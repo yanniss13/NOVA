@@ -992,7 +992,7 @@
     const p = hero.potentiel = normalizePotentiel(hero.potentiel);
     const types = ch ? weaponTypesOf(ch.id) : [];
     const disabled = !ch || !types.length;
-    const tierTxt = p.tier > 0 ? ("T" + p.tier) : "—";
+    const tierTxt = p.tier > 0 ? ("P" + p.tier) : "—";
 
     const btn = el("button",{
       class:"pot-btn"+(p.tier>0?" set":"")+(disabled?" disabled":""),
@@ -1115,7 +1115,7 @@
       // Boutons de palier — puis T1..T10
       const head = el("div",{class:"pot-head"},[
         el("span",{class:"pot-head-lbl", text:"Palier"}),
-        el("span",{class:"pot-head-val", text:"T"+selTier+"/"+POT_MAX})
+        el("span",{class:"pot-head-val", text:"P"+selTier+"/"+POT_MAX})
       ]);
       body.appendChild(head);
 
@@ -1129,7 +1129,7 @@
         title:"Aucun palier", onclick:()=>setTier(0)}));
       for(let t=1;t<=POT_MAX;t++){
         row.appendChild(el("button",{class:"pot-p"+(t<=selTier?" reached":"")+(t===selTier?" active":""),
-          text:"T"+t, onclick:()=>setTier(t)}));
+          text:"P"+t, onclick:()=>setTier(t)}));
       }
       body.appendChild(row);
 
@@ -1139,7 +1139,7 @@
         details.list.forEach((desc, idx)=>{
           const t = idx+1;
           const item = el("div",{class:"pot-item"+(t<=selTier?" on":"")});
-          item.appendChild(el("span",{class:"pot-item-t", text:"T"+t}));
+          item.appendChild(el("span",{class:"pot-item-t", text:"P"+t}));
           item.appendChild(el("span",{class:"pot-item-d", html:renderBonus(desc)}));
           listBox.appendChild(item);
         });
