@@ -514,7 +514,17 @@
   const POT = window.SEVEN_DS_POTENTIELS || {};
   const POT_MAX = 10;
   const weaponFolderOf = file => file ? file.split("/")[1] : null;
-  const potTypesOf = charId => Object.keys((charId && POT[charId]) || {});
+  const weaponTypesOf = charId => Object.keys((charId && POT[charId]) || {});
+  const isWeaponCompatible = (charId, file) =>
+    !file || !!charId && weaponTypesOf(charId).includes(weaponFolderOf(file));
+  function compatibleWeaponGroups(charId){
+    const allowed = new Set(weaponTypesOf(charId));
+    return Object.entries(DATA.armes||{}).reduce((groups, [label, items])=>{
+      const compatible = items.filter(item => allowed.has(weaponFolderOf(item.file)));
+      if(compatible.length) groups[label] = compatible;
+      return groups;
+    }, {});
+  }
   function potentielDetailsOf(hero){
     const weaponType = weaponFolderOf(hero && hero.weapon);
     const byWeapon = (hero && hero.char && POT[hero.char]) || {};
@@ -596,9 +606,11 @@
   };
   function normalizeHero(raw){
     const h = raw && typeof raw === "object" ? raw : {};
+    const char = h.char||null;
+    const weapon = isWeaponCompatible(char, h.weapon) ? (h.weapon||null) : null;
     return {
-      char:h.char||null,
-      weapon:h.weapon||null,
+      char,
+      weapon,
       armor:Object.assign(emptyArmor(), h.armor||{}),
       jewel:Object.assign(emptyJewel(), h.jewel||{}),
       potentiel:normalizePotentiel(h.potentiel),
@@ -788,7 +800,7 @@
   // Petit bloc "Potentiel" sur la carte héros -> ouvre la fenêtre de potentiel
   function potentielControl(hero, i, ch){
     const p = hero.potentiel = normalizePotentiel(hero.potentiel);
-    const types = ch ? potTypesOf(ch.id) : [];
+    const types = ch ? weaponTypesOf(ch.id) : [];
     const disabled = !ch || !types.length;
     const tierTxt = p.tier > 0 ? ("T" + p.tier) : "—";
 
@@ -820,13 +832,25 @@
     Picker.open({
       title:"Choisir un héros", portrait:true, value:draft.heroes[i].char,
       items:(DATA.personnages||[]).map(c=>({value:c.id, name:c.name, file:c.file})),
-      onSelect:v=>{ draft.heroes[i].char = v; renderBuilder(); }
+      onSelect:v=>{
+        const hero = draft.heroes[i];
+        hero.char = v;
+        if(!isWeaponCompatible(hero.char, hero.weapon)) hero.weapon = null;
+        renderBuilder();
+      }
     });
   }
   function pickWeapon(i){
+    const hero = draft.heroes[i];
+    if(!hero.char){
+      toast("Choisis d'abord un héros.", true);
+      return;
+    }
     Picker.open({
-      title:"Choisir une arme", value:draft.heroes[i].weapon, groups:DATA.armes,
-      onSelect:v=>{ draft.heroes[i].weapon = v; renderBuilder(); }
+      title:"Choisir une arme", value:hero.weapon,
+      groups:compatibleWeaponGroups(hero.char),
+      emptyHint:"Aucune arme compatible disponible.",
+      onSelect:v=>{ hero.weapon = v; renderBuilder(); }
     });
   }
   function pickArmor(i, slot){
@@ -863,7 +887,7 @@
       heroIdx = i;
       const hero = draft.heroes[i], ch = charOf(hero.char);
       if(!ch) return;
-      const types = potTypesOf(ch.id);
+      const types = weaponTypesOf(ch.id);
       if(!types.length) return;
       titleEl.textContent = "Potentiel — " + ch.name;
       render();

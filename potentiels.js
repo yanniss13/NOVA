@@ -1,5 +1,5 @@
 // Genere par generate-potentiels.py depuis 7dsorigin.app (team-builder).
-// Descriptions uniquement : cle personnage, puis type d'arme, puis bonus T1..T10.
+// Chaque personnage a 3 cles d'armes compatibles, avec leurs bonus T1..T10.
 // Le palier choisi est commun au heros et reste stocke dans les equipes.
 // Le balisage [#RRGGBB]texte[-] est un span de couleur (rendu par l'appli).
 window.SEVEN_DS_POTENTIELS = {

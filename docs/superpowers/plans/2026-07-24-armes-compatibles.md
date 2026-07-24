@@ -41,7 +41,7 @@
 - Produces: `compatibleWeaponGroups(charId)` retourne un objet au format attendu par `Picker.open({ groups })`.
 - Consumes: `POT`, `DATA.armes` et `weaponFolderOf(file)`.
 
-- [ ] **Step 1: Écrire les tests purs en échec**
+- [x] **Step 1: Écrire les tests purs en échec**
 
 Exposer depuis le vrai script inline les trois nouvelles fonctions, puis ajouter :
 
@@ -79,12 +79,12 @@ assert.ok(Object.values(actualPot).every(byWeapon =>
 ));
 ```
 
-- [ ] **Step 2: Vérifier l’échec attendu**
+- [x] **Step 2: Vérifier l’échec attendu**
 
 Run: `node tests/potentiel-commun.test.js`  
 Expected: FAIL avec `weaponTypesOf is not defined`.
 
-- [ ] **Step 3: Implémenter les fonctions minimales**
+- [x] **Step 3: Implémenter les fonctions minimales**
 
 Dans `index.html`, remplacer `potTypesOf` par :
 
@@ -104,7 +104,7 @@ function compatibleWeaponGroups(charId){
 
 Utiliser `weaponTypesOf` dans le contrôle et la fenêtre de potentiel.
 
-- [ ] **Step 4: Supprimer les armes incompatibles pendant la normalisation**
+- [x] **Step 4: Supprimer les armes incompatibles pendant la normalisation**
 
 Dans `normalizeHero(raw)`, calculer d’abord `char` puis `weapon` :
 
@@ -117,7 +117,7 @@ Retourner ces deux valeurs dans le héros normalisé. Ajouter au test une équip
 Meliodas + Livre et vérifier `weapon === null`, puis Meliodas + Hache et vérifier
 que le chemin reste intact.
 
-- [ ] **Step 5: Vérifier et committer**
+- [x] **Step 5: Vérifier et committer**
 
 Run: `node tests/potentiel-commun.test.js`  
 Expected: `PASS potentiel commun`.
@@ -140,7 +140,7 @@ git commit -m "feat: validate weapons per hero"
 - Consumes: `compatibleWeaponGroups(hero.char)` et `isWeaponCompatible(char, file)`.
 - Produces: un picker contenant `Tous` plus exactement trois groupes compatibles.
 
-- [ ] **Step 1: Ajouter le parcours Playwright en échec**
+- [x] **Step 1: Ajouter le parcours Playwright en échec**
 
 Avant de choisir un héros, cliquer sur `.gear-slot.weapon` et vérifier que le picker
 reste fermé et que le toast contient `Choisis d'abord un héros.`.
@@ -160,12 +160,12 @@ par Merlin et vérifier que `.gear-slot.weapon` ne possède plus la classe `fill
 Dans le scénario d’équipe héritée, utiliser un chemin `7ds-armes/Livre/x.webp` pour
 Meliodas et vérifier après sauvegarde que `weapon === null`.
 
-- [ ] **Step 2: Vérifier l’échec attendu**
+- [x] **Step 2: Vérifier l’échec attendu**
 
 Run: `node tests/potentiel-commun.playwright.js`  
 Expected: FAIL parce que le picker affiche actuellement les douze groupes.
 
-- [ ] **Step 3: Filtrer le picker et nettoyer au changement de héros**
+- [x] **Step 3: Filtrer le picker et nettoyer au changement de héros**
 
 Modifier `pickChar(i)` :
 
@@ -195,14 +195,14 @@ Picker.open({
 });
 ```
 
-- [ ] **Step 4: Aligner la documentation générée**
+- [x] **Step 4: Aligner la documentation générée**
 
 Dans `generate-potentiels.py` et l’en-tête de `potentiels.js`, préciser que les clés
 de types d’armes représentent les compatibilités du héros et les valeurs ses
 descriptions T1–T10. Dans `AGENTS.md`, documenter le picker filtré et la suppression
 automatique aux frontières du Store et de l’import.
 
-- [ ] **Step 5: Lancer la suite complète**
+- [x] **Step 5: Lancer la suite complète**
 
 Run: `npm test`  
 Expected:
@@ -212,7 +212,7 @@ PASS potentiel commun
 PASS Playwright: potentiel commun, changement d'arme et migration
 ```
 
-- [ ] **Step 6: Committer**
+- [x] **Step 6: Committer**
 
 ```bash
 git add index.html tests/potentiel-commun.playwright.js generate-potentiels.py potentiels.js AGENTS.md
@@ -228,7 +228,7 @@ git commit -m "feat: filter weapons by hero compatibility"
 - Consumes: la suite `npm test`.
 - Produces: une branche prête à être fusionnée dans `main`.
 
-- [ ] **Step 1: Vérifier les exigences**
+- [x] **Step 1: Vérifier les exigences**
 
 Run:
 
@@ -246,12 +246,12 @@ rg -n "groups:DATA\\.armes|potTypesOf" index.html
 
 Expected: aucune occurrence.
 
-- [ ] **Step 2: Vérifier l’état Git**
+- [x] **Step 2: Vérifier l’état Git**
 
 Run: `git status --short`  
 Expected: aucun fichier non committé.
 
-- [ ] **Step 3: Relancer les tests sur l’état à intégrer**
+- [x] **Step 3: Relancer les tests sur l’état à intégrer**
 
 Run: `npm test`  
 Expected: les deux lignes `PASS` et un code de sortie `0`.

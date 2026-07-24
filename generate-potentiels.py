@@ -1,9 +1,9 @@
 # =============================================================================
 #  generate-potentiels.py
-#  Récupère les descriptions de bonus T1-T10 par type d'arme pour chaque
-#  personnage depuis la page team-builder de 7dsorigin.app, et regénère
-#  potentiels.js (consommé par index.html). Le palier choisi dans l'appli
-#  est commun au personnage ; seul le texte affiché dépend de l'arme.
+#  Récupère les trois types d'armes compatibles et leurs descriptions de
+#  bonus T1-T10 pour chaque personnage depuis la page team-builder de
+#  7dsorigin.app, puis regénère potentiels.js (consommé par index.html).
+#  Le palier choisi dans l'appli est commun au personnage.
 #
 #  Usage :   python generate-potentiels.py
 #  (nécessite une connexion internet ; aucune dépendance tierce)
@@ -70,7 +70,7 @@ def main():
         sys.exit(1)
 
     content = ("// Genere par generate-potentiels.py depuis 7dsorigin.app (team-builder).\n"
-               "// Descriptions uniquement : cle personnage, puis type d'arme, puis bonus T1..T10.\n"
+               "// Chaque personnage a 3 cles d'armes compatibles, avec leurs bonus T1..T10.\n"
                "// Le palier choisi est commun au heros et reste stocke dans les equipes.\n"
                "// Le balisage [#RRGGBB]texte[-] est un span de couleur (rendu par l'appli).\n"
                "window.SEVEN_DS_POTENTIELS = " + json.dumps(data, ensure_ascii=False, indent=1) + ";\n")

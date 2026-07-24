@@ -20,8 +20,20 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await page.reload();
 
     const firstHero = page.locator(".hero").first();
-    await firstHero.locator(".portrait").click();
-    await page.locator('#pickerGrid .tile[title="Meliodas"]').click();
+    await firstHero.locator(".gear-slot.weapon").click();
+    assert.equal(
+      await page.locator("#overlay").evaluate(el => el.classList.contains("on")),
+      false
+    );
+    assert.equal(await page.locator("#toast").textContent(), "Choisis d'abord un héros.");
+
+    await chooseHero(page, firstHero, "Meliodas");
+    await firstHero.locator(".gear-slot.weapon").click();
+    assert.deepEqual(
+      (await page.locator("#pickerChips .chip").allTextContents()).sort(),
+      ["Epee a une main", "Epees doubles", "Hache", "Tous"].sort()
+    );
+    await page.locator("#pickerClose").click();
 
     await firstHero.locator(".pot-btn").click();
     await assertVisibleText(
@@ -48,6 +60,17 @@ const STORAGE_KEY = "confrerie7ds.teams";
     assert.notEqual(epeeT2, hacheT2, "Les descriptions doivent suivre l'arme équipée");
     await page.locator("#potClose").click();
 
+    const secondHero = page.locator(".hero").nth(1);
+    await chooseHero(page, secondHero, "Meliodas");
+    await chooseWeapon(page, secondHero, "Hache");
+    assert.equal(await secondHero.locator(".gear-slot.weapon").evaluate(
+      el => el.classList.contains("filled")
+    ), true);
+    await chooseHero(page, secondHero, "Merlin");
+    assert.equal(await secondHero.locator(".gear-slot.weapon").evaluate(
+      el => el.classList.contains("filled")
+    ), false);
+
     await page.locator("#pseudo").fill("Test Playwright");
     await page.locator("#btnSave").click();
     const saved = await page.evaluate(key => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
@@ -60,7 +83,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
         pseudo:"Ancien membre",
         heroes:[{
           char:"meliodas",
-          weapon:"7ds-armes/Hache/1003000003.webp",
+          weapon:"7ds-armes/Livre/grimoire-incompatible.webp",
           potentiel:{ weaponType:"Hache", tier:8 }
         }]
       }]));
@@ -73,6 +96,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
 
     const migrated = await page.evaluate(key => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
     assert.deepEqual(migrated[0].heroes[0].potentiel, { tier:8 });
+    assert.equal(migrated[0].heroes[0].weapon, null);
     assert.ok(!JSON.stringify(migrated).includes("weaponType"));
     assert.deepEqual(errors, []);
 
@@ -89,6 +113,11 @@ async function chooseWeapon(page, hero, group){
   await hero.locator(".gear-slot.weapon").click();
   await page.locator("#pickerChips").getByRole("button", { name:group, exact:true }).click();
   await page.locator("#pickerGrid .tile:not(.none)").first().click();
+}
+
+async function chooseHero(page, hero, name){
+  await hero.locator(".portrait").click();
+  await page.locator(`#pickerGrid .tile[title="${name}"]`).click();
 }
 
 async function assertVisibleText(locator, expected){

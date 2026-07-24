@@ -78,7 +78,7 @@ function loadApp(initialTeams){
 
   const exposed = source.replace(
     /\}\)\(\);\s*$/,
-    "Object.assign(globalThis.__hooks,{normalizePotentiel,normalizeHero,normalizeTeam,potentielDetailsOf,Store});})();"
+    "Object.assign(globalThis.__hooks,{normalizePotentiel,normalizeHero,normalizeTeam,potentielDetailsOf,weaponTypesOf,isWeaponCompatible,compatibleWeaponGroups,Store});})();"
   );
   assert.notStrictEqual(exposed, source, "Le chargeur doit exposer les fonctions réelles");
 
@@ -98,15 +98,37 @@ function loadApp(initialTeams){
     setTimeout:() => 1,
     SEVEN_DS_DATA:{
       generatedAt:"",
-      personnages:[{ id:"meliodas", name:"Meliodas", file:"7ds-personnages/meliodas.webp" }],
-      armes:{ Hache:[] },
+      personnages:[
+        { id:"meliodas", name:"Meliodas", file:"7ds-personnages/meliodas.webp" },
+        { id:"merlin", name:"Merlin", file:"7ds-personnages/merlin.webp" }
+      ],
+      armes:{
+        "Epee a une main":[
+          { name:"Épée", file:"7ds-armes/Epee 1 main/epee.webp" }
+        ],
+        "Epees doubles":[
+          { name:"Doubles", file:"7ds-armes/Epees doubles/doubles.webp" }
+        ],
+        Grimoire:[
+          { name:"Livre", file:"7ds-armes/Livre/livre.webp" }
+        ],
+        Hache:[
+          { name:"Hache", file:"7ds-armes/Hache/hache.webp" }
+        ]
+      },
       armures:{ Haut:[], Bas:[], Bottes:[], Ceinture:[], "Armure liee":[] },
       bijoux:{ Anneau:[], Collier:[], "Boucle d'oreille":[] }
     },
     SEVEN_DS_POTENTIELS:{
       meliodas:{
         Hache:["Bonus hache T1"],
-        "Epee 1 main":["Bonus épée T1"]
+        "Epee 1 main":["Bonus épée T1"],
+        "Epees doubles":["Bonus doubles T1"]
+      },
+      merlin:{
+        Livre:["Bonus livre T1"],
+        Baton:["Bonus bâton T1"],
+        Baguette:["Bonus baguette T1"]
       }
     }
   };
@@ -117,6 +139,46 @@ function loadApp(initialTeams){
 
 function plain(value){
   return JSON.parse(JSON.stringify(value));
+}
+
+// Donnée générée réelle : 24 héros, exactement 3 types d'armes chacun.
+{
+  const actual = { window:{} };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(ROOT, "potentiels.js"), "utf8"),
+    actual,
+    { filename:"potentiels.js" }
+  );
+  const actualPot = actual.window.SEVEN_DS_POTENTIELS;
+  assert.strictEqual(Object.keys(actualPot).length, 24);
+  assert.ok(Object.values(actualPot).every(
+    byWeapon => Object.keys(byWeapon).length === 3
+  ));
+}
+
+// Régression ciblée : seuls les trois dossiers autorisés alimentent le picker.
+{
+  const { hooks } = loadApp();
+  assert.deepStrictEqual(plain(hooks.weaponTypesOf("meliodas")).sort(), [
+    "Epee 1 main", "Epees doubles", "Hache"
+  ]);
+  assert.strictEqual(
+    hooks.isWeaponCompatible("meliodas", "7ds-armes/Hache/hache.webp"),
+    true
+  );
+  assert.strictEqual(
+    hooks.isWeaponCompatible("meliodas", "7ds-armes/Livre/livre.webp"),
+    false
+  );
+  assert.strictEqual(hooks.isWeaponCompatible("meliodas", null), true);
+
+  const groups = plain(hooks.compatibleWeaponGroups("meliodas"));
+  assert.deepStrictEqual(Object.keys(groups).sort(), [
+    "Epee a une main", "Epees doubles", "Hache"
+  ]);
+  assert.ok(Object.values(groups).flat().every(item =>
+    ["Hache", "Epee 1 main", "Epees doubles"].includes(item.file.split("/")[1])
+  ));
 }
 
 // Régression ciblée : retirer weaponType ne doit jamais perdre le palier existant.
@@ -140,6 +202,22 @@ function plain(value){
   assert.strictEqual(migrated.heroes.length, 4);
   assert.deepStrictEqual(migrated.heroes[0].potentiel, { tier:7 });
   assert.ok(!("weaponType" in migrated.heroes[0].potentiel));
+
+  const incompatible = plain(hooks.normalizeTeam({
+    heroes:[{
+      char:"meliodas",
+      weapon:"7ds-armes/Livre/livre.webp"
+    }]
+  }));
+  assert.strictEqual(incompatible.heroes[0].weapon, null);
+
+  const compatible = plain(hooks.normalizeTeam({
+    heroes:[{
+      char:"meliodas",
+      weapon:"7ds-armes/Hache/hache.webp"
+    }]
+  }));
+  assert.strictEqual(compatible.heroes[0].weapon, "7ds-armes/Hache/hache.webp");
 }
 
 // Régression ciblée : l'arme choisit les textes, jamais le palier du héros.

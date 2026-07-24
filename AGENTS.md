@@ -22,7 +22,10 @@ Outil web local pour que les membres d'une confrérie **7DS Origin** construisen
 - [x] Potentiels : palier T0→T10 par héros, façon page team-builder du site.
       Données FR (24 persos × ~3 types d'arme × 10 paliers) dans `potentiels.js`,
       régénérable via `generate-potentiels.py`. Le palier est **commun au héros** ;
-      l'arme équipée détermine uniquement les descriptions de bonus affichées.
+      les 3 clés d'armes par héros déterminent les armes compatibles et l'arme
+      équipée choisit les descriptions de bonus affichées.
+- [x] Compatibilité des armes : le picker ne propose que les 3 types autorisés
+      du héros. Toute arme incompatible est automatiquement retirée.
 - [ ] Partage réseau entre membres (voir « Évolutions prévues »). **Non commencé.**
 
 L'appli fonctionne en **local uniquement** : on ouvre `index.html` par double-clic
@@ -53,7 +56,7 @@ Site Confrérie 7ds/
 ├─ tests/                  # Régressions du potentiel commun et parcours Chromium.
 ├─ data.js                 # GÉNÉRÉ. window.SEVEN_DS_DATA = { personnages, armes, armures, bijoux }.
 ├─ generate-data.ps1       # Régénère data.js en scannant les dossiers d'images.
-├─ potentiels.js           # GÉNÉRÉ. Descriptions de bonus par perso/arme.
+├─ potentiels.js           # GÉNÉRÉ. 3 armes compatibles + bonus par héros.
 ├─ generate-potentiels.py  # Régénère potentiels.js depuis 7dsorigin.app (internet requis).
 ├─ AGENTS.md               # Ce fichier.
 ├─ docs/superpowers/specs/ # Spec de design détaillée.
@@ -99,7 +102,7 @@ Clé localStorage : `confrerie7ds.teams` → tableau JSON d'équipes.
   heroes: [                 // TOUJOURS 4 entrées (slot vide = char null)
     {
       char: "meliodas" | null,        // id de personnage
-      weapon: "7ds-armes/.../x.webp" | null,
+      weapon: "7ds-armes/.../x.webp" | null, // forcément compatible avec char
       armor: { "Haut": file|null, "Bas": file|null, "Bottes": file|null,
                "Ceinture": file|null, "Armure liee": file|null },
       jewel: { "Anneau": file|null, "Collier": file|null,
@@ -117,6 +120,7 @@ Clé localStorage : `confrerie7ds.teams` → tableau JSON d'équipes.
 { "<charId>": { "<dossier d'arme>": [ "<bonusFr T1>", ... "<T10>" ] } }
 // dossier d'arme = segment de chemin de hero.weapon (ex. "Hache", "Epee 1 main").
 // bonusFr contient un balisage couleur [#RRGGBB]texte[-] rendu par renderBonus().
+// Les 3 sous-clés sont les armes compatibles du héros.
 // L'arme équipée choisit la liste affichée ; le palier stocké reste commun au héros.
 ```
 
@@ -124,7 +128,8 @@ Constantes utiles dans `index.html` : `STORAGE_KEY`, `TEAM_SIZE` (= 4),
 `ARMOR_SLOTS`, `JEWEL_SLOTS` (ordre d'affichage des emplacements).
 Le Store, `editTeam()` et l'import normalisent les anciennes équipes : ajout des
 champs d'équipement manquants et migration de l'ancien potentiel
-`{ weaponType, tier }` vers `{ tier }`.
+`{ weaponType, tier }` vers `{ tier }`. `normalizeHero()` retire aussi toute arme
+dont le dossier n'appartient pas aux 3 clés de potentiel du personnage.
 
 ## Décisions de conception (ne pas casser sans raison)
 
@@ -137,7 +142,8 @@ champs d'équipement manquants et migration de l'ancien potentiel
   `renderBonus()` rend leur balisage couleur. Pas de calcul de stats.
 - **Pas de calcul de stats chiffrées** : aucune donnée de stats n'existe dans les
   assets. Le « détail » d'un perso = arme + 5 armures + une note libre.
-- Arme choisie en 2 temps : type puis arme (le picker gère les groupes).
+- Arme choisie en 2 temps : type puis arme. Le picker filtre les groupes aux
+  3 types autorisés par les clés de `window.SEVEN_DS_POTENTIELS[charId]`.
 - Export / Import JSON = sauvegarde de secours et base du futur partage.
 
 ## Évolutions prévues (non commencées)
