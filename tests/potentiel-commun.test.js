@@ -78,7 +78,7 @@ function loadApp(initialTeams){
 
   const exposed = source.replace(
     /\}\)\(\);\s*$/,
-    "Object.assign(globalThis.__hooks,{normalizePotentiel,normalizeHero,normalizeTeam,potentielDetailsOf,weaponTypesOf,isWeaponCompatible,compatibleWeaponGroups,Store});})();"
+    "Object.assign(globalThis.__hooks,{normalizePotentiel,normalizeHero,normalizeTeam,potentielDetailsOf,weaponTypesOf,isWeaponCompatible,compatibleWeaponGroups,linkedArmorsOf,isLinkedArmorCompatible,Store});})();"
   );
   assert.notStrictEqual(exposed, source, "Le chargeur doit exposer les fonctions réelles");
 
@@ -130,6 +130,18 @@ function loadApp(initialTeams){
         Baton:["Bonus bâton T1"],
         Baguette:["Bonus baguette T1"]
       }
+    },
+    SEVEN_DS_ARMURES_LIEES:{
+      meliodas:[
+        "7ds-armures-ssr/Armure liee/Défense simple.webp",
+        "7ds-armures-ssr/Armure liee/Majesté bien malveillante.webp",
+        "7ds-armures-ssr/Armure liee/Une nouvelle aventure.webp"
+      ],
+      merlin:[
+        "7ds-armures-ssr/Armure liee/Chercheuse de savoir.webp",
+        "7ds-armures-ssr/Armure liee/Le Sanglier de la Gourmandise.webp",
+        "7ds-armures-ssr/Armure liee/Vêtements formels légers.webp"
+      ]
     }
   };
   sandbox.window = sandbox;
@@ -139,6 +151,40 @@ function loadApp(initialTeams){
 
 function plain(value){
   return JSON.parse(JSON.stringify(value));
+}
+
+// Régression ciblée : une armure liée d'un autre héros est retirée à la migration.
+{
+  const { hooks } = loadApp();
+  assert.deepStrictEqual(plain(hooks.linkedArmorsOf("meliodas")), [
+    "7ds-armures-ssr/Armure liee/Défense simple.webp",
+    "7ds-armures-ssr/Armure liee/Majesté bien malveillante.webp",
+    "7ds-armures-ssr/Armure liee/Une nouvelle aventure.webp"
+  ]);
+  assert.strictEqual(
+    hooks.isLinkedArmorCompatible(
+      "meliodas",
+      "7ds-armures-ssr/Armure liee/Une nouvelle aventure.webp"
+    ),
+    true
+  );
+  assert.strictEqual(
+    hooks.isLinkedArmorCompatible(
+      "meliodas",
+      "7ds-armures-ssr/Armure liee/Chercheuse de savoir.webp"
+    ),
+    false
+  );
+
+  const normalized = plain(hooks.normalizeHero({
+    char:"meliodas",
+    armor:{
+      Haut:"7ds-armures-ssr/Haut/universel.webp",
+      "Armure liee":"7ds-armures-ssr/Armure liee/Chercheuse de savoir.webp"
+    }
+  }));
+  assert.strictEqual(normalized.armor.Haut, "7ds-armures-ssr/Haut/universel.webp");
+  assert.strictEqual(normalized.armor["Armure liee"], null);
 }
 
 // Donnée générée réelle : chaque armure liée locale est attribuée une fois.

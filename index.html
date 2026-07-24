@@ -494,6 +494,7 @@
 
 <script src="data.js"></script>
 <script src="potentiels.js"></script>
+<script src="armures-liees.js"></script>
 <script>
 (function(){
   "use strict";
@@ -503,6 +504,8 @@
   const STORAGE_KEY = "confrerie7ds.teams";
   const TEAM_SIZE = 4;
   const ARMOR_SLOTS = ["Haut","Bas","Bottes","Ceinture","Armure liee"];
+  const LINKED_ARMOR_SLOT = "Armure liee";
+  const LINKED_ARMORS = window.SEVEN_DS_ARMURES_LIEES || {};
   const ARMOR_LABELS = {
     "Haut":"Haut","Bas":"Bas","Bottes":"Bottes",
     "Ceinture":"Ceinture","Armure liee":"Armure liée"
@@ -517,6 +520,10 @@
   const weaponTypesOf = charId => Object.keys((charId && POT[charId]) || {});
   const isWeaponCompatible = (charId, file) =>
     !file || !!charId && weaponTypesOf(charId).includes(weaponFolderOf(file));
+  const linkedArmorsOf = charId =>
+    [...((charId && LINKED_ARMORS[charId]) || [])];
+  const isLinkedArmorCompatible = (charId, file) =>
+    !file || !!charId && linkedArmorsOf(charId).includes(file);
   function compatibleWeaponGroups(charId){
     const allowed = new Set(weaponTypesOf(charId));
     return Object.entries(DATA.armes||{}).reduce((groups, [label, items])=>{
@@ -608,13 +615,17 @@
     const h = raw && typeof raw === "object" ? raw : {};
     const char = h.char||null;
     const weapon = isWeaponCompatible(char, h.weapon) ? (h.weapon||null) : null;
+    const armor = Object.assign(emptyArmor(), h.armor||{});
+    if(!isLinkedArmorCompatible(char, armor[LINKED_ARMOR_SLOT])){
+      armor[LINKED_ARMOR_SLOT] = null;
+    }
     return {
       char,
       weapon,
-      armor:Object.assign(emptyArmor(), h.armor||{}),
+      armor,
       jewel:Object.assign(emptyJewel(), h.jewel||{}),
       potentiel:normalizePotentiel(h.potentiel),
-      note:h.note||""
+      note:typeof h.note === "string" ? h.note : ""
     };
   }
   function normalizeTeam(raw){
