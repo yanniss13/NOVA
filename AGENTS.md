@@ -26,6 +26,9 @@ Outil web local pour que les membres d'une confrérie **7DS Origin** construisen
       équipée choisit les descriptions de bonus affichées.
 - [x] Compatibilité des armes : le picker ne propose que les 3 types autorisés
       du héros. Toute arme incompatible est automatiquement retirée.
+- [x] Compatibilité des armures liées : 66 images locales associées aux 24 héros
+      (2 ou 3 par héros). Le picker filtre selon le personnage et retire les
+      anciennes valeurs incompatibles.
 - [ ] Partage réseau entre membres (voir « Évolutions prévues »). **Non commencé.**
 
 L'appli fonctionne en **local uniquement** : on ouvre `index.html` par double-clic
@@ -58,6 +61,8 @@ Site Confrérie 7ds/
 ├─ generate-data.ps1       # Régénère data.js en scannant les dossiers d'images.
 ├─ potentiels.js           # GÉNÉRÉ. 3 armes compatibles + bonus par héros.
 ├─ generate-potentiels.py  # Régénère potentiels.js depuis 7dsorigin.app (internet requis).
+├─ armures-liees.js        # GÉNÉRÉ. Fichiers d’armure liée par personnage.
+├─ generate-armures-liees.py # Régénération manuelle depuis la page publique.
 ├─ AGENTS.md               # Ce fichier.
 ├─ docs/superpowers/specs/ # Spec de design détaillée.
 ├─ 7ds-personnages/        # <id>.webp  (ex. meliodas.webp)
@@ -87,6 +92,25 @@ peut pas lister le contenu d'un dossier. `data.js` contourne ça sans serveur.
              "Boucle d'oreille": [...] }  // groupé par emplacement (peut être vide)
 }
 ```
+
+### Armures liées (`window.SEVEN_DS_ARMURES_LIEES`, depuis `armures-liees.js`)
+```js
+window.SEVEN_DS_ARMURES_LIEES = {
+  "<charId>": [
+    "7ds-armures-ssr/Armure liee/<nom>.webp"
+  ]
+};
+```
+
+`generate-armures-liees.py` régénère cet instantané uniquement lorsqu’il est
+lancé manuellement avec `python generate-armures-liees.py`. Il lit la page
+publique de référence en une requête, sans télécharger aucune image. Il ne
+s’exécute jamais dans le navigateur : `index.html` ne charge que
+`armures-liees.js` local et ne contacte donc jamais cette source.
+
+`normalizeHero()` refuse une valeur de `armor["Armure liee"]` si son fichier
+n’appartient pas au tableau du héros. Les quatre emplacements universels
+`Haut`, `Bas`, `Bottes` et `Ceinture` ne sont pas filtrés par cette règle.
 
 ## Modèle de données d'une équipe (localStorage)
 
@@ -129,7 +153,8 @@ Constantes utiles dans `index.html` : `STORAGE_KEY`, `TEAM_SIZE` (= 4),
 Le Store, `editTeam()` et l'import normalisent les anciennes équipes : ajout des
 champs d'équipement manquants et migration de l'ancien potentiel
 `{ weaponType, tier }` vers `{ tier }`. `normalizeHero()` retire aussi toute arme
-dont le dossier n'appartient pas aux 3 clés de potentiel du personnage.
+dont le dossier n'appartient pas aux 3 clés de potentiel du personnage, ainsi
+que toute armure liée incompatible avec le héros.
 
 ## Décisions de conception (ne pas casser sans raison)
 

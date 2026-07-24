@@ -36,7 +36,7 @@
 - Produces browser global: `window.SEVEN_DS_ARMURES_LIEES: Record<string, string[]>`
 - Consumes local assets: `7ds-armures-ssr/Armure liee/*.webp` and `7ds-personnages/*.webp`
 
-- [ ] **Step 1: Écrire les tests Python en échec**
+- [x] **Step 1: Écrire les tests Python en échec**
 
 Créer un chargeur du module à nom composé et couvrir une extraction valide,
 une image locale sans correspondance et la non-écriture en cas d’erreur :
@@ -103,7 +103,7 @@ class LinkedArmorGeneratorTests(unittest.TestCase):
             self.assertEqual(output.read_text(encoding="utf-8"), "instantane valide")
 ```
 
-- [ ] **Step 2: Vérifier que les tests échouent faute de générateur**
+- [x] **Step 2: Vérifier que les tests échouent faute de générateur**
 
 Run:
 
@@ -113,7 +113,7 @@ python -m unittest tests/test_generate_armures_liees.py
 
 Expected: `FileNotFoundError` pour `generate-armures-liees.py`.
 
-- [ ] **Step 3: Implémenter le générateur minimal et ses validations**
+- [x] **Step 3: Implémenter le générateur minimal et ses validations**
 
 Le script utilise uniquement la bibliothèque standard. Il décode les guillemets
 du payload Next, ne laisse pas une expression régulière traverser le costume
@@ -231,7 +231,7 @@ if __name__ == "__main__":
     main()
 ```
 
-- [ ] **Step 4: Vérifier les tests Python**
+- [x] **Step 4: Vérifier les tests Python**
 
 Run:
 
@@ -241,7 +241,7 @@ python -m unittest tests/test_generate_armures_liees.py
 
 Expected: `Ran 3 tests ... OK`.
 
-- [ ] **Step 5: Ajouter le test en échec de l’instantané réel**
+- [x] **Step 5: Ajouter le test en échec de l’instantané réel**
 
 Dans `tests/potentiel-commun.test.js`, charger `armures-liees.js` avec `vm`,
 charger `data.js`, puis vérifier :
@@ -274,7 +274,7 @@ assert.deepStrictEqual(
 );
 ```
 
-- [ ] **Step 6: Vérifier que le test échoue faute d’instantané**
+- [x] **Step 6: Vérifier que le test échoue faute d’instantané**
 
 Run:
 
@@ -284,7 +284,7 @@ node tests/potentiel-commun.test.js
 
 Expected: `ENOENT` pour `armures-liees.js`.
 
-- [ ] **Step 7: Générer l’instantané réel en une requête**
+- [x] **Step 7: Générer l’instantané réel en une requête**
 
 Run:
 
@@ -300,7 +300,7 @@ OK -> armures-liees.js généré
   Armures liées : 66
 ```
 
-- [ ] **Step 8: Intégrer les tests Python à la commande unitaire**
+- [x] **Step 8: Intégrer les tests Python à la commande unitaire**
 
 Dans `package.json` :
 
@@ -314,7 +314,7 @@ Dans `package.json` :
 }
 ```
 
-- [ ] **Step 9: Vérifier l’instantané et le générateur**
+- [x] **Step 9: Vérifier l’instantané et le générateur**
 
 Run:
 
@@ -324,7 +324,7 @@ npm run test:unit
 
 Expected: trois tests Python `OK`, puis `PASS potentiel commun`.
 
-- [ ] **Step 10: Commit**
+- [x] **Step 10: Commit**
 
 ```powershell
 git add generate-armures-liees.py armures-liees.js tests/test_generate_armures_liees.py tests/potentiel-commun.test.js package.json
@@ -345,7 +345,7 @@ git commit -m "feat: generate linked armor compatibility"
 - Produces: `isLinkedArmorCompatible(charId: string | null, file: string | null) -> boolean`
 - Updates: `normalizeHero(raw) -> Hero` avec `armor["Armure liee"]` validée
 
-- [ ] **Step 1: Écrire les tests unitaires en échec**
+- [x] **Step 1: Écrire les tests unitaires en échec**
 
 Ajouter au sandbox de `loadApp()` :
 
@@ -402,7 +402,7 @@ ajouter :
 }
 ```
 
-- [ ] **Step 2: Vérifier l’échec avant implémentation**
+- [x] **Step 2: Vérifier l’échec avant implémentation**
 
 Run:
 
@@ -412,7 +412,7 @@ npm run test:unit
 
 Expected: échec car `linkedArmorsOf` n’existe pas dans le script principal.
 
-- [ ] **Step 3: Charger l’instantané et ajouter les fonctions pures**
+- [x] **Step 3: Charger l’instantané et ajouter les fonctions pures**
 
 Ajouter le chargement avant le script inline :
 
@@ -434,7 +434,7 @@ const isLinkedArmorCompatible = (charId, file) =>
   !file || !!charId && linkedArmorsOf(charId).includes(file);
 ```
 
-- [ ] **Step 4: Valider l’armure liée dans `normalizeHero()`**
+- [x] **Step 4: Valider l’armure liée dans `normalizeHero()`**
 
 Construire l’armure avant l’objet retourné :
 
@@ -458,7 +458,7 @@ function normalizeHero(raw){
 }
 ```
 
-- [ ] **Step 5: Vérifier la migration et la non-régression**
+- [x] **Step 5: Vérifier la migration et la non-régression**
 
 Run:
 
@@ -468,7 +468,7 @@ npm run test:unit
 
 Expected: tous les tests Python et Node passent.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```powershell
 git add index.html tests/potentiel-commun.test.js
@@ -488,7 +488,7 @@ git commit -m "feat: validate linked armor per hero"
 - Updates: `pickChar(i)` retire une armure liée incompatible
 - Updates: `pickArmor(i, slot)` filtre uniquement `Armure liee`
 
-- [ ] **Step 1: Ajouter le parcours Playwright en échec**
+- [x] **Step 1: Ajouter le parcours Playwright en échec**
 
 Créer un helper stable pour cibler les slots par libellé :
 
@@ -553,7 +553,7 @@ armor:{
 assert.equal(migrated[0].heroes[0].armor["Armure liee"], null);
 ```
 
-- [ ] **Step 2: Vérifier que le picker global fait échouer le test**
+- [x] **Step 2: Vérifier que le picker global fait échouer le test**
 
 Run:
 
@@ -563,7 +563,7 @@ npm run test:e2e
 
 Expected: échec sur l’ouverture sans héros ou sur le nombre de tuiles.
 
-- [ ] **Step 3: Retirer le choix incompatible dans `pickChar()`**
+- [x] **Step 3: Retirer le choix incompatible dans `pickChar()`**
 
 Après la validation existante de l’arme :
 
@@ -579,7 +579,7 @@ if(!isLinkedArmorCompatible(
 renderBuilder();
 ```
 
-- [ ] **Step 4: Filtrer uniquement le picker `Armure liee`**
+- [x] **Step 4: Filtrer uniquement le picker `Armure liee`**
 
 Remplacer `pickArmor()` par :
 
@@ -608,7 +608,7 @@ function pickArmor(i, slot){
 }
 ```
 
-- [ ] **Step 5: Vérifier le parcours complet**
+- [x] **Step 5: Vérifier le parcours complet**
 
 Run:
 
@@ -618,7 +618,7 @@ npm run test:e2e
 
 Expected: `PASS Playwright` et aucune `pageerror`.
 
-- [ ] **Step 6: Vérifier aussi les tests unitaires**
+- [x] **Step 6: Vérifier aussi les tests unitaires**
 
 Run:
 
@@ -628,7 +628,7 @@ npm run test:unit
 
 Expected: tous les tests Python et Node passent.
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```powershell
 git add index.html tests/potentiel-commun.playwright.js
@@ -648,7 +648,7 @@ git commit -m "feat: filter linked armor by hero"
 - Documents: commande `python generate-armures-liees.py`
 - Documents: règle de normalisation de `armor["Armure liee"]`
 
-- [ ] **Step 1: Mettre à jour l’état et la structure dans `AGENTS.md`**
+- [x] **Step 1: Mettre à jour l’état et la structure dans `AGENTS.md`**
 
 Ajouter à l’état actuel :
 
@@ -668,7 +668,7 @@ Ajouter à la structure :
 Documenter que le script ne télécharge pas d’image, ne s’exécute jamais dans le
 navigateur et ne doit être relancé que manuellement.
 
-- [ ] **Step 2: Documenter le contrat de données**
+- [x] **Step 2: Documenter le contrat de données**
 
 Ajouter :
 
@@ -683,7 +683,7 @@ window.SEVEN_DS_ARMURES_LIEES = {
 Préciser que `normalizeHero()` retire l’armure liée si le fichier n’appartient
 pas au tableau du héros, sans toucher aux quatre armures universelles.
 
-- [ ] **Step 3: Exécuter la suite complète**
+- [x] **Step 3: Exécuter la suite complète**
 
 Run:
 
@@ -700,7 +700,7 @@ PASS potentiel commun
 PASS Playwright
 ```
 
-- [ ] **Step 4: Vérifier le diff et l’état Git**
+- [x] **Step 4: Vérifier le diff et l’état Git**
 
 Run:
 
@@ -712,7 +712,7 @@ git status --short
 Expected: aucune erreur d’espacement ; seuls `AGENTS.md` et le plan sont encore
 modifiés à cette étape.
 
-- [ ] **Step 5: Marquer le plan exécuté et commit**
+- [x] **Step 5: Marquer le plan exécuté et commit**
 
 Cocher les étapes réellement terminées, puis :
 
@@ -721,7 +721,7 @@ git add AGENTS.md docs/superpowers/plans/2026-07-24-armures-liees-compatibles.md
 git commit -m "docs: document linked armor compatibility"
 ```
 
-- [ ] **Step 6: Vérification post-commit**
+- [x] **Step 6: Vérification post-commit**
 
 Run:
 
