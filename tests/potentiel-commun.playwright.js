@@ -27,6 +27,39 @@ const STORAGE_KEY = "confrerie7ds.teams";
     );
     assert.equal(await page.locator("#toast").textContent(), "Choisis d'abord un héros.");
 
+    const linkedSlot = armorSlot(firstHero, "Armure liée");
+    await linkedSlot.click();
+    assert.equal(
+      await page.locator("#overlay").evaluate(el => el.classList.contains("on")),
+      false
+    );
+    assert.equal(await page.locator("#toast").textContent(), "Choisis d'abord un héros.");
+
+    await chooseHero(page, firstHero, "Meliodas");
+    await linkedSlot.click();
+    assert.deepEqual(
+      (await page.locator("#pickerGrid .tile:not(.none)").evaluateAll(nodes =>
+        nodes.map(node => node.title).sort()
+      )),
+      ["Défense simple", "Majesté bien malveillante", "Une nouvelle aventure"].sort()
+    );
+    await page.locator("#pickerClose").click();
+
+    await chooseArmor(page, firstHero, "Armure liée", "Une nouvelle aventure");
+    await chooseHero(page, firstHero, "Merlin");
+    assert.equal(await linkedSlot.evaluate(el => el.classList.contains("filled")), false);
+
+    const topSlot = armorSlot(firstHero, "Haut");
+    await topSlot.click();
+    const expectedTopCount = await page.evaluate(
+      () => window.SEVEN_DS_DATA.armures.Haut.length
+    );
+    assert.equal(
+      await page.locator("#pickerGrid .tile:not(.none)").count(),
+      expectedTopCount
+    );
+    await page.locator("#pickerClose").click();
+
     await chooseHero(page, firstHero, "Meliodas");
     await firstHero.locator(".gear-slot.weapon").click();
     assert.deepEqual(
@@ -84,6 +117,9 @@ const STORAGE_KEY = "confrerie7ds.teams";
         heroes:[{
           char:"meliodas",
           weapon:"7ds-armes/Livre/grimoire-incompatible.webp",
+          armor:{
+            "Armure liee":"7ds-armures-ssr/Armure liee/Chercheuse de savoir.webp"
+          },
           potentiel:{ weaponType:"Hache", tier:8 }
         }]
       }]));
@@ -97,6 +133,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     const migrated = await page.evaluate(key => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
     assert.deepEqual(migrated[0].heroes[0].potentiel, { tier:8 });
     assert.equal(migrated[0].heroes[0].weapon, null);
+    assert.equal(migrated[0].heroes[0].armor["Armure liee"], null);
     assert.ok(!JSON.stringify(migrated).includes("weaponType"));
     assert.deepEqual(errors, []);
 
@@ -118,6 +155,15 @@ async function chooseWeapon(page, hero, group){
 async function chooseHero(page, hero, name){
   await hero.locator(".portrait").click();
   await page.locator(`#pickerGrid .tile[title="${name}"]`).click();
+}
+
+function armorSlot(hero, label){
+  return hero.locator(".gear-slot").filter({ hasText:label });
+}
+
+async function chooseArmor(page, hero, label, itemName){
+  await armorSlot(hero, label).click();
+  await page.locator(`#pickerGrid .tile[title="${itemName}"]`).click();
 }
 
 async function assertVisibleText(locator, expected){

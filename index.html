@@ -850,6 +850,12 @@
         const hero = draft.heroes[i];
         hero.char = v;
         if(!isWeaponCompatible(hero.char, hero.weapon)) hero.weapon = null;
+        if(!isLinkedArmorCompatible(
+          hero.char,
+          hero.armor[LINKED_ARMOR_SLOT]
+        )){
+          hero.armor[LINKED_ARMOR_SLOT] = null;
+        }
         renderBuilder();
       }
     });
@@ -868,10 +874,25 @@
     });
   }
   function pickArmor(i, slot){
+    const hero = draft.heroes[i];
+    if(slot === LINKED_ARMOR_SLOT && !hero.char){
+      toast("Choisis d'abord un héros.", true);
+      return;
+    }
+    const allowed = slot === LINKED_ARMOR_SLOT
+      ? new Set(linkedArmorsOf(hero.char))
+      : null;
+    const items = (DATA.armures[slot]||[])
+      .filter(a => !allowed || allowed.has(a.file))
+      .map(a => ({value:a.file, name:a.name, file:a.file}));
     Picker.open({
-      title:"Armure — "+ARMOR_LABELS[slot], value:draft.heroes[i].armor[slot],
-      items:(DATA.armures[slot]||[]).map(a=>({value:a.file, name:a.name, file:a.file})),
-      onSelect:v=>{ draft.heroes[i].armor[slot] = v; renderBuilder(); }
+      title:"Armure — "+ARMOR_LABELS[slot],
+      value:hero.armor[slot],
+      items,
+      emptyHint:slot === LINKED_ARMOR_SLOT
+        ? "Aucune armure liée compatible disponible."
+        : "Aucune armure disponible.",
+      onSelect:v=>{ hero.armor[slot] = v; renderBuilder(); }
     });
   }
   function pickJewel(i, slot){
