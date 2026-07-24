@@ -187,6 +187,27 @@ function plain(value){
   assert.strictEqual(normalized.armor["Armure liee"], null);
 }
 
+// Régression ciblée : les identifiants inconnus ou hérités refusent l'armure liée.
+{
+  const { hooks } = loadApp();
+  ["inconnu", "constructor", "__proto__"].forEach(charId => {
+    assert.deepStrictEqual(plain(hooks.linkedArmorsOf(charId)), []);
+    assert.strictEqual(
+      hooks.isLinkedArmorCompatible(
+        charId,
+        "7ds-armures-ssr/Armure liee/Défense simple.webp"
+      ),
+      false
+    );
+  });
+
+  const normalized = plain(hooks.normalizeHero({
+    char:"__proto__",
+    armor:{ "Armure liee":"7ds-armures-ssr/Armure liee/Défense simple.webp" }
+  }));
+  assert.strictEqual(normalized.armor["Armure liee"], null);
+}
+
 // Donnée générée réelle : chaque armure liée locale est attribuée une fois.
 {
   const armorContext = { window:{} };

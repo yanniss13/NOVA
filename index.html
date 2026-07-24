@@ -520,8 +520,11 @@
   const weaponTypesOf = charId => Object.keys((charId && POT[charId]) || {});
   const isWeaponCompatible = (charId, file) =>
     !file || !!charId && weaponTypesOf(charId).includes(weaponFolderOf(file));
-  const linkedArmorsOf = charId =>
-    [...((charId && LINKED_ARMORS[charId]) || [])];
+  const linkedArmorsOf = charId => {
+    const linked = charId && Object.prototype.hasOwnProperty.call(LINKED_ARMORS, charId)
+      && LINKED_ARMORS[charId];
+    return Array.isArray(linked) ? [...linked] : [];
+  };
   const isLinkedArmorCompatible = (charId, file) =>
     !file || !!charId && linkedArmorsOf(charId).includes(file);
   function compatibleWeaponGroups(charId){
