@@ -141,6 +141,35 @@ function plain(value){
   return JSON.parse(JSON.stringify(value));
 }
 
+// Donnée générée réelle : chaque armure liée locale est attribuée une fois.
+{
+  const armorContext = { window:{} };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(ROOT, "armures-liees.js"), "utf8"),
+    armorContext,
+    { filename:"armures-liees.js" }
+  );
+  const dataContext = { window:{} };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(ROOT, "data.js"), "utf8"),
+    dataContext,
+    { filename:"data.js" }
+  );
+  const linked = armorContext.window.SEVEN_DS_ARMURES_LIEES;
+  const files = Object.values(linked).flat();
+  const localArmorFiles = dataContext.window.SEVEN_DS_DATA.armures["Armure liee"]
+    .map(item => item.file);
+
+  assert.strictEqual(Object.keys(linked).length, 24);
+  assert.strictEqual(files.length, 66);
+  assert.strictEqual(new Set(files).size, 66);
+  assert.ok(Object.values(linked).every(items => [2, 3].includes(items.length)));
+  assert.deepStrictEqual(
+    plain([...files].sort()),
+    plain([...localArmorFiles].sort())
+  );
+}
+
 // Donnée générée réelle : 24 héros, exactement 3 types d'armes chacun.
 {
   const actual = { window:{} };

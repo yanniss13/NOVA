@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node tests/potentiel-commun.test.js && node tests/potentiel-commun.playwright.js",
-    "test:unit": "node tests/potentiel-commun.test.js",
+    "test": "python -m unittest tests/test_generate_armures_liees.py && node tests/potentiel-commun.test.js && node tests/potentiel-commun.playwright.js",
+    "test:unit": "python -m unittest tests/test_generate_armures_liees.py && node tests/potentiel-commun.test.js",
     "test:e2e": "node tests/potentiel-commun.playwright.js"
   },
   "keywords": [],
