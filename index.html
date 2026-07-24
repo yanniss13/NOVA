@@ -163,6 +163,30 @@
   }
   .hero-title.empty{color:var(--muted-2);font-style:italic;font-family:var(--ui);font-weight:400}
 
+  /* Badges d'arme (rôle/élément par slot) */
+  .hero-badges{display:flex;gap:6px 8px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:-2px}
+  .wslots{display:flex;gap:5px}
+  .wslot{
+    position:relative;display:inline-flex;width:28px;height:28px;flex:none;
+    border-radius:50%;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 50% 32%, #2b2534, #14121b);
+    border:1px solid var(--line)
+  }
+  .wslot-w{width:19px;height:19px;object-fit:contain}
+  .wslot-e{
+    position:absolute;right:-3px;bottom:-3px;width:14px;height:14px;object-fit:contain;
+    filter:drop-shadow(0 1px 2px rgba(0,0,0,.75))
+  }
+  .wslot.active{
+    border-color:var(--gold-bright);
+    box-shadow:0 0 0 1px var(--gold-bright), 0 0 9px rgba(240,198,116,.45)
+  }
+  .wslot.dim{opacity:.38}
+  .mini-badges{gap:5px;margin-top:2px;min-height:25px}
+  .mini-badges .wslot{width:23px;height:23px}
+  .mini-badges .wslot-w{width:15px;height:15px}
+  .mini-badges .wslot-e{width:11px;height:11px;right:-2px;bottom:-2px}
+
   .gear{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
   .gear-slot{
     appearance:none;cursor:pointer;border:1px solid var(--line-soft);border-radius:9px;
@@ -263,6 +287,69 @@
   }
   .team-actions{display:flex;gap:8px;margin-top:16px;position:relative}
   .team-actions .btn{padding:8px 14px;font-size:13px;flex:1;justify-content:center}
+  .team-heroes.clickable{cursor:pointer;border-radius:10px;transition:.16s;padding:4px;margin:-4px}
+  .team-heroes.clickable:hover{background:rgba(217,164,65,.06)}
+  .team-detail-btn{
+    appearance:none;cursor:pointer;width:100%;margin-top:12px;position:relative;
+    background:var(--obsidian-2);border:1px solid var(--line);border-radius:8px;
+    color:var(--muted);font-family:var(--ui);font-weight:600;font-size:12px;
+    letter-spacing:.06em;padding:8px;transition:.16s
+  }
+  .team-detail-btn:hover{border-color:var(--gold-deep);color:var(--gold-bright)}
+
+  /* Modal détail d'équipe */
+  .modal.teammodal{width:min(1240px,96vw)}
+  /* Modal détail : tout doit tenir sans scroll -> compact + haute */
+  .modal.teammodal{position:relative;max-height:96vh}
+  .modal.teammodal .picker-head{
+    position:absolute;top:0;left:0;right:0;z-index:3;border-bottom:0;padding:11px 18px;
+    background:linear-gradient(180deg, var(--panel) 62%, rgba(27,25,34,0))
+  }
+  .team-detail{
+    padding:60px 18px 20px;overflow:auto;display:grid;gap:14px;
+    grid-template-columns:repeat(4,1fr);scrollbar-width:none
+  }
+  .team-detail::-webkit-scrollbar{width:0;height:0}
+  .hdetail{
+    min-width:0;
+    background:var(--obsidian-2);border:1px solid var(--line-soft);border-radius:11px;
+    padding:14px 13px;display:flex;flex-direction:column;gap:9px
+  }
+  .hd-head{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
+  .hd-portrait{
+    width:72px;height:72px;border-radius:10px;overflow:hidden;border:1px solid var(--line);
+    background:#0b0910 center/cover no-repeat;display:grid;place-items:center;color:var(--muted-2)
+  }
+  .hd-portrait img{width:100%;height:100%;object-fit:cover}
+  .hd-name{font-family:var(--display);font-weight:600;font-size:14.5px;color:var(--parchment)}
+  .hd-name.empty{color:var(--muted-2);font-style:italic}
+  .hd-pot{
+    align-self:center;font-size:11px;font-weight:600;color:var(--gold-bright);
+    border:1px solid var(--gold-deep);border-radius:999px;padding:2px 11px;margin-top:1px
+  }
+  .hd-gear{display:flex;flex-direction:column;gap:2px}
+  .hd-group-t{
+    font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted-2);
+    margin:9px 0 3px
+  }
+  .eq-line{display:flex;align-items:center;gap:9px;padding:4px 0}
+  .eq-thumb{
+    width:32px;height:32px;flex:none;border-radius:6px;border:1px solid var(--line-soft);
+    background:#0b0910 center/contain no-repeat
+  }
+  .eq-thumb.weapon{border-color:var(--gold-deep)}
+  .eq-thumb.jewel{border-color:rgba(161,44,44,.55)}
+  .eq-thumb.empty{opacity:.3}
+  .eq-txt{flex:1;display:flex;flex-direction:column;min-width:0;line-height:1.2}
+  .eq-slot{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2)}
+  .eq-name{font-size:12.5px;color:var(--parchment);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .eq-line.empty .eq-name{color:var(--muted-2)}
+  .hd-note{
+    font-size:12px;font-style:italic;color:var(--muted);line-height:1.3;
+    border-top:1px solid var(--line-soft);padding-top:9px;margin-top:3px
+  }
+  @media(max-width:720px){ .team-detail{grid-template-columns:repeat(2,1fr)} .modal.teammodal{max-height:92vh} .team-detail{overflow:auto;scrollbar-width:none} }
+  @media(max-width:440px){ .team-detail{grid-template-columns:1fr} }
 
   .empty-state{
     text-align:center;padding:64px 20px;border:1px dashed var(--line);
@@ -486,11 +573,23 @@
   </div>
 </div>
 
+<!-- Détail d'une équipe -->
+<div class="overlay" id="teamOverlay" role="dialog" aria-modal="true" aria-labelledby="teamTitle">
+  <div class="modal teammodal">
+    <div class="picker-head">
+      <span class="picker-title" id="teamTitle">Équipe</span>
+      <button class="icon-btn" id="teamClose" aria-label="Fermer">✕</button>
+    </div>
+    <div class="team-detail" id="teamDetail"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="data.js"></script>
 <script src="potentiels.js"></script>
 <script src="armures-liees.js"></script>
+<script src="personnages-meta.js"></script>
 <script>
 (function(){
   "use strict";
@@ -512,6 +611,87 @@
   };
   const POT = window.SEVEN_DS_POTENTIELS || {};
   const POT_MAX = 10;
+  const META = window.SEVEN_DS_META || {};
+  const ELEMENTS = {
+    FIRE:   {label:"Feu",      color:"#d24b3e"},
+    WIND:   {label:"Vent",     color:"#4fa563"},
+    DARK:   {label:"Ténèbres", color:"#9a6fd0"},
+    EARTH:  {label:"Terre",    color:"#c0863e"},
+    HOLY:   {label:"Sacré",    color:"#e6c766"},
+    ICE:    {label:"Glace",    color:"#56b0c9"},
+    THUNDER:{label:"Foudre",   color:"#5c74e0"}
+  };
+  const ROLES = {
+    ATTACKER:{label:"Attaquant"}, DEFENDER:{label:"Défenseur"}, SUPPORT:{label:"Soutien"}
+  };
+  // rôles au niveau des slots d'arme (vocabulaire plus fin du jeu)
+  const WSLOT_ROLES = {
+    Attacker:"Attaquant", Defender:"Défenseur", Supporter:"Soutien",
+    Warden:"Gardien", Buster:"Briseur"
+  };
+  // enum d'arme du site -> libellé + icône de maîtrise (7ds-ui/mastery/<icon>.webp)
+  const WEAPON_ENUM = {
+    Axe:{label:"Hache",icon:"axe"}, Book:{label:"Grimoire",icon:"book"},
+    SwordDual:{label:"Épées doubles",icon:"sworddual"}, Rapier:{label:"Rapière",icon:"rapier"},
+    Shield:{label:"Épée & bouclier",icon:"shield"}, Lance:{label:"Lance",icon:"lance"},
+    Sword1h:{label:"Épée à une main",icon:"sword1h"}, Cudgel3c:{label:"Nunchaku",icon:"cudgel3c"},
+    Gauntlets:{label:"Gantelets",icon:"gauntlets"}, Sword2h:{label:"Épée à deux mains",icon:"sword2h"},
+    Staff:{label:"Bâton",icon:"staff"}, Wand:{label:"Baguette",icon:"wand"}
+  };
+  const metaOf = id => (id && META[id]) || null;
+  // dossier d'arme (chemin) -> enum du site (pour matcher les slots du perso)
+  const FOLDER_TO_ENUM = {
+    "Baguette":"Wand","Baton":"Staff","Bouclier":"Shield","Epee 1 main":"Sword1h",
+    "Epee 2 mains":"Sword2h","Epees doubles":"SwordDual","Gantelets":"Gauntlets",
+    "Hache":"Axe","Lance":"Lance","Livre":"Book","Nunchaku":"Cudgel3c","Rapiere":"Rapier"
+  };
+  const equippedEnumOf = hero => {
+    const f = weaponFolderOf(hero && hero.weapon);
+    return f ? (FOLDER_TO_ENUM[f] || null) : null;
+  };
+
+  // Badge d'un slot d'arme : icône d'arme + coin élément/rôle
+  function weaponSlotBadge(ws, active){
+    const w = WEAPON_ENUM[ws.weapon];
+    if(!w) return null;
+    const elu = (ws.element||"").toUpperCase();
+    const elLbl = ELEMENTS[elu] ? ELEMENTS[elu].label : (ws.element||"");
+    const roleLbl = WSLOT_ROLES[ws.role] || ws.role || "";
+    const combo = (ws.element||"default").toLowerCase()+"_"+(ws.role||"").toLowerCase();
+    const badge = el("span",{class:"wslot"+(active?" active":""),
+      title: w.label+(elLbl?" · "+elLbl:"")+(roleLbl?" · "+roleLbl:"")+(active?" (équipée)":"")});
+    badge.appendChild(el("img",{class:"wslot-w", src:"7ds-ui/mastery/"+w.icon+".webp", alt:w.label, loading:"lazy"}));
+    badge.appendChild(el("img",{class:"wslot-e", src:"7ds-ui/role-elements/"+combo+".webp", alt:"", loading:"lazy"}));
+    return badge;
+  }
+
+  // Rangée de badges. L'élément et les badges suivent l'ARME ÉQUIPÉE.
+  // Builder (compact=false) : les 3 armes possibles, l'équipée surlignée.
+  // Roster (compact=true)   : seulement l'arme équipée (compact, aligné).
+  function badgesRow(ch, hero, compact){
+    const m = ch ? metaOf(ch.id) : null;
+    if(!m || !m.weapons || !m.weapons.length) return compact ? el("div",{class:"hero-badges mini-badges"}) : null;
+
+    const eq = equippedEnumOf(hero);
+    const active = eq ? m.weapons.find(s => s.weapon === eq) : null;
+    const row = el("div",{class:"hero-badges"+(compact?" mini-badges":"")});
+
+    const slots = el("div",{class:"wslots"});
+    if(compact){
+      if(active){ const b = weaponSlotBadge(active, true); if(b) slots.appendChild(b); }
+    } else {
+      m.weapons.forEach(ws=>{
+        const b = weaponSlotBadge(ws, !!active && ws.weapon === active.weapon);
+        if(!b) return;
+        if(active && ws.weapon !== active.weapon) b.classList.add("dim");
+        slots.appendChild(b);
+      });
+    }
+    if(slots.children.length) row.appendChild(slots);
+
+    // en compact on renvoie toujours la rangée (réserve la hauteur -> colonnes alignées)
+    return compact ? row : (row.children.length ? row : null);
+  }
   const weaponFolderOf = file => file ? file.split("/")[1] : null;
   const weaponTypesOf = charId => Object.keys((charId && POT[charId]) || {});
   const isWeaponCompatible = (charId, file) =>
@@ -776,6 +956,7 @@
     else{ portrait.appendChild(el("div",{class:"ph",html:'<span class="plus">+</span><span>Héros</span>'})); }
 
     const title = el("div",{class:"hero-title"+(ch?"":" empty"), text: ch ? ch.name : "Emplacement libre"});
+    const badges = badgesRow(ch, hero, false);
 
     // Gear : arme + 5 armures + 3 bijoux
     const gear = el("div",{class:"gear"});
@@ -802,7 +983,7 @@
       onclick:()=>{ draft.heroes[i] = emptyHero(); renderBuilder(); }});
 
     return el("div",{class:"hero"},[
-      portrait, title, gear, pot, note, clear
+      portrait, title, badges, gear, pot, note, clear
     ]);
   }
 
@@ -1030,16 +1211,82 @@
       ])
     ]);
 
-    const heroes = el("div",{class:"team-heroes"});
+    const heroes = el("div",{class:"team-heroes clickable", title:"Voir l'équipement",
+      onclick:()=>openTeamDetail(t)});
     (t.heroes||[]).forEach(h=>heroes.appendChild(miniHero(h)));
+
+    const hint = el("button",{class:"team-detail-btn", type:"button",
+      text:"Voir l'équipement ▾", onclick:()=>openTeamDetail(t)});
 
     const actions = el("div",{class:"team-actions"},[
       el("button",{class:"btn", text:"Modifier", onclick:()=>editTeam(t)}),
       el("button",{class:"btn btn-danger", text:"Supprimer", onclick:()=>deleteTeam(t)})
     ]);
 
-    return el("div",{class:"team"},[head, heroes, actions]);
+    return el("div",{class:"team"},[head, heroes, hint, actions]);
   }
+
+  /* ---- Modal de détail d'une équipe (équipement complet par héros) ---- */
+  function equipLine(file, slotLabel, variant){
+    const thumb = el("div",{class:"eq-thumb"+(variant?" "+variant:"")+(file?"":" empty")});
+    if(file) thumb.style.backgroundImage = "url('"+file.replace(/'/g,"%27")+"')";
+    return el("div",{class:"eq-line"+(file?"":" empty"), title: file ? nameOfFile(file) : ""},[
+      thumb,
+      el("div",{class:"eq-txt"},[
+        el("span",{class:"eq-slot", text:slotLabel}),
+        el("span",{class:"eq-name", text: file ? nameOfFile(file) : "—"})
+      ])
+    ]);
+  }
+
+  function heroDetail(h){
+    const ch = h && h.char ? charOf(h.char) : null;
+    const col = el("div",{class:"hdetail"});
+
+    const port = el("div",{class:"hd-portrait"});
+    if(ch) port.appendChild(el("img",{src:ch.file, alt:ch.name, loading:"lazy"}));
+    else port.textContent = "—";
+    const idBox = el("div",{class:"hd-id"},[
+      el("div",{class:"hd-name"+(ch?"":" empty"), text: ch ? ch.name : "Emplacement libre"})
+    ]);
+    const badges = ch ? badgesRow(ch, h, false) : null;
+    if(badges) idBox.appendChild(badges);
+    col.appendChild(el("div",{class:"hd-head"},[port, idBox]));
+
+    if(!ch) return col;
+
+    if(h.potentiel && h.potentiel.tier > 0)
+      col.appendChild(el("div",{class:"hd-pot", text:"✦ P"+h.potentiel.tier}));
+
+    const gear = el("div",{class:"hd-gear"});
+    gear.appendChild(el("div",{class:"hd-group-t", text:"Arme"}));
+    gear.appendChild(equipLine(h.weapon, "Arme", "weapon"));
+    gear.appendChild(el("div",{class:"hd-group-t", text:"Armures"}));
+    ARMOR_SLOTS.forEach(s=>gear.appendChild(equipLine(h.armor ? h.armor[s] : null, ARMOR_LABELS[s], "")));
+    gear.appendChild(el("div",{class:"hd-group-t", text:"Bijoux"}));
+    JEWEL_SLOTS.forEach(s=>gear.appendChild(equipLine(h.jewel ? h.jewel[s] : null, JEWEL_LABELS[s], "jewel")));
+    col.appendChild(gear);
+
+    if(h.note && h.note.trim())
+      col.appendChild(el("div",{class:"hd-note", text:h.note.trim()}));
+
+    return col;
+  }
+
+  function openTeamDetail(t){
+    $("#teamTitle").textContent = "Équipe — " + (t.pseudo || "Sans pseudo");
+    const box = $("#teamDetail");
+    box.innerHTML = "";
+    (t.heroes||[]).forEach(h=>box.appendChild(heroDetail(h)));
+    $("#teamOverlay").classList.add("on");
+  }
+  (function(){
+    const ov = $("#teamOverlay");
+    const close = ()=>ov.classList.remove("on");
+    $("#teamClose").addEventListener("click", close);
+    ov.addEventListener("click", e=>{ if(e.target===ov) close(); });
+    document.addEventListener("keydown", e=>{ if(e.key==="Escape" && ov.classList.contains("on")) close(); });
+  })();
 
   function miniHero(h){
     const ch = h && h.char ? charOf(h.char) : null;
@@ -1049,17 +1296,14 @@
     else portrait.textContent = "—";
 
     const name = el("div",{class:"mini-name"+(ch?"":" empty"), text: ch ? ch.name : "Libre"});
+    const badges = badgesRow(ch, h, true);
 
-    const gearRow = el("div",{class:"mini-gear"});
-    gearRow.appendChild(gearIcon(h && h.weapon, "weapon"));
-    ARMOR_SLOTS.forEach(slot=>gearRow.appendChild(gearIcon(h && h.armor ? h.armor[slot] : null, "")));
-    JEWEL_SLOTS.forEach(slot=>gearRow.appendChild(gearIcon(h && h.jewel ? h.jewel[slot] : null, "jewel")));
-
-    const kids = [portrait, name, gearRow];
+    const kids = [portrait, name];
+    if(badges) kids.push(badges);
     const p = h && h.potentiel;
     if(p && p.tier > 0){
       kids.push(el("div",{class:"mini-pot", title:"Potentiel",
-        text:"✦ Potentiel T"+p.tier}));
+        text:"✦ P"+p.tier}));
     }
     if(h && h.note && h.note.trim()){
       kids.push(el("div",{class:"mini-note", text:h.note.trim()}));

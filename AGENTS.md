@@ -29,6 +29,20 @@ Outil web local pour que les membres d'une confrérie **7DS Origin** construisen
 - [x] Compatibilité des armures liées : 66 images locales associées aux 24 héros
       (2 ou 3 par héros). Le picker filtre selon le personnage et retire les
       anciennes valeurs incompatibles.
+- [x] Badges **élément + armes** par personnage. `personnages-meta.js`
+      (`generate-meta.py`) : role/rarity + `weapons` = 3 slots
+      `{weapon, role, element}`. ⚠️ L'élément **dépend de l'arme équipée**
+      (chaque slot a son élément) — ne PAS afficher `meta.element` fixe.
+      `badgesRow(ch, hero, compact)` : la pastille d'élément et le surlignage
+      suivent l'arme équipée (`FOLDER_TO_ENUM` mappe le dossier → enum du slot).
+      Builder = 3 armes (équipée surlignée, autres estompées) ; roster = seule
+      l'arme équipée. Icônes locales `7ds-ui/mastery/<arme>.webp` (12) +
+      `role-elements/<element>_<role>.webp` (30), depuis `7dsorigin.app/images/ui/`.
+- [x] Roster épuré : les cartes d'équipe ne montrent plus les icônes
+      d'équipement (portrait, nom, badge d'arme équipée, potentiel, note).
+      Clic sur la carte / bouton « Voir l'équipement » → modal `#teamOverlay`
+      (`openTeamDetail`/`heroDetail`/`equipLine`) avec l'équipement complet
+      (arme + 5 armures + 3 bijoux, noms) par héros.
 - [ ] Partage réseau entre membres (voir « Évolutions prévues »). **Non commencé.**
 
 L'appli fonctionne en **local uniquement** : on ouvre `index.html` par double-clic
@@ -53,7 +67,7 @@ reste autonome et ne dépend pas de npm.
 
 ```
 Site Confrérie 7ds/
-├─ index.html              # L'appli (HTML + CSS + JS inline). Charge data.js + potentiels.js + armures-liees.js.
+├─ index.html              # L'appli. Charge data.js + potentiels.js + armures-liees.js + personnages-meta.js.
 ├─ package.json            # Scripts de test Node + Playwright (développement uniquement).
 ├─ package-lock.json       # Versions verrouillées des dépendances de test.
 ├─ tests/                  # Régressions du potentiel commun et parcours Chromium.
@@ -63,6 +77,9 @@ Site Confrérie 7ds/
 ├─ generate-potentiels.py  # Régénère potentiels.js depuis 7dsorigin.app (internet requis).
 ├─ armures-liees.js        # GÉNÉRÉ. Fichiers d’armure liée par personnage.
 ├─ generate-armures-liees.py # Régénération manuelle depuis la page publique.
+├─ personnages-meta.js     # GÉNÉRÉ. element/role/rarity + weapons[] par personnage.
+├─ generate-meta.py        # Régénère personnages-meta.js depuis 7dsorigin.app.
+├─ 7ds-ui/                 # Icônes d'UI : mastery/<arme>.webp, role-elements/<el>_<role>.webp
 ├─ AGENTS.md               # Ce fichier.
 ├─ docs/superpowers/specs/ # Spec de design détaillée.
 ├─ 7ds-personnages/        # <id>.webp  (ex. meliodas.webp)
