@@ -147,10 +147,6 @@
     border:1px solid var(--line);border-radius:14px;padding:14px;
     display:flex;flex-direction:column;gap:12px;position:relative;
   }
-  .hero-index{
-    position:absolute;top:10px;left:12px;font-family:var(--display);font-size:12px;
-    letter-spacing:.2em;color:var(--muted-2)
-  }
   .portrait{
     appearance:none;border:1px solid var(--line);cursor:pointer;
     aspect-ratio:1/1;border-radius:10px;overflow:hidden;padding:0;position:relative;
@@ -806,7 +802,6 @@
       onclick:()=>{ draft.heroes[i] = emptyHero(); renderBuilder(); }});
 
     return el("div",{class:"hero"},[
-      el("span",{class:"hero-index", text:"№ "+(i+1)}),
       portrait, title, gear, pot, note, clear
     ]);
   }
