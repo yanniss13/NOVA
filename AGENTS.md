@@ -53,7 +53,7 @@ reste autonome et ne dépend pas de npm.
 
 ```
 Site Confrérie 7ds/
-├─ index.html              # L'appli (HTML + CSS + JS inline). Charge data.js + potentiels.js.
+├─ index.html              # L'appli (HTML + CSS + JS inline). Charge data.js + potentiels.js + armures-liees.js.
 ├─ package.json            # Scripts de test Node + Playwright (développement uniquement).
 ├─ package-lock.json       # Versions verrouillées des dépendances de test.
 ├─ tests/                  # Régressions du potentiel commun et parcours Chromium.
@@ -74,8 +74,9 @@ Site Confrérie 7ds/
 ## Règle d'or sur les assets
 
 **On ne hardcode JAMAIS la liste des images dans `index.html`.**
-Quand l'utilisateur ajoute/retire des images, il relance `generate-data.ps1`
-et `data.js` est régénéré. `index.html` ne lit QUE `window.SEVEN_DS_DATA`.
+Les assets proviennent de `window.SEVEN_DS_DATA`, régénéré via
+`generate-data.ps1` lorsque l'utilisateur ajoute ou retire des images. La
+compatibilité des armures liées provient de `window.SEVEN_DS_ARMURES_LIEES`.
 
 Pourquoi un fichier généré et pas un scan JS direct ? En `file://`, JavaScript ne
 peut pas lister le contenu d'un dossier. `data.js` contourne ça sans serveur.
