@@ -31,6 +31,33 @@ const { chromium } = require("playwright");
     await page.locator("#accountPseudo").getByText("Yannis", { exact:true }).waitFor();
     assert.equal(await authOverlay.evaluate(el => el.classList.contains("on")), false);
 
+    await page.locator('.tab[data-view="member-roster"]').click();
+    await page.locator("#memberRosterGrid .member-roster-card").first().waitFor();
+    assert.equal(await page.locator("#memberRosterGrid .member-roster-card").count(), 1);
+    assert.match(await page.locator("#memberRosterGrid").textContent(), /Meliodas/);
+    assert.equal(await page.locator("#memberRosterGrid .member-roster-edit").count(), 1);
+    await page.locator("#memberRosterGrid .member-roster-edit").click();
+    await page.locator("#memberRosterOverlay").waitFor({ state:"visible" });
+    assert.match(await page.locator("#memberRosterEditor").textContent(), /Potentiel commun/);
+    assert.match(await page.locator("#memberRosterEditor").textContent(), /Hache/);
+    await page.locator("#memberRosterSave").click();
+    await page.locator("#memberRosterOverlay").waitFor({ state:"hidden" });
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.roster_characters
+          .find(row => row.owner === "user-1" && row.char_id === "meliodas")
+          .potential_tier
+      ),
+      7
+    );
+
+    await page.locator("#memberRosterOthers").click();
+    await page.locator("#memberRosterOwner").selectOption("user-2");
+    await page.locator("#memberRosterGrid .member-roster-card").first().waitFor();
+    assert.match(await page.locator("#memberRosterGrid").textContent(), /Merlin/);
+    assert.equal(await page.locator("#memberRosterGrid .member-roster-edit").count(), 0);
+    assert.equal(await page.locator("#memberRosterGrid .member-roster-delete").count(), 0);
+
     await page.locator('.tab[data-view="roster"]').click();
     await page.locator("#rosterGrid .team").first().waitFor();
     assert.equal(await page.locator("#rosterGrid .team").count(), 2);
@@ -129,7 +156,10 @@ async function installFakeSupabase(page){
     const state = {
       session:null,
       authCallbacks:[],
-      profiles:[{ id:"user-1", pseudo:"Yannis" }],
+      profiles:[
+        { id:"user-1", pseudo:"Yannis" },
+        { id:"user-2", pseudo:"Merlin" }
+      ],
       teams:[
         {
           id:"team-own",
@@ -160,6 +190,29 @@ async function installFakeSupabase(page){
           pseudo:"Merlin",
           dps:[{ char:"merlin", element:"ICE", pot:9 }],
           updated_at:"2026-07-25T08:20:00.000Z"
+        }
+      ],
+      roster_characters:[
+        {
+          owner:"user-1",
+          char_id:"meliodas",
+          potential_tier:7,
+          builds:{
+            Hache:{
+              weapon:"7ds-armes/Hache/Hache à l'aura triomphale.webp",
+              armor:{},
+              jewel:{},
+              note:"Mon build"
+            }
+          },
+          updated_at:"2026-07-25T08:40:00.000Z"
+        },
+        {
+          owner:"user-2",
+          char_id:"merlin",
+          potential_tier:9,
+          builds:{},
+          updated_at:"2026-07-25T08:35:00.000Z"
         }
       ],
       calls:[]
@@ -221,8 +274,15 @@ async function installFakeSupabase(page){
 
         const values = Array.isArray(payload) ? payload : [payload];
         values.forEach(value => {
-          const key = table === "profiles" ? "id" : (table === "recensement" ? "owner" : "id");
-          const index = rows.findIndex(row => row[key] === value[key]);
+          const index = rows.findIndex(row => {
+            if(table === "roster_characters"){
+              return row.owner === value.owner && row.char_id === value.char_id;
+            }
+            const key = table === "profiles"
+              ? "id"
+              : (table === "recensement" ? "owner" : "id");
+            return row[key] === value[key];
+          });
           const stamped = Object.assign({}, value);
           if(table === "teams"){
             stamped.created_at = index >= 0 ? rows[index].created_at : "2026-07-25T09:00:00.000Z";

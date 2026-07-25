@@ -316,6 +316,118 @@
   .team-detail-btn:hover{border-color:var(--gold-deep);color:var(--gold-bright)}
 
   /* Modal détail d'équipe */
+  /* ---------- Roster des membres ---------- */
+  .member-roster-toolbar{
+    display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:22px 0 14px;
+    padding:14px;background:linear-gradient(180deg,var(--panel),var(--panel-2));
+    border:1px solid var(--line);border-radius:var(--radius);min-width:0
+  }
+  .member-roster-modes{display:flex;gap:8px;flex-wrap:wrap}
+  .member-roster-owner-field{min-width:min(250px,100%)}
+  .member-roster-owner-field span,
+  .member-roster-field-label{
+    font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)
+  }
+  .member-roster-owner-field select{
+    min-width:220px;max-width:100%;font-family:var(--ui);font-size:14px;
+    color:var(--parchment);background:var(--obsidian-2);border:1px solid var(--line);
+    border-radius:8px;padding:10px 34px 10px 12px
+  }
+  .member-roster-toolbar #memberRosterAdd{margin-left:auto}
+  .member-roster-filters{
+    display:flex;flex-direction:column;gap:10px;margin-bottom:14px;min-width:0
+  }
+  .member-roster-filter-rail{
+    display:flex;gap:8px;overflow-x:auto;padding:1px 1px 7px;scrollbar-width:thin
+  }
+  .member-roster-filter-group{
+    display:flex;gap:5px;align-items:center;flex:none;padding-right:8px;
+    border-right:1px solid var(--line-soft)
+  }
+  .member-roster-filter-group:last-child{border-right:0}
+  .member-roster-filter-name{
+    font-size:9px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted-2);
+    margin-right:2px
+  }
+  .member-roster-count{font-size:12px;color:var(--muted);margin:3px 0 12px}
+  .member-roster-count b{font-family:var(--display);color:var(--gold-bright)}
+  .member-roster-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));
+    gap:16px
+  }
+  .member-roster-card{
+    min-width:0;position:relative;overflow:hidden;padding:15px;
+    background:linear-gradient(165deg,var(--panel),var(--obsidian-2));
+    border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)
+  }
+  .member-roster-card::after{
+    content:"";position:absolute;inset:6px;border:1px solid rgba(217,164,65,.12);
+    border-radius:9px;pointer-events:none
+  }
+  .member-roster-card-head{
+    display:grid;grid-template-columns:72px minmax(0,1fr);gap:12px;align-items:center;
+    position:relative;z-index:1
+  }
+  .member-roster-portrait{
+    width:72px;height:72px;border-radius:10px;overflow:hidden;background:#0b0910;
+    border:1px solid var(--gold-deep)
+  }
+  .member-roster-portrait img{width:100%;height:100%;object-fit:cover}
+  .member-roster-summary{min-width:0}
+  .member-roster-name{
+    margin:0 0 4px;font-family:var(--display);font-size:18px;color:var(--parchment);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+  }
+  .member-roster-potential{
+    display:inline-flex;border:1px solid var(--gold-deep);border-radius:999px;
+    padding:2px 9px;font-size:11px;font-weight:700;color:var(--gold-bright)
+  }
+  .member-roster-builds{
+    display:flex;gap:6px;flex-wrap:wrap;margin:13px 0 0;position:relative;z-index:1
+  }
+  .member-roster-build-tag{
+    padding:5px 8px;border:1px solid var(--line-soft);border-radius:7px;
+    color:var(--muted-2);font-size:10px
+  }
+  .member-roster-build-tag.saved{border-color:var(--gold-deep);color:var(--parchment)}
+  .member-roster-card-actions{
+    display:flex;gap:8px;margin-top:14px;position:relative;z-index:1
+  }
+  .member-roster-card-actions .btn{flex:1;justify-content:center;padding:8px 10px;font-size:12px}
+  .member-roster-modal{width:min(920px,100%);max-height:92vh}
+  .member-roster-editor{padding:18px;overflow:auto;min-width:0}
+  .member-roster-editor-hero{
+    display:flex;align-items:center;gap:13px;margin-bottom:16px
+  }
+  .member-roster-editor-hero .member-roster-portrait{width:64px;height:64px}
+  .member-roster-editor-hero h2{
+    margin:0;font-family:var(--display);font-size:20px;color:var(--parchment)
+  }
+  .member-roster-editor-section{margin-top:15px;min-width:0}
+  .member-roster-editor-section > .member-roster-field-label{display:block;margin-bottom:7px}
+  .member-roster-potential-list,
+  .member-roster-weapon-tabs{
+    display:flex;gap:6px;overflow-x:auto;padding:2px 1px 8px;scrollbar-width:thin
+  }
+  .member-roster-potential-list .chip,
+  .member-roster-weapon-tabs .chip{flex:none}
+  .member-roster-weapon-tabs{
+    border-bottom:1px solid var(--line);margin-bottom:14px
+  }
+  .member-roster-build-panel{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(220px,.7fr);gap:16px;
+    min-width:0
+  }
+  .member-roster-build-panel .gear{align-content:start}
+  .member-roster-note{min-height:120px}
+  .member-roster-editor-actions{
+    display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap;margin-top:18px;
+    padding-top:14px;border-top:1px solid var(--line)
+  }
+  .member-roster-build-empty{
+    color:var(--muted);font-size:12px;margin:0 0 10px;line-height:1.4
+  }
+
   .modal.teammodal{width:min(1240px,96vw)}
   /* Modal détail : tout doit tenir sans scroll -> compact + haute */
   .modal.teammodal{position:relative;max-height:96vh}
@@ -689,6 +801,14 @@
     input, select, textarea,
     .field input, .rec-input, .note, .picker-search,
     .dps-pot, .dps-elem-sel select{font-size:16px}
+    .member-roster-card,.member-roster-toolbar,.member-roster-editor{min-width:0}
+    .member-roster-toolbar{align-items:stretch}
+    .member-roster-modes,.member-roster-modes .btn,
+    .member-roster-owner-field,.member-roster-owner-field select,
+    .member-roster-toolbar #memberRosterAdd{width:100%;min-width:0}
+    .member-roster-modes .btn{justify-content:center}
+    .member-roster-build-panel{grid-template-columns:1fr}
+    .member-roster-editor{padding:14px}
   }
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
@@ -708,6 +828,7 @@
   <nav class="tabs" role="tablist">
     <button class="tab active" data-view="builder" role="tab">Créer une équipe</button>
     <button class="tab" data-view="roster" role="tab">Boss de Guilde</button>
+    <button class="tab" data-view="member-roster" role="tab">Roster</button>
     <button class="tab" data-view="recensement" role="tab">Recensement DPS</button>
     <button class="tab" data-view="analyse" role="tab">Analyse</button>
   </nav>
@@ -761,6 +882,30 @@
   </section>
 
   <!-- ============ RECENSEMENT DPS ============ -->
+  <section id="view-member-roster" class="view">
+    <p class="section-eyebrow">Collection de la confrérie</p>
+    <h1 class="section-title">Roster des membres</h1>
+    <p class="section-lead">Enregistre tes personnages une fois, puis réutilise leurs équipements dans tes équipes.</p>
+    <div class="member-roster-toolbar">
+      <div class="member-roster-modes" role="group" aria-label="Roster affiché">
+        <button class="btn btn-primary" id="memberRosterMine" type="button" aria-pressed="true">Mon roster</button>
+        <button class="btn" id="memberRosterOthers" type="button" aria-pressed="false">Roster des membres</button>
+      </div>
+      <label class="field member-roster-owner-field" for="memberRosterOwner">
+        <span>Membre</span>
+        <select id="memberRosterOwner"></select>
+      </label>
+      <button class="btn btn-primary" id="memberRosterAdd" type="button">Ajouter un personnage</button>
+    </div>
+    <div class="member-roster-filters">
+      <input class="picker-search" id="memberRosterSearch" type="search"
+             placeholder="Rechercher un personnage…" autocomplete="off">
+      <div id="memberRosterFilters"></div>
+    </div>
+    <div class="member-roster-count" id="memberRosterCount"></div>
+    <div class="member-roster-grid" id="memberRosterGrid"></div>
+  </section>
+
   <section id="view-recensement" class="view">
     <p class="section-eyebrow">Confrérie</p>
     <h1 class="section-title">Recensement des DPS</h1>
@@ -807,6 +952,17 @@
 </div>
 
 <!-- Potentiel modal -->
+<div class="overlay" id="memberRosterOverlay" role="dialog"
+     aria-modal="true" aria-labelledby="memberRosterTitle">
+  <div class="modal member-roster-modal">
+    <div class="picker-head">
+      <span class="picker-title" id="memberRosterTitle">Personnage du roster</span>
+      <button class="icon-btn" id="memberRosterClose" aria-label="Fermer">✕</button>
+    </div>
+    <div class="member-roster-editor" id="memberRosterEditor"></div>
+  </div>
+</div>
+
 <div class="overlay" id="potOverlay" role="dialog" aria-modal="true" aria-labelledby="potTitle">
   <div class="modal potmodal">
     <div class="picker-head">
@@ -1553,6 +1709,7 @@
     document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
     $("#view-"+name).classList.add("active");
     if(name==="roster") void renderRoster();
+    if(name==="member-roster") void renderMemberRoster();
     if(name==="recensement") void renderRecensement();
     if(name==="analyse") void renderAnalyse();
     window.scrollTo({top:0, behavior:"smooth"});
@@ -1563,7 +1720,8 @@
   const Picker = (function(){
     const overlay = $("#overlay"), grid = $("#pickerGrid"), chipsBox = $("#pickerChips"),
           search = $("#pickerSearch"), titleEl = $("#pickerTitle");
-    let groups=null, flat=null, activeGroup="__all__", current=null, onPick=null, portrait=false, emptyHint="";
+    let groups=null, flat=null, activeGroup="__all__", current=null, onPick=null,
+        portrait=false, emptyHint="", allowNone=true;
 
     function open(cfg){
       titleEl.textContent = cfg.title || "Choisir";
@@ -1573,6 +1731,7 @@
       onPick = cfg.onSelect;
       portrait = !!cfg.portrait;
       emptyHint = cfg.emptyHint || "";
+      allowNone = cfg.allowNone !== false;
       activeGroup = "__all__";
       search.value = "";
       renderChips();
@@ -1607,12 +1766,12 @@
       const items = currentItems().filter(it => !q || norm(it.name).includes(q));
       grid.innerHTML = "";
 
-      // Tuile "Aucun"
-      const none = el("button",{class:"tile none",onclick:()=>{ pick(null); }},[
-        el("div",{class:"tile-img",text:"∅"}),
-        el("div",{class:"tile-name",text:"Aucun"})
-      ]);
-      grid.appendChild(none);
+      if(allowNone){
+        grid.appendChild(el("button",{class:"tile none",onclick:()=>pick(null)},[
+          el("div",{class:"tile-img",text:"∅"}),
+          el("div",{class:"tile-name",text:"Aucun"})
+        ]));
+      }
 
       if(!items.length){
         grid.appendChild(el("div",{class:"picker-empty",
@@ -1642,6 +1801,535 @@
 
     return { open };
   })();
+
+  /* ============================ Roster des membres ============================ */
+  let memberRosterMode = "mine";
+  let memberRosterOwnerId = "";
+  let memberRosterRenderId = 0;
+  let memberRosterEntries = [];
+  let memberRosterEditable = false;
+  let memberRosterDraft = null;
+  let memberRosterWeaponType = "";
+  const memberRosterFilters = {
+    query:"",
+    element:"",
+    weapon:"",
+    role:"",
+    rarity:""
+  };
+
+  const rosterWeaponLabel = type => type || "Arme";
+  const rosterElementLabel = value => {
+    const key = String(value || "").toUpperCase();
+    return ELEMENTS[key] ? ELEMENTS[key].label : value;
+  };
+  const rosterRoleLabel = value => WSLOT_ROLES[value] || value;
+
+  function rosterFilterValues(key){
+    const values = new Set();
+    Object.values(META).forEach(meta => {
+      if(!meta) return;
+      if(key === "rarity" && meta.rarity) values.add(meta.rarity);
+      (meta.weapons || []).forEach(slot => {
+        if(key === "element" && slot.element && slot.element !== "Default") values.add(slot.element);
+        if(key === "weapon" && slot.weapon) values.add(slot.weapon);
+        if(key === "role" && slot.role) values.add(slot.role);
+      });
+    });
+    return [...values].sort((a,b)=>String(a).localeCompare(String(b), "fr"));
+  }
+
+  function rosterFilterLabel(key, value){
+    if(key === "element") return rosterElementLabel(value);
+    if(key === "weapon") return WEAPON_ENUM[value] ? WEAPON_ENUM[value].label : value;
+    if(key === "role") return rosterRoleLabel(value);
+    return value;
+  }
+
+  function renderMemberRosterFilterControls(){
+    const box = $("#memberRosterFilters");
+    box.innerHTML = "";
+    const rail = el("div",{class:"member-roster-filter-rail"});
+    [
+      ["element","Élément"],
+      ["weapon","Arme"],
+      ["role","Rôle"],
+      ["rarity","Rareté"]
+    ].forEach(([key,label])=>{
+      const group = el("div",{class:"member-roster-filter-group"},[
+        el("span",{class:"member-roster-filter-name",text:label})
+      ]);
+      group.appendChild(el("button",{
+        class:"chip"+(memberRosterFilters[key] ? "" : " active"),
+        type:"button",
+        text:"Tous",
+        "aria-pressed":String(!memberRosterFilters[key]),
+        onclick:()=>{
+          memberRosterFilters[key] = "";
+          renderMemberRosterFilterControls();
+          renderMemberRosterCards(memberRosterEntries, memberRosterEditable);
+        }
+      }));
+      rosterFilterValues(key).forEach(value => {
+        group.appendChild(el("button",{
+          class:"chip"+(memberRosterFilters[key] === value ? " active" : ""),
+          type:"button",
+          text:rosterFilterLabel(key, value),
+          "aria-pressed":String(memberRosterFilters[key] === value),
+          onclick:()=>{
+            memberRosterFilters[key] = memberRosterFilters[key] === value ? "" : value;
+            renderMemberRosterFilterControls();
+            renderMemberRosterCards(memberRosterEntries, memberRosterEditable);
+          }
+        }));
+      });
+      rail.appendChild(group);
+    });
+    box.appendChild(rail);
+  }
+
+  function renderMemberRosterControls(profiles, ownerId){
+    const mine = memberRosterMode === "mine";
+    const mineButton = $("#memberRosterMine");
+    const othersButton = $("#memberRosterOthers");
+    mineButton.classList.toggle("btn-primary", mine);
+    othersButton.classList.toggle("btn-primary", !mine);
+    mineButton.setAttribute("aria-pressed", String(mine));
+    othersButton.setAttribute("aria-pressed", String(!mine));
+    $(".member-roster-owner-field").hidden = mine;
+    $("#memberRosterAdd").hidden = !mine;
+
+    const ownerSelect = $("#memberRosterOwner");
+    ownerSelect.innerHTML = "";
+    const others = (profiles || []).filter(profile => !currentUser || profile.id !== currentUser.id);
+    if(!others.length){
+      ownerSelect.appendChild(el("option",{value:"",text:"Aucun autre membre"}));
+      ownerSelect.disabled = true;
+    }else{
+      ownerSelect.disabled = false;
+      others.forEach(profile => ownerSelect.appendChild(el("option",{
+        value:profile.id,
+        text:profile.pseudo
+      })));
+    }
+    ownerSelect.value = mine ? "" : ownerId;
+    renderMemberRosterFilterControls();
+  }
+
+  function memberRosterMatches(entry){
+    const character = charOf(entry.charId);
+    if(!character) return false;
+    if(memberRosterFilters.query && !norm(character.name).includes(norm(memberRosterFilters.query))){
+      return false;
+    }
+    const meta = metaOf(entry.charId) || {};
+    const weapons = meta.weapons || [];
+    if(memberRosterFilters.element
+      && !weapons.some(slot => slot.element === memberRosterFilters.element)) return false;
+    if(memberRosterFilters.weapon
+      && !weapons.some(slot => slot.weapon === memberRosterFilters.weapon)) return false;
+    if(memberRosterFilters.role
+      && !weapons.some(slot => slot.role === memberRosterFilters.role)) return false;
+    if(memberRosterFilters.rarity && meta.rarity !== memberRosterFilters.rarity) return false;
+    return true;
+  }
+
+  function memberRosterCard(entry, editable){
+    const character = charOf(entry.charId);
+    const buildTypes = new Set(Object.keys(entry.builds || {}));
+    const firstType = [...buildTypes][0];
+    const hero = firstType
+      ? rosterHeroSnapshot(entry, firstType)
+      : normalizeHero({char:entry.charId, potentiel:{tier:entry.potentialTier}});
+    const summary = el("div",{class:"member-roster-summary"},[
+      el("h2",{class:"member-roster-name",text:character.name}),
+      el("span",{class:"member-roster-potential",text:"P"+entry.potentialTier})
+    ]);
+    const badges = badgesRow(character, hero, false);
+    if(badges) summary.appendChild(badges);
+
+    const card = el("article",{class:"member-roster-card"},[
+      el("div",{class:"member-roster-card-head"},[
+        el("div",{class:"member-roster-portrait"},[
+          el("img",{src:character.file,alt:character.name,loading:"lazy"})
+        ]),
+        summary
+      ])
+    ]);
+    const builds = el("div",{class:"member-roster-builds"});
+    weaponTypesOf(entry.charId).forEach(type => builds.appendChild(el("span",{
+      class:"member-roster-build-tag"+(buildTypes.has(type) ? " saved" : ""),
+      text:rosterWeaponLabel(type)+(buildTypes.has(type) ? " · configuré" : "")
+    })));
+    card.appendChild(builds);
+    if(editable){
+      card.appendChild(el("div",{class:"member-roster-card-actions"},[
+        el("button",{
+          class:"btn member-roster-edit",
+          type:"button",
+          text:"Modifier",
+          onclick:()=>openMemberRosterEditor(entry)
+        }),
+        el("button",{
+          class:"btn btn-danger member-roster-delete",
+          type:"button",
+          text:"Retirer",
+          onclick:()=>void deleteMemberRosterCharacter(entry)
+        })
+      ]));
+    }
+    return card;
+  }
+
+  function renderMemberRosterCards(entries, editable){
+    memberRosterEntries = (entries || []).map(normalizeRosterCharacter).filter(Boolean);
+    memberRosterEditable = !!editable;
+    const filtered = memberRosterEntries
+      .filter(memberRosterMatches)
+      .sort((a,b)=>{
+        const left = charOf(a.charId);
+        const right = charOf(b.charId);
+        return left.name.localeCompare(right.name, "fr");
+      });
+    const count = $("#memberRosterCount");
+    count.innerHTML = "<b>"+filtered.length+"</b> personnage"
+      +(filtered.length > 1 ? "s" : "")
+      +(filtered.length !== memberRosterEntries.length
+        ? " sur "+memberRosterEntries.length
+        : "");
+    const grid = $("#memberRosterGrid");
+    grid.innerHTML = "";
+    if(!filtered.length){
+      grid.appendChild(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:memberRosterEntries.length
+          ? "Aucun personnage ne correspond aux filtres"
+          : (editable ? "Ton roster est vide" : "Ce membre n’a encore aucun personnage")}),
+        el("p",{text:editable && !memberRosterEntries.length
+          ? "Ajoute ton premier personnage pour enregistrer son potentiel et ses équipements."
+          : "Modifie les filtres pour afficher d’autres personnages."})
+      ]));
+      return;
+    }
+    filtered.forEach(entry => grid.appendChild(memberRosterCard(entry, editable)));
+  }
+
+  async function renderMemberRoster(){
+    const renderId = ++memberRosterRenderId;
+    const grid = $("#memberRosterGrid");
+    grid.innerHTML = "";
+    if(!currentUser){
+      grid.appendChild(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:"Connecte-toi pour consulter le roster."}),
+        el("button",{class:"btn btn-primary",text:"Connexion",onclick:()=>openAuth()})
+      ]));
+      return;
+    }
+    grid.appendChild(el("div",{class:"empty-state"},[
+      el("p",{class:"big",text:"Ouverture du registre…"})
+    ]));
+    let ownerId = memberRosterMode === "mine"
+      ? currentUser.id
+      : memberRosterOwnerId;
+    try{
+      const profiles = await refreshRosterProfiles();
+      if(memberRosterMode === "others" && !ownerId){
+        const other = profiles.find(profile => profile.id !== currentUser.id);
+        ownerId = other ? other.id : "";
+        memberRosterOwnerId = ownerId;
+      }
+      const entries = ownerId ? await MemberRosterStore.refresh(ownerId) : [];
+      if(renderId !== memberRosterRenderId) return;
+      renderMemberRosterControls(profiles, ownerId);
+      renderMemberRosterCards(entries, ownerId === currentUser.id);
+    }catch(error){
+      if(renderId !== memberRosterRenderId) return;
+      renderMemberRosterControls(rosterProfiles, ownerId);
+      renderMemberRosterCards(MemberRosterStore.all(ownerId), ownerId === currentUser.id);
+      toast("Roster indisponible, affichage du cache local.", true);
+    }
+  }
+
+  function setMemberRosterBuildValue(kind, slot, value){
+    const type = memberRosterWeaponType;
+    const build = memberRosterDraft.builds[type]
+      || (memberRosterDraft.builds[type] = emptyRosterBuild());
+    if(kind === "weapon") build.weapon = value;
+    if(kind === "armor") build.armor[slot] = value;
+    if(kind === "jewel") build.jewel[slot] = value;
+    renderMemberRosterEditor();
+  }
+
+  function pickMemberRosterWeapon(){
+    const charId = memberRosterDraft.charId;
+    const build = memberRosterDraft.builds[memberRosterWeaponType] || emptyRosterBuild();
+    const items = Object.values(compatibleWeaponGroups(charId)).flat()
+      .filter(item => weaponFolderOf(item.file) === memberRosterWeaponType)
+      .map(item => ({value:item.file,name:item.name,file:item.file}));
+    Picker.open({
+      title:"Arme — "+memberRosterWeaponType,
+      value:build.weapon,
+      items,
+      emptyHint:"Aucune arme compatible disponible.",
+      onSelect:value=>setMemberRosterBuildValue("weapon", null, value)
+    });
+  }
+
+  function pickMemberRosterArmor(slot){
+    const charId = memberRosterDraft.charId;
+    const build = memberRosterDraft.builds[memberRosterWeaponType] || emptyRosterBuild();
+    const allowed = slot === LINKED_ARMOR_SLOT ? new Set(linkedArmorsOf(charId)) : null;
+    const items = (DATA.armures[slot] || [])
+      .filter(item => !allowed || allowed.has(item.file))
+      .map(item => ({value:item.file,name:item.name,file:item.file}));
+    Picker.open({
+      title:"Armure — "+ARMOR_LABELS[slot],
+      value:build.armor[slot],
+      items,
+      emptyHint:slot === LINKED_ARMOR_SLOT
+        ? "Aucune armure liée compatible disponible."
+        : "Aucune armure disponible.",
+      onSelect:value=>setMemberRosterBuildValue("armor", slot, value)
+    });
+  }
+
+  function pickMemberRosterJewel(slot){
+    const build = memberRosterDraft.builds[memberRosterWeaponType] || emptyRosterBuild();
+    Picker.open({
+      title:"Bijou — "+slot,
+      value:build.jewel[slot],
+      items:(DATA.bijoux[slot] || [])
+        .map(item => ({value:item.file,name:item.name,file:item.file})),
+      emptyHint:"Aucun bijou disponible.",
+      onSelect:value=>setMemberRosterBuildValue("jewel", slot, value)
+    });
+  }
+
+  function renderMemberRosterEditor(){
+    if(!memberRosterDraft) return;
+    const character = charOf(memberRosterDraft.charId);
+    const types = weaponTypesOf(memberRosterDraft.charId);
+    if(!types.includes(memberRosterWeaponType)) memberRosterWeaponType = types[0] || "";
+    const hasBuild = Object.prototype.hasOwnProperty.call(
+      memberRosterDraft.builds,
+      memberRosterWeaponType
+    );
+    const build = hasBuild
+      ? memberRosterDraft.builds[memberRosterWeaponType]
+      : emptyRosterBuild();
+    $("#memberRosterTitle").textContent = character.name+" — roster";
+    const editor = $("#memberRosterEditor");
+    editor.innerHTML = "";
+    editor.appendChild(el("div",{class:"member-roster-editor-hero"},[
+      el("div",{class:"member-roster-portrait"},[
+        el("img",{src:character.file,alt:character.name})
+      ]),
+      el("div",{},[
+        el("span",{class:"member-roster-field-label",text:"Personnage"}),
+        el("h2",{text:character.name})
+      ])
+    ]));
+
+    const potentialList = el("div",{class:"member-roster-potential-list"});
+    for(let tier = 0; tier <= POT_MAX; tier++){
+      potentialList.appendChild(el("button",{
+        class:"chip"+(memberRosterDraft.potentialTier === tier ? " active" : ""),
+        type:"button",
+        text:"T"+tier,
+        "aria-pressed":String(memberRosterDraft.potentialTier === tier),
+        onclick:()=>{
+          memberRosterDraft.potentialTier = tier;
+          renderMemberRosterEditor();
+        }
+      }));
+    }
+    editor.appendChild(el("div",{class:"member-roster-editor-section"},[
+      el("span",{class:"member-roster-field-label",text:"Potentiel commun"}),
+      potentialList
+    ]));
+
+    const tabs = el("div",{class:"member-roster-weapon-tabs"});
+    types.forEach(type => tabs.appendChild(el("button",{
+      class:"chip"+(memberRosterWeaponType === type ? " active" : ""),
+      type:"button",
+      text:rosterWeaponLabel(type)
+        +(Object.prototype.hasOwnProperty.call(memberRosterDraft.builds, type) ? " ✓" : ""),
+      "aria-pressed":String(memberRosterWeaponType === type),
+      onclick:()=>{
+        memberRosterWeaponType = type;
+        renderMemberRosterEditor();
+      }
+    })));
+    editor.appendChild(el("div",{class:"member-roster-editor-section"},[
+      el("span",{class:"member-roster-field-label",text:"Configuration par type d’arme"}),
+      tabs
+    ]));
+
+    const gear = el("div",{class:"gear"});
+    gear.appendChild(gearSlot("Arme", build.weapon, true, pickMemberRosterWeapon));
+    gear.appendChild(el("div",{class:"gear-group",text:"Armures"}));
+    ARMOR_SLOTS.forEach(slot => gear.appendChild(gearSlot(
+      ARMOR_LABELS[slot],
+      build.armor[slot],
+      false,
+      ()=>pickMemberRosterArmor(slot)
+    )));
+    gear.appendChild(el("div",{class:"gear-group",text:"Bijoux"}));
+    JEWEL_SLOTS.forEach(slot => gear.appendChild(gearSlot(
+      JEWEL_LABELS[slot],
+      build.jewel[slot],
+      false,
+      ()=>pickMemberRosterJewel(slot),
+      "jewel"
+    )));
+    const noteColumn = el("div",{class:"member-roster-note-column"});
+    if(!hasBuild){
+      noteColumn.appendChild(el("p",{
+        class:"member-roster-build-empty",
+        text:"Cette configuration n’est pas encore enregistrée. Choisis un équipement ou saisis une note pour la créer."
+      }));
+    }
+    const note = el("textarea",{
+      class:"note member-roster-note",
+      placeholder:"Rôle, rotation ou consigne pour ce type d’arme…",
+      maxlength:"160"
+    });
+    note.value = build.note || "";
+    note.addEventListener("input", event => {
+      const saved = memberRosterDraft.builds[memberRosterWeaponType]
+        || (memberRosterDraft.builds[memberRosterWeaponType] = emptyRosterBuild());
+      saved.note = event.target.value;
+    });
+    noteColumn.appendChild(el("span",{class:"member-roster-field-label",text:"Note du build"}));
+    noteColumn.appendChild(note);
+    if(hasBuild){
+      noteColumn.appendChild(el("button",{
+        class:"btn btn-danger",
+        type:"button",
+        text:"Retirer cette configuration",
+        onclick:()=>{
+          delete memberRosterDraft.builds[memberRosterWeaponType];
+          renderMemberRosterEditor();
+        }
+      }));
+    }
+    editor.appendChild(el("div",{class:"member-roster-build-panel"},[
+      gear,
+      noteColumn
+    ]));
+    editor.appendChild(el("div",{class:"member-roster-editor-actions"},[
+      el("button",{
+        class:"btn",
+        type:"button",
+        text:"Annuler",
+        onclick:closeMemberRosterEditor
+      }),
+      el("button",{
+        class:"btn btn-primary",
+        id:"memberRosterSave",
+        type:"button",
+        text:"Enregistrer le personnage",
+        onclick:()=>void saveMemberRosterEditor()
+      })
+    ]));
+  }
+
+  function openMemberRosterEditor(entry){
+    const normalized = normalizeRosterCharacter(entry);
+    if(!normalized) return;
+    memberRosterDraft = JSON.parse(JSON.stringify(normalized));
+    memberRosterWeaponType = weaponTypesOf(normalized.charId)[0] || "";
+    renderMemberRosterEditor();
+    $("#memberRosterOverlay").classList.add("on");
+  }
+
+  function closeMemberRosterEditor(){
+    $("#memberRosterOverlay").classList.remove("on");
+    memberRosterDraft = null;
+  }
+
+  async function saveMemberRosterEditor(){
+    if(!memberRosterDraft) return;
+    const button = $("#memberRosterSave");
+    button.disabled = true;
+    try{
+      await MemberRosterStore.upsert(memberRosterDraft);
+      closeMemberRosterEditor();
+      await renderMemberRoster();
+      toast("Personnage enregistré dans ton roster.");
+    }catch(error){
+      button.disabled = false;
+      toast("Roster non enregistré : "+authMessage(error), true);
+    }
+  }
+
+  async function deleteMemberRosterCharacter(entry){
+    if(!currentUser || currentUser.id !== entry.owner) return;
+    const character = charOf(entry.charId);
+    if(!confirm("Retirer "+character.name+" de ton roster ?")) return;
+    try{
+      await MemberRosterStore.remove(entry.charId);
+      await renderMemberRoster();
+      toast(character.name+" a été retiré du roster.");
+    }catch(error){
+      toast("Suppression impossible : "+authMessage(error), true);
+    }
+  }
+
+  $("#memberRosterMine").addEventListener("click", ()=>{
+    memberRosterMode = "mine";
+    void renderMemberRoster();
+  });
+  $("#memberRosterOthers").addEventListener("click", ()=>{
+    memberRosterMode = "others";
+    memberRosterOwnerId = "";
+    void renderMemberRoster();
+  });
+  $("#memberRosterOwner").addEventListener("change", event => {
+    memberRosterOwnerId = event.target.value;
+    void renderMemberRoster();
+  });
+  $("#memberRosterSearch").addEventListener("input", event => {
+    memberRosterFilters.query = event.target.value;
+    renderMemberRosterCards(memberRosterEntries, memberRosterEditable);
+  });
+  $("#memberRosterAdd").addEventListener("click", ()=>{
+    if(!currentUser){
+      openAuth("Connecte-toi pour modifier ton roster.", true);
+      return;
+    }
+    const existing = new Set(
+      MemberRosterStore.all(currentUser.id).map(entry => entry.charId)
+    );
+    Picker.open({
+      title:"Ajouter un personnage",
+      portrait:true,
+      allowNone:false,
+      items:(DATA.personnages || [])
+        .filter(character => !existing.has(character.id))
+        .map(character => ({
+          value:character.id,
+          name:character.name,
+          file:character.file
+        })),
+      emptyHint:"Tous les personnages sont déjà dans ton roster.",
+      onSelect:charId=>openMemberRosterEditor({
+        owner:currentUser.id,
+        charId,
+        potentialTier:0,
+        builds:{},
+        updatedAt:0
+      })
+    });
+  });
+  $("#memberRosterClose").addEventListener("click", closeMemberRosterEditor);
+  $("#memberRosterOverlay").addEventListener("click", event => {
+    if(event.target === $("#memberRosterOverlay")) closeMemberRosterEditor();
+  });
+  document.addEventListener("keydown", event => {
+    if(event.key === "Escape" && $("#memberRosterOverlay").classList.contains("on")){
+      closeMemberRosterEditor();
+    }
+  });
 
   /* ============================ Builder ============================ */
   const heroGrid = $("#heroGrid");
