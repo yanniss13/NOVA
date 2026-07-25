@@ -260,14 +260,24 @@ ne reste pas liée à la fiche source.
 
 ## Groupes de Boss de Guilde (onglet « Groupes de boss »)
 
-- **6 groupes auto-créés chaque semaine** (reset lundi 9h), boss *Akumu, bête démoniaque*.
-  Création à l'ouverture de la page via `BossStore.ensureWeek` (`upsert` `ignoreDuplicates`
-  sur l'index unique `(week_start, slot)`) — pas de cron pour la création.
-- Les membres **rejoignent / quittent** un ou plusieurs groupes (`boss_participation`).
-  « Juste rejoindre » : pas de dégâts/élément. Les semaines passées s'archivent seules.
+- **6 groupes ouverts simultanément chaque semaine** (reset lundi 9h), boss
+  *Akumu, bête démoniaque*. `BossStore.ensureWeek` crée uniquement les runs n°1
+  avec un `upsert` sur `(week_start, slot, run_no)`.
+- Chaque membre dispose de **3 runs par semaine**. Rejoindre une run ouverte la
+  réserve ; quitter la run ouverte la libère. Les participations archivées sont
+  définitives.
+- Tout membre du groupe peut cliquer « Run terminée ». La RPC
+  `complete_boss_run` archive la session et ses participants, puis crée
+  immédiatement la run suivante, vide, pour le même groupe.
+- Les écritures passent par `join_boss_run`, `leave_boss_run` et
+  `complete_boss_run`. Les politiques RLS interdisent les écritures directes
+  dans `boss_participation` et la modification directe des sessions.
 - Semaine courante = `currentBossWeek()` (lundi 9h Paris le plus récent ≤ maintenant).
 - **Rappel Discord** : dimanche midi Paris (`scripts/discord-reminder.js` + GitHub Actions),
-  ping les membres sans groupe. Voir `docs/superpowers/specs/2026-07-25-boss-groupes-hebdo-design.md`.
+  liste les membres sous `3/3` et le nombre de runs manquantes.
+  Voir `docs/superpowers/specs/2026-07-25-boss-trois-runs-design.md`.
+- Après une modification de ce schéma, réexécuter le contenu complet de
+  `supabase/schema.sql` dans le SQL Editor Supabase.
 
 ## Évolutions prévues
 
