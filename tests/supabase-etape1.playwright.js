@@ -58,6 +58,24 @@ const { chromium } = require("playwright");
     assert.equal(await page.locator("#memberRosterGrid .member-roster-edit").count(), 0);
     assert.equal(await page.locator("#memberRosterGrid .member-roster-delete").count(), 0);
 
+    await page.locator('.tab[data-view="builder"]').click();
+    const rosterHeroSlot = page.locator(".hero").first();
+    await rosterHeroSlot
+      .getByRole("button", { name:"Depuis mon roster", exact:true })
+      .click();
+    await page.locator('#pickerGrid .tile[title="Meliodas"]').click();
+    await page.locator('#pickerGrid .tile[title*="Hache"]').click();
+    assert.match(await rosterHeroSlot.textContent(), /Meliodas/);
+    assert.match(await rosterHeroSlot.textContent(), /P7/);
+
+    await rosterHeroSlot.locator("textarea.note").fill("Copie modifiée");
+    const rosterNote = await page.evaluate(() =>
+      window.__fakeSupabaseState.roster_characters
+        .find(row => row.owner === "user-1" && row.char_id === "meliodas")
+        .builds.Hache.note
+    );
+    assert.equal(rosterNote, "Mon build");
+
     await page.locator('.tab[data-view="roster"]').click();
     await page.locator("#rosterGrid .team").first().waitFor();
     assert.equal(await page.locator("#rosterGrid .team").count(), 2);

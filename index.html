@@ -165,6 +165,13 @@
     border:1px solid var(--line);border-radius:14px;padding:14px;
     display:flex;flex-direction:column;gap:12px;position:relative;
   }
+  .hero-source-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+  .hero-source-actions .btn{
+    min-width:0;justify-content:center;padding:7px 8px;font-size:11px;line-height:1.2;
+    text-align:center
+  }
+  .hero-source-actions .btn:only-child{grid-column:1/-1}
+  .hero-source-actions .hero-roster-reload{grid-column:1/-1}
   .portrait{
     appearance:none;border:1px solid var(--line);cursor:pointer;
     aspect-ratio:1/1;border-radius:10px;overflow:hidden;padding:0;position:relative;
@@ -809,6 +816,8 @@
     .member-roster-modes .btn{justify-content:center}
     .member-roster-build-panel{grid-template-columns:1fr}
     .member-roster-editor{padding:14px}
+    .hero-source-actions{grid-template-columns:1fr}
+    .hero-source-actions .hero-roster-reload{grid-column:auto}
   }
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
@@ -1610,6 +1619,7 @@
       openAuth();
     }
     updateAccountUi();
+    if($("#view-builder").classList.contains("active")) renderBuilder();
     if($("#view-roster").classList.contains("active")) void renderRoster();
     const memberRosterView = $("#view-member-roster");
     if(memberRosterView && memberRosterView.classList.contains("active")
@@ -1708,6 +1718,7 @@
     document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active", b.dataset.view===name));
     document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
     $("#view-"+name).classList.add("active");
+    if(name==="builder") renderBuilder();
     if(name==="roster") void renderRoster();
     if(name==="member-roster") void renderMemberRoster();
     if(name==="recensement") void renderRecensement();
@@ -1792,7 +1803,11 @@
       });
     }
 
-    function pick(val){ if(onPick) onPick(val); close(); }
+    function pick(val){
+      const callback = onPick;
+      close();
+      if(callback) callback(val);
+    }
 
     search.addEventListener("input", renderGrid);
     $("#pickerClose").addEventListener("click", close);
@@ -2356,6 +2371,39 @@
 
   function heroCard(hero, i){
     const ch = charOf(hero.char);
+    const sourceActions = el("div",{class:"hero-source-actions"});
+    if(currentUser){
+      sourceActions.appendChild(el("button",{
+        class:"btn btn-primary",
+        type:"button",
+        text:"Depuis mon roster",
+        onclick:()=>void pickRosterHero(i)
+      }));
+    }
+    sourceActions.appendChild(el("button",{
+      class:"btn",
+      type:"button",
+      text:"Choisir manuellement",
+      onclick:()=>pickChar(i)
+    }));
+    const currentWeaponType = weaponFolderOf(hero.weapon);
+    const rosterEntry = currentUser && hero.char
+      ? MemberRosterStore.all(currentUser.id)
+        .find(entry => entry.charId === hero.char)
+      : null;
+    if(rosterEntry && currentWeaponType
+      && Object.prototype.hasOwnProperty.call(rosterEntry.builds, currentWeaponType)){
+      sourceActions.appendChild(el("button",{
+        class:"btn hero-roster-reload",
+        type:"button",
+        text:"Recharger depuis mon roster",
+        onclick:()=>{
+          if(confirm("Remplacer ce héros par la version actuelle de ton roster ?")){
+            loadRosterHero(i, rosterEntry, currentWeaponType);
+          }
+        }
+      }));
+    }
 
     // Portrait
     const portrait = el("button",{class:"portrait", type:"button", title:"Choisir un héros",
@@ -2391,7 +2439,7 @@
       onclick:()=>{ draft.heroes[i] = emptyHero(); renderBuilder(); }});
 
     return el("div",{class:"hero"},[
-      portrait, title, badges, gear, pot, note, clear
+      sourceActions, portrait, title, badges, gear, pot, note, clear
     ]);
   }
 
@@ -2486,6 +2534,77 @@
       emptyHint:"Aucun bijou pour l'instant. Ajoute des images dans 7ds-bijoux/"+slot+"/ puis relance generate-data.ps1.",
       onSelect:v=>{ draft.heroes[i].jewel[slot] = v; renderBuilder(); }
     });
+  }
+
+  function masteryIconForWeaponType(type){
+    const item = WEAPON_ENUM[FOLDER_TO_ENUM[type]];
+    return item ? "7ds-ui/mastery/"+item.icon+".webp" : "";
+  }
+
+  async function pickRosterHero(slotIndex){
+    if(!currentUser){
+      openAuth("Connecte-toi pour utiliser ton roster.", true);
+      return;
+    }
+    let entries;
+    try{
+      entries = await MemberRosterStore.refresh(currentUser.id);
+    }catch(error){
+      entries = MemberRosterStore.all(currentUser.id);
+      if(!entries.length){
+        toast("Ton roster est indisponible.", true);
+        return;
+      }
+    }
+    if(!entries.length){
+      toast("Ton roster est vide. Ajoute d’abord un personnage.", true);
+      return;
+    }
+    Picker.open({
+      title:"Choisir dans mon roster",
+      portrait:true,
+      allowNone:false,
+      items:entries.map(entry => {
+        const character = charOf(entry.charId);
+        return {
+          value:entry.charId,
+          name:character.name,
+          file:character.file
+        };
+      }),
+      onSelect:charId=>{
+        const entry = entries.find(item => item.charId === charId);
+        if(entry) pickRosterWeapon(slotIndex, entry);
+      }
+    });
+  }
+
+  function pickRosterWeapon(slotIndex, entry){
+    const items = Object.keys(entry.builds).map(type => ({
+      value:type,
+      name:type+" · "+(entry.builds[type].weapon
+        ? nameOfFile(entry.builds[type].weapon)
+        : "équipement partiel"),
+      file:entry.builds[type].weapon || masteryIconForWeaponType(type)
+    }));
+    if(!items.length){
+      toast("Ce personnage n’a encore aucun équipement enregistré.", true);
+      return;
+    }
+    Picker.open({
+      title:"Choisir l’équipement",
+      allowNone:false,
+      items,
+      onSelect:type=>loadRosterHero(slotIndex, entry, type)
+    });
+  }
+
+  function loadRosterHero(slotIndex, entry, weaponType){
+    const snapshot = rosterHeroSnapshot(entry, weaponType);
+    if(!snapshot) return;
+    draft.heroes[slotIndex] = snapshot;
+    renderBuilder();
+    toast("Équipement copié depuis ton roster.");
   }
 
   /* ---- Potentiel : rendu du balisage couleur [#RRGGBB]texte[-] ---- */
