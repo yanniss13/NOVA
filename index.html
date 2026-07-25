@@ -663,15 +663,20 @@
     border:1px solid var(--line);border-radius:999px;padding:2px 10px}
   .boss-chip.me{color:var(--gold-bright);border-color:var(--gold-deep);background:rgba(217,164,65,.08)}
   .boss-none{font-size:12px;color:var(--muted-2);font-style:italic}
-  .boss-join{width:100%;justify-content:center;margin-top:2px}
+  .boss-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .boss-actions .btn{min-width:0;width:100%;justify-content:center}
   .boss-archive{margin-top:24px;border:1px solid var(--line-soft);border-radius:12px;background:var(--obsidian-2);padding:0 14px}
   .boss-archive>summary{cursor:pointer;padding:12px 2px;font-family:var(--display);font-size:14px;color:var(--muted);letter-spacing:.03em}
   .boss-archive[open]>summary{color:var(--parchment)}
   .boss-archive-week{padding:8px 0 12px;border-top:1px solid var(--line-soft)}
   .boss-archive-title{font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold-bright);margin-bottom:6px}
-  .boss-archive-row{font-size:13px;color:var(--muted);padding:2px 0}
+  .boss-archive-row{font-size:13px;color:var(--muted);padding:2px 0;overflow-wrap:anywhere}
   .boss-archive-row b{color:var(--parchment)}
-  @media(max-width:520px){ .boss-grid{grid-template-columns:1fr} }
+  .boss-archive-row small{color:var(--muted-2)}
+  @media(max-width:520px){
+    .boss-grid{grid-template-columns:minmax(0,1fr)}
+    .boss-actions{grid-template-columns:1fr}
+  }
 
   @media(max-width:820px){ .cov-row{grid-template-columns:repeat(4,1fr)} .rec-grid{grid-template-columns:1fr} }
   @media(max-width:520px){
@@ -3773,12 +3778,18 @@
     return { startDate: base.toISOString().slice(0,10), endDate: end.toISOString().slice(0,10) };
   }
   const frDate = iso => iso ? new Date(iso+"T00:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short"}) : "";
+  const frDateTime = iso => iso
+    ? new Date(iso).toLocaleString("fr-FR", {
+        day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"
+      })
+    : "";
 
   const BossStore = {
     async listAll(){
       if(!currentUser || !sb) return [];
       const { data, error } = await sb.from("boss_sessions").select("*")
-        .order("week_start",{ascending:false}).order("slot",{ascending:true});
+        .order("week_start",{ascending:false}).order("slot",{ascending:true})
+        .order("run_no",{ascending:true});
       if(error) throw error;
       return data || [];
     },
@@ -3790,10 +3801,13 @@
       for(let i=1; i<=BOSS_GROUPS; i++){
         rows.push({ id:uid(), created_by:currentUser.id, title:"Groupe "+i,
           boss_name:BOSS_NAME, session_date:week.startDate, week_start:week.startDate, slot:i,
-          elements:[], status:"open", created_at:now });
+          run_no:1, elements:[], status:"open", created_at:now });
       }
       const { error } = await sb.from("boss_sessions")
-        .upsert(rows, { onConflict:"week_start,slot", ignoreDuplicates:true });
+        .upsert(rows, {
+          onConflict:"week_start,slot,run_no",
+          ignoreDuplicates:true
+        });
       if(error) throw error;
     },
     async listMembership(sessionIds){
@@ -3805,16 +3819,17 @@
     },
     async join(sessionId){
       if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
-      const { error } = await sb.from("boss_participation").upsert({
-        session_id:sessionId, owner:currentUser.id, pseudo:currentPseudo || "Membre",
-        updated_at:new Date().toISOString()
-      });
+      const { error } = await sb.rpc("join_boss_run", { p_session_id:sessionId });
       if(error) throw error;
     },
     async leave(sessionId){
       if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
-      const { error } = await sb.from("boss_participation").delete()
-        .eq("session_id", sessionId).eq("owner", currentUser.id);
+      const { error } = await sb.rpc("leave_boss_run", { p_session_id:sessionId });
+      if(error) throw error;
+    },
+    async complete(sessionId){
+      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      const { error } = await sb.rpc("complete_boss_run", { p_session_id:sessionId });
       if(error) throw error;
     }
   };
@@ -3841,14 +3856,22 @@
     }catch(e){ toast("Groupes indisponibles.", true); }
     if(renderId !== bossRenderId) return;
 
-    const current = allGroups.filter(g => g.week_start === week.startDate).sort((a,b)=>(a.slot||0)-(b.slot||0));
+    const weekGroups = allGroups.filter(g => g.week_start === week.startDate);
+    const current = weekGroups
+      .filter(g => g.status === "open")
+      .sort((a,b)=>(a.slot||0)-(b.slot||0));
+    const completedCurrent = weekGroups
+      .filter(g => g.status === "archived")
+      .sort((a,b)=>(b.completed_at||"").localeCompare(a.completed_at||""));
     const past = allGroups.filter(g => g.week_start && g.week_start !== week.startDate);
-    const myCount = membership.filter(m => m.owner === currentUser.id && current.some(g=>g.id===m.session_id)).length;
+    const currentSessionIds = new Set(weekGroups.map(g => g.id));
+    const myCount = membership.filter(m =>
+      m.owner === currentUser.id && currentSessionIds.has(m.session_id)
+    ).length;
 
     body.className = ""; body.innerHTML = "";
-    $("#bossCount").innerHTML = myCount
-      ? ("<b>"+myCount+"</b> groupe"+(myCount>1?"s":"")+" rejoint"+(myCount>1?"s":""))
-      : "Aucun groupe rejoint";
+    $("#bossCount").innerHTML =
+      "<b>"+myCount+"/3</b> runs réservés ou terminés";
 
     body.appendChild(el("div",{class:"boss-weekhead"},[
       el("div",{class:"boss-weekboss", text:BOSS_NAME}),
@@ -3862,50 +3885,145 @@
       ]));
     }else{
       const grid = el("div",{class:"boss-grid"});
-      current.forEach(g => grid.appendChild(bossGroupCard(g, membership)));
+      current.forEach(g => grid.appendChild(bossGroupCard(g, membership, myCount)));
       body.appendChild(grid);
     }
 
+    if(completedCurrent.length){
+      const currentArchive = el("details",{
+        class:"boss-archive boss-archive-current",
+        open:true
+      });
+      currentArchive.appendChild(el("summary",{
+        text:"Runs terminées cette semaine ("+completedCurrent.length+")"
+      }));
+      currentArchive.appendChild(bossArchiveRows(completedCurrent, membership));
+      body.appendChild(currentArchive);
+    }
     if(past.length) body.appendChild(bossArchive(past, membership));
   }
 
-  function bossGroupCard(g, membership){
+  function bossActionMessage(error){
+    const message = String(error && error.message || "");
+    if(message.includes("RUN_LIMIT_REACHED")) return "Tes 3 runs de la semaine sont déjà réservés ou terminés.";
+    if(message.includes("RUN_ARCHIVED")) return "Cette run vient d’être terminée. La liste a été actualisée.";
+    if(message.includes("RUN_MEMBERS_ONLY")) return "Seuls les membres de ce groupe peuvent terminer la run.";
+    if(message.includes("RUN_NOT_FOUND")) return "Cette run n’existe plus. La liste a été actualisée.";
+    return authMessage(error);
+  }
+
+  function bossGroupCard(g, membership, myCount){
     const members = membership.filter(m => m.session_id === g.id);
     const mine = members.some(m => m.owner === currentUser.id);
     const list = el("div",{class:"boss-members"});
-    if(members.length) members.forEach(m => list.appendChild(
-      el("span",{class:"boss-chip"+(m.owner===currentUser.id?" me":""), text:m.pseudo||"Membre"})));
-    else list.appendChild(el("span",{class:"boss-none", text:"Personne pour l'instant"}));
+    if(members.length){
+      members.forEach(m => list.appendChild(el("span",{
+        class:"boss-chip"+(m.owner===currentUser.id?" me":""),
+        text:m.pseudo||"Membre"
+      })));
+    }else{
+      list.appendChild(el("span",{
+        class:"boss-none",
+        text:"Personne pour l'instant"
+      }));
+    }
 
-    const btn = el("button",{class:"btn "+(mine?"btn-danger":"btn-primary")+" boss-join", type:"button",
-      text:mine?"Quitter":"Rejoindre", onclick:async()=>{
-        btn.disabled = true;
-        try{ mine ? await BossStore.leave(g.id) : await BossStore.join(g.id); await renderBossView(); }
-        catch(e){ btn.disabled = false; toast("Action impossible : "+authMessage(e), true); }
-      }});
+    const joinButton = el("button",{
+      class:"btn "+(mine?"btn-danger":"btn-primary")+" boss-join",
+      type:"button",
+      text:mine?"Quitter":"Rejoindre",
+      title:!mine && myCount >= 3 ? "Limite hebdomadaire atteinte : 3/3" : "",
+      onclick:async()=>{
+        joinButton.disabled = true;
+        try{
+          mine ? await BossStore.leave(g.id) : await BossStore.join(g.id);
+        }catch(error){
+          toast("Action impossible : "+bossActionMessage(error), true);
+        }
+        await renderBossView();
+      }
+    });
+    joinButton.disabled = !mine && myCount >= 3;
+
+    const completeButton = mine ? el("button",{
+      class:"btn btn-secondary boss-complete",
+      type:"button",
+      text:"Run terminée",
+      onclick:async()=>{
+        const names = members.map(member => member.pseudo || "Membre").join(", ");
+        if(!confirm(
+          "Terminer "+g.title+" · Run "+(g.run_no||1)+" ?\n\n"+
+          "Runs utilisées définitivement pour : "+names
+        )) return;
+        completeButton.disabled = true;
+        try{
+          await BossStore.complete(g.id);
+        }catch(error){
+          toast("Fin de run impossible : "+bossActionMessage(error), true);
+        }
+        await renderBossView();
+      }
+    }) : null;
+
+    const actions = el("div",{class:"boss-actions"},[
+      joinButton,
+      ...(completeButton ? [completeButton] : [])
+    ]);
 
     return el("div",{class:"boss-card"+(mine?" mine":"")},[
       el("div",{class:"boss-card-head"},[
-        el("span",{class:"boss-card-title", text:g.title}),
-        el("span",{class:"boss-membercount", text:members.length+" membre"+(members.length>1?"s":"")})
+        el("span",{
+          class:"boss-card-title",
+          text:g.title+" · Run "+(g.run_no||1)
+        }),
+        el("span",{
+          class:"boss-membercount",
+          text:members.length+" membre"+(members.length>1?"s":"")
+        })
       ]),
-      list, btn
+      list,
+      actions
     ]);
+  }
+
+  function bossArchiveRows(groups, membership){
+    const wrap = el("div");
+    groups.forEach(g=>{
+      const names = membership
+        .filter(m=>m.session_id===g.id)
+        .map(m=>m.pseudo||"Membre")
+        .join(", ") || "—";
+      wrap.appendChild(el("div",{class:"boss-archive-row"},[
+        el("b",{text:g.title+" · Run "+(g.run_no||1)+" : "}),
+        el("span",{text:names}),
+        ...(g.completed_at ? [
+          el("small",{text:" · terminée le "+frDateTime(g.completed_at)})
+        ] : [])
+      ]));
+    });
+    return wrap;
   }
 
   function bossArchive(past, membership){
     const weeks = [...new Set(past.map(g=>g.week_start))].sort().reverse();
     const wrap = el("details",{class:"boss-archive"});
-    wrap.appendChild(el("summary",{text:"Semaines précédentes ("+weeks.length+")"}));
-    weeks.forEach(w=>{
-      const gs = past.filter(g => g.week_start === w).sort((a,b)=>(a.slot||0)-(b.slot||0));
-      const wk = el("div",{class:"boss-archive-week"});
-      wk.appendChild(el("div",{class:"boss-archive-title", text:"Semaine du "+frDate(w)}));
-      gs.forEach(g=>{
-        const names = membership.filter(m=>m.session_id===g.id).map(m=>m.pseudo||"Membre").join(", ") || "—";
-        wk.appendChild(el("div",{class:"boss-archive-row"},[ el("b",{text:g.title+" : "}), el("span",{text:names}) ]));
-      });
-      wrap.appendChild(wk);
+    wrap.appendChild(el("summary",{
+      text:"Semaines précédentes ("+weeks.length+")"
+    }));
+    weeks.forEach(weekStart=>{
+      const groups = past
+        .filter(g => g.week_start === weekStart)
+        .sort((a,b)=>
+          ((a.slot||0)-(b.slot||0)) ||
+          ((a.run_no||1)-(b.run_no||1))
+        );
+      const weekBlock = el("div",{class:"boss-archive-week"});
+      weekBlock.appendChild(el("div",{
+        class:"boss-archive-title",
+        text:"Semaine du "+frDate(weekStart)
+      }));
+      weekBlock.appendChild(bossArchiveRows(groups, membership));
+      wrap.appendChild(weekBlock);
     });
     return wrap;
   }
