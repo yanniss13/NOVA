@@ -95,7 +95,7 @@ create table if not exists public.boss_sessions (
   title        text not null,
   boss_name    text,
   session_date date,
-  week_start   date,                             -- lundi (9h) de la semaine du groupe
+  week_start   date not null,                    -- lundi (9h) de la semaine du groupe
   slot         int,                              -- n° de groupe (1..6)
   elements     text[] not null default '{}',   -- (héritage) éléments visés
   status       text not null default 'open',    -- open | won | lost | archived
@@ -112,6 +112,36 @@ alter table public.boss_sessions add column if not exists week_start  date;
 alter table public.boss_sessions add column if not exists slot        int;
 alter table public.boss_sessions add column if not exists run_no       integer not null default 1;
 alter table public.boss_sessions add column if not exists completed_at timestamptz;
+
+create schema if not exists private;
+revoke all on schema private from public;
+
+create or replace function private.current_boss_week_start()
+returns date
+language sql
+stable
+set search_path = pg_catalog
+as $$
+  with paris as (
+    select now() at time zone 'Europe/Paris' as local_now
+  )
+  select (
+    local_now::date
+    - (extract(isodow from local_now)::integer - 1)
+    - case
+        when extract(isodow from local_now) = 1
+         and local_now::time < time '09:00'
+        then 7
+        else 0
+      end
+  )::date
+  from paris;
+$$;
+
+grant usage on schema private to authenticated;
+revoke all on function private.current_boss_week_start() from public;
+grant execute on function private.current_boss_week_start() to authenticated;
+
 create index if not exists boss_sessions_created_idx on public.boss_sessions(created_at desc);
 -- Un seul groupe N par semaine : sert de cible au "upsert" côté appli (anti-doublon).
 drop index if exists public.boss_sessions_week_slot_idx;
@@ -164,6 +194,12 @@ begin
   if not found then
     raise exception 'RUN_NOT_FOUND' using errcode = 'P0001';
   end if;
+  if v_week is null then
+    raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
+  end if;
+  if v_week <> private.current_boss_week_start() then
+    raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
+  end if;
   if v_status <> 'open' then
     raise exception 'RUN_ARCHIVED' using errcode = 'P0001';
   end if;
@@ -208,20 +244,27 @@ set search_path = public, pg_temp
 as $$
 declare
   v_owner uuid := auth.uid();
+  v_week date;
   v_status text;
 begin
   if v_owner is null then
     raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
   end if;
 
-  select status
-    into v_status
+  select week_start, status
+    into v_week, v_status
     from public.boss_sessions
    where id = p_session_id
    for update;
 
   if not found then
     raise exception 'RUN_NOT_FOUND' using errcode = 'P0001';
+  end if;
+  if v_week is null then
+    raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
+  end if;
+  if v_week <> private.current_boss_week_start() then
+    raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
   end if;
   if v_status <> 'open' then
     raise exception 'RUN_ARCHIVED' using errcode = 'P0001';
@@ -256,6 +299,12 @@ begin
   if not found then
     raise exception 'RUN_NOT_FOUND' using errcode = 'P0001';
   end if;
+  if v_run.week_start is null then
+    raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
+  end if;
+  if v_run.week_start <> private.current_boss_week_start() then
+    raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
+  end if;
   if v_run.status <> 'open' then
     return;
   end if;
@@ -284,7 +333,7 @@ begin
 end;
 $$;
 
--- boss_sessions : lecture par tout membre ; écriture/suppression par le créateur
+-- boss_sessions : lecture par tout membre ; seules les six seeds courantes sont insérables directement.
 drop policy if exists boss_sessions_read   on public.boss_sessions;
 drop policy if exists boss_sessions_insert on public.boss_sessions;
 drop policy if exists boss_sessions_update on public.boss_sessions;
@@ -296,6 +345,8 @@ create policy boss_sessions_insert
   to authenticated
   with check (
     created_by = auth.uid()
+    and week_start is not null
+    and week_start = private.current_boss_week_start()
     and run_no = 1
     and slot between 1 and 6
     and status = 'open'
