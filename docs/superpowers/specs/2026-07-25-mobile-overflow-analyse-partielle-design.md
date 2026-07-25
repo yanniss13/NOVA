@@ -1,5 +1,9 @@
 # Débordement mobile et classement potentiel partiel — Design
 
+> **Statut : IMPLÉMENTÉ** (2026-07-25). Vérifié par
+> `tests/mobile-analyse-partielle.playwright.js` (ajouté à `npm test`).
+> Le débordement mesuré avant correctif était de 37px à 320px ; il est nul après.
+
 ## Objectif
 
 Corriger le défilement horizontal involontaire de la page sur téléphone et

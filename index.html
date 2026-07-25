@@ -377,6 +377,7 @@
   }
   .rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:20px}
   .rec-player{
+    min-width:0;
     background:linear-gradient(180deg,var(--panel),var(--obsidian-2));
     border:1px solid var(--line);border-radius:12px;padding:14px
   }
@@ -505,7 +506,15 @@
   .mx-item{color:var(--parchment);white-space:nowrap}
   .mx-empty{color:var(--muted-2);text-align:center}
   @media(max-width:820px){ .cov-row{grid-template-columns:repeat(4,1fr)} .rec-grid{grid-template-columns:1fr} }
-  @media(max-width:520px){ .cov-row{grid-template-columns:repeat(2,1fr)} .rank-row{grid-template-columns:32px 1fr 70px;} .rank-row .rk-dps{display:none} }
+  @media(max-width:520px){
+    .cov-row{grid-template-columns:repeat(2,1fr)}
+    .rank-row{grid-template-columns:32px 1fr 70px;}
+    .rank-row .rk-dps{display:none}
+    /* Recensement : contrôles sur plusieurs lignes, sans élargir le document */
+    #recLocalControls{flex-wrap:wrap}
+    #recLocalControls .rec-input,
+    #recLocalControls .btn{width:100%;min-width:0}
+  }
 
   /* ---------- Picker modal ---------- */
   .overlay{
@@ -2466,6 +2475,34 @@
   /* ============================ Analyse ============================ */
   let analyseElem = null;
   let analyseRenderId = 0;
+  let analysePlayers = [];   // joueurs déjà chargés par renderAnalyse (filtrage local)
+
+  // Construit le tableau du classement dans son conteneur stable, à partir des
+  // joueurs déjà chargés et de l'élément choisi. Aucune lecture réseau ici.
+  function renderRankTable(rankBox){
+    const entries = [];
+    analysePlayers.forEach(p=>(p.dps||[]).forEach(d=>{
+      if(dpsElem(d)===analyseElem) entries.push({player:p.name, char:d.char, pot:d.pot||0});
+    }));
+    entries.sort((a,b)=>b.pot-a.pot);
+    const rank = el("div",{class:"rank-table"});
+    rank.appendChild(el("div",{class:"rank-row rank-head"},[
+      el("span",{class:"rk-pos",text:"#"}), el("span",{class:"rk-player",text:"Membre"}),
+      el("span",{class:"rk-dps",text:"DPS"}), el("span",{class:"rk-pot",text:"Potentiel"})
+    ]));
+    if(!entries.length) rank.appendChild(el("div",{class:"rank-empty", text:"Aucun DPS "+elemLabel(analyseElem)+" recensé."}));
+    entries.forEach((en,i)=>{
+      const ch=charOf(en.char);
+      const port=el("div",{class:"rk-portrait"}); if(ch) port.appendChild(el("img",{src:ch.file,alt:"",loading:"lazy"}));
+      rank.appendChild(el("div",{class:"rank-row"+(i<3?" top":"")},[
+        el("span",{class:"rk-pos", text:String(i+1)}),
+        el("span",{class:"rk-player", text:en.player}),
+        el("span",{class:"rk-dps"},[ port, el("span",{text: ch?ch.name:en.char}) ]),
+        el("span",{class:"rk-pot", text: en.pot>0?("P"+en.pot):"—"})
+      ]));
+    });
+    rankBox.replaceChildren(rank);
+  }
 
   async function renderAnalyse(){
     const renderId = ++analyseRenderId;
@@ -2514,37 +2551,32 @@
     box.appendChild(covRow);
 
     // --- 2) Classement par élément ---
+    // Le classement vit dans un conteneur stable : le clic sur un élément ne
+    // remplace que ce conteneur (aucun rechargement Supabase, aucun reflow global).
     box.appendChild(el("h2",{class:"an-title", text:"Classement par potentiel"}));
     if(analyseElem===null){
       analyseElem = ELEM_ORDER.find(e=>cov[e].dps>0) || ELEM_ORDER[0];
     }
+    analysePlayers = players;
     const chips = el("div",{class:"elem-chips"});
+    const rankBox = el("div",{class:"rank-box"});
     ELEM_ORDER.forEach(e=>{
       chips.appendChild(el("button",{class:"elem-chip"+(e===analyseElem?" active":""),
-        onclick:()=>{ analyseElem=e; void renderAnalyse(); }},[ elemBadge(e) ]));
+        "aria-pressed": e===analyseElem ? "true" : "false",
+        dataset:{elem:e},
+        onclick:()=>{
+          analyseElem=e;
+          [...chips.children].forEach(b=>{
+            const on = b.dataset.elem===analyseElem;
+            b.classList.toggle("active", on);
+            b.setAttribute("aria-pressed", on ? "true" : "false");
+          });
+          renderRankTable(rankBox);
+        }},[ elemBadge(e) ]));
     });
     box.appendChild(chips);
-
-    const entries = [];
-    players.forEach(p=>(p.dps||[]).forEach(d=>{ if(dpsElem(d)===analyseElem) entries.push({player:p.name, char:d.char, pot:d.pot||0}); }));
-    entries.sort((a,b)=>b.pot-a.pot);
-    const rank = el("div",{class:"rank-table"});
-    rank.appendChild(el("div",{class:"rank-row rank-head"},[
-      el("span",{class:"rk-pos",text:"#"}), el("span",{class:"rk-player",text:"Membre"}),
-      el("span",{class:"rk-dps",text:"DPS"}), el("span",{class:"rk-pot",text:"Potentiel"})
-    ]));
-    if(!entries.length) rank.appendChild(el("div",{class:"rank-empty", text:"Aucun DPS "+elemLabel(analyseElem)+" recensé."}));
-    entries.forEach((en,i)=>{
-      const ch=charOf(en.char);
-      const port=el("div",{class:"rk-portrait"}); if(ch) port.appendChild(el("img",{src:ch.file,alt:"",loading:"lazy"}));
-      rank.appendChild(el("div",{class:"rank-row"+(i<3?" top":"")},[
-        el("span",{class:"rk-pos", text:String(i+1)}),
-        el("span",{class:"rk-player", text:en.player}),
-        el("span",{class:"rk-dps"},[ port, el("span",{text: ch?ch.name:en.char}) ]),
-        el("span",{class:"rk-pot", text: en.pot>0?("P"+en.pot):"—"})
-      ]));
-    });
-    box.appendChild(rank);
+    renderRankTable(rankBox);
+    box.appendChild(rankBox);
 
     // --- 3) Matrice joueur × élément ---
     box.appendChild(el("h2",{class:"an-title", text:"Matrice membre × élément"}));
