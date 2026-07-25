@@ -78,7 +78,7 @@ function loadApp(initialTeams){
 
   const exposed = source.replace(
     /\}\)\(\);\s*$/,
-    "Object.assign(globalThis.__hooks,{normalizePotentiel,normalizeHero,normalizeTeam,potentielDetailsOf,weaponTypesOf,isWeaponCompatible,compatibleWeaponGroups,linkedArmorsOf,isLinkedArmorCompatible,Store,recPlayersForView:typeof recPlayersForView==='function'?recPlayersForView:undefined});})();"
+    "Object.assign(globalThis.__hooks,{normalizePotentiel,normalizeHero,normalizeTeam,potentielDetailsOf,weaponTypesOf,isWeaponCompatible,compatibleWeaponGroups,linkedArmorsOf,isLinkedArmorCompatible,emptyRosterBuild,normalizeRosterBuild,normalizeRosterCharacter,rosterHeroSnapshot,Store,recPlayersForView:typeof recPlayersForView==='function'?recPlayersForView:undefined});})();"
   );
   assert.notStrictEqual(exposed, source, "Le chargeur doit exposer les fonctions réelles");
 
@@ -377,6 +377,45 @@ function plain(value){
   assert.deepStrictEqual(loaded[0].heroes[0].potentiel, { tier:8 });
   hooks.Store.save(loaded);
   assert.ok(!localStorage.getItem(STORAGE_KEY).includes("weaponType"));
+}
+
+// Roster : une seule fiche conserve le potentiel commun et les builds compatibles.
+{
+  const { hooks } = loadApp();
+  const raw = {
+    owner:"user-1",
+    charId:"meliodas",
+    potentialTier:7,
+    builds:{
+      Hache:{
+        weapon:"7ds-armes/Hache/hache.webp",
+        armor:{
+          Haut:"7ds-armures-ssr/Haut/universel.webp",
+          "Armure liee":"7ds-armures-ssr/Armure liee/Une nouvelle aventure.webp"
+        },
+        jewel:{ Anneau:"7ds-bijoux/Anneau/test.webp" },
+        note:"Boss"
+      },
+      Livre:{ weapon:"7ds-armes/Livre/livre.webp" }
+    }
+  };
+  const entry = plain(hooks.normalizeRosterCharacter(raw));
+  assert.strictEqual(entry.potentialTier, 7);
+  assert.deepStrictEqual(Object.keys(entry.builds), ["Hache"]);
+  assert.strictEqual(entry.builds.Hache.weapon, "7ds-armes/Hache/hache.webp");
+  assert.strictEqual(
+    entry.builds.Hache.armor["Armure liee"],
+    "7ds-armures-ssr/Armure liee/Une nouvelle aventure.webp"
+  );
+
+  const snapshot = plain(hooks.rosterHeroSnapshot(entry, "Hache"));
+  assert.strictEqual(snapshot.char, "meliodas");
+  assert.deepStrictEqual(snapshot.potentiel, { tier:7 });
+  snapshot.note = "Copie modifiée";
+  assert.strictEqual(entry.builds.Hache.note, "Boss");
+
+  assert.strictEqual(hooks.normalizeRosterCharacter({ charId:"inconnu" }), null);
+  assert.strictEqual(hooks.rosterHeroSnapshot(entry, "Livre"), null);
 }
 
 console.log("PASS potentiel commun");

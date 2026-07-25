@@ -31,9 +31,22 @@ create table if not exists public.recensement (
 );
 
 -- ============================ RLS (sécurité) ============================
+-- 4) Roster persistant : un personnage par membre, avec un build par type d'arme
+create table if not exists public.roster_characters (
+  owner          uuid not null references auth.users(id) on delete cascade,
+  char_id        text not null,
+  potential_tier smallint not null default 0 check (potential_tier between 0 and 10),
+  builds         jsonb not null default '{}'::jsonb,
+  updated_at     timestamptz not null default now(),
+  primary key (owner, char_id)
+);
+create index if not exists roster_characters_owner_idx
+  on public.roster_characters(owner);
+
 alter table public.profiles    enable row level security;
 alter table public.teams       enable row level security;
 alter table public.recensement enable row level security;
+alter table public.roster_characters enable row level security;
 
 -- profiles : lecture par tout membre connecté ; on gère uniquement le sien
 drop policy if exists profiles_read   on public.profiles;
@@ -62,3 +75,13 @@ create policy rec_read   on public.recensement for select to authenticated using
 create policy rec_insert on public.recensement for insert to authenticated with check (owner = auth.uid());
 create policy rec_update on public.recensement for update to authenticated using (owner = auth.uid());
 create policy rec_delete on public.recensement for delete to authenticated using (owner = auth.uid());
+
+-- roster : lecture par tout membre ; ecriture/suppression de SON roster
+drop policy if exists roster_read   on public.roster_characters;
+drop policy if exists roster_insert on public.roster_characters;
+drop policy if exists roster_update on public.roster_characters;
+drop policy if exists roster_delete on public.roster_characters;
+create policy roster_read   on public.roster_characters for select to authenticated using (true);
+create policy roster_insert on public.roster_characters for insert to authenticated with check (owner = auth.uid());
+create policy roster_update on public.roster_characters for update to authenticated using (owner = auth.uid()) with check (owner = auth.uid());
+create policy roster_delete on public.roster_characters for delete to authenticated using (owner = auth.uid());

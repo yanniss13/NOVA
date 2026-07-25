@@ -1174,6 +1174,66 @@
       note:typeof h.note === "string" ? h.note : ""
     };
   }
+  const emptyRosterBuild = () => ({
+    weapon:null,
+    armor:emptyArmor(),
+    jewel:emptyJewel(),
+    note:""
+  });
+  function normalizeRosterBuild(charId, weaponType, raw){
+    const source = raw && typeof raw === "object" ? raw : {};
+    const knownWeapons = Object.values(compatibleWeaponGroups(charId)).flat();
+    const weapon = weaponFolderOf(source.weapon) === weaponType
+      && knownWeapons.some(item => item.file === source.weapon)
+      ? source.weapon
+      : null;
+    const hero = normalizeHero({
+      char:charId,
+      weapon,
+      armor:source.armor,
+      jewel:source.jewel,
+      note:source.note
+    });
+    return {
+      weapon:hero.weapon,
+      armor:hero.armor,
+      jewel:hero.jewel,
+      note:hero.note
+    };
+  }
+  function normalizeRosterCharacter(raw){
+    const source = raw && typeof raw === "object" ? raw : {};
+    const charId = typeof source.charId === "string" ? source.charId : "";
+    if(!charOf(charId)) return null;
+    const allowed = weaponTypesOf(charId);
+    const sourceBuilds = source.builds && typeof source.builds === "object" ? source.builds : {};
+    const builds = allowed.reduce((result, weaponType)=>{
+      if(Object.prototype.hasOwnProperty.call(sourceBuilds, weaponType)){
+        result[weaponType] = normalizeRosterBuild(charId, weaponType, sourceBuilds[weaponType]);
+      }
+      return result;
+    }, {});
+    return {
+      owner:typeof source.owner === "string" ? source.owner : "",
+      charId,
+      potentialTier:normalizePotentiel({tier:source.potentialTier}).tier,
+      builds,
+      updatedAt:Number.isFinite(Number(source.updatedAt)) ? Number(source.updatedAt) : 0
+    };
+  }
+  function rosterHeroSnapshot(entry, weaponType){
+    const normalized = normalizeRosterCharacter(entry);
+    if(!normalized || !Object.prototype.hasOwnProperty.call(normalized.builds, weaponType)) return null;
+    const build = normalized.builds[weaponType];
+    return normalizeHero({
+      char:normalized.charId,
+      weapon:build.weapon,
+      armor:build.armor,
+      jewel:build.jewel,
+      potentiel:{tier:normalized.potentialTier},
+      note:build.note
+    });
+  }
   function normalizeTeam(raw){
     const t = raw && typeof raw === "object" ? raw : {};
     const heroes = Array.isArray(t.heroes) ? t.heroes.slice(0, TEAM_SIZE) : [];
