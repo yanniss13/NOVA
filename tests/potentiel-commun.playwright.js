@@ -146,6 +146,14 @@ const STORAGE_KEY = "confrerie7ds.teams";
       await page.locator("#authOverlay").evaluate(el => el.classList.contains("on")),
       true
     );
+    await page.getByRole("button", { name:"Continuer hors connexion", exact:true }).click();
+    await page.locator('.tab[data-view="roster"]').click();
+    page.once("dialog", dialog => dialog.accept());
+    await page.getByRole("button", { name:"Supprimer", exact:true }).click();
+    await page.waitForFunction(key => {
+      const teams = JSON.parse(localStorage.getItem(key)||"[]");
+      return teams.length === 0;
+    }, STORAGE_KEY);
     assert.deepEqual(errors, []);
 
     console.log("PASS Playwright: potentiel commun, changement d'arme et migration");

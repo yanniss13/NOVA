@@ -1,10 +1,22 @@
 # Handoff Codex — Supabase Étape 1 (comptes + partage)
 
 Date : 2026-07-25
-Statut : **prêt à implémenter**. Config + SQL fournis. Reste : le code app + 2 manips Supabase côté utilisateur.
+Statut : **Étape 1 implémentée**. Config + SQL fournis. Restent les 2 manips
+Supabase côté utilisateur décrites ci-dessous.
 
 > Ce doc contient TOUT le contexte pour qu'un agent (Codex) implémente l'Étape 1
 > sans repartir de zéro. Lis-le en entier, puis suis « Plan d'implémentation ».
+
+## Résultat de l'implémentation
+- Gate email/mot de passe avec création de compte, profil/pseudo, déconnexion et
+  possibilité de continuer à composer hors connexion.
+- Équipes partagées via `teams`, avec actions Modifier/Supprimer réservées au
+  propriétaire et cache local séparé.
+- Recensement partagé via une ligne par compte ; Analyse alimentée par toutes les
+  lignes visibles.
+- Migration one-shot de `confrerie7ds.teams` et du recensement correspondant au
+  pseudo connecté. Les sauvegardes locales d'origine ne sont pas supprimées.
+- Parcours Chromium automatisé avec faux client Supabase, sans compte réel.
 
 ## Contexte / décisions validées par l'utilisateur
 - Objectif : rendre **collaboratif** ce qui est aujourd'hui local (localStorage) →
@@ -42,7 +54,7 @@ Statut : **prêt à implémenter**. Config + SQL fournis. Reste : le code app + 
 - RLS : **lecture par tout membre connecté**, **écriture uniquement de ses propres
   lignes** (`owner = auth.uid()`).
 
-## Plan d'implémentation (app — `index.html`)
+## Plan d'implémentation réalisé (app — `index.html`)
 Charger le client (après `supabase-config.js`) :
 ```html
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -97,6 +109,5 @@ const sb = window.supabase.createClient(window.SB_URL, window.SB_KEY);
 ## Fichiers concernés
 - `supabase-config.js` (créé) — URL + clé publique.
 - `supabase/schema.sql` (créé) — tables + RLS.
-- `index.html` — à modifier (client + gate + bascule cloud). Gros morceau, y aller par
-  étapes (d'abord auth + teams, puis recensement/analyse, puis migration).
+- `index.html` — modifié : client + gate + équipes, recensement/analyse et migration.
 - `AGENTS.md` — pointera vers ce doc.

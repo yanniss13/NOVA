@@ -1,13 +1,13 @@
 # Site Confrérie 7DS — Team Builder (Boss de Guilde)
 
-Outil web local pour que les membres d'une confrérie **7DS Origin** construisent des
+Outil web statique collaboratif pour que les membres d'une confrérie **7DS Origin** construisent des
 équipes (perso + arme + armures + notes) et les affichent sur une page
 **« Équipes dispo pour le Boss de Guilde »**.
 
 > Ce fichier est le point d'entrée pour tout agent (Codex, Claude, etc.) qui
 > reprend le projet. Lis-le en entier avant de coder.
 
-## État actuel — 2026-07-24
+## État actuel — 2026-07-25
 
 - [x] Assets rangés dans des dossiers (fournis par l'utilisateur, ne pas renommer).
 - [x] `generate-data.ps1` — scanne les dossiers et génère `data.js`.
@@ -43,21 +43,24 @@ Outil web local pour que les membres d'une confrérie **7DS Origin** construisen
       Clic sur la carte / bouton « Voir l'équipement » → modal `#teamOverlay`
       (`openTeamDetail`/`heroDetail`/`equipLine`) avec l'équipement complet
       (arme + 5 armures + 3 bijoux, noms) par héros.
-- [~] **Partage réseau (Supabase) — EN COURS, Étape 1**. Comptes + équipes +
-      recensement partagés. Projet Supabase créé, config + SQL prêts.
+- [x] **Partage réseau (Supabase) — Étape 1 implémentée**. Comptes + équipes +
+      recensement/analyse partagés. Auth email/mot de passe, ownership par RLS,
+      cache hors ligne séparé et migration one-shot des anciennes données locales.
       👉 **Codex : lis `docs/superpowers/specs/2026-07-25-supabase-etape1-handoff.md`**
-      (contexte complet, modèle de données, plan d'implémentation, manips Supabase
-      restantes). Fichiers : `supabase-config.js`, `supabase/schema.sql`.
+      (contexte, modèle de données et manips Supabase restantes).
+      Fichiers : `supabase-config.js`, `supabase/schema.sql`.
       Auth validée = email + mot de passe SANS confirmation email.
 
-L'appli fonctionne en **local uniquement** : on ouvre `index.html` par double-clic
-(protocole `file://`). Les équipes sont stockées dans le **localStorage** du
-navigateur. Partage prévu plus tard (l'utilisateur partage via Discord pour l'instant).
+L'appli reste un site statique ouvrable en `file://` ou via GitHub Pages. Une
+connexion internet et un compte sont nécessaires pour lire/écrire le registre
+partagé. Sans connexion, le builder reste utilisable, mais « Enregistrer l'équipe »
+ouvre la connexion. Les anciennes données locales et les caches cloud restent dans
+le `localStorage`.
 
 ## Comment lancer
 
-Double-clic sur `index.html`. Aucun serveur, aucune install, aucun build.
-Fonctionne hors-ligne (les polices web ont un repli système).
+Double-clic sur `index.html` ou ouvrir le site GitHub Pages. Aucun serveur, aucune
+install, aucun build. Le builder fonctionne hors ligne ; Supabase exige internet.
 
 Pour les tests de développement uniquement :
 
@@ -72,10 +75,12 @@ reste autonome et ne dépend pas de npm.
 
 ```
 Site Confrérie 7ds/
-├─ index.html              # L'appli. Charge data.js + potentiels.js + armures-liees.js + personnages-meta.js.
+├─ index.html              # L'appli + auth/store Supabase. Charge les données locales et le client CDN.
+├─ supabase-config.js      # URL + clé publique publishable (jamais de service_role).
+├─ supabase/schema.sql     # Tables profiles/teams/recensement + politiques RLS.
 ├─ package.json            # Scripts de test Node + Playwright (développement uniquement).
 ├─ package-lock.json       # Versions verrouillées des dépendances de test.
-├─ tests/                  # Régressions du potentiel commun et parcours Chromium.
+├─ tests/                  # Régressions du builder + parcours Supabase simulé dans Chromium.
 ├─ data.js                 # GÉNÉRÉ. window.SEVEN_DS_DATA = { personnages, armes, armures, bijoux }.
 ├─ generate-data.ps1       # Régénère data.js en scannant les dossiers d'images.
 ├─ potentiels.js           # GÉNÉRÉ. 3 armes compatibles + bonus par héros.
@@ -135,9 +140,12 @@ s’exécute jamais dans le navigateur : `index.html` ne charge que
 n’appartient pas au tableau du héros. Les quatre emplacements universels
 `Haut`, `Bas`, `Bottes` et `Ceinture` ne sont pas filtrés par cette règle.
 
-## Modèle de données d'une équipe (localStorage)
+## Modèle de données d'une équipe (Supabase + cache local)
 
-Clé localStorage : `confrerie7ds.teams` → tableau JSON d'équipes.
+Table Supabase : `teams(id, owner, pseudo, data, created_at, updated_at)`.
+`data` conserve la forme historique ci-dessous. La clé locale
+`confrerie7ds.teams` reste la source de migration/backup ; le cache des lignes
+cloud utilise `confrerie7ds.cloud.teams`.
 
 ```js
 {
@@ -173,11 +181,20 @@ Clé localStorage : `confrerie7ds.teams` → tableau JSON d'équipes.
 
 Constantes utiles dans `index.html` : `STORAGE_KEY`, `TEAM_SIZE` (= 4),
 `ARMOR_SLOTS`, `JEWEL_SLOTS` (ordre d'affichage des emplacements).
-Le Store, `editTeam()` et l'import normalisent les anciennes équipes : ajout des
+`Store`, `editTeam()` et l'import normalisent les anciennes équipes : ajout des
 champs d'équipement manquants et migration de l'ancien potentiel
 `{ weaponType, tier }` vers `{ tier }`. `normalizeHero()` retire aussi toute arme
 dont le dossier n'appartient pas aux 3 clés de potentiel du personnage, ainsi
 que toute armure liée incompatible avec le héros.
+
+Connecté, `Store.refresh/upsert/remove` utilise Supabase et ne montre les actions
+Modifier/Supprimer que si `team.owner === currentUser.id`. Déconnecté, le builder
+reste accessible mais la sauvegarde exige l'authentification.
+
+Le recensement partagé utilise une ligne Supabase par compte :
+`recensement(owner, pseudo, dps, updated_at)`. Tous les membres connectés lisent
+toutes les lignes pour l'Analyse ; seul le propriétaire modifie sa fiche. Le cache
+cloud local est `confrerie7ds.cloud.recensement`.
 
 ## Décisions de conception (ne pas casser sans raison)
 
@@ -192,18 +209,21 @@ que toute armure liée incompatible avec le héros.
   assets. Le « détail » d'un perso = arme + 5 armures + une note libre.
 - Arme choisie en 2 temps : type puis arme. Le picker filtre les groupes aux
   3 types autorisés par les clés de `window.SEVEN_DS_POTENTIELS[charId]`.
-- Export / Import JSON = sauvegarde de secours et base du futur partage.
+- Export / Import JSON = sauvegarde de secours et format pivot indépendant de Supabase.
+- Auth Supabase : email + mot de passe sans confirmation email. Toute lecture
+  partagée exige un membre authentifié ; RLS limite l'écriture au propriétaire.
 
-## Évolutions prévues (non commencées)
+## Évolutions prévues
 
-- **Partage réseau** : passer du localStorage à une base partagée (ex. Supabase
-  gratuit) pour que « chacun crée son équipe, visible par tous » via un lien
-  Discord. Garder l'export/import JSON comme format d'échange pivot.
+- **Étape 2 — roster persistant** : chaque membre construit ses personnages
+  équipés une fois et les réutilise dans ses équipes. Ne pas commencer sans
+  validation utilisateur de l'Étape 1.
 - Champ **boss ciblé** et **note globale d'équipe** (déjà réservés dans le modèle).
 
 ## Conventions
 
 - Français partout dans l'UI.
-- Tout est inline dans `index.html` (pas d'outillage). Rester sans dépendance.
+- La logique applicative reste inline dans `index.html` (pas de build). Les seules
+  exceptions runtime sont `supabase-config.js` et le client Supabase chargé par CDN.
 - Thème : héraldique sombre (obsidienne + or vieilli + pourpre). Voir la spec.
 - Après modif des dossiers d'images : relancer `generate-data.ps1`.

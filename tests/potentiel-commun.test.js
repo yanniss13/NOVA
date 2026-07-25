@@ -78,7 +78,7 @@ function loadApp(initialTeams){
 
   const exposed = source.replace(
     /\}\)\(\);\s*$/,
-    "Object.assign(globalThis.__hooks,{normalizePotentiel,normalizeHero,normalizeTeam,potentielDetailsOf,weaponTypesOf,isWeaponCompatible,compatibleWeaponGroups,linkedArmorsOf,isLinkedArmorCompatible,Store});})();"
+    "Object.assign(globalThis.__hooks,{normalizePotentiel,normalizeHero,normalizeTeam,potentielDetailsOf,weaponTypesOf,isWeaponCompatible,compatibleWeaponGroups,linkedArmorsOf,isLinkedArmorCompatible,Store,recPlayersForView:typeof recPlayersForView==='function'?recPlayersForView:undefined});})();"
   );
   assert.notStrictEqual(exposed, source, "Le chargeur doit exposer les fonctions réelles");
 
@@ -151,6 +151,24 @@ function loadApp(initialTeams){
 
 function plain(value){
   return JSON.parse(JSON.stringify(value));
+}
+
+// Régression ciblée : la fiche provisoire du membre courant ne pollue pas l'Analyse.
+{
+  const { hooks } = loadApp();
+  assert.strictEqual(typeof hooks.recPlayersForView, "function");
+  const rows = [{ id:"user-2", owner:"user-2", name:"Merlin", dps:[] }];
+  assert.deepStrictEqual(
+    plain(hooks.recPlayersForView(rows, "user-1", "Yannis", true)),
+    [
+      { id:"user-1", owner:"user-1", name:"Yannis", dps:[], updatedAt:0 },
+      { id:"user-2", owner:"user-2", name:"Merlin", dps:[] }
+    ]
+  );
+  assert.deepStrictEqual(
+    plain(hooks.recPlayersForView(rows, "user-1", "Yannis", false)),
+    rows
+  );
 }
 
 // Régression ciblée : une armure liée d'un autre héros est retirée à la migration.

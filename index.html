@@ -1068,7 +1068,11 @@
       return normalized;
     },
     async remove(id){
-      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      if(!currentUser){
+        LocalTeams.remove(id);
+        return;
+      }
+      if(!sb) throw new Error("AUTH_REQUIRED");
       const { error } = await sb.from("teams").delete().eq("id", id);
       if(error) throw error;
       saveCloudTeamCache(cloudTeamsCache.filter(team => team.id !== id));
@@ -1929,6 +1933,20 @@
     localStorage.setItem(CLOUD_REC_CACHE_KEY, JSON.stringify(cloudRecCache));
   }
 
+  function recPlayersForView(players, userId, pseudo, includeCurrentDraft){
+    const list = Array.isArray(players) ? players.slice() : [];
+    if(includeCurrentDraft && userId && !list.some(player => player.owner === userId)){
+      list.unshift({
+        id:userId,
+        owner:userId,
+        name:pseudo || "Membre",
+        dps:[],
+        updatedAt:0
+      });
+    }
+    return list;
+  }
+
   const Rec = {
     all(){ return currentUser ? cloudRecCache.slice() : LocalRec.all(); },
     save(list){
@@ -1940,15 +1958,6 @@
       const { data, error } = await sb.from("recensement").select("*");
       if(error) throw error;
       const players = (data||[]).map(cloudPlayerFromRow);
-      if(!players.some(player => player.owner === currentUser.id)){
-        players.unshift({
-          id:currentUser.id,
-          owner:currentUser.id,
-          name:currentPseudo || "Membre",
-          dps:[],
-          updatedAt:0
-        });
-      }
       saveCloudRecCache(players);
       return Rec.all();
     },
@@ -2114,6 +2123,12 @@
       toast("Recensement indisponible, affichage du cache local.", true);
     }
     if(renderId !== recRenderId) return;
+    players = recPlayersForView(
+      players,
+      currentUser && currentUser.id,
+      currentPseudo,
+      !!currentUser
+    );
     const totalDps = players.reduce((n,p)=>n+((p.dps||[]).length),0);
     $("#recCount").innerHTML = "<b>"+players.length+"</b> membre"+(players.length>1?"s":"")+
       " · <b>"+totalDps+"</b> DPS recensé"+(totalDps>1?"s":"");
