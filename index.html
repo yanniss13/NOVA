@@ -411,26 +411,59 @@
     background:color-mix(in srgb, var(--ec) 14%, var(--obsidian-2));color:var(--parchment)}
   .elem-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--ec);flex:none;box-shadow:0 0 6px var(--ec)}
   .dps-elem-sel{
-    --ec:var(--gold);display:inline-flex;align-items:center;gap:6px;flex:none;position:relative;
-    border-radius:999px;padding:3px 9px;max-width:122px;
-    border:1px solid color-mix(in srgb, var(--ec) 60%, var(--line));
-    background:color-mix(in srgb, var(--ec) 18%, var(--obsidian-2))
+    --ec:var(--gold);position:relative;display:inline-flex;flex:none;
+    max-width:126px
   }
-  .dps-elem-sel .dot{width:8px;height:8px;border-radius:50%;background:var(--ec);flex:none;box-shadow:0 0 6px var(--ec)}
-  .dps-elem-trigger{appearance:none;display:inline-flex;align-items:center;gap:6px;padding:0;border:0;
-    color:var(--parchment);background:transparent;cursor:pointer;font:600 11px var(--ui)}
-  .dps-elem-caret{font-size:13px;line-height:1}
-  .dps-elem-menu{position:absolute;z-index:5;top:-4px;left:calc(100% + 6px);display:flex;flex-direction:column;
-    min-width:max-content;padding:4px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
-  .dps-elem-option{appearance:none;display:flex;align-items:center;gap:6px;padding:5px 7px;border:0;
-    border-radius:5px;color:var(--parchment);background:transparent;cursor:pointer;font:600 11px var(--ui);text-align:left}
-  .dps-elem-option:hover,.dps-elem-option:focus{outline:none;background:var(--panel-2)}
-  .dps-elem-check{visibility:hidden;margin-left:auto}.dps-elem-option.selected .dps-elem-check{visibility:visible}
-  .dps-elem-sel select{
-    appearance:auto;background:transparent;border:0;color:var(--parchment);cursor:pointer;
-    font-family:var(--ui);font-size:11px;font-weight:600;padding:0;color-scheme:dark;max-width:84px
+  .dps-elem-trigger{
+    appearance:none;display:inline-flex;align-items:center;gap:6px;min-width:94px;
+    max-width:126px;padding:4px 9px;border-radius:999px;cursor:pointer;
+    border:1px solid color-mix(in srgb,var(--ec) 60%,var(--line));
+    background:color-mix(in srgb,var(--ec) 18%,var(--obsidian-2));
+    color:var(--parchment);font:600 11px var(--ui);transition:.14s
   }
-  .dps-elem-sel select:focus{outline:none}
+  .dps-elem-trigger:hover,
+  .dps-elem-trigger:focus-visible,
+  .dps-elem-sel.open .dps-elem-trigger{
+    border-color:color-mix(in srgb,var(--ec) 80%,var(--gold-bright));
+    box-shadow:0 0 0 2px color-mix(in srgb,var(--ec) 18%,transparent)
+  }
+  .dps-elem-trigger:focus{outline:none}
+  .dps-elem-sel .dot{
+    width:8px;height:8px;border-radius:50%;background:var(--ec);flex:none;
+    box-shadow:0 0 6px var(--ec)
+  }
+  .dps-elem-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .dps-elem-caret{margin-left:auto;color:var(--gold-bright);transition:transform .14s}
+  .dps-elem-sel.open .dps-elem-caret{transform:rotate(180deg)}
+  .dps-elem-menu{
+    position:absolute;z-index:40;top:calc(100% + 6px);right:0;min-width:142px;
+    padding:5px;border:1px solid var(--gold-deep);border-radius:9px;
+    background:linear-gradient(155deg,var(--panel),var(--obsidian-2));
+    box-shadow:0 14px 30px #050309d9,0 0 18px #5c214533;
+    animation:dps-menu-in .14s ease-out
+  }
+  .dps-elem-menu[hidden]{display:none}
+  .dps-elem-option{
+    appearance:none;width:100%;display:grid;grid-template-columns:10px 1fr 14px;
+    align-items:center;gap:8px;padding:7px 8px;border:0;border-radius:6px;
+    background:transparent;color:var(--muted);font:600 11px var(--ui);
+    text-align:left;cursor:pointer
+  }
+  .dps-elem-option:hover,
+  .dps-elem-option:focus-visible{
+    outline:none;background:#5c214542;color:var(--parchment)
+  }
+  .dps-elem-option.selected{color:var(--parchment);background:#b88a441c}
+  .dps-elem-check{color:var(--gold-bright);opacity:0}
+  .dps-elem-option.selected .dps-elem-check{opacity:1}
+  @keyframes dps-menu-in{
+    from{opacity:0;transform:translateY(-4px)}
+    to{opacity:1;transform:translateY(0)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .dps-elem-menu{animation:none}
+    .dps-elem-trigger,.dps-elem-caret{transition:none}
+  }
 
   /* ---------- Analyse ---------- */
   .an-title{font-family:var(--display);font-weight:700;font-size:20px;color:var(--parchment);

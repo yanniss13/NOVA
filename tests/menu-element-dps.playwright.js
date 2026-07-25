@@ -75,6 +75,32 @@ const REC_KEY = "confrerie7ds.recensement";
     await first.click();
     await page.locator(".rec-player-head").click();
     assert.equal(await first.getAttribute("aria-expanded"), "false");
+
+    await page.setViewportSize({ width:390, height:844 });
+    await first.click();
+    await firstMenu.waitFor({ state:"visible" });
+    const menuStyle = await firstMenu.evaluate(node => {
+      const style = getComputedStyle(node);
+      return {
+        background:style.backgroundImage,
+        border:style.borderTopColor,
+        shadow:style.boxShadow
+      };
+    });
+    assert.notEqual(menuStyle.background, "none");
+    assert.notEqual(menuStyle.shadow, "none");
+
+    const bounds = await firstMenu.boundingBox();
+    assert.ok(bounds.x >= 0);
+    assert.ok(bounds.x + bounds.width <= 390);
+
+    await first.press("Escape");
+    await page.emulateMedia({ reducedMotion:"reduce" });
+    await first.click();
+    const duration = await firstMenu.evaluate(node => getComputedStyle(node).animationDuration);
+    assert.equal(duration, "0s");
+    await first.press("Escape");
+
     assert.deepEqual(errors, []);
 
     console.log("PASS Playwright: menu d’élément DPS accessible et persistant");
