@@ -1,24 +1,39 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { dueSessions, absentPseudos, reminderMessage } = require("../scripts/reminder-core.js");
+const {
+  isReminderWindow, sessionsToRemind, absentPseudos, reminderMessage
+} = require("../scripts/reminder-core.js");
 
-const NOW = "2026-07-25T18:00:00.000Z";
-
-// dueSessions : ouverte + remind_at passé + pas encore rappelée.
+// Fenêtre : dimanche (0) à 12h, heure de Paris.
 {
-  const sessions = [
-    { id:"a", status:"open", remind_at:"2026-07-25T17:00:00.000Z", reminded_at:null },   // due
-    { id:"b", status:"open", remind_at:"2026-07-25T19:00:00.000Z", reminded_at:null },   // futur -> non
-    { id:"c", status:"open", remind_at:"2026-07-25T17:00:00.000Z", reminded_at:"2026-07-25T17:05:00.000Z" }, // déjà -> non
-    { id:"d", status:"won",  remind_at:"2026-07-25T17:00:00.000Z", reminded_at:null },   // fermée -> non
-    { id:"e", status:"open", remind_at:null, reminded_at:null }                          // pas de rappel -> non
-  ];
-  const due = dueSessions(sessions, NOW).map(s => s.id);
-  assert.deepStrictEqual(due, ["a"]);
+  assert.equal(isReminderWindow(0, 12), true);
+  assert.equal(isReminderWindow(0, 11), false); // 11h -> non
+  assert.equal(isReminderWindow(0, 13), false); // 13h -> non
+  assert.equal(isReminderWindow(1, 12), false); // lundi -> non
+  assert.equal(isReminderWindow(6, 12), false); // samedi -> non
 }
 
-// absentPseudos : membres sans participation "participated=true" pour la session.
+// sessionsToRemind : la session OUVERTE la plus récente, pas rappelée récemment.
+{
+  const now = "2026-07-26T10:00:00.000Z"; // un dimanche
+  const sessions = [
+    { id:"old", status:"open", created_at:"2026-07-20T10:00:00.000Z", reminded_at:null },
+    { id:"cur", status:"open", created_at:"2026-07-25T10:00:00.000Z", reminded_at:null }, // + récente
+    { id:"won", status:"won",  created_at:"2026-07-25T12:00:00.000Z", reminded_at:null }  // fermée -> non
+  ];
+  assert.deepStrictEqual(sessionsToRemind(sessions, now).map(s => s.id), ["cur"]);
+
+  // Déjà rappelée il y a 1h -> garde-fou : rien.
+  const guarded = [{ id:"cur", status:"open", created_at:"2026-07-25T10:00:00.000Z", reminded_at:"2026-07-26T09:00:00.000Z" }];
+  assert.deepStrictEqual(sessionsToRemind(guarded, now), []);
+
+  // Rappelée la semaine dernière (> 20h) -> on relance.
+  const lastWeek = [{ id:"cur", status:"open", created_at:"2026-07-25T10:00:00.000Z", reminded_at:"2026-07-19T10:00:00.000Z" }];
+  assert.deepStrictEqual(sessionsToRemind(lastWeek, now).map(s => s.id), ["cur"]);
+}
+
+// absentPseudos : membres sans participation "participated=true".
 {
   const session = { id:"s1" };
   const profiles = [

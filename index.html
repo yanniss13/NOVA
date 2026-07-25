@@ -666,8 +666,9 @@
   .boss-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
   .boss-detail-sub{font-size:13px;color:var(--muted);margin-bottom:6px}
   .boss-detail-admin{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .boss-remind-edit{width:auto;padding:6px 8px;font-size:12px}
   .boss-remind-status{font-size:11.5px;color:var(--muted-2);margin-top:6px}
+  .boss-remind-note{font-size:12px;color:var(--muted);background:rgba(217,164,65,.06);
+    border:1px solid var(--line-soft);border-radius:8px;padding:9px 11px;margin:0;line-height:1.35}
   .boss-h{font-family:var(--display);font-size:15px;color:var(--gold-bright);margin:18px 0 8px;letter-spacing:.04em}
   .boss-mine{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
   .boss-mine .boss-dmg{width:120px}
@@ -3897,7 +3898,6 @@
     const title = el("input",{class:"rec-input", type:"text", placeholder:"Titre (ex. BDG semaine 30)", maxlength:"60"});
     const boss = el("input",{class:"rec-input", type:"text", placeholder:"Nom du boss (optionnel)", maxlength:"40"});
     const date = el("input",{class:"rec-input", type:"date"});
-    const remind = el("input",{class:"rec-input", type:"datetime-local"});
     const elemWrap = el("div",{class:"boss-elem-pick"});
     const chosen = new Set();
     ELEM_ORDER.forEach(e=>{
@@ -3911,7 +3911,7 @@
       if(!t){ toast("Donne un titre à la session.", true); return; }
       save.disabled = true;
       try{
-        const s = await BossStore.createSession({ title:t, boss_name:(boss.value||"").trim(), session_date:date.value||null, elements:[...chosen], remind_at: remind.value ? new Date(remind.value).toISOString() : null });
+        const s = await BossStore.createSession({ title:t, boss_name:(boss.value||"").trim(), session_date:date.value||null, elements:[...chosen] });
         await renderBossView();
         openBossDetail(s);
       }catch(err){ save.disabled = false; toast("Création impossible : "+authMessage(err), true); }
@@ -3920,8 +3920,8 @@
       el("label",{class:"field"},[ el("span",{text:"Titre"}), title ]),
       el("label",{class:"field"},[ el("span",{text:"Boss (optionnel)"}), boss ]),
       el("label",{class:"field"},[ el("span",{text:"Date (optionnel)"}), date ]),
-      el("label",{class:"field"},[ el("span",{text:"Rappel Discord auto (optionnel)"}), remind ]),
       el("div",{class:"field"},[ el("span",{text:"Éléments visés"}), elemWrap ]),
+      el("p",{class:"boss-remind-note", text:"🔔 Rappel Discord automatique chaque dimanche à midi pour les membres sans run (reset lundi 9h)."}),
       save
     ]));
     $("#bossOverlay").classList.add("on");
@@ -3952,10 +3952,8 @@
     const mine = parts.find(p => p.owner === currentUser.id) || { element:"", team_id:"", damage:"", participated:false };
 
     // En-tête
-    const remindTxt = s.reminded_at
-      ? ("Rappel Discord envoyé le "+new Date(s.reminded_at).toLocaleString("fr-FR"))
-      : (s.remind_at ? ("Rappel Discord prévu le "+new Date(s.remind_at).toLocaleString("fr-FR"))
-                     : "Aucun rappel Discord programmé");
+    const remindTxt = "Rappel Discord auto chaque dimanche à midi"
+      + (s.reminded_at ? (" · dernier envoi : "+new Date(s.reminded_at).toLocaleString("fr-FR")) : "");
     const head = el("div",{class:"boss-detail-head"},[
       el("div",{},[
         el("div",{class:"boss-detail-sub", text:[s.boss_name, fmtDate(s.session_date)].filter(Boolean).join(" · ") || "—"}),
@@ -3968,16 +3966,8 @@
       [["open","Ouverte"],["won","Vaincu"],["lost","Échec"]].forEach(([v,l])=>statusSel.appendChild(el("option",{value:v,text:l})));
       statusSel.value = s.status || "open";
       statusSel.addEventListener("change", async()=>{ try{ await BossStore.updateSession(s.id,{status:statusSel.value}); s.status=statusSel.value; renderBossDetail(); }catch(e){ toast("Maj impossible.",true); } });
-      const remindEdit = el("input",{class:"rec-input boss-remind-edit", type:"datetime-local", title:"Rappel Discord automatique"});
-      if(s.remind_at){ const d=new Date(s.remind_at); if(!isNaN(d)) remindEdit.value = new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,16); }
-      remindEdit.addEventListener("change", async()=>{
-        const iso = remindEdit.value ? new Date(remindEdit.value).toISOString() : null;
-        try{ await BossStore.updateSession(s.id,{remind_at:iso, reminded_at:null}); s.remind_at=iso; s.reminded_at=null; renderBossDetail(); }
-        catch(e){ toast("Rappel non enregistré.", true); }
-      });
       head.appendChild(el("div",{class:"boss-detail-admin"},[
         statusSel,
-        remindEdit,
         el("button",{class:"btn btn-danger", type:"button", text:"Supprimer", onclick:async()=>{
           if(!confirm("Supprimer cette session ?")) return;
           try{ await BossStore.deleteSession(s.id); $("#bossOverlay").classList.remove("on"); bossDetailSession=null; await renderBossView(); }

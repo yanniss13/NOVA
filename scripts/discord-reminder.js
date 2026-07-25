@@ -1,13 +1,23 @@
 "use strict";
-/* Rappel Discord automatique des sessions de boss.
-   Lancé par GitHub Actions (cron). Lit Supabase avec la clé service_role
-   (secret GitHub) et poste la liste des absents sur le webhook Discord (secret).
+/* Rappel Discord automatique — chaque DIMANCHE à MIDI (heure de Paris).
+   (Le boss de confrérie reset le lundi 9h.) Lancé par GitHub Actions (cron).
+   Lit Supabase avec la clé service_role (secret GitHub) et poste la liste des
+   membres qui n'ont pas fait leur run sur le webhook Discord (secret).
    Ni la clé ni le webhook n'apparaissent dans le site public. */
-const { dueSessions, absentPseudos, reminderMessage } = require("./reminder-core.js");
+const {
+  isReminderWindow, sessionsToRemind, absentPseudos, reminderMessage
+} = require("./reminder-core.js");
 
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://uxouhbgdlolidjmxwgae.supabase.co";
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
 const WEBHOOK = process.env.DISCORD_WEBHOOK_URL;
+const FORCE = process.env.FORCE === "1"; // lancement manuel : ignore la fenêtre horaire
+
+// Heure locale de Paris (gère automatiquement l'heure d'été/hiver).
+function parisNow() {
+  const paris = new Date(new Date().toLocaleString("en-US", { timeZone: "Europe/Paris" }));
+  return { weekday: paris.getDay(), hour: paris.getHours() };
+}
 
 async function sb(pathname, opts) {
   const res = await fetch(SUPABASE_URL + "/rest/v1/" + pathname, Object.assign({
@@ -26,13 +36,19 @@ async function main() {
     console.log("Secrets manquants (SUPABASE_SERVICE_ROLE / DISCORD_WEBHOOK_URL) — rien à envoyer.");
     return;
   }
+  const { weekday, hour } = parisNow();
+  if (!FORCE && !isReminderWindow(weekday, hour)) {
+    console.log("Hors fenêtre (dimanche 12h Paris). Heure Paris actuelle : jour " + weekday + ", " + hour + "h. Rien à faire.");
+    return;
+  }
+
   const nowIso = new Date().toISOString();
   const sessions = await sb("boss_sessions?select=*");
-  const due = dueSessions(sessions, nowIso);
-  if (!due.length) { console.log("Aucun rappel dû."); return; }
+  const targets = sessionsToRemind(sessions, nowIso);
+  if (!targets.length) { console.log("Aucune session ouverte à relancer."); return; }
 
   const profiles = await sb("profiles?select=id,pseudo");
-  for (const s of due) {
+  for (const s of targets) {
     const parts = await sb("boss_participation?select=owner,participated,session_id&session_id=eq." + s.id);
     const absents = absentPseudos(s, profiles, parts);
     const content = reminderMessage(s, absents);

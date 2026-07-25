@@ -1,13 +1,27 @@
 "use strict";
-/* Logique pure du rappel Discord des sessions de boss (aucun réseau -> testable). */
+/* Logique pure du rappel Discord des sessions de boss (aucun réseau -> testable).
+   Rappel hebdomadaire : chaque dimanche à midi (heure de Paris), on relance les
+   membres qui n'ont pas fait leur run sur la session en cours. */
 
-// Sessions "dues" : ouvertes, avec un rappel programmé atteint, pas encore rappelées.
-function dueSessions(sessions, nowIso) {
+const REMINDER_WEEKDAY = 0; // dimanche (getDay : 0 = dimanche)
+const REMINDER_HOUR = 12;   // midi, heure locale de Paris
+
+// Fenêtre d'envoi : dimanche 12h (heure de Paris). Le runner fournit l'heure Paris.
+function isReminderWindow(parisWeekday, parisHour) {
+  return parisWeekday === REMINDER_WEEKDAY && parisHour === REMINDER_HOUR;
+}
+
+// Session à relancer = la session OUVERTE la plus récente, pas déjà rappelée
+// dans les ~20 dernières heures (garde-fou contre un double envoi le même jour ;
+// d'une semaine sur l'autre, reminded_at a > 6 jours -> on relance).
+function sessionsToRemind(sessions, nowIso) {
   const now = Date.parse(nowIso);
-  return (sessions || []).filter(s =>
-    s && s.status === "open" && s.remind_at && !s.reminded_at &&
-    Date.parse(s.remind_at) <= now
+  const open = (sessions || []).filter(s =>
+    s && s.status === "open" &&
+    (!s.reminded_at || (now - Date.parse(s.reminded_at)) > 20 * 3600 * 1000)
   );
+  open.sort((a, b) => Date.parse(b.created_at || 0) - Date.parse(a.created_at || 0));
+  return open.slice(0, 1);
 }
 
 // Absents d'une session = membres (profiles) sans participation "participated = true".
@@ -26,10 +40,10 @@ function absentPseudos(session, profiles, participations) {
 function reminderMessage(session, absents) {
   const title = (session && session.title) || "Boss de Guilde";
   if (!absents.length) {
-    return "✅ **" + title + "** — tout le monde a fait son run. Bravo !";
+    return "✅ **" + title + "** — tout le monde a fait son run avant le reset de lundi 9h. Bravo !";
   }
-  return "🔔 **" + title + "** — il manque encore le run de : " +
+  return "🔔 **" + title + "** — reset lundi 9h ! Il manque encore le run de : " +
     absents.join(", ") + ".\nPensez à faire vos dégâts sur le Boss de Guilde ! ⚔️";
 }
 
-module.exports = { dueSessions, absentPseudos, reminderMessage };
+module.exports = { isReminderWindow, sessionsToRemind, absentPseudos, reminderMessage, REMINDER_WEEKDAY, REMINDER_HOUR };

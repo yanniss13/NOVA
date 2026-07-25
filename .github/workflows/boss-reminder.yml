@@ -1,15 +1,20 @@
 name: Rappel Discord — Boss de Guilde
 
-# Rappelle automatiquement, sur Discord, les membres qui n'ont pas fait leur run.
-# Nécessite 2 secrets de dépôt (Settings -> Secrets and variables -> Actions) :
-#   SUPABASE_SERVICE_ROLE : la clé "service_role" de ton projet Supabase (secrète)
-#   DISCORD_WEBHOOK_URL   : l'URL du webhook de ton salon Discord
-# (SUPABASE_URL est optionnel : par défaut le projet NOVA.)
+# Relance sur Discord les membres qui n'ont pas fait leur run.
+# Le boss de confrérie reset le LUNDI 9h -> rappel chaque DIMANCHE à MIDI (Paris).
+# GitHub Actions tourne en UTC : on lance à 10:00 ET 11:00 UTC le dimanche
+# (couvre midi Paris en heure d'été comme en heure d'hiver) ; le script ne poste
+# que si l'heure locale de Paris est bien dimanche 12h.
+#
+# 2 secrets requis (Settings -> Secrets and variables -> Actions) :
+#   SUPABASE_SERVICE_ROLE : clé "service_role" Supabase (secrète)
+#   DISCORD_WEBHOOK_URL   : URL du webhook de ton salon Discord
 
 on:
   schedule:
-    - cron: "*/30 * * * *"   # toutes les 30 minutes
-  workflow_dispatch: {}       # + bouton "Run workflow" manuel dans l'onglet Actions
+    - cron: "0 10 * * 0"   # dimanche 10:00 UTC (= 12:00 Paris en été)
+    - cron: "0 11 * * 0"   # dimanche 11:00 UTC (= 12:00 Paris en hiver)
+  workflow_dispatch: {}     # + bouton "Run workflow" manuel (ignore la fenêtre horaire)
 
 jobs:
   remind:
@@ -19,9 +24,11 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Envoyer les rappels dus
+      - name: Envoyer le rappel du dimanche
         run: node scripts/discord-reminder.js
         env:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          # Lancement manuel -> on force l'envoi (ignore la fenêtre dimanche 12h).
+          FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
