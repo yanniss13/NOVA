@@ -5,7 +5,7 @@
    - autres assets même origine : stale-while-revalidate.
    - Supabase et CDN supabase-js : network-only (jamais mis en cache).
    Bump CACHE à chaque déploiement significatif pour purger l'ancien cache. */
-const CACHE = "conf7ds-v1";
+const CACHE = "conf7ds-v2";
 const ASSETS = [
   "./", "./index.html",
   "./data.js", "./potentiels.js", "./armures-liees.js",
