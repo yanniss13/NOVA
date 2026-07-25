@@ -52,12 +52,36 @@ const { chromium } = require("playwright");
     assert.equal(saved.pseudo, "Yannis");
     assert.equal(saved.data.heroes[0].char, "meliodas");
 
+    await page.locator('.tab[data-view="recensement"]').click();
+    await page.locator("#recGrid .rec-player").first().waitFor();
+    assert.equal(await page.locator("#recGrid .rec-player").count(), 2);
+    assert.equal(await page.locator("#recAddPlayer").isVisible(), false);
+
+    const ownRecensement = page.locator("#recGrid .rec-player").filter({ hasText:"Yannis" });
+    const otherRecensement = page.locator("#recGrid .rec-player").filter({ hasText:"Merlin" });
+    assert.equal(await ownRecensement.locator(".dps-add").count(), 1);
+    assert.equal(await otherRecensement.locator(".dps-add").count(), 0);
+    assert.equal(await otherRecensement.locator(".rec-del").count(), 0);
+
+    await ownRecensement.locator(".dps-add").click();
+    await page.locator('#pickerGrid .tile[title="Diane"]').click();
+    await page.waitForFunction(() => {
+      const mine = window.__fakeSupabaseState.recensement.find(row => row.owner === "user-1");
+      return mine && mine.dps.length === 2;
+    });
+
+    await page.locator('.tab[data-view="analyse"]').click();
+    await page.locator("#analyseBody .rank-table").waitFor();
+    const analyseText = await page.locator("#analyseBody").textContent();
+    assert.match(analyseText, /Yannis/);
+    assert.match(analyseText, /Merlin/);
+
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await authOverlay.waitFor({ state:"visible" });
     assert.equal(await authOverlay.evaluate(el => el.classList.contains("on")), true);
     assert.deepEqual(errors, []);
 
-    console.log("PASS Playwright: Supabase Étape 1 — auth et équipes");
+    console.log("PASS Playwright: Supabase Étape 1 — auth, équipes et recensement");
   }finally{
     await browser.close();
   }
@@ -98,7 +122,20 @@ async function installFakeSupabase(page){
           updated_at:"2026-07-25T07:00:00.000Z"
         }
       ],
-      recensement:[],
+      recensement:[
+        {
+          owner:"user-1",
+          pseudo:"Yannis",
+          dps:[{ char:"meliodas", element:"FIRE", pot:7 }],
+          updated_at:"2026-07-25T08:30:00.000Z"
+        },
+        {
+          owner:"user-2",
+          pseudo:"Merlin",
+          dps:[{ char:"merlin", element:"ICE", pot:9 }],
+          updated_at:"2026-07-25T08:20:00.000Z"
+        }
+      ],
       calls:[]
     };
 

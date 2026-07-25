@@ -32,6 +32,7 @@
   }
 
   *{box-sizing:border-box}
+  [hidden]{display:none!important}
   html,body{margin:0}
   body{
     font-family:var(--ui);
@@ -695,7 +696,7 @@
     <p class="section-lead">Pour chaque membre, ajoute ses DPS : choisis le héros (l'élément est détecté automatiquement) et son potentiel. Sert à savoir qui envoyer sur quel élément du Boss de Guilde.</p>
 
     <div class="roster-toolbar">
-      <div class="field" style="flex-direction:row;align-items:flex-end;gap:8px">
+      <div class="field" id="recLocalControls" style="flex-direction:row;align-items:flex-end;gap:8px">
         <input id="recPlayer" class="rec-input" type="text" placeholder="Pseudo du membre" autocomplete="off" maxlength="30">
         <button class="btn btn-primary" id="recAddPlayer">Ajouter le membre</button>
       </div>
@@ -820,6 +821,7 @@
   const POT_MAX = 10;
   const META = window.SEVEN_DS_META || {};
   const CLOUD_TEAMS_CACHE_KEY = "confrerie7ds.cloud.teams";
+  const CLOUD_REC_CACHE_KEY = "confrerie7ds.cloud.recensement";
   const sb = window.supabase && window.SB_URL && window.SB_KEY
     ? window.supabase.createClient(window.SB_URL, window.SB_KEY)
     : null;
@@ -1168,6 +1170,7 @@
     $("#accountLogin").hidden = !!currentUser;
     $("#accountConnected").hidden = !currentUser;
     $("#accountPseudo").textContent = currentPseudo || (currentUser && currentUser.email) || "";
+    $("#recLocalControls").hidden = !!currentUser;
     if(typeof pseudoInput !== "undefined"){
       pseudoInput.disabled = !!currentUser;
       if(currentUser && currentPseudo){
@@ -1193,6 +1196,8 @@
     }
     updateAccountUi();
     if($("#view-roster").classList.contains("active")) void renderRoster();
+    if($("#view-recensement").classList.contains("active")) void renderRecensement();
+    if($("#view-analyse").classList.contains("active")) void renderAnalyse();
   }
 
   async function signIn(){
@@ -1284,8 +1289,8 @@
     document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
     $("#view-"+name).classList.add("active");
     if(name==="roster") void renderRoster();
-    if(name==="recensement") renderRecensement();
-    if(name==="analyse") renderAnalyse();
+    if(name==="recensement") void renderRecensement();
+    if(name==="analyse") void renderAnalyse();
     window.scrollTo({top:0, behavior:"smooth"});
   }
   document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click", ()=>showView(b.dataset.view)));
@@ -1874,9 +1879,97 @@
 
   /* ============================ Recensement DPS ============================ */
   const REC_KEY = "confrerie7ds.recensement";
-  const Rec = {
+  const LocalRec = {
     all(){ try{ return JSON.parse(localStorage.getItem(REC_KEY)) || []; }catch(e){ return []; } },
     save(list){ localStorage.setItem(REC_KEY, JSON.stringify(list)); }
+  };
+
+  function normalizeDpsList(value){
+    if(!Array.isArray(value)) return [];
+    return value.filter(item => item && typeof item === "object" && item.char).map(item => ({
+      char:String(item.char),
+      element:item.element ? String(item.element).toUpperCase() : null,
+      pot:Math.max(0, Math.min(POT_MAX, Math.trunc(Number(item.pot)||0)))
+    }));
+  }
+
+  function cloudPlayerFromRow(row){
+    return {
+      id:row.owner,
+      owner:row.owner,
+      name:row.pseudo || "Membre",
+      dps:normalizeDpsList(row.dps),
+      updatedAt:row.updated_at ? Date.parse(row.updated_at) : 0
+    };
+  }
+
+  function readRecCache(){
+    try{
+      const list = JSON.parse(localStorage.getItem(CLOUD_REC_CACHE_KEY)) || [];
+      return Array.isArray(list) ? list.map(player => Object.assign({}, player, {
+        dps:normalizeDpsList(player.dps)
+      })) : [];
+    }catch(e){ return []; }
+  }
+  let cloudRecCache = readRecCache();
+
+  function saveCloudRecCache(list){
+    cloudRecCache = Array.isArray(list) ? list.map(player => Object.assign({}, player, {
+      dps:normalizeDpsList(player.dps)
+    })) : [];
+    localStorage.setItem(CLOUD_REC_CACHE_KEY, JSON.stringify(cloudRecCache));
+  }
+
+  const Rec = {
+    all(){ return currentUser ? cloudRecCache.slice() : LocalRec.all(); },
+    save(list){
+      if(currentUser) saveCloudRecCache(list);
+      else LocalRec.save(list);
+    },
+    async refresh(){
+      if(!currentUser || !sb) return Rec.all();
+      const { data, error } = await sb.from("recensement").select("*");
+      if(error) throw error;
+      const players = (data||[]).map(cloudPlayerFromRow);
+      if(!players.some(player => player.owner === currentUser.id)){
+        players.unshift({
+          id:currentUser.id,
+          owner:currentUser.id,
+          name:currentPseudo || "Membre",
+          dps:[],
+          updatedAt:0
+        });
+      }
+      saveCloudRecCache(players);
+      return Rec.all();
+    },
+    async saveMine(player){
+      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      const mine = {
+        id:currentUser.id,
+        owner:currentUser.id,
+        name:currentPseudo || player.name || "Membre",
+        dps:normalizeDpsList(player.dps),
+        updatedAt:Date.now()
+      };
+      const { error } = await sb.from("recensement").upsert({
+        owner:currentUser.id,
+        pseudo:mine.name,
+        dps:mine.dps,
+        updated_at:new Date(mine.updatedAt).toISOString()
+      });
+      if(error) throw error;
+      const list = cloudRecCache.filter(item => item.owner !== currentUser.id);
+      list.unshift(mine);
+      saveCloudRecCache(list);
+      return mine;
+    },
+    async removeMine(){
+      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      const { error } = await sb.from("recensement").delete().eq("owner", currentUser.id);
+      if(error) throw error;
+      saveCloudRecCache(cloudRecCache.filter(player => player.owner !== currentUser.id));
+    }
   };
   const ELEM_ORDER = ["FIRE","ICE","WIND","EARTH","HOLY","DARK","THUNDER"];
   const elemLabel = e => e==="HOLY" ? "Lumière" : (ELEMENTS[e] ? ELEMENTS[e].label : (e||"—"));
@@ -1924,12 +2017,27 @@
     return sel;
   }
 
-  function renderRecensement(){
-    const players = Rec.all();
+  let recRenderId = 0;
+
+  async function renderRecensement(){
+    const renderId = ++recRenderId;
+    const grid = $("#recGrid");
+    grid.className = "";
+    grid.innerHTML = "";
+    grid.appendChild(el("div",{class:"empty-state"},[
+      el("p",{class:"big",text:"Chargement du recensement…"})
+    ]));
+    let players;
+    try{
+      players = await Rec.refresh();
+    }catch(error){
+      players = Rec.all();
+      toast("Recensement indisponible, affichage du cache local.", true);
+    }
+    if(renderId !== recRenderId) return;
     const totalDps = players.reduce((n,p)=>n+((p.dps||[]).length),0);
     $("#recCount").innerHTML = "<b>"+players.length+"</b> membre"+(players.length>1?"s":"")+
       " · <b>"+totalDps+"</b> DPS recensé"+(totalDps>1?"s":"");
-    const grid = $("#recGrid");
     grid.className = players.length ? "rec-grid" : "";
     grid.innerHTML = "";
     if(!players.length){
@@ -1942,13 +2050,50 @@
     players.forEach(p=>grid.appendChild(playerCard(p)));
   }
 
+  function canManagePlayer(player){
+    return !currentUser || !!player && player.owner === currentUser.id;
+  }
+
+  async function persistPlayer(player){
+    try{
+      if(currentUser){
+        if(!canManagePlayer(player)) throw new Error("AUTH_REQUIRED");
+        await Rec.saveMine(player);
+      }else{
+        const list = LocalRec.all();
+        const index = list.findIndex(item => item.id === player.id);
+        if(index>=0) list[index]=player; else list.push(player);
+        LocalRec.save(list);
+      }
+      if($("#view-analyse").classList.contains("active")) void renderAnalyse();
+    }catch(error){
+      toast("Recensement non enregistré : "+authMessage(error), true);
+    }
+  }
+
+  async function removePlayer(player){
+    if(!canManagePlayer(player)) return;
+    if(!confirm('Retirer « '+(player.name||"?")+' » du recensement ?')) return;
+    try{
+      if(currentUser) await Rec.removeMine();
+      else LocalRec.save(LocalRec.all().filter(item => item.id !== player.id));
+      await renderRecensement();
+    }catch(error){
+      toast("Suppression impossible : "+authMessage(error), true);
+    }
+  }
+
   function playerCard(p){
-    const head = el("div",{class:"rec-player-head"},[
+    const editable = canManagePlayer(p);
+    const headItems = [
       el("div",{class:"seal small", text:initials(p.name)}),
-      el("span",{class:"rec-name", text:p.name || "?"}),
-      el("button",{class:"rec-del", type:"button", title:"Retirer le membre", text:"✕",
-        onclick:()=>{ if(confirm('Retirer « '+(p.name||"?")+' » du recensement ?')){ Rec.save(Rec.all().filter(x=>x.id!==p.id)); renderRecensement(); } }})
-    ]);
+      el("span",{class:"rec-name", text:p.name || "?"})
+    ];
+    if(editable){
+      headItems.push(el("button",{class:"rec-del", type:"button", title:"Retirer le membre", text:"✕",
+        onclick:()=>void removePlayer(p)}));
+    }
+    const head = el("div",{class:"rec-player-head"},headItems);
 
     const list = el("div",{class:"dps-list"});
     const dps = (p.dps||[]).slice().sort((a,b)=>{
@@ -1961,31 +2106,53 @@
       const port = el("div",{class:"dps-portrait"});
       if(ch) port.appendChild(el("img",{src:ch.file, alt:ch.name, loading:"lazy"}));
       const realIdx = (p.dps||[]).indexOf(d);
-      const saveP = ()=>{ Rec.save(Rec.all().map(x=>x.id===p.id?p:x)); if(document.getElementById("view-analyse").classList.contains("active")) renderAnalyse(); };
-      list.appendChild(el("div",{class:"dps-row"},[
+      const rowItems = [
         port,
-        el("span",{class:"dps-name", text: ch ? ch.name : d.char}),
-        elemControl(d.char, dpsElem(d), v=>{ p.dps[realIdx].element=v; saveP(); }),
-        potSelect(d.pot, v=>{ p.dps[realIdx].pot=v; saveP(); }),
-        el("button",{class:"dps-del", type:"button", title:"Retirer", text:"✕",
-          onclick:()=>{ p.dps.splice(realIdx,1); Rec.save(Rec.all().map(x=>x.id===p.id?p:x)); renderRecensement(); }})
-      ]));
+        el("span",{class:"dps-name", text: ch ? ch.name : d.char})
+      ];
+      if(editable){
+        rowItems.push(elemControl(d.char, dpsElem(d), value=>{
+          p.dps[realIdx].element=value;
+          void persistPlayer(p);
+        }));
+        rowItems.push(potSelect(d.pot, value=>{
+          p.dps[realIdx].pot=value;
+          void persistPlayer(p);
+        }));
+        rowItems.push(el("button",{class:"dps-del", type:"button", title:"Retirer", text:"✕",
+          onclick:()=>{
+            p.dps.splice(realIdx,1);
+            void persistPlayer(p).then(()=>renderRecensement());
+          }}));
+      }else{
+        rowItems.push(elemBadge(dpsElem(d)));
+        rowItems.push(el("span",{class:"dps-pot", text:d.pot>0 ? "P"+d.pot : "—"}));
+      }
+      list.appendChild(el("div",{class:"dps-row"},rowItems));
     });
 
-    const add = el("button",{class:"dps-add", type:"button", text:"+ Ajouter un DPS",
-      onclick:()=>{
-        Picker.open({
-          title:"DPS de "+(p.name||"?"),
-          items:(DATA.personnages||[]).map(c=>({value:c.id, name:c.name, file:c.file})),
-          portrait:true,
-          onSelect:v=>{ if(!v) return; p.dps=p.dps||[]; p.dps.push({char:v, pot:0, element:(charElements(v)[0]||elemOf(v)||null)}); Rec.save(Rec.all().map(x=>x.id===p.id?p:x)); renderRecensement(); }
-        });
-      }});
-
-    return el("div",{class:"rec-player"},[head, list, add]);
+    const children = [head, list];
+    if(editable){
+      children.push(el("button",{class:"dps-add", type:"button", text:"+ Ajouter un DPS",
+        onclick:()=>{
+          Picker.open({
+            title:"DPS de "+(p.name||"?"),
+            items:(DATA.personnages||[]).map(c=>({value:c.id, name:c.name, file:c.file})),
+            portrait:true,
+            onSelect:value=>{
+              if(!value) return;
+              p.dps=p.dps||[];
+              p.dps.push({char:value, pot:0, element:(charElements(value)[0]||elemOf(value)||null)});
+              void persistPlayer(p).then(()=>renderRecensement());
+            }
+          });
+        }}));
+    }
+    return el("div",{class:"rec-player"},children);
   }
 
   $("#recAddPlayer").addEventListener("click", ()=>{
+    if(currentUser) return;
     const name = ($("#recPlayer").value||"").trim();
     if(!name){ toast("Entre un pseudo.", true); return; }
     const list = Rec.all();
@@ -1993,7 +2160,7 @@
     list.push({ id:uid(), name, dps:[] });
     Rec.save(list);
     $("#recPlayer").value = "";
-    renderRecensement();
+    void renderRecensement();
   });
   $("#recPlayer").addEventListener("keydown", e=>{ if(e.key==="Enter") $("#recAddPlayer").click(); });
 
@@ -2009,22 +2176,47 @@
   $("#recImportFile").addEventListener("change", e=>{
     const file=e.target.files[0]; if(!file) return;
     const r=new FileReader();
-    r.onload=()=>{ try{
+    r.onload=async()=>{ try{
       const inc=JSON.parse(r.result); if(!Array.isArray(inc)) throw 0;
-      const list=Rec.all();
-      inc.forEach(p=>{ if(!p||typeof p!=="object")return; if(!p.id)p.id=uid(); if(!Array.isArray(p.dps))p.dps=[];
-        const i=list.findIndex(x=>x.id===p.id); if(i>=0)list[i]=p; else list.push(p); });
-      Rec.save(list); renderRecensement(); toast(inc.length+" membre(s) importé(s).");
+      const valid=inc.filter(p=>p&&typeof p==="object").map(p=>Object.assign({},p,{
+        id:p.id||uid(), dps:normalizeDpsList(p.dps)
+      }));
+      if(currentUser){
+        const mine=valid.find(p=>(p.name||p.pseudo||"").toLowerCase()===currentPseudo.toLowerCase())
+          || (valid.length===1 ? valid[0] : null);
+        if(!mine) throw new Error("Choisis un fichier qui contient uniquement ton recensement ou une entrée à ton pseudo.");
+        await Rec.saveMine(mine);
+        toast("Ton recensement a été importé.");
+      }else{
+        const list=LocalRec.all();
+        valid.forEach(p=>{ const i=list.findIndex(x=>x.id===p.id); if(i>=0)list[i]=p; else list.push(p); });
+        LocalRec.save(list);
+        toast(valid.length+" membre(s) importé(s).");
+      }
+      await renderRecensement();
     }catch(err){ toast("Fichier JSON invalide.", true); } e.target.value=""; };
     r.readAsText(file);
   });
 
   /* ============================ Analyse ============================ */
   let analyseElem = null;
+  let analyseRenderId = 0;
 
-  function renderAnalyse(){
-    const players = Rec.all();
+  async function renderAnalyse(){
+    const renderId = ++analyseRenderId;
     const box = $("#analyseBody");
+    box.innerHTML = "";
+    box.appendChild(el("div",{class:"empty-state"},[
+      el("p",{class:"big",text:"Chargement de l’analyse…"})
+    ]));
+    let players;
+    try{
+      players = await Rec.refresh();
+    }catch(error){
+      players = Rec.all();
+      toast("Analyse indisponible, affichage du cache local.", true);
+    }
+    if(renderId !== analyseRenderId) return;
     box.innerHTML = "";
     if(!players.length){
       box.appendChild(el("div",{class:"empty-state"},[
@@ -2064,7 +2256,7 @@
     const chips = el("div",{class:"elem-chips"});
     ELEM_ORDER.forEach(e=>{
       chips.appendChild(el("button",{class:"elem-chip"+(e===analyseElem?" active":""),
-        onclick:()=>{ analyseElem=e; renderAnalyse(); }},[ elemBadge(e) ]));
+        onclick:()=>{ analyseElem=e; void renderAnalyse(); }},[ elemBadge(e) ]));
     });
     box.appendChild(chips);
 
