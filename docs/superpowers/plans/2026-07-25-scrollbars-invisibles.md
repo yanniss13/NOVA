@@ -4,7 +4,7 @@
 
 **Goal:** Masquer toutes les barres de défilement du site sans désactiver le défilement.
 
-**Architecture:** Une règle CSS globale agit sur tous les conteneurs défilables. Un test Node vérifie les mécanismes Firefox et WebKit ; les parcours Playwright existants prouvent que les rails et la page restent défilables et sans débordement mobile.
+**Architecture:** Une règle CSS globale agit sur tous les conteneurs défilables. Un test Playwright vérifie les styles calculés et fait réellement défiler un conteneur dans les deux axes ; les parcours existants prouvent que les rails et la page restent sans débordement mobile.
 
 **Tech Stack:** HTML/CSS autonome, Node.js `assert`, Playwright Chromium.
 
@@ -21,7 +21,7 @@
 ### Task 1: Masquage global sans perte du défilement
 
 **Files:**
-- Create: `tests/scrollbars-invisibles.test.js`
+- Create: `tests/scrollbars-invisibles.playwright.js`
 - Modify: `index.html:35-50`
 - Modify: `package.json:6-9`
 
@@ -29,39 +29,60 @@
 - Consumes: feuille CSS inline de `index.html`.
 - Produces: règle globale de présentation des barres, sans API JavaScript.
 
-- [ ] **Step 1: Écrire le test statique rouge**
+- [ ] **Step 1: Écrire le test de comportement rouge**
 
 ```js
 "use strict";
 
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
 const path = require("node:path");
+const { pathToFileURL } = require("node:url");
+const { chromium } = require("playwright");
 
-const html = fs.readFileSync(
-  path.resolve(__dirname, "..", "index.html"),
-  "utf8"
-);
+(async()=>{
+  const browser = await chromium.launch({ headless:true });
+  const page = await browser.newPage();
+  try{
+    await page.goto(pathToFileURL(path.resolve(__dirname, "..", "index.html")).href);
+    const result = await page.evaluate(() => {
+      const probe = document.createElement("div");
+      probe.style.cssText = "width:100px;height:100px;overflow:auto;position:fixed;left:-9999px";
+      const content = document.createElement("div");
+      content.style.cssText = "width:300px;height:300px";
+      probe.appendChild(content);
+      document.body.appendChild(probe);
 
-assert.match(
-  html,
-  /\*\s*\{[^}]*scrollbar-width\s*:\s*none[^}]*\}/i,
-  "Tous les conteneurs doivent masquer leur barre dans Firefox"
-);
-assert.match(
-  html,
-  /\*::\s*-webkit-scrollbar\s*\{[^}]*display\s*:\s*none[^}]*\}/i,
-  "Tous les conteneurs doivent masquer leur barre dans Chromium et Safari"
-);
+      probe.scrollTop = 45;
+      probe.scrollLeft = 35;
+      const measured = {
+        scrollbarWidth:getComputedStyle(probe).scrollbarWidth,
+        webkitDisplay:getComputedStyle(probe, "::-webkit-scrollbar").display,
+        scrollTop:probe.scrollTop,
+        scrollLeft:probe.scrollLeft
+      };
+      probe.remove();
+      return measured;
+    });
 
-console.log("PASS barres de défilement invisibles");
+    assert.equal(result.scrollbarWidth, "none");
+    assert.equal(result.webkitDisplay, "none");
+    assert.equal(result.scrollTop, 45);
+    assert.equal(result.scrollLeft, 35);
+    console.log("PASS Playwright: barres invisibles, défilement conservé");
+  }finally{
+    await browser.close();
+  }
+})().catch(error=>{
+  console.error(error);
+  process.exitCode = 1;
+});
 ```
 
 - [ ] **Step 2: Confirmer l’échec**
 
-Run: `node tests/scrollbars-invisibles.test.js`
+Run: `node tests/scrollbars-invisibles.playwright.js`
 
-Expected: FAIL sur la première assertion car aucune règle globale
+Expected: FAIL sur `scrollbarWidth` car aucune règle globale
 `scrollbar-width:none` n’existe.
 
 - [ ] **Step 3: Ajouter la règle CSS minimale**
@@ -78,17 +99,17 @@ Ces règles masquent seulement l’habillage natif. Elles ne changent ni
 
 - [ ] **Step 4: Ajouter le test à la suite**
 
-Préfixer les scripts `test` et `test:unit` de `package.json` avec :
+Ajouter aux scripts `test` et `test:e2e` de `package.json` :
 
 ```json
-"node tests/scrollbars-invisibles.test.js && "
+"node tests/scrollbars-invisibles.playwright.js"
 ```
 
 - [ ] **Step 5: Vérifier le test ciblé**
 
-Run: `node tests/scrollbars-invisibles.test.js`
+Run: `node tests/scrollbars-invisibles.playwright.js`
 
-Expected: `PASS barres de défilement invisibles`.
+Expected: `PASS Playwright: barres invisibles, défilement conservé`.
 
 - [ ] **Step 6: Vérifier tous les comportements**
 
@@ -104,6 +125,6 @@ Run: `git diff --check`
 Expected: aucune erreur.
 
 ```powershell
-git add index.html package.json tests/scrollbars-invisibles.test.js
+git add index.html package.json tests/scrollbars-invisibles.playwright.js
 git commit -m "style: masquer toutes les barres de défilement"
 ```
