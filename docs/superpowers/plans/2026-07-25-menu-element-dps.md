@@ -69,10 +69,6 @@ const REC_KEY = "confrerie7ds.recensement";
     }, { key:REC_KEY });
 
     await page.goto(pathToFileURL(path.resolve(__dirname, "..", "index.html")).href);
-    await page.getByRole("button", {
-      name:"Continuer hors connexion",
-      exact:true
-    }).click();
     await page.locator('.tab[data-view="recensement"]').click();
 
     const triggers = page.locator(".dps-elem-trigger");
