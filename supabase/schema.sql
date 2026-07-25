@@ -88,6 +88,7 @@ create policy roster_delete on public.roster_characters for delete to authentica
 
 -- 5) Sessions de boss de guilde : 6 GROUPES auto-créés chaque semaine (reset lundi 9h).
 --    Les membres rejoignent un ou plusieurs groupes (boss_participation).
+-- Une ligne boss_sessions represente une run precise, et non un groupe permanent.
 create table if not exists public.boss_sessions (
   id           uuid primary key default gen_random_uuid(),
   created_by   uuid not null references auth.users(id) on delete cascade,
@@ -98,6 +99,8 @@ create table if not exists public.boss_sessions (
   slot         int,                              -- n° de groupe (1..6)
   elements     text[] not null default '{}',   -- (héritage) éléments visés
   status       text not null default 'open',    -- open | won | lost | archived
+  run_no       integer not null default 1,      -- run du groupe pendant la semaine
+  completed_at timestamptz,                     -- fin definitive de cette run
   remind_at    timestamptz,                      -- rappel Discord auto (optionnel)
   reminded_at  timestamptz,                      -- horodatage de l'envoi du rappel
   created_at   timestamptz not null default now()
@@ -107,10 +110,16 @@ alter table public.boss_sessions add column if not exists remind_at   timestampt
 alter table public.boss_sessions add column if not exists reminded_at timestamptz;
 alter table public.boss_sessions add column if not exists week_start  date;
 alter table public.boss_sessions add column if not exists slot        int;
+alter table public.boss_sessions add column if not exists run_no       integer not null default 1;
+alter table public.boss_sessions add column if not exists completed_at timestamptz;
 create index if not exists boss_sessions_created_idx on public.boss_sessions(created_at desc);
 -- Un seul groupe N par semaine : sert de cible au "upsert" côté appli (anti-doublon).
-create unique index if not exists boss_sessions_week_slot_idx
-  on public.boss_sessions(week_start, slot);
+drop index if exists public.boss_sessions_week_slot_idx;
+create unique index if not exists boss_sessions_week_slot_run_idx
+  on public.boss_sessions(week_start, slot, run_no);
+create unique index if not exists boss_sessions_one_open_slot_idx
+  on public.boss_sessions(week_start, slot)
+  where status = 'open';
 
 -- Appartenance d'un membre à un groupe (rejoindre / quitter). "Juste rejoindre".
 create table if not exists public.boss_participation (
@@ -129,15 +138,169 @@ create index if not exists boss_participation_session_idx on public.boss_partici
 alter table public.boss_sessions      enable row level security;
 alter table public.boss_participation enable row level security;
 
+create or replace function public.join_boss_run(p_session_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_owner uuid := auth.uid();
+  v_week date;
+  v_status text;
+  v_count integer;
+  v_pseudo text;
+begin
+  if v_owner is null then
+    raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
+  end if;
+
+  select week_start, status
+    into v_week, v_status
+    from public.boss_sessions
+   where id = p_session_id
+   for update;
+
+  if not found then
+    raise exception 'RUN_NOT_FOUND' using errcode = 'P0001';
+  end if;
+  if v_status <> 'open' then
+    raise exception 'RUN_ARCHIVED' using errcode = 'P0001';
+  end if;
+  if exists (
+    select 1 from public.boss_participation
+     where session_id = p_session_id and owner = v_owner
+  ) then
+    return;
+  end if;
+
+  perform pg_advisory_xact_lock(
+    hashtextextended(v_owner::text || ':' || v_week::text, 0)
+  );
+
+  select count(*)
+    into v_count
+    from public.boss_participation bp
+    join public.boss_sessions bs on bs.id = bp.session_id
+   where bp.owner = v_owner
+     and bs.week_start = v_week;
+
+  if v_count >= 3 then
+    raise exception 'RUN_LIMIT_REACHED' using errcode = 'P0001';
+  end if;
+
+  select nullif(trim(pseudo), '')
+    into v_pseudo
+    from public.profiles
+   where id = v_owner;
+
+  insert into public.boss_participation(session_id, owner, pseudo, updated_at)
+  values (p_session_id, v_owner, coalesce(v_pseudo, 'Membre'), now())
+  on conflict (session_id, owner) do nothing;
+end;
+$$;
+
+create or replace function public.leave_boss_run(p_session_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_owner uuid := auth.uid();
+  v_status text;
+begin
+  if v_owner is null then
+    raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
+  end if;
+
+  select status
+    into v_status
+    from public.boss_sessions
+   where id = p_session_id
+   for update;
+
+  if not found then
+    raise exception 'RUN_NOT_FOUND' using errcode = 'P0001';
+  end if;
+  if v_status <> 'open' then
+    raise exception 'RUN_ARCHIVED' using errcode = 'P0001';
+  end if;
+
+  delete from public.boss_participation
+   where session_id = p_session_id
+     and owner = v_owner;
+end;
+$$;
+
+create or replace function public.complete_boss_run(p_session_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_owner uuid := auth.uid();
+  v_run public.boss_sessions%rowtype;
+begin
+  if v_owner is null then
+    raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
+  end if;
+
+  select *
+    into v_run
+    from public.boss_sessions
+   where id = p_session_id
+   for update;
+
+  if not found then
+    raise exception 'RUN_NOT_FOUND' using errcode = 'P0001';
+  end if;
+  if v_run.status <> 'open' then
+    return;
+  end if;
+  if not exists (
+    select 1 from public.boss_participation
+     where session_id = p_session_id
+       and owner = v_owner
+  ) then
+    raise exception 'RUN_MEMBERS_ONLY' using errcode = 'P0001';
+  end if;
+
+  update public.boss_sessions
+     set status = 'archived',
+         completed_at = now()
+   where id = p_session_id;
+
+  insert into public.boss_sessions(
+    created_by, title, boss_name, session_date, week_start, slot,
+    run_no, elements, status, created_at
+  )
+  values (
+    v_owner, 'Groupe ' || v_run.slot, v_run.boss_name, v_run.session_date,
+    v_run.week_start, v_run.slot, v_run.run_no + 1, v_run.elements, 'open', now()
+  )
+  on conflict (week_start, slot, run_no) do nothing;
+end;
+$$;
+
 -- boss_sessions : lecture par tout membre ; écriture/suppression par le créateur
 drop policy if exists boss_sessions_read   on public.boss_sessions;
 drop policy if exists boss_sessions_insert on public.boss_sessions;
 drop policy if exists boss_sessions_update on public.boss_sessions;
 drop policy if exists boss_sessions_delete on public.boss_sessions;
 create policy boss_sessions_read   on public.boss_sessions for select to authenticated using (true);
-create policy boss_sessions_insert on public.boss_sessions for insert to authenticated with check (created_by = auth.uid());
-create policy boss_sessions_update on public.boss_sessions for update to authenticated using (created_by = auth.uid()) with check (created_by = auth.uid());
-create policy boss_sessions_delete on public.boss_sessions for delete to authenticated using (created_by = auth.uid());
+create policy boss_sessions_insert
+  on public.boss_sessions
+  for insert
+  to authenticated
+  with check (
+    created_by = auth.uid()
+    and run_no = 1
+    and slot between 1 and 6
+    and status = 'open'
+    and completed_at is null
+  );
 
 -- boss_participation : lecture par tout membre ; chacun écrit SA propre ligne
 drop policy if exists boss_part_read   on public.boss_participation;
@@ -145,6 +308,10 @@ drop policy if exists boss_part_insert on public.boss_participation;
 drop policy if exists boss_part_update on public.boss_participation;
 drop policy if exists boss_part_delete on public.boss_participation;
 create policy boss_part_read   on public.boss_participation for select to authenticated using (true);
-create policy boss_part_insert on public.boss_participation for insert to authenticated with check (owner = auth.uid());
-create policy boss_part_update on public.boss_participation for update to authenticated using (owner = auth.uid()) with check (owner = auth.uid());
-create policy boss_part_delete on public.boss_participation for delete to authenticated using (owner = auth.uid());
+
+revoke all on function public.join_boss_run(uuid) from public;
+revoke all on function public.leave_boss_run(uuid) from public;
+revoke all on function public.complete_boss_run(uuid) from public;
+grant execute on function public.join_boss_run(uuid) to authenticated;
+grant execute on function public.leave_boss_run(uuid) to authenticated;
+grant execute on function public.complete_boss_run(uuid) to authenticated;
