@@ -3,3 +3,4 @@ playwright-report/
 test-results/
 .worktrees/
 __pycache__/
+debug.log

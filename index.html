@@ -81,6 +81,18 @@
     background:linear-gradient(180deg,var(--gold-bright),var(--gold));
     color:var(--ink);box-shadow:0 4px 14px rgba(217,164,65,.28);
   }
+  .account{display:flex;align-items:center;gap:8px}
+  .account-connected{
+    display:flex;align-items:center;gap:9px;padding:5px 6px 5px 12px;
+    border:1px solid var(--gold-deep);border-radius:999px;
+    background:linear-gradient(180deg,rgba(217,164,65,.10),rgba(14,13,18,.42))
+  }
+  .account-seal{
+    width:8px;height:8px;border-radius:50%;background:var(--ok);
+    box-shadow:0 0 9px rgba(76,154,90,.75)
+  }
+  .account-pseudo{font-family:var(--display);font-size:12px;color:var(--gold-bright);letter-spacing:.04em}
+  .account .btn{padding:8px 12px;font-size:12px}
 
   main{max-width:1180px;margin:0 auto;padding:clamp(20px,4vw,40px)}
   .view{display:none;animation:fade .25s ease}
@@ -505,6 +517,28 @@
   .tile.none .tile-img{border:1px dashed var(--line);color:var(--muted-2)}
   .picker-empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:30px}
 
+  /* ---------- Compte Supabase ---------- */
+  .auth-overlay{z-index:75}
+  .auth-modal{width:min(470px,100%);overflow:visible}
+  .auth-body{padding:22px;display:flex;flex-direction:column;gap:16px}
+  .auth-mark{
+    width:56px;height:56px;margin:-50px auto 2px;display:grid;place-items:center;
+    border-radius:50%;border:1px solid var(--gold-deep);
+    background:radial-gradient(circle at 50% 30%,#332713,#0f0c07 72%);
+    color:var(--gold-bright);font-family:var(--display);font-weight:700;font-size:21px;
+    box-shadow:0 10px 28px rgba(0,0,0,.55),inset 0 0 16px rgba(217,164,65,.22)
+  }
+  .auth-copy{text-align:center}
+  .auth-copy h2{font-family:var(--display);font-size:21px;letter-spacing:.05em;margin:0 0 7px}
+  .auth-copy p{color:var(--muted);font-size:13px;line-height:1.5;margin:0}
+  .auth-fields{display:grid;gap:11px}
+  .auth-fields .field input{width:100%;min-width:0}
+  .auth-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+  .auth-actions .btn{justify-content:center}
+  .auth-offline{justify-content:center;width:100%}
+  .auth-status{min-height:20px;margin:0;text-align:center;color:var(--muted);font-size:12.5px}
+  .auth-status.err{color:#e98d8d}
+
   /* ---------- Potentiel : bouton carte héros ---------- */
   .pot-btn{
     appearance:none;cursor:pointer;width:100%;display:flex;align-items:center;gap:8px;
@@ -572,6 +606,8 @@
   @media(max-width:900px){
     .hero-grid{grid-template-columns:repeat(2,1fr)}
     .team-heroes{grid-template-columns:repeat(4,1fr)}
+    .topbar{gap:12px}
+    .account{margin-left:auto}
   }
   @media(max-width:560px){
     .hero-grid{grid-template-columns:1fr}
@@ -579,6 +615,9 @@
     .metabar .grow{margin-left:0;width:100%}
     .metabar .grow .btn{flex:1;justify-content:center}
     .roster-grid{grid-template-columns:1fr}
+    .tabs{order:3;width:100%;overflow:auto}
+    .tab{padding:9px 13px;white-space:nowrap}
+    .auth-actions{grid-template-columns:1fr}
   }
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
@@ -601,6 +640,14 @@
     <button class="tab" data-view="recensement" role="tab">Recensement DPS</button>
     <button class="tab" data-view="analyse" role="tab">Analyse</button>
   </nav>
+  <div class="account">
+    <button class="btn btn-ghost" id="accountLogin" type="button">Connexion</button>
+    <div class="account-connected" id="accountConnected" hidden>
+      <span class="account-seal" aria-hidden="true"></span>
+      <span class="account-pseudo" id="accountPseudo"></span>
+      <button class="btn btn-ghost" id="authLogout" type="button">Déconnexion</button>
+    </div>
+  </div>
 </header>
 
 <main>
@@ -709,12 +756,47 @@
   </div>
 </div>
 
+<!-- Connexion Supabase -->
+<div class="overlay auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+  <div class="modal auth-modal">
+    <div class="auth-body">
+      <div class="auth-mark" aria-hidden="true">7</div>
+      <div class="auth-copy">
+        <h2 id="authTitle">Registre de la confrérie</h2>
+        <p>Connecte-toi pour partager tes équipes et ton recensement avec les autres membres.</p>
+      </div>
+      <div class="auth-fields">
+        <div class="field">
+          <label for="authEmail">Adresse email</label>
+          <input id="authEmail" type="email" autocomplete="email" placeholder="membre@exemple.fr">
+        </div>
+        <div class="field">
+          <label for="authPassword">Mot de passe</label>
+          <input id="authPassword" type="password" autocomplete="current-password" minlength="6">
+        </div>
+        <div class="field">
+          <label for="authSignupPseudo">Pseudo (création de compte)</label>
+          <input id="authSignupPseudo" type="text" autocomplete="nickname" maxlength="40" placeholder="Ton pseudo en jeu">
+        </div>
+      </div>
+      <p class="auth-status" id="authStatus" role="status"></p>
+      <div class="auth-actions">
+        <button class="btn btn-primary" id="authSignIn" type="button">Se connecter</button>
+        <button class="btn" id="authSignUp" type="button">Créer un compte</button>
+      </div>
+      <button class="btn btn-ghost auth-offline" id="authOffline" type="button">Continuer hors connexion</button>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script src="data.js"></script>
 <script src="potentiels.js"></script>
 <script src="armures-liees.js"></script>
 <script src="personnages-meta.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <script>
 (function(){
   "use strict";
@@ -737,6 +819,12 @@
   const POT = window.SEVEN_DS_POTENTIELS || {};
   const POT_MAX = 10;
   const META = window.SEVEN_DS_META || {};
+  const CLOUD_TEAMS_CACHE_KEY = "confrerie7ds.cloud.teams";
+  const sb = window.supabase && window.SB_URL && window.SB_KEY
+    ? window.supabase.createClient(window.SB_URL, window.SB_KEY)
+    : null;
+  let currentUser = null;
+  let currentPseudo = "";
   const ELEMENTS = {
     FIRE:   {label:"Feu",      color:"#d24b3e"},
     WIND:   {label:"Vent",     color:"#4fa563"},
@@ -884,8 +972,8 @@
     return n;
   }
 
-  /* ============================ Store (localStorage) ============================ */
-  const Store = {
+  /* ============================ Équipes : local + Supabase ============================ */
+  const LocalTeams = {
     all(){
       try{
         const list = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
@@ -898,13 +986,89 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
     },
     upsert(team){
-      const list = Store.all();
+      const list = LocalTeams.all();
       const normalized = normalizeTeam(team);
       const i = list.findIndex(t => t.id === normalized.id);
       if(i>=0) list[i] = normalized; else list.push(normalized);
-      Store.save(list);
+      LocalTeams.save(list);
     },
-    remove(id){ Store.save(Store.all().filter(t => t.id !== id)); }
+    remove(id){ LocalTeams.save(LocalTeams.all().filter(t => t.id !== id)); }
+  };
+
+  function readTeamCache(){
+    try{
+      const list = JSON.parse(localStorage.getItem(CLOUD_TEAMS_CACHE_KEY)) || [];
+      return Array.isArray(list) ? list.map(normalizeTeam) : [];
+    }catch(e){ return []; }
+  }
+  let cloudTeamsCache = readTeamCache();
+
+  function cloudTeamFromRow(row){
+    const raw = row && row.data && typeof row.data === "object" ? row.data : {};
+    return normalizeTeam(Object.assign({}, raw, {
+      id:row.id,
+      owner:row.owner,
+      pseudo:row.pseudo || raw.pseudo || "",
+      createdAt:row.created_at ? Date.parse(row.created_at) : raw.createdAt,
+      updatedAt:row.updated_at ? Date.parse(row.updated_at) : raw.updatedAt
+    }));
+  }
+
+  function teamToCloudRow(team){
+    const normalized = normalizeTeam(team);
+    const data = JSON.parse(JSON.stringify(normalized));
+    delete data.owner;
+    return {
+      id:normalized.id,
+      owner:currentUser && currentUser.id,
+      pseudo:currentPseudo || normalized.pseudo || "",
+      data,
+      updated_at:new Date(normalized.updatedAt || Date.now()).toISOString()
+    };
+  }
+
+  function saveCloudTeamCache(list){
+    cloudTeamsCache = Array.isArray(list) ? list.map(normalizeTeam) : [];
+    localStorage.setItem(CLOUD_TEAMS_CACHE_KEY, JSON.stringify(cloudTeamsCache));
+  }
+
+  const Store = {
+    all(){
+      return currentUser ? cloudTeamsCache.map(normalizeTeam) : LocalTeams.all();
+    },
+    save(list){
+      if(currentUser) saveCloudTeamCache(list);
+      else LocalTeams.save(list);
+    },
+    async refresh(){
+      if(!currentUser || !sb) return Store.all();
+      const { data, error } = await sb.from("teams")
+        .select("*")
+        .order("updated_at", { ascending:false });
+      if(error) throw error;
+      saveCloudTeamCache((data||[]).map(cloudTeamFromRow));
+      return Store.all();
+    },
+    async upsert(team){
+      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      const normalized = normalizeTeam(Object.assign({}, team, {
+        owner:currentUser.id,
+        pseudo:currentPseudo || team.pseudo || ""
+      }));
+      const { error } = await sb.from("teams").upsert(teamToCloudRow(normalized));
+      if(error) throw error;
+      const list = cloudTeamsCache.slice();
+      const index = list.findIndex(item => item.id === normalized.id);
+      if(index >= 0) list[index] = normalized; else list.push(normalized);
+      saveCloudTeamCache(list);
+      return normalized;
+    },
+    async remove(id){
+      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      const { error } = await sb.from("teams").delete().eq("id", id);
+      if(error) throw error;
+      saveCloudTeamCache(cloudTeamsCache.filter(team => team.id !== id));
+    }
   };
 
   /* ============================ Brouillon d'équipe ============================ */
@@ -956,12 +1120,170 @@
     toastTimer = setTimeout(()=>t.classList.remove("on"), 2600);
   }
 
+  /* ============================ Authentification Supabase ============================ */
+  const authOverlay = $("#authOverlay");
+  const authStatus = $("#authStatus");
+
+  function setAuthStatus(message, isErr){
+    authStatus.textContent = message || "";
+    authStatus.classList.toggle("err", !!isErr);
+  }
+
+  function openAuth(message, isErr){
+    setAuthStatus(message, isErr);
+    authOverlay.classList.add("on");
+    setTimeout(()=>$("#authEmail").focus(), 30);
+  }
+
+  function closeAuth(){
+    authOverlay.classList.remove("on");
+    setAuthStatus("");
+  }
+
+  function setAuthBusy(busy){
+    ["#authSignIn","#authSignUp","#authOffline"].forEach(selector => {
+      $(selector).disabled = !!busy;
+    });
+  }
+
+  function authMessage(error){
+    const message = String(error && error.message || "");
+    if(/invalid login credentials/i.test(message)) return "Email ou mot de passe incorrect.";
+    if(/already registered/i.test(message)) return "Un compte existe déjà avec cet email.";
+    if(/password/i.test(message)) return "Le mot de passe doit contenir au moins 6 caractères.";
+    return message || "La connexion au registre a échoué.";
+  }
+
+  async function profilePseudo(user){
+    if(!user || !sb) return "";
+    const { data, error } = await sb.from("profiles")
+      .select("pseudo")
+      .eq("id", user.id)
+      .maybeSingle();
+    if(error) throw error;
+    return data && typeof data.pseudo === "string" ? data.pseudo.trim() : "";
+  }
+
+  function updateAccountUi(){
+    $("#accountLogin").hidden = !!currentUser;
+    $("#accountConnected").hidden = !currentUser;
+    $("#accountPseudo").textContent = currentPseudo || (currentUser && currentUser.email) || "";
+    if(typeof pseudoInput !== "undefined"){
+      pseudoInput.disabled = !!currentUser;
+      if(currentUser && currentPseudo){
+        draft.pseudo = currentPseudo;
+        pseudoInput.value = currentPseudo;
+      }
+    }
+  }
+
+  async function applySession(session){
+    currentUser = session && session.user ? session.user : null;
+    currentPseudo = "";
+    if(currentUser){
+      try{
+        currentPseudo = await profilePseudo(currentUser);
+      }catch(error){
+        toast("Profil indisponible : "+authMessage(error), true);
+      }
+      if(!currentPseudo) currentPseudo = (currentUser.email||"membre").split("@")[0];
+      closeAuth();
+    }else if(sb){
+      openAuth();
+    }
+    updateAccountUi();
+    if($("#view-roster").classList.contains("active")) void renderRoster();
+  }
+
+  async function signIn(){
+    if(!sb){ openAuth("Connexion indisponible hors ligne.", true); return; }
+    const email = ($("#authEmail").value||"").trim();
+    const password = $("#authPassword").value||"";
+    if(!email || !password){ setAuthStatus("Renseigne ton email et ton mot de passe.", true); return; }
+    setAuthBusy(true);
+    setAuthStatus("Connexion au registre…");
+    try{
+      const { data, error } = await sb.auth.signInWithPassword({ email, password });
+      if(error) throw error;
+      await applySession(data && data.session);
+    }catch(error){
+      setAuthStatus(authMessage(error), true);
+    }finally{
+      setAuthBusy(false);
+    }
+  }
+
+  async function signUp(){
+    if(!sb){ openAuth("Création de compte indisponible hors ligne.", true); return; }
+    const email = ($("#authEmail").value||"").trim();
+    const password = $("#authPassword").value||"";
+    const pseudo = ($("#authSignupPseudo").value||"").trim();
+    if(!email || !password || !pseudo){
+      setAuthStatus("Renseigne l’email, le mot de passe et le pseudo.", true);
+      return;
+    }
+    setAuthBusy(true);
+    setAuthStatus("Création du compte…");
+    try{
+      const { data, error } = await sb.auth.signUp({ email, password });
+      if(error) throw error;
+      if(!data || !data.user) throw new Error("Compte non créé.");
+      if(!data.session){
+        setAuthStatus("Compte créé, mais la session n’est pas ouverte. Désactive « Confirm email » dans Supabase.", true);
+        return;
+      }
+      const profileResult = await sb.from("profiles").upsert({ id:data.user.id, pseudo });
+      if(profileResult.error) throw profileResult.error;
+      currentPseudo = pseudo;
+      await applySession(data.session);
+      currentPseudo = pseudo;
+      updateAccountUi();
+      toast("Compte créé. Bienvenue "+pseudo+" !");
+    }catch(error){
+      setAuthStatus(authMessage(error), true);
+    }finally{
+      setAuthBusy(false);
+    }
+  }
+
+  async function initAuth(){
+    updateAccountUi();
+    if(!sb) return;
+    sb.auth.onAuthStateChange((event, session) => {
+      if(event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "TOKEN_REFRESHED"){
+        setTimeout(()=>void applySession(session), 0);
+      }
+    });
+    try{
+      const { data, error } = await sb.auth.getSession();
+      if(error) throw error;
+      await applySession(data && data.session);
+    }catch(error){
+      openAuth(authMessage(error), true);
+    }
+  }
+
+  $("#accountLogin").addEventListener("click", ()=>
+    openAuth(sb ? "" : "Connexion indisponible hors ligne.", !sb)
+  );
+  $("#authOffline").addEventListener("click", closeAuth);
+  $("#authSignIn").addEventListener("click", ()=>void signIn());
+  $("#authSignUp").addEventListener("click", ()=>void signUp());
+  $("#authPassword").addEventListener("keydown", event => {
+    if(event.key === "Enter") void signIn();
+  });
+  $("#authLogout").addEventListener("click", async()=>{
+    if(!sb) return;
+    const { error } = await sb.auth.signOut();
+    if(error) toast(authMessage(error), true);
+  });
+
   /* ============================ Navigation onglets ============================ */
   function showView(name){
     document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active", b.dataset.view===name));
     document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
     $("#view-"+name).classList.add("active");
-    if(name==="roster") renderRoster();
+    if(name==="roster") void renderRoster();
     if(name==="recensement") renderRecensement();
     if(name==="analyse") renderAnalyse();
     window.scrollTo({top:0, behavior:"smooth"});
@@ -1059,7 +1381,9 @@
   pseudoInput.addEventListener("input", e => draft.pseudo = e.target.value);
 
   function renderBuilder(){
+    if(currentUser && currentPseudo) draft.pseudo = currentPseudo;
     pseudoInput.value = draft.pseudo || "";
+    pseudoInput.disabled = !!currentUser;
     $("#editFlag").classList.toggle("on", editing);
     $("#btnSave").textContent = editing ? "Mettre à jour l'équipe" : "Enregistrer l'équipe";
     heroGrid.innerHTML = "";
@@ -1290,8 +1614,12 @@
     toast("Nouvelle équipe prête.");
   });
 
-  $("#btnSave").addEventListener("click", ()=>{
-    const pseudo = (draft.pseudo||"").trim();
+  $("#btnSave").addEventListener("click", async()=>{
+    if(!currentUser || !sb){
+      openAuth("Connecte-toi pour enregistrer cette équipe.", true);
+      return;
+    }
+    const pseudo = (currentPseudo||draft.pseudo||"").trim();
     if(!pseudo){ toast("Ajoute d'abord un pseudo de membre.", true); pseudoInput.focus(); return; }
     if(!draft.heroes.some(h=>h.char)){ toast("Ajoute au moins un héros à l'équipe.", true); return; }
 
@@ -1301,18 +1629,40 @@
     team.pseudo = pseudo;
     team.createdAt = existing ? existing.createdAt : now;
     team.updatedAt = now;
-    Store.upsert(team);
-
-    toast(editing ? "Équipe mise à jour." : "Équipe enregistrée !");
-    draft = emptyDraft(); editing = false; renderBuilder();
-    showView("roster");
+    const saveButton = $("#btnSave");
+    saveButton.disabled = true;
+    try{
+      await Store.upsert(team);
+      toast(editing ? "Équipe mise à jour." : "Équipe enregistrée !");
+      draft = emptyDraft(); editing = false; renderBuilder();
+      showView("roster");
+    }catch(error){
+      toast("Enregistrement impossible : "+authMessage(error), true);
+    }finally{
+      saveButton.disabled = false;
+    }
   });
 
   /* ============================ Roster (page d'affichage) ============================ */
   const rosterGrid = $("#rosterGrid");
+  let rosterRenderId = 0;
 
-  function renderRoster(){
-    const teams = Store.all().sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+  async function renderRoster(){
+    const renderId = ++rosterRenderId;
+    rosterGrid.className = "";
+    rosterGrid.innerHTML = "";
+    rosterGrid.appendChild(el("div",{class:"empty-state"},[
+      el("p",{class:"big",text:"Chargement des équipes…"})
+    ]));
+    let teams;
+    try{
+      teams = await Store.refresh();
+    }catch(error){
+      teams = Store.all();
+      toast("Registre indisponible, affichage du cache local.", true);
+    }
+    if(renderId !== rosterRenderId) return;
+    teams = teams.slice().sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
     const c = $("#rosterCount");
     c.innerHTML = "<b>"+teams.length+"</b> équipe"+(teams.length>1?"s":"")+" enregistrée"+(teams.length>1?"s":"");
 
@@ -1345,12 +1695,14 @@
     const hint = el("button",{class:"team-detail-btn", type:"button",
       text:"Voir l'équipement ▾", onclick:()=>openTeamDetail(t)});
 
-    const actions = el("div",{class:"team-actions"},[
-      el("button",{class:"btn", text:"Modifier", onclick:()=>editTeam(t)}),
-      el("button",{class:"btn btn-danger", text:"Supprimer", onclick:()=>deleteTeam(t)})
-    ]);
-
-    return el("div",{class:"team"},[head, heroes, hint, actions]);
+    const children = [head, heroes, hint];
+    if(canManageTeam(t)){
+      children.push(el("div",{class:"team-actions"},[
+        el("button",{class:"btn", text:"Modifier", onclick:()=>editTeam(t)}),
+        el("button",{class:"btn btn-danger", text:"Supprimer", onclick:()=>void deleteTeam(t)})
+      ]));
+    }
+    return el("div",{class:"team"},children);
   }
 
   /* ---- Modal de détail d'une équipe (équipement complet par héros) ---- */
@@ -1445,7 +1797,15 @@
     return d;
   }
 
+  function canManageTeam(team){
+    return !currentUser || !!team && team.owner === currentUser.id;
+  }
+
   function editTeam(t){
+    if(!canManageTeam(t)){
+      toast("Cette équipe appartient à un autre membre.", true);
+      return;
+    }
     draft = normalizeTeam(JSON.parse(JSON.stringify(t)));
     editing = true;
     renderBuilder();
@@ -1453,11 +1813,19 @@
     toast("Équipe chargée pour modification.");
   }
 
-  function deleteTeam(t){
+  async function deleteTeam(t){
+    if(!canManageTeam(t)){
+      toast("Cette équipe appartient à un autre membre.", true);
+      return;
+    }
     if(!confirm('Supprimer l\'équipe de « '+(t.pseudo||"?")+' » ?')) return;
-    Store.remove(t.id);
-    renderRoster();
-    toast("Équipe supprimée.");
+    try{
+      await Store.remove(t.id);
+      await renderRoster();
+      toast("Équipe supprimée.");
+    }catch(error){
+      toast("Suppression impossible : "+authMessage(error), true);
+    }
   }
 
   /* ============================ Export / Import ============================ */
@@ -1474,21 +1842,29 @@
   $("#importFile").addEventListener("change", e=>{
     const file = e.target.files[0]; if(!file) return;
     const reader = new FileReader();
-    reader.onload = ()=>{
+    reader.onload = async()=>{
       try{
         const incoming = JSON.parse(reader.result);
         if(!Array.isArray(incoming)) throw new Error("format");
-        const list = Store.all();
+        const normalized = [];
         let added=0;
         incoming.forEach(t=>{
           if(!t || typeof t!=="object") return;
           const team = normalizeTeam(Object.assign({}, t, { id:t.id||uid() }));
-          const i = list.findIndex(x=>x.id===team.id);
-          if(i>=0) list[i]=team; else { list.push(team); }
+          normalized.push(team);
           added++;
         });
-        Store.save(list);
-        renderRoster();
+        if(currentUser){
+          for(const team of normalized) await Store.upsert(team);
+        }else{
+          const list = LocalTeams.all();
+          normalized.forEach(team=>{
+            const index = list.findIndex(item=>item.id===team.id);
+            if(index>=0) list[index]=team; else list.push(team);
+          });
+          LocalTeams.save(list);
+        }
+        await renderRoster();
         toast(added+" équipe(s) importée(s).");
       }catch(err){ toast("Fichier JSON invalide.", true); }
       e.target.value = "";
@@ -1749,6 +2125,7 @@
     (DATA.generatedAt ? "  ·  données du "+DATA.generatedAt : "");
 
   renderBuilder();
+  void initAuth();
 })();
 </script>
 </body>

@@ -14,6 +14,9 @@ const STORAGE_KEY = "confrerie7ds.teams";
   page.on("pageerror", error => errors.push(error.message));
 
   try{
+    await page.route("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*", route =>
+      route.fulfill({ status:200, contentType:"application/javascript", body:"" })
+    );
     const url = pathToFileURL(path.resolve(__dirname, "..", "index.html")).href;
     await page.goto(url);
     await page.evaluate(key => localStorage.removeItem(key), STORAGE_KEY);
@@ -106,9 +109,13 @@ const STORAGE_KEY = "confrerie7ds.teams";
 
     await page.locator("#pseudo").fill("Test Playwright");
     await page.locator("#btnSave").click();
-    const saved = await page.evaluate(key => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
-    assert.deepEqual(saved[0].heroes[0].potentiel, { tier:5 });
-    assert.ok(!JSON.stringify(saved).includes("weaponType"));
+    assert.equal(
+      await page.locator("#authOverlay").evaluate(el => el.classList.contains("on")),
+      true,
+      "Enregistrer hors connexion doit inviter à se connecter"
+    );
+    assert.equal(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY), null);
+    await page.getByRole("button", { name:"Continuer hors connexion", exact:true }).click();
 
     await page.evaluate(({ key })=>{
       localStorage.setItem(key, JSON.stringify([{
@@ -128,13 +135,17 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await page.locator('.tab[data-view="roster"]').click();
     assert.match(await page.locator(".mini-pot").first().textContent(), /P8/);
     await page.getByRole("button", { name:"Modifier", exact:true }).click();
+    assert.equal(await page.locator(".hero").first().locator(".gear-slot.weapon").evaluate(
+      el => el.classList.contains("filled")
+    ), false);
+    assert.equal(await armorSlot(page.locator(".hero").first(), "Armure liée").evaluate(
+      el => el.classList.contains("filled")
+    ), false);
     await page.locator("#btnSave").click();
-
-    const migrated = await page.evaluate(key => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
-    assert.deepEqual(migrated[0].heroes[0].potentiel, { tier:8 });
-    assert.equal(migrated[0].heroes[0].weapon, null);
-    assert.equal(migrated[0].heroes[0].armor["Armure liee"], null);
-    assert.ok(!JSON.stringify(migrated).includes("weaponType"));
+    assert.equal(
+      await page.locator("#authOverlay").evaluate(el => el.classList.contains("on")),
+      true
+    );
     assert.deepEqual(errors, []);
 
     console.log("PASS Playwright: potentiel commun, changement d'arme et migration");
