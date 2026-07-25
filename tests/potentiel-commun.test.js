@@ -78,7 +78,7 @@ function loadApp(initialTeams){
 
   const exposed = source.replace(
     /\}\)\(\);\s*$/,
-    "Object.assign(globalThis.__hooks,{normalizePotentiel,normalizeHero,normalizeTeam,potentielDetailsOf,weaponTypesOf,isWeaponCompatible,compatibleWeaponGroups,linkedArmorsOf,isLinkedArmorCompatible,emptyRosterBuild,normalizeRosterBuild,normalizeRosterCharacter,rosterHeroSnapshot,Store,recPlayersForView:typeof recPlayersForView==='function'?recPlayersForView:undefined});})();"
+    "Object.assign(globalThis.__hooks,{normalizePotentiel,normalizeHero,normalizeTeam,potentielDetailsOf,weaponTypesOf,isWeaponCompatible,compatibleWeaponGroups,linkedArmorsOf,isLinkedArmorCompatible,emptyRosterBuild,normalizeRosterBuild,normalizeRosterCharacter,rosterHeroSnapshot,cloudRosterFromRow,rosterToCloudRow,replaceRosterCacheForOwner,MemberRosterStore,Store,recPlayersForView:typeof recPlayersForView==='function'?recPlayersForView:undefined});})();"
   );
   assert.notStrictEqual(exposed, source, "Le chargeur doit exposer les fonctions réelles");
 
@@ -416,6 +416,36 @@ function plain(value){
 
   assert.strictEqual(hooks.normalizeRosterCharacter({ charId:"inconnu" }), null);
   assert.strictEqual(hooks.rosterHeroSnapshot(entry, "Livre"), null);
+}
+
+// Roster partagé : conversion Supabase et cache isolé par propriétaire.
+{
+  const { hooks, localStorage } = loadApp();
+  const row = {
+    owner:"user-1",
+    char_id:"meliodas",
+    potential_tier:8,
+    builds:{ Hache:{ weapon:"7ds-armes/Hache/hache.webp" } },
+    updated_at:"2026-07-25T12:00:00.000Z"
+  };
+  const entry = plain(hooks.cloudRosterFromRow(row));
+  assert.strictEqual(entry.charId, "meliodas");
+  assert.strictEqual(entry.potentialTier, 8);
+
+  hooks.replaceRosterCacheForOwner("user-2", [{
+    owner:"user-2",
+    charId:"merlin",
+    potentialTier:4,
+    builds:{}
+  }]);
+  hooks.replaceRosterCacheForOwner("user-1", [entry]);
+
+  assert.strictEqual(plain(hooks.MemberRosterStore.all("user-1")).length, 1);
+  assert.strictEqual(plain(hooks.MemberRosterStore.all("user-2")).length, 1);
+  assert.match(
+    localStorage.getItem("confrerie7ds.cloud.roster"),
+    /"charId":"meliodas"/
+  );
 }
 
 console.log("PASS potentiel commun");
