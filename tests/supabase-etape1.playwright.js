@@ -213,36 +213,28 @@ const { chromium } = require("playwright");
       "La migration ne doit pas supprimer le filet de sauvegarde local"
     );
 
-    // #1 Sessions de boss : création, assignation, suivi des dégâts, statut.
+    // #1 Groupes de boss : 6 groupes auto-créés par semaine ; rejoindre / quitter (multi-groupes).
     await page.locator('.tab[data-view="boss"]').click();
-    await page.locator("#bossNew").click();
-    await page.locator("#bossOverlay.on").waitFor();
-    await page.locator(".boss-form .rec-input").first().fill("BDG semaine 30");
-    await page.locator(".boss-elem-pick .elem-chip", { hasText:"Ténèbres" }).click();
-    await page.locator(".boss-elem-pick .elem-chip", { hasText:"Feu" }).click();
-    await page.getByRole("button", { name:"Créer la session", exact:true }).click();
+    await page.locator(".boss-grid .boss-card").nth(5).waitFor();
+    assert.equal(await page.locator(".boss-grid .boss-card").count(), 6, "6 groupes créés automatiquement");
+    // Une seule semaine de groupes créée (pas de doublon malgré plusieurs rendus/ensureWeek).
+    assert.equal(await page.evaluate(() => window.__fakeSupabaseState.boss_sessions.length), 6);
 
-    await page.locator(".boss-detail-head").waitFor();
-    // Yannis (user-1) a meliodas/Ténèbres -> il s'assigne Ténèbres + dégâts + participé.
-    await page.locator(".boss-mine select").first().selectOption({ label:"Ténèbres" });
-    await page.locator(".boss-mine .boss-dmg").fill("1200");
-    await page.locator(".boss-mine .boss-dmg").blur();
-    await page.locator(".boss-part input").check();
-    await page.waitForFunction(() => {
-      const p = window.__fakeSupabaseState.boss_participation.find(r => r.owner === "user-1");
-      return p && p.element === "DARK" && Number(p.damage) === 1200 && p.participated === true;
-    });
+    const groupe1 = page.locator(".boss-card", { hasText:"Groupe 1" });
+    await groupe1.getByRole("button", { name:"Rejoindre", exact:true }).click();
+    await page.waitForFunction(() => window.__fakeSupabaseState.boss_participation.some(r => r.owner === "user-1"));
+    await groupe1.getByRole("button", { name:"Quitter", exact:true }).waitFor();
+    assert.match(await page.locator("#bossCount").textContent(), /1\s+groupe rejoint/);
 
-    // Ténèbres couvert (chip Yannis), Feu non couvert (aucun DPS Feu recensé).
-    await page.locator(".boss-assign-row:not(.uncovered)", { hasText:"Ténèbres" }).waitFor();
-    assert.equal(await page.locator(".boss-assign-row.uncovered").count(), 1);
-    assert.match(await page.locator(".boss-total").textContent(), /1[\s  ]?200/);
+    // Multi-groupes : on peut aussi rejoindre le Groupe 2.
+    await page.locator(".boss-card", { hasText:"Groupe 2" }).getByRole("button", { name:"Rejoindre", exact:true }).click();
+    await page.waitForFunction(() => window.__fakeSupabaseState.boss_participation.length === 2);
+    assert.match(await page.locator("#bossCount").textContent(), /2\s+groupes rejoints/);
 
-    // Le créateur passe la session en « Vaincu ».
-    await page.locator(".boss-detail-admin select").selectOption("won");
-    await page.waitForFunction(() =>
-      window.__fakeSupabaseState.boss_sessions.some(s => s.status === "won"));
-    await page.locator("#bossClose").click();
+    // Quitter le Groupe 1 -> il ne reste qu'un groupe.
+    await groupe1.getByRole("button", { name:"Quitter", exact:true }).click();
+    await page.waitForFunction(() => window.__fakeSupabaseState.boss_participation.length === 1);
+    assert.match(await page.locator("#bossCount").textContent(), /1\s+groupe rejoint/);
 
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await authOverlay.waitFor({ state:"visible" });
@@ -354,23 +346,23 @@ async function installFakeSupabase(page){
     function query(table){
       let operation = "select";
       let payload = null;
+      let upsertOptions = null;
       const filters = [];
+      const sorts = [];
+      const matchRow = row => filters.every(([key, value]) => {
+        if(typeof key === "string" && key.startsWith("__in:")) return value.includes(row[key.slice(5)]);
+        return row[key] === value;
+      });
       const builder = {
         select(){ operation = "select"; return builder; },
-        order(column, options){
-          return execute().then(result => {
-            if(result.error || !Array.isArray(result.data)) return result;
-            const direction = options && options.ascending === false ? -1 : 1;
-            result.data.sort((a,b) => String(a[column]||"").localeCompare(String(b[column]||"")) * direction);
-            return result;
-          });
-        },
+        order(column, options){ sorts.push([column, options && options.ascending === false ? -1 : 1]); return builder; },
         eq(column, value){ filters.push([column, value]); return builder; },
+        in(column, values){ filters.push(["__in:" + column, values || []]); return builder; },
         maybeSingle(){ return execute().then(result => ({
           data:Array.isArray(result.data) ? (result.data[0] || null) : result.data,
           error:result.error
         })); },
-        upsert(value){ operation = "upsert"; payload = clone(value); return execute(); },
+        upsert(value, options){ operation = "upsert"; payload = clone(value); upsertOptions = options || null; return execute(); },
         update(value){ operation = "update"; payload = clone(value); return builder; },
         delete(){ operation = "delete"; return builder; },
         then(resolve, reject){ return execute().then(resolve, reject); }
@@ -382,22 +374,32 @@ async function installFakeSupabase(page){
         if(!Array.isArray(rows)) return { data:null, error:{ message:"Table inconnue" } };
 
         if(operation === "select"){
-          const selected = rows.filter(row => filters.every(([key,value]) => row[key] === value));
+          const selected = rows.filter(matchRow);
+          if(sorts.length){
+            selected.sort((a,b) => {
+              for(const [col,dir] of sorts){
+                const av = a[col], bv = b[col];
+                let c;
+                if(typeof av === "number" && typeof bv === "number") c = (av - bv);
+                else c = String(av==null?"":av).localeCompare(String(bv==null?"":bv));
+                if(c) return c * dir;
+              }
+              return 0;
+            });
+          }
           return { data:clone(selected), error:null };
         }
 
         if(operation === "delete"){
           for(let index = rows.length - 1; index >= 0; index--){
-            if(filters.every(([key,value]) => rows[index][key] === value)) rows.splice(index, 1);
+            if(matchRow(rows[index])) rows.splice(index, 1);
           }
           return { data:null, error:null };
         }
 
         if(operation === "update"){
           rows.forEach((row, index) => {
-            if(filters.every(([key,value]) => row[key] === value)){
-              rows[index] = Object.assign({}, row, payload);
-            }
+            if(matchRow(row)) rows[index] = Object.assign({}, row, payload);
           });
           return { data:null, error:null };
         }
@@ -415,11 +417,16 @@ async function installFakeSupabase(page){
             if(table === "boss_participation"){
               return row.session_id === value.session_id && row.owner === value.owner;
             }
+            if(table === "boss_sessions"){
+              return row.week_start === value.week_start && row.slot === value.slot;
+            }
             const key = table === "profiles"
               ? "id"
               : (table === "recensement" ? "owner" : "id");
             return row[key] === value[key];
           });
+          // onConflict + ignoreDuplicates : on ne réécrit pas une ligne déjà là (garde son id).
+          if(index >= 0 && upsertOptions && upsertOptions.ignoreDuplicates) return;
           const stamped = Object.assign({}, value);
           if(table === "teams"){
             stamped.created_at = index >= 0 ? rows[index].created_at : "2026-07-25T09:00:00.000Z";

@@ -258,13 +258,20 @@ ne reste pas liée à la fiche source.
 - Auth Supabase : email + mot de passe sans confirmation email. Toute lecture
   partagée exige un membre authentifié ; RLS limite l'écriture au propriétaire.
 
+## Groupes de Boss de Guilde (onglet « Groupes de boss »)
+
+- **6 groupes auto-créés chaque semaine** (reset lundi 9h), boss *Akumu, bête démoniaque*.
+  Création à l'ouverture de la page via `BossStore.ensureWeek` (`upsert` `ignoreDuplicates`
+  sur l'index unique `(week_start, slot)`) — pas de cron pour la création.
+- Les membres **rejoignent / quittent** un ou plusieurs groupes (`boss_participation`).
+  « Juste rejoindre » : pas de dégâts/élément. Les semaines passées s'archivent seules.
+- Semaine courante = `currentBossWeek()` (lundi 9h Paris le plus récent ≤ maintenant).
+- **Rappel Discord** : dimanche midi Paris (`scripts/discord-reminder.js` + GitHub Actions),
+  ping les membres sans groupe. Voir `docs/superpowers/specs/2026-07-25-boss-groupes-hebdo-design.md`.
+
 ## Évolutions prévues
 
-- **Sessions de Boss de Guilde** : organiser les équipes disponibles autour
-  d'une session ou d'un boss ciblé.
-- **PWA installable** : cache applicatif et installation mobile, après les
-  sessions de boss.
-- Champ **boss ciblé** et **note globale d'équipe** (déjà réservés dans le modèle).
+- Champ **note globale d'équipe** (déjà réservé dans le modèle).
 
 ## Conventions
 

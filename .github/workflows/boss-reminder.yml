@@ -1,6 +1,6 @@
 name: Rappel Discord — Boss de Guilde
 
-# Relance sur Discord les membres qui n'ont pas fait leur run.
+# Relance sur Discord les membres qui n'ont rejoint aucun groupe de la semaine.
 # Le boss de confrérie reset le LUNDI 9h -> rappel chaque DIMANCHE à MIDI (Paris).
 # GitHub Actions tourne en UTC : on lance à 10:00 ET 11:00 UTC le dimanche
 # (couvre midi Paris en heure d'été comme en heure d'hiver) ; le script ne poste

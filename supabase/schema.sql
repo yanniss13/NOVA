@@ -86,25 +86,33 @@ create policy roster_insert on public.roster_characters for insert to authentica
 create policy roster_update on public.roster_characters for update to authenticated using (owner = auth.uid()) with check (owner = auth.uid());
 create policy roster_delete on public.roster_characters for delete to authenticated using (owner = auth.uid());
 
--- 5) Sessions de boss de guilde (assignation + suivi)
+-- 5) Sessions de boss de guilde : 6 GROUPES auto-créés chaque semaine (reset lundi 9h).
+--    Les membres rejoignent un ou plusieurs groupes (boss_participation).
 create table if not exists public.boss_sessions (
   id           uuid primary key default gen_random_uuid(),
   created_by   uuid not null references auth.users(id) on delete cascade,
   title        text not null,
   boss_name    text,
   session_date date,
-  elements     text[] not null default '{}',   -- éléments visés (FIRE, ICE, …)
-  status       text not null default 'open',    -- open | won | lost
+  week_start   date,                             -- lundi (9h) de la semaine du groupe
+  slot         int,                              -- n° de groupe (1..6)
+  elements     text[] not null default '{}',   -- (héritage) éléments visés
+  status       text not null default 'open',    -- open | won | lost | archived
   remind_at    timestamptz,                      -- rappel Discord auto (optionnel)
   reminded_at  timestamptz,                      -- horodatage de l'envoi du rappel
   created_at   timestamptz not null default now()
 );
--- Colonnes de rappel ajoutées aussi pour les bases déjà créées (idempotent) :
+-- Colonnes ajoutées aussi pour les bases déjà créées (idempotent) :
 alter table public.boss_sessions add column if not exists remind_at   timestamptz;
 alter table public.boss_sessions add column if not exists reminded_at timestamptz;
+alter table public.boss_sessions add column if not exists week_start  date;
+alter table public.boss_sessions add column if not exists slot        int;
 create index if not exists boss_sessions_created_idx on public.boss_sessions(created_at desc);
+-- Un seul groupe N par semaine : sert de cible au "upsert" côté appli (anti-doublon).
+create unique index if not exists boss_sessions_week_slot_idx
+  on public.boss_sessions(week_start, slot);
 
--- Participation d'un membre à une session : assignation (avant) + résultat (après)
+-- Appartenance d'un membre à un groupe (rejoindre / quitter). "Juste rejoindre".
 create table if not exists public.boss_participation (
   session_id   uuid not null references public.boss_sessions(id) on delete cascade,
   owner        uuid not null references auth.users(id) on delete cascade,

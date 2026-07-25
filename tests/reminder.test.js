@@ -2,7 +2,7 @@
 
 const assert = require("node:assert/strict");
 const {
-  isReminderWindow, sessionsToRemind, absentPseudos, reminderMessage
+  isReminderWindow, currentBossWeekStart, absentPseudos, reminderMessage
 } = require("../scripts/reminder-core.js");
 
 // Fenêtre : dimanche (0) à 12h, heure de Paris.
@@ -14,51 +14,48 @@ const {
   assert.equal(isReminderWindow(6, 12), false); // samedi -> non
 }
 
-// sessionsToRemind : la session OUVERTE la plus récente, pas rappelée récemment.
+// currentBossWeekStart : lundi 9h (Paris) de la semaine de boss courante.
+// (Juillet 2026 = heure d'été, Paris = UTC+2.)
 {
-  const now = "2026-07-26T10:00:00.000Z"; // un dimanche
-  const sessions = [
-    { id:"old", status:"open", created_at:"2026-07-20T10:00:00.000Z", reminded_at:null },
-    { id:"cur", status:"open", created_at:"2026-07-25T10:00:00.000Z", reminded_at:null }, // + récente
-    { id:"won", status:"won",  created_at:"2026-07-25T12:00:00.000Z", reminded_at:null }  // fermée -> non
-  ];
-  assert.deepStrictEqual(sessionsToRemind(sessions, now).map(s => s.id), ["cur"]);
-
-  // Déjà rappelée il y a 1h -> garde-fou : rien.
-  const guarded = [{ id:"cur", status:"open", created_at:"2026-07-25T10:00:00.000Z", reminded_at:"2026-07-26T09:00:00.000Z" }];
-  assert.deepStrictEqual(sessionsToRemind(guarded, now), []);
-
-  // Rappelée la semaine dernière (> 20h) -> on relance.
-  const lastWeek = [{ id:"cur", status:"open", created_at:"2026-07-25T10:00:00.000Z", reminded_at:"2026-07-19T10:00:00.000Z" }];
-  assert.deepStrictEqual(sessionsToRemind(lastWeek, now).map(s => s.id), ["cur"]);
+  // Mercredi 22/07 12h Paris (10h UTC) -> lundi 20/07.
+  assert.equal(currentBossWeekStart(new Date("2026-07-22T10:00:00Z")), "2026-07-20");
+  // Dimanche 26/07 12h Paris (10h UTC) -> toujours lundi 20/07.
+  assert.equal(currentBossWeekStart(new Date("2026-07-26T10:00:00Z")), "2026-07-20");
+  // Lundi 20/07 8h Paris (6h UTC), avant le reset -> semaine précédente, lundi 13/07.
+  assert.equal(currentBossWeekStart(new Date("2026-07-20T06:00:00Z")), "2026-07-13");
+  // Lundi 20/07 10h Paris (8h UTC), après le reset -> nouvelle semaine, lundi 20/07.
+  assert.equal(currentBossWeekStart(new Date("2026-07-20T08:00:00Z")), "2026-07-20");
 }
 
-// absentPseudos : membres sans participation "participated=true".
+// absentPseudos : membres qui n'ont rejoint aucun groupe de la semaine.
 {
-  const session = { id:"s1" };
   const profiles = [
-    { id:"u1", pseudo:"Akaaarix" },
-    { id:"u2", pseudo:"Casté" },
-    { id:"u3", pseudo:"Syval" }
+    { id: "u1", pseudo: "Akaaarix" },
+    { id: "u2", pseudo: "Casté" },
+    { id: "u3", pseudo: "Syval" }
   ];
-  const participations = [
-    { session_id:"s1", owner:"u1", participated:true },   // a fait son run
-    { session_id:"s1", owner:"u2", participated:false },  // pas encore
-    { session_id:"autre", owner:"u3", participated:true } // autre session -> ne compte pas
+  const memberships = [
+    { owner: "u1" },            // a rejoint un groupe
+    { owner: "u1" },            // (doublon : plusieurs groupes) -> compte une fois
   ];
   assert.deepStrictEqual(
-    absentPseudos(session, profiles, participations).sort(),
+    absentPseudos(profiles, memberships).sort(),
     ["Casté", "Syval"].sort()
+  );
+  // Tout le monde a rejoint -> personne d'absent.
+  assert.deepStrictEqual(
+    absentPseudos(profiles, [{ owner: "u1" }, { owner: "u2" }, { owner: "u3" }]),
+    []
   );
 }
 
-// reminderMessage : liste les pseudos ; cas "tout le monde a fait".
+// reminderMessage : liste les pseudos ; cas "tout le monde a rejoint".
 {
-  const s = { title:"BDG semaine 30" };
-  const msg = reminderMessage(s, ["Casté", "Syval"]);
-  assert.match(msg, /BDG semaine 30/);
+  const msg = reminderMessage("semaine du 20 juil.", ["Casté", "Syval"]);
+  assert.match(msg, /Boss de confrérie/);
+  assert.match(msg, /semaine du 20 juil\./);
   assert.match(msg, /Casté, Syval/);
-  assert.match(reminderMessage(s, []), /tout le monde a fait/);
+  assert.match(reminderMessage("semaine du 20 juil.", []), /tout le monde a rejoint/);
 }
 
 console.log("PASS rappel Discord (logique pure)");
