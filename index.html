@@ -971,7 +971,7 @@
   <section id="view-recensement" class="view">
     <p class="section-eyebrow">Confrérie</p>
     <h1 class="section-title">Recensement des DPS</h1>
-    <p class="section-lead">Calculé automatiquement à partir du <b>Roster</b> de chaque membre : chaque personnage à rôle offensif (Attaquant/Briseur) devient un DPS, avec son élément et son potentiel. Pour te recenser, remplis ton roster.</p>
+    <p class="section-lead">Calculé automatiquement à partir du <b>Roster</b> de chaque membre : chaque personnage avec un build Attaquant devient un DPS, avec son élément et son potentiel. Exception : Gowther avec une Baguette est recensé à partir de P7. Pour te recenser, remplis ton roster.</p>
 
     <div class="roster-toolbar">
       <span class="roster-count" id="recCount"></span>
@@ -1574,8 +1574,15 @@
   }
 
   /* ===== #5 Recensement auto : DPS dérivés du Roster ===== */
-  // Un build à rôle offensif (Attaquant/Briseur) d'un perso du roster =
-  // une entrée DPS { char, element, pot }. Dédupliqué par élément.
+  // Un build Attaquant du roster = une entrée DPS { char, element, pot }.
+  // Exception unique : Gowther Baguette (Briseur) à partir de P7.
+  function isRosterBuildDps(entry, slot, weaponEnum){
+    if(slot.role === "Attacker") return true;
+    return slot.role === "Buster"
+      && entry.charId === "gowther"
+      && weaponEnum === "Wand"
+      && (entry.potentialTier||0) >= 7;
+  }
   function dpsEntriesFromRoster(entry){
     const m = entry && metaOf(entry.charId);
     if(!m || !entry.builds) return [];
@@ -1585,7 +1592,7 @@
       const en = FOLDER_TO_ENUM[folder];
       const slot = (m.weapons||[]).find(w => w.weapon === en);
       if(!slot) return;
-      if(slot.role !== "Attacker" && slot.role !== "Buster") return; // offensifs seulement
+      if(!isRosterBuildDps(entry, slot, en)) return;
       const element = (slot.element||"").toUpperCase();
       if(!element || seen.has(element)) return;
       seen.add(element);

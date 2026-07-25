@@ -129,6 +129,11 @@ function loadApp(initialTeams){
         Livre:["Bonus livre T1"],
         Baton:["Bonus bâton T1"],
         Baguette:["Bonus baguette T1"]
+      },
+      gowther:{
+        Baguette:["Bonus baguette T1"],
+        Livre:["Bonus livre T1"],
+        Baton:["Bonus bâton T1"]
       }
     },
     SEVEN_DS_META:{
@@ -141,6 +146,11 @@ function loadApp(initialTeams){
         { weapon:"Book", role:"Attacker", element:"Ice" },
         { weapon:"Wand", role:"Attacker", element:"Thunder" },
         { weapon:"Staff", role:"Buster", element:"Fire" }
+      ]},
+      gowther:{ element:"THUNDER", role:"ATTACKER", rarity:"SSR", weapons:[
+        { weapon:"Wand", role:"Buster", element:"Thunder" },
+        { weapon:"Book", role:"Supporter", element:"Default" },
+        { weapon:"Staff", role:"Supporter", element:"Thunder" }
       ]}
     },
     SEVEN_DS_ARMURES_LIEES:{
@@ -433,7 +443,6 @@ function plain(value){
 // #5 Recensement auto : DPS dérivés du roster.
 {
   const { hooks } = loadApp();
-  const byElem = list => plain(list).slice().sort((a,b)=> a.element < b.element ? -1 : 1);
 
   // meliodas : Hache + Epée à une main = 2 builds Attaquant/Ténèbres -> dédup -> 1 DPS
   assert.deepStrictEqual(
@@ -442,14 +451,33 @@ function plain(value){
     [{ char:"meliodas", element:"DARK", pot:7 }]
   );
 
-  // merlin : Livre(Attaquant/Glace) + Bâton(Briseur/Feu) -> 2 DPS ; rôle offensif seulement
+  // merlin : Livre(Attaquant/Glace) est recensé, Bâton(Briseur/Feu) est exclu
   assert.deepStrictEqual(
-    byElem(hooks.dpsEntriesFromRoster({ charId:"merlin", potentialTier:9,
+    plain(hooks.dpsEntriesFromRoster({ charId:"merlin", potentialTier:9,
       builds:{ Livre:{}, Baton:{} } })),
-    [
-      { char:"merlin", element:"FIRE", pot:9 },
-      { char:"merlin", element:"ICE", pot:9 }
-    ]
+    [{ char:"merlin", element:"ICE", pot:9 }]
+  );
+
+  // Gowther : seule la Baguette Briseur est admise, à partir de P7.
+  assert.deepStrictEqual(
+    plain(hooks.dpsEntriesFromRoster({ charId:"gowther", potentialTier:6,
+      builds:{ Baguette:{} } })),
+    []
+  );
+  assert.deepStrictEqual(
+    plain(hooks.dpsEntriesFromRoster({ charId:"gowther", potentialTier:7,
+      builds:{ Baguette:{} } })),
+    [{ char:"gowther", element:"THUNDER", pot:7 }]
+  );
+  assert.deepStrictEqual(
+    plain(hooks.dpsEntriesFromRoster({ charId:"gowther", potentialTier:10,
+      builds:{ Baguette:{} } })),
+    [{ char:"gowther", element:"THUNDER", pot:10 }]
+  );
+  assert.deepStrictEqual(
+    plain(hooks.dpsEntriesFromRoster({ charId:"gowther", potentialTier:9,
+      builds:{ Livre:{}, Baton:{} } })),
+    []
   );
 
   // perso inconnu ou builds vides -> aucun DPS
