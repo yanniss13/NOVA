@@ -2,11 +2,10 @@
 /* Rappel Discord automatique — chaque DIMANCHE à MIDI (heure de Paris).
    (Le boss de confrérie reset le lundi 9h ; 6 groupes sont créés par semaine.)
    Lancé par GitHub Actions (cron). Lit Supabase avec la clé service_role (secret
-   GitHub) et poste la liste des membres qui n'ont rejoint AUCUN groupe de la
-   semaine sur le webhook Discord (secret). Ni la clé ni le webhook n'apparaissent
-   dans le site public. */
+   GitHub) et relance sur le webhook Discord les membres sous 3/3 runs de la
+   semaine. Ni la clé ni le webhook n'apparaissent dans le site public. */
 const {
-  isReminderWindow, currentBossWeekStart, absentPseudos, reminderMessage
+  isReminderWindow, currentBossWeekStart, missingRuns, reminderMessage
 } = require("./reminder-core.js");
 
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://uxouhbgdlolidjmxwgae.supabase.co";
@@ -53,11 +52,11 @@ async function main() {
   const ids = sessions.map(s => s.id);
   const memberships = await sb("boss_participation?select=owner&session_id=in.(" + ids.join(",") + ")");
   const profiles = await sb("profiles?select=id,pseudo");
-  const absents = absentPseudos(profiles, memberships);
+  const missingMembers = missingRuns(profiles, memberships);
 
   const weekLabel = "semaine du " + new Date(weekStart + "T00:00:00Z")
     .toLocaleDateString("fr-FR", { day: "numeric", month: "short", timeZone: "UTC" });
-  const content = reminderMessage(weekLabel, absents);
+  const content = reminderMessage(weekLabel, missingMembers);
 
   const post = await fetch(WEBHOOK, {
     method: "POST",
@@ -70,7 +69,10 @@ async function main() {
     process.exitCode = 1;
     return;
   }
-  console.log("Rappel envoyé (" + weekStart + ") — " + absents.length + " membre(s) sans groupe.");
+  console.log(
+    "Rappel envoyé (" + weekStart + ") — " +
+    missingMembers.length + " membre(s) sous les 3 runs."
+  );
 }
 
 main().catch(e => { console.error(e); process.exitCode = 1; });

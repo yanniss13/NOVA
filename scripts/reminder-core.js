@@ -1,7 +1,7 @@
 "use strict";
 /* Logique pure du rappel Discord des groupes de boss (aucun réseau -> testable).
    6 groupes sont créés chaque semaine (reset lundi 9h). Chaque dimanche à midi
-   (heure de Paris), on relance les membres qui n'ont rejoint AUCUN groupe. */
+   (heure de Paris), on relance les membres sous 3/3 runs. */
 
 const REMINDER_WEEKDAY = 0; // dimanche (getDay : 0 = dimanche)
 const REMINDER_HOUR = 12;   // midi, heure locale de Paris
@@ -28,26 +28,39 @@ function currentBossWeekStart(now) {
   return base.toISOString().slice(0, 10);
 }
 
-// Absents = membres (profiles) qui n'apparaissent dans AUCUNE appartenance de la semaine.
-function absentPseudos(profiles, memberships) {
-  const joined = new Set((memberships || []).filter(m => m && m.owner).map(m => m.owner));
-  return (profiles || [])
-    .filter(p => p && p.id && !joined.has(p.id))
-    .map(p => (p.pseudo && String(p.pseudo).trim()) || "Membre");
+function missingRuns(profiles, memberships, maxRuns = 3) {
+  const counts = new Map();
+  (memberships || []).forEach(membership => {
+    if (!membership || !membership.owner) return;
+    counts.set(membership.owner, (counts.get(membership.owner) || 0) + 1);
+  });
+  return (profiles || []).flatMap(profile => {
+    if (!profile || !profile.id) return [];
+    const missing = Math.max(0, maxRuns - (counts.get(profile.id) || 0));
+    if (!missing) return [];
+    return [{
+      pseudo: (profile.pseudo && String(profile.pseudo).trim()) || "Membre",
+      missing
+    }];
+  });
 }
 
-// Message Discord (liste de pseudos, sans vrai @mention).
-function reminderMessage(weekLabel, absents) {
+function reminderMessage(weekLabel, missingMembers) {
   const label = weekLabel ? (" (" + weekLabel + ")") : "";
-  if (!absents.length) {
-    return "✅ **Boss de confrérie**" + label + " — tout le monde a rejoint un groupe avant le reset de lundi 9h. Bravo !";
+  if (!missingMembers.length) {
+    return "✅ **Boss de confrérie**" + label +
+      " — tout le monde est à 3/3 avant le reset de lundi 9h. Bravo !";
   }
+  const lines = missingMembers.map(member =>
+    member.pseudo + " : " + member.missing + " run" +
+    (member.missing > 1 ? "s restantes" : " restante")
+  );
   return "🔔 **Boss de confrérie**" + label + " — reset lundi 9h !\n" +
-    "Pas encore de groupe pour : " + absents.join(", ") + ".\n" +
-    "Rejoins un groupe sur NOVA pour ne pas rater ton run ! ⚔️";
+    lines.join("\n") + "\n" +
+    "Réserve tes runs sur NOVA avant le reset ! ⚔️";
 }
 
 module.exports = {
-  isReminderWindow, currentBossWeekStart, absentPseudos, reminderMessage,
+  isReminderWindow, currentBossWeekStart, missingRuns, reminderMessage,
   REMINDER_WEEKDAY, REMINDER_HOUR
 };

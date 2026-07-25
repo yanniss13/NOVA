@@ -2,7 +2,7 @@
 
 const assert = require("node:assert/strict");
 const {
-  isReminderWindow, currentBossWeekStart, absentPseudos, reminderMessage
+  isReminderWindow, currentBossWeekStart, missingRuns, reminderMessage
 } = require("../scripts/reminder-core.js");
 
 // Fenêtre : dimanche (0) à 12h, heure de Paris.
@@ -27,35 +27,41 @@ const {
   assert.equal(currentBossWeekStart(new Date("2026-07-20T08:00:00Z")), "2026-07-20");
 }
 
-// absentPseudos : membres qui n'ont rejoint aucun groupe de la semaine.
+// missingRuns : une participation ouverte ou archivée vaut une run.
 {
   const profiles = [
-    { id: "u1", pseudo: "Akaaarix" },
-    { id: "u2", pseudo: "Casté" },
-    { id: "u3", pseudo: "Syval" }
+    { id: "u0", pseudo: "Zéro" },
+    { id: "u1", pseudo: "Une" },
+    { id: "u2", pseudo: "Deux" },
+    { id: "u3", pseudo: "Trois" }
   ];
   const memberships = [
-    { owner: "u1" },            // a rejoint un groupe
-    { owner: "u1" },            // (doublon : plusieurs groupes) -> compte une fois
+    { owner: "u1" },
+    { owner: "u2" }, { owner: "u2" },
+    { owner: "u3" }, { owner: "u3" }, { owner: "u3" }
   ];
+  assert.deepStrictEqual(missingRuns(profiles, memberships), [
+    { pseudo: "Zéro", missing: 3 },
+    { pseudo: "Une", missing: 2 },
+    { pseudo: "Deux", missing: 1 }
+  ]);
   assert.deepStrictEqual(
-    absentPseudos(profiles, memberships).sort(),
-    ["Casté", "Syval"].sort()
-  );
-  // Tout le monde a rejoint -> personne d'absent.
-  assert.deepStrictEqual(
-    absentPseudos(profiles, [{ owner: "u1" }, { owner: "u2" }, { owner: "u3" }]),
-    []
+    missingRuns([profiles[0]], memberships.concat({ owner: "u0" }), 2),
+    [{ pseudo: "Zéro", missing: 1 }]
   );
 }
 
-// reminderMessage : liste les pseudos ; cas "tout le monde a rejoint".
+// reminderMessage : détail par pseudo et cas où tout le monde est à 3/3.
 {
-  const msg = reminderMessage("semaine du 20 juil.", ["Casté", "Syval"]);
+  const msg = reminderMessage("semaine du 20 juil.", [
+    { pseudo: "Casté", missing: 1 },
+    { pseudo: "Syval", missing: 3 }
+  ]);
   assert.match(msg, /Boss de confrérie/);
   assert.match(msg, /semaine du 20 juil\./);
-  assert.match(msg, /Casté, Syval/);
-  assert.match(reminderMessage("semaine du 20 juil.", []), /tout le monde a rejoint/);
+  assert.match(msg, /Casté : 1 run restante/);
+  assert.match(msg, /Syval : 3 runs restantes/);
+  assert.match(reminderMessage("semaine du 20 juil.", []), /tout le monde est à 3\/3/);
 }
 
 console.log("PASS rappel Discord (logique pure)");
