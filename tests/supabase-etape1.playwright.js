@@ -218,6 +218,67 @@ const { chromium } = require("playwright");
     await page.locator(".boss-grid .boss-card").nth(5).waitFor();
     assert.equal(await page.locator(".boss-grid .boss-card").count(), 6);
     assert.equal(await page.evaluate(() => window.__fakeSupabaseState.boss_sessions.length), 6);
+    const invalidWeekErrors = await page.evaluate(async () => {
+      const state = window.__fakeSupabaseState;
+      const source = state.boss_sessions[0];
+      const invalidRun = Object.assign({}, source, {
+        id:"boss-invalid-week",
+        week_start:"1999-01-04"
+      });
+      state.boss_sessions.push(invalidRun);
+      const errors = await Promise.all([
+        "join_boss_run",
+        "leave_boss_run",
+        "complete_boss_run"
+      ].map(async name => {
+        const result = await window.__fakeSupabaseClient.rpc(name, {
+          p_session_id:invalidRun.id
+        });
+        return result.error && result.error.message;
+      }));
+      state.boss_sessions = state.boss_sessions.filter(item => item.id !== invalidRun.id);
+      return errors;
+    });
+    assert.deepEqual(invalidWeekErrors, [
+      "RUN_INVALID_WEEK",
+      "RUN_INVALID_WEEK",
+      "RUN_INVALID_WEEK"
+    ]);
+    const directWriteErrors = await page.evaluate(async () => {
+      const client = window.__fakeSupabaseClient;
+      const state = window.__fakeSupabaseState;
+      const run = state.boss_sessions.find(item => item.slot === 1 && item.run_no === 1);
+      const results = await Promise.all([
+        client.from("boss_participation").upsert({
+          session_id:run.id, owner:"user-1", pseudo:"Yannis"
+        }),
+        client.from("boss_participation").update({ pseudo:"Intrus" })
+          .eq("session_id", run.id).eq("owner", "user-1"),
+        client.from("boss_participation").delete()
+          .eq("session_id", run.id).eq("owner", "user-1"),
+        client.from("boss_sessions").upsert(Object.assign({}, run, { id:"boss-invalid-seed" })),
+        client.from("boss_sessions").update({ status:"archived" }).eq("id", run.id),
+        client.from("boss_sessions").delete().eq("id", run.id)
+      ]);
+      return {
+        errors:results.map(result => result.error && result.error.message),
+        participationCount:state.boss_participation.length,
+        runCount:state.boss_sessions.length,
+        runStatus:run.status
+      };
+    });
+    assert.deepEqual(directWriteErrors.errors, [
+      "RPC_REQUIRED",
+      "RPC_REQUIRED",
+      "RPC_REQUIRED",
+      "RPC_REQUIRED",
+      "RPC_REQUIRED",
+      "RPC_REQUIRED"
+    ]);
+    assert.equal(directWriteErrors.participationCount, 0);
+    assert.equal(directWriteErrors.runCount, 6);
+    assert.equal(directWriteErrors.runStatus, "open");
+    await page.evaluate(() => { window.__fakeSupabaseState.rpcCalls.length = 0; });
     assert.match(await page.locator("#bossCount").textContent(), /0\/3/);
 
     for(const number of [1, 2, 3]){
@@ -225,6 +286,16 @@ const { chromium } = require("playwright");
         .getByRole("button", { name:"Rejoindre", exact:true }).click();
     }
     await page.waitForFunction(() => window.__fakeSupabaseState.boss_participation.length === 3);
+    assert.deepEqual(
+      await page.evaluate(() => window.__fakeSupabaseState.rpcCalls
+        .filter(call => call.name === "join_boss_run")
+        .map(call => call.args)),
+      await page.evaluate(() => window.__fakeSupabaseState.boss_sessions
+        .filter(item => [1, 2, 3].includes(item.slot) && item.run_no === 1)
+        .sort((a,b) => a.slot - b.slot)
+        .map(item => ({ p_session_id:item.id }))
+      )
+    );
     assert.match(await page.locator("#bossCount").textContent(), /3\/3/);
     assert.equal(
       await page.locator(".boss-card", { hasText:"Groupe 4 · Run 1" })
@@ -250,6 +321,16 @@ const { chromium } = require("playwright");
     await page.locator(".boss-card", { hasText:"Groupe 1 · Run 1" })
       .getByRole("button", { name:"Quitter", exact:true }).click();
     await page.waitForFunction(() => window.__fakeSupabaseState.boss_participation.length === 2);
+    assert.equal(
+      await page.evaluate(() => window.__fakeSupabaseState.rpcCalls.some(call =>
+        call.name === "leave_boss_run" &&
+        call.args.p_session_id === window.__fakeSupabaseState.boss_sessions.find(item =>
+          item.slot === 1 && item.run_no === 1
+        ).id
+      )),
+      true,
+      "Quitter passe par leave_boss_run"
+    );
     assert.match(await page.locator("#bossCount").textContent(), /2\/3/);
 
     await page.locator(".boss-card", { hasText:"Groupe 4 · Run 1" })
@@ -260,6 +341,34 @@ const { chromium } = require("playwright");
     await page.locator(".boss-card", { hasText:"Groupe 2 · Run 1" })
       .getByRole("button", { name:"Run terminée", exact:true }).click();
     await page.locator(".boss-card", { hasText:"Groupe 2 · Run 2" }).waitFor();
+    assert.equal(
+      await page.evaluate(() => window.__fakeSupabaseState.rpcCalls.some(call =>
+        call.name === "complete_boss_run" &&
+        call.args.p_session_id === window.__fakeSupabaseState.boss_sessions.find(item =>
+          item.slot === 2 && item.run_no === 1
+        ).id
+      )),
+      true,
+      "Run terminée passe par complete_boss_run"
+    );
+    const nextRunId = await page.evaluate(() =>
+      window.__fakeSupabaseState.boss_sessions.find(item =>
+        item.slot === 2 && item.run_no === 2
+      ).id
+    );
+    assert.equal(
+      await page.evaluate(id => window.__fakeSupabaseState.boss_participation.some(item =>
+        item.session_id === id
+      ), nextRunId),
+      false,
+      "La run suivante est créée vide"
+    );
+    const nextRunCard = page.locator(".boss-card", { hasText:"Groupe 2 · Run 2" });
+    assert.match(await nextRunCard.textContent(), /Personne pour l'instant/);
+    assert.equal(
+      await nextRunCard.getByRole("button", { name:"Rejoindre", exact:true }).count(),
+      1
+    );
     assert.equal(await page.locator(".boss-grid .boss-card").count(), 6);
     assert.match(await page.locator("#bossCount").textContent(), /3\/3/);
     assert.match(await page.locator(".boss-archive-current").textContent(), /Groupe 2 · Run 1/);
@@ -407,7 +516,8 @@ async function installFakeSupabase(page){
       ],
       boss_sessions:[],
       boss_participation:[],
-      calls:[]
+      calls:[],
+      rpcCalls:[]
     };
 
     function clone(value){
@@ -423,13 +533,31 @@ async function installFakeSupabase(page){
       return state[table];
     }
 
+    function currentBossWeekStart(now){
+      const p = new Intl.DateTimeFormat("en-CA",{ timeZone:"Europe/Paris",
+        year:"numeric", month:"2-digit", day:"2-digit", weekday:"short", hour:"2-digit", hourCycle:"h23" })
+        .formatToParts(now || new Date());
+      const get = type => (p.find(item => item.type === type) || {}).value;
+      const year = +get("year"), month = +get("month"), day = +get("day"), hour = +get("hour");
+      const weekday = { Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6 }[get("weekday")];
+      let offset = (weekday + 6) % 7;
+      if(weekday === 1 && hour < 9) offset = 7;
+      const start = new Date(Date.UTC(year, month - 1, day));
+      start.setUTCDate(start.getUTCDate() - offset);
+      return start.toISOString().slice(0,10);
+    }
+
     async function rpc(name, args){
       const sessionId = args && args.p_session_id;
       const run = state.boss_sessions.find(item => item.id === sessionId);
       const owner = state.session && state.session.user && state.session.user.id;
       const fail = message => ({ data:null, error:{ message } });
+      state.rpcCalls.push({ name, args:clone(args) });
       if(!owner) return fail("AUTH_REQUIRED");
       if(!run) return fail("RUN_NOT_FOUND");
+      if(!run.week_start || run.week_start !== currentBossWeekStart()){
+        return fail("RUN_INVALID_WEEK");
+      }
 
       if(name === "join_boss_run"){
         if(run.status !== "open") return fail("RUN_ARCHIVED");
@@ -475,15 +603,20 @@ async function installFakeSupabase(page){
           item.slot === run.slot &&
           item.run_no === nextRunNo
         )){
-          state.boss_sessions.push(Object.assign({}, run, {
+          state.boss_sessions.push({
             id:"boss-" + run.week_start + "-" + run.slot + "-" + nextRunNo,
             created_by:owner,
             title:"Groupe " + run.slot,
+            boss_name:run.boss_name || null,
+            session_date:run.session_date || null,
+            week_start:run.week_start,
+            slot:run.slot,
             run_no:nextRunNo,
+            elements:clone(run.elements || []),
             status:"open",
             completed_at:null,
             created_at:"2026-07-25T10:30:00.000Z"
-          }));
+          });
         }
         return { data:null, error:null };
       }
@@ -521,6 +654,14 @@ async function installFakeSupabase(page){
         const rows = tableRows(table);
         if(!Array.isArray(rows)) return { data:null, error:{ message:"Table inconnue" } };
 
+        const rpcRequired = () => ({ data:null, error:{ message:"RPC_REQUIRED" } });
+        if(table === "boss_participation" && ["upsert", "update", "delete"].includes(operation)){
+          return rpcRequired();
+        }
+        if(table === "boss_sessions" && ["update", "delete"].includes(operation)){
+          return rpcRequired();
+        }
+
         if(operation === "select"){
           const selected = rows.filter(matchRow);
           if(sorts.length){
@@ -553,6 +694,23 @@ async function installFakeSupabase(page){
         }
 
         const values = Array.isArray(payload) ? payload : [payload];
+        if(table === "boss_sessions"){
+          const validSeed = operation === "upsert" &&
+            upsertOptions && upsertOptions.ignoreDuplicates === true &&
+            values.length === 6 &&
+            values.every(value =>
+              value.created_by === (state.session && state.session.user && state.session.user.id) &&
+              value.week_start === currentBossWeekStart() &&
+              value.session_date === value.week_start &&
+              (value.run_no == null || value.run_no === 1)
+            );
+          const slots = values.map(value => value.slot).sort((a,b) => a-b);
+          if(!validSeed || slots.join(",") !== "1,2,3,4,5,6" || values.some(value =>
+            value.title !== "Groupe " + value.slot ||
+            value.status !== "open" ||
+            value.completed_at != null
+          )) return rpcRequired();
+        }
         if(table === "roster_characters" && state.failNextRosterUpsert){
           state.failNextRosterUpsert = false;
           return { data:null, error:{ message:"Échec simulé" } };
@@ -578,6 +736,7 @@ async function installFakeSupabase(page){
           // onConflict + ignoreDuplicates : on ne réécrit pas une ligne déjà là (garde son id).
           if(index >= 0 && upsertOptions && upsertOptions.ignoreDuplicates) return;
           const stamped = Object.assign({}, value);
+          if(table === "boss_sessions") stamped.run_no = stamped.run_no || 1;
           if(table === "teams"){
             stamped.created_at = index >= 0 ? rows[index].created_at : "2026-07-25T09:00:00.000Z";
             stamped.updated_at = stamped.updated_at || "2026-07-25T09:00:00.000Z";
