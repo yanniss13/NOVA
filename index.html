@@ -646,6 +646,7 @@
     <div class="account-connected" id="accountConnected" hidden>
       <span class="account-seal" aria-hidden="true"></span>
       <span class="account-pseudo" id="accountPseudo"></span>
+      <button class="btn btn-ghost" id="btnMigrateLocal" type="button">Importer mes données locales</button>
       <button class="btn btn-ghost" id="authLogout" type="button">Déconnexion</button>
     </div>
   </div>
@@ -822,6 +823,7 @@
   const META = window.SEVEN_DS_META || {};
   const CLOUD_TEAMS_CACHE_KEY = "confrerie7ds.cloud.teams";
   const CLOUD_REC_CACHE_KEY = "confrerie7ds.cloud.recensement";
+  const MIGRATION_KEY_PREFIX = "confrerie7ds.supabase.migrated.";
   const sb = window.supabase && window.SB_URL && window.SB_KEY
     ? window.supabase.createClient(window.SB_URL, window.SB_KEY)
     : null;
@@ -1171,6 +1173,13 @@
     $("#accountConnected").hidden = !currentUser;
     $("#accountPseudo").textContent = currentPseudo || (currentUser && currentUser.email) || "";
     $("#recLocalControls").hidden = !!currentUser;
+    const migrationButton = $("#btnMigrateLocal");
+    const migrated = !!currentUser &&
+      localStorage.getItem(MIGRATION_KEY_PREFIX+currentUser.id) === "1";
+    migrationButton.disabled = migrated;
+    migrationButton.textContent = migrated
+      ? "Données locales importées"
+      : "Importer mes données locales";
     if(typeof pseudoInput !== "undefined"){
       pseudoInput.disabled = !!currentUser;
       if(currentUser && currentPseudo){
@@ -1971,6 +1980,76 @@
       saveCloudRecCache(cloudRecCache.filter(player => player.owner !== currentUser.id));
     }
   };
+
+  function localPlayerForMigration(players){
+    const valid = Array.isArray(players)
+      ? players.filter(player => player && typeof player === "object")
+      : [];
+    const pseudo = currentPseudo.trim().toLowerCase();
+    const matching = valid.find(player =>
+      String(player.name||player.pseudo||"").trim().toLowerCase() === pseudo
+    );
+    if(matching) return matching;
+    return valid.length === 1 ? valid[0] : null;
+  }
+
+  async function migrateLocalData(){
+    if(!currentUser || !sb){
+      openAuth("Connecte-toi pour importer tes données locales.", true);
+      return;
+    }
+    const migrationKey = MIGRATION_KEY_PREFIX+currentUser.id;
+    if(localStorage.getItem(migrationKey) === "1") return;
+    const button = $("#btnMigrateLocal");
+    const oldText = button.textContent;
+    button.disabled = true;
+    button.textContent = "Import en cours…";
+    try{
+      const localTeams = LocalTeams.all();
+      const localPlayers = LocalRec.all();
+      const localPlayer = localPlayerForMigration(localPlayers);
+      if(localPlayers.length > 1 && !localPlayer){
+        throw new Error("Plusieurs membres sont présents localement et aucun ne correspond à ton pseudo.");
+      }
+      if(!localTeams.length && !localPlayer){
+        toast("Aucune donnée locale à importer.");
+        return;
+      }
+
+      for(const localTeam of localTeams){
+        await Store.upsert(Object.assign({}, localTeam, {
+          pseudo:currentPseudo,
+          owner:currentUser.id,
+          updatedAt:localTeam.updatedAt || Date.now()
+        }));
+      }
+      if(localPlayer){
+        await Rec.saveMine({
+          name:currentPseudo,
+          dps:normalizeDpsList(localPlayer.dps)
+        });
+      }
+
+      localStorage.setItem(migrationKey, "1");
+      updateAccountUi();
+      if($("#view-roster").classList.contains("active")) await renderRoster();
+      if($("#view-recensement").classList.contains("active")) await renderRecensement();
+      if($("#view-analyse").classList.contains("active")) await renderAnalyse();
+      const parts = [];
+      if(localTeams.length) parts.push(localTeams.length+" équipe"+(localTeams.length>1?"s":""));
+      if(localPlayer) parts.push("ton recensement");
+      toast(parts.join(" et ")+" importé"+(parts.length>1||localTeams.length>1?"s":"")+" dans le registre.");
+    }catch(error){
+      toast("Import local impossible : "+authMessage(error), true);
+    }finally{
+      if(localStorage.getItem(migrationKey) !== "1"){
+        button.disabled = false;
+        button.textContent = oldText;
+      }
+    }
+  }
+  $("#btnMigrateLocal").addEventListener("click", ()=>void migrateLocalData());
+
   const ELEM_ORDER = ["FIRE","ICE","WIND","EARTH","HOLY","DARK","THUNDER"];
   const elemLabel = e => e==="HOLY" ? "Lumière" : (ELEMENTS[e] ? ELEMENTS[e].label : (e||"—"));
   const elemColor = e => ELEMENTS[e] ? ELEMENTS[e].color : "#8a8a8a";

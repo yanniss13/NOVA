@@ -76,12 +76,38 @@ const { chromium } = require("playwright");
     assert.match(analyseText, /Yannis/);
     assert.match(analyseText, /Merlin/);
 
+    const migrateButton = page.locator("#btnMigrateLocal");
+    assert.equal(await migrateButton.textContent(), "Importer mes données locales");
+    await migrateButton.click();
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.teams.some(team => team.id === "local-team")
+    );
+    const migratedTeam = await page.evaluate(() =>
+      window.__fakeSupabaseState.teams.find(team => team.id === "local-team")
+    );
+    assert.equal(migratedTeam.owner, "user-1");
+    assert.equal(migratedTeam.pseudo, "Yannis");
+
+    const migratedRecensement = await page.evaluate(() =>
+      window.__fakeSupabaseState.recensement.find(row => row.owner === "user-1")
+    );
+    assert.deepEqual(migratedRecensement.dps, [
+      { char:"diane", element:"EARTH", pot:6 }
+    ]);
+    assert.equal(await migrateButton.isDisabled(), true);
+    assert.equal(await migrateButton.textContent(), "Données locales importées");
+    assert.equal(
+      await page.evaluate(() => localStorage.getItem("confrerie7ds.teams") !== null),
+      true,
+      "La migration ne doit pas supprimer le filet de sauvegarde local"
+    );
+
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await authOverlay.waitFor({ state:"visible" });
     assert.equal(await authOverlay.evaluate(el => el.classList.contains("on")), true);
     assert.deepEqual(errors, []);
 
-    console.log("PASS Playwright: Supabase Étape 1 — auth, équipes et recensement");
+    console.log("PASS Playwright: Supabase Étape 1 — auth, partage et migration");
   }finally{
     await browser.close();
   }
@@ -212,6 +238,18 @@ async function installFakeSupabase(page){
     }
 
     window.__fakeSupabaseState = state;
+    localStorage.setItem("confrerie7ds.teams", JSON.stringify([{
+      id:"local-team",
+      pseudo:"Ancien pseudo",
+      heroes:emptyHeroes(),
+      createdAt:1700000000000,
+      updatedAt:1700000000000
+    }]));
+    localStorage.setItem("confrerie7ds.recensement", JSON.stringify([{
+      id:"local-player",
+      name:"Yannis",
+      dps:[{ char:"diane", element:"EARTH", pot:6 }]
+    }]));
     window.__fakeSupabaseClient = {
       auth:{
         async getSession(){ return { data:{ session:clone(state.session) }, error:null }; },
