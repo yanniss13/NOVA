@@ -43,7 +43,12 @@ Outil web local pour que les membres d'une confrérie **7DS Origin** construisen
       Clic sur la carte / bouton « Voir l'équipement » → modal `#teamOverlay`
       (`openTeamDetail`/`heroDetail`/`equipLine`) avec l'équipement complet
       (arme + 5 armures + 3 bijoux, noms) par héros.
-- [ ] Partage réseau entre membres (voir « Évolutions prévues »). **Non commencé.**
+- [~] **Partage réseau (Supabase) — EN COURS, Étape 1**. Comptes + équipes +
+      recensement partagés. Projet Supabase créé, config + SQL prêts.
+      👉 **Codex : lis `docs/superpowers/specs/2026-07-25-supabase-etape1-handoff.md`**
+      (contexte complet, modèle de données, plan d'implémentation, manips Supabase
+      restantes). Fichiers : `supabase-config.js`, `supabase/schema.sql`.
+      Auth validée = email + mot de passe SANS confirmation email.
 
 L'appli fonctionne en **local uniquement** : on ouvre `index.html` par double-clic
 (protocole `file://`). Les équipes sont stockées dans le **localStorage** du
