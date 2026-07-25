@@ -34,6 +34,11 @@
   *{box-sizing:border-box}
   [hidden]{display:none!important}
   html,body{margin:0}
+  /* Empêche tout défilement latéral de la PAGE (bug Safari iOS : on pouvait
+     "sortir" du site sur le côté et le contenu restait décalé/non centré).
+     `clip` ne crée pas de conteneur de scroll -> n'affecte pas le header sticky
+     ni les zones à défilement interne (onglets, matrice, modales). */
+  html{overflow-x:clip}
   body{
     font-family:var(--ui);
     color:var(--parchment);
