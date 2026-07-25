@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Confrérie 7DS — Équipes du Boss de Guilde</title>
+<!-- PWA (installable, gratuit) -->
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0e0d12">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Confrérie 7DS">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
@@ -3708,6 +3716,15 @@
   renderBuilder();
   void initAuth();
 })();
+</script>
+<script>
+/* Enregistrement du service worker (PWA). Script séparé : la sandbox de tests
+   unitaires ne charge que le script principal et n'a pas `navigator`. */
+if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("sw.js").catch(function () {});
+  });
+}
 </script>
 </body>
 </html>

@@ -67,6 +67,11 @@ Les builds à rôle défensif/soutien (`Warden`, `Supporter`) ne comptent pas.
 
 ## #2 — PWA (installable, gratuit)
 
+> **Statut : IMPLÉMENTÉ (2026-07-25).** `manifest.webmanifest`, `sw.js`,
+> icônes `icons/` (192/512/maskable/apple-touch-180, blason « 7 »), balises
+> head + enregistrement du SW. Cache : HTML network-first, assets SWR,
+> Supabase/CDN network-only, cache versionné `conf7ds-vN`. Test `tests/pwa.test.js`.
+
 ### Livrables
 - `manifest.webmanifest` : `name` « Confrérie 7DS », `short_name` « 7DS »,
   `display:"standalone"`, `theme_color:"#0e0d12"`, `background_color:"#0e0d12"`,

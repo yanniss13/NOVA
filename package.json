@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "node tests/roster-schema.test.js && python -m unittest tests/test_generate_armures_liees.py && node tests/potentiel-commun.test.js && node tests/potentiel-commun.playwright.js && node tests/supabase-etape1.playwright.js",
-    "test:unit": "node tests/roster-schema.test.js && python -m unittest tests/test_generate_armures_liees.py && node tests/potentiel-commun.test.js",
+    "test": "node tests/roster-schema.test.js && node tests/pwa.test.js && python -m unittest tests/test_generate_armures_liees.py && node tests/potentiel-commun.test.js && node tests/potentiel-commun.playwright.js && node tests/supabase-etape1.playwright.js",
+    "test:unit": "node tests/roster-schema.test.js && node tests/pwa.test.js && python -m unittest tests/test_generate_armures_liees.py && node tests/potentiel-commun.test.js",
     "test:e2e": "node tests/potentiel-commun.playwright.js && node tests/supabase-etape1.playwright.js && node tests/menu-element-dps.playwright.js"
   },
   "keywords": [],
