@@ -357,6 +357,101 @@
   }
   .empty-state .big{font-family:var(--display);font-size:20px;color:var(--parchment);margin:0 0 8px}
 
+  /* ---------- Recensement DPS ---------- */
+  .rec-input{
+    font-family:var(--ui);font-size:14px;color:var(--parchment);background:var(--obsidian-2);
+    border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:200px
+  }
+  .rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:20px}
+  .rec-player{
+    background:linear-gradient(180deg,var(--panel),var(--obsidian-2));
+    border:1px solid var(--line);border-radius:12px;padding:14px
+  }
+  .rec-player-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .seal.small{width:34px;height:34px;font-size:12px}
+  .rec-name{font-family:var(--display);font-weight:600;font-size:16px;color:var(--parchment);
+    flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rec-del{appearance:none;border:1px solid var(--line);background:var(--panel-2);color:var(--muted-2);
+    width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:13px;flex:none}
+  .rec-del:hover{color:#e98d8d;border-color:var(--crimson)}
+  .dps-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+  .dps-empty{font-size:12.5px;color:var(--muted-2);font-style:italic;padding:6px 2px}
+  .dps-row{display:flex;align-items:center;gap:9px;background:var(--obsidian-2);
+    border:1px solid var(--line-soft);border-radius:8px;padding:6px 8px}
+  .dps-portrait{width:32px;height:32px;flex:none;border-radius:6px;overflow:hidden;
+    background:#0b0910 center/cover no-repeat;border:1px solid var(--line-soft)}
+  .dps-portrait img{width:100%;height:100%;object-fit:cover}
+  .dps-name{flex:1;font-size:13px;color:var(--parchment);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .dps-pot{font-family:var(--ui);font-size:12px;font-weight:600;color:var(--gold-bright);
+    background:var(--panel-2);border:1px solid var(--gold-deep);border-radius:7px;padding:4px 6px;cursor:pointer}
+  .dps-del{appearance:none;border:0;background:transparent;color:var(--muted-2);cursor:pointer;font-size:13px;flex:none;padding:2px}
+  .dps-del:hover{color:#e98d8d}
+  .dps-add{appearance:none;width:100%;cursor:pointer;background:var(--obsidian-2);
+    border:1px dashed var(--line);border-radius:8px;color:var(--muted);font-weight:600;
+    font-size:13px;padding:9px;transition:.16s}
+  .dps-add:hover{border-color:var(--gold-deep);color:var(--gold-bright)}
+
+  /* badge élément (recensement + analyse) */
+  .elem-badge{--ec:var(--gold);display:inline-flex;align-items:center;gap:5px;
+    font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap;
+    border:1px solid color-mix(in srgb, var(--ec) 55%, var(--line));
+    background:color-mix(in srgb, var(--ec) 14%, var(--obsidian-2));color:var(--parchment)}
+  .elem-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--ec);flex:none;box-shadow:0 0 6px var(--ec)}
+  .dps-elem-sel{
+    --ec:var(--gold);display:inline-flex;align-items:center;gap:6px;flex:none;
+    border-radius:999px;padding:3px 9px;max-width:122px;
+    border:1px solid color-mix(in srgb, var(--ec) 60%, var(--line));
+    background:color-mix(in srgb, var(--ec) 18%, var(--obsidian-2))
+  }
+  .dps-elem-sel .dot{width:8px;height:8px;border-radius:50%;background:var(--ec);flex:none;box-shadow:0 0 6px var(--ec)}
+  .dps-elem-sel select{
+    appearance:auto;background:transparent;border:0;color:var(--parchment);cursor:pointer;
+    font-family:var(--ui);font-size:11px;font-weight:600;padding:0;color-scheme:dark;max-width:84px
+  }
+  .dps-elem-sel select:focus{outline:none}
+
+  /* ---------- Analyse ---------- */
+  .an-title{font-family:var(--display);font-weight:700;font-size:20px;color:var(--parchment);
+    margin:28px 0 12px;letter-spacing:.03em}
+  .cov-row{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+  .cov-card{--ec:var(--gold);background:var(--panel);border:1px solid var(--line);
+    border-top:2px solid var(--ec);border-radius:10px;padding:12px 10px;text-align:center;
+    display:flex;flex-direction:column;align-items:center;gap:6px}
+  .cov-nums{display:flex;align-items:baseline;gap:5px}
+  .cov-big{font-family:var(--display);font-weight:700;font-size:26px;color:var(--parchment)}
+  .cov-lbl{font-size:10px;color:var(--muted)}
+  .cov-sub{font-size:11px;color:var(--gold-bright);font-weight:600}
+  .elem-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
+  .elem-chip{appearance:none;cursor:pointer;background:var(--panel-2);border:1px solid var(--line);
+    border-radius:999px;padding:3px;transition:.14s}
+  .elem-chip:hover{border-color:var(--gold-deep)}
+  .elem-chip.active{border-color:var(--gold-bright);box-shadow:0 0 0 1px var(--gold-bright)}
+  .elem-chip .elem-badge{border:0;background:transparent;padding:2px 8px}
+  .rank-table{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+  .rank-row{display:grid;grid-template-columns:44px 1fr 1.6fr 90px;align-items:center;gap:10px;
+    padding:8px 14px;border-bottom:1px solid var(--line-soft)}
+  .rank-row:last-child{border-bottom:0}
+  .rank-head{background:var(--panel);color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+  .rank-row.top .rk-pos{color:var(--gold-bright);font-weight:700}
+  .rk-pos{font-family:var(--display);text-align:center;color:var(--muted)}
+  .rk-player{font-weight:600;color:var(--parchment);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rk-dps{display:flex;align-items:center;gap:8px;color:var(--parchment);font-size:13.5px;min-width:0}
+  .rk-dps>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .rk-portrait{width:28px;height:28px;flex:none;border-radius:6px;overflow:hidden;background:#0b0910 center/cover no-repeat;border:1px solid var(--line-soft)}
+  .rk-portrait img{width:100%;height:100%;object-fit:cover}
+  .rk-pot{font-family:var(--display);font-weight:700;color:var(--gold-bright);text-align:right}
+  .rank-empty{padding:18px;text-align:center;color:var(--muted)}
+  .matrix-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+  .matrix{border-collapse:collapse;width:100%;min-width:760px;font-size:12px}
+  .matrix th,.matrix td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line-soft);vertical-align:top}
+  .matrix th{background:var(--panel);position:sticky;top:0}
+  .matrix .mx-player{font-weight:600;color:var(--parchment);white-space:nowrap}
+  .matrix .mx-total{font-family:var(--display);color:var(--gold-bright);text-align:center;font-weight:700}
+  .mx-item{color:var(--parchment);white-space:nowrap}
+  .mx-empty{color:var(--muted-2);text-align:center}
+  @media(max-width:820px){ .cov-row{grid-template-columns:repeat(4,1fr)} .rec-grid{grid-template-columns:1fr} }
+  @media(max-width:520px){ .cov-row{grid-template-columns:repeat(2,1fr)} .rank-row{grid-template-columns:32px 1fr 70px;} .rank-row .rk-dps{display:none} }
+
   /* ---------- Picker modal ---------- */
   .overlay{
     position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;
@@ -503,6 +598,8 @@
   <nav class="tabs" role="tablist">
     <button class="tab active" data-view="builder" role="tab">Créer une équipe</button>
     <button class="tab" data-view="roster" role="tab">Boss de Guilde</button>
+    <button class="tab" data-view="recensement" role="tab">Recensement DPS</button>
+    <button class="tab" data-view="analyse" role="tab">Analyse</button>
   </nav>
 </header>
 
@@ -542,6 +639,34 @@
     </div>
 
     <div id="rosterGrid"></div>
+  </section>
+
+  <!-- ============ RECENSEMENT DPS ============ -->
+  <section id="view-recensement" class="view">
+    <p class="section-eyebrow">Confrérie</p>
+    <h1 class="section-title">Recensement des DPS</h1>
+    <p class="section-lead">Pour chaque membre, ajoute ses DPS : choisis le héros (l'élément est détecté automatiquement) et son potentiel. Sert à savoir qui envoyer sur quel élément du Boss de Guilde.</p>
+
+    <div class="roster-toolbar">
+      <div class="field" style="flex-direction:row;align-items:flex-end;gap:8px">
+        <input id="recPlayer" class="rec-input" type="text" placeholder="Pseudo du membre" autocomplete="off" maxlength="30">
+        <button class="btn btn-primary" id="recAddPlayer">Ajouter le membre</button>
+      </div>
+      <span class="roster-count" id="recCount" style="margin-left:auto"></span>
+      <button class="btn" id="recExport">Exporter (JSON)</button>
+      <button class="btn" id="recImport">Importer (JSON)</button>
+      <input type="file" id="recImportFile" accept="application/json,.json" hidden>
+    </div>
+
+    <div id="recGrid"></div>
+  </section>
+
+  <!-- ============ ANALYSE ============ -->
+  <section id="view-analyse" class="view">
+    <p class="section-eyebrow">Confrérie</p>
+    <h1 class="section-title">Analyse par élément</h1>
+    <p class="section-lead">Couverture des éléments, classement des membres par potentiel, et matrice complète — d'après le recensement.</p>
+    <div id="analyseBody"></div>
   </section>
 
   <p class="databar" id="databar"></p>
@@ -837,6 +962,8 @@
     document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
     $("#view-"+name).classList.add("active");
     if(name==="roster") renderRoster();
+    if(name==="recensement") renderRecensement();
+    if(name==="analyse") renderAnalyse();
     window.scrollTo({top:0, behavior:"smooth"});
   }
   document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click", ()=>showView(b.dataset.view)));
@@ -1368,6 +1495,249 @@
     };
     reader.readAsText(file);
   });
+
+  /* ============================ Recensement DPS ============================ */
+  const REC_KEY = "confrerie7ds.recensement";
+  const Rec = {
+    all(){ try{ return JSON.parse(localStorage.getItem(REC_KEY)) || []; }catch(e){ return []; } },
+    save(list){ localStorage.setItem(REC_KEY, JSON.stringify(list)); }
+  };
+  const ELEM_ORDER = ["FIRE","ICE","WIND","EARTH","HOLY","DARK","THUNDER"];
+  const elemLabel = e => e==="HOLY" ? "Lumière" : (ELEMENTS[e] ? ELEMENTS[e].label : (e||"—"));
+  const elemColor = e => ELEMENTS[e] ? ELEMENTS[e].color : "#8a8a8a";
+  const elemOf = charId => { const m = metaOf(charId); return m ? (m.element||"").toUpperCase() : null; };
+  // éléments POSSIBLES d'un perso (il en a un par type d'arme équipable)
+  function charElements(charId){
+    const m = metaOf(charId); if(!m) return [];
+    const set = [];
+    (m.weapons||[]).forEach(w=>{ const e=(w.element||"").toUpperCase(); if(e && e!=="DEFAULT" && !set.includes(e)) set.push(e); });
+    if(!set.length && m.element) set.push((m.element||"").toUpperCase());
+    return set;
+  }
+  // élément retenu pour une entrée DPS (choisi, sinon 1er possible)
+  const dpsElem = d => (d.element||"").toUpperCase() || charElements(d.char)[0] || elemOf(d.char);
+
+  function elemBadge(e){
+    const b = el("span",{class:"elem-badge", title:elemLabel(e)});
+    b.style.setProperty("--ec", elemColor(e));
+    b.appendChild(el("span",{class:"dot"}));
+    b.appendChild(el("span",{text:elemLabel(e)}));
+    return b;
+  }
+  // contrôle d'élément : badge fixe si 1 seul, sinon menu déroulant colorable
+  function elemControl(charId, current, onChange){
+    const opts = charElements(charId);
+    if(opts.length <= 1) return elemBadge(current || opts[0] || elemOf(charId));
+    const wrap = el("span",{class:"dps-elem-sel", title:"Élément (selon l'arme jouée)"});
+    const dot = el("span",{class:"dot"});
+    const sel = el("select",{});
+    opts.forEach(e=> sel.appendChild(el("option",{value:e, text:elemLabel(e)})));
+    sel.value = current || opts[0];
+    const paint = ()=> wrap.style.setProperty("--ec", elemColor(sel.value));
+    paint();
+    sel.addEventListener("change", ()=>{ paint(); onChange(sel.value); });
+    wrap.appendChild(dot); wrap.appendChild(sel);
+    return wrap;
+  }
+  function potSelect(pot, onChange){
+    const sel = el("select",{class:"dps-pot", title:"Potentiel"});
+    const opts = [["0","—"]]; for(let i=1;i<=POT_MAX;i++) opts.push([String(i),"P"+i]);
+    opts.forEach(([v,l])=> sel.appendChild(el("option",{value:v, text:l})));
+    sel.value = String(pot||0);
+    sel.addEventListener("change", ()=>onChange(parseInt(sel.value,10)||0));
+    return sel;
+  }
+
+  function renderRecensement(){
+    const players = Rec.all();
+    const totalDps = players.reduce((n,p)=>n+((p.dps||[]).length),0);
+    $("#recCount").innerHTML = "<b>"+players.length+"</b> membre"+(players.length>1?"s":"")+
+      " · <b>"+totalDps+"</b> DPS recensé"+(totalDps>1?"s":"");
+    const grid = $("#recGrid");
+    grid.className = players.length ? "rec-grid" : "";
+    grid.innerHTML = "";
+    if(!players.length){
+      grid.appendChild(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:"Aucun membre recensé"}),
+        el("p",{text:"Ajoute un membre ci-dessus pour commencer le recensement des DPS."})
+      ]));
+      return;
+    }
+    players.forEach(p=>grid.appendChild(playerCard(p)));
+  }
+
+  function playerCard(p){
+    const head = el("div",{class:"rec-player-head"},[
+      el("div",{class:"seal small", text:initials(p.name)}),
+      el("span",{class:"rec-name", text:p.name || "?"}),
+      el("button",{class:"rec-del", type:"button", title:"Retirer le membre", text:"✕",
+        onclick:()=>{ if(confirm('Retirer « '+(p.name||"?")+' » du recensement ?')){ Rec.save(Rec.all().filter(x=>x.id!==p.id)); renderRecensement(); } }})
+    ]);
+
+    const list = el("div",{class:"dps-list"});
+    const dps = (p.dps||[]).slice().sort((a,b)=>{
+      const ea=ELEM_ORDER.indexOf(dpsElem(a)), eb=ELEM_ORDER.indexOf(dpsElem(b));
+      return ea-eb || (b.pot||0)-(a.pot||0);
+    });
+    if(!dps.length) list.appendChild(el("div",{class:"dps-empty", text:"Aucun DPS. Ajoute-en un ci-dessous."}));
+    dps.forEach((d,idx)=>{
+      const ch = charOf(d.char);
+      const port = el("div",{class:"dps-portrait"});
+      if(ch) port.appendChild(el("img",{src:ch.file, alt:ch.name, loading:"lazy"}));
+      const realIdx = (p.dps||[]).indexOf(d);
+      const saveP = ()=>{ Rec.save(Rec.all().map(x=>x.id===p.id?p:x)); if(document.getElementById("view-analyse").classList.contains("active")) renderAnalyse(); };
+      list.appendChild(el("div",{class:"dps-row"},[
+        port,
+        el("span",{class:"dps-name", text: ch ? ch.name : d.char}),
+        elemControl(d.char, dpsElem(d), v=>{ p.dps[realIdx].element=v; saveP(); }),
+        potSelect(d.pot, v=>{ p.dps[realIdx].pot=v; saveP(); }),
+        el("button",{class:"dps-del", type:"button", title:"Retirer", text:"✕",
+          onclick:()=>{ p.dps.splice(realIdx,1); Rec.save(Rec.all().map(x=>x.id===p.id?p:x)); renderRecensement(); }})
+      ]));
+    });
+
+    const add = el("button",{class:"dps-add", type:"button", text:"+ Ajouter un DPS",
+      onclick:()=>{
+        Picker.open({
+          title:"DPS de "+(p.name||"?"),
+          items:(DATA.personnages||[]).map(c=>({value:c.id, name:c.name, file:c.file})),
+          portrait:true,
+          onSelect:v=>{ if(!v) return; p.dps=p.dps||[]; p.dps.push({char:v, pot:0, element:(charElements(v)[0]||elemOf(v)||null)}); Rec.save(Rec.all().map(x=>x.id===p.id?p:x)); renderRecensement(); }
+        });
+      }});
+
+    return el("div",{class:"rec-player"},[head, list, add]);
+  }
+
+  $("#recAddPlayer").addEventListener("click", ()=>{
+    const name = ($("#recPlayer").value||"").trim();
+    if(!name){ toast("Entre un pseudo.", true); return; }
+    const list = Rec.all();
+    if(list.some(p=>p.name.toLowerCase()===name.toLowerCase())){ toast("Ce membre existe déjà.", true); return; }
+    list.push({ id:uid(), name, dps:[] });
+    Rec.save(list);
+    $("#recPlayer").value = "";
+    renderRecensement();
+  });
+  $("#recPlayer").addEventListener("keydown", e=>{ if(e.key==="Enter") $("#recAddPlayer").click(); });
+
+  $("#recExport").addEventListener("click", ()=>{
+    const data = Rec.all();
+    if(!data.length){ toast("Rien à exporter.", true); return; }
+    const blob = new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+    const a = el("a",{href:URL.createObjectURL(blob), download:"confrerie7ds-recensement.json"});
+    document.body.appendChild(a); a.click(); a.remove();
+    toast(data.length+" membre(s) exporté(s).");
+  });
+  $("#recImport").addEventListener("click", ()=>$("#recImportFile").click());
+  $("#recImportFile").addEventListener("change", e=>{
+    const file=e.target.files[0]; if(!file) return;
+    const r=new FileReader();
+    r.onload=()=>{ try{
+      const inc=JSON.parse(r.result); if(!Array.isArray(inc)) throw 0;
+      const list=Rec.all();
+      inc.forEach(p=>{ if(!p||typeof p!=="object")return; if(!p.id)p.id=uid(); if(!Array.isArray(p.dps))p.dps=[];
+        const i=list.findIndex(x=>x.id===p.id); if(i>=0)list[i]=p; else list.push(p); });
+      Rec.save(list); renderRecensement(); toast(inc.length+" membre(s) importé(s).");
+    }catch(err){ toast("Fichier JSON invalide.", true); } e.target.value=""; };
+    r.readAsText(file);
+  });
+
+  /* ============================ Analyse ============================ */
+  let analyseElem = null;
+
+  function renderAnalyse(){
+    const players = Rec.all();
+    const box = $("#analyseBody");
+    box.innerHTML = "";
+    if(!players.length){
+      box.appendChild(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:"Rien à analyser"}),
+        el("p",{text:"Remplis d'abord l'onglet « Recensement DPS »."})
+      ]));
+      return;
+    }
+
+    // --- 1) Couverture par élément ---
+    const cov = {}; ELEM_ORDER.forEach(e=>cov[e]={players:0,dps:0});
+    players.forEach(p=>{
+      const has={};
+      (p.dps||[]).forEach(d=>{ const e=dpsElem(d); if(cov[e]){ cov[e].dps++; has[e]=true; } });
+      ELEM_ORDER.forEach(e=>{ if(has[e]) cov[e].players++; });
+    });
+    box.appendChild(el("h2",{class:"an-title", text:"Couverture par élément"}));
+    const covRow = el("div",{class:"cov-row"});
+    ELEM_ORDER.forEach(e=>{
+      const c = el("div",{class:"cov-card"});
+      c.style.setProperty("--ec", elemColor(e));
+      c.appendChild(elemBadge(e));
+      c.appendChild(el("div",{class:"cov-nums"},[
+        el("span",{class:"cov-big", text:String(cov[e].players)}),
+        el("span",{class:"cov-lbl", text:"membre"+(cov[e].players>1?"s":"")})
+      ]));
+      c.appendChild(el("div",{class:"cov-sub", text:cov[e].dps+" DPS"}));
+      covRow.appendChild(c);
+    });
+    box.appendChild(covRow);
+
+    // --- 2) Classement par élément ---
+    box.appendChild(el("h2",{class:"an-title", text:"Classement par potentiel"}));
+    if(analyseElem===null){
+      analyseElem = ELEM_ORDER.find(e=>cov[e].dps>0) || ELEM_ORDER[0];
+    }
+    const chips = el("div",{class:"elem-chips"});
+    ELEM_ORDER.forEach(e=>{
+      chips.appendChild(el("button",{class:"elem-chip"+(e===analyseElem?" active":""),
+        onclick:()=>{ analyseElem=e; renderAnalyse(); }},[ elemBadge(e) ]));
+    });
+    box.appendChild(chips);
+
+    const entries = [];
+    players.forEach(p=>(p.dps||[]).forEach(d=>{ if(dpsElem(d)===analyseElem) entries.push({player:p.name, char:d.char, pot:d.pot||0}); }));
+    entries.sort((a,b)=>b.pot-a.pot);
+    const rank = el("div",{class:"rank-table"});
+    rank.appendChild(el("div",{class:"rank-row rank-head"},[
+      el("span",{class:"rk-pos",text:"#"}), el("span",{class:"rk-player",text:"Membre"}),
+      el("span",{class:"rk-dps",text:"DPS"}), el("span",{class:"rk-pot",text:"Potentiel"})
+    ]));
+    if(!entries.length) rank.appendChild(el("div",{class:"rank-empty", text:"Aucun DPS "+elemLabel(analyseElem)+" recensé."}));
+    entries.forEach((en,i)=>{
+      const ch=charOf(en.char);
+      const port=el("div",{class:"rk-portrait"}); if(ch) port.appendChild(el("img",{src:ch.file,alt:"",loading:"lazy"}));
+      rank.appendChild(el("div",{class:"rank-row"+(i<3?" top":"")},[
+        el("span",{class:"rk-pos", text:String(i+1)}),
+        el("span",{class:"rk-player", text:en.player}),
+        el("span",{class:"rk-dps"},[ port, el("span",{text: ch?ch.name:en.char}) ]),
+        el("span",{class:"rk-pot", text: en.pot>0?("P"+en.pot):"—"})
+      ]));
+    });
+    box.appendChild(rank);
+
+    // --- 3) Matrice joueur × élément ---
+    box.appendChild(el("h2",{class:"an-title", text:"Matrice membre × élément"}));
+    const wrap = el("div",{class:"matrix-wrap"});
+    const table = el("table",{class:"matrix"});
+    const thead = el("tr",{},[ el("th",{class:"mx-player",text:"Membre"}), el("th",{text:"Total"}) ]);
+    ELEM_ORDER.forEach(e=>{ const th=el("th",{}); th.appendChild(elemBadge(e)); thead.appendChild(th); });
+    table.appendChild(thead);
+    players.slice().sort((a,b)=>(b.dps||[]).length-(a.dps||[]).length).forEach(p=>{
+      const tr=el("tr",{});
+      tr.appendChild(el("td",{class:"mx-player", text:p.name}));
+      tr.appendChild(el("td",{class:"mx-total", text:String((p.dps||[]).length)}));
+      ELEM_ORDER.forEach(e=>{
+        const cell = (p.dps||[]).filter(d=>dpsElem(d)===e)
+          .sort((a,b)=>(b.pot||0)-(a.pot||0))
+          .map(d=>{ const ch=charOf(d.char); return (ch?ch.name:d.char)+(d.pot>0?" P"+d.pot:""); });
+        const td = el("td",{class:cell.length?"":"mx-empty"});
+        if(cell.length) cell.forEach(t=>td.appendChild(el("div",{class:"mx-item",text:t})));
+        else td.textContent="—";
+        tr.appendChild(td);
+      });
+      table.appendChild(tr);
+    });
+    wrap.appendChild(table);
+    box.appendChild(wrap);
+  }
 
   /* ============================ Démarrage ============================ */
   $("#databar").textContent =

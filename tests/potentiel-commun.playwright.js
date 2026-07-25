@@ -73,21 +73,21 @@ const STORAGE_KEY = "confrerie7ds.teams";
       page.locator("#potBody .pot-empty"),
       "Équipe une arme compatible pour afficher les bonus de potentiel."
     );
-    await page.locator("#potBody").getByRole("button", { name:"T5", exact:true }).click();
-    assert.equal(await page.locator("#potBody .pot-head-val").textContent(), "T5/10");
+    await page.locator("#potBody").getByRole("button", { name:"P5", exact:true }).click();
+    assert.equal(await page.locator("#potBody .pot-head-val").textContent(), "P5/10");
     await page.locator("#potClose").click();
-    assert.equal(await firstHero.locator(".pot-val").textContent(), "T5");
+    assert.equal(await firstHero.locator(".pot-val").textContent(), "P5");
 
     await chooseWeapon(page, firstHero, "Hache");
     await firstHero.locator(".pot-btn").click();
-    assert.equal(await page.locator("#potBody .pot-head-val").textContent(), "T5/10");
+    assert.equal(await page.locator("#potBody .pot-head-val").textContent(), "P5/10");
     assert.equal(await page.locator("#potBody .pot-item").count(), 10);
     const hacheT2 = await page.locator("#potBody .pot-item").nth(1).textContent();
     await page.locator("#potClose").click();
 
     await chooseWeapon(page, firstHero, "Epee a une main");
     await firstHero.locator(".pot-btn").click();
-    assert.equal(await page.locator("#potBody .pot-head-val").textContent(), "T5/10");
+    assert.equal(await page.locator("#potBody .pot-head-val").textContent(), "P5/10");
     assert.equal(await page.locator("#potBody .pot-item").count(), 10);
     const epeeT2 = await page.locator("#potBody .pot-item").nth(1).textContent();
     assert.notEqual(epeeT2, hacheT2, "Les descriptions doivent suivre l'arme équipée");
@@ -126,7 +126,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     }, { key:STORAGE_KEY });
     await page.reload();
     await page.locator('.tab[data-view="roster"]').click();
-    assert.match(await page.locator(".mini-pot").first().textContent(), /T8/);
+    assert.match(await page.locator(".mini-pot").first().textContent(), /P8/);
     await page.getByRole("button", { name:"Modifier", exact:true }).click();
     await page.locator("#btnSave").click();
 
