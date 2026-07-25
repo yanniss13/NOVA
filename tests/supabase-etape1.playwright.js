@@ -213,28 +213,108 @@ const { chromium } = require("playwright");
       "La migration ne doit pas supprimer le filet de sauvegarde local"
     );
 
-    // #1 Groupes de boss : 6 groupes auto-créés par semaine ; rejoindre / quitter (multi-groupes).
+    // Boss : trois runs maximum, départ libérateur, archive et run suivante.
     await page.locator('.tab[data-view="boss"]').click();
     await page.locator(".boss-grid .boss-card").nth(5).waitFor();
-    assert.equal(await page.locator(".boss-grid .boss-card").count(), 6, "6 groupes créés automatiquement");
-    // Une seule semaine de groupes créée (pas de doublon malgré plusieurs rendus/ensureWeek).
+    assert.equal(await page.locator(".boss-grid .boss-card").count(), 6);
     assert.equal(await page.evaluate(() => window.__fakeSupabaseState.boss_sessions.length), 6);
+    assert.match(await page.locator("#bossCount").textContent(), /0\/3/);
 
-    const groupe1 = page.locator(".boss-card", { hasText:"Groupe 1" });
-    await groupe1.getByRole("button", { name:"Rejoindre", exact:true }).click();
-    await page.waitForFunction(() => window.__fakeSupabaseState.boss_participation.some(r => r.owner === "user-1"));
-    await groupe1.getByRole("button", { name:"Quitter", exact:true }).waitFor();
-    assert.match(await page.locator("#bossCount").textContent(), /1\s+groupe rejoint/);
+    for(const number of [1, 2, 3]){
+      await page.locator(".boss-card", { hasText:"Groupe " + number + " · Run 1" })
+        .getByRole("button", { name:"Rejoindre", exact:true }).click();
+    }
+    await page.waitForFunction(() => window.__fakeSupabaseState.boss_participation.length === 3);
+    assert.match(await page.locator("#bossCount").textContent(), /3\/3/);
+    assert.equal(
+      await page.locator(".boss-card", { hasText:"Groupe 4 · Run 1" })
+        .getByRole("button", { name:"Rejoindre", exact:true }).isDisabled(),
+      true
+    );
+    const fourthJoinError = await page.evaluate(async () => {
+      const run = window.__fakeSupabaseState.boss_sessions.find(item =>
+        item.slot === 4 && item.run_no === 1
+      );
+      const result = await window.__fakeSupabaseClient.rpc(
+        "join_boss_run",
+        { p_session_id:run.id }
+      );
+      return result.error && result.error.message;
+    });
+    assert.equal(fourthJoinError, "RUN_LIMIT_REACHED");
+    assert.equal(
+      await page.evaluate(() => window.__fakeSupabaseState.boss_participation.length),
+      3
+    );
 
-    // Multi-groupes : on peut aussi rejoindre le Groupe 2.
-    await page.locator(".boss-card", { hasText:"Groupe 2" }).getByRole("button", { name:"Rejoindre", exact:true }).click();
+    await page.locator(".boss-card", { hasText:"Groupe 1 · Run 1" })
+      .getByRole("button", { name:"Quitter", exact:true }).click();
     await page.waitForFunction(() => window.__fakeSupabaseState.boss_participation.length === 2);
-    assert.match(await page.locator("#bossCount").textContent(), /2\s+groupes rejoints/);
+    assert.match(await page.locator("#bossCount").textContent(), /2\/3/);
 
-    // Quitter le Groupe 1 -> il ne reste qu'un groupe.
-    await groupe1.getByRole("button", { name:"Quitter", exact:true }).click();
-    await page.waitForFunction(() => window.__fakeSupabaseState.boss_participation.length === 1);
-    assert.match(await page.locator("#bossCount").textContent(), /1\s+groupe rejoint/);
+    await page.locator(".boss-card", { hasText:"Groupe 4 · Run 1" })
+      .getByRole("button", { name:"Rejoindre", exact:true }).click();
+    await page.waitForFunction(() => window.__fakeSupabaseState.boss_participation.length === 3);
+
+    page.once("dialog", dialog => dialog.accept());
+    await page.locator(".boss-card", { hasText:"Groupe 2 · Run 1" })
+      .getByRole("button", { name:"Run terminée", exact:true }).click();
+    await page.locator(".boss-card", { hasText:"Groupe 2 · Run 2" }).waitFor();
+    assert.equal(await page.locator(".boss-grid .boss-card").count(), 6);
+    assert.match(await page.locator("#bossCount").textContent(), /3\/3/);
+    assert.match(await page.locator(".boss-archive-current").textContent(), /Groupe 2 · Run 1/);
+    assert.match(await page.locator(".boss-archive-current").textContent(), /Yannis/);
+
+    const archivedId = await page.evaluate(() =>
+      window.__fakeSupabaseState.boss_sessions.find(item =>
+        item.slot === 2 && item.run_no === 1
+      ).id
+    );
+    await page.evaluate(async id => {
+      await window.__fakeSupabaseClient.rpc("complete_boss_run", { p_session_id:id });
+    }, archivedId);
+    assert.equal(
+      await page.evaluate(() => window.__fakeSupabaseState.boss_sessions.filter(item =>
+        item.slot === 2 && item.run_no === 2
+      ).length),
+      1,
+      "Une double terminaison ne crée jamais deux runs suivantes"
+    );
+    const archivedLeaveError = await page.evaluate(async id => {
+      const result = await window.__fakeSupabaseClient.rpc(
+        "leave_boss_run",
+        { p_session_id:id }
+      );
+      return result.error && result.error.message;
+    }, archivedId);
+    assert.equal(archivedLeaveError, "RUN_ARCHIVED");
+    assert.equal(
+      await page.evaluate(id => window.__fakeSupabaseState.boss_participation.some(item =>
+        item.session_id === id && item.owner === "user-1"
+      ), archivedId),
+      true,
+      "La participation archivée reste définitive"
+    );
+
+    const nonMemberError = await page.evaluate(async () => {
+      const run = window.__fakeSupabaseState.boss_sessions.find(item =>
+        item.slot === 5 && item.run_no === 1
+      );
+      const result = await window.__fakeSupabaseClient.rpc(
+        "complete_boss_run",
+        { p_session_id:run.id }
+      );
+      return result.error && result.error.message;
+    });
+    assert.equal(nonMemberError, "RUN_MEMBERS_ONLY");
+
+    for(const width of [320, 360, 390]){
+      await page.setViewportSize({ width, height:844 });
+      const overflow = await page.evaluate(() =>
+        document.scrollingElement.scrollWidth - document.scrollingElement.clientWidth
+      );
+      assert.ok(overflow <= 1, `Débordement boss de ${overflow}px à ${width}px`);
+    }
 
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await authOverlay.waitFor({ state:"visible" });
@@ -343,6 +423,74 @@ async function installFakeSupabase(page){
       return state[table];
     }
 
+    async function rpc(name, args){
+      const sessionId = args && args.p_session_id;
+      const run = state.boss_sessions.find(item => item.id === sessionId);
+      const owner = state.session && state.session.user && state.session.user.id;
+      const fail = message => ({ data:null, error:{ message } });
+      if(!owner) return fail("AUTH_REQUIRED");
+      if(!run) return fail("RUN_NOT_FOUND");
+
+      if(name === "join_boss_run"){
+        if(run.status !== "open") return fail("RUN_ARCHIVED");
+        if(state.boss_participation.some(item =>
+          item.session_id === sessionId && item.owner === owner
+        )) return { data:null, error:null };
+        const weekSessionIds = new Set(state.boss_sessions
+          .filter(item => item.week_start === run.week_start)
+          .map(item => item.id));
+        const used = state.boss_participation.filter(item =>
+          item.owner === owner && weekSessionIds.has(item.session_id)
+        ).length;
+        if(used >= 3) return fail("RUN_LIMIT_REACHED");
+        const profile = state.profiles.find(item => item.id === owner);
+        state.boss_participation.push({
+          session_id:sessionId,
+          owner,
+          pseudo:(profile && profile.pseudo) || "Membre",
+          updated_at:"2026-07-25T10:00:00.000Z"
+        });
+        return { data:null, error:null };
+      }
+
+      if(name === "leave_boss_run"){
+        if(run.status !== "open") return fail("RUN_ARCHIVED");
+        state.boss_participation = state.boss_participation.filter(item =>
+          item.session_id !== sessionId || item.owner !== owner
+        );
+        return { data:null, error:null };
+      }
+
+      if(name === "complete_boss_run"){
+        if(run.status !== "open") return { data:null, error:null };
+        const mine = state.boss_participation.some(item =>
+          item.session_id === sessionId && item.owner === owner
+        );
+        if(!mine) return fail("RUN_MEMBERS_ONLY");
+        run.status = "archived";
+        run.completed_at = "2026-07-25T10:30:00.000Z";
+        const nextRunNo = (run.run_no || 1) + 1;
+        if(!state.boss_sessions.some(item =>
+          item.week_start === run.week_start &&
+          item.slot === run.slot &&
+          item.run_no === nextRunNo
+        )){
+          state.boss_sessions.push(Object.assign({}, run, {
+            id:"boss-" + run.week_start + "-" + run.slot + "-" + nextRunNo,
+            created_by:owner,
+            title:"Groupe " + run.slot,
+            run_no:nextRunNo,
+            status:"open",
+            completed_at:null,
+            created_at:"2026-07-25T10:30:00.000Z"
+          }));
+        }
+        return { data:null, error:null };
+      }
+
+      return fail("RPC inconnue");
+    }
+
     function query(table){
       let operation = "select";
       let payload = null;
@@ -418,7 +566,9 @@ async function installFakeSupabase(page){
               return row.session_id === value.session_id && row.owner === value.owner;
             }
             if(table === "boss_sessions"){
-              return row.week_start === value.week_start && row.slot === value.slot;
+              return row.week_start === value.week_start &&
+                row.slot === value.slot &&
+                (row.run_no || 1) === (value.run_no || 1);
             }
             const key = table === "profiles"
               ? "id"
@@ -477,6 +627,7 @@ async function installFakeSupabase(page){
           return { data:{ subscription:{ unsubscribe(){} } } };
         }
       },
+      rpc,
       from:query
     };
   });
