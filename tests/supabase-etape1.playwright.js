@@ -107,11 +107,12 @@ const { chromium } = require("playwright");
       .first();
     page.once("dialog", dialog => dialog.accept());
     await importButton.click();
-    await page.waitForFunction(() =>
-      window.__fakeSupabaseState.roster_characters.some(row =>
-        row.owner === "user-1" && row.char_id === "meliodas"
-      )
-    );
+    await page.waitForFunction(() => {
+      const row = window.__fakeSupabaseState.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      return row && row.builds.Hache.note === "Copie modifiée";
+    });
 
     await page.locator("#teamClose").click();
     const otherTeam = page.locator("#rosterGrid .team").filter({ hasText:"Merlin" });

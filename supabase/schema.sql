@@ -30,7 +30,6 @@ create table if not exists public.recensement (
   updated_at timestamptz not null default now()
 );
 
--- ============================ RLS (sécurité) ============================
 -- 4) Roster persistant : un personnage par membre, avec un build par type d'arme
 create table if not exists public.roster_characters (
   owner          uuid not null references auth.users(id) on delete cascade,
@@ -43,6 +42,7 @@ create table if not exists public.roster_characters (
 create index if not exists roster_characters_owner_idx
   on public.roster_characters(owner);
 
+-- ============================ RLS (sécurité) ============================
 alter table public.profiles    enable row level security;
 alter table public.teams       enable row level security;
 alter table public.recensement enable row level security;

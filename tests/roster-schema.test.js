@@ -16,7 +16,7 @@ const sql = fs.readFileSync(
   /alter table public\.roster_characters enable row level security/i,
   /create policy roster_read[\s\S]*for select to authenticated using\s*\(\s*true\s*\)/i,
   /create policy roster_insert[\s\S]*with check\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i,
-  /create policy roster_update[\s\S]*using\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i,
+  /create policy roster_update[\s\S]*?using\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)[\s\S]*?with check\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i,
   /create policy roster_delete[\s\S]*using\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i
 ].forEach(pattern => assert.match(sql, pattern));
 
