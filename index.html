@@ -660,7 +660,7 @@
     padding:2px 9px;border-radius:999px;border:1px solid var(--line)}
   .boss-members{display:flex;gap:5px;flex-wrap:wrap;flex:1;align-content:flex-start;min-height:26px}
   .boss-chip{font-size:12px;font-weight:600;color:var(--parchment);background:var(--panel-2);
-    border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+    border:1px solid var(--line);border-radius:999px;padding:2px 10px;max-width:100%;overflow-wrap:anywhere}
   .boss-chip.me{color:var(--gold-bright);border-color:var(--gold-deep);background:rgba(217,164,65,.08)}
   .boss-none{font-size:12px;color:var(--muted-2);font-style:italic}
   .boss-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
@@ -3905,6 +3905,8 @@
 
   function bossActionMessage(error){
     const message = String(error && error.message || "");
+    if(message.includes("RUN_INVALID_WEEK")) return "La semaine de boss a changé. La liste a été actualisée.";
+    if(message.includes("AUTH_REQUIRED")) return "Ta session a expiré. Reconnecte-toi pour continuer.";
     if(message.includes("RUN_LIMIT_REACHED")) return "Tes 3 runs de la semaine sont déjà réservés ou terminés.";
     if(message.includes("RUN_ARCHIVED")) return "Cette run vient d’être terminée. La liste a été actualisée.";
     if(message.includes("RUN_MEMBERS_ONLY")) return "Seuls les membres de ce groupe peuvent terminer la run.";

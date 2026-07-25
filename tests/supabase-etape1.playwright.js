@@ -281,6 +281,35 @@ const { chromium } = require("playwright");
     await page.evaluate(() => { window.__fakeSupabaseState.rpcCalls.length = 0; });
     assert.match(await page.locator("#bossCount").textContent(), /0\/3/);
 
+    for(const errorCase of [
+      {
+        code:"RUN_INVALID_WEEK",
+        expected:"La semaine de boss a changé. La liste a été actualisée."
+      },
+      {
+        code:"AUTH_REQUIRED",
+        expected:"Ta session a expiré. Reconnecte-toi pour continuer."
+      }
+    ]){
+      await page.evaluate(({ code }) => {
+        window.__fakeSupabaseState.bossRpcFailureOnce = {
+          name:"join_boss_run",
+          message:code
+        };
+      }, errorCase);
+      await page.locator(".boss-card", { hasText:"Groupe 1 · Run 1" })
+        .getByRole("button", { name:"Rejoindre", exact:true }).click();
+      await page.waitForFunction(expected => {
+        const toast = document.querySelector("#toast");
+        return toast && toast.classList.contains("on") &&
+          toast.textContent.includes(expected);
+      }, errorCase.expected);
+      const toastText = await page.locator("#toast").textContent();
+      assert.match(toastText, new RegExp(errorCase.expected.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+      assert.doesNotMatch(toastText, new RegExp(errorCase.code));
+    }
+    await page.evaluate(() => { window.__fakeSupabaseState.rpcCalls.length = 0; });
+
     for(const number of [1, 2, 3]){
       await page.locator(".boss-card", { hasText:"Groupe " + number + " · Run 1" })
         .getByRole("button", { name:"Rejoindre", exact:true }).click();
@@ -417,12 +446,33 @@ const { chromium } = require("playwright");
     });
     assert.equal(nonMemberError, "RUN_MEMBERS_ONLY");
 
+    const longBossPseudo = "WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW";
+    await page.evaluate(pseudo => {
+      const state = window.__fakeSupabaseState;
+      const run = state.boss_sessions.find(item =>
+        item.slot === 3 && item.run_no === 1
+      );
+      const membership = state.boss_participation.find(item =>
+        item.session_id === run.id && item.owner === "user-1"
+      );
+      membership.pseudo = pseudo;
+    }, longBossPseudo);
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.locator('.tab[data-view="boss"]').click();
+    await page.locator(".boss-chip", { hasText:longBossPseudo }).waitFor();
+
     for(const width of [320, 360, 390]){
       await page.setViewportSize({ width, height:844 });
       const overflow = await page.evaluate(() =>
         document.scrollingElement.scrollWidth - document.scrollingElement.clientWidth
       );
       assert.ok(overflow <= 1, `Débordement boss de ${overflow}px à ${width}px`);
+      const chipOverflow = await page.locator(".boss-chip", { hasText:longBossPseudo })
+        .evaluate(element => element.scrollWidth - element.clientWidth);
+      assert.ok(
+        chipOverflow <= 1,
+        `Débordement interne du pseudo boss de ${chipOverflow}px à ${width}px`
+      );
     }
 
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
@@ -517,7 +567,8 @@ async function installFakeSupabase(page){
       boss_sessions:[],
       boss_participation:[],
       calls:[],
-      rpcCalls:[]
+      rpcCalls:[],
+      bossRpcFailureOnce:null
     };
 
     function clone(value){
@@ -553,6 +604,12 @@ async function installFakeSupabase(page){
       const owner = state.session && state.session.user && state.session.user.id;
       const fail = message => ({ data:null, error:{ message } });
       state.rpcCalls.push({ name, args:clone(args) });
+      if(state.bossRpcFailureOnce &&
+        (!state.bossRpcFailureOnce.name || state.bossRpcFailureOnce.name === name)){
+        const message = state.bossRpcFailureOnce.message;
+        state.bossRpcFailureOnce = null;
+        return fail(message);
+      }
       if(!owner) return fail("AUTH_REQUIRED");
       if(!run) return fail("RUN_NOT_FOUND");
       if(!run.week_start || run.week_start !== currentBossWeekStart()){
