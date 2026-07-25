@@ -97,6 +97,31 @@ const { chromium } = require("playwright");
     assert.equal(saved.pseudo, "Yannis");
     assert.equal(saved.data.heroes[0].char, "meliodas");
 
+    await page.locator('.tab[data-view="roster"]').click();
+    const ownTeam = page.locator("#rosterGrid .team")
+      .filter({ hasText:"Yannis" })
+      .first();
+    await ownTeam.getByRole("button", { name:/Voir l'équipement/ }).click();
+    const importButton = page.locator("#teamDetail")
+      .getByRole("button", { name:/roster/i })
+      .first();
+    page.once("dialog", dialog => dialog.accept());
+    await importButton.click();
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.roster_characters.some(row =>
+        row.owner === "user-1" && row.char_id === "meliodas"
+      )
+    );
+
+    await page.locator("#teamClose").click();
+    const otherTeam = page.locator("#rosterGrid .team").filter({ hasText:"Merlin" });
+    await otherTeam.getByRole("button", { name:/Voir l'équipement/ }).click();
+    assert.equal(
+      await page.locator("#teamDetail").getByRole("button", { name:/roster/i }).count(),
+      0
+    );
+    await page.locator("#teamClose").click();
+
     await page.locator('.tab[data-view="recensement"]').click();
     await page.locator("#recGrid .rec-player").first().waitFor();
     assert.equal(await page.locator("#recGrid .rec-player").count(), 2);
@@ -141,6 +166,47 @@ const { chromium } = require("playwright");
     ]);
     assert.equal(await migrateButton.isDisabled(), true);
     assert.equal(await migrateButton.textContent(), "Données locales importées");
+    await page.locator('.tab[data-view="member-roster"]').click();
+    await page.locator("#memberRosterMine").click();
+    await page.locator("#memberRosterGrid .member-roster-edit").click();
+    const rosterEditorNote = page.locator("#memberRosterEditor textarea");
+    await rosterEditorNote.fill("Saisie conservée");
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.failNextRosterUpsert = true;
+    });
+    await page.locator("#memberRosterSave").click();
+    assert.equal(
+      await page.locator("#memberRosterOverlay").evaluate(node =>
+        node.classList.contains("on")
+      ),
+      true
+    );
+    assert.equal(await rosterEditorNote.inputValue(), "Saisie conservée");
+    await page.locator("#memberRosterClose").click();
+
+    for(const width of [320, 360, 390]){
+      await page.setViewportSize({ width, height:844 });
+      await page.locator('.tab[data-view="member-roster"]').click();
+      await page.waitForTimeout(100);
+      const overflow = await page.evaluate(() => {
+        const root = document.scrollingElement;
+        return root.scrollWidth - root.clientWidth;
+      });
+      assert.ok(overflow <= 1, `Débordement roster de ${overflow}px à ${width}px`);
+      if(width === 320){
+        await page.locator("#memberRosterGrid .member-roster-edit").click();
+        const weaponTabs = await page.locator(".member-roster-weapon-tabs").evaluate(node => ({
+          scrollWidth:node.scrollWidth,
+          clientWidth:node.clientWidth
+        }));
+        assert.ok(
+          weaponTabs.scrollWidth > weaponTabs.clientWidth,
+          "Les types d’arme doivent défiler dans leur propre rail à 320 px"
+        );
+        await page.locator("#memberRosterClose").click();
+      }
+    }
+
     assert.equal(
       await page.evaluate(() => localStorage.getItem("confrerie7ds.teams") !== null),
       true,
@@ -174,6 +240,7 @@ async function installFakeSupabase(page){
     const state = {
       session:null,
       authCallbacks:[],
+      failNextRosterUpsert:false,
       profiles:[
         { id:"user-1", pseudo:"Yannis" },
         { id:"user-2", pseudo:"Merlin" }
@@ -291,6 +358,10 @@ async function installFakeSupabase(page){
         }
 
         const values = Array.isArray(payload) ? payload : [payload];
+        if(table === "roster_characters" && state.failNextRosterUpsert){
+          state.failNextRosterUpsert = false;
+          return { data:null, error:{ message:"Échec simulé" } };
+        }
         values.forEach(value => {
           const index = rows.findIndex(row => {
             if(table === "roster_characters"){

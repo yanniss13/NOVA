@@ -50,6 +50,16 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       (contexte, modèle de données et manips Supabase restantes).
       Fichiers : `supabase-config.js`, `supabase/schema.sql`.
       Auth validée = email + mot de passe SANS confirmation email.
+- [x] **Roster persistant des membres**. Une fiche par personnage et par compte,
+      avec potentiel commun T0–T10 et au maximum un build par type d'arme
+      compatible. Tous les membres connectés peuvent consulter les fiches ;
+      seul leur propriétaire peut les créer, modifier ou supprimer. Un build
+      peut être copié vers le Team Builder ou importé explicitement depuis une
+      équipe propriétaire, toujours sous forme d'instantané indépendant.
+
+Après cette mise à jour, l'utilisateur doit rejouer le contenu complet de
+`supabase/schema.sql` dans le SQL Editor Supabase afin de créer la table
+`roster_characters` et ses politiques RLS.
 
 L'appli reste un site statique ouvrable en `file://` ou via GitHub Pages. Une
 connexion internet et un compte sont nécessaires pour lire/écrire le registre
@@ -77,7 +87,7 @@ reste autonome et ne dépend pas de npm.
 Site Confrérie 7ds/
 ├─ index.html              # L'appli + auth/store Supabase. Charge les données locales et le client CDN.
 ├─ supabase-config.js      # URL + clé publique publishable (jamais de service_role).
-├─ supabase/schema.sql     # Tables profiles/teams/recensement + politiques RLS.
+├─ supabase/schema.sql     # Tables profiles/teams/recensement/roster_characters + RLS.
 ├─ package.json            # Scripts de test Node + Playwright (développement uniquement).
 ├─ package-lock.json       # Versions verrouillées des dépendances de test.
 ├─ tests/                  # Régressions du builder + parcours Supabase simulé dans Chromium.
@@ -196,6 +206,41 @@ Le recensement partagé utilise une ligne Supabase par compte :
 toutes les lignes pour l'Analyse ; seul le propriétaire modifie sa fiche. Le cache
 cloud local est `confrerie7ds.cloud.recensement`.
 
+## Modèle du roster persistant
+
+Table Supabase :
+`roster_characters(owner, char_id, potential_tier, builds, updated_at)`.
+La clé primaire composée `(owner, char_id)` garantit une seule fiche par
+personnage et par membre. Le cache local partagé est
+`confrerie7ds.cloud.roster`.
+
+```js
+{
+  owner: "uuid-du-membre",
+  charId: "meliodas",
+  potentialTier: 0..10,
+  builds: {
+    "Hache": {
+      weapon: "7ds-armes/Hache/x.webp" | null,
+      armor: { "Haut": file|null, "Bas": file|null, "Bottes": file|null,
+               "Ceinture": file|null, "Armure liee": file|null },
+      jewel: { "Anneau": file|null, "Collier": file|null,
+               "Boucle d'oreille": file|null },
+      note: "texte libre"
+    }
+  },
+  updatedAt: 1690000000000
+}
+```
+
+Les clés de `builds` sont uniquement les dossiers présents dans
+`window.SEVEN_DS_POTENTIELS[charId]`. Une clé représente au maximum une
+configuration modifiable pour ce type d'arme ; les configurations partielles
+sont autorisées. `MemberRosterStore` lit le roster de tous les membres mais
+n'écrit que celui de `currentUser`. Les politiques RLS appliquent la même règle
+côté Supabase. Toute copie vers une équipe passe par `rosterHeroSnapshot()` et
+ne reste pas liée à la fiche source.
+
 ## Décisions de conception (ne pas casser sans raison)
 
 - **4 personnages** par équipe (format boss de guilde). Voir `TEAM_SIZE`.
@@ -215,9 +260,10 @@ cloud local est `confrerie7ds.cloud.recensement`.
 
 ## Évolutions prévues
 
-- **Étape 2 — roster persistant** : chaque membre construit ses personnages
-  équipés une fois et les réutilise dans ses équipes. Ne pas commencer sans
-  validation utilisateur de l'Étape 1.
+- **Sessions de Boss de Guilde** : organiser les équipes disponibles autour
+  d'une session ou d'un boss ciblé.
+- **PWA installable** : cache applicatif et installation mobile, après les
+  sessions de boss.
 - Champ **boss ciblé** et **note globale d'équipe** (déjà réservés dans le modèle).
 
 ## Conventions

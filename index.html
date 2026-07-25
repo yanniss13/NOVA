@@ -485,6 +485,9 @@
     font-size:12px;font-style:italic;color:var(--muted);line-height:1.3;
     border-top:1px solid var(--line-soft);padding-top:9px;margin-top:3px
   }
+  .hd-roster-import{
+    width:100%;justify-content:center;margin-top:auto;font-size:11px;padding:8px 9px
+  }
   @media(max-width:720px){ .team-detail{grid-template-columns:repeat(2,1fr)} .modal.teammodal{max-height:92vh} .team-detail{overflow:auto;scrollbar-width:none} }
   @media(max-width:440px){ .team-detail{grid-template-columns:1fr} }
 
@@ -2794,7 +2797,8 @@
     ]);
   }
 
-  function heroDetail(h){
+  function heroDetail(h, options){
+    const settings = options || {};
     const ch = h && h.char ? charOf(h.char) : null;
     const col = el("div",{class:"hdetail"});
 
@@ -2825,6 +2829,21 @@
     if(h.note && h.note.trim())
       col.appendChild(el("div",{class:"hd-note", text:h.note.trim()}));
 
+    if(settings.canImport && h && h.char){
+      const type = weaponFolderOf(h.weapon);
+      const valid = type && weaponTypesOf(h.char).includes(type);
+      const props = {
+        class:"btn hd-roster-import",
+        type:"button",
+        title:valid ? "" : "Équipe d’abord une arme compatible.",
+        text:settings.hasBuild(h.char, type)
+          ? "Mettre à jour ce build dans mon roster"
+          : "Ajouter au roster",
+        onclick:()=>{ if(valid) void importTeamHeroToRoster(settings.team, h); }
+      };
+      if(!valid) props.disabled = "disabled";
+      col.appendChild(el("button",props));
+    }
     return col;
   }
 
@@ -2832,7 +2851,17 @@
     $("#teamTitle").textContent = "Équipe — " + (t.pseudo || "Sans pseudo");
     const box = $("#teamDetail");
     box.innerHTML = "";
-    (t.heroes||[]).forEach(h=>box.appendChild(heroDetail(h)));
+    const ownEntries = currentUser ? MemberRosterStore.all(currentUser.id) : [];
+    const settings = {
+      team:t,
+      canImport:canManageTeam(t) && !!currentUser,
+      hasBuild:(charId, type)=>{
+        const entry = ownEntries.find(item => item.charId === charId);
+        return !!entry && !!type
+          && Object.prototype.hasOwnProperty.call(entry.builds, type);
+      }
+    };
+    (t.heroes||[]).forEach(h=>box.appendChild(heroDetail(h, settings)));
     $("#teamOverlay").classList.add("on");
   }
   (function(){
@@ -2875,6 +2904,49 @@
 
   function canManageTeam(team){
     return !currentUser || !!team && team.owner === currentUser.id;
+  }
+
+  async function importTeamHeroToRoster(team, hero){
+    if(!currentUser || !canManageTeam(team)) return;
+    const type = weaponFolderOf(hero && hero.weapon);
+    if(!hero || !hero.char || !type
+      || !weaponTypesOf(hero.char).includes(type)){
+      toast("Équipe d’abord une arme compatible.", true);
+      return;
+    }
+    try{
+      await MemberRosterStore.refresh(currentUser.id);
+    }catch(error){
+      if(!MemberRosterStore.all(currentUser.id).length){
+        toast("Roster indisponible : "+authMessage(error), true);
+        return;
+      }
+    }
+    const existing = MemberRosterStore.all(currentUser.id)
+      .find(entry => entry.charId === hero.char);
+    const replacing = !!existing
+      && Object.prototype.hasOwnProperty.call(existing.builds, type);
+    const character = charOf(hero.char);
+    if(replacing && !confirm(
+      "Remplacer le build "+type+" de "+(character ? character.name : hero.char)+" ?"
+    )) return;
+
+    const next = normalizeRosterCharacter(existing || {
+      owner:currentUser.id,
+      charId:hero.char,
+      potentialTier:hero.potentiel && hero.potentiel.tier,
+      builds:{}
+    });
+    next.potentialTier = normalizePotentiel(hero.potentiel).tier;
+    next.builds[type] = normalizeRosterBuild(hero.char, type, hero);
+    try{
+      await MemberRosterStore.upsert(next);
+      toast(replacing
+        ? "Build mis à jour dans ton roster."
+        : "Personnage ajouté à ton roster.");
+    }catch(error){
+      toast("Import impossible : "+authMessage(error), true);
+    }
   }
 
   function editTeam(t){
