@@ -95,8 +95,13 @@ create table if not exists public.boss_sessions (
   session_date date,
   elements     text[] not null default '{}',   -- éléments visés (FIRE, ICE, …)
   status       text not null default 'open',    -- open | won | lost
+  remind_at    timestamptz,                      -- rappel Discord auto (optionnel)
+  reminded_at  timestamptz,                      -- horodatage de l'envoi du rappel
   created_at   timestamptz not null default now()
 );
+-- Colonnes de rappel ajoutées aussi pour les bases déjà créées (idempotent) :
+alter table public.boss_sessions add column if not exists remind_at   timestamptz;
+alter table public.boss_sessions add column if not exists reminded_at timestamptz;
 create index if not exists boss_sessions_created_idx on public.boss_sessions(created_at desc);
 
 -- Participation d'un membre à une session : assignation (avant) + résultat (après)

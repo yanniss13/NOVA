@@ -1,0 +1,27 @@
+name: Rappel Discord — Boss de Guilde
+
+# Rappelle automatiquement, sur Discord, les membres qui n'ont pas fait leur run.
+# Nécessite 2 secrets de dépôt (Settings -> Secrets and variables -> Actions) :
+#   SUPABASE_SERVICE_ROLE : la clé "service_role" de ton projet Supabase (secrète)
+#   DISCORD_WEBHOOK_URL   : l'URL du webhook de ton salon Discord
+# (SUPABASE_URL est optionnel : par défaut le projet NOVA.)
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"   # toutes les 30 minutes
+  workflow_dispatch: {}       # + bouton "Run workflow" manuel dans l'onglet Actions
+
+jobs:
+  remind:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Envoyer les rappels dus
+        run: node scripts/discord-reminder.js
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
