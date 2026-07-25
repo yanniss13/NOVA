@@ -1,6 +1,6 @@
 # Barres de défilement invisibles — Design
 
-**Date :** 2026-07-25  
+**Date :** 2026-07-25
 **Statut :** validé par l’utilisateur
 
 ## Objectif
