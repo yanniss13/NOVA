@@ -20,4 +20,16 @@ const sql = fs.readFileSync(
   /create policy roster_delete[\s\S]*using\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i
 ].forEach(pattern => assert.match(sql, pattern));
 
-console.log("PASS schéma roster persistant");
+// Sessions de boss (#1)
+[
+  /create table if not exists public\.boss_sessions/i,
+  /create table if not exists public\.boss_participation/i,
+  /primary key\s*\(\s*session_id\s*,\s*owner\s*\)/i,
+  /alter table public\.boss_sessions\s+enable row level security/i,
+  /alter table public\.boss_participation enable row level security/i,
+  /create policy boss_sessions_insert[\s\S]*with check\s*\(\s*created_by\s*=\s*auth\.uid\(\)\s*\)/i,
+  /create policy boss_part_insert[\s\S]*with check\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i,
+  /create policy boss_part_read[\s\S]*for select to authenticated using\s*\(\s*true\s*\)/i
+].forEach(pattern => assert.match(sql, pattern));
+
+console.log("PASS schéma roster persistant + sessions de boss");

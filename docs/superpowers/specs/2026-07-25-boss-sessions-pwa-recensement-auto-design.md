@@ -100,6 +100,14 @@ Les builds à rôle défensif/soutien (`Warden`, `Supporter`) ne comptent pas.
 
 ## #1 — Sessions de boss (assignation + suivi)
 
+> **Statut : IMPLÉMENTÉ (2026-07-25).** Onglet « Sessions de boss », tables
+> `boss_sessions` + `boss_participation` (+ RLS) dans `supabase/schema.sql`,
+> `BossStore`, création de session, auto-assignation par élément (classement
+> issu des DPS du roster), suivi des dégâts + total + statut (open/won/lost).
+> Tests : schéma (`roster-schema.test.js`) + parcours complet dans
+> `supabase-etape1.playwright.js`. ⚠️ **Manip utilisateur : relancer
+> `supabase/schema.sql`** pour créer les 2 nouvelles tables.
+
 ### Modèle Supabase (nouvelles tables, partagées)
 ```sql
 -- Une session = un boss à une date, avec les éléments concernés

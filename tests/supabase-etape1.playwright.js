@@ -213,6 +213,37 @@ const { chromium } = require("playwright");
       "La migration ne doit pas supprimer le filet de sauvegarde local"
     );
 
+    // #1 Sessions de boss : création, assignation, suivi des dégâts, statut.
+    await page.locator('.tab[data-view="boss"]').click();
+    await page.locator("#bossNew").click();
+    await page.locator("#bossOverlay.on").waitFor();
+    await page.locator(".boss-form .rec-input").first().fill("BDG semaine 30");
+    await page.locator(".boss-elem-pick .elem-chip", { hasText:"Ténèbres" }).click();
+    await page.locator(".boss-elem-pick .elem-chip", { hasText:"Feu" }).click();
+    await page.getByRole("button", { name:"Créer la session", exact:true }).click();
+
+    await page.locator(".boss-detail-head").waitFor();
+    // Yannis (user-1) a meliodas/Ténèbres -> il s'assigne Ténèbres + dégâts + participé.
+    await page.locator(".boss-mine select").first().selectOption({ label:"Ténèbres" });
+    await page.locator(".boss-mine .boss-dmg").fill("1200");
+    await page.locator(".boss-mine .boss-dmg").blur();
+    await page.locator(".boss-part input").check();
+    await page.waitForFunction(() => {
+      const p = window.__fakeSupabaseState.boss_participation.find(r => r.owner === "user-1");
+      return p && p.element === "DARK" && Number(p.damage) === 1200 && p.participated === true;
+    });
+
+    // Ténèbres couvert (chip Yannis), Feu non couvert (aucun DPS Feu recensé).
+    await page.locator(".boss-assign-row:not(.uncovered)", { hasText:"Ténèbres" }).waitFor();
+    assert.equal(await page.locator(".boss-assign-row.uncovered").count(), 1);
+    assert.match(await page.locator(".boss-total").textContent(), /1[\s  ]?200/);
+
+    // Le créateur passe la session en « Vaincu ».
+    await page.locator(".boss-detail-admin select").selectOption("won");
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.boss_sessions.some(s => s.status === "won"));
+    await page.locator("#bossClose").click();
+
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await authOverlay.waitFor({ state:"visible" });
     assert.equal(await authOverlay.evaluate(el => el.classList.contains("on")), true);
@@ -302,6 +333,8 @@ async function installFakeSupabase(page){
           updated_at:"2026-07-25T08:35:00.000Z"
         }
       ],
+      boss_sessions:[],
+      boss_participation:[],
       calls:[]
     };
 
@@ -338,6 +371,7 @@ async function installFakeSupabase(page){
           error:result.error
         })); },
         upsert(value){ operation = "upsert"; payload = clone(value); return execute(); },
+        update(value){ operation = "update"; payload = clone(value); return builder; },
         delete(){ operation = "delete"; return builder; },
         then(resolve, reject){ return execute().then(resolve, reject); }
       };
@@ -359,6 +393,15 @@ async function installFakeSupabase(page){
           return { data:null, error:null };
         }
 
+        if(operation === "update"){
+          rows.forEach((row, index) => {
+            if(filters.every(([key,value]) => row[key] === value)){
+              rows[index] = Object.assign({}, row, payload);
+            }
+          });
+          return { data:null, error:null };
+        }
+
         const values = Array.isArray(payload) ? payload : [payload];
         if(table === "roster_characters" && state.failNextRosterUpsert){
           state.failNextRosterUpsert = false;
@@ -368,6 +411,9 @@ async function installFakeSupabase(page){
           const index = rows.findIndex(row => {
             if(table === "roster_characters"){
               return row.owner === value.owner && row.char_id === value.char_id;
+            }
+            if(table === "boss_participation"){
+              return row.session_id === value.session_id && row.owner === value.owner;
             }
             const key = table === "profiles"
               ? "id"

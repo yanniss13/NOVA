@@ -640,6 +640,49 @@
   .matrix .mx-total{font-family:var(--display);color:var(--gold-bright);text-align:center;font-weight:700}
   .mx-item{color:var(--parchment);white-space:nowrap}
   .mx-empty{color:var(--muted-2);text-align:center}
+
+  /* ---------- Sessions de boss ---------- */
+  .boss-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-top:20px}
+  .boss-card{min-width:0;background:linear-gradient(180deg,var(--panel),var(--obsidian-2));
+    border:1px solid var(--line);border-radius:12px;padding:14px;cursor:pointer;transition:.16s}
+  .boss-card:hover{border-color:var(--gold-deep)}
+  .boss-card-head{display:flex;align-items:center;gap:8px;justify-content:space-between}
+  .boss-card-title{font-family:var(--display);font-weight:600;font-size:16px;color:var(--parchment);
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .boss-card-sub{font-size:12px;color:var(--muted);margin:4px 0 10px}
+  .boss-elems{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+  .boss-status{font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;
+    padding:2px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);flex:none}
+  .boss-status.won{color:#7ee0a0;border-color:var(--ok)}
+  .boss-status.lost{color:#e98d8d;border-color:var(--crimson)}
+  .boss-status.open{color:var(--gold-bright);border-color:var(--gold-deep)}
+  .bossmodal{width:min(760px,100%)}
+  .boss-modal-body{padding:16px 18px 20px;overflow:auto;max-height:calc(88vh - 60px);scrollbar-width:none}
+  .boss-modal-body::-webkit-scrollbar{width:0}
+  .boss-form{display:flex;flex-direction:column;gap:12px}
+  .boss-form .field span{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:5px;display:block}
+  .boss-form .rec-input{width:100%}
+  .boss-elem-pick{display:flex;gap:6px;flex-wrap:wrap}
+  .boss-detail-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+  .boss-detail-sub{font-size:13px;color:var(--muted);margin-bottom:6px}
+  .boss-detail-admin{display:flex;gap:8px;align-items:center}
+  .boss-h{font-family:var(--display);font-size:15px;color:var(--gold-bright);margin:18px 0 8px;letter-spacing:.04em}
+  .boss-mine{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+  .boss-mine .boss-dmg{width:120px}
+  .boss-part{display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--parchment)}
+  .boss-assign{display:flex;flex-direction:column;gap:6px}
+  .boss-assign-row{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid var(--line-soft);
+    border-radius:8px;background:var(--obsidian-2)}
+  .boss-assign-row.uncovered{border-color:var(--crimson);background:rgba(161,44,44,.06)}
+  .boss-assigned{display:flex;gap:5px;flex-wrap:wrap;flex:1;min-width:0}
+  .boss-chip{font-size:12px;font-weight:600;color:var(--parchment);background:var(--panel-2);
+    border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+  .boss-none{font-size:12px;color:var(--muted-2);font-style:italic}
+  .boss-track td,.boss-track th{white-space:nowrap}
+  .boss-total{margin-top:10px;text-align:right;font-size:13px;color:var(--muted)}
+  .boss-total b{color:var(--gold-bright);font-family:var(--display)}
+  @media(max-width:520px){ .boss-grid{grid-template-columns:1fr} .boss-mine{flex-direction:column;align-items:stretch} .boss-mine .boss-dmg{width:100%} }
+
   @media(max-width:820px){ .cov-row{grid-template-columns:repeat(4,1fr)} .rec-grid{grid-template-columns:1fr} }
   @media(max-width:520px){
     .cov-row{grid-template-columns:repeat(2,1fr)}
@@ -854,6 +897,7 @@
     <button class="tab" data-view="member-roster" role="tab">Roster</button>
     <button class="tab" data-view="recensement" role="tab">Recensement DPS</button>
     <button class="tab" data-view="analyse" role="tab">Analyse</button>
+    <button class="tab" data-view="boss" role="tab">Sessions de boss</button>
   </nav>
   <div class="account">
     <button class="btn btn-ghost" id="accountLogin" type="button">Connexion</button>
@@ -950,8 +994,31 @@
     <div id="analyseBody"></div>
   </section>
 
+  <!-- ============ SESSIONS DE BOSS ============ -->
+  <section id="view-boss" class="view">
+    <p class="section-eyebrow">Confrérie</p>
+    <h1 class="section-title">Sessions de boss</h1>
+    <p class="section-lead">Organise les attaques du Boss de Guilde : crée une session, chacun s'assigne un élément (selon les DPS du roster), puis renseigne ses dégâts.</p>
+    <div class="roster-toolbar">
+      <span class="roster-count" id="bossCount"></span>
+      <button class="btn btn-primary" id="bossNew" type="button" style="margin-left:auto">Nouvelle session</button>
+    </div>
+    <div id="bossBody"></div>
+  </section>
+
   <p class="databar" id="databar"></p>
 </main>
+
+<!-- Modal détail / création d'une session de boss -->
+<div class="overlay" id="bossOverlay" role="dialog" aria-modal="true" aria-labelledby="bossTitle">
+  <div class="modal bossmodal">
+    <div class="picker-head">
+      <span class="picker-title" id="bossTitle">Session</span>
+      <button class="icon-btn" id="bossClose" aria-label="Fermer">✕</button>
+    </div>
+    <div class="boss-modal-body" id="bossModalBody"></div>
+  </div>
+</div>
 
 <!-- Picker modal -->
 <div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
@@ -1778,6 +1845,7 @@
     if(name==="member-roster") void renderMemberRoster();
     if(name==="recensement") void renderRecensement();
     if(name==="analyse") void renderAnalyse();
+    if(name==="boss") void renderBossView();
     window.scrollTo({top:0, behavior:"smooth"});
   }
   document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click", ()=>showView(b.dataset.view)));
@@ -3703,6 +3771,287 @@
     wrap.appendChild(table);
     box.appendChild(wrap);
   }
+
+  /* ============================ Sessions de boss ============================ */
+  const BOSS_STATUS = { open:{label:"Ouverte",cls:"open"}, won:{label:"Vaincu ✓",cls:"won"}, lost:{label:"Échec",cls:"lost"} };
+  let bossRenderId = 0;
+  let bossDetailSession = null;   // session ouverte dans la modale
+
+  const BossStore = {
+    async listSessions(){
+      if(!currentUser || !sb) return [];
+      const { data, error } = await sb.from("boss_sessions").select("*").order("created_at",{ascending:false});
+      if(error) throw error;
+      return data || [];
+    },
+    async createSession(s){
+      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      const row = {
+        id:uid(), created_by:currentUser.id, title:s.title,
+        boss_name:s.boss_name || null, session_date:s.session_date || null,
+        elements:s.elements || [], status:"open",
+        created_at:new Date().toISOString()
+      };
+      const { error } = await sb.from("boss_sessions").upsert(row);
+      if(error) throw error;
+      return row;
+    },
+    async updateSession(id, patch){
+      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      const { error } = await sb.from("boss_sessions").update(patch).eq("id", id);
+      if(error) throw error;
+    },
+    async deleteSession(id){
+      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      const { error } = await sb.from("boss_sessions").delete().eq("id", id);
+      if(error) throw error;
+    },
+    async listParticipation(sessionId){
+      if(!currentUser || !sb) return [];
+      const { data, error } = await sb.from("boss_participation").select("*").eq("session_id", sessionId);
+      if(error) throw error;
+      return data || [];
+    },
+    async saveMine(sessionId, p){
+      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      const dmg = (p.damage === "" || p.damage == null) ? null : Math.max(0, Math.round(Number(p.damage)) || 0);
+      const { error } = await sb.from("boss_participation").upsert({
+        session_id:sessionId, owner:currentUser.id, pseudo:currentPseudo || "Membre",
+        element:p.element || null, team_id:p.team_id || null,
+        damage:dmg, participated:!!p.participated, updated_at:new Date().toISOString()
+      });
+      if(error) throw error;
+    }
+  };
+
+  const bossStatusBadge = status => {
+    const s = BOSS_STATUS[status] || BOSS_STATUS.open;
+    return el("span",{class:"boss-status "+s.cls, text:s.label});
+  };
+  const fmtDate = d => d ? new Date(d+"T00:00:00").toLocaleDateString("fr-FR") : "";
+  const myTeamsList = () => Store.all().filter(t => !currentUser || t.owner === currentUser.id);
+  const teamLabel = t => {
+    const names = (t.heroes||[]).map(h => h && h.char ? (charOf(h.char)||{}).name : null).filter(Boolean);
+    return names.length ? names.slice(0,3).join(", ")+(names.length>3?"…":"") : "Équipe";
+  };
+  // top membres pour un élément, d'après les DPS dérivés du roster
+  function bossRankingByElement(players, element){
+    const out = [];
+    players.forEach(p => (p.dps||[]).forEach(d => { if(dpsElem(d) === element) out.push({ name:p.name, pot:d.pot||0 }); }));
+    return out.sort((a,b)=>b.pot-a.pot);
+  }
+
+  async function renderBossView(){
+    const renderId = ++bossRenderId;
+    const body = $("#bossBody");
+    body.className = ""; body.innerHTML = "";
+    if(!currentUser){
+      $("#bossCount").textContent = "";
+      body.appendChild(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:"Connecte-toi pour les sessions de boss"}),
+        el("button",{class:"btn btn-primary",text:"Connexion",onclick:()=>openAuth()})
+      ]));
+      return;
+    }
+    body.appendChild(el("div",{class:"empty-state"},[el("p",{class:"big",text:"Chargement…"})]));
+    let sessions;
+    try{ sessions = await BossStore.listSessions(); }
+    catch(e){ sessions = []; toast("Sessions indisponibles.", true); }
+    if(renderId !== bossRenderId) return;
+    $("#bossCount").innerHTML = "<b>"+sessions.length+"</b> session"+(sessions.length>1?"s":"");
+    body.className = sessions.length ? "boss-grid" : "";
+    body.innerHTML = "";
+    if(!sessions.length){
+      body.appendChild(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:"Aucune session"}),
+        el("p",{text:"Crée une session pour organiser la prochaine attaque du Boss de Guilde."})
+      ]));
+      return;
+    }
+    sessions.forEach(s=>body.appendChild(bossCard(s)));
+  }
+
+  function bossCard(s){
+    const elems = el("div",{class:"boss-elems"});
+    (s.elements||[]).forEach(e=>elems.appendChild(elemBadge(e)));
+    return el("div",{class:"boss-card", onclick:()=>openBossDetail(s)},[
+      el("div",{class:"boss-card-head"},[
+        el("span",{class:"boss-card-title", text:s.title}),
+        bossStatusBadge(s.status)
+      ]),
+      el("div",{class:"boss-card-sub", text:[s.boss_name, fmtDate(s.session_date)].filter(Boolean).join(" · ") || "—"}),
+      elems,
+      el("button",{class:"btn team-detail-btn", type:"button", text:"Ouvrir ▾", onclick:(ev)=>{ ev.stopPropagation(); openBossDetail(s); }})
+    ]);
+  }
+
+  /* ---- Création d'une session ---- */
+  function openBossCreate(){
+    if(!currentUser){ openAuth("Connecte-toi pour créer une session.", true); return; }
+    $("#bossTitle").textContent = "Nouvelle session";
+    const body = $("#bossModalBody");
+    body.innerHTML = "";
+    const title = el("input",{class:"rec-input", type:"text", placeholder:"Titre (ex. BDG semaine 30)", maxlength:"60"});
+    const boss = el("input",{class:"rec-input", type:"text", placeholder:"Nom du boss (optionnel)", maxlength:"40"});
+    const date = el("input",{class:"rec-input", type:"date"});
+    const elemWrap = el("div",{class:"boss-elem-pick"});
+    const chosen = new Set();
+    ELEM_ORDER.forEach(e=>{
+      const b = el("button",{class:"elem-chip", type:"button", "aria-pressed":"false",
+        onclick:()=>{ if(chosen.has(e)){chosen.delete(e);b.classList.remove("active");b.setAttribute("aria-pressed","false");}
+          else{chosen.add(e);b.classList.add("active");b.setAttribute("aria-pressed","true");} }},[ elemBadge(e) ]);
+      elemWrap.appendChild(b);
+    });
+    const save = el("button",{class:"btn btn-primary", type:"button", text:"Créer la session", onclick:async()=>{
+      const t = (title.value||"").trim();
+      if(!t){ toast("Donne un titre à la session.", true); return; }
+      save.disabled = true;
+      try{
+        const s = await BossStore.createSession({ title:t, boss_name:(boss.value||"").trim(), session_date:date.value||null, elements:[...chosen] });
+        await renderBossView();
+        openBossDetail(s);
+      }catch(err){ save.disabled = false; toast("Création impossible : "+authMessage(err), true); }
+    }});
+    body.appendChild(el("div",{class:"boss-form"},[
+      el("label",{class:"field"},[ el("span",{text:"Titre"}), title ]),
+      el("label",{class:"field"},[ el("span",{text:"Boss (optionnel)"}), boss ]),
+      el("label",{class:"field"},[ el("span",{text:"Date (optionnel)"}), date ]),
+      el("div",{class:"field"},[ el("span",{text:"Éléments visés"}), elemWrap ]),
+      save
+    ]));
+    $("#bossOverlay").classList.add("on");
+    setTimeout(()=>title.focus(), 30);
+  }
+
+  /* ---- Détail d'une session : assignation + suivi ---- */
+  function openBossDetail(session){
+    bossDetailSession = session;
+    $("#bossOverlay").classList.add("on");
+    void renderBossDetail();
+  }
+
+  async function renderBossDetail(){
+    const s = bossDetailSession;
+    if(!s) return;
+    $("#bossTitle").textContent = s.title;
+    const body = $("#bossModalBody");
+    body.innerHTML = "";
+    body.appendChild(el("div",{class:"empty-state"},[el("p",{text:"Chargement…"})]));
+    let parts = [], players = [];
+    try{
+      [parts, players] = await Promise.all([ BossStore.listParticipation(s.id), rosterDerivedPlayers().catch(()=>[]) ]);
+    }catch(e){ toast("Détail indisponible.", true); }
+    if(bossDetailSession !== s) return;
+    body.innerHTML = "";
+    const isCreator = s.created_by === currentUser.id;
+    const mine = parts.find(p => p.owner === currentUser.id) || { element:"", team_id:"", damage:"", participated:false };
+
+    // En-tête
+    const head = el("div",{class:"boss-detail-head"},[
+      el("div",{},[
+        el("div",{class:"boss-detail-sub", text:[s.boss_name, fmtDate(s.session_date)].filter(Boolean).join(" · ") || "—"}),
+        bossStatusBadge(s.status)
+      ])
+    ]);
+    if(isCreator){
+      const statusSel = el("select",{class:"dps-pot"});
+      [["open","Ouverte"],["won","Vaincu"],["lost","Échec"]].forEach(([v,l])=>statusSel.appendChild(el("option",{value:v,text:l})));
+      statusSel.value = s.status || "open";
+      statusSel.addEventListener("change", async()=>{ try{ await BossStore.updateSession(s.id,{status:statusSel.value}); s.status=statusSel.value; renderBossDetail(); }catch(e){ toast("Maj impossible.",true); } });
+      head.appendChild(el("div",{class:"boss-detail-admin"},[
+        statusSel,
+        el("button",{class:"btn btn-danger", type:"button", text:"Supprimer", onclick:async()=>{
+          if(!confirm("Supprimer cette session ?")) return;
+          try{ await BossStore.deleteSession(s.id); $("#bossOverlay").classList.remove("on"); bossDetailSession=null; await renderBossView(); }
+          catch(e){ toast("Suppression impossible.", true); }
+        }})
+      ]));
+    }
+    body.appendChild(head);
+
+    // Mon attaque
+    const elemSel = el("select",{class:"dps-pot"});
+    elemSel.appendChild(el("option",{value:"",text:"— élément —"}));
+    (s.elements||[]).forEach(e=>elemSel.appendChild(el("option",{value:e,text:elemLabel(e)})));
+    elemSel.value = mine.element || "";
+    const teamSel = el("select",{class:"dps-pot"});
+    teamSel.appendChild(el("option",{value:"",text:"— équipe —"}));
+    myTeamsList().forEach(t=>teamSel.appendChild(el("option",{value:t.id,text:teamLabel(t)})));
+    teamSel.value = mine.team_id || "";
+    const dmg = el("input",{class:"rec-input boss-dmg", type:"number", min:"0", placeholder:"Dégâts"});
+    if(mine.damage!=null && mine.damage!=="") dmg.value = mine.damage;
+    const part = el("input",{type:"checkbox"});
+    part.checked = !!mine.participated;
+    const dynBox = el("div",{class:"boss-dyn"});
+    const saveMine = async()=>{
+      try{
+        await BossStore.saveMine(s.id,{element:elemSel.value, team_id:teamSel.value, damage:dmg.value, participated:part.checked});
+        const [np, pl] = await Promise.all([ BossStore.listParticipation(s.id), rosterDerivedPlayers().catch(()=>[]) ]);
+        renderBossDynamic(dynBox, s, np, pl);
+      }catch(e){ toast("Non enregistré : "+authMessage(e), true); }
+    };
+    elemSel.addEventListener("change", saveMine);
+    teamSel.addEventListener("change", saveMine);
+    dmg.addEventListener("change", saveMine);
+    part.addEventListener("change", saveMine);
+    body.appendChild(el("h3",{class:"boss-h", text:"Mon attaque"}));
+    body.appendChild(el("div",{class:"boss-mine"},[
+      elemSel, teamSel, dmg,
+      el("label",{class:"boss-part"},[ part, el("span",{text:"J'ai participé"}) ])
+    ]));
+
+    renderBossDynamic(dynBox, s, parts, players);
+    body.appendChild(dynBox);
+  }
+
+  // Sections qui dépendent des participations (rafraîchies sans reconstruire les champs).
+  function renderBossDynamic(container, s, parts, players){
+    container.innerHTML = "";
+    // Assignation par élément
+    container.appendChild(el("h3",{class:"boss-h", text:"Assignation par élément"}));
+    const assign = el("div",{class:"boss-assign"});
+    if(!(s.elements||[]).length) assign.appendChild(el("p",{class:"dps-empty",text:"Aucun élément défini pour cette session."}));
+    (s.elements||[]).forEach(e=>{
+      const assigned = parts.filter(p=>p.element===e);
+      const ranking = bossRankingByElement(players, e).slice(0,3);
+      const row = el("div",{class:"boss-assign-row"+(assigned.length?"":" uncovered")});
+      row.appendChild(elemBadge(e));
+      const who = el("div",{class:"boss-assigned"});
+      if(assigned.length) assigned.forEach(p=>who.appendChild(el("span",{class:"boss-chip",text:p.pseudo||"Membre"})));
+      else who.appendChild(el("span",{class:"boss-none",text:"personne — "+(ranking.length?("dispo : "+ranking.map(r=>r.name+" P"+r.pot).join(", ")):"aucun DPS")}));
+      row.appendChild(who);
+      assign.appendChild(row);
+    });
+    container.appendChild(assign);
+
+    // Suivi des dégâts
+    container.appendChild(el("h3",{class:"boss-h", text:"Suivi des dégâts"}));
+    const withDmg = parts.slice().sort((a,b)=>(b.damage||0)-(a.damage||0));
+    const total = parts.reduce((n,p)=>n+(p.damage||0),0);
+    const table = el("table",{class:"matrix boss-track"});
+    table.appendChild(el("tr",{},[ el("th",{text:"#"}), el("th",{class:"mx-player",text:"Membre"}), el("th",{text:"Élément"}), el("th",{text:"Dégâts"}), el("th",{text:"Participé"}) ]));
+    if(!withDmg.length) table.appendChild(el("tr",{},[ el("td",{colspan:"5",class:"mx-empty",text:"Personne n'a encore renseigné son attaque."}) ]));
+    withDmg.forEach((p,i)=>{
+      table.appendChild(el("tr",{},[
+        el("td",{text:String(i+1)}),
+        el("td",{class:"mx-player",text:p.pseudo||"Membre"}),
+        el("td",{text:p.element?elemLabel(p.element):"—"}),
+        el("td",{class:"mx-total",text:(p.damage!=null?Number(p.damage).toLocaleString("fr-FR"):"—")}),
+        el("td",{text:p.participated?"✓":"—"})
+      ]));
+    });
+    container.appendChild(el("div",{class:"matrix-wrap"},[table]));
+    container.appendChild(el("div",{class:"boss-total", html:"Total confrérie : <b>"+total.toLocaleString("fr-FR")+"</b> dégâts"}));
+  }
+
+  $("#bossNew").addEventListener("click", openBossCreate);
+  (function(){
+    const ov = $("#bossOverlay");
+    const close = ()=>{ ov.classList.remove("on"); bossDetailSession=null; };
+    $("#bossClose").addEventListener("click", close);
+    ov.addEventListener("click", e=>{ if(e.target===ov) close(); });
+    document.addEventListener("keydown", e=>{ if(e.key==="Escape" && ov.classList.contains("on")) close(); });
+  })();
 
   /* ============================ Démarrage ============================ */
   $("#databar").textContent =
