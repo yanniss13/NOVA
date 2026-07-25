@@ -924,17 +924,11 @@
   <section id="view-recensement" class="view">
     <p class="section-eyebrow">Confrérie</p>
     <h1 class="section-title">Recensement des DPS</h1>
-    <p class="section-lead">Pour chaque membre, ajoute ses DPS : choisis le héros (l'élément est détecté automatiquement) et son potentiel. Sert à savoir qui envoyer sur quel élément du Boss de Guilde.</p>
+    <p class="section-lead">Calculé automatiquement à partir du <b>Roster</b> de chaque membre : chaque personnage à rôle offensif (Attaquant/Briseur) devient un DPS, avec son élément et son potentiel. Pour te recenser, remplis ton roster.</p>
 
     <div class="roster-toolbar">
-      <div class="field" id="recLocalControls" style="flex-direction:row;align-items:flex-end;gap:8px">
-        <input id="recPlayer" class="rec-input" type="text" placeholder="Pseudo du membre" autocomplete="off" maxlength="30">
-        <button class="btn btn-primary" id="recAddPlayer">Ajouter le membre</button>
-      </div>
-      <span class="roster-count" id="recCount" style="margin-left:auto"></span>
-      <button class="btn" id="recExport">Exporter (JSON)</button>
-      <button class="btn" id="recImport">Importer (JSON)</button>
-      <input type="file" id="recImportFile" accept="application/json,.json" hidden>
+      <span class="roster-count" id="recCount"></span>
+      <button class="btn" id="recGoRoster" type="button" style="margin-left:auto">Modifier mon roster</button>
     </div>
 
     <div id="recGrid"></div>
@@ -1520,6 +1514,54 @@
       .map(item => ({id:item.id, pseudo:item.pseudo || "Membre"}));
     return rosterProfiles.slice();
   }
+
+  /* ===== #5 Recensement auto : DPS dérivés du Roster ===== */
+  // Un build à rôle offensif (Attaquant/Briseur) d'un perso du roster =
+  // une entrée DPS { char, element, pot }. Dédupliqué par élément.
+  function dpsEntriesFromRoster(entry){
+    const m = entry && metaOf(entry.charId);
+    if(!m || !entry.builds) return [];
+    const seen = new Set();
+    const out = [];
+    Object.keys(entry.builds).forEach(folder=>{
+      const en = FOLDER_TO_ENUM[folder];
+      const slot = (m.weapons||[]).find(w => w.weapon === en);
+      if(!slot) return;
+      if(slot.role !== "Attacker" && slot.role !== "Buster") return; // offensifs seulement
+      const element = (slot.element||"").toUpperCase();
+      if(!element || seen.has(element)) return;
+      seen.add(element);
+      out.push({ char:entry.charId, element, pot:entry.potentialTier||0 });
+    });
+    return out;
+  }
+
+  // Agrège tous les rosters de la confrérie -> [{owner, name, dps:[…]}]
+  async function rosterDerivedPlayers(){
+    if(!currentUser || !sb) return [];
+    const [rosterRes, profiles] = await Promise.all([
+      sb.from("roster_characters").select("owner,char_id,potential_tier,builds,updated_at"),
+      refreshRosterProfiles().catch(()=>rosterProfiles.slice())
+    ]);
+    if(rosterRes.error) throw rosterRes.error;
+    const byOwner = {};
+    (rosterRes.data||[]).forEach(row=>{
+      const entry = cloudRosterFromRow(row);
+      if(!entry) return;
+      (byOwner[entry.owner] = byOwner[entry.owner] || []).push(entry);
+    });
+    const nameOf = id => {
+      const p = (profiles||[]).find(x => x.id === id);
+      if(p) return p.pseudo;
+      if(currentUser && id === currentUser.id) return currentPseudo || "Moi";
+      return "Membre";
+    };
+    return Object.keys(byOwner).map(owner=>({
+      owner,
+      name:nameOf(owner),
+      dps:byOwner[owner].reduce((acc,e)=>acc.concat(dpsEntriesFromRoster(e)), [])
+    })).filter(p => p.dps.length);
+  }
   function normalizeTeam(raw){
     const t = raw && typeof raw === "object" ? raw : {};
     const heroes = Array.isArray(t.heroes) ? t.heroes.slice(0, TEAM_SIZE) : [];
@@ -1592,7 +1634,6 @@
     $("#accountLogin").hidden = !!currentUser;
     $("#accountConnected").hidden = !currentUser;
     $("#accountPseudo").textContent = currentPseudo || (currentUser && currentUser.email) || "";
-    $("#recLocalControls").hidden = !!currentUser;
     const migrationButton = $("#btnMigrateLocal");
     const migrated = !!currentUser &&
       localStorage.getItem(MIGRATION_KEY_PREFIX+currentUser.id) === "1";
@@ -3374,41 +3415,43 @@
     const grid = $("#recGrid");
     grid.className = "";
     grid.innerHTML = "";
+    if(!currentUser){
+      $("#recCount").textContent = "";
+      grid.appendChild(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:"Connecte-toi pour voir le recensement"}),
+        el("p",{text:"Le recensement des DPS est calculé automatiquement à partir du roster de chaque membre."}),
+        el("button",{class:"btn btn-primary",text:"Connexion",onclick:()=>openAuth()})
+      ]));
+      return;
+    }
     grid.appendChild(el("div",{class:"empty-state"},[
       el("p",{class:"big",text:"Chargement du recensement…"})
     ]));
     let players;
     try{
-      players = await Rec.refresh();
+      players = await rosterDerivedPlayers();
     }catch(error){
-      players = Rec.all();
-      toast("Recensement indisponible, affichage du cache local.", true);
+      players = [];
+      toast("Recensement indisponible pour l'instant.", true);
     }
     if(renderId !== recRenderId) return;
-    players = recPlayersForView(
-      players,
-      currentUser && currentUser.id,
-      currentPseudo,
-      !!currentUser
-    );
     const totalDps = players.reduce((n,p)=>n+((p.dps||[]).length),0);
     $("#recCount").innerHTML = "<b>"+players.length+"</b> membre"+(players.length>1?"s":"")+
-      " · <b>"+totalDps+"</b> DPS recensé"+(totalDps>1?"s":"");
+      " · <b>"+totalDps+"</b> DPS (auto)";
     grid.className = players.length ? "rec-grid" : "";
     grid.innerHTML = "";
     if(!players.length){
       grid.appendChild(el("div",{class:"empty-state"},[
-        el("p",{class:"big",text:"Aucun membre recensé"}),
-        el("p",{text:"Ajoute un membre ci-dessus pour commencer le recensement des DPS."})
+        el("p",{class:"big",text:"Aucun DPS recensé"}),
+        el("p",{text:"Ajoute des personnages à rôle offensif dans l'onglet « Roster » : ils apparaîtront ici automatiquement."})
       ]));
       return;
     }
     players.forEach(p=>grid.appendChild(playerCard(p)));
   }
 
-  function canManagePlayer(player){
-    return !currentUser || !!player && player.owner === currentUser.id;
-  }
+  // Recensement 100% dérivé du roster -> tout est en lecture seule.
+  function canManagePlayer(){ return false; }
 
   async function persistPlayer(player){
     try{
@@ -3507,51 +3550,10 @@
     return el("div",{class:"rec-player"},children);
   }
 
-  $("#recAddPlayer").addEventListener("click", ()=>{
-    if(currentUser) return;
-    const name = ($("#recPlayer").value||"").trim();
-    if(!name){ toast("Entre un pseudo.", true); return; }
-    const list = Rec.all();
-    if(list.some(p=>p.name.toLowerCase()===name.toLowerCase())){ toast("Ce membre existe déjà.", true); return; }
-    list.push({ id:uid(), name, dps:[] });
-    Rec.save(list);
-    $("#recPlayer").value = "";
-    void renderRecensement();
-  });
-  $("#recPlayer").addEventListener("keydown", e=>{ if(e.key==="Enter") $("#recAddPlayer").click(); });
-
-  $("#recExport").addEventListener("click", ()=>{
-    const data = Rec.all();
-    if(!data.length){ toast("Rien à exporter.", true); return; }
-    const blob = new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
-    const a = el("a",{href:URL.createObjectURL(blob), download:"confrerie7ds-recensement.json"});
-    document.body.appendChild(a); a.click(); a.remove();
-    toast(data.length+" membre(s) exporté(s).");
-  });
-  $("#recImport").addEventListener("click", ()=>$("#recImportFile").click());
-  $("#recImportFile").addEventListener("change", e=>{
-    const file=e.target.files[0]; if(!file) return;
-    const r=new FileReader();
-    r.onload=async()=>{ try{
-      const inc=JSON.parse(r.result); if(!Array.isArray(inc)) throw 0;
-      const valid=inc.filter(p=>p&&typeof p==="object").map(p=>Object.assign({},p,{
-        id:p.id||uid(), dps:normalizeDpsList(p.dps)
-      }));
-      if(currentUser){
-        const mine=valid.find(p=>(p.name||p.pseudo||"").toLowerCase()===currentPseudo.toLowerCase())
-          || (valid.length===1 ? valid[0] : null);
-        if(!mine) throw new Error("Choisis un fichier qui contient uniquement ton recensement ou une entrée à ton pseudo.");
-        await Rec.saveMine(mine);
-        toast("Ton recensement a été importé.");
-      }else{
-        const list=LocalRec.all();
-        valid.forEach(p=>{ const i=list.findIndex(x=>x.id===p.id); if(i>=0)list[i]=p; else list.push(p); });
-        LocalRec.save(list);
-        toast(valid.length+" membre(s) importé(s).");
-      }
-      await renderRecensement();
-    }catch(err){ toast("Fichier JSON invalide.", true); } e.target.value=""; };
-    r.readAsText(file);
+  // Le recensement est 100% dérivé du roster : un seul bouton -> onglet Roster.
+  $("#recGoRoster").addEventListener("click", ()=>{
+    if(!currentUser){ openAuth("Connecte-toi pour gérer ton roster.", true); return; }
+    showView("member-roster");
   });
 
   /* ============================ Analyse ============================ */
@@ -3593,19 +3595,27 @@
     box.appendChild(el("div",{class:"empty-state"},[
       el("p",{class:"big",text:"Chargement de l’analyse…"})
     ]));
+    if(!currentUser){
+      box.innerHTML = "";
+      box.appendChild(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:"Connecte-toi pour voir l'analyse"}),
+        el("button",{class:"btn btn-primary",text:"Connexion",onclick:()=>openAuth()})
+      ]));
+      return;
+    }
     let players;
     try{
-      players = await Rec.refresh();
+      players = await rosterDerivedPlayers();
     }catch(error){
-      players = Rec.all();
-      toast("Analyse indisponible, affichage du cache local.", true);
+      players = [];
+      toast("Analyse indisponible pour l'instant.", true);
     }
     if(renderId !== analyseRenderId) return;
     box.innerHTML = "";
     if(!players.length){
       box.appendChild(el("div",{class:"empty-state"},[
         el("p",{class:"big",text:"Rien à analyser"}),
-        el("p",{text:"Remplis d'abord l'onglet « Recensement DPS »."})
+        el("p",{text:"Les DPS sont calculés depuis les rosters : ajoute des personnages offensifs dans l'onglet « Roster »."})
       ]));
       return;
     }

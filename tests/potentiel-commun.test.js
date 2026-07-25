@@ -78,7 +78,7 @@ function loadApp(initialTeams){
 
   const exposed = source.replace(
     /\}\)\(\);\s*$/,
-    "Object.assign(globalThis.__hooks,{normalizePotentiel,normalizeHero,normalizeTeam,potentielDetailsOf,weaponTypesOf,isWeaponCompatible,compatibleWeaponGroups,linkedArmorsOf,isLinkedArmorCompatible,emptyRosterBuild,normalizeRosterBuild,normalizeRosterCharacter,rosterHeroSnapshot,cloudRosterFromRow,rosterToCloudRow,replaceRosterCacheForOwner,MemberRosterStore,Store,recPlayersForView:typeof recPlayersForView==='function'?recPlayersForView:undefined});})();"
+    "Object.assign(globalThis.__hooks,{normalizePotentiel,normalizeHero,normalizeTeam,potentielDetailsOf,weaponTypesOf,isWeaponCompatible,compatibleWeaponGroups,linkedArmorsOf,isLinkedArmorCompatible,emptyRosterBuild,normalizeRosterBuild,normalizeRosterCharacter,rosterHeroSnapshot,cloudRosterFromRow,rosterToCloudRow,replaceRosterCacheForOwner,MemberRosterStore,Store,dpsEntriesFromRoster,recPlayersForView:typeof recPlayersForView==='function'?recPlayersForView:undefined});})();"
   );
   assert.notStrictEqual(exposed, source, "Le chargeur doit exposer les fonctions réelles");
 
@@ -130,6 +130,18 @@ function loadApp(initialTeams){
         Baton:["Bonus bâton T1"],
         Baguette:["Bonus baguette T1"]
       }
+    },
+    SEVEN_DS_META:{
+      meliodas:{ element:"DARK", role:"ATTACKER", rarity:"SSR", weapons:[
+        { weapon:"Axe", role:"Attacker", element:"Dark" },
+        { weapon:"Sword1h", role:"Attacker", element:"Dark" },
+        { weapon:"SwordDual", role:"Attacker", element:"Dark" }
+      ]},
+      merlin:{ element:"ICE", role:"ATTACKER", rarity:"SSR", weapons:[
+        { weapon:"Book", role:"Attacker", element:"Ice" },
+        { weapon:"Wand", role:"Attacker", element:"Thunder" },
+        { weapon:"Staff", role:"Buster", element:"Fire" }
+      ]}
     },
     SEVEN_DS_ARMURES_LIEES:{
       meliodas:[
@@ -416,6 +428,33 @@ function plain(value){
 
   assert.strictEqual(hooks.normalizeRosterCharacter({ charId:"inconnu" }), null);
   assert.strictEqual(hooks.rosterHeroSnapshot(entry, "Livre"), null);
+}
+
+// #5 Recensement auto : DPS dérivés du roster.
+{
+  const { hooks } = loadApp();
+  const byElem = list => plain(list).slice().sort((a,b)=> a.element < b.element ? -1 : 1);
+
+  // meliodas : Hache + Epée à une main = 2 builds Attaquant/Ténèbres -> dédup -> 1 DPS
+  assert.deepStrictEqual(
+    plain(hooks.dpsEntriesFromRoster({ charId:"meliodas", potentialTier:7,
+      builds:{ Hache:{}, "Epee 1 main":{} } })),
+    [{ char:"meliodas", element:"DARK", pot:7 }]
+  );
+
+  // merlin : Livre(Attaquant/Glace) + Bâton(Briseur/Feu) -> 2 DPS ; rôle offensif seulement
+  assert.deepStrictEqual(
+    byElem(hooks.dpsEntriesFromRoster({ charId:"merlin", potentialTier:9,
+      builds:{ Livre:{}, Baton:{} } })),
+    [
+      { char:"merlin", element:"FIRE", pot:9 },
+      { char:"merlin", element:"ICE", pot:9 }
+    ]
+  );
+
+  // perso inconnu ou builds vides -> aucun DPS
+  assert.deepStrictEqual(plain(hooks.dpsEntriesFromRoster({ charId:"inconnu", builds:{ Hache:{} } })), []);
+  assert.deepStrictEqual(plain(hooks.dpsEntriesFromRoster({ charId:"meliodas", builds:{} })), []);
 }
 
 // Roster partagé : conversion Supabase et cache isolé par propriétaire.

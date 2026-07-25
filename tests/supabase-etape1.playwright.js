@@ -123,30 +123,36 @@ const { chromium } = require("playwright");
     );
     await page.locator("#teamClose").click();
 
+    // #5 : Recensement 100% dérivé du roster, lecture seule.
     await page.locator('.tab[data-view="recensement"]').click();
     await page.locator("#recGrid .rec-player").first().waitFor();
     assert.equal(await page.locator("#recGrid .rec-player").count(), 2);
-    assert.equal(await page.locator("#recAddPlayer").isVisible(), false);
+    // Plus de saisie manuelle : aucun bouton d'ajout/suppression.
+    assert.equal(await page.locator("#recGrid .dps-add").count(), 0);
+    assert.equal(await page.locator("#recGrid .rec-del").count(), 0);
 
     const ownRecensement = page.locator("#recGrid .rec-player").filter({ hasText:"Yannis" });
-    const otherRecensement = page.locator("#recGrid .rec-player").filter({ hasText:"Merlin" });
-    assert.equal(await ownRecensement.locator(".dps-add").count(), 1);
-    assert.equal(await otherRecensement.locator(".dps-add").count(), 0);
-    assert.equal(await otherRecensement.locator(".rec-del").count(), 0);
+    // Yannis a meliodas (Attaquant/Ténèbres) dans son roster -> DPS dérivé Ténèbres.
+    assert.match(await ownRecensement.textContent(), /Meliodas/);
 
-    await ownRecensement.locator(".dps-add").click();
-    await page.locator('#pickerGrid .tile[title="Diane"]').click();
-    await page.waitForFunction(() => {
-      const mine = window.__fakeSupabaseState.recensement.find(row => row.owner === "user-1");
-      return mine && mine.dps.length === 2;
-    });
+    // Aucun débordement horizontal sur mobile (recensement + analyse).
+    for(const width of [320, 360, 390]){
+      await page.setViewportSize({ width, height:844 });
+      const overflow = await page.evaluate(() =>
+        document.scrollingElement.scrollWidth - document.scrollingElement.clientWidth
+      );
+      assert.ok(overflow <= 1, `Débordement recensement de ${overflow}px à ${width}px`);
+    }
+    await page.setViewportSize({ width:1280, height:900 });
 
     await page.locator('.tab[data-view="analyse"]').click();
     await page.locator("#analyseBody .rank-table").waitFor();
     const analyseText = await page.locator("#analyseBody").textContent();
     assert.match(analyseText, /Yannis/);
     assert.match(analyseText, /Merlin/);
+    assert.match(analyseText, /Meliodas/);
 
+    // Migration one-shot des ÉQUIPES locales (le recensement n'est plus migré).
     const migrateButton = page.locator("#btnMigrateLocal");
     assert.equal(await migrateButton.textContent(), "Importer mes données locales");
     await migrateButton.click();
@@ -158,13 +164,6 @@ const { chromium } = require("playwright");
     );
     assert.equal(migratedTeam.owner, "user-1");
     assert.equal(migratedTeam.pseudo, "Yannis");
-
-    const migratedRecensement = await page.evaluate(() =>
-      window.__fakeSupabaseState.recensement.find(row => row.owner === "user-1")
-    );
-    assert.deepEqual(migratedRecensement.dps, [
-      { char:"diane", element:"EARTH", pot:6 }
-    ]);
     assert.equal(await migrateButton.isDisabled(), true);
     assert.equal(await migrateButton.textContent(), "Données locales importées");
     await page.locator('.tab[data-view="member-roster"]').click();
@@ -297,7 +296,9 @@ async function installFakeSupabase(page){
           owner:"user-2",
           char_id:"merlin",
           potential_tier:9,
-          builds:{},
+          builds:{
+            Livre:{ weapon:"7ds-armes/Livre/Grimoire béni.webp", armor:{}, jewel:{}, note:"" }
+          },
           updated_at:"2026-07-25T08:35:00.000Z"
         }
       ],
