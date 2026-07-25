@@ -411,12 +411,21 @@
     background:color-mix(in srgb, var(--ec) 14%, var(--obsidian-2));color:var(--parchment)}
   .elem-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--ec);flex:none;box-shadow:0 0 6px var(--ec)}
   .dps-elem-sel{
-    --ec:var(--gold);display:inline-flex;align-items:center;gap:6px;flex:none;
+    --ec:var(--gold);display:inline-flex;align-items:center;gap:6px;flex:none;position:relative;
     border-radius:999px;padding:3px 9px;max-width:122px;
     border:1px solid color-mix(in srgb, var(--ec) 60%, var(--line));
     background:color-mix(in srgb, var(--ec) 18%, var(--obsidian-2))
   }
   .dps-elem-sel .dot{width:8px;height:8px;border-radius:50%;background:var(--ec);flex:none;box-shadow:0 0 6px var(--ec)}
+  .dps-elem-trigger{appearance:none;display:inline-flex;align-items:center;gap:6px;padding:0;border:0;
+    color:var(--parchment);background:transparent;cursor:pointer;font:600 11px var(--ui)}
+  .dps-elem-caret{font-size:13px;line-height:1}
+  .dps-elem-menu{position:absolute;z-index:5;top:-4px;left:calc(100% + 6px);display:flex;flex-direction:column;
+    min-width:max-content;padding:4px;border:1px solid var(--line);border-radius:8px;background:var(--panel)}
+  .dps-elem-option{appearance:none;display:flex;align-items:center;gap:6px;padding:5px 7px;border:0;
+    border-radius:5px;color:var(--parchment);background:transparent;cursor:pointer;font:600 11px var(--ui);text-align:left}
+  .dps-elem-option:hover,.dps-elem-option:focus{outline:none;background:var(--panel-2)}
+  .dps-elem-check{visibility:hidden;margin-left:auto}.dps-elem-option.selected .dps-elem-check{visibility:visible}
   .dps-elem-sel select{
     appearance:auto;background:transparent;border:0;color:var(--parchment);cursor:pointer;
     font-family:var(--ui);font-size:11px;font-weight:600;padding:0;color-scheme:dark;max-width:84px
@@ -2081,19 +2090,148 @@
     b.appendChild(el("span",{text:elemLabel(e)}));
     return b;
   }
+  let activeElemMenu = null;
+
+  function closeActiveElemMenu(restoreFocus=false){
+    if(!activeElemMenu) return;
+    const closing = activeElemMenu;
+    activeElemMenu = null;
+    closing.close(restoreFocus);
+  }
+
+  document.addEventListener("pointerdown", event=>{
+    if(activeElemMenu && !activeElemMenu.root.contains(event.target)){
+      closeActiveElemMenu(false);
+    }
+  });
+
   // contrôle d'élément : badge fixe si 1 seul, sinon menu déroulant colorable
   function elemControl(charId, current, onChange){
     const opts = charElements(charId);
     if(opts.length <= 1) return elemBadge(current || opts[0] || elemOf(charId));
-    const wrap = el("span",{class:"dps-elem-sel", title:"Élément (selon l'arme jouée)"});
-    const dot = el("span",{class:"dot"});
-    const sel = el("select",{});
-    opts.forEach(e=> sel.appendChild(el("option",{value:e, text:elemLabel(e)})));
-    sel.value = current || opts[0];
-    const paint = ()=> wrap.style.setProperty("--ec", elemColor(sel.value));
+    let value = current || opts[0];
+    let activeIndex = Math.max(0, opts.indexOf(value));
+    const wrap = el("span", {
+      class:"dps-elem-sel",
+      title:"Élément (selon l'arme jouée)"
+    });
+    const trigger = el("button", {
+      class:"dps-elem-trigger",
+      type:"button",
+      "aria-haspopup":"listbox",
+      "aria-expanded":"false"
+    });
+    const triggerDot = el("span", { class:"dot", "aria-hidden":"true" });
+    const triggerLabel = el("span", { class:"dps-elem-label" });
+    const caret = el("span", {
+      class:"dps-elem-caret",
+      text:"⌄",
+      "aria-hidden":"true"
+    });
+    const menu = el("span", { class:"dps-elem-menu", role:"listbox" });
+    menu.hidden = true;
+    const optionNodes = [];
+
+    function paint(){
+      wrap.style.setProperty("--ec", elemColor(value));
+      triggerLabel.textContent = elemLabel(value);
+      trigger.setAttribute("aria-label", "Élément : "+elemLabel(value));
+      optionNodes.forEach((node,index)=>{
+        node.setAttribute("aria-selected", String(opts[index] === value));
+        node.classList.toggle("selected", opts[index] === value);
+      });
+    }
+
+    function focusOption(index){
+      activeIndex = (index + optionNodes.length) % optionNodes.length;
+      optionNodes[activeIndex].focus();
+    }
+
+    const controller = {
+      root:wrap,
+      close(restoreFocus=false){
+        wrap.classList.remove("open");
+        menu.hidden = true;
+        trigger.setAttribute("aria-expanded", "false");
+        if(restoreFocus) trigger.focus();
+      }
+    };
+
+    function openMenu(){
+      if(activeElemMenu && activeElemMenu !== controller) closeActiveElemMenu(false);
+      activeElemMenu = controller;
+      wrap.classList.add("open");
+      menu.hidden = false;
+      trigger.setAttribute("aria-expanded", "true");
+      activeIndex = Math.max(0, opts.indexOf(value));
+      focusOption(activeIndex);
+    }
+
+    function choose(index){
+      value = opts[index];
+      paint();
+      onChange(value);
+      closeActiveElemMenu(true);
+    }
+
+    opts.forEach((element,index)=>{
+      const option = el("button", {
+        class:"dps-elem-option",
+        type:"button",
+        role:"option",
+        "aria-label":elemLabel(element),
+        tabindex:"-1"
+      }, [
+        el("span", {
+          class:"dot",
+          "aria-hidden":"true",
+          style:"--ec:"+elemColor(element)
+        }),
+        el("span", { text:elemLabel(element) }),
+        el("span", {
+          class:"dps-elem-check",
+          text:"✓",
+          "aria-hidden":"true"
+        })
+      ]);
+      option.querySelector(".dot").style.setProperty("--ec", elemColor(element));
+      option.addEventListener("click", ()=>choose(index));
+      option.addEventListener("keydown", event=>{
+        if(event.key === "ArrowDown"){
+          event.preventDefault();
+          focusOption(activeIndex+1);
+        }else if(event.key === "ArrowUp"){
+          event.preventDefault();
+          focusOption(activeIndex-1);
+        }else if(event.key === "Enter" || event.key === " "){
+          event.preventDefault();
+          choose(activeIndex);
+        }else if(event.key === "Escape"){
+          event.preventDefault();
+          closeActiveElemMenu(true);
+        }
+      });
+      optionNodes.push(option);
+      menu.appendChild(option);
+    });
+
+    trigger.addEventListener("click", ()=>{
+      if(activeElemMenu === controller) closeActiveElemMenu(false);
+      else openMenu();
+    });
+    trigger.addEventListener("keydown", event=>{
+      if(event.key === "ArrowDown" || event.key === "ArrowUp"){
+        event.preventDefault();
+        openMenu();
+      }else if(event.key === "Escape"){
+        event.preventDefault();
+        closeActiveElemMenu(true);
+      }
+    });
+
+    trigger.append(triggerDot, triggerLabel, caret);
+    wrap.append(trigger, menu);
     paint();
-    sel.addEventListener("change", ()=>{ paint(); onChange(sel.value); });
-    wrap.appendChild(dot); wrap.appendChild(sel);
     return wrap;
   }
   function potSelect(pot, onChange){
