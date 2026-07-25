@@ -31,6 +31,25 @@ async function sb(pathname, opts) {
   return res.status === 204 ? null : res.json();
 }
 
+async function collectReminderData(request, weekStart) {
+  const sessions = await request(
+    "boss_sessions?week_start=eq." + weekStart + "&select=id"
+  );
+  const profiles = await request("profiles?select=id,pseudo");
+  const ids = (sessions || []).map(session => session.id);
+  const memberships = ids.length
+    ? await request(
+      "boss_participation?select=owner&session_id=in.(" + ids.join(",") + ")"
+    )
+    : [];
+  return {
+    sessions:sessions || [],
+    profiles:profiles || [],
+    memberships:memberships || [],
+    missingMembers:missingRuns(profiles || [], memberships || [])
+  };
+}
+
 async function main() {
   if (!SERVICE_ROLE || !WEBHOOK) {
     console.log("Secrets manquants (SUPABASE_SERVICE_ROLE / DISCORD_WEBHOOK_URL) — rien à envoyer.");
@@ -44,15 +63,7 @@ async function main() {
   }
 
   const weekStart = currentBossWeekStart(now);
-  const sessions = await sb("boss_sessions?week_start=eq." + weekStart + "&select=id");
-  if (!sessions.length) {
-    console.log("Groupes de la semaine (" + weekStart + ") pas encore créés — rien à envoyer.");
-    return;
-  }
-  const ids = sessions.map(s => s.id);
-  const memberships = await sb("boss_participation?select=owner&session_id=in.(" + ids.join(",") + ")");
-  const profiles = await sb("profiles?select=id,pseudo");
-  const missingMembers = missingRuns(profiles, memberships);
+  const { missingMembers } = await collectReminderData(sb, weekStart);
 
   const weekLabel = "semaine du " + new Date(weekStart + "T00:00:00Z")
     .toLocaleDateString("fr-FR", { day: "numeric", month: "short", timeZone: "UTC" });
@@ -75,4 +86,8 @@ async function main() {
   );
 }
 
-main().catch(e => { console.error(e); process.exitCode = 1; });
+if (require.main === module) {
+  main().catch(e => { console.error(e); process.exitCode = 1; });
+}
+
+module.exports = { collectReminderData };

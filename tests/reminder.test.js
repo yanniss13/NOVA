@@ -4,6 +4,20 @@ const assert = require("node:assert/strict");
 const {
   isReminderWindow, currentBossWeekStart, missingRuns, reminderMessage
 } = require("../scripts/reminder-core.js");
+const reminderLogs = [];
+const originalConsoleLog = console.log;
+console.log = (...args) => reminderLogs.push(args);
+let collectReminderData;
+try {
+  ({ collectReminderData } = require("../scripts/discord-reminder.js"));
+} finally {
+  console.log = originalConsoleLog;
+}
+assert.deepStrictEqual(
+  reminderLogs,
+  [],
+  "Importer le collecteur ne doit déclencher ni rappel ni message"
+);
 
 // Fenêtre : dimanche (0) à 12h, heure de Paris.
 {
@@ -64,4 +78,40 @@ const {
   assert.match(reminderMessage("semaine du 20 juil.", []), /tout le monde est à 3\/3/);
 }
 
-console.log("PASS rappel Discord (logique pure)");
+async function testReminderCollectionWithoutSessions() {
+  const profiles = [
+    { id: "u1", pseudo: "Yannis" },
+    { id: "u2", pseudo: "Merlin" }
+  ];
+  const requestedPaths = [];
+  const request = async pathname => {
+    requestedPaths.push(pathname);
+    if (pathname.startsWith("boss_sessions?")) return [];
+    if (pathname === "profiles?select=id,pseudo") return profiles;
+    throw new Error("Requête inattendue : " + pathname);
+  };
+
+  const collected = await collectReminderData(request, "2026-07-20");
+
+  assert.deepStrictEqual(collected.memberships, []);
+  assert.deepStrictEqual(collected.missingMembers, [
+    { pseudo: "Yannis", missing: 3 },
+    { pseudo: "Merlin", missing: 3 }
+  ]);
+  assert.deepStrictEqual(requestedPaths, [
+    "boss_sessions?week_start=eq.2026-07-20&select=id",
+    "profiles?select=id,pseudo"
+  ]);
+  assert.equal(
+    requestedPaths.some(pathname => pathname.startsWith("boss_participation?")),
+    false,
+    "Une semaine sans session ne doit pas produire de filtre in.() vide"
+  );
+}
+
+testReminderCollectionWithoutSessions()
+  .then(() => console.log("PASS rappel Discord (logique pure + collecte)"))
+  .catch(error => {
+    console.error(error);
+    process.exitCode = 1;
+  });

@@ -3812,10 +3812,16 @@
     },
     async listMembership(sessionIds){
       if(!currentUser || !sb || !sessionIds.length) return [];
-      const { data, error } = await sb.from("boss_participation")
-        .select("session_id,owner,pseudo").in("session_id", sessionIds);
-      if(error) throw error;
-      return data || [];
+      const memberships = [];
+      const batchSize = 100;
+      for(let start=0; start<sessionIds.length; start+=batchSize){
+        const batch = sessionIds.slice(start, start + batchSize);
+        const { data, error } = await sb.from("boss_participation")
+          .select("session_id,owner,pseudo").in("session_id", batch);
+        if(error) throw error;
+        memberships.push(...(data || []));
+      }
+      return memberships;
     },
     async join(sessionId){
       if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");

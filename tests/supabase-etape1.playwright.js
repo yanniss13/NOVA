@@ -214,10 +214,97 @@ const { chromium } = require("playwright");
     );
 
     // Boss : trois runs maximum, départ libérateur, archive et run suivante.
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      state.calls.length = 0;
+      for(let index = 1; index <= 205; index++){
+        const slot = ((index - 1) % 6) + 1;
+        state.boss_sessions.push({
+          id:"boss-history-" + index,
+          created_by:"user-1",
+          title:"Groupe " + slot,
+          boss_name:"Akumu, bête démoniaque",
+          session_date:"2026-07-06",
+          week_start:"2026-07-06",
+          slot,
+          run_no:Math.floor((index - 1) / 6) + 1,
+          elements:[],
+          status:"archived",
+          completed_at:"2026-07-12T10:00:00.000Z",
+          remind_at:null,
+          reminded_at:null,
+          created_at:"2026-07-06T09:00:00.000Z"
+        });
+        state.boss_participation.push({
+          session_id:"boss-history-" + index,
+          owner:"history-user-" + index,
+          pseudo:"Historique " + index,
+          updated_at:"2026-07-12T10:00:00.000Z"
+        });
+      }
+    });
     await page.locator('.tab[data-view="boss"]').click();
     await page.locator(".boss-grid .boss-card").nth(5).waitFor();
     assert.equal(await page.locator(".boss-grid .boss-card").count(), 6);
+    const membershipBatchSizes = await page.evaluate(() =>
+      window.__fakeSupabaseState.calls
+        .filter(call => call.table === "boss_participation" && call.operation === "select")
+        .map(call => {
+          const filter = call.filters.find(([key]) => key === "__in:session_id");
+          return filter ? filter[1].length : 0;
+        })
+    );
+    assert.ok(
+      membershipBatchSizes.length > 1,
+      "Plus de 100 sessions doivent déclencher plusieurs requêtes de participation"
+    );
+    assert.ok(
+      membershipBatchSizes.every(size => size > 0 && size <= 100),
+      "Chaque requête de participation doit contenir au maximum 100 UUID"
+    );
+    assert.equal(
+      membershipBatchSizes.reduce((sum, size) => sum + size, 0),
+      211,
+      "Tous les UUID historiques et courants doivent être interrogés"
+    );
+    assert.match(
+      await page.locator(".boss-archive").textContent(),
+      /Historique 205/,
+      "Les participations du dernier lot doivent rester visibles"
+    );
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      state.boss_sessions = state.boss_sessions.filter(
+        run => !run.id.startsWith("boss-history-")
+      );
+      state.boss_participation = state.boss_participation.filter(
+        membership => !membership.session_id.startsWith("boss-history-")
+      );
+      state.calls.length = 0;
+    });
     assert.equal(await page.evaluate(() => window.__fakeSupabaseState.boss_sessions.length), 6);
+    const alteredSeedResult = await page.evaluate(async () => {
+      const state = window.__fakeSupabaseState;
+      const before = JSON.stringify(state.boss_sessions);
+      const alteredSeeds = state.boss_sessions.map((run, index) => Object.assign({}, run, {
+        boss_name:index === 0 ? "Boss injecté" : run.boss_name
+      }));
+      const result = await window.__fakeSupabaseClient.from("boss_sessions")
+        .upsert(alteredSeeds, {
+          onConflict:"week_start,slot,run_no",
+          ignoreDuplicates:true
+        });
+      return {
+        error:result.error && result.error.message,
+        unchanged:JSON.stringify(state.boss_sessions) === before
+      };
+    });
+    assert.equal(alteredSeedResult.error, "RPC_REQUIRED");
+    assert.equal(
+      alteredSeedResult.unchanged,
+      true,
+      "Une seed aux métadonnées altérées doit être refusée sans mutation"
+    );
     const invalidWeekErrors = await page.evaluate(async () => {
       const state = window.__fakeSupabaseState;
       const source = state.boss_sessions[0];
@@ -759,14 +846,17 @@ async function installFakeSupabase(page){
               value.created_by === (state.session && state.session.user && state.session.user.id) &&
               value.week_start === currentBossWeekStart() &&
               value.session_date === value.week_start &&
-              (value.run_no == null || value.run_no === 1)
+              (value.run_no == null || value.run_no === 1) &&
+              value.title === "Groupe " + value.slot &&
+              value.boss_name === "Akumu, bête démoniaque" &&
+              Array.isArray(value.elements) && value.elements.length === 0 &&
+              value.status === "open" &&
+              value.completed_at == null &&
+              value.remind_at == null &&
+              value.reminded_at == null
             );
           const slots = values.map(value => value.slot).sort((a,b) => a-b);
-          if(!validSeed || slots.join(",") !== "1,2,3,4,5,6" || values.some(value =>
-            value.title !== "Groupe " + value.slot ||
-            value.status !== "open" ||
-            value.completed_at != null
-          )) return rpcRequired();
+          if(!validSeed || slots.join(",") !== "1,2,3,4,5,6") return rpcRequired();
         }
         if(table === "roster_characters" && state.failNextRosterUpsert){
           state.failNextRosterUpsert = false;

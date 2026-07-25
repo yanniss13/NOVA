@@ -95,7 +95,7 @@ create table if not exists public.boss_sessions (
   title        text not null,
   boss_name    text,
   session_date date,
-  week_start   date not null,                    -- lundi (9h) de la semaine du groupe
+  week_start   date,                             -- nullable pour les lignes historiques ; policy/RPC strictes
   slot         int,                              -- n° de groupe (1..6)
   elements     text[] not null default '{}',   -- (héritage) éléments visés
   status       text not null default 'open',    -- open | won | lost | archived
@@ -349,8 +349,14 @@ create policy boss_sessions_insert
     and week_start = private.current_boss_week_start()
     and run_no = 1
     and slot between 1 and 6
+    and title = 'Groupe ' || slot
+    and boss_name = 'Akumu, bête démoniaque'
+    and session_date = week_start
+    and elements = '{}'::text[]
     and status = 'open'
     and completed_at is null
+    and remind_at is null
+    and reminded_at is null
   );
 
 -- boss_participation : lecture par tout membre ; chacun écrit SA propre ligne

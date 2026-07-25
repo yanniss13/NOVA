@@ -24,7 +24,6 @@ const sql = fs.readFileSync(
 [
   /create table if not exists public\.boss_sessions/i,
   /create table if not exists public\.boss_participation/i,
-  /week_start\s+date\s+not null/i,
   /run_no\s+integer\s+not null\s+default\s+1/i,
   /completed_at\s+timestamptz/i,
   /primary key\s*\(\s*session_id\s*,\s*owner\s*\)/i,
@@ -48,6 +47,42 @@ const sql = fs.readFileSync(
   /grant execute on function public\.leave_boss_run\(uuid\) to authenticated/i,
   /grant execute on function public\.complete_boss_run\(uuid\) to authenticated/i
 ].forEach(pattern => assert.match(sql, pattern));
+
+const bossSessionsTable = sql.slice(
+  sql.indexOf("create table if not exists public.boss_sessions"),
+  sql.indexOf("create table if not exists public.boss_participation")
+);
+assert.match(
+  bossSessionsTable,
+  /week_start\s+date\s*,/i,
+  "Le DDL rejouable doit assumer explicitement les anciennes semaines nullables"
+);
+assert.doesNotMatch(
+  bossSessionsTable,
+  /week_start\s+date\s+not null/i,
+  "Aucun SET NOT NULL implicite ne doit risquer un backfill ou un conflit historique"
+);
+assert.match(
+  bossSessionsTable,
+  /alter table public\.boss_sessions add column if not exists week_start\s+date\s*;/i
+);
+
+const bossSessionsInsertPolicy = sql.slice(
+  sql.indexOf("create policy boss_sessions_insert"),
+  sql.indexOf("-- boss_participation")
+);
+[
+  /title\s*=\s*'Groupe '\s*\|\|\s*slot/i,
+  /boss_name\s*=\s*'Akumu, bête démoniaque'/i,
+  /session_date\s*=\s*week_start/i,
+  /elements\s*=\s*'\{\}'::text\[\]/i,
+  /remind_at\s+is null/i,
+  /reminded_at\s+is null/i
+].forEach(pattern => assert.match(
+  bossSessionsInsertPolicy,
+  pattern,
+  "La seed directe doit conserver toutes les métadonnées canoniques"
+));
 
 assert.doesNotMatch(sql, /create policy boss_sessions_update/i);
 assert.doesNotMatch(sql, /create policy boss_sessions_delete/i);
