@@ -667,9 +667,23 @@
     .metabar .grow{margin-left:0;width:100%}
     .metabar .grow .btn{flex:1;justify-content:center}
     .roster-grid{grid-template-columns:1fr}
-    .tabs{order:3;width:100%;overflow:auto}
+    .tabs{order:3;width:100%;overflow-x:auto;scrollbar-width:none}
+    .tabs::-webkit-scrollbar{height:0}
     .tab{padding:9px 13px;white-space:nowrap}
     .auth-actions{grid-template-columns:1fr}
+    /* Barre de compte : pleine largeur, replis autorisés — ne doit jamais
+       élargir le document (cause du scroll latéral iPhone). */
+    .topbar > *{min-width:0}
+    .account{width:100%;order:2}
+    .account-connected{flex:1;min-width:0;flex-wrap:wrap;justify-content:center;padding:6px 10px}
+    .account-connected .btn{flex:1 1 auto;justify-content:center}
+    .account-pseudo{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    /* iOS Safari zoome automatiquement (et reste zoomé) au focus d'un champ
+       dont la police est < 16px — cause du décentrage + scroll latéral signalés
+       sur iPhone. On force 16px sur tous les contrôles de saisie en mobile. */
+    input, select, textarea,
+    .field input, .rec-input, .note, .picker-search,
+    .dps-pot, .dps-elem-sel select{font-size:16px}
   }
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
