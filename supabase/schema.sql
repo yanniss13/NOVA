@@ -163,10 +163,27 @@ create table if not exists public.boss_participation (
   updated_at   timestamptz not null default now(),
   primary key (session_id, owner)
 );
+alter table public.boss_participation add column if not exists team_snapshot jsonb;
+
+create table if not exists public.boss_run_reports (
+  session_id         uuid primary key
+                     references public.boss_sessions(id) on delete cascade,
+  global_score       bigint not null check (global_score > 0),
+  note               text not null default ''
+                     check (char_length(note) <= 1000),
+  created_by         uuid references auth.users(id) on delete set null,
+  created_by_pseudo  text not null,
+  created_at         timestamptz not null default now(),
+  updated_by         uuid references auth.users(id) on delete set null,
+  updated_by_pseudo  text,
+  updated_at         timestamptz
+);
+
 create index if not exists boss_participation_session_idx on public.boss_participation(session_id);
 
 alter table public.boss_sessions      enable row level security;
 alter table public.boss_participation enable row level security;
+alter table public.boss_run_reports   enable row level security;
 
 create or replace function public.join_boss_run(p_session_id uuid)
 returns void
@@ -286,7 +303,87 @@ begin
 end;
 $$;
 
-create or replace function public.complete_boss_run(p_session_id uuid)
+create or replace function public.select_boss_team(
+  p_session_id uuid,
+  p_team_id uuid
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_owner uuid := auth.uid();
+  v_week date;
+  v_status text;
+  v_snapshot jsonb;
+begin
+  if v_owner is null then
+    raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
+  end if;
+
+  select week_start, status
+    into v_week, v_status
+    from public.boss_sessions
+   where id = p_session_id
+   for update;
+
+  if not found then
+    raise exception 'RUN_NOT_FOUND' using errcode = 'P0001';
+  end if;
+  if v_week is null then
+    raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
+  end if;
+  if v_week <> private.current_boss_week_start() then
+    raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
+  end if;
+  if v_status <> 'open' then
+    raise exception 'RUN_ARCHIVED' using errcode = 'P0001';
+  end if;
+  if not exists (
+    select 1 from public.boss_participation
+     where session_id = p_session_id
+       and owner = v_owner
+  ) then
+    raise exception 'NOT_A_PARTICIPANT' using errcode = 'P0001';
+  end if;
+
+  select jsonb_build_object(
+           'id', t.id,
+           'owner', t.owner,
+           'pseudo', t.pseudo,
+           'data', t.data,
+           'createdAt', t.created_at,
+           'updatedAt', t.updated_at,
+           'capturedAt', now()
+         )
+    into v_snapshot
+    from public.teams t
+   where t.id = p_team_id
+     and t.owner = v_owner;
+
+  if v_snapshot is null then
+    raise exception 'TEAM_NOT_OWNED' using errcode = 'P0001';
+  end if;
+
+  update public.boss_participation
+     set team_id = p_team_id,
+         team_snapshot = v_snapshot,
+         updated_at = now()
+   where session_id = p_session_id
+     and owner = v_owner;
+
+  if not found then
+    raise exception 'NOT_A_PARTICIPANT' using errcode = 'P0001';
+  end if;
+end;
+$$;
+
+create or replace function public.complete_boss_run_with_report(
+  p_session_id uuid,
+  p_global_score bigint,
+  p_note text
+)
 returns void
 language plpgsql
 security definer
@@ -295,6 +392,10 @@ as $$
 declare
   v_owner uuid := auth.uid();
   v_run public.boss_sessions%rowtype;
+  v_member_count bigint;
+  v_missing_count bigint;
+  v_missing_names text;
+  v_pseudo text;
 begin
   if v_owner is null then
     raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
@@ -315,16 +416,52 @@ begin
   if v_run.week_start <> private.current_boss_week_start() then
     raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
   end if;
+
+  select count(*),
+         count(*) filter (where team_snapshot is null),
+         string_agg(pseudo, ', ') filter (where team_snapshot is null)
+    into v_member_count, v_missing_count, v_missing_names
+    from public.boss_participation
+   where session_id = p_session_id;
+
   if v_run.status <> 'open' then
-    return;
+    raise exception 'RUN_ARCHIVED' using errcode = 'P0001';
   end if;
   if not exists (
     select 1 from public.boss_participation
-     where session_id = p_session_id
-       and owner = v_owner
+     where session_id = p_session_id and owner = v_owner
   ) then
-    raise exception 'RUN_MEMBERS_ONLY' using errcode = 'P0001';
+    raise exception 'NOT_A_PARTICIPANT' using errcode = 'P0001';
   end if;
+  if v_member_count < 1 then
+    raise exception 'NOT_A_PARTICIPANT' using errcode = 'P0001';
+  end if;
+  if v_member_count > 5 then
+    raise exception 'GROUP_OVER_CAPACITY' using errcode = 'P0001';
+  end if;
+  if v_missing_count > 0 then
+    raise exception 'TEAM_REQUIRED:%', coalesce(v_missing_names, 'Membre')
+      using errcode = 'P0001';
+  end if;
+  if p_global_score is null or p_global_score <= 0 then
+    raise exception 'INVALID_SCORE' using errcode = 'P0001';
+  end if;
+  if char_length(coalesce(p_note, '')) > 1000 then
+    raise exception 'NOTE_TOO_LONG' using errcode = 'P0001';
+  end if;
+
+  select nullif(trim(pseudo), '')
+    into v_pseudo
+    from public.profiles
+   where id = v_owner;
+
+  insert into public.boss_run_reports(
+    session_id, global_score, note, created_by, created_by_pseudo, created_at
+  )
+  values (
+    p_session_id, p_global_score, btrim(coalesce(p_note, '')),
+    v_owner, coalesce(v_pseudo, 'Membre'), now()
+  );
 
   update public.boss_sessions
      set status = 'archived',
@@ -340,6 +477,85 @@ begin
     v_run.week_start, v_run.slot, v_run.run_no + 1, v_run.elements, 'open', now()
   )
   on conflict (week_start, slot, run_no) do nothing;
+end;
+$$;
+
+create or replace function public.update_boss_run_report(
+  p_session_id uuid,
+  p_global_score bigint,
+  p_note text
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_owner uuid := auth.uid();
+  v_report_session_id uuid;
+  v_run_status text;
+  v_pseudo text;
+begin
+  if v_owner is null then
+    raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
+  end if;
+
+  select session_id
+    into v_report_session_id
+    from public.boss_run_reports
+   where session_id = p_session_id
+   for update;
+
+  if not found then
+    raise exception 'REPORT_NOT_FOUND' using errcode = 'P0001';
+  end if;
+
+  select status
+    into v_run_status
+    from public.boss_sessions
+   where id = v_report_session_id;
+
+  if v_run_status <> 'archived' then
+    raise exception 'RUN_NOT_ARCHIVED' using errcode = 'P0001';
+  end if;
+  if not exists (
+    select 1
+      from public.boss_participation
+     where session_id = p_session_id
+       and owner = v_owner
+  ) then
+    raise exception 'NOT_A_PARTICIPANT' using errcode = 'P0001';
+  end if;
+  if p_global_score is null or p_global_score <= 0 then
+    raise exception 'INVALID_SCORE' using errcode = 'P0001';
+  end if;
+  if char_length(coalesce(p_note, '')) > 1000 then
+    raise exception 'NOTE_TOO_LONG' using errcode = 'P0001';
+  end if;
+
+  select nullif(trim(pseudo), '')
+    into v_pseudo
+    from public.profiles
+   where id = v_owner;
+
+  update public.boss_run_reports
+     set global_score = p_global_score,
+         note = btrim(coalesce(p_note, '')),
+         updated_by = v_owner,
+         updated_by_pseudo = coalesce(v_pseudo, 'Membre'),
+         updated_at = now()
+   where session_id = p_session_id;
+end;
+$$;
+
+create or replace function public.complete_boss_run(p_session_id uuid)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  raise exception 'REPORT_REQUIRED' using errcode = 'P0001';
 end;
 $$;
 
@@ -376,12 +592,23 @@ drop policy if exists boss_part_update on public.boss_participation;
 drop policy if exists boss_part_delete on public.boss_participation;
 create policy boss_part_read   on public.boss_participation for select to authenticated using (true);
 
+drop policy if exists boss_reports_read on public.boss_run_reports;
+create policy boss_reports_read
+  on public.boss_run_reports
+  for select to authenticated using (true);
+
 revoke all on function public.join_boss_run(uuid) from public;
 revoke all on function public.leave_boss_run(uuid) from public;
 revoke all on function public.complete_boss_run(uuid) from public;
+revoke all on function public.select_boss_team(uuid, uuid) from public;
+revoke all on function public.complete_boss_run_with_report(uuid, bigint, text) from public;
+revoke all on function public.update_boss_run_report(uuid, bigint, text) from public;
 grant execute on function public.join_boss_run(uuid) to authenticated;
 grant execute on function public.leave_boss_run(uuid) to authenticated;
 grant execute on function public.complete_boss_run(uuid) to authenticated;
+grant execute on function public.select_boss_team(uuid, uuid) to authenticated;
+grant execute on function public.complete_boss_run_with_report(uuid, bigint, text) to authenticated;
+grant execute on function public.update_boss_run_report(uuid, bigint, text) to authenticated;
 
 -- ============================ Realtime ============================
 -- Chaque table est vérifiée séparément pour que le schéma complet reste rejouable.
@@ -394,7 +621,8 @@ begin
     'teams',
     'roster_characters',
     'boss_sessions',
-    'boss_participation'
+    'boss_participation',
+    'boss_run_reports'
   ]
   loop
     if not exists (
