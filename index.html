@@ -726,6 +726,65 @@
   .boss-team-empty{text-align:center;padding:28px 16px;color:var(--muted)}
   .boss-team-empty p{margin:0 0 14px;line-height:1.45}
   .boss-team-empty .btn{justify-content:center}
+  .modal.boss-report-modal{width:min(620px,100%)}
+  .boss-report-body{
+    min-width:0;padding:18px;overflow:auto;display:flex;flex-direction:column;gap:12px
+  }
+  .boss-report-members{
+    display:flex;flex-direction:column;gap:7px;padding:10px;
+    border:1px solid var(--line-soft);border-radius:10px;background:var(--obsidian-2)
+  }
+  .boss-report-member{
+    min-width:0;display:flex;align-items:center;justify-content:space-between;gap:10px;
+    color:var(--parchment);font-size:13px
+  }
+  .boss-report-member-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
+  .boss-report-member-state{flex:none;color:var(--gold-bright);font-size:11px}
+  .boss-report-member-state.missing{color:#e98d8d}
+  .boss-report-body>label{
+    font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)
+  }
+  #bossScore,#bossReportNote{
+    width:100%;min-width:0;font-family:var(--ui);color:var(--parchment);
+    background:var(--obsidian-2);border:1px solid var(--line);border-radius:9px
+  }
+  #bossScore{
+    min-height:52px;padding:8px 12px;text-align:center;
+    font-family:var(--display);font-size:clamp(24px,7vw,34px);font-weight:700;
+    letter-spacing:.04em;color:var(--gold-bright);border-color:var(--gold-deep);
+    box-shadow:inset 0 0 22px rgba(217,164,65,.06)
+  }
+  #bossScore[aria-invalid="true"]{border-color:var(--crimson)}
+  #bossReportNote{min-height:104px;padding:11px 12px;resize:vertical;line-height:1.45}
+  #bossReportCount{margin-top:-7px;text-align:right;color:var(--muted-2);font-size:11px}
+  #bossReportError{min-height:20px;margin:0;color:#e98d8d;font-size:12.5px;line-height:1.45}
+  #bossReportSubmit{min-height:44px;justify-content:center}
+  .boss-stats{
+    margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:12px;
+    background:linear-gradient(180deg,var(--panel),var(--obsidian-2))
+  }
+  .boss-stats-head{
+    display:flex;align-items:baseline;justify-content:space-between;gap:12px;
+    padding-bottom:10px;border-bottom:1px solid var(--line-soft)
+  }
+  .boss-stats-title{
+    margin:0;font-family:var(--display);font-size:14px;font-weight:600;
+    letter-spacing:.05em;color:var(--parchment)
+  }
+  .boss-stat-evolution{font-size:11px;color:var(--gold-bright);text-align:right}
+  .boss-stats-grid{
+    display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;
+    margin-top:10px;background:var(--line-soft)
+  }
+  .boss-stat{min-width:0;padding:10px;background:var(--obsidian-2)}
+  .boss-stat-label{
+    display:block;margin-bottom:5px;font-size:10px;font-weight:700;
+    letter-spacing:.08em;text-transform:uppercase;color:var(--muted)
+  }
+  .boss-stat-value{
+    display:block;min-width:0;font-family:var(--display);font-size:clamp(15px,2.5vw,20px);
+    font-weight:700;color:var(--parchment);overflow:hidden;text-overflow:ellipsis
+  }
   .boss-archive{margin-top:24px;border:1px solid var(--line-soft);border-radius:12px;background:var(--obsidian-2);padding:0 14px}
   .boss-archive>summary{cursor:pointer;padding:12px 2px;font-family:var(--display);font-size:14px;color:var(--muted);letter-spacing:.03em}
   .boss-archive[open]>summary{color:var(--parchment)}
@@ -734,12 +793,86 @@
   .boss-archive-row{font-size:13px;color:var(--muted);padding:2px 0;overflow-wrap:anywhere}
   .boss-archive-row b{color:var(--parchment)}
   .boss-archive-row small{color:var(--muted-2)}
+  .boss-report-list{display:flex;flex-direction:column;gap:12px;padding:4px 0 14px}
+  .boss-report-card{
+    min-width:0;padding:14px;border:1px solid var(--line);border-radius:11px;
+    background:linear-gradient(165deg,var(--panel),var(--obsidian-2))
+  }
+  .boss-report-head{
+    display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+    padding-bottom:10px;border-bottom:1px solid var(--line-soft)
+  }
+  .boss-report-heading{
+    margin:0;font-family:var(--display);font-size:15px;font-weight:600;
+    letter-spacing:.03em;color:var(--parchment)
+  }
+  .boss-report-date{flex:none;font-size:11px;color:var(--muted-2)}
+  .boss-report-score-block{
+    margin:12px 0;padding:12px 14px;border-left:3px solid var(--gold);
+    background:linear-gradient(90deg,rgba(217,164,65,.09),transparent 72%)
+  }
+  .boss-report-score-label{
+    display:block;font-size:10px;font-weight:700;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--muted)
+  }
+  .boss-report-score{
+    display:block;margin-top:3px;font-family:var(--display);
+    font-size:clamp(28px,6vw,40px);font-weight:700;letter-spacing:.035em;
+    line-height:1.05;color:var(--gold-bright)
+  }
+  .boss-report-note{
+    margin:0 0 10px;padding:10px 12px;border:1px solid var(--line-soft);
+    border-radius:8px;color:var(--parchment);font-size:13px;line-height:1.5;
+    white-space:pre-wrap
+  }
+  .boss-report-meta{display:flex;flex-direction:column;gap:2px;color:var(--muted);font-size:11px}
+  .boss-report-participants{
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+    gap:8px;margin-top:12px
+  }
+  .boss-report-participant{
+    min-width:0;padding:9px;border:1px solid var(--line-soft);border-radius:9px;
+    background:rgba(11,9,16,.46)
+  }
+  .boss-report-participant-name{
+    display:block;min-width:0;margin-bottom:7px;font-size:12px;font-weight:700;
+    color:var(--parchment);overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+  }
+  .boss-report-team{
+    appearance:none;width:100%;min-width:0;padding:7px;border:1px solid var(--line);
+    border-radius:8px;background:var(--obsidian-2);color:var(--parchment);
+    cursor:pointer;text-align:left
+  }
+  .boss-report-team:hover{border-color:var(--gold-deep)}
+  .boss-report-team .boss-team-banner{
+    grid-template-columns:repeat(4,minmax(0,86px));justify-content:center
+  }
+  .boss-report-team-label{
+    display:block;margin-top:6px;text-align:center;font-size:11px;font-weight:700;
+    color:var(--gold-bright)
+  }
+  .boss-report-team-missing{font-size:11px;color:var(--muted-2)}
+  .boss-report-actions{display:flex;justify-content:flex-end;margin-top:12px}
+  .boss-report-edit{justify-content:center}
+  .boss-report-unavailable p{
+    margin:12px 0 0;color:var(--muted);font-size:13px;line-height:1.45
+  }
   @media(max-width:520px){
     .boss-grid{grid-template-columns:minmax(0,1fr)}
     .boss-actions{grid-template-columns:1fr}
     .boss-team-choice-heroes{grid-template-columns:repeat(2,minmax(0,1fr))}
     .boss-team-choice-hero{grid-template-columns:36px minmax(0,1fr)}
     .boss-team-choice-portrait{width:36px;height:36px}
+    .boss-report-body{padding:14px}
+    .boss-report-member{align-items:flex-start;flex-direction:column;gap:3px}
+    .boss-stats-head{align-items:flex-start;flex-direction:column}
+    .boss-stat-evolution{text-align:left}
+    .boss-stats-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .boss-report-card{padding:12px}
+    .boss-report-head{flex-direction:column;gap:4px}
+    .boss-report-score{font-size:28px}
+    .boss-report-participants{grid-template-columns:minmax(0,1fr)}
+    .boss-report-actions .btn{width:100%;justify-content:center}
   }
 
   @media(max-width:820px){ .cov-row{grid-template-columns:repeat(4,1fr)} .rec-grid{grid-template-columns:1fr} }
@@ -1246,6 +1379,31 @@
               aria-label="Fermer">×</button>
     </div>
     <div class="boss-team-list" id="bossTeamList"></div>
+  </div>
+</div>
+
+<div class="overlay" id="bossReportOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="bossReportTitle" aria-hidden="true">
+  <div class="modal boss-report-modal">
+    <div class="modal-head">
+      <h2 id="bossReportTitle">Terminer la run</h2>
+      <button class="icon-btn" id="bossReportClose" type="button"
+              aria-label="Fermer">×</button>
+    </div>
+    <div class="boss-report-body">
+      <div class="boss-report-members" id="bossReportMembers"></div>
+      <label for="bossScore">Score global</label>
+      <input id="bossScore" type="text" inputmode="numeric"
+             autocomplete="off" aria-describedby="bossReportError">
+      <label for="bossReportNote">Note de run</label>
+      <textarea id="bossReportNote" maxlength="1000"
+                aria-describedby="bossReportCount bossReportError"></textarea>
+      <div id="bossReportCount">0/1000</div>
+      <p id="bossReportError" role="alert"></p>
+      <button class="btn btn-primary" id="bossReportSubmit" type="button">
+        Enregistrer et terminer la run
+      </button>
+    </div>
   </div>
 </div>
 
@@ -1995,7 +2153,8 @@
       "teams",
       "roster_characters",
       "boss_sessions",
-      "boss_participation"
+      "boss_participation",
+      "boss_run_reports"
     ];
     let channel = null;
     let userId = "";
@@ -2047,7 +2206,11 @@
       if(table === "profiles" || table === "roster_characters"){
         pending.add("roster");
       }
-      if(table === "boss_sessions" || table === "boss_participation"){
+      if(
+        table === "boss_sessions" ||
+        table === "boss_participation" ||
+        table === "boss_run_reports"
+      ){
         pending.add("boss");
       }
       clearTimeout(timer);
@@ -4326,6 +4489,7 @@
     week:null,
     allGroups:[],
     membership:[],
+    reports:[],
     ready:false
   });
   let bossViewState = emptyBossViewState("");
@@ -4338,6 +4502,9 @@
   function ensureBossViewOwner(){
     const userId = currentUser ? currentUser.id : "";
     if(bossViewState.userId === userId) return;
+    if(bossReportContext && bossReportContext.userId !== userId){
+      closeBossReport();
+    }
     invalidateBossRenders();
     bossViewState = emptyBossViewState(userId);
     bossPendingActions.clear();
@@ -4381,6 +4548,53 @@
         day:"numeric", month:"short", hour:"2-digit", minute:"2-digit"
       })
     : "";
+  const BOSS_SCORE_FORMAT = new Intl.NumberFormat("fr-FR");
+
+  function bossScoreBigInt(value){
+    try{
+      return BigInt(String(value));
+    }catch(error){
+      return null;
+    }
+  }
+
+  function formatBossScore(value){
+    const score = typeof value === "bigint" ? value : bossScoreBigInt(value);
+    return score === null ? "—" : BOSS_SCORE_FORMAT.format(score);
+  }
+
+  function bossStatsForWeek(groups, reports, weekStart){
+    const weekGroups = (groups || [])
+      .filter(group => group.week_start === weekStart);
+    const sessions = new Map(weekGroups.map(group => [group.id, group]));
+    const ids = new Set(sessions.keys());
+    const rows = (reports || [])
+      .filter(report => ids.has(report.session_id))
+      .slice()
+      .sort((a,b)=>{
+        const aCompleted = sessions.get(a.session_id)?.completed_at || "";
+        const bCompleted = sessions.get(b.session_id)?.completed_at || "";
+        return String(bCompleted).localeCompare(String(aCompleted)) ||
+          String(b.created_at || "").localeCompare(String(a.created_at || ""));
+      });
+    const scores = rows.map(report => BigInt(String(report.global_score)));
+    const sum = scores.reduce((total, score) => total + score, 0n);
+    return {
+      count:scores.length,
+      best:scores.length ? scores.reduce((a,b) => a > b ? a : b) : null,
+      average:scores.length
+        ? (sum + BigInt(Math.floor(scores.length / 2))) /
+          BigInt(scores.length)
+        : null,
+      latest:rows[0] || null
+    };
+  }
+
+  function previousBossWeekStart(weekStart){
+    const date = new Date(weekStart+"T00:00:00.000Z");
+    date.setUTCDate(date.getUTCDate() - 7);
+    return date.toISOString().slice(0,10);
+  }
 
   const BossStore = {
     async listAll(){
@@ -4421,6 +4635,14 @@
       }
       return memberships;
     },
+    async listReports(){
+      if(!currentUser || !sb) return [];
+      const { data, error } = await sb.from("boss_run_reports")
+        .select("*")
+        .order("created_at", { ascending:false });
+      if(error) throw error;
+      return data || [];
+    },
     async join(sessionId){
       if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
       const { error } = await sb.rpc("join_boss_run", { p_session_id:sessionId });
@@ -4439,18 +4661,92 @@
       });
       if(error) throw error;
     },
-    async complete(sessionId){
+    async complete(sessionId, globalScore, note){
       if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
-      const { error } = await sb.rpc("complete_boss_run", { p_session_id:sessionId });
+      const { error } = await sb.rpc("complete_boss_run_with_report", {
+        p_session_id:sessionId,
+        p_global_score:globalScore,
+        p_note:note
+      });
+      if(error) throw error;
+    },
+    async updateReport(sessionId, globalScore, note){
+      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      const { error } = await sb.rpc("update_boss_run_report", {
+        p_session_id:sessionId,
+        p_global_score:globalScore,
+        p_note:note
+      });
       if(error) throw error;
     }
   };
+
+  function bossStatCell(label, className, value){
+    return el("div",{class:"boss-stat"},[
+      el("span",{class:"boss-stat-label",text:label}),
+      el("span",{class:"boss-stat-value "+className,text:value})
+    ]);
+  }
+
+  function bossStatsBlock(groups, reports, weekStart){
+    const current = bossStatsForWeek(groups, reports, weekStart);
+    const previous = bossStatsForWeek(
+      groups,
+      reports,
+      previousBossWeekStart(weekStart)
+    );
+    const head = el("div",{class:"boss-stats-head"},[
+      el("h2",{
+        class:"boss-stats-title",
+        id:"bossStatsTitle",
+        text:"Statistiques de la semaine"
+      })
+    ]);
+    if(current.average !== null && previous.average !== null){
+      const difference = current.average - previous.average;
+      const sign = difference > 0n ? "+" : (difference < 0n ? "−" : "");
+      const absolute = difference < 0n ? -difference : difference;
+      head.appendChild(el("span",{
+        class:"boss-stat-evolution",
+        text:sign+formatBossScore(absolute)+
+          " par rapport à la semaine précédente"
+      }));
+    }
+    const latestScore = current.latest
+      ? bossScoreBigInt(current.latest.global_score)
+      : null;
+    return el("section",{
+      class:"boss-stats",
+      "aria-labelledby":"bossStatsTitle"
+    },[
+      head,
+      el("div",{class:"boss-stats-grid"},[
+        bossStatCell("Rapports", "boss-stat-count", String(current.count)),
+        bossStatCell(
+          "Meilleur score",
+          "boss-stat-best",
+          current.best === null ? "—" : formatBossScore(current.best)
+        ),
+        bossStatCell(
+          "Score moyen",
+          "boss-stat-average",
+          current.average === null ? "—" : formatBossScore(current.average)
+        ),
+        bossStatCell(
+          "Dernier score",
+          "boss-stat-latest",
+          latestScore === null ? "—" : formatBossScore(latestScore)
+        )
+      ])
+    ]);
+  }
 
   function renderBossContent(){
     const body = $("#bossBody");
     const week = bossViewState.week || currentBossWeek();
     const allGroups = bossViewState.allGroups || [];
     const membership = bossVisibleMembership();
+    const reports = bossViewState.reports || [];
 
     const weekGroups = allGroups.filter(g => g.week_start === week.startDate);
     const current = weekGroups
@@ -4473,6 +4769,7 @@
       el("div",{class:"boss-weekboss", text:BOSS_NAME}),
       el("div",{class:"boss-weeksub", text:"Semaine du "+frDate(week.startDate)+" au "+frDate(week.endDate)+" · reset lundi 9h"})
     ]));
+    body.appendChild(bossStatsBlock(allGroups, reports, week.startDate));
 
     if(!current.length){
       body.appendChild(el("div",{class:"empty-state"},[
@@ -4493,10 +4790,12 @@
       currentArchive.appendChild(el("summary",{
         text:"Runs terminées cette semaine ("+completedCurrent.length+")"
       }));
-      currentArchive.appendChild(bossArchiveRows(completedCurrent, membership));
+      currentArchive.appendChild(
+        bossArchiveRows(completedCurrent, membership, reports)
+      );
       body.appendChild(currentArchive);
     }
-    if(past.length) body.appendChild(bossArchive(past, membership));
+    if(past.length) body.appendChild(bossArchive(past, membership, reports));
   }
 
   function renderBossUnavailableState(){
@@ -4550,7 +4849,10 @@
     try{
       if(settings.ensureWeek) await BossStore.ensureWeek(week);
       const allGroups = await BossStore.listAll();
-      const membership = await BossStore.listMembership(allGroups.map(group => group.id));
+      const [membership, reports] = await Promise.all([
+        BossStore.listMembership(allGroups.map(group => group.id)),
+        BossStore.listReports()
+      ]);
       if(renderId < bossRenderAppliedId) return true;
       bossRenderAppliedId = renderId;
       bossViewState = {
@@ -4558,6 +4860,7 @@
         week,
         allGroups,
         membership,
+        reports,
         ready:true
       };
       renderBossContent();
@@ -4924,6 +5227,248 @@
     if(event.target === $("#bossTeamOverlay")) closeBossTeamPicker();
   });
 
+  const SCORE_RE = /^[1-9]\d*$/;
+  let bossReportRequestId = 0;
+  let bossReportContext = null;
+
+  function validBossScore(value){
+    const text = String(value || "").trim();
+    if(!SCORE_RE.test(text)) return false;
+    try{
+      const score = BigInt(text);
+      return score > 0n && score <= BigInt(Number.MAX_SAFE_INTEGER);
+    }catch(error){
+      return false;
+    }
+  }
+
+  function bossReportMembers(group){
+    return (bossViewState.membership || [])
+      .filter(member => member.session_id === group.id);
+  }
+
+  function bossMissingTeamMessage(members){
+    const missing = members.filter(member => !member.team_snapshot);
+    if(!missing.length) return "";
+    const names = missing.map(member => member.pseudo || "Membre").join(", ");
+    return "Chaque membre doit choisir une équipe avant de terminer la run : "+names+".";
+  }
+
+  function bossReportActionMessage(error, mode){
+    const message = String(error && error.message || "");
+    if(message.includes("TEAM_REQUIRED")){
+      const names = message.split("TEAM_REQUIRED:")[1];
+      return "Chaque membre doit choisir une équipe avant de terminer la run"+
+        (names ? " : "+names : "")+".";
+    }
+    if(message.includes("INVALID_SCORE")){
+      return "Saisis un score global entier supérieur à zéro.";
+    }
+    if(message.includes("NOTE_TOO_LONG")){
+      return "La note doit contenir 1 000 caractères maximum.";
+    }
+    if(message.includes("GROUP_OVER_CAPACITY")){
+      return "Ce groupe compte plus de 5 membres. Retire les participations en trop avant de terminer la run.";
+    }
+    if(message.includes("RUN_ARCHIVED")){
+      return "Cette run est déjà terminée. Ferme ce rapport puis actualise la liste.";
+    }
+    if(message.includes("RUN_NOT_ARCHIVED")){
+      return "Cette run n’est pas archivée. Ferme ce rapport puis actualise la liste.";
+    }
+    if(message.includes("NOT_A_PARTICIPANT")){
+      return "Tu ne participes pas à cette run. Ferme ce rapport puis actualise la liste.";
+    }
+    if(message.includes("REPORT_NOT_FOUND")){
+      return "Ce rapport n’est plus disponible. Ferme cette fenêtre puis actualise la liste.";
+    }
+    if(message.includes("RUN_NOT_FOUND")){
+      return "Cette run n’existe plus. Ferme cette fenêtre puis actualise la liste.";
+    }
+    if(message.includes("AUTH_REQUIRED")){
+      return "Ta session a expiré. Reconnecte-toi avant de réessayer.";
+    }
+    return mode === "edit"
+      ? "La correction n’a pas été enregistrée. Vérifie ta connexion puis réessaie."
+      : "Le rapport n’a pas été enregistré. Vérifie ta connexion puis réessaie.";
+  }
+
+  function renderBossReportMembers(context){
+    const box = $("#bossReportMembers");
+    box.innerHTML = "";
+    context.members.forEach(member => {
+      const ready = !!member.team_snapshot;
+      box.appendChild(el("div",{class:"boss-report-member"},[
+        el("span",{
+          class:"boss-report-member-name",
+          text:member.pseudo || "Membre"
+        }),
+        el("span",{
+          class:"boss-report-member-state"+(ready?"":" missing"),
+          text:ready ? "Équipe prête" : "Équipe à choisir"
+        })
+      ]));
+    });
+  }
+
+  function updateBossReportForm(clearError){
+    const context = bossReportContext;
+    if(!context) return;
+    if(clearError) context.error = "";
+    const scoreValue = $("#bossScore").value;
+    const missingMessage = bossMissingTeamMessage(context.members);
+    const validScore = validBossScore(scoreValue);
+    const scoreMessage = validScore
+      ? ""
+      : "Saisis un score global entier supérieur à zéro.";
+    $("#bossScore").setAttribute(
+      "aria-invalid",
+      String(!!scoreValue.trim() && !validScore)
+    );
+    $("#bossReportCount").textContent =
+      $("#bossReportNote").value.length+"/1000";
+    $("#bossReportError").textContent =
+      context.error || missingMessage || scoreMessage;
+    $("#bossReportSubmit").disabled =
+      context.pending || !validScore || !!missingMessage;
+    $("#bossReportSubmit").setAttribute(
+      "aria-busy",
+      context.pending ? "true" : "false"
+    );
+  }
+
+  function closeBossReport(){
+    bossReportRequestId++;
+    bossReportContext = null;
+    ModalStack.close($("#bossReportOverlay"));
+  }
+
+  function focusBossReportResult(group, mode){
+    let target = null;
+    if(mode === "edit"){
+      const reportCard = [...document.querySelectorAll(".boss-report-card")]
+        .find(card => card.dataset.sessionId === group.id);
+      target = reportCard && reportCard.querySelector(".boss-report-edit");
+    }else{
+      const next = (bossViewState.allGroups || [])
+        .filter(item => item.status === "open" && item.slot === group.slot)
+        .sort((a,b)=>(b.run_no||1)-(a.run_no||1))[0];
+      const nextCard = next && [...document.querySelectorAll(".boss-card")]
+        .find(card => card.dataset.sessionId === next.id);
+      target = nextCard && nextCard.querySelector(".boss-join");
+    }
+    if(!target){
+      target = mainTabs.find(button => button.dataset.view === "boss");
+    }
+    if(target && target.focus) target.focus();
+  }
+
+  function openBossReport(group, mode){
+    const selectedMode = mode === "edit" ? "edit" : "complete";
+    const members = bossReportMembers(group);
+    const report = (bossViewState.reports || [])
+      .find(item => item.session_id === group.id) || null;
+    const mine = members.some(member => member.owner === currentUser?.id);
+    if(!mine || (selectedMode === "edit" && !report)) return;
+
+    const context = {
+      requestId:++bossReportRequestId,
+      userId:currentUser.id,
+      group,
+      mode:selectedMode,
+      members,
+      report,
+      pending:false,
+      error:""
+    };
+    bossReportContext = context;
+    $("#bossReportTitle").textContent =
+      selectedMode === "edit" ? "Corriger le rapport" : "Terminer la run";
+    $("#bossReportSubmit").textContent = selectedMode === "edit"
+      ? "Enregistrer la correction"
+      : "Enregistrer et terminer la run";
+    $("#bossScore").value = report ? String(report.global_score) : "";
+    $("#bossReportNote").value = report ? String(report.note || "") : "";
+    renderBossReportMembers(context);
+    updateBossReportForm(false);
+    ModalStack.open(
+      $("#bossReportOverlay"),
+      "#bossScore",
+      closeBossReport
+    );
+  }
+
+  async function submitBossReport(){
+    const context = bossReportContext;
+    if(!context || context.pending) return;
+    const score = $("#bossScore").value.trim();
+    const note = $("#bossReportNote").value;
+    const missingMessage = bossMissingTeamMessage(context.members);
+    if(!validBossScore(score) || missingMessage) return;
+
+    context.pending = true;
+    context.error = "";
+    updateBossReportForm(false);
+    const submission = {
+      requestId:context.requestId,
+      userId:context.userId,
+      group:context.group,
+      mode:context.mode,
+      score,
+      note
+    };
+    const isCurrent = () =>
+      bossReportContext === context &&
+      context.requestId === submission.requestId &&
+      currentUser?.id === submission.userId;
+
+    try{
+      if(submission.mode === "edit"){
+        await BossStore.updateReport(
+          submission.group.id,
+          submission.score,
+          submission.note
+        );
+      }else{
+        await BossStore.complete(
+          submission.group.id,
+          submission.score,
+          submission.note
+        );
+      }
+      const restoreFocus = isCurrent();
+      if(restoreFocus) closeBossReport();
+      invalidateBossRenders();
+      await renderBossView({
+        showLoading:false,
+        ensureWeek:false,
+        showErrorToast:true
+      });
+      const active = document.activeElement;
+      const focusWasLost = !active ||
+        !active.isConnected ||
+        active === document.body ||
+        active === document.documentElement;
+      if(restoreFocus || focusWasLost){
+        focusBossReportResult(submission.group, submission.mode);
+      }
+    }catch(error){
+      if(!isCurrent()) return;
+      context.pending = false;
+      context.error = bossReportActionMessage(error, context.mode);
+      updateBossReportForm(false);
+      $("#bossReportError").focus?.();
+    }
+  }
+
+  $("#bossScore").addEventListener("input", ()=>updateBossReportForm(true));
+  $("#bossReportNote").addEventListener("input", ()=>updateBossReportForm(true));
+  $("#bossReportSubmit").addEventListener("click", ()=>void submitBossReport());
+  $("#bossReportClose").addEventListener("click", closeBossReport);
+  $("#bossReportOverlay").addEventListener("click", event => {
+    if(event.target === $("#bossReportOverlay")) closeBossReport();
+  });
+
   function bossGroupCard(g, membership, myCount){
     const members = membership.filter(m => m.session_id === g.id);
     const mine = members.some(m => m.owner === currentUser.id);
@@ -4984,20 +5529,7 @@
       class:"btn btn-secondary boss-complete",
       type:"button",
       text:"Run terminée",
-      onclick:async()=>{
-        const names = members.map(member => member.pseudo || "Membre").join(", ");
-        if(!confirm(
-          "Terminer "+g.title+" · Run "+(g.run_no||1)+" ?\n\n"+
-          "Runs utilisées définitivement pour : "+names
-        )) return;
-        completeButton.disabled = true;
-        try{
-          await BossStore.complete(g.id);
-        }catch(error){
-          toast("Fin de run impossible : "+bossActionMessage(error), true);
-        }
-        await renderBossView();
-      }
+      onclick:()=>openBossReport(g, "complete")
     }) : null;
     if(completeButton) completeButton.disabled = pending;
 
@@ -5025,25 +5557,123 @@
     ]);
   }
 
-  function bossArchiveRows(groups, membership){
-    const wrap = el("div");
-    groups.forEach(g=>{
-      const names = membership
-        .filter(m=>m.session_id===g.id)
-        .map(m=>m.pseudo||"Membre")
-        .join(", ") || "—";
-      wrap.appendChild(el("div",{class:"boss-archive-row"},[
-        el("b",{text:g.title+" · Run "+(g.run_no||1)+" : "}),
-        el("span",{text:names}),
-        ...(g.completed_at ? [
-          el("small",{text:" · terminée le "+frDateTime(g.completed_at)})
-        ] : [])
+  function bossReportParticipant(member){
+    const team = teamFromBossSnapshot(member.team_snapshot);
+    const row = el("div",{class:"boss-report-participant"},[
+      el("span",{
+        class:"boss-report-participant-name",
+        text:member.pseudo || "Membre"
+      })
+    ]);
+    if(team){
+      row.appendChild(el("button",{
+        class:"boss-report-team",
+        type:"button",
+        "aria-label":"Voir l’équipe de "+(member.pseudo || "Membre"),
+        onclick:()=>openTeamDetail(team)
+      },[
+        bossTeamBanner(team),
+        el("span",{class:"boss-report-team-label",text:"Voir l’équipe"})
       ]));
+    }else{
+      row.appendChild(el("span",{
+        class:"boss-report-team-missing",
+        text:"Équipe non disponible"
+      }));
+    }
+    return row;
+  }
+
+  function bossReportCard(group, members, report){
+    const card = el("article",{
+      class:"boss-report-card"+(report?"":" boss-report-unavailable"),
+      dataset:{sessionId:group.id}
+    });
+    card.appendChild(el("div",{class:"boss-report-head"},[
+      el("h3",{
+        class:"boss-report-heading",
+        text:group.title+" · Run "+(group.run_no||1)
+      }),
+      el("span",{
+        class:"boss-report-date",
+        text:group.completed_at ? "Terminée le "+frDateTime(group.completed_at) : ""
+      })
+    ]));
+
+    if(!report){
+      card.appendChild(el("p",{
+        text:"Rapport non disponible pour cette ancienne run."
+      }));
+      const legacyParticipants = el("div",{class:"boss-report-participants"});
+      members.forEach(member =>
+        legacyParticipants.appendChild(bossReportParticipant(member))
+      );
+      card.appendChild(legacyParticipants);
+      return card;
+    }
+
+    card.appendChild(el("div",{class:"boss-report-score-block"},[
+      el("span",{class:"boss-report-score-label",text:"Score global"}),
+      el("strong",{
+        class:"boss-report-score",
+        text:formatBossScore(report.global_score)
+      })
+    ]));
+    card.appendChild(el("p",{
+      class:"boss-report-note",
+      text:report.note || "Aucune note de run."
+    }));
+    const meta = el("div",{class:"boss-report-meta"},[
+      el("span",{
+        text:"Rapport enregistré par "+
+          (report.created_by_pseudo || "Membre")+
+          (report.created_at ? " le "+frDateTime(report.created_at) : "")
+      })
+    ]);
+    if(report.updated_at){
+      meta.appendChild(el("span",{
+        text:"Corrigé par "+(report.updated_by_pseudo || "Membre")+
+          " le "+frDateTime(report.updated_at)
+      }));
+    }
+    card.appendChild(meta);
+
+    const participants = el("div",{class:"boss-report-participants"});
+    members.forEach(member =>
+      participants.appendChild(bossReportParticipant(member))
+    );
+    card.appendChild(participants);
+
+    if(members.some(member => member.owner === currentUser?.id)){
+      card.appendChild(el("div",{class:"boss-report-actions"},[
+        el("button",{
+          class:"btn boss-report-edit",
+          type:"button",
+          text:"Corriger le rapport",
+          onclick:()=>openBossReport(group, "edit")
+        })
+      ]));
+    }
+    return card;
+  }
+
+  function bossArchiveRows(groups, membership, reports){
+    const wrap = el("div",{class:"boss-report-list"});
+    const reportsBySession = new Map(
+      (reports || []).map(report => [report.session_id, report])
+    );
+    groups.forEach(group => {
+      const members = membership.filter(member =>
+        member.session_id === group.id
+      );
+      wrap.appendChild(
+        bossReportCard(group, members, reportsBySession.get(group.id) || null)
+      );
     });
     return wrap;
   }
 
-  function bossArchive(past, membership){
+  function bossArchive(past, membership, reports){
     const weeks = [...new Set(past.map(g=>g.week_start))].sort().reverse();
     const wrap = el("details",{class:"boss-archive"});
     wrap.appendChild(el("summary",{
@@ -5061,7 +5691,7 @@
         class:"boss-archive-title",
         text:"Semaine du "+frDate(weekStart)
       }));
-      weekBlock.appendChild(bossArchiveRows(groups, membership));
+      weekBlock.appendChild(bossArchiveRows(groups, membership, reports));
       wrap.appendChild(weekBlock);
     });
     return wrap;
