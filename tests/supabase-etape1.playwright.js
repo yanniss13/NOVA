@@ -411,6 +411,8 @@ const { chromium } = require("playwright");
           session_id:"boss-history-" + index,
           owner:"history-user-" + index,
           pseudo:"Historique " + index,
+          team_id:null,
+          team_snapshot:null,
           updated_at:"2026-07-12T10:00:00.000Z"
         });
       }
@@ -552,6 +554,8 @@ const { chromium } = require("playwright");
         session_id:session.id,
         owner:"user-2",
         pseudo:"Merlin",
+        team_id:null,
+        team_snapshot:null,
         updated_at:"2026-07-26T10:00:00.000Z"
       });
       window.__fakeSupabaseEmit("boss_participation", "INSERT");
@@ -574,6 +578,8 @@ const { chromium } = require("playwright");
         session_id:session.id,
         owner:"user-2",
         pseudo:"Merlin",
+        team_id:null,
+        team_snapshot:null,
         updated_at:"2026-07-26T10:02:00.000Z"
       });
       window.__fakeSupabaseHoldBossRead("boss_participation");
@@ -645,6 +651,173 @@ const { chromium } = require("playwright");
       name:"Quitter",
       exact:true
     }).waitFor();
+    assert.match(await groupOne.textContent(), /1\/5 joueurs/);
+    assert.match(await groupOne.textContent(), /Équipe manquante/);
+
+    const chooseBossTeam = groupOne.getByRole("button", {
+      name:"Choisir mon équipe",
+      exact:true
+    });
+    await chooseBossTeam.click();
+    const bossTeamOverlay = page.locator("#bossTeamOverlay");
+    await bossTeamOverlay.waitFor({ state:"visible" });
+    const bossTeamChoices = page.locator("#bossTeamList .boss-team-choice");
+    assert.equal(
+      await bossTeamChoices.count(),
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.teams.filter(team => team.owner === "user-1").length
+      )
+    );
+    assert.equal(
+      await bossTeamChoices.first().locator(".boss-team-choice-hero").count(),
+      4,
+      "Chaque choix doit montrer les quatre emplacements de la composition"
+    );
+    assert.match(await bossTeamChoices.first().textContent(), /Modifiée le/);
+    assert.equal(
+      await page.evaluate(() =>
+        document.activeElement.classList.contains("boss-team-choice")
+      ),
+      true,
+      "Le focus initial doit arriver sur la première équipe"
+    );
+    for(const width of [320, 390]){
+      await page.setViewportSize({ width, height:844 });
+      const modalMetrics = await page.evaluate(() => {
+        const root = document.scrollingElement;
+        const choice = document.querySelector(".boss-team-choice");
+        const rect = choice.getBoundingClientRect();
+        return {
+          overflow:root.scrollWidth - root.clientWidth,
+          choiceHeight:rect.height,
+          choiceRight:rect.right
+        };
+      });
+      assert.ok(
+        modalMetrics.overflow <= 1,
+        `Débordement du sélecteur d’équipe de ${modalMetrics.overflow}px à ${width}px`
+      );
+      assert.ok(modalMetrics.choiceHeight >= 44, "Une équipe doit rester une cible tactile de 44 px");
+      assert.ok(modalMetrics.choiceRight <= width, "Une équipe ne doit pas sortir de la fenêtre");
+    }
+    await page.setViewportSize({ width:390, height:844 });
+    await page.keyboard.press("Escape");
+    await bossTeamOverlay.waitFor({ state:"hidden" });
+    assert.equal(
+      await page.evaluate(() => document.activeElement.textContent.trim()),
+      "Choisir mon équipe",
+      "Le focus doit revenir au bouton qui a ouvert le sélecteur"
+    );
+
+    await chooseBossTeam.click();
+    await bossTeamOverlay.waitFor({ state:"visible" });
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.bossRpcFailureOnce = {
+        name:"select_boss_team",
+        message:"TEAM_NOT_OWNED"
+      };
+    });
+    await bossTeamChoices.first().click();
+    await page.waitForFunction(() =>
+      document.querySelector("#toast").textContent.includes("Cette équipe ne t’appartient plus.")
+    );
+    assert.equal(await bossTeamOverlay.isVisible(), true);
+    assert.equal(await bossTeamChoices.first().isDisabled(), false);
+
+    await bossTeamChoices.first().click();
+    await bossTeamOverlay.waitFor({ state:"hidden" });
+    await groupOne.getByText("Équipe prête", { exact:true }).waitFor();
+    assert.match(await groupOne.textContent(), /Équipe prête/);
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.rpcCalls.at(-1).name
+      ),
+      "select_boss_team"
+    );
+    const selectedBossTeam = await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const membership = state.boss_participation.find(item =>
+        item.owner === "user-1" &&
+        item.session_id === state.boss_sessions.find(run => run.slot === 1).id
+      );
+      const source = state.teams.find(team => team.id === membership.team_id);
+      return {
+        membership,
+        source,
+        sameDataReference:membership.team_snapshot.data === source.data
+      };
+    });
+    assert.equal(selectedBossTeam.membership.team_snapshot.capturedAt, "2026-07-25T10:15:00.000Z");
+    assert.equal(selectedBossTeam.sameDataReference, false);
+
+    const bossTeamDetailButton = groupOne.getByRole("button", {
+      name:/Voir l’équipe de Yannis/
+    });
+    await bossTeamDetailButton.click();
+    await page.locator("#teamOverlay").waitFor({ state:"visible" });
+    assert.equal(await page.locator("#teamDetail .hdetail").count(), 4);
+    await page.locator("#teamClose").click();
+
+    const ownTeams = await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const owned = state.teams.filter(team => team.owner === "user-1");
+      state.teams = state.teams.filter(team => team.owner !== "user-1");
+      return owned;
+    });
+    await groupOne.getByRole("button", { name:"Changer", exact:true }).click();
+    await bossTeamOverlay.waitFor({ state:"visible" });
+    assert.match(await page.locator("#bossTeamList").textContent(), /Crée d’abord une équipe/);
+    assert.equal(
+      await page.locator("#bossTeamList").getByRole("button", {
+        name:"Créer une équipe",
+        exact:true
+      }).count(),
+      1
+    );
+    await page.keyboard.press("Escape");
+    await page.evaluate(teams => {
+      window.__fakeSupabaseState.teams.push(...teams);
+    }, ownTeams);
+
+    const fullGroup = page.locator(".boss-card", {
+      hasText:"Groupe 6 · Run 1"
+    });
+    const fullSessionId = await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const run = state.boss_sessions.find(item => item.slot === 6 && item.run_no === 1);
+      for(let index = 1; index <= 5; index++){
+        state.boss_participation.push({
+          session_id:run.id,
+          owner:"full-user-" + index,
+          pseudo:"Complet " + index,
+          team_id:null,
+          team_snapshot:null,
+          updated_at:"2026-07-26T10:10:00.000Z"
+        });
+      }
+      window.__fakeSupabaseEmit("boss_participation", "INSERT");
+      return run.id;
+    });
+    await fullGroup.getByText("5/5 joueurs", { exact:true }).waitFor();
+    assert.equal(
+      await fullGroup.getByRole("button", { name:"Rejoindre", exact:true }).isDisabled(),
+      true
+    );
+    const fullResult = await page.evaluate(async sessionId => {
+      const result = await window.__fakeSupabaseClient.rpc("join_boss_run", {
+        p_session_id:sessionId
+      });
+      return result.error && result.error.message;
+    }, fullSessionId);
+    assert.equal(fullResult, "GROUP_FULL");
+    await page.evaluate(sessionId => {
+      const state = window.__fakeSupabaseState;
+      state.boss_participation = state.boss_participation.filter(item =>
+        item.session_id !== sessionId
+      );
+      window.__fakeSupabaseEmit("boss_participation", "DELETE");
+    }, fullSessionId);
+    await fullGroup.getByText("0/5 joueurs", { exact:true }).waitFor();
 
     await page.evaluate(() =>
       window.__fakeSupabaseHoldBossRpc("leave_boss_run")
@@ -668,6 +841,8 @@ const { chromium } = require("playwright");
         session_id:session.id,
         owner:"user-2",
         pseudo:"Merlin",
+        team_id:null,
+        team_snapshot:null,
         updated_at:"2026-07-26T10:05:00.000Z"
       });
       window.__fakeSupabaseEmit("boss_participation", "INSERT");
@@ -1197,6 +1372,7 @@ async function installFakeSupabase(page){
       ],
       boss_sessions:[],
       boss_participation:[],
+      boss_run_reports:[],
       calls:[],
       rpcCalls:[],
       bossRpcFailureOnce:null,
@@ -1261,6 +1437,10 @@ async function installFakeSupabase(page){
         if(state.boss_participation.some(item =>
           item.session_id === sessionId && item.owner === owner
         )) return { data:null, error:null };
+        const memberCount = state.boss_participation.filter(item =>
+          item.session_id === sessionId
+        ).length;
+        if(memberCount >= 5) return fail("GROUP_FULL");
         const weekSessionIds = new Set(state.boss_sessions
           .filter(item => item.week_start === run.week_start)
           .map(item => item.id));
@@ -1273,8 +1453,34 @@ async function installFakeSupabase(page){
           session_id:sessionId,
           owner,
           pseudo:(profile && profile.pseudo) || "Membre",
+          team_id:null,
+          team_snapshot:null,
           updated_at:"2026-07-25T10:00:00.000Z"
         });
+        return { data:null, error:null };
+      }
+
+      if(name === "select_boss_team"){
+        if(run.status !== "open") return fail("RUN_ARCHIVED");
+        const membership = state.boss_participation.find(item =>
+          item.session_id === sessionId && item.owner === owner
+        );
+        if(!membership) return fail("NOT_A_PARTICIPANT");
+        const team = state.teams.find(item =>
+          item.id === args.p_team_id && item.owner === owner
+        );
+        if(!team) return fail("TEAM_NOT_OWNED");
+        membership.team_id = team.id;
+        membership.team_snapshot = clone({
+          id:team.id,
+          owner:team.owner,
+          pseudo:team.pseudo,
+          data:team.data,
+          created_at:team.created_at,
+          updated_at:team.updated_at,
+          capturedAt:"2026-07-25T10:15:00.000Z"
+        });
+        membership.updated_at = "2026-07-25T10:15:00.000Z";
         return { data:null, error:null };
       }
 
