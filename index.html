@@ -841,6 +841,27 @@
   }
   .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
   .toast.err{border-color:var(--crimson)}
+
+  /* ---------- Bandeau de mise à jour PWA ---------- */
+  .pwa-update{
+    position:fixed;z-index:79;left:50%;
+    bottom:calc(24px + env(safe-area-inset-bottom));
+    width:min(620px,calc(100vw - 24px));max-width:calc(100% - 24px);
+    transform:translateX(-50%);display:flex;align-items:center;gap:10px;
+    padding:10px 12px;border:1px solid var(--gold-deep);border-radius:12px;
+    background:var(--panel-2);box-shadow:var(--shadow);color:var(--parchment)
+  }
+  .pwa-update[hidden]{display:none}
+  .pwa-update p{flex:1;min-width:0;margin:0;font-size:14px}
+  .pwa-update .btn,.pwa-update .icon-btn{flex:none;min-height:44px}
+  /* Le toast reste lisible et ne recouvre jamais le bandeau visible. */
+  body.pwa-update-on .toast{bottom:calc(100px + env(safe-area-inset-bottom))}
+  @media(max-width:560px){
+    .pwa-update{align-items:stretch;flex-wrap:wrap}
+    .pwa-update p{flex-basis:calc(100% - 54px);align-self:center}
+    .pwa-update #pwaUpdateApply{order:3;flex:1 0 100%}
+    body.pwa-update-on .toast{bottom:calc(158px + env(safe-area-inset-bottom))}
+  }
   .member-roster-card,.member-roster-build-tag,.boss-card,
   .team,.hero,.modal{overflow-wrap:anywhere}
 
@@ -1147,6 +1168,18 @@
     </div>
   </div>
 </div>
+
+<aside class="pwa-update" id="pwaUpdateBanner"
+       aria-labelledby="pwaUpdateText" hidden>
+  <p id="pwaUpdateText" role="status" aria-live="polite">
+    Nouvelle version disponible
+  </p>
+  <button class="btn btn-primary" id="pwaUpdateApply" type="button">
+    Mettre à jour
+  </button>
+  <button class="icon-btn" id="pwaUpdateClose" type="button"
+          aria-label="Masquer la mise à jour">×</button>
+</aside>
 
 <div class="toast" id="toast" role="status"
      aria-live="polite" aria-atomic="true"></div>
@@ -4630,13 +4663,111 @@
 })();
 </script>
 <script>
-/* Enregistrement du service worker (PWA). Script séparé : la sandbox de tests
-   unitaires ne charge que le script principal et n'a pas `navigator`. */
-if (typeof navigator !== "undefined" && "serviceWorker" in navigator) {
-  window.addEventListener("load", function () {
-    navigator.serviceWorker.register("sw.js").catch(function () {});
+/* Enregistrement du service worker + cycle de mise à jour choisi par le membre.
+   Script séparé : la sandbox de tests unitaires ne charge que le script
+   principal et n'a pas `navigator`.
+   Contrat : une nouvelle version n'est JAMAIS activée sans clic sur
+   « Mettre à jour », et une activation ne recharge la page qu'une seule fois. */
+(function () {
+  if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) return;
+
+  var banner = document.getElementById("pwaUpdateBanner");
+  var applyBtn = document.getElementById("pwaUpdateApply");
+  var closeBtn = document.getElementById("pwaUpdateClose");
+  if (!banner || !applyBtn || !closeBtn) return;
+
+  var registration = null;
+  var waitingWorker = null;
+  var dismissedWorker = null;
+  var activationRequested = false;
+  var reloadStarted = false;
+  var lastUpdateCheck = 0;
+  var UPDATE_INTERVAL = 60 * 60 * 1000;
+  var APPLY_LABEL = applyBtn.textContent;
+
+  function hideBanner() {
+    banner.hidden = true;
+    document.body.classList.remove("pwa-update-on");
+  }
+
+  /* Révèle le bandeau, sauf si ce même worker a déjà été masqué par le membre. */
+  function showUpdate(worker) {
+    if (!worker || worker === dismissedWorker) return;
+    waitingWorker = worker;
+    banner.hidden = false;
+    document.body.classList.add("pwa-update-on");
+  }
+
+  function setBusy(busy) {
+    applyBtn.disabled = busy;
+    applyBtn.textContent = busy ? "Mise à jour…" : APPLY_LABEL;
+  }
+
+  closeBtn.addEventListener("click", function () {
+    dismissedWorker = waitingWorker;
+    hideBanner();
   });
-}
+
+  applyBtn.addEventListener("click", function () {
+    if (activationRequested) return;
+    if (!waitingWorker) { hideBanner(); return; }
+    setBusy(true);
+    activationRequested = true;
+    try {
+      waitingWorker.postMessage({ type: "SKIP_WAITING" });
+    } catch (error) {
+      // Le worker attendu n'existe plus : on rend la main sans rechargement forcé.
+      activationRequested = false;
+      setBusy(false);
+      hideBanner();
+    }
+  });
+
+  /* `clients.claim()` d'une première installation déclenche aussi
+     `controllerchange` : sans demande explicite, on ne recharge jamais. */
+  navigator.serviceWorker.addEventListener("controllerchange", function () {
+    if (!activationRequested || reloadStarted) return;
+    reloadStarted = true;
+    window.location.reload();
+  });
+
+  function checkForUpdate() {
+    if (!registration) return;
+    lastUpdateCheck = Date.now();
+    try {
+      var result = registration.update();
+      if (result && typeof result.catch === "function") result.catch(function () {});
+    } catch (error) { /* une vérification échouée ne bloque jamais l'appli */ }
+  }
+
+  function watchInstalling(worker) {
+    if (!worker) return;
+    worker.addEventListener("statechange", function () {
+      if (worker.state === "installed" && navigator.serviceWorker.controller) {
+        showUpdate(worker);
+      }
+    });
+  }
+
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("sw.js").then(function (reg) {
+      registration = reg;
+      if (reg.waiting && navigator.serviceWorker.controller) showUpdate(reg.waiting);
+      reg.addEventListener("updatefound", function () {
+        watchInstalling(reg.installing);
+      });
+      checkForUpdate();
+      setInterval(checkForUpdate, UPDATE_INTERVAL);
+      document.addEventListener("visibilitychange", function () {
+        if (document.visibilityState !== "visible") return;
+        if (Date.now() - lastUpdateCheck < UPDATE_INTERVAL) return;
+        checkForUpdate();
+      });
+    }).catch(function () {
+      // Hors ligne ou `file://` : l'appli reste pleinement utilisable.
+    });
+  });
+})();
 </script>
 </body>
 </html>

@@ -126,6 +126,58 @@ async function assertPickerTilesContained(page, label){
         pathToFileURL(path.resolve(__dirname, "..", "index.html")).href
       );
 
+      /* Bandeau de mise à jour PWA : il est masqué par défaut ici (pas de
+         service worker en `file://`), on le révèle le temps des mesures. */
+      await pickerPage.evaluate(() => {
+        document.querySelector("#pwaUpdateBanner").hidden = false;
+        document.body.classList.add("pwa-update-on");
+      });
+      assert.ok(
+        await pickerPage.evaluate(() =>
+          document.scrollingElement.scrollWidth -
+          document.scrollingElement.clientWidth
+        ) <= 1,
+        "Le bandeau de mise à jour déborde à "+width+"px"
+      );
+      const bannerLayout = await pickerPage.evaluate(() => {
+        const rect = id =>
+          document.querySelector(id).getBoundingClientRect().toJSON();
+        return {
+          text:rect("#pwaUpdateText"),
+          apply:rect("#pwaUpdateApply"),
+          close:rect("#pwaUpdateClose")
+        };
+      });
+      for(const key of ["apply", "close"]){
+        const box = bannerLayout[key];
+        assert.ok(
+          box.height >= 44,
+          "Bandeau "+width+"px : "+key+" doit mesurer 44 px de haut"
+        );
+        assert.ok(
+          box.width >= 44,
+          "Bandeau "+width+"px : "+key+" doit mesurer 44 px de large"
+        );
+      }
+      const bannerPairs = [
+        ["text", "apply"], ["text", "close"], ["apply", "close"]
+      ];
+      bannerPairs.forEach(([a, b]) => {
+        const first = bannerLayout[a];
+        const second = bannerLayout[b];
+        const overlaps =
+          first.left < second.right - 1 && second.left < first.right - 1 &&
+          first.top < second.bottom - 1 && second.top < first.bottom - 1;
+        assert.ok(
+          !overlaps,
+          "Bandeau "+width+"px : "+a+" et "+b+" se superposent"
+        );
+      });
+      await pickerPage.evaluate(() => {
+        document.querySelector("#pwaUpdateBanner").hidden = true;
+        document.body.classList.remove("pwa-update-on");
+      });
+
       await pickerPage.locator(".hero .portrait").first().click();
       await assertPickerTilesContained(pickerPage, "Héros "+width+"px");
       assert.ok(
