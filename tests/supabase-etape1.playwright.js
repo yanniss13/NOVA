@@ -79,6 +79,12 @@ const { chromium } = require("playwright");
       await page.evaluate(() => window.__fakeSupabaseState.realtimeChannels.length),
       1
     );
+    assert.ok(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.realtimeTables.includes("boss_run_reports")
+      ),
+      "Realtime doit écouter les rapports"
+    );
     await page.evaluate(() => {
       window.__fakeSupabaseState.realtimeChannels[0]
         .statusCallback("CHANNEL_ERROR");
@@ -853,16 +859,27 @@ const { chromium } = require("playwright");
       true,
       "Le focus initial doit arriver sur la première équipe"
     );
+    await page.keyboard.press("Escape");
+    await bossTeamOverlay.waitFor({ state:"hidden" });
     for(const width of [320, 390]){
       await page.setViewportSize({ width, height:844 });
+      await chooseBossTeam.click();
+      await bossTeamOverlay.waitFor({ state:"visible" });
+      await page.waitForFunction(() =>
+        document.activeElement.classList.contains("boss-team-choice")
+      );
       const modalMetrics = await page.evaluate(() => {
         const root = document.scrollingElement;
         const choice = document.querySelector(".boss-team-choice");
+        const close = document.querySelector("#bossTeamClose");
         const rect = choice.getBoundingClientRect();
+        const closeRect = close.getBoundingClientRect();
         return {
           overflow:root.scrollWidth - root.clientWidth,
           choiceHeight:rect.height,
-          choiceRight:rect.right
+          choiceRight:rect.right,
+          closeWidth:closeRect.width,
+          closeHeight:closeRect.height
         };
       });
       assert.ok(
@@ -871,15 +888,29 @@ const { chromium } = require("playwright");
       );
       assert.ok(modalMetrics.choiceHeight >= 44, "Une équipe doit rester une cible tactile de 44 px");
       assert.ok(modalMetrics.choiceRight <= width, "Une équipe ne doit pas sortir de la fenêtre");
+      assert.ok(
+        modalMetrics.closeWidth >= 44 && modalMetrics.closeHeight >= 44,
+        `La fermeture du sélecteur doit mesurer 44 × 44 px à ${width}px`
+      );
+      await page.locator("#bossTeamClose").focus();
+      await page.keyboard.press("Shift+Tab");
+      assert.equal(
+        await page.evaluate(() =>
+          document.querySelector("#bossTeamOverlay")
+            .contains(document.activeElement)
+        ),
+        true,
+        `Le focus doit rester piégé dans le sélecteur à ${width}px`
+      );
+      await page.keyboard.press("Escape");
+      await bossTeamOverlay.waitFor({ state:"hidden" });
+      assert.equal(
+        await page.evaluate(() => document.activeElement.textContent.trim()),
+        "Choisir mon équipe",
+        `Échap doit restituer le focus au déclencheur à ${width}px`
+      );
     }
     await page.setViewportSize({ width:390, height:844 });
-    await page.keyboard.press("Escape");
-    await bossTeamOverlay.waitFor({ state:"hidden" });
-    assert.equal(
-      await page.evaluate(() => document.activeElement.textContent.trim()),
-      "Choisir mon équipe",
-      "Le focus doit revenir au bouton qui a ouvert le sélecteur"
-    );
 
     // Une équipe supprimée côté serveur disparaît du picker après réconciliation.
     await chooseBossTeam.click();
@@ -893,6 +924,10 @@ const { chromium } = require("playwright");
     await bossTeamChoices.first().click();
     await page.waitForFunction(() =>
       document.querySelector("#toast").textContent.includes("Cette équipe ne t’appartient plus.")
+    );
+    assert.equal(
+      await page.locator("#toast").textContent(),
+      "Équipe non sélectionnée : Cette équipe ne t’appartient plus. Actualise tes équipes puis choisis-en une autre."
     );
     assert.equal(await bossTeamOverlay.isVisible(), true);
     await page.waitForFunction(expected =>
@@ -931,7 +966,9 @@ const { chromium } = require("playwright");
     });
     await bossTeamChoices.first().click();
     await page.waitForFunction(() =>
-      document.querySelector("#toast").textContent.includes("Tu ne participes plus à cette run.")
+      document.querySelector("#toast").textContent.includes(
+        "Seuls les participants peuvent effectuer cette action."
+      )
     );
     assert.equal(
       await bossTeamOverlay.isVisible(),
@@ -1030,7 +1067,9 @@ const { chromium } = require("playwright");
     });
     await bossTeamChoices.first().click();
     await page.waitForFunction(() =>
-      document.querySelector("#toast").textContent.includes("Tu ne participes plus à cette run.")
+      document.querySelector("#toast").textContent.includes(
+        "Seuls les participants peuvent effectuer cette action."
+      )
     );
     await bossTeamOverlay.waitFor({ state:"hidden" });
     await groupOne.getByRole("button", { name:"Rejoindre", exact:true }).waitFor();
@@ -1335,7 +1374,13 @@ const { chromium } = require("playwright");
     }, fullSessionId);
     await fullGroup.getByRole("button", { name:"Rejoindre", exact:true }).click();
     await page.waitForFunction(() =>
-      document.querySelector("#toast").textContent.includes("Ce groupe compte déjà 5 joueurs.")
+      document.querySelector("#toast").textContent.includes(
+        "Ce groupe est déjà complet (5/5)."
+      )
+    );
+    assert.equal(
+      await page.locator("#toast").textContent(),
+      "Action impossible : Ce groupe est déjà complet (5/5)."
     );
     await page.waitForFunction(sessionId =>
       !window.__fakeSupabaseState.boss_participation.some(item =>
@@ -1892,6 +1937,15 @@ const { chromium } = require("playwright");
       "bossScore",
       "Le score doit recevoir le focus à l’ouverture"
     );
+    assert.equal(
+      await page.locator("#bossScore").getAttribute("aria-describedby"),
+      "bossReportError"
+    );
+    assert.equal(
+      await page.locator("#bossScore").getAttribute("aria-invalid"),
+      "true",
+      "Le score vide et signalé en erreur doit être annoncé comme invalide"
+    );
     assert.equal(await page.locator("#bossReportSubmit").isDisabled(), true);
     await page.locator("#bossScore").fill("9007199254740992");
     assert.equal(
@@ -1932,40 +1986,165 @@ const { chromium } = require("playwright");
     );
     await page.locator("#bossScore").fill("12450800");
     assert.equal(await page.locator("#bossReportSubmit").isDisabled(), false);
+    await page.locator("#bossReportNote").fill("x".repeat(899));
+    assert.equal(
+      await page.locator("#bossReportCount").getAttribute("aria-live"),
+      null,
+      "Le compteur ne doit pas bavarder loin de la limite"
+    );
+    await page.locator("#bossReportNote").fill("x".repeat(900));
+    assert.equal(
+      await page.locator("#bossReportCount").getAttribute("aria-live"),
+      "polite",
+      "Le compteur doit annoncer l’approche de la limite"
+    );
     await page.locator("#bossReportNote").fill("Rotation propre.");
     assert.equal(await page.locator("#bossReportCount").textContent(), "16/1000");
     assert.match(await page.locator("#bossReportMembers").textContent(), /Yannis/);
 
+    await page.locator("#bossReportClose").click();
+    await bossReportOverlay.waitFor({ state:"hidden" });
     for(const width of [320, 390]){
       await page.setViewportSize({ width, height:844 });
+      await groupTwoReportCard.getByRole("button", {
+        name:"Run terminée",
+        exact:true
+      }).click();
+      await bossReportOverlay.waitFor({ state:"visible" });
+      await page.waitForFunction(() => document.activeElement.id === "bossScore");
+      await page.locator("#bossScore").fill("12450800");
+      await page.locator("#bossReportNote").fill("Rotation propre.");
       const reportMetrics = await page.evaluate(() => {
         const root = document.scrollingElement;
         const modal = document.querySelector(".boss-report-modal");
         const score = document.querySelector("#bossScore");
         const submit = document.querySelector("#bossReportSubmit");
+        const close = document.querySelector("#bossReportClose");
+        const modalRect = modal.getBoundingClientRect();
+        const closeRect = close.getBoundingClientRect();
         return {
           overflow:root.scrollWidth - root.clientWidth,
-          modalRight:modal.getBoundingClientRect().right,
+          modalLeft:modalRect.left,
+          modalRight:modalRect.right,
           scoreHeight:score.getBoundingClientRect().height,
-          submitHeight:submit.getBoundingClientRect().height
+          submitHeight:submit.getBoundingClientRect().height,
+          submitWidth:submit.getBoundingClientRect().width,
+          closeWidth:closeRect.width,
+          closeHeight:closeRect.height
         };
       });
       assert.ok(
         reportMetrics.overflow <= 1,
         `Débordement du rapport de ${reportMetrics.overflow}px à ${width}px`
       );
-      assert.ok(reportMetrics.modalRight <= width, "La modale doit rester dans la fenêtre");
+      assert.ok(
+        reportMetrics.modalLeft >= 0 && reportMetrics.modalRight <= width,
+        "La modale doit rester dans la fenêtre"
+      );
       assert.ok(reportMetrics.scoreHeight >= 44, "Le score doit rester une cible de 44 px");
-      assert.ok(reportMetrics.submitHeight >= 44, "L’enregistrement doit rester une cible de 44 px");
+      assert.ok(
+        reportMetrics.submitHeight >= 44 && reportMetrics.submitWidth >= 44,
+        "L’enregistrement doit rester une cible de 44 px"
+      );
+      assert.ok(
+        reportMetrics.closeWidth >= 44 && reportMetrics.closeHeight >= 44,
+        `La fermeture du rapport doit mesurer 44 × 44 px à ${width}px`
+      );
+      await page.locator("#bossReportClose").focus();
+      await page.keyboard.press("Shift+Tab");
+      assert.equal(
+        await page.evaluate(() =>
+          document.querySelector("#bossReportOverlay")
+            .contains(document.activeElement)
+        ),
+        true,
+        `Le focus doit rester piégé dans le rapport à ${width}px`
+      );
+      await page.keyboard.press("Escape");
+      await bossReportOverlay.waitFor({ state:"hidden" });
+      assert.equal(
+        await page.evaluate(() =>
+          document.activeElement.textContent.trim()
+        ),
+        "Run terminée",
+        `Échap doit restituer le focus à la fin de run à ${width}px`
+      );
     }
     await page.setViewportSize({ width:390, height:844 });
+    await groupTwoReportCard.getByRole("button", {
+      name:"Run terminée",
+      exact:true
+    }).click();
+    await bossReportOverlay.waitFor({ state:"visible" });
+    await page.locator("#bossScore").fill("12450800");
+    await page.locator("#bossReportNote").fill("Rotation propre.");
 
-    await page.evaluate(() => {
-      window.__fakeSupabaseState.bossRpcFailureOnce = {
+    for(const errorCase of [
+      {
+        code:"GROUP_OVER_CAPACITY",
+        expected:
+          "Des membres doivent quitter ce groupe pour revenir à 5 joueurs."
+      },
+      {
+        code:"TEAM_REQUIRED:Yannis, Arthur",
+        expected:
+          "Chaque membre doit choisir une équipe avant de terminer la run : Yannis, Arthur."
+      },
+      {
+        code:"INVALID_SCORE",
+        expected:"Saisis un score entier supérieur à zéro."
+      },
+      {
+        code:"NOT_A_PARTICIPANT",
+        expected:"Seuls les participants peuvent effectuer cette action."
+      },
+      {
+        code:"REPORT_REQUIRED",
+        expected:
+          "Une mise à jour du site est nécessaire pour terminer cette run."
+      },
+      {
+        code:"REPORT_NOT_FOUND",
+        expected:"Aucun rapport modifiable n’existe pour cette run."
+      },
+      {
+        code:"NOTE_TOO_LONG",
+        expected:"La note doit contenir 1 000 caractères maximum."
+      }
+    ]){
+      await page.evaluate(code => {
+        window.__fakeSupabaseState.bossRpcFailureOnce = {
+          name:"complete_boss_run_with_report",
+          message:code
+        };
+      }, errorCase.code);
+      await page.locator("#bossReportSubmit").click();
+      await page.locator("#bossReportError").getByText(
+        errorCase.expected,
+        { exact:true }
+      ).waitFor({ timeout:2000 });
+      assert.equal(
+        await bossReportOverlay.isVisible(),
+        true,
+        `${errorCase.code} doit conserver le rapport ouvert`
+      );
+    }
+
+    const failedCompletionBefore = await page.evaluate(id => {
+      const state = window.__fakeSupabaseState;
+      state.bossRpcFailureOnce = {
         name:"complete_boss_run_with_report",
         message:"NETWORK_FAILURE"
       };
-    });
+      const run = state.boss_sessions.find(item => item.id === id);
+      return {
+        reports:state.boss_run_reports.length,
+        status:run.status,
+        nextRuns:state.boss_sessions.filter(item =>
+          item.slot === run.slot && item.run_no === (run.run_no || 1) + 1
+        ).length
+      };
+    }, archivedId);
     await page.locator("#bossReportSubmit").click();
     await page.locator("#bossReportError").getByText(
       "Le rapport n’a pas été enregistré. Vérifie ta connexion puis réessaie.",
@@ -1974,6 +2153,22 @@ const { chromium } = require("playwright");
     assert.equal(await page.locator("#bossScore").inputValue(), "12450800");
     assert.equal(await page.locator("#bossReportNote").inputValue(), "Rotation propre.");
     assert.equal(await page.locator("#bossReportSubmit").isEnabled(), true);
+    assert.equal(await bossReportOverlay.isVisible(), true);
+    assert.deepEqual(
+      await page.evaluate(id => {
+        const state = window.__fakeSupabaseState;
+        const run = state.boss_sessions.find(item => item.id === id);
+        return {
+          reports:state.boss_run_reports.length,
+          status:run.status,
+          nextRuns:state.boss_sessions.filter(item =>
+            item.slot === run.slot && item.run_no === (run.run_no || 1) + 1
+          ).length
+        };
+      }, archivedId),
+      failedCompletionBefore,
+      "Une erreur ne doit créer ni rapport, ni archive, ni run suivante"
+    );
 
     await page.evaluate(id => {
       const state = window.__fakeSupabaseState;
@@ -2169,6 +2364,53 @@ const { chromium } = require("playwright");
       await archivedReportCard.locator(".boss-report-participant").count(),
       1
     );
+    await page.waitForTimeout(180);
+    const groupedBossReadsBefore = await page.evaluate(() => {
+      const calls = window.__fakeSupabaseState.calls;
+      return Object.fromEntries(
+        ["boss_sessions", "boss_participation", "boss_run_reports"]
+          .map(table => [
+            table,
+            calls.filter(call =>
+              call.table === table && call.operation === "select"
+            ).length
+          ])
+      );
+    });
+    await page.evaluate(id => {
+      const state = window.__fakeSupabaseState;
+      state.boss_run_reports
+        .find(item => item.session_id === id).global_score = 12450801;
+      window.__fakeSupabaseEmit("boss_participation", "UPDATE");
+      window.__fakeSupabaseEmit("boss_run_reports", "INSERT");
+      window.__fakeSupabaseEmit("boss_sessions", "UPDATE");
+    }, archivedId);
+    await archivedReportCard.getByText("12 450 801", { exact:true }).waitFor();
+    await page.waitForTimeout(180);
+    const groupedBossReadsAfter = await page.evaluate(() => {
+      const calls = window.__fakeSupabaseState.calls;
+      return Object.fromEntries(
+        ["boss_sessions", "boss_participation", "boss_run_reports"]
+          .map(table => [
+            table,
+            calls.filter(call =>
+              call.table === table && call.operation === "select"
+            ).length
+          ])
+      );
+    });
+    assert.deepEqual(
+      Object.fromEntries(Object.keys(groupedBossReadsAfter).map(table => [
+        table,
+        groupedBossReadsAfter[table] - groupedBossReadsBefore[table]
+      ])),
+      {
+        boss_sessions:1,
+        boss_participation:1,
+        boss_run_reports:1
+      },
+      "Trois événements rapprochés doivent appliquer un seul cycle Boss final"
+    );
 
     const immutableReportBefore = await page.evaluate(id => {
       const state = window.__fakeSupabaseState;
@@ -2226,7 +2468,7 @@ const { chromium } = require("playwright");
       await page.locator("#bossReportSubmit").textContent(),
       "Enregistrer la correction"
     );
-    assert.equal(await page.locator("#bossScore").inputValue(), "12450800");
+    assert.equal(await page.locator("#bossScore").inputValue(), "12450801");
     assert.equal(await page.locator("#bossReportNote").inputValue(), "Rotation propre.");
     const exactLimitNote = "W".repeat(1000);
     await page.locator("#bossScore").fill("9007199254740991");
@@ -2874,6 +3116,7 @@ async function installFakeSupabase(page){
       session:null,
       authCallbacks:[],
       realtimeChannels:[],
+      realtimeTables:[],
       removedRealtimeChannels:0,
       failNextRosterUpsert:false,
       profiles:[
@@ -3358,6 +3601,12 @@ async function installFakeSupabase(page){
         name,
         handlers,
         on(kind, filter, callback){
+          if(
+            kind === "postgres_changes" &&
+            !state.realtimeTables.includes(filter.table)
+          ){
+            state.realtimeTables.push(filter.table);
+          }
           handlers.push({ kind, filter:clone(filter), callback });
           return realtimeChannel;
         },

@@ -4900,9 +4900,9 @@
     if(message.includes("RUN_INVALID_WEEK")) return "La semaine de boss a changé. La liste a été actualisée.";
     if(message.includes("AUTH_REQUIRED")) return "Ta session a expiré. Reconnecte-toi pour continuer.";
     if(message.includes("RUN_LIMIT_REACHED")) return "Tes 3 runs de la semaine sont déjà réservés ou terminés.";
-    if(message.includes("GROUP_FULL")) return "Ce groupe compte déjà 5 joueurs. Choisis un autre groupe ou attends qu’une place se libère.";
+    if(message.includes("GROUP_FULL")) return "Ce groupe est déjà complet (5/5).";
     if(message.includes("TEAM_NOT_OWNED")) return "Cette équipe ne t’appartient plus. Actualise tes équipes puis choisis-en une autre.";
-    if(message.includes("NOT_A_PARTICIPANT")) return "Tu ne participes plus à cette run. La liste a été actualisée.";
+    if(message.includes("NOT_A_PARTICIPANT")) return "Seuls les participants peuvent effectuer cette action.";
     if(message.includes("RUN_ARCHIVED")) return "Cette run vient d’être terminée. La liste a été actualisée.";
     if(message.includes("RUN_MEMBERS_ONLY")) return "Seuls les membres de ce groupe peuvent terminer la run.";
     if(message.includes("RUN_NOT_FOUND")) return "Cette run n’existe plus. La liste a été actualisée.";
@@ -5265,19 +5265,22 @@
     if(message.includes("RUN_INVALID_WEEK")){
       return "La semaine de boss a changé. La liste a été actualisée.";
     }
+    if(message.includes("REPORT_REQUIRED")){
+      return "Une mise à jour du site est nécessaire pour terminer cette run.";
+    }
     if(message.includes("TEAM_REQUIRED")){
       const names = message.split("TEAM_REQUIRED:")[1];
       return "Chaque membre doit choisir une équipe avant de terminer la run"+
         (names ? " : "+names : "")+".";
     }
     if(message.includes("INVALID_SCORE")){
-      return "Saisis un score global entier supérieur à zéro.";
+      return "Saisis un score entier supérieur à zéro.";
     }
     if(message.includes("NOTE_TOO_LONG")){
       return "La note doit contenir 1 000 caractères maximum.";
     }
     if(message.includes("GROUP_OVER_CAPACITY")){
-      return "Ce groupe compte plus de 5 membres. Retire les participations en trop avant de terminer la run.";
+      return "Des membres doivent quitter ce groupe pour revenir à 5 joueurs.";
     }
     if(message.includes("RUN_ARCHIVED")){
       return "Cette run est déjà terminée. Ferme ce rapport puis actualise la liste.";
@@ -5286,10 +5289,10 @@
       return "Cette run n’est pas archivée. Ferme ce rapport puis actualise la liste.";
     }
     if(message.includes("NOT_A_PARTICIPANT")){
-      return "Tu ne participes pas à cette run. Ferme ce rapport puis actualise la liste.";
+      return "Seuls les participants peuvent effectuer cette action.";
     }
     if(message.includes("REPORT_NOT_FOUND")){
-      return "Ce rapport n’est plus disponible. Ferme cette fenêtre puis actualise la liste.";
+      return "Aucun rapport modifiable n’existe pour cette run.";
     }
     if(message.includes("RUN_NOT_FOUND")){
       return "Cette run n’existe plus. Ferme cette fenêtre puis actualise la liste.";
@@ -5329,13 +5332,18 @@
     const validScore = validBossScore(scoreValue);
     const scoreMessage = validScore
       ? ""
-      : "Saisis un score global entier supérieur à zéro.";
+      : "Saisis un score entier supérieur à zéro.";
     $("#bossScore").setAttribute(
       "aria-invalid",
-      String(!!scoreValue.trim() && !validScore)
+      String(!validScore)
     );
-    $("#bossReportCount").textContent =
-      $("#bossReportNote").value.length+"/1000";
+    const noteLength = $("#bossReportNote").value.length;
+    $("#bossReportCount").textContent = noteLength+"/1000";
+    if(noteLength >= 900){
+      $("#bossReportCount").setAttribute("aria-live", "polite");
+    }else{
+      $("#bossReportCount").removeAttribute("aria-live");
+    }
     $("#bossReportError").textContent =
       context.error || missingMessage || scoreMessage;
     $("#bossReportSubmit").disabled =

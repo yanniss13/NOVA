@@ -233,6 +233,81 @@ async function assertPickerTilesContained(page, label){
         document.body.classList.remove("pwa-update-on");
       });
 
+      for(const modalCase of [
+        {
+          overlay:"#bossTeamOverlay",
+          modal:".boss-team-modal",
+          close:"#bossTeamClose",
+          label:"sélecteur d’équipe"
+        },
+        {
+          overlay:"#bossReportOverlay",
+          modal:".boss-report-modal",
+          close:"#bossReportClose",
+          submit:"#bossReportSubmit",
+          label:"rapport de run"
+        }
+      ]){
+        await pickerPage.evaluate(({ overlay }) => {
+          const node = document.querySelector(overlay);
+          node.classList.add("on");
+          node.setAttribute("aria-hidden", "false");
+        }, modalCase);
+        await pickerPage.locator(modalCase.overlay).waitFor({state:"visible"});
+        const bossModalLayout = await pickerPage.evaluate(modalCase => {
+          const root = document.scrollingElement;
+          const modal = document.querySelector(modalCase.modal)
+            .getBoundingClientRect();
+          const close = document.querySelector(modalCase.close)
+            .getBoundingClientRect();
+          const submit = modalCase.submit
+            ? document.querySelector(modalCase.submit).getBoundingClientRect()
+            : null;
+          return {
+            overflow:root.scrollWidth - root.clientWidth,
+            modalLeft:modal.left,
+            modalRight:modal.right,
+            modalTop:modal.top,
+            modalBottom:modal.bottom,
+            closeWidth:close.width,
+            closeHeight:close.height,
+            submitWidth:submit && submit.width,
+            submitHeight:submit && submit.height
+          };
+        }, modalCase);
+        assert.ok(
+          bossModalLayout.overflow <= 1,
+          "La modale "+modalCase.label+" déborde à "+width+"px"
+        );
+        assert.ok(
+          bossModalLayout.modalLeft >= 0 &&
+          bossModalLayout.modalRight <= width &&
+          bossModalLayout.modalTop >= 0 &&
+          bossModalLayout.modalBottom <= 844,
+          "La modale "+modalCase.label+" doit rester dans le viewport à "+
+            width+"px"
+        );
+        assert.ok(
+          bossModalLayout.closeWidth >= 44 &&
+          bossModalLayout.closeHeight >= 44,
+          "La fermeture "+modalCase.label+" doit mesurer 44 × 44 px à "+
+            width+"px"
+        );
+        if(modalCase.submit){
+          assert.ok(
+            bossModalLayout.submitWidth >= 44 &&
+            bossModalLayout.submitHeight >= 44,
+            "La validation du rapport doit mesurer 44 × 44 px à "+
+              width+"px"
+          );
+        }
+        await pickerPage.evaluate(({ overlay }) => {
+          const node = document.querySelector(overlay);
+          node.classList.remove("on");
+          node.setAttribute("aria-hidden", "true");
+        }, modalCase);
+      }
+
       await pickerPage.locator(".hero .portrait").first().click();
       await assertPickerTilesContained(pickerPage, "Héros "+width+"px");
       assert.ok(
