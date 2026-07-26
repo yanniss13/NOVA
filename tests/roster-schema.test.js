@@ -79,6 +79,30 @@ assert.match(
   "La limite personnelle de trois runs doit rester active"
 );
 
+const sessionLockAt = joinBossRun.search(/for update/i);
+const existingMembershipAt = joinBossRun.search(
+  /if exists\s*\(\s*select 1 from public\.boss_participation\s+where session_id\s*=\s*p_session_id\s+and owner\s*=\s*v_owner\s*\)\s*then\s*return\s*;/i
+);
+const capacityCountAt = joinBossRun.search(
+  /select\s+count\(\*\)\s+into\s+v_member_count\s+from public\.boss_participation\s+where session_id\s*=\s*p_session_id\s*;/i
+);
+const participationInsertAt = joinBossRun.search(
+  /insert into public\.boss_participation\s*\(\s*session_id\s*,\s*owner/i
+);
+
+assert.ok(
+  sessionLockAt < existingMembershipAt,
+  "Le verrou de session doit précéder le retour idempotent"
+);
+assert.ok(
+  existingMembershipAt < capacityCountAt,
+  "Le retour idempotent doit précéder le contrôle de capacité"
+);
+assert.ok(
+  capacityCountAt < participationInsertAt,
+  "Le contrôle de capacité doit précéder l'insertion"
+);
+
 const bossSessionsTable = sql.slice(
   sql.indexOf("create table if not exists public.boss_sessions"),
   sql.indexOf("create table if not exists public.boss_participation")
