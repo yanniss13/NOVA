@@ -78,7 +78,7 @@ function loadApp(initialTeams){
 
   const exposed = source.replace(
     /\}\)\(\);\s*$/,
-    "Object.assign(globalThis.__hooks,{normalizePotentiel,normalizeHero,normalizeTeam,potentielDetailsOf,weaponTypesOf,isWeaponCompatible,compatibleWeaponGroups,linkedArmorsOf,isLinkedArmorCompatible,emptyRosterBuild,normalizeRosterBuild,normalizeRosterCharacter,rosterHeroSnapshot,cloudRosterFromRow,rosterToCloudRow,replaceRosterCacheForOwner,MemberRosterStore,Store,dpsEntriesFromRoster,recPlayersForView:typeof recPlayersForView==='function'?recPlayersForView:undefined});})();"
+    "Object.assign(globalThis.__hooks,{normalizePotentiel,normalizeHero,normalizeTeam,potentielDetailsOf,weaponTypesOf,isWeaponCompatible,compatibleWeaponGroups,linkedArmorsOf,isLinkedArmorCompatible,emptyRosterBuild,normalizeRosterBuild,normalizeRosterCharacter,favoriteRosterWeaponType,setFavoriteRosterBuild,copyFavoriteRosterBuild,rosterHeroSnapshot,cloudRosterFromRow,rosterToCloudRow,replaceRosterCacheForOwner,MemberRosterStore,Store,dpsEntriesFromRoster,recPlayersForView:typeof recPlayersForView==='function'?recPlayersForView:undefined});})();"
   );
   assert.notStrictEqual(exposed, source, "Le chargeur doit exposer les fonctions réelles");
 
@@ -438,6 +438,108 @@ function plain(value){
 
   assert.strictEqual(hooks.normalizeRosterCharacter({ charId:"inconnu" }), null);
   assert.strictEqual(hooks.rosterHeroSnapshot(entry, "Livre"), null);
+}
+
+// Roster : migration du favori, unicité et résolution du build favori.
+{
+  const { hooks } = loadApp();
+  const legacy = plain(hooks.normalizeRosterCharacter({
+    owner:"user-1",
+    charId:"meliodas",
+    potentialTier:7,
+    builds:{ Hache:{ note:"Ancien build" } }
+  }));
+  assert.equal(legacy.builds.Hache.favorite, false);
+  assert.equal(hooks.favoriteRosterWeaponType(legacy), null);
+
+  const duplicated = plain(hooks.normalizeRosterCharacter({
+    owner:"user-1",
+    charId:"meliodas",
+    potentialTier:7,
+    builds:{
+      Hache:{ favorite:true },
+      "Epee 1 main":{ favorite:true }
+    }
+  }));
+  assert.equal(duplicated.builds.Hache.favorite, true);
+  assert.equal(duplicated.builds["Epee 1 main"].favorite, false);
+  assert.equal(hooks.favoriteRosterWeaponType(duplicated), "Hache");
+}
+
+// Roster : bascule du favori et copie indépendante vers un autre type d'arme.
+{
+  const { hooks } = loadApp();
+  const original = {
+    owner:"user-1",
+    charId:"meliodas",
+    potentialTier:8,
+    builds:{
+      Hache:{
+        weapon:"7ds-armes/Hache/hache.webp",
+        armor:{ Haut:"haut.webp" },
+        jewel:{ Anneau:"anneau.webp" },
+        note:"Favori",
+        favorite:true
+      },
+      "Epee 1 main":{
+        weapon:"7ds-armes/Epee 1 main/epee.webp",
+        armor:{ Haut:"ancien.webp" },
+        jewel:{ Anneau:"ancien-anneau.webp" },
+        note:"Destination",
+        favorite:false
+      }
+    }
+  };
+
+  const switched = plain(hooks.setFavoriteRosterBuild(
+    original,
+    "Epee 1 main"
+  ));
+  assert.equal(switched.builds.Hache.favorite, false);
+  assert.equal(switched.builds["Epee 1 main"].favorite, true);
+  assert.equal(hooks.favoriteRosterWeaponType(switched), "Epee 1 main");
+
+  const removed = plain(hooks.setFavoriteRosterBuild(
+    switched,
+    "Epee 1 main"
+  ));
+  assert.equal(hooks.favoriteRosterWeaponType(removed), null);
+  assert.equal(
+    removed.builds["Epee 1 main"].weapon,
+    "7ds-armes/Epee 1 main/epee.webp"
+  );
+  assert.equal(hooks.setFavoriteRosterBuild(original, "Epees doubles"), null);
+
+  const copied = plain(hooks.copyFavoriteRosterBuild(
+    original,
+    "Epee 1 main"
+  ));
+  const source = copied.builds.Hache;
+  const target = copied.builds["Epee 1 main"];
+  assert.equal(target.weapon, "7ds-armes/Epee 1 main/epee.webp");
+  assert.deepStrictEqual(target.armor, source.armor);
+  assert.deepStrictEqual(target.jewel, source.jewel);
+  assert.equal(target.note, "Favori");
+  assert.equal(target.favorite, false);
+  assert.equal(source.favorite, true);
+
+  target.armor.Haut = "copie-modifiee.webp";
+  target.jewel.Anneau = "copie-modifiee.webp";
+  assert.equal(source.armor.Haut, "haut.webp");
+  assert.equal(source.jewel.Anneau, "anneau.webp");
+
+  const newTarget = plain(hooks.copyFavoriteRosterBuild(
+    original,
+    "Epees doubles"
+  ));
+  assert.equal(newTarget.builds["Epees doubles"].weapon, null);
+  assert.equal(newTarget.builds["Epees doubles"].note, "Favori");
+
+  assert.equal(hooks.copyFavoriteRosterBuild(original, "Hache"), null);
+  assert.equal(hooks.copyFavoriteRosterBuild({
+    charId:"meliodas",
+    builds:{ Hache:{ favorite:false } }
+  }, "Epee 1 main"), null);
 }
 
 // #5 Recensement auto : DPS dérivés du roster.

@@ -1409,7 +1409,8 @@
     weapon:null,
     armor:emptyArmor(),
     jewel:emptyJewel(),
-    note:""
+    note:"",
+    favorite:false
   });
   function normalizeRosterBuild(charId, weaponType, raw){
     const source = raw && typeof raw === "object" ? raw : {};
@@ -1429,7 +1430,8 @@
       weapon:hero.weapon,
       armor:hero.armor,
       jewel:hero.jewel,
-      note:hero.note
+      note:hero.note,
+      favorite:source.favorite === true
     };
   }
   function normalizeRosterCharacter(raw){
@@ -1438,9 +1440,19 @@
     if(!charOf(charId)) return null;
     const allowed = weaponTypesOf(charId);
     const sourceBuilds = source.builds && typeof source.builds === "object" ? source.builds : {};
+    let favoriteFound = false;
     const builds = allowed.reduce((result, weaponType)=>{
       if(Object.prototype.hasOwnProperty.call(sourceBuilds, weaponType)){
-        result[weaponType] = normalizeRosterBuild(charId, weaponType, sourceBuilds[weaponType]);
+        const build = normalizeRosterBuild(
+          charId,
+          weaponType,
+          sourceBuilds[weaponType]
+        );
+        if(build.favorite){
+          if(favoriteFound) build.favorite = false;
+          else favoriteFound = true;
+        }
+        result[weaponType] = build;
       }
       return result;
     }, {});
@@ -1451,6 +1463,42 @@
       builds,
       updatedAt:Number.isFinite(Number(source.updatedAt)) ? Number(source.updatedAt) : 0
     };
+  }
+  function favoriteRosterWeaponType(entry){
+    const normalized = normalizeRosterCharacter(entry);
+    if(!normalized) return null;
+    return Object.keys(normalized.builds)
+      .find(type => normalized.builds[type].favorite) || null;
+  }
+  function setFavoriteRosterBuild(entry, weaponType){
+    const normalized = normalizeRosterCharacter(entry);
+    if(!normalized
+      || !Object.prototype.hasOwnProperty.call(normalized.builds, weaponType)){
+      return null;
+    }
+    const wasFavorite = normalized.builds[weaponType].favorite;
+    Object.values(normalized.builds)
+      .forEach(build => { build.favorite = false; });
+    normalized.builds[weaponType].favorite = !wasFavorite;
+    return normalized;
+  }
+  function copyFavoriteRosterBuild(entry, targetWeaponType){
+    const normalized = normalizeRosterCharacter(entry);
+    if(!normalized || !weaponTypesOf(normalized.charId).includes(targetWeaponType)){
+      return null;
+    }
+    const sourceType = favoriteRosterWeaponType(normalized);
+    if(!sourceType || sourceType === targetWeaponType) return null;
+    const source = normalized.builds[sourceType];
+    const target = normalized.builds[targetWeaponType] || emptyRosterBuild();
+    normalized.builds[targetWeaponType] = {
+      weapon:target.weapon,
+      armor:JSON.parse(JSON.stringify(source.armor)),
+      jewel:JSON.parse(JSON.stringify(source.jewel)),
+      note:source.note,
+      favorite:false
+    };
+    return normalizeRosterCharacter(normalized);
   }
   function rosterHeroSnapshot(entry, weaponType){
     const normalized = normalizeRosterCharacter(entry);
