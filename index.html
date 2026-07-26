@@ -108,6 +108,11 @@
     box-shadow:0 0 9px rgba(76,154,90,.75)
   }
   .account-pseudo{font-family:var(--display);font-size:12px;color:var(--gold-bright);letter-spacing:.04em}
+  .live-status{
+    font-size:10px;color:var(--muted);white-space:nowrap
+  }
+  .live-status[data-state="online"]{color:var(--ok)}
+  .live-status[data-state="offline"]{color:#e98d8d}
   .account .btn{padding:8px 12px;font-size:12px}
 
   main{max-width:1180px;margin:0 auto;padding:clamp(20px,4vw,40px)}
@@ -899,6 +904,8 @@
     <div class="account-connected" id="accountConnected" hidden>
       <span class="account-seal" aria-hidden="true"></span>
       <span class="account-pseudo" id="accountPseudo"></span>
+      <span class="live-status" id="liveStatus" role="status"
+            aria-live="polite" aria-atomic="true">Connexion…</span>
       <button class="btn btn-ghost" id="btnMigrateLocal" type="button">Importer mes données locales</button>
       <button class="btn btn-ghost" id="authLogout" type="button">Déconnexion</button>
     </div>
@@ -1651,6 +1658,107 @@
     toastTimer = setTimeout(()=>t.classList.remove("on"), 2600);
   }
 
+  const RealtimeSync = (function(){
+    const tables = [
+      "profiles",
+      "teams",
+      "roster_characters",
+      "boss_sessions",
+      "boss_participation"
+    ];
+    let channel = null;
+    let userId = "";
+    let timer = null;
+    const pending = new Set();
+
+    function setStatus(state, text){
+      const node = $("#liveStatus");
+      if(!node) return;
+      node.dataset.state = state;
+      node.textContent = text;
+    }
+
+    function activeView(){
+      const view = document.querySelector(".view.active");
+      return view ? view.id.replace(/^view-/, "") : "";
+    }
+
+    async function flush(){
+      timer = null;
+      const changed = new Set(pending);
+      pending.clear();
+      const view = activeView();
+      try{
+        if(changed.has("teams")){
+          if(view === "roster") await renderRoster();
+          else await Store.refresh();
+        }
+        if(changed.has("roster")){
+          if(view === "member-roster") await renderMemberRoster();
+          if(view === "recensement") await renderRecensement();
+          if(view === "analyse") await renderAnalyse();
+        }
+        if(changed.has("boss") && view === "boss"){
+          await renderBossView();
+        }
+      }catch(error){
+        setStatus("offline", "Synchronisation indisponible");
+      }
+    }
+
+    function schedule(table){
+      if(table === "teams") pending.add("teams");
+      if(table === "profiles" || table === "roster_characters"){
+        pending.add("roster");
+      }
+      if(table === "boss_sessions" || table === "boss_participation"){
+        pending.add("boss");
+      }
+      clearTimeout(timer);
+      timer = setTimeout(()=>void flush(), 120);
+    }
+
+    function stop(){
+      clearTimeout(timer);
+      timer = null;
+      pending.clear();
+      const previous = channel;
+      channel = null;
+      userId = "";
+      if(previous && sb) void sb.removeChannel(previous);
+      setStatus("offline", "Hors ligne");
+    }
+
+    function start(nextUserId){
+      if(!sb || !nextUserId){
+        stop();
+        return;
+      }
+      if(channel && userId === nextUserId) return;
+      stop();
+      userId = nextUserId;
+      setStatus("connecting", "Connexion…");
+      let next = sb.channel("confrerie-live-"+nextUserId);
+      tables.forEach(table => {
+        next = next.on("postgres_changes", {
+          event:"*",
+          schema:"public",
+          table
+        }, ()=>schedule(table));
+      });
+      channel = next.subscribe(status => {
+        if(channel !== next) return;
+        if(status === "SUBSCRIBED") setStatus("online", "À jour");
+        if(status === "CHANNEL_ERROR" || status === "TIMED_OUT"){
+          setStatus("offline", "Synchronisation indisponible");
+        }
+        if(status === "CLOSED") setStatus("offline", "Hors ligne");
+      });
+    }
+
+    return { start, stop, schedule };
+  })();
+
   /* ============================ Authentification Supabase ============================ */
   const authOverlay = $("#authOverlay");
   const authStatus = $("#authStatus");
@@ -1730,6 +1838,8 @@
     }else if(sb){
       openAuth();
     }
+    if(currentUser) RealtimeSync.start(currentUser.id);
+    else RealtimeSync.stop();
     updateAccountUi();
     if($("#view-builder").classList.contains("active")) renderBuilder();
     if($("#view-roster").classList.contains("active")) void renderRoster();
