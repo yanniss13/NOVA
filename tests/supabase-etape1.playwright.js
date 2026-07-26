@@ -30,6 +30,21 @@ const { chromium } = require("playwright");
 
     await page.locator("#accountPseudo").getByText("Yannis", { exact:true }).waitFor();
     assert.equal(await authOverlay.evaluate(el => el.classList.contains("on")), false);
+    await page.getByText("À jour", { exact:true }).waitFor();
+    assert.equal(
+      await page.evaluate(() => window.__fakeSupabaseState.realtimeChannels.length),
+      1
+    );
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.realtimeChannels[0]
+        .statusCallback("CHANNEL_ERROR");
+    });
+    await page.getByText("Synchronisation indisponible", { exact:true }).waitFor();
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.realtimeChannels[0]
+        .statusCallback("SUBSCRIBED");
+    });
+    await page.getByText("À jour", { exact:true }).waitFor();
 
     await page.locator('.tab[data-view="member-roster"]').click();
     await page.locator("#memberRosterGrid .member-roster-card").first().waitFor();
@@ -84,6 +99,40 @@ const { chromium } = require("playwright");
       1,
       "Seule l'équipe du membre connecté doit être modifiable"
     );
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.teams.push({
+        id:"team-realtime",
+        owner:"user-2",
+        pseudo:"Merlin",
+        data:{
+          id:"team-realtime",
+          pseudo:"Merlin",
+          heroes:Array.from({length:4}, () => ({
+            char:null,
+            weapon:null,
+            armor:{},
+            jewel:{},
+            potentiel:{tier:0},
+            note:""
+          }))
+        },
+        created_at:"2026-07-26T09:00:00.000Z",
+        updated_at:"2026-07-26T09:00:00.000Z"
+      });
+      window.__fakeSupabaseEmit("teams", "INSERT");
+    });
+    await page.waitForFunction(() =>
+      document.querySelectorAll("#rosterGrid .team").length === 3
+    );
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.teams =
+        window.__fakeSupabaseState.teams
+          .filter(team => team.id !== "team-realtime");
+      window.__fakeSupabaseEmit("teams", "DELETE");
+    });
+    await page.waitForFunction(() =>
+      document.querySelectorAll("#rosterGrid .team").length === 2
+    );
 
     await page.locator('.tab[data-view="builder"]').click();
     const firstHero = page.locator(".hero").first();
@@ -134,6 +183,31 @@ const { chromium } = require("playwright");
     const ownRecensement = page.locator("#recGrid .rec-player").filter({ hasText:"Yannis" });
     // Yannis a meliodas (Attaquant/Ténèbres) dans son roster -> DPS dérivé Ténèbres.
     assert.match(await ownRecensement.textContent(), /Meliodas/);
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.calls.length = 0;
+      const row = window.__fakeSupabaseState.roster_characters
+        .find(item => item.owner === "user-2" && item.char_id === "merlin");
+      row.potential_tier = 10;
+      window.__fakeSupabaseEmit("roster_characters", "UPDATE");
+      window.__fakeSupabaseEmit("profiles", "UPDATE");
+    });
+    await page.waitForFunction(() =>
+      [...document.querySelectorAll("#recGrid .rec-player")]
+        .some(card =>
+          card.textContent.includes("Merlin") &&
+          card.textContent.includes("P10")
+        )
+    );
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.calls.filter(call =>
+          call.table === "roster_characters" &&
+          call.operation === "select"
+        ).length
+      ),
+      1,
+      "Deux événements du même domaine doivent produire une seule relecture"
+    );
 
     // Aucun débordement horizontal sur mobile (recensement + analyse).
     for(const width of [320, 360, 390]){
@@ -171,6 +245,11 @@ const { chromium } = require("playwright");
     await page.locator("#memberRosterGrid .member-roster-edit").click();
     const rosterEditorNote = page.locator("#memberRosterEditor textarea");
     await rosterEditorNote.fill("Saisie conservée");
+    await page.evaluate(() => {
+      window.__fakeSupabaseEmit("roster_characters", "UPDATE");
+    });
+    await page.waitForTimeout(300);
+    assert.equal(await rosterEditorNote.inputValue(), "Saisie conservée");
     await page.evaluate(() => {
       window.__fakeSupabaseState.failNextRosterUpsert = true;
     });
@@ -367,6 +446,27 @@ const { chromium } = require("playwright");
     assert.equal(directWriteErrors.runStatus, "open");
     await page.evaluate(() => { window.__fakeSupabaseState.rpcCalls.length = 0; });
     assert.match(await page.locator("#bossCount").textContent(), /0\/3/);
+    await page.evaluate(() => {
+      const session = window.__fakeSupabaseState.boss_sessions
+        .find(item => item.status === "open");
+      window.__fakeSupabaseState.boss_participation.push({
+        session_id:session.id,
+        owner:"user-2",
+        pseudo:"Merlin",
+        updated_at:"2026-07-26T10:00:00.000Z"
+      });
+      window.__fakeSupabaseEmit("boss_participation", "INSERT");
+    });
+    await page.locator("#bossBody").getByText("Merlin", { exact:true }).waitFor();
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.boss_participation =
+        window.__fakeSupabaseState.boss_participation
+          .filter(item => item.owner !== "user-2");
+      window.__fakeSupabaseEmit("boss_participation", "DELETE");
+    });
+    await page.waitForFunction(() =>
+      !document.querySelector("#bossBody").textContent.includes("Merlin")
+    );
 
     for(const errorCase of [
       {
@@ -565,6 +665,19 @@ const { chromium } = require("playwright");
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await authOverlay.waitFor({ state:"visible" });
     assert.equal(await authOverlay.evaluate(el => el.classList.contains("on")), true);
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.realtimeChannels.length === 0
+    );
+    assert.equal(
+      await page.evaluate(() => window.__fakeSupabaseState.removedRealtimeChannels),
+      1
+    );
+    await page.locator("#authEmail").fill("yannis@example.test");
+    await page.locator("#authPassword").fill("mot-de-passe-test");
+    await page.getByRole("button", { name:"Se connecter", exact:true }).click();
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.realtimeChannels.length === 1
+    );
     assert.deepEqual(errors, []);
 
     console.log("PASS Playwright: Supabase Étape 1 — auth, partage et migration");
@@ -589,6 +702,8 @@ async function installFakeSupabase(page){
     const state = {
       session:null,
       authCallbacks:[],
+      realtimeChannels:[],
+      removedRealtimeChannels:0,
       failNextRosterUpsert:false,
       profiles:[
         { id:"user-1", pseudo:"Yannis" },
@@ -897,7 +1012,45 @@ async function installFakeSupabase(page){
       return builder;
     }
 
+    function channel(name){
+      const handlers = [];
+      const realtimeChannel = {
+        name,
+        handlers,
+        on(kind, filter, callback){
+          handlers.push({ kind, filter:clone(filter), callback });
+          return realtimeChannel;
+        },
+        subscribe(callback){
+          realtimeChannel.statusCallback = callback;
+          state.realtimeChannels.push(realtimeChannel);
+          queueMicrotask(() => callback("SUBSCRIBED"));
+          return realtimeChannel;
+        }
+      };
+      return realtimeChannel;
+    }
+
+    function emitDatabase(table, eventType){
+      state.realtimeChannels.forEach(realtimeChannel => {
+        realtimeChannel.handlers
+          .filter(handler =>
+            handler.kind === "postgres_changes" &&
+            handler.filter.schema === "public" &&
+            handler.filter.table === table
+          )
+          .forEach(handler => handler.callback({
+            schema:"public",
+            table,
+            eventType:eventType || "UPDATE",
+            new:{},
+            old:{}
+          }));
+      });
+    }
+
     window.__fakeSupabaseState = state;
+    window.__fakeSupabaseEmit = emitDatabase;
     localStorage.setItem("confrerie7ds.teams", JSON.stringify([{
       id:"local-team",
       pseudo:"Ancien pseudo",
@@ -932,6 +1085,13 @@ async function installFakeSupabase(page){
           state.authCallbacks.push(callback);
           return { data:{ subscription:{ unsubscribe(){} } } };
         }
+      },
+      channel,
+      async removeChannel(realtimeChannel){
+        state.realtimeChannels = state.realtimeChannels
+          .filter(item => item !== realtimeChannel);
+        state.removedRealtimeChannels++;
+        return "ok";
       },
       rpc,
       from:query
