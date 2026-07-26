@@ -1,6 +1,8 @@
 /* Service worker — Confrérie 7DS (PWA #3)
-   Objectif : chargement instantané + hors-ligne du builder, sans jamais figer la
-   page ni activer une nouvelle version dans le dos du membre. Stratégie :
+   Objectif : builder utilisable hors ligne, sans jamais figer la page ni activer
+   une nouvelle version dans le dos du membre. En ligne, les fichiers applicatifs
+   sont volontairement relus sur le réseau : c'est ce qui évite de mélanger un
+   nouveau document avec d'anciens scripts. Stratégie :
    - navigation : network-first -> toujours frais en ligne, repli cache hors-ligne.
    - fichiers applicatifs (CORE_PATHS) : network-first, pour ne jamais mélanger un
      nouveau document avec d'anciens scripts.
@@ -25,9 +27,14 @@ const CORE_PATHS = new Set(
   CORE_ASSETS.map(asset => new URL(asset, self.registration.scope).pathname)
 );
 
+/* Mise en cache fichier par fichier : `addAll` est atomique, donc un seul 404
+   laisserait un cache VIDE — et le mode hors ligne avec lui, puisque le cache
+   change désormais à chaque commit. */
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(CORE_ASSETS).catch(() => {}))
+    caches.open(CACHE).then(cache =>
+      Promise.allSettled(CORE_ASSETS.map(asset => cache.add(asset)))
+    )
   );
 });
 
@@ -52,13 +59,15 @@ self.addEventListener("activate", event => {
 });
 
 /* Fraîcheur d'abord, cache en secours. `fallbackKey` sert au document : la
-   réponse est stockée sous une clé stable plutôt que sous l'URL navigée. */
+   réponse est stockée sous une clé stable plutôt que sous l'URL navigée.
+   L'écriture en cache reste HORS du chemin de réponse : un `put` refusé (206,
+   `Vary: *`, quota) ne doit jamais transformer un succès réseau en erreur. */
 async function networkFirst(request, fallbackKey){
   const cache = await caches.open(CACHE);
   try{
     const response = await fetch(request);
     if(response && response.ok && !response.redirected){
-      await cache.put(fallbackKey || request, response.clone());
+      cache.put(fallbackKey || request, response.clone()).catch(() => {});
     }
     return response;
   }catch(error){
@@ -75,10 +84,10 @@ async function networkFirst(request, fallbackKey){
 /* Réponse immédiate depuis le cache, rafraîchissement en arrière-plan. */
 function staleWhileRevalidate(event, request){
   const cachePromise = caches.open(CACHE);
-  const network = fetch(request).then(async response => {
+  const network = fetch(request).then(response => {
     if(response && response.ok){
-      const cache = await cachePromise;
-      await cache.put(request, response.clone());
+      const copy = response.clone();
+      cachePromise.then(cache => cache.put(request, copy)).catch(() => {});
     }
     return response;
   });

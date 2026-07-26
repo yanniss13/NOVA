@@ -173,6 +173,61 @@ async function assertPickerTilesContained(page, label){
           "Bandeau "+width+"px : "+a+" et "+b+" se superposent"
         );
       });
+      /* Le bandeau ne doit jamais intercepter les clics d'une modale ouverte :
+         le piège à focus le rend inatteignable au clavier, donc il doit aussi
+         rester sous la couche des modales à la souris et au doigt.
+         L'ordre d'empilement est vérifié directement, car un simple test
+         géométrique dépend de la hauteur de l'écran. */
+      const stacking = await pickerPage.evaluate(() => {
+        const z = selector =>
+          parseInt(
+            getComputedStyle(document.querySelector(selector)).zIndex, 10
+          );
+        return {
+          banner:z("#pwaUpdateBanner"),
+          picker:z("#overlay"),
+          auth:z("#authOverlay"),
+          toast:z("#toast")
+        };
+      });
+      assert.ok(
+        stacking.banner < stacking.picker &&
+        stacking.banner < stacking.auth,
+        "Le bandeau doit rester sous les modales : "+JSON.stringify(stacking)
+      );
+      assert.ok(
+        stacking.banner < stacking.toast,
+        "Le toast doit rester au-dessus du bandeau : "+JSON.stringify(stacking)
+      );
+
+      /* Écran court : c'est là que le bandeau et la modale se chevauchent
+         réellement. Aucun bouton de la modale ne doit être intercepté. */
+      await pickerPage.setViewportSize({width, height:640});
+      await pickerPage.locator("#accountLogin").click();
+      await pickerPage.locator("#authOverlay").waitFor({state:"visible"});
+      const blocked = await pickerPage.evaluate(() => {
+        const banner = document.querySelector("#pwaUpdateBanner")
+          .getBoundingClientRect();
+        return ["#authOffline", "#authSignIn"].filter(id => {
+          const box = document.querySelector(id).getBoundingClientRect();
+          const overlaps =
+            box.left < banner.right && banner.left < box.right &&
+            box.top < banner.bottom && banner.top < box.bottom;
+          if(!overlaps) return false;
+          const hit = document.elementFromPoint(
+            box.x + box.width / 2, box.y + box.height / 2
+          );
+          return !(hit && hit.closest("#authOverlay"));
+        });
+      });
+      assert.deepStrictEqual(
+        blocked, [],
+        "Le bandeau masque des boutons de la modale à "+width+"px"
+      );
+      await pickerPage.keyboard.press("Escape");
+      await pickerPage.locator("#authOverlay").waitFor({state:"hidden"});
+      await pickerPage.setViewportSize({width, height:844});
+
       await pickerPage.evaluate(() => {
         document.querySelector("#pwaUpdateBanner").hidden = true;
         document.body.classList.remove("pwa-update-on");

@@ -842,9 +842,12 @@
   .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
   .toast.err{border-color:var(--crimson)}
 
-  /* ---------- Bandeau de mise à jour PWA ---------- */
+  /* ---------- Bandeau de mise à jour PWA ----------
+     z-index 55 : SOUS la couche des modales (.overlay 60, #overlay 70,
+     .auth-overlay 75). Une modale ouverte doit rester entièrement cliquable et
+     le piège à focus ne laisse de toute façon pas atteindre le bandeau. */
   .pwa-update{
-    position:fixed;z-index:79;left:50%;
+    position:fixed;z-index:55;left:50%;
     bottom:calc(24px + env(safe-area-inset-bottom));
     width:min(620px,calc(100vw - 24px));max-width:calc(100% - 24px);
     transform:translateX(-50%);display:flex;align-items:center;gap:10px;
@@ -853,14 +856,16 @@
   }
   .pwa-update[hidden]{display:none}
   .pwa-update p{flex:1;min-width:0;margin:0;font-size:14px}
-  .pwa-update .btn,.pwa-update .icon-btn{flex:none;min-height:44px}
-  /* Le toast reste lisible et ne recouvre jamais le bandeau visible. */
-  body.pwa-update-on .toast{bottom:calc(100px + env(safe-area-inset-bottom))}
+  .pwa-update .btn,.pwa-update .icon-btn{flex:none;min-width:44px;min-height:44px}
+  /* Le toast (z-index 80) reste lisible au-dessus du bandeau visible. La hauteur
+     réelle du bandeau est publiée par le contrôleur de mise à jour. */
+  body.pwa-update-on .toast{
+    bottom:calc(var(--pwa-banner-h,124px) + 38px + env(safe-area-inset-bottom))
+  }
   @media(max-width:560px){
     .pwa-update{align-items:stretch;flex-wrap:wrap}
     .pwa-update p{flex-basis:calc(100% - 54px);align-self:center}
     .pwa-update #pwaUpdateApply{order:3;flex:1 0 100%}
-    body.pwa-update-on .toast{bottom:calc(158px + env(safe-area-inset-bottom))}
   }
   .member-roster-card,.member-roster-build-tag,.boss-card,
   .team,.hero,.modal{overflow-wrap:anywhere}
@@ -4676,14 +4681,18 @@
   var closeBtn = document.getElementById("pwaUpdateClose");
   if (!banner || !applyBtn || !closeBtn) return;
 
+  var text = document.getElementById("pwaUpdateText");
   var registration = null;
   var waitingWorker = null;
   var dismissedWorker = null;
   var activationRequested = false;
   var reloadStarted = false;
   var lastUpdateCheck = 0;
+  var activationTimer = null;
   var UPDATE_INTERVAL = 60 * 60 * 1000;
-  var APPLY_LABEL = applyBtn.textContent;
+  var ACTIVATION_TIMEOUT = 10 * 1000;
+  var UPDATE_MESSAGE = "Nouvelle version disponible";
+  var APPLY_LABEL = applyBtn.textContent.trim();
 
   function hideBanner() {
     banner.hidden = true;
@@ -4696,11 +4705,31 @@
     waitingWorker = worker;
     banner.hidden = false;
     document.body.classList.add("pwa-update-on");
+    // Réécrire le texte mute la région live déjà enregistrée : sans cette
+    // mutation, dévoiler un texte statique n'est pas annoncé de façon fiable.
+    text.textContent = UPDATE_MESSAGE;
+    document.documentElement.style.setProperty(
+      "--pwa-banner-h", banner.offsetHeight + "px"
+    );
   }
 
   function setBusy(busy) {
     applyBtn.disabled = busy;
     applyBtn.textContent = busy ? "Mise à jour…" : APPLY_LABEL;
+  }
+
+  /* Le clic est annulable : si l'activation n'aboutit pas, le bouton redevient
+     utilisable et le bandeau reste affiché pour réessayer. Jamais de boucle. */
+  function cancelActivation() {
+    if (reloadStarted) return;
+    activationRequested = false;
+    setBusy(false);
+  }
+
+  function clearActivationTimer() {
+    if (activationTimer === null) return;
+    clearTimeout(activationTimer);
+    activationTimer = null;
   }
 
   closeBtn.addEventListener("click", function () {
@@ -4715,10 +4744,13 @@
     activationRequested = true;
     try {
       waitingWorker.postMessage({ type: "SKIP_WAITING" });
+      activationTimer = setTimeout(function () {
+        activationTimer = null;
+        cancelActivation();
+      }, ACTIVATION_TIMEOUT);
     } catch (error) {
       // Le worker attendu n'existe plus : on rend la main sans rechargement forcé.
-      activationRequested = false;
-      setBusy(false);
+      cancelActivation();
       hideBanner();
     }
   });
@@ -4728,6 +4760,7 @@
   navigator.serviceWorker.addEventListener("controllerchange", function () {
     if (!activationRequested || reloadStarted) return;
     reloadStarted = true;
+    clearActivationTimer();
     window.location.reload();
   });
 
@@ -4753,6 +4786,8 @@
     navigator.serviceWorker.register("sw.js").then(function (reg) {
       registration = reg;
       if (reg.waiting && navigator.serviceWorker.controller) showUpdate(reg.waiting);
+      // Une installation lancée par un autre onglet a déjà émis `updatefound`.
+      if (reg.installing) watchInstalling(reg.installing);
       reg.addEventListener("updatefound", function () {
         watchInstalling(reg.installing);
       });

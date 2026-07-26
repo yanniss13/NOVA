@@ -336,8 +336,20 @@ Le workflow Pages **n'a besoin d'aucun secret** : il ne touche pas à Supabase.
 `boss-reminder.yml` reste séparé, avec son propre calendrier et ses propres
 secrets — ne pas le modifier pour des raisons de déploiement.
 
+Le job `package` porte `pages: read` : `configure-pages` interroge l'API Pages et
+répondrait 403 avec la seule permission `contents: read`. `package` et `deploy`
+sont en outre limités à `refs/heads/main`, pour qu'un `workflow_dispatch` lancé
+depuis une autre branche ne publie jamais. La concurrence est cloisonnée par
+référence (`${{ github.workflow }}-${{ github.ref }}`), sinon une pull request
+annulerait un déploiement de `main` en cours.
+
 **Réglage manuel unique** (une seule fois, après la fusion) :
 `Settings → Pages → Build and deployment → Source → GitHub Actions`.
+
+⚠️ Ordre : la fusion déclenche le workflow immédiatement. Si la source Pages est
+encore `Deploy from a branch`, ce premier run échoue à `configure-pages` ou
+`deploy-pages`. C'est attendu : basculer la source, puis relancer via
+`Actions → Tests et déploiement GitHub Pages → Run workflow`.
 
 ## Cycle de mise à jour PWA
 
@@ -356,10 +368,29 @@ Le clic envoie `{type:"SKIP_WAITING"}` au worker en attente, attend
 version : elle peut réapparaître après un rechargement.
 
 Une première installation ne montre aucun bandeau et son `clients.claim()` ne
-doit jamais provoquer de rechargement. Les navigations et les fichiers
-applicatifs (`CORE_PATHS`) sont `network-first` ; seules les images locales
-restent en `stale-while-revalidate`. Supabase et le CDN jsDelivr ne sont jamais
-mis en cache.
+doit jamais provoquer de rechargement. Si l'activation n'aboutit pas dans les
+10 s, le bouton redevient utilisable et le bandeau reste affiché : jamais de
+bouton bloqué, jamais de boucle de rechargement.
+
+Les navigations et les fichiers applicatifs (`CORE_PATHS`) sont `network-first` ;
+seules les images locales restent en `stale-while-revalidate`. Supabase et le CDN
+jsDelivr ne sont jamais mis en cache. Le préchargement d'installation passe par
+`cache.add` fichier par fichier : `addAll` est atomique et un seul 404 laisserait
+un cache vide, donc sans mode hors ligne. Les écritures en cache restent hors du
+chemin de réponse, pour qu'un `put` refusé ne fasse jamais passer un succès
+réseau pour une panne.
+
+Le bandeau est en `z-index:55`, **sous** la couche des modales (`.overlay` 60,
+`#overlay` 70, `.auth-overlay` 75) et sous le toast (80). Ne pas le remonter :
+le piège à focus de `ModalStack` le rendrait inatteignable au clavier tout en
+interceptant les clics sur la modale ouverte. `tests/accessibilite-mobile.playwright.js`
+verrouille cet ordre d'empilement.
+
+**Premier passage après ce déploiement** : l'ancien service worker appelait
+`skipWaiting()` à l'installation. Les membres déjà équipés reçoivent donc le
+nouveau `index.html` tout en restant contrôlés par l'ancien worker, et le bandeau
+apparaît aussitôt. C'est normal, pas un bug : un clic sur « Mettre à jour »
+suffit et le comportement devient explicite dès la version suivante.
 
 ## Accessibilité et mobile
 

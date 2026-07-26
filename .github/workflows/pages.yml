@@ -10,8 +10,10 @@ on:
 permissions:
   contents: read
 
+# Une référence = une file. Un commit plus récent annule le déploiement encore
+# en attente de la même branche, sans qu'une pull request puisse annuler `main`.
 concurrency:
-  group: pages
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -35,8 +37,12 @@ jobs:
         run: npm test
 
   package:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: test
+    # `configure-pages` interroge l'API Pages : sans `pages: read` elle répond 403.
+    permissions:
+      contents: read
+      pages: read
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
@@ -44,7 +50,7 @@ jobs:
       - name: Préparer le commit testé
         shell: bash
         run: |
-          mkdir _site
+          mkdir -p _site
           git archive HEAD | tar -x -C _site
           grep -q "__BUILD_VERSION__" _site/sw.js
           sed -i "s/__BUILD_VERSION__/${GITHUB_SHA}/g" _site/sw.js
@@ -55,9 +61,10 @@ jobs:
           path: _site
 
   deploy:
-    if: github.event_name != 'pull_request'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main'
     needs: package
     permissions:
+      contents: read
       pages: write
       id-token: write
     environment:

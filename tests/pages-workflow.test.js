@@ -26,6 +26,8 @@ const required = [
   /GITHUB_SHA/,
   /actions\/configure-pages@v5/,
   /actions\/upload-pages-artifact@v4/,
+  // L'artefact ne doit contenir QUE la copie propre du commit testé.
+  /path:\s*_site\s*$/m,
   /actions\/deploy-pages@v4/,
   /pages:\s*write/,
   /id-token:\s*write/,
@@ -43,5 +45,35 @@ assert.ok(
   "paquetage et déploiement doivent être exclus des pull requests"
 );
 assert.match(yaml, /deploy:[\s\S]*needs:\s*package/);
+
+/* Chaîne de dépendance vérifiée par job, et pas seulement par comptage :
+   package -> test, deploy -> package. Sans cela un `needs:` égaré suffirait. */
+const jobs = {};
+yaml.split(/\r?\n/).forEach(line => {
+  const header = /^ {2}([a-z][\w-]*):\s*$/.exec(line);
+  if(header) jobs[header[1]] = [];
+  else{
+    const current = Object.keys(jobs).pop();
+    if(current) jobs[current].push(line);
+  }
+});
+["test", "package", "deploy"].forEach(name =>
+  assert.ok(jobs[name], "job manquant : " + name)
+);
+assert.match(
+  jobs.package.join("\n"),
+  /needs:\s*test/,
+  "le paquetage doit dépendre du job de test"
+);
+assert.match(
+  jobs.deploy.join("\n"),
+  /needs:\s*package/,
+  "le déploiement doit dépendre du paquetage"
+);
+assert.doesNotMatch(
+  jobs.test.join("\n"),
+  /continue-on-error:\s*true|if:\s*always\(\)/,
+  "un échec de test ne doit jamais être ignoré"
+);
 
 console.log("PASS workflow Pages : tests obligatoires avant déploiement");
