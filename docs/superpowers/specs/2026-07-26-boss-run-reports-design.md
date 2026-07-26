@@ -1,7 +1,8 @@
 # Rapports de runs du Boss de Guilde — Spécification
 
 **Date :** 2026-07-26  
-**Statut :** conception validée, implémentation à planifier
+**Statut :** implémentée sur la branche `feature/boss-run-reports` ; activation
+manuelle Supabase puis publication Pages encore requises.
 
 ## Objectif
 
@@ -23,11 +24,13 @@ une composition optimale avant d’avoir accumulé suffisamment de résultats.
 - Six groupes sont ouverts chaque semaine.
 - Une ligne `boss_sessions` représente une run précise.
 - Chaque membre dispose de trois participations par semaine.
-- `complete_boss_run(uuid)` archive la run et crée immédiatement la suivante.
+- `complete_boss_run(uuid)` historique renvoie `REPORT_REQUIRED`; la nouvelle
+  terminaison passe par `complete_boss_run_with_report`.
 - `boss_participation` possède déjà les colonnes historiques `team_id`,
   `damage` et `participated`, mais elles ne sont pas utilisées par l’interface.
 - Toutes les écritures de boss passent par des RPC `security definer`.
-- Les groupes n’ont actuellement aucune capacité maximale.
+- Les groupes acceptent de un à cinq membres et chaque run terminée exige un
+  instantané d’équipe propriétaire par participant.
 
 ## Décisions validées
 

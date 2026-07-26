@@ -307,4 +307,36 @@ assert.doesNotMatch(
   "Le retour arrière ne doit effacer aucune donnée"
 );
 
+const agents = fs.readFileSync(path.join(ROOT, "AGENTS.md"), "utf8");
+assert.match(
+  agents,
+  /Groupes de Boss de Guilde[\s\S]*?groupes ouverts simultanément[\s\S]*?1 à 5/i,
+  "La documentation opérationnelle doit borner les groupes de boss à cinq membres"
+);
+assert.match(
+  agents,
+  /équipe propriétaire\s+obligatoire[\s\S]*?instantané immuable/i,
+  "La documentation opérationnelle doit imposer une équipe propriétaire et son instantané"
+);
+assert.match(
+  agents,
+  /score global\s+obligatoire[\s\S]*?note facultative/i,
+  "La documentation opérationnelle doit distinguer score obligatoire et note facultative"
+);
+assert.match(
+  agents,
+  /participant\s+archivé[\s\S]*?corriger[\s\S]*?score[\s\S]*?note/i,
+  "La documentation opérationnelle doit réserver la correction aux participants archivés"
+);
+assert.match(
+  agents,
+  /SQL[\s\S]*?fusion\/push[\s\S]*?Pages[\s\S]*?mise à jour PWA/i,
+  "La documentation opérationnelle doit donner l'ordre de déploiement"
+);
+assert.match(
+  agents,
+  /rollback-boss-reports\.sql[\s\S]*?git revert[\s\S]*?push/i,
+  "La documentation opérationnelle doit donner l'ordre de retour arrière"
+);
+
 console.log("PASS rapports de boss : contrats stricts RPC, RLS, Realtime et rollback");

@@ -61,6 +61,12 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
 - [x] **Synchronisation Realtime** des équipes, rosters, profils et sessions de
       boss. Une seule chaîne par membre actualise la vue partagée concernée,
       avec regroupement des événements rapprochés.
+- [x] **Rapports de runs du boss**. Groupes limités à 1–5 membres, équipe
+      propriétaire obligatoire avec instantané immuable, score global obligatoire
+      et note facultative. Les participants archivés peuvent corriger le rapport
+      sans modifier la composition; `boss_run_reports` et les RPC associées sont
+      synchronisés par Realtime. Les anciennes archives sans rapport restent
+      lisibles.
 - [x] **Mobile et accessibilité**. Onglets au clavier, pile de modales avec
       piège/restitution du focus, cibles tactiles de 44 px et vues sans
       débordement horizontal entre 320 et 390 px.
@@ -102,6 +108,7 @@ Site Confrérie 7ds/
 ├─ .github/workflows/boss-reminder.yml # Rappel Discord (secrets propres). Indépendant du déploiement.
 ├─ supabase-config.js      # URL + clé publique publishable (jamais de service_role).
 ├─ supabase/schema.sql     # Tables partagées, RPC boss, RLS et publication Realtime.
+├─ supabase/rollback-boss-reports.sql # Retour arrière fonctionnel, non destructif des rapports de boss.
 ├─ package.json            # Scripts de test Node + Playwright (développement uniquement).
 ├─ package-lock.json       # Versions verrouillées des dépendances de test.
 ├─ tests/                  # Régressions du builder + parcours Supabase simulé dans Chromium.
@@ -291,29 +298,73 @@ le SQL Editor afin d'ajouter les tables à la publication
 
 ## Groupes de Boss de Guilde (onglet « Groupes de boss »)
 
-- **6 groupes ouverts simultanément chaque semaine** (reset lundi 9h), boss
-  *Akumu, bête démoniaque*. `BossStore.ensureWeek` crée uniquement les runs n°1
-  avec un `upsert` sur `(week_start, slot, run_no)`.
+- **6 groupes ouverts simultanément chaque semaine, de 1 à 5 membres** (reset
+  lundi 9h), boss *Akumu, bête démoniaque*. `BossStore.ensureWeek` crée
+  uniquement les runs n°1 avec un `upsert` sur `(week_start, slot, run_no)`.
 - Chaque membre dispose de **3 runs par semaine**. Rejoindre une run ouverte la
   réserve ; quitter la run ouverte la libère. Les participations archivées sont
   définitives.
 - **Rejoindre/Quitter est optimiste** : la participation, la carte et le
   compteur changent avant la réponse RPC. `bossPendingActions` protège les
   doubles clics et se superpose aux rechargements Realtime silencieux. Une
-  erreur annule uniquement l’intention locale concernée. `Run terminée`
-  conserve un rechargement complet.
-- Tout membre du groupe peut cliquer « Run terminée ». La RPC
-  `complete_boss_run` archive la session et ses participants, puis crée
-  immédiatement la run suivante, vide, pour le même groupe.
-- Les écritures passent par `join_boss_run`, `leave_boss_run` et
-  `complete_boss_run`. Les politiques RLS interdisent les écritures directes
-  dans `boss_participation` et la modification directe des sessions.
+  erreur annule uniquement l’intention locale concernée. Les sélections
+  d’équipe et rapports conservent un rechargement complet.
+- Chaque participant d’une run ouverte doit choisir une **équipe propriétaire
+  obligatoire**. `select_boss_team` enregistre alors un **instantané immuable**
+  dans `boss_participation.team_snapshot` : les modifications ou suppressions
+  ultérieures de l’équipe source ne changent jamais l’archive.
+- Tout membre du groupe peut cliquer « Run terminée » quand toutes les équipes
+  sont prêtes. La modale exige un **score global obligatoire** et accepte une
+  **note facultative** (1 000 caractères maximum). La RPC
+  `complete_boss_run_with_report` crée le rapport, archive la session et crée
+  immédiatement la run suivante, vide, pour le même groupe, dans une unique
+  transaction. `complete_boss_run` historique répond `REPORT_REQUIRED` aux
+  anciennes PWA et ne peut plus archiver sans rapport.
+- `boss_run_reports` stocke un rapport par session archivée. Les trois nouvelles
+  RPC sont `select_boss_team`, `complete_boss_run_with_report` et
+  `update_boss_run_report`. Un **participant archivé** peut corriger uniquement
+  le score et la note; ni les participants, ni les équipes, ni leurs instantanés
+  ne sont modifiables. Les archives historiques sans rapport restent consultables
+  et affichent « Rapport non disponible pour cette ancienne run. ».
+- Les écritures passent exclusivement par `join_boss_run`, `leave_boss_run`,
+  `select_boss_team`, `complete_boss_run_with_report` et
+  `update_boss_run_report`. Les politiques RLS interdisent les écritures
+  directes dans `boss_participation`, `boss_sessions` et `boss_run_reports`.
+- La chaîne Realtime écoute aussi `boss_run_reports`; les événements sont
+  regroupés et ne rechargent que la vue Boss concernée.
+- Le bilan de confrérie ne calcule aucune statistique individuelle : il utilise
+  uniquement les rapports disponibles pour les runs renseignées, meilleur score,
+  score moyen, dernier score et variation hebdomadaire.
 - Semaine courante = `currentBossWeek()` (lundi 9h Paris le plus récent ≤ maintenant).
 - **Rappel Discord** : dimanche midi Paris (`scripts/discord-reminder.js` + GitHub Actions),
   liste les membres sous `3/3` et le nombre de runs manquantes.
   Voir `docs/superpowers/specs/2026-07-25-boss-trois-runs-design.md`.
 - Après une modification de ce schéma, réexécuter le contenu complet de
   `supabase/schema.sql` dans le SQL Editor Supabase.
+
+### Activation et retour arrière des rapports de boss
+
+Le tag annoté local `backup-before-boss-reports-2026-07-26` sauvegarde le
+`main` antérieur aux rapports; il n’est poussé qu’avec l’autorisation explicite
+du membre. La mise en service requiert une courte fenêtre de maintenance :
+
+1. rejouer `supabase/schema.sql` dans le SQL Editor Supabase ;
+2. effectuer la fusion/push de la branche validée vers `main` ;
+3. attendre le workflow GitHub Pages vert ;
+4. demander aux onglets ouverts d’appliquer la mise à jour PWA.
+
+Pendant l’intervalle SQL → Pages, les anciennes pages peuvent consulter les
+groupes mais `Run terminée` reçoit `REPORT_REQUIRED`. En cas de retour arrière,
+respecter l’ordre inverse de compatibilité :
+
+1. exécuter `supabase/rollback-boss-reports.sql` dans Supabase ;
+2. lancer un `git revert` du commit ou de la fusion des rapports ;
+3. push le revert et attendre le déploiement Pages testé.
+
+Ce script de rollback est rejouable et non destructif : il restaure les RPC et
+leurs privilèges, mais ne supprime aucune table, colonne, participation,
+session, instantané ni rapport. Les objets ajoutés restent disponibles pour une
+réactivation ultérieure.
 
 ## Publication GitHub Pages
 
