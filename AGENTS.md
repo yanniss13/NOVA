@@ -291,6 +291,11 @@ le SQL Editor afin d'ajouter les tables à la publication
 - Chaque membre dispose de **3 runs par semaine**. Rejoindre une run ouverte la
   réserve ; quitter la run ouverte la libère. Les participations archivées sont
   définitives.
+- **Rejoindre/Quitter est optimiste** : la participation, la carte et le
+  compteur changent avant la réponse RPC. `bossPendingActions` protège les
+  doubles clics et se superpose aux rechargements Realtime silencieux. Une
+  erreur annule uniquement l’intention locale concernée. `Run terminée`
+  conserve un rechargement complet.
 - Tout membre du groupe peut cliquer « Run terminée ». La RPC
   `complete_boss_run` archive la session et ses participants, puis crée
   immédiatement la run suivante, vide, pour le même groupe.
