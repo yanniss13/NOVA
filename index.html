@@ -1188,6 +1188,7 @@
     : null;
   let currentUser = null;
   let currentPseudo = "";
+  let sessionApplicationEpoch = 0;
   const ELEMENTS = {
     FIRE:   {label:"Feu",      color:"#d24b3e"},
     WIND:   {label:"Vent",     color:"#4fa563"},
@@ -1921,7 +1922,12 @@
           if(view === "analyse") await renderAnalyse();
         }
         if(changed.has("boss") && view === "boss"){
-          await renderBossView({ showLoading:false, ensureWeek:false });
+          const refreshed = await renderBossView({
+            showLoading:false,
+            ensureWeek:false,
+            showErrorToast:false
+          });
+          if(!refreshed) throw new Error("BOSS_SYNC_FAILED");
         }
       }catch(error){
         setStatus("offline", "Synchronisation indisponible");
@@ -2045,9 +2051,15 @@
   }
 
   async function applySession(session){
+    const applicationEpoch = ++sessionApplicationEpoch;
+    const expectedUser = session && session.user ? session.user : null;
+    const expectedUserId = expectedUser ? expectedUser.id : "";
+    const isCurrentApplication = () =>
+      applicationEpoch === sessionApplicationEpoch &&
+      (currentUser ? currentUser.id : "") === expectedUserId;
     const previousUserId = currentUser ? currentUser.id : "";
-    currentUser = session && session.user ? session.user : null;
-    const sessionChanged = previousUserId !== (currentUser ? currentUser.id : "");
+    currentUser = expectedUser;
+    const sessionChanged = previousUserId !== expectedUserId;
     if(sessionChanged){
       ensureBossViewOwner();
       if($("#view-boss").classList.contains("active")) void renderBossView();
@@ -2055,11 +2067,15 @@
     currentPseudo = "";
     rosterProfiles = [];
     if(currentUser){
+      let loadedPseudo = "";
       try{
-        currentPseudo = await profilePseudo(currentUser);
+        loadedPseudo = await profilePseudo(expectedUser);
       }catch(error){
+        if(!isCurrentApplication()) return;
         toast("Profil indisponible : "+authMessage(error), true);
       }
+      if(!isCurrentApplication()) return;
+      currentPseudo = loadedPseudo;
       if(!currentPseudo) currentPseudo = (currentUser.email||"membre").split("@")[0];
       closeAuth();
     }else if(sb){
@@ -4195,7 +4211,8 @@
      un ou plusieurs groupes ; les semaines passées s'archivent toutes seules. */
   const BOSS_NAME = "Akumu, bête démoniaque";
   const BOSS_GROUPS = 6;
-  let bossRenderId = 0;
+  let bossRenderIssuedId = 0;
+  let bossRenderAppliedId = 0;
   const emptyBossViewState = userId => ({
     userId:userId || "",
     week:null,
@@ -4206,10 +4223,14 @@
   let bossViewState = emptyBossViewState("");
   const bossPendingActions = new Map();
 
+  function invalidateBossRenders(){
+    bossRenderAppliedId = ++bossRenderIssuedId;
+  }
+
   function ensureBossViewOwner(){
     const userId = currentUser ? currentUser.id : "";
     if(bossViewState.userId === userId) return;
-    bossRenderId++;
+    invalidateBossRenders();
     bossViewState = emptyBossViewState(userId);
     bossPendingActions.clear();
   }
@@ -4365,11 +4386,12 @@
   async function renderBossView(options){
     const settings = Object.assign({
       showLoading:true,
-      ensureWeek:true
+      ensureWeek:true,
+      showErrorToast:true
     }, options || {});
     const body = $("#bossBody");
     ensureBossViewOwner();
-    const renderId = ++bossRenderId;
+    const renderId = ++bossRenderIssuedId;
 
     if(!currentUser){
       $("#bossCount").textContent = "";
@@ -4379,7 +4401,7 @@
         el("p",{class:"big",text:"Connecte-toi pour les groupes de boss"}),
         el("button",{class:"btn btn-primary",text:"Connexion",onclick:()=>openAuth()})
       ]));
-      return;
+      return true;
     }
     if(settings.showLoading || !bossViewState.ready){
       body.className = "";
@@ -4392,7 +4414,8 @@
       if(settings.ensureWeek) await BossStore.ensureWeek(week);
       const allGroups = await BossStore.listAll();
       const membership = await BossStore.listMembership(allGroups.map(group => group.id));
-      if(renderId !== bossRenderId) return;
+      if(renderId < bossRenderAppliedId) return true;
+      bossRenderAppliedId = renderId;
       bossViewState = {
         userId:currentUser.id,
         week,
@@ -4401,10 +4424,28 @@
         ready:true
       };
       renderBossContent();
+      return true;
     }catch(error){
-      if(renderId !== bossRenderId) return;
-      toast("Groupes indisponibles.", true);
-      if(bossViewState.ready) renderBossContent();
+      if(renderId < bossRenderAppliedId) return true;
+      if(settings.showErrorToast) toast("Groupes indisponibles.", true);
+      if(bossViewState.ready){
+        renderBossContent();
+      }else{
+        $("#bossCount").textContent = "";
+        body.className = "";
+        body.innerHTML = "";
+        body.appendChild(el("div",{class:"empty-state"},[
+          el("p",{class:"big",text:"Groupes indisponibles"}),
+          el("p",{text:"Impossible de charger les groupes pour le moment."}),
+          el("button",{
+            class:"btn btn-primary",
+            type:"button",
+            text:"Réessayer",
+            onclick:()=>void renderBossView()
+          })
+        ]));
+      }
+      return false;
     }
   }
 
@@ -4444,7 +4485,7 @@
         ? await BossStore.leave(group.id)
         : await BossStore.join(group.id);
       if(!isCurrentAction()) return;
-      ++bossRenderId;
+      invalidateBossRenders();
       bossViewState.membership = bossApplyIntent(
         bossViewState.membership,
         group.id,
@@ -4457,7 +4498,11 @@
       bossPendingActions.delete(group.id);
       renderBossContent();
       toast("Action impossible : "+bossActionMessage(error), true);
-      void renderBossView({ showLoading:false, ensureWeek:true });
+      void renderBossView({
+        showLoading:false,
+        ensureWeek:true,
+        showErrorToast:false
+      });
     }
   }
 

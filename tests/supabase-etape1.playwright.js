@@ -385,6 +385,10 @@ const { chromium } = require("playwright");
     await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       state.calls.length = 0;
+      state.bossReadFailureOnce = {
+        table:"boss_sessions",
+        message:"Échec boss simulé"
+      };
       for(let index = 1; index <= 205; index++){
         const slot = ((index - 1) % 6) + 1;
         state.boss_sessions.push({
@@ -412,6 +416,12 @@ const { chromium } = require("playwright");
       }
     });
     await page.locator('.tab[data-view="boss"]').click();
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadFailureOnce === null
+    );
+    assert.doesNotMatch(await page.locator("#bossBody").textContent(), /Chargement/);
+    assert.match(await page.locator("#bossBody").textContent(), /Groupes indisponibles/);
+    await page.getByRole("button", { name:"Réessayer", exact:true }).click();
     await page.locator(".boss-grid .boss-card").nth(5).waitFor();
     assert.equal(await page.locator(".boss-grid .boss-card").count(), 6);
     const membershipBatchSizes = await page.evaluate(() =>
@@ -557,6 +567,43 @@ const { chromium } = require("playwright");
       !document.querySelector("#bossBody").textContent.includes("Merlin")
     );
 
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const session = state.boss_sessions.find(item => item.slot === 1);
+      state.boss_participation.push({
+        session_id:session.id,
+        owner:"user-2",
+        pseudo:"Merlin",
+        updated_at:"2026-07-26T10:02:00.000Z"
+      });
+      window.__fakeSupabaseHoldBossRead("boss_participation");
+      window.__fakeSupabaseEmit("boss_participation", "INSERT");
+    });
+    await page.waitForFunction(() =>
+      typeof window.__fakeSupabaseState.bossReadHold.release === "function"
+    );
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.bossReadFailureOnce = {
+        table:"boss_sessions",
+        message:"Échec plus récent simulé"
+      };
+    });
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.locator('.tab[data-view="boss"]').click();
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadFailureOnce === null
+    );
+    await page.evaluate(() => window.__fakeSupabaseReleaseBossRead());
+    await page.locator("#bossBody").getByText("Merlin", { exact:true }).waitFor();
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      state.boss_participation = state.boss_participation
+        .filter(item => item.owner !== "user-2");
+      window.__fakeSupabaseEmit("boss_participation", "DELETE");
+    });
+    await page.locator("#bossBody").getByText("Merlin", { exact:true })
+      .waitFor({ state:"detached" });
+
     const groupOne = page.locator(".boss-card", {
       hasText:"Groupe 1 · Run 1"
     });
@@ -634,6 +681,11 @@ const { chromium } = require("playwright");
         item.owner === "user-1"
       )
     );
+    assert.match(
+      await groupOne.textContent(),
+      /Merlin/,
+      "La réponse de Quitter ne doit pas retirer le membre concurrent"
+    );
     await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       state.boss_participation = state.boss_participation
@@ -655,14 +707,41 @@ const { chromium } = require("playwright");
     );
     assert.match(await groupOne.textContent(), /Yannis/);
     assert.match(await page.locator("#bossCount").textContent(), /1\/3/);
-    await page.evaluate(() => window.__fakeSupabaseReleaseBossRpc());
-    await page.waitForFunction(() => {
-      const toast = document.querySelector("#toast");
-      return toast && toast.classList.contains("on") &&
-        toast.textContent.includes("Ta session a expiré. Reconnecte-toi pour continuer.");
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.bossReadFailureOnce = {
+        table:"boss_sessions",
+        message:"Échec de réconciliation simulé"
+      };
+      window.__fakeSupabaseReleaseBossRpc();
     });
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadFailureOnce === null
+    );
+    const authFailureToast = await page.locator("#toast").textContent();
+    assert.match(
+      authFailureToast,
+      /Ta session a expiré\. Reconnecte-toi pour continuer\./
+    );
+    assert.doesNotMatch(authFailureToast, /Groupes indisponibles/);
     assert.doesNotMatch(await groupOne.textContent(), /Yannis/);
     assert.match(await page.locator("#bossCount").textContent(), /0\/3/);
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.bossReadFailureOnce = {
+        table:"boss_sessions",
+        message:"Échec Realtime simulé"
+      };
+      window.__fakeSupabaseEmit("boss_participation", "UPDATE");
+    });
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadFailureOnce === null
+    );
+    await page.getByText("Synchronisation indisponible", { exact:true }).waitFor();
+    const realtimeFailureToast = await page.locator("#toast").textContent();
+    assert.match(
+      realtimeFailureToast,
+      /Ta session a expiré\. Reconnecte-toi pour continuer\./
+    );
+    assert.doesNotMatch(realtimeFailureToast, /Groupes indisponibles/);
 
     await groupOne.getByRole("button", { name:"Rejoindre", exact:true }).click();
     await page.waitForFunction(() => window.__fakeSupabaseState.boss_participation.length === 1);
@@ -967,6 +1046,55 @@ const { chromium } = require("playwright");
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.realtimeChannels.length === 1
     );
+
+    await page.evaluate(() => {
+      window.__fakeSupabaseHoldProfileRead("user-1");
+      window.__fakeSupabaseApplySession({
+        id:"user-1",
+        email:"yannis@example.test"
+      });
+    });
+    await page.waitForFunction(() =>
+      typeof window.__fakeSupabaseState.profileReadHold.release === "function"
+    );
+    await page.evaluate(() => {
+      window.__fakeSupabaseApplySession({
+        id:"user-2",
+        email:"merlin@example.test"
+      });
+    });
+    await page.locator("#accountPseudo").getByText("Merlin", { exact:true }).waitFor();
+    await page.evaluate(() => window.__fakeSupabaseReleaseProfileRead());
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.profileReadHold === null
+    );
+    assert.equal(await page.locator("#accountPseudo").textContent(), "Merlin");
+
+    const merlinGroupOne = page.locator(".boss-card", {
+      hasText:"Groupe 1 · Run 1"
+    });
+    await merlinGroupOne.getByRole("button", {
+      name:"Rejoindre",
+      exact:true
+    }).waitFor();
+    await page.evaluate(() =>
+      window.__fakeSupabaseHoldBossRpc("join_boss_run")
+    );
+    await merlinGroupOne.getByRole("button", {
+      name:"Rejoindre",
+      exact:true
+    }).click();
+    await page.waitForFunction(() =>
+      typeof window.__fakeSupabaseState.bossRpcHold.release === "function"
+    );
+    assert.match(await merlinGroupOne.textContent(), /Merlin/);
+    assert.doesNotMatch(await merlinGroupOne.textContent(), /Yannis/);
+    await page.evaluate(() => window.__fakeSupabaseReleaseBossRpc());
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.boss_participation.some(item =>
+        item.owner === "user-2"
+      )
+    );
     assert.deepEqual(errors, []);
 
     console.log("PASS Playwright: Supabase Étape 1 — auth, partage et migration");
@@ -1073,7 +1201,9 @@ async function installFakeSupabase(page){
       rpcCalls:[],
       bossRpcFailureOnce:null,
       bossRpcHold:null,
-      bossReadHold:null
+      bossReadHold:null,
+      bossReadFailureOnce:null,
+      profileReadHold:null
     };
 
     function clone(value){
@@ -1243,10 +1373,23 @@ async function installFakeSupabase(page){
               return 0;
             });
           }
+          if(state.bossReadFailureOnce &&
+            (!state.bossReadFailureOnce.table || state.bossReadFailureOnce.table === table)){
+            const message = state.bossReadFailureOnce.message;
+            state.bossReadFailureOnce = null;
+            return { data:null, error:{ message } };
+          }
           const hold = state.bossReadHold;
           if(hold && (!hold.table || hold.table === table)){
             await new Promise(resolve => { hold.release = resolve; });
             if(state.bossReadHold === hold) state.bossReadHold = null;
+          }
+          const profileHold = state.profileReadHold;
+          const profileId = filters.find(([key]) => key === "id");
+          if(table === "profiles" && profileHold &&
+            (!profileHold.userId || (profileId && profileId[1] === profileHold.userId))){
+            await new Promise(resolve => { profileHold.release = resolve; });
+            if(state.profileReadHold === profileHold) state.profileReadHold = null;
           }
           return { data:selected, error:null };
         }
@@ -1381,6 +1524,19 @@ async function installFakeSupabase(page){
       if(!hold || typeof hold.release !== "function") return false;
       hold.release();
       return true;
+    };
+    window.__fakeSupabaseHoldProfileRead = userId => {
+      state.profileReadHold = { userId, release:null };
+    };
+    window.__fakeSupabaseReleaseProfileRead = () => {
+      const hold = state.profileReadHold;
+      if(!hold || typeof hold.release !== "function") return false;
+      hold.release();
+      return true;
+    };
+    window.__fakeSupabaseApplySession = user => {
+      state.session = user ? { user:clone(user) } : null;
+      emit(user ? "SIGNED_IN" : "SIGNED_OUT");
     };
     localStorage.setItem("confrerie7ds.teams", JSON.stringify([{
       id:"local-team",
