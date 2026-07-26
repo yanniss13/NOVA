@@ -4800,6 +4800,13 @@
                 ModalStack.setRestoreFocus($("#bossTeamOverlay"), retry);
                 closeBossTeamPicker();
                 toast("Équipe non sélectionnée : "+bossActionMessage(error), true);
+              }else{
+                const active = document.activeElement;
+                const focusWasLost = !active
+                  || !active.isConnected
+                  || active === document.body
+                  || active === document.documentElement;
+                if(focusWasLost) retry.focus();
               }
               return;
             }

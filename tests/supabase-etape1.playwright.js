@@ -920,6 +920,11 @@ const { chromium } = require("playwright");
       /Groupes indisponibles/,
       "L’échec Boss doit invalider la vue même si le picker a été fermé"
     );
+    assert.equal(
+      await page.evaluate(() => document.activeElement.textContent.trim()),
+      "Réessayer",
+      "L’état sûr doit récupérer le focus si son rendu supprime le déclencheur restauré"
+    );
     await page.locator("#bossBody")
       .getByRole("button", { name:"Réessayer", exact:true })
       .click();
