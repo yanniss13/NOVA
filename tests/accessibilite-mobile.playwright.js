@@ -72,6 +72,70 @@ const { chromium } = require("playwright");
       await portrait.evaluate(node => node === document.activeElement),
       true
     );
+
+    const mobileContext = await browser.newContext({
+      viewport:{width:390,height:844},
+      isMobile:true,
+      hasTouch:true,
+      reducedMotion:"reduce"
+    });
+    const mobile = await mobileContext.newPage();
+    await mobile.route("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*", route =>
+      route.fulfill({
+        status:200,
+        contentType:"application/javascript",
+        body:"window.supabase=undefined;"
+      })
+    );
+    await mobile.goto(pathToFileURL(path.resolve(__dirname, "..", "index.html")).href);
+
+    assert.equal(await mobile.locator("#toast").getAttribute("role"), "status");
+    assert.equal(await mobile.locator("#toast").getAttribute("aria-live"), "polite");
+
+    for(const selector of [".tab", ".btn"]){
+      const box = await mobile.locator(selector).first().boundingBox();
+      assert.ok(box && box.height >= 44, selector+" doit mesurer au moins 44 px");
+    }
+
+    await mobile.locator(".hero .portrait").first().click();
+    await mobile.locator('#pickerGrid .tile[title="Meliodas"]').click();
+    const gearBox = await mobile.locator(".hero .gear-slot.weapon")
+      .first().boundingBox();
+    assert.ok(gearBox && gearBox.height >= 44, ".gear-slot doit mesurer 44 px");
+    await mobile.locator(".hero .gear-slot.weapon").first().click();
+    await mobile.locator("#overlay").waitFor({state:"visible"});
+    for(const selector of [".icon-btn", ".chip"]){
+      const box = await mobile.locator(selector).first().boundingBox();
+      assert.ok(box && box.height >= 44, selector+" doit mesurer au moins 44 px");
+      if(selector === ".icon-btn"){
+        assert.ok(box.width >= 44, selector+" doit mesurer au moins 44 px de large");
+      }
+    }
+    await mobile.keyboard.press("Escape");
+
+    for(const name of [
+      "builder", "roster", "member-roster",
+      "recensement", "analyse", "boss"
+    ]){
+      await mobile.locator('.tab[data-view="'+name+'"]').click();
+      await mobile.waitForTimeout(50);
+      const overflow = await mobile.evaluate(() =>
+        document.scrollingElement.scrollWidth -
+        document.scrollingElement.clientWidth
+      );
+      assert.ok(overflow <= 1, "Débordement "+name+" : "+overflow+"px");
+    }
+
+    const motion = await mobile.locator(".view.active").evaluate(node => ({
+      animationName:getComputedStyle(node).animationName,
+      animationDuration:getComputedStyle(node).animationDuration
+    }));
+    assert.ok(
+      motion.animationName === "none" || motion.animationDuration === "0s",
+      "Les animations doivent être neutralisées"
+    );
+    await mobileContext.close();
+
     assert.deepStrictEqual(errors, []);
     console.log("PASS accessibilité : onglets, modales et mobile");
   }finally{

@@ -146,8 +146,7 @@
   .btn-danger:hover{border-color:var(--crimson);color:#e98d8d}
   .btn-ghost{background:transparent}
   .btn:disabled{opacity:.5;cursor:not-allowed}
-  .btn:focus-visible,.tab:focus-visible,.tile:focus-visible,.gear-slot:focus-visible,
-  .portrait:focus-visible,input:focus-visible,textarea:focus-visible{
+  :where(button,[href],input,select,textarea,[tabindex]):focus-visible{
     outline:2px solid var(--gold-bright);outline-offset:2px
   }
 
@@ -713,7 +712,9 @@
      de roster, builder) et doit donc toujours passer au-dessus d'elles. */
   #overlay{z-index:70}
   .modal{
-    width:min(760px,100%);max-height:88vh;display:flex;flex-direction:column;
+    width:min(760px,100%);
+    max-height:min(88vh,calc(100dvh - 24px));
+    max-width:100%;display:flex;flex-direction:column;
     background:var(--panel);border:1px solid var(--gold-deep);border-radius:14px;
     box-shadow:var(--shadow);overflow:hidden
   }
@@ -831,13 +832,16 @@
 
   /* ---------- Toast ---------- */
   .toast{
-    position:fixed;left:50%;bottom:26px;transform:translateX(-50%) translateY(20px);
+    position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom));
+    transform:translateX(-50%) translateY(20px);
     background:var(--panel-2);border:1px solid var(--gold-deep);color:var(--parchment);
     padding:12px 20px;border-radius:10px;box-shadow:var(--shadow);z-index:80;
     opacity:0;pointer-events:none;transition:.25s;font-size:14px;max-width:90vw
   }
   .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
   .toast.err{border-color:var(--crimson)}
+  .member-roster-card,.member-roster-build-tag,.boss-card,
+  .team,.hero,.modal{overflow-wrap:anywhere}
 
   .databar{
     text-align:center;color:var(--muted-2);font-size:11.5px;letter-spacing:.06em;
@@ -884,6 +888,26 @@
     .member-roster-editor{padding:14px}
     .hero-source-actions{grid-template-columns:1fr}
     .hero-source-actions .hero-roster-reload{grid-column:auto}
+  }
+  @media (pointer:coarse), (max-width:560px){
+    button,.btn,.tab,.chip,.gear-slot,.pot-btn,.dps-elem-trigger,
+    .dps-elem-option{
+      min-height:44px
+    }
+    .icon-btn,.rec-del,.dps-del{
+      min-width:44px;
+      min-height:44px
+    }
+    .overlay{
+      padding:
+        max(12px,env(safe-area-inset-top))
+        max(12px,env(safe-area-inset-right))
+        max(12px,env(safe-area-inset-bottom))
+        max(12px,env(safe-area-inset-left))
+    }
+    .modal.teammodal{
+      max-height:min(88vh,calc(100dvh - 24px))
+    }
   }
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
@@ -1122,7 +1146,8 @@
   </div>
 </div>
 
-<div class="toast" id="toast"></div>
+<div class="toast" id="toast" role="status"
+     aria-live="polite" aria-atomic="true"></div>
 
 <script src="data.js"></script>
 <script src="potentiels.js"></script>
@@ -1814,6 +1839,8 @@
   function toast(msg, isErr){
     const t = $("#toast");
     t.textContent = msg;
+    t.setAttribute("role", isErr ? "alert" : "status");
+    t.setAttribute("aria-live", isErr ? "assertive" : "polite");
     t.classList.toggle("err", !!isErr);
     t.classList.add("on");
     clearTimeout(toastTimer);
@@ -3899,7 +3926,12 @@
       el("span",{class:"rec-name", text:p.name || "?"})
     ];
     if(editable){
-      headItems.push(el("button",{class:"rec-del", type:"button", title:"Retirer le membre", text:"✕",
+      headItems.push(el("button",{
+        class:"rec-del",
+        type:"button",
+        title:"Retirer le membre",
+        "aria-label":"Retirer le membre",
+        text:"✕",
         onclick:()=>void removePlayer(p)}));
     }
     const head = el("div",{class:"rec-player-head"},headItems);
@@ -3928,7 +3960,12 @@
           p.dps[realIdx].pot=value;
           void persistPlayer(p);
         }));
-        rowItems.push(el("button",{class:"dps-del", type:"button", title:"Retirer", text:"✕",
+        rowItems.push(el("button",{
+          class:"dps-del",
+          type:"button",
+          title:"Retirer le DPS",
+          "aria-label":"Retirer le DPS",
+          text:"✕",
           onclick:()=>{
             p.dps.splice(realIdx,1);
             void persistPlayer(p).then(()=>renderRecensement());
