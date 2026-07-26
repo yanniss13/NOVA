@@ -48,6 +48,37 @@ const sql = fs.readFileSync(
   /grant execute on function public\.complete_boss_run\(uuid\) to authenticated/i
 ].forEach(pattern => assert.match(sql, pattern));
 
+const joinBossRun = sql.slice(
+  sql.indexOf("create or replace function public.join_boss_run"),
+  sql.indexOf("create or replace function public.leave_boss_run")
+);
+
+assert.match(
+  joinBossRun,
+  /select\s+week_start,\s*status[\s\S]*from public\.boss_sessions[\s\S]*for update/i,
+  "La session doit être verrouillée avant le contrôle de capacité"
+);
+assert.match(
+  joinBossRun,
+  /from public\.boss_participation[\s\S]*where session_id\s*=\s*p_session_id/i,
+  "La capacité doit compter uniquement la session ciblée"
+);
+assert.match(
+  joinBossRun,
+  /select\s+count\(\*\)\s+into\s+v_member_count\s+from public\.boss_participation\s+where session_id\s*=\s*p_session_id/i,
+  "Le compteur de capacité doit rester limité à la session ciblée"
+);
+assert.match(
+  joinBossRun,
+  /if v_member_count\s*>=\s*5 then[\s\S]*GROUP_FULL/i,
+  "Le sixième joueur doit être refusé"
+);
+assert.match(
+  joinBossRun,
+  /if v_week_count\s*>=\s*3 then[\s\S]*RUN_LIMIT_REACHED/i,
+  "La limite personnelle de trois runs doit rester active"
+);
+
 const bossSessionsTable = sql.slice(
   sql.indexOf("create table if not exists public.boss_sessions"),
   sql.indexOf("create table if not exists public.boss_participation")

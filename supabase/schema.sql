@@ -178,7 +178,8 @@ declare
   v_owner uuid := auth.uid();
   v_week date;
   v_status text;
-  v_count integer;
+  v_member_count integer;
+  v_week_count integer;
   v_pseudo text;
 begin
   if v_owner is null then
@@ -215,13 +216,22 @@ begin
   );
 
   select count(*)
-    into v_count
+    into v_member_count
+    from public.boss_participation
+   where session_id = p_session_id;
+
+  if v_member_count >= 5 then
+    raise exception 'GROUP_FULL' using errcode = 'P0001';
+  end if;
+
+  select count(*)
+    into v_week_count
     from public.boss_participation bp
     join public.boss_sessions bs on bs.id = bp.session_id
    where bp.owner = v_owner
      and bs.week_start = v_week;
 
-  if v_count >= 3 then
+  if v_week_count >= 3 then
     raise exception 'RUN_LIMIT_REACHED' using errcode = 'P0001';
   end if;
 
