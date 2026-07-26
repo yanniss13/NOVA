@@ -326,6 +326,10 @@ le SQL Editor afin d'ajouter les tables à la publication
   le score et la note; ni les participants, ni les équipes, ni leurs instantanés
   ne sont modifiables. Les archives historiques sans rapport restent consultables
   et affichent « Rapport non disponible pour cette ancienne run. ».
+- La suppression d’un compte conserve l’historique : le créateur de session et
+  le propriétaire de participation deviennent `NULL`, mais sessions, rapports,
+  pseudos et instantanés restent intacts. Une participation anonymisée ne donne
+  plus aucun droit de correction à un compte actif.
 - Exception de démarrage : la policy `boss_sessions_insert` autorise la
   **création initiale des seeds** des six groupes courants (`run_no=1`, slots
   1–6) par `BossStore.ensureWeek`. Les modifications/suppressions de sessions
@@ -363,6 +367,14 @@ respecter l’ordre inverse de compatibilité :
 1. exécuter `supabase/rollback-boss-reports.sql` dans Supabase ;
 2. lancer un `git revert` du commit ou de la fusion des rapports ;
 3. push le revert et attendre le déploiement Pages testé.
+
+Cette fenêtre de compatibilité concerne les onglets et PWA récents : dès le
+rollback SQL, leurs nouvelles RPC sont révoquées et l’interface affiche le
+message explicite de maintenance du schéma. Une ancienne interface utilisant
+`complete_boss_run` redevient compatible après le rollback SQL. Une fois le
+frontend restauré déployé par Pages, cliquer sur **Mettre à jour** dans chaque
+onglet ou PWA encore ouvert ; à défaut, fermer puis rouvrir chaque onglet et
+chaque PWA afin d’activer la version restaurée.
 
 Ce script de rollback est rejouable et non destructif : il restaure les RPC et
 leurs privilèges, mais ne supprime aucune table, colonne, participation,

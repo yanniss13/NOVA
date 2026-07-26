@@ -1,5 +1,8 @@
 -- Retour arrière fonctionnel pour une ancienne interface.
 -- Les tables, colonnes, instantanés et rapports restent intacts.
+-- Attention : ce script ouvre une fenêtre de compatibilité. Les onglets et
+-- PWA récents perdent aussitôt les nouvelles RPC et affichent le message de
+-- maintenance jusqu’au déploiement puis à l’activation du frontend restauré.
 begin;
 
 create or replace function public.join_boss_run(p_session_id uuid)

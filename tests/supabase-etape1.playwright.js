@@ -24,9 +24,28 @@ const { chromium } = require("playwright");
       1
     );
 
-    const anonymousReportRead = await page.evaluate(async () => {
-      window.__fakeSupabaseState.boss_run_reports.push({
-        session_id:"boss-report-rls-probe",
+    const anonymousBossAcl = await page.evaluate(async () => {
+      const state = window.__fakeSupabaseState;
+      state.boss_sessions.push({
+        id:"boss-session-rls-probe",
+        created_by:"user-1",
+        title:"Groupe ACL",
+        week_start:"2026-07-20",
+        slot:1,
+        run_no:99,
+        status:"archived",
+        created_at:"2026-07-25T08:00:00.000Z"
+      });
+      state.boss_participation.push({
+        session_id:"boss-session-rls-probe",
+        owner:"user-1",
+        pseudo:"Yannis",
+        team_id:null,
+        team_snapshot:{ id:"snapshot-acl", data:{} },
+        updated_at:"2026-07-25T08:00:00.000Z"
+      });
+      state.boss_run_reports.push({
+        session_id:"boss-session-rls-probe",
         global_score:1,
         note:"",
         created_by:"user-1",
@@ -36,18 +55,40 @@ const { chromium } = require("playwright");
         updated_by_pseudo:null,
         updated_at:null
       });
-      const { data, error } = await window.__fakeSupabaseClient
-        .from("boss_run_reports")
-        .select("*");
+      const reads = {};
+      for(const table of [
+        "boss_sessions",
+        "boss_participation",
+        "boss_run_reports"
+      ]){
+        const { data, error } = await window.__fakeSupabaseClient
+          .from(table)
+          .select("*");
+        reads[table] = {
+          count:(data || []).length,
+          error:error && error.message
+        };
+      }
+      const legacy = await window.__fakeSupabaseClient.rpc(
+        "complete_boss_run",
+        { p_session_id:"boss-session-rls-probe" }
+      );
       return {
-        count:(data || []).length,
-        error:error && error.message
+        reads,
+        legacyError:legacy.error && legacy.error.message
       };
     });
     assert.deepEqual(
-      anonymousReportRead,
-      { count:0, error:null },
-      "La politique RLS doit masquer tous les rapports sans session authentifiée"
+      anonymousBossAcl,
+      {
+        reads:{
+          boss_sessions:{ count:0, error:null },
+          boss_participation:{ count:0, error:null },
+          boss_run_reports:{ count:0, error:null }
+        },
+        legacyError:"AUTH_REQUIRED"
+      },
+      "Le fake doit appliquer l'authentification et la lecture RLS à toutes les ressources Boss"
     );
 
     await page.locator("#authEmail").fill("yannis@example.test");
@@ -55,23 +96,41 @@ const { chromium } = require("playwright");
     await page.getByRole("button", { name:"Se connecter", exact:true }).click();
 
     await page.locator("#accountPseudo").getByText("Yannis", { exact:true }).waitFor();
-    const authenticatedReportRead = await page.evaluate(async () => {
-      const { data, error } = await window.__fakeSupabaseClient
-        .from("boss_run_reports")
-        .select("*");
-      window.__fakeSupabaseState.boss_run_reports =
-        window.__fakeSupabaseState.boss_run_reports.filter(item =>
-          item.session_id !== "boss-report-rls-probe"
-        );
-      return {
-        count:(data || []).length,
-        error:error && error.message
-      };
+    const authenticatedBossRead = await page.evaluate(async () => {
+      const state = window.__fakeSupabaseState;
+      const reads = {};
+      for(const table of [
+        "boss_sessions",
+        "boss_participation",
+        "boss_run_reports"
+      ]){
+        const { data, error } = await window.__fakeSupabaseClient
+          .from(table)
+          .select("*");
+        reads[table] = {
+          count:(data || []).length,
+          error:error && error.message
+        };
+      }
+      state.boss_sessions = state.boss_sessions.filter(item =>
+        item.id !== "boss-session-rls-probe"
+      );
+      state.boss_participation = state.boss_participation.filter(item =>
+        item.session_id !== "boss-session-rls-probe"
+      );
+      state.boss_run_reports = state.boss_run_reports.filter(item =>
+        item.session_id !== "boss-session-rls-probe"
+      );
+      return reads;
     });
     assert.deepEqual(
-      authenticatedReportRead,
-      { count:1, error:null },
-      "Un membre authentifié doit lire les rapports partagés"
+      authenticatedBossRead,
+      {
+        boss_sessions:{ count:1, error:null },
+        boss_participation:{ count:1, error:null },
+        boss_run_reports:{ count:1, error:null }
+      },
+      "Un membre authentifié doit lire les sessions, participations et rapports partagés"
     );
     assert.equal(await authOverlay.evaluate(el => el.classList.contains("on")), false);
     await page.getByText("À jour", { exact:true }).waitFor();
@@ -513,6 +572,31 @@ const { chromium } = require("playwright");
       state.calls.length = 0;
     });
     assert.equal(await page.evaluate(() => window.__fakeSupabaseState.boss_sessions.length), 6);
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.bossReadFailureOnce = {
+        table:"boss_run_reports",
+        message:
+          "PGRST205: Could not find the table 'public.boss_run_reports' in the schema cache"
+      };
+    });
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.locator('.tab[data-view="boss"]').click();
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadFailureOnce === null
+    );
+    await page.getByText("Maintenance des rapports de boss", {
+      exact:true
+    }).waitFor({ timeout:2000 });
+    assert.match(
+      await page.locator("#bossBody").textContent(),
+      /La version du site et le schéma partagé ne sont pas compatibles/
+    );
+    await page.locator("#bossBody").getByRole("button", {
+      name:"Réessayer",
+      exact:true
+    }).click();
+    await page.locator(".boss-grid .boss-card").nth(5).waitFor();
+
     const alteredSeedResult = await page.evaluate(async () => {
       const state = window.__fakeSupabaseState;
       const before = JSON.stringify(state.boss_sessions);
@@ -1070,6 +1154,7 @@ const { chromium } = require("playwright");
     );
     await page.keyboard.press("Escape");
     await bossTeamOverlay.waitFor({ state:"hidden" });
+    await page.locator("#authLogout").focus();
     await page.evaluate(() => window.__fakeSupabaseReleaseBossRead());
     await page.waitForFunction(() => !window.__fakeSupabaseState.bossReadHold);
     await page.waitForTimeout(50);
@@ -1079,9 +1164,9 @@ const { chromium } = require("playwright");
       "L’échec Boss doit invalider la vue même si le picker a été fermé"
     );
     assert.equal(
-      await page.evaluate(() => document.activeElement.textContent.trim()),
-      "Réessayer",
-      "L’état sûr doit récupérer le focus si son rendu supprime le déclencheur restauré"
+      await page.evaluate(() => document.activeElement.id),
+      "authLogout",
+      "L’état sûr ne doit pas voler le focus déplacé volontairement hors de la vue Boss"
     );
     await page.locator("#bossBody")
       .getByRole("button", { name:"Réessayer", exact:true })
@@ -1246,6 +1331,24 @@ const { chromium } = require("playwright");
     );
     await bossTeamChoices.nth(1).click();
     await bossTeamOverlay.waitFor({ state:"hidden" });
+    await page.waitForTimeout(50);
+    assert.deepEqual(
+      await page.evaluate(() => {
+        const active = document.activeElement;
+        const card = active && active.closest(".boss-card");
+        return {
+          action:active && active.textContent.trim(),
+          sessionId:card && card.dataset.sessionId
+        };
+      }),
+      await page.evaluate(() => {
+        const run = window.__fakeSupabaseState.boss_sessions.find(item =>
+          item.slot === 2 && item.run_no === 1
+        );
+        return { action:"Changer", sessionId:run.id };
+      }),
+      "Une sélection réussie doit rendre le focus à l’action recréée de la même run"
+    );
     assert.deepEqual(
       await page.evaluate(() => {
         const state = window.__fakeSupabaseState;
@@ -1322,6 +1425,103 @@ const { chromium } = require("playwright");
     }
     assert.equal(await page.locator("#teamDetail .hd-portrait img").count(), 4);
     await page.locator("#teamClose").click();
+
+    // Une réconciliation déjà engagée par l’ancien compte ne doit pas
+    // remplacer la vue autoritative du compte suivant.
+    await groupOne.getByRole("button", {
+      name:"Changer",
+      exact:true
+    }).click();
+    await bossTeamOverlay.waitFor({ state:"visible" });
+    const teamsRemovedBeforeAccountSwitch = await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const removed = state.teams.filter(team => team.owner === "user-1");
+      state.teams = state.teams.filter(team => team.owner !== "user-1");
+      state.bossReadFailureOnce = {
+        table:"boss_sessions",
+        message:"Échec Boss de l’ancien compte"
+      };
+      window.__fakeSupabaseHoldBossReadOnce("teams");
+      return removed;
+    });
+    await bossTeamChoices.first().click();
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadFailureOnce === null &&
+      typeof window.__fakeSupabaseState.bossReadHold?.release === "function"
+    );
+    await page.evaluate(() => window.__fakeSupabaseApplySession({
+      id:"user-2",
+      email:"merlin@example.test"
+    }));
+    await page.locator("#accountPseudo").getByText("Merlin", {
+      exact:true
+    }).waitFor();
+    await bossTeamOverlay.waitFor({ state:"hidden", timeout:2000 });
+    await page.evaluate(() => window.__fakeSupabaseReleaseBossRead());
+    await page.waitForFunction(() => !window.__fakeSupabaseState.bossReadHold);
+    await page.locator("#bossBody .boss-card").first().waitFor();
+    assert.doesNotMatch(
+      await page.locator("#bossBody").textContent(),
+      /Groupes indisponibles/,
+      "Le résultat tardif de l’ancien compte ne doit pas remplacer la vue de Merlin"
+    );
+    await page.evaluate(teams => {
+      window.__fakeSupabaseState.teams.push(...teams);
+    }, teamsRemovedBeforeAccountSwitch);
+    await page.evaluate(() => window.__fakeSupabaseApplySession({
+      id:"user-1",
+      email:"yannis@example.test"
+    }));
+    await page.locator("#accountPseudo").getByText("Yannis", {
+      exact:true
+    }).waitFor();
+    await groupOne.getByRole("button", {
+      name:"Changer",
+      exact:true
+    }).waitFor();
+
+    // Un changement de compte invalide immédiatement le contexte du picker.
+    await groupOne.getByRole("button", {
+      name:"Changer",
+      exact:true
+    }).click();
+    await bossTeamOverlay.waitFor({ state:"visible" });
+    const staleAccountChoice = await bossTeamChoices.first().elementHandle();
+    const accountSwitchSelectCalls = await page.evaluate(() =>
+      window.__fakeSupabaseState.rpcCalls.filter(call =>
+        call.name === "select_boss_team"
+      ).length
+    );
+    await page.evaluate(() => window.__fakeSupabaseApplySession({
+      id:"user-2",
+      email:"merlin@example.test"
+    }));
+    await page.locator("#accountPseudo").getByText("Merlin", {
+      exact:true
+    }).waitFor();
+    await bossTeamOverlay.waitFor({ state:"hidden", timeout:2000 });
+    await page.evaluate(choice => choice.click(), staleAccountChoice);
+    await page.waitForTimeout(50);
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.rpcCalls.filter(call =>
+          call.name === "select_boss_team"
+        ).length
+      ),
+      accountSwitchSelectCalls,
+      "Une tuile du compte précédent doit devenir inerte"
+    );
+    await page.evaluate(() => window.__fakeSupabaseApplySession({
+      id:"user-1",
+      email:"yannis@example.test"
+    }));
+    await page.locator("#accountPseudo").getByText("Yannis", {
+      exact:true
+    }).waitFor();
+    await groupOne.getByRole("button", {
+      name:"Changer",
+      exact:true
+    }).waitFor();
 
     await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
@@ -1772,7 +1972,7 @@ const { chromium } = require("playwright");
     await page.locator("#bossReportClose").click();
     await bossReportOverlay.waitFor({ state:"hidden" });
 
-    const overCapacityError = await page.evaluate(async () => {
+    const overCapacitySessionId = await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       const run = state.boss_sessions.find(item =>
         item.slot === 2 && item.run_no === 1
@@ -1787,20 +1987,45 @@ const { chromium } = require("playwright");
           updated_at:"2026-07-25T10:20:00.000Z"
         });
       }
+      window.__fakeSupabaseEmit("boss_participation", "INSERT");
+      return run.id;
+    });
+    await missingTeamGroup.getByText(
+      "Groupe au-dessus de la nouvelle limite",
+      { exact:true }
+    ).waitFor({ timeout:2000 });
+    assert.match(await missingTeamGroup.textContent(), /6\/5 joueurs/);
+    assert.equal(
+      await missingTeamGroup.getByRole("button", {
+        name:"Run terminée",
+        exact:true
+      }).isDisabled(),
+      true,
+      "Une session héritée à 6/5 ne doit pas pouvoir être clôturée localement"
+    );
+    const overCapacityError = await page.evaluate(async sessionId => {
       const result = await window.__fakeSupabaseClient.rpc(
         "complete_boss_run_with_report",
         {
-          p_session_id:run.id,
+          p_session_id:sessionId,
           p_global_score:"12450800",
           p_note:""
         }
       );
+      return result.error && result.error.message;
+    }, overCapacitySessionId);
+    assert.equal(overCapacityError, "GROUP_OVER_CAPACITY");
+    await page.evaluate(sessionId => {
+      const state = window.__fakeSupabaseState;
       state.boss_participation = state.boss_participation.filter(item =>
         !item.owner.startsWith("overflow-user-")
       );
-      return result.error && result.error.message;
-    });
-    assert.equal(overCapacityError, "GROUP_OVER_CAPACITY");
+      window.__fakeSupabaseEmit("boss_participation", "DELETE");
+    }, overCapacitySessionId);
+    await missingTeamGroup.getByText(
+      "Groupe au-dessus de la nouvelle limite",
+      { exact:true }
+    ).waitFor({ state:"detached" });
 
     const nonMemberError = await page.evaluate(async () => {
       const run = window.__fakeSupabaseState.boss_sessions.find(item =>
@@ -1845,6 +2070,151 @@ const { chromium } = require("playwright");
       hasText:"Groupe 2 · Run 1"
     });
     await groupTwoReportCard.getByText("Équipe prête", { exact:true }).waitFor();
+
+    // La modale ouverte suit l’état Realtime autoritatif sans perdre les champs.
+    await groupTwoReportCard.getByRole("button", {
+      name:"Run terminée",
+      exact:true
+    }).click();
+    await bossReportOverlay.waitFor({ state:"visible" });
+    await page.locator("#bossScore").fill("12450800");
+    await page.locator("#bossReportNote").fill("Saisie Realtime conservée.");
+    const liveParticipantId = await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const run = state.boss_sessions.find(item =>
+        item.slot === 2 && item.run_no === 1
+      );
+      state.boss_participation.push({
+        session_id:run.id,
+        owner:"live-user",
+        pseudo:"Arthur live",
+        team_id:null,
+        team_snapshot:null,
+        updated_at:"2026-07-25T10:24:00.000Z"
+      });
+      window.__fakeSupabaseEmit("boss_participation", "INSERT");
+      return run.id;
+    });
+    const liveMember = page.locator("#bossReportMembers .boss-report-member", {
+      hasText:"Arthur live"
+    });
+    await liveMember.waitFor({ timeout:2000 });
+    assert.match(await liveMember.textContent(), /Équipe à choisir/);
+    assert.equal(await page.locator("#bossReportSubmit").isDisabled(), true);
+    assert.equal(await page.locator("#bossScore").inputValue(), "12450800");
+    assert.equal(
+      await page.locator("#bossReportNote").inputValue(),
+      "Saisie Realtime conservée."
+    );
+
+    await page.evaluate(sessionId => {
+      const state = window.__fakeSupabaseState;
+      const mine = state.boss_participation.find(item =>
+        item.session_id === sessionId && item.owner === "user-1"
+      );
+      const live = state.boss_participation.find(item =>
+        item.session_id === sessionId && item.owner === "live-user"
+      );
+      live.team_id = mine.team_id;
+      live.team_snapshot = JSON.parse(JSON.stringify(mine.team_snapshot));
+      window.__fakeSupabaseEmit("boss_participation", "UPDATE");
+    }, liveParticipantId);
+    await liveMember.getByText("Équipe prête", { exact:true }).waitFor();
+    assert.equal(await page.locator("#bossReportSubmit").isEnabled(), true);
+    assert.equal(await page.locator("#bossScore").inputValue(), "12450800");
+    assert.equal(
+      await page.locator("#bossReportNote").inputValue(),
+      "Saisie Realtime conservée."
+    );
+
+    await page.evaluate(sessionId => {
+      const state = window.__fakeSupabaseState;
+      const source = state.boss_participation.find(item =>
+        item.session_id === sessionId && item.owner === "user-1"
+      );
+      for(let index = 1; index <= 4; index++){
+        state.boss_participation.push({
+          session_id:sessionId,
+          owner:"live-overflow-" + index,
+          pseudo:"Surplus live " + index,
+          team_id:source.team_id,
+          team_snapshot:JSON.parse(JSON.stringify(source.team_snapshot)),
+          updated_at:"2026-07-25T10:25:00.000Z"
+        });
+      }
+      window.__fakeSupabaseEmit("boss_participation", "INSERT");
+    }, liveParticipantId);
+    await page.locator("#bossReportError").getByText(
+      "Groupe au-dessus de la nouvelle limite",
+      { exact:true }
+    ).waitFor({ timeout:2000 });
+    assert.equal(await page.locator("#bossReportSubmit").isDisabled(), true);
+    assert.equal(await page.locator("#bossScore").inputValue(), "12450800");
+    assert.equal(
+      await page.locator("#bossReportNote").inputValue(),
+      "Saisie Realtime conservée."
+    );
+
+    await page.evaluate(sessionId => {
+      const state = window.__fakeSupabaseState;
+      state.boss_participation = state.boss_participation.filter(item =>
+        item.session_id !== sessionId ||
+        (
+          item.owner !== "live-user" &&
+          !String(item.owner || "").startsWith("live-overflow-")
+        )
+      );
+      window.__fakeSupabaseEmit("boss_participation", "DELETE");
+    }, liveParticipantId);
+    await liveMember.waitFor({ state:"detached" });
+    await page.waitForFunction(() =>
+      document.querySelector("#bossReportError")?.textContent === "" &&
+      !document.querySelector("#bossReportSubmit")?.disabled
+    );
+    assert.equal(await page.locator("#bossScore").inputValue(), "12450800");
+    assert.equal(
+      await page.locator("#bossReportNote").inputValue(),
+      "Saisie Realtime conservée."
+    );
+    await page.locator("#bossReportClose").click();
+    await bossReportOverlay.waitFor({ state:"hidden" });
+
+    const groupThreeReportCard = page.locator(".boss-card", {
+      hasText:"Groupe 3 · Run 1"
+    });
+    await groupThreeReportCard.getByRole("button", {
+      name:"Run terminée",
+      exact:true
+    }).click();
+    await bossReportOverlay.waitFor({ state:"visible" });
+    await page.locator("#bossScore").fill("999");
+    await page.locator("#bossReportNote").fill("Archivée ailleurs.");
+    await page.evaluate(() => {
+      const run = window.__fakeSupabaseState.boss_sessions.find(item =>
+        item.slot === 3 && item.run_no === 1
+      );
+      run.status = "archived";
+      run.completed_at = "2026-07-25T10:26:00.000Z";
+      window.__fakeSupabaseEmit("boss_sessions", "UPDATE");
+    });
+    await bossReportOverlay.waitFor({ state:"hidden", timeout:2000 });
+    assert.equal(
+      await page.evaluate(() => document.activeElement.dataset.view),
+      "boss",
+      "Une archive autoritative doit fermer la modale sur une cible sûre"
+    );
+    await page.evaluate(() => {
+      const run = window.__fakeSupabaseState.boss_sessions.find(item =>
+        item.slot === 3 && item.run_no === 1
+      );
+      run.status = "open";
+      run.completed_at = null;
+      window.__fakeSupabaseEmit("boss_sessions", "UPDATE");
+    });
+    await groupThreeReportCard.getByRole("button", {
+      name:"Run terminée",
+      exact:true
+    }).waitFor();
 
     const invalidScoreError = await page.evaluate(async () => {
       const run = window.__fakeSupabaseState.boss_sessions.find(item =>
@@ -2199,6 +2569,12 @@ const { chromium } = require("playwright");
         code:"REPORT_REQUIRED",
         expected:
           "Une mise à jour du site est nécessaire pour terminer cette run."
+      },
+      {
+        code:
+          "PGRST202: Could not find the function public.complete_boss_run_with_report in the schema cache",
+        expected:
+          "La version du site et le schéma partagé ne sont pas compatibles. La maintenance est en cours ; applique la mise à jour proposée puis recharge la page."
       },
       {
         code:"NOTE_TOO_LONG",
@@ -3078,7 +3454,7 @@ const { chromium } = require("playwright");
     assert.equal(
       (await bossStats.locator(".boss-stat-evolution").textContent())
         .replace(/\s+/g, " ").trim(),
-      "+4 000 001 par rapport à la semaine précédente"
+      "+4 000 001 (+40,00 %) par rapport à la semaine précédente"
     );
     await page.evaluate(previousId => {
       window.__fakeSupabaseState.boss_run_reports
@@ -3093,8 +3469,55 @@ const { chromium } = require("playwright");
     assert.equal(
       (await bossStats.locator(".boss-stat-evolution").textContent())
         .replace(/\s+/g, " ").trim(),
-      "−6 000 002 par rapport à la semaine précédente",
+      "−6 000 002 (−30,00 %) par rapport à la semaine précédente",
       "Une baisse hebdomadaire doit conserver son signe et sa valeur exacte"
+    );
+    await page.evaluate(previousId => {
+      window.__fakeSupabaseState.boss_run_reports
+        .find(item => item.session_id === previousId).global_score =
+          "14000001";
+      window.__fakeSupabaseEmit("boss_run_reports", "UPDATE");
+    }, statsFixtures.previousId);
+    await page.waitForFunction(() =>
+      document.querySelector(".boss-stat-evolution")?.textContent
+        .includes("(0,00 %)")
+    );
+    assert.equal(
+      (await bossStats.locator(".boss-stat-evolution").textContent())
+        .replace(/\s+/g, " ").trim(),
+      "0 (0,00 %) par rapport à la semaine précédente",
+      "Une moyenne identique doit afficher une évolution nulle exacte"
+    );
+
+    await page.evaluate(({ archivedId, currentId, previousId }) => {
+      const reports = window.__fakeSupabaseState.boss_run_reports;
+      reports.find(item => item.session_id === archivedId).global_score =
+        "9007199254740989";
+      reports.find(item => item.session_id === currentId).global_score =
+        "9007199254740991";
+      reports.find(item => item.session_id === previousId).global_score =
+        "4503599627370495";
+      window.__fakeSupabaseEmit("boss_run_reports", "UPDATE");
+    }, {
+      archivedId,
+      currentId:statsFixtures.currentId,
+      previousId:statsFixtures.previousId
+    });
+    await page.waitForFunction(() =>
+      document.querySelector(".boss-stat-evolution")?.textContent
+        .includes("(+100,00 %)")
+    );
+    assert.equal(
+      (await bossStats.locator(".boss-stat-average").textContent())
+        .replace(/\s+/g, " ").trim(),
+      "9 007 199 254 740 990",
+      "La moyenne doit rester exacte près de MAX_SAFE_INTEGER"
+    );
+    assert.equal(
+      (await bossStats.locator(".boss-stat-evolution").textContent())
+        .replace(/\s+/g, " ").trim(),
+      "+4 503 599 627 370 495 (+100,00 %) par rapport à la semaine précédente",
+      "Le delta et le pourcentage ne doivent perdre aucun bit via Number"
     );
     await page.locator("details.boss-archive:not(.boss-archive-current)>summary")
       .click();
@@ -3187,7 +3610,7 @@ const { chromium } = require("playwright");
     );
     assert.equal(
       await page.evaluate(() => window.__fakeSupabaseState.removedRealtimeChannels),
-      4,
+      8,
       "Chaque changement de compte et déconnexion doit retirer l’ancienne chaîne"
     );
     await page.locator("#authEmail").fill("yannis@example.test");
@@ -3372,6 +3795,32 @@ async function installFakeSupabase(page){
       return state[table];
     }
 
+    const bossAcl = {
+      sharedReadTables:new Set([
+        "boss_sessions",
+        "boss_participation",
+        "boss_run_reports"
+      ]),
+      rpcOnlyWriteTables:new Set([
+        "boss_participation",
+        "boss_run_reports"
+      ]),
+      owner(){
+        return state.session && state.session.user && state.session.user.id;
+      },
+      canRead(table){
+        return !this.sharedReadTables.has(table) || !!this.owner();
+      },
+      requiresAuthentication(table, operation){
+        return operation !== "select" && this.sharedReadTables.has(table);
+      },
+      requiresRpc(table, operation){
+        if(operation === "select") return false;
+        if(this.rpcOnlyWriteTables.has(table)) return true;
+        return table === "boss_sessions" && operation !== "upsert";
+      }
+    };
+
     function currentBossWeekStart(now){
       const p = new Intl.DateTimeFormat("en-CA",{ timeZone:"Europe/Paris",
         year:"numeric", month:"2-digit", day:"2-digit", weekday:"short", hour:"2-digit", hourCycle:"h23" })
@@ -3388,9 +3837,10 @@ async function installFakeSupabase(page){
 
     async function rpc(name, args){
       const sessionId = args && args.p_session_id;
-      const owner = state.session && state.session.user && state.session.user.id;
+      const owner = bossAcl.owner();
       const fail = message => ({ data:null, error:{ message } });
       state.rpcCalls.push({ name, args:clone(args) });
+      if(!owner) return fail("AUTH_REQUIRED");
       const hold = state.bossRpcHold;
       if(hold && (!hold.name || hold.name === name)){
         await new Promise(resolve => { hold.release = resolve; });
@@ -3403,7 +3853,6 @@ async function installFakeSupabase(page){
         return fail(message);
       }
       if(name === "complete_boss_run") return fail("REPORT_REQUIRED");
-      if(!owner) return fail("AUTH_REQUIRED");
 
       const scoreValue = value => {
         if(typeof value === "number" && !Number.isSafeInteger(value)) return null;
@@ -3611,21 +4060,20 @@ async function installFakeSupabase(page){
         if(!Array.isArray(rows)) return { data:null, error:{ message:"Table inconnue" } };
 
         const rpcRequired = () => ({ data:null, error:{ message:"RPC_REQUIRED" } });
-        if(table === "boss_participation" && ["upsert", "update", "delete"].includes(operation)){
-          return rpcRequired();
+        if(
+          bossAcl.requiresAuthentication(table, operation) &&
+          !bossAcl.owner()
+        ){
+          return { data:null, error:{ message:"AUTH_REQUIRED" } };
         }
-        if(table === "boss_sessions" && ["update", "delete"].includes(operation)){
-          return rpcRequired();
-        }
-        if(table === "boss_run_reports" && operation !== "select"){
+        if(bossAcl.requiresRpc(table, operation)){
           return rpcRequired();
         }
 
         if(operation === "select"){
-          const selected =
-            table === "boss_run_reports" && !state.session
-              ? []
-              : clone(rows.filter(matchRow));
+          const selected = bossAcl.canRead(table)
+            ? clone(rows.filter(matchRow))
+            : [];
           if(sorts.length){
             selected.sort((a,b) => {
               for(const [col,dir] of sorts){

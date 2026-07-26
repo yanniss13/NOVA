@@ -33,7 +33,9 @@ Realtime, Node.js assertions, Playwright Chromium, Git/GitHub Pages.
 - Après archivage, seuls score et note sont corrigeables, par un participant.
 - Participants, équipes et instantanés deviennent immuables après archivage.
 - Aucun `DROP TABLE`, `DROP COLUMN`, effacement ou migration destructive.
-- Toutes les écritures passent par des RPC `security definer`.
+- La policy `boss_sessions_insert` autorise uniquement les seeds des six
+  groupes courants (`run_no=1`, slots 1–6). Les autres écritures directes de
+  boss restent interdites et le flux métier passe via RPC `security definer`.
 - Les modales utilisent `ModalStack`, avec contrôles tactiles de 44 px.
 - Aucun débordement horizontal entre 320 et 390 px.
 - Ne pas fusionner ni pousser sans autorisation explicite de l’utilisateur.

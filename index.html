@@ -699,6 +699,9 @@
     text-overflow:ellipsis;white-space:nowrap;color:var(--muted)}
   .boss-member-team-action{width:100%;justify-content:center;margin-top:7px;padding:8px 10px;font-size:12px}
   .boss-none{font-size:12px;color:var(--muted-2);font-style:italic}
+  .boss-over-capacity{margin:0;padding:8px 10px;border:1px solid rgba(161,44,44,.65);
+    border-radius:8px;background:rgba(161,44,44,.13);color:#f0aaaa;font-size:12px;
+    font-weight:700;line-height:1.35;overflow-wrap:anywhere}
   .boss-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .boss-actions .btn{min-width:0;width:100%;justify-content:center}
   .modal.boss-team-modal{width:min(720px,100%)}
@@ -1717,6 +1720,27 @@
 
     return { open, close, focusTop, setRestoreFocus };
   })();
+
+  function closeModalAfterAsyncRefresh(overlay, closeAction, restoreTarget){
+    const active = document.activeElement;
+    const preserveExternalFocus = !!active &&
+      active.isConnected &&
+      active !== document.body &&
+      active !== document.documentElement &&
+      !overlay.contains(active) &&
+      active.getClientRects().length > 0;
+    if(restoreTarget){
+      ModalStack.setRestoreFocus(overlay, restoreTarget);
+    }
+    closeAction();
+    if(
+      preserveExternalFocus &&
+      active.isConnected &&
+      active.getClientRects().length > 0
+    ){
+      active.focus();
+    }
+  }
 
   /* ============================ Équipes : local + Supabase ============================ */
   const LocalTeams = {
@@ -4484,8 +4508,12 @@
      un ou plusieurs groupes ; les semaines passées s'archivent toutes seules. */
   const BOSS_NAME = "Akumu, bête démoniaque";
   const BOSS_GROUPS = 6;
+  const BOSS_SCHEMA_MAINTENANCE_MESSAGE =
+    "La version du site et le schéma partagé ne sont pas compatibles. "+
+    "La maintenance est en cours ; applique la mise à jour proposée puis recharge la page.";
   let bossRenderIssuedId = 0;
   let bossRenderAppliedId = 0;
+  let bossViewOwnerVersion = 0;
   const emptyBossViewState = userId => ({
     userId:userId || "",
     week:null,
@@ -4504,6 +4532,10 @@
   function ensureBossViewOwner(){
     const userId = currentUser ? currentUser.id : "";
     if(bossViewState.userId === userId) return;
+    bossViewOwnerVersion++;
+    if(bossTeamPickerContext && bossTeamPickerContext.userId !== userId){
+      closeBossTeamPicker();
+    }
     if(bossReportContext && bossReportContext.userId !== userId){
       closeBossReport();
     }
@@ -4565,6 +4597,26 @@
     return score === null ? "—" : BOSS_SCORE_FORMAT.format(score);
   }
 
+  function isBossSchemaCompatibilityError(error){
+    const code = String(error && error.code || "").toUpperCase();
+    const message = String(error && error.message || "");
+    if([
+      "PGRST202",
+      "PGRST204",
+      "PGRST205",
+      "42P01",
+      "42703",
+      "42883",
+      "42501"
+    ].includes(code)) return true;
+    return /\b(?:PGRST202|PGRST204|PGRST205|42P01|42703|42883|42501)\b/i
+      .test(message) ||
+      /schema cache[\s\S]*(?:boss_run_reports|select_boss_team|complete_boss_run_with_report|update_boss_run_report)/i
+        .test(message) ||
+      /permission denied for function\s+(?:select_boss_team|complete_boss_run_with_report|update_boss_run_report)/i
+        .test(message);
+  }
+
   function bossStatsForWeek(groups, reports, weekStart){
     const weekGroups = (groups || [])
       .filter(group => group.week_start === weekStart);
@@ -4596,6 +4648,18 @@
     const date = new Date(weekStart+"T00:00:00.000Z");
     date.setUTCDate(date.getUTCDate() - 7);
     return date.toISOString().slice(0,10);
+  }
+
+  function bossEvolutionPercentage(difference, previousAverage){
+    if(previousAverage <= 0n) return "";
+    const sign = difference > 0n ? "+" : (difference < 0n ? "−" : "");
+    const absolute = difference < 0n ? -difference : difference;
+    const hundredths = (
+      absolute * 10000n + previousAverage / 2n
+    ) / previousAverage;
+    const integer = hundredths / 100n;
+    const decimals = (hundredths % 100n).toString().padStart(2, "0");
+    return sign+integer.toString()+","+decimals+" %";
   }
 
   const BossStore = {
@@ -4708,9 +4772,13 @@
       const difference = current.average - previous.average;
       const sign = difference > 0n ? "+" : (difference < 0n ? "−" : "");
       const absolute = difference < 0n ? -difference : difference;
+      const percentage = bossEvolutionPercentage(
+        difference,
+        previous.average
+      );
       head.appendChild(el("span",{
         class:"boss-stat-evolution",
-        text:sign+formatBossScore(absolute)+
+        text:sign+formatBossScore(absolute)+" ("+percentage+")"+
           " par rapport à la semaine précédente"
       }));
     }
@@ -4821,6 +4889,27 @@
     return retry;
   }
 
+  function renderBossCompatibilityState(){
+    invalidateBossRenders();
+    bossViewState = emptyBossViewState(currentUser?.id);
+    $("#bossCount").textContent = "";
+    const body = $("#bossBody");
+    body.className = "";
+    body.innerHTML = "";
+    const retry = el("button",{
+      class:"btn btn-primary",
+      type:"button",
+      text:"Réessayer",
+      onclick:()=>void renderBossView()
+    });
+    body.appendChild(el("div",{class:"empty-state"},[
+      el("p",{class:"big",text:"Maintenance des rapports de boss"}),
+      el("p",{text:BOSS_SCHEMA_MAINTENANCE_MESSAGE}),
+      retry
+    ]));
+    return retry;
+  }
+
   async function renderBossView(options){
     const settings = Object.assign({
       showLoading:true,
@@ -4870,9 +4959,17 @@
         ready:true
       };
       renderBossContent();
+      reconcileOpenBossReport();
       return true;
     }catch(error){
       if(!isCurrentRender()) return true;
+      if(isBossSchemaCompatibilityError(error)){
+        if(settings.showErrorToast){
+          toast(BOSS_SCHEMA_MAINTENANCE_MESSAGE, true);
+        }
+        renderBossCompatibilityState();
+        return false;
+      }
       if(settings.showErrorToast) toast("Groupes indisponibles.", true);
       if(bossViewState.ready){
         renderBossContent();
@@ -4897,6 +4994,9 @@
 
   function bossActionMessage(error){
     const message = String(error && error.message || "");
+    if(isBossSchemaCompatibilityError(error)){
+      return BOSS_SCHEMA_MAINTENANCE_MESSAGE;
+    }
     if(message.includes("RUN_INVALID_WEEK")) return "La semaine de boss a changé. La liste a été actualisée.";
     if(message.includes("AUTH_REQUIRED")) return "Ta session a expiré. Reconnecte-toi pour continuer.";
     if(message.includes("RUN_LIMIT_REACHED")) return "Tes 3 runs de la semaine sont déjà réservés ou terminés.";
@@ -4992,15 +5092,25 @@
 
   let bossTeamPickerRequestId = 0;
   let bossTeamPickerPendingRequestId = null;
+  let bossTeamPickerContext = null;
+
+  function isBossTeamPickerCurrent(requestId){
+    return !!bossTeamPickerContext &&
+      bossTeamPickerContext.requestId === requestId &&
+      requestId === bossTeamPickerRequestId &&
+      bossTeamPickerContext.ownerVersion === bossViewOwnerVersion &&
+      currentUser?.id === bossTeamPickerContext.userId;
+  }
 
   function closeBossTeamPicker(){
     bossTeamPickerRequestId++;
     bossTeamPickerPendingRequestId = null;
+    bossTeamPickerContext = null;
     ModalStack.close($("#bossTeamOverlay"));
   }
 
   function setBossTeamPickerPending(requestId, pending, activeChoice){
-    if(requestId !== bossTeamPickerRequestId) return;
+    if(!isBossTeamPickerCurrent(requestId)) return;
     bossTeamPickerPendingRequestId = pending ? requestId : null;
     $("#bossTeamList").querySelectorAll(".boss-team-choice").forEach(choice => {
       choice.disabled = pending;
@@ -5041,7 +5151,17 @@
     }
   }
 
+  function bossTeamActionFor(sessionId){
+    const card = [...document.querySelectorAll(".boss-card")]
+      .find(item => item.dataset.sessionId === sessionId);
+    return card
+      ? card.querySelector(".boss-member-team-action, .boss-join")
+      : mainTabs.find(button => button.dataset.view === "boss");
+  }
+
   function bossTeamChoice(team, group, requestId){
+    const pickerUserId = bossTeamPickerContext?.userId;
+    const pickerOwnerVersion = bossTeamPickerContext?.ownerVersion;
     const heroes = el("span",{class:"boss-team-choice-heroes"});
     (team.heroes || []).forEach(hero => {
       const character = hero && hero.char ? charOf(hero.char) : null;
@@ -5071,20 +5191,34 @@
         if(
           choice.disabled ||
           bossTeamPickerPendingRequestId !== null ||
-          requestId !== bossTeamPickerRequestId
+          !isBossTeamPickerCurrent(requestId)
         ) return;
         setBossTeamPickerPending(requestId, true, choice);
         try{
           await BossStore.selectTeam(group.id, team.id);
-          if(requestId !== bossTeamPickerRequestId) return;
-          closeBossTeamPicker();
-          await renderBossView({
+          if(!isBossTeamPickerCurrent(requestId)) return;
+          const refreshed = await renderBossView({
             showLoading:false,
             ensureWeek:false,
             showErrorToast:false
           });
+          if(!isBossTeamPickerCurrent(requestId)) return;
+          const restoreTarget = refreshed
+            ? bossTeamActionFor(group.id)
+            : renderBossUnavailableState();
+          closeModalAfterAsyncRefresh(
+            $("#bossTeamOverlay"),
+            closeBossTeamPicker,
+            restoreTarget
+          );
+          if(!refreshed){
+            toast(
+              "Équipe sélectionnée, mais les groupes n’ont pas pu être actualisés.",
+              true
+            );
+          }
         }catch(error){
-          if(requestId !== bossTeamPickerRequestId) return;
+          if(!isBossTeamPickerCurrent(requestId)) return;
           const message = String(error && error.message || "");
           const mustReconcile = [
             "TEAM_NOT_OWNED",
@@ -5100,10 +5234,18 @@
                 showErrorToast:false
               })
             ]);
-            const pickerIsCurrent = requestId === bossTeamPickerRequestId;
+            const pickerIsCurrent = isBossTeamPickerCurrent(requestId);
             const bossRefreshed = bossResult.status === "fulfilled"
               && bossResult.value === true;
             if(!bossRefreshed){
+              if(
+                !pickerIsCurrent &&
+                (
+                  currentUser?.id !== pickerUserId ||
+                  bossViewOwnerVersion !== pickerOwnerVersion ||
+                  bossTeamPickerContext !== null
+                )
+              ) return;
               const retry = renderBossUnavailableState();
               if(pickerIsCurrent){
                 ModalStack.setRestoreFocus($("#bossTeamOverlay"), retry);
@@ -5127,11 +5269,7 @@
                 item.session_id === group.id &&
                 item.owner === currentUser?.id
               );
-            const refreshedCard = [...document.querySelectorAll(".boss-card")]
-              .find(card => card.dataset.sessionId === group.id);
-            const refreshedTrigger = refreshedCard
-              ? refreshedCard.querySelector(".boss-member-team-action, .boss-join")
-              : mainTabs.find(button => button.dataset.view === "boss");
+            const refreshedTrigger = bossTeamActionFor(group.id);
             ModalStack.setRestoreFocus(
               $("#bossTeamOverlay"),
               refreshedTrigger
@@ -5185,13 +5323,19 @@
     const restoreFocus = document.activeElement;
     const requestId = ++bossTeamPickerRequestId;
     bossTeamPickerPendingRequestId = null;
+    bossTeamPickerContext = {
+      requestId,
+      userId,
+      ownerVersion:bossViewOwnerVersion,
+      groupId:group.id
+    };
     const overlay = $("#bossTeamOverlay");
     const list = $("#bossTeamList");
     try{
       const teams = (await Store.refresh())
         .filter(team => team.owner === userId)
         .sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
-      if(requestId !== bossTeamPickerRequestId || currentUser?.id !== userId) return;
+      if(!isBossTeamPickerCurrent(requestId)) return;
       bossTeamPickerTeams(list, teams, group, requestId);
       if(overlay.classList.contains("on")){
         const target = list.querySelector(teams.length ? ".boss-team-choice" : ".btn");
@@ -5205,7 +5349,7 @@
         );
       }
     }catch(error){
-      if(requestId !== bossTeamPickerRequestId || currentUser?.id !== userId) return;
+      if(!isBossTeamPickerCurrent(requestId)) return;
       list.innerHTML = "";
       list.appendChild(el("div",{class:"boss-team-empty"},[
         el("p",{
@@ -5260,8 +5404,17 @@
     return "Chaque membre doit choisir une équipe avant de terminer la run : "+names+".";
   }
 
+  function bossOverCapacityMessage(members){
+    return members.length > 5
+      ? "Groupe au-dessus de la nouvelle limite"
+      : "";
+  }
+
   function bossReportActionMessage(error, mode){
     const message = String(error && error.message || "");
+    if(isBossSchemaCompatibilityError(error)){
+      return BOSS_SCHEMA_MAINTENANCE_MESSAGE;
+    }
     if(message.includes("RUN_INVALID_WEEK")){
       return "La semaine de boss a changé. La liste a été actualisée.";
     }
@@ -5333,6 +5486,7 @@
       context.error = "";
     }
     const scoreValue = $("#bossScore").value;
+    const overCapacityMessage = bossOverCapacityMessage(context.members);
     const missingMessage = bossMissingTeamMessage(context.members);
     const validScore = validBossScore(scoreValue);
     const scoreMessage = validScore
@@ -5350,10 +5504,10 @@
       $("#bossReportCount").removeAttribute("aria-live");
     }
     $("#bossReportError").textContent =
-      context.error || missingMessage || scoreMessage;
+      context.error || overCapacityMessage || missingMessage || scoreMessage;
     $("#bossReportSubmit").disabled =
       context.pending || !validScore || context.serverInvalidScore ||
-      !!missingMessage;
+      !!overCapacityMessage || !!missingMessage;
     $("#bossReportSubmit").setAttribute(
       "aria-busy",
       context.pending ? "true" : "false"
@@ -5366,7 +5520,7 @@
     ModalStack.close($("#bossReportOverlay"));
   }
 
-  function focusBossReportResult(group, mode){
+  function bossReportResultTarget(group, mode){
     let target = null;
     if(mode === "edit"){
       const reportCard = [...document.querySelectorAll(".boss-report-card")]
@@ -5383,7 +5537,45 @@
     if(!target){
       target = mainTabs.find(button => button.dataset.view === "boss");
     }
+    return target;
+  }
+
+  function focusBossReportResult(group, mode){
+    const target = bossReportResultTarget(group, mode);
     if(target && target.focus) target.focus();
+  }
+
+  function reconcileOpenBossReport(){
+    const context = bossReportContext;
+    if(!context) return;
+    if(context.userId !== currentUser?.id){
+      closeBossReport();
+      return;
+    }
+    const group = (bossViewState.allGroups || [])
+      .find(item => item.id === context.group.id);
+    const members = group ? bossReportMembers(group) : [];
+    const report = (bossViewState.reports || [])
+      .find(item => item.session_id === context.group.id) || null;
+    const mine = members.some(member => member.owner === context.userId);
+    const remainsValid = context.mode === "edit"
+      ? !!group && group.status === "archived" && !!report && mine
+      : !!group && group.status === "open" && mine;
+
+    if(!remainsValid){
+      closeModalAfterAsyncRefresh(
+        $("#bossReportOverlay"),
+        closeBossReport,
+        bossReportResultTarget(context.group, context.mode)
+      );
+      return;
+    }
+
+    context.group = group;
+    context.members = members;
+    context.report = report;
+    renderBossReportMembers(context);
+    updateBossReportForm(false);
   }
 
   function openBossReport(group, mode){
@@ -5524,7 +5716,15 @@
     const members = membership.filter(m => m.session_id === g.id);
     const mine = members.some(m => m.owner === currentUser.id);
     const pending = bossPendingActions.has(g.id);
+    const overCapacity = members.length > 5;
     const list = el("div",{class:"boss-members"});
+    if(overCapacity){
+      list.appendChild(el("p",{
+        class:"boss-over-capacity",
+        role:"status",
+        text:"Groupe au-dessus de la nouvelle limite"
+      }));
+    }
     if(members.length){
       members.forEach(member => {
         const isMe = member.owner === currentUser.id;
@@ -5582,7 +5782,7 @@
       text:"Run terminée",
       onclick:()=>openBossReport(g, "complete")
     }) : null;
-    if(completeButton) completeButton.disabled = pending;
+    if(completeButton) completeButton.disabled = pending || overCapacity;
 
     const actions = el("div",{class:"boss-actions"},[
       joinButton,

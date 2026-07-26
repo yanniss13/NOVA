@@ -7,6 +7,14 @@ const path = require("node:path");
 const ROOT = path.resolve(__dirname, "..");
 const sql = fs.readFileSync(path.join(ROOT, "supabase/schema.sql"), "utf8");
 const rollbackPath = path.join(ROOT, "supabase/rollback-boss-reports.sql");
+const design = fs.readFileSync(
+  path.join(ROOT, "docs/superpowers/specs/2026-07-26-boss-run-reports-design.md"),
+  "utf8"
+);
+const plan = fs.readFileSync(
+  path.join(ROOT, "docs/superpowers/plans/2026-07-26-boss-run-reports.md"),
+  "utf8"
+);
 
 function between(source, startMarker, endMarker, label) {
   const start = source.indexOf(startMarker);
@@ -306,6 +314,11 @@ assert.doesNotMatch(
   /\bdrop\s+(?:table|column)\b|\bdelete\s+from\b|\btruncate\b/i,
   "Le retour arrière ne doit effacer aucune donnée"
 );
+assert.match(
+  rollback,
+  /fenêtre de compatibilité[\s\S]*?onglets[\s\S]*?PWA[\s\S]*?maintenance/i,
+  "Le script doit prévenir de la fenêtre de compatibilité des clients récents"
+);
 
 const agents = fs.readFileSync(path.join(ROOT, "AGENTS.md"), "utf8");
 assert.match(
@@ -347,6 +360,41 @@ assert.match(
   agents,
   /policy[\s\S]*?création initiale des seeds[\s\S]*?modifications\/suppressions de sessions[\s\S]*?boss_participation[\s\S]*?boss_run_reports[\s\S]*?flux métier[\s\S]*?via RPC/i,
   "La documentation opérationnelle doit borner exactement l'exception d'insertion des seeds"
+);
+assert.match(
+  agents,
+  /fenêtre de compatibilité[\s\S]*?onglets[\s\S]*?PWA[\s\S]*?maintenance[\s\S]*?Pages[\s\S]*?Mettre à jour[\s\S]*?chaque[\s\S]*?(?:fermer|fermeture)[\s\S]*?(?:rouvrir|réouverture)/i,
+  "La procédure de rollback doit guider les clients récents jusqu’à la version PWA restaurée"
+);
+assert.match(
+  agents,
+  /ancienne interface[\s\S]*?complete_boss_run[\s\S]*?après le rollback/i,
+  "La procédure doit expliquer quand l’ancienne interface redevient compatible"
+);
+assert.doesNotMatch(
+  design,
+  /Toutes les écritures de boss passent par des RPC/i,
+  "La spec ne doit pas nier l’exception d’insertion des six seeds"
+);
+assert.match(
+  design,
+  /boss_sessions_insert[\s\S]*?six groupes courants[\s\S]*?run_no=1[\s\S]*?slots 1[–-]6[\s\S]*?écritures directes[\s\S]*?via RPC/i,
+  "La spec doit borner exactement l’exception d’insertion des six seeds"
+);
+assert.match(
+  design,
+  /suppression d’un\s+compte[\s\S]*?conserve[\s\S]*?participation[\s\S]*?pseudo[\s\S]*?instantané[\s\S]*?droit de correction/i,
+  "La spec doit garantir la conservation historique après suppression d’un compte"
+);
+assert.doesNotMatch(
+  plan,
+  /Toutes les écritures passent par des RPC `security definer`/i,
+  "Le plan ne doit pas nier l’exception d’insertion des six seeds"
+);
+assert.match(
+  plan,
+  /boss_sessions_insert[\s\S]*?six\s+groupes courants[\s\S]*?run_no=1[\s\S]*?slots 1[–-]6[\s\S]*?via RPC/i,
+  "Le plan doit refléter l’exception de seed sans élargir les écritures directes"
 );
 
 console.log("PASS rapports de boss : contrats stricts RPC, RLS, Realtime et rollback");

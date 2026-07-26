@@ -28,7 +28,11 @@ une composition optimale avant d’avoir accumulé suffisamment de résultats.
   terminaison passe par `complete_boss_run_with_report`.
 - `boss_participation` possède déjà les colonnes historiques `team_id`,
   `damage` et `participated`, mais elles ne sont pas utilisées par l’interface.
-- Toutes les écritures de boss passent par des RPC `security definer`.
+- La policy `boss_sessions_insert` autorise uniquement la création initiale
+  des seeds des six groupes courants (`run_no=1`, slots 1–6) par
+  `BossStore.ensureWeek`. Les modifications/suppressions de sessions et les
+  écritures directes dans `boss_participation` et `boss_run_reports` restent
+  interdites ; le flux métier passe via RPC `security definer`.
 - Les groupes acceptent de un à cinq membres et chaque run terminée exige un
   instantané d’équipe propriétaire par participant.
 
@@ -64,6 +68,30 @@ une composition optimale avant d’avoir accumulé suffisamment de résultats.
 
 ## Modèle de données
 
+### Conservation des sessions et participations
+
+Les relations d’archive ne doivent jamais cascader lors de la suppression d’un
+compte ou d’une session :
+
+```sql
+-- boss_sessions
+created_by uuid references auth.users(id) on delete set null
+
+-- boss_participation
+id         uuid primary key default gen_random_uuid()
+session_id uuid not null references public.boss_sessions(id) on delete restrict
+owner      uuid references auth.users(id) on delete set null
+unique (session_id, owner)
+```
+
+La migration ajoute et renseigne l’identité technique `id` avant de remplacer
+l’ancienne clé primaire composée. La contrainte d’unicité `(session_id, owner)`
+préserve le comportement des RPC pour les comptes actifs. La suppression d’un
+compte conserve donc la session, le rapport, chaque participation, son pseudo
+et son instantané ; `owner` devient `null` et le droit de correction disparaît
+naturellement. Les liens de `boss_participation` et `boss_run_reports` vers la
+session utilisent `ON DELETE RESTRICT`.
+
 ### Table `boss_run_reports`
 
 Une ligne représente le rapport d’une session archivée :
@@ -71,7 +99,7 @@ Une ligne représente le rapport d’une session archivée :
 ```sql
 create table if not exists public.boss_run_reports (
   session_id         uuid primary key
-                     references public.boss_sessions(id) on delete cascade,
+                     references public.boss_sessions(id) on delete restrict,
   global_score       bigint not null check (global_score > 0),
   note               text not null default ''
                      check (char_length(note) <= 1000),
@@ -201,7 +229,9 @@ Le nouveau site utilise exclusivement `complete_boss_run_with_report`.
 - Tous les membres authentifiés peuvent lire `boss_run_reports`.
 - Aucune politique d’insertion, modification ou suppression directe n’est
   créée pour cette table.
-- Les écritures passent exclusivement par les RPC.
+- Seule la policy `boss_sessions_insert` permet la création initiale des seeds
+  des six groupes courants (`run_no=1`, slots 1–6). Les autres écritures
+  directes restent interdites et les actions métier passent par les RPC.
 - Les règles existantes de `boss_participation` restent inchangées : lecture
   partagée, aucune écriture directe.
 - Les trois nouvelles RPC sont accordées à `authenticated` et révoquées pour
@@ -330,8 +360,9 @@ Une erreur réseau utilise le toast existant et conserve le formulaire ouvert.
 ## Compatibilité et données existantes
 
 - Le schéma complet reste idempotent et rejouable dans le SQL Editor Supabase.
-- Les sessions et participations existantes ne sont ni transformées ni
-  supprimées.
+- Les sessions et participations existantes ne sont pas supprimées. La
+  migration renseigne seulement les identités techniques manquantes et fait
+  évoluer les contraintes de clés étrangères sans perte de ligne.
 - Les archives sans rapport restent visibles.
 - Les nouvelles colonnes sont nullables pour les anciennes lignes.
 - Le cache local existant ne devient jamais la source d’autorité d’un rapport.
@@ -363,16 +394,25 @@ L’implémentation fournit `supabase/rollback-boss-reports.sql`. Ce script :
 
 Les objets additifs restent dormants après le retour arrière.
 
+L’exécution du script ouvre une fenêtre de compatibilité : les onglets et PWA
+récents continuent temporairement d’appeler les nouvelles RPC révoquées. Ils
+affichent alors le message explicite de maintenance du schéma, sans retenter une
+écriture legacy. Une ancienne interface utilisant `complete_boss_run` retrouve
+son comportement dès le rollback SQL.
+
 ### Procédure après déploiement
 
 Si la fonctionnalité ne convient pas :
 
 1. exécuter `supabase/rollback-boss-reports.sql` dans Supabase ;
 2. faire un `git revert` du commit ou de la fusion de la fonctionnalité ;
-3. pousser le revert et attendre le déploiement Pages testé.
+3. pousser le revert et attendre le déploiement Pages testé ;
+4. dans chaque onglet ou PWA récent encore ouvert, cliquer sur **Mettre à
+   jour** ; sinon le fermer puis le rouvrir pour activer le frontend restauré.
 
-Cet ordre garantit que l’ancienne interface retrouve immédiatement ses RPC.
-Les rapports collectés restent disponibles pour une éventuelle réactivation.
+Cet ordre garantit que l’ancienne interface retrouve immédiatement ses RPC et
+que les clients récents ne restent pas sur une version incompatible. Les
+rapports collectés restent disponibles pour une éventuelle réactivation.
 
 ## Tests
 
@@ -444,6 +484,8 @@ L’activation exige une courte fenêtre de maintenance :
 Pendant ces quelques minutes, une ancienne page peut consulter les groupes,
 mais `Run terminée` répond `REPORT_REQUIRED`. Si le déploiement Pages échoue,
 le script SQL de retour arrière restaure immédiatement l’ancien comportement.
+Les onglets/PWA récents affichent la maintenance jusqu’au déploiement du revert
+et doivent ensuite activer la mise à jour PWA restaurée.
 
 ## Critères d’acceptation
 

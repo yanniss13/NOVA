@@ -91,7 +91,7 @@ create policy roster_delete on public.roster_characters for delete to authentica
 -- Une ligne boss_sessions represente une run precise, et non un groupe permanent.
 create table if not exists public.boss_sessions (
   id           uuid primary key default gen_random_uuid(),
-  created_by   uuid not null references auth.users(id) on delete cascade,
+  created_by   uuid references auth.users(id) on delete set null,
   title        text not null,
   boss_name    text,
   session_date date,
@@ -153,21 +153,22 @@ create unique index if not exists boss_sessions_one_open_slot_idx
 
 -- Appartenance d'un membre à un groupe (rejoindre / quitter). "Juste rejoindre".
 create table if not exists public.boss_participation (
-  session_id   uuid not null references public.boss_sessions(id) on delete cascade,
-  owner        uuid not null references auth.users(id) on delete cascade,
+  id           uuid primary key default gen_random_uuid(),
+  session_id   uuid not null references public.boss_sessions(id) on delete restrict,
+  owner        uuid references auth.users(id) on delete set null,
   pseudo       text,
   element      text,               -- élément assigné
   team_id      uuid,               -- équipe utilisée (référence libre vers teams.id)
   damage       bigint,             -- dégâts (suivi après)
   participated boolean not null default false,
   updated_at   timestamptz not null default now(),
-  primary key (session_id, owner)
+  constraint boss_participation_session_owner_key unique (session_id, owner)
 );
 alter table public.boss_participation add column if not exists team_snapshot jsonb;
 
 create table if not exists public.boss_run_reports (
   session_id         uuid primary key
-                     references public.boss_sessions(id) on delete cascade,
+                     references public.boss_sessions(id) on delete restrict,
   global_score       bigint not null check (global_score > 0),
   note               text not null default ''
                      check (char_length(note) <= 1000),
@@ -178,6 +179,107 @@ create table if not exists public.boss_run_reports (
   updated_by_pseudo  text,
   updated_at         timestamptz
 );
+
+-- Migration non destructive des archives de boss :
+-- - les comptes supprimés sont anonymisés sans retirer sessions/participations ;
+-- - une identité technique remplace la clé métier devenue nullable ;
+-- - les liens d'archive interdisent toute suppression en cascade d'une session.
+alter table public.boss_sessions
+  alter column created_by drop not null;
+alter table public.boss_sessions
+  drop constraint if exists boss_sessions_created_by_fkey;
+alter table public.boss_sessions
+  add constraint boss_sessions_created_by_fkey
+  foreign key (created_by) references auth.users(id) on delete set null;
+
+alter table public.boss_participation
+  add column if not exists id uuid;
+alter table public.boss_participation
+  alter column id set default gen_random_uuid();
+update public.boss_participation
+   set id = gen_random_uuid()
+ where id is null;
+alter table public.boss_participation
+  alter column id set not null;
+
+do $$
+declare
+  v_primary_key name;
+  v_id_attribute smallint;
+begin
+  select attnum::smallint
+    into v_id_attribute
+    from pg_attribute
+   where attrelid = 'public.boss_participation'::regclass
+     and attname = 'id'
+     and not attisdropped;
+
+  select conname
+    into v_primary_key
+    from pg_constraint
+   where conrelid = 'public.boss_participation'::regclass
+     and contype = 'p';
+
+  if v_primary_key is not null and not exists (
+    select 1
+      from pg_constraint
+     where conrelid = 'public.boss_participation'::regclass
+       and contype = 'p'
+       and conkey = array[v_id_attribute]::smallint[]
+  ) then
+    execute format(
+      'alter table public.boss_participation drop constraint %I',
+      v_primary_key
+    );
+  end if;
+
+  if not exists (
+    select 1
+      from pg_constraint
+     where conrelid = 'public.boss_participation'::regclass
+       and contype = 'p'
+       and conkey = array[v_id_attribute]::smallint[]
+  ) then
+    alter table public.boss_participation
+      add constraint boss_participation_pkey primary key (id);
+  end if;
+end
+$$;
+
+alter table public.boss_participation
+  alter column owner drop not null;
+alter table public.boss_participation
+  drop constraint if exists boss_participation_owner_fkey;
+alter table public.boss_participation
+  add constraint boss_participation_owner_fkey
+  foreign key (owner) references auth.users(id) on delete set null;
+alter table public.boss_participation
+  drop constraint if exists boss_participation_session_id_fkey;
+alter table public.boss_participation
+  add constraint boss_participation_session_id_fkey
+  foreign key (session_id) references public.boss_sessions(id) on delete restrict;
+
+do $$
+begin
+  if not exists (
+    select 1
+      from pg_constraint
+     where conrelid = 'public.boss_participation'::regclass
+       and conname = 'boss_participation_session_owner_key'
+       and contype = 'u'
+  ) then
+    alter table public.boss_participation
+      add constraint boss_participation_session_owner_key
+      unique (session_id, owner);
+  end if;
+end
+$$;
+
+alter table public.boss_run_reports
+  drop constraint if exists boss_run_reports_session_id_fkey;
+alter table public.boss_run_reports
+  add constraint boss_run_reports_session_id_fkey
+  foreign key (session_id) references public.boss_sessions(id) on delete restrict;
 
 create index if not exists boss_participation_session_idx on public.boss_participation(session_id);
 
