@@ -816,14 +816,16 @@
     text-transform:uppercase;color:var(--muted)
   }
   .boss-report-score{
-    display:block;margin-top:3px;font-family:var(--display);
+    display:block;min-width:0;max-width:100%;margin-top:3px;
+    font-family:var(--display);
     font-size:clamp(28px,6vw,40px);font-weight:700;letter-spacing:.035em;
-    line-height:1.05;color:var(--gold-bright)
+    line-height:1.05;color:var(--gold-bright);overflow-wrap:anywhere
   }
   .boss-report-note{
-    margin:0 0 10px;padding:10px 12px;border:1px solid var(--line-soft);
+    min-width:0;max-width:100%;margin:0 0 10px;padding:10px 12px;
+    border:1px solid var(--line-soft);
     border-radius:8px;color:var(--parchment);font-size:13px;line-height:1.5;
-    white-space:pre-wrap
+    white-space:pre-wrap;overflow-wrap:anywhere
   }
   .boss-report-meta{display:flex;flex-direction:column;gap:2px;color:var(--muted);font-size:11px}
   .boss-report-participants{
@@ -4827,9 +4829,13 @@
     }, options || {});
     const body = $("#bossBody");
     ensureBossViewOwner();
+    const renderUserId = currentUser?.id || "";
     const renderId = ++bossRenderIssuedId;
+    const isCurrentRender = () =>
+      renderId === bossRenderIssuedId &&
+      currentUser?.id === renderUserId;
 
-    if(!currentUser){
+    if(!renderUserId){
       $("#bossCount").textContent = "";
       body.className = "";
       body.innerHTML = "";
@@ -4853,10 +4859,10 @@
         BossStore.listMembership(allGroups.map(group => group.id)),
         BossStore.listReports()
       ]);
-      if(renderId < bossRenderAppliedId) return true;
+      if(!isCurrentRender()) return true;
       bossRenderAppliedId = renderId;
       bossViewState = {
-        userId:currentUser.id,
+        userId:renderUserId,
         week,
         allGroups,
         membership,
@@ -4866,7 +4872,7 @@
       renderBossContent();
       return true;
     }catch(error){
-      if(renderId < bossRenderAppliedId) return true;
+      if(!isCurrentRender()) return true;
       if(settings.showErrorToast) toast("Groupes indisponibles.", true);
       if(bossViewState.ready){
         renderBossContent();
@@ -5256,6 +5262,9 @@
 
   function bossReportActionMessage(error, mode){
     const message = String(error && error.message || "");
+    if(message.includes("RUN_INVALID_WEEK")){
+      return "La semaine de boss a changé. La liste a été actualisée.";
+    }
     if(message.includes("TEAM_REQUIRED")){
       const names = message.split("TEAM_REQUIRED:")[1];
       return "Chaque membre doit choisir une équipe avant de terminer la run"+
@@ -5454,8 +5463,28 @@
       }
     }catch(error){
       if(!isCurrent()) return;
+      const errorCode = String(error && error.message || "");
+      const actionMessage = bossReportActionMessage(error, context.mode);
+      if(errorCode.includes("RUN_INVALID_WEEK")){
+        const actionUserId = submission.userId;
+        closeBossReport();
+        toast(actionMessage, true);
+        const refreshed = await renderBossView({
+          showLoading:false,
+          ensureWeek:true,
+          showErrorToast:false
+        });
+        if(currentUser?.id !== actionUserId) return;
+        if(!refreshed){
+          const retry = renderBossUnavailableState();
+          retry.focus();
+          return;
+        }
+        focusBossReportResult(submission.group, submission.mode);
+        return;
+      }
       context.pending = false;
-      context.error = bossReportActionMessage(error, context.mode);
+      context.error = actionMessage;
       updateBossReportForm(false);
       $("#bossReportError").focus?.();
     }

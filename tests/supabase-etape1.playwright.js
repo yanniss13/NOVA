@@ -24,11 +24,55 @@ const { chromium } = require("playwright");
       1
     );
 
+    const anonymousReportRead = await page.evaluate(async () => {
+      window.__fakeSupabaseState.boss_run_reports.push({
+        session_id:"boss-report-rls-probe",
+        global_score:1,
+        note:"",
+        created_by:"user-1",
+        created_by_pseudo:"Yannis",
+        created_at:"2026-07-25T08:00:00.000Z",
+        updated_by:null,
+        updated_by_pseudo:null,
+        updated_at:null
+      });
+      const { data, error } = await window.__fakeSupabaseClient
+        .from("boss_run_reports")
+        .select("*");
+      return {
+        count:(data || []).length,
+        error:error && error.message
+      };
+    });
+    assert.deepEqual(
+      anonymousReportRead,
+      { count:0, error:null },
+      "La politique RLS doit masquer tous les rapports sans session authentifiée"
+    );
+
     await page.locator("#authEmail").fill("yannis@example.test");
     await page.locator("#authPassword").fill("mot-de-passe-test");
     await page.getByRole("button", { name:"Se connecter", exact:true }).click();
 
     await page.locator("#accountPseudo").getByText("Yannis", { exact:true }).waitFor();
+    const authenticatedReportRead = await page.evaluate(async () => {
+      const { data, error } = await window.__fakeSupabaseClient
+        .from("boss_run_reports")
+        .select("*");
+      window.__fakeSupabaseState.boss_run_reports =
+        window.__fakeSupabaseState.boss_run_reports.filter(item =>
+          item.session_id !== "boss-report-rls-probe"
+        );
+      return {
+        count:(data || []).length,
+        error:error && error.message
+      };
+    });
+    assert.deepEqual(
+      authenticatedReportRead,
+      { count:1, error:null },
+      "Un membre authentifié doit lire les rapports partagés"
+    );
     assert.equal(await authOverlay.evaluate(el => el.classList.contains("on")), false);
     await page.getByText("À jour", { exact:true }).waitFor();
     assert.equal(
@@ -623,6 +667,16 @@ const { chromium } = require("playwright");
       window.__fakeSupabaseState.bossReadFailureOnce === null
     );
     await page.evaluate(() => window.__fakeSupabaseReleaseBossRead());
+    await page.waitForFunction(() => !window.__fakeSupabaseState.bossReadHold);
+    await page.waitForTimeout(30);
+    assert.doesNotMatch(
+      await page.locator("#bossBody").textContent(),
+      /Merlin/,
+      "Une lecture ancienne ne redevient pas courante après l’échec du rendu suivant"
+    );
+    await page.evaluate(() =>
+      window.__fakeSupabaseEmit("boss_participation", "UPDATE")
+    );
     await page.locator("#bossBody").getByText("Merlin", { exact:true }).waitFor();
     await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
@@ -1592,6 +1646,7 @@ const { chromium } = require("playwright");
     });
     assert.equal(legacyCompleteError, "REPORT_REQUIRED");
 
+    const bossReportOverlay = page.locator("#bossReportOverlay");
     const missingTeamError = await page.evaluate(async () => {
       const run = window.__fakeSupabaseState.boss_sessions.find(item =>
         item.slot === 2 && item.run_no === 1
@@ -1607,6 +1662,26 @@ const { chromium } = require("playwright");
       return result.error && result.error.message;
     });
     assert.equal(missingTeamError, "TEAM_REQUIRED:Yannis");
+    const missingTeamGroup = page.locator(".boss-card", {
+      hasText:"Groupe 2 · Run 1"
+    });
+    await missingTeamGroup.getByRole("button", {
+      name:"Run terminée",
+      exact:true
+    }).click();
+    await bossReportOverlay.waitFor({ state:"visible" });
+    assert.match(
+      await page.locator("#bossReportError").textContent(),
+      /Chaque membre doit choisir une équipe.*Yannis/
+    );
+    await page.locator("#bossScore").fill("12450800");
+    assert.equal(
+      await page.locator("#bossReportSubmit").isDisabled(),
+      true,
+      "Une équipe manquante doit bloquer la terminaison dans l’interface"
+    );
+    await page.locator("#bossReportClose").click();
+    await bossReportOverlay.waitFor({ state:"hidden" });
 
     const overCapacityError = await page.evaluate(async () => {
       const state = window.__fakeSupabaseState;
@@ -1714,6 +1789,94 @@ const { chromium } = require("playwright");
     });
     assert.equal(noteTooLongError, "NOTE_TOO_LONG");
 
+    const fiveMemberRunId = await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const run = state.boss_sessions.find(item =>
+        item.slot === 4 && item.run_no === 1
+      );
+      const mine = state.boss_participation.find(item =>
+        item.session_id === run.id && item.owner === "user-1"
+      );
+      for(let index = 1; index <= 4; index++){
+        state.boss_participation.push({
+          session_id:run.id,
+          owner:"five-user-" + index,
+          pseudo:"Membre " + index,
+          team_id:mine.team_id,
+          team_snapshot:JSON.parse(JSON.stringify(mine.team_snapshot)),
+          updated_at:"2026-07-25T10:25:00.000Z"
+        });
+      }
+      window.__fakeSupabaseEmit("boss_participation", "INSERT");
+      return run.id;
+    });
+    const fiveMemberCard = page.locator(".boss-card", {
+      hasText:"Groupe 4 · Run 1"
+    });
+    await fiveMemberCard.getByText("5/5 joueurs", { exact:true }).waitFor();
+    await fiveMemberCard.getByRole("button", {
+      name:"Run terminée",
+      exact:true
+    }).click();
+    await bossReportOverlay.waitFor({ state:"visible" });
+    assert.equal(
+      await page.locator("#bossReportMembers .boss-report-member").count(),
+      5
+    );
+    await page.locator("#bossScore").fill("5000000");
+    await page.locator("#bossReportNote").fill("Cinq membres.");
+    await page.locator("#bossReportSubmit").click();
+    await bossReportOverlay.waitFor({ state:"hidden" });
+    await page.locator(".boss-card", { hasText:"Groupe 4 · Run 2" }).waitFor();
+    const fiveMemberCompletion = await page.evaluate(id => {
+      const state = window.__fakeSupabaseState;
+      const call = state.rpcCalls
+        .filter(item => item.name === "complete_boss_run_with_report")
+        .at(-1);
+      return {
+        status:state.boss_sessions.find(item => item.id === id).status,
+        reportScore:state.boss_run_reports
+          .find(item => item.session_id === id)?.global_score,
+        participants:state.boss_participation
+          .filter(item => item.session_id === id).length,
+        args:call && call.args
+      };
+    }, fiveMemberRunId);
+    assert.deepEqual(
+      fiveMemberCompletion,
+      {
+        status:"archived",
+        reportScore:5000000,
+        participants:5,
+        args:{
+          p_session_id:fiveMemberRunId,
+          p_global_score:"5000000",
+          p_note:"Cinq membres."
+        }
+      },
+      "Un groupe exactement à 5 doit être archivé par le parcours UI/RPC"
+    );
+    await page.evaluate(id => {
+      const state = window.__fakeSupabaseState;
+      const run = state.boss_sessions.find(item => item.id === id);
+      run.status = "open";
+      run.completed_at = null;
+      state.boss_sessions = state.boss_sessions.filter(item =>
+        !(item.slot === run.slot && item.run_no === 2)
+      );
+      state.boss_run_reports = state.boss_run_reports.filter(item =>
+        item.session_id !== id
+      );
+      state.boss_participation = state.boss_participation.filter(item =>
+        item.session_id !== id || !item.owner.startsWith("five-user-")
+      );
+      window.__fakeSupabaseEmit("boss_sessions", "UPDATE");
+      window.__fakeSupabaseEmit("boss_participation", "DELETE");
+      window.__fakeSupabaseEmit("boss_run_reports", "DELETE");
+    }, fiveMemberRunId);
+    await page.locator(".boss-card", { hasText:"Groupe 4 · Run 1" })
+      .getByText("1/5 joueurs", { exact:true }).waitFor();
+
     const archivedId = await page.evaluate(() =>
       window.__fakeSupabaseState.boss_sessions.find(item =>
         item.slot === 2 && item.run_no === 1
@@ -1721,7 +1884,6 @@ const { chromium } = require("playwright");
     );
     await groupTwoReportCard
       .getByRole("button", { name:"Run terminée", exact:true }).click();
-    const bossReportOverlay = page.locator("#bossReportOverlay");
     await bossReportOverlay.waitFor({ state:"visible" });
     assert.equal(await bossReportOverlay.getAttribute("aria-hidden"), "false");
     await page.waitForFunction(() => document.activeElement.id === "bossScore");
@@ -1736,6 +1898,37 @@ const { chromium } = require("playwright");
       await page.locator("#bossReportSubmit").isDisabled(),
       true,
       "Un score hors de la précision sûre doit être refusé"
+    );
+    const invalidUiScoreCalls = await page.evaluate(() =>
+      window.__fakeSupabaseState.rpcCalls.filter(call =>
+        call.name === "complete_boss_run_with_report"
+      ).length
+    );
+    for(const invalidScore of ["12.5", "+12", "-12", "12 000"]){
+      await page.locator("#bossScore").fill(invalidScore);
+      assert.equal(
+        await page.locator("#bossReportSubmit").isDisabled(),
+        true,
+        `Le score ${JSON.stringify(invalidScore)} doit être refusé`
+      );
+      assert.equal(
+        await page.locator("#bossScore").getAttribute("aria-invalid"),
+        "true"
+      );
+      await page.evaluate(() => document.querySelector("#bossReportSubmit").click());
+    }
+    assert.equal(
+      await page.evaluate(() => window.__fakeSupabaseState.rpcCalls.filter(call =>
+        call.name === "complete_boss_run_with_report"
+      ).length),
+      invalidUiScoreCalls,
+      "Décimales, signes et espaces ne doivent déclencher aucune RPC"
+    );
+    await page.locator("#bossScore").fill("9007199254740991");
+    assert.equal(
+      await page.locator("#bossReportSubmit").isEnabled(),
+      true,
+      "La borne MAX_SAFE_INTEGER doit rester acceptée"
     );
     await page.locator("#bossScore").fill("12450800");
     assert.equal(await page.locator("#bossReportSubmit").isDisabled(), false);
@@ -1781,6 +1974,60 @@ const { chromium } = require("playwright");
     assert.equal(await page.locator("#bossScore").inputValue(), "12450800");
     assert.equal(await page.locator("#bossReportNote").inputValue(), "Rotation propre.");
     assert.equal(await page.locator("#bossReportSubmit").isEnabled(), true);
+
+    await page.evaluate(id => {
+      const state = window.__fakeSupabaseState;
+      const mine = state.boss_participation.find(item =>
+        item.session_id === id && item.owner === "user-1"
+      );
+      state.boss_participation.push({
+        session_id:id,
+        owner:"week-reset-user",
+        pseudo:"Arthur reset",
+        team_id:mine.team_id,
+        team_snapshot:JSON.parse(JSON.stringify(mine.team_snapshot)),
+        updated_at:"2026-07-25T10:29:00.000Z"
+      });
+      state.bossRpcFailureOnce = {
+        name:"complete_boss_run_with_report",
+        message:"RUN_INVALID_WEEK"
+      };
+    }, archivedId);
+    await page.locator("#bossReportSubmit").click();
+    await bossReportOverlay.waitFor({ state:"hidden", timeout:3000 });
+    await page.waitForFunction(() => {
+      const toast = document.querySelector("#toast");
+      return toast &&
+        toast.textContent.includes(
+          "La semaine de boss a changé. La liste a été actualisée."
+        );
+    });
+    assert.doesNotMatch(
+      await page.locator("#toast").textContent(),
+      /RUN_INVALID_WEEK/
+    );
+    await page.locator("#bossBody").getByText(
+      "Arthur reset",
+      { exact:true }
+    ).waitFor();
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.boss_participation =
+        window.__fakeSupabaseState.boss_participation.filter(item =>
+          item.owner !== "week-reset-user"
+        );
+      window.__fakeSupabaseEmit("boss_participation", "DELETE");
+    });
+    await page.locator("#bossBody").getByText(
+      "Arthur reset",
+      { exact:true }
+    ).waitFor({ state:"detached" });
+    await groupTwoReportCard.getByRole("button", {
+      name:"Run terminée",
+      exact:true
+    }).click();
+    await bossReportOverlay.waitFor({ state:"visible" });
+    await page.locator("#bossScore").fill("12450800");
+    await page.locator("#bossReportNote").fill("Rotation propre.");
 
     const reportCallsBeforeSubmit = await page.evaluate(() =>
       window.__fakeSupabaseState.rpcCalls.filter(call =>
@@ -1981,6 +2228,100 @@ const { chromium } = require("playwright");
     );
     assert.equal(await page.locator("#bossScore").inputValue(), "12450800");
     assert.equal(await page.locator("#bossReportNote").inputValue(), "Rotation propre.");
+    const exactLimitNote = "W".repeat(1000);
+    await page.locator("#bossScore").fill("9007199254740991");
+    await page.locator("#bossReportNote").fill(exactLimitNote);
+    assert.equal(
+      await page.locator("#bossReportCount").textContent(),
+      "1000/1000"
+    );
+    assert.equal(await page.locator("#bossReportSubmit").isEnabled(), true);
+    await page.locator("#bossReportSubmit").click();
+    await bossReportOverlay.waitFor({ state:"hidden" });
+    await page.waitForFunction(id => {
+      const report = window.__fakeSupabaseState.boss_run_reports
+        .find(item => item.session_id === id);
+      return report &&
+        report.global_score === Number.MAX_SAFE_INTEGER &&
+        report.note.length === 1000;
+    }, archivedId);
+    const exactLimitCorrection = await page.evaluate(id => {
+      const state = window.__fakeSupabaseState;
+      const call = state.rpcCalls
+        .filter(item => item.name === "update_boss_run_report")
+        .at(-1);
+      const report = state.boss_run_reports.find(item =>
+        item.session_id === id
+      );
+      return {
+        score:report.global_score,
+        noteLength:report.note.length,
+        rpcScore:call && call.args.p_global_score,
+        rpcNoteLength:call && call.args.p_note.length
+      };
+    }, archivedId);
+    assert.deepEqual(
+      exactLimitCorrection,
+      {
+        score:Number.MAX_SAFE_INTEGER,
+        noteLength:1000,
+        rpcScore:"9007199254740991",
+        rpcNoteLength:1000
+      },
+      "MAX_SAFE_INTEGER et une note de 1 000 caractères doivent traverser UI et RPC sans altération"
+    );
+    for(const width of [320, 390]){
+      await page.setViewportSize({ width, height:844 });
+      const longNoteMetrics = await page.evaluate(id => {
+        const root = document.scrollingElement;
+        const card = [...document.querySelectorAll(".boss-report-card")]
+          .find(item => item.dataset.sessionId === id);
+        const note = card.querySelector(".boss-report-note");
+        const score = card.querySelector(".boss-report-score");
+        const noteRect = note.getBoundingClientRect();
+        const scoreRect = score.getBoundingClientRect();
+        const cardRect = card.getBoundingClientRect();
+        return {
+          viewport:document.documentElement.clientWidth,
+          documentOverflow:root.scrollWidth - root.clientWidth,
+          cardClientWidth:card.clientWidth,
+          cardScrollWidth:card.scrollWidth,
+          noteOverflow:note.scrollWidth - note.clientWidth,
+          noteRight:noteRect.right,
+          noteWidth:noteRect.width,
+          scoreOverflow:score.scrollWidth - score.clientWidth,
+          scoreRight:scoreRect.right,
+          scoreWidth:scoreRect.width,
+          scoreFont:getComputedStyle(score).fontFamily,
+          cardRight:cardRect.right
+        };
+      }, archivedId);
+      assert.ok(
+        longNoteMetrics.documentOverflow <= 1 &&
+          longNoteMetrics.cardScrollWidth -
+            longNoteMetrics.cardClientWidth <= 1 &&
+          longNoteMetrics.noteOverflow <= 1 &&
+          longNoteMetrics.noteRight <= longNoteMetrics.cardRight + 1 &&
+          longNoteMetrics.scoreOverflow <= 1,
+        `La note et le score maximal doivent rester contenus à ${width}px : ` +
+          JSON.stringify(longNoteMetrics)
+      );
+    }
+    await page.setViewportSize({ width:390, height:844 });
+
+    await archivedReportCard.getByRole("button", {
+      name:"Corriger le rapport",
+      exact:true
+    }).click();
+    await bossReportOverlay.waitFor({ state:"visible" });
+    assert.equal(
+      await page.locator("#bossScore").inputValue(),
+      "9007199254740991"
+    );
+    assert.equal(
+      (await page.locator("#bossReportNote").inputValue()).length,
+      1000
+    );
     await page.locator("#bossScore").fill("13000001");
     await page.locator("#bossReportNote").fill("Rotation corrigée.");
     await page.locator("#bossReportSubmit").click();
@@ -2060,6 +2401,106 @@ const { chromium } = require("playwright");
       /Version de lecture ancienne/,
       "Une lecture de rapport tardive ne doit pas remplacer un rendu plus récent"
     );
+
+    await page.evaluate(id => {
+      const report = window.__fakeSupabaseState.boss_run_reports
+        .find(item => item.session_id === id);
+      report.note = "Succès ancien à ignorer.";
+      window.__fakeSupabaseQueueBossRead(
+        "boss-old-success",
+        "boss_run_reports"
+      );
+      window.__fakeSupabaseQueueBossRead(
+        "boss-new-success",
+        "boss_run_reports"
+      );
+    }, archivedId);
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.locator('.tab[data-view="boss"]').click();
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadQueue
+        .some(item => item.token === "boss-old-success" && item.claimed)
+    );
+    await page.evaluate(id => {
+      window.__fakeSupabaseState.boss_run_reports
+        .find(item => item.session_id === id).note =
+          "Succès récent encore en attente.";
+    }, archivedId);
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.locator('.tab[data-view="boss"]').click();
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadQueue
+        .some(item => item.token === "boss-new-success" && item.claimed)
+    );
+    await page.evaluate(() =>
+      window.__fakeSupabaseReleaseQueuedBossRead("boss-old-success")
+    );
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadQueue
+        .some(item => item.token === "boss-old-success" && item.finished)
+    );
+    await page.waitForTimeout(30);
+    assert.doesNotMatch(
+      await page.locator("#bossBody").textContent(),
+      /Succès ancien à ignorer/,
+      "Un succès ancien ne doit pas modifier le DOM pendant le rendu plus récent"
+    );
+    await page.evaluate(() =>
+      window.__fakeSupabaseReleaseQueuedBossRead("boss-new-success")
+    );
+    await page.getByText("Succès récent encore en attente.", {
+      exact:true
+    }).waitFor();
+
+    const toastBeforeStaleError = await page.locator("#toast").textContent();
+    await page.evaluate(() => {
+      window.__fakeSupabaseQueueBossRead(
+        "boss-old-error",
+        "boss_run_reports",
+        "OLD_BOSS_READ_FAILURE"
+      );
+      window.__fakeSupabaseQueueBossRead(
+        "boss-new-after-error",
+        "boss_run_reports"
+      );
+    });
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.locator('.tab[data-view="boss"]').click();
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadQueue
+        .some(item => item.token === "boss-old-error" && item.claimed)
+    );
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.locator('.tab[data-view="boss"]').click();
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadQueue
+        .some(item => item.token === "boss-new-after-error" && item.claimed)
+    );
+    await page.evaluate(() =>
+      window.__fakeSupabaseReleaseQueuedBossRead("boss-old-error")
+    );
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadQueue
+        .some(item => item.token === "boss-old-error" && item.finished)
+    );
+    await page.waitForTimeout(30);
+    assert.equal(
+      await page.locator("#toast").textContent(),
+      toastBeforeStaleError,
+      "Une erreur ancienne ne doit pas remplacer le toast courant"
+    );
+    assert.doesNotMatch(
+      await page.locator("#bossBody").textContent(),
+      /Groupes indisponibles/,
+      "Une erreur ancienne ne doit pas rendre un état indisponible"
+    );
+    await page.evaluate(() =>
+      window.__fakeSupabaseReleaseQueuedBossRead("boss-new-after-error")
+    );
+    await page.getByText("Succès récent encore en attente.", {
+      exact:true
+    }).waitFor();
+    await page.evaluate(() => window.__fakeSupabaseClearBossReadQueue());
 
     await page.evaluate(() => window.__fakeSupabaseApplySession({
       id:"user-2",
@@ -2242,6 +2683,22 @@ const { chromium } = require("playwright");
       (await bossStats.locator(".boss-stat-evolution").textContent())
         .replace(/\s+/g, " ").trim(),
       "+4 000 001 par rapport à la semaine précédente"
+    );
+    await page.evaluate(previousId => {
+      window.__fakeSupabaseState.boss_run_reports
+        .find(item => item.session_id === previousId).global_score =
+          "20000003";
+      window.__fakeSupabaseEmit("boss_run_reports", "UPDATE");
+    }, statsFixtures.previousId);
+    await page.waitForFunction(() =>
+      document.querySelector(".boss-stat-evolution")?.textContent
+        .includes("−6")
+    );
+    assert.equal(
+      (await bossStats.locator(".boss-stat-evolution").textContent())
+        .replace(/\s+/g, " ").trim(),
+      "−6 000 002 par rapport à la semaine précédente",
+      "Une baisse hebdomadaire doit conserver son signe et sa valeur exacte"
     );
     await page.locator("details.boss-archive:not(.boss-archive-current)>summary")
       .click();
@@ -2500,6 +2957,7 @@ async function installFakeSupabase(page){
       bossRpcFailureOnce:null,
       bossRpcHold:null,
       bossReadHold:null,
+      bossReadQueue:[],
       bossReadFailureOnce:null,
       profileReadHold:null
     };
@@ -2767,7 +3225,10 @@ async function installFakeSupabase(page){
         }
 
         if(operation === "select"){
-          const selected = clone(rows.filter(matchRow));
+          const selected =
+            table === "boss_run_reports" && !state.session
+              ? []
+              : clone(rows.filter(matchRow));
           if(sorts.length){
             selected.sort((a,b) => {
               for(const [col,dir] of sorts){
@@ -2779,6 +3240,17 @@ async function installFakeSupabase(page){
               }
               return 0;
             });
+          }
+          const queuedHold = state.bossReadQueue.find(item =>
+            !item.claimed && (!item.table || item.table === table)
+          );
+          if(queuedHold){
+            queuedHold.claimed = true;
+            await new Promise(resolve => { queuedHold.release = resolve; });
+            queuedHold.finished = true;
+            if(queuedHold.error){
+              return { data:null, error:{ message:queuedHold.error } };
+            }
           }
           if(state.bossReadFailureOnce &&
             (!state.bossReadFailureOnce.table || state.bossReadFailureOnce.table === table)){
@@ -2939,6 +3411,25 @@ async function installFakeSupabase(page){
       if(!hold || typeof hold.release !== "function") return false;
       hold.release();
       return true;
+    };
+    window.__fakeSupabaseQueueBossRead = (token, table, error) => {
+      state.bossReadQueue.push({
+        token,
+        table,
+        error:error || null,
+        claimed:false,
+        release:null,
+        finished:false
+      });
+    };
+    window.__fakeSupabaseReleaseQueuedBossRead = token => {
+      const hold = state.bossReadQueue.find(item => item.token === token);
+      if(!hold || typeof hold.release !== "function") return false;
+      hold.release();
+      return true;
+    };
+    window.__fakeSupabaseClearBossReadQueue = () => {
+      state.bossReadQueue = state.bossReadQueue.filter(item => !item.finished);
     };
     window.__fakeSupabaseHoldProfileRead = userId => {
       state.profileReadHold = { userId, release:null };
