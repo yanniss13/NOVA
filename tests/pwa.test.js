@@ -26,11 +26,31 @@ manifest.icons.forEach(icon => {
 });
 assert.ok(fs.existsSync(path.join(ROOT, "icons/apple-touch-icon-180.png")), "apple-touch-icon absent");
 
-// 3) sw.js : ne met JAMAIS en cache Supabase / le CDN (données live) et gère un cache versionné.
+// 3) sw.js : cache versionné par le commit déployé, mise à jour explicite,
+//    et jamais de cache pour Supabase / le CDN (données live).
 const sw = read("sw.js");
-assert.match(sw, /const CACHE = "conf7ds-v\d+";/, "cache versionné requis");
+assert.match(
+  sw,
+  /const BUILD_VERSION = "__BUILD_VERSION__";/,
+  "marqueur de version de déploiement requis"
+);
+assert.match(
+  sw,
+  /const CACHE = CACHE_PREFIX \+ BUILD_VERSION;/,
+  "le cache doit dépendre du commit déployé"
+);
+assert.doesNotMatch(
+  sw.match(/self\.addEventListener\("install"[\s\S]*?\n\}\);/)?.[0] || "",
+  /skipWaiting/,
+  "une mise à jour ne doit pas s'activer sans accord"
+);
+assert.match(sw, /event\.data\.type === "SKIP_WAITING"/);
+assert.match(sw, /CORE_PATHS/);
+assert.match(sw, /isImage/);
+assert.match(sw, /networkFirst/);
+assert.match(sw, /staleWhileRevalidate/);
 assert.match(sw, /supabase\\.co/, "exclusion Supabase requise");
 assert.match(sw, /jsdelivr\\.net/, "exclusion CDN requise");
 assert.match(sw, /caches\.keys\(\)/, "purge des anciens caches requise (activate)");
 
-console.log("PASS PWA : manifest, icônes, service worker");
+console.log("PASS PWA : manifest, icônes, cycle de mise à jour explicite du service worker");

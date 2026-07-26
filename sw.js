@@ -1,39 +1,107 @@
-/* Service worker — Confrérie 7DS (PWA #2)
-   Objectif : chargement instantané + hors-ligne du builder, SANS figer la page
-   (le bug de cache Safari qu'on a eu). Stratégie :
-   - HTML (navigation) : network-first -> toujours frais en ligne, repli cache hors-ligne.
-   - autres assets même origine : stale-while-revalidate.
+/* Service worker — Confrérie 7DS (PWA #3)
+   Objectif : chargement instantané + hors-ligne du builder, sans jamais figer la
+   page ni activer une nouvelle version dans le dos du membre. Stratégie :
+   - navigation : network-first -> toujours frais en ligne, repli cache hors-ligne.
+   - fichiers applicatifs (CORE_PATHS) : network-first, pour ne jamais mélanger un
+     nouveau document avec d'anciens scripts.
+   - images locales : stale-while-revalidate (noms stables, sans logique JS).
    - Supabase et CDN supabase-js : network-only (jamais mis en cache).
-   Bump CACHE à chaque déploiement significatif pour purger l'ancien cache. */
-const CACHE = "conf7ds-v3";
-const ASSETS = [
+   La version du cache vient du commit déployé : `__BUILD_VERSION__` est remplacé
+   par le SHA dans la copie publiée par l'Action GitHub Pages. Le fichier source
+   du dépôt garde le marqueur littéral — ne pas le remplacer à la main.
+   Une nouvelle version reste en attente jusqu'au message `SKIP_WAITING` envoyé
+   par le bandeau de mise à jour d'index.html. */
+const BUILD_VERSION = "__BUILD_VERSION__";
+const CACHE_PREFIX = "conf7ds-";
+const CACHE = CACHE_PREFIX + BUILD_VERSION;
+const CORE_ASSETS = [
   "./", "./index.html",
   "./data.js", "./potentiels.js", "./armures-liees.js",
   "./personnages-meta.js", "./supabase-config.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png", "./icons/icon-512.png"
 ];
+const CORE_PATHS = new Set(
+  CORE_ASSETS.map(asset => new URL(asset, self.registration.scope).pathname)
+);
 
 self.addEventListener("install", event => {
-  self.skipWaiting();
   event.waitUntil(
-    caches.open(CACHE).then(cache => cache.addAll(ASSETS).catch(() => {}))
+    caches.open(CACHE).then(cache => cache.addAll(CORE_ASSETS).catch(() => {}))
   );
+});
+
+/* Activation choisie par le membre : le bandeau d'index.html est le seul
+   déclencheur. Aucun autre message ne doit court-circuiter l'attente. */
+self.addEventListener("message", event => {
+  if(event.data && event.data.type === "SKIP_WAITING"){
+    event.waitUntil(self.skipWaiting());
+  }
 });
 
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(keys => Promise.all(
+        keys
+          .filter(key => key.startsWith(CACHE_PREFIX) && key !== CACHE)
+          .map(key => caches.delete(key))
+      ))
       .then(() => self.clients.claim())
   );
 });
 
+/* Fraîcheur d'abord, cache en secours. `fallbackKey` sert au document : la
+   réponse est stockée sous une clé stable plutôt que sous l'URL navigée. */
+async function networkFirst(request, fallbackKey){
+  const cache = await caches.open(CACHE);
+  try{
+    const response = await fetch(request);
+    if(response && response.ok && !response.redirected){
+      await cache.put(fallbackKey || request, response.clone());
+    }
+    return response;
+  }catch(error){
+    const cached = await cache.match(request);
+    if(cached) return cached;
+    if(fallbackKey){
+      const fallback = await cache.match(fallbackKey);
+      if(fallback) return fallback;
+    }
+    return Response.error();
+  }
+}
+
+/* Réponse immédiate depuis le cache, rafraîchissement en arrière-plan. */
+function staleWhileRevalidate(event, request){
+  const cachePromise = caches.open(CACHE);
+  const network = fetch(request).then(async response => {
+    if(response && response.ok){
+      const cache = await cachePromise;
+      await cache.put(request, response.clone());
+    }
+    return response;
+  });
+  event.waitUntil(network.catch(() => {}));
+  return (async () => {
+    const cache = await cachePromise;
+    const cached = await cache.match(request);
+    if(cached) return cached;
+    try{ return await network; }
+    catch(error){ return Response.error(); }
+  })();
+}
+
+function isImage(request, url){
+  return request.destination === "image" ||
+    /\.(webp|png|jpg|jpeg|gif|svg|ico)$/i.test(url.pathname);
+}
+
 self.addEventListener("fetch", event => {
-  const req = event.request;
-  if(req.method !== "GET") return;
+  const request = event.request;
+  if(request.method !== "GET") return;
   let url;
-  try{ url = new URL(req.url); }catch(e){ return; }
+  try{ url = new URL(request.url); }catch(error){ return; }
 
   // Ne jamais mettre en cache l'API partagée ni le client Supabase (données live).
   if(/supabase\.co$/.test(url.hostname) || /jsdelivr\.net$/.test(url.hostname)) return;
@@ -41,30 +109,22 @@ self.addEventListener("fetch", event => {
   // Uniquement notre propre origine.
   if(url.origin !== location.origin) return;
 
-  const isDoc = req.mode === "navigate" ||
+  const isDoc = request.mode === "navigate" ||
     url.pathname.endsWith("/") || url.pathname.endsWith("index.html");
-
   if(isDoc){
-    // network-first : fraîcheur en ligne, repli hors-ligne
-    event.respondWith(
-      fetch(req).then(res => {
-        const copy = res.clone();
-        caches.open(CACHE).then(cache => cache.put("./index.html", copy));
-        return res;
-      }).catch(() => caches.match("./index.html").then(r => r || caches.match("./")))
-    );
+    event.respondWith(networkFirst(request, "./index.html"));
     return;
   }
 
-  // stale-while-revalidate pour les assets
-  event.respondWith(
-    caches.open(CACHE).then(async cache => {
-      const cached = await cache.match(req);
-      const network = fetch(req).then(res => {
-        if(res && res.ok) cache.put(req, res.clone());
-        return res;
-      }).catch(() => cached);
-      return cached || network;
-    })
-  );
+  if(CORE_PATHS.has(url.pathname)){
+    event.respondWith(networkFirst(request));
+    return;
+  }
+
+  if(isImage(request, url)){
+    event.respondWith(staleWhileRevalidate(event, request));
+    return;
+  }
+
+  event.respondWith(networkFirst(request));
 });
