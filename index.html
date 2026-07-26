@@ -901,12 +901,24 @@
     </div>
   </div>
   <nav class="tabs" role="tablist">
-    <button class="tab active" data-view="builder" role="tab">Créer une équipe</button>
-    <button class="tab" data-view="roster" role="tab">Boss de Guilde</button>
-    <button class="tab" data-view="member-roster" role="tab">Roster</button>
-    <button class="tab" data-view="recensement" role="tab">Recensement DPS</button>
-    <button class="tab" data-view="analyse" role="tab">Analyse</button>
-    <button class="tab" data-view="boss" role="tab">Sessions de boss</button>
+    <button class="tab active" id="tab-builder" data-view="builder"
+            role="tab" aria-controls="view-builder"
+            aria-selected="true" tabindex="0">Créer une équipe</button>
+    <button class="tab" id="tab-roster" data-view="roster"
+            role="tab" aria-controls="view-roster"
+            aria-selected="false" tabindex="-1">Boss de Guilde</button>
+    <button class="tab" id="tab-member-roster" data-view="member-roster"
+            role="tab" aria-controls="view-member-roster"
+            aria-selected="false" tabindex="-1">Roster</button>
+    <button class="tab" id="tab-recensement" data-view="recensement"
+            role="tab" aria-controls="view-recensement"
+            aria-selected="false" tabindex="-1">Recensement DPS</button>
+    <button class="tab" id="tab-analyse" data-view="analyse"
+            role="tab" aria-controls="view-analyse"
+            aria-selected="false" tabindex="-1">Analyse</button>
+    <button class="tab" id="tab-boss" data-view="boss"
+            role="tab" aria-controls="view-boss"
+            aria-selected="false" tabindex="-1">Sessions de boss</button>
   </nav>
   <div class="account">
     <button class="btn btn-ghost" id="accountLogin" type="button">Connexion</button>
@@ -923,7 +935,8 @@
 
 <main>
   <!-- ============ BUILDER ============ -->
-  <section id="view-builder" class="view active">
+  <section id="view-builder" class="view active" role="tabpanel"
+           aria-labelledby="tab-builder">
     <p class="section-eyebrow">Forge des équipes</p>
     <h1 class="section-title">Composer une équipe</h1>
     <p class="section-lead">Assigne 4 héros, leur arme et leurs armures, puis enregistre l'équipe pour la rendre disponible face au Boss de Guilde.</p>
@@ -944,7 +957,8 @@
   </section>
 
   <!-- ============ ROSTER ============ -->
-  <section id="view-roster" class="view">
+  <section id="view-roster" class="view" role="tabpanel"
+           aria-labelledby="tab-roster">
     <p class="section-eyebrow">Registre de la confrérie</p>
     <h1 class="section-title">Équipes dispo pour le Boss de Guilde</h1>
     <p class="section-lead">Toutes les équipes proposées par les membres. Modifie ou retire les tiennes à tout moment.</p>
@@ -960,7 +974,8 @@
   </section>
 
   <!-- ============ RECENSEMENT DPS ============ -->
-  <section id="view-member-roster" class="view">
+  <section id="view-member-roster" class="view" role="tabpanel"
+           aria-labelledby="tab-member-roster">
     <p class="section-eyebrow">Collection de la confrérie</p>
     <h1 class="section-title">Roster des membres</h1>
     <p class="section-lead">Enregistre tes personnages une fois, puis réutilise leurs équipements dans tes équipes.</p>
@@ -984,7 +999,8 @@
     <div class="member-roster-grid" id="memberRosterGrid"></div>
   </section>
 
-  <section id="view-recensement" class="view">
+  <section id="view-recensement" class="view" role="tabpanel"
+           aria-labelledby="tab-recensement">
     <p class="section-eyebrow">Confrérie</p>
     <h1 class="section-title">Recensement des DPS</h1>
     <p class="section-lead">Calculé automatiquement à partir du <b>Roster</b> de chaque membre : chaque personnage avec un build Attaquant devient un DPS, avec son élément et son potentiel. Exception : Gowther avec une Baguette est recensé à partir de P7. Pour te recenser, remplis ton roster.</p>
@@ -998,7 +1014,8 @@
   </section>
 
   <!-- ============ ANALYSE ============ -->
-  <section id="view-analyse" class="view">
+  <section id="view-analyse" class="view" role="tabpanel"
+           aria-labelledby="tab-analyse">
     <p class="section-eyebrow">Confrérie</p>
     <h1 class="section-title">Analyse par élément</h1>
     <p class="section-lead">Couverture des éléments, classement des membres par potentiel, et matrice complète — d'après le recensement.</p>
@@ -1006,7 +1023,8 @@
   </section>
 
   <!-- ============ SESSIONS DE BOSS ============ -->
-  <section id="view-boss" class="view">
+  <section id="view-boss" class="view" role="tabpanel"
+           aria-labelledby="tab-boss">
     <p class="section-eyebrow">Confrérie</p>
     <h1 class="section-title">Groupes de boss</h1>
     <p class="section-lead">6 groupes sont créés automatiquement chaque semaine (reset lundi 9h). Rejoins un ou plusieurs groupes pour organiser l'attaque du Boss de Guilde.</p>
@@ -1993,19 +2011,45 @@
   });
 
   /* ============================ Navigation onglets ============================ */
+  const mainTabs = [...document.querySelectorAll(".tab[data-view]")];
+
   function showView(name){
-    document.querySelectorAll(".tab").forEach(b=>b.classList.toggle("active", b.dataset.view===name));
-    document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
-    $("#view-"+name).classList.add("active");
+    mainTabs.forEach(button => {
+      const selected = button.dataset.view === name;
+      button.classList.toggle("active", selected);
+      button.setAttribute("aria-selected", String(selected));
+      button.tabIndex = selected ? 0 : -1;
+    });
+    document.querySelectorAll(".view").forEach(view => {
+      view.classList.toggle("active", view.id === "view-"+name);
+    });
     if(name==="builder") renderBuilder();
     if(name==="roster") void renderRoster();
     if(name==="member-roster") void renderMemberRoster();
     if(name==="recensement") void renderRecensement();
     if(name==="analyse") void renderAnalyse();
     if(name==="boss") void renderBossView();
-    window.scrollTo({top:0, behavior:"smooth"});
+    const reduced = window.matchMedia
+      && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    window.scrollTo({top:0, behavior:reduced ? "auto" : "smooth"});
   }
-  document.querySelectorAll(".tab").forEach(b=>b.addEventListener("click", ()=>showView(b.dataset.view)));
+  mainTabs.forEach((button, index) => {
+    button.addEventListener("click", ()=>showView(button.dataset.view));
+    button.addEventListener("keydown", event => {
+      let next = null;
+      if(event.key === "ArrowRight") next = (index + 1) % mainTabs.length;
+      if(event.key === "ArrowLeft"){
+        next = (index - 1 + mainTabs.length) % mainTabs.length;
+      }
+      if(event.key === "Home") next = 0;
+      if(event.key === "End") next = mainTabs.length - 1;
+      if(next === null) return;
+      event.preventDefault();
+      const target = mainTabs[next];
+      showView(target.dataset.view);
+      target.focus();
+    });
+  });
 
   /* ============================ Picker réutilisable ============================ */
   const Picker = (function(){
