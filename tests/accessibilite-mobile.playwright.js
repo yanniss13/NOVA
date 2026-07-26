@@ -5,6 +5,39 @@ const path = require("node:path");
 const { pathToFileURL } = require("node:url");
 const { chromium } = require("playwright");
 
+async function assertPickerTilesContained(page, label){
+  const layout = await page.locator("#pickerGrid").evaluate(grid => ({
+    clientHeight:grid.clientHeight,
+    scrollHeight:grid.scrollHeight,
+    tiles:[...grid.querySelectorAll(".tile")].slice(0, 6).map(tile => {
+      const tileRect = tile.getBoundingClientRect();
+      const imageRect = tile.querySelector(".tile-img").getBoundingClientRect();
+      const nameRect = tile.querySelector(".tile-name").getBoundingClientRect();
+      return {
+        tileTop:tileRect.top,
+        tileBottom:tileRect.bottom,
+        imageTop:imageRect.top,
+        imageBottom:imageRect.bottom,
+        nameTop:nameRect.top,
+        nameBottom:nameRect.bottom
+      };
+    })
+  }));
+  assert.ok(layout.scrollHeight > layout.clientHeight, label+" doit rester défilable");
+  layout.tiles.forEach((item, index) => {
+    assert.ok(
+      item.imageTop >= item.tileTop - 1 &&
+      item.imageBottom <= item.tileBottom + 1,
+      label+" : image hors de la vignette "+index
+    );
+    assert.ok(
+      item.nameTop >= item.tileTop - 1 &&
+      item.nameBottom <= item.tileBottom + 1,
+      label+" : nom hors de la vignette "+index
+    );
+  });
+}
+
 (async()=>{
   const browser = await chromium.launch({ headless:true });
   const page = await browser.newPage({ viewport:{width:1280,height:900} });
@@ -72,6 +105,49 @@ const { chromium } = require("playwright");
       await portrait.evaluate(node => node === document.activeElement),
       true
     );
+
+    for(const width of [320, 390]){
+      const pickerContext = await browser.newContext({
+        viewport:{width,height:844},
+        isMobile:true,
+        hasTouch:true,
+        reducedMotion:"reduce"
+      });
+      const pickerPage = await pickerContext.newPage();
+      await pickerPage.route(
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*",
+        route => route.fulfill({
+          status:200,
+          contentType:"application/javascript",
+          body:"window.supabase=undefined;"
+        })
+      );
+      await pickerPage.goto(
+        pathToFileURL(path.resolve(__dirname, "..", "index.html")).href
+      );
+
+      await pickerPage.locator(".hero .portrait").first().click();
+      await assertPickerTilesContained(pickerPage, "Héros "+width+"px");
+      assert.ok(
+        await pickerPage.evaluate(() =>
+          document.scrollingElement.scrollWidth -
+          document.scrollingElement.clientWidth
+        ) <= 1,
+        "Le sélecteur de héros déborde à "+width+"px"
+      );
+
+      await pickerPage.locator('#pickerGrid .tile[title="Meliodas"]').click();
+      await pickerPage.locator(".hero .gear-slot.weapon").first().click();
+      await assertPickerTilesContained(pickerPage, "Armes "+width+"px");
+      assert.ok(
+        await pickerPage.evaluate(() =>
+          document.scrollingElement.scrollWidth -
+          document.scrollingElement.clientWidth
+        ) <= 1,
+        "Le sélecteur d'armes déborde à "+width+"px"
+      );
+      await pickerContext.close();
+    }
 
     const mobileContext = await browser.newContext({
       viewport:{width:390,height:844},
