@@ -55,16 +55,60 @@ const { chromium } = require("playwright");
     await page.locator("#memberRosterOverlay").waitFor({ state:"visible" });
     assert.match(await page.locator("#memberRosterEditor").textContent(), /Potentiel commun/);
     assert.match(await page.locator("#memberRosterEditor").textContent(), /Hache/);
+    assert.equal(
+      await page.locator(".member-roster-weapon-tabs .chip.active").textContent(),
+      "Hache ✓ ★"
+    );
+    const favoriteButton = page.locator(".member-roster-favorite");
+    assert.equal(await favoriteButton.getAttribute("aria-pressed"), "true");
+
+    await page.getByRole("button", { name:/Epee 1 main/ }).click();
+    const copyButton = page.locator(".member-roster-copy-favorite");
+    await copyButton.waitFor();
+    page.once("dialog", dialog => dialog.accept());
+    await copyButton.click();
+
+    const copiedDraft = await page.evaluate(() => {
+      const editor = document.querySelector("#memberRosterEditor");
+      return {
+        note:editor.querySelector("textarea").value,
+        favorite:editor.querySelector(".member-roster-favorite")
+          .getAttribute("aria-pressed")
+      };
+    });
+    assert.equal(copiedDraft.note, "Mon build");
+    assert.equal(copiedDraft.favorite, "false");
+
     await page.locator("#memberRosterSave").click();
     await page.locator("#memberRosterOverlay").waitFor({ state:"hidden" });
-    assert.equal(
-      await page.evaluate(() =>
-        window.__fakeSupabaseState.roster_characters
-          .find(row => row.owner === "user-1" && row.char_id === "meliodas")
-          .potential_tier
-      ),
-      7
+    await page.waitForFunction(() => {
+      const row = window.__fakeSupabaseState.roster_characters
+        .find(item => item.owner === "user-1" && item.char_id === "meliodas");
+      const target = row && row.builds["Epee 1 main"];
+      return target &&
+        target.weapon === "7ds-armes/Epee 1 main/En plein cœur !.webp" &&
+        target.note === "Mon build" &&
+        target.favorite === false &&
+        row.builds.Hache.favorite === true;
+    });
+    const meliodasCard = page.locator("#memberRosterGrid .member-roster-card")
+      .filter({ hasText:"Meliodas" });
+    assert.match(await meliodasCard.textContent(), /★ favori/);
+    assert.match(
+      await meliodasCard.locator(".member-roster-build-tag")
+        .filter({ hasText:"favori" })
+        .getAttribute("aria-label"),
+      /build favori/i
     );
+
+    await meliodasCard.locator(".member-roster-edit").click();
+    await page.getByRole("button", { name:/Epee 1 main/ }).click();
+    const destinationNote = page.locator("#memberRosterEditor textarea");
+    await destinationNote.fill("Ne pas écraser");
+    page.once("dialog", dialog => dialog.dismiss());
+    await page.locator(".member-roster-copy-favorite").click();
+    assert.equal(await destinationNote.inputValue(), "Ne pas écraser");
+    await page.locator("#memberRosterClose").click();
 
     await page.locator("#memberRosterOthers").click();
     await page.locator("#memberRosterOwner").selectOption("user-2");
@@ -749,9 +793,21 @@ async function installFakeSupabase(page){
           builds:{
             Hache:{
               weapon:"7ds-armes/Hache/Hache à l'aura triomphale.webp",
+              armor:{
+                Haut:"7ds-armures-ssr/Haut/Haut de la mélodie d'Arachnée.webp"
+              },
+              jewel:{
+                Anneau:"7ds-bijoux/Anneau/Anneau de la mélodie d'Arachnée.webp"
+              },
+              note:"Mon build",
+              favorite:true
+            },
+            "Epee 1 main":{
+              weapon:"7ds-armes/Epee 1 main/En plein cœur !.webp",
               armor:{},
               jewel:{},
-              note:"Mon build"
+              note:"",
+              favorite:false
             }
           },
           updated_at:"2026-07-25T08:40:00.000Z"

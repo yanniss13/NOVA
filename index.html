@@ -412,6 +412,10 @@
     color:var(--muted-2);font-size:10px
   }
   .member-roster-build-tag.saved{border-color:var(--gold-deep);color:var(--parchment)}
+  .member-roster-build-tag.favorite{
+    border-color:var(--gold);color:var(--gold-bright);
+    box-shadow:inset 0 0 0 1px rgba(217,164,65,.12)
+  }
   .member-roster-card-actions{
     display:flex;gap:8px;margin-top:14px;position:relative;z-index:1
   }
@@ -448,6 +452,11 @@
   }
   .member-roster-build-empty{
     color:var(--muted);font-size:12px;margin:0 0 10px;line-height:1.4
+  }
+  .member-roster-note-column .btn{width:100%;justify-content:center;margin-top:9px}
+  .member-roster-favorite[aria-pressed="true"]{
+    border-color:var(--gold);color:var(--gold-bright);
+    background:rgba(217,164,65,.09)
   }
 
   .modal.teammodal{width:min(1240px,96vw)}
@@ -2223,7 +2232,8 @@
   function memberRosterCard(entry, editable){
     const character = charOf(entry.charId);
     const buildTypes = new Set(Object.keys(entry.builds || {}));
-    const firstType = [...buildTypes][0];
+    const favoriteType = favoriteRosterWeaponType(entry);
+    const firstType = favoriteType || [...buildTypes][0];
     const hero = firstType
       ? rosterHeroSnapshot(entry, firstType)
       : normalizeHero({char:entry.charId, potentiel:{tier:entry.potentialTier}});
@@ -2243,10 +2253,19 @@
       ])
     ]);
     const builds = el("div",{class:"member-roster-builds"});
-    weaponTypesOf(entry.charId).forEach(type => builds.appendChild(el("span",{
-      class:"member-roster-build-tag"+(buildTypes.has(type) ? " saved" : ""),
-      text:rosterWeaponLabel(type)+(buildTypes.has(type) ? " · configuré" : "")
-    })));
+    weaponTypesOf(entry.charId).forEach(type => {
+      const isSaved = buildTypes.has(type);
+      const isFavorite = isSaved && type === favoriteType;
+      builds.appendChild(el("span",{
+        class:"member-roster-build-tag"
+          +(isSaved ? " saved" : "")
+          +(isFavorite ? " favorite" : ""),
+        text:rosterWeaponLabel(type)
+          +(isFavorite ? " · ★ favori" : (isSaved ? " · configuré" : "")),
+        "aria-label":rosterWeaponLabel(type)+" : "
+          +(isFavorite ? "build favori" : (isSaved ? "build configuré" : "aucun build"))
+      }));
+    });
     card.appendChild(builds);
     if(editable){
       card.appendChild(el("div",{class:"member-roster-card-actions"},[
@@ -2402,6 +2421,7 @@
     const build = hasBuild
       ? memberRosterDraft.builds[memberRosterWeaponType]
       : emptyRosterBuild();
+    const favoriteType = favoriteRosterWeaponType(memberRosterDraft);
     $("#memberRosterTitle").textContent = character.name+" — roster";
     const editor = $("#memberRosterEditor");
     editor.innerHTML = "";
@@ -2438,7 +2458,8 @@
       class:"chip"+(memberRosterWeaponType === type ? " active" : ""),
       type:"button",
       text:rosterWeaponLabel(type)
-        +(Object.prototype.hasOwnProperty.call(memberRosterDraft.builds, type) ? " ✓" : ""),
+        +(Object.prototype.hasOwnProperty.call(memberRosterDraft.builds, type) ? " ✓" : "")
+        +(memberRosterDraft.builds[type] && memberRosterDraft.builds[type].favorite ? " ★" : ""),
       "aria-pressed":String(memberRosterWeaponType === type),
       onclick:()=>{
         memberRosterWeaponType = type;
@@ -2489,6 +2510,40 @@
     noteColumn.appendChild(note);
     if(hasBuild){
       noteColumn.appendChild(el("button",{
+        class:"btn member-roster-favorite",
+        type:"button",
+        "aria-pressed":String(build.favorite),
+        text:build.favorite ? "★ Build favori" : "☆ Définir comme favori",
+        onclick:()=>{
+          memberRosterDraft = setFavoriteRosterBuild(
+            memberRosterDraft,
+            memberRosterWeaponType
+          );
+          renderMemberRosterEditor();
+        }
+      }));
+    }
+    if(favoriteType && favoriteType !== memberRosterWeaponType){
+      noteColumn.appendChild(el("button",{
+        class:"btn member-roster-copy-favorite",
+        type:"button",
+        text:"Copier le favori ici",
+        onclick:()=>{
+          if(hasBuild && !confirm(
+            "Remplacer les armures, bijoux et la note de ce build ? "+
+            "Son arme sera conservée."
+          )) return;
+          const copied = copyFavoriteRosterBuild(
+            memberRosterDraft,
+            memberRosterWeaponType
+          );
+          if(copied) memberRosterDraft = copied;
+          renderMemberRosterEditor();
+        }
+      }));
+    }
+    if(hasBuild){
+      noteColumn.appendChild(el("button",{
         class:"btn btn-danger",
         type:"button",
         text:"Retirer cette configuration",
@@ -2523,7 +2578,9 @@
     const normalized = normalizeRosterCharacter(entry);
     if(!normalized) return;
     memberRosterDraft = JSON.parse(JSON.stringify(normalized));
-    memberRosterWeaponType = weaponTypesOf(normalized.charId)[0] || "";
+    memberRosterWeaponType = favoriteRosterWeaponType(normalized)
+      || weaponTypesOf(normalized.charId)[0]
+      || "";
     renderMemberRosterEditor();
     $("#memberRosterOverlay").classList.add("on");
   }
