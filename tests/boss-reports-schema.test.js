@@ -338,5 +338,15 @@ assert.match(
   /rollback-boss-reports\.sql[\s\S]*?git revert[\s\S]*?push/i,
   "La documentation opérationnelle doit donner l'ordre de retour arrière"
 );
+assert.doesNotMatch(
+  agents,
+  /Les écritures passent exclusivement par/i,
+  "La documentation opérationnelle ne doit pas nier l'exception de seed boss_sessions"
+);
+assert.match(
+  agents,
+  /policy[\s\S]*?création initiale des seeds[\s\S]*?modifications\/suppressions de sessions[\s\S]*?boss_participation[\s\S]*?boss_run_reports[\s\S]*?flux métier[\s\S]*?via RPC/i,
+  "La documentation opérationnelle doit borner exactement l'exception d'insertion des seeds"
+);
 
 console.log("PASS rapports de boss : contrats stricts RPC, RLS, Realtime et rollback");

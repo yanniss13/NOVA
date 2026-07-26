@@ -326,10 +326,13 @@ le SQL Editor afin d'ajouter les tables à la publication
   le score et la note; ni les participants, ni les équipes, ni leurs instantanés
   ne sont modifiables. Les archives historiques sans rapport restent consultables
   et affichent « Rapport non disponible pour cette ancienne run. ».
-- Les écritures passent exclusivement par `join_boss_run`, `leave_boss_run`,
-  `select_boss_team`, `complete_boss_run_with_report` et
-  `update_boss_run_report`. Les politiques RLS interdisent les écritures
-  directes dans `boss_participation`, `boss_sessions` et `boss_run_reports`.
+- Exception de démarrage : la policy `boss_sessions_insert` autorise la
+  **création initiale des seeds** des six groupes courants (`run_no=1`, slots
+  1–6) par `BossStore.ensureWeek`. Les modifications/suppressions de sessions
+  et les écritures directes dans `boss_participation` et `boss_run_reports`
+  restent interdites ; le flux métier passe via RPC (`join_boss_run`,
+  `leave_boss_run`, `select_boss_team`, `complete_boss_run_with_report` et
+  `update_boss_run_report`).
 - La chaîne Realtime écoute aussi `boss_run_reports`; les événements sont
   regroupés et ne rechargent que la vue Boss concernée.
 - Le bilan de confrérie ne calcule aucune statistique individuelle : il utilise
