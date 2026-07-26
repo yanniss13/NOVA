@@ -1921,7 +1921,7 @@
           if(view === "analyse") await renderAnalyse();
         }
         if(changed.has("boss") && view === "boss"){
-          await renderBossView();
+          await renderBossView({ showLoading:false, ensureWeek:false });
         }
       }catch(error){
         setStatus("offline", "Synchronisation indisponible");
@@ -4190,6 +4190,39 @@
   const BOSS_NAME = "Akumu, bête démoniaque";
   const BOSS_GROUPS = 6;
   let bossRenderId = 0;
+  const emptyBossViewState = userId => ({
+    userId:userId || "",
+    week:null,
+    allGroups:[],
+    membership:[],
+    ready:false
+  });
+  let bossViewState = emptyBossViewState("");
+  const bossPendingActions = new Map();
+
+  function ensureBossViewOwner(){
+    const userId = currentUser ? currentUser.id : "";
+    if(bossViewState.userId === userId) return;
+    bossViewState = emptyBossViewState(userId);
+    bossPendingActions.clear();
+  }
+
+  function bossApplyIntent(membership, sessionId, intent){
+    const owner = currentUser && currentUser.id;
+    const next = (membership || []).filter(member =>
+      member.session_id !== sessionId || member.owner !== owner
+    );
+    if(intent && intent.type === "join") next.push(intent.member);
+    return next;
+  }
+
+  function bossVisibleMembership(){
+    let membership = (bossViewState.membership || []).slice();
+    bossPendingActions.forEach((intent, sessionId) => {
+      membership = bossApplyIntent(membership, sessionId, intent);
+    });
+    return membership;
+  }
 
   // Lundi 9h (heure de Paris) de la semaine de boss courante -> { startDate, endDate } (YYYY-MM-DD).
   function currentBossWeek(now){
@@ -4269,27 +4302,11 @@
     }
   };
 
-  async function renderBossView(){
-    const renderId = ++bossRenderId;
+  function renderBossContent(){
     const body = $("#bossBody");
-    body.className = ""; body.innerHTML = "";
-    if(!currentUser){
-      $("#bossCount").textContent = "";
-      body.appendChild(el("div",{class:"empty-state"},[
-        el("p",{class:"big",text:"Connecte-toi pour les groupes de boss"}),
-        el("button",{class:"btn btn-primary",text:"Connexion",onclick:()=>openAuth()})
-      ]));
-      return;
-    }
-    body.appendChild(el("div",{class:"empty-state"},[el("p",{class:"big",text:"Chargement…"})]));
-    const week = currentBossWeek();
-    let allGroups = [], membership = [];
-    try{
-      await BossStore.ensureWeek(week);
-      allGroups = await BossStore.listAll();
-      membership = await BossStore.listMembership(allGroups.map(g=>g.id));
-    }catch(e){ toast("Groupes indisponibles.", true); }
-    if(renderId !== bossRenderId) return;
+    const week = bossViewState.week || currentBossWeek();
+    const allGroups = bossViewState.allGroups || [];
+    const membership = bossVisibleMembership();
 
     const weekGroups = allGroups.filter(g => g.week_start === week.startDate);
     const current = weekGroups
@@ -4338,6 +4355,52 @@
     if(past.length) body.appendChild(bossArchive(past, membership));
   }
 
+  async function renderBossView(options){
+    const settings = Object.assign({
+      showLoading:true,
+      ensureWeek:true
+    }, options || {});
+    const renderId = ++bossRenderId;
+    const body = $("#bossBody");
+    ensureBossViewOwner();
+
+    if(!currentUser){
+      $("#bossCount").textContent = "";
+      body.className = "";
+      body.innerHTML = "";
+      body.appendChild(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:"Connecte-toi pour les groupes de boss"}),
+        el("button",{class:"btn btn-primary",text:"Connexion",onclick:()=>openAuth()})
+      ]));
+      return;
+    }
+    if(settings.showLoading || !bossViewState.ready){
+      body.className = "";
+      body.innerHTML = "";
+      body.appendChild(el("div",{class:"empty-state"},[el("p",{class:"big",text:"Chargement…"})]));
+    }
+
+    const week = currentBossWeek();
+    try{
+      if(settings.ensureWeek) await BossStore.ensureWeek(week);
+      const allGroups = await BossStore.listAll();
+      const membership = await BossStore.listMembership(allGroups.map(group => group.id));
+      if(renderId !== bossRenderId) return;
+      bossViewState = {
+        userId:currentUser.id,
+        week,
+        allGroups,
+        membership,
+        ready:true
+      };
+      renderBossContent();
+    }catch(error){
+      if(renderId !== bossRenderId) return;
+      toast("Groupes indisponibles.", true);
+      if(bossViewState.ready) renderBossContent();
+    }
+  }
+
   function bossActionMessage(error){
     const message = String(error && error.message || "");
     if(message.includes("RUN_INVALID_WEEK")) return "La semaine de boss a changé. La liste a été actualisée.";
@@ -4349,9 +4412,44 @@
     return authMessage(error);
   }
 
+  async function changeBossMembership(group, mine){
+    if(bossPendingActions.has(group.id)) return;
+    const intent = mine
+      ? { type:"leave", member:null }
+      : {
+          type:"join",
+          member:{
+            session_id:group.id,
+            owner:currentUser.id,
+            pseudo:currentPseudo || "Membre"
+          }
+        };
+    bossPendingActions.set(group.id, intent);
+    renderBossContent();
+
+    try{
+      mine
+        ? await BossStore.leave(group.id)
+        : await BossStore.join(group.id);
+      bossViewState.membership = bossApplyIntent(
+        bossViewState.membership,
+        group.id,
+        intent
+      );
+      bossPendingActions.delete(group.id);
+      renderBossContent();
+    }catch(error){
+      bossPendingActions.delete(group.id);
+      renderBossContent();
+      toast("Action impossible : "+bossActionMessage(error), true);
+      void renderBossView({ showLoading:false, ensureWeek:true });
+    }
+  }
+
   function bossGroupCard(g, membership, myCount){
     const members = membership.filter(m => m.session_id === g.id);
     const mine = members.some(m => m.owner === currentUser.id);
+    const pending = bossPendingActions.has(g.id);
     const list = el("div",{class:"boss-members"});
     if(members.length){
       members.forEach(m => list.appendChild(el("span",{
@@ -4368,19 +4466,11 @@
     const joinButton = el("button",{
       class:"btn "+(mine?"btn-danger":"btn-primary")+" boss-join",
       type:"button",
-      text:mine?"Quitter":"Rejoindre",
+      text:pending ? "Synchronisation…" : (mine ? "Quitter" : "Rejoindre"),
       title:!mine && myCount >= 3 ? "Limite hebdomadaire atteinte : 3/3" : "",
-      onclick:async()=>{
-        joinButton.disabled = true;
-        try{
-          mine ? await BossStore.leave(g.id) : await BossStore.join(g.id);
-        }catch(error){
-          toast("Action impossible : "+bossActionMessage(error), true);
-        }
-        await renderBossView();
-      }
+      onclick:()=>void changeBossMembership(g, mine)
     });
-    joinButton.disabled = !mine && myCount >= 3;
+    joinButton.disabled = pending || (!mine && myCount >= 3);
 
     const completeButton = mine ? el("button",{
       class:"btn btn-secondary boss-complete",
@@ -4401,6 +4491,7 @@
         await renderBossView();
       }
     }) : null;
+    if(completeButton) completeButton.disabled = pending;
 
     const actions = el("div",{class:"boss-actions"},[
       joinButton,
