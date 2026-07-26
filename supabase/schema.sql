@@ -372,3 +372,33 @@ revoke all on function public.complete_boss_run(uuid) from public;
 grant execute on function public.join_boss_run(uuid) to authenticated;
 grant execute on function public.leave_boss_run(uuid) to authenticated;
 grant execute on function public.complete_boss_run(uuid) to authenticated;
+
+-- ============================ Realtime ============================
+-- Chaque table est vérifiée séparément pour que le schéma complet reste rejouable.
+do $$
+declare
+  realtime_table text;
+begin
+  foreach realtime_table in array array[
+    'profiles',
+    'teams',
+    'roster_characters',
+    'boss_sessions',
+    'boss_participation'
+  ]
+  loop
+    if not exists (
+      select 1
+      from pg_publication_tables
+      where pubname = 'supabase_realtime'
+        and schemaname = 'public'
+        and tablename = realtime_table
+    ) then
+      execute format(
+        'alter publication supabase_realtime add table public.%I',
+        realtime_table
+      );
+    end if;
+  end loop;
+end
+$$;

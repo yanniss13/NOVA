@@ -90,4 +90,22 @@ assert.doesNotMatch(sql, /create policy boss_part_insert/i);
 assert.doesNotMatch(sql, /create policy boss_part_update/i);
 assert.doesNotMatch(sql, /create policy boss_part_delete/i);
 
+const realtimeTables = [
+  "profiles",
+  "teams",
+  "roster_characters",
+  "boss_sessions",
+  "boss_participation"
+];
+
+assert.match(sql, /pg_publication_tables/i);
+assert.match(sql, /alter publication supabase_realtime add table/i);
+realtimeTables.forEach(table => {
+  assert.match(
+    sql,
+    new RegExp("\\b" + table + "\\b", "i"),
+    table + " doit être ajoutée à Supabase Realtime"
+  );
+});
+
 console.log("PASS schéma roster persistant + sessions de boss");
