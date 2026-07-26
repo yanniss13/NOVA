@@ -7,7 +7,7 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
 > Ce fichier est le point d'entrée pour tout agent (Codex, Claude, etc.) qui
 > reprend le projet. Lis-le en entier avant de coder.
 
-## État actuel — 2026-07-25
+## État actuel — 2026-07-26
 
 - [x] Assets rangés dans des dossiers (fournis par l'utilisateur, ne pas renommer).
 - [x] `generate-data.ps1` — scanne les dossiers et génère `data.js`.
@@ -64,6 +64,9 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
 - [x] **Mobile et accessibilité**. Onglets au clavier, pile de modales avec
       piège/restitution du focus, cibles tactiles de 44 px et vues sans
       débordement horizontal entre 320 et 390 px.
+- [x] **CI GitHub Pages et mises à jour PWA choisies**. `npm test` garde le
+      déploiement ; une nouvelle version attend l'accord du membre.
+      Voir « Publication GitHub Pages » et « Cycle de mise à jour PWA ».
 
 Après cette mise à jour, l'utilisateur doit rejouer le contenu complet de
 `supabase/schema.sql` dans le SQL Editor Supabase afin d'appliquer le schéma,
@@ -94,6 +97,9 @@ reste autonome et ne dépend pas de npm.
 ```
 Site Confrérie 7ds/
 ├─ index.html              # L'appli + auth/store Supabase. Charge les données locales et le client CDN.
+├─ sw.js                   # Service worker. Cache versionné par __BUILD_VERSION__, mise à jour explicite.
+├─ .github/workflows/pages.yml         # Tests de toute contribution + déploiement Pages du seul `main` testé.
+├─ .github/workflows/boss-reminder.yml # Rappel Discord (secrets propres). Indépendant du déploiement.
 ├─ supabase-config.js      # URL + clé publique publishable (jamais de service_role).
 ├─ supabase/schema.sql     # Tables partagées, RPC boss, RLS et publication Realtime.
 ├─ package.json            # Scripts de test Node + Playwright (développement uniquement).
@@ -308,6 +314,52 @@ le SQL Editor afin d'ajouter les tables à la publication
   Voir `docs/superpowers/specs/2026-07-25-boss-trois-runs-design.md`.
 - Après une modification de ce schéma, réexécuter le contenu complet de
   `supabase/schema.sql` dans le SQL Editor Supabase.
+
+## Publication GitHub Pages
+
+`.github/workflows/pages.yml` est le seul workflow qui publie le site.
+
+- Une **pull request** vers `main` exécute uniquement le job `test` : `npm ci`,
+  installation de Chromium puis `npm test`. Elle ne déploie jamais.
+- Un **push vers `main`** exécute `test`, puis `package` (`needs: test`), puis
+  `deploy` (`needs: package`). Si `npm test` échoue, aucun déploiement n'a lieu
+  et l'ancienne version Pages reste en ligne.
+- `workflow_dispatch` permet de relancer un déploiement à la main.
+
+Le job `package` reconstruit `_site` avec `git archive HEAD`, donc **seuls les
+fichiers suivis par Git** sont publiés : jamais `node_modules`, jamais les
+worktrees, jamais un fichier local non suivi. Il remplace ensuite
+`__BUILD_VERSION__` par `${GITHUB_SHA}` dans `_site/sw.js` uniquement, puis
+échoue volontairement si le marqueur est absent ou subsiste.
+
+Le workflow Pages **n'a besoin d'aucun secret** : il ne touche pas à Supabase.
+`boss-reminder.yml` reste séparé, avec son propre calendrier et ses propres
+secrets — ne pas le modifier pour des raisons de déploiement.
+
+**Réglage manuel unique** (une seule fois, après la fusion) :
+`Settings → Pages → Build and deployment → Source → GitHub Actions`.
+
+## Cycle de mise à jour PWA
+
+Le SHA du commit déployé devient la version du cache : `sw.js` garde le
+marqueur littéral `__BUILD_VERSION__` dans le dépôt et
+`CACHE = CACHE_PREFIX + BUILD_VERSION`. **Ne pas remplacer ce marqueur à la
+main** ; l'Action l'injecte dans la copie publiée. Chaque commit publié produit
+donc un nouveau cache, sans « bump » manuel oublié.
+
+`sw.js` n'appelle plus `skipWaiting()` pendant `install`. Une nouvelle version
+reste en attente et `index.html` affiche le bandeau `#pwaUpdateBanner`
+(« Nouvelle version disponible » + **Mettre à jour** + fermeture accessible).
+Le clic envoie `{type:"SKIP_WAITING"}` au worker en attente, attend
+`controllerchange`, puis recharge la page **une seule fois** (garde
+`activationRequested` + `reloadStarted`). Fermer le bandeau ne refuse pas la
+version : elle peut réapparaître après un rechargement.
+
+Une première installation ne montre aucun bandeau et son `clients.claim()` ne
+doit jamais provoquer de rechargement. Les navigations et les fichiers
+applicatifs (`CORE_PATHS`) sont `network-first` ; seules les images locales
+restent en `stale-while-revalidate`. Supabase et le CDN jsDelivr ne sont jamais
+mis en cache.
 
 ## Accessibilité et mobile
 
