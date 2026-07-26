@@ -654,14 +654,95 @@ const { chromium } = require("playwright");
     assert.match(await groupOne.textContent(), /1\/5 joueurs/);
     assert.match(await groupOne.textContent(), /Équipe manquante/);
 
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const latestUpdate = Math.max(...state.teams.map(team =>
+        Date.parse(team.updated_at) || 0
+      ));
+      state.teams.push({
+        id:"team-boss-four",
+        owner:"user-1",
+        pseudo:"Yannis",
+        data:{
+          id:"team-boss-four",
+          pseudo:"Yannis",
+          heroes:["bug", "daisy", "diane", "drake"].map(char => ({
+            char,
+            weapon:null,
+            armor:{},
+            jewel:{},
+            potentiel:{ tier:0 },
+            note:""
+          }))
+        },
+        created_at:"2026-07-26T20:00:00.000Z",
+        updated_at:new Date(latestUpdate + 60000).toISOString()
+      });
+    });
+
     const chooseBossTeam = groupOne.getByRole("button", {
       name:"Choisir mon équipe",
       exact:true
     });
-    await chooseBossTeam.click();
     const bossTeamOverlay = page.locator("#bossTeamOverlay");
-    await bossTeamOverlay.waitFor({ state:"visible" });
     const bossTeamChoices = page.locator("#bossTeamList .boss-team-choice");
+
+    // Le déclencheur doit être capturé avant la lecture réseau.
+    await page.evaluate(() => window.__fakeSupabaseHoldBossRead("teams"));
+    await chooseBossTeam.click();
+    await page.waitForFunction(() =>
+      typeof window.__fakeSupabaseState.bossReadHold.release === "function"
+    );
+    const focusDecoy = page.locator(".boss-card", {
+      hasText:"Groupe 2 · Run 1"
+    }).getByRole("button", { name:"Rejoindre", exact:true });
+    await focusDecoy.focus();
+    await page.evaluate(() => window.__fakeSupabaseReleaseBossRead());
+    await bossTeamOverlay.waitFor({ state:"visible" });
+    await page.keyboard.press("Escape");
+    await bossTeamOverlay.waitFor({ state:"hidden" });
+    assert.equal(
+      await page.evaluate(() => document.activeElement.textContent.trim()),
+      "Choisir mon équipe",
+      "Le focus doit revenir au déclencheur capturé avant la lecture réseau"
+    );
+
+    // Fermer pendant un retry lent ne doit jamais rouvrir la modale.
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.bossReadFailureOnce = {
+        table:"teams",
+        message:"Échec équipes simulé"
+      };
+    });
+    await chooseBossTeam.click();
+    await bossTeamOverlay.waitFor({ state:"visible" });
+    const retryBossTeams = page.locator("#bossTeamList")
+      .getByRole("button", { name:"Réessayer", exact:true });
+    await page.evaluate(() => window.__fakeSupabaseHoldBossRead("teams"));
+    await retryBossTeams.click();
+    await page.waitForFunction(() =>
+      typeof window.__fakeSupabaseState.bossReadHold.release === "function"
+    );
+    await page.keyboard.press("Escape");
+    await page.evaluate(() => window.__fakeSupabaseReleaseBossRead());
+    await page.waitForFunction(() => !window.__fakeSupabaseState.bossReadHold);
+    await page.waitForTimeout(50);
+    assert.equal(
+      await bossTeamOverlay.isVisible(),
+      false,
+      "Une lecture terminée après Échap ne doit pas rouvrir le sélecteur"
+    );
+
+    await chooseBossTeam.click();
+    await bossTeamOverlay.waitFor({ state:"visible" });
+    await page.setViewportSize({ width:1000, height:844 });
+    const bossTeamModalWidth = await page.locator(".boss-team-modal")
+      .evaluate(modal => modal.getBoundingClientRect().width);
+    assert.ok(
+      bossTeamModalWidth <= 722,
+      `La modale d’équipe doit garder sa largeur dédiée (reçu ${bossTeamModalWidth}px)`
+    );
+    await page.setViewportSize({ width:390, height:844 });
     assert.equal(
       await bossTeamChoices.count(),
       await page.evaluate(() =>
@@ -674,6 +755,20 @@ const { chromium } = require("playwright");
       "Chaque choix doit montrer les quatre emplacements de la composition"
     );
     assert.match(await bossTeamChoices.first().textContent(), /Modifiée le/);
+    for(const name of ["Bug", "Daisy", "Diane", "Drake"]){
+      assert.match(await bossTeamChoices.first().textContent(), new RegExp(name));
+    }
+    assert.equal(
+      await bossTeamChoices.first().locator("img").count(),
+      4,
+      "La composition complète doit montrer quatre images"
+    );
+    assert.deepEqual(
+      await bossTeamChoices.first().locator("img").evaluateAll(images =>
+        images.map(image => new URL(image.src).pathname.split("/").pop())
+      ),
+      ["bug.webp", "daisy.webp", "diane.webp", "drake.webp"]
+    );
     assert.equal(
       await page.evaluate(() =>
         document.activeElement.classList.contains("boss-team-choice")
@@ -709,23 +804,207 @@ const { chromium } = require("playwright");
       "Le focus doit revenir au bouton qui a ouvert le sélecteur"
     );
 
+    // Une équipe supprimée côté serveur disparaît du picker après réconciliation.
     await chooseBossTeam.click();
     await bossTeamOverlay.waitFor({ state:"visible" });
-    await page.evaluate(() => {
-      window.__fakeSupabaseState.bossRpcFailureOnce = {
-        name:"select_boss_team",
-        message:"TEAM_NOT_OWNED"
-      };
+    const staleChoiceCount = await bossTeamChoices.count();
+    const removedBossTeam = await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const index = state.teams.findIndex(team => team.id === "team-boss-four");
+      return state.teams.splice(index, 1)[0];
     });
     await bossTeamChoices.first().click();
     await page.waitForFunction(() =>
       document.querySelector("#toast").textContent.includes("Cette équipe ne t’appartient plus.")
     );
     assert.equal(await bossTeamOverlay.isVisible(), true);
-    assert.equal(await bossTeamChoices.first().isDisabled(), false);
-
-    await bossTeamChoices.first().click();
+    await page.waitForFunction(expected =>
+      document.querySelectorAll("#bossTeamList .boss-team-choice").length === expected
+    , staleChoiceCount - 1);
+    assert.doesNotMatch(await page.locator("#bossTeamList").textContent(), /Bug/);
+    await page.evaluate(team => {
+      window.__fakeSupabaseState.teams.push(team);
+    }, removedBossTeam);
+    await page.keyboard.press("Escape");
     await bossTeamOverlay.waitFor({ state:"hidden" });
+    assert.equal(
+      await page.evaluate(() => document.activeElement.textContent.trim()),
+      "Choisir mon équipe",
+      "La réconciliation doit restaurer le focus sur le bouton recréé"
+    );
+
+    await groupOne.getByRole("button", {
+      name:"Choisir mon équipe",
+      exact:true
+    }).click();
+    await bossTeamOverlay.waitFor({ state:"visible" });
+    const removedMembership = await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const session = state.boss_sessions.find(run => run.slot === 1 && run.run_no === 1);
+      const index = state.boss_participation.findIndex(item =>
+        item.session_id === session.id && item.owner === "user-1"
+      );
+      return state.boss_participation.splice(index, 1)[0];
+    });
+    await bossTeamChoices.first().click();
+    await page.waitForFunction(() =>
+      document.querySelector("#toast").textContent.includes("Tu ne participes plus à cette run.")
+    );
+    await bossTeamOverlay.waitFor({ state:"hidden" });
+    await groupOne.getByRole("button", { name:"Rejoindre", exact:true }).waitFor();
+    assert.equal(
+      await page.evaluate(() => document.activeElement.textContent.trim()),
+      "Rejoindre",
+      "Une participation disparue doit restituer le focus à l’action disponible"
+    );
+    await page.evaluate(membership => {
+      window.__fakeSupabaseState.boss_participation.push(membership);
+      window.__fakeSupabaseEmit("boss_participation", "INSERT");
+    }, removedMembership);
+    await groupOne.getByRole("button", {
+      name:"Choisir mon équipe",
+      exact:true
+    }).waitFor();
+
+    await groupOne.getByRole("button", {
+      name:"Choisir mon équipe",
+      exact:true
+    }).click();
+    await bossTeamOverlay.waitFor({ state:"visible" });
+    await page.evaluate(() => {
+      const run = window.__fakeSupabaseState.boss_sessions
+        .find(item => item.slot === 1 && item.run_no === 1);
+      run.status = "archived";
+      run.completed_at = "2026-07-26T10:13:00.000Z";
+    });
+    await bossTeamChoices.first().click();
+    await page.waitForFunction(() =>
+      document.querySelector("#toast").textContent.includes("Cette run vient d’être terminée.")
+    );
+    await bossTeamOverlay.waitFor({ state:"hidden" });
+    assert.equal(
+      await page.evaluate(() => document.activeElement.dataset.view),
+      "boss",
+      "Une run archivée doit restituer le focus à l’onglet Boss"
+    );
+    await page.evaluate(() => {
+      const run = window.__fakeSupabaseState.boss_sessions
+        .find(item => item.slot === 1 && item.run_no === 1);
+      run.status = "open";
+      run.completed_at = null;
+      window.__fakeSupabaseEmit("boss_sessions", "UPDATE");
+    });
+    await groupOne.getByRole("button", {
+      name:"Choisir mon équipe",
+      exact:true
+    }).waitFor();
+
+    // Une seule sélection est admise ; un ancien résultat ne ferme pas un
+    // picker rouvert pour un autre groupe.
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const session = state.boss_sessions.find(run => run.slot === 2 && run.run_no === 1);
+      state.boss_participation.push({
+        session_id:session.id,
+        owner:"user-1",
+        pseudo:"Yannis",
+        team_id:null,
+        team_snapshot:null,
+        updated_at:"2026-07-26T10:12:00.000Z"
+      });
+      window.__fakeSupabaseEmit("boss_participation", "INSERT");
+    });
+    const groupTwo = page.locator(".boss-card", {
+      hasText:"Groupe 2 · Run 1"
+    });
+    await groupTwo.getByRole("button", {
+      name:"Choisir mon équipe",
+      exact:true
+    }).waitFor();
+    const selectCallsBeforePending = await page.evaluate(() =>
+      window.__fakeSupabaseState.rpcCalls.filter(call =>
+        call.name === "select_boss_team"
+      ).length
+    );
+    await page.evaluate(() => window.__fakeSupabaseHoldBossRpc("select_boss_team"));
+    await groupOne.getByRole("button", {
+      name:"Choisir mon équipe",
+      exact:true
+    }).click();
+    await bossTeamOverlay.waitFor({ state:"visible" });
+    await bossTeamChoices.first().click();
+    await page.waitForFunction(() =>
+      typeof window.__fakeSupabaseState.bossRpcHold.release === "function"
+    );
+    assert.equal(
+      await bossTeamChoices.evaluateAll(choices =>
+        choices.every(choice => choice.disabled)
+      ),
+      true,
+      "Toutes les équipes doivent être bloquées pendant la sélection"
+    );
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.rpcCalls.filter(call =>
+          call.name === "select_boss_team"
+        ).length
+      ),
+      selectCallsBeforePending + 1,
+      "Une seule RPC doit partir pendant le pending"
+    );
+    await page.locator("#bossTeamClose").click();
+    await groupTwo.getByRole("button", {
+      name:"Choisir mon équipe",
+      exact:true
+    }).click();
+    await bossTeamOverlay.waitFor({ state:"visible" });
+    assert.equal(
+      await bossTeamChoices.evaluateAll(choices =>
+        choices.every(choice => !choice.disabled)
+      ),
+      true,
+      "Le nouveau picker ne doit pas hériter du pending précédent"
+    );
+    await page.evaluate(() => window.__fakeSupabaseReleaseBossRpc());
+    await page.waitForFunction(() => !window.__fakeSupabaseState.bossRpcHold);
+    await page.waitForTimeout(50);
+    assert.equal(
+      await bossTeamOverlay.isVisible(),
+      true,
+      "Le résultat de l’ancien picker ne doit pas fermer le nouveau"
+    );
+
+    const secondChoiceTeamId = await page.evaluate(() =>
+      window.__fakeSupabaseState.teams
+        .filter(team => team.owner === "user-1")
+        .sort((a,b) => Date.parse(b.updated_at) - Date.parse(a.updated_at))[1].id
+    );
+    await bossTeamChoices.nth(1).click();
+    await bossTeamOverlay.waitFor({ state:"hidden" });
+    assert.deepEqual(
+      await page.evaluate(() => {
+        const state = window.__fakeSupabaseState;
+        const group = state.boss_sessions.find(run => run.slot === 2 && run.run_no === 1);
+        const membership = state.boss_participation.find(item =>
+          item.session_id === group.id && item.owner === "user-1"
+        );
+        const call = state.rpcCalls.at(-1);
+        return {
+          teamId:membership.team_id,
+          rpcTeamId:call.args.p_team_id,
+          rpcSessionId:call.args.p_session_id
+        };
+      }),
+      {
+        teamId:secondChoiceTeamId,
+        rpcTeamId:secondChoiceTeamId,
+        rpcSessionId:await page.evaluate(() =>
+          window.__fakeSupabaseState.boss_sessions
+            .find(run => run.slot === 2 && run.run_no === 1).id
+        )
+      }
+    );
+
     await groupOne.getByText("Équipe prête", { exact:true }).waitFor();
     assert.match(await groupOne.textContent(), /Équipe prête/);
     assert.equal(
@@ -741,14 +1020,31 @@ const { chromium } = require("playwright");
         item.session_id === state.boss_sessions.find(run => run.slot === 1).id
       );
       const source = state.teams.find(team => team.id === membership.team_id);
+      const sourceFirstHero = source.data.heroes[0].char;
+      source.data.heroes[0].char = null;
+      const snapshotFirstHeroAfterMutation = membership.team_snapshot.data.heroes[0].char;
+      source.data.heroes[0].char = sourceFirstHero;
       return {
         membership,
         source,
-        sameDataReference:membership.team_snapshot.data === source.data
+        sameDataReference:membership.team_snapshot.data === source.data,
+        snapshotFirstHeroAfterMutation,
+        snapshotKeys:Object.keys(membership.team_snapshot).sort()
       };
     });
+    assert.equal(selectedBossTeam.membership.team_id, "team-boss-four");
     assert.equal(selectedBossTeam.membership.team_snapshot.capturedAt, "2026-07-25T10:15:00.000Z");
     assert.equal(selectedBossTeam.sameDataReference, false);
+    assert.equal(selectedBossTeam.snapshotFirstHeroAfterMutation, "bug");
+    assert.deepEqual(selectedBossTeam.snapshotKeys, [
+      "capturedAt",
+      "createdAt",
+      "data",
+      "id",
+      "owner",
+      "pseudo",
+      "updatedAt"
+    ]);
 
     const bossTeamDetailButton = groupOne.getByRole("button", {
       name:/Voir l’équipe de Yannis/
@@ -756,7 +1052,21 @@ const { chromium } = require("playwright");
     await bossTeamDetailButton.click();
     await page.locator("#teamOverlay").waitFor({ state:"visible" });
     assert.equal(await page.locator("#teamDetail .hdetail").count(), 4);
+    for(const name of ["Bug", "Daisy", "Diane", "Drake"]){
+      await page.locator("#teamDetail").getByText(name, { exact:true }).waitFor();
+    }
+    assert.equal(await page.locator("#teamDetail .hd-portrait img").count(), 4);
     await page.locator("#teamClose").click();
+
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const session = state.boss_sessions.find(run => run.slot === 2 && run.run_no === 1);
+      state.boss_participation = state.boss_participation.filter(item =>
+        item.session_id !== session.id || item.owner !== "user-1"
+      );
+      window.__fakeSupabaseEmit("boss_participation", "DELETE");
+    });
+    await groupTwo.getByRole("button", { name:"Rejoindre", exact:true }).waitFor();
 
     const ownTeams = await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
@@ -774,10 +1084,21 @@ const { chromium } = require("playwright");
       }).count(),
       1
     );
-    await page.keyboard.press("Escape");
+    await page.locator("#bossTeamList").getByRole("button", {
+      name:"Créer une équipe",
+      exact:true
+    }).click();
+    await bossTeamOverlay.waitFor({ state:"hidden" });
+    assert.equal(await page.locator("#view-builder").getAttribute("class"), "view active");
+    assert.equal(
+      await page.evaluate(() => document.activeElement.dataset.view),
+      "builder"
+    );
     await page.evaluate(teams => {
       window.__fakeSupabaseState.teams.push(...teams);
     }, ownTeams);
+    await page.locator('.tab[data-view="boss"]').click();
+    await groupOne.getByRole("button", { name:"Changer", exact:true }).waitFor();
 
     const fullGroup = page.locator(".boss-card", {
       hasText:"Groupe 6 · Run 1"
@@ -785,7 +1106,15 @@ const { chromium } = require("playwright");
     const fullSessionId = await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       const run = state.boss_sessions.find(item => item.slot === 6 && item.run_no === 1);
-      for(let index = 1; index <= 5; index++){
+      state.boss_participation.push({
+        session_id:run.id,
+        owner:"user-1",
+        pseudo:"Yannis",
+        team_id:null,
+        team_snapshot:null,
+        updated_at:"2026-07-26T10:10:00.000Z"
+      });
+      for(let index = 1; index <= 4; index++){
         state.boss_participation.push({
           session_id:run.id,
           owner:"full-user-" + index,
@@ -800,16 +1129,43 @@ const { chromium } = require("playwright");
     });
     await fullGroup.getByText("5/5 joueurs", { exact:true }).waitFor();
     assert.equal(
+      await fullGroup.getByRole("button", { name:"Quitter", exact:true }).isEnabled(),
+      true,
+      "Le membre courant doit pouvoir quitter un groupe complet"
+    );
+    await fullGroup.getByRole("button", { name:"Quitter", exact:true }).click();
+    await page.waitForFunction(sessionId =>
+      !window.__fakeSupabaseState.boss_participation.some(item =>
+        item.session_id === sessionId && item.owner === "user-1"
+      )
+    , fullSessionId);
+    await fullGroup.getByText("4/5 joueurs", { exact:true }).waitFor();
+
+    await page.evaluate(sessionId => {
+      window.__fakeSupabaseState.boss_participation.push({
+        session_id:sessionId,
+        owner:"full-user-5",
+        pseudo:"Complet 5",
+        team_id:null,
+        team_snapshot:null,
+        updated_at:"2026-07-26T10:11:00.000Z"
+      });
+    }, fullSessionId);
+    await fullGroup.getByRole("button", { name:"Rejoindre", exact:true }).click();
+    await page.waitForFunction(() =>
+      document.querySelector("#toast").textContent.includes("Ce groupe compte déjà 5 joueurs.")
+    );
+    await page.waitForFunction(sessionId =>
+      !window.__fakeSupabaseState.boss_participation.some(item =>
+        item.session_id === sessionId && item.owner === "user-1"
+      )
+    , fullSessionId);
+    await fullGroup.getByText("5/5 joueurs", { exact:true }).waitFor();
+    assert.equal(
       await fullGroup.getByRole("button", { name:"Rejoindre", exact:true }).isDisabled(),
       true
     );
-    const fullResult = await page.evaluate(async sessionId => {
-      const result = await window.__fakeSupabaseClient.rpc("join_boss_run", {
-        p_session_id:sessionId
-      });
-      return result.error && result.error.message;
-    }, fullSessionId);
-    assert.equal(fullResult, "GROUP_FULL");
+    assert.doesNotMatch(await fullGroup.textContent(), /Yannis/);
     await page.evaluate(sessionId => {
       const state = window.__fakeSupabaseState;
       state.boss_participation = state.boss_participation.filter(item =>
@@ -1189,7 +1545,7 @@ const { chromium } = require("playwright");
     }, longBossPseudo);
     await page.locator('.tab[data-view="builder"]').click();
     await page.locator('.tab[data-view="boss"]').click();
-    await page.locator(".boss-chip", { hasText:longBossPseudo }).waitFor();
+    await page.locator(".boss-member-name", { hasText:longBossPseudo }).waitFor();
 
     for(const width of [320, 360, 390]){
       await page.setViewportSize({ width, height:844 });
@@ -1197,11 +1553,20 @@ const { chromium } = require("playwright");
         document.scrollingElement.scrollWidth - document.scrollingElement.clientWidth
       );
       assert.ok(overflow <= 1, `Débordement boss de ${overflow}px à ${width}px`);
-      const chipOverflow = await page.locator(".boss-chip", { hasText:longBossPseudo })
-        .evaluate(element => element.scrollWidth - element.clientWidth);
+      const pseudoLayout = await page.locator(".boss-member-name", { hasText:longBossPseudo })
+        .evaluate(element => {
+          const rect = element.getBoundingClientRect();
+          const parentRect = element.parentElement.getBoundingClientRect();
+          return {
+            right:rect.right,
+            parentRight:parentRect.right,
+            overflowX:getComputedStyle(element).overflowX
+          };
+        });
       assert.ok(
-        chipOverflow <= 1,
-        `Débordement interne du pseudo boss de ${chipOverflow}px à ${width}px`
+        pseudoLayout.right <= pseudoLayout.parentRight + 1 &&
+          pseudoLayout.overflowX === "hidden",
+        `Le pseudo boss doit rester visuellement contenu à ${width}px`
       );
     }
 
@@ -1476,8 +1841,8 @@ async function installFakeSupabase(page){
           owner:team.owner,
           pseudo:team.pseudo,
           data:team.data,
-          created_at:team.created_at,
-          updated_at:team.updated_at,
+          createdAt:team.created_at,
+          updatedAt:team.updated_at,
           capturedAt:"2026-07-25T10:15:00.000Z"
         });
         membership.updated_at = "2026-07-25T10:15:00.000Z";

@@ -701,7 +701,7 @@
   .boss-none{font-size:12px;color:var(--muted-2);font-style:italic}
   .boss-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
   .boss-actions .btn{min-width:0;width:100%;justify-content:center}
-  .boss-team-modal{width:min(720px,100%)}
+  .modal.boss-team-modal{width:min(720px,100%)}
   .modal-head{display:flex;align-items:center;gap:12px;padding:16px 18px;
     border-bottom:1px solid var(--line)}
   .modal-head h2{margin:0 auto 0 0;font-family:var(--display);font-size:18px;
@@ -1522,6 +1522,13 @@
       return record.trigger;
     }
 
+    function setRestoreFocus(overlay, trigger){
+      const record = stack.find(item => item.overlay === overlay);
+      if(!record || !isVisible(trigger)) return false;
+      record.trigger = trigger;
+      return true;
+    }
+
     document.addEventListener("keydown", event => {
       const record = stack[stack.length - 1];
       if(!record) return;
@@ -1548,7 +1555,7 @@
       }
     });
 
-    return { open, close, focusTop };
+    return { open, close, focusTop, setRestoreFocus };
   })();
 
   /* ============================ Équipes : local + Supabase ============================ */
@@ -4653,11 +4660,26 @@
     return banner;
   }
 
+  let bossTeamPickerRequestId = 0;
+  let bossTeamPickerPendingRequestId = null;
+
   function closeBossTeamPicker(){
+    bossTeamPickerRequestId++;
+    bossTeamPickerPendingRequestId = null;
     ModalStack.close($("#bossTeamOverlay"));
   }
 
-  let bossTeamPickerRequestId = 0;
+  function setBossTeamPickerPending(requestId, pending, activeChoice){
+    if(requestId !== bossTeamPickerRequestId) return;
+    bossTeamPickerPendingRequestId = pending ? requestId : null;
+    $("#bossTeamList").querySelectorAll(".boss-team-choice").forEach(choice => {
+      choice.disabled = pending;
+      choice.removeAttribute("aria-busy");
+    });
+    if(pending && activeChoice){
+      activeChoice.setAttribute("aria-busy", "true");
+    }
+  }
 
   function bossTeamPickerEmpty(list){
     list.appendChild(el("div",{class:"boss-team-empty"},[
@@ -4678,7 +4700,18 @@
     ]));
   }
 
-  function bossTeamChoice(team, group){
+  function bossTeamPickerTeams(list, teams, group, requestId){
+    list.innerHTML = "";
+    if(teams.length){
+      teams.forEach(team =>
+        list.appendChild(bossTeamChoice(team, group, requestId))
+      );
+    }else{
+      bossTeamPickerEmpty(list);
+    }
+  }
+
+  function bossTeamChoice(team, group, requestId){
     const heroes = el("span",{class:"boss-team-choice-heroes"});
     (team.heroes || []).forEach(hero => {
       const character = hero && hero.char ? charOf(hero.char) : null;
@@ -4705,11 +4738,15 @@
       class:"boss-team-choice",
       type:"button",
       onclick:async()=>{
-        if(choice.disabled) return;
-        choice.disabled = true;
-        choice.setAttribute("aria-busy", "true");
+        if(
+          choice.disabled ||
+          bossTeamPickerPendingRequestId !== null ||
+          requestId !== bossTeamPickerRequestId
+        ) return;
+        setBossTeamPickerPending(requestId, true, choice);
         try{
           await BossStore.selectTeam(group.id, team.id);
+          if(requestId !== bossTeamPickerRequestId) return;
           closeBossTeamPicker();
           await renderBossView({
             showLoading:false,
@@ -4717,8 +4754,69 @@
             showErrorToast:false
           });
         }catch(error){
-          choice.disabled = false;
-          choice.removeAttribute("aria-busy");
+          if(requestId !== bossTeamPickerRequestId) return;
+          const message = String(error && error.message || "");
+          const mustReconcile = [
+            "TEAM_NOT_OWNED",
+            "NOT_A_PARTICIPANT",
+            "RUN_ARCHIVED"
+          ].some(code => message.includes(code));
+          if(mustReconcile){
+            const [teamsResult] = await Promise.allSettled([
+              Store.refresh(),
+              renderBossView({
+                showLoading:false,
+                ensureWeek:false,
+                showErrorToast:false
+              })
+            ]);
+            if(requestId !== bossTeamPickerRequestId) return;
+            const currentGroup = (bossViewState.allGroups || [])
+              .find(item => item.id === group.id);
+            const currentMembership = (bossViewState.membership || [])
+              .find(item =>
+                item.session_id === group.id &&
+                item.owner === currentUser?.id
+              );
+            const refreshedCard = [...document.querySelectorAll(".boss-card")]
+              .find(card => card.dataset.sessionId === group.id);
+            const refreshedTrigger = refreshedCard
+              ? refreshedCard.querySelector(".boss-member-team-action, .boss-join")
+              : mainTabs.find(button => button.dataset.view === "boss");
+            ModalStack.setRestoreFocus(
+              $("#bossTeamOverlay"),
+              refreshedTrigger
+            );
+            if(!currentGroup || currentGroup.status !== "open" || !currentMembership){
+              closeBossTeamPicker();
+            }else if(teamsResult.status === "fulfilled"){
+              bossTeamPickerPendingRequestId = null;
+              const teams = teamsResult.value
+                .filter(item => item.owner === currentUser.id)
+                .sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+              bossTeamPickerTeams(
+                $("#bossTeamList"),
+                teams,
+                group,
+                requestId
+              );
+              const target = $("#bossTeamList").querySelector(
+                teams.length ? ".boss-team-choice" : ".btn"
+              );
+              if(target) target.focus();
+            }else{
+              const list = $("#bossTeamList");
+              list.innerHTML = "";
+              list.appendChild(el("div",{class:"boss-team-empty"},[
+                el("p",{
+                  text:"Tes équipes n’ont pas pu être actualisées. Ferme cette fenêtre puis réessaie."
+                })
+              ]));
+            }
+            toast("Équipe non sélectionnée : "+bossActionMessage(error), true);
+            return;
+          }
+          setBossTeamPickerPending(requestId, false);
           toast("Équipe non sélectionnée : "+bossActionMessage(error), true);
         }
       }
@@ -4735,7 +4833,9 @@
   async function openBossTeamPicker(group, member){
     const userId = currentUser && currentUser.id;
     if(!userId || !member || member.owner !== userId) return;
+    const restoreFocus = document.activeElement;
     const requestId = ++bossTeamPickerRequestId;
+    bossTeamPickerPendingRequestId = null;
     const overlay = $("#bossTeamOverlay");
     const list = $("#bossTeamList");
     try{
@@ -4743,12 +4843,7 @@
         .filter(team => team.owner === userId)
         .sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
       if(requestId !== bossTeamPickerRequestId || currentUser?.id !== userId) return;
-      list.innerHTML = "";
-      if(teams.length){
-        teams.forEach(team => list.appendChild(bossTeamChoice(team, group)));
-      }else{
-        bossTeamPickerEmpty(list);
-      }
+      bossTeamPickerTeams(list, teams, group, requestId);
       if(overlay.classList.contains("on")){
         const target = list.querySelector(teams.length ? ".boss-team-choice" : ".btn");
         if(target) target.focus();
@@ -4756,7 +4851,8 @@
         ModalStack.open(
           overlay,
           teams.length ? ".boss-team-choice" : "#bossTeamList .btn",
-          closeBossTeamPicker
+          closeBossTeamPicker,
+          restoreFocus
         );
       }
     }catch(error){
@@ -4773,7 +4869,12 @@
           onclick:()=>void openBossTeamPicker(group, member)
         })
       ]));
-      ModalStack.open(overlay, "#bossTeamList .btn", closeBossTeamPicker);
+      ModalStack.open(
+        overlay,
+        "#bossTeamList .btn",
+        closeBossTeamPicker,
+        restoreFocus
+      );
       toast("Équipes indisponibles : "+authMessage(error), true);
     }
   }
@@ -4865,7 +4966,10 @@
       ...(completeButton ? [completeButton] : [])
     ]);
 
-    return el("div",{class:"boss-card"+(mine?" mine":"")},[
+    return el("div",{
+      class:"boss-card"+(mine?" mine":""),
+      dataset:{sessionId:g.id}
+    },[
       el("div",{class:"boss-card-head"},[
         el("span",{
           class:"boss-card-title",
