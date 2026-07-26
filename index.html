@@ -4811,7 +4811,30 @@
     ]);
   }
 
+  function focusedBossActionIdentity(){
+    const body = $("#bossBody");
+    const active = document.activeElement;
+    if(!active || !body.contains(active)) return null;
+    const session = active.closest("[data-session-id]");
+    const action = active.dataset.bossAction;
+    return session && action
+      ? { sessionId:session.dataset.sessionId, action }
+      : null;
+  }
+
+  function restoreBossActionFocus(identity){
+    if(!identity) return;
+    const target = [...$("#bossBody").querySelectorAll("[data-boss-action]")]
+      .find(node => {
+        const session = node.closest("[data-session-id]");
+        return node.dataset.bossAction === identity.action &&
+          session?.dataset.sessionId === identity.sessionId;
+      });
+    if(target && target.getClientRects().length) target.focus();
+  }
+
   function renderBossContent(){
+    const focusedAction = focusedBossActionIdentity();
     const body = $("#bossBody");
     const week = bossViewState.week || currentBossWeek();
     const allGroups = bossViewState.allGroups || [];
@@ -4866,6 +4889,7 @@
       body.appendChild(currentArchive);
     }
     if(past.length) body.appendChild(bossArchive(past, membership, reports));
+    restoreBossActionFocus(focusedAction);
   }
 
   function renderBossUnavailableState(){
@@ -5742,6 +5766,7 @@
           row.appendChild(el("button",{
             class:"boss-member-team-preview",
             type:"button",
+            dataset:{bossAction:"team-preview"},
             "aria-label":"Voir l’équipe de "+(member.pseudo||"Membre"),
             onclick:()=>openTeamDetail(team)
           },[
@@ -5752,6 +5777,7 @@
           row.appendChild(el("button",{
             class:"btn boss-member-team-action",
             type:"button",
+            dataset:{bossAction:"team"},
             text:team ? "Changer" : "Choisir mon équipe",
             onclick:()=>void openBossTeamPicker(g, member)
           }));
@@ -5768,6 +5794,7 @@
     const joinButton = el("button",{
       class:"btn "+(mine?"btn-danger":"btn-primary")+" boss-join",
       type:"button",
+      dataset:{bossAction:"membership"},
       text:pending ? "Synchronisation…" : (mine ? "Quitter" : "Rejoindre"),
       title:!mine && members.length >= 5
         ? "Groupe complet : 5/5"
@@ -5779,6 +5806,7 @@
     const completeButton = mine ? el("button",{
       class:"btn btn-secondary boss-complete",
       type:"button",
+      dataset:{bossAction:"complete"},
       text:"Run terminée",
       onclick:()=>openBossReport(g, "complete")
     }) : null;
@@ -5900,6 +5928,7 @@
         el("button",{
           class:"btn boss-report-edit",
           type:"button",
+          dataset:{bossAction:"report-edit"},
           text:"Corriger le rapport",
           onclick:()=>openBossReport(group, "edit")
         })

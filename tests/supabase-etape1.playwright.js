@@ -1331,24 +1331,67 @@ const { chromium } = require("playwright");
     );
     await bossTeamChoices.nth(1).click();
     await bossTeamOverlay.waitFor({ state:"hidden" });
-    await page.waitForTimeout(50);
-    assert.deepEqual(
-      await page.evaluate(() => {
-        const active = document.activeElement;
-        const card = active && active.closest(".boss-card");
-        return {
-          action:active && active.textContent.trim(),
-          sessionId:card && card.dataset.sessionId
-        };
-      }),
-      await page.evaluate(() => {
-        const run = window.__fakeSupabaseState.boss_sessions.find(item =>
-          item.slot === 2 && item.run_no === 1
-        );
-        return { action:"Changer", sessionId:run.id };
-      }),
-      "Une sélection réussie doit rendre le focus à l’action recréée de la même run"
+    const focusedAfterExplicitTeamRefresh = await page.evaluateHandle(
+      () => document.activeElement
     );
+    const expectedGroupTwoTeamFocus = await page.evaluate(() => {
+      const run = window.__fakeSupabaseState.boss_sessions.find(item =>
+        item.slot === 2 && item.run_no === 1
+      );
+      return { action:"team", sessionId:run.id };
+    });
+    const currentBossActionFocus = () => page.evaluate(() => {
+      const active = document.activeElement;
+      const card = active && active.closest(".boss-card");
+      return {
+        action:active && active.classList.contains("boss-member-team-action")
+          ? "team"
+          : null,
+        sessionId:card && card.dataset.sessionId
+      };
+    });
+    assert.deepEqual(
+      await currentBossActionFocus(),
+      expectedGroupTwoTeamFocus,
+      "Le refresh explicite doit d’abord cibler l’action équipe recréée"
+    );
+    await page.waitForFunction(
+      action => !action.isConnected,
+      focusedAfterExplicitTeamRefresh
+    );
+    assert.deepEqual(
+      await currentBossActionFocus(),
+      expectedGroupTwoTeamFocus,
+      "L’écho Realtime doit conserver la même identité session/action"
+    );
+
+    // Le même écho ne doit pas reprendre un focus déplacé hors de la vue Boss.
+    await groupTwo.getByRole("button", {
+      name:"Changer",
+      exact:true
+    }).click();
+    await bossTeamOverlay.waitFor({ state:"visible" });
+    await bossTeamChoices.nth(1).click();
+    await bossTeamOverlay.waitFor({ state:"hidden" });
+    const groupTwoActionBeforeExternalFocus = await groupTwo.getByRole("button", {
+      name:"Changer",
+      exact:true
+    }).elementHandle();
+    assert.ok(
+      groupTwoActionBeforeExternalFocus,
+      "L’action équipe doit exister avant l’écho Realtime"
+    );
+    await page.locator("#authLogout").focus();
+    await page.waitForFunction(
+      action => !action.isConnected,
+      groupTwoActionBeforeExternalFocus
+    );
+    assert.equal(
+      await page.evaluate(() => document.activeElement.id),
+      "authLogout",
+      "L’écho Realtime ne doit pas voler un focus déplacé hors de la vue Boss"
+    );
+
     assert.deepEqual(
       await page.evaluate(() => {
         const state = window.__fakeSupabaseState;
@@ -3956,6 +3999,7 @@ async function installFakeSupabase(page){
           capturedAt:"2026-07-25T10:15:00.000Z"
         });
         membership.updated_at = "2026-07-25T10:15:00.000Z";
+        emitDatabase("boss_participation", "UPDATE");
         return { data:null, error:null };
       }
 
