@@ -237,12 +237,16 @@ async function assertPickerTilesContained(page, label){
         {
           overlay:"#bossTeamOverlay",
           modal:".boss-team-modal",
+          body:"#bossTeamList",
+          content:".boss-team-choice",
           close:"#bossTeamClose",
           label:"sélecteur d’équipe"
         },
         {
           overlay:"#bossReportOverlay",
           modal:".boss-report-modal",
+          body:".boss-report-body",
+          content:"#bossScore,#bossReportNote,.boss-report-member",
           close:"#bossReportClose",
           submit:"#bossReportSubmit",
           label:"rapport de run"
@@ -250,25 +254,65 @@ async function assertPickerTilesContained(page, label){
       ]){
         await pickerPage.evaluate(({ overlay }) => {
           const node = document.querySelector(overlay);
+          if(overlay === "#bossTeamOverlay"){
+            const list = document.querySelector("#bossTeamList");
+            const choice = document.createElement("button");
+            choice.className = "boss-team-choice";
+            choice.type = "button";
+            const heroes = document.createElement("span");
+            heroes.className = "boss-team-choice-heroes";
+            for(let index = 0; index < 4; index++){
+              const hero = document.createElement("span");
+              hero.className = "boss-team-choice-hero";
+              hero.textContent =
+                "PersonnageSansEspaceTrèsLong"+index+"W".repeat(30);
+              heroes.appendChild(hero);
+            }
+            choice.appendChild(heroes);
+            list.replaceChildren(choice);
+          }else{
+            const members = document.querySelector("#bossReportMembers");
+            const member = document.createElement("div");
+            member.className = "boss-report-member";
+            member.textContent = "MembreSansEspace"+"W".repeat(120);
+            members.replaceChildren(member);
+            document.querySelector("#bossScore").value = "9007199254740991";
+            document.querySelector("#bossReportNote").value = "W".repeat(1000);
+            document.querySelector("#bossReportCount").textContent = "1000/1000";
+          }
           node.classList.add("on");
           node.setAttribute("aria-hidden", "false");
         }, modalCase);
         await pickerPage.locator(modalCase.overlay).waitFor({state:"visible"});
         const bossModalLayout = await pickerPage.evaluate(modalCase => {
           const root = document.scrollingElement;
+          const overlay = document.querySelector(modalCase.overlay)
+            .getBoundingClientRect();
           const modal = document.querySelector(modalCase.modal)
+            .getBoundingClientRect();
+          const body = document.querySelector(modalCase.body)
             .getBoundingClientRect();
           const close = document.querySelector(modalCase.close)
             .getBoundingClientRect();
           const submit = modalCase.submit
             ? document.querySelector(modalCase.submit).getBoundingClientRect()
             : null;
+          const content = [...document.querySelectorAll(modalCase.content)]
+            .map(node => {
+              const rect = node.getBoundingClientRect();
+              return {
+                rect:rect.toJSON(),
+                overflow:node.scrollWidth - node.clientWidth
+              };
+            });
           return {
+            viewportWidth:document.documentElement.clientWidth,
+            viewportHeight:document.documentElement.clientHeight,
             overflow:root.scrollWidth - root.clientWidth,
-            modalLeft:modal.left,
-            modalRight:modal.right,
-            modalTop:modal.top,
-            modalBottom:modal.bottom,
+            overlay:overlay.toJSON(),
+            modal:modal.toJSON(),
+            body:body.toJSON(),
+            content,
             closeWidth:close.width,
             closeHeight:close.height,
             submitWidth:submit && submit.width,
@@ -279,14 +323,28 @@ async function assertPickerTilesContained(page, label){
           bossModalLayout.overflow <= 1,
           "La modale "+modalCase.label+" déborde à "+width+"px"
         );
-        assert.ok(
-          bossModalLayout.modalLeft >= 0 &&
-          bossModalLayout.modalRight <= width &&
-          bossModalLayout.modalTop >= 0 &&
-          bossModalLayout.modalBottom <= 844,
-          "La modale "+modalCase.label+" doit rester dans le viewport à "+
-            width+"px"
-        );
+        for(const [label, rect] of [
+          ["overlay", bossModalLayout.overlay],
+          ["modale", bossModalLayout.modal],
+          ["corps", bossModalLayout.body]
+        ]){
+          assert.ok(
+            rect.left >= 0 && rect.top >= 0 &&
+            rect.right <= bossModalLayout.viewportWidth &&
+            rect.bottom <= bossModalLayout.viewportHeight,
+            label+" "+modalCase.label+" hors viewport à "+width+"px : "+
+              JSON.stringify(rect)
+          );
+        }
+        bossModalLayout.content.forEach(({ rect, overflow }) => {
+          assert.ok(
+            rect.left >= bossModalLayout.modal.left &&
+            rect.right <= bossModalLayout.modal.right &&
+            overflow <= 1,
+            "Contenu "+modalCase.label+" hors modale à "+width+"px : "+
+              JSON.stringify({ rect, overflow })
+          );
+        });
         assert.ok(
           bossModalLayout.closeWidth >= 44 &&
           bossModalLayout.closeHeight >= 44,

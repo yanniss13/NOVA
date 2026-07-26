@@ -861,6 +861,8 @@ const { chromium } = require("playwright");
     );
     await page.keyboard.press("Escape");
     await bossTeamOverlay.waitFor({ state:"hidden" });
+    const bossTeamTriggerHandle = await chooseBossTeam.elementHandle();
+    assert.ok(bossTeamTriggerHandle, "Le déclencheur d’équipe doit exister");
     for(const width of [320, 390]){
       await page.setViewportSize({ width, height:844 });
       await chooseBossTeam.click();
@@ -870,24 +872,64 @@ const { chromium } = require("playwright");
       );
       const modalMetrics = await page.evaluate(() => {
         const root = document.scrollingElement;
+        const overlay = document.querySelector("#bossTeamOverlay");
+        const modal = document.querySelector(".boss-team-modal");
+        const list = document.querySelector("#bossTeamList");
         const choice = document.querySelector(".boss-team-choice");
         const close = document.querySelector("#bossTeamClose");
-        const rect = choice.getBoundingClientRect();
+        const overlayRect = overlay.getBoundingClientRect();
+        const modalRect = modal.getBoundingClientRect();
+        const listRect = list.getBoundingClientRect();
+        const choiceRects = [...document.querySelectorAll(".boss-team-choice")]
+          .map(node => node.getBoundingClientRect().toJSON());
+        const heroRects = [...document.querySelectorAll(
+          ".boss-team-choice-hero"
+        )].map(node => node.getBoundingClientRect().toJSON());
         const closeRect = close.getBoundingClientRect();
         return {
-          overflow:root.scrollWidth - root.clientWidth,
-          choiceHeight:rect.height,
-          choiceRight:rect.right,
+          viewportWidth:document.documentElement.clientWidth,
+          viewportHeight:document.documentElement.clientHeight,
+          documentOverflow:root.scrollWidth - root.clientWidth,
+          overlay:overlayRect.toJSON(),
+          modal:modalRect.toJSON(),
+          list:listRect.toJSON(),
+          choices:choiceRects,
+          heroes:heroRects,
           closeWidth:closeRect.width,
           closeHeight:closeRect.height
         };
       });
       assert.ok(
-        modalMetrics.overflow <= 1,
-        `Débordement du sélecteur d’équipe de ${modalMetrics.overflow}px à ${width}px`
+        modalMetrics.documentOverflow <= 1,
+        `Débordement du sélecteur d’équipe de ${modalMetrics.documentOverflow}px à ${width}px`
       );
-      assert.ok(modalMetrics.choiceHeight >= 44, "Une équipe doit rester une cible tactile de 44 px");
-      assert.ok(modalMetrics.choiceRight <= width, "Une équipe ne doit pas sortir de la fenêtre");
+      for(const [label, rect] of [
+        ["overlay", modalMetrics.overlay],
+        ["modale", modalMetrics.modal],
+        ["liste", modalMetrics.list]
+      ]){
+        assert.ok(
+          rect.left >= 0 && rect.top >= 0 &&
+          rect.right <= modalMetrics.viewportWidth &&
+          rect.bottom <= modalMetrics.viewportHeight,
+          `${label} du sélecteur hors viewport à ${width}px : `+
+            JSON.stringify(rect)
+        );
+      }
+      for(const rect of [...modalMetrics.choices, ...modalMetrics.heroes]){
+        assert.ok(
+          rect.left >= modalMetrics.modal.left &&
+          rect.right <= modalMetrics.modal.right &&
+          rect.left >= 0 && rect.right <= modalMetrics.viewportWidth,
+          `Contenu d’équipe hors modale à ${width}px : ${JSON.stringify(rect)}`
+        );
+      }
+      modalMetrics.choices.forEach(rect => {
+        assert.ok(
+          rect.height >= 44 && rect.width >= 44,
+          "Une équipe doit rester une cible tactile de 44 × 44 px"
+        );
+      });
       assert.ok(
         modalMetrics.closeWidth >= 44 && modalMetrics.closeHeight >= 44,
         `La fermeture du sélecteur doit mesurer 44 × 44 px à ${width}px`
@@ -905,8 +947,10 @@ const { chromium } = require("playwright");
       await page.keyboard.press("Escape");
       await bossTeamOverlay.waitFor({ state:"hidden" });
       assert.equal(
-        await page.evaluate(() => document.activeElement.textContent.trim()),
-        "Choisir mon équipe",
+        await page.evaluate(trigger =>
+          document.activeElement === trigger
+        , bossTeamTriggerHandle),
+        true,
         `Échap doit restituer le focus au déclencheur à ${width}px`
       );
     }
@@ -2000,48 +2044,101 @@ const { chromium } = require("playwright");
     );
     await page.locator("#bossReportNote").fill("Rotation propre.");
     assert.equal(await page.locator("#bossReportCount").textContent(), "16/1000");
+    assert.equal(
+      await page.locator("#bossReportCount").getAttribute("aria-live"),
+      null,
+      "Le compteur doit redevenir silencieux sous le seuil"
+    );
     assert.match(await page.locator("#bossReportMembers").textContent(), /Yannis/);
 
     await page.locator("#bossReportClose").click();
     await bossReportOverlay.waitFor({ state:"hidden" });
+    const bossReportTrigger = groupTwoReportCard.getByRole("button", {
+      name:"Run terminée",
+      exact:true
+    });
+    const bossReportTriggerHandle = await bossReportTrigger.elementHandle();
+    assert.ok(bossReportTriggerHandle, "Le déclencheur du rapport doit exister");
     for(const width of [320, 390]){
       await page.setViewportSize({ width, height:844 });
-      await groupTwoReportCard.getByRole("button", {
-        name:"Run terminée",
-        exact:true
-      }).click();
+      await bossReportTrigger.click();
       await bossReportOverlay.waitFor({ state:"visible" });
       await page.waitForFunction(() => document.activeElement.id === "bossScore");
-      await page.locator("#bossScore").fill("12450800");
-      await page.locator("#bossReportNote").fill("Rotation propre.");
+      await page.locator("#bossScore").fill("9007199254740991");
+      await page.locator("#bossReportNote").fill("W".repeat(1000));
       const reportMetrics = await page.evaluate(() => {
         const root = document.scrollingElement;
+        const overlay = document.querySelector("#bossReportOverlay");
         const modal = document.querySelector(".boss-report-modal");
+        const body = document.querySelector(".boss-report-body");
         const score = document.querySelector("#bossScore");
+        const note = document.querySelector("#bossReportNote");
         const submit = document.querySelector("#bossReportSubmit");
         const close = document.querySelector("#bossReportClose");
+        const overlayRect = overlay.getBoundingClientRect();
         const modalRect = modal.getBoundingClientRect();
+        const bodyRect = body.getBoundingClientRect();
+        const scoreRect = score.getBoundingClientRect();
+        const noteRect = note.getBoundingClientRect();
+        const submitRect = submit.getBoundingClientRect();
         const closeRect = close.getBoundingClientRect();
         return {
-          overflow:root.scrollWidth - root.clientWidth,
-          modalLeft:modalRect.left,
-          modalRight:modalRect.right,
-          scoreHeight:score.getBoundingClientRect().height,
-          submitHeight:submit.getBoundingClientRect().height,
-          submitWidth:submit.getBoundingClientRect().width,
+          viewportWidth:document.documentElement.clientWidth,
+          viewportHeight:document.documentElement.clientHeight,
+          documentOverflow:root.scrollWidth - root.clientWidth,
+          overlay:overlayRect.toJSON(),
+          modal:modalRect.toJSON(),
+          body:bodyRect.toJSON(),
+          score:scoreRect.toJSON(),
+          scoreOverflow:score.scrollWidth - score.clientWidth,
+          note:noteRect.toJSON(),
+          noteOverflow:note.scrollWidth - note.clientWidth,
+          members:[...document.querySelectorAll(".boss-report-member")]
+            .map(node => node.getBoundingClientRect().toJSON()),
+          submitHeight:submitRect.height,
+          submitWidth:submitRect.width,
           closeWidth:closeRect.width,
           closeHeight:closeRect.height
         };
       });
       assert.ok(
-        reportMetrics.overflow <= 1,
-        `Débordement du rapport de ${reportMetrics.overflow}px à ${width}px`
+        reportMetrics.documentOverflow <= 1,
+        `Débordement du rapport de ${reportMetrics.documentOverflow}px à ${width}px`
+      );
+      for(const [label, rect] of [
+        ["overlay", reportMetrics.overlay],
+        ["modale", reportMetrics.modal],
+        ["corps", reportMetrics.body],
+        ["score", reportMetrics.score],
+        ["note", reportMetrics.note]
+      ]){
+        assert.ok(
+          rect.left >= 0 && rect.top >= 0 &&
+          rect.right <= reportMetrics.viewportWidth &&
+          rect.bottom <= reportMetrics.viewportHeight,
+          `${label} du rapport hors viewport à ${width}px : `+
+            JSON.stringify(rect)
+        );
+      }
+      for(const rect of reportMetrics.members){
+        assert.ok(
+          rect.left >= reportMetrics.body.left &&
+          rect.right <= reportMetrics.body.right,
+          `Carte membre hors corps à ${width}px : ${JSON.stringify(rect)}`
+        );
+      }
+      assert.ok(
+        reportMetrics.score.width >= 44 &&
+        reportMetrics.score.height >= 44 &&
+        reportMetrics.scoreOverflow <= 1,
+        `Le score maximal doit rester contenu et mesurer 44 px à ${width}px`
       );
       assert.ok(
-        reportMetrics.modalLeft >= 0 && reportMetrics.modalRight <= width,
-        "La modale doit rester dans la fenêtre"
+        reportMetrics.note.width >= 44 &&
+        reportMetrics.note.height >= 44 &&
+        reportMetrics.noteOverflow <= 1,
+        `La note non sécable doit rester contenue à ${width}px`
       );
-      assert.ok(reportMetrics.scoreHeight >= 44, "Le score doit rester une cible de 44 px");
       assert.ok(
         reportMetrics.submitHeight >= 44 && reportMetrics.submitWidth >= 44,
         "L’enregistrement doit rester une cible de 44 px"
@@ -2063,10 +2160,10 @@ const { chromium } = require("playwright");
       await page.keyboard.press("Escape");
       await bossReportOverlay.waitFor({ state:"hidden" });
       assert.equal(
-        await page.evaluate(() =>
-          document.activeElement.textContent.trim()
-        ),
-        "Run terminée",
+        await page.evaluate(trigger =>
+          document.activeElement === trigger
+        , bossReportTriggerHandle),
+        true,
         `Échap doit restituer le focus à la fin de run à ${width}px`
       );
     }
@@ -2104,10 +2201,6 @@ const { chromium } = require("playwright");
           "Une mise à jour du site est nécessaire pour terminer cette run."
       },
       {
-        code:"REPORT_NOT_FOUND",
-        expected:"Aucun rapport modifiable n’existe pour cette run."
-      },
-      {
         code:"NOTE_TOO_LONG",
         expected:"La note doit contenir 1 000 caractères maximum."
       }
@@ -2128,6 +2221,34 @@ const { chromium } = require("playwright");
         true,
         `${errorCase.code} doit conserver le rapport ouvert`
       );
+      if(errorCase.code === "INVALID_SCORE"){
+        assert.equal(await page.locator("#bossScore").inputValue(), "12450800");
+        assert.equal(
+          await page.locator("#bossScore").getAttribute("aria-invalid"),
+          "true",
+          "INVALID_SCORE serveur doit invalider un score localement valide"
+        );
+        assert.equal(await page.locator("#bossReportSubmit").isDisabled(), true);
+        await page.locator("#bossReportNote").fill("Note modifiée.");
+        assert.equal(
+          await page.locator("#bossReportError").textContent(),
+          errorCase.expected,
+          "Modifier la note ne doit pas effacer INVALID_SCORE"
+        );
+        assert.equal(
+          await page.locator("#bossScore").getAttribute("aria-invalid"),
+          "true"
+        );
+        await page.locator("#bossScore").fill("12450801");
+        assert.equal(
+          await page.locator("#bossScore").getAttribute("aria-invalid"),
+          "false",
+          "Le prochain input score doit effacer l’invalidité serveur"
+        );
+        assert.equal(await page.locator("#bossReportError").textContent(), "");
+        await page.locator("#bossScore").fill("12450800");
+        await page.locator("#bossReportNote").fill("Rotation propre.");
+      }
     }
 
     const failedCompletionBefore = await page.evaluate(id => {
@@ -2470,6 +2591,39 @@ const { chromium } = require("playwright");
     );
     assert.equal(await page.locator("#bossScore").inputValue(), "12450801");
     assert.equal(await page.locator("#bossReportNote").inputValue(), "Rotation propre.");
+    const reportBeforeNotFound = await page.evaluate(id => {
+      const state = window.__fakeSupabaseState;
+      state.bossRpcFailureOnce = {
+        name:"update_boss_run_report",
+        message:"REPORT_NOT_FOUND"
+      };
+      return JSON.parse(JSON.stringify(
+        state.boss_run_reports.find(item => item.session_id === id)
+      ));
+    }, archivedId);
+    await page.locator("#bossReportSubmit").click();
+    await page.locator("#bossReportError").getByText(
+      "Aucun rapport modifiable n’existe pour cette run.",
+      { exact:true }
+    ).waitFor();
+    assert.equal(await bossReportOverlay.isVisible(), true);
+    assert.equal(await page.locator("#bossScore").inputValue(), "12450801");
+    assert.equal(await page.locator("#bossReportNote").inputValue(), "Rotation propre.");
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.rpcCalls.at(-1).name
+      ),
+      "update_boss_run_report",
+      "REPORT_NOT_FOUND doit provenir de la RPC de correction"
+    );
+    assert.deepEqual(
+      await page.evaluate(id => JSON.parse(JSON.stringify(
+        window.__fakeSupabaseState.boss_run_reports
+          .find(item => item.session_id === id)
+      )), archivedId),
+      reportBeforeNotFound,
+      "REPORT_NOT_FOUND ne doit modifier aucun champ du rapport"
+    );
     const exactLimitNote = "W".repeat(1000);
     await page.locator("#bossScore").fill("9007199254740991");
     await page.locator("#bossReportNote").fill(exactLimitNote);

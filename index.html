@@ -5323,10 +5323,15 @@
     });
   }
 
-  function updateBossReportForm(clearError){
+  function updateBossReportForm(clearError, scoreChanged){
     const context = bossReportContext;
     if(!context) return;
-    if(clearError) context.error = "";
+    if(scoreChanged){
+      context.error = "";
+      context.serverInvalidScore = false;
+    }else if(clearError && !context.serverInvalidScore){
+      context.error = "";
+    }
     const scoreValue = $("#bossScore").value;
     const missingMessage = bossMissingTeamMessage(context.members);
     const validScore = validBossScore(scoreValue);
@@ -5335,7 +5340,7 @@
       : "Saisis un score entier supérieur à zéro.";
     $("#bossScore").setAttribute(
       "aria-invalid",
-      String(!validScore)
+      String(!validScore || context.serverInvalidScore)
     );
     const noteLength = $("#bossReportNote").value.length;
     $("#bossReportCount").textContent = noteLength+"/1000";
@@ -5347,7 +5352,8 @@
     $("#bossReportError").textContent =
       context.error || missingMessage || scoreMessage;
     $("#bossReportSubmit").disabled =
-      context.pending || !validScore || !!missingMessage;
+      context.pending || !validScore || context.serverInvalidScore ||
+      !!missingMessage;
     $("#bossReportSubmit").setAttribute(
       "aria-busy",
       context.pending ? "true" : "false"
@@ -5396,6 +5402,7 @@
       members,
       report,
       pending:false,
+      serverInvalidScore:false,
       error:""
     };
     bossReportContext = context;
@@ -5492,14 +5499,21 @@
         return;
       }
       context.pending = false;
+      context.serverInvalidScore = errorCode.includes("INVALID_SCORE");
       context.error = actionMessage;
       updateBossReportForm(false);
       $("#bossReportError").focus?.();
     }
   }
 
-  $("#bossScore").addEventListener("input", ()=>updateBossReportForm(true));
-  $("#bossReportNote").addEventListener("input", ()=>updateBossReportForm(true));
+  $("#bossScore").addEventListener(
+    "input",
+    ()=>updateBossReportForm(true, true)
+  );
+  $("#bossReportNote").addEventListener(
+    "input",
+    ()=>updateBossReportForm(true, false)
+  );
   $("#bossReportSubmit").addEventListener("click", ()=>void submitBossReport());
   $("#bossReportClose").addEventListener("click", closeBossReport);
   $("#bossReportOverlay").addEventListener("click", event => {
