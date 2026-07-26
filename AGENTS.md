@@ -55,11 +55,19 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       compatible. Tous les membres connectés peuvent consulter les fiches ;
       seul leur propriétaire peut les créer, modifier ou supprimer. Un build
       peut être copié vers le Team Builder ou importé explicitement depuis une
-      équipe propriétaire, toujours sous forme d'instantané indépendant.
+      équipe propriétaire, toujours sous forme d'instantané indépendant. Un
+      build peut être marqué favori et son équipement copié vers un autre type
+      d'arme compatible.
+- [x] **Synchronisation Realtime** des équipes, rosters, profils et sessions de
+      boss. Une seule chaîne par membre actualise la vue partagée concernée,
+      avec regroupement des événements rapprochés.
+- [x] **Mobile et accessibilité**. Onglets au clavier, pile de modales avec
+      piège/restitution du focus, cibles tactiles de 44 px et vues sans
+      débordement horizontal entre 320 et 390 px.
 
 Après cette mise à jour, l'utilisateur doit rejouer le contenu complet de
-`supabase/schema.sql` dans le SQL Editor Supabase afin de créer la table
-`roster_characters` et ses politiques RLS.
+`supabase/schema.sql` dans le SQL Editor Supabase afin d'appliquer le schéma,
+les politiques RLS et la publication Realtime. Le script est idempotent.
 
 L'appli reste un site statique ouvrable en `file://` ou via GitHub Pages. Une
 connexion internet et un compte sont nécessaires pour lire/écrire le registre
@@ -87,7 +95,7 @@ reste autonome et ne dépend pas de npm.
 Site Confrérie 7ds/
 ├─ index.html              # L'appli + auth/store Supabase. Charge les données locales et le client CDN.
 ├─ supabase-config.js      # URL + clé publique publishable (jamais de service_role).
-├─ supabase/schema.sql     # Tables profiles/teams/recensement/roster_characters + RLS.
+├─ supabase/schema.sql     # Tables partagées, RPC boss, RLS et publication Realtime.
 ├─ package.json            # Scripts de test Node + Playwright (développement uniquement).
 ├─ package-lock.json       # Versions verrouillées des dépendances de test.
 ├─ tests/                  # Régressions du builder + parcours Supabase simulé dans Chromium.
@@ -226,7 +234,8 @@ personnage et par membre. Le cache local partagé est
                "Ceinture": file|null, "Armure liee": file|null },
       jewel: { "Anneau": file|null, "Collier": file|null,
                "Boucle d'oreille": file|null },
-      note: "texte libre"
+      note: "texte libre",
+      favorite: true | false
     }
   },
   updatedAt: 1690000000000
@@ -240,6 +249,22 @@ sont autorisées. `MemberRosterStore` lit le roster de tous les membres mais
 n'écrit que celui de `currentUser`. Les politiques RLS appliquent la même règle
 côté Supabase. Toute copie vers une équipe passe par `rosterHeroSnapshot()` et
 ne reste pas liée à la fiche source.
+
+Chaque personnage possède au maximum un build favori. Le champ `favorite` est
+stocké dans l'objet du type d'arme ; les anciens builds sont normalisés à
+`false`. La copie du favori transfère les armures, les bijoux et la note,
+conserve l'arme de destination et ne crée jamais un second favori.
+
+## Synchronisation Supabase Realtime
+
+Une chaîne `confrerie-live-<userId>` écoute `profiles`, `teams`,
+`roster_characters`, `boss_sessions` et `boss_participation`. Les événements
+sont regroupés puis seule la vue active concernée est relue. Le Recensement et
+l'Analyse réagissent au roster et aux profils, car ils sont entièrement dérivés.
+
+Après déploiement de cette fonction, rejouer `supabase/schema.sql` une fois dans
+le SQL Editor afin d'ajouter les tables à la publication
+`supabase_realtime`. Le bloc est idempotent.
 
 ## Décisions de conception (ne pas casser sans raison)
 
@@ -278,6 +303,14 @@ ne reste pas liée à la fiche source.
   Voir `docs/superpowers/specs/2026-07-25-boss-trois-runs-design.md`.
 - Après une modification de ce schéma, réexécuter le contenu complet de
   `supabase/schema.sql` dans le SQL Editor Supabase.
+
+## Accessibilité et mobile
+
+Les onglets principaux suivent le motif ARIA et se pilotent avec les flèches,
+Début et Fin. Toutes les modales passent par `ModalStack`, qui gère la pile, le
+piège à focus, Échap et la restitution du focus. Ne pas réintroduire d'écouteurs
+Échap locaux. Sur écran tactile, les contrôles principaux restent à 44 × 44 px
+minimum et aucune vue ne doit élargir le document.
 
 ## Évolutions prévues
 
