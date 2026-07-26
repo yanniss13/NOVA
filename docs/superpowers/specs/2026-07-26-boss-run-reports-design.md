@@ -216,10 +216,14 @@ de correcteur deviennent `null`, tandis que leurs pseudos instantanés restent.
 Sur une carte de groupe rejoint, le membre voit :
 
 - `Choisir mon équipe` si aucune équipe n’est déclarée ;
-- le nom de l’équipe et `Changer` après sélection.
+- `Équipe prête`, les personnages de la composition et `Changer` après
+  sélection.
 
-Le sélecteur montre uniquement les équipes appartenant au membre connecté. Si
-son registre est vide, l’interface l’invite à passer au Team Builder.
+Les équipes ne possèdent pas de titre propre dans le modèle actuel. Le
+sélecteur les distingue donc par les portraits et noms de leurs personnages,
+ainsi que leur date de dernière modification. Il montre uniquement les équipes
+appartenant au membre connecté. Si son registre est vide, l’interface l’invite
+à passer au Team Builder.
 
 Les autres membres voient un état compact `Équipe prête` ou `Équipe manquante`,
 sans pouvoir choisir à la place du participant.
