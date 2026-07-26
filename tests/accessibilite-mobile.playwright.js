@@ -38,6 +38,40 @@ const { chromium } = require("playwright");
     await page.keyboard.press("Home");
     assert.equal(await tabs.nth(0).getAttribute("aria-selected"), "true");
     assert.equal(await page.locator("#view-builder").isVisible(), true);
+
+    const login = page.locator("#accountLogin");
+    await login.focus();
+    await login.click();
+    await page.locator("#authOverlay").waitFor({state:"visible"});
+    await page.waitForFunction(() => document.activeElement.id === "authEmail");
+    await page.keyboard.press("Escape");
+    await page.locator("#authOverlay").waitFor({state:"hidden"});
+    await page.waitForFunction(() => document.activeElement.id === "accountLogin");
+    assert.equal(
+      await page.evaluate(() => document.activeElement.id),
+      "accountLogin"
+    );
+
+    const portrait = page.locator(".hero .portrait").first();
+    await portrait.click();
+    await page.locator("#overlay").waitFor({state:"visible"});
+    await page.locator("#pickerClose").focus();
+    await page.keyboard.press("Shift+Tab");
+    assert.equal(
+      await page.evaluate(() =>
+        document.querySelector("#overlay").contains(document.activeElement)
+      ),
+      true
+    );
+    await page.keyboard.press("Escape");
+    await page.locator("#overlay").waitFor({state:"hidden"});
+    await page.waitForFunction(() =>
+      document.querySelector(".hero .portrait") === document.activeElement
+    );
+    assert.equal(
+      await portrait.evaluate(node => node === document.activeElement),
+      true
+    );
     assert.deepStrictEqual(errors, []);
     console.log("PASS accessibilité : onglets, modales et mobile");
   }finally{

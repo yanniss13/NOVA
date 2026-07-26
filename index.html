@@ -1038,7 +1038,8 @@
 </main>
 
 <!-- Picker modal -->
-<div class="overlay" id="overlay" role="dialog" aria-modal="true" aria-labelledby="pickerTitle">
+<div class="overlay" id="overlay" role="dialog" aria-modal="true"
+     aria-labelledby="pickerTitle" aria-hidden="true">
   <div class="modal">
     <div class="picker-head">
       <span class="picker-title" id="pickerTitle">Choisir</span>
@@ -1054,7 +1055,7 @@
 
 <!-- Potentiel modal -->
 <div class="overlay" id="memberRosterOverlay" role="dialog"
-     aria-modal="true" aria-labelledby="memberRosterTitle">
+     aria-modal="true" aria-labelledby="memberRosterTitle" aria-hidden="true">
   <div class="modal member-roster-modal">
     <div class="picker-head">
       <span class="picker-title" id="memberRosterTitle">Personnage du roster</span>
@@ -1064,7 +1065,8 @@
   </div>
 </div>
 
-<div class="overlay" id="potOverlay" role="dialog" aria-modal="true" aria-labelledby="potTitle">
+<div class="overlay" id="potOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="potTitle" aria-hidden="true">
   <div class="modal potmodal">
     <div class="picker-head">
       <span class="picker-title" id="potTitle">Potentiel</span>
@@ -1075,7 +1077,8 @@
 </div>
 
 <!-- Détail d'une équipe -->
-<div class="overlay" id="teamOverlay" role="dialog" aria-modal="true" aria-labelledby="teamTitle">
+<div class="overlay" id="teamOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="teamTitle" aria-hidden="true">
   <div class="modal teammodal">
     <div class="picker-head">
       <span class="picker-title" id="teamTitle">Équipe</span>
@@ -1086,7 +1089,8 @@
 </div>
 
 <!-- Connexion Supabase -->
-<div class="overlay auth-overlay" id="authOverlay" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+<div class="overlay auth-overlay" id="authOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="authTitle" aria-hidden="true">
   <div class="modal auth-modal">
     <div class="auth-body">
       <div class="auth-mark" aria-hidden="true">7</div>
@@ -1303,6 +1307,89 @@
     (kids||[]).forEach(c => c!=null && n.appendChild(typeof c==="string" ? document.createTextNode(c) : c));
     return n;
   }
+
+  const ModalStack = (function(){
+    const stack = [];
+    const focusableSelector = [
+      "button:not([disabled])",
+      "[href]",
+      "input:not([disabled])",
+      "select:not([disabled])",
+      "textarea:not([disabled])",
+      "[tabindex]:not([tabindex='-1'])"
+    ].join(",");
+
+    function focusables(overlay){
+      return [...overlay.querySelectorAll(focusableSelector)]
+        .filter(node => !node.hidden && node.getClientRects().length);
+    }
+
+    function focusTop(){
+      const record = stack[stack.length - 1];
+      if(!record) return;
+      const target = focusables(record.overlay)[0];
+      if(target) target.focus();
+    }
+
+    function open(overlay, initialFocus, requestClose){
+      const existing = stack.find(record => record.overlay === overlay);
+      if(existing) return;
+      const trigger = document.activeElement;
+      overlay.classList.add("on");
+      overlay.setAttribute("aria-hidden", "false");
+      stack.push({ overlay, trigger, requestClose });
+      setTimeout(() => {
+        const target = typeof initialFocus === "string"
+          ? overlay.querySelector(initialFocus)
+          : initialFocus;
+        if(target && target.focus) target.focus();
+        else focusTop();
+      }, 0);
+    }
+
+    function close(overlay){
+      const index = stack.findIndex(record => record.overlay === overlay);
+      if(index < 0) return;
+      const [record] = stack.splice(index, 1);
+      overlay.classList.remove("on");
+      overlay.setAttribute("aria-hidden", "true");
+      setTimeout(() => {
+        if(record.trigger && record.trigger.isConnected && record.trigger.focus){
+          record.trigger.focus();
+        }else{
+          focusTop();
+        }
+      }, 0);
+    }
+
+    document.addEventListener("keydown", event => {
+      const record = stack[stack.length - 1];
+      if(!record) return;
+      if(event.key === "Escape"){
+        event.preventDefault();
+        if(record.requestClose) record.requestClose();
+        else close(record.overlay);
+        return;
+      }
+      if(event.key !== "Tab") return;
+      const nodes = focusables(record.overlay);
+      if(!nodes.length){
+        event.preventDefault();
+        return;
+      }
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      if(event.shiftKey && document.activeElement === first){
+        event.preventDefault();
+        last.focus();
+      }else if(!event.shiftKey && document.activeElement === last){
+        event.preventDefault();
+        first.focus();
+      }
+    });
+
+    return { open, close, focusTop };
+  })();
 
   /* ============================ Équipes : local + Supabase ============================ */
   const LocalTeams = {
@@ -1845,12 +1932,11 @@
 
   function openAuth(message, isErr){
     setAuthStatus(message, isErr);
-    authOverlay.classList.add("on");
-    setTimeout(()=>$("#authEmail").focus(), 30);
+    ModalStack.open(authOverlay, "#authEmail", closeAuth);
   }
 
   function closeAuth(){
-    authOverlay.classList.remove("on");
+    ModalStack.close(authOverlay);
     setAuthStatus("");
   }
 
@@ -2071,10 +2157,12 @@
       search.value = "";
       renderChips();
       renderGrid();
-      overlay.classList.add("on");
-      setTimeout(()=>search.focus(), 30);
+      ModalStack.open(overlay, "#pickerSearch", close);
     }
-    function close(){ overlay.classList.remove("on"); onPick=null; }
+    function close(){
+      ModalStack.close(overlay);
+      onPick=null;
+    }
 
     function renderChips(){
       chipsBox.innerHTML = "";
@@ -2136,7 +2224,6 @@
     search.addEventListener("input", renderGrid);
     $("#pickerClose").addEventListener("click", close);
     overlay.addEventListener("click", e=>{ if(e.target===overlay) close(); });
-    document.addEventListener("keydown", e=>{ if(e.key==="Escape" && overlay.classList.contains("on")) close(); });
 
     return { open };
   })();
@@ -2626,11 +2713,15 @@
       || weaponTypesOf(normalized.charId)[0]
       || "";
     renderMemberRosterEditor();
-    $("#memberRosterOverlay").classList.add("on");
+    ModalStack.open(
+      $("#memberRosterOverlay"),
+      "#memberRosterClose",
+      closeMemberRosterEditor
+    );
   }
 
   function closeMemberRosterEditor(){
-    $("#memberRosterOverlay").classList.remove("on");
+    ModalStack.close($("#memberRosterOverlay"));
     memberRosterDraft = null;
   }
 
@@ -2711,11 +2802,6 @@
   $("#memberRosterClose").addEventListener("click", closeMemberRosterEditor);
   $("#memberRosterOverlay").addEventListener("click", event => {
     if(event.target === $("#memberRosterOverlay")) closeMemberRosterEditor();
-  });
-  document.addEventListener("keydown", event => {
-    if(event.key === "Escape" && $("#memberRosterOverlay").classList.contains("on")){
-      closeMemberRosterEditor();
-    }
   });
 
   /* ============================ Builder ============================ */
@@ -3001,9 +3087,9 @@
       if(!types.length) return;
       titleEl.textContent = "Potentiel — " + ch.name;
       render();
-      overlay.classList.add("on");
+      ModalStack.open(overlay, "#potClose", close);
     }
-    function close(){ overlay.classList.remove("on"); }
+    function close(){ ModalStack.close(overlay); }
 
     function render(){
       const hero = draft.heroes[heroIdx];
@@ -3051,7 +3137,6 @@
 
     $("#potClose").addEventListener("click", close);
     overlay.addEventListener("click", e=>{ if(e.target===overlay) close(); });
-    document.addEventListener("keydown", e=>{ if(e.key==="Escape" && overlay.classList.contains("on")) close(); });
     return { open };
   })();
   function openPotentiel(i){ Potentiel.open(i); }
@@ -3231,15 +3316,15 @@
       }
     };
     (t.heroes||[]).forEach(h=>box.appendChild(heroDetail(h, settings)));
-    $("#teamOverlay").classList.add("on");
+    ModalStack.open($("#teamOverlay"), "#teamClose", closeTeamDetail);
   }
-  (function(){
-    const ov = $("#teamOverlay");
-    const close = ()=>ov.classList.remove("on");
-    $("#teamClose").addEventListener("click", close);
-    ov.addEventListener("click", e=>{ if(e.target===ov) close(); });
-    document.addEventListener("keydown", e=>{ if(e.key==="Escape" && ov.classList.contains("on")) close(); });
-  })();
+  function closeTeamDetail(){
+    ModalStack.close($("#teamOverlay"));
+  }
+  $("#teamClose").addEventListener("click", closeTeamDetail);
+  $("#teamOverlay").addEventListener("click", event => {
+    if(event.target === $("#teamOverlay")) closeTeamDetail();
+  });
 
   function miniHero(h){
     const ch = h && h.char ? charOf(h.char) : null;

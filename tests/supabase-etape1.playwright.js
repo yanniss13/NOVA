@@ -55,6 +55,28 @@ const { chromium } = require("playwright");
     await page.locator("#memberRosterOverlay").waitFor({ state:"visible" });
     assert.match(await page.locator("#memberRosterEditor").textContent(), /Potentiel commun/);
     assert.match(await page.locator("#memberRosterEditor").textContent(), /Hache/);
+    const rosterWeaponButton = page.locator(
+      "#memberRosterEditor .gear-slot.weapon"
+    );
+    await rosterWeaponButton.click();
+    await page.locator("#overlay").waitFor({state:"visible"});
+    await page.keyboard.press("Escape");
+    await page.locator("#overlay").waitFor({state:"hidden"});
+    await page.waitForFunction(() =>
+      document.querySelector("#memberRosterOverlay")
+        .contains(document.activeElement)
+    );
+    assert.equal(
+      await page.locator("#memberRosterOverlay").isVisible(),
+      true
+    );
+    assert.equal(
+      await page.evaluate(() =>
+        document.querySelector("#memberRosterOverlay")
+          .contains(document.activeElement)
+      ),
+      true
+    );
     assert.equal(
       await page.locator(".member-roster-weapon-tabs .chip.active").textContent(),
       "Hache ✓ ★"
