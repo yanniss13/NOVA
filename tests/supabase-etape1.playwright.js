@@ -885,6 +885,54 @@ const { chromium } = require("playwright");
       exact:true
     }).waitFor();
 
+    // Fermer le picker pendant que la lecture des équipes attend ne doit pas
+    // empêcher l’échec Boss déjà connu d’invalider la vue obsolète.
+    await groupOne.getByRole("button", {
+      name:"Choisir mon équipe",
+      exact:true
+    }).click();
+    await bossTeamOverlay.waitFor({ state:"visible" });
+    const membershipRemovedBeforeEscape = await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const session = state.boss_sessions.find(run => run.slot === 1 && run.run_no === 1);
+      const index = state.boss_participation.findIndex(item =>
+        item.session_id === session.id && item.owner === "user-1"
+      );
+      state.bossReadFailureOnce = {
+        table:"boss_sessions",
+        message:"Échec Boss avant fermeture du picker"
+      };
+      window.__fakeSupabaseHoldBossRead("teams");
+      return state.boss_participation.splice(index, 1)[0];
+    });
+    await bossTeamChoices.first().click();
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadFailureOnce === null &&
+      typeof window.__fakeSupabaseState.bossReadHold?.release === "function"
+    );
+    await page.keyboard.press("Escape");
+    await bossTeamOverlay.waitFor({ state:"hidden" });
+    await page.evaluate(() => window.__fakeSupabaseReleaseBossRead());
+    await page.waitForFunction(() => !window.__fakeSupabaseState.bossReadHold);
+    await page.waitForTimeout(50);
+    assert.match(
+      await page.locator("#bossBody").textContent(),
+      /Groupes indisponibles/,
+      "L’échec Boss doit invalider la vue même si le picker a été fermé"
+    );
+    await page.locator("#bossBody")
+      .getByRole("button", { name:"Réessayer", exact:true })
+      .click();
+    await groupOne.getByRole("button", { name:"Rejoindre", exact:true }).waitFor();
+    await page.evaluate(membership => {
+      window.__fakeSupabaseState.boss_participation.push(membership);
+      window.__fakeSupabaseEmit("boss_participation", "INSERT");
+    }, membershipRemovedBeforeEscape);
+    await groupOne.getByRole("button", {
+      name:"Choisir mon équipe",
+      exact:true
+    }).waitFor();
+
     await groupOne.getByRole("button", {
       name:"Choisir mon équipe",
       exact:true

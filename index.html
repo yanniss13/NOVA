@@ -4791,16 +4791,19 @@
                 showErrorToast:false
               })
             ]);
-            if(requestId !== bossTeamPickerRequestId) return;
+            const pickerIsCurrent = requestId === bossTeamPickerRequestId;
             const bossRefreshed = bossResult.status === "fulfilled"
               && bossResult.value === true;
             if(!bossRefreshed){
               const retry = renderBossUnavailableState();
-              ModalStack.setRestoreFocus($("#bossTeamOverlay"), retry);
-              closeBossTeamPicker();
-              toast("Équipe non sélectionnée : "+bossActionMessage(error), true);
+              if(pickerIsCurrent){
+                ModalStack.setRestoreFocus($("#bossTeamOverlay"), retry);
+                closeBossTeamPicker();
+                toast("Équipe non sélectionnée : "+bossActionMessage(error), true);
+              }
               return;
             }
+            if(!pickerIsCurrent) return;
             const currentGroup = (bossViewState.allGroups || [])
               .find(item => item.id === group.id);
             const currentMembership = (bossViewState.membership || [])
