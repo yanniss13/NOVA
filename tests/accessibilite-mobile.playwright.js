@@ -107,10 +107,21 @@ const { chromium } = require("playwright");
     for(const selector of [".icon-btn", ".chip"]){
       const box = await mobile.locator(selector).first().boundingBox();
       assert.ok(box && box.height >= 44, selector+" doit mesurer au moins 44 px");
-      if(selector === ".icon-btn"){
-        assert.ok(box.width >= 44, selector+" doit mesurer au moins 44 px de large");
-      }
+      assert.ok(box.width >= 44, selector+" doit mesurer au moins 44 px de large");
     }
+    const compactChipWidth = await mobile.evaluate(() => {
+      const chip = document.createElement("button");
+      chip.className = "chip";
+      chip.textContent = "T0";
+      document.body.appendChild(chip);
+      const width = chip.getBoundingClientRect().width;
+      chip.remove();
+      return width;
+    });
+    assert.ok(
+      compactChipWidth >= 44,
+      ".chip compacte doit mesurer au moins 44 px de large"
+    );
     await mobile.keyboard.press("Escape");
 
     for(const name of [

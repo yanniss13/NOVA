@@ -132,6 +132,20 @@ const { chromium } = require("playwright");
     assert.equal(await destinationNote.inputValue(), "Ne pas écraser");
     await page.locator("#memberRosterClose").click();
 
+    const addRosterCharacter = page.locator("#memberRosterAdd");
+    await addRosterCharacter.click();
+    await page.locator("#overlay").waitFor({state:"visible"});
+    await page.locator("#pickerGrid .tile").first().click();
+    await page.locator("#memberRosterOverlay").waitFor({state:"visible"});
+    await page.locator("#memberRosterClose").click();
+    await page.locator("#memberRosterOverlay").waitFor({state:"hidden"});
+    await page.waitForTimeout(20);
+    assert.equal(
+      await page.evaluate(() => document.activeElement.id),
+      "memberRosterAdd",
+      "Le focus doit revenir au bouton qui a lancé l’ajout"
+    );
+
     await page.locator("#memberRosterOthers").click();
     await page.locator("#memberRosterOwner").selectOption("user-2");
     await page.locator("#memberRosterGrid .member-roster-card").first().waitFor();
@@ -228,6 +242,15 @@ const { chromium } = require("playwright");
       );
       return row && row.builds.Hache.note === "Copie modifiée";
     });
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.roster_characters
+          .find(item => item.owner === "user-1" && item.char_id === "meliodas")
+          .builds.Hache.favorite
+      ),
+      true,
+      "Mettre à jour le contenu d’un build ne doit pas retirer son favori"
+    );
 
     await page.locator("#teamClose").click();
     const otherTeam = page.locator("#rosterGrid .team").filter({ hasText:"Merlin" });

@@ -98,12 +98,20 @@ const realtimeTables = [
   "boss_participation"
 ];
 
-assert.match(sql, /pg_publication_tables/i);
-assert.match(sql, /alter publication supabase_realtime add table/i);
+const realtimeMarker = "-- ============================ Realtime";
+const realtimeStart = sql.indexOf(realtimeMarker);
+assert.notEqual(
+  realtimeStart,
+  -1,
+  "Le bloc de publication Realtime doit rester explicite"
+);
+const realtimeSql = sql.slice(realtimeStart);
+assert.match(realtimeSql, /pg_publication_tables/i);
+assert.match(realtimeSql, /alter publication supabase_realtime add table/i);
 realtimeTables.forEach(table => {
   assert.match(
-    sql,
-    new RegExp("\\b" + table + "\\b", "i"),
+    realtimeSql,
+    new RegExp("['\"]" + table + "['\"]", "i"),
     table + " doit être ajoutée à Supabase Realtime"
   );
 });

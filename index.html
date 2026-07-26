@@ -898,6 +898,7 @@
       min-width:44px;
       min-height:44px
     }
+    .chip{min-width:44px}
     .overlay{
       padding:
         max(12px,env(safe-area-inset-top))
@@ -1335,6 +1336,7 @@
 
   const ModalStack = (function(){
     const stack = [];
+    let pendingRestore = null;
     const focusableSelector = [
       "button:not([disabled])",
       "[href]",
@@ -1349,6 +1351,14 @@
         .filter(node => !node.hidden && node.getClientRects().length);
     }
 
+    function isVisible(node){
+      return !!node
+        && node.isConnected
+        && !node.hidden
+        && typeof node.getClientRects === "function"
+        && node.getClientRects().length > 0;
+    }
+
     function focusTop(){
       const record = stack[stack.length - 1];
       if(!record) return;
@@ -1356,14 +1366,24 @@
       if(target) target.focus();
     }
 
-    function open(overlay, initialFocus, requestClose){
+    function open(overlay, initialFocus, requestClose, restoreFocus){
       const existing = stack.find(record => record.overlay === overlay);
       if(existing) return;
-      const trigger = document.activeElement;
+      const active = document.activeElement;
+      const meaningfulActive = isVisible(active)
+        && active !== document.body
+        && active !== document.documentElement;
+      const trigger = isVisible(restoreFocus)
+        ? restoreFocus
+        : (meaningfulActive
+          ? active
+          : (isVisible(pendingRestore) ? pendingRestore : active));
+      pendingRestore = null;
       overlay.classList.add("on");
       overlay.setAttribute("aria-hidden", "false");
       stack.push({ overlay, trigger, requestClose });
       setTimeout(() => {
+        if(!stack.some(record => record.overlay === overlay)) return;
         const target = typeof initialFocus === "string"
           ? overlay.querySelector(initialFocus)
           : initialFocus;
@@ -1378,13 +1398,25 @@
       const [record] = stack.splice(index, 1);
       overlay.classList.remove("on");
       overlay.setAttribute("aria-hidden", "true");
-      setTimeout(() => {
-        if(record.trigger && record.trigger.isConnected && record.trigger.focus){
+      pendingRestore = record.trigger;
+      const restore = () => {
+        const top = stack[stack.length - 1];
+        if(top){
+          if(isVisible(record.trigger) && top.overlay.contains(record.trigger)){
+            record.trigger.focus();
+          }else{
+            focusTop();
+          }
+        }else if(isVisible(record.trigger)){
           record.trigger.focus();
-        }else{
-          focusTop();
         }
+      };
+      restore();
+      setTimeout(() => {
+        restore();
+        if(pendingRestore === record.trigger) pendingRestore = null;
       }, 0);
+      return record.trigger;
     }
 
     document.addEventListener("keydown", event => {
@@ -2187,8 +2219,9 @@
       ModalStack.open(overlay, "#pickerSearch", close);
     }
     function close(){
-      ModalStack.close(overlay);
+      const trigger = ModalStack.close(overlay);
       onPick=null;
+      return trigger;
     }
 
     function renderChips(){
@@ -2244,8 +2277,8 @@
 
     function pick(val){
       const callback = onPick;
-      close();
-      if(callback) callback(val);
+      const trigger = close();
+      if(callback) callback(val, trigger);
     }
 
     search.addEventListener("input", renderGrid);
@@ -2732,7 +2765,7 @@
     ]));
   }
 
-  function openMemberRosterEditor(entry){
+  function openMemberRosterEditor(entry, restoreFocus){
     const normalized = normalizeRosterCharacter(entry);
     if(!normalized) return;
     memberRosterDraft = JSON.parse(JSON.stringify(normalized));
@@ -2743,7 +2776,8 @@
     ModalStack.open(
       $("#memberRosterOverlay"),
       "#memberRosterClose",
-      closeMemberRosterEditor
+      closeMemberRosterEditor,
+      restoreFocus
     );
   }
 
@@ -2818,12 +2852,12 @@
         })),
       emptyHint:"Tous les personnages sont déjà dans ton roster.",
       onSelect:charId=>openMemberRosterEditor({
-        owner:currentUser.id,
-        charId,
-        potentialTier:0,
-        builds:{},
-        updatedAt:0
-      })
+          owner:currentUser.id,
+          charId,
+          potentialTier:0,
+          builds:{},
+          updatedAt:0
+        }, $("#memberRosterAdd"))
     });
   });
   $("#memberRosterClose").addEventListener("click", closeMemberRosterEditor);
@@ -3419,7 +3453,13 @@
       builds:{}
     });
     next.potentialTier = normalizePotentiel(hero.potentiel).tier;
-    next.builds[type] = normalizeRosterBuild(hero.char, type, hero);
+    const importedBuild = normalizeRosterBuild(hero.char, type, hero);
+    importedBuild.favorite = !!(
+      existing
+      && existing.builds[type]
+      && existing.builds[type].favorite
+    );
+    next.builds[type] = importedBuild;
     try{
       await MemberRosterStore.upsert(next);
       toast(replacing
