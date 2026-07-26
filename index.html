@@ -4499,6 +4499,27 @@
     if(past.length) body.appendChild(bossArchive(past, membership));
   }
 
+  function renderBossUnavailableState(){
+    invalidateBossRenders();
+    bossViewState = emptyBossViewState(currentUser?.id);
+    $("#bossCount").textContent = "";
+    const body = $("#bossBody");
+    body.className = "";
+    body.innerHTML = "";
+    const retry = el("button",{
+      class:"btn btn-primary",
+      type:"button",
+      text:"Réessayer",
+      onclick:()=>void renderBossView()
+    });
+    body.appendChild(el("div",{class:"empty-state"},[
+      el("p",{class:"big",text:"Groupes indisponibles"}),
+      el("p",{text:"Impossible d’actualiser les groupes pour le moment."}),
+      retry
+    ]));
+    return retry;
+  }
+
   async function renderBossView(options){
     const settings = Object.assign({
       showLoading:true,
@@ -4762,7 +4783,7 @@
             "RUN_ARCHIVED"
           ].some(code => message.includes(code));
           if(mustReconcile){
-            const [teamsResult] = await Promise.allSettled([
+            const [teamsResult, bossResult] = await Promise.allSettled([
               Store.refresh(),
               renderBossView({
                 showLoading:false,
@@ -4771,6 +4792,15 @@
               })
             ]);
             if(requestId !== bossTeamPickerRequestId) return;
+            const bossRefreshed = bossResult.status === "fulfilled"
+              && bossResult.value === true;
+            if(!bossRefreshed){
+              const retry = renderBossUnavailableState();
+              ModalStack.setRestoreFocus($("#bossTeamOverlay"), retry);
+              closeBossTeamPicker();
+              toast("Équipe non sélectionnée : "+bossActionMessage(error), true);
+              return;
+            }
             const currentGroup = (bossViewState.allGroups || [])
               .find(item => item.id === group.id);
             const currentMembership = (bossViewState.membership || [])

@@ -833,6 +833,58 @@ const { chromium } = require("playwright");
       "La réconciliation doit restaurer le focus sur le bouton recréé"
     );
 
+    // Une erreur autoritative ne doit jamais réutiliser l’état Boss obsolète
+    // lorsque sa propre actualisation échoue.
+    await groupOne.getByRole("button", {
+      name:"Choisir mon équipe",
+      exact:true
+    }).click();
+    await bossTeamOverlay.waitFor({ state:"visible" });
+    const membershipRemovedDuringFailedRefresh = await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const session = state.boss_sessions.find(run => run.slot === 1 && run.run_no === 1);
+      const index = state.boss_participation.findIndex(item =>
+        item.session_id === session.id && item.owner === "user-1"
+      );
+      state.bossReadFailureOnce = {
+        table:"boss_sessions",
+        message:"Échec Boss pendant la réconciliation"
+      };
+      return state.boss_participation.splice(index, 1)[0];
+    });
+    await bossTeamChoices.first().click();
+    await page.waitForFunction(() =>
+      document.querySelector("#toast").textContent.includes("Tu ne participes plus à cette run.")
+    );
+    assert.equal(
+      await bossTeamOverlay.isVisible(),
+      false,
+      "Le picker doit se fermer si l’état Boss autoritatif n’a pas pu être relu"
+    );
+    await page.getByText("Groupes indisponibles", { exact:true }).waitFor();
+    const retryFailedBossReconciliation = page.locator("#bossBody")
+      .getByRole("button", { name:"Réessayer", exact:true });
+    assert.equal(
+      await page.evaluate(() => document.activeElement.textContent.trim()),
+      "Réessayer",
+      "Le focus doit arriver sur l’action sûre après l’échec de réconciliation"
+    );
+    assert.doesNotMatch(
+      await page.locator("#bossBody").textContent(),
+      /Choisir mon équipe/,
+      "La vue sûre ne doit pas réafficher une participation obsolète"
+    );
+    await retryFailedBossReconciliation.click();
+    await groupOne.getByRole("button", { name:"Rejoindre", exact:true }).waitFor();
+    await page.evaluate(membership => {
+      window.__fakeSupabaseState.boss_participation.push(membership);
+      window.__fakeSupabaseEmit("boss_participation", "INSERT");
+    }, membershipRemovedDuringFailedRefresh);
+    await groupOne.getByRole("button", {
+      name:"Choisir mon équipe",
+      exact:true
+    }).waitFor();
+
     await groupOne.getByRole("button", {
       name:"Choisir mon équipe",
       exact:true
