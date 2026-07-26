@@ -2045,7 +2045,13 @@
   }
 
   async function applySession(session){
+    const previousUserId = currentUser ? currentUser.id : "";
     currentUser = session && session.user ? session.user : null;
+    const sessionChanged = previousUserId !== (currentUser ? currentUser.id : "");
+    if(sessionChanged){
+      ensureBossViewOwner();
+      if($("#view-boss").classList.contains("active")) void renderBossView();
+    }
     currentPseudo = "";
     rosterProfiles = [];
     if(currentUser){
@@ -4203,6 +4209,7 @@
   function ensureBossViewOwner(){
     const userId = currentUser ? currentUser.id : "";
     if(bossViewState.userId === userId) return;
+    bossRenderId++;
     bossViewState = emptyBossViewState(userId);
     bossPendingActions.clear();
   }
@@ -4360,9 +4367,9 @@
       showLoading:true,
       ensureWeek:true
     }, options || {});
-    const renderId = ++bossRenderId;
     const body = $("#bossBody");
     ensureBossViewOwner();
+    const renderId = ++bossRenderId;
 
     if(!currentUser){
       $("#bossCount").textContent = "";
@@ -4413,17 +4420,22 @@
   }
 
   async function changeBossMembership(group, mine){
-    if(bossPendingActions.has(group.id)) return;
+    const actionUserId = currentUser?.id;
+    if(!actionUserId || bossPendingActions.has(group.id)) return;
     const intent = mine
       ? { type:"leave", member:null }
       : {
           type:"join",
           member:{
             session_id:group.id,
-            owner:currentUser.id,
+            owner:actionUserId,
             pseudo:currentPseudo || "Membre"
           }
         };
+    const isCurrentAction = () =>
+      currentUser?.id === actionUserId &&
+      bossViewState.userId === actionUserId &&
+      bossPendingActions.get(group.id) === intent;
     bossPendingActions.set(group.id, intent);
     renderBossContent();
 
@@ -4431,6 +4443,8 @@
       mine
         ? await BossStore.leave(group.id)
         : await BossStore.join(group.id);
+      if(!isCurrentAction()) return;
+      ++bossRenderId;
       bossViewState.membership = bossApplyIntent(
         bossViewState.membership,
         group.id,
@@ -4439,6 +4453,7 @@
       bossPendingActions.delete(group.id);
       renderBossContent();
     }catch(error){
+      if(!isCurrentAction()) return;
       bossPendingActions.delete(group.id);
       renderBossContent();
       toast("Action impossible : "+bossActionMessage(error), true);

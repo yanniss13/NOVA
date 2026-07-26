@@ -721,6 +721,71 @@ const { chromium } = require("playwright");
     }
     await page.evaluate(() => { window.__fakeSupabaseState.rpcCalls.length = 0; });
 
+    await page.evaluate(() => {
+      window.__fakeSupabaseHoldBossRead("boss_participation");
+      window.__fakeSupabaseEmit("boss_participation", "UPDATE");
+    });
+    await page.waitForFunction(() =>
+      typeof window.__fakeSupabaseState.bossReadHold.release === "function"
+    );
+    await page.evaluate(() =>
+      window.__fakeSupabaseHoldBossRpc("join_boss_run")
+    );
+    await page.locator(".boss-card", { hasText:"Groupe 1 · Run 1" })
+      .getByRole("button", { name:"Rejoindre", exact:true }).click();
+    await page.waitForFunction(() =>
+      typeof window.__fakeSupabaseState.bossRpcHold.release === "function"
+    );
+    await page.evaluate(() => window.__fakeSupabaseReleaseBossRpc());
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.boss_participation.length === 1
+    );
+    await page.evaluate(() => window.__fakeSupabaseReleaseBossRead());
+    await page.waitForFunction(() => !window.__fakeSupabaseState.bossReadHold);
+    await page.waitForTimeout(150);
+    const staleReadGroup = page.locator(".boss-card", { hasText:"Groupe 1 · Run 1" });
+    assert.match(
+      await staleReadGroup.textContent(),
+      /Yannis/,
+      "Une lecture Realtime antérieure ne doit pas effacer le succès local"
+    );
+    assert.match(await page.locator("#bossCount").textContent(), /1\/3/);
+    await staleReadGroup.getByRole("button", { name:"Quitter", exact:true }).click();
+    await page.waitForFunction(() => window.__fakeSupabaseState.boss_participation.length === 0);
+
+    await page.evaluate(() =>
+      window.__fakeSupabaseHoldBossRpc("join_boss_run")
+    );
+    await page.locator(".boss-card", { hasText:"Groupe 1 · Run 1" })
+      .getByRole("button", { name:"Rejoindre", exact:true }).click();
+    await page.waitForFunction(() =>
+      typeof window.__fakeSupabaseState.bossRpcHold.release === "function"
+    );
+    await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
+    await authOverlay.waitFor({ state:"visible" });
+    await page.locator("#bossBody").getByText(
+      "Connecte-toi pour les groupes de boss",
+      { exact:true }
+    ).waitFor();
+    assert.equal(await page.locator("#bossCount").textContent(), "");
+    await page.evaluate(() => window.__fakeSupabaseReleaseBossRpc());
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.boss_participation.some(item => item.owner === "user-1")
+    );
+    await page.waitForTimeout(100);
+    assert.deepEqual(errors, [], "Aucune erreur de page après une déconnexion pendant la RPC");
+    assert.doesNotMatch(await page.locator("#bossBody").textContent(), /Yannis/);
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.boss_participation = [];
+    });
+    await page.locator("#authEmail").fill("yannis@example.test");
+    await page.locator("#authPassword").fill("mot-de-passe-test");
+    await page.getByRole("button", { name:"Se connecter", exact:true }).click();
+    await page.locator(".boss-card", { hasText:"Groupe 1 · Run 1" })
+      .getByRole("button", { name:"Rejoindre", exact:true }).waitFor();
+    assert.match(await page.locator("#bossCount").textContent(), /0\/3/);
+    await page.evaluate(() => { window.__fakeSupabaseState.rpcCalls.length = 0; });
+
     for(const number of [1, 2, 3]){
       await page.locator(".boss-card", { hasText:"Groupe " + number + " · Run 1" })
         .getByRole("button", { name:"Rejoindre", exact:true }).click();
@@ -894,7 +959,7 @@ const { chromium } = require("playwright");
     );
     assert.equal(
       await page.evaluate(() => window.__fakeSupabaseState.removedRealtimeChannels),
-      1
+      2
     );
     await page.locator("#authEmail").fill("yannis@example.test");
     await page.locator("#authPassword").fill("mot-de-passe-test");
@@ -1007,7 +1072,8 @@ async function installFakeSupabase(page){
       calls:[],
       rpcCalls:[],
       bossRpcFailureOnce:null,
-      bossRpcHold:null
+      bossRpcHold:null,
+      bossReadHold:null
     };
 
     function clone(value){
@@ -1164,7 +1230,7 @@ async function installFakeSupabase(page){
         }
 
         if(operation === "select"){
-          const selected = rows.filter(matchRow);
+          const selected = clone(rows.filter(matchRow));
           if(sorts.length){
             selected.sort((a,b) => {
               for(const [col,dir] of sorts){
@@ -1177,7 +1243,12 @@ async function installFakeSupabase(page){
               return 0;
             });
           }
-          return { data:clone(selected), error:null };
+          const hold = state.bossReadHold;
+          if(hold && (!hold.table || hold.table === table)){
+            await new Promise(resolve => { hold.release = resolve; });
+            if(state.bossReadHold === hold) state.bossReadHold = null;
+          }
+          return { data:selected, error:null };
         }
 
         if(operation === "delete"){
@@ -1298,6 +1369,15 @@ async function installFakeSupabase(page){
     };
     window.__fakeSupabaseReleaseBossRpc = () => {
       const hold = state.bossRpcHold;
+      if(!hold || typeof hold.release !== "function") return false;
+      hold.release();
+      return true;
+    };
+    window.__fakeSupabaseHoldBossRead = table => {
+      state.bossReadHold = { table, release:null };
+    };
+    window.__fakeSupabaseReleaseBossRead = () => {
+      const hold = state.bossReadHold;
       if(!hold || typeof hold.release !== "function") return false;
       hold.release();
       return true;
