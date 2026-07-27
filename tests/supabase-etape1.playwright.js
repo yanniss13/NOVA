@@ -91,11 +91,23 @@ const { chromium } = require("playwright");
       "Le fake doit appliquer l'authentification et la lecture RLS à toutes les ressources Boss"
     );
 
+    // Déconnecté, le Team Builder reste la vue initiale.
+    assert.equal(await page.locator("#view-builder").isVisible(), true);
+    assert.equal(await page.locator("#view-dashboard").isVisible(), false);
+
     await page.locator("#authEmail").fill("yannis@example.test");
     await page.locator("#authPassword").fill("mot-de-passe-test");
     await page.getByRole("button", { name:"Se connecter", exact:true }).click();
 
     await page.locator("#accountPseudo").getByText("Yannis", { exact:true }).waitFor();
+
+    // Après connexion, « Mon suivi » devient la vue par défaut.
+    await page.locator("#view-dashboard").waitFor({ state:"visible" });
+    assert.equal(
+      await page.locator("#tab-dashboard").getAttribute("aria-selected"),
+      "true"
+    );
+
     const authenticatedBossRead = await page.evaluate(async () => {
       const state = window.__fakeSupabaseState;
       const reads = {};
@@ -107,8 +119,13 @@ const { chromium } = require("playwright");
         const { data, error } = await window.__fakeSupabaseClient
           .from(table)
           .select("*");
+        /* On ne compte que les lignes de la sonde : « Mon suivi » sème
+           désormais les six groupes de la semaine dès son ouverture, à un
+           moment que ce test ne contrôle pas. */
         reads[table] = {
-          count:(data || []).length,
+          count:(data || []).filter(row =>
+            (row.id || row.session_id) === "boss-session-rls-probe"
+          ).length,
           error:error && error.message
         };
       }
@@ -1905,6 +1922,9 @@ const { chromium } = require("playwright");
     await page.locator("#authEmail").fill("yannis@example.test");
     await page.locator("#authPassword").fill("mot-de-passe-test");
     await page.getByRole("button", { name:"Se connecter", exact:true }).click();
+    // Une connexion réussie ouvre « Mon suivi » : ce scénario revient sur Boss.
+    await page.locator("#view-dashboard").waitFor({ state:"visible" });
+    await page.locator('.tab[data-view="boss"]').click();
     await page.locator(".boss-card", { hasText:"Groupe 1 · Run 1" })
       .getByRole("button", { name:"Rejoindre", exact:true }).waitFor();
     assert.match(await page.locator("#bossCount").textContent(), /0\/3/);
@@ -3645,6 +3665,73 @@ const { chromium } = require("playwright");
       );
     }
 
+    /* ---------- Mon suivi : rendu connecté ----------
+       Les participations de user-1 sont remises à plat pour que les compteurs
+       soient déterministes, quoi qu'aient laissé les scénarios Boss précédents. */
+    await page.setViewportSize({ width:1280, height:900 });
+    const dashboardWeekStart = await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const week = state.boss_sessions[0].week_start;
+      const openRun = state.boss_sessions.find(run =>
+        run.slot === 2 && run.week_start === week && run.status === "open"
+      );
+      const archivedRun = state.boss_sessions.find(run =>
+        run.slot === 4 && run.week_start === week
+      );
+      archivedRun.status = "archived";
+      archivedRun.completed_at = "2026-07-30T20:00:00.000Z";
+      state.boss_participation = state.boss_participation
+        .filter(item => item.owner !== "user-1");
+      state.boss_run_reports.length = 0;
+      state.boss_participation.push(
+        {
+          session_id:openRun.id,
+          owner:"user-1",
+          pseudo:"Yannis",
+          team_id:null,
+          team_snapshot:null
+        },
+        {
+          session_id:openRun.id,
+          owner:"user-2",
+          pseudo:"Merlin",
+          team_id:"team-other",
+          team_snapshot:{ id:"team-other" }
+        },
+        {
+          session_id:archivedRun.id,
+          owner:"user-1",
+          pseudo:"Yannis",
+          team_id:"team-own",
+          team_snapshot:{ id:"team-own" }
+        }
+      );
+      state.boss_run_reports.push({
+        session_id:archivedRun.id,
+        global_score:"9007199254740991",
+        note:"Rapport exact",
+        created_by:"user-1",
+        created_by_pseudo:"Yannis",
+        created_at:"2026-07-30T20:00:00.000Z",
+        updated_by:null,
+        updated_by_pseudo:null,
+        updated_at:null
+      });
+      return week;
+    });
+    await page.locator('.tab[data-view="dashboard"]').click();
+
+    await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
+    const dashboardText = () => page.locator("#dashboardBody").textContent();
+    assert.match(await dashboardText(), /1\s*Terminées/);
+    assert.match(await dashboardText(), /1\s*En cours/);
+    assert.match(await dashboardText(), /1\s*Encore disponibles/);
+    // Le numéro de run dépend des scénarios Boss précédents : on ne le fige pas.
+    assert.match(await dashboardText(), /Groupe 2 · Run \d+/);
+    assert.match(await dashboardText(), /Équipe manquante/);
+    assert.match(await dashboardText(), /9\s*007\s*199\s*254\s*740\s*991/);
+    assert.ok(dashboardWeekStart, "La semaine du tableau de bord doit être connue");
+
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await authOverlay.waitFor({ state:"visible" });
     assert.equal(await authOverlay.evaluate(el => el.classList.contains("on")), true);
@@ -3686,6 +3773,8 @@ const { chromium } = require("playwright");
     );
     assert.equal(await page.locator("#accountPseudo").textContent(), "Merlin");
 
+    // La connexion précédente a ouvert « Mon suivi » : ce scénario vise Boss.
+    await page.locator('.tab[data-view="boss"]').click();
     const merlinGroupOne = page.locator(".boss-card", {
       hasText:"Groupe 1 · Run 1"
     });

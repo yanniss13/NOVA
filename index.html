@@ -774,6 +774,73 @@
     margin:0;font-family:var(--display);font-size:14px;font-weight:600;
     letter-spacing:.05em;color:var(--parchment)
   }
+
+  /* ---------- Mon suivi ---------- */
+  .dashboard-heading,
+  .dashboard-summary-head,
+  .dashboard-card-head{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:16px
+  }
+  .dashboard-sync-meta{color:var(--muted);font-size:13px;text-align:right}
+  .dashboard-sync-meta span{display:block}
+  /* Région live réservée aux lecteurs d'écran : chargement, succès, erreur. */
+  .dashboard-status{
+    position:absolute;
+    width:1px;
+    height:1px;
+    padding:0;
+    margin:-1px;
+    overflow:hidden;
+    clip:rect(0,0,0,0);
+    white-space:nowrap;
+    border:0
+  }
+  .dashboard-summary,
+  .dashboard-actions-panel,
+  .dashboard-section,
+  .dashboard-deadline{
+    border:1px solid var(--line);
+    background:linear-gradient(145deg,rgba(35,27,42,.96),rgba(20,16,26,.96));
+    border-radius:14px;
+    padding:18px;
+    margin-top:16px
+  }
+  .dashboard-progress{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:10px;
+    margin-top:14px
+  }
+  .dashboard-progress-cell,
+  .dashboard-action-row,
+  .dashboard-run-card{
+    min-width:0;
+    border:1px solid rgba(199,167,91,.22);
+    border-radius:12px;
+    background:rgba(255,255,255,.025)
+  }
+  .dashboard-progress-cell{padding:14px;text-align:center}
+  .dashboard-progress-cell strong{display:block;font-size:24px;color:var(--gold)}
+  .dashboard-progress-cell span{display:block;color:var(--muted)}
+  .dashboard-action-list,
+  .dashboard-run-list{display:grid;gap:10px;margin-top:12px}
+  .dashboard-action-row,
+  .dashboard-run-card{padding:14px}
+  .dashboard-action-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .dashboard-run-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
+  .dashboard-run-card p{margin:6px 0 0;color:var(--muted)}
+  .dashboard-run-card .dashboard-team-state{color:var(--parchment)}
+  .dashboard-offline-badge{
+    display:inline-block;padding:2px 10px;border-radius:999px;
+    border:1px solid var(--gold-deep);color:var(--gold-bright);
+    font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase
+  }
+  .dashboard-deadline[data-level="complete"]{border-color:rgba(111,176,138,.6)}
+  .dashboard-deadline[data-level="warning"]{border-color:rgba(199,167,91,.7)}
+  .dashboard-deadline[data-level="urgent"]{border-color:rgba(190,74,85,.8)}
   .boss-stat-evolution{font-size:11px;color:var(--gold-bright);text-align:right}
   .boss-stats-grid{
     display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;
@@ -1145,6 +1212,9 @@
     <button class="tab active" id="tab-builder" data-view="builder"
             role="tab" aria-controls="view-builder"
             aria-selected="true" tabindex="0">Créer une équipe</button>
+    <button class="tab" id="tab-dashboard" data-view="dashboard"
+            role="tab" aria-controls="view-dashboard"
+            aria-selected="false" tabindex="-1">Mon suivi</button>
     <button class="tab" id="tab-roster" data-view="roster"
             role="tab" aria-controls="view-roster"
             aria-selected="false" tabindex="-1">Boss de Guilde</button>
@@ -1175,6 +1245,22 @@
 </header>
 
 <main>
+  <!-- ============ MON SUIVI ============ -->
+  <section id="view-dashboard" class="view" role="tabpanel"
+           aria-labelledby="tab-dashboard">
+    <div class="dashboard-heading">
+      <div>
+        <p class="section-eyebrow">Boss de Guilde</p>
+        <h1 class="section-title" id="dashboardTitle" tabindex="-1">Mon suivi</h1>
+        <p class="section-lead">Tes trois runs de la semaine et la prochaine action utile.</p>
+      </div>
+      <div id="dashboardSyncMeta" class="dashboard-sync-meta"></div>
+    </div>
+    <div id="dashboardStatus" class="dashboard-status"
+         role="status" aria-live="polite" aria-atomic="true"></div>
+    <div id="dashboardBody"></div>
+  </section>
+
   <!-- ============ BUILDER ============ -->
   <section id="view-builder" class="view active" role="tabpanel"
            aria-labelledby="tab-builder">
@@ -2371,6 +2457,8 @@
     const sessionChanged = previousUserId !== expectedUserId;
     if(sessionChanged){
       ensureBossViewOwner();
+      // Le suivi du compte précédent ne doit jamais rester visible.
+      DashboardStore.reset(expectedUserId);
       if($("#view-boss").classList.contains("active")) void renderBossView();
     }
     currentPseudo = "";
@@ -2402,6 +2490,16 @@
     }
     if($("#view-recensement").classList.contains("active")) void renderRecensement();
     if($("#view-analyse").classList.contains("active")) void renderAnalyse();
+    /* « Mon suivi » devient la vue par défaut à la résolution initiale d'une
+       session et après une connexion réussie, c'est-à-dire au passage
+       « aucun compte -> un compte ». Un changement de compte piloté de
+       l'extérieur, comme un TOKEN_REFRESHED, ne déplace jamais la navigation :
+       il se contente de réafficher le suivi du bon compte s'il est visible. */
+    if(sessionChanged && !previousUserId && currentUser){
+      void showView("dashboard");
+    }else if($("#view-dashboard").classList.contains("active")){
+      void renderDashboardView();
+    }
   }
 
   async function signIn(){
@@ -2500,6 +2598,7 @@
     document.querySelectorAll(".view").forEach(view => {
       view.classList.toggle("active", view.id === "view-"+name);
     });
+    if(name==="dashboard") void renderDashboardView();
     if(name==="builder") renderBuilder();
     if(name==="roster") void renderRoster();
     if(name==="member-roster") void renderMemberRoster();
@@ -4873,6 +4972,31 @@
         });
       if(error) throw error;
     },
+    /* Lectures ciblées de « Mon suivi » : la semaine seule, sans toucher aux
+       méthodes déjà utilisées par la vue Boss. */
+    async listWeek(weekStart){
+      if(!currentUser || !sb) return [];
+      const { data, error } = await sb.from("boss_sessions")
+        .select("*")
+        .eq("week_start", weekStart)
+        .order("slot", {ascending:true})
+        .order("run_no", {ascending:true});
+      if(error) throw error;
+      return data || [];
+    },
+    async listReportsForSessions(sessionIds){
+      if(!currentUser || !sb || !sessionIds.length) return [];
+      const reports = [];
+      for(let start=0; start<sessionIds.length; start+=100){
+        const batch = sessionIds.slice(start, start+100);
+        const { data, error } = await sb.from("boss_run_reports")
+          .select("*")
+          .in("session_id", batch);
+        if(error) throw error;
+        reports.push(...(data || []));
+      }
+      return reports;
+    },
     async listMembership(sessionIds){
       if(!currentUser || !sb || !sessionIds.length) return [];
       const memberships = [];
@@ -4931,6 +5055,286 @@
       if(error) throw error;
     }
   };
+
+  /* ---------- Mon suivi : store et rendu ----------
+     Le store protège chaque lecture par une génération, l'identité du compte et
+     la semaine attendue : une réponse lente ne remplace jamais un état plus
+     récent, et une déconnexion ne réaffiche pas le compte précédent. */
+  const DashboardStore = (function(){
+    let issued = 0;
+    let ownerId = "";
+    let state = null;
+
+    function reset(userId){
+      issued++;
+      ownerId = userId || "";
+      state = null;
+    }
+
+    function current(){
+      return state;
+    }
+
+    async function refresh(){
+      const userId = currentUser?.id || "";
+      if(!userId || !sb) throw new Error("AUTH_REQUIRED");
+      if(ownerId !== userId) reset(userId);
+      const requestId = ++issued;
+      const weekStart = currentBossWeek().startDate;
+      const isCurrent = () =>
+        issued === requestId &&
+        currentUser?.id === userId &&
+        currentBossWeek().startDate === weekStart;
+
+      const teamsPromise = Store.refresh();
+      await BossStore.ensureWeek(currentBossWeek());
+      const sessions = await BossStore.listWeek(weekStart);
+      const sessionIds = sessions.map(session => session.id);
+      const membershipPromise = BossStore.listMembership(sessionIds);
+      // Une base sans les rapports de boss reste lisible : on dégrade au lieu
+      // d'échouer, comme le fait déjà la vue Boss.
+      const reportsPromise = BossStore.listReportsForSessions(sessionIds)
+        .then(reports => ({ reports, reportsAvailable:true }))
+        .catch(error => {
+          if(isBossSchemaCompatibilityError(error)){
+            return { reports:[], reportsAvailable:false };
+          }
+          throw error;
+        });
+      const [membership, reportResult, teams] = await Promise.all([
+        membershipPromise,
+        reportsPromise,
+        teamsPromise
+      ]);
+      if(!isCurrent()) return state;
+      state = Object.assign(buildDashboardState({
+        userId,
+        weekStart,
+        sessions,
+        membership,
+        reports:reportResult.reports,
+        teams,
+        now:new Date(),
+        lastSyncedAt:Date.now(),
+        offline:false
+      }), {
+        userId,
+        reportsAvailable:reportResult.reportsAvailable
+      });
+      return state;
+    }
+
+    return { current, refresh, reset };
+  })();
+
+  function dashboardProgressCell(label, value, className){
+    return el("div",{class:"dashboard-progress-cell "+className},[
+      el("strong",{text:String(value)}),
+      el("span",{text:label})
+    ]);
+  }
+
+  const DASHBOARD_NETWORK_ACTIONS = [
+    "choose-team",
+    "view-group",
+    "find-group",
+    "edit-report"
+  ];
+
+  function dashboardActionButton(action){
+    return el("button",{
+      class:"btn "+(action.priority === 1 ? "btn-primary" : ""),
+      type:"button",
+      dataset:{
+        dashboardAction:action.type,
+        sessionId:action.sessionId || "",
+        dashboardNetworkAction:DASHBOARD_NETWORK_ACTIONS.includes(action.type)
+          ? "true"
+          : "false"
+      },
+      text:action.label
+    });
+  }
+
+  function dashboardRunCard(group){
+    const head = el("div",{class:"dashboard-card-head"},[
+      el("strong",{text:group.title+" · Run "+group.runNo})
+    ]);
+    const card = el("div",{
+      class:"dashboard-run-card",
+      dataset:{ sessionId:group.id, status:group.status }
+    },[head]);
+    if(group.status === "open"){
+      card.appendChild(el("p",{
+        text:group.memberCount+"/5 joueurs"
+      }));
+      card.appendChild(el("p",{
+        class:"dashboard-team-state",
+        text:group.teamSelected ? "Équipe sélectionnée" : "Équipe manquante"
+      }));
+      return card;
+    }
+    card.appendChild(el("p",{
+      text:group.completedAt
+        ? "Terminée le "+frDateTime(group.completedAt)
+        : "Terminée"
+    }));
+    card.appendChild(el("p",{
+      text:group.report
+        ? formatBossScore(group.report.globalScore)+" points"
+        : "Rapport non disponible pour cette ancienne run."
+    }));
+    return card;
+  }
+
+  function renderDashboardContent(state){
+    const body = $("#dashboardBody");
+    const blocks = [];
+
+    const summary = el("section",{class:"dashboard-summary"},[
+      el("div",{class:"dashboard-summary-head"},[
+        el("strong",{text:"Runs engagées "+state.engaged+"/3"})
+      ]),
+      el("div",{class:"dashboard-progress"},[
+        dashboardProgressCell("Terminées", state.completed, "is-done"),
+        dashboardProgressCell("En cours", state.open, "is-open"),
+        dashboardProgressCell("Encore disponibles", state.remaining, "is-left")
+      ])
+    ]);
+    blocks.push(summary);
+
+    if(state.reportsAvailable === false){
+      blocks.push(el("section",{class:"dashboard-section"},[
+        el("strong",{text:"Maintenance des rapports de boss"}),
+        el("p",{text:"Les scores ne sont pas lisibles pour le moment. Tes runs restent correctes."})
+      ]));
+    }
+
+    if(state.offline){
+      blocks.push(el("section",{class:"dashboard-section"},[
+        el("strong",{text:"Données potentiellement anciennes"}),
+        el("p",{text:"Ces informations viennent du dernier suivi enregistré sur cet appareil."}),
+        el("button",{
+          class:"btn btn-primary",
+          type:"button",
+          text:"Réessayer",
+          onclick:()=>void renderDashboardView({ force:true })
+        })
+      ]));
+    }
+
+    if(state.actions.length){
+      blocks.push(el("section",{class:"dashboard-actions-panel"},[
+        el("strong",{text:"À faire maintenant"}),
+        el("div",{class:"dashboard-action-list"},
+          state.actions.map(action => el("div",{class:"dashboard-action-row"},[
+            // Le libellé du groupe sert de contexte ; le bouton porte l'action.
+            action.sessionId
+              ? el("span",{text:"Groupe "+action.slot+" · Run "+action.runNo})
+              : el("span",{text:"Tu peux encore engager une run"}),
+            dashboardActionButton(action)
+          ]))
+        )
+      ]));
+    }
+
+    const openGroups = state.groups.filter(group => group.status === "open");
+    if(openGroups.length){
+      blocks.push(el("section",{class:"dashboard-section"},[
+        el("strong",{text:"Runs en cours"}),
+        el("div",{class:"dashboard-run-grid"}, openGroups.map(dashboardRunCard))
+      ]));
+    }
+
+    const doneGroups = state.groups.filter(group => group.status === "archived");
+    if(doneGroups.length){
+      blocks.push(el("section",{class:"dashboard-section"},[
+        el("strong",{text:"Runs terminées cette semaine"}),
+        el("div",{class:"dashboard-run-grid"}, doneGroups.map(dashboardRunCard))
+      ]));
+    }
+
+    blocks.push(el("section",{
+      class:"dashboard-deadline",
+      dataset:{ level:state.deadlineStatus.level }
+    },[
+      el("strong",{text:state.deadlineStatus.label})
+    ]));
+
+    body.replaceChildren(...blocks);
+    if(state.offline){
+      body.querySelectorAll('[data-dashboard-network-action="true"]')
+        .forEach(button => {
+          button.disabled = true;
+          button.title = "Action indisponible hors ligne";
+        });
+    }
+  }
+
+  function renderDashboardSyncMeta(state){
+    const meta = $("#dashboardSyncMeta");
+    if(!state){
+      meta.replaceChildren();
+      return;
+    }
+    const stamp = state.lastSyncedAt
+      ? "Dernière synchronisation "+frDateTime(
+          new Date(state.lastSyncedAt).toISOString()
+        )
+      : "Dernière synchronisation inconnue";
+    if(state.offline){
+      meta.replaceChildren(
+        el("span",{class:"dashboard-offline-badge",text:"Hors ligne"}),
+        el("span",{text:stamp})
+      );
+      return;
+    }
+    meta.replaceChildren(el("span",{text:stamp}));
+  }
+
+  async function renderDashboardView(){
+    const body = $("#dashboardBody");
+    if(!currentUser){
+      $("#dashboardSyncMeta").replaceChildren();
+      $("#dashboardStatus").textContent = "";
+      body.replaceChildren(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:"Connecte-toi pour afficher ton suivi"}),
+        el("button",{
+          class:"btn btn-primary",
+          type:"button",
+          text:"Connexion",
+          onclick:()=>openAuth()
+        })
+      ]));
+      return true;
+    }
+    body.replaceChildren(el("div",{class:"empty-state"},[
+      el("p",{class:"big",text:"Chargement du suivi…"})
+    ]));
+    $("#dashboardStatus").textContent = "Chargement du suivi";
+    try{
+      const state = await DashboardStore.refresh();
+      if(!state) return true;
+      renderDashboardSyncMeta(state);
+      renderDashboardContent(state);
+      $("#dashboardStatus").textContent = "Suivi actualisé";
+      return true;
+    }catch(error){
+      renderDashboardSyncMeta(null);
+      body.replaceChildren(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:"Suivi indisponible"}),
+        el("p",{text:"Impossible de charger ton suivi pour le moment."}),
+        el("button",{
+          class:"btn btn-primary",
+          type:"button",
+          text:"Réessayer",
+          onclick:()=>void renderDashboardView()
+        })
+      ]));
+      $("#dashboardStatus").textContent = "Suivi indisponible";
+      return false;
+    }
+  }
 
   function bossStatCell(label, className, value){
     return el("div",{class:"boss-stat"},[

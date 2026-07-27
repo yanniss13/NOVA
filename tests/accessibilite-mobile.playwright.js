@@ -53,7 +53,7 @@ async function assertPickerTilesContained(page, label){
     );
     await page.goto(pathToFileURL(path.resolve(__dirname, "..", "index.html")).href);
     const tabs = page.getByRole("tab");
-    assert.equal(await tabs.count(), 6);
+    assert.equal(await tabs.count(), 7);
     assert.equal(await tabs.nth(0).getAttribute("aria-selected"), "true");
     assert.equal(await tabs.nth(0).getAttribute("tabindex"), "0");
     assert.equal(await tabs.nth(1).getAttribute("aria-selected"), "false");
@@ -62,10 +62,15 @@ async function assertPickerTilesContained(page, label){
     await tabs.nth(0).focus();
     await page.keyboard.press("ArrowRight");
     assert.equal(await tabs.nth(1).getAttribute("aria-selected"), "true");
-    assert.equal(await page.locator("#view-roster").isVisible(), true);
+    assert.equal(await page.locator("#view-dashboard").isVisible(), true);
+
+    // Flèche gauche revient sur le Team Builder, sans sauter d'onglet.
+    await page.keyboard.press("ArrowLeft");
+    assert.equal(await tabs.nth(0).getAttribute("aria-selected"), "true");
+    assert.equal(await page.locator("#view-builder").isVisible(), true);
 
     await page.keyboard.press("End");
-    assert.equal(await tabs.nth(5).getAttribute("aria-selected"), "true");
+    assert.equal(await tabs.nth(6).getAttribute("aria-selected"), "true");
     assert.equal(await page.locator("#view-boss").isVisible(), true);
 
     await page.keyboard.press("Home");
@@ -475,7 +480,7 @@ async function assertPickerTilesContained(page, label){
     await mobile.keyboard.press("Escape");
 
     for(const name of [
-      "builder", "roster", "member-roster",
+      "builder", "dashboard", "roster", "member-roster",
       "recensement", "analyse", "boss"
     ]){
       await mobile.locator('.tab[data-view="'+name+'"]').click();
