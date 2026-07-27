@@ -3891,6 +3891,155 @@ const { chromium } = require("playwright");
     }));
     await page.locator("#accountPseudo").getByText("Yannis", { exact:true }).waitFor();
 
+    /* ---- Actions directes : chaque bouton ouvre la vraie interface ---- */
+    await page.locator('.tab[data-view="dashboard"]').click();
+    await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
+
+    // Choisir mon équipe -> sélecteur d'équipe de la bonne participation.
+    await page.locator(
+      '[data-dashboard-action="choose-team"][data-session-id]'
+    ).click();
+    await page.locator("#bossTeamOverlay").waitFor({ state:"visible" });
+    assert.equal(
+      await page.locator("#bossTeamOverlay").getAttribute("aria-hidden"),
+      "false"
+    );
+    await page.locator("#bossTeamClose").click();
+    await page.waitForFunction(() =>
+      document.querySelector("#view-boss").contains(document.activeElement)
+    );
+
+    // Voir le groupe -> onglet Boss, focus sur la carte de la bonne session.
+    await page.locator('.tab[data-view="dashboard"]').click();
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const membership = state.boss_participation.find(item =>
+        item.owner === "user-1" && !item.team_snapshot
+      );
+      membership.team_id = "team-own";
+      membership.team_snapshot = { id:"team-own" };
+      window.__fakeSupabaseEmit("boss_participation", "UPDATE");
+    });
+    await page.locator('[data-dashboard-action="view-group"]').first().waitFor();
+    const viewGroupSessionId = await page
+      .locator('[data-dashboard-action="view-group"]').first()
+      .getAttribute("data-session-id");
+    await page.locator('[data-dashboard-action="view-group"]').first().click();
+    await page.locator("#view-boss").waitFor({ state:"visible" });
+    assert.equal(
+      await page.evaluate(() =>
+        document.activeElement.closest("[data-session-id]")?.dataset.sessionId
+      ),
+      viewGroupSessionId
+    );
+
+    // Corriger le rapport -> modale de rapport en mode correction.
+    await page.locator('.tab[data-view="dashboard"]').click();
+    await page.locator('[data-dashboard-action="edit-report"]').first().click();
+    await page.locator("#bossReportOverlay").waitFor({ state:"visible" });
+    assert.equal(
+      await page.locator("#bossReportTitle").textContent(),
+      "Corriger le rapport"
+    );
+    await page.locator("#bossReportClose").click();
+    await page.waitForFunction(() =>
+      document.querySelector("#view-boss").contains(document.activeElement)
+    );
+
+    // Trouver un groupe -> onglet Boss, focus sur un Rejoindre disponible.
+    await page.locator('.tab[data-view="dashboard"]').click();
+    await page.locator('[data-dashboard-action="find-group"]').click();
+    await page.locator("#view-boss").waitFor({ state:"visible" });
+    assert.equal(
+      await page.evaluate(() =>
+        document.activeElement.classList.contains("boss-join")
+      ),
+      true,
+      "« Trouver un groupe » doit focaliser un Rejoindre disponible"
+    );
+
+    // Voir mes équipes -> onglet des équipes, focus sur son titre.
+    await page.locator('.tab[data-view="dashboard"]').click();
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const membership = state.boss_participation.find(item =>
+        item.owner === "user-1" && item.team_snapshot
+      );
+      membership.team_id = null;
+      membership.team_snapshot = null;
+      window.__fakeSupabaseEmit("boss_participation", "UPDATE");
+    });
+    await page.locator('[data-dashboard-action="view-teams"]').first().waitFor();
+    await page.locator('[data-dashboard-action="view-teams"]').first().click();
+    await page.locator("#view-roster").waitFor({ state:"visible" });
+    assert.equal(
+      await page.evaluate(() => document.activeElement.id),
+      "rosterTitle"
+    );
+
+    // Créer une équipe -> builder vierge, hors mode édition.
+    await page.locator('.tab[data-view="dashboard"]').click();
+    const ownTeamsForDashboard = await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const removed = state.teams.filter(team => team.owner === "user-1");
+      state.teams = state.teams.filter(team => team.owner !== "user-1");
+      window.__fakeSupabaseEmit("teams", "DELETE");
+      return removed;
+    });
+    await page.locator('[data-dashboard-action="create-team"]').first().waitFor();
+    await page.locator('[data-dashboard-action="create-team"]').first().click();
+    await page.locator("#view-builder").waitFor({ state:"visible" });
+    assert.equal(await page.locator("#editFlag").isVisible(), false);
+    assert.equal(await page.locator(".hero .portrait img").count(), 0);
+    assert.equal(
+      await page.evaluate(() => document.activeElement.id),
+      "builderTitle"
+    );
+    await page.evaluate(teams => {
+      window.__fakeSupabaseState.teams.push(...teams);
+      window.__fakeSupabaseEmit("teams", "INSERT");
+    }, ownTeamsForDashboard);
+
+    // Une run devenue archivée entre le clic et le rendu ne doit rien ouvrir.
+    await page.locator('.tab[data-view="dashboard"]').click();
+    await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const run = state.boss_sessions.find(item =>
+        item.slot === 2 && item.status === "open"
+      );
+      state.staleDashboardRunId = run.id;
+    });
+    const staleChooseTeam = page.locator(
+      '[data-dashboard-action="choose-team"][data-session-id]'
+    );
+    await staleChooseTeam.waitFor();
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const run = state.boss_sessions.find(item =>
+        item.id === state.staleDashboardRunId
+      );
+      run.status = "archived";
+      run.completed_at = "2026-07-31T20:00:00.000Z";
+    });
+    await staleChooseTeam.click();
+    await page.getByText("Cette run n’accepte plus de sélection d’équipe.", {
+      exact:true
+    }).waitFor();
+    assert.equal(
+      await page.locator("#bossTeamOverlay").isVisible(),
+      false,
+      "Une run périmée ne doit pas ouvrir de sélecteur"
+    );
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const run = state.boss_sessions.find(item =>
+        item.id === state.staleDashboardRunId
+      );
+      run.status = "open";
+      run.completed_at = null;
+    });
+
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await authOverlay.waitFor({ state:"visible" });
     assert.equal(await authOverlay.evaluate(el => el.classList.contains("on")), true);

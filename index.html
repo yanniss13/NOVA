@@ -1265,7 +1265,7 @@
   <section id="view-builder" class="view active" role="tabpanel"
            aria-labelledby="tab-builder">
     <p class="section-eyebrow">Forge des équipes</p>
-    <h1 class="section-title">Composer une équipe</h1>
+    <h1 class="section-title" id="builderTitle" tabindex="-1">Composer une équipe</h1>
     <p class="section-lead">Assigne 4 héros, leur arme et leurs armures, puis enregistre l'équipe pour la rendre disponible face au Boss de Guilde.</p>
 
     <div class="metabar">
@@ -1287,7 +1287,7 @@
   <section id="view-roster" class="view" role="tabpanel"
            aria-labelledby="tab-roster">
     <p class="section-eyebrow">Registre de la confrérie</p>
-    <h1 class="section-title">Équipes dispo pour le Boss de Guilde</h1>
+    <h1 class="section-title" id="rosterTitle" tabindex="-1">Équipes dispo pour le Boss de Guilde</h1>
     <p class="section-lead">Toutes les équipes proposées par les membres. Modifie ou retire les tiennes à tout moment.</p>
 
     <div class="roster-toolbar">
@@ -2615,16 +2615,25 @@
     document.querySelectorAll(".view").forEach(view => {
       view.classList.toggle("active", view.id === "view-"+name);
     });
-    if(name==="dashboard") void renderDashboardView();
+    /* La promesse de rendu est renvoyée pour que les actions de « Mon suivi »
+       puissent attendre la vue destination avant de cibler un élément. Les
+       écouteurs existants continuent d'ignorer la valeur de retour. */
+    let result = Promise.resolve(true);
+    if(name==="dashboard") result = renderDashboardView();
     if(name==="builder") renderBuilder();
-    if(name==="roster") void renderRoster();
-    if(name==="member-roster") void renderMemberRoster();
-    if(name==="recensement") void renderRecensement();
-    if(name==="analyse") void renderAnalyse();
-    if(name==="boss") void renderBossView();
+    if(name==="roster") result = Promise.resolve(renderRoster()).then(()=>true);
+    if(name==="member-roster"){
+      result = Promise.resolve(renderMemberRoster()).then(()=>true);
+    }
+    if(name==="recensement"){
+      result = Promise.resolve(renderRecensement()).then(()=>true);
+    }
+    if(name==="analyse") result = Promise.resolve(renderAnalyse()).then(()=>true);
+    if(name==="boss") result = renderBossView();
     const reduced = window.matchMedia
       && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.scrollTo({top:0, behavior:reduced ? "auto" : "smooth"});
+    return result;
   }
   mainTabs.forEach((button, index) => {
     button.addEventListener("click", ()=>showView(button.dataset.view));
@@ -3651,8 +3660,14 @@
   function openPotentiel(i){ Potentiel.open(i); }
 
   // Actions builder
+  function resetTeamDraft(){
+    draft = emptyDraft();
+    editing = false;
+    renderBuilder();
+  }
+
   $("#btnNew").addEventListener("click", ()=>{
-    draft = emptyDraft(); editing = false; renderBuilder();
+    resetTeamDraft();
     toast("Nouvelle équipe prête.");
   });
 
@@ -5224,6 +5239,99 @@
     return { current, refresh, reset, markDirty, isDirty };
   })();
 
+  /* Une carte ouverte est un `.boss-card`, une archive un `.boss-report-card` :
+     les deux portent `data-session-id`, donc une seule recherche suffit. */
+  function dashboardBossCard(sessionId){
+    return [...$("#bossBody").querySelectorAll("[data-session-id]")]
+      .find(node => node.dataset.sessionId === sessionId) || null;
+  }
+
+  async function openDashboardBossTarget(sessionId, mode){
+    const loaded = await showView("boss");
+    if(!loaded){
+      toast("Le groupe n’a pas pu être chargé.", true);
+      return;
+    }
+    const group = (bossViewState.allGroups || [])
+      .find(item => item.id === sessionId);
+    if(!group){
+      toast("Cette run n’est plus disponible.", true);
+      return;
+    }
+    const card = dashboardBossCard(sessionId);
+    if(card) card.scrollIntoView({ block:"center", behavior:"smooth" });
+
+    if(mode === "choose-team"){
+      const member = (bossViewState.membership || []).find(item =>
+        item.session_id === sessionId &&
+        item.owner === currentUser?.id
+      );
+      const trigger = card && card.querySelector('[data-boss-action="team"]');
+      if(!member || group.status !== "open" || !trigger){
+        toast("Cette run n’accepte plus de sélection d’équipe.", true);
+        if(card) dashboardFocusCard(card);
+        return;
+      }
+      trigger.focus();
+      await openBossTeamPicker(group, member);
+      return;
+    }
+
+    if(mode === "edit-report"){
+      const trigger = card && card.querySelector(
+        '[data-boss-action="report-edit"]'
+      );
+      const report = (bossViewState.reports || []).find(item =>
+        item.session_id === sessionId
+      );
+      if(group.status !== "archived" || !report || !trigger){
+        toast("Ce rapport n’est plus modifiable.", true);
+        if(card) dashboardFocusCard(card);
+        return;
+      }
+      trigger.focus();
+      openBossReport(group, "edit");
+      return;
+    }
+
+    if(card) dashboardFocusCard(card);
+    else $("#tab-boss").focus();
+  }
+
+  function dashboardFocusCard(card){
+    card.setAttribute("tabindex", "-1");
+    card.focus();
+  }
+
+  async function runDashboardAction(action){
+    if(!action) return;
+    if(action.type === "choose-team" ||
+       action.type === "view-group" ||
+       action.type === "edit-report"){
+      await openDashboardBossTarget(action.sessionId, action.type);
+      return;
+    }
+    if(action.type === "create-team"){
+      resetTeamDraft();
+      await showView("builder");
+      $("#builderTitle").focus();
+      return;
+    }
+    if(action.type === "view-teams"){
+      await showView("roster");
+      $("#rosterTitle").focus();
+      return;
+    }
+    if(action.type === "find-group"){
+      const loaded = await showView("boss");
+      if(!loaded) return;
+      const target = $("#bossBody").querySelector(
+        '.boss-card:not(.mine) .boss-join:not([disabled])'
+      );
+      (target || $("#tab-boss")).focus();
+    }
+  }
+
   function dashboardProgressCell(label, value, className){
     return el("div",{class:"dashboard-progress-cell "+className},[
       el("strong",{text:String(value)}),
@@ -5249,7 +5357,8 @@
           ? "true"
           : "false"
       },
-      text:action.label
+      text:action.label,
+      onclick:()=>void runDashboardAction(action)
     });
   }
 
@@ -5269,6 +5378,18 @@
         class:"dashboard-team-state",
         text:group.teamSelected ? "Équipe sélectionnée" : "Équipe manquante"
       }));
+      /* Action secondaire : elle complète « Choisir mon équipe » sans la
+         remplacer, et seulement si le membre possède déjà des équipes. */
+      if(!group.teamSelected && group.hasOwnTeams){
+        card.appendChild(dashboardActionButton({
+          type:"view-teams",
+          sessionId:null,
+          slot:group.slot,
+          runNo:group.runNo,
+          label:"Voir mes équipes",
+          priority:5
+        }));
+      }
       return card;
     }
     card.appendChild(el("p",{
@@ -5335,7 +5456,11 @@
       ]));
     }
 
-    const openGroups = state.groups.filter(group => group.status === "open");
+    const openGroups = state.groups
+      .filter(group => group.status === "open")
+      .map(group => Object.assign({}, group, {
+        hasOwnTeams:state.hasOwnTeams
+      }));
     if(openGroups.length){
       blocks.push(el("section",{class:"dashboard-section"},[
         el("strong",{text:"Runs en cours"}),
