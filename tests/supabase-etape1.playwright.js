@@ -300,11 +300,19 @@ const { chromium } = require("playwright");
     await page.locator('.tab[data-view="roster"]').click();
     await page.locator("#rosterGrid .team").first().waitFor();
     assert.equal(await page.locator("#rosterGrid .team").count(), 2);
+    /* On compte les actions de gestion, pas le conteneur : « Dupliquer » est
+       désormais offert sur chaque carte, donc `.team-actions` existe partout. */
     assert.equal(
-      await page.locator("#rosterGrid .team-actions").count(),
+      await page.locator('#rosterGrid [data-team-action="edit"]').count(),
       1,
       "Seule l'équipe du membre connecté doit être modifiable"
     );
+    assert.equal(
+      await page.locator('#rosterGrid [data-team-action="delete"]').count(),
+      1,
+      "Seule l'équipe du membre connecté doit être supprimable"
+    );
+
     await page.evaluate(() => {
       window.__fakeSupabaseState.teams.push({
         id:"team-realtime",
@@ -386,6 +394,116 @@ const { chromium } = require("playwright");
       0
     );
     await page.locator("#teamClose").click();
+
+    /* ---- Nom d'équipe et duplication ----
+       « Dupliquer » est proposé sur TOUTE équipe : le registre est partagé et le
+       résultat est un brouillon indépendant. */
+    const cardsBeforeDuplicate = await page.locator("#rosterGrid .team").count();
+    assert.ok(cardsBeforeDuplicate >= 2, "Il faut plusieurs équipes pour ce test");
+    assert.equal(
+      await page.locator('#rosterGrid [data-team-action="duplicate"]').count(),
+      cardsBeforeDuplicate,
+      "Dupliquer doit être proposé sur chaque équipe, pas seulement les siennes"
+    );
+    assert.equal(
+      await page.locator('#rosterGrid [data-team-action="edit"]').count(),
+      cardsBeforeDuplicate - 1,
+      "Modifier ne doit rester que sur les équipes du membre connecté"
+    );
+
+    /* Équipe source dédiée, retirée à la fin : les deux équipes du jeu de test
+       restent intactes pour les scénarios suivants. Elle porte un nom (dont on
+       vérifie l'affichage) et un héros, sans lequel la sauvegarde est refusée. */
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      state.teams.push({
+        id:"team-dup-source",
+        owner:"user-1",
+        pseudo:"Yannis",
+        data:{
+          id:"team-dup-source",
+          name:"Compo de Yannis",
+          pseudo:"Yannis",
+          heroes:Array.from({length:4}, (unused, index) => ({
+            char:index === 0 ? "meliodas" : null,
+            weapon:null,
+            armor:{},
+            jewel:{},
+            potentiel:{tier:0},
+            note:""
+          }))
+        },
+        created_at:"2026-07-27T09:00:00.000Z",
+        updated_at:"2026-07-27T09:00:00.000Z"
+      });
+      window.__fakeSupabaseEmit("teams", "INSERT");
+    });
+    const teamToDuplicate = page.locator("#rosterGrid .team")
+      .filter({ hasText:"Compo de Yannis" });
+    await teamToDuplicate.locator(".team-name").waitFor();
+    const duplicatedFrom = await teamToDuplicate.evaluate(node => ({
+      name:node.querySelector(".team-name")?.textContent || "",
+      pseudo:node.querySelector(".team-pseudo")?.textContent || "",
+      heroes:[...node.querySelectorAll(".team-heroes img")].map(img => img.src)
+    }));
+    assert.equal(duplicatedFrom.name, "Compo de Yannis");
+    assert.equal(duplicatedFrom.pseudo, "Yannis");
+    assert.ok(
+      duplicatedFrom.heroes.length > 0,
+      "L'équipe source doit avoir au moins un héros, sinon le test ne prouve rien"
+    );
+    const teamsBeforeDuplicate = await page.evaluate(() =>
+      window.__fakeSupabaseState.teams.length
+    );
+    await teamToDuplicate.locator('[data-team-action="duplicate"]').click();
+    await page.locator("#view-builder").waitFor({ state:"visible" });
+
+    // Un brouillon, pas une écriture : rien n'est enregistré avant validation.
+    assert.equal(
+      await page.evaluate(() => window.__fakeSupabaseState.teams.length),
+      teamsBeforeDuplicate,
+      "Dupliquer ne doit rien enregistrer tout de suite"
+    );
+    assert.equal(await page.locator("#editFlag").isVisible(), false);
+    assert.equal(
+      await page.locator("#teamName").inputValue(),
+      "Compo de Yannis (copie)",
+      "Le nom du brouillon doit signaler la copie"
+    );
+    // Le pseudo est le mien, pas celui de l'auteur d'origine.
+    assert.equal(await page.locator("#pseudo").inputValue(), "Yannis");
+    assert.deepEqual(
+      await page.evaluate(() =>
+        [...document.querySelectorAll("#heroGrid .portrait img")].map(img => img.src)
+      ),
+      duplicatedFrom.heroes,
+      "La copie doit reprendre les héros de l'équipe d'origine"
+    );
+
+    // Enregistrer crée bien une NOUVELLE équipe, sans toucher l'originale.
+    await page.locator("#teamName").fill("Compo dupliquée");
+    await page.locator("#btnSave").click();
+    await page.waitForFunction(count =>
+      window.__fakeSupabaseState.teams.length === count + 1,
+      teamsBeforeDuplicate
+    );
+    await page.locator('.tab[data-view="roster"]').click();
+    await page.locator("#rosterGrid .team-name")
+      .filter({ hasText:"Compo dupliquée" }).waitFor();
+    /* On rend au jeu de test exactement l'état où on l'a trouvé : la source
+       dédiée et la copie disparaissent, les équipes préexistantes restent. */
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      state.teams = state.teams.filter(team =>
+        team.id !== "team-dup-source" &&
+        !(team.data && team.data.name === "Compo dupliquée")
+      );
+      window.__fakeSupabaseEmit("teams", "DELETE");
+    });
+    await page.waitForFunction(count =>
+      document.querySelectorAll("#rosterGrid .team").length === count,
+      cardsBeforeDuplicate
+    );
 
     // #5 : Recensement 100% dérivé du roster, lecture seule.
     await page.locator('.tab[data-view="recensement"]').click();

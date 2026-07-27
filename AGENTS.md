@@ -187,6 +187,7 @@ cloud utilise `confrerie7ds.cloud.teams`.
 ```js
 {
   id: "uuid",
+  name: "Compo burst",      // nom facultatif, ≤ 40 car., "" pour les anciennes
   pseudo: "NomDuMembre",
   boss: "",                 // réservé (non utilisé dans l'UI actuelle)
   createdAt: 1690000000000,
@@ -562,9 +563,30 @@ piège à focus, Échap et la restitution du focus. Ne pas réintroduire d'écou
 Échap locaux. Sur écran tactile, les contrôles principaux restent à 44 × 44 px
 minimum et aucune vue ne doit élargir le document.
 
+## Nom d'équipe et duplication
+
+Une équipe porte un **nom facultatif** de 40 caractères maximum, `normalizeTeamName`
+le coupant et le bornant. Il vit dans le `jsonb` de `teams.data`, donc **aucune
+migration Supabase** : une équipe créée avant devient simplement sans nom.
+
+Le nom s'affiche là où deux compos étaient indistinguables : carte d'équipe (il
+prend la ligne principale, le pseudo passe dessous), **sélecteur d'équipe du Boss
+de Guilde** — sa raison d'être — et titre de la modale d'équipement. Les
+instantanés de `boss_participation` copiant tout `teams.data`, le nom du moment
+est figé dans les rapports archivés, gratuitement.
+
+**« Dupliquer » est proposé sur toute équipe**, pas seulement les siennes : le
+registre est partagé et la copie est indépendante. Elle arrive comme **brouillon
+non enregistré** — nouvel identifiant, hors mode édition, nom suffixé
+« (copie) », pseudo remplacé par le sien, et `owner`/`createdAt`/`updatedAt`
+retirés. Rien n'est écrit dans Supabase avant « Enregistrer ». *Modifier* et
+*Supprimer* restent réservés au propriétaire ; les tests comptent désormais
+`[data-team-action="edit"]` plutôt que le conteneur `.team-actions`, présent sur
+chaque carte.
+
 ## Évolutions prévues
 
-- Champ **note globale d'équipe** (déjà réservé dans le modèle).
+- Champ **note globale d'équipe** (déjà réservé dans le modèle via `boss`).
 
 ## Conventions
 

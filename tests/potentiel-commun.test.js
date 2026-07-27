@@ -163,6 +163,21 @@ const STORAGE_KEY = "confrerie7ds.teams";
   assert.deepStrictEqual(plain(hooks.normalizePotentiel({ tier:99 })), { tier:10 });
   assert.deepStrictEqual(plain(hooks.normalizePotentiel({ tier:-4 })), { tier:0 });
 
+  /* Nom d'équipe : facultatif, coupé, borné à 40 caractères, et vide pour les
+     équipes créées avant son existence. Aucune migration Supabase : le champ
+     vit dans le jsonb de teams.data. */
+  assert.strictEqual(
+    plain(hooks.normalizeTeam({ name:"  Compo burst  " })).name,
+    "Compo burst"
+  );
+  assert.strictEqual(plain(hooks.normalizeTeam({})).name, "");
+  assert.strictEqual(plain(hooks.normalizeTeam({ name:null })).name, "");
+  assert.strictEqual(plain(hooks.normalizeTeam({ name:42 })).name, "42");
+  assert.strictEqual(
+    plain(hooks.normalizeTeam({ name:"N".repeat(60) })).name.length,
+    40
+  );
+
   const migrated = plain(hooks.normalizeTeam({
     id:"ancienne",
     pseudo:"Membre",
@@ -171,6 +186,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
       potentiel:{ weaponType:"Hache", tier:7 }
     }]
   }));
+  assert.strictEqual(migrated.name, "", "Une ancienne équipe reste sans nom");
   assert.strictEqual(migrated.heroes.length, 4);
   assert.deepStrictEqual(migrated.heroes[0].potentiel, { tier:7 });
   assert.ok(!("weaponType" in migrated.heroes[0].potentiel));
