@@ -528,16 +528,23 @@ l'autre.
 211 px à 73 px, soit 138 px rendus au contenu (25 % → 9 % de l'écran). Remonter
 le redéploie ; il ne se replie jamais en haut de page ni en desktop.
 
-Trois garde-fous à ne pas retirer :
+Quatre garde-fous à ne pas retirer :
 
 - `display:none` plutôt qu'une hauteur nulle, pour supprimer aussi les
   interlignes du flex **et** retirer ces contrôles de l'ordre de tabulation ;
 - comme ils quittent l'ordre de tabulation, **toute frappe de Tab redéploie le
   header**, sinon un membre au clavier ne pourrait plus jamais les atteindre ;
-- un amortisseur de quelques frames après chaque changement d'état. Le header
-  est dans le flux : le replier raccourcit le document et déplace `scrollY` de
-  la hauteur gagnée. Sans cet amortisseur, ce saut auto-infligé ressemble à un
-  scroll vers le haut et l'oscillation devient infinie à chaque frame.
+- le garde « ne pas masquer un contrôle focalisé » ne teste que `.brand` et
+  `.account`, **jamais `.topbar` entière**. Les onglets vivent aussi dans le
+  header mais restent visibles replié : les inclure faisait que le focus laissé
+  sur l'onglet cliqué bloquait le repli définitivement, donc plus aucun repli
+  après la moindre navigation ;
+- `lastY` est relu **après** le basculement, jamais avant. Le header est dans le
+  flux : le replier raccourcit le document et le navigateur recale aussitôt
+  `scrollY`. Lire la position avant laisserait ce saut auto-infligé passer pour
+  un scroll vers le haut au coup suivant, et l'oscillation deviendrait infinie.
+  Un amortisseur en nombre de frames corrigeait aussi l'oscillation, mais il
+  avalait un scroll réel arrivant juste après une navigation.
 
 Ce code vit dans un bloc `<script>` séparé, car le bac à sable `vm` des tests
 unitaires ne fournit ni `window.addEventListener`, ni `matchMedia`, ni

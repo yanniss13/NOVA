@@ -622,6 +622,53 @@ async function assertPickerTilesContained(page, label){
       const restored = await headerMetrics();
       assert.equal(restored.brandVisible, true, `Marque non restaurée à ${width}px`);
       assert.equal(restored.height, expanded.height);
+
+      /* Naviguer laisse le focus sur l'onglet cliqué, et les onglets vivent dans
+         le header. Comme ils restent visibles une fois replié, ils ne doivent
+         jamais bloquer le repli. */
+      await headerPage.locator('.tab[data-view="builder"]').click();
+      await headerPage.waitForFunction(() =>
+        document.activeElement === document.querySelector('.tab[data-view="builder"]')
+      );
+      await headerPage.evaluate(() => window.scrollTo({ top:800 }));
+      await headerPage.waitForFunction(() =>
+        document.querySelector(".topbar").classList.contains("is-retracted"),
+        undefined,
+        { timeout:4000 }
+      );
+
+      /* À l'inverse, un contrôle du bloc compte détient le focus : le replier le
+         ferait disparaître sous les doigts, donc on s'en abstient. */
+      await headerPage.evaluate(() => window.scrollTo({ top:0 }));
+      await headerPage.waitForFunction(() =>
+        !document.querySelector(".topbar").classList.contains("is-retracted")
+      );
+      await headerPage.locator("#authLogout").focus();
+      await headerPage.evaluate(() => window.scrollTo({ top:800 }));
+      await headerPage.waitForTimeout(250);
+      assert.equal(
+        await headerPage.evaluate(() =>
+          document.querySelector(".topbar").classList.contains("is-retracted")
+        ),
+        false,
+        `Le focus dans le bloc compte doit empêcher le repli à ${width}px`
+      );
+      /* Focus relâché : le repli redevient possible. Les deux défilements sont
+         séparés par une frame, sinon le throttle `requestAnimationFrame` les
+         fusionne et le contrôleur ne voit que la position finale — un doigt ne
+         peut pas se téléporter de 0 à 800 en une frame. */
+      await headerPage.evaluate(() => document.activeElement.blur());
+      await headerPage.evaluate(() => window.scrollTo({ top:0 }));
+      await headerPage.waitForFunction(() => Math.round(window.scrollY) === 0);
+      await headerPage.evaluate(() => new Promise(resolve =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve))
+      ));
+      await headerPage.evaluate(() => window.scrollTo({ top:800 }));
+      await headerPage.waitForFunction(() =>
+        document.querySelector(".topbar").classList.contains("is-retracted"),
+        undefined,
+        { timeout:4000 }
+      );
       await headerContext.close();
     }
 

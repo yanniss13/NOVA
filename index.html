@@ -7012,47 +7012,57 @@
   var compact = window.matchMedia("(max-width:560px)");
   var RETRACT_FROM = 140;
   var EXPAND_DELTA = 12;
-  /* Le header est dans le flux : le replier raccourcit le document et déplace
-     `scrollY` de la hauteur gagnée. Sans amortisseur, ce saut auto-infligé
-     ressemble à un scroll vers le haut, on redéploie, le document rallonge, et
-     l'oscillation devient infinie à chaque frame. On absorbe donc les quelques
-     frames qui suivent un changement d'état : on resynchronise l'ancre sans
-     rien décider. */
-  var SETTLE_FRAMES = 3;
   var lastY = 0;
-  var settle = 0;
   var queued = false;
+
+  // Seules ces deux zones passent en display:none quand le header se replie.
+  function focusInsideHidden() {
+    var active = document.activeElement;
+    if (!active) return false;
+    var zones = bar.querySelectorAll(".brand, .account");
+    for (var i = 0; i < zones.length; i++) {
+      if (zones[i].contains(active)) return true;
+    }
+    return false;
+  }
 
   function setRetracted(next) {
     if (bar.classList.contains("is-retracted") === next) return;
     bar.classList.toggle("is-retracted", next);
-    settle = SETTLE_FRAMES;
+  }
+
+  function currentY() {
+    return window.scrollY > 0 ? window.scrollY : 0;
   }
 
   function apply() {
     queued = false;
-    var y = window.scrollY > 0 ? window.scrollY : 0;
+    var y = currentY();
     if (!compact.matches) {
       setRetracted(false);
       lastY = y;
       return;
     }
-    // Ne jamais masquer un contrôle qui détient le focus.
-    if (bar.contains(document.activeElement)) {
+    /* Garde limité aux zones qui disparaissent réellement. Les onglets vivent
+       aussi dans le header mais restent visibles replié : tester tout `.topbar`
+       laissait le focus posé sur l'onglet cliqué bloquer le repli pour de bon,
+       donc plus aucun repli après la moindre navigation. */
+    if (focusInsideHidden()) {
       lastY = y;
-      return;
-    }
-    if (settle > 0) {
-      settle--;
-      lastY = y;
-      schedule();
       return;
     }
     var delta = y - lastY;
     if (y <= RETRACT_FROM) setRetracted(false);
     else if (delta > 2) setRetracted(true);
     else if (delta < -EXPAND_DELTA) setRetracted(false);
-    lastY = y;
+    /* Le header est dans le flux : le replier raccourcit le document, et le
+       navigateur recale aussitôt `scrollY`. On relit donc la position APRÈS le
+       basculement, sinon ce saut auto-infligé serait pris au coup suivant pour
+       un scroll vers le haut et l'oscillation deviendrait infinie.
+       Un amortisseur en nombre de frames marchait aussi, mais il avalait un
+       scroll réel arrivant juste après une navigation — le header restait alors
+       déployé pour de bon. */
+    lastY = currentY();
   }
 
   function schedule() {
@@ -7063,10 +7073,6 @@
 
   window.addEventListener("scroll", schedule, { passive: true });
   window.addEventListener("resize", schedule, { passive: true });
-  // Un focus clavier arrivant dans le header le redéploie toujours.
-  bar.addEventListener("focusin", function () {
-    setRetracted(false);
-  });
   /* `display:none` retire les contrôles du compte de l'ordre de tabulation :
      sans cette règle, un membre au clavier ne pourrait plus les atteindre du
      tout une fois le header replié. La moindre tabulation le redéploie donc. */
