@@ -7,7 +7,7 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
 > Ce fichier est le point d'entrée pour tout agent (Codex, Claude, etc.) qui
 > reprend le projet. Lis-le en entier avant de coder.
 
-## État actuel — 2026-07-26
+## État actuel — 2026-07-27
 
 - [x] Assets rangés dans des dossiers (fournis par l'utilisateur, ne pas renommer).
 - [x] `generate-data.ps1` — scanne les dossiers et génère `data.js`.
@@ -73,6 +73,11 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
 - [x] **CI GitHub Pages et mises à jour PWA choisies**. `npm test` garde le
       déploiement ; une nouvelle version attend l'accord du membre.
       Voir « Publication GitHub Pages » et « Cycle de mise à jour PWA ».
+- [x] **Tableau de bord personnel « Mon suivi »**. Vue Boss orientée actions,
+      affichée par défaut après connexion : runs engagées/terminées/en cours,
+      équipe manquante, accès ciblé au groupe ou au rapport et urgence calculée
+      en heure de Paris. État dérivé des tables existantes, sans migration
+      Supabase. Cache hors ligne séparé par compte et semaine.
 
 Après cette mise à jour, l'utilisateur doit rejouer le contenu complet de
 `supabase/schema.sql` dans le SQL Editor Supabase afin d'appliquer le schéma,
@@ -112,6 +117,7 @@ Site Confrérie 7ds/
 ├─ package.json            # Scripts de test Node + Playwright (développement uniquement).
 ├─ package-lock.json       # Versions verrouillées des dépendances de test.
 ├─ tests/                  # Régressions du builder + parcours Supabase simulé dans Chromium.
+├─ tests/helpers/load-app.js # Charge le script inline d'index.html dans `vm` et expose ses fonctions pures.
 ├─ data.js                 # GÉNÉRÉ. window.SEVEN_DS_DATA = { personnages, armes, armures, bijoux }.
 ├─ generate-data.ps1       # Régénère data.js en scannant les dossiers d'images.
 ├─ potentiels.js           # GÉNÉRÉ. 3 armes compatibles + bonus par héros.
@@ -457,6 +463,62 @@ verrouille cet ordre d'empilement.
 nouveau `index.html` tout en restant contrôlés par l'ancien worker, et le bandeau
 apparaît aussitôt. C'est normal, pas un bug : un clic sur « Mettre à jour »
 suffit et le comportement devient explicite dès la version suivante.
+
+## Tableau de bord personnel « Mon suivi »
+
+Septième onglet principal, placé juste après « Créer une équipe ». Il devient la
+vue par défaut au passage **« aucun compte → un compte »** : résolution initiale
+d'une session ou connexion réussie. Un changement de compte piloté de l'extérieur
+ou un `TOKEN_REFRESHED` ne déplace **jamais** la navigation ; il réaffiche
+seulement le suivi du bon compte si le panneau est visible. Déconnecté, l'onglet
+reste ouvrable et propose la connexion.
+
+**Aucune table, aucune RPC, aucune migration Supabase.** Le tableau de bord est
+une projection calculée dans `index.html`. Les seules sources d'autorité restent
+`teams`, `boss_sessions`, `boss_participation` et `boss_run_reports`.
+
+Fonctions pures, testables sans navigateur via `tests/helpers/load-app.js` :
+
+- `dashboardDeadlineStatus(now, remaining)` → `neutral` / `warning` / `urgent` /
+  `complete`, toujours en heure de Paris ;
+- `buildDashboardState(input)` → `{ weekStart, engaged, completed, open,
+  remaining, hasOwnTeams, groups, actions, deadlineStatus, lastSyncedAt,
+  offline }`.
+
+Une participation est comptée **une seule fois par `session_id`** ; une ligne
+d'une autre semaine ou sans session n'entre dans aucun compteur. Le serveur
+reste l'autorité sur la limite de trois runs. Les scores sont conservés en
+**chaînes** pour ne perdre aucun bit avant `formatBossScore`.
+
+Priorité du bloc « À faire maintenant » : équipe manquante, puis équipe prête,
+puis rejoindre une run, puis corriger un rapport. Les six actions réutilisent
+les interfaces existantes sans rechargement de page, et rendent le focus dans
+la vue destination — fermer une modale ouverte depuis le tableau de bord ramène
+le focus dans la vue Boss, jamais dans le panneau désormais caché.
+
+### Cache et Realtime
+
+Clé locale, cloisonnée par compte **et** par semaine :
+
+```
+confrerie7ds.cloud.dashboard.<userId>.<weekStart>
+```
+
+L'enveloppe porte une version de format ; une version, un compte ou une semaine
+qui ne correspondent pas font renvoyer `null`. En cas d'échec réseau, le dernier
+cache compatible s'affiche avec le badge « Hors ligne », la date de dernière
+synchronisation et les actions réseau désactivées. **Sans cache compatible, la
+vue dit que le suivi est indisponible hors ligne et n'affiche jamais un faux
+`0/3`.** Le cache n'accorde aucun droit et ne déclenche jamais de mutation.
+
+Realtime : quand « Mon suivi » est actif, un événement `teams` ou boss le
+recharge silencieusement, et cette lecture unique remplace les branches
+`teams`/`boss` du même lot. Quand un autre onglet est actif, le tableau de bord
+est seulement **marqué sale** et relu à sa prochaine ouverture — Realtime ne
+change jamais l'onglet actif ni le focus. Chaque lecture est protégée par une
+génération, l'identité du compte et la semaine attendue : une réponse lente ne
+remplace jamais un état plus récent et ne fait jamais fuiter un compte vers
+l'autre.
 
 ## Accessibilité et mobile
 

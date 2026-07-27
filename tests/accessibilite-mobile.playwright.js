@@ -77,6 +77,29 @@ async function assertPickerTilesContained(page, label){
     assert.equal(await tabs.nth(0).getAttribute("aria-selected"), "true");
     assert.equal(await page.locator("#view-builder").isVisible(), true);
 
+    /* « Mon suivi » déconnecté propose la connexion, et fermer la modale par
+       Échap rend le focus au bouton qui l'a ouverte. */
+    await page.locator('.tab[data-view="dashboard"]').click();
+    const dashboardConnect = page.locator("#dashboardBody").getByRole("button", {
+      name:"Connexion",
+      exact:true
+    });
+    await dashboardConnect.waitFor();
+    assert.match(
+      await page.locator("#dashboardBody").textContent(),
+      /Connecte-toi pour afficher ton suivi/
+    );
+    await dashboardConnect.click();
+    await page.locator("#authOverlay").waitFor({ state:"visible" });
+    await page.keyboard.press("Escape");
+    await page.locator("#authOverlay").waitFor({ state:"hidden" });
+    await page.waitForFunction(() =>
+      document.activeElement === document.querySelector(
+        "#dashboardBody button"
+      )
+    );
+    await page.locator('.tab[data-view="builder"]').click();
+
     const login = page.locator("#accountLogin");
     await login.focus();
     await login.click();

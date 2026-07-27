@@ -841,6 +841,38 @@
   .dashboard-deadline[data-level="complete"]{border-color:rgba(111,176,138,.6)}
   .dashboard-deadline[data-level="warning"]{border-color:rgba(199,167,91,.7)}
   .dashboard-deadline[data-level="urgent"]{border-color:rgba(190,74,85,.8)}
+  /* Rien ne doit pouvoir élargir le document, même un score très long. */
+  #view-dashboard,
+  #dashboardBody,
+  .dashboard-summary,
+  .dashboard-actions-panel,
+  .dashboard-section,
+  .dashboard-run-grid,
+  .dashboard-run-card{
+    min-width:0;
+    max-width:100%
+  }
+  .dashboard-run-card,
+  .dashboard-run-card *{
+    overflow-wrap:anywhere
+  }
+  @media(max-width:700px){
+    .dashboard-heading,
+    .dashboard-summary-head,
+    .dashboard-card-head,
+    .dashboard-action-row{
+      align-items:stretch;
+      flex-direction:column
+    }
+    .dashboard-sync-meta{text-align:left}
+    .dashboard-progress{grid-template-columns:1fr}
+    .dashboard-run-grid{grid-template-columns:1fr}
+    .dashboard-action-row .btn,
+    .dashboard-run-card .btn{
+      width:100%;
+      min-height:44px
+    }
+  }
   .boss-stat-evolution{font-size:11px;color:var(--gold-bright);text-align:right}
   .boss-stats-grid{
     display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;

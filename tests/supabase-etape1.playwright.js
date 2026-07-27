@@ -4040,6 +4040,47 @@ const { chromium } = require("playwright");
       run.completed_at = null;
     });
 
+    /* ---- Mon suivi : mobile de 320 à 390 px ---- */
+    await page.locator('.tab[data-view="dashboard"]').click();
+    await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
+    for(const width of [320, 360, 375, 390]){
+      await page.setViewportSize({ width, height:844 });
+      await page.locator('.tab[data-view="dashboard"]').click();
+      await page.locator("#dashboardBody").waitFor();
+      const metrics = await page.evaluate(() => {
+        const root = document.scrollingElement;
+        const controls = [...document.querySelectorAll(
+          "#view-dashboard button:not([hidden])"
+        )].filter(node => node.getClientRects().length).map(node => {
+          const rect = node.getBoundingClientRect();
+          return { width:rect.width, height:rect.height, right:rect.right };
+        });
+        const cards = [...document.querySelectorAll(
+          "#view-dashboard .dashboard-run-card"
+        )].map(node => {
+          const rect = node.getBoundingClientRect();
+          return { left:rect.left, right:rect.right, width:rect.width };
+        });
+        return {
+          viewport:document.documentElement.clientWidth,
+          overflow:root.scrollWidth-root.clientWidth,
+          controls,
+          cards
+        };
+      });
+      assert.ok(metrics.overflow <= 1, `Mon suivi déborde à ${width}px`);
+      assert.ok(metrics.controls.length > 0, `Aucune action mesurée à ${width}px`);
+      assert.ok(metrics.cards.length > 0, `Aucune carte mesurée à ${width}px`);
+      metrics.controls.forEach(control => {
+        assert.ok(control.height >= 44, `Action inférieure à 44 px à ${width}px`);
+        assert.ok(control.right <= metrics.viewport + 1);
+      });
+      metrics.cards.forEach(card => {
+        assert.ok(card.left >= 0 && card.right <= metrics.viewport + 1);
+      });
+    }
+    await page.setViewportSize({ width:1280, height:900 });
+
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await authOverlay.waitFor({ state:"visible" });
     assert.equal(await authOverlay.evaluate(el => el.classList.contains("on")), true);
