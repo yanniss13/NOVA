@@ -525,8 +525,138 @@ async function assertPickerTilesContained(page, label){
     );
     await mobileContext.close();
 
+    /* Header rétractable : en descendant, la marque et le bloc compte se
+       replient et seule la barre d'onglets reste collante. Le compte connecté
+       est révélé de force pour mesurer le cas réel le plus haut. */
+    for(const width of [320, 390]){
+      const headerContext = await browser.newContext({
+        viewport:{width,height:844},
+        isMobile:true,
+        hasTouch:true,
+        reducedMotion:"reduce"
+      });
+      const headerPage = await headerContext.newPage();
+      await headerPage.route(
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*",
+        route => route.fulfill({
+          status:200,
+          contentType:"application/javascript",
+          body:"window.supabase=undefined;"
+        })
+      );
+      await headerPage.goto(
+        pathToFileURL(path.resolve(__dirname, "..", "index.html")).href
+      );
+      await headerPage.evaluate(() => {
+        document.querySelector("#accountLogin").hidden = true;
+        document.querySelector("#accountConnected").hidden = false;
+        document.querySelector("#accountPseudo").textContent = "Yannis";
+        document.querySelector("#liveStatus").textContent = "À jour";
+      });
+
+      const headerMetrics = () => headerPage.evaluate(() => {
+        const bar = document.querySelector(".topbar");
+        const visible = selector => {
+          const node = document.querySelector(selector);
+          return !!node && node.getClientRects().length > 0;
+        };
+        const root = document.scrollingElement;
+        return {
+          height:Math.round(bar.getBoundingClientRect().height),
+          retracted:bar.classList.contains("is-retracted"),
+          brandVisible:visible(".brand"),
+          accountVisible:visible("#accountConnected"),
+          tabsVisible:visible(".tabs"),
+          overflow:root.scrollWidth - root.clientWidth,
+          scrollable:root.scrollHeight - root.clientHeight
+        };
+      });
+
+      const expanded = await headerMetrics();
+      assert.ok(
+        expanded.scrollable > 400,
+        `La page doit être défilable pour tester le header à ${width}px`
+      );
+      assert.equal(expanded.retracted, false);
+      assert.equal(expanded.brandVisible, true);
+      assert.equal(expanded.accountVisible, true);
+
+      await headerPage.evaluate(() => window.scrollTo({ top:600 }));
+      await headerPage.waitForFunction(() =>
+        document.querySelector(".topbar").classList.contains("is-retracted")
+      );
+      const retracted = await headerMetrics();
+      assert.equal(retracted.brandVisible, false, `Marque encore visible à ${width}px`);
+      assert.equal(
+        retracted.accountVisible,
+        false,
+        `Bloc compte encore visible à ${width}px`
+      );
+      assert.equal(
+        retracted.tabsVisible,
+        true,
+        `Les onglets doivent rester atteignables à ${width}px`
+      );
+      assert.ok(
+        retracted.height <= expanded.height * 0.5,
+        `Le header replié doit perdre au moins la moitié de sa hauteur `+
+        `à ${width}px (${expanded.height} -> ${retracted.height})`
+      );
+      assert.ok(retracted.overflow <= 1, `Débordement au repli à ${width}px`);
+      // Un contrôle replié ne doit plus être atteignable au clavier.
+      assert.equal(
+        await headerPage.evaluate(() => {
+          const logout = document.querySelector("#authLogout");
+          logout.focus();
+          return document.activeElement === logout;
+        }),
+        false,
+        `Le bouton replié ne doit pas être focalisable à ${width}px`
+      );
+
+      // Remonter redéploie le header.
+      await headerPage.evaluate(() => window.scrollTo({ top:0 }));
+      await headerPage.waitForFunction(() =>
+        !document.querySelector(".topbar").classList.contains("is-retracted")
+      );
+      const restored = await headerMetrics();
+      assert.equal(restored.brandVisible, true, `Marque non restaurée à ${width}px`);
+      assert.equal(restored.height, expanded.height);
+      await headerContext.close();
+    }
+
+    // En desktop, le header ne se replie jamais.
+    const deskHeader = await browser.newContext({ viewport:{width:1280,height:900} });
+    const deskPage = await deskHeader.newPage();
+    await deskPage.route("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*", route =>
+      route.fulfill({
+        status:200,
+        contentType:"application/javascript",
+        body:"window.supabase=undefined;"
+      })
+    );
+    await deskPage.goto(
+      pathToFileURL(path.resolve(__dirname, "..", "index.html")).href
+    );
+    await deskPage.evaluate(() => window.scrollTo({ top:600 }));
+    await deskPage.waitForTimeout(120);
+    assert.equal(
+      await deskPage.evaluate(() =>
+        document.querySelector(".topbar").classList.contains("is-retracted")
+      ),
+      false,
+      "Le header ne doit jamais se replier en desktop"
+    );
+    assert.equal(
+      await deskPage.evaluate(() =>
+        document.querySelector(".brand").getClientRects().length > 0
+      ),
+      true
+    );
+    await deskHeader.close();
+
     assert.deepStrictEqual(errors, []);
-    console.log("PASS accessibilité : onglets, modales et mobile");
+    console.log("PASS accessibilité : onglets, modales, header rétractable et mobile");
   }finally{
     await browser.close();
   }

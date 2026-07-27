@@ -1184,6 +1184,13 @@
        élargir le document (cause du scroll latéral iPhone). */
     .topbar > *{min-width:0}
     .account{width:100%;order:2}
+    /* Header rétractable : en descendant, la marque et le bloc compte se
+       replient et seule la barre d'onglets reste collante. `display:none` plutôt
+       qu'une hauteur nulle, pour supprimer aussi les interlignes du flex ET
+       retirer ces contrôles de l'ordre de tabulation. */
+    .topbar.is-retracted{padding-top:8px;padding-bottom:8px;gap:0}
+    .topbar.is-retracted .brand,
+    .topbar.is-retracted .account{display:none}
     .account-connected{flex:1;min-width:0;flex-wrap:wrap;justify-content:center;padding:6px 10px}
     .account-connected .btn{flex:1 1 auto;justify-content:center}
     .account-pseudo{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -2478,13 +2485,22 @@
     $("#accountLogin").hidden = !!currentUser;
     $("#accountConnected").hidden = !currentUser;
     $("#accountPseudo").textContent = currentPseudo || (currentUser && currentUser.email) || "";
+    /* Bouton à usage unique : il n'apparaît que s'il reste vraiment quelque
+       chose à importer depuis CE navigateur. Une fois la migration faite — ou
+       s'il n'y a aucune donnée locale — il disparaît au lieu de rester
+       désactivé, car il occupait une ligne entière du header mobile. */
     const migrationButton = $("#btnMigrateLocal");
     const migrated = !!currentUser &&
       localStorage.getItem(MIGRATION_KEY_PREFIX+currentUser.id) === "1";
+    let hasLocalData = false;
+    try{
+      hasLocalData = LocalTeams.all().length > 0 || LocalRec.all().length > 0;
+    }catch(error){
+      hasLocalData = false;
+    }
+    migrationButton.hidden = !currentUser || migrated || !hasLocalData;
     migrationButton.disabled = migrated;
-    migrationButton.textContent = migrated
-      ? "Données locales importées"
-      : "Importer mes données locales";
+    migrationButton.textContent = "Importer mes données locales";
     if(typeof pseudoInput !== "undefined"){
       pseudoInput.disabled = !!currentUser;
       if(currentUser && currentPseudo){
@@ -6981,6 +6997,81 @@
     }).catch(function () {
       // Hors ligne ou `file://` : l'appli reste pleinement utilisable.
     });
+  });
+})();
+</script>
+<script>
+/* Header rétractable sur mobile. Bloc séparé du script principal : le bac à
+   sable `vm` des tests unitaires ne fournit ni `window.addEventListener`, ni
+   `matchMedia`, ni `requestAnimationFrame`.
+   Contrat : on ne replie jamais en haut de page, jamais en desktop, et jamais
+   un contrôle qui détient le focus. */
+(function () {
+  var bar = document.querySelector(".topbar");
+  if (!bar || !window.matchMedia || !window.requestAnimationFrame) return;
+  var compact = window.matchMedia("(max-width:560px)");
+  var RETRACT_FROM = 140;
+  var EXPAND_DELTA = 12;
+  /* Le header est dans le flux : le replier raccourcit le document et déplace
+     `scrollY` de la hauteur gagnée. Sans amortisseur, ce saut auto-infligé
+     ressemble à un scroll vers le haut, on redéploie, le document rallonge, et
+     l'oscillation devient infinie à chaque frame. On absorbe donc les quelques
+     frames qui suivent un changement d'état : on resynchronise l'ancre sans
+     rien décider. */
+  var SETTLE_FRAMES = 3;
+  var lastY = 0;
+  var settle = 0;
+  var queued = false;
+
+  function setRetracted(next) {
+    if (bar.classList.contains("is-retracted") === next) return;
+    bar.classList.toggle("is-retracted", next);
+    settle = SETTLE_FRAMES;
+  }
+
+  function apply() {
+    queued = false;
+    var y = window.scrollY > 0 ? window.scrollY : 0;
+    if (!compact.matches) {
+      setRetracted(false);
+      lastY = y;
+      return;
+    }
+    // Ne jamais masquer un contrôle qui détient le focus.
+    if (bar.contains(document.activeElement)) {
+      lastY = y;
+      return;
+    }
+    if (settle > 0) {
+      settle--;
+      lastY = y;
+      schedule();
+      return;
+    }
+    var delta = y - lastY;
+    if (y <= RETRACT_FROM) setRetracted(false);
+    else if (delta > 2) setRetracted(true);
+    else if (delta < -EXPAND_DELTA) setRetracted(false);
+    lastY = y;
+  }
+
+  function schedule() {
+    if (queued) return;
+    queued = true;
+    window.requestAnimationFrame(apply);
+  }
+
+  window.addEventListener("scroll", schedule, { passive: true });
+  window.addEventListener("resize", schedule, { passive: true });
+  // Un focus clavier arrivant dans le header le redéploie toujours.
+  bar.addEventListener("focusin", function () {
+    setRetracted(false);
+  });
+  /* `display:none` retire les contrôles du compte de l'ordre de tabulation :
+     sans cette règle, un membre au clavier ne pourrait plus les atteindre du
+     tout une fois le header replié. La moindre tabulation le redéploie donc. */
+  window.addEventListener("keydown", function (event) {
+    if (event.key === "Tab") setRetracted(false);
   });
 })();
 </script>

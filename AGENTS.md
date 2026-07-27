@@ -522,6 +522,33 @@ l'autre.
 
 ## Accessibilité et mobile
 
+**Header rétractable sur mobile** (≤ 560 px). En défilant vers le bas au-delà de
+140 px, `.topbar` reçoit `is-retracted` : la marque et le bloc compte passent en
+`display:none` et seule la barre d'onglets reste collante. Le header passe de
+211 px à 73 px, soit 138 px rendus au contenu (25 % → 9 % de l'écran). Remonter
+le redéploie ; il ne se replie jamais en haut de page ni en desktop.
+
+Trois garde-fous à ne pas retirer :
+
+- `display:none` plutôt qu'une hauteur nulle, pour supprimer aussi les
+  interlignes du flex **et** retirer ces contrôles de l'ordre de tabulation ;
+- comme ils quittent l'ordre de tabulation, **toute frappe de Tab redéploie le
+  header**, sinon un membre au clavier ne pourrait plus jamais les atteindre ;
+- un amortisseur de quelques frames après chaque changement d'état. Le header
+  est dans le flux : le replier raccourcit le document et déplace `scrollY` de
+  la hauteur gagnée. Sans cet amortisseur, ce saut auto-infligé ressemble à un
+  scroll vers le haut et l'oscillation devient infinie à chaque frame.
+
+Ce code vit dans un bloc `<script>` séparé, car le bac à sable `vm` des tests
+unitaires ne fournit ni `window.addEventListener`, ni `matchMedia`, ni
+`requestAnimationFrame`.
+
+**Bouton « Importer mes données locales »** : action à usage unique, affichée
+seulement s'il reste réellement des données dans le `localStorage` de ce
+navigateur et que la migration n'a pas déjà eu lieu. Elle disparaît ensuite au
+lieu de rester désactivée — elle occupait une ligne entière du header mobile
+pour toujours, et le bloc compte est ainsi passé de 136 px à 58 px.
+
 Les onglets principaux suivent le motif ARIA et se pilotent avec les flèches,
 Début et Fin. Toutes les modales passent par `ModalStack`, qui gère la pile, le
 piège à focus, Échap et la restitution du focus. Ne pas réintroduire d'écouteurs

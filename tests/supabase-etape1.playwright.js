@@ -443,6 +443,8 @@ const { chromium } = require("playwright");
 
     // Migration one-shot des ÉQUIPES locales (le recensement n'est plus migré).
     const migrateButton = page.locator("#btnMigrateLocal");
+    // Visible seulement parce qu'il reste réellement des données locales.
+    assert.equal(await migrateButton.isVisible(), true);
     assert.equal(await migrateButton.textContent(), "Importer mes données locales");
     await migrateButton.click();
     await page.waitForFunction(() =>
@@ -453,8 +455,11 @@ const { chromium } = require("playwright");
     );
     assert.equal(migratedTeam.owner, "user-1");
     assert.equal(migratedTeam.pseudo, "Yannis");
-    assert.equal(await migrateButton.isDisabled(), true);
-    assert.equal(await migrateButton.textContent(), "Données locales importées");
+    /* Une fois la migration faite, ce bouton à usage unique disparaît au lieu
+       de rester désactivé : il mangeait une ligne entière du header mobile
+       pour toujours. */
+    await migrateButton.waitFor({ state:"hidden" });
+    assert.equal(await migrateButton.isVisible(), false);
     await page.locator('.tab[data-view="member-roster"]').click();
     await page.locator("#memberRosterMine").click();
     await page.locator("#memberRosterGrid .member-roster-edit").click();
@@ -1144,6 +1149,13 @@ const { chromium } = require("playwright");
       exact:true
     }).waitFor();
 
+    /* Retour en desktop : les sections suivantes portent sur le focus, Realtime
+       et les changements de compte, plus sur la mise en page mobile. Le 390 px
+       posé plus haut n'était jamais restauré, et le header rétractable y masque
+       désormais le bloc compte dès qu'on a défilé. Les scénarios réellement
+       mobiles règlent leur propre viewport. */
+    await page.setViewportSize({ width:1280, height:900 });
+
     // Fermer le picker pendant que la lecture des équipes attend ne doit pas
     // empêcher l’échec Boss déjà connu d’invalider la vue obsolète.
     await groupOne.getByRole("button", {
@@ -1398,14 +1410,18 @@ const { chromium } = require("playwright");
       groupTwoActionBeforeExternalFocus,
       "L’action équipe doit exister avant l’écho Realtime"
     );
-    await page.locator("#authLogout").focus();
+    /* La cible du focus externe est un onglet plutôt que `#authLogout` : les
+       onglets restent visibles que le header soit replié ou non, ce qui rend ce
+       test indépendant de la largeur d'écran. Un onglet est tout aussi
+       extérieur à `#bossBody`, donc l'intention est intacte. */
+    await page.locator("#tab-builder").focus();
     await page.waitForFunction(
       action => !action.isConnected,
       groupTwoActionBeforeExternalFocus
     );
     assert.equal(
       await page.evaluate(() => document.activeElement.id),
-      "authLogout",
+      "tab-builder",
       "L’écho Realtime ne doit pas voler un focus déplacé hors de la vue Boss"
     );
 
