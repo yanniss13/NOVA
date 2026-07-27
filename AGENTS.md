@@ -563,6 +563,36 @@ piège à focus, Échap et la restitution du focus. Ne pas réintroduire d'écou
 Échap locaux. Sur écran tactile, les contrôles principaux restent à 44 × 44 px
 minimum et aucune vue ne doit élargir le document.
 
+## Sets d'armure en un clic
+
+Un bouton **« Équiper un set »** figure dans la grille d'équipement du **roster
+des membres** et du **Team Builder**. Il remplit d'un coup `Haut`, `Bas`,
+`Bottes` et `Ceinture`. L'`Armure liee` n'est jamais touchée : elle dépend du
+personnage et n'a pas de structure de set. Les bijoux non plus — aucun nom n'est
+commun entre `Anneau`, `Collier` et `Boucle d'oreille`.
+
+**Les sets ne sont JAMAIS listés en dur**, conformément à la règle d'or : ils
+sont déduits de `window.SEVEN_DS_DATA` par `armorSetsFrom(armures)`. Le nom d'une
+pièce est le libellé de son emplacement suivi du nom du set :
+
+```
+Haut de la mélodie d'Arachnée
+Bas de la mélodie d'Arachnée
+Bottes de combat de la mélodie d'Arachnée
+Ceinture de la mélodie d'Arachnée
+```
+
+Le regroupement se fait donc par **plus long suffixe commun** (au moins 6
+caractères utiles), et non par égalité de nom — aucun nom n'est identique d'un
+emplacement à l'autre. Ce choix survit à l'ajout d'une pièce hors convention :
+seule celle-là ne trouvera pas de set, les autres tiennent. Un regroupement par
+préfixe commun aurait au contraire cassé tout un emplacement d'un seul coup.
+
+Seuls les sets **complets sur les quatre emplacements** sont proposés. Avec les
+données actuelles : **14 sets**, couvrant 56 des 62 pièces ; les 6 restantes
+n'existent que dans un emplacement. `armorSetLabel` retire l'article français de
+liaison pour l'affichage (« du cristal de vie » → « Cristal de vie »).
+
 ## Nom d'équipe et duplication
 
 Une équipe porte un **nom facultatif** de 40 caractères maximum, `normalizeTeamName`

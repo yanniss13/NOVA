@@ -248,6 +248,8 @@
     grid-column:1 / -1;font-size:9px;letter-spacing:.2em;text-transform:uppercase;
     color:var(--muted-2);margin:3px 0 -3px;padding-left:2px
   }
+  /* Bouton d'équipement d'un set : pleine largeur de la grille d'équipement. */
+  .gear-set{grid-column:1 / -1;justify-content:center;font-size:12px;padding:7px 10px}
   .gear-slot.jewel.filled{border-color:var(--crimson)}
   .gear-slot.jewel .gear-thumb{border-color:rgba(161,44,44,.4)}
 
@@ -1999,6 +2001,71 @@
 
   /* ============================ Brouillon d'équipe ============================ */
   const emptyArmor = () => ARMOR_SLOTS.reduce((o,s)=>(o[s]=null,o),{});
+
+  /* ---------- Sets d'armure ----------
+     Les sets ne sont JAMAIS listés en dur : ils sont déduits de
+     `window.SEVEN_DS_DATA`. Le nom d'une pièce est le libellé de son
+     emplacement suivi du nom du set — « Haut de la mélodie d'Arachnée »,
+     « Bottes de combat de la mélodie d'Arachnée » — donc on regroupe par plus
+     long suffixe commun. Cette approche survit à l'ajout d'une pièce hors
+     convention : seule celle-là ne trouvera pas de set, les autres tiennent.
+     L'armure liée est exclue : elle est propre au personnage et n'a pas de set. */
+  const ARMOR_SET_SLOTS = ["Haut","Bas","Bottes","Ceinture"];
+  const ARMOR_SET_MIN_STEM = 6;
+
+  function commonSuffix(a, b){
+    const left = String(a), right = String(b);
+    let i = 0;
+    while(
+      i < left.length && i < right.length &&
+      left[left.length-1-i] === right[right.length-1-i]
+    ) i++;
+    return left.slice(left.length - i);
+  }
+
+  function armorSetLabel(stem){
+    const raw = String(stem).trim();
+    // Retire l'article français de liaison pour un libellé lisible en liste.
+    const cleaned = raw
+      .replace(/^(?:de\s+(?:la|les|le|l['’])|du|des|d['’])\s*/i, "")
+      .trim();
+    const label = cleaned || raw;
+    return label ? label[0].toLocaleUpperCase("fr-FR")+label.slice(1) : "";
+  }
+
+  function armorSetsFrom(armures){
+    const source = armures && typeof armures === "object" ? armures : {};
+    const lists = ARMOR_SET_SLOTS.map(slot =>
+      Array.isArray(source[slot]) ? source[slot] : []
+    );
+    if(lists.some(list => !list.length)) return [];
+    const [reference, ...others] = lists;
+    const sets = [];
+    reference.forEach(base => {
+      const pieces = {};
+      pieces[ARMOR_SET_SLOTS[0]] = base.file;
+      let stem = String(base.name || "");
+      const complete = others.every((list, index) => {
+        let best = null;
+        let bestSuffix = "";
+        list.forEach(candidate => {
+          const suffix = commonSuffix(base.name || "", candidate.name || "");
+          if(suffix.length > bestSuffix.length){
+            bestSuffix = suffix;
+            best = candidate;
+          }
+        });
+        if(!best || bestSuffix.trim().length < ARMOR_SET_MIN_STEM) return false;
+        if(bestSuffix.length < stem.length) stem = bestSuffix;
+        pieces[ARMOR_SET_SLOTS[index+1]] = best.file;
+        return true;
+      });
+      if(!complete) return;
+      const name = armorSetLabel(stem);
+      if(name) sets.push({ name, pieces });
+    });
+    return sets.sort((a,b) => a.name.localeCompare(b.name, "fr-FR"));
+  }
   const emptyJewel = () => JEWEL_SLOTS.reduce((o,s)=>(o[s]=null,o),{});
   const emptyPot = () => ({ tier:0 });
   const normalizePotentiel = raw => {
@@ -3102,6 +3169,49 @@
     });
   }
 
+  /* Un clic équipe les 4 emplacements universels d'un set. L'armure liée n'est
+     jamais touchée : elle dépend du personnage, pas du set. */
+  function openArmorSetPicker(onApply){
+    const sets = armorSetsFrom(DATA.armures);
+    if(!sets.length){
+      toast("Aucun set complet dans les données actuelles.", true);
+      return;
+    }
+    Picker.open({
+      title:"Équiper un set d’armure",
+      allowNone:false,
+      items:sets.map(set => ({
+        value:set.name,
+        name:set.name,
+        file:set.pieces[ARMOR_SET_SLOTS[0]]
+      })),
+      emptyHint:"Aucun set complet disponible.",
+      onSelect:value => {
+        const chosen = sets.find(set => set.name === value);
+        if(chosen) onApply(chosen);
+      }
+    });
+  }
+
+  function armorSetButton(onApply){
+    return el("button",{
+      class:"btn btn-ghost gear-set",
+      type:"button",
+      dataset:{ gearAction:"armor-set" },
+      text:"Équiper un set",
+      onclick:()=>openArmorSetPicker(onApply)
+    });
+  }
+
+  function applyMemberRosterArmorSet(set){
+    const type = memberRosterWeaponType;
+    const build = memberRosterDraft.builds[type]
+      || (memberRosterDraft.builds[type] = emptyRosterBuild());
+    ARMOR_SET_SLOTS.forEach(slot => { build.armor[slot] = set.pieces[slot]; });
+    renderMemberRosterEditor();
+    toast("Set « "+set.name+" » équipé.");
+  }
+
   function pickMemberRosterArmor(slot){
     const charId = memberRosterDraft.charId;
     const build = memberRosterDraft.builds[memberRosterWeaponType] || emptyRosterBuild();
@@ -3197,6 +3307,7 @@
     const gear = el("div",{class:"gear"});
     gear.appendChild(gearSlot("Arme", build.weapon, true, pickMemberRosterWeapon));
     gear.appendChild(el("div",{class:"gear-group",text:"Armures"}));
+    gear.appendChild(armorSetButton(applyMemberRosterArmorSet));
     ARMOR_SLOTS.forEach(slot => gear.appendChild(gearSlot(
       ARMOR_LABELS[slot],
       build.armor[slot],
@@ -3472,6 +3583,11 @@
     const gear = el("div",{class:"gear"});
     gear.appendChild(gearSlot("Arme", hero.weapon, true, ()=>pickWeapon(i)));
     gear.appendChild(el("div",{class:"gear-group", text:"Armures"}));
+    gear.appendChild(armorSetButton(set => {
+      ARMOR_SET_SLOTS.forEach(slot => { hero.armor[slot] = set.pieces[slot]; });
+      renderBuilder();
+      toast("Set « "+set.name+" » équipé.");
+    }));
     ARMOR_SLOTS.forEach(slot=>{
       gear.appendChild(gearSlot(ARMOR_LABELS[slot], hero.armor[slot], false, ()=>pickArmor(i, slot)));
     });

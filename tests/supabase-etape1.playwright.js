@@ -203,6 +203,79 @@ const { chromium } = require("playwright");
       ),
       true
     );
+
+    /* ---- Équiper un set en un clic (roster) ----
+       Un set remplit les 4 emplacements universels et ne touche jamais
+       l'armure liée, qui dépend du personnage. */
+    const rosterSetButton = page.locator(
+      '#memberRosterEditor [data-gear-action="armor-set"]'
+    );
+    await rosterSetButton.waitFor();
+    await rosterSetButton.click();
+    await page.locator("#overlay").waitFor({ state:"visible" });
+    assert.equal(
+      await page.locator("#pickerTitle").textContent(),
+      "Équiper un set d’armure"
+    );
+    // Pas d'option « Aucun » : un set s'applique ou on ferme.
+    assert.equal(await page.locator("#pickerGrid .tile.none").count(), 0);
+    const setTiles = await page.locator("#pickerGrid .tile").count();
+    assert.ok(setTiles >= 2, "Plusieurs sets complets doivent être proposés");
+    const chosenSetName = await page.locator("#pickerGrid .tile .tile-name")
+      .first().textContent();
+    await page.locator("#pickerGrid .tile").first().click();
+    await page.locator("#overlay").waitFor({ state:"hidden" });
+
+    const armorAfterSet = await page.evaluate(() =>
+      [...document.querySelectorAll("#memberRosterEditor .gear-slot")]
+        .filter(node => !node.classList.contains("weapon")
+          && !node.classList.contains("jewel"))
+        .map(node => ({
+          label:node.textContent.trim(),
+          filled:node.classList.contains("filled")
+        }))
+    );
+    const universal = armorAfterSet.filter(slot =>
+      !/li[ée]e/i.test(slot.label)
+    );
+    assert.equal(universal.length, 4, "Quatre emplacements universels attendus");
+    assert.ok(
+      universal.every(slot => slot.filled),
+      "Le set doit remplir les quatre emplacements universels"
+    );
+    const linked = armorAfterSet.find(slot => /li[ée]e/i.test(slot.label));
+    assert.ok(linked && !linked.filled, "L'armure liée ne doit pas être touchée");
+
+    /* Les quatre pièces appartiennent bien au MÊME set : leurs noms de fichier
+       partagent la racine, et cette racine correspond au set choisi. */
+    const equippedNames = await page.evaluate(() =>
+      [...document.querySelectorAll("#memberRosterEditor .gear-slot")]
+        .filter(node => !node.classList.contains("weapon")
+          && !node.classList.contains("jewel")
+          && !/li[ée]e/i.test(node.textContent)
+          && node.classList.contains("filled"))
+        .map(node => node.getAttribute("title") || "")
+    );
+    assert.equal(equippedNames.length, 4);
+    const sharedSuffix = equippedNames.reduce((suffix, name) => {
+      let i = 0;
+      while(
+        i < suffix.length && i < name.length &&
+        suffix[suffix.length-1-i] === name[name.length-1-i]
+      ) i++;
+      return suffix.slice(suffix.length - i);
+    });
+    assert.ok(
+      sharedSuffix.trim().length >= 6,
+      "Les quatre pièces doivent partager la racine du set, obtenu : "+
+      JSON.stringify(sharedSuffix)
+    );
+    assert.ok(
+      chosenSetName.length > 0 &&
+      sharedSuffix.toLocaleLowerCase("fr-FR")
+        .includes(chosenSetName.toLocaleLowerCase("fr-FR").slice(1)),
+      "La racine partagée doit correspondre au set choisi « "+chosenSetName+" »"
+    );
     assert.equal(
       await page.locator(".member-roster-weapon-tabs .chip.active").textContent(),
       "Hache ✓ ★"

@@ -469,4 +469,66 @@ const STORAGE_KEY = "confrerie7ds.teams";
   );
 }
 
+/* Sets d'armure déduits des données, jamais listés en dur. Le nom d'une pièce
+   est le libellé de son emplacement suivi du nom du set, d'où le regroupement
+   par plus long suffixe commun. */
+{
+  const { hooks } = loadApp();
+  const armorSetsFrom = hooks.armorSetsFrom;
+  assert.strictEqual(typeof armorSetsFrom, "function");
+
+  const synthetic = plain(armorSetsFrom({
+    Haut:[
+      { name:"Haut du cristal de vie", file:"h/cristal.webp" },
+      { name:"Haut de l'œil solitaire", file:"h/oeil.webp" }
+    ],
+    Bas:[{ name:"Bas du cristal de vie", file:"b/cristal.webp" }],
+    Bottes:[{ name:"Bottes de combat du cristal de vie", file:"o/cristal.webp" }],
+    Ceinture:[{ name:"Ceinture du cristal de vie", file:"c/cristal.webp" }]
+  }));
+  assert.strictEqual(synthetic.length, 1, "Une pièce orpheline ne forme pas un set");
+  assert.strictEqual(synthetic[0].name, "Cristal de vie");
+  assert.deepStrictEqual(synthetic[0].pieces, {
+    Haut:"h/cristal.webp",
+    Bas:"b/cristal.webp",
+    Bottes:"o/cristal.webp",
+    Ceinture:"c/cristal.webp"
+  });
+
+  // Un emplacement vide ne peut produire aucun set complet.
+  assert.deepStrictEqual(plain(armorSetsFrom({ Haut:[], Bas:[], Bottes:[], Ceinture:[] })), []);
+  assert.deepStrictEqual(plain(armorSetsFrom(null)), []);
+
+  // Données générées réelles : 14 sets complets, chacun avec ses 4 fichiers.
+  const dataContext = { window:{} };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(ROOT, "data.js"), "utf8"),
+    dataContext,
+    { filename:"data.js" }
+  );
+  const armures = dataContext.window.SEVEN_DS_DATA.armures;
+  const realSets = plain(armorSetsFrom(armures));
+  assert.strictEqual(realSets.length, 14, "14 sets complets attendus");
+  const slots = ["Haut", "Bas", "Bottes", "Ceinture"];
+  const filesBySlot = {};
+  slots.forEach(slot => {
+    filesBySlot[slot] = new Set(armures[slot].map(item => item.file));
+  });
+  realSets.forEach(set => {
+    assert.ok(set.name && set.name === set.name.trim(), "Nom de set propre requis");
+    slots.forEach(slot => {
+      assert.ok(
+        filesBySlot[slot].has(set.pieces[slot]),
+        "La pièce "+slot+" du set "+set.name+" doit exister dans son emplacement"
+      );
+    });
+  });
+  // Aucun doublon de nom, et un tri français stable.
+  assert.strictEqual(new Set(realSets.map(s => s.name)).size, 14);
+  assert.deepStrictEqual(
+    realSets.map(s => s.name),
+    [...realSets.map(s => s.name)].sort((a, b) => a.localeCompare(b, "fr-FR"))
+  );
+}
+
 console.log("PASS potentiel commun");

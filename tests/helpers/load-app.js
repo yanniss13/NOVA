@@ -117,6 +117,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
     : undefined,
   writeDashboardCache:typeof writeDashboardCache === "function"
     ? writeDashboardCache
+    : undefined,
+  armorSetsFrom:typeof armorSetsFrom === "function"
+    ? armorSetsFrom
     : undefined
 });})();`;
 
