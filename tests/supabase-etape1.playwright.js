@@ -211,6 +211,11 @@ const { chromium } = require("playwright");
       '#memberRosterEditor [data-gear-action="armor-set"]'
     );
     await rosterSetButton.waitFor();
+    assert.equal(
+      await rosterSetButton.textContent(),
+      "Équiper un set d’armure",
+      "Les deux boutons de set doivent être distinguables"
+    );
     await rosterSetButton.click();
     await page.locator("#overlay").waitFor({ state:"visible" });
     assert.equal(
@@ -276,6 +281,77 @@ const { chromium } = require("playwright");
         .includes(chosenSetName.toLocaleLowerCase("fr-FR").slice(1)),
       "La racine partagée doit correspondre au set choisi « "+chosenSetName+" »"
     );
+
+    /* ---- Même geste pour les bijoux ----
+       Les trois emplacements sont remplis, et les armures déjà équipées ne
+       doivent pas bouger. */
+    const rosterJewelButton = page.locator(
+      '#memberRosterEditor [data-gear-action="jewel-set"]'
+    );
+    await rosterJewelButton.waitFor();
+    assert.equal(
+      await rosterJewelButton.textContent(),
+      "Équiper un set de bijoux"
+    );
+    await rosterJewelButton.click();
+    await page.locator("#overlay").waitFor({ state:"visible" });
+    assert.equal(
+      await page.locator("#pickerTitle").textContent(),
+      "Équiper un set de bijoux"
+    );
+    assert.ok(
+      await page.locator("#pickerGrid .tile").count() >= 2,
+      "Plusieurs sets de bijoux doivent être proposés"
+    );
+    const chosenJewelSet = await page.locator("#pickerGrid .tile .tile-name")
+      .first().textContent();
+    await page.locator("#pickerGrid .tile").first().click();
+    await page.locator("#overlay").waitFor({ state:"hidden" });
+
+    const jewelNames = await page.evaluate(() =>
+      [...document.querySelectorAll("#memberRosterEditor .gear-slot.jewel")]
+        .map(node => ({
+          title:node.getAttribute("title") || "",
+          filled:node.classList.contains("filled")
+        }))
+    );
+    assert.equal(jewelNames.length, 3, "Trois emplacements de bijoux attendus");
+    assert.ok(
+      jewelNames.every(slot => slot.filled),
+      "Le set doit remplir les trois emplacements de bijoux"
+    );
+    /* Même normalisation que le produit : une note finale entre parenthèses
+       n'appartient pas à l'identité du set. Sans elle, « (jamais porté) » et
+       « (jamais portées) » ne partagent que « ) ». */
+    const jewelSuffix = jewelNames
+      .map(slot => slot.title.replace(/\s*\([^)]*\)\s*$/, "").trim())
+      .reduce((suffix, name) => {
+      let i = 0;
+      while(
+        i < suffix.length && i < name.length &&
+        suffix[suffix.length-1-i] === name[name.length-1-i]
+      ) i++;
+      return suffix.slice(suffix.length - i);
+    });
+    assert.ok(
+      jewelSuffix.trim().length >= 6,
+      "Les trois bijoux doivent partager la racine du set, obtenu : "+
+      JSON.stringify(jewelSuffix)
+    );
+    assert.ok(
+      jewelSuffix.toLocaleLowerCase("fr-FR")
+        .includes(chosenJewelSet.toLocaleLowerCase("fr-FR").slice(1)),
+      "La racine partagée doit correspondre au set choisi « "+chosenJewelSet+" »"
+    );
+    // Les armures restent celles du set précédent.
+    const armorStillFilled = await page.evaluate(() =>
+      [...document.querySelectorAll("#memberRosterEditor .gear-slot")]
+        .filter(node => !node.classList.contains("weapon")
+          && !node.classList.contains("jewel")
+          && !/li[ée]e/i.test(node.textContent))
+        .every(node => node.classList.contains("filled"))
+    );
+    assert.ok(armorStillFilled, "Équiper des bijoux ne doit pas vider les armures");
     assert.equal(
       await page.locator(".member-roster-weapon-tabs .chip.active").textContent(),
       "Hache ✓ ★"

@@ -120,6 +120,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
     : undefined,
   armorSetsFrom:typeof armorSetsFrom === "function"
     ? armorSetsFrom
+    : undefined,
+  jewelSetsFrom:typeof jewelSetsFrom === "function"
+    ? jewelSetsFrom
     : undefined
 });})();`;
 

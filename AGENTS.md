@@ -563,13 +563,22 @@ piège à focus, Échap et la restitution du focus. Ne pas réintroduire d'écou
 Échap locaux. Sur écran tactile, les contrôles principaux restent à 44 × 44 px
 minimum et aucune vue ne doit élargir le document.
 
-## Sets d'armure en un clic
+## Sets d'équipement en un clic
 
-Un bouton **« Équiper un set »** figure dans la grille d'équipement du **roster
-des membres** et du **Team Builder**. Il remplit d'un coup `Haut`, `Bas`,
-`Bottes` et `Ceinture`. L'`Armure liee` n'est jamais touchée : elle dépend du
-personnage et n'a pas de structure de set. Les bijoux non plus — aucun nom n'est
-commun entre `Anneau`, `Collier` et `Boucle d'oreille`.
+Deux boutons figurent dans la grille d'équipement du **roster des membres** et du
+**Team Builder** : **« Équiper un set d'armure »** remplit `Haut`, `Bas`,
+`Bottes` et `Ceinture`, **« Équiper un set de bijoux »** remplit `Anneau`,
+`Collier` et `Boucle d'oreille`. Les libellés diffèrent volontairement : deux
+boutons identiques dans la même grille seraient ambigus au lecteur d'écran.
+
+Chacun n'agit que sur ses propres emplacements — équiper des bijoux ne vide pas
+les armures, et réciproquement. L'`Armure liee` n'est **jamais** touchée : elle
+dépend du personnage et n'a pas de structure de set.
+
+⚠️ Ne pas répéter cette erreur : les bijoux ont d'abord été déclarés « sans
+set » sur la foi d'un test d'égalité **exacte** des noms, qui renvoie zéro pour
+les armures comme pour les bijoux. Les deux familles suivent en réalité la même
+convention. Toujours comparer par suffixe.
 
 **Les sets ne sont JAMAIS listés en dur**, conformément à la règle d'or : ils
 sont déduits de `window.SEVEN_DS_DATA` par `armorSetsFrom(armures)`. Le nom d'une
@@ -588,10 +597,20 @@ emplacement à l'autre. Ce choix survit à l'ajout d'une pièce hors convention 
 seule celle-là ne trouvera pas de set, les autres tiennent. Un regroupement par
 préfixe commun aurait au contraire cassé tout un emplacement d'un seul coup.
 
-Seuls les sets **complets sur les quatre emplacements** sont proposés. Avec les
-données actuelles : **14 sets**, couvrant 56 des 62 pièces ; les 6 restantes
-n'existent que dans un emplacement. `armorSetLabel` retire l'article français de
-liaison pour l'affichage (« du cristal de vie » → « Cristal de vie »).
+Seuls les sets **complets sur tous les emplacements de leur famille** sont
+proposés. Avec les données actuelles : **14 sets d'armure** (56 des 62 pièces) et
+**10 sets de bijoux** (30 des 34) ; le reste n'existe que dans un emplacement.
+`armorSetLabel` retire l'article français de liaison pour l'affichage
+(« du cristal de vie » → « Cristal de vie »).
+
+`stripSetNote` retire une note finale entre parenthèses avant la comparaison.
+Sans elle, « Anneau des 100 jours (jamais porté) » et « Boucles d'oreilles des
+100 jours (jamais port**ées**) » ne partagent que « ) » : l'accord du participe
+casse le suffixe commun et ce 10ᵉ set disparaît. Les noms d'armure ne comportent
+aucune parenthèse, donc ce nettoyage ne change rien pour eux.
+
+`equipmentSetsFrom(source, slots)` porte la logique ; `armorSetsFrom` et
+`jewelSetsFrom` ne sont que des enveloppes sur la liste d'emplacements.
 
 ## Nom d'équipe et duplication
 

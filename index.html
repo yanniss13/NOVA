@@ -2002,16 +2002,25 @@
   /* ============================ Brouillon d'équipe ============================ */
   const emptyArmor = () => ARMOR_SLOTS.reduce((o,s)=>(o[s]=null,o),{});
 
-  /* ---------- Sets d'armure ----------
+  /* ---------- Sets d'équipement (armures ET bijoux) ----------
      Les sets ne sont JAMAIS listés en dur : ils sont déduits de
      `window.SEVEN_DS_DATA`. Le nom d'une pièce est le libellé de son
      emplacement suivi du nom du set — « Haut de la mélodie d'Arachnée »,
-     « Bottes de combat de la mélodie d'Arachnée » — donc on regroupe par plus
-     long suffixe commun. Cette approche survit à l'ajout d'une pièce hors
-     convention : seule celle-là ne trouvera pas de set, les autres tiennent.
+     « Bottes de combat de la mélodie d'Arachnée », « Boucles d'oreilles de la
+     mélodie d'Arachnée » — donc on regroupe par plus long suffixe commun.
+     Cette approche survit à l'ajout d'une pièce hors convention : seule
+     celle-là ne trouvera pas de set, les autres tiennent.
      L'armure liée est exclue : elle est propre au personnage et n'a pas de set. */
   const ARMOR_SET_SLOTS = ["Haut","Bas","Bottes","Ceinture"];
   const ARMOR_SET_MIN_STEM = 6;
+
+  /* Une note entre parenthèses en fin de nom n'appartient pas à l'identité du
+     set. Sans ce nettoyage, « Anneau des 100 jours (jamais porté) » et
+     « Boucles d'oreilles des 100 jours (jamais portées) » ne se rejoignent pas,
+     l'accord du participe cassant le suffixe commun. */
+  function stripSetNote(name){
+    return String(name || "").replace(/\s*\([^)]*\)\s*$/, "").trim();
+  }
 
   function commonSuffix(a, b){
     const left = String(a), right = String(b);
@@ -2033,23 +2042,24 @@
     return label ? label[0].toLocaleUpperCase("fr-FR")+label.slice(1) : "";
   }
 
-  function armorSetsFrom(armures){
-    const source = armures && typeof armures === "object" ? armures : {};
-    const lists = ARMOR_SET_SLOTS.map(slot =>
-      Array.isArray(source[slot]) ? source[slot] : []
+  function equipmentSetsFrom(source, slots){
+    const groups = source && typeof source === "object" ? source : {};
+    const lists = slots.map(slot =>
+      Array.isArray(groups[slot]) ? groups[slot] : []
     );
     if(lists.some(list => !list.length)) return [];
     const [reference, ...others] = lists;
     const sets = [];
     reference.forEach(base => {
+      const baseName = stripSetNote(base.name);
       const pieces = {};
-      pieces[ARMOR_SET_SLOTS[0]] = base.file;
-      let stem = String(base.name || "");
+      pieces[slots[0]] = base.file;
+      let stem = baseName;
       const complete = others.every((list, index) => {
         let best = null;
         let bestSuffix = "";
         list.forEach(candidate => {
-          const suffix = commonSuffix(base.name || "", candidate.name || "");
+          const suffix = commonSuffix(baseName, stripSetNote(candidate.name));
           if(suffix.length > bestSuffix.length){
             bestSuffix = suffix;
             best = candidate;
@@ -2057,7 +2067,7 @@
         });
         if(!best || bestSuffix.trim().length < ARMOR_SET_MIN_STEM) return false;
         if(bestSuffix.length < stem.length) stem = bestSuffix;
-        pieces[ARMOR_SET_SLOTS[index+1]] = best.file;
+        pieces[slots[index+1]] = best.file;
         return true;
       });
       if(!complete) return;
@@ -2065,6 +2075,14 @@
       if(name) sets.push({ name, pieces });
     });
     return sets.sort((a,b) => a.name.localeCompare(b.name, "fr-FR"));
+  }
+
+  function armorSetsFrom(armures){
+    return equipmentSetsFrom(armures, ARMOR_SET_SLOTS);
+  }
+
+  function jewelSetsFrom(bijoux){
+    return equipmentSetsFrom(bijoux, JEWEL_SLOTS);
   }
   const emptyJewel = () => JEWEL_SLOTS.reduce((o,s)=>(o[s]=null,o),{});
   const emptyPot = () => ({ tier:0 });
@@ -3171,45 +3189,62 @@
 
   /* Un clic équipe les 4 emplacements universels d'un set. L'armure liée n'est
      jamais touchée : elle dépend du personnage, pas du set. */
-  function openArmorSetPicker(onApply){
-    const sets = armorSetsFrom(DATA.armures);
+  function openEquipmentSetPicker(config){
+    const sets = config.sets;
     if(!sets.length){
       toast("Aucun set complet dans les données actuelles.", true);
       return;
     }
     Picker.open({
-      title:"Équiper un set d’armure",
+      title:config.title,
       allowNone:false,
       items:sets.map(set => ({
         value:set.name,
         name:set.name,
-        file:set.pieces[ARMOR_SET_SLOTS[0]]
+        file:set.pieces[config.thumbSlot]
       })),
       emptyHint:"Aucun set complet disponible.",
       onSelect:value => {
         const chosen = sets.find(set => set.name === value);
-        if(chosen) onApply(chosen);
+        if(chosen) config.onApply(chosen);
       }
     });
   }
 
-  function armorSetButton(onApply){
+  function equipmentSetButton(kind, onApply){
+    const armor = kind === "armor";
     return el("button",{
       class:"btn btn-ghost gear-set",
       type:"button",
-      dataset:{ gearAction:"armor-set" },
-      text:"Équiper un set",
-      onclick:()=>openArmorSetPicker(onApply)
+      dataset:{ gearAction:armor ? "armor-set" : "jewel-set" },
+      text:armor ? "Équiper un set d’armure" : "Équiper un set de bijoux",
+      onclick:()=>openEquipmentSetPicker({
+        title:armor ? "Équiper un set d’armure" : "Équiper un set de bijoux",
+        sets:armor ? armorSetsFrom(DATA.armures) : jewelSetsFrom(DATA.bijoux),
+        thumbSlot:armor ? ARMOR_SET_SLOTS[0] : JEWEL_SLOTS[0],
+        onApply
+      })
     });
   }
 
-  function applyMemberRosterArmorSet(set){
+  function currentMemberRosterBuild(){
     const type = memberRosterWeaponType;
-    const build = memberRosterDraft.builds[type]
+    return memberRosterDraft.builds[type]
       || (memberRosterDraft.builds[type] = emptyRosterBuild());
+  }
+
+  function applyMemberRosterArmorSet(set){
+    const build = currentMemberRosterBuild();
     ARMOR_SET_SLOTS.forEach(slot => { build.armor[slot] = set.pieces[slot]; });
     renderMemberRosterEditor();
     toast("Set « "+set.name+" » équipé.");
+  }
+
+  function applyMemberRosterJewelSet(set){
+    const build = currentMemberRosterBuild();
+    JEWEL_SLOTS.forEach(slot => { build.jewel[slot] = set.pieces[slot]; });
+    renderMemberRosterEditor();
+    toast("Bijoux « "+set.name+" » équipés.");
   }
 
   function pickMemberRosterArmor(slot){
@@ -3307,7 +3342,7 @@
     const gear = el("div",{class:"gear"});
     gear.appendChild(gearSlot("Arme", build.weapon, true, pickMemberRosterWeapon));
     gear.appendChild(el("div",{class:"gear-group",text:"Armures"}));
-    gear.appendChild(armorSetButton(applyMemberRosterArmorSet));
+    gear.appendChild(equipmentSetButton("armor", applyMemberRosterArmorSet));
     ARMOR_SLOTS.forEach(slot => gear.appendChild(gearSlot(
       ARMOR_LABELS[slot],
       build.armor[slot],
@@ -3315,6 +3350,7 @@
       ()=>pickMemberRosterArmor(slot)
     )));
     gear.appendChild(el("div",{class:"gear-group",text:"Bijoux"}));
+    gear.appendChild(equipmentSetButton("jewel", applyMemberRosterJewelSet));
     JEWEL_SLOTS.forEach(slot => gear.appendChild(gearSlot(
       JEWEL_LABELS[slot],
       build.jewel[slot],
@@ -3583,7 +3619,7 @@
     const gear = el("div",{class:"gear"});
     gear.appendChild(gearSlot("Arme", hero.weapon, true, ()=>pickWeapon(i)));
     gear.appendChild(el("div",{class:"gear-group", text:"Armures"}));
-    gear.appendChild(armorSetButton(set => {
+    gear.appendChild(equipmentSetButton("armor", set => {
       ARMOR_SET_SLOTS.forEach(slot => { hero.armor[slot] = set.pieces[slot]; });
       renderBuilder();
       toast("Set « "+set.name+" » équipé.");
@@ -3592,6 +3628,11 @@
       gear.appendChild(gearSlot(ARMOR_LABELS[slot], hero.armor[slot], false, ()=>pickArmor(i, slot)));
     });
     gear.appendChild(el("div",{class:"gear-group", text:"Bijoux"}));
+    gear.appendChild(equipmentSetButton("jewel", set => {
+      JEWEL_SLOTS.forEach(slot => { hero.jewel[slot] = set.pieces[slot]; });
+      renderBuilder();
+      toast("Bijoux « "+set.name+" » équipés.");
+    }));
     JEWEL_SLOTS.forEach(slot=>{
       gear.appendChild(gearSlot(JEWEL_LABELS[slot], hero.jewel[slot], false, ()=>pickJewel(i, slot), "jewel"));
     });

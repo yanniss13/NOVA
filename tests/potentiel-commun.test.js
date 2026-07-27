@@ -529,6 +529,54 @@ const STORAGE_KEY = "confrerie7ds.teams";
     realSets.map(s => s.name),
     [...realSets.map(s => s.name)].sort((a, b) => a.localeCompare(b, "fr-FR"))
   );
+
+  /* Les bijoux suivent la même convention que les armures. Une note entre
+     parenthèses en fin de nom n'appartient pas à l'identité du set : sans ce
+     nettoyage, « des 100 jours (jamais porté) » et « (jamais portées) » ne se
+     rejoignent pas, l'accord du participe cassant le suffixe commun. */
+  const jewelSetsFrom = hooks.jewelSetsFrom;
+  assert.strictEqual(typeof jewelSetsFrom, "function");
+
+  const syntheticJewels = plain(jewelSetsFrom({
+    Anneau:[
+      { name:"Anneau des 100 jours (jamais porté)", file:"a/100.webp" },
+      { name:"Anneau du serment solitaire", file:"a/serment.webp" }
+    ],
+    Collier:[{ name:"Collier des 100 jours (jamais porté)", file:"c/100.webp" }],
+    "Boucle d'oreille":[
+      { name:"Boucles d'oreilles des 100 jours (jamais portées)", file:"b/100.webp" }
+    ]
+  }));
+  assert.strictEqual(syntheticJewels.length, 1, "L'anneau orphelin ne forme pas un set");
+  assert.strictEqual(syntheticJewels[0].name, "100 jours");
+  assert.deepStrictEqual(syntheticJewels[0].pieces, {
+    Anneau:"a/100.webp",
+    Collier:"c/100.webp",
+    "Boucle d'oreille":"b/100.webp"
+  });
+
+  const realJewelSets = plain(jewelSetsFrom(dataContext.window.SEVEN_DS_DATA.bijoux));
+  assert.strictEqual(realJewelSets.length, 10, "10 sets de bijoux attendus");
+  const jewelSlots = ["Anneau", "Collier", "Boucle d'oreille"];
+  const jewelFiles = {};
+  jewelSlots.forEach(slot => {
+    jewelFiles[slot] = new Set(
+      dataContext.window.SEVEN_DS_DATA.bijoux[slot].map(item => item.file)
+    );
+  });
+  realJewelSets.forEach(set => {
+    jewelSlots.forEach(slot => {
+      assert.ok(
+        jewelFiles[slot].has(set.pieces[slot]),
+        "La pièce "+slot+" du set "+set.name+" doit exister dans son emplacement"
+      );
+    });
+  });
+  assert.ok(
+    realJewelSets.some(set => set.name === "100 jours"),
+    "Le set « 100 jours » ne doit pas être perdu à cause de l'accord au pluriel"
+  );
+  assert.strictEqual(new Set(realJewelSets.map(s => s.name)).size, 10);
 }
 
 console.log("PASS potentiel commun");
