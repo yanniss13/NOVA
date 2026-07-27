@@ -4588,6 +4588,179 @@
     const end = new Date(base); end.setUTCDate(end.getUTCDate() + 7);
     return { startDate: base.toISOString().slice(0,10), endDate: end.toISOString().slice(0,10) };
   }
+  /* ---------- Mon suivi : projection pure des tables existantes ----------
+     Aucune table, RPC ni migration Supabase. Ces fonctions ne lisent que ce
+     qu'on leur passe, afin d'être testables sans navigateur. */
+  function dashboardParisParts(now){
+    const parts = new Intl.DateTimeFormat("en-CA",{
+      timeZone:"Europe/Paris",
+      weekday:"short",
+      hour:"2-digit",
+      hourCycle:"h23"
+    }).formatToParts(now || new Date());
+    const get = type => (parts.find(part => part.type === type) || {}).value;
+    return {
+      weekday:{ Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6 }[
+        get("weekday")
+      ],
+      hour:Number(get("hour"))
+    };
+  }
+
+  function dashboardRunCountLabel(count){
+    return count+" run"+(count > 1 ? "s" : "");
+  }
+
+  function dashboardDeadlineStatus(now, remaining){
+    const left = Math.max(0, Math.min(3, Number(remaining) || 0));
+    if(left === 0){
+      return { level:"complete", label:"Semaine complète", remaining:0 };
+    }
+    const paris = dashboardParisParts(now);
+    const urgent = paris.weekday === 0 && paris.hour >= 12
+      || paris.weekday === 1 && paris.hour < 9;
+    const warning = paris.weekday === 6
+      || paris.weekday === 0 && paris.hour < 12;
+    if(urgent){
+      return {
+        level:"urgent",
+        label:"Priorité : "+dashboardRunCountLabel(left)+
+          " manquante"+(left > 1 ? "s" : "")+" avant le reset",
+        remaining:left
+      };
+    }
+    if(warning){
+      return {
+        level:"warning",
+        label:"Il reste "+dashboardRunCountLabel(left)+" avant lundi 9 h",
+        remaining:left
+      };
+    }
+    return {
+      level:"neutral",
+      label:"Reset lundi 9 h · Encore "+dashboardRunCountLabel(left)+
+        " disponible"+(left > 1 ? "s" : ""),
+      remaining:left
+    };
+  }
+
+  function buildDashboardState(input){
+    const source = input || {};
+    const userId = source.userId || "";
+    const weekStart = source.weekStart || "";
+    const sessions = (source.sessions || []).filter(session =>
+      session &&
+      session.week_start === weekStart &&
+      (session.status === "open" || session.status === "archived")
+    );
+    const sessionById = new Map(sessions.map(session => [session.id, session]));
+    const seen = new Set();
+    const mine = (source.membership || []).filter(member => {
+      if(!member || member.owner !== userId || !sessionById.has(member.session_id)){
+        return false;
+      }
+      if(seen.has(member.session_id)) return false;
+      seen.add(member.session_id);
+      return true;
+    });
+    const reports = new Map(
+      (source.reports || []).map(report => [report.session_id, report])
+    );
+    const ownTeamCount = (source.teams || []).filter(team =>
+      team && team.owner === userId
+    ).length;
+    const groups = mine.map(member => {
+      const session = sessionById.get(member.session_id);
+      const report = reports.get(session.id) || null;
+      return {
+        id:session.id,
+        slot:Number(session.slot) || 0,
+        runNo:Number(session.run_no) || 1,
+        title:session.title || "Groupe "+(session.slot || ""),
+        status:session.status,
+        completedAt:session.completed_at || null,
+        memberCount:(source.membership || []).filter(row =>
+          row && row.session_id === session.id
+        ).length,
+        teamSelected:!!member.team_snapshot,
+        report:report ? {
+          globalScore:String(report.global_score),
+          note:String(report.note || "")
+        } : null,
+        canEditReport:session.status === "archived" && !!report
+      };
+    }).sort((a,b) => {
+      if(a.status !== b.status) return a.status === "open" ? -1 : 1;
+      if(a.status === "open" && a.teamSelected !== b.teamSelected){
+        return a.teamSelected ? 1 : -1;
+      }
+      if(a.status === "archived"){
+        const dateOrder = String(b.completedAt || "")
+          .localeCompare(String(a.completedAt || ""));
+        if(dateOrder) return dateOrder;
+      }
+      return a.slot - b.slot || a.runNo - b.runNo;
+    });
+    const completed = groups.filter(group => group.status === "archived").length;
+    const open = groups.filter(group => group.status === "open").length;
+    const engaged = groups.length;
+    const remaining = Math.max(0, 3 - engaged);
+    const actions = [];
+    groups.filter(group => group.status === "open").forEach(group => {
+      const type = group.teamSelected
+        ? "view-group"
+        : (ownTeamCount ? "choose-team" : "create-team");
+      actions.push({
+        type,
+        sessionId:group.id,
+        slot:group.slot,
+        runNo:group.runNo,
+        label:type === "view-group"
+          ? "Voir le groupe"
+          : (type === "choose-team" ? "Choisir mon équipe" : "Créer une équipe"),
+        priority:group.teamSelected ? 2 : 1
+      });
+    });
+    if(remaining > 0){
+      actions.push({
+        type:"find-group",
+        sessionId:null,
+        slot:null,
+        runNo:null,
+        label:"Trouver un groupe",
+        priority:3
+      });
+    }
+    groups
+      .filter(group => group.canEditReport)
+      .forEach(group => actions.push({
+        type:"edit-report",
+        sessionId:group.id,
+        slot:group.slot,
+        runNo:group.runNo,
+        label:"Corriger le rapport",
+        priority:4
+      }));
+    actions.sort((a,b) =>
+      a.priority - b.priority ||
+      (a.slot || 0) - (b.slot || 0) ||
+      (a.runNo || 0) - (b.runNo || 0)
+    );
+    return {
+      weekStart,
+      engaged,
+      completed,
+      open,
+      remaining,
+      hasOwnTeams:ownTeamCount > 0,
+      groups,
+      actions,
+      deadlineStatus:dashboardDeadlineStatus(source.now || new Date(), remaining),
+      lastSyncedAt:Number(source.lastSyncedAt) || null,
+      offline:!!source.offline
+    };
+  }
+
   const frDate = iso => iso ? new Date(iso+"T00:00:00").toLocaleDateString("fr-FR",{day:"numeric",month:"short"}) : "";
   const frDateTime = iso => iso
     ? new Date(iso).toLocaleString("fr-FR", {
