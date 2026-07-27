@@ -190,4 +190,52 @@ assert.equal(
   "complete"
 );
 
-console.log("PASS Mon suivi : compteurs, priorités et échéances");
+/* Cache strictement cloisonné par compte et par semaine, et refusant une
+   enveloppe d'une autre version de format. */
+{
+  const { hooks:cacheHooks, localStorage } = loadApp();
+  const cached = {
+    weekStart:"2026-07-27",
+    engaged:2,
+    completed:1,
+    open:1,
+    remaining:1,
+    groups:[{
+      id:"run-archived",
+      report:{ globalScore:"9007199254740991", note:"Exact" }
+    }],
+    actions:[],
+    deadlineStatus:{ level:"neutral", label:"Reset lundi 9 h", remaining:1 },
+    lastSyncedAt:1234,
+    offline:false
+  };
+  cacheHooks.writeDashboardCache("user-1", cached);
+  assert.equal(
+    cacheHooks.readDashboardCache("user-1", "2026-07-27")
+      .groups[0].report.globalScore,
+    "9007199254740991"
+  );
+  // Un cache relu est toujours signalé comme potentiellement ancien.
+  assert.equal(
+    cacheHooks.readDashboardCache("user-1", "2026-07-27").offline,
+    true
+  );
+  assert.equal(
+    cacheHooks.readDashboardCache("user-2", "2026-07-27"),
+    null
+  );
+  assert.equal(
+    cacheHooks.readDashboardCache("user-1", "2026-08-03"),
+    null
+  );
+  localStorage.setItem(
+    cacheHooks.dashboardCacheKey("user-1", "2026-07-27"),
+    JSON.stringify({ version:999, userId:"user-1", weekStart:"2026-07-27" })
+  );
+  assert.equal(
+    cacheHooks.readDashboardCache("user-1", "2026-07-27"),
+    null
+  );
+}
+
+console.log("PASS Mon suivi : compteurs, priorités, échéances et cache");

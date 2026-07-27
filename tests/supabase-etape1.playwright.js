@@ -3732,6 +3732,165 @@ const { chromium } = require("playwright");
     assert.match(await dashboardText(), /9\s*007\s*199\s*254\s*740\s*991/);
     assert.ok(dashboardWeekStart, "La semaine du tableau de bord doit être connue");
 
+    // ---- Cache écrit par compte et par semaine ----
+    const dashboardCacheKey =
+      "confrerie7ds.cloud.dashboard.user-1."+dashboardWeekStart;
+    assert.equal(
+      await page.evaluate(
+        key => localStorage.getItem(key) !== null,
+        dashboardCacheKey
+      ),
+      true,
+      "Un suivi valide doit être mis en cache"
+    );
+
+    // ---- Hors ligne avec cache : dernier état connu + badge ----
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.bossReadFailureOnce = {
+        table:"boss_sessions",
+        message:"Réseau dashboard indisponible"
+      };
+      window.__fakeSupabaseEmit("boss_participation", "UPDATE");
+    });
+    await page.locator('.tab[data-view="dashboard"]').click();
+    await page.getByText("Hors ligne", { exact:true }).waitFor();
+    assert.match(await dashboardText(), /Runs engagées 2\/3/);
+    assert.match(await dashboardText(), /Données potentiellement anciennes/);
+    assert.equal(
+      await page.locator(
+        '#dashboardBody [data-dashboard-network-action="true"]'
+      ).first().isDisabled(),
+      true,
+      "Les actions réseau doivent être désactivées hors ligne"
+    );
+
+    // ---- Hors ligne sans cache : jamais un faux 0/3 ----
+    await page.evaluate(key => {
+      localStorage.removeItem(key);
+      window.__fakeSupabaseApplySession(null);
+    }, dashboardCacheKey);
+    await page.getByText("Connecte-toi pour afficher ton suivi", {
+      exact:true
+    }).waitFor();
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.bossReadFailureOnce = {
+        table:"boss_sessions",
+        message:"Réseau dashboard toujours indisponible"
+      };
+      window.__fakeSupabaseApplySession({
+        id:"user-1",
+        email:"yannis@example.test"
+      });
+    });
+    await page.getByText("Suivi indisponible hors ligne", { exact:true }).waitFor();
+    assert.doesNotMatch(await dashboardText(), /0\/3/);
+    assert.equal(await page.locator(".dashboard-progress").count(), 0);
+    await page.getByRole("button", { name:"Réessayer", exact:true }).click();
+    await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
+
+    // ---- Realtime : vue active relue, vue inactive seulement marquée sale ----
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.calls.length = 0;
+      window.__fakeSupabaseEmit("boss_participation", "UPDATE");
+    });
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.calls.some(call =>
+        call.table === "boss_sessions" && call.operation === "select"
+      )
+    );
+
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.calls.length = 0;
+      window.__fakeSupabaseEmit("boss_participation", "UPDATE");
+    });
+    await page.waitForTimeout(180);
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.calls.some(call =>
+          call.table === "boss_sessions" && call.operation === "select"
+        )
+      ),
+      false,
+      "Realtime ne doit pas relire le dashboard inactif"
+    );
+    await page.locator('.tab[data-view="dashboard"]').click();
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.calls.some(call =>
+        call.table === "boss_sessions" && call.operation === "select"
+      )
+    );
+
+    // ---- Course : une lecture ancienne ne remplace pas un état plus récent ----
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.evaluate(() => {
+      window.__fakeSupabaseQueueBossRead("dashboard-old", "boss_sessions");
+      window.__fakeSupabaseEmit("boss_participation", "UPDATE");
+    });
+    await page.locator('.tab[data-view="dashboard"]').click();
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadQueue.some(item =>
+        item.token === "dashboard-old" && item.claimed
+      )
+    );
+
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.evaluate(() => {
+      const run = window.__fakeSupabaseState.boss_sessions.find(item =>
+        item.slot === 2 && item.status === "open"
+      );
+      run.title = "Groupe actualisé";
+      window.__fakeSupabaseEmit("boss_sessions", "UPDATE");
+    });
+    await page.locator('.tab[data-view="dashboard"]').click();
+    await page.getByText(/Groupe actualisé · Run \d+/).first().waitFor();
+    await page.evaluate(() =>
+      window.__fakeSupabaseReleaseQueuedBossRead("dashboard-old")
+    );
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadQueue.some(item =>
+        item.token === "dashboard-old" && item.finished
+      )
+    );
+    assert.match(await dashboardText(), /Groupe actualisé/);
+
+    /* ---- Aucune fuite entre comptes ----
+       Merlin est vidé de ses participations pour que son 0/3 soit déterministe
+       et distinct des 2/3 de Yannis. */
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      state.boss_participation = state.boss_participation
+        .filter(item => item.owner !== "user-2");
+      window.__fakeSupabaseQueueBossRead("dashboard-user-1", "boss_sessions");
+      window.__fakeSupabaseEmit("boss_sessions", "UPDATE");
+    });
+    await page.locator('.tab[data-view="dashboard"]').click();
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadQueue.some(item =>
+        item.token === "dashboard-user-1" && item.claimed
+      )
+    );
+    await page.evaluate(() => window.__fakeSupabaseApplySession({
+      id:"user-2",
+      email:"merlin@example.test"
+    }));
+    await page.locator("#accountPseudo").getByText("Merlin", { exact:true }).waitFor();
+    await page.getByText("Runs engagées 0/3", { exact:true }).waitFor();
+    await page.evaluate(() =>
+      window.__fakeSupabaseReleaseQueuedBossRead("dashboard-user-1")
+    );
+    await page.waitForTimeout(50);
+    assert.equal(await page.locator("#accountPseudo").textContent(), "Merlin");
+    assert.match(await dashboardText(), /Runs engagées 0\/3/);
+    assert.doesNotMatch(await dashboardText(), /Groupe actualisé/);
+    await page.evaluate(() => window.__fakeSupabaseApplySession({
+      id:"user-1",
+      email:"yannis@example.test"
+    }));
+    await page.locator("#accountPseudo").getByText("Yannis", { exact:true }).waitFor();
+
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await authOverlay.waitFor({ state:"visible" });
     assert.equal(await authOverlay.evaluate(el => el.classList.contains("on")), true);
@@ -3740,7 +3899,7 @@ const { chromium } = require("playwright");
     );
     assert.equal(
       await page.evaluate(() => window.__fakeSupabaseState.removedRealtimeChannels),
-      8,
+      11,
       "Chaque changement de compte et déconnexion doit retirer l’ancienne chaîne"
     );
     await page.locator("#authEmail").fill("yannis@example.test");

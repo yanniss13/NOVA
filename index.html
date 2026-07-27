@@ -2302,8 +2302,14 @@
       const changed = new Set(pending);
       pending.clear();
       const view = activeView();
+      /* « Mon suivi » dérive des équipes et des tables de boss. Quand il est
+         actif il se recharge silencieusement, et sa lecture unique remplace les
+         branches teams/boss pour ce même lot d'événements. Sinon il est
+         seulement marqué sale : Realtime ne change jamais l'onglet actif. */
+      const dashboardChanged = changed.has("teams") || changed.has("boss");
+      const dashboardActive = view === "dashboard";
       try{
-        if(changed.has("teams")){
+        if(changed.has("teams") && !dashboardActive){
           if(view === "roster") await renderRoster();
           else await Store.refresh();
         }
@@ -2319,6 +2325,17 @@
             showErrorToast:false
           });
           if(!refreshed) throw new Error("BOSS_SYNC_FAILED");
+        }
+        if(dashboardChanged){
+          if(dashboardActive){
+            const refreshed = await renderDashboardView({
+              showLoading:false,
+              force:true
+            });
+            if(!refreshed) throw new Error("DASHBOARD_SYNC_FAILED");
+          }else{
+            DashboardStore.markDirty();
+          }
         }
       }catch(error){
         setStatus("offline", "Synchronisation indisponible");
@@ -5056,6 +5073,57 @@
     }
   };
 
+  /* ---------- Mon suivi : cache hors ligne ----------
+     Cloisonné par compte ET par semaine, versionné, et jamais utilisé pour
+     accorder un droit ni pour envoyer une mutation. On ne cherche jamais « le
+     dernier cache » : l'identité et la semaine doivent être connues d'abord. */
+  const DASHBOARD_CACHE_PREFIX = "confrerie7ds.cloud.dashboard.";
+  const DASHBOARD_CACHE_VERSION = 1;
+
+  function dashboardCacheKey(userId, weekStart){
+    return DASHBOARD_CACHE_PREFIX+userId+"."+weekStart;
+  }
+
+  function readDashboardCache(userId, weekStart){
+    if(!userId || !weekStart) return null;
+    try{
+      const raw = localStorage.getItem(dashboardCacheKey(userId, weekStart));
+      if(!raw) return null;
+      const envelope = JSON.parse(raw);
+      if(
+        !envelope ||
+        envelope.version !== DASHBOARD_CACHE_VERSION ||
+        envelope.userId !== userId ||
+        envelope.weekStart !== weekStart ||
+        !envelope.state
+      ) return null;
+      return Object.assign({}, envelope.state, {
+        offline:true,
+        userId
+      });
+    }catch(error){
+      return null;
+    }
+  }
+
+  function writeDashboardCache(userId, state){
+    if(!userId || !state || !state.weekStart) return;
+    try{
+      localStorage.setItem(
+        dashboardCacheKey(userId, state.weekStart),
+        JSON.stringify({
+          version:DASHBOARD_CACHE_VERSION,
+          userId,
+          weekStart:state.weekStart,
+          savedAt:Date.now(),
+          state:Object.assign({}, state, { offline:false })
+        })
+      );
+    }catch(error){
+      // Un quota local indisponible ne doit jamais casser la vue en ligne.
+    }
+  }
+
   /* ---------- Mon suivi : store et rendu ----------
      Le store protège chaque lecture par une génération, l'identité du compte et
      la semaine attendue : une réponse lente ne remplace jamais un état plus
@@ -5064,15 +5132,25 @@
     let issued = 0;
     let ownerId = "";
     let state = null;
+    let dirty = true;
 
     function reset(userId){
       issued++;
       ownerId = userId || "";
       state = null;
+      dirty = true;
     }
 
     function current(){
       return state;
+    }
+
+    function markDirty(){
+      dirty = true;
+    }
+
+    function isDirty(){
+      return dirty;
     }
 
     async function refresh(){
@@ -5086,7 +5164,24 @@
         currentUser?.id === userId &&
         currentBossWeek().startDate === weekStart;
 
+      try{
+        return await load(requestId, userId, weekStart, isCurrent);
+      }catch(error){
+        // Une réponse périmée ne touche ni l'état, ni le cache, ni le DOM.
+        if(!isCurrent()) return state;
+        const cached = readDashboardCache(userId, weekStart);
+        if(!cached) throw error;
+        state = cached;
+        return state;
+      }
+    }
+
+    async function load(requestId, userId, weekStart, isCurrent){
       const teamsPromise = Store.refresh();
+      /* Si une lecture Boss échoue avant le Promise.all, cette promesse reste
+         pendante : on lui attache un puits pour éviter une rejection non gérée,
+         sans consommer l'erreur que le Promise.all doit encore voir. */
+      teamsPromise.catch(() => {});
       await BossStore.ensureWeek(currentBossWeek());
       const sessions = await BossStore.listWeek(weekStart);
       const sessionIds = sessions.map(session => session.id);
@@ -5121,10 +5216,12 @@
         userId,
         reportsAvailable:reportResult.reportsAvailable
       });
+      dirty = false;
+      writeDashboardCache(userId, state);
       return state;
     }
 
-    return { current, refresh, reset };
+    return { current, refresh, reset, markDirty, isDirty };
   })();
 
   function dashboardProgressCell(label, value, className){
@@ -5292,7 +5389,8 @@
     meta.replaceChildren(el("span",{text:stamp}));
   }
 
-  async function renderDashboardView(){
+  async function renderDashboardView(options){
+    const settings = options || {};
     const body = $("#dashboardBody");
     if(!currentUser){
       $("#dashboardSyncMeta").replaceChildren();
@@ -5308,27 +5406,40 @@
       ]));
       return true;
     }
-    body.replaceChildren(el("div",{class:"empty-state"},[
-      el("p",{class:"big",text:"Chargement du suivi…"})
-    ]));
+    /* Rouvrir un onglet propre ne relit pas le réseau : seul un marquage sale
+       ou une demande explicite déclenche une nouvelle lecture. */
+    const known = DashboardStore.current();
+    if(known && !DashboardStore.isDirty() && settings.force !== true){
+      renderDashboardSyncMeta(known);
+      renderDashboardContent(known);
+      return true;
+    }
+    if(settings.showLoading !== false){
+      body.replaceChildren(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:"Chargement du suivi…"})
+      ]));
+    }
     $("#dashboardStatus").textContent = "Chargement du suivi";
     try{
       const state = await DashboardStore.refresh();
       if(!state) return true;
       renderDashboardSyncMeta(state);
       renderDashboardContent(state);
-      $("#dashboardStatus").textContent = "Suivi actualisé";
-      return true;
+      $("#dashboardStatus").textContent = state.offline
+        ? "Suivi hors ligne"
+        : "Suivi actualisé";
+      return !state.offline;
     }catch(error){
+      // Aucun cache compatible : on ne montre jamais un faux 0/3.
       renderDashboardSyncMeta(null);
       body.replaceChildren(el("div",{class:"empty-state"},[
-        el("p",{class:"big",text:"Suivi indisponible"}),
-        el("p",{text:"Impossible de charger ton suivi pour le moment."}),
+        el("p",{class:"big",text:"Suivi indisponible hors ligne"}),
+        el("p",{text:"Reconnecte-toi puis réessaie. Aucun compteur fiable n’est disponible."}),
         el("button",{
           class:"btn btn-primary",
           type:"button",
           text:"Réessayer",
-          onclick:()=>void renderDashboardView()
+          onclick:()=>void renderDashboardView({ force:true })
         })
       ]));
       $("#dashboardStatus").textContent = "Suivi indisponible";

@@ -108,6 +108,15 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
     : undefined,
   buildDashboardState:typeof buildDashboardState === "function"
     ? buildDashboardState
+    : undefined,
+  dashboardCacheKey:typeof dashboardCacheKey === "function"
+    ? dashboardCacheKey
+    : undefined,
+  readDashboardCache:typeof readDashboardCache === "function"
+    ? readDashboardCache
+    : undefined,
+  writeDashboardCache:typeof writeDashboardCache === "function"
+    ? writeDashboardCache
     : undefined
 });})();`;
 
