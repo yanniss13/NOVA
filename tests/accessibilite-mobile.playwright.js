@@ -106,6 +106,40 @@ async function assertPickerTilesContained(page, label){
       true
     );
 
+    /* Fermer une modale ne doit pas reprendre un focus déplacé volontairement.
+       `ModalStack.close()` restaure le déclencheur deux fois : une fois tout de
+       suite, puis une seconde fois au tick suivant pour rattraper un
+       déclencheur pas encore rendu. Cette seconde passe ne doit jamais voler un
+       focus valide placé ailleurs entre-temps.
+       Le déplacement est fait depuis un MutationObserver : son callback est une
+       microtâche, donc il s'exécute forcément AVANT le `setTimeout(0)` de la
+       restauration différée, quelle que soit la vitesse de la machine. */
+    await portrait.click();
+    await page.locator("#overlay").waitFor({state:"visible"});
+    await page.evaluate(() => {
+      const overlay = document.querySelector("#overlay");
+      const observer = new MutationObserver(() => {
+        if(overlay.classList.contains("on")) return;
+        observer.disconnect();
+        document.querySelector("#accountLogin").focus();
+        window.__focusMovedDuringClose = document.activeElement.id;
+      });
+      observer.observe(overlay, { attributes:true, attributeFilter:["class"] });
+    });
+    await page.keyboard.press("Escape");
+    await page.locator("#overlay").waitFor({state:"hidden"});
+    assert.equal(
+      await page.evaluate(() => window.__focusMovedDuringClose),
+      "accountLogin",
+      "Le focus doit bien avoir été déplacé pendant la fermeture"
+    );
+    await page.waitForTimeout(50);
+    assert.equal(
+      await page.evaluate(() => document.activeElement.id),
+      "accountLogin",
+      "La restauration différée ne doit pas reprendre un focus déplacé"
+    );
+
     for(const width of [320, 390]){
       const pickerContext = await browser.newContext({
         viewport:{width,height:844},

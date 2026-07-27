@@ -1678,8 +1678,20 @@
         }
       };
       restore();
+      /* Seconde passe : elle ne sert qu'à rattraper une restauration ratée (un
+         déclencheur pas encore rendu au moment de la fermeture) ou à garder le
+         focus captif dans une modale encore ouverte. Elle ne doit JAMAIS
+         reprendre un focus valide déplacé entre-temps : sans cette garde, un
+         membre qui bouge au clavier juste après la fermeture se voit ramené de
+         force sur le déclencheur au tick suivant. */
       setTimeout(() => {
-        restore();
+        const active = document.activeElement;
+        const focusWasLost = !active
+          || !active.isConnected
+          || active === document.body
+          || active === document.documentElement;
+        const top = stack[stack.length - 1];
+        if(focusWasLost || (top && !top.overlay.contains(active))) restore();
         if(pendingRestore === record.trigger) pendingRestore = null;
       }, 0);
       return record.trigger;
