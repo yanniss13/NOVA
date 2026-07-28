@@ -166,6 +166,12 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   calculateWeaponStats:typeof calculateWeaponStats === "function"
     ? calculateWeaponStats
     : undefined,
+  calculateGearStats:typeof calculateGearStats === "function"
+    ? calculateGearStats
+    : undefined,
+  buildGearCatalog:typeof buildGearCatalog === "function"
+    ? buildGearCatalog
+    : undefined,
   reconstructStatTotals:typeof reconstructStatTotals === "function"
     ? reconstructStatTotals
     : undefined,

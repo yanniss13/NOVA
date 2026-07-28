@@ -304,7 +304,7 @@ function masterstoneConfig(enchantment){
 {
   const source = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
   const engineStart = source.indexOf("function curveValueAtLevel");
-  const engineEnd = source.indexOf("function applyWeaponChange", engineStart);
+  const engineEnd = source.indexOf("function gearDomainOf", engineStart);
   assert.ok(engineStart >= 0 && engineEnd > engineStart);
   assert.doesNotMatch(source.slice(engineStart, engineEnd), /\b10300\b/);
   assert.doesNotMatch(source.slice(engineStart, engineEnd), /\breinforce\b/i);
@@ -942,6 +942,98 @@ function masterstoneConfig(enchantment){
     hooks.ARMOR_LEVEL_ORIGIN_MODE,
     "segment-lower-bound"
   );
+}
+
+// Chaque pièce produit des termes reconstructibles et déclare ses manques connus.
+{
+  const { hooks } = loadApp();
+  const FILE = "7ds-armures-ssr/Haut/Haut de l'araignée de l'ombre.webp";
+  const config = hooks.emptyGearConfig(FILE);
+  const result = hooks.calculateGearStats(FILE, config, "Haut");
+  assert.strictEqual(result.status, "valid");
+  assert.deepStrictEqual(plain(result.coverage), ["armor"]);
+  assert.deepStrictEqual(plain(result.uncovered), []);
+  assert.strictEqual(
+    result.assumptions.armorLevelOrigin,
+    "segment-lower-bound"
+  );
+  assert.deepStrictEqual(
+    [...new Set(result.terms.map(term => term.bucket))],
+    ["armor:Haut"]
+  );
+  result.terms.forEach(term => {
+    assert.ok(
+      term.unit === "flat" || term.unit === "ten-thousandths",
+      "chaque terme doit déclarer son unité"
+    );
+    assert.strictEqual(term.operation, "add");
+    assert.strictEqual(term.confidence, "presumed");
+    assert.strictEqual(term.source.domain, "armor");
+  });
+  assert.deepStrictEqual(
+    plain(hooks.reconstructStatTotals(result.terms)),
+    plain(result.totals),
+    "les totaux doivent être reconstruits uniquement depuis les termes"
+  );
+
+  const ENGRAVED =
+    "7ds-armures-ssr/Armure liee/Arrogance adéquate.webp";
+  const engraving = hooks.calculateGearStats(
+    ENGRAVED,
+    hooks.emptyGearConfig(ENGRAVED),
+    "Armure liee"
+  );
+  assert.deepStrictEqual(plain(engraving.coverage), ["engraving"]);
+  assert.deepStrictEqual(
+    plain(engraving.uncovered),
+    ["engraving:passive"]
+  );
+  assert.ok(
+    engraving.terms.some(term => term.source.extra === true),
+    "les contributions extraStats de la gravure doivent être calculées"
+  );
+
+  const PASSIVE =
+    "7ds-armures-ssr/Bas/Bas de la puissance retorse.webp";
+  const passiveConfig = hooks.emptyGearConfig(PASSIVE);
+  passiveConfig.enchantments[0] = {
+    slot:0,
+    stat:"Aerialattack_Damadd_Rate",
+    value:1381
+  };
+  const passive = hooks.calculateGearStats(PASSIVE, passiveConfig, "Bas");
+  assert.deepStrictEqual(plain(passive.uncovered), ["armor:passive"]);
+  const enchantmentTerm = passive.terms.find(
+    term => term.source.component === "enchantment"
+  );
+  assert.ok(enchantmentTerm, "l'option aléatoire doit produire un terme");
+  assert.strictEqual(enchantmentTerm.value, 1381);
+  assert.strictEqual(enchantmentTerm.confidence, "exact");
+
+  const withoutOptions = Object.entries(hooks.buildGearCatalog())
+    .find(([, item]) => !item.randomOptions);
+  assert.ok(withoutOptions, "il existe des pièces sans option aléatoire");
+  const noOptions = hooks.calculateGearStats(
+    withoutOptions[0],
+    hooks.emptyGearConfig(withoutOptions[0]),
+    "Haut"
+  );
+  assert.deepStrictEqual(plain(noOptions.coverage), ["armor"]);
+  assert.strictEqual(
+    noOptions.terms.some(term => term.source.component === "enchantment"),
+    false
+  );
+
+  const invalid = hooks.calculateGearStats(
+    FILE,
+    { ...config, level:9999 },
+    "Haut"
+  );
+  assert.strictEqual(invalid.status, "incompatible");
+  assert.deepStrictEqual(plain(invalid.terms), []);
+  assert.deepStrictEqual(plain(invalid.totals), []);
+  assert.deepStrictEqual(plain(invalid.coverage), []);
+  assert.deepStrictEqual(plain(invalid.uncovered), []);
 }
 
 console.log("PASS stats de builds : modèle et calcul de l’arme");

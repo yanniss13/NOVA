@@ -2406,6 +2406,9 @@
     if(owns(BUILD_ENGRAVED, file)) return BUILD_ENGRAVED[file];
     return null;
   }
+  function buildGearCatalog(){
+    return BUILD_GEAR;
+  }
   function gearEnchantmentLength(definition){
     const options = definition && definition.randomOptions;
     return options && Number.isFinite(options.slots)
@@ -3073,6 +3076,136 @@
       terms,
       totals:reconstructStatTotals(terms),
       facts
+    };
+  }
+
+  function gearDomainOf(slotKey){
+    return JEWEL_SLOTS.indexOf(slotKey) >= 0
+      ? "jewel"
+      : (slotKey === LINKED_ARMOR_SLOT ? "engraving" : "armor");
+  }
+  function addGearStatTerm(terms, settings){
+    if(settings.value === 0) return;
+    const metadata = buildStatMetadata(settings.stat);
+    terms.push({
+      id:settings.id,
+      stat:settings.stat,
+      operation:"add",
+      value:settings.value,
+      unit:metadata.unit,
+      bucket:settings.bucket,
+      family:metadata.family,
+      source:settings.source,
+      confidence:settings.confidence
+    });
+  }
+  function emptyGearStatResult(status){
+    return {
+      version:1,
+      status,
+      coverage:[],
+      uncovered:[],
+      assumptions:{ armorLevelOrigin:ARMOR_LEVEL_ORIGIN_MODE },
+      terms:[],
+      totals:[],
+      facts:[]
+    };
+  }
+  function calculateGearStats(file, config, slotKey){
+    const status = gearConfigStatus(file, config);
+    if(status !== "valid") return emptyGearStatResult(status);
+
+    const definition = buildGearDefinition(file);
+    const domain = gearDomainOf(slotKey);
+    const bucket = domain + ":" + slotKey;
+    const terms = [];
+    addGearStatTerm(terms, {
+      id:bucket + ":main:" + definition.mainStat,
+      stat:definition.mainStat,
+      value:gearStatValue(
+        definition,
+        definition.mainValues,
+        definition.mainAdd,
+        config.level,
+        config.reinforce
+      ),
+      bucket,
+      source:{ domain, component:"level", slot:slotKey, id:file },
+      confidence:"presumed"
+    });
+    if(definition.subStat && definition.subValues){
+      addGearStatTerm(terms, {
+        id:bucket + ":sub:" + definition.subStat,
+        stat:definition.subStat,
+        value:gearStatValue(
+          definition,
+          definition.subValues,
+          definition.subAdd,
+          config.level,
+          config.reinforce
+        ),
+        bucket,
+        source:{ domain, component:"level", slot:slotKey, id:file },
+        confidence:"presumed"
+      });
+    }
+    (definition.extraStats || []).forEach((extra, index) => {
+      addGearStatTerm(terms, {
+        id:bucket + ":extra:" + index + ":" + extra.stat,
+        stat:extra.stat,
+        value:gearStatValue(
+          definition,
+          extra.values,
+          extra.add,
+          config.level,
+          config.reinforce
+        ),
+        bucket,
+        source:{
+          domain,
+          component:"level",
+          slot:slotKey,
+          id:file,
+          extra:true,
+          index
+        },
+        confidence:"presumed"
+      });
+    });
+    config.enchantments.forEach((choice, index) => {
+      if(!choice || !choice.stat) return;
+      addGearStatTerm(terms, {
+        id:bucket + ":enchantment:" + index + ":" + choice.stat,
+        stat:choice.stat,
+        value:Number(choice.value) || 0,
+        bucket,
+        source:{
+          domain,
+          component:"enchantment",
+          slot:slotKey,
+          id:file,
+          index
+        },
+        confidence:"exact"
+      });
+    });
+
+    const uncovered = [];
+    if(domain === "engraving"){
+      uncovered.push("engraving:passive");
+    }
+    if(definition.hasEquipPassive){
+      uncovered.push("armor:passive");
+    }
+    return {
+      version:1,
+      status:"valid",
+      coverage:[domain],
+      uncovered,
+      assumptions:{ armorLevelOrigin:ARMOR_LEVEL_ORIGIN_MODE },
+      terms,
+      totals:reconstructStatTotals(terms),
+      facts:[]
     };
   }
 
