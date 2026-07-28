@@ -275,6 +275,25 @@ stocké dans l'objet du type d'arme ; les anciens builds sont normalisés à
 `false`. La copie du favori transfère les armures, les bijoux et la note,
 conserve l'arme de destination et ne crée jamais un second favori.
 
+## Filtres de catégorie du roster
+
+Les quatre catégories (`element`, `weapon`, `role`, `rarity`) sont des listes
+déroulantes, pas des chips : `#memberRosterFilterElement`,
+`#memberRosterFilterWeapon`, `#memberRosterFilterRole`,
+`#memberRosterFilterRarity`. Elles vivent dans une grille
+`.member-roster-filter-fields` en `auto-fit` — quatre colonnes sur bureau, deux
+sur mobile — et **ne doivent jamais défiler horizontalement**. L'ancien rail
+`overflow-x` est supprimé : il rendait visible une barre de défilement que le
+reste du site masque (voir `tests/scrollbars-invisibles.playwright.js`).
+
+Une liste dont la valeur n'est pas `""` porte la classe `on` (bordure et texte
+dorés). Le bouton `#memberRosterFilterReset` n'existe dans le DOM que si au
+moins un filtre est actif ; `syncMemberRosterFilterReset()` l'ajoute et le
+retire **sans reconstruire les listes**, sinon le focus clavier serait perdu
+juste après un choix. Les valeurs proposées viennent toujours de
+`rosterFilterValues(key)`, dérivé de `window.SEVEN_DS_META` : aucune liste
+d'éléments ou d'armes n'est écrite en dur.
+
 ## Synchronisation Supabase Realtime
 
 Une chaîne `confrerie-live-<userId>` écoute `profiles`, `teams`,
