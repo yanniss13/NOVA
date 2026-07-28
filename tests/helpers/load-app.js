@@ -94,6 +94,27 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   setFavoriteRosterBuild,
   copyFavoriteRosterBuild,
   rosterHeroSnapshot,
+  buildWeaponDefinition:typeof buildWeaponDefinition === "function"
+    ? buildWeaponDefinition
+    : undefined,
+  buildWeaponGrade:typeof buildWeaponGrade === "function"
+    ? buildWeaponGrade
+    : undefined,
+  normalizeWeaponConfig:typeof normalizeWeaponConfig === "function"
+    ? normalizeWeaponConfig
+    : undefined,
+  emptyWeaponConfig:typeof emptyWeaponConfig === "function"
+    ? emptyWeaponConfig
+    : undefined,
+  weaponConfigStatus:typeof weaponConfigStatus === "function"
+    ? weaponConfigStatus
+    : undefined,
+  weaponLevelCap:typeof weaponLevelCap === "function"
+    ? weaponLevelCap
+    : undefined,
+  applyWeaponChange:typeof applyWeaponChange === "function"
+    ? applyWeaponChange
+    : undefined,
   cloudRosterFromRow,
   rosterToCloudRow,
   replaceRosterCacheForOwner,
@@ -218,6 +239,45 @@ function loadApp(initialTeams){
         "7ds-armures-ssr/Armure liee/Le Sanglier de la Gourmandise.webp",
         "7ds-armures-ssr/Armure liee/Vêtements formels légers.webp"
       ]
+    },
+    SEVEN_DS_BUILD_STATS:{
+      version:1,
+      statLabels:{
+        B_Atk_Equip:{ fr:"Attaque de l'équipement", family:"main", unit:"flat" },
+        critRate:{ fr:"Chances crit.", family:"additional", unit:"ten-thousandths" }
+      },
+      weaponsByFile:{
+        "7ds-armes/Hache/hache.webp":{
+          mainStat:"attack",
+          mainStatCode:"B_Atk_Equip",
+          gradesByGameId:{
+            "grade-axe":{
+              gameId:"grade-axe",
+              mainStatValues:{ base:10, max:60, progression:[1, 1, 1, 1, 1] },
+              subStats:[{ stat:"critRate", values:{ base:0, max:50, progression:[1, 1, 1, 1, 1] } }],
+              promotionSteps:[
+                { reinforceMax:20 }, { reinforceMax:30 },
+                { reinforceMax:40 }, { reinforceMax:50 }
+              ],
+              overlimit:{ levels:[{ level:0, statRate:0 }, { level:1, statRate:500 }] },
+              enchantments:{
+                type:"basic",
+                slots:[5000],
+                options:[{ stat:"critRate", min:10, max:20 }]
+              }
+            },
+            "grade-sans-courbe":{
+              gameId:"grade-sans-courbe",
+              mainStatValues:null,
+              subStats:[],
+              enchantments:{
+                type:"masterstone",
+                tiers:[{ tier:1, options:[{ stat:"B_Atk_Equip", min:5, max:10 }] }]
+              }
+            }
+          }
+        }
+      }
     }
   };
   sandbox.window = sandbox;

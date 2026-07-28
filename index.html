@@ -1665,6 +1665,7 @@
      aria-live="polite" aria-atomic="true"></div>
 
 <script src="data.js"></script>
+<script src="stats-build.js"></script>
 <script src="potentiels.js"></script>
 <script src="armures-liees.js"></script>
 <script src="personnages-meta.js"></script>
@@ -1676,6 +1677,11 @@
 
   /* ============================ Données & constantes ============================ */
   const DATA = window.SEVEN_DS_DATA;
+  const BUILD_STATS = window.SEVEN_DS_BUILD_STATS || {
+    version:0,
+    weaponsByFile:{},
+    statLabels:{}
+  };
   const STORAGE_KEY = "confrerie7ds.teams";
   const TEAM_SIZE = 4;
   const ARMOR_SLOTS = ["Haut","Bas","Bottes","Ceinture","Armure liee"];
@@ -2197,6 +2203,123 @@
     const tier = Number.isFinite(Number(raw && raw.tier)) ? Math.trunc(Number(raw.tier)) : 0;
     return { tier:Math.max(0, Math.min(POT_MAX, tier)) };
   };
+  const jsonCopy = value => JSON.parse(JSON.stringify(value));
+  const owns = (object, key) => !!object && Object.prototype.hasOwnProperty.call(object, key);
+  const isInteger = value => Number.isInteger(value);
+  function buildWeaponDefinition(file){
+    return file && owns(BUILD_STATS.weaponsByFile, file)
+      ? BUILD_STATS.weaponsByFile[file]
+      : null;
+  }
+  function buildWeaponGrade(file, gameId){
+    const weapon = buildWeaponDefinition(file);
+    return weapon && owns(weapon.gradesByGameId, gameId)
+      ? weapon.gradesByGameId[gameId]
+      : null;
+  }
+  function weaponLevelCap(grade, promotion){
+    const steps = Array.isArray(grade && grade.promotionSteps)
+      ? grade.promotionSteps : [];
+    if(!steps.length) return -1;
+    if(promotion === 0) return Math.max(0, Number(steps[0].reinforceMax) - 10);
+    const step = steps[promotion - 1];
+    return step ? Number(step.reinforceMax) : -1;
+  }
+  function enchantmentLength(grade){
+    const enchantments = grade && grade.enchantments;
+    if(!enchantments || typeof enchantments !== "object") return -1;
+    if(enchantments.type === "basic"){
+      return Array.isArray(enchantments.slots) ? enchantments.slots.length : -1;
+    }
+    if(enchantments.type === "masterstone") return 1;
+    return -1;
+  }
+  function emptyWeaponConfig(file, gameId){
+    const grade = buildWeaponGrade(file, gameId);
+    const length = enchantmentLength(grade);
+    if(!grade || length < 0) return null;
+    return {
+      version:1,
+      gradeGameId:gameId,
+      level:0,
+      promotion:0,
+      overlimit:0,
+      enchantments:Array.from({length}, ()=>null)
+    };
+  }
+  function normalizeWeaponConfig(file, raw){
+    if(raw === undefined || raw === null) return null;
+    return jsonCopy(raw);
+  }
+  function isAllowedEnchantValue(choice, options){
+    return !!choice && typeof choice === "object" && !Array.isArray(choice)
+      && typeof choice.stat === "string" && isInteger(choice.value)
+      && (options || []).some(option => option && option.stat === choice.stat
+        && choice.value >= option.min && choice.value <= option.max);
+  }
+  function areEnchantmentsValid(grade, enchantments){
+    const catalog = grade.enchantments;
+    if(catalog.type === "basic"){
+      return enchantments.every((choice, index) => choice === null || (
+        choice.slot === index && isAllowedEnchantValue(choice, catalog.options)
+      ));
+    }
+    if(catalog.type === "masterstone"){
+      const choice = enchantments[0];
+      if(choice === null) return true;
+      if(!choice || typeof choice !== "object" || Array.isArray(choice) || choice.slot !== 0){
+        return false;
+      }
+      const tier = (catalog.tiers || []).find(item => item && item.tier === choice.tier);
+      if(!tier) return false;
+      const group = tier.elements
+        ? (tier.elements || []).find(item => item && item.element === choice.element)
+        : choice.element === null ? tier : null;
+      return !!group && isAllowedEnchantValue(choice, group.options);
+    }
+    return false;
+  }
+  function weaponConfigStatus(file, config){
+    const weapon = buildWeaponDefinition(file);
+    if(!weapon) return "unavailable";
+    if(config === undefined || config === null) return "missing";
+    if(!config || typeof config !== "object" || Array.isArray(config) || config.version !== 1){
+      return "incompatible";
+    }
+    const required = ["gradeGameId", "level", "promotion", "overlimit", "enchantments"];
+    if(required.some(key => !owns(config, key) || config[key] === null)) return "incomplete";
+    const grade = buildWeaponGrade(file, config.gradeGameId);
+    if(!grade) return "incompatible";
+    if(!isInteger(config.level) || !isInteger(config.promotion) || !isInteger(config.overlimit)){
+      return "incompatible";
+    }
+    const cap = weaponLevelCap(grade, config.promotion);
+    if(cap < 0 || config.promotion < 0 || config.promotion > grade.promotionSteps.length
+      || config.level < 0 || config.level > cap){
+      return "incompatible";
+    }
+    const overlimitLevels = grade.overlimit && Array.isArray(grade.overlimit.levels)
+      ? grade.overlimit.levels : null;
+    if(overlimitLevels){
+      if(!overlimitLevels.some(item => item && item.level === config.overlimit)) return "incompatible";
+    }else if(config.overlimit !== 0){
+      return "incompatible";
+    }
+    const length = enchantmentLength(grade);
+    if(length < 0 || !Array.isArray(config.enchantments) || config.enchantments.length !== length){
+      return "incompatible";
+    }
+    if(!areEnchantmentsValid(grade, config.enchantments)) return "incompatible";
+    return "valid";
+  }
+  function applyWeaponChange(hero, nextFile){
+    const source = hero && typeof hero === "object" ? hero : {};
+    const changed = source.weapon !== nextFile;
+    return Object.assign({}, jsonCopy(source), {
+      weapon:nextFile || null,
+      weaponConfig:changed ? null : normalizeWeaponConfig(nextFile, source.weaponConfig)
+    });
+  }
   function normalizeHero(raw){
     const h = raw && typeof raw === "object" ? raw : {};
     const char = h.char||null;
@@ -2208,6 +2331,7 @@
     return {
       char,
       weapon,
+      weaponConfig:weapon ? normalizeWeaponConfig(weapon, h.weaponConfig) : null,
       armor,
       jewel:Object.assign(emptyJewel(), h.jewel||{}),
       potentiel:normalizePotentiel(h.potentiel),
@@ -2216,6 +2340,7 @@
   }
   const emptyRosterBuild = () => ({
     weapon:null,
+    weaponConfig:null,
     armor:emptyArmor(),
     jewel:emptyJewel(),
     note:"",
@@ -2231,12 +2356,14 @@
     const hero = normalizeHero({
       char:charId,
       weapon,
+      weaponConfig:source.weaponConfig,
       armor:source.armor,
       jewel:source.jewel,
       note:source.note
     });
     return {
       weapon:hero.weapon,
+      weaponConfig:hero.weaponConfig,
       armor:hero.armor,
       jewel:hero.jewel,
       note:hero.note,
@@ -2302,6 +2429,7 @@
     const target = normalized.builds[targetWeaponType] || emptyRosterBuild();
     normalized.builds[targetWeaponType] = {
       weapon:target.weapon,
+      weaponConfig:jsonCopy(target.weaponConfig),
       armor:JSON.parse(JSON.stringify(source.armor)),
       jewel:JSON.parse(JSON.stringify(source.jewel)),
       note:source.note,
@@ -2316,6 +2444,7 @@
     return normalizeHero({
       char:normalized.charId,
       weapon:build.weapon,
+      weaponConfig:build.weaponConfig,
       armor:build.armor,
       jewel:build.jewel,
       potentiel:{tier:normalized.potentialTier},
@@ -2509,7 +2638,7 @@
       heroes:heroes.map(normalizeHero)
     });
   }
-  const emptyHero = () => ({ char:null, weapon:null, armor:emptyArmor(), jewel:emptyJewel(), potentiel:emptyPot(), note:"" });
+  const emptyHero = () => ({ char:null, weapon:null, weaponConfig:null, armor:emptyArmor(), jewel:emptyJewel(), potentiel:emptyPot(), note:"" });
   const emptyDraft = () => ({ id:uid(), name:"", pseudo:"", boss:"",
                               heroes:Array.from({length:TEAM_SIZE}, emptyHero) });
 
@@ -3424,7 +3553,7 @@
     const type = memberRosterWeaponType;
     const build = memberRosterDraft.builds[type]
       || (memberRosterDraft.builds[type] = emptyRosterBuild());
-    if(kind === "weapon") build.weapon = value;
+    if(kind === "weapon") memberRosterDraft.builds[type] = applyWeaponChange(build, value);
     if(kind === "armor") build.armor[slot] = value;
     if(kind === "jewel") build.jewel[slot] = value;
     renderMemberRosterEditor();
@@ -3950,7 +4079,9 @@
       onSelect:v=>{
         const hero = draft.heroes[i];
         hero.char = v;
-        if(!isWeaponCompatible(hero.char, hero.weapon)) hero.weapon = null;
+        if(!isWeaponCompatible(hero.char, hero.weapon)){
+          draft.heroes[i] = applyWeaponChange(hero, null);
+        }
         if(!isLinkedArmorCompatible(
           hero.char,
           hero.armor[LINKED_ARMOR_SLOT]
@@ -3971,7 +4102,7 @@
       title:"Choisir une arme", value:hero.weapon,
       groups:compatibleWeaponGroups(hero.char),
       emptyHint:"Aucune arme compatible disponible.",
-      onSelect:v=>{ hero.weapon = v; renderBuilder(); }
+      onSelect:v=>{ draft.heroes[i] = applyWeaponChange(hero, v); renderBuilder(); }
     });
   }
   function pickArmor(i, slot){
