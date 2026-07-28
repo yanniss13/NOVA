@@ -276,8 +276,10 @@ concerner directement :
 - **Règle d'or sur les assets :** ne jamais coder en dur une liste d'armes,
   d'armures ou d'éléments. Tout dérive de `window.SEVEN_DS_DATA`. Comparaison des
   sets **par suffixe**, jamais par égalité de nom exacte (piège documenté).
-- **`index.html` est en CRLF.** Les remplacements multi-lignes en Python
-  échouent silencieusement si tu écris `\n`. Éditer ligne par ligne.
+- **`index.html` a des fins de ligne mixtes (CRLF et LF).** Ne jamais présumer
+  le séparateur d'une ancre multi-ligne : inspecter la zone ciblée, utiliser
+  une expression tolérant `\r?\n`, ou éditer ligne par ligne. Ne pas normaliser
+  tout le fichier au passage, car cela masquerait le vrai diff fonctionnel.
 - **Le chargeur de tests** (`tests/helpers/load-app.js`, lignes 131-133) extrait
   le script inline par expression régulière et expose les fonctions internes.
   Toute fonction pure à tester doit être ajoutée à `HOOK_EXPORT`.

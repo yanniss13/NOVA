@@ -122,6 +122,15 @@ refusé.
 Playwright et Chromium sont des outils de vérification ; l'application livrée
 reste autonome et ne dépend pas de npm.
 
+## Fins de ligne
+
+`index.html` et `AGENTS.md` contiennent actuellement un mélange de fins de ligne
+CRLF et LF. Ne jamais construire une ancre multi-ligne en supposant un
+séparateur unique : inspecter d'abord la zone ciblée, utiliser une expression
+tolérant `\r?\n`, ou modifier avec `apply_patch`. Ne pas normaliser un fichier
+entier au passage dans un commit fonctionnel, car le diff de milliers de lignes
+masquerait la modification réelle.
+
 ## Structure du dépôt
 
 ```

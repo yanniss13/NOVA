@@ -28,8 +28,10 @@ PostgreSQL/Supabase pour la persistance.
   d'`index.html`. Les blocs `<script>` de fin de fichier existent parce que le
   bac à sable `vm` ne fournit ni `addEventListener`, ni `matchMedia`, ni
   `requestAnimationFrame`.
-- **`index.html` est en CRLF.** Les remplacements multi-lignes en Python échouent
-  silencieusement si l'on écrit `\n`. Éditer ligne par ligne.
+- **`index.html` a des fins de ligne mixtes (CRLF et LF).** Une ancre
+  multi-ligne doit inspecter la zone ciblée ou tolérer `\r?\n`; sinon elle peut
+  échouer silencieusement. Ne pas normaliser tout le fichier dans un commit
+  fonctionnel : éditer ligne par ligne ou avec un outil de patch.
 - **Règle d'or :** aucune liste d'armes, d'armures, d'éléments ou de stats codée
   en dur. Tout dérive de `window.SEVEN_DS_DATA` et de
   `window.SEVEN_DS_BUILD_STATS`. Comparaison des ensembles **par suffixe**, jamais
