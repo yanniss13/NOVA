@@ -28,8 +28,8 @@ Les décisions suivantes sont définitives pour ce lot :
 - aucune nouvelle table ni colonne Supabase n’est créée.
 
 L’exactitude retenue reste celle de la passation : modèle documenté, avec une
-distinction visible entre ce qui est prouvé, ce qui est un modificateur non
-appliqué et ce qui sera estimé dans les lots suivants.
+distinction visible entre ce qui est prouvé, ce qui repose sur une base
+d’application présumée et ce qui sera estimé dans les lots suivants.
 
 ## 2. Hors périmètre
 
@@ -38,12 +38,14 @@ Ce lot ne calcule pas :
 - les statistiques finales du personnage ;
 - les sept pièces d’armure, les sets ou les costumes gravés ;
 - la maîtrise ou le potentiel par type d’arme ;
-- l’ordre d’application des bonus en pourcentage ;
+- l’ordre d’application des bonus en pourcentage entre plusieurs domaines ;
 - les synergies de Combines ;
 - les descriptions longues des passifs d’arme.
 
-Le total du héros et l’application des taux restent réservés au lot 3. Le lot 1
-affiche uniquement **« Contribution de l’arme »**.
+Le total du héros et l’application des taux entre plusieurs domaines restent
+réservés au lot 3. Le lot 1 applique seulement l’outrepassement interne à l’arme
+selon l’hypothèse documentée et affiche uniquement
+**« Apport de l’arme — calcul partiel »**.
 
 ## 3. Architecture retenue
 
@@ -96,8 +98,8 @@ window.SEVEN_DS_BUILD_STATS = {
   statLabels: {
     "B_Atk_Equip": {
       fr: "Attaque de l’équipement",
-      rate: false,
-      family: "main"
+      family: "main",
+      unit: "flat"
     }
   }
 };
@@ -128,13 +130,38 @@ Le générateur ne contient aucune liste d’armes en dur. Il :
 Le rapprochement est fait à la génération, jamais à l’exécution. Le navigateur
 fait ensuite une recherche exacte par chemin de fichier.
 
-### 4.3 Libellés et familles
+### 4.3 Libellés, familles et unités
 
 Les libellés fusionnent les deux sources déjà documentées :
 `{stat, nameFr}` et le dictionnaire court `statLabels`.
 
-Une petite table de classification maintenue dans le dépôt affecte chaque code à
-l’une des cinq familles :
+Une table `7ds-stats/stat-metadata.json`, maintenue dans le dépôt, affecte
+explicitement chaque code à une famille et à une unité :
+
+```json
+{
+  "B_Atk_Equip": {
+    "family": "main",
+    "unit": "flat"
+  },
+  "I_AtkAdd_Rate": {
+    "family": "additional",
+    "unit": "ten-thousandths"
+  }
+}
+```
+
+Les deux seules unités autorisées sont :
+
+- `flat` — points bruts ;
+- `ten-thousandths` — dix-millièmes, où `500` représente `5 %`.
+
+L’unité n’est jamais déduite du nom du code ni du drapeau `taux` de
+`libelles-stats.json`. Ce drapeau est absent pour de nombreux codes, notamment
+`B_Atk_Equip` et `A_Accuracy`; une déduction silencieuse produirait donc des
+sommes fausses.
+
+Les cinq familles sont :
 
 - `main` — PV, ATK, DEF ;
 - `additional` — statistiques supplémentaires ;
@@ -142,9 +169,10 @@ l’une des cinq familles :
 - `special` — statistiques spéciales ;
 - `elemental` — statistiques élémentaires.
 
-Cette table classe des codes de statistiques, pas des assets. Le générateur
-échoue dès qu’un code émis ne possède pas de libellé français, d’unité ou de
-famille. Une famille vide est masquée à l’affichage.
+Cette table décrit des codes de statistiques, pas des assets. Le générateur
+échoue dès qu’un code émis ne possède pas de libellé français, d’unité explicite
+ou de famille. Il refuse aussi toute unité autre que les deux valeurs ci-dessus.
+Une famille vide est masquée à l’affichage.
 
 Les valeurs sémantiques de `mainStat` sont converties par une table de domaine
 explicite (`attack` → `B_Atk_Equip`, `defense` → `B_Def_Equip`, `hp` →
@@ -258,7 +286,7 @@ Une valeur invalide masque les chiffres. La normalisation peut supprimer une
 option inconnue ou borner une donnée manifestement corrompue, mais elle ne
 transforme jamais une configuration incomplète en configuration valide.
 
-Le plafond avant le premier renforcement correspond au premier plafond de
+Le plafond avant la première promotion correspond au premier plafond de
 `promotionSteps` moins dix niveaux. Avec les données mesurées, le palier zéro
 ouvre donc le niveau 10, puis les étapes ouvrent exactement 20, 30, 40 et 50 via
 leur `reinforceMax`. Si une variante ne possède aucune étape, son plafond n'est
@@ -282,14 +310,14 @@ Le niveau est borné entre zéro et le plafond du grade. Au plafond,
 `valueAtLevel` doit reproduire `max`. Cette formule s’applique aux statistiques
 principales et aux sous-statistiques qui portent cette structure.
 
-### 7.2 Renforcement
+### 7.2 Promotion
 
 Les armes ne possèdent aucun `growthType: "reinforce"` : la progression
 `[10300, 10700, 11200, 11800, 12500]` appartient aux armures et ne doit jamais
 être utilisée ici.
 
-Le champ interne `promotion` correspond au contrôle affiché
-« Renforcement ». Au palier `n`, la valeur est :
+Le champ interne `promotion` correspond au contrôle affiché « Promotion ». Au
+palier `n`, la valeur est :
 
 ```text
 promotionValue(n) =
@@ -314,23 +342,47 @@ Pour les 81 armes qui possèdent l'outrepassement, les `statRate` suivent la
 table constante `0 / 500 / 1000 / 1750 / 2500 / 3750 / 5000`. Ils sont stockés
 en dix-millièmes : `500` s'affiche donc `+5 %`.
 
-Le lot 1 les affiche séparément :
+Le facteur multiplicatif est exact :
 
 ```text
-Bonus aux statistiques de l’arme   +50 %
-Niveau du passif                        7
+facteur = 1 + statRate / 10000
 ```
 
-`statRate` n’est pas appliqué aux valeurs principales ou secondaires tant que
-sa base exacte n’est pas documentée.
+La base d’application, elle, n’est pas documentée. Le lot 1 retient comme
+hypothèse les statistiques natives de l’arme, avant les enchantements. Ce choix
+est concentré dans un paramètre unique :
+
+```js
+/*
+ * PRÉSUMÉ, NON VÉRIFIÉ :
+ * l’outrepassement multiplie les statistiques natives de l’arme avant
+ * les enchantements.
+ *
+ * Vérification dans le jeu :
+ * relever l’ATK à outrepassement 0 puis 1 sur une arme enchantée.
+ * Si le gain de 5 % inclut les enchantements, remplacer uniquement
+ * "native-before-enchantments" par "native-and-enchantments".
+ */
+const OVERLIMIT_APPLICATION_MODE = "native-before-enchantments";
+```
+
+Une seule fonction traduit ce mode en seaux ciblés. Aucun autre calcul ni rendu
+ne connaît l’hypothèse. Le résultat expose également le mode sous
+`assumptions.overlimitBase`, afin qu’une comparaison avec le jeu reste
+reproductible.
+
+Le moteur émet un terme multiplicatif distinct pour chaque statistique native
+réellement affectée. Il n’utilise jamais de joker `stat: "*"`. Le taux du terme
+est exact ; seul le choix des seaux placés dans `appliesTo` est présumé.
+
+Le niveau de passif reste une information annexe dans `facts`, car ce n’est pas
+une contribution numérique à une statistique.
 
 ### 7.4 Enchantements
 
 La valeur saisie est un entier dans l’intervalle permis par l’option et son
-emplacement. Le moteur l’émet directement :
-
-- valeur plate si `statLabels[stat].rate === false` ;
-- taux en dix-millièmes si `rate === true`.
+emplacement. Le moteur l’émet directement avec l’unité explicite provenant de
+`stat-metadata.json`; il ne consulte pas le drapeau `taux` des libellés.
 
 Pour un emplacement basique de coefficient `slotRate`, les bornes inclusives
 sont :
@@ -345,34 +397,191 @@ pierre maîtresse utilise directement les bornes de son option.
 
 Les taux ne sont pas appliqués à une base de personnage dans ce lot.
 
-### 7.5 Sortie et regroupement
+### 7.5 Contrat de sortie : couverture et termes
 
-Le moteur émet des contributions atomiques :
+La sortie canonique n’est jamais un nombre isolé :
 
 ```js
 {
-  stat: "B_Atk_Equip",
-  value: 2147,
-  rate: false,
-  family: "main",
-  source: "level",
-  confidence: "exact"
+  version: 1,
+  coverage: ["weapon"],
+  assumptions: {
+    overlimitBase: "native-before-enchantments"
+  },
+  terms: [
+    {
+      id: "weapon:level:B_Atk_Equip",
+      stat: "B_Atk_Equip",
+      operation: "add",
+      value: 2147,
+      unit: "flat",
+      bucket: "weapon-native",
+      family: "main",
+      source: {
+        domain: "weapon",
+        component: "level",
+        id: "7ds-armes/Hache/exemple.webp"
+      },
+      confidence: "exact"
+    },
+    {
+      id: "weapon:promotion:B_Atk_Equip",
+      stat: "B_Atk_Equip",
+      operation: "add",
+      value: 1144,
+      unit: "flat",
+      bucket: "weapon-native",
+      family: "main",
+      source: {
+        domain: "weapon",
+        component: "promotion",
+        id: "7ds-armes/Hache/exemple.webp"
+      },
+      confidence: "exact"
+    },
+    {
+      id: "weapon:overlimit:B_Atk_Equip",
+      stat: "B_Atk_Equip",
+      operation: "multiply",
+      value: 500,
+      unit: "ten-thousandths",
+      appliesTo: ["weapon-native"],
+      family: "main",
+      source: {
+        domain: "weapon",
+        component: "overlimit",
+        id: "7ds-armes/Hache/exemple.webp"
+      },
+      confidence: "exact"
+    },
+    {
+      id: "weapon:enchantment:0:I_AtkAdd_Rate",
+      stat: "I_AtkAdd_Rate",
+      operation: "add",
+      value: 787,
+      unit: "ten-thousandths",
+      bucket: "weapon-enchantment",
+      family: "additional",
+      source: {
+        domain: "weapon",
+        component: "enchantment",
+        id: "7ds-armes/Hache/exemple.webp",
+        slot: 0
+      },
+      confidence: "exact"
+    }
+  ],
+  totals: [
+    {
+      stat: "B_Atk_Equip",
+      unit: "flat",
+      value: 3455.55
+    },
+    {
+      stat: "I_AtkAdd_Rate",
+      unit: "ten-thousandths",
+      value: 787
+    }
+  ],
+  facts: [
+    {
+      key: "passiveLevel",
+      value: 7,
+      source: {
+        domain: "weapon",
+        component: "overlimit"
+      }
+    }
+  ]
 }
 ```
 
-`groupWeaponStats()` regroupe les mêmes codes, conserve le détail par source et
-ne mélange jamais une valeur plate avec un taux.
+`coverage` déclare les domaines entièrement pris en charge par cette version :
 
-Affichage :
+- configuration d’arme valide : `["weapon"]` ;
+- configuration absente, incomplète, indisponible ou incompatible : `[]`.
+
+Une source couverte sans terme pour une statistique contribue réellement zéro.
+Une source non couverte n’est pas encore calculée. Ainsi, l’absence d’un terme
+d’enchantement avec `weapon` couvert signifie « aucun enchantement », pas
+« fonctionnalité non implémentée ».
+
+Les futurs domaines sont `character`, `armor`, `set`, `potential` et `mastery`.
+L’outrepassement reste un composant du domaine `weapon`, identifiable par
+`source.component`.
+
+La provenance structurée est conçue dès maintenant pour rendre la future
+décomposition complète sans changer de contrat :
+
+- base du personnage : `domain:"character", component:"base"` ;
+- arme : `domain:"weapon"` avec `level`, `promotion`, `enchantment` ou
+  `overlimit` ;
+- chaque pièce d’armure : `domain:"armor", component:"piece"` avec son `slot`
+  et son `id`, afin que deux pièces ne soient jamais fusionnées dans la trace ;
+- bonus de set : `domain:"set"` avec l’identifiant du set et le seuil 2/4 ;
+- potentiel : `domain:"potential"` avec le palier ;
+- maîtrise : `domain:"mastery"` avec le type d’arme et le niveau.
+
+Chaque terme possède obligatoirement :
+
+- un `stat` concret ;
+- une `operation` valant `add` ou `multiply` ;
+- une `unit` valant `flat` ou `ten-thousandths` ;
+- une provenance structurée ;
+- soit un `bucket` pour un additif, soit `appliesTo` pour un multiplicateur.
+
+Un multiplicateur n’est jamais ajouté comme une valeur brute. Sa valeur en
+dix-millièmes est appliquée uniquement aux seaux nommés dans `appliesTo`.
+
+### 7.6 Reconstruction générique par seaux
+
+Le calcul n’impose aucun ordre global entre « arme », « armure » ou futurs
+domaines. Pour chaque code de statistique :
+
+1. sommer les termes `add` séparément dans leur `bucket` ;
+2. pour chaque terme `multiply`, sommer les seaux cités par `appliesTo` ;
+3. calculer sa contribution avec
+   `baseCiblée × value / 10000` ;
+4. additionner les seaux additifs et les contributions multiplicatives.
+
+Les additifs d’une même statistique doivent tous déclarer la même unité : c’est
+l’unité du total reconstruit. Les multiplicateurs utilisent toujours
+`ten-thousandths`, quelle que soit l’unité du total ciblé. Un multiplicateur ne
+peut exister que si la même statistique possède au moins un additif dans un seau
+ciblé. Un multiplicateur visant un nom de seau inconnu rend la sortie
+incompatible au lieu d’être ignoré.
+
+`totals` est une commodité dérivée, jamais une seconde source de vérité. Pour
+chaque `stat`, la reconstruction indépendante depuis tous ses termes doit être
+strictement égale à la valeur correspondante de `totals`; l’unité du total est
+celle de ses termes additifs. Ce contrat est testé, puis prouvé par mutation en
+retirant un terme : le test d’égalité doit échouer.
+
+Le mode d’outrepassement ne change que la liste de seaux produite dans
+`appliesTo` :
+
+- `native-before-enchantments` → `["weapon-native"]` ;
+- `native-and-enchantments` →
+  `["weapon-native", "weapon-enchantment"]`.
+
+Changer l’hypothèse coûte donc une ligne et ne modifie ni le format des termes,
+ni le regroupement, ni l’interface.
+
+Affichage du lot 1 :
 
 ```text
-Attaque de l’équipement       +3 291
-  Niveau                      +2 147
-  Renforcement                +1 144
+Apport de l’arme — calcul partiel
+
+Attaque de l’équipement
+  Niveau                                  +2 147
+  Promotion                               +1 144
+  Outrepassement ×1,05 — base présumée
 ```
 
-Les nombres utilisent `fr-FR`. Les taux divisent la valeur entière par 100 pour
-l’affichage en pourcentage.
+Les nombres utilisent `fr-FR`. Les valeurs `ten-thousandths` divisent l’entier
+par 100 pour l’affichage en pourcentage. Tant que `coverage` ne contient pas
+tous les domaines attendus, aucun rendu ne peut employer « stats du héros » ou
+« total du héros ».
 
 ## 8. Interface validée
 
@@ -383,7 +592,7 @@ Le choix visuel validé est le **panneau dédié**.
 Sur ordinateur :
 
 - configuration à gauche ;
-- aperçu « Contribution de l’arme » à droite.
+- aperçu « Apport de l’arme — calcul partiel » à droite.
 
 Sur téléphone :
 
@@ -408,10 +617,10 @@ Le panneau propose dans cet ordre :
 
 1. grade ;
 2. niveau ;
-3. renforcement ;
+3. promotion ;
 4. outrepassement, masqué si non disponible ;
 5. enchantements basiques ou pierre maîtresse ;
-6. contribution calculée.
+6. apport partiel calculé.
 
 Un enchantement basique propose la statistique autorisée et une valeur dans ses
 bornes. Une pierre maîtresse propose le palier, l’élément seulement au palier 5,
@@ -503,7 +712,8 @@ qu’elle mord.
 - correspondance image/arme ;
 - refus des absences et ambiguïtés ;
 - tri et sortie déterministes ;
-- couverture libellé, unité et famille ;
+- couverture libellé, unité explicite et famille ;
+- aucune unité dérivée du code de statistique ou du drapeau `taux` ;
 - enchantements basiques à zéro, un ou deux emplacements ;
 - pierres maîtresses paliers 1 à 4 ;
 - palier 5 découpé par élément ;
@@ -513,11 +723,18 @@ qu’elle mord.
 
 - segments aux niveaux 0, 10, 11 et au plafond ;
 - égalité avec `max` au plafond ;
-- cumul de renforcement ;
+- cumul de promotion ;
 - invariant `promotionValues.max == base + Σ(progression)` ;
 - plafonds de niveau ouverts ;
 - plafonds 10/20/30/40/50 dérivés uniquement de `promotionSteps` ;
 - table d’outrepassement séparée `0/500/1000/1750/2500/3750/5000` ;
+- termes `add` et `multiply` munis d’une unité explicite ;
+- aucun terme avec `stat: "*"` ;
+- regroupement et reconstruction pilotés uniquement par les seaux ;
+- couverture `["weapon"]` ou `[]` selon l’état de la configuration ;
+- égalité stricte entre reconstruction des termes et `totals` pour chaque stat ;
+- mutation d’un terme faisant échouer cette égalité ;
+- bascule du mode d’outrepassement sans changement de contrat ;
 - validation de grade, palier, élément, statistique et valeur ;
 - regroupement des cinq familles ;
 - format français ;
@@ -587,6 +804,8 @@ Le lot 1 est terminé lorsque :
   équipe ;
 - le même moteur et le même panneau servent aux deux parcours ;
 - les contributions sont chiffrées, regroupées et lisibles en français ;
+- chaque total partiel est reconstructible exactement depuis ses termes typés ;
+- le lot 1 est toujours nommé « Apport de l’arme — calcul partiel » ;
 - aucun ancien build n’affiche un faux total ;
 - un autre membre voit les résultats sans pouvoir les modifier ;
 - une ancienne PWA ne peut pas supprimer silencieusement la configuration ;

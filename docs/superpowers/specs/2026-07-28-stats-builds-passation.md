@@ -66,7 +66,7 @@ Interprétation : la progression donne l'incrément **par niveau** de chaque
 segment de **10 niveaux**. Les longueurs rencontrées sont 4 (60 cas) et 5
 (88 cas), soit un plafond de niveau 40 ou 50 selon le grade.
 
-### 3.2 Renforcement : ne pas transposer la règle des armures aux armes
+### 3.2 Renforcement des armures : ne pas transposer cette règle aux armes
 
 Les 412 occurrences de `growthType: "reinforce"` mesurées appartiennent
 uniquement à `armures.json`. Elles portent toutes la progression :
@@ -80,7 +80,7 @@ pour les niveaux de renforcement 1 à 5 des armures. `reinforceMax` vaut 5
 partout où il a été observé dans ce contexte.
 
 Les armes ne possèdent aucune entrée `growthType: "reinforce"`. Leur
-renforcement suit trois sources distinctes :
+progression suit trois sources distinctes :
 
 - `promotionValues`, avec l'invariant
   `max == base + Σ(progression)` vérifié sur 261 cas sur 261 ;
@@ -135,6 +135,31 @@ s'appliquent (attaque de base du personnage seule ? base + équipement ?) et dan
 quel ordre par rapport aux bonus de set et de potentiel. À trancher et à
 **documenter dans le code**, puisque c'est un choix, pas une donnée.
 
+Pour l'outrepassement des armes, le lot 1 retient l'hypothèse
+`native-before-enchantments` : multiplicateur appliqué aux statistiques natives
+de l'arme avant les enchantements. La valeur du multiplicateur est exacte ; sa
+base est présumée.
+
+Cette hypothèse doit vivre dans un paramètre unique du moteur. Protocole de
+validation : relever dans le jeu l'ATK à outrepassement 0 puis 1 sur une arme
+enchantée et vérifier si le gain de 5 % porte sur les statistiques natives ou
+sur le total enchanté. Une contradiction doit se corriger en changeant une
+seule ligne.
+
+Le moteur expose dès le lot 1 :
+
+- `coverage: ["weapon"]` uniquement quand le domaine arme est entièrement
+  calculé ;
+- une liste de termes portant `stat`, `operation`, `unit`, seau ou cible et
+  provenance ;
+- un terme multiplicatif concret par statistique affectée, jamais `stat: "*"` ;
+- des totaux partiels dont chaque valeur est strictement reconstructible depuis
+  les termes.
+
+Les unités `flat` et `ten-thousandths` sont déclarées explicitement par terme.
+Elles ne sont jamais déduites des codes ou du drapeau `taux` incomplet de
+`libelles-stats.json`.
+
 ## 4. Découpage proposé (à faire valider avant de coder)
 
 Règle imposée par le propriétaire, apprise à ses dépens : **chaque lot doit être
@@ -146,7 +171,7 @@ Voir la mémoire `prioriser-valeur-visible-membres`.
 Socle de données chargé par le navigateur, modèle de build étendu + migration
 Supabase, moteur de calcul, affichage des stats de l'arme sur la fiche.
 
-Saisie : grade, niveau, renforcement, outrepassement, enchantements (basiques ou
+Saisie : grade, niveau, promotion, outrepassement, enchantements (basiques ou
 pierre maîtresse). Affichage : ce que l'arme apporte, chiffré.
 
 **Commencer ici parce que c'est le seul terrain où la formule est prouvée**
