@@ -703,7 +703,7 @@ Structure imposée, sur le modèle de `calculateWeaponStats` :
        un vrai zéro. */
     const uncovered = [];
     if(domain === "engraving") uncovered.push("engraving:passive");
-    if(definition.equipPassive) uncovered.push("armor:passive");
+    if(definition.hasEquipPassive) uncovered.push("armor:passive");
     return {
       version:1, status:"valid", coverage:[domain], uncovered,
       assumptions:{ armorLevelOrigin:ARMOR_LEVEL_ORIGIN_MODE },
@@ -1141,8 +1141,11 @@ viennent de `qualityMin`/`qualityMax` de la pièce, un `select.gear-config-reinf
 de 0 à `reinforceMax`, puis un bloc par emplacement d'option aléatoire — stat et
 valeur, sur le modèle exact de la perle du lot 1, doublon de stat interdit.
 
-L'aperçu affiche `calculateGearStats(...)` regroupé par famille de stat, avec le
-titre **« Apport de l'équipement — calcul partiel »**.
+L'aperçu affiche `calculateGearStats(...)` regroupé par famille de stat. Son
+titre est produit par `buildStatsTitle` : **« Apport de la gravure hors passif
+— borne inférieure »** pour une armure liée, **« Apport de l'équipement hors
+passif — borne inférieure »** pour une autre pièce portant un passif, et
+**« Apport de l'équipement — calcul partiel »** quand `uncovered` est vide.
 
 Contraintes non négociables :
 
