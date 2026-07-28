@@ -109,13 +109,49 @@ def gear_random_options(growth, known):
     }
 
 
+def gear_extra_stats(growth, known):
+    """Contributions supplementaires d'une piece, avec leurs courbes.
+
+    Les equipements graves en portent 179 au total. Les omettre sous-estime
+    leur apport."""
+    extras = []
+    for extra in (growth or {}).get("extraStats") or []:
+        code = extra.get("key")
+        if not code:
+            continue
+        values = gear_curve(extra.get("statValues"))
+        add = gear_curve(extra.get("equiplvAdd"))
+        if not values:
+            continue
+        extras.append({
+            "stat": canonical_stat(code, known),
+            "values": values,
+            "add": add,
+        })
+    return sorted(extras, key=lambda item: item["stat"]) or None
+
+
+def gear_reinforce_max(piece):
+    """Plafond de renforcement. Les armures le declarent a la racine ; les
+    gravures le cachent dans `growth.promotion[].maxReinforce`."""
+    declared = piece.get("reinforceMax")
+    if isinstance(declared, int):
+        return declared
+    steps = [
+        step.get("maxReinforce")
+        for step in ((piece.get("growth") or {}).get("promotion") or [])
+        if isinstance(step.get("maxReinforce"), int)
+    ]
+    return max(steps) if steps else None
+
+
 def gear_entry(piece, known):
     """Une pièce d'équipement réduite à ce dont le moteur a besoin."""
     growth = piece.get("growth") or {}
     entry = {
-        "slug": piece.get("slug"),
+        "slug": piece.get("slug") or piece.get("costumeSlug"),
         "slot": piece.get("slot"),
-        "grade": piece.get("grade"),
+        "grade": piece.get("grade") or piece.get("rarity"),
         "setId": piece.get("setId") or None,
         "mainStat": canonical_stat(piece["mainStat"], known),
         "subStat": (
@@ -124,12 +160,13 @@ def gear_entry(piece, known):
         "qualityMin": piece.get("qualityMin"),
         "qualityMax": piece.get("qualityMax"),
         "tierBoundaries": list(piece.get("tierBoundaries") or []),
-        "reinforceMax": piece.get("reinforceMax"),
+        "reinforceMax": gear_reinforce_max(piece),
         "mainValues": gear_curve(growth.get("mainStatValues")),
         "mainAdd": gear_curve(growth.get("mainEquiplvAdd")),
         "subValues": gear_curve(growth.get("subStatValues")),
         "subAdd": gear_curve(growth.get("subEquiplvAdd")),
         "randomOptions": gear_random_options(growth, known),
+        "extraStats": gear_extra_stats(growth, known),
     }
     return entry
 
@@ -185,10 +222,11 @@ def gear_stat_codes(entry):
         codes.add(entry["subStat"])
     options = entry.get("randomOptions") or {}
     codes.update(item["stat"] for item in options.get("stats") or [])
+    codes.update(item["stat"] for item in entry.get("extraStats") or [])
     return codes
 
 
-def build_gear_catalogs(stats_root: Path, gear_roots, known):
+def build_gear_catalogs(stats_root: Path, gear_roots, known, repo_root=None):
     """Rapproche les images locales des pieces officielles, par emplacement et
     par nom. Une piece du catalogue sans image locale est ignoree : la regle
     d'or veut que les assets presents pilotent l'interface. Une image sans
@@ -224,7 +262,8 @@ def build_gear_catalogs(stats_root: Path, gear_roots, known):
             if len(relative.parts) < 2:
                 raise ValueError(f"Image hors emplacement : {image_path}")
             folder = relative.parts[0]
-            catalog_file = image_path.as_posix()
+            base = repo_root or Path(root).parent
+            catalog_file = image_path.relative_to(base).as_posix()
             if folder == ENGRAVED_FOLDER:
                 candidates = by_engraved.get(normalize_name(image_path.stem), [])
                 target = engraved_by_file
@@ -474,7 +513,7 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict,
 
     known = set(metadata)
     gear_by_file, engraved_by_file, gear_labels = build_gear_catalogs(
-        stats_root, gear_roots, known
+        stats_root, gear_roots, known, weapons_root.parent
     )
     fallback_labels.update(gear_labels)
     all_gear = list(gear_by_file.values()) + list(engraved_by_file.values())

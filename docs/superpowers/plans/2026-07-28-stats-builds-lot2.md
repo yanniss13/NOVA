@@ -671,6 +671,20 @@ Structure imposée, sur le modèle de `calculateWeaponStats` :
         confidence:"presumed"
       });
     }
+    /* Contributions supplémentaires : 145 sur les équipements gravés. Les
+       omettre sous-estimerait chaque gravure. Même forme que la statistique
+       principale, un terme par entrée. */
+    (definition.extraStats || []).forEach(extra => {
+      addGearStatTerm(terms, {
+        id:bucket + ":extra:" + extra.stat,
+        stat:extra.stat,
+        value:gearStatValue(definition, extra.values, extra.add,
+          config.level, config.reinforce),
+        bucket,
+        source:{ domain, component:"level", slot:slotKey, extra:true },
+        confidence:"presumed"
+      });
+    });
     (config.enchantments || []).forEach((choice, index) => {
       if(!choice || !choice.stat) return;
       addGearStatTerm(terms, {
@@ -723,8 +737,8 @@ git commit -m "feat: decomposer la contribution d'une piece d'equipement"
   (Task 4), `calculateWeaponStats` (lot 1).
 - Produit :
   - `buildGearSets()` → `BUILD_GEAR_SETS` ;
-  - `activeGearSets(files)` → `[{setId, count, twoActive, fourActive}]` ;
-  - `gearSetTerms(files)` → tableau de termes, `bucket:"set"` ;
+  - `activeGearSets(files)` → `[{setId, count, twoActive, fourActive, sevenActive}]` ;
+  - `gearSetTerms(files)` → tableau de termes, `bucket:"set"`, **pour les trois paliers** ;
   - `calculateBuildStats(build)` → `{version:1, coverage, assumptions, terms, totals, statuses}`
     où `statuses` associe chaque source à son statut, et `coverage` ne liste que
     les domaines réellement calculés.
@@ -800,7 +814,11 @@ Expected: FAIL — `hooks.activeGearSets is not a function`.
         setId,
         count,
         twoActive:Number.isFinite(set.twoCount) && count >= set.twoCount,
-        fourActive:Number.isFinite(set.fourCount) && count >= set.fourCount
+        fourActive:Number.isFinite(set.fourCount) && count >= set.fourCount,
+        /* Troisième palier, découvert en mesurant : sept ensembles en ont
+           un, dont un à six pièces. Cinq sont référencés par des pièces
+           possédées. Ne pas l'oublier. */
+        sevenActive:Number.isFinite(set.sevenCount) && count >= set.sevenCount
       };
     });
   }
@@ -820,6 +838,7 @@ Expected: FAIL — `hooks.activeGearSets is not a function`.
       };
       if(state.twoActive) push(set.twoStats, "two");
       if(state.fourActive) push(set.fourStats, "four");
+      if(state.sevenActive) push(set.sevenStats, "seven");
     });
     return terms;
   }

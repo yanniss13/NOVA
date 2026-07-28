@@ -18,6 +18,7 @@ const required = [
   /node-version:\s*["']?24["']?/,
   /actions\/setup-python@v6/,
   /python-version:\s*["']?3\.13["']?/,
+  /pip install -r requirements-dev\.txt/,
   /npm ci/,
   /npx playwright install --with-deps chromium/,
   /npm test/,

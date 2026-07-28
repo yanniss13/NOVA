@@ -25,6 +25,27 @@ assert.equal(catalog.version, 1);
     key + " doit exister dans le catalogue"
   ));
 
+/* Les clés sont des chemins RELATIFS à la racine du dépôt : c'est ainsi que le
+   site charge ses images. Un chemin absolu rendrait le catalogue inutilisable,
+   divulguerait le chemin de la machine de génération, et ferait échouer
+   `--check` en intégration continue. Ce contrôle manquait, et le défaut est
+   passé. */
+const ASSET_FOLDERS = ["7ds-armes/", "7ds-armures-ssr/", "7ds-bijoux/"];
+["weaponsByFile", "gearByFile", "engravedByFile"].forEach(section => {
+  Object.keys(catalog[section]).forEach(key => {
+    assert.ok(
+      ASSET_FOLDERS.some(folder => key.startsWith(folder)),
+      section + " : clé hors dossier d'assets — " + key
+    );
+    assert.doesNotMatch(
+      key,
+      /^[A-Za-z]:|\\|^\/|\.\./,
+      section + " : clé non relative — " + key
+    );
+    assert.ok(key.endsWith(".webp"), section + " : clé sans extension — " + key);
+  });
+});
+
 const GAME_SLOTS = ["Top", "Bottom", "Belt", "Shoes", "Ring", "Necklace", "Earring"];
 const gear = Object.entries(catalog.gearByFile);
 assert.ok(gear.length > 50, "le catalogue doit contenir les pièces d'équipement");
@@ -71,6 +92,36 @@ assert.ok(engraved.length > 50, "les équipements gravés doivent être présent
 engraved.forEach(([file, entry]) => {
   assert.ok(entry.character, file + " : équipement gravé sans personnage");
   assert.equal(entry.slot, "Armure liee", file + " : emplacement inattendu");
+  /* Les gravures nomment leurs identifiants autrement que les armures et cachent
+     leur plafond de renforcement dans `growth.promotion`. Sans ces trois champs,
+     le moteur ne saurait ni les nommer ni les renforcer. */
+  assert.ok(entry.slug, file + " : slug manquant");
+  assert.ok(entry.grade, file + " : grade manquant");
+  assert.ok(
+    Number.isInteger(entry.reinforceMax) && entry.reinforceMax > 0,
+    file + " : plafond de renforcement manquant"
+  );
+});
+
+/* `extraStats` porte des contributions supplémentaires, avec leurs propres
+   courbes. Les 145 des équipements gravés seraient sinon perdues, et chaque
+   gravure sous-estimée. */
+const withExtras = engraved.filter(([, entry]) => (entry.extraStats || []).length);
+assert.ok(
+  withExtras.length > 40,
+  "les équipements gravés doivent porter leurs contributions supplémentaires "
+  +"(" + withExtras.length + " en ont)"
+);
+gear.concat(engraved).forEach(([file, entry]) => {
+  const segments = Math.max(1, entry.tierBoundaries.length - 1);
+  (entry.extraStats || []).forEach(extra => {
+    assert.ok(extra.stat, file + " : contribution sans code de stat");
+    assert.equal(
+      extra.values.progression.length,
+      segments,
+      file + " : " + extra.stat + " ne suit pas la segmentation"
+    );
+  });
 });
 
 /* Les seuils d'ensemble viennent des données : « 2 et 4 pièces » est un abus de
@@ -110,6 +161,7 @@ gear.concat(engraved).forEach(([, entry]) => {
   cited.add(entry.mainStat);
   if(entry.subStat) cited.add(entry.subStat);
   ((entry.randomOptions || {}).stats || []).forEach(item => cited.add(item.stat));
+  (entry.extraStats || []).forEach(item => cited.add(item.stat));
 });
 sets.forEach(([, entry]) => {
   [entry.twoStats, entry.fourStats, entry.sevenStats].forEach(group => {
