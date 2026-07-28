@@ -1195,6 +1195,113 @@
     border:1px solid var(--gold-deep);border-radius:999px;padding:1px 8px;margin-top:2px
   }
 
+  /* ---------- Configuration chiffrée de l'arme ---------- */
+  .weapon-config-control{
+    grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) auto;
+    gap:8px;align-items:center;min-width:0;padding:8px 9px;
+    border:1px solid var(--line-soft);border-radius:9px;background:rgba(11,9,16,.48)
+  }
+  .weapon-config-summary{
+    min-width:0;color:var(--muted);font-size:11px;line-height:1.35;
+    overflow-wrap:anywhere
+  }
+  .weapon-config-control.is-valid .weapon-config-summary{color:var(--gold-bright)}
+  .weapon-config-open{min-height:36px;padding:7px 10px;font-size:11px;white-space:nowrap}
+  .weapon-config-modal{width:min(1080px,100%);max-height:calc(100dvh - 24px)}
+  .weapon-config-layout{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.8fr);
+    gap:0;min-width:0;min-height:0;overflow:auto
+  }
+  #weaponConfigBody,#weaponConfigPreview{min-width:0;padding:18px}
+  #weaponConfigBody{display:flex;flex-direction:column;gap:14px}
+  #weaponConfigPreview{
+    border-left:1px solid var(--line);
+    background:linear-gradient(155deg,rgba(217,164,65,.07),rgba(11,9,16,.48))
+  }
+  .weapon-config-field{
+    display:flex;flex-direction:column;gap:6px;min-width:0
+  }
+  .weapon-config-field > span,
+  .weapon-enchantment-title{
+    font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+    color:var(--muted)
+  }
+  .weapon-config-field input,
+  .weapon-config-field select{
+    width:100%;min-width:0;min-height:44px;padding:9px 11px;
+    border:1px solid var(--line);border-radius:8px;background:var(--obsidian-2);
+    color:var(--parchment);font:inherit
+  }
+  .weapon-config-field input:focus,
+  .weapon-config-field select:focus{border-color:var(--gold-bright)}
+  .weapon-config-field [aria-invalid="true"]{
+    border-color:#e98d8d;box-shadow:0 0 0 1px rgba(233,141,141,.25)
+  }
+  .weapon-config-hint{margin:0;color:var(--muted-2);font-size:11px;line-height:1.4}
+  .weapon-enchantments{
+    display:flex;flex-direction:column;gap:10px;padding-top:2px;
+    border-top:1px solid var(--line-soft)
+  }
+  .weapon-enchantment{
+    display:grid;grid-template-columns:minmax(0,1fr) minmax(100px,.42fr);
+    gap:9px;min-width:0;padding:11px;border:1px solid var(--line-soft);
+    border-radius:9px;background:rgba(11,9,16,.42)
+  }
+  .weapon-enchantment > .weapon-enchantment-title{grid-column:1/-1}
+  .weapon-enchantment-master{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .weapon-enchantment-master .weapon-config-field:last-child{grid-column:1/-1}
+  .weapon-stats-title{
+    margin:0 0 14px;font-family:var(--display);font-size:17px;
+    letter-spacing:.04em;color:var(--gold-bright)
+  }
+  .weapon-stats-state{
+    margin:0;padding:13px;border:1px dashed var(--line);border-radius:9px;
+    color:var(--muted);font-size:12px;line-height:1.45
+  }
+  .weapon-stats-family{margin-top:15px}
+  .weapon-stats-family:first-of-type{margin-top:0}
+  .weapon-stats-family-title{
+    margin:0 0 8px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--muted)
+  }
+  .weapon-stat{
+    min-width:0;padding:10px 0;border-top:1px solid var(--line-soft)
+  }
+  .weapon-stat-head{
+    display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+    color:var(--parchment);font-size:12px;font-weight:700
+  }
+  .weapon-stat-total{flex:none;color:var(--gold-bright)}
+  .weapon-stat-term{
+    display:flex;justify-content:space-between;gap:10px;margin-top:6px;
+    color:var(--muted);font-size:11px;line-height:1.35
+  }
+  .weapon-stat-term span:last-child{flex:none;color:var(--parchment)}
+  .weapon-stat-term-overlimit{display:block;color:var(--gold-bright)}
+  #weaponConfigError{
+    min-height:18px;margin:0;padding:0 18px;color:#e98d8d;font-size:12px
+  }
+  .weapon-config-actions{
+    display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;
+    padding:14px 18px;border-top:1px solid var(--line);background:var(--panel-2)
+  }
+  @media(max-width:700px){
+    .weapon-config-modal{
+      width:min(100%,680px);max-height:calc(100dvh - 16px)
+    }
+    .weapon-config-layout{grid-template-columns:minmax(0,1fr)}
+    #weaponConfigPreview{border-left:0;border-top:1px solid var(--line)}
+    .weapon-config-actions{display:grid;grid-template-columns:1fr}
+    .weapon-config-actions .btn{width:100%;min-height:44px;justify-content:center}
+  }
+  @media(max-width:420px){
+    .weapon-config-control{grid-template-columns:minmax(0,1fr)}
+    .weapon-config-open{width:100%;justify-content:center}
+    .weapon-enchantment,
+    .weapon-enchantment-master{grid-template-columns:minmax(0,1fr)}
+    .weapon-enchantment-master .weapon-config-field:last-child{grid-column:auto}
+  }
+
   /* ---------- Toast ---------- */
   .toast{
     position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom));
@@ -1543,6 +1650,30 @@
       <button class="icon-btn" id="potClose" aria-label="Fermer">✕</button>
     </div>
     <div class="pot-body" id="potBody"></div>
+  </div>
+</div>
+
+<!-- Configuration chiffrée de l'arme, commune au builder et au roster. -->
+<div class="overlay" id="weaponConfigOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="weaponConfigTitle" aria-hidden="true">
+  <div class="modal weapon-config-modal">
+    <div class="picker-head">
+      <span class="picker-title" id="weaponConfigTitle">Configurer l’arme</span>
+      <button class="icon-btn" id="weaponConfigClose" type="button"
+              aria-label="Fermer">×</button>
+    </div>
+    <div class="weapon-config-layout">
+      <div id="weaponConfigBody"></div>
+      <aside id="weaponConfigPreview" aria-live="polite"></aside>
+    </div>
+    <p id="weaponConfigError" role="alert"></p>
+    <div class="weapon-config-actions">
+      <button class="btn" id="weaponConfigCancel" type="button">Annuler</button>
+      <button class="btn btn-danger" id="weaponConfigReset"
+              type="button">Réinitialiser</button>
+      <button class="btn btn-primary" id="weaponConfigSave"
+              type="button">Valider la configuration</button>
+    </div>
   </div>
 </div>
 
@@ -2619,6 +2750,606 @@
       maximumFractionDigits:2
     }).format(displayed) + (unit === "ten-thousandths" ? " %" : "");
   }
+
+  const WEAPON_RARITY_LABELS = {
+    grade1:"Grade 1",
+    grade2:"Grade 2",
+    grade3:"Grade 3",
+    grade4:"Grade 4",
+    grade5:"SSR"
+  };
+  const BUILD_STAT_FAMILY_LABELS = {
+    main:"PV · ATK · DEF",
+    additional:"Statistiques supplémentaires",
+    damage:"Modificateurs de dégâts",
+    special:"Statistiques spéciales",
+    elemental:"Statistiques élémentaires"
+  };
+
+  function weaponGrades(file){
+    const weapon = buildWeaponDefinition(file);
+    if(!weapon) return [];
+    return Object.values(weapon.gradesByGameId || {}).sort((left, right) => {
+      const leftGrade = Number(String(left.rarity || "").replace(/\D/g, "")) || 0;
+      const rightGrade = Number(String(right.rarity || "").replace(/\D/g, "")) || 0;
+      return leftGrade - rightGrade || String(left.gameId).localeCompare(String(right.gameId));
+    });
+  }
+
+  function weaponDefaultGradeGameId(file){
+    const first = weaponGrades(file)[0];
+    return first ? first.gameId : null;
+  }
+
+  function weaponConfigSummary(file, config){
+    const status = weaponConfigStatus(file, config);
+    if(status === "unavailable") return "Données chiffrées indisponibles";
+    if(status !== "valid") return "Configuration à compléter";
+    const grade = buildWeaponGrade(file, config.gradeGameId);
+    const rarity = WEAPON_RARITY_LABELS[grade.rarity] || grade.rarity;
+    const parts = [
+      "Configurée",
+      rarity,
+      "Nv. "+config.level
+    ];
+    if(grade.overlimit && Array.isArray(grade.overlimit.levels)){
+      parts.push("Outrepassement "+config.overlimit);
+    }
+    return parts.join(" · ");
+  }
+
+  function weaponStatsStatusMessage(status){
+    if(status === "unavailable"){
+      return "Les données chiffrées de cette arme ne sont pas disponibles.";
+    }
+    if(status === "missing"){
+      return "Configuration à compléter pour calculer l’apport de l’arme.";
+    }
+    if(status === "incomplete"){
+      return "Complète les champs requis pour afficher l’apport de l’arme.";
+    }
+    return "Cette configuration n’est pas compatible avec les données de l’arme.";
+  }
+
+  function weaponTermLabel(term){
+    if(term.source.component === "level") return "Niveau";
+    if(term.source.component === "promotion") return "Promotion";
+    if(term.source.component === "enchantment") return "Enchantement";
+    if(term.source.component === "overlimit"){
+      const factor = new Intl.NumberFormat("fr-FR", {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }).format(1 + Number(term.value) / 10000);
+      return "Outrepassement ×"+factor+" — base présumée";
+    }
+    return term.source.component;
+  }
+
+  function weaponStatsSection(file, config){
+    const section = el("section",{class:"weapon-stats"});
+    section.appendChild(el("h3",{
+      class:"weapon-stats-title",
+      text:"Apport de l’arme — calcul partiel"
+    }));
+    const result = calculateWeaponStats(file, config);
+    if(result.status !== "valid"){
+      section.appendChild(el("p",{
+        class:"weapon-stats-state",
+        text:weaponStatsStatusMessage(result.status)
+      }));
+      return section;
+    }
+
+    groupBuildStatResults(result).forEach(group => {
+      const family = el("section",{class:"weapon-stats-family"});
+      family.appendChild(el("h4",{
+        class:"weapon-stats-family-title",
+        text:BUILD_STAT_FAMILY_LABELS[group.family] || group.family
+      }));
+      group.stats.forEach(stat => {
+        const statNode = el("div",{class:"weapon-stat"});
+        statNode.appendChild(el("div",{class:"weapon-stat-head"},[
+          el("span",{text:stat.label}),
+          el("span",{
+            class:"weapon-stat-total",
+            text:formatBuildStatValue(stat.value, stat.unit)
+          })
+        ]));
+        stat.terms.forEach(term => {
+          if(term.operation === "multiply"){
+            statNode.appendChild(el("div",{
+              class:"weapon-stat-term weapon-stat-term-overlimit",
+              text:weaponTermLabel(term)
+            }));
+            return;
+          }
+          statNode.appendChild(el("div",{class:"weapon-stat-term"},[
+            el("span",{text:weaponTermLabel(term)}),
+            el("span",{text:formatBuildStatValue(term.value, term.unit)})
+          ]));
+        });
+        family.appendChild(statNode);
+      });
+      section.appendChild(family);
+    });
+    return section;
+  }
+
+  function weaponConfigControl(context){
+    if(!context.weaponFile) return null;
+    const status = weaponConfigStatus(context.weaponFile, context.config);
+    const button = el("button",{
+      class:"btn weapon-config-open",
+      type:"button",
+      text:status === "valid" ? "Modifier la configuration" : "Configurer l’arme",
+      onclick:()=>openWeaponConfigEditor(context, button)
+    });
+    if(status === "unavailable") button.disabled = true;
+    return el("div",{
+      class:"weapon-config-control"+(status === "valid" ? " is-valid" : "")
+    },[
+      el("span",{
+        class:"weapon-config-summary",
+        text:weaponConfigSummary(context.weaponFile, context.config)
+      }),
+      button
+    ]);
+  }
+
+  function weaponConfigField(label, control, hint){
+    const field = el("label",{class:"weapon-config-field"},[
+      el("span",{text:label}),
+      control
+    ]);
+    if(hint) field.appendChild(el("p",{class:"weapon-config-hint",text:hint}));
+    return field;
+  }
+
+  function weaponConfigOption(value, label){
+    return el("option",{value:String(value),text:label});
+  }
+
+  function weaponEnchantOptions(grade, choice){
+    const catalog = grade.enchantments;
+    if(catalog.type === "basic") return catalog.options || [];
+    if(!choice || !Number.isInteger(choice.tier)) return [];
+    const tier = (catalog.tiers || []).find(item => item.tier === choice.tier);
+    if(!tier) return [];
+    if(!tier.elements) return tier.options || [];
+    const group = (tier.elements || []).find(item => item.element === choice.element);
+    return group ? (group.options || []) : [];
+  }
+
+  function weaponDraftHasChoices(draft){
+    return !!draft && (
+      draft.level !== 0 ||
+      draft.promotion !== 0 ||
+      draft.overlimit !== 0 ||
+      (draft.enchantments || []).some(choice => choice !== null)
+    );
+  }
+
+  function weaponConfigFirstInvalidSelector(file, draft){
+    const grade = draft && buildWeaponGrade(file, draft.gradeGameId);
+    if(!grade) return ".weapon-config-grade";
+    if(!isInteger(draft.promotion)
+      || draft.promotion < 0
+      || draft.promotion > grade.promotionSteps.length){
+      return ".weapon-config-promotion";
+    }
+    const cap = weaponLevelCap(grade, draft.promotion);
+    if(!isInteger(draft.level) || draft.level < 0 || draft.level > cap){
+      return ".weapon-config-level";
+    }
+    const levels = grade.overlimit && Array.isArray(grade.overlimit.levels)
+      ? grade.overlimit.levels : [{level:0}];
+    if(!isInteger(draft.overlimit)
+      || !levels.some(item => item.level === draft.overlimit)){
+      return ".weapon-config-overlimit";
+    }
+    if(!Array.isArray(draft.enchantments)
+      || draft.enchantments.length !== enchantmentLength(grade)){
+      return ".weapon-config-enchantment-choice";
+    }
+    if(!areEnchantmentsValid(grade, draft.enchantments)){
+      if(grade.enchantments.type === "masterstone"){
+        const choice = draft.enchantments[0];
+        const tier = choice && (grade.enchantments.tiers || [])
+          .find(item => item.tier === choice.tier);
+        if(!tier) return ".weapon-config-enchantment-choice";
+        if(tier.elements
+          && !(tier.elements || []).some(item => item.element === choice.element)){
+          return ".weapon-config-enchantment-element";
+        }
+        const options = weaponEnchantOptions(grade, choice);
+        if(!options.some(option => option.stat === choice.stat)){
+          return ".weapon-config-enchantment-stat";
+        }
+        return ".weapon-config-enchantment-value";
+      }
+      const invalidIndex = draft.enchantments.findIndex((choice, index) => {
+        if(choice === null) return false;
+        const slotRate = grade.enchantments.slots[index];
+        const options = (grade.enchantments.options || []).map(option =>
+          Object.assign({}, option, enchantmentBounds(option, slotRate))
+        );
+        return choice.slot !== index || !isAllowedEnchantValue(choice, options);
+      });
+      return invalidIndex < 0
+        ? ".weapon-config-enchantment-choice"
+        : '.weapon-enchantment[data-slot="'+invalidIndex+'"] '
+          + ".weapon-config-enchantment-value";
+    }
+    return ".weapon-config-grade";
+  }
+
+  let weaponConfigEditorState = null;
+
+  function openWeaponConfigEditor(context, restoreFocus){
+    const defaultGradeGameId = context.defaultGradeGameId
+      || weaponDefaultGradeGameId(context.weaponFile);
+    const initial = context.config == null
+      ? emptyWeaponConfig(context.weaponFile, defaultGradeGameId)
+      : jsonCopy(context.config);
+    weaponConfigEditorState = {
+      context,
+      draft:initial,
+      restoreFocus,
+      validationAttempted:false
+    };
+    renderWeaponConfigEditor();
+    ModalStack.open(
+      $("#weaponConfigOverlay"),
+      ".weapon-config-grade",
+      closeWeaponConfigEditor,
+      restoreFocus
+    );
+  }
+
+  function closeWeaponConfigEditor(){
+    ModalStack.close($("#weaponConfigOverlay"));
+    weaponConfigEditorState = null;
+  }
+
+  function updateWeaponConfigPreview(){
+    if(!weaponConfigEditorState) return;
+    const preview = $("#weaponConfigPreview");
+    preview.innerHTML = "";
+    preview.appendChild(weaponStatsSection(
+      weaponConfigEditorState.context.weaponFile,
+      weaponConfigEditorState.draft
+    ));
+    $("#weaponConfigError").textContent = weaponConfigEditorState.validationAttempted
+      && weaponConfigStatus(
+        weaponConfigEditorState.context.weaponFile,
+        weaponConfigEditorState.draft
+      ) !== "valid"
+      ? "Vérifie les champs signalés avant de valider."
+      : "";
+  }
+
+  function renderBasicWeaponEnchantments(container, grade, draft){
+    const catalog = grade.enchantments;
+    catalog.slots.forEach((slotRate, index) => {
+      const choice = draft.enchantments[index];
+      const box = el("div",{
+        class:"weapon-enchantment",
+        dataset:{slot:String(index)}
+      });
+      box.appendChild(el("span",{
+        class:"weapon-enchantment-title",
+        text:"Enchantement "+(index + 1)
+      }));
+      const select = el("select",{class:"weapon-config-enchantment-choice"});
+      select.appendChild(weaponConfigOption("none","Aucun enchantement"));
+      (catalog.options || []).forEach(option => {
+        select.appendChild(weaponConfigOption(
+          option.stat,
+          BUILD_STATS.statLabels[option.stat].fr
+        ));
+      });
+      select.value = choice ? choice.stat : "none";
+      select.addEventListener("change", event => {
+        if(event.target.value === "none"){
+          draft.enchantments[index] = null;
+        }else{
+          const option = catalog.options.find(item => item.stat === event.target.value);
+          const bounds = enchantmentBounds(option, slotRate);
+          draft.enchantments[index] = {
+            slot:index,
+            stat:option.stat,
+            value:bounds.min
+          };
+        }
+        renderWeaponConfigEditor();
+      });
+      box.appendChild(weaponConfigField("Statistique",select));
+      if(choice){
+        const option = catalog.options.find(item => item.stat === choice.stat);
+        const bounds = option && enchantmentBounds(option, slotRate);
+        const input = el("input",{
+          class:"weapon-config-enchantment-value",
+          type:"number",
+          step:"1",
+          min:bounds ? String(bounds.min) : "0",
+          max:bounds ? String(bounds.max) : "0",
+          value:String(choice.value)
+        });
+        input.addEventListener("input", event => {
+          choice.value = event.target.value === ""
+            ? null
+            : Math.trunc(Number(event.target.value));
+          updateWeaponConfigPreview();
+        });
+        box.appendChild(weaponConfigField(
+          "Valeur",
+          input,
+          bounds ? "De "+bounds.min+" à "+bounds.max+"." : ""
+        ));
+      }
+      container.appendChild(box);
+    });
+  }
+
+  function renderMasterstoneWeaponEnchantments(container, grade, draft){
+    const catalog = grade.enchantments;
+    const choice = draft.enchantments[0];
+    const box = el("div",{
+      class:"weapon-enchantment weapon-enchantment-master",
+      dataset:{slot:"0"}
+    });
+    box.appendChild(el("span",{
+      class:"weapon-enchantment-title",
+      text:"Pierre maîtresse"
+    }));
+    const tierSelect = el("select",{class:"weapon-config-enchantment-choice"});
+    tierSelect.appendChild(weaponConfigOption("none","Aucun enchantement"));
+    (catalog.tiers || []).forEach(tier => {
+      tierSelect.appendChild(weaponConfigOption(tier.tier,"Palier "+tier.tier));
+    });
+    tierSelect.value = choice ? String(choice.tier) : "none";
+    tierSelect.addEventListener("change", event => {
+      if(event.target.value === "none"){
+        draft.enchantments[0] = null;
+      }else{
+        const tier = Number(event.target.value);
+        draft.enchantments[0] = {
+          slot:0,
+          tier,
+          element:tier === 5 ? "" : null,
+          stat:"",
+          value:null
+        };
+      }
+      renderWeaponConfigEditor();
+    });
+    box.appendChild(weaponConfigField("Palier",tierSelect));
+
+    if(choice){
+      const tier = (catalog.tiers || []).find(item => item.tier === choice.tier);
+      if(tier && tier.elements){
+        const elementSelect = el("select",{class:"weapon-config-enchantment-element"});
+        elementSelect.appendChild(weaponConfigOption("","Choisir un élément"));
+        tier.elements.forEach(group => {
+          const label = group.element === "generic"
+            ? "Générique"
+            : group.element === "default"
+              ? "Physique"
+              : (ELEMENTS[group.element.toUpperCase()]
+                ? ELEMENTS[group.element.toUpperCase()].label
+                : group.element);
+          elementSelect.appendChild(weaponConfigOption(group.element,label));
+        });
+        elementSelect.value = choice.element || "";
+        elementSelect.addEventListener("change", event => {
+          choice.element = event.target.value;
+          choice.stat = "";
+          choice.value = null;
+          renderWeaponConfigEditor();
+        });
+        box.appendChild(weaponConfigField("Élément",elementSelect));
+      }
+
+      const options = weaponEnchantOptions(grade, choice);
+      const statSelect = el("select",{class:"weapon-config-enchantment-stat"});
+      statSelect.appendChild(weaponConfigOption("","Choisir une statistique"));
+      options.forEach(option => {
+        statSelect.appendChild(weaponConfigOption(
+          option.stat,
+          BUILD_STATS.statLabels[option.stat].fr
+        ));
+      });
+      statSelect.value = choice.stat || "";
+      statSelect.addEventListener("change", event => {
+        choice.stat = event.target.value;
+        const option = options.find(item => item.stat === choice.stat);
+        choice.value = option ? option.min : null;
+        renderWeaponConfigEditor();
+      });
+      box.appendChild(weaponConfigField("Statistique",statSelect));
+
+      if(choice.stat){
+        const option = options.find(item => item.stat === choice.stat);
+        const input = el("input",{
+          class:"weapon-config-enchantment-value",
+          type:"number",
+          step:"1",
+          min:option ? String(option.min) : "0",
+          max:option ? String(option.max) : "0",
+          value:String(choice.value)
+        });
+        input.addEventListener("input", event => {
+          choice.value = event.target.value === ""
+            ? null
+            : Math.trunc(Number(event.target.value));
+          updateWeaponConfigPreview();
+        });
+        box.appendChild(weaponConfigField(
+          "Valeur",
+          input,
+          option ? "De "+option.min+" à "+option.max+"." : ""
+        ));
+      }
+    }
+    container.appendChild(box);
+  }
+
+  function renderWeaponConfigEditor(){
+    const state = weaponConfigEditorState;
+    if(!state) return;
+    const body = $("#weaponConfigBody");
+    body.innerHTML = "";
+    const grades = weaponGrades(state.context.weaponFile);
+    if(!state.draft || !grades.length){
+      body.appendChild(el("p",{
+        class:"weapon-stats-state",
+        text:"Les données chiffrées de cette arme ne sont pas disponibles."
+      }));
+      updateWeaponConfigPreview();
+      return;
+    }
+    const draft = state.draft;
+    const grade = buildWeaponGrade(state.context.weaponFile, draft.gradeGameId);
+    if(draft.version !== 1 || !grade){
+      body.appendChild(el("p",{
+        class:"weapon-stats-state",
+        text:"Cette configuration provient d’une version non compatible. "
+          +"Tu peux l’annuler ou la réinitialiser sans perdre l’arme."
+      }));
+      updateWeaponConfigPreview();
+      return;
+    }
+
+    const gradeSelect = el("select",{class:"weapon-config-grade"});
+    grades.forEach(item => {
+      gradeSelect.appendChild(weaponConfigOption(
+        item.gameId,
+        (WEAPON_RARITY_LABELS[item.rarity] || item.rarity)+" · "+item.gameId
+      ));
+    });
+    gradeSelect.value = draft.gradeGameId;
+    gradeSelect.addEventListener("change", event => {
+      const nextGameId = event.target.value;
+      if(nextGameId === draft.gradeGameId) return;
+      if(weaponDraftHasChoices(draft)
+        && !confirm("Changer de grade effacera les valeurs incompatibles. Continuer ?")){
+        event.target.value = draft.gradeGameId;
+        return;
+      }
+      state.draft = emptyWeaponConfig(state.context.weaponFile, nextGameId);
+      state.validationAttempted = false;
+      renderWeaponConfigEditor();
+    });
+    body.appendChild(weaponConfigField("Grade",gradeSelect));
+
+    const levelInput = el("input",{
+      class:"weapon-config-level",
+      type:"number",
+      step:"1",
+      min:"0",
+      max:String(weaponLevelCap(grade, draft.promotion)),
+      value:String(draft.level)
+    });
+    levelInput.addEventListener("input", event => {
+      draft.level = event.target.value === "" ? null : Math.trunc(Number(event.target.value));
+      updateWeaponConfigPreview();
+    });
+    body.appendChild(weaponConfigField(
+      "Niveau",
+      levelInput,
+      "Maximum actuel : "+weaponLevelCap(grade, draft.promotion)+"."
+    ));
+
+    const promotionSelect = el("select",{class:"weapon-config-promotion"});
+    for(let promotion = 0; promotion <= grade.promotionSteps.length; promotion += 1){
+      promotionSelect.appendChild(weaponConfigOption(promotion,String(promotion)));
+    }
+    promotionSelect.value = String(draft.promotion);
+    promotionSelect.addEventListener("change", event => {
+      draft.promotion = Number(event.target.value);
+      const cap = weaponLevelCap(grade, draft.promotion);
+      if(draft.level > cap) draft.level = cap;
+      renderWeaponConfigEditor();
+    });
+    body.appendChild(weaponConfigField("Promotion",promotionSelect));
+
+    const overlimitLevels = grade.overlimit && Array.isArray(grade.overlimit.levels)
+      ? grade.overlimit.levels : [];
+    if(overlimitLevels.length){
+      const overlimitSelect = el("select",{class:"weapon-config-overlimit"});
+      overlimitLevels.forEach(item => {
+        overlimitSelect.appendChild(weaponConfigOption(
+          item.level,
+          item.level+" · +"+new Intl.NumberFormat("fr-FR", {
+            maximumFractionDigits:2
+          }).format(item.statRate / 100)+" %"
+        ));
+      });
+      overlimitSelect.value = String(draft.overlimit);
+      overlimitSelect.addEventListener("change", event => {
+        draft.overlimit = Number(event.target.value);
+        updateWeaponConfigPreview();
+      });
+      body.appendChild(weaponConfigField("Outrepassement",overlimitSelect));
+    }else{
+      draft.overlimit = 0;
+    }
+
+    const enchantments = el("div",{class:"weapon-enchantments"},[
+      el("span",{class:"weapon-enchantment-title",text:"Enchantements"})
+    ]);
+    if(grade.enchantments.type === "basic"){
+      renderBasicWeaponEnchantments(enchantments, grade, draft);
+    }else{
+      renderMasterstoneWeaponEnchantments(enchantments, grade, draft);
+    }
+    body.appendChild(enchantments);
+    updateWeaponConfigPreview();
+  }
+
+  function saveWeaponConfigEditor(){
+    const state = weaponConfigEditorState;
+    if(!state) return;
+    const status = weaponConfigStatus(state.context.weaponFile, state.draft);
+    if(status !== "valid"){
+      state.validationAttempted = true;
+      renderWeaponConfigEditor();
+      const selector = weaponConfigFirstInvalidSelector(
+        state.context.weaponFile,
+        state.draft
+      );
+      const invalid = $("#weaponConfigOverlay").querySelector(selector);
+      if(invalid){
+        invalid.setAttribute("aria-invalid","true");
+        invalid.focus();
+      }
+      return;
+    }
+    state.context.commit(jsonCopy(state.draft));
+    closeWeaponConfigEditor();
+  }
+
+  function resetWeaponConfigEditor(){
+    const state = weaponConfigEditorState;
+    if(!state) return;
+    if(!confirm("Réinitialiser la configuration chiffrée de cette arme ?")) return;
+    state.context.commit(null);
+    closeWeaponConfigEditor();
+  }
+
+  const WeaponConfigEditor = Object.freeze({
+    open:openWeaponConfigEditor,
+    close:closeWeaponConfigEditor,
+    render:renderWeaponConfigEditor
+  });
+
+  $("#weaponConfigClose").addEventListener("click", closeWeaponConfigEditor);
+  $("#weaponConfigCancel").addEventListener("click", closeWeaponConfigEditor);
+  $("#weaponConfigSave").addEventListener("click", saveWeaponConfigEditor);
+  $("#weaponConfigReset").addEventListener("click", resetWeaponConfigEditor);
+  $("#weaponConfigOverlay").addEventListener("click", event => {
+    if(event.target === $("#weaponConfigOverlay")) closeWeaponConfigEditor();
+  });
 
   function applyWeaponChange(hero, nextFile){
     const source = hero && typeof hero === "object" ? hero : {};
@@ -4313,6 +5044,24 @@
     // Gear : arme + 5 armures + 3 bijoux
     const gear = el("div",{class:"gear"});
     gear.appendChild(gearSlot("Arme", hero.weapon, true, ()=>pickWeapon(i)));
+    const configControl = weaponConfigControl({
+      weaponFile:hero.weapon,
+      config:hero.weaponConfig,
+      sourceUpdatedAt:draft.updatedAt,
+      defaultGradeGameId:weaponDefaultGradeGameId(hero.weapon),
+      commit(nextConfig){
+        hero.weaponConfig = nextConfig;
+        renderBuilder();
+        const nextButton = heroGrid.children[i]
+          && heroGrid.children[i].querySelector(".weapon-config-open");
+        if(nextButton){
+          ModalStack.setRestoreFocus($("#weaponConfigOverlay"), nextButton);
+        }
+      },
+      latestUpdatedAt(){ return draft.updatedAt; },
+      reload(){ renderBuilder(); }
+    });
+    if(configControl) gear.appendChild(configControl);
     gear.appendChild(el("div",{class:"gear-group", text:"Armures"}));
     gear.appendChild(equipmentSetButton("armor", set => {
       ARMOR_SET_SLOTS.forEach(slot => { hero.armor[slot] = set.pieces[slot]; });
@@ -4410,7 +5159,14 @@
       title:"Choisir une arme", value:hero.weapon,
       groups:compatibleWeaponGroups(hero.char),
       emptyHint:"Aucune arme compatible disponible.",
-      onSelect:v=>{ draft.heroes[i] = applyWeaponChange(hero, v); renderBuilder(); }
+      onSelect:v=>{
+        if(hero.weaponConfig && hero.weapon !== v
+          && !confirm("Changer d’arme réinitialisera sa configuration chiffrée. Continuer ?")){
+          return;
+        }
+        draft.heroes[i] = applyWeaponChange(hero, v);
+        renderBuilder();
+      }
     });
   }
   function pickArmor(i, slot){

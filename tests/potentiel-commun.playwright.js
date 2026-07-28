@@ -81,12 +81,151 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await page.locator("#potClose").click();
     assert.equal(await firstHero.locator(".pot-val").textContent(), "P5");
 
-    await chooseWeapon(page, firstHero, "Hache");
+    await chooseWeapon(
+      page,
+      firstHero,
+      "Hache",
+      "Hache de l'âme vorace"
+    );
     await firstHero.locator(".pot-btn").click();
     assert.equal(await page.locator("#potBody .pot-head-val").textContent(), "P5/10");
     assert.equal(await page.locator("#potBody .pot-item").count(), 10);
     const hacheT2 = await page.locator("#potBody .pot-item").nth(1).textContent();
     await page.locator("#potClose").click();
+
+    const configButton = firstHero.locator(".weapon-config-open");
+    await assertVisibleText(
+      firstHero.locator(".weapon-config-summary"),
+      "Configuration à compléter"
+    );
+    await configButton.click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"visible" });
+    await page.locator(".weapon-config-level").fill("999");
+    await page.locator("#weaponConfigCancel").click();
+    assert.equal(
+      (await firstHero.locator(".weapon-config-summary").textContent()).trim(),
+      "Configuration à compléter"
+    );
+    assert.equal(
+      await page.evaluate(() => document.activeElement.classList.contains("weapon-config-open")),
+      true,
+      "Annuler doit rendre le focus au contrôle exact"
+    );
+
+    await configButton.click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"visible" });
+    assert.equal(await page.locator(".weapon-config-level").inputValue(), "0");
+    await page.locator(".weapon-config-grade").selectOption({ index:0 });
+    await page.locator(".weapon-config-level").fill("999");
+    await page.locator("#weaponConfigSave").click();
+    assert.equal(
+      await page.locator("#weaponConfigOverlay").getAttribute("aria-hidden"),
+      "false",
+      "Une configuration invalide ne doit pas être enregistrée"
+    );
+    assert.equal(
+      await page.evaluate(() => document.activeElement.classList.contains("weapon-config-level")),
+      true,
+      "Le premier champ invalide doit recevoir le focus"
+    );
+    await page.locator(".weapon-config-level").fill("0");
+    await page.locator(".weapon-config-enchantment-choice").selectOption("5");
+    await page.locator("#weaponConfigSave").click();
+    assert.equal(
+      await page.evaluate(() =>
+        document.activeElement.classList.contains("weapon-config-enchantment-element")
+      ),
+      true,
+      "Un palier 5 incomplet doit diriger vers le choix d’élément"
+    );
+    await page.locator(".weapon-config-promotion").selectOption("0");
+    await page.locator(".weapon-config-overlimit").selectOption("0");
+    for(const select of await page.locator(".weapon-config-enchantment-choice").all()){
+      await select.selectOption("none");
+    }
+    await assertVisibleText(
+      page.locator("#weaponConfigPreview .weapon-stats-title"),
+      "Apport de l’arme — calcul partiel"
+    );
+    const partialPreview = await page.locator("#weaponConfigPreview").textContent();
+    assert.doesNotMatch(partialPreview.toLowerCase(), /stats du héros|total du héros/);
+    const weaponConfigText = await page.locator("#weaponConfigOverlay").textContent();
+    assert.match(weaponConfigText, /Promotion/);
+    assert.doesNotMatch(weaponConfigText, /Renforcement/);
+
+    for(const width of [320, 360, 390]){
+      await page.setViewportSize({ width, height:844 });
+      const mobileMetrics = await page.locator("#weaponConfigOverlay").evaluate(overlay => ({
+        documentWidth:document.documentElement.scrollWidth,
+        viewportWidth:window.innerWidth,
+        overlayWidth:overlay.scrollWidth,
+        columns:getComputedStyle(
+          overlay.querySelector(".weapon-config-layout")
+        ).gridTemplateColumns
+      }));
+      assert.ok(
+        mobileMetrics.documentWidth <= mobileMetrics.viewportWidth,
+        "Le document ne doit pas déborder à "+width+" px"
+      );
+      assert.ok(
+        mobileMetrics.overlayWidth <= mobileMetrics.viewportWidth,
+        "La modale ne doit pas déborder à "+width+" px"
+      );
+      assert.equal(mobileMetrics.columns.split(" ").length, 1);
+    }
+    await page.setViewportSize({ width:1440, height:1000 });
+
+    await page.locator("#weaponConfigSave").click();
+    assert.match(
+      (await firstHero.locator(".weapon-config-summary").textContent()).trim(),
+      /^Configurée/
+    );
+    assert.equal(
+      await page.evaluate(() => document.activeElement.classList.contains("weapon-config-open")),
+      true,
+      "Valider doit rendre le focus au contrôle reconstruit"
+    );
+
+    await configButton.click();
+    await page.locator(".weapon-config-promotion").selectOption("1");
+    await assertVisibleText(
+      page.locator("#weaponConfigPreview .weapon-stat-term")
+        .filter({ hasText:"Promotion" }).first().locator("span").first(),
+      "Promotion"
+    );
+    await page.locator(".weapon-config-overlimit").selectOption("1");
+    await assertVisibleText(
+      page.locator("#weaponConfigPreview .weapon-stat-term-overlimit").first(),
+      "Outrepassement ×1,05 — base présumée"
+    );
+    await page.locator("#weaponConfigSave").click();
+
+    await configButton.click();
+    page.once("dialog", dialog => dialog.accept());
+    await page.locator("#weaponConfigReset").click();
+    await assertVisibleText(
+      firstHero.locator(".weapon-config-summary"),
+      "Configuration à compléter"
+    );
+    assert.equal(
+      await page.evaluate(() => document.activeElement.classList.contains("weapon-config-open")),
+      true,
+      "Réinitialiser doit rendre le focus au contrôle reconstruit"
+    );
+
+    await configButton.click();
+    await page.locator(".weapon-config-level").fill("0");
+    await page.locator(".weapon-config-promotion").selectOption("0");
+    await page.locator(".weapon-config-overlimit").selectOption("0");
+    await page.locator(".weapon-config-enchantment-choice").selectOption("none");
+    await page.locator("#weaponConfigSave").click();
+
+    page.once("dialog", dialog => dialog.accept());
+    await chooseWeapon(page, firstHero, "Hache", "Hache bénie");
+    await assertVisibleText(
+      firstHero.locator(".weapon-config-summary"),
+      "Configuration à compléter"
+    );
 
     await chooseWeapon(page, firstHero, "Epee a une main");
     await firstHero.locator(".pot-btn").click();
@@ -128,6 +267,11 @@ const STORAGE_KEY = "confrerie7ds.teams";
             "Armure liee":"7ds-armures-ssr/Armure liee/Chercheuse de savoir.webp"
           },
           potentiel:{ weaponType:"Hache", tier:8 }
+        },{
+          char:"meliodas",
+          weapon:"7ds-armes/Hache/Hache de l'âme vorace.webp",
+          weaponConfig:{ version:99 },
+          potentiel:{ tier:0 }
         }]
       }]));
     }, { key:STORAGE_KEY });
@@ -141,6 +285,21 @@ const STORAGE_KEY = "confrerie7ds.teams";
     assert.equal(await armorSlot(page.locator(".hero").first(), "Armure liée").evaluate(
       el => el.classList.contains("filled")
     ), false);
+    const futureHero = page.locator(".hero").nth(1);
+    await assertVisibleText(
+      futureHero.locator(".weapon-config-summary"),
+      "Configuration à compléter"
+    );
+    await futureHero.locator(".weapon-config-open").click();
+    await page.locator("#weaponConfigOverlay").waitFor({
+      state:"visible",
+      timeout:2000
+    });
+    assert.match(
+      await page.locator("#weaponConfigPreview").textContent(),
+      /n’est pas compatible/
+    );
+    await page.locator("#weaponConfigCancel").click();
     await page.locator("#btnSave").click();
     assert.equal(
       await page.locator("#authOverlay").evaluate(el => el.classList.contains("on")),
@@ -165,10 +324,14 @@ const STORAGE_KEY = "confrerie7ds.teams";
   process.exitCode = 1;
 });
 
-async function chooseWeapon(page, hero, group){
+async function chooseWeapon(page, hero, group, name){
   await hero.locator(".gear-slot.weapon").click();
   await page.locator("#pickerChips").getByRole("button", { name:group, exact:true }).click();
-  await page.locator("#pickerGrid .tile:not(.none)").first().click();
+  if(name){
+    await page.locator(`#pickerGrid .tile[title="${name}"]`).click();
+  }else{
+    await page.locator("#pickerGrid .tile:not(.none)").first().click();
+  }
 }
 
 async function chooseHero(page, hero, name){
