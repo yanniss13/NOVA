@@ -158,7 +158,24 @@ Le contrat du lot 1 ne change pas de forme. Il s'étend :
 - `bucket` : `"armor:Haut"`, `"jewel:Anneau"`, `"engraving"`, `"set"` ;
 - `source.domain` : `"armor"`, `"jewel"`, `"engraving"`, `"set"` ;
 - `source.component` : `"level"`, `"reinforce"`, `"enchantment"`, `"bonus"` ;
-- `coverage` passe à `["weapon","armor","jewel","engraving","set"]`.
+- `coverage` passe à `["weapon","armor","jewel","engraving","set"]` ;
+- **`uncovered`** énumère ce qui existe dans les données mais n'est pas
+  calculé. Sans lui, une source déclarée couverte dont une partie manque
+  transforme ce manque en vrai zéro — exactement ce que `coverage` devait
+  empêcher. Trois entrées à prévoir : `"weapon:passive"` (567
+  `passiveLevels` absents du catalogue), `"engraving:passive"` (les passifs
+  de gravure sont en prose, pas des paires `{stat, valeur}`) et
+  `"armor:passive"` dès qu'une des 10 pièces portant un `equipPassive` est
+  équipée.
+
+**Règle de lecture, valable partout :** une source listée dans `coverage` et
+sans terme contribue vraiment zéro ; une source listée dans `uncovered` est
+un manque connu, jamais un zéro.
+
+**Conséquence sur l'affichage :** dès que `uncovered` n'est pas vide, le
+titre doit annoncer une **borne inférieure**. Pour la gravure précisément :
+**« Apport de la gravure hors passif — borne inférieure »**. Ne jamais
+présenter un total comme complet quand `uncovered` contient quelque chose.
 
 Les six exigences du lot 1 restent obligatoires : unité explicite par terme,
 `operation` et `confidence` obligatoires, pas de joker `stat:"*"`, reconstruction

@@ -642,7 +642,7 @@ Structure imposée, sur le modèle de `calculateWeaponStats` :
     const status = gearConfigStatus(file, config);
     if(status !== "valid"){
       return {
-        version:1, status, coverage:[],
+        version:1, status, coverage:[], uncovered:[],
         assumptions:{ armorLevelOrigin:ARMOR_LEVEL_ORIGIN_MODE },
         terms:[], totals:[], facts:[]
       };
@@ -696,8 +696,16 @@ Structure imposée, sur le modèle de `calculateWeaponStats` :
         confidence:"exact"
       });
     });
+    /* La gravure garde ses contributions numériques calculables, mais son
+       passif est en prose : il est déclaré non couvert, jamais omis en
+       silence. Les 10 armures portant un `equipPassive` suivent la même
+       règle. Sans cette déclaration, l'absence du passif passerait pour
+       un vrai zéro. */
+    const uncovered = [];
+    if(domain === "engraving") uncovered.push("engraving:passive");
+    if(definition.equipPassive) uncovered.push("armor:passive");
     return {
-      version:1, status:"valid", coverage:[domain],
+      version:1, status:"valid", coverage:[domain], uncovered,
       assumptions:{ armorLevelOrigin:ARMOR_LEVEL_ORIGIN_MODE },
       terms,
       totals:reconstructStatTotals(terms),
@@ -739,7 +747,7 @@ git commit -m "feat: decomposer la contribution d'une piece d'equipement"
   - `buildGearSets()` → `BUILD_GEAR_SETS` ;
   - `activeGearSets(files)` → `[{setId, count, twoActive, fourActive, sevenActive}]` ;
   - `gearSetTerms(files)` → tableau de termes, `bucket:"set"`, **pour les trois paliers** ;
-  - `calculateBuildStats(build)` → `{version:1, coverage, assumptions, terms, totals, statuses}`
+  - `calculateBuildStats(build)` → `{version:1, coverage, uncovered, assumptions, terms, totals, statuses}`
     où `statuses` associe chaque source à son statut, et `coverage` ne liste que
     les domaines réellement calculés.
 
@@ -855,7 +863,9 @@ Ajouter aussi l'accès au catalogue d'ensembles et l'agrégation du build :
   ];
   /* Agrégation : chaque source produit ses termes, puis on reconstruit une
      seule fois. `coverage` ne liste que ce qui a réellement été calculé — c'est
-     ce qui permet de distinguer un vrai zéro d'une source non couverte. */
+     ce qui permet de distinguer un vrai zéro d'une source non couverte.
+     `uncovered` cumule les manques connus de chaque source : le total reste
+     alors une borne inférieure, et l'interface doit le dire. */
   function calculateBuildStats(build){
     const terms = [];
     const statuses = {};

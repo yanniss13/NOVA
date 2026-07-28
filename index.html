@@ -2821,6 +2821,7 @@
       version:1,
       status,
       coverage:[],
+      uncovered:[],
       assumptions:{ overlimitBase:OVERLIMIT_APPLICATION_MODE },
       terms:[],
       totals:[],
@@ -2917,6 +2918,11 @@
       version:1,
       status,
       coverage:["weapon"],
+      /* Les 567 `passiveLevels` des armes ne sont ni au catalogue ni
+         calcules. Sans cette declaration, leur absence passerait pour un
+         vrai zero : le total serait lu comme complet alors qu'il est une
+         borne inferieure. */
+      uncovered:["weapon:passive"],
       assumptions:{ overlimitBase:OVERLIMIT_APPLICATION_MODE },
       terms,
       totals:reconstructStatTotals(terms),

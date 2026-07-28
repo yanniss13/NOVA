@@ -596,6 +596,30 @@ function masterstoneConfig(enchantment){
   );
 }
 
+/* `uncovered` : ce que les données contiennent mais que le moteur ne calcule
+   pas. Les 567 `passiveLevels` des armes ne sont ni au catalogue ni calculés ;
+   sans cette déclaration, leur absence passerait pour un vrai zéro et le total
+   serait lu comme complet alors qu'il est une borne inférieure. */
+{
+  const { hooks } = loadApp();
+  const result = hooks.calculateWeaponStats(HACHE_FILE, validConfig());
+  assert.strictEqual(result.status, "valid");
+  assert.deepStrictEqual(
+    plain(result.coverage),
+    ["weapon"],
+    "l'arme est couverte pour ses stats"
+  );
+  assert.deepStrictEqual(
+    plain(result.uncovered),
+    ["weapon:passive"],
+    "le passif d'arme doit être déclaré non couvert"
+  );
+  // Un résultat invalide porte le champ malgré tout : la forme reste constante.
+  const invalide = hooks.calculateWeaponStats(HACHE_FILE, validConfig({ level:999 }));
+  assert.notStrictEqual(invalide.status, "valid");
+  assert.deepStrictEqual(plain(invalide.uncovered), []);
+}
+
 /* Perle de sortilège : le nombre d'emplacements de stat dépend du palier.
    Cette table vient du propriétaire, qui joue au jeu — les données de
    7dsorigin ne la portent pas. Ne pas la « corriger » d'après le catalogue.
