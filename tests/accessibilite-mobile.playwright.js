@@ -494,6 +494,76 @@ async function installRosterFocusFakeSupabase(page){
         document.body.classList.remove("pwa-update-on");
       });
 
+      /* Configuration d'arme, perle légendaire, quatre stats renseignées : le
+         cas le plus large. Le corps de la modale ne doit jamais pouvoir défiler
+         latéralement, et rien ne doit y dépasser sa largeur. Le symptôme
+         n'apparaissait que sur Safari, qui ne rétrécit pas un `<select>` sous sa
+         plus longue option — d'où un contrat CSS plutôt qu'une mesure. */
+      await pickerPage.locator('.tab[data-view="builder"]').click();
+      /* Héroïque (3 emplacements, sans élément) et légendaire (4, avec élément).
+         Le défaut apparaissait dès trois sélecteurs remplis. */
+      for(const pearl of [{tier:"4", slots:3, element:null},
+                          {tier:"5", slots:4, element:"generic"}]){
+        const hero = pickerPage.locator(".hero").first();
+        await hero.locator(".portrait").click();
+        await pickerPage.locator("#pickerGrid").getByTitle("Meliodas").click();
+        await hero.locator(".gear-slot.weapon").click();
+        await pickerPage.locator("#pickerGrid")
+          .getByTitle("Hache de l'âme vorace").click();
+        await hero.locator(".weapon-config-open").click();
+        await pickerPage.locator("#weaponConfigOverlay").waitFor({ state:"visible" });
+        await pickerPage.locator(".weapon-config-enchantment-choice").first()
+          .selectOption(pearl.tier);
+        if(pearl.element){
+          await pickerPage.locator(".weapon-config-enchantment-element")
+            .selectOption(pearl.element);
+        }
+        for(let slot = 0; slot < pearl.slots; slot += 1){
+          const select = pickerPage.locator(".weapon-config-enchantment-stat").nth(slot);
+          const choices = await select.locator("option").evaluateAll(nodes =>
+            nodes.map(node => node.value).filter(value => value !== "")
+          );
+          assert.ok(
+            choices.length,
+            `L'emplacement ${slot + 1} doit proposer une statistique à ${width}px`
+          );
+          await select.selectOption(choices[0]);
+        }
+        await pickerPage.locator("#weaponConfigPreview .weapon-stats-family").first()
+          .waitFor({ state:"visible" });
+        const pearlLayout = await pickerPage.evaluate(() => {
+          const layout = document.querySelector(".weapon-config-layout");
+          const limit = layout.clientWidth;
+          let widest = 0;
+          layout.querySelectorAll("*").forEach(node => {
+            widest = Math.max(widest, Math.round(node.getBoundingClientRect().width));
+          });
+          return {
+            overflowX:getComputedStyle(layout).overflowX,
+            lateral:layout.scrollWidth - layout.clientWidth,
+            widest,
+            limit
+          };
+        });
+        assert.equal(
+          pearlLayout.overflowX,
+          "hidden",
+          `Le corps de la modale ne doit jamais défiler latéralement à ${width}px`
+        );
+        assert.ok(
+          pearlLayout.lateral <= 1,
+          `Débordement latéral de la modale à ${width}px `
+          +`(${pearlLayout.lateral}px)`
+        );
+        assert.ok(
+          pearlLayout.widest <= pearlLayout.limit + 1,
+          `Un élément dépasse la largeur du corps à ${width}px `
+          +`(${pearlLayout.widest} > ${pearlLayout.limit})`
+        );
+        await pickerPage.locator("#weaponConfigClose").click();
+        await pickerPage.locator("#weaponConfigOverlay").waitFor({ state:"hidden" });
+      }
+
       /* Sur iOS Safari, un overlay `position:fixed` n'empêche pas la page
          dessous de se déplacer au doigt : on pouvait faire glisser le site
          latéralement derrière la modale. Le document doit donc être figé tant

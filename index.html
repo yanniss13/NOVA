@@ -463,7 +463,7 @@
   }
   .member-roster-card-actions .btn{flex:1;justify-content:center;padding:8px 10px;font-size:12px}
   .member-roster-modal{width:min(920px,100%);max-height:92vh}
-  .member-roster-editor{padding:18px;overflow:auto;min-width:0}
+  .member-roster-editor{padding:18px;overflow-y:auto;overflow-x:hidden;min-width:0}
   .member-roster-editor-hero{
     display:flex;align-items:center;gap:13px;margin-bottom:16px
   }
@@ -509,7 +509,7 @@
     background:linear-gradient(180deg, var(--panel) 62%, rgba(27,25,34,0))
   }
   .team-detail{
-    padding:60px 18px 20px;overflow:auto;display:grid;gap:14px;
+    padding:60px 18px 20px;overflow-y:auto;overflow-x:hidden;display:grid;gap:14px;
     grid-template-columns:repeat(4,1fr);scrollbar-width:none
   }
   .team-detail::-webkit-scrollbar{width:0;height:0}
@@ -554,7 +554,7 @@
   .hd-roster-import{
     width:100%;justify-content:center;margin-top:auto;font-size:11px;padding:8px 9px
   }
-  @media(max-width:720px){ .team-detail{grid-template-columns:repeat(2,1fr)} .modal.teammodal{max-height:92vh} .team-detail{overflow:auto;scrollbar-width:none} }
+  @media(max-width:720px){ .team-detail{grid-template-columns:repeat(2,1fr)} .modal.teammodal{max-height:92vh} .team-detail{overflow-y:auto;overflow-x:hidden;scrollbar-width:none} }
   @media(max-width:440px){ .team-detail{grid-template-columns:1fr} }
 
   /* Modal détail d'un personnage consulté chez un autre membre */
@@ -568,7 +568,7 @@
   .roster-detail-position{
     font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)
   }
-  .roster-detail-body{padding:15px 18px 20px;overflow:auto;min-height:0}
+  .roster-detail-body{padding:15px 18px 20px;overflow-y:auto;overflow-x:hidden;min-height:0}
   .roster-detail-weapons{
     display:flex;gap:8px;justify-content:center;flex-wrap:wrap
   }
@@ -781,7 +781,7 @@
     border-bottom:1px solid var(--line)}
   .modal-head h2{margin:0 auto 0 0;font-family:var(--display);font-size:18px;
     font-weight:600;letter-spacing:.05em;color:var(--parchment)}
-  .boss-team-list{display:flex;flex-direction:column;gap:10px;padding:16px;overflow:auto;min-width:0}
+  .boss-team-list{display:flex;flex-direction:column;gap:10px;padding:16px;overflow-y:auto;overflow-x:hidden;min-width:0}
   .boss-team-choice{appearance:none;width:100%;min-width:0;padding:10px;border:1px solid var(--line);
     border-radius:10px;background:linear-gradient(165deg,var(--panel-2),var(--obsidian-2));
     color:var(--parchment);cursor:pointer;text-align:left}
@@ -807,7 +807,7 @@
   .boss-team-empty .btn{justify-content:center}
   .modal.boss-report-modal{width:min(620px,100%)}
   .boss-report-body{
-    min-width:0;padding:18px;overflow:auto;display:flex;flex-direction:column;gap:12px
+    min-width:0;padding:18px;overflow-y:auto;overflow-x:hidden;display:flex;flex-direction:column;gap:12px
   }
   .boss-report-members{
     display:flex;flex-direction:column;gap:7px;padding:10px;
@@ -1110,7 +1110,7 @@
   .chip:hover{color:var(--parchment)}
   .chip.active{background:var(--gold);color:var(--ink);border-color:var(--gold-deep)}
   .picker-grid{
-    padding:16px 18px;overflow:auto;display:grid;
+    padding:16px 18px;overflow-y:auto;overflow-x:hidden;display:grid;
     grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
     grid-auto-rows:max-content;gap:10px
   }
@@ -1169,7 +1169,7 @@
 
   /* ---------- Potentiel : modal ---------- */
   .potmodal{width:min(720px,100%)}
-  .pot-body{padding:14px 18px 18px;overflow:auto}
+  .pot-body{padding:14px 18px 18px;overflow-y:auto;overflow-x:hidden}
   .pot-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
   .pot-head-lbl{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
   .pot-head-val{font-family:var(--display);font-weight:700;color:var(--gold-bright)}
@@ -1216,7 +1216,7 @@
   .weapon-config-modal{width:min(1080px,100%);max-height:calc(100dvh - 24px)}
   .weapon-config-layout{
     display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.8fr);
-    gap:0;min-width:0;min-height:0;overflow:auto
+    gap:0;min-width:0;min-height:0;overflow-y:auto;overflow-x:hidden
   }
   #weaponConfigBody,#weaponConfigPreview{min-width:0;padding:18px}
   #weaponConfigBody{display:flex;flex-direction:column;gap:14px}
@@ -1232,9 +1232,15 @@
     font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
     color:var(--muted)
   }
+  /* `max-width` est indispensable en plus de `width` : Safari ne rétrécit pas un
+     `<select>` sous la largeur de sa plus longue option, alors que Chromium le
+     bride. Avec une perle légendaire, quatre sélecteurs de statistique aux
+     libellés longs suffisaient à élargir le corps de la modale, qui devenait
+     alors déplaçable latéralement sur iPhone. */
   .weapon-config-field input,
   .weapon-config-field select{
-    width:100%;min-width:0;min-height:44px;padding:9px 11px;
+    width:100%;min-width:0;max-width:100%;text-overflow:ellipsis;
+    min-height:44px;padding:9px 11px;
     border:1px solid var(--line);border-radius:8px;background:var(--obsidian-2);
     color:var(--parchment);font:inherit
   }
