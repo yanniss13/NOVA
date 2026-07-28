@@ -106,6 +106,27 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   gearConfigStatus:typeof gearConfigStatus === "function"
     ? gearConfigStatus
     : undefined,
+  ARMOR_LEVEL_ORIGIN_MODE:typeof ARMOR_LEVEL_ORIGIN_MODE === "string"
+    ? ARMOR_LEVEL_ORIGIN_MODE
+    : undefined,
+  REINFORCE_PROGRESSION:typeof REINFORCE_PROGRESSION !== "undefined"
+    ? REINFORCE_PROGRESSION
+    : undefined,
+  reinforceMultiplier:typeof reinforceMultiplier === "function"
+    ? reinforceMultiplier
+    : undefined,
+  gearSegmentCount:typeof gearSegmentCount === "function"
+    ? gearSegmentCount
+    : undefined,
+  gearSegmentIndex:typeof gearSegmentIndex === "function"
+    ? gearSegmentIndex
+    : undefined,
+  gearLevelOrigin:typeof gearLevelOrigin === "function"
+    ? gearLevelOrigin
+    : undefined,
+  gearStatValue:typeof gearStatValue === "function"
+    ? gearStatValue
+    : undefined,
   buildWeaponGrade:typeof buildWeaponGrade === "function"
     ? buildWeaponGrade
     : undefined,

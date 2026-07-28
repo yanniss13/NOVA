@@ -883,4 +883,65 @@ function masterstoneConfig(enchantment){
   );
 }
 
+// La valeur d'une pièce suit ses segments de qualité, puis son renforcement.
+{
+  const { hooks } = loadApp();
+  assert.strictEqual(hooks.gearSegmentCount({ tierBoundaries:[119] }), 1);
+  assert.strictEqual(hooks.gearSegmentCount({ tierBoundaries:[60, 70] }), 1);
+  assert.strictEqual(
+    hooks.gearSegmentCount({ tierBoundaries:[95, 112, 119, 125] }),
+    3
+  );
+  assert.strictEqual(hooks.gearSegmentCount({ tierBoundaries:[] }), 1);
+  assert.deepStrictEqual(
+    [0, 1, 2, 3, 4, 5].map(hooks.reinforceMultiplier),
+    [1, 1.03, 1.07, 1.12, 1.18, 1.25]
+  );
+
+  const definition = {
+    tierBoundaries:[119],
+    qualityMin:120,
+    qualityMax:160,
+    reinforceMax:5
+  };
+  const curve = { base:0, progression:[3073] };
+  const add = { base:0, progression:[35] };
+  assert.strictEqual(
+    hooks.gearStatValue(definition, curve, add, 120, 0),
+    3073
+  );
+  assert.strictEqual(
+    hooks.gearStatValue(definition, curve, add, 160, 0),
+    3073 + 35 * 40
+  );
+  assert.strictEqual(
+    hooks.gearStatValue(definition, curve, add, 120, 5),
+    Math.round(3073 * 1.25)
+  );
+
+  const segmented = {
+    tierBoundaries:[95, 112, 119, 125],
+    qualityMin:96,
+    qualityMax:125
+  };
+  assert.strictEqual(hooks.gearSegmentIndex(segmented, 112), 0);
+  assert.strictEqual(hooks.gearSegmentIndex(segmented, 113), 1);
+  assert.strictEqual(hooks.gearSegmentIndex(segmented, 120), 2);
+  assert.strictEqual(hooks.gearLevelOrigin(segmented, 2), 120);
+  assert.strictEqual(
+    hooks.gearStatValue(
+      segmented,
+      { base:0, progression:[1000, 2000, 3000] },
+      { base:0, progression:[10, 20, 30] },
+      122,
+      0
+    ),
+    3060
+  );
+  assert.strictEqual(
+    hooks.ARMOR_LEVEL_ORIGIN_MODE,
+    "segment-lower-bound"
+  );
+}
+
 console.log("PASS stats de builds : modèle et calcul de l’arme");

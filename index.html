@@ -2490,6 +2490,60 @@
     if(config.enchantments.length < length) return "incomplete";
     return status;
   }
+  /* PRÉSUMÉ, NON VÉRIFIÉ :
+   * le gain par niveau d'une pièce part de la borne basse de son segment.
+   *
+   * Vérification dans le jeu : relever la même statistique d'une même armure
+   * à qualityMin, juste avant, au niveau et juste après la première borne
+   * interne, puis comparer les reconstructions "segment-lower-bound" et
+   * "quality-min". Si la mesure contredit ce choix, remplacer uniquement la
+   * valeur ci-dessous. Aucune autre partie du moteur ne connaît l'hypothèse. */
+  const ARMOR_LEVEL_ORIGIN_MODE = "segment-lower-bound";
+  const REINFORCE_PROGRESSION = [10300, 10700, 11200, 11800, 12500];
+  function reinforceMultiplier(level){
+    const step = Math.trunc(Number(level) || 0);
+    if(step <= 0) return 1;
+    const rate = REINFORCE_PROGRESSION[step - 1];
+    return rate ? rate / 10000 : 1;
+  }
+  function gearSegmentCount(definition){
+    const bounds = (definition && definition.tierBoundaries) || [];
+    return Math.max(1, bounds.length - 1);
+  }
+  function gearSegmentIndex(definition, level){
+    const bounds = (definition && definition.tierBoundaries) || [];
+    const count = gearSegmentCount(definition);
+    let index = 0;
+    for(let cursor = 1; cursor < bounds.length; cursor += 1){
+      if(level > bounds[cursor]) index = cursor;
+    }
+    return Math.min(index, count - 1);
+  }
+  function gearLevelOrigin(definition, index){
+    const bounds = (definition && definition.tierBoundaries) || [];
+    if(ARMOR_LEVEL_ORIGIN_MODE === "quality-min"){
+      return definition.qualityMin;
+    }
+    const bound = bounds.length > 1 ? bounds[index] : bounds[0];
+    return Number.isFinite(bound) ? bound + 1 : definition.qualityMin;
+  }
+  function gearStatValue(definition, curve, add, level, reinforce){
+    if(!curve || !Array.isArray(curve.progression)) return 0;
+    const index = gearSegmentIndex(definition, level);
+    const origin = gearLevelOrigin(definition, index);
+    const segmentBase = Number(curve.progression[index]);
+    const base = Number.isFinite(segmentBase)
+      ? segmentBase
+      : (Number(curve.base) || 0);
+    const addValue = add && Array.isArray(add.progression)
+      ? Number(add.progression[index])
+      : 0;
+    const perLevel = Number.isFinite(addValue) ? addValue : 0;
+    const steps = Math.max(0, Math.trunc(level) - origin);
+    return Math.round(
+      (base + perLevel * steps) * reinforceMultiplier(reinforce)
+    );
+  }
   function buildWeaponDefinition(file){
     return file && owns(BUILD_STATS.weaponsByFile, file)
       ? BUILD_STATS.weaponsByFile[file]
