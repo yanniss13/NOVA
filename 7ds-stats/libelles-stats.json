@@ -1,0 +1,336 @@
+{
+ "I_AtkAdd_Rate": {
+  "fr": "Augmentation de l'attaque",
+  "en": "Attack Increase",
+  "taux": true
+ },
+ "I_DefAdd_Rate": {
+  "fr": "Augmentation de la défense",
+  "en": "Defense Increase",
+  "taux": true
+ },
+ "I_MaxHpAdd_Rate": {
+  "fr": "Augmentation des PV",
+  "en": "HP Increase",
+  "taux": true
+ },
+ "C_Critical_Rate": {
+  "fr": "Chances crit.",
+  "en": "Crit Chance",
+  "taux": true,
+  "court": "Taux critique"
+ },
+ "C_Critical_Dam_Rate": {
+  "fr": "Dégâts crit.",
+  "en": "Crit Damage",
+  "taux": true,
+  "court": "Dégâts crit."
+ },
+ "D_Protect_Cur_Rate": {
+  "fr": "Percement de défense",
+  "en": "Defense Shatter",
+  "taux": true
+ },
+ "B_Atk_Equip": {
+  "fr": "Attaque de l'équipement",
+  "en": "Equipment Attack"
+ },
+ "B_Def_Equip": {
+  "fr": "Défense de l'équipement",
+  "en": "Equipment Defense",
+  "taux": false
+ },
+ "B_MaxHp_Equip": {
+  "fr": "PV de l'équipement",
+  "en": "Equipment HP"
+ },
+ "C_Critical_ResRate": {
+  "fr": "Résistance crit.",
+  "en": "Crit Resistance",
+  "taux": true,
+  "court": "Résist. critique"
+ },
+ "C_Critical_DamRes_Rate": {
+  "fr": "Défense crit.",
+  "en": "Crit Defense",
+  "taux": true
+ },
+ "MF_ChargeEffic_Rate": {
+  "fr": "Efficacité de recharge de la magie",
+  "en": "Magic Charging Efficiency",
+  "taux": true
+ },
+ "Normalattack_Damadd_Rate": {
+  "fr": "Augmentation des dégâts d'attaque normale",
+  "en": "Normal Attack Damage Increase",
+  "taux": true
+ },
+ "Activethird_Damadd_Rate": {
+  "fr": "Augmentation des dégâts d'attaque spéciale",
+  "en": "Special Attack Damage Increase",
+  "taux": true
+ },
+ "Normalskill_Damadd_Rate": {
+  "fr": "Augmentation des dégâts, compétence normale",
+  "en": "Normal Skill Damage Increase",
+  "taux": true
+ },
+ "Normalskillchangetag_Damadd_Rate": {
+  "fr": "Augmentation des dégâts, compétence de relève",
+  "en": "Tag Skill Damage Increase",
+  "taux": true
+ },
+ "Ultimateskill_Damadd_Rate": {
+  "fr": "Augmentation des dégâts d'attaque ultime",
+  "en": "Ultimate Move Damage Increase",
+  "taux": true
+ },
+ "Default_Rate": {
+  "fr": "Augmentation de l'attaque physique",
+  "en": "Physical Attack Increase"
+ },
+ "Default_Element_Rate": {
+  "fr": "Augmentation des dégâts physiques",
+  "en": "Physical Damage Increase"
+ },
+ "S_SkillRecycle_Rate": {
+  "fr": "Réduction de temps de recharge",
+  "en": "Cooldown Reduction",
+  "taux": true
+ },
+ "Fire_Rate": {
+  "fr": "Augmentation de l'attaque de Feu",
+  "en": "Fire Attack Increase",
+  "taux": true
+ },
+ "Fire_Element_Rate": {
+  "fr": "Augmentation des dégâts de Feu",
+  "en": "Fire Damage Increase"
+ },
+ "Fire_Burst_Gauge_Rate": {
+  "fr": "Efficacité de Déluge de Feu",
+  "en": "Fire Burst Efficiency",
+  "taux": true
+ },
+ "Thunder_Rate": {
+  "fr": "Augmentation de l'attaque de Foudre",
+  "en": "Lightning Attack Increase"
+ },
+ "Thunder_Element_Rate": {
+  "fr": "Augmentation des dégâts de Foudre",
+  "en": "Lightning Damage Increase"
+ },
+ "Thunder_Burst_Gauge_Rate": {
+  "fr": "Efficacité de Déluge de Foudre",
+  "en": "Lightning Burst Efficiency",
+  "taux": true
+ },
+ "Wind_Rate": {
+  "fr": "Augmentation de l'attaque de Vent",
+  "en": "Wind Attack Increase"
+ },
+ "Wind_Element_Rate": {
+  "fr": "Augmentation des dégâts de Vent",
+  "en": "Wind Damage Increase"
+ },
+ "Wind_Burst_Gauge_Rate": {
+  "fr": "Efficacité de Déluge de Vent",
+  "en": "Wind Burst Efficiency",
+  "taux": true
+ },
+ "Ice_Rate": {
+  "fr": "Augmentation de l'attaque de Froid",
+  "en": "Cold Attack Increase"
+ },
+ "Ice_Element_Rate": {
+  "fr": "Augmentation des dégâts de Froid",
+  "en": "Cold Damage Increase"
+ },
+ "Ice_Burst_Gauge_Rate": {
+  "fr": "Efficacité de Déluge de Froid",
+  "en": "Cold Burst Efficiency",
+  "taux": true
+ },
+ "Earth_Rate": {
+  "fr": "Augmentation de l'attaque de Terre",
+  "en": "Earth Attack Increase"
+ },
+ "Earth_Element_Rate": {
+  "fr": "Augmentation des dégâts de Terre",
+  "en": "Earth Damage Increase"
+ },
+ "Earth_Burst_Gauge_Rate": {
+  "fr": "Efficacité de Déluge de Terre",
+  "en": "Earth Burst Efficiency",
+  "taux": true
+ },
+ "Dark_Rate": {
+  "fr": "Augmentation de l'attaque des Ténèbres",
+  "en": "Darkness Attack Increase"
+ },
+ "Dark_Element_Rate": {
+  "fr": "Augmentation des dégâts des Ténèbres",
+  "en": "Darkness Damage Increase"
+ },
+ "Holy_Rate": {
+  "fr": "Augmentation de l'attaque du Sacré",
+  "en": "Holy Attack Increase"
+ },
+ "Holy_Element_Rate": {
+  "fr": "Augmentation des dégâts du Sacré",
+  "en": "Holy Damage Increase"
+ },
+ "TickDam_Rate": {
+  "fr": "Efficacité des dégâts sur la durée",
+  "en": "DoT Efficiency",
+  "taux": true
+ },
+ "Default_Add": {
+  "fr": "Attaque physique",
+  "en": "Physical Attack",
+  "taux": false
+ },
+ "Thunder_Add": {
+  "fr": "Attaque de Foudre",
+  "en": "Lightning Attack",
+  "taux": false
+ },
+ "Wind_Add": {
+  "fr": "Attaque de Vent",
+  "en": "Wind Attack",
+  "taux": false
+ },
+ "Fire_Add": {
+  "fr": "Attaque de Feu",
+  "en": "Fire Attack",
+  "taux": false
+ },
+ "Ice_Add": {
+  "fr": "Attaque de Froid",
+  "en": "Cold Attack",
+  "taux": false
+ },
+ "Earth_Add": {
+  "fr": "Attaque de Terre",
+  "en": "Earth Attack",
+  "taux": false
+ },
+ "Dark_Add": {
+  "fr": "Attaque des Ténèbres",
+  "en": "Darkness Attack",
+  "taux": false
+ },
+ "Holy_Add": {
+  "fr": "Attaque du Sacré",
+  "en": "Holy Attack",
+  "taux": false
+ },
+ "AllElement_Add": {
+  "fr": "Attaque de tous les éléments",
+  "en": "All Element Attack",
+  "taux": false
+ },
+ "Aerialattack_Damadd_Rate": {
+  "fr": "Augmentation des dégâts d'attaque plongée",
+  "en": "Plunging Attack Damage Increase",
+  "taux": true
+ },
+ "Debuff_Time_Rate": {
+  "fr": "Efficacité de la durée des malus",
+  "en": "Debuff Duration Efficiency",
+  "taux": true
+ },
+ "Buff_Time_Rate": {
+  "fr": "Efficacité de la durée des bonus",
+  "en": "Buff Duration Efficiency",
+  "taux": true
+ },
+ "P_Shield_Rate": {
+  "fr": "Efficacité des barrières",
+  "en": "Barrier Efficiency",
+  "taux": true
+ },
+ "H_HealPower_Rate": {
+  "fr": "Efficacité de guérison",
+  "en": "Healing Efficiency",
+  "taux": true
+ },
+ "Burst_Gauge_Rate": {
+  "fr": "Efficacité de Déluge de tous les éléments",
+  "en": "All Elemental Burst Efficiency",
+  "taux": true
+ },
+ "A_Block": {
+  "fr": "Persévérance",
+  "en": "Perseverance",
+  "taux": false,
+  "court": "Persévérance"
+ },
+ "Default_Res": {
+  "fr": "Défense physique",
+  "en": "Physical Defense",
+  "taux": false
+ },
+ "Thunder_Res": {
+  "fr": "Défense de Foudre",
+  "en": "Lightning Defense",
+  "taux": false
+ },
+ "Wind_Res": {
+  "fr": "Défense de Vent",
+  "en": "Wind Defense",
+  "taux": false
+ },
+ "Fire_Res": {
+  "fr": "Défense de Feu",
+  "en": "Fire Defense",
+  "taux": false
+ },
+ "Ice_Res": {
+  "fr": "Défense de Froid",
+  "en": "Cold Defense",
+  "taux": false
+ },
+ "Earth_Res": {
+  "fr": "Défense de Terre",
+  "en": "Earth Defense",
+  "taux": false
+ },
+ "Dark_Res": {
+  "fr": "Défense des Ténèbres",
+  "en": "Darkness Defense",
+  "taux": false
+ },
+ "Holy_Res": {
+  "fr": "Défense du Sacré",
+  "en": "Holy Defense",
+  "taux": false
+ },
+ "AllElement_Res": {
+  "fr": "Défense de tous les éléments",
+  "en": "All Element Defense",
+  "taux": false
+ },
+ "D_Protect_CurRes_Rate": {
+  "fr": "Résistance au percement",
+  "en": "Shatter Resistance",
+  "taux": true
+ },
+ "NormalSkill_DamAdd_Rate": {
+  "fr": "Augmentation des dégâts, compétence normale",
+  "en": "Normal Skill Damage Increase",
+  "taux": true
+ },
+ "B_Atk": {
+  "court": "ATK"
+ },
+ "B_Def": {
+  "court": "DEF"
+ },
+ "B_MaxHp": {
+  "court": "PV max"
+ },
+ "A_Accuracy": {
+  "court": "Perforation"
+ }
+}

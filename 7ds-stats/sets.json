@@ -1,0 +1,614 @@
+[
+ {
+  "id": "cms29784m004x2lp2qcdjri3k",
+  "gameId": "equip_t4_scale_1",
+  "slug": "equip-t4-scale-1",
+  "nameFr": "Cœur ardent",
+  "nameEn": "Burning Heart",
+  "bonusTwoFr": "Perforation [#D67314]+30[-]",
+  "bonusTwoEn": "Pierce [#D67314]+30[-]",
+  "bonusFourFr": "Attaque [#D67314]+5%[-]\nL'activation d'un [#0F5CD8]Déluge[-] restaure la [#0F5CD8]jauge de magie[-] de [#1A7331]200[-]. (Temps de recharge : [#1A7331]20s[-])",
+  "bonusFourEn": "Attack [#D67314]+5%[-]\nActivating a [#0F5CD8]Burst[-] restores the [#0F5CD8]Magic Gauge[-] by [#1A7331]200[-]. (Cooldown: [#1A7331]20 sec[-])",
+  "bonusTwoCount": 3,
+  "bonusTwoStats": [
+   {
+    "stat": "A_Accuracy",
+    "value": 30
+   }
+  ],
+  "bonusFourCount": 4,
+  "bonusFourStats": [
+   {
+    "stat": "I_AtkAdd_Rate",
+    "value": 500
+   }
+  ],
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 4
+ },
+ {
+  "id": "cms29784m004y2lp28rv9jals",
+  "gameId": "equip_t4_scale_2",
+  "slug": "equip-t4-scale-2",
+  "nameFr": "Pétales éparpillés",
+  "nameEn": "Scattered Petals",
+  "bonusTwoFr": "Chances crit. [#D67314]+3%[-]\nAttaquer un ennemi dont les [#0F5CD8]PV restants[-] sont supérieurs ou égaux à [#1A7331]50%[-] augmente la [#0F5CD8]jauge de Déluge[-] de [#1A7331]4[-].",
+  "bonusTwoEn": "Crit Chance [#D67314]+3%[-]\nAttacking an enemy whose [#0F5CD8]remaining HP[-] is [#1A7331]50%[-] or higher increases the [#0F5CD8]Burst Gauge[-] by [#1A7331]4[-].",
+  "bonusFourFr": "",
+  "bonusFourEn": "",
+  "bonusTwoCount": 3,
+  "bonusTwoStats": [
+   {
+    "stat": "C_Critical_Rate",
+    "value": 300
+   }
+  ],
+  "bonusFourCount": null,
+  "bonusFourStats": null,
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 3
+ },
+ {
+  "id": "cms29784m004z2lp2iwyov4ap",
+  "gameId": "equip_t4_scale_3",
+  "slug": "equip-t4-scale-3",
+  "nameFr": "Flash aveuglant",
+  "nameEn": "Blinding Flash",
+  "bonusTwoFr": "Attaque [#D67314]+7.5%[-]",
+  "bonusTwoEn": "Attack [#D67314]+7.5%[-]",
+  "bonusFourFr": "Perforation [#D67314]+50[-]\nL'activation d'un [#0F5CD8]Déluge[-] restaure la [#0F5CD8]jauge de magie[-] de [#1A7331]250[-]. (Temps de recharge : [#1A7331]20s[-])",
+  "bonusFourEn": "Pierce [#D67314]+50[-]\nActivating a [#0F5CD8]Burst[-] restores the [#0F5CD8]Magic Gauge[-] by [#1A7331]250[-]. (Cooldown: [#1A7331]20 sec[-])",
+  "bonusTwoCount": 3,
+  "bonusTwoStats": [
+   {
+    "stat": "I_AtkAdd_Rate",
+    "value": 750
+   }
+  ],
+  "bonusFourCount": 4,
+  "bonusFourStats": [
+   {
+    "stat": "A_Accuracy",
+    "value": 50
+   }
+  ],
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 4
+ },
+ {
+  "id": "cms29784m00502lp2h05hw6q8",
+  "gameId": "equip_t4_scale_4",
+  "slug": "equip-t4-scale-4",
+  "nameFr": "Horizon vacillant",
+  "nameEn": "Quaking Horizon",
+  "bonusTwoFr": "Perforation [#D67314]+70[-]",
+  "bonusTwoEn": "Pierce [#D67314]+70[-]",
+  "bonusFourFr": "Dégâts d'attaque ultime [#D67314]+10%[-]\nL'activation d'un [#0F5CD8]Déluge[-] restaure la [#0F5CD8]jauge de magie[-] de [#1A7331]300[-]. (Temps de recharge : [#1A7331]20s[-])",
+  "bonusFourEn": "Ultimate Move Damage [#D67314]+10%[-]\nActivating a [#0F5CD8]Burst[-] restores the [#0F5CD8]Magic Gauge[-] by [#1A7331]300[-]. (Cooldown: [#1A7331]20 sec[-])",
+  "bonusSevenFr": "Attaque [#D67314]+10%[-]\nL'activation d'un [#0F5CD8]Déluge[-] restaure la [#0F5CD8]jauge de magie[-] de [#1A7331]350[-]. (Temps de recharge : [#1A7331]20s[-])",
+  "bonusSevenEn": "Attack [#D67314]+10%[-]\nActivating a [#0F5CD8]Burst[-] restores the [#0F5CD8]Magic Gauge[-] by [#1A7331]350[-]. (Cooldown: [#1A7331]20 sec[-])",
+  "bonusTwoCount": 3,
+  "bonusTwoStats": [
+   {
+    "stat": "A_Accuracy",
+    "value": 70
+   }
+  ],
+  "bonusFourCount": 5,
+  "bonusFourStats": [
+   {
+    "stat": "Ultimateskill_Damadd_Rate",
+    "value": 1000
+   }
+  ],
+  "bonusSevenCount": 7,
+  "bonusSevenStats": [
+   {
+    "stat": "I_AtkAdd_Rate",
+    "value": 1000
+   }
+  ],
+  "partsCount": 7
+ },
+ {
+  "id": "cms29784m00512lp2vc4gtx7w",
+  "gameId": "armor_t4_ferzen",
+  "slug": "armor-t4-ferzen",
+  "nameFr": "Ruines de la mine abandonnée",
+  "nameEn": "Remnants of the Abandoned Mine",
+  "bonusTwoFr": "Dégâts crit. [#D67314]+2%[-]",
+  "bonusTwoEn": "Crit Damage [#D67314]+2%[-]",
+  "bonusFourFr": "Dégâts de compétence de relève [#D67314]+15%[-]\nL'utilisation de la compétence de relève réduit la [#0F5CD8]vitesse de déplacement[-] des ennemis proches de [#1A7331]20%[-] et leur [#0F5CD8]attaque[-] de [#1A7331]6%[-] pendant [#1A7331]20s[-]. (Temps de recharge : [#1A7331]30s[-])",
+  "bonusFourEn": "Tag Skill Damage [#D67314]+15%[-]\nUsing the Tag Skill decreases nearby enemies' [#0F5CD8]Movement Speed[-] by [#1A7331]20%[-] and [#0F5CD8]Attack[-] by [#1A7331]6%[-] for [#1A7331]20 sec[-]. (Cooldown: [#1A7331]30 sec[-])",
+  "bonusSevenFr": "Chances crit. [#D67314]+4%[-]\nL'utilisation de la compétence de relève réduit la [#0F5CD8]vitesse de déplacement[-] des ennemis proches de [#1A7331]30%[-] et leur [#0F5CD8]attaque[-] de [#1A7331]10%[-] pendant [#1A7331]20s[-]. (Temps de recharge : [#1A7331]30s[-])",
+  "bonusSevenEn": "Crit Chance [#D67314]+4%[-]\nUsing the Tag Skill decreases nearby enemies' [#0F5CD8]Movement Speed[-] by [#1A7331]30%[-] and [#0F5CD8]Attack[-] by [#1A7331]10%[-] for [#1A7331]20 sec[-]. (Cooldown: [#1A7331]30 sec[-])",
+  "bonusTwoCount": 2,
+  "bonusTwoStats": [
+   {
+    "stat": "C_Critical_Dam_Rate",
+    "value": 200
+   }
+  ],
+  "bonusFourCount": 5,
+  "bonusFourStats": [
+   {
+    "stat": "Normalskillchangetag_Damadd_Rate",
+    "value": 1500
+   }
+  ],
+  "bonusSevenCount": 7,
+  "bonusSevenStats": [
+   {
+    "stat": "C_Critical_Rate",
+    "value": 400
+   }
+  ],
+  "partsCount": 7
+ },
+ {
+  "id": "cms29784m00522lp2x65h84h2",
+  "gameId": "armor_t5_spider",
+  "slug": "armor-t5-spider",
+  "nameFr": "Rancœur du nid d'araignée",
+  "nameEn": "Grudge of the Spider Nest",
+  "bonusTwoFr": "Chances crit. [#D67314]+5%[-]",
+  "bonusTwoEn": "Crit Chance [#D67314]+5%[-]",
+  "bonusFourFr": "Dégâts d'attaque ultime [#D67314]+15%[-]\nLorsque les [#0F5CD8]points de magie[-] sont supérieurs ou égaux à [#1A7331]6[-] au moment d'utiliser une compétence, augmente la [#0F5CD8]durée des bonus et des malus[-] de [#1A7331]10%[-] pendant [#1A7331]10s[-]. (Temps de recharge : [#1A7331]20s[-])",
+  "bonusFourEn": "Ultimate Move Damage [#D67314]+15%[-]\nIf [#0F5CD8]Magic Points[-] are [#1A7331]6[-] or greater when using a skill, [#0F5CD8]Buff and Debuff durations[-] are increased by [#1A7331]10%[-] for [#1A7331]10 sec[-]. (Cooldown: [#1A7331]20 sec[-])",
+  "bonusSevenFr": "Dégâts crit. [#D67314]+15%[-]\nLorsque les [#0F5CD8]points de magie[-] sont supérieurs ou égaux à [#1A7331]6[-] au moment d'utiliser une compétence, augmente la [#0F5CD8]durée des bonus et des malus[-] de [#1A7331]15%[-] pendant [#1A7331]10s[-]. (Temps de recharge : [#1A7331]20s[-])",
+  "bonusSevenEn": "Crit Damage [#D67314]+15%[-]\nIf [#0F5CD8]Magic Points[-] are [#1A7331]6[-] or greater when using a skill, [#0F5CD8]Buff and Debuff durations[-] are increased by [#1A7331]15%[-] for [#1A7331]10 sec[-]. (Cooldown: [#1A7331]20 sec[-])",
+  "bonusTwoCount": 3,
+  "bonusTwoStats": [
+   {
+    "stat": "C_Critical_Rate",
+    "value": 500
+   }
+  ],
+  "bonusFourCount": 5,
+  "bonusFourStats": [
+   {
+    "stat": "Ultimateskill_Damadd_Rate",
+    "value": 1500
+   }
+  ],
+  "bonusSevenCount": 7,
+  "bonusSevenStats": [
+   {
+    "stat": "C_Critical_Dam_Rate",
+    "value": 1500
+   }
+  ],
+  "partsCount": 7
+ },
+ {
+  "id": "cms29784m00532lp2yzvs21sa",
+  "gameId": "armor_t5_dead",
+  "slug": "armor-t5-dead",
+  "nameFr": "Cris des âmes",
+  "nameEn": "Cries of Souls",
+  "bonusTwoFr": "Perforation [#D67314]+100[-]",
+  "bonusTwoEn": "Pierce [#D67314]+100[-]",
+  "bonusFourFr": "PV [#D67314]+20%[-]\nChaque fois que la [#0F5CD8]parade[-] est déclenchée, restaure la [#0F5CD8]jauge de relève[-] de [#1A7331]50[-] et augmente la [#0F5CD8]persévérance[-] de [#1A7331]4[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]40[-])",
+  "bonusFourEn": "HP [#D67314]+20%[-]\nEach time [#0F5CD8]Block[-] is triggered when hit, the [#0F5CD8]Tag Gauge[-] is restored by [#1A7331]50[-] and [#0F5CD8]Perseverance[-] increases by [#1A7331]4[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]40[-])",
+  "bonusSevenFr": "Efficacité de guérison [#D67314]+20%[-]\nChaque fois que la [#0F5CD8]parade[-] est déclenchée, restaure la [#0F5CD8]jauge de relève[-] de [#1A7331]100[-] et augmente la [#0F5CD8]persévérance[-] de [#1A7331]5[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]50[-])",
+  "bonusSevenEn": "Healing Efficiency [#D67314]+20%[-]\nEach time [#0F5CD8]Block[-] is triggered when hit, the [#0F5CD8]Tag Gauge[-] is restored by [#1A7331]100[-] and [#0F5CD8]Perseverance[-] increases by [#1A7331]5[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]50[-])",
+  "bonusTwoCount": 2,
+  "bonusTwoStats": [
+   {
+    "stat": "A_Accuracy",
+    "value": 100
+   }
+  ],
+  "bonusFourCount": 4,
+  "bonusFourStats": [
+   {
+    "stat": "I_MaxHpAdd_Rate",
+    "value": 2000
+   }
+  ],
+  "bonusSevenCount": 7,
+  "bonusSevenStats": [
+   {
+    "stat": "H_HealPower_Rate",
+    "value": 2000
+   }
+  ],
+  "partsCount": 7
+ },
+ {
+  "id": "cms29784m00542lp2wiq2v9l1",
+  "gameId": "armor_t5_undying",
+  "slug": "armor-t5-undying",
+  "nameFr": "Observateur",
+  "nameEn": "The Watcher",
+  "bonusTwoFr": "Résistance au percement [#D67314]+5%[-]",
+  "bonusTwoEn": "Shatter Resistance [#D67314]+5%[-]",
+  "bonusFourFr": "Défense [#D67314]+15%[-]\n[#1A7331]5%[-] de chances d'infliger des dégâts supplémentaires égaux à [#1A7331]20%[-] de la défense et d'infliger [#0F5CD8]Saignement[-] pendant [#1A7331]10s[-] lorsqu'une attaque fait mouche. (Temps de recharge : [#1A7331]15s[-])",
+  "bonusFourEn": "Defense [#D67314]+15%[-]\n[#1A7331]5%[-] chance to inflict additional damage equal to [#1A7331]20%[-] of Defense and inflict [#0F5CD8]Bleed[-] for [#1A7331]10 sec[-] when landing an attack. (Cooldown: [#1A7331]15 sec[-])",
+  "bonusTwoCount": 2,
+  "bonusTwoStats": [
+   {
+    "stat": "D_Protect_CurRes_Rate",
+    "value": 500
+   }
+  ],
+  "bonusFourCount": 4,
+  "bonusFourStats": [
+   {
+    "stat": "I_DefAdd_Rate",
+    "value": 1500
+   }
+  ],
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 4
+ },
+ {
+  "id": "cms29784m00552lp2iwswur1c",
+  "gameId": "accessory_t5_corruption",
+  "slug": "accessory-t5-corruption",
+  "nameFr": "Au bord du néant",
+  "nameEn": "Edge of the Void",
+  "bonusTwoFr": "Percement de défense [#D67314]+5%[-]",
+  "bonusTwoEn": "Defense Shatter [#D67314]+5%[-]",
+  "bonusFourFr": "Tous les dégâts [#D67314]+7.5%[-]\nLorsque les [#0F5CD8]points de relève[-] sont inférieurs à [#1A7331]1[-] au moment d'utiliser la compétence de relève, restaure la [#0F5CD8]jauge de relève[-] de [#1A7331]100[-] [#1A7331]toutes les secondes[-] pendant [#1A7331]10s[-]. (Temps de recharge : [#1A7331]20s[-])",
+  "bonusFourEn": "All Damage [#D67314]+7.5%[-]\nIf [#0F5CD8]Tag Points[-] are fewer than [#1A7331]1[-] when using the Tag Skill, the [#0F5CD8]Tag Gauge[-] is restored by [#1A7331]100[-] [#1A7331]every second[-] for [#1A7331]10 sec[-]. (Cooldown: [#1A7331]20 sec[-])",
+  "bonusTwoCount": 2,
+  "bonusTwoStats": [
+   {
+    "stat": "D_Protect_Cur_Rate",
+    "value": 500
+   }
+  ],
+  "bonusFourCount": 3,
+  "bonusFourStats": [
+   {
+    "stat": "I_All_DamAdd_Rate",
+    "value": 750
+   }
+  ],
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 3
+ },
+ {
+  "id": "cms29784m00562lp293nvbp11",
+  "gameId": "armor_t4_ocean",
+  "slug": "armor-t4-ocean",
+  "nameFr": "Fragment tranchant",
+  "nameEn": "Sharp Fragment",
+  "bonusTwoFr": "Dégâts de compétence normale [#D67314]+5%[-]",
+  "bonusTwoEn": "Normal Skill Damage [#D67314]+5%[-]",
+  "bonusFourFr": "Dégâts crit. [#D67314]+5%[-]\n[#1A7331]6%[-] de chances d'augmenter les [#0F5CD8]chances crit.[-] de [#1A7331]12%[-] pendant [#1A7331]5s[-] lorsqu'une attaque fait mouche. (Temps de recharge : [#1A7331]10s[-])",
+  "bonusFourEn": "Crit Damage [#D67314]+5%[-]\n[#1A7331]6%[-] chance to increase [#0F5CD8]Crit Chance[-] by [#1A7331]12%[-] for [#1A7331]5 sec[-] when landing an attack. (Cooldown: [#1A7331]10 sec[-])",
+  "bonusTwoCount": 2,
+  "bonusTwoStats": [
+   {
+    "stat": "Normalskill_Damadd_Rate",
+    "value": 500
+   }
+  ],
+  "bonusFourCount": 4,
+  "bonusFourStats": [
+   {
+    "stat": "C_Critical_Dam_Rate",
+    "value": 500
+   }
+  ],
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 4
+ },
+ {
+  "id": "cms29784m00572lp2yiui6h91",
+  "gameId": "accessory_t5_crystal",
+  "slug": "accessory-t5-crystal",
+  "nameFr": "Fragment mortel",
+  "nameEn": "Deadly Fragment",
+  "bonusTwoFr": "Dégâts de compétence normale [#D67314]+10%[-]",
+  "bonusTwoEn": "Normal Skill Damage [#D67314]+10%[-]",
+  "bonusFourFr": "Dégâts crit. [#D67314]+8%[-]\n[#1A7331]6%[-] de chances d'augmenter les [#0F5CD8]chances crit.[-] de [#1A7331]20%[-] pendant [#1A7331]5s[-] lorsqu'une attaque fait mouche. [#1A7331]30%[-] de chances d'infliger des dégâts supplémentaires égaux à [#1A7331]15%[-] de l'attaque après avoir réussi un coup critique lorsque l'effet est actif. (Temps de recharge : [#1A7331]10s[-])",
+  "bonusFourEn": "Crit Damage [#D67314]+8%[-]\n[#1A7331]6%[-] chance to increase [#0F5CD8]Crit Chance[-] by [#1A7331]20%[-] for [#1A7331]5 sec[-] when landing an attack. [#1A7331]30%[-] chance to deal additional damage equal to [#1A7331]15%[-] of Attack when landing a Critical Hit while the effect is active. (Cooldown: [#1A7331]10 sec[-])",
+  "bonusTwoCount": 2,
+  "bonusTwoStats": [
+   {
+    "stat": "Normalskill_Damadd_Rate",
+    "value": 1000
+   }
+  ],
+  "bonusFourCount": 4,
+  "bonusFourStats": [
+   {
+    "stat": "C_Critical_Dam_Rate",
+    "value": 800
+   }
+  ],
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 4
+ },
+ {
+  "id": "cms29784m00582lp2e9se4lkb",
+  "gameId": "armor_t4_immortal",
+  "slug": "armor-t4-immortal",
+  "nameFr": "Brillance lavande",
+  "nameEn": "Lavender Brilliance",
+  "bonusTwoFr": "Efficacité de Déluge de tous les éléments [#D67314]+10%[-]\nAttaquer un ennemi qui n'est [#0F5CD8]pas sous l'effet d'un Déluge[-] a [#1A7331]3%[-] de chances de restaurer la [#0F5CD8]jauge de relève[-] de [#1A7331]1000[-]. (Temps de recharge : [#1A7331]3s[-])",
+  "bonusTwoEn": "All Elemental Burst Efficiency [#D67314]+10%[-]\n[#1A7331]3%[-] chance to restore the [#0F5CD8]Tag Gauge[-] by [#1A7331]1000[-] when attacking an enemy [#0F5CD8]without a Burst activated[-]. (Cooldown: [#1A7331]3 sec[-])",
+  "bonusFourFr": "",
+  "bonusFourEn": "",
+  "bonusTwoCount": 3,
+  "bonusTwoStats": [
+   {
+    "stat": "Burst_Gauge_Rate",
+    "value": 1000
+   }
+  ],
+  "bonusFourCount": null,
+  "bonusFourStats": null,
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 3
+ },
+ {
+  "id": "cms29784m00592lp2odwtwkmi",
+  "gameId": "accessory_t5_thought",
+  "slug": "accessory-t5-thought",
+  "nameFr": "Ombre lavande",
+  "nameEn": "Lavender Shadow",
+  "bonusTwoFr": "Efficacité de Déluge de tous les éléments [#D67314]+15%[-]\nAttaquer un ennemi qui n'est [#0F5CD8]pas sous l'effet d'un Déluge[-] a [#1A7331]3%[-] de chances de restaurer la [#0F5CD8]jauge de relève[-] de [#1A7331]1000[-]. (Temps de recharge : [#1A7331]3s[-])\nAugmente les [#0F5CD8]dégâts d'attaque ultime[-] des héros alliés de [#1A7331]20%[-] pendant [#1A7331]8s[-] lorsqu'un [#0F5CD8]Déluge[-] est déclenché.",
+  "bonusTwoEn": "All Elemental Burst Efficiency [#D67314]+15%[-]\n[#1A7331]3%[-] chance to restore the [#0F5CD8]Tag Gauge[-] by [#1A7331]1000[-] when attacking an enemy [#0F5CD8]without a Burst activated[-]. (Cooldown: [#1A7331]3 sec[-])\nAllied heroes' [#0F5CD8]Ultimate Move damage[-] increases by [#1A7331]20%[-] for [#1A7331]8 sec[-] when a [#0F5CD8]Burst[-] is activated.",
+  "bonusFourFr": "",
+  "bonusFourEn": "",
+  "bonusTwoCount": 3,
+  "bonusTwoStats": [
+   {
+    "stat": "Burst_Gauge_Rate",
+    "value": 1500
+   }
+  ],
+  "bonusFourCount": null,
+  "bonusFourStats": null,
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 3
+ },
+ {
+  "id": "cms29784m005a2lp2y4cu9n34",
+  "gameId": "armor_t5_fortrees",
+  "slug": "armor-t5-fortrees",
+  "nameFr": "Rite gravé",
+  "nameEn": "Engraved Rite",
+  "bonusTwoFr": "Attaque [#D67314]+10%[-]\nInflige [#0F5CD8]Malédiction d'autodestruction[-] à l'ennemi pendant [#1A7331]30s[-] en attaquant l'ennemi avec une compétence de relève lorsque le héros est une unité de [#0F5CD8]soutien[-].\nChaque fois qu'un ennemi avec l'effet est touché par un héros allié, [#1A7331]3%[-] de chances d'infliger des dégâts supplémentaires égaux à [#1A7331]40%[-] de l'attaque du lanceur. (Non cumulable)",
+  "bonusTwoEn": "Attack [#D67314]+10%[-]\nInflicts [#0F5CD8]Curse of Self-Destruction[-] on the enemy for [#1A7331]30 sec[-] if the hero is a [#0F5CD8]Support[-] unit when attacking the enemy with a Tag Skill.\nEach time an enemy with the effect is hit by an allied hero, has a [#1A7331]3%[-] chance to inflict additional damage equal to [#1A7331]40%[-] of the caster's Attack. (Does not stack)",
+  "bonusFourFr": "",
+  "bonusFourEn": "",
+  "bonusTwoCount": 4,
+  "bonusTwoStats": [
+   {
+    "stat": "I_AtkAdd_Rate",
+    "value": 1000
+   }
+  ],
+  "bonusFourCount": null,
+  "bonusFourStats": null,
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 4
+ },
+ {
+  "id": "cms29784m005b2lp2efono9e6",
+  "gameId": "accessory_t5_curse",
+  "slug": "accessory-t5-curse",
+  "nameFr": "Talent caché",
+  "nameEn": "Latent Ability",
+  "bonusTwoFr": "PV [#D67314]+10%[-]\nOctroie des [#0F5CD8]barrières[-] à tous les héros alliés égales à [#1A7331]7%[-] des PV max pendant [#1A7331]20s[-] lorsqu'un allié subit des dégâts alors que ses PV sont inférieurs ou égaux à [#1A7331]50%[-] des PV max. (Temps de recharge : [#1A7331]30s[-])",
+  "bonusTwoEn": "HP [#D67314]+10%[-]\nGrants all allied heroes [#0F5CD8]barriers[-] equal to [#1A7331]7%[-] of Max HP for [#1A7331]20 sec[-] when an ally takes damage while HP is [#1A7331]50%[-] of Max HP or lower. (Cooldown: [#1A7331]30 sec[-])",
+  "bonusFourFr": "Résistance aux Ténèbres [#D67314]+15%[-]",
+  "bonusFourEn": "Darkness Resistance [#D67314]+15%[-]",
+  "bonusTwoCount": 2,
+  "bonusTwoStats": [
+   {
+    "stat": "I_MaxHpAdd_Rate",
+    "value": 1000
+   }
+  ],
+  "bonusFourCount": 3,
+  "bonusFourStats": [
+   {
+    "stat": "Dark_Element_Res_Rate",
+    "value": 1500
+   }
+  ],
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 3
+ },
+ {
+  "id": "cms29784m005c2lp21qabujsj",
+  "gameId": "accessory_t5_heart_acc",
+  "slug": "accessory-t5-heart-acc",
+  "nameFr": "Serment éternel",
+  "nameEn": "Eternal Oath",
+  "bonusTwoFr": "Efficacité de guérison [#D67314]+15%[-]\nAttaquer un ennemi dont la [#0F5CD8]résistance élémentaire[-] est diminuée augmente l'[#0F5CD8]efficacité de guérison[-] de tous les héros alliés de [#1A7331]15%[-] pendant [#1A7331]30s[-]. (Temps de recharge : [#1A7331]30s[-])",
+  "bonusTwoEn": "Healing Efficiency [#D67314]+15%[-]\nAttacking an enemy with reduced [#0F5CD8]Elemental Resistance[-] increases all allied heroes' [#0F5CD8]Healing Efficiency[-] by [#1A7331]15%[-] for [#1A7331]30 sec[-]. (Cooldown: [#1A7331]30 sec[-])",
+  "bonusFourFr": "",
+  "bonusFourEn": "",
+  "bonusTwoCount": 3,
+  "bonusTwoStats": [
+   {
+    "stat": "H_HealPower_Rate",
+    "value": 1500
+   }
+  ],
+  "bonusFourCount": null,
+  "bonusFourStats": null,
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 3
+ },
+ {
+  "id": "cms29784m005d2lp2bxr90sc2",
+  "gameId": "accessory_t5_hymn",
+  "slug": "accessory-t5-hymn",
+  "nameFr": "Énergie revigorante",
+  "nameEn": "Rejuvenating Energy",
+  "bonusTwoFr": "Efficacité de recharge de la magie [#D67314]+10%[-]",
+  "bonusTwoEn": "Magic Charging Efficiency [#D67314]+10%[-]",
+  "bonusFourFr": "PV [#D67314]+10%[-]\nLorsqu'un héros allié attaque un ennemi dont les [#0F5CD8]PV restants[-] sont supérieurs ou égaux à [#1A7331]100%[-], augmente l'[#0F5CD8]efficacité de recharge de la magie[-] de tous les héros alliés de [#1A7331]15%[-] pendant [#1A7331]20s[-] et restaure leur [#0F5CD8]jauge de magie[-] d'une quantité fixe de [#1A7331]2000[-]. (Temps de recharge : [#1A7331]300s[-])",
+  "bonusFourEn": "HP [#D67314]+10%[-]\nWhen an allied hero attacks an enemy whose [#0F5CD8]remaining HP[-] is [#1A7331]100%[-] or higher, it increases all allied heroes' [#0F5CD8]Magic Charging Efficiency[-] by [#1A7331]15%[-] for [#1A7331]20 sec[-] and restores the [#0F5CD8]Magic Gauge[-] by a fixed amount of [#1A7331]2000[-]. (Cooldown: [#1A7331]300 sec[-])",
+  "bonusTwoCount": 2,
+  "bonusTwoStats": [
+   {
+    "stat": "MF_ChargeEffic_Rate",
+    "value": 1000
+   }
+  ],
+  "bonusFourCount": 3,
+  "bonusFourStats": [
+   {
+    "stat": "I_MaxHpAdd_Rate",
+    "value": 1000
+   }
+  ],
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 3
+ },
+ {
+  "id": "cms29784w005e2lp21fxm0d8b",
+  "gameId": "equip_t5_greed",
+  "slug": "equip-t5-greed",
+  "nameFr": "Souverain cupide",
+  "nameEn": "Greedy Ruler",
+  "bonusTwoFr": "Chances crit. [#D67314]+8%[-]",
+  "bonusTwoEn": "Crit Chance [#D67314]+8%[-]",
+  "bonusFourFr": "Dégâts crit. [#D67314]+15%[-]\nL'utilisation de la compétence de relève augmente les [#0F5CD8]chances crit.[-] de [#1A7331]3%[-] pendant [#1A7331]20s[-].\nL'utilisation de la compétence de relève alors que cet effet est actif le remplace par un effet qui augmente les [#0F5CD8]chances crit.[-] de [#1A7331]7%[-] et le [#0F5CD8]percement de défense[-] de [#1A7331]7%[-] pendant [#1A7331]20s[-]. (Non cumulable jusqu'à la fin de sa durée)",
+  "bonusFourEn": "Crit Damage [#D67314]+15%[-]\nUsing the Tag Skill increases [#0F5CD8]Crit Chance[-] by [#1A7331]3%[-] for [#1A7331]20 sec[-].\nUsing the Tag Skill while this effect is active replaces it with an effect that increases [#0F5CD8]Crit Chance[-] by [#1A7331]7%[-] and [#0F5CD8]Defense Shatter[-] by [#1A7331]7%[-] for [#1A7331]20 sec[-]. (Cannot stack until the duration ends)",
+  "bonusSevenFr": "Percement de défense [#D67314]+10%[-]\nL'utilisation de la compétence de relève augmente les [#0F5CD8]chances crit.[-] de [#1A7331]6%[-] pendant [#1A7331]20s[-].\nL'utilisation de la compétence de relève alors que cet effet est actif le remplace par un effet qui augmente les [#0F5CD8]chances crit.[-] de [#1A7331]12%[-] et le [#0F5CD8]percement de défense[-] de [#1A7331]12%[-] pendant [#1A7331]20s[-]. (Non cumulable jusqu'à la fin de sa durée)",
+  "bonusSevenEn": "Defense Shatter [#D67314]+10%[-]\nUsing the Tag Skill increases [#0F5CD8]Crit Chance[-] by [#1A7331]6%[-] for [#1A7331]20 sec[-].\nUsing the Tag Skill while this effect is active replaces it with an effect that increases [#0F5CD8]Crit Chance[-] by [#1A7331]12%[-] and [#0F5CD8]Defense Shatter[-] by [#1A7331]12%[-] for [#1A7331]20 sec[-]. (Cannot stack until the duration ends)",
+  "bonusTwoCount": 3,
+  "bonusTwoStats": [
+   {
+    "stat": "C_Critical_Rate",
+    "value": 800
+   }
+  ],
+  "bonusFourCount": 5,
+  "bonusFourStats": [
+   {
+    "stat": "C_Critical_Dam_Rate",
+    "value": 1500
+   }
+  ],
+  "bonusSevenCount": 7,
+  "bonusSevenStats": [
+   {
+    "stat": "D_Protect_Cur_Rate",
+    "value": 1000
+   }
+  ],
+  "partsCount": 7
+ },
+ {
+  "id": "cms29784x005f2lp22y2idcci",
+  "gameId": "armor_t5_wildroar",
+  "slug": "armor-t5-wildroar",
+  "nameFr": "Rite des liens",
+  "nameEn": "Rite of Bonds",
+  "bonusTwoFr": "Efficacité de guérison [#D67314]+12%[-]",
+  "bonusTwoEn": "Healing Efficiency [#D67314]+12%[-]",
+  "bonusFourFr": "PV [#D67314]+15%[-]\nAugmente l'[#0F5CD8]attaque[-] de tous les héros alliés de [#1A7331]10%[-] pendant [#1A7331]20s[-] lorsqu'un héros allié attaque un ennemi dans le dos.\nL'utilisation de la compétence de relève lorsque cet effet est actif augmente l'[#0F5CD8]efficacité de guérison[-] de [#1A7331]10%[-] pendant [#1A7331]20s[-].",
+  "bonusFourEn": "HP [#D67314]+15%[-]\nIncreases all allied heroes' [#0F5CD8]Attack[-] by [#1A7331]10%[-] for [#1A7331]20 sec[-] when an allied hero lands a Back Attack.\nUsing the Tag Skill while this effect is active increases [#0F5CD8]Healing Efficiency[-] by [#1A7331]10%[-] for [#1A7331]20 sec[-].",
+  "bonusTwoCount": 3,
+  "bonusTwoStats": [
+   {
+    "stat": "H_HealPower_Rate",
+    "value": 1200
+   }
+  ],
+  "bonusFourCount": 4,
+  "bonusFourStats": [
+   {
+    "stat": "I_MaxHPAdd_Rate",
+    "value": 1500
+   }
+  ],
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 4
+ },
+ {
+  "id": "cms29784x005g2lp2vly150l3",
+  "gameId": "equip_t5_splinter",
+  "slug": "equip-t5-splinter",
+  "nameFr": "Aube du cauchemar",
+  "nameEn": "Dawn of the Nightmare",
+  "bonusTwoFr": "Dégâts crit. [#D67314]+6%[-]",
+  "bonusTwoEn": "Crit Damage [#D67314]+6%[-]",
+  "bonusFourFr": "Perforation [#D67314]+120[-]\nL'utilisation de la compétence de relève augmente les [#0F5CD8]dégâts d'attaque ultime[-] de [#1A7331]20%[-] et les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]20%[-] pendant [#1A7331]30s[-].\nCet effet est retiré en touchant l'ennemi avec l'attaque ultime ou en changeant de héros.",
+  "bonusFourEn": "Pierce [#D67314]+120[-]\nUsing the Tag Skill increases [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]20%[-] and Ultimate Move's [#0F5CD8]Crit Damage[-] by [#1A7331]20%[-] for [#1A7331]30 sec[-].\nThis effect is removed upon landing the Ultimate Move on an enemy or switching heroes.",
+  "bonusSevenFr": "Augmentation des dégâts d'attaque ultime [#D67314]+20%[-]\nL'utilisation de la compétence de relève augmente les [#0F5CD8]dégâts d'attaque ultime[-] de [#1A7331]40%[-] et les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]40%[-] pendant [#1A7331]30s[-].\nCet effet est retiré en touchant l'ennemi avec l'attaque ultime ou en changeant de héros.",
+  "bonusSevenEn": "Ultimate Move Damage Increase [#D67314]+20%[-]\nUsing the Tag Skill increases [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]40%[-] and Ultimate Move's [#0F5CD8]Crit Damage[-] by [#1A7331]40%[-] for [#1A7331]30 sec[-].\nThis effect is removed upon landing the Ultimate Move on an enemy or switching heroes.",
+  "bonusTwoCount": 2,
+  "bonusTwoStats": [
+   {
+    "stat": "C_Critical_Dam_Rate",
+    "value": 600
+   }
+  ],
+  "bonusFourCount": 4,
+  "bonusFourStats": [
+   {
+    "stat": "A_Accuracy",
+    "value": 120
+   }
+  ],
+  "bonusSevenCount": 6,
+  "bonusSevenStats": [
+   {
+    "stat": "UltimateSkill_DamAdd_Rate",
+    "value": 2000
+   }
+  ],
+  "partsCount": 6
+ },
+ {
+  "id": "cms29784x005h2lp265qso9b0",
+  "gameId": "equip_t5_darksand",
+  "slug": "equip-t5-darksand",
+  "nameFr": "Reine des profondeurs",
+  "nameEn": "Queen of the Depths",
+  "bonusTwoFr": "Chances crit. [#D67314]+8%[-]",
+  "bonusTwoEn": "Crit Chance [#D67314]+8%[-]",
+  "bonusFourFr": "Perforation [#D67314]+120[-]\nL'utilisation de la compétence de relève augmente les [#0F5CD8]dégâts crit.[-] à hauteur de [#1A7331]50%[-] de l'[#0F5CD8]efficacité de Déluge[-] de l'élément du héros pendant [#1A7331]30s[-]. (Max : [#1A7331]18%[-], hors [#0F5CD8]efficacité de Déluge de tous les éléments[-])\nLorsque le héros active un [#0F5CD8]Déluge[-], augmente l'[#0F5CD8]attaque élémentaire[-] de l'élément correspondant de tous les héros alliés de [#1A7331]10%[-] pendant [#1A7331]30s[-].",
+  "bonusFourEn": "Pierce [#D67314]+120[-]\nUsing the Tag Skill increases [#0F5CD8]Crit Damage[-] by [#1A7331]50%[-] of the [#0F5CD8]Burst Efficiency[-] of the hero's element for [#1A7331]30 sec[-]. (Max: [#1A7331]18%[-], excludes [#0F5CD8]All Elemental Burst Efficiency[-])\nWhen the hero activates a [#0F5CD8]Burst[-], it increases all allied heroes' [#0F5CD8]Elemental Attack[-] of the same element by [#1A7331]10%[-] for [#1A7331]30 sec[-].",
+  "bonusSevenFr": "Tous les dégâts élémentaires [#D67314]+20%[-]\nL'utilisation de la compétence de relève augmente les [#0F5CD8]dégâts crit.[-] à hauteur de [#1A7331]50%[-] de l'[#0F5CD8]efficacité de Déluge[-] de l'élément du héros pendant [#1A7331]30s[-]. (Max : [#1A7331]30%[-], hors [#0F5CD8]efficacité de Déluge de tous les éléments[-])\nLorsque le héros active un [#0F5CD8]Déluge[-], augmente l'[#0F5CD8]attaque élémentaire[-] de l'élément correspondant de tous les héros alliés de [#1A7331]15%[-] pendant [#1A7331]30s[-].",
+  "bonusSevenEn": "All Elemental Damage Increase [#D67314]+20%[-]\nUsing the Tag Skill increases [#0F5CD8]Crit Damage[-] by [#1A7331]50%[-] of the [#0F5CD8]Burst Efficiency[-] of the hero's element for [#1A7331]30 sec[-]. (Max: [#1A7331]30%[-], excludes [#0F5CD8]All Elemental Burst Efficiency[-])\nWhen the hero activates a [#0F5CD8]Burst[-], it increases all allied heroes' [#0F5CD8]Elemental Attack[-] of the same element by [#1A7331]15%[-] for [#1A7331]30 sec[-].",
+  "bonusTwoCount": 3,
+  "bonusTwoStats": [
+   {
+    "stat": "C_Critical_Rate",
+    "value": 800
+   }
+  ],
+  "bonusFourCount": 5,
+  "bonusFourStats": [
+   {
+    "stat": "A_Accuracy",
+    "value": 120
+   }
+  ],
+  "bonusSevenCount": 7,
+  "bonusSevenStats": [
+   {
+    "stat": "All_Element_Rate",
+    "value": 2000
+   }
+  ],
+  "partsCount": 7
+ }
+]
