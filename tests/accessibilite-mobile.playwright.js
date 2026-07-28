@@ -589,6 +589,94 @@ async function assertPickerTilesContained(page, label){
       assert.equal(expanded.brandVisible, true);
       assert.equal(expanded.accountVisible, true);
 
+      /* Repère de défilement des onglets : un fondu surmonté d'un chevron
+         apparaît du côté où il reste des onglets à atteindre, et disparaît au
+         bout de la course. Il ne doit jamais intercepter une touche. */
+      const tabsCue = () => headerPage.evaluate(() => {
+        const rail = document.querySelector(".tabs-rail");
+        const tabs = document.querySelector(".tabs");
+        const opacityOf = selector => {
+          const node = document.querySelector(selector);
+          return node ? Number(getComputedStyle(node).opacity) : null;
+        };
+        const box = document.querySelector(".tabs-cue-right").getBoundingClientRect();
+        const under = document.elementFromPoint(
+          Math.round(box.left + box.width / 2),
+          Math.round(box.top + box.height / 2)
+        );
+        return {
+          overflowing:tabs.scrollWidth - tabs.clientWidth > 2,
+          left:rail.classList.contains("can-scroll-left"),
+          right:rail.classList.contains("can-scroll-right"),
+          leftOpacity:opacityOf(".tabs-cue-left"),
+          rightOpacity:opacityOf(".tabs-cue-right"),
+          underCue:under ? under.className : ""
+        };
+      });
+      const setTabsScroll = value => headerPage.evaluate(target => {
+        const tabs = document.querySelector(".tabs");
+        tabs.scrollLeft = target === "end"
+          ? tabs.scrollWidth
+          : (target === "middle"
+            ? Math.round((tabs.scrollWidth - tabs.clientWidth) / 2)
+            : 0);
+      }, value);
+
+      const cueAtStart = await tabsCue();
+      assert.ok(
+        cueAtStart.overflowing,
+        `Les onglets doivent déborder pour justifier un repère à ${width}px`
+      );
+      assert.equal(
+        cueAtStart.right,
+        true,
+        `Au départ, le repère de droite doit être présent à ${width}px`
+      );
+      assert.equal(
+        cueAtStart.left,
+        false,
+        `Au départ, aucun repère à gauche à ${width}px`
+      );
+      assert.ok(
+        cueAtStart.rightOpacity > 0.5,
+        `Le repère de droite doit être visible à ${width}px `
+        +`(opacité ${cueAtStart.rightOpacity})`
+      );
+      assert.equal(cueAtStart.leftOpacity, 0);
+      assert.ok(
+        !/tabs-cue/.test(cueAtStart.underCue),
+        `Le repère ne doit pas intercepter la touche à ${width}px `
+        +`(élément touché : ${cueAtStart.underCue})`
+      );
+
+      await setTabsScroll("middle");
+      await headerPage.waitForFunction(() => {
+        const rail = document.querySelector(".tabs-rail");
+        return rail.classList.contains("can-scroll-left")
+          && rail.classList.contains("can-scroll-right");
+      });
+
+      await setTabsScroll("end");
+      await headerPage.waitForFunction(() =>
+        !document.querySelector(".tabs-rail").classList.contains("can-scroll-right")
+      );
+      const cueAtEnd = await tabsCue();
+      assert.equal(
+        cueAtEnd.left,
+        true,
+        `Au bout de la course, le repère passe à gauche à ${width}px`
+      );
+      assert.ok(cueAtEnd.leftOpacity > 0.5);
+      assert.equal(
+        cueAtEnd.rightOpacity,
+        0,
+        `Plus rien à atteindre à droite : le repère doit disparaître à ${width}px`
+      );
+      await setTabsScroll("start");
+      await headerPage.waitForFunction(() =>
+        !document.querySelector(".tabs-rail").classList.contains("can-scroll-left")
+      );
+
       await headerPage.evaluate(() => window.scrollTo({ top:600 }));
       await headerPage.waitForFunction(() =>
         document.querySelector(".topbar").classList.contains("is-retracted")
@@ -786,6 +874,15 @@ async function assertPickerTilesContained(page, label){
         document.querySelector(".brand").getClientRects().length > 0
       ),
       true
+    );
+    /* Les onglets ne défilent qu'en mobile : aucun repère ne doit apparaître
+       en desktop, même si le contrôleur pose ses classes. */
+    assert.deepEqual(
+      await deskPage.evaluate(() => [".tabs-cue-left", ".tabs-cue-right"].map(selector =>
+        Number(getComputedStyle(document.querySelector(selector)).opacity)
+      )),
+      [0, 0],
+      "Aucun repère de défilement des onglets en desktop"
     );
     await deskHeader.close();
 

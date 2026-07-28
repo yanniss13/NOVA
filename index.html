@@ -85,8 +85,25 @@
   }
   .brand-sub{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
 
+  .tabs-rail{position:relative;display:flex;min-width:0}
   .tabs{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);
     border-radius:999px;padding:5px}
+  /* Repères de défilement : invisibles par défaut, révélés par les classes
+     `can-scroll-*` uniquement là où les onglets défilent (mobile). */
+  .tabs-cue{
+    position:absolute;top:1px;bottom:1px;width:46px;display:grid;align-items:center;
+    pointer-events:none;opacity:0;font-size:23px;font-weight:700;line-height:1;
+    color:var(--gold-bright);text-shadow:0 1px 4px rgba(0,0,0,.9);
+    transition:opacity .2s ease
+  }
+  .tabs-cue-left{
+    left:1px;border-radius:999px 0 0 999px;justify-items:start;padding-left:6px;
+    background:linear-gradient(90deg,var(--panel) 52%,rgba(27,25,34,0))
+  }
+  .tabs-cue-right{
+    right:1px;border-radius:0 999px 999px 0;justify-items:end;padding-right:6px;
+    background:linear-gradient(270deg,var(--panel) 52%,rgba(27,25,34,0))
+  }
   .tab{
     appearance:none;border:0;cursor:pointer;font-family:var(--ui);
     padding:9px 18px;border-radius:999px;background:transparent;color:var(--muted);
@@ -1235,8 +1252,12 @@
     .metabar .grow{margin-left:0;width:100%}
     .metabar .grow .btn{flex:1;justify-content:center}
     .roster-grid{grid-template-columns:1fr}
-    .tabs{order:3;width:100%;overflow-x:auto;scrollbar-width:none}
+    .tabs-rail{order:3;width:100%}
+    .tabs{width:100%;overflow-x:auto;scrollbar-width:none}
     .tabs::-webkit-scrollbar{height:0}
+    /* Le repère n'apparaît que du côté où il reste des onglets à atteindre. */
+    .tabs-rail.can-scroll-left .tabs-cue-left,
+    .tabs-rail.can-scroll-right .tabs-cue-right{opacity:1}
     .tab{padding:9px 13px;white-space:nowrap}
     .auth-actions{grid-template-columns:1fr}
     /* Barre de compte : pleine largeur, replis autorisés — ne doit jamais
@@ -1319,6 +1340,9 @@
       <span class="brand-sub">Team Builder · Boss de Guilde</span>
     </div>
   </div>
+  <!-- Le rail porte les repères de défilement : ils doivent rester immobiles
+       pendant que les onglets défilent, donc hors du conteneur défilant. -->
+  <div class="tabs-rail">
   <nav class="tabs" role="tablist">
     <button class="tab active" id="tab-builder" data-view="builder"
             role="tab" aria-controls="view-builder"
@@ -1342,6 +1366,9 @@
             role="tab" aria-controls="view-boss"
             aria-selected="false" tabindex="-1">Sessions de boss</button>
   </nav>
+    <span class="tabs-cue tabs-cue-left" aria-hidden="true">‹</span>
+    <span class="tabs-cue tabs-cue-right" aria-hidden="true">›</span>
+  </div>
   <div class="account">
     <button class="btn btn-ghost" id="accountLogin" type="button">Connexion</button>
     <div class="account-connected" id="accountConnected" hidden>
@@ -7564,6 +7591,43 @@
   window.addEventListener("keydown", function (event) {
     if (event.key === "Tab") setRetracted(false);
   });
+})();
+
+/* Repères de défilement de la barre d'onglets. Le CSS ne sait pas dire « il
+   reste du contenu de ce côté » : on pose donc les classes ici, et c'est le CSS
+   qui décide de les rendre visibles ou non (jamais en desktop, où les onglets
+   ne défilent pas). Même bloc que le header : le bac à sable `vm` des tests
+   unitaires ne fournit pas `addEventListener`. */
+(function () {
+  var rail = document.querySelector(".tabs-rail");
+  var tabs = rail && rail.querySelector(".tabs");
+  if (!rail || !tabs || !window.requestAnimationFrame) return;
+  var TOLERANCE = 2;
+  var queued = false;
+
+  function apply() {
+    queued = false;
+    var max = tabs.scrollWidth - tabs.clientWidth;
+    var left = tabs.scrollLeft;
+    rail.classList.toggle("can-scroll-left", left > TOLERANCE);
+    rail.classList.toggle("can-scroll-right", max - left > TOLERANCE);
+  }
+
+  function schedule() {
+    if (queued) return;
+    queued = true;
+    window.requestAnimationFrame(apply);
+  }
+
+  tabs.addEventListener("scroll", schedule, { passive: true });
+  window.addEventListener("resize", schedule, { passive: true });
+  /* Changer d'onglet peut déplacer le défilement (mise au point du navigateur
+     sur l'onglet cliqué), et le texte des onglets ne bouge pas mais leur
+     largeur dépend des polices : on recalcule aussi après chargement. */
+  tabs.addEventListener("click", schedule);
+  window.addEventListener("load", schedule);
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
+  apply();
 })();
 </script>
 </body>
