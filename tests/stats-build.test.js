@@ -685,6 +685,29 @@ function masterstoneConfig(enchantment){
     "deux éléments différents sur la même perle"
   );
 
+  /* Le jeu interdit deux fois la même stat sur une perle (confirmé par le
+     propriétaire). Deux emplacements encore vides ne comptent pas comme un
+     doublon. */
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, pearlConfig([
+      pearl(0, 5, "generic", "C_Critical_Rate", 700),
+      pearl(1, 5, "generic", "C_Critical_Rate", 800),
+      pearl(2, 5, "generic", "C_Critical_Dam_Rate", 1200),
+      pearl(3, 5, "generic", "C_Critical_DamRes_Rate", 1200)
+    ])),
+    "incompatible",
+    "deux fois la même stat sur une perle"
+  );
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, pearlConfig([
+      pearl(0, 4, null, "B_Atk_Equip", 500),
+      pearl(1, 4, null, "", null),
+      pearl(2, 4, null, "", null)
+    ])),
+    "incomplete",
+    "deux emplacements vides ne sont pas des doublons"
+  );
+
   /* Saisie en cours : incomplète, jamais incompatible — distinction introduite
      par le correctif de revue finale, à ne pas casser. */
   assert.strictEqual(

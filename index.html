@@ -2537,10 +2537,18 @@
       && (choice.element || null) === (first.element || null)
     );
   }
+  /* Le jeu interdit deux fois la même stat sur une perle. Les emplacements
+     encore vides ne comptent pas : sinon toute saisie en cours serait refusée. */
+  function pearlStatsAreDistinct(enchantments){
+    const stats = (enchantments || [])
+      .map(choice => choice && typeof choice === "object" ? choice.stat : null)
+      .filter(stat => typeof stat === "string" && stat !== "");
+    return new Set(stats).size === stats.length;
+  }
   function enchantmentsStatus(grade, enchantments){
     let status = "valid";
     if(grade && grade.enchantments && grade.enchantments.type === "masterstone"
-      && !pearlEntriesAgree(enchantments)){
+      && (!pearlEntriesAgree(enchantments) || !pearlStatsAreDistinct(enchantments))){
       return "incompatible";
     }
     enchantments.forEach((choice, index) => {
@@ -3496,7 +3504,13 @@
             text:"Emplacement "+(index + 1)+" sur "+slots
           }));
         }
-        const options = weaponEnchantOptions(grade, choice);
+        /* Une stat déjà posée sur un autre emplacement n'est pas proposée :
+           autant empêcher l'état interdit que le signaler après coup. */
+        const used = new Set(draft.enchantments
+          .filter((entry, position) => entry && position !== index && entry.stat)
+          .map(entry => entry.stat));
+        const options = weaponEnchantOptions(grade, choice)
+          .filter(option => !used.has(option.stat));
         const statSelect = el("select",{class:"weapon-config-enchantment-stat"});
         statSelect.appendChild(weaponConfigOption("","Choisir une statistique"));
         options.forEach(option => {

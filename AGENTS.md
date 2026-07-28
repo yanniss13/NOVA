@@ -180,7 +180,12 @@ Quatre règles du modèle :
   invalide, sinon les données déjà en base seraient condamnées ;
 - `incompatible` **prime** sur `incomplete` : une stat interdite ou une valeur
   hors bornes reste invalide même dans un tableau encore court. Le contenu est
-  donc validé avant la longueur.
+  donc validé avant la longueur ;
+- **la même stat ne peut pas occuper deux emplacements** d'une même perle — le
+  jeu l'interdit, information confirmée par le propriétaire. Les emplacements
+  encore vides ne comptent pas comme doublons, sinon toute saisie en cours serait
+  refusée. L'interface ne propose pas une stat déjà posée ailleurs, et la
+  validation la refuse quand même : empêcher l'état interdit **et** le détecter.
 
 Cette distinction ne vaut que pour la perle. Pour un enchantement `basic`, le
 nombre d'emplacements est fixé par les données : toute longueur différente est
