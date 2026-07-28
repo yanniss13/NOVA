@@ -103,8 +103,17 @@ install, aucun build. Le builder fonctionne hors ligne ; Supabase exige internet
 Pour les tests de développement uniquement :
 
 ```powershell
+pip install -r requirements-dev.txt
 npm test
 ```
+
+`requirements-dev.txt` n'apporte que `pglast`, le parseur de PostgreSQL utilisé
+par `tests/test_schema_sql.py` pour valider la **syntaxe** de `supabase/*.sql`,
+corps PL/pgSQL compris. Les autres tests SQL vérifient le contenu par expressions
+régulières et ne détectent aucune faute de frappe : sans ce garde, une virgule
+oubliée n'apparaissait qu'au moment de coller le fichier dans Supabase. Le test
+prouve ses propres dents — il vérifie qu'un corps volontairement cassé est bien
+refusé.
 
 Playwright et Chromium sont des outils de vérification ; l'application livrée
 reste autonome et ne dépend pas de npm.
