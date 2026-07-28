@@ -278,6 +278,12 @@ class GenerateStatsBuildTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "overlimit"):
             module.build_catalog(self.stats_root, self.weapons_root, self.metadata)
 
+    def test_present_empty_overlimit_is_rejected_instead_of_being_omitted(self):
+        self.fixture_grade()["overlimit"] = {}
+        self.write_official_weapons()
+        with self.assertRaisesRegex(ValueError, "overlimit"):
+            module.build_catalog(self.stats_root, self.weapons_root, self.metadata)
+
     def test_catalog_rendering_is_deterministic_and_excludes_descriptions(self):
         first = module.render_js(
             module.build_catalog(self.stats_root, self.weapons_root, self.metadata)

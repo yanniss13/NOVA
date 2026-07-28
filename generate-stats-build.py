@@ -107,9 +107,16 @@ def validate_grade(grade, weapon_slug):
     maxima = [step["reinforceMax"] for step in grade.get("promotionSteps") or []]
     if maxima != PROMOTION_MAXES[:len(maxima)]:
         raise ValueError(f"promotionSteps invalides pour {weapon_slug}/{grade['gameId']}")
-    overlimit = grade.get("overlimit")
-    if overlimit and [level["statRate"] for level in overlimit.get("levels") or []] != OVERLIMIT_RATES:
-        raise ValueError(f"overlimit invalide pour {weapon_slug}/{grade['gameId']}")
+    if "overlimit" in grade:
+        overlimit = grade["overlimit"]
+        levels = overlimit.get("levels") if isinstance(overlimit, dict) else None
+        rates = (
+            [level.get("statRate") for level in levels]
+            if isinstance(levels, list) and all(isinstance(level, dict) for level in levels)
+            else None
+        )
+        if rates != OVERLIMIT_RATES:
+            raise ValueError(f"overlimit invalide pour {weapon_slug}/{grade['gameId']}")
 
 
 def grade_stat_labels(grade):
@@ -159,7 +166,7 @@ def compact_grade(grade, weapon_slug):
         ),
         "enchantments": compact_enchantments(grade["enchantments"]),
     }
-    if grade.get("overlimit"):
+    if "overlimit" in grade:
         compact["overlimit"] = {
             "levels": [
                 {
