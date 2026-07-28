@@ -3062,13 +3062,29 @@
     return parts.join(" · ");
   }
 
+  /* Le titre dit ce que le total vaut vraiment. `uncovered` non vide signifie
+     qu'une part existante n'est pas calculee — les 567 niveaux de passif
+     d'arme — donc le total est une borne inferieure, pas un partiel qu'on
+     completerait plus tard. Ne jamais annoncer un total complet dans ce cas. */
+  function buildStatsTitle(subject, result){
+    const missing = Array.isArray(result.uncovered) ? result.uncovered : [];
+    if(missing.includes(subject.passiveKey)){
+      return "Apport " + subject.of + " hors passif — borne inférieure";
+    }
+    if(missing.length) return "Apport " + subject.of + " — borne inférieure";
+    return "Apport " + subject.of + " — calcul partiel";
+  }
+
   function weaponStatsSection(file, config){
     const section = el("section",{class:"weapon-stats"});
+    const result = calculateWeaponStats(file, config);
     section.appendChild(el("h3",{
       class:"weapon-stats-title",
-      text:"Apport de l’arme — calcul partiel"
+      text:buildStatsTitle(
+        { of:"de l’arme", passiveKey:"weapon:passive" },
+        result
+      )
     }));
-    const result = calculateWeaponStats(file, config);
     const weaponCovered = result.status === "valid"
       && Array.isArray(result.coverage)
       && result.coverage.length === 1

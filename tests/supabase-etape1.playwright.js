@@ -569,7 +569,7 @@ const { chromium } = require("playwright");
     assert.match(await page.locator("#rosterDetailBody").textContent(), /Merlin/);
     assert.match(
       await page.locator("#rosterDetailBody").textContent(),
-      /Apport de l’arme — calcul partiel/
+      /Apport de l’arme hors passif — borne inférieure/
     );
     assert.equal(
       await page.locator("#rosterDetailBody .weapon-config-open").count(),
@@ -757,7 +757,7 @@ const { chromium } = require("playwright");
     await ownTeam.getByText("Meliodas", { exact:true }).waitFor();
     await ownTeam.getByRole("button", { name:/Voir l'équipement/ }).click();
     const teamStats = page.locator("#teamDetail .weapon-stats").first();
-    assert.match(await teamStats.textContent(), /Apport de l’arme — calcul partiel/);
+    assert.match(await teamStats.textContent(), /Apport de l’arme hors passif — borne inférieure/);
     assert.match(await teamStats.textContent(), /Promotion/);
     assert.match(
       await teamStats.textContent(),

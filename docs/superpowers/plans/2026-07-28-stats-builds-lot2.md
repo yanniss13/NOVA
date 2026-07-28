@@ -870,6 +870,15 @@ Ajouter aussi l'accès au catalogue d'ensembles et l'agrégation du build :
     const terms = [];
     const statuses = {};
     const coverage = [];
+    /* Les manques connus de chaque source se cumulent : sans cette
+       collecte, le resultat global perdrait tous les avertissements et
+       presenterait une borne inferieure comme un total. */
+    const uncovered = [];
+    const noteUncovered = list => {
+      (list || []).forEach(entry => {
+        if(!uncovered.includes(entry)) uncovered.push(entry);
+      });
+    };
     const assumptions = {
       overlimitBase:OVERLIMIT_APPLICATION_MODE,
       armorLevelOrigin:ARMOR_LEVEL_ORIGIN_MODE
@@ -879,6 +888,7 @@ Ajouter aussi l'accès au catalogue d'ensembles et l'agrégation du build :
     if(weapon.status === "valid"){
       terms.push(...weapon.terms);
       coverage.push("weapon");
+      noteUncovered(weapon.uncovered);
     }
     const equipped = [];
     GEAR_SLOT_DOMAINS.forEach(([domain, slots]) => {
@@ -892,6 +902,7 @@ Ajouter aussi l'accès au catalogue d'ensembles et l'agrégation du build :
         statuses[domain + ":" + slotKey] = result.status;
         if(result.status !== "valid") return;
         terms.push(...result.terms);
+        noteUncovered(result.uncovered);
         covered = true;
       });
       if(covered) coverage.push(domain);
@@ -904,6 +915,7 @@ Ajouter aussi l'accès au catalogue d'ensembles et l'agrégation du build :
     return {
       version:1,
       coverage,
+      uncovered,
       assumptions,
       terms,
       totals:reconstructStatTotals(terms),
@@ -1138,8 +1150,10 @@ Contraintes non négociables :
 - les `<select>` portent `width:100%; min-width:0; max-width:100%; text-overflow:ellipsis`
   — Safari ne rétrécit pas un `<select>` sous sa plus longue option ;
 - chaque contrôle mesure au moins 44 px de haut en pointeur grossier ;
-- le titre affiche **« calcul partiel »** tant que `coverage` ne contient pas
-  toutes les sources.
+- le titre suit **`uncovered`**, pas `coverage` : vide → « calcul partiel » ;
+  contenant une entree de passif → **« Apport de l'equipement hors passif —
+  borne inferieure »** ; non vide autrement → « borne inferieure ». Le test
+  doit lire le TEXTE affiche, pas seulement le resultat du moteur.
 
 - [ ] **Step 4 : Vérifier**
 

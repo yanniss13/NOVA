@@ -118,6 +118,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   promotionValueAt:typeof promotionValueAt === "function"
     ? promotionValueAt
     : undefined,
+  buildStatsTitle:typeof buildStatsTitle === "function"
+    ? buildStatsTitle
+    : undefined,
   pearlSlotCount:typeof pearlSlotCount === "function"
     ? pearlSlotCount
     : undefined,

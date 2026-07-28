@@ -166,6 +166,10 @@ def gear_entry(piece, known):
         "subValues": gear_curve(growth.get("subStatValues")),
         "subAdd": gear_curve(growth.get("subEquiplvAdd")),
         "randomOptions": gear_random_options(growth, known),
+        # Booleen seulement : le passif d'equipement est de la prose, il n'a
+        # pas sa place dans un catalogue de calcul. Mais le moteur doit savoir
+        # qu'il existe pour le declarer non couvert.
+        "hasEquipPassive": bool(piece.get("equipPassive")),
         "extraStats": gear_extra_stats(growth, known),
     }
     return entry

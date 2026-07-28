@@ -87,6 +87,26 @@ gear.forEach(([file, entry]) => {
   }
 });
 
+/* `hasEquipPassive` est un booléen, jamais la prose du passif : le moteur doit
+   savoir qu'un talent unique existe pour le déclarer non couvert, sans embarquer
+   un texte qu'il ne sait pas calculer. Dix armures en portent un. */
+gear.forEach(([file, entry]) => {
+  assert.equal(
+    typeof entry.hasEquipPassive,
+    "boolean",
+    file + " : hasEquipPassive doit être un booléen"
+  );
+  assert.ok(
+    !("equipPassive" in entry),
+    file + " : la prose du passif ne doit pas entrer au catalogue"
+  );
+});
+assert.equal(
+  gear.filter(([, entry]) => entry.hasEquipPassive).length,
+  10,
+  "les dix armures portant un talent unique doivent être signalées"
+);
+
 const engraved = Object.entries(catalog.engravedByFile);
 assert.ok(engraved.length > 50, "les équipements gravés doivent être présents");
 engraved.forEach(([file, entry]) => {

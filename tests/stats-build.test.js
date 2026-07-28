@@ -618,6 +618,29 @@ function masterstoneConfig(enchantment){
   const invalide = hooks.calculateWeaponStats(HACHE_FILE, validConfig({ level:999 }));
   assert.notStrictEqual(invalide.status, "valid");
   assert.deepStrictEqual(plain(invalide.uncovered), []);
+
+  /* Le TEXTE affiché doit suivre `uncovered`, pas seulement le résultat du
+     moteur : sans ce contrôle, le titre restait « calcul partiel » alors que le
+     total est une borne inférieure. */
+  const sujet = { of:"de l’arme", passiveKey:"weapon:passive" };
+  assert.strictEqual(
+    hooks.buildStatsTitle(sujet, { uncovered:["weapon:passive"] }),
+    "Apport de l’arme hors passif — borne inférieure"
+  );
+  assert.strictEqual(
+    hooks.buildStatsTitle(sujet, { uncovered:["autre:chose"] }),
+    "Apport de l’arme — borne inférieure"
+  );
+  assert.strictEqual(
+    hooks.buildStatsTitle(sujet, { uncovered:[] }),
+    "Apport de l’arme — calcul partiel"
+  );
+  // Le titre réellement produit pour une arme valide annonce la borne.
+  assert.strictEqual(
+    hooks.buildStatsTitle(sujet, result),
+    "Apport de l’arme hors passif — borne inférieure",
+    "le titre doit annoncer une borne inférieure quand le passif manque"
+  );
 }
 
 /* Perle de sortilège : le nombre d'emplacements de stat dépend du palier.

@@ -161,7 +161,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     }
     await assertVisibleText(
       page.locator("#weaponConfigPreview .weapon-stats-title"),
-      "Apport de l’arme — calcul partiel"
+      "Apport de l’arme hors passif — borne inférieure"
     );
     const partialPreview = await page.locator("#weaponConfigPreview").textContent();
     assert.doesNotMatch(partialPreview.toLowerCase(), /stats du héros|total du héros/);
