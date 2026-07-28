@@ -18,7 +18,7 @@ const CACHE_PREFIX = "conf7ds-";
 const CACHE = CACHE_PREFIX + BUILD_VERSION;
 const CORE_ASSETS = [
   "./", "./index.html",
-  "./data.js", "./potentiels.js", "./armures-liees.js",
+  "./data.js", "./stats-build.js", "./potentiels.js", "./armures-liees.js",
   "./personnages-meta.js", "./supabase-config.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png", "./icons/icon-512.png"

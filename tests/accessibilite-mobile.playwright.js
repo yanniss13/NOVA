@@ -367,7 +367,7 @@ async function installRosterFocusFakeSupabase(page){
     );
     await rosterFocusContext.close();
 
-    for(const width of [320, 390]){
+    for(const width of [320, 360, 390]){
       const pickerContext = await browser.newContext({
         viewport:{width,height:844},
         isMobile:true,
@@ -647,6 +647,102 @@ async function installRosterFocusFakeSupabase(page){
         ) <= 1,
         "Le sélecteur d'armes déborde à "+width+"px"
       );
+      await pickerPage.locator("#pickerGrid")
+        .getByTitle("Hache de l'âme vorace").click();
+      await pickerPage.locator(".hero .weapon-config-open").first().click();
+      await pickerPage.locator("#weaponConfigOverlay").waitFor({state:"visible"});
+
+      const weaponConfigLayout = await pickerPage.evaluate(() => {
+        const modal = document.querySelector(
+          "#weaponConfigOverlay .weapon-config-modal"
+        );
+        const rect = modal.getBoundingClientRect();
+        const actionBoxes = [
+          "#weaponConfigClose",
+          "#weaponConfigCancel",
+          "#weaponConfigReset",
+          "#weaponConfigSave"
+        ].map(selector => {
+          const box = document.querySelector(selector).getBoundingClientRect();
+          return { selector, width:box.width, height:box.height };
+        });
+        const fieldBoxes = [...document.querySelectorAll(
+          "#weaponConfigBody .weapon-config-field"
+        )].map(field => {
+          const label = field.querySelector(":scope > span").getBoundingClientRect();
+          const control = field.querySelector("input,select").getBoundingClientRect();
+          return {
+            label:label.toJSON(),
+            control:control.toJSON()
+          };
+        });
+        const directChildren = parent => [...parent.children]
+          .filter(node => {
+            const box = node.getBoundingClientRect();
+            return box.width > 0 && box.height > 0;
+          })
+          .map(node => node.getBoundingClientRect().toJSON());
+        const sequences = [
+          directChildren(document.querySelector("#weaponConfigBody")),
+          directChildren(document.querySelector("#weaponConfigPreview")),
+          directChildren(document.querySelector(".weapon-config-actions"))
+        ];
+        return {
+          left:rect.left,
+          right:rect.right,
+          top:rect.top,
+          bottom:rect.bottom,
+          viewportWidth:document.documentElement.clientWidth,
+          viewportHeight:document.documentElement.clientHeight,
+          documentWidth:document.documentElement.scrollWidth,
+          actionBoxes,
+          fieldBoxes,
+          sequences
+        };
+      });
+      assert.ok(
+        weaponConfigLayout.left >= -1 &&
+        weaponConfigLayout.right <= weaponConfigLayout.viewportWidth + 1 &&
+        weaponConfigLayout.top >= -1 &&
+        weaponConfigLayout.bottom <= weaponConfigLayout.viewportHeight + 1,
+        "La configuration d’arme sort du viewport à "+width+"px : "+
+          JSON.stringify(weaponConfigLayout)
+      );
+      assert.equal(
+        weaponConfigLayout.documentWidth,
+        weaponConfigLayout.viewportWidth,
+        "La configuration d’arme élargit le document à "+width+"px"
+      );
+      weaponConfigLayout.actionBoxes.forEach(box => {
+        assert.ok(
+          box.width >= 44 && box.height >= 44,
+          box.selector+" doit mesurer au moins 44 × 44 px à "+width+"px"
+        );
+      });
+      weaponConfigLayout.fieldBoxes.forEach((box, index) => {
+        assert.ok(
+          box.label.bottom <= box.control.top + 1,
+          "Le libellé chevauche son champ "+index+" à "+width+"px"
+        );
+      });
+      weaponConfigLayout.sequences.forEach((boxes, sequenceIndex) => {
+        for(let index = 1; index < boxes.length; index += 1){
+          const previous = boxes[index - 1];
+          const current = boxes[index];
+          const overlaps =
+            previous.left < current.right - 1 &&
+            current.left < previous.right - 1 &&
+            previous.top < current.bottom - 1 &&
+            current.top < previous.bottom - 1;
+          assert.ok(
+            !overlaps,
+            "Des éléments de configuration se chevauchent à "+width+
+              "px (séquence "+sequenceIndex+", élément "+index+")"
+          );
+        }
+      });
+      await pickerPage.keyboard.press("Escape");
+      await pickerPage.locator("#weaponConfigOverlay").waitFor({state:"hidden"});
       await pickerContext.close();
     }
 

@@ -78,6 +78,12 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       équipe manquante, accès ciblé au groupe ou au rapport et urgence calculée
       en heure de Paris. État dérivé des tables existantes, sans migration
       Supabase. Cache hors ligne séparé par compte et semaine.
+- [x] **Stats de builds — lot 1, arme de bout en bout**. Grade, niveau,
+      promotion, outrepassement et enchantements sont configurables dans le
+      roster et le Team Builder. Le moteur local expose une décomposition
+      reconstructible et affiche uniquement « Apport de l’arme — calcul
+      partiel ». Les armures et les stats finales du héros restent hors
+      couverture.
 
 Après cette mise à jour, l'utilisateur doit rejouer le contenu complet de
 `supabase/schema.sql` dans le SQL Editor Supabase afin d'appliquer le schéma,
@@ -119,6 +125,8 @@ Site Confrérie 7ds/
 ├─ tests/                  # Régressions du builder + parcours Supabase simulé dans Chromium.
 ├─ tests/helpers/load-app.js # Charge le script inline d'index.html dans `vm` et expose ses fonctions pures.
 ├─ data.js                 # GÉNÉRÉ. window.SEVEN_DS_DATA = { personnages, armes, armures, bijoux }.
+├─ stats-build.js          # GÉNÉRÉ. Catalogue chiffré local des seules armes du lot 1.
+├─ generate-stats-build.py # Régénère/valide stats-build.js depuis les références locales.
 ├─ generate-data.ps1       # Régénère data.js en scannant les dossiers d'images.
 ├─ potentiels.js           # GÉNÉRÉ. 3 armes compatibles + bonus par héros.
 ├─ generate-potentiels.py  # Régénère potentiels.js depuis 7dsorigin.app (internet requis).
@@ -138,8 +146,9 @@ Site Confrérie 7ds/
 ## Stats de référence (`7ds-stats/`)
 
 Données chiffrées du jeu, extraites de 7dsorigin.app par `generate-stats.py`.
-**Aucun de ces fichiers n'est chargé par `index.html`** : ce sont des fichiers de
-référence pour concevoir, pas des données d'exécution. Ne les précache pas.
+**Aucun de ces JSON n'est chargé par `index.html`** : ce sont des fichiers de
+référence pour générer `stats-build.js`, pas des données d'exécution. Ne les
+précache pas.
 
 | Fichier | Contenu |
 | --- | --- |
@@ -150,6 +159,7 @@ référence pour concevoir, pas des données d'exécution. Ne les précache pas.
 | `enchantements.json` | 181 tables basiques, 81 tables de pierre maîtresse, 67 armures, 83 armures gravées |
 | `sets.json` | 21 ensembles avec bonus 2 et 4 pièces |
 | `libelles-stats.json` | 71 codes de stat → libellés FR/EN, `taux`, libellé court |
+| `stat-metadata.json` | Métadonnées explicites `{family, unit}` des codes émis |
 
 Quatre points à ne pas réapprendre à la dure :
 
@@ -170,6 +180,191 @@ Quatre points à ne pas réapprendre à la dure :
 
 Le palier 5 des pierres maîtresses se découpe par élément (`generic`, `default`
 puis les 7 éléments) : sa forme diffère des paliers 1 à 4.
+
+## Configuration chiffrée des armes — lot 1
+
+### Catalogue local et données persistées
+
+`generate-stats-build.py` rapproche les images locales des armes de référence et
+génère `stats-build.js`, qui pose `window.SEVEN_DS_BUILD_STATS`. La commande de
+référence est :
+
+```powershell
+python generate-stats-build.py
+```
+
+Le rapprochement tient compte du type d'arme, échoue sur une absence ou une
+ambiguïté et ne contient aucune liste d'assets écrite à la main. Le catalogue
+est chargé par une balise `<script>` classique et précaché comme ressource
+essentielle : le calcul fonctionne donc en `file://` et hors ligne. Les JSON
+`7ds-stats/*.json` ne sont jamais chargés par le navigateur ni par le service
+worker.
+
+Les paramètres, jamais les résultats calculés, vivent dans les JSONB existants :
+`teams.data.heroes[x].weaponConfig` et
+`roster_characters.builds[weaponType].weaponConfig`.
+
+```js
+weaponConfig: {
+  version: 1,
+  gradeGameId: "131065010",
+  level: 50,
+  promotion: 4,
+  overlimit: 6,
+  enchantments: [
+    {
+      slot: 0,
+      tier: 5,
+      element: "thunder",
+      stat: "I_AtkAdd_Rate",
+      value: 787
+    }
+  ]
+}
+```
+
+`enchantments` est positionnel. Une entrée `null` signifie explicitement
+« emplacement laissé vide » et permet à une saisie complète de rester valide.
+Un champ ancien absent est normalisé à `weaponConfig:null`, sans inventer de
+grade ou de niveau.
+
+`weaponConfigStatus(weaponFile, config)` possède exactement cinq états :
+
+- `missing` — arme connue, configuration absente ;
+- `incomplete` — structure reconnue, saisie non terminée ;
+- `valid` — tous les choix et toutes les bornes sont valides ;
+- `unavailable` — l'arme locale n'existe pas dans le catalogue ;
+- `incompatible` — configuration corrompue ou version inconnue.
+
+Seul `valid` produit des chiffres. Tous les autres états conservent l'équipement
+mais masquent le calcul : un ancien build dit « Configuration à compléter »,
+jamais `0`. Une source non couverte ne doit jamais être présentée comme un vrai
+zéro.
+
+### Formules d'arme et métadonnées
+
+Pour une courbe `{base, progression}`, chaque entrée de `progression` est un
+gain par niveau sur un segment de dix niveaux :
+
+```text
+valueAtLevel(curve, level) =
+  base + Σ progression[i] × clamp(level - 10×i, 0, 10)
+```
+
+La **promotion** utilise uniquement `promotionValues` :
+
+```text
+promotionValue(n) =
+  promotionValues.base + Σ promotionValues.progression[0..n-1]
+```
+
+Le contrôle et les termes doivent donc s'appeler « Promotion », jamais
+« Renforcement ». Les plafonds de niveau 10/20/30/40/50 sont dérivés
+exclusivement de `promotionSteps[].reinforceMax` : le palier zéro vaut dix
+niveaux de moins que le premier plafond, puis chaque étape ouvre son plafond.
+Les armes n'ont aucun `growthType:"reinforce"` et n'utilisent jamais la
+progression multiplicative `[10300,10700,11200,11800,12500]`, propre aux
+armures.
+
+Chaque code émis possède des métadonnées explicites
+`{fr, family, unit}`. Les familles sont `main`, `additional`, `damage`,
+`special` et `elemental`; les unités autorisées sont `flat` et
+`ten-thousandths`. Ne jamais déduire l'unité depuis le nom du code ni depuis le
+drapeau incomplet `taux` de `libelles-stats.json`.
+
+L'outrepassement est multiplicatif. Les taux connus sont
+`0/500/1000/1750/2500/3750/5000` en dix-millièmes, donc `500 = +5 %` et le
+facteur exact vaut `1 + statRate/10000`. Sa base d'application est présumée :
+`OVERLIMIT_APPLICATION_MODE` vaut actuellement
+`"native-before-enchantments"`. Une seule fonction traduit ce mode en seaux
+ciblés.
+
+Protocole de validation dans le vrai jeu : relever l'ATK d'une même arme
+enchantée aux outrepassements 0 puis 1. Si le gain de 5 % inclut les
+enchantements, remplacer uniquement le mode par
+`"native-and-enchantments"`. Le taux est exact ; seule la base porte la
+présomption et l'interface l'annonce par
+« Outrepassement ×1,05 — base présumée ».
+
+### Contrat du moteur et rendu
+
+`calculateWeaponStats()` ne renvoie jamais un nombre isolé. Sa sortie canonique
+contient :
+
+- `coverage` — domaines entièrement calculés ;
+- `terms` — contributions typées et leur provenance ;
+- `totals` — commodité reconstruite depuis les termes ;
+- `facts` — informations non numériques, par exemple le niveau de passif ;
+- `assumptions` — hypothèses actives nécessaires pour reproduire le résultat.
+
+Une arme valide déclare `coverage:["weapon"]`; tout autre état déclare `[]`.
+Quand un domaine est couvert, l'absence d'un terme pour une statistique est un
+vrai zéro de ce domaine. Quand il ne l'est pas, son apport n'est simplement pas
+encore calculé.
+
+Chaque terme porte un `stat` concret, une `unit`, une `confidence`, une
+provenance et :
+
+- `operation:"add"` avec un `bucket` pour une contribution additive ;
+- `operation:"multiply"` avec `unit:"ten-thousandths"` et `appliesTo` pour les
+  seaux ciblés.
+
+La reconstruction est pilotée par les seaux, sans ordre de domaines codé en
+dur : sommer les additifs par seau, appliquer chaque multiplicateur à la somme
+des seuls seaux de `appliesTo`, puis additionner les seaux et les contributions
+multiplicatives. Pour chaque statistique, `totals` doit être **strictement
+égal** au résultat reconstruit depuis `terms`; les totaux ne constituent jamais
+une seconde source de vérité.
+
+Tant que seule l'arme est couverte, tout rendu porte exactement le titre
+**« Apport de l'arme — calcul partiel »**. Il est interdit d'afficher
+« stats du héros » ou « total du héros ». Le panneau partagé permet la saisie
+dans le roster et le Team Builder; les autres rosters, détails d'équipe et
+archives de boss restent en lecture seule.
+
+### Inconnue réservée au futur lot armures
+
+Ne jamais créer de table pour `equiplv_N` : cet identifiant est redondant. Le
+nombre de segments d'une armure se dérive de l'objet :
+
+```text
+nombreDeSegments = max(1, len(tierBoundaries) - 1)
+```
+
+Quand il n'existe qu'une borne, l'intervalle va de `qualityMin` à `qualityMax`.
+La seule inconnue est l'origine du gain par niveau : borne inférieure du
+segment ou `qualityMin`. Le futur lot doit concentrer ce choix dans l'unique
+paramètre `ARMOR_SEGMENT_ORIGIN_MODE`, présumé et non exécuté au lot 1; les
+termes concernés porteront `confidence:"presumed"`.
+
+Protocole de validation : relever la même statistique d'une même armure à
+`qualityMin`, juste avant, au niveau et juste après la première borne interne,
+puis comparer les reconstructions `"segment-lower-bound"` et `"quality-min"`.
+Changer de résultat doit coûter une seule valeur de paramètre, pas une
+réécriture du moteur.
+
+### Compatibilité des anciennes PWA, activation et retour arrière
+
+Deux triggers idempotents dans `supabase/schema.sql`,
+`preserve_roster_weapon_configs` et `preserve_team_weapon_configs`, empêchent
+une ancienne PWA qui omet `weaponConfig` d'effacer une saisie récente lorsque
+l'arme et l'objet sont inchangés. Une clé explicitement mise à `null` reste une
+suppression volontaire; retirer un build/héros ou changer d'arme ne ressuscite
+ni ne transporte l'ancienne configuration. Aucune table, colonne ou politique
+RLS n'est ajoutée.
+
+Ordre de mise en service :
+
+1. rejouer le `supabase/schema.sql` complet pour installer les gardes ;
+2. fusionner/pousser le frontend seulement après autorisation ;
+3. attendre le workflow GitHub Pages vert ;
+4. appliquer la mise à jour PWA proposée ;
+5. vérifier que le `BUILD_VERSION` servi correspond au SHA publié.
+
+Retour arrière du frontend : revenir au commit antérieur, déployer ce revert,
+puis appliquer la mise à jour PWA, **en conservant les triggers SQL**. Les
+`weaponConfig` restent dans les JSONB et réapparaissent lors d'une réactivation;
+aucun rollback SQL destructif n'est nécessaire.
 
 ## Règle d'or sur les assets
 
@@ -232,6 +427,7 @@ cloud utilise `confrerie7ds.cloud.teams`.
     {
       char: "meliodas" | null,        // id de personnage
       weapon: "7ds-armes/.../x.webp" | null, // forcément compatible avec char
+      weaponConfig: { /* forme version 1 documentée plus haut */ } | null,
       armor: { "Haut": file|null, "Bas": file|null, "Bottes": file|null,
                "Ceinture": file|null, "Armure liee": file|null },
       jewel: { "Anneau": file|null, "Collier": file|null,
@@ -286,6 +482,7 @@ personnage et par membre. Le cache local partagé est
   builds: {
     "Hache": {
       weapon: "7ds-armes/Hache/x.webp" | null,
+      weaponConfig: { /* forme version 1 documentée plus haut */ } | null,
       armor: { "Haut": file|null, "Bas": file|null, "Bottes": file|null,
                "Ceinture": file|null, "Armure liee": file|null },
       jewel: { "Anneau": file|null, "Collier": file|null,
@@ -377,9 +574,11 @@ le SQL Editor afin d'ajouter les tables à la publication
 - Chaque équipe porte un **pseudo de membre** (seule métadonnée demandée).
 - **Potentiel** par héros : un palier commun T0–T10, indépendant de son arme.
   L'arme équipée choisit seulement les descriptions officielles affichées.
-  `renderBonus()` rend leur balisage couleur. Pas de calcul de stats.
-- **Pas de calcul de stats chiffrées** : aucune donnée de stats n'existe dans les
-  assets. Le « détail » d'un perso = arme + 5 armures + une note libre.
+  `renderBonus()` rend leur balisage couleur. Le potentiel ne participe pas
+  encore au calcul chiffré du lot 1.
+- **Calcul chiffré partiel de l'arme uniquement** : `stats-build.js` calcule
+  l'apport de l'arme configurée. Aucune statistique finale de héros, d'armure,
+  de set, de potentiel ou de maîtrise n'est encore annoncée comme couverte.
 - Arme choisie en 2 temps : type puis arme. Le picker filtre les groupes aux
   3 types autorisés par les clés de `window.SEVEN_DS_POTENTIELS[charId]`.
 - Export / Import JSON = sauvegarde de secours et format pivot indépendant de Supabase.

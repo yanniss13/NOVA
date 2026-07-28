@@ -138,6 +138,29 @@ async function openPage(browser, options){
   return { context, page, errors };
 }
 
+async function configureWeaponAndReadContribution(page){
+  const hero = page.locator(".hero").first();
+  await hero.locator(".portrait").click();
+  await page.locator("#pickerGrid").getByTitle("Meliodas").click();
+  await hero.locator(".gear-slot.weapon").click();
+  await page.locator("#pickerGrid")
+    .getByTitle("Hache de l'âme vorace").click();
+  await hero.locator(".weapon-config-open").click();
+  await page.locator("#weaponConfigOverlay").waitFor({ state:"visible" });
+  await page.locator(".weapon-config-level").fill("10");
+  await page.locator(".weapon-config-promotion").selectOption("0");
+  await page.locator(".weapon-config-overlimit").selectOption("0");
+  for(const select of await page.locator(
+    ".weapon-config-enchantment-choice"
+  ).all()){
+    await select.selectOption("none");
+  }
+  await page.locator("#weaponConfigPreview .weapon-stats-family").first()
+    .waitFor({ state:"visible" });
+  return (await page.locator("#weaponConfigPreview").innerText())
+    .replace(/\r\n/g, "\n");
+}
+
 (async () => {
   const browser = await chromium.launch({ headless: true });
   try{
@@ -273,7 +296,52 @@ async function openPage(browser, options){
     assert.deepStrictEqual(broken.errors, [], "aucune erreur de page attendue");
     await broken.context.close();
 
-    console.log("PASS Playwright: bandeau PWA, activation choisie, un seul rechargement");
+    // ---- Cas 8 : le calcul d'arme reste identique sans réseau ------------
+    const offlineContext = await browser.newContext({
+      viewport: { width:1280, height:900 }
+    });
+    const offlinePage = await offlineContext.newPage();
+    const offlineErrors = [];
+    const requestedUrls = [];
+    offlinePage.on("pageerror", error => offlineErrors.push(error.message));
+    offlinePage.on("request", request => requestedUrls.push(request.url()));
+    await offlinePage.route(
+      "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*",
+      route => route.abort("internetdisconnected")
+    );
+    await offlinePage.goto(PAGE_URL);
+    const onlineContribution = await configureWeaponAndReadContribution(
+      offlinePage
+    );
+
+    await offlineContext.setOffline(true);
+    await offlinePage.reload({ waitUntil:"load" });
+    const offlineContribution = await configureWeaponAndReadContribution(
+      offlinePage
+    );
+    assert.equal(
+      offlineContribution,
+      onlineContribution,
+      "le même paramétrage doit produire exactement la même contribution hors ligne"
+    );
+    assert.deepStrictEqual(
+      requestedUrls.filter(url =>
+        /7ds-stats\/.*\.json(?:[?#]|$)/i.test(url) ||
+        /\/api(?:[/?#]|$)/i.test(url)
+      ),
+      [],
+      "le builder ne doit charger ni JSON de référence ni API pour calculer"
+    );
+    assert.deepStrictEqual(
+      offlineErrors,
+      [],
+      "le builder hors ligne ne doit pas dépendre du client Supabase"
+    );
+    await offlineContext.close();
+
+    console.log(
+      "PASS Playwright: bandeau PWA, activation choisie, calcul d'arme hors ligne"
+    );
   }finally{
     await browser.close();
   }
