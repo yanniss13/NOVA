@@ -494,6 +494,69 @@ async function installRosterFocusFakeSupabase(page){
         document.body.classList.remove("pwa-update-on");
       });
 
+      /* Sur iOS Safari, un overlay `position:fixed` n'empêche pas la page
+         dessous de se déplacer au doigt : on pouvait faire glisser le site
+         latéralement derrière la modale. Le document doit donc être figé tant
+         qu'une modale est ouverte, et sa position restituée ensuite. */
+      await pickerPage.locator('.tab[data-view="builder"]').click();
+      await pickerPage.evaluate(() => window.scrollTo(0, 400));
+      /* La position réelle est lue juste avant l'ouverture : changer de vue
+         raccourcit le document, et le navigateur ramène le défilement à son
+         maximum — écrire 400 en dur rendrait le test faux, pas le code. */
+      const readingPosition = await pickerPage.evaluate(() => Math.round(window.scrollY));
+      assert.ok(
+        readingPosition > 0,
+        `La page doit être défilée pour tester le verrou à ${width}px`
+      );
+      await pickerPage.locator(".hero").first().locator(".portrait").click();
+      await pickerPage.locator("#overlay").waitFor({state:"visible"});
+      const locked = await pickerPage.evaluate(() => ({
+        classe:document.body.classList.contains("modal-locked"),
+        position:getComputedStyle(document.body).position,
+        top:document.body.style.top,
+        defilable:document.scrollingElement.scrollHeight
+          - document.scrollingElement.clientHeight
+      }));
+      assert.equal(
+        locked.classe,
+        true,
+        `Le corps doit être verrouillé modale ouverte à ${width}px`
+      );
+      assert.equal(
+        locked.position,
+        "fixed",
+        `Le corps doit être figé modale ouverte à ${width}px`
+      );
+      /* On ne compare pas à une valeur relevée avant l'ouverture : replier le
+         header raccourcit le document et déplace la position entre les deux
+         instants. C'est le verrou lui-même qui dit quelle position il a
+         mémorisée, et c'est elle qui doit être restituée. */
+      const lockedOffset = Math.round(-parseFloat(locked.top || "0"));
+      assert.ok(
+        lockedOffset > 0,
+        `Le décalage doit compenser une position de lecture non nulle à `
+        +`${width}px (top=${locked.top})`
+      );
+      assert.ok(
+        locked.defilable <= 1,
+        `Plus rien ne doit rester à faire défiler à ${width}px `
+        +`(${locked.defilable}px)`
+      );
+      await pickerPage.locator("#pickerClose").click();
+      await pickerPage.locator("#overlay").waitFor({state:"hidden"});
+      await pickerPage.waitForFunction(
+        expected => Math.round(window.scrollY) === expected,
+        lockedOffset
+      );
+      assert.equal(
+        await pickerPage.evaluate(() =>
+          document.body.classList.contains("modal-locked")
+        ),
+        false,
+        `Le verrou doit être levé à la fermeture à ${width}px`
+      );
+      await pickerPage.evaluate(() => window.scrollTo(0, 0));
+
       for(const modalCase of [
         {
           overlay:"#bossTeamOverlay",

@@ -1067,6 +1067,12 @@
   }
 
   /* ---------- Picker modal ---------- */
+  /* Document figé pendant qu'une modale est ouverte : il ne reste rien à faire
+     défiler, donc iOS Safari ne peut plus déplacer la page derrière l'overlay.
+     `top` est posé en JS avec la position courante, restituée à la fermeture. */
+  body.modal-locked{
+    position:fixed;left:0;right:0;width:100%;overflow:hidden
+  }
   .overlay{
     position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;
     background:rgba(6,5,9,.72);backdrop-filter:blur(4px);padding:18px
@@ -2039,6 +2045,30 @@
       if(target) target.focus();
     }
 
+    /* Verrouillage du document pendant qu'une modale est ouverte.
+       Sur iOS Safari, un overlay `position:fixed` n'empêche PAS la page dessous
+       de se déplacer au doigt : on pouvait faire glisser le site latéralement
+       derrière la modale. `overflow:hidden` seul n'y suffit pas non plus sur ce
+       navigateur. On fige donc le corps de page et on lui applique un décalage
+       négatif égal à la position courante, ce qui supprime tout contenu à faire
+       défiler — puis on restitue la position à la fermeture.
+       Le verrou est posé à la PREMIÈRE ouverture et levé à la DERNIÈRE
+       fermeture : le sélecteur d'équipement s'ouvre par-dessus d'autres
+       modales. */
+    let lockedScrollY = 0;
+    function lockDocument(){
+      if(stack.length !== 1) return;
+      lockedScrollY = window.scrollY || 0;
+      document.body.classList.add("modal-locked");
+      document.body.style.top = (-lockedScrollY) + "px";
+    }
+    function unlockDocument(){
+      if(stack.length) return;
+      document.body.classList.remove("modal-locked");
+      document.body.style.top = "";
+      window.scrollTo(0, lockedScrollY);
+    }
+
     function open(overlay, initialFocus, requestClose, restoreFocus){
       const existing = stack.find(record => record.overlay === overlay);
       if(existing) return;
@@ -2055,6 +2085,7 @@
       overlay.classList.add("on");
       overlay.setAttribute("aria-hidden", "false");
       stack.push({ overlay, trigger, requestClose });
+      lockDocument();
       setTimeout(() => {
         if(!stack.some(record => record.overlay === overlay)) return;
         const target = typeof initialFocus === "string"
@@ -2071,6 +2102,9 @@
       const [record] = stack.splice(index, 1);
       overlay.classList.remove("on");
       overlay.setAttribute("aria-hidden", "true");
+      /* Avant de rendre le focus : sinon focaliser un contrôle ferait défiler
+         un document encore figé, et la position restituée serait fausse. */
+      unlockDocument();
       pendingRestore = record.trigger;
       const restore = () => {
         const top = stack[stack.length - 1];
@@ -9283,6 +9317,11 @@
        aussi dans le header mais restent visibles replié : tester tout `.topbar`
        laissait le focus posé sur l'onglet cliqué bloquer le repli pour de bon,
        donc plus aucun repli après la moindre navigation. */
+    /* Modale ouverte : le corps de page est figé, `scrollY` vaut 0 sans que
+       l'utilisateur ait bougé. On ne touche pas non plus à `lastY` — le garder
+       à sa valeur d'avant le verrou fait que le header retrouve son état exact
+       quand la modale se ferme, au lieu de se déployer sans raison. */
+    if (document.body.classList.contains("modal-locked")) return;
     if (focusInsideHidden()) {
       lastY = y;
       return;

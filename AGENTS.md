@@ -916,6 +916,29 @@ Trois contraintes à respecter :
 `.tabs-rail` porte `order:3` et `width:100%` en mobile (c'est lui le
 flex-item de `.topbar`, plus `.tabs`).
 
+**Document figé pendant qu'une modale est ouverte.** Sur iOS Safari, un overlay
+`position:fixed` **n'empêche pas** la page dessous de se déplacer au doigt : on
+pouvait faire glisser le site latéralement derrière la modale, et
+`html{overflow-x:clip}` n'y suffit pas. `ModalStack` pose donc
+`body.modal-locked` (`position:fixed`, `left/right:0`, `overflow:hidden`) avec un
+`top` négatif égal à la position de lecture, puis restitue cette position à la
+fermeture. Il ne reste alors plus rien à faire défiler.
+
+Trois points à ne pas défaire :
+
+- le verrou est posé à la **première** ouverture et levé à la **dernière**
+  fermeture : le sélecteur d'équipement s'ouvre par-dessus d'autres modales ;
+- il est levé **avant** de rendre le focus, sinon focaliser un contrôle ferait
+  défiler un document encore figé et la position restituée serait fausse ;
+- le contrôleur du header rétractable **sort immédiatement** quand
+  `modal-locked` est présent, sans toucher à `lastY`. Sinon `scrollY` vaut 0
+  pendant le verrou et le header se déploierait sans que personne ait bougé.
+
+Pour tester ce comportement, ne pas comparer à une position relevée **avant**
+l'ouverture : replier le header raccourcit le document et déplace le défilement
+entre les deux instants. C'est le `top` du verrou qui dit quelle position a été
+mémorisée, et c'est celle-là qui doit être restituée.
+
 **Bouton « Importer mes données locales »** : action à usage unique, affichée
 seulement s'il reste réellement des données dans le `localStorage` de ce
 navigateur et que la migration n'a pas déjà eu lieu. Elle disparaît ensuite au
