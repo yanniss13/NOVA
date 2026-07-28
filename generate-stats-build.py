@@ -155,7 +155,99 @@ def gear_set_entry(raw, known):
         "twoStats": stats(raw.get("bonusTwoStats")),
         "fourCount": raw.get("bonusFourCount"),
         "fourStats": stats(raw.get("bonusFourStats")),
+        "sevenCount": raw.get("bonusSevenCount"),
+        "sevenStats": stats(raw.get("bonusSevenStats")),
     }
+
+
+def gear_stat_labels(piece):
+    """Libelles francais portes par une piece brute, avant compactage."""
+    growth = piece.get("growth") or {}
+    labels = {}
+    for key, code_key in (("mainStatLabel", "mainStat"), ("subStatLabel", "subStat")):
+        block = growth.get(key) or {}
+        code = piece.get(code_key)
+        if code and block.get("nameFr"):
+            labels.setdefault(code, block["nameFr"])
+    for item in ((growth.get("randomOptions") or {}).get("stats") or []):
+        if item.get("key") and item.get("nameFr"):
+            labels.setdefault(item["key"], item["nameFr"])
+    for extra in growth.get("extraStats") or []:
+        if extra.get("key") and extra.get("nameFr"):
+            labels.setdefault(extra["key"], extra["nameFr"])
+    return labels
+
+
+def gear_stat_codes(entry):
+    """Codes cites par une piece, options aleatoires comprises."""
+    codes = {entry["mainStat"]}
+    if entry.get("subStat"):
+        codes.add(entry["subStat"])
+    options = entry.get("randomOptions") or {}
+    codes.update(item["stat"] for item in options.get("stats") or [])
+    return codes
+
+
+def build_gear_catalogs(stats_root: Path, gear_roots, known):
+    """Rapproche les images locales des pieces officielles, par emplacement et
+    par nom. Une piece du catalogue sans image locale est ignoree : la regle
+    d'or veut que les assets presents pilotent l'interface. Une image sans
+    piece correspondante est une erreur — elle serait insaisissable.
+
+    Les libelles se collectent sur TOUTES les pieces officielles, pas
+    seulement celles qui ont une image : une piece sans image peut porter le
+    seul libelle francais d'un code que d'autres pieces citent aussi."""
+    if not gear_roots:
+        return {}, {}, {}
+    pieces = read_json(stats_root / "armures.json")
+    engraved_pieces = read_json(stats_root / "armures-gravees.json")
+    by_slot = {}
+    for piece in pieces:
+        by_slot.setdefault(
+            (piece["slot"], normalize_name(piece["nameFr"])), []
+        ).append(piece)
+    by_engraved = {}
+    for piece in engraved_pieces:
+        if not piece.get("nameFr"):
+            continue
+        by_engraved.setdefault(normalize_name(piece["nameFr"]), []).append(piece)
+
+    fallback = {}
+    for piece in pieces + engraved_pieces:
+        fallback.update(gear_stat_labels(piece))
+
+    gear_by_file = {}
+    engraved_by_file = {}
+    for root in gear_roots:
+        for image_path in sorted(Path(root).rglob("*.webp")):
+            relative = image_path.relative_to(root)
+            if len(relative.parts) < 2:
+                raise ValueError(f"Image hors emplacement : {image_path}")
+            folder = relative.parts[0]
+            catalog_file = image_path.as_posix()
+            if folder == ENGRAVED_FOLDER:
+                candidates = by_engraved.get(normalize_name(image_path.stem), [])
+                target = engraved_by_file
+            else:
+                slot = SLOT_FOLDERS.get(folder)
+                if not slot:
+                    raise ValueError(f"Emplacement local inconnu : {folder}")
+                candidates = by_slot.get(
+                    (slot, normalize_name(image_path.stem)), []
+                )
+                target = gear_by_file
+            if len(candidates) != 1:
+                if not candidates:
+                    raise ValueError(f"Aucune piece officielle pour {image_path.name}")
+                raise ValueError(f"Piece ambigue pour {image_path.name}")
+            if catalog_file in target:
+                raise ValueError(f"Cle d'image locale dupliquee : {catalog_file}")
+            entry = gear_entry(candidates[0], known)
+            if folder == ENGRAVED_FOLDER:
+                entry["character"] = candidates[0].get("personnage")
+                entry["slot"] = ENGRAVED_FOLDER
+            target[catalog_file] = entry
+    return gear_by_file, engraved_by_file, fallback
 
 
 def normalize_name(value):
@@ -331,10 +423,13 @@ def collect_stat_codes(weapon):
     return codes
 
 
-def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict) -> dict:
+def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict,
+                  gear_roots=()) -> dict:
     validate_metadata(metadata)
     official_weapons = read_json(stats_root / "armes.json")
     labels = read_json(stats_root / "libelles-stats.json")
+    supplement_path = stats_root / "stat-labels-supplement.json"
+    supplement = read_json(supplement_path) if supplement_path.exists() else {}
     official_by_key = {}
     for weapon in official_weapons:
         key = (weapon["weaponType"], normalize_name(weapon["nameFr"]))
@@ -377,10 +472,41 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict) -> dict:
             fallback_labels.update(grade_stat_labels(grade))
         weapons_by_file[catalog_file] = compact_weapon
 
+    known = set(metadata)
+    gear_by_file, engraved_by_file, gear_labels = build_gear_catalogs(
+        stats_root, gear_roots, known
+    )
+    fallback_labels.update(gear_labels)
+    all_gear = list(gear_by_file.values()) + list(engraved_by_file.values())
+    gear_sets = {}
+    referenced = {
+        entry["setId"] for entry in all_gear if entry.get("setId")
+    }
+    if referenced:
+        for raw in read_json(stats_root / "sets.json"):
+            if raw.get("gameId") in referenced:
+                gear_sets[raw["gameId"]] = gear_set_entry(raw, known)
+        missing = sorted(referenced - set(gear_sets))
+        if missing:
+            raise ValueError(f"Ensembles introuvables : {chr(44).join(missing)}")
+
     codes = sorted(
-        code
-        for weapon in weapons_by_file.values()
-        for code in collect_stat_codes(weapon)
+        {
+            code
+            for weapon in weapons_by_file.values()
+            for code in collect_stat_codes(weapon)
+        }
+        | {code for entry in all_gear for code in gear_stat_codes(entry)}
+        | {
+            item["stat"]
+            for entry in gear_sets.values()
+            for group in (
+                entry["twoStats"] or [],
+                entry["fourStats"] or [],
+                entry["sevenStats"] or [],
+            )
+            for item in group
+        }
     )
     stat_labels = {}
     for code in codes:
@@ -391,6 +517,11 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict) -> dict:
             french_label = labels[code]["fr"]
         elif code in fallback_labels:
             french_label = fallback_labels[code]
+        elif code in supplement:
+            french_label = supplement[code]
+        elif code in labels and labels[code].get("court"):
+            # Certains codes n'ont qu'un libelle court d'interface.
+            french_label = labels[code]["court"]
         else:
             raise ValueError(f"Libellé français manquant pour {code}")
         stat_labels[code] = {
@@ -402,6 +533,9 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict) -> dict:
     return {
         "version": 1,
         "weaponsByFile": dict(sorted(weapons_by_file.items())),
+        "gearByFile": dict(sorted(gear_by_file.items())),
+        "engravedByFile": dict(sorted(engraved_by_file.items())),
+        "gearSets": dict(sorted(gear_sets.items())),
         "statLabels": dict(sorted(stat_labels.items())),
     }
 
@@ -415,6 +549,7 @@ def main():
         root / "7ds-stats",
         root / "7ds-armes",
         read_json(root / "7ds-stats" / "stat-metadata.json"),
+        (root / "7ds-armures-ssr", root / "7ds-bijoux"),
     )
     rendered = render_js(catalog)
     target = root / "stats-build.js"
