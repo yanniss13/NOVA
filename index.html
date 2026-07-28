@@ -3079,6 +3079,35 @@
     return !!state && JSON.stringify(state.draft) !== state.initialDraftJson;
   }
 
+  function weaponConfigParentIsDirty(state){
+    return !!(
+      state &&
+      state.context &&
+      typeof state.context.parentIsDirty === "function" &&
+      state.context.parentIsDirty()
+    );
+  }
+
+  function weaponConfigSourceWasDeleted(state){
+    return !!(
+      state &&
+      state.context &&
+      typeof state.context.sourceWasDeleted === "function" &&
+      state.context.sourceWasDeleted()
+    );
+  }
+
+  async function reloadDeletedWeaponConfigSource(state){
+    if(!state || weaponConfigEditorState !== state) return;
+    state.overwriteConfirmed = false;
+    const reloaded = typeof state.context.reload === "function"
+      ? await state.context.reload()
+      : true;
+    if(reloaded !== false && weaponConfigEditorState === state){
+      closeWeaponConfigEditor();
+    }
+  }
+
   function weaponConfigConflictNode(state){
     const reload = el("button",{
       class:"btn",
@@ -3086,7 +3115,8 @@
       type:"button",
       text:"Recharger la version récente",
       onclick:async()=>{
-        if(weaponConfigDraftIsDirty(state) && !confirm(
+        if((weaponConfigDraftIsDirty(state) || weaponConfigParentIsDirty(state))
+          && !confirm(
           "Recharger la version récente et abandonner tes modifications ?"
         )){
           reload.focus();
@@ -3476,6 +3506,10 @@
       }
       return;
     }
+    if(weaponConfigSourceWasDeleted(state)){
+      void reloadDeletedWeaponConfigSource(state);
+      return;
+    }
     if(weaponConfigHasConflict(state)){
       showWeaponConfigConflict(state);
       return;
@@ -3840,6 +3874,8 @@
   let draft = emptyDraft();
   let editing = false;
   let teamDraftSourceUpdatedAt = 0;
+  let teamDraftInitialJson = JSON.stringify(draft);
+  let teamDraftDeletedRemotely = false;
 
   /* ============================ Toast ============================ */
   let toastTimer;
@@ -4346,6 +4382,7 @@
   let memberRosterEditable = false;
   let memberRosterDraft = null;
   let memberRosterDraftSourceUpdatedAt = 0;
+  let memberRosterDraftInitialJson = "";
   let memberRosterWeaponType = "";
   const memberRosterFilters = {
     query:"",
@@ -4937,6 +4974,16 @@
       weaponFile:build.weapon,
       config:build.weaponConfig,
       sourceUpdatedAt:memberRosterDraftSourceUpdatedAt,
+      parentIsDirty(){
+        return !!memberRosterDraft
+          && JSON.stringify(memberRosterDraft) !== memberRosterDraftInitialJson;
+      },
+      sourceWasDeleted(){
+        if(!currentUser || !memberRosterDraft
+          || memberRosterDraftSourceUpdatedAt <= 0) return false;
+        return !MemberRosterStore.all(currentUser.id)
+          .some(row => row.charId === memberRosterDraft.charId);
+      },
       defaultGradeGameId:weaponDefaultGradeGameId(build.weapon),
       commit(nextConfig){
         currentMemberRosterBuild().weaponConfig = nextConfig;
@@ -5064,6 +5111,7 @@
     if(!normalized) return;
     memberRosterDraft = JSON.parse(JSON.stringify(normalized));
     memberRosterDraftSourceUpdatedAt = normalized.updatedAt;
+    memberRosterDraftInitialJson = JSON.stringify(memberRosterDraft);
     memberRosterWeaponType = favoriteRosterWeaponType(normalized)
       || weaponTypesOf(normalized.charId)[0]
       || "";
@@ -5080,6 +5128,14 @@
     ModalStack.close($("#memberRosterOverlay"));
     memberRosterDraft = null;
     memberRosterDraftSourceUpdatedAt = 0;
+    memberRosterDraftInitialJson = "";
+  }
+
+  function closeDeletedMemberRosterDraft(){
+    closeWeaponConfigEditor();
+    closeMemberRosterEditor();
+    void renderMemberRoster();
+    toast("Ce personnage a été supprimé du roster.", true);
   }
 
   async function reloadCurrentRosterDraft(){
@@ -5089,15 +5145,14 @@
       const rows = await MemberRosterStore.refresh(currentUser.id);
       const latest = rows.find(row => row.charId === charId);
       if(!latest){
-        closeWeaponConfigEditor();
-        closeMemberRosterEditor();
-        toast("Ce personnage a été supprimé du roster.", true);
+        closeDeletedMemberRosterDraft();
         return true;
       }
       memberRosterDraft = JSON.parse(JSON.stringify(
         normalizeRosterCharacter(latest)
       ));
       memberRosterDraftSourceUpdatedAt = memberRosterDraft.updatedAt;
+      memberRosterDraftInitialJson = JSON.stringify(memberRosterDraft);
       renderMemberRosterEditor();
       return true;
     }catch(error){
@@ -5113,6 +5168,10 @@
     try{
       const latest = currentUser && MemberRosterStore.all(currentUser.id)
         .find(row => row.charId === memberRosterDraft.charId);
+      if(memberRosterDraftSourceUpdatedAt > 0 && !latest){
+        closeDeletedMemberRosterDraft();
+        return;
+      }
       const latestUpdatedAt = Number(latest && latest.updatedAt) || 0;
       if(latestUpdatedAt > memberRosterDraftSourceUpdatedAt && !confirm(
         "Une version plus récente existe. Enregistrer quand même ?"
@@ -5274,6 +5333,13 @@
       weaponFile:hero.weapon,
       config:hero.weaponConfig,
       sourceUpdatedAt:teamDraftSourceUpdatedAt,
+      parentIsDirty(){
+        return JSON.stringify(draft) !== teamDraftInitialJson;
+      },
+      sourceWasDeleted(){
+        if(teamDraftSourceUpdatedAt <= 0) return false;
+        return !Store.all().some(row => row.id === draft.id);
+      },
       defaultGradeGameId:weaponDefaultGradeGameId(hero.weapon),
       commit(nextConfig){
         hero.weaponConfig = nextConfig;
@@ -5290,9 +5356,15 @@
       },
       reload(){
         const latest = Store.all().find(row => row.id === draft.id);
-        if(!latest) return;
+        if(!latest){
+          if(teamDraftSourceUpdatedAt > 0){
+            closeDeletedTeamDraft();
+          }
+          return true;
+        }
         draft = normalizeTeam(JSON.parse(JSON.stringify(latest)));
         teamDraftSourceUpdatedAt = draft.updatedAt;
+        teamDraftInitialJson = JSON.stringify(draft);
         renderBuilder();
       }
     });
@@ -5587,7 +5659,16 @@
     draft = emptyDraft();
     editing = false;
     teamDraftSourceUpdatedAt = 0;
+    teamDraftInitialJson = JSON.stringify(draft);
+    teamDraftDeletedRemotely = false;
     renderBuilder();
+  }
+
+  function closeDeletedTeamDraft(){
+    closeWeaponConfigEditor();
+    resetTeamDraft();
+    teamDraftDeletedRemotely = true;
+    toast("Cette équipe a été supprimée dans un autre onglet.", true);
   }
 
   $("#btnNew").addEventListener("click", ()=>{
@@ -5598,6 +5679,10 @@
   $("#btnSave").addEventListener("click", async()=>{
     if(!currentUser || !sb){
       openAuth("Connecte-toi pour enregistrer cette équipe.", true);
+      return;
+    }
+    if(teamDraftDeletedRemotely){
+      toast("Cette équipe a été supprimée dans un autre onglet.", true);
       return;
     }
     const pseudo = (currentPseudo||draft.pseudo||"").trim();
@@ -5614,6 +5699,10 @@
     saveButton.disabled = true;
     try{
       const latest = Store.all().find(row => row.id === team.id);
+      if(teamDraftSourceUpdatedAt > 0 && !latest){
+        closeDeletedTeamDraft();
+        return;
+      }
       const latestUpdatedAt = Number(latest && latest.updatedAt) || 0;
       if(teamDraftSourceUpdatedAt > 0
         && latestUpdatedAt > teamDraftSourceUpdatedAt
@@ -5912,6 +6001,8 @@
     }
     draft = normalizeTeam(JSON.parse(JSON.stringify(t)));
     teamDraftSourceUpdatedAt = Number(draft.updatedAt) || 0;
+    teamDraftInitialJson = JSON.stringify(draft);
+    teamDraftDeletedRemotely = false;
     editing = true;
     renderBuilder();
     showView("builder");
@@ -5934,6 +6025,8 @@
     delete copy.updatedAt;
     draft = copy;
     teamDraftSourceUpdatedAt = 0;
+    teamDraftInitialJson = JSON.stringify(draft);
+    teamDraftDeletedRemotely = false;
     editing = false;
     renderBuilder();
     showView("builder");

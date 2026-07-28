@@ -1019,6 +1019,61 @@ const { chromium } = require("playwright");
     assert.equal(await rosterEditorNote.inputValue(), "Saisie conservée");
     await page.locator("#memberRosterClose").click();
 
+    /* Un panneau d'arme propre ne rend pas le parent propre : une note roster
+       modifiée doit elle aussi déclencher la confirmation avant rechargement. */
+    await page.locator("#memberRosterGrid .member-roster-edit").click();
+    const dirtyRosterParentNote = page.locator(
+      "#memberRosterEditor textarea"
+    );
+    await dirtyRosterParentNote.fill("Brouillon parent roster");
+    await page.locator("#memberRosterEditor .weapon-config-open").click();
+    await page.evaluate(() => {
+      const row = window.__fakeSupabaseState.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      row.builds.Hache.note = "Version distante roster";
+      row.updated_at = new Date(Date.parse(row.updated_at) + 60_000).toISOString();
+      window.__fakeSupabaseEmit("roster_characters", "UPDATE");
+    });
+    await page.waitForTimeout(300);
+    await page.locator("#weaponConfigSave").click();
+    const dirtyRosterConflict = page.locator(".weapon-config-conflict");
+    await dirtyRosterConflict.waitFor({ timeout:3000 });
+    let dirtyRosterConfirmSeen = false;
+    const dismissDirtyRosterReload = async dialog => {
+      dirtyRosterConfirmSeen = true;
+      await dialog.dismiss();
+    };
+    page.on("dialog", dismissDirtyRosterReload);
+    await dirtyRosterConflict.getByRole("button", {
+      name:"Recharger la version récente",
+      exact:true
+    }).click();
+    page.off("dialog", dismissDirtyRosterReload);
+    assert.equal(
+      dirtyRosterConfirmSeen,
+      true,
+      "La saleté du parent roster doit être incluse dans la confirmation"
+    );
+    assert.equal(await page.locator("#weaponConfigOverlay").isVisible(), true);
+    assert.equal(
+      await dirtyRosterParentNote.inputValue(),
+      "Brouillon parent roster",
+      "Refuser doit conserver le brouillon parent roster"
+    );
+    page.once("dialog", dialog => dialog.accept());
+    await dirtyRosterConflict.getByRole("button", {
+      name:"Recharger la version récente",
+      exact:true
+    }).click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"hidden" });
+    assert.equal(
+      await page.locator("#memberRosterEditor textarea").inputValue(),
+      "Version distante roster",
+      "Accepter doit recharger le parent roster autoritatif"
+    );
+    await page.locator("#memberRosterClose").click();
+
     /* ---- Conflits Realtime de configuration d'arme ----
        La ligne distante peut avancer pendant que deux niveaux de brouillon
        restent ouverts : le panneau arme, puis son parent roster/équipe. */
@@ -1185,6 +1240,81 @@ const { chromium } = require("playwright");
     });
     await page.locator("#memberRosterGrid .member-roster-edit").waitFor();
 
+    /* Si Realtime retire aussi la ligne du cache, le fallback de timestamp ne
+       doit pas masquer la suppression. Même un écrasement explicite suivi
+       d'une sauvegarde parent ne peut ressusciter le personnage. */
+    await page.locator("#memberRosterGrid .member-roster-edit").click();
+    await page.locator("#memberRosterEditor .weapon-config-open").click();
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const row = state.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      row.updated_at = new Date(Date.parse(row.updated_at) + 60_000).toISOString();
+      window.__fakeRosterDeletedBackup = JSON.parse(JSON.stringify(row));
+      window.__fakeSupabaseEmit("roster_characters", "UPDATE");
+    });
+    await page.waitForTimeout(300);
+    await page.locator("#weaponConfigSave").click();
+    const deletedRosterConflict = page.locator(".weapon-config-conflict");
+    await deletedRosterConflict.waitFor({ timeout:3000 });
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.roster_characters =
+        window.__fakeSupabaseState.roster_characters.filter(item =>
+          item.owner !== "user-1" || item.char_id !== "meliodas"
+        );
+      window.__fakeSupabaseEmit("roster_characters", "DELETE");
+    });
+    await page.waitForTimeout(300);
+    const rosterUpsertsBeforeDeleteAttempt = await page.evaluate(() =>
+      window.__fakeSupabaseState.calls.filter(call =>
+        call.table === "roster_characters" && call.operation === "upsert"
+      ).length
+    );
+    await deletedRosterConflict.getByRole("button", {
+      name:"Enregistrer quand même",
+      exact:true
+    }).click();
+    await page.waitForTimeout(100);
+    await page.evaluate(() => {
+      const staleSave = document.querySelector("#memberRosterSave");
+      if(staleSave) staleSave.click();
+    });
+    await page.waitForTimeout(100);
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.calls.filter(call =>
+          call.table === "roster_characters" && call.operation === "upsert"
+        ).length
+      ),
+      rosterUpsertsBeforeDeleteAttempt,
+      "Une suppression distante roster ne doit jamais être ressuscitée"
+    );
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.roster_characters.some(item =>
+          item.owner === "user-1" && item.char_id === "meliodas"
+        )
+      ),
+      false
+    );
+    assert.equal(
+      await page.locator("#weaponConfigOverlay").getAttribute("aria-hidden"),
+      "true"
+    );
+    assert.equal(
+      await page.locator("#memberRosterOverlay").getAttribute("aria-hidden"),
+      "true"
+    );
+    assert.match(await page.locator("#toast").textContent(), /supprimé du roster/);
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.roster_characters.push(
+        window.__fakeRosterDeletedBackup
+      );
+      window.__fakeSupabaseEmit("roster_characters", "INSERT");
+    });
+    await page.locator("#memberRosterGrid .member-roster-edit").waitFor();
+
     /* Même contrat dans le Team Builder, avec la garde parent juste avant
        Store.upsert. Une équipe temporaire isole ce scénario du reste. */
     await page.evaluate(() => {
@@ -1228,6 +1358,52 @@ const { chromium } = require("playwright");
     const conflictTeamCard = page.locator("#rosterGrid .team")
       .filter({ hasText:"Conflit Team" });
     await conflictTeamCard.locator('[data-team-action="edit"]').click();
+    const dirtyTeamParentName = page.locator("#teamName");
+    await dirtyTeamParentName.fill("Brouillon parent équipe");
+    await page.locator(
+      "#heroGrid .hero"
+    ).first().locator(".weapon-config-open").click();
+    await page.evaluate(() => {
+      const row = window.__fakeSupabaseState.teams.find(item =>
+        item.id === "team-weapon-conflict"
+      );
+      row.data.name = "Version distante équipe";
+      row.updated_at = new Date(Date.parse(row.updated_at) + 60_000).toISOString();
+      window.__fakeSupabaseEmit("teams", "UPDATE");
+    });
+    await page.waitForTimeout(300);
+    await page.locator("#weaponConfigSave").click();
+    const dirtyTeamConflict = page.locator(".weapon-config-conflict");
+    await dirtyTeamConflict.waitFor({ timeout:3000 });
+    let dirtyTeamConfirmSeen = false;
+    const dismissDirtyTeamReload = async dialog => {
+      dirtyTeamConfirmSeen = true;
+      await dialog.dismiss();
+    };
+    page.on("dialog", dismissDirtyTeamReload);
+    await dirtyTeamConflict.getByRole("button", {
+      name:"Recharger la version récente",
+      exact:true
+    }).click();
+    page.off("dialog", dismissDirtyTeamReload);
+    assert.equal(
+      dirtyTeamConfirmSeen,
+      true,
+      "La saleté du parent équipe doit être incluse dans la confirmation"
+    );
+    assert.equal(await page.locator("#weaponConfigOverlay").isVisible(), true);
+    assert.equal(await dirtyTeamParentName.inputValue(), "Brouillon parent équipe");
+    page.once("dialog", dialog => dialog.accept());
+    await dirtyTeamConflict.getByRole("button", {
+      name:"Recharger la version récente",
+      exact:true
+    }).click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"hidden" });
+    assert.equal(
+      await page.locator("#teamName").inputValue(),
+      "Version distante équipe"
+    );
+
     const teamConflictOpen = page.locator(
       "#heroGrid .hero"
     ).first().locator(".weapon-config-open");
@@ -1283,6 +1459,67 @@ const { chromium } = require("playwright");
       }),
       6
     );
+
+    await page.locator("#rosterGrid .team")
+      .filter({ hasText:"Version distante équipe" })
+      .locator('[data-team-action="edit"]').click();
+    await page.locator("#heroGrid .hero").first()
+      .locator(".weapon-config-open").click();
+    await page.evaluate(() => {
+      const row = window.__fakeSupabaseState.teams.find(item =>
+        item.id === "team-weapon-conflict"
+      );
+      row.updated_at = new Date(Date.parse(row.updated_at) + 60_000).toISOString();
+      window.__fakeDeletedTeamBackup = JSON.parse(JSON.stringify(row));
+      window.__fakeSupabaseEmit("teams", "UPDATE");
+    });
+    await page.waitForTimeout(300);
+    await page.locator("#weaponConfigSave").click();
+    const deletedTeamConflict = page.locator(".weapon-config-conflict");
+    await deletedTeamConflict.waitFor({ timeout:3000 });
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.teams =
+        window.__fakeSupabaseState.teams.filter(item =>
+          item.id !== "team-weapon-conflict"
+        );
+      window.__fakeSupabaseEmit("teams", "DELETE");
+    });
+    await page.waitForTimeout(300);
+    const teamUpsertsBeforeDeleteAttempt = await page.evaluate(() =>
+      window.__fakeSupabaseState.calls.filter(call =>
+        call.table === "teams" && call.operation === "upsert"
+      ).length
+    );
+    await deletedTeamConflict.getByRole("button", {
+      name:"Enregistrer quand même",
+      exact:true
+    }).click();
+    await page.waitForTimeout(100);
+    await page.evaluate(() => document.querySelector("#btnSave").click());
+    await page.waitForTimeout(100);
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.calls.filter(call =>
+          call.table === "teams" && call.operation === "upsert"
+        ).length
+      ),
+      teamUpsertsBeforeDeleteAttempt,
+      "Une suppression distante équipe ne doit jamais être ressuscitée"
+    );
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.teams.some(item =>
+          item.id === "team-weapon-conflict"
+        )
+      ),
+      false
+    );
+    assert.equal(
+      await page.locator("#weaponConfigOverlay").getAttribute("aria-hidden"),
+      "true"
+    );
+    assert.equal(await page.locator("#editFlag").isVisible(), false);
+    assert.match(await page.locator("#toast").textContent(), /équipe.*supprimée/i);
     await page.evaluate(() => {
       window.__fakeSupabaseState.teams =
         window.__fakeSupabaseState.teams.filter(item =>
