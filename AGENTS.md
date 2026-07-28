@@ -143,6 +143,49 @@ Site Confrérie 7ds/
 └─ 7ds-bijoux/<Slot>/      # Anneau, Collier, Boucle d'oreille — *.webp (vides pour l'instant)
 ```
 
+## Perle de sortilège (enchantement d'arme haut de gamme)
+
+Ce que les données de 7dsorigin appellent `type:"masterstone"` — et que leur site
+traduit par « Pierre maîtresse » — s'appelle en jeu **« Perle de sortilège »**.
+Leur propre champ `pearlEnchant` confirme « perle ». Utiliser le nom du jeu dans
+l'interface.
+
+Chaque palier a un nom de rareté et **ouvre un nombre d'emplacements de stat
+différent** :
+
+| Palier | Nom | Emplacements |
+| --- | --- | --- |
+| 1 | Commune | 1 |
+| 2 | Remarquable | 2 |
+| 3 | Rare | 2 |
+| 4 | Héroïque | 3 |
+| 5 | Légendaire | 4 |
+
+⚠️ **Cette table ne vient pas des données.** Les `tiers[].options` de 7dsorigin ne
+listent que les stats possibles, jamais le nombre d'emplacements. Elle vient du
+propriétaire, qui joue au jeu. Ne la « corrige » pas d'après `stats-build.js` : la
+source de vérité est `PEARL_TIERS` dans `index.html`.
+
+Quatre règles du modèle :
+
+- le **palier et l'élément appartiennent à la perle entière**, pas à chaque
+  emplacement. Toutes les entrées renseignées doivent partager les deux, sinon la
+  configuration est `incompatible` — sans cette contrainte, deux perles de paliers
+  différents sur la même arme passeraient pour valides ;
+- changer de palier **reconstruit** le tableau `enchantments` à la longueur du
+  nouveau palier ;
+- un tableau **plus long** que le palier est `incompatible`. **Plus court**, c'est
+  `incomplete` : soit une saisie en cours, soit une configuration enregistrée
+  avant que les paliers ouvrent plusieurs emplacements. Ne jamais la déclarer
+  invalide, sinon les données déjà en base seraient condamnées ;
+- `incompatible` **prime** sur `incomplete` : une stat interdite ou une valeur
+  hors bornes reste invalide même dans un tableau encore court. Le contenu est
+  donc validé avant la longueur.
+
+Cette distinction ne vaut que pour la perle. Pour un enchantement `basic`, le
+nombre d'emplacements est fixé par les données : toute longueur différente est
+`incompatible`.
+
 ## Stats de référence (`7ds-stats/`)
 
 Données chiffrées du jeu, extraites de 7dsorigin.app par `generate-stats.py`.

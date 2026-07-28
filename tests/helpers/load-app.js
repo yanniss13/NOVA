@@ -118,6 +118,12 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   promotionValueAt:typeof promotionValueAt === "function"
     ? promotionValueAt
     : undefined,
+  pearlSlotCount:typeof pearlSlotCount === "function"
+    ? pearlSlotCount
+    : undefined,
+  pearlTierLabel:typeof pearlTierLabel === "function"
+    ? pearlTierLabel
+    : undefined,
   enchantmentBounds:typeof enchantmentBounds === "function"
     ? enchantmentBounds
     : undefined,

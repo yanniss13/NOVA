@@ -2377,14 +2377,53 @@
     const step = steps[promotion - 1];
     return step ? Number(step.reinforceMax) : -1;
   }
+  /* Perle de sortilège : chaque palier ouvre un nombre d'emplacements de stat
+     différent. Cette table vient du jeu, rapportée par le propriétaire — les
+     données de 7dsorigin ne la contiennent pas, leurs `tiers[].options` ne
+     listent que les stats possibles. Ne pas la « corriger » d'après le
+     catalogue. */
+  const PEARL_TIERS = [
+    { tier:1, label:"Commune", slots:1 },
+    { tier:2, label:"Remarquable", slots:2 },
+    { tier:3, label:"Rare", slots:2 },
+    { tier:4, label:"Héroïque", slots:3 },
+    { tier:5, label:"Légendaire", slots:4 }
+  ];
+  function pearlTierOf(tier){
+    return PEARL_TIERS.find(item => item.tier === tier) || null;
+  }
+  function pearlSlotCount(tier){
+    const found = pearlTierOf(tier);
+    return found ? found.slots : 0;
+  }
+  function pearlTierLabel(tier){
+    const found = pearlTierOf(tier);
+    return found ? found.label : "Palier "+tier;
+  }
+  // Le palier d'une perle est commun à tous ses emplacements : on le lit sur la
+  // première entrée renseignée.
+  function pearlTierInUse(enchantments){
+    const first = (enchantments || []).find(choice =>
+      choice && typeof choice === "object" && !Array.isArray(choice)
+    );
+    return first && isInteger(first.tier) ? first.tier : null;
+  }
   function enchantmentLength(grade){
     const enchantments = grade && grade.enchantments;
     if(!enchantments || typeof enchantments !== "object") return -1;
     if(enchantments.type === "basic"){
       return Array.isArray(enchantments.slots) ? enchantments.slots.length : -1;
     }
+    // Perle vide : un emplacement suffit tant qu'aucun palier n'est choisi.
     if(enchantments.type === "masterstone") return 1;
     return -1;
+  }
+  // Longueur attendue pour une saisie en cours : elle suit le palier choisi.
+  function enchantmentExpectedLength(grade, enchantments){
+    const catalog = grade && grade.enchantments;
+    if(!catalog || catalog.type !== "masterstone") return enchantmentLength(grade);
+    const tier = pearlTierInUse(enchantments);
+    return tier === null ? 1 : pearlSlotCount(tier);
   }
   function emptyWeaponConfig(file, gameId){
     const grade = buildWeaponGrade(file, gameId);
@@ -2464,7 +2503,8 @@
         || enchantmentFieldIsMissing(choice, "tier")){
         return "incomplete";
       }
-      if(choice.slot !== 0 || !isInteger(choice.tier)) return "incompatible";
+      if(choice.slot !== index || !isInteger(choice.tier)) return "incompatible";
+      if(index >= pearlSlotCount(choice.tier)) return "incompatible";
       const tier = (catalog.tiers || []).find(item => item && item.tier === choice.tier);
       if(!tier) return "incompatible";
       let group = tier;
@@ -2483,8 +2523,26 @@
     }
     return "incompatible";
   }
+  /* Une arme ne porte qu'une seule perle : tous les emplacements renseignés
+     doivent partager le même palier et le même élément. Sans cette contrainte,
+     un état absurde deviendrait « valide ». */
+  function pearlEntriesAgree(enchantments){
+    const filled = (enchantments || []).filter(choice =>
+      choice && typeof choice === "object" && !Array.isArray(choice)
+    );
+    if(filled.length < 2) return true;
+    const first = filled[0];
+    return filled.every(choice =>
+      choice.tier === first.tier
+      && (choice.element || null) === (first.element || null)
+    );
+  }
   function enchantmentsStatus(grade, enchantments){
     let status = "valid";
+    if(grade && grade.enchantments && grade.enchantments.type === "masterstone"
+      && !pearlEntriesAgree(enchantments)){
+      return "incompatible";
+    }
     enchantments.forEach((choice, index) => {
       const choiceStatus = enchantmentChoiceStatus(grade, choice, index);
       if(choiceStatus === "incompatible"){
@@ -2530,13 +2588,26 @@
     }else if(config.overlimit !== 0){
       return "incompatible";
     }
-    const length = enchantmentLength(grade);
-    if(length < 0 || !Array.isArray(config.enchantments) || config.enchantments.length !== length){
-      return "incompatible";
-    }
+    if(!Array.isArray(config.enchantments)) return "incompatible";
+    const length = enchantmentExpectedLength(grade, config.enchantments);
+    if(length < 0) return "incompatible";
+    /* Trop d'emplacements = état impossible, quel que soit le type.
+       Pas assez : pour un enchantement basique le nombre est fixé par les
+       données, donc c'est invalide ; pour une perle c'est une saisie en cours,
+       ou une configuration enregistrée avant que les paliers ouvrent plusieurs
+       emplacements — on la déclare incomplète pour ne pas condamner les données
+       déjà en base. */
+    const isPearl = grade.enchantments.type === "masterstone";
+    if(config.enchantments.length > length) return "incompatible";
+    /* `incompatible` prime sur `incomplete` : une stat interdite ou une valeur
+       hors bornes reste invalide même dans un tableau encore court. On valide
+       donc le contenu avant de juger la longueur. */
     const currentEnchantmentsStatus = enchantmentsStatus(grade, config.enchantments);
-    if(currentEnchantmentsStatus !== "valid") return currentEnchantmentsStatus;
-    return "valid";
+    if(currentEnchantmentsStatus === "incompatible") return "incompatible";
+    if(config.enchantments.length < length){
+      return isPearl ? "incomplete" : "incompatible";
+    }
+    return currentEnchantmentsStatus;
   }
 
   function curveValueAtLevel(curve, level){
@@ -3092,12 +3163,19 @@
       return ".weapon-config-overlimit";
     }
     if(!Array.isArray(draft.enchantments)
-      || draft.enchantments.length !== enchantmentLength(grade)){
+      || draft.enchantments.length !== enchantmentExpectedLength(grade, draft.enchantments)){
+      // Une perle plus courte que son palier : c'est le palier qu'il faut reprendre.
       return ".weapon-config-enchantment-choice";
     }
     if(!areEnchantmentsValid(grade, draft.enchantments)){
       if(grade.enchantments.type === "masterstone"){
-        const choice = draft.enchantments[0];
+        /* Plusieurs emplacements : viser celui qui bloque, pas le premier. */
+        const position = draft.enchantments.findIndex((entry, index) =>
+          enchantmentChoiceStatus(grade, entry, index) !== "valid"
+        );
+        const slot = position < 0 ? 0 : position;
+        const choice = draft.enchantments[slot];
+        const scope = '.weapon-enchantment-slot[data-pearl-slot="'+slot+'"] ';
         const tier = choice && (grade.enchantments.tiers || [])
           .find(item => item.tier === choice.tier);
         if(!tier) return ".weapon-config-enchantment-choice";
@@ -3107,9 +3185,9 @@
         }
         const options = weaponEnchantOptions(grade, choice);
         if(!options.some(option => option.stat === choice.stat)){
-          return ".weapon-config-enchantment-stat";
+          return scope + ".weapon-config-enchantment-stat";
         }
-        return ".weapon-config-enchantment-value";
+        return scope + ".weapon-config-enchantment-value";
       }
       const invalidIndex = draft.enchantments.findIndex((choice, index) => {
         if(choice === null) return false;
@@ -3338,40 +3416,46 @@
 
   function renderMasterstoneWeaponEnchantments(container, grade, draft){
     const catalog = grade.enchantments;
-    const choice = draft.enchantments[0];
+    /* Le palier et l'élément appartiennent à la perle entière ; seules les stats
+       sont propres à chaque emplacement. La première entrée renseignée porte
+       donc la référence. */
+    const lead = draft.enchantments.find(item =>
+      item && typeof item === "object" && !Array.isArray(item)
+    ) || null;
     const box = el("div",{
       class:"weapon-enchantment weapon-enchantment-master",
       dataset:{slot:"0"}
     });
     box.appendChild(el("span",{
       class:"weapon-enchantment-title",
-      text:"Pierre maîtresse"
+      text:"Perle de sortilège"
     }));
     const tierSelect = el("select",{class:"weapon-config-enchantment-choice"});
     tierSelect.appendChild(weaponConfigOption("none","Aucun enchantement"));
     (catalog.tiers || []).forEach(tier => {
-      tierSelect.appendChild(weaponConfigOption(tier.tier,"Palier "+tier.tier));
+      tierSelect.appendChild(weaponConfigOption(tier.tier,pearlTierLabel(tier.tier)));
     });
-    tierSelect.value = choice ? String(choice.tier) : "none";
+    tierSelect.value = lead ? String(lead.tier) : "none";
     tierSelect.addEventListener("change", event => {
       if(event.target.value === "none"){
-        draft.enchantments[0] = null;
+        draft.enchantments = [null];
       }else{
+        // Changer de palier change le nombre d'emplacements : on reconstruit.
         const tier = Number(event.target.value);
-        draft.enchantments[0] = {
-          slot:0,
+        draft.enchantments = Array.from({length:pearlSlotCount(tier)}, (unused, index) => ({
+          slot:index,
           tier,
           element:tier === 5 ? "" : null,
           stat:"",
           value:null
-        };
+        }));
       }
       renderWeaponConfigEditor();
     });
     box.appendChild(weaponConfigField("Palier",tierSelect));
 
-    if(choice){
-      const tier = (catalog.tiers || []).find(item => item.tier === choice.tier);
+    if(lead){
+      const tier = (catalog.tiers || []).find(item => item.tier === lead.tier);
       if(tier && tier.elements){
         const elementSelect = el("select",{class:"weapon-config-enchantment-element"});
         elementSelect.appendChild(weaponConfigOption("","Choisir un élément"));
@@ -3385,56 +3469,75 @@
                 : group.element);
           elementSelect.appendChild(weaponConfigOption(group.element,label));
         });
-        elementSelect.value = choice.element || "";
+        elementSelect.value = lead.element || "";
         elementSelect.addEventListener("change", event => {
-          choice.element = event.target.value;
-          choice.stat = "";
-          choice.value = null;
+          // L'élément vaut pour toute la perle : chaque emplacement le suit.
+          draft.enchantments.forEach(entry => {
+            if(!entry) return;
+            entry.element = event.target.value;
+            entry.stat = "";
+            entry.value = null;
+          });
           renderWeaponConfigEditor();
         });
         box.appendChild(weaponConfigField("Élément",elementSelect));
       }
 
-      const options = weaponEnchantOptions(grade, choice);
-      const statSelect = el("select",{class:"weapon-config-enchantment-stat"});
-      statSelect.appendChild(weaponConfigOption("","Choisir une statistique"));
-      options.forEach(option => {
-        statSelect.appendChild(weaponConfigOption(
-          option.stat,
-          BUILD_STATS.statLabels[option.stat].fr
-        ));
-      });
-      statSelect.value = choice.stat || "";
-      statSelect.addEventListener("change", event => {
-        choice.stat = event.target.value;
-        const option = options.find(item => item.stat === choice.stat);
-        choice.value = option ? option.min : null;
-        renderWeaponConfigEditor();
-      });
-      box.appendChild(weaponConfigField("Statistique",statSelect));
+      const slots = pearlSlotCount(lead.tier);
+      draft.enchantments.forEach((choice, index) => {
+        if(!choice) return;
+        const slotBox = el("div",{
+          class:"weapon-enchantment-slot",
+          dataset:{pearlSlot:String(index)}
+        });
+        if(slots > 1){
+          slotBox.appendChild(el("span",{
+            class:"weapon-enchantment-slot-title",
+            text:"Emplacement "+(index + 1)+" sur "+slots
+          }));
+        }
+        const options = weaponEnchantOptions(grade, choice);
+        const statSelect = el("select",{class:"weapon-config-enchantment-stat"});
+        statSelect.appendChild(weaponConfigOption("","Choisir une statistique"));
+        options.forEach(option => {
+          statSelect.appendChild(weaponConfigOption(
+            option.stat,
+            BUILD_STATS.statLabels[option.stat].fr
+          ));
+        });
+        statSelect.value = choice.stat || "";
+        statSelect.addEventListener("change", event => {
+          choice.stat = event.target.value;
+          const option = options.find(item => item.stat === choice.stat);
+          choice.value = option ? option.min : null;
+          renderWeaponConfigEditor();
+        });
+        slotBox.appendChild(weaponConfigField("Statistique",statSelect));
 
-      if(choice.stat){
-        const option = options.find(item => item.stat === choice.stat);
-        const input = el("input",{
-          class:"weapon-config-enchantment-value",
-          type:"number",
-          step:"1",
-          min:option ? String(option.min) : "0",
-          max:option ? String(option.max) : "0",
-          value:String(choice.value)
-        });
-        input.addEventListener("input", event => {
-          choice.value = event.target.value === ""
-            ? null
-            : Math.trunc(Number(event.target.value));
-          updateWeaponConfigPreview();
-        });
-        box.appendChild(weaponConfigField(
-          "Valeur",
-          input,
-          option ? "De "+option.min+" à "+option.max+"." : ""
-        ));
-      }
+        if(choice.stat){
+          const option = options.find(item => item.stat === choice.stat);
+          const input = el("input",{
+            class:"weapon-config-enchantment-value",
+            type:"number",
+            step:"1",
+            min:option ? String(option.min) : "0",
+            max:option ? String(option.max) : "0",
+            value:String(choice.value)
+          });
+          input.addEventListener("input", event => {
+            choice.value = event.target.value === ""
+              ? null
+              : Math.trunc(Number(event.target.value));
+            updateWeaponConfigPreview();
+          });
+          slotBox.appendChild(weaponConfigField(
+            "Valeur",
+            input,
+            option ? "De "+option.min+" à "+option.max+"." : ""
+          ));
+        }
+        box.appendChild(slotBox);
+      });
     }
     container.appendChild(box);
   }

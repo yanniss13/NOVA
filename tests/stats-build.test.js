@@ -596,4 +596,106 @@ function masterstoneConfig(enchantment){
   );
 }
 
+/* Perle de sortilège : le nombre d'emplacements de stat dépend du palier.
+   Cette table vient du propriétaire, qui joue au jeu — les données de
+   7dsorigin ne la portent pas. Ne pas la « corriger » d'après le catalogue.
+     commune 1 · remarquable 2 · rare 2 · héroïque 3 · légendaire 4 */
+{
+  const { hooks } = loadApp();
+  const pearlConfig = entries => ({
+    version:1,
+    gradeGameId:"131065010",
+    level:0,
+    promotion:0,
+    overlimit:0,
+    enchantments:entries
+  });
+  const pearl = (slot, tier, element, stat, value) => ({ slot, tier, element, stat, value });
+
+  assert.deepStrictEqual(
+    [1, 2, 3, 4, 5].map(tier => hooks.pearlSlotCount(tier)),
+    [1, 2, 2, 3, 4],
+    "emplacements par palier de perle"
+  );
+
+  // Légendaire : quatre emplacements remplis, tous du même palier et du même élément.
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, pearlConfig([
+      pearl(0, 5, "generic", "C_Critical_Rate", 700),
+      pearl(1, 5, "generic", "C_Critical_ResRate", 700),
+      pearl(2, 5, "generic", "C_Critical_Dam_Rate", 1200),
+      pearl(3, 5, "generic", "C_Critical_DamRes_Rate", 1200)
+    ])),
+    "valid",
+    "une perle légendaire doit accepter ses quatre stats"
+  );
+
+  // Un cinquième emplacement n'existe pas.
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, pearlConfig([
+      pearl(0, 5, "generic", "C_Critical_Rate", 700),
+      pearl(1, 5, "generic", "C_Critical_ResRate", 700),
+      pearl(2, 5, "generic", "C_Critical_Dam_Rate", 1200),
+      pearl(3, 5, "generic", "C_Critical_DamRes_Rate", 1200),
+      pearl(4, 5, "generic", "Activethird_Damadd_Rate", 2000)
+    ])),
+    "incompatible",
+    "une perle légendaire n'a pas de cinquième emplacement"
+  );
+
+  // Héroïque : trois emplacements, et ce palier n'a pas d'élément.
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, pearlConfig([
+      pearl(0, 4, null, "B_Atk_Equip", 500),
+      pearl(1, 4, null, "B_Def_Equip", 400),
+      pearl(2, 4, null, "B_MaxHp_Equip", 1000)
+    ])),
+    "valid",
+    "une perle héroïque doit accepter ses trois stats"
+  );
+
+  // Commune : un seul emplacement.
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, pearlConfig([
+      pearl(0, 1, null, "B_Atk_Equip", 100),
+      pearl(1, 1, null, "B_Def_Equip", 80)
+    ])),
+    "incompatible",
+    "une perle commune n'a qu'un emplacement"
+  );
+
+  // Une seule perle par arme : ni deux paliers, ni deux éléments.
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, pearlConfig([
+      pearl(0, 4, null, "B_Atk_Equip", 500),
+      pearl(1, 3, null, "B_Def_Equip", 300),
+      pearl(2, 4, null, "B_MaxHp_Equip", 1000)
+    ])),
+    "incompatible",
+    "deux paliers différents sur la même perle"
+  );
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, pearlConfig([
+      pearl(0, 5, "generic", "C_Critical_Rate", 700),
+      pearl(1, 5, "fire", "C_Critical_ResRate", 700),
+      pearl(2, 5, "generic", "C_Critical_Dam_Rate", 1200),
+      pearl(3, 5, "generic", "C_Critical_DamRes_Rate", 1200)
+    ])),
+    "incompatible",
+    "deux éléments différents sur la même perle"
+  );
+
+  /* Saisie en cours : incomplète, jamais incompatible — distinction introduite
+     par le correctif de revue finale, à ne pas casser. */
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, pearlConfig([
+      pearl(0, 4, null, "B_Atk_Equip", 500),
+      pearl(1, 4, null, "B_Def_Equip", 400),
+      pearl(2, 4, null, "", null)
+    ])),
+    "incomplete",
+    "une perle héroïque à moitié remplie est incomplète"
+  );
+}
+
 console.log("PASS stats de builds : modèle et calcul de l’arme");
