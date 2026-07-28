@@ -42,6 +42,95 @@ create table if not exists public.roster_characters (
 create index if not exists roster_characters_owner_idx
   on public.roster_characters(owner);
 
+create schema if not exists private;
+revoke all on schema private from public;
+
+-- Empêche une ancienne PWA, qui omet weaponConfig, d'effacer la saisie récente.
+create or replace function private.preserve_roster_weapon_configs()
+returns trigger
+language plpgsql
+set search_path = pg_catalog, public
+as $$
+declare
+  v_type text;
+  v_old_build jsonb;
+  v_new_build jsonb;
+begin
+  if jsonb_typeof(new.builds) <> 'object' then
+    return new;
+  end if;
+
+  for v_type in select jsonb_object_keys(new.builds)
+  loop
+    v_old_build := old.builds -> v_type;
+    v_new_build := new.builds -> v_type;
+    if jsonb_typeof(v_old_build) = 'object'
+       and jsonb_typeof(v_new_build) = 'object'
+       and not (v_new_build ? 'weaponConfig')
+       and v_old_build ? 'weaponConfig'
+       and nullif(v_new_build->>'weapon', '') is not null
+       and v_new_build->>'weapon' is not distinct from v_old_build->>'weapon'
+    then
+      new.builds := jsonb_set(
+        new.builds,
+        array[v_type, 'weaponConfig'],
+        v_old_build->'weaponConfig',
+        true
+      );
+    end if;
+  end loop;
+  return new;
+end;
+$$;
+
+drop trigger if exists preserve_roster_weapon_configs on public.roster_characters;
+create trigger preserve_roster_weapon_configs
+before update of builds on public.roster_characters
+for each row execute function private.preserve_roster_weapon_configs();
+
+create or replace function private.preserve_team_weapon_configs()
+returns trigger
+language plpgsql
+set search_path = pg_catalog, public
+as $$
+declare
+  v_index integer;
+  v_old_hero jsonb;
+  v_new_hero jsonb;
+begin
+  if jsonb_typeof(new.data->'heroes') <> 'array' then
+    return new;
+  end if;
+
+  for v_index in 0 .. jsonb_array_length(new.data->'heroes') - 1
+  loop
+    v_old_hero := old.data->'heroes'->v_index;
+    v_new_hero := new.data->'heroes'->v_index;
+    if jsonb_typeof(v_old_hero) = 'object'
+       and jsonb_typeof(v_new_hero) = 'object'
+       and not (v_new_hero ? 'weaponConfig')
+       and v_old_hero ? 'weaponConfig'
+       and nullif(v_new_hero->>'weapon', '') is not null
+       and v_new_hero->>'char' is not distinct from v_old_hero->>'char'
+       and v_new_hero->>'weapon' is not distinct from v_old_hero->>'weapon'
+    then
+      new.data := jsonb_set(
+        new.data,
+        array['heroes', v_index::text, 'weaponConfig'],
+        v_old_hero->'weaponConfig',
+        true
+      );
+    end if;
+  end loop;
+  return new;
+end;
+$$;
+
+drop trigger if exists preserve_team_weapon_configs on public.teams;
+create trigger preserve_team_weapon_configs
+before update of data on public.teams
+for each row execute function private.preserve_team_weapon_configs();
+
 -- ============================ RLS (sécurité) ============================
 alter table public.profiles    enable row level security;
 alter table public.teams       enable row level security;
@@ -112,9 +201,6 @@ alter table public.boss_sessions add column if not exists week_start  date;
 alter table public.boss_sessions add column if not exists slot        int;
 alter table public.boss_sessions add column if not exists run_no       integer not null default 1;
 alter table public.boss_sessions add column if not exists completed_at timestamptz;
-
-create schema if not exists private;
-revoke all on schema private from public;
 
 create or replace function private.current_boss_week_start()
 returns date

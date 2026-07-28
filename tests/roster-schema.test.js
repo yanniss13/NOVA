@@ -20,6 +20,13 @@ const sql = fs.readFileSync(
   /create policy roster_delete[\s\S]*using\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i
 ].forEach(pattern => assert.match(sql, pattern));
 
+[
+  /create policy teams_read[\s\S]*for select to authenticated using\s*\(\s*true\s*\)/i,
+  /create policy teams_insert[\s\S]*with check\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i,
+  /create policy teams_update[\s\S]*using\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i,
+  /create policy teams_delete[\s\S]*using\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i
+].forEach(pattern => assert.match(sql, pattern));
+
 // Sessions de boss : trois runs atomiques par membre et par semaine.
 [
   /create table if not exists public\.boss_sessions/i,
