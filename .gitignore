@@ -5,3 +5,4 @@ test-results/
 __pycache__/
 debug.log
 .superpowers/
+.VSCodeCounter/
