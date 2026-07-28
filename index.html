@@ -269,6 +269,22 @@
   .gear-set{grid-column:1 / -1;justify-content:center;font-size:12px;padding:7px 10px}
   .gear-slot.jewel.filled{border-color:var(--crimson)}
   .gear-slot.jewel .gear-thumb{border-color:rgba(161,44,44,.4)}
+  .gear-configurable-slot{
+    min-width:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:5px
+  }
+  .gear-configurable-slot > .gear-slot{width:100%;min-width:0}
+  .gear-config-open{
+    min-width:0;min-height:36px;padding:6px 7px;
+    border:1px solid var(--line-soft);border-radius:8px;
+    background:rgba(11,9,16,.58);color:var(--muted);
+    font-size:10px;line-height:1.2;cursor:pointer
+  }
+  .gear-config-open:hover{border-color:var(--gold-deep);color:var(--parchment)}
+  .gear-config-open.is-valid{
+    border-color:var(--gold-deep);color:var(--gold-bright);
+    background:rgba(217,164,65,.07)
+  }
+  .gear-config-open:disabled{cursor:not-allowed;opacity:.48}
 
   .note{
     font-family:var(--ui);font-size:13px;color:var(--parchment);resize:vertical;
@@ -1218,9 +1234,10 @@
     display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.8fr);
     gap:0;min-width:0;min-height:0;overflow-y:auto;overflow-x:hidden
   }
-  #weaponConfigBody,#weaponConfigPreview{min-width:0;padding:18px}
-  #weaponConfigBody{display:flex;flex-direction:column;gap:14px}
-  #weaponConfigPreview{
+  #weaponConfigBody,#weaponConfigPreview,
+  #gearConfigBody,#gearConfigPreview{min-width:0;padding:18px}
+  #weaponConfigBody,#gearConfigBody{display:flex;flex-direction:column;gap:14px}
+  #weaponConfigPreview,#gearConfigPreview{
     border-left:1px solid var(--line);
     background:linear-gradient(155deg,rgba(217,164,65,.07),rgba(11,9,16,.48))
   }
@@ -1299,7 +1316,7 @@
   .weapon-stat-term-value span:last-child{flex:none;color:var(--parchment)}
   .weapon-stat-term-overlimit{color:var(--gold-bright)!important}
   .weapon-stat-provenance{overflow-wrap:anywhere;color:var(--muted-2)}
-  #weaponConfigError{
+  #weaponConfigError,#gearConfigError{
     min-height:18px;margin:0;padding:0 18px;color:#e98d8d;font-size:12px
   }
   .weapon-config-conflict{
@@ -1321,7 +1338,9 @@
       width:min(100%,680px);max-height:calc(100dvh - 16px)
     }
     .weapon-config-layout{grid-template-columns:minmax(0,1fr)}
-    #weaponConfigPreview{border-left:0;border-top:1px solid var(--line)}
+    #weaponConfigPreview,#gearConfigPreview{
+      border-left:0;border-top:1px solid var(--line)
+    }
     .weapon-config-conflict-actions{display:grid;grid-template-columns:1fr}
     .weapon-config-conflict-actions .btn{width:100%}
     .weapon-config-actions{display:grid;grid-template-columns:1fr}
@@ -1333,6 +1352,9 @@
     .weapon-enchantment,
     .weapon-enchantment-master{grid-template-columns:minmax(0,1fr)}
     .weapon-enchantment-master .weapon-config-field:last-child{grid-column:auto}
+  }
+  @media(pointer:coarse){
+    .gear-config-open{min-height:44px}
   }
 
   /* ---------- Toast ---------- */
@@ -1705,6 +1727,30 @@
       <button class="btn btn-danger" id="weaponConfigReset"
               type="button">Réinitialiser</button>
       <button class="btn btn-primary" id="weaponConfigSave"
+              type="button">Valider la configuration</button>
+    </div>
+  </div>
+</div>
+
+<!-- Configuration chiffrée d'une armure ou d'un bijou. -->
+<div class="overlay" id="gearConfigOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="gearConfigTitle" aria-hidden="true">
+  <div class="modal weapon-config-modal">
+    <div class="picker-head">
+      <span class="picker-title" id="gearConfigTitle">Configurer la pièce</span>
+      <button class="icon-btn" id="gearConfigClose" type="button"
+              aria-label="Fermer">×</button>
+    </div>
+    <div class="weapon-config-layout">
+      <div id="gearConfigBody"></div>
+      <aside id="gearConfigPreview" aria-live="polite"></aside>
+    </div>
+    <p id="gearConfigError" role="alert"></p>
+    <div class="weapon-config-actions">
+      <button class="btn" id="gearConfigCancel" type="button">Annuler</button>
+      <button class="btn btn-danger" id="gearConfigReset"
+              type="button">Réinitialiser</button>
+      <button class="btn btn-primary" id="gearConfigSave"
               type="button">Valider la configuration</button>
     </div>
   </div>
@@ -4184,6 +4230,374 @@
     if(event.target === $("#weaponConfigOverlay")) closeWeaponConfigEditor();
   });
 
+  let gearConfigEditorState = null;
+
+  function gearConfigSummary(file, config){
+    const status = gearConfigStatus(file, config);
+    if(status === "unavailable") return "Données indisponibles";
+    if(status !== "valid") return "Configurer";
+    return "Chiffrée · Nv. "+config.level+" · Renf. +"+config.reinforce;
+  }
+
+  function gearConfigControl(context){
+    if(!context.file) return null;
+    const status = gearConfigStatus(context.file, context.config);
+    const summary = gearConfigSummary(context.file, context.config);
+    const button = el("button",{
+      class:"gear-config-open"+(status === "valid" ? " is-valid" : ""),
+      type:"button",
+      dataset:{slot:context.slotKey},
+      text:summary,
+      title:status === "unavailable"
+        ? "Données chiffrées indisponibles"
+        : "Configurer "+context.label.toLowerCase(),
+      "aria-label":status === "valid"
+        ? "Modifier la configuration chiffrée — "+context.label
+        : "Configurer "+context.label,
+      onclick:()=>openGearConfigEditor(context, button)
+    });
+    if(status === "unavailable") button.disabled = true;
+    return button;
+  }
+
+  function gearStatsStatusMessage(status){
+    if(status === "unavailable"){
+      return "Les données chiffrées de cette pièce ne sont pas disponibles.";
+    }
+    if(status === "missing"){
+      return "Configuration à compléter pour calculer l’apport de cette pièce.";
+    }
+    if(status === "incomplete"){
+      return "Complète les champs requis pour afficher l’apport de cette pièce.";
+    }
+    return "Cette configuration n’est pas compatible avec les données de la pièce.";
+  }
+
+  function gearTermLabel(term){
+    if(term.source.component === "level") return "Niveau et renforcement";
+    if(term.source.component === "enchantment"){
+      return "Option aléatoire"
+        +(Number.isInteger(term.source.index) ? " "+(term.source.index + 1) : "");
+    }
+    if(term.source.component === "bonus") return "Bonus d’ensemble";
+    return term.source.component;
+  }
+
+  function gearTermProvenance(term){
+    const source = term.source || {};
+    const domains = {
+      armor:"armure",
+      engraving:"gravure",
+      jewel:"bijou",
+      set:"ensemble"
+    };
+    const parts = [
+      "Source : "+(domains[source.domain] || source.domain || "inconnue"),
+      gearTermLabel(term),
+      "opération addition",
+      "unité "+(term.unit === "flat" ? "points" : "dix-millièmes")
+    ];
+    if(source.id) parts.push(source.id);
+    if(source.slot) parts.push("emplacement "+source.slot);
+    if(term.bucket) parts.push("seau "+term.bucket);
+    return parts.join(" · ");
+  }
+
+  function gearStatsSection(file, config, slotKey){
+    const section = el("section",{class:"weapon-stats"});
+    const result = calculateGearStats(file, config, slotKey);
+    const engraving = gearDomainOf(slotKey) === "engraving";
+    section.appendChild(el("h3",{
+      class:"weapon-stats-title",
+      text:buildStatsTitle(
+        engraving
+          ? {of:"de la gravure",passiveKey:"engraving:passive"}
+          : {of:"de l’équipement",passiveKey:"armor:passive"},
+        result
+      )
+    }));
+    const covered = result.status === "valid"
+      && Array.isArray(result.coverage)
+      && result.coverage.includes(gearDomainOf(slotKey));
+    if(!covered){
+      section.appendChild(el("p",{
+        class:"weapon-stats-state",
+        text:gearStatsStatusMessage(result.status)
+      }));
+      return section;
+    }
+
+    groupBuildStatResults(result).forEach(group => {
+      const family = el("section",{class:"weapon-stats-family"});
+      family.appendChild(el("h4",{
+        class:"weapon-stats-family-title",
+        text:BUILD_STAT_FAMILY_LABELS[group.family] || group.family
+      }));
+      group.stats.forEach(stat => {
+        const statNode = el("div",{class:"weapon-stat"});
+        statNode.appendChild(el("div",{class:"weapon-stat-head"},[
+          el("span",{text:stat.label}),
+          el("span",{
+            class:"weapon-stat-total",
+            dataset:{unit:stat.unit},
+            text:formatBuildStatValue(stat.value, stat.unit)
+              +(stat.unit === "flat" ? " points" : "")
+          })
+        ]));
+        const details = el("details",{class:"weapon-stat-details",open:""},[
+          el("summary",{text:"Détail du calcul"})
+        ]);
+        stat.terms.forEach(term => {
+          details.appendChild(el("div",{
+            class:"weapon-stat-term",
+            dataset:{
+              operation:term.operation,
+              unit:term.unit,
+              buckets:term.bucket || ""
+            }
+          },[
+            el("div",{class:"weapon-stat-term-value"},[
+              el("span",{text:gearTermLabel(term)}),
+              el("span",{
+                text:formatBuildStatValue(term.value, term.unit)
+                  +(term.unit === "flat" ? " points" : "")
+              })
+            ]),
+            el("small",{
+              class:"weapon-stat-provenance",
+              text:gearTermProvenance(term)
+            })
+          ]));
+        });
+        statNode.appendChild(details);
+        family.appendChild(statNode);
+      });
+      section.appendChild(family);
+    });
+    return section;
+  }
+
+  function gearConfigFirstInvalidSelector(file, draft){
+    const definition = buildGearDefinition(file);
+    if(!definition) return ".gear-config-level";
+    if(!draft || !isInteger(draft.level)
+      || draft.level < definition.qualityMin
+      || draft.level > definition.qualityMax){
+      return ".gear-config-level";
+    }
+    if(!isInteger(draft.reinforce)
+      || draft.reinforce < 0
+      || draft.reinforce > definition.reinforceMax){
+      return ".gear-config-reinforce";
+    }
+    const choices = Array.isArray(draft.enchantments) ? draft.enchantments : [];
+    for(let index = 0; index < choices.length; index += 1){
+      const status = gearEnchantmentChoiceStatus(definition, choices[index], index);
+      if(status !== "valid"){
+        const suffix = choices[index] && choices[index].stat ? "value" : "stat";
+        return '[data-gear-slot="'+index+'"] .gear-config-enchantment-'+suffix;
+      }
+    }
+    return ".gear-config-level";
+  }
+
+  function updateGearConfigPreview(){
+    const state = gearConfigEditorState;
+    if(!state) return;
+    const preview = $("#gearConfigPreview");
+    preview.innerHTML = "";
+    preview.appendChild(gearStatsSection(
+      state.context.file,
+      state.draft,
+      state.context.slotKey
+    ));
+    $("#gearConfigError").textContent = state.validationAttempted
+      && gearConfigStatus(state.context.file, state.draft) !== "valid"
+      ? "Vérifie les champs signalés avant de valider."
+      : "";
+  }
+
+  function renderGearConfigEnchantments(body, definition, draft){
+    const container = el("div",{class:"weapon-enchantments"},[
+      el("span",{class:"weapon-enchantment-title",text:"Options aléatoires"})
+    ]);
+    const options = (definition.randomOptions
+      && Array.isArray(definition.randomOptions.stats))
+      ? definition.randomOptions.stats : [];
+    draft.enchantments.forEach((choice, index) => {
+      const used = new Set(draft.enchantments
+        .filter((entry, position) => entry && position !== index && entry.stat)
+        .map(entry => entry.stat));
+      const available = options.filter(option => !used.has(option.stat));
+      const box = el("div",{
+        class:"weapon-enchantment",
+        dataset:{gearSlot:String(index)}
+      });
+      box.appendChild(el("span",{
+        class:"weapon-enchantment-title",
+        text:"Option "+(index + 1)
+      }));
+      const select = el("select",{class:"gear-config-enchantment-stat"});
+      select.appendChild(weaponConfigOption("","Aucune option"));
+      available.forEach(option => {
+        const metadata = BUILD_STATS.statLabels[option.stat];
+        select.appendChild(weaponConfigOption(
+          option.stat,
+          metadata ? metadata.fr : option.stat
+        ));
+      });
+      select.value = choice ? choice.stat : "";
+      select.addEventListener("change", event => {
+        const option = options.find(item => item.stat === event.target.value);
+        draft.enchantments[index] = option ? {
+          slot:index,
+          stat:option.stat,
+          value:option.min
+        } : null;
+        renderGearConfigEditor();
+      });
+      box.appendChild(weaponConfigField("Statistique",select));
+      if(choice){
+        const option = options.find(item => item.stat === choice.stat);
+        const value = el("input",{
+          class:"gear-config-enchantment-value",
+          type:"number",
+          step:"1",
+          min:option ? String(option.min) : "0",
+          max:option ? String(option.max) : "0",
+          value:String(choice.value)
+        });
+        value.addEventListener("input", event => {
+          choice.value = event.target.value === ""
+            ? null
+            : Math.trunc(Number(event.target.value));
+          updateGearConfigPreview();
+        });
+        box.appendChild(weaponConfigField(
+          "Valeur",
+          value,
+          option ? "De "+option.min+" à "+option.max+"." : ""
+        ));
+      }
+      container.appendChild(box);
+    });
+    if(!draft.enchantments.length){
+      container.appendChild(el("p",{
+        class:"weapon-config-hint",
+        text:"Cette pièce ne possède aucun emplacement d’option aléatoire."
+      }));
+    }
+    body.appendChild(container);
+  }
+
+  function renderGearConfigEditor(){
+    const state = gearConfigEditorState;
+    if(!state) return;
+    const body = $("#gearConfigBody");
+    body.innerHTML = "";
+    const definition = buildGearDefinition(state.context.file);
+    if(!definition || !state.draft){
+      body.appendChild(el("p",{
+        class:"weapon-stats-state",
+        text:"Les données chiffrées de cette pièce ne sont pas disponibles."
+      }));
+      updateGearConfigPreview();
+      return;
+    }
+    const draft = state.draft;
+    const level = el("input",{
+      class:"gear-config-level",
+      type:"number",
+      step:"1",
+      min:String(definition.qualityMin),
+      max:String(definition.qualityMax),
+      value:String(draft.level)
+    });
+    level.addEventListener("input", event => {
+      draft.level = event.target.value === ""
+        ? null
+        : Math.trunc(Number(event.target.value));
+      updateGearConfigPreview();
+    });
+    body.appendChild(weaponConfigField(
+      "Niveau de qualité",
+      level,
+      "De "+definition.qualityMin+" à "+definition.qualityMax+"."
+    ));
+
+    const reinforce = el("select",{class:"gear-config-reinforce"});
+    for(let value = 0; value <= definition.reinforceMax; value += 1){
+      reinforce.appendChild(weaponConfigOption(value,"+"+value));
+    }
+    reinforce.value = String(draft.reinforce);
+    reinforce.addEventListener("change", event => {
+      draft.reinforce = Number(event.target.value);
+      updateGearConfigPreview();
+    });
+    body.appendChild(weaponConfigField("Renforcement",reinforce));
+    renderGearConfigEnchantments(body, definition, draft);
+    updateGearConfigPreview();
+  }
+
+  function openGearConfigEditor(context, restoreFocus){
+    const initial = context.config == null
+      ? emptyGearConfig(context.file)
+      : jsonCopy(context.config);
+    gearConfigEditorState = {
+      context,
+      draft:initial,
+      validationAttempted:false
+    };
+    $("#gearConfigTitle").textContent = "Configurer — "+context.label;
+    renderGearConfigEditor();
+    ModalStack.open(
+      $("#gearConfigOverlay"),
+      ".gear-config-level",
+      closeGearConfigEditor,
+      restoreFocus
+    );
+  }
+
+  function closeGearConfigEditor(){
+    ModalStack.close($("#gearConfigOverlay"));
+    gearConfigEditorState = null;
+  }
+
+  function saveGearConfigEditor(){
+    const state = gearConfigEditorState;
+    if(!state) return;
+    if(gearConfigStatus(state.context.file, state.draft) !== "valid"){
+      state.validationAttempted = true;
+      renderGearConfigEditor();
+      const invalid = $("#gearConfigOverlay").querySelector(
+        gearConfigFirstInvalidSelector(state.context.file, state.draft)
+      );
+      if(invalid){
+        invalid.setAttribute("aria-invalid","true");
+        invalid.focus();
+      }
+      return;
+    }
+    state.context.commit(jsonCopy(state.draft));
+    closeGearConfigEditor();
+  }
+
+  function resetGearConfigEditor(){
+    const state = gearConfigEditorState;
+    if(!state) return;
+    if(!confirm("Réinitialiser la configuration chiffrée de cette pièce ?")) return;
+    state.context.commit(null);
+    closeGearConfigEditor();
+  }
+
+  $("#gearConfigClose").addEventListener("click", closeGearConfigEditor);
+  $("#gearConfigCancel").addEventListener("click", closeGearConfigEditor);
+  $("#gearConfigSave").addEventListener("click", saveGearConfigEditor);
+  $("#gearConfigReset").addEventListener("click", resetGearConfigEditor);
+  $("#gearConfigOverlay").addEventListener("click", event => {
+    if(event.target === $("#gearConfigOverlay")) closeGearConfigEditor();
+  });
+
   function applyWeaponChange(hero, nextFile){
     const source = hero && typeof hero === "object" ? hero : {};
     const changed = source.weapon !== nextFile;
@@ -5648,20 +6062,49 @@
     if(configControl) gear.appendChild(configControl);
     gear.appendChild(el("div",{class:"gear-group",text:"Armures"}));
     gear.appendChild(equipmentSetButton("armor", applyMemberRosterArmorSet));
-    ARMOR_SLOTS.forEach(slot => gear.appendChild(gearSlot(
+    ARMOR_SLOTS.forEach(slot => gear.appendChild(gearConfigurableSlot(
       ARMOR_LABELS[slot],
       build.armor[slot],
-      false,
-      ()=>pickMemberRosterArmor(slot)
+      ()=>pickMemberRosterArmor(slot),
+      "",
+      slot,
+      {
+        config:build.armorConfig && build.armorConfig[slot],
+        commit(nextConfig){
+          const target = currentMemberRosterBuild();
+          if(!target.armorConfig) target.armorConfig = {};
+          if(nextConfig === null) delete target.armorConfig[slot];
+          else target.armorConfig[slot] = nextConfig;
+          renderMemberRosterEditor();
+          const nextButton = findGearConfigButton($("#memberRosterEditor"), slot);
+          if(nextButton){
+            ModalStack.setRestoreFocus($("#gearConfigOverlay"), nextButton);
+          }
+        }
+      }
     )));
     gear.appendChild(el("div",{class:"gear-group",text:"Bijoux"}));
     gear.appendChild(equipmentSetButton("jewel", applyMemberRosterJewelSet));
-    JEWEL_SLOTS.forEach(slot => gear.appendChild(gearSlot(
+    JEWEL_SLOTS.forEach(slot => gear.appendChild(gearConfigurableSlot(
       JEWEL_LABELS[slot],
       build.jewel[slot],
-      false,
       ()=>pickMemberRosterJewel(slot),
-      "jewel"
+      "jewel",
+      slot,
+      {
+        config:build.jewelConfig && build.jewelConfig[slot],
+        commit(nextConfig){
+          const target = currentMemberRosterBuild();
+          if(!target.jewelConfig) target.jewelConfig = {};
+          if(nextConfig === null) delete target.jewelConfig[slot];
+          else target.jewelConfig[slot] = nextConfig;
+          renderMemberRosterEditor();
+          const nextButton = findGearConfigButton($("#memberRosterEditor"), slot);
+          if(nextButton){
+            ModalStack.setRestoreFocus($("#gearConfigOverlay"), nextButton);
+          }
+        }
+      }
     )));
     const noteColumn = el("div",{class:"member-roster-note-column"});
     if(!hasBuild){
@@ -6019,7 +6462,28 @@
       toast("Set « "+set.name+" » équipé.");
     }));
     ARMOR_SLOTS.forEach(slot=>{
-      gear.appendChild(gearSlot(ARMOR_LABELS[slot], hero.armor[slot], false, ()=>pickArmor(i, slot)));
+      gear.appendChild(gearConfigurableSlot(
+        ARMOR_LABELS[slot],
+        hero.armor[slot],
+        ()=>pickArmor(i, slot),
+        "",
+        slot,
+        {
+          config:hero.armorConfig && hero.armorConfig[slot],
+          commit(nextConfig){
+            if(!hero.armorConfig) hero.armorConfig = {};
+            if(nextConfig === null) delete hero.armorConfig[slot];
+            else hero.armorConfig[slot] = nextConfig;
+            renderBuilder();
+            const nextHero = heroGrid.children[i];
+            const nextButton = nextHero
+              ? findGearConfigButton(nextHero, slot) : null;
+            if(nextButton){
+              ModalStack.setRestoreFocus($("#gearConfigOverlay"), nextButton);
+            }
+          }
+        }
+      ));
     });
     gear.appendChild(el("div",{class:"gear-group", text:"Bijoux"}));
     gear.appendChild(equipmentSetButton("jewel", set => {
@@ -6028,7 +6492,28 @@
       toast("Bijoux « "+set.name+" » équipés.");
     }));
     JEWEL_SLOTS.forEach(slot=>{
-      gear.appendChild(gearSlot(JEWEL_LABELS[slot], hero.jewel[slot], false, ()=>pickJewel(i, slot), "jewel"));
+      gear.appendChild(gearConfigurableSlot(
+        JEWEL_LABELS[slot],
+        hero.jewel[slot],
+        ()=>pickJewel(i, slot),
+        "jewel",
+        slot,
+        {
+          config:hero.jewelConfig && hero.jewelConfig[slot],
+          commit(nextConfig){
+            if(!hero.jewelConfig) hero.jewelConfig = {};
+            if(nextConfig === null) delete hero.jewelConfig[slot];
+            else hero.jewelConfig[slot] = nextConfig;
+            renderBuilder();
+            const nextHero = heroGrid.children[i];
+            const nextButton = nextHero
+              ? findGearConfigButton(nextHero, slot) : null;
+            if(nextButton){
+              ModalStack.setRestoreFocus($("#gearConfigOverlay"), nextButton);
+            }
+          }
+        }
+      ));
     });
 
     // Potentiel
@@ -6068,14 +6553,42 @@
     return btn;
   }
 
-  function gearSlot(label, file, isWeapon, onclick, extraClass){
+  function gearSlot(label, file, isWeapon, onclick, extraClass, slotKey){
     return el("button",{
       class:"gear-slot"+(isWeapon?" weapon":"")+(extraClass?" "+extraClass:"")+(file?" filled":""),
-      type:"button", title:(isWeapon?"Arme":label)+(file?" : "+nameOfFile(file):""), onclick
+      type:"button",
+      title:(isWeapon?"Arme":label)+(file?" : "+nameOfFile(file):""),
+      dataset:slotKey ? {slot:slotKey} : undefined,
+      onclick
     },[
       gearThumb(file),
       el("span",{class:"gear-label", text:label})
     ]);
+  }
+
+  function gearConfigurableSlot(label, file, onclick, extraClass, slotKey, settings){
+    const cell = el("div",{
+      class:"gear-configurable-slot",
+      dataset:{slot:slotKey}
+    },[
+      gearSlot(label, file, false, onclick, extraClass, slotKey)
+    ]);
+    if(file){
+      const control = gearConfigControl({
+        file,
+        slotKey,
+        label,
+        config:settings && settings.config,
+        commit:settings && settings.commit
+      });
+      if(control) cell.appendChild(control);
+    }
+    return cell;
+  }
+
+  function findGearConfigButton(container, slotKey){
+    return [...container.querySelectorAll(".gear-config-open")]
+      .find(button => button.dataset.slot === slotKey) || null;
   }
 
   // Pickers spécialisés

@@ -236,6 +236,72 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await page.locator(".weapon-config-enchantment-choice").selectOption("none");
     await page.locator("#weaponConfigSave").click();
 
+    // Saisie d'une pièce d'équipement, de bout en bout.
+    await chooseArmor(
+      page,
+      firstHero,
+      "Haut",
+      "Haut de la mélodie d'Arachnée"
+    );
+    const gearConfigButton = firstHero.locator(
+      '.gear-config-open[data-slot="Haut"]'
+    );
+    assert.equal(
+      await gearConfigButton.count(),
+      1,
+      "Chaque pièce équipée doit proposer un bouton de configuration"
+    );
+    await gearConfigButton.click();
+    await page.locator("#gearConfigOverlay").waitFor({ state:"visible" });
+
+    const gearLevelInput = page.locator(".gear-config-level");
+    const gearMinimum = Number(await gearLevelInput.getAttribute("min"));
+    const gearMaximum = Number(await gearLevelInput.getAttribute("max"));
+    assert.ok(
+      gearMaximum > gearMinimum,
+      "Les bornes de qualité doivent venir de la pièce"
+    );
+    await gearLevelInput.fill(String(gearMaximum));
+    await page.locator(".gear-config-reinforce").selectOption("5");
+    await page.locator("#gearConfigPreview .weapon-stats-family").first()
+      .waitFor({ state:"visible" });
+    const gearPreview = await page.locator("#gearConfigPreview").innerText();
+    assert.match(
+      gearPreview,
+      /calcul partiel/,
+      "Le total d'une pièce sans passif doit rester annoncé comme partiel"
+    );
+    assert.match(gearPreview, /\d/, "La contribution doit afficher des chiffres");
+    assert.doesNotMatch(
+      gearPreview.toLowerCase(),
+      /stats du héros|total du héros/
+    );
+
+    await gearLevelInput.fill(String(gearMaximum + 1));
+    await page.locator("#gearConfigSave").click();
+    assert.equal(
+      await page.locator("#gearConfigOverlay").getAttribute("aria-hidden"),
+      "false",
+      "Une configuration invalide ne doit pas être enregistrée"
+    );
+    assert.equal(
+      await page.evaluate(() =>
+        document.activeElement.classList.contains("gear-config-level")
+      ),
+      true,
+      "Le premier champ invalide doit recevoir le focus"
+    );
+    await gearLevelInput.fill(String(gearMaximum));
+    await page.locator("#gearConfigSave").click();
+    await page.locator("#gearConfigOverlay").waitFor({ state:"hidden" });
+    assert.equal(
+      await page.evaluate(() =>
+        document.activeElement.classList.contains("gear-config-open")
+      ),
+      true,
+      "Fermer doit rendre le focus au bouton exact qui a ouvert"
+    );
+
     page.once("dialog", dialog => dialog.accept());
     await chooseWeapon(page, firstHero, "Hache", "Hache bénie");
     await assertVisibleText(
