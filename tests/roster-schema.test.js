@@ -20,12 +20,31 @@ const sql = fs.readFileSync(
   /create policy roster_delete[\s\S]*using\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i
 ].forEach(pattern => assert.match(sql, pattern));
 
-[
-  /create policy teams_read[\s\S]*for select to authenticated using\s*\(\s*true\s*\)/i,
-  /create policy teams_insert[\s\S]*with check\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i,
-  /create policy teams_update[\s\S]*using\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i,
-  /create policy teams_delete[\s\S]*using\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i
-].forEach(pattern => assert.match(sql, pattern));
+function normalizedPolicy(name) {
+  const marker = "create policy " + name;
+  const start = sql.indexOf(marker);
+  assert.notEqual(start, -1, name + " doit exister");
+  const end = sql.indexOf(";", start);
+  assert.notEqual(end, -1, name + " doit être une instruction complète");
+  return sql.slice(start, end + 1).replace(/\s+/g, " ").trim().toLowerCase();
+}
+
+assert.equal(
+  normalizedPolicy("teams_read"),
+  "create policy teams_read on public.teams for select to authenticated using (true);"
+);
+assert.equal(
+  normalizedPolicy("teams_insert"),
+  "create policy teams_insert on public.teams for insert to authenticated with check (owner = auth.uid());"
+);
+assert.equal(
+  normalizedPolicy("teams_update"),
+  "create policy teams_update on public.teams for update to authenticated using (owner = auth.uid());"
+);
+assert.equal(
+  normalizedPolicy("teams_delete"),
+  "create policy teams_delete on public.teams for delete to authenticated using (owner = auth.uid());"
+);
 
 // Sessions de boss : trois runs atomiques par membre et par semaine.
 [
