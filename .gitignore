@@ -6,3 +6,5 @@ __pycache__/
 debug.log
 .superpowers/
 .VSCodeCounter/
+*.tmp.py
+*.tmp.js
