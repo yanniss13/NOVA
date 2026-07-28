@@ -135,6 +135,42 @@ Site Confrérie 7ds/
 └─ 7ds-bijoux/<Slot>/      # Anneau, Collier, Boucle d'oreille — *.webp (vides pour l'instant)
 ```
 
+## Stats de référence (`7ds-stats/`)
+
+Données chiffrées du jeu, extraites de 7dsorigin.app par `generate-stats.py`.
+**Aucun de ces fichiers n'est chargé par `index.html`** : ce sont des fichiers de
+référence pour concevoir, pas des données d'exécution. Ne les précache pas.
+
+| Fichier | Contenu |
+| --- | --- |
+| `personnages.json` | 24 personnages : `baseHp/baseAtk/baseDef/baseSpd`, précision, blocage, crit (taux, dégâts, résistances), PvP, `weaponSlots`, 15 niveaux de maîtrise, 30 paliers de potentiel, costumes |
+| `armes.json` | 142 armes, 262 variantes de grade : `mainStat`, `subStats` (`base`, `max`, `progression`), enchantements, passifs |
+| `armures.json` | 229 pièces sur 7 emplacements × 5 grades : `mainStat`, `subStat`, `setId`, `reinforceMax`, qualité, `growth` |
+| `armures-gravees.json` | 83 équipements gravés, rapprochés de leur costume et de leur personnage, avec passifs de gravure et matériaux |
+| `enchantements.json` | 181 tables basiques, 81 tables de pierre maîtresse, 67 armures, 83 armures gravées |
+| `sets.json` | 21 ensembles avec bonus 2 et 4 pièces |
+| `libelles-stats.json` | 71 codes de stat → libellés FR/EN, `taux`, libellé court |
+
+Quatre points à ne pas réapprendre à la dure :
+
+- **`robots.txt` de 7dsorigin.app interdit `/api/`** à tous les agents, `ClaudeBot`
+  nommément. Le générateur ne tape donc jamais l'API : il lit le payload RSC que
+  la page `/fr/team-builder/create` embarque déjà (`self.__next_f.push`), ce qui
+  ne demande qu'un GET, sans navigateur ;
+- les options aléatoires d'une pièce vivent dans **`growth.randomOptions`**, pas à
+  la racine de l'objet. Chercher `item.randomOptions` renvoie toujours vide, et
+  les 152 occurrences de ce mot dans le payload sont surtout des libellés
+  d'interface ;
+- seules **67 des 229** armures ont des options aléatoires (les hauts grades),
+  contre **83 sur 83** pour les gravées. Un compte partiel n'est pas un bug ;
+- les codes de stat ont deux sources de libellés : les objets `{stat, nameFr}`
+  répartis dans l'arbre, et un dictionnaire court `statLabels`
+  (« ATK », « Perforation ») qui couvre 8 codes absents des premiers. Il faut
+  fusionner les deux, sinon des codes restent sans nom.
+
+Le palier 5 des pierres maîtresses se découpe par élément (`generic`, `default`
+puis les 7 éléments) : sa forme diffère des paliers 1 à 4.
+
 ## Règle d'or sur les assets
 
 **On ne hardcode JAMAIS la liste des images dans `index.html`.**
