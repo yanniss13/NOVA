@@ -38,6 +38,125 @@ async function assertPickerTilesContained(page, label){
   });
 }
 
+async function installRosterFocusFakeSupabase(page){
+  await page.addInitScript(() => {
+    const clone = value => value == null
+      ? value
+      : JSON.parse(JSON.stringify(value));
+    const state = {
+      session:{
+        user:{ id:"focus-user", email:"focus@example.test" }
+      },
+      profiles:[{ id:"focus-user", pseudo:"Focus" }],
+      teams:[],
+      roster_characters:[{
+        owner:"focus-user",
+        char_id:"meliodas",
+        potential_tier:7,
+        builds:{
+          Hache:{
+            weapon:"7ds-armes/Hache/Hache à l'aura triomphale.webp",
+            weaponConfig:null,
+            armor:{},
+            jewel:{},
+            note:"",
+            favorite:true
+          }
+        },
+        updated_at:"2026-07-25T08:40:00.000Z"
+      }],
+      boss_sessions:[],
+      boss_participation:[],
+      boss_run_reports:[],
+      channels:[]
+    };
+
+    function query(table){
+      let operation = "select";
+      let payload = null;
+      const filters = [];
+      const builder = {
+        select(){ operation = "select"; return builder; },
+        order(){ return builder; },
+        eq(column, value){ filters.push([column,value]); return builder; },
+        in(column, values){ filters.push([column,values]); return builder; },
+        maybeSingle(){
+          return execute().then(result => ({
+            data:Array.isArray(result.data) ? (result.data[0] || null) : result.data,
+            error:result.error
+          }));
+        },
+        upsert(value){ operation = "upsert"; payload = clone(value); return execute(); },
+        then(resolve, reject){ return execute().then(resolve, reject); }
+      };
+      async function execute(){
+        const rows = state[table] || [];
+        if(operation === "upsert") return { data:clone(payload), error:null };
+        const data = rows.filter(row => filters.every(([column,value]) =>
+          Array.isArray(value) ? value.includes(row[column]) : row[column] === value
+        ));
+        return { data:clone(data), error:null };
+      }
+      return builder;
+    }
+
+    function channel(){
+      const handlers = [];
+      const value = {
+        on(kind, filter, callback){
+          handlers.push({kind,filter,callback});
+          return value;
+        },
+        subscribe(callback){
+          value.statusCallback = callback;
+          state.channels.push(value);
+          queueMicrotask(() => callback("SUBSCRIBED"));
+          return value;
+        },
+        handlers
+      };
+      return value;
+    }
+
+    window.__focusSupabaseState = state;
+    window.__focusSupabaseEmit = table => {
+      state.channels.forEach(item => item.handlers
+        .filter(handler =>
+          handler.kind === "postgres_changes" &&
+          handler.filter.table === table
+        )
+        .forEach(handler => handler.callback({
+          schema:"public",
+          table,
+          eventType:"UPDATE",
+          new:{},
+          old:{}
+        })));
+    };
+    window.__focusSupabaseClient = {
+      auth:{
+        async getSession(){
+          return { data:{session:clone(state.session)}, error:null };
+        },
+        onAuthStateChange(){
+          return { data:{subscription:{unsubscribe(){}}} };
+        }
+      },
+      from:query,
+      channel,
+      async removeChannel(){ return "ok"; },
+      async rpc(){ return {data:null,error:null}; }
+    };
+  });
+  await page.route("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*", route =>
+    route.fulfill({
+      status:200,
+      contentType:"application/javascript",
+      body:"window.supabase={createClient:function(){return window.__focusSupabaseClient;}};"
+    })
+  );
+}
+
 (async()=>{
   const browser = await chromium.launch({ headless:true });
   const page = await browser.newPage({ viewport:{width:1280,height:900} });
@@ -167,6 +286,86 @@ async function assertPickerTilesContained(page, label){
       "accountLogin",
       "La restauration différée ne doit pas reprendre un focus déplacé"
     );
+
+    /* Pile réelle roster -> panneau arme : Échap ferme seulement le dessus,
+       puis un conflit reste captif et place le focus sur son premier choix. */
+    const rosterFocusContext = await browser.newContext({
+      viewport:{width:1280,height:900}
+    });
+    const rosterFocusPage = await rosterFocusContext.newPage();
+    await installRosterFocusFakeSupabase(rosterFocusPage);
+    await rosterFocusPage.goto(
+      pathToFileURL(path.resolve(__dirname, "..", "index.html")).href
+    );
+    await rosterFocusPage.locator("#accountPseudo")
+      .getByText("Focus", { exact:true }).waitFor();
+    await rosterFocusPage.locator('.tab[data-view="member-roster"]').click();
+    await rosterFocusPage.locator(
+      "#memberRosterGrid .member-roster-edit"
+    ).click();
+    const weaponConfigTrigger = rosterFocusPage.locator(
+      "#memberRosterEditor .weapon-config-open"
+    );
+    await weaponConfigTrigger.click();
+    assert.equal(
+      await rosterFocusPage.locator("#weaponConfigOverlay")
+        .getAttribute("aria-hidden"),
+      "false"
+    );
+    await rosterFocusPage.keyboard.press("Escape");
+    assert.equal(
+      await rosterFocusPage.locator("#memberRosterOverlay")
+        .getAttribute("aria-hidden"),
+      "false"
+    );
+    assert.equal(
+      await rosterFocusPage.evaluate(() =>
+        document.activeElement.classList.contains("weapon-config-open")
+      ),
+      true
+    );
+
+    await rosterFocusPage.locator(
+      "#memberRosterEditor .weapon-config-open"
+    ).click();
+    await rosterFocusPage.locator(".weapon-config-level").fill("4");
+    await rosterFocusPage.evaluate(() => {
+      const row = window.__focusSupabaseState.roster_characters[0];
+      row.updated_at = "2026-07-25T08:41:00.000Z";
+      window.__focusSupabaseEmit("roster_characters");
+    });
+    await rosterFocusPage.waitForTimeout(300);
+    await rosterFocusPage.locator("#weaponConfigSave").click();
+    const conflictAlert = rosterFocusPage.locator(".weapon-config-conflict");
+    await conflictAlert.waitFor({ timeout:3000 });
+    assert.equal(await conflictAlert.getAttribute("role"), "alert");
+    assert.equal(
+      await rosterFocusPage.evaluate(() => document.activeElement.id),
+      "weaponConfigReload",
+      "Le premier choix du conflit doit recevoir le focus"
+    );
+    await rosterFocusPage.keyboard.press("Tab");
+    assert.equal(
+      await rosterFocusPage.evaluate(() =>
+        document.querySelector("#weaponConfigOverlay")
+          .contains(document.activeElement)
+      ),
+      true,
+      "Le conflit ne doit jamais faire sortir le focus du panneau"
+    );
+    await rosterFocusPage.keyboard.press("Escape");
+    assert.equal(
+      await rosterFocusPage.locator("#memberRosterOverlay")
+        .getAttribute("aria-hidden"),
+      "false"
+    );
+    assert.equal(
+      await rosterFocusPage.evaluate(() =>
+        document.activeElement.classList.contains("weapon-config-open")
+      ),
+      true
+    );
+    await rosterFocusContext.close();
 
     for(const width of [320, 390]){
       const pickerContext = await browser.newContext({

@@ -1290,6 +1290,16 @@
   #weaponConfigError{
     min-height:18px;margin:0;padding:0 18px;color:#e98d8d;font-size:12px
   }
+  .weapon-config-conflict{
+    display:flex;flex-direction:column;gap:10px;padding:13px;
+    border:1px solid #c87979;border-radius:9px;
+    background:rgba(118,36,48,.2);color:var(--parchment);
+    font-size:12px;line-height:1.45
+  }
+  .weapon-config-conflict p{margin:0}
+  .weapon-config-conflict-actions{
+    display:flex;flex-wrap:wrap;gap:8px
+  }
   .weapon-config-actions{
     display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;
     padding:14px 18px;border-top:1px solid var(--line);background:var(--panel-2)
@@ -1300,6 +1310,8 @@
     }
     .weapon-config-layout{grid-template-columns:minmax(0,1fr)}
     #weaponConfigPreview{border-left:0;border-top:1px solid var(--line)}
+    .weapon-config-conflict-actions{display:grid;grid-template-columns:1fr}
+    .weapon-config-conflict-actions .btn{width:100%}
     .weapon-config-actions{display:grid;grid-template-columns:1fr}
     .weapon-config-actions .btn{width:100%;min-height:44px;justify-content:center}
   }
@@ -3050,6 +3062,74 @@
 
   let weaponConfigEditorState = null;
 
+  function weaponConfigHasConflict(state){
+    const source = Number(
+      state && state.context && state.context.sourceUpdatedAt
+    ) || 0;
+    const latest = Number(
+      state &&
+      state.context &&
+      typeof state.context.latestUpdatedAt === "function" &&
+      state.context.latestUpdatedAt()
+    ) || 0;
+    return latest > source && !state.overwriteConfirmed;
+  }
+
+  function weaponConfigDraftIsDirty(state){
+    return !!state && JSON.stringify(state.draft) !== state.initialDraftJson;
+  }
+
+  function weaponConfigConflictNode(state){
+    const reload = el("button",{
+      class:"btn",
+      id:"weaponConfigReload",
+      type:"button",
+      text:"Recharger la version récente",
+      onclick:async()=>{
+        if(weaponConfigDraftIsDirty(state) && !confirm(
+          "Recharger la version récente et abandonner tes modifications ?"
+        )){
+          reload.focus();
+          return;
+        }
+        const reloaded = typeof state.context.reload === "function"
+          ? await state.context.reload()
+          : true;
+        if(reloaded !== false && weaponConfigEditorState === state){
+          closeWeaponConfigEditor();
+        }
+      }
+    });
+    const overwrite = el("button",{
+      class:"btn btn-danger",
+      id:"weaponConfigOverwrite",
+      type:"button",
+      text:"Enregistrer quand même",
+      onclick:()=>{
+        state.overwriteConfirmed = true;
+        state.conflictVisible = false;
+        saveWeaponConfigEditor();
+      }
+    });
+    return el("div",{
+      class:"weapon-config-conflict",
+      role:"alert"
+    },[
+      el("p",{
+        text:"Une version plus récente existe. Choisis laquelle conserver."
+      }),
+      el("div",{class:"weapon-config-conflict-actions"},[reload,overwrite])
+    ]);
+  }
+
+  function showWeaponConfigConflict(state){
+    if(!state || weaponConfigEditorState !== state) return;
+    state.conflictVisible = true;
+    renderWeaponConfigEditor();
+    const reload = $("#weaponConfigReload");
+    if(reload) reload.focus();
+  }
+
   function openWeaponConfigEditor(context, restoreFocus){
     const defaultGradeGameId = context.defaultGradeGameId
       || weaponDefaultGradeGameId(context.weaponFile);
@@ -3060,7 +3140,10 @@
       context,
       draft:initial,
       restoreFocus,
-      validationAttempted:false
+      initialDraftJson:JSON.stringify(initial),
+      validationAttempted:false,
+      conflictVisible:false,
+      overwriteConfirmed:false
     };
     renderWeaponConfigEditor();
     ModalStack.open(
@@ -3264,6 +3347,9 @@
     if(!state) return;
     const body = $("#weaponConfigBody");
     body.innerHTML = "";
+    if(state.conflictVisible){
+      body.appendChild(weaponConfigConflictNode(state));
+    }
     const grades = weaponGrades(state.context.weaponFile);
     if(!state.draft || !grades.length){
       body.appendChild(el("p",{
@@ -3390,6 +3476,11 @@
       }
       return;
     }
+    if(weaponConfigHasConflict(state)){
+      showWeaponConfigConflict(state);
+      return;
+    }
+    state.overwriteConfirmed = false;
     state.context.commit(jsonCopy(state.draft));
     closeWeaponConfigEditor();
   }
@@ -3748,6 +3839,7 @@
 
   let draft = emptyDraft();
   let editing = false;
+  let teamDraftSourceUpdatedAt = 0;
 
   /* ============================ Toast ============================ */
   let toastTimer;
@@ -4859,9 +4951,9 @@
         if(!currentUser || !memberRosterDraft) return 0;
         const latest = MemberRosterStore.all(currentUser.id)
           .find(row => row.charId === memberRosterDraft.charId);
-        return latest ? latest.updatedAt : memberRosterDraft.updatedAt;
+        return latest ? latest.updatedAt : memberRosterDraftSourceUpdatedAt;
       },
-      reload(){ void reloadCurrentRosterDraft(); }
+      reload(){ return reloadCurrentRosterDraft(); }
     });
     if(configControl) gear.appendChild(configControl);
     gear.appendChild(el("div",{class:"gear-group",text:"Armures"}));
@@ -4991,7 +5083,7 @@
   }
 
   async function reloadCurrentRosterDraft(){
-    if(!currentUser || !memberRosterDraft) return;
+    if(!currentUser || !memberRosterDraft) return false;
     const charId = memberRosterDraft.charId;
     try{
       const rows = await MemberRosterStore.refresh(currentUser.id);
@@ -5000,15 +5092,17 @@
         closeWeaponConfigEditor();
         closeMemberRosterEditor();
         toast("Ce personnage a été supprimé du roster.", true);
-        return;
+        return true;
       }
       memberRosterDraft = JSON.parse(JSON.stringify(
         normalizeRosterCharacter(latest)
       ));
       memberRosterDraftSourceUpdatedAt = memberRosterDraft.updatedAt;
       renderMemberRosterEditor();
+      return true;
     }catch(error){
       toast("Impossible de recharger la version récente du roster.", true);
+      return false;
     }
   }
 
@@ -5017,7 +5111,18 @@
     const button = $("#memberRosterSave");
     button.disabled = true;
     try{
-      await MemberRosterStore.upsert(memberRosterDraft);
+      const latest = currentUser && MemberRosterStore.all(currentUser.id)
+        .find(row => row.charId === memberRosterDraft.charId);
+      const latestUpdatedAt = Number(latest && latest.updatedAt) || 0;
+      if(latestUpdatedAt > memberRosterDraftSourceUpdatedAt && !confirm(
+        "Une version plus récente existe. Enregistrer quand même ?"
+      )){
+        button.disabled = false;
+        button.focus();
+        return;
+      }
+      const saved = await MemberRosterStore.upsert(memberRosterDraft);
+      memberRosterDraftSourceUpdatedAt = saved.updatedAt;
       closeMemberRosterEditor();
       await renderMemberRoster();
       toast("Personnage enregistré dans ton roster.");
@@ -5168,7 +5273,7 @@
     const configControl = weaponConfigControl({
       weaponFile:hero.weapon,
       config:hero.weaponConfig,
-      sourceUpdatedAt:draft.updatedAt,
+      sourceUpdatedAt:teamDraftSourceUpdatedAt,
       defaultGradeGameId:weaponDefaultGradeGameId(hero.weapon),
       commit(nextConfig){
         hero.weaponConfig = nextConfig;
@@ -5179,8 +5284,17 @@
           ModalStack.setRestoreFocus($("#weaponConfigOverlay"), nextButton);
         }
       },
-      latestUpdatedAt(){ return draft.updatedAt; },
-      reload(){ renderBuilder(); }
+      latestUpdatedAt(){
+        const latest = Store.all().find(row => row.id === draft.id);
+        return latest ? latest.updatedAt : teamDraftSourceUpdatedAt;
+      },
+      reload(){
+        const latest = Store.all().find(row => row.id === draft.id);
+        if(!latest) return;
+        draft = normalizeTeam(JSON.parse(JSON.stringify(latest)));
+        teamDraftSourceUpdatedAt = draft.updatedAt;
+        renderBuilder();
+      }
     });
     if(configControl) gear.appendChild(configControl);
     gear.appendChild(el("div",{class:"gear-group", text:"Armures"}));
@@ -5472,6 +5586,7 @@
   function resetTeamDraft(){
     draft = emptyDraft();
     editing = false;
+    teamDraftSourceUpdatedAt = 0;
     renderBuilder();
   }
 
@@ -5498,9 +5613,19 @@
     const saveButton = $("#btnSave");
     saveButton.disabled = true;
     try{
-      await Store.upsert(team);
+      const latest = Store.all().find(row => row.id === team.id);
+      const latestUpdatedAt = Number(latest && latest.updatedAt) || 0;
+      if(teamDraftSourceUpdatedAt > 0
+        && latestUpdatedAt > teamDraftSourceUpdatedAt
+        && !confirm("Une version plus récente existe. Enregistrer quand même ?")){
+        saveButton.disabled = false;
+        saveButton.focus();
+        return;
+      }
+      const saved = await Store.upsert(team);
+      teamDraftSourceUpdatedAt = saved.updatedAt;
       toast(editing ? "Équipe mise à jour." : "Équipe enregistrée !");
-      draft = emptyDraft(); editing = false; renderBuilder();
+      resetTeamDraft();
       showView("roster");
     }catch(error){
       toast("Enregistrement impossible : "+authMessage(error), true);
@@ -5786,6 +5911,7 @@
       return;
     }
     draft = normalizeTeam(JSON.parse(JSON.stringify(t)));
+    teamDraftSourceUpdatedAt = Number(draft.updatedAt) || 0;
     editing = true;
     renderBuilder();
     showView("builder");
@@ -5807,6 +5933,7 @@
     delete copy.createdAt;
     delete copy.updatedAt;
     draft = copy;
+    teamDraftSourceUpdatedAt = 0;
     editing = false;
     renderBuilder();
     showView("builder");

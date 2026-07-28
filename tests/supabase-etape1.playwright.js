@@ -1019,6 +1019,298 @@ const { chromium } = require("playwright");
     assert.equal(await rosterEditorNote.inputValue(), "Saisie conservée");
     await page.locator("#memberRosterClose").click();
 
+    /* ---- Conflits Realtime de configuration d'arme ----
+       La ligne distante peut avancer pendant que deux niveaux de brouillon
+       restent ouverts : le panneau arme, puis son parent roster/équipe. */
+    await page.locator("#memberRosterGrid .member-roster-edit").click();
+    const rosterConflictOpen = page.locator(
+      "#memberRosterEditor .weapon-config-open"
+    );
+    await rosterConflictOpen.click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"visible" });
+    await page.locator(".weapon-config-level").fill("9");
+    await page.evaluate(() => {
+      const row = window.__fakeSupabaseState.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      row.updated_at = new Date(Date.parse(row.updated_at) + 60_000).toISOString();
+      window.__fakeSupabaseEmit("roster_characters", "UPDATE");
+    });
+    await page.waitForTimeout(300);
+    assert.equal(
+      await page.locator("#weaponConfigOverlay").isVisible(),
+      true,
+      "Realtime ne doit pas fermer le panneau arme"
+    );
+    assert.equal(
+      await page.locator(".weapon-config-level").inputValue(),
+      "9",
+      "Realtime ne doit pas remplacer le brouillon d'arme"
+    );
+    await page.locator("#weaponConfigSave").click();
+    const rosterConflict = page.locator(".weapon-config-conflict");
+    await rosterConflict.waitFor({ timeout:3000 });
+    assert.equal(await rosterConflict.getAttribute("role"), "alert");
+    assert.equal(
+      await rosterConflict.getByRole("button", {
+        name:"Recharger la version récente",
+        exact:true
+      }).count(),
+      1
+    );
+    assert.equal(
+      await rosterConflict.getByRole("button", {
+        name:"Enregistrer quand même",
+        exact:true
+      }).count(),
+      1
+    );
+    assert.equal(
+      await page.locator("#weaponConfigOverlay").isVisible(),
+      true,
+      "Le conflit ne doit ni écrire ni fermer le panneau"
+    );
+
+    page.once("dialog", dialog => dialog.accept());
+    await rosterConflict.getByRole("button", {
+      name:"Recharger la version récente",
+      exact:true
+    }).click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"hidden" });
+    assert.equal(
+      await page.locator("#memberRosterOverlay").isVisible(),
+      true,
+      "Recharger doit conserver l'éditeur roster parent"
+    );
+
+    await page.locator("#memberRosterEditor .weapon-config-open").click();
+    await page.locator(".weapon-config-level").fill("8");
+    await page.evaluate(() => {
+      const row = window.__fakeSupabaseState.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      row.updated_at = new Date(Date.parse(row.updated_at) + 60_000).toISOString();
+      window.__fakeSupabaseEmit("roster_characters", "UPDATE");
+    });
+    await page.waitForTimeout(300);
+    await page.locator("#weaponConfigSave").click();
+    await page.locator(".weapon-config-conflict").waitFor({ timeout:3000 });
+    await page.getByRole("button", {
+      name:"Enregistrer quand même",
+      exact:true
+    }).click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"hidden" });
+    assert.match(
+      await page.locator("#memberRosterEditor .weapon-config-summary").textContent(),
+      /Nv\. 8/,
+      "L'écrasement explicite doit valider exactement ce brouillon"
+    );
+
+    const rosterUpsertsBeforeGuard = await page.evaluate(() =>
+      window.__fakeSupabaseState.calls.filter(call =>
+        call.table === "roster_characters" && call.operation === "upsert"
+      ).length
+    );
+    page.once("dialog", dialog => dialog.dismiss());
+    await page.locator("#memberRosterSave").click();
+    assert.equal(
+      await page.locator("#memberRosterOverlay").isVisible(),
+      true,
+      "Refuser la garde parent doit conserver le brouillon roster"
+    );
+    assert.equal(
+      await page.evaluate(() => document.activeElement.id),
+      "memberRosterSave",
+      "Refuser la garde parent doit réactiver et refocaliser Enregistrer"
+    );
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.calls.filter(call =>
+          call.table === "roster_characters" && call.operation === "upsert"
+        ).length
+      ),
+      rosterUpsertsBeforeGuard,
+      "Refuser la garde parent ne doit lancer aucun upsert roster"
+    );
+    page.once("dialog", dialog => dialog.accept());
+    await page.locator("#memberRosterSave").click();
+    await page.locator("#memberRosterOverlay").waitFor({ state:"hidden" });
+    await page.waitForFunction(() => {
+      const row = window.__fakeSupabaseState.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      return row && row.builds.Hache.weaponConfig &&
+        row.builds.Hache.weaponConfig.level === 8;
+    });
+
+    /* Une suppression distante survenue après l'affichage du conflit doit
+       fermer proprement les deux modales, sans ressusciter la ligne. */
+    await page.locator("#memberRosterGrid .member-roster-edit").click();
+    await page.locator("#memberRosterEditor .weapon-config-open").click();
+    await page.locator(".weapon-config-level").fill("7");
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const row = state.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      row.updated_at = new Date(Date.parse(row.updated_at) + 60_000).toISOString();
+      window.__fakeRosterConflictBackup = JSON.parse(JSON.stringify(row));
+      window.__fakeSupabaseEmit("roster_characters", "UPDATE");
+    });
+    await page.waitForTimeout(300);
+    await page.locator("#weaponConfigSave").click();
+    await page.locator(".weapon-config-conflict").waitFor({ timeout:3000 });
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.roster_characters =
+        window.__fakeSupabaseState.roster_characters.filter(item =>
+          item.owner !== "user-1" || item.char_id !== "meliodas"
+        );
+    });
+    page.once("dialog", dialog => dialog.accept());
+    await page.getByRole("button", {
+      name:"Recharger la version récente",
+      exact:true
+    }).click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"hidden" });
+    await page.locator("#memberRosterOverlay").waitFor({ state:"hidden" });
+    assert.match(
+      await page.locator("#toast").textContent(),
+      /supprimé du roster/
+    );
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.roster_characters.push(
+        window.__fakeRosterConflictBackup
+      );
+      window.__fakeSupabaseEmit("roster_characters", "INSERT");
+    });
+    await page.locator("#memberRosterGrid .member-roster-edit").waitFor();
+
+    /* Même contrat dans le Team Builder, avec la garde parent juste avant
+       Store.upsert. Une équipe temporaire isole ce scénario du reste. */
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const roster = state.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      state.teams.push({
+        id:"team-weapon-conflict",
+        owner:"user-1",
+        pseudo:"Yannis",
+        data:{
+          id:"team-weapon-conflict",
+          name:"Conflit Team",
+          pseudo:"Yannis",
+          heroes:Array.from({length:4}, (unused, index) => index === 0 ? {
+            char:"meliodas",
+            weapon:roster.builds.Hache.weapon,
+            weaponConfig:JSON.parse(JSON.stringify(
+              roster.builds.Hache.weaponConfig
+            )),
+            armor:{},
+            jewel:{},
+            potentiel:{tier:7},
+            note:""
+          } : {
+            char:null,
+            weapon:null,
+            armor:{},
+            jewel:{},
+            potentiel:{tier:0},
+            note:""
+          })
+        },
+        created_at:"2026-07-25T11:00:00.000Z",
+        updated_at:"2026-07-25T11:00:00.000Z"
+      });
+      window.__fakeSupabaseEmit("teams", "INSERT");
+    });
+    await page.locator('.tab[data-view="roster"]').click();
+    const conflictTeamCard = page.locator("#rosterGrid .team")
+      .filter({ hasText:"Conflit Team" });
+    await conflictTeamCard.locator('[data-team-action="edit"]').click();
+    const teamConflictOpen = page.locator(
+      "#heroGrid .hero"
+    ).first().locator(".weapon-config-open");
+    await teamConflictOpen.click();
+    await page.locator(".weapon-config-level").fill("6");
+    await page.evaluate(() => {
+      const row = window.__fakeSupabaseState.teams.find(item =>
+        item.id === "team-weapon-conflict"
+      );
+      row.updated_at = new Date(Date.parse(row.updated_at) + 60_000).toISOString();
+      window.__fakeSupabaseEmit("teams", "UPDATE");
+    });
+    await page.waitForTimeout(300);
+    assert.equal(await page.locator(".weapon-config-level").inputValue(), "6");
+    await page.locator("#weaponConfigSave").click();
+    await page.locator(".weapon-config-conflict").waitFor({ timeout:3000 });
+    await page.getByRole("button", {
+      name:"Enregistrer quand même",
+      exact:true
+    }).click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"hidden" });
+
+    const teamUpsertsBeforeGuard = await page.evaluate(() =>
+      window.__fakeSupabaseState.calls.filter(call =>
+        call.table === "teams" && call.operation === "upsert"
+      ).length
+    );
+    page.once("dialog", dialog => dialog.dismiss());
+    await page.locator("#btnSave").click();
+    assert.equal(await page.locator("#view-builder").isVisible(), true);
+    assert.equal(
+      await page.evaluate(() => document.activeElement.id),
+      "btnSave"
+    );
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.calls.filter(call =>
+          call.table === "teams" && call.operation === "upsert"
+        ).length
+      ),
+      teamUpsertsBeforeGuard,
+      "Refuser la garde parent ne doit lancer aucun upsert équipe"
+    );
+    page.once("dialog", dialog => dialog.accept());
+    await page.locator("#btnSave").click();
+    await page.locator("#view-roster").waitFor({ state:"visible" });
+    assert.equal(
+      await page.evaluate(() => {
+        const row = window.__fakeSupabaseState.teams.find(item =>
+          item.id === "team-weapon-conflict"
+        );
+        return row.data.heroes[0].weaponConfig.level;
+      }),
+      6
+    );
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.teams =
+        window.__fakeSupabaseState.teams.filter(item =>
+          item.id !== "team-weapon-conflict"
+        );
+      window.__fakeSupabaseEmit("teams", "DELETE");
+    });
+
+    /* Une nouvelle équipe n'a aucune source distante : elle ne doit jamais
+       produire de faux conflit dans le panneau. */
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.locator("#btnNew").click();
+    await page.locator(".hero").first()
+      .getByRole("button", { name:"Depuis mon roster", exact:true }).click();
+    await page.locator('#pickerGrid .tile[title="Meliodas"]').click();
+    await page.locator('#pickerGrid .tile[title*="Hache"]').click();
+    await page.locator("#heroGrid .hero").first()
+      .locator(".weapon-config-open").click();
+    await page.locator(".weapon-config-level").fill("5");
+    await page.locator("#weaponConfigSave").click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"hidden" });
+    assert.equal(
+      await page.locator(".weapon-config-conflict").count(),
+      0,
+      "Un brouillon neuf ne doit pas signaler de version plus récente"
+    );
+    await page.locator("#btnNew").click();
+
     for(const width of [320, 360, 390]){
       await page.setViewportSize({ width, height:844 });
       await page.locator('.tab[data-view="member-roster"]').click();
