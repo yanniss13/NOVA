@@ -7,6 +7,8 @@ const { loadApp, plain } = require("./helpers/load-app");
 
 const HACHE_FILE = "7ds-armes/Hache/hache.webp";
 const EPEE_FILE = "7ds-armes/Epee 1 main/epee.webp";
+const BAGUETTE_VORACE_FILE = "7ds-armes/Baguette/Baguette de l'âme vorace.webp";
+const EPEE_LONGUE_USEE_FILE = "7ds-armes/Epee 1 main/Épée longue usée.webp";
 
 function validConfig(overrides = {}){
   return Object.assign({
@@ -21,6 +23,17 @@ function validConfig(overrides = {}){
 
 function assertThrowsCode(action, code){
   assert.throws(action, new RegExp(code));
+}
+
+function masterstoneConfig(enchantment){
+  return {
+    version:1,
+    gradeGameId:"131065010",
+    level:0,
+    promotion:0,
+    overlimit:0,
+    enchantments:[enchantment]
+  };
 }
 
 // Les primitives reproduisent les segments, promotions, bornes et formats documentés.
@@ -373,7 +386,82 @@ function assertThrowsCode(action, code){
   );
   assert.strictEqual(
     hooks.weaponConfigStatus(HACHE_FILE, validConfig({ gradeGameId:"grade-sans-courbe" })),
+    "unavailable"
+  );
+}
+
+// Une pierre maîtresse reconnue mais en cours de saisie reste incomplète.
+{
+  const { hooks } = loadApp();
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, masterstoneConfig({
+      slot:0,
+      tier:5,
+      element:"",
+      stat:"",
+      value:null
+    })),
+    "incomplete"
+  );
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, masterstoneConfig({
+      slot:0,
+      tier:5,
+      element:"generic",
+      stat:"I_AtkAdd_Rate",
+      value:null
+    })),
+    "incomplete"
+  );
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, masterstoneConfig({
+      slot:0,
+      tier:5,
+      element:"generic",
+      stat:"stat-interdite",
+      value:423
+    })),
     "incompatible"
+  );
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, masterstoneConfig({
+      slot:0,
+      tier:5,
+      element:"generic",
+      stat:"I_AtkAdd_Rate",
+      value:422
+    })),
+    "incompatible"
+  );
+}
+
+// La variante réelle sans courbes natives n'annonce jamais un zéro couvert.
+{
+  const { hooks } = loadApp();
+  const config = {
+    version:1,
+    gradeGameId:"130100098",
+    level:0,
+    promotion:0,
+    overlimit:0,
+    enchantments:[null]
+  };
+  assert.strictEqual(
+    hooks.weaponConfigStatus(EPEE_LONGUE_USEE_FILE, config),
+    "unavailable"
+  );
+  const result = plain(hooks.calculateWeaponStats(EPEE_LONGUE_USEE_FILE, config));
+  assert.strictEqual(result.status, "unavailable");
+  assert.deepStrictEqual(result.coverage, []);
+  assert.deepStrictEqual(result.terms, []);
+  assert.deepStrictEqual(result.totals, []);
+  assert.strictEqual(
+    hooks.weaponConfigSummary(EPEE_LONGUE_USEE_FILE, null),
+    "Données chiffrées indisponibles"
+  );
+  assert.strictEqual(
+    hooks.weaponConfigSummary(EPEE_LONGUE_USEE_FILE, config),
+    "Données chiffrées indisponibles"
   );
 }
 

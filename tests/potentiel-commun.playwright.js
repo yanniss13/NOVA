@@ -84,6 +84,22 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await chooseWeapon(
       page,
       firstHero,
+      "Epee a une main",
+      "Épée longue usée"
+    );
+    await assertVisibleText(
+      firstHero.locator(".weapon-config-summary"),
+      "Données chiffrées indisponibles"
+    );
+    assert.equal(
+      await firstHero.locator(".weapon-config-open").isDisabled(),
+      true,
+      "Une variante sans courbes natives ne doit pas ouvrir un calcul à zéro"
+    );
+
+    await chooseWeapon(
+      page,
+      firstHero,
       "Hache",
       "Hache de l'âme vorace"
     );

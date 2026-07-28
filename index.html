@@ -2403,44 +2403,109 @@
     if(raw === undefined || raw === null) return null;
     return jsonCopy(raw);
   }
-  function isAllowedEnchantValue(choice, options){
-    return !!choice && typeof choice === "object" && !Array.isArray(choice)
-      && typeof choice.stat === "string" && isInteger(choice.value)
-      && (options || []).some(option => option && option.stat === choice.stat
-        && choice.value >= option.min && choice.value <= option.max);
+  function nativeWeaponCurveIsComplete(curve){
+    return !!curve && typeof curve === "object" && !Array.isArray(curve)
+      && Number.isFinite(curve.base)
+      && Number.isFinite(curve.max)
+      && Array.isArray(curve.progression)
+      && curve.progression.every(Number.isFinite);
   }
-  function areEnchantmentsValid(grade, enchantments){
+  function weaponGradeHasCompleteNativeCurves(grade){
+    return nativeWeaponCurveIsComplete(grade && grade.mainStatValues)
+      && nativeWeaponCurveIsComplete(grade && grade.promotionValues)
+      && Array.isArray(grade && grade.subStats)
+      && grade.subStats.every(subStat =>
+        nativeWeaponCurveIsComplete(subStat && subStat.values)
+      );
+  }
+  function weaponHasCompleteNativeCurves(weapon){
+    return !!weapon && Object.values(weapon.gradesByGameId || {})
+      .some(weaponGradeHasCompleteNativeCurves);
+  }
+  function enchantmentFieldIsMissing(choice, key){
+    return !owns(choice, key) || choice[key] === null || choice[key] === "";
+  }
+  function allowedEnchantValueStatus(choice, options){
+    if(enchantmentFieldIsMissing(choice, "stat")) return "incomplete";
+    if(typeof choice.stat !== "string") return "incompatible";
+    const option = (options || []).find(item =>
+      item && item.stat === choice.stat
+    );
+    if(!option) return "incompatible";
+    if(enchantmentFieldIsMissing(choice, "value")) return "incomplete";
+    if(!isInteger(choice.value)) return "incompatible";
+    return choice.value >= option.min && choice.value <= option.max
+      ? "valid" : "incompatible";
+  }
+  function enchantmentChoiceStatus(grade, choice, index){
     const catalog = grade.enchantments;
     if(catalog.type === "basic"){
-      return enchantments.every((choice, index) => choice === null || (
-        choice.slot === index && isAllowedEnchantValue(
-          choice,
-          (catalog.options || []).map(option => Object.assign(
-            {},
-            option,
-            enchantmentBounds(option, catalog.slots[index])
-          ))
-        )
-      ));
+      if(choice === null) return "valid";
+      if(!choice || typeof choice !== "object" || Array.isArray(choice)){
+        return "incompatible";
+      }
+      if(enchantmentFieldIsMissing(choice, "slot")) return "incomplete";
+      if(choice.slot !== index) return "incompatible";
+      return allowedEnchantValueStatus(
+        choice,
+        (catalog.options || []).map(option => Object.assign(
+          {},
+          option,
+          enchantmentBounds(option, catalog.slots[index])
+        ))
+      );
     }
     if(catalog.type === "masterstone"){
-      const choice = enchantments[0];
-      if(choice === null) return true;
-      if(!choice || typeof choice !== "object" || Array.isArray(choice) || choice.slot !== 0){
-        return false;
+      if(choice === null) return "valid";
+      if(!choice || typeof choice !== "object" || Array.isArray(choice)){
+        return "incompatible";
       }
+      if(enchantmentFieldIsMissing(choice, "slot")
+        || enchantmentFieldIsMissing(choice, "tier")){
+        return "incomplete";
+      }
+      if(choice.slot !== 0 || !isInteger(choice.tier)) return "incompatible";
       const tier = (catalog.tiers || []).find(item => item && item.tier === choice.tier);
-      if(!tier) return false;
-      const group = tier.elements
-        ? (tier.elements || []).find(item => item && item.element === choice.element)
-        : choice.element === null ? tier : null;
-      return !!group && isAllowedEnchantValue(choice, group.options);
+      if(!tier) return "incompatible";
+      let group = tier;
+      if(tier.elements){
+        if(enchantmentFieldIsMissing(choice, "element")) return "incomplete";
+        if(typeof choice.element !== "string") return "incompatible";
+        group = (tier.elements || [])
+          .find(item => item && item.element === choice.element);
+        if(!group) return "incompatible";
+      }else if(!owns(choice, "element") || choice.element === undefined){
+        return "incomplete";
+      }else if(choice.element !== null){
+        return "incompatible";
+      }
+      return allowedEnchantValueStatus(choice, group.options);
     }
-    return false;
+    return "incompatible";
+  }
+  function enchantmentsStatus(grade, enchantments){
+    let status = "valid";
+    enchantments.forEach((choice, index) => {
+      const choiceStatus = enchantmentChoiceStatus(grade, choice, index);
+      if(choiceStatus === "incompatible"){
+        status = "incompatible";
+      }else if(choiceStatus === "incomplete" && status === "valid"){
+        status = "incomplete";
+      }
+    });
+    return status;
+  }
+  function isAllowedEnchantValue(choice, options){
+    return !!choice && typeof choice === "object" && !Array.isArray(choice)
+      && allowedEnchantValueStatus(choice, options) === "valid";
+  }
+  function areEnchantmentsValid(grade, enchantments){
+    return enchantmentsStatus(grade, enchantments) === "valid";
   }
   function weaponConfigStatus(file, config){
     const weapon = buildWeaponDefinition(file);
     if(!weapon) return "unavailable";
+    if(!weaponHasCompleteNativeCurves(weapon)) return "unavailable";
     if(config === undefined || config === null) return "missing";
     if(!config || typeof config !== "object" || Array.isArray(config) || config.version !== 1){
       return "incompatible";
@@ -2449,6 +2514,7 @@
     if(required.some(key => !owns(config, key) || config[key] === null)) return "incomplete";
     const grade = buildWeaponGrade(file, config.gradeGameId);
     if(!grade) return "incompatible";
+    if(!weaponGradeHasCompleteNativeCurves(grade)) return "unavailable";
     if(!isInteger(config.level) || !isInteger(config.promotion) || !isInteger(config.overlimit)){
       return "incompatible";
     }
@@ -2468,7 +2534,8 @@
     if(length < 0 || !Array.isArray(config.enchantments) || config.enchantments.length !== length){
       return "incompatible";
     }
-    if(!areEnchantmentsValid(grade, config.enchantments)) return "incompatible";
+    const currentEnchantmentsStatus = enchantmentsStatus(grade, config.enchantments);
+    if(currentEnchantmentsStatus !== "valid") return currentEnchantmentsStatus;
     return "valid";
   }
 

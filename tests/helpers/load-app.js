@@ -109,6 +109,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   weaponConfigStatus:typeof weaponConfigStatus === "function"
     ? weaponConfigStatus
     : undefined,
+  weaponConfigSummary:typeof weaponConfigSummary === "function"
+    ? weaponConfigSummary
+    : undefined,
   curveValueAtLevel:typeof curveValueAtLevel === "function"
     ? curveValueAtLevel
     : undefined,
@@ -312,6 +315,26 @@ function loadApp(initialTeams){
         }
       }
     }
+  };
+  const catalogSandbox = { window:{} };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(ROOT, "stats-build.js"), "utf8"),
+    catalogSandbox,
+    { filename:"stats-build.js" }
+  );
+  const realBuildStats = catalogSandbox.window.SEVEN_DS_BUILD_STATS;
+  sandbox.SEVEN_DS_BUILD_STATS = {
+    version:realBuildStats.version,
+    statLabels:Object.assign(
+      {},
+      realBuildStats.statLabels,
+      sandbox.SEVEN_DS_BUILD_STATS.statLabels
+    ),
+    weaponsByFile:Object.assign(
+      {},
+      realBuildStats.weaponsByFile,
+      sandbox.SEVEN_DS_BUILD_STATS.weaponsByFile
+    )
   };
   sandbox.window = sandbox;
   vm.runInNewContext(exposed, sandbox, { filename:"index.html" });
