@@ -275,6 +275,34 @@ stocké dans l'objet du type d'arme ; les anciens builds sont normalisés à
 `false`. La copie du favori transfère les armures, les bijoux et la note,
 conserve l'arme de destination et ne crée jamais un second favori.
 
+## Modale de détail du roster d'un membre
+
+Elle n'existe **que** dans le roster consulté (`editable === false`) : sur son
+propre roster, « Modifier » ouvre déjà l'éditeur. Chaque fiche est cliquable et
+porte un bouton `.member-roster-detail-btn` — le bouton existe pour l'accès
+clavier, pas pour la décoration.
+
+`#rosterDetailOverlay` réutilise `heroDetail()` pour ne pas dupliquer la
+présentation du détail d'équipe. L'option `settings.badgesFor` remplace la
+rangée de badges figée par `rosterDetailWeaponSwitch()` : un bouton
+`.roster-detail-weapon[data-weapon-type]` par type d'arme du personnage, actif
+seulement si un build est enregistré pour ce type, `aria-pressed="true"` sur le
+build affiché.
+
+Navigation : `#rosterDetailPrev` / `#rosterDetailNext`, les touches
+`ArrowLeft` / `ArrowRight`, et `#rosterDetailPosition` (« n / total »). Les
+flèches sont désactivées aux extrémités, sans bouclage.
+
+Deux pièges vérifiés par les tests :
+
+- Le navigateur **retire le focus** d'un bouton dès qu'il devient `disabled`.
+  `renderRosterDetail()` lit donc `document.activeElement` **avant** de
+  désactiver une flèche, puis rend le focus à l'autre flèche. Sans ça, le focus
+  tombe sur `body` et les touches fléchées cessent de répondre.
+- `rosterDetail.entries` est une **copie** de la liste affichée. Une
+  synchronisation Realtime pendant la lecture ne doit pas déplacer le
+  personnage consulté.
+
 ## Filtres de catégorie du roster
 
 Les quatre catégories (`element`, `weapon`, `role`, `rarity`) sont des listes
