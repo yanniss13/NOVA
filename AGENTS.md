@@ -612,6 +612,27 @@ Ce code vit dans un bloc `<script>` séparé, car le bac à sable `vm` des tests
 unitaires ne fournit ni `window.addEventListener`, ni `matchMedia`, ni
 `requestAnimationFrame`.
 
+**Repères de défilement des onglets.** Sept onglets pour 390 px : `.tabs` défile
+en `overflow-x:auto` avec la barre masquée, donc rien n'indiquait qu'on pouvait
+défiler. Un fondu surmonté d'un chevron doré (`.tabs-cue-left` /
+`.tabs-cue-right`) apparaît du côté où il reste des onglets à atteindre.
+
+Trois contraintes à respecter :
+
+- les repères vivent dans l'enveloppe `.tabs-rail`, **hors** du conteneur
+  défilant. Un pseudo-élément posé sur `.tabs` défilerait avec les onglets, le
+  conteneur de bloc d'un descendant absolu étant l'aire de débordement ;
+- `pointer-events:none` obligatoire : le repère recouvre le dernier onglet
+  visible et ne doit jamais lui voler une touche. Le test le vérifie par
+  `elementFromPoint` au centre du repère, qui doit rendre un `.tab` ;
+- le contrôleur pose seulement `can-scroll-left` / `can-scroll-right` sur le
+  rail — le CSS décide de les rendre visibles, et ne le fait que dans la requête
+  média mobile. En desktop les onglets ne défilent pas : aucun repère, même si
+  les classes sont posées.
+
+`.tabs-rail` porte `order:3` et `width:100%` en mobile (c'est lui le
+flex-item de `.topbar`, plus `.tabs`).
+
 **Bouton « Importer mes données locales »** : action à usage unique, affichée
 seulement s'il reste réellement des données dans le `localStorage` de ce
 navigateur et que la migration n'a pas déjà eu lieu. Elle disparaît ensuite au
