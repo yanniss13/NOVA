@@ -55,8 +55,8 @@ jobs:
           grep -q "__BUILD_VERSION__" _site/sw.js
           sed -i "s/__BUILD_VERSION__/${GITHUB_SHA}/g" _site/sw.js
           ! grep -q "__BUILD_VERSION__" _site/sw.js
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v4
+      - uses: actions/configure-pages@v6
+      - uses: actions/upload-pages-artifact@v5
         with:
           path: _site
 
@@ -75,4 +75,4 @@ jobs:
     steps:
       - name: Publier GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5

@@ -24,11 +24,11 @@ const required = [
   /git archive HEAD/,
   /__BUILD_VERSION__/,
   /GITHUB_SHA/,
-  /actions\/configure-pages@v5/,
-  /actions\/upload-pages-artifact@v4/,
+  /actions\/configure-pages@v6/,
+  /actions\/upload-pages-artifact@v5/,
   // L'artefact ne doit contenir QUE la copie propre du commit testé.
   /path:\s*_site\s*$/m,
-  /actions\/deploy-pages@v4/,
+  /actions\/deploy-pages@v5/,
   /pages:\s*write/,
   /id-token:\s*write/,
   /name:\s*github-pages/
