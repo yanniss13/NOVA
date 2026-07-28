@@ -115,17 +115,58 @@ Structure observée sur une pièce grade5 (Haut de l'araignée de l'ombre) :
 
 avec `qualityMin: 120`, `qualityMax: 160`, `tierBoundaries: [119]`.
 
-**Hypothèse à valider :**
-`stat = progression[segment] + equiplvAdd[segment] × (niveau − borne) puis × reinforce[r] / 10000`
+Les identifiants `equiplv_N` ne renvoient à aucune table publiée : ils
+apparaissent 757 fois comme valeur de `growthType`, mais zéro fois comme clé de
+dictionnaire. Ils sont redondants et ne doivent donc être ni résolus, ni
+convertis en table de correspondance.
 
-Le `N` de `equiplv_N` est un **index de groupe (1 à 18), pas un niveau** — il y a
-34 valeurs distinctes de `growthType`, et la longueur de `progression` varie de 1
-à 4 selon le groupe, en correspondance avec `tierBoundaries`.
+La segmentation nécessaire est entièrement portée par chaque objet :
 
-**Pourquoi ce n'est pas vérifiable seul :** contrairement aux armes, aucun champ
-`max` ne permet de recouper le calcul. La seule validation possible serait de
-monter le même build sur leur site et de comparer les nombres affichés. Le
-propriétaire a choisi de ne pas faire ça (décision 1).
+```text
+nombreDeSegments = max(1, len(tierBoundaries) − 1)
+```
+
+Cette relation a été vérifiée sur les 1 156 blocs de croissance des 312 pièces,
+sans exception. Lorsqu'il n'existe qu'une seule borne, l'unique intervalle va de
+`qualityMin` à `qualityMax`.
+
+Il reste une seule hypothèse à valider : le gain par niveau d'un segment
+part-il de la borne inférieure de ce segment ou toujours de `qualityMin` ?
+L'implémentation du lot armures devra centraliser ce choix dans un unique
+paramètre nommé :
+
+```text
+origine(segment, "segment-lower-bound") = borne inférieure du segment
+origine(segment, "quality-min")          = qualityMin
+
+statAvantRenforcement =
+  progression[segment]
+  + equiplvAdd[segment] × (niveau − origine(segment, mode))
+```
+
+Le renforcement d'armure s'applique ensuite avec le taux correspondant de la
+table décrite au § 3.2.
+
+```js
+/*
+ * PRÉSUMÉ, NON VÉRIFIÉ :
+ * le gain par niveau repart de la borne inférieure de chaque segment.
+ *
+ * Vérification dans le jeu :
+ * relever la même statistique d'une même armure à qualityMin, juste avant,
+ * au niveau et juste après la première borne interne, puis comparer les deux
+ * reconstructions "segment-lower-bound" et "quality-min".
+ */
+const ARMOR_SEGMENT_ORIGIN_MODE = "segment-lower-bound";
+```
+
+Le terme produit à partir de ce choix devra porter
+`confidence: "presumed"`. Si la mesure favorise l'autre formule, le basculement
+devra se limiter à remplacer cette valeur par `"quality-min"`.
+
+**Pourquoi ce n'est pas vérifiable avec les données seules :** contrairement aux
+armes, aucun champ `max` ne permet de recouper le point d'origine. La mesure
+dans le vrai jeu selon le protocole ci-dessus reste le test décisif.
 
 ### 3.5 L'ordre d'application des pourcentages est inconnu
 
@@ -181,7 +222,10 @@ pierre maîtresse). Affichage : ce que l'arme apporte, chiffré.
 
 Haut, Bas, Ceinture, Bottes, Anneau, Collier, Boucle d'oreille + costume gravé.
 Détection des sets et bonus 2/4 pièces. C'est le lot qui porte l'incertitude du
-§ 3.4 : le modèle doit être appliqué **et marqué comme estimé dans l'interface**.
+§ 3.4 : aucune table `equiplv_N` ne doit être créée, la segmentation vient de
+`tierBoundaries`, et seul le point d'origine est piloté par
+`ARMOR_SEGMENT_ORIGIN_MODE`. Le terme correspondant doit porter
+`confidence: "presumed"` et l'interface doit le signaler comme estimé.
 
 ### Lot 3 — Maîtrise, potentiel et totaux
 

@@ -522,11 +522,20 @@ décomposition complète sans changer de contrat :
 - potentiel : `domain:"potential"` avec le palier ;
 - maîtrise : `domain:"mastery"` avec le type d’arme et le niveau.
 
+Pour le futur lot armures, `equiplv_N` reste un identifiant redondant et ne
+nécessite aucune table de correspondance. Les segments viennent directement de
+`tierBoundaries`, selon `max(1, len(tierBoundaries) − 1)`. L'unique hypothèse,
+le point d'origine du gain par niveau, sera centralisée dans
+`ARMOR_SEGMENT_ORIGIN_MODE`; les termes qui en dépendent porteront
+`confidence:"presumed"`. Ce paramètre n'est pas exécuté dans le lot 1, qui ne
+couvre pas les armures.
+
 Chaque terme possède obligatoirement :
 
 - un `stat` concret ;
 - une `operation` valant `add` ou `multiply` ;
 - une `unit` valant `flat` ou `ten-thousandths` ;
+- une `confidence` valant `exact` ou `presumed` ;
 - une provenance structurée ;
 - soit un `bucket` pour un additif, soit `appliesTo` pour un multiplicateur.
 
@@ -548,8 +557,8 @@ Les additifs d’une même statistique doivent tous déclarer la même unité : 
 l’unité du total reconstruit. Les multiplicateurs utilisent toujours
 `ten-thousandths`, quelle que soit l’unité du total ciblé. Un multiplicateur ne
 peut exister que si la même statistique possède au moins un additif dans un seau
-ciblé. Un multiplicateur visant un nom de seau inconnu rend la sortie
-incompatible au lieu d’être ignoré.
+ciblé. Un seau ciblé sans additif pour cette statistique contribue zéro ; cette
+absence est un vrai zéro lorsque le domaine correspondant est déclaré couvert.
 
 `totals` est une commodité dérivée, jamais une seconde source de vérité. Pour
 chaque `stat`, la reconstruction indépendante depuis tous ses termes doit être
