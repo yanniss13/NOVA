@@ -1036,4 +1036,111 @@ function masterstoneConfig(enchantment){
   assert.deepStrictEqual(plain(invalid.uncovered), []);
 }
 
+// Les ensembles suivent leurs seuils réels et le build agrège toutes les sources.
+{
+  const { hooks } = loadApp();
+  const sets = hooks.buildGearSets();
+  const catalog = hooks.buildGearCatalog();
+  const threePiece = Object.entries(sets)
+    .find(([, item]) => item.twoCount === 3);
+  assert.ok(threePiece, "il existe un ensemble dont le premier seuil vaut trois");
+  const threeFiles = Object.keys(catalog)
+    .filter(file => catalog[file].setId === threePiece[0]);
+  assert.ok(threeFiles.length >= 3);
+  assert.strictEqual(
+    hooks.activeGearSets(threeFiles.slice(0, 2))[0].twoActive,
+    false,
+    "deux pièces ne doivent pas activer un seuil à trois"
+  );
+  assert.deepStrictEqual(
+    plain(hooks.gearSetTerms(threeFiles.slice(0, 2))),
+    []
+  );
+  const firstTier = hooks.gearSetTerms(threeFiles.slice(0, 3));
+  assert.ok(firstTier.length > 0);
+  firstTier.forEach(term => {
+    assert.strictEqual(term.bucket, "set");
+    assert.strictEqual(term.source.domain, "set");
+    assert.strictEqual(term.source.tier, "two");
+    assert.strictEqual(term.confidence, "exact");
+  });
+
+  const sixPiece = Object.entries(sets)
+    .find(([, item]) => item.sevenCount === 6);
+  assert.ok(sixPiece, "un ensemble local possède un troisième seuil à six");
+  const sixFiles = Object.keys(catalog)
+    .filter(file => catalog[file].setId === sixPiece[0]);
+  assert.strictEqual(
+    hooks.activeGearSets(sixFiles.slice(0, 5))[0].sevenActive,
+    false
+  );
+  assert.strictEqual(
+    hooks.activeGearSets(sixFiles.slice(0, 6))[0].sevenActive,
+    true
+  );
+  assert.ok(
+    hooks.gearSetTerms(sixFiles.slice(0, 6))
+      .some(term => term.source.tier === "seven"),
+    "le troisième palier doit produire ses propres termes"
+  );
+
+  const orphan = Object.keys(catalog).find(file => !catalog[file].setId);
+  assert.ok(orphan);
+  assert.deepStrictEqual(plain(hooks.activeGearSets([orphan])), []);
+
+  const empty = hooks.calculateBuildStats({
+    weapon:null,
+    armor:{},
+    jewel:{}
+  });
+  assert.deepStrictEqual(plain(empty.coverage), []);
+  assert.deepStrictEqual(plain(empty.uncovered), []);
+  assert.deepStrictEqual(plain(empty.terms), []);
+
+  const ARMOR = "7ds-armures-ssr/Haut/Haut de l'araignée de l'ombre.webp";
+  const ENGRAVED =
+    "7ds-armures-ssr/Armure liee/Arrogance adéquate.webp";
+  const build = {
+    weapon:HACHE_FILE,
+    weaponConfig:validConfig(),
+    armor:{
+      Haut:ARMOR,
+      "Armure liee":ENGRAVED
+    },
+    armorConfig:{
+      Haut:hooks.emptyGearConfig(ARMOR),
+      "Armure liee":hooks.emptyGearConfig(ENGRAVED)
+    },
+    jewel:{},
+    jewelConfig:{}
+  };
+  const aggregate = hooks.calculateBuildStats(build);
+  assert.deepStrictEqual(
+    plain(aggregate.coverage),
+    ["weapon", "armor", "engraving"]
+  );
+  assert.deepStrictEqual(
+    plain(aggregate.uncovered),
+    ["weapon:passive", "engraving:passive"]
+  );
+  assert.strictEqual(aggregate.statuses.weapon, "valid");
+  assert.strictEqual(aggregate.statuses["armor:Haut"], "valid");
+  assert.strictEqual(
+    aggregate.statuses["engraving:Armure liee"],
+    "valid"
+  );
+  assert.deepStrictEqual(
+    plain(hooks.reconstructStatTotals(aggregate.terms)),
+    plain(aggregate.totals)
+  );
+
+  const missing = hooks.calculateBuildStats({
+    weapon:null,
+    armor:{ Haut:ARMOR },
+    jewel:{}
+  });
+  assert.strictEqual(missing.statuses["armor:Haut"], "missing");
+  assert.deepStrictEqual(plain(missing.coverage), []);
+}
+
 console.log("PASS stats de builds : modèle et calcul de l’arme");

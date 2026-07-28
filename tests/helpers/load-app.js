@@ -172,6 +172,18 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   buildGearCatalog:typeof buildGearCatalog === "function"
     ? buildGearCatalog
     : undefined,
+  buildGearSets:typeof buildGearSets === "function"
+    ? buildGearSets
+    : undefined,
+  activeGearSets:typeof activeGearSets === "function"
+    ? activeGearSets
+    : undefined,
+  gearSetTerms:typeof gearSetTerms === "function"
+    ? gearSetTerms
+    : undefined,
+  calculateBuildStats:typeof calculateBuildStats === "function"
+    ? calculateBuildStats
+    : undefined,
   reconstructStatTotals:typeof reconstructStatTotals === "function"
     ? reconstructStatTotals
     : undefined,

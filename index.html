@@ -2400,6 +2400,7 @@
   const isInteger = value => Number.isInteger(value);
   const BUILD_GEAR = BUILD_STATS.gearByFile || {};
   const BUILD_ENGRAVED = BUILD_STATS.engravedByFile || {};
+  const BUILD_GEAR_SETS = BUILD_STATS.gearSets || {};
   function buildGearDefinition(file){
     if(typeof file !== "string" || !file) return null;
     if(owns(BUILD_GEAR, file)) return BUILD_GEAR[file];
@@ -3206,6 +3207,123 @@
       terms,
       totals:reconstructStatTotals(terms),
       facts:[]
+    };
+  }
+
+  function buildGearSets(){
+    return BUILD_GEAR_SETS;
+  }
+  function activeGearSets(files){
+    const counts = new Map();
+    (files || []).forEach(file => {
+      const definition = buildGearDefinition(file);
+      const setId = definition && definition.setId;
+      if(!setId || !owns(BUILD_GEAR_SETS, setId)) return;
+      counts.set(setId, (counts.get(setId) || 0) + 1);
+    });
+    return [...counts.entries()].map(([setId, count]) => {
+      const set = BUILD_GEAR_SETS[setId];
+      return {
+        setId,
+        count,
+        twoActive:Number.isFinite(set.twoCount) && count >= set.twoCount,
+        fourActive:Number.isFinite(set.fourCount) && count >= set.fourCount,
+        sevenActive:Number.isFinite(set.sevenCount) && count >= set.sevenCount
+      };
+    });
+  }
+  function gearSetTerms(files){
+    const terms = [];
+    activeGearSets(files).forEach(state => {
+      const set = BUILD_GEAR_SETS[state.setId];
+      const pushTier = (stats, tier) => {
+        (stats || []).forEach(entry => addGearStatTerm(terms, {
+          id:"set:" + state.setId + ":" + tier + ":" + entry.stat,
+          stat:entry.stat,
+          value:Number(entry.value) || 0,
+          bucket:"set",
+          source:{
+            domain:"set",
+            component:"bonus",
+            setId:state.setId,
+            tier
+          },
+          confidence:"exact"
+        }));
+      };
+      if(state.twoActive) pushTier(set.twoStats, "two");
+      if(state.fourActive) pushTier(set.fourStats, "four");
+      if(state.sevenActive) pushTier(set.sevenStats, "seven");
+    });
+    return terms;
+  }
+
+  const GEAR_SLOT_DOMAINS = [
+    ["armor", ARMOR_SLOTS],
+    ["jewel", JEWEL_SLOTS]
+  ];
+  function calculateBuildStats(build){
+    const source = build || {};
+    const terms = [];
+    const statuses = {};
+    const coverage = [];
+    const uncovered = [];
+    const noteCoverage = list => {
+      (list || []).forEach(entry => {
+        if(!coverage.includes(entry)) coverage.push(entry);
+      });
+    };
+    const noteUncovered = list => {
+      (list || []).forEach(entry => {
+        if(!uncovered.includes(entry)) uncovered.push(entry);
+      });
+    };
+    const assumptions = {
+      overlimitBase:OVERLIMIT_APPLICATION_MODE,
+      armorLevelOrigin:ARMOR_LEVEL_ORIGIN_MODE
+    };
+
+    const weapon = calculateWeaponStats(
+      source.weapon,
+      source.weaponConfig
+    );
+    statuses.weapon = weapon.status;
+    if(weapon.status === "valid"){
+      terms.push(...weapon.terms);
+      noteCoverage(weapon.coverage);
+      noteUncovered(weapon.uncovered);
+    }
+
+    const equipped = [];
+    GEAR_SLOT_DOMAINS.forEach(([storageKey, slots]) => {
+      slots.forEach(slotKey => {
+        const file = (source[storageKey] || {})[slotKey];
+        if(!file) return;
+        equipped.push(file);
+        const configs = source[storageKey + "Config"] || {};
+        const result = calculateGearStats(file, configs[slotKey], slotKey);
+        const domain = gearDomainOf(slotKey);
+        statuses[domain + ":" + slotKey] = result.status;
+        if(result.status !== "valid") return;
+        terms.push(...result.terms);
+        noteCoverage(result.coverage);
+        noteUncovered(result.uncovered);
+      });
+    });
+
+    const setTerms = gearSetTerms(equipped);
+    if(setTerms.length){
+      terms.push(...setTerms);
+      noteCoverage(["set"]);
+    }
+    return {
+      version:1,
+      coverage,
+      uncovered,
+      assumptions,
+      terms,
+      totals:reconstructStatTotals(terms),
+      statuses
     };
   }
 
