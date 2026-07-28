@@ -475,6 +475,114 @@ const { chromium } = require("playwright");
     assert.equal(await page.locator("#memberRosterGrid .member-roster-edit").count(), 0);
     assert.equal(await page.locator("#memberRosterGrid .member-roster-delete").count(), 0);
 
+    /* Roster d'un autre membre : le détail s'ouvre en modale, navigue d'un
+       personnage à l'autre et change de build par les icônes d'arme.
+       On sème un second personnage pour ce membre le temps du test. */
+    assert.equal(
+      await page.locator("#memberRosterGrid .member-roster-detail-btn").count(),
+      1,
+      "Chaque fiche consultée doit offrir un bouton de détail"
+    );
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.roster_characters.push({
+        owner:"user-2",
+        char_id:"escanor",
+        potential_tier:5,
+        builds:{
+          Hache:{
+            weapon:"7ds-armes/Hache/Hache à l'aura triomphale.webp",
+            armor:{}, jewel:{}, note:"Build hache"
+          },
+          "Epee 2 mains":{
+            weapon:"7ds-armes/Epee 2 mains/Espadon à l'aura triomphale.webp",
+            armor:{}, jewel:{}, note:"Build espadon"
+          }
+        },
+        updated_at:"2026-07-25T08:36:00.000Z"
+      });
+      window.__fakeSupabaseEmit("roster_characters", "INSERT");
+    });
+    await page.waitForFunction(() =>
+      document.querySelectorAll("#memberRosterGrid .member-roster-card").length === 2
+    );
+
+    const rosterDetailOverlay = page.locator("#rosterDetailOverlay");
+    await page.locator("#memberRosterGrid .member-roster-card").nth(1)
+      .locator(".member-roster-detail-btn").click();
+    await rosterDetailOverlay.waitFor({ state:"visible" });
+    assert.match(await page.locator("#rosterDetailBody").textContent(), /Merlin/);
+    assert.match(await page.locator("#rosterDetailTitle").textContent(), /Merlin/);
+    assert.equal(await page.locator("#rosterDetailPosition").textContent(), "2 / 2");
+    assert.equal(
+      await page.locator("#rosterDetailNext").evaluate(node => node.disabled),
+      true,
+      "Au dernier personnage, la flèche droite doit être désactivée"
+    );
+
+    /* Flèche gauche puis touches fléchées : même parcours, deux entrées. */
+    await page.locator("#rosterDetailPrev").click();
+    await page.waitForFunction(() =>
+      document.querySelector("#rosterDetailPosition").textContent === "1 / 2"
+    );
+    assert.match(await page.locator("#rosterDetailBody").textContent(), /Escanor/);
+    assert.equal(
+      await page.locator("#rosterDetailPrev").evaluate(node => node.disabled),
+      true,
+      "Au premier personnage, la flèche gauche doit être désactivée"
+    );
+    await page.keyboard.press("ArrowRight");
+    await page.waitForFunction(() =>
+      document.querySelector("#rosterDetailPosition").textContent === "2 / 2"
+    );
+    await page.keyboard.press("ArrowLeft");
+    await page.waitForFunction(() =>
+      document.querySelector("#rosterDetailPosition").textContent === "1 / 2"
+    );
+
+    /* Icônes d'arme : Escanor a un build Hache et un build Epee 2 mains, mais
+       aucun build Bouclier — cette icône reste inactive. */
+    assert.deepEqual(
+      await page.locator(".roster-detail-weapon").evaluateAll(nodes =>
+        nodes.map(node => ({ type:node.dataset.weaponType, off:node.disabled }))
+      ),
+      [
+        { type:"Hache", off:false },
+        { type:"Bouclier", off:true },
+        { type:"Epee 2 mains", off:false }
+      ]
+    );
+    assert.match(await page.locator("#rosterDetailBody").textContent(), /Build hache/);
+    assert.equal(
+      await page.locator('.roster-detail-weapon[data-weapon-type="Hache"]')
+        .getAttribute("aria-pressed"),
+      "true"
+    );
+    await page.locator('.roster-detail-weapon[data-weapon-type="Epee 2 mains"]').click();
+    await page.waitForFunction(() =>
+      document.querySelector("#rosterDetailBody").textContent.includes("Build espadon")
+    );
+    assert.match(
+      await page.locator("#rosterDetailBody").textContent(),
+      /Espadon à l’aura triomphale|Espadon à l'aura triomphale/
+    );
+    assert.equal(
+      await page.locator('.roster-detail-weapon[data-weapon-type="Epee 2 mains"]')
+        .getAttribute("aria-pressed"),
+      "true"
+    );
+
+    await page.locator("#rosterDetailClose").click();
+    await rosterDetailOverlay.waitFor({ state:"hidden" });
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.roster_characters =
+        window.__fakeSupabaseState.roster_characters
+          .filter(row => row.char_id !== "escanor");
+      window.__fakeSupabaseEmit("roster_characters", "DELETE");
+    });
+    await page.waitForFunction(() =>
+      document.querySelectorAll("#memberRosterGrid .member-roster-card").length === 1
+    );
+
     await page.locator('.tab[data-view="builder"]').click();
     const rosterHeroSlot = page.locator(".hero").first();
     await rosterHeroSlot

@@ -402,6 +402,11 @@
     background:linear-gradient(165deg,var(--panel),var(--obsidian-2));
     border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)
   }
+  .member-roster-card.clickable{cursor:pointer;transition:.16s}
+  .member-roster-card.clickable:hover{border-color:var(--gold-deep)}
+  .member-roster-detail-btn{
+    width:100%;justify-content:center;margin-top:12px;font-size:12px;padding:8px
+  }
   .member-roster-card::after{
     content:"";position:absolute;inset:6px;border:1px solid rgba(217,164,65,.12);
     border-radius:9px;pointer-events:none
@@ -534,6 +539,35 @@
   }
   @media(max-width:720px){ .team-detail{grid-template-columns:repeat(2,1fr)} .modal.teammodal{max-height:92vh} .team-detail{overflow:auto;scrollbar-width:none} }
   @media(max-width:440px){ .team-detail{grid-template-columns:1fr} }
+
+  /* Modal détail d'un personnage consulté chez un autre membre */
+  .modal.rostermodal{
+    width:min(520px,96vw);max-height:92vh;display:flex;flex-direction:column
+  }
+  .roster-detail-nav{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    padding:9px 18px;border-bottom:1px solid var(--line-soft);flex:none
+  }
+  .roster-detail-position{
+    font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)
+  }
+  .roster-detail-body{padding:15px 18px 20px;overflow:auto;min-height:0}
+  .roster-detail-weapons{
+    display:flex;gap:8px;justify-content:center;flex-wrap:wrap
+  }
+  .roster-detail-weapon{
+    appearance:none;cursor:pointer;display:grid;place-items:center;
+    min-width:40px;min-height:40px;padding:5px;background:transparent;
+    border:1px solid var(--line);border-radius:11px;transition:.16s
+  }
+  .roster-detail-weapon:hover:not(:disabled){border-color:var(--gold-deep)}
+  .roster-detail-weapon[aria-pressed="true"]{
+    border-color:var(--gold-bright);background:rgba(217,164,65,.12)
+  }
+  .roster-detail-weapon:disabled{cursor:default;opacity:.34}
+  .roster-detail-hint{
+    font-size:11.5px;font-style:italic;color:var(--muted-2);text-align:center;margin-top:2px
+  }
 
   .empty-state{
     text-align:center;padding:64px 20px;border:1px dashed var(--line);
@@ -1241,6 +1275,7 @@
     .dps-elem-option,.member-roster-filter-field select{
       min-height:44px
     }
+    .roster-detail-weapon{min-width:44px;min-height:44px}
     .icon-btn,.rec-del,.dps-del{
       min-width:44px;
       min-height:44px
@@ -1481,6 +1516,26 @@
       <button class="icon-btn" id="teamClose" aria-label="Fermer">✕</button>
     </div>
     <div class="team-detail" id="teamDetail"></div>
+  </div>
+</div>
+
+<!-- Détail d'un personnage dans le roster d'un autre membre -->
+<div class="overlay" id="rosterDetailOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="rosterDetailTitle" aria-hidden="true">
+  <div class="modal rostermodal">
+    <div class="picker-head">
+      <span class="picker-title" id="rosterDetailTitle">Personnage</span>
+      <button class="icon-btn" id="rosterDetailClose" aria-label="Fermer">✕</button>
+    </div>
+    <div class="roster-detail-nav">
+      <button class="icon-btn" id="rosterDetailPrev" type="button"
+              aria-label="Personnage précédent">‹</button>
+      <span class="roster-detail-position" id="rosterDetailPosition"
+            aria-live="polite"></span>
+      <button class="icon-btn" id="rosterDetailNext" type="button"
+              aria-label="Personnage suivant">›</button>
+    </div>
+    <div class="roster-detail-body" id="rosterDetailBody"></div>
   </div>
 </div>
 
@@ -2923,6 +2978,7 @@
   let memberRosterOwnerId = "";
   let memberRosterRenderId = 0;
   let memberRosterEntries = [];
+  let memberRosterVisible = [];
   let memberRosterEditable = false;
   let memberRosterDraft = null;
   let memberRosterWeaponType = "";
@@ -3071,7 +3127,7 @@
     return true;
   }
 
-  function memberRosterCard(entry, editable){
+  function memberRosterCard(entry, editable, openDetail){
     const character = charOf(entry.charId);
     const buildTypes = new Set(Object.keys(entry.builds || {}));
     const favoriteType = favoriteRosterWeaponType(entry);
@@ -3125,19 +3181,32 @@
         })
       ]));
     }
+    /* Roster consulté : la fiche entière ouvre le détail, et le bouton donne
+       le même accès au clavier. */
+    if(openDetail){
+      card.classList.add("clickable");
+      card.addEventListener("click", openDetail);
+      card.appendChild(el("button",{
+        class:"btn member-roster-detail-btn",
+        type:"button",
+        text:"Voir les builds",
+        onclick:event=>{ event.stopPropagation(); openDetail(); }
+      }));
+    }
     return card;
   }
 
   function renderMemberRosterCards(entries, editable){
     memberRosterEntries = (entries || []).map(normalizeRosterCharacter).filter(Boolean);
     memberRosterEditable = !!editable;
-    const filtered = memberRosterEntries
+    memberRosterVisible = memberRosterEntries
       .filter(memberRosterMatches)
       .sort((a,b)=>{
         const left = charOf(a.charId);
         const right = charOf(b.charId);
         return left.name.localeCompare(right.name, "fr");
       });
+    const filtered = memberRosterVisible;
     const count = $("#memberRosterCount");
     count.innerHTML = "<b>"+filtered.length+"</b> personnage"
       +(filtered.length > 1 ? "s" : "")
@@ -3157,8 +3226,124 @@
       ]));
       return;
     }
-    filtered.forEach(entry => grid.appendChild(memberRosterCard(entry, editable)));
+    filtered.forEach((entry, index) => grid.appendChild(memberRosterCard(
+      entry,
+      editable,
+      editable ? null : ()=>openRosterDetail(index)
+    )));
   }
+
+  /* ---- Modal détail d'un personnage consulté chez un autre membre ----
+     La modale garde sa propre copie de la liste affichée : une synchronisation
+     Realtime pendant la consultation ne déplace pas le personnage sous les
+     yeux du lecteur. */
+  const rosterDetail = { entries:[], index:0, type:null, owner:"" };
+
+  function rosterDetailOwnerLabel(){
+    const select = $("#memberRosterOwner");
+    const option = select && select.selectedOptions && select.selectedOptions[0];
+    return option ? option.textContent : "";
+  }
+
+  function rosterDetailWeaponSwitch(entry){
+    const meta = metaOf(entry.charId);
+    const slots = (meta && meta.weapons) || [];
+    const row = el("div",{class:"roster-detail-weapons"});
+    weaponTypesOf(entry.charId).forEach(type => {
+      const enumName = FOLDER_TO_ENUM[type];
+      const slot = slots.find(item => item.weapon === enumName)
+        || { weapon:enumName, element:"", role:"" };
+      const badge = weaponSlotBadge(slot, false);
+      if(!badge) return;
+      const saved = Object.prototype.hasOwnProperty.call(entry.builds || {}, type);
+      const props = {
+        class:"roster-detail-weapon",
+        type:"button",
+        dataset:{ weaponType:type },
+        "aria-pressed":String(saved && type === rosterDetail.type),
+        title:rosterWeaponLabel(type)
+          +(saved ? "" : " · aucun build enregistré")
+      };
+      if(saved) props.onclick = ()=>{ rosterDetail.type = type; renderRosterDetail(); };
+      else props.disabled = "disabled";
+      row.appendChild(el("button",props,[badge]));
+    });
+    return row;
+  }
+
+  function renderRosterDetail(){
+    const entry = rosterDetail.entries[rosterDetail.index];
+    const body = $("#rosterDetailBody");
+    body.innerHTML = "";
+    if(!entry) return;
+    const character = charOf(entry.charId);
+    const types = Object.keys(entry.builds || {});
+    if(!rosterDetail.type || !types.includes(rosterDetail.type)){
+      rosterDetail.type = favoriteRosterWeaponType(entry) || types[0] || null;
+    }
+    $("#rosterDetailTitle").textContent = rosterDetail.owner
+      ? character.name + " — " + rosterDetail.owner
+      : character.name;
+    $("#rosterDetailPosition").textContent =
+      (rosterDetail.index + 1) + " / " + rosterDetail.entries.length;
+    const prev = $("#rosterDetailPrev");
+    const next = $("#rosterDetailNext");
+    /* Le navigateur retire le focus d'un bouton dès qu'il devient `disabled` :
+       on note qui l'avait AVANT de désactiver, puis on le rend au contrôle
+       encore utilisable plutôt que de le perdre sur le body. */
+    const active = document.activeElement;
+    prev.disabled = rosterDetail.index <= 0;
+    next.disabled = rosterDetail.index >= rosterDetail.entries.length - 1;
+    if((active === prev || active === next) && active.disabled){
+      const fallback = active === prev ? next : prev;
+      (fallback.disabled ? $("#rosterDetailClose") : fallback).focus();
+    }
+    const hero = rosterDetail.type
+      ? rosterHeroSnapshot(entry, rosterDetail.type)
+      : normalizeHero({ char:entry.charId, potentiel:{tier:entry.potentialTier} });
+    body.appendChild(heroDetail(hero, {
+      badgesFor:()=>rosterDetailWeaponSwitch(entry)
+    }));
+    if(!types.length){
+      body.appendChild(el("p",{
+        class:"roster-detail-hint",
+        text:"Ce membre n’a enregistré aucun build pour ce personnage."
+      }));
+    }
+  }
+
+  function openRosterDetail(index){
+    if(!memberRosterVisible.length) return;
+    rosterDetail.entries = memberRosterVisible;
+    rosterDetail.index = Math.min(Math.max(index, 0), memberRosterVisible.length - 1);
+    rosterDetail.type = null;
+    rosterDetail.owner = rosterDetailOwnerLabel();
+    renderRosterDetail();
+    ModalStack.open($("#rosterDetailOverlay"), "#rosterDetailClose", closeRosterDetail);
+  }
+
+  function moveRosterDetail(step){
+    const next = rosterDetail.index + step;
+    if(next < 0 || next >= rosterDetail.entries.length) return;
+    rosterDetail.index = next;
+    rosterDetail.type = null;
+    renderRosterDetail();
+  }
+
+  function closeRosterDetail(){
+    ModalStack.close($("#rosterDetailOverlay"));
+  }
+
+  $("#rosterDetailClose").addEventListener("click", closeRosterDetail);
+  $("#rosterDetailPrev").addEventListener("click", ()=>moveRosterDetail(-1));
+  $("#rosterDetailNext").addEventListener("click", ()=>moveRosterDetail(1));
+  $("#rosterDetailOverlay").addEventListener("click", event => {
+    if(event.target === $("#rosterDetailOverlay")) closeRosterDetail();
+  });
+  $("#rosterDetailOverlay").addEventListener("keydown", event => {
+    if(event.key === "ArrowLeft"){ event.preventDefault(); moveRosterDetail(-1); }
+    else if(event.key === "ArrowRight"){ event.preventDefault(); moveRosterDetail(1); }
+  });
 
   async function renderMemberRoster(){
     const renderId = ++memberRosterRenderId;
@@ -4084,7 +4269,11 @@
     const idBox = el("div",{class:"hd-id"},[
       el("div",{class:"hd-name"+(ch?"":" empty"), text: ch ? ch.name : "Emplacement libre"})
     ]);
-    const badges = ch ? badgesRow(ch, h, false) : null;
+    /* `badgesFor` remplace la rangée de badges figée par un sélecteur
+       interactif (modal du roster d'un membre). */
+    const badges = ch
+      ? (settings.badgesFor ? settings.badgesFor(ch, h) : badgesRow(ch, h, false))
+      : null;
     if(badges) idBox.appendChild(badges);
     col.appendChild(el("div",{class:"hd-head"},[port, idBox]));
 
