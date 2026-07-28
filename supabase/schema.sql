@@ -45,6 +45,57 @@ create index if not exists roster_characters_owner_idx
 create schema if not exists private;
 revoke all on schema private from public;
 
+-- Préservation des configs d'équipement indexées par emplacement (armorConfig,
+-- jewelConfig). Une ancienne PWA omet la clé entière ; on ne restaure alors que
+-- les emplacements dont la pièce équipée n'a pas changé. Restaurer l'objet
+-- complet attacherait une config périmée à une pièce qu'elle ne décrit plus.
+-- Renvoie NULL quand il n'y a rien à préserver, pour que l'appelant n'écrive pas.
+create or replace function private.preserved_gear_config(
+  p_old jsonb,
+  p_new jsonb,
+  p_gear_key text,
+  p_config_key text
+)
+returns jsonb
+language plpgsql
+immutable
+set search_path = pg_catalog, public
+as $$
+declare
+  v_slot text;
+  v_kept jsonb := '{}'::jsonb;
+begin
+  if p_old is null or p_new is null then
+    return null;
+  end if;
+  -- Le client connaît la clé : sa valeur fait foi, même vide.
+  if p_new ? p_config_key then
+    return null;
+  end if;
+  if not (p_old ? p_config_key) then
+    return null;
+  end if;
+  if jsonb_typeof(p_old -> p_config_key) <> 'object' then
+    return null;
+  end if;
+
+  for v_slot in select jsonb_object_keys(p_old -> p_config_key)
+  loop
+    if nullif(p_new -> p_gear_key ->> v_slot, '') is not null
+       and p_new -> p_gear_key ->> v_slot
+           is not distinct from p_old -> p_gear_key ->> v_slot
+    then
+      v_kept := v_kept || jsonb_build_object(v_slot, p_old -> p_config_key -> v_slot);
+    end if;
+  end loop;
+
+  if v_kept = '{}'::jsonb then
+    return null;
+  end if;
+  return v_kept;
+end;
+$$;
+
 -- Empêche une ancienne PWA, qui omet weaponConfig, d'effacer la saisie récente.
 create or replace function private.preserve_roster_weapon_configs()
 returns trigger
@@ -55,6 +106,7 @@ declare
   v_type text;
   v_old_build jsonb;
   v_new_build jsonb;
+  v_kept jsonb;
 begin
   if jsonb_typeof(new.builds) <> 'object' then
     return new;
@@ -78,6 +130,24 @@ begin
         true
       );
     end if;
+
+    v_kept := private.preserved_gear_config(
+      v_old_build, v_new_build, 'armor', 'armorConfig'
+    );
+    if v_kept is not null then
+      new.builds := jsonb_set(
+        new.builds, array[v_type, 'armorConfig'], v_kept, true
+      );
+    end if;
+
+    v_kept := private.preserved_gear_config(
+      v_old_build, v_new_build, 'jewel', 'jewelConfig'
+    );
+    if v_kept is not null then
+      new.builds := jsonb_set(
+        new.builds, array[v_type, 'jewelConfig'], v_kept, true
+      );
+    end if;
   end loop;
   return new;
 end;
@@ -97,6 +167,7 @@ declare
   v_index integer;
   v_old_hero jsonb;
   v_new_hero jsonb;
+  v_kept jsonb;
 begin
   if jsonb_typeof(new.data->'heroes') <> 'array' then
     return new;
@@ -120,6 +191,28 @@ begin
         v_old_hero->'weaponConfig',
         true
       );
+    end if;
+
+    /* Les pièces ne sont préservées que si le héros du slot n'a pas changé :
+       sinon on collerait l'équipement d'un héros sur un autre. */
+    if v_new_hero->>'char' is not distinct from v_old_hero->>'char' then
+      v_kept := private.preserved_gear_config(
+        v_old_hero, v_new_hero, 'armor', 'armorConfig'
+      );
+      if v_kept is not null then
+        new.data := jsonb_set(
+          new.data, array['heroes', v_index::text, 'armorConfig'], v_kept, true
+        );
+      end if;
+
+      v_kept := private.preserved_gear_config(
+        v_old_hero, v_new_hero, 'jewel', 'jewelConfig'
+      );
+      if v_kept is not null then
+        new.data := jsonb_set(
+          new.data, array['heroes', v_index::text, 'jewelConfig'], v_kept, true
+        );
+      end if;
     end if;
   end loop;
   return new;

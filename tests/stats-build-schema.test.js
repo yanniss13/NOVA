@@ -92,8 +92,45 @@ assert.match(
   /^create trigger preserve_team_weapon_configs\s+before update of data on public\.teams\s+for each row execute function private\.preserve_team_weapon_configs\(\)\s*;$/i
 );
 
+/* Lot 2 : armorConfig et jewelConfig sont des objets indexés par emplacement.
+   Une ancienne PWA omet la clé entière ; on ne restaure alors que les
+   emplacements dont la pièce équipée n'a pas changé, sinon une config
+   resterait attachée à une pièce qu'elle ne décrit plus. La logique est
+   factorisée dans une fonction d'aide, appelée par les deux triggers. */
+const gearHelper = extractFunction("private.preserved_gear_config(");
+[
+  /set search_path\s*=\s*pg_catalog\s*,\s*public/i,
+  // Le client connaît la clé : on ne touche à rien.
+  /if p_new \? p_config_key then\s*return null/i,
+  // Rien à préserver côté ancien.
+  /if not \(p_old \? p_config_key\) then\s*return null/i,
+  /for v_slot in select jsonb_object_keys\(p_old\s*->\s*p_config_key\)/i,
+  // Comparaison par emplacement, insensible aux NULL, et pièce non vide.
+  /nullif\(p_new\s*->\s*p_gear_key\s*->>\s*v_slot\s*,\s*''\)\s*is not null/i,
+  /p_new\s*->\s*p_gear_key\s*->>\s*v_slot\s+is not distinct from\s+p_old\s*->\s*p_gear_key\s*->>\s*v_slot/i,
+  /v_kept\s*:=\s*v_kept\s*\|\|\s*jsonb_build_object\(\s*v_slot\s*,\s*p_old\s*->\s*p_config_key\s*->\s*v_slot\s*\)/i
+].forEach(pattern => assert.match(gearHelper, pattern));
+
+// Les deux triggers délèguent, pour les deux familles d'équipement.
+[
+  [rosterFunction, "roster", "v_old_build", "v_new_build"],
+  [teamFunction, "teams", "v_old_hero", "v_new_hero"]
+].forEach(([body, label, oldVar, newVar]) => {
+  [["armor", "armorConfig"], ["jewel", "jewelConfig"]].forEach(([gear, config]) => {
+    assert.match(
+      body,
+      new RegExp(
+        "private\\.preserved_gear_config\\(\\s*" + oldVar + "\\s*,\\s*" + newVar
+        + "\\s*,\\s*'" + gear + "'\\s*,\\s*'" + config + "'\\s*\\)",
+        "i"
+      ),
+      label + " doit déléguer la préservation de " + config
+    );
+  });
+});
+
 const guardsStart = sql.indexOf(
-  "create or replace function private.preserve_roster_weapon_configs"
+  "create or replace function private.preserved_gear_config"
 );
 const guardsEnd = sql.indexOf("-- ============================ RLS", guardsStart);
 assert.notEqual(guardsStart, -1, "Les gardes SQL doivent exister");
