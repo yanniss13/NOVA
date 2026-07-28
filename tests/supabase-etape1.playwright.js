@@ -177,6 +177,53 @@ const { chromium } = require("playwright");
     assert.equal(await page.locator("#memberRosterGrid .member-roster-card").count(), 1);
     assert.match(await page.locator("#memberRosterGrid").textContent(), /Meliodas/);
     assert.equal(await page.locator("#memberRosterGrid .member-roster-edit").count(), 1);
+
+    /* Filtres de catégorie : quatre listes déroulantes, plus aucun rail
+       défilant horizontalement. */
+    assert.equal(
+      await page.locator(".member-roster-filter-rail").count(),
+      0,
+      "Le rail de chips défilant doit avoir disparu"
+    );
+    assert.deepEqual(
+      await page.locator("#memberRosterFilters select").evaluateAll(nodes =>
+        nodes.map(node => node.id)
+      ),
+      [
+        "memberRosterFilterElement",
+        "memberRosterFilterWeapon",
+        "memberRosterFilterRole",
+        "memberRosterFilterRarity"
+      ]
+    );
+    const filterOverflow = await page.locator("#memberRosterFilters").evaluate(node =>
+      node.scrollWidth - node.clientWidth
+    );
+    assert.ok(
+      filterOverflow <= 1,
+      "Les filtres ne doivent pas déborder horizontalement ("+filterOverflow+"px)"
+    );
+    assert.equal(
+      await page.locator("#memberRosterFilterReset").count(),
+      0,
+      "Sans filtre actif, aucun bouton de réinitialisation"
+    );
+    await page.locator("#memberRosterFilterElement").selectOption("Fire");
+    await page.waitForFunction(() =>
+      document.querySelectorAll("#memberRosterGrid .member-roster-card").length === 0
+    );
+    assert.match(
+      await page.locator("#memberRosterCount").textContent(),
+      /0 personnage sur 1/
+    );
+    await page.locator("#memberRosterFilterReset").click();
+    await page.locator("#memberRosterGrid .member-roster-card").first().waitFor();
+    assert.equal(
+      await page.locator("#memberRosterFilterElement").inputValue(),
+      "",
+      "La réinitialisation doit remettre chaque liste sur « Tous »"
+    );
+
     await page.locator("#memberRosterGrid .member-roster-edit").click();
     await page.locator("#memberRosterOverlay").waitFor({ state:"visible" });
     assert.match(await page.locator("#memberRosterEditor").textContent(), /Potentiel commun/);
