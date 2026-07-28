@@ -556,9 +556,17 @@ async function assertPickerTilesContained(page, label){
 
       const headerMetrics = () => headerPage.evaluate(() => {
         const bar = document.querySelector(".topbar");
+        /* Le repli est animé : les zones repliées gardent un rectangle client
+           de hauteur nulle. « Visible » veut donc dire peint — une hauteur
+           réelle ET une `visibility` qui ne l'exclut pas du rendu (et donc de
+           l'ordre de tabulation). */
         const visible = selector => {
           const node = document.querySelector(selector);
-          return !!node && node.getClientRects().length > 0;
+          if(!node) return false;
+          const rect = node.getBoundingClientRect();
+          return rect.height > 0
+            && rect.width > 0
+            && getComputedStyle(node).visibility !== "hidden";
         };
         const root = document.scrollingElement;
         return {
@@ -614,7 +622,25 @@ async function assertPickerTilesContained(page, label){
         `Le bouton replié ne doit pas être focalisable à ${width}px`
       );
 
-      // Remonter redéploie le header.
+      /* Remonter sans atteindre le haut ne redéploie plus rien : le header ne
+         revient qu'une fois en haut de la page. */
+      await headerPage.evaluate(() => window.scrollTo({ top:300 }));
+      await headerPage.waitForTimeout(150);
+      assert.equal(
+        await headerPage.evaluate(() =>
+          document.querySelector(".topbar").classList.contains("is-retracted")
+        ),
+        true,
+        `Remonter à mi-page doit laisser le header replié à ${width}px`
+      );
+      /* Se déployer rallongerait le document et le navigateur recalerait la
+         position : rester replié garantit aussi l'absence de ce saut. */
+      assert.ok(
+        await headerPage.evaluate(() => Math.round(window.scrollY) <= 305),
+        `Remonter à mi-page ne doit pas déplacer la position à ${width}px`
+      );
+
+      // Remonter jusqu'en haut redéploie le header.
       await headerPage.evaluate(() => window.scrollTo({ top:0 }));
       await headerPage.waitForFunction(() =>
         !document.querySelector(".topbar").classList.contains("is-retracted")
@@ -671,6 +697,67 @@ async function assertPickerTilesContained(page, label){
       );
       await headerContext.close();
     }
+
+    /* Le repli doit être animé, pas instantané : sans réduction de mouvement,
+       la hauteur du header doit passer par des valeurs intermédiaires entre
+       l'état déployé et l'état replié. */
+    const motionContext = await browser.newContext({
+      viewport:{width:390,height:844},
+      isMobile:true,
+      hasTouch:true
+    });
+    const motionPage = await motionContext.newPage();
+    await motionPage.route("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*", route =>
+      route.fulfill({
+        status:200,
+        contentType:"application/javascript",
+        body:"window.supabase=undefined;"
+      })
+    );
+    await motionPage.goto(
+      pathToFileURL(path.resolve(__dirname, "..", "index.html")).href
+    );
+    await motionPage.evaluate(() => {
+      document.querySelector("#accountLogin").hidden = true;
+      document.querySelector("#accountConnected").hidden = false;
+      document.querySelector("#accountPseudo").textContent = "Yannis";
+      document.querySelector("#liveStatus").textContent = "À jour";
+    });
+    const heights = await motionPage.evaluate(() => new Promise(resolve => {
+      const bar = document.querySelector(".topbar");
+      const samples = [];
+      const start = performance.now();
+      window.scrollTo({ top:600 });
+      (function tick(){
+        samples.push(Math.round(bar.getBoundingClientRect().height));
+        if(performance.now() - start < 400) requestAnimationFrame(tick);
+        else resolve(samples);
+      })();
+    }));
+    const tallest = Math.max(...heights);
+    const shortest = Math.min(...heights);
+    assert.ok(
+      tallest - shortest > 20,
+      "Le header doit visiblement se replier pendant l'échantillonnage "
+      +"("+tallest+" -> "+shortest+")"
+    );
+    /* Le milieu de la plage, pas ses bords : animer seulement les marges du
+       header produirait déjà des valeurs proches des extrêmes, sans que le
+       contenu replié bouge d'un pixel. */
+    const span = tallest - shortest;
+    assert.ok(
+      heights.some(value =>
+        value > shortest + span * 0.25 && value < tallest - span * 0.25
+      ),
+      "Le repli doit traverser le milieu de sa course, pas sauter d'un état à "
+      +"l'autre : "+JSON.stringify(heights)
+    );
+    assert.equal(
+      heights[heights.length - 1],
+      shortest,
+      "Le repli doit être terminé à la fin de l'échantillonnage"
+    );
+    await motionContext.close();
 
     // En desktop, le header ne se replie jamais.
     const deskHeader = await browser.newContext({ viewport:{width:1280,height:900} });

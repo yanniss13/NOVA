@@ -1244,12 +1244,24 @@
     .topbar > *{min-width:0}
     .account{width:100%;order:2}
     /* Header rétractable : en descendant, la marque et le bloc compte se
-       replient et seule la barre d'onglets reste collante. `display:none` plutôt
-       qu'une hauteur nulle, pour supprimer aussi les interlignes du flex ET
-       retirer ces contrôles de l'ordre de tabulation. */
+       replient et seule la barre d'onglets reste collante.
+       On anime `max-height` + `opacity` (jamais `display`, qui ne se transitionne
+       pas) et on termine sur `visibility:hidden` : c'est ce qui retire ces
+       contrôles de l'ordre de tabulation, comme le faisait `display:none`.
+       `visibility` bascule sans délai à l'ouverture, mais seulement en fin de
+       course à la fermeture, sinon le bloc disparaîtrait avant d'avoir replié. */
+    .topbar{transition:padding .26s ease, gap .26s ease}
+    .topbar .brand,
+    .topbar .account{
+      overflow:hidden;max-height:320px;
+      transition:max-height .26s ease, opacity .17s ease .05s, visibility 0s
+    }
     .topbar.is-retracted{padding-top:8px;padding-bottom:8px;gap:0}
     .topbar.is-retracted .brand,
-    .topbar.is-retracted .account{display:none}
+    .topbar.is-retracted .account{
+      max-height:0;opacity:0;visibility:hidden;
+      transition:max-height .26s ease, opacity .15s ease, visibility 0s linear .26s
+    }
     .account-connected{flex:1;min-width:0;flex-wrap:wrap;justify-content:center;padding:6px 10px}
     .account-connected .btn{flex:1 1 auto;justify-content:center}
     .account-pseudo{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -7480,7 +7492,12 @@
   if (!bar || !window.matchMedia || !window.requestAnimationFrame) return;
   var compact = window.matchMedia("(max-width:560px)");
   var RETRACT_FROM = 140;
-  var EXPAND_DELTA = 12;
+  /* Le header ne se redéploie qu'en haut de page, pas au moindre scroll vers le
+     haut : remonter pour relire un paragraphe ne doit pas recouvrir la page.
+     Le seuil reste bas exprès — se replier raccourcit le document et le
+     navigateur recale `scrollY` d'environ 140 px, donc un seuil large ferait
+     rebondir le header entre les deux états pendant l'animation. */
+  var EXPAND_AT = 4;
   var lastY = 0;
   var queued = false;
 
@@ -7521,9 +7538,8 @@
       return;
     }
     var delta = y - lastY;
-    if (y <= RETRACT_FROM) setRetracted(false);
-    else if (delta > 2) setRetracted(true);
-    else if (delta < -EXPAND_DELTA) setRetracted(false);
+    if (y <= EXPAND_AT) setRetracted(false);
+    else if (y > RETRACT_FROM && delta > 2) setRetracted(true);
     /* Le header est dans le flux : le replier raccourcit le document, et le
        navigateur recale aussitôt `scrollY`. On relit donc la position APRÈS le
        basculement, sinon ce saut auto-infligé serait pris au coup suivant pour
