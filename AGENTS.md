@@ -571,15 +571,29 @@ l'autre.
 ## Accessibilité et mobile
 
 **Header rétractable sur mobile** (≤ 560 px). En défilant vers le bas au-delà de
-140 px, `.topbar` reçoit `is-retracted` : la marque et le bloc compte passent en
-`display:none` et seule la barre d'onglets reste collante. Le header passe de
-211 px à 73 px, soit 138 px rendus au contenu (25 % → 9 % de l'écran). Remonter
-le redéploie ; il ne se replie jamais en haut de page ni en desktop.
+`RETRACT_FROM` (140 px), `.topbar` reçoit `is-retracted` : la marque et le bloc
+compte se replient et seule la barre d'onglets reste collante. Le header passe de
+211 px à 73 px, soit 138 px rendus au contenu (25 % → 9 % de l'écran).
 
-Quatre garde-fous à ne pas retirer :
+Il ne se replie jamais en haut de page ni en desktop, et **ne se redéploie qu'en
+haut de page** (`EXPAND_AT`, 4 px) : remonter à mi-page pour relire un paragraphe
+ne doit pas recouvrir la lecture. Le seuil est volontairement bas — se replier
+raccourcit le document et le navigateur recale `scrollY` d'environ 90 px pendant
+l'animation ; un seuil large ferait rebondir le header entre les deux états.
 
-- `display:none` plutôt qu'une hauteur nulle, pour supprimer aussi les
-  interlignes du flex **et** retirer ces contrôles de l'ordre de tabulation ;
+Le repli est **animé** : `max-height` + `opacity` sur les deux zones, `padding` +
+`gap` sur le header, environ 0,26 s.
+
+Cinq garde-fous à ne pas retirer :
+
+- l'état replié se termine sur `visibility:hidden`, **jamais** un simple
+  `max-height:0`. C'est lui qui retire ces contrôles de l'ordre de tabulation, ce
+  que faisait `display:none` avant l'animation (`display` ne se transitionne
+  pas). Il ne bascule qu'en fin de course au repli, sinon le bloc disparaîtrait
+  avant d'avoir replié ;
+- corollaire pour les tests : un bloc replié **garde un rectangle client** de
+  hauteur nulle. Tester `getClientRects().length` ne prouve donc plus rien ;
+  comparer hauteur peinte **et** `visibility` calculée ;
 - comme ils quittent l'ordre de tabulation, **toute frappe de Tab redéploie le
   header**, sinon un membre au clavier ne pourrait plus jamais les atteindre ;
 - le garde « ne pas masquer un contrôle focalisé » ne teste que `.brand` et
