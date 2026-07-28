@@ -66,18 +66,33 @@ Interprétation : la progression donne l'incrément **par niveau** de chaque
 segment de **10 niveaux**. Les longueurs rencontrées sont 4 (60 cas) et 5
 (88 cas), soit un plafond de niveau 40 ou 50 selon le grade.
 
-### 3.2 Le renforcement est une règle universelle — 412 sur 412
+### 3.2 Renforcement : ne pas transposer la règle des armures aux armes
 
-Toutes les occurrences de `growthType: "reinforce"` portent la même progression :
+Les 412 occurrences de `growthType: "reinforce"` mesurées appartiennent
+uniquement à `armures.json`. Elles portent toutes la progression :
 
 ```
 [10300, 10700, 11200, 11800, 12500]
 ```
 
 Soit des multiplicateurs en dix-millièmes : ×1,03 / ×1,07 / ×1,12 / ×1,18 / ×1,25
-pour les niveaux de renforcement 1 à 5. `reinforceMax` vaut 5 partout où il a été
-observé. **Aucune exception trouvée** — c'est donc une constante, pas une donnée
-par objet.
+pour les niveaux de renforcement 1 à 5 des armures. `reinforceMax` vaut 5
+partout où il a été observé dans ce contexte.
+
+Les armes ne possèdent aucune entrée `growthType: "reinforce"`. Leur
+renforcement suit trois sources distinctes :
+
+- `promotionValues`, avec l'invariant
+  `max == base + Σ(progression)` vérifié sur 261 cas sur 261 ;
+- `promotionSteps[].reinforceMax`, qui ouvre successivement les plafonds de
+  niveau 20, 30, 40 et 50 ;
+- `overlimit.levels[].statRate`, en dix-millièmes, selon la table constante
+  `0 / 500 / 1000 / 1750 / 2500 / 3750 / 5000`, identique sur les 81 armes
+  concernées.
+
+L'unité des taux est confirmée : `500` signifie `+5 %`. Le lot arme ne doit
+donc jamais importer ni appliquer la progression multiplicative propre aux
+armures.
 
 ### 3.3 Additifs simples, rien à deviner
 

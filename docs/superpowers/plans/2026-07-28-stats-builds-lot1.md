@@ -20,6 +20,9 @@
 - Ne jamais afficher un total lorsque `weaponConfig` est absent, incomplet, incompatible ou indisponible.
 - Stocker les taux comme entiers en dix-millièmes. `787` s’affiche `7,87 %`.
 - Ne pas appliquer `overlimit.statRate` ni les enchantements en pourcentage à une base de personnage dans ce lot.
+- Ne jamais utiliser pour une arme la progression
+  `[10300,10700,11200,11800,12500]` ni un `growthType:"reinforce"` : ces données
+  appartiennent exclusivement aux armures.
 - Ne créer aucune table ni colonne Supabase et ne modifier aucune politique RLS.
 - Conserver la lecture des équipes et rosters par tous les membres authentifiés,
   mais l’édition uniquement par leur propriétaire. Le détail d’autrui ne montre
@@ -128,6 +131,17 @@ class GenerateStatsBuildTests(unittest.TestCase):
             [group["element"] for group in emitted["tiers"][-1]["elements"]],
             ["generic", "default", "fire"]
         )
+
+    def test_weapon_promotion_reaches_declared_max(self):
+        values = self.fixture_grade()["promotionValues"]
+        self.assertEqual(values["max"], values["base"] + sum(values["progression"]))
+
+    def test_overlimit_uses_the_canonical_rate_table(self):
+        levels = self.fixture_grade()["overlimit"]["levels"]
+        self.assertEqual(
+            [level["statRate"] for level in levels],
+            [0, 500, 1000, 1750, 2500, 3750, 5000],
+        )
 ```
 
 Le fixture doit contenir une arme, deux grades, un enchantement basique, une
@@ -222,11 +236,18 @@ def render_js(catalog):
 2. scanner les `.webp` avec `Path.rglob`;
 3. transformer le dossier via `FOLDER_TO_ENUM`;
 4. exiger une correspondance unique ;
-5. compacter uniquement `gameId`, `rarity`, `reinforceMax`,
+5. compacter uniquement `gameId`, `rarity`,
    `mainStatValues`, `subStats`, `promotionSteps`, `promotionValues`,
    `overlimit` sans descriptions, et `enchantments`;
 6. ajouter à chaque label `{fr, rate, family}`;
 7. trier fichiers, grades, sous-stats, options et groupes.
+
+Pour chaque grade, le générateur refuse une `promotionValues` dont
+`max !== base + Σ(progression)`. Les `promotionSteps[].reinforceMax` doivent
+être le préfixe attendu de `[20,30,40,50]`. Lorsqu'un `overlimit` existe, ses
+sept niveaux doivent porter exactement les taux
+`[0,500,1000,1750,2500,3750,5000]`. Le générateur ne lit jamais
+`armures.json` pour produire le lot 1.
 
 Le CLI normal écrit `stats-build.js`. `--check` génère en mémoire, compare les
 octets au fichier suivi et quitte avec le message
@@ -400,7 +421,7 @@ function buildWeaponGrade(file, gameId){
 function weaponLevelCap(grade, promotion){
   const steps = Array.isArray(grade && grade.promotionSteps)
     ? grade.promotionSteps : [];
-  if(!steps.length) return Math.max(0, Number(grade && grade.reinforceMax) || 0);
+  if(!steps.length) return -1;
   if(promotion === 0) return Math.max(0, Number(steps[0].reinforceMax) - 10);
   const step = steps[promotion - 1];
   return step ? Number(step.reinforceMax) : -1;
@@ -413,6 +434,9 @@ uniquement pour une absence réelle.
 
 `weaponConfigStatus` applique exactement les cinq états de la spec. Un élément
 `null` dans un tableau d’enchantements de bonne longueur est un choix valide.
+Ajouter les assertions `weaponLevelCap(grade, 0) === 10`, puis
+`20/30/40/50` pour les promotions 1 à 4 ; l'absence de `promotionSteps` doit
+produire `incompatible`, jamais un plafond inventé.
 
 - [ ] **Step 5: Propager `weaponConfig` dans tous les modèles**
 
@@ -494,8 +518,16 @@ assert.equal(hooks.curveValueAtLevel({base:100, progression:[2,3]}, 11), 123);
 assert.equal(hooks.curveValueAtLevel({base:100, progression:[2,3]}, 20), 150);
 
 assert.equal(
-  hooks.promotionValueAt({promotionValues:{base:0, progression:[73,145,218]}}, 3),
-  436
+  hooks.promotionValueAt({
+    promotionValues:{base:50, progression:[73,145,218], max:486}
+  }, 0),
+  50
+);
+assert.equal(
+  hooks.promotionValueAt({
+    promotionValues:{base:50, progression:[73,145,218], max:486}
+  }, 3),
+  486
 );
 assert.deepEqual(
   plain(hooks.enchantmentBounds({min:315,max:787}, 5000)),
@@ -508,6 +540,8 @@ assert.equal(hooks.formatBuildStatValue(3291, false), "+3 291");
 Ajouter un calcul complet qui exige deux contributions distinctes
 `source:"level"` et `source:"promotion"`, ainsi qu’un
 `modifiers:{overlimitRate:5000, passiveLevel:7}` non appliqué aux entrées.
+Ajouter un test qui formate `500` en `+5 %` et qui échoue si le moteur applique
+le multiplicateur d’armure `10300`.
 
 - [ ] **Step 2: Vérifier l’échec**
 
@@ -1364,7 +1398,12 @@ Mettre à jour `AGENTS.md` avec :
 - forme complète de `weaponConfig`;
 - cinq statuts et absence de faux zéro ;
 - formule segmentée et cumul du renforcement ;
+- renforcement d'arme issu uniquement de `promotionValues` ;
+- plafonds 10/20/30/40/50 issus de `promotionSteps[].reinforceMax` ;
+- absence explicite de la progression multiplicative des armures ;
 - outrepassement/taux séparés ;
+- table d'outrepassement `0/500/1000/1750/2500/3750/5000`, avec
+  `500 = +5 %` ;
 - catalogue généré et commande `python generate-stats-build.py`;
 - triggers de conservation ;
 - ordre SQL → Pages → mise à jour PWA ;

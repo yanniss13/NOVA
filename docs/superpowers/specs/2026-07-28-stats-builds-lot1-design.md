@@ -83,7 +83,6 @@ window.SEVEN_DS_BUILD_STATS = {
       gradesByGameId: {
         "131065010": {
           rarity: "grade5",
-          reinforceMax: 50,
           mainStatValues: {},
           subStats: [],
           promotionSteps: [],
@@ -260,9 +259,11 @@ option inconnue ou borner une donnée manifestement corrompue, mais elle ne
 transforme jamais une configuration incomplète en configuration valide.
 
 Le plafond avant le premier renforcement correspond au premier plafond de
-`promotionSteps` moins dix niveaux. Chaque palier suivant utilise exactement le
-`reinforceMax` de son étape. Si une variante ne possède aucune étape, son propre
-`reinforceMax` est le plafond unique.
+`promotionSteps` moins dix niveaux. Avec les données mesurées, le palier zéro
+ouvre donc le niveau 10, puis les étapes ouvrent exactement 20, 30, 40 et 50 via
+leur `reinforceMax`. Si une variante ne possède aucune étape, son plafond n'est
+pas déductible : elle est signalée incompatible au lieu d'inventer un repli sur
+un champ de grade.
 
 ## 7. Moteur de calcul
 
@@ -283,8 +284,12 @@ principales et aux sous-statistiques qui portent cette structure.
 
 ### 7.2 Renforcement
 
+Les armes ne possèdent aucun `growthType: "reinforce"` : la progression
+`[10300, 10700, 11200, 11800, 12500]` appartient aux armures et ne doit jamais
+être utilisée ici.
+
 Le champ interne `promotion` correspond au contrôle affiché
-« Renforcement ». Le niveau zéro n’ajoute rien. Au palier `n`, le bonus est :
+« Renforcement ». Au palier `n`, la valeur est :
 
 ```text
 promotionValue(n) =
@@ -293,7 +298,10 @@ promotionValue(n) =
 ```
 
 Les `promotionSteps` déterminent le plafond de niveau ouvert. Aucune valeur
-n’est extrapolée au-delà des étapes présentes.
+n’est extrapolée au-delà des étapes présentes. Au palier zéro,
+`promotionValue(0)` vaut donc exactement `promotionValues.base`. Au dernier
+palier, l'égalité avec `promotionValues.max` est garantie par
+`max == base + Σ(progression)`, vérifiée sur 261 cas sur 261.
 
 ### 7.3 Outrepassement
 
@@ -301,6 +309,10 @@ Le niveau sélectionné retrouve directement :
 
 - `statRate` ;
 - `passiveLevel`.
+
+Pour les 81 armes qui possèdent l'outrepassement, les `statRate` suivent la
+table constante `0 / 500 / 1000 / 1750 / 2500 / 3750 / 5000`. Ils sont stockés
+en dix-millièmes : `500` s'affiche donc `+5 %`.
 
 Le lot 1 les affiche séparément :
 
@@ -502,8 +514,10 @@ qu’elle mord.
 - segments aux niveaux 0, 10, 11 et au plafond ;
 - égalité avec `max` au plafond ;
 - cumul de renforcement ;
+- invariant `promotionValues.max == base + Σ(progression)` ;
 - plafonds de niveau ouverts ;
-- outrepassement séparé ;
+- plafonds 10/20/30/40/50 dérivés uniquement de `promotionSteps` ;
+- table d’outrepassement séparée `0/500/1000/1750/2500/3750/5000` ;
 - validation de grade, palier, élément, statistique et valeur ;
 - regroupement des cinq familles ;
 - format français ;
