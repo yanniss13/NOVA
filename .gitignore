@@ -4,3 +4,4 @@ test-results/
 .worktrees/
 __pycache__/
 debug.log
+.superpowers/
