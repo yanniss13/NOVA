@@ -97,6 +97,15 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   buildWeaponDefinition:typeof buildWeaponDefinition === "function"
     ? buildWeaponDefinition
     : undefined,
+  buildGearDefinition:typeof buildGearDefinition === "function"
+    ? buildGearDefinition
+    : undefined,
+  emptyGearConfig:typeof emptyGearConfig === "function"
+    ? emptyGearConfig
+    : undefined,
+  gearConfigStatus:typeof gearConfigStatus === "function"
+    ? gearConfigStatus
+    : undefined,
   buildWeaponGrade:typeof buildWeaponGrade === "function"
     ? buildWeaponGrade
     : undefined,
@@ -343,7 +352,10 @@ function loadApp(initialTeams){
       {},
       realBuildStats.weaponsByFile,
       sandbox.SEVEN_DS_BUILD_STATS.weaponsByFile
-    )
+    ),
+    gearByFile:realBuildStats.gearByFile,
+    engravedByFile:realBuildStats.engravedByFile,
+    gearSets:realBuildStats.gearSets
   };
   sandbox.window = sandbox;
   vm.runInNewContext(exposed, sandbox, { filename:"index.html" });

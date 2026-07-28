@@ -768,4 +768,119 @@ function masterstoneConfig(enchantment){
   );
 }
 
+// Une pièce d'équipement possède un modèle de configuration indépendant de l'arme.
+{
+  const { hooks } = loadApp();
+  const FILE = "7ds-armures-ssr/Haut/Haut de l'araignée de l'ombre.webp";
+  const definition = hooks.buildGearDefinition(FILE);
+  assert.ok(definition, "la pièce doit exister au catalogue");
+
+  assert.strictEqual(hooks.gearConfigStatus(FILE, undefined), "missing");
+  assert.strictEqual(
+    hooks.gearConfigStatus("7ds-armures-ssr/Haut/inconnu.webp", null),
+    "unavailable"
+  );
+
+  const base = hooks.emptyGearConfig(FILE);
+  assert.strictEqual(base.level, definition.qualityMin);
+  assert.strictEqual(base.reinforce, 0);
+  assert.strictEqual(
+    base.enchantments.length,
+    definition.randomOptions ? definition.randomOptions.slots : 0
+  );
+  assert.strictEqual(hooks.gearConfigStatus(FILE, base), "valid");
+
+  assert.strictEqual(
+    hooks.gearConfigStatus(FILE, {
+      ...base,
+      level:definition.qualityMax + 1
+    }),
+    "incompatible",
+    "un niveau supérieur à la qualité maximale doit être refusé"
+  );
+  assert.strictEqual(
+    hooks.gearConfigStatus(FILE, {
+      ...base,
+      level:definition.qualityMin - 1
+    }),
+    "incompatible"
+  );
+  assert.strictEqual(
+    hooks.gearConfigStatus(FILE, {
+      ...base,
+      reinforce:definition.reinforceMax + 1
+    }),
+    "incompatible"
+  );
+  assert.strictEqual(
+    hooks.gearConfigStatus(FILE, { ...base, reinforce:-1 }),
+    "incompatible"
+  );
+  assert.strictEqual(
+    hooks.gearConfigStatus(FILE, { ...base, version:2 }),
+    "incompatible"
+  );
+
+  const ENGRAVED =
+    "7ds-armures-ssr/Armure liee/Arrogance adéquate.webp";
+  const engraved = hooks.emptyGearConfig(ENGRAVED);
+  assert.strictEqual(engraved.enchantments.length, 3);
+  assert.strictEqual(hooks.gearConfigStatus(ENGRAVED, engraved), "valid");
+  const attackOption = {
+    slot:0,
+    stat:"I_AtkAdd_Rate",
+    value:315
+  };
+  assert.strictEqual(
+    hooks.gearConfigStatus(ENGRAVED, {
+      ...engraved,
+      enchantments:[attackOption, null, null]
+    }),
+    "valid"
+  );
+  assert.strictEqual(
+    hooks.gearConfigStatus(ENGRAVED, {
+      ...engraved,
+      enchantments:[{ ...attackOption, value:null }, null, null]
+    }),
+    "incomplete"
+  );
+  assert.strictEqual(
+    hooks.gearConfigStatus(ENGRAVED, {
+      ...engraved,
+      enchantments:[{ ...attackOption, stat:"stat-inconnue" }, null, null]
+    }),
+    "incompatible"
+  );
+  assert.strictEqual(
+    hooks.gearConfigStatus(ENGRAVED, {
+      ...engraved,
+      enchantments:[{ ...attackOption, value:314 }, null, null]
+    }),
+    "incompatible"
+  );
+  assert.strictEqual(
+    hooks.gearConfigStatus(ENGRAVED, {
+      ...engraved,
+      enchantments:[attackOption, { ...attackOption, slot:1 }, null]
+    }),
+    "incompatible",
+    "une même stat ne peut pas occuper deux emplacements"
+  );
+  assert.strictEqual(
+    hooks.gearConfigStatus(ENGRAVED, {
+      ...engraved,
+      enchantments:[attackOption]
+    }),
+    "incomplete"
+  );
+  assert.strictEqual(
+    hooks.gearConfigStatus(ENGRAVED, {
+      ...engraved,
+      enchantments:[null, null, null, null]
+    }),
+    "incompatible"
+  );
+}
+
 console.log("PASS stats de builds : modèle et calcul de l’arme");

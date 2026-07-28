@@ -2398,6 +2398,98 @@
   const jsonCopy = value => JSON.parse(JSON.stringify(value));
   const owns = (object, key) => !!object && Object.prototype.hasOwnProperty.call(object, key);
   const isInteger = value => Number.isInteger(value);
+  const BUILD_GEAR = BUILD_STATS.gearByFile || {};
+  const BUILD_ENGRAVED = BUILD_STATS.engravedByFile || {};
+  function buildGearDefinition(file){
+    if(typeof file !== "string" || !file) return null;
+    if(owns(BUILD_GEAR, file)) return BUILD_GEAR[file];
+    if(owns(BUILD_ENGRAVED, file)) return BUILD_ENGRAVED[file];
+    return null;
+  }
+  function gearEnchantmentLength(definition){
+    const options = definition && definition.randomOptions;
+    return options && Number.isFinite(options.slots)
+      ? Math.max(0, Math.trunc(options.slots))
+      : 0;
+  }
+  function emptyGearConfig(file){
+    const definition = buildGearDefinition(file);
+    if(!definition) return null;
+    return {
+      version:1,
+      level:definition.qualityMin,
+      reinforce:0,
+      enchantments:Array.from({
+        length:gearEnchantmentLength(definition)
+      }, ()=>null)
+    };
+  }
+  function gearEnchantmentChoiceStatus(definition, choice, index){
+    if(choice === null) return "valid";
+    if(!choice || typeof choice !== "object" || Array.isArray(choice)){
+      return "incompatible";
+    }
+    if(enchantmentFieldIsMissing(choice, "slot")
+      || enchantmentFieldIsMissing(choice, "stat")
+      || enchantmentFieldIsMissing(choice, "value")){
+      return "incomplete";
+    }
+    if(!isInteger(choice.slot) || choice.slot !== index) return "incompatible";
+    return allowedEnchantValueStatus(
+      choice,
+      (definition.randomOptions && definition.randomOptions.stats) || []
+    );
+  }
+  function gearEnchantmentsStatus(definition, enchantments){
+    let status = "valid";
+    const seenStats = new Set();
+    enchantments.forEach((choice, index) => {
+      if(choice && typeof choice === "object"
+        && typeof choice.stat === "string" && choice.stat){
+        if(seenStats.has(choice.stat)){
+          status = "incompatible";
+          return;
+        }
+        seenStats.add(choice.stat);
+      }
+      const choiceStatus = gearEnchantmentChoiceStatus(definition, choice, index);
+      if(choiceStatus === "incompatible"){
+        status = "incompatible";
+      }else if(choiceStatus === "incomplete" && status === "valid"){
+        status = "incomplete";
+      }
+    });
+    return status;
+  }
+  function gearConfigStatus(file, config){
+    const definition = buildGearDefinition(file);
+    if(!definition) return "unavailable";
+    if(!definition.mainValues || !definition.mainAdd) return "unavailable";
+    if(config === undefined || config === null) return "missing";
+    if(typeof config !== "object" || Array.isArray(config) || config.version !== 1){
+      return "incompatible";
+    }
+    const required = ["level", "reinforce", "enchantments"];
+    if(required.some(key => !owns(config, key) || config[key] === null)){
+      return "incomplete";
+    }
+    if(!isInteger(config.level) || !isInteger(config.reinforce)){
+      return "incompatible";
+    }
+    if(config.level < definition.qualityMin
+      || config.level > definition.qualityMax
+      || config.reinforce < 0
+      || config.reinforce > definition.reinforceMax
+      || !Array.isArray(config.enchantments)){
+      return "incompatible";
+    }
+    const length = gearEnchantmentLength(definition);
+    if(config.enchantments.length > length) return "incompatible";
+    const status = gearEnchantmentsStatus(definition, config.enchantments);
+    if(status === "incompatible") return "incompatible";
+    if(config.enchantments.length < length) return "incomplete";
+    return status;
+  }
   function buildWeaponDefinition(file){
     return file && owns(BUILD_STATS.weaponsByFile, file)
       ? BUILD_STATS.weaponsByFile[file]
