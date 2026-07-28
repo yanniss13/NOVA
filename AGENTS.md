@@ -82,8 +82,12 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       promotion, outrepassement et enchantements sont configurables dans le
       roster et le Team Builder. Le moteur local expose une décomposition
       reconstructible et affiche uniquement « Apport de l’arme — calcul
-      partiel ». Les armures et les stats finales du héros restent hors
-      couverture.
+      partiel ».
+- [x] **Stats de builds — lot 2, équipement**. Armures, gravures et bijoux
+      disposent de leur qualité, renforcement et options aléatoires. Les bonus
+      d'ensemble suivent leurs seuils réels, les passifs textuels sont annoncés
+      comme non couverts, et les configurations sont persistées jusque dans les
+      instantanés de boss. Les stats finales du héros restent hors couverture.
 
 Après cette mise à jour, l'utilisateur doit rejouer le contenu complet de
 `supabase/schema.sql` dans le SQL Editor Supabase afin d'appliquer le schéma,
@@ -134,7 +138,7 @@ Site Confrérie 7ds/
 ├─ tests/                  # Régressions du builder + parcours Supabase simulé dans Chromium.
 ├─ tests/helpers/load-app.js # Charge le script inline d'index.html dans `vm` et expose ses fonctions pures.
 ├─ data.js                 # GÉNÉRÉ. window.SEVEN_DS_DATA = { personnages, armes, armures, bijoux }.
-├─ stats-build.js          # GÉNÉRÉ. Catalogue chiffré local des seules armes du lot 1.
+├─ stats-build.js          # GÉNÉRÉ. Catalogue chiffré local armes + équipement + sets.
 ├─ generate-stats-build.py # Régénère/valide stats-build.js depuis les références locales.
 ├─ generate-data.ps1       # Régénère data.js en scannant les dossiers d'images.
 ├─ potentiels.js           # GÉNÉRÉ. 3 armes compatibles + bonus par héros.
@@ -379,7 +383,7 @@ Tant que seule l'arme est couverte, tout rendu porte exactement le titre
 dans le roster et le Team Builder; les autres rosters, détails d'équipe et
 archives de boss restent en lecture seule.
 
-### Inconnue réservée au futur lot armures
+### Hypothèse d'origine des segments d'armure
 
 Ne jamais créer de table pour `equiplv_N` : cet identifiant est redondant. Le
 nombre de segments d'une armure se dérive de l'objet :
@@ -390,9 +394,9 @@ nombreDeSegments = max(1, len(tierBoundaries) - 1)
 
 Quand il n'existe qu'une borne, l'intervalle va de `qualityMin` à `qualityMax`.
 La seule inconnue est l'origine du gain par niveau : borne inférieure du
-segment ou `qualityMin`. Le futur lot doit concentrer ce choix dans l'unique
-paramètre `ARMOR_SEGMENT_ORIGIN_MODE`, présumé et non exécuté au lot 1; les
-termes concernés porteront `confidence:"presumed"`.
+segment ou `qualityMin`. Le lot 2 concentre ce choix dans l'unique paramètre
+`ARMOR_LEVEL_ORIGIN_MODE`; les termes concernés portent
+`confidence:"presumed"`.
 
 Protocole de validation : relever la même statistique d'une même armure à
 `qualityMin`, juste avant, au niveau et juste après la première borne interne,
@@ -404,11 +408,11 @@ réécriture du moteur.
 
 Deux triggers idempotents dans `supabase/schema.sql`,
 `preserve_roster_weapon_configs` et `preserve_team_weapon_configs`, empêchent
-une ancienne PWA qui omet `weaponConfig` d'effacer une saisie récente lorsque
-l'arme et l'objet sont inchangés. Une clé explicitement mise à `null` reste une
-suppression volontaire; retirer un build/héros ou changer d'arme ne ressuscite
-ni ne transporte l'ancienne configuration. Aucune table, colonne ou politique
-RLS n'est ajoutée.
+une ancienne PWA qui omet `weaponConfig`, `armorConfig` ou `jewelConfig`
+d'effacer une saisie récente lorsque l'équipement correspondant est inchangé.
+Une clé explicitement mise à `null` reste une suppression volontaire; retirer
+un build/héros ou changer une pièce ne ressuscite ni ne transporte l'ancienne
+configuration. Aucune table, colonne ou politique RLS n'est ajoutée.
 
 Ordre de mise en service :
 
@@ -422,6 +426,66 @@ Retour arrière du frontend : revenir au commit antérieur, déployer ce revert,
 puis appliquer la mise à jour PWA, **en conservant les triggers SQL**. Les
 `weaponConfig` restent dans les JSONB et réapparaissent lors d'une réactivation;
 aucun rollback SQL destructif n'est nécessaire.
+
+## Stats de builds — lot 2 (armures, gravures, bijoux et ensembles)
+
+Chaque build possède désormais deux dictionnaires supplémentaires, persistés
+dans les mêmes JSONB que l'équipement :
+
+```js
+armorConfig: {
+  "Haut": {
+    version: 1,
+    level: 120,
+    reinforce: 5,
+    enchantments: [
+      { slot: 0, stat: "B_Atk_Equip", value: 420 },
+      null
+    ]
+  }
+},
+jewelConfig: {
+  "Anneau": { /* même forme */ }
+}
+```
+
+Les clés suivent exactement `ARMOR_SLOTS` et `JEWEL_SLOTS`. Une configuration
+n'est conservée que tant que le fichier équipé au même emplacement ne change
+pas. Une ancienne équipe sans ces deux champs est normalisée avec des
+dictionnaires vides, sans inventer de chiffres. Les copies roster → builder,
+les duplications d'équipe et les instantanés de boss transportent ces
+configurations par valeur, jamais par référence.
+
+Correspondance des domaines du moteur :
+
+- `Haut`, `Bas`, `Bottes` et `Ceinture` → `armor` ;
+- `Armure liee` → `engraving` : il s'agit de l'équipement gravé associé au
+  personnage, même si le libellé visible reste « Armure liée » ;
+- `Anneau`, `Collier` et `Boucle d'oreille` → `jewel`.
+
+Le nombre de segments d'une pièce vaut toujours
+`max(1, tierBoundaries.length - 1)`. Ne jamais créer une table `equiplv_N` :
+ce nom n'est qu'un identifiant redondant. Le renforcement utilise exclusivement
+`REINFORCE_PROGRESSION = [10300, 10700, 11200, 11800, 12500]`, soit les
+multiplicateurs exacts des niveaux +1 à +5.
+
+> **Attention — les bonus d'ensemble ne s'activent pas uniformément à 2 et
+> 4 pièces.** Lire pour chaque set ses propres `twoCount`, `fourCount` et
+> `sevenCount` dans `stats-build.js`. Les combinaisons publiées incluent
+> notamment 2/3, 3/5/7, 2/4/6 et 2/4/7. Une valeur absente signifie que le
+> palier n'existe pas.
+
+`ARMOR_LEVEL_ORIGIN_MODE` vaut actuellement `"segment-lower-bound"`. C'est une
+**présomption non vérifiée**, concentrée dans un seul paramètre. Pour la
+trancher en jeu, relever la même statistique d'une même armure à `qualityMin`,
+juste avant, au niveau et juste après la première borne interne, puis comparer
+les reconstructions `"segment-lower-bound"` et `"quality-min"`. Si les mesures
+contredisent le choix, seule la valeur du paramètre doit changer.
+
+Les passifs en prose ne sont pas calculables. Le moteur les déclare dans
+`uncovered` (`engraving:passive` ou `armor:passive`) et l'interface annonce
+alors explicitement une « borne inférieure ». Leur absence dans `terms` ne doit
+jamais être interprétée comme un vrai zéro.
 
 ## Règle d'or sur les assets
 
@@ -632,10 +696,12 @@ le SQL Editor afin d'ajouter les tables à la publication
 - **Potentiel** par héros : un palier commun T0–T10, indépendant de son arme.
   L'arme équipée choisit seulement les descriptions officielles affichées.
   `renderBonus()` rend leur balisage couleur. Le potentiel ne participe pas
-  encore au calcul chiffré du lot 1.
-- **Calcul chiffré partiel de l'arme uniquement** : `stats-build.js` calcule
-  l'apport de l'arme configurée. Aucune statistique finale de héros, d'armure,
-  de set, de potentiel ou de maîtrise n'est encore annoncée comme couverte.
+  encore au calcul chiffré.
+- **Calcul chiffré partiel du build** : `stats-build.js` calcule l'apport
+  configuré de l'arme, des armures, de la gravure, des bijoux et des bonus
+  d'ensemble. Aucune statistique finale de héros, de potentiel ou de maîtrise
+  n'est annoncée comme couverte ; les passifs en prose restent explicitement
+  dans `uncovered`.
 - Arme choisie en 2 temps : type puis arme. Le picker filtre les groupes aux
   3 types autorisés par les clés de `window.SEVEN_DS_POTENTIELS[charId]`.
 - Export / Import JSON = sauvegarde de secours et format pivot indépendant de Supabase.

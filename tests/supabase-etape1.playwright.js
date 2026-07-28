@@ -364,6 +364,24 @@ const { chromium } = require("playwright");
       "La racine partagée doit correspondre au set choisi « "+chosenSetName+" »"
     );
 
+    /* Une configuration chiffrée d'armure doit suivre le même trajet que
+       l'arme : brouillon roster, ligne Supabase, copie builder et snapshot. */
+    const rosterTopConfig = page.locator(
+      '#memberRosterEditor .gear-config-open[data-slot="Haut"]'
+    );
+    await rosterTopConfig.click();
+    await page.locator("#gearConfigOverlay").waitFor({ state:"visible" });
+    const rosterTopLevel = page.locator(".gear-config-level");
+    const rosterTopMaximum = Number(await rosterTopLevel.getAttribute("max"));
+    await rosterTopLevel.fill(String(rosterTopMaximum));
+    await page.locator(".gear-config-reinforce").selectOption("5");
+    await page.locator("#gearConfigSave").click();
+    await page.locator("#gearConfigOverlay").waitFor({ state:"hidden" });
+    assert.match(
+      await rosterTopConfig.textContent(),
+      new RegExp("Chiffrée.*Nv\\. "+rosterTopMaximum+".*Renf\\. \\+5")
+    );
+
     /* ---- Même geste pour les bijoux ----
        Les trois emplacements sont remplis, et les armures déjà équipées ne
        doivent pas bouger. */
@@ -460,7 +478,7 @@ const { chromium } = require("playwright");
 
     await page.locator("#memberRosterSave").click();
     await page.locator("#memberRosterOverlay").waitFor({ state:"hidden" });
-    await page.waitForFunction(() => {
+    await page.waitForFunction(expectedLevel => {
       const row = window.__fakeSupabaseState.roster_characters
         .find(item => item.owner === "user-1" && item.char_id === "meliodas");
       const target = row && row.builds["Epee 1 main"];
@@ -470,8 +488,12 @@ const { chromium } = require("playwright");
         target.favorite === false &&
         row.builds.Hache.favorite === true &&
         row.builds.Hache.weaponConfig &&
-        row.builds.Hache.weaponConfig.version === 1;
-    });
+        row.builds.Hache.weaponConfig.version === 1 &&
+        row.builds.Hache.armorConfig &&
+        row.builds.Hache.armorConfig.Haut &&
+        row.builds.Hache.armorConfig.Haut.level === expectedLevel &&
+        row.builds.Hache.armorConfig.Haut.reinforce === 5;
+    }, rosterTopMaximum);
     const meliodasCard = page.locator("#memberRosterGrid .member-roster-card")
       .filter({ hasText:"Meliodas" });
     assert.match(await meliodasCard.textContent(), /★ favori/);
@@ -487,6 +509,23 @@ const { chromium } = require("playwright");
       await page.locator("#memberRosterEditor .weapon-config-summary").textContent(),
       /Configurée .* Nv\. 10 .* Outrepassement 1/
     );
+    const reloadedTopConfig = page.locator(
+      '#memberRosterEditor .gear-config-open[data-slot="Haut"]'
+    );
+    assert.match(await reloadedTopConfig.textContent(), /Chiffrée/);
+    await reloadedTopConfig.click();
+    await page.locator("#gearConfigOverlay").waitFor({ state:"visible" });
+    assert.equal(
+      await page.locator(".gear-config-level").inputValue(),
+      String(rosterTopMaximum),
+      "La qualité de l'armure doit être relue depuis la ligne Supabase"
+    );
+    assert.equal(
+      await page.locator(".gear-config-reinforce").inputValue(),
+      "5",
+      "Le renforcement doit être relu depuis la ligne Supabase"
+    );
+    await page.locator("#gearConfigCancel").click();
     await page.getByRole("button", { name:/Epee 1 main/ }).click();
     const destinationNote = page.locator("#memberRosterEditor textarea");
     await destinationNote.fill("Ne pas écraser");
@@ -661,6 +700,13 @@ const { chromium } = require("playwright");
     await page.locator('#pickerGrid .tile[title*="Hache"]').click();
     assert.match(await rosterHeroSlot.textContent(), /Meliodas/);
     assert.match(await rosterHeroSlot.textContent(), /P7/);
+    assert.match(
+      await rosterHeroSlot.locator(
+        '.gear-config-open[data-slot="Haut"]'
+      ).textContent(),
+      /Chiffrée/,
+      "La copie roster → Team Builder doit conserver la configuration d'armure"
+    );
 
     await rosterHeroSlot.locator("textarea.note").fill("Copie modifiée");
     const rosterNote = await page.evaluate(() =>
@@ -732,6 +778,11 @@ const { chromium } = require("playwright");
     assert.equal(saved.owner, "user-1");
     assert.equal(saved.pseudo, "Yannis");
     assert.equal(saved.data.heroes[0].char, "meliodas");
+    assert.equal(
+      saved.data.heroes[0].armorConfig.Haut.level,
+      rosterTopMaximum
+    );
+    assert.equal(saved.data.heroes[0].armorConfig.Haut.reinforce, 5);
 
     await page.locator('.tab[data-view="roster"]').click();
     await page.evaluate(() => {
@@ -2513,6 +2564,22 @@ const { chromium } = require("playwright");
         )
       }
     );
+    const bossGearSnapshot = await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const group = state.boss_sessions.find(run =>
+        run.slot === 2 && run.run_no === 1
+      );
+      const membership = state.boss_participation.find(item =>
+        item.session_id === group.id && item.owner === "user-1"
+      );
+      return membership.team_snapshot.data.heroes[0].armorConfig.Haut;
+    });
+    assert.equal(
+      bossGearSnapshot.level,
+      rosterTopMaximum,
+      "L'instantané de boss doit conserver la qualité de l'armure"
+    );
+    assert.equal(bossGearSnapshot.reinforce, 5);
 
     await groupOne.getByText("Équipe prête", { exact:true }).waitFor();
     assert.match(await groupOne.textContent(), /Équipe prête/);

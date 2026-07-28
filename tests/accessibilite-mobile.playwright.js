@@ -876,6 +876,128 @@ async function installRosterFocusFakeSupabase(page){
       });
       await pickerPage.keyboard.press("Escape");
       await pickerPage.locator("#weaponConfigOverlay").waitFor({state:"hidden"});
+
+      if(width === 320 || width === 390){
+        const hero = pickerPage.locator(".hero").first();
+        await hero.locator('[data-gear-action="armor-set"]').click();
+        await pickerPage.locator("#pickerGrid .tile").first().click();
+        await hero.locator('[data-gear-action="jewel-set"]').click();
+        await pickerPage.locator("#pickerGrid .tile").first().click();
+        await hero.locator(
+          '.gear-slot[data-slot="Armure liee"]'
+        ).click();
+        await pickerPage.locator("#pickerGrid")
+          .getByTitle("Une nouvelle aventure").click();
+
+        const configuredSlots = [
+          "Haut",
+          "Bas",
+          "Bottes",
+          "Ceinture",
+          "Armure liee",
+          "Anneau",
+          "Collier",
+          "Boucle d'oreille"
+        ];
+        for(const slot of configuredSlots){
+          const open = hero.locator(
+            '.gear-config-open[data-slot="'+slot+'"]'
+          );
+          const triggerBox = await open.boundingBox();
+          assert.ok(
+            triggerBox && triggerBox.height >= 44,
+            "Le contrôle chiffré "+slot+" doit mesurer 44 px à "+width+"px"
+          );
+          await open.click();
+          await pickerPage.locator("#gearConfigOverlay")
+            .waitFor({state:"visible"});
+          const level = pickerPage.locator(".gear-config-level");
+          await level.fill(await level.getAttribute("max"));
+          const reinforce = pickerPage.locator(".gear-config-reinforce");
+          await reinforce.selectOption({
+            index:await reinforce.locator("option").count() - 1
+          });
+          await pickerPage.locator("#gearConfigSave").click();
+          await pickerPage.locator("#gearConfigOverlay")
+            .waitFor({state:"hidden"});
+        }
+        assert.equal(
+          await hero.locator(".gear-config-open.is-valid").count(),
+          configuredSlots.length,
+          "Toutes les pièces équipées doivent rester configurées"
+        );
+
+        await hero.locator(
+          '.gear-config-open[data-slot="Haut"]'
+        ).click();
+        await pickerPage.locator("#gearConfigOverlay")
+          .waitFor({state:"visible"});
+        const gearConfigLayout = await pickerPage.evaluate(() => {
+          const overlay = document.querySelector("#gearConfigOverlay");
+          const layout = overlay.querySelector(".weapon-config-layout");
+          const modal = overlay.querySelector(".weapon-config-modal");
+          const modalRect = modal.getBoundingClientRect();
+          const controls = [...overlay.querySelectorAll("input,select,button")]
+            .filter(node => {
+              const box = node.getBoundingClientRect();
+              return box.width > 0 && box.height > 0;
+            })
+            .map(node => {
+              const box = node.getBoundingClientRect();
+              return {
+                name:node.id || node.className || node.tagName,
+                width:box.width,
+                height:box.height,
+                left:box.left,
+                right:box.right
+              };
+            });
+          let widest = 0;
+          layout.querySelectorAll("*").forEach(node => {
+            widest = Math.max(widest, node.getBoundingClientRect().width);
+          });
+          return {
+            overflowX:getComputedStyle(layout).overflowX,
+            lateral:layout.scrollWidth - layout.clientWidth,
+            widest,
+            limit:layout.clientWidth,
+            modalLeft:modalRect.left,
+            modalRight:modalRect.right,
+            viewportWidth:document.documentElement.clientWidth,
+            controls
+          };
+        });
+        assert.equal(
+          gearConfigLayout.overflowX,
+          "hidden",
+          "La modale d'équipement doit masquer tout débordement horizontal"
+        );
+        assert.ok(
+          gearConfigLayout.lateral <= 1 &&
+          gearConfigLayout.widest <= gearConfigLayout.limit + 1,
+          "Un élément de la modale d'équipement déborde à "+width+"px : "+
+            JSON.stringify(gearConfigLayout)
+        );
+        assert.ok(
+          gearConfigLayout.modalLeft >= -1 &&
+          gearConfigLayout.modalRight <= gearConfigLayout.viewportWidth + 1,
+          "La modale d'équipement sort du viewport à "+width+"px"
+        );
+        gearConfigLayout.controls.forEach(control => {
+          assert.ok(
+            control.height >= 44,
+            control.name+" doit mesurer au moins 44 px à "+width+"px"
+          );
+          assert.ok(
+            control.left >= gearConfigLayout.modalLeft - 1 &&
+            control.right <= gearConfigLayout.modalRight + 1,
+            control.name+" sort de la modale à "+width+"px"
+          );
+        });
+        await pickerPage.keyboard.press("Escape");
+        await pickerPage.locator("#gearConfigOverlay")
+          .waitFor({state:"hidden"});
+      }
       await pickerContext.close();
     }
 

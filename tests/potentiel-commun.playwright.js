@@ -301,6 +301,19 @@ const STORAGE_KEY = "confrerie7ds.teams";
       true,
       "Fermer doit rendre le focus au bouton exact qui a ouvert"
     );
+    await chooseArmor(
+      page,
+      firstHero,
+      "Haut",
+      "Haut de l'araignée de l'ombre"
+    );
+    assert.equal(
+      (await firstHero.locator(
+        '.gear-config-open[data-slot="Haut"]'
+      ).textContent()).trim(),
+      "Configurer",
+      "Changer de pièce doit effacer sa configuration précédente"
+    );
 
     page.once("dialog", dialog => dialog.accept());
     await chooseWeapon(page, firstHero, "Hache", "Hache bénie");

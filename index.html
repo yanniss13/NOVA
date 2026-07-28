@@ -2678,6 +2678,17 @@
     if(raw === undefined || raw === null) return null;
     return jsonCopy(raw);
   }
+  function normalizeGearConfigMap(equipment, raw, slots){
+    const source = raw && typeof raw === "object" && !Array.isArray(raw)
+      ? raw : {};
+    return slots.reduce((result, slot) => {
+      if(equipment[slot] && owns(source, slot)
+        && source[slot] !== undefined && source[slot] !== null){
+        result[slot] = jsonCopy(source[slot]);
+      }
+      return result;
+    }, {});
+  }
   function nativeWeaponCurveIsComplete(curve){
     return !!curve && typeof curve === "object" && !Array.isArray(curve)
       && Number.isFinite(curve.base)
@@ -4606,6 +4617,20 @@
       weaponConfig:changed ? null : normalizeWeaponConfig(nextFile, source.weaponConfig)
     });
   }
+  function applyGearChange(target, kind, slot, nextFile){
+    const configKey = kind + "Config";
+    if(!target[kind] || typeof target[kind] !== "object"){
+      target[kind] = kind === "armor" ? emptyArmor() : emptyJewel();
+    }
+    if(!target[configKey] || typeof target[configKey] !== "object"){
+      target[configKey] = {};
+    }
+    if(target[kind][slot] !== nextFile){
+      delete target[configKey][slot];
+    }
+    target[kind][slot] = nextFile || null;
+    return target;
+  }
   function normalizeHero(raw){
     const h = raw && typeof raw === "object" ? raw : {};
     const char = h.char||null;
@@ -4614,12 +4639,15 @@
     if(!isLinkedArmorCompatible(char, armor[LINKED_ARMOR_SLOT])){
       armor[LINKED_ARMOR_SLOT] = null;
     }
+    const jewel = Object.assign(emptyJewel(), h.jewel||{});
     return {
       char,
       weapon,
       weaponConfig:weapon ? normalizeWeaponConfig(weapon, h.weaponConfig) : null,
       armor,
-      jewel:Object.assign(emptyJewel(), h.jewel||{}),
+      armorConfig:normalizeGearConfigMap(armor, h.armorConfig, ARMOR_SLOTS),
+      jewel,
+      jewelConfig:normalizeGearConfigMap(jewel, h.jewelConfig, JEWEL_SLOTS),
       potentiel:normalizePotentiel(h.potentiel),
       note:typeof h.note === "string" ? h.note : ""
     };
@@ -4628,7 +4656,9 @@
     weapon:null,
     weaponConfig:null,
     armor:emptyArmor(),
+    armorConfig:{},
     jewel:emptyJewel(),
+    jewelConfig:{},
     note:"",
     favorite:false
   });
@@ -4644,14 +4674,18 @@
       weapon,
       weaponConfig:source.weaponConfig,
       armor:source.armor,
+      armorConfig:source.armorConfig,
       jewel:source.jewel,
+      jewelConfig:source.jewelConfig,
       note:source.note
     });
     return {
       weapon:hero.weapon,
       weaponConfig:hero.weaponConfig,
       armor:hero.armor,
+      armorConfig:hero.armorConfig,
       jewel:hero.jewel,
+      jewelConfig:hero.jewelConfig,
       note:hero.note,
       favorite:source.favorite === true
     };
@@ -4717,7 +4751,9 @@
       weapon:target.weapon,
       weaponConfig:jsonCopy(target.weaponConfig),
       armor:JSON.parse(JSON.stringify(source.armor)),
+      armorConfig:JSON.parse(JSON.stringify(source.armorConfig)),
       jewel:JSON.parse(JSON.stringify(source.jewel)),
+      jewelConfig:JSON.parse(JSON.stringify(source.jewelConfig)),
       note:source.note,
       favorite:false
     };
@@ -4732,7 +4768,9 @@
       weapon:build.weapon,
       weaponConfig:build.weaponConfig,
       armor:build.armor,
+      armorConfig:build.armorConfig,
       jewel:build.jewel,
+      jewelConfig:build.jewelConfig,
       potentiel:{tier:normalized.potentialTier},
       note:build.note
     });
@@ -4924,7 +4962,17 @@
       heroes:heroes.map(normalizeHero)
     });
   }
-  const emptyHero = () => ({ char:null, weapon:null, weaponConfig:null, armor:emptyArmor(), jewel:emptyJewel(), potentiel:emptyPot(), note:"" });
+  const emptyHero = () => ({
+    char:null,
+    weapon:null,
+    weaponConfig:null,
+    armor:emptyArmor(),
+    armorConfig:{},
+    jewel:emptyJewel(),
+    jewelConfig:{},
+    potentiel:emptyPot(),
+    note:""
+  });
   const emptyDraft = () => ({ id:uid(), name:"", pseudo:"", boss:"",
                               heroes:Array.from({length:TEAM_SIZE}, emptyHero) });
 
@@ -5845,8 +5893,9 @@
     const build = memberRosterDraft.builds[type]
       || (memberRosterDraft.builds[type] = emptyRosterBuild());
     if(kind === "weapon") memberRosterDraft.builds[type] = applyWeaponChange(build, value);
-    if(kind === "armor") build.armor[slot] = value;
-    if(kind === "jewel") build.jewel[slot] = value;
+    if(kind === "armor" || kind === "jewel"){
+      applyGearChange(build, kind, slot, value);
+    }
     renderMemberRosterEditor();
   }
 
@@ -5921,14 +5970,18 @@
 
   function applyMemberRosterArmorSet(set){
     const build = currentMemberRosterBuild();
-    ARMOR_SET_SLOTS.forEach(slot => { build.armor[slot] = set.pieces[slot]; });
+    ARMOR_SET_SLOTS.forEach(slot => {
+      applyGearChange(build, "armor", slot, set.pieces[slot]);
+    });
     renderMemberRosterEditor();
     toast("Set « "+set.name+" » équipé.");
   }
 
   function applyMemberRosterJewelSet(set){
     const build = currentMemberRosterBuild();
-    JEWEL_SLOTS.forEach(slot => { build.jewel[slot] = set.pieces[slot]; });
+    JEWEL_SLOTS.forEach(slot => {
+      applyGearChange(build, "jewel", slot, set.pieces[slot]);
+    });
     renderMemberRosterEditor();
     toast("Bijoux « "+set.name+" » équipés.");
   }
@@ -6457,7 +6510,9 @@
     if(configControl) gear.appendChild(configControl);
     gear.appendChild(el("div",{class:"gear-group", text:"Armures"}));
     gear.appendChild(equipmentSetButton("armor", set => {
-      ARMOR_SET_SLOTS.forEach(slot => { hero.armor[slot] = set.pieces[slot]; });
+      ARMOR_SET_SLOTS.forEach(slot => {
+        applyGearChange(hero, "armor", slot, set.pieces[slot]);
+      });
       renderBuilder();
       toast("Set « "+set.name+" » équipé.");
     }));
@@ -6487,7 +6542,9 @@
     });
     gear.appendChild(el("div",{class:"gear-group", text:"Bijoux"}));
     gear.appendChild(equipmentSetButton("jewel", set => {
-      JEWEL_SLOTS.forEach(slot => { hero.jewel[slot] = set.pieces[slot]; });
+      JEWEL_SLOTS.forEach(slot => {
+        applyGearChange(hero, "jewel", slot, set.pieces[slot]);
+      });
       renderBuilder();
       toast("Bijoux « "+set.name+" » équipés.");
     }));
@@ -6606,7 +6663,7 @@
           hero.char,
           hero.armor[LINKED_ARMOR_SLOT]
         )){
-          hero.armor[LINKED_ARMOR_SLOT] = null;
+          applyGearChange(hero, "armor", LINKED_ARMOR_SLOT, null);
         }
         renderBuilder();
       }
@@ -6651,7 +6708,10 @@
       emptyHint:slot === LINKED_ARMOR_SLOT
         ? "Aucune armure liée compatible disponible."
         : "Aucune armure disponible.",
-      onSelect:v=>{ hero.armor[slot] = v; renderBuilder(); }
+      onSelect:v=>{
+        applyGearChange(hero, "armor", slot, v);
+        renderBuilder();
+      }
     });
   }
   function pickJewel(i, slot){
@@ -6659,7 +6719,10 @@
       title:"Bijou — "+slot, value:draft.heroes[i].jewel[slot],
       items:(DATA.bijoux[slot]||[]).map(b=>({value:b.file, name:b.name, file:b.file})),
       emptyHint:"Aucun bijou pour l'instant. Ajoute des images dans 7ds-bijoux/"+slot+"/ puis relance generate-data.ps1.",
-      onSelect:v=>{ draft.heroes[i].jewel[slot] = v; renderBuilder(); }
+      onSelect:v=>{
+        applyGearChange(draft.heroes[i], "jewel", slot, v);
+        renderBuilder();
+      }
     });
   }
 
