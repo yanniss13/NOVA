@@ -1272,12 +1272,21 @@
     color:var(--parchment);font-size:12px;font-weight:700
   }
   .weapon-stat-total{flex:none;color:var(--gold-bright)}
+  .weapon-stat-details{margin-top:7px;color:var(--muted);font-size:11px}
+  .weapon-stat-details summary{
+    min-height:44px;display:flex;align-items:center;cursor:pointer;
+    color:var(--gold-bright);font-weight:700
+  }
   .weapon-stat-term{
-    display:flex;justify-content:space-between;gap:10px;margin-top:6px;
+    display:flex;flex-direction:column;gap:3px;margin-top:6px;
     color:var(--muted);font-size:11px;line-height:1.35
   }
-  .weapon-stat-term span:last-child{flex:none;color:var(--parchment)}
-  .weapon-stat-term-overlimit{display:block;color:var(--gold-bright)}
+  .weapon-stat-term-value{
+    display:flex;justify-content:space-between;gap:10px;color:var(--muted)
+  }
+  .weapon-stat-term-value span:last-child{flex:none;color:var(--parchment)}
+  .weapon-stat-term-overlimit{color:var(--gold-bright)!important}
+  .weapon-stat-provenance{overflow-wrap:anywhere;color:var(--muted-2)}
   #weaponConfigError{
     min-height:18px;margin:0;padding:0 18px;color:#e98d8d;font-size:12px
   }
@@ -2825,6 +2834,30 @@
     return term.source.component;
   }
 
+  function weaponTermProvenance(term){
+    const source = term.source || {};
+    const buckets = {
+      "weapon-native":"statistiques natives de l’arme",
+      "weapon-enchantment":"enchantements de l’arme"
+    };
+    const parts = [
+      "Source : "+(source.domain === "weapon" ? "arme" : (source.domain || "inconnue")),
+      source.component ? weaponTermLabel(term) : "inconnue",
+      "opération "+(term.operation === "add" ? "addition" : "multiplication"),
+      "unité "+(term.unit === "flat" ? "points" : "dix-millièmes")
+    ];
+    if(source.id) parts.push(source.id);
+    if(Number.isInteger(source.slot)) parts.push("emplacement "+(source.slot + 1));
+    if(term.operation === "add"){
+      parts.push("seau "+(buckets[term.bucket] || term.bucket));
+    }else{
+      parts.push("seaux ciblés "+term.appliesTo
+        .map(bucket => buckets[bucket] || bucket)
+        .join(", "));
+    }
+    return parts.join(" · ");
+  }
+
   function weaponStatsSection(file, config){
     const section = el("section",{class:"weapon-stats"});
     section.appendChild(el("h3",{
@@ -2832,10 +2865,16 @@
       text:"Apport de l’arme — calcul partiel"
     }));
     const result = calculateWeaponStats(file, config);
-    if(result.status !== "valid"){
+    const weaponCovered = result.status === "valid"
+      && Array.isArray(result.coverage)
+      && result.coverage.length === 1
+      && result.coverage[0] === "weapon";
+    if(!weaponCovered){
       section.appendChild(el("p",{
         class:"weapon-stats-state",
-        text:weaponStatsStatusMessage(result.status)
+        text:weaponStatsStatusMessage(
+          result.status === "valid" ? "incompatible" : result.status
+        )
       }));
       return section;
     }
@@ -2852,22 +2891,48 @@
           el("span",{text:stat.label}),
           el("span",{
             class:"weapon-stat-total",
+            dataset:{unit:stat.unit},
             text:formatBuildStatValue(stat.value, stat.unit)
+              +(stat.unit === "flat" ? " points" : "")
           })
         ]));
+        const details = el("details",{class:"weapon-stat-details",open:""},[
+          el("summary",{text:"Détail du calcul"})
+        ]);
         stat.terms.forEach(term => {
-          if(term.operation === "multiply"){
-            statNode.appendChild(el("div",{
-              class:"weapon-stat-term weapon-stat-term-overlimit",
-              text:weaponTermLabel(term)
-            }));
-            return;
-          }
-          statNode.appendChild(el("div",{class:"weapon-stat-term"},[
-            el("span",{text:weaponTermLabel(term)}),
-            el("span",{text:formatBuildStatValue(term.value, term.unit)})
+          const value = term.operation === "multiply"
+            ? weaponTermLabel(term)
+            : formatBuildStatValue(term.value, term.unit)
+              +(term.unit === "flat" ? " points" : "");
+          details.appendChild(el("div",{
+            class:"weapon-stat-term",
+            dataset:{
+              operation:term.operation,
+              unit:term.unit,
+              buckets:term.operation === "multiply"
+                ? term.appliesTo.join(",")
+                : term.bucket
+            }
+          },[
+            el("div",{class:"weapon-stat-term-value"},[
+              el("span",{
+                text:term.operation === "multiply"
+                  ? "Outrepassement"
+                  : weaponTermLabel(term)
+              }),
+              el("span",{
+                class:term.operation === "multiply"
+                  ? "weapon-stat-term-overlimit" : "",
+                text:value
+              })
+            ]),
+            el("small",{
+              class:"weapon-stat-provenance",
+              text:weaponTermProvenance(term)
+            })
           ]));
         });
+        statNode.appendChild(details);
         family.appendChild(statNode);
       });
       section.appendChild(family);
@@ -3500,11 +3565,11 @@
       updatedAt:row.updated_at ? Date.parse(row.updated_at) : 0
     });
   }
-  function rosterToCloudRow(entry){
+  function rosterToCloudRow(entry, ownerId){
     const normalized = normalizeRosterCharacter(entry);
-    if(!normalized || !currentUser) return null;
+    if(!normalized || typeof ownerId !== "string" || !ownerId) return null;
     return {
-      owner:currentUser.id,
+      owner:ownerId,
       char_id:normalized.charId,
       potential_tier:normalized.potentialTier,
       builds:JSON.parse(JSON.stringify(normalized.builds)),
@@ -3569,7 +3634,7 @@
       }));
       if(!normalized) throw new Error("ROSTER_INVALID");
       const { error } = await sb.from("roster_characters")
-        .upsert(rosterToCloudRow(normalized));
+        .upsert(rosterToCloudRow(normalized, currentUser.id));
       if(error) throw error;
       const owned = MemberRosterStore.all(currentUser.id);
       const index = owned.findIndex(item => item.charId === normalized.charId);
@@ -4188,6 +4253,7 @@
   let memberRosterVisible = [];
   let memberRosterEditable = false;
   let memberRosterDraft = null;
+  let memberRosterDraftSourceUpdatedAt = 0;
   let memberRosterWeaponType = "";
   const memberRosterFilters = {
     query:"",
@@ -4609,7 +4675,15 @@
       value:build.weapon,
       items,
       emptyHint:"Aucune arme compatible disponible.",
-      onSelect:value=>setMemberRosterBuildValue("weapon", null, value)
+      onSelect:value=>{
+        if(value !== build.weapon && build.weaponConfig !== null
+          && !confirm(
+            "Changer d’arme effacera sa configuration chiffrée. Continuer ?"
+          )){
+          return;
+        }
+        setMemberRosterBuildValue("weapon", null, value);
+      }
     });
   }
 
@@ -4767,6 +4841,29 @@
 
     const gear = el("div",{class:"gear"});
     gear.appendChild(gearSlot("Arme", build.weapon, true, pickMemberRosterWeapon));
+    const configControl = weaponConfigControl({
+      weaponFile:build.weapon,
+      config:build.weaponConfig,
+      sourceUpdatedAt:memberRosterDraftSourceUpdatedAt,
+      defaultGradeGameId:weaponDefaultGradeGameId(build.weapon),
+      commit(nextConfig){
+        currentMemberRosterBuild().weaponConfig = nextConfig;
+        renderMemberRosterEditor();
+        const nextButton = $("#memberRosterEditor")
+          .querySelector(".weapon-config-open");
+        if(nextButton){
+          ModalStack.setRestoreFocus($("#weaponConfigOverlay"), nextButton);
+        }
+      },
+      latestUpdatedAt(){
+        if(!currentUser || !memberRosterDraft) return 0;
+        const latest = MemberRosterStore.all(currentUser.id)
+          .find(row => row.charId === memberRosterDraft.charId);
+        return latest ? latest.updatedAt : memberRosterDraft.updatedAt;
+      },
+      reload(){ void reloadCurrentRosterDraft(); }
+    });
+    if(configControl) gear.appendChild(configControl);
     gear.appendChild(el("div",{class:"gear-group",text:"Armures"}));
     gear.appendChild(equipmentSetButton("armor", applyMemberRosterArmorSet));
     ARMOR_SLOTS.forEach(slot => gear.appendChild(gearSlot(
@@ -4874,6 +4971,7 @@
     const normalized = normalizeRosterCharacter(entry);
     if(!normalized) return;
     memberRosterDraft = JSON.parse(JSON.stringify(normalized));
+    memberRosterDraftSourceUpdatedAt = normalized.updatedAt;
     memberRosterWeaponType = favoriteRosterWeaponType(normalized)
       || weaponTypesOf(normalized.charId)[0]
       || "";
@@ -4889,6 +4987,29 @@
   function closeMemberRosterEditor(){
     ModalStack.close($("#memberRosterOverlay"));
     memberRosterDraft = null;
+    memberRosterDraftSourceUpdatedAt = 0;
+  }
+
+  async function reloadCurrentRosterDraft(){
+    if(!currentUser || !memberRosterDraft) return;
+    const charId = memberRosterDraft.charId;
+    try{
+      const rows = await MemberRosterStore.refresh(currentUser.id);
+      const latest = rows.find(row => row.charId === charId);
+      if(!latest){
+        closeWeaponConfigEditor();
+        closeMemberRosterEditor();
+        toast("Ce personnage a été supprimé du roster.", true);
+        return;
+      }
+      memberRosterDraft = JSON.parse(JSON.stringify(
+        normalizeRosterCharacter(latest)
+      ));
+      memberRosterDraftSourceUpdatedAt = memberRosterDraft.updatedAt;
+      renderMemberRosterEditor();
+    }catch(error){
+      toast("Impossible de recharger la version récente du roster.", true);
+    }
   }
 
   async function saveMemberRosterEditor(){
@@ -5524,6 +5645,9 @@
     gear.appendChild(el("div",{class:"hd-group-t", text:"Bijoux"}));
     JEWEL_SLOTS.forEach(s=>gear.appendChild(equipLine(h.jewel ? h.jewel[s] : null, JEWEL_LABELS[s], "jewel")));
     col.appendChild(gear);
+
+    const stats = weaponStatsSection(h.weapon, h.weaponConfig);
+    if(stats) col.appendChild(stats);
 
     if(h.note && h.note.trim())
       col.appendChild(el("div",{class:"hd-note", text:h.note.trim()}));

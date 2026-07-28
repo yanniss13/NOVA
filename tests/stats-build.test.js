@@ -414,4 +414,98 @@ function assertThrowsCode(action, code){
   assert.strictEqual(copied.builds["Epee 1 main"].weaponConfig.level, 4);
 }
 
+// La configuration complète traverse chaque frontière JSONB sans être reconstruite.
+{
+  const { hooks } = loadApp();
+  const emptyArmorFixture = {
+    Haut:null, Bas:null, Bottes:null, Ceinture:null, "Armure liee":null
+  };
+  const emptyJewelFixture = {
+    Anneau:null, Collier:null, "Boucle d'oreille":null
+  };
+  const buildFixture = (weapon, weaponConfig, favorite) => ({
+    weapon,
+    weaponConfig,
+    armor:emptyArmorFixture,
+    jewel:emptyJewelFixture,
+    note:"",
+    favorite:!!favorite
+  });
+  const sourceConfig = validConfig({
+    overlimit:1,
+    enchantments:[{
+      slot:0,
+      tier:null,
+      element:null,
+      stat:"critRate",
+      value:7
+    }]
+  });
+  const entry = {
+    owner:"user-1",
+    charId:"meliodas",
+    potentialTier:7,
+    builds:{
+      Hache:buildFixture(HACHE_FILE, sourceConfig, true)
+    },
+    updatedAt:123
+  };
+
+  const snapshot = plain(hooks.rosterHeroSnapshot(entry, "Hache"));
+  assert.strictEqual(
+    JSON.stringify(snapshot.weaponConfig),
+    JSON.stringify(sourceConfig)
+  );
+
+  const cloud = plain(hooks.rosterToCloudRow(entry, "user-1"));
+  assert.ok(cloud, "La conversion cloud doit accepter un propriétaire explicite en test pur");
+  assert.strictEqual(cloud.owner, "user-1");
+  assert.strictEqual(
+    JSON.stringify(cloud.builds.Hache.weaponConfig),
+    JSON.stringify(sourceConfig)
+  );
+  const restored = plain(hooks.cloudRosterFromRow(cloud));
+  assert.strictEqual(
+    JSON.stringify(restored.builds.Hache.weaponConfig),
+    JSON.stringify(sourceConfig)
+  );
+
+  const team = plain(hooks.normalizeTeam({
+    id:"team-1",
+    pseudo:"Yannis",
+    heroes:[{
+      char:"meliodas",
+      weapon:HACHE_FILE,
+      weaponConfig:sourceConfig
+    }]
+  }));
+  assert.strictEqual(
+    JSON.stringify(team.heroes[0].weaponConfig),
+    JSON.stringify(sourceConfig)
+  );
+
+  const imported = plain(hooks.normalizeTeam(
+    JSON.parse(JSON.stringify(team))
+  ));
+  assert.strictEqual(
+    JSON.stringify(imported.heroes[0].weaponConfig),
+    JSON.stringify(sourceConfig)
+  );
+
+  const duplicated = plain(hooks.normalizeTeam(
+    JSON.parse(JSON.stringify(imported))
+  ));
+  duplicated.id = "team-copy";
+  assert.strictEqual(
+    JSON.stringify(duplicated.heroes[0].weaponConfig),
+    JSON.stringify(sourceConfig)
+  );
+
+  const bossSnapshot = plain(JSON.parse(JSON.stringify(team)));
+  assert.strictEqual(
+    JSON.stringify(bossSnapshot.heroes[0].weaponConfig),
+    JSON.stringify(sourceConfig)
+  );
+}
+
 console.log("PASS stats de builds : modèle et calcul de l’arme");

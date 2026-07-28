@@ -127,6 +127,11 @@ assert.match(
 assert.match(selectBossTeam, /v_week <> private\.current_boss_week_start\(\)/i);
 assert.match(selectBossTeam, /v_status <> 'open'/i);
 assert.match(selectBossTeam, /t\.id = p_team_id\s+and t\.owner = v_owner/i);
+assert.match(
+  selectBossTeam,
+  /'data'\s*,\s*t\.data/i,
+  "L’instantané doit copier le JSON complet de teams.data, weaponConfig inclus"
+);
 assert.match(selectBossTeam, /'capturedAt', now\(\)/i);
 assert.match(
   selectBossTeam,

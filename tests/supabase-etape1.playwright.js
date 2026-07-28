@@ -251,6 +251,41 @@ const { chromium } = require("playwright");
       true
     );
 
+    /* Le roster réutilise exactement le panneau chiffré du Team Builder. */
+    const rosterWeaponConfig = page.locator(
+      "#memberRosterEditor .weapon-config-open"
+    );
+    await rosterWeaponConfig.waitFor();
+    assert.match(
+      await page.locator("#memberRosterEditor .weapon-config-summary").textContent(),
+      /Configuration à compléter/
+    );
+    await rosterWeaponConfig.click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"visible" });
+    assert.equal(
+      await page.locator("#weaponConfigTitle").textContent(),
+      "Configurer l’arme"
+    );
+    await page.locator(".weapon-config-level").fill("10");
+    await page.locator(".weapon-config-promotion").selectOption("1");
+    await page.locator(".weapon-config-overlimit").selectOption("1");
+    await page.locator("#weaponConfigSave").click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"hidden" });
+    assert.match(
+      await page.locator("#memberRosterEditor .weapon-config-summary").textContent(),
+      /Configurée .* Nv\. 10 .* Outrepassement 1/
+    );
+    await rosterWeaponButton.click();
+    await page.locator("#overlay").waitFor({ state:"visible" });
+    page.once("dialog", dialog => dialog.dismiss());
+    await page.locator("#pickerGrid .tile:not(.none):not(.selected)").first().click();
+    await page.locator("#overlay").waitFor({ state:"hidden" });
+    assert.match(
+      await page.locator("#memberRosterEditor .weapon-config-summary").textContent(),
+      /Configurée .* Nv\. 10 .* Outrepassement 1/,
+      "Refuser le changement d’arme doit conserver la configuration"
+    );
+
     /* ---- Équiper un set en un clic (roster) ----
        Un set remplit les 4 emplacements universels et ne touche jamais
        l'armure liée, qui dépend du personnage. */
@@ -433,7 +468,9 @@ const { chromium } = require("playwright");
         target.weapon === "7ds-armes/Epee 1 main/En plein cœur !.webp" &&
         target.note === "Mon build" &&
         target.favorite === false &&
-        row.builds.Hache.favorite === true;
+        row.builds.Hache.favorite === true &&
+        row.builds.Hache.weaponConfig &&
+        row.builds.Hache.weaponConfig.version === 1;
     });
     const meliodasCard = page.locator("#memberRosterGrid .member-roster-card")
       .filter({ hasText:"Meliodas" });
@@ -446,6 +483,10 @@ const { chromium } = require("playwright");
     );
 
     await meliodasCard.locator(".member-roster-edit").click();
+    assert.match(
+      await page.locator("#memberRosterEditor .weapon-config-summary").textContent(),
+      /Configurée .* Nv\. 10 .* Outrepassement 1/
+    );
     await page.getByRole("button", { name:/Epee 1 main/ }).click();
     const destinationNote = page.locator("#memberRosterEditor textarea");
     await destinationNote.fill("Ne pas écraser");
@@ -468,6 +509,21 @@ const { chromium } = require("playwright");
       "Le focus doit revenir au bouton qui a lancé l’ajout"
     );
 
+    await page.evaluate(() => {
+      const row = window.__fakeSupabaseState.roster_characters
+        .find(item => item.owner === "user-2" && item.char_id === "merlin");
+      const build = row.builds.Livre;
+      const weapon = window.SEVEN_DS_BUILD_STATS.weaponsByFile[build.weapon];
+      const grade = Object.values(weapon.gradesByGameId)[0];
+      build.weaponConfig = {
+        version:1,
+        gradeGameId:grade.gameId,
+        level:0,
+        promotion:0,
+        overlimit:0,
+        enchantments:Array(grade.enchantments.slots.length).fill(null)
+      };
+    });
     await page.locator("#memberRosterOthers").click();
     await page.locator("#memberRosterOwner").selectOption("user-2");
     await page.locator("#memberRosterGrid .member-roster-card").first().waitFor();
@@ -511,6 +567,19 @@ const { chromium } = require("playwright");
       .locator(".member-roster-detail-btn").click();
     await rosterDetailOverlay.waitFor({ state:"visible" });
     assert.match(await page.locator("#rosterDetailBody").textContent(), /Merlin/);
+    assert.match(
+      await page.locator("#rosterDetailBody").textContent(),
+      /Apport de l’arme — calcul partiel/
+    );
+    assert.equal(
+      await page.locator("#rosterDetailBody .weapon-config-open").count(),
+      0,
+      "Le détail d’autrui ne doit exposer aucun contrôle d’édition"
+    );
+    assert.ok(
+      await page.locator("#rosterDetailBody .weapon-stats details").count() > 0,
+      "La décomposition de l’apport doit rester consultable"
+    );
     assert.match(await page.locator("#rosterDetailTitle").textContent(), /Merlin/);
     assert.equal(await page.locator("#rosterDetailPosition").textContent(), "2 / 2");
     assert.equal(
@@ -665,10 +734,55 @@ const { chromium } = require("playwright");
     assert.equal(saved.data.heroes[0].char, "meliodas");
 
     await page.locator('.tab[data-view="roster"]').click();
+    await page.evaluate(() => {
+      const state = window.__fakeSupabaseState;
+      const roster = state.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      const team = state.teams.find(item => item.id === "team-own");
+      team.data.heroes[0] = {
+        char:"meliodas",
+        weapon:roster.builds.Hache.weapon,
+        weaponConfig:JSON.parse(JSON.stringify(roster.builds.Hache.weaponConfig)),
+        armor:{},
+        jewel:{},
+        potentiel:{tier:roster.potential_tier},
+        note:"Instantané chiffré"
+      };
+      window.__fakeSupabaseEmit("teams", "UPDATE");
+    });
     const ownTeam = page.locator("#rosterGrid .team")
       .filter({ hasText:"Yannis" })
       .first();
+    await ownTeam.getByText("Meliodas", { exact:true }).waitFor();
     await ownTeam.getByRole("button", { name:/Voir l'équipement/ }).click();
+    const teamStats = page.locator("#teamDetail .weapon-stats").first();
+    assert.match(await teamStats.textContent(), /Apport de l’arme — calcul partiel/);
+    assert.match(await teamStats.textContent(), /Promotion/);
+    assert.match(
+      await teamStats.textContent(),
+      /Outrepassement ×1,05 — base présumée/
+    );
+    assert.doesNotMatch(
+      (await teamStats.textContent()).toLocaleLowerCase("fr-FR"),
+      /stats du héros|total du héros|renforcement/
+    );
+    assert.equal(
+      await page.locator("#teamDetail .weapon-config-open").count(),
+      0,
+      "Le détail d’équipe reste strictement en lecture seule"
+    );
+    const termTrace = await teamStats.locator("details .weapon-stat-term")
+      .first().evaluate(node => ({
+        operation:node.dataset.operation,
+        unit:node.dataset.unit,
+        buckets:node.dataset.buckets,
+        text:node.textContent
+      }));
+    assert.ok(termTrace.operation);
+    assert.ok(termTrace.unit);
+    assert.ok(termTrace.buckets);
+    assert.match(termTrace.text, /Source : arme|Source : weapon/);
     const importButton = page.locator("#teamDetail")
       .getByRole("button", { name:/roster/i })
       .first();
