@@ -15,6 +15,157 @@ module = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(module)
 
 
+class CanonicalStatTests(unittest.TestCase):
+    """Le jeu écrit la même statistique de plusieurs façons : B_MaxHp_Equip
+    apparaît 388 fois et B_MaxHP_Equip 24 fois, dans le même fichier. Les
+    traiter comme deux codes distincts scinderait un total en deux lignes qui ne
+    s'additionnent pas. Seule l'orthographe dominante porte un libellé."""
+
+    def test_case_variants_collapse_to_one_key(self):
+        self.assertEqual(
+            module.canonical_key("B_MaxHP_Equip"),
+            module.canonical_key("B_MaxHp_Equip"),
+        )
+        self.assertEqual(
+            module.canonical_key("UltimateSkill_DamAdd_Rate"),
+            module.canonical_key("Ultimateskill_Damadd_Rate"),
+        )
+
+    def test_underscore_variants_collapse_too(self):
+        self.assertEqual(
+            module.canonical_key("All_Element_Rate"),
+            module.canonical_key("AllElement_Rate"),
+        )
+
+    def test_distinct_stats_keep_distinct_keys(self):
+        self.assertNotEqual(
+            module.canonical_key("Dark_Add"), module.canonical_key("Dark_Res")
+        )
+        self.assertNotEqual(
+            module.canonical_key("B_Atk_Equip"), module.canonical_key("B_Def_Equip")
+        )
+
+    def test_the_reference_spelling_wins(self):
+        """La forme retenue est celle que connaît la table de métadonnées."""
+        known = {"B_MaxHp_Equip", "AllElement_Rate"}
+        self.assertEqual(module.canonical_stat("B_MaxHP_Equip", known), "B_MaxHp_Equip")
+        self.assertEqual(module.canonical_stat("All_Element_Rate", known), "AllElement_Rate")
+        # Un code déjà canonique reste inchangé.
+        self.assertEqual(module.canonical_stat("B_MaxHp_Equip", known), "B_MaxHp_Equip")
+
+    def test_an_unknown_stat_is_left_alone(self):
+        self.assertEqual(module.canonical_stat("Inconnu_Rate", set()), "Inconnu_Rate")
+
+    def test_two_unknown_variants_elect_a_single_reference(self):
+        """Sans élection, deux variantes toutes deux inconnues survivraient
+        côte à côte et scinderaient le total en deux lignes."""
+        elected = module.elect_canonical(
+            {"AllElement_Rate": 8, "All_Element_Rate": 1}, {}
+        )
+        self.assertEqual(elected, {"AllElement_Rate"}, "la plus fréquente gagne")
+
+    def test_a_labelled_variant_wins_over_a_more_frequent_one(self):
+        elected = module.elect_canonical(
+            {"Ultimateskill_Damadd_Rate": 2, "UltimateSkill_DamAdd_Rate": 99},
+            {"Ultimateskill_Damadd_Rate": {"fr": "Dégâts ultime"}},
+        )
+        self.assertEqual(elected, {"Ultimateskill_Damadd_Rate"})
+
+    def test_distinct_stats_are_never_merged_by_the_election(self):
+        elected = module.elect_canonical({"Dark_Add": 5, "Dark_Res": 5}, {})
+        self.assertEqual(elected, {"Dark_Add", "Dark_Res"})
+
+
+class GearCatalogTests(unittest.TestCase):
+    PIECE = {
+        "slug": "haut-x",
+        "slot": "Top",
+        "grade": "grade5",
+        "setId": "equip_t5_x",
+        "mainStat": "B_Def_Equip",
+        "subStat": "C_Critical_ResRate",
+        "qualityMin": 120,
+        "qualityMax": 160,
+        "tierBoundaries": [119],
+        "reinforceMax": 5,
+        "nameFr": "Haut X",
+        "growth": {
+            "mainStatValues": {"base": 0, "progression": [3073]},
+            "mainEquiplvAdd": {"base": 0, "progression": [35]},
+            "subStatValues": {"base": 0, "progression": [328]},
+            "subEquiplvAdd": {"base": 0, "progression": [4]},
+            "randomOptions": {
+                "slots": 1,
+                "stats": [
+                    {"key": "TickDam_Rate", "min": 304, "max": 759, "chance": 714}
+                ],
+            },
+        },
+    }
+
+    def test_entry_keeps_only_what_the_engine_needs(self):
+        entry = module.gear_entry(self.PIECE, set())
+        self.assertEqual(entry["slot"], "Top")
+        self.assertEqual(entry["mainValues"], {"base": 0, "progression": [3073]})
+        self.assertEqual(entry["mainAdd"], {"base": 0, "progression": [35]})
+        self.assertEqual(entry["tierBoundaries"], [119])
+        self.assertEqual(
+            entry["randomOptions"],
+            {
+                "slots": 1,
+                "stats": [
+                    {"stat": "TickDam_Rate", "min": 304, "max": 759, "chance": 714}
+                ],
+            },
+        )
+        self.assertNotIn("nameFr", entry)
+        self.assertNotIn("growth", entry)
+
+    def test_random_options_are_none_when_absent(self):
+        piece = copy.deepcopy(self.PIECE)
+        del piece["growth"]["randomOptions"]
+        self.assertIsNone(module.gear_entry(piece, set())["randomOptions"])
+
+    def test_stat_codes_are_canonicalised(self):
+        piece = copy.deepcopy(self.PIECE)
+        piece["mainStat"] = "B_MaxHP_Equip"
+        piece["growth"]["randomOptions"]["stats"][0]["key"] = "I_MaxHPAdd_Rate"
+        entry = module.gear_entry(piece, {"B_MaxHp_Equip", "I_MaxHpAdd_Rate"})
+        self.assertEqual(entry["mainStat"], "B_MaxHp_Equip")
+        self.assertEqual(entry["randomOptions"]["stats"][0]["stat"], "I_MaxHpAdd_Rate")
+
+    def test_set_thresholds_come_from_the_data(self):
+        entry = module.gear_set_entry(
+            {
+                "gameId": "equip_t4_scale_1",
+                "nameFr": "Cœur ardent",
+                "bonusTwoCount": 3,
+                "bonusTwoStats": [{"stat": "A_Accuracy", "value": 30}],
+                "bonusFourCount": None,
+                "bonusFourStats": None,
+            },
+            set(),
+        )
+        self.assertEqual(entry["twoCount"], 3)
+        self.assertIsNone(entry["fourCount"])
+        self.assertIsNone(entry["fourStats"])
+
+    def test_set_bonus_stats_are_canonicalised(self):
+        entry = module.gear_set_entry(
+            {
+                "gameId": "s",
+                "nameFr": "S",
+                "bonusTwoCount": 2,
+                "bonusTwoStats": [{"stat": "All_Element_Rate", "value": 500}],
+                "bonusFourCount": 4,
+                "bonusFourStats": [{"stat": "UltimateSkill_DamAdd_Rate", "value": 700}],
+            },
+            {"AllElement_Rate", "Ultimateskill_Damadd_Rate"},
+        )
+        self.assertEqual(entry["twoStats"][0]["stat"], "AllElement_Rate")
+        self.assertEqual(entry["fourStats"][0]["stat"], "Ultimateskill_Damadd_Rate")
+
+
 class GenerateStatsBuildTests(unittest.TestCase):
     def setUp(self):
         self.tempdir = tempfile.TemporaryDirectory()

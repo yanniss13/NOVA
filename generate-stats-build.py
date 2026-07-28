@@ -21,6 +21,141 @@ ALLOWED_FAMILIES = {"main", "additional", "damage", "special", "elemental"}
 ALLOWED_UNITS = {"flat", "ten-thousandths"}
 PROMOTION_MAXES = [20, 30, 40, 50]
 OVERLIMIT_RATES = [0, 500, 1000, 1750, 2500, 3750, 5000]
+SLOT_FOLDERS = {
+    "Haut": "Top", "Bas": "Bottom", "Bottes": "Shoes", "Ceinture": "Belt",
+    "Anneau": "Ring", "Collier": "Necklace", "Boucle d'oreille": "Earring",
+}
+ENGRAVED_FOLDER = "Armure liee"
+
+
+def canonical_key(code):
+    """Clé de comparaison d'un code de statistique.
+
+    Le jeu écrit la même statistique de plusieurs façons : `B_MaxHp_Equip`
+    apparaît 388 fois et `B_MaxHP_Equip` 24 fois, dans le même fichier ;
+    `AllElement_Rate` et `All_Element_Rate` ne diffèrent que d'un underscore.
+    Les traiter comme deux codes distincts scinderait un total en deux lignes
+    qui ne s'additionnent pas, et seule l'orthographe dominante porte un
+    libellé.
+    """
+    return re.sub(r"[^a-z0-9]+", "", code.casefold())
+
+
+def canonical_stat(code, known):
+    """Ramène un code à l'orthographe de référence, celle que `known` contient."""
+    if code in known:
+        return code
+    key = canonical_key(code)
+    for reference in sorted(known):
+        if canonical_key(reference) == key:
+            return reference
+    return code
+
+
+def elect_canonical(counts, labels):
+    """Élit une orthographe de référence par groupe de variantes.
+
+    `canonical_stat` ne sait ramener un code que vers une orthographe déjà
+    connue. Quand les deux variantes sont nouvelles — `AllElement_Rate` et
+    `All_Element_Rate` par exemple — aucune ne gagne et le catalogue en garde
+    deux, ce qui scinde le total. On élit donc d'abord : la variante qui porte
+    un libellé, sinon la plus fréquente, et l'ordre alphabétique pour trancher
+    afin que la génération reste déterministe.
+    """
+    groups = {}
+    for code, count in counts.items():
+        groups.setdefault(canonical_key(code), []).append((code, count))
+    elected = set()
+    for variants in groups.values():
+        variants.sort(
+            key=lambda item: (
+                0 if labels.get(item[0], {}).get("fr") else 1,
+                -item[1],
+                item[0],
+            )
+        )
+        elected.add(variants[0][0])
+    return elected
+
+
+def gear_curve(block):
+    """Une courbe de croissance d'équipement : base et incréments par segment."""
+    if not block or not isinstance(block.get("progression"), list):
+        return None
+    return {
+        "base": block.get("base") or 0,
+        "progression": list(block["progression"]),
+    }
+
+
+def gear_random_options(growth, known):
+    """Options d'enchantement d'une pièce. Elles vivent dans `growth`, pas à la
+    racine : 67 des 229 armures en ont, et 83 gravées sur 83."""
+    options = (growth or {}).get("randomOptions") or {}
+    stats = options.get("stats") or []
+    if not stats:
+        return None
+    return {
+        "slots": options.get("slots") or 0,
+        "stats": [
+            {
+                "stat": canonical_stat(item["key"], known),
+                "min": item["min"],
+                "max": item["max"],
+                "chance": item.get("chance") or 0,
+            }
+            for item in sorted(stats, key=lambda item: (item["key"], item["min"]))
+        ],
+    }
+
+
+def gear_entry(piece, known):
+    """Une pièce d'équipement réduite à ce dont le moteur a besoin."""
+    growth = piece.get("growth") or {}
+    entry = {
+        "slug": piece.get("slug"),
+        "slot": piece.get("slot"),
+        "grade": piece.get("grade"),
+        "setId": piece.get("setId") or None,
+        "mainStat": canonical_stat(piece["mainStat"], known),
+        "subStat": (
+            canonical_stat(piece["subStat"], known) if piece.get("subStat") else None
+        ),
+        "qualityMin": piece.get("qualityMin"),
+        "qualityMax": piece.get("qualityMax"),
+        "tierBoundaries": list(piece.get("tierBoundaries") or []),
+        "reinforceMax": piece.get("reinforceMax"),
+        "mainValues": gear_curve(growth.get("mainStatValues")),
+        "mainAdd": gear_curve(growth.get("mainEquiplvAdd")),
+        "subValues": gear_curve(growth.get("subStatValues")),
+        "subAdd": gear_curve(growth.get("subEquiplvAdd")),
+        "randomOptions": gear_random_options(growth, known),
+    }
+    return entry
+
+
+def gear_set_entry(raw, known):
+    """Un ensemble et ses deux paliers.
+
+    ⚠️ Les seuils ne sont PAS 2 et 4 : `bonusTwoCount` vaut 3 dans onze
+    ensembles sur vingt-et-un et 4 dans un ; `bonusFourCount` vaut 5 dans cinq
+    et est absent dans cinq autres. Ils se lisent toujours dans les données.
+    """
+    def stats(items):
+        if not items:
+            return None
+        return [
+            {"stat": canonical_stat(item["stat"], known), "value": item["value"]}
+            for item in items
+        ]
+
+    return {
+        "nameFr": raw.get("nameFr"),
+        "twoCount": raw.get("bonusTwoCount"),
+        "twoStats": stats(raw.get("bonusTwoStats")),
+        "fourCount": raw.get("bonusFourCount"),
+        "fourStats": stats(raw.get("bonusFourStats")),
+    }
 
 
 def normalize_name(value):

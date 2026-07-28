@@ -1,59 +1,362 @@
 {
-  "Activethird_Damadd_Rate": {"family":"damage","unit":"ten-thousandths"},
-  "B_Atk_Equip": {"family":"main","unit":"flat"},
-  "B_Def_Equip": {"family":"main","unit":"flat"},
-  "B_MaxHp_Equip": {"family":"main","unit":"flat"},
-  "C_Critical_DamRes_Rate": {"family":"additional","unit":"ten-thousandths"},
-  "C_Critical_Dam_Rate": {"family":"additional","unit":"ten-thousandths"},
-  "C_Critical_Rate": {"family":"additional","unit":"ten-thousandths"},
-  "C_Critical_ResRate": {"family":"additional","unit":"ten-thousandths"},
-  "D_Protect_Cur_Rate": {"family":"additional","unit":"ten-thousandths"},
-  "Dark_Element_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Dark_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Default_Element_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Default_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Earth_Burst_Gauge_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Earth_Element_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Earth_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Fire_Burst_Gauge_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Fire_Element_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Fire_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Holy_Element_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Holy_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "I_AtkAdd_Rate": {"family":"additional","unit":"ten-thousandths"},
-  "I_DefAdd_Rate": {"family":"additional","unit":"ten-thousandths"},
-  "I_MaxHpAdd_Rate": {"family":"additional","unit":"ten-thousandths"},
-  "Ice_Burst_Gauge_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Ice_Element_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Ice_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "MF_ChargeEffic_Rate": {"family":"special","unit":"ten-thousandths"},
-  "Normalattack_Damadd_Rate": {"family":"damage","unit":"ten-thousandths"},
-  "Normalskill_Damadd_Rate": {"family":"damage","unit":"ten-thousandths"},
-  "Normalskillchangetag_Damadd_Rate": {"family":"damage","unit":"ten-thousandths"},
-  "S_SkillRecycle_Rate": {"family":"special","unit":"ten-thousandths"},
-  "Thunder_Burst_Gauge_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Thunder_Element_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Thunder_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Ultimateskill_Damadd_Rate": {"family":"damage","unit":"ten-thousandths"},
-  "Wind_Burst_Gauge_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Wind_Element_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "Wind_Rate": {"family":"elemental","unit":"ten-thousandths"},
-  "accuracy": {"family":"additional","unit":"ten-thousandths"},
-  "atkRate": {"family":"additional","unit":"ten-thousandths"},
-  "burstGauge": {"family":"special","unit":"ten-thousandths"},
-  "critDamage": {"family":"additional","unit":"ten-thousandths"},
-  "critRate": {"family":"additional","unit":"ten-thousandths"},
-  "darkDamage": {"family":"elemental","unit":"ten-thousandths"},
-  "defRate": {"family":"additional","unit":"ten-thousandths"},
-  "defense": {"family":"additional","unit":"ten-thousandths"},
-  "earthDamage": {"family":"elemental","unit":"ten-thousandths"},
-  "fireDamage": {"family":"elemental","unit":"ten-thousandths"},
-  "healPower": {"family":"special","unit":"ten-thousandths"},
-  "lightDamage": {"family":"elemental","unit":"ten-thousandths"},
-  "normalAtkDamage": {"family":"damage","unit":"ten-thousandths"},
-  "thunderBurstGauge": {"family":"elemental","unit":"ten-thousandths"},
-  "ultimateDmg": {"family":"damage","unit":"ten-thousandths"},
-  "waterDamage": {"family":"elemental","unit":"ten-thousandths"},
-  "windBurstGauge": {"family":"elemental","unit":"ten-thousandths"},
-  "windDamage": {"family":"elemental","unit":"ten-thousandths"}
+ "A_Accuracy": {
+  "family": "additional",
+  "unit": "flat"
+ },
+ "A_Block": {
+  "family": "additional",
+  "unit": "flat"
+ },
+ "A_Block_Rate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "Activethird_Damadd_Rate": {
+  "family": "damage",
+  "unit": "ten-thousandths"
+ },
+ "Aerialattack_Damadd_Rate": {
+  "family": "damage",
+  "unit": "ten-thousandths"
+ },
+ "AllElement_Add": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "AllElement_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "AllElement_Res": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "B_Atk_Equip": {
+  "family": "main",
+  "unit": "flat"
+ },
+ "B_Def_Equip": {
+  "family": "main",
+  "unit": "flat"
+ },
+ "B_MaxHp_Equip": {
+  "family": "main",
+  "unit": "flat"
+ },
+ "Buff_Time_Rate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "Burst_Gauge_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "C_Critical_DamRes_Rate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "C_Critical_Dam_Rate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "C_Critical_Rate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "C_Critical_ResRate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "D_Protect_CurRes_Rate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "D_Protect_Cur_Rate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "Dark_Add": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "Dark_Element_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Dark_Element_Res_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Dark_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Dark_Res": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "Debuff_Time_Rate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "Default_Add": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "Default_Element_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Default_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Default_Res": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "Earth_Add": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "Earth_Burst_Gauge_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Earth_Element_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Earth_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Earth_Res": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "Fire_Add": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "Fire_Burst_Gauge_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Fire_Element_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Fire_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Fire_Res": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "H_HealPower_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "H_HealReceive_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "Holy_Add": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "Holy_Element_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Holy_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Holy_Res": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "I_All_DamAdd_Rate": {
+  "family": "damage",
+  "unit": "ten-thousandths"
+ },
+ "I_AtkAdd_Rate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "I_DefAdd_Rate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "I_MaxHpAdd_Rate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "Ice_Add": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "Ice_Burst_Gauge_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Ice_Element_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Ice_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Ice_Res": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "MF_ChargeEffic_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "Normalattack_Damadd_Rate": {
+  "family": "damage",
+  "unit": "ten-thousandths"
+ },
+ "Normalskill_Damadd_Rate": {
+  "family": "damage",
+  "unit": "ten-thousandths"
+ },
+ "Normalskillchangetag_Damadd_Rate": {
+  "family": "damage",
+  "unit": "ten-thousandths"
+ },
+ "P_Shield_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "S_SkillRecycle_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "Thunder_Add": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "Thunder_Burst_Gauge_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Thunder_Element_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Thunder_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Thunder_Res": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "TickDam_Rate": {
+  "family": "damage",
+  "unit": "ten-thousandths"
+ },
+ "Ultimateskill_Damadd_Rate": {
+  "family": "damage",
+  "unit": "ten-thousandths"
+ },
+ "Wind_Add": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "Wind_Burst_Gauge_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Wind_Element_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Wind_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Wind_Res": {
+  "family": "elemental",
+  "unit": "flat"
+ },
+ "accuracy": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "atkRate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "burstGauge": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "critDamage": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "critRate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "darkDamage": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "defRate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "defense": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "earthDamage": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "fireDamage": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "healPower": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "lightDamage": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "normalAtkDamage": {
+  "family": "damage",
+  "unit": "ten-thousandths"
+ },
+ "thunderBurstGauge": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "ultimateDmg": {
+  "family": "damage",
+  "unit": "ten-thousandths"
+ },
+ "waterDamage": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "windBurstGauge": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "windDamage": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ }
 }
