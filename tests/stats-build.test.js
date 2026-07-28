@@ -1,6 +1,8 @@
 "use strict";
 
 const assert = require("node:assert");
+const fs = require("node:fs");
+const path = require("node:path");
 const { loadApp, plain } = require("./helpers/load-app");
 
 const HACHE_FILE = "7ds-armes/Hache/hache.webp";
@@ -15,6 +17,284 @@ function validConfig(overrides = {}){
     overlimit:0,
     enchantments:[null]
   }, overrides);
+}
+
+function assertThrowsCode(action, code){
+  assert.throws(action, new RegExp(code));
+}
+
+// Les primitives reproduisent les segments, promotions, bornes et formats documentés.
+{
+  const { hooks } = loadApp();
+  assert.strictEqual(
+    hooks.curveValueAtLevel({ base:100, progression:[2, 3], max:150 }, 0),
+    100
+  );
+  assert.strictEqual(hooks.curveValueAtLevel({ base:100, progression:[2, 3] }, 10), 120);
+  assert.strictEqual(hooks.curveValueAtLevel({ base:100, progression:[2, 3] }, 11), 123);
+  assert.strictEqual(hooks.curveValueAtLevel({ base:100, progression:[2, 3] }, 20), 150);
+  assert.strictEqual(
+    hooks.promotionValueAt({
+      promotionValues:{ base:50, progression:[73, 145, 218], max:486 }
+    }, 0),
+    50
+  );
+  assert.strictEqual(
+    hooks.promotionValueAt({
+      promotionValues:{ base:50, progression:[73, 145, 218], max:486 }
+    }, 3),
+    486
+  );
+  assert.deepStrictEqual(
+    plain(hooks.enchantmentBounds({ min:315, max:787 }, 5000)),
+    { min:158, max:393 }
+  );
+  assert.strictEqual(hooks.weaponConfigStatus(HACHE_FILE, validConfig({
+    enchantments:[{
+      slot:0, tier:null, element:null, stat:"critRate", value:5
+    }]
+  })), "valid");
+  assert.strictEqual(hooks.weaponConfigStatus(HACHE_FILE, validConfig({
+    enchantments:[{
+      slot:0, tier:null, element:null, stat:"critRate", value:4
+    }]
+  })), "incompatible");
+  assert.strictEqual(hooks.formatBuildStatValue(787, "ten-thousandths"), "+7,87 %");
+  assert.strictEqual(hooks.formatBuildStatValue(500, "ten-thousandths"), "+5 %");
+  assert.strictEqual(hooks.formatBuildStatValue(3291, "flat"), "+3\u202f291");
+  assert.deepStrictEqual(
+    plain(hooks.overlimitTargetBuckets("native-before-enchantments")),
+    ["weapon-native"]
+  );
+  assert.deepStrictEqual(
+    plain(hooks.overlimitTargetBuckets("native-and-enchantments")),
+    ["weapon-native", "weapon-enchantment"]
+  );
+  assertThrowsCode(
+    () => hooks.overlimitTargetBuckets("mode-inconnu"),
+    "OVERLIMIT_MODE_INVALID"
+  );
+}
+
+// L'hypothèse d'outrepassement reste unique et inséparable de son protocole.
+{
+  const source = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+  assert.strictEqual(
+    (source.match(/\bconst\s+OVERLIMIT_APPLICATION_MODE\b/g) || []).length,
+    1
+  );
+  assert.match(source, /PRÉSUMÉ, NON VÉRIFIÉ/);
+  assert.match(source, /outrepassement 0 puis 1/);
+  assert.match(source, /arme enchantée/);
+}
+
+// La reconstruction somme les seaux, puis applique chaque multiplicateur à ses seules cibles.
+{
+  const { hooks } = loadApp();
+  const bucketTerms = [
+    {
+      id:"level", stat:"B_Atk_Equip", operation:"add",
+      value:2000, unit:"flat", bucket:"weapon-native", family:"main",
+      source:{ domain:"weapon", component:"level" }, confidence:"exact"
+    },
+    {
+      id:"promotion", stat:"B_Atk_Equip", operation:"add",
+      value:1000, unit:"flat", bucket:"weapon-native", family:"main",
+      source:{ domain:"weapon", component:"promotion" }, confidence:"exact"
+    },
+    {
+      id:"overlimit", stat:"B_Atk_Equip", operation:"multiply",
+      value:500, unit:"ten-thousandths", appliesTo:["weapon-native"],
+      family:"main",
+      source:{ domain:"weapon", component:"overlimit" }, confidence:"exact"
+    },
+    {
+      id:"enchantment", stat:"B_Atk_Equip", operation:"add",
+      value:100, unit:"flat", bucket:"weapon-enchantment", family:"main",
+      source:{ domain:"weapon", component:"enchantment", slot:0 },
+      confidence:"exact"
+    }
+  ];
+  assert.deepStrictEqual(
+    plain(hooks.reconstructStatTotals(bucketTerms)),
+    [{ stat:"B_Atk_Equip", unit:"flat", value:3250 }]
+  );
+  const includingEnchantments = bucketTerms.map(term =>
+    term.id === "overlimit"
+      ? { ...term, appliesTo:["weapon-native", "weapon-enchantment"] }
+      : term
+  );
+  assert.deepStrictEqual(
+    plain(hooks.reconstructStatTotals(includingEnchantments)),
+    [{ stat:"B_Atk_Equip", unit:"flat", value:3255 }]
+  );
+
+  const additive = bucketTerms[0];
+  const multiplier = bucketTerms[2];
+  assertThrowsCode(
+    () => hooks.reconstructStatTotals([{ ...additive, unit:undefined }]),
+    "BUILD_STAT_UNIT_INVALID"
+  );
+  assertThrowsCode(
+    () => hooks.reconstructStatTotals([{ ...additive, confidence:undefined }]),
+    "BUILD_STAT_CONFIDENCE_INVALID"
+  );
+  assertThrowsCode(
+    () => hooks.reconstructStatTotals([{ ...additive, confidence:"maybe" }]),
+    "BUILD_STAT_CONFIDENCE_INVALID"
+  );
+  assertThrowsCode(
+    () => hooks.reconstructStatTotals([
+      additive,
+      { ...additive, id:"other-unit", unit:"ten-thousandths", bucket:"other" }
+    ]),
+    "BUILD_STAT_UNIT_MISMATCH"
+  );
+  assertThrowsCode(
+    () => hooks.reconstructStatTotals([{ ...multiplier, unit:"flat" }, additive]),
+    "BUILD_STAT_MULTIPLIER_UNIT_INVALID"
+  );
+  assertThrowsCode(
+    () => hooks.reconstructStatTotals([{ ...multiplier, stat:"*" }, additive]),
+    "BUILD_STAT_CONCRETE_STAT_REQUIRED"
+  );
+  assertThrowsCode(
+    () => hooks.reconstructStatTotals([{ ...multiplier, appliesTo:[] }, additive]),
+    "BUILD_STAT_TARGETS_INVALID"
+  );
+  assertThrowsCode(
+    () => hooks.reconstructStatTotals([
+      { ...multiplier, appliesTo:["absent"] },
+      additive
+    ]),
+    "BUILD_STAT_TARGET_UNRESOLVED"
+  );
+  assertThrowsCode(
+    () => hooks.reconstructStatTotals([{ ...additive, operation:"divide" }]),
+    "BUILD_STAT_OPERATION_INVALID"
+  );
+}
+
+// Le moteur publie des termes traçables dont les totaux sont uniquement reconstruits.
+{
+  const { hooks } = loadApp();
+  const result = plain(hooks.calculateWeaponStats(HACHE_FILE, validConfig({
+    overlimit:1,
+    enchantments:[{
+      slot:0,
+      tier:null,
+      element:null,
+      stat:"critRate",
+      value:10
+    }]
+  })));
+  assert.strictEqual(result.version, 1);
+  assert.strictEqual(result.status, "valid");
+  assert.deepStrictEqual(result.coverage, ["weapon"]);
+  assert.strictEqual(result.assumptions.overlimitBase, "native-before-enchantments");
+  assert.ok(result.terms.length > 0);
+  assert.ok(result.terms.every(term =>
+    term.stat !== "*" &&
+    ["add", "multiply"].includes(term.operation) &&
+    ["flat", "ten-thousandths"].includes(term.unit) &&
+    ["exact", "presumed"].includes(term.confidence) &&
+    term.family &&
+    term.source && term.source.domain === "weapon" &&
+    term.source.component
+  ));
+  assert.ok(result.terms.some(term =>
+    term.operation === "multiply" &&
+    term.source.component === "overlimit" &&
+    term.stat === "B_Atk_Equip" &&
+    term.value === 500 &&
+    JSON.stringify(term.appliesTo) === JSON.stringify(["weapon-native"])
+  ));
+  assert.ok(result.terms.some(term =>
+    term.operation === "add" &&
+    term.source.component === "level" &&
+    term.stat === "B_Atk_Equip" &&
+    term.value === 10 &&
+    term.bucket === "weapon-native"
+  ));
+  assert.ok(result.terms.some(term =>
+    term.operation === "add" &&
+    term.source.component === "promotion" &&
+    term.stat === "B_Atk_Equip" &&
+    term.value === 5 &&
+    term.bucket === "weapon-native"
+  ));
+  assert.ok(result.terms.some(term =>
+    term.operation === "add" &&
+    term.source.component === "level" &&
+    term.stat === "critRate" &&
+    term.value === 20 &&
+    term.bucket === "weapon-native"
+  ));
+  assert.ok(result.terms.some(term =>
+    term.operation === "add" &&
+    term.source.component === "enchantment" &&
+    term.stat === "critRate" &&
+    term.value === 10 &&
+    term.bucket === "weapon-enchantment"
+  ));
+  assert.ok(result.facts.some(fact =>
+    fact.source.component === "passive" && fact.level === 7
+  ));
+  assert.deepStrictEqual(
+    plain(hooks.reconstructStatTotals(result.terms)),
+    result.totals
+  );
+
+  const grouped = plain(hooks.groupBuildStatResults(result));
+  assert.deepStrictEqual(grouped.map(group => group.family), ["main", "additional"]);
+  assert.deepStrictEqual(
+    grouped[0].stats[0].terms,
+    result.terms.filter(term => term.stat === "B_Atk_Equip")
+  );
+  assert.deepStrictEqual(
+    grouped[1].stats[0].terms,
+    result.terms.filter(term => term.stat === "critRate")
+  );
+
+  const invalidCases = [
+    [HACHE_FILE, null, "missing"],
+    [HACHE_FILE, validConfig({ gradeGameId:null }), "incomplete"],
+    ["7ds-armes/Hache/sans-stats.webp", validConfig(), "unavailable"],
+    [HACHE_FILE, { version:99, opaque:true }, "incompatible"]
+  ];
+  for(const [file, config, expectedStatus] of invalidCases){
+    const invalidResult = plain(hooks.calculateWeaponStats(file, config));
+    assert.strictEqual(invalidResult.status, expectedStatus);
+    assert.deepStrictEqual(invalidResult.coverage, []);
+    assert.deepStrictEqual(invalidResult.terms, []);
+    assert.deepStrictEqual(invalidResult.totals, []);
+  }
+
+  const validWithoutEnchantments = plain(hooks.calculateWeaponStats(
+    HACHE_FILE,
+    validConfig({ enchantments:[null] })
+  ));
+  assert.deepStrictEqual(validWithoutEnchantments.coverage, ["weapon"]);
+  assert.strictEqual(
+    validWithoutEnchantments.terms.some(
+      term => term.source.component === "enchantment"
+    ),
+    false
+  );
+  assert.notDeepStrictEqual(
+    plain(hooks.reconstructStatTotals(result.terms.slice(1))),
+    result.totals
+  );
+}
+
+// Le moteur d'arme n'importe jamais la progression de renforcement des armures.
+{
+  const source = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+  const engineStart = source.indexOf("function curveValueAtLevel");
+  const engineEnd = source.indexOf("function applyWeaponChange", engineStart);
+  assert.ok(engineStart >= 0 && engineEnd > engineStart);
+  assert.doesNotMatch(source.slice(engineStart, engineEnd), /\b10300\b/);
+  assert.doesNotMatch(source.slice(engineStart, engineEnd), /\breinforce\b/i);
 }
 
 // Cette assertion échoue tant que le modèle n'expose pas son état public.
@@ -134,4 +414,4 @@ function validConfig(overrides = {}){
   assert.strictEqual(copied.builds["Epee 1 main"].weaponConfig.level, 4);
 }
 
-console.log("stats-build.test.js: OK");
+console.log("PASS stats de builds : modèle et calcul de l’arme");

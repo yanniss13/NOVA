@@ -2261,7 +2261,14 @@
     const catalog = grade.enchantments;
     if(catalog.type === "basic"){
       return enchantments.every((choice, index) => choice === null || (
-        choice.slot === index && isAllowedEnchantValue(choice, catalog.options)
+        choice.slot === index && isAllowedEnchantValue(
+          choice,
+          (catalog.options || []).map(option => Object.assign(
+            {},
+            option,
+            enchantmentBounds(option, catalog.slots[index])
+          ))
+        )
       ));
     }
     if(catalog.type === "masterstone"){
@@ -2312,6 +2319,307 @@
     if(!areEnchantmentsValid(grade, config.enchantments)) return "incompatible";
     return "valid";
   }
+
+  function curveValueAtLevel(curve, level){
+    const base = Number(curve && curve.base) || 0;
+    const current = Math.max(0, Math.trunc(Number(level) || 0));
+    return (curve && Array.isArray(curve.progression) ? curve.progression : [])
+      .reduce((total, increment, index) =>
+        total + Number(increment) * Math.max(0, Math.min(10, current - index * 10)),
+        base
+      );
+  }
+
+  function promotionValueAt(grade, promotion){
+    const values = grade && grade.promotionValues;
+    const count = Math.max(0, Math.trunc(Number(promotion) || 0));
+    return (Array.isArray(values && values.progression)
+      ? values.progression.slice(0, count) : []
+    ).reduce((sum, value) => sum + Number(value), Number(values && values.base) || 0);
+  }
+
+  function enchantmentBounds(option, slotRate){
+    return {
+      min:Math.ceil(Number(option.min) * Number(slotRate) / 10000),
+      max:Math.floor(Number(option.max) * Number(slotRate) / 10000)
+    };
+  }
+
+  /*
+   * PRÉSUMÉ, NON VÉRIFIÉ :
+   * l’outrepassement multiplie les statistiques natives de l’arme avant
+   * les enchantements.
+   *
+   * Vérification dans le jeu :
+   * relever l’ATK à outrepassement 0 puis 1 sur une arme enchantée.
+   * Si le gain de 5 % inclut les enchantements, remplacer uniquement
+   * "native-before-enchantments" par "native-and-enchantments".
+   */
+  const OVERLIMIT_APPLICATION_MODE = "native-before-enchantments";
+
+  function overlimitTargetBuckets(mode){
+    if(mode === "native-before-enchantments") return ["weapon-native"];
+    if(mode === "native-and-enchantments"){
+      return ["weapon-native", "weapon-enchantment"];
+    }
+    throw new Error("OVERLIMIT_MODE_INVALID");
+  }
+
+  function assertBuildStatTerm(term){
+    if(!term || typeof term.stat !== "string" || !term.stat || term.stat === "*"){
+      throw new Error("BUILD_STAT_CONCRETE_STAT_REQUIRED");
+    }
+    if(term.operation !== "add" && term.operation !== "multiply"){
+      throw new Error("BUILD_STAT_OPERATION_INVALID");
+    }
+    if(term.unit !== "flat" && term.unit !== "ten-thousandths"){
+      throw new Error("BUILD_STAT_UNIT_INVALID");
+    }
+    if(term.confidence !== "exact" && term.confidence !== "presumed"){
+      throw new Error("BUILD_STAT_CONFIDENCE_INVALID");
+    }
+    if(typeof term.family !== "string" || !term.family){
+      throw new Error("BUILD_STAT_FAMILY_REQUIRED");
+    }
+    if(!term.source || typeof term.source !== "object"
+      || typeof term.source.domain !== "string" || !term.source.domain
+      || typeof term.source.component !== "string" || !term.source.component){
+      throw new Error("BUILD_STAT_SOURCE_REQUIRED");
+    }
+    if(!Number.isFinite(term.value)){
+      throw new Error("BUILD_STAT_VALUE_INVALID");
+    }
+    if(term.operation === "add"){
+      if(typeof term.bucket !== "string" || !term.bucket){
+        throw new Error("BUILD_STAT_BUCKET_REQUIRED");
+      }
+      return;
+    }
+    if(term.unit !== "ten-thousandths"){
+      throw new Error("BUILD_STAT_MULTIPLIER_UNIT_INVALID");
+    }
+    if(!Array.isArray(term.appliesTo) || !term.appliesTo.length
+      || term.appliesTo.some(bucket => typeof bucket !== "string" || !bucket)){
+      throw new Error("BUILD_STAT_TARGETS_INVALID");
+    }
+  }
+
+  function reconstructStatTotals(terms){
+    if(!Array.isArray(terms)) throw new Error("BUILD_STAT_TERMS_INVALID");
+    const stats = new Map();
+    terms.forEach(term => {
+      assertBuildStatTerm(term);
+      if(!stats.has(term.stat)){
+        stats.set(term.stat, { unit:null, buckets:new Map(), multipliers:[] });
+      }
+      const entry = stats.get(term.stat);
+      if(term.operation === "add"){
+        if(entry.unit !== null && entry.unit !== term.unit){
+          throw new Error("BUILD_STAT_UNIT_MISMATCH");
+        }
+        entry.unit = term.unit;
+        entry.buckets.set(
+          term.bucket,
+          (entry.buckets.get(term.bucket) || 0) + term.value
+        );
+      }else{
+        entry.multipliers.push(term);
+      }
+    });
+
+    stats.forEach(entry => {
+      entry.multipliers.forEach(term => {
+        if(!term.appliesTo.some(bucket => entry.buckets.has(bucket))){
+          throw new Error("BUILD_STAT_TARGET_UNRESOLVED");
+        }
+      });
+    });
+
+    return [...stats.entries()]
+      .filter(([, entry]) => entry.unit !== null)
+      .sort(([left], [right]) => left.localeCompare(right))
+      .map(([stat, entry]) => {
+        const additive = [...entry.buckets.values()]
+          .reduce((sum, value) => sum + value, 0);
+        const multiplied = entry.multipliers.reduce((sum, term) => {
+          const base = term.appliesTo.reduce(
+            (targeted, bucket) => targeted + (entry.buckets.get(bucket) || 0),
+            0
+          );
+          return sum + base * term.value / 10000;
+        }, 0);
+        return { stat, unit:entry.unit, value:additive + multiplied };
+      });
+  }
+
+  function buildStatMetadata(stat){
+    const metadata = owns(BUILD_STATS.statLabels, stat)
+      ? BUILD_STATS.statLabels[stat] : null;
+    if(!metadata || typeof metadata.family !== "string"
+      || (metadata.unit !== "flat" && metadata.unit !== "ten-thousandths")){
+      throw new Error("BUILD_STAT_METADATA_MISSING");
+    }
+    return metadata;
+  }
+
+  function addWeaponStatTerm(terms, settings){
+    if(settings.value === 0) return;
+    const metadata = buildStatMetadata(settings.stat);
+    terms.push({
+      id:settings.id,
+      stat:settings.stat,
+      operation:"add",
+      value:settings.value,
+      unit:metadata.unit,
+      bucket:settings.bucket,
+      family:metadata.family,
+      source:settings.source,
+      confidence:"exact"
+    });
+  }
+
+  function emptyWeaponStatResult(status){
+    return {
+      version:1,
+      status,
+      coverage:[],
+      assumptions:{ overlimitBase:OVERLIMIT_APPLICATION_MODE },
+      terms:[],
+      totals:[],
+      facts:[]
+    };
+  }
+
+  function calculateWeaponStats(file, config){
+    const status = weaponConfigStatus(file, config);
+    if(status !== "valid") return emptyWeaponStatResult(status);
+
+    const weapon = buildWeaponDefinition(file);
+    const grade = buildWeaponGrade(file, config.gradeGameId);
+    const terms = [];
+    const facts = [];
+    const nativeBucket = "weapon-native";
+    const enchantmentBucket = "weapon-enchantment";
+    const mainStat = weapon.mainStatCode;
+
+    addWeaponStatTerm(terms, {
+      id:"weapon:level:"+mainStat,
+      stat:mainStat,
+      value:curveValueAtLevel(grade.mainStatValues, config.level),
+      bucket:nativeBucket,
+      source:{ domain:"weapon", component:"level", id:file }
+    });
+    addWeaponStatTerm(terms, {
+      id:"weapon:promotion:"+mainStat,
+      stat:mainStat,
+      value:promotionValueAt(grade, config.promotion),
+      bucket:nativeBucket,
+      source:{ domain:"weapon", component:"promotion", id:file }
+    });
+    (grade.subStats || []).forEach((subStat, index) => {
+      addWeaponStatTerm(terms, {
+        id:"weapon:level:"+subStat.stat+":"+index,
+        stat:subStat.stat,
+        value:curveValueAtLevel(subStat.values, config.level),
+        bucket:nativeBucket,
+        source:{ domain:"weapon", component:"level", id:file, subStat:index }
+      });
+    });
+    config.enchantments.forEach((enchantment, slot) => {
+      if(enchantment === null) return;
+      addWeaponStatTerm(terms, {
+        id:"weapon:enchantment:"+slot+":"+enchantment.stat,
+        stat:enchantment.stat,
+        value:enchantment.value,
+        bucket:enchantmentBucket,
+        source:{
+          domain:"weapon",
+          component:"enchantment",
+          id:file,
+          slot
+        }
+      });
+    });
+
+    const overlimitLevels = grade.overlimit && Array.isArray(grade.overlimit.levels)
+      ? grade.overlimit.levels : [];
+    const overlimit = overlimitLevels.find(level => level.level === config.overlimit);
+    if(overlimit && Number.isFinite(overlimit.passiveLevel)){
+      facts.push({
+        key:"passiveLevel",
+        level:overlimit.passiveLevel,
+        value:overlimit.passiveLevel,
+        source:{ domain:"weapon", component:"passive", id:file }
+      });
+    }
+    if(overlimit && Number(overlimit.statRate) !== 0){
+      const appliesTo = overlimitTargetBuckets(OVERLIMIT_APPLICATION_MODE);
+      const affectedStats = new Set(
+        terms
+          .filter(term => term.operation === "add" && appliesTo.includes(term.bucket))
+          .map(term => term.stat)
+      );
+      [...affectedStats].sort().forEach(stat => {
+        const metadata = buildStatMetadata(stat);
+        terms.push({
+          id:"weapon:overlimit:"+stat,
+          stat,
+          operation:"multiply",
+          value:Number(overlimit.statRate),
+          unit:"ten-thousandths",
+          appliesTo:[...appliesTo],
+          family:metadata.family,
+          source:{ domain:"weapon", component:"overlimit", id:file },
+          confidence:"exact"
+        });
+      });
+    }
+
+    return {
+      version:1,
+      status,
+      coverage:["weapon"],
+      assumptions:{ overlimitBase:OVERLIMIT_APPLICATION_MODE },
+      terms,
+      totals:reconstructStatTotals(terms),
+      facts
+    };
+  }
+
+  function groupBuildStatResults(result){
+    const familyOrder = ["main", "additional", "damage", "special", "elemental"];
+    const totals = result && Array.isArray(result.totals) ? result.totals : [];
+    const terms = result && Array.isArray(result.terms) ? result.terms : [];
+    return familyOrder.map(family => {
+      const stats = totals
+        .filter(total => {
+          const metadata = BUILD_STATS.statLabels[total.stat];
+          return metadata && metadata.family === family;
+        })
+        .map(total => {
+          const metadata = BUILD_STATS.statLabels[total.stat];
+          return Object.assign({}, total, {
+            label:metadata.fr,
+            terms:terms.filter(term => term.stat === total.stat)
+          });
+        });
+      return { family, stats };
+    }).filter(group => group.stats.length);
+  }
+
+  function formatBuildStatValue(value, unit){
+    if(unit !== "flat" && unit !== "ten-thousandths"){
+      throw new Error("BUILD_STAT_UNIT_INVALID");
+    }
+    const numeric = Number(value);
+    if(!Number.isFinite(numeric)) throw new Error("BUILD_STAT_VALUE_INVALID");
+    const displayed = unit === "ten-thousandths" ? numeric / 100 : numeric;
+    const prefix = displayed >= 0 ? "+" : "";
+    return prefix + new Intl.NumberFormat("fr-FR", {
+      maximumFractionDigits:2
+    }).format(displayed) + (unit === "ten-thousandths" ? " %" : "");
+  }
+
   function applyWeaponChange(hero, nextFile){
     const source = hero && typeof hero === "object" ? hero : {};
     const changed = source.weapon !== nextFile;

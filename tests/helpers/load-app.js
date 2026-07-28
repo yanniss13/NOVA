@@ -109,6 +109,33 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   weaponConfigStatus:typeof weaponConfigStatus === "function"
     ? weaponConfigStatus
     : undefined,
+  curveValueAtLevel:typeof curveValueAtLevel === "function"
+    ? curveValueAtLevel
+    : undefined,
+  promotionValueAt:typeof promotionValueAt === "function"
+    ? promotionValueAt
+    : undefined,
+  enchantmentBounds:typeof enchantmentBounds === "function"
+    ? enchantmentBounds
+    : undefined,
+  overlimitTargetBuckets:typeof overlimitTargetBuckets === "function"
+    ? overlimitTargetBuckets
+    : undefined,
+  calculateWeaponStats:typeof calculateWeaponStats === "function"
+    ? calculateWeaponStats
+    : undefined,
+  reconstructStatTotals:typeof reconstructStatTotals === "function"
+    ? reconstructStatTotals
+    : undefined,
+  groupBuildStatResults:typeof groupBuildStatResults === "function"
+    ? groupBuildStatResults
+    : undefined,
+  formatBuildStatValue:typeof formatBuildStatValue === "function"
+    ? formatBuildStatValue
+    : undefined,
+  OVERLIMIT_APPLICATION_MODE:typeof OVERLIMIT_APPLICATION_MODE === "string"
+    ? OVERLIMIT_APPLICATION_MODE
+    : undefined,
   weaponLevelCap:typeof weaponLevelCap === "function"
     ? weaponLevelCap
     : undefined,
@@ -254,12 +281,18 @@ function loadApp(initialTeams){
             "grade-axe":{
               gameId:"grade-axe",
               mainStatValues:{ base:10, max:60, progression:[1, 1, 1, 1, 1] },
-              subStats:[{ stat:"critRate", values:{ base:0, max:50, progression:[1, 1, 1, 1, 1] } }],
+              subStats:[{ stat:"critRate", values:{ base:20, max:70, progression:[1, 1, 1, 1, 1] } }],
               promotionSteps:[
                 { reinforceMax:20 }, { reinforceMax:30 },
                 { reinforceMax:40 }, { reinforceMax:50 }
               ],
-              overlimit:{ levels:[{ level:0, statRate:0 }, { level:1, statRate:500 }] },
+              promotionValues:{ base:5, max:55, progression:[5, 10, 15, 20] },
+              overlimit:{
+                levels:[
+                  { level:0, passiveLevel:1, statRate:0 },
+                  { level:1, passiveLevel:7, statRate:500 }
+                ]
+              },
               enchantments:{
                 type:"basic",
                 slots:[5000],
