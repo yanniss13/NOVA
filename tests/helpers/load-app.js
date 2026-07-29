@@ -118,6 +118,21 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   weaponPassiveFact:typeof weaponPassiveFact === "function"
     ? weaponPassiveFact
     : undefined,
+  characterDefinitionForHero:typeof characterDefinitionForHero === "function"
+    ? characterDefinitionForHero
+    : undefined,
+  characterBaseTerms:typeof characterBaseTerms === "function"
+    ? characterBaseTerms
+    : undefined,
+  fullMasteryTerms:typeof fullMasteryTerms === "function"
+    ? fullMasteryTerms
+    : undefined,
+  potentialTerms:typeof potentialTerms === "function"
+    ? potentialTerms
+    : undefined,
+  canonicalHeroTerm:typeof canonicalHeroTerm === "function"
+    ? canonicalHeroTerm
+    : undefined,
   ARMOR_LEVEL_ORIGIN_MODE:typeof ARMOR_LEVEL_ORIGIN_MODE === "string"
     ? ARMOR_LEVEL_ORIGIN_MODE
     : undefined,

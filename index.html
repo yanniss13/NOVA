@@ -2447,6 +2447,7 @@
   const BUILD_GEAR = BUILD_STATS.gearByFile || {};
   const BUILD_ENGRAVED = BUILD_STATS.engravedByFile || {};
   const BUILD_GEAR_SETS = BUILD_STATS.gearSets || {};
+  const BUILD_CHARACTERS = BUILD_STATS.charactersBySlug || {};
   const WEAPON_PASSIVE_MAX_LEVEL = 7;
   const GEAR_PASSIVE_MAX_LEVEL = 3;
   function buildGearDefinition(file){
@@ -3046,6 +3047,134 @@
       throw new Error("BUILD_STAT_METADATA_MISSING");
     }
     return metadata;
+  }
+
+  const HERO_MAIN_STAT_MAP = {
+    B_Atk_Equip:"B_Atk",
+    B_Def_Equip:"B_Def",
+    B_MaxHp_Equip:"B_MaxHp"
+  };
+  const CHARACTER_BASE_SOURCE_FIELDS = {
+    B_MaxHp:"baseHp",
+    B_Atk:"baseAtk",
+    B_Def:"baseDef",
+    baseSpd:"baseSpd",
+    accuracy:"accuracy",
+    block:"block",
+    critRate:"critRate",
+    critDamage:"critDamage",
+    critResist:"critResist",
+    critDmgResist:"critDmgResist",
+    blockDmgResist:"blockDmgResist",
+    pvpDmgUp:"pvpDmgUp",
+    pvpDmgDown:"pvpDmgDown"
+  };
+  function characterDefinitionForHero(hero){
+    const charId = hero && hero.char;
+    return typeof charId === "string" && owns(BUILD_CHARACTERS, charId)
+      ? BUILD_CHARACTERS[charId] : null;
+  }
+  function heroAdditiveTerm(settings){
+    const metadata = buildStatMetadata(settings.stat);
+    return {
+      id:settings.id,
+      stat:settings.stat,
+      operation:"add",
+      value:Number(settings.value),
+      unit:metadata.unit,
+      bucket:settings.bucket,
+      family:metadata.family,
+      source:settings.source,
+      confidence:"exact"
+    };
+  }
+  function characterBaseTerms(definition){
+    if(!definition || !Array.isArray(definition.baseStats)) return [];
+    return definition.baseStats
+      .filter(item => Number(item.value) !== 0)
+      .map((item, index) => heroAdditiveTerm({
+        id:"character:base:"+index+":"+item.stat,
+        stat:item.stat,
+        value:item.value,
+        bucket:"character:base",
+        source:{
+          domain:"character",
+          component:"base",
+          field:CHARACTER_BASE_SOURCE_FIELDS[item.stat] || item.stat
+        }
+      }));
+  }
+  function fullMasteryTerms(definition, weaponType){
+    if(!definition) return [];
+    const common = (definition.commonMasteryStats || [])
+      .filter(item => Number(item.value) !== 0)
+      .map((item, index) => heroAdditiveTerm({
+        id:"mastery:common:"+index+":"+item.stat,
+        stat:item.stat,
+        value:item.value,
+        bucket:"mastery:common",
+        source:{
+          domain:"mastery",
+          component:"common-mastery",
+          index
+        }
+      }));
+    const branch = definition.masteriesByWeapon
+      && definition.masteriesByWeapon[weaponType];
+    const weapon = branch && Array.isArray(branch.abilities)
+      ? branch.abilities : [];
+    return common.concat(
+      weapon
+        .filter(item => Number(item.value) !== 0)
+        .map((item, index) => heroAdditiveTerm({
+          id:"mastery:"+weaponType+":"+index+":"+item.stat,
+          stat:item.stat,
+          value:item.value,
+          bucket:"mastery:"+weaponType,
+          source:Object.assign({
+            domain:"mastery",
+            component:"weapon-mastery",
+            weaponType
+          }, item.source || {})
+        }))
+    );
+  }
+  function potentialTerms(definition, weaponType, tier){
+    if(!definition || !isInteger(tier) || tier <= 0 || tier > POT_MAX){
+      return [];
+    }
+    const branch = definition.potentialsByWeapon
+      && definition.potentialsByWeapon[weaponType];
+    const snapshot = branch && branch[String(tier)];
+    if(!Array.isArray(snapshot)) return [];
+    return snapshot
+      .filter(item => Number(item.value) !== 0)
+      .map((item, index) => heroAdditiveTerm({
+        id:"potential:"+weaponType+":"+tier+":"+index+":"+item.stat,
+        stat:item.stat,
+        value:item.value,
+        bucket:"potential:"+weaponType+":"+tier,
+        source:{
+          domain:"potential",
+          component:"potential",
+          weaponType,
+          tier,
+          index
+        }
+      }));
+  }
+  function canonicalHeroTerm(term){
+    const mapped = HERO_MAIN_STAT_MAP[term.stat] || term.stat;
+    if(mapped === term.stat){
+      return Object.assign({}, term, { source:Object.assign({}, term.source) });
+    }
+    const metadata = buildStatMetadata(mapped);
+    return Object.assign({}, term, {
+      stat:mapped,
+      unit:metadata.unit,
+      family:metadata.family,
+      source:Object.assign({}, term.source, { originalStat:term.stat })
+    });
   }
 
   function addWeaponStatTerm(terms, settings){

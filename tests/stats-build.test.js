@@ -884,6 +884,96 @@ function masterstoneConfig(enchantment){
   );
 }
 
+// La base fixe, la maîtrise maximale et le potentiel commun restent traçables.
+{
+  const { hooks } = loadApp();
+  const definition = hooks.characterDefinitionForHero({ char:"meliodas" });
+  assert.ok(definition, "Meliodas doit être présent dans le catalogue local");
+
+  const base = plain(hooks.characterBaseTerms(definition));
+  assert.strictEqual(base.length, 13);
+  assert.ok(base.some(term =>
+    term.stat === "B_Atk"
+    && term.value === 250
+    && term.unit === "flat"
+    && term.bucket === "character:base"
+    && term.source.field === "baseAtk"
+  ));
+  assert.ok(base.some(term =>
+    term.stat === "critRate"
+    && term.value === 1000
+    && term.unit === "ten-thousandths"
+  ));
+
+  const mastery = plain(hooks.fullMasteryTerms(definition, "Axe"));
+  assert.strictEqual(
+    mastery.length,
+    definition.commonMasteryStats.length
+      + definition.masteriesByWeapon.Axe.abilities.length
+  );
+  assert.ok(mastery.some(term =>
+    term.bucket === "mastery:common"
+    && term.source.component === "common-mastery"
+  ));
+  assert.ok(mastery.some(term =>
+    term.bucket === "mastery:Axe"
+    && term.source.component === "weapon-mastery"
+    && term.source.kind === "node"
+  ));
+  assert.strictEqual(
+    mastery.some(term => term.bucket === "mastery:Sword1h"),
+    false,
+    "une autre branche de maîtrise ne doit pas contribuer"
+  );
+
+  assert.deepStrictEqual(plain(hooks.potentialTerms(definition, "Axe", 0)), []);
+  const p3 = plain(hooks.potentialTerms(definition, "Axe", 3));
+  assert.deepStrictEqual(
+    p3.map(term => [term.stat, term.value]),
+    [
+      ["I_AtkAdd_Rate", 1500],
+      ["I_DefAdd_Rate", 1200],
+      ["I_MaxHpAdd_Rate", 500]
+    ],
+    "P3 est un instantané cumulé et ne doit pas additionner P1+P2+P3"
+  );
+  assert.ok(p3.every(term =>
+    term.bucket === "potential:Axe:3"
+    && term.source.component === "potential"
+    && term.source.tier === 3
+  ));
+
+  const canonical = plain(hooks.canonicalHeroTerm({
+    id:"armor",
+    stat:"B_Atk_Equip",
+    operation:"add",
+    value:100,
+    unit:"flat",
+    bucket:"armor:Haut",
+    family:"main",
+    source:{ domain:"armor", component:"level" },
+    confidence:"exact"
+  }));
+  assert.strictEqual(canonical.stat, "B_Atk");
+  assert.strictEqual(canonical.source.originalStat, "B_Atk_Equip");
+  assert.strictEqual(
+    hooks.canonicalHeroTerm({
+      ...canonical,
+      stat:"A_Accuracy",
+      source:{ domain:"armor", component:"level" }
+    }).stat,
+    "A_Accuracy",
+    "aucun rapprochement implicite des autres codes n'est autorisé"
+  );
+
+  [base, mastery, p3].flat().forEach(term => {
+    assert.strictEqual(term.operation, "add");
+    assert.strictEqual(term.confidence, "exact");
+    assert.ok(term.source.domain);
+    assert.ok(term.source.component);
+  });
+}
+
 // Le niveau du passif de pièce est persistant mais ne participe jamais au calcul.
 {
   const { hooks } = loadApp();
