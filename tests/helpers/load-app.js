@@ -133,6 +133,16 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   canonicalHeroTerm:typeof canonicalHeroTerm === "function"
     ? canonicalHeroTerm
     : undefined,
+  HERO_MAIN_RATE_APPLICATION_MODE:
+    typeof HERO_MAIN_RATE_APPLICATION_MODE === "string"
+      ? HERO_MAIN_RATE_APPLICATION_MODE
+      : undefined,
+  heroMainRateTargetBuckets:typeof heroMainRateTargetBuckets === "function"
+    ? heroMainRateTargetBuckets
+    : undefined,
+  calculateHeroStats:typeof calculateHeroStats === "function"
+    ? calculateHeroStats
+    : undefined,
   ARMOR_LEVEL_ORIGIN_MODE:typeof ARMOR_LEVEL_ORIGIN_MODE === "string"
     ? ARMOR_LEVEL_ORIGIN_MODE
     : undefined,

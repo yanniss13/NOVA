@@ -1312,4 +1312,216 @@ function masterstoneConfig(enchantment){
   assert.deepStrictEqual(plain(missing.coverage), []);
 }
 
+// Le héros complet est tout-ou-rien et expose une décomposition reconstructible.
+{
+  const { hooks } = loadApp();
+  const catalog = hooks.buildGearCatalog();
+  const firstValid = slot => Object.keys(catalog).find(file => {
+    const definition = hooks.buildGearDefinition(file);
+    const config = hooks.emptyGearConfig(file);
+    return definition.slot === slot
+      && config
+      && hooks.gearConfigStatus(file, config) === "valid";
+  });
+  const PASSIVE =
+    "7ds-armures-ssr/Bas/Bas de la puissance retorse.webp";
+  const armor = {
+    Haut:firstValid("Top"),
+    Bas:PASSIVE,
+    Bottes:firstValid("Shoes"),
+    Ceinture:firstValid("Belt"),
+    "Armure liee":
+      "7ds-armures-ssr/Armure liee/Défense simple.webp"
+  };
+  const jewel = {
+    Anneau:firstValid("Ring"),
+    Collier:firstValid("Necklace"),
+    "Boucle d'oreille":firstValid("Earring")
+  };
+  Object.values(armor).concat(Object.values(jewel)).forEach(file => {
+    assert.ok(file, "chaque emplacement de la fixture doit avoir une pièce");
+  });
+  const hero = {
+    char:"meliodas",
+    weapon:HACHE_FILE,
+    weaponConfig:validConfig(),
+    armor,
+    armorConfig:Object.fromEntries(
+      Object.entries(armor).map(([slot, file]) => [
+        slot,
+        hooks.emptyGearConfig(file)
+      ])
+    ),
+    jewel,
+    jewelConfig:Object.fromEntries(
+      Object.entries(jewel).map(([slot, file]) => [
+        slot,
+        hooks.emptyGearConfig(file)
+      ])
+    ),
+    potentiel:{ tier:0 },
+    note:""
+  };
+
+  assert.strictEqual(
+    hooks.HERO_MAIN_RATE_APPLICATION_MODE,
+    "all-flat-before-passives"
+  );
+  const result = plain(hooks.calculateHeroStats(hero));
+  assert.strictEqual(result.status, "valid");
+  assert.deepStrictEqual(result.coverage, [
+    "character",
+    "mastery",
+    "potential",
+    "weapon",
+    "armor",
+    "jewel",
+    "engraving",
+    "set"
+  ]);
+  assert.deepStrictEqual(result.assumptions.heroMainRateApplication, {
+    mode:"all-flat-before-passives",
+    confidence:"presumed"
+  });
+  assert.deepStrictEqual(
+    plain(hooks.reconstructStatTotals(result.terms)),
+    result.totals,
+    "la décomposition doit être l'unique source des totaux"
+  );
+  assert.ok(result.terms.some(term =>
+    term.operation === "multiply"
+    && term.stat === "B_Atk"
+    && term.confidence === "presumed"
+    && term.source.originalStat === "I_AtkAdd_Rate"
+  ));
+  assert.ok(result.terms.some(term =>
+    term.source.originalStat === "B_Atk_Equip"
+    && term.stat === "B_Atk"
+  ));
+  assert.deepStrictEqual(
+    plain(hooks.heroMainRateTargetBuckets(
+      "B_Atk",
+      result.terms.filter(term => term.operation === "add")
+    )),
+    [...new Set(result.terms
+      .filter(term =>
+        term.operation === "add"
+        && term.stat === "B_Atk"
+        && term.unit === "flat"
+      )
+      .map(term => term.bucket))]
+  );
+  const simpleTerms = [
+    {
+      id:"base",
+      stat:"B_Atk",
+      operation:"add",
+      value:100,
+      unit:"flat",
+      bucket:"character:base",
+      family:"main",
+      source:{ domain:"character", component:"base" },
+      confidence:"exact"
+    },
+    {
+      id:"gear",
+      stat:"B_Atk",
+      operation:"add",
+      value:50,
+      unit:"flat",
+      bucket:"armor:Haut",
+      family:"main",
+      source:{ domain:"armor", component:"level" },
+      confidence:"exact"
+    }
+  ];
+  simpleTerms.push({
+    id:"rate",
+    stat:"B_Atk",
+    operation:"multiply",
+    value:500,
+    unit:"ten-thousandths",
+    appliesTo:plain(hooks.heroMainRateTargetBuckets("B_Atk", simpleTerms)),
+    family:"main",
+    source:{ domain:"potential", component:"potential" },
+    confidence:"presumed"
+  });
+  assert.deepStrictEqual(
+    plain(hooks.reconstructStatTotals(simpleTerms)),
+    [{ stat:"B_Atk", unit:"flat", value:157.5 }]
+  );
+  assert.ok(result.uncovered.includes("weapon:passive"));
+  assert.ok(result.uncovered.includes("armor:passive"));
+  assert.ok(result.uncovered.includes("engraving:passive"));
+  assert.ok(result.facts.passives.some(fact =>
+    fact.source === "weapon:passive"
+    && fact.level === 1
+    && fact.maxLevel === 7
+  ));
+  assert.ok(result.facts.passives.some(fact =>
+    fact.source === "armor:passive"
+    && fact.slot === "Bas"
+    && fact.status === "missing"
+  ));
+  assert.ok(result.facts.passives.some(fact =>
+    fact.source === "engraving:passive"
+    && fact.slot === "Armure liee"
+    && fact.status === "missing"
+  ));
+
+  const withPassives = plain(hero);
+  withPassives.armorConfig.Bas.passiveLevel = 3;
+  withPassives.armorConfig["Armure liee"].passiveLevel = 2;
+  const withPassivesResult = plain(hooks.calculateHeroStats(withPassives));
+  assert.deepStrictEqual(withPassivesResult.terms, result.terms);
+  assert.deepStrictEqual(withPassivesResult.totals, result.totals);
+  assert.ok(withPassivesResult.facts.passives.some(fact =>
+    fact.slot === "Bas" && fact.level === 3 && fact.status === "valid"
+  ));
+  const invalidPassive = plain(hero);
+  invalidPassive.armorConfig.Bas.passiveLevel = 99;
+  const invalidPassiveResult = plain(hooks.calculateHeroStats(invalidPassive));
+  assert.strictEqual(invalidPassiveResult.status, "valid");
+  assert.deepStrictEqual(invalidPassiveResult.totals, result.totals);
+  assert.ok(invalidPassiveResult.facts.passives.some(fact =>
+    fact.slot === "Bas" && fact.status === "incompatible"
+  ));
+
+  [
+    ["weapon", draft => { draft.weapon = null; }],
+    ["weaponConfig", draft => { draft.weaponConfig = null; }],
+    ["armor.Haut", draft => { draft.armor.Haut = null; }],
+    ["armorConfig.Haut", draft => { delete draft.armorConfig.Haut; }],
+    ["jewel.Anneau", draft => { draft.jewel.Anneau = null; }],
+    ["jewelConfig.Anneau", draft => { delete draft.jewelConfig.Anneau; }]
+  ].forEach(([missingPath, mutate]) => {
+    const draft = plain(hero);
+    mutate(draft);
+    const incomplete = plain(hooks.calculateHeroStats(draft));
+    assert.strictEqual(incomplete.status, "incomplete", missingPath);
+    assert.ok(incomplete.missing.includes(missingPath), missingPath);
+    assert.deepStrictEqual(incomplete.terms, [], missingPath);
+    assert.deepStrictEqual(incomplete.totals, [], missingPath);
+  });
+
+  const badPotential = plain(hero);
+  badPotential.potentiel.tier = 11;
+  assert.strictEqual(
+    hooks.calculateHeroStats(badPotential).status,
+    "incompatible"
+  );
+  const unknownCharacter = plain(hero);
+  unknownCharacter.char = "inconnu";
+  assert.strictEqual(
+    hooks.calculateHeroStats(unknownCharacter).status,
+    "unavailable"
+  );
+  const futureConfig = plain(hero);
+  futureConfig.armorConfig.Haut.version = 99;
+  assert.strictEqual(
+    hooks.calculateHeroStats(futureConfig).status,
+    "incompatible"
+  );
+}
+
 console.log("PASS stats de builds : modèle et calcul de l’arme");

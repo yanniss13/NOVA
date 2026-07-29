@@ -3549,6 +3549,255 @@
     };
   }
 
+  /*
+   * PRÉSUMÉ, NON VÉRIFIÉ :
+   * les taux principaux du héros portent sur tous ses apports fixes avant les
+   * passifs. Protocole : relever les statistiques d'un nouveau personnage
+   * avant son premier potentiel puis juste après, équipement inchangé. Si la
+   * mesure contredit cette base, changer uniquement ce mode et
+   * heroMainRateTargetBuckets().
+   */
+  const HERO_MAIN_RATE_APPLICATION_MODE = "all-flat-before-passives";
+  const HERO_MAIN_RATE_TARGETS = {
+    I_AtkAdd_Rate:"B_Atk",
+    I_DefAdd_Rate:"B_Def",
+    I_MaxHpAdd_Rate:"B_MaxHp"
+  };
+  const HERO_STAT_COVERAGE = [
+    "character",
+    "mastery",
+    "potential",
+    "weapon",
+    "armor",
+    "jewel",
+    "engraving",
+    "set"
+  ];
+  function heroMainRateTargetBuckets(stat, additiveTerms, mode){
+    const selectedMode = mode || HERO_MAIN_RATE_APPLICATION_MODE;
+    if(selectedMode !== "all-flat-before-passives"){
+      throw new Error("HERO_MAIN_RATE_MODE_INVALID");
+    }
+    const seen = new Set();
+    return (additiveTerms || []).reduce((buckets, term) => {
+      if(term && term.operation === "add" && term.stat === stat
+        && term.unit === "flat" && typeof term.bucket === "string"
+        && !seen.has(term.bucket)){
+        seen.add(term.bucket);
+        buckets.push(term.bucket);
+      }
+      return buckets;
+    }, []);
+  }
+  function emptyHeroStatResult(status, missing){
+    return {
+      version:1,
+      status,
+      coverage:[],
+      uncovered:[],
+      assumptions:{
+        overlimitBase:OVERLIMIT_APPLICATION_MODE,
+        armorLevelOrigin:ARMOR_LEVEL_ORIGIN_MODE,
+        heroMainRateApplication:{
+          mode:HERO_MAIN_RATE_APPLICATION_MODE,
+          confidence:"presumed"
+        }
+      },
+      missing:missing || [],
+      terms:[],
+      totals:[],
+      facts:{ passives:[] }
+    };
+  }
+  function heroGearPassiveFacts(hero){
+    const facts = [];
+    GEAR_SLOT_DOMAINS.forEach(([storageKey, slots]) => {
+      slots.forEach(slot => {
+        const file = (hero[storageKey] || {})[slot];
+        const definition = buildGearDefinition(file);
+        if(!definition || !Array.isArray(definition.passiveLevels)
+          || definition.passiveLevels.length === 0){
+          return;
+        }
+        const config = (hero[storageKey + "Config"] || {})[slot];
+        const status = gearPassiveStatus(definition, config);
+        const level = status === "valid" ? config.passiveLevel : null;
+        const passive = status === "valid"
+          ? definition.passiveLevels.find(item => item.level === level)
+          : null;
+        facts.push({
+          source:slot === LINKED_ARMOR_SLOT
+            ? "engraving:passive" : "armor:passive",
+          slot,
+          file,
+          level,
+          maxLevel:GEAR_PASSIVE_MAX_LEVEL,
+          status,
+          text:passive ? passive.textFr || "" : ""
+        });
+      });
+    });
+    return facts;
+  }
+  function calculateHeroStats(hero){
+    const source = hero && typeof hero === "object" ? hero : {};
+    const missing = [];
+    let status = "valid";
+    const severity = {
+      valid:0,
+      incomplete:1,
+      unavailable:2,
+      incompatible:3
+    };
+    const noteIssue = (path, nextStatus) => {
+      if(!missing.includes(path)) missing.push(path);
+      if(severity[nextStatus] > severity[status]) status = nextStatus;
+    };
+
+    const character = characterDefinitionForHero(source);
+    if(!source.char){
+      noteIssue("character", "incomplete");
+    }else if(!character){
+      noteIssue("character", "unavailable");
+    }
+
+    const potentialTier = source.potentiel && source.potentiel.tier;
+    if(!isInteger(potentialTier) || potentialTier < 0 || potentialTier > POT_MAX){
+      noteIssue("potential", "incompatible");
+    }
+
+    if(!source.weapon){
+      noteIssue("weapon", "incomplete");
+    }else if(character && !isWeaponCompatible(source.char, source.weapon)){
+      noteIssue("weapon", "incompatible");
+    }else if(!buildWeaponDefinition(source.weapon)){
+      noteIssue("weapon", "unavailable");
+    }else{
+      const weaponStatus = weaponConfigStatus(source.weapon, source.weaponConfig);
+      if(weaponStatus !== "valid"){
+        noteIssue(
+          "weaponConfig",
+          weaponStatus === "missing" || weaponStatus === "incomplete"
+            ? "incomplete" : weaponStatus
+        );
+      }
+    }
+    const equippedWeaponType = equippedEnumOf(source);
+    if(character && source.weapon && buildWeaponDefinition(source.weapon)
+      && isWeaponCompatible(source.char, source.weapon)){
+      const mastery = character.masteriesByWeapon
+        && character.masteriesByWeapon[equippedWeaponType];
+      if(!mastery || mastery.levels !== 5){
+        noteIssue("mastery", "unavailable");
+      }
+      const potentials = character.potentialsByWeapon
+        && character.potentialsByWeapon[equippedWeaponType];
+      if(isInteger(potentialTier) && potentialTier > 0
+        && (!potentials || !Array.isArray(potentials[String(potentialTier)]))){
+        noteIssue("potential", "unavailable");
+      }
+    }
+
+    GEAR_SLOT_DOMAINS.forEach(([storageKey, slots]) => {
+      slots.forEach(slot => {
+        const file = (source[storageKey] || {})[slot];
+        const equipmentPath = storageKey + "." + slot;
+        const configPath = storageKey + "Config." + slot;
+        if(!file){
+          noteIssue(equipmentPath, "incomplete");
+          return;
+        }
+        if(character && slot === LINKED_ARMOR_SLOT
+          && !isLinkedArmorCompatible(source.char, file)){
+          noteIssue(equipmentPath, "incompatible");
+          return;
+        }
+        if(!buildGearDefinition(file)){
+          noteIssue(equipmentPath, "unavailable");
+          return;
+        }
+        const config = (source[storageKey + "Config"] || {})[slot];
+        const configStatus = gearConfigStatus(file, config);
+        if(configStatus !== "valid"){
+          noteIssue(
+            configPath,
+            configStatus === "missing" || configStatus === "incomplete"
+              ? "incomplete" : configStatus
+          );
+        }
+      });
+    });
+
+    if(status !== "valid") return emptyHeroStatResult(status, missing);
+
+    const weaponType = equippedWeaponType;
+    const build = calculateBuildStats(source);
+    const rawTerms = characterBaseTerms(character)
+      .concat(fullMasteryTerms(character, weaponType))
+      .concat(potentialTerms(character, weaponType, potentialTier))
+      .concat(build.terms.map(canonicalHeroTerm));
+    const rateTerms = rawTerms.reduce((terms, rateTerm) => {
+      const targetStat = HERO_MAIN_RATE_TARGETS[rateTerm.stat];
+      if(!targetStat || rateTerm.operation !== "add"
+        || rateTerm.unit !== "ten-thousandths"){
+        return terms;
+      }
+      const appliesTo = heroMainRateTargetBuckets(targetStat, rawTerms);
+      if(!appliesTo.length) return terms;
+      const metadata = buildStatMetadata(targetStat);
+      terms.push({
+        id:"hero-main-rate:"+rateTerm.id,
+        stat:targetStat,
+        operation:"multiply",
+        value:rateTerm.value,
+        unit:"ten-thousandths",
+        appliesTo,
+        family:metadata.family,
+        source:Object.assign({}, rateTerm.source, {
+          originalStat:rateTerm.stat,
+          application:"hero-main-rate"
+        }),
+        confidence:"presumed"
+      });
+      return terms;
+    }, []);
+    const terms = rawTerms.concat(rateTerms);
+    const weaponFact = calculateWeaponStats(
+      source.weapon,
+      source.weaponConfig
+    ).facts.find(fact => fact.source && fact.source.component === "passive");
+    const passives = heroGearPassiveFacts(source);
+    if(weaponFact){
+      passives.unshift({
+        source:"weapon:passive",
+        slot:"weapon",
+        file:source.weapon,
+        level:weaponFact.level,
+        maxLevel:WEAPON_PASSIVE_MAX_LEVEL,
+        status:"valid",
+        text:weaponFact.text || ""
+      });
+    }
+    return {
+      version:1,
+      status:"valid",
+      coverage:[...HERO_STAT_COVERAGE],
+      uncovered:[...new Set(build.uncovered)],
+      assumptions:{
+        overlimitBase:OVERLIMIT_APPLICATION_MODE,
+        armorLevelOrigin:ARMOR_LEVEL_ORIGIN_MODE,
+        heroMainRateApplication:{
+          mode:HERO_MAIN_RATE_APPLICATION_MODE,
+          confidence:"presumed"
+        }
+      },
+      missing:[],
+      terms,
+      totals:reconstructStatTotals(terms),
+      facts:{ passives }
+    };
+  }
+
   function groupBuildStatResults(result){
     const familyOrder = ["main", "additional", "damage", "special", "elemental"];
     const totals = result && Array.isArray(result.totals) ? result.totals : [];
