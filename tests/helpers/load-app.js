@@ -327,9 +327,6 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   rosterPlayerFrom:typeof rosterPlayerFrom === "function"
     ? rosterPlayerFrom
     : undefined,
-  recPlayersForView:typeof recPlayersForView === "function"
-    ? recPlayersForView
-    : undefined,
   dashboardDeadlineStatus:typeof dashboardDeadlineStatus === "function"
     ? dashboardDeadlineStatus
     : undefined,

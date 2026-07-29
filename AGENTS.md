@@ -44,8 +44,8 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       (`openTeamDetail`/`heroDetail`/`equipLine`) avec l'équipement complet
       (arme + 5 armures + 3 bijoux, noms) par héros.
 - [x] **Partage réseau (Supabase) — Étape 1 implémentée**. Comptes + équipes +
-      recensement/analyse partagés. Auth email/mot de passe, ownership par RLS,
-      cache hors ligne séparé et migration one-shot des anciennes données locales.
+      rosters et Analyse partagés. Auth email/mot de passe, ownership par RLS,
+      caches hors ligne séparés et migration one-shot des anciennes équipes locales.
       👉 **Codex : lis `docs/superpowers/specs/2026-07-25-supabase-etape1-handoff.md`**
       (contexte, modèle de données et manips Supabase restantes).
       Fichiers : `supabase-config.js`, `supabase/schema.sql`.
@@ -757,9 +757,6 @@ Pour revenir en arrière, déployer un revert du frontend en conservant les
 triggers SQL. Les sous-champs restent dans les JSONB et réapparaissent lors
 d'une réactivation ; aucun rollback SQL destructif n'est requis.
 
-L'optimisation Supabase du Recensement reste un lot 3B indépendant. Ne pas la
-mélanger à ce moteur ni à sa mise en service.
-
 ## Règle d'or sur les assets
 
 **On ne hardcode JAMAIS la liste des images dans `index.html`.**
@@ -857,10 +854,13 @@ Connecté, `Store.refresh/upsert/remove` utilise Supabase et ne montre les actio
 Modifier/Supprimer que si `team.owner === currentUser.id`. Déconnecté, le builder
 reste accessible mais la sauvegarde exige l'authentification.
 
-Le recensement partagé utilise une ligne Supabase par compte :
-`recensement(owner, pseudo, dps, updated_at)`. Tous les membres connectés lisent
-toutes les lignes pour l'Analyse ; seul le propriétaire modifie sa fiche. Le cache
-cloud local est `confrerie7ds.cloud.recensement`.
+L'**Analyse est l'unique vue DPS**. Elle dérive directement des
+`roster_characters` et des profils : aucune fiche DPS distincte n'est créée ou
+maintenue. L'ancienne table `recensement(owner, pseudo, dps, updated_at)` et les
+clés locales `confrerie7ds.recensement` /
+`confrerie7ds.cloud.recensement` sont conservées pour ne détruire aucune donnée,
+mais le frontend ne les lit ni ne les écrit. Leur suppression éventuelle devra
+faire l'objet d'une migration SQL séparée et explicitement validée.
 
 ## Modèle du roster persistant
 
@@ -957,8 +957,8 @@ d'éléments ou d'armes n'est écrite en dur.
 
 Une chaîne `confrerie-live-<userId>` écoute `profiles`, `teams`,
 `roster_characters`, `boss_sessions` et `boss_participation`. Les événements
-sont regroupés puis seule la vue active concernée est relue. Le Recensement et
-l'Analyse réagissent au roster et aux profils, car ils sont entièrement dérivés.
+sont regroupés puis seule la vue active concernée est relue. L'Analyse réagit au
+roster et aux profils, dont elle est entièrement dérivée.
 
 Après déploiement de cette fonction, rejouer `supabase/schema.sql` une fois dans
 le SQL Editor afin d'ajouter les tables à la publication
@@ -1375,7 +1375,6 @@ chaque carte.
 ## Évolutions prévues
 
 - Champ **note globale d'équipe** (déjà réservé dans le modèle via `boss`).
-- **Lot 3B** : optimiser séparément les lectures Supabase du Recensement.
 - Valider dans le vrai jeu les trois hypothèses de formule documentées
   (outrepassement, origine des segments d'armure, taux principaux du héros)
   avant de retirer leurs mentions « présumée ».

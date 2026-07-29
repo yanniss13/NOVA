@@ -11,22 +11,18 @@ const { loadApp, plain } = require("./helpers/load-app");
 const ROOT = path.resolve(__dirname, "..");
 const STORAGE_KEY = "confrerie7ds.teams";
 
-// Régression ciblée : la fiche provisoire du membre courant ne pollue pas l'Analyse.
+// Le Recensement a disparu du frontend, mais son schéma et ses données restent.
 {
-  const { hooks } = loadApp();
-  assert.strictEqual(typeof hooks.recPlayersForView, "function");
-  const rows = [{ id:"user-2", owner:"user-2", name:"Merlin", dps:[] }];
-  assert.deepStrictEqual(
-    plain(hooks.recPlayersForView(rows, "user-1", "Yannis", true)),
-    [
-      { id:"user-1", owner:"user-1", name:"Yannis", dps:[], updatedAt:0 },
-      { id:"user-2", owner:"user-2", name:"Merlin", dps:[] }
-    ]
-  );
-  assert.deepStrictEqual(
-    plain(hooks.recPlayersForView(rows, "user-1", "Yannis", false)),
-    rows
-  );
+  const source = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  [
+    /tab-recensement/,
+    /view-recensement/,
+    /function\s+renderRecensement\s*\(/,
+    /function\s+recPlayersForView\s*\(/,
+    /function\s+saveCloudRecCache\s*\(/,
+    /function\s+readRecCache\s*\(/,
+    /\.from\(["']recensement["']\)/
+  ].forEach(pattern => assert.doesNotMatch(source, pattern));
 }
 
 // Régression ciblée : une armure liée d'un autre héros est retirée à la migration.
@@ -394,7 +390,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
   }, "Epee 1 main"), null);
 }
 
-// #5 Recensement auto : DPS dérivés du roster.
+// #5 Analyse : DPS dérivés du roster.
 {
   const { hooks } = loadApp();
 
@@ -451,7 +447,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
   assert.deepStrictEqual(plain(hooks.dpsEntriesFromRoster({ charId:"meliodas", builds:{} })), []);
 }
 
-// #5 bis Recensement auto : agrégation des builds DPS et exclusion des SR.
+// #5 bis Analyse : agrégation des builds DPS et exclusion des SR.
 {
   const { hooks } = loadApp();
 

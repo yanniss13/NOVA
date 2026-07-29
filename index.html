@@ -621,101 +621,12 @@
   }
   .empty-state .big{font-family:var(--display);font-size:20px;color:var(--parchment);margin:0 0 8px}
 
-  /* ---------- Recensement DPS ---------- */
-  .rec-input{
-    font-family:var(--ui);font-size:14px;color:var(--parchment);background:var(--obsidian-2);
-    border:1px solid var(--line);border-radius:8px;padding:10px 12px;min-width:200px
-  }
-  .rec-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:16px;margin-top:20px}
-  .rec-player{
-    min-width:0;
-    background:linear-gradient(180deg,var(--panel),var(--obsidian-2));
-    border:1px solid var(--line);border-radius:12px;padding:14px
-  }
-  .rec-player-head{display:flex;align-items:center;gap:10px;margin-bottom:12px}
-  .seal.small{width:34px;height:34px;font-size:12px}
-  .rec-name{font-family:var(--display);font-weight:600;font-size:16px;color:var(--parchment);
-    flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .rec-del{appearance:none;border:1px solid var(--line);background:var(--panel-2);color:var(--muted-2);
-    width:28px;height:28px;border-radius:7px;cursor:pointer;font-size:13px;flex:none}
-  .rec-del:hover{color:#e98d8d;border-color:var(--crimson)}
-  .dps-list{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
-  .dps-empty{font-size:12.5px;color:var(--muted-2);font-style:italic;padding:6px 2px}
-  .dps-row{display:flex;align-items:center;gap:9px;background:var(--obsidian-2);
-    border:1px solid var(--line-soft);border-radius:8px;padding:6px 8px}
-  .dps-portrait{width:32px;height:32px;flex:none;border-radius:6px;overflow:hidden;
-    background:#0b0910 center/cover no-repeat;border:1px solid var(--line-soft)}
-  .dps-portrait img{width:100%;height:100%;object-fit:cover}
-  .dps-name{flex:1;font-size:13px;color:var(--parchment);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-  .dps-pot{font-family:var(--ui);font-size:12px;font-weight:600;color:var(--gold-bright);
-    background:var(--panel-2);border:1px solid var(--gold-deep);border-radius:7px;padding:4px 6px;cursor:pointer}
-  .dps-del{appearance:none;border:0;background:transparent;color:var(--muted-2);cursor:pointer;font-size:13px;flex:none;padding:2px}
-  .dps-del:hover{color:#e98d8d}
-  .dps-add{appearance:none;width:100%;cursor:pointer;background:var(--obsidian-2);
-    border:1px dashed var(--line);border-radius:8px;color:var(--muted);font-weight:600;
-    font-size:13px;padding:9px;transition:.16s}
-  .dps-add:hover{border-color:var(--gold-deep);color:var(--gold-bright)}
-
-  /* badge élément (recensement + analyse) */
+  /* Badge d'élément partagé par les sections de l'Analyse. */
   .elem-badge{--ec:var(--gold);display:inline-flex;align-items:center;gap:5px;
     font-size:11px;font-weight:600;padding:2px 9px;border-radius:999px;white-space:nowrap;
     border:1px solid color-mix(in srgb, var(--ec) 55%, var(--line));
     background:color-mix(in srgb, var(--ec) 14%, var(--obsidian-2));color:var(--parchment)}
   .elem-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--ec);flex:none;box-shadow:0 0 6px var(--ec)}
-  .dps-elem-sel{
-    --ec:var(--gold);position:relative;display:inline-flex;flex:none;
-    max-width:126px
-  }
-  .dps-elem-trigger{
-    appearance:none;display:inline-flex;align-items:center;gap:6px;min-width:94px;
-    max-width:126px;padding:4px 9px;border-radius:999px;cursor:pointer;
-    border:1px solid color-mix(in srgb,var(--ec) 60%,var(--line));
-    background:color-mix(in srgb,var(--ec) 18%,var(--obsidian-2));
-    color:var(--parchment);font:600 11px var(--ui);transition:.14s
-  }
-  .dps-elem-trigger:hover,
-  .dps-elem-trigger:focus-visible,
-  .dps-elem-sel.open .dps-elem-trigger{
-    border-color:color-mix(in srgb,var(--ec) 80%,var(--gold-bright));
-    box-shadow:0 0 0 2px color-mix(in srgb,var(--ec) 18%,transparent)
-  }
-  .dps-elem-trigger:focus{outline:none}
-  .dps-elem-sel .dot{
-    width:8px;height:8px;border-radius:50%;background:var(--ec);flex:none;
-    box-shadow:0 0 6px var(--ec)
-  }
-  .dps-elem-label{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .dps-elem-caret{margin-left:auto;color:var(--gold-bright);transition:transform .14s}
-  .dps-elem-sel.open .dps-elem-caret{transform:rotate(180deg)}
-  .dps-elem-menu{
-    position:absolute;z-index:40;top:calc(100% + 6px);right:0;min-width:142px;
-    padding:5px;border:1px solid var(--gold-deep);border-radius:9px;
-    background:linear-gradient(155deg,var(--panel),var(--obsidian-2));
-    box-shadow:0 14px 30px #050309d9,0 0 18px #5c214533;
-    animation:dps-menu-in .14s ease-out
-  }
-  .dps-elem-menu[hidden]{display:none}
-  .dps-elem-option{
-    appearance:none;width:100%;display:grid;grid-template-columns:10px 1fr 14px;
-    align-items:center;gap:8px;padding:7px 8px;border:0;border-radius:6px;
-    background:transparent;color:var(--muted);font:600 11px var(--ui);
-    text-align:left;cursor:pointer
-  }
-  .dps-elem-option:hover,
-  .dps-elem-option:focus-visible{
-    outline:none;background:#5c214542;color:var(--parchment)
-  }
-  .dps-elem-option.selected{color:var(--parchment);background:#b88a441c}
-  .dps-elem-check{color:var(--gold-bright);opacity:0}
-  .dps-elem-option.selected .dps-elem-check{opacity:1}
-  @keyframes dps-menu-in{
-    from{opacity:0;transform:translateY(-4px)}
-    to{opacity:1;transform:translateY(0)}
-  }
-  @media (prefers-reduced-motion:reduce){
-    .dps-elem-menu{animation:none}
-    .dps-elem-trigger,.dps-elem-caret{transition:none}
-  }
 
   /* ---------- Analyse ---------- */
   .an-title{font-family:var(--display);font-weight:700;font-size:20px;color:var(--parchment);
@@ -1090,15 +1001,11 @@
     .boss-report-actions .btn{width:100%;justify-content:center}
   }
 
-  @media(max-width:820px){ .cov-row{grid-template-columns:repeat(4,1fr)} .rec-grid{grid-template-columns:1fr} }
+  @media(max-width:820px){ .cov-row{grid-template-columns:repeat(4,1fr)} }
   @media(max-width:520px){
     .cov-row{grid-template-columns:repeat(2,1fr)}
     .rank-row{grid-template-columns:32px 1fr 70px;}
     .rank-row .rk-dps{display:none}
-    /* Recensement : contrôles sur plusieurs lignes, sans élargir le document */
-    #recLocalControls{flex-wrap:wrap}
-    #recLocalControls .rec-input,
-    #recLocalControls .btn{width:100%;min-width:0}
   }
 
   /* ---------- Picker modal ---------- */
@@ -1533,8 +1440,7 @@
        dont la police est < 16px — cause du décentrage + scroll latéral signalés
        sur iPhone. On force 16px sur tous les contrôles de saisie en mobile. */
     input, select, textarea,
-    .field input, .rec-input, .note, .picker-search,
-    .dps-pot, .dps-elem-sel select{font-size:16px}
+    .field input, .note, .picker-search{font-size:16px}
     .member-roster-card,.member-roster-toolbar,.member-roster-editor{min-width:0}
     .member-roster-toolbar{align-items:stretch}
     .member-roster-modes,.member-roster-modes .btn,
@@ -1547,12 +1453,12 @@
     .hero-source-actions .hero-roster-reload{grid-column:auto}
   }
   @media (pointer:coarse), (max-width:560px){
-    button,.btn,.tab,.chip,.gear-slot,.pot-btn,.dps-elem-trigger,
-    .dps-elem-option,.member-roster-filter-field select{
+    button,.btn,.tab,.chip,.gear-slot,.pot-btn,
+    .member-roster-filter-field select{
       min-height:44px
     }
     .roster-detail-weapon{min-width:44px;min-height:44px}
-    .icon-btn,.rec-del,.dps-del{
+    .icon-btn{
       min-width:44px;
       min-height:44px
     }
@@ -1599,9 +1505,6 @@
     <button class="tab" id="tab-member-roster" data-view="member-roster"
             role="tab" aria-controls="view-member-roster"
             aria-selected="false" tabindex="-1">Roster</button>
-    <button class="tab" id="tab-recensement" data-view="recensement"
-            role="tab" aria-controls="view-recensement"
-            aria-selected="false" tabindex="-1">Recensement DPS</button>
     <button class="tab" id="tab-analyse" data-view="analyse"
             role="tab" aria-controls="view-analyse"
             aria-selected="false" tabindex="-1">Analyse</button>
@@ -1712,26 +1615,12 @@
     <div class="member-roster-grid" id="memberRosterGrid"></div>
   </section>
 
-  <section id="view-recensement" class="view" role="tabpanel"
-           aria-labelledby="tab-recensement">
-    <p class="section-eyebrow">Confrérie</p>
-    <h1 class="section-title">Recensement des DPS</h1>
-    <p class="section-lead">Calculé automatiquement à partir du <b>Roster</b> de chaque membre : chaque personnage avec un build Attaquant devient un DPS, avec son élément et son potentiel. Exception : Gowther avec une Baguette est recensé à partir de P7. Pour te recenser, remplis ton roster.</p>
-
-    <div class="roster-toolbar">
-      <span class="roster-count" id="recCount"></span>
-      <button class="btn" id="recGoRoster" type="button" style="margin-left:auto">Modifier mon roster</button>
-    </div>
-
-    <div id="recGrid"></div>
-  </section>
-
   <!-- ============ ANALYSE ============ -->
   <section id="view-analyse" class="view" role="tabpanel"
            aria-labelledby="tab-analyse">
     <p class="section-eyebrow">Confrérie</p>
     <h1 class="section-title">Analyse par élément</h1>
-    <p class="section-lead">Couverture des éléments, classement des membres par potentiel, et matrice complète — d'après le recensement.</p>
+    <p class="section-lead">Couverture des éléments, classement des membres par potentiel et matrice complète, calculés directement depuis les rosters.</p>
     <div id="analyseBody"></div>
   </section>
 
@@ -1877,7 +1766,7 @@
       <div class="auth-mark" aria-hidden="true">7</div>
       <div class="auth-copy">
         <h2 id="authTitle">Registre de la confrérie</h2>
-        <p>Connecte-toi pour partager tes équipes et ton recensement avec les autres membres.</p>
+        <p>Connecte-toi pour partager tes équipes et ton roster avec les autres membres.</p>
       </div>
       <div class="auth-fields">
         <div class="field">
@@ -1990,7 +1879,6 @@
   const POT_MAX = 10;
   const META = window.SEVEN_DS_META || {};
   const CLOUD_TEAMS_CACHE_KEY = "confrerie7ds.cloud.teams";
-  const CLOUD_REC_CACHE_KEY = "confrerie7ds.cloud.recensement";
   const CLOUD_ROSTER_CACHE_KEY = "confrerie7ds.cloud.roster";
   const MIGRATION_KEY_PREFIX = "confrerie7ds.supabase.migrated.";
   const sb = window.supabase && window.SB_URL && window.SB_KEY
@@ -6281,7 +6169,7 @@
     return rosterProfiles.slice();
   }
 
-  /* ===== #5 Recensement auto : DPS dérivés du Roster ===== */
+  /* ===== #5 Analyse : DPS dérivés du Roster ===== */
   // Un build Attaquant du roster = une entrée DPS { char, element, pot }.
   // Exception unique : Gowther Baguette (Briseur) à partir de P7.
   function isRosterBuildDps(entry, slot, weaponEnum){
@@ -6536,7 +6424,6 @@
         }
         if(changed.has("roster")){
           if(view === "member-roster") await renderMemberRoster();
-          if(view === "recensement") await renderRecensement();
           if(view === "analyse") await renderAnalyse();
         }
         if(changed.has("boss") && view === "boss"){
@@ -6676,7 +6563,7 @@
       localStorage.getItem(MIGRATION_KEY_PREFIX+currentUser.id) === "1";
     let hasLocalData = false;
     try{
-      hasLocalData = LocalTeams.all().length > 0 || LocalRec.all().length > 0;
+      hasLocalData = LocalTeams.all().length > 0;
     }catch(error){
       hasLocalData = false;
     }
@@ -6736,7 +6623,6 @@
       && typeof renderMemberRoster === "function"){
       void renderMemberRoster();
     }
-    if($("#view-recensement").classList.contains("active")) void renderRecensement();
     if($("#view-analyse").classList.contains("active")) void renderAnalyse();
     /* « Mon suivi » devient la vue par défaut à la résolution initiale d'une
        session et après une connexion réussie, c'est-à-dire au passage
@@ -6855,9 +6741,6 @@
     if(name==="roster") result = Promise.resolve(renderRoster()).then(()=>true);
     if(name==="member-roster"){
       result = Promise.resolve(renderMemberRoster()).then(()=>true);
-    }
-    if(name==="recensement"){
-      result = Promise.resolve(renderRecensement()).then(()=>true);
     }
     if(name==="analyse") result = Promise.resolve(renderAnalyse()).then(()=>true);
     if(name==="boss") result = renderBossView();
@@ -9064,118 +8947,6 @@
     reader.readAsText(file);
   });
 
-  /* ============================ Recensement DPS ============================ */
-  const REC_KEY = "confrerie7ds.recensement";
-  const LocalRec = {
-    all(){ try{ return JSON.parse(localStorage.getItem(REC_KEY)) || []; }catch(e){ return []; } },
-    save(list){ localStorage.setItem(REC_KEY, JSON.stringify(list)); }
-  };
-
-  function normalizeDpsList(value){
-    if(!Array.isArray(value)) return [];
-    return value.filter(item => item && typeof item === "object" && item.char).map(item => ({
-      char:String(item.char),
-      element:item.element ? String(item.element).toUpperCase() : null,
-      pot:Math.max(0, Math.min(POT_MAX, Math.trunc(Number(item.pot)||0)))
-    }));
-  }
-
-  function cloudPlayerFromRow(row){
-    return {
-      id:row.owner,
-      owner:row.owner,
-      name:row.pseudo || "Membre",
-      dps:normalizeDpsList(row.dps),
-      updatedAt:row.updated_at ? Date.parse(row.updated_at) : 0
-    };
-  }
-
-  function readRecCache(){
-    try{
-      const list = JSON.parse(localStorage.getItem(CLOUD_REC_CACHE_KEY)) || [];
-      return Array.isArray(list) ? list.map(player => Object.assign({}, player, {
-        dps:normalizeDpsList(player.dps)
-      })) : [];
-    }catch(e){ return []; }
-  }
-  let cloudRecCache = readRecCache();
-
-  function saveCloudRecCache(list){
-    cloudRecCache = Array.isArray(list) ? list.map(player => Object.assign({}, player, {
-      dps:normalizeDpsList(player.dps)
-    })) : [];
-    localStorage.setItem(CLOUD_REC_CACHE_KEY, JSON.stringify(cloudRecCache));
-  }
-
-  function recPlayersForView(players, userId, pseudo, includeCurrentDraft){
-    const list = Array.isArray(players) ? players.slice() : [];
-    if(includeCurrentDraft && userId && !list.some(player => player.owner === userId)){
-      list.unshift({
-        id:userId,
-        owner:userId,
-        name:pseudo || "Membre",
-        dps:[],
-        updatedAt:0
-      });
-    }
-    return list;
-  }
-
-  const Rec = {
-    all(){ return currentUser ? cloudRecCache.slice() : LocalRec.all(); },
-    save(list){
-      if(currentUser) saveCloudRecCache(list);
-      else LocalRec.save(list);
-    },
-    async refresh(){
-      if(!currentUser || !sb) return Rec.all();
-      const { data, error } = await sb.from("recensement").select("*");
-      if(error) throw error;
-      const players = (data||[]).map(cloudPlayerFromRow);
-      saveCloudRecCache(players);
-      return Rec.all();
-    },
-    async saveMine(player){
-      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
-      const mine = {
-        id:currentUser.id,
-        owner:currentUser.id,
-        name:currentPseudo || player.name || "Membre",
-        dps:normalizeDpsList(player.dps),
-        updatedAt:Date.now()
-      };
-      const { error } = await sb.from("recensement").upsert({
-        owner:currentUser.id,
-        pseudo:mine.name,
-        dps:mine.dps,
-        updated_at:new Date(mine.updatedAt).toISOString()
-      });
-      if(error) throw error;
-      const list = cloudRecCache.filter(item => item.owner !== currentUser.id);
-      list.unshift(mine);
-      saveCloudRecCache(list);
-      return mine;
-    },
-    async removeMine(){
-      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
-      const { error } = await sb.from("recensement").delete().eq("owner", currentUser.id);
-      if(error) throw error;
-      saveCloudRecCache(cloudRecCache.filter(player => player.owner !== currentUser.id));
-    }
-  };
-
-  function localPlayerForMigration(players){
-    const valid = Array.isArray(players)
-      ? players.filter(player => player && typeof player === "object")
-      : [];
-    const pseudo = currentPseudo.trim().toLowerCase();
-    const matching = valid.find(player =>
-      String(player.name||player.pseudo||"").trim().toLowerCase() === pseudo
-    );
-    if(matching) return matching;
-    return valid.length === 1 ? valid[0] : null;
-  }
-
   async function migrateLocalData(){
     if(!currentUser || !sb){
       openAuth("Connecte-toi pour importer tes données locales.", true);
@@ -9189,12 +8960,7 @@
     button.textContent = "Import en cours…";
     try{
       const localTeams = LocalTeams.all();
-      const localPlayers = LocalRec.all();
-      const localPlayer = localPlayerForMigration(localPlayers);
-      if(localPlayers.length > 1 && !localPlayer){
-        throw new Error("Plusieurs membres sont présents localement et aucun ne correspond à ton pseudo.");
-      }
-      if(!localTeams.length && !localPlayer){
+      if(!localTeams.length){
         toast("Aucune donnée locale à importer.");
         return;
       }
@@ -9206,22 +8972,15 @@
           updatedAt:localTeam.updatedAt || Date.now()
         }));
       }
-      if(localPlayer){
-        await Rec.saveMine({
-          name:currentPseudo,
-          dps:normalizeDpsList(localPlayer.dps)
-        });
-      }
 
       localStorage.setItem(migrationKey, "1");
       updateAccountUi();
       if($("#view-roster").classList.contains("active")) await renderRoster();
-      if($("#view-recensement").classList.contains("active")) await renderRecensement();
       if($("#view-analyse").classList.contains("active")) await renderAnalyse();
-      const parts = [];
-      if(localTeams.length) parts.push(localTeams.length+" équipe"+(localTeams.length>1?"s":""));
-      if(localPlayer) parts.push("ton recensement");
-      toast(parts.join(" et ")+" importé"+(parts.length>1||localTeams.length>1?"s":"")+" dans le registre.");
+      toast(
+        localTeams.length+" équipe"+(localTeams.length>1 ? "s" : "")
+          +" importée"+(localTeams.length>1 ? "s" : "")+" dans le registre."
+      );
     }catch(error){
       toast("Import local impossible : "+authMessage(error), true);
     }finally{
@@ -9255,316 +9014,6 @@
     b.appendChild(el("span",{text:elemLabel(e)}));
     return b;
   }
-  let activeElemMenu = null;
-
-  function closeActiveElemMenu(restoreFocus=false){
-    if(!activeElemMenu) return;
-    const closing = activeElemMenu;
-    activeElemMenu = null;
-    closing.close(restoreFocus);
-  }
-
-  document.addEventListener("pointerdown", event=>{
-    if(activeElemMenu && !activeElemMenu.root.contains(event.target)){
-      closeActiveElemMenu(false);
-    }
-  });
-
-  // contrôle d'élément : badge fixe si 1 seul, sinon menu déroulant colorable
-  function elemControl(charId, current, onChange){
-    const opts = charElements(charId);
-    if(opts.length <= 1) return elemBadge(current || opts[0] || elemOf(charId));
-    let value = current || opts[0];
-    let activeIndex = Math.max(0, opts.indexOf(value));
-    const wrap = el("span", {
-      class:"dps-elem-sel",
-      title:"Élément (selon l'arme jouée)"
-    });
-    const trigger = el("button", {
-      class:"dps-elem-trigger",
-      type:"button",
-      "aria-haspopup":"listbox",
-      "aria-expanded":"false"
-    });
-    const triggerDot = el("span", { class:"dot", "aria-hidden":"true" });
-    const triggerLabel = el("span", { class:"dps-elem-label" });
-    const caret = el("span", {
-      class:"dps-elem-caret",
-      text:"⌄",
-      "aria-hidden":"true"
-    });
-    const menu = el("span", { class:"dps-elem-menu", role:"listbox" });
-    menu.hidden = true;
-    const optionNodes = [];
-
-    function paint(){
-      wrap.style.setProperty("--ec", elemColor(value));
-      triggerLabel.textContent = elemLabel(value);
-      trigger.setAttribute("aria-label", "Élément : "+elemLabel(value));
-      optionNodes.forEach((node,index)=>{
-        node.setAttribute("aria-selected", String(opts[index] === value));
-        node.classList.toggle("selected", opts[index] === value);
-      });
-    }
-
-    function focusOption(index){
-      activeIndex = (index + optionNodes.length) % optionNodes.length;
-      optionNodes[activeIndex].focus();
-    }
-
-    const controller = {
-      root:wrap,
-      close(restoreFocus=false){
-        wrap.classList.remove("open");
-        menu.hidden = true;
-        trigger.setAttribute("aria-expanded", "false");
-        if(restoreFocus) trigger.focus();
-      }
-    };
-
-    function openMenu(){
-      if(activeElemMenu && activeElemMenu !== controller) closeActiveElemMenu(false);
-      activeElemMenu = controller;
-      wrap.classList.add("open");
-      menu.hidden = false;
-      trigger.setAttribute("aria-expanded", "true");
-      activeIndex = Math.max(0, opts.indexOf(value));
-      focusOption(activeIndex);
-    }
-
-    function choose(index){
-      value = opts[index];
-      paint();
-      onChange(value);
-      closeActiveElemMenu(true);
-    }
-
-    opts.forEach((element,index)=>{
-      const option = el("button", {
-        class:"dps-elem-option",
-        type:"button",
-        role:"option",
-        "aria-label":elemLabel(element),
-        tabindex:"-1"
-      }, [
-        el("span", {
-          class:"dot",
-          "aria-hidden":"true",
-          style:"--ec:"+elemColor(element)
-        }),
-        el("span", { text:elemLabel(element) }),
-        el("span", {
-          class:"dps-elem-check",
-          text:"✓",
-          "aria-hidden":"true"
-        })
-      ]);
-      option.querySelector(".dot").style.setProperty("--ec", elemColor(element));
-      option.addEventListener("click", ()=>choose(index));
-      option.addEventListener("keydown", event=>{
-        if(event.key === "ArrowDown"){
-          event.preventDefault();
-          focusOption(activeIndex+1);
-        }else if(event.key === "ArrowUp"){
-          event.preventDefault();
-          focusOption(activeIndex-1);
-        }else if(event.key === "Enter" || event.key === " "){
-          event.preventDefault();
-          choose(activeIndex);
-        }else if(event.key === "Escape"){
-          event.preventDefault();
-          closeActiveElemMenu(true);
-        }
-      });
-      optionNodes.push(option);
-      menu.appendChild(option);
-    });
-
-    trigger.addEventListener("click", ()=>{
-      if(activeElemMenu === controller) closeActiveElemMenu(false);
-      else openMenu();
-    });
-    trigger.addEventListener("keydown", event=>{
-      if(event.key === "ArrowDown" || event.key === "ArrowUp"){
-        event.preventDefault();
-        openMenu();
-      }else if(event.key === "Escape"){
-        event.preventDefault();
-        closeActiveElemMenu(true);
-      }
-    });
-
-    trigger.append(triggerDot, triggerLabel, caret);
-    wrap.append(trigger, menu);
-    paint();
-    return wrap;
-  }
-  function potSelect(pot, onChange){
-    const sel = el("select",{class:"dps-pot", title:"Potentiel"});
-    const opts = [["0","—"]]; for(let i=1;i<=POT_MAX;i++) opts.push([String(i),"P"+i]);
-    opts.forEach(([v,l])=> sel.appendChild(el("option",{value:v, text:l})));
-    sel.value = String(pot||0);
-    sel.addEventListener("change", ()=>onChange(parseInt(sel.value,10)||0));
-    return sel;
-  }
-
-  let recRenderId = 0;
-
-  async function renderRecensement(){
-    const renderId = ++recRenderId;
-    const grid = $("#recGrid");
-    grid.className = "";
-    grid.innerHTML = "";
-    if(!currentUser){
-      $("#recCount").textContent = "";
-      grid.appendChild(el("div",{class:"empty-state"},[
-        el("p",{class:"big",text:"Connecte-toi pour voir le recensement"}),
-        el("p",{text:"Le recensement des DPS est calculé automatiquement à partir du roster de chaque membre."}),
-        el("button",{class:"btn btn-primary",text:"Connexion",onclick:()=>openAuth()})
-      ]));
-      return;
-    }
-    grid.appendChild(el("div",{class:"empty-state"},[
-      el("p",{class:"big",text:"Chargement du recensement…"})
-    ]));
-    let players;
-    try{
-      players = await rosterDerivedPlayers();
-    }catch(error){
-      players = [];
-      toast("Recensement indisponible pour l'instant.", true);
-    }
-    if(renderId !== recRenderId) return;
-    const totalDps = players.reduce((n,p)=>n+((p.dps||[]).length),0);
-    $("#recCount").innerHTML = "<b>"+players.length+"</b> membre"+(players.length>1?"s":"")+
-      " · <b>"+totalDps+"</b> DPS (auto)";
-    grid.className = players.length ? "rec-grid" : "";
-    grid.innerHTML = "";
-    if(!players.length){
-      grid.appendChild(el("div",{class:"empty-state"},[
-        el("p",{class:"big",text:"Aucun DPS recensé"}),
-        el("p",{text:"Ajoute des personnages à rôle offensif dans l'onglet « Roster » : ils apparaîtront ici automatiquement."})
-      ]));
-      return;
-    }
-    players.forEach(p=>grid.appendChild(playerCard(p)));
-  }
-
-  // Recensement 100% dérivé du roster -> tout est en lecture seule.
-  function canManagePlayer(){ return false; }
-
-  async function persistPlayer(player){
-    try{
-      if(currentUser){
-        if(!canManagePlayer(player)) throw new Error("AUTH_REQUIRED");
-        await Rec.saveMine(player);
-      }else{
-        const list = LocalRec.all();
-        const index = list.findIndex(item => item.id === player.id);
-        if(index>=0) list[index]=player; else list.push(player);
-        LocalRec.save(list);
-      }
-      if($("#view-analyse").classList.contains("active")) void renderAnalyse();
-    }catch(error){
-      toast("Recensement non enregistré : "+authMessage(error), true);
-    }
-  }
-
-  async function removePlayer(player){
-    if(!canManagePlayer(player)) return;
-    if(!confirm('Retirer « '+(player.name||"?")+' » du recensement ?')) return;
-    try{
-      if(currentUser) await Rec.removeMine();
-      else LocalRec.save(LocalRec.all().filter(item => item.id !== player.id));
-      await renderRecensement();
-    }catch(error){
-      toast("Suppression impossible : "+authMessage(error), true);
-    }
-  }
-
-  function playerCard(p){
-    const editable = canManagePlayer(p);
-    const headItems = [
-      el("div",{class:"seal small", text:initials(p.name)}),
-      el("span",{class:"rec-name", text:p.name || "?"})
-    ];
-    if(editable){
-      headItems.push(el("button",{
-        class:"rec-del",
-        type:"button",
-        title:"Retirer le membre",
-        "aria-label":"Retirer le membre",
-        text:"✕",
-        onclick:()=>void removePlayer(p)}));
-    }
-    const head = el("div",{class:"rec-player-head"},headItems);
-
-    const list = el("div",{class:"dps-list"});
-    const dps = (p.dps||[]).slice().sort((a,b)=>{
-      const ea=ELEM_ORDER.indexOf(dpsElem(a)), eb=ELEM_ORDER.indexOf(dpsElem(b));
-      return ea-eb || (b.pot||0)-(a.pot||0);
-    });
-    if(!dps.length) list.appendChild(el("div",{class:"dps-empty", text:"Aucun DPS. Ajoute-en un ci-dessous."}));
-    dps.forEach((d,idx)=>{
-      const ch = charOf(d.char);
-      const port = el("div",{class:"dps-portrait"});
-      if(ch) port.appendChild(el("img",{src:ch.file, alt:ch.name, loading:"lazy"}));
-      const realIdx = (p.dps||[]).indexOf(d);
-      const rowItems = [
-        port,
-        el("span",{class:"dps-name", text: ch ? ch.name : d.char})
-      ];
-      if(editable){
-        rowItems.push(elemControl(d.char, dpsElem(d), value=>{
-          p.dps[realIdx].element=value;
-          void persistPlayer(p);
-        }));
-        rowItems.push(potSelect(d.pot, value=>{
-          p.dps[realIdx].pot=value;
-          void persistPlayer(p);
-        }));
-        rowItems.push(el("button",{
-          class:"dps-del",
-          type:"button",
-          title:"Retirer le DPS",
-          "aria-label":"Retirer le DPS",
-          text:"✕",
-          onclick:()=>{
-            p.dps.splice(realIdx,1);
-            void persistPlayer(p).then(()=>renderRecensement());
-          }}));
-      }else{
-        rowItems.push(elemBadge(dpsElem(d)));
-        rowItems.push(el("span",{class:"dps-pot", text:d.pot>0 ? "P"+d.pot : "—"}));
-      }
-      list.appendChild(el("div",{class:"dps-row"},rowItems));
-    });
-
-    const children = [head, list];
-    if(editable){
-      children.push(el("button",{class:"dps-add", type:"button", text:"+ Ajouter un DPS",
-        onclick:()=>{
-          Picker.open({
-            title:"DPS de "+(p.name||"?"),
-            items:(DATA.personnages||[]).map(c=>({value:c.id, name:c.name, file:c.file})),
-            portrait:true,
-            onSelect:value=>{
-              if(!value) return;
-              p.dps=p.dps||[];
-              p.dps.push({char:value, pot:0, element:(charElements(value)[0]||elemOf(value)||null)});
-              void persistPlayer(p).then(()=>renderRecensement());
-            }
-          });
-        }}));
-    }
-    return el("div",{class:"rec-player"},children);
-  }
-
-  // Le recensement est 100% dérivé du roster : un seul bouton -> onglet Roster.
-  $("#recGoRoster").addEventListener("click", ()=>{
-    if(!currentUser){ openAuth("Connecte-toi pour gérer ton roster.", true); return; }
-    showView("member-roster");
-  });
 
   /* ============================ Analyse ============================ */
   let analyseElem = null;

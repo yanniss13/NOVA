@@ -1362,17 +1362,39 @@ const { chromium } = require("playwright");
       cardsBeforeDuplicate
     );
 
-    // #5 : Recensement 100% dérivé du roster, lecture seule.
-    await page.locator('.tab[data-view="recensement"]').click();
-    await page.locator("#recGrid .rec-player").first().waitFor();
-    assert.equal(await page.locator("#recGrid .rec-player").count(), 2);
-    // Plus de saisie manuelle : aucun bouton d'ajout/suppression.
-    assert.equal(await page.locator("#recGrid .dps-add").count(), 0);
-    assert.equal(await page.locator("#recGrid .rec-del").count(), 0);
+    // #5 : l'Analyse est l'unique vue DPS et dérive directement des rosters.
+    await page.locator('.tab[data-view="analyse"]').click();
+    await page.locator("#analyseBody .rank-table").waitFor();
+    const analyseText = await page.locator("#analyseBody").textContent();
+    assert.match(analyseText, /Yannis/);
+    assert.match(analyseText, /Merlin/);
+    assert.match(analyseText, /Meliodas/);
 
-    const ownRecensement = page.locator("#recGrid .rec-player").filter({ hasText:"Yannis" });
-    // Yannis a meliodas (Attaquant/Ténèbres) dans son roster -> DPS dérivé Ténèbres.
-    assert.match(await ownRecensement.textContent(), /Meliodas/);
+    /* Les anciennes clés sont volontairement conservées, mais le frontend ne
+       les lit plus et ne consulte plus la table Supabase correspondante. */
+    assert.deepEqual(
+      await page.evaluate(() => ({
+        local:localStorage.getItem("confrerie7ds.recensement"),
+        cloud:localStorage.getItem("confrerie7ds.cloud.recensement")
+      })),
+      {
+        local:JSON.stringify([{
+          id:"local-player",
+          name:"Yannis",
+          dps:[{char:"diane",element:"EARTH",pot:6}]
+        }]),
+        cloud:JSON.stringify([{owner:"legacy-user",dps:[]}])
+      }
+    );
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.calls
+          .some(call => call.table === "recensement")
+      ),
+      false,
+      "L'ancienne table doit rester intacte sans être lue par le frontend"
+    );
+
     await page.evaluate(() => {
       window.__fakeSupabaseState.calls.length = 0;
       const row = window.__fakeSupabaseState.roster_characters
@@ -1382,10 +1404,10 @@ const { chromium } = require("playwright");
       window.__fakeSupabaseEmit("profiles", "UPDATE");
     });
     await page.waitForFunction(() =>
-      [...document.querySelectorAll("#recGrid .rec-player")]
-        .some(card =>
-          card.textContent.includes("Merlin") &&
-          card.textContent.includes("P10")
+      [...document.querySelectorAll("#analyseBody .rank-row")]
+        .some(row =>
+          row.textContent.includes("Merlin") &&
+          row.textContent.includes("P10")
         )
     );
     assert.equal(
@@ -1399,22 +1421,15 @@ const { chromium } = require("playwright");
       "Deux événements du même domaine doivent produire une seule relecture"
     );
 
-    // Aucun débordement horizontal sur mobile (recensement + analyse).
+    // Aucun débordement horizontal sur mobile dans l'Analyse.
     for(const width of [320, 360, 390]){
       await page.setViewportSize({ width, height:844 });
       const overflow = await page.evaluate(() =>
         document.scrollingElement.scrollWidth - document.scrollingElement.clientWidth
       );
-      assert.ok(overflow <= 1, `Débordement recensement de ${overflow}px à ${width}px`);
+      assert.ok(overflow <= 1, `Débordement Analyse de ${overflow}px à ${width}px`);
     }
     await page.setViewportSize({ width:1280, height:900 });
-
-    await page.locator('.tab[data-view="analyse"]').click();
-    await page.locator("#analyseBody .rank-table").waitFor();
-    const analyseText = await page.locator("#analyseBody").textContent();
-    assert.match(analyseText, /Yannis/);
-    assert.match(analyseText, /Merlin/);
-    assert.match(analyseText, /Meliodas/);
 
     // Migration one-shot des ÉQUIPES locales (le recensement n'est plus migré).
     const migrateButton = page.locator("#btnMigrateLocal");
@@ -6371,6 +6386,10 @@ async function installFakeSupabase(page){
       name:"Yannis",
       dps:[{ char:"diane", element:"EARTH", pot:6 }]
     }]));
+    localStorage.setItem(
+      "confrerie7ds.cloud.recensement",
+      JSON.stringify([{ owner:"legacy-user", dps:[] }])
+    );
     window.__fakeSupabaseClient = {
       auth:{
         async getSession(){ return { data:{ session:clone(state.session) }, error:null }; },
