@@ -2346,4 +2346,151 @@ function testHeroTermLabelUsesOrigin(hooks){
   testHeroTermLabelUsesOrigin(hooks);
 }
 
+function testStatTermGroups(hooks){
+  const groups = hooks.statTermGroups;
+  const label = term => term.source.label;
+  const stat = {
+    stat:"B_MaxHp",
+    unit:"flat",
+    terms:[
+      {
+        id:"a", operation:"add", unit:"flat", value:10,
+        bucket:"mastery:Wand", source:{ label:"Maîtrise Baguette" }
+      },
+      {
+        id:"b", operation:"add", unit:"flat", value:32,
+        bucket:"mastery:Wand", source:{ label:"Maîtrise Baguette" }
+      },
+      {
+        id:"c", operation:"add", unit:"flat", value:5,
+        bucket:"character:base", source:{ label:"Base du personnage" }
+      }
+    ]
+  };
+  const result = groups(stat, { termLabel:label });
+  assert.strictEqual(result.length, 2, "Deux libellés distincts, deux groupes");
+  assert.strictEqual(result[0].label, "Maîtrise Baguette");
+  assert.strictEqual(result[0].value, 42, "Les additifs d'un groupe se somment");
+  assert.strictEqual(result[0].terms.length, 2);
+  assert.strictEqual(
+    result[1].label, "Base du personnage",
+    "L'ordre suit la première apparition des termes"
+  );
+}
+
+function testStatTermGroupsKeepAppliesToApart(hooks){
+  const stat = {
+    stat:"B_Atk",
+    unit:"flat",
+    terms:[
+      {
+        id:"a", operation:"multiply", unit:"ten-thousandths", value:300,
+        appliesTo:["character:base", "armor:Bas"], source:{ label:"Taux" }
+      },
+      {
+        id:"b", operation:"multiply", unit:"ten-thousandths", value:300,
+        appliesTo:["weapon-native"], source:{ label:"Taux" }
+      }
+    ]
+  };
+  const result = hooks.statTermGroups(stat, {
+    termLabel:term => term.source.label
+  });
+  assert.strictEqual(
+    result.length, 2,
+    "Deux multiplicateurs visant des seaux différents ne peuvent pas être sommés"
+  );
+}
+
+function testStatTermGroupsKeepEmphasisApart(hooks){
+  const stat = {
+    stat:"B_Atk",
+    unit:"flat",
+    terms:[
+      {
+        id:"a", operation:"multiply", unit:"ten-thousandths", value:300,
+        appliesTo:["character:base"], source:{ label:"Taux", strong:true }
+      },
+      {
+        id:"b", operation:"multiply", unit:"ten-thousandths", value:300,
+        appliesTo:["character:base"], source:{ label:"Taux", strong:false }
+      }
+    ]
+  };
+  const result = hooks.statTermGroups(stat, {
+    termLabel:term => term.source.label,
+    termEmphasis:term => term.source.strong ? "weapon-stat-term-overlimit" : ""
+  });
+  assert.strictEqual(
+    result.length, 2,
+    "Une emphase différente change la ligne rendue : pas de fusion"
+  );
+}
+
+function testStatTermGroupsFlagMainRate(hooks){
+  const stat = {
+    stat:"B_MaxHp",
+    unit:"flat",
+    terms:[
+      {
+        id:"a", operation:"multiply", unit:"ten-thousandths", value:300,
+        appliesTo:["character:base"],
+        source:{ label:"Maîtrise Baguette", application:"hero-main-rate" }
+      },
+      {
+        id:"b", operation:"multiply", unit:"ten-thousandths", value:500,
+        appliesTo:["weapon-native"],
+        source:{ label:"Outrepassement", component:"overlimit" }
+      }
+    ]
+  };
+  const result = hooks.statTermGroups(stat, {
+    termLabel:term => term.source.label
+  });
+  assert.deepStrictEqual(
+    plain(result).map(group => group.mainRate),
+    [true, false],
+    "Seuls les taux principaux sont marqués pour le regroupement d'affichage"
+  );
+}
+
+function testStatTermGroupsKeepMainRateApart(hooks){
+  const stat = {
+    stat:"B_Atk",
+    unit:"flat",
+    terms:[
+      {
+        id:"a", operation:"multiply", unit:"ten-thousandths", value:300,
+        appliesTo:["character:base"],
+        source:{ label:"Équipement", application:"hero-main-rate" }
+      },
+      {
+        id:"b", operation:"multiply", unit:"ten-thousandths", value:300,
+        appliesTo:["character:base"],
+        source:{ label:"Équipement" }
+      }
+    ]
+  };
+  const result = hooks.statTermGroups(stat, {
+    termLabel:term => term.source.label
+  });
+  assert.strictEqual(
+    result.length, 2,
+    "Un taux principal ne fusionne jamais avec un multiplicateur ordinaire :"
+      +" leur notation et leur emplacement diffèrent"
+  );
+}
+
+// Le regroupement pur fusionne les termes qui rendraient la même ligne :
+// même libellé, même opération/unité, même seau ciblé, même emphase, et ne
+// mélange jamais un taux principal avec un multiplicateur ordinaire.
+{
+  const { hooks } = loadApp();
+  testStatTermGroups(hooks);
+  testStatTermGroupsKeepAppliesToApart(hooks);
+  testStatTermGroupsKeepEmphasisApart(hooks);
+  testStatTermGroupsKeepMainRateApart(hooks);
+  testStatTermGroupsFlagMainRate(hooks);
+}
+
 console.log("PASS stats de builds : modèle et calcul de l’arme");

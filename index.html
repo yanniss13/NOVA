@@ -4254,6 +4254,58 @@
     else parts.push("seaux "+term.appliesTo.join(", "));
     return parts.join(" · ");
   }
+  /* Deux termes ne sont regroupés que s'ils produiraient exactement la même
+     ligne. `appliesTo` fait partie de la clé parce que la contribution d'un
+     multiplicateur vaut base(appliesTo) × valeur : sommer deux taux visant des
+     seaux différents afficherait un total appliqué à une base qui n'existe
+     pas. L'emphase en fait partie parce qu'elle change la ligne rendue. */
+  const STAT_TERM_KEY_SEPARATOR = "\u0001";
+  function statTermGroupKey(term, termLabel, termEmphasis){
+    return [
+      termLabel(term) || "Autre",
+      term.operation,
+      term.unit,
+      term.operation === "multiply"
+        ? [...(term.appliesTo || [])].sort().join(",")
+        : "",
+      termEmphasis(term) || "",
+      /* `mainRate` change la notation ET l'emplacement du groupe : un taux
+         principal et un multiplicateur ordinaire ne doivent jamais fusionner,
+         même si tout le reste coïncide. */
+      ((term.source || {}).application === "hero-main-rate") ? "1" : "0"
+    ].join(STAT_TERM_KEY_SEPARATOR);
+  }
+  function statTermGroups(stat, options){
+    const settings = options || {};
+    const termLabel = settings.termLabel;
+    const termEmphasis = settings.termEmphasis || (() => "");
+    const groups = [];
+    const index = new Map();
+    ((stat && stat.terms) || []).forEach(term => {
+      const key = statTermGroupKey(term, termLabel, termEmphasis);
+      let group = index.get(key);
+      if(!group){
+        const source = term.source || {};
+        group = {
+          key,
+          label:termLabel(term) || "Autre",
+          operation:term.operation,
+          unit:term.unit,
+          appliesTo:term.operation === "multiply"
+            ? [...(term.appliesTo || [])].sort() : [],
+          emphasis:termEmphasis(term) || "",
+          mainRate:source.application === "hero-main-rate",
+          value:0,
+          terms:[]
+        };
+        index.set(key, group);
+        groups.push(group);
+      }
+      group.value += Number(term.value) || 0;
+      group.terms.push(term);
+    });
+    return groups;
+  }
   function heroStatDetails(stat){
     const details = el("details",{class:"weapon-stat-details"},[
       el("summary",{text:"Détail du calcul"})
