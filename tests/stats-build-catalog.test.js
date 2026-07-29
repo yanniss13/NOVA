@@ -172,6 +172,14 @@ characters.forEach(([slug, character]) => {
       slug + "/" + weaponType + " : maîtrise maximale incomplète"
     );
     assert.ok(mastery.abilities.length, slug + "/" + weaponType + " : aucun apport");
+    mastery.abilities.forEach(ability => {
+      if(ability.source.kind === "node"){
+        assert.ok(
+          ["Normal", "Special"].includes(ability.source.nodeType),
+          slug + "/" + weaponType + " : type de nœud absent"
+        );
+      }
+    });
   });
   Object.entries(character.potentialsByWeapon).forEach(([weaponType, tiers]) => {
     assert.deepEqual(

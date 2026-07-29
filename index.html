@@ -2713,7 +2713,7 @@
       : 0;
     const perLevel = Number.isFinite(addValue) ? addValue : 0;
     const steps = Math.max(0, Math.trunc(level) - origin);
-    return Math.round(
+    return gameCeil(
       (base + perLevel * steps) * reinforceMultiplier(reinforce)
     );
   }
@@ -3065,8 +3065,10 @@
 
   /*
    * PRÉSUMÉ, NON VÉRIFIÉ :
-   * l’outrepassement multiplie les statistiques natives de l’arme avant
-   * les enchantements.
+   * l’outrepassement multiplie la statistique principale native de l’arme
+   * avant les enchantements. Le fait qu’il ne touche ni les sous-statistiques
+   * ni le passif est confirmé par le propriétaire ; seule la base précise de
+   * la statistique principale reste présumée.
    *
    * Vérification dans le jeu :
    * relever l’ATK à outrepassement 0 puis 1 sur une arme enchantée.
@@ -3145,28 +3147,55 @@
       }
     });
 
-    stats.forEach(entry => {
-      entry.multipliers.forEach(term => {
-        if(!term.appliesTo.some(bucket => entry.buckets.has(bucket))){
-          throw new Error("BUILD_STAT_TARGET_UNRESOLVED");
-        }
-      });
-    });
-
     return [...stats.entries()]
       .filter(([, entry]) => entry.unit !== null)
       .sort(([left], [right]) => left.localeCompare(right))
       .map(([stat, entry]) => {
-        const additive = [...entry.buckets.values()]
-          .reduce((sum, value) => sum + value, 0);
-        const multiplied = entry.multipliers.reduce((sum, term) => {
+        const producedBuckets = new Set(
+          entry.multipliers
+            .map(term => term.bucket)
+            .filter(bucket => typeof bucket === "string" && bucket)
+        );
+        let pending = entry.multipliers.filter(term => producedBuckets.has(term.bucket));
+        while(pending.length){
+          const ready = pending.filter(term =>
+            term.appliesTo.every(bucket =>
+              entry.buckets.has(bucket) || !producedBuckets.has(bucket)
+            )
+          );
+          if(!ready.length) throw new Error("BUILD_STAT_TARGET_UNRESOLVED");
+          ready.forEach(term => {
+            if(!term.appliesTo.some(bucket => entry.buckets.has(bucket))){
+              throw new Error("BUILD_STAT_TARGET_UNRESOLVED");
+            }
+            const base = term.appliesTo.reduce(
+              (targeted, bucket) => targeted + (entry.buckets.get(bucket) || 0),
+              0
+            );
+            entry.buckets.set(
+              term.bucket,
+              (entry.buckets.get(term.bucket) || 0)
+                + base * term.value / 10000
+            );
+          });
+          const resolved = new Set(ready);
+          pending = pending.filter(term => !resolved.has(term));
+        }
+        const finalMultipliers = entry.multipliers
+          .filter(term => !producedBuckets.has(term.bucket));
+        const multiplied = finalMultipliers.reduce((sum, term) => {
+          if(!term.appliesTo.some(bucket => entry.buckets.has(bucket))){
+            throw new Error("BUILD_STAT_TARGET_UNRESOLVED");
+          }
           const base = term.appliesTo.reduce(
             (targeted, bucket) => targeted + (entry.buckets.get(bucket) || 0),
             0
           );
           return sum + base * term.value / 10000;
         }, 0);
-        return { stat, unit:entry.unit, value:additive + multiplied };
+        const bucketTotal = [...entry.buckets.values()]
+          .reduce((sum, value) => sum + value, 0);
+        return { stat, unit:entry.unit, value:bucketTotal + multiplied };
       });
   }
 
@@ -3178,6 +3207,32 @@
       throw new Error("BUILD_STAT_METADATA_MISSING");
     }
     return metadata;
+  }
+  function gameCeil(value){
+    return Math.ceil(Number(value) - 1e-9);
+  }
+  function appendCeilRoundingTerm(terms, stat, bucket, source){
+    const total = reconstructStatTotals(terms)
+      .find(entry => entry.stat === stat);
+    if(!total || total.unit !== "flat") return;
+    const rounded = gameCeil(total.value);
+    const delta = rounded - total.value;
+    if(delta === 0) return;
+    const metadata = buildStatMetadata(stat);
+    terms.push({
+      id:"rounding:"+bucket+":"+stat,
+      stat,
+      operation:"add",
+      value:delta,
+      unit:"flat",
+      bucket,
+      family:metadata.family,
+      source:Object.assign({
+        domain:"rounding",
+        component:"final-ceil"
+      }, source || {}),
+      confidence:"exact"
+    });
   }
 
   const HERO_MAIN_STAT_MAP = {
@@ -3269,6 +3324,32 @@
           }, item.source || {})
         }))
     );
+  }
+  function reserveMasteryTerms(definition, activeWeaponType){
+    if(!definition || !definition.masteriesByWeapon) return [];
+    return Object.entries(definition.masteriesByWeapon)
+      .filter(([weaponType]) => weaponType !== activeWeaponType)
+      .flatMap(([weaponType, branch]) => {
+        const abilities = branch && Array.isArray(branch.abilities)
+          ? branch.abilities : [];
+        return abilities
+          .filter(item => item && item.source
+            && (item.source.kind === "subLevel"
+              || (item.source.kind === "node"
+                && item.source.nodeType === "Special")))
+          .filter(item => Number(item.value) !== 0)
+          .map((item, index) => heroAdditiveTerm({
+            id:"mastery:reserve:"+weaponType+":"+index+":"+item.stat,
+            stat:item.stat,
+            value:item.value,
+            bucket:"mastery:reserve:"+weaponType,
+            source:Object.assign({
+              domain:"mastery",
+              component:"reserve-weapon-mastery",
+              weaponType
+            }, item.source || {})
+          }));
+      });
   }
   function potentialTerms(definition, weaponType, tier){
     if(!definition || !isInteger(tier) || tier <= 0 || tier > POT_MAX){
@@ -3398,26 +3479,26 @@
     }
     if(overlimit && Number(overlimit.statRate) !== 0){
       const appliesTo = overlimitTargetBuckets(OVERLIMIT_APPLICATION_MODE);
-      const affectedStats = new Set(
-        terms
-          .filter(term => term.operation === "add" && appliesTo.includes(term.bucket))
-          .map(term => term.stat)
-      );
-      [...affectedStats].sort().forEach(stat => {
-        const metadata = buildStatMetadata(stat);
-        terms.push({
-          id:"weapon:overlimit:"+stat,
-          stat,
-          operation:"multiply",
-          value:Number(overlimit.statRate),
-          unit:"ten-thousandths",
-          appliesTo:[...appliesTo],
-          family:metadata.family,
-          source:{ domain:"weapon", component:"overlimit", id:file },
-          confidence:"exact"
-        });
+      const metadata = buildStatMetadata(mainStat);
+      terms.push({
+        id:"weapon:overlimit:"+mainStat,
+        stat:mainStat,
+        operation:"multiply",
+        value:Number(overlimit.statRate),
+        unit:"ten-thousandths",
+        appliesTo:[...appliesTo],
+        bucket:"weapon-overlimit",
+        family:metadata.family,
+        source:{ domain:"weapon", component:"overlimit", id:file },
+        confidence:"exact"
       });
     }
+    appendCeilRoundingTerm(
+      terms,
+      mainStat,
+      "weapon-rounding",
+      { domain:"weapon", component:"final-rounding", scope:"weapon", id:file }
+    );
 
     return {
       version:1,
@@ -3704,15 +3785,17 @@
     "engraving",
     "set"
   ];
-  function heroMainRateTargetBuckets(stat, additiveTerms, mode){
+  function heroMainRateTargetBuckets(stat, sourceTerms, mode){
     const selectedMode = mode || HERO_MAIN_RATE_APPLICATION_MODE;
     if(selectedMode !== "all-flat-before-passives"){
       throw new Error("HERO_MAIN_RATE_MODE_INVALID");
     }
     const seen = new Set();
-    return (additiveTerms || []).reduce((buckets, term) => {
-      if(term && term.operation === "add" && term.stat === stat
-        && term.unit === "flat" && typeof term.bucket === "string"
+    return (sourceTerms || []).reduce((buckets, term) => {
+      if(term && (term.operation === "add" || term.operation === "multiply")
+        && term.stat === stat
+        && (term.operation !== "add" || term.unit === "flat")
+        && typeof term.bucket === "string"
         && !seen.has(term.bucket)){
         seen.add(term.bucket);
         buckets.push(term.bucket);
@@ -3831,8 +3914,9 @@
           id:"secondary-weapon:"+type+":attack-transfer",
           stat:"B_Atk",
           operation:"add",
-          value:attack.value
-            * SECONDARY_WEAPON_ATTACK_TRANSFER_RATE / 10000,
+          value:gameCeil(
+            attack.value * SECONDARY_WEAPON_ATTACK_TRANSFER_RATE / 10000
+          ),
           unit:"flat",
           bucket:"secondary-weapon:"+type,
           family:metadata.family,
@@ -3950,6 +4034,7 @@
     const build = calculateBuildStats(source);
     const rawTerms = characterBaseTerms(character)
       .concat(fullMasteryTerms(character, weaponType))
+      .concat(reserveMasteryTerms(character, weaponType))
       .concat(potentialTerms(character, weaponType, potentialTier))
       .concat(build.terms.map(canonicalHeroTerm))
       .concat(secondary.terms);
@@ -3979,6 +4064,14 @@
       return terms;
     }, []);
     const terms = rawTerms.concat(rateTerms);
+    ["B_Atk", "B_Def", "B_MaxHp"].forEach(stat => {
+      appendCeilRoundingTerm(
+        terms,
+        stat,
+        "hero-rounding:"+stat,
+        { scope:"hero" }
+      );
+    });
     const weaponFact = calculateWeaponStats(
       source.weapon,
       source.weaponConfig
@@ -4091,6 +4184,10 @@
   }
   function heroTermLabel(term){
     const source = term.source || {};
+    if(source.component === "final-ceil"
+      || source.component === "final-rounding"){
+      return "Arrondi du jeu";
+    }
     if(term.operation === "multiply"){
       return source.component === "overlimit"
         ? "Outrepassement" : "Application du taux";
@@ -4114,9 +4211,13 @@
   }
   function heroTermProvenance(term){
     const source = term.source || {};
+    const component = source.component === "final-ceil"
+      || source.component === "final-rounding"
+      ? "arrondi au supérieur"
+      : (source.component || "contribution");
     const parts = [
       "Source : "+(source.domain || "inconnue"),
-      source.component || "contribution",
+      component,
       "unité "+(term.unit === "flat" ? "points" : "dix-millièmes")
     ];
     if(source.field) parts.push("champ "+source.field);
@@ -4361,6 +4462,7 @@
       }).format(1 + Number(term.value) / 10000);
       return "Outrepassement ×"+factor+" — base présumée";
     }
+    if(term.source.component === "final-rounding") return "Arrondi du jeu";
     return term.source.component;
   }
 

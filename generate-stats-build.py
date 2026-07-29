@@ -563,6 +563,11 @@ def compact_character(character, known):
                     },
                 })
         for index, node in enumerate(mastery.get("nodes") or []):
+            node_type = node.get("nodeType")
+            if node_type not in {"Normal", "Special"}:
+                raise ValueError(
+                    f"{slug}/{weapon_type} : type de noeud de maitrise invalide"
+                )
             for ability in node.get("abilities") or []:
                 group["abilities"].append({
                     "stat": canonical_stat(ability["stat"], known),
@@ -571,6 +576,7 @@ def compact_character(character, known):
                         "level": level,
                         "kind": "node",
                         "index": index,
+                        "nodeType": node_type,
                     },
                 })
     masteries_by_weapon = {}

@@ -91,6 +91,9 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
 - [x] **Stats de builds — lot 3A, borne inférieure du héros**. Les statistiques
       fixes du personnage, sa maîtrise maximale, son potentiel commun et ses
       neuf équipements sont réunis dans une décomposition reconstructible.
+      La maîtrise inclut toute la branche active, les sous-niveaux et les gros
+      nœuds `Special` des deux armes de réserve. Les arrondis reproduisent le
+      jeu et sont eux aussi exposés comme des termes.
       PV, ATK et DEF sont affichés séparément comme « borne inférieure ».
       Les passifs restent descriptifs et explicitement hors calcul. Un build
       incomplet n'affiche jamais de faux total.
@@ -354,7 +357,11 @@ Chaque code émis possède des métadonnées explicites
 `ten-thousandths`. Ne jamais déduire l'unité depuis le nom du code ni depuis le
 drapeau incomplet `taux` de `libelles-stats.json`.
 
-L'outrepassement est multiplicatif. Les taux connus sont
+L'outrepassement est multiplicatif et porte uniquement sur la statistique
+principale `B_Atk_Equip` de l'arme. Il ne multiplie ni les sous-statistiques de
+l'arme, ni le texte de son passif. L'inclusion éventuelle d'un enchantement
+`B_Atk_Equip` plat reste l'hypothèse distincte décrite ci-dessous. Les taux
+connus sont
 `0/500/1000/1750/2500/3750/5000` en dix-millièmes, donc `500 = +5 %` et le
 facteur exact vaut `1 + statRate/10000`. Sa base d'application est présumée :
 `OVERLIMIT_APPLICATION_MODE` vaut actuellement
@@ -549,9 +556,12 @@ jamais être interprétée comme un vrai zéro.
 
 Les personnages **n'ont aucun niveau dans le jeu** : leurs `baseStats` sont
 fixes. Le propriétaire a décidé de considérer tous les personnages en
-**maîtrise maximale**. Le moteur additionne donc la maîtrise commune et tous les
-`subLevel`/`node` des cinq niveaux de la branche correspondant à l'arme équipée.
-Aucun réglage de maîtrise n'est persisté.
+**maîtrise maximale**. Le moteur additionne une seule fois la maîtrise commune,
+tous les `subLevel` et tous les `node` des cinq niveaux de la branche de l'arme
+équipée, puis les `subLevel` et uniquement les gros nœuds
+`nodeType:"Special"` des deux branches de réserve. Les petits nœuds
+`nodeType:"Normal"` d'une arme inactive ne contribuent pas. Aucun réglage de
+maîtrise n'est persisté.
 
 Le potentiel reste un seul entier commun au héros et s'affiche `P0` à `P10`.
 L'arme équipée choisit la branche de données. Chaque entrée numérique
@@ -663,7 +673,10 @@ retombe sur les millisecondes que pour un ancien cache qui n'en contient pas.
 `SECONDARY_WEAPON_ATTACK_TRANSFER_RATE = 3000` signifie que chacune des deux
 armes non affichées apporte 30 % de son `B_Atk_Equip` final. Cette valeur inclut
 niveau, promotion, outrepassement et enchantements ATK plats. Les termes
-`I_AtkAdd_Rate` des armes secondaires sont exclus.
+`I_AtkAdd_Rate` des armes secondaires sont exclus. Chaque apport de 30 %, puis
+le résultat final PV/ATK/DEF, est arrondi au supérieur comme dans le jeu. Les
+écarts d'arrondi restent visibles dans la décomposition sous forme de termes,
+afin que `totals` reste strictement reconstructible.
 
 `SECONDARY_WEAPON_TRANSFER_APPLICATION_MODE` vaut
 `"before-hero-rates"`. Ce choix est **présumé, non vérifié** : les contributions

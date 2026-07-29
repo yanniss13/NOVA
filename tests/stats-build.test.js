@@ -54,6 +54,110 @@ function fakeText(root){
     .join(" ");
 }
 
+function merlinGameFixture(hooks){
+  const weaponConfig = (gradeGameId, overlimit) => ({
+    version:1,
+    gradeGameId,
+    level:50,
+    promotion:4,
+    overlimit,
+    enchantments:[null]
+  });
+  const gearConfig = (file, level, reinforce, enchantments) => {
+    const config = plain(hooks.emptyGearConfig(file));
+    config.level = level;
+    config.reinforce = reinforce;
+    if(enchantments) config.enchantments = enchantments;
+    return config;
+  };
+  const weapon =
+    "7ds-armes/Baguette/Baguette des ailes de la flamme noire.webp";
+  const armor = {
+    Haut:"7ds-armures-ssr/Haut/Haut du souverain cupide.webp",
+    Bas:"7ds-armures-ssr/Bas/Bas du souverain cupide.webp",
+    Bottes:"7ds-armures-ssr/Bottes/Bottes de combat du souverain cupide.webp",
+    Ceinture:"7ds-armures-ssr/Ceinture/Ceinture du souverain cupide.webp",
+    "Armure liee":
+      "7ds-armures-ssr/Armure liee/Le Sanglier de la Gourmandise.webp"
+  };
+  const jewel = {
+    Anneau:"7ds-bijoux/Anneau/Anneau du souverain cupide.webp",
+    Collier:"7ds-bijoux/Collier/Collier du souverain cupide.webp",
+    "Boucle d'oreille":
+      "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles du souverain cupide.webp"
+  };
+  const activeWeaponConfig = weaponConfig("131065005", 6);
+  activeWeaponConfig.enchantments = [
+    {
+      slot:0, tier:5, element:"thunder",
+      stat:"Thunder_Element_Rate", value:1680
+    },
+    {
+      slot:1, tier:5, element:"thunder",
+      stat:"C_Critical_Dam_Rate", value:1681
+    },
+    {
+      slot:2, tier:5, element:"thunder",
+      stat:"Normalskill_Damadd_Rate", value:2045
+    },
+    {
+      slot:3, tier:5, element:"thunder",
+      stat:"Normalskillchangetag_Damadd_Rate", value:2722
+    }
+  ];
+  const hero = {
+    char:"merlin",
+    weapon,
+    weaponConfig:activeWeaponConfig,
+    armor,
+    armorConfig:{
+      Haut:gearConfig(armor.Haut, 159, 5),
+      Bas:gearConfig(armor.Bas, 159, 5),
+      Bottes:gearConfig(armor.Bottes, 156, 5),
+      Ceinture:gearConfig(armor.Ceinture, 159, 5),
+      "Armure liee":gearConfig(
+        armor["Armure liee"],
+        129,
+        5,
+        [
+          { slot:0, stat:"Normalskill_Damadd_Rate", value:1766 },
+          { slot:1, stat:"TickDam_Rate", value:2930 },
+          { slot:2, stat:"C_Critical_Rate", value:450 }
+        ]
+      )
+    },
+    jewel,
+    jewelConfig:{
+      Anneau:gearConfig(jewel.Anneau, 160, 5, [
+        { slot:0, stat:"C_Critical_Dam_Rate", value:1205 }
+      ]),
+      Collier:gearConfig(jewel.Collier, 158, 5, [
+        { slot:0, stat:"C_Critical_DamRes_Rate", value:669 }
+      ]),
+      "Boucle d'oreille":gearConfig(jewel["Boucle d'oreille"], 160, 5, [
+        { slot:0, stat:"Fire_Burst_Gauge_Rate", value:789 }
+      ])
+    },
+    potentiel:{ tier:7 },
+    note:"",
+    activeWeaponType:"Baguette",
+    rosterBuilds:{}
+  };
+  hero.armorConfig["Armure liee"].passiveLevel = 3;
+  hero.rosterBuilds.Baguette = plain(hooks.teamBuildSnapshot(hero));
+  hero.rosterBuilds.Livre = {
+    ...plain(hero.rosterBuilds.Baguette),
+    weapon:"7ds-armes/Livre/Grimoire de l'âme vorace.webp",
+    weaponConfig:weaponConfig("131105010", 5)
+  };
+  hero.rosterBuilds.Baton = {
+    ...plain(hero.rosterBuilds.Baguette),
+    weapon:"7ds-armes/Baton/Bâton des ailes de la flamme noire.webp",
+    weaponConfig:weaponConfig("131015005", 3)
+  };
+  return hero;
+}
+
 // Les primitives reproduisent les segments, promotions, bornes et formats documentés.
 {
   const { hooks } = loadApp();
@@ -159,6 +263,27 @@ function fakeText(root){
     plain(hooks.reconstructStatTotals(includingEnchantments)),
     [{ stat:"B_Atk_Equip", unit:"flat", value:3255 }]
   );
+  const chainedMultipliers = [
+    { ...bucketTerms[0], value:100 },
+    {
+      ...bucketTerms[2],
+      id:"weapon-overlimit",
+      value:5000,
+      bucket:"weapon-overlimit"
+    },
+    {
+      ...bucketTerms[2],
+      id:"hero-rate",
+      value:2000,
+      appliesTo:["weapon-native", "weapon-overlimit"],
+      source:{ domain:"potential", component:"hero-main-rate" }
+    }
+  ];
+  assert.deepStrictEqual(
+    plain(hooks.reconstructStatTotals(chainedMultipliers)),
+    [{ stat:"B_Atk_Equip", unit:"flat", value:180 }],
+    "un taux du héros doit inclure le bonus produit par l’outrepassement"
+  );
 
   const additive = bucketTerms[0];
   const multiplier = bucketTerms[2];
@@ -240,6 +365,20 @@ function fakeText(root){
     term.value === 500 &&
     JSON.stringify(term.appliesTo) === JSON.stringify(["weapon-native"])
   ));
+  assert.strictEqual(
+    result.terms.some(term =>
+      term.operation === "multiply"
+      && term.source.component === "overlimit"
+      && term.stat === "critRate"
+    ),
+    false,
+    "l’outrepassement ne doit jamais multiplier une sous-statistique"
+  );
+  assert.strictEqual(
+    result.totals.find(total => total.stat === "B_Atk_Equip").value,
+    16,
+    "la statistique principale finale de l’arme est arrondie au supérieur"
+  );
   assert.ok(result.terms.some(term =>
     term.operation === "add" &&
     term.source.component === "level" &&
@@ -1190,6 +1329,39 @@ function fakeText(root){
     "une autre branche de maîtrise ne doit pas contribuer"
   );
 
+  assert.strictEqual(
+    typeof hooks.reserveMasteryTerms,
+    "function",
+    "le moteur doit exposer les apports de maîtrise des armes de réserve"
+  );
+  const merlinDefinition = hooks.characterDefinitionForHero({ char:"merlin" });
+  const reserve = plain(hooks.reserveMasteryTerms(merlinDefinition, "Wand"));
+  const reserveTotals = Object.fromEntries(
+    ["B_Atk", "B_Def", "B_MaxHp", "I_AtkAdd_Rate", "I_DefAdd_Rate",
+      "I_MaxHpAdd_Rate", "A_Accuracy", "A_Block"].map(stat => [
+      stat,
+      reserve
+        .filter(term => term.stat === stat)
+        .reduce((sum, term) => sum + term.value, 0)
+    ])
+  );
+  assert.deepStrictEqual(reserveTotals, {
+    B_Atk:1764,
+    B_Def:1134,
+    B_MaxHp:3024,
+    I_AtkAdd_Rate:2400,
+    I_DefAdd_Rate:2400,
+    I_MaxHpAdd_Rate:2400,
+    A_Accuracy:202,
+    A_Block:145
+  });
+  assert.ok(reserve.every(term =>
+    ["Book", "Staff"].includes(term.source.weaponType)
+    && term.source.component === "reserve-weapon-mastery"
+    && (term.source.kind === "subLevel"
+      || (term.source.kind === "node" && term.source.nodeType === "Special"))
+  ));
+
   assert.deepStrictEqual(plain(hooks.potentialTerms(definition, "Axe", 0)), []);
   const p3 = plain(hooks.potentialTerms(definition, "Axe", 3));
   assert.deepStrictEqual(
@@ -1349,7 +1521,7 @@ function fakeText(root){
   );
   assert.strictEqual(
     hooks.gearStatValue(definition, curve, add, 120, 5),
-    Math.round(3073 * 1.25)
+    Math.ceil(3073 * 1.25)
   );
 
   const segmented = {
@@ -1711,7 +1883,7 @@ function fakeText(root){
   );
   assert.deepStrictEqual(
     transfers.map(term => term.value),
-    [67.8, 61.5]
+    [68, 62]
   );
   transfers.forEach(term => {
     assert.strictEqual(term.stat, "B_Atk");
@@ -1719,7 +1891,7 @@ function fakeText(root){
     assert.strictEqual(term.unit, "flat");
     assert.strictEqual(
       term.value,
-      term.source.originalValue * 3000 / 10000
+      Math.ceil(term.source.originalValue * 3000 / 10000)
     );
   });
   assert.strictEqual(
@@ -1738,6 +1910,12 @@ function fakeText(root){
     result.totals,
     "la décomposition doit être l'unique source des totaux"
   );
+  assert.ok(
+    result.totals
+      .filter(total => ["B_Atk", "B_Def", "B_MaxHp"].includes(total.stat))
+      .every(total => Number.isInteger(total.value)),
+    "les trois statistiques principales finales sont arrondies au supérieur"
+  );
   const percentageSword = plain(hero);
   percentageSword.rosterBuilds["Epee 1 main"].weaponConfig.enchantments[0] = {
     slot:0,
@@ -1754,7 +1932,7 @@ function fakeText(root){
     && term.source.weaponType === "Epee 1 main"
   );
   assert.strictEqual(percentageSwordTransfer.source.originalValue, 126);
-  assert.strictEqual(percentageSwordTransfer.value, 37.8);
+  assert.strictEqual(percentageSwordTransfer.value, 38);
   assert.strictEqual(
     transfers.find(term =>
       term.source.weaponType === "Epee 1 main"
@@ -1933,6 +2111,8 @@ function fakeText(root){
   assert.ok(details.every(node => !node.open));
   assert.match(fakeText(section), /Base d’application présumée/);
   assert.match(fakeText(section), /Passifs non inclus dans le calcul/);
+  assert.match(fakeText(section), /Arrondi du jeu/);
+  assert.doesNotMatch(fakeText(section), /final-(?:ceil|rounding)/);
 
   const withPassives = plain(hero);
   withPassives.armorConfig.Bas.passiveLevel = 3;
@@ -1992,6 +2172,86 @@ function fakeText(root){
   assert.strictEqual(
     hooks.calculateHeroStats(futureConfig).status,
     "incompatible"
+  );
+}
+
+// Régression mesurée dans le vrai jeu avec le build Supabase de Merlin Foudre.
+{
+  const { hooks } = loadApp();
+  const hero = merlinGameFixture(hooks);
+  assert.strictEqual(
+    hooks.weaponConfigStatus(hero.weapon, hero.weaponConfig),
+    "valid",
+    "configuration de la baguette active"
+  );
+  Object.entries(hero.armor).forEach(([slot, file]) => {
+    assert.strictEqual(
+      hooks.gearConfigStatus(file, hero.armorConfig[slot]),
+      "valid",
+      "configuration d’armure " + slot
+    );
+  });
+  Object.entries(hero.jewel).forEach(([slot, file]) => {
+    assert.strictEqual(
+      hooks.gearConfigStatus(file, hero.jewelConfig[slot]),
+      "valid",
+      "configuration de bijou " + slot
+    );
+  });
+  const result = plain(hooks.calculateHeroStats(hero));
+  assert.strictEqual(result.status, "valid");
+
+  const totalsOf = terms => Object.fromEntries(
+    plain(hooks.reconstructStatTotals(terms))
+      .filter(total => ["B_Atk", "B_Def", "B_MaxHp"].includes(total.stat))
+      .map(total => [total.stat, total.value])
+  );
+  const base = totalsOf(result.terms.filter(term =>
+    ["character", "mastery"].includes(term.source.domain)
+    && term.operation === "add"
+  ));
+  assert.deepStrictEqual(base, {
+    B_Atk:4813,
+    B_Def:2950,
+    B_MaxHp:9296
+  });
+
+  const equipment = totalsOf(result.terms.filter(term =>
+    ["weapon", "armor", "engraving", "jewel", "set", "secondary-weapon"]
+      .includes(term.source.domain)
+  ));
+  assert.deepStrictEqual(equipment, {
+    B_Atk:10036,
+    B_Def:21614,
+    B_MaxHp:60338
+  });
+
+  assert.deepStrictEqual(
+    Object.fromEntries(
+      result.totals
+        .filter(total =>
+          ["I_AtkAdd_Rate", "I_DefAdd_Rate", "I_MaxHpAdd_Rate"]
+            .includes(total.stat)
+        )
+        .map(total => [total.stat, total.value])
+    ),
+    {
+      I_AtkAdd_Rate:5100,
+      I_DefAdd_Rate:4800,
+      I_MaxHpAdd_Rate:4100
+    }
+  );
+  assert.deepStrictEqual(
+    Object.fromEntries(
+      result.totals
+        .filter(total => ["B_Atk", "B_Def", "B_MaxHp"].includes(total.stat))
+        .map(total => [total.stat, total.value])
+    ),
+    {
+      B_Atk:22422,
+      B_Def:36355,
+      B_MaxHp:98184
+    }
   );
 }
 

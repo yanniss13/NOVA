@@ -154,6 +154,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   fullMasteryTerms:typeof fullMasteryTerms === "function"
     ? fullMasteryTerms
     : undefined,
+  reserveMasteryTerms:typeof reserveMasteryTerms === "function"
+    ? reserveMasteryTerms
+    : undefined,
   potentialTerms:typeof potentialTerms === "function"
     ? potentialTerms
     : undefined,

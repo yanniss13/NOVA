@@ -266,6 +266,7 @@ class GenerateStatsBuildTests(unittest.TestCase):
                         ],
                         "nodes": [
                             {
+                                "nodeType": "Special",
                                 "abilities": [
                                     {"stat": "I_AtkAdd_Rate", "value": 200}
                                 ]
@@ -491,7 +492,12 @@ class GenerateStatsBuildTests(unittest.TestCase):
                 {
                     "stat": "I_AtkAdd_Rate",
                     "value": 200,
-                    "source": {"level": 1, "kind": "node", "index": 0},
+                    "source": {
+                        "level": 1,
+                        "kind": "node",
+                        "index": 0,
+                        "nodeType": "Special",
+                    },
                 },
             ],
         )
