@@ -469,6 +469,12 @@ function loadApp(initialTeams){
         { weapon:"Wand", role:"Buster", element:"Thunder" },
         { weapon:"Book", role:"Supporter", element:"Default" },
         { weapon:"Staff", role:"Supporter", element:"Thunder" }
+      ]},
+      // SR Attaquant : sert uniquement à prouver l'exclusion des SR de l'analyse DPS.
+      bug:{ element:"DARK", role:"ATTACKER", rarity:"SR", weapons:[
+        { weapon:"Axe", role:"Attacker", element:"Dark" },
+        { weapon:"SwordDual", role:"Attacker", element:"Dark" },
+        { weapon:"Book", role:"Supporter", element:"Dark" }
       ]}
     },
     SEVEN_DS_ARMURES_LIEES:{

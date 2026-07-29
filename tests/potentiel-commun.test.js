@@ -398,18 +398,24 @@ const STORAGE_KEY = "confrerie7ds.teams";
 {
   const { hooks } = loadApp();
 
-  // meliodas : Hache + Epée à une main = 2 builds Attaquant/Ténèbres -> dédup -> 1 DPS
+  // meliodas : Hache + Epée à une main = 2 builds Attaquant/Ténèbres -> agrégés en 1 ligne
   assert.deepStrictEqual(
     plain(hooks.dpsEntriesFromRoster({ charId:"meliodas", potentialTier:7,
       builds:{ Hache:{}, "Epee 1 main":{} } })),
-    [{ char:"meliodas", element:"DARK", pot:7 }]
+    [{
+      char:"meliodas", element:"DARK", pot:7,
+      weaponTypes:["Axe", "Sword1h"], preferredWeaponType:"Sword1h"
+    }]
   );
 
   // merlin : Livre(Attaquant/Glace) est recensé, Bâton(Briseur/Feu) est exclu
   assert.deepStrictEqual(
     plain(hooks.dpsEntriesFromRoster({ charId:"merlin", potentialTier:9,
       builds:{ Livre:{}, Baton:{} } })),
-    [{ char:"merlin", element:"ICE", pot:9 }]
+    [{
+      char:"merlin", element:"ICE", pot:9,
+      weaponTypes:["Book"], preferredWeaponType:"Book"
+    }]
   );
 
   // Gowther : seule la Baguette Briseur est admise, à partir de P7.
@@ -421,12 +427,18 @@ const STORAGE_KEY = "confrerie7ds.teams";
   assert.deepStrictEqual(
     plain(hooks.dpsEntriesFromRoster({ charId:"gowther", potentialTier:7,
       builds:{ Baguette:{} } })),
-    [{ char:"gowther", element:"THUNDER", pot:7 }]
+    [{
+      char:"gowther", element:"THUNDER", pot:7,
+      weaponTypes:["Wand"], preferredWeaponType:"Wand"
+    }]
   );
   assert.deepStrictEqual(
     plain(hooks.dpsEntriesFromRoster({ charId:"gowther", potentialTier:10,
       builds:{ Baguette:{} } })),
-    [{ char:"gowther", element:"THUNDER", pot:10 }]
+    [{
+      char:"gowther", element:"THUNDER", pot:10,
+      weaponTypes:["Wand"], preferredWeaponType:"Wand"
+    }]
   );
   assert.deepStrictEqual(
     plain(hooks.dpsEntriesFromRoster({ charId:"gowther", potentialTier:9,
@@ -437,6 +449,108 @@ const STORAGE_KEY = "confrerie7ds.teams";
   // perso inconnu ou builds vides -> aucun DPS
   assert.deepStrictEqual(plain(hooks.dpsEntriesFromRoster({ charId:"inconnu", builds:{ Hache:{} } })), []);
   assert.deepStrictEqual(plain(hooks.dpsEntriesFromRoster({ charId:"meliodas", builds:{} })), []);
+}
+
+// #5 bis Recensement auto : agrégation des builds DPS et exclusion des SR.
+{
+  const { hooks } = loadApp();
+
+  function dpsFixture(charId, folders, tier){
+    const builds = {};
+    folders.forEach(folder => { builds[folder] = { weapon:"x.webp" }; });
+    return { charId, potentialTier:tier || 0, builds };
+  }
+
+  function testDpsAggregatesWeaponTypes(hooks){
+    // Meliodas SSR : trois builds DPS Ténèbres. Une seule ligne, trois armes.
+    const entries = plain(hooks.dpsEntriesFromRoster(
+      dpsFixture("meliodas", ["Epee 1 main", "Hache", "Epees doubles"], 7)
+    ));
+    const dark = entries.filter(e => e.element === "DARK");
+    assert.strictEqual(dark.length, 1, "Une seule ligne par personnage et élément");
+    assert.deepStrictEqual(
+      dark[0].weaponTypes.slice().sort(),
+      ["Axe", "Sword1h", "SwordDual"],
+      "Aucun build DPS n'est perdu par la déduplication"
+    );
+  }
+
+  function testDpsWeaponOrderIsStable(hooks){
+    const forward = plain(hooks.dpsEntriesFromRoster(
+      dpsFixture("meliodas", ["Epee 1 main", "Hache", "Epees doubles"], 7)
+    ));
+    const reversed = plain(hooks.dpsEntriesFromRoster(
+      dpsFixture("meliodas", ["Epees doubles", "Hache", "Epee 1 main"], 7)
+    ));
+    assert.deepStrictEqual(
+      forward.find(e => e.element === "DARK").weaponTypes,
+      reversed.find(e => e.element === "DARK").weaponTypes,
+      "L'ordre suit les slots du personnage, pas l'ordre de saisie"
+    );
+  }
+
+  function testDpsExcludesSr(hooks){
+    // `bug` est SR Attaquant avec deux builds Ténèbres : il ne doit rien produire.
+    assert.deepStrictEqual(
+      plain(hooks.dpsEntriesFromRoster(dpsFixture("bug", ["Hache", "Epees doubles"]))),
+      [],
+      "Un SR ne produit aucune entrée DPS, même avec des builds valides"
+    );
+    assert.ok(
+      plain(hooks.dpsEntriesFromRoster(
+        dpsFixture("meliodas", ["Hache"], 0)
+      )).length > 0,
+      "Un SSR équivalent reste présent"
+    );
+  }
+
+  function testDpsPreferredWeapon(hooks){
+    const entry = dpsFixture("meliodas", ["Hache", "Epee 1 main"], 7);
+    assert.strictEqual(
+      plain(hooks.dpsEntriesFromRoster(entry))
+        .find(e => e.element === "DARK").preferredWeaponType,
+      "Sword1h",
+      "Sans favori, Meliodas ouvre Sword1h"
+    );
+
+    const favored = dpsFixture("meliodas", ["Hache", "Epee 1 main"], 7);
+    favored.builds["Hache"].favorite = true;
+    assert.strictEqual(
+      plain(hooks.dpsEntriesFromRoster(favored))
+        .find(e => e.element === "DARK").preferredWeaponType,
+      "Axe",
+      "Le favori prime sur la préférence Meliodas"
+    );
+
+    const noSword = dpsFixture("meliodas", ["Hache", "Epees doubles"], 7);
+    const fallback = plain(hooks.dpsEntriesFromRoster(noSword))
+      .find(e => e.element === "DARK");
+    assert.strictEqual(
+      fallback.preferredWeaponType,
+      fallback.weaponTypes[0],
+      "Sans Sword1h, repli stable sur le premier de weaponTypes"
+    );
+  }
+
+  function testGowtherPotentialGate(hooks){
+    const seven = plain(hooks.dpsEntriesFromRoster(dpsFixture("gowther", ["Baguette"], 7)));
+    assert.deepStrictEqual(
+      seven.length ? seven[0].weaponTypes : [],
+      ["Wand"],
+      "Gowther P7 ne porte que la Baguette"
+    );
+    assert.deepStrictEqual(
+      plain(hooks.dpsEntriesFromRoster(dpsFixture("gowther", ["Baguette"], 6))),
+      [],
+      "Gowther P6 ne produit aucune entrée DPS"
+    );
+  }
+
+  testDpsAggregatesWeaponTypes(hooks);
+  testDpsWeaponOrderIsStable(hooks);
+  testDpsExcludesSr(hooks);
+  testDpsPreferredWeapon(hooks);
+  testGowtherPotentialGate(hooks);
 }
 
 // Roster partagé : conversion Supabase et cache isolé par propriétaire.

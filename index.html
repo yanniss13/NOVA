@@ -6285,22 +6285,49 @@
       && weaponEnum === "Wand"
       && (entry.potentialTier||0) >= 7;
   }
+  /* Préférence de jeu du propriétaire, propre à Meliodas : à défaut de favori,
+     ouvrir l'Épée à une main. Ce n'est pas une liste d'assets — c'est une
+     règle produit nommée. La généraliser changerait le comportement de futurs
+     personnages sans décision. */
+  const DPS_PREFERRED_WEAPON_BY_CHAR = { meliodas:"Sword1h" };
+
   function dpsEntriesFromRoster(entry){
     const m = entry && metaOf(entry.charId);
     if(!m || !entry.builds) return [];
-    const seen = new Set();
-    const out = [];
-    Object.keys(entry.builds).forEach(folder=>{
-      const en = FOLDER_TO_ENUM[folder];
-      const slot = (m.weapons||[]).find(w => w.weapon === en);
-      if(!slot) return;
+    /* Les SR sont hors de l'analyse DPS. Filtrer ici les retire d'un coup du
+       classement, de la couverture et de la matrice, qui dérivent toutes de
+       cette sortie. */
+    if(m.rarity !== "SSR") return [];
+    const favoriteFolder = favoriteRosterWeaponType(entry);
+    const favoriteEnum = favoriteFolder ? FOLDER_TO_ENUM[favoriteFolder] : null;
+    const preferred = DPS_PREFERRED_WEAPON_BY_CHAR[entry.charId] || null;
+    const byElement = new Map();
+    /* On parcourt les slots du personnage, pas les clés de `builds` : l'ordre
+       des armes devient stable d'un membre à l'autre. */
+    (m.weapons||[]).forEach(slot => {
+      const en = slot.weapon;
+      const folder = ENUM_TO_FOLDER[en];
+      if(!folder || !owns(entry.builds, folder)) return;
       if(!isRosterBuildDps(entry, slot, en)) return;
       const element = (slot.element||"").toUpperCase();
-      if(!element || seen.has(element)) return;
-      seen.add(element);
-      out.push({ char:entry.charId, element, pot:entry.potentialTier||0 });
+      if(!element) return;
+      if(!byElement.has(element)){
+        byElement.set(element, {
+          char:entry.charId,
+          element,
+          pot:entry.potentialTier||0,
+          weaponTypes:[],
+          preferredWeaponType:null
+        });
+      }
+      byElement.get(element).weaponTypes.push(en);
     });
-    return out;
+    return [...byElement.values()].map(item => Object.assign(item, {
+      preferredWeaponType:
+        (favoriteEnum && item.weaponTypes.includes(favoriteEnum) && favoriteEnum)
+        || (preferred && item.weaponTypes.includes(preferred) && preferred)
+        || item.weaponTypes[0]
+    }));
   }
 
   // Agrège tous les rosters de la confrérie -> [{owner, name, dps:[…]}]
