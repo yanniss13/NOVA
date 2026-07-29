@@ -4747,41 +4747,16 @@
               +(stat.unit === "flat" ? " points" : "")
           })
         ]));
-        const details = el("details",{class:"weapon-stat-details"},[
-          el("summary",{text:"Détail du calcul"})
-        ]);
-        stat.terms.forEach(term => {
-          const value = term.operation === "multiply"
+        const details = statTermsDetails(stat, {
+          termLabel:term => term.operation === "multiply"
+            ? "Outrepassement" : weaponTermLabel(term),
+          termValue:term => term.operation === "multiply"
             ? weaponTermLabel(term)
             : formatBuildStatValue(term.value, term.unit)
-              +(term.unit === "flat" ? " points" : "");
-          details.appendChild(el("div",{
-            class:"weapon-stat-term",
-            dataset:{
-              operation:term.operation,
-              unit:term.unit,
-              buckets:term.operation === "multiply"
-                ? term.appliesTo.join(",")
-                : term.bucket
-            }
-          },[
-            el("div",{class:"weapon-stat-term-value"},[
-              el("span",{
-                text:term.operation === "multiply"
-                  ? "Outrepassement"
-                  : weaponTermLabel(term)
-              }),
-              el("span",{
-                class:term.operation === "multiply"
-                  ? "weapon-stat-term-overlimit" : "",
-                text:value
-              })
-            ]),
-            el("small",{
-              class:"weapon-stat-provenance",
-              text:weaponTermProvenance(term)
-            })
-          ]));
+              +(term.unit === "flat" ? " points" : ""),
+          termProvenance:weaponTermProvenance,
+          termEmphasis:term => term.operation === "multiply"
+            ? "weapon-stat-term-overlimit" : ""
         });
         statNode.appendChild(details);
         family.appendChild(statNode);
