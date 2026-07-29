@@ -67,6 +67,12 @@ En maîtrise maximale, le moteur prend tous les `subLevels[].abilities`, tous le
 `nodes[].abilities` et les `commonMasteryStats` de la branche équipée. Aucun
 choix de nœud n’est demandé.
 
+Les tableaux `potentials[].stats` sont des instantanés cumulés du palier, pas
+des gains à additionner : par exemple, la branche Axe vérifiée passe de
+`I_AtkAdd_Rate:300` à P1 à `900` à P3 puis `1800` à P8. Le moteur lit donc
+uniquement les statistiques du palier commun sélectionné. P0 n’émet aucun
+terme.
+
 ### 3.2 Passifs
 
 Trois plafonds distincts existent et ne doivent pas être unifiés :
