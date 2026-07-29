@@ -1589,7 +1589,7 @@
     <div id="rosterGrid"></div>
   </section>
 
-  <!-- ============ RECENSEMENT DPS ============ -->
+  <!-- ============ ROSTER DES MEMBRES ============ -->
   <section id="view-member-roster" class="view" role="tabpanel"
            aria-labelledby="tab-member-roster">
     <p class="section-eyebrow">Collection de la confrérie</p>
@@ -9107,6 +9107,14 @@
   async function renderAnalyse(){
     const renderId = ++analyseRenderId;
     const box = $("#analyseBody");
+    /* Le rafraîchissement détache immédiatement les lignes du classement. Si
+       celle qui a ouvert la modale ne réapparaît pas (build supprimé ou lecture
+       en échec), l'onglet Analyse reste une cible logique et visible. Une ligne
+       reconstruite remplacera ce repli dans `renderRankTable()`. */
+    const detailOverlay = $("#rosterDetailOverlay");
+    if(detailOverlay.classList.contains("on") && rosterDetail.returnFocusKey){
+      ModalStack.setRestoreFocus(detailOverlay, $("#tab-analyse"));
+    }
     box.innerHTML = "";
     box.appendChild(el("div",{class:"empty-state"},[
       el("p",{class:"big",text:"Chargement de l’analyse…"})

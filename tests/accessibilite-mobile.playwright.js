@@ -565,6 +565,31 @@ async function installRosterFocusFakeSupabase(page){
         "La ligne du classement ne doit pas déborder à "+width+"px"
       );
     }
+
+    /* Si le build est supprimé pendant la lecture, aucune nouvelle ligne ne
+       peut reprendre le focus. Le repli logique est alors l'onglet Analyse,
+       jamais le body ni un contrôle désormais masqué de la modale. */
+    await rosterFocusPage.setViewportSize({ width:1280, height:900 });
+    await meliodasRank.click();
+    await rosterFocusPage.locator("#rosterDetailOverlay")
+      .waitFor({ state:"visible" });
+    await rosterFocusPage.evaluate(() => {
+      const state = window.__focusSupabaseState;
+      state.roster_characters = state.roster_characters
+        .filter(row => row.char_id !== "meliodas");
+      window.__focusSupabaseEmit("roster_characters");
+    });
+    await meliodasRank.waitFor({ state:"detached" });
+    await rosterFocusPage.locator("#analyseBody .rank-table").waitFor();
+    await rosterFocusPage.keyboard.press("Escape");
+    await rosterFocusPage.locator("#rosterDetailOverlay")
+      .waitFor({ state:"hidden" });
+    await rosterFocusPage.waitForTimeout(100);
+    assert.equal(
+      await rosterFocusPage.evaluate(() => document.activeElement.id),
+      "tab-analyse",
+      "Une ligne disparue doit rendre le focus à l'onglet Analyse"
+    );
     await rosterFocusContext.close();
 
     for(const width of [320, 360, 390]){
