@@ -404,6 +404,33 @@ function testStatTermGroupsFlagMainRate(hooks){
     "Seuls les taux principaux sont marqués pour le regroupement d'affichage"
   );
 }
+
+function testStatTermGroupsKeepMainRateApart(hooks){
+  const stat = {
+    stat:"B_Atk",
+    unit:"flat",
+    terms:[
+      {
+        id:"a", operation:"multiply", unit:"ten-thousandths", value:300,
+        appliesTo:["character:base"],
+        source:{ label:"Équipement", application:"hero-main-rate" }
+      },
+      {
+        id:"b", operation:"multiply", unit:"ten-thousandths", value:300,
+        appliesTo:["character:base"],
+        source:{ label:"Équipement" }
+      }
+    ]
+  };
+  const result = hooks.statTermGroups(stat, {
+    termLabel:term => term.source.label
+  });
+  assert.strictEqual(
+    result.length, 2,
+    "Un taux principal ne fusionne jamais avec un multiplicateur ordinaire :"
+      +" leur notation et leur emplacement diffèrent"
+  );
+}
 ```
 
 Puis appeler les quatre fonctions avec les autres :
@@ -412,6 +439,7 @@ Puis appeler les quatre fonctions avec les autres :
 testStatTermGroups(hooks);
 testStatTermGroupsKeepAppliesToApart(hooks);
 testStatTermGroupsKeepEmphasisApart(hooks);
+testStatTermGroupsKeepMainRateApart(hooks);
 testStatTermGroupsFlagMainRate(hooks);
 ```
 
@@ -452,7 +480,11 @@ Dans `index.html`, juste avant `function heroStatDetails(stat){` (~4234) :
       term.operation === "multiply"
         ? [...(term.appliesTo || [])].sort().join(",")
         : "",
-      termEmphasis(term) || ""
+      termEmphasis(term) || "",
+      /* `mainRate` change la notation ET l'emplacement du groupe : un taux
+         principal et un multiplicateur ordinaire ne doivent jamais fusionner,
+         même si tout le reste coïncide. */
+      ((term.source || {}).application === "hero-main-rate") ? "1" : "0"
     ].join(STAT_TERM_KEY_SEPARATOR);
   }
   function statTermGroups(stat, options){
@@ -498,10 +530,14 @@ Attendu : `PASS stats de builds : modèle et calcul de l’arme`.
 
 - [ ] **Étape 6 : prouver que les assertions mordent**
 
-Retirer `term.operation === "multiply" ? [...].sort().join(",") : ""` de la clé
-(le remplacer par `""`), relancer : `testStatTermGroupsKeepAppliesToApart` doit
-échouer. Rétablir. Retirer `termEmphasis(term) || ""` de la clé, relancer :
-`testStatTermGroupsKeepEmphasisApart` doit échouer. Rétablir.
+Trois mutations, une par composante ajoutée à la clé. Après chacune, relancer
+`node tests/stats-build.test.js`, vérifier l'échec attendu, puis rétablir.
+
+| Mutation | Test qui doit échouer |
+| --- | --- |
+| remplacer la ligne `appliesTo` de la clé par `""` | `testStatTermGroupsKeepAppliesToApart` |
+| retirer `termEmphasis(term) \|\| ""` de la clé | `testStatTermGroupsKeepEmphasisApart` |
+| remplacer la ligne `mainRate` de la clé par `"0"` | `testStatTermGroupsKeepMainRateApart` |
 
 - [ ] **Étape 7 : commit**
 
@@ -601,10 +637,16 @@ function testStatTermsDetailsStructure(hooks){
     groups.length, 1,
     "Seul le groupe de deux termes est replié ; le groupe d'un terme reste plat"
   );
-  const soloParent = rendered.find(item => item.dataset.termId === "base");
+  const solo = rendered.find(item => item.dataset.termId === "base");
   assert.ok(
-    fakeNodes(node, item => item === soloParent).length === 1,
-    "Le terme unique est rendu"
+    node.children.includes(solo),
+    "Un groupe d'un seul terme est enfant direct du détail : sans quoi il "
+      +"faudrait un second clic pour le voir, et potentiel-commun casse"
+  );
+  const paired = rendered.find(item => item.dataset.termId === "m1");
+  assert.ok(
+    !node.children.includes(paired),
+    "Un terme d'un groupe multiple est enfant du repli, pas du détail"
   );
 }
 ```
@@ -740,20 +782,22 @@ Remplacer entièrement `heroStatDetails` (~4234-4273) par :
   function statBucketNotes(groups){
     /* Une même statistique porte plusieurs bases : les taux principaux visent
        tous les seaux fixes, l'outrepassement les seuls seaux natifs de l'arme.
-       Une note unique afficherait la mauvaise base pour l'un des deux. */
-    const seen = new Map();
+       Une note unique afficherait la mauvaise base pour l'un des deux.
+       La note dit seulement où le taux s'applique : la mention « base
+       présumée » vit sur la ligne ou le bloc concerné, jamais deux fois. */
+    const seen = new Set();
+    const notes = [];
     groups.forEach(group => {
       if(group.operation !== "multiply") return;
       const key = group.appliesTo.join(",");
       if(!key || seen.has(key)) return;
-      seen.set(key, group);
+      seen.add(key);
+      notes.push(el("small",{
+        class:"stat-term-buckets",
+        text:"Appliqué à : "+key.split(",").join(", ")
+      }));
     });
-    return [...seen.entries()].map(([key, group]) => el("small",{
-      class:"stat-term-buckets",
-      text:"Appliqué à : "+key.split(",").join(", ")
-        +(group.terms.some(term => term.confidence === "presumed")
-          ? " · base présumée" : "")
-    }));
+    return notes;
   }
   function statTermsDetails(stat, options){
     const settings = options || {};
@@ -767,8 +811,18 @@ Remplacer entièrement `heroStatDetails` (~4234-4273) par :
       termLabel:settings.termLabel,
       termEmphasis
     });
-    const mainRateGroups = groups.filter(group => group.mainRate);
-    let mainRateRendered = false;
+    /* Un bloc « Taux principaux » par base visée. Additionner des taux qui ne
+       visent pas les mêmes seaux donnerait un total appliqué à une base qui
+       n'existe pas — c'est précisément ce que la clé de groupe interdit, et le
+       rendu ne doit pas le réintroduire. */
+    const mainRateBlocks = new Map();
+    groups.forEach(group => {
+      if(!group.mainRate) return;
+      const key = group.appliesTo.join(",");
+      if(!mainRateBlocks.has(key)) mainRateBlocks.set(key, []);
+      mainRateBlocks.get(key).push(group);
+    });
+    const renderedBlocks = new Set();
     groups.forEach(group => {
       if(!group.mainRate){
         details.appendChild(
@@ -776,18 +830,23 @@ Remplacer entièrement `heroStatDetails` (~4234-4273) par :
         );
         return;
       }
-      if(mainRateRendered) return;
-      mainRateRendered = true;
-      const total = mainRateGroups.reduce(
-        (sum, item) => sum + item.value, 0
+      const key = group.appliesTo.join(",");
+      if(renderedBlocks.has(key)) return;
+      renderedBlocks.add(key);
+      const block = mainRateBlocks.get(key);
+      const total = block.reduce((sum, item) => sum + item.value, 0);
+      const presumed = block.some(item =>
+        item.terms.some(term => term.confidence === "presumed")
       );
       const parent = el("details",{class:"stat-term-group"},[
         el("summary",{},[
-          el("span",{text:"Taux principaux"}),
+          el("span",{
+            text:"Taux principaux"+(presumed ? " — base présumée" : "")
+          }),
           el("span",{text:mainRateValueText(total)})
         ])
       ]);
-      mainRateGroups.forEach(item => {
+      block.forEach(item => {
         parent.appendChild(statGroupNode(item, termValue, termProvenance));
       });
       details.appendChild(parent);
@@ -969,12 +1028,15 @@ doit plus être faite trois fois."
 
 **Fichiers :**
 - Modifier : `tests/stats-build.test.js`
+- Modifier : `tests/accessibilite-mobile.playwright.js` (~1146, motif de boucle
+  320/390 px existant)
 - Modifier : `AGENTS.md`
 
 **Interfaces :**
 - Consomme : `merlinGameFixture(hooks)` (déjà présent,
-  `tests/stats-build.test.js` ~57), `calculateHeroStats`, `heroStatsGroups`,
-  `statTermsDetails`.
+  `tests/stats-build.test.js` ~57), `calculateHeroStats`,
+  `groupBuildStatResults`, `statTermGroups`, `statTermsDetails`,
+  `heroTermLabel`, `heroTermValue`.
 
 - [ ] **Étape 1 : écrire le test de régression qui échoue**
 
@@ -1014,15 +1076,40 @@ function testMerlinHpDetailRendering(hooks){
     "Les identifiants du moteur doivent être uniques"
   );
 
-  const text = fakeText(node);
-  ["Base du personnage", "Maîtrise commune", "Maîtrise Baguette",
-    "Maîtrises de réserve", "Équipement", "Taux principaux",
-    "Potentiel P7"].forEach(label => {
+  // Les chiffres, pas seulement les libellés : c'est ce que la spec fige.
+  assert.strictEqual(stat.value, 98184, "Total des PV du build mesuré");
+  const groups = plain(hooks.statTermGroups(stat, {
+    termLabel:hooks.heroTermLabel
+  }));
+  const shape = groups.map(group => [
+    group.label, group.mainRate, group.terms.length, group.value
+  ]);
+  [
+    ["Base du personnage", false, 1, 2000],
+    ["Maîtrise commune", false, 1, 1248],
+    ["Maîtrise Baguette", false, 8, 3024],
+    ["Maîtrises de réserve", false, 8, 3024],
+    ["Équipement", false, 4, 60338],
+    ["Maîtrise Baguette", true, 4, 1200],
+    ["Maîtrises de réserve", true, 8, 2400],
+    ["Potentiel P7", true, 1, 500]
+  ].forEach(expected => {
     assert.ok(
-      text.includes(label),
-      "Le détail des PV doit contenir la ligne « "+label+" »"
+      shape.some(actual =>
+        actual.every((value, index) => value === expected[index])
+      ),
+      "Groupe attendu absent ou différent : "+JSON.stringify(expected)
+        +" — obtenu "+JSON.stringify(shape)
     );
   });
+  assert.strictEqual(
+    groups.filter(group => group.mainRate)
+      .reduce((sum, group) => sum + group.value, 0),
+    4100,
+    "12 % + 24 % + 5 % = 41 % de taux principaux"
+  );
+
+  const text = fakeText(node);
   assert.ok(
     !text.includes("Application du taux"),
     "Plus aucune ligne indistincte « Application du taux »"
@@ -1052,6 +1139,90 @@ un-à-un, qui est l'invariant du lot.
 Dans `statTermNode`, remplacer `termId:term.id` par `termId:"x"`, relancer,
 vérifier l'échec de `deepStrictEqual`, puis rétablir.
 
+- [ ] **Étape 3 bis : test de débordement à 320 et 390 px**
+
+La spec exige ce contrôle dans les tests, pas seulement à l'œil. Ajouter dans
+`tests/accessibilite-mobile.playwright.js`, en suivant le motif de la boucle
+existante (~1146) :
+
+```js
+    for(const width of [320, 390]){
+      const detailContext = await browser.newContext({
+        viewport:{width,height:844},
+        isMobile:true,
+        hasTouch:true,
+        reducedMotion:"reduce"
+      });
+      const detailPage = await detailContext.newPage();
+      await detailPage.route(
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*",
+        route => route.fulfill({
+          status:200,
+          contentType:"application/javascript",
+          body:"window.supabase=undefined;"
+        })
+      );
+      await detailPage.goto(
+        pathToFileURL(path.resolve(__dirname, "..", "index.html")).href
+      );
+
+      await detailPage.locator(".weapon-config-open").first().click();
+      await detailPage.locator("#weaponConfigPreview .weapon-stat-details summary")
+        .first().click();
+      // Déplier tous les groupes : c'est replié que rien ne déborde jamais.
+      await detailPage.evaluate(() => {
+        document.querySelectorAll("#weaponConfigPreview details")
+          .forEach(node => { node.open = true; });
+      });
+
+      const metrics = await detailPage.evaluate(() => {
+        const root = document.scrollingElement;
+        const summaries = [...document.querySelectorAll(
+          "#weaponConfigPreview .weapon-stat-details summary,"
+          +" #weaponConfigPreview .stat-term-group>summary"
+        )];
+        return {
+          overflow:root.scrollWidth - root.clientWidth,
+          shortestSummary:summaries.reduce(
+            (smallest, node) => Math.min(
+              smallest,
+              Math.round(node.getBoundingClientRect().height)
+            ),
+            Infinity
+          ),
+          summaryCount:summaries.length
+        };
+      });
+
+      assert.ok(
+        metrics.summaryCount > 0,
+        `Le détail du calcul doit être rendu à ${width}px`
+      );
+      assert.ok(
+        metrics.overflow <= 2,
+        `Aucun débordement horizontal à ${width}px `
+          +`(mesuré ${metrics.overflow}px)`
+      );
+      assert.ok(
+        metrics.shortestSummary >= 44,
+        `Les replis gardent une cible tactile de 44px à ${width}px `
+          +`(mesuré ${metrics.shortestSummary}px)`
+      );
+
+      await detailContext.close();
+    }
+```
+
+Lancer :
+
+```bash
+node tests/accessibilite-mobile.playwright.js
+```
+
+Attendu : PASS. Si le débordement dépasse 2 px, la cause est presque toujours la
+ligne de provenance : vérifier que `.weapon-stat-provenance` et
+`.stat-term-buckets` portent bien `overflow-wrap:anywhere`.
+
 - [ ] **Étape 4 : documenter dans AGENTS.md**
 
 Dans la section « Stats de builds — lot 3A », ajouter une sous-section :
@@ -1059,16 +1230,22 @@ Dans la section « Stats de builds — lot 3A », ajouter une sous-section :
 ```markdown
 ### Détail du calcul : regroupement d'affichage
 
-`statTermsDetails(stat, { termLabel, termProvenance, termEmphasis })` est le
-seul rendu du bloc « Détail du calcul ». Les trois appelants (fiche du héros,
-aperçu d'arme, aperçu d'équipement) lui passent leurs fonctions de libellé et
-de provenance.
+`statTermsDetails(stat, { termLabel, termValue, termProvenance, termEmphasis })`
+est le seul rendu du bloc « Détail du calcul ». Les trois appelants (fiche du
+héros, aperçu d'arme, aperçu d'équipement) lui passent leurs fonctions.
+
+`termValue` existe parce que la colonne de droite diffère réellement : le
+panneau d'arme y met `weaponTermLabel(term)` en entier, soit
+`Outrepassement ×1,05 — base présumée`, là où la fiche du héros n'y met que le
+facteur. `tests/potentiel-commun.playwright.js` compare ce texte exactement.
 
 `statTermGroups()` regroupe deux termes seulement s'ils produiraient la même
-ligne. La clé est le quintuplet
-`(libellé, operation, unit, appliesTo trié, emphase)`. Les seaux en font partie
-parce qu'un multiplicateur s'applique à la base qu'il vise : sommer deux taux
-de seaux différents afficherait un total appliqué à une base inexistante.
+ligne. La clé est le sextuplet
+`(libellé, operation, unit, appliesTo trié, emphase, mainRate)`. Les seaux en
+font partie parce qu'un multiplicateur s'applique à la base qu'il vise : sommer
+deux taux de seaux différents afficherait un total appliqué à une base
+inexistante. Pour la même raison, le rendu produit **un bloc « Taux
+principaux » par `appliesTo` distinct**, jamais un bloc unique.
 
 Invariant : **un nœud `.weapon-stat-term` par terme du moteur**, portant
 `data-term-id`. Les groupes sont des conteneurs supplémentaires. Un `<summary>`
@@ -1094,7 +1271,7 @@ Attendu : `npm test` en code de retour 0, `git diff --check` sans sortie.
 - [ ] **Étape 6 : commit**
 
 ```bash
-git add tests/stats-build.test.js AGENTS.md
+git add tests/stats-build.test.js tests/accessibilite-mobile.playwright.js AGENTS.md
 git commit -m "test: figer le rendu du détail des PV de Merlin
 
 Le build mesuré sert de régression : correspondance un-à-un entre nœuds
@@ -1112,6 +1289,7 @@ regard.
 - [ ] Ouvrir `index.html` par double-clic, aller sur le roster, ouvrir le détail
       des PV de Merlin : le bloc tient en une dizaine de lignes.
 - [ ] Déplier « Taux principaux » : les sous-lignes portent des noms distincts.
-- [ ] Réduire la fenêtre à 320 px : aucun débordement horizontal, aucune
-      superposition, les `summary` gardent 44 px de hauteur.
+- [ ] Vérifier à l'œil qu'aucun texte ne se chevauche à 320 px — le test
+      automatique mesure le débordement et la hauteur des cibles, pas la
+      superposition.
 - [ ] Le panneau d'équipement n'a aucun terme mis en avant, comme avant le lot.
