@@ -7,7 +7,7 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
 > Ce fichier est le point d'entrée pour tout agent (Codex, Claude, etc.) qui
 > reprend le projet. Lis-le en entier avant de coder.
 
-## État actuel — 2026-07-27
+## État actuel — 2026-07-29
 
 - [x] Assets rangés dans des dossiers (fournis par l'utilisateur, ne pas renommer).
 - [x] `generate-data.ps1` — scanne les dossiers et génère `data.js`.
@@ -19,7 +19,7 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       (gameId lu dans le JSON embarqué de `7dsorigin.app/fr/bijoux`, filtré sur
       `grade == grade5`, `displayName` = nom de fichier, `slot`
       Ring/Necklace/Earring → dossier Anneau/Collier/Boucle d'oreille).
-- [x] Potentiels : palier T0→T10 par héros, façon page team-builder du site.
+- [x] Potentiels : palier P0→P10 par héros, façon page team-builder du site.
       Données FR (24 persos × ~3 types d'arme × 10 paliers) dans `potentiels.js`,
       régénérable via `generate-potentiels.py`. Le palier est **commun au héros** ;
       les 3 clés d'armes par héros déterminent les armes compatibles et l'arme
@@ -51,7 +51,7 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       Fichiers : `supabase-config.js`, `supabase/schema.sql`.
       Auth validée = email + mot de passe SANS confirmation email.
 - [x] **Roster persistant des membres**. Une fiche par personnage et par compte,
-      avec potentiel commun T0–T10 et au maximum un build par type d'arme
+      avec potentiel commun P0–P10 et au maximum un build par type d'arme
       compatible. Tous les membres connectés peuvent consulter les fiches ;
       seul leur propriétaire peut les créer, modifier ou supprimer. Un build
       peut être copié vers le Team Builder ou importé explicitement depuis une
@@ -87,7 +87,13 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       disposent de leur qualité, renforcement et options aléatoires. Les bonus
       d'ensemble suivent leurs seuils réels, les passifs textuels sont annoncés
       comme non couverts, et les configurations sont persistées jusque dans les
-      instantanés de boss. Les stats finales du héros restent hors couverture.
+      instantanés de boss.
+- [x] **Stats de builds — lot 3A, borne inférieure du héros**. Les statistiques
+      fixes du personnage, sa maîtrise maximale, son potentiel commun et ses
+      neuf équipements sont réunis dans une décomposition reconstructible.
+      PV, ATK et DEF sont affichés séparément comme « borne inférieure ».
+      Les passifs restent descriptifs et explicitement hors calcul. Un build
+      incomplet n'affiche jamais de faux total.
 
 Après cette mise à jour, l'utilisateur doit rejouer le contenu complet de
 `supabase/schema.sql` dans le SQL Editor Supabase afin d'appliquer le schéma,
@@ -147,7 +153,7 @@ Site Confrérie 7ds/
 ├─ tests/                  # Régressions du builder + parcours Supabase simulé dans Chromium.
 ├─ tests/helpers/load-app.js # Charge le script inline d'index.html dans `vm` et expose ses fonctions pures.
 ├─ data.js                 # GÉNÉRÉ. window.SEVEN_DS_DATA = { personnages, armes, armures, bijoux }.
-├─ stats-build.js          # GÉNÉRÉ. Catalogue chiffré local armes + équipement + sets.
+├─ stats-build.js          # GÉNÉRÉ. Personnages + armes + équipement + sets + passifs.
 ├─ generate-stats-build.py # Régénère/valide stats-build.js depuis les références locales.
 ├─ generate-data.ps1       # Régénère data.js en scannant les dossiers d'images.
 ├─ potentiels.js           # GÉNÉRÉ. 3 armes compatibles + bonus par héros.
@@ -386,11 +392,11 @@ multiplicatives. Pour chaque statistique, `totals` doit être **strictement
 égal** au résultat reconstruit depuis `terms`; les totaux ne constituent jamais
 une seconde source de vérité.
 
-Tant que seule l'arme est couverte, tout rendu porte exactement le titre
-**« Apport de l'arme — calcul partiel »**. Il est interdit d'afficher
-« stats du héros » ou « total du héros ». Le panneau partagé permet la saisie
-dans le roster et le Team Builder; les autres rosters, détails d'équipe et
-archives de boss restent en lecture seule.
+`calculateWeaponStats()` et les aperçus propres à une pièce restent disponibles
+dans les modales de configuration. Le résumé partagé d'un build complet utilise
+désormais `calculateHeroStats()` et le contrat du lot 3A documenté plus bas.
+Les autres rosters, détails d'équipe et archives de boss restent en lecture
+seule.
 
 ### Hypothèse d'origine des segments d'armure
 
@@ -421,7 +427,10 @@ une ancienne PWA qui omet `weaponConfig`, `armorConfig` ou `jewelConfig`
 d'effacer une saisie récente lorsque l'équipement correspondant est inchangé.
 Une clé explicitement mise à `null` reste une suppression volontaire; retirer
 un build/héros ou changer une pièce ne ressuscite ni ne transporte l'ancienne
-configuration. Aucune table, colonne ou politique RLS n'est ajoutée.
+configuration. Le garde descend aussi dans chaque configuration de pièce :
+si une ancienne PWA conserve la pièce mais omet seulement `passiveLevel`, la
+valeur récente est préservée ; un `passiveLevel:null` explicite reste
+volontaire. Aucune table, colonne ou politique RLS n'est ajoutée.
 
 Ordre de mise en service :
 
@@ -450,7 +459,8 @@ armorConfig: {
     enchantments: [
       { slot: 0, stat: "B_Atk_Equip", value: 420 },
       null
-    ]
+    ],
+    passiveLevel: 2
   }
 },
 jewelConfig: {
@@ -464,6 +474,12 @@ pas. Une ancienne équipe sans ces deux champs est normalisée avec des
 dictionnaires vides, sans inventer de chiffres. Les copies roster → builder,
 les duplications d'équipe et les instantanés de boss transportent ces
 configurations par valeur, jamais par référence.
+
+`passiveLevel` vaut `null`, `1`, `2` ou `3`. Il n'est proposé que pour les dix
+pièces spéciales et les 83 tenues gravées dont le catalogue contient trois
+niveaux de passif. `null` signifie « Niveau du passif à renseigner ». Ce
+sous-champ est descriptif : il n'entre jamais dans `gearConfigStatus()` ni dans
+les termes numériques.
 
 Correspondance des domaines du moteur :
 
@@ -495,6 +511,149 @@ Les passifs en prose ne sont pas calculables. Le moteur les déclare dans
 `uncovered` (`engraving:passive` ou `armor:passive`) et l'interface annonce
 alors explicitement une « borne inférieure ». Leur absence dans `terms` ne doit
 jamais être interprétée comme un vrai zéro.
+
+## Stats de builds — lot 3A (borne inférieure du héros)
+
+### Catalogue personnage
+
+`stats-build.js` expose désormais
+`window.SEVEN_DS_BUILD_STATS.charactersBySlug[charId]` :
+
+```js
+{
+  baseStats: [ { stat, value } ],
+  commonMasteryStats: [ { stat, value } ],
+  masteriesByWeapon: {
+    Axe: {
+      levels: 5,
+      abilities: [
+        { stat, value, source: { level, kind, index } }
+      ]
+    }
+  },
+  potentialsByWeapon: {
+    Axe: {
+      "1": [ { stat, value } ],
+      // ...
+      "10": [ { stat, value } ]
+    }
+  }
+}
+```
+
+Les personnages **n'ont aucun niveau dans le jeu** : leurs `baseStats` sont
+fixes. Le propriétaire a décidé de considérer tous les personnages en
+**maîtrise maximale**. Le moteur additionne donc la maîtrise commune et tous les
+`subLevel`/`node` des cinq niveaux de la branche correspondant à l'arme équipée.
+Aucun réglage de maîtrise n'est persisté.
+
+Le potentiel reste un seul entier commun au héros et s'affiche `P0` à `P10`.
+L'arme équipée choisit la branche de données. Chaque entrée numérique
+`potentialsByWeapon[type][tier]` est un **instantané cumulatif du palier** :
+ne jamais sommer P1 à Pn.
+
+### Contrat de `calculateHeroStats()`
+
+La fonction canonique consomme la forme normalisée d'un héros et retourne :
+
+```js
+{
+  version: 1,
+  status: "valid" | "incomplete" | "unavailable" | "incompatible",
+  coverage: [],
+  uncovered: [],
+  assumptions: {},
+  missing: [],
+  terms: [],
+  totals: [],
+  facts: { passives: [] }
+}
+```
+
+Un résultat n'est `valid` que si le personnage, l'arme compatible, les cinq
+armures et les trois bijoux sont équipés et si leurs neuf configurations
+chiffrées sont valides. Sinon `missing` contient les chemins précis concernés
+et `terms`/`totals` restent vides : l'interface ne doit jamais inventer un
+`0`. Un niveau de passif manquant ou invalide ne change pas ce statut, car les
+passifs ne participent pas aux chiffres.
+
+Une sortie valide couvre :
+
+```js
+[
+  "character", "mastery", "potential", "weapon",
+  "armor", "jewel", "engraving", "set"
+]
+```
+
+`coverage` décrit les domaines numériques calculés. `uncovered` conserve les
+manques connus non numériques (`weapon:passive`, `armor:passive`,
+`engraving:passive`). Une source dans `coverage` sans terme vaut réellement
+zéro ; une source dans `uncovered` n'a pas été calculée et ne doit jamais être
+lue comme zéro.
+
+Les termes des lots 1 et 2 sont réutilisés. Seuls
+`B_Atk_Equip → B_Atk`, `B_Def_Equip → B_Def` et
+`B_MaxHp_Equip → B_MaxHp` sont canonisés. Un terme multiplicatif canonisé garde
+obligatoirement `unit:"ten-thousandths"` ; il ne prend jamais l'unité `flat` de
+la statistique cible.
+
+### Formule présumée et validation dans le jeu
+
+`HERO_MAIN_RATE_APPLICATION_MODE` vaut
+`"all-flat-before-passives"`. Les taux `I_AtkAdd_Rate`, `I_DefAdd_Rate` et
+`I_MaxHpAdd_Rate` produisent des termes multiplicatifs concrets qui ciblent
+tous les seaux fixes de leur statistique avant les passifs.
+
+Ce choix est **présumé, non vérifié** et centralisé dans
+`heroMainRateTargetBuckets()`. Pour le trancher, relever les statistiques d'un
+nouveau personnage avant son premier nœud de potentiel puis juste après, sans
+changer son équipement, et comparer les seaux réellement affectés aux
+reconstructions du moteur. Si la mesure contredit l'hypothèse, modifier le mode
+et cette fonction, pas les producteurs de termes.
+
+Le mode d'outrepassement d'arme et l'origine des segments d'armure conservent
+leurs protocoles distincts documentés plus haut. Le taux d'outrepassement est
+exact ; son libellé reste « Outrepassement ×… — base présumée ».
+
+### Passifs et interface
+
+Deux plafonds distincts sont obligatoires :
+
+```js
+const WEAPON_PASSIVE_MAX_LEVEL = 7;
+const GEAR_PASSIVE_MAX_LEVEL = 3;
+```
+
+Le niveau du passif d'arme est dérivé de l'outrepassement (`overlimit + 1`) et
+n'est jamais stocké séparément. Le niveau des passifs d'armure, de bijou
+spécial ou de tenue gravée vient de `passiveLevel`. Les textes sont des faits
+descriptifs rendus avec `renderBonus()` ; aucun ne devient un terme numérique.
+
+`heroStatsSection()` est partagé par le Team Builder, l'éditeur de son roster,
+les rosters consultés, les détails d'équipe et les instantanés des archives de
+boss. Les trois cartes PV/ATK/DEF portent chacune « borne inférieure » et les
+autres statistiques restent classées par famille. Toute décomposition est un
+`<details>` fermé par défaut. La section s'intitule exactement
+**« Passifs non inclus dans le calcul »**.
+
+À moins de 560 px, les trois cartes s'empilent sans rail horizontal. Les quatre
+héros d'une équipe restent toujours séparés : aucun total collectif ni aucune
+moyenne d'équipe n'est calculé tant que la formule du jeu n'est pas comprise.
+
+### Activation et retour arrière
+
+Avant de publier le frontend du lot 3A, rejouer le contenu complet et
+idempotent de `supabase/schema.sql`. Cela installe le garde imbriqué de
+`passiveLevel`. Ensuite seulement : fusionner/pousser, attendre GitHub Pages
+vert, accepter la mise à jour PWA et vérifier le `BUILD_VERSION`.
+
+Pour revenir en arrière, déployer un revert du frontend en conservant les
+triggers SQL. Les sous-champs restent dans les JSONB et réapparaissent lors
+d'une réactivation ; aucun rollback SQL destructif n'est requis.
+
+L'optimisation Supabase du Recensement reste un lot 3B indépendant. Ne pas la
+mélanger à ce moteur ni à sa mise en service.
 
 ## Règle d'or sur les assets
 
@@ -560,8 +719,10 @@ cloud utilise `confrerie7ds.cloud.teams`.
       weaponConfig: { /* forme version 1 documentée plus haut */ } | null,
       armor: { "Haut": file|null, "Bas": file|null, "Bottes": file|null,
                "Ceinture": file|null, "Armure liee": file|null },
+      armorConfig: { "<slot équipé>": { /* version 1 + passiveLevel */ } },
       jewel: { "Anneau": file|null, "Collier": file|null,
                "Boucle d'oreille": file|null },
+      jewelConfig: { "<slot équipé>": { /* version 1 + passiveLevel */ } },
       potentiel: { tier: 0..10 },
       note: "texte libre"
     }
@@ -572,7 +733,7 @@ cloud utilise `confrerie7ds.cloud.teams`.
 
 ### Potentiels (`window.SEVEN_DS_POTENTIELS`, depuis `potentiels.js`)
 ```js
-{ "<charId>": { "<dossier d'arme>": [ "<bonusFr T1>", ... "<T10>" ] } }
+{ "<charId>": { "<dossier d'arme>": [ "<bonusFr P1>", ... "<P10>" ] } }
 // dossier d'arme = segment de chemin de hero.weapon (ex. "Hache", "Epee 1 main").
 // bonusFr contient un balisage couleur [#RRGGBB]texte[-] rendu par renderBonus().
 // Les 3 sous-clés sont les armes compatibles du héros.
@@ -615,8 +776,10 @@ personnage et par membre. Le cache local partagé est
       weaponConfig: { /* forme version 1 documentée plus haut */ } | null,
       armor: { "Haut": file|null, "Bas": file|null, "Bottes": file|null,
                "Ceinture": file|null, "Armure liee": file|null },
+      armorConfig: { "<slot équipé>": { /* version 1 + passiveLevel */ } },
       jewel: { "Anneau": file|null, "Collier": file|null,
                "Boucle d'oreille": file|null },
+      jewelConfig: { "<slot équipé>": { /* version 1 + passiveLevel */ } },
       note: "texte libre",
       favorite: true | false
     }
@@ -702,15 +865,14 @@ le SQL Editor afin d'ajouter les tables à la publication
 - Équipement par héros : 1 arme + 5 armures + **3 bijoux** (Anneau, Collier,
   Boucle d'oreille), calqués sur les 3 catégories du site de référence.
 - Chaque équipe porte un **pseudo de membre** (seule métadonnée demandée).
-- **Potentiel** par héros : un palier commun T0–T10, indépendant de son arme.
+- **Potentiel** par héros : un palier commun P0–P10, indépendant de son arme.
   L'arme équipée choisit seulement les descriptions officielles affichées.
-  `renderBonus()` rend leur balisage couleur. Le potentiel ne participe pas
-  encore au calcul chiffré.
-- **Calcul chiffré partiel du build** : `stats-build.js` calcule l'apport
-  configuré de l'arme, des armures, de la gravure, des bijoux et des bonus
-  d'ensemble. Aucune statistique finale de héros, de potentiel ou de maîtrise
-  n'est annoncée comme couverte ; les passifs en prose restent explicitement
-  dans `uncovered`.
+  `renderBonus()` rend leur balisage couleur. Son instantané numérique participe
+  au calcul du lot 3A.
+- **Borne inférieure du héros** : `stats-build.js` calcule le personnage, sa
+  maîtrise maximale, son potentiel, l'arme, les armures, la gravure, les bijoux
+  et les ensembles. Un build incomplet ne produit aucun total. Les passifs en
+  prose restent explicitement dans `uncovered` et hors des nombres.
 - Arme choisie en 2 temps : type puis arme. Le picker filtre les groupes aux
   3 types autorisés par les clés de `window.SEVEN_DS_POTENTIELS[charId]`.
 - Export / Import JSON = sauvegarde de secours et format pivot indépendant de Supabase.
@@ -1108,6 +1270,10 @@ chaque carte.
 ## Évolutions prévues
 
 - Champ **note globale d'équipe** (déjà réservé dans le modèle via `boss`).
+- **Lot 3B** : optimiser séparément les lectures Supabase du Recensement.
+- Valider dans le vrai jeu les trois hypothèses de formule documentées
+  (outrepassement, origine des segments d'armure, taux principaux du héros)
+  avant de retirer leurs mentions « présumée ».
 
 ## Conventions
 

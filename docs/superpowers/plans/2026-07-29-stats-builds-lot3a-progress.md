@@ -16,7 +16,7 @@ Il ne remplace ni la conception ni le plan détaillé.
 - [x] Tâche 4 — calculer base, maîtrise complète et potentiel commun
 - [x] Tâche 5 — agréger la borne inférieure des statistiques du héros
 - [x] Tâche 6 — terminer l’interface partagée et ses tests d’intégration
-- [ ] Tâche 7 — mettre à jour la documentation et exécuter la vérification finale
+- [x] Tâche 7 — mettre à jour la documentation et exécuter la vérification finale
 
 ## Travail terminé
 
@@ -95,6 +95,8 @@ Implémenté :
 - les trois cartes principales s’empilent sous 560 px ;
 - le dernier exemple visible « burst T2 » est devenu « burst P2 ».
 
+Commit : `254f900` — `feat: afficher les statistiques finales par héros`
+
 Deux défauts réels ont été trouvés et couverts pendant l’intégration :
 
 - la canonisation `B_Atk_Equip → B_Atk` remplaçait à tort l’unité du
@@ -114,6 +116,20 @@ Deux défauts réels ont été trouvés et couverts pendant l’intégration :
 - `tests/supabase-etape1.playwright.js` : vert
 - `tests/accessibilite-mobile.playwright.js` : vert
 - `tests/scrollbars-invisibles.playwright.js` : vert
+- `python generate-stats-build.py --check` : `stats-build.js à jour`
+- `git diff --check` : aucune erreur
+- `npm test` complet : code de retour 0, toutes les suites vertes (86,4 s)
+
+## Mise en service restante
+
+Le code est prêt sur `stats-builds-lot3a`, mais il n'est ni fusionné ni poussé.
+Avant la publication :
+
+1. rejouer `supabase/schema.sql` dans le SQL Editor ;
+2. fusionner la branche seulement après validation du propriétaire ;
+3. pousser `main` et attendre GitHub Pages vert ;
+4. accepter la mise à jour PWA ;
+5. comparer le `BUILD_VERSION` servi au SHA publié.
 
 ## Dernière erreur résolue
 
