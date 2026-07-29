@@ -716,6 +716,35 @@ autres statistiques restent classées par famille. Toute décomposition est un
 héros d'une équipe restent toujours séparés : aucun total collectif ni aucune
 moyenne d'équipe n'est calculé tant que la formule du jeu n'est pas comprise.
 
+### Détail du calcul : regroupement d'affichage
+
+`statTermsDetails(stat, { termLabel, termValue, termProvenance, termEmphasis })`
+est le seul rendu du bloc « Détail du calcul ». Les trois appelants (fiche du
+héros, aperçu d'arme, aperçu d'équipement) lui passent leurs fonctions.
+
+`termValue` existe parce que la colonne de droite diffère réellement : le
+panneau d'arme y met `weaponTermLabel(term)` en entier, soit
+`Outrepassement ×1,05 — base présumée`, là où la fiche du héros n'y met que le
+facteur. `tests/potentiel-commun.playwright.js` compare ce texte exactement.
+
+`statTermGroups()` regroupe deux termes seulement s'ils produiraient la même
+ligne. La clé est le sextuplet
+`(libellé, operation, unit, appliesTo trié, emphase, mainRate)`. Les seaux en
+font partie parce qu'un multiplicateur s'applique à la base qu'il vise : sommer
+deux taux de seaux différents afficherait un total appliqué à une base
+inexistante. Pour la même raison, le rendu produit **un bloc « Taux
+principaux » par `appliesTo` distinct**, jamais un bloc unique.
+
+Invariant : **un nœud `.weapon-stat-term` par terme du moteur**, portant
+`data-term-id`. Les groupes sont des conteneurs supplémentaires. Un `<summary>`
+ne porte jamais cette classe, et un groupe d'un seul terme n'introduit aucun
+repli — sans quoi `tests/potentiel-commun.playwright.js` casse, car il n'ouvre
+qu'un seul niveau avant d'exiger « Promotion » visible.
+
+Les taux principaux (`source.application === "hero-main-rate"`) s'écrivent en
+pourcentage additif ; tout autre multiplicateur garde sa notation, notamment
+`Outrepassement ×1,05 — base présumée`.
+
 ### Activation et retour arrière
 
 Avant de publier ce frontend, rejouer le contenu complet et idempotent de

@@ -2613,6 +2613,93 @@ function testProvenanceDropsTargetBuckets(hooks){
   );
 }
 
+// Rendu attendu du détail des PV pour le build Supabase de Merlin Foudre.
+// Valeurs relevées sur la sortie réelle de calculateHeroStats() :
+// (2000 + 1248 + 3024 + 3024 + 60338) × 1,41 = 98 183,94 → 98 184.
+function testMerlinHpDetailRendering(hooks){
+  const hero = merlinGameFixture(hooks);
+  const result = plain(hooks.calculateHeroStats(hero));
+  const stat = plain(hooks.groupBuildStatResults(result))
+    .flatMap(group => group.stats)
+    .find(item => item.stat === "B_MaxHp");
+  assert.ok(stat, "Les PV doivent être présents dans les totaux");
+
+  const node = hooks.statTermsDetails(stat, {
+    termLabel:hooks.heroTermLabel,
+    termValue:hooks.heroTermValue,
+    termProvenance:() => "",
+    termEmphasis:term => term.operation === "multiply"
+      ? "weapon-stat-term-overlimit" : ""
+  });
+
+  const renderedIds = fakeNodes(node, item =>
+    (item.className || "").split(" ").includes("weapon-stat-term")
+  ).map(item => item.dataset.termId);
+  const engineTermIds = stat.terms.map(term => term.id);
+
+  assert.deepStrictEqual(
+    renderedIds.slice().sort(),
+    engineTermIds.slice().sort(),
+    "Correspondance un-à-un entre nœuds rendus et termes du moteur"
+  );
+  assert.strictEqual(
+    new Set(engineTermIds).size,
+    engineTermIds.length,
+    "Les identifiants du moteur doivent être uniques"
+  );
+
+  assert.strictEqual(stat.value, 98184, "Total des PV du build mesuré");
+  const groups = plain(hooks.statTermGroups(stat, {
+    termLabel:hooks.heroTermLabel
+  }));
+  const shape = groups.map(group => [
+    group.label, group.mainRate, group.terms.length, group.value
+  ]);
+  [
+    ["Base du personnage", false, 1, 2000],
+    ["Maîtrise commune", false, 1, 1248],
+    ["Maîtrise Baguette", false, 8, 3024],
+    ["Maîtrises de réserve", false, 8, 3024],
+    ["Équipement", false, 4, 60338],
+    ["Maîtrise Baguette", true, 4, 1200],
+    ["Maîtrises de réserve", true, 8, 2400],
+    ["Potentiel P7", true, 1, 500]
+  ].forEach(expected => {
+    assert.ok(
+      shape.some(actual =>
+        actual.every((value, index) => value === expected[index])
+      ),
+      "Groupe attendu absent ou différent : "+JSON.stringify(expected)
+        +" — obtenu "+JSON.stringify(shape)
+    );
+  });
+  assert.strictEqual(
+    groups.filter(group => group.mainRate)
+      .reduce((sum, group) => sum + group.value, 0),
+    4100,
+    "12 % + 24 % + 5 % = 41 % de taux principaux"
+  );
+
+  const text = fakeText(node);
+  assert.ok(
+    !text.includes("Application du taux"),
+    "Plus aucune ligne indistincte « Application du taux »"
+  );
+  assert.ok(
+    !/×1,0\d/.test(text),
+    "Les taux principaux ne s’écrivent plus en notation multiplicative"
+  );
+  assert.strictEqual(
+    (text.match(/Appliqué à :/g) || []).length,
+    new Set(
+      stat.terms
+        .filter(term => term.operation === "multiply")
+        .map(term => [...term.appliesTo].sort().join(","))
+    ).size,
+    "Une note de seaux par base visée, ni plus ni moins"
+  );
+}
+
 // Le rendu commun replie les termes identiques sous un même noeud, regroupe
 // les taux principaux et retire la liste des seaux ciblés des provenances
 // individuelles (elle vit désormais en pied de bloc).
@@ -2620,6 +2707,7 @@ function testProvenanceDropsTargetBuckets(hooks){
   const { hooks } = loadApp();
   testStatTermsDetailsStructure(hooks);
   testProvenanceDropsTargetBuckets(hooks);
+  testMerlinHpDetailRendering(hooks);
 }
 
 console.log("PASS stats de builds : modèle et calcul de l’arme");

@@ -920,7 +920,49 @@ async function installRosterFocusFakeSupabase(page){
           );
         }
       });
-      await pickerPage.keyboard.press("Escape");
+      if(width === 320 || width === 390){
+        await pickerPage.evaluate(() => {
+          document.querySelectorAll("#weaponConfigPreview details")
+            .forEach(node => { node.open = true; });
+        });
+        const detailMetrics = await pickerPage.evaluate(() => {
+          const root = document.scrollingElement;
+          const summaries = [...document.querySelectorAll(
+            "#weaponConfigPreview .weapon-stat-details summary,"
+            +" #weaponConfigPreview .stat-term-group>summary"
+          )];
+          return {
+            overflow:root.scrollWidth - root.clientWidth,
+            shortestSummary:summaries.reduce(
+              (smallest, node) => Math.min(
+                smallest,
+                Math.round(node.getBoundingClientRect().height)
+              ),
+              Infinity
+            ),
+            summaryCount:summaries.length
+          };
+        });
+        assert.ok(
+          detailMetrics.summaryCount > 0,
+          "Le détail du calcul doit être rendu à "+width+"px"
+        );
+        assert.ok(
+          detailMetrics.overflow <= 2,
+          "Le détail du calcul déborde à "+width+"px "
+            +"("+detailMetrics.overflow+"px)"
+        );
+        assert.ok(
+          detailMetrics.shortestSummary >= 44,
+          "Les replis du calcul doivent mesurer 44px à "+width+"px "
+            +"("+detailMetrics.shortestSummary+"px)"
+        );
+      }
+      if(width === 320 || width === 390){
+        await pickerPage.locator("#weaponConfigSave").click();
+      }else{
+        await pickerPage.keyboard.press("Escape");
+      }
       await pickerPage.locator("#weaponConfigOverlay").waitFor({state:"hidden"});
 
       if(width === 320 || width === 390){
@@ -1043,6 +1085,54 @@ async function installRosterFocusFakeSupabase(page){
         await pickerPage.keyboard.press("Escape");
         await pickerPage.locator("#gearConfigOverlay")
           .waitFor({state:"hidden"});
+
+        const heroDetail = pickerPage.locator(
+          ".hero .hero-stats-primary .weapon-stat-details"
+        ).first();
+        await heroDetail.waitFor({state:"visible"});
+        await pickerPage.evaluate(() => {
+          document.querySelectorAll(
+            ".hero .hero-stats-primary .weapon-stat-details details"
+          ).forEach(node => { node.open = true; });
+          const root = document.querySelector(
+            ".hero .hero-stats-primary .weapon-stat-details"
+          );
+          root.open = true;
+        });
+        const heroDetailMetrics = await pickerPage.evaluate(() => {
+          const root = document.scrollingElement;
+          const detail = document.querySelector(
+            ".hero .hero-stats-primary .weapon-stat-details"
+          );
+          const groupSummaries = [...detail.querySelectorAll(
+            ".stat-term-group>summary"
+          )];
+          return {
+            overflow:root.scrollWidth - root.clientWidth,
+            groupCount:groupSummaries.length,
+            shortestGroup:groupSummaries.reduce(
+              (smallest, node) => Math.min(
+                smallest,
+                Math.round(node.getBoundingClientRect().height)
+              ),
+              Infinity
+            )
+          };
+        });
+        assert.ok(
+          heroDetailMetrics.groupCount > 0,
+          "Le détail du héros doit contenir un groupe repliable à "+width+"px"
+        );
+        assert.ok(
+          heroDetailMetrics.overflow <= 2,
+          "Le détail complet du héros déborde à "+width+"px "
+            +"("+heroDetailMetrics.overflow+"px)"
+        );
+        assert.ok(
+          heroDetailMetrics.shortestGroup >= 44,
+          "Les groupes du héros doivent mesurer 44px à "+width+"px "
+            +"("+heroDetailMetrics.shortestGroup+"px)"
+        );
       }
       await pickerContext.close();
     }
