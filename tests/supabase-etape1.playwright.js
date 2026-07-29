@@ -716,6 +716,58 @@ const { chromium } = require("playwright");
       "La copie roster → Team Builder doit conserver la configuration d'armure"
     );
 
+    const hacheSwitch = rosterHeroSlot.locator(
+      '.builder-weapon-switch[data-weapon-type="Hache"]'
+    );
+    const swordSwitch = rosterHeroSlot.locator(
+      '.builder-weapon-switch[data-weapon-type="Epee 1 main"]'
+    );
+    assert.equal(
+      await rosterHeroSlot.locator(".builder-weapon-switch").count(),
+      3
+    );
+    assert.equal(await hacheSwitch.getAttribute("aria-pressed"), "true");
+    await rosterHeroSlot.locator(".weapon-config-open").click();
+    await page.locator(".weapon-config-level").fill("8");
+    await page.locator("#weaponConfigSave").click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"hidden" });
+    const hrefBeforeSwitch = page.url();
+    const callsBeforeSwitch = await page.evaluate(() =>
+      window.__fakeSupabaseState.calls.length
+    );
+    await swordSwitch.click();
+    assert.equal(await swordSwitch.getAttribute("aria-pressed"), "true");
+    assert.match(
+      await rosterHeroSlot.locator(".gear-slot.weapon").getAttribute("title"),
+      /En plein cœur/
+    );
+    assert.equal(
+      await page.evaluate(() =>
+        document.activeElement.dataset.weaponType
+      ),
+      "Epee 1 main"
+    );
+    await hacheSwitch.click();
+    assert.equal(await hacheSwitch.getAttribute("aria-pressed"), "true");
+    assert.equal(
+      await page.evaluate(() =>
+        document.activeElement.dataset.weaponType
+      ),
+      "Hache"
+    );
+    assert.equal(page.url(), hrefBeforeSwitch);
+    assert.equal(
+      await page.evaluate(() => window.__fakeSupabaseState.calls.length),
+      callsBeforeSwitch,
+      "Changer de build ne doit effectuer aucun accès Supabase"
+    );
+    await rosterHeroSlot.locator(".weapon-config-open").click();
+    assert.equal(
+      await page.locator(".weapon-config-level").inputValue(),
+      "8"
+    );
+    await page.locator("#weaponConfigCancel").click();
+
     await rosterHeroSlot.locator("textarea.note").fill("Copie modifiée");
     const rosterNote = await page.evaluate(() =>
       window.__fakeSupabaseState.roster_characters
@@ -860,18 +912,24 @@ const { chromium } = require("playwright");
     const teamStats = page.locator("#teamDetail .hero-stats").first();
     assert.match(
       await teamStats.textContent(),
-      /Statistiques du héros — borne inférieure/
+      /Statistiques du héros — calcul partiel/
     );
     assert.equal(
       await teamStats.locator(".hero-stat-card").count(),
       3,
       "PV, ATK et DEF doivent être présentés séparément"
     );
+    assert.match(
+      await teamStats.locator(".hero-stat-card")
+        .filter({ hasText:"ATK" }).innerText(),
+      /arme secondaire manquante/i
+    );
     assert.equal(
       await teamStats.locator(".hero-stat-card")
+        .filter({ hasText:/PV|DEF/ })
         .filter({ hasNotText:"borne inférieure" }).count(),
       0,
-      "Chaque statistique principale doit annoncer sa borne inférieure"
+      "PV et DEF restent des bornes inférieures disponibles"
     );
     assert.match(await teamStats.textContent(), /Promotion/);
     assert.match(
@@ -5459,6 +5517,13 @@ async function installFakeSupabase(page){
               armor:{},
               jewel:{},
               note:"",
+              favorite:false
+            },
+            "Epees doubles":{
+              weapon:"7ds-armes/Epees doubles/Épées doubles bénies.webp",
+              armor:{},
+              jewel:{},
+              note:"Build doubles",
               favorite:false
             }
           },

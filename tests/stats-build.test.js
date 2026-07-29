@@ -551,6 +551,22 @@ function fakeText(root){
   assert.deepStrictEqual(changedCharacter.rosterBuilds, {});
   assert.strictEqual(changedCharacter.weapon, null);
 
+  assert.strictEqual(
+    typeof hooks.applyCharacterChange,
+    "function"
+  );
+  const changed = plain(
+    hooks.applyCharacterChange(snapshot, "merlin")
+  );
+  assert.strictEqual(changed.char, "merlin");
+  assert.deepStrictEqual(changed.rosterBuilds, {});
+  assert.strictEqual(changed.weapon, null);
+  assert.strictEqual(changed.activeWeaponType, null);
+  assert.strictEqual(
+    changed.potentiel.tier,
+    snapshot.potentiel.tier
+  );
+
   const copied = plain(hooks.copyFavoriteRosterBuild(entry, "Epee 1 main"));
   assert.deepStrictEqual(copied.builds["Epee 1 main"].weaponConfig, targetConfig);
   targetConfig.level = 8;

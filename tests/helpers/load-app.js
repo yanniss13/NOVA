@@ -93,6 +93,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   activateHeroBuild:typeof activateHeroBuild === "function"
     ? activateHeroBuild
     : undefined,
+  applyCharacterChange:typeof applyCharacterChange === "function"
+    ? applyCharacterChange
+    : undefined,
   potentielDetailsOf,
   weaponTypesOf,
   isWeaponCompatible,

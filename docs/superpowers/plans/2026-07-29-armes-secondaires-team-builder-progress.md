@@ -16,7 +16,7 @@ Plan :
 - [x] Task 2 — protéger `rosterBuilds` contre les anciennes PWA
 - [x] Task 3 — calculer le transfert reconstructible de 30 %
 - [x] Task 4 — rendre le résultat partiel impossible à confondre
-- [ ] Task 5 — changer de build par les trois icônes sans perte
+- [x] Task 5 — changer de build par les trois icônes sans perte
 - [ ] Task 6 — mettre à jour ou recharger le roster explicitement
 - [ ] Task 7 — documenter, vérifier et préparer l'activation
 
@@ -49,6 +49,8 @@ Plan :
 | `de2eb17` | `docs: planifier les armes secondaires` | Plan |
 | `3e30b8c` | `feat: conserver les trois builds d'un héros` | Task 1 |
 | `d7f1fee` | `fix: préserver les trois builds d'équipe` | Task 2 |
+| `97c12df` | `feat: calculer l'ATK des armes secondaires` | Task 3 |
+| `ec49817` | `feat: signaler l'ATK secondaire incomplète` | Task 4 |
 
 ## Vérifications
 
@@ -65,6 +67,10 @@ Plan :
 - Task 4 RED : titre partiel et avertissement ATK absents du rendu.
 - Task 4 GREEN : `node tests/stats-build.test.js`.
 - Task 4 navigateur : `node tests/potentiel-commun.playwright.js`.
+- Task 5 RED : `applyCharacterChange()` absent, puis zéro bouton de build.
+- Task 5 GREEN : `node tests/stats-build.test.js`.
+- Task 5 navigateur : `node tests/supabase-etape1.playwright.js`.
+- Régression potentiel : `node tests/potentiel-commun.playwright.js`.
 
 ## Activation
 

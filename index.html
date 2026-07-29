@@ -238,6 +238,14 @@
     box-shadow:0 0 0 1px var(--gold-bright), 0 0 9px rgba(240,198,116,.45)
   }
   .wslot.dim{opacity:.38}
+  .builder-weapon-switch{
+    appearance:none;display:grid;place-items:center;min-width:44px;min-height:44px;
+    padding:7px;border:0;border-radius:50%;cursor:pointer;color:inherit;
+    background:transparent;transition:.16s
+  }
+  .builder-weapon-switch:not(.active) .wslot{opacity:.48}
+  .builder-weapon-switch:hover,
+  .builder-weapon-switch:focus-visible{background:rgba(217,164,65,.1)}
   .mini-badges{gap:5px;margin-top:2px;min-height:25px}
   .mini-badges .wslot{width:23px;height:23px}
   .mini-badges .wslot-w{width:15px;height:15px}
@@ -2002,6 +2010,10 @@
     "Epee 2 mains":"Sword2h","Epees doubles":"SwordDual","Gantelets":"Gauntlets",
     "Hache":"Axe","Lance":"Lance","Livre":"Book","Nunchaku":"Cudgel3c","Rapiere":"Rapier"
   };
+  const ENUM_TO_FOLDER = Object.fromEntries(
+    Object.entries(FOLDER_TO_ENUM)
+      .map(([folder, value]) => [value, folder])
+  );
   const equippedEnumOf = hero => {
     const f = weaponFolderOf(hero && hero.weapon);
     return f ? (FOLDER_TO_ENUM[f] || null) : null;
@@ -2048,6 +2060,37 @@
 
     // en compact on renvoie toujours la rangée (réserve la hauteur -> colonnes alignées)
     return compact ? row : (row.children.length ? row : null);
+  }
+  function builderWeaponSwitcher(hero, heroIndex, character){
+    const metadata = character ? metaOf(character.id) : null;
+    if(!metadata || !Array.isArray(metadata.weapons)
+      || !metadata.weapons.length){
+      return null;
+    }
+    const row = el("div",{
+      class:"hero-badges builder-weapon-switcher",
+      role:"group",
+      "aria-label":"Builds par type d'arme"
+    });
+    const slots = el("div",{class:"wslots"});
+    const activeType = weaponFolderOf(hero.weapon)
+      || hero.activeWeaponType;
+    metadata.weapons.forEach(slot => {
+      const type = ENUM_TO_FOLDER[slot.weapon];
+      if(!type) return;
+      const active = type === activeType;
+      const badge = weaponSlotBadge(slot, active);
+      slots.appendChild(el("button",{
+        class:"builder-weapon-switch"+(active ? " active" : ""),
+        type:"button",
+        dataset:{weaponType:type},
+        "aria-pressed":String(active),
+        title:"Afficher le build "+rosterWeaponLabel(type),
+        onclick:()=>switchBuilderHeroBuild(heroIndex, type)
+      },[badge]));
+    });
+    row.appendChild(slots);
+    return row;
   }
   const weaponFolderOf = file => file ? file.split("/")[1] : null;
   const weaponTypesOf = charId => Object.keys((charId && POT[charId]) || {});
@@ -5590,6 +5633,25 @@
     });
     return hero;
   }
+  function applyCharacterChange(hero, nextChar){
+    const next = jsonCopy(normalizeHero(hero));
+    if(next.char === nextChar) return next;
+    next.char = nextChar || null;
+    next.rosterBuilds = {};
+    next.activeWeaponType = null;
+    if(!isWeaponCompatible(next.char, next.weapon)){
+      next.weapon = null;
+      next.weaponConfig = null;
+    }
+    if(!isLinkedArmorCompatible(
+      next.char,
+      next.armor && next.armor[LINKED_ARMOR_SLOT]
+    )){
+      next.armor[LINKED_ARMOR_SLOT] = null;
+      delete next.armorConfig[LINKED_ARMOR_SLOT];
+    }
+    return normalizeHero(next);
+  }
   const emptyRosterBuild = () => ({
     weapon:null,
     weaponConfig:null,
@@ -7358,6 +7420,17 @@
     heroGrid.innerHTML = "";
     draft.heroes.forEach((hero, i) => heroGrid.appendChild(heroCard(hero, i)));
   }
+  function switchBuilderHeroBuild(heroIndex, weaponType){
+    const hero = draft.heroes[heroIndex];
+    if(!hero || hero.activeWeaponType === weaponType) return;
+    draft.heroes[heroIndex] = activateHeroBuild(hero, weaponType);
+    renderBuilder();
+    const card = heroGrid.children[heroIndex];
+    const active = card && [...card.querySelectorAll(
+      ".builder-weapon-switch"
+    )].find(button => button.dataset.weaponType === weaponType);
+    if(active) active.focus();
+  }
 
   function gearThumb(file){
     const box = el("div",{class:"gear-thumb"});
@@ -7409,7 +7482,7 @@
     else{ portrait.appendChild(el("div",{class:"ph",html:'<span class="plus">+</span><span>Héros</span>'})); }
 
     const title = el("div",{class:"hero-title"+(ch?"":" empty"), text: ch ? ch.name : "Emplacement libre"});
-    const badges = badgesRow(ch, hero, false);
+    const badges = builderWeaponSwitcher(hero, i, ch);
 
     // Gear : arme + 5 armures + 3 bijoux
     const gear = el("div",{class:"gear"});
@@ -7603,17 +7676,10 @@
       title:"Choisir un héros", portrait:true, value:draft.heroes[i].char,
       items:(DATA.personnages||[]).map(c=>({value:c.id, name:c.name, file:c.file})),
       onSelect:v=>{
-        const hero = draft.heroes[i];
-        hero.char = v;
-        if(!isWeaponCompatible(hero.char, hero.weapon)){
-          draft.heroes[i] = applyWeaponChange(hero, null);
-        }
-        if(!isLinkedArmorCompatible(
-          hero.char,
-          hero.armor[LINKED_ARMOR_SLOT]
-        )){
-          applyGearChange(hero, "armor", LINKED_ARMOR_SLOT, null);
-        }
+        draft.heroes[i] = applyCharacterChange(
+          draft.heroes[i],
+          v
+        );
         renderBuilder();
       }
     });
@@ -7624,9 +7690,20 @@
       toast("Choisis d'abord un héros.", true);
       return;
     }
+    const compatible = compatibleWeaponGroups(hero.char);
+    const activeType = hero.activeWeaponType;
+    const groups = activeType
+      ? Object.entries(compatible).reduce((result, [label, items]) => {
+          const matching = items.filter(item =>
+            weaponFolderOf(item.file) === activeType
+          );
+          if(matching.length) result[label] = matching;
+          return result;
+        }, {})
+      : compatible;
     Picker.open({
       title:"Choisir une arme", value:hero.weapon,
-      groups:compatibleWeaponGroups(hero.char),
+      groups,
       emptyHint:"Aucune arme compatible disponible.",
       onSelect:v=>{
         if(hero.weaponConfig && hero.weapon !== v
