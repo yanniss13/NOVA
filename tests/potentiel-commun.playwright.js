@@ -23,6 +23,11 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await page.reload();
 
     const firstHero = page.locator(".hero").first();
+    assert.doesNotMatch(
+      await firstHero.locator(".note").getAttribute("placeholder"),
+      /\bT(?:[0-9]|10)\b/,
+      "aucun exemple visible ne doit employer l’ancien préfixe T"
+    );
     await firstHero.locator(".gear-slot.weapon").click();
     assert.equal(
       await page.locator("#overlay").evaluate(el => el.classList.contains("on")),
@@ -64,6 +69,32 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await page.locator("#pickerClose").click();
 
     await chooseHero(page, firstHero, "Meliodas");
+    await chooseArmor(
+      page,
+      firstHero,
+      "Bas",
+      "Bas de la puissance retorse"
+    );
+    let passiveConfigButton = firstHero.locator(
+      '.gear-configurable-slot[data-slot="Bas"] .gear-config-open'
+    );
+    await passiveConfigButton.click();
+    assert.deepEqual(
+      await page.locator(".gear-config-passive-level option").allTextContents(),
+      ["À renseigner","1","2","3"]
+    );
+    await page.locator(".gear-config-passive-level").selectOption("2");
+    await page.locator("#gearConfigSave").click();
+    passiveConfigButton = firstHero.locator(
+      '.gear-configurable-slot[data-slot="Bas"] .gear-config-open'
+    );
+    await passiveConfigButton.click();
+    assert.equal(
+      await page.locator(".gear-config-passive-level").inputValue(),
+      "2"
+    );
+    await page.locator("#gearConfigCancel").click();
+
     await firstHero.locator(".gear-slot.weapon").click();
     assert.deepEqual(
       (await page.locator("#pickerChips .chip").allTextContents()).sort(),
@@ -209,12 +240,16 @@ const STORAGE_KEY = "confrerie7ds.teams";
 
     await configButton.click();
     await page.locator(".weapon-config-promotion").selectOption("1");
+    await page.locator("#weaponConfigPreview details")
+      .filter({ hasText:"Promotion" }).first().locator("summary").click();
     await assertVisibleText(
       page.locator("#weaponConfigPreview .weapon-stat-term")
         .filter({ hasText:"Promotion" }).first().locator("span").first(),
       "Promotion"
     );
     await page.locator(".weapon-config-overlimit").selectOption("1");
+    await page.locator("#weaponConfigPreview details")
+      .filter({ hasText:"Outrepassement" }).first().locator("summary").click();
     await assertVisibleText(
       page.locator("#weaponConfigPreview .weapon-stat-term-overlimit").first(),
       "Outrepassement ×1,05 — base présumée"

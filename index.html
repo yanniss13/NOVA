@@ -1316,6 +1316,56 @@
   .weapon-stat-term-value span:last-child{flex:none;color:var(--parchment)}
   .weapon-stat-term-overlimit{color:var(--gold-bright)!important}
   .weapon-stat-provenance{overflow-wrap:anywhere;color:var(--muted-2)}
+  .gear-config-passive{
+    display:flex;flex-direction:column;gap:9px;min-width:0;padding-top:10px;
+    border-top:1px solid var(--line-soft)
+  }
+  .hero-stats{
+    min-width:0;padding-top:12px;border-top:1px solid var(--line-soft);
+    overflow-wrap:anywhere
+  }
+  .hero-stats .weapon-stats-title{font-size:15px;margin-bottom:9px}
+  .hero-stats-assumption{
+    display:inline-flex;margin-bottom:10px;padding:4px 8px;border-radius:999px;
+    border:1px solid var(--gold-deep);color:var(--gold-bright);
+    background:rgba(217,164,65,.07);font-size:10px;line-height:1.3
+  }
+  .hero-stats-primary{
+    display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;
+    min-width:0
+  }
+  .hero-stat-card{
+    min-width:0;padding:9px 7px;border:1px solid var(--gold-deep);
+    border-radius:9px;background:rgba(217,164,65,.06);text-align:center
+  }
+  .hero-stat-card-label{
+    display:block;color:var(--muted);font-size:9px;letter-spacing:.14em;
+    text-transform:uppercase
+  }
+  .hero-stat-card-value{
+    display:block;margin-top:3px;color:var(--gold-bright);font-family:var(--display);
+    font-size:15px;overflow-wrap:anywhere
+  }
+  .hero-stat-card-bound{
+    display:block;margin-top:2px;color:var(--muted-2);font-size:8px;
+    line-height:1.25;text-transform:uppercase
+  }
+  .hero-stat-card .weapon-stat-details{text-align:left}
+  .hero-passives{
+    min-width:0;margin-top:15px;padding-top:12px;border-top:1px solid var(--line-soft)
+  }
+  .hero-passive{
+    min-width:0;padding:9px 0;border-top:1px solid var(--line-soft)
+  }
+  .hero-passive-head{
+    display:flex;align-items:baseline;justify-content:space-between;gap:9px;
+    color:var(--parchment);font-size:11px
+  }
+  .hero-passive-head span{color:var(--gold-bright);text-align:right}
+  .hero-passive-text{
+    margin:6px 0 0;color:var(--muted);font-size:10px;line-height:1.45;
+    white-space:normal;overflow-wrap:anywhere
+  }
   #weaponConfigError,#gearConfigError{
     min-height:18px;margin:0;padding:0 18px;color:#e98d8d;font-size:12px
   }
@@ -1409,6 +1459,7 @@
     .account{margin-left:auto}
   }
   @media(max-width:560px){
+    .hero-stats-primary{grid-template-columns:minmax(0,1fr)}
     .hero-grid{grid-template-columns:1fr}
     .team-heroes{grid-template-columns:repeat(2,1fr)}
     .metabar .grow{margin-left:0;width:100%}
@@ -3171,7 +3222,7 @@
     const metadata = buildStatMetadata(mapped);
     return Object.assign({}, term, {
       stat:mapped,
-      unit:metadata.unit,
+      unit:term.operation === "multiply" ? term.unit : metadata.unit,
       family:metadata.family,
       source:Object.assign({}, term.source, { originalStat:term.stat })
     });
@@ -3832,6 +3883,219 @@
     }).format(displayed) + (unit === "ten-thousandths" ? " %" : "");
   }
 
+  const HERO_PRIMARY_STATS = [
+    ["B_MaxHp", "PV"],
+    ["B_Atk", "ATK"],
+    ["B_Def", "DEF"]
+  ];
+  function heroStatsTitle(result){
+    if(!result || result.status === "incomplete"){
+      return "Statistiques du héros — configuration à compléter";
+    }
+    if(result.status !== "valid"){
+      return "Statistiques du héros — indisponibles";
+    }
+    return "Statistiques du héros — borne inférieure";
+  }
+  function heroStatsGroups(result){
+    const primary = new Set(HERO_PRIMARY_STATS.map(item => item[0]));
+    return groupBuildStatResults(result).map(group => ({
+      family:group.family,
+      stats:group.stats.filter(stat => !primary.has(stat.stat))
+    })).filter(group => group.stats.length);
+  }
+  function formatHeroStatTotal(value, unit){
+    const numeric = unit === "ten-thousandths"
+      ? Number(value) / 100 : Number(value);
+    return new Intl.NumberFormat("fr-FR", {
+      maximumFractionDigits:2
+    }).format(numeric) + (unit === "ten-thousandths" ? " %" : "");
+  }
+  function heroTermLabel(term){
+    const source = term.source || {};
+    if(term.operation === "multiply"){
+      return source.component === "overlimit"
+        ? "Outrepassement" : "Application du taux";
+    }
+    if(source.domain === "character") return "Base du personnage";
+    if(source.domain === "mastery"){
+      return source.component === "common-mastery"
+        ? "Maîtrise commune" : "Maîtrise "+(source.weaponType || "");
+    }
+    if(source.domain === "potential") return "Potentiel P"+source.tier;
+    if(source.domain === "weapon") return weaponTermLabel(term);
+    return gearTermLabel(term);
+  }
+  function heroTermProvenance(term){
+    const source = term.source || {};
+    const parts = [
+      "Source : "+(source.domain || "inconnue"),
+      source.component || "contribution",
+      "unité "+(term.unit === "flat" ? "points" : "dix-millièmes")
+    ];
+    if(source.field) parts.push("champ "+source.field);
+    if(source.weaponType) parts.push("arme "+source.weaponType);
+    if(Number.isInteger(source.level)) parts.push("nœud "+source.level);
+    if(source.kind) parts.push(source.kind);
+    if(source.slot) parts.push("emplacement "+source.slot);
+    if(source.id) parts.push(source.id);
+    if(source.originalStat) parts.push("code original "+source.originalStat);
+    if(term.operation === "add") parts.push("seau "+term.bucket);
+    else parts.push("seaux "+term.appliesTo.join(", "));
+    return parts.join(" · ");
+  }
+  function heroStatDetails(stat){
+    const details = el("details",{class:"weapon-stat-details"},[
+      el("summary",{text:"Détail du calcul"})
+    ]);
+    stat.terms.forEach(term => {
+      const presumedMultiplierBase = term.operation === "multiply"
+        && (term.confidence === "presumed"
+          || (term.source && term.source.component === "overlimit"));
+      const value = term.operation === "multiply"
+        ? "×"+new Intl.NumberFormat("fr-FR", {
+          maximumFractionDigits:4
+        }).format(1 + Number(term.value) / 10000)
+          +(presumedMultiplierBase ? " — base présumée" : "")
+        : formatBuildStatValue(term.value, term.unit)
+          +(term.unit === "flat" ? " points" : "");
+      details.appendChild(el("div",{
+        class:"weapon-stat-term",
+        dataset:{
+          operation:term.operation,
+          unit:term.unit,
+          buckets:term.operation === "multiply"
+            ? term.appliesTo.join(",") : term.bucket
+        }
+      },[
+        el("div",{class:"weapon-stat-term-value"},[
+          el("span",{text:heroTermLabel(term)}),
+          el("span",{
+            class:term.operation === "multiply"
+              ? "weapon-stat-term-overlimit" : "",
+            text:value
+          })
+        ]),
+        el("small",{
+          class:"weapon-stat-provenance",
+          text:heroTermProvenance(term)
+        })
+      ]));
+    });
+    return details;
+  }
+  function heroPassiveLabel(fact){
+    if(fact.source === "weapon:passive") return "Arme";
+    return ARMOR_LABELS[fact.slot] || JEWEL_LABELS[fact.slot] || fact.slot;
+  }
+  function heroPassivesSection(passives){
+    if(!Array.isArray(passives) || !passives.length) return null;
+    const section = el("section",{class:"hero-passives"});
+    section.appendChild(el("h4",{
+      class:"weapon-stats-family-title",
+      text:"Passifs non inclus dans le calcul"
+    }));
+    passives.forEach(fact => {
+      let state = "Niveau du passif à renseigner";
+      if(fact.status === "valid"){
+        state = "Niveau "+fact.level+" / "+fact.maxLevel;
+      }else if(fact.status === "incompatible"){
+        state = "Niveau du passif invalide";
+      }
+      const item = el("article",{class:"hero-passive"},[
+        el("div",{class:"hero-passive-head"},[
+          el("strong",{text:heroPassiveLabel(fact)}),
+          el("span",{text:state})
+        ])
+      ]);
+      if(fact.status === "valid" && fact.text){
+        item.appendChild(el("p",{
+          class:"hero-passive-text",
+          html:renderBonus(fact.text)
+        }));
+      }
+      section.appendChild(item);
+    });
+    return section;
+  }
+  function heroStatsSection(hero){
+    const result = calculateHeroStats(hero);
+    const section = el("section",{
+      class:"hero-stats",
+      dataset:{status:result.status}
+    });
+    section.appendChild(el("h3",{
+      class:"weapon-stats-title",
+      text:heroStatsTitle(result)
+    }));
+    if(result.status !== "valid"){
+      const details = result.missing.length
+        ? " À compléter : "+result.missing.join(", ")+"."
+        : "";
+      section.appendChild(el("p",{
+        class:"weapon-stats-state",
+        text:(result.status === "incomplete"
+          ? "Équipe et configure les neuf pièces pour obtenir une valeur fiable."
+          : "Les données de cette configuration ne peuvent pas être calculées.")
+          +details
+      }));
+      return section;
+    }
+
+    section.appendChild(el("span",{
+      class:"hero-stats-assumption",
+      text:"Base d’application présumée"
+    }));
+    const grouped = groupBuildStatResults(result);
+    const statsByCode = new Map(
+      grouped.flatMap(group => group.stats).map(stat => [stat.stat,stat])
+    );
+    const primary = el("div",{class:"hero-stats-primary"});
+    HERO_PRIMARY_STATS.forEach(([code, label]) => {
+      const stat = statsByCode.get(code);
+      const card = el("article",{
+        class:"hero-stat-card",
+        dataset:{stat:code}
+      },[
+        el("span",{class:"hero-stat-card-label",text:label}),
+        el("strong",{
+          class:"hero-stat-card-value",
+          text:formatHeroStatTotal(stat.value, stat.unit)
+        }),
+        el("small",{class:"hero-stat-card-bound",text:"borne inférieure"})
+      ]);
+      card.appendChild(heroStatDetails(stat));
+      primary.appendChild(card);
+    });
+    section.appendChild(primary);
+
+    heroStatsGroups(result).forEach(group => {
+      const family = el("section",{class:"weapon-stats-family"});
+      family.appendChild(el("h4",{
+        class:"weapon-stats-family-title",
+        text:BUILD_STAT_FAMILY_LABELS[group.family] || group.family
+      }));
+      group.stats.forEach(stat => {
+        const node = el("div",{class:"weapon-stat"},[
+          el("div",{class:"weapon-stat-head"},[
+            el("span",{text:stat.label}),
+            el("span",{
+              class:"weapon-stat-total",
+              dataset:{unit:stat.unit},
+              text:formatHeroStatTotal(stat.value, stat.unit)
+            })
+          ])
+        ]);
+        node.appendChild(heroStatDetails(stat));
+        family.appendChild(node);
+      });
+      section.appendChild(family);
+    });
+    const passives = heroPassivesSection(result.facts.passives);
+    if(passives) section.appendChild(passives);
+    return section;
+  }
+
   const WEAPON_RARITY_LABELS = {
     grade1:"Grade 1",
     grade2:"Grade 2",
@@ -3984,7 +4248,7 @@
               +(stat.unit === "flat" ? " points" : "")
           })
         ]));
-        const details = el("details",{class:"weapon-stat-details",open:""},[
+        const details = el("details",{class:"weapon-stat-details"},[
           el("summary",{text:"Détail du calcul"})
         ]);
         stat.terms.forEach(term => {
@@ -4769,7 +5033,7 @@
               +(stat.unit === "flat" ? " points" : "")
           })
         ]));
-        const details = el("details",{class:"weapon-stat-details",open:""},[
+        const details = el("details",{class:"weapon-stat-details"},[
           el("summary",{text:"Détail du calcul"})
         ]);
         stat.terms.forEach(term => {
@@ -4915,6 +5179,48 @@
     body.appendChild(container);
   }
 
+  function renderGearConfigPassive(body, definition, draft){
+    if(!Array.isArray(definition.passiveLevels)
+      || !definition.passiveLevels.length){
+      return;
+    }
+    const container = el("div",{class:"gear-config-passive"},[
+      el("span",{class:"weapon-enchantment-title",text:"Passif"})
+    ]);
+    const select = el("select",{class:"gear-config-passive-level"});
+    select.appendChild(weaponConfigOption("","À renseigner"));
+    definition.passiveLevels.forEach(item => {
+      select.appendChild(weaponConfigOption(item.level,String(item.level)));
+    });
+    select.value = isInteger(draft.passiveLevel)
+      && draft.passiveLevel >= 1
+      && draft.passiveLevel <= GEAR_PASSIVE_MAX_LEVEL
+      ? String(draft.passiveLevel) : "";
+    const description = el("p",{class:"hero-passive-text weapon-config-hint"});
+    const updateDescription = () => {
+      const selected = definition.passiveLevels.find(
+        item => item.level === draft.passiveLevel
+      );
+      description.innerHTML = selected
+        ? renderBonus(selected.textFr || "")
+        : "Niveau du passif à renseigner";
+    };
+    select.addEventListener("change", event => {
+      draft.passiveLevel = event.target.value === ""
+        ? null : Number(event.target.value);
+      updateDescription();
+      updateGearConfigPreview();
+    });
+    container.appendChild(weaponConfigField(
+      "Niveau du passif",
+      select,
+      "Information enregistrée séparément ; elle ne modifie pas les chiffres."
+    ));
+    updateDescription();
+    container.appendChild(description);
+    body.appendChild(container);
+  }
+
   function renderGearConfigEditor(){
     const state = gearConfigEditorState;
     if(!state) return;
@@ -4961,6 +5267,7 @@
     });
     body.appendChild(weaponConfigField("Renforcement",reinforce));
     renderGearConfigEnchantments(body, definition, draft);
+    renderGearConfigPassive(body, definition, draft);
     updateGearConfigPreview();
   }
 
@@ -4968,6 +5275,9 @@
     const initial = context.config == null
       ? emptyGearConfig(context.file)
       : jsonCopy(context.config);
+    if(initial && initial.version === 1 && !owns(initial, "passiveLevel")){
+      initial.passiveLevel = null;
+    }
     gearConfigEditorState = {
       context,
       draft:initial,
@@ -6642,6 +6952,17 @@
       gear,
       noteColumn
     ]));
+    editor.appendChild(heroStatsSection(normalizeHero({
+      char:memberRosterDraft.charId,
+      weapon:build.weapon,
+      weaponConfig:build.weaponConfig,
+      armor:build.armor,
+      armorConfig:build.armorConfig,
+      jewel:build.jewel,
+      jewelConfig:build.jewelConfig,
+      potentiel:{tier:memberRosterDraft.potentialTier},
+      note:build.note
+    })));
     editor.appendChild(el("div",{class:"member-roster-editor-actions"},[
       el("button",{
         class:"btn",
@@ -6991,7 +7312,7 @@
     const pot = potentielControl(hero, i, ch);
 
     // Note
-    const note = el("textarea",{class:"note", placeholder:"Rôle / notes (ex. tank, burst T2)…",
+    const note = el("textarea",{class:"note", placeholder:"Rôle / notes (ex. tank, burst P2)…",
       maxlength:"160"});
     note.value = hero.note || "";
     note.addEventListener("input", e => hero.note = e.target.value);
@@ -6999,9 +7320,12 @@
     const clear = el("button",{class:"clear", type:"button", text:"Vider ce héros",
       onclick:()=>{ draft.heroes[i] = emptyHero(); renderBuilder(); }});
 
-    return el("div",{class:"hero"},[
-      sourceActions, portrait, title, badges, gear, pot, note, clear
-    ]);
+    const content = [
+      sourceActions, portrait, title, badges, gear, pot, note
+    ];
+    if(ch) content.push(heroStatsSection(hero));
+    content.push(clear);
+    return el("div",{class:"hero"},content);
   }
 
   // Petit bloc "Potentiel" sur la carte héros -> ouvre la fenêtre de potentiel
@@ -7493,7 +7817,7 @@
     JEWEL_SLOTS.forEach(s=>gear.appendChild(equipLine(h.jewel ? h.jewel[s] : null, JEWEL_LABELS[s], "jewel")));
     col.appendChild(gear);
 
-    const stats = weaponStatsSection(h.weapon, h.weaponConfig);
+    const stats = heroStatsSection(h);
     if(stats) col.appendChild(stats);
 
     if(h.note && h.note.trim())

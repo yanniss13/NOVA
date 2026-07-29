@@ -608,8 +608,8 @@ const { chromium } = require("playwright");
     assert.match(await page.locator("#rosterDetailBody").textContent(), /Merlin/);
     assert.match(
       await page.locator("#rosterDetailBody").textContent(),
-      /Apport de l’arme — calcul partiel/,
-      "une arme sans passif connu ne doit pas annoncer un manque inexistant"
+      /Statistiques du héros — configuration à compléter/,
+      "une fiche sans ses neuf pièces chiffrées ne doit pas inventer un total"
     );
     assert.equal(
       await page.locator("#rosterDetailBody .weapon-config-open").count(),
@@ -617,8 +617,15 @@ const { chromium } = require("playwright");
       "Le détail d’autrui ne doit exposer aucun contrôle d’édition"
     );
     assert.ok(
-      await page.locator("#rosterDetailBody .weapon-stats details").count() > 0,
-      "La décomposition de l’apport doit rester consultable"
+      await page.locator(
+        '#rosterDetailBody .hero-stats[data-status="incomplete"]'
+      ).count() === 1,
+      "Le détail doit identifier explicitement la configuration incomplète"
+    );
+    assert.equal(
+      await page.locator("#rosterDetailBody .hero-stats-primary").count(),
+      0,
+      "Une configuration incomplète ne doit afficher aucun faux total"
     );
     assert.match(await page.locator("#rosterDetailTitle").textContent(), /Merlin/);
     assert.equal(await page.locator("#rosterDetailPosition").textContent(), "2 / 2");
@@ -792,32 +799,97 @@ const { chromium } = require("playwright");
         item.owner === "user-1" && item.char_id === "meliodas"
       );
       const team = state.teams.find(item => item.id === "team-own");
+      const build = JSON.parse(JSON.stringify(roster.builds.Hache));
+      const catalog = window.SEVEN_DS_BUILD_STATS;
+      const linked = (window.SEVEN_DS_ARMURES_LIEES.meliodas || [])
+        .find(file => catalog.engravedByFile[file]);
+      if(!linked) throw new Error("FIXTURE_LINKED_ARMOR_MISSING");
+      build.armor["Armure liee"] = linked;
+      const configFor = file => {
+        const definition = catalog.gearByFile[file]
+          || catalog.engravedByFile[file];
+        if(!definition) throw new Error("FIXTURE_GEAR_MISSING:"+file);
+        return {
+          version:1,
+          level:definition.qualityMin,
+          reinforce:0,
+          enchantments:Array(
+            definition.randomOptions
+              ? definition.randomOptions.slots : 0
+          ).fill(null),
+          passiveLevel:Array.isArray(definition.passiveLevels)
+            && definition.passiveLevels.length ? 2 : null
+        };
+      };
+      build.armorConfig = Object.fromEntries(
+        Object.entries(build.armor).map(([slot,file]) => [
+          slot,
+          configFor(file)
+        ])
+      );
+      build.jewelConfig = Object.fromEntries(
+        Object.entries(build.jewel).map(([slot,file]) => [
+          slot,
+          configFor(file)
+        ])
+      );
+      team.data.name = "Fixture stats héros";
       team.data.heroes[0] = {
         char:"meliodas",
-        weapon:roster.builds.Hache.weapon,
-        weaponConfig:JSON.parse(JSON.stringify(roster.builds.Hache.weaponConfig)),
-        armor:{},
-        jewel:{},
+        weapon:build.weapon,
+        weaponConfig:build.weaponConfig,
+        armor:build.armor,
+        armorConfig:build.armorConfig,
+        jewel:build.jewel,
+        jewelConfig:build.jewelConfig,
         potentiel:{tier:roster.potential_tier},
-        note:"Instantané chiffré"
+        note:"Copie modifiée"
       };
       window.__fakeSupabaseEmit("teams", "UPDATE");
     });
     const ownTeam = page.locator("#rosterGrid .team")
-      .filter({ hasText:"Yannis" })
+      .filter({ hasText:"Fixture stats héros" })
       .first();
     await ownTeam.getByText("Meliodas", { exact:true }).waitFor();
     await ownTeam.getByRole("button", { name:/Voir l'équipement/ }).click();
-    const teamStats = page.locator("#teamDetail .weapon-stats").first();
-    assert.match(await teamStats.textContent(), /Apport de l’arme hors passif — borne inférieure/);
+    assert.deepEqual(
+      errors,
+      [],
+      "Le rendu du total du héros ne doit produire aucune erreur navigateur"
+    );
+    const teamStats = page.locator("#teamDetail .hero-stats").first();
+    assert.match(
+      await teamStats.textContent(),
+      /Statistiques du héros — borne inférieure/
+    );
+    assert.equal(
+      await teamStats.locator(".hero-stat-card").count(),
+      3,
+      "PV, ATK et DEF doivent être présentés séparément"
+    );
+    assert.equal(
+      await teamStats.locator(".hero-stat-card")
+        .filter({ hasNotText:"borne inférieure" }).count(),
+      0,
+      "Chaque statistique principale doit annoncer sa borne inférieure"
+    );
     assert.match(await teamStats.textContent(), /Promotion/);
     assert.match(
       await teamStats.textContent(),
-      /Outrepassement ×1,05 — base présumée/
+      /Outrepassement\s*×1,05 — base présumée/
+    );
+    assert.match(
+      await teamStats.textContent(),
+      /Passifs non inclus dans le calcul/
+    );
+    assert.equal(
+      await teamStats.locator("details[open]").count(),
+      0,
+      "La décomposition doit être repliée par défaut"
     );
     assert.doesNotMatch(
       (await teamStats.textContent()).toLocaleLowerCase("fr-FR"),
-      /stats du héros|total du héros|renforcement/
+      /total du héros/
     );
     assert.equal(
       await page.locator("#teamDetail .weapon-config-open").count(),
@@ -834,7 +906,10 @@ const { chromium } = require("playwright");
     assert.ok(termTrace.operation);
     assert.ok(termTrace.unit);
     assert.ok(termTrace.buckets);
-    assert.match(termTrace.text, /Source : arme|Source : weapon/);
+    assert.match(
+      termTrace.text,
+      /Source : character|Source : personnage|Source : weapon|Source : arme/
+    );
     const importButton = page.locator("#teamDetail")
       .getByRole("button", { name:/roster/i })
       .first();

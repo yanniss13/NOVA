@@ -36,6 +36,23 @@ function masterstoneConfig(enchantment){
   };
 }
 
+function fakeNodes(root, predicate){
+  const matches = [];
+  const visit = node => {
+    if(!node || typeof node !== "object") return;
+    if(predicate(node)) matches.push(node);
+    (node.children || []).forEach(visit);
+  };
+  visit(root);
+  return matches;
+}
+
+function fakeText(root){
+  return fakeNodes(root, () => true)
+    .map(node => node.textContent || "")
+    .join(" ");
+}
+
 // Les primitives reproduisent les segments, promotions, bornes et formats documentés.
 {
   const { hooks } = loadApp();
@@ -1398,6 +1415,22 @@ function masterstoneConfig(enchantment){
     term.source.originalStat === "B_Atk_Equip"
     && term.stat === "B_Atk"
   ));
+  const overlimitedHero = plain(hero);
+  overlimitedHero.weaponConfig.overlimit = 1;
+  const overlimitedResult = plain(hooks.calculateHeroStats(overlimitedHero));
+  assert.strictEqual(overlimitedResult.status, "valid");
+  assert.ok(overlimitedResult.terms.some(term =>
+    term.operation === "multiply"
+    && term.source.domain === "weapon"
+    && term.source.component === "overlimit"
+    && term.stat === "B_Atk"
+    && term.unit === "ten-thousandths"
+  ), "l’outrepassement canonisé doit rester un taux en dix-millièmes");
+  assert.match(
+    fakeText(hooks.heroStatsSection(overlimitedHero)),
+    /Outrepassement\s+×1,05 — base présumée/,
+    "le taux exact doit continuer d’annoncer sa base d’application présumée"
+  );
   assert.deepStrictEqual(
     plain(hooks.heroMainRateTargetBuckets(
       "B_Atk",
@@ -1469,6 +1502,30 @@ function masterstoneConfig(enchantment){
     && fact.status === "missing"
   ));
 
+  assert.strictEqual(
+    hooks.heroStatsTitle(result),
+    "Statistiques du héros — borne inférieure"
+  );
+  const section = hooks.heroStatsSection(hero);
+  assert.ok(section.className.includes("hero-stats"));
+  const primaryCards = fakeNodes(
+    section,
+    node => node.className
+      && node.className.split(/\s+/).includes("hero-stat-card")
+  );
+  assert.strictEqual(primaryCards.length, 3);
+  primaryCards.forEach(card => {
+    assert.match(fakeText(card), /borne inférieure/i);
+  });
+  const details = fakeNodes(
+    section,
+    node => node.className && node.className.includes("weapon-stat-details")
+  );
+  assert.ok(details.length > 3);
+  assert.ok(details.every(node => !node.open));
+  assert.match(fakeText(section), /Base d’application présumée/);
+  assert.match(fakeText(section), /Passifs non inclus dans le calcul/);
+
   const withPassives = plain(hero);
   withPassives.armorConfig.Bas.passiveLevel = 3;
   withPassives.armorConfig["Armure liee"].passiveLevel = 2;
@@ -1502,6 +1559,12 @@ function masterstoneConfig(enchantment){
     assert.ok(incomplete.missing.includes(missingPath), missingPath);
     assert.deepStrictEqual(incomplete.terms, [], missingPath);
     assert.deepStrictEqual(incomplete.totals, [], missingPath);
+    const incompleteSection = hooks.heroStatsSection(draft);
+    assert.doesNotMatch(
+      fakeText(incompleteSection),
+      /\b(?:PV|ATK|DEF)\s*0\b/,
+      "un build incomplet ne doit jamais afficher un faux zéro"
+    );
   });
 
   const badPotential = plain(hero);

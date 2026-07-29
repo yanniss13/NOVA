@@ -1040,7 +1040,7 @@ async function installRosterFocusFakeSupabase(page){
     const compactChipWidth = await mobile.evaluate(() => {
       const chip = document.createElement("button");
       chip.className = "chip";
-      chip.textContent = "T0";
+      chip.textContent = "P0";
       document.body.appendChild(chip);
       const width = chip.getBoundingClientRect().width;
       chip.remove();
@@ -1072,6 +1072,25 @@ async function installRosterFocusFakeSupabase(page){
     assert.ok(
       motion.animationName === "none" || motion.animationDuration === "0s",
       "Les animations doivent être neutralisées"
+    );
+    await mobile.setViewportSize({width:500,height:844});
+    const heroPrimaryColumns = await mobile.evaluate(() => {
+      const grid = document.createElement("div");
+      grid.className = "hero-stats-primary";
+      grid.append(
+        document.createElement("div"),
+        document.createElement("div"),
+        document.createElement("div")
+      );
+      document.body.appendChild(grid);
+      const columns = getComputedStyle(grid).gridTemplateColumns;
+      grid.remove();
+      return columns.trim().split(/\s+/).length;
+    });
+    assert.equal(
+      heroPrimaryColumns,
+      1,
+      "Les trois statistiques principales doivent s'empiler sous 560 px"
     );
     await mobileContext.close();
 

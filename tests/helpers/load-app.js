@@ -143,6 +143,15 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   calculateHeroStats:typeof calculateHeroStats === "function"
     ? calculateHeroStats
     : undefined,
+  heroStatsTitle:typeof heroStatsTitle === "function"
+    ? heroStatsTitle
+    : undefined,
+  heroStatsGroups:typeof heroStatsGroups === "function"
+    ? heroStatsGroups
+    : undefined,
+  heroStatsSection:typeof heroStatsSection === "function"
+    ? heroStatsSection
+    : undefined,
   ARMOR_LEVEL_ORIGIN_MODE:typeof ARMOR_LEVEL_ORIGIN_MODE === "string"
     ? ARMOR_LEVEL_ORIGIN_MODE
     : undefined,
