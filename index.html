@@ -3652,9 +3652,14 @@
         heroMainRateApplication:{
           mode:HERO_MAIN_RATE_APPLICATION_MODE,
           confidence:"presumed"
+        },
+        secondaryWeaponTransfer:{
+          mode:SECONDARY_WEAPON_TRANSFER_APPLICATION_MODE,
+          confidence:"presumed"
         }
       },
       missing:missing || [],
+      partialStats:[],
       terms:[],
       totals:[],
       facts:{ passives:[] }
@@ -3689,6 +3694,81 @@
       });
     });
     return facts;
+  }
+  const SECONDARY_WEAPON_ATTACK_TRANSFER_RATE = 3000;
+  /*
+   * PRÉSUMÉ, NON VÉRIFIÉ :
+   * les 30 % d'ATK plate des deux armes secondaires sont ajoutés avant les
+   * taux principaux du héros. Protocole : comparer sur Merlin l'ATK affichée
+   * avec les deux armes secondaires configurées, puis sans l'une d'elles. Si
+   * l'écart réel n'est pas lui-même affecté par les taux principaux, changer
+   * uniquement ce mode et le branchement de ces seaux.
+   */
+  const SECONDARY_WEAPON_TRANSFER_APPLICATION_MODE =
+    "before-hero-rates";
+  function secondaryWeaponAttackResult(
+    hero,
+    activeWeaponType,
+    applicationMode
+  ){
+    const selectedMode = applicationMode
+      || SECONDARY_WEAPON_TRANSFER_APPLICATION_MODE;
+    if(selectedMode !== "before-hero-rates"){
+      throw new Error("SECONDARY_WEAPON_TRANSFER_MODE_INVALID");
+    }
+    const source = hero && typeof hero === "object" ? hero : {};
+    const terms = [];
+    const missing = [];
+    const uncovered = [];
+    weaponTypesOf(source.char)
+      .filter(type => type !== activeWeaponType)
+      .forEach(type => {
+        const build = source.rosterBuilds && source.rosterBuilds[type];
+        if(!build || !build.weapon){
+          missing.push("rosterBuilds."+type+".weapon");
+          uncovered.push("secondary-weapon:"+type);
+          return;
+        }
+        const weapon = calculateWeaponStats(
+          build.weapon,
+          build.weaponConfig
+        );
+        if(weapon.status !== "valid"){
+          missing.push("rosterBuilds."+type+".weaponConfig");
+          uncovered.push("secondary-weapon:"+type);
+          return;
+        }
+        const attack = weapon.totals.find(total =>
+          total.stat === "B_Atk_Equip" && total.unit === "flat"
+        );
+        if(!attack){
+          missing.push("rosterBuilds."+type+".weaponConfig");
+          uncovered.push("secondary-weapon:"+type);
+          return;
+        }
+        const metadata = buildStatMetadata("B_Atk");
+        terms.push({
+          id:"secondary-weapon:"+type+":attack-transfer",
+          stat:"B_Atk",
+          operation:"add",
+          value:attack.value
+            * SECONDARY_WEAPON_ATTACK_TRANSFER_RATE / 10000,
+          unit:"flat",
+          bucket:"secondary-weapon:"+type,
+          family:metadata.family,
+          source:{
+            domain:"secondary-weapon",
+            component:"attack-transfer",
+            weaponType:type,
+            file:build.weapon,
+            originalStat:"B_Atk_Equip",
+            originalValue:attack.value,
+            transferRate:SECONDARY_WEAPON_ATTACK_TRANSFER_RATE
+          },
+          confidence:"exact"
+        });
+      });
+    return { terms, missing, uncovered };
   }
   function calculateHeroStats(hero){
     const source = hero && typeof hero === "object" ? hero : {};
@@ -3782,11 +3862,17 @@
     if(status !== "valid") return emptyHeroStatResult(status, missing);
 
     const weaponType = equippedWeaponType;
+    const activeWeaponType = weaponFolderOf(source.weapon);
+    const secondary = secondaryWeaponAttackResult(
+      source,
+      activeWeaponType
+    );
     const build = calculateBuildStats(source);
     const rawTerms = characterBaseTerms(character)
       .concat(fullMasteryTerms(character, weaponType))
       .concat(potentialTerms(character, weaponType, potentialTier))
-      .concat(build.terms.map(canonicalHeroTerm));
+      .concat(build.terms.map(canonicalHeroTerm))
+      .concat(secondary.terms);
     const rateTerms = rawTerms.reduce((terms, rateTerm) => {
       const targetStat = HERO_MAIN_RATE_TARGETS[rateTerm.stat];
       if(!targetStat || rateTerm.operation !== "add"
@@ -3831,18 +3917,27 @@
     }
     return {
       version:1,
-      status:"valid",
-      coverage:[...HERO_STAT_COVERAGE],
-      uncovered:[...new Set(build.uncovered)],
+      status:secondary.missing.length ? "partial" : "valid",
+      coverage:secondary.missing.length
+        ? [...HERO_STAT_COVERAGE]
+        : [...HERO_STAT_COVERAGE, "secondary-weapon"],
+      uncovered:[
+        ...new Set(build.uncovered.concat(secondary.uncovered))
+      ],
       assumptions:{
         overlimitBase:OVERLIMIT_APPLICATION_MODE,
         armorLevelOrigin:ARMOR_LEVEL_ORIGIN_MODE,
         heroMainRateApplication:{
           mode:HERO_MAIN_RATE_APPLICATION_MODE,
           confidence:"presumed"
+        },
+        secondaryWeaponTransfer:{
+          mode:SECONDARY_WEAPON_TRANSFER_APPLICATION_MODE,
+          confidence:"presumed"
         }
       },
-      missing:[],
+      missing:secondary.missing,
+      partialStats:secondary.missing.length ? ["B_Atk"] : [],
       terms,
       totals:reconstructStatTotals(terms),
       facts:{ passives }

@@ -152,6 +152,18 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   heroMainRateTargetBuckets:typeof heroMainRateTargetBuckets === "function"
     ? heroMainRateTargetBuckets
     : undefined,
+  SECONDARY_WEAPON_ATTACK_TRANSFER_RATE:
+    typeof SECONDARY_WEAPON_ATTACK_TRANSFER_RATE === "number"
+      ? SECONDARY_WEAPON_ATTACK_TRANSFER_RATE
+      : undefined,
+  SECONDARY_WEAPON_TRANSFER_APPLICATION_MODE:
+    typeof SECONDARY_WEAPON_TRANSFER_APPLICATION_MODE === "string"
+      ? SECONDARY_WEAPON_TRANSFER_APPLICATION_MODE
+      : undefined,
+  secondaryWeaponAttackResult:
+    typeof secondaryWeaponAttackResult === "function"
+      ? secondaryWeaponAttackResult
+      : undefined,
   calculateHeroStats:typeof calculateHeroStats === "function"
     ? calculateHeroStats
     : undefined,
@@ -292,6 +304,46 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
     : undefined
 });})();`;
 
+function testWeaponDefinition(gameId, base, percentOption){
+  return {
+    mainStat:"attack",
+    mainStatCode:"B_Atk_Equip",
+    passiveLevels:[],
+    gradesByGameId:{
+      [gameId]:{
+        gameId,
+        mainStatValues:{
+          base,
+          max:base + 50,
+          progression:[1, 1, 1, 1, 1]
+        },
+        subStats:[],
+        promotionSteps:[
+          { reinforceMax:20 }, { reinforceMax:30 },
+          { reinforceMax:40 }, { reinforceMax:50 }
+        ],
+        promotionValues:{ base:5, max:55, progression:[5, 10, 15, 20] },
+        overlimit:{
+          levels:[
+            { level:0, passiveLevel:1, statRate:0 },
+            { level:1, passiveLevel:2, statRate:500 }
+          ]
+        },
+        enchantments:{
+          type:"basic",
+          slots:[10000],
+          options:[
+            { stat:"B_Atk_Equip", min:1, max:1000 },
+            ...(percentOption
+              ? [{ stat:"I_AtkAdd_Rate", min:1, max:5000 }]
+              : [])
+          ]
+        }
+      }
+    }
+  };
+}
+
 function loadApp(initialTeams){
   const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
   const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
@@ -389,6 +441,7 @@ function loadApp(initialTeams){
       version:1,
       statLabels:{
         B_Atk_Equip:{ fr:"Attaque de l'équipement", family:"main", unit:"flat" },
+        I_AtkAdd_Rate:{ fr:"ATK", family:"main", unit:"ten-thousandths" },
         critRate:{ fr:"Chances crit.", family:"additional", unit:"ten-thousandths" }
       },
       weaponsByFile:{
@@ -431,7 +484,11 @@ function loadApp(initialTeams){
               }
             }
           }
-        }
+        },
+        "7ds-armes/Epee 1 main/epee.webp":
+          testWeaponDefinition("grade-sword", 100, true),
+        "7ds-armes/Epees doubles/doubles.webp":
+          testWeaponDefinition("grade-dual", 200, true)
       }
     }
   };

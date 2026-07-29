@@ -1417,10 +1417,55 @@ function fakeText(root){
     potentiel:{ tier:0 },
     note:""
   };
+  const baseSnapshot = plain(hooks.teamBuildSnapshot(hero));
+  hero.activeWeaponType = "Hache";
+  hero.rosterBuilds = {
+    Hache:plain(baseSnapshot),
+    "Epee 1 main":{
+      ...plain(baseSnapshot),
+      weapon:EPEE_FILE,
+      weaponConfig:{
+        version:1,
+        gradeGameId:"grade-sword",
+        level:10,
+        promotion:1,
+        overlimit:1,
+        enchantments:[{
+          slot:0,
+          tier:null,
+          element:null,
+          stat:"B_Atk_Equip",
+          value:100
+        }]
+      }
+    },
+    "Epees doubles":{
+      ...plain(baseSnapshot),
+      weapon:DOUBLE_FILE,
+      weaponConfig:{
+        version:1,
+        gradeGameId:"grade-dual",
+        level:0,
+        promotion:0,
+        overlimit:0,
+        enchantments:[{
+          slot:0,
+          tier:null,
+          element:null,
+          stat:"I_AtkAdd_Rate",
+          value:3000
+        }]
+      }
+    }
+  };
 
   assert.strictEqual(
     hooks.HERO_MAIN_RATE_APPLICATION_MODE,
     "all-flat-before-passives"
+  );
+  assert.strictEqual(
+    hooks.SECONDARY_WEAPON_TRANSFER_APPLICATION_MODE,
+    "before-hero-rates"
   );
   const result = plain(hooks.calculateHeroStats(hero));
   assert.strictEqual(result.status, "valid");
@@ -1432,8 +1477,49 @@ function fakeText(root){
     "armor",
     "jewel",
     "engraving",
-    "set"
+    "set",
+    "secondary-weapon"
   ]);
+  assert.deepStrictEqual(result.partialStats, []);
+  assert.deepStrictEqual(
+    result.assumptions.secondaryWeaponTransfer,
+    {
+      mode:"before-hero-rates",
+      confidence:"presumed"
+    }
+  );
+  const transfers = result.terms.filter(term =>
+    term.source.domain === "secondary-weapon"
+  );
+  assert.strictEqual(transfers.length, 2);
+  assert.deepStrictEqual(
+    transfers.map(term => term.source.transferRate),
+    [3000, 3000]
+  );
+  assert.deepStrictEqual(
+    transfers.map(term => term.source.originalValue),
+    [226, 205]
+  );
+  assert.deepStrictEqual(
+    transfers.map(term => term.value),
+    [67.8, 61.5]
+  );
+  transfers.forEach(term => {
+    assert.strictEqual(term.stat, "B_Atk");
+    assert.strictEqual(term.operation, "add");
+    assert.strictEqual(term.unit, "flat");
+    assert.strictEqual(
+      term.value,
+      term.source.originalValue * 3000 / 10000
+    );
+  });
+  assert.strictEqual(
+    result.terms.some(term =>
+      term.source.domain === "secondary-weapon"
+      && term.source.originalStat === "I_AtkAdd_Rate"
+    ),
+    false
+  );
   assert.deepStrictEqual(result.assumptions.heroMainRateApplication, {
     mode:"all-flat-before-passives",
     confidence:"presumed"
@@ -1443,6 +1529,49 @@ function fakeText(root){
     result.totals,
     "la décomposition doit être l'unique source des totaux"
   );
+  const percentageSword = plain(hero);
+  percentageSword.rosterBuilds["Epee 1 main"].weaponConfig.enchantments[0] = {
+    slot:0,
+    tier:null,
+    element:null,
+    stat:"I_AtkAdd_Rate",
+    value:100
+  };
+  const percentageSwordResult = plain(
+    hooks.calculateHeroStats(percentageSword)
+  );
+  const percentageSwordTransfer = percentageSwordResult.terms.find(term =>
+    term.source.domain === "secondary-weapon"
+    && term.source.weaponType === "Epee 1 main"
+  );
+  assert.strictEqual(percentageSwordTransfer.source.originalValue, 126);
+  assert.strictEqual(percentageSwordTransfer.value, 37.8);
+  assert.strictEqual(
+    transfers.find(term =>
+      term.source.weaponType === "Epee 1 main"
+    ).value - percentageSwordTransfer.value,
+    30,
+    "remplacer 100 ATK plate par 100 ATK % retire exactement 30 ATK transférée"
+  );
+
+  const missingSecondary = plain(hero);
+  delete missingSecondary.rosterBuilds["Epees doubles"];
+  const partial = plain(hooks.calculateHeroStats(missingSecondary));
+  assert.strictEqual(partial.status, "partial");
+  assert.deepStrictEqual(partial.partialStats, ["B_Atk"]);
+  assert.ok(partial.missing.includes(
+    "rosterBuilds.Epees doubles.weapon"
+  ));
+  assert.ok(partial.uncovered.includes(
+    "secondary-weapon:Epees doubles"
+  ));
+  assert.strictEqual(
+    partial.coverage.includes("secondary-weapon"),
+    false
+  );
+  assert.ok(partial.totals.some(total => total.stat === "B_MaxHp"));
+  assert.ok(partial.totals.some(total => total.stat === "B_Def"));
+  assert.ok(partial.totals.some(total => total.stat === "B_Atk"));
   assert.ok(result.terms.some(term =>
     term.operation === "multiply"
     && term.stat === "B_Atk"

@@ -14,7 +14,7 @@ Plan :
 
 - [x] Task 1 — normaliser et transporter les trois builds
 - [x] Task 2 — protéger `rosterBuilds` contre les anciennes PWA
-- [ ] Task 3 — calculer le transfert reconstructible de 30 %
+- [x] Task 3 — calculer le transfert reconstructible de 30 %
 - [ ] Task 4 — rendre le résultat partiel impossible à confondre
 - [ ] Task 5 — changer de build par les trois icônes sans perte
 - [ ] Task 6 — mettre à jour ou recharger le roster explicitement
@@ -46,6 +46,9 @@ Plan :
 | SHA | Message | Tâche |
 | --- | --- | --- |
 | `194e3e5` | `docs: concevoir le transfert des armes secondaires` | Conception |
+| `de2eb17` | `docs: planifier les armes secondaires` | Plan |
+| `3e30b8c` | `feat: conserver les trois builds d'un héros` | Task 1 |
+| `d7f1fee` | `fix: préserver les trois builds d'équipe` | Task 2 |
 
 ## Vérifications
 
@@ -56,6 +59,9 @@ Plan :
 - Task 2 RED : garde `rosterBuilds` absente du trigger d'équipe.
 - Task 2 GREEN : `node tests/stats-build-schema.test.js`.
 - Syntaxe SQL : `python -m unittest tests/test_schema_sql.py`.
+- Task 3 RED : mode et termes d'armes secondaires absents.
+- Task 3 GREEN : `node tests/stats-build.test.js`.
+- Task 3 formule : transferts synthétiques `67,8` et `61,5`, sans ATK %.
 
 ## Activation
 
