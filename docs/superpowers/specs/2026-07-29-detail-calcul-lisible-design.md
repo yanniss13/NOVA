@@ -67,6 +67,7 @@ Signature figée :
 ```js
 statTermsDetails(stat, {
   termLabel,      // (term) => string
+  termValue,      // (term, group) => string   texte de la colonne de droite
   termProvenance, // (term) => string
   termEmphasis    // (term) => string | null   classe de mise en avant
 })
@@ -81,10 +82,25 @@ Les fonctions existantes (`heroTermLabel` / `heroTermProvenance`,
 `gearTermProvenance`) restent la source des noms et des provenances. L'appelant
 les fournit ; `statTermsDetails` ne les choisit jamais elle-même.
 
-`termEmphasis` remplace un paramètre `context` fourre-tout : c'est la **seule**
-différence restante entre appelants, et la nommer la rend testable. Un rappel de
-contexte non typé inviterait à y glisser peu à peu la logique d'affichage que
-cette fonction est justement censée unifier.
+`termEmphasis` et `termValue` remplacent un paramètre `context` fourre-tout :
+ce sont les **deux seules** différences restantes entre appelants, et les nommer
+les rend testables. Un rappel de contexte non typé inviterait à y glisser peu à
+peu la logique d'affichage que cette fonction est justement censée unifier.
+
+**Pourquoi `termValue` existe.** Le texte de la colonne de droite n'est pas le
+même d'un appelant à l'autre pour un multiplicateur :
+
+| Appelant | Colonne de droite aujourd'hui |
+| --- | --- |
+| Panneau d'arme | `weaponTermLabel(term)` en entier, soit `Outrepassement ×1,05 — base présumée` |
+| Fiche du héros | `×1,05 — base présumée` |
+| Panneau d'équipement | aucun multiplicateur en pratique |
+
+`tests/potentiel-commun.playwright.js` (~625) compare le texte **exactement**
+(`assert.equal` après `trim()`). Une règle de valeur commune casserait donc ce
+test, que ce lot s'interdit de réécrire. `termValue` reçoit le groupe en second
+argument afin de connaître `group.mainRate` et d'appliquer la notation additive
+aux seuls taux principaux.
 
 **Le lot ne change pas quelles lignes sont mises en avant.** `termEmphasis`
 reproduit exactement les règles actuelles :
