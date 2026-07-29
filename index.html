@@ -5540,30 +5540,11 @@
               +(stat.unit === "flat" ? " points" : "")
           })
         ]));
-        const details = el("details",{class:"weapon-stat-details"},[
-          el("summary",{text:"Détail du calcul"})
-        ]);
-        stat.terms.forEach(term => {
-          details.appendChild(el("div",{
-            class:"weapon-stat-term",
-            dataset:{
-              operation:term.operation,
-              unit:term.unit,
-              buckets:term.bucket || ""
-            }
-          },[
-            el("div",{class:"weapon-stat-term-value"},[
-              el("span",{text:gearTermLabel(term)}),
-              el("span",{
-                text:formatBuildStatValue(term.value, term.unit)
-                  +(term.unit === "flat" ? " points" : "")
-              })
-            ]),
-            el("small",{
-              class:"weapon-stat-provenance",
-              text:gearTermProvenance(term)
-            })
-          ]));
+        const details = statTermsDetails(stat, {
+          termLabel:gearTermLabel,
+          termValue:term => formatBuildStatValue(term.value, term.unit)
+            +(term.unit === "flat" ? " points" : ""),
+          termProvenance:gearTermProvenance
         });
         statNode.appendChild(details);
         family.appendChild(statNode);
