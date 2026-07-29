@@ -239,9 +239,14 @@
   }
   .wslot.dim{opacity:.38}
   .builder-weapon-switch{
-    appearance:none;display:grid;place-items:center;min-width:44px;min-height:44px;
+    appearance:none;position:relative;display:grid;place-items:center;
+    min-width:44px;min-height:44px;
     padding:7px;border:0;border-radius:50%;cursor:pointer;color:inherit;
     background:transparent;transition:.16s
+  }
+  .builder-weapon-switch.dirty::after{
+    content:"";position:absolute;right:2px;top:2px;width:7px;height:7px;
+    border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px #15121c
   }
   .builder-weapon-switch:not(.active) .wslot{opacity:.48}
   .builder-weapon-switch:hover,
@@ -2079,13 +2084,19 @@
       const type = ENUM_TO_FOLDER[slot.weapon];
       if(!type) return;
       const active = type === activeType;
+      const dirty = builderBuildIsDirty(heroIndex, type);
       const badge = weaponSlotBadge(slot, active);
       slots.appendChild(el("button",{
-        class:"builder-weapon-switch"+(active ? " active" : ""),
+        class:"builder-weapon-switch"
+          +(active ? " active" : "")
+          +(dirty ? " dirty" : ""),
         type:"button",
         dataset:{weaponType:type},
         "aria-pressed":String(active),
-        title:"Afficher le build "+rosterWeaponLabel(type),
+        "aria-label":"Afficher le build "+rosterWeaponLabel(type)
+          +(dirty ? " modifié" : ""),
+        title:"Afficher le build "+rosterWeaponLabel(type)
+          +(dirty ? " — modifié" : ""),
         onclick:()=>switchBuilderHeroBuild(heroIndex, type)
       },[badge]));
     });
@@ -5708,6 +5719,24 @@
       updatedAt:Number.isFinite(Number(source.updatedAt)) ? Number(source.updatedAt) : 0
     };
   }
+  function rosterEntryWithActiveHeroBuild(existing, hero, ownerId){
+    const type = hero.activeWeaponType || weaponFolderOf(hero.weapon);
+    const next = normalizeRosterCharacter(existing || {
+      owner:ownerId,
+      charId:hero.char,
+      potentialTier:0,
+      builds:{}
+    });
+    const favorite = !!(
+      next.builds[type] && next.builds[type].favorite
+    );
+    next.potentialTier = normalizePotentiel(hero.potentiel).tier;
+    next.builds[type] = Object.assign(
+      normalizeRosterBuild(hero.char, type, hero),
+      { favorite }
+    );
+    return next;
+  }
   function favoriteRosterWeaponType(entry){
     const normalized = normalizeRosterCharacter(entry);
     if(!normalized) return null;
@@ -5978,6 +6007,34 @@
   let teamDraftSourceUpdatedAt = 0;
   let teamDraftInitialJson = JSON.stringify(draft);
   let teamDraftDeletedRemotely = false;
+  let builderRosterBaselines = Array.from(
+    {length:TEAM_SIZE},
+    () => ({updatedAt:0, builds:{}})
+  );
+  function resetBuilderRosterBaselines(){
+    builderRosterBaselines = draft.heroes.map(hero => {
+      const entry = currentUser && hero.char
+        ? MemberRosterStore.all(currentUser.id)
+          .find(item => item.charId === hero.char)
+        : null;
+      return {
+        updatedAt:Number(entry && entry.updatedAt) || 0,
+        builds:entry ? jsonCopy(entry.builds) : {}
+      };
+    });
+  }
+  function builderBuildIsDirty(index, type){
+    const hero = draft.heroes[index];
+    const activeType = hero
+      && (weaponFolderOf(hero.weapon) || hero.activeWeaponType);
+    const current = type === activeType
+      ? teamBuildSnapshot(hero)
+      : hero && hero.rosterBuilds && hero.rosterBuilds[type];
+    const baseline = builderRosterBaselines[index]
+      && builderRosterBaselines[index].builds[type];
+    return JSON.stringify(teamBuildSnapshot(current || {}))
+      !== JSON.stringify(teamBuildSnapshot(baseline || {}));
+  }
 
   /* ============================ Toast ============================ */
   let toastTimer;
@@ -7431,6 +7488,131 @@
     )].find(button => button.dataset.weaponType === weaponType);
     if(active) active.focus();
   }
+  function rosterNetworkAvailable(){
+    return !!currentUser && !!sb
+      && (typeof navigator === "undefined"
+        || navigator.onLine !== false);
+  }
+  function focusBuilderWeaponSwitch(heroIndex, weaponType){
+    const card = heroGrid.children[heroIndex];
+    const button = card && [...card.querySelectorAll(
+      ".builder-weapon-switch"
+    )].find(item => item.dataset.weaponType === weaponType);
+    if(button) button.focus();
+  }
+  async function updateBuilderHeroRoster(heroIndex){
+    if(!rosterNetworkAvailable()){
+      toast("Connexion requise pour mettre à jour le roster.", true);
+      return;
+    }
+    const hero = draft.heroes[heroIndex];
+    if(!hero || !hero.char){
+      toast("Choisis d’abord un personnage.", true);
+      return;
+    }
+    storeActiveHeroBuild(hero);
+    const type = hero.activeWeaponType || weaponFolderOf(hero.weapon);
+    if(!type){
+      toast("Choisis d’abord un type d’arme.", true);
+      return;
+    }
+    let rows;
+    try{
+      rows = await MemberRosterStore.refresh(currentUser.id);
+    }catch(error){
+      toast("Impossible de vérifier ton roster.", true);
+      return;
+    }
+    const latest = rows.find(entry => entry.charId === hero.char);
+    const baseline = builderRosterBaselines[heroIndex]
+      || {updatedAt:0, builds:{}};
+    const latestUpdatedAt = Number(latest && latest.updatedAt) || 0;
+    const remotelyChanged = latestUpdatedAt !== baseline.updatedAt
+      || (!latest && baseline.updatedAt > 0);
+    if(remotelyChanged && !confirm(
+      "Ton roster a été modifié depuis son chargement. "
+      +"Écraser uniquement le build "+rosterWeaponLabel(type)+" ?"
+    )){
+      toast("Le roster a été modifié ailleurs. Mise à jour annulée.", true);
+      return;
+    }
+    const next = rosterEntryWithActiveHeroBuild(
+      latest,
+      hero,
+      currentUser.id
+    );
+    try{
+      const saved = await MemberRosterStore.upsert(next);
+      builderRosterBaselines[heroIndex] = {
+        updatedAt:Number(saved.updatedAt) || 0,
+        builds:jsonCopy(saved.builds)
+      };
+      renderBuilder();
+      focusBuilderWeaponSwitch(heroIndex, type);
+      toast("Build "+rosterWeaponLabel(type)+" mis à jour dans ton roster.");
+    }catch(error){
+      toast("Roster non enregistré : "+authMessage(error), true);
+    }
+  }
+  async function reloadBuilderHeroFromRoster(heroIndex){
+    if(!rosterNetworkAvailable()){
+      toast("Connexion requise pour recharger le roster.", true);
+      return;
+    }
+    const hero = draft.heroes[heroIndex];
+    if(!hero || !hero.char) return;
+    const dirty = weaponTypesOf(hero.char)
+      .some(type => builderBuildIsDirty(heroIndex, type));
+    if(dirty && !confirm(
+      "Remplacer les trois brouillons de ce héros par ton roster ?"
+    )){
+      return;
+    }
+    let rows;
+    try{
+      rows = await MemberRosterStore.refresh(currentUser.id);
+    }catch(error){
+      toast("Impossible de recharger ton roster.", true);
+      return;
+    }
+    const latest = rows.find(entry => entry.charId === hero.char);
+    if(!latest){
+      toast("Ce personnage n’existe plus dans ton roster.", true);
+      return;
+    }
+    const currentType = weaponFolderOf(hero.weapon)
+      || hero.activeWeaponType;
+    const nextType = Object.prototype.hasOwnProperty.call(
+      latest.builds,
+      currentType
+    )
+      ? currentType
+      : favoriteRosterWeaponType(latest)
+        || Object.keys(latest.builds)[0];
+    if(!nextType){
+      toast("Ce personnage n’a aucun build dans ton roster.", true);
+      return;
+    }
+    const snapshot = rosterHeroSnapshot(latest, nextType);
+    if(!snapshot) return;
+    draft.heroes[heroIndex] = snapshot;
+    builderRosterBaselines[heroIndex] = {
+      updatedAt:Number(latest.updatedAt) || 0,
+      builds:jsonCopy(latest.builds)
+    };
+    renderBuilder();
+    focusBuilderWeaponSwitch(heroIndex, nextType);
+    toast("Les trois builds ont été rechargés depuis ton roster.");
+  }
+  if(window.addEventListener){
+    ["online","offline"].forEach(eventName => {
+      window.addEventListener(eventName, () => {
+        if($("#view-builder").classList.contains("active")){
+          renderBuilder();
+        }
+      });
+    });
+  }
 
   function gearThumb(file){
     const box = el("div",{class:"gear-thumb"});
@@ -7456,23 +7638,37 @@
       text:"Choisir manuellement",
       onclick:()=>pickChar(i)
     }));
-    const currentWeaponType = weaponFolderOf(hero.weapon);
+    const currentWeaponType = weaponFolderOf(hero.weapon)
+      || hero.activeWeaponType;
     const rosterEntry = currentUser && hero.char
       ? MemberRosterStore.all(currentUser.id)
         .find(entry => entry.charId === hero.char)
       : null;
-    if(rosterEntry && currentWeaponType
-      && Object.prototype.hasOwnProperty.call(rosterEntry.builds, currentWeaponType)){
-      sourceActions.appendChild(el("button",{
+    if(hero.char){
+      const updateProps = {
+        class:"btn hero-roster-update",
+        type:"button",
+        text:"Mettre à jour mon roster",
+        onclick:()=>void updateBuilderHeroRoster(i)
+      };
+      if(!rosterNetworkAvailable()){
+        updateProps.disabled = "disabled";
+        updateProps.title = "Connexion requise pour mettre à jour le roster";
+      }
+      sourceActions.appendChild(el("button",updateProps));
+    }
+    if(rosterEntry && currentWeaponType){
+      const reloadProps = {
         class:"btn hero-roster-reload",
         type:"button",
         text:"Recharger depuis mon roster",
-        onclick:()=>{
-          if(confirm("Remplacer ce héros par la version actuelle de ton roster ?")){
-            loadRosterHero(i, rosterEntry, currentWeaponType);
-          }
-        }
-      }));
+        onclick:()=>void reloadBuilderHeroFromRoster(i)
+      };
+      if(!rosterNetworkAvailable()){
+        reloadProps.disabled = "disabled";
+        reloadProps.title = "Connexion requise pour recharger le roster";
+      }
+      sourceActions.appendChild(el("button",reloadProps));
     }
 
     // Portrait
@@ -7819,6 +8015,7 @@
     const snapshot = rosterHeroSnapshot(entry, weaponType);
     if(!snapshot) return;
     draft.heroes[slotIndex] = snapshot;
+    resetBuilderRosterBaselines();
     renderBuilder();
     toast("Équipement copié depuis ton roster.");
   }
@@ -7906,6 +8103,7 @@
     teamDraftSourceUpdatedAt = 0;
     teamDraftInitialJson = JSON.stringify(draft);
     teamDraftDeletedRemotely = false;
+    resetBuilderRosterBaselines();
     renderBuilder();
   }
 
@@ -8249,6 +8447,7 @@
     teamDraftInitialJson = JSON.stringify(draft);
     teamDraftDeletedRemotely = false;
     editing = true;
+    resetBuilderRosterBaselines();
     renderBuilder();
     showView("builder");
     toast("Équipe chargée pour modification.");
@@ -8273,6 +8472,7 @@
     teamDraftInitialJson = JSON.stringify(draft);
     teamDraftDeletedRemotely = false;
     editing = false;
+    resetBuilderRosterBaselines();
     renderBuilder();
     showView("builder");
     teamNameInput.focus();

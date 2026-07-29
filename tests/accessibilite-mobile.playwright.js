@@ -782,6 +782,45 @@ async function installRosterFocusFakeSupabase(page){
       );
       await pickerPage.locator("#pickerGrid")
         .getByTitle("Hache de l'âme vorace").click();
+      const builderSwitches = pickerPage.locator(
+        "#heroGrid .hero:first-child .builder-weapon-switch"
+      );
+      assert.equal(await builderSwitches.count(), 3);
+      for(let index = 0; index < 3; index += 1){
+        const box = await builderSwitches.nth(index).boundingBox();
+        assert.ok(
+          box.width >= 44 && box.height >= 44,
+          "Chaque changement de build doit mesurer 44 × 44 px à "
+            +width+"px"
+        );
+      }
+      const hacheBuilderSwitch = pickerPage.locator(
+        '.builder-weapon-switch[data-weapon-type="Hache"]'
+      ).first();
+      const swordBuilderSwitch = pickerPage.locator(
+        '.builder-weapon-switch[data-weapon-type="Epee 1 main"]'
+      ).first();
+      await swordBuilderSwitch.focus();
+      await pickerPage.keyboard.press("Enter");
+      assert.equal(
+        await swordBuilderSwitch.getAttribute("aria-pressed"),
+        "true"
+      );
+      assert.equal(
+        await hacheBuilderSwitch.evaluate(node =>
+          node.classList.contains("dirty")
+        ),
+        true,
+        "Le build Hache modifié doit garder son repère à "+width+"px"
+      );
+      assert.ok(
+        await pickerPage.evaluate(() =>
+          document.scrollingElement.scrollWidth
+          - document.scrollingElement.clientWidth
+        ) <= 1,
+        "Les changements de build élargissent le document à "+width+"px"
+      );
+      await hacheBuilderSwitch.click();
       await pickerPage.locator(".hero .weapon-config-open").first().click();
       await pickerPage.locator("#weaponConfigOverlay").waitFor({state:"visible"});
 

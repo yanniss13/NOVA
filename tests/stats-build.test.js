@@ -567,6 +567,42 @@ function fakeText(root){
     snapshot.potentiel.tier
   );
 
+  assert.strictEqual(
+    typeof hooks.rosterEntryWithActiveHeroBuild,
+    "function"
+  );
+  const existing = plain(hooks.normalizeRosterCharacter({
+    owner:"user-1",
+    charId:"meliodas",
+    potentialTier:7,
+    builds:entry.builds,
+    updatedAt:123
+  }));
+  const inactiveBefore = {
+    sword:JSON.stringify(existing.builds["Epee 1 main"]),
+    dual:JSON.stringify(existing.builds["Epees doubles"])
+  };
+  const activeDraft = plain(returned);
+  activeDraft.potentiel = {tier:9};
+  const targeted = plain(
+    hooks.rosterEntryWithActiveHeroBuild(
+      existing,
+      activeDraft,
+      "user-1"
+    )
+  );
+  assert.strictEqual(targeted.potentialTier, 9);
+  assert.strictEqual(targeted.builds.Hache.weaponConfig.level, 8);
+  assert.strictEqual(targeted.builds.Hache.favorite, true);
+  assert.strictEqual(
+    JSON.stringify(targeted.builds["Epee 1 main"]),
+    inactiveBefore.sword
+  );
+  assert.strictEqual(
+    JSON.stringify(targeted.builds["Epees doubles"]),
+    inactiveBefore.dual
+  );
+
   const copied = plain(hooks.copyFavoriteRosterBuild(entry, "Epee 1 main"));
   assert.deepStrictEqual(copied.builds["Epee 1 main"].weaponConfig, targetConfig);
   targetConfig.level = 8;

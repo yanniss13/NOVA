@@ -96,6 +96,10 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   applyCharacterChange:typeof applyCharacterChange === "function"
     ? applyCharacterChange
     : undefined,
+  rosterEntryWithActiveHeroBuild:
+    typeof rosterEntryWithActiveHeroBuild === "function"
+      ? rosterEntryWithActiveHeroBuild
+      : undefined,
   potentielDetailsOf,
   weaponTypesOf,
   isWeaponCompatible,

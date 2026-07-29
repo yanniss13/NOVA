@@ -768,6 +768,162 @@ const { chromium } = require("playwright");
     );
     await page.locator("#weaponConfigCancel").click();
 
+    await rosterHeroSlot.locator(".pot-btn").click();
+    await page.locator("#potBody")
+      .getByRole("button", { name:"P9", exact:true }).click();
+    await page.locator("#potClose").click();
+    const inactiveBeforeUpdate = await page.evaluate(() => {
+      const row = window.__fakeSupabaseState.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      return {
+        sword:JSON.stringify(row.builds["Epee 1 main"]),
+        dual:JSON.stringify(row.builds["Epees doubles"])
+      };
+    });
+    const updateRosterButton = rosterHeroSlot.getByRole("button", {
+      name:"Mettre à jour mon roster",
+      exact:true
+    });
+    await page.context().setOffline(true);
+    await page.evaluate(() => window.dispatchEvent(new Event("offline")));
+    assert.equal(await updateRosterButton.isDisabled(), true);
+    await page.context().setOffline(false);
+    await page.evaluate(() => window.dispatchEvent(new Event("online")));
+    await updateRosterButton.click();
+    await page.waitForFunction(() => {
+      const row = window.__fakeSupabaseState.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      return row.builds.Hache.weaponConfig.level === 8
+        && row.potential_tier === 9;
+    });
+    const inactiveAfterUpdate = await page.evaluate(() => {
+      const row = window.__fakeSupabaseState.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      return {
+        sword:JSON.stringify(row.builds["Epee 1 main"]),
+        dual:JSON.stringify(row.builds["Epees doubles"])
+      };
+    });
+    assert.deepEqual(inactiveAfterUpdate, inactiveBeforeUpdate);
+
+    await rosterHeroSlot.locator(".weapon-config-open").click();
+    await page.locator(".weapon-config-level").fill("9");
+    await page.locator("#weaponConfigSave").click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"hidden" });
+    await swordSwitch.click();
+    await rosterHeroSlot.locator("textarea.note").fill("Épée locale");
+    const reloadRosterButton = rosterHeroSlot.getByRole("button", {
+      name:"Recharger depuis mon roster",
+      exact:true
+    });
+    page.once("dialog", dialog => dialog.dismiss());
+    await reloadRosterButton.click();
+    assert.equal(
+      await rosterHeroSlot.locator("textarea.note").inputValue(),
+      "Épée locale",
+      "Refuser le rechargement conserve le brouillon actif"
+    );
+    await hacheSwitch.click();
+    await rosterHeroSlot.locator(".weapon-config-open").click();
+    assert.equal(
+      await page.locator(".weapon-config-level").inputValue(),
+      "9",
+      "Refuser le rechargement conserve aussi le brouillon inactif"
+    );
+    await page.locator("#weaponConfigCancel").click();
+    page.once("dialog", dialog => dialog.accept());
+    await reloadRosterButton.click();
+    await page.waitForFunction(() =>
+      document.querySelector("#toast").textContent
+        .includes("trois builds")
+    );
+    await rosterHeroSlot.locator(".weapon-config-open").click();
+    assert.equal(
+      await page.locator(".weapon-config-level").inputValue(),
+      "8",
+      "Accepter recharge la Hache depuis le roster"
+    );
+    await page.locator("#weaponConfigCancel").click();
+    await swordSwitch.click();
+    assert.equal(
+      await rosterHeroSlot.locator("textarea.note").inputValue(),
+      "Mon build",
+      "Accepter recharge aussi le brouillon Épée"
+    );
+    const dualSwitch = rosterHeroSlot.locator(
+      '.builder-weapon-switch[data-weapon-type="Epees doubles"]'
+    );
+    await dualSwitch.click();
+    assert.equal(
+      await rosterHeroSlot.locator("textarea.note").inputValue(),
+      "Build doubles",
+      "Accepter recharge aussi le troisième brouillon"
+    );
+    await hacheSwitch.click();
+    await rosterHeroSlot.locator(".weapon-config-open").click();
+    await page.locator(".weapon-config-level").fill("7");
+    await page.locator("#weaponConfigSave").click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"hidden" });
+    await page.evaluate(() => {
+      const row = window.__fakeSupabaseState.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      row.updated_at = new Date(
+        Date.parse(row.updated_at) + 60_000
+      ).toISOString();
+      window.__fakeSupabaseEmit("roster_characters", "UPDATE");
+    });
+    await page.waitForTimeout(300);
+    const rosterUpsertsBeforeConflict = await page.evaluate(() =>
+      window.__fakeSupabaseState.calls.filter(call =>
+        call.table === "roster_characters"
+        && call.operation === "upsert"
+      ).length
+    );
+    page.once("dialog", dialog => dialog.dismiss());
+    await updateRosterButton.click();
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.calls.filter(call =>
+          call.table === "roster_characters"
+          && call.operation === "upsert"
+        ).length
+      ),
+      rosterUpsertsBeforeConflict
+    );
+    assert.equal(await page.locator("#view-builder").isVisible(), true);
+    assert.match(await page.locator("#toast").innerText(), /roster.*modifi/i);
+    page.once("dialog", dialog => dialog.accept());
+    await updateRosterButton.click();
+    await page.waitForFunction(() => {
+      const row = window.__fakeSupabaseState.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      return row.builds.Hache.weaponConfig.level === 7;
+    });
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.calls.filter(call =>
+          call.table === "roster_characters"
+          && call.operation === "upsert"
+        ).length
+      ),
+      rosterUpsertsBeforeConflict + 1
+    );
+    const inactiveAfterConflict = await page.evaluate(() => {
+      const row = window.__fakeSupabaseState.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      return {
+        sword:JSON.stringify(row.builds["Epee 1 main"]),
+        dual:JSON.stringify(row.builds["Epees doubles"])
+      };
+    });
+    assert.deepEqual(inactiveAfterConflict, inactiveAfterUpdate);
+
     await rosterHeroSlot.locator("textarea.note").fill("Copie modifiée");
     const rosterNote = await page.evaluate(() =>
       window.__fakeSupabaseState.roster_characters

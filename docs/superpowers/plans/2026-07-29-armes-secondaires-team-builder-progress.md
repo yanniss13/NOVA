@@ -17,7 +17,7 @@ Plan :
 - [x] Task 3 — calculer le transfert reconstructible de 30 %
 - [x] Task 4 — rendre le résultat partiel impossible à confondre
 - [x] Task 5 — changer de build par les trois icônes sans perte
-- [ ] Task 6 — mettre à jour ou recharger le roster explicitement
+- [x] Task 6 — mettre à jour ou recharger le roster explicitement
 - [ ] Task 7 — documenter, vérifier et préparer l'activation
 
 ## Points validés par le propriétaire
@@ -51,6 +51,7 @@ Plan :
 | `d7f1fee` | `fix: préserver les trois builds d'équipe` | Task 2 |
 | `97c12df` | `feat: calculer l'ATK des armes secondaires` | Task 3 |
 | `ec49817` | `feat: signaler l'ATK secondaire incomplète` | Task 4 |
+| `c584442` | `feat: changer de build depuis une équipe` | Task 5 |
 
 ## Vérifications
 
@@ -71,6 +72,10 @@ Plan :
 - Task 5 GREEN : `node tests/stats-build.test.js`.
 - Task 5 navigateur : `node tests/supabase-etape1.playwright.js`.
 - Régression potentiel : `node tests/potentiel-commun.playwright.js`.
+- Task 6 RED : action de mise à jour absente dans le Team Builder.
+- Task 6 GREEN modèle : `node tests/stats-build.test.js`.
+- Task 6 Supabase : `node tests/supabase-etape1.playwright.js`.
+- Task 6 mobile : `node tests/accessibilite-mobile.playwright.js`.
 
 ## Activation
 
