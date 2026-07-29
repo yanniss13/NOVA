@@ -2481,6 +2481,39 @@ function testStatTermGroupsKeepMainRateApart(hooks){
   );
 }
 
+function testStatTermGroupsFallsBackToAutre(hooks){
+  // Un libellé inconnu ne doit jamais faire disparaître un terme : il reste
+  // visible sous un groupe « Autre ». On couvre les deux valeurs fausses que
+  // `termLabel(term) || "Autre"` prétend gérer : chaîne vide et undefined.
+  const stat = {
+    stat:"B_MaxHp",
+    unit:"flat",
+    terms:[
+      {
+        id:"a", operation:"add", unit:"flat", value:10,
+        bucket:"unknown:a", source:{}
+      },
+      {
+        id:"b", operation:"add", unit:"flat", value:5,
+        bucket:"unknown:b", source:{}
+      }
+    ]
+  };
+  const unusableLabels = { a:"", b:undefined };
+  const result = hooks.statTermGroups(stat, {
+    termLabel:term => unusableLabels[term.id]
+  });
+  assert.strictEqual(
+    result.length, 1,
+    "Chaîne vide et undefined retombent sur la même clé « Autre » : un seul groupe"
+  );
+  assert.strictEqual(result[0].label, "Autre");
+  assert.strictEqual(
+    result[0].terms.length, 2,
+    "Les deux termes à libellé inconnu restent visibles dans le groupe, pas perdus"
+  );
+}
+
 // Le regroupement pur fusionne les termes qui rendraient la même ligne :
 // même libellé, même opération/unité, même seau ciblé, même emphase, et ne
 // mélange jamais un taux principal avec un multiplicateur ordinaire.
@@ -2491,6 +2524,7 @@ function testStatTermGroupsKeepMainRateApart(hooks){
   testStatTermGroupsKeepEmphasisApart(hooks);
   testStatTermGroupsKeepMainRateApart(hooks);
   testStatTermGroupsFlagMainRate(hooks);
+  testStatTermGroupsFallsBackToAutre(hooks);
 }
 
 console.log("PASS stats de builds : modèle et calcul de l’arme");
