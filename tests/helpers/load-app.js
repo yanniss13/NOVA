@@ -106,6 +106,18 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   gearConfigStatus:typeof gearConfigStatus === "function"
     ? gearConfigStatus
     : undefined,
+  GEAR_PASSIVE_MAX_LEVEL:typeof GEAR_PASSIVE_MAX_LEVEL === "number"
+    ? GEAR_PASSIVE_MAX_LEVEL
+    : undefined,
+  WEAPON_PASSIVE_MAX_LEVEL:typeof WEAPON_PASSIVE_MAX_LEVEL === "number"
+    ? WEAPON_PASSIVE_MAX_LEVEL
+    : undefined,
+  gearPassiveStatus:typeof gearPassiveStatus === "function"
+    ? gearPassiveStatus
+    : undefined,
+  weaponPassiveFact:typeof weaponPassiveFact === "function"
+    ? weaponPassiveFact
+    : undefined,
   ARMOR_LEVEL_ORIGIN_MODE:typeof ARMOR_LEVEL_ORIGIN_MODE === "string"
     ? ARMOR_LEVEL_ORIGIN_MODE
     : undefined,
@@ -337,6 +349,10 @@ function loadApp(initialTeams){
         "7ds-armes/Hache/hache.webp":{
           mainStat:"attack",
           mainStatCode:"B_Atk_Equip",
+          passiveLevels:Array.from({length:7}, (_, index) => ({
+            level:index + 1,
+            textFr:"Passif arme " + (index + 1)
+          })),
           gradesByGameId:{
             "grade-axe":{
               gameId:"grade-axe",
@@ -350,7 +366,7 @@ function loadApp(initialTeams){
               overlimit:{
                 levels:[
                   { level:0, passiveLevel:1, statRate:0 },
-                  { level:1, passiveLevel:7, statRate:500 }
+                  { level:1, passiveLevel:2, statRate:500 }
                 ]
               },
               enchantments:{
@@ -394,7 +410,8 @@ function loadApp(initialTeams){
     ),
     gearByFile:realBuildStats.gearByFile,
     engravedByFile:realBuildStats.engravedByFile,
-    gearSets:realBuildStats.gearSets
+    gearSets:realBuildStats.gearSets,
+    charactersBySlug:realBuildStats.charactersBySlug
   };
   sandbox.window = sandbox;
   vm.runInNewContext(exposed, sandbox, { filename:"index.html" });

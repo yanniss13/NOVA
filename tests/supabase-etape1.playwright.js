@@ -608,7 +608,8 @@ const { chromium } = require("playwright");
     assert.match(await page.locator("#rosterDetailBody").textContent(), /Merlin/);
     assert.match(
       await page.locator("#rosterDetailBody").textContent(),
-      /Apport de l’arme hors passif — borne inférieure/
+      /Apport de l’arme — calcul partiel/,
+      "une arme sans passif connu ne doit pas annoncer un manque inexistant"
     );
     assert.equal(
       await page.locator("#rosterDetailBody .weapon-config-open").count(),

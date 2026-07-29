@@ -251,7 +251,7 @@ function masterstoneConfig(enchantment){
     term.bucket === "weapon-enchantment"
   ));
   assert.ok(result.facts.some(fact =>
-    fact.source.component === "passive" && fact.level === 7
+    fact.source.component === "passive" && fact.level === 2
   ));
   assert.deepStrictEqual(
     plain(hooks.reconstructStatTotals(result.terms)),
@@ -784,6 +784,7 @@ function masterstoneConfig(enchantment){
   const base = hooks.emptyGearConfig(FILE);
   assert.strictEqual(base.level, definition.qualityMin);
   assert.strictEqual(base.reinforce, 0);
+  assert.strictEqual(base.passiveLevel, null);
   assert.strictEqual(
     base.enchantments.length,
     definition.randomOptions ? definition.randomOptions.slots : 0
@@ -881,6 +882,84 @@ function masterstoneConfig(enchantment){
     }),
     "incompatible"
   );
+}
+
+// Le niveau du passif de pièce est persistant mais ne participe jamais au calcul.
+{
+  const { hooks } = loadApp();
+  const NORMAL = "7ds-armures-ssr/Haut/Haut de l'araignée de l'ombre.webp";
+  const PASSIVE = "7ds-armures-ssr/Bas/Bas de la puissance retorse.webp";
+  const passiveDefinition = hooks.buildGearDefinition(PASSIVE);
+  const passiveConfig = hooks.emptyGearConfig(PASSIVE);
+
+  assert.strictEqual(hooks.GEAR_PASSIVE_MAX_LEVEL, 3);
+  assert.strictEqual(hooks.WEAPON_PASSIVE_MAX_LEVEL, 7);
+  assert.strictEqual(
+    hooks.gearPassiveStatus(hooks.buildGearDefinition(NORMAL), passiveConfig),
+    "not-applicable"
+  );
+  assert.strictEqual(
+    hooks.gearPassiveStatus(passiveDefinition, passiveConfig),
+    "missing"
+  );
+  assert.strictEqual(
+    hooks.gearPassiveStatus(passiveDefinition, { ...passiveConfig, passiveLevel:1 }),
+    "valid"
+  );
+  assert.strictEqual(
+    hooks.gearPassiveStatus(passiveDefinition, { ...passiveConfig, passiveLevel:3 }),
+    "valid"
+  );
+  assert.strictEqual(
+    hooks.gearPassiveStatus(passiveDefinition, { ...passiveConfig, passiveLevel:0 }),
+    "incompatible"
+  );
+  assert.strictEqual(
+    hooks.gearPassiveStatus(passiveDefinition, { ...passiveConfig, passiveLevel:4 }),
+    "incompatible"
+  );
+
+  const withoutLevel = hooks.calculateGearStats(PASSIVE, passiveConfig, "Bas");
+  const withLevel = hooks.calculateGearStats(
+    PASSIVE,
+    { ...passiveConfig, passiveLevel:3 },
+    "Bas"
+  );
+  assert.deepStrictEqual(plain(withLevel.terms), plain(withoutLevel.terms));
+  assert.deepStrictEqual(plain(withLevel.totals), plain(withoutLevel.totals));
+  assert.strictEqual(
+    hooks.gearConfigStatus(PASSIVE, { ...passiveConfig, passiveLevel:99 }),
+    "valid",
+    "le statut numérique ne dépend pas du passif"
+  );
+
+  const oldHero = hooks.normalizeHero({
+    char:"meliodas",
+    armor:{ Bas:PASSIVE },
+    armorConfig:{ Bas:{
+      version:1,
+      level:passiveDefinition.qualityMin,
+      reinforce:0,
+      enchantments:Array.from({
+        length:passiveDefinition.randomOptions
+          ? passiveDefinition.randomOptions.slots : 0
+      }, () => null)
+    }}
+  });
+  assert.strictEqual(oldHero.armorConfig.Bas.passiveLevel, null);
+  oldHero.armorConfig.Bas.passiveLevel = 2;
+  const copied = hooks.normalizeHero(plain(oldHero));
+  assert.strictEqual(copied.armorConfig.Bas.passiveLevel, 2);
+  copied.armorConfig.Bas.passiveLevel = 1;
+  assert.strictEqual(oldHero.armorConfig.Bas.passiveLevel, 2);
+
+  const weaponFact = hooks.weaponPassiveFact(
+    hooks.buildWeaponDefinition(HACHE_FILE),
+    { overlimit:6 }
+  );
+  assert.strictEqual(weaponFact.level, 7);
+  assert.strictEqual(weaponFact.maxLevel, 7);
+  assert.strictEqual(weaponFact.text, "Passif arme 7");
 }
 
 // La valeur d'une pièce suit ses segments de qualité, puis son renforcement.

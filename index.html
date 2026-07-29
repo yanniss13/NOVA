@@ -2447,6 +2447,8 @@
   const BUILD_GEAR = BUILD_STATS.gearByFile || {};
   const BUILD_ENGRAVED = BUILD_STATS.engravedByFile || {};
   const BUILD_GEAR_SETS = BUILD_STATS.gearSets || {};
+  const WEAPON_PASSIVE_MAX_LEVEL = 7;
+  const GEAR_PASSIVE_MAX_LEVEL = 3;
   function buildGearDefinition(file){
     if(typeof file !== "string" || !file) return null;
     if(owns(BUILD_GEAR, file)) return BUILD_GEAR[file];
@@ -2471,8 +2473,23 @@
       reinforce:0,
       enchantments:Array.from({
         length:gearEnchantmentLength(definition)
-      }, ()=>null)
+      }, ()=>null),
+      passiveLevel:null
     };
+  }
+  function gearPassiveStatus(definition, config){
+    if(!definition || !Array.isArray(definition.passiveLevels)
+      || definition.passiveLevels.length === 0){
+      return "not-applicable";
+    }
+    if(!config || config.passiveLevel === undefined
+      || config.passiveLevel === null){
+      return "missing";
+    }
+    return isInteger(config.passiveLevel)
+      && config.passiveLevel >= 1
+      && config.passiveLevel <= GEAR_PASSIVE_MAX_LEVEL
+      ? "valid" : "incompatible";
   }
   function gearEnchantmentChoiceStatus(definition, choice, index){
     if(choice === null) return "valid";
@@ -2599,6 +2616,25 @@
       ? BUILD_STATS.weaponsByFile[file]
       : null;
   }
+  function weaponPassiveFact(definition, config){
+    if(!definition || !Array.isArray(definition.passiveLevels)
+      || definition.passiveLevels.length === 0
+      || !config || !isInteger(config.overlimit)
+      || config.overlimit < 0 || config.overlimit >= WEAPON_PASSIVE_MAX_LEVEL){
+      return null;
+    }
+    const level = config.overlimit + 1;
+    const passive = definition.passiveLevels.find(item => item.level === level);
+    if(!passive) return null;
+    return {
+      key:"passiveLevel",
+      level,
+      value:level,
+      maxLevel:WEAPON_PASSIVE_MAX_LEVEL,
+      text:passive.textFr || "",
+      source:{ domain:"weapon", component:"passive" }
+    };
+  }
   function buildWeaponGrade(file, gameId){
     const weapon = buildWeaponDefinition(file);
     return weapon && owns(weapon.gradesByGameId, gameId)
@@ -2684,7 +2720,12 @@
     return slots.reduce((result, slot) => {
       if(equipment[slot] && owns(source, slot)
         && source[slot] !== undefined && source[slot] !== null){
-        result[slot] = jsonCopy(source[slot]);
+        const config = jsonCopy(source[slot]);
+        if(config && typeof config === "object" && !Array.isArray(config)
+          && config.version === 1 && !owns(config, "passiveLevel")){
+          config.passiveLevel = null;
+        }
+        result[slot] = config;
       }
       return result;
     }, {});
@@ -3090,13 +3131,10 @@
     const overlimitLevels = grade.overlimit && Array.isArray(grade.overlimit.levels)
       ? grade.overlimit.levels : [];
     const overlimit = overlimitLevels.find(level => level.level === config.overlimit);
-    if(overlimit && Number.isFinite(overlimit.passiveLevel)){
-      facts.push({
-        key:"passiveLevel",
-        level:overlimit.passiveLevel,
-        value:overlimit.passiveLevel,
-        source:{ domain:"weapon", component:"passive", id:file }
-      });
+    const passiveFact = weaponPassiveFact(weapon, config);
+    if(passiveFact){
+      passiveFact.source.id = file;
+      facts.push(passiveFact);
     }
     if(overlimit && Number(overlimit.statRate) !== 0){
       const appliesTo = overlimitTargetBuckets(OVERLIMIT_APPLICATION_MODE);
@@ -3125,11 +3163,9 @@
       version:1,
       status,
       coverage:["weapon"],
-      /* Les 567 `passiveLevels` des armes ne sont ni au catalogue ni
-         calcules. Sans cette declaration, leur absence passerait pour un
-         vrai zero : le total serait lu comme complet alors qu'il est une
-         borne inferieure. */
-      uncovered:["weapon:passive"],
+      /* Le texte du passif fixe est consultable, mais sa prose conditionnelle
+         n'est pas transformee en termes numeriques. */
+      uncovered:passiveFact ? ["weapon:passive"] : [],
       assumptions:{ overlimitBase:OVERLIMIT_APPLICATION_MODE },
       terms,
       totals:reconstructStatTotals(terms),
@@ -6047,7 +6083,7 @@
       potentialList.appendChild(el("button",{
         class:"chip"+(memberRosterDraft.potentialTier === tier ? " active" : ""),
         type:"button",
-        text:"T"+tier,
+        text:"P"+tier,
         "aria-pressed":String(memberRosterDraft.potentialTier === tier),
         onclick:()=>{
           memberRosterDraft.potentialTier = tier;
@@ -6829,7 +6865,7 @@
       const selTier = normalizePotentiel(hero.potentiel).tier;
       body.innerHTML = "";
 
-      // Boutons de palier — puis T1..T10
+      // Boutons de palier — P0 puis P1..P10
       const head = el("div",{class:"pot-head"},[
         el("span",{class:"pot-head-lbl", text:"Palier"}),
         el("span",{class:"pot-head-val", text:"P"+selTier+"/"+POT_MAX})
@@ -6842,7 +6878,7 @@
         render();
         renderBuilder();
       };
-      row.appendChild(el("button",{class:"pot-p"+(selTier===0?" active":""), text:"—",
+      row.appendChild(el("button",{class:"pot-p"+(selTier===0?" active":""), text:"P0",
         title:"Aucun palier", onclick:()=>setTier(0)}));
       for(let t=1;t<=POT_MAX;t++){
         row.appendChild(el("button",{class:"pot-p"+(t<=selTier?" reached":"")+(t===selTier?" active":""),

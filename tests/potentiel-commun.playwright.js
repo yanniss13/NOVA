@@ -72,6 +72,11 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await page.locator("#pickerClose").click();
 
     await firstHero.locator(".pot-btn").click();
+    assert.deepEqual(
+      await page.locator("#potBody .pot-paliers button").allTextContents(),
+      ["P0","P1","P2","P3","P4","P5","P6","P7","P8","P9","P10"],
+      "tous les paliers visibles utilisent P, jamais T"
+    );
     await assertVisibleText(
       page.locator("#potBody .pot-empty"),
       "Équipe une arme compatible pour afficher les bonus de potentiel."
