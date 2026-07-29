@@ -13,7 +13,7 @@ Plan :
 ## État global
 
 - [x] Task 1 — normaliser et transporter les trois builds
-- [ ] Task 2 — protéger `rosterBuilds` contre les anciennes PWA
+- [x] Task 2 — protéger `rosterBuilds` contre les anciennes PWA
 - [ ] Task 3 — calculer le transfert reconstructible de 30 %
 - [ ] Task 4 — rendre le résultat partiel impossible à confondre
 - [ ] Task 5 — changer de build par les trois icônes sans perte
@@ -53,6 +53,9 @@ Plan :
 - Task 1 RED : `snapshot.rosterBuilds` absent.
 - Task 1 GREEN : `node tests/stats-build.test.js`.
 - Régression potentiel : `node tests/potentiel-commun.test.js`.
+- Task 2 RED : garde `rosterBuilds` absente du trigger d'équipe.
+- Task 2 GREEN : `node tests/stats-build-schema.test.js`.
+- Syntaxe SQL : `python -m unittest tests/test_schema_sql.py`.
 
 ## Activation
 

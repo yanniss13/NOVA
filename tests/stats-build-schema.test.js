@@ -77,6 +77,33 @@ const teamFunction = extractFunction(
   /new\.data\s*:=\s*jsonb_set\(\s*new\.data\s*,\s*array\['heroes'\s*,\s*v_index::text\s*,\s*'weaponConfig'\]\s*,\s*v_old_hero->'weaponConfig'\s*,\s*true\s*\)/i
 ].forEach(pattern => assert.match(teamFunction, pattern));
 
+function assertTeamRosterBuildsGuard(body) {
+  [
+    /if\s+v_new_hero->>'char'\s+is not distinct from\s+v_old_hero->>'char'\s+then/i,
+    /not\s*\(\s*v_new_hero\s*\?\s*'rosterBuilds'\s*\)/i,
+    /v_old_hero\s*\?\s*'rosterBuilds'/i,
+    /new\.data\s*:=\s*jsonb_set\(\s*new\.data\s*,\s*array\['heroes'\s*,\s*v_index::text\s*,\s*'rosterBuilds'\]\s*,\s*v_old_hero->'rosterBuilds'\s*,\s*true\s*\)/i
+  ].forEach(pattern => assert.match(body, pattern));
+}
+
+assertTeamRosterBuildsGuard(teamFunction);
+
+/* Une clé présente, même à null, est une suppression volontaire. Retirer la
+   condition d'absence doit donc faire échouer le contrat. */
+const mutatedRosterBuildsGuard = teamFunction.replace(
+  /not\s*\(\s*v_new_hero\s*\?\s*'rosterBuilds'\s*\)/i,
+  "false"
+);
+assert.notEqual(
+  mutatedRosterBuildsGuard,
+  teamFunction,
+  "la mutation rosterBuilds doit s'appliquer"
+);
+assert.throws(
+  () => assertTeamRosterBuildsGuard(mutatedRosterBuildsGuard),
+  /did not match|rosterBuilds/
+);
+
 const teamDropTrigger = extractStatement(
   "drop trigger if exists preserve_team_weapon_configs"
 );

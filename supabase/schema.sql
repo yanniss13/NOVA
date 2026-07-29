@@ -229,6 +229,20 @@ begin
     /* Les pièces ne sont préservées que si le héros du slot n'a pas changé :
        sinon on collerait l'équipement d'un héros sur un autre. */
     if v_new_hero->>'char' is not distinct from v_old_hero->>'char' then
+      -- Une PWA antérieure aux armes secondaires réécrit le héros sans ce
+      -- dictionnaire. Une clé null explicite reste une suppression volontaire.
+      if not (v_new_hero ? 'rosterBuilds')
+         and v_old_hero ? 'rosterBuilds'
+      then
+        new.data := jsonb_set(
+          new.data,
+          array['heroes', v_index::text, 'rosterBuilds'],
+          v_old_hero->'rosterBuilds',
+          true
+        );
+        v_new_hero := new.data->'heroes'->v_index;
+      end if;
+
       v_kept := private.preserved_gear_config(
         v_old_hero, v_new_hero, 'armor', 'armorConfig'
       );
