@@ -1,5 +1,11 @@
 # Passation — perle de sortilège : libellés et emplacements de stat
 
+> **Mise à jour du 2026-07-29 :** ce document reste l'historique du premier
+> correctif. La règle « 3/3 Héroïque et 4/4 Légendaire obligatoires » est
+> remplacée par
+> `docs/superpowers/specs/2026-07-29-perle-emplacements-facultatifs-design.md` :
+> 2/3 sont obligatoires en Héroïque et 3/4 en Légendaire.
+
 **Date :** 2026-07-28
 **Base :** `main` = `328dd51` (lot 1 livré et déployé)
 **Pour :** l'agent qui reprend si le travail s'interrompt.

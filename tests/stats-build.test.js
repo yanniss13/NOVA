@@ -842,6 +842,82 @@ function fakeText(root){
     [1, 2, 2, 3, 4],
     "emplacements par palier de perle"
   );
+  assert.deepStrictEqual(
+    [1, 2, 3, 4, 5].map(tier => hooks.pearlRequiredSlotCount(tier)),
+    [1, 2, 2, 2, 3],
+    "emplacements obligatoires par palier de perle"
+  );
+
+  // Le dernier emplacement Héroïque n'est pas garanti dans le jeu.
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, pearlConfig([
+      pearl(0, 4, null, "B_Atk_Equip", 500),
+      pearl(1, 4, null, "B_Def_Equip", 400)
+    ])),
+    "valid",
+    "une perle héroïque doit être valide avec ses deux stats garanties"
+  );
+  const normalizedHeroic = hooks.normalizeWeaponConfig(
+    BAGUETTE_VORACE_FILE,
+    pearlConfig([
+      pearl(0, 4, null, "B_Atk_Equip", 500),
+      pearl(1, 4, null, "B_Def_Equip", 400)
+    ])
+  );
+  assert.strictEqual(
+    normalizedHeroic.enchantments.length,
+    3,
+    "la normalisation conserve l'emplacement héroïque facultatif"
+  );
+  assert.strictEqual(
+    normalizedHeroic.enchantments[2],
+    null,
+    "l'emplacement héroïque facultatif vide est normalisé à null"
+  );
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, pearlConfig([
+      pearl(0, 4, null, "B_Atk_Equip", 500)
+    ])),
+    "incomplete",
+    "une perle héroïque conserve deux stats obligatoires"
+  );
+
+  // Le dernier emplacement Légendaire n'est pas garanti dans le jeu.
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, pearlConfig([
+      pearl(0, 5, "generic", "C_Critical_Rate", 700),
+      pearl(1, 5, "generic", "C_Critical_ResRate", 700),
+      pearl(2, 5, "generic", "C_Critical_Dam_Rate", 1200)
+    ])),
+    "valid",
+    "une perle légendaire doit être valide avec ses trois stats garanties"
+  );
+  const normalizedLegendary = hooks.normalizeWeaponConfig(
+    BAGUETTE_VORACE_FILE,
+    pearlConfig([
+      pearl(0, 5, "generic", "C_Critical_Rate", 700),
+      pearl(1, 5, "generic", "C_Critical_ResRate", 700),
+      pearl(2, 5, "generic", "C_Critical_Dam_Rate", 1200)
+    ])
+  );
+  assert.strictEqual(
+    normalizedLegendary.enchantments.length,
+    4,
+    "la normalisation conserve l'emplacement légendaire facultatif"
+  );
+  assert.strictEqual(
+    normalizedLegendary.enchantments[3],
+    null,
+    "l'emplacement légendaire facultatif vide est normalisé à null"
+  );
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, pearlConfig([
+      pearl(0, 5, "generic", "C_Critical_Rate", 700),
+      pearl(1, 5, "generic", "C_Critical_ResRate", 700)
+    ])),
+    "incomplete",
+    "une perle légendaire conserve trois stats obligatoires"
+  );
 
   // Légendaire : quatre emplacements remplis, tous du même palier et du même élément.
   assert.strictEqual(
@@ -853,6 +929,16 @@ function fakeText(root){
     ])),
     "valid",
     "une perle légendaire doit accepter ses quatre stats"
+  );
+  assert.strictEqual(
+    hooks.weaponConfigStatus(BAGUETTE_VORACE_FILE, pearlConfig([
+      pearl(0, 5, "generic", "C_Critical_Rate", 700),
+      pearl(1, 5, "generic", "C_Critical_ResRate", 700),
+      pearl(2, 5, "generic", "C_Critical_Dam_Rate", 1200),
+      pearl(3, 5, "generic", "C_Critical_DamRes_Rate", 999999)
+    ])),
+    "incompatible",
+    "un emplacement facultatif rempli conserve les bornes du catalogue"
   );
 
   // Un cinquième emplacement n'existe pas.

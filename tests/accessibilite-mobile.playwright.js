@@ -494,16 +494,15 @@ async function installRosterFocusFakeSupabase(page){
         document.body.classList.remove("pwa-update-on");
       });
 
-      /* Configuration d'arme, perle légendaire, quatre stats renseignées : le
-         cas le plus large. Le corps de la modale ne doit jamais pouvoir défiler
+      /* Configuration d'arme, avec le dernier emplacement facultatif laissé
+         vide. Le corps de la modale ne doit jamais pouvoir défiler
          latéralement, et rien ne doit y dépasser sa largeur. Le symptôme
          n'apparaissait que sur Safari, qui ne rétrécit pas un `<select>` sous sa
          plus longue option — d'où un contrat CSS plutôt qu'une mesure. */
       await pickerPage.locator('.tab[data-view="builder"]').click();
-      /* Héroïque (3 emplacements, sans élément) et légendaire (4, avec élément).
-         Le défaut apparaissait dès trois sélecteurs remplis. */
-      for(const pearl of [{tier:"4", slots:3, element:null},
-                          {tier:"5", slots:4, element:"generic"}]){
+      /* Héroïque : 2 stats garanties sur 3. Légendaire : 3 sur 4. */
+      for(const pearl of [{tier:"4", slots:3, requiredSlots:2, element:null},
+                          {tier:"5", slots:4, requiredSlots:3, element:"generic"}]){
         const hero = pickerPage.locator(".hero").first();
         await hero.locator(".portrait").click();
         await pickerPage.locator("#pickerGrid").getByTitle("Meliodas").click();
@@ -518,7 +517,15 @@ async function installRosterFocusFakeSupabase(page){
           await pickerPage.locator(".weapon-config-enchantment-element")
             .selectOption(pearl.element);
         }
-        for(let slot = 0; slot < pearl.slots; slot += 1){
+        const optionalTitle = pickerPage
+          .locator(".weapon-enchantment-slot-title")
+          .nth(pearl.slots - 1);
+        assert.match(
+          await optionalTitle.textContent(),
+          /facultatif/,
+          `Le dernier emplacement du palier ${pearl.tier} doit être facultatif`
+        );
+        for(let slot = 0; slot < pearl.requiredSlots; slot += 1){
           const select = pickerPage.locator(".weapon-config-enchantment-stat").nth(slot);
           const choices = await select.locator("option").evaluateAll(nodes =>
             nodes.map(node => node.value).filter(value => value !== "")

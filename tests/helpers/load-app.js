@@ -239,6 +239,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   pearlSlotCount:typeof pearlSlotCount === "function"
     ? pearlSlotCount
     : undefined,
+  pearlRequiredSlotCount:typeof pearlRequiredSlotCount === "function"
+    ? pearlRequiredSlotCount
+    : undefined,
   pearlTierLabel:typeof pearlTierLabel === "function"
     ? pearlTierLabel
     : undefined,

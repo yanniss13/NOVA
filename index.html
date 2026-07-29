@@ -2761,11 +2761,11 @@
      listent que les stats possibles. Ne pas la « corriger » d'après le
      catalogue. */
   const PEARL_TIERS = [
-    { tier:1, label:"Commune", slots:1 },
-    { tier:2, label:"Remarquable", slots:2 },
-    { tier:3, label:"Rare", slots:2 },
-    { tier:4, label:"Héroïque", slots:3 },
-    { tier:5, label:"Légendaire", slots:4 }
+    { tier:1, label:"Commune", slots:1, requiredSlots:1 },
+    { tier:2, label:"Remarquable", slots:2, requiredSlots:2 },
+    { tier:3, label:"Rare", slots:2, requiredSlots:2 },
+    { tier:4, label:"Héroïque", slots:3, requiredSlots:2 },
+    { tier:5, label:"Légendaire", slots:4, requiredSlots:3 }
   ];
   function pearlTierOf(tier){
     return PEARL_TIERS.find(item => item.tier === tier) || null;
@@ -2774,6 +2774,10 @@
     const found = pearlTierOf(tier);
     return found ? found.slots : 0;
   }
+  function pearlRequiredSlotCount(tier){
+    const found = pearlTierOf(tier);
+    return found ? found.requiredSlots : 0;
+  }
   function pearlTierLabel(tier){
     const found = pearlTierOf(tier);
     return found ? found.label : "Palier "+tier;
@@ -2781,7 +2785,8 @@
   // Le palier d'une perle est commun à tous ses emplacements : on le lit sur la
   // première entrée renseignée.
   function pearlTierInUse(enchantments){
-    const first = (enchantments || []).find(choice =>
+    const choices = Array.isArray(enchantments) ? enchantments : [];
+    const first = choices.find(choice =>
       choice && typeof choice === "object" && !Array.isArray(choice)
     );
     return first && isInteger(first.tier) ? first.tier : null;
@@ -2803,6 +2808,12 @@
     const tier = pearlTierInUse(enchantments);
     return tier === null ? 1 : pearlSlotCount(tier);
   }
+  function enchantmentRequiredLength(grade, enchantments){
+    const catalog = grade && grade.enchantments;
+    if(!catalog || catalog.type !== "masterstone") return enchantmentLength(grade);
+    const tier = pearlTierInUse(enchantments);
+    return tier === null ? 1 : pearlRequiredSlotCount(tier);
+  }
   function emptyWeaponConfig(file, gameId){
     const grade = buildWeaponGrade(file, gameId);
     const length = enchantmentLength(grade);
@@ -2818,7 +2829,21 @@
   }
   function normalizeWeaponConfig(file, raw){
     if(raw === undefined || raw === null) return null;
-    return jsonCopy(raw);
+    const config = jsonCopy(raw);
+    const grade = config && buildWeaponGrade(file, config.gradeGameId);
+    if(grade && grade.enchantments
+      && grade.enchantments.type === "masterstone"
+      && Array.isArray(config.enchantments)){
+      const maximumLength = enchantmentExpectedLength(grade, config.enchantments);
+      const minimumLength = enchantmentRequiredLength(grade, config.enchantments);
+      if(config.enchantments.length >= minimumLength
+        && config.enchantments.length < maximumLength){
+        config.enchantments = config.enchantments.concat(
+          Array(maximumLength - config.enchantments.length).fill(null)
+        );
+      }
+    }
+    return config;
   }
   function normalizeGearConfigMap(equipment, raw, slots){
     const source = raw && typeof raw === "object" && !Array.isArray(raw)
@@ -2991,8 +3016,9 @@
       return "incompatible";
     }
     if(!Array.isArray(config.enchantments)) return "incompatible";
-    const length = enchantmentExpectedLength(grade, config.enchantments);
-    if(length < 0) return "incompatible";
+    const maximumLength = enchantmentExpectedLength(grade, config.enchantments);
+    const minimumLength = enchantmentRequiredLength(grade, config.enchantments);
+    if(maximumLength < 0 || minimumLength < 0) return "incompatible";
     /* Trop d'emplacements = état impossible, quel que soit le type.
        Pas assez : pour un enchantement basique le nombre est fixé par les
        données, donc c'est invalide ; pour une perle c'est une saisie en cours,
@@ -3000,13 +3026,13 @@
        emplacements — on la déclare incomplète pour ne pas condamner les données
        déjà en base. */
     const isPearl = grade.enchantments.type === "masterstone";
-    if(config.enchantments.length > length) return "incompatible";
+    if(config.enchantments.length > maximumLength) return "incompatible";
     /* `incompatible` prime sur `incomplete` : une stat interdite ou une valeur
        hors bornes reste invalide même dans un tableau encore court. On valide
        donc le contenu avant de juger la longueur. */
     const currentEnchantmentsStatus = enchantmentsStatus(grade, config.enchantments);
     if(currentEnchantmentsStatus === "incompatible") return "incompatible";
-    if(config.enchantments.length < length){
+    if(config.enchantments.length < minimumLength){
       return isPearl ? "incomplete" : "incompatible";
     }
     return currentEnchantmentsStatus;
@@ -4532,9 +4558,18 @@
       || !levels.some(item => item.level === draft.overlimit)){
       return ".weapon-config-overlimit";
     }
-    if(!Array.isArray(draft.enchantments)
-      || draft.enchantments.length !== enchantmentExpectedLength(grade, draft.enchantments)){
-      // Une perle plus courte que son palier : c'est le palier qu'il faut reprendre.
+    if(!Array.isArray(draft.enchantments)){
+      return ".weapon-config-enchantment-choice";
+    }
+    const maximumEnchantments = enchantmentExpectedLength(grade, draft.enchantments);
+    const minimumEnchantments = enchantmentRequiredLength(grade, draft.enchantments);
+    const isPearl = grade.enchantments.type === "masterstone";
+    if(maximumEnchantments < 0
+      || minimumEnchantments < 0
+      || draft.enchantments.length > maximumEnchantments
+      || draft.enchantments.length < minimumEnchantments
+      || (!isPearl && draft.enchantments.length !== maximumEnchantments)){
+      // Une perle sous son minimum : c'est le palier qu'il faut reprendre.
       return ".weapon-config-enchantment-choice";
     }
     if(!areEnchantmentsValid(grade, draft.enchantments)){
@@ -4811,14 +4846,19 @@
         draft.enchantments = [null];
       }else{
         // Changer de palier change le nombre d'emplacements : on reconstruit.
+        // Les derniers slots Héroïque et Légendaire ne sont pas garantis.
         const tier = Number(event.target.value);
-        draft.enchantments = Array.from({length:pearlSlotCount(tier)}, (unused, index) => ({
-          slot:index,
-          tier,
-          element:tier === 5 ? "" : null,
-          stat:"",
-          value:null
-        }));
+        const requiredSlots = pearlRequiredSlotCount(tier);
+        draft.enchantments = Array.from(
+          {length:pearlSlotCount(tier)},
+          (unused, index) => index < requiredSlots ? {
+            slot:index,
+            tier,
+            element:tier === 5 ? "" : null,
+            stat:"",
+            value:null
+          } : null
+        );
       }
       renderWeaponConfigEditor();
     });
@@ -4854,8 +4894,16 @@
       }
 
       const slots = pearlSlotCount(lead.tier);
-      draft.enchantments.forEach((choice, index) => {
-        if(!choice) return;
+      const requiredSlots = pearlRequiredSlotCount(lead.tier);
+      for(let index = 0; index < slots; index += 1){
+        const storedChoice = draft.enchantments[index] || null;
+        const choice = storedChoice || {
+          slot:index,
+          tier:lead.tier,
+          element:lead.tier === 5 ? (lead.element || "") : null,
+          stat:"",
+          value:null
+        };
         const slotBox = el("div",{
           class:"weapon-enchantment-slot",
           dataset:{pearlSlot:String(index)}
@@ -4864,6 +4912,7 @@
           slotBox.appendChild(el("span",{
             class:"weapon-enchantment-slot-title",
             text:"Emplacement "+(index + 1)+" sur "+slots
+              +(index >= requiredSlots ? " — facultatif" : "")
           }));
         }
         /* Une stat déjà posée sur un autre emplacement n'est pas proposée :
@@ -4883,14 +4932,24 @@
         });
         statSelect.value = choice.stat || "";
         statSelect.addEventListener("change", event => {
-          choice.stat = event.target.value;
-          const option = options.find(item => item.stat === choice.stat);
-          choice.value = option ? option.min : null;
+          const stat = event.target.value;
+          if(!stat && index >= requiredSlots){
+            draft.enchantments[index] = null;
+          }else{
+            const option = options.find(item => item.stat === stat);
+            draft.enchantments[index] = {
+              slot:index,
+              tier:lead.tier,
+              element:lead.tier === 5 ? (lead.element || "") : null,
+              stat,
+              value:option ? option.min : null
+            };
+          }
           renderWeaponConfigEditor();
         });
         slotBox.appendChild(weaponConfigField("Statistique",statSelect));
 
-        if(choice.stat){
+        if(storedChoice && choice.stat){
           const option = options.find(item => item.stat === choice.stat);
           const input = el("input",{
             class:"weapon-config-enchantment-value",
@@ -4913,7 +4972,7 @@
           ));
         }
         box.appendChild(slotBox);
-      });
+      }
     }
     container.appendChild(box);
   }

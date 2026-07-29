@@ -183,34 +183,35 @@ traduit par « Pierre maîtresse » — s'appelle en jeu **« Perle de sortilèg
 Leur propre champ `pearlEnchant` confirme « perle ». Utiliser le nom du jeu dans
 l'interface.
 
-Chaque palier a un nom de rareté et **ouvre un nombre d'emplacements de stat
-différent** :
+Chaque palier a un nom de rareté et **ouvre un nombre maximal d'emplacements
+de stat différent**. Les derniers emplacements Héroïque et Légendaire ne sont
+pas garantis dans le jeu :
 
-| Palier | Nom | Emplacements |
-| --- | --- | --- |
-| 1 | Commune | 1 |
-| 2 | Remarquable | 2 |
-| 3 | Rare | 2 |
-| 4 | Héroïque | 3 |
-| 5 | Légendaire | 4 |
+| Palier | Nom | Possibles | Obligatoires |
+| --- | --- | ---: | ---: |
+| 1 | Commune | 1 | 1 |
+| 2 | Remarquable | 2 | 2 |
+| 3 | Rare | 2 | 2 |
+| 4 | Héroïque | 3 | 2 |
+| 5 | Légendaire | 4 | 3 |
 
 ⚠️ **Cette table ne vient pas des données.** Les `tiers[].options` de 7dsorigin ne
 listent que les stats possibles, jamais le nombre d'emplacements. Elle vient du
 propriétaire, qui joue au jeu. Ne la « corrige » pas d'après `stats-build.js` : la
 source de vérité est `PEARL_TIERS` dans `index.html`.
 
-Quatre règles du modèle :
+Règles du modèle :
 
 - le **palier et l'élément appartiennent à la perle entière**, pas à chaque
   emplacement. Toutes les entrées renseignées doivent partager les deux, sinon la
   configuration est `incompatible` — sans cette contrainte, deux perles de paliers
   différents sur la même arme passeraient pour valides ;
-- changer de palier **reconstruit** le tableau `enchantments` à la longueur du
-  nouveau palier ;
-- un tableau **plus long** que le palier est `incompatible`. **Plus court**, c'est
-  `incomplete` : soit une saisie en cours, soit une configuration enregistrée
-  avant que les paliers ouvrent plusieurs emplacements. Ne jamais la déclarer
-  invalide, sinon les données déjà en base seraient condamnées ;
+- changer de palier **reconstruit** le tableau `enchantments` à la longueur
+  maximale du nouveau palier. Un emplacement facultatif vide vaut `null` ;
+- un tableau **plus long** que le maximum du palier est `incompatible`. Un
+  tableau plus court que le minimum obligatoire est `incomplete`. Entre ces
+  deux bornes, sa longueur est valide : deux entrées suffisent en Héroïque et
+  trois en Légendaire ;
 - `incompatible` **prime** sur `incomplete` : une stat interdite ou une valeur
   hors bornes reste invalide même dans un tableau encore court. Le contenu est
   donc validé avant la longueur ;
