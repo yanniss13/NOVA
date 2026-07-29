@@ -631,6 +631,33 @@ function fakeText(root){
     ),
     false
   );
+  assert.strictEqual(
+    typeof hooks.rosterBaselineVersionMatches,
+    "function"
+  );
+  const firstMicrosecond = "2026-07-25T08:40:00.123456Z";
+  const secondMicrosecond = "2026-07-25T08:40:00.123789Z";
+  assert.strictEqual(
+    hooks.rosterBaselineVersionMatches(
+      {
+        updatedAt:Date.parse(firstMicrosecond),
+        updatedAtToken:firstMicrosecond
+      },
+      {
+        updatedAt:Date.parse(secondMicrosecond),
+        updatedAtToken:secondMicrosecond
+      }
+    ),
+    false
+  );
+  assert.strictEqual(
+    hooks.rosterBaselineVersionMatches(
+      { updatedAt:Date.parse(firstMicrosecond), updatedAtToken:"" },
+      { updatedAt:Date.parse(secondMicrosecond), updatedAtToken:"" }
+    ),
+    true,
+    "un ancien cache sans jeton conserve le repli milliseconde"
+  );
 
   const copied = plain(hooks.copyFavoriteRosterBuild(entry, "Epee 1 main"));
   assert.deepStrictEqual(copied.builds["Epee 1 main"].weaponConfig, targetConfig);

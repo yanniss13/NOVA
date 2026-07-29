@@ -6063,6 +6063,21 @@
       && baseline.ownerId === (ownerId || "")
       && baseline.charId === (charId || "");
   }
+  function rosterBaselineVersionMatches(baseline, latest){
+    const baselineToken = baseline
+      && typeof baseline.updatedAtToken === "string"
+      ? baseline.updatedAtToken
+      : "";
+    const latestToken = latest
+      && typeof latest.updatedAtToken === "string"
+      ? latest.updatedAtToken
+      : "";
+    if(baselineToken && latestToken){
+      return baselineToken === latestToken;
+    }
+    return (Number(baseline && baseline.updatedAt) || 0)
+      === (Number(latest && latest.updatedAt) || 0);
+  }
   function builderRosterBaselineForHero(hero){
     const ownerId = currentUser ? currentUser.id : "";
     const charId = hero && hero.char ? hero.char : "";
@@ -7590,15 +7605,13 @@
         updatedAtToken:"",
         builds:{}
       };
-    const latestUpdatedAt = Number(latest && latest.updatedAt) || 0;
     const latestUpdatedAtToken = latest && latest.updatedAtToken || "";
     const remotelyChanged = !rosterBaselineIdentityMatches(
       baseline,
       currentUser.id,
       hero.char
     )
-      || latestUpdatedAt !== baseline.updatedAt
-      || (!latest && baseline.updatedAt > 0);
+      || !rosterBaselineVersionMatches(baseline, latest);
     if(remotelyChanged && !confirm(
       "Ton roster a été modifié depuis son chargement. "
       +"Écraser uniquement le build "+rosterWeaponLabel(type)+" ?"

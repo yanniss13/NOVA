@@ -799,6 +799,11 @@ const { chromium } = require("playwright");
     assert.equal(await updateRosterButton.isDisabled(), true);
     await page.context().setOffline(false);
     await page.evaluate(() => window.dispatchEvent(new Event("online")));
+    let preciseConflictPrompt = false;
+    page.once("dialog", dialog => {
+      preciseConflictPrompt = /modifi/i.test(dialog.message());
+      dialog.accept();
+    });
     await updateRosterButton.click();
     await page.waitForFunction(() => {
       const row = window.__fakeSupabaseState.roster_characters.find(item =>
@@ -807,6 +812,11 @@ const { chromium } = require("playwright");
       return row.builds.Hache.weaponConfig.level === 8
         && row.potential_tier === 9;
     });
+    assert.equal(
+      preciseConflictPrompt,
+      true,
+      "deux versions SQL dans la même milliseconde doivent demander confirmation"
+    );
     const inactiveAfterUpdate = await page.evaluate(() => {
       const row = window.__fakeSupabaseState.roster_characters.find(item =>
         item.owner === "user-1" && item.char_id === "meliodas"
