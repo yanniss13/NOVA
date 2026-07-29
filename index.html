@@ -5887,6 +5887,40 @@
       replaceRosterCacheForOwner(currentUser.id, owned);
       return normalized;
     },
+    async updateBuild(entry, weaponType, expectedUpdatedAt){
+      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      const normalized = normalizeRosterCharacter(Object.assign({}, entry, {
+        owner:currentUser.id
+      }));
+      if(!normalized
+        || !Object.prototype.hasOwnProperty.call(
+          normalized.builds,
+          weaponType
+        )){
+        throw new Error("ROSTER_INVALID");
+      }
+      const { data, error } = await sb.rpc("update_roster_build", {
+        p_char_id:normalized.charId,
+        p_expected_updated_at:expectedUpdatedAt
+          ? new Date(expectedUpdatedAt).toISOString()
+          : null,
+        p_potential_tier:normalized.potentialTier,
+        p_weapon_type:weaponType,
+        p_build:normalized.builds[weaponType]
+      });
+      if(error) throw error;
+      const row = Array.isArray(data) ? data[0] : data;
+      const saved = cloudRosterFromRow(row);
+      if(!saved) throw new Error("ROSTER_INVALID");
+      const owned = MemberRosterStore.all(currentUser.id);
+      const index = owned.findIndex(item =>
+        item.charId === saved.charId
+      );
+      if(index >= 0) owned[index] = saved;
+      else owned.push(saved);
+      replaceRosterCacheForOwner(currentUser.id, owned);
+      return saved;
+    },
     async remove(charId){
       if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
       const { error } = await sb.from("roster_characters")
@@ -6009,19 +6043,36 @@
   let teamDraftDeletedRemotely = false;
   let builderRosterBaselines = Array.from(
     {length:TEAM_SIZE},
-    () => ({updatedAt:0, builds:{}})
+    () => ({ownerId:"", charId:"", updatedAt:0, builds:{}})
   );
+  function rosterBaselineIdentityMatches(baseline, ownerId, charId){
+    return !!baseline
+      && baseline.ownerId === (ownerId || "")
+      && baseline.charId === (charId || "");
+  }
+  function builderRosterBaselineForHero(hero){
+    const ownerId = currentUser ? currentUser.id : "";
+    const charId = hero && hero.char ? hero.char : "";
+    const entry = ownerId && charId
+      ? MemberRosterStore.all(ownerId)
+        .find(item => item.charId === charId)
+      : null;
+    return {
+      ownerId,
+      charId,
+      updatedAt:Number(entry && entry.updatedAt) || 0,
+      builds:entry ? jsonCopy(entry.builds) : {}
+    };
+  }
+  function resetBuilderRosterBaseline(index){
+    builderRosterBaselines[index] = builderRosterBaselineForHero(
+      draft.heroes[index]
+    );
+  }
   function resetBuilderRosterBaselines(){
-    builderRosterBaselines = draft.heroes.map(hero => {
-      const entry = currentUser && hero.char
-        ? MemberRosterStore.all(currentUser.id)
-          .find(item => item.charId === hero.char)
-        : null;
-      return {
-        updatedAt:Number(entry && entry.updatedAt) || 0,
-        builds:entry ? jsonCopy(entry.builds) : {}
-      };
-    });
+    builderRosterBaselines = draft.heroes.map(
+      builderRosterBaselineForHero
+    );
   }
   function builderBuildIsDirty(index, type){
     const hero = draft.heroes[index];
@@ -6261,6 +6312,7 @@
     const sessionChanged = previousUserId !== expectedUserId;
     if(sessionChanged){
       ensureBossViewOwner();
+      resetBuilderRosterBaselines();
       // Le suivi du compte précédent ne doit jamais rester visible.
       DashboardStore.reset(expectedUserId);
       if($("#view-boss").classList.contains("active")) void renderBossView();
@@ -7517,9 +7569,14 @@
     }
     const latest = rows.find(entry => entry.charId === hero.char);
     const baseline = builderRosterBaselines[heroIndex]
-      || {updatedAt:0, builds:{}};
+      || {ownerId:"", charId:"", updatedAt:0, builds:{}};
     const latestUpdatedAt = Number(latest && latest.updatedAt) || 0;
-    const remotelyChanged = latestUpdatedAt !== baseline.updatedAt
+    const remotelyChanged = !rosterBaselineIdentityMatches(
+      baseline,
+      currentUser.id,
+      hero.char
+    )
+      || latestUpdatedAt !== baseline.updatedAt
       || (!latest && baseline.updatedAt > 0);
     if(remotelyChanged && !confirm(
       "Ton roster a été modifié depuis son chargement. "
@@ -7534,8 +7591,14 @@
       currentUser.id
     );
     try{
-      const saved = await MemberRosterStore.upsert(next);
+      const saved = await MemberRosterStore.updateBuild(
+        next,
+        type,
+        latestUpdatedAt
+      );
       builderRosterBaselines[heroIndex] = {
+        ownerId:currentUser.id,
+        charId:hero.char,
         updatedAt:Number(saved.updatedAt) || 0,
         builds:jsonCopy(saved.builds)
       };
@@ -7543,6 +7606,13 @@
       focusBuilderWeaponSwitch(heroIndex, type);
       toast("Build "+rosterWeaponLabel(type)+" mis à jour dans ton roster.");
     }catch(error){
+      if(String(error && error.message || error).includes("ROSTER_CONFLICT")){
+        toast(
+          "Ton roster a été modifié ailleurs. Recharge-le puis réessaie.",
+          true
+        );
+        return;
+      }
       toast("Roster non enregistré : "+authMessage(error), true);
     }
   }
@@ -7589,6 +7659,8 @@
     if(!snapshot) return;
     draft.heroes[heroIndex] = snapshot;
     builderRosterBaselines[heroIndex] = {
+      ownerId:currentUser.id,
+      charId:hero.char,
       updatedAt:Number(latest.updatedAt) || 0,
       builds:jsonCopy(latest.builds)
     };
@@ -7868,6 +7940,7 @@
           draft.heroes[i],
           v
         );
+        resetBuilderRosterBaseline(i);
         renderBuilder();
       }
     });

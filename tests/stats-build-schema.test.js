@@ -88,6 +88,16 @@ function assertTeamRosterBuildsGuard(body) {
 
 assertTeamRosterBuildsGuard(teamFunction);
 
+function assertTeamActiveWeaponTypeGuard(body) {
+  [
+    /not\s*\(\s*v_new_hero\s*\?\s*'activeWeaponType'\s*\)/i,
+    /v_old_hero\s*\?\s*'activeWeaponType'/i,
+    /new\.data\s*:=\s*jsonb_set\(\s*new\.data\s*,\s*array\['heroes'\s*,\s*v_index::text\s*,\s*'activeWeaponType'\]\s*,\s*v_old_hero->'activeWeaponType'\s*,\s*true\s*\)/i
+  ].forEach(pattern => assert.match(body, pattern));
+}
+
+assertTeamActiveWeaponTypeGuard(teamFunction);
+
 /* Une clé présente, même à null, est une suppression volontaire. Retirer la
    condition d'absence doit donc faire échouer le contrat. */
 const mutatedRosterBuildsGuard = teamFunction.replace(
@@ -102,6 +112,20 @@ assert.notEqual(
 assert.throws(
   () => assertTeamRosterBuildsGuard(mutatedRosterBuildsGuard),
   /did not match|rosterBuilds/
+);
+
+const mutatedActiveWeaponTypeGuard = teamFunction.replace(
+  /not\s*\(\s*v_new_hero\s*\?\s*'activeWeaponType'\s*\)/i,
+  "false"
+);
+assert.notEqual(
+  mutatedActiveWeaponTypeGuard,
+  teamFunction,
+  "la mutation activeWeaponType doit s'appliquer"
+);
+assert.throws(
+  () => assertTeamActiveWeaponTypeGuard(mutatedActiveWeaponTypeGuard),
+  /did not match|activeWeaponType/
 );
 
 const teamDropTrigger = extractStatement(
@@ -198,6 +222,27 @@ assert.doesNotMatch(
   guardsSql,
   /\b(?:create\s+table|alter\s+table|add\s+column|create\s+policy|drop\s+policy)\b/i,
   "Les gardes ne doivent ni modifier le schéma ni toucher aux policies RLS"
+);
+
+const updateRosterBuild = extractFunction("public.update_roster_build(");
+[
+  /p_expected_updated_at\s+timestamptz/i,
+  /p_weapon_type\s+text/i,
+  /p_build\s+jsonb/i,
+  /v_owner\s+uuid\s*:=\s*auth\.uid\(\)/i,
+  /update\s+public\.roster_characters[\s\S]*updated_at\s*=\s*p_expected_updated_at/i,
+  /jsonb_set\([\s\S]*array\[p_weapon_type\][\s\S]*p_build[\s\S]*true/i,
+  /insert\s+into\s+public\.roster_characters/i,
+  /on\s+conflict\s+do\s+nothing/i,
+  /raise\s+exception\s+'ROSTER_CONFLICT'/i
+].forEach(pattern => assert.match(updateRosterBuild, pattern));
+assert.match(
+  sql,
+  /revoke all on function public\.update_roster_build\(\s*text,\s*timestamptz,\s*smallint,\s*text,\s*jsonb\s*\)\s*from public/i
+);
+assert.match(
+  sql,
+  /grant execute on function public\.update_roster_build\(\s*text,\s*timestamptz,\s*smallint,\s*text,\s*jsonb\s*\)\s*to authenticated/i
 );
 
 console.log("PASS gardes SQL weaponConfig pour anciennes PWA");

@@ -603,6 +603,35 @@ function fakeText(root){
     inactiveBefore.dual
   );
 
+  assert.strictEqual(
+    typeof hooks.rosterBaselineIdentityMatches,
+    "function"
+  );
+  assert.strictEqual(
+    hooks.rosterBaselineIdentityMatches(
+      { ownerId:"user-1", charId:"meliodas" },
+      "user-1",
+      "meliodas"
+    ),
+    true
+  );
+  assert.strictEqual(
+    hooks.rosterBaselineIdentityMatches(
+      { ownerId:"user-1", charId:"meliodas" },
+      "user-2",
+      "meliodas"
+    ),
+    false
+  );
+  assert.strictEqual(
+    hooks.rosterBaselineIdentityMatches(
+      { ownerId:"user-1", charId:"meliodas" },
+      "user-1",
+      "merlin"
+    ),
+    false
+  );
+
   const copied = plain(hooks.copyFavoriteRosterBuild(entry, "Epee 1 main"));
   assert.deepStrictEqual(copied.builds["Epee 1 main"].weaponConfig, targetConfig);
   targetConfig.level = 8;

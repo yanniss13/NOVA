@@ -243,6 +243,20 @@ begin
         v_new_hero := new.data->'heroes'->v_index;
       end if;
 
+      -- Le type reste nécessaire quand le build actif n'a temporairement plus
+      -- d'arme. Une clé null explicite reste une suppression volontaire.
+      if not (v_new_hero ? 'activeWeaponType')
+         and v_old_hero ? 'activeWeaponType'
+      then
+        new.data := jsonb_set(
+          new.data,
+          array['heroes', v_index::text, 'activeWeaponType'],
+          v_old_hero->'activeWeaponType',
+          true
+        );
+        v_new_hero := new.data->'heroes'->v_index;
+      end if;
+
       v_kept := private.preserved_gear_config(
         v_old_hero, v_new_hero, 'armor', 'armorConfig'
       );
@@ -314,6 +328,91 @@ create policy roster_read   on public.roster_characters for select to authentica
 create policy roster_insert on public.roster_characters for insert to authenticated with check (owner = auth.uid());
 create policy roster_update on public.roster_characters for update to authenticated using (owner = auth.uid()) with check (owner = auth.uid());
 create policy roster_delete on public.roster_characters for delete to authenticated using (owner = auth.uid());
+
+-- Mise à jour atomique d'un seul build. Le timestamp lu par le client sert de
+-- compare-and-swap : une modification concurrente ne peut jamais être écrasée.
+create or replace function public.update_roster_build(
+  p_char_id text,
+  p_expected_updated_at timestamptz,
+  p_potential_tier smallint,
+  p_weapon_type text,
+  p_build jsonb
+)
+returns jsonb
+language plpgsql
+security invoker
+set search_path = pg_catalog, public
+as $$
+declare
+  v_owner uuid := auth.uid();
+  v_saved jsonb;
+begin
+  if v_owner is null then
+    raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
+  end if;
+  if nullif(btrim(p_char_id), '') is null
+     or nullif(btrim(p_weapon_type), '') is null
+     or p_potential_tier is null
+     or p_potential_tier not between 0 and 10
+     or jsonb_typeof(p_build) <> 'object'
+  then
+    raise exception 'ROSTER_INVALID' using errcode = 'P0001';
+  end if;
+
+  if p_expected_updated_at is null then
+    insert into public.roster_characters as roster (
+      owner, char_id, potential_tier, builds, updated_at
+    )
+    values (
+      v_owner,
+      p_char_id,
+      p_potential_tier,
+      jsonb_build_object(p_weapon_type, p_build),
+      now()
+    )
+    on conflict do nothing
+    returning jsonb_build_object(
+      'owner', roster.owner,
+      'char_id', roster.char_id,
+      'potential_tier', roster.potential_tier,
+      'builds', roster.builds,
+      'updated_at', roster.updated_at
+    ) into v_saved;
+  else
+    update public.roster_characters as roster
+       set potential_tier = p_potential_tier,
+           builds = jsonb_set(
+             roster.builds,
+             array[p_weapon_type],
+             p_build,
+             true
+           ),
+           updated_at = now()
+     where roster.owner = v_owner
+       and roster.char_id = p_char_id
+       and roster.updated_at = p_expected_updated_at
+    returning jsonb_build_object(
+      'owner', roster.owner,
+      'char_id', roster.char_id,
+      'potential_tier', roster.potential_tier,
+      'builds', roster.builds,
+      'updated_at', roster.updated_at
+    ) into v_saved;
+  end if;
+
+  if v_saved is null then
+    raise exception 'ROSTER_CONFLICT' using errcode = 'P0001';
+  end if;
+  return v_saved;
+end;
+$$;
+
+revoke all on function public.update_roster_build(
+  text, timestamptz, smallint, text, jsonb
+) from public;
+grant execute on function public.update_roster_build(
+  text, timestamptz, smallint, text, jsonb
+) to authenticated;
 
 -- 5) Sessions de boss de guilde : 6 GROUPES auto-créés chaque semaine (reset lundi 9h).
 --    Les membres rejoignent un ou plusieurs groupes (boss_participation).

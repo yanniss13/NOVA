@@ -100,6 +100,10 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
     typeof rosterEntryWithActiveHeroBuild === "function"
       ? rosterEntryWithActiveHeroBuild
       : undefined,
+  rosterBaselineIdentityMatches:
+    typeof rosterBaselineIdentityMatches === "function"
+      ? rosterBaselineIdentityMatches
+      : undefined,
   potentielDetailsOf,
   weaponTypesOf,
   isWeaponCompatible,

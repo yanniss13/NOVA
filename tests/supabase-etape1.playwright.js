@@ -877,22 +877,20 @@ const { chromium } = require("playwright");
       window.__fakeSupabaseEmit("roster_characters", "UPDATE");
     });
     await page.waitForTimeout(300);
-    const rosterUpsertsBeforeConflict = await page.evaluate(() =>
-      window.__fakeSupabaseState.calls.filter(call =>
-        call.table === "roster_characters"
-        && call.operation === "upsert"
+    const rosterWritesBeforeConflict = await page.evaluate(() =>
+      window.__fakeSupabaseState.rpcCalls.filter(call =>
+        call.name === "update_roster_build"
       ).length
     );
     page.once("dialog", dialog => dialog.dismiss());
     await updateRosterButton.click();
     assert.equal(
       await page.evaluate(() =>
-        window.__fakeSupabaseState.calls.filter(call =>
-          call.table === "roster_characters"
-          && call.operation === "upsert"
+        window.__fakeSupabaseState.rpcCalls.filter(call =>
+          call.name === "update_roster_build"
         ).length
       ),
-      rosterUpsertsBeforeConflict
+      rosterWritesBeforeConflict
     );
     assert.equal(await page.locator("#view-builder").isVisible(), true);
     assert.match(await page.locator("#toast").innerText(), /roster.*modifi/i);
@@ -906,12 +904,11 @@ const { chromium } = require("playwright");
     });
     assert.equal(
       await page.evaluate(() =>
-        window.__fakeSupabaseState.calls.filter(call =>
-          call.table === "roster_characters"
-          && call.operation === "upsert"
+        window.__fakeSupabaseState.rpcCalls.filter(call =>
+          call.name === "update_roster_build"
         ).length
       ),
-      rosterUpsertsBeforeConflict + 1
+      rosterWritesBeforeConflict + 1
     );
     const inactiveAfterConflict = await page.evaluate(() => {
       const row = window.__fakeSupabaseState.roster_characters.find(item =>
@@ -923,6 +920,43 @@ const { chromium } = require("playwright");
       };
     });
     assert.deepEqual(inactiveAfterConflict, inactiveAfterUpdate);
+
+    /* Une mutation distante entre refresh() et l'écriture atomique doit gagner :
+       le build inactif distant reste intact et l'écriture locale est refusée. */
+    await rosterHeroSlot.locator(".weapon-config-open").click();
+    await page.locator(".weapon-config-level").fill("6");
+    await page.locator("#weaponConfigSave").click();
+    await page.locator("#weaponConfigOverlay").waitFor({ state:"hidden" });
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.rosterConflictOnce = true;
+    });
+    const rosterWritesBeforeRace = await page.evaluate(() =>
+      window.__fakeSupabaseState.rpcCalls.filter(call =>
+        call.name === "update_roster_build"
+      ).length
+    );
+    await updateRosterButton.click();
+    await page.waitForTimeout(100);
+    assert.equal(
+      await page.evaluate(() =>
+        window.__fakeSupabaseState.rpcCalls.filter(call =>
+          call.name === "update_roster_build"
+        ).length
+      ),
+      rosterWritesBeforeRace + 1
+    );
+    assert.match(await page.locator("#toast").innerText(), /modifi.*ailleurs/i);
+    const afterAtomicConflict = await page.evaluate(() => {
+      const row = window.__fakeSupabaseState.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      return {
+        activeLevel:row.builds.Hache.weaponConfig.level,
+        inactiveNote:row.builds["Epee 1 main"].note
+      };
+    });
+    assert.equal(afterAtomicConflict.activeLevel, 7);
+    assert.equal(afterAtomicConflict.inactiveNote, "Modification concurrente");
 
     await rosterHeroSlot.locator("textarea.note").fill("Copie modifiée");
     const rosterNote = await page.evaluate(() =>
@@ -5660,6 +5694,7 @@ async function installFakeSupabase(page){
       realtimeTables:[],
       removedRealtimeChannels:0,
       failNextRosterUpsert:false,
+      rosterConflictOnce:false,
       profiles:[
         { id:"user-1", pseudo:"Yannis" },
         { id:"user-2", pseudo:"Merlin" }
@@ -5822,6 +5857,44 @@ async function installFakeSupabase(page){
         const message = state.bossRpcFailureOnce.message;
         state.bossRpcFailureOnce = null;
         return fail(message);
+      }
+      if(name === "update_roster_build"){
+        let row = state.roster_characters.find(item =>
+          item.owner === owner && item.char_id === args.p_char_id
+        );
+        if(state.rosterConflictOnce && row){
+          state.rosterConflictOnce = false;
+          row.updated_at = new Date(
+            Date.parse(row.updated_at) + 1_000
+          ).toISOString();
+          if(row.builds["Epee 1 main"]){
+            row.builds["Epee 1 main"].note = "Modification concurrente";
+          }
+        }
+        const expected = args.p_expected_updated_at;
+        if(row){
+          if(!expected || row.updated_at !== expected){
+            return fail("ROSTER_CONFLICT");
+          }
+          row.potential_tier = args.p_potential_tier;
+          row.builds[args.p_weapon_type] = clone(args.p_build);
+          row.updated_at = new Date(
+            Date.parse(row.updated_at) + 1_000
+          ).toISOString();
+        }else{
+          if(expected) return fail("ROSTER_CONFLICT");
+          row = {
+            owner,
+            char_id:args.p_char_id,
+            potential_tier:args.p_potential_tier,
+            builds:{
+              [args.p_weapon_type]:clone(args.p_build)
+            },
+            updated_at:"2026-07-25T09:00:00.000Z"
+          };
+          state.roster_characters.push(row);
+        }
+        return { data:clone(row), error:null };
       }
       if(name === "complete_boss_run") return fail("REPORT_REQUIRED");
 
