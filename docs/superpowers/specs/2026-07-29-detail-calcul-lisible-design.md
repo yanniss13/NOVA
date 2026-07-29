@@ -81,12 +81,25 @@ Les fonctions existantes (`heroTermLabel` / `heroTermProvenance`,
 `gearTermProvenance`) restent la source des noms et des provenances. L'appelant
 les fournit ; `statTermsDetails` ne les choisit jamais elle-même.
 
-`termEmphasis` remplace un paramètre `context` fourre-tout. La règle de mise en
-avant diffère réellement d'un appelant à l'autre — le panneau d'arme met en
-avant tout multiplicateur, la fiche du héros seulement ceux dont la base est
-présumée, le panneau d'équipement aucun — mais c'est la **seule** différence
-restante. Un rappel de contexte non typé inviterait à y glisser peu à peu de la
-logique d'affichage que cette fonction est justement censée unifier.
+`termEmphasis` remplace un paramètre `context` fourre-tout : c'est la **seule**
+différence restante entre appelants, et la nommer la rend testable. Un rappel de
+contexte non typé inviterait à y glisser peu à peu la logique d'affichage que
+cette fonction est justement censée unifier.
+
+**Le lot ne change pas quelles lignes sont mises en avant.** `termEmphasis`
+reproduit exactement les règles actuelles :
+
+| Appelant | Règle existante | Référence |
+| --- | --- | --- |
+| Fiche du héros | tout terme `multiply` | `index.html` ~4261 |
+| Panneau d'arme | tout terme `multiply` | `index.html` ~4572 |
+| Panneau d'équipement | aucun | `index.html` ~5377 |
+
+À noter pour éviter une erreur de lecture du code existant : sur la fiche du
+héros, `presumedMultiplierBase` (~4239) ne pilote **que** le suffixe texte
+« — base présumée ». Il ne conditionne pas la classe. Restreindre la mise en
+avant aux termes présumés serait un changement de comportement ; il n'est pas
+demandé et n'entre pas dans ce lot.
 
 ### 4.2 Clé de groupe
 
@@ -94,10 +107,14 @@ Deux termes ne sont regroupés que s'ils produiraient **exactement la même
 ligne**. La clé est donc le quadruplet :
 
 ```text
-( libellé rendu, operation, unit, appliesTo normalisé )
+( libellé rendu, operation, unit, appliesTo normalisé, termEmphasis(term) || "" )
 ```
 
 `appliesTo` est trié puis joint ; il vaut la chaîne vide pour un terme `add`.
+
+`termEmphasis` fait partie de la clé parce qu'il modifie la ligne rendue :
+fusionner un terme mis en avant avec un terme qui ne l'est pas produirait une
+ligne unique dont la mise en forme trahit l'un des deux.
 
 **Pourquoi `appliesTo` fait partie de la clé.** La contribution d'un
 multiplicateur vaut `base(appliesTo) × valeur / 10 000`. Sommer les taux de deux
@@ -265,10 +282,16 @@ mordante par une mutation volontaire.
 
 ### Fonctions pures
 
-- la clé de groupe est le quadruplet `(libellé, operation, unit, appliesTo)` ;
+- la clé de groupe est le quintuplet
+  `(libellé, operation, unit, appliesTo, emphase)` ;
 - **deux multiplicateurs de même libellé mais d'`appliesTo` différents ne sont
   pas regroupés** — la mutation qui retire `appliesTo` de la clé doit faire
   échouer ce test ;
+- **deux termes de même libellé mais d'emphase différente ne sont pas
+  regroupés** — la mutation qui retire l'emphase de la clé doit faire échouer
+  ce test ;
+- `termEmphasis` de chaque appelant reproduit le comportement actuel : tout
+  multiplicateur pour le héros et pour l'arme, aucun pour l'équipement ;
 - un libellé inconnu produit son propre groupe au lieu d'être avalé ;
 - additifs et multiplicateurs d'un même groupe ne sont jamais additionnés
   ensemble ;
