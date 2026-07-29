@@ -94,6 +94,11 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       PV, ATK et DEF sont affichés séparément comme « borne inférieure ».
       Les passifs restent descriptifs et explicitement hors calcul. Un build
       incomplet n'affiche jamais de faux total.
+- [x] **Armes secondaires et builds interchangeables**. Les deux armes non
+      utilisées transfèrent chacune 30 % de leur ATK plate finale. Les trois
+      builds du roster sont copiés dans l'instantané d'équipe et leurs icônes
+      permettent de changer de build sans perdre les brouillons. Une arme
+      secondaire manquante rend seulement l'ATK partielle.
 
 Après cette mise à jour, l'utilisateur doit rejouer le contenu complet de
 `supabase/schema.sql` dans le SQL Editor Supabase afin d'appliquer le schéma,
@@ -559,11 +564,12 @@ La fonction canonique consomme la forme normalisée d'un héros et retourne :
 ```js
 {
   version: 1,
-  status: "valid" | "incomplete" | "unavailable" | "incompatible",
+  status: "valid" | "partial" | "incomplete" | "unavailable" | "incompatible",
   coverage: [],
   uncovered: [],
   assumptions: {},
   missing: [],
+  partialStats: [],
   terms: [],
   totals: [],
   facts: { passives: [] }
@@ -577,12 +583,16 @@ et `terms`/`totals` restent vides : l'interface ne doit jamais inventer un
 `0`. Un niveau de passif manquant ou invalide ne change pas ce statut, car les
 passifs ne participent pas aux chiffres.
 
+Cette règle tout-ou-rien concerne le build actif. Si lui est complet mais
+qu'une arme secondaire manque, le résultat devient `partial` et conserve ses
+termes/totaux ; seule l'ATK est alors signalée comme incomplète.
+
 Une sortie valide couvre :
 
 ```js
 [
   "character", "mastery", "potential", "weapon",
-  "armor", "jewel", "engraving", "set"
+  "armor", "jewel", "engraving", "set", "secondary-weapon"
 ]
 ```
 
@@ -616,6 +626,57 @@ Le mode d'outrepassement d'arme et l'origine des segments d'armure conservent
 leurs protocoles distincts documentés plus haut. Le taux d'outrepassement est
 exact ; son libellé reste « Outrepassement ×… — base présumée ».
 
+### Armes secondaires et brouillons interchangeables
+
+Un héros d'équipe conserve les champs historiques du build affiché et deux
+champs supplémentaires :
+
+```js
+{
+  activeWeaponType: "Hache",
+  rosterBuilds: {
+    Hache: { /* arme, configurations, équipement et note */ },
+    "Epee 1 main": { /* instantané indépendant */ },
+    "Epees doubles": { /* instantané indépendant */ }
+  }
+}
+```
+
+Changer d'icône appelle `storeActiveHeroBuild()` avant
+`activateHeroBuild()` : un passage A → B → A restitue donc les modifications
+non enregistrées de A. Le potentiel reste commun au personnage. « Mettre à
+jour mon roster » remplace seulement le build affiché et ce potentiel ;
+« Recharger depuis mon roster » remplace explicitement les trois brouillons
+après confirmation.
+
+La mise à jour ciblée passe par la RPC `update_roster_build`. Elle compare
+atomiquement le `updated_at` relu par le client avant de modifier uniquement le
+build actif : une écriture distante arrivée entre la lecture et l'enregistrement
+provoque `ROSTER_CONFLICT` au lieu d'être écrasée. Les baselines du builder sont
+cloisonnées par compte et personnage. Le timestamp PostgreSQL exact est conservé
+séparément comme jeton opaque : ne jamais le reconstruire depuis `Date.parse()`,
+qui perdrait ses microsecondes et ferait échouer le CAS suivant. La détection
+« modifié depuis le chargement » compare également ces jetons exacts ; elle ne
+retombe sur les millisecondes que pour un ancien cache qui n'en contient pas.
+
+`SECONDARY_WEAPON_ATTACK_TRANSFER_RATE = 3000` signifie que chacune des deux
+armes non affichées apporte 30 % de son `B_Atk_Equip` final. Cette valeur inclut
+niveau, promotion, outrepassement et enchantements ATK plats. Les termes
+`I_AtkAdd_Rate` des armes secondaires sont exclus.
+
+`SECONDARY_WEAPON_TRANSFER_APPLICATION_MODE` vaut
+`"before-hero-rates"`. Ce choix est **présumé, non vérifié** : les contributions
+secondaires sont actuellement ajoutées avant les taux principaux du héros.
+Pour le vérifier, comparer sur Merlin l'ATK avec ses deux armes secondaires
+configurées, puis sans l'une d'elles. Si l'écart réel n'est pas affecté par les
+taux principaux, modifier uniquement ce mode et le branchement de ses seaux.
+
+Une arme secondaire absente ou invalide ne masque pas les résultats
+disponibles : `status:"partial"`, `partialStats:["B_Atk"]`, absence de
+`"secondary-weapon"` dans `coverage` et clé précise dans `uncovered`. PV et DEF
+restent affichés comme bornes inférieures ; seule l'ATK porte « calcul
+incomplet — arme secondaire manquante ».
+
 ### Passifs et interface
 
 Deux plafonds distincts sont obligatoires :
@@ -643,10 +704,11 @@ moyenne d'équipe n'est calculé tant que la formule du jeu n'est pas comprise.
 
 ### Activation et retour arrière
 
-Avant de publier le frontend du lot 3A, rejouer le contenu complet et
-idempotent de `supabase/schema.sql`. Cela installe le garde imbriqué de
-`passiveLevel`. Ensuite seulement : fusionner/pousser, attendre GitHub Pages
-vert, accepter la mise à jour PWA et vérifier le `BUILD_VERSION`.
+Avant de publier ce frontend, rejouer le contenu complet et idempotent de
+`supabase/schema.sql`. Cela installe les gardes imbriqués de `passiveLevel` et
+de `rosterBuilds`/`activeWeaponType` pour les anciennes PWA, ainsi que la RPC
+atomique `update_roster_build`. Ensuite seulement : fusionner/pousser, attendre
+GitHub Pages vert, accepter la mise à jour PWA et vérifier le `BUILD_VERSION`.
 
 Pour revenir en arrière, déployer un revert du frontend en conservant les
 triggers SQL. Les sous-champs restent dans les JSONB et réapparaissent lors

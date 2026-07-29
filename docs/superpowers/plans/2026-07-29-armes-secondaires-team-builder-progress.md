@@ -18,7 +18,7 @@ Plan :
 - [x] Task 4 — rendre le résultat partiel impossible à confondre
 - [x] Task 5 — changer de build par les trois icônes sans perte
 - [x] Task 6 — mettre à jour ou recharger le roster explicitement
-- [ ] Task 7 — documenter, vérifier et préparer l'activation
+- [x] Task 7 — documenter, vérifier et préparer l'activation
 
 ## Points validés par le propriétaire
 
@@ -52,6 +52,11 @@ Plan :
 | `97c12df` | `feat: calculer l'ATK des armes secondaires` | Task 3 |
 | `ec49817` | `feat: signaler l'ATK secondaire incomplète` | Task 4 |
 | `c584442` | `feat: changer de build depuis une équipe` | Task 5 |
+| `c0fa47c` | `feat: synchroniser un build d'équipe vers le roster` | Task 6 |
+| `aa6063d` | `fix: calculer les armes secondaires dans le roster` | Revue |
+| `c727101` | `fix: rendre la synchronisation roster atomique` | Revue |
+| `27c9232` | `fix: préserver le jeton exact du roster` | Revue |
+| `3f24ad3` | `fix: détecter les versions roster exactes` | Revue |
 
 ## Vérifications
 
@@ -76,11 +81,40 @@ Plan :
 - Task 6 GREEN modèle : `node tests/stats-build.test.js`.
 - Task 6 Supabase : `node tests/supabase-etape1.playwright.js`.
 - Task 6 mobile : `node tests/accessibilite-mobile.playwright.js`.
+- Générateur : `python generate-stats-build.py --check`.
+- Syntaxe SQL : `python -m unittest tests/test_schema_sql.py`.
+- Garde SQL : `node tests/stats-build-schema.test.js`.
+- Parcours potentiel : `node tests/potentiel-commun.playwright.js`.
+- Parcours Supabase : `node tests/supabase-etape1.playwright.js`.
+- Parcours mobile : `node tests/accessibilite-mobile.playwright.js`.
+- Régression éditeur roster RED : les deux armes secondaires configurées
+  laissaient « calcul partiel ».
+- Régression éditeur roster GREEN :
+  `node tests/supabase-etape1.playwright.js`.
+- Revue indépendante : zéro constat critique, trois constats importants
+  vérifiés puis corrigés.
+- Concurrence roster : RPC compare-and-swap testée avec une mutation distante
+  injectée entre `refresh()` et l'écriture.
+- Identité des baselines : compte et personnage obligatoires, réinitialisés aux
+  changements d'identité.
+- Ancienne PWA : `activeWeaponType` préservé par omission, mais jamais lorsqu'un
+  `null` explicite est envoyé.
+- Précision CAS : le `timestamptz` PostgreSQL exact reste un jeton opaque ;
+  régression couverte avec six chiffres décimaux et deux écritures successives.
+- Détection de conflit : deux versions différentes dans la même milliseconde
+  déclenchent encore la confirmation ; repli numérique réservé aux anciens
+  caches sans jeton.
+- Suite complète après le correctif de revue : `npm test` vert en 109,2 s.
+- Suite complète après les trois corrections : `npm test` vert en 88,2 s.
+- Suite complète après conservation du jeton exact : `npm test` vert en 86,9 s.
+- Revue finale : aucun constat Critical ou Important.
+- Suite complète finale après la revue : `npm test` vert en 88,9 s.
 
 ## Activation
 
-Le contenu complet de `supabase/schema.sql` devra être rejoué avant la fusion
-du frontend. Aucun push ne sera effectué sans validation explicite.
+**Schéma Supabase à rejouer avant fusion** : le contenu complet de
+`supabase/schema.sql` doit être exécuté dans le SQL Editor avant la fusion du
+frontend. Aucun push ne sera effectué sans validation explicite.
 
 ## Mesures après déploiement
 
