@@ -120,17 +120,23 @@ demandé et n'entre pas dans ce lot.
 ### 4.2 Clé de groupe
 
 Deux termes ne sont regroupés que s'ils produiraient **exactement la même
-ligne**. La clé est donc le quintuplet :
+ligne**. La clé est donc le sextuplet :
 
 ```text
-( libellé rendu, operation, unit, appliesTo normalisé, termEmphasis(term) || "" )
+( libellé, operation, unit, appliesTo normalisé, emphase, mainRate )
 ```
 
 `appliesTo` est trié puis joint ; il vaut la chaîne vide pour un terme `add`.
 
-`termEmphasis` fait partie de la clé parce qu'il modifie la ligne rendue :
+`emphase` fait partie de la clé parce qu'elle modifie la ligne rendue :
 fusionner un terme mis en avant avec un terme qui ne l'est pas produirait une
-ligne unique dont la mise en forme trahit l'un des deux.
+ligne unique dont la mise en forme trahit l'un des deux. `mainRate` en fait
+partie pour la même raison, aggravée : il change la notation **et**
+l'emplacement du groupe.
+
+Conséquence sur le rendu : il existe **un bloc « Taux principaux » par valeur
+distincte d'`appliesTo`**. Réunir tous les taux principaux en un bloc unique et
+sommer leurs valeurs annulerait la séparation que cette clé impose.
 
 **Pourquoi `appliesTo` fait partie de la clé.** La contribution d'un
 multiplicateur vaut `base(appliesTo) × valeur / 10 000`. Sommer les taux de deux
@@ -298,8 +304,8 @@ mordante par une mutation volontaire.
 
 ### Fonctions pures
 
-- la clé de groupe est le quintuplet
-  `(libellé, operation, unit, appliesTo, emphase)` ;
+- la clé de groupe est le sextuplet
+  `(libellé, operation, unit, appliesTo, emphase, mainRate)` ;
 - **deux multiplicateurs de même libellé mais d'`appliesTo` différents ne sont
   pas regroupés** — la mutation qui retire `appliesTo` de la clé doit faire
   échouer ce test ;
