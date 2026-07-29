@@ -57,9 +57,13 @@ ligne sait désormais quels builds elle représente.
 - Ordre : les personnages cliquables d'abord, le retrait du Recensement ensuite.
 - Le classement reste trié par palier de potentiel. Ce lot n'y touche pas.
 - Ne jamais déduire le build depuis le seul élément.
-- `supabase/schema.sql` reste inchangé ; la table `recensement` et ses données
-  sont conservées. Une suppression SQL éventuelle fera l'objet d'une migration
-  séparée dans quelques semaines.
+- **Les personnages SR sont entièrement exclus de l'Analyse DPS**, à la source.
+  Ils restent visibles et configurables dans le Roster.
+- **L'agrégation multi-armes est générique** ; seule la préférence `Sword1h`
+  est propre à Meliodas.
+- `supabase/schema.sql` reste inchangé ; la table `recensement`, ses données et
+  les anciennes clés `localStorage` sont conservées. Une suppression SQL
+  éventuelle fera l'objet d'une migration séparée dans quelques semaines.
 - Rien n'est poussé sans autorisation explicite.
 
 ## 4. Lot 1 — personnages cliquables dans l'Analyse
@@ -90,9 +94,24 @@ personnage tel que publié dans ses métadonnées (`m.weapons`), pas selon l'ord
 des clés de `entry.builds`. Deux membres ayant les mêmes builds obtiennent donc
 la même liste, dans le même ordre.
 
-**Filtrage.** Seuls les builds satisfaisant `isRosterBuildDps()` entrent dans
-`weaponTypes`. La règle Gowther P7+ est donc respectée sans être réécrite : sa
-Baguette est le seul build `Buster` admis, et uniquement à partir du palier 7.
+**Filtrage.** Deux filtres, dans cet ordre.
+
+1. **Rareté.** Seuls les personnages `SSR` produisent une entrée DPS :
+   `metaOf(charId).rarity === "SSR"`. Les SR restent visibles et configurables
+   dans le Roster ; ils disparaissent de l'Analyse — classement, couverture par
+   élément et matrice comprises. `bug`, SR Attaquant portant deux builds
+   Ténèbres, cesse donc d'apparaître.
+2. **Rôle.** Parmi les builds du personnage, seuls ceux satisfaisant
+   `isRosterBuildDps()` entrent dans `weaponTypes`. La règle Gowther P7+ est
+   respectée sans être réécrite : sa Baguette est le seul build `Buster` admis,
+   et uniquement à partir du palier 7.
+
+**L'agrégation multi-armes est générique.** Elle ne connaît aucun personnage :
+toute entrée dont l'élément est produit par plusieurs builds DPS porte
+plusieurs `weaponTypes`. Meliodas est aujourd'hui le seul SSR dans ce cas, mais
+un futur SSR à plusieurs armes DPS d'un même élément fonctionnera sans aucune
+modification. Aucune phrase de cette conception ne suppose qu'un DPS
+« ordinaire » ne porterait qu'un seul type.
 
 **Le regroupement par élément est conservé, la perte ne l'est pas.** La
 fonction continue d'émettre **une entrée par élément** — le classement affiche
@@ -128,18 +147,25 @@ déjà téléchargés pour cette vue.
 
 ### 4.2 Sélection initiale
 
-`preferredWeaponType` est déterminé dans cet ordre, sans exception :
+`preferredWeaponType` est déterminé dans cet ordre, première règle satisfaite
+gagnante :
 
 1. le build favori du personnage, s'il existe et s'il fait partie de
    `weaponTypes` — `favoriteRosterWeaponType(entry)` (~6065) renvoie une clé de
    dossier, à convertir en enum avant comparaison ;
-2. sinon `Sword1h`, s'il fait partie de `weaponTypes` ;
+2. sinon, **pour Meliodas uniquement**, `Sword1h` s'il fait partie de
+   `weaponTypes` ;
 3. sinon le premier élément de `weaponTypes`, dont l'ordre est stable par §4.1.
 
-La règle 2 est une préférence de jeu du propriétaire pour Meliodas. Elle
-s'applique telle quelle à tout personnage dont les builds DPS incluent
-`Sword1h` ; aucune exception codée par personnage n'est introduite, ce que la
-règle d'or du dépôt interdirait.
+La règle 2 est une **préférence de jeu du propriétaire, propre à Meliodas**,
+portée par une constante nommée et commentée du type
+`DPS_PREFERRED_WEAPON_BY_CHAR = { meliodas:"Sword1h" }`.
+
+La règle d'or du dépôt interdit de coder en dur des **listes d'assets** — armes,
+armures, personnages disponibles. Elle n'interdit pas une règle produit nommée.
+Généraliser cette préférence à tout personnage possédant `Sword1h` changerait en
+revanche le comportement de futurs personnages sans décision du propriétaire :
+c'est précisément ce qu'il faut éviter.
 
 ### 4.3 Ouvrir la modale depuis l'Analyse
 
@@ -160,16 +186,34 @@ openRosterDetailFor(context)                  // nouveau
 
 ```js
 {
-  entry,                 // le personnage normalisé, issu de player.characters (§4.1 bis)
+  entries,               // liste de personnages normalisés (§4.1 bis)
+  index,                 // position ouverte dans `entries`
   memberName,            // pseudo affiché du propriétaire du roster
-  weaponTypes,           // enums, ordre stable
+  weaponTypes,           // enums, ordre stable ; null = tous les builds
   weaponType,            // build ouvert initialement
-  returnFocusTo          // élément à refocaliser à la fermeture
+  showNavigation,        // affiche ou masque précédent/suivant
+  returnFocusKey         // identité de la ligne à refocaliser (§4.5)
 }
 ```
 
-`entry` est l'objet déjà normalisé, pas un identifiant : la modale rend depuis
-la mémoire et n'a rien à retrouver ni à recharger.
+`entries` contient des objets déjà normalisés, pas des identifiants : la modale
+rend depuis la mémoire et n'a rien à retrouver ni à recharger.
+
+Les deux contextes sont définis explicitement, et c'est ce qui permet à
+`openRosterDetail(index)` de devenir un adaptateur **sans perdre sa
+navigation** :
+
+| | depuis le Roster | depuis l'Analyse |
+| --- | --- | --- |
+| `entries` | la liste complète du roster affiché | **un seul** personnage, celui de la ligne |
+| `index` | la position cliquée | `0` |
+| `weaponTypes` | `null` — tous les builds | les types DPS de la ligne |
+| `showNavigation` | `true` | `false` |
+| `returnFocusKey` | `null` — comportement existant | `{owner, char, element}` |
+
+`moveRosterDetail(step)` continue d'opérer sur `entries` : depuis l'Analyse la
+liste ne contient qu'un élément, la navigation n'a donc nulle part où aller —
+raison pour laquelle elle est masquée plutôt que rendue inerte.
 
 `openRosterDetail(index)` devient un adaptateur qui construit ce contexte
 depuis la liste du roster puis appelle `openRosterDetailFor`. Le rendu, la pile
@@ -182,11 +226,15 @@ contrôle inerte visible est une promesse non tenue.
 
 ### 4.4 Ce que la modale affiche depuis l'Analyse
 
-- un DPS ordinaire : **uniquement son build DPS** ;
-- Gowther au palier 7 ou plus : **uniquement la Baguette** ;
-- Meliodas : **ses trois builds DPS Ténèbres enregistrés**, sélectionnables par
-  leurs icônes d'arme ;
-- les builds Support, Gardien ou Briseur non concernés sont **masqués**.
+La modale affiche **exactement les `weaponTypes` de la ligne cliquée**, ni plus
+ni moins. Cette règle unique couvre tous les cas, sans en nommer aucun :
+
+- un seul type : ce build, **sans sélecteur** ;
+- plusieurs types : un sélecteur limité **à ces builds DPS** ;
+- Meliodas : ses trois armes DPS Ténèbres enregistrées, par leurs icônes ;
+- Gowther au palier 7 ou plus : uniquement la Baguette ;
+- les builds Support, Gardien ou Briseur non représentés par la ligne sont
+  **masqués**.
 
 Ces builds masqués restent consultables normalement depuis l'onglet Roster :
 cette restriction est propre à la vue Analyse, elle ne supprime rien.
@@ -202,7 +250,14 @@ entrées. Un sélecteur à un seul choix est du bruit.
 - Cible tactile d'au moins 44 × 44 px, y compris à 320 px.
 - Ouverture par la pile `ModalStack` existante.
 - La fermeture — bouton, Échap ou clic extérieur — **rend le focus à la ligne
-  exacte** qui a ouvert la modale, via `returnFocusTo`.
+  qui a ouvert la modale**. Une référence directe au nœud ne suffit pas :
+  Realtime peut reconstruire le classement pendant que la modale est ouverte et
+  détacher ce bouton du DOM. On mémorise donc une **identité stable**
+  `{owner, char, element}` et, à la fermeture, dans cet ordre :
+  1. refocaliser le bouton d'origine s'il est toujours dans le document ;
+  2. sinon retrouver la ligne portant cette identité et la focaliser ;
+  3. sinon poser le focus sur un repli logique de l'onglet Analyse, jamais sur
+     `document.body`.
 - **Aucune lecture réseau au clic.** Les données viennent de
   `analysePlayers`, déjà chargé par `renderAnalyse()`. Le clic ne déclenche ni
   requête Supabase, ni rechargement de page.
@@ -232,10 +287,23 @@ Conservés sans exception :
 
 - `supabase/schema.sql` **inchangé** ;
 - la table `recensement`, ses politiques RLS et ses données ;
-- aucun `DROP`, aucune migration destructive.
+- aucun `DROP`, aucune migration destructive ;
+- **les anciennes clés `localStorage` du recensement ne sont jamais
+  supprimées.** Seul le code qui les lit et les écrit disparaît. Effacer le
+  stockage local d'un membre détruirait une saisie qu'il n'a pas exportée, et
+  ce lot n'a aucune raison de le faire.
 
-Un `grep -rn "recensement"` après le lot ne doit plus retourner que
-`supabase/schema.sql` et les documents d'historique.
+**Critère de fin, formulé précisément.** Un `grep -rn "recensement"` global
+serait un mauvais test : `AGENTS.md`, `supabase/schema.sql` et les tests SQL
+documentent légitimement une table qu'on conserve. Le test vérifie l'absence
+des **points d'accroche frontend**, nommément :
+
+- aucun `tab-recensement` ni `view-recensement` dans `index.html` ;
+- aucune fonction `renderRecensement`, `recPlayersForView`, `saveCloudRecCache`
+  ou `readRecCache` ;
+- aucun `from("recensement")` dans `index.html` ;
+- aucune entrée `"recensement"` dans le routage d'onglets ni dans les listes
+  d'onglets des tests.
 
 ## 6. Tests
 
@@ -255,9 +323,23 @@ mordante par une mutation volontaire.
 - sans favori, `Sword1h` est choisi ;
 - sans favori et sans `Sword1h`, repli stable sur le premier de `weaponTypes` ;
 - un favori portant sur un build **non DPS** n'est pas retenu ;
-- un DPS ordinaire ne porte qu'un seul `weaponTypes` ;
+- le repli `Sword1h` ne s'applique **qu'à Meliodas** : un autre personnage
+  possédant `Sword1h` parmi ses builds DPS, sans favori, ouvre le premier de
+  `weaponTypes` et non `Sword1h` ;
+- un personnage à un seul build DPS porte un `weaponTypes` d'un élément —
+  formulé comme une conséquence des données, jamais comme une règle ;
 - Gowther au palier 7 ne porte que `Wand` ; au palier 6 il ne produit aucune
   entrée DPS ;
+
+### Rareté
+
+- un personnage **SR** de rôle Attaquant, avec un build valide, ne produit
+  **aucune** entrée DPS ;
+- un personnage **SSR** équivalent, mêmes builds, reste présent ;
+- aucun SR n'apparaît dans les **trois** sections de l'Analyse : classement,
+  couverture par élément et matrice ;
+- la mutation qui retire le filtre de rareté doit faire échouer ces trois
+  tests ;
 - `char`, `element` et `pot` sont inchangés pour les entrées existantes ;
 - **le nombre de lignes du classement est identique avant et après le lot**
   pour un même roster : l'agrégation ne doit pas multiplier les lignes de
@@ -293,8 +375,12 @@ mordante par une mutation volontaire.
 - Un `weaponTypes` vide est impossible par construction : une entrée n'existe
   que si au moins un build DPS l'a produite. Le rendu ne doit malgré tout jamais
   supposer un tableau non vide.
-- Hors ligne, le classement affiche ce que le chargement précédent a fourni ;
-  le clic reste fonctionnel puisqu'il ne lit rien.
+- **Hors ligne :** `rosterDerivedPlayers()` lève une erreur si Supabase échoue,
+  et `renderAnalyse()` affiche alors « Analyse indisponible pour l'instant ».
+  Ce lot ne change pas ce comportement. Ce qu'il garantit est plus étroit et
+  doit être formulé ainsi : **après un chargement réussi, le clic et la modale
+  restent utilisables si la connexion tombe**, puisqu'ils ne lisent que la
+  mémoire. Un véritable cache hors ligne du classement serait un autre lot.
 
 ## 8. Mise en service et retour arrière
 
@@ -306,10 +392,16 @@ servi correspond au SHA publié.
 
 ## 9. Critères d'acceptation
 
-- Meliodas apparaît une fois en Ténèbres, et sa modale propose ses trois armes
-  DPS ;
+- Meliodas apparaît **une seule ligne** en Ténèbres, et sa modale propose ses
+  trois armes DPS ;
 - aucun build n'est plus perdu par la déduplication ;
-- un DPS ordinaire ouvre directement son unique build ;
+- une ligne à un seul type d'arme ouvre ce build sans sélecteur ;
 - Gowther P7+ ouvre sa Baguette et rien d'autre ;
-- l'onglet Recensement a disparu sans qu'aucune donnée Supabase soit touchée ;
-- tout est utilisable au clavier, et la fermeture rend le focus.
+- **aucun personnage SR n'apparaît nulle part dans l'Analyse**, et les SR
+  restent configurables dans le Roster ;
+- l'agrégation multi-armes fonctionne pour un futur SSR sans qu'une ligne de
+  code le nomme ;
+- l'onglet Recensement a disparu, sans qu'aucune donnée Supabase ni aucune clé
+  `localStorage` ne soit touchée ;
+- tout est utilisable au clavier, et la fermeture rend le focus même après une
+  reconstruction Realtime du classement.
