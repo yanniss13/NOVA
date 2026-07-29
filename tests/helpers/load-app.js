@@ -324,6 +324,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   MemberRosterStore,
   Store,
   dpsEntriesFromRoster,
+  rosterPlayerFrom:typeof rosterPlayerFrom === "function"
+    ? rosterPlayerFrom
+    : undefined,
   recPlayersForView:typeof recPlayersForView === "function"
     ? recPlayersForView
     : undefined,

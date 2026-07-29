@@ -553,6 +553,36 @@ const STORAGE_KEY = "confrerie7ds.teams";
   testGowtherPotentialGate(hooks);
 }
 
+// Analyse : rosterPlayerFrom assemble un joueur sans jeter les personnages normalisés.
+{
+  const { hooks } = loadApp();
+  assert.strictEqual(typeof hooks.rosterPlayerFrom, "function");
+
+  // Personnage réellement normalisé (mêmes champs que cloudRosterFromRow),
+  // pas un raccourci inventé : sinon le test ne prouve rien sur la modale.
+  const character = hooks.normalizeRosterCharacter({
+    owner:"owner-1",
+    charId:"meliodas",
+    potentialTier:7,
+    builds:{ Hache:{ weapon:"7ds-armes/Hache/hache.webp" } }
+  });
+  const player = plain(hooks.rosterPlayerFrom("owner-1", "Yannis", [character]));
+
+  assert.strictEqual(player.owner, "owner-1");
+  assert.strictEqual(player.name, "Yannis");
+  assert.ok(player.dps.length > 0, "Les entrées DPS restent calculées");
+  assert.deepStrictEqual(
+    player.characters.map(c => c.charId),
+    ["meliodas"],
+    "Les personnages normalisés sont conservés pour la modale"
+  );
+  assert.strictEqual(
+    player.characters[0].builds.Hache.weapon,
+    "7ds-armes/Hache/hache.webp",
+    "Le détail du build normalisé reste disponible sans relecture réseau"
+  );
+}
+
 // Roster partagé : conversion Supabase et cache isolé par propriétaire.
 {
   const { hooks, localStorage } = loadApp();

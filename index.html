@@ -6330,7 +6330,19 @@
     }));
   }
 
-  // Agrège tous les rosters de la confrérie -> [{owner, name, dps:[…]}]
+  /* Assemblage d'un joueur de l'analyse. `characters` conserve les rosters
+     normalises deja calcules : la modale de detail doit pouvoir s'ouvrir sans
+     relire le reseau. */
+  function rosterPlayerFrom(owner, name, entries){
+    return {
+      owner,
+      name,
+      characters:entries,
+      dps:entries.reduce((acc, e) => acc.concat(dpsEntriesFromRoster(e)), [])
+    };
+  }
+
+  // Agrège tous les rosters de la confrérie -> [{owner, name, dps:[…], characters:[…]}]
   async function rosterDerivedPlayers(){
     if(!currentUser || !sb) return [];
     const [rosterRes, profiles] = await Promise.all([
@@ -6350,11 +6362,9 @@
       if(currentUser && id === currentUser.id) return currentPseudo || "Moi";
       return "Membre";
     };
-    return Object.keys(byOwner).map(owner=>({
-      owner,
-      name:nameOf(owner),
-      dps:byOwner[owner].reduce((acc,e)=>acc.concat(dpsEntriesFromRoster(e)), [])
-    })).filter(p => p.dps.length);
+    return Object.keys(byOwner)
+      .map(owner => rosterPlayerFrom(owner, nameOf(owner), byOwner[owner]))
+      .filter(p => p.dps.length);
   }
   const TEAM_NAME_MAX = 40;
 
