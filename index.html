@@ -5355,26 +5355,126 @@
     target[kind][slot] = nextFile || null;
     return target;
   }
+  const TEAM_BUILD_FIELDS = [
+    "weapon",
+    "weaponConfig",
+    "armor",
+    "armorConfig",
+    "jewel",
+    "jewelConfig",
+    "note"
+  ];
+  function teamBuildSnapshot(raw){
+    const source = raw && typeof raw === "object" ? raw : {};
+    const defaults = {
+      weapon:null,
+      weaponConfig:null,
+      armor:emptyArmor(),
+      armorConfig:{},
+      jewel:emptyJewel(),
+      jewelConfig:{},
+      note:""
+    };
+    return TEAM_BUILD_FIELDS.reduce((copy, field) => {
+      copy[field] = jsonCopy(
+        Object.prototype.hasOwnProperty.call(source, field)
+          ? source[field]
+          : defaults[field]
+      );
+      return copy;
+    }, {});
+  }
+  function normalizeBuildFields(charId, weaponType, raw){
+    const source = raw && typeof raw === "object" ? raw : {};
+    const candidateType = weaponFolderOf(source.weapon);
+    const weapon = isWeaponCompatible(charId, source.weapon)
+      && (!weaponType || candidateType === weaponType)
+      ? (source.weapon || null)
+      : null;
+    const armor = Object.assign(emptyArmor(), source.armor || {});
+    if(!isLinkedArmorCompatible(charId, armor[LINKED_ARMOR_SLOT])){
+      armor[LINKED_ARMOR_SLOT] = null;
+    }
+    const jewel = Object.assign(emptyJewel(), source.jewel || {});
+    return {
+      weapon,
+      weaponConfig:weapon
+        ? normalizeWeaponConfig(weapon, source.weaponConfig)
+        : null,
+      armor,
+      armorConfig:normalizeGearConfigMap(
+        armor,
+        source.armorConfig,
+        ARMOR_SLOTS
+      ),
+      jewel,
+      jewelConfig:normalizeGearConfigMap(
+        jewel,
+        source.jewelConfig,
+        JEWEL_SLOTS
+      ),
+      note:typeof source.note === "string" ? source.note : ""
+    };
+  }
   function normalizeHero(raw){
     const h = raw && typeof raw === "object" ? raw : {};
     const char = h.char||null;
-    const weapon = isWeaponCompatible(char, h.weapon) ? (h.weapon||null) : null;
-    const armor = Object.assign(emptyArmor(), h.armor||{});
-    if(!isLinkedArmorCompatible(char, armor[LINKED_ARMOR_SLOT])){
-      armor[LINKED_ARMOR_SLOT] = null;
+    const allowed = weaponTypesOf(char);
+    const equippedType = weaponFolderOf(h.weapon);
+    const storedType = allowed.includes(h.activeWeaponType)
+      ? h.activeWeaponType
+      : null;
+    const activeWeaponType = allowed.includes(equippedType)
+      ? equippedType
+      : storedType;
+    const rosterBuilds = {};
+    if(h.rosterBuilds && typeof h.rosterBuilds === "object"
+      && !Array.isArray(h.rosterBuilds)){
+      allowed.forEach(type => {
+        if(Object.prototype.hasOwnProperty.call(h.rosterBuilds, type)){
+          rosterBuilds[type] = teamBuildSnapshot(
+            normalizeBuildFields(char, type, h.rosterBuilds[type])
+          );
+        }
+      });
     }
-    const jewel = Object.assign(emptyJewel(), h.jewel||{});
-    return {
+    const active = normalizeBuildFields(char, activeWeaponType, h);
+    if(activeWeaponType){
+      rosterBuilds[activeWeaponType] = teamBuildSnapshot(active);
+    }
+    return Object.assign({
       char,
-      weapon,
-      weaponConfig:weapon ? normalizeWeaponConfig(weapon, h.weaponConfig) : null,
-      armor,
-      armorConfig:normalizeGearConfigMap(armor, h.armorConfig, ARMOR_SLOTS),
-      jewel,
-      jewelConfig:normalizeGearConfigMap(jewel, h.jewelConfig, JEWEL_SLOTS),
+      rosterBuilds,
+      activeWeaponType,
       potentiel:normalizePotentiel(h.potentiel),
-      note:typeof h.note === "string" ? h.note : ""
-    };
+    }, active);
+  }
+  function storeActiveHeroBuild(hero){
+    if(!hero || !hero.char) return hero;
+    const type = weaponFolderOf(hero.weapon) || hero.activeWeaponType;
+    if(!weaponTypesOf(hero.char).includes(type)) return hero;
+    if(!hero.rosterBuilds || typeof hero.rosterBuilds !== "object"
+      || Array.isArray(hero.rosterBuilds)){
+      hero.rosterBuilds = {};
+    }
+    hero.rosterBuilds[type] = teamBuildSnapshot(
+      normalizeBuildFields(hero.char, type, hero)
+    );
+    hero.activeWeaponType = type;
+    return hero;
+  }
+  function activateHeroBuild(hero, weaponType){
+    if(!hero || !weaponTypesOf(hero.char).includes(weaponType)) return hero;
+    storeActiveHeroBuild(hero);
+    const target = normalizeBuildFields(
+      hero.char,
+      weaponType,
+      hero.rosterBuilds && hero.rosterBuilds[weaponType]
+    );
+    Object.assign(hero, teamBuildSnapshot(target), {
+      activeWeaponType:weaponType
+    });
+    return hero;
   }
   const emptyRosterBuild = () => ({
     weapon:null,
@@ -5393,24 +5493,12 @@
       && knownWeapons.some(item => item.file === source.weapon)
       ? source.weapon
       : null;
-    const hero = normalizeHero({
-      char:charId,
+    const build = normalizeBuildFields(charId, weaponType, {
+      ...source,
       weapon,
-      weaponConfig:source.weaponConfig,
-      armor:source.armor,
-      armorConfig:source.armorConfig,
-      jewel:source.jewel,
-      jewelConfig:source.jewelConfig,
-      note:source.note
     });
     return {
-      weapon:hero.weapon,
-      weaponConfig:hero.weaponConfig,
-      armor:hero.armor,
-      armorConfig:hero.armorConfig,
-      jewel:hero.jewel,
-      jewelConfig:hero.jewelConfig,
-      note:hero.note,
+      ...build,
       favorite:source.favorite === true
     };
   }
@@ -5487,6 +5575,11 @@
     const normalized = normalizeRosterCharacter(entry);
     if(!normalized || !Object.prototype.hasOwnProperty.call(normalized.builds, weaponType)) return null;
     const build = normalized.builds[weaponType];
+    const rosterBuilds = Object.keys(normalized.builds)
+      .reduce((result, type) => {
+        result[type] = teamBuildSnapshot(normalized.builds[type]);
+        return result;
+      }, {});
     return normalizeHero({
       char:normalized.charId,
       weapon:build.weapon,
@@ -5495,6 +5588,8 @@
       armorConfig:build.armorConfig,
       jewel:build.jewel,
       jewelConfig:build.jewelConfig,
+      rosterBuilds,
+      activeWeaponType:weaponType,
       potentiel:{tier:normalized.potentialTier},
       note:build.note
     });
@@ -5690,6 +5785,8 @@
     char:null,
     weapon:null,
     weaponConfig:null,
+    rosterBuilds:{},
+    activeWeaponType:null,
     armor:emptyArmor(),
     armorConfig:{},
     jewel:emptyJewel(),

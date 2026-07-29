@@ -7,6 +7,7 @@ const { loadApp, plain } = require("./helpers/load-app");
 
 const HACHE_FILE = "7ds-armes/Hache/hache.webp";
 const EPEE_FILE = "7ds-armes/Epee 1 main/epee.webp";
+const DOUBLE_FILE = "7ds-armes/Epees doubles/doubles.webp";
 const BAGUETTE_VORACE_FILE = "7ds-armes/Baguette/Baguette de l'âme vorace.webp";
 const EPEE_LONGUE_USEE_FILE = "7ds-armes/Epee 1 main/Épée longue usée.webp";
 
@@ -496,22 +497,59 @@ function fakeText(root){
   assert.strictEqual(hooks.emptyWeaponConfig(HACHE_FILE, "grade-inconnue"), null);
 }
 
-// Les copies de roster gardent la configuration, sauf le favori ciblé qui garde la sienne.
+// L'import roster conserve les trois builds par valeur et un changement
+// Hache -> Épée -> Hache ne perd jamais le brouillon de départ.
 {
   const { hooks } = loadApp();
   const favoriteConfig = validConfig();
   const targetConfig = validConfig({ level:4 });
+  const doubleConfig = validConfig({ level:2 });
   const entry = {
     charId:"meliodas",
     builds:{
       Hache:{ weapon:HACHE_FILE, weaponConfig:favoriteConfig, favorite:true },
-      "Epee 1 main":{ weapon:EPEE_FILE, weaponConfig:targetConfig, favorite:false }
+      "Epee 1 main":{ weapon:EPEE_FILE, weaponConfig:targetConfig, favorite:false },
+      "Epees doubles":{
+        weapon:DOUBLE_FILE,
+        weaponConfig:doubleConfig,
+        favorite:false
+      }
     }
   };
   const snapshot = plain(hooks.rosterHeroSnapshot(entry, "Hache"));
+  assert.deepStrictEqual(
+    Object.keys(snapshot.rosterBuilds).sort(),
+    ["Epee 1 main", "Epees doubles", "Hache"].sort()
+  );
+  assert.strictEqual(snapshot.activeWeaponType, "Hache");
+  assert.strictEqual("favorite" in snapshot.rosterBuilds.Hache, false);
   assert.deepStrictEqual(snapshot.weaponConfig, favoriteConfig);
   favoriteConfig.level = 7;
   assert.strictEqual(snapshot.weaponConfig.level, 0);
+
+  snapshot.weaponConfig.level = 8;
+  const sword = plain(hooks.activateHeroBuild(snapshot, "Epee 1 main"));
+  assert.strictEqual(sword.activeWeaponType, "Epee 1 main");
+  assert.strictEqual(sword.weaponConfig.level, 4);
+  const returned = plain(hooks.activateHeroBuild(sword, "Hache"));
+  assert.strictEqual(returned.activeWeaponType, "Hache");
+  assert.strictEqual(returned.weaponConfig.level, 8);
+
+  const legacy = plain(hooks.normalizeHero({
+    char:"meliodas",
+    weapon:HACHE_FILE,
+    weaponConfig:validConfig(),
+    potentiel:{tier:7}
+  }));
+  assert.deepStrictEqual(Object.keys(legacy.rosterBuilds), ["Hache"]);
+  assert.strictEqual(legacy.activeWeaponType, "Hache");
+
+  const changedCharacter = plain(hooks.normalizeHero({
+    ...snapshot,
+    char:"merlin"
+  }));
+  assert.deepStrictEqual(changedCharacter.rosterBuilds, {});
+  assert.strictEqual(changedCharacter.weapon, null);
 
   const copied = plain(hooks.copyFavoriteRosterBuild(entry, "Epee 1 main"));
   assert.deepStrictEqual(copied.builds["Epee 1 main"].weaponConfig, targetConfig);

@@ -12,7 +12,7 @@ Plan :
 
 ## État global
 
-- [ ] Task 1 — normaliser et transporter les trois builds
+- [x] Task 1 — normaliser et transporter les trois builds
 - [ ] Task 2 — protéger `rosterBuilds` contre les anciennes PWA
 - [ ] Task 3 — calculer le transfert reconstructible de 30 %
 - [ ] Task 4 — rendre le résultat partiel impossible à confondre
@@ -49,7 +49,10 @@ Plan :
 
 ## Vérifications
 
-Aucune vérification d'implémentation exécutée pour le moment.
+- Référence avant modification : `npm test` vert en 82,9 s.
+- Task 1 RED : `snapshot.rosterBuilds` absent.
+- Task 1 GREEN : `node tests/stats-build.test.js`.
+- Régression potentiel : `node tests/potentiel-commun.test.js`.
 
 ## Activation
 

@@ -81,6 +81,18 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   normalizePotentiel,
   normalizeHero,
   normalizeTeam,
+  normalizeBuildFields:typeof normalizeBuildFields === "function"
+    ? normalizeBuildFields
+    : undefined,
+  teamBuildSnapshot:typeof teamBuildSnapshot === "function"
+    ? teamBuildSnapshot
+    : undefined,
+  storeActiveHeroBuild:typeof storeActiveHeroBuild === "function"
+    ? storeActiveHeroBuild
+    : undefined,
+  activateHeroBuild:typeof activateHeroBuild === "function"
+    ? activateHeroBuild
+    : undefined,
   potentielDetailsOf,
   weaponTypesOf,
   isWeaponCompatible,
