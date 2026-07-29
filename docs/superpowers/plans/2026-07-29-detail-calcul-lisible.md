@@ -42,6 +42,9 @@ aucun module ES. Tests Node natifs (`assert`) via le bac à sable `vm` de
   implémenter au minimum. Prouver qu'une assertion mord en cassant volontairement
   le code visé.
 - **Un commit par tâche**, message en français décrivant le *pourquoi*.
+- **Les numéros de ligne de ce plan valent pour `11ca999` et se décalent dès la
+  première édition.** Toujours retrouver une ancre par le nom de la fonction
+  (`grep -n "function heroTermLabel" index.html`), jamais par son numéro.
 - Commandes de vérification : `node tests/stats-build.test.js` pour la boucle
   courte, `npm test` en fin de lot, puis `git diff --check` et
   `git status --short`.
@@ -556,7 +559,8 @@ total appliqué à une base inexistante."
 ### Tâche 3 : rendu commun et branchement de la fiche du héros
 
 **Fichiers :**
-- Modifier : `index.html` (CSS ~1330, `heroStatDetails` ~4234)
+- Modifier : `index.html` (CSS, `heroStatDetails`, `heroTermProvenance`,
+  `weaponTermProvenance`)
 - Test : `tests/stats-build.test.js`
 
 **Interfaces :**
@@ -886,6 +890,85 @@ Remplacer entièrement `heroStatDetails` (~4234-4273) par :
 (`index.html` ~4239) pour les multiplicateurs non principaux : le suffixe
 « — base présumée » ne doit pas disparaître de la fiche du héros.
 
+- [ ] **Étape 5 bis : retirer la liste des seaux des provenances**
+
+**Sans cette étape le lot échoue son objectif principal.** `statBucketNotes`
+ajoute la liste des seaux en pied de bloc, mais les fonctions de provenance
+continuent de la recopier sur chaque ligne — elle apparaîtrait donc **deux
+fois**, alors que sa répétition est le défaut n°2 de la spec.
+
+Ne retirer que la branche `multiply` : la liste `appliesTo` est identique sur
+toutes les lignes d'une même base, c'est elle le pavé. Le `"seau <bucket>"` d'un
+terme additif reste, il est court et distinct par terme.
+
+D'abord, sortir le dictionnaire français de `weaponTermProvenance` (~4471) pour
+que le pied de bloc puisse le réutiliser. Le déclarer juste avant
+`statTermGroupKey` :
+
+```js
+  const BUILD_BUCKET_LABELS = {
+    "weapon-native":"statistiques natives de l’arme",
+    "weapon-enchantment":"enchantements de l’arme"
+  };
+```
+
+Dans `weaponTermProvenance`, supprimer la déclaration locale `const buckets = {…}`
+et remplacer le bloc final :
+
+```js
+    if(term.operation === "add"){
+      parts.push("seau "+(BUILD_BUCKET_LABELS[term.bucket] || term.bucket));
+    }
+    return parts.join(" · ");
+```
+
+Dans `heroTermProvenance` (~4230), remplacer :
+
+```js
+    if(term.operation === "add") parts.push("seau "+term.bucket);
+    return parts.join(" · ");
+```
+
+`gearTermProvenance` (~5320) n'a que la branche additive : ne pas y toucher.
+
+Enfin, faire lire le dictionnaire par le pied de bloc, dans `statBucketNotes` :
+
+```js
+        text:"Appliqué à : "+key.split(",")
+          .map(bucket => BUILD_BUCKET_LABELS[bucket] || bucket)
+          .join(", ")
+```
+
+Test à ajouter dans `tests/stats-build.test.js` :
+
+```js
+function testProvenanceDropsTargetBuckets(hooks){
+  const term = {
+    operation:"multiply",
+    unit:"ten-thousandths",
+    value:500,
+    appliesTo:["weapon-native"],
+    source:{ domain:"weapon", component:"overlimit", id:"x.webp" }
+  };
+  [hooks.heroTermProvenance, hooks.weaponTermProvenance].forEach(provenance => {
+    assert.ok(
+      !provenance(term).includes("seau"),
+      "La liste des seaux ciblés vit en pied de bloc, plus sur chaque ligne"
+    );
+  });
+  assert.ok(
+    hooks.heroTermProvenance({
+      operation:"add", unit:"flat", value:10, bucket:"armor:Bas",
+      source:{ domain:"armor", component:"level" }
+    }).includes("seau armor:Bas"),
+    "Le seau d'un terme additif reste : il est court et distinct par terme"
+  );
+}
+```
+
+Exposer `heroTermProvenance` et `weaponTermProvenance` dans `HOOK_EXPORT`, puis
+appeler `testProvenanceDropsTargetBuckets(hooks);` avec les autres.
+
 - [ ] **Étape 6 : lancer les tests**
 
 ```bash
@@ -895,7 +978,8 @@ node tests/supabase-etape1.playwright.js
 
 Attendu : les deux passent. `tests/supabase-etape1.playwright.js` (~1166) lit
 `dataset.buckets` sur le premier `.weapon-stat-term` : il prouve que le nœud
-par terme est conservé.
+par terme est conservé. Il vérifie aussi que le texte du terme commence par
+`Source : …`, ce que l'étape 5 bis ne touche pas.
 
 - [ ] **Étape 7 : prouver que l'assertion mord**
 
@@ -1117,6 +1201,15 @@ function testMerlinHpDetailRendering(hooks){
   assert.ok(
     !/×1,0\d/.test(text),
     "Les taux principaux ne s'écrivent plus en notation multiplicative"
+  );
+  assert.strictEqual(
+    (text.match(/Appliqué à :/g) || []).length,
+    new Set(
+      stat.terms
+        .filter(term => term.operation === "multiply")
+        .map(term => [...term.appliesTo].sort().join(","))
+    ).size,
+    "Une note de seaux par base visée, ni plus ni moins"
   );
 }
 ```
