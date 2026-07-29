@@ -1329,6 +1329,17 @@
   .weapon-stat-term-value span:last-child{flex:none;color:var(--parchment)}
   .weapon-stat-term-overlimit{color:var(--gold-bright)!important}
   .weapon-stat-provenance{overflow-wrap:anywhere;color:var(--muted-2)}
+  .stat-term-group{margin-top:6px}
+  .stat-term-group>summary{
+    min-height:44px;display:flex;align-items:center;
+    justify-content:space-between;gap:10px;cursor:pointer;
+    color:var(--muted);font-size:11px
+  }
+  .stat-term-group>summary span:last-child{flex:none;color:var(--parchment)}
+  .stat-term-group .weapon-stat-term{margin-left:10px}
+  .stat-term-buckets{
+    margin-top:8px;overflow-wrap:anywhere;color:var(--muted-2);font-size:11px
+  }
   .gear-config-passive{
     display:flex;flex-direction:column;gap:9px;min-width:0;padding-top:10px;
     border-top:1px solid var(--line-soft)
@@ -4251,9 +4262,15 @@
     if(source.id) parts.push(source.id);
     if(source.originalStat) parts.push("code original "+source.originalStat);
     if(term.operation === "add") parts.push("seau "+term.bucket);
-    else parts.push("seaux "+term.appliesTo.join(", "));
     return parts.join(" · ");
   }
+  /* Dictionnaire partagé par les provenances et par le pied de bloc des seaux
+     ciblés : un même seau doit porter le même libellé partout, faute de quoi
+     la note de pied de bloc et la ligne d'un terme additif se contrediraient. */
+  const BUILD_BUCKET_LABELS = {
+    "weapon-native":"statistiques natives de l’arme",
+    "weapon-enchantment":"enchantements de l’arme"
+  };
   /* Deux termes ne sont regroupés que s'ils produiraient exactement la même
      ligne. `appliesTo` fait partie de la clé parce que la contribution d'un
      multiplicateur vaut base(appliesTo) × valeur : sommer deux taux visant des
@@ -4306,45 +4323,164 @@
     });
     return groups;
   }
-  function heroStatDetails(stat){
+  /* Les taux principaux s'additionnent : les écrire ×1,03 laisserait croire à
+     un produit composé. Trois nœuds à 3 % font +9 %, pas +9,27 %. */
+  function mainRateValueText(value){
+    return formatBuildStatValue(value, "ten-thousandths");
+  }
+  function statTermNode(term, group, termValue, termProvenance){
+    return el("div",{
+      class:"weapon-stat-term",
+      dataset:{
+        termId:term.id,
+        operation:term.operation,
+        unit:term.unit,
+        buckets:term.operation === "multiply"
+          ? term.appliesTo.join(",") : term.bucket
+      }
+    },[
+      el("div",{class:"weapon-stat-term-value"},[
+        el("span",{text:group.label}),
+        el("span",{
+          class:group.emphasis,
+          text:termValue(term, group)
+        })
+      ]),
+      el("small",{
+        class:"weapon-stat-provenance",
+        text:termProvenance(term)
+      })
+    ]);
+  }
+  /* Le total d'un groupe n'est affiché que pour les taux principaux et les
+     additifs, dont la somme a un sens. Un groupe de multiplicateurs non
+     principaux n'existe pas en pratique : chacun porte un libellé distinct. */
+  function statGroupTotalText(group){
+    if(group.operation === "multiply"){
+      return group.mainRate ? mainRateValueText(group.value) : "";
+    }
+    return formatBuildStatValue(group.value, group.unit)
+      +(group.unit === "flat" ? " points" : "");
+  }
+  function statGroupNode(group, termValue, termProvenance){
+    if(group.terms.length === 1){
+      return statTermNode(group.terms[0], group, termValue, termProvenance);
+    }
+    const node = el("details",{class:"stat-term-group"},[
+      el("summary",{},[
+        el("span",{
+          text:group.label+" · "+group.terms.length+" apports"
+        }),
+        el("span",{class:group.emphasis, text:statGroupTotalText(group)})
+      ])
+    ]);
+    group.terms.forEach(term => {
+      node.appendChild(statTermNode(term, group, termValue, termProvenance));
+    });
+    return node;
+  }
+  function statBucketNotes(groups){
+    /* Une même statistique porte plusieurs bases : les taux principaux visent
+       tous les seaux fixes, l'outrepassement les seuls seaux natifs de l'arme.
+       Une note unique afficherait la mauvaise base pour l'un des deux.
+       La note dit seulement où le taux s'applique : la mention « base
+       présumée » vit sur la ligne ou le bloc concerné, jamais deux fois. */
+    const seen = new Set();
+    const notes = [];
+    groups.forEach(group => {
+      if(group.operation !== "multiply") return;
+      const key = group.appliesTo.join(",");
+      if(!key || seen.has(key)) return;
+      seen.add(key);
+      notes.push(el("small",{
+        class:"stat-term-buckets",
+        text:"Appliqué à : "+key.split(",")
+          .map(bucket => BUILD_BUCKET_LABELS[bucket] || bucket)
+          .join(", ")
+      }));
+    });
+    return notes;
+  }
+  function statTermsDetails(stat, options){
+    const settings = options || {};
+    const termValue = settings.termValue;
+    const termProvenance = settings.termProvenance;
+    const termEmphasis = settings.termEmphasis || (() => "");
     const details = el("details",{class:"weapon-stat-details"},[
       el("summary",{text:"Détail du calcul"})
     ]);
-    stat.terms.forEach(term => {
-      const presumedMultiplierBase = term.operation === "multiply"
-        && (term.confidence === "presumed"
-          || (term.source && term.source.component === "overlimit"));
-      const value = term.operation === "multiply"
-        ? "×"+new Intl.NumberFormat("fr-FR", {
-          maximumFractionDigits:4
-        }).format(1 + Number(term.value) / 10000)
-          +(presumedMultiplierBase ? " — base présumée" : "")
-        : formatBuildStatValue(term.value, term.unit)
-          +(term.unit === "flat" ? " points" : "");
-      details.appendChild(el("div",{
-        class:"weapon-stat-term",
-        dataset:{
-          operation:term.operation,
-          unit:term.unit,
-          buckets:term.operation === "multiply"
-            ? term.appliesTo.join(",") : term.bucket
-        }
-      },[
-        el("div",{class:"weapon-stat-term-value"},[
-          el("span",{text:heroTermLabel(term)}),
-          el("span",{
-            class:term.operation === "multiply"
-              ? "weapon-stat-term-overlimit" : "",
-            text:value
-          })
-        ]),
-        el("small",{
-          class:"weapon-stat-provenance",
-          text:heroTermProvenance(term)
-        })
-      ]));
+    const groups = statTermGroups(stat, {
+      termLabel:settings.termLabel,
+      termEmphasis
     });
+    /* Un bloc « Taux principaux » par base visée. Additionner des taux qui ne
+       visent pas les mêmes seaux donnerait un total appliqué à une base qui
+       n'existe pas — c'est précisément ce que la clé de groupe interdit, et le
+       rendu ne doit pas le réintroduire. */
+    const mainRateBlocks = new Map();
+    groups.forEach(group => {
+      if(!group.mainRate) return;
+      const key = group.appliesTo.join(",");
+      if(!mainRateBlocks.has(key)) mainRateBlocks.set(key, []);
+      mainRateBlocks.get(key).push(group);
+    });
+    const renderedBlocks = new Set();
+    groups.forEach(group => {
+      if(!group.mainRate){
+        details.appendChild(
+          statGroupNode(group, termValue, termProvenance)
+        );
+        return;
+      }
+      const key = group.appliesTo.join(",");
+      if(renderedBlocks.has(key)) return;
+      renderedBlocks.add(key);
+      const block = mainRateBlocks.get(key);
+      const total = block.reduce((sum, item) => sum + item.value, 0);
+      const presumed = block.some(item =>
+        item.terms.some(term => term.confidence === "presumed")
+      );
+      const parent = el("details",{class:"stat-term-group"},[
+        el("summary",{},[
+          el("span",{
+            text:"Taux principaux"+(presumed ? " — base présumée" : "")
+          }),
+          el("span",{text:mainRateValueText(total)})
+        ])
+      ]);
+      block.forEach(item => {
+        parent.appendChild(statGroupNode(item, termValue, termProvenance));
+      });
+      details.appendChild(parent);
+    });
+    statBucketNotes(groups).forEach(note => details.appendChild(note));
     return details;
+  }
+  /* La valeur affichée diffère réellement d'un appelant à l'autre : le panneau
+     d'arme met le libellé complet à droite — c'est la chaîne exacte assertie
+     par tests/potentiel-commun.playwright.js — là où la fiche du héros n'y met
+     que le facteur. D'où termValue plutôt qu'une règle unique. */
+  function heroTermValue(term, group){
+    if(term.operation !== "multiply"){
+      return formatBuildStatValue(term.value, term.unit)
+        +(term.unit === "flat" ? " points" : "");
+    }
+    if(group.mainRate) return mainRateValueText(term.value);
+    const presumed = term.confidence === "presumed"
+      || (term.source && term.source.component === "overlimit");
+    return "×"+new Intl.NumberFormat("fr-FR", {
+      maximumFractionDigits:4
+    }).format(1 + Number(term.value) / 10000)
+      +(presumed ? " — base présumée" : "");
+  }
+  function heroStatDetails(stat){
+    return statTermsDetails(stat, {
+      termLabel:heroTermLabel,
+      termValue:heroTermValue,
+      termProvenance:heroTermProvenance,
+      termEmphasis:term => term.operation === "multiply"
+        ? "weapon-stat-term-overlimit" : ""
+    });
   }
   function heroPassiveLabel(fact){
     if(fact.source === "weapon:passive") return "Arme";
@@ -4543,10 +4679,6 @@
 
   function weaponTermProvenance(term){
     const source = term.source || {};
-    const buckets = {
-      "weapon-native":"statistiques natives de l’arme",
-      "weapon-enchantment":"enchantements de l’arme"
-    };
     const parts = [
       "Source : "+(source.domain === "weapon" ? "arme" : (source.domain || "inconnue")),
       source.component ? weaponTermLabel(term) : "inconnue",
@@ -4556,11 +4688,7 @@
     if(source.id) parts.push(source.id);
     if(Number.isInteger(source.slot)) parts.push("emplacement "+(source.slot + 1));
     if(term.operation === "add"){
-      parts.push("seau "+(buckets[term.bucket] || term.bucket));
-    }else{
-      parts.push("seaux ciblés "+term.appliesTo
-        .map(bucket => buckets[bucket] || bucket)
-        .join(", "));
+      parts.push("seau "+(BUILD_BUCKET_LABELS[term.bucket] || term.bucket));
     }
     return parts.join(" · ");
   }

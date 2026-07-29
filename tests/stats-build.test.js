@@ -2527,4 +2527,99 @@ function testStatTermGroupsFallsBackToAutre(hooks){
   testStatTermGroupsFallsBackToAutre(hooks);
 }
 
+function testStatTermsDetailsStructure(hooks){
+  const stat = {
+    stat:"B_MaxHp",
+    unit:"flat",
+    label:"PV",
+    terms:[
+      {
+        id:"m1", operation:"add", unit:"flat", value:10,
+        bucket:"mastery:Wand", source:{ label:"Maîtrise Baguette" }
+      },
+      {
+        id:"m2", operation:"add", unit:"flat", value:32,
+        bucket:"mastery:Wand", source:{ label:"Maîtrise Baguette" }
+      },
+      {
+        id:"base", operation:"add", unit:"flat", value:5,
+        bucket:"character:base", source:{ label:"Base du personnage" }
+      }
+    ]
+  };
+  const node = hooks.statTermsDetails(stat, {
+    termLabel:term => term.source.label,
+    termValue:term => String(term.value),
+    termProvenance:() => "Source : test"
+  });
+
+  const rendered = fakeNodes(node, item =>
+    (item.className || "").split(" ").includes("weapon-stat-term")
+  );
+  assert.deepStrictEqual(
+    rendered.map(item => item.dataset.termId).slice().sort(),
+    ["base", "m1", "m2"],
+    "Un nœud de terme par terme du moteur, identifié par data-term-id"
+  );
+
+  const summaries = fakeNodes(node, item => item.tag === "summary");
+  summaries.forEach(summary => {
+    assert.ok(
+      !(summary.className || "").split(" ").includes("weapon-stat-term"),
+      "Un résumé de groupe ne doit jamais porter la classe d'un terme"
+    );
+  });
+
+  const groups = fakeNodes(node, item =>
+    (item.className || "").split(" ").includes("stat-term-group")
+  );
+  assert.strictEqual(
+    groups.length, 1,
+    "Seul le groupe de deux termes est replié ; le groupe d'un terme reste plat"
+  );
+  const solo = rendered.find(item => item.dataset.termId === "base");
+  assert.ok(
+    node.children.includes(solo),
+    "Un groupe d'un seul terme est enfant direct du détail : sans quoi il "
+      +"faudrait un second clic pour le voir, et potentiel-commun casse"
+  );
+  const paired = rendered.find(item => item.dataset.termId === "m1");
+  assert.ok(
+    !node.children.includes(paired),
+    "Un terme d'un groupe multiple est enfant du repli, pas du détail"
+  );
+}
+
+function testProvenanceDropsTargetBuckets(hooks){
+  const term = {
+    operation:"multiply",
+    unit:"ten-thousandths",
+    value:500,
+    appliesTo:["weapon-native"],
+    source:{ domain:"weapon", component:"overlimit", id:"x.webp" }
+  };
+  [hooks.heroTermProvenance, hooks.weaponTermProvenance].forEach(provenance => {
+    assert.ok(
+      !provenance(term).includes("seau"),
+      "La liste des seaux ciblés vit en pied de bloc, plus sur chaque ligne"
+    );
+  });
+  assert.ok(
+    hooks.heroTermProvenance({
+      operation:"add", unit:"flat", value:10, bucket:"armor:Bas",
+      source:{ domain:"armor", component:"level" }
+    }).includes("seau armor:Bas"),
+    "Le seau d'un terme additif reste : il est court et distinct par terme"
+  );
+}
+
+// Le rendu commun replie les termes identiques sous un même noeud, regroupe
+// les taux principaux et retire la liste des seaux ciblés des provenances
+// individuelles (elle vit désormais en pied de bloc).
+{
+  const { hooks } = loadApp();
+  testStatTermsDetailsStructure(hooks);
+  testProvenanceDropsTargetBuckets(hooks);
+}
+
 console.log("PASS stats de builds : modèle et calcul de l’arme");

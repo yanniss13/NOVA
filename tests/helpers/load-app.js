@@ -56,7 +56,11 @@ function makeDocument(){
   };
   return {
     body:new FakeElement(),
-    createElement:() => new FakeElement(),
+    createElement:tag => {
+      const node = new FakeElement();
+      node.tag = String(tag);
+      return node;
+    },
     createTextNode:text => ({ textContent:String(text) }),
     addEventListener(){},
     getElementById:id => getNode("#"+id),
@@ -193,6 +197,18 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
     : undefined,
   statTermGroups:typeof statTermGroups === "function"
     ? statTermGroups
+    : undefined,
+  statTermsDetails:typeof statTermsDetails === "function"
+    ? statTermsDetails
+    : undefined,
+  heroTermValue:typeof heroTermValue === "function"
+    ? heroTermValue
+    : undefined,
+  heroTermProvenance:typeof heroTermProvenance === "function"
+    ? heroTermProvenance
+    : undefined,
+  weaponTermProvenance:typeof weaponTermProvenance === "function"
+    ? weaponTermProvenance
     : undefined,
   heroStatsTitle:typeof heroStatsTitle === "function"
     ? heroStatsTitle
