@@ -76,26 +76,45 @@ fonction de libellé applicable en paramètre au lieu de la choisir elle-même.
 
 ### 4.2 Clé de groupe
 
-Le groupe d'un terme est dérivé de `source.domain` et `source.component`. Aucune
-liste d'objets, d'armes ou de personnages n'est codée en dur, conformément à la
-règle d'or du dépôt.
+Deux termes ne sont regroupés que s'ils produiraient **exactement la même
+ligne**. La clé est donc le quadruplet :
 
-| `domain` | `component` | Groupe affiché |
-| --- | --- | --- |
-| `character` | `base` | Base du personnage |
-| `mastery` | `common-mastery` | Maîtrise commune |
-| `mastery` | `weapon-mastery` | Maîtrise `<weaponType>` |
-| `mastery` | `reserve-weapon-mastery` | Maîtrise de réserve |
-| `potential` | `potential` | Potentiel P`<tier>` |
-| `weapon` | `level`, `promotion`, `overlimit`, `enchantment` | Arme |
-| `secondary-weapon` | `attack-transfer` | Arme secondaire `<weaponType>` |
-| `armor`, `jewel`, `engraving` | tous | Équipement |
-| `set` | `bonus` | Ensembles |
-| `weapon`, `rounding` | `final-rounding`, `final-ceil` | Arrondi du jeu |
+```text
+( libellé rendu, operation, unit, appliesTo normalisé )
+```
 
-Un couple `domain`/`component` inconnu forme son propre groupe, libellé par la
-fonction de libellé reçue. Le rendu ne doit jamais masquer un terme qu'il ne
-sait pas classer.
+`appliesTo` est trié puis joint ; il vaut la chaîne vide pour un terme `add`.
+
+**Pourquoi `appliesTo` fait partie de la clé.** La contribution d'un
+multiplicateur vaut `base(appliesTo) × valeur / 10 000`. Sommer les taux de deux
+multiplicateurs qui ne visent pas les mêmes seaux afficherait un total appliqué
+à une base qui n'existe pas. Aujourd'hui `heroMainRateTargetBuckets()` renvoie
+la même liste pour tous les taux d'une même statistique, donc le cas ne se
+présente pas — mais la clé doit l'interdire structurellement, pas compter
+là-dessus.
+
+**Pourquoi le libellé plutôt qu'une table `domain`/`component`.** Les fonctions
+`weaponTermLabel`, `gearTermLabel` et `heroTermLabel` font déjà ce travail
+sémantique. Une seconde table ferait doublon et divergerait. Surtout, une table
+qui range `level`, `promotion` et `overlimit` sous un même groupe « Arme »
+casserait `tests/potentiel-commun.playwright.js` (~243) : ce test ouvre un seul
+`summary` puis exige que « Promotion » soit **visible**. Avec ces libellés
+distincts, chacun reste une ligne de premier niveau et le test continue de
+passer.
+
+Deux ajustements de libellé, et deux seulement :
+
+- dans le contexte du héros, les domaines `armor`, `jewel` et `engraving` sont
+  libellés **« Équipement »**, ce qui réunit les pièces en une ligne comme
+  décidé. Le détail par pièce reste lisible en dépliant, via la provenance de
+  chaque terme ;
+- un multiplicateur portant `source.application === "hero-main-rate"` est
+  libellé d'après **sa provenance d'origine** (« Maîtrise Baguette »,
+  « Potentiel P10 », « Équipement »), et non « Application du taux ». C'est ce
+  qui produit les sous-lignes de §4.4 au lieu d'un bloc indistinct.
+
+Un terme dont le libellé est inconnu forme son propre groupe. Le rendu ne doit
+jamais masquer un terme qu'il ne sait pas classer.
 
 ### 4.3 Séparation additifs / multiplicateurs
 
@@ -117,19 +136,28 @@ répétés sont précisément les taux principaux.
 
 ### 4.4 Rendu cible
 
+Valeurs réelles des PV de la Merlin Foudre mesurée, celles-là mêmes qui ont
+servi à la parité de `4be3fae`. Aucun chiffre de cet exemple n'est inventé.
+
 ```
 Base du personnage                              +2 000 points
 Maîtrise commune                                +1 248 points
 Maîtrise Baguette            4 apports          +3 024 points
-Taux principaux                                 +42 %            ▸
+Maîtrises de réserve         2 apports          +3 024 points
+Équipement                   8 apports         +60 338 points
+Taux principaux                                 +41 %            ▸
     Maîtrise Baguette        4 apports          +12 %
-    Maîtrise de réserve      2 apports           +6 %
+    Maîtrises de réserve     2 apports           +6 %
     Potentiel P10                               +10 %
-    Équipement               5 apports          +14 %
-Arrondi du jeu                                      +1 point
-
-Appliqué à toutes les contributions fixes · base présumée
+    Équipement               5 apports          +13 %
+Arrondi du jeu                                   +0,06 point
+                                        Total   98 184
 ```
+
+Contrôle : `(2 000 + 1 248 + 3 024 + 3 024 + 60 338) × 1,41 = 98 183,94`,
+arrondi au supérieur à `98 184`. La base `9 296` et l'équipement `60 338`
+correspondent au détail relevé dans le jeu. La répartition des `41 %` entre
+sous-lignes dépend du build : elle illustre la forme, sa somme est exacte.
 
 Règles d'affichage :
 
@@ -137,22 +165,60 @@ Règles d'affichage :
 - un groupe de plusieurs termes affiche leur nombre suivi du mot invariable
   `apports` (`4 apports`). Aucun vocabulaire par domaine n'est inventé : le mot
   est le même pour un nœud de maîtrise, une pièce ou un ensemble ;
-- les taux s'écrivent `+3 %`, jamais `×1,03` ;
-- « base présumée » apparaît une fois, sous le bloc, dès qu'au moins un terme
-  multiplicatif porte `confidence: "presumed"` ;
+- **les taux s'écrivent `+3 %` uniquement pour les multiplicateurs portant
+  `source.application === "hero-main-rate"`.** Tout autre multiplicateur garde
+  la notation de sa fonction de libellé. En particulier l'outrepassement d'arme
+  conserve `Outrepassement ×1,05 — base présumée`, chaîne assertie mot pour mot
+  par `tests/potentiel-commun.playwright.js` (~253) : sa base et ses seaux ne
+  sont pas ceux des taux du héros, une notation additive y serait fausse ;
+- « base présumée » apparaît une fois sous le bloc pour les taux principaux, dès
+  qu'au moins un de leurs termes porte `confidence: "presumed"` ; celle de
+  l'outrepassement reste sur sa propre ligne ;
 - la liste des seaux ciblés apparaît une fois par statistique, en pied de bloc ;
 - l'outrepassement d'arme garde sa mise en avant existante
-  (`weapon-stat-term-overlimit`) : c'est le seul multiplicateur dont la base
-  présumée est propre à l'arme.
+  (`weapon-stat-term-overlimit`).
 
 ## 5. Invariants à ne pas casser
 
 Ces points sont couverts par des tests existants ou à ajouter. Ils sont la
 raison pour laquelle ce lot ne touche pas au moteur.
 
-1. **Un nœud `.weapon-stat-term` par terme du moteur.** Les groupes sont des
-   conteneurs supplémentaires, pas un remplacement. Chaque nœud conserve son
-   `dataset.operation`, `dataset.unit` et `dataset.buckets` inchangés.
+### 5.1 Structure DOM imposée
+
+Un groupe de **plusieurs** termes :
+
+```html
+<details class="stat-term-group">          <!-- fermé par défaut -->
+  <summary class="stat-term-group-head">…total groupé…</summary>
+  <div class="weapon-stat-term" data-term-id="…">…</div>
+  <div class="weapon-stat-term" data-term-id="…">…</div>
+</details>
+```
+
+Un groupe d'**un seul** terme n'introduit aucun repli : son
+`.weapon-stat-term` est un enfant direct du `<details>` principal, donc visible
+dès son ouverture.
+
+```html
+<div class="weapon-stat-term" data-term-id="…">…</div>
+```
+
+Deux règles non négociables :
+
+- **le `<summary>` d'un groupe ne porte jamais la classe
+  `.weapon-stat-term`.** Sinon le compte de nœuds cesse de correspondre aux
+  termes du moteur et les sélecteurs des tests attrapent un résumé au lieu d'un
+  terme ;
+- **un groupe à un terme reste directement visible.** C'est ce qui garde
+  « Promotion » et « Outrepassement » accessibles en un clic, comme l'exigent
+  `tests/potentiel-commun.playwright.js` (~243 et ~253).
+
+### 5.2 Invariants
+
+1. **Un nœud `.weapon-stat-term` par terme du moteur**, portant
+   `data-term-id = term.id`. Les groupes sont des conteneurs supplémentaires,
+   pas un remplacement. Chaque nœud conserve son `dataset.operation`,
+   `dataset.unit` et `dataset.buckets` inchangés.
    `tests/supabase-etape1.playwright.js` (~1166) et
    `tests/potentiel-commun.playwright.js` (~246) doivent passer sans être
    réécrits.
@@ -171,21 +237,28 @@ mordante par une mutation volontaire.
 
 ### Fonctions pures
 
-- la clé de groupe est dérivée de `domain` + `component`, pas d'une liste en
-  dur ;
-- un couple inconnu produit son propre groupe au lieu d'être avalé ;
+- la clé de groupe est le quadruplet `(libellé, operation, unit, appliesTo)` ;
+- **deux multiplicateurs de même libellé mais d'`appliesTo` différents ne sont
+  pas regroupés** — la mutation qui retire `appliesTo` de la clé doit faire
+  échouer ce test ;
+- un libellé inconnu produit son propre groupe au lieu d'être avalé ;
 - additifs et multiplicateurs d'un même groupe ne sont jamais additionnés
   ensemble ;
 - la somme des taux d'un groupe égale la somme des valeurs des termes qui le
   composent ;
 - un terme `presumed` suffit à faire apparaître « base présumée », zéro terme
   `presumed` le fait disparaître ;
-- le formatage d'un taux donne `+3 %` et jamais `×1,03`.
+- un multiplicateur `hero-main-rate` se formate `+3 %` ;
+- un multiplicateur d'outrepassement garde `×1,05 — base présumée` : le test
+  échoue si la notation additive est appliquée à tous les multiplicateurs.
 
 ### Rendu
 
-- le nombre de nœuds `.weapon-stat-term` égale `stat.terms.length` sur une
-  fiche Merlin complète ;
+- **correspondance un-à-un** : l'ensemble des `data-term-id` rendus égale
+  l'ensemble des `term.id` du moteur. Un simple compte égal ne suffit pas — il
+  passerait alors qu'un terme est dupliqué et un autre perdu ;
+- aucun `<summary>` ne porte la classe `.weapon-stat-term` ;
+- un groupe d'un seul terme est visible sans second clic ;
 - `dataset.buckets` est identique avant et après le lot pour chaque terme ;
 - la liste des seaux n'apparaît qu'une fois par statistique ;
 - les trois appelants (héros, arme, équipement) produisent la même structure ;
@@ -217,7 +290,9 @@ mise à jour PWA, vérifier le `BUILD_VERSION` servi.
 
 - le détail des PV de Merlin tient en une dizaine de lignes au lieu de plusieurs
   dizaines ;
-- aucun taux n'est écrit sous forme multiplicative ;
+- aucun taux principal n'est écrit sous forme multiplicative, et
+  l'outrepassement d'arme conserve exactement
+  `Outrepassement ×1,05 — base présumée` ;
 - la liste des seaux n'est plus répétée ;
 - les trois rendus passent par une seule fonction et aucun bloc de détail
   inline ne subsiste dans `index.html` ;
