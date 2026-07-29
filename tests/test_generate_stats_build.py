@@ -616,6 +616,7 @@ class GenerateStatsBuildTests(unittest.TestCase):
             cwd=REPO_ROOT,
             capture_output=True,
             text=True,
+            encoding="utf-8",  # le script écrit en UTF-8, ne pas suivre la console Windows
             check=False,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
