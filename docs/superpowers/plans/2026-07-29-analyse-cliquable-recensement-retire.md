@@ -406,7 +406,12 @@ Relever la forme exacte de l'état `rosterDetail` et comment
     rosterDetail.index = Math.min(
       Math.max(context.index || 0, 0), context.entries.length - 1
     );
-    rosterDetail.type = context.weaponType || null;
+    /* `rosterDetail.type` est une cle de DOSSIER : c'est ce que
+       `rosterHeroSnapshot(entry, type)` attend. Le contexte parle en enums.
+       La conversion est obligatoire ; l'oublier ouvre un build introuvable. */
+    rosterDetail.type = context.weaponType
+      ? (ENUM_TO_FOLDER[context.weaponType] || null)
+      : null;
     rosterDetail.owner = context.memberName || rosterDetailOwnerLabel();
     rosterDetail.weaponTypes = context.weaponTypes || null;
     rosterDetail.showNavigation = context.showNavigation !== false;
@@ -446,11 +451,30 @@ Faire filtrer les badges d'arme par `rosterDetail.weaponTypes` : quand il vaut
 `null`, comportement actuel ; sinon ne proposer que ces enums, et n'afficher
 aucun sélecteur s'il n'en reste qu'un.
 
-- [ ] **Étape 4 : restituer le focus malgré Realtime**
+- [ ] **Étape 4 : restituer le focus via ModalStack, pas à la main**
 
-Dans `closeRosterDetail()`, après la fermeture, appliquer la cascade de la
-spec §4.5 : le nœud d'origine s'il est encore dans le document, sinon la ligne
-portant `{owner, char, element}`, sinon un repli logique de l'onglet Analyse.
+`ModalStack` gère déjà la restitution : `open(overlay, initialFocus,
+requestClose, restoreFocus)` prend une cible (~2240), et
+`setRestoreFocus(overlay, trigger)` (~2309) permet de la corriger tant que la
+modale est ouverte. Une seconde passe différée existe déjà côté pile.
+
+**Ne pas refocaliser manuellement après `ModalStack.close()`.** Cela ferait
+deux mécanismes concurrents sur le même focus, et le plus tardif gagnerait au
+hasard.
+
+Marche à suivre :
+
+1. passer le bouton cliqué en quatrième argument de `ModalStack.open()` ;
+2. quand `returnFocusKey` est présent et que le classement est reconstruit
+   pendant que la modale est ouverte, retrouver la nouvelle ligne par
+   `{owner, char, element}` et appeler
+   `ModalStack.setRestoreFocus($("#rosterDetailOverlay"), nouvelleLigne)`
+   **avant** toute fermeture ;
+3. laisser `ModalStack.close()` faire le reste. `closeRosterDetail()` n'est pas
+   modifiée.
+
+Lire `open()` et `setRestoreFocus()` avant d'écrire : ils portent déjà une
+notion de visibilité (`isVisible(restoreFocus)`) qu'il ne faut pas dupliquer.
 
 - [ ] **Étape 5 : vérifier la non-régression du Roster**
 
@@ -499,6 +523,24 @@ la tabulation et l'activation clavier viennent alors du navigateur. Elle porte
 `dataset` `{owner, char, elem}` pour permettre la restitution du focus après
 une reconstruction Realtime.
 
+**Conséquence HTML à ne pas manquer.** Un `<button>` n'accepte que du contenu
+phrasé. Or `.rk-portrait` est aujourd'hui une `<div>` (~9485) :
+
+```js
+      const port=el("div",{class:"rk-portrait"});
+```
+
+Elle devient un `<span>`, sinon le bouton contient du markup invalide et le
+comportement dépend du navigateur :
+
+```js
+      const port=el("span",{class:"rk-portrait"});
+```
+
+Vérifier au passage que `.rk-portrait` porte bien `display:block` ou
+`inline-block` dans le CSS : un `<span>` est `inline` par défaut et
+n'appliquerait ni largeur ni hauteur.
+
 Au clic :
 
 ```js
@@ -521,12 +563,30 @@ La ligne-bouton conserve l'apparence actuelle de `.rank-row` : `appearance:none`
 fond et bordure hérités, `width:100%`, `text-align:left`, `min-height:44px`,
 plus un état `:focus-visible` visible.
 
-- [ ] **Étape 3 : test Playwright**
+- [ ] **Étape 3 : tests Playwright**
 
 Ajouter dans `tests/accessibilite-mobile.playwright.js`, sur le motif de la
-boucle 320/390 px existante (~1146) : ouvrir l'Analyse, activer une ligne **au
-clavier**, vérifier que la modale s'ouvre, la fermer par Échap, vérifier que le
-focus revient sur la ligne, et qu'aucun débordement horizontal n'apparaît.
+boucle 320/390 px existante (~1146). Le parcours minimal — ouvrir, fermer,
+focus — ne suffit pas : il passerait avec la mauvaise arme affichée. Assertions
+obligatoires :
+
+1. **le bon build est ouvert** : la modale montre l'arme correspondant à
+   `preferredWeaponType`, pas la première du roster ;
+2. **les armes non DPS sont absentes** : un personnage ayant un build Support
+   n'expose pas ce build dans cette modale ;
+3. **aucun sélecteur d'arme avec un seul type** ;
+4. **Meliodas expose ses trois armes DPS** et permet de basculer de l'une à
+   l'autre ;
+5. **aucune requête Supabase au clic** — instrumenter via
+   `page.route("**/rest/v1/**", …)` en comptant les appels, et vérifier que le
+   compteur est identique avant et après le clic ;
+6. **reconstruction Realtime pendant l'ouverture** : forcer un nouveau rendu du
+   classement modale ouverte, fermer, et vérifier que le focus atterrit sur la
+   **nouvelle** ligne portant `{owner, char, element}` — pas sur `body` ;
+7. activation **clavier** et cible de 44 px à 320 et 390 px, sans débordement.
+
+L'assertion 5 est celle qui protège la promesse « aucune lecture réseau » : sans
+elle, une régression réintroduisant un `select()` au clic passerait inaperçue.
 
 - [ ] **Étape 4 : suite complète et commit**
 
@@ -545,8 +605,12 @@ lecture reseau."
 ### Tâche 5 : retrait du Recensement DPS
 
 **Fichiers :**
-- Modifier : `index.html`, `tests/accessibilite-mobile.playwright.js`,
-  `AGENTS.md`
+- Modifier : `index.html`
+- Modifier : `tests/helpers/load-app.js`
+- Modifier : `tests/potentiel-commun.test.js`
+- Modifier : `tests/supabase-etape1.playwright.js`
+- Modifier : `tests/accessibilite-mobile.playwright.js`
+- Modifier : `AGENTS.md`
 
 - [ ] **Étape 1 : inventorier avant de supprimer**
 
@@ -572,10 +636,34 @@ lit disparaît.
 
 - [ ] **Étape 3 : mettre à jour les tests et la doc**
 
-Retirer `"recensement"` de la liste d'onglets de
-`tests/accessibilite-mobile.playwright.js` (~1193). Mettre à jour `AGENTS.md`
-pour décrire l'Analyse comme unique vue DPS, en indiquant que la table
-Supabase est conservée sans être lue.
+Quatre fichiers de test portent encore des contrats liés au Recensement, tous
+vérifiés présents :
+
+| Fichier | Ce qu'il contient encore |
+| --- | --- |
+| `tests/helpers/load-app.js` | exports de `HOOK_EXPORT` liés au recensement, à retirer avec les fonctions |
+| `tests/potentiel-commun.test.js` | contrats sur `recPlayersForView` et les anciennes données locales |
+| `tests/supabase-etape1.playwright.js` | parcours passant par l'onglet Recensement |
+| `tests/accessibilite-mobile.playwright.js` | `"recensement"` dans la liste d'onglets (~1193) |
+
+Commencer par inventorier chacun :
+
+```bash
+grep -n "recensement\|recPlayersForView\|LocalRec\|cloudRec" tests/helpers/load-app.js tests/potentiel-commun.test.js tests/supabase-etape1.playwright.js tests/accessibilite-mobile.playwright.js
+```
+
+Un parcours Playwright qui passait par le Recensement est **réécrit pour passer
+par l'Analyse**, pas simplement supprimé : supprimer un test réduit la
+couverture au lieu de la déplacer.
+
+**Un test doit prouver la garde de conservation :** après le lot, les anciennes
+clés `localStorage` du recensement sont **toujours présentes** dans le stockage
+et **ne sont plus lues** par l'application. Écrire les clés avant chargement,
+charger l'application, vérifier qu'elles existent encore et qu'aucun rendu ne
+les consomme.
+
+Mettre à jour `AGENTS.md` pour décrire l'Analyse comme unique vue DPS, en
+indiquant que la table Supabase est conservée sans être lue.
 
 - [ ] **Étape 4 : test de fin, ciblé**
 
@@ -598,7 +686,7 @@ Attendu : **aucune sortie**.
 ```bash
 npm test
 git diff --check
-git add index.html tests/accessibilite-mobile.playwright.js AGENTS.md
+git add index.html tests/ AGENTS.md
 git commit -m "refactor: retirer le Recensement DPS devenu doublon
 
 L'Analyse derive du roster et n'a jamais lu la table recensement, que
