@@ -104,7 +104,7 @@ demandé et n'entre pas dans ce lot.
 ### 4.2 Clé de groupe
 
 Deux termes ne sont regroupés que s'ils produiraient **exactement la même
-ligne**. La clé est donc le quadruplet :
+ligne**. La clé est donc le quintuplet :
 
 ```text
 ( libellé rendu, operation, unit, appliesTo normalisé, termEmphasis(term) || "" )
