@@ -121,6 +121,28 @@ class GearCatalogTests(unittest.TestCase):
         self.assertNotIn("nameFr", entry)
         self.assertNotIn("growth", entry)
 
+    def test_normal_gear_keeps_its_three_passive_levels(self):
+        piece = copy.deepcopy(self.PIECE)
+        piece["equipPassive"] = {
+            "maxLevel": 3,
+            "levels": [
+                {"level": 1, "descFr": "Niveau un", "dropRate": 60},
+                {"level": 2, "descFr": "Niveau deux", "dropRate": 30},
+                {"level": 3, "descFr": "Niveau trois", "dropRate": 10},
+            ],
+        }
+        entry = module.gear_entry(piece, set())
+        self.assertEqual(
+            entry["passiveLevels"],
+            [
+                {"level": 1, "textFr": "Niveau un"},
+                {"level": 2, "textFr": "Niveau deux"},
+                {"level": 3, "textFr": "Niveau trois"},
+            ],
+        )
+        self.assertNotIn("equipPassive", entry)
+        self.assertNotIn("dropRate", json.dumps(entry))
+
     def test_random_options_are_none_when_absent(self):
         piece = copy.deepcopy(self.PIECE)
         del piece["growth"]["randomOptions"]
@@ -178,6 +200,19 @@ class GenerateStatsBuildTests(unittest.TestCase):
 
         self.metadata = {
             "B_Atk_Equip": {"family": "main", "unit": "flat"},
+            "B_Atk": {"family": "main", "unit": "flat"},
+            "B_Def": {"family": "main", "unit": "flat"},
+            "B_MaxHp": {"family": "main", "unit": "flat"},
+            "baseSpd": {"family": "main", "unit": "flat"},
+            "accuracy": {"family": "additional", "unit": "ten-thousandths"},
+            "block": {"family": "additional", "unit": "ten-thousandths"},
+            "critRate": {"family": "additional", "unit": "ten-thousandths"},
+            "critDamage": {"family": "additional", "unit": "ten-thousandths"},
+            "critResist": {"family": "additional", "unit": "ten-thousandths"},
+            "critDmgResist": {"family": "additional", "unit": "ten-thousandths"},
+            "blockDmgResist": {"family": "additional", "unit": "ten-thousandths"},
+            "pvpDmgUp": {"family": "special", "unit": "ten-thousandths"},
+            "pvpDmgDown": {"family": "special", "unit": "ten-thousandths"},
             "I_AtkAdd_Rate": {
                 "family": "additional",
                 "unit": "ten-thousandths",
@@ -185,11 +220,68 @@ class GenerateStatsBuildTests(unittest.TestCase):
         }
         self.labels = {
             "B_Atk_Equip": {"fr": "Attaque de l'équipement"},
+            "B_Atk": {"court": "ATK"},
+            "B_Def": {"court": "DEF"},
+            "B_MaxHp": {"court": "PV max"},
             "I_AtkAdd_Rate": {
                 "fr": "Augmentation de l'attaque",
                 "taux": True,
             },
         }
+        self.supplement = {
+            "baseSpd": "Vitesse",
+            "accuracy": "Précision de base",
+            "block": "Blocage de base",
+            "critRate": "Taux critique de base",
+            "critDamage": "Dégâts critiques de base",
+            "critResist": "Résistance critique de base",
+            "critDmgResist": "Résistance aux dégâts critiques de base",
+            "blockDmgResist": "Réduction des dégâts bloqués",
+            "pvpDmgUp": "Dégâts JcJ infligés",
+            "pvpDmgDown": "Dégâts JcJ subis",
+        }
+        self.characters = [
+            {
+                "slug": "hero",
+                "baseHp": 1200,
+                "baseAtk": 200,
+                "baseDef": 160,
+                "baseSpd": 500,
+                "accuracy": 50,
+                "block": 30,
+                "critRate": 500,
+                "critDamage": 1500,
+                "critResist": 0,
+                "critDmgResist": 0,
+                "blockDmgResist": 9500,
+                "pvpDmgUp": 150,
+                "pvpDmgDown": 125,
+                "commonMasteryStats": [{"stat": "B_Atk", "value": 10}],
+                "weaponMasteries": [
+                    {
+                        "weaponType": "Axe",
+                        "level": 1,
+                        "subLevels": [
+                            {"abilities": [{"stat": "B_Def", "value": 20}]}
+                        ],
+                        "nodes": [
+                            {
+                                "abilities": [
+                                    {"stat": "I_AtkAdd_Rate", "value": 200}
+                                ]
+                            }
+                        ],
+                    }
+                ],
+                "potentials": [
+                    {
+                        "weaponType": "Axe",
+                        "tier": 1,
+                        "stats": [{"stat": "I_AtkAdd_Rate", "value": 300}],
+                    }
+                ],
+            }
+        ]
         self.official_weapons = [
             {
                 "slug": "test-axe",
@@ -197,6 +289,10 @@ class GenerateStatsBuildTests(unittest.TestCase):
                 "weaponType": "Axe",
                 "mainStat": "attack",
                 "description": "Ne doit jamais sortir",
+                "passiveLevels": [
+                    {"level": level, "descFr": f"Passif arme {level}"}
+                    for level in range(1, 8)
+                ],
                 "grades": [
                     {
                         "gameId": "grade-axe",
@@ -322,6 +418,8 @@ class GenerateStatsBuildTests(unittest.TestCase):
         ]
         self.write_official_weapons()
         self.write_labels()
+        self.write_characters()
+        self.write_supplement()
 
     def tearDown(self):
         self.tempdir.cleanup()
@@ -335,6 +433,16 @@ class GenerateStatsBuildTests(unittest.TestCase):
     def write_labels(self):
         (self.stats_root / "libelles-stats.json").write_text(
             json.dumps(self.labels, ensure_ascii=False), encoding="utf-8"
+        )
+
+    def write_characters(self):
+        (self.stats_root / "personnages.json").write_text(
+            json.dumps(self.characters, ensure_ascii=False), encoding="utf-8"
+        )
+
+    def write_supplement(self):
+        (self.stats_root / "stat-labels-supplement.json").write_text(
+            json.dumps(self.supplement, ensure_ascii=False), encoding="utf-8"
         )
 
     def fixture_grade(self):
@@ -366,6 +474,49 @@ class GenerateStatsBuildTests(unittest.TestCase):
             catalog["statLabels"]["B_Atk_Equip"],
             {"fr": "Attaque de l'équipement", "family": "main", "unit": "flat"},
         )
+
+    def test_catalog_compacts_characters_and_weapon_passives(self):
+        catalog = module.build_catalog(self.stats_root, self.weapons_root, self.metadata)
+        hero = catalog["charactersBySlug"]["hero"]
+        self.assertIn({"stat": "B_MaxHp", "value": 1200}, hero["baseStats"])
+        self.assertIn({"stat": "critResist", "value": 0}, hero["baseStats"])
+        self.assertEqual(
+            hero["masteriesByWeapon"]["Axe"]["abilities"],
+            [
+                {
+                    "stat": "B_Def",
+                    "value": 20,
+                    "source": {"level": 1, "kind": "subLevel", "index": 0},
+                },
+                {
+                    "stat": "I_AtkAdd_Rate",
+                    "value": 200,
+                    "source": {"level": 1, "kind": "node", "index": 0},
+                },
+            ],
+        )
+        self.assertEqual(
+            hero["potentialsByWeapon"]["Axe"]["1"],
+            [{"stat": "I_AtkAdd_Rate", "value": 300}],
+        )
+        weapon = catalog["weaponsByFile"]["7ds-armes/Hache/Hache test.webp"]
+        self.assertEqual(len(weapon["passiveLevels"]), 7)
+        self.assertEqual(
+            weapon["passiveLevels"][0],
+            {"level": 1, "textFr": "Passif arme 1"},
+        )
+
+    def test_duplicate_character_slug_fails(self):
+        self.characters.append(copy.deepcopy(self.characters[0]))
+        self.write_characters()
+        with self.assertRaisesRegex(ValueError, "personnage dupli"):
+            module.build_catalog(self.stats_root, self.weapons_root, self.metadata)
+
+    def test_passive_level_table_must_be_complete(self):
+        self.official_weapons[0]["passiveLevels"].pop()
+        self.write_official_weapons()
+        with self.assertRaisesRegex(ValueError, "passif"):
+            module.build_catalog(self.stats_root, self.weapons_root, self.metadata)
 
     def test_ambiguous_name_fails_instead_of_guessing(self):
         self.add_second_weapon_with_same_normalized_name_and_type()

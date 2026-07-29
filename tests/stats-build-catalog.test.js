@@ -19,7 +19,14 @@ vm.runInNewContext(
 const catalog = sandbox.window.SEVEN_DS_BUILD_STATS;
 
 assert.equal(catalog.version, 1);
-["weaponsByFile", "gearByFile", "engravedByFile", "gearSets", "statLabels"]
+[
+  "weaponsByFile",
+  "gearByFile",
+  "engravedByFile",
+  "gearSets",
+  "charactersBySlug",
+  "statLabels"
+]
   .forEach(key => assert.ok(
     catalog[key] && typeof catalog[key] === "object",
     key + " doit exister dans le catalogue"
@@ -87,9 +94,8 @@ gear.forEach(([file, entry]) => {
   }
 });
 
-/* `hasEquipPassive` est un booléen, jamais la prose du passif : le moteur doit
-   savoir qu'un talent unique existe pour le déclarer non couvert, sans embarquer
-   un texte qu'il ne sait pas calculer. Dix armures en portent un. */
+/* Les dix talents uniques d'armure conservent leurs trois niveaux français,
+   sans les taux de butin ni les descriptions anglaises. */
 gear.forEach(([file, entry]) => {
   assert.equal(
     typeof entry.hasEquipPassive,
@@ -100,6 +106,20 @@ gear.forEach(([file, entry]) => {
     !("equipPassive" in entry),
     file + " : la prose du passif ne doit pas entrer au catalogue"
   );
+  if(entry.hasEquipPassive){
+    assert.equal(entry.passiveLevels.length, 3, file + " : passif incomplet");
+    entry.passiveLevels.forEach((level, index) => {
+      assert.equal(level.level, index + 1, file + " : niveau de passif incorrect");
+      assert.ok(level.textFr, file + " : texte français du passif manquant");
+      assert.deepEqual(
+        Object.keys(level).sort(),
+        ["level", "textFr"],
+        file + " : champ de passif superflu"
+      );
+    });
+  }else{
+    assert.equal(entry.passiveLevels, null, file + " : faux passif");
+  }
 });
 assert.equal(
   gear.filter(([, entry]) => entry.hasEquipPassive).length,
@@ -121,6 +141,45 @@ engraved.forEach(([file, entry]) => {
     Number.isInteger(entry.reinforceMax) && entry.reinforceMax > 0,
     file + " : plafond de renforcement manquant"
   );
+  assert.equal(entry.passiveLevels.length, 3, file + " : passif gravé incomplet");
+});
+
+const weaponsWithPassive = Object.entries(catalog.weaponsByFile)
+  .filter(([, entry]) => (entry.passiveLevels || []).length);
+assert.equal(
+  weaponsWithPassive.length,
+  81,
+  "les 81 armes concernées doivent conserver leurs sept niveaux de passif"
+);
+weaponsWithPassive.forEach(([file, entry]) => {
+  assert.equal(entry.passiveLevels.length, 7, file + " : passif d'arme incomplet");
+});
+
+const characters = Object.entries(catalog.charactersBySlug);
+assert.equal(characters.length, 24, "les 24 personnages doivent être rapprochés");
+characters.forEach(([slug, character]) => {
+  assert.equal(character.baseStats.length, 13, slug + " : base incomplète");
+  assert.ok(character.commonMasteryStats.length, slug + " : maîtrise commune absente");
+  assert.equal(
+    Object.keys(character.masteriesByWeapon).length,
+    3,
+    slug + " : branches de maîtrise incomplètes"
+  );
+  Object.entries(character.masteriesByWeapon).forEach(([weaponType, mastery]) => {
+    assert.equal(
+      mastery.levels,
+      5,
+      slug + "/" + weaponType + " : maîtrise maximale incomplète"
+    );
+    assert.ok(mastery.abilities.length, slug + "/" + weaponType + " : aucun apport");
+  });
+  Object.entries(character.potentialsByWeapon).forEach(([weaponType, tiers]) => {
+    assert.deepEqual(
+      Object.keys(tiers).map(Number).sort((a, b) => a - b),
+      [1,2,3,4,5,6,7,8,9,10],
+      slug + "/" + weaponType + " : paliers de potentiel incomplets"
+    );
+  });
 });
 
 /* `extraStats` porte des contributions supplémentaires, avec leurs propres
@@ -186,6 +245,18 @@ gear.concat(engraved).forEach(([, entry]) => {
 sets.forEach(([, entry]) => {
   [entry.twoStats, entry.fourStats, entry.sevenStats].forEach(group => {
     (group || []).forEach(item => cited.add(item.stat));
+  });
+});
+characters.forEach(([, character]) => {
+  character.baseStats.forEach(item => cited.add(item.stat));
+  character.commonMasteryStats.forEach(item => cited.add(item.stat));
+  Object.values(character.masteriesByWeapon).forEach(mastery => {
+    mastery.abilities.forEach(item => cited.add(item.stat));
+  });
+  Object.values(character.potentialsByWeapon).forEach(tiers => {
+    Object.values(tiers).forEach(items => {
+      items.forEach(item => cited.add(item.stat));
+    });
   });
 });
 assert.ok(cited.size > 30, "le catalogue doit citer des codes de stat");

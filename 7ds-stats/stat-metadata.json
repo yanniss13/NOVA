@@ -31,11 +31,23 @@
   "family": "elemental",
   "unit": "flat"
  },
+ "B_Atk": {
+  "family": "main",
+  "unit": "flat"
+ },
  "B_Atk_Equip": {
   "family": "main",
   "unit": "flat"
  },
+ "B_Def": {
+  "family": "main",
+  "unit": "flat"
+ },
  "B_Def_Equip": {
+  "family": "main",
+  "unit": "flat"
+ },
+ "B_MaxHp": {
   "family": "main",
   "unit": "flat"
  },
@@ -291,6 +303,18 @@
   "family": "additional",
   "unit": "ten-thousandths"
  },
+ "baseSpd": {
+  "family": "main",
+  "unit": "flat"
+ },
+ "block": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "blockDmgResist": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
  "atkRate": {
   "family": "additional",
   "unit": "ten-thousandths"
@@ -303,7 +327,15 @@
   "family": "additional",
   "unit": "ten-thousandths"
  },
+ "critDmgResist": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
  "critRate": {
+  "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "critResist": {
   "family": "additional",
   "unit": "ten-thousandths"
  },
@@ -337,6 +369,14 @@
  },
  "normalAtkDamage": {
   "family": "damage",
+  "unit": "ten-thousandths"
+ },
+ "pvpDmgDown": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "pvpDmgUp": {
+  "family": "special",
   "unit": "ten-thousandths"
  },
  "thunderBurstGauge": {

@@ -3,5 +3,15 @@
  "AllElement_Rate": "Augmentation de toutes les attaques élémentaires",
  "Dark_Element_Res_Rate": "Résistance aux Ténèbres",
  "H_HealReceive_Rate": "Efficacité des soins reçus",
- "I_All_DamAdd_Rate": "Augmentation de tous les dégâts"
+ "I_All_DamAdd_Rate": "Augmentation de tous les dégâts",
+ "accuracy": "Précision de base",
+ "baseSpd": "Vitesse",
+ "block": "Blocage de base",
+ "blockDmgResist": "Réduction des dégâts bloqués",
+ "critDamage": "Dégâts critiques de base",
+ "critDmgResist": "Résistance aux dégâts critiques de base",
+ "critRate": "Taux critique de base",
+ "critResist": "Résistance critique de base",
+ "pvpDmgDown": "Dégâts JcJ subis",
+ "pvpDmgUp": "Dégâts JcJ infligés"
 }

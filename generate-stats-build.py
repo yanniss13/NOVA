@@ -26,6 +26,23 @@ SLOT_FOLDERS = {
     "Anneau": "Ring", "Collier": "Necklace", "Boucle d'oreille": "Earring",
 }
 ENGRAVED_FOLDER = "Armure liee"
+CHARACTER_BASE_FIELDS = {
+    "baseHp": ("B_MaxHp", "flat"),
+    "baseAtk": ("B_Atk", "flat"),
+    "baseDef": ("B_Def", "flat"),
+    "baseSpd": ("baseSpd", "flat"),
+    "accuracy": ("accuracy", "ten-thousandths"),
+    "block": ("block", "ten-thousandths"),
+    "critRate": ("critRate", "ten-thousandths"),
+    "critDamage": ("critDamage", "ten-thousandths"),
+    "critResist": ("critResist", "ten-thousandths"),
+    "critDmgResist": ("critDmgResist", "ten-thousandths"),
+    "blockDmgResist": ("blockDmgResist", "ten-thousandths"),
+    "pvpDmgUp": ("pvpDmgUp", "ten-thousandths"),
+    "pvpDmgDown": ("pvpDmgDown", "ten-thousandths"),
+}
+WEAPON_PASSIVE_MAX_LEVEL = 7
+GEAR_PASSIVE_MAX_LEVEL = 3
 
 
 def canonical_key(code):
@@ -145,6 +162,50 @@ def gear_reinforce_max(piece):
     return max(steps) if steps else None
 
 
+def compact_passive_levels(raw, expected_max, context):
+    """Ne conserve que le niveau et le texte francais d'un passif fixe."""
+    if raw is None:
+        return None
+    if isinstance(raw, dict):
+        declared_max = raw.get("maxLevel")
+        levels = raw.get("levels")
+    elif isinstance(raw, list):
+        # Les gravures enveloppent leur unique passif dans un tableau, tandis
+        # que les armes exposent directement le tableau de niveaux.
+        if raw and all(isinstance(item, dict) and "levels" in item for item in raw):
+            if len(raw) != 1:
+                raise ValueError(f"{context} : plusieurs passifs de gravure")
+            declared_max = raw[0].get("maxLevel")
+            levels = raw[0].get("levels")
+        else:
+            declared_max = None
+            levels = raw
+    else:
+        raise ValueError(f"{context} : passif invalide")
+    if not isinstance(levels, list):
+        raise ValueError(f"{context} : niveaux de passif absents")
+    compact = []
+    seen = set()
+    for item in levels:
+        if not isinstance(item, dict):
+            raise ValueError(f"{context} : niveau de passif invalide")
+        level = item.get("level")
+        text = item.get("descFr")
+        if not isinstance(level, int) or level in seen:
+            raise ValueError(f"{context} : niveau de passif duplique ou invalide")
+        if not isinstance(text, str):
+            raise ValueError(f"{context} : texte francais du passif absent")
+        seen.add(level)
+        compact.append({"level": level, "textFr": text})
+    compact.sort(key=lambda item: item["level"])
+    expected = list(range(1, expected_max + 1))
+    if [item["level"] for item in compact] != expected:
+        raise ValueError(f"{context} : table de passif incomplete")
+    if declared_max is not None and declared_max != expected_max:
+        raise ValueError(f"{context} : plafond de passif invalide")
+    return compact
+
+
 def gear_entry(piece, known):
     """Une pièce d'équipement réduite à ce dont le moteur a besoin."""
     growth = piece.get("growth") or {}
@@ -166,10 +227,12 @@ def gear_entry(piece, known):
         "subValues": gear_curve(growth.get("subStatValues")),
         "subAdd": gear_curve(growth.get("subEquiplvAdd")),
         "randomOptions": gear_random_options(growth, known),
-        # Booleen seulement : le passif d'equipement est de la prose, il n'a
-        # pas sa place dans un catalogue de calcul. Mais le moteur doit savoir
-        # qu'il existe pour le declarer non couvert.
         "hasEquipPassive": bool(piece.get("equipPassive")),
+        "passiveLevels": compact_passive_levels(
+            piece.get("equipPassive") or piece.get("engravingPassives"),
+            GEAR_PASSIVE_MAX_LEVEL,
+            piece.get("slug") or piece.get("costumeSlug") or piece.get("nameFr") or "piece",
+        ),
         "extraStats": gear_extra_stats(growth, known),
     }
     return entry
@@ -450,6 +513,115 @@ def compact_grade(grade, weapon_slug):
     return compact
 
 
+def compact_character(character, known):
+    """Reduit un personnage aux statistiques necessaires au moteur local."""
+    slug = character.get("slug")
+    if not slug:
+        raise ValueError("personnage sans slug")
+    base_stats = []
+    for field, (stat, expected_unit) in CHARACTER_BASE_FIELDS.items():
+        value = character.get(field)
+        if not isinstance(value, (int, float)) or isinstance(value, bool):
+            raise ValueError(f"{slug} : statistique de base absente ({field})")
+        details = known.get(stat)
+        if not details or details.get("unit") != expected_unit:
+            raise ValueError(f"{slug} : unite explicite incoherente pour {stat}")
+        base_stats.append({"stat": stat, "value": value})
+
+    common = []
+    for item in character.get("commonMasteryStats") or []:
+        stat = item.get("stat")
+        value = item.get("value")
+        if not stat or not isinstance(value, (int, float)) or isinstance(value, bool):
+            raise ValueError(f"{slug} : maitrise commune invalide")
+        common.append({
+            "stat": canonical_stat(stat, known),
+            "value": value,
+        })
+
+    mastery_groups = {}
+    for mastery in character.get("weaponMasteries") or []:
+        weapon_type = mastery.get("weaponType")
+        level = mastery.get("level")
+        if not weapon_type or not isinstance(level, int):
+            raise ValueError(f"{slug} : branche de maitrise invalide")
+        group = mastery_groups.setdefault(
+            weapon_type, {"levelsSeen": set(), "abilities": []}
+        )
+        if level in group["levelsSeen"]:
+            raise ValueError(f"{slug}/{weapon_type} : niveau de maitrise duplique")
+        group["levelsSeen"].add(level)
+        for index, sub_level in enumerate(mastery.get("subLevels") or []):
+            for ability in sub_level.get("abilities") or []:
+                group["abilities"].append({
+                    "stat": canonical_stat(ability["stat"], known),
+                    "value": ability["value"],
+                    "source": {
+                        "level": level,
+                        "kind": "subLevel",
+                        "index": index,
+                    },
+                })
+        for index, node in enumerate(mastery.get("nodes") or []):
+            for ability in node.get("abilities") or []:
+                group["abilities"].append({
+                    "stat": canonical_stat(ability["stat"], known),
+                    "value": ability["value"],
+                    "source": {
+                        "level": level,
+                        "kind": "node",
+                        "index": index,
+                    },
+                })
+    masteries_by_weapon = {}
+    for weapon_type, group in sorted(mastery_groups.items()):
+        masteries_by_weapon[weapon_type] = {
+            "levels": len(group["levelsSeen"]),
+            "abilities": group["abilities"],
+        }
+
+    potentials_by_weapon = {}
+    for potential in character.get("potentials") or []:
+        weapon_type = potential.get("weaponType")
+        tier = potential.get("tier")
+        if not weapon_type or not isinstance(tier, int) or not 1 <= tier <= 10:
+            raise ValueError(f"{slug} : palier de potentiel invalide")
+        tiers = potentials_by_weapon.setdefault(weapon_type, {})
+        key = str(tier)
+        if key in tiers:
+            raise ValueError(f"{slug}/{weapon_type} : palier de potentiel duplique")
+        tiers[key] = [
+            {
+                "stat": canonical_stat(item["stat"], known),
+                "value": item["value"],
+            }
+            for item in potential.get("stats") or []
+        ]
+
+    return {
+        "baseStats": base_stats,
+        "commonMasteryStats": common,
+        "masteriesByWeapon": masteries_by_weapon,
+        "potentialsByWeapon": {
+            weapon_type: dict(
+                sorted(tiers.items(), key=lambda item: int(item[0]))
+            )
+            for weapon_type, tiers in sorted(potentials_by_weapon.items())
+        },
+    }
+
+
+def character_stat_codes(character):
+    codes = {item["stat"] for item in character["baseStats"]}
+    codes.update(item["stat"] for item in character["commonMasteryStats"])
+    for mastery in character["masteriesByWeapon"].values():
+        codes.update(item["stat"] for item in mastery["abilities"])
+    for tiers in character["potentialsByWeapon"].values():
+        for stats in tiers.values():
+            codes.update(item["stat"] for item in stats)
+    return codes
+
+
 def collect_stat_codes(weapon):
     codes = {weapon["mainStatCode"]}
     for grade in weapon["gradesByGameId"].values():
@@ -470,6 +642,7 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict,
                   gear_roots=()) -> dict:
     validate_metadata(metadata)
     official_weapons = read_json(stats_root / "armes.json")
+    official_characters = read_json(stats_root / "personnages.json")
     labels = read_json(stats_root / "libelles-stats.json")
     supplement_path = stats_root / "stat-labels-supplement.json"
     supplement = read_json(supplement_path) if supplement_path.exists() else {}
@@ -506,6 +679,11 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict,
             "weaponType": source["weaponType"],
             "mainStat": source["mainStat"],
             "mainStatCode": MAIN_STAT_CODES[source["mainStat"]],
+            "passiveLevels": compact_passive_levels(
+                source.get("passiveLevels"),
+                WEAPON_PASSIVE_MAX_LEVEL,
+                source["slug"],
+            ),
             "gradesByGameId": {},
         }
         for grade in sorted(source.get("grades") or [], key=lambda grade: grade["gameId"]):
@@ -516,6 +694,15 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict,
         weapons_by_file[catalog_file] = compact_weapon
 
     known = set(metadata)
+    characters_by_slug = {}
+    for character in official_characters:
+        slug = character.get("slug")
+        if not slug:
+            raise ValueError("personnage sans slug")
+        if slug in characters_by_slug:
+            raise ValueError(f"personnage duplique : {slug}")
+        characters_by_slug[slug] = compact_character(character, metadata)
+
     gear_by_file, engraved_by_file, gear_labels = build_gear_catalogs(
         stats_root, gear_roots, known, weapons_root.parent
     )
@@ -540,6 +727,11 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict,
             for code in collect_stat_codes(weapon)
         }
         | {code for entry in all_gear for code in gear_stat_codes(entry)}
+        | {
+            code
+            for character in characters_by_slug.values()
+            for code in character_stat_codes(character)
+        }
         | {
             item["stat"]
             for entry in gear_sets.values()
@@ -579,6 +771,7 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict,
         "gearByFile": dict(sorted(gear_by_file.items())),
         "engravedByFile": dict(sorted(engraved_by_file.items())),
         "gearSets": dict(sorted(gear_sets.items())),
+        "charactersBySlug": dict(sorted(characters_by_slug.items())),
         "statLabels": dict(sorted(stat_labels.items())),
     }
 
