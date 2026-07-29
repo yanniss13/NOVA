@@ -1146,6 +1146,51 @@ const { chromium } = require("playwright");
     );
 
     await page.locator("#teamClose").click();
+
+    /* Le panneau chiffré de l'éditeur roster doit recevoir les trois builds du
+       brouillon. Sinon les deux armes secondaires configurées sont prises pour
+       absentes et l'ATK reste faussement partielle. */
+    await page.locator('.tab[data-view="member-roster"]').click();
+    await page.locator("#memberRosterMine").click();
+    const importedMeliodas = page.locator(
+      "#memberRosterGrid .member-roster-card"
+    ).filter({ hasText:"Meliodas" });
+    await importedMeliodas.locator(".member-roster-edit").click();
+    for(const weaponType of ["Epee 1 main", "Epees doubles"]){
+      await page.locator("#memberRosterEditor")
+        .getByRole("button", { name:new RegExp(weaponType) }).click();
+      await page.locator(
+        "#memberRosterEditor .weapon-config-open"
+      ).click();
+      await page.locator("#weaponConfigOverlay").waitFor({ state:"visible" });
+      await page.locator("#weaponConfigSave").click();
+      await page.locator("#weaponConfigOverlay").waitFor({ state:"hidden" });
+    }
+    await page.locator("#memberRosterEditor")
+      .getByRole("button", { name:/Hache/ }).click();
+    const rosterHeroStats = page.locator(
+      "#memberRosterEditor .hero-stats"
+    );
+    assert.doesNotMatch(
+      await rosterHeroStats.locator(".weapon-stats-title").textContent(),
+      /calcul partiel/i,
+      "Deux armes secondaires configurées doivent compléter l'ATK du roster"
+    );
+    const rosterSecondaryTerms = rosterHeroStats.locator(
+      ".weapon-stat-term"
+    ).filter({ hasText:" secondaire :" });
+    assert.equal(
+      await rosterSecondaryTerms.count(),
+      2,
+      "Le détail ATK doit contenir les deux transferts secondaires"
+    );
+    assert.equal(
+      await rosterSecondaryTerms.filter({ hasText:"30 %" }).count(),
+      2
+    );
+    await page.locator("#memberRosterClose").click();
+    await page.locator('.tab[data-view="roster"]').click();
+
     const otherTeam = page.locator("#rosterGrid .team").filter({ hasText:"Merlin" });
     await otherTeam.getByRole("button", { name:/Voir l'équipement/ }).click();
     assert.equal(

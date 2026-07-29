@@ -7282,17 +7282,9 @@
       gear,
       noteColumn
     ]));
-    editor.appendChild(heroStatsSection(normalizeHero({
-      char:memberRosterDraft.charId,
-      weapon:build.weapon,
-      weaponConfig:build.weaponConfig,
-      armor:build.armor,
-      armorConfig:build.armorConfig,
-      jewel:build.jewel,
-      jewelConfig:build.jewelConfig,
-      potentiel:{tier:memberRosterDraft.potentialTier},
-      note:build.note
-    })));
+    editor.appendChild(heroStatsSection(
+      rosterHeroSnapshot(memberRosterDraft, memberRosterWeaponType)
+    ));
     editor.appendChild(el("div",{class:"member-roster-editor-actions"},[
       el("button",{
         class:"btn",
