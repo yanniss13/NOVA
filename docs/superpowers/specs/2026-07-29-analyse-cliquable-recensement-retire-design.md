@@ -48,9 +48,10 @@ Conséquences, toutes vérifiées sur les données :
    depuis l'élément est donc impossible pour Meliodas, et fragile partout
    ailleurs.
 
-Ce lot ne complète pas la donnée : il répare une perte. Le classement continue
-d'afficher **une ligne par élément** — ce comportement ne change pas — mais la
-ligne sait désormais quels builds elle représente.
+Ce lot ne complète pas la donnée : il répare une perte. Le regroupement reste
+**une ligne par personnage et par élément**, mais la ligne sait désormais quels
+builds elle représente. Le nombre *total* de lignes, lui, diminue — non à cause
+de l'agrégation, mais du retrait des SR décidé en §3.
 
 ## 3. Décisions du propriétaire
 
@@ -113,12 +114,22 @@ un futur SSR à plusieurs armes DPS d'un même élément fonctionnera sans aucun
 modification. Aucune phrase de cette conception ne suppose qu'un DPS
 « ordinaire » ne porterait qu'un seul type.
 
-**Le regroupement par élément est conservé, la perte ne l'est pas.** La
-fonction continue d'émettre **une entrée par élément** — le classement affiche
-donc le même nombre de lignes qu'aujourd'hui. Ce qui change est le traitement
-du deuxième build d'un même élément : au lieu d'être ignoré (`return`), son
-type d'arme est **ajouté au `weaponTypes` de l'entrée existante**. La
-déduplication devient une agrégation.
+**Le regroupement par élément est conservé, la perte ne l'est pas.** Ce qui
+change est le traitement du deuxième build d'un même élément : au lieu d'être
+ignoré (`return`), son type d'arme est **ajouté au `weaponTypes` de l'entrée
+existante**. La déduplication devient une agrégation.
+
+**Effet sur le nombre de lignes du classement.** Trois affirmations distinctes,
+à ne pas confondre :
+
+1. parmi les SSR conservés, l'agrégation garde **une seule ligne par
+   personnage et par élément** ;
+2. l'ajout de `weaponTypes` **ne crée aucune ligne supplémentaire** ;
+3. le nombre **total** de lignes peut uniquement **diminuer**, du seul fait du
+   retrait des SR (§4.1, filtre 1).
+
+Le total avant et après le lot n'est donc pas égal, et aucun test ne doit
+l'exiger.
 
 **Compatibilité.** Les champs `char`, `element` et `pot` sont conservés à
 l'identique, avec les mêmes valeurs qu'avant le lot.
@@ -336,14 +347,29 @@ mordante par une mutation volontaire.
 - un personnage **SR** de rôle Attaquant, avec un build valide, ne produit
   **aucune** entrée DPS ;
 - un personnage **SSR** équivalent, mêmes builds, reste présent ;
+
+**Choix des fixtures — piège à éviter.** `bug` est SR et porte deux builds
+Ténèbres. Il ne peut donc pas servir aux deux démonstrations à la fois : s'il
+est exclu, il ne prouve rien sur l'agrégation. Répartition imposée :
+
+| Ce qu'on prouve | Fixture |
+| --- | --- |
+| Exclusion des SR | **`bug` réel**, tel qu'il est dans les données |
+| Agrégation multi-armes | **Meliodas réel**, ou une fixture synthétique identique à `bug` mais déclarée `SSR` |
+
+La fixture synthétique est ce qui prouve que l'agrégation est **générique** et
+ne dépend d'aucun personnage nommé : elle n'existe pas dans le jeu, et le code
+ne peut donc pas la connaître.
+
 - aucun SR n'apparaît dans les **trois** sections de l'Analyse : classement,
   couverture par élément et matrice ;
 - la mutation qui retire le filtre de rareté doit faire échouer ces trois
   tests ;
 - `char`, `element` et `pot` sont inchangés pour les entrées existantes ;
-- **le nombre de lignes du classement est identique avant et après le lot**
-  pour un même roster : l'agrégation ne doit pas multiplier les lignes de
-  Meliodas ;
+- **parmi les SSR conservés**, un personnage à plusieurs builds DPS d'un même
+  élément produit **une seule ligne**, et l'ajout de `weaponTypes` n'en crée
+  aucune de plus. Ne **jamais** tester l'égalité du nombre total de lignes
+  avant et après le lot : le retrait des SR le fait légitimement diminuer ;
 - `rosterDerivedPlayers()` renvoie les personnages normalisés, et la mutation
   qui les rejette à nouveau doit faire échouer le test d'ouverture de la modale.
 
