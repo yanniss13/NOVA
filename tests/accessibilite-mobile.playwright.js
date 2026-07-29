@@ -61,6 +61,53 @@ async function installRosterFocusFakeSupabase(page){
             jewel:{},
             note:"",
             favorite:true
+          },
+          "Epee 1 main":{
+            weapon:"7ds-armes/Epee 1 main/En plein cœur !.webp",
+            weaponConfig:null,
+            armor:{},
+            jewel:{},
+            note:"",
+            favorite:false
+          },
+          "Epees doubles":{
+            weapon:"7ds-armes/Epees doubles/Épées doubles bénies.webp",
+            weaponConfig:null,
+            armor:{},
+            jewel:{},
+            note:"",
+            favorite:false
+          }
+        },
+        updated_at:"2026-07-25T08:40:00.000Z"
+      },{
+        owner:"focus-user",
+        char_id:"merlin",
+        potential_tier:8,
+        builds:{
+          Livre:{
+            weapon:"7ds-armes/Livre/Grimoire de l'âme vorace.webp",
+            weaponConfig:null,
+            armor:{},
+            jewel:{},
+            note:"",
+            favorite:false
+          },
+          Baguette:{
+            weapon:"7ds-armes/Baguette/Baguette des ailes de la flamme noire.webp",
+            weaponConfig:null,
+            armor:{},
+            jewel:{},
+            note:"",
+            favorite:true
+          },
+          Baton:{
+            weapon:"7ds-armes/Baton/Bâton des ailes de la flamme noire.webp",
+            weaponConfig:null,
+            armor:{},
+            jewel:{},
+            note:"",
+            favorite:false
           }
         },
         updated_at:"2026-07-25T08:40:00.000Z"
@@ -68,10 +115,12 @@ async function installRosterFocusFakeSupabase(page){
       boss_sessions:[],
       boss_participation:[],
       boss_run_reports:[],
-      channels:[]
+      channels:[],
+      queryCalls:[]
     };
 
     function query(table){
+      state.queryCalls.push(table);
       let operation = "select";
       let payload = null;
       const filters = [];
@@ -302,7 +351,7 @@ async function installRosterFocusFakeSupabase(page){
     await rosterFocusPage.locator('.tab[data-view="member-roster"]').click();
     await rosterFocusPage.locator(
       "#memberRosterGrid .member-roster-edit"
-    ).click();
+    ).first().click();
     const weaponConfigTrigger = rosterFocusPage.locator(
       "#memberRosterEditor .weapon-config-open"
     );
@@ -365,6 +414,157 @@ async function installRosterFocusFakeSupabase(page){
       ),
       true
     );
+
+    /* L'Analyse ouvre le build exact déjà chargé avec le roster. Elle ne doit
+       ni relire Supabase au clic, ni exposer une arme qui ne correspond pas à
+       la ligne DPS sélectionnée. */
+    await rosterFocusPage.keyboard.press("Escape");
+    await rosterFocusPage.locator("#memberRosterOverlay")
+      .waitFor({ state:"hidden" });
+    await rosterFocusPage.locator('.tab[data-view="analyse"]').click();
+    const darkChip = rosterFocusPage.locator('.elem-chip[data-elem="DARK"]');
+    await darkChip.click();
+    const meliodasRank = rosterFocusPage.locator(
+      '.rank-row[data-owner="focus-user"][data-char="meliodas"][data-elem="DARK"]'
+    );
+    await meliodasRank.waitFor();
+    const queryCountBeforeOpen = await rosterFocusPage.evaluate(() =>
+      window.__focusSupabaseState.queryCalls.length
+    );
+    await meliodasRank.focus();
+    await rosterFocusPage.keyboard.press("Enter");
+    await rosterFocusPage.locator("#rosterDetailOverlay")
+      .waitFor({ state:"visible" });
+    assert.equal(
+      await rosterFocusPage.evaluate(() =>
+        window.__focusSupabaseState.queryCalls.length
+      ),
+      queryCountBeforeOpen,
+      "Ouvrir un détail depuis l'Analyse ne doit relire aucune table Supabase"
+    );
+    assert.equal(
+      await rosterFocusPage.locator(".roster-detail-nav").isHidden(),
+      true,
+      "La navigation précédente/suivante doit disparaître depuis l'Analyse"
+    );
+    const meliodasWeapons = rosterFocusPage.locator(
+      "#rosterDetailBody .roster-detail-weapon"
+    );
+    assert.equal(
+      await meliodasWeapons.count(),
+      3,
+      "Les trois builds DPS Ténèbres de Meliodas doivent rester accessibles"
+    );
+    assert.equal(
+      await rosterFocusPage.locator(
+        '#rosterDetailBody .roster-detail-weapon[aria-pressed="true"]'
+      ).getAttribute("data-weapon-type"),
+      "Hache",
+      "Le build favori doit être ouvert, pas le premier build arbitraire"
+    );
+    await rosterFocusPage.locator(
+      '#rosterDetailBody .roster-detail-weapon[data-weapon-type="Epee 1 main"]'
+    ).click();
+    assert.equal(
+      await rosterFocusPage.locator(
+        '#rosterDetailBody .roster-detail-weapon[data-weapon-type="Epee 1 main"]'
+      ).getAttribute("aria-pressed"),
+      "true",
+      "Le membre doit pouvoir basculer entre les builds DPS de la ligne"
+    );
+    await rosterFocusPage.keyboard.press("Escape");
+    await rosterFocusPage.locator("#rosterDetailOverlay")
+      .waitFor({ state:"hidden" });
+    await rosterFocusPage.waitForFunction(() =>
+      document.activeElement.matches(
+        '.rank-row[data-owner="focus-user"][data-char="meliodas"][data-elem="DARK"]'
+      )
+    );
+
+    await rosterFocusPage.locator('.elem-chip[data-elem="ICE"]').click();
+    const merlinRank = rosterFocusPage.locator(
+      '.rank-row[data-owner="focus-user"][data-char="merlin"][data-elem="ICE"]'
+    );
+    await merlinRank.focus();
+    await rosterFocusPage.keyboard.press("Enter");
+    await rosterFocusPage.locator("#rosterDetailOverlay")
+      .waitFor({ state:"visible" });
+    assert.equal(
+      await rosterFocusPage.locator(
+        "#rosterDetailBody .roster-detail-weapons"
+      ).count(),
+      0,
+      "Une ligne à un seul type DPS ne doit pas afficher de faux sélecteur"
+    );
+    assert.match(
+      await rosterFocusPage.locator(
+        "#rosterDetailBody .eq-line"
+      ).first().getAttribute("title"),
+      /Grimoire de l'âme vorace/,
+      "La ligne Glace de Merlin doit ouvrir son Livre"
+    );
+    assert.doesNotMatch(
+      await rosterFocusPage.locator("#rosterDetailBody").textContent(),
+      /Bâton|Baguette/,
+      "Les autres armes, dont le build Buster, doivent rester absentes"
+    );
+    await rosterFocusPage.keyboard.press("Escape");
+    await rosterFocusPage.locator("#rosterDetailOverlay")
+      .waitFor({ state:"hidden" });
+
+    /* Une mise à jour Realtime remplace le bouton du classement. La pile de
+       modales doit restituer le focus à sa nouvelle incarnation, pas à
+       l'ancien nœud détaché ni au body. */
+    await darkChip.click();
+    await meliodasRank.click();
+    await rosterFocusPage.locator("#rosterDetailOverlay")
+      .waitFor({ state:"visible" });
+    const previousRankNode = await meliodasRank.elementHandle();
+    await rosterFocusPage.evaluate(() =>
+      window.__focusSupabaseEmit("roster_characters")
+    );
+    await rosterFocusPage.waitForFunction(node => !node.isConnected, previousRankNode);
+    await meliodasRank.waitFor({ state:"visible" });
+    await rosterFocusPage.keyboard.press("Escape");
+    await rosterFocusPage.locator("#rosterDetailOverlay")
+      .waitFor({ state:"hidden" });
+    await rosterFocusPage.waitForTimeout(100);
+    assert.deepEqual(
+      await rosterFocusPage.evaluate(() => ({
+        connected:document.activeElement.isConnected,
+        tag:document.activeElement.tagName,
+        owner:document.activeElement.dataset.owner || "",
+        char:document.activeElement.dataset.char || "",
+        elem:document.activeElement.dataset.elem || ""
+      })),
+      {
+        connected:true,
+        tag:"BUTTON",
+        owner:"focus-user",
+        char:"meliodas",
+        elem:"DARK"
+      },
+      "Le focus doit revenir sur la nouvelle ligne reconstruite par Realtime"
+    );
+
+    for(const width of [320, 390]){
+      await rosterFocusPage.setViewportSize({ width, height:844 });
+      const rankMetrics = await rosterFocusPage.locator(
+        '.rank-row[data-owner="focus-user"][data-char="meliodas"][data-elem="DARK"]'
+      ).evaluate(node => ({
+        height:node.getBoundingClientRect().height,
+        overflow:document.scrollingElement.scrollWidth
+          - document.scrollingElement.clientWidth
+      }));
+      assert.ok(
+        rankMetrics.height >= 44,
+        "La ligne du classement doit mesurer 44 px à "+width+"px"
+      );
+      assert.ok(
+        rankMetrics.overflow <= 1,
+        "La ligne du classement ne doit pas déborder à "+width+"px"
+      );
+    }
     await rosterFocusContext.close();
 
     for(const width of [320, 360, 390]){

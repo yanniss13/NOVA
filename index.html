@@ -737,6 +737,12 @@
   .rank-table{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden}
   .rank-row{display:grid;grid-template-columns:44px 1fr 1.6fr 90px;align-items:center;gap:10px;
     padding:8px 14px;border-bottom:1px solid var(--line-soft)}
+  .rank-action{appearance:none;width:100%;min-height:44px;border:0;
+    border-bottom:1px solid var(--line-soft);background:transparent;color:inherit;
+    font:inherit;text-align:left;cursor:pointer}
+  .rank-action:hover{background:rgba(218,165,56,.06)}
+  .rank-action:focus-visible{outline:2px solid var(--gold-bright);outline-offset:-2px;
+    position:relative;z-index:1}
   .rank-row:last-child{border-bottom:0}
   .rank-head{background:var(--panel);color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
   .rank-row.top .rk-pos{color:var(--gold-bright);font-weight:700}
@@ -744,7 +750,7 @@
   .rk-player{font-weight:600;color:var(--parchment);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
   .rk-dps{display:flex;align-items:center;gap:8px;color:var(--parchment);font-size:13.5px;min-width:0}
   .rk-dps>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .rk-portrait{width:28px;height:28px;flex:none;border-radius:6px;overflow:hidden;background:#0b0910 center/cover no-repeat;border:1px solid var(--line-soft)}
+  .rk-portrait{display:block;width:28px;height:28px;flex:none;border-radius:6px;overflow:hidden;background:#0b0910 center/cover no-repeat;border:1px solid var(--line-soft)}
   .rk-portrait img{width:100%;height:100%;object-fit:cover}
   .rk-pot{font-family:var(--display);font-weight:700;color:var(--gold-bright);text-align:right}
   .rank-empty{padding:18px;text-align:center;color:var(--muted)}
@@ -9565,14 +9571,30 @@
   let analyseRenderId = 0;
   let analysePlayers = [];   // joueurs déjà chargés par renderAnalyse (filtrage local)
 
+  function rankRowForFocusKey(root, key){
+    if(!root || !key) return null;
+    return [...root.querySelectorAll(".rank-action")].find(row =>
+      row.dataset.owner === String(key.owner || "")
+      && row.dataset.char === String(key.char || "")
+      && row.dataset.elem === String(key.element || "")
+    ) || null;
+  }
+
   // Construit le tableau du classement dans son conteneur stable, à partir des
   // joueurs déjà chargés et de l'élément choisi. Aucune lecture réseau ici.
   function renderRankTable(rankBox){
     const entries = [];
     analysePlayers.forEach(p=>(p.dps||[]).forEach(d=>{
-      if(dpsElem(d)===analyseElem) entries.push({player:p.name, char:d.char, pot:d.pot||0});
+      if(dpsElem(d)===analyseElem){
+        entries.push({
+          player:p.name,
+          owner:p.owner,
+          characters:p.characters,
+          dps:d
+        });
+      }
     }));
-    entries.sort((a,b)=>b.pot-a.pot);
+    entries.sort((a,b)=>(b.dps.pot||0)-(a.dps.pot||0));
     const rank = el("div",{class:"rank-table"});
     rank.appendChild(el("div",{class:"rank-row rank-head"},[
       el("span",{class:"rk-pos",text:"#"}), el("span",{class:"rk-player",text:"Membre"}),
@@ -9580,16 +9602,57 @@
     ]));
     if(!entries.length) rank.appendChild(el("div",{class:"rank-empty", text:"Aucun DPS "+elemLabel(analyseElem)+" recensé."}));
     entries.forEach((en,i)=>{
-      const ch=charOf(en.char);
-      const port=el("div",{class:"rk-portrait"}); if(ch) port.appendChild(el("img",{src:ch.file,alt:"",loading:"lazy"}));
-      rank.appendChild(el("div",{class:"rank-row"+(i<3?" top":"")},[
+      const ch=charOf(en.dps.char);
+      const element = dpsElem(en.dps);
+      const port=el("span",{class:"rk-portrait"});
+      if(ch) port.appendChild(el("img",{src:ch.file,alt:"",loading:"lazy"}));
+      const row = el("button",{
+        class:"rank-row rank-action"+(i<3?" top":""),
+        type:"button",
+        dataset:{ owner:en.owner || "", char:en.dps.char, elem:element },
+        onclick:()=>{
+          const entry = (en.characters||[])
+            .find(character => character.charId === en.dps.char);
+          if(!entry) return;
+          openRosterDetailFor({
+            entries:[entry],
+            index:0,
+            memberName:en.player,
+            weaponTypes:en.dps.weaponTypes,
+            weaponType:en.dps.preferredWeaponType,
+            showNavigation:false,
+            returnFocusKey:{
+              owner:en.owner,
+              char:en.dps.char,
+              element
+            }
+          });
+        }
+      },[
         el("span",{class:"rk-pos", text:String(i+1)}),
         el("span",{class:"rk-player", text:en.player}),
-        el("span",{class:"rk-dps"},[ port, el("span",{text: ch?ch.name:en.char}) ]),
-        el("span",{class:"rk-pot", text: en.pot>0?("P"+en.pot):"—"})
-      ]));
+        el("span",{class:"rk-dps"},[
+          port,
+          el("span",{text: ch?ch.name:en.dps.char})
+        ]),
+        el("span",{
+          class:"rk-pot",
+          text:en.dps.pot>0 ? ("P"+en.dps.pot) : "—"
+        })
+      ]);
+      rank.appendChild(row);
     });
     rankBox.replaceChildren(rank);
+    /* Realtime peut remplacer la ligne qui a ouvert la modale. On corrige la
+       cible de restitution dans la pile AVANT la fermeture ; ModalStack reste
+       l'unique mécanisme qui déplace effectivement le focus. */
+    const overlay = $("#rosterDetailOverlay");
+    if(overlay.classList.contains("on") && rosterDetail.returnFocusKey){
+      const replacement = rankRowForFocusKey(
+        rankBox, rosterDetail.returnFocusKey
+      );
+      if(replacement) ModalStack.setRestoreFocus(overlay, replacement);
+    }
   }
 
   async function renderAnalyse(){
@@ -9671,8 +9734,11 @@
         }},[ elemBadge(e) ]));
     });
     box.appendChild(chips);
-    renderRankTable(rankBox);
     box.appendChild(rankBox);
+    /* Le conteneur doit déjà être connecté : si Realtime reconstruit la vue
+       pendant que la modale est ouverte, ModalStack refuse à juste titre une
+       cible de focus détachée. */
+    renderRankTable(rankBox);
 
     // --- 3) Matrice joueur × élément ---
     box.appendChild(el("h2",{class:"an-title", text:"Matrice membre × élément"}));
