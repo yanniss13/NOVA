@@ -694,6 +694,21 @@ function fakeText(root){
     JSON.stringify(sourceConfig)
   );
 
+  const preciseTimestamp = "2026-07-25T08:40:00.123456Z";
+  const precise = plain(hooks.cloudRosterFromRow({
+    owner:"user-1",
+    char_id:"meliodas",
+    potential_tier:7,
+    builds:cloud.builds,
+    updated_at:preciseTimestamp
+  }));
+  assert.strictEqual(precise.updatedAt, Date.parse(preciseTimestamp));
+  assert.strictEqual(
+    precise.updatedAtToken,
+    preciseTimestamp,
+    "le jeton CAS doit conserver les microsecondes PostgreSQL"
+  );
+
   const team = plain(hooks.normalizeTeam({
     id:"team-1",
     pseudo:"Yannis",

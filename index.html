@@ -5716,7 +5716,12 @@
       charId,
       potentialTier:normalizePotentiel({tier:source.potentialTier}).tier,
       builds,
-      updatedAt:Number.isFinite(Number(source.updatedAt)) ? Number(source.updatedAt) : 0
+      updatedAt:Number.isFinite(Number(source.updatedAt))
+        ? Number(source.updatedAt)
+        : 0,
+      updatedAtToken:typeof source.updatedAtToken === "string"
+        ? source.updatedAtToken
+        : ""
     };
   }
   function rosterEntryWithActiveHeroBuild(existing, hero, ownerId){
@@ -5806,7 +5811,10 @@
       charId:row.char_id,
       potentialTier:row.potential_tier,
       builds:row.builds,
-      updatedAt:row.updated_at ? Date.parse(row.updated_at) : 0
+      updatedAt:row.updated_at ? Date.parse(row.updated_at) : 0,
+      updatedAtToken:typeof row.updated_at === "string"
+        ? row.updated_at
+        : ""
     });
   }
   function rosterToCloudRow(entry, ownerId){
@@ -5874,7 +5882,8 @@
       if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
       const normalized = normalizeRosterCharacter(Object.assign({}, entry, {
         owner:currentUser.id,
-        updatedAt:Date.now()
+        updatedAt:Date.now(),
+        updatedAtToken:""
       }));
       if(!normalized) throw new Error("ROSTER_INVALID");
       const { error } = await sb.from("roster_characters")
@@ -5887,7 +5896,7 @@
       replaceRosterCacheForOwner(currentUser.id, owned);
       return normalized;
     },
-    async updateBuild(entry, weaponType, expectedUpdatedAt){
+    async updateBuild(entry, weaponType, expectedUpdatedAtToken){
       if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
       const normalized = normalizeRosterCharacter(Object.assign({}, entry, {
         owner:currentUser.id
@@ -5901,9 +5910,7 @@
       }
       const { data, error } = await sb.rpc("update_roster_build", {
         p_char_id:normalized.charId,
-        p_expected_updated_at:expectedUpdatedAt
-          ? new Date(expectedUpdatedAt).toISOString()
-          : null,
+        p_expected_updated_at:expectedUpdatedAtToken || null,
         p_potential_tier:normalized.potentialTier,
         p_weapon_type:weaponType,
         p_build:normalized.builds[weaponType]
@@ -6043,7 +6050,13 @@
   let teamDraftDeletedRemotely = false;
   let builderRosterBaselines = Array.from(
     {length:TEAM_SIZE},
-    () => ({ownerId:"", charId:"", updatedAt:0, builds:{}})
+    () => ({
+      ownerId:"",
+      charId:"",
+      updatedAt:0,
+      updatedAtToken:"",
+      builds:{}
+    })
   );
   function rosterBaselineIdentityMatches(baseline, ownerId, charId){
     return !!baseline
@@ -6061,6 +6074,7 @@
       ownerId,
       charId,
       updatedAt:Number(entry && entry.updatedAt) || 0,
+      updatedAtToken:entry && entry.updatedAtToken || "",
       builds:entry ? jsonCopy(entry.builds) : {}
     };
   }
@@ -7569,8 +7583,15 @@
     }
     const latest = rows.find(entry => entry.charId === hero.char);
     const baseline = builderRosterBaselines[heroIndex]
-      || {ownerId:"", charId:"", updatedAt:0, builds:{}};
+      || {
+        ownerId:"",
+        charId:"",
+        updatedAt:0,
+        updatedAtToken:"",
+        builds:{}
+      };
     const latestUpdatedAt = Number(latest && latest.updatedAt) || 0;
+    const latestUpdatedAtToken = latest && latest.updatedAtToken || "";
     const remotelyChanged = !rosterBaselineIdentityMatches(
       baseline,
       currentUser.id,
@@ -7594,12 +7615,13 @@
       const saved = await MemberRosterStore.updateBuild(
         next,
         type,
-        latestUpdatedAt
+        latestUpdatedAtToken
       );
       builderRosterBaselines[heroIndex] = {
         ownerId:currentUser.id,
         charId:hero.char,
         updatedAt:Number(saved.updatedAt) || 0,
+        updatedAtToken:saved.updatedAtToken || "",
         builds:jsonCopy(saved.builds)
       };
       renderBuilder();
@@ -7662,6 +7684,7 @@
       ownerId:currentUser.id,
       charId:hero.char,
       updatedAt:Number(latest.updatedAt) || 0,
+      updatedAtToken:latest.updatedAtToken || "",
       builds:jsonCopy(latest.builds)
     };
     renderBuilder();

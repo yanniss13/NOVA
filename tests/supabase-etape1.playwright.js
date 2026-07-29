@@ -772,6 +772,15 @@ const { chromium } = require("playwright");
     await page.locator("#potBody")
       .getByRole("button", { name:"P9", exact:true }).click();
     await page.locator("#potClose").click();
+    await page.evaluate(() => {
+      const row = window.__fakeSupabaseState.roster_characters.find(item =>
+        item.owner === "user-1" && item.char_id === "meliodas"
+      );
+      row.updated_at = row.updated_at.replace(
+        /\.(\d{3})Z$/,
+        (whole, milliseconds) => "."+milliseconds+"123Z"
+      );
+    });
     const inactiveBeforeUpdate = await page.evaluate(() => {
       const row = window.__fakeSupabaseState.roster_characters.find(item =>
         item.owner === "user-1" && item.char_id === "meliodas"
@@ -5763,7 +5772,7 @@ async function installFakeSupabase(page){
               favorite:false
             }
           },
-          updated_at:"2026-07-25T08:40:00.000Z"
+          updated_at:"2026-07-25T08:40:00.123456Z"
         },
         {
           owner:"user-2",
@@ -5866,7 +5875,7 @@ async function installFakeSupabase(page){
           state.rosterConflictOnce = false;
           row.updated_at = new Date(
             Date.parse(row.updated_at) + 1_000
-          ).toISOString();
+          ).toISOString().replace(/\.\d{3}Z$/, ".654321Z");
           if(row.builds["Epee 1 main"]){
             row.builds["Epee 1 main"].note = "Modification concurrente";
           }
@@ -5880,7 +5889,7 @@ async function installFakeSupabase(page){
           row.builds[args.p_weapon_type] = clone(args.p_build);
           row.updated_at = new Date(
             Date.parse(row.updated_at) + 1_000
-          ).toISOString();
+          ).toISOString().replace(/\.\d{3}Z$/, ".654321Z");
         }else{
           if(expected) return fail("ROSTER_CONFLICT");
           row = {
@@ -5890,7 +5899,7 @@ async function installFakeSupabase(page){
             builds:{
               [args.p_weapon_type]:clone(args.p_build)
             },
-            updated_at:"2026-07-25T09:00:00.000Z"
+            updated_at:"2026-07-25T09:00:00.123456Z"
           };
           state.roster_characters.push(row);
         }
