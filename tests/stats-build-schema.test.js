@@ -100,16 +100,46 @@ assert.match(
 const gearHelper = extractFunction("private.preserved_gear_config(");
 [
   /set search_path\s*=\s*pg_catalog\s*,\s*public/i,
-  // Le client connaît la clé : on ne touche à rien.
-  /if p_new \? p_config_key then\s*return null/i,
   // Rien à préserver côté ancien.
   /if not \(p_old \? p_config_key\) then\s*return null/i,
   /for v_slot in select jsonb_object_keys\(p_old\s*->\s*p_config_key\)/i,
   // Comparaison par emplacement, insensible aux NULL, et pièce non vide.
   /nullif\(p_new\s*->\s*p_gear_key\s*->>\s*v_slot\s*,\s*''\)\s*is not null/i,
-  /p_new\s*->\s*p_gear_key\s*->>\s*v_slot\s+is not distinct from\s+p_old\s*->\s*p_gear_key\s*->>\s*v_slot/i,
-  /v_kept\s*:=\s*v_kept\s*\|\|\s*jsonb_build_object\(\s*v_slot\s*,\s*p_old\s*->\s*p_config_key\s*->\s*v_slot\s*\)/i
+  /p_new\s*->\s*p_gear_key\s*->>\s*v_slot\s+is not distinct from\s+p_old\s*->\s*p_gear_key\s*->>\s*v_slot/i
 ].forEach(pattern => assert.match(gearHelper, pattern));
+
+function assertNestedPassiveGuard(body) {
+  [
+    /if p_new \? p_config_key then/i,
+    /v_old_config\s*:=\s*p_old\s*->\s*p_config_key\s*->\s*v_slot/i,
+    /v_new_config\s*:=\s*p_new\s*->\s*p_config_key\s*->\s*v_slot/i,
+    /jsonb_typeof\(v_old_config\)\s*=\s*'object'/i,
+    /jsonb_typeof\(v_new_config\)\s*=\s*'object'/i,
+    /v_old_config\s*\?\s*'passiveLevel'/i,
+    /not\s*\(\s*v_new_config\s*\?\s*'passiveLevel'\s*\)/i,
+    /v_kept\s*:=\s*jsonb_set\(\s*v_kept\s*,\s*array\[v_slot\s*,\s*'passiveLevel'\]\s*,\s*v_old_config\s*->\s*'passiveLevel'\s*,\s*true\s*\)/i
+  ].forEach(pattern => assert.match(body, pattern));
+  assert.doesNotMatch(
+    body,
+    /if p_new \? p_config_key then\s*return null/i,
+    "une PWA lot 2 connaît la config mais omet encore passiveLevel"
+  );
+}
+
+assertNestedPassiveGuard(gearHelper);
+
+/* Preuve que le contrat mord : sans la condition d'absence, une valeur
+   explicite `null` serait remplacée par l'ancienne et ne pourrait plus être
+   supprimée volontairement. */
+const mutatedGearHelper = gearHelper.replace(
+  /not\s*\(\s*v_new_config\s*\?\s*'passiveLevel'\s*\)/i,
+  "false"
+);
+assert.notEqual(mutatedGearHelper, gearHelper, "la mutation doit s'appliquer");
+assert.throws(
+  () => assertNestedPassiveGuard(mutatedGearHelper),
+  /did not match|passiveLevel/
+);
 
 // Les deux triggers délèguent, pour les deux familles d'équipement.
 [

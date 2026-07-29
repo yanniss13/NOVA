@@ -64,12 +64,11 @@ as $$
 declare
   v_slot text;
   v_kept jsonb := '{}'::jsonb;
+  v_old_config jsonb;
+  v_new_config jsonb;
+  v_has_new_config boolean;
 begin
   if p_old is null or p_new is null then
-    return null;
-  end if;
-  -- Le client connaît la clé : sa valeur fait foi, même vide.
-  if p_new ? p_config_key then
     return null;
   end if;
   if not (p_old ? p_config_key) then
@@ -79,17 +78,51 @@ begin
     return null;
   end if;
 
+  v_has_new_config := p_new ? p_config_key;
+  if p_new ? p_config_key then
+    if jsonb_typeof(p_new -> p_config_key) <> 'object' then
+      return null;
+    end if;
+    -- Une PWA du lot 2 connaît armorConfig/jewelConfig, mais pas encore leur
+    -- sous-champ passiveLevel. Partir de sa valeur conserve toutes ses autres
+    -- modifications récentes avant de réinsérer seulement le sous-champ omis.
+    v_kept := p_new -> p_config_key;
+  end if;
+
   for v_slot in select jsonb_object_keys(p_old -> p_config_key)
   loop
     if nullif(p_new -> p_gear_key ->> v_slot, '') is not null
        and p_new -> p_gear_key ->> v_slot
            is not distinct from p_old -> p_gear_key ->> v_slot
     then
-      v_kept := v_kept || jsonb_build_object(v_slot, p_old -> p_config_key -> v_slot);
+      if v_has_new_config then
+        v_old_config := p_old -> p_config_key -> v_slot;
+        v_new_config := p_new -> p_config_key -> v_slot;
+        if jsonb_typeof(v_old_config) = 'object'
+           and jsonb_typeof(v_new_config) = 'object'
+           and v_old_config ? 'passiveLevel'
+           and not (v_new_config ? 'passiveLevel')
+        then
+          v_kept := jsonb_set(
+            v_kept,
+            array[v_slot, 'passiveLevel'],
+            v_old_config -> 'passiveLevel',
+            true
+          );
+        end if;
+      else
+        -- PWA antérieure au lot 2 : la clé complète est absente.
+        v_kept := v_kept || jsonb_build_object(
+          v_slot,
+          p_old -> p_config_key -> v_slot
+        );
+      end if;
     end if;
   end loop;
 
-  if v_kept = '{}'::jsonb then
+  if (v_has_new_config and v_kept is not distinct from p_new -> p_config_key)
+     or (not v_has_new_config and v_kept = '{}'::jsonb)
+  then
     return null;
   end if;
   return v_kept;
