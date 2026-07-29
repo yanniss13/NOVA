@@ -62,17 +62,31 @@ fonction unique.
 
 ### 4.1 Fonction unique
 
+Signature figée :
+
 ```js
-statTermsDetails(stat)
+statTermsDetails(stat, {
+  termLabel,      // (term) => string
+  termProvenance, // (term) => string
+  termEmphasis    // (term) => string | null   classe de mise en avant
+})
 ```
 
 Elle consomme la forme déjà produite par `groupBuildStatResults()` :
 `{ stat, unit, value, label, terms }`. Elle est utilisée par les trois appelants
 et ne connaît ni le héros, ni l'arme, ni l'équipement.
 
-Les fonctions de libellé existantes (`heroTermLabel`, `weaponTermLabel`,
-`gearTermLabel`) restent la source des noms. `statTermsDetails` reçoit la
-fonction de libellé applicable en paramètre au lieu de la choisir elle-même.
+Les fonctions existantes (`heroTermLabel` / `heroTermProvenance`,
+`weaponTermLabel` / `weaponTermProvenance`, `gearTermLabel` /
+`gearTermProvenance`) restent la source des noms et des provenances. L'appelant
+les fournit ; `statTermsDetails` ne les choisit jamais elle-même.
+
+`termEmphasis` remplace un paramètre `context` fourre-tout. La règle de mise en
+avant diffère réellement d'un appelant à l'autre — le panneau d'arme met en
+avant tout multiplicateur, la fiche du héros seulement ceux dont la base est
+présumée, le panneau d'équipement aucun — mais c'est la **seule** différence
+restante. Un rappel de contexte non typé inviterait à y glisser peu à peu de la
+logique d'affichage que cette fonction est justement censée unifier.
 
 ### 4.2 Clé de groupe
 
@@ -110,7 +124,7 @@ Deux ajustements de libellé, et deux seulement :
   chaque terme ;
 - un multiplicateur portant `source.application === "hero-main-rate"` est
   libellé d'après **sa provenance d'origine** (« Maîtrise Baguette »,
-  « Potentiel P10 », « Équipement »), et non « Application du taux ». C'est ce
+  « Potentiel P7 », « Équipement »), et non « Application du taux ». C'est ce
   qui produit les sous-lignes de §4.4 au lieu d'un bloc indistinct.
 
 Un terme dont le libellé est inconnu forme son propre groupe. Le rendu ne doit
@@ -136,28 +150,37 @@ répétés sont précisément les taux principaux.
 
 ### 4.4 Rendu cible
 
-Valeurs réelles des PV de la Merlin Foudre mesurée, celles-là mêmes qui ont
-servi à la parité de `4be3fae`. Aucun chiffre de cet exemple n'est inventé.
+PV de la Merlin Foudre du propriétaire. Les termes ont été **relevés sur la
+sortie réelle de `calculateHeroStats()`**, pas reconstitués : nombres d'apports,
+répartition des taux et palier de potentiel compris.
 
 ```
 Base du personnage                              +2 000 points
 Maîtrise commune                                +1 248 points
-Maîtrise Baguette            4 apports          +3 024 points
-Maîtrises de réserve         2 apports          +3 024 points
-Équipement                   8 apports         +60 338 points
+Maîtrise Baguette            8 apports          +3 024 points
+Maîtrises de réserve         8 apports          +3 024 points
+Équipement                   4 apports         +60 338 points
 Taux principaux                                 +41 %            ▸
     Maîtrise Baguette        4 apports          +12 %
-    Maîtrises de réserve     2 apports           +6 %
-    Potentiel P10                               +10 %
-    Équipement               5 apports          +13 %
+    Maîtrises de réserve     8 apports          +24 %
+    Potentiel P7                                 +5 %
 Arrondi du jeu                                   +0,06 point
                                         Total   98 184
 ```
 
-Contrôle : `(2 000 + 1 248 + 3 024 + 3 024 + 60 338) × 1,41 = 98 183,94`,
-arrondi au supérieur à `98 184`. La base `9 296` et l'équipement `60 338`
-correspondent au détail relevé dans le jeu. La répartition des `41 %` entre
-sous-lignes dépend du build : elle illustre la forme, sa somme est exacte.
+Contrôles :
+
+- `12 + 24 + 5 = 41 %` — aucune ligne d'équipement dans les taux, ce build n'a
+  aucune option aléatoire en `I_MaxHpAdd_Rate` ;
+- `P7` donne bien `I_MaxHpAdd_Rate: 500` dans `7ds-stats/personnages.json`,
+  branche Wand ;
+- `(2 000 + 1 248 + 3 024 + 3 024 + 60 338) × 1,41 = 98 183,94`, arrondi au
+  supérieur à `98 184` ;
+- la base `9 296` et l'équipement `60 338` correspondent au détail relevé dans
+  le jeu.
+
+Cet exemple sert de fixture de régression : le rendu doit produire exactement
+ces lignes pour ce build.
 
 Règles d'affichage :
 
@@ -174,7 +197,12 @@ Règles d'affichage :
 - « base présumée » apparaît une fois sous le bloc pour les taux principaux, dès
   qu'au moins un de leurs termes porte `confidence: "presumed"` ; celle de
   l'outrepassement reste sur sa propre ligne ;
-- la liste des seaux ciblés apparaît une fois par statistique, en pied de bloc ;
+- la liste des seaux ciblés apparaît **une fois par valeur distincte
+  d'`appliesTo` normalisée**, et non une fois par statistique. Une même
+  statistique en porte plusieurs : les taux principaux visent tous les seaux
+  fixes, tandis que l'outrepassement d'arme ne vise que les seaux natifs de
+  l'arme. Une ligne unique en pied de bloc afficherait la mauvaise base pour
+  l'un des deux ;
 - l'outrepassement d'arme garde sa mise en avant existante
   (`weapon-stat-term-overlimit`).
 
@@ -254,13 +282,28 @@ mordante par une mutation volontaire.
 
 ### Rendu
 
-- **correspondance un-à-un** : l'ensemble des `data-term-id` rendus égale
-  l'ensemble des `term.id` du moteur. Un simple compte égal ne suffit pas — il
-  passerait alors qu'un terme est dupliqué et un autre perdu ;
+- **correspondance un-à-un** : comparaison des **listes triées complètes**, plus
+  une assertion d'unicité des identifiants du moteur.
+
+  ```js
+  assert.deepStrictEqual(
+    renderedIds.slice().sort(),
+    engineTermIds.slice().sort()
+  );
+  assert.strictEqual(
+    new Set(engineTermIds).size,
+    engineTermIds.length
+  );
+  ```
+
+  Ni un compte égal ni une égalité d'ensembles ne suffisent : `A, A, B` rendu
+  contre `A, B` calculé passerait les deux ;
 - aucun `<summary>` ne porte la classe `.weapon-stat-term` ;
 - un groupe d'un seul terme est visible sans second clic ;
 - `dataset.buckets` est identique avant et après le lot pour chaque terme ;
-- la liste des seaux n'apparaît qu'une fois par statistique ;
+- la liste des seaux n'apparaît qu'une fois par valeur distincte d'`appliesTo` ;
+  une statistique portant à la fois des taux principaux et un outrepassement en
+  affiche donc deux, pas une ;
 - les trois appelants (héros, arme, équipement) produisent la même structure ;
 - tout est replié à l'ouverture ;
 - 320 et 390 px : aucun débordement, aucune superposition.
