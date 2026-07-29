@@ -391,6 +391,145 @@ const STORAGE_KEY = "confrerie7ds.teams";
     assert.equal(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY), null);
     await page.getByRole("button", { name:"Continuer hors connexion", exact:true }).click();
 
+    await page.evaluate(key => {
+      const catalog = window.SEVEN_DS_BUILD_STATS;
+      const firstCatalogFile = (items, definitions) => {
+        const match = (items || []).find(item => definitions[item.file]);
+        if(!match) throw new Error("FIXTURE_EQUIPMENT_MISSING");
+        return match.file;
+      };
+      let weapon = null;
+      let grade = null;
+      for(const item of window.SEVEN_DS_DATA.armes.Hache){
+        const definition = catalog.weaponsByFile[item.file];
+        const candidate = definition
+          && Object.values(definition.gradesByGameId).find(value =>
+            value.mainStatValues
+            && value.promotionValues
+            && value.enchantments
+            && value.enchantments.type === "basic"
+          );
+        if(candidate){
+          weapon = item.file;
+          grade = candidate;
+          break;
+        }
+      }
+      if(!weapon || !grade){
+        throw new Error("FIXTURE_WEAPON_GRADE_MISSING");
+      }
+      const configFor = file => {
+        const definition = catalog.gearByFile[file]
+          || catalog.engravedByFile[file];
+        if(!definition) throw new Error("FIXTURE_GEAR_MISSING:"+file);
+        return {
+          version:1,
+          level:definition.qualityMin,
+          reinforce:0,
+          enchantments:Array(
+            definition.randomOptions
+              ? definition.randomOptions.slots : 0
+          ).fill(null),
+          passiveLevel:null
+        };
+      };
+      const armor = {
+        Haut:firstCatalogFile(
+          window.SEVEN_DS_DATA.armures.Haut,
+          catalog.gearByFile
+        ),
+        Bas:firstCatalogFile(
+          window.SEVEN_DS_DATA.armures.Bas,
+          catalog.gearByFile
+        ),
+        Bottes:firstCatalogFile(
+          window.SEVEN_DS_DATA.armures.Bottes,
+          catalog.gearByFile
+        ),
+        Ceinture:firstCatalogFile(
+          window.SEVEN_DS_DATA.armures.Ceinture,
+          catalog.gearByFile
+        ),
+        "Armure liee":(
+          window.SEVEN_DS_ARMURES_LIEES.meliodas || []
+        ).find(file => catalog.engravedByFile[file])
+      };
+      if(!armor["Armure liee"]){
+        throw new Error("FIXTURE_ENGRAVING_MISSING");
+      }
+      const jewel = {
+        Anneau:firstCatalogFile(
+          window.SEVEN_DS_DATA.bijoux.Anneau,
+          catalog.gearByFile
+        ),
+        Collier:firstCatalogFile(
+          window.SEVEN_DS_DATA.bijoux.Collier,
+          catalog.gearByFile
+        ),
+        "Boucle d'oreille":firstCatalogFile(
+          window.SEVEN_DS_DATA.bijoux["Boucle d'oreille"],
+          catalog.gearByFile
+        )
+      };
+      const hero = {
+        char:"meliodas",
+        weapon,
+        weaponConfig:{
+          version:1,
+          gradeGameId:grade.gameId,
+          level:0,
+          promotion:0,
+          overlimit:0,
+          enchantments:Array(grade.enchantments.slots.length).fill(null)
+        },
+        armor,
+        armorConfig:Object.fromEntries(
+          Object.entries(armor).map(([slot, file]) => [
+            slot,
+            configFor(file)
+          ])
+        ),
+        jewel,
+        jewelConfig:Object.fromEntries(
+          Object.entries(jewel).map(([slot, file]) => [
+            slot,
+            configFor(file)
+          ])
+        ),
+        potentiel:{ tier:0 },
+        note:"Ancien instantané sans armes secondaires"
+      };
+      localStorage.setItem(key, JSON.stringify([{
+        id:"equipe-stats-partielles",
+        pseudo:"Stats partielles",
+        heroes:[hero]
+      }]));
+    }, STORAGE_KEY);
+    await page.reload();
+    await page.locator('.tab[data-view="roster"]').click();
+    const partialTeam = page.locator("#rosterGrid .team")
+      .filter({ hasText:"Stats partielles" })
+      .first();
+    await partialTeam.getByRole("button", {
+      name:/Voir l'équipement/
+    }).click();
+    const partialStats = page.locator("#teamDetail .hero-stats").first();
+    assert.match(
+      await partialStats.locator(".weapon-stats-title").innerText(),
+      /calcul partiel/i
+    );
+    assert.match(
+      await partialStats.locator(".hero-stat-card")
+        .filter({ hasText:"ATK" }).innerText(),
+      /arme secondaire manquante/i
+    );
+    assert.doesNotMatch(
+      await partialStats.locator(".hero-stat-card")
+        .filter({ hasText:"PV" }).innerText(),
+      /arme secondaire manquante/i
+    );
+    await page.locator("#teamClose").click();
+
     await page.evaluate(({ key })=>{
       localStorage.setItem(key, JSON.stringify([{
         id:"ancienne-equipe",

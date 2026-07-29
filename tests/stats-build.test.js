@@ -1572,6 +1572,38 @@ function fakeText(root){
   assert.ok(partial.totals.some(total => total.stat === "B_MaxHp"));
   assert.ok(partial.totals.some(total => total.stat === "B_Def"));
   assert.ok(partial.totals.some(total => total.stat === "B_Atk"));
+  const partialSection = hooks.heroStatsSection(missingSecondary);
+  assert.strictEqual(
+    hooks.heroStatsTitle(partial),
+    "Statistiques du héros — calcul partiel"
+  );
+  const attackCard = fakeNodes(partialSection, node =>
+    node.className
+      && node.className.split(/\s+/).includes("hero-stat-card")
+      && /ATK/.test(fakeText(node))
+  )[0];
+  assert.ok(attackCard);
+  assert.match(
+    fakeText(attackCard),
+    /calcul incomplet — arme secondaire manquante/i
+  );
+  const hpAndDef = fakeNodes(partialSection, node =>
+    node.className
+      && node.className.split(/\s+/).includes("hero-stat-card")
+      && /(?:PV|DEF)/.test(fakeText(node))
+  );
+  assert.strictEqual(hpAndDef.length, 2);
+  hpAndDef.forEach(card =>
+    assert.doesNotMatch(
+      fakeText(card),
+      /arme secondaire manquante/i
+    )
+  );
+  const completeSection = hooks.heroStatsSection(hero);
+  assert.match(
+    fakeText(completeSection),
+    /secondaire.*×\s*30\s*%.*=\s*\+/i
+  );
   assert.ok(result.terms.some(term =>
     term.operation === "multiply"
     && term.stat === "B_Atk"

@@ -15,7 +15,7 @@ Plan :
 - [x] Task 1 — normaliser et transporter les trois builds
 - [x] Task 2 — protéger `rosterBuilds` contre les anciennes PWA
 - [x] Task 3 — calculer le transfert reconstructible de 30 %
-- [ ] Task 4 — rendre le résultat partiel impossible à confondre
+- [x] Task 4 — rendre le résultat partiel impossible à confondre
 - [ ] Task 5 — changer de build par les trois icônes sans perte
 - [ ] Task 6 — mettre à jour ou recharger le roster explicitement
 - [ ] Task 7 — documenter, vérifier et préparer l'activation
@@ -62,6 +62,9 @@ Plan :
 - Task 3 RED : mode et termes d'armes secondaires absents.
 - Task 3 GREEN : `node tests/stats-build.test.js`.
 - Task 3 formule : transferts synthétiques `67,8` et `61,5`, sans ATK %.
+- Task 4 RED : titre partiel et avertissement ATK absents du rendu.
+- Task 4 GREEN : `node tests/stats-build.test.js`.
+- Task 4 navigateur : `node tests/potentiel-commun.playwright.js`.
 
 ## Activation
 
