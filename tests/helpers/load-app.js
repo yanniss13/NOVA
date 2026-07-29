@@ -185,6 +185,12 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   calculateHeroStats:typeof calculateHeroStats === "function"
     ? calculateHeroStats
     : undefined,
+  heroTermOriginLabel:typeof heroTermOriginLabel === "function"
+    ? heroTermOriginLabel
+    : undefined,
+  heroTermLabel:typeof heroTermLabel === "function"
+    ? heroTermLabel
+    : undefined,
   heroStatsTitle:typeof heroStatsTitle === "function"
     ? heroStatsTitle
     : undefined,

@@ -4182,6 +4182,30 @@
       maximumFractionDigits:2
     }).format(numeric) + (unit === "ten-thousandths" ? " %" : "");
   }
+  /* Libellé de la provenance d'un terme, indépendant de son opération. C'est
+     lui qui réunit les pièces sous « Équipement » et qui donne un nom aux taux
+     principaux, dont le libellé historique « Application du taux » était le
+     même pour des dizaines de lignes. Renvoie null quand la provenance n'est
+     pas regroupée : l'appelant garde alors son libellé spécifique. */
+  function heroTermOriginLabel(term){
+    const source = (term && term.source) || {};
+    if(source.domain === "character") return "Base du personnage";
+    if(source.domain === "mastery"){
+      if(source.component === "common-mastery") return "Maîtrise commune";
+      if(source.component === "reserve-weapon-mastery"){
+        return "Maîtrises de réserve";
+      }
+      const meta = WEAPON_ENUM[source.weaponType];
+      return "Maîtrise "+((meta && meta.label) || source.weaponType || "");
+    }
+    if(source.domain === "potential") return "Potentiel P"+source.tier;
+    if(source.domain === "set") return "Bonus d’ensemble";
+    if(source.domain === "armor" || source.domain === "jewel"
+      || source.domain === "engraving"){
+      return "Équipement";
+    }
+    return null;
+  }
   function heroTermLabel(term){
     const source = term.source || {};
     if(source.component === "final-ceil"
@@ -4189,15 +4213,14 @@
       return "Arrondi du jeu";
     }
     if(term.operation === "multiply"){
+      if(source.application === "hero-main-rate"){
+        return heroTermOriginLabel(term) || "Application du taux";
+      }
       return source.component === "overlimit"
         ? "Outrepassement" : "Application du taux";
     }
-    if(source.domain === "character") return "Base du personnage";
-    if(source.domain === "mastery"){
-      return source.component === "common-mastery"
-        ? "Maîtrise commune" : "Maîtrise "+(source.weaponType || "");
-    }
-    if(source.domain === "potential") return "Potentiel P"+source.tier;
+    const origin = heroTermOriginLabel(term);
+    if(origin) return origin;
     if(source.domain === "weapon") return weaponTermLabel(term);
     if(source.domain === "secondary-weapon"){
       return (source.weaponType || "Arme")

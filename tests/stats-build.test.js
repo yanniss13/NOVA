@@ -2255,4 +2255,95 @@ function merlinGameFixture(hooks){
   );
 }
 
+function testHeroTermOriginLabels(hooks){
+  const originLabel = hooks.heroTermOriginLabel;
+  assert.strictEqual(
+    originLabel({ source:{ domain:"character", component:"base" } }),
+    "Base du personnage"
+  );
+  assert.strictEqual(
+    originLabel({ source:{ domain:"mastery", component:"common-mastery" } }),
+    "Maîtrise commune"
+  );
+  assert.strictEqual(
+    originLabel({
+      source:{ domain:"mastery", component:"weapon-mastery", weaponType:"Wand" }
+    }),
+    "Maîtrise Baguette",
+    "Le libellé doit venir de WEAPON_ENUM, pas de l'enum brut"
+  );
+  assert.strictEqual(
+    originLabel({
+      source:{
+        domain:"mastery", component:"reserve-weapon-mastery", weaponType:"Book"
+      }
+    }),
+    "Maîtrises de réserve"
+  );
+  assert.strictEqual(
+    originLabel({ source:{ domain:"potential", component:"potential", tier:7 } }),
+    "Potentiel P7"
+  );
+  ["armor", "jewel", "engraving"].forEach(domain => {
+    assert.strictEqual(
+      originLabel({ source:{ domain, component:"level" } }),
+      "Équipement",
+      "Les pièces sont réunies sous un seul libellé dans la fiche du héros"
+    );
+  });
+  assert.strictEqual(
+    originLabel({ source:{ domain:"set", component:"bonus" } }),
+    "Bonus d’ensemble",
+    "Les ensembles restent distincts des pièces"
+  );
+  assert.strictEqual(
+    originLabel({ source:{ domain:"weapon", component:"level" } }),
+    null,
+    "Une provenance non regroupée doit répondre null"
+  );
+}
+
+function testHeroTermLabelUsesOrigin(hooks){
+  const label = hooks.heroTermLabel;
+  assert.strictEqual(
+    label({
+      operation:"multiply",
+      appliesTo:["character:base"],
+      source:{
+        domain:"mastery",
+        component:"weapon-mastery",
+        weaponType:"Wand",
+        application:"hero-main-rate"
+      }
+    }),
+    "Maîtrise Baguette",
+    "Un taux principal est libellé par sa provenance, pas « Application du taux »"
+  );
+  assert.strictEqual(
+    label({
+      operation:"multiply",
+      appliesTo:["weapon-native"],
+      source:{ domain:"weapon", component:"overlimit", id:"x.webp" }
+    }),
+    "Outrepassement",
+    "L'outrepassement n'est pas un taux principal"
+  );
+  assert.strictEqual(
+    label({
+      operation:"add",
+      bucket:"armor:Bas",
+      source:{ domain:"armor", component:"level", slot:"Bas", id:"x.webp" }
+    }),
+    "Équipement"
+  );
+}
+
+// Les libellés d'origine distinguent les taux principaux, les maîtrises de
+// réserve et regroupent les pièces d'équipement sous un même libellé.
+{
+  const { hooks } = loadApp();
+  testHeroTermOriginLabels(hooks);
+  testHeroTermLabelUsesOrigin(hooks);
+}
+
 console.log("PASS stats de builds : modèle et calcul de l’arme");
