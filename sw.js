@@ -16,12 +16,16 @@
 const BUILD_VERSION = "__BUILD_VERSION__";
 const CACHE_PREFIX = "conf7ds-";
 const CACHE = CACHE_PREFIX + BUILD_VERSION;
+/* Seule la petite icône est préchargée. La 512 (350 Ko) ne sert qu'à
+   l'installation sur l'écran d'accueil : la faire télécharger par chaque membre
+   au premier chargement coûtait plus qu'elle ne rapportait. Le gestionnaire
+   `fetch` la met en cache le jour où elle est réellement demandée. */
 const CORE_ASSETS = [
   "./", "./index.html",
   "./data.js", "./stats-build.js", "./potentiels.js", "./armures-liees.js",
   "./personnages-meta.js", "./supabase-config.js",
   "./manifest.webmanifest",
-  "./icons/icon-192.png", "./icons/icon-512.png"
+  "./icons/icon-192.png"
 ];
 const CORE_PATHS = new Set(
   CORE_ASSETS.map(asset => new URL(asset, self.registration.scope).pathname)
@@ -81,6 +85,26 @@ async function networkFirst(request, fallbackKey){
   }
 }
 
+/* Cache d'abord, sans aller-retour réseau. Réservé aux fichiers dont la
+   fraîcheur est déjà garantie par le nom du cache : celui-ci contient le SHA du
+   commit déployé et les caches des versions précédentes sont supprimés à
+   l'activation. Une entrée trouvée ici appartient donc forcément à la version
+   courante — la revalider coûterait un téléchargement pour rien. */
+async function cacheFirst(request){
+  const cache = await caches.open(CACHE);
+  const cached = await cache.match(request);
+  if(cached) return cached;
+  try{
+    const response = await fetch(request);
+    if(response && response.ok && !response.redirected){
+      cache.put(request, response.clone()).catch(() => {});
+    }
+    return response;
+  }catch(error){
+    return Response.error();
+  }
+}
+
 /* Réponse immédiate depuis le cache, rafraîchissement en arrière-plan. */
 function staleWhileRevalidate(event, request){
   const cachePromise = caches.open(CACHE);
@@ -125,8 +149,11 @@ self.addEventListener("fetch", event => {
     return;
   }
 
+  // Le document reste en `networkFirst` au-dessus : c'est lui qui fait découvrir
+  // un nouveau déploiement. Les fichiers versionnés, eux, sont servis depuis le
+  // cache sans requête : mesuré à 2,3 Mo retéléchargés inutilement par visite.
   if(CORE_PATHS.has(url.pathname)){
-    event.respondWith(networkFirst(request));
+    event.respondWith(cacheFirst(request));
     return;
   }
 
