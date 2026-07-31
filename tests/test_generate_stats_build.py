@@ -1,6 +1,7 @@
 import copy
 import importlib.util
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -611,12 +612,18 @@ class GenerateStatsBuildTests(unittest.TestCase):
         self.assertEqual(sorted(catalog["weaponsByFile"]), images)
 
     def test_check_accepts_the_tracked_generated_catalog(self):
+        # Sans PYTHONIOENCODING, le script suit la page de codes de la console
+        # Windows et « stats-build.js à jour » revient en cp1252 : le décodage
+        # UTF-8 échoue alors dans le thread de lecture, et `stdout` vaut None.
+        # On impose l'encodage au processus fils au lieu de le supposer.
+        env = dict(os.environ, PYTHONIOENCODING="utf-8")
         result = subprocess.run(
             [sys.executable, str(SCRIPT_PATH), "--check"],
             cwd=REPO_ROOT,
             capture_output=True,
             text=True,
-            encoding="utf-8",  # le script écrit en UTF-8, ne pas suivre la console Windows
+            encoding="utf-8",
+            env=env,
             check=False,
         )
         self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
