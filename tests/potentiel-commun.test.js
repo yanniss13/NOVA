@@ -11,6 +11,41 @@ const { loadApp, plain } = require("./helpers/load-app");
 const ROOT = path.resolve(__dirname, "..");
 const STORAGE_KEY = "confrerie7ds.teams";
 
+// Les saisies exclusivement entières doivent demander le pavé numérique mobile.
+{
+  const source = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const { hooks } = loadApp();
+  assert.strictEqual(
+    typeof hooks.numericKeyboardInputProps,
+    "function",
+    "Le contrat des champs numériques doit être exposé aux tests"
+  );
+  assert.deepStrictEqual(
+    plain(hooks.numericKeyboardInputProps({ class:"numeric-test", min:"0" })),
+    {
+      type:"number",
+      inputmode:"numeric",
+      pattern:"[0-9]*",
+      class:"numeric-test",
+      min:"0"
+    }
+  );
+  assert.match(
+    source,
+    /<input id="bossScore"[^>]*inputmode="numeric"[^>]*pattern="\[0-9\]\*"/
+  );
+  assert.strictEqual(
+    (source.match(/numericKeyboardInputProps\(\{/g) || []).length,
+    5,
+    "Les cinq créations de champs numériques dynamiques doivent partager le contrat"
+  );
+  assert.strictEqual(
+    (source.match(/type:"number"/g) || []).length,
+    1,
+    "Le type number doit être centralisé dans numericKeyboardInputProps"
+  );
+}
+
 // Le Recensement a disparu du frontend, mais son schéma et ses données restent.
 {
   const source = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");

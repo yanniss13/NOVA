@@ -1836,7 +1836,7 @@
     <div class="boss-report-body">
       <div class="boss-report-members" id="bossReportMembers"></div>
       <label for="bossScore">Score global</label>
-      <input id="bossScore" type="text" inputmode="numeric"
+      <input id="bossScore" type="text" inputmode="numeric" pattern="[0-9]*"
              autocomplete="off" aria-describedby="bossReportError">
       <label for="bossReportNote">Note de run</label>
       <textarea id="bossReportNote" maxlength="1000"
@@ -2070,6 +2070,14 @@
     const parts = t.split(/\s+/);
     return (parts.length>1 ? parts[0][0]+parts[1][0] : t.slice(0,2)).toUpperCase();
   };
+  function numericKeyboardInputProps(props){
+    return Object.assign({
+      type:"number",
+      inputmode:"numeric",
+      pattern:"[0-9]*"
+    }, props || {});
+  }
+
   function el(tag, props, kids){
     const n = document.createElement(tag);
     if(props) for(const k in props){
@@ -4978,14 +4986,13 @@
       if(choice){
         const option = catalog.options.find(item => item.stat === choice.stat);
         const bounds = option && enchantmentBounds(option, slotRate);
-        const input = el("input",{
+        const input = el("input",numericKeyboardInputProps({
           class:"weapon-config-enchantment-value",
-          type:"number",
           step:"1",
           min:bounds ? String(bounds.min) : "0",
           max:bounds ? String(bounds.max) : "0",
           value:String(choice.value)
-        });
+        }));
         input.addEventListener("input", event => {
           choice.value = event.target.value === ""
             ? null
@@ -5134,14 +5141,13 @@
 
         if(storedChoice && choice.stat){
           const option = options.find(item => item.stat === choice.stat);
-          const input = el("input",{
+          const input = el("input",numericKeyboardInputProps({
             class:"weapon-config-enchantment-value",
-            type:"number",
             step:"1",
             min:option ? String(option.min) : "0",
             max:option ? String(option.max) : "0",
             value:String(choice.value)
-          });
+          }));
           input.addEventListener("input", event => {
             choice.value = event.target.value === ""
               ? null
@@ -5211,14 +5217,13 @@
     });
     body.appendChild(weaponConfigField("Grade",gradeSelect));
 
-    const levelInput = el("input",{
+    const levelInput = el("input",numericKeyboardInputProps({
       class:"weapon-config-level",
-      type:"number",
       step:"1",
       min:"0",
       max:String(weaponLevelCap(grade, draft.promotion)),
       value:String(draft.level)
-    });
+    }));
     levelInput.addEventListener("input", event => {
       draft.level = event.target.value === "" ? null : Math.trunc(Number(event.target.value));
       updateWeaponConfigPreview();
@@ -5539,14 +5544,13 @@
       box.appendChild(weaponConfigField("Statistique",select));
       if(choice){
         const option = options.find(item => item.stat === choice.stat);
-        const value = el("input",{
+        const value = el("input",numericKeyboardInputProps({
           class:"gear-config-enchantment-value",
-          type:"number",
           step:"1",
           min:option ? String(option.min) : "0",
           max:option ? String(option.max) : "0",
           value:String(choice.value)
-        });
+        }));
         value.addEventListener("input", event => {
           choice.value = event.target.value === ""
             ? null
@@ -5627,14 +5631,13 @@
       return;
     }
     const draft = state.draft;
-    const level = el("input",{
+    const level = el("input",numericKeyboardInputProps({
       class:"gear-config-level",
-      type:"number",
       step:"1",
       min:String(definition.qualityMin),
       max:String(definition.qualityMax),
       value:String(draft.level)
-    });
+    }));
     level.addEventListener("input", event => {
       draft.level = event.target.value === ""
         ? null

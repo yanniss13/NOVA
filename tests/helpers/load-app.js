@@ -82,6 +82,10 @@ function makeLocalStorage(initialTeams){
 }
 
 const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
+  numericKeyboardInputProps:
+    typeof numericKeyboardInputProps === "function"
+      ? numericKeyboardInputProps
+      : undefined,
   normalizePotentiel,
   normalizeHero,
   normalizeTeam,
