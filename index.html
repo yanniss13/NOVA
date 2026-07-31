@@ -874,6 +874,15 @@
     min-width:0;
     max-width:100%
   }
+  /* Ces deux blocs restent vides jusqu'à la réponse de Supabase, puis se
+     remplissent d'un coup en poussant `#databar` vers le bas. Mesuré dans
+     l'onglet Performance : un décalage de 0,52 alors que le seuil acceptable
+     est 0,1. Réserver la hauteur supprime le saut sans rien changer une fois
+     le contenu arrivé. */
+  #dashboardBody,
+  #bossBody{
+    min-height:60vh
+  }
   .dashboard-run-card,
   .dashboard-run-card *{
     overflow-wrap:anywhere
