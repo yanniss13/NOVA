@@ -4,6 +4,8 @@ const assert = require("node:assert");
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
+/* Balisage ET script : le JavaScript vit desormais dans js/. */
+const { appSource } = require("./helpers/app-source");
 const { loadApp, plain } = require("./helpers/load-app");
 
 /* Ces constantes restent ici : elles servent aux tests qui chargent
@@ -13,7 +15,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
 
 // Les saisies exclusivement entières doivent demander le pavé numérique mobile.
 {
-  const source = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const source = appSource();
   const { hooks } = loadApp();
   assert.strictEqual(
     typeof hooks.numericKeyboardInputProps,
@@ -48,7 +50,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
 
 // Le Recensement a disparu du frontend, mais son schéma et ses données restent.
 {
-  const source = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const source = appSource();
   [
     /tab-recensement/,
     /view-recensement/,

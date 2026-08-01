@@ -3,6 +3,8 @@
 const assert = require("node:assert");
 const fs = require("node:fs");
 const path = require("node:path");
+/* Balisage ET script : le JavaScript vit desormais dans js/. */
+const { appSource } = require("./helpers/app-source");
 const { loadApp, plain } = require("./helpers/load-app");
 
 const HACHE_FILE = "7ds-armes/Hache/hache.webp";
@@ -213,7 +215,7 @@ function merlinGameFixture(hooks){
 
 // L'hypothèse d'outrepassement reste unique et inséparable de son protocole.
 {
-  const source = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+  const source = appSource();
   assert.strictEqual(
     (source.match(/\bconst\s+OVERLIMIT_APPLICATION_MODE\b/g) || []).length,
     1
@@ -459,7 +461,7 @@ function merlinGameFixture(hooks){
 
 // Le moteur d'arme n'importe jamais la progression de renforcement des armures.
 {
-  const source = fs.readFileSync(path.join(__dirname, "..", "index.html"), "utf8");
+  const source = appSource();
   const engineStart = source.indexOf("function curveValueAtLevel");
   const engineEnd = source.indexOf("function gearDomainOf", engineStart);
   assert.ok(engineStart >= 0 && engineEnd > engineStart);

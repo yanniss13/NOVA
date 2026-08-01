@@ -16,6 +16,8 @@ const vm = require("node:vm");
 const ROOT = path.resolve(__dirname, "..", "..");
 const STORAGE_KEY = "confrerie7ds.teams";
 
+const { MODULES } = require("./modules");
+
 class FakeElement {
   constructor(){
     this.children = [];
@@ -456,11 +458,13 @@ function testWeaponDefinition(gameId, base, percentOption){
 }
 
 function loadApp(initialTeams){
-  const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
-  const scripts = [...html.matchAll(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/gi)]
-    .map(match => match[1]);
-  const source = scripts.find(script => script.includes("(function(){"));
-  assert.ok(source, "Le script principal inline doit exister");
+  /* Depuis le lot 1 du refactor, le script principal vit dans js/app.js. Il
+     sera découpé en plusieurs modules : MODULES tient l'ordre de concaténation,
+     qui doit rester identique à l'ordre de chargement déclaré dans index.html. */
+  const source = MODULES
+    .map(name => fs.readFileSync(path.join(ROOT, "js", name), "utf8"))
+    .join("\n");
+  assert.ok(source.includes("(function(){"), "Le script principal doit exister");
 
   const exposed = source.replace(/\}\)\(\);\s*$/, HOOK_EXPORT);
   assert.notStrictEqual(exposed, source, "Le chargeur doit exposer les fonctions réelles");

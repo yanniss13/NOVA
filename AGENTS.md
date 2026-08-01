@@ -135,7 +135,7 @@ Après cette mise à jour, l'utilisateur doit rejouer le contenu complet de
 `supabase/schema.sql` dans le SQL Editor Supabase afin d'appliquer le schéma,
 les politiques RLS et la publication Realtime. Le script est idempotent.
 
-L'appli reste un site statique ouvrable en `file://` ou via GitHub Pages. Une
+L'appli reste un site statique, servi par GitHub Pages. Une
 connexion internet et un compte sont nécessaires pour lire/écrire le registre
 partagé. Sans connexion, le builder reste utilisable, mais « Enregistrer l'équipe »
 ouvre la connexion. Les anciennes données locales et les caches cloud restent dans
@@ -143,8 +143,21 @@ le `localStorage`.
 
 ## Comment lancer
 
-Double-clic sur `index.html` ou ouvrir le site GitHub Pages. Aucun serveur, aucune
-install, aucun build. Le builder fonctionne hors ligne ; Supabase exige internet.
+Ouvrir le site GitHub Pages. Aucune install, aucun build. Le builder fonctionne
+hors ligne une fois la page chargée ; Supabase exige internet.
+
+⚠️ **Le double-clic sur `index.html` ne fonctionne plus** depuis le passage aux
+modules ES : un `<script type="module">` est bloqué en `file://` par la
+politique d'origine des navigateurs (« Cross origin requests are only supported
+for protocol schemes: chrome, chrome-untrusted, data, http, https »). Pour
+essayer une modification en local, servir le dépôt en http :
+
+```powershell
+python -m http.server
+```
+
+puis ouvrir `http://localhost:8000/`. Les tests le font automatiquement via
+`tests/helpers/serve.js`.
 
 Pour les tests de développement uniquement :
 
@@ -309,7 +322,7 @@ python generate-stats-build.py
 Le rapprochement tient compte du type d'arme, échoue sur une absence ou une
 ambiguïté et ne contient aucune liste d'assets écrite à la main. Le catalogue
 est chargé par une balise `<script>` classique et précaché comme ressource
-essentielle : le calcul fonctionne donc en `file://` et hors ligne. Les JSON
+essentielle : le calcul fonctionne donc hors ligne. Les JSON
 `7ds-stats/*.json` ne sont jamais chargés par le navigateur ni par le service
 worker.
 
@@ -792,8 +805,8 @@ Les assets proviennent de `window.SEVEN_DS_DATA`, régénéré via
 `generate-data.ps1` lorsque l'utilisateur ajoute ou retire des images. La
 compatibilité des armures liées provient de `window.SEVEN_DS_ARMURES_LIEES`.
 
-Pourquoi un fichier généré et pas un scan JS direct ? En `file://`, JavaScript ne
-peut pas lister le contenu d'un dossier. `data.js` contourne ça sans serveur.
+Pourquoi un fichier généré et pas un scan JS direct ? Le navigateur ne peut pas
+lister le contenu d'un dossier. `data.js` contourne ça sans build.
 
 ### Forme de `window.SEVEN_DS_DATA`
 ```js

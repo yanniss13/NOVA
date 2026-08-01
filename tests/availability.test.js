@@ -303,10 +303,10 @@ assert.deepStrictEqual(plain(staleAvailabilityWeeks([], "2026-08-03", 4)), []);
 const fs = require("node:fs");
 const path = require("node:path");
 const { availabilityViewState, availabilityWeekLabel } = hooks;
-const indexSource = fs.readFileSync(
-  path.resolve(__dirname, "..", "index.html"),
-  "utf8"
-);
+/* Balisage ET script : depuis le découpage en modules, le JavaScript ne vit
+   plus dans index.html. */
+const { appSource } = require("./helpers/app-source");
+const indexSource = appSource();
 
 /* L'onglet et la vue doivent exister et se répondre par leurs attributs ARIA. */
 assert.match(
