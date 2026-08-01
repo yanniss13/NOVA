@@ -7,7 +7,7 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
 > Ce fichier est le point d'entrée pour tout agent (Codex, Claude, etc.) qui
 > reprend le projet. Lis-le en entier avant de coder.
 
-## État actuel — 2026-07-29
+## État actuel — 2026-08-01
 
 - [x] Assets rangés dans des dossiers (fournis par l'utilisateur, ne pas renommer).
 - [x] `generate-data.ps1` — scanne les dossiers et génère `data.js`.
@@ -102,6 +102,24 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       builds du roster sont copiés dans l'instantané d'équipe et leurs icônes
       permettent de changer de build sans perdre les brouillons. Une arme
       secondaire manquante rend seulement l'ATK partielle.
+- [x] **Dispos hebdomadaires des membres**. Un onglet « Dispos » où chacun peint
+      ses créneaux d'une heure sur la semaine — grille maison en CSS Grid, de
+      minuit à minuit, sans aucune bibliothèque de calendrier. Glissement
+      rectangulaire à la souris, appui maintenu au doigt, bascule d'une journée
+      ou d'une heure entière par son en-tête, et navigation complète au clavier.
+      Un formulaire dédié pose les créneaux qui enjambent minuit (« de 22h à
+      02h » sur les jours cochés), avec la plage lue comme `[début, fin[`, les
+      heures égales refusées et la nuit du dimanche écrêtée. La vue « La
+      confrérie » colore chaque créneau selon le nombre de membres disponibles
+      — nombre toujours écrit, la couleur ne portant jamais seule
+      l'information —, liste les meilleurs créneaux et ouvre la liste nominative
+      en marquant ceux qui n'ont encore rejoint aucun groupe.
+      Table `member_availability` : un masque de 168 caractères par membre et
+      par semaine, un seul upsert par geste, publiée en Realtime et purgée
+      au-delà de quatre semaines par le membre lui-même.
+      ⚠️ `member_availability.week_start` est le **lundi ISO (00h)**, calculé en
+      heure de Paris, et NON la semaine de boss qui bascule le lundi à 9h. Les
+      deux diffèrent entre minuit et 9h le lundi : ne jamais les joindre.
 
 Après cette mise à jour, l'utilisateur doit rejouer le contenu complet de
 `supabase/schema.sql` dans le SQL Editor Supabase afin d'appliquer le schéma,
