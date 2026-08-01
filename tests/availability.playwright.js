@@ -348,6 +348,59 @@ function ownMask(page){
       "La reprise doit rester masquée quand des dispos existent déjà"
     );
 
+    /* Vue confrérie : effectifs écrits en clair, densité par paliers, panneau
+       nominatif et marquage des membres sans groupe. */
+    await page.click("#availModeGuild");
+    await page.waitForSelector("#availGrid .avail-cell[data-tier]");
+    assert.ok(
+      await page.locator("#availRangeForm").isHidden(),
+      "Les commandes de saisie n'ont pas leur place en lecture collective"
+    );
+
+    // Alix et Béa sont dispos à 21h le lundi, moi non : le compte doit valoir 2.
+    const cell21 = page.locator('#availGrid .avail-cell[data-index="21"]');
+    assert.equal(
+      (await cell21.innerText()).trim(), "2",
+      "La case doit écrire l'effectif, la couleur ne suffit pas"
+    );
+    assert.equal(
+      await cell21.getAttribute("data-tier"), "4",
+      "Le créneau le plus fourni doit atteindre le palier maximal"
+    );
+
+    assert.match(
+      await page.locator("#availBest").innerText(),
+      /Meilleurs créneaux/,
+      "Les meilleurs créneaux de la semaine doivent être proposés"
+    );
+
+    await cell21.scrollIntoViewIfNeeded();
+    await cell21.click();
+    await page.waitForSelector("#availSlotOverlay[aria-hidden='false']");
+    const slotTitle = await page.locator("#availSlotTitle").innerText();
+    assert.match(slotTitle, /Lundi 21h/, "Le panneau doit nommer le créneau");
+    assert.match(slotTitle, /2 membres/);
+    const listText = await page.locator("#availSlotList").innerText();
+    assert.match(listText, /Alix/, "Le panneau doit nommer les membres");
+    assert.match(listText, /Béa/);
+    // Béa a rejoint un groupe, Alix non : une seule mention « sans groupe ».
+    assert.equal(
+      await page.locator("#availSlotList .avail-slot-tag").count(), 1,
+      "Seul le membre sans groupe doit porter la mention"
+    );
+    assert.match(
+      await page.locator("#availSlotList li:has(.avail-slot-tag)").innerText(),
+      /Alix/,
+      "C'est Alix, sans groupe cette semaine, qui doit être marquée"
+    );
+    await page.click("#availSlotClose");
+    await page.waitForSelector("#availSlotOverlay", { state:"hidden" });
+    assert.equal(
+      await page.locator("#availSlotOverlay").getAttribute("aria-hidden"),
+      "true",
+      "La fermeture doit rendre le panneau inerte pour les lecteurs d'écran"
+    );
+
     assert.deepEqual(errors, [], "Aucune erreur JS ne doit survenir");
     console.log("PASS Playwright: dispos hebdomadaires");
   }finally{

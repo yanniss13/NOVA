@@ -1550,6 +1550,18 @@
   .avail-range-days input:checked + span{color:var(--gold-bright);font-weight:700}
   .avail-range-days label:focus-within{outline:2px solid var(--gold-bright)}
   .avail-actions{margin:14px 0 0}
+  .avail-best{font-size:13px;color:var(--muted);margin:14px 0 0;
+    display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+  .avail-slot-list{list-style:none;margin:0;padding:0;max-height:60vh;overflow:auto}
+  .avail-slot-list li{
+    display:flex;align-items:center;gap:10px;min-height:44px;
+    border-bottom:1px solid var(--line-soft);font-size:14px
+  }
+  .avail-slot-list li.me b{color:var(--gold-bright)}
+  .avail-slot-tag{
+    margin-left:auto;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+    color:var(--muted-2);border:1px solid var(--line);border-radius:999px;padding:3px 8px
+  }
 
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
@@ -1734,6 +1746,7 @@
       <span class="avail-week" id="availWeek"></span>
     </div>
     <div id="availBody"></div>
+    <p class="avail-best" id="availBest"></p>
     <div class="avail-range" id="availRangeForm">
       <span class="avail-range-title">Ajouter un créneau</span>
       <label class="avail-range-hour">de
@@ -1845,6 +1858,18 @@
 </div>
 
 <!-- Détail d'une équipe -->
+<!-- Membres disponibles sur un créneau -->
+<div class="overlay" id="availSlotOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="availSlotTitle" aria-hidden="true">
+  <div class="modal">
+    <div class="picker-head">
+      <span class="picker-title" id="availSlotTitle">Créneau</span>
+      <button class="icon-btn" id="availSlotClose" aria-label="Fermer">✕</button>
+    </div>
+    <ul class="avail-slot-list" id="availSlotList"></ul>
+  </div>
+</div>
+
 <div class="overlay" id="teamOverlay" role="dialog" aria-modal="true"
      aria-labelledby="teamTitle" aria-hidden="true">
   <div class="modal teammodal">
@@ -7205,6 +7230,12 @@
       }
       wrap.appendChild(grid);
       body.appendChild(wrap);
+      if(state.mode === "guild"){
+        grid.addEventListener("click", event => {
+          const cell = event.target.closest(".avail-cell[data-index]");
+          if(cell) openSlot(Number(cell.dataset.index));
+        });
+      }
       bindGrid();
     }
 
@@ -7219,8 +7250,11 @@
         "aria-pressed", String(state.mode === "guild")
       );
       renderGrid();
+      renderBest();
       syncRangeControls();
       syncCopyButton();
+      /* Les commandes de saisie n'ont aucun sens en lecture collective. */
+      $("#availRangeForm").hidden = state.mode === "guild";
     }
 
     function setMode(mode){
@@ -7246,6 +7280,7 @@
           writeAvailabilityCache(user.id, weekStart, rows);
         }
       }
+      await loadOwnersWithGroup();
       state = availabilityViewState({
         now:new Date(),
         rows,
@@ -7525,6 +7560,102 @@
       return true;
     }
 
+    let ownersWithGroup = new Set();
+    let pseudos = [];
+
+    /* Les pseudos viennent de `profiles`, via le même cache que les vues
+       partagées. `profilePseudo()` ne convient pas : elle résout le pseudo du
+       compte connecté, pas celui d'un propriétaire quelconque. */
+    function pseudoOfOwner(owner){
+      const found = pseudos.find(profile => profile.id === owner);
+      if(found) return found.pseudo;
+      if(currentUser && owner === currentUser.id) return currentPseudo || "Moi";
+      return "Membre";
+    }
+
+    /* Les participations disent qui a déjà rejoint un groupe. Elles se lisent
+       sur la SEMAINE DE BOSS, qui bascule le lundi à 9h, et non sur la semaine
+       ISO de la grille : les deux ne coïncident pas le lundi matin. */
+    async function loadOwnersWithGroup(){
+      ownersWithGroup = new Set();
+      if(!currentUser || !sb) return;
+      pseudos = await refreshRosterProfiles().catch(()=>rosterProfiles.slice());
+      const week = currentBossWeek();
+      const sessions = await sb.from("boss_sessions")
+        .select("id")
+        .eq("week_start", week.startDate);
+      if(sessions.error || !sessions.data || !sessions.data.length) return;
+      const participation = await sb.from("boss_participation")
+        .select("owner,session_id")
+        .in("session_id", sessions.data.map(session => session.id));
+      if(participation.error) return;
+      (participation.data || []).forEach(row => {
+        if(row.owner) ownersWithGroup.add(row.owner);
+      });
+    }
+
+    function renderBest(){
+      const node = $("#availBest");
+      node.innerHTML = "";
+      if(!state || state.mode !== "guild") return;
+      const { best } = aggregateAvailability(state.rows);
+      if(!best.length){
+        node.textContent = "Personne n'a encore posé de dispo cette semaine.";
+        return;
+      }
+      node.appendChild(document.createTextNode("Meilleurs créneaux :"));
+      best.forEach(entry => {
+        const slot = availabilitySlotFromIndex(entry.index);
+        const button = document.createElement("button");
+        button.type = "button";
+        button.className = "btn btn-ghost";
+        button.textContent = AVAIL_DAY_LABELS[slot.day]
+          + " " + String(slot.hour).padStart(2, "0") + "h"
+          + " (" + entry.count + ")";
+        button.addEventListener("click", ()=>openSlot(entry.index));
+        node.appendChild(button);
+      });
+    }
+
+    function openSlot(index){
+      if(!state || state.mode !== "guild") return;
+      const slot = availabilitySlotFromIndex(index);
+      const members = availabilitySlotMembers(state.rows, index, {
+        pseudoOf:pseudoOfOwner,
+        currentUserId:currentUser ? currentUser.id : "",
+        ownersWithGroup
+      });
+      $("#availSlotTitle").textContent = AVAIL_DAY_FULL[slot.day]
+        + " " + String(slot.hour).padStart(2, "0") + "h — "
+        + members.length + " membre" + (members.length > 1 ? "s" : "");
+      const list = $("#availSlotList");
+      list.innerHTML = "";
+      if(!members.length){
+        const empty = document.createElement("li");
+        empty.textContent = "Personne n'est disponible sur ce créneau.";
+        list.appendChild(empty);
+      }
+      members.forEach(member => {
+        const row = document.createElement("li");
+        row.classList.toggle("me", member.isMe);
+        const name = document.createElement("b");
+        name.textContent = member.pseudo + (member.isMe ? " (toi)" : "");
+        row.appendChild(name);
+        if(member.withoutGroup){
+          const tag = document.createElement("span");
+          tag.className = "avail-slot-tag";
+          tag.textContent = "sans groupe";
+          row.appendChild(tag);
+        }
+        list.appendChild(row);
+      });
+      ModalStack.open($("#availSlotOverlay"), "#availSlotClose", closeSlot);
+    }
+
+    function closeSlot(){
+      ModalStack.close($("#availSlotOverlay"));
+    }
+
     function syncCopyButton(){
       const button = $("#availCopyPrevious");
       /* Le bouton ne s'affiche que s'il a quelque chose à apporter : une
@@ -7535,9 +7666,12 @@
     return {
       refresh, render, setMode, applyMask, saveNow, isSaving,
       fillHourOptions, syncRangeControls, applyRange, copyPreviousWeek,
+      openSlot, closeSlot,
       get state(){ return state; }
     };
   })();
+
+  $("#availSlotClose").addEventListener("click", ()=>Availability.closeSlot());
 
   $("#availModeMine").addEventListener("click", ()=>Availability.setMode("mine"));
   $("#availModeGuild").addEventListener("click", ()=>Availability.setMode("guild"));

@@ -440,4 +440,14 @@ assert.match(
   "Les sept cases de jours doivent être regroupées"
 );
 
+assert.match(indexSource, /id="availSlotOverlay"/);
+assert.match(indexSource, /id="availSlotTitle"/);
+assert.match(indexSource, /id="availSlotList"/);
+assert.match(indexSource, /id="availBest"/);
+assert.match(
+  indexSource,
+  /sans groupe/i,
+  "Le panneau doit marquer les membres sans groupe"
+);
+
 console.log("availability.test.js OK");
