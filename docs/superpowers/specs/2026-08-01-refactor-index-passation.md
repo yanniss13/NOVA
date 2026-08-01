@@ -58,17 +58,50 @@ soit jamais passée au rouge.
 
 Commits : `77d18c0` (serveur), `35c0bcb` (conversion des six tests).
 
-### Prochaine étape — lot 1, le pivot
+### Lot 1 — TERMINÉ
 
-Déplacer le script en ligne de `index.html` (~10 400 lignes) vers `js/app.js`,
-chargé par `<script type="module" src="js/app.js">`. **Déplacement pur, aucun
-découpage**, aucune ligne de code modifiée.
+Le script principal a quitté `index.html` pour `js/app.js`, chargé par
+`<script type="module" src="js/app.js"></script>`. **Déplacement pur : aucune
+ligne de code applicatif n'a été modifiée.** `npm test` est vert, tests
+navigateur compris — ce qui prouve que le module se charge bien en http.
 
-Le détail pas à pas est dans
-[le plan](../plans/2026-08-01-refactor-index-lot0-lot1.md), tâche 3. Les trois
-points à ne pas oublier : `CORE_ASSETS` dans `sw.js`, la source lue par
-`tests/helpers/load-app.js`, et la phrase d'`AGENTS.md` qui promet le
-double-clic et devient fausse.
+- `index.html` : **12 752 → 2 263 lignes**. Il ne reste que le CSS, le balisage
+  et les deux petits scripts de fin (service worker, header rétractable), qui
+  restent classiques et en ligne à dessein.
+- `js/app.js` : 10 489 lignes, toujours une seule IIFE. **Rien n'y est encore
+  découpé.**
+- `sw.js` : `"./js/app.js"` ajouté à `CORE_ASSETS`.
+- `tests/helpers/modules.js` : **source unique de vérité** de l'ordre des
+  modules. Toute extraction s'y déclare, sinon ni le chargeur `vm` ni le lecteur
+  de source ne verront le nouveau fichier.
+- `tests/helpers/app-source.js` : concatène `index.html` et les modules pour les
+  tests qui vérifient la structure du code. Quatre fichiers l'utilisent —
+  `availability`, `potentiel-commun`, `stats-build` — parce que leurs assertions
+  cherchaient du JavaScript qui a déménagé.
+- `AGENTS.md` : les quatre passages qui promettaient `file://` sont corrigés.
+
+Commit : `692833c`.
+
+### Prochaine étape — lot 2, première extraction
+
+À partir d'ici, on suit **la recette** de la fin du
+[plan](../plans/2026-08-01-refactor-index-lot0-lot1.md) : un domaine par lot,
+`npm test` vert, commit, et mise à jour de cette section dans le même commit.
+
+Deux pièges qui n'ont pas encore été rencontrés, parce que `js/app.js` est
+encore un fichier unique sans `import`/`export` :
+
+1. **Le `vm` ne sait pas exécuter `import`/`export`.** Dès la première
+   extraction, `tests/helpers/load-app.js` devra neutraliser ces lignes avant
+   d'exécuter la concaténation. Le code à ajouter est donné à l'étape 6 de la
+   recette.
+2. **Trois endroits à mettre à jour pour chaque fichier extrait**, et en oublier
+   un casse quelque chose de silencieux : `CORE_ASSETS` dans `sw.js` (mode hors
+   ligne), `MODULES` dans `tests/helpers/modules.js` (tests unitaires), et les
+   `import` réels dans le module qui consomme.
+
+Ordre proposé, à confirmer par un relevé des dépendances réelles : `dates`,
+`masques-dispos`, `modal-stack`, `toast`, `supabase`, puis les vues.
 
 ## Pourquoi ce refactor
 
