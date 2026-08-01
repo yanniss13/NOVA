@@ -6843,6 +6843,63 @@
     return availabilityMaskWith(mask, indexes, fill);
   }
 
+  function aggregateAvailability(rows){
+    const counts = new Array(AVAIL_SLOTS).fill(0);
+    (rows || []).forEach(row => {
+      const mask = normalizeAvailabilityMask(row && row.slots);
+      for(let index = 0; index < AVAIL_SLOTS; index += 1){
+        if(mask[index] === "1") counts[index] += 1;
+      }
+    });
+    let max = 0;
+    counts.forEach(count => { if(count > max) max = count; });
+    /* À effectif égal, le créneau le plus tôt passe devant : le classement
+       reste déterministe, donc testable et stable d'un rendu à l'autre. */
+    const best = counts
+      .map((count, index) => ({ index, count }))
+      .filter(entry => entry.count > 0)
+      .sort((a, b) => b.count - a.count || a.index - b.index)
+      .slice(0, 3);
+    return { counts, max, best };
+  }
+
+  function availabilityDensityTier(count, max){
+    if(!count || !max) return 0;
+    return Math.min(4, Math.ceil((count / max) * 4));
+  }
+
+  function availabilitySlotMembers(rows, index, options){
+    const config = options || {};
+    const pseudoOf = config.pseudoOf || (() => "");
+    const withGroup = config.ownersWithGroup || new Set();
+    const members = (rows || [])
+      .filter(row => normalizeAvailabilityMask(row && row.slots)[index] === "1")
+      .map(row => ({
+        owner:row.owner,
+        pseudo:pseudoOf(row.owner) || "Membre",
+        isMe:row.owner === config.currentUserId,
+        withoutGroup:!withGroup.has(row.owner)
+      }));
+    members.sort((a, b) =>
+      (b.isMe ? 1 : 0) - (a.isMe ? 1 : 0)
+      || a.pseudo.localeCompare(b.pseudo, "fr")
+    );
+    return members;
+  }
+
+  /* Purge auto-nettoyante : chaque membre supprime SES anciennes semaines en
+     enregistrant, ce qui évite une tâche planifiée côté serveur. La comparaison
+     de chaînes suffit, le format ISO étant ordonné lexicographiquement.
+     `keepWeeks` compte la semaine courante : on recule donc de keepWeeks - 1
+     semaines pour trouver la plus ancienne à conserver. */
+  function staleAvailabilityWeeks(weekStarts, currentWeekStart, keepWeeks){
+    let floor = currentWeekStart;
+    for(let step = 1; step < keepWeeks; step += 1){
+      floor = availabilityPreviousWeekStart(floor);
+    }
+    return (weekStarts || []).filter(week => week < floor);
+  }
+
   /* ============================ Navigation onglets ============================ */
   const mainTabs = [...document.querySelectorAll(".tab[data-view]")];
 

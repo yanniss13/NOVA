@@ -184,4 +184,120 @@ function selectedIndexes(mask){
   assert.strictEqual(cleared[2], "1");
 }
 
+const {
+  aggregateAvailability,
+  availabilityDensityTier,
+  availabilitySlotMembers,
+  staleAvailabilityWeeks
+} = hooks;
+
+function maskOf(indexes){
+  const chars = EMPTY.split("");
+  indexes.forEach(index => { chars[index] = "1"; });
+  return chars.join("");
+}
+
+/* Agrégation : trois membres, des recouvrements partiels. */
+{
+  const rows = [
+    { owner:"a", slots:maskOf([20, 21, 22]) },
+    { owner:"b", slots:maskOf([21, 22]) },
+    { owner:"c", slots:maskOf([21]) }
+  ];
+  const { counts, max, best } = aggregateAvailability(rows);
+  assert.strictEqual(counts.length, 168);
+  assert.strictEqual(counts[20], 1);
+  assert.strictEqual(counts[21], 3);
+  assert.strictEqual(counts[22], 2);
+  assert.strictEqual(counts[23], 0);
+  assert.strictEqual(max, 3);
+  assert.deepStrictEqual(plain(best), [
+    { index:21, count:3 },
+    { index:22, count:2 },
+    { index:20, count:1 }
+  ]);
+}
+
+/* Une ligne au masque corrompu ne doit pas fausser le comptage. */
+{
+  const { counts, max } = aggregateAvailability([
+    { owner:"a", slots:"pas un masque" },
+    { owner:"b", slots:null },
+    { owner:"c", slots:maskOf([5]) }
+  ]);
+  assert.strictEqual(max, 1);
+  assert.strictEqual(counts[5], 1);
+}
+
+/* Semaine vide : aucun meilleur créneau, aucun maximum. */
+{
+  const { max, best } = aggregateAvailability([]);
+  assert.strictEqual(max, 0);
+  assert.deepStrictEqual(plain(best), []);
+}
+
+/* Égalité : le créneau le plus tôt passe devant, pour un classement stable. */
+{
+  const rows = [{ owner:"a", slots:maskOf([100, 40, 70]) }];
+  const { best } = aggregateAvailability(rows);
+  assert.deepStrictEqual(plain(best.map(entry => entry.index)), [40, 70, 100]);
+}
+
+/* Moins de trois créneaux occupés : on n'invente jamais un créneau vide. */
+{
+  const { best } = aggregateAvailability([{ owner:"a", slots:maskOf([3]) }]);
+  assert.deepStrictEqual(plain(best), [{ index:3, count:1 }]);
+}
+
+/* Paliers de densité : cinq niveaux, et zéro quand personne n'a rien saisi. */
+assert.strictEqual(availabilityDensityTier(0, 16), 0);
+assert.strictEqual(availabilityDensityTier(1, 16), 1);
+assert.strictEqual(availabilityDensityTier(4, 16), 1);
+assert.strictEqual(availabilityDensityTier(5, 16), 2);
+assert.strictEqual(availabilityDensityTier(16, 16), 4);
+assert.strictEqual(availabilityDensityTier(0, 0), 0, "Aucune division par zéro");
+assert.strictEqual(availabilityDensityTier(3, 0), 0);
+
+/* Membres d'un créneau : moi d'abord, puis l'ordre alphabétique. Le marquage
+   « sans groupe » repose sur les participations de la semaine de boss. */
+{
+  const rows = [
+    { owner:"zoe", slots:maskOf([21]) },
+    { owner:"moi", slots:maskOf([21]) },
+    { owner:"alix", slots:maskOf([21]) },
+    { owner:"absent", slots:maskOf([22]) }
+  ];
+  const members = availabilitySlotMembers(rows, 21, {
+    pseudoOf:owner => ({ zoe:"Zoé", moi:"Moi", alix:"Alix" })[owner],
+    currentUserId:"moi",
+    ownersWithGroup:new Set(["alix"])
+  });
+  assert.deepStrictEqual(plain(members), [
+    { owner:"moi", pseudo:"Moi", isMe:true, withoutGroup:true },
+    { owner:"alix", pseudo:"Alix", isMe:false, withoutGroup:false },
+    { owner:"zoe", pseudo:"Zoé", isMe:false, withoutGroup:true }
+  ]);
+}
+
+/* Un profil manquant ne doit jamais produire « undefined » à l'écran. */
+{
+  const members = availabilitySlotMembers(
+    [{ owner:"inconnu", slots:maskOf([0]) }],
+    0,
+    { pseudoOf:() => null, currentUserId:"moi", ownersWithGroup:new Set() }
+  );
+  assert.strictEqual(members[0].pseudo, "Membre");
+}
+
+/* Purge : quatre semaines conservées, la cinquième part. */
+assert.deepStrictEqual(
+  plain(staleAvailabilityWeeks(
+    ["2026-08-03", "2026-07-27", "2026-07-06", "2026-06-29"],
+    "2026-08-03",
+    4
+  )),
+  ["2026-07-06", "2026-06-29"]
+);
+assert.deepStrictEqual(plain(staleAvailabilityWeeks([], "2026-08-03", 4)), []);
+
 console.log("availability.test.js OK");

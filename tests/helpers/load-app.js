@@ -114,6 +114,18 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   paintAvailabilityRectangle:typeof paintAvailabilityRectangle === "function"
     ? paintAvailabilityRectangle
     : undefined,
+  aggregateAvailability:typeof aggregateAvailability === "function"
+    ? aggregateAvailability
+    : undefined,
+  availabilityDensityTier:typeof availabilityDensityTier === "function"
+    ? availabilityDensityTier
+    : undefined,
+  availabilitySlotMembers:typeof availabilitySlotMembers === "function"
+    ? availabilitySlotMembers
+    : undefined,
+  staleAvailabilityWeeks:typeof staleAvailabilityWeeks === "function"
+    ? staleAvailabilityWeeks
+    : undefined,
   normalizePotentiel,
   normalizeHero,
   normalizeTeam,
