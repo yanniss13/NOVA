@@ -100,13 +100,31 @@ maintenant écrit et couvert.
 
 Commit : `255636e`.
 
+### Lots 3 et 4 — TERMINÉS
+
+- **Lot 3** : `js/modal-stack.js` (167 lignes), la pile de modales. Bloc net,
+  n'exposant que `ModalStack`. Commit `6630876`.
+- **Lot 4** : `js/dom.js` (45 lignes) — `$`, `uid`, `norm`, `initials`,
+  `numericKeyboardInputProps`, `el`. Commit `68f4e39`.
+
+Le lot 4 mérite une explication, parce qu'il n'était pas dans l'ordre prévu.
+`Picker`, `Potentiel`, `DashboardStore` et `RealtimeSync` semblaient être les
+prochains candidats évidents ; le relevé de leurs dépendances a montré qu'ils
+s'appuient **tous** sur `$`, `el` et `norm`. Ces utilitaires étaient donc la
+vraie feuille de l'arbre. Les sortir en premier débloque les quatre.
+
+**Leçon pour la suite : ne pas se fier à l'ordre proposé, relever les
+dépendances réelles avant de choisir.** La commande est donnée plus bas.
+
 ### Où en sont les fichiers
 
 | Fichier | Lignes |
 |---|---|
 | `index.html` | 2 263 |
-| `js/app.js` | 10 265 |
+| `js/app.js` | 10 082 |
 | `js/dispos-logique.js` | 282 |
+| `js/modal-stack.js` | 167 |
+| `js/dom.js` | 45 |
 
 ### Prochaine étape — lot 3 et suivants
 
@@ -127,9 +145,49 @@ quelque chose de silencieux :
 3. l'`import` réel en tête de `js/app.js`, **au-dessus de l'IIFE** : un `import`
    ne peut pas vivre dans une portée de fonction.
 
-Candidats suivants, du plus isolé au plus emmêlé : `modal-stack`, `toast`, les
-dates de boss (`currentBossWeek` et les helpers du tableau de bord), puis
-`supabase`, puis les vues.
+**Relever les dépendances réelles avant de choisir le prochain domaine.** Ce
+script donne, pour chaque module en IIFE, ses bornes et ce dont il dépend encore :
+
+```bash
+python - <<'PY'
+import io, re
+NL="\r\n"
+lines = io.open("js/app.js", encoding="utf-8", newline="").read().split(NL)
+def bornes(nom):
+    deb = next(i for i,l in enumerate(lines,1)
+               if l.startswith("  const %s = (function(){" % nom))
+    fin = next(i for i in range(deb, len(lines)+1) if lines[i-1].startswith("  })();"))
+    return deb, fin
+for nom in ["Picker","Potentiel","DashboardStore","RealtimeSync","Availability"]:
+    try: d, f = bornes(nom)
+    except StopIteration: print(nom, ": deja extrait ou introuvable"); continue
+    bloc = lines[d-1:f]
+    appels = set(re.findall(r"(?<![.\w$])([A-Za-z_$][\w$]*)\s*\(", NL.join(bloc)))
+    internes = {m.group(1) for l in bloc
+                for m in [re.match(r"\s+(?:const|let|function)\s+([A-Za-z_$][\w$]*)", l)] if m}
+    builtins = {"if","for","while","switch","catch","return","function","Number","String",
+                "Array","Object","Date","Set","Map","Math","JSON","parseInt","parseFloat",
+                "setTimeout","clearTimeout","requestAnimationFrame","Promise","Boolean"}
+    ext = sorted(a for a in appels if a not in internes and a not in builtins and a != nom)
+    print("%-15s %5d-%-5d (%4d lignes) | depend de : %s"
+          % (nom, d, f, f-d+1, ", ".join(ext[:12]) or "rien"))
+PY
+```
+
+État constaté au lot 4 — à refaire, il a changé depuis :
+
+| Module | Lignes | Dépend encore de |
+|---|---|---|
+| `Picker` | 90 | `$`, `el`, `norm` → **désormais extraits, il est prêt** |
+| `Potentiel` | 64 | `charOf`, `normalizePotentiel`, `potentielDetailsOf`, `renderBonus`, `renderBuilder`, `weaponTypesOf` |
+| `DashboardStore` | 95 | `buildDashboardState`, `currentBossWeek`, `readDashboardCache`, `writeDashboardCache` |
+| `RealtimeSync` | 141 | les rendus de toutes les vues — **à garder pour la fin** |
+
+Prochain candidat évident : **`Picker`**, dont toutes les dépendances sont
+sorties. Ensuite les fonctions de potentiel, puis les dates de boss
+(`currentBossWeek` et les helpers du tableau de bord), puis les vues.
+`RealtimeSync` en dernier : il appelle les rendus de toutes les vues, il ne
+pourra sortir qu'une fois celles-ci extraites.
 
 ## Pourquoi ce refactor
 
