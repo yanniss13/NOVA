@@ -1037,6 +1037,43 @@ grant execute on function public.select_boss_team(uuid, uuid) to authenticated;
 grant execute on function public.complete_boss_run_with_report(uuid, bigint, text) to authenticated;
 grant execute on function public.update_boss_run_report(uuid, bigint, text) to authenticated;
 
+-- 8) Disponibilités hebdomadaires des membres.
+-- Une ligne par membre et par semaine : la saisie complète tient dans un seul
+-- upsert, là où une ligne par créneau produirait des centaines d'écritures.
+-- `week_start` est le LUNDI ISO (00h) et NON la semaine de boss, qui bascule le
+-- lundi à 9h via private.current_boss_week_start(). Les deux diffèrent entre
+-- minuit et 9h le lundi : ne jamais les joindre.
+-- `slots` : un caractère par créneau d'une heure, à l'index jour * 24 + heure,
+-- le jour 0 étant le lundi. '1' = disponible.
+create table if not exists public.member_availability (
+  owner      uuid not null references auth.users(id) on delete cascade,
+  week_start date not null,
+  slots      text not null default repeat('0', 168)
+             check (slots ~ '^[01]{168}$'),
+  updated_at timestamptz not null default now(),
+  primary key (owner, week_start)
+);
+
+create index if not exists member_availability_week_idx
+  on public.member_availability(week_start);
+
+alter table public.member_availability enable row level security;
+
+drop policy if exists avail_read   on public.member_availability;
+drop policy if exists avail_insert on public.member_availability;
+drop policy if exists avail_update on public.member_availability;
+drop policy if exists avail_delete on public.member_availability;
+
+create policy avail_read on public.member_availability
+  for select to authenticated using (true);
+create policy avail_insert on public.member_availability
+  for insert to authenticated with check (owner = auth.uid());
+create policy avail_update on public.member_availability
+  for update to authenticated using (owner = auth.uid())
+  with check (owner = auth.uid());
+create policy avail_delete on public.member_availability
+  for delete to authenticated using (owner = auth.uid());
+
 -- ============================ Realtime ============================
 -- Chaque table est vérifiée séparément pour que le schéma complet reste rejouable.
 do $$
@@ -1049,7 +1086,8 @@ begin
     'roster_characters',
     'boss_sessions',
     'boss_participation',
-    'boss_run_reports'
+    'boss_run_reports',
+    'member_availability'
   ]
   loop
     if not exists (
