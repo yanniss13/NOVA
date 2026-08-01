@@ -132,6 +132,12 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   availabilityWeekLabel:typeof availabilityWeekLabel === "function"
     ? availabilityWeekLabel
     : undefined,
+  availabilityToggleDay:typeof availabilityToggleDay === "function"
+    ? availabilityToggleDay
+    : undefined,
+  availabilityToggleHour:typeof availabilityToggleHour === "function"
+    ? availabilityToggleHour
+    : undefined,
   normalizePotentiel,
   normalizeHero,
   normalizeTeam,

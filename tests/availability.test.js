@@ -395,4 +395,36 @@ assert.strictEqual(
   assert.match(state.message, /connecte/i);
 }
 
+const { availabilityToggleDay, availabilityToggleHour } = hooks;
+
+/* En-tête de jour : remplit la colonne, puis la vide au second appui. */
+{
+  const filled = availabilityToggleDay(EMPTY, 2);
+  for(let hour = 0; hour < 24; hour += 1){
+    assert.strictEqual(filled[48 + hour], "1");
+  }
+  assert.strictEqual(filled[47], "0");
+  assert.strictEqual(filled[72], "0");
+  assert.strictEqual(availabilityToggleDay(filled, 2), EMPTY);
+}
+
+/* Journée partiellement remplie : le premier appui complète, il n'efface pas. */
+{
+  const partial = maskOf([48, 49]);
+  const filled = availabilityToggleDay(partial, 2);
+  for(let hour = 0; hour < 24; hour += 1){
+    assert.strictEqual(filled[48 + hour], "1");
+  }
+}
+
+/* Gouttière d'heure : même règle, sur les sept jours. */
+{
+  const filled = availabilityToggleHour(EMPTY, 21);
+  assert.deepStrictEqual(
+    selectedIndexes(filled),
+    [21, 45, 69, 93, 117, 141, 165]
+  );
+  assert.strictEqual(availabilityToggleHour(filled, 21), EMPTY);
+}
+
 console.log("availability.test.js OK");

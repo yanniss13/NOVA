@@ -6915,6 +6915,26 @@
     return availabilityMaskWith(mask, indexes, fill);
   }
 
+  /* Les raccourcis suivent la même règle que le glissement : tant qu'il reste
+     une case vide on remplit, et on n'efface qu'une sélection déjà complète. */
+  function availabilityToggleDay(mask, day){
+    const indexes = [];
+    for(let hour = 0; hour < AVAIL_HOURS; hour += 1){
+      indexes.push(availabilitySlotIndex(day, hour));
+    }
+    const full = indexes.every(index => availabilityMaskHas(mask, index));
+    return availabilityMaskWith(mask, indexes, !full);
+  }
+
+  function availabilityToggleHour(mask, hour){
+    const indexes = [];
+    for(let day = 0; day < AVAIL_DAYS; day += 1){
+      indexes.push(availabilitySlotIndex(day, hour));
+    }
+    const full = indexes.every(index => availabilityMaskHas(mask, index));
+    return availabilityMaskWith(mask, indexes, !full);
+  }
+
   function aggregateAvailability(rows){
     const counts = new Array(AVAIL_SLOTS).fill(0);
     (rows || []).forEach(row => {
@@ -7148,6 +7168,7 @@
       }
       wrap.appendChild(grid);
       body.appendChild(wrap);
+      bindGrid();
     }
 
     function render(){
@@ -7197,7 +7218,216 @@
       return true;
     }
 
-    return { refresh, render, setMode, get state(){ return state; } };
+    /* Enregistrement différé : un glissement produit un seul upsert, et le
+       drapeau `savePending` sert de garde contre l'écho Realtime de sa propre
+       écriture (voir RealtimeSync). */
+    let saveTimer = null;
+    let savePending = false;
+    let anchor = null;
+    let lastCell = null;
+    let paintFill = true;
+    let holdTimer = null;
+    let painting = false;
+
+    function isSaving(){ return savePending; }
+
+    /* Indicateur dédié plutôt que #liveStatus : ce dernier appartient à
+       RealtimeSync, qui y écrit l'état de la connexion. Deux écrivains sur le
+       même nœud produiraient des messages qui se chassent l'un l'autre. */
+    function setSaveStatus(stateName, text){
+      const node = $("#availSaveStatus");
+      if(!node) return;
+      node.dataset.state = stateName;
+      node.textContent = text;
+    }
+
+    async function saveNow(){
+      clearTimeout(saveTimer);
+      saveTimer = null;
+      if(!state || !state.canEdit || !currentUser || !sb){
+        savePending = false;
+        return false;
+      }
+      setSaveStatus("saving", "Enregistrement…");
+      const payload = {
+        owner:currentUser.id,
+        week_start:state.weekStart,
+        slots:state.mask,
+        updated_at:new Date().toISOString()
+      };
+      const { error } = await sb.from("member_availability")
+        .upsert(payload, { onConflict:"owner,week_start" });
+      savePending = false;
+      if(error){
+        setSaveStatus("error", "Non enregistré");
+        toast("Dispos non enregistrées : réessaie une fois reconnecté.", true);
+        return false;
+      }
+      const own = state.rows.find(row => row.owner === currentUser.id);
+      if(own) own.slots = state.mask;
+      else state.rows.push({ owner:currentUser.id, slots:state.mask });
+      writeAvailabilityCache(currentUser.id, state.weekStart, state.rows);
+      const stamp = new Intl.DateTimeFormat("fr-FR", {
+        timeZone:"Europe/Paris", hour:"2-digit", minute:"2-digit"
+      }).format(new Date());
+      setSaveStatus("saved", "Enregistré à "+stamp);
+      return true;
+    }
+
+    function scheduleSave(){
+      savePending = true;
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(()=>void saveNow(), 600);
+    }
+
+    function applyMask(mask){
+      if(!state || !state.canEdit || mask === state.mask) return;
+      state.mask = mask;
+      render();
+      scheduleSave();
+    }
+
+    function cellFrom(target){
+      if(!target || !target.dataset || target.dataset.index === undefined){
+        return null;
+      }
+      return {
+        day:Number(target.dataset.day),
+        hour:Number(target.dataset.hour),
+        index:Number(target.dataset.index)
+      };
+    }
+
+    function previewRectangle(cursor){
+      if(!anchor) return;
+      const grid = $("#availGrid");
+      if(!grid) return;
+      const preview = paintAvailabilityRectangle(
+        state.mask, anchor, cursor, paintFill
+      );
+      grid.querySelectorAll(".avail-cell").forEach(cell => {
+        const index = Number(cell.dataset.index);
+        cell.setAttribute("aria-pressed", String(preview[index] === "1"));
+        cell.classList.toggle("preview", preview[index] !== state.mask[index]);
+      });
+    }
+
+    function endPaint(cursor){
+      clearTimeout(holdTimer);
+      holdTimer = null;
+      if(!anchor) return;
+      const target = cursor || lastCell || anchor;
+      const mask = paintAvailabilityRectangle(
+        state.mask, anchor, target, paintFill
+      );
+      anchor = null;
+      lastCell = null;
+      painting = false;
+      applyMask(mask);
+      /* Un second rendu efface l'aperçu quand le masque n'a pas changé :
+         applyMask sort alors sans redessiner. */
+      render();
+    }
+
+    function bindGrid(){
+      const grid = $("#availGrid");
+      if(!grid || !state.canEdit || state.mode !== "mine") return;
+      grid.addEventListener("pointerdown", event => {
+        const cell = cellFrom(event.target);
+        if(!cell) return;
+        anchor = cell;
+        lastCell = cell;
+        paintFill = !availabilityMaskHas(state.mask, cell.index);
+        painting = event.pointerType === "mouse";
+        if(painting){
+          grid.setPointerCapture(event.pointerId);
+          event.preventDefault();
+        }else{
+          /* Sur écran tactile, la peinture ne démarre qu'après un appui
+             maintenu : un glissement immédiat doit rester un défilement. */
+          holdTimer = setTimeout(() => {
+            painting = true;
+            try{ grid.setPointerCapture(event.pointerId); }catch(error){}
+          }, 150);
+        }
+      });
+      grid.addEventListener("pointermove", event => {
+        if(!anchor || !painting) return;
+        const cell = cellFrom(document.elementFromPoint(
+          event.clientX, event.clientY
+        ));
+        if(cell){
+          lastCell = cell;
+          previewRectangle(cell);
+        }
+        event.preventDefault();
+      });
+      /* La capture du pointeur redirige `pointerup` vers la GRILLE : son
+         `event.target` n'est donc plus la case survolée. On repasse par la
+         position du curseur, avec la dernière case connue en repli. */
+      grid.addEventListener("pointerup", event => {
+        if(!anchor) return;
+        endPaint(cellFrom(document.elementFromPoint(
+          event.clientX, event.clientY
+        )));
+      });
+      grid.addEventListener("pointercancel", ()=>{
+        clearTimeout(holdTimer);
+        anchor = null;
+        painting = false;
+        render();
+      });
+      grid.addEventListener("click", event => {
+        const head = event.target.closest(".avail-head[data-day]");
+        if(head){
+          applyMask(availabilityToggleDay(state.mask, Number(head.dataset.day)));
+          return;
+        }
+        const gutter = event.target.closest(".avail-gutter[data-hour]");
+        if(gutter){
+          applyMask(
+            availabilityToggleHour(state.mask, Number(gutter.dataset.hour))
+          );
+        }
+      });
+      grid.addEventListener("keydown", event => {
+        const cell = cellFrom(event.target);
+        if(!cell) return;
+        let day = cell.day;
+        let hour = cell.hour;
+        if(event.key === "ArrowRight") day = Math.min(AVAIL_DAYS - 1, day + 1);
+        else if(event.key === "ArrowLeft") day = Math.max(0, day - 1);
+        else if(event.key === "ArrowDown") hour = Math.min(AVAIL_HOURS - 1, hour + 1);
+        else if(event.key === "ArrowUp") hour = Math.max(0, hour - 1);
+        else if(event.key === " " || event.key === "Enter"){
+          event.preventDefault();
+          applyMask(paintAvailabilityRectangle(
+            state.mask, cell, cell, !availabilityMaskHas(state.mask, cell.index)
+          ));
+          const same = $("#availGrid").querySelector(
+            '.avail-cell[data-index="'+cell.index+'"]'
+          );
+          if(same) same.focus();
+          return;
+        }else return;
+        event.preventDefault();
+        if(event.shiftKey){
+          applyMask(paintAvailabilityRectangle(
+            state.mask, cell, { day, hour },
+            !availabilityMaskHas(state.mask, cell.index)
+          ));
+        }
+        const next = $("#availGrid").querySelector(
+          '.avail-cell[data-index="'+availabilitySlotIndex(day, hour)+'"]'
+        );
+        if(next) next.focus();
+      });
+    }
+
+    return {
+      refresh, render, setMode, applyMask, saveNow, isSaving,
+      get state(){ return state; }
+    };
   })();
 
   $("#availModeMine").addEventListener("click", ()=>Availability.setMode("mine"));

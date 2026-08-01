@@ -221,7 +221,9 @@ async function installRosterFocusFakeSupabase(page){
     );
     await page.goto(pathToFileURL(path.resolve(__dirname, "..", "index.html")).href);
     const tabs = page.getByRole("tab");
-    assert.equal(await tabs.count(), 6);
+    // 7 onglets depuis l'ajout de « Dispos », inséré après « Boss de Guilde ».
+    assert.equal(await tabs.count(), 7);
+    assert.equal(await tabs.nth(3).getAttribute("id"), "tab-availability");
     assert.equal(await tabs.nth(0).getAttribute("aria-selected"), "true");
     assert.equal(await tabs.nth(0).getAttribute("tabindex"), "0");
     assert.equal(await tabs.nth(1).getAttribute("aria-selected"), "false");
@@ -238,7 +240,7 @@ async function installRosterFocusFakeSupabase(page){
     assert.equal(await page.locator("#view-builder").isVisible(), true);
 
     await page.keyboard.press("End");
-    assert.equal(await tabs.nth(5).getAttribute("aria-selected"), "true");
+    assert.equal(await tabs.nth(6).getAttribute("aria-selected"), "true");
     assert.equal(await page.locator("#view-boss").isVisible(), true);
 
     await page.keyboard.press("Home");
