@@ -82,26 +82,54 @@ navigateur compris — ce qui prouve que le module se charge bien en http.
 
 Commit : `692833c`.
 
-### Prochaine étape — lot 2, première extraction
+### Lot 2 — TERMINÉ : le mécanisme d'extraction est validé
 
-À partir d'ici, on suit **la recette** de la fin du
-[plan](../plans/2026-08-01-refactor-index-lot0-lot1.md) : un domaine par lot,
-`npm test` vert, commit, et mise à jour de cette section dans le même commit.
+`js/dispos-logique.js` (282 lignes) porte la logique pure des disponibilités.
+**22 symboles exportés, 5 devenus privés** — `AVAIL_SLOTS`,
+`availabilityParisParts`, `availabilityMaskWith`, `AVAIL_MONTHS`,
+`availabilityWeekLabel` ne sortent plus du module. C'est exactement le bénéfice
+recherché.
 
-Deux pièges qui n'ont pas encore été rencontrés, parce que `js/app.js` est
-encore un fichier unique sans `import`/`export` :
+`npm test` est vert, **tests navigateur compris** : cela prouve que les
+`import`/`export` se chargent réellement en http, et pas seulement dans le `vm`.
 
-1. **Le `vm` ne sait pas exécuter `import`/`export`.** Dès la première
-   extraction, `tests/helpers/load-app.js` devra neutraliser ces lignes avant
-   d'exécuter la concaténation. Le code à ajouter est donné à l'étape 6 de la
-   recette.
-2. **Trois endroits à mettre à jour pour chaque fichier extrait**, et en oublier
-   un casse quelque chose de silencieux : `CORE_ASSETS` dans `sw.js` (mode hors
-   ligne), `MODULES` dans `tests/helpers/modules.js` (tests unitaires), et les
-   `import` réels dans le module qui consomme.
+`tests/helpers/load-app.js` neutralise désormais les lignes de module avant
+d'exécuter la concaténation, avec une garde qui échoue si une déclaration
+survit. Ce mécanisme est **le point le plus fragile du chantier** ; il est
+maintenant écrit et couvert.
 
-Ordre proposé, à confirmer par un relevé des dépendances réelles : `dates`,
-`masques-dispos`, `modal-stack`, `toast`, `supabase`, puis les vues.
+Commit : `255636e`.
+
+### Où en sont les fichiers
+
+| Fichier | Lignes |
+|---|---|
+| `index.html` | 2 263 |
+| `js/app.js` | 10 265 |
+| `js/dispos-logique.js` | 282 |
+
+### Prochaine étape — lot 3 et suivants
+
+La recette est en fin de
+[plan](../plans/2026-08-01-refactor-index-lot0-lot1.md). Elle a servi une fois
+et fonctionne : **la suivre à la lettre, un domaine par lot.**
+
+Méthode pour choisir le prochain domaine et ses exports, éprouvée au lot 2 :
+relever les bornes du bloc, lister ses déclarations de premier niveau, et
+chercher lesquelles apparaissent encore dans le reste de `js/app.js`. Celles qui
+n'y apparaissent pas deviennent privées.
+
+**Trois endroits à mettre à jour à chaque extraction**, en oublier un casse
+quelque chose de silencieux :
+
+1. `MODULES` dans `tests/helpers/modules.js` — **avant** son consommateur ;
+2. `CORE_ASSETS` dans `sw.js` — sinon le mode hors ligne casse sans test rouge ;
+3. l'`import` réel en tête de `js/app.js`, **au-dessus de l'IIFE** : un `import`
+   ne peut pas vivre dans une portée de fonction.
+
+Candidats suivants, du plus isolé au plus emmêlé : `modal-stack`, `toast`, les
+dates de boss (`currentBossWeek` et les helpers du tableau de bord), puis
+`supabase`, puis les vues.
 
 ## Pourquoi ce refactor
 
