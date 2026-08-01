@@ -461,10 +461,21 @@ function loadApp(initialTeams){
   /* Depuis le lot 1 du refactor, le script principal vit dans js/app.js. Il
      sera découpé en plusieurs modules : MODULES tient l'ordre de concaténation,
      qui doit rester identique à l'ordre de chargement déclaré dans index.html. */
-  const source = MODULES
+  const modules = MODULES
     .map(name => fs.readFileSync(path.join(ROOT, "js", name), "utf8"))
     .join("\n");
+  /* La concaténation place tous les symboles dans une même portée : les
+     déclarations de module n'y ont plus de sens et feraient échouer le `vm`,
+     qui exécute un script classique et non un module. */
+  const source = modules
+    .replace(/^\s*import\s[\s\S]*?from\s+"[^"]*";\s*$/gm, "")
+    .replace(/^\s*export\s+(?=(?:const|let|function|class)\s)/gm, "")
+    .replace(/^\s*export\s*\{[\s\S]*?\}\s*;\s*$/gm, "");
   assert.ok(source.includes("(function(){"), "Le script principal doit exister");
+  assert.ok(
+    !/^\s*(?:import|export)\s/m.test(source),
+    "Aucune déclaration de module ne doit survivre à la concaténation"
+  );
 
   const exposed = source.replace(/\}\)\(\);\s*$/, HOOK_EXPORT);
   assert.notStrictEqual(exposed, source, "Le chargeur doit exposer les fonctions réelles");
