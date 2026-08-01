@@ -24,7 +24,7 @@ const CORE_ASSETS = [
   "./", "./index.html",
   "./data.js", "./stats-build.js", "./potentiels.js", "./armures-liees.js",
   "./personnages-meta.js", "./supabase-config.js",
-  "./js/dispos-logique.js", "./js/app.js",
+  "./js/dispos-logique.js", "./js/modal-stack.js", "./js/app.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png"
 ];
