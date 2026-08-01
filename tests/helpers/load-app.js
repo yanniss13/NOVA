@@ -86,6 +86,28 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
     typeof numericKeyboardInputProps === "function"
       ? numericKeyboardInputProps
       : undefined,
+  availabilityWeekStart:typeof availabilityWeekStart === "function"
+    ? availabilityWeekStart
+    : undefined,
+  availabilityPreviousWeekStart:
+    typeof availabilityPreviousWeekStart === "function"
+      ? availabilityPreviousWeekStart
+      : undefined,
+  availabilitySlotIndex:typeof availabilitySlotIndex === "function"
+    ? availabilitySlotIndex
+    : undefined,
+  availabilitySlotFromIndex:typeof availabilitySlotFromIndex === "function"
+    ? availabilitySlotFromIndex
+    : undefined,
+  normalizeAvailabilityMask:typeof normalizeAvailabilityMask === "function"
+    ? normalizeAvailabilityMask
+    : undefined,
+  availabilityMaskHas:typeof availabilityMaskHas === "function"
+    ? availabilityMaskHas
+    : undefined,
+  availabilityMaskWith:typeof availabilityMaskWith === "function"
+    ? availabilityMaskWith
+    : undefined,
   normalizePotentiel,
   normalizeHero,
   normalizeTeam,
