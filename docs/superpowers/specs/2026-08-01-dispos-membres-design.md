@@ -104,11 +104,24 @@ Le sens de la peinture est décidé par l'état de la case d'ancrage :
 Un aperçu suit le curseur pendant le geste ; la modification n'est appliquée
 qu'au relâchement.
 
-Sur écran tactile :
+Sur écran tactile, **seul l'appui bascule une case** — il n'y a pas de peinture
+par glissement.
 
-- un **appui simple** bascule une seule case ;
-- un **appui maintenu d'environ 150 ms** engage la peinture, après quoi le
-  défilement est neutralisé jusqu'au relâchement.
+Cette règle a été corrigée le 1er août 2026 après mesure sur navigateur. La
+version initiale prévoyait un appui maintenu de 150 ms engageant la peinture :
+c'était irréalisable. Le navigateur émet `pointercancel` dès qu'il décide de
+faire défiler, donc le geste ne s'engage jamais ; et le forcer reviendrait à
+confisquer le défilement d'une grille de 24 lignes.
+
+Symétriquement, quand le doigt bouge **moins** que le seuil de défilement du
+navigateur, aucun `pointercancel` n'est émis et le `pointerup` arrive quand
+même. Sans filtre, tout doigt posé pour tenter un défilement remplissait un
+créneau. L'appui n'est donc retenu que s'il est **bref (moins de 300 ms) et
+immobile (moins de 10 px de déplacement cumulé)**, le déplacement étant mesuré
+pendant le geste et non au relâchement.
+
+La saisie de plusieurs créneaux au doigt passe par le contrôle « Ajouter un
+créneau » décrit plus bas.
 
 Un `touch-action: none` permanent sur la grille est proscrit : il rendrait le
 défilement impossible au doigt.
@@ -159,7 +172,14 @@ et utilisable au clavier seul.
 ### Enregistrement
 
 L'enregistrement est **automatique**, environ 600 ms après la fin du geste, et
-son état s'affiche dans l'indicateur `liveStatus` existant.
+son état s'affiche dans un indicateur dédié `#availSaveStatus`. `liveStatus` a
+été écarté : il appartient à `RealtimeSync`, qui y écrit l'état de la connexion,
+et deux écrivains sur le même nœud se chasseraient l'un l'autre.
+
+La grille est mise à jour **sur place** : seuls les attributs des cases
+concernées changent. La reconstruire à chaque bascule faisait perdre la position
+de défilement et le focus, ce qui donnait au membre l'impression que le planning
+se rechargeait à chaque créneau.
 
 Hors ligne, la grille reste lisible depuis le cache local mais n'accepte plus de
 modification, et le message le dit explicitement — même comportement

@@ -7136,6 +7136,11 @@
   const AVAIL_CACHE_VERSION = 1;
   /* Quatre semaines conservées, la courante comprise. */
   const AVAIL_KEEP_WEEKS = 4;
+  /* Seuils d'un appui volontaire au doigt. En dessous du seuil de défilement du
+     navigateur, aucun `pointercancel` n'est émis : ces bornes distinguent seules
+     l'appui franc du doigt simplement posé pour faire défiler. */
+  const AVAIL_TAP_MAX_MOVE = 10;   // pixels
+  const AVAIL_TAP_MAX_DELAY = 300; // millisecondes
 
   function availabilityCacheKey(userId, weekStart){
     return AVAIL_CACHE_PREFIX+userId+"."+weekStart;
@@ -7325,6 +7330,7 @@
     let paintFill = true;
     let holdTimer = null;
     let painting = false;
+    let touchStart = null;
 
     function isSaving(){ return savePending; }
 
@@ -7395,10 +7401,27 @@
       saveTimer = setTimeout(()=>void saveNow(), 600);
     }
 
+    /* Mise à jour chirurgicale : on ne touche qu'aux attributs des 168 cases
+       déjà en place. Reconstruire la grille à chaque bascule faisait perdre la
+       position de défilement et le focus, ce qui donnait l'impression que le
+       planning se rechargeait à chaque créneau ajouté. */
+    function syncCells(){
+      const grid = $("#availGrid");
+      if(!grid || !state || state.mode !== "mine") return;
+      grid.querySelectorAll(".avail-cell").forEach(cell => {
+        const index = Number(cell.dataset.index);
+        cell.setAttribute(
+          "aria-pressed", String(availabilityMaskHas(state.mask, index))
+        );
+        cell.classList.remove("preview");
+      });
+    }
+
     function applyMask(mask){
       if(!state || !state.canEdit || mask === state.mask) return;
       state.mask = mask;
-      render();
+      syncCells();
+      syncCopyButton();
       scheduleSave();
     }
 
@@ -7439,9 +7462,18 @@
       lastCell = null;
       painting = false;
       applyMask(mask);
-      /* Un second rendu efface l'aperçu quand le masque n'a pas changé :
-         applyMask sort alors sans redessiner. */
-      render();
+      /* Remet l'affichage sur le masque réel : indispensable quand le geste
+         n'a rien changé, applyMask sortant alors sans redessiner. */
+      syncCells();
+    }
+
+    function abortPaint(){
+      clearTimeout(holdTimer);
+      holdTimer = null;
+      anchor = null;
+      lastCell = null;
+      painting = false;
+      syncCells();
     }
 
     function bindGrid(){
@@ -7453,20 +7485,28 @@
         anchor = cell;
         lastCell = cell;
         paintFill = !availabilityMaskHas(state.mask, cell.index);
+        touchStart = event.pointerType === "mouse"
+          ? null
+          : { x:event.clientX, y:event.clientY, at:Date.now(), moved:0 };
+        /* Le glissement de peinture est réservé à la souris. Au doigt, le
+           navigateur reprend la main dès qu'il décide de faire défiler et émet
+           `pointercancel` : une peinture par glissement ne s'engagerait jamais,
+           et prétendre le contraire volait le défilement au membre. Sur mobile,
+           la saisie de plusieurs créneaux passe par « Ajouter un créneau ». */
         painting = event.pointerType === "mouse";
         if(painting){
           grid.setPointerCapture(event.pointerId);
           event.preventDefault();
-        }else{
-          /* Sur écran tactile, la peinture ne démarre qu'après un appui
-             maintenu : un glissement immédiat doit rester un défilement. */
-          holdTimer = setTimeout(() => {
-            painting = true;
-            try{ grid.setPointerCapture(event.pointerId); }catch(error){}
-          }, 150);
         }
       });
       grid.addEventListener("pointermove", event => {
+        /* Le déplacement se mesure pendant le geste, jamais au relâchement :
+           au doigt, le `pointerup` ne porte pas de position exploitable. */
+        if(touchStart){
+          touchStart.moved = Math.max(touchStart.moved, Math.hypot(
+            event.clientX - touchStart.x, event.clientY - touchStart.y
+          ));
+        }
         if(!anchor || !painting) return;
         const cell = cellFrom(document.elementFromPoint(
           event.clientX, event.clientY
@@ -7480,17 +7520,29 @@
       /* La capture du pointeur redirige `pointerup` vers la GRILLE : son
          `event.target` n'est donc plus la case survolée. On repasse par la
          position du curseur, avec la dernière case connue en repli. */
+      /* Au doigt, le navigateur n'émet `pointercancel` que s'il a bougé assez
+         pour décider de faire défiler. En dessous de son seuil, `pointerup`
+         arrive quand même : sans ce filtre, tout doigt posé pour tenter un
+         défilement remplissait un créneau. On n'accepte donc qu'un appui à la
+         fois BREF et IMMOBILE. */
       grid.addEventListener("pointerup", event => {
         if(!anchor) return;
+        if(touchStart){
+          const eloigne = touchStart.moved > AVAIL_TAP_MAX_MOVE;
+          const trainant = Date.now() - touchStart.at > AVAIL_TAP_MAX_DELAY;
+          touchStart = null;
+          if(eloigne || trainant){ abortPaint(); return; }
+          /* Appui franc : on bascule la case pressée, et elle seule. */
+          endPaint(anchor);
+          return;
+        }
         endPaint(cellFrom(document.elementFromPoint(
           event.clientX, event.clientY
         )));
       });
       grid.addEventListener("pointercancel", ()=>{
-        clearTimeout(holdTimer);
-        anchor = null;
-        painting = false;
-        render();
+        touchStart = null;
+        abortPaint();
       });
       grid.addEventListener("click", event => {
         const head = event.target.closest(".avail-head[data-day]");

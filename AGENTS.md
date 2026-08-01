@@ -105,8 +105,18 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
 - [x] **Dispos hebdomadaires des membres**. Un onglet « Dispos » où chacun peint
       ses créneaux d'une heure sur la semaine — grille maison en CSS Grid, de
       minuit à minuit, sans aucune bibliothèque de calendrier. Glissement
-      rectangulaire à la souris, appui maintenu au doigt, bascule d'une journée
-      ou d'une heure entière par son en-tête, et navigation complète au clavier.
+      rectangulaire **à la souris uniquement**, appui franc au doigt, bascule
+      d'une journée ou d'une heure entière par son en-tête, et navigation
+      complète au clavier.
+      ⚠️ Ne pas réintroduire de peinture par glissement tactile : le navigateur
+      émet `pointercancel` dès qu'il décide de faire défiler, donc un tel geste
+      ne s'engage jamais — et tenter de le forcer vole le défilement au membre.
+      Au doigt, seul un appui **bref (< 300 ms) et immobile (< 10 px)** pose un
+      créneau : en dessous de son seuil de défilement le navigateur n'annule
+      pas, et sans ces bornes tout doigt posé pour faire défiler remplissait la
+      grille. La saisie de plusieurs créneaux sur mobile passe par le formulaire
+      « Ajouter un créneau ». La grille est mise à jour **sur place** à chaque
+      bascule ; la reconstruire faisait perdre défilement et focus.
       Un formulaire dédié pose les créneaux qui enjambent minuit (« de 22h à
       02h » sur les jours cochés), avec la plage lue comme `[début, fin[`, les
       heures égales refusées et la nuit du dimanche écrêtée. La vue « La
