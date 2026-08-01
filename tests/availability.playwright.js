@@ -182,6 +182,109 @@ function ownMask(page){
   });
 }
 
+/* Gestes tactiles réels : `page.mouse` produit pointerType "mouse" et ne
+   reproduit donc pas le comportement mobile. On passe par CDP. */
+async function runMobileChecks(browser){
+  const page = await browser.newPage({
+    viewport:{ width:390, height:780 }, hasTouch:true, isMobile:true
+  });
+  const errors = [];
+  page.on("pageerror", error => errors.push(error.message));
+  try{
+    await installFakeSupabase(page, isoWeekStart(new Date()));
+    await page.goto(pathToFileURL(
+      path.resolve(__dirname, "..", "index.html")
+    ).href);
+    await page.click("#tab-availability");
+    await page.waitForSelector("#availGrid .avail-cell");
+
+    const cdp = await page.context().newCDPSession(page);
+    const touch = (type, x, y) => cdp.send("Input.dispatchTouchEvent", {
+      type, touchPoints: type === "touchEnd" ? [] : [{ x, y, id:1 }]
+    });
+    const filledCount = () => page.evaluate(() => {
+      const row = window.__availState.member_availability
+        .find(item => item.owner === "moi");
+      if(!row) return 0;
+      let total = 0;
+      for(let index = 0; index < 168; index += 1){
+        if(row.slots[index] === "1") total += 1;
+      }
+      return total;
+    });
+    /* Une case hors écran a quand même un boundingBox : sans ce défilement
+       préalable, le toucher serait envoyé en dehors du viewport et n'atteindrait
+       rien. */
+    const centre = async selector => {
+      await page.locator(selector).scrollIntoViewIfNeeded();
+      const box = await page.locator(selector).boundingBox();
+      return { x:box.x + box.width / 2, y:box.y + box.height / 2 };
+    };
+
+    /* Un doigt pose pour faire defiler, qui ne bouge pas assez pour que le
+       navigateur emette pointercancel, ne doit PAS remplir de creneau. C'est
+       le cas qui remplissait le planning en tentant de defiler. */
+    const slow = await centre('#availGrid .avail-cell[data-index="3"]');
+    await touch("touchStart", slow.x, slow.y);
+    await page.waitForTimeout(450);
+    await touch("touchMove", slow.x, slow.y - 2);
+    await touch("touchEnd", slow.x, slow.y - 2);
+    await page.waitForTimeout(1100);
+    assert.equal(
+      await filledCount(), 0,
+      "Un doigt pose puis relache sans appui franc ne doit rien remplir"
+    );
+
+    // Un appui franc et bref reste le moyen de poser un creneau au doigt.
+    const tap = await centre('#availGrid .avail-cell[data-index="5"]');
+    await touch("touchStart", tap.x, tap.y);
+    await page.waitForTimeout(60);
+    await touch("touchEnd", tap.x, tap.y);
+    await page.waitForFunction(() => {
+      const row = window.__availState.member_availability
+        .find(item => item.owner === "moi");
+      return row && row.slots[5] === "1";
+    }, null, { timeout:5000 });
+    assert.equal(
+      await filledCount(), 1,
+      "L'appui franc ne doit poser QUE le créneau visé"
+    );
+
+    /* Ajouter un creneau ne doit pas reconstruire la grille : le membre perdrait
+       sa position de defilement et son focus a chaque case. */
+    await page.evaluate(() => {
+      window.__probeCell = document.querySelector(
+        '#availGrid .avail-cell[data-index="7"]'
+      );
+    });
+    const second = await centre('#availGrid .avail-cell[data-index="7"]');
+    await touch("touchStart", second.x, second.y);
+    await page.waitForTimeout(60);
+    await touch("touchEnd", second.x, second.y);
+    await page.waitForFunction(() => {
+      const row = window.__availState.member_availability
+        .find(item => item.owner === "moi");
+      return row && row.slots[7] === "1";
+    }, null, { timeout:5000 });
+    const stable = await page.evaluate(() => window.__probeCell
+      === document.querySelector('#availGrid .avail-cell[data-index="7"]'));
+    assert.equal(
+      stable, true,
+      "La grille doit être mise à jour sur place, pas reconstruite"
+    );
+    assert.equal(
+      await page.locator('#availGrid .avail-cell[data-index="7"]')
+        .getAttribute("aria-pressed"),
+      "true",
+      "La case touchée doit refléter son nouvel état sans reconstruction"
+    );
+
+    assert.deepEqual(errors, [], "Aucune erreur JS sur mobile");
+  }finally{
+    await page.close();
+  }
+}
+
 (async () => {
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport:{ width:360, height:780 } });
@@ -234,14 +337,27 @@ function ownMask(page){
        Les heures visées sont en bas de la grille, qui défile dans son propre
        conteneur : il faut les amener à l'écran AVANT de mesurer, sinon le
        curseur irait cliquer en dehors de la zone visible. */
-    const anchorCell = page.locator('#availGrid .avail-cell[data-index="44"]');
-    await anchorCell.scrollIntoViewIfNeeded();
-    const from = await anchorCell.boundingBox();
-    const to = await page.locator('#availGrid .avail-cell[data-index="93"]')
-      .boundingBox();
-    await page.mouse.move(from.x + from.width / 2, from.y + from.height / 2);
+    /* On amène à l'écran la case la PLUS BASSE du rectangle : `boundingBox()`
+       renvoie des coordonnées même pour un élément hors viewport, et la souris
+       s'y déplacerait dans le vide — `elementFromPoint` rendrait null. */
+    await page.locator('#availGrid .avail-cell[data-index="93"]')
+      .scrollIntoViewIfNeeded();
+    const centreOf = async index => {
+      const box = await page
+        .locator('#availGrid .avail-cell[data-index="' + index + '"]')
+        .boundingBox();
+      return { x:box.x + box.width / 2, y:box.y + box.height / 2 };
+    };
+    const from = await centreOf(44);
+    await page.mouse.move(from.x, from.y);
     await page.mouse.down();
-    await page.mouse.move(to.x + to.width / 2, to.y + to.height / 2, { steps:8 });
+    /* La position d'arrivée est relue APRÈS l'appui : presser une case peut
+       faire défiler le conteneur pour l'amener entièrement à l'écran, et des
+       coordonnées calculées avant deviendraient fausses. */
+    const to = await centreOf(93);
+    await page.mouse.move(to.x, to.y, { steps:8 });
+    const release = await centreOf(93);
+    await page.mouse.move(release.x, release.y);
     await page.mouse.up();
     await page.waitForFunction(() => {
       const row = window.__availState.member_availability
@@ -446,6 +562,7 @@ function ownMask(page){
     }, null, { timeout:6000 });
 
     assert.deepEqual(errors, [], "Aucune erreur JS ne doit survenir");
+    await runMobileChecks(browser);
     console.log("PASS Playwright: dispos hebdomadaires");
   }finally{
     await browser.close();
