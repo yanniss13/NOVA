@@ -1483,6 +1483,55 @@
       max-height:min(88vh,calc(100dvh - 24px))
     }
   }
+  /* ============================ Dispos ============================ */
+  .avail-toolbar{
+    display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:20px 0 16px
+  }
+  .avail-modes{display:flex;gap:6px;border:1px solid var(--line);border-radius:10px;padding:4px}
+  .avail-mode{
+    min-height:44px;padding:0 14px;border:0;border-radius:7px;background:transparent;
+    color:var(--muted);font:inherit;font-size:13px;cursor:pointer
+  }
+  .avail-mode.active{background:var(--panel-2);color:var(--gold-bright)}
+  .avail-save{font-size:12px;color:var(--muted-2);margin-left:auto}
+  .avail-save[data-state="saving"]{color:var(--muted)}
+  .avail-save[data-state="saved"]{color:var(--gold-bright)}
+  .avail-save[data-state="error"]{color:#e07a5f}
+  .avail-week{font-size:13px;color:var(--muted)}
+  .avail-note{font-size:13px;color:var(--muted);margin:10px 0 0}
+
+  /* La grille défile dans son propre conteneur : les cases gardent 44 px même
+     sur 320 px de large, sans jamais faire déborder la page. */
+  .avail-grid-wrap{overflow:auto;max-height:70vh;border:1px solid var(--line);border-radius:12px}
+  .avail-grid{
+    display:grid;grid-template-columns:56px repeat(7, minmax(44px, 1fr));
+    min-width:364px;background:var(--panel)
+  }
+  .avail-head,.avail-gutter{
+    position:sticky;background:var(--panel-2);z-index:2;
+    font-size:12px;color:var(--muted);display:flex;align-items:center;
+    justify-content:center;min-height:44px;border:0;font-family:inherit
+  }
+  .avail-head{top:0}
+  .avail-gutter{left:0;z-index:1}
+  .avail-corner{position:sticky;top:0;left:0;z-index:3;background:var(--panel-2)}
+  .avail-head,.avail-gutter,.avail-corner{border-bottom:1px solid var(--line-soft)}
+  .avail-cell{
+    min-height:44px;border:0;border-top:1px solid var(--line-soft);
+    border-left:1px solid var(--line-soft);background:transparent;
+    color:var(--muted-2);font:inherit;font-size:11px;cursor:pointer;padding:0;
+    touch-action:manipulation
+  }
+  .avail-cell[aria-pressed="true"]{background:var(--gold-deep);color:var(--ink)}
+  .avail-cell.preview{outline:2px solid var(--gold-bright);outline-offset:-2px}
+  .avail-cell:disabled{cursor:default}
+  .avail-cell.mine{box-shadow:inset 0 0 0 2px var(--gold-bright)}
+  .avail-cell[data-tier="0"]{background:transparent;color:var(--muted-2)}
+  .avail-cell[data-tier="1"]{background:#2b2a3c;color:var(--muted)}
+  .avail-cell[data-tier="2"]{background:#3d3547;color:#cfc4b4}
+  .avail-cell[data-tier="3"]{background:var(--gold-deep);color:var(--ink)}
+  .avail-cell[data-tier="4"]{background:var(--gold-bright);color:var(--ink);font-weight:700}
+
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
   }
@@ -1511,6 +1560,9 @@
     <button class="tab" id="tab-roster" data-view="roster"
             role="tab" aria-controls="view-roster"
             aria-selected="false" tabindex="-1">Boss de Guilde</button>
+    <button class="tab" id="tab-availability" data-view="availability"
+            role="tab" aria-controls="view-availability"
+            aria-selected="false" tabindex="-1">Dispos</button>
     <button class="tab" id="tab-member-roster" data-view="member-roster"
             role="tab" aria-controls="view-member-roster"
             aria-selected="false" tabindex="-1">Roster</button>
@@ -1643,6 +1695,26 @@
       <span class="roster-count" id="bossCount"></span>
     </div>
     <div id="bossBody"></div>
+  </section>
+
+  <!-- ============ DISPOS ============ -->
+  <section id="view-availability" class="view" role="tabpanel"
+           aria-labelledby="tab-availability">
+    <p class="section-eyebrow">Confrérie</p>
+    <h1 class="section-title">Dispos de la semaine</h1>
+    <p class="section-lead">Indique les heures où tu peux jouer. La vue « La confrérie » montre les créneaux où le plus de monde est disponible pour lancer une run.</p>
+    <div class="avail-toolbar">
+      <div class="avail-modes" role="group" aria-label="Vue des disponibilités">
+        <button class="avail-mode active" id="availModeMine" type="button"
+                aria-pressed="true">Mes dispos</button>
+        <button class="avail-mode" id="availModeGuild" type="button"
+                aria-pressed="false">La confrérie</button>
+      </div>
+      <span class="avail-save" id="availSaveStatus" role="status"
+            aria-live="polite" aria-atomic="true"></span>
+      <span class="avail-week" id="availWeek"></span>
+    </div>
+    <div id="availBody"></div>
   </section>
 
   <p class="databar" id="databar"></p>
@@ -6900,6 +6972,241 @@
     return (weekStarts || []).filter(week => week < floor);
   }
 
+  const AVAIL_DAY_LABELS = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
+  const AVAIL_DAY_FULL = [
+    "Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"
+  ];
+  const AVAIL_MONTHS = [
+    "janvier","février","mars","avril","mai","juin",
+    "juillet","août","septembre","octobre","novembre","décembre"
+  ];
+
+  /* Dates civiles manipulées en UTC : `weekStart` est un jour du calendrier, pas
+     un instant, et l'arithmétique UTC ignore les changements d'heure. */
+  function availabilityDayDate(weekStart, day){
+    const parts = String(weekStart).split("-").map(Number);
+    const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+    date.setUTCDate(date.getUTCDate() + day);
+    return date;
+  }
+
+  function availabilityWeekLabel(weekStart){
+    const first = availabilityDayDate(weekStart, 0);
+    const last = availabilityDayDate(weekStart, 6);
+    const lastLabel = last.getUTCDate()+" "+AVAIL_MONTHS[last.getUTCMonth()];
+    const firstLabel = first.getUTCMonth() === last.getUTCMonth()
+      ? String(first.getUTCDate())
+      : first.getUTCDate()+" "+AVAIL_MONTHS[first.getUTCMonth()];
+    return "semaine du "+firstLabel+" au "+lastLabel;
+  }
+
+  /* Fonction pure : elle décrit la vue sans toucher au DOM, ce qui permet de la
+     tester sans navigateur. Un visiteur déconnecté ne reçoit AUCUNE donnée :
+     les politiques RLS réservent déjà la lecture aux membres connectés, et la
+     vue ne doit pas laisser croire le contraire. */
+  function availabilityViewState(options){
+    const config = options || {};
+    const weekStart = availabilityWeekStart(config.now || new Date());
+    const signedIn = !!config.currentUserId;
+    const online = config.online !== false;
+    const rows = signedIn ? (config.rows || []) : [];
+    const own = rows.find(row => row.owner === config.currentUserId);
+    let message = "";
+    if(!signedIn){
+      message = "Connecte-toi pour voir les dispos de la confrérie et poser les tiennes.";
+    }else if(!online){
+      message = "Tu es hors ligne : les dispos affichées viennent du cache et ne peuvent pas être modifiées.";
+    }
+    return {
+      weekStart,
+      weekLabel:availabilityWeekLabel(weekStart),
+      mask:normalizeAvailabilityMask(own && own.slots),
+      rows,
+      mode:config.mode === "guild" ? "guild" : "mine",
+      canEdit:signedIn && online,
+      offline:signedIn && !online,
+      message
+    };
+  }
+
+  const AVAIL_CACHE_PREFIX = "confrerie7ds.cloud.availability.";
+  const AVAIL_CACHE_VERSION = 1;
+
+  function availabilityCacheKey(userId, weekStart){
+    return AVAIL_CACHE_PREFIX+userId+"."+weekStart;
+  }
+
+  function readAvailabilityCache(userId, weekStart){
+    if(!userId || !weekStart) return null;
+    try{
+      const raw = localStorage.getItem(availabilityCacheKey(userId, weekStart));
+      if(!raw) return null;
+      const envelope = JSON.parse(raw);
+      if(
+        !envelope ||
+        envelope.version !== AVAIL_CACHE_VERSION ||
+        envelope.userId !== userId ||
+        envelope.weekStart !== weekStart ||
+        !Array.isArray(envelope.rows)
+      ) return null;
+      return envelope.rows;
+    }catch(error){
+      return null;
+    }
+  }
+
+  function writeAvailabilityCache(userId, weekStart, rows){
+    if(!userId || !weekStart) return;
+    try{
+      localStorage.setItem(
+        availabilityCacheKey(userId, weekStart),
+        JSON.stringify({
+          version:AVAIL_CACHE_VERSION,
+          userId,
+          weekStart,
+          savedAt:Date.now(),
+          rows
+        })
+      );
+    }catch(error){
+      // Un quota local indisponible ne doit jamais casser la vue en ligne.
+    }
+  }
+
+  const Availability = (function(){
+    let state = null;
+
+    function cellLabel(day, hour){
+      return AVAIL_DAY_FULL[day]+" "+String(hour).padStart(2, "0")+"h";
+    }
+
+    function renderGrid(){
+      const body = $("#availBody");
+      body.innerHTML = "";
+      if(state.message){
+        const note = document.createElement("p");
+        note.className = "avail-note";
+        note.textContent = state.message;
+        body.appendChild(note);
+      }
+      const aggregate = state.mode === "guild"
+        ? aggregateAvailability(state.rows)
+        : null;
+      const wrap = document.createElement("div");
+      wrap.className = "avail-grid-wrap";
+      const grid = document.createElement("div");
+      grid.className = "avail-grid";
+      grid.id = "availGrid";
+      const corner = document.createElement("div");
+      corner.className = "avail-corner avail-head";
+      grid.appendChild(corner);
+      for(let day = 0; day < AVAIL_DAYS; day += 1){
+        const head = document.createElement("button");
+        head.type = "button";
+        head.className = "avail-head";
+        head.dataset.day = String(day);
+        const date = availabilityDayDate(state.weekStart, day);
+        head.textContent = AVAIL_DAY_LABELS[day]+" "+date.getUTCDate();
+        head.disabled = !state.canEdit || state.mode === "guild";
+        grid.appendChild(head);
+      }
+      for(let hour = 0; hour < AVAIL_HOURS; hour += 1){
+        const gutter = document.createElement("button");
+        gutter.type = "button";
+        gutter.className = "avail-gutter";
+        gutter.dataset.hour = String(hour);
+        gutter.textContent = String(hour).padStart(2, "0")+"h";
+        gutter.disabled = !state.canEdit || state.mode === "guild";
+        grid.appendChild(gutter);
+        for(let day = 0; day < AVAIL_DAYS; day += 1){
+          const index = availabilitySlotIndex(day, hour);
+          const cell = document.createElement("button");
+          cell.type = "button";
+          cell.className = "avail-cell";
+          cell.dataset.index = String(index);
+          cell.dataset.day = String(day);
+          cell.dataset.hour = String(hour);
+          if(state.mode === "guild"){
+            const count = aggregate.counts[index];
+            cell.dataset.tier = String(
+              availabilityDensityTier(count, aggregate.max)
+            );
+            cell.textContent = count ? String(count) : "";
+            cell.classList.toggle("mine", availabilityMaskHas(state.mask, index));
+            cell.setAttribute(
+              "aria-label",
+              cellLabel(day, hour)+" — "+count+" membre"+(count > 1 ? "s" : "")
+            );
+          }else{
+            const on = availabilityMaskHas(state.mask, index);
+            cell.setAttribute("aria-pressed", String(on));
+            cell.setAttribute("aria-label", cellLabel(day, hour));
+            cell.disabled = !state.canEdit;
+          }
+          grid.appendChild(cell);
+        }
+      }
+      wrap.appendChild(grid);
+      body.appendChild(wrap);
+    }
+
+    function render(){
+      $("#availWeek").textContent = state ? state.weekLabel : "";
+      $("#availModeMine").classList.toggle("active", state.mode === "mine");
+      $("#availModeMine").setAttribute(
+        "aria-pressed", String(state.mode === "mine")
+      );
+      $("#availModeGuild").classList.toggle("active", state.mode === "guild");
+      $("#availModeGuild").setAttribute(
+        "aria-pressed", String(state.mode === "guild")
+      );
+      renderGrid();
+    }
+
+    function setMode(mode){
+      if(!state) return;
+      state.mode = mode;
+      render();
+    }
+
+    async function refresh(){
+      const user = currentUser;
+      const weekStart = availabilityWeekStart(new Date());
+      let rows = [];
+      let online = true;
+      if(user && sb){
+        const result = await sb.from("member_availability")
+          .select("owner,slots,week_start")
+          .eq("week_start", weekStart);
+        if(result.error){
+          online = false;
+          rows = readAvailabilityCache(user.id, weekStart) || [];
+        }else{
+          rows = result.data || [];
+          writeAvailabilityCache(user.id, weekStart, rows);
+        }
+      }
+      state = availabilityViewState({
+        now:new Date(),
+        rows,
+        currentUserId:user ? user.id : "",
+        mode:state ? state.mode : "mine",
+        online
+      });
+      render();
+      return true;
+    }
+
+    return { refresh, render, setMode, get state(){ return state; } };
+  })();
+
+  $("#availModeMine").addEventListener("click", ()=>Availability.setMode("mine"));
+  $("#availModeGuild").addEventListener("click", ()=>Availability.setMode("guild"));
+
+  function renderAvailabilityView(){
+    return Availability.refresh();
+  }
+
   /* ============================ Navigation onglets ============================ */
   const mainTabs = [...document.querySelectorAll(".tab[data-view]")];
 
@@ -6925,6 +7232,7 @@
     }
     if(name==="analyse") result = Promise.resolve(renderAnalyse()).then(()=>true);
     if(name==="boss") result = renderBossView();
+    if(name==="availability") result = renderAvailabilityView();
     const reduced = window.matchMedia
       && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     window.scrollTo({top:0, behavior:reduced ? "auto" : "smooth"});

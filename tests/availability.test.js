@@ -300,4 +300,99 @@ assert.deepStrictEqual(
 );
 assert.deepStrictEqual(plain(staleAvailabilityWeeks([], "2026-08-03", 4)), []);
 
+const fs = require("node:fs");
+const path = require("node:path");
+const { availabilityViewState, availabilityWeekLabel } = hooks;
+const indexSource = fs.readFileSync(
+  path.resolve(__dirname, "..", "index.html"),
+  "utf8"
+);
+
+/* L'onglet et la vue doivent exister et se répondre par leurs attributs ARIA. */
+assert.match(
+  indexSource,
+  /<button class="tab" id="tab-availability" data-view="availability"[\s\S]{0,160}aria-controls="view-availability"/,
+  "L'onglet Dispos doit exister et cibler sa vue"
+);
+assert.match(
+  indexSource,
+  /<section id="view-availability" class="view" role="tabpanel"[\s\S]{0,120}aria-labelledby="tab-availability"/,
+  "La vue Dispos doit exister et pointer vers son onglet"
+);
+assert.match(
+  indexSource,
+  /if\(name==="availability"\)/,
+  "showView doit rendre la vue Dispos"
+);
+
+assert.strictEqual(availabilityWeekLabel("2026-08-03"), "semaine du 3 au 9 août");
+assert.strictEqual(
+  availabilityWeekLabel("2026-07-27"),
+  "semaine du 27 juillet au 2 août",
+  "Un changement de mois doit nommer les deux mois"
+);
+
+/* Membre connecté : sa propre ligne alimente la grille, l'édition est ouverte. */
+{
+  const state = availabilityViewState({
+    now:new Date("2026-08-01T12:00:00Z"),
+    rows:[
+      { owner:"moi", slots:maskOf([20, 21]) },
+      { owner:"autre", slots:maskOf([21]) }
+    ],
+    currentUserId:"moi",
+    mode:"mine",
+    online:true
+  });
+  assert.strictEqual(state.weekStart, "2026-07-27");
+  assert.strictEqual(state.weekLabel, "semaine du 27 juillet au 2 août");
+  assert.strictEqual(state.mask, maskOf([20, 21]));
+  assert.strictEqual(state.canEdit, true);
+  assert.strictEqual(state.offline, false);
+  assert.strictEqual(state.rows.length, 2);
+}
+
+/* Membre sans ligne enregistrée : grille vide, édition ouverte quand même. */
+{
+  const state = availabilityViewState({
+    now:new Date("2026-08-01T12:00:00Z"),
+    rows:[],
+    currentUserId:"moi",
+    mode:"mine",
+    online:true
+  });
+  assert.strictEqual(state.mask, EMPTY);
+  assert.strictEqual(state.canEdit, true);
+}
+
+/* Hors ligne : lecture seule et message explicite. */
+{
+  const state = availabilityViewState({
+    now:new Date("2026-08-01T12:00:00Z"),
+    rows:[{ owner:"moi", slots:maskOf([20]) }],
+    currentUserId:"moi",
+    mode:"mine",
+    online:false
+  });
+  assert.strictEqual(state.canEdit, false);
+  assert.strictEqual(state.offline, true);
+  assert.match(state.message, /hors ligne/i);
+}
+
+/* Visiteur déconnecté : aucune donnée servie, invitation à se connecter.
+   Les politiques RLS réservent déjà la lecture aux membres connectés. */
+{
+  const state = availabilityViewState({
+    now:new Date("2026-08-01T12:00:00Z"),
+    rows:[{ owner:"autre", slots:maskOf([20]) }],
+    currentUserId:"",
+    mode:"guild",
+    online:true
+  });
+  assert.strictEqual(state.canEdit, false);
+  assert.deepStrictEqual(plain(state.rows), []);
+  assert.strictEqual(state.mask, EMPTY);
+  assert.match(state.message, /connecte/i);
+}
+
 console.log("availability.test.js OK");

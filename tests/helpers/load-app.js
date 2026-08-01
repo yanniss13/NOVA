@@ -126,6 +126,12 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   staleAvailabilityWeeks:typeof staleAvailabilityWeeks === "function"
     ? staleAvailabilityWeeks
     : undefined,
+  availabilityViewState:typeof availabilityViewState === "function"
+    ? availabilityViewState
+    : undefined,
+  availabilityWeekLabel:typeof availabilityWeekLabel === "function"
+    ? availabilityWeekLabel
+    : undefined,
   normalizePotentiel,
   normalizeHero,
   normalizeTeam,
