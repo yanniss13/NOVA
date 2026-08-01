@@ -6806,6 +6806,43 @@
     return chars.join("");
   }
 
+  /* Le masque étant une frise continue, une plage qui franchit minuit est une
+     simple suite d'index : `jour * 24 + heure + n` traverse naturellement la
+     limite du jour. Seule la fin de la semaine demande un écrêtage, la nuit du
+     dimanche débordant sur la semaine suivante, hors de cette grille. */
+  function applyAvailabilityRange(mask, startHour, endHour, days, fill){
+    if(startHour === endHour) return { mask, clipped:false };
+    const span = endHour > startHour
+      ? endHour - startHour
+      : (AVAIL_HOURS - startHour) + endHour;
+    const indexes = [];
+    let clipped = false;
+    (days || []).forEach(day => {
+      for(let step = 0; step < span; step += 1){
+        const index = availabilitySlotIndex(day, startHour) + step;
+        if(index >= AVAIL_SLOTS){ clipped = true; continue; }
+        indexes.push(index);
+      }
+    });
+    return { mask:availabilityMaskWith(mask, indexes, fill), clipped };
+  }
+
+  /* Peinture rectangulaire : les deux extrémités sont des cases, donc incluses.
+     Glisser de 22h à 23h sélectionne bien deux créneaux. */
+  function paintAvailabilityRectangle(mask, anchor, cursor, fill){
+    const dayFrom = Math.min(anchor.day, cursor.day);
+    const dayTo = Math.max(anchor.day, cursor.day);
+    const hourFrom = Math.min(anchor.hour, cursor.hour);
+    const hourTo = Math.max(anchor.hour, cursor.hour);
+    const indexes = [];
+    for(let day = dayFrom; day <= dayTo; day += 1){
+      for(let hour = hourFrom; hour <= hourTo; hour += 1){
+        indexes.push(availabilitySlotIndex(day, hour));
+      }
+    }
+    return availabilityMaskWith(mask, indexes, fill);
+  }
+
   /* ============================ Navigation onglets ============================ */
   const mainTabs = [...document.querySelectorAll(".tab[data-view]")];
 

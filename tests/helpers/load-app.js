@@ -108,6 +108,12 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   availabilityMaskWith:typeof availabilityMaskWith === "function"
     ? availabilityMaskWith
     : undefined,
+  applyAvailabilityRange:typeof applyAvailabilityRange === "function"
+    ? applyAvailabilityRange
+    : undefined,
+  paintAvailabilityRectangle:typeof paintAvailabilityRectangle === "function"
+    ? paintAvailabilityRectangle
+    : undefined,
   normalizePotentiel,
   normalizeHero,
   normalizeTeam,

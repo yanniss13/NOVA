@@ -90,4 +90,98 @@ assert.ok(availabilityMaskHas(erased, 0));
 assert.ok(!availabilityMaskHas(erased, 24));
 assert.strictEqual(availabilityMaskWith(EMPTY, [], true), EMPTY);
 
+const {
+  applyAvailabilityRange,
+  paintAvailabilityRectangle
+} = hooks;
+
+function selectedIndexes(mask){
+  const indexes = [];
+  for(let index = 0; index < 168; index += 1){
+    if(mask[index] === "1") indexes.push(index);
+  }
+  return indexes;
+}
+
+/* Cas nominal : 22h → 02h le lundi couvre quatre créneaux, dont deux le mardi.
+   La plage est [début, fin[ : 02h n'est pas inclus. */
+{
+  const result = applyAvailabilityRange(EMPTY, 22, 2, [0], true);
+  assert.strictEqual(result.clipped, false);
+  assert.deepStrictEqual(selectedIndexes(result.mask), [22, 23, 24, 25]);
+}
+
+/* La même plage sur plusieurs jours cochés. */
+{
+  const result = applyAvailabilityRange(EMPTY, 22, 2, [0, 1], true);
+  assert.deepStrictEqual(
+    selectedIndexes(result.mask),
+    [22, 23, 24, 25, 46, 47, 48, 49]
+  );
+}
+
+/* Plage ordinaire, sans franchissement. */
+{
+  const result = applyAvailabilityRange(EMPTY, 20, 23, [2], true);
+  assert.strictEqual(result.clipped, false);
+  assert.deepStrictEqual(selectedIndexes(result.mask), [68, 69, 70]);
+}
+
+/* Heures égales : cas interdit, aucun effet et aucun écrêtage signalé. */
+{
+  const result = applyAvailabilityRange(EMPTY, 22, 22, [0, 1, 2], true);
+  assert.strictEqual(result.mask, EMPTY);
+  assert.strictEqual(result.clipped, false);
+}
+
+/* Nuit du dimanche : la partie après minuit appartient à la semaine suivante,
+   elle est écrêtée et signalée. */
+{
+  const result = applyAvailabilityRange(EMPTY, 22, 2, [6], true);
+  assert.strictEqual(result.clipped, true);
+  assert.deepStrictEqual(selectedIndexes(result.mask), [166, 167]);
+}
+
+/* Effacement : la même plage retire exactement ce qu'elle aurait ajouté. */
+{
+  const added = applyAvailabilityRange(EMPTY, 22, 2, [0], true).mask;
+  const removed = applyAvailabilityRange(added, 22, 2, [0], false).mask;
+  assert.strictEqual(removed, EMPTY);
+}
+
+/* Rectangle : bornes inclusives, ordre des extrémités indifférent. */
+{
+  const painted = paintAvailabilityRectangle(
+    EMPTY, { day:1, hour:20 }, { day:3, hour:22 }, true
+  );
+  assert.deepStrictEqual(selectedIndexes(painted), [
+    44, 45, 46,
+    68, 69, 70,
+    92, 93, 94
+  ]);
+  const reversed = paintAvailabilityRectangle(
+    EMPTY, { day:3, hour:22 }, { day:1, hour:20 }, true
+  );
+  assert.strictEqual(reversed, painted, "Le sens du glissement est indifférent");
+}
+
+/* Une seule case : le rectangle dégénéré bascule un créneau. */
+{
+  const single = paintAvailabilityRectangle(
+    EMPTY, { day:0, hour:0 }, { day:0, hour:0 }, true
+  );
+  assert.deepStrictEqual(selectedIndexes(single), [0]);
+}
+
+/* Le rectangle efface aussi bien qu'il remplit. */
+{
+  const full = "1".repeat(168);
+  const cleared = paintAvailabilityRectangle(
+    full, { day:0, hour:0 }, { day:0, hour:1 }, false
+  );
+  assert.strictEqual(cleared[0], "0");
+  assert.strictEqual(cleared[1], "0");
+  assert.strictEqual(cleared[2], "1");
+}
+
 console.log("availability.test.js OK");
