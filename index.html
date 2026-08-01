@@ -1532,6 +1532,25 @@
   .avail-cell[data-tier="3"]{background:var(--gold-deep);color:var(--ink)}
   .avail-cell[data-tier="4"]{background:var(--gold-bright);color:var(--ink);font-weight:700}
 
+  .avail-range{
+    display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 0;
+    padding:14px;border:1px solid var(--line);border-radius:12px
+  }
+  .avail-range-title{font-size:13px;color:var(--gold-bright);width:100%}
+  .avail-range-hour{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+  .avail-range-hour select{min-height:44px;background:var(--panel-2);color:inherit;
+    border:1px solid var(--line);border-radius:8px;padding:0 8px;font:inherit}
+  .avail-range-days{display:flex;gap:4px;flex-wrap:wrap}
+  .avail-range-days label{
+    position:relative;min-width:44px;min-height:44px;display:flex;
+    align-items:center;justify-content:center;border:1px solid var(--line);
+    border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer
+  }
+  .avail-range-days input{position:absolute;opacity:0;pointer-events:none}
+  .avail-range-days input:checked + span{color:var(--gold-bright);font-weight:700}
+  .avail-range-days label:focus-within{outline:2px solid var(--gold-bright)}
+  .avail-actions{margin:14px 0 0}
+
   @media(prefers-reduced-motion:reduce){
     *{animation:none!important;transition:none!important}
   }
@@ -1715,6 +1734,24 @@
       <span class="avail-week" id="availWeek"></span>
     </div>
     <div id="availBody"></div>
+    <div class="avail-range" id="availRangeForm">
+      <span class="avail-range-title">Ajouter un créneau</span>
+      <label class="avail-range-hour">de
+        <select id="availRangeStart"></select>
+      </label>
+      <label class="avail-range-hour">à
+        <select id="availRangeEnd"></select>
+      </label>
+      <span class="avail-range-days" id="availRangeDays"></span>
+      <button class="btn" id="availRangeAdd" type="button">Ajouter</button>
+      <button class="btn btn-ghost" id="availRangeRemove" type="button">Retirer</button>
+      <p class="avail-note" id="availRangeHint"></p>
+    </div>
+    <div class="avail-actions">
+      <button class="btn btn-ghost" id="availCopyPrevious" type="button" hidden>
+        Reprendre mes dispos de la semaine dernière
+      </button>
+    </div>
   </section>
 
   <p class="databar" id="databar"></p>
@@ -7182,6 +7219,8 @@
         "aria-pressed", String(state.mode === "guild")
       );
       renderGrid();
+      syncRangeControls();
+      syncCopyButton();
     }
 
     function setMode(mode){
@@ -7424,14 +7463,116 @@
       });
     }
 
+    function fillHourOptions(select, selected){
+      select.innerHTML = "";
+      for(let hour = 0; hour < AVAIL_HOURS; hour += 1){
+        const option = document.createElement("option");
+        option.value = String(hour);
+        option.textContent = String(hour).padStart(2, "0")+"h";
+        if(hour === selected) option.selected = true;
+        select.appendChild(option);
+      }
+    }
+
+    function selectedRangeDays(){
+      return [...$("#availRangeDays").querySelectorAll("input:checked")]
+        .map(input => Number(input.value));
+    }
+
+    function syncRangeControls(){
+      const start = Number($("#availRangeStart").value);
+      const end = Number($("#availRangeEnd").value);
+      const days = selectedRangeDays();
+      /* Heures égales : la plage serait soit vide soit longue de 24 h selon la
+         lecture. On refuse le cas plutôt que d'en inventer une. */
+      const usable = !!state && state.canEdit && start !== end && days.length > 0;
+      $("#availRangeAdd").disabled = !usable;
+      $("#availRangeRemove").disabled = !usable;
+      $("#availRangeHint").textContent = start === end
+        ? "Choisis deux heures différentes."
+        : (end < start ? "Ce créneau se poursuit le lendemain." : "");
+    }
+
+    function applyRange(fill){
+      if(!state || !state.canEdit) return;
+      const start = Number($("#availRangeStart").value);
+      const end = Number($("#availRangeEnd").value);
+      const result = applyAvailabilityRange(
+        state.mask, start, end, selectedRangeDays(), fill
+      );
+      applyMask(result.mask);
+      if(result.clipped){
+        toast(
+          "La fin de la nuit du dimanche appartient à la semaine suivante : "
+          + "elle n'a pas été ajoutée."
+        );
+      }
+    }
+
+    async function copyPreviousWeek(){
+      if(!state || !state.canEdit || !currentUser || !sb) return false;
+      const previous = availabilityPreviousWeekStart(state.weekStart);
+      const { data, error } = await sb.from("member_availability")
+        .select("slots")
+        .eq("week_start", previous)
+        .eq("owner", currentUser.id)
+        .maybeSingle();
+      if(error || !data){
+        toast("Aucune dispo trouvée pour la semaine dernière.", true);
+        return false;
+      }
+      applyMask(normalizeAvailabilityMask(data.slots));
+      return true;
+    }
+
+    function syncCopyButton(){
+      const button = $("#availCopyPrevious");
+      /* Le bouton ne s'affiche que s'il a quelque chose à apporter : une
+         semaine encore vierge et une saisie possible. */
+      button.hidden = !state || !state.canEdit || state.mask !== AVAIL_EMPTY_MASK;
+    }
+
     return {
       refresh, render, setMode, applyMask, saveNow, isSaving,
+      fillHourOptions, syncRangeControls, applyRange, copyPreviousWeek,
       get state(){ return state; }
     };
   })();
 
   $("#availModeMine").addEventListener("click", ()=>Availability.setMode("mine"));
   $("#availModeGuild").addEventListener("click", ()=>Availability.setMode("guild"));
+
+  (function initAvailabilityRange(){
+    const days = $("#availRangeDays");
+    AVAIL_DAY_LABELS.forEach((label, day) => {
+      const wrapper = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.value = String(day);
+      input.setAttribute("aria-label", AVAIL_DAY_FULL[day]);
+      const text = document.createElement("span");
+      text.textContent = label;
+      wrapper.appendChild(input);
+      wrapper.appendChild(text);
+      days.appendChild(wrapper);
+    });
+    Availability.fillHourOptions($("#availRangeStart"), 22);
+    Availability.fillHourOptions($("#availRangeEnd"), 2);
+    days.addEventListener("change", ()=>Availability.syncRangeControls());
+    $("#availRangeStart").addEventListener(
+      "change", ()=>Availability.syncRangeControls()
+    );
+    $("#availRangeEnd").addEventListener(
+      "change", ()=>Availability.syncRangeControls()
+    );
+    $("#availRangeAdd").addEventListener("click", ()=>Availability.applyRange(true));
+    $("#availRangeRemove").addEventListener(
+      "click", ()=>Availability.applyRange(false)
+    );
+    $("#availCopyPrevious").addEventListener(
+      "click", ()=>void Availability.copyPreviousWeek()
+    );
+  })();
 
   function renderAvailabilityView(){
     return Availability.refresh();

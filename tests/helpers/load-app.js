@@ -42,6 +42,11 @@ class FakeElement {
   }
   addEventListener(type, handler){ this.events[type] = handler; }
   appendChild(child){ this.children.push(child); return child; }
+  /* Le faux DOM ne construit pas d'arbre interrogeable : une recherche rend
+     toujours une liste vide, ce qui suffit aux tests de logique pure et évite
+     que le chargement du script échoue sur une méthode absente. */
+  querySelector(){ return null; }
+  querySelectorAll(){ return []; }
   click(){ if(this.events.click) this.events.click({ target:this }); }
   focus(){}
   remove(){}

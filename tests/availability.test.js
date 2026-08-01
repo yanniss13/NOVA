@@ -427,4 +427,17 @@ const { availabilityToggleDay, availabilityToggleHour } = hooks;
   assert.strictEqual(availabilityToggleHour(filled, 21), EMPTY);
 }
 
+/* Le formulaire de créneau de nuit et la reprise doivent exister dans la page. */
+assert.match(indexSource, /id="availRangeForm"/);
+assert.match(indexSource, /id="availRangeStart"/);
+assert.match(indexSource, /id="availRangeEnd"/);
+assert.match(indexSource, /id="availRangeAdd"/);
+assert.match(indexSource, /id="availRangeRemove"/);
+assert.match(indexSource, /id="availCopyPrevious"/);
+assert.match(
+  indexSource,
+  /availRangeDays/,
+  "Les sept cases de jours doivent être regroupées"
+);
+
 console.log("availability.test.js OK");

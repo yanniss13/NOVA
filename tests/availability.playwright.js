@@ -162,6 +162,18 @@ async function installFakeSupabase(page, weekStart){
   );
 }
 
+/* La case à cocher est visuellement masquée : c'est le libellé qui la porte, et
+   c'est lui qu'un membre clique réellement. */
+async function setRangeDay(page, day, checked){
+  const input = page.locator('#availRangeDays input[value="'+day+'"]');
+  if(await input.isChecked() === checked) return;
+  await page.click('#availRangeDays label:has(input[value="'+day+'"])');
+  assert.equal(
+    await input.isChecked(), checked,
+    "Le libellé du jour "+day+" doit basculer sa case"
+  );
+}
+
 function ownMask(page){
   return page.evaluate(() => {
     const row = window.__availState.member_availability
@@ -271,6 +283,70 @@ function ownMask(page){
       );
       return cell && cell.getAttribute("aria-pressed") === "true";
     }, null, { timeout:5000 });
+
+    // Le formulaire de nuit franchit minuit : 22h → 02h le lundi.
+    await page.selectOption("#availRangeStart", "22");
+    await page.selectOption("#availRangeEnd", "2");
+    await setRangeDay(page, 0, true);
+    await page.click("#availRangeAdd");
+    await page.waitForFunction(() => {
+      const row = window.__availState.member_availability
+        .find(item => item.owner === "moi");
+      return row
+        && row.slots[22] === "1" && row.slots[23] === "1"
+        && row.slots[24] === "1" && row.slots[25] === "1";
+    }, null, { timeout:5000 });
+    assert.equal(
+      (await ownMask(page))[26], "0",
+      "La plage est [début, fin[ : 02h ne doit pas être sélectionné"
+    );
+    assert.match(
+      await page.locator("#availRangeHint").innerText(),
+      /se poursuit le lendemain/,
+      "Le formulaire doit annoncer le franchissement de minuit"
+    );
+
+    // Retirer la même plage doit rendre exactement l'état antérieur.
+    await page.click("#availRangeRemove");
+    await page.waitForFunction(() => {
+      const row = window.__availState.member_availability
+        .find(item => item.owner === "moi");
+      return row && row.slots[22] === "0" && row.slots[25] === "0";
+    }, null, { timeout:5000 });
+
+    // Heures égales : les deux boutons se désactivent.
+    await page.selectOption("#availRangeEnd", "22");
+    assert.ok(
+      await page.locator("#availRangeAdd").isDisabled(),
+      "Une plage d'heures égales doit être refusée"
+    );
+    assert.ok(await page.locator("#availRangeRemove").isDisabled());
+    assert.match(
+      await page.locator("#availRangeHint").innerText(),
+      /heures différentes/
+    );
+
+    // Nuit du dimanche : la part qui déborde est écrêtée, pas reportée.
+    await page.selectOption("#availRangeStart", "23");
+    await page.selectOption("#availRangeEnd", "2");
+    await setRangeDay(page, 0, false);
+    await setRangeDay(page, 6, true);
+    await page.click("#availRangeAdd");
+    await page.waitForFunction(() => {
+      const row = window.__availState.member_availability
+        .find(item => item.owner === "moi");
+      return row && row.slots[167] === "1";
+    }, null, { timeout:5000 });
+    assert.equal(
+      (await ownMask(page))[0], "0",
+      "La nuit du dimanche ne doit jamais déborder sur le lundi de la grille"
+    );
+
+    // Le bouton de reprise ne s'affiche que sur une semaine encore vierge.
+    assert.ok(
+      await page.locator("#availCopyPrevious").isHidden(),
+      "La reprise doit rester masquée quand des dispos existent déjà"
+    );
 
     assert.deepEqual(errors, [], "Aucune erreur JS ne doit survenir");
     console.log("PASS Playwright: dispos hebdomadaires");
