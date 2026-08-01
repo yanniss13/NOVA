@@ -183,7 +183,47 @@ PY
 | `DashboardStore` | 95 | `buildDashboardState`, `currentBossWeek`, `readDashboardCache`, `writeDashboardCache` |
 | `RealtimeSync` | 141 | les rendus de toutes les vues — **à garder pour la fin** |
 
-Prochain candidat évident : **`Picker`**, dont toutes les dépendances sont
+### ⚠️ Lot 5 tenté sur `Picker` — ÉCHOUÉ, annulé, à reprendre
+
+Une extraction de `Picker` vers `js/picker.js` a été tentée puis **annulée** :
+elle n'a jamais été commitée, le dépôt est resté vert. Ne pas la refaire à
+l'identique en croyant qu'elle marchera.
+
+Ce qui a été fait : bloc `const Picker = (function(){` … `})();` (90 lignes)
+déplacé tel quel dans `js/picker.js`, avec
+`import { $, el, norm } from "./dom.js";` et `export { Picker };`, plus les
+trois déclarations habituelles.
+
+Ce qui s'est passé :
+
+- `npm run test:unit` : **vert**. Le `vm` et la concaténation fonctionnent.
+- `node tests/potentiel-commun.playwright.js` : **échec**, la modale du
+  sélecteur ne s'ouvre plus (`element is not visible`, l'attente de clic expire).
+
+Ce qui a déjà été écarté : il ne s'agit **pas** d'un symbole oublié. Un relevé
+des identifiants de `js/app.js` encore référencés par `js/picker.js`, y compris
+les références simples et pas seulement les appels, renvoie une liste **vide**.
+
+Piste sérieuse non vérifiée, faute de quota : **le moment d'évaluation**. Dans
+l'IIFE d'origine, `Picker` s'exécutait à un point précis du démarrage. Devenu
+module importé par `app.js`, il est évalué **avant** le corps de `app.js`. S'il
+capte des nœuds du DOM ou un état applicatif à l'évaluation, il peut le faire
+trop tôt. À vérifier en premier : ce que le corps de l'IIFE de `Picker` lit au
+moment de sa création, par opposition à ce qu'il lit à l'ouverture.
+
+**Leçon générale :** les tests unitaires ne suffisent pas à valider une
+extraction. Toujours lancer `npm test` en entier — c'est un test navigateur qui
+a attrapé celui-ci. Le garde-fou employé, à réutiliser :
+
+```bash
+npm test >/dev/null 2>&1 && git add js/ sw.js tests/helpers/ && git commit -m "…" \
+  || echo "ECHEC : rien n'est commite"
+```
+
+Prochain candidat, une fois `Picker` compris : `Potentiel`, puis les dates de
+boss.
+
+Ancien candidat évident : **`Picker`**, dont toutes les dépendances sont
 sorties. Ensuite les fonctions de potentiel, puis les dates de boss
 (`currentBossWeek` et les helpers du tableau de bord), puis les vues.
 `RealtimeSync` en dernier : il appelle les rendus de toutes les vues, il ne
