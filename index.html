@@ -6533,7 +6533,8 @@
       "roster_characters",
       "boss_sessions",
       "boss_participation",
-      "boss_run_reports"
+      "boss_run_reports",
+      "member_availability"
     ];
     let channel = null;
     let userId = "";
@@ -6580,6 +6581,10 @@
           });
           if(!refreshed) throw new Error("BOSS_SYNC_FAILED");
         }
+        if(changed.has("availability") && view === "availability"){
+          const refreshed = await renderAvailabilityView();
+          if(!refreshed) throw new Error("AVAILABILITY_SYNC_FAILED");
+        }
         if(dashboardChanged){
           if(dashboardActive){
             const refreshed = await renderDashboardView({
@@ -6608,6 +6613,7 @@
       ){
         pending.add("boss");
       }
+      if(table === "member_availability") pending.add("availability");
       clearTimeout(timer);
       timer = setTimeout(()=>void flush(), 120);
     }
@@ -6638,7 +6644,16 @@
           event:"*",
           schema:"public",
           table
-        }, ()=>schedule(table));
+        }, payload => {
+          /* L'écho de sa PROPRE écriture, pendant qu'on peint encore, ferait
+             réapparaître un masque plus ancien que la sélection en cours. */
+          if(shouldIgnoreAvailabilityEcho(
+            payload && payload.new,
+            userId,
+            Availability.isSaving()
+          )) return;
+          schedule(table);
+        });
       });
       channel = next.subscribe(status => {
         if(channel !== next) return;
@@ -7054,6 +7069,12 @@
     return (weekStarts || []).filter(week => week < floor);
   }
 
+  /* Sans cette garde, l'écho Realtime de sa PROPRE écriture réapplique un
+     masque plus ancien que celui qu'on est en train de peindre. */
+  function shouldIgnoreAvailabilityEcho(payload, currentUserId, savePending){
+    return !!savePending && !!payload && payload.owner === currentUserId;
+  }
+
   const AVAIL_DAY_LABELS = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];
   const AVAIL_DAY_FULL = [
     "Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche"
@@ -7113,6 +7134,8 @@
 
   const AVAIL_CACHE_PREFIX = "confrerie7ds.cloud.availability.";
   const AVAIL_CACHE_VERSION = 1;
+  /* Quatre semaines conservées, la courante comprise. */
+  const AVAIL_KEEP_WEEKS = 4;
 
   function availabilityCacheKey(userId, weekStart){
     return AVAIL_CACHE_PREFIX+userId+"."+weekStart;
@@ -7345,6 +7368,24 @@
         timeZone:"Europe/Paris", hour:"2-digit", minute:"2-digit"
       }).format(new Date());
       setSaveStatus("saved", "Enregistré à "+stamp);
+      /* Purge auto-nettoyante : chaque membre efface SES semaines anciennes,
+         ce qui évite une tâche planifiée côté serveur. */
+      const owned = await sb.from("member_availability")
+        .select("week_start")
+        .eq("owner", currentUser.id);
+      if(!owned.error){
+        const stale = staleAvailabilityWeeks(
+          (owned.data || []).map(row => row.week_start),
+          state.weekStart,
+          AVAIL_KEEP_WEEKS
+        );
+        if(stale.length){
+          await sb.from("member_availability")
+            .delete()
+            .eq("owner", currentUser.id)
+            .in("week_start", stale);
+        }
+      }
       return true;
     }
 

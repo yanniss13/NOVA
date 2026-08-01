@@ -450,4 +450,41 @@ assert.match(
   "Le panneau doit marquer les membres sans groupe"
 );
 
+const { shouldIgnoreAvailabilityEcho } = hooks;
+
+/* Pendant une saisie, l'écho de sa propre écriture ne doit pas écraser la
+   sélection en cours de peinture. */
+assert.strictEqual(
+  shouldIgnoreAvailabilityEcho({ owner:"moi" }, "moi", true),
+  true
+);
+/* Une fois l'enregistrement terminé, plus rien n'est ignoré. */
+assert.strictEqual(
+  shouldIgnoreAvailabilityEcho({ owner:"moi" }, "moi", false),
+  false
+);
+/* La saisie d'un autre membre est toujours prise en compte. */
+assert.strictEqual(
+  shouldIgnoreAvailabilityEcho({ owner:"autre" }, "moi", true),
+  false
+);
+assert.strictEqual(shouldIgnoreAvailabilityEcho(null, "moi", true), false);
+
+/* La table doit être écoutée par la chaîne Realtime unique. */
+assert.match(
+  indexSource,
+  /"boss_run_reports",\s*\n\s*"member_availability"/,
+  "member_availability doit rejoindre la liste des tables suivies"
+);
+assert.match(
+  indexSource,
+  /table === "member_availability"/,
+  "schedule doit router les evenements de disponibilite"
+);
+assert.match(
+  indexSource,
+  /shouldIgnoreAvailabilityEcho\([\s\S]{0,160}Availability\.isSaving\(\)/,
+  "Le gestionnaire Realtime doit consulter la garde de saisie"
+);
+
 console.log("availability.test.js OK");

@@ -401,6 +401,50 @@ function ownMask(page){
       "La fermeture doit rendre le panneau inerte pour les lecteurs d'écran"
     );
 
+    /* La table doit être écoutée par la chaîne Realtime unique, et un événement
+       venu d'un autre membre doit rafraîchir la vue ouverte. */
+    await page.evaluate(() => {
+      window.__availState.member_availability.push({
+        owner:"tardif",
+        week_start:window.__availState.member_availability[0].week_start,
+        slots:"1".repeat(168)
+      });
+      window.__availState.profiles.push({ id:"tardif", pseudo:"Tardif" });
+      window.__availEmit("member_availability", { owner:"tardif" });
+    });
+    await page.waitForFunction(() => {
+      const cell = document.querySelector(
+        '#availGrid .avail-cell[data-index="21"]'
+      );
+      return cell && cell.textContent.trim() === "3";
+    }, null, { timeout:5000 });
+
+    /* Purge : une semaine vieille de plus de quatre semaines part au prochain
+       enregistrement, la semaine précédente reste. */
+    await page.click("#availModeMine");
+    await page.waitForSelector('#availGrid .avail-cell[aria-pressed]');
+    await page.evaluate(() => {
+      const rows = window.__availState.member_availability;
+      const current = rows.find(row => row.owner === "moi").week_start;
+      const shift = weeks => {
+        const parts = current.split("-").map(Number);
+        const date = new Date(Date.UTC(parts[0], parts[1] - 1, parts[2]));
+        date.setUTCDate(date.getUTCDate() - weeks * 7);
+        return date.toISOString().slice(0, 10);
+      };
+      rows.push({ owner:"moi", week_start:shift(1), slots:"0".repeat(168) });
+      rows.push({ owner:"moi", week_start:shift(9), slots:"0".repeat(168) });
+      window.__availPurgeProbe = { recente:shift(1), ancienne:shift(9) };
+    });
+    await page.click('#availGrid .avail-cell[data-index="30"]');
+    await page.waitForFunction(() => {
+      const probe = window.__availPurgeProbe;
+      const weeks = window.__availState.member_availability
+        .filter(row => row.owner === "moi")
+        .map(row => row.week_start);
+      return weeks.includes(probe.recente) && !weeks.includes(probe.ancienne);
+    }, null, { timeout:6000 });
+
     assert.deepEqual(errors, [], "Aucune erreur JS ne doit survenir");
     console.log("PASS Playwright: dispos hebdomadaires");
   }finally{

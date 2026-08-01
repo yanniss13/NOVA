@@ -143,6 +143,10 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   availabilityToggleHour:typeof availabilityToggleHour === "function"
     ? availabilityToggleHour
     : undefined,
+  shouldIgnoreAvailabilityEcho:
+    typeof shouldIgnoreAvailabilityEcho === "function"
+      ? shouldIgnoreAvailabilityEcho
+      : undefined,
   normalizePotentiel,
   normalizeHero,
   normalizeTeam,
