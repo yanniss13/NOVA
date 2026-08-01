@@ -32,13 +32,43 @@ Décisions retenues, en résumé :
 - **l'ouverture en `file://` est abandonnée** — l'utilisateur passe toujours par
   GitHub Pages.
 
-**Travail de code effectué à ce jour : AUCUN.** La branche a été remise à niveau
-sur `main` (correctif mobile des dispos inclus) et ne porte que de la
-documentation.
+La branche a été remise à niveau sur `main` (correctif mobile des dispos
+inclus).
 
-**Prochaine étape : le lot 0**, qui fait passer les six tests Playwright de
-`file://` à un serveur local **sans toucher à l'application**. Il paie la dette
-du harnais avant tout découpage, pour que la branche ne soit jamais rouge.
+### Lot 0 — TERMINÉ
+
+Les six tests Playwright ne chargent plus le site en `file://` : ils passent par
+un serveur statique local. **`index.html` n'a pas été touché d'une ligne.**
+`npm test` est vert. La dette du harnais est donc payée sans que la branche
+soit jamais passée au rouge.
+
+- `tests/helpers/serve.js` — `serveRepo()` → `{ url, close }`, serveur
+  `node:http` sur un port éphémère de `127.0.0.1`, sans dépendance.
+  **Piège déjà résolu :** `close()` appelle `closeAllConnections()`, sans quoi
+  Playwright garde des sockets ouvertes et le processus de test se fige.
+- `tests/serve.test.js` — couvre le type MIME JavaScript (un module servi en
+  `text/plain` serait refusé par le navigateur), le 404, et le refus de lire
+  hors du dépôt.
+- Les six `.playwright.js` démarrent le serveur en tête et le ferment dans leur
+  `finally`. `grep -rn pathToFileURL tests/` ne renvoie plus rien.
+- `tests/pwa-update.playwright.js` était le cas à risque : il redéfinit
+  `navigator.serviceWorker`, qui existe vraiment en `http` alors qu'il n'existe
+  pas en `file://`. Il passe sans modification, son descripteur portant déjà
+  `configurable: true`.
+
+Commits : `77d18c0` (serveur), `35c0bcb` (conversion des six tests).
+
+### Prochaine étape — lot 1, le pivot
+
+Déplacer le script en ligne de `index.html` (~10 400 lignes) vers `js/app.js`,
+chargé par `<script type="module" src="js/app.js">`. **Déplacement pur, aucun
+découpage**, aucune ligne de code modifiée.
+
+Le détail pas à pas est dans
+[le plan](../plans/2026-08-01-refactor-index-lot0-lot1.md), tâche 3. Les trois
+points à ne pas oublier : `CORE_ASSETS` dans `sw.js`, la source lue par
+`tests/helpers/load-app.js`, et la phrase d'`AGENTS.md` qui promet le
+double-clic et devient fausse.
 
 ## Pourquoi ce refactor
 
