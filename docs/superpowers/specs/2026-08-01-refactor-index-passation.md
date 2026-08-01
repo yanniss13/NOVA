@@ -19,12 +19,26 @@
 **Branche :** `refactor/decoupage-index`, créée le 1er août 2026 depuis `main`
 au commit `5e0b491`.
 
-**Travail effectué à ce jour : AUCUN.** Seul ce document existe. Rien n'a été
-découpé, déplacé ni renommé. La branche part d'un `main` entièrement vert
-(`npm test` = 0) et déployé sur GitHub Pages.
+**Conception : TRANCHÉE avec l'utilisateur le 1er août 2026.** Elle est écrite
+dans [2026-08-01-refactor-index-design.md](2026-08-01-refactor-index-design.md).
+La section « Ce qu'il faut trancher » plus bas est conservée pour mémoire, mais
+**elle est close** — n'y retourne pas poser les questions.
 
-**Décision de conception : PAS ENCORE PRISE.** Voir « Ce qu'il faut trancher
-avec l'utilisateur » plus bas. Ne touche pas au code avant d'avoir tranché.
+Décisions retenues, en résumé :
+
+- **modules ES**, choix explicite de l'utilisateur en connaissance du coût ;
+- **JavaScript seul**, le CSS et le balisage restent dans `index.html` ;
+- **découpage par domaine**, un lot par domaine, `npm test` vert avant commit ;
+- **l'ouverture en `file://` est abandonnée** — l'utilisateur passe toujours par
+  GitHub Pages.
+
+**Travail de code effectué à ce jour : AUCUN.** La branche a été remise à niveau
+sur `main` (correctif mobile des dispos inclus) et ne porte que de la
+documentation.
+
+**Prochaine étape : le lot 0**, qui fait passer les six tests Playwright de
+`file://` à un serveur local **sans toucher à l'application**. Il paie la dette
+du harnais avant tout découpage, pour que la branche ne soit jamais rouge.
 
 ## Pourquoi ce refactor
 
