@@ -2,7 +2,7 @@
 
 const assert = require("node:assert/strict");
 const path = require("node:path");
-const { pathToFileURL } = require("node:url");
+const { serveRepo } = require("./helpers/serve");
 const { chromium } = require("playwright");
 
 async function assertPickerTilesContained(page, label){
@@ -207,6 +207,7 @@ async function installRosterFocusFakeSupabase(page){
 }
 
 (async()=>{
+  const server = await serveRepo();
   const browser = await chromium.launch({ headless:true });
   const page = await browser.newPage({ viewport:{width:1280,height:900} });
   const errors = [];
@@ -219,7 +220,7 @@ async function installRosterFocusFakeSupabase(page){
         body:"window.supabase=undefined;"
       })
     );
-    await page.goto(pathToFileURL(path.resolve(__dirname, "..", "index.html")).href);
+    await page.goto(server.url + "/index.html");
     const tabs = page.getByRole("tab");
     // 7 onglets depuis l'ajout de « Dispos », inséré après « Boss de Guilde ».
     assert.equal(await tabs.count(), 7);
@@ -346,7 +347,7 @@ async function installRosterFocusFakeSupabase(page){
     const rosterFocusPage = await rosterFocusContext.newPage();
     await installRosterFocusFakeSupabase(rosterFocusPage);
     await rosterFocusPage.goto(
-      pathToFileURL(path.resolve(__dirname, "..", "index.html")).href
+      server.url + "/index.html"
     );
     await rosterFocusPage.locator("#accountPseudo")
       .getByText("Focus", { exact:true }).waitFor();
@@ -611,7 +612,7 @@ async function installRosterFocusFakeSupabase(page){
         })
       );
       await pickerPage.goto(
-        pathToFileURL(path.resolve(__dirname, "..", "index.html")).href
+        server.url + "/index.html"
       );
 
       /* Bandeau de mise à jour PWA : il est masqué par défaut ici (pas de
@@ -1378,7 +1379,7 @@ async function installRosterFocusFakeSupabase(page){
         body:"window.supabase=undefined;"
       })
     );
-    await mobile.goto(pathToFileURL(path.resolve(__dirname, "..", "index.html")).href);
+    await mobile.goto(server.url + "/index.html");
 
     assert.equal(await mobile.locator("#toast").getAttribute("role"), "status");
     assert.equal(await mobile.locator("#toast").getAttribute("aria-live"), "polite");
@@ -1477,7 +1478,7 @@ async function installRosterFocusFakeSupabase(page){
         })
       );
       await headerPage.goto(
-        pathToFileURL(path.resolve(__dirname, "..", "index.html")).href
+        server.url + "/index.html"
       );
       await headerPage.evaluate(() => {
         document.querySelector("#accountLogin").hidden = true;
@@ -1735,7 +1736,7 @@ async function installRosterFocusFakeSupabase(page){
       })
     );
     await motionPage.goto(
-      pathToFileURL(path.resolve(__dirname, "..", "index.html")).href
+      server.url + "/index.html"
     );
     await motionPage.evaluate(() => {
       document.querySelector("#accountLogin").hidden = true;
@@ -1790,7 +1791,7 @@ async function installRosterFocusFakeSupabase(page){
       })
     );
     await deskPage.goto(
-      pathToFileURL(path.resolve(__dirname, "..", "index.html")).href
+      server.url + "/index.html"
     );
     await deskPage.evaluate(() => window.scrollTo({ top:600 }));
     await deskPage.waitForTimeout(120);
@@ -1822,6 +1823,7 @@ async function installRosterFocusFakeSupabase(page){
     console.log("PASS accessibilité : onglets, modales, header rétractable et mobile");
   }finally{
     await browser.close();
+    await server.close();
   }
 })().catch(error=>{
   console.error(error);

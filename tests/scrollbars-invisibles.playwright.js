@@ -1,15 +1,15 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const path = require("node:path");
-const { pathToFileURL } = require("node:url");
+const { serveRepo } = require("./helpers/serve");
 const { chromium } = require("playwright");
 
 (async()=>{
+  const server = await serveRepo();
   const browser = await chromium.launch({ headless:true });
   const page = await browser.newPage();
   try{
-    await page.goto(pathToFileURL(path.resolve(__dirname, "..", "index.html")).href);
+    await page.goto(server.url + "/index.html");
     const result = await page.evaluate(() => {
       const probe = document.createElement("div");
       probe.style.cssText =
@@ -38,6 +38,7 @@ const { chromium } = require("playwright");
     console.log("PASS Playwright: barres invisibles, défilement conservé");
   }finally{
     await browser.close();
+    await server.close();
   }
 })().catch(error=>{
   console.error(error);

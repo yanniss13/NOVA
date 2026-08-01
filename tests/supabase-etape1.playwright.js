@@ -1,11 +1,11 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const path = require("node:path");
-const { pathToFileURL } = require("node:url");
+const { serveRepo } = require("./helpers/serve");
 const { chromium } = require("playwright");
 
 (async()=>{
+  const server = await serveRepo();
   const browser = await chromium.launch({ headless:true });
   const page = await browser.newPage({ viewport:{ width:1440, height:1000 } });
   const errors = [];
@@ -13,8 +13,7 @@ const { chromium } = require("playwright");
 
   try{
     await installFakeSupabase(page);
-    const url = pathToFileURL(path.resolve(__dirname, "..", "index.html")).href;
-    await page.goto(url);
+    await page.goto(server.url + "/index.html");
 
     const authOverlay = page.locator("#authOverlay");
     await authOverlay.waitFor({ state:"visible" });
@@ -5705,6 +5704,7 @@ const { chromium } = require("playwright");
     console.log("PASS Playwright: Supabase Étape 1 — auth, partage et migration");
   }finally{
     await browser.close();
+    await server.close();
   }
 })().catch(error=>{
   console.error(error);

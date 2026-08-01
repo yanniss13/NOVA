@@ -1,13 +1,13 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const path = require("node:path");
-const { pathToFileURL } = require("node:url");
+const { serveRepo } = require("./helpers/serve");
 const { chromium } = require("playwright");
 
 const STORAGE_KEY = "confrerie7ds.teams";
 
 (async()=>{
+  const server = await serveRepo();
   const browser = await chromium.launch({ headless:true });
   const page = await browser.newPage({ viewport:{ width:1440, height:1000 } });
   const errors = [];
@@ -17,8 +17,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await page.route("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*", route =>
       route.fulfill({ status:200, contentType:"application/javascript", body:"" })
     );
-    const url = pathToFileURL(path.resolve(__dirname, "..", "index.html")).href;
-    await page.goto(url);
+    await page.goto(server.url + "/index.html");
     await page.evaluate(key => localStorage.removeItem(key), STORAGE_KEY);
     await page.reload();
 
@@ -592,6 +591,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     console.log("PASS Playwright: potentiel commun, changement d'arme et migration");
   }finally{
     await browser.close();
+    await server.close();
   }
 })().catch(error=>{
   console.error(error);

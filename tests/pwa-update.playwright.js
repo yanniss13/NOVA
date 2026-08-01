@@ -1,13 +1,12 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const path = require("node:path");
-const { pathToFileURL } = require("node:url");
+const { serveRepo } = require("./helpers/serve");
 const { chromium } = require("playwright");
 
-const PAGE_URL = pathToFileURL(
-  path.resolve(__dirname, "..", "index.html")
-).href;
+/* Renseignée au démarrage du serveur local : les modules ES ne se chargent
+   pas en file://, la page doit donc être servie en http. */
+let PAGE_URL = "";
 
 /* Faux `navigator.serviceWorker`. Il est installé AVANT les scripts de la page
    pour que l'enregistrement au `load` d'index.html tombe sur ce double.
@@ -162,6 +161,8 @@ async function configureWeaponAndReadContribution(page){
 }
 
 (async () => {
+  const server = await serveRepo();
+  PAGE_URL = server.url + "/index.html";
   const browser = await chromium.launch({ headless: true });
   try{
     // ---- Cas 1 : onglet déjà contrôlé + version en attente ----------------
@@ -344,6 +345,7 @@ async function configureWeaponAndReadContribution(page){
     );
   }finally{
     await browser.close();
+    await server.close();
   }
 })().catch(error => {
   console.error(error);

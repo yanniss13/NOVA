@@ -7,8 +7,7 @@
    semaines s'en sert). */
 
 const assert = require("node:assert/strict");
-const path = require("node:path");
-const { pathToFileURL } = require("node:url");
+const { serveRepo } = require("./helpers/serve");
 const { chromium } = require("playwright");
 
 /* La semaine est recalculée à chaque exécution : une valeur en dur ferait
@@ -184,7 +183,7 @@ function ownMask(page){
 
 /* Gestes tactiles réels : `page.mouse` produit pointerType "mouse" et ne
    reproduit donc pas le comportement mobile. On passe par CDP. */
-async function runMobileChecks(browser){
+async function runMobileChecks(browser, baseUrl){
   const page = await browser.newPage({
     viewport:{ width:390, height:780 }, hasTouch:true, isMobile:true
   });
@@ -192,9 +191,7 @@ async function runMobileChecks(browser){
   page.on("pageerror", error => errors.push(error.message));
   try{
     await installFakeSupabase(page, isoWeekStart(new Date()));
-    await page.goto(pathToFileURL(
-      path.resolve(__dirname, "..", "index.html")
-    ).href);
+    await page.goto(baseUrl + "/index.html");
     await page.click("#tab-availability");
     await page.waitForSelector("#availGrid .avail-cell");
 
@@ -286,15 +283,14 @@ async function runMobileChecks(browser){
 }
 
 (async () => {
+  const server = await serveRepo();
   const browser = await chromium.launch();
   const page = await browser.newPage({ viewport:{ width:360, height:780 } });
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
   try{
     await installFakeSupabase(page, isoWeekStart(new Date()));
-    await page.goto(pathToFileURL(
-      path.resolve(__dirname, "..", "index.html")
-    ).href);
+    await page.goto(server.url + "/index.html");
     await page.click("#tab-availability");
     await page.waitForSelector("#availGrid .avail-cell");
 
@@ -562,10 +558,11 @@ async function runMobileChecks(browser){
     }, null, { timeout:6000 });
 
     assert.deepEqual(errors, [], "Aucune erreur JS ne doit survenir");
-    await runMobileChecks(browser);
+    await runMobileChecks(browser, server.url);
     console.log("PASS Playwright: dispos hebdomadaires");
   }finally{
     await browser.close();
+    await server.close();
   }
 })().catch(error => {
   console.error(error);
