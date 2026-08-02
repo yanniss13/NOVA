@@ -121,10 +121,11 @@ dépendances réelles avant de choisir.** La commande est donnée plus bas.
 | Fichier | Lignes |
 |---|---|
 | `index.html` | 2 263 |
-| `js/app.js` | 9 689 |
+| `js/app.js` | 9 604 |
 | `js/boss-logique.js` | 292 |
 | `js/dispos-logique.js` | 282 |
 | `js/modal-stack.js` | 167 |
+| `js/equipement.js` | 107 |
 | `js/constantes.js` | 99 |
 | `js/picker.js` | 98 |
 | `js/dom.js` | 45 |
@@ -339,26 +340,47 @@ voyageront avec elle — ils ne posent pas de problème. Ceux qui restent
 réellement partagés sont `draft`, `cloudTeamsCache`, `cloudRosterCache` : même
 traitement le jour où leur zone sortira.
 
+### Lot 9 — TERMINÉ
+
+`js/equipement.js` (107 lignes) : détection des sets d'équipement (armures et
+bijoux, par racine commune des noms de fichiers) et modèles vides
+(`emptyArmor`, `emptyJewel`, `emptyPot`). **11 déclarations, 6 exportées,
+5 devenues privées** — `ARMOR_SET_MIN_STEM`, `stripSetNote`, `commonSuffix`,
+`armorSetLabel`, `equipmentSetsFrom`. `npm test` vert deux fois, exit 0.
+
+Le bloc est en tête de la zone `Brouillon d'équipe` et n'en dépendait pas :
+**relevé à zéro dépendance vers `js/app.js`**, il ne consomme que
+`js/constantes.js`.
+
 ### Prochain candidat
 
-Le relevé après lot 8, par nombre de symboles de `js/app.js` restant à
-satisfaire :
+**Attention : le découpage par bannière touche à sa limite.** Les zones
+restantes sont grosses et fortement entrelacées. Le relevé après lot 9 :
 
-| Zone | Lignes | Dépendances |
+| Zone | Lignes | Dépendances vers `app.js` |
 |---|---|---|
 | `Démarrage` | 13 | 1 (`renderBuilder`) |
-| `Navigation onglets` | 49 | 2 (`renderAvailabilityView`, `renderBuilder`) |
+| `Navigation onglets` | 49 | 2 (rendus de vues) |
 | **`Équipes : local + Supabase`** | **103** | **2 (`normalizeTeam`, `sb`)** |
 | `Export / Import` | 112 | 8 |
-| `Authentification Supabase` | 886 | 11 |
 | `Analyse` | 208 | 11 |
+| `Authentification Supabase` | 886 | 11 |
 | `Sessions de boss` | 1 888 | 12 |
 | `Builder` | 735 | 46 |
+| `Brouillon d'équipe` | ~3 700 | 12 |
 
-**`Équipes : local + Supabase` est le prochain lot évident** : 103 lignes, deux
-dépendances seulement. `sb` (le client Supabase) est un `const` sans état
-réaffecté — il peut rejoindre un `js/supabase-client.js`, ce qui débloquerait
-aussi `Export/Import` et `Sessions de boss`. `normalizeTeam` est à relever.
+Deux pistes, dans cet ordre :
+
+1. **`js/supabase-client.js`** — sortir le seul `sb` (3 lignes, aucune
+   dépendance, **73 emplois**). Lot minuscule mais il retire une dépendance à
+   `Équipes`, `Export/Import`, `Authentification` et `Sessions de boss` d'un
+   coup. C'est le même pari que `dom.js` au lot 4, et il a payé deux fois.
+2. **`js/equipe-modele.js`** — `normalizeTeam`, `normalizeTeamName`,
+   `normalizeHero`, `emptyHero`, `emptyDraft`, `TEAM_NAME_MAX`. ⚠️ **Ces
+   déclarations ne sont PAS contiguës** : elles sont éparpillées dans
+   `Brouillon d'équipe` (lignes ~336, ~420, ~3768, ~4229). C'est le premier lot
+   qui demandera de rassembler des morceaux dispersés au lieu de couper une
+   tranche — plus risqué, à faire lentement. Il libère `Équipes` entièrement.
 
 `Démarrage` et `Navigation onglets` sont petits mais dépendent des rendus des
 vues : ils sortiront **en dernier**, pas en premier.

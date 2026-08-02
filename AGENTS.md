@@ -195,6 +195,7 @@ Site Confrérie 7ds/
 ├─ js/constantes.js        # Catalogues, libellés et clés de stockage. Feuille de l'arbre.
 ├─ js/session.js           # État mutable de session (`sessionCourante`). Objet, pour rester réaffectable.
 ├─ js/dom.js               # Utilitaires DOM ($, el, norm, uid, initials…). Feuille de l'arbre.
+├─ js/equipement.js        # Sets d'équipement (armures, bijoux) et modèles vides.
 ├─ js/dispos-logique.js    # Logique pure des disponibilités (masques, semaines, agrégation).
 ├─ js/boss-logique.js      # Logique pure des sessions de boss et de « Mon suivi » (dates, scores, projection).
 ├─ js/modal-stack.js       # Pile de modales (ouverture, fermeture, restitution du focus).
