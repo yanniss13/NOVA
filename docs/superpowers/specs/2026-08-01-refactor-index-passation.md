@@ -571,25 +571,57 @@ d'affichage de stats ne peut pas dépendre d'un éditeur déclaré après lui. C
 libellés appartenaient à `stats-affichage.js`. **Quand ce test proteste, c'est
 presque toujours le rangement qui a tort.**
 
+### Lot 31 — `fiche-heros.js`, le noyau commun des modales
+
+Le relevé annoncé par la passation précédente s'est vérifié cette fois : 7
+symboles, 171 lignes, clôture fermée (« dépend encore de app.js : RIEN »).
+
+**Le rangement n'a pas suivi la clôture telle quelle.** Deux des sept symboles
+n'avaient rien à faire dans une fiche de héros, et le nombre de leurs appelants
+le disait :
+
+| Symbole | Appels hors fiche | Rangé dans |
+|---|---|---|
+| `authMessage` | 13 — auth, roster, équipes, boss | `noyau/supabase-client.js` |
+| `canManageTeam` | 4 — gestion d'équipe | `etat/session.js` |
+
+Les laisser dans `vues/fiche-heros.js` aurait obligé `app.js` à importer son
+formateur d'erreurs Supabase depuis une carte de héros. `authMessage` ne traduit
+que les erreurs de `sb` : il vit avec lui. `canManageTeam` est une question
+posée à la session courante, pas une règle sur l'équipe — et `equipe-modele.js`
+promet dans son en-tête de rester lisible sans connaître l'utilisateur, donc il
+ne pouvait pas l'accueillir.
+
+Restent cinq symboles dans `js/vues/fiche-heros.js` (204 lignes), dont **trois
+exportés seulement** : `equipLine` et `importTeamHeroToRoster` ne servent qu'à
+la fiche.
+
+Un import est mort en chemin — `equippedEnumOf` dans `app.js` — attrapé par
+`tests/modules-imports.test.js`, pas par la lecture. Et la bannière
+`/* ==== Données & constantes ==== */` est tombée : les constantes étaient
+parties depuis longtemps, les deux dernières fonctions sous elle venaient de
+sortir, elle ne décrivait plus rien.
+
 ### Où ça s'arrête
 
-**`js/app.js` : 10 489 → 5 139 lignes**, 30 modules.
+**`js/app.js` : 10 489 → 4 966 lignes**, 31 modules. `npm test` vert, exit 0,
+Playwright compris.
 
-Restent quatre grosses modales, toutes à clôture fermée donc extractibles sans
-cycle. **Relevé refait après le lot `stats-heros` — les chiffres précédents
-étaient déjà périmés :**
+Restent trois modales, toutes à clôture fermée donc extractibles sans cycle.
+**Relevé refait après le lot `fiche-heros` :**
 
-| Racine | Symboles | Lignes |
-|---|---|---|
-| `openRosterDetailFor` | 17 | 356 |
-| `bossReportParticipant` | 12 | 258 |
-| `openTeamDetail` | 9 | 198 |
-| **`heroDetail`** | **7** | **171** |
+| Racine | Symboles | Lignes | Clôture |
+|---|---|---|---|
+| `openRosterDetailFor` | 10 | 185 | `closeRosterDetail`, `favoriteRosterWeaponType`, `moveRosterDetail`, `openRosterDetailFor`, `renderRosterDetail`, `rosterDetail`, `rosterDetailOwnerLabel`, `rosterDetailWeaponSwitch`, `rosterHeroSnapshot`, `rosterWeaponLabel` |
+| `bossReportParticipant` | 5 | 87 | `bossReportParticipant`, `bossTeamBanner`, `closeTeamDetail`, `openTeamDetail`, `teamFromBossSnapshot` |
+| `openTeamDetail` | 2 | 27 | `closeTeamDetail`, `openTeamDetail` |
 
-`heroDetail` **est** le noyau commun aux quatre — `authMessage`, `badgesRow`,
-`canManageTeam`, `equipLine`, `heroDetail`, `importTeamHeroToRoster`,
-`weaponSlotBadge`. Le sortir en premier fait tomber les trois autres à 10, 5
-et 2 symboles propres. C'est exactement l'ordre qui a marché à chaque fois.
+**La leçon « sortir la base avant ce qui s'appuie dessus » se vérifie une
+cinquième fois :** ces racines pesaient 17, 12 et 9 symboles avant le lot, sans
+qu'une ligne de leur code ne change.
+
+⚠️ `bossReportParticipant` **contient** `openTeamDetail` : les extraire dans le
+mauvais ordre referait le travail deux fois. Sortir `openTeamDetail` d'abord.
 
 **Refais le relevé avant de commencer** : ces nombres changent à chaque
 extraction, et ce document a déjà été faux deux fois sur ce point précis.

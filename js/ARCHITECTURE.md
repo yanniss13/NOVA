@@ -32,13 +32,13 @@ projet, et elle est vérifiée par un test.
 | `constantes.js` | Catalogues et libellés (`DATA`, `ELEMENTS`, `WEAPON_ENUM`, clés de stockage) |
 | `dom.js` | `$`, `el`, `norm`, `uid`, `initials` |
 | `outils.js` | `jsonCopy`, `owns`, `isInteger` |
-| `supabase-client.js` | `sb`, le client — **`null` si la configuration manque**, donc à tester avant usage |
+| `supabase-client.js` | `sb`, le client — **`null` si la configuration manque**, donc à tester avant usage — et `authMessage`, qui traduit ses erreurs |
 
 ### `etat/` — ce qui change
 
 | Fichier | Contenu |
 |---|---|
-| `session.js` | `sessionCourante` : utilisateur, pseudo, profils du roster |
+| `session.js` | `sessionCourante` : utilisateur, pseudo, profils du roster — et `canManageTeam`, la seule question qu'on lui pose |
 | `brouillon-equipe.js` | `brouillonEquipe` : l'équipe en cours d'édition dans le Builder |
 
 **Pourquoi des objets et pas des `let` exportés ?** Parce qu'une liaison
@@ -88,6 +88,7 @@ version plus ancienne du site reste ouvrable.
 | `picker.js` | La modale de sélection réutilisable |
 | `stats-affichage.js` | Mise en forme des termes de stats, libellés partagés |
 | `stats-heros.js` | Le bloc de statistiques d'un héros, dans les fiches |
+| `fiche-heros.js` | La fiche d'un héros — **le noyau commun aux quatre grosses modales** |
 | `editeur-arme.js` | La modale de configuration d'une arme |
 | `editeur-equipement.js` | La modale de configuration d'une pièce d'équipement |
 | `dispos.js` | La vue des disponibilités hebdomadaires |
@@ -133,27 +134,26 @@ Toujours `npm test` en entier.
 
 ## Si tu veux découper davantage
 
-`app.js` n'est pas fini : il reste ~5 100 lignes, soit le Builder, le Roster,
+`app.js` n'est pas fini : il reste ~4 950 lignes, soit le Builder, le Roster,
 les sessions de boss, l'authentification et le démarrage.
 
-**Les quatre plus gros morceaux encore dedans**, tous des modales, tous à
-clôture fermée — donc extractibles sans cycle. Relevé après le lot
-`stats-heros` :
+**Les modales encore dedans**, toutes à clôture fermée — donc extractibles sans
+cycle. Relevé refait après le lot `fiche-heros` :
 
 | Racine | Symboles | Lignes |
 |---|---|---|
-| `openRosterDetailFor` | 17 | 356 |
-| `bossReportParticipant` | 12 | 258 |
-| `openTeamDetail` | 9 | 198 |
-| **`heroDetail`** | **7** | **171** |
+| `openRosterDetailFor` | 10 | 185 |
+| `bossReportParticipant` | 5 | 87 |
+| `openTeamDetail` | 2 | 27 |
 
-`heroDetail` **est** le noyau commun aux quatre : `authMessage`, `badgesRow`,
-`canManageTeam`, `equipLine`, `heroDetail`, `importTeamHeroToRoster`,
-`weaponSlotBadge`. **Le sortir en premier** — les trois autres tomberont
-respectivement à 10, 5 et 2 symboles propres.
+**La démonstration est faite une fois de plus :** ces trois racines pesaient 17,
+12 et 9 symboles avant que `fiche-heros.js` ne sorte. Elles partageaient toutes
+le même noyau — la fiche d'un héros — et le sortir en premier a fait tomber
+leurs clôtures de moitié sans toucher à une ligne de leur code.
 
 C'est l'ordre qui a fonctionné à chaque fois : `dom.js` avant les vues, le
-modèle avant les stores, `stats-heros.js` avant les fiches.
+modèle avant les stores, `stats-heros.js` puis `fiche-heros.js` avant les
+modales qui les affichent.
 
 ⚠️ **Ces chiffres bougent à chaque extraction.** Refais le relevé plutôt que de
 les croire — c'est le seul conseil de cette page qui périme.

@@ -8,7 +8,11 @@
    Le nom `sessionCourante` n'est pas decoratif : `session` est deja pris
    comme parametre dans applySession(session) et dans les gestionnaires
    d'evenements Supabase. Une collision y aurait ecrit dans l'objet d'auth
-   au lieu de l'etat applicatif, sans aucune erreur. */
+   au lieu de l'etat applicatif, sans aucune erreur.
+
+   `canManageTeam` vit ici et non dans metier/equipe-modele.js : c'est une
+   question posee a la session courante, pas une regle sur l'equipe. Le
+   modele d'equipe, lui, doit rester lisible sans connaitre l'utilisateur. */
 
   const sessionCourante = {
     user: null,
@@ -17,4 +21,9 @@
     rosterProfiles: []
   };
 
-export { sessionCourante };
+  // Hors ligne, faute de compte, tout est modifiable en local.
+  function canManageTeam(team){
+    return !sessionCourante.user || !!team && team.owner === sessionCourante.user.id;
+  }
+
+export { canManageTeam, sessionCourante };
