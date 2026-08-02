@@ -2,6 +2,7 @@
    dans sa portée interne. */
 import { shouldIgnoreAvailabilityEcho } from "./metier/dispos-logique.js";
 import { ModalStack, closeModalAfterAsyncRefresh } from "./vues/modal-stack.js";
+import { enregistrerVue, mainTabs, showView } from "./vues/navigation.js";
 import { canManageTeam, sessionCourante } from "./etat/session.js";
 import { brouillonEquipe } from "./etat/brouillon-equipe.js";
 import { authMessage, sb } from "./noyau/supabase-client.js";
@@ -1013,53 +1014,17 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
   });
 
   /* ============================ Navigation onglets ============================ */
-  const mainTabs = [...document.querySelectorAll(".tab[data-view]")];
-
-  function showView(name){
-    mainTabs.forEach(button => {
-      const selected = button.dataset.view === name;
-      button.classList.toggle("active", selected);
-      button.setAttribute("aria-selected", String(selected));
-      button.tabIndex = selected ? 0 : -1;
-    });
-    document.querySelectorAll(".view").forEach(view => {
-      view.classList.toggle("active", view.id === "view-"+name);
-    });
-    /* La promesse de rendu est renvoyée pour que les actions de « Mon suivi »
-       puissent attendre la vue destination avant de cibler un élément. Les
-       écouteurs existants continuent d'ignorer la valeur de retour. */
-    let result = Promise.resolve(true);
-    if(name==="dashboard") result = renderDashboardView();
-    if(name==="builder") renderBuilder();
-    if(name==="roster") result = Promise.resolve(renderRoster()).then(()=>true);
-    if(name==="member-roster"){
-      result = Promise.resolve(renderMemberRoster()).then(()=>true);
-    }
-    if(name==="analyse") result = Promise.resolve(renderAnalyse()).then(()=>true);
-    if(name==="boss") result = renderBossView();
-    if(name==="availability") result = renderAvailabilityView();
-    const reduced = window.matchMedia
-      && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    window.scrollTo({top:0, behavior:reduced ? "auto" : "smooth"});
-    return result;
-  }
-  mainTabs.forEach((button, index) => {
-    button.addEventListener("click", ()=>showView(button.dataset.view));
-    button.addEventListener("keydown", event => {
-      let next = null;
-      if(event.key === "ArrowRight") next = (index + 1) % mainTabs.length;
-      if(event.key === "ArrowLeft"){
-        next = (index - 1 + mainTabs.length) % mainTabs.length;
-      }
-      if(event.key === "Home") next = 0;
-      if(event.key === "End") next = mainTabs.length - 1;
-      if(next === null) return;
-      event.preventDefault();
-      const target = mainTabs[next];
-      showView(target.dataset.view);
-      target.focus();
-    });
-  });
+  /* Chaque vue s'annonce au registre de vues/navigation.js. L'enveloppe dit ce
+     que `showView` doit renvoyer : les trois vues enveloppees ici renvoyaient
+     deja `true` quel que soit leur resultat, seul le rendu comptait. */
+  enregistrerVue("dashboard", renderDashboardView);
+  enregistrerVue("builder", ()=>{ renderBuilder(); return true; });
+  enregistrerVue("roster", ()=>Promise.resolve(renderRoster()).then(()=>true));
+  enregistrerVue("member-roster",
+    ()=>Promise.resolve(renderMemberRoster()).then(()=>true));
+  enregistrerVue("analyse", ()=>Promise.resolve(renderAnalyse()).then(()=>true));
+  enregistrerVue("boss", renderBossView);
+  enregistrerVue("availability", renderAvailabilityView);
 
   /* ============================ Roster des membres ============================ */
   let memberRosterMode = "mine";

@@ -41,6 +41,7 @@ const MODULES = [
   "donnees/suivi-store.js",
 
   /* vues — tout ce qui touche au DOM. */
+  "vues/navigation.js",
   "vues/elements.js",
   "vues/toast.js",
   "vues/modal-stack.js",

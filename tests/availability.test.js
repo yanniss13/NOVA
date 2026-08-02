@@ -319,10 +319,13 @@ assert.match(
   /<section id="view-availability" class="view" role="tabpanel"[\s\S]{0,120}aria-labelledby="tab-availability"/,
   "La vue Dispos doit exister et pointer vers son onglet"
 );
+/* Depuis le registre de vues/navigation.js, showView ne cite plus les vues :
+   chacune s enregistre. L invariant teste est le meme — l onglet Dispos
+   declenche bien son rendu — seul le mecanisme a change. */
 assert.match(
   indexSource,
-  /if\(name==="availability"\)/,
-  "showView doit rendre la vue Dispos"
+  /enregistrerVue\("availability",\s*renderAvailabilityView\)/,
+  "La vue Dispos doit etre enregistree aupres de showView"
 );
 
 assert.strictEqual(availabilityWeekLabel("2026-08-03"), "semaine du 3 au 9 août");
