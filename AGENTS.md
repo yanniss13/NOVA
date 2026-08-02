@@ -190,7 +190,12 @@ masquerait la modification réelle.
 
 ```
 Site Confrérie 7ds/
-├─ index.html              # L'appli + auth/store Supabase. Charge les données locales et le client CDN.
+├─ index.html              # Style + balisage. Charge les données locales, le client CDN et js/app.js.
+├─ js/app.js               # Module ES principal : vues, auth/store Supabase, démarrage.
+├─ js/dom.js               # Utilitaires DOM ($, el, norm, uid, initials…). Feuille de l'arbre.
+├─ js/dispos-logique.js    # Logique pure des disponibilités (masques, semaines, agrégation).
+├─ js/modal-stack.js       # Pile de modales (ouverture, fermeture, restitution du focus).
+├─ js/picker.js            # Modale de sélection réutilisable.
 ├─ sw.js                   # Service worker. Cache versionné par __BUILD_VERSION__, mise à jour explicite.
 ├─ .github/workflows/pages.yml         # Tests de toute contribution + déploiement Pages du seul `main` testé.
 ├─ .github/workflows/boss-reminder.yml # Rappel Discord (secrets propres). Indépendant du déploiement.
@@ -200,7 +205,9 @@ Site Confrérie 7ds/
 ├─ package.json            # Scripts de test Node + Playwright (développement uniquement).
 ├─ package-lock.json       # Versions verrouillées des dépendances de test.
 ├─ tests/                  # Régressions du builder + parcours Supabase simulé dans Chromium.
-├─ tests/helpers/load-app.js # Charge le script inline d'index.html dans `vm` et expose ses fonctions pures.
+├─ tests/helpers/load-app.js # Concatène les modules de js/ dans `vm` et expose leurs fonctions pures.
+├─ tests/helpers/modules.js  # Ordre de chargement des modules de js/. Source unique de vérité.
+├─ tests/modules-imports.test.js # Garde-fou : tout module importe ce qu'il emploie et est mis en cache.
 ├─ data.js                 # GÉNÉRÉ. window.SEVEN_DS_DATA = { personnages, armes, armures, bijoux }.
 ├─ stats-build.js          # GÉNÉRÉ. Personnages + armes + équipement + sets + passifs.
 ├─ generate-stats-build.py # Régénère/valide stats-build.js depuis les références locales.

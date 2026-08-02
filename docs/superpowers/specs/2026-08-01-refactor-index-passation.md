@@ -121,9 +121,10 @@ dépendances réelles avant de choisir.** La commande est donnée plus bas.
 | Fichier | Lignes |
 |---|---|
 | `index.html` | 2 263 |
-| `js/app.js` | 10 082 |
+| `js/app.js` | 9 991 |
 | `js/dispos-logique.js` | 282 |
 | `js/modal-stack.js` | 167 |
+| `js/picker.js` | 98 |
 | `js/dom.js` | 45 |
 
 ### Prochaine étape — lot 3 et suivants
@@ -183,51 +184,71 @@ PY
 | `DashboardStore` | 95 | `buildDashboardState`, `currentBossWeek`, `readDashboardCache`, `writeDashboardCache` |
 | `RealtimeSync` | 141 | les rendus de toutes les vues — **à garder pour la fin** |
 
-### ⚠️ Lot 5 tenté sur `Picker` — ÉCHOUÉ, annulé, à reprendre
+### Lot 5 — TERMINÉ : `Picker`, et la cause de l'échec précédent
 
-Une extraction de `Picker` vers `js/picker.js` a été tentée puis **annulée** :
-elle n'a jamais été commitée, le dépôt est resté vert. Ne pas la refaire à
-l'identique en croyant qu'elle marchera.
+`js/picker.js` (98 lignes) porte la modale de sélection réutilisable. Elle
+n'expose que `Picker`. `npm test` est vert, exit 0.
 
-Ce qui a été fait : bloc `const Picker = (function(){` … `})();` (90 lignes)
-déplacé tel quel dans `js/picker.js`, avec
-`import { $, el, norm } from "./dom.js";` et `export { Picker };`, plus les
-trois déclarations habituelles.
+**Une première tentative avait échoué et été annulée. La piste consignée alors
+— « le moment d'évaluation » — était fausse.** La vraie cause, reproduite puis
+confirmée par retrait délibéré :
 
-Ce qui s'est passé :
+> `js/picker.js` appelle `ModalStack.open()` et `ModalStack.close()`, mais la
+> tentative n'avait importé que `{ $, el, norm } from "./dom.js"`. Sans
+> `import { ModalStack } from "./modal-stack.js";`, l'appel lève un
+> `ReferenceError` à l'ouverture de la modale — d'où le
+> `element is not visible` de `potentiel-commun.playwright.js`.
 
-- `npm run test:unit` : **vert**. Le `vm` et la concaténation fonctionnent.
-- `node tests/potentiel-commun.playwright.js` : **échec**, la modale du
-  sélecteur ne s'ouvre plus (`element is not visible`, l'attente de clic expire).
+**Pourquoi le relevé de dépendances était passé à côté :** il cherchait les
+identifiants **encore présents dans `js/app.js`**. Or `ModalStack` en était
+déjà sorti au lot 3. Un symbole déjà extrait est invisible pour ce relevé tout
+en restant une dépendance bien réelle.
 
-Ce qui a déjà été écarté : il ne s'agit **pas** d'un symbole oublié. Un relevé
-des identifiants de `js/app.js` encore référencés par `js/picker.js`, y compris
-les références simples et pas seulement les appels, renvoie une liste **vide**.
+**Pourquoi `npm run test:unit` restait vert :** le chargeur `vm` **concatène
+tous les modules dans une portée commune**, où `ModalStack` est visible. Le
+`vm` ne peut donc structurellement pas détecter un `import` manquant. Seul le
+navigateur, qui isole réellement les modules, le voit.
 
-Piste sérieuse non vérifiée, faute de quota : **le moment d'évaluation**. Dans
-l'IIFE d'origine, `Picker` s'exécutait à un point précis du démarrage. Devenu
-module importé par `app.js`, il est évalué **avant** le corps de `app.js`. S'il
-capte des nœuds du DOM ou un état applicatif à l'évaluation, il peut le faire
-trop tôt. À vérifier en premier : ce que le corps de l'IIFE de `Picker` lit au
-moment de sa création, par opposition à ce qu'il lit à l'ouverture.
+**Les deux leçons, à ne pas réapprendre :**
 
-**Leçon générale :** les tests unitaires ne suffisent pas à valider une
-extraction. Toujours lancer `npm test` en entier — c'est un test navigateur qui
-a attrapé celui-ci. Le garde-fou employé, à réutiliser :
+1. **Relever les dépendances contre *tous* les modules déjà extraits, pas
+   seulement contre `js/app.js`.** C'est désormais automatisé :
+   `tests/modules-imports.test.js` échoue si un module emploie un symbole
+   exporté par un autre sans l'importer. Il rejoue le cas `Picker`.
+2. **`npm run test:unit` ne valide jamais une extraction à lui seul.** Toujours
+   `npm test` en entier. Garde-fou à réutiliser :
 
 ```bash
-npm test >/dev/null 2>&1 && git add js/ sw.js tests/helpers/ && git commit -m "…" \
+npm test >/dev/null 2>&1 && git add js/ sw.js tests/ && git commit -m "…" \
   || echo "ECHEC : rien n'est commite"
 ```
 
-Prochain candidat, une fois `Picker` compris : `Potentiel`, puis les dates de
-boss.
+Commit : voir `git log` (message `refactor: extraire le Picker vers js/picker.js`).
 
-Ancien candidat évident : **`Picker`**, dont toutes les dépendances sont
-sorties. Ensuite les fonctions de potentiel, puis les dates de boss
-(`currentBossWeek` et les helpers du tableau de bord), puis les vues.
-`RealtimeSync` en dernier : il appelle les rendus de toutes les vues, il ne
-pourra sortir qu'une fois celles-ci extraites.
+**Instabilité observée, non imputée à ce lot.** Au premier `npm test` complet,
+`accessibilite-mobile.playwright.js:1206` a échoué une fois — attente d'une
+tuile `Une nouvelle aventure` dans `#pickerGrid`. Vérifications faites avant de
+commiter :
+
+- 4 exécutions isolées après extraction : vertes ; 6 exécutions sur la base
+  d'avant extraction : vertes ; 3 `npm test` complets d'affilée : verts.
+- Aucun mécanisme de rattachement : après extraction, `js/app.js` ne référence
+  plus du tout `#overlay` ni `#pickerClose`, et `modal-stack.js` s'évalue
+  toujours avant `picker.js`. L'ordre d'enregistrement des écouteurs est
+  inchangé.
+
+**Conclusion : intermittence du test, comme `supabase-etape1.playwright.js`.**
+Relancer avant de conclure à une régression.
+
+### Prochain candidat
+
+**`Potentiel`** (64 lignes), puis les dates de boss (`currentBossWeek` et les
+helpers du tableau de bord), puis les vues. `RealtimeSync` en dernier : il
+appelle les rendus de toutes les vues, il ne pourra sortir qu'une fois
+celles-ci extraites.
+
+**Refaire le relevé de dépendances avant de choisir** (script plus haut), et se
+souvenir qu'il ne montre que ce qui vit encore dans `js/app.js`.
 
 ## Pourquoi ce refactor
 

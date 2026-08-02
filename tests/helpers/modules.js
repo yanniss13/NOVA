@@ -5,6 +5,6 @@
    tests unitaires concatène ces fichiers dans une portée commune, et le lecteur
    de source les parcourt pour les assertions structurelles.
    Toute extraction ajoute son fichier ICI, avant celui qui le consomme. */
-const MODULES = ["dom.js", "dispos-logique.js", "modal-stack.js", "app.js"];
+const MODULES = ["dom.js", "dispos-logique.js", "modal-stack.js", "picker.js", "app.js"];
 
 module.exports = { MODULES };
