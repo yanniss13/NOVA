@@ -15,6 +15,7 @@ import { canManageTeam, sessionCourante } from "../etat/session.js";
 import { charOf, nameOfFile } from "../metier/catalogue.js";
 import { normalizeTeam, normalizeTeamName } from "../metier/equipe-modele.js";
 import { $, el, initials, uid } from "../noyau/dom.js";
+import { LocalTeams } from "../donnees/equipes-store.js";
 import { authMessage } from "../noyau/supabase-client.js";
 import {
   renderBuilder,
@@ -202,5 +203,51 @@ import { toast } from "./toast.js";
       toast("Suppression impossible : "+authMessage(error), true);
     }
   }
+
+  /* Exporter et importer un fichier JSON d'equipes. Les deux boutons
+     vivent dans l'onglet Roster, dans index.html : c'est ce qui a decide
+     de leur place ici plutot que dans un module « export/import ». */
+  $("#btnExport").addEventListener("click", ()=>{
+    const data = Store.all();
+    if(!data.length){ toast("Rien à exporter.", true); return; }
+    const blob = new Blob([JSON.stringify(data, null, 2)], {type:"application/json"});
+    const a = el("a",{href:URL.createObjectURL(blob), download:"confrerie7ds-equipes.json"});
+    document.body.appendChild(a); a.click(); a.remove();
+    toast(data.length+" équipe(s) exportée(s).");
+  });
+
+  $("#btnImport").addEventListener("click", ()=>$("#importFile").click());
+  $("#importFile").addEventListener("change", e=>{
+    const file = e.target.files[0]; if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async()=>{
+      try{
+        const incoming = JSON.parse(reader.result);
+        if(!Array.isArray(incoming)) throw new Error("format");
+        const normalized = [];
+        let added=0;
+        incoming.forEach(t=>{
+          if(!t || typeof t!=="object") return;
+          const team = normalizeTeam(Object.assign({}, t, { id:t.id||uid() }));
+          normalized.push(team);
+          added++;
+        });
+        if(sessionCourante.user){
+          for(const team of normalized) await Store.upsert(team);
+        }else{
+          const list = LocalTeams.all();
+          normalized.forEach(team=>{
+            const index = list.findIndex(item=>item.id===team.id);
+            if(index>=0) list[index]=team; else list.push(team);
+          });
+          LocalTeams.save(list);
+        }
+        await renderRoster();
+        toast(added+" équipe(s) importée(s).");
+      }catch(err){ toast("Fichier JSON invalide.", true); }
+      e.target.value = "";
+    };
+    reader.readAsText(file);
+  });
 
 export { renderRoster };

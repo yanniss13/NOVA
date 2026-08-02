@@ -31,6 +31,7 @@ import { renderMemberRoster } from "./roster-membres.js";
 import { renderDashboardView } from "./suivi.js";
 import { RealtimeSync } from "./synchro-temps-reel.js";
 import { toast } from "./toast.js";
+import { Store } from "../donnees/equipes-store.js";
 
   async function profilePseudo(user){
     if(!user || !sb) return "";
@@ -213,4 +214,54 @@ import { toast } from "./toast.js";
     if(error) toast(authMessage(error), true);
   });
 
-export { initAuth, updateAccountUi };
+  /* Importer dans son compte les equipes reste es en local. Le bouton vit
+     a cote de « Deconnexion » dans index.html, et l'operation ne veut rien
+     dire sans compte : sa place est avec la session. */
+  async function migrateLocalData(){
+    if(!sessionCourante.user || !sb){
+      openAuth("Connecte-toi pour importer tes données locales.", true);
+      return;
+    }
+    const migrationKey = MIGRATION_KEY_PREFIX+sessionCourante.user.id;
+    if(localStorage.getItem(migrationKey) === "1") return;
+    const button = $("#btnMigrateLocal");
+    const oldText = button.textContent;
+    button.disabled = true;
+    button.textContent = "Import en cours…";
+    try{
+      const localTeams = LocalTeams.all();
+      if(!localTeams.length){
+        toast("Aucune donnée locale à importer.");
+        return;
+      }
+
+      for(const localTeam of localTeams){
+        await Store.upsert(Object.assign({}, localTeam, {
+          pseudo:sessionCourante.pseudo,
+          owner:sessionCourante.user.id,
+          updatedAt:localTeam.updatedAt || Date.now()
+        }));
+      }
+
+      localStorage.setItem(migrationKey, "1");
+      updateAccountUi();
+      if($("#view-roster").classList.contains("active")) await renderRoster();
+      if($("#view-analyse").classList.contains("active")) await renderAnalyse();
+      toast(
+        localTeams.length+" équipe"+(localTeams.length>1 ? "s" : "")
+          +" importée"+(localTeams.length>1 ? "s" : "")+" dans le registre."
+      );
+    }catch(error){
+      toast("Import local impossible : "+authMessage(error), true);
+    }finally{
+      if(localStorage.getItem(migrationKey) !== "1"){
+        button.disabled = false;
+        button.textContent = oldText;
+      }
+    }
+  }
+  $("#btnMigrateLocal").addEventListener("click", ()=>void migrateLocalData());
+
+/* updateAccountUi est redevenue privee quand la migration des donnees
+   locales l a rejointe : c etait son dernier appelant du dehors. */
+export { initAuth };
