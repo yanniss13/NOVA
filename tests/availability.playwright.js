@@ -26,8 +26,33 @@ function isoWeekStart(now){
   return base.toISOString().slice(0, 10);
 }
 
-async function installFakeSupabase(page, weekStart){
-  await page.addInitScript(injectedWeekStart => {
+/* La semaine de BOSS n'est pas la semaine de dispos : elle bascule le lundi a
+   9h (Europe/Paris), pas a minuit — voir currentBossWeek() dans
+   metier/boss-logique.js. Les deux coincident six jours et quinze heures sur
+   sept, puis divergent chaque lundi entre 0h et 9h. Semer la session de boss
+   avec la semaine de dispos faisait donc echouer ce test neuf heures par
+   semaine, sans qu'aucun code n'ait change. */
+function bossWeekStart(now){
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone:"Europe/Paris",
+    year:"numeric", month:"2-digit", day:"2-digit", weekday:"short",
+    hour:"2-digit", hourCycle:"h23"
+  }).formatToParts(now);
+  const get = type => (parts.find(part => part.type === type) || {}).value;
+  const weekday = { Sun:0, Mon:1, Tue:2, Wed:3, Thu:4, Fri:5, Sat:6 }[
+    get("weekday")
+  ];
+  let offset = (weekday + 6) % 7;
+  if(weekday === 1 && +get("hour") < 9) offset = 7;
+  const base = new Date(Date.UTC(+get("year"), +get("month") - 1, +get("day")));
+  base.setUTCDate(base.getUTCDate() - offset);
+  return base.toISOString().slice(0, 10);
+}
+
+async function installFakeSupabase(page, weekStart, semaineBoss){
+  await page.addInitScript(injected => {
+    const injectedWeekStart = injected.semaineDispos;
+    const injectedBossWeek = injected.semaineBoss;
     const clone = value => value == null
       ? value
       : JSON.parse(JSON.stringify(value));
@@ -48,7 +73,7 @@ async function installFakeSupabase(page, weekStart){
       roster_characters:[],
       /* Béa a rejoint un groupe cette semaine, Alix non : le panneau doit donc
          marquer Alix « sans groupe » et pas Béa. */
-      boss_sessions:[{ id:"run-1", week_start:injectedWeekStart, slot:1 }],
+      boss_sessions:[{ id:"run-1", week_start:injectedBossWeek, slot:1 }],
       boss_participation:[{ session_id:"run-1", owner:"bea" }],
       boss_run_reports:[],
       member_availability:[
@@ -151,7 +176,7 @@ async function installFakeSupabase(page, weekStart){
       async removeChannel(){ return "ok"; },
       async rpc(){ return { data:null, error:null }; }
     };
-  }, weekStart);
+  }, { semaineDispos:weekStart, semaineBoss:semaineBoss });
   await page.route("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*", route =>
     route.fulfill({
       status:200,
@@ -190,7 +215,10 @@ async function runMobileChecks(browser, baseUrl){
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
   try{
-    await installFakeSupabase(page, isoWeekStart(new Date()));
+    const maintenant = new Date();
+    await installFakeSupabase(
+      page, isoWeekStart(maintenant), bossWeekStart(maintenant)
+    );
     await page.goto(baseUrl + "/index.html");
     await page.click("#tab-availability");
     await page.waitForSelector("#availGrid .avail-cell");
@@ -289,7 +317,10 @@ async function runMobileChecks(browser, baseUrl){
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
   try{
-    await installFakeSupabase(page, isoWeekStart(new Date()));
+    const maintenant = new Date();
+    await installFakeSupabase(
+      page, isoWeekStart(maintenant), bossWeekStart(maintenant)
+    );
     await page.goto(server.url + "/index.html");
     await page.click("#tab-availability");
     await page.waitForSelector("#availGrid .avail-cell");
