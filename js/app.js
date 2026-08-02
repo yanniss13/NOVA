@@ -6,6 +6,21 @@ import { sessionCourante } from "./etat/session.js";
 import { brouillonEquipe } from "./etat/brouillon-equipe.js";
 import { sb } from "./noyau/supabase-client.js";
 import { charOf, nameOfFile } from "./metier/catalogue.js";
+import { MemberRosterStore, cloudRosterFromRow } from "./donnees/roster-store.js";
+import { DashboardStore } from "./donnees/suivi-store.js";
+import { LocalTeams, Store } from "./donnees/equipes-store.js";
+import {
+  compatibleWeaponGroups,
+  normalizeBuildFields,
+  normalizeHero,
+  normalizePotentiel,
+  normalizeRosterBuild,
+  normalizeRosterCharacter,
+  normalizeTeam,
+  normalizeTeamName,
+  normalizeWeaponConfig,
+  teamBuildSnapshot
+} from "./metier/equipe-modele.js";
 import {
   closeGearConfigEditor,
   gearConfigEditorState,
@@ -39,10 +54,7 @@ import {
   weaponFolderOf,
   weaponTypesOf
 } from "./metier/armes.js";
-import {
-  enchantmentExpectedLength,
-  enchantmentRequiredLength
-} from "./metier/perles.js";
+
 import { isInteger, jsonCopy, owns } from "./noyau/outils.js";
 import {
   BUILD_STAT_FAMILY_LABELS,
@@ -64,7 +76,6 @@ import {
 } from "./metier/equipement.js";
 import {
   DATA,
-  STORAGE_KEY,
   TEAM_SIZE,
   ARMOR_SLOTS,
   LINKED_ARMOR_SLOT,
@@ -74,8 +85,6 @@ import {
   POT,
   POT_MAX,
   META,
-  CLOUD_TEAMS_CACHE_KEY,
-  CLOUD_ROSTER_CACHE_KEY,
   MIGRATION_KEY_PREFIX,
   ELEMENTS,
   WSLOT_ROLES,
@@ -89,7 +98,6 @@ import {
   bossEvolutionPercentage,
   bossScoreBigInt,
   bossStatsForWeek,
-  buildDashboardState,
   currentBossWeek,
   formatBossScore,
   frDate,
@@ -183,14 +191,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
     row.appendChild(slots);
     return row;
   }
-  function compatibleWeaponGroups(charId){
-    const allowed = new Set(weaponTypesOf(charId));
-    return Object.entries(DATA.armes||{}).reduce((groups, [label, items])=>{
-      const compatible = items.filter(item => allowed.has(weaponFolderOf(item.file)));
-      if(compatible.length) groups[label] = compatible;
-      return groups;
-    }, {});
-  }
   function potentielDetailsOf(hero){
     const weaponType = weaponFolderOf(hero && hero.weapon);
     const byWeapon = (hero && hero.char && POT[hero.char]) || {};
@@ -226,113 +226,8 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
   }
 
   /* ============================ Équipes : local + Supabase ============================ */
-  const LocalTeams = {
-    all(){
-      try{
-        const list = JSON.parse(localStorage.getItem(STORAGE_KEY)) || [];
-        return Array.isArray(list) ? list.map(normalizeTeam) : [];
-      }
-      catch(e){ return []; }
-    },
-    save(list){
-      const normalized = Array.isArray(list) ? list.map(normalizeTeam) : [];
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-    },
-    upsert(team){
-      const list = LocalTeams.all();
-      const normalized = normalizeTeam(team);
-      const i = list.findIndex(t => t.id === normalized.id);
-      if(i>=0) list[i] = normalized; else list.push(normalized);
-      LocalTeams.save(list);
-    },
-    remove(id){ LocalTeams.save(LocalTeams.all().filter(t => t.id !== id)); }
-  };
-
-  function readTeamCache(){
-    try{
-      const list = JSON.parse(localStorage.getItem(CLOUD_TEAMS_CACHE_KEY)) || [];
-      return Array.isArray(list) ? list.map(normalizeTeam) : [];
-    }catch(e){ return []; }
-  }
-  let cloudTeamsCache = readTeamCache();
-
-  function cloudTeamFromRow(row){
-    const raw = row && row.data && typeof row.data === "object" ? row.data : {};
-    return normalizeTeam(Object.assign({}, raw, {
-      id:row.id,
-      owner:row.owner,
-      pseudo:row.pseudo || raw.pseudo || "",
-      createdAt:row.created_at ? Date.parse(row.created_at) : raw.createdAt,
-      updatedAt:row.updated_at ? Date.parse(row.updated_at) : raw.updatedAt
-    }));
-  }
-
-  function teamToCloudRow(team){
-    const normalized = normalizeTeam(team);
-    const data = JSON.parse(JSON.stringify(normalized));
-    delete data.owner;
-    return {
-      id:normalized.id,
-      owner:sessionCourante.user && sessionCourante.user.id,
-      pseudo:sessionCourante.pseudo || normalized.pseudo || "",
-      data,
-      updated_at:new Date(normalized.updatedAt || Date.now()).toISOString()
-    };
-  }
-
-  function saveCloudTeamCache(list){
-    cloudTeamsCache = Array.isArray(list) ? list.map(normalizeTeam) : [];
-    localStorage.setItem(CLOUD_TEAMS_CACHE_KEY, JSON.stringify(cloudTeamsCache));
-  }
-
-  const Store = {
-    all(){
-      return sessionCourante.user ? cloudTeamsCache.map(normalizeTeam) : LocalTeams.all();
-    },
-    save(list){
-      if(sessionCourante.user) saveCloudTeamCache(list);
-      else LocalTeams.save(list);
-    },
-    async refresh(){
-      if(!sessionCourante.user || !sb) return Store.all();
-      const { data, error } = await sb.from("teams")
-        .select("*")
-        .order("updated_at", { ascending:false });
-      if(error) throw error;
-      saveCloudTeamCache((data||[]).map(cloudTeamFromRow));
-      return Store.all();
-    },
-    async upsert(team){
-      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
-      const normalized = normalizeTeam(Object.assign({}, team, {
-        owner:sessionCourante.user.id,
-        pseudo:sessionCourante.pseudo || team.pseudo || ""
-      }));
-      const { error } = await sb.from("teams").upsert(teamToCloudRow(normalized));
-      if(error) throw error;
-      const list = cloudTeamsCache.slice();
-      const index = list.findIndex(item => item.id === normalized.id);
-      if(index >= 0) list[index] = normalized; else list.push(normalized);
-      saveCloudTeamCache(list);
-      return normalized;
-    },
-    async remove(id){
-      if(!sessionCourante.user){
-        LocalTeams.remove(id);
-        return;
-      }
-      if(!sb) throw new Error("AUTH_REQUIRED");
-      const { error } = await sb.from("teams").delete().eq("id", id);
-      if(error) throw error;
-      saveCloudTeamCache(cloudTeamsCache.filter(team => team.id !== id));
-    }
-  };
 
   /* ============================ Brouillon d'équipe ============================ */
-  const normalizePotentiel = raw => {
-    const tier = Number.isFinite(Number(raw && raw.tier)) ? Math.trunc(Number(raw.tier)) : 0;
-    return { tier:Math.max(0, Math.min(POT_MAX, tier)) };
-  };
   function buildGearCatalog(){
     return BUILD_GEAR;
   }
@@ -344,40 +239,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
    * interne, puis comparer les reconstructions "segment-lower-bound" et
    * "quality-min". Si la mesure contredit ce choix, remplacer uniquement la
    * valeur ci-dessous. Aucune autre partie du moteur ne connaît l'hypothèse. */
-  function normalizeWeaponConfig(file, raw){
-    if(raw === undefined || raw === null) return null;
-    const config = jsonCopy(raw);
-    const grade = config && buildWeaponGrade(file, config.gradeGameId);
-    if(grade && grade.enchantments
-      && grade.enchantments.type === "masterstone"
-      && Array.isArray(config.enchantments)){
-      const maximumLength = enchantmentExpectedLength(grade, config.enchantments);
-      const minimumLength = enchantmentRequiredLength(grade, config.enchantments);
-      if(config.enchantments.length >= minimumLength
-        && config.enchantments.length < maximumLength){
-        config.enchantments = config.enchantments.concat(
-          Array(maximumLength - config.enchantments.length).fill(null)
-        );
-      }
-    }
-    return config;
-  }
-  function normalizeGearConfigMap(equipment, raw, slots){
-    const source = raw && typeof raw === "object" && !Array.isArray(raw)
-      ? raw : {};
-    return slots.reduce((result, slot) => {
-      if(equipment[slot] && owns(source, slot)
-        && source[slot] !== undefined && source[slot] !== null){
-        const config = jsonCopy(source[slot]);
-        if(config && typeof config === "object" && !Array.isArray(config)
-          && config.version === 1 && !owns(config, "passiveLevel")){
-          config.passiveLevel = null;
-        }
-        result[slot] = config;
-      }
-      return result;
-    }, {});
-  }
   /* Une arme ne porte qu'une seule perle : tous les emplacements renseignés
      doivent partager le même palier et le même élément. Sans cette contrainte,
      un état absurde deviendrait « valide ». */
@@ -810,100 +671,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
     target[kind][slot] = nextFile || null;
     return target;
   }
-  const TEAM_BUILD_FIELDS = [
-    "weapon",
-    "weaponConfig",
-    "armor",
-    "armorConfig",
-    "jewel",
-    "jewelConfig",
-    "note"
-  ];
-  function teamBuildSnapshot(raw){
-    const source = raw && typeof raw === "object" ? raw : {};
-    const defaults = {
-      weapon:null,
-      weaponConfig:null,
-      armor:emptyArmor(),
-      armorConfig:{},
-      jewel:emptyJewel(),
-      jewelConfig:{},
-      note:""
-    };
-    return TEAM_BUILD_FIELDS.reduce((copy, field) => {
-      copy[field] = jsonCopy(
-        Object.prototype.hasOwnProperty.call(source, field)
-          ? source[field]
-          : defaults[field]
-      );
-      return copy;
-    }, {});
-  }
-  function normalizeBuildFields(charId, weaponType, raw){
-    const source = raw && typeof raw === "object" ? raw : {};
-    const candidateType = weaponFolderOf(source.weapon);
-    const weapon = isWeaponCompatible(charId, source.weapon)
-      && (!weaponType || candidateType === weaponType)
-      ? (source.weapon || null)
-      : null;
-    const armor = Object.assign(emptyArmor(), source.armor || {});
-    if(!isLinkedArmorCompatible(charId, armor[LINKED_ARMOR_SLOT])){
-      armor[LINKED_ARMOR_SLOT] = null;
-    }
-    const jewel = Object.assign(emptyJewel(), source.jewel || {});
-    return {
-      weapon,
-      weaponConfig:weapon
-        ? normalizeWeaponConfig(weapon, source.weaponConfig)
-        : null,
-      armor,
-      armorConfig:normalizeGearConfigMap(
-        armor,
-        source.armorConfig,
-        ARMOR_SLOTS
-      ),
-      jewel,
-      jewelConfig:normalizeGearConfigMap(
-        jewel,
-        source.jewelConfig,
-        JEWEL_SLOTS
-      ),
-      note:typeof source.note === "string" ? source.note : ""
-    };
-  }
-  function normalizeHero(raw){
-    const h = raw && typeof raw === "object" ? raw : {};
-    const char = h.char||null;
-    const allowed = weaponTypesOf(char);
-    const equippedType = weaponFolderOf(h.weapon);
-    const storedType = allowed.includes(h.activeWeaponType)
-      ? h.activeWeaponType
-      : null;
-    const activeWeaponType = allowed.includes(equippedType)
-      ? equippedType
-      : storedType;
-    const rosterBuilds = {};
-    if(h.rosterBuilds && typeof h.rosterBuilds === "object"
-      && !Array.isArray(h.rosterBuilds)){
-      allowed.forEach(type => {
-        if(Object.prototype.hasOwnProperty.call(h.rosterBuilds, type)){
-          rosterBuilds[type] = teamBuildSnapshot(
-            normalizeBuildFields(char, type, h.rosterBuilds[type])
-          );
-        }
-      });
-    }
-    const active = normalizeBuildFields(char, activeWeaponType, h);
-    if(activeWeaponType){
-      rosterBuilds[activeWeaponType] = teamBuildSnapshot(active);
-    }
-    return Object.assign({
-      char,
-      rosterBuilds,
-      activeWeaponType,
-      potentiel:normalizePotentiel(h.potentiel),
-    }, active);
-  }
   function storeActiveHeroBuild(hero){
     if(!hero || !hero.char) return hero;
     const type = weaponFolderOf(hero.weapon) || hero.activeWeaponType;
@@ -960,57 +727,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
     note:"",
     favorite:false
   });
-  function normalizeRosterBuild(charId, weaponType, raw){
-    const source = raw && typeof raw === "object" ? raw : {};
-    const knownWeapons = Object.values(compatibleWeaponGroups(charId)).flat();
-    const weapon = weaponFolderOf(source.weapon) === weaponType
-      && knownWeapons.some(item => item.file === source.weapon)
-      ? source.weapon
-      : null;
-    const build = normalizeBuildFields(charId, weaponType, {
-      ...source,
-      weapon,
-    });
-    return {
-      ...build,
-      favorite:source.favorite === true
-    };
-  }
-  function normalizeRosterCharacter(raw){
-    const source = raw && typeof raw === "object" ? raw : {};
-    const charId = typeof source.charId === "string" ? source.charId : "";
-    if(!charOf(charId)) return null;
-    const allowed = weaponTypesOf(charId);
-    const sourceBuilds = source.builds && typeof source.builds === "object" ? source.builds : {};
-    let favoriteFound = false;
-    const builds = allowed.reduce((result, weaponType)=>{
-      if(Object.prototype.hasOwnProperty.call(sourceBuilds, weaponType)){
-        const build = normalizeRosterBuild(
-          charId,
-          weaponType,
-          sourceBuilds[weaponType]
-        );
-        if(build.favorite){
-          if(favoriteFound) build.favorite = false;
-          else favoriteFound = true;
-        }
-        result[weaponType] = build;
-      }
-      return result;
-    }, {});
-    return {
-      owner:typeof source.owner === "string" ? source.owner : "",
-      charId,
-      potentialTier:normalizePotentiel({tier:source.potentialTier}).tier,
-      builds,
-      updatedAt:Number.isFinite(Number(source.updatedAt))
-        ? Number(source.updatedAt)
-        : 0,
-      updatedAtToken:typeof source.updatedAtToken === "string"
-        ? source.updatedAtToken
-        : ""
-    };
-  }
   function rosterEntryWithActiveHeroBuild(existing, hero, ownerId){
     const type = hero.activeWeaponType || weaponFolderOf(hero.weapon);
     const next = normalizeRosterCharacter(existing || {
@@ -1091,144 +807,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
       note:build.note
     });
   }
-  function cloudRosterFromRow(row){
-    if(!row || typeof row !== "object") return null;
-    return normalizeRosterCharacter({
-      owner:row.owner,
-      charId:row.char_id,
-      potentialTier:row.potential_tier,
-      builds:row.builds,
-      updatedAt:row.updated_at ? Date.parse(row.updated_at) : 0,
-      updatedAtToken:typeof row.updated_at === "string"
-        ? row.updated_at
-        : ""
-    });
-  }
-  function rosterToCloudRow(entry, ownerId){
-    const normalized = normalizeRosterCharacter(entry);
-    if(!normalized || typeof ownerId !== "string" || !ownerId) return null;
-    return {
-      owner:ownerId,
-      char_id:normalized.charId,
-      potential_tier:normalized.potentialTier,
-      builds:JSON.parse(JSON.stringify(normalized.builds)),
-      updated_at:new Date(normalized.updatedAt || Date.now()).toISOString()
-    };
-  }
-  function readRosterCache(){
-    try{
-      const list = JSON.parse(localStorage.getItem(CLOUD_ROSTER_CACHE_KEY)) || [];
-      return Array.isArray(list)
-        ? list.map(normalizeRosterCharacter).filter(Boolean)
-        : [];
-    }catch(error){
-      return [];
-    }
-  }
-  let cloudRosterCache = readRosterCache();
-  function saveRosterCache(list){
-    cloudRosterCache = (Array.isArray(list) ? list : [])
-      .map(normalizeRosterCharacter)
-      .filter(Boolean);
-    localStorage.setItem(
-      CLOUD_ROSTER_CACHE_KEY,
-      JSON.stringify(cloudRosterCache)
-    );
-  }
-  function replaceRosterCacheForOwner(ownerId, entries){
-    const others = cloudRosterCache.filter(entry => entry.owner !== ownerId);
-    const owned = (Array.isArray(entries) ? entries : [])
-      .map(entry => normalizeRosterCharacter(
-        Object.assign({}, entry, {owner:ownerId})
-      ))
-      .filter(Boolean);
-    saveRosterCache(others.concat(owned));
-    return owned;
-  }
-  const MemberRosterStore = {
-    all(ownerId){
-      if(!ownerId) return [];
-      return cloudRosterCache
-        .filter(entry => entry.owner === ownerId)
-        .map(normalizeRosterCharacter)
-        .filter(Boolean);
-    },
-    async refresh(ownerId){
-      if(!ownerId) return [];
-      if(!sessionCourante.user || !sb) return MemberRosterStore.all(ownerId);
-      const { data, error } = await sb.from("roster_characters")
-        .select("*")
-        .eq("owner", ownerId);
-      if(error) throw error;
-      return replaceRosterCacheForOwner(
-        ownerId,
-        (data || []).map(cloudRosterFromRow).filter(Boolean)
-      );
-    },
-    async upsert(entry){
-      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
-      const normalized = normalizeRosterCharacter(Object.assign({}, entry, {
-        owner:sessionCourante.user.id,
-        updatedAt:Date.now(),
-        updatedAtToken:""
-      }));
-      if(!normalized) throw new Error("ROSTER_INVALID");
-      const { error } = await sb.from("roster_characters")
-        .upsert(rosterToCloudRow(normalized, sessionCourante.user.id));
-      if(error) throw error;
-      const owned = MemberRosterStore.all(sessionCourante.user.id);
-      const index = owned.findIndex(item => item.charId === normalized.charId);
-      if(index >= 0) owned[index] = normalized;
-      else owned.push(normalized);
-      replaceRosterCacheForOwner(sessionCourante.user.id, owned);
-      return normalized;
-    },
-    async updateBuild(entry, weaponType, expectedUpdatedAtToken){
-      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
-      const normalized = normalizeRosterCharacter(Object.assign({}, entry, {
-        owner:sessionCourante.user.id
-      }));
-      if(!normalized
-        || !Object.prototype.hasOwnProperty.call(
-          normalized.builds,
-          weaponType
-        )){
-        throw new Error("ROSTER_INVALID");
-      }
-      const { data, error } = await sb.rpc("update_roster_build", {
-        p_char_id:normalized.charId,
-        p_expected_updated_at:expectedUpdatedAtToken || null,
-        p_potential_tier:normalized.potentialTier,
-        p_weapon_type:weaponType,
-        p_build:normalized.builds[weaponType]
-      });
-      if(error) throw error;
-      const row = Array.isArray(data) ? data[0] : data;
-      const saved = cloudRosterFromRow(row);
-      if(!saved) throw new Error("ROSTER_INVALID");
-      const owned = MemberRosterStore.all(sessionCourante.user.id);
-      const index = owned.findIndex(item =>
-        item.charId === saved.charId
-      );
-      if(index >= 0) owned[index] = saved;
-      else owned.push(saved);
-      replaceRosterCacheForOwner(sessionCourante.user.id, owned);
-      return saved;
-    },
-    async remove(charId){
-      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
-      const { error } = await sb.from("roster_characters")
-        .delete()
-        .eq("owner", sessionCourante.user.id)
-        .eq("char_id", charId);
-      if(error) throw error;
-      replaceRosterCacheForOwner(
-        sessionCourante.user.id,
-        MemberRosterStore.all(sessionCourante.user.id)
-          .filter(entry => entry.charId !== charId)
-      );
-    }
-  };
 
   /* ===== #5 Analyse : DPS dérivés du Roster ===== */
   // Un build Attaquant du roster = une entrée DPS { char, element, pot }.
@@ -1321,24 +899,10 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
       .map(owner => rosterPlayerFrom(owner, nameOf(owner), byOwner[owner]))
       .filter(p => p.dps.length);
   }
-  const TEAM_NAME_MAX = 40;
 
   /* Nom d'équipe facultatif. Il vit dans le jsonb de `teams.data`, donc aucune
      migration Supabase : une équipe antérieure devient simplement sans nom. */
-  function normalizeTeamName(value){
-    if(value === null || value === undefined) return "";
-    return String(value).trim().slice(0, TEAM_NAME_MAX);
-  }
 
-  function normalizeTeam(raw){
-    const t = raw && typeof raw === "object" ? raw : {};
-    const heroes = Array.isArray(t.heroes) ? t.heroes.slice(0, TEAM_SIZE) : [];
-    while(heroes.length < TEAM_SIZE) heroes.push({});
-    return Object.assign({}, t, {
-      name:normalizeTeamName(t.name),
-      heroes:heroes.map(normalizeHero)
-    });
-  }
   const emptyHero = () => ({
     char:null,
     weapon:null,
@@ -4230,152 +3794,11 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
      Cloisonné par compte ET par semaine, versionné, et jamais utilisé pour
      accorder un droit ni pour envoyer une mutation. On ne cherche jamais « le
      dernier cache » : l'identité et la semaine doivent être connues d'abord. */
-  const DASHBOARD_CACHE_PREFIX = "confrerie7ds.cloud.dashboard.";
-  const DASHBOARD_CACHE_VERSION = 1;
-
-  function dashboardCacheKey(userId, weekStart){
-    return DASHBOARD_CACHE_PREFIX+userId+"."+weekStart;
-  }
-
-  function readDashboardCache(userId, weekStart){
-    if(!userId || !weekStart) return null;
-    try{
-      const raw = localStorage.getItem(dashboardCacheKey(userId, weekStart));
-      if(!raw) return null;
-      const envelope = JSON.parse(raw);
-      if(
-        !envelope ||
-        envelope.version !== DASHBOARD_CACHE_VERSION ||
-        envelope.userId !== userId ||
-        envelope.weekStart !== weekStart ||
-        !envelope.state
-      ) return null;
-      return Object.assign({}, envelope.state, {
-        offline:true,
-        userId
-      });
-    }catch(error){
-      return null;
-    }
-  }
-
-  function writeDashboardCache(userId, state){
-    if(!userId || !state || !state.weekStart) return;
-    try{
-      localStorage.setItem(
-        dashboardCacheKey(userId, state.weekStart),
-        JSON.stringify({
-          version:DASHBOARD_CACHE_VERSION,
-          userId,
-          weekStart:state.weekStart,
-          savedAt:Date.now(),
-          state:Object.assign({}, state, { offline:false })
-        })
-      );
-    }catch(error){
-      // Un quota local indisponible ne doit jamais casser la vue en ligne.
-    }
-  }
 
   /* ---------- Mon suivi : store et rendu ----------
      Le store protège chaque lecture par une génération, l'identité du compte et
      la semaine attendue : une réponse lente ne remplace jamais un état plus
      récent, et une déconnexion ne réaffiche pas le compte précédent. */
-  const DashboardStore = (function(){
-    let issued = 0;
-    let ownerId = "";
-    let state = null;
-    let dirty = true;
-
-    function reset(userId){
-      issued++;
-      ownerId = userId || "";
-      state = null;
-      dirty = true;
-    }
-
-    function current(){
-      return state;
-    }
-
-    function markDirty(){
-      dirty = true;
-    }
-
-    function isDirty(){
-      return dirty;
-    }
-
-    async function refresh(){
-      const userId = sessionCourante.user?.id || "";
-      if(!userId || !sb) throw new Error("AUTH_REQUIRED");
-      if(ownerId !== userId) reset(userId);
-      const requestId = ++issued;
-      const weekStart = currentBossWeek().startDate;
-      const isCurrent = () =>
-        issued === requestId &&
-        sessionCourante.user?.id === userId &&
-        currentBossWeek().startDate === weekStart;
-
-      try{
-        return await load(requestId, userId, weekStart, isCurrent);
-      }catch(error){
-        // Une réponse périmée ne touche ni l'état, ni le cache, ni le DOM.
-        if(!isCurrent()) return state;
-        const cached = readDashboardCache(userId, weekStart);
-        if(!cached) throw error;
-        state = cached;
-        return state;
-      }
-    }
-
-    async function load(requestId, userId, weekStart, isCurrent){
-      const teamsPromise = Store.refresh();
-      /* Si une lecture Boss échoue avant le Promise.all, cette promesse reste
-         pendante : on lui attache un puits pour éviter une rejection non gérée,
-         sans consommer l'erreur que le Promise.all doit encore voir. */
-      teamsPromise.catch(() => {});
-      await BossStore.ensureWeek(currentBossWeek());
-      const sessions = await BossStore.listWeek(weekStart);
-      const sessionIds = sessions.map(session => session.id);
-      const membershipPromise = BossStore.listMembership(sessionIds);
-      // Une base sans les rapports de boss reste lisible : on dégrade au lieu
-      // d'échouer, comme le fait déjà la vue Boss.
-      const reportsPromise = BossStore.listReportsForSessions(sessionIds)
-        .then(reports => ({ reports, reportsAvailable:true }))
-        .catch(error => {
-          if(isBossSchemaCompatibilityError(error)){
-            return { reports:[], reportsAvailable:false };
-          }
-          throw error;
-        });
-      const [membership, reportResult, teams] = await Promise.all([
-        membershipPromise,
-        reportsPromise,
-        teamsPromise
-      ]);
-      if(!isCurrent()) return state;
-      state = Object.assign(buildDashboardState({
-        userId,
-        weekStart,
-        sessions,
-        membership,
-        reports:reportResult.reports,
-        teams,
-        now:new Date(),
-        lastSyncedAt:Date.now(),
-        offline:false
-      }), {
-        userId,
-        reportsAvailable:reportResult.reportsAvailable
-      });
-      dirty = false;
-      writeDashboardCache(userId, state);
-      return state;
-    }
-
-    return { current, refresh, reset, markDirty, isDirty };
-  })();
 
   /* Une carte ouverte est un `.boss-card`, une archive un `.boss-report-card` :
      les deux portent `data-session-id`, donc une seule recherche suffit. */

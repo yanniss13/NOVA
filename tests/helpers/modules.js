@@ -29,12 +29,16 @@ const MODULES = [
   "metier/perles.js",
   "metier/build-config.js",
   "metier/stats-calcul.js",
+  "metier/equipe-modele.js",
   "metier/dispos-logique.js",
   "metier/boss-logique.js",
 
   /* donnees — lectures et écritures Supabase, sans aucun rendu. */
   "donnees/roster-profils.js",
+  "donnees/equipes-store.js",
+  "donnees/roster-store.js",
   "donnees/boss-store.js",
+  "donnees/suivi-store.js",
 
   /* vues — tout ce qui touche au DOM. */
   "vues/elements.js",
