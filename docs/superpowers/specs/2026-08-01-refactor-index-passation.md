@@ -645,23 +645,84 @@ Meme motif qu'au lot 31 : **la cloture transitive dit ce qui doit sortir
 ensemble, pas ou chaque morceau doit atterrir.** Compter les appelants hors du
 domaine tranche mieux.
 
+### Lot 34 — `detail-roster.js`, la derniere modale
+
+Cloture de dix symboles, dont **trois ne sont pas des symboles de vue**. Le
+compte des appelants hors du domaine l'a dit sans ambiguite :
+
+| Symbole | Appelants | dont dans la modale | Range dans |
+|---|---|---|---|
+| `favoriteRosterWeaponType` | 7 | 1 | `metier/equipe-modele.js` |
+| `rosterWeaponLabel` | 8 | 1 | `vues/elements.js` |
+| `rosterHeroSnapshot` | 5 | 1 | `metier/equipe-modele.js` |
+
+`copyFavoriteRosterBuild`, restee dans `app.js` juste au-dessus de
+`favoriteRosterWeaponType`, l'appelle. L'emporter dans la vue aurait fait
+importer une aide de modele depuis un module de rendu.
+
+Les sept autres sont partis, **plus dix lignes de cablage de premier niveau**
+(fermeture, precedent/suivant, fleches du clavier) que le releve ne montre pas
+— le meme piege qu'au lot 32.
+
+`rosterDetail` est exporte : `app.js` lit `returnFocusKey` en trois points pour
+rendre le focus a la bonne tuile apres fermeture.
+
+`openRosterDetail(index)`, qui ne fait qu'appeler `openRosterDetailFor` avec la
+liste du Roster, **reste dans app.js** : il depend de `memberRosterVisible`. Il
+coupe la tranche en deux, d'ou deux retraits separes.
+
+Un import est mort en chemin : `heroDetail` n'avait plus aucun appelant dans
+`app.js`, ses deux derniers sites etant partis avec les modales. Attrape par
+`tests/modules-imports.test.js`.
+
+### Les quatre modales, bilan
+
+| Lot | Module | Lignes |
+|---|---|---|
+| 31 | `vues/fiche-heros.js` | 204 |
+| 32 | `vues/detail-equipe.js` | 48 |
+| 33 | `vues/equipe-boss.js` | 71 |
+| 34 | `vues/detail-roster.js` | 187 |
+
+**Cinq symboles tires par ces clotures sont descendus d'une couche** au lieu de
+suivre la vue : `authMessage`, `canManageTeam`, `teamFromBossSnapshot`,
+`favoriteRosterWeaponType`, `rosterHeroSnapshot`. Plus `rosterWeaponLabel`,
+remonte dans les briques de rendu partagees.
+
+**La lecon a retenir de ces quatre lots :** une cloture transitive dit ce qui
+doit sortir ENSEMBLE, pas ou chaque morceau doit atterrir. Le second point se
+tranche en comptant les appelants hors du domaine.
+
 ### Où ça s'arrête
 
-**`js/app.js` : 10 489 → 4 879 lignes**, 33 modules. `npm test` vert, exit 0,
+**`js/app.js` : 10 489 → 4 697 lignes**, 34 modules. `npm test` vert, exit 0,
 Playwright compris.
 
-Reste **une** modale, à clôture fermée donc extractible sans cycle.
-**Relevé refait après le lot `equipe-boss` :**
+**Les quatre grosses modales sont toutes sorties.** Ce qui reste dans
+`app.js` : le Builder, l'Analyse, les sessions de boss, l'authentification et
+le démarrage.
 
-| Racine | Symboles | Lignes | Clôture |
+**Relevé refait après le lot `detail-roster` :**
+
+| Racine | Symboles | Lignes | Contigu |
 |---|---|---|---|
-| `openRosterDetailFor` | 10 | 185 | `closeRosterDetail`, `favoriteRosterWeaponType`, `moveRosterDetail`, `openRosterDetailFor`, `renderRosterDetail`, `rosterDetail`, `rosterDetailOwnerLabel`, `rosterDetailWeaponSwitch`, `rosterHeroSnapshot`, `rosterWeaponLabel` |
+| `renderAnalyse` | 23 | 344 | non |
+| `bossArchiveRows` | 15 | 230 | non |
+| `bossReportCard` | 14 | 214 | non |
+| `rosterDerivedPlayers` | 5 | 92 | **OUI** |
+| `bossStatsBlock` | 2 | 64 | **OUI** |
 
-⚠️ Trois de ces dix ne sont **pas** des symboles de vue :
-`favoriteRosterWeaponType` (7 appelants), `rosterHeroSnapshot` (5) et
-`rosterWeaponLabel` (8) servent presque partout ailleurs dans `app.js`. Les
-emporter dans la modale ferait importer du modele depuis une vue. Le module de
-vue ne doit recevoir que les sept autres.
+Les deux `OUI` sont des tranches uniques à couper — le cas sûr, à faire en
+premier. Les trois autres sont éparpillées : faisable, mais **garder l'ordre
+d'origine des déclarations**.
+
+Plus aucune clôture n'est aussi nette que celles des modales. Le prochain
+chantier sérieux est l'Analyse (`renderAnalyse`) ou les rapports de boss, et
+il faudra sans doute y sortir une base commune d'abord — comme
+`fiche-heros.js` l'a été pour les modales.
+
+**Refais le relevé avant de commencer** : ces nombres changent à chaque
+extraction, et ce document a déjà été faux deux fois sur ce point précis.
 
 **La leçon « sortir la base avant ce qui s'appuie dessus » se vérifie une
 sixième fois :** ces racines pesaient 17, 12 et 9 symboles avant `fiche-heros`,

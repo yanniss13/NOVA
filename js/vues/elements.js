@@ -37,7 +37,12 @@ import { nameOfFile } from "../metier/catalogue.js";
       .replace(/\n/g, "<br>");
   }
 
+  // Repli d'un type d'arme absent : le Builder, le Roster et sa modale
+  // affichent tous ce libelle.
+  const rosterWeaponLabel = type => type || "Arme";
+
 export {
   gearSlot,
-  renderBonus
+  renderBonus,
+  rosterWeaponLabel
 };

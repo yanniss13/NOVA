@@ -82,7 +82,7 @@ version plus ancienne du site reste ouvrable.
 
 | Fichier | Contenu |
 |---|---|
-| `elements.js` | Briques de rendu partagées : `gearSlot`, `renderBonus` |
+| `elements.js` | Briques de rendu partagées : `gearSlot`, `renderBonus`, `rosterWeaponLabel` |
 | `toast.js` | Le bandeau de notification |
 | `modal-stack.js` | La pile de modales : ouverture, fermeture, restitution du focus |
 | `picker.js` | La modale de sélection réutilisable |
@@ -91,6 +91,7 @@ version plus ancienne du site reste ouvrable.
 | `fiche-heros.js` | La fiche d'un héros — **le noyau commun aux grosses modales** |
 | `detail-equipe.js` | La modale de détail d'une équipe : l'équipement héros par héros |
 | `equipe-boss.js` | L'équipe d'un membre dans une session de boss : bandeau et participant |
+| `detail-roster.js` | La modale de détail d'un personnage consulté chez un autre membre |
 | `editeur-arme.js` | La modale de configuration d'une arme |
 | `editeur-equipement.js` | La modale de configuration d'une pièce d'équipement |
 | `dispos.js` | La vue des disponibilités hebdomadaires |
@@ -136,25 +137,41 @@ Toujours `npm test` en entier.
 
 ## Si tu veux découper davantage
 
-`app.js` n'est pas fini : il reste ~4 880 lignes, soit le Builder, le Roster,
-les sessions de boss, l'authentification et le démarrage.
+`app.js` n'est pas fini : il reste ~4 700 lignes. **Les modales, elles, en sont
+toutes sorties.** Ce qui reste : le Builder, l'Analyse, les sessions de boss,
+l'authentification et le démarrage.
 
-**La modale encore dedans**, à clôture fermée — donc extractible sans cycle.
-Relevé refait après le lot `equipe-boss` :
+Relevé refait après le lot `detail-roster` — plus aucune clôture fermée facile,
+le prochain chantier est l'Analyse ou les rapports de boss :
 
-| Racine | Symboles | Lignes |
-|---|---|---|
-| `openRosterDetailFor` | 10 | 185 |
+| Racine | Symboles | Lignes | Contigu |
+|---|---|---|---|
+| `renderAnalyse` | 23 | 344 | non |
+| `bossArchiveRows` | 15 | 230 | non |
+| `bossReportCard` | 14 | 214 | non |
+| `rosterDerivedPlayers` | 5 | 92 | **oui** |
+| `bossStatsBlock` | 2 | 64 | **oui** |
 
-**La démonstration est faite une fois de plus :** ces racines pesaient 17, 12 et
-9 symboles avant que `fiche-heros.js` ne sorte, puis `detail-equipe.js`. Elles
-partageaient le même noyau — la fiche d'un héros, la modale d'équipe — et
-sortir la base d'abord a fait tomber leurs clôtures sans toucher à une ligne
-de leur code.
+Les deux `oui` sont des tranches uniques à couper : le cas sûr, à faire en
+premier. Les trois autres sont éparpillées — faisable, mais **garder l'ordre
+d'origine des déclarations**.
+
+**La démonstration est faite quatre fois de suite :** les quatre modales
+pesaient 17, 12, 9 et 7 symboles. Sortir leur noyau commun d'abord
+(`fiche-heros.js`, puis `detail-equipe.js`) a fait tomber leurs clôtures de
+moitié sans toucher à une ligne de leur code.
 
 C'est l'ordre qui a fonctionné à chaque fois : `dom.js` avant les vues, le
 modèle avant les stores, `stats-heros.js` puis `fiche-heros.js` avant les
 modales qui les affichent.
+
+⚠️ **Une clôture dit ce qui doit sortir ENSEMBLE, pas où chaque morceau doit
+atterrir.** Cinq symboles tirés par ces quatre modales n'étaient pas des
+symboles de vue et sont descendus d'une couche : `authMessage`,
+`canManageTeam`, `teamFromBossSnapshot`, `favoriteRosterWeaponType`,
+`rosterHeroSnapshot`. Le signal est simple — **compter les appelants hors du
+domaine**. `favoriteRosterWeaponType` en avait sept, dont un seul dans la
+modale.
 
 ⚠️ **Une clôture ne voit que les déclarations.** Le détail d'équipe traînait
 quatre lignes de branchement d'événements au premier niveau (`$("#teamClose")

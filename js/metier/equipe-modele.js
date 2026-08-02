@@ -248,6 +248,41 @@ import { buildWeaponGrade } from "./build-config.js";
     }));
   }
 
+  /* Deux lectures d'une entree de roster, remontees ici depuis app.js : la
+     modale de detail les partageait avec sept autres appelants, dont
+     copyFavoriteRosterBuild juste au-dessus. Une aide de modele ne peut pas
+     vivre dans la vue qui l'a fait sortir. */
+  function favoriteRosterWeaponType(entry){
+    const normalized = normalizeRosterCharacter(entry);
+    if(!normalized) return null;
+    return Object.keys(normalized.builds)
+      .find(type => normalized.builds[type].favorite) || null;
+  }
+
+  function rosterHeroSnapshot(entry, weaponType){
+    const normalized = normalizeRosterCharacter(entry);
+    if(!normalized || !Object.prototype.hasOwnProperty.call(normalized.builds, weaponType)) return null;
+    const build = normalized.builds[weaponType];
+    const rosterBuilds = Object.keys(normalized.builds)
+      .reduce((result, type) => {
+        result[type] = teamBuildSnapshot(normalized.builds[type]);
+        return result;
+      }, {});
+    return normalizeHero({
+      char:normalized.charId,
+      weapon:build.weapon,
+      weaponConfig:build.weaponConfig,
+      armor:build.armor,
+      armorConfig:build.armorConfig,
+      jewel:build.jewel,
+      jewelConfig:build.jewelConfig,
+      rosterBuilds,
+      activeWeaponType:weaponType,
+      potentiel:{tier:normalized.potentialTier},
+      note:build.note
+    });
+  }
+
 export {
   normalizeRosterCharacter,  normalizeRosterBuild,  compatibleWeaponGroups,  normalizeBuildFields,
   normalizeHero,
@@ -255,6 +290,8 @@ export {
   normalizeTeam,
   normalizeTeamName,
   normalizeWeaponConfig,
+  favoriteRosterWeaponType,
+  rosterHeroSnapshot,
   teamBuildSnapshot,
   teamFromBossSnapshot
 };

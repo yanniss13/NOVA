@@ -7,14 +7,20 @@ import { brouillonEquipe } from "./etat/brouillon-equipe.js";
 import { authMessage, sb } from "./noyau/supabase-client.js";
 import { charOf, nameOfFile } from "./metier/catalogue.js";
 import { heroStatsSection } from "./vues/stats-heros.js";
-import { badgesRow, heroDetail, weaponSlotBadge } from "./vues/fiche-heros.js";
+import { badgesRow, weaponSlotBadge } from "./vues/fiche-heros.js";
 import { openTeamDetail } from "./vues/detail-equipe.js";
 import { bossReportParticipant, bossTeamBanner } from "./vues/equipe-boss.js";
+import {
+  openRosterDetailFor,
+  rosterDetail,
+  rosterDetailOwnerLabel
+} from "./vues/detail-roster.js";
 import { MemberRosterStore, cloudRosterFromRow } from "./donnees/roster-store.js";
 import { DashboardStore } from "./donnees/suivi-store.js";
 import { LocalTeams, Store } from "./donnees/equipes-store.js";
 import {
   compatibleWeaponGroups,
+  favoriteRosterWeaponType,
   normalizeBuildFields,
   normalizeHero,
   normalizePotentiel,
@@ -23,6 +29,7 @@ import {
   normalizeTeam,
   normalizeTeamName,
   normalizeWeaponConfig,
+  rosterHeroSnapshot,
   teamBuildSnapshot,
   teamFromBossSnapshot
 } from "./metier/equipe-modele.js";
@@ -32,7 +39,7 @@ import {
   openGearConfigEditor,
   renderGearConfigEditor
 } from "./vues/editeur-equipement.js";
-import { gearSlot, renderBonus } from "./vues/elements.js";
+import { gearSlot, renderBonus, rosterWeaponLabel } from "./vues/elements.js";
 import {
   WEAPON_RARITY_LABELS,
   closeWeaponConfigEditor,
@@ -460,12 +467,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
     );
     return next;
   }
-  function favoriteRosterWeaponType(entry){
-    const normalized = normalizeRosterCharacter(entry);
-    if(!normalized) return null;
-    return Object.keys(normalized.builds)
-      .find(type => normalized.builds[type].favorite) || null;
-  }
   function setFavoriteRosterBuild(entry, weaponType){
     const normalized = normalizeRosterCharacter(entry);
     if(!normalized
@@ -498,29 +499,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
       favorite:false
     };
     return normalizeRosterCharacter(normalized);
-  }
-  function rosterHeroSnapshot(entry, weaponType){
-    const normalized = normalizeRosterCharacter(entry);
-    if(!normalized || !Object.prototype.hasOwnProperty.call(normalized.builds, weaponType)) return null;
-    const build = normalized.builds[weaponType];
-    const rosterBuilds = Object.keys(normalized.builds)
-      .reduce((result, type) => {
-        result[type] = teamBuildSnapshot(normalized.builds[type]);
-        return result;
-      }, {});
-    return normalizeHero({
-      char:normalized.charId,
-      weapon:build.weapon,
-      weaponConfig:build.weaponConfig,
-      armor:build.armor,
-      armorConfig:build.armorConfig,
-      jewel:build.jewel,
-      jewelConfig:build.jewelConfig,
-      rosterBuilds,
-      activeWeaponType:weaponType,
-      potentiel:{tier:normalized.potentialTier},
-      note:build.note
-    });
   }
 
   /* ===== #5 Analyse : DPS dérivés du Roster ===== */
@@ -1123,7 +1101,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
     rarity:""
   };
 
-  const rosterWeaponLabel = type => type || "Arme";
   const rosterElementLabel = value => {
     const key = String(value || "").toUpperCase();
     return ELEMENTS[key] ? ELEMENTS[key].label : value;
@@ -1366,144 +1343,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
     )));
   }
 
-  /* ---- Modal détail d'un personnage consulté chez un autre membre ----
-     La modale garde sa propre copie de la liste affichée : une synchronisation
-     Realtime pendant la consultation ne déplace pas le personnage sous les
-     yeux du lecteur. */
-  /* `weaponTypes` restreint le sélecteur d'arme à ces enums (null = tout
-     proposer, comportement historique). `showNavigation` masque les flèches
-     précédent/suivant quand l'appelant n'a qu'une seule entrée (l'Analyse).
-     `returnFocusKey` est réservé aux futurs appelants qui reconstruisent leur
-     liste pendant que la modale reste ouverte : personne ne le consomme
-     encore ici, mais le champ doit survivre au passage. */
-  const rosterDetail = {
-    entries:[], index:0, type:null, owner:"",
-    weaponTypes:null, showNavigation:true, returnFocusKey:null
-  };
-
-  function rosterDetailOwnerLabel(){
-    const select = $("#memberRosterOwner");
-    const option = select && select.selectedOptions && select.selectedOptions[0];
-    return option ? option.textContent : "";
-  }
-
-  function rosterDetailWeaponSwitch(entry){
-    const meta = metaOf(entry.charId);
-    const slots = (meta && meta.weapons) || [];
-    const allowed = rosterDetail.weaponTypes;
-    /* L'Analyse ne propose qu'un sous-ensemble d'armes DPS (des enums) : on
-       filtre AVANT de construire les badges. Sans filtre, comportement
-       historique inchangé. */
-    const types = allowed
-      ? weaponTypesOf(entry.charId).filter(type => allowed.includes(FOLDER_TO_ENUM[type]))
-      : weaponTypesOf(entry.charId);
-    /* Un sélecteur à un seul choix n'en est plus un : le masquer plutôt que
-       proposer un bouton qui ne fait rien. Le comportement historique (filtre
-       absent) n'est pas concerné : il peut légitimement n'afficher qu'une
-       arme. */
-    if(allowed && types.length <= 1) return null;
-    const row = el("div",{class:"roster-detail-weapons"});
-    types.forEach(type => {
-      const enumName = FOLDER_TO_ENUM[type];
-      const slot = slots.find(item => item.weapon === enumName)
-        || { weapon:enumName, element:"", role:"" };
-      const badge = weaponSlotBadge(slot, false);
-      if(!badge) return;
-      const saved = Object.prototype.hasOwnProperty.call(entry.builds || {}, type);
-      const props = {
-        class:"roster-detail-weapon",
-        type:"button",
-        dataset:{ weaponType:type },
-        "aria-pressed":String(saved && type === rosterDetail.type),
-        title:rosterWeaponLabel(type)
-          +(saved ? "" : " · aucun build enregistré")
-      };
-      if(saved) props.onclick = ()=>{ rosterDetail.type = type; renderRosterDetail(); };
-      else props.disabled = "disabled";
-      row.appendChild(el("button",props,[badge]));
-    });
-    return row;
-  }
-
-  function renderRosterDetail(){
-    const entry = rosterDetail.entries[rosterDetail.index];
-    const body = $("#rosterDetailBody");
-    body.innerHTML = "";
-    if(!entry) return;
-    const character = charOf(entry.charId);
-    const types = Object.keys(entry.builds || {});
-    if(!rosterDetail.type || !types.includes(rosterDetail.type)){
-      rosterDetail.type = favoriteRosterWeaponType(entry) || types[0] || null;
-    }
-    $("#rosterDetailTitle").textContent = rosterDetail.owner
-      ? character.name + " — " + rosterDetail.owner
-      : character.name;
-    $("#rosterDetailPosition").textContent =
-      (rosterDetail.index + 1) + " / " + rosterDetail.entries.length;
-    const prev = $("#rosterDetailPrev");
-    const next = $("#rosterDetailNext");
-    /* Prev/next et le compteur de position partagent un même conteneur : sans
-       rien à parcourir (l'Analyse n'a qu'une entrée), on masque tout le bloc
-       plutôt que de laisser des flèches inertes visibles — une promesse non
-       tenue. */
-    const nav = prev.parentElement;
-    if(nav) nav.hidden = !rosterDetail.showNavigation;
-    /* Le navigateur retire le focus d'un bouton dès qu'il devient `disabled` :
-       on note qui l'avait AVANT de désactiver, puis on le rend au contrôle
-       encore utilisable plutôt que de le perdre sur le body. */
-    const active = document.activeElement;
-    prev.disabled = rosterDetail.index <= 0;
-    next.disabled = rosterDetail.index >= rosterDetail.entries.length - 1;
-    if((active === prev || active === next) && active.disabled){
-      const fallback = active === prev ? next : prev;
-      (fallback.disabled ? $("#rosterDetailClose") : fallback).focus();
-    }
-    const hero = rosterDetail.type
-      ? rosterHeroSnapshot(entry, rosterDetail.type)
-      : normalizeHero({ char:entry.charId, potentiel:{tier:entry.potentialTier} });
-    body.appendChild(heroDetail(hero, {
-      badgesFor:()=>rosterDetailWeaponSwitch(entry)
-    }));
-    if(!types.length){
-      body.appendChild(el("p",{
-        class:"roster-detail-hint",
-        text:"Ce membre n’a enregistré aucun build pour ce personnage."
-      }));
-    }
-  }
-
-  /* Point d'entrée explicite : le Roster indexe sur sa propre liste affichée,
-     mais l'Analyse (une seule fiche, aucune liste) n'a pas cet index. Les deux
-     passent désormais par le même contexte plutôt que par un second chemin
-     parallèle dans la modale. */
-  function openRosterDetailFor(context){
-    if(!context || !Array.isArray(context.entries) || !context.entries.length){
-      return;
-    }
-    /* Capturé avant tout rendu : `renderRosterDetail()` ne déplace pas le
-       focus sur un premier affichage, mais le rendre explicite ici évite de
-       dépendre implicitement de l'ordre d'exécution pour la restitution. */
-    const trigger = document.activeElement;
-    rosterDetail.entries = context.entries;
-    rosterDetail.index = Math.min(
-      Math.max(context.index || 0, 0), context.entries.length - 1
-    );
-    /* `rosterDetail.type` est une clé de DOSSIER : c'est ce que
-       `rosterHeroSnapshot(entry, type)` attend. Le contexte parle en enums.
-       La conversion est obligatoire ; l'oublier ouvre un build introuvable. */
-    rosterDetail.type = context.weaponType
-      ? (ENUM_TO_FOLDER[context.weaponType] || null)
-      : null;
-    rosterDetail.owner = context.memberName || rosterDetailOwnerLabel();
-    rosterDetail.weaponTypes = context.weaponTypes || null;
-    rosterDetail.showNavigation = context.showNavigation !== false;
-    rosterDetail.returnFocusKey = context.returnFocusKey || null;
-    renderRosterDetail();
-    ModalStack.open(
-      $("#rosterDetailOverlay"), "#rosterDetailClose", closeRosterDetail, trigger
-    );
-  }
-
   function openRosterDetail(index){
     if(!memberRosterVisible.length) return;
     openRosterDetailFor({
@@ -1516,29 +1355,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
       returnFocusKey:null
     });
   }
-
-  function moveRosterDetail(step){
-    const next = rosterDetail.index + step;
-    if(next < 0 || next >= rosterDetail.entries.length) return;
-    rosterDetail.index = next;
-    rosterDetail.type = null;
-    renderRosterDetail();
-  }
-
-  function closeRosterDetail(){
-    ModalStack.close($("#rosterDetailOverlay"));
-  }
-
-  $("#rosterDetailClose").addEventListener("click", closeRosterDetail);
-  $("#rosterDetailPrev").addEventListener("click", ()=>moveRosterDetail(-1));
-  $("#rosterDetailNext").addEventListener("click", ()=>moveRosterDetail(1));
-  $("#rosterDetailOverlay").addEventListener("click", event => {
-    if(event.target === $("#rosterDetailOverlay")) closeRosterDetail();
-  });
-  $("#rosterDetailOverlay").addEventListener("keydown", event => {
-    if(event.key === "ArrowLeft"){ event.preventDefault(); moveRosterDetail(-1); }
-    else if(event.key === "ArrowRight"){ event.preventDefault(); moveRosterDetail(1); }
-  });
 
   async function renderMemberRoster(){
     const renderId = ++memberRosterRenderId;
