@@ -83,11 +83,32 @@ function declarationsDe(source){
   return noms;
 }
 
+/* Les paramètres de fonction sont des noms connus du module : sans eux, un
+   paramètre nommé comme une constante d'un autre module passerait pour un
+   emprunt. */
+function parametresDe(source){
+  const noms = new Set();
+  for(const m of source.matchAll(/\(([^()]*)\)\s*(?:=>|\{)/g)){
+    for(const brut of m[1].split(",")){
+      const p = /([A-Za-z_$][\w$]*)/.exec(brut.replace(/[{}[\]]/g, " "));
+      if(p) noms.add(p[1]);
+    }
+  }
+  for(const m of source.matchAll(/(?:^|[(,=\s])([A-Za-z_$][\w$]*)\s*=>/gm)) noms.add(m[1]);
+  return noms;
+}
+
 function emploie(source, nom){
   /* `$` demande une précaution : dans un gabarit, `${` n'est pas un emploi de
      l'utilitaire `$` mais une interpolation. */
   const suite = nom === "$" ? "(?![\\w${])" : "(?![\\w$])";
-  return new RegExp("(?<![\\w$.])" + nom.replace(/\$/g, "\\$") + suite).test(source);
+  /* Le point qui précède doit être écarté quand il est un accès de propriété
+     (`objet.nom`), mais PAS quand il fait partie d'un spread (`...nom`) — qui
+     est un emploi bien réel. D'où « pas un point qui ne soit lui-même précédé
+     d'un point ». Une version naïve `(?<![\w$.])` a laissé passer une vraie
+     régression : `[...HERO_STAT_COVERAGE]` n'était vu par aucun contrôle. */
+  return new RegExp("(?<![\\w$])(?<!(?<!\\.)\\.)"
+    + nom.replace(/\$/g, "\\$") + suite).test(source);
 }
 
 const sources = new Map();
@@ -108,17 +129,53 @@ for(const fichier of fs.readdirSync(RACINE).filter(f => f.endsWith(".js"))){
 const exportes = new Map();
 for(const [fichier, source] of sources) exportes.set(fichier, exportsDe(source));
 
+/* Déclarations de PREMIER niveau d'un module : deux espaces d'indentation,
+   héritage de l'IIFE d'origine. Ce sont les seules qui peuvent être exportées. */
+function declarationsTopNiveau(source){
+  const noms = new Set();
+  for(const ligne of source.split("\n")){
+    const m = /^ {2}(?:async )?(?:const|let|var|function\*?|class) +([A-Za-z_$][\w$]*)/.exec(ligne);
+    if(m) noms.add(m[1]);
+  }
+  return noms;
+}
+
+const topNiveau = new Map();
+for(const [fichier, source] of sources) topNiveau.set(fichier, declarationsTopNiveau(source));
+
+/* Un module ne voit d'un autre QUE ce que celui-ci exporte et qu'il importe.
+   Trois fautes possibles, toutes silencieuses pour le chargeur `vm` — qui
+   concatène tout dans une portée commune — et donc invisibles aux tests
+   unitaires. Seul le navigateur les révèle, souvent loin de leur cause :
+
+   1. le symbole est exporté mais non importé ;
+   2. le symbole est déclaré ailleurs mais **pas exporté** ;
+   3. le symbole est resté dans js/app.js, dont rien ne sort.
+
+   Les trois ont déjà mordu : `ModalStack` (1), `ARMOR_LEVEL_ORIGIN_MODE` (2),
+   `HERO_STAT_COVERAGE` (3). */
 const manques = [];
 for(const [fichier, source] of sources){
   const importes = importsDe(source);
   const locaux = declarationsDe(source);
   const siens = exportes.get(fichier);
+  const parametres = parametresDe(source);
+  /* Une clé d'objet (`pseudo:`) n'est pas un emprunt de symbole. */
+  const corps = source.replace(/([A-Za-z_$][\w$]*)\s*:/g, " ");
 
-  for(const [autre, noms] of exportes){
+  for(const [autre, declares] of topNiveau){
     if(autre === fichier) continue;
-    for(const nom of noms){
-      if(importes.has(nom) || locaux.has(nom) || siens.has(nom)) continue;
-      if(emploie(source, nom)){
+    for(const nom of declares){
+      if(importes.has(nom) || locaux.has(nom) || siens.has(nom)
+         || parametres.has(nom)) continue;
+      if(!emploie(corps, nom)) continue;
+      if(autre === "app.js"){
+        manques.push("js/" + fichier + " emploie « " + nom
+          + " », resté dans js/app.js dont rien n'est exporté");
+      }else if(!exportes.get(autre).has(nom)){
+        manques.push("js/" + fichier + " emploie « " + nom
+          + " », que ./" + autre + " déclare mais n'exporte PAS");
+      }else{
         manques.push("js/" + fichier + " emploie « " + nom
           + " » sans l'importer de ./" + autre);
       }
@@ -127,8 +184,9 @@ for(const [fichier, source] of sources){
 }
 
 assert.deepEqual(manques, [],
-  "Des modules emploient des symboles qu'ils n'importent pas :\n  "
+  "Des modules emploient des symboles qu'ils ne peuvent pas voir :\n  "
   + manques.join("\n  "));
+
 
 /* Et l'inverse : un `import` qui ne sert plus est du bruit. Il survit aux
    extractions successives — on importe large « au cas où » — et finit par

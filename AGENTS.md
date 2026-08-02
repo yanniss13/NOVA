@@ -199,6 +199,9 @@ Site Confrérie 7ds/
 ├─ js/roster-profils.js    # Pseudos de la confrérie, lus une fois et mis en cache.
 ├─ js/boss-store.js        # Accès Supabase aux sessions de boss (aucun rendu).
 ├─ js/outils.js            # jsonCopy, owns, isInteger. Sans domaine, employés partout.
+├─ js/armes.js             # Identité d’une arme : dossier, type, compatibilité.
+├─ js/build-config.js      # Catalogue de build et diagnostic d’une configuration saisie.
+├─ js/stats-calcul.js      # Moteur de calcul des stats : produit des termes explicables.
 ├─ js/perles.js            # Perle de sortilège : paliers et longueur des enchantements.
 ├─ js/stats-affichage.js   # Rendu des termes de stats (regroupement, libellés, notes).
 ├─ js/dom.js               # Utilitaires DOM ($, el, norm, uid, initials…). Feuille de l'arbre.
