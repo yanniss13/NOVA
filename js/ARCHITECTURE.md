@@ -84,7 +84,7 @@ version plus ancienne du site reste ouvrable.
 |---|---|
 | `elements.js` | Briques de rendu partagées : `gearSlot`, `renderBonus`, `rosterWeaponLabel` |
 | `toast.js` | Le bandeau de notification |
-| `modal-stack.js` | La pile de modales : ouverture, fermeture, restitution du focus |
+| `modal-stack.js` | La pile de modales : ouverture, fermeture, restitution du focus, `closeModalAfterAsyncRefresh` |
 | `picker.js` | La modale de sélection réutilisable |
 | `stats-affichage.js` | Mise en forme des termes de stats, libellés partagés |
 | `stats-heros.js` | Le bloc de statistiques d'un héros, dans les fiches |
@@ -95,6 +95,9 @@ version plus ancienne du site reste ouvrable.
 | `editeur-arme.js` | La modale de configuration d'une arme |
 | `editeur-equipement.js` | La modale de configuration d'une pièce d'équipement |
 | `dispos.js` | La vue des disponibilités hebdomadaires |
+| `navigation.js` | Les onglets et **le registre des vues** — la seule façon de changer d'onglet |
+| `modale-auth.js` | La fenêtre de connexion (le contenant seul) |
+| `boss-sessions.js` | L'onglet « Sessions de boss » : groupes, inscriptions, rapports, archive |
 
 **Un cas instructif :** `weaponTermLabel` et `gearTermLabel` vivaient dans les
 deux éditeurs. Quand `stats-heros.js` en a eu besoin, le contrôle des couches a
@@ -144,49 +147,55 @@ resté là après le passage à `WSLOT_ROLES` (cinq, « vocabulaire plus fin »)
 
 ## Si tu veux découper davantage
 
-`app.js` n'est pas fini : il reste ~4 700 lignes. **Les modales, elles, en sont
-toutes sorties.** Ce qui reste : le Builder, l'Analyse, les sessions de boss,
-l'authentification et le démarrage.
+`app.js` est passé de **10 489 à 3 382 lignes**. Ce qui reste :
 
-Relevé refait après le lot `detail-roster` — plus aucune clôture fermée facile,
-le prochain chantier est l'Analyse ou les rapports de boss :
-
-| Racine | Symboles | Lignes | Contigu |
+| Zone | Lignes | Frontière | Bloqué par |
 |---|---|---|---|
-| `renderAnalyse` | 23 | 344 | non |
-| `bossArchiveRows` | 15 | 230 | non |
-| `bossReportCard` | 14 | 214 | non |
-| `rosterDerivedPlayers` | 5 | 92 | **oui** |
-| `bossStatsBlock` | 2 | 64 | **oui** |
+| Roster des membres | 819 | 2 sorties, 8 entrées | les aides du Builder (l. 246-670) |
+| Builder | 708 | 7 sorties, 19 entrées | ses propres aides, éparpillées en tête |
+| Analyse (+ DPS dérivés) | ~530 | — | — |
+| **Mon suivi** | **343** | **1 sortie, 1 entrée** | **`resetTeamDraft` seul** |
+| Équipes, Export/Import, auth, démarrage | ~980 | — | — |
 
-Les deux `oui` sont des tranches uniques à couper : le cas sûr, à faire en
-premier. Les trois autres sont éparpillées — faisable, mais **garder l'ordre
-d'origine des déclarations**.
+**Le prochain lot évident est « Mon suivi » : une seule sortie
+(`renderDashboardView`), un seul verrou (`resetTeamDraft`).**
 
-**La démonstration est faite quatre fois de suite :** les quatre modales
-pesaient 17, 12, 9 et 7 symboles. Sortir leur noyau commun d'abord
-(`fiche-heros.js`, puis `detail-equipe.js`) a fait tomber leurs clôtures de
-moitié sans toucher à une ligne de leur code.
+Et ce verrou est le même que celui qui bloquait les sessions de boss :
+`resetTeamDraft` appelle `renderBuilder`, donc il ne peut pas descendre dans
+`etat/`. **Sortir le Builder débloque tout le reste d'un coup** — c'est lui, la
+dernière base commune.
 
-C'est l'ordre qui a fonctionné à chaque fois : `dom.js` avant les vues, le
-modèle avant les stores, `stats-heros.js` puis `fiche-heros.js` avant les
-modales qui les affichent.
+⚠️ Attention : le Builder ne tient pas dans sa bannière. Une vingtaine de ses
+aides (`emptyDraft`, `applyGearChange`, `builderWeaponSwitcher`,
+`resetBuilderRosterBaselines`…) vivent **lignes 246 à 670**, loin au-dessus.
+Le relevé de frontière les montre ; la lecture par bannière, non.
 
-⚠️ **Une clôture dit ce qui doit sortir ENSEMBLE, pas où chaque morceau doit
-atterrir.** Cinq symboles tirés par ces quatre modales n'étaient pas des
-symboles de vue et sont descendus d'une couche : `authMessage`,
-`canManageTeam`, `teamFromBossSnapshot`, `favoriteRosterWeaponType`,
-`rosterHeroSnapshot`. Le signal est simple — **compter les appelants hors du
-domaine**. `favoriteRosterWeaponType` en avait sept, dont un seul dans la
-modale.
+### La leçon qui s'est vérifiée sept fois
 
-⚠️ **Une clôture ne voit que les déclarations.** Le détail d'équipe traînait
-quatre lignes de branchement d'événements au premier niveau (`$("#teamClose")
-.addEventListener(…)`) qu'aucun relevé ne signale. Relis toujours les lignes
-autour de la tranche avant de couper.
+Les modales pesaient 17, 12, 9 et 7 symboles ; les sessions de boss,
+1 575 lignes. À chaque fois, **sortir la base commune d'abord** a fait tomber
+les clôtures sans toucher une ligne du code qui s'appuyait dessus.
 
-⚠️ **Ces chiffres bougent à chaque extraction.** Refais le relevé plutôt que de
-les croire — c'est le seul conseil de cette page qui périme.
+Et **une clôture dit ce qui sort ENSEMBLE, pas où chaque morceau atterrit.**
+Huit symboles tirés par ces extractions ne devaient pas suivre la vue et sont
+descendus d'une couche : `authMessage`, `canManageTeam`, `teamFromBossSnapshot`,
+`favoriteRosterWeaponType`, `rosterHeroSnapshot`, `rosterWeaponLabel`,
+`closeModalAfterAsyncRefresh`, `bossStatCell`. Le signal qui tranche :
+**compter les appelants hors du domaine**.
+
+### Quand deux modules se veulent l'un l'autre : le registre
+
+`showView` citait chaque vue, donc la navigation importait tout le monde ; et
+chaque vue voulait appeler `showView`. Aucune ne pouvait sortir en premier.
+
+`vues/navigation.js` renverse la dépendance : il ne connaît personne, chaque
+vue s'annonce au chargement par `enregistrerVue(nom, rendu)`. C'est ce qui a
+débloqué les 1 575 lignes des sessions de boss. **Garde ce motif en tête pour
+le Builder** — c'est probablement la même sortie.
+
+⚠️ **Une clôture ne voit que les déclarations.** Trois modales traînaient des
+lignes de câblage d'événements au premier niveau (`$("#x").addEventListener…`)
+qu'aucun relevé ne signale. Relis toujours les lignes autour de la tranche.
 
 ## La méthode
 
