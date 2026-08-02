@@ -1,6 +1,6 @@
 /* Picker reutilisable : la modale de selection partagee par les vues. */
 
-import { $, el, norm } from "./dom.js";
+import { $, el, norm } from "../noyau/dom.js";
 import { ModalStack } from "./modal-stack.js";
 
   /* ============================ Picker réutilisable ============================ */

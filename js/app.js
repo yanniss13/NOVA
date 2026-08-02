@@ -1,10 +1,10 @@
 /* Les `import` doivent précéder l'IIFE : ils vivent au niveau du module, pas
    dans sa portée interne. */
-import { shouldIgnoreAvailabilityEcho } from "./dispos-logique.js";
-import { ModalStack } from "./modal-stack.js";
-import { sessionCourante } from "./session.js";
-import { brouillonEquipe } from "./brouillon-equipe.js";
-import { sb } from "./supabase-client.js";
+import { shouldIgnoreAvailabilityEcho } from "./metier/dispos-logique.js";
+import { ModalStack } from "./vues/modal-stack.js";
+import { sessionCourante } from "./etat/session.js";
+import { brouillonEquipe } from "./etat/brouillon-equipe.js";
+import { sb } from "./noyau/supabase-client.js";
 import {
   WEAPON_RARITY_LABELS,
   closeWeaponConfigEditor,
@@ -13,13 +13,13 @@ import {
   weaponConfigOption,
   weaponDefaultGradeGameId,
   weaponTermLabel
-} from "./editeur-arme.js";
+} from "./vues/editeur-arme.js";
 import {
   calculateGearStats,
   calculateHeroStats,
   gearDomainOf,
   groupBuildStatResults
-} from "./stats-calcul.js";
+} from "./metier/stats-calcul.js";
 import {
   BUILD_GEAR,
   BUILD_GEAR_SETS,
@@ -30,7 +30,7 @@ import {
   gearEnchantmentChoiceStatus,
   gearEnchantmentLength,
   weaponConfigStatus
-} from "./build-config.js";
+} from "./metier/build-config.js";
 import {
   equippedEnumOf,
   isLinkedArmorCompatible,
@@ -38,20 +38,20 @@ import {
   linkedArmorsOf,
   weaponFolderOf,
   weaponTypesOf
-} from "./armes.js";
-import { enchantmentExpectedLength, enchantmentRequiredLength } from "./perles.js";
-import { isInteger, jsonCopy, owns } from "./outils.js";
+} from "./metier/armes.js";
+import { enchantmentExpectedLength, enchantmentRequiredLength } from "./metier/perles.js";
+import { isInteger, jsonCopy, owns } from "./noyau/outils.js";
 import {
   BUILD_STAT_FAMILY_LABELS,
   buildStatsTitle,
   formatBuildStatValue,
   mainRateValueText,
   statTermsDetails
-} from "./stats-affichage.js";
-import { Availability, renderAvailabilityView } from "./dispos.js";
-import { BOSS_NAME, BossStore } from "./boss-store.js";
-import { refreshRosterProfiles } from "./roster-profils.js";
-import { toast } from "./toast.js";
+} from "./vues/stats-affichage.js";
+import { Availability, renderAvailabilityView } from "./vues/dispos.js";
+import { BOSS_NAME, BossStore } from "./donnees/boss-store.js";
+import { refreshRosterProfiles } from "./donnees/roster-profils.js";
+import { toast } from "./vues/toast.js";
 import {
   ARMOR_SET_SLOTS,
   armorSetsFrom,
@@ -59,7 +59,7 @@ import {
   emptyJewel,
   emptyPot,
   jewelSetsFrom
-} from "./equipement.js";
+} from "./metier/equipement.js";
 import {
   DATA,
   BUILD_STATS,
@@ -82,8 +82,8 @@ import {
   metaOf,
   FOLDER_TO_ENUM,
   ENUM_TO_FOLDER
-} from "./constantes.js";
-import { Picker } from "./picker.js";
+} from "./noyau/constantes.js";
+import { Picker } from "./vues/picker.js";
 import {
   bossEvolutionPercentage,
   bossScoreBigInt,
@@ -95,8 +95,8 @@ import {
   frDateTime,
   isBossSchemaCompatibilityError,
   previousBossWeekStart
-} from "./boss-logique.js";
-import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js";
+} from "./metier/boss-logique.js";
+import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./noyau/dom.js";
 
 (function(){
   "use strict";

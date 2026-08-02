@@ -8,13 +8,13 @@
    modules deja sortis : seuls `Availability` et `renderAvailabilityView` en
    sortent, les huit autres declarations deviennent privees. */
 
-import { $ } from "./dom.js";
-import { sb } from "./supabase-client.js";
-import { sessionCourante } from "./session.js";
+import { $ } from "../noyau/dom.js";
+import { sb } from "../noyau/supabase-client.js";
+import { sessionCourante } from "../etat/session.js";
 import { toast } from "./toast.js";
-import { refreshRosterProfiles } from "./roster-profils.js";
+import { refreshRosterProfiles } from "../donnees/roster-profils.js";
 import { ModalStack } from "./modal-stack.js";
-import { currentBossWeek } from "./boss-logique.js";
+import { currentBossWeek } from "../metier/boss-logique.js";
 import {
   AVAIL_DAYS,
   AVAIL_HOURS,
@@ -37,7 +37,7 @@ import {
   AVAIL_DAY_FULL,
   availabilityDayDate,
   availabilityViewState
-} from "./dispos-logique.js";
+} from "../metier/dispos-logique.js";
 
   const AVAIL_CACHE_PREFIX = "confrerie7ds.cloud.availability.";
   const AVAIL_CACHE_VERSION = 1;

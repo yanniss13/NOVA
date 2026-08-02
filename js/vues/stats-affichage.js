@@ -6,7 +6,7 @@
    Sept declarations sur onze restent privees : le regroupement par cle, les
    noeuds de rendu et les notes de seau n'ont aucun sens hors d'ici. */
 
-import { el } from "./dom.js";
+import { el } from "../noyau/dom.js";
 
   function formatBuildStatValue(value, unit){
     if(unit !== "flat" && unit !== "ten-thousandths"){

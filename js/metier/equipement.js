@@ -8,7 +8,7 @@
    de detection de racine commune restent privees, elles n'ont aucun sens
    hors d'ici. */
 
-import { ARMOR_SLOTS, JEWEL_SLOTS } from "./constantes.js";
+import { ARMOR_SLOTS, JEWEL_SLOTS } from "../noyau/constantes.js";
 
   const emptyArmor = () => ARMOR_SLOTS.reduce((o,s)=>(o[s]=null,o),{});
 

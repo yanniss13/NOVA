@@ -4,7 +4,7 @@
    La table PEARL_TIERS vient du jeu, rapportee par le proprietaire. Elle
    reste privee : on n'y accede que par les fonctions de ce module. */
 
-import { isInteger } from "./outils.js";
+import { isInteger } from "../noyau/outils.js";
 
   /* Perle de sortilège : chaque palier ouvre un nombre d'emplacements de stat
      différent. Cette table vient du jeu, rapportée par le propriétaire — les

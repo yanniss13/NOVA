@@ -4,7 +4,7 @@
    module minuscule. `toastTimer` reste prive, personne d'autre n'a a le
    connaitre. */
 
-import { $ } from "./dom.js";
+import { $ } from "../noyau/dom.js";
 
   /* ============================ Toast ============================ */
   let toastTimer;

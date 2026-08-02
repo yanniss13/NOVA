@@ -13,8 +13,8 @@ import {
   ARMOR_SLOTS,
   JEWEL_SLOTS,
   LINKED_ARMOR_SLOT
-} from "./constantes.js";
-import { isInteger, owns } from "./outils.js";
+} from "../noyau/constantes.js";
+import { isInteger, owns } from "../noyau/outils.js";
 import {
   equippedEnumOf,
   weaponFolderOf,

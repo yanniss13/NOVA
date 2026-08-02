@@ -7,8 +7,8 @@
    Rien ici ne calcule de statistique finale : c'est le role de
    js/stats-calcul.js, qui s'appuie sur ce module. */
 
-import { BUILD_STATS } from "./constantes.js";
-import { isInteger, owns } from "./outils.js";
+import { BUILD_STATS } from "../noyau/constantes.js";
+import { isInteger, owns } from "../noyau/outils.js";
 import {
   enchantmentExpectedLength,
   enchantmentRequiredLength,

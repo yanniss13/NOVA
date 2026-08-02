@@ -4,8 +4,8 @@
    Partagee par les dispos, le roster des membres et l'analyse : c'est ce qui
    lui vaut son propre module plutot qu'une place dans l'une des trois. */
 
-import { sessionCourante } from "./session.js";
-import { sb } from "./supabase-client.js";
+import { sessionCourante } from "../etat/session.js";
+import { sb } from "../noyau/supabase-client.js";
 
   async function refreshRosterProfiles(){
     if(!sessionCourante.user || !sb) return sessionCourante.rosterProfiles.slice();

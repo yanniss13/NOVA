@@ -4,9 +4,9 @@
    Aucun rendu ici. La vue qui consomme ce store est restee dans js/app.js
    pour l'instant. `BOSS_GROUPS` ne sort pas : seul BossStore s'en sert. */
 
-import { sb } from "./supabase-client.js";
-import { uid } from "./dom.js";
-import { sessionCourante } from "./session.js";
+import { sb } from "../noyau/supabase-client.js";
+import { uid } from "../noyau/dom.js";
+import { sessionCourante } from "../etat/session.js";
 
   const BOSS_NAME = "Akumu, bête démoniaque";
   const BOSS_GROUPS = 6;

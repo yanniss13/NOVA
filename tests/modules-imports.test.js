@@ -120,11 +120,50 @@ for(const fichier of MODULES){
 }
 
 /* Tout fichier de js/ doit être déclaré : un module oublié dans MODULES
-   échappe au chargeur `vm` comme au lecteur de source. */
-for(const fichier of fs.readdirSync(RACINE).filter(f => f.endsWith(".js"))){
+   échappe au chargeur `vm` comme au lecteur de source. Depuis le rangement en
+   dossiers par rôle, il faut descendre dans les sous-dossiers. */
+function tousLesModules(dossier, prefixe){
+  const trouves = [];
+  for(const entree of fs.readdirSync(dossier, { withFileTypes:true })){
+    const relatif = prefixe ? prefixe + "/" + entree.name : entree.name;
+    if(entree.isDirectory()) trouves.push(...tousLesModules(path.join(dossier, entree.name), relatif));
+    else if(entree.name.endsWith(".js")) trouves.push(relatif);
+  }
+  return trouves;
+}
+
+for(const fichier of tousLesModules(RACINE, "")){
   assert.ok(MODULES.includes(fichier),
     "js/" + fichier + " n'est pas déclaré dans tests/helpers/modules.js");
 }
+
+/* Un import doit désigner un fichier qui existe vraiment : après un
+   déplacement, un chemin relatif faux ne se voit qu'au chargement réel.
+
+   Et il doit désigner un module DÉCLARÉ PLUS TÔT dans MODULES. C'est la règle
+   des couches, et c'est ce qui garde le découpage lisible : `metier` ne peut
+   pas appeler `vues`, `noyau` ne peut appeler personne. Un import à contre-sens
+   est soit un cycle, soit un module rangé dans la mauvaise couche. */
+const rang = new Map(MODULES.map((f, i) => [f, i]));
+const contreSens = [];
+for(const fichier of MODULES){
+  const source = fs.readFileSync(path.join(RACINE, fichier), "utf8");
+  for(const m of source.matchAll(/from\s+"(\.[^"]*\.js)"/g)){
+    const vise = path.resolve(path.dirname(path.join(RACINE, fichier)), m[1]);
+    assert.ok(fs.existsSync(vise),
+      "js/" + fichier + " importe « " + m[1] + " », qui n'existe pas");
+
+    const cible = path.relative(RACINE, vise).split(path.sep).join("/");
+    if(rang.get(cible) >= rang.get(fichier)){
+      contreSens.push("js/" + fichier + " importe js/" + cible
+        + ", déclaré APRÈS lui dans MODULES");
+    }
+  }
+}
+
+assert.deepEqual(contreSens, [],
+  "Des imports remontent les couches — cycle, ou module mal rangé :\n  "
+  + contreSens.join("\n  "));
 
 const exportes = new Map();
 for(const [fichier, source] of sources) exportes.set(fichier, exportsDe(source));

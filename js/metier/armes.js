@@ -3,7 +3,7 @@
    Le dossier d'image est la cle de tout le reste du site : c'est lui qui
    relie une arme a son enum, donc a ses stats et a ses armures liees. */
 
-import { FOLDER_TO_ENUM, LINKED_ARMORS, POT } from "./constantes.js";
+import { FOLDER_TO_ENUM, LINKED_ARMORS, POT } from "../noyau/constantes.js";
 
   const equippedEnumOf = hero => {
     const f = weaponFolderOf(hero && hero.weapon);

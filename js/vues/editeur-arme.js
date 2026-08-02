@@ -9,9 +9,9 @@
    modale elle-meme et quatre aides de rendu partagees avec l'editeur
    d'equipement, reste dans js/app.js. */
 
-import { $, el, numericKeyboardInputProps } from "./dom.js";
-import { BUILD_STATS, ELEMENTS } from "./constantes.js";
-import { isInteger, jsonCopy } from "./outils.js";
+import { $, el, numericKeyboardInputProps } from "../noyau/dom.js";
+import { BUILD_STATS, ELEMENTS } from "../noyau/constantes.js";
+import { isInteger, jsonCopy } from "../noyau/outils.js";
 import { ModalStack } from "./modal-stack.js";
 
 import {
@@ -21,7 +21,7 @@ import {
   enchantmentLength,
   enchantmentExpectedLength,
   enchantmentRequiredLength
-} from "./perles.js";
+} from "../metier/perles.js";
 import {
   BUILD_STAT_FAMILY_LABELS,
   BUILD_BUCKET_LABELS,
@@ -29,7 +29,7 @@ import {
   formatBuildStatValue,
   statTermsDetails
 } from "./stats-affichage.js";
-import { calculateWeaponStats, groupBuildStatResults } from "./stats-calcul.js";
+import { calculateWeaponStats, groupBuildStatResults } from "../metier/stats-calcul.js";
 import {
   buildWeaponDefinition,
   buildWeaponGrade,
@@ -39,7 +39,7 @@ import {
   enchantmentChoiceStatus,
   enchantmentsStatus,
   enchantmentBounds
-} from "./build-config.js";
+} from "../metier/build-config.js";
 
   function emptyWeaponConfig(file, gameId){
     const grade = buildWeaponGrade(file, gameId);

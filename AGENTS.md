@@ -191,26 +191,13 @@ masquerait la modification réelle.
 ```
 Site Confrérie 7ds/
 ├─ index.html              # Style + balisage. Charge les données locales, le client CDN et js/app.js.
-├─ js/app.js               # Module ES principal : vues, auth/store Supabase, démarrage.
-├─ js/constantes.js        # Catalogues, libellés et clés de stockage. Feuille de l'arbre.
-├─ js/session.js           # État mutable de session (`sessionCourante`). Objet, pour rester réaffectable.
-├─ js/supabase-client.js   # Le client Supabase (`sb`), ou null si non configuré.
-├─ js/toast.js             # Bandeau de notification, partagé par toutes les vues.
-├─ js/roster-profils.js    # Pseudos de la confrérie, lus une fois et mis en cache.
-├─ js/boss-store.js        # Accès Supabase aux sessions de boss (aucun rendu).
-├─ js/outils.js            # jsonCopy, owns, isInteger. Sans domaine, employés partout.
-├─ js/armes.js             # Identité d’une arme : dossier, type, compatibilité.
-├─ js/build-config.js      # Catalogue de build et diagnostic d’une configuration saisie.
-├─ js/stats-calcul.js      # Moteur de calcul des stats : produit des termes explicables.
-├─ js/perles.js            # Perle de sortilège : paliers et longueur des enchantements.
-├─ js/stats-affichage.js   # Rendu des termes de stats (regroupement, libellés, notes).
-├─ js/dom.js               # Utilitaires DOM ($, el, norm, uid, initials…). Feuille de l'arbre.
-├─ js/equipement.js        # Sets d'équipement (armures, bijoux) et modèles vides.
-├─ js/dispos.js            # Vue des dispos hebdo : grille, cache hors ligne, sync Supabase.
-├─ js/dispos-logique.js    # Logique pure des disponibilités (masques, semaines, agrégation).
-├─ js/boss-logique.js      # Logique pure des sessions de boss et de « Mon suivi » (dates, scores, projection).
-├─ js/modal-stack.js       # Pile de modales (ouverture, fermeture, restitution du focus).
-├─ js/picker.js            # Modale de sélection réutilisable.
+├─ js/ARCHITECTURE.md      # ⭐ À LIRE EN PREMIER pour comprendre le découpage du JavaScript.
+├─ js/app.js               # Ce qui n'est pas encore découpé : vues restantes, auth, démarrage.
+├─ js/noyau/               # Briques sans domaine : dom, outils, constantes, client Supabase.
+├─ js/etat/                # État mutable partagé : session, brouillon d'équipe.
+├─ js/metier/              # Logique pure, testable sans navigateur : stats, dispos, boss, armes.
+├─ js/donnees/             # Accès Supabase, sans aucun rendu : boss-store, roster-profils.
+├─ js/vues/                # Tout ce qui touche au DOM : dispos, picker, modales, éditeur d'arme.
 ├─ sw.js                   # Service worker. Cache versionné par __BUILD_VERSION__, mise à jour explicite.
 ├─ .github/workflows/pages.yml         # Tests de toute contribution + déploiement Pages du seul `main` testé.
 ├─ .github/workflows/boss-reminder.yml # Rappel Discord (secrets propres). Indépendant du déploiement.
