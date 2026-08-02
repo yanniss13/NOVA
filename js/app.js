@@ -3,6 +3,7 @@
 import { shouldIgnoreAvailabilityEcho } from "./dispos-logique.js";
 import { ModalStack } from "./modal-stack.js";
 import { sessionCourante } from "./session.js";
+import { brouillonEquipe } from "./brouillon-equipe.js";
 import { sb } from "./supabase-client.js";
 import {
   calculateGearStats,
@@ -2484,12 +2485,14 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
   const emptyDraft = () => ({ id:uid(), name:"", pseudo:"", boss:"",
                               heroes:Array.from({length:TEAM_SIZE}, emptyHero) });
 
-  let draft = emptyDraft();
-  let editing = false;
-  let teamDraftSourceUpdatedAt = 0;
-  let teamDraftInitialJson = JSON.stringify(draft);
-  let teamDraftDeletedRemotely = false;
-  let builderRosterBaselines = Array.from(
+  /* L'etat du brouillon vit dans js/brouillon-equipe.js ; on l'amorce ici,
+     au meme instant qu'avant, parce que emptyDraft() a besoin du catalogue. */
+  brouillonEquipe.equipe = emptyDraft();
+  brouillonEquipe.edition = false;
+  brouillonEquipe.sourceMaj = 0;
+  brouillonEquipe.jsonInitial = JSON.stringify(brouillonEquipe.equipe);
+  brouillonEquipe.supprimeAilleurs = false;
+  brouillonEquipe.referencesRoster = Array.from(
     {length:TEAM_SIZE},
     () => ({
       ownerId:"",
@@ -2535,24 +2538,24 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
     };
   }
   function resetBuilderRosterBaseline(index){
-    builderRosterBaselines[index] = builderRosterBaselineForHero(
-      draft.heroes[index]
+    brouillonEquipe.referencesRoster[index] = builderRosterBaselineForHero(
+      brouillonEquipe.equipe.heroes[index]
     );
   }
   function resetBuilderRosterBaselines(){
-    builderRosterBaselines = draft.heroes.map(
+    brouillonEquipe.referencesRoster = brouillonEquipe.equipe.heroes.map(
       builderRosterBaselineForHero
     );
   }
   function builderBuildIsDirty(index, type){
-    const hero = draft.heroes[index];
+    const hero = brouillonEquipe.equipe.heroes[index];
     const activeType = hero
       && (weaponFolderOf(hero.weapon) || hero.activeWeaponType);
     const current = type === activeType
       ? teamBuildSnapshot(hero)
       : hero && hero.rosterBuilds && hero.rosterBuilds[type];
-    const baseline = builderRosterBaselines[index]
-      && builderRosterBaselines[index].builds[type];
+    const baseline = brouillonEquipe.referencesRoster[index]
+      && brouillonEquipe.referencesRoster[index].builds[type];
     return JSON.stringify(teamBuildSnapshot(current || {}))
       !== JSON.stringify(teamBuildSnapshot(baseline || {}));
   }
@@ -2765,7 +2768,7 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
     if(typeof pseudoInput !== "undefined"){
       pseudoInput.disabled = !!sessionCourante.user;
       if(sessionCourante.user && sessionCourante.pseudo){
-        draft.pseudo = sessionCourante.pseudo;
+        brouillonEquipe.equipe.pseudo = sessionCourante.pseudo;
         pseudoInput.value = sessionCourante.pseudo;
       }
     }
@@ -3946,23 +3949,23 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
   const pseudoInput = $("#pseudo");
   const teamNameInput = $("#teamName");
 
-  pseudoInput.addEventListener("input", e => draft.pseudo = e.target.value);
-  teamNameInput.addEventListener("input", e => draft.name = e.target.value);
+  pseudoInput.addEventListener("input", e => brouillonEquipe.equipe.pseudo = e.target.value);
+  teamNameInput.addEventListener("input", e => brouillonEquipe.equipe.name = e.target.value);
 
   function renderBuilder(){
-    if(sessionCourante.user && sessionCourante.pseudo) draft.pseudo = sessionCourante.pseudo;
-    teamNameInput.value = draft.name || "";
-    pseudoInput.value = draft.pseudo || "";
+    if(sessionCourante.user && sessionCourante.pseudo) brouillonEquipe.equipe.pseudo = sessionCourante.pseudo;
+    teamNameInput.value = brouillonEquipe.equipe.name || "";
+    pseudoInput.value = brouillonEquipe.equipe.pseudo || "";
     pseudoInput.disabled = !!sessionCourante.user;
-    $("#editFlag").classList.toggle("on", editing);
-    $("#btnSave").textContent = editing ? "Mettre à jour l'équipe" : "Enregistrer l'équipe";
+    $("#editFlag").classList.toggle("on", brouillonEquipe.edition);
+    $("#btnSave").textContent = brouillonEquipe.edition ? "Mettre à jour l'équipe" : "Enregistrer l'équipe";
     heroGrid.innerHTML = "";
-    draft.heroes.forEach((hero, i) => heroGrid.appendChild(heroCard(hero, i)));
+    brouillonEquipe.equipe.heroes.forEach((hero, i) => heroGrid.appendChild(heroCard(hero, i)));
   }
   function switchBuilderHeroBuild(heroIndex, weaponType){
-    const hero = draft.heroes[heroIndex];
+    const hero = brouillonEquipe.equipe.heroes[heroIndex];
     if(!hero || hero.activeWeaponType === weaponType) return;
-    draft.heroes[heroIndex] = activateHeroBuild(hero, weaponType);
+    brouillonEquipe.equipe.heroes[heroIndex] = activateHeroBuild(hero, weaponType);
     renderBuilder();
     const card = heroGrid.children[heroIndex];
     const active = card && [...card.querySelectorAll(
@@ -3987,7 +3990,7 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
       toast("Connexion requise pour mettre à jour le roster.", true);
       return;
     }
-    const hero = draft.heroes[heroIndex];
+    const hero = brouillonEquipe.equipe.heroes[heroIndex];
     if(!hero || !hero.char){
       toast("Choisis d’abord un personnage.", true);
       return;
@@ -4006,7 +4009,7 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
       return;
     }
     const latest = rows.find(entry => entry.charId === hero.char);
-    const baseline = builderRosterBaselines[heroIndex]
+    const baseline = brouillonEquipe.referencesRoster[heroIndex]
       || {
         ownerId:"",
         charId:"",
@@ -4039,7 +4042,7 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
         type,
         latestUpdatedAtToken
       );
-      builderRosterBaselines[heroIndex] = {
+      brouillonEquipe.referencesRoster[heroIndex] = {
         ownerId:sessionCourante.user.id,
         charId:hero.char,
         updatedAt:Number(saved.updatedAt) || 0,
@@ -4065,7 +4068,7 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
       toast("Connexion requise pour recharger le roster.", true);
       return;
     }
-    const hero = draft.heroes[heroIndex];
+    const hero = brouillonEquipe.equipe.heroes[heroIndex];
     if(!hero || !hero.char) return;
     const dirty = weaponTypesOf(hero.char)
       .some(type => builderBuildIsDirty(heroIndex, type));
@@ -4101,8 +4104,8 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
     }
     const snapshot = rosterHeroSnapshot(latest, nextType);
     if(!snapshot) return;
-    draft.heroes[heroIndex] = snapshot;
-    builderRosterBaselines[heroIndex] = {
+    brouillonEquipe.equipe.heroes[heroIndex] = snapshot;
+    brouillonEquipe.referencesRoster[heroIndex] = {
       ownerId:sessionCourante.user.id,
       charId:hero.char,
       updatedAt:Number(latest.updatedAt) || 0,
@@ -4195,13 +4198,13 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
     const configControl = weaponConfigControl({
       weaponFile:hero.weapon,
       config:hero.weaponConfig,
-      sourceUpdatedAt:teamDraftSourceUpdatedAt,
+      sourceUpdatedAt:brouillonEquipe.sourceMaj,
       parentIsDirty(){
-        return JSON.stringify(draft) !== teamDraftInitialJson;
+        return JSON.stringify(brouillonEquipe.equipe) !== brouillonEquipe.jsonInitial;
       },
       sourceWasDeleted(){
-        if(teamDraftSourceUpdatedAt <= 0) return false;
-        return !Store.all().some(row => row.id === draft.id);
+        if(brouillonEquipe.sourceMaj <= 0) return false;
+        return !Store.all().some(row => row.id === brouillonEquipe.equipe.id);
       },
       defaultGradeGameId:weaponDefaultGradeGameId(hero.weapon),
       commit(nextConfig){
@@ -4214,20 +4217,20 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
         }
       },
       latestUpdatedAt(){
-        const latest = Store.all().find(row => row.id === draft.id);
-        return latest ? latest.updatedAt : teamDraftSourceUpdatedAt;
+        const latest = Store.all().find(row => row.id === brouillonEquipe.equipe.id);
+        return latest ? latest.updatedAt : brouillonEquipe.sourceMaj;
       },
       reload(){
-        const latest = Store.all().find(row => row.id === draft.id);
+        const latest = Store.all().find(row => row.id === brouillonEquipe.equipe.id);
         if(!latest){
-          if(teamDraftSourceUpdatedAt > 0){
+          if(brouillonEquipe.sourceMaj > 0){
             closeDeletedTeamDraft();
           }
           return true;
         }
-        draft = normalizeTeam(JSON.parse(JSON.stringify(latest)));
-        teamDraftSourceUpdatedAt = draft.updatedAt;
-        teamDraftInitialJson = JSON.stringify(draft);
+        brouillonEquipe.equipe = normalizeTeam(JSON.parse(JSON.stringify(latest)));
+        brouillonEquipe.sourceMaj = brouillonEquipe.equipe.updatedAt;
+        brouillonEquipe.jsonInitial = JSON.stringify(brouillonEquipe.equipe);
         renderBuilder();
       }
     });
@@ -4307,7 +4310,7 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
     note.addEventListener("input", e => hero.note = e.target.value);
 
     const clear = el("button",{class:"clear", type:"button", text:"Vider ce héros",
-      onclick:()=>{ draft.heroes[i] = emptyHero(); renderBuilder(); }});
+      onclick:()=>{ brouillonEquipe.equipe.heroes[i] = emptyHero(); renderBuilder(); }});
 
     const content = [
       sourceActions, portrait, title, badges, gear, pot, note
@@ -4378,11 +4381,11 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
   // Pickers spécialisés
   function pickChar(i){
     Picker.open({
-      title:"Choisir un héros", portrait:true, value:draft.heroes[i].char,
+      title:"Choisir un héros", portrait:true, value:brouillonEquipe.equipe.heroes[i].char,
       items:(DATA.personnages||[]).map(c=>({value:c.id, name:c.name, file:c.file})),
       onSelect:v=>{
-        draft.heroes[i] = applyCharacterChange(
-          draft.heroes[i],
+        brouillonEquipe.equipe.heroes[i] = applyCharacterChange(
+          brouillonEquipe.equipe.heroes[i],
           v
         );
         resetBuilderRosterBaseline(i);
@@ -4391,7 +4394,7 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
     });
   }
   function pickWeapon(i){
-    const hero = draft.heroes[i];
+    const hero = brouillonEquipe.equipe.heroes[i];
     if(!hero.char){
       toast("Choisis d'abord un héros.", true);
       return;
@@ -4416,13 +4419,13 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
           && !confirm("Changer d’arme réinitialisera sa configuration chiffrée. Continuer ?")){
           return;
         }
-        draft.heroes[i] = applyWeaponChange(hero, v);
+        brouillonEquipe.equipe.heroes[i] = applyWeaponChange(hero, v);
         renderBuilder();
       }
     });
   }
   function pickArmor(i, slot){
-    const hero = draft.heroes[i];
+    const hero = brouillonEquipe.equipe.heroes[i];
     if(slot === LINKED_ARMOR_SLOT && !hero.char){
       toast("Choisis d'abord un héros.", true);
       return;
@@ -4448,11 +4451,11 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
   }
   function pickJewel(i, slot){
     Picker.open({
-      title:"Bijou — "+slot, value:draft.heroes[i].jewel[slot],
+      title:"Bijou — "+slot, value:brouillonEquipe.equipe.heroes[i].jewel[slot],
       items:(DATA.bijoux[slot]||[]).map(b=>({value:b.file, name:b.name, file:b.file})),
       emptyHint:"Aucun bijou pour l'instant. Ajoute des images dans 7ds-bijoux/"+slot+"/ puis relance generate-data.ps1.",
       onSelect:v=>{
-        applyGearChange(draft.heroes[i], "jewel", slot, v);
+        applyGearChange(brouillonEquipe.equipe.heroes[i], "jewel", slot, v);
         renderBuilder();
       }
     });
@@ -4524,7 +4527,7 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
   function loadRosterHero(slotIndex, entry, weaponType){
     const snapshot = rosterHeroSnapshot(entry, weaponType);
     if(!snapshot) return;
-    draft.heroes[slotIndex] = snapshot;
+    brouillonEquipe.equipe.heroes[slotIndex] = snapshot;
     resetBuilderRosterBaselines();
     renderBuilder();
     toast("Équipement copié depuis ton roster.");
@@ -4546,7 +4549,7 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
 
     function open(i){
       heroIdx = i;
-      const hero = draft.heroes[i], ch = charOf(hero.char);
+      const hero = brouillonEquipe.equipe.heroes[i], ch = charOf(hero.char);
       if(!ch) return;
       const types = weaponTypesOf(ch.id);
       if(!types.length) return;
@@ -4557,7 +4560,7 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
     function close(){ ModalStack.close(overlay); }
 
     function render(){
-      const hero = draft.heroes[heroIdx];
+      const hero = brouillonEquipe.equipe.heroes[heroIdx];
       const details = potentielDetailsOf(hero);
       const selTier = normalizePotentiel(hero.potentiel).tier;
       body.innerHTML = "";
@@ -4608,11 +4611,11 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
 
   // Actions builder
   function resetTeamDraft(){
-    draft = emptyDraft();
-    editing = false;
-    teamDraftSourceUpdatedAt = 0;
-    teamDraftInitialJson = JSON.stringify(draft);
-    teamDraftDeletedRemotely = false;
+    brouillonEquipe.equipe = emptyDraft();
+    brouillonEquipe.edition = false;
+    brouillonEquipe.sourceMaj = 0;
+    brouillonEquipe.jsonInitial = JSON.stringify(brouillonEquipe.equipe);
+    brouillonEquipe.supprimeAilleurs = false;
     resetBuilderRosterBaselines();
     renderBuilder();
   }
@@ -4620,7 +4623,7 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
   function closeDeletedTeamDraft(){
     closeWeaponConfigEditor();
     resetTeamDraft();
-    teamDraftDeletedRemotely = true;
+    brouillonEquipe.supprimeAilleurs = true;
     toast("Cette équipe a été supprimée dans un autre onglet.", true);
   }
 
@@ -4634,17 +4637,17 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
       openAuth("Connecte-toi pour enregistrer cette équipe.", true);
       return;
     }
-    if(teamDraftDeletedRemotely){
+    if(brouillonEquipe.supprimeAilleurs){
       toast("Cette équipe a été supprimée dans un autre onglet.", true);
       return;
     }
-    const pseudo = (sessionCourante.pseudo||draft.pseudo||"").trim();
+    const pseudo = (sessionCourante.pseudo||brouillonEquipe.equipe.pseudo||"").trim();
     if(!pseudo){ toast("Ajoute d'abord un pseudo de membre.", true); pseudoInput.focus(); return; }
-    if(!draft.heroes.some(h=>h.char)){ toast("Ajoute au moins un héros à l'équipe.", true); return; }
+    if(!brouillonEquipe.equipe.heroes.some(h=>h.char)){ toast("Ajoute au moins un héros à l'équipe.", true); return; }
 
     const now = Date.now();
-    const existing = Store.all().find(t=>t.id===draft.id);
-    const team = normalizeTeam(JSON.parse(JSON.stringify(draft)));
+    const existing = Store.all().find(t=>t.id===brouillonEquipe.equipe.id);
+    const team = normalizeTeam(JSON.parse(JSON.stringify(brouillonEquipe.equipe)));
     team.pseudo = pseudo;
     team.createdAt = existing ? existing.createdAt : now;
     team.updatedAt = now;
@@ -4652,21 +4655,21 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
     saveButton.disabled = true;
     try{
       const latest = Store.all().find(row => row.id === team.id);
-      if(teamDraftSourceUpdatedAt > 0 && !latest){
+      if(brouillonEquipe.sourceMaj > 0 && !latest){
         closeDeletedTeamDraft();
         return;
       }
       const latestUpdatedAt = Number(latest && latest.updatedAt) || 0;
-      if(teamDraftSourceUpdatedAt > 0
-        && latestUpdatedAt > teamDraftSourceUpdatedAt
+      if(brouillonEquipe.sourceMaj > 0
+        && latestUpdatedAt > brouillonEquipe.sourceMaj
         && !confirm("Une version plus récente existe. Enregistrer quand même ?")){
         saveButton.disabled = false;
         saveButton.focus();
         return;
       }
       const saved = await Store.upsert(team);
-      teamDraftSourceUpdatedAt = saved.updatedAt;
-      toast(editing ? "Équipe mise à jour." : "Équipe enregistrée !");
+      brouillonEquipe.sourceMaj = saved.updatedAt;
+      toast(brouillonEquipe.edition ? "Équipe mise à jour." : "Équipe enregistrée !");
       resetTeamDraft();
       showView("roster");
     }catch(error){
@@ -4952,11 +4955,11 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
       toast("Cette équipe appartient à un autre membre.", true);
       return;
     }
-    draft = normalizeTeam(JSON.parse(JSON.stringify(t)));
-    teamDraftSourceUpdatedAt = Number(draft.updatedAt) || 0;
-    teamDraftInitialJson = JSON.stringify(draft);
-    teamDraftDeletedRemotely = false;
-    editing = true;
+    brouillonEquipe.equipe = normalizeTeam(JSON.parse(JSON.stringify(t)));
+    brouillonEquipe.sourceMaj = Number(brouillonEquipe.equipe.updatedAt) || 0;
+    brouillonEquipe.jsonInitial = JSON.stringify(brouillonEquipe.equipe);
+    brouillonEquipe.supprimeAilleurs = false;
+    brouillonEquipe.edition = true;
     resetBuilderRosterBaselines();
     renderBuilder();
     showView("builder");
@@ -4977,11 +4980,11 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
     delete copy.owner;
     delete copy.createdAt;
     delete copy.updatedAt;
-    draft = copy;
-    teamDraftSourceUpdatedAt = 0;
-    teamDraftInitialJson = JSON.stringify(draft);
-    teamDraftDeletedRemotely = false;
-    editing = false;
+    brouillonEquipe.equipe = copy;
+    brouillonEquipe.sourceMaj = 0;
+    brouillonEquipe.jsonInitial = JSON.stringify(brouillonEquipe.equipe);
+    brouillonEquipe.supprimeAilleurs = false;
+    brouillonEquipe.edition = false;
     resetBuilderRosterBaselines();
     renderBuilder();
     showView("builder");
