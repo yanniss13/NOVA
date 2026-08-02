@@ -21,7 +21,7 @@ projet, et elle est vérifiée par un test.
 | `metier/` | Logique pure : calculs, règles du jeu. **Ni DOM ni réseau.** | `noyau`, `etat` |
 | `donnees/` | Lectures et écritures Supabase. **Aucun rendu.** | `noyau`, `etat`, `metier` |
 | `vues/` | Tout ce qui touche au DOM | toutes les précédentes |
-| `app.js` | **Le point d'assemblage** : session, enregistrement des vues, migration, démarrage. 356 lignes. | tout |
+| `app.js` | **Le point d'assemblage** : il déclare les sept onglets et démarre. **57 lignes.** | tout |
 
 ## Où trouver quoi
 
@@ -104,7 +104,8 @@ version plus ancienne du site reste ouvrable.
 | `analyse.js` | L'onglet Analyse : les DPS de la confrérie par élément |
 | `roster-equipes.js` | L'onglet Roster **des équipes** |
 | `suivi.js` | « Mon suivi » : le tableau de bord personnel |
-| `synchro-temps-reel.js` | Le nuage change → les vues suivent. **Dernier de la couche.** |
+| `synchro-temps-reel.js` | Le nuage change → les vues suivent |
+| `session-auth.js` | La session : connexion, déconnexion, propagation. **Dernier de la couche.** |
 
 ⚠️ `roster-membres.js` montre les **personnages** d'un membre, `roster-equipes.js`
 ses **équipes**. Les deux onglets s'appellent « roster » dans l'interface.
@@ -157,22 +158,34 @@ resté là après le passage à `WSLOT_ROLES` (cinq, « vocabulaire plus fin »)
 
 ## Ce qu'il reste dans `app.js`
 
-**10 489 → 356 lignes.** Le découpage est terminé : `app.js` n'est plus une vue,
-c'est le **point d'assemblage**. Quatre choses, et rien d'autre :
+**10 489 → 57 lignes.** `app.js` n'est plus une vue, c'est le point
+d'assemblage. Il tient sur un écran :
 
-| Bloc | Lignes | Pourquoi il reste ici |
-|---|---|---|
-| Session Supabase | 182 | Se connecter recharge **toutes** les vues. C'est de la composition par définition. |
-| Enregistrement des vues | 13 | La liste des sept onglets du site. Le seul endroit qui les connaît tous. |
-| Export / Import local | 89 | Migrer les données locales touche l'auth **et** les rendus. |
-| Démarrage | 12 | La bannière de données, puis `renderBuilder()` et `initAuth()`. |
+- il déclare les **sept onglets** auprès du registre de `vues/navigation.js` ;
+- il écrit la bannière de données ;
+- il lance `renderBuilder()` puis `initAuth()`.
 
-**Ne redécoupe pas ces blocs.** Chacun a été mesuré : leur frontière fait
-entrer dix symboles ou plus, tous des rendus. Les descendre dans une couche y
-traînerait le reste du site. Un point d'assemblage doit connaître ses pièces —
-c'est son travail, pas un défaut.
+C'est tout. Il n'y a plus rien à en sortir.
 
-Les deux plus gros modules restants sont `vues/boss-sessions.js` (1 282) et
+### Une erreur à ne pas refaire
+
+Ce document a affirmé, une version plus tôt, que la session Supabase ne
+pouvait **pas** sortir : « sa frontière fait entrer dix symboles, tous des
+rendus ». C'était vrai quand la mesure a été prise — et faux une heure plus
+tard, parce que ces dix rendus étaient devenus des modules importables.
+
+**Une mesure de frontière périme dès l'extraction suivante.** C'est le même
+avertissement que pour les clôtures, et il s'applique aussi aux conclusions
+qu'on en tire. Remesure avant de conclure qu'un bloc est bloqué.
+
+### Où placer un nouveau bout de code
+
+Regarde **où vit son élément dans `index.html`**. C'est ce qui a décidé, sans
+discussion possible, que l'export JSON appartenait à `roster-equipes.js` (ses
+boutons sont dans `<section id="view-roster">`) et l'import des données locales
+à `session-auth.js` (le sien est à côté de « Déconnexion »).
+
+Les deux plus gros modules sont `vues/boss-sessions.js` (1 282) et
 `metier/stats-calcul.js` (1 119). Si l'un devient pénible, `boss-sessions.js`
 se coupe en trois : ses deux modales, une fois `bossViewState` sorti.
 

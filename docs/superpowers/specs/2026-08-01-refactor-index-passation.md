@@ -812,16 +812,34 @@ initialise avant `app.js`, et la question ne se pose plus. Retire.
 
 ### Où ça s'arrête
 
-**`js/app.js` : 10 489 → 356 lignes**, 44 modules, 11 783 lignes au total.
-`npm test` vert, exit 0, Playwright compris.
+**`js/app.js` : 10 489 → 57 lignes**, 45 modules. `npm test` vert, exit 0,
+Playwright compris.
 
-**Le decoupage est termine.** `app.js` n'est plus une vue : c'est le point
-d'assemblage. Session Supabase, enregistrement des sept vues, migration des
-donnees locales, demarrage. Rien d'autre.
+`app.js` declare les sept onglets aupres du registre, ecrit la banniere de
+donnees, lance le Builder et la session. Il n'y a plus rien a en sortir.
 
-⚠️ **Ne redecoupe pas ces quatre blocs.** Chacun a ete mesure : leur frontiere
-fait entrer dix symboles ou plus, tous des rendus. Un point d'assemblage doit
-connaitre ses pieces — c'est son travail, pas un defaut.
+### ⚠️ L'erreur de la version precedente de ce document
+
+Ce document affirmait, deux lots plus tot, que la session Supabase ne pouvait
+PAS sortir : « sa frontiere fait entrer dix symboles, tous des rendus ».
+
+C'etait vrai au moment de la mesure, et faux une heure plus tard : ces dix
+rendus etaient devenus des modules importables entre-temps. La vraie frontiere
+etait a ZERO entrant, et `session-auth.js` (196 lignes) est sorti sans effort.
+
+**Une mesure de frontiere perime des l'extraction suivante — et les
+conclusions qu'on en tire aussi.** C'est le meme avertissement que pour les
+clotures, en plus vicieux : une cloture perimee donne un mauvais chiffre, une
+conclusion perimee fait renoncer.
+
+### Le dernier lot : laisser le balisage trancher
+
+Le bloc « Export / Import » ne formait pas un domaine. index.html l'a montre :
+`#btnExport` et `#btnImport` sont dans `<section id="view-roster">`,
+`#btnMigrateLocal` est dans `#accountConnected` a cote de « Deconnexion ». Le
+bloc s'est dissous en deux, chaque moitie rejoignant le module de ses boutons.
+
+**Quand le rangement hesite, regarde ou vit l'element dans index.html.**
 
 Le detail de ce qui reste, et par ou attaquer, est desormais tenu a jour dans
 [js/ARCHITECTURE.md](../../../js/ARCHITECTURE.md) — section « Si tu veux
