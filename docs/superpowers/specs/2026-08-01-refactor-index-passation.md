@@ -121,13 +121,14 @@ dépendances réelles avant de choisir.** La commande est donnée plus bas.
 | Fichier | Lignes |
 |---|---|
 | `index.html` | 2 263 |
-| `js/app.js` | 9 692 |
+| `js/app.js` | 9 689 |
 | `js/boss-logique.js` | 292 |
 | `js/dispos-logique.js` | 282 |
 | `js/modal-stack.js` | 167 |
 | `js/constantes.js` | 99 |
 | `js/picker.js` | 98 |
 | `js/dom.js` | 45 |
+| `js/session.js` | 20 |
 
 ### Prochaine étape — lot 3 et suivants
 
@@ -294,34 +295,73 @@ symboles de `js/app.js` dont chaque zone dépend encore, avant → après :
 
 - `builderWeaponSwitcher` — seule déclaration de la zone à dépendre du Builder
   (`builderBuildIsDirty`, `rosterWeaponLabel`, `switchBuilderHeroBuild`) ;
-- `currentUser`, `currentPseudo`, `sessionApplicationEpoch` — voir ci-dessous.
+- `currentUser`, `currentPseudo`, `sessionApplicationEpoch` — sortis au lot 8.
 
-### ⚠️ Le vrai blocage suivant : l'état mutable de session
+### Lot 8 — TERMINÉ : l'état mutable de session est débloqué
 
-**Aucune vue ne peut plus sortir sans trancher ce point.** `currentUser`,
-`currentPseudo` et `rosterProfiles` sont des `let` réaffectés depuis `app.js`.
-Or **une liaison exportée par un module ne peut pas être réaffectée par un
-importateur** : le déplacer casse l'écriture, le laisser force un cycle
-`app.js → vue.js → app.js`.
+`js/session.js` (20 lignes) porte `sessionCourante`, un objet unique
+`{ user, pseudo, applicationEpoch, rosterProfiles }`. **Décision prise par
+l'utilisateur** parmi trois options (porteur d'état / injection au démarrage /
+s'arrêter là). `npm test` vert deux fois, exit 0 — dont le parcours d'auth
+Supabase, qui est la couverture qui compte ici.
 
-Zones concernées : `Équipes`, `Brouillon d'équipe`, `Analyse`, `Authentification`,
-`Roster`, `Export/Import`, `Sessions de boss` — c'est-à-dire toutes.
+**C'est le premier lot qui touche au code applicatif** : 183 références
+renommées (`currentUser` → `sessionCourante.user`, `currentPseudo`,
+`sessionApplicationEpoch`, `rosterProfiles`). Le renommage a été fait sous
+assertion de comptage exact — le script refusait de s'exécuter si un seul site
+manquait à l'appel.
 
-Deux issues, à arbitrer avec l'utilisateur avant d'écrire :
+**⚠️ Le piège évité, à ne pas réintroduire.** Le nom naturel, `session`, était
+**déjà pris** : `async function applySession(session)` reçoit l'objet d'auth
+Supabase, et c'est précisément la fonction qui écrit `currentUser` et
+`currentPseudo`. Nommer l'export `session` y aurait écrit dans l'objet d'auth
+au lieu de l'état applicatif, **sans lever la moindre erreur**. D'où
+`sessionCourante`. Vérifier les collisions de nom avant tout renommage global :
 
-1. **Porteur d'état explicite** — `js/session.js` exportant un objet
-   `export const session = { user:null, pseudo:"" }`, les lectures devenant
-   `session.user`. L'affectation de propriété traverse les modules sans
-   problème. Coût : réécrire tous les sites de lecture et d'écriture. **Ce
-   n'est plus un déplacement pur** — c'est la première fois du chantier qu'on
-   touche au code applicatif, et ça mérite un accord.
-2. **S'arrêter là** — garder les vues dans `app.js`. Le fichier est passé de
-   12 752 à 9 692 lignes et six modules nets en sont sortis ; c'est déjà le
-   gros du bénéfice de lisibilité.
+```bash
+grep -nE "(const|let|var|function)\s+NOM\b|\(\s*NOM\s*[,)]|,\s*NOM\s*[,)]" js/*.js
+```
 
-**Ne pas trancher seul.** Tant que ce n'est pas décidé, les seuls lots encore
-possibles sont marginaux (`toast`, `Navigation onglets`), et tous deux
-dépendent de rendus restés dans `app.js`.
+Effet sur les zones — l'état de session a disparu de toutes :
+
+| Zone | Lot 6 | Lot 7 | Lot 8 |
+|---|---|---|---|
+| Équipes : local + Supabase | 6 | 4 | **2** |
+| Export / Import | 13 | 10 | **8** |
+| Authentification Supabase | 16 | 15 | **11** |
+| Sessions de boss | 14 | 14 | **12** |
+| Builder | 57 | 48 | **46** |
+
+**La leçon générale, valable pour la suite :** le même raisonnement vaut pour
+tout `let` de premier niveau partagé entre plusieurs zones. La plupart des
+autres (`memberRoster*`, `boss*`, `analyse*`) sont **locaux à une vue** et
+voyageront avec elle — ils ne posent pas de problème. Ceux qui restent
+réellement partagés sont `draft`, `cloudTeamsCache`, `cloudRosterCache` : même
+traitement le jour où leur zone sortira.
+
+### Prochain candidat
+
+Le relevé après lot 8, par nombre de symboles de `js/app.js` restant à
+satisfaire :
+
+| Zone | Lignes | Dépendances |
+|---|---|---|
+| `Démarrage` | 13 | 1 (`renderBuilder`) |
+| `Navigation onglets` | 49 | 2 (`renderAvailabilityView`, `renderBuilder`) |
+| **`Équipes : local + Supabase`** | **103** | **2 (`normalizeTeam`, `sb`)** |
+| `Export / Import` | 112 | 8 |
+| `Authentification Supabase` | 886 | 11 |
+| `Analyse` | 208 | 11 |
+| `Sessions de boss` | 1 888 | 12 |
+| `Builder` | 735 | 46 |
+
+**`Équipes : local + Supabase` est le prochain lot évident** : 103 lignes, deux
+dépendances seulement. `sb` (le client Supabase) est un `const` sans état
+réaffecté — il peut rejoindre un `js/supabase-client.js`, ce qui débloquerait
+aussi `Export/Import` et `Sessions de boss`. `normalizeTeam` est à relever.
+
+`Démarrage` et `Navigation onglets` sont petits mais dépendent des rendus des
+vues : ils sortiront **en dernier**, pas en premier.
 
 **Refaire le relevé avant de choisir**, et se souvenir qu'un symbole déjà
 extrait n'apparaît plus dans `js/app.js` tout en restant une dépendance.

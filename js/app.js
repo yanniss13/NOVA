@@ -25,6 +25,7 @@ import {
   availabilityViewState
 } from "./dispos-logique.js";
 import { ModalStack } from "./modal-stack.js";
+import { sessionCourante } from "./session.js";
 import {
   DATA,
   BUILD_STATS,
@@ -79,9 +80,6 @@ import {
   const sb = window.supabase && window.SB_URL && window.SB_KEY
     ? window.supabase.createClient(window.SB_URL, window.SB_KEY)
     : null;
-  let currentUser = null;
-  let currentPseudo = "";
-  let sessionApplicationEpoch = 0;
   const equippedEnumOf = hero => {
     const f = weaponFolderOf(hero && hero.weapon);
     return f ? (FOLDER_TO_ENUM[f] || null) : null;
@@ -279,8 +277,8 @@ import {
     delete data.owner;
     return {
       id:normalized.id,
-      owner:currentUser && currentUser.id,
-      pseudo:currentPseudo || normalized.pseudo || "",
+      owner:sessionCourante.user && sessionCourante.user.id,
+      pseudo:sessionCourante.pseudo || normalized.pseudo || "",
       data,
       updated_at:new Date(normalized.updatedAt || Date.now()).toISOString()
     };
@@ -293,14 +291,14 @@ import {
 
   const Store = {
     all(){
-      return currentUser ? cloudTeamsCache.map(normalizeTeam) : LocalTeams.all();
+      return sessionCourante.user ? cloudTeamsCache.map(normalizeTeam) : LocalTeams.all();
     },
     save(list){
-      if(currentUser) saveCloudTeamCache(list);
+      if(sessionCourante.user) saveCloudTeamCache(list);
       else LocalTeams.save(list);
     },
     async refresh(){
-      if(!currentUser || !sb) return Store.all();
+      if(!sessionCourante.user || !sb) return Store.all();
       const { data, error } = await sb.from("teams")
         .select("*")
         .order("updated_at", { ascending:false });
@@ -309,10 +307,10 @@ import {
       return Store.all();
     },
     async upsert(team){
-      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
       const normalized = normalizeTeam(Object.assign({}, team, {
-        owner:currentUser.id,
-        pseudo:currentPseudo || team.pseudo || ""
+        owner:sessionCourante.user.id,
+        pseudo:sessionCourante.pseudo || team.pseudo || ""
       }));
       const { error } = await sb.from("teams").upsert(teamToCloudRow(normalized));
       if(error) throw error;
@@ -323,7 +321,7 @@ import {
       return normalized;
     },
     async remove(id){
-      if(!currentUser){
+      if(!sessionCourante.user){
         LocalTeams.remove(id);
         return;
       }
@@ -4051,7 +4049,7 @@ import {
     },
     async refresh(ownerId){
       if(!ownerId) return [];
-      if(!currentUser || !sb) return MemberRosterStore.all(ownerId);
+      if(!sessionCourante.user || !sb) return MemberRosterStore.all(ownerId);
       const { data, error } = await sb.from("roster_characters")
         .select("*")
         .eq("owner", ownerId);
@@ -4062,27 +4060,27 @@ import {
       );
     },
     async upsert(entry){
-      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
       const normalized = normalizeRosterCharacter(Object.assign({}, entry, {
-        owner:currentUser.id,
+        owner:sessionCourante.user.id,
         updatedAt:Date.now(),
         updatedAtToken:""
       }));
       if(!normalized) throw new Error("ROSTER_INVALID");
       const { error } = await sb.from("roster_characters")
-        .upsert(rosterToCloudRow(normalized, currentUser.id));
+        .upsert(rosterToCloudRow(normalized, sessionCourante.user.id));
       if(error) throw error;
-      const owned = MemberRosterStore.all(currentUser.id);
+      const owned = MemberRosterStore.all(sessionCourante.user.id);
       const index = owned.findIndex(item => item.charId === normalized.charId);
       if(index >= 0) owned[index] = normalized;
       else owned.push(normalized);
-      replaceRosterCacheForOwner(currentUser.id, owned);
+      replaceRosterCacheForOwner(sessionCourante.user.id, owned);
       return normalized;
     },
     async updateBuild(entry, weaponType, expectedUpdatedAtToken){
-      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
       const normalized = normalizeRosterCharacter(Object.assign({}, entry, {
-        owner:currentUser.id
+        owner:sessionCourante.user.id
       }));
       if(!normalized
         || !Object.prototype.hasOwnProperty.call(
@@ -4102,40 +4100,39 @@ import {
       const row = Array.isArray(data) ? data[0] : data;
       const saved = cloudRosterFromRow(row);
       if(!saved) throw new Error("ROSTER_INVALID");
-      const owned = MemberRosterStore.all(currentUser.id);
+      const owned = MemberRosterStore.all(sessionCourante.user.id);
       const index = owned.findIndex(item =>
         item.charId === saved.charId
       );
       if(index >= 0) owned[index] = saved;
       else owned.push(saved);
-      replaceRosterCacheForOwner(currentUser.id, owned);
+      replaceRosterCacheForOwner(sessionCourante.user.id, owned);
       return saved;
     },
     async remove(charId){
-      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
       const { error } = await sb.from("roster_characters")
         .delete()
-        .eq("owner", currentUser.id)
+        .eq("owner", sessionCourante.user.id)
         .eq("char_id", charId);
       if(error) throw error;
       replaceRosterCacheForOwner(
-        currentUser.id,
-        MemberRosterStore.all(currentUser.id)
+        sessionCourante.user.id,
+        MemberRosterStore.all(sessionCourante.user.id)
           .filter(entry => entry.charId !== charId)
       );
     }
   };
-  let rosterProfiles = [];
   async function refreshRosterProfiles(){
-    if(!currentUser || !sb) return rosterProfiles.slice();
+    if(!sessionCourante.user || !sb) return sessionCourante.rosterProfiles.slice();
     const { data, error } = await sb.from("profiles")
       .select("id,pseudo")
       .order("pseudo", {ascending:true});
     if(error) throw error;
-    rosterProfiles = (data || [])
+    sessionCourante.rosterProfiles = (data || [])
       .filter(item => item && item.id)
       .map(item => ({id:item.id, pseudo:item.pseudo || "Membre"}));
-    return rosterProfiles.slice();
+    return sessionCourante.rosterProfiles.slice();
   }
 
   /* ===== #5 Analyse : DPS dérivés du Roster ===== */
@@ -4207,10 +4204,10 @@ import {
 
   // Agrège tous les rosters de la confrérie -> [{owner, name, dps:[…], characters:[…]}]
   async function rosterDerivedPlayers(){
-    if(!currentUser || !sb) return [];
+    if(!sessionCourante.user || !sb) return [];
     const [rosterRes, profiles] = await Promise.all([
       sb.from("roster_characters").select("owner,char_id,potential_tier,builds,updated_at"),
-      refreshRosterProfiles().catch(()=>rosterProfiles.slice())
+      refreshRosterProfiles().catch(()=>sessionCourante.rosterProfiles.slice())
     ]);
     if(rosterRes.error) throw rosterRes.error;
     const byOwner = {};
@@ -4222,7 +4219,7 @@ import {
     const nameOf = id => {
       const p = (profiles||[]).find(x => x.id === id);
       if(p) return p.pseudo;
-      if(currentUser && id === currentUser.id) return currentPseudo || "Moi";
+      if(sessionCourante.user && id === sessionCourante.user.id) return sessionCourante.pseudo || "Moi";
       return "Membre";
     };
     return Object.keys(byOwner)
@@ -4299,7 +4296,7 @@ import {
       === (Number(latest && latest.updatedAt) || 0);
   }
   function builderRosterBaselineForHero(hero){
-    const ownerId = currentUser ? currentUser.id : "";
+    const ownerId = sessionCourante.user ? sessionCourante.user.id : "";
     const charId = hero && hero.char ? hero.char : "";
     const entry = ownerId && charId
       ? MemberRosterStore.all(ownerId)
@@ -4535,43 +4532,43 @@ import {
   }
 
   function updateAccountUi(){
-    $("#accountLogin").hidden = !!currentUser;
-    $("#accountConnected").hidden = !currentUser;
-    $("#accountPseudo").textContent = currentPseudo || (currentUser && currentUser.email) || "";
+    $("#accountLogin").hidden = !!sessionCourante.user;
+    $("#accountConnected").hidden = !sessionCourante.user;
+    $("#accountPseudo").textContent = sessionCourante.pseudo || (sessionCourante.user && sessionCourante.user.email) || "";
     /* Bouton à usage unique : il n'apparaît que s'il reste vraiment quelque
        chose à importer depuis CE navigateur. Une fois la migration faite — ou
        s'il n'y a aucune donnée locale — il disparaît au lieu de rester
        désactivé, car il occupait une ligne entière du header mobile. */
     const migrationButton = $("#btnMigrateLocal");
-    const migrated = !!currentUser &&
-      localStorage.getItem(MIGRATION_KEY_PREFIX+currentUser.id) === "1";
+    const migrated = !!sessionCourante.user &&
+      localStorage.getItem(MIGRATION_KEY_PREFIX+sessionCourante.user.id) === "1";
     let hasLocalData = false;
     try{
       hasLocalData = LocalTeams.all().length > 0;
     }catch(error){
       hasLocalData = false;
     }
-    migrationButton.hidden = !currentUser || migrated || !hasLocalData;
+    migrationButton.hidden = !sessionCourante.user || migrated || !hasLocalData;
     migrationButton.disabled = migrated;
     migrationButton.textContent = "Importer mes données locales";
     if(typeof pseudoInput !== "undefined"){
-      pseudoInput.disabled = !!currentUser;
-      if(currentUser && currentPseudo){
-        draft.pseudo = currentPseudo;
-        pseudoInput.value = currentPseudo;
+      pseudoInput.disabled = !!sessionCourante.user;
+      if(sessionCourante.user && sessionCourante.pseudo){
+        draft.pseudo = sessionCourante.pseudo;
+        pseudoInput.value = sessionCourante.pseudo;
       }
     }
   }
 
   async function applySession(session){
-    const applicationEpoch = ++sessionApplicationEpoch;
+    const applicationEpoch = ++sessionCourante.applicationEpoch;
     const expectedUser = session && session.user ? session.user : null;
     const expectedUserId = expectedUser ? expectedUser.id : "";
     const isCurrentApplication = () =>
-      applicationEpoch === sessionApplicationEpoch &&
-      (currentUser ? currentUser.id : "") === expectedUserId;
-    const previousUserId = currentUser ? currentUser.id : "";
-    currentUser = expectedUser;
+      applicationEpoch === sessionCourante.applicationEpoch &&
+      (sessionCourante.user ? sessionCourante.user.id : "") === expectedUserId;
+    const previousUserId = sessionCourante.user ? sessionCourante.user.id : "";
+    sessionCourante.user = expectedUser;
     const sessionChanged = previousUserId !== expectedUserId;
     if(sessionChanged){
       ensureBossViewOwner();
@@ -4580,9 +4577,9 @@ import {
       DashboardStore.reset(expectedUserId);
       if($("#view-boss").classList.contains("active")) void renderBossView();
     }
-    currentPseudo = "";
-    rosterProfiles = [];
-    if(currentUser){
+    sessionCourante.pseudo = "";
+    sessionCourante.rosterProfiles = [];
+    if(sessionCourante.user){
       let loadedPseudo = "";
       try{
         loadedPseudo = await profilePseudo(expectedUser);
@@ -4591,13 +4588,13 @@ import {
         toast("Profil indisponible : "+authMessage(error), true);
       }
       if(!isCurrentApplication()) return;
-      currentPseudo = loadedPseudo;
-      if(!currentPseudo) currentPseudo = (currentUser.email||"membre").split("@")[0];
+      sessionCourante.pseudo = loadedPseudo;
+      if(!sessionCourante.pseudo) sessionCourante.pseudo = (sessionCourante.user.email||"membre").split("@")[0];
       closeAuth();
     }else if(sb){
       openAuth();
     }
-    if(currentUser) RealtimeSync.start(currentUser.id);
+    if(sessionCourante.user) RealtimeSync.start(sessionCourante.user.id);
     else RealtimeSync.stop();
     updateAccountUi();
     if($("#view-builder").classList.contains("active")) renderBuilder();
@@ -4613,7 +4610,7 @@ import {
        « aucun compte -> un compte ». Un changement de compte piloté de
        l'extérieur, comme un TOKEN_REFRESHED, ne déplace jamais la navigation :
        il se contente de réafficher le suivi du bon compte s'il est visible. */
-    if(sessionChanged && !previousUserId && currentUser){
+    if(sessionChanged && !previousUserId && sessionCourante.user){
       void showView("dashboard");
     }else if($("#view-dashboard").classList.contains("active")){
       void renderDashboardView();
@@ -4659,9 +4656,9 @@ import {
       }
       const profileResult = await sb.from("profiles").upsert({ id:data.user.id, pseudo });
       if(profileResult.error) throw profileResult.error;
-      currentPseudo = pseudo;
+      sessionCourante.pseudo = pseudo;
       await applySession(data.session);
-      currentPseudo = pseudo;
+      sessionCourante.pseudo = pseudo;
       updateAccountUi();
       toast("Compte créé. Bienvenue "+pseudo+" !");
     }catch(error){
@@ -4864,7 +4861,7 @@ import {
     }
 
     async function refresh(){
-      const user = currentUser;
+      const user = sessionCourante.user;
       const weekStart = availabilityWeekStart(new Date());
       let rows = [];
       let online = true;
@@ -4919,13 +4916,13 @@ import {
     async function saveNow(){
       clearTimeout(saveTimer);
       saveTimer = null;
-      if(!state || !state.canEdit || !currentUser || !sb){
+      if(!state || !state.canEdit || !sessionCourante.user || !sb){
         savePending = false;
         return false;
       }
       setSaveStatus("saving", "Enregistrement…");
       const payload = {
-        owner:currentUser.id,
+        owner:sessionCourante.user.id,
         week_start:state.weekStart,
         slots:state.mask,
         updated_at:new Date().toISOString()
@@ -4938,10 +4935,10 @@ import {
         toast("Dispos non enregistrées : réessaie une fois reconnecté.", true);
         return false;
       }
-      const own = state.rows.find(row => row.owner === currentUser.id);
+      const own = state.rows.find(row => row.owner === sessionCourante.user.id);
       if(own) own.slots = state.mask;
-      else state.rows.push({ owner:currentUser.id, slots:state.mask });
-      writeAvailabilityCache(currentUser.id, state.weekStart, state.rows);
+      else state.rows.push({ owner:sessionCourante.user.id, slots:state.mask });
+      writeAvailabilityCache(sessionCourante.user.id, state.weekStart, state.rows);
       const stamp = new Intl.DateTimeFormat("fr-FR", {
         timeZone:"Europe/Paris", hour:"2-digit", minute:"2-digit"
       }).format(new Date());
@@ -4950,7 +4947,7 @@ import {
          ce qui évite une tâche planifiée côté serveur. */
       const owned = await sb.from("member_availability")
         .select("week_start")
-        .eq("owner", currentUser.id);
+        .eq("owner", sessionCourante.user.id);
       if(!owned.error){
         const stale = staleAvailabilityWeeks(
           (owned.data || []).map(row => row.week_start),
@@ -4960,7 +4957,7 @@ import {
         if(stale.length){
           await sb.from("member_availability")
             .delete()
-            .eq("owner", currentUser.id)
+            .eq("owner", sessionCourante.user.id)
             .in("week_start", stale);
         }
       }
@@ -5210,12 +5207,12 @@ import {
     }
 
     async function copyPreviousWeek(){
-      if(!state || !state.canEdit || !currentUser || !sb) return false;
+      if(!state || !state.canEdit || !sessionCourante.user || !sb) return false;
       const previous = availabilityPreviousWeekStart(state.weekStart);
       const { data, error } = await sb.from("member_availability")
         .select("slots")
         .eq("week_start", previous)
-        .eq("owner", currentUser.id)
+        .eq("owner", sessionCourante.user.id)
         .maybeSingle();
       if(error || !data){
         toast("Aucune dispo trouvée pour la semaine dernière.", true);
@@ -5234,7 +5231,7 @@ import {
     function pseudoOfOwner(owner){
       const found = pseudos.find(profile => profile.id === owner);
       if(found) return found.pseudo;
-      if(currentUser && owner === currentUser.id) return currentPseudo || "Moi";
+      if(sessionCourante.user && owner === sessionCourante.user.id) return sessionCourante.pseudo || "Moi";
       return "Membre";
     }
 
@@ -5243,8 +5240,8 @@ import {
        ISO de la grille : les deux ne coïncident pas le lundi matin. */
     async function loadOwnersWithGroup(){
       ownersWithGroup = new Set();
-      if(!currentUser || !sb) return;
-      pseudos = await refreshRosterProfiles().catch(()=>rosterProfiles.slice());
+      if(!sessionCourante.user || !sb) return;
+      pseudos = await refreshRosterProfiles().catch(()=>sessionCourante.rosterProfiles.slice());
       const week = currentBossWeek();
       const sessions = await sb.from("boss_sessions")
         .select("id")
@@ -5287,7 +5284,7 @@ import {
       const slot = availabilitySlotFromIndex(index);
       const members = availabilitySlotMembers(state.rows, index, {
         pseudoOf:pseudoOfOwner,
-        currentUserId:currentUser ? currentUser.id : "",
+        currentUserId:sessionCourante.user ? sessionCourante.user.id : "",
         ownersWithGroup
       });
       $("#availSlotTitle").textContent = AVAIL_DAY_FULL[slot.day]
@@ -5549,7 +5546,7 @@ import {
 
     const ownerSelect = $("#memberRosterOwner");
     ownerSelect.innerHTML = "";
-    const others = (profiles || []).filter(profile => !currentUser || profile.id !== currentUser.id);
+    const others = (profiles || []).filter(profile => !sessionCourante.user || profile.id !== sessionCourante.user.id);
     if(!others.length){
       ownerSelect.appendChild(el("option",{value:"",text:"Aucun autre membre"}));
       ownerSelect.disabled = true;
@@ -5866,7 +5863,7 @@ import {
     const renderId = ++memberRosterRenderId;
     const grid = $("#memberRosterGrid");
     grid.innerHTML = "";
-    if(!currentUser){
+    if(!sessionCourante.user){
       grid.appendChild(el("div",{class:"empty-state"},[
         el("p",{class:"big",text:"Connecte-toi pour consulter le roster."}),
         el("button",{class:"btn btn-primary",text:"Connexion",onclick:()=>openAuth()})
@@ -5877,23 +5874,23 @@ import {
       el("p",{class:"big",text:"Ouverture du registre…"})
     ]));
     let ownerId = memberRosterMode === "mine"
-      ? currentUser.id
+      ? sessionCourante.user.id
       : memberRosterOwnerId;
     try{
       const profiles = await refreshRosterProfiles();
       if(memberRosterMode === "others" && !ownerId){
-        const other = profiles.find(profile => profile.id !== currentUser.id);
+        const other = profiles.find(profile => profile.id !== sessionCourante.user.id);
         ownerId = other ? other.id : "";
         memberRosterOwnerId = ownerId;
       }
       const entries = ownerId ? await MemberRosterStore.refresh(ownerId) : [];
       if(renderId !== memberRosterRenderId) return;
       renderMemberRosterControls(profiles, ownerId);
-      renderMemberRosterCards(entries, ownerId === currentUser.id);
+      renderMemberRosterCards(entries, ownerId === sessionCourante.user.id);
     }catch(error){
       if(renderId !== memberRosterRenderId) return;
-      renderMemberRosterControls(rosterProfiles, ownerId);
-      renderMemberRosterCards(MemberRosterStore.all(ownerId), ownerId === currentUser.id);
+      renderMemberRosterControls(sessionCourante.rosterProfiles, ownerId);
+      renderMemberRosterCards(MemberRosterStore.all(ownerId), ownerId === sessionCourante.user.id);
       toast("Roster indisponible, affichage du cache local.", true);
     }
   }
@@ -6099,9 +6096,9 @@ import {
           && JSON.stringify(memberRosterDraft) !== memberRosterDraftInitialJson;
       },
       sourceWasDeleted(){
-        if(!currentUser || !memberRosterDraft
+        if(!sessionCourante.user || !memberRosterDraft
           || memberRosterDraftSourceUpdatedAt <= 0) return false;
-        return !MemberRosterStore.all(currentUser.id)
+        return !MemberRosterStore.all(sessionCourante.user.id)
           .some(row => row.charId === memberRosterDraft.charId);
       },
       defaultGradeGameId:weaponDefaultGradeGameId(build.weapon),
@@ -6115,8 +6112,8 @@ import {
         }
       },
       latestUpdatedAt(){
-        if(!currentUser || !memberRosterDraft) return 0;
-        const latest = MemberRosterStore.all(currentUser.id)
+        if(!sessionCourante.user || !memberRosterDraft) return 0;
+        const latest = MemberRosterStore.all(sessionCourante.user.id)
           .find(row => row.charId === memberRosterDraft.charId);
         return latest ? latest.updatedAt : memberRosterDraftSourceUpdatedAt;
       },
@@ -6291,10 +6288,10 @@ import {
   }
 
   async function reloadCurrentRosterDraft(){
-    if(!currentUser || !memberRosterDraft) return false;
+    if(!sessionCourante.user || !memberRosterDraft) return false;
     const charId = memberRosterDraft.charId;
     try{
-      const rows = await MemberRosterStore.refresh(currentUser.id);
+      const rows = await MemberRosterStore.refresh(sessionCourante.user.id);
       const latest = rows.find(row => row.charId === charId);
       if(!latest){
         closeDeletedMemberRosterDraft();
@@ -6318,7 +6315,7 @@ import {
     const button = $("#memberRosterSave");
     button.disabled = true;
     try{
-      const latest = currentUser && MemberRosterStore.all(currentUser.id)
+      const latest = sessionCourante.user && MemberRosterStore.all(sessionCourante.user.id)
         .find(row => row.charId === memberRosterDraft.charId);
       if(memberRosterDraftSourceUpdatedAt > 0 && !latest){
         closeDeletedMemberRosterDraft();
@@ -6344,7 +6341,7 @@ import {
   }
 
   async function deleteMemberRosterCharacter(entry){
-    if(!currentUser || currentUser.id !== entry.owner) return;
+    if(!sessionCourante.user || sessionCourante.user.id !== entry.owner) return;
     const character = charOf(entry.charId);
     if(!confirm("Retirer "+character.name+" de ton roster ?")) return;
     try{
@@ -6374,12 +6371,12 @@ import {
     renderMemberRosterCards(memberRosterEntries, memberRosterEditable);
   });
   $("#memberRosterAdd").addEventListener("click", ()=>{
-    if(!currentUser){
+    if(!sessionCourante.user){
       openAuth("Connecte-toi pour modifier ton roster.", true);
       return;
     }
     const existing = new Set(
-      MemberRosterStore.all(currentUser.id).map(entry => entry.charId)
+      MemberRosterStore.all(sessionCourante.user.id).map(entry => entry.charId)
     );
     Picker.open({
       title:"Ajouter un personnage",
@@ -6394,7 +6391,7 @@ import {
         })),
       emptyHint:"Tous les personnages sont déjà dans ton roster.",
       onSelect:charId=>openMemberRosterEditor({
-          owner:currentUser.id,
+          owner:sessionCourante.user.id,
           charId,
           potentialTier:0,
           builds:{},
@@ -6416,10 +6413,10 @@ import {
   teamNameInput.addEventListener("input", e => draft.name = e.target.value);
 
   function renderBuilder(){
-    if(currentUser && currentPseudo) draft.pseudo = currentPseudo;
+    if(sessionCourante.user && sessionCourante.pseudo) draft.pseudo = sessionCourante.pseudo;
     teamNameInput.value = draft.name || "";
     pseudoInput.value = draft.pseudo || "";
-    pseudoInput.disabled = !!currentUser;
+    pseudoInput.disabled = !!sessionCourante.user;
     $("#editFlag").classList.toggle("on", editing);
     $("#btnSave").textContent = editing ? "Mettre à jour l'équipe" : "Enregistrer l'équipe";
     heroGrid.innerHTML = "";
@@ -6437,7 +6434,7 @@ import {
     if(active) active.focus();
   }
   function rosterNetworkAvailable(){
-    return !!currentUser && !!sb
+    return !!sessionCourante.user && !!sb
       && (typeof navigator === "undefined"
         || navigator.onLine !== false);
   }
@@ -6466,7 +6463,7 @@ import {
     }
     let rows;
     try{
-      rows = await MemberRosterStore.refresh(currentUser.id);
+      rows = await MemberRosterStore.refresh(sessionCourante.user.id);
     }catch(error){
       toast("Impossible de vérifier ton roster.", true);
       return;
@@ -6483,7 +6480,7 @@ import {
     const latestUpdatedAtToken = latest && latest.updatedAtToken || "";
     const remotelyChanged = !rosterBaselineIdentityMatches(
       baseline,
-      currentUser.id,
+      sessionCourante.user.id,
       hero.char
     )
       || !rosterBaselineVersionMatches(baseline, latest);
@@ -6497,7 +6494,7 @@ import {
     const next = rosterEntryWithActiveHeroBuild(
       latest,
       hero,
-      currentUser.id
+      sessionCourante.user.id
     );
     try{
       const saved = await MemberRosterStore.updateBuild(
@@ -6506,7 +6503,7 @@ import {
         latestUpdatedAtToken
       );
       builderRosterBaselines[heroIndex] = {
-        ownerId:currentUser.id,
+        ownerId:sessionCourante.user.id,
         charId:hero.char,
         updatedAt:Number(saved.updatedAt) || 0,
         updatedAtToken:saved.updatedAtToken || "",
@@ -6542,7 +6539,7 @@ import {
     }
     let rows;
     try{
-      rows = await MemberRosterStore.refresh(currentUser.id);
+      rows = await MemberRosterStore.refresh(sessionCourante.user.id);
     }catch(error){
       toast("Impossible de recharger ton roster.", true);
       return;
@@ -6569,7 +6566,7 @@ import {
     if(!snapshot) return;
     draft.heroes[heroIndex] = snapshot;
     builderRosterBaselines[heroIndex] = {
-      ownerId:currentUser.id,
+      ownerId:sessionCourante.user.id,
       charId:hero.char,
       updatedAt:Number(latest.updatedAt) || 0,
       updatedAtToken:latest.updatedAtToken || "",
@@ -6599,7 +6596,7 @@ import {
   function heroCard(hero, i){
     const ch = charOf(hero.char);
     const sourceActions = el("div",{class:"hero-source-actions"});
-    if(currentUser){
+    if(sessionCourante.user){
       sourceActions.appendChild(el("button",{
         class:"btn btn-primary",
         type:"button",
@@ -6615,8 +6612,8 @@ import {
     }));
     const currentWeaponType = weaponFolderOf(hero.weapon)
       || hero.activeWeaponType;
-    const rosterEntry = currentUser && hero.char
-      ? MemberRosterStore.all(currentUser.id)
+    const rosterEntry = sessionCourante.user && hero.char
+      ? MemberRosterStore.all(sessionCourante.user.id)
         .find(entry => entry.charId === hero.char)
       : null;
     if(hero.char){
@@ -6930,15 +6927,15 @@ import {
   }
 
   async function pickRosterHero(slotIndex){
-    if(!currentUser){
+    if(!sessionCourante.user){
       openAuth("Connecte-toi pour utiliser ton roster.", true);
       return;
     }
     let entries;
     try{
-      entries = await MemberRosterStore.refresh(currentUser.id);
+      entries = await MemberRosterStore.refresh(sessionCourante.user.id);
     }catch(error){
-      entries = MemberRosterStore.all(currentUser.id);
+      entries = MemberRosterStore.all(sessionCourante.user.id);
       if(!entries.length){
         toast("Ton roster est indisponible.", true);
         return;
@@ -7096,7 +7093,7 @@ import {
   });
 
   $("#btnSave").addEventListener("click", async()=>{
-    if(!currentUser || !sb){
+    if(!sessionCourante.user || !sb){
       openAuth("Connecte-toi pour enregistrer cette équipe.", true);
       return;
     }
@@ -7104,7 +7101,7 @@ import {
       toast("Cette équipe a été supprimée dans un autre onglet.", true);
       return;
     }
-    const pseudo = (currentPseudo||draft.pseudo||"").trim();
+    const pseudo = (sessionCourante.pseudo||draft.pseudo||"").trim();
     if(!pseudo){ toast("Ajoute d'abord un pseudo de membre.", true); pseudoInput.focus(); return; }
     if(!draft.heroes.some(h=>h.char)){ toast("Ajoute au moins un héros à l'équipe.", true); return; }
 
@@ -7309,10 +7306,10 @@ import {
       : "Équipe — " + (t.pseudo || "Sans pseudo");
     const box = $("#teamDetail");
     box.innerHTML = "";
-    const ownEntries = currentUser ? MemberRosterStore.all(currentUser.id) : [];
+    const ownEntries = sessionCourante.user ? MemberRosterStore.all(sessionCourante.user.id) : [];
     const settings = {
       team:t,
-      canImport:canManageTeam(t) && !!currentUser,
+      canImport:canManageTeam(t) && !!sessionCourante.user,
       hasBuild:(charId, type)=>{
         const entry = ownEntries.find(item => item.charId === charId);
         return !!entry && !!type
@@ -7361,11 +7358,11 @@ import {
   }
 
   function canManageTeam(team){
-    return !currentUser || !!team && team.owner === currentUser.id;
+    return !sessionCourante.user || !!team && team.owner === sessionCourante.user.id;
   }
 
   async function importTeamHeroToRoster(team, hero){
-    if(!currentUser || !canManageTeam(team)) return;
+    if(!sessionCourante.user || !canManageTeam(team)) return;
     const type = weaponFolderOf(hero && hero.weapon);
     if(!hero || !hero.char || !type
       || !weaponTypesOf(hero.char).includes(type)){
@@ -7373,14 +7370,14 @@ import {
       return;
     }
     try{
-      await MemberRosterStore.refresh(currentUser.id);
+      await MemberRosterStore.refresh(sessionCourante.user.id);
     }catch(error){
-      if(!MemberRosterStore.all(currentUser.id).length){
+      if(!MemberRosterStore.all(sessionCourante.user.id).length){
         toast("Roster indisponible : "+authMessage(error), true);
         return;
       }
     }
-    const existing = MemberRosterStore.all(currentUser.id)
+    const existing = MemberRosterStore.all(sessionCourante.user.id)
       .find(entry => entry.charId === hero.char);
     const replacing = !!existing
       && Object.prototype.hasOwnProperty.call(existing.builds, type);
@@ -7390,7 +7387,7 @@ import {
     )) return;
 
     const next = normalizeRosterCharacter(existing || {
-      owner:currentUser.id,
+      owner:sessionCourante.user.id,
       charId:hero.char,
       potentialTier:hero.potentiel && hero.potentiel.tier,
       builds:{}
@@ -7439,7 +7436,7 @@ import {
     copy.name = normalizeTeamName(
       (copy.name ? copy.name+" " : "Équipe ")+"(copie)"
     );
-    copy.pseudo = currentPseudo || copy.pseudo || "";
+    copy.pseudo = sessionCourante.pseudo || copy.pseudo || "";
     delete copy.owner;
     delete copy.createdAt;
     delete copy.updatedAt;
@@ -7496,7 +7493,7 @@ import {
           normalized.push(team);
           added++;
         });
-        if(currentUser){
+        if(sessionCourante.user){
           for(const team of normalized) await Store.upsert(team);
         }else{
           const list = LocalTeams.all();
@@ -7515,11 +7512,11 @@ import {
   });
 
   async function migrateLocalData(){
-    if(!currentUser || !sb){
+    if(!sessionCourante.user || !sb){
       openAuth("Connecte-toi pour importer tes données locales.", true);
       return;
     }
-    const migrationKey = MIGRATION_KEY_PREFIX+currentUser.id;
+    const migrationKey = MIGRATION_KEY_PREFIX+sessionCourante.user.id;
     if(localStorage.getItem(migrationKey) === "1") return;
     const button = $("#btnMigrateLocal");
     const oldText = button.textContent;
@@ -7534,8 +7531,8 @@ import {
 
       for(const localTeam of localTeams){
         await Store.upsert(Object.assign({}, localTeam, {
-          pseudo:currentPseudo,
-          owner:currentUser.id,
+          pseudo:sessionCourante.pseudo,
+          owner:sessionCourante.user.id,
           updatedAt:localTeam.updatedAt || Date.now()
         }));
       }
@@ -7686,7 +7683,7 @@ import {
     box.appendChild(el("div",{class:"empty-state"},[
       el("p",{class:"big",text:"Chargement de l’analyse…"})
     ]));
-    if(!currentUser){
+    if(!sessionCourante.user){
       box.innerHTML = "";
       box.appendChild(el("div",{class:"empty-state"},[
         el("p",{class:"big",text:"Connecte-toi pour voir l'analyse"}),
@@ -7817,7 +7814,7 @@ import {
   }
 
   function ensureBossViewOwner(){
-    const userId = currentUser ? currentUser.id : "";
+    const userId = sessionCourante.user ? sessionCourante.user.id : "";
     if(bossViewState.userId === userId) return;
     bossViewOwnerVersion++;
     if(bossTeamPickerContext && bossTeamPickerContext.userId !== userId){
@@ -7832,7 +7829,7 @@ import {
   }
 
   function bossApplyIntent(membership, sessionId, intent){
-    const owner = currentUser && currentUser.id;
+    const owner = sessionCourante.user && sessionCourante.user.id;
     const next = (membership || []).filter(member =>
       member.session_id !== sessionId || member.owner !== owner
     );
@@ -7850,7 +7847,7 @@ import {
 
   const BossStore = {
     async listAll(){
-      if(!currentUser || !sb) return [];
+      if(!sessionCourante.user || !sb) return [];
       const { data, error } = await sb.from("boss_sessions").select("*")
         .order("week_start",{ascending:false}).order("slot",{ascending:true})
         .order("run_no",{ascending:true});
@@ -7859,11 +7856,11 @@ import {
     },
     // Crée les 6 groupes de la semaine s'ils n'existent pas encore (anti-doublon multi-clients).
     async ensureWeek(week){
-      if(!currentUser || !sb) return;
+      if(!sessionCourante.user || !sb) return;
       const now = new Date().toISOString();
       const rows = [];
       for(let i=1; i<=BOSS_GROUPS; i++){
-        rows.push({ id:uid(), created_by:currentUser.id, title:"Groupe "+i,
+        rows.push({ id:uid(), created_by:sessionCourante.user.id, title:"Groupe "+i,
           boss_name:BOSS_NAME, session_date:week.startDate, week_start:week.startDate, slot:i,
           run_no:1, elements:[], status:"open", created_at:now });
       }
@@ -7877,7 +7874,7 @@ import {
     /* Lectures ciblées de « Mon suivi » : la semaine seule, sans toucher aux
        méthodes déjà utilisées par la vue Boss. */
     async listWeek(weekStart){
-      if(!currentUser || !sb) return [];
+      if(!sessionCourante.user || !sb) return [];
       const { data, error } = await sb.from("boss_sessions")
         .select("*")
         .eq("week_start", weekStart)
@@ -7887,7 +7884,7 @@ import {
       return data || [];
     },
     async listReportsForSessions(sessionIds){
-      if(!currentUser || !sb || !sessionIds.length) return [];
+      if(!sessionCourante.user || !sb || !sessionIds.length) return [];
       const reports = [];
       for(let start=0; start<sessionIds.length; start+=100){
         const batch = sessionIds.slice(start, start+100);
@@ -7900,7 +7897,7 @@ import {
       return reports;
     },
     async listMembership(sessionIds){
-      if(!currentUser || !sb || !sessionIds.length) return [];
+      if(!sessionCourante.user || !sb || !sessionIds.length) return [];
       const memberships = [];
       const batchSize = 100;
       for(let start=0; start<sessionIds.length; start+=batchSize){
@@ -7913,7 +7910,7 @@ import {
       return memberships;
     },
     async listReports(){
-      if(!currentUser || !sb) return [];
+      if(!sessionCourante.user || !sb) return [];
       const { data, error } = await sb.from("boss_run_reports")
         .select("*")
         .order("created_at", { ascending:false });
@@ -7921,17 +7918,17 @@ import {
       return data || [];
     },
     async join(sessionId){
-      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
       const { error } = await sb.rpc("join_boss_run", { p_session_id:sessionId });
       if(error) throw error;
     },
     async leave(sessionId){
-      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
       const { error } = await sb.rpc("leave_boss_run", { p_session_id:sessionId });
       if(error) throw error;
     },
     async selectTeam(sessionId, teamId){
-      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
       const { error } = await sb.rpc("select_boss_team", {
         p_session_id:sessionId,
         p_team_id:teamId
@@ -7939,7 +7936,7 @@ import {
       if(error) throw error;
     },
     async complete(sessionId, globalScore, note){
-      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
       const { error } = await sb.rpc("complete_boss_run_with_report", {
         p_session_id:sessionId,
         p_global_score:globalScore,
@@ -7948,7 +7945,7 @@ import {
       if(error) throw error;
     },
     async updateReport(sessionId, globalScore, note){
-      if(!currentUser || !sb) throw new Error("AUTH_REQUIRED");
+      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
       const { error } = await sb.rpc("update_boss_run_report", {
         p_session_id:sessionId,
         p_global_score:globalScore,
@@ -8039,14 +8036,14 @@ import {
     }
 
     async function refresh(){
-      const userId = currentUser?.id || "";
+      const userId = sessionCourante.user?.id || "";
       if(!userId || !sb) throw new Error("AUTH_REQUIRED");
       if(ownerId !== userId) reset(userId);
       const requestId = ++issued;
       const weekStart = currentBossWeek().startDate;
       const isCurrent = () =>
         issued === requestId &&
-        currentUser?.id === userId &&
+        sessionCourante.user?.id === userId &&
         currentBossWeek().startDate === weekStart;
 
       try{
@@ -8134,7 +8131,7 @@ import {
     if(mode === "choose-team"){
       const member = (bossViewState.membership || []).find(item =>
         item.session_id === sessionId &&
-        item.owner === currentUser?.id
+        item.owner === sessionCourante.user?.id
       );
       const trigger = card && card.querySelector('[data-boss-action="team"]');
       if(!member || group.status !== "open" || !trigger){
@@ -8387,7 +8384,7 @@ import {
   async function renderDashboardView(options){
     const settings = options || {};
     const body = $("#dashboardBody");
-    if(!currentUser){
+    if(!sessionCourante.user){
       $("#dashboardSyncMeta").replaceChildren();
       $("#dashboardStatus").textContent = "";
       body.replaceChildren(el("div",{class:"empty-state"},[
@@ -8546,7 +8543,7 @@ import {
     const past = allGroups.filter(g => g.week_start && g.week_start !== week.startDate);
     const currentSessionIds = new Set(weekGroups.map(g => g.id));
     const myCount = membership.filter(m =>
-      m.owner === currentUser.id && currentSessionIds.has(m.session_id)
+      m.owner === sessionCourante.user.id && currentSessionIds.has(m.session_id)
     ).length;
 
     body.className = ""; body.innerHTML = "";
@@ -8589,7 +8586,7 @@ import {
 
   function renderBossUnavailableState(){
     invalidateBossRenders();
-    bossViewState = emptyBossViewState(currentUser?.id);
+    bossViewState = emptyBossViewState(sessionCourante.user?.id);
     $("#bossCount").textContent = "";
     const body = $("#bossBody");
     body.className = "";
@@ -8610,7 +8607,7 @@ import {
 
   function renderBossCompatibilityState(){
     invalidateBossRenders();
-    bossViewState = emptyBossViewState(currentUser?.id);
+    bossViewState = emptyBossViewState(sessionCourante.user?.id);
     $("#bossCount").textContent = "";
     const body = $("#bossBody");
     body.className = "";
@@ -8637,11 +8634,11 @@ import {
     }, options || {});
     const body = $("#bossBody");
     ensureBossViewOwner();
-    const renderUserId = currentUser?.id || "";
+    const renderUserId = sessionCourante.user?.id || "";
     const renderId = ++bossRenderIssuedId;
     const isCurrentRender = () =>
       renderId === bossRenderIssuedId &&
-      currentUser?.id === renderUserId;
+      sessionCourante.user?.id === renderUserId;
 
     if(!renderUserId){
       $("#bossCount").textContent = "";
@@ -8729,7 +8726,7 @@ import {
   }
 
   async function changeBossMembership(group, mine){
-    const actionUserId = currentUser?.id;
+    const actionUserId = sessionCourante.user?.id;
     if(!actionUserId || bossPendingActions.has(group.id)) return;
     const intent = mine
       ? { type:"leave", member:null }
@@ -8738,13 +8735,13 @@ import {
           member:{
             session_id:group.id,
             owner:actionUserId,
-            pseudo:currentPseudo || "Membre",
+            pseudo:sessionCourante.pseudo || "Membre",
             team_id:null,
             team_snapshot:null
           }
         };
     const isCurrentAction = () =>
-      currentUser?.id === actionUserId &&
+      sessionCourante.user?.id === actionUserId &&
       bossViewState.userId === actionUserId &&
       bossPendingActions.get(group.id) === intent;
     bossPendingActions.set(group.id, intent);
@@ -8818,7 +8815,7 @@ import {
       bossTeamPickerContext.requestId === requestId &&
       requestId === bossTeamPickerRequestId &&
       bossTeamPickerContext.ownerVersion === bossViewOwnerVersion &&
-      currentUser?.id === bossTeamPickerContext.userId;
+      sessionCourante.user?.id === bossTeamPickerContext.userId;
   }
 
   function closeBossTeamPicker(){
@@ -8960,7 +8957,7 @@ import {
               if(
                 !pickerIsCurrent &&
                 (
-                  currentUser?.id !== pickerUserId ||
+                  sessionCourante.user?.id !== pickerUserId ||
                   bossViewOwnerVersion !== pickerOwnerVersion ||
                   bossTeamPickerContext !== null
                 )
@@ -8986,7 +8983,7 @@ import {
             const currentMembership = (bossViewState.membership || [])
               .find(item =>
                 item.session_id === group.id &&
-                item.owner === currentUser?.id
+                item.owner === sessionCourante.user?.id
               );
             const refreshedTrigger = bossTeamActionFor(group.id);
             ModalStack.setRestoreFocus(
@@ -8998,7 +8995,7 @@ import {
             }else if(teamsResult.status === "fulfilled"){
               bossTeamPickerPendingRequestId = null;
               const teams = teamsResult.value
-                .filter(item => item.owner === currentUser.id)
+                .filter(item => item.owner === sessionCourante.user.id)
                 .sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
               bossTeamPickerTeams(
                 $("#bossTeamList"),
@@ -9043,7 +9040,7 @@ import {
   }
 
   async function openBossTeamPicker(group, member){
-    const userId = currentUser && currentUser.id;
+    const userId = sessionCourante.user && sessionCourante.user.id;
     if(!userId || !member || member.owner !== userId) return;
     const restoreFocus = document.activeElement;
     const requestId = ++bossTeamPickerRequestId;
@@ -9273,7 +9270,7 @@ import {
   function reconcileOpenBossReport(){
     const context = bossReportContext;
     if(!context) return;
-    if(context.userId !== currentUser?.id){
+    if(context.userId !== sessionCourante.user?.id){
       closeBossReport();
       return;
     }
@@ -9308,12 +9305,12 @@ import {
     const members = bossReportMembers(group);
     const report = (bossViewState.reports || [])
       .find(item => item.session_id === group.id) || null;
-    const mine = members.some(member => member.owner === currentUser?.id);
+    const mine = members.some(member => member.owner === sessionCourante.user?.id);
     if(!mine || (selectedMode === "edit" && !report)) return;
 
     const context = {
       requestId:++bossReportRequestId,
-      userId:currentUser.id,
+      userId:sessionCourante.user.id,
       group,
       mode:selectedMode,
       members,
@@ -9361,7 +9358,7 @@ import {
     const isCurrent = () =>
       bossReportContext === context &&
       context.requestId === submission.requestId &&
-      currentUser?.id === submission.userId;
+      sessionCourante.user?.id === submission.userId;
 
     try{
       if(submission.mode === "edit"){
@@ -9406,7 +9403,7 @@ import {
           ensureWeek:true,
           showErrorToast:false
         });
-        if(currentUser?.id !== actionUserId) return;
+        if(sessionCourante.user?.id !== actionUserId) return;
         if(!refreshed){
           const retry = renderBossUnavailableState();
           retry.focus();
@@ -9439,7 +9436,7 @@ import {
 
   function bossGroupCard(g, membership, myCount){
     const members = membership.filter(m => m.session_id === g.id);
-    const mine = members.some(m => m.owner === currentUser.id);
+    const mine = members.some(m => m.owner === sessionCourante.user.id);
     const pending = bossPendingActions.has(g.id);
     const overCapacity = members.length > 5;
     const list = el("div",{class:"boss-members"});
@@ -9452,7 +9449,7 @@ import {
     }
     if(members.length){
       members.forEach(member => {
-        const isMe = member.owner === currentUser.id;
+        const isMe = member.owner === sessionCourante.user.id;
         const team = teamFromBossSnapshot(member.team_snapshot);
         const row = el("div",{class:"boss-member"+(isMe?" me":"")},[
           el("div",{class:"boss-member-head"},[
@@ -9624,7 +9621,7 @@ import {
     );
     card.appendChild(participants);
 
-    if(members.some(member => member.owner === currentUser?.id)){
+    if(members.some(member => member.owner === sessionCourante.user?.id)){
       card.appendChild(el("div",{class:"boss-report-actions"},[
         el("button",{
           class:"btn boss-report-edit",
