@@ -5,30 +5,30 @@ import { ModalStack } from "./vues/modal-stack.js";
 import { sessionCourante } from "./etat/session.js";
 import { brouillonEquipe } from "./etat/brouillon-equipe.js";
 import { sb } from "./noyau/supabase-client.js";
+import { charOf, nameOfFile } from "./metier/catalogue.js";
+import {
+  closeGearConfigEditor,
+  gearConfigEditorState,
+  gearTermLabel,
+  openGearConfigEditor,
+  renderGearConfigEditor
+} from "./vues/editeur-equipement.js";
+import { gearSlot, renderBonus } from "./vues/elements.js";
 import {
   WEAPON_RARITY_LABELS,
   closeWeaponConfigEditor,
   openWeaponConfigEditor,
-  weaponConfigField,
-  weaponConfigOption,
   weaponDefaultGradeGameId,
   weaponTermLabel
 } from "./vues/editeur-arme.js";
-import {
-  calculateGearStats,
-  calculateHeroStats,
-  gearDomainOf,
-  groupBuildStatResults
-} from "./metier/stats-calcul.js";
+import { calculateHeroStats, groupBuildStatResults } from "./metier/stats-calcul.js";
 import {
   BUILD_GEAR,
   BUILD_GEAR_SETS,
-  GEAR_PASSIVE_MAX_LEVEL,
   buildGearDefinition,
   buildWeaponGrade,
   gearConfigStatus,
   gearEnchantmentChoiceStatus,
-  gearEnchantmentLength,
   weaponConfigStatus
 } from "./metier/build-config.js";
 import {
@@ -39,11 +39,13 @@ import {
   weaponFolderOf,
   weaponTypesOf
 } from "./metier/armes.js";
-import { enchantmentExpectedLength, enchantmentRequiredLength } from "./metier/perles.js";
+import {
+  enchantmentExpectedLength,
+  enchantmentRequiredLength
+} from "./metier/perles.js";
 import { isInteger, jsonCopy, owns } from "./noyau/outils.js";
 import {
   BUILD_STAT_FAMILY_LABELS,
-  buildStatsTitle,
   formatBuildStatValue,
   mainRateValueText,
   statTermsDetails
@@ -62,7 +64,6 @@ import {
 } from "./metier/equipement.js";
 import {
   DATA,
-  BUILD_STATS,
   STORAGE_KEY,
   TEAM_SIZE,
   ARMOR_SLOTS,
@@ -96,7 +97,7 @@ import {
   isBossSchemaCompatibilityError,
   previousBossWeekStart
 } from "./metier/boss-logique.js";
-import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./noyau/dom.js";
+import { $, uid, norm, initials, el } from "./noyau/dom.js";
 
 (function(){
   "use strict";
@@ -202,16 +203,6 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./noyau/d
       '<p>Lance <b>generate-data.ps1</b> puis recharge la page.</p></div>';
     return;
   }
-
-  // Index de recherche : chemin de fichier -> nom lisible
-  const FILE_NAME = new Map();
-  Object.values(DATA.armes||{}).forEach(list => list.forEach(w => FILE_NAME.set(w.file, w.name)));
-  Object.values(DATA.armures||{}).forEach(list => list.forEach(a => FILE_NAME.set(a.file, a.name)));
-  Object.values(DATA.bijoux||{}).forEach(list => list.forEach(b => FILE_NAME.set(b.file, b.name)));
-  const CHAR_BY_ID = new Map((DATA.personnages||[]).map(c => [c.id, c]));
-
-  const nameOfFile = f => FILE_NAME.get(f) || (f ? f.split("/").pop().replace(/\.webp$/i,"") : "");
-  const charOf = id => CHAR_BY_ID.get(id) || null;
 
   function closeModalAfterAsyncRefresh(overlay, closeAction, restoreTarget){
     const active = document.activeElement;
@@ -344,19 +335,6 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./noyau/d
   };
   function buildGearCatalog(){
     return BUILD_GEAR;
-  }
-  function emptyGearConfig(file){
-    const definition = buildGearDefinition(file);
-    if(!definition) return null;
-    return {
-      version:1,
-      level:definition.qualityMin,
-      reinforce:0,
-      enchantments:Array.from({
-        length:gearEnchantmentLength(definition)
-      }, ()=>null),
-      passiveLevel:null
-    };
   }
   /* PRÉSUMÉ, NON VÉRIFIÉ :
    * le gain par niveau d'une pièce part de la borne basse de son segment.
@@ -723,8 +701,6 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./noyau/d
     ]);
   }
 
-  let gearConfigEditorState = null;
-
   function gearConfigSummary(file, config){
     const status = gearConfigStatus(file, config);
     if(status === "unavailable") return "Données indisponibles";
@@ -753,104 +729,6 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./noyau/d
     return button;
   }
 
-  function gearStatsStatusMessage(status){
-    if(status === "unavailable"){
-      return "Les données chiffrées de cette pièce ne sont pas disponibles.";
-    }
-    if(status === "missing"){
-      return "Configuration à compléter pour calculer l’apport de cette pièce.";
-    }
-    if(status === "incomplete"){
-      return "Complète les champs requis pour afficher l’apport de cette pièce.";
-    }
-    return "Cette configuration n’est pas compatible avec les données de la pièce.";
-  }
-
-  function gearTermLabel(term){
-    if(term.source.component === "level") return "Niveau et renforcement";
-    if(term.source.component === "enchantment"){
-      return "Option aléatoire"
-        +(Number.isInteger(term.source.index) ? " "+(term.source.index + 1) : "");
-    }
-    if(term.source.component === "bonus") return "Bonus d’ensemble";
-    return term.source.component;
-  }
-
-  function gearTermProvenance(term){
-    const source = term.source || {};
-    const domains = {
-      armor:"armure",
-      engraving:"gravure",
-      jewel:"bijou",
-      set:"ensemble"
-    };
-    const parts = [
-      "Source : "+(domains[source.domain] || source.domain || "inconnue"),
-      gearTermLabel(term),
-      "opération addition",
-      "unité "+(term.unit === "flat" ? "points" : "dix-millièmes")
-    ];
-    if(source.id) parts.push(source.id);
-    if(source.slot) parts.push("emplacement "+source.slot);
-    if(term.bucket) parts.push("seau "+term.bucket);
-    return parts.join(" · ");
-  }
-
-  function gearStatsSection(file, config, slotKey){
-    const section = el("section",{class:"weapon-stats"});
-    const result = calculateGearStats(file, config, slotKey);
-    const engraving = gearDomainOf(slotKey) === "engraving";
-    section.appendChild(el("h3",{
-      class:"weapon-stats-title",
-      text:buildStatsTitle(
-        engraving
-          ? {of:"de la gravure",passiveKey:"engraving:passive"}
-          : {of:"de l’équipement",passiveKey:"armor:passive"},
-        result
-      )
-    }));
-    const covered = result.status === "valid"
-      && Array.isArray(result.coverage)
-      && result.coverage.includes(gearDomainOf(slotKey));
-    if(!covered){
-      section.appendChild(el("p",{
-        class:"weapon-stats-state",
-        text:gearStatsStatusMessage(result.status)
-      }));
-      return section;
-    }
-
-    groupBuildStatResults(result).forEach(group => {
-      const family = el("section",{class:"weapon-stats-family"});
-      family.appendChild(el("h4",{
-        class:"weapon-stats-family-title",
-        text:BUILD_STAT_FAMILY_LABELS[group.family] || group.family
-      }));
-      group.stats.forEach(stat => {
-        const statNode = el("div",{class:"weapon-stat"});
-        statNode.appendChild(el("div",{class:"weapon-stat-head"},[
-          el("span",{text:stat.label}),
-          el("span",{
-            class:"weapon-stat-total",
-            dataset:{unit:stat.unit},
-            text:formatBuildStatValue(stat.value, stat.unit)
-              +(stat.unit === "flat" ? " points" : "")
-          })
-        ]));
-        const details = statTermsDetails(stat, {
-          termLabel:gearTermLabel,
-          termValue:term => formatBuildStatValue(term.value, term.unit)
-            +(term.unit === "flat" ? " points" : ""),
-          termProvenance:gearTermProvenance
-        });
-        statNode.appendChild(details);
-        family.appendChild(statNode);
-      });
-      section.appendChild(family);
-    });
-    return section;
-  }
-
   function gearConfigFirstInvalidSelector(file, draft){
     const definition = buildGearDefinition(file);
     if(!definition) return ".gear-config-level";
@@ -873,212 +751,6 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./noyau/d
       }
     }
     return ".gear-config-level";
-  }
-
-  function updateGearConfigPreview(){
-    const state = gearConfigEditorState;
-    if(!state) return;
-    const preview = $("#gearConfigPreview");
-    preview.innerHTML = "";
-    preview.appendChild(gearStatsSection(
-      state.context.file,
-      state.draft,
-      state.context.slotKey
-    ));
-    $("#gearConfigError").textContent = state.validationAttempted
-      && gearConfigStatus(state.context.file, state.draft) !== "valid"
-      ? "Vérifie les champs signalés avant de valider."
-      : "";
-  }
-
-  function renderGearConfigEnchantments(body, definition, draft){
-    const container = el("div",{class:"weapon-enchantments"},[
-      el("span",{class:"weapon-enchantment-title",text:"Options aléatoires"})
-    ]);
-    const options = (definition.randomOptions
-      && Array.isArray(definition.randomOptions.stats))
-      ? definition.randomOptions.stats : [];
-    draft.enchantments.forEach((choice, index) => {
-      const used = new Set(draft.enchantments
-        .filter((entry, position) => entry && position !== index && entry.stat)
-        .map(entry => entry.stat));
-      const available = options.filter(option => !used.has(option.stat));
-      const box = el("div",{
-        class:"weapon-enchantment",
-        dataset:{gearSlot:String(index)}
-      });
-      box.appendChild(el("span",{
-        class:"weapon-enchantment-title",
-        text:"Option "+(index + 1)
-      }));
-      const select = el("select",{class:"gear-config-enchantment-stat"});
-      select.appendChild(weaponConfigOption("","Aucune option"));
-      available.forEach(option => {
-        const metadata = BUILD_STATS.statLabels[option.stat];
-        select.appendChild(weaponConfigOption(
-          option.stat,
-          metadata ? metadata.fr : option.stat
-        ));
-      });
-      select.value = choice ? choice.stat : "";
-      select.addEventListener("change", event => {
-        const option = options.find(item => item.stat === event.target.value);
-        draft.enchantments[index] = option ? {
-          slot:index,
-          stat:option.stat,
-          value:option.min
-        } : null;
-        renderGearConfigEditor();
-      });
-      box.appendChild(weaponConfigField("Statistique",select));
-      if(choice){
-        const option = options.find(item => item.stat === choice.stat);
-        const value = el("input",numericKeyboardInputProps({
-          class:"gear-config-enchantment-value",
-          step:"1",
-          min:option ? String(option.min) : "0",
-          max:option ? String(option.max) : "0",
-          value:String(choice.value)
-        }));
-        value.addEventListener("input", event => {
-          choice.value = event.target.value === ""
-            ? null
-            : Math.trunc(Number(event.target.value));
-          updateGearConfigPreview();
-        });
-        box.appendChild(weaponConfigField(
-          "Valeur",
-          value,
-          option ? "De "+option.min+" à "+option.max+"." : ""
-        ));
-      }
-      container.appendChild(box);
-    });
-    if(!draft.enchantments.length){
-      container.appendChild(el("p",{
-        class:"weapon-config-hint",
-        text:"Cette pièce ne possède aucun emplacement d’option aléatoire."
-      }));
-    }
-    body.appendChild(container);
-  }
-
-  function renderGearConfigPassive(body, definition, draft){
-    if(!Array.isArray(definition.passiveLevels)
-      || !definition.passiveLevels.length){
-      return;
-    }
-    const container = el("div",{class:"gear-config-passive"},[
-      el("span",{class:"weapon-enchantment-title",text:"Passif"})
-    ]);
-    const select = el("select",{class:"gear-config-passive-level"});
-    select.appendChild(weaponConfigOption("","À renseigner"));
-    definition.passiveLevels.forEach(item => {
-      select.appendChild(weaponConfigOption(item.level,String(item.level)));
-    });
-    select.value = isInteger(draft.passiveLevel)
-      && draft.passiveLevel >= 1
-      && draft.passiveLevel <= GEAR_PASSIVE_MAX_LEVEL
-      ? String(draft.passiveLevel) : "";
-    const description = el("p",{class:"hero-passive-text weapon-config-hint"});
-    const updateDescription = () => {
-      const selected = definition.passiveLevels.find(
-        item => item.level === draft.passiveLevel
-      );
-      description.innerHTML = selected
-        ? renderBonus(selected.textFr || "")
-        : "Niveau du passif à renseigner";
-    };
-    select.addEventListener("change", event => {
-      draft.passiveLevel = event.target.value === ""
-        ? null : Number(event.target.value);
-      updateDescription();
-      updateGearConfigPreview();
-    });
-    container.appendChild(weaponConfigField(
-      "Niveau du passif",
-      select,
-      "Information enregistrée séparément ; elle ne modifie pas les chiffres."
-    ));
-    updateDescription();
-    container.appendChild(description);
-    body.appendChild(container);
-  }
-
-  function renderGearConfigEditor(){
-    const state = gearConfigEditorState;
-    if(!state) return;
-    const body = $("#gearConfigBody");
-    body.innerHTML = "";
-    const definition = buildGearDefinition(state.context.file);
-    if(!definition || !state.draft){
-      body.appendChild(el("p",{
-        class:"weapon-stats-state",
-        text:"Les données chiffrées de cette pièce ne sont pas disponibles."
-      }));
-      updateGearConfigPreview();
-      return;
-    }
-    const draft = state.draft;
-    const level = el("input",numericKeyboardInputProps({
-      class:"gear-config-level",
-      step:"1",
-      min:String(definition.qualityMin),
-      max:String(definition.qualityMax),
-      value:String(draft.level)
-    }));
-    level.addEventListener("input", event => {
-      draft.level = event.target.value === ""
-        ? null
-        : Math.trunc(Number(event.target.value));
-      updateGearConfigPreview();
-    });
-    body.appendChild(weaponConfigField(
-      "Niveau de qualité",
-      level,
-      "De "+definition.qualityMin+" à "+definition.qualityMax+"."
-    ));
-
-    const reinforce = el("select",{class:"gear-config-reinforce"});
-    for(let value = 0; value <= definition.reinforceMax; value += 1){
-      reinforce.appendChild(weaponConfigOption(value,"+"+value));
-    }
-    reinforce.value = String(draft.reinforce);
-    reinforce.addEventListener("change", event => {
-      draft.reinforce = Number(event.target.value);
-      updateGearConfigPreview();
-    });
-    body.appendChild(weaponConfigField("Renforcement",reinforce));
-    renderGearConfigEnchantments(body, definition, draft);
-    renderGearConfigPassive(body, definition, draft);
-    updateGearConfigPreview();
-  }
-
-  function openGearConfigEditor(context, restoreFocus){
-    const initial = context.config == null
-      ? emptyGearConfig(context.file)
-      : jsonCopy(context.config);
-    if(initial && initial.version === 1 && !owns(initial, "passiveLevel")){
-      initial.passiveLevel = null;
-    }
-    gearConfigEditorState = {
-      context,
-      draft:initial,
-      validationAttempted:false
-    };
-    $("#gearConfigTitle").textContent = "Configurer — "+context.label;
-    renderGearConfigEditor();
-    ModalStack.open(
-      $("#gearConfigOverlay"),
-      ".gear-config-level",
-      closeGearConfigEditor,
-      restoreFocus
-    );
-  }
-
-  function closeGearConfigEditor(){
-    ModalStack.close($("#gearConfigOverlay"));
-    gearConfigEditorState = null;
   }
 
   function saveGearConfigEditor(){
@@ -3324,13 +2996,6 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./noyau/d
     });
   }
 
-  function gearThumb(file){
-    const box = el("div",{class:"gear-thumb"});
-    if(file) box.appendChild(el("img",{src:file, alt:"", loading:"lazy"}));
-    else box.textContent = "+";
-    return box;
-  }
-
   function heroCard(hero, i){
     const ch = charOf(hero.char);
     const sourceActions = el("div",{class:"hero-source-actions"});
@@ -3538,19 +3203,6 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./noyau/d
     return btn;
   }
 
-  function gearSlot(label, file, isWeapon, onclick, extraClass, slotKey){
-    return el("button",{
-      class:"gear-slot"+(isWeapon?" weapon":"")+(extraClass?" "+extraClass:"")+(file?" filled":""),
-      type:"button",
-      title:(isWeapon?"Arme":label)+(file?" : "+nameOfFile(file):""),
-      dataset:slotKey ? {slot:slotKey} : undefined,
-      onclick
-    },[
-      gearThumb(file),
-      el("span",{class:"gear-label", text:label})
-    ]);
-  }
-
   function gearConfigurableSlot(label, file, onclick, extraClass, slotKey, settings){
     const cell = el("div",{
       class:"gear-configurable-slot",
@@ -3732,13 +3384,6 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./noyau/d
   }
 
   /* ---- Potentiel : rendu du balisage couleur [#RRGGBB]texte[-] ---- */
-  function renderBonus(str){
-    const esc = (str||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-    return esc
-      .replace(/\[#([0-9A-Fa-f]{6})\]/g, '<span style="color:#$1">')
-      .replace(/\[-\]/g, "</span>")
-      .replace(/\n/g, "<br>");
-  }
 
   /* ---- Fenêtre Potentiel (façon page de référence) ---- */
   const Potentiel = (function(){

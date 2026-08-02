@@ -23,6 +23,7 @@ const MODULES = [
   "etat/brouillon-equipe.js",
 
   /* metier — logique pure, testable sans navigateur. Ni DOM ni réseau. */
+  "metier/catalogue.js",
   "metier/armes.js",
   "metier/equipement.js",
   "metier/perles.js",
@@ -36,11 +37,13 @@ const MODULES = [
   "donnees/boss-store.js",
 
   /* vues — tout ce qui touche au DOM. */
+  "vues/elements.js",
   "vues/toast.js",
   "vues/modal-stack.js",
   "vues/picker.js",
   "vues/stats-affichage.js",
   "vues/editeur-arme.js",
+  "vues/editeur-equipement.js",
   "vues/dispos.js",
 
   /* le reste, pas encore découpé. */
