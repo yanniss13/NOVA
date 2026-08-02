@@ -90,6 +90,7 @@ version plus ancienne du site reste ouvrable.
 | `stats-heros.js` | Le bloc de statistiques d'un héros, dans les fiches |
 | `fiche-heros.js` | La fiche d'un héros — **le noyau commun aux grosses modales** |
 | `detail-equipe.js` | La modale de détail d'une équipe : l'équipement héros par héros |
+| `equipe-boss.js` | L'équipe d'un membre dans une session de boss : bandeau et participant |
 | `editeur-arme.js` | La modale de configuration d'une arme |
 | `editeur-equipement.js` | La modale de configuration d'une pièce d'équipement |
 | `dispos.js` | La vue des disponibilités hebdomadaires |
@@ -135,16 +136,15 @@ Toujours `npm test` en entier.
 
 ## Si tu veux découper davantage
 
-`app.js` n'est pas fini : il reste ~4 940 lignes, soit le Builder, le Roster,
+`app.js` n'est pas fini : il reste ~4 880 lignes, soit le Builder, le Roster,
 les sessions de boss, l'authentification et le démarrage.
 
-**Les modales encore dedans**, toutes à clôture fermée — donc extractibles sans
-cycle. Relevé refait après le lot `detail-equipe` :
+**La modale encore dedans**, à clôture fermée — donc extractible sans cycle.
+Relevé refait après le lot `equipe-boss` :
 
 | Racine | Symboles | Lignes |
 |---|---|---|
 | `openRosterDetailFor` | 10 | 185 |
-| `bossReportParticipant` | 3 | 57 |
 
 **La démonstration est faite une fois de plus :** ces racines pesaient 17, 12 et
 9 symboles avant que `fiche-heros.js` ne sorte, puis `detail-equipe.js`. Elles

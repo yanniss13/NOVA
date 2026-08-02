@@ -237,6 +237,17 @@ import { buildWeaponGrade } from "./build-config.js";
     };
   }
 
+  /* Un instantane de boss est une equipe venue du dehors comme une autre :
+     il arrive d'une colonne jsonb, ecrite par une version quelconque du
+     site. Il passe donc par normalizeTeam, qui ne leve jamais. */
+  function teamFromBossSnapshot(snapshot){
+    if(!snapshot || typeof snapshot !== "object") return null;
+    return normalizeTeam(Object.assign({}, snapshot.data || {}, {
+      id:snapshot.id || snapshot.teamId || "",
+      pseudo:snapshot.pseudo || ""
+    }));
+  }
+
 export {
   normalizeRosterCharacter,  normalizeRosterBuild,  compatibleWeaponGroups,  normalizeBuildFields,
   normalizeHero,
@@ -244,5 +255,6 @@ export {
   normalizeTeam,
   normalizeTeamName,
   normalizeWeaponConfig,
-  teamBuildSnapshot
+  teamBuildSnapshot,
+  teamFromBossSnapshot
 };

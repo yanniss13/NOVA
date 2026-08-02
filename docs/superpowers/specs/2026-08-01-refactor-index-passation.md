@@ -628,18 +628,40 @@ clôture transitive est aveugle aux instructions de premier niveau.
 
 `openTeamDetail` sort seul ; `closeTeamDetail` et le câblage restent privés.
 
+### Lot 33 — `equipe-boss.js`, et une aide rendue au modele
+
+`bossTeamBanner` et `bossReportParticipant` partent en vue. Le troisieme
+symbole de la cloture, **`teamFromBossSnapshot`, est descendu dans
+`metier/equipe-modele.js`** : il ne fait que passer un instantane de boss par
+`normalizeTeam`, et l'en-tete de ce module promet justement d'accueillir
+« toute equipe venue du dehors — stockage local, Supabase, import d'un
+fichier ». Un instantane jsonb ecrit par une version quelconque du site est
+exactement ce cas-la.
+
+Le garder dans la vue aurait oblige la carte d'un groupe — restee dans
+`app.js` — a lire un instantane via un module de rendu.
+
+Meme motif qu'au lot 31 : **la cloture transitive dit ce qui doit sortir
+ensemble, pas ou chaque morceau doit atterrir.** Compter les appelants hors du
+domaine tranche mieux.
+
 ### Où ça s'arrête
 
-**`js/app.js` : 10 489 → 4 938 lignes**, 32 modules. `npm test` vert, exit 0,
+**`js/app.js` : 10 489 → 4 879 lignes**, 33 modules. `npm test` vert, exit 0,
 Playwright compris.
 
-Restent deux modales, toutes deux à clôture fermée donc extractibles sans
-cycle. **Relevé refait après le lot `detail-equipe` :**
+Reste **une** modale, à clôture fermée donc extractible sans cycle.
+**Relevé refait après le lot `equipe-boss` :**
 
 | Racine | Symboles | Lignes | Clôture |
 |---|---|---|---|
 | `openRosterDetailFor` | 10 | 185 | `closeRosterDetail`, `favoriteRosterWeaponType`, `moveRosterDetail`, `openRosterDetailFor`, `renderRosterDetail`, `rosterDetail`, `rosterDetailOwnerLabel`, `rosterDetailWeaponSwitch`, `rosterHeroSnapshot`, `rosterWeaponLabel` |
-| `bossReportParticipant` | 3 | 57 | `bossReportParticipant`, `bossTeamBanner`, `teamFromBossSnapshot` |
+
+⚠️ Trois de ces dix ne sont **pas** des symboles de vue :
+`favoriteRosterWeaponType` (7 appelants), `rosterHeroSnapshot` (5) et
+`rosterWeaponLabel` (8) servent presque partout ailleurs dans `app.js`. Les
+emporter dans la modale ferait importer du modele depuis une vue. Le module de
+vue ne doit recevoir que les sept autres.
 
 **La leçon « sortir la base avant ce qui s'appuie dessus » se vérifie une
 sixième fois :** ces racines pesaient 17, 12 et 9 symboles avant `fiche-heros`,

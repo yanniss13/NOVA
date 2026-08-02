@@ -9,6 +9,7 @@ import { charOf, nameOfFile } from "./metier/catalogue.js";
 import { heroStatsSection } from "./vues/stats-heros.js";
 import { badgesRow, heroDetail, weaponSlotBadge } from "./vues/fiche-heros.js";
 import { openTeamDetail } from "./vues/detail-equipe.js";
+import { bossReportParticipant, bossTeamBanner } from "./vues/equipe-boss.js";
 import { MemberRosterStore, cloudRosterFromRow } from "./donnees/roster-store.js";
 import { DashboardStore } from "./donnees/suivi-store.js";
 import { LocalTeams, Store } from "./donnees/equipes-store.js";
@@ -22,7 +23,8 @@ import {
   normalizeTeam,
   normalizeTeamName,
   normalizeWeaponConfig,
-  teamBuildSnapshot
+  teamBuildSnapshot,
+  teamFromBossSnapshot
 } from "./metier/equipe-modele.js";
 import {
   closeGearConfigEditor,
@@ -4022,39 +4024,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
     }
   }
 
-  function teamFromBossSnapshot(snapshot){
-    if(!snapshot || typeof snapshot !== "object") return null;
-    return normalizeTeam(Object.assign({}, snapshot.data || {}, {
-      id:snapshot.id || snapshot.teamId || "",
-      pseudo:snapshot.pseudo || ""
-    }));
-  }
-
-  function bossTeamBanner(team){
-    const banner = el("span",{class:"boss-team-banner"});
-    (team.heroes || []).forEach(hero => {
-      const character = hero && hero.char ? charOf(hero.char) : null;
-      const portrait = el("span",{class:"boss-team-banner-portrait"});
-      if(character){
-        portrait.appendChild(el("img",{
-          src:character.file,
-          alt:"",
-          loading:"lazy"
-        }));
-      }else{
-        portrait.textContent = "—";
-      }
-      banner.appendChild(el("span",{class:"boss-team-banner-hero"},[
-        portrait,
-        el("span",{
-          class:"boss-team-banner-name",
-          text:character ? character.name : "Libre"
-        })
-      ]));
-    });
-    return banner;
-  }
-
   let bossTeamPickerRequestId = 0;
   let bossTeamPickerPendingRequestId = null;
   let bossTeamPickerContext = null;
@@ -4781,33 +4750,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
       list,
       actions
     ]);
-  }
-
-  function bossReportParticipant(member){
-    const team = teamFromBossSnapshot(member.team_snapshot);
-    const row = el("div",{class:"boss-report-participant"},[
-      el("span",{
-        class:"boss-report-participant-name",
-        text:member.pseudo || "Membre"
-      })
-    ]);
-    if(team){
-      row.appendChild(el("button",{
-        class:"boss-report-team",
-        type:"button",
-        "aria-label":"Voir l’équipe de "+(member.pseudo || "Membre"),
-        onclick:()=>openTeamDetail(team)
-      },[
-        bossTeamBanner(team),
-        el("span",{class:"boss-report-team-label",text:"Voir l’équipe"})
-      ]));
-    }else{
-      row.appendChild(el("span",{
-        class:"boss-report-team-missing",
-        text:"Équipe non disponible"
-      }));
-    }
-    return row;
   }
 
   function bossReportCard(group, members, report){
