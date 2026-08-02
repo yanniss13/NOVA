@@ -121,10 +121,11 @@ dépendances réelles avant de choisir.** La commande est donnée plus bas.
 | Fichier | Lignes |
 |---|---|
 | `index.html` | 2 263 |
-| `js/app.js` | 9 729 |
+| `js/app.js` | 9 692 |
 | `js/boss-logique.js` | 292 |
 | `js/dispos-logique.js` | 282 |
 | `js/modal-stack.js` | 167 |
+| `js/constantes.js` | 99 |
 | `js/picker.js` | 98 |
 | `js/dom.js` | 45 |
 
@@ -269,18 +270,58 @@ premier niveau du bloc à celles du reste, dans les deux sens :
 
 Le garde-fou `tests/modules-imports.test.js` rattrape ce qui échappe au relevé.
 
-### Prochain candidat
+### Lot 7 — TERMINÉ
 
-Les vues restent le gros morceau. Dans l'ordre de difficulté croissante :
+`js/constantes.js` (99 lignes) : catalogues, libellés et clés de stockage —
+`DATA`, `BUILD_STATS`, `ELEMENTS`, `ROLES`, `WEAPON_ENUM`, `ARMOR_*`,
+`JEWEL_*`, `FOLDER_TO_ENUM`, `ENUM_TO_FOLDER`, `metaOf`… 23 symboles, tous
+exportés. Feuille de l'arbre au même titre que `dom.js`. `npm test` vert deux
+fois, exit 0.
 
-1. **`BossStore`** (`js/app.js`, juste après le bloc extrait) — accès Supabase
-   des sessions de boss, sans rendu. À vérifier au relevé.
-2. **`Availability`** (580 lignes) — dépend de `toast`, `currentBossWeek`
-   (désormais importable), `refreshRosterProfiles`, `loadOwnersWithGroup`.
-   Sortir d'abord `toast`, qui est une feuille de 13 lignes.
-3. **`Potentiel`** — bloqué tant que `renderBuilder` et `renderBonus` sont dans
-   `app.js`. Ne pas forcer : ce serait un cycle.
-4. **`RealtimeSync`** en dernier : il appelle les rendus de toutes les vues.
+**C'est le lot qui débloque les autres**, comme `dom.js` au lot 4. Nombre de
+symboles de `js/app.js` dont chaque zone dépend encore, avant → après :
+
+| Zone | Avant | Après |
+|---|---|---|
+| Builder | 57 | 48 |
+| Roster des membres | 48 | 34 |
+| Roster (page d'affichage) | 31 | 27 |
+| Brouillon d'équipe | 23 | 13 |
+| Export / Import | 13 | 10 |
+| Démarrage | 3 | 1 |
+
+**Deux choses sont restées dans `js/app.js`, délibérément :**
+
+- `builderWeaponSwitcher` — seule déclaration de la zone à dépendre du Builder
+  (`builderBuildIsDirty`, `rosterWeaponLabel`, `switchBuilderHeroBuild`) ;
+- `currentUser`, `currentPseudo`, `sessionApplicationEpoch` — voir ci-dessous.
+
+### ⚠️ Le vrai blocage suivant : l'état mutable de session
+
+**Aucune vue ne peut plus sortir sans trancher ce point.** `currentUser`,
+`currentPseudo` et `rosterProfiles` sont des `let` réaffectés depuis `app.js`.
+Or **une liaison exportée par un module ne peut pas être réaffectée par un
+importateur** : le déplacer casse l'écriture, le laisser force un cycle
+`app.js → vue.js → app.js`.
+
+Zones concernées : `Équipes`, `Brouillon d'équipe`, `Analyse`, `Authentification`,
+`Roster`, `Export/Import`, `Sessions de boss` — c'est-à-dire toutes.
+
+Deux issues, à arbitrer avec l'utilisateur avant d'écrire :
+
+1. **Porteur d'état explicite** — `js/session.js` exportant un objet
+   `export const session = { user:null, pseudo:"" }`, les lectures devenant
+   `session.user`. L'affectation de propriété traverse les modules sans
+   problème. Coût : réécrire tous les sites de lecture et d'écriture. **Ce
+   n'est plus un déplacement pur** — c'est la première fois du chantier qu'on
+   touche au code applicatif, et ça mérite un accord.
+2. **S'arrêter là** — garder les vues dans `app.js`. Le fichier est passé de
+   12 752 à 9 692 lignes et six modules nets en sont sortis ; c'est déjà le
+   gros du bénéfice de lisibilité.
+
+**Ne pas trancher seul.** Tant que ce n'est pas décidé, les seuls lots encore
+possibles sont marginaux (`toast`, `Navigation onglets`), et tous deux
+dépendent de rendus restés dans `app.js`.
 
 **Refaire le relevé avant de choisir**, et se souvenir qu'un symbole déjà
 extrait n'apparaît plus dans `js/app.js` tout en restant une dépendance.

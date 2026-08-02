@@ -192,6 +192,7 @@ masquerait la modification réelle.
 Site Confrérie 7ds/
 ├─ index.html              # Style + balisage. Charge les données locales, le client CDN et js/app.js.
 ├─ js/app.js               # Module ES principal : vues, auth/store Supabase, démarrage.
+├─ js/constantes.js        # Catalogues, libellés et clés de stockage. Feuille de l'arbre.
 ├─ js/dom.js               # Utilitaires DOM ($, el, norm, uid, initials…). Feuille de l'arbre.
 ├─ js/dispos-logique.js    # Logique pure des disponibilités (masques, semaines, agrégation).
 ├─ js/boss-logique.js      # Logique pure des sessions de boss et de « Mon suivi » (dates, scores, projection).
