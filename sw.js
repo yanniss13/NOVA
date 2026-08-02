@@ -24,8 +24,8 @@ const CORE_ASSETS = [
   "./", "./index.html",
   "./data.js", "./stats-build.js", "./potentiels.js", "./armures-liees.js",
   "./personnages-meta.js", "./supabase-config.js",
-  "./js/constantes.js", "./js/session.js", "./js/supabase-client.js", "./js/dom.js", "./js/equipement.js", "./js/dispos-logique.js", "./js/modal-stack.js", "./js/picker.js", "./js/boss-logique.js",
-  "./js/app.js",
+  "./js/constantes.js", "./js/session.js", "./js/supabase-client.js", "./js/dom.js", "./js/equipement.js", "./js/roster-profils.js", "./js/toast.js", "./js/dispos-logique.js", "./js/modal-stack.js", "./js/picker.js", "./js/boss-logique.js",
+  "./js/boss-store.js", "./js/app.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png"
 ];

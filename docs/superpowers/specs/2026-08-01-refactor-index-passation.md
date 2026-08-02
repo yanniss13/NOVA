@@ -121,7 +121,7 @@ dépendances réelles avant de choisir.** La commande est donnée plus bas.
 | Fichier | Lignes |
 |---|---|
 | `index.html` | 2 263 |
-| `js/app.js` | 9 602 |
+| `js/app.js` | 9 471 |
 | `js/boss-logique.js` | 292 |
 | `js/dispos-logique.js` | 282 |
 | `js/modal-stack.js` | 167 |
@@ -130,6 +130,9 @@ dépendances réelles avant de choisir.** La commande est donnée plus bas.
 | `js/picker.js` | 98 |
 | `js/dom.js` | 45 |
 | `js/session.js` | 20 |
+| `js/boss-store.js` | 127 |
+| `js/toast.js` | 24 |
+| `js/roster-profils.js` | 24 |
 | `js/supabase-client.js` | 12 |
 
 ### Prochaine étape — lot 3 et suivants

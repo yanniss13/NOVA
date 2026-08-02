@@ -195,6 +195,9 @@ Site Confrérie 7ds/
 ├─ js/constantes.js        # Catalogues, libellés et clés de stockage. Feuille de l'arbre.
 ├─ js/session.js           # État mutable de session (`sessionCourante`). Objet, pour rester réaffectable.
 ├─ js/supabase-client.js   # Le client Supabase (`sb`), ou null si non configuré.
+├─ js/toast.js             # Bandeau de notification, partagé par toutes les vues.
+├─ js/roster-profils.js    # Pseudos de la confrérie, lus une fois et mis en cache.
+├─ js/boss-store.js        # Accès Supabase aux sessions de boss (aucun rendu).
 ├─ js/dom.js               # Utilitaires DOM ($, el, norm, uid, initials…). Feuille de l'arbre.
 ├─ js/equipement.js        # Sets d'équipement (armures, bijoux) et modèles vides.
 ├─ js/dispos-logique.js    # Logique pure des disponibilités (masques, semaines, agrégation).
