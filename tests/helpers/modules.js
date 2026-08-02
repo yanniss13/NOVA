@@ -45,6 +45,7 @@ const MODULES = [
   "vues/elements.js",
   "vues/toast.js",
   "vues/modal-stack.js",
+  "vues/modale-auth.js",
   "vues/picker.js",
   "vues/stats-affichage.js",
   "vues/stats-heros.js",

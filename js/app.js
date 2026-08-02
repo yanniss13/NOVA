@@ -3,6 +3,12 @@
 import { shouldIgnoreAvailabilityEcho } from "./metier/dispos-logique.js";
 import { ModalStack, closeModalAfterAsyncRefresh } from "./vues/modal-stack.js";
 import { enregistrerVue, mainTabs, showView } from "./vues/navigation.js";
+import {
+  closeAuth,
+  openAuth,
+  setAuthBusy,
+  setAuthStatus
+} from "./vues/modale-auth.js";
 import { canManageTeam, sessionCourante } from "./etat/session.js";
 import { brouillonEquipe } from "./etat/brouillon-equipe.js";
 import { authMessage, sb } from "./noyau/supabase-client.js";
@@ -810,30 +816,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
   })();
 
   /* ============================ Authentification Supabase ============================ */
-  const authOverlay = $("#authOverlay");
-  const authStatus = $("#authStatus");
-
-  function setAuthStatus(message, isErr){
-    authStatus.textContent = message || "";
-    authStatus.classList.toggle("err", !!isErr);
-  }
-
-  function openAuth(message, isErr){
-    setAuthStatus(message, isErr);
-    ModalStack.open(authOverlay, "#authEmail", closeAuth);
-  }
-
-  function closeAuth(){
-    ModalStack.close(authOverlay);
-    setAuthStatus("");
-  }
-
-  function setAuthBusy(busy){
-    ["#authSignIn","#authSignUp","#authOffline"].forEach(selector => {
-      $(selector).disabled = !!busy;
-    });
-  }
-
   async function profilePseudo(user){
     if(!user || !sb) return "";
     const { data, error } = await sb.from("profiles")
