@@ -45,7 +45,12 @@ import { $, el, norm } from "../noyau/dom.js";
 import { jsonCopy } from "../noyau/outils.js";
 import { authMessage } from "../noyau/supabase-client.js";
 import { openRosterDetailFor, rosterDetailOwnerLabel } from "./detail-roster.js";
-import { closeWeaponConfigEditor, weaponDefaultGradeGameId } from "./editeur-arme.js";
+import {
+  closeWeaponConfigEditor,
+  setWeaponConfigRestoreFocus,
+  weaponDefaultGradeGameId
+} from "./editeur-arme.js";
+import { setGearConfigRestoreFocus } from "./editeur-equipement.js";
 import {
   applyGearChange,
   applyWeaponChange,
@@ -587,9 +592,7 @@ import { toast } from "./toast.js";
         renderMemberRosterEditor();
         const nextButton = $("#memberRosterEditor")
           .querySelector(".weapon-config-open");
-        if(nextButton){
-          ModalStack.setRestoreFocus($("#weaponConfigOverlay"), nextButton);
-        }
+        setWeaponConfigRestoreFocus(nextButton);
       },
       latestUpdatedAt(){
         if(!sessionCourante.user || !memberRosterDraft) return 0;
@@ -617,9 +620,7 @@ import { toast } from "./toast.js";
           else target.armorConfig[slot] = nextConfig;
           renderMemberRosterEditor();
           const nextButton = findGearConfigButton($("#memberRosterEditor"), slot);
-          if(nextButton){
-            ModalStack.setRestoreFocus($("#gearConfigOverlay"), nextButton);
-          }
+          setGearConfigRestoreFocus(nextButton);
         }
       }
     )));
@@ -640,9 +641,7 @@ import { toast } from "./toast.js";
           else target.jewelConfig[slot] = nextConfig;
           renderMemberRosterEditor();
           const nextButton = findGearConfigButton($("#memberRosterEditor"), slot);
-          if(nextButton){
-            ModalStack.setRestoreFocus($("#gearConfigOverlay"), nextButton);
-          }
+          setGearConfigRestoreFocus(nextButton);
         }
       }
     )));

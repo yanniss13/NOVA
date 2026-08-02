@@ -454,4 +454,14 @@ import {
 /* Trois declarations sont redevenues privees quand la sauvegarde et le
    cablage sont rentres d'app.js : plus personne dehors n'en a besoin.
    Seule l'ouverture de l'editeur reste publique. */
-export { openGearConfigEditor };
+  /* Apres un enregistrement, le rendu remplace le bouton qui avait ouvert
+     cette modale : rendre le focus a l'ancien le poserait sur un noeud
+     detache. L'appelant designe le remplacant, l'editeur sait sur quelle
+     modale le poser — sans quoi chaque appelant devait connaitre
+     l'identifiant de CELLE-CI, et le renommer cassait deux modules en
+     silence, sans aucun test rouge. */
+  function setGearConfigRestoreFocus(button){
+    if(button) ModalStack.setRestoreFocus($("#gearConfigOverlay"), button);
+  }
+
+export { openGearConfigEditor, setGearConfigRestoreFocus };

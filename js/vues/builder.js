@@ -50,7 +50,12 @@ import {
 import { $, el, uid } from "../noyau/dom.js";
 import { jsonCopy } from "../noyau/outils.js";
 import { authMessage, sb } from "../noyau/supabase-client.js";
-import { closeWeaponConfigEditor, weaponDefaultGradeGameId } from "./editeur-arme.js";
+import {
+  closeWeaponConfigEditor,
+  setWeaponConfigRestoreFocus,
+  weaponDefaultGradeGameId
+} from "./editeur-arme.js";
+import { setGearConfigRestoreFocus } from "./editeur-equipement.js";
 import {
   activateHeroBuild,
   applyCharacterChange,
@@ -469,9 +474,7 @@ import { toast } from "./toast.js";
         renderBuilder();
         const nextButton = heroGrid.children[i]
           && heroGrid.children[i].querySelector(".weapon-config-open");
-        if(nextButton){
-          ModalStack.setRestoreFocus($("#weaponConfigOverlay"), nextButton);
-        }
+        setWeaponConfigRestoreFocus(nextButton);
       },
       latestUpdatedAt(){
         const latest = Store.all().find(row => row.id === brouillonEquipe.equipe.id);
@@ -517,9 +520,7 @@ import { toast } from "./toast.js";
             const nextHero = heroGrid.children[i];
             const nextButton = nextHero
               ? findGearConfigButton(nextHero, slot) : null;
-            if(nextButton){
-              ModalStack.setRestoreFocus($("#gearConfigOverlay"), nextButton);
-            }
+            setGearConfigRestoreFocus(nextButton);
           }
         }
       ));
@@ -549,9 +550,7 @@ import { toast } from "./toast.js";
             const nextHero = heroGrid.children[i];
             const nextButton = nextHero
               ? findGearConfigButton(nextHero, slot) : null;
-            if(nextButton){
-              ModalStack.setRestoreFocus($("#gearConfigOverlay"), nextButton);
-            }
+            setGearConfigRestoreFocus(nextButton);
           }
         }
       ));

@@ -813,10 +813,21 @@ import {
     if(event.target === $("#weaponConfigOverlay")) closeWeaponConfigEditor();
   });
 
+  /* Apres un enregistrement, le rendu remplace le bouton qui avait ouvert
+     cette modale : rendre le focus a l'ancien le poserait sur un noeud
+     detache. L'appelant designe le remplacant, l'editeur sait sur quelle
+     modale le poser — sans quoi chaque appelant devait connaitre
+     l'identifiant de CELLE-CI, et le renommer cassait deux modules en
+     silence, sans aucun test rouge. */
+  function setWeaponConfigRestoreFocus(button){
+    if(button) ModalStack.setRestoreFocus($("#weaponConfigOverlay"), button);
+  }
+
 export {
   WEAPON_RARITY_LABELS,
   closeWeaponConfigEditor,
   openWeaponConfigEditor,
+  setWeaponConfigRestoreFocus,
   weaponConfigField,
   weaponConfigOption,
   weaponDefaultGradeGameId,
