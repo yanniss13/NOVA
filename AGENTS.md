@@ -200,6 +200,7 @@ Site Confrérie 7ds/
 ├─ js/boss-store.js        # Accès Supabase aux sessions de boss (aucun rendu).
 ├─ js/dom.js               # Utilitaires DOM ($, el, norm, uid, initials…). Feuille de l'arbre.
 ├─ js/equipement.js        # Sets d'équipement (armures, bijoux) et modèles vides.
+├─ js/dispos.js            # Vue des dispos hebdo : grille, cache hors ligne, sync Supabase.
 ├─ js/dispos-logique.js    # Logique pure des disponibilités (masques, semaines, agrégation).
 ├─ js/boss-logique.js      # Logique pure des sessions de boss et de « Mon suivi » (dates, scores, projection).
 ├─ js/modal-stack.js       # Pile de modales (ouverture, fermeture, restitution du focus).

@@ -130,6 +130,25 @@ assert.deepEqual(manques, [],
   "Des modules emploient des symboles qu'ils n'importent pas :\n  "
   + manques.join("\n  "));
 
+/* Et l'inverse : un `import` qui ne sert plus est du bruit. Il survit aux
+   extractions successives — on importe large « au cas où » — et finit par
+   mentir sur les dépendances réelles du module. */
+const inutiles = [];
+for(const [fichier, source] of sources){
+  /* On retire les lignes d'import avant de chercher : sinon chaque symbole se
+     trouverait lui-même dans sa propre déclaration d'import. */
+  const corps = source.replace(/import\s*\{[^}]*\}\s*from\s*["'][^"']*["']\s*;?/g, " ");
+  for(const nom of importsDe(source)){
+    if(!emploie(corps, nom)){
+      inutiles.push("js/" + fichier + " importe « " + nom + " » sans s'en servir");
+    }
+  }
+}
+
+assert.deepEqual(inutiles, [],
+  "Des modules importent des symboles qu'ils n'emploient pas :\n  "
+  + inutiles.join("\n  "));
+
 /* Chaque module doit aussi être servi hors ligne. */
 const sw = fs.readFileSync(path.join(__dirname, "..", "sw.js"), "utf8");
 for(const fichier of MODULES){

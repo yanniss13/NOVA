@@ -121,7 +121,8 @@ dépendances réelles avant de choisir.** La commande est donnée plus bas.
 | Fichier | Lignes |
 |---|---|
 | `index.html` | 2 263 |
-| `js/app.js` | 9 471 |
+| `js/app.js` | 8 778 |
+| `js/dispos.js` | 716 |
 | `js/boss-logique.js` | 292 |
 | `js/dispos-logique.js` | 282 |
 | `js/modal-stack.js` | 167 |
