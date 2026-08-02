@@ -194,6 +194,7 @@ Site Confrérie 7ds/
 ├─ js/app.js               # Module ES principal : vues, auth/store Supabase, démarrage.
 ├─ js/constantes.js        # Catalogues, libellés et clés de stockage. Feuille de l'arbre.
 ├─ js/session.js           # État mutable de session (`sessionCourante`). Objet, pour rester réaffectable.
+├─ js/supabase-client.js   # Le client Supabase (`sb`), ou null si non configuré.
 ├─ js/dom.js               # Utilitaires DOM ($, el, norm, uid, initials…). Feuille de l'arbre.
 ├─ js/equipement.js        # Sets d'équipement (armures, bijoux) et modèles vides.
 ├─ js/dispos-logique.js    # Logique pure des disponibilités (masques, semaines, agrégation).

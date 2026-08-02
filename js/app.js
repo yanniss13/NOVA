@@ -26,6 +26,7 @@ import {
 } from "./dispos-logique.js";
 import { ModalStack } from "./modal-stack.js";
 import { sessionCourante } from "./session.js";
+import { sb } from "./supabase-client.js";
 import { ARMOR_SET_SLOTS, armorSetsFrom, emptyArmor, emptyJewel, emptyPot, jewelSetsFrom } from "./equipement.js";
 import {
   DATA,
@@ -78,9 +79,6 @@ import {
   "use strict";
 
   /* ============================ Données & constantes ============================ */
-  const sb = window.supabase && window.SB_URL && window.SB_KEY
-    ? window.supabase.createClient(window.SB_URL, window.SB_KEY)
-    : null;
   const equippedEnumOf = hero => {
     const f = weaponFolderOf(hero && hero.weapon);
     return f ? (FOLDER_TO_ENUM[f] || null) : null;
