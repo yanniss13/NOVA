@@ -9,6 +9,7 @@
    permet une liaison `let` exportee — lisible, jamais reaffectable ailleurs. */
 
 import { $, el, numericKeyboardInputProps } from "../noyau/dom.js";
+import { BUILD_GEAR, BUILD_GEAR_SETS, gearEnchantmentChoiceStatus } from "../metier/build-config.js";
 import { BUILD_STATS } from "../noyau/constantes.js";
 import { isInteger, jsonCopy, owns } from "../noyau/outils.js";
 import { ModalStack } from "./modal-stack.js";
@@ -345,9 +346,112 @@ import {
     gearConfigEditorState = null;
   }
 
-export {
-  closeGearConfigEditor,
-  gearConfigEditorState,
-  openGearConfigEditor,
-  renderGearConfigEditor
-};
+  /* Le catalogue, la sauvegarde et le cablage des boutons vivaient dans
+     app.js : ils y avaient ete oublies quand l'editeur en est sorti.
+     editeur-arme.js branche ses propres boutons de la meme facon. */
+  function buildGearCatalog(){
+    return BUILD_GEAR;
+  }
+  /* PRÉSUMÉ, NON VÉRIFIÉ :
+   * le gain par niveau d'une pièce part de la borne basse de son segment.
+   *
+   * Vérification dans le jeu : relever la même statistique d'une même armure
+   * à qualityMin, juste avant, au niveau et juste après la première borne
+   * interne, puis comparer les reconstructions "segment-lower-bound" et
+   * "quality-min". Si la mesure contredit ce choix, remplacer uniquement la
+   * valeur ci-dessous. Aucune autre partie du moteur ne connaît l'hypothèse. */
+  /* Une arme ne porte qu'une seule perle : tous les emplacements renseignés
+     doivent partager le même palier et le même élément. Sans cette contrainte,
+     un état absurde deviendrait « valide ». */
+  /* Le jeu interdit deux fois la même stat sur une perle. Les emplacements
+     encore vides ne comptent pas : sinon toute saisie en cours serait refusée. */
+
+  /*
+   * PRÉSUMÉ, NON VÉRIFIÉ :
+   * l’outrepassement multiplie la statistique principale native de l’arme
+   * avant les enchantements. Le fait qu’il ne touche ni les sous-statistiques
+   * ni le passif est confirmé par le propriétaire ; seule la base précise de
+   * la statistique principale reste présumée.
+   *
+   * Vérification dans le jeu :
+   * relever l’ATK à outrepassement 0 puis 1 sur une arme enchantée.
+   * Si le gain de 5 % inclut les enchantements, remplacer uniquement
+   * "native-before-enchantments" par "native-and-enchantments".
+   */
+
+  function buildGearSets(){
+    return BUILD_GEAR_SETS;
+  }
+
+  /*
+   * PRÉSUMÉ, NON VÉRIFIÉ :
+   * les 30 % d'ATK plate des deux armes secondaires sont ajoutés avant les
+   * taux principaux du héros. Protocole : comparer sur Merlin l'ATK affichée
+   * avec les deux armes secondaires configurées, puis sans l'une d'elles. Si
+   * l'écart réel n'est pas lui-même affecté par les taux principaux, changer
+   * uniquement ce mode et le branchement de ces seaux.
+   */
+
+  function gearConfigFirstInvalidSelector(file, draft){
+    const definition = buildGearDefinition(file);
+    if(!definition) return ".gear-config-level";
+    if(!draft || !isInteger(draft.level)
+      || draft.level < definition.qualityMin
+      || draft.level > definition.qualityMax){
+      return ".gear-config-level";
+    }
+    if(!isInteger(draft.reinforce)
+      || draft.reinforce < 0
+      || draft.reinforce > definition.reinforceMax){
+      return ".gear-config-reinforce";
+    }
+    const choices = Array.isArray(draft.enchantments) ? draft.enchantments : [];
+    for(let index = 0; index < choices.length; index += 1){
+      const status = gearEnchantmentChoiceStatus(definition, choices[index], index);
+      if(status !== "valid"){
+        const suffix = choices[index] && choices[index].stat ? "value" : "stat";
+        return '[data-gear-slot="'+index+'"] .gear-config-enchantment-'+suffix;
+      }
+    }
+    return ".gear-config-level";
+  }
+
+  function saveGearConfigEditor(){
+    const state = gearConfigEditorState;
+    if(!state) return;
+    if(gearConfigStatus(state.context.file, state.draft) !== "valid"){
+      state.validationAttempted = true;
+      renderGearConfigEditor();
+      const invalid = $("#gearConfigOverlay").querySelector(
+        gearConfigFirstInvalidSelector(state.context.file, state.draft)
+      );
+      if(invalid){
+        invalid.setAttribute("aria-invalid","true");
+        invalid.focus();
+      }
+      return;
+    }
+    state.context.commit(jsonCopy(state.draft));
+    closeGearConfigEditor();
+  }
+
+  function resetGearConfigEditor(){
+    const state = gearConfigEditorState;
+    if(!state) return;
+    if(!confirm("Réinitialiser la configuration chiffrée de cette pièce ?")) return;
+    state.context.commit(null);
+    closeGearConfigEditor();
+  }
+
+  $("#gearConfigClose").addEventListener("click", closeGearConfigEditor);
+  $("#gearConfigCancel").addEventListener("click", closeGearConfigEditor);
+  $("#gearConfigSave").addEventListener("click", saveGearConfigEditor);
+  $("#gearConfigReset").addEventListener("click", resetGearConfigEditor);
+  $("#gearConfigOverlay").addEventListener("click", event => {
+    if(event.target === $("#gearConfigOverlay")) closeGearConfigEditor();
+  });
+
+/* Trois declarations sont redevenues privees quand la sauvegarde et le
+   cablage sont rentres d'app.js : plus personne dehors n'en a besoin.
+   Seule l'ouverture de l'editeur reste publique. */
+export { openGearConfigEditor };
