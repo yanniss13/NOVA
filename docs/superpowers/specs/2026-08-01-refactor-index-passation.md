@@ -121,20 +121,23 @@ dépendances réelles avant de choisir.** La commande est donnée plus bas.
 | Fichier | Lignes |
 |---|---|
 | `index.html` | 2 263 |
-| `js/app.js` | 8 778 |
-| `js/dispos.js` | 716 |
+| `js/app.js` | **8 518** |
+| `js/dispos.js` | 718 |
 | `js/boss-logique.js` | 292 |
 | `js/dispos-logique.js` | 282 |
+| `js/stats-affichage.js` | 222 |
 | `js/modal-stack.js` | 167 |
+| `js/boss-store.js` | 127 |
 | `js/equipement.js` | 107 |
 | `js/constantes.js` | 99 |
 | `js/picker.js` | 98 |
+| `js/perles.js` | 76 |
 | `js/dom.js` | 45 |
-| `js/session.js` | 20 |
-| `js/boss-store.js` | 127 |
 | `js/toast.js` | 24 |
 | `js/roster-profils.js` | 24 |
-| `js/supabase-client.js` | 12 |
+| `js/session.js` | 20 |
+| `js/outils.js` | 14 |
+| `js/supabase-client.js` | 13 |
 
 ### Prochaine étape — lot 3 et suivants
 

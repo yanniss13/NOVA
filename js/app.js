@@ -4,6 +4,21 @@ import { shouldIgnoreAvailabilityEcho } from "./dispos-logique.js";
 import { ModalStack } from "./modal-stack.js";
 import { sessionCourante } from "./session.js";
 import { sb } from "./supabase-client.js";
+import {
+  enchantmentExpectedLength,
+  enchantmentLength,
+  enchantmentRequiredLength,
+  pearlRequiredSlotCount,
+  pearlSlotCount,
+  pearlTierLabel
+} from "./perles.js";
+import { isInteger, jsonCopy, owns } from "./outils.js";
+import {
+  BUILD_BUCKET_LABELS,
+  formatBuildStatValue,
+  mainRateValueText,
+  statTermsDetails
+} from "./stats-affichage.js";
 import { Availability, renderAvailabilityView } from "./dispos.js";
 import { BOSS_NAME, BossStore } from "./boss-store.js";
 import { refreshRosterProfiles } from "./roster-profils.js";
@@ -314,9 +329,6 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
     const tier = Number.isFinite(Number(raw && raw.tier)) ? Math.trunc(Number(raw.tier)) : 0;
     return { tier:Math.max(0, Math.min(POT_MAX, tier)) };
   };
-  const jsonCopy = value => JSON.parse(JSON.stringify(value));
-  const owns = (object, key) => !!object && Object.prototype.hasOwnProperty.call(object, key);
-  const isInteger = value => Number.isInteger(value);
   const BUILD_GEAR = BUILD_STATS.gearByFile || {};
   const BUILD_ENGRAVED = BUILD_STATS.engravedByFile || {};
   const BUILD_GEAR_SETS = BUILD_STATS.gearSets || {};
@@ -522,65 +534,6 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
     if(promotion === 0) return Math.max(0, Number(steps[0].reinforceMax) - 10);
     const step = steps[promotion - 1];
     return step ? Number(step.reinforceMax) : -1;
-  }
-  /* Perle de sortilège : chaque palier ouvre un nombre d'emplacements de stat
-     différent. Cette table vient du jeu, rapportée par le propriétaire — les
-     données de 7dsorigin ne la contiennent pas, leurs `tiers[].options` ne
-     listent que les stats possibles. Ne pas la « corriger » d'après le
-     catalogue. */
-  const PEARL_TIERS = [
-    { tier:1, label:"Commune", slots:1, requiredSlots:1 },
-    { tier:2, label:"Remarquable", slots:2, requiredSlots:2 },
-    { tier:3, label:"Rare", slots:2, requiredSlots:2 },
-    { tier:4, label:"Héroïque", slots:3, requiredSlots:2 },
-    { tier:5, label:"Légendaire", slots:4, requiredSlots:3 }
-  ];
-  function pearlTierOf(tier){
-    return PEARL_TIERS.find(item => item.tier === tier) || null;
-  }
-  function pearlSlotCount(tier){
-    const found = pearlTierOf(tier);
-    return found ? found.slots : 0;
-  }
-  function pearlRequiredSlotCount(tier){
-    const found = pearlTierOf(tier);
-    return found ? found.requiredSlots : 0;
-  }
-  function pearlTierLabel(tier){
-    const found = pearlTierOf(tier);
-    return found ? found.label : "Palier "+tier;
-  }
-  // Le palier d'une perle est commun à tous ses emplacements : on le lit sur la
-  // première entrée renseignée.
-  function pearlTierInUse(enchantments){
-    const choices = Array.isArray(enchantments) ? enchantments : [];
-    const first = choices.find(choice =>
-      choice && typeof choice === "object" && !Array.isArray(choice)
-    );
-    return first && isInteger(first.tier) ? first.tier : null;
-  }
-  function enchantmentLength(grade){
-    const enchantments = grade && grade.enchantments;
-    if(!enchantments || typeof enchantments !== "object") return -1;
-    if(enchantments.type === "basic"){
-      return Array.isArray(enchantments.slots) ? enchantments.slots.length : -1;
-    }
-    // Perle vide : un emplacement suffit tant qu'aucun palier n'est choisi.
-    if(enchantments.type === "masterstone") return 1;
-    return -1;
-  }
-  // Longueur attendue pour une saisie en cours : elle suit le palier choisi.
-  function enchantmentExpectedLength(grade, enchantments){
-    const catalog = grade && grade.enchantments;
-    if(!catalog || catalog.type !== "masterstone") return enchantmentLength(grade);
-    const tier = pearlTierInUse(enchantments);
-    return tier === null ? 1 : pearlSlotCount(tier);
-  }
-  function enchantmentRequiredLength(grade, enchantments){
-    const catalog = grade && grade.enchantments;
-    if(!catalog || catalog.type !== "masterstone") return enchantmentLength(grade);
-    const tier = pearlTierInUse(enchantments);
-    return tier === null ? 1 : pearlRequiredSlotCount(tier);
   }
   function emptyWeaponConfig(file, gameId){
     const grade = buildWeaponGrade(file, gameId);
@@ -1906,19 +1859,6 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
     }).filter(group => group.stats.length);
   }
 
-  function formatBuildStatValue(value, unit){
-    if(unit !== "flat" && unit !== "ten-thousandths"){
-      throw new Error("BUILD_STAT_UNIT_INVALID");
-    }
-    const numeric = Number(value);
-    if(!Number.isFinite(numeric)) throw new Error("BUILD_STAT_VALUE_INVALID");
-    const displayed = unit === "ten-thousandths" ? numeric / 100 : numeric;
-    const prefix = displayed >= 0 ? "+" : "";
-    return prefix + new Intl.NumberFormat("fr-FR", {
-      maximumFractionDigits:2
-    }).format(displayed) + (unit === "ten-thousandths" ? " %" : "");
-  }
-
   const HERO_PRIMARY_STATS = [
     ["B_MaxHp", "PV"],
     ["B_Atk", "ATK"],
@@ -2020,198 +1960,6 @@ import { $, uid, norm, initials, numericKeyboardInputProps, el } from "./dom.js"
     if(source.originalStat) parts.push("code original "+source.originalStat);
     if(term.operation === "add") parts.push("seau "+term.bucket);
     return parts.join(" · ");
-  }
-  /* Dictionnaire partagé par les provenances et par le pied de bloc des seaux
-     ciblés : un même seau doit porter le même libellé partout, faute de quoi
-     la note de pied de bloc et la ligne d'un terme additif se contrediraient. */
-  const BUILD_BUCKET_LABELS = {
-    "weapon-native":"statistiques natives de l’arme",
-    "weapon-enchantment":"enchantements de l’arme"
-  };
-  /* Deux termes ne sont regroupés que s'ils produiraient exactement la même
-     ligne. `appliesTo` fait partie de la clé parce que la contribution d'un
-     multiplicateur vaut base(appliesTo) × valeur : sommer deux taux visant des
-     seaux différents afficherait un total appliqué à une base qui n'existe
-     pas. L'emphase en fait partie parce qu'elle change la ligne rendue. */
-  const STAT_TERM_KEY_SEPARATOR = "\u0001";
-  function statTermGroupKey(term, termLabel, termEmphasis){
-    return [
-      termLabel(term) || "Autre",
-      term.operation,
-      term.unit,
-      term.operation === "multiply"
-        ? [...(term.appliesTo || [])].sort().join(",")
-        : "",
-      termEmphasis(term) || "",
-      /* `mainRate` change la notation ET l'emplacement du groupe : un taux
-         principal et un multiplicateur ordinaire ne doivent jamais fusionner,
-         même si tout le reste coïncide. */
-      ((term.source || {}).application === "hero-main-rate") ? "1" : "0"
-    ].join(STAT_TERM_KEY_SEPARATOR);
-  }
-  function statTermGroups(stat, options){
-    const settings = options || {};
-    const termLabel = settings.termLabel;
-    const termEmphasis = settings.termEmphasis || (() => "");
-    const groups = [];
-    const index = new Map();
-    ((stat && stat.terms) || []).forEach(term => {
-      const key = statTermGroupKey(term, termLabel, termEmphasis);
-      let group = index.get(key);
-      if(!group){
-        const source = term.source || {};
-        group = {
-          key,
-          label:termLabel(term) || "Autre",
-          operation:term.operation,
-          unit:term.unit,
-          appliesTo:term.operation === "multiply"
-            ? [...(term.appliesTo || [])].sort() : [],
-          emphasis:termEmphasis(term) || "",
-          mainRate:source.application === "hero-main-rate",
-          value:0,
-          terms:[]
-        };
-        index.set(key, group);
-        groups.push(group);
-      }
-      group.value += Number(term.value) || 0;
-      group.terms.push(term);
-    });
-    return groups;
-  }
-  /* Les taux principaux s'additionnent : les écrire ×1,03 laisserait croire à
-     un produit composé. Trois nœuds à 3 % font +9 %, pas +9,27 %. */
-  function mainRateValueText(value){
-    return formatBuildStatValue(value, "ten-thousandths");
-  }
-  function statTermNode(term, group, termValue, termProvenance){
-    return el("div",{
-      class:"weapon-stat-term",
-      dataset:{
-        termId:term.id,
-        operation:term.operation,
-        unit:term.unit,
-        buckets:term.operation === "multiply"
-          ? term.appliesTo.join(",") : term.bucket
-      }
-    },[
-      el("div",{class:"weapon-stat-term-value"},[
-        el("span",{text:group.label}),
-        el("span",{
-          class:group.emphasis,
-          text:termValue(term, group)
-        })
-      ]),
-      el("small",{
-        class:"weapon-stat-provenance",
-        text:termProvenance(term)
-      })
-    ]);
-  }
-  /* Le total d'un groupe n'est affiché que pour les taux principaux et les
-     additifs, dont la somme a un sens. Un groupe de multiplicateurs non
-     principaux n'existe pas en pratique : chacun porte un libellé distinct. */
-  function statGroupTotalText(group){
-    if(group.operation === "multiply"){
-      return group.mainRate ? mainRateValueText(group.value) : "";
-    }
-    return formatBuildStatValue(group.value, group.unit)
-      +(group.unit === "flat" ? " points" : "");
-  }
-  function statGroupNode(group, termValue, termProvenance){
-    if(group.terms.length === 1){
-      return statTermNode(group.terms[0], group, termValue, termProvenance);
-    }
-    const node = el("details",{class:"stat-term-group"},[
-      el("summary",{},[
-        el("span",{
-          text:group.label+" · "+group.terms.length+" apports"
-        }),
-        el("span",{class:group.emphasis, text:statGroupTotalText(group)})
-      ])
-    ]);
-    group.terms.forEach(term => {
-      node.appendChild(statTermNode(term, group, termValue, termProvenance));
-    });
-    return node;
-  }
-  function statBucketNotes(groups){
-    /* Une même statistique porte plusieurs bases : les taux principaux visent
-       tous les seaux fixes, l'outrepassement les seuls seaux natifs de l'arme.
-       Une note unique afficherait la mauvaise base pour l'un des deux.
-       La note dit seulement où le taux s'applique : la mention « base
-       présumée » vit sur la ligne ou le bloc concerné, jamais deux fois. */
-    const seen = new Set();
-    const notes = [];
-    groups.forEach(group => {
-      if(group.operation !== "multiply") return;
-      const key = group.appliesTo.join(",");
-      if(!key || seen.has(key)) return;
-      seen.add(key);
-      notes.push(el("small",{
-        class:"stat-term-buckets",
-        text:"Appliqué à : "+key.split(",")
-          .map(bucket => BUILD_BUCKET_LABELS[bucket] || bucket)
-          .join(", ")
-      }));
-    });
-    return notes;
-  }
-  function statTermsDetails(stat, options){
-    const settings = options || {};
-    const termValue = settings.termValue;
-    const termProvenance = settings.termProvenance;
-    const termEmphasis = settings.termEmphasis || (() => "");
-    const details = el("details",{class:"weapon-stat-details"},[
-      el("summary",{text:"Détail du calcul"})
-    ]);
-    const groups = statTermGroups(stat, {
-      termLabel:settings.termLabel,
-      termEmphasis
-    });
-    /* Un bloc « Taux principaux » par base visée. Additionner des taux qui ne
-       visent pas les mêmes seaux donnerait un total appliqué à une base qui
-       n'existe pas — c'est précisément ce que la clé de groupe interdit, et le
-       rendu ne doit pas le réintroduire. */
-    const mainRateBlocks = new Map();
-    groups.forEach(group => {
-      if(!group.mainRate) return;
-      const key = group.appliesTo.join(",");
-      if(!mainRateBlocks.has(key)) mainRateBlocks.set(key, []);
-      mainRateBlocks.get(key).push(group);
-    });
-    const renderedBlocks = new Set();
-    groups.forEach(group => {
-      if(!group.mainRate){
-        details.appendChild(
-          statGroupNode(group, termValue, termProvenance)
-        );
-        return;
-      }
-      const key = group.appliesTo.join(",");
-      if(renderedBlocks.has(key)) return;
-      renderedBlocks.add(key);
-      const block = mainRateBlocks.get(key);
-      const total = block.reduce((sum, item) => sum + item.value, 0);
-      const presumed = block.some(item =>
-        item.terms.some(term => term.confidence === "presumed")
-      );
-      const parent = el("details",{class:"stat-term-group"},[
-        el("summary",{},[
-          el("span",{
-            text:"Taux principaux"+(presumed ? " — base présumée" : "")
-          }),
-          el("span",{text:mainRateValueText(total)})
-        ])
-      ]);
-      block.forEach(item => {
-        parent.appendChild(statGroupNode(item, termValue, termProvenance));
-      });
-      details.appendChild(parent);
-    });
-    statBucketNotes(groups).forEach(note => details.appendChild(note));
-    return details;
   }
   /* La valeur affichée diffère réellement d'un appelant à l'autre : le panneau
      d'arme met le libellé complet à droite — c'est la chaîne exacte assertie

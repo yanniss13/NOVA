@@ -198,6 +198,9 @@ Site Confrérie 7ds/
 ├─ js/toast.js             # Bandeau de notification, partagé par toutes les vues.
 ├─ js/roster-profils.js    # Pseudos de la confrérie, lus une fois et mis en cache.
 ├─ js/boss-store.js        # Accès Supabase aux sessions de boss (aucun rendu).
+├─ js/outils.js            # jsonCopy, owns, isInteger. Sans domaine, employés partout.
+├─ js/perles.js            # Perle de sortilège : paliers et longueur des enchantements.
+├─ js/stats-affichage.js   # Rendu des termes de stats (regroupement, libellés, notes).
 ├─ js/dom.js               # Utilitaires DOM ($, el, norm, uid, initials…). Feuille de l'arbre.
 ├─ js/equipement.js        # Sets d'équipement (armures, bijoux) et modèles vides.
 ├─ js/dispos.js            # Vue des dispos hebdo : grille, cache hors ligne, sync Supabase.
