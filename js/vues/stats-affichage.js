@@ -231,8 +231,33 @@ import { el } from "../noyau/dom.js";
     return "Apport " + subject.of + " — calcul partiel";
   }
 
+  function weaponTermLabel(term){
+    if(term.source.component === "level") return "Niveau";
+    if(term.source.component === "promotion") return "Promotion";
+    if(term.source.component === "enchantment") return "Enchantement";
+    if(term.source.component === "overlimit"){
+      const factor = new Intl.NumberFormat("fr-FR", {
+        minimumFractionDigits:2,
+        maximumFractionDigits:2
+      }).format(1 + Number(term.value) / 10000);
+      return "Outrepassement ×"+factor+" — base présumée";
+    }
+    if(term.source.component === "final-rounding") return "Arrondi du jeu";
+    return term.source.component;
+  }
+
+  function gearTermLabel(term){
+    if(term.source.component === "level") return "Niveau et renforcement";
+    if(term.source.component === "enchantment"){
+      return "Option aléatoire"
+        +(Number.isInteger(term.source.index) ? " "+(term.source.index + 1) : "");
+    }
+    if(term.source.component === "bonus") return "Bonus d’ensemble";
+    return term.source.component;
+  }
+
 export {
-  buildStatsTitle,  BUILD_STAT_FAMILY_LABELS,  BUILD_BUCKET_LABELS,
+  gearTermLabel,  weaponTermLabel,  buildStatsTitle,  BUILD_STAT_FAMILY_LABELS,  BUILD_BUCKET_LABELS,
   formatBuildStatValue,
   mainRateValueText,
   statTermsDetails

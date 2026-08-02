@@ -46,6 +46,7 @@ const MODULES = [
   "vues/modal-stack.js",
   "vues/picker.js",
   "vues/stats-affichage.js",
+  "vues/stats-heros.js",
   "vues/editeur-arme.js",
   "vues/editeur-equipement.js",
   "vues/dispos.js",

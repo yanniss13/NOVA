@@ -19,6 +19,7 @@ import {
   BUILD_STAT_FAMILY_LABELS,
   buildStatsTitle,
   formatBuildStatValue,
+  gearTermLabel,
   statTermsDetails
 } from "./stats-affichage.js";
 import {
@@ -62,15 +63,6 @@ import {
     return "Cette configuration n’est pas compatible avec les données de la pièce.";
   }
 
-  function gearTermLabel(term){
-    if(term.source.component === "level") return "Niveau et renforcement";
-    if(term.source.component === "enchantment"){
-      return "Option aléatoire"
-        +(Number.isInteger(term.source.index) ? " "+(term.source.index + 1) : "");
-    }
-    if(term.source.component === "bonus") return "Bonus d’ensemble";
-    return term.source.component;
-  }
 
   function gearTermProvenance(term){
     const source = term.source || {};
@@ -356,7 +348,6 @@ import {
 export {
   closeGearConfigEditor,
   gearConfigEditorState,
-  gearTermLabel,
   openGearConfigEditor,
   renderGearConfigEditor
 };

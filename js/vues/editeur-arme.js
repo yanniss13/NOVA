@@ -23,11 +23,12 @@ import {
   enchantmentRequiredLength
 } from "../metier/perles.js";
 import {
-  BUILD_STAT_FAMILY_LABELS,
   BUILD_BUCKET_LABELS,
+  BUILD_STAT_FAMILY_LABELS,
   buildStatsTitle,
   formatBuildStatValue,
-  statTermsDetails
+  statTermsDetails,
+  weaponTermLabel
 } from "./stats-affichage.js";
 import { calculateWeaponStats, groupBuildStatResults } from "../metier/stats-calcul.js";
 import {
@@ -99,20 +100,6 @@ import {
     return "Cette configuration n’est pas compatible avec les données de l’arme.";
   }
 
-  function weaponTermLabel(term){
-    if(term.source.component === "level") return "Niveau";
-    if(term.source.component === "promotion") return "Promotion";
-    if(term.source.component === "enchantment") return "Enchantement";
-    if(term.source.component === "overlimit"){
-      const factor = new Intl.NumberFormat("fr-FR", {
-        minimumFractionDigits:2,
-        maximumFractionDigits:2
-      }).format(1 + Number(term.value) / 10000);
-      return "Outrepassement ×"+factor+" — base présumée";
-    }
-    if(term.source.component === "final-rounding") return "Arrondi du jeu";
-    return term.source.component;
-  }
 
   function weaponTermProvenance(term){
     const source = term.source || {};
@@ -833,5 +820,4 @@ export {
   weaponConfigField,
   weaponConfigOption,
   weaponDefaultGradeGameId,
-  weaponTermLabel
 };
