@@ -15,7 +15,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./css/site.css">
+<!-- Les feuilles se chargent DANS CET ORDRE : la cascade en depend.
+     tests/css-ordre.test.js le verifie. -->
+<link rel="stylesheet" href="./css/base.css">
+<link rel="stylesheet" href="./css/builder.css">
+<link rel="stylesheet" href="./css/roster.css">
+<link rel="stylesheet" href="./css/analyse.css">
+<link rel="stylesheet" href="./css/boss.css">
+<link rel="stylesheet" href="./css/suivi.css">
+<link rel="stylesheet" href="./css/modales.css">
+<link rel="stylesheet" href="./css/notifications.css">
+<link rel="stylesheet" href="./css/responsive.css">
+<link rel="stylesheet" href="./css/dispos.css">
 </head>
 <body>
 

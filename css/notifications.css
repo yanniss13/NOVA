@@ -1,0 +1,49 @@
+/* Ce qui s'affiche par-dessus tout : le bandeau de notification et celui de
+   mise a jour de la PWA. Leurs z-index se repondent, ne les separe pas.
+
+   Sortie du <style> d'index.html. L'ordre de chargement est fixe par
+   index.html et verifie par tests/css-ordre.test.js. */
+
+/* ---------- Toast ---------- */
+.toast{
+  position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom));
+  transform:translateX(-50%) translateY(20px);
+  background:var(--panel-2);border:1px solid var(--gold-deep);color:var(--parchment);
+  padding:12px 20px;border-radius:10px;box-shadow:var(--shadow);z-index:80;
+  opacity:0;pointer-events:none;transition:.25s;font-size:14px;max-width:90vw
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.toast.err{border-color:var(--crimson)}
+
+/* ---------- Bandeau de mise à jour PWA ----------
+   z-index 55 : SOUS la couche des modales (.overlay 60, #overlay 70,
+   .auth-overlay 75). Une modale ouverte doit rester entièrement cliquable et
+   le piège à focus ne laisse de toute façon pas atteindre le bandeau. */
+.pwa-update{
+  position:fixed;z-index:55;left:50%;
+  bottom:calc(24px + env(safe-area-inset-bottom));
+  width:min(620px,calc(100vw - 24px));max-width:calc(100% - 24px);
+  transform:translateX(-50%);display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border:1px solid var(--gold-deep);border-radius:12px;
+  background:var(--panel-2);box-shadow:var(--shadow);color:var(--parchment)
+}
+.pwa-update[hidden]{display:none}
+.pwa-update p{flex:1;min-width:0;margin:0;font-size:14px}
+.pwa-update .btn,.pwa-update .icon-btn{flex:none;min-width:44px;min-height:44px}
+/* Le toast (z-index 80) reste lisible au-dessus du bandeau visible. La hauteur
+   réelle du bandeau est publiée par le contrôleur de mise à jour. */
+body.pwa-update-on .toast{
+  bottom:calc(var(--pwa-banner-h,124px) + 38px + env(safe-area-inset-bottom))
+}
+@media(max-width:560px){
+  .pwa-update{align-items:stretch;flex-wrap:wrap}
+  .pwa-update p{flex-basis:calc(100% - 54px);align-self:center}
+  .pwa-update #pwaUpdateApply{order:3;flex:1 0 100%}
+}
+.member-roster-card,.member-roster-build-tag,.boss-card,
+.team,.hero,.modal{overflow-wrap:anywhere}
+
+.databar{
+  text-align:center;color:var(--muted-2);font-size:11.5px;letter-spacing:.06em;
+  margin-top:34px;padding-top:16px;border-top:1px solid var(--line-soft)
+}

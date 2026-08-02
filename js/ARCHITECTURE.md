@@ -5,8 +5,9 @@ t'évitera de chercher.
 
 ## En une phrase
 
-`index.html` porte le style et le balisage ; tout le JavaScript vit dans `js/`,
-rangé en **cinq couches** qui ne se regardent que dans un sens.
+`index.html` ne porte plus que le **balisage**. Le style vit dans `css/`, le
+JavaScript dans `js/`, rangé en **cinq couches** qui ne se regardent que dans
+un sens.
 
 ## Les cinq couches
 
@@ -116,6 +117,32 @@ refusé — un module d'affichage de stats ne peut pas importer d'un éditeur
 déclaré après lui. La règle a désigné le bon rangement toute seule : ces
 libellés appartenaient à `stats-affichage.js`. **Quand le test des couches
 proteste, c'est presque toujours le rangement qui a tort, pas le test.**
+
+## `css/` — le style
+
+Le `<style>` d'`index.html` faisait 1 551 lignes. Il est découpé en dix
+feuilles, **chargées dans cet ordre** par `index.html` :
+
+`base` · `builder` · `roster` · `analyse` · `boss` · `suivi` · `modales` ·
+`notifications` · `responsive` · `dispos`
+
+⚠️ **L'ordre n'est pas décoratif : en CSS la cascade en dépend.** `responsive`
+surcharge tout ce qui précède, et `dispos` porte ses propres `@media` qui
+doivent gagner sur `responsive` — d'où sa place en dernier, comme dans le
+`<style>` d'origine.
+
+`tests/css-ordre.test.js` vérifie l'ordre, la présence dans `CORE_ASSETS`, et
+qu'aucune feuille n'est coupée au milieu d'une règle.
+
+**Ce dernier contrôle vient d'une erreur réelle.** Au premier découpage, les
+bornes avaient été relevées sur le fichier *avec* son en-tête puis appliquées
+au corps *sans* en-tête : douze lignes de décalage, quatre feuilles sur dix
+tranchées en plein milieu d'une règle. La concaténation restait pourtant
+identique à l'octet près — mais le navigateur parse chaque feuille séparément,
+et une accolade orpheline y perd la règle. Seul un test Playwright de mesure
+tactile l'a signalé, par hasard.
+
+**Coupe une feuille à une bannière de section, jamais à un numéro de ligne.**
 
 ## Les trois fichiers à ne jamais oublier
 

@@ -21,7 +21,7 @@ const CACHE = CACHE_PREFIX + BUILD_VERSION;
    au premier chargement coûtait plus qu'elle ne rapportait. Le gestionnaire
    `fetch` la met en cache le jour où elle est réellement demandée. */
 const CORE_ASSETS = [
-  "./", "./index.html", "./css/site.css",
+  "./", "./index.html", "./css/base.css", "./css/builder.css", "./css/roster.css", "./css/analyse.css", "./css/boss.css", "./css/suivi.css", "./css/modales.css", "./css/notifications.css", "./css/responsive.css", "./css/dispos.css",
   "./data.js", "./stats-build.js", "./potentiels.js", "./armures-liees.js",
   "./personnages-meta.js", "./supabase-config.js",
   "./js/noyau/constantes.js", "./js/etat/session.js", "./js/etat/brouillon-equipe.js", "./js/noyau/supabase-client.js", "./js/noyau/outils.js", "./js/noyau/dom.js", "./js/metier/equipement.js", "./js/donnees/roster-profils.js", "./js/vues/navigation.js", "./js/vues/elements.js", "./js/vues/toast.js", "./js/metier/perles.js", "./js/metier/build-config.js", "./js/metier/stats-calcul.js", "./js/metier/catalogue.js", "./js/metier/armes.js", "./js/metier/equipe-modele.js", "./js/metier/dispos-logique.js", "./js/vues/modal-stack.js", "./js/vues/modale-auth.js", "./js/vues/stats-heros.js", "./js/vues/editeur-arme.js", "./js/vues/picker.js", "./js/metier/boss-logique.js",

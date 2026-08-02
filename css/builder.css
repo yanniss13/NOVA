@@ -1,0 +1,148 @@
+/* L'onglet Builder : grille de heros, badges d'arme, boutons d'equipement.
+
+   Sortie du <style> d'index.html. L'ordre de chargement est fixe par
+   index.html et verifie par tests/css-ordre.test.js. */
+
+/* ---------- Builder ---------- */
+.metabar{
+  display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:16px;margin:22px 0;
+}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.field input{
+  font-family:var(--ui);font-size:15px;color:var(--parchment);
+  background:var(--obsidian-2);border:1px solid var(--line);border-radius:8px;
+  padding:11px 13px;min-width:240px;
+}
+.metabar .grow{margin-left:auto;display:flex;gap:10px}
+.edit-flag{
+  display:none;align-items:center;gap:8px;font-size:13px;color:var(--gold-bright);
+  background:rgba(217,164,65,.1);border:1px solid var(--gold-deep);
+  padding:6px 12px;border-radius:999px;
+}
+.edit-flag.on{display:inline-flex}
+
+.hero-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+}
+.hero{
+  background:linear-gradient(180deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line);border-radius:14px;padding:14px;
+  display:flex;flex-direction:column;gap:12px;position:relative;
+}
+.hero-source-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.hero-source-actions .btn{
+  min-width:0;justify-content:center;padding:7px 8px;font-size:11px;line-height:1.2;
+  text-align:center
+}
+.hero-source-actions .btn:only-child{grid-column:1/-1}
+.hero-source-actions .hero-roster-reload{grid-column:1/-1}
+.portrait{
+  appearance:none;border:1px solid var(--line);cursor:pointer;
+  aspect-ratio:1/1;border-radius:10px;overflow:hidden;padding:0;position:relative;
+  background:var(--obsidian-2) center/cover no-repeat;color:var(--muted);
+  display:grid;place-items:center;transition:.16s;
+}
+.portrait:hover{border-color:var(--gold-deep)}
+.portrait img{width:100%;height:100%;object-fit:cover;display:block}
+.portrait .ph{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12.5px}
+.portrait .ph .plus{font-size:30px;line-height:1;color:var(--gold)}
+.hero-title{
+  text-align:center;font-family:var(--display);font-weight:600;font-size:15px;
+  letter-spacing:.03em;min-height:20px;color:var(--parchment)
+}
+.hero-title.empty{color:var(--muted-2);font-style:italic;font-family:var(--ui);font-weight:400}
+
+/* Badges d'arme (rôle/élément par slot) */
+.hero-badges{display:flex;gap:6px 8px;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:-2px}
+.wslots{display:flex;gap:5px}
+.wslot{
+  position:relative;display:inline-flex;width:28px;height:28px;flex:none;
+  border-radius:50%;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 50% 32%, #2b2534, #14121b);
+  border:1px solid var(--line)
+}
+.wslot-w{width:19px;height:19px;object-fit:contain}
+.wslot-e{
+  position:absolute;right:-3px;bottom:-3px;width:14px;height:14px;object-fit:contain;
+  filter:drop-shadow(0 1px 2px rgba(0,0,0,.75))
+}
+.wslot.active{
+  border-color:var(--gold-bright);
+  box-shadow:0 0 0 1px var(--gold-bright), 0 0 9px rgba(240,198,116,.45)
+}
+.wslot.dim{opacity:.38}
+.builder-weapon-switch{
+  appearance:none;position:relative;display:grid;place-items:center;
+  min-width:44px;min-height:44px;
+  padding:7px;border:0;border-radius:50%;cursor:pointer;color:inherit;
+  background:transparent;transition:.16s
+}
+.builder-weapon-switch.dirty::after{
+  content:"";position:absolute;right:2px;top:2px;width:7px;height:7px;
+  border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px #15121c
+}
+.builder-weapon-switch:not(.active) .wslot{opacity:.48}
+.builder-weapon-switch:hover,
+.builder-weapon-switch:focus-visible{background:rgba(217,164,65,.1)}
+.mini-badges{gap:5px;margin-top:2px;min-height:25px}
+.mini-badges .wslot{width:23px;height:23px}
+.mini-badges .wslot-w{width:15px;height:15px}
+.mini-badges .wslot-e{width:11px;height:11px;right:-2px;bottom:-2px}
+
+.gear{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.gear-slot{
+  appearance:none;cursor:pointer;border:1px solid var(--line-soft);border-radius:9px;
+  background:var(--obsidian-2);padding:6px 4px 5px;display:flex;flex-direction:column;
+  align-items:center;gap:4px;transition:.16s;color:var(--muted)
+}
+.gear-slot:hover{border-color:var(--gold-deep)}
+.gear-slot.filled{border-color:var(--gold-deep)}
+.gear-slot.weapon{grid-column:1 / -1;flex-direction:row;justify-content:center;padding:7px}
+.gear-thumb{
+  width:38px;height:38px;border-radius:7px;background:#0b0910 center/cover no-repeat;
+  display:grid;place-items:center;font-size:18px;color:var(--muted-2);flex:none;
+  border:1px solid var(--line-soft)
+}
+.gear-slot.weapon .gear-thumb{width:34px;height:34px}
+.gear-thumb img{width:100%;height:100%;object-fit:contain}
+.gear-label{font-size:9.5px;letter-spacing:.08em;text-transform:uppercase;line-height:1.1;text-align:center}
+.gear-slot.weapon .gear-label{font-size:11px}
+.gear-group{
+  grid-column:1 / -1;font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--muted-2);margin:3px 0 -3px;padding-left:2px
+}
+/* Bouton d'équipement d'un set : pleine largeur de la grille d'équipement. */
+.gear-set{grid-column:1 / -1;justify-content:center;font-size:12px;padding:7px 10px}
+.gear-slot.jewel.filled{border-color:var(--crimson)}
+.gear-slot.jewel .gear-thumb{border-color:rgba(161,44,44,.4)}
+.gear-configurable-slot{
+  min-width:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:5px
+}
+.gear-configurable-slot > .gear-slot{width:100%;min-width:0}
+.gear-config-open{
+  min-width:0;min-height:36px;padding:6px 7px;
+  border:1px solid var(--line-soft);border-radius:8px;
+  background:rgba(11,9,16,.58);color:var(--muted);
+  font-size:10px;line-height:1.2;cursor:pointer
+}
+.gear-config-open:hover{border-color:var(--gold-deep);color:var(--parchment)}
+.gear-config-open.is-valid{
+  border-color:var(--gold-deep);color:var(--gold-bright);
+  background:rgba(217,164,65,.07)
+}
+.gear-config-open:disabled{cursor:not-allowed;opacity:.48}
+
+.note{
+  font-family:var(--ui);font-size:13px;color:var(--parchment);resize:vertical;
+  background:var(--obsidian-2);border:1px solid var(--line);border-radius:8px;
+  padding:9px 11px;min-height:52px;width:100%;
+}
+.note::placeholder{color:var(--muted-2)}
+.hero .clear{
+  align-self:flex-end;background:transparent;border:0;color:var(--muted-2);
+  font-size:12px;cursor:pointer;padding:2px 4px
+}
+.hero .clear:hover{color:#e98d8d}

@@ -1,0 +1,91 @@
+/* L'onglet Dispos : la grille hebdomadaire et son panneau de creneau.
+
+   Chargee en DERNIER, comme dans le <style> d'origine : ses propres requetes
+   @media doivent gagner sur celles de responsive.css.
+
+   Sortie du <style> d'index.html. L'ordre de chargement est fixe par
+   index.html et verifie par tests/css-ordre.test.js. */
+
+/* ============================ Dispos ============================ */
+.avail-toolbar{
+  display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:20px 0 16px
+}
+.avail-modes{display:flex;gap:6px;border:1px solid var(--line);border-radius:10px;padding:4px}
+.avail-mode{
+  min-height:44px;padding:0 14px;border:0;border-radius:7px;background:transparent;
+  color:var(--muted);font:inherit;font-size:13px;cursor:pointer
+}
+.avail-mode.active{background:var(--panel-2);color:var(--gold-bright)}
+.avail-save{font-size:12px;color:var(--muted-2);margin-left:auto}
+.avail-save[data-state="saving"]{color:var(--muted)}
+.avail-save[data-state="saved"]{color:var(--gold-bright)}
+.avail-save[data-state="error"]{color:#e07a5f}
+.avail-week{font-size:13px;color:var(--muted)}
+.avail-note{font-size:13px;color:var(--muted);margin:10px 0 0}
+
+/* La grille défile dans son propre conteneur : les cases gardent 44 px même
+   sur 320 px de large, sans jamais faire déborder la page. */
+.avail-grid-wrap{overflow:auto;max-height:70vh;border:1px solid var(--line);border-radius:12px}
+.avail-grid{
+  display:grid;grid-template-columns:56px repeat(7, minmax(44px, 1fr));
+  min-width:364px;background:var(--panel)
+}
+.avail-head,.avail-gutter{
+  position:sticky;background:var(--panel-2);z-index:2;
+  font-size:12px;color:var(--muted);display:flex;align-items:center;
+  justify-content:center;min-height:44px;border:0;font-family:inherit
+}
+.avail-head{top:0}
+.avail-gutter{left:0;z-index:1}
+.avail-corner{position:sticky;top:0;left:0;z-index:3;background:var(--panel-2)}
+.avail-head,.avail-gutter,.avail-corner{border-bottom:1px solid var(--line-soft)}
+.avail-cell{
+  min-height:44px;border:0;border-top:1px solid var(--line-soft);
+  border-left:1px solid var(--line-soft);background:transparent;
+  color:var(--muted-2);font:inherit;font-size:11px;cursor:pointer;padding:0;
+  touch-action:manipulation
+}
+.avail-cell[aria-pressed="true"]{background:var(--gold-deep);color:var(--ink)}
+.avail-cell.preview{outline:2px solid var(--gold-bright);outline-offset:-2px}
+.avail-cell:disabled{cursor:default}
+.avail-cell.mine{box-shadow:inset 0 0 0 2px var(--gold-bright)}
+.avail-cell[data-tier="0"]{background:transparent;color:var(--muted-2)}
+.avail-cell[data-tier="1"]{background:#2b2a3c;color:var(--muted)}
+.avail-cell[data-tier="2"]{background:#3d3547;color:#cfc4b4}
+.avail-cell[data-tier="3"]{background:var(--gold-deep);color:var(--ink)}
+.avail-cell[data-tier="4"]{background:var(--gold-bright);color:var(--ink);font-weight:700}
+
+.avail-range{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:16px 0 0;
+  padding:14px;border:1px solid var(--line);border-radius:12px
+}
+.avail-range-title{font-size:13px;color:var(--gold-bright);width:100%}
+.avail-range-hour{font-size:13px;color:var(--muted);display:flex;align-items:center;gap:6px}
+.avail-range-hour select{min-height:44px;background:var(--panel-2);color:inherit;
+  border:1px solid var(--line);border-radius:8px;padding:0 8px;font:inherit}
+.avail-range-days{display:flex;gap:4px;flex-wrap:wrap}
+.avail-range-days label{
+  position:relative;min-width:44px;min-height:44px;display:flex;
+  align-items:center;justify-content:center;border:1px solid var(--line);
+  border-radius:8px;font-size:13px;color:var(--muted);cursor:pointer
+}
+.avail-range-days input{position:absolute;opacity:0;pointer-events:none}
+.avail-range-days input:checked + span{color:var(--gold-bright);font-weight:700}
+.avail-range-days label:focus-within{outline:2px solid var(--gold-bright)}
+.avail-actions{margin:14px 0 0}
+.avail-best{font-size:13px;color:var(--muted);margin:14px 0 0;
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.avail-slot-list{list-style:none;margin:0;padding:0;max-height:60vh;overflow:auto}
+.avail-slot-list li{
+  display:flex;align-items:center;gap:10px;min-height:44px;
+  border-bottom:1px solid var(--line-soft);font-size:14px
+}
+.avail-slot-list li.me b{color:var(--gold-bright)}
+.avail-slot-tag{
+  margin-left:auto;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--muted-2);border:1px solid var(--line);border-radius:999px;padding:3px 8px
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}

@@ -1,0 +1,95 @@
+/* Les requetes @media qui adaptent tout ce qui precede aux petits ecrans.
+
+   ATTENTION : cette feuille doit rester chargee APRES celles qu'elle surcharge,
+   et AVANT dispos.css, qui porte ses propres requetes @media. C'est l'ordre du
+   <style> d'origine ; le changer casserait la mise en page en silence.
+
+   Sortie du <style> d'index.html. L'ordre de chargement est fixe par
+   index.html et verifie par tests/css-ordre.test.js. */
+
+/* ---------- Responsive ---------- */
+@media(max-width:900px){
+  .hero-grid{grid-template-columns:repeat(2,1fr)}
+  .team-heroes{grid-template-columns:repeat(4,1fr)}
+  .topbar{gap:12px}
+  .account{margin-left:auto}
+}
+@media(max-width:560px){
+  .hero-stats-primary{grid-template-columns:minmax(0,1fr)}
+  .hero-grid{grid-template-columns:1fr}
+  .team-heroes{grid-template-columns:repeat(2,1fr)}
+  .metabar .grow{margin-left:0;width:100%}
+  .metabar .grow .btn{flex:1;justify-content:center}
+  .roster-grid{grid-template-columns:1fr}
+  .tabs-rail{order:3;width:100%}
+  .tabs{width:100%;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{height:0}
+  /* Le repère n'apparaît que du côté où il reste des onglets à atteindre. */
+  .tabs-rail.can-scroll-left .tabs-cue-left,
+  .tabs-rail.can-scroll-right .tabs-cue-right{opacity:1}
+  .tab{padding:9px 13px;white-space:nowrap}
+  .auth-actions{grid-template-columns:1fr}
+  /* Barre de compte : pleine largeur, replis autorisés — ne doit jamais
+     élargir le document (cause du scroll latéral iPhone). */
+  .topbar > *{min-width:0}
+  .account{width:100%;order:2}
+  /* Header rétractable : en descendant, la marque et le bloc compte se
+     replient et seule la barre d'onglets reste collante.
+     On anime `max-height` + `opacity` (jamais `display`, qui ne se transitionne
+     pas) et on termine sur `visibility:hidden` : c'est ce qui retire ces
+     contrôles de l'ordre de tabulation, comme le faisait `display:none`.
+     `visibility` bascule sans délai à l'ouverture, mais seulement en fin de
+     course à la fermeture, sinon le bloc disparaîtrait avant d'avoir replié. */
+  .topbar{transition:padding .26s ease, gap .26s ease}
+  .topbar .brand,
+  .topbar .account{
+    overflow:hidden;max-height:320px;
+    transition:max-height .26s ease, opacity .17s ease .05s, visibility 0s
+  }
+  .topbar.is-retracted{padding-top:8px;padding-bottom:8px;gap:0}
+  .topbar.is-retracted .brand,
+  .topbar.is-retracted .account{
+    max-height:0;opacity:0;visibility:hidden;
+    transition:max-height .26s ease, opacity .15s ease, visibility 0s linear .26s
+  }
+  .account-connected{flex:1;min-width:0;flex-wrap:wrap;justify-content:center;padding:6px 10px}
+  .account-connected .btn{flex:1 1 auto;justify-content:center}
+  .account-pseudo{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  /* iOS Safari zoome automatiquement (et reste zoomé) au focus d'un champ
+     dont la police est < 16px — cause du décentrage + scroll latéral signalés
+     sur iPhone. On force 16px sur tous les contrôles de saisie en mobile. */
+  input, select, textarea,
+  .field input, .note, .picker-search{font-size:16px}
+  .member-roster-card,.member-roster-toolbar,.member-roster-editor{min-width:0}
+  .member-roster-toolbar{align-items:stretch}
+  .member-roster-modes,.member-roster-modes .btn,
+  .member-roster-owner-field,.member-roster-owner-field select,
+  .member-roster-toolbar #memberRosterAdd{width:100%;min-width:0}
+  .member-roster-modes .btn{justify-content:center}
+  .member-roster-build-panel{grid-template-columns:1fr}
+  .member-roster-editor{padding:14px}
+  .hero-source-actions{grid-template-columns:1fr}
+  .hero-source-actions .hero-roster-reload{grid-column:auto}
+}
+@media (pointer:coarse), (max-width:560px){
+  button,.btn,.tab,.chip,.gear-slot,.pot-btn,
+  .member-roster-filter-field select{
+    min-height:44px
+  }
+  .roster-detail-weapon{min-width:44px;min-height:44px}
+  .icon-btn{
+    min-width:44px;
+    min-height:44px
+  }
+  .chip{min-width:44px}
+  .overlay{
+    padding:
+      max(12px,env(safe-area-inset-top))
+      max(12px,env(safe-area-inset-right))
+      max(12px,env(safe-area-inset-bottom))
+      max(12px,env(safe-area-inset-left))
+  }
+  .modal.teammodal{
+    max-height:min(88vh,calc(100dvh - 24px))
+  }
+}

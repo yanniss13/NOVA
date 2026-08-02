@@ -1,0 +1,341 @@
+/* Les fenetres superposees : picker, barre de compte, potentiel, et
+   configuration chiffree de l'arme.
+
+   Sortie du <style> d'index.html. L'ordre de chargement est fixe par
+   index.html et verifie par tests/css-ordre.test.js. */
+
+/* ---------- Picker modal ---------- */
+/* Document figé pendant qu'une modale est ouverte : il ne reste rien à faire
+   défiler, donc iOS Safari ne peut plus déplacer la page derrière l'overlay.
+   `top` est posé en JS avec la position courante, restituée à la fermeture. */
+body.modal-locked{
+  position:fixed;left:0;right:0;width:100%;overflow:hidden
+}
+.overlay{
+  position:fixed;inset:0;z-index:60;display:none;align-items:center;justify-content:center;
+  background:rgba(6,5,9,.72);backdrop-filter:blur(4px);padding:18px
+}
+.overlay.on{display:flex}
+/* Le picker est une sous-modale : il s'ouvre DEPUIS d'autres modales (éditeur
+   de roster, builder) et doit donc toujours passer au-dessus d'elles. */
+#overlay{z-index:70}
+.modal{
+  width:min(760px,100%);
+  max-height:min(88vh,calc(100dvh - 24px));
+  max-width:100%;display:flex;flex-direction:column;
+  background:var(--panel);border:1px solid var(--gold-deep);border-radius:14px;
+  box-shadow:var(--shadow);overflow:hidden
+}
+.picker-head{
+  display:flex;align-items:center;gap:12px;padding:16px 18px;border-bottom:1px solid var(--line)
+}
+.picker-title{font-family:var(--display);font-weight:600;letter-spacing:.06em;font-size:17px;margin-right:auto}
+.icon-btn{
+  appearance:none;border:1px solid var(--line);background:var(--panel-2);color:var(--muted);
+  width:34px;height:34px;border-radius:8px;cursor:pointer;font-size:18px;line-height:1
+}
+.icon-btn:hover{color:var(--gold-bright);border-color:var(--gold-deep)}
+.picker-tools{padding:12px 18px;display:flex;flex-direction:column;gap:10px;border-bottom:1px solid var(--line-soft)}
+.picker-search{
+  font-family:var(--ui);font-size:14px;color:var(--parchment);width:100%;
+  background:var(--obsidian-2);border:1px solid var(--line);border-radius:8px;padding:10px 12px
+}
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chip{
+  appearance:none;cursor:pointer;border:1px solid var(--line);background:var(--panel-2);
+  color:var(--muted);border-radius:999px;padding:5px 12px;font-size:12px;font-weight:600;transition:.14s
+}
+.chip:hover{color:var(--parchment)}
+.chip.active{background:var(--gold);color:var(--ink);border-color:var(--gold-deep)}
+.picker-grid{
+  padding:16px 18px;overflow-y:auto;overflow-x:hidden;display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(96px,1fr));
+  grid-auto-rows:max-content;gap:10px
+}
+.tile{
+  appearance:none;cursor:pointer;border:1px solid var(--line);background:var(--obsidian-2);
+  border-radius:9px;padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:6px;
+  transition:.14s;color:var(--parchment)
+}
+.tile:hover{border-color:var(--gold-deep);transform:translateY(-2px)}
+.tile.selected{border-color:var(--gold-bright);box-shadow:0 0 0 1px var(--gold-bright) inset}
+.tile-img{
+  width:100%;aspect-ratio:1/1;border-radius:6px;background:#0b0910 center/contain no-repeat;
+  display:grid;place-items:center;font-size:22px;color:var(--muted-2)
+}
+.tile-img img{width:100%;height:100%;object-fit:contain}
+.tile.portrait-tile .tile-img img{object-fit:cover}
+.tile-name{font-size:11px;line-height:1.2;text-align:center;color:var(--parchment);word-break:break-word}
+.tile.none .tile-img{border:1px dashed var(--line);color:var(--muted-2)}
+.picker-empty{grid-column:1/-1;text-align:center;color:var(--muted);padding:30px}
+
+/* ---------- Compte Supabase ---------- */
+.auth-overlay{z-index:75}
+.auth-modal{width:min(470px,100%);overflow:visible}
+.auth-body{padding:22px;display:flex;flex-direction:column;gap:16px}
+.auth-mark{
+  width:56px;height:56px;margin:-50px auto 2px;display:grid;place-items:center;
+  border-radius:50%;border:1px solid var(--gold-deep);
+  background:radial-gradient(circle at 50% 30%,#332713,#0f0c07 72%);
+  color:var(--gold-bright);font-family:var(--display);font-weight:700;font-size:21px;
+  box-shadow:0 10px 28px rgba(0,0,0,.55),inset 0 0 16px rgba(217,164,65,.22)
+}
+.auth-copy{text-align:center}
+.auth-copy h2{font-family:var(--display);font-size:21px;letter-spacing:.05em;margin:0 0 7px}
+.auth-copy p{color:var(--muted);font-size:13px;line-height:1.5;margin:0}
+.auth-fields{display:grid;gap:11px}
+.auth-fields .field input{width:100%;min-width:0}
+.auth-actions{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.auth-actions .btn{justify-content:center}
+.auth-offline{justify-content:center;width:100%}
+.auth-status{min-height:20px;margin:0;text-align:center;color:var(--muted);font-size:12.5px}
+.auth-status.err{color:#e98d8d}
+
+/* ---------- Potentiel : bouton carte héros ---------- */
+.pot-btn{
+  appearance:none;cursor:pointer;width:100%;display:flex;align-items:center;gap:8px;
+  border:1px solid var(--line-soft);background:var(--obsidian-2);border-radius:9px;
+  padding:8px 11px;color:var(--muted);transition:.16s;text-align:left
+}
+.pot-btn:hover{border-color:var(--gold-deep);color:var(--parchment)}
+.pot-btn.set{border-color:var(--gold-deep)}
+.pot-btn.set .pot-val{color:var(--gold-bright)}
+.pot-btn.disabled{opacity:.5;cursor:not-allowed}
+.pot-star{color:var(--gold);font-size:13px}
+.pot-lbl{font-size:10px;letter-spacing:.16em;text-transform:uppercase;flex:1}
+.pot-val{font-family:var(--display);font-weight:600;font-size:13px;color:var(--muted)}
+
+/* ---------- Potentiel : modal ---------- */
+.potmodal{width:min(720px,100%)}
+.pot-body{padding:14px 18px 18px;overflow-y:auto;overflow-x:hidden}
+.pot-head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px}
+.pot-head-lbl{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted)}
+.pot-head-val{font-family:var(--display);font-weight:700;color:var(--gold-bright)}
+.pot-paliers{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:18px}
+.pot-p{
+  appearance:none;cursor:pointer;border:1px solid var(--line);background:var(--obsidian-2);
+  color:var(--muted);border-radius:7px;padding:8px 0;min-width:44px;flex:1;
+  font-family:var(--display);font-weight:600;font-size:13px;transition:.13s
+}
+.pot-p:hover{border-color:var(--gold-deep);color:var(--parchment)}
+.pot-p.reached{color:var(--gold-bright);border-color:var(--gold-deep)}
+.pot-p.active{background:linear-gradient(180deg,var(--gold-bright),var(--gold));color:var(--ink);border-color:var(--gold-deep)}
+.pot-list-title{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);margin-bottom:8px}
+.pot-list{display:flex;flex-direction:column;gap:6px}
+.pot-item{
+  display:flex;gap:12px;padding:11px 13px;border:1px solid var(--line-soft);
+  border-radius:8px;background:var(--obsidian-2);opacity:.55;transition:.16s
+}
+.pot-item.on{opacity:1;border-color:var(--gold-deep);background:rgba(217,164,65,.06)}
+.pot-item-t{font-family:var(--display);font-weight:700;color:var(--gold-bright);flex:none;min-width:30px}
+.pot-item-d{font-size:13px;line-height:1.45;color:var(--parchment)}
+.pot-empty{
+  padding:18px;border:1px dashed var(--line);border-radius:9px;
+  background:var(--obsidian-2);color:var(--muted);font-size:13px;text-align:center
+}
+
+.mini-pot{
+  font-size:10px;letter-spacing:.04em;color:var(--gold-bright);font-weight:600;
+  border:1px solid var(--gold-deep);border-radius:999px;padding:1px 8px;margin-top:2px
+}
+
+/* ---------- Configuration chiffrée de l'arme ---------- */
+.weapon-config-control{
+  grid-column:1/-1;display:grid;grid-template-columns:minmax(0,1fr) auto;
+  gap:8px;align-items:center;min-width:0;padding:8px 9px;
+  border:1px solid var(--line-soft);border-radius:9px;background:rgba(11,9,16,.48)
+}
+.weapon-config-summary{
+  min-width:0;color:var(--muted);font-size:11px;line-height:1.35;
+  overflow-wrap:anywhere
+}
+.weapon-config-control.is-valid .weapon-config-summary{color:var(--gold-bright)}
+.weapon-config-open{min-height:36px;padding:7px 10px;font-size:11px;white-space:nowrap}
+.weapon-config-modal{width:min(1080px,100%);max-height:calc(100dvh - 24px)}
+.weapon-config-layout{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,.8fr);
+  gap:0;min-width:0;min-height:0;overflow-y:auto;overflow-x:hidden
+}
+#weaponConfigBody,#weaponConfigPreview,
+#gearConfigBody,#gearConfigPreview{min-width:0;padding:18px}
+#weaponConfigBody,#gearConfigBody{display:flex;flex-direction:column;gap:14px}
+#weaponConfigPreview,#gearConfigPreview{
+  border-left:1px solid var(--line);
+  background:linear-gradient(155deg,rgba(217,164,65,.07),rgba(11,9,16,.48))
+}
+.weapon-config-field{
+  display:flex;flex-direction:column;gap:6px;min-width:0
+}
+.weapon-config-field > span,
+.weapon-enchantment-title{
+  font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted)
+}
+/* `max-width` est indispensable en plus de `width` : Safari ne rétrécit pas un
+   `<select>` sous la largeur de sa plus longue option, alors que Chromium le
+   bride. Avec une perle légendaire, quatre sélecteurs de statistique aux
+   libellés longs suffisaient à élargir le corps de la modale, qui devenait
+   alors déplaçable latéralement sur iPhone. */
+.weapon-config-field input,
+.weapon-config-field select{
+  width:100%;min-width:0;max-width:100%;text-overflow:ellipsis;
+  min-height:44px;padding:9px 11px;
+  border:1px solid var(--line);border-radius:8px;background:var(--obsidian-2);
+  color:var(--parchment);font:inherit
+}
+.weapon-config-field input:focus,
+.weapon-config-field select:focus{border-color:var(--gold-bright)}
+.weapon-config-field [aria-invalid="true"]{
+  border-color:#e98d8d;box-shadow:0 0 0 1px rgba(233,141,141,.25)
+}
+.weapon-config-hint{margin:0;color:var(--muted-2);font-size:11px;line-height:1.4}
+.weapon-enchantments{
+  display:flex;flex-direction:column;gap:10px;padding-top:2px;
+  border-top:1px solid var(--line-soft)
+}
+.weapon-enchantment{
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(100px,.42fr);
+  gap:9px;min-width:0;padding:11px;border:1px solid var(--line-soft);
+  border-radius:9px;background:rgba(11,9,16,.42)
+}
+.weapon-enchantment > .weapon-enchantment-title{grid-column:1/-1}
+.weapon-enchantment-master{grid-template-columns:repeat(2,minmax(0,1fr))}
+.weapon-enchantment-master .weapon-config-field:last-child{grid-column:1/-1}
+.weapon-stats-title{
+  margin:0 0 14px;font-family:var(--display);font-size:17px;
+  letter-spacing:.04em;color:var(--gold-bright)
+}
+.weapon-stats-state{
+  margin:0;padding:13px;border:1px dashed var(--line);border-radius:9px;
+  color:var(--muted);font-size:12px;line-height:1.45
+}
+.weapon-stats-family{margin-top:15px}
+.weapon-stats-family:first-of-type{margin-top:0}
+.weapon-stats-family-title{
+  margin:0 0 8px;font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--muted)
+}
+.weapon-stat{
+  min-width:0;padding:10px 0;border-top:1px solid var(--line-soft)
+}
+.weapon-stat-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:10px;
+  color:var(--parchment);font-size:12px;font-weight:700
+}
+.weapon-stat-total{flex:none;color:var(--gold-bright)}
+.weapon-stat-details{margin-top:7px;color:var(--muted);font-size:11px}
+.weapon-stat-details summary{
+  min-height:44px;display:flex;align-items:center;cursor:pointer;
+  color:var(--gold-bright);font-weight:700
+}
+.weapon-stat-term{
+  display:flex;flex-direction:column;gap:3px;margin-top:6px;
+  color:var(--muted);font-size:11px;line-height:1.35
+}
+.weapon-stat-term-value{
+  display:flex;justify-content:space-between;gap:10px;color:var(--muted)
+}
+.weapon-stat-term-value span:last-child{flex:none;color:var(--parchment)}
+.weapon-stat-term-overlimit{color:var(--gold-bright)!important}
+.weapon-stat-provenance{overflow-wrap:anywhere;color:var(--muted-2)}
+.stat-term-group{margin-top:6px}
+.stat-term-group>summary{
+  min-height:44px;display:flex;align-items:center;
+  justify-content:space-between;gap:10px;cursor:pointer;
+  color:var(--muted);font-size:11px
+}
+.stat-term-group>summary span:last-child{flex:none;color:var(--parchment)}
+.stat-term-group .weapon-stat-term{margin-left:10px}
+.stat-term-buckets{
+  margin-top:8px;overflow-wrap:anywhere;color:var(--muted-2);font-size:11px
+}
+.gear-config-passive{
+  display:flex;flex-direction:column;gap:9px;min-width:0;padding-top:10px;
+  border-top:1px solid var(--line-soft)
+}
+.hero-stats{
+  min-width:0;padding-top:12px;border-top:1px solid var(--line-soft);
+  overflow-wrap:anywhere
+}
+.hero-stats .weapon-stats-title{font-size:15px;margin-bottom:9px}
+.hero-stats-assumption{
+  display:inline-flex;margin-bottom:10px;padding:4px 8px;border-radius:999px;
+  border:1px solid var(--gold-deep);color:var(--gold-bright);
+  background:rgba(217,164,65,.07);font-size:10px;line-height:1.3
+}
+.hero-stats-primary{
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;
+  min-width:0
+}
+.hero-stat-card{
+  min-width:0;padding:9px 7px;border:1px solid var(--gold-deep);
+  border-radius:9px;background:rgba(217,164,65,.06);text-align:center
+}
+.hero-stat-card-label{
+  display:block;color:var(--muted);font-size:9px;letter-spacing:.14em;
+  text-transform:uppercase
+}
+.hero-stat-card-value{
+  display:block;margin-top:3px;color:var(--gold-bright);font-family:var(--display);
+  font-size:15px;overflow-wrap:anywhere
+}
+.hero-stat-card-bound{
+  display:block;margin-top:2px;color:var(--muted-2);font-size:8px;
+  line-height:1.25;text-transform:uppercase
+}
+.hero-stat-card .weapon-stat-details{text-align:left}
+.hero-passives{
+  min-width:0;margin-top:15px;padding-top:12px;border-top:1px solid var(--line-soft)
+}
+.hero-passive{
+  min-width:0;padding:9px 0;border-top:1px solid var(--line-soft)
+}
+.hero-passive-head{
+  display:flex;align-items:baseline;justify-content:space-between;gap:9px;
+  color:var(--parchment);font-size:11px
+}
+.hero-passive-head span{color:var(--gold-bright);text-align:right}
+.hero-passive-text{
+  margin:6px 0 0;color:var(--muted);font-size:10px;line-height:1.45;
+  white-space:normal;overflow-wrap:anywhere
+}
+#weaponConfigError,#gearConfigError{
+  min-height:18px;margin:0;padding:0 18px;color:#e98d8d;font-size:12px
+}
+.weapon-config-conflict{
+  display:flex;flex-direction:column;gap:10px;padding:13px;
+  border:1px solid #c87979;border-radius:9px;
+  background:rgba(118,36,48,.2);color:var(--parchment);
+  font-size:12px;line-height:1.45
+}
+.weapon-config-conflict p{margin:0}
+.weapon-config-conflict-actions{
+  display:flex;flex-wrap:wrap;gap:8px
+}
+.weapon-config-actions{
+  display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap;
+  padding:14px 18px;border-top:1px solid var(--line);background:var(--panel-2)
+}
+@media(max-width:700px){
+  .weapon-config-modal{
+    width:min(100%,680px);max-height:calc(100dvh - 16px)
+  }
+  .weapon-config-layout{grid-template-columns:minmax(0,1fr)}
+  #weaponConfigPreview,#gearConfigPreview{
+    border-left:0;border-top:1px solid var(--line)
+  }
+  .weapon-config-conflict-actions{display:grid;grid-template-columns:1fr}
+  .weapon-config-conflict-actions .btn{width:100%}
+  .weapon-config-actions{display:grid;grid-template-columns:1fr}
+  .weapon-config-actions .btn{width:100%;min-height:44px;justify-content:center}
+}
+@media(max-width:420px){
+  .weapon-config-control{grid-template-columns:minmax(0,1fr)}
+  .weapon-config-open{width:100%;justify-content:center}
+  .weapon-enchantment,
+  .weapon-enchantment-master{grid-template-columns:minmax(0,1fr)}
+  .weapon-enchantment-master .weapon-config-field:last-child{grid-column:auto}
+}
+@media(pointer:coarse){
+  .gear-config-open{min-height:44px}
+}
