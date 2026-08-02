@@ -8,6 +8,7 @@ import { authMessage, sb } from "./noyau/supabase-client.js";
 import { charOf, nameOfFile } from "./metier/catalogue.js";
 import { heroStatsSection } from "./vues/stats-heros.js";
 import { badgesRow, heroDetail, weaponSlotBadge } from "./vues/fiche-heros.js";
+import { openTeamDetail } from "./vues/detail-equipe.js";
 import { MemberRosterStore, cloudRosterFromRow } from "./donnees/roster-store.js";
 import { DashboardStore } from "./donnees/suivi-store.js";
 import { LocalTeams, Store } from "./donnees/equipes-store.js";
@@ -2880,34 +2881,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
     }
     return el("div",{class:"team"},[head, heroes, hint, actions]);
   }
-
-  /* ---- Modal de détail d'une équipe (équipement complet par héros) ---- */
-  function openTeamDetail(t){
-    $("#teamTitle").textContent = t.name
-      ? t.name + " — " + (t.pseudo || "Sans pseudo")
-      : "Équipe — " + (t.pseudo || "Sans pseudo");
-    const box = $("#teamDetail");
-    box.innerHTML = "";
-    const ownEntries = sessionCourante.user ? MemberRosterStore.all(sessionCourante.user.id) : [];
-    const settings = {
-      team:t,
-      canImport:canManageTeam(t) && !!sessionCourante.user,
-      hasBuild:(charId, type)=>{
-        const entry = ownEntries.find(item => item.charId === charId);
-        return !!entry && !!type
-          && Object.prototype.hasOwnProperty.call(entry.builds, type);
-      }
-    };
-    (t.heroes||[]).forEach(h=>box.appendChild(heroDetail(h, settings)));
-    ModalStack.open($("#teamOverlay"), "#teamClose", closeTeamDetail);
-  }
-  function closeTeamDetail(){
-    ModalStack.close($("#teamOverlay"));
-  }
-  $("#teamClose").addEventListener("click", closeTeamDetail);
-  $("#teamOverlay").addEventListener("click", event => {
-    if(event.target === $("#teamOverlay")) closeTeamDetail();
-  });
 
   function miniHero(h){
     const ch = h && h.char ? charOf(h.char) : null;

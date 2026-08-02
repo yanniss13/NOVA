@@ -602,26 +602,48 @@ Un import est mort en chemin — `equippedEnumOf` dans `app.js` — attrapé par
 parties depuis longtemps, les deux dernières fonctions sous elle venaient de
 sortir, elle ne décrivait plus rien.
 
+### Lot 32 — `detail-equipe.js`, et le piège que le relevé ne voit pas
+
+Sorti avant `bossReportParticipant`, qui le contient : l'inverse aurait fait le
+travail deux fois.
+
+**Le relevé ne liste que les déclarations.** Sous `closeTeamDetail` traînaient
+quatre lignes de premier niveau qu'aucune clôture ne signale :
+
+```js
+  $("#teamClose").addEventListener("click", closeTeamDetail);
+  $("#teamOverlay").addEventListener("click", event => {
+    if(event.target === $("#teamOverlay")) closeTeamDetail();
+  });
+```
+
+Les laisser dans `app.js` l'aurait obligé à importer `closeTeamDetail`, qui n'a
+sinon aucun appelant dehors. Elles sont parties avec le module — le précédent
+existait déjà dans `editeur-arme.js`, `picker.js` et `dispos.js`, qui branchent
+tous leurs boutons au chargement. Le balisage vient d'`index.html` et les
+modules sont différés : l'élément existe quand le module s'exécute.
+
+**À retenir : relire les lignes autour de la tranche avant de couper.** Une
+clôture transitive est aveugle aux instructions de premier niveau.
+
+`openTeamDetail` sort seul ; `closeTeamDetail` et le câblage restent privés.
+
 ### Où ça s'arrête
 
-**`js/app.js` : 10 489 → 4 966 lignes**, 31 modules. `npm test` vert, exit 0,
+**`js/app.js` : 10 489 → 4 938 lignes**, 32 modules. `npm test` vert, exit 0,
 Playwright compris.
 
-Restent trois modales, toutes à clôture fermée donc extractibles sans cycle.
-**Relevé refait après le lot `fiche-heros` :**
+Restent deux modales, toutes deux à clôture fermée donc extractibles sans
+cycle. **Relevé refait après le lot `detail-equipe` :**
 
 | Racine | Symboles | Lignes | Clôture |
 |---|---|---|---|
 | `openRosterDetailFor` | 10 | 185 | `closeRosterDetail`, `favoriteRosterWeaponType`, `moveRosterDetail`, `openRosterDetailFor`, `renderRosterDetail`, `rosterDetail`, `rosterDetailOwnerLabel`, `rosterDetailWeaponSwitch`, `rosterHeroSnapshot`, `rosterWeaponLabel` |
-| `bossReportParticipant` | 5 | 87 | `bossReportParticipant`, `bossTeamBanner`, `closeTeamDetail`, `openTeamDetail`, `teamFromBossSnapshot` |
-| `openTeamDetail` | 2 | 27 | `closeTeamDetail`, `openTeamDetail` |
+| `bossReportParticipant` | 3 | 57 | `bossReportParticipant`, `bossTeamBanner`, `teamFromBossSnapshot` |
 
 **La leçon « sortir la base avant ce qui s'appuie dessus » se vérifie une
-cinquième fois :** ces racines pesaient 17, 12 et 9 symboles avant le lot, sans
-qu'une ligne de leur code ne change.
-
-⚠️ `bossReportParticipant` **contient** `openTeamDetail` : les extraire dans le
-mauvais ordre referait le travail deux fois. Sortir `openTeamDetail` d'abord.
+sixième fois :** ces racines pesaient 17, 12 et 9 symboles avant `fiche-heros`,
+sans qu'une ligne de leur code ne change.
 
 **Refais le relevé avant de commencer** : ces nombres changent à chaque
 extraction, et ce document a déjà été faux deux fois sur ce point précis.

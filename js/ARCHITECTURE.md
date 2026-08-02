@@ -88,7 +88,8 @@ version plus ancienne du site reste ouvrable.
 | `picker.js` | La modale de sélection réutilisable |
 | `stats-affichage.js` | Mise en forme des termes de stats, libellés partagés |
 | `stats-heros.js` | Le bloc de statistiques d'un héros, dans les fiches |
-| `fiche-heros.js` | La fiche d'un héros — **le noyau commun aux quatre grosses modales** |
+| `fiche-heros.js` | La fiche d'un héros — **le noyau commun aux grosses modales** |
+| `detail-equipe.js` | La modale de détail d'une équipe : l'équipement héros par héros |
 | `editeur-arme.js` | La modale de configuration d'une arme |
 | `editeur-equipement.js` | La modale de configuration d'une pièce d'équipement |
 | `dispos.js` | La vue des disponibilités hebdomadaires |
@@ -134,26 +135,31 @@ Toujours `npm test` en entier.
 
 ## Si tu veux découper davantage
 
-`app.js` n'est pas fini : il reste ~4 950 lignes, soit le Builder, le Roster,
+`app.js` n'est pas fini : il reste ~4 940 lignes, soit le Builder, le Roster,
 les sessions de boss, l'authentification et le démarrage.
 
 **Les modales encore dedans**, toutes à clôture fermée — donc extractibles sans
-cycle. Relevé refait après le lot `fiche-heros` :
+cycle. Relevé refait après le lot `detail-equipe` :
 
 | Racine | Symboles | Lignes |
 |---|---|---|
 | `openRosterDetailFor` | 10 | 185 |
-| `bossReportParticipant` | 5 | 87 |
-| `openTeamDetail` | 2 | 27 |
+| `bossReportParticipant` | 3 | 57 |
 
-**La démonstration est faite une fois de plus :** ces trois racines pesaient 17,
-12 et 9 symboles avant que `fiche-heros.js` ne sorte. Elles partageaient toutes
-le même noyau — la fiche d'un héros — et le sortir en premier a fait tomber
-leurs clôtures de moitié sans toucher à une ligne de leur code.
+**La démonstration est faite une fois de plus :** ces racines pesaient 17, 12 et
+9 symboles avant que `fiche-heros.js` ne sorte, puis `detail-equipe.js`. Elles
+partageaient le même noyau — la fiche d'un héros, la modale d'équipe — et
+sortir la base d'abord a fait tomber leurs clôtures sans toucher à une ligne
+de leur code.
 
 C'est l'ordre qui a fonctionné à chaque fois : `dom.js` avant les vues, le
 modèle avant les stores, `stats-heros.js` puis `fiche-heros.js` avant les
 modales qui les affichent.
+
+⚠️ **Une clôture ne voit que les déclarations.** Le détail d'équipe traînait
+quatre lignes de branchement d'événements au premier niveau (`$("#teamClose")
+.addEventListener(…)`) qu'aucun relevé ne signale. Relis toujours les lignes
+autour de la tranche avant de couper.
 
 ⚠️ **Ces chiffres bougent à chaque extraction.** Refais le relevé plutôt que de
 les croire — c'est le seul conseil de cette page qui périme.
