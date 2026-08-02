@@ -693,10 +693,84 @@ remonte dans les briques de rendu partagees.
 doit sortir ENSEMBLE, pas ou chaque morceau doit atterrir. Le second point se
 tranche en comptant les appelants hors du domaine.
 
+### Lots 35 a 38 — le verrou de la navigation, puis 1 244 lignes
+
+Apres les modales, plus aucune cloture fermee : `submitBossReport` en tirait
+193 symboles, tout etait transitivement connecte. **Le releve par cloture ne
+sert plus ; il faut couper par frontiere de domaine.**
+
+L'outil qui a servi (`frontiere.py`, meme methode que le graphe) : pour une ou
+plusieurs tranches de lignes, il liste ce qui SORT (declarations de la tranche
+citees dehors → a exporter) et ce qui ENTRE (declarations du dehors citees
+dedans → a importer). Une tranche a zero entrant est extractible telle quelle.
+
+⚠️ **Son piege :** une declaration situee en fin de tranche s'etend jusqu'a la
+declaration suivante, donc au-dela de la borne. Le bloc « Demarrage » d'app.js
+etant fait d'instructions nues, il etait avale, et `initAuth` / `renderBuilder`
+apparaissaient comme des entrants fantomes a chaque mesure. Verifier chaque
+entrant au `grep` avant de le croire.
+
+**La zone boss affichait 1 575 lignes pour trois sorties — et sept entrants.**
+Sept petits symboles bloquaient un tiers du fichier. Les lots 35 a 37 les ont
+retires un par un :
+
+| Lot | Module | Debloque |
+|---|---|---|
+| 35 | `closeModalAfterAsyncRefresh` → `vues/modal-stack.js` | 1 entrant |
+| 36 | `vues/navigation.js` — **registre de vues** | `showView`, `mainTabs` |
+| 37 | `vues/modale-auth.js` (36 lignes) | `openAuth` |
+| 38 | `vues/boss-sessions.js` (1 282 lignes) | — |
+
+#### Le registre, la piece maitresse
+
+`showView` citait chaque vue par son nom, donc la navigation devait importer
+toutes les vues ; et chaque vue voulait appeler `showView`. **Cycle franc :
+aucune des deux ne pouvait sortir en premier.**
+
+`enregistrerVue(nom, rendu)` renverse la dependance. La navigation ne connait
+plus personne. Chaque vue s'annonce au chargement.
+
+Le contrat : un rendu enregistre, appele sans argument, renvoie ce que
+`showView` doit renvoyer. Les trois vues qui renvoyaient `true` quoi qu'il
+arrive enregistrent une enveloppe explicite — la connaissance reste chez
+l'appelant. `tests/availability.test.js` verifiait ce cablage en cherchant
+`if(name==="availability")` dans la source ; il verifie desormais
+l'enregistrement. Meme invariant, aucune assertion affaiblie.
+
+**Garder ce motif en tete : c'est probablement la sortie pour le Builder.**
+
+#### Ce qui ne descend PAS
+
+L'auth complete etait tentante (204 lignes) mais sa frontiere montre **dix
+entrants**, dont `RealtimeSync` et les cinq fonctions de rendu : recharger
+toutes les vues apres connexion, c'est de la composition. Seul le CONTENANT de
+la fenetre est sorti. Le reste appartient a app.js et doit y rester.
+
+De meme, l'etat de la vue boss n'est pas alle dans `etat/` : `bossApplyIntent`
+appelle `closeBossReport` et la vue lit `bossViewState`. La separation
+etat/vue aurait ete circulaire. L'etat vit en tete de son module.
+
+#### Un test rouge qui n'etait pas une regression
+
+`availability.playwright.js` est devenu rouge en cours de chantier. Verifie sur
+HEAD sans aucune modification : **il echouait deja**. Le test semait la session
+de boss avec la semaine de DISPOS (lundi 0h) alors que l'application calcule la
+semaine de BOSS (lundi 9h, `currentBossWeek`). Les deux divergent chaque lundi
+entre 0h et 9h — le test etait donc rouge neuf heures par semaine depuis
+toujours. Corrige en lot separe.
+
+**Reflexe : avant d'accuser son propre travail, rejouer le test sur HEAD.**
+
 ### Où ça s'arrête
 
-**`js/app.js` : 10 489 → 4 697 lignes**, 34 modules. `npm test` vert, exit 0,
+**`js/app.js` : 10 489 → 3 382 lignes**, 37 modules. `npm test` vert, exit 0,
 Playwright compris.
+
+Le detail de ce qui reste, et par ou attaquer, est desormais tenu a jour dans
+[js/ARCHITECTURE.md](../../../js/ARCHITECTURE.md) — section « Si tu veux
+decouper davantage ». **Le prochain lot evident est « Mon suivi » : 343 lignes,
+une seule sortie, un seul verrou (`resetTeamDraft`). Et ce verrou tombe avec le
+Builder, derniere base commune du fichier.**
 
 **Les quatre grosses modales sont toutes sorties.** Ce qui reste dans
 `app.js` : le Builder, l'Analyse, les sessions de boss, l'authentification et
