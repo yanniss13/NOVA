@@ -214,8 +214,25 @@ import { el } from "./dom.js";
     return details;
   }
 
+  const BUILD_STAT_FAMILY_LABELS = {
+    main:"PV · ATK · DEF",
+    additional:"Statistiques supplémentaires",
+    damage:"Modificateurs de dégâts",
+    special:"Statistiques spéciales",
+    elemental:"Statistiques élémentaires"
+  };
+
+  function buildStatsTitle(subject, result){
+    const missing = Array.isArray(result.uncovered) ? result.uncovered : [];
+    if(missing.includes(subject.passiveKey)){
+      return "Apport " + subject.of + " hors passif — borne inférieure";
+    }
+    if(missing.length) return "Apport " + subject.of + " — borne inférieure";
+    return "Apport " + subject.of + " — calcul partiel";
+  }
+
 export {
-  BUILD_BUCKET_LABELS,
+  buildStatsTitle,  BUILD_STAT_FAMILY_LABELS,  BUILD_BUCKET_LABELS,
   formatBuildStatValue,
   mainRateValueText,
   statTermsDetails

@@ -24,7 +24,7 @@ const CORE_ASSETS = [
   "./", "./index.html",
   "./data.js", "./stats-build.js", "./potentiels.js", "./armures-liees.js",
   "./personnages-meta.js", "./supabase-config.js",
-  "./js/constantes.js", "./js/session.js", "./js/brouillon-equipe.js", "./js/supabase-client.js", "./js/outils.js", "./js/dom.js", "./js/equipement.js", "./js/roster-profils.js", "./js/toast.js", "./js/perles.js", "./js/build-config.js", "./js/stats-calcul.js", "./js/armes.js", "./js/dispos-logique.js", "./js/modal-stack.js", "./js/picker.js", "./js/boss-logique.js",
+  "./js/constantes.js", "./js/session.js", "./js/brouillon-equipe.js", "./js/supabase-client.js", "./js/outils.js", "./js/dom.js", "./js/equipement.js", "./js/roster-profils.js", "./js/toast.js", "./js/perles.js", "./js/build-config.js", "./js/stats-calcul.js", "./js/armes.js", "./js/dispos-logique.js", "./js/modal-stack.js", "./js/editeur-arme.js", "./js/picker.js", "./js/boss-logique.js",
   "./js/boss-store.js", "./js/dispos.js", "./js/stats-affichage.js", "./js/app.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png"
