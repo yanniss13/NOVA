@@ -21,7 +21,7 @@ projet, et elle est vérifiée par un test.
 | `metier/` | Logique pure : calculs, règles du jeu. **Ni DOM ni réseau.** | `noyau`, `etat` |
 | `donnees/` | Lectures et écritures Supabase. **Aucun rendu.** | `noyau`, `etat`, `metier` |
 | `vues/` | Tout ce qui touche au DOM | toutes les précédentes |
-| `app.js` | Le reste, pas encore découpé : les vues qui n'ont pas encore été sorties, et le démarrage | tout |
+| `app.js` | **Le point d'assemblage** : session, enregistrement des vues, migration, démarrage. 356 lignes. | tout |
 
 ## Où trouver quoi
 
@@ -82,22 +82,32 @@ version plus ancienne du site reste ouvrable.
 
 | Fichier | Contenu |
 |---|---|
+| `navigation.js` | Les onglets et **le registre des vues** |
 | `elements.js` | Briques de rendu partagées : `gearSlot`, `renderBonus`, `rosterWeaponLabel` |
 | `toast.js` | Le bandeau de notification |
-| `modal-stack.js` | La pile de modales : ouverture, fermeture, restitution du focus, `closeModalAfterAsyncRefresh` |
+| `modal-stack.js` | La pile de modales : ouverture, fermeture, restitution du focus |
+| `modale-auth.js` | La fenêtre de connexion (le contenant seul) |
 | `picker.js` | La modale de sélection réutilisable |
 | `stats-affichage.js` | Mise en forme des termes de stats, libellés partagés |
-| `stats-heros.js` | Le bloc de statistiques d'un héros, dans les fiches |
-| `fiche-heros.js` | La fiche d'un héros — **le noyau commun aux grosses modales** |
-| `detail-equipe.js` | La modale de détail d'une équipe : l'équipement héros par héros |
-| `equipe-boss.js` | L'équipe d'un membre dans une session de boss : bandeau et participant |
-| `detail-roster.js` | La modale de détail d'un personnage consulté chez un autre membre |
+| `stats-heros.js` | Le bloc de statistiques d'un héros |
 | `editeur-arme.js` | La modale de configuration d'une arme |
-| `editeur-equipement.js` | La modale de configuration d'une pièce d'équipement |
+| `editeur-equipement.js` | La modale de configuration d'une pièce |
+| `edition-build.js` | **Les widgets d'édition partagés** par le Builder et l'éditeur du roster |
 | `dispos.js` | La vue des disponibilités hebdomadaires |
-| `navigation.js` | Les onglets et **le registre des vues** — la seule façon de changer d'onglet |
-| `modale-auth.js` | La fenêtre de connexion (le contenant seul) |
-| `boss-sessions.js` | L'onglet « Sessions de boss » : groupes, inscriptions, rapports, archive |
+| `fiche-heros.js` | La fiche d'un héros — **le noyau commun aux modales** |
+| `detail-equipe.js` | La modale de détail d'une équipe |
+| `equipe-boss.js` | L'équipe d'un membre dans une session de boss |
+| `detail-roster.js` | La modale de détail d'un personnage d'un autre membre |
+| `boss-sessions.js` | L'onglet Sessions de boss : groupes, rapports, archive |
+| `builder.js` | L'onglet Builder : composer et équiper une équipe |
+| `roster-membres.js` | L'onglet Roster **des personnages** d'un membre |
+| `analyse.js` | L'onglet Analyse : les DPS de la confrérie par élément |
+| `roster-equipes.js` | L'onglet Roster **des équipes** |
+| `suivi.js` | « Mon suivi » : le tableau de bord personnel |
+| `synchro-temps-reel.js` | Le nuage change → les vues suivent. **Dernier de la couche.** |
+
+⚠️ `roster-membres.js` montre les **personnages** d'un membre, `roster-equipes.js`
+ses **équipes**. Les deux onglets s'appellent « roster » dans l'interface.
 
 **Un cas instructif :** `weaponTermLabel` et `gearTermLabel` vivaient dans les
 deux éditeurs. Quand `stats-heros.js` en a eu besoin, le contrôle des couches a
@@ -145,57 +155,26 @@ jamais besoin d'être exporté pour être testé. Un export que personne n'impor
 est donc mort sans ambiguïté. Il a immédiatement trouvé `ROLES` (trois rôles),
 resté là après le passage à `WSLOT_ROLES` (cinq, « vocabulaire plus fin »).
 
-## Si tu veux découper davantage
+## Ce qu'il reste dans `app.js`
 
-`app.js` est passé de **10 489 à 3 382 lignes**. Ce qui reste :
+**10 489 → 356 lignes.** Le découpage est terminé : `app.js` n'est plus une vue,
+c'est le **point d'assemblage**. Quatre choses, et rien d'autre :
 
-| Zone | Lignes | Frontière | Bloqué par |
-|---|---|---|---|
-| Roster des membres | 819 | 2 sorties, 8 entrées | les aides du Builder (l. 246-670) |
-| Builder | 708 | 7 sorties, 19 entrées | ses propres aides, éparpillées en tête |
-| Analyse (+ DPS dérivés) | ~530 | — | — |
-| **Mon suivi** | **343** | **1 sortie, 1 entrée** | **`resetTeamDraft` seul** |
-| Équipes, Export/Import, auth, démarrage | ~980 | — | — |
+| Bloc | Lignes | Pourquoi il reste ici |
+|---|---|---|
+| Session Supabase | 182 | Se connecter recharge **toutes** les vues. C'est de la composition par définition. |
+| Enregistrement des vues | 13 | La liste des sept onglets du site. Le seul endroit qui les connaît tous. |
+| Export / Import local | 89 | Migrer les données locales touche l'auth **et** les rendus. |
+| Démarrage | 12 | La bannière de données, puis `renderBuilder()` et `initAuth()`. |
 
-**Le prochain lot évident est « Mon suivi » : une seule sortie
-(`renderDashboardView`), un seul verrou (`resetTeamDraft`).**
+**Ne redécoupe pas ces blocs.** Chacun a été mesuré : leur frontière fait
+entrer dix symboles ou plus, tous des rendus. Les descendre dans une couche y
+traînerait le reste du site. Un point d'assemblage doit connaître ses pièces —
+c'est son travail, pas un défaut.
 
-Et ce verrou est le même que celui qui bloquait les sessions de boss :
-`resetTeamDraft` appelle `renderBuilder`, donc il ne peut pas descendre dans
-`etat/`. **Sortir le Builder débloque tout le reste d'un coup** — c'est lui, la
-dernière base commune.
-
-⚠️ Attention : le Builder ne tient pas dans sa bannière. Une vingtaine de ses
-aides (`emptyDraft`, `applyGearChange`, `builderWeaponSwitcher`,
-`resetBuilderRosterBaselines`…) vivent **lignes 246 à 670**, loin au-dessus.
-Le relevé de frontière les montre ; la lecture par bannière, non.
-
-### La leçon qui s'est vérifiée sept fois
-
-Les modales pesaient 17, 12, 9 et 7 symboles ; les sessions de boss,
-1 575 lignes. À chaque fois, **sortir la base commune d'abord** a fait tomber
-les clôtures sans toucher une ligne du code qui s'appuyait dessus.
-
-Et **une clôture dit ce qui sort ENSEMBLE, pas où chaque morceau atterrit.**
-Huit symboles tirés par ces extractions ne devaient pas suivre la vue et sont
-descendus d'une couche : `authMessage`, `canManageTeam`, `teamFromBossSnapshot`,
-`favoriteRosterWeaponType`, `rosterHeroSnapshot`, `rosterWeaponLabel`,
-`closeModalAfterAsyncRefresh`, `bossStatCell`. Le signal qui tranche :
-**compter les appelants hors du domaine**.
-
-### Quand deux modules se veulent l'un l'autre : le registre
-
-`showView` citait chaque vue, donc la navigation importait tout le monde ; et
-chaque vue voulait appeler `showView`. Aucune ne pouvait sortir en premier.
-
-`vues/navigation.js` renverse la dépendance : il ne connaît personne, chaque
-vue s'annonce au chargement par `enregistrerVue(nom, rendu)`. C'est ce qui a
-débloqué les 1 575 lignes des sessions de boss. **Garde ce motif en tête pour
-le Builder** — c'est probablement la même sortie.
-
-⚠️ **Une clôture ne voit que les déclarations.** Trois modales traînaient des
-lignes de câblage d'événements au premier niveau (`$("#x").addEventListener…`)
-qu'aucun relevé ne signale. Relis toujours les lignes autour de la tranche.
+Les deux plus gros modules restants sont `vues/boss-sessions.js` (1 282) et
+`metier/stats-calcul.js` (1 119). Si l'un devient pénible, `boss-sessions.js`
+se coupe en trois : ses deux modales, une fois `bossViewState` sorti.
 
 ## La méthode
 

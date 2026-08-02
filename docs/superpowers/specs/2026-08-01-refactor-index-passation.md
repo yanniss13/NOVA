@@ -761,10 +761,67 @@ toujours. Corrige en lot separe.
 
 **Reflexe : avant d'accuser son propre travail, rejouer le test sur HEAD.**
 
+### Lots 39 a 46 — le Builder tombe, et tout le reste avec
+
+Le Builder etait le dernier verrou : `resetTeamDraft` bloquait « Mon suivi »,
+ses aides bloquaient le Roster des membres. Mais sa banniere mentait — une
+vingtaine de ses declarations vivaient sept cents lignes plus haut.
+
+**L'outil qui a debloque ca : un releve de frontiere sur les SYMBOLES et non
+sur les lignes** (`frontiere_noms.py`). On part des declarations d'une
+banniere, on ajoute les entrants, on remesure, et on s'arrete quand la
+frontiere est vide. Trois tours ont suffi : 18 entrants, puis 4, puis 0.
+
+Ce releve a aussi montre que **six des onze exports du Builder etaient en fait
+des widgets partages avec l'editeur du roster**. Sortis d'abord
+(`edition-build.js`), ils ont fait tomber le Builder a zero entrant et le
+Roster des membres de huit a zero.
+
+| Lot | Module | Lignes | app.js apres |
+|---|---|---|---|
+| 39 | `vues/edition-build.js` | 285 | 3 150 |
+| 40 | `vues/builder.js` | 900 | 2 335 |
+| 41 | `vues/suivi.js` | 370 | 1 981 |
+| 42 | `vues/roster-membres.js` | 887 | 1 152 |
+| 43 | `vues/analyse.js` | 358 | 803 |
+| 44 | `vues/roster-equipes.js` | 197 | 614 |
+| 45 | l'editeur d'equipement recupere sa sauvegarde | — | 508 |
+| 46 | `vues/synchro-temps-reel.js` | 155 | **356** |
+
+#### Le controle des couches a tranche deux fois
+
+`builder.js` puis `synchro-temps-reel.js` ont ete refuses au premier
+rangement : tous deux importaient un module declare apres eux. Le test avait
+raison les deux fois. Une vue de haut niveau se declare APRES les briques
+qu'elle assemble, et `synchro-temps-reel.js`, qui appelle les sept vues, est
+forcement le dernier de la couche.
+
+#### Le garde-fou des exports orphelins a servi
+
+Au lot 45, ramener la sauvegarde de l'editeur d'equipement dans son module a
+rendu trois de ses exports inutiles. Le controle ajoute au debut de ce
+chantier les a signales immediatement. `editeur-equipement.js` n'expose plus
+que `openGearConfigEditor`.
+
+#### Un garde inutile depuis toujours
+
+`updateAccountUi` testait `typeof pseudoInput !== "undefined"`. Sur un `const`
+en zone morte, `typeof` LEVE au lieu de renvoyer « undefined » : ce garde n'a
+jamais protege de rien. `pseudoInput` venant d'un module, il est desormais
+initialise avant `app.js`, et la question ne se pose plus. Retire.
+
 ### Où ça s'arrête
 
-**`js/app.js` : 10 489 → 3 382 lignes**, 37 modules. `npm test` vert, exit 0,
-Playwright compris.
+**`js/app.js` : 10 489 → 356 lignes**, 44 modules, 11 783 lignes au total.
+`npm test` vert, exit 0, Playwright compris.
+
+**Le decoupage est termine.** `app.js` n'est plus une vue : c'est le point
+d'assemblage. Session Supabase, enregistrement des sept vues, migration des
+donnees locales, demarrage. Rien d'autre.
+
+⚠️ **Ne redecoupe pas ces quatre blocs.** Chacun a ete mesure : leur frontiere
+fait entrer dix symboles ou plus, tous des rendus. Un point d'assemblage doit
+connaitre ses pieces — c'est son travail, pas un defaut.
 
 Le detail de ce qui reste, et par ou attaquer, est desormais tenu a jour dans
 [js/ARCHITECTURE.md](../../../js/ARCHITECTURE.md) — section « Si tu veux
