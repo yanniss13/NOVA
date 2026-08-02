@@ -576,13 +576,24 @@ presque toujours le rangement qui a tort.**
 **`js/app.js` : 10 489 → 5 139 lignes**, 30 modules.
 
 Restent quatre grosses modales, toutes à clôture fermée donc extractibles sans
-cycle : `openRosterDetailFor` (~600 lignes), `bossReportParticipant` (~500),
-`openTeamDetail` (~450), `heroDetail` (~420).
+cycle. **Relevé refait après le lot `stats-heros` — les chiffres précédents
+étaient déjà périmés :**
 
-Elles partagent un **noyau commun de 19 symboles** (`heroDetail`, `badgesRow`,
-`weaponSlotBadge`, `authMessage`…). Sortir ce noyau d'abord fait tomber les
-trois autres sous dix symboles chacune. C'est exactement l'ordre qui a marché
-à chaque fois.
+| Racine | Symboles | Lignes |
+|---|---|---|
+| `openRosterDetailFor` | 17 | 356 |
+| `bossReportParticipant` | 12 | 258 |
+| `openTeamDetail` | 9 | 198 |
+| **`heroDetail`** | **7** | **171** |
+
+`heroDetail` **est** le noyau commun aux quatre — `authMessage`, `badgesRow`,
+`canManageTeam`, `equipLine`, `heroDetail`, `importTeamHeroToRoster`,
+`weaponSlotBadge`. Le sortir en premier fait tomber les trois autres à 10, 5
+et 2 symboles propres. C'est exactement l'ordre qui a marché à chaque fois.
+
+**Refais le relevé avant de commencer** : ces nombres changent à chaque
+extraction, et ce document a déjà été faux deux fois sur ce point précis.
+
 ## Pourquoi ce refactor
 
 `index.html` fait **12 701 lignes pour 500 Ko**. Un seul fichier porte le style,

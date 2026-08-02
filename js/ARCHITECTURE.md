@@ -136,21 +136,27 @@ Toujours `npm test` en entier.
 `app.js` n'est pas fini : il reste ~5 100 lignes, soit le Builder, le Roster,
 les sessions de boss, l'authentification et le démarrage.
 
-**Les quatre plus gros morceaux encore dedans**, tous des modales, tous avec
-une clôture fermée — donc extractibles sans cycle :
+**Les quatre plus gros morceaux encore dedans**, tous des modales, tous à
+clôture fermée — donc extractibles sans cycle. Relevé après le lot
+`stats-heros` :
 
-| Racine | Lignes | Symboles |
+| Racine | Symboles | Lignes |
 |---|---|---|
-| `openRosterDetailFor` | ~600 | 29 |
-| `bossReportParticipant` | ~500 | 24 |
-| `openTeamDetail` | ~450 | 21 |
-| `heroDetail` | ~420 | 19 |
+| `openRosterDetailFor` | 17 | 356 |
+| `bossReportParticipant` | 12 | 258 |
+| `openTeamDetail` | 9 | 198 |
+| **`heroDetail`** | **7** | **171** |
 
-Ils partagent un noyau commun de 19 symboles (`heroDetail`, `badgesRow`,
-`weaponSlotBadge`, `authMessage`…). **Sortir ce noyau d'abord** : chacun des
-trois autres tombera alors à moins de dix symboles. C'est l'ordre qui a
-fonctionné à chaque fois — `dom.js` avant les vues, le modèle avant les stores,
-`stats-heros.js` avant les fiches.
+`heroDetail` **est** le noyau commun aux quatre : `authMessage`, `badgesRow`,
+`canManageTeam`, `equipLine`, `heroDetail`, `importTeamHeroToRoster`,
+`weaponSlotBadge`. **Le sortir en premier** — les trois autres tomberont
+respectivement à 10, 5 et 2 symboles propres.
+
+C'est l'ordre qui a fonctionné à chaque fois : `dom.js` avant les vues, le
+modèle avant les stores, `stats-heros.js` avant les fiches.
+
+⚠️ **Ces chiffres bougent à chaque extraction.** Refais le relevé plutôt que de
+les croire — c'est le seul conseil de cette page qui périme.
 
 ## La méthode
 
