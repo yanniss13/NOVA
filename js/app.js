@@ -11,6 +11,18 @@ import {
   openBossTeamPicker,
   renderBossView
 } from "./vues/boss-sessions.js";
+import {
+  activateHeroBuild,
+  applyCharacterChange,
+  applyGearChange,
+  applyWeaponChange,
+  equipmentSetButton,
+  findGearConfigButton,
+  gearConfigurableSlot,
+  rosterEntryWithActiveHeroBuild,
+  storeActiveHeroBuild,
+  weaponConfigControl
+} from "./vues/edition-build.js";
 import { canManageTeam, sessionCourante } from "./etat/session.js";
 import { brouillonEquipe } from "./etat/brouillon-equipe.js";
 import { authMessage, sb } from "./noyau/supabase-client.js";
@@ -30,28 +42,22 @@ import { LocalTeams, Store } from "./donnees/equipes-store.js";
 import {
   compatibleWeaponGroups,
   favoriteRosterWeaponType,
-  normalizeBuildFields,
   normalizeHero,
   normalizePotentiel,
-  normalizeRosterBuild,
   normalizeRosterCharacter,
   normalizeTeam,
   normalizeTeamName,
-  normalizeWeaponConfig,
   rosterHeroSnapshot,
   teamBuildSnapshot
 } from "./metier/equipe-modele.js";
 import {
   closeGearConfigEditor,
   gearConfigEditorState,
-  openGearConfigEditor,
   renderGearConfigEditor
 } from "./vues/editeur-equipement.js";
 import { gearSlot, renderBonus, rosterWeaponLabel } from "./vues/elements.js";
 import {
-  WEAPON_RARITY_LABELS,
   closeWeaponConfigEditor,
-  openWeaponConfigEditor,
   weaponDefaultGradeGameId
 } from "./vues/editeur-arme.js";
 
@@ -59,18 +65,10 @@ import {
   BUILD_GEAR,
   BUILD_GEAR_SETS,
   buildGearDefinition,
-  buildWeaponGrade,
   gearConfigStatus,
-  gearEnchantmentChoiceStatus,
-  weaponConfigStatus
+  gearEnchantmentChoiceStatus
 } from "./metier/build-config.js";
-import {
-  isLinkedArmorCompatible,
-  isWeaponCompatible,
-  linkedArmorsOf,
-  weaponFolderOf,
-  weaponTypesOf
-} from "./metier/armes.js";
+import { linkedArmorsOf, weaponFolderOf, weaponTypesOf } from "./metier/armes.js";
 
 import { isInteger, jsonCopy, owns } from "./noyau/outils.js";
 
@@ -80,11 +78,9 @@ import { refreshRosterProfiles } from "./donnees/roster-profils.js";
 import { toast } from "./vues/toast.js";
 import {
   ARMOR_SET_SLOTS,
-  armorSetsFrom,
   emptyArmor,
   emptyJewel,
-  emptyPot,
-  jewelSetsFrom
+  emptyPot
 } from "./metier/equipement.js";
 import {
   DATA,
@@ -208,87 +204,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
    * uniquement ce mode et le branchement de ces seaux.
    */
 
-  /* Libellé de la provenance d'un terme, indépendant de son opération. C'est
-     lui qui réunit les pièces sous « Équipement » et qui donne un nom aux taux
-     principaux, dont le libellé historique « Application du taux » était le
-     même pour des dizaines de lignes. Renvoie null quand la provenance n'est
-     pas regroupée : l'appelant garde alors son libellé spécifique. */
-  /* La valeur affichée diffère réellement d'un appelant à l'autre : le panneau
-     d'arme met le libellé complet à droite — c'est la chaîne exacte assertie
-     par tests/potentiel-commun.playwright.js — là où la fiche du héros n'y met
-     que le facteur. D'où termValue plutôt qu'une règle unique. */
-
-  function weaponConfigSummary(file, config){
-    const status = weaponConfigStatus(file, config);
-    if(status === "unavailable") return "Données chiffrées indisponibles";
-    if(status !== "valid") return "Configuration à compléter";
-    const grade = buildWeaponGrade(file, config.gradeGameId);
-    const rarity = WEAPON_RARITY_LABELS[grade.rarity] || grade.rarity;
-    const parts = [
-      "Configurée",
-      rarity,
-      "Nv. "+config.level
-    ];
-    if(grade.overlimit && Array.isArray(grade.overlimit.levels)){
-      parts.push("Outrepassement "+config.overlimit);
-    }
-    return parts.join(" · ");
-  }
-
-  /* Le titre dit ce que le total vaut vraiment. `uncovered` non vide signifie
-     qu'une part existante n'est pas calculee — les 567 niveaux de passif
-     d'arme — donc le total est une borne inferieure, pas un partiel qu'on
-     completerait plus tard. Ne jamais annoncer un total complet dans ce cas. */
-
-  function weaponConfigControl(context){
-    if(!context.weaponFile) return null;
-    const status = weaponConfigStatus(context.weaponFile, context.config);
-    const button = el("button",{
-      class:"btn weapon-config-open",
-      type:"button",
-      text:status === "valid" ? "Modifier la configuration" : "Configurer l’arme",
-      onclick:()=>openWeaponConfigEditor(context, button)
-    });
-    if(status === "unavailable") button.disabled = true;
-    return el("div",{
-      class:"weapon-config-control"+(status === "valid" ? " is-valid" : "")
-    },[
-      el("span",{
-        class:"weapon-config-summary",
-        text:weaponConfigSummary(context.weaponFile, context.config)
-      }),
-      button
-    ]);
-  }
-
-  function gearConfigSummary(file, config){
-    const status = gearConfigStatus(file, config);
-    if(status === "unavailable") return "Données indisponibles";
-    if(status !== "valid") return "Configurer";
-    return "Chiffrée · Nv. "+config.level+" · Renf. +"+config.reinforce;
-  }
-
-  function gearConfigControl(context){
-    if(!context.file) return null;
-    const status = gearConfigStatus(context.file, context.config);
-    const summary = gearConfigSummary(context.file, context.config);
-    const button = el("button",{
-      class:"gear-config-open"+(status === "valid" ? " is-valid" : ""),
-      type:"button",
-      dataset:{slot:context.slotKey},
-      text:summary,
-      title:status === "unavailable"
-        ? "Données chiffrées indisponibles"
-        : "Configurer "+context.label.toLowerCase(),
-      "aria-label":status === "valid"
-        ? "Modifier la configuration chiffrée — "+context.label
-        : "Configurer "+context.label,
-      onclick:()=>openGearConfigEditor(context, button)
-    });
-    if(status === "unavailable") button.disabled = true;
-    return button;
-  }
-
   function gearConfigFirstInvalidSelector(file, draft){
     const definition = buildGearDefinition(file);
     if(!definition) return ".gear-config-level";
@@ -348,74 +263,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
     if(event.target === $("#gearConfigOverlay")) closeGearConfigEditor();
   });
 
-  function applyWeaponChange(hero, nextFile){
-    const source = hero && typeof hero === "object" ? hero : {};
-    const changed = source.weapon !== nextFile;
-    return Object.assign({}, jsonCopy(source), {
-      weapon:nextFile || null,
-      weaponConfig:changed ? null : normalizeWeaponConfig(nextFile, source.weaponConfig)
-    });
-  }
-  function applyGearChange(target, kind, slot, nextFile){
-    const configKey = kind + "Config";
-    if(!target[kind] || typeof target[kind] !== "object"){
-      target[kind] = kind === "armor" ? emptyArmor() : emptyJewel();
-    }
-    if(!target[configKey] || typeof target[configKey] !== "object"){
-      target[configKey] = {};
-    }
-    if(target[kind][slot] !== nextFile){
-      delete target[configKey][slot];
-    }
-    target[kind][slot] = nextFile || null;
-    return target;
-  }
-  function storeActiveHeroBuild(hero){
-    if(!hero || !hero.char) return hero;
-    const type = weaponFolderOf(hero.weapon) || hero.activeWeaponType;
-    if(!weaponTypesOf(hero.char).includes(type)) return hero;
-    if(!hero.rosterBuilds || typeof hero.rosterBuilds !== "object"
-      || Array.isArray(hero.rosterBuilds)){
-      hero.rosterBuilds = {};
-    }
-    hero.rosterBuilds[type] = teamBuildSnapshot(
-      normalizeBuildFields(hero.char, type, hero)
-    );
-    hero.activeWeaponType = type;
-    return hero;
-  }
-  function activateHeroBuild(hero, weaponType){
-    if(!hero || !weaponTypesOf(hero.char).includes(weaponType)) return hero;
-    storeActiveHeroBuild(hero);
-    const target = normalizeBuildFields(
-      hero.char,
-      weaponType,
-      hero.rosterBuilds && hero.rosterBuilds[weaponType]
-    );
-    Object.assign(hero, teamBuildSnapshot(target), {
-      activeWeaponType:weaponType
-    });
-    return hero;
-  }
-  function applyCharacterChange(hero, nextChar){
-    const next = jsonCopy(normalizeHero(hero));
-    if(next.char === nextChar) return next;
-    next.char = nextChar || null;
-    next.rosterBuilds = {};
-    next.activeWeaponType = null;
-    if(!isWeaponCompatible(next.char, next.weapon)){
-      next.weapon = null;
-      next.weaponConfig = null;
-    }
-    if(!isLinkedArmorCompatible(
-      next.char,
-      next.armor && next.armor[LINKED_ARMOR_SLOT]
-    )){
-      next.armor[LINKED_ARMOR_SLOT] = null;
-      delete next.armorConfig[LINKED_ARMOR_SLOT];
-    }
-    return normalizeHero(next);
-  }
   const emptyRosterBuild = () => ({
     weapon:null,
     weaponConfig:null,
@@ -426,24 +273,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
     note:"",
     favorite:false
   });
-  function rosterEntryWithActiveHeroBuild(existing, hero, ownerId){
-    const type = hero.activeWeaponType || weaponFolderOf(hero.weapon);
-    const next = normalizeRosterCharacter(existing || {
-      owner:ownerId,
-      charId:hero.char,
-      potentialTier:0,
-      builds:{}
-    });
-    const favorite = !!(
-      next.builds[type] && next.builds[type].favorite
-    );
-    next.potentialTier = normalizePotentiel(hero.potentiel).tier;
-    next.builds[type] = Object.assign(
-      normalizeRosterBuild(hero.char, type, hero),
-      { favorite }
-    );
-    return next;
-  }
   function setFavoriteRosterBuild(entry, weaponType){
     const normalized = normalizeRosterCharacter(entry);
     if(!normalized
@@ -1343,46 +1172,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
     });
   }
 
-  /* Un clic équipe les 4 emplacements universels d'un set. L'armure liée n'est
-     jamais touchée : elle dépend du personnage, pas du set. */
-  function openEquipmentSetPicker(config){
-    const sets = config.sets;
-    if(!sets.length){
-      toast("Aucun set complet dans les données actuelles.", true);
-      return;
-    }
-    Picker.open({
-      title:config.title,
-      allowNone:false,
-      items:sets.map(set => ({
-        value:set.name,
-        name:set.name,
-        file:set.pieces[config.thumbSlot]
-      })),
-      emptyHint:"Aucun set complet disponible.",
-      onSelect:value => {
-        const chosen = sets.find(set => set.name === value);
-        if(chosen) config.onApply(chosen);
-      }
-    });
-  }
-
-  function equipmentSetButton(kind, onApply){
-    const armor = kind === "armor";
-    return el("button",{
-      class:"btn btn-ghost gear-set",
-      type:"button",
-      dataset:{ gearAction:armor ? "armor-set" : "jewel-set" },
-      text:armor ? "Équiper un set d’armure" : "Équiper un set de bijoux",
-      onclick:()=>openEquipmentSetPicker({
-        title:armor ? "Équiper un set d’armure" : "Équiper un set de bijoux",
-        sets:armor ? armorSetsFrom(DATA.armures) : jewelSetsFrom(DATA.bijoux),
-        thumbSlot:armor ? ARMOR_SET_SLOTS[0] : JEWEL_SLOTS[0],
-        onApply
-      })
-    });
-  }
-
   function currentMemberRosterBuild(){
     const type = memberRosterWeaponType;
     return memberRosterDraft.builds[type]
@@ -2205,31 +1994,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
       el("span",{class:"pot-val", text:disabled ? "—" : tierTxt})
     ]);
     return btn;
-  }
-
-  function gearConfigurableSlot(label, file, onclick, extraClass, slotKey, settings){
-    const cell = el("div",{
-      class:"gear-configurable-slot",
-      dataset:{slot:slotKey}
-    },[
-      gearSlot(label, file, false, onclick, extraClass, slotKey)
-    ]);
-    if(file){
-      const control = gearConfigControl({
-        file,
-        slotKey,
-        label,
-        config:settings && settings.config,
-        commit:settings && settings.commit
-      });
-      if(control) cell.appendChild(control);
-    }
-    return cell;
-  }
-
-  function findGearConfigButton(container, slotKey){
-    return [...container.querySelectorAll(".gear-config-open")]
-      .find(button => button.dataset.slot === slotKey) || null;
   }
 
   // Pickers spécialisés

@@ -158,6 +158,15 @@ import { el } from "../noyau/dom.js";
     });
     return notes;
   }
+  /* Libellé de la provenance d'un terme, indépendant de son opération. C'est
+     lui qui réunit les pièces sous « Équipement » et qui donne un nom aux taux
+     principaux, dont le libellé historique « Application du taux » était le
+     même pour des dizaines de lignes. Renvoie null quand la provenance n'est
+     pas regroupée : l'appelant garde alors son libellé spécifique. */
+  /* La valeur affichée diffère réellement d'un appelant à l'autre : le panneau
+     d'arme met le libellé complet à droite — c'est la chaîne exacte assertie
+     par tests/potentiel-commun.playwright.js — là où la fiche du héros n'y met
+     que le facteur. D'où termValue plutôt qu'une règle unique. */
   function statTermsDetails(stat, options){
     const settings = options || {};
     const termValue = settings.termValue;
