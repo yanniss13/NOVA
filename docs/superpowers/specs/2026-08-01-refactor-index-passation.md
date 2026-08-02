@@ -121,7 +121,8 @@ dépendances réelles avant de choisir.** La commande est donnée plus bas.
 | Fichier | Lignes |
 |---|---|
 | `index.html` | 2 263 |
-| `js/app.js` | 9 991 |
+| `js/app.js` | 9 729 |
+| `js/boss-logique.js` | 292 |
 | `js/dispos-logique.js` | 282 |
 | `js/modal-stack.js` | 167 |
 | `js/picker.js` | 98 |
@@ -240,15 +241,49 @@ commiter :
 **Conclusion : intermittence du test, comme `supabase-etape1.playwright.js`.**
 Relancer avant de conclure à une régression.
 
+### Lot 6 — TERMINÉ
+
+`js/boss-logique.js` (292 lignes) porte la logique pure des sessions de boss et
+du tableau « Mon suivi » : `currentBossWeek`, la projection
+`buildDashboardState`, le formatage des scores et les statistiques de semaine.
+**14 déclarations, 10 exportées, 4 devenues privées** — `BOSS_SCORE_FORMAT`,
+`dashboardParisParts`, `dashboardRunCountLabel`, `dashboardDeadlineStatus`.
+`npm test` vert deux fois d'affilée, exit 0.
+
+**Pourquoi ce bloc et pas `Potentiel`.** Le relevé a montré que `Potentiel`
+dépend de `renderBuilder` et `renderBonus`, deux rendus qui restent dans
+`js/app.js` : l'extraire créerait un cycle `app.js → potentiel.js → app.js`.
+Le bloc « Mon suivi », lui, portait déjà en commentaire la promesse d'être pur
+— vérifiée : **il n'emploie aucun symbole de premier niveau de `js/app.js`**.
+C'est la même forme que le lot 2, et c'est la forme qui marche.
+
+**Méthode de relevé, corrigée.** Le script plus haut ne liste que les *appels*
+et compare au seul `js/app.js`. Le bon relevé compare les déclarations de
+premier niveau du bloc à celles du reste, dans les deux sens :
+
+```bash
+# 1. ce qui sort du bloc : declarations du bloc encore citees ailleurs
+# 2. ce qui entre : declarations de premier niveau du reste citees par le bloc
+#    -> si cette seconde liste n'est pas vide, le bloc n'est pas une feuille
+```
+
+Le garde-fou `tests/modules-imports.test.js` rattrape ce qui échappe au relevé.
+
 ### Prochain candidat
 
-**`Potentiel`** (64 lignes), puis les dates de boss (`currentBossWeek` et les
-helpers du tableau de bord), puis les vues. `RealtimeSync` en dernier : il
-appelle les rendus de toutes les vues, il ne pourra sortir qu'une fois
-celles-ci extraites.
+Les vues restent le gros morceau. Dans l'ordre de difficulté croissante :
 
-**Refaire le relevé de dépendances avant de choisir** (script plus haut), et se
-souvenir qu'il ne montre que ce qui vit encore dans `js/app.js`.
+1. **`BossStore`** (`js/app.js`, juste après le bloc extrait) — accès Supabase
+   des sessions de boss, sans rendu. À vérifier au relevé.
+2. **`Availability`** (580 lignes) — dépend de `toast`, `currentBossWeek`
+   (désormais importable), `refreshRosterProfiles`, `loadOwnersWithGroup`.
+   Sortir d'abord `toast`, qui est une feuille de 13 lignes.
+3. **`Potentiel`** — bloqué tant que `renderBuilder` et `renderBonus` sont dans
+   `app.js`. Ne pas forcer : ce serait un cycle.
+4. **`RealtimeSync`** en dernier : il appelle les rendus de toutes les vues.
+
+**Refaire le relevé avant de choisir**, et se souvenir qu'un symbole déjà
+extrait n'apparaît plus dans `js/app.js` tout en restant une dépendance.
 
 ## Pourquoi ce refactor
 

@@ -194,6 +194,7 @@ Site Confrérie 7ds/
 ├─ js/app.js               # Module ES principal : vues, auth/store Supabase, démarrage.
 ├─ js/dom.js               # Utilitaires DOM ($, el, norm, uid, initials…). Feuille de l'arbre.
 ├─ js/dispos-logique.js    # Logique pure des disponibilités (masques, semaines, agrégation).
+├─ js/boss-logique.js      # Logique pure des sessions de boss et de « Mon suivi » (dates, scores, projection).
 ├─ js/modal-stack.js       # Pile de modales (ouverture, fermeture, restitution du focus).
 ├─ js/picker.js            # Modale de sélection réutilisable.
 ├─ sw.js                   # Service worker. Cache versionné par __BUILD_VERSION__, mise à jour explicite.
