@@ -139,16 +139,72 @@ dépendances réelles avant de choisir.** La commande est donnée plus bas.
 | `js/outils.js` | 14 |
 | `js/supabase-client.js` | 13 |
 
-### Prochaine étape — lot 3 et suivants
+### La méthode de relevé — REMPLACÉE, lire ceci d'abord
 
-La recette est en fin de
-[plan](../plans/2026-08-01-refactor-index-lot0-lot1.md). Elle a servi une fois
-et fonctionne : **la suivre à la lettre, un domaine par lot.**
+L'ancien script (conservé plus bas pour mémoire) ne listait que les *appels*
+d'un bloc en IIFE et ne comparait qu'à `js/app.js`. Il a deux angles morts qui
+ont chacun coûté un échec :
 
-Méthode pour choisir le prochain domaine et ses exports, éprouvée au lot 2 :
-relever les bornes du bloc, lister ses déclarations de premier niveau, et
-chercher lesquelles apparaissent encore dans le reste de `js/app.js`. Celles qui
-n'y apparaissent pas deviennent privées.
+- il ne voit pas les symboles **déjà extraits** (`ModalStack` au lot 5, `uid` au
+  lot 13) — d'où le garde-fou `tests/modules-imports.test.js` ;
+- il ne calcule pas la **fermeture transitive**, donc il ne dit pas si un bloc
+  est extractible sans cycle.
+
+**La bonne méthode est un graphe de dépendances entre déclarations de premier
+niveau, puis la clôture transitive de chaque déclaration.** Une clôture est
+extractible telle quelle : par construction elle ne dépend de rien d'autre.
+C'est ce qui a permis les lots 14 à 18, dont `js/dispos.js` (718 lignes).
+
+Écrire le script dans un fichier, **pas dans un heredoc** : les accents graves
+des expressions régulières y sont mangés par le shell.
+
+```python
+# releve.py — lancer avec : python releve.py
+import io, os, re
+NL = "\r\n"
+lines = io.open("js/app.js", encoding="utf-8", newline="").read().split(NL)
+
+decl = re.compile(r"  (?:async\s+)?(?:function\*?|const|let|var|class)\s+([A-Za-z_$][\w$]*)")
+starts = [(i, m.group(1)) for i, l in enumerate(lines, 1) for m in [decl.match(l)] if m]
+blocs = {nom: (i, (starts[k+1][0]-1 if k+1 < len(starts) else len(lines)))
+         for k, (i, nom) in enumerate(starts)}
+
+def code(t):
+    t = re.sub(r"/\*[\s\S]*?\*/", " ", t); t = re.sub(r"//[^\n]*", " ", t)
+    t = re.sub(r'"(?:[^"\\\n]|\\.)*"', '""', t)
+    return re.sub(r"'(?:[^'\\\n]|\\.)*'", "''", t)
+
+deps = {}
+for nom, (d, f) in blocs.items():
+    txt = code(NL.join(lines[d-1:f]))
+    deps[nom] = {a for a in blocs if a != nom
+                 and re.search(r"(?<![\w$.])" + re.escape(a) + r"(?![\w$])", txt)}
+
+def cloture(n):
+    vus, pile = set(), [n]
+    while pile:
+        x = pile.pop()
+        if x not in vus:
+            vus.add(x); pile.extend(deps.get(x, ()))
+    return vus
+
+res = []
+for nom in blocs:
+    c = cloture(nom)
+    lg = sum(blocs[x][1] - blocs[x][0] + 1 for x in c)
+    bornes = sorted(blocs[x] for x in c)
+    contigu = all(bornes[i][1] + 1 >= bornes[i+1][0] - 3 for i in range(len(bornes)-1))
+    if len(c) <= 30 and lg >= 60:
+        res.append((lg, len(c), contigu, nom, bornes[0][0], bornes[-1][1]))
+for lg, n, contigu, nom, a, b in sorted(res, reverse=True)[:25]:
+    print("%6d lignes %3d symb  %-3s  %-30s %d-%d"
+          % (lg, n, "OUI" if contigu else "non", nom, a, b))
+```
+
+**Lire le résultat :** une clôture `contigu = OUI` est une tranche unique à
+couper, c'est le cas sûr. `non` veut dire déclarations éparpillées — faisable
+(l'extracteur accepte plusieurs tranches) mais **garder l'ordre d'origine**,
+sinon un `const` est lu avant son initialisation.
 
 **Trois endroits à mettre à jour à chaque extraction**, en oublier un casse
 quelque chose de silencieux :
@@ -157,6 +213,11 @@ quelque chose de silencieux :
 2. `CORE_ASSETS` dans `sw.js` — sinon le mode hors ligne casse sans test rouge ;
 3. l'`import` réel en tête de `js/app.js`, **au-dessus de l'IIFE** : un `import`
    ne peut pas vivre dans une portée de fonction.
+
+Les trois sont vérifiés par `node tests/modules-imports.test.js`, qui tourne en
+une seconde. **Le lancer après chaque extraction, avant `npm test`.**
+
+### L'ancien script, pour mémoire — ne plus s'en servir seul
 
 **Relever les dépendances réelles avant de choisir le prochain domaine.** Ce
 script donne, pour chaque module en IIFE, ses bornes et ce dont il dépend encore :
@@ -387,25 +448,60 @@ boss` d'un coup — même pari que `dom.js` au lot 4, et il a payé trois fois.
 
 **`Équipes : local + Supabase` n'a plus qu'UNE dépendance : `normalizeTeam`.**
 
-### Le prochain lot, précisément
+### Lots 11 à 18 — TERMINÉS, par la méthode du graphe
 
-**`js/equipe-modele.js`** — `normalizeTeam`, `normalizeTeamName`,
-`normalizeHero`, `emptyHero`, `emptyDraft`, `TEAM_NAME_MAX`. Il libère
-`Équipes` entièrement, et allège `Analyse`, `Export/Import` et
-`Sessions de boss`.
+Le découpage par bannière était épuisé. Le passage au **graphe de clôtures**
+(méthode décrite plus haut) a rouvert huit lots d'un coup, en cherchant non
+plus des zones mais des **clôtures transitives contiguës** :
 
-⚠️ **Ces déclarations ne sont PAS contiguës** : elles sont éparpillées dans
-`Brouillon d'équipe` (lignes ~336, ~420, ~3768, ~4229 — à re-relever). **C'est
-le premier lot qui demandera de rassembler des morceaux dispersés au lieu de
-couper une tranche.** Tous les lots réussis jusqu'ici étaient des tranches
-contiguës ; c'est ce qui les rendait sûrs. Y aller lentement, vérifier le
-relevé de dépendances de chaque morceau séparément avant de les réunir.
+| Module | Lignes | Ce qu'il apporte |
+|---|---|---|
+| `js/toast.js` | 24 | 34 déclarations l'appelaient |
+| `js/roster-profils.js` | 24 | partagé par dispos, roster et analyse |
+| `js/boss-store.js` | 127 | accès Supabase des boss, sans rendu |
+| **`js/dispos.js`** | **718** | **la plus grosse sortie du chantier** |
+| `js/stats-affichage.js` | 222 | 7 déclarations sur 11 devenues privées |
+| `js/outils.js` | 14 | `jsonCopy`, `owns`, `isInteger` |
+| `js/perles.js` | 76 | `PEARL_TIERS` devenu privé |
+
+`js/dispos.js` est l'exemple à retenir : sa clôture était **d'un seul tenant**
+et ne dépendait que de modules déjà sortis. Deux déclarations exportées, huit
+devenues privées. Aucun relevé par bannière ne pouvait le voir.
+
+**Le garde-fou a payé deux fois de plus :** un `uid` employé sans import dans
+`boss-store.js` (le bug exact du lot 5, arrêté automatiquement), et
+`pearlTierOf` exporté alors que seuls ses voisins de module l'appellent.
+
+Il a aussi gagné un **second contrôle : un `import` qui ne sert plus est une
+erreur**. 25 imports morts retirés au passage, dont les 21 symboles de
+`dispos-logique` que `app.js` gardait alors que la vue était partie.
+
+### Où ça s'arrête, et pourquoi
+
+**Il n'existe plus une seule clôture contiguë.** Le relevé final :
+
+| Racine | Lignes | Symboles | Étendue |
+|---|---|---|---|
+| `secondaryWeaponAttackResult` | 608 | 32 | 162–1657 |
+| `gearStatsSection` | 541 | 31 | 332–3058 |
+| `calculateWeaponStats` | 531 | 28 | 336–1237 |
+| `DashboardStore` | 424 | 30 | 161–6939 |
+| `MemberRosterStore` | 297 | 23 | 161–3768 |
+| `Store` | 275 | 24 | 161–3874 |
+
+Toutes éparpillées sur des milliers de lignes, toutes autour de 25-30 symboles.
+**Aucune n'est bloquée** — l'extracteur accepte plusieurs tranches — mais
+chacune demande de rassembler 25 morceaux dispersés, ce qui est une opération
+d'un autre ordre de risque que couper une tranche.
+
+**Si tu reprends :** commencer par `calculateWeaponStats` ou `gearStatsSection`
+(le calcul de stats, domaine net), pas par `Store` ou `DashboardStore` qui
+touchent au réseau et à l'état. **Garder l'ordre d'origine des déclarations**
+dans le module produit : un `const` déplacé avant son initialisation ne lève
+aucune erreur au chargement, seulement plus tard, à l'usage.
 
 `Démarrage` et `Navigation onglets` sont petits mais dépendent des rendus des
 vues : ils sortiront **en dernier**, pas en premier.
-
-**Refaire le relevé avant de choisir**, et se souvenir qu'un symbole déjà
-extrait n'apparaît plus dans `js/app.js` tout en restant une dépendance.
 
 ## Pourquoi ce refactor
 
