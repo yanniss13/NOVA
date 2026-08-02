@@ -118,29 +118,36 @@ dépendances réelles avant de choisir.** La commande est donnée plus bas.
 
 ### Où en sont les fichiers
 
+`js/` est rangé en cinq couches. **Lire [js/ARCHITECTURE.md](../../../js/ARCHITECTURE.md)**
+avant toute reprise : la carte, la règle des couches et les pièges y sont.
+
 | Fichier | Lignes |
 |---|---|
 | `index.html` | 2 263 |
-| `js/app.js` | **7 129** |
-| `js/dispos.js` | 718 |
-| `js/stats-calcul.js` | 1 097 |
-| `js/build-config.js` | 402 |
-| `js/armes.js` | 32 |
-| `js/boss-logique.js` | 292 |
-| `js/dispos-logique.js` | 282 |
-| `js/stats-affichage.js` | 222 |
-| `js/modal-stack.js` | 167 |
-| `js/boss-store.js` | 127 |
-| `js/equipement.js` | 107 |
-| `js/constantes.js` | 99 |
-| `js/picker.js` | 98 |
-| `js/perles.js` | 76 |
-| `js/dom.js` | 45 |
-| `js/toast.js` | 24 |
-| `js/roster-profils.js` | 24 |
-| `js/session.js` | 20 |
-| `js/outils.js` | 14 |
-| `js/supabase-client.js` | 13 |
+| `js/app.js` | **6315** |
+| `js/metier/stats-calcul.js` | 1119 |
+| `js/vues/editeur-arme.js` | 837 |
+| `js/vues/dispos.js` | 718 |
+| `js/metier/build-config.js` | 406 |
+| `js/metier/boss-logique.js` | 292 |
+| `js/metier/dispos-logique.js` | 282 |
+| `js/vues/stats-affichage.js` | 239 |
+| `js/vues/modal-stack.js` | 167 |
+| `js/donnees/boss-store.js` | 127 |
+| `js/metier/equipement.js` | 107 |
+| `js/noyau/constantes.js` | 99 |
+| `js/vues/picker.js` | 98 |
+| `js/metier/perles.js` | 76 |
+| `js/noyau/dom.js` | 45 |
+| `js/metier/armes.js` | 32 |
+| `js/vues/toast.js` | 24 |
+| `js/donnees/roster-profils.js` | 24 |
+| `js/etat/brouillon-equipe.js` | 21 |
+| `js/etat/session.js` | 20 |
+| `js/noyau/outils.js` | 14 |
+| `js/noyau/supabase-client.js` | 13 |
+
+**`index.html` : 12 752 → 2 263. `js/app.js` : 10 489 → 6315.**
 
 ### La méthode de relevé — REMPLACÉE, lire ceci d'abord
 
@@ -479,33 +486,67 @@ Il a aussi gagné un **second contrôle : un `import` qui ne sert plus est une
 erreur**. 25 imports morts retirés au passage, dont les 21 symboles de
 `dispos-logique` que `app.js` gardait alors que la vue était partie.
 
-### Où ça s'arrête, et pourquoi
+### Lots 19 à 24 — le calcul de stats, l'éditeur d'arme, et le rangement
 
-**Il n'existe plus une seule clôture contiguë.** Le relevé final :
+| Module | Lignes | Ce qu'il apporte |
+|---|---|---|
+| `metier/stats-calcul.js` | 1 119 | 33 déclarations privées sur 38 |
+| `vues/editeur-arme.js` | 837 | 25 privées sur 32 |
+| `metier/build-config.js` | 406 | catalogue + diagnostic d'une config |
+| `metier/armes.js` | 32 | identité d'une arme |
+| `etat/brouillon-equipe.js` | 21 | débloque l'éditeur d'arme |
 
-| Racine | Lignes | Symboles | Étendue |
-|---|---|---|---|
-| `secondaryWeaponAttackResult` | 608 | 32 | 162–1657 |
-| `gearStatsSection` | 541 | 31 | 332–3058 |
-| `calculateWeaponStats` | 531 | 28 | 336–1237 |
-| `DashboardStore` | 424 | 30 | 161–6939 |
-| `MemberRosterStore` | 297 | 23 | 161–3768 |
-| `Store` | 275 | 24 | 161–3874 |
+La grappe du calcul de stats — 85 symboles, 1 579 lignes — était **entièrement
+fermée** mais mêlait identité d'arme, catalogue, validation et calcul. La
+couper en trois couches empilées la rend lisible.
 
-Toutes éparpillées sur des milliers de lignes, toutes autour de 25-30 symboles.
-**Aucune n'est bloquée** — l'extracteur accepte plusieurs tranches — mais
-chacune demande de rassembler 25 morceaux dispersés, ce qui est une opération
-d'un autre ordre de risque que couper une tranche.
+### ⚠️ Trois régressions, et ce qu'elles ont appris au garde-fou
 
-**Si tu reprends :** commencer par `calculateWeaponStats` ou `gearStatsSection`
-(le calcul de stats, domaine net), pas par `Store` ou `DashboardStore` qui
-touchent au réseau et à l'état. **Garder l'ordre d'origine des déclarations**
-dans le module produit : un `const` déplacé avant son initialisation ne lève
-aucune erreur au chargement, seulement plus tard, à l'usage.
+Toutes les trois ont passé `npm run test:unit` au vert. **Le chargeur `vm`
+concatène tout dans une portée commune : il ne peut structurellement pas voir
+un symbole manquant.** Seul le navigateur les a levées.
 
-`Démarrage` et `Navigation onglets` sont petits mais dépendent des rendus des
-vues : ils sortiront **en dernier**, pas en premier.
+1. **`HERO_STAT_COVERAGE`** — resté dans `app.js` alors que son appelant
+   partait. Le garde-fou ne regardait pas `app.js`, dont rien n'est exporté.
+2. **`ARMOR_LEVEL_ORIGIN_MODE`, `gearPassiveStatus`, `weaponPassiveFact`** —
+   déclarés dans `build-config.js` mais **non exportés**. Le garde-fou ne
+   vérifiait que les symboles déjà exportés.
+3. **Le garde-fou lui-même était troué** : il excluait tout nom précédé d'un
+   point pour ignorer `objet.nom`, et manquait donc les **spread `...NOM`**.
+   C'est ce qui avait laissé passer le cas 1.
 
+Le contrôle couvre désormais les trois formes, plus les imports inutiles et
+**les imports qui remontent les couches**. `node tests/modules-imports.test.js`
+tourne en une seconde : **le lancer après chaque déplacement.**
+
+### Deux pièges de renommage global
+
+Rencontrés en portant `draft` vers `brouillonEquipe.equipe` :
+
+- **l'ombrage** : `draft` était aussi un paramètre local dans neuf fonctions.
+  Un renommage aveugle a produit
+  `function weaponDraftHasChoices(brouillonEquipe.equipe)`. Sauter toute
+  déclaration qui lie le nom localement — et vérifier ensuite chaque
+  occurrence restante une par une.
+- **les clés d'objet** : `draft:initial` n'est pas un emploi du symbole.
+
+Corollaire : l'heuristique qui détecte l'ombrage doit exclure `if(x){`, qui
+ressemble à une liste de paramètres. Ce détail a coûté une régression.
+
+### Où ça s'arrête
+
+**`js/app.js` : 10 489 → 6 315 lignes.** Ce qui reste est le Builder, le Roster,
+les sessions de boss, l'authentification et l'éditeur d'équipement — fortement
+entrelacés, sans clôture contiguë.
+
+**Le prochain candidat sérieux est l'éditeur d'équipement** (~390 lignes,
+clôture fermée). Il n'a pas été sorti parce que sa clôture happe `gearSlot`,
+`nameOfFile` et `renderBonus`, des aides partagées avec le Builder : les sortir
+avec lui les mettrait dans le mauvais module. **Les déplacer d'abord**, comme
+`BUILD_STAT_FAMILY_LABELS` l'a été vers `stats-affichage.js`.
+
+Ensuite : `MemberRosterStore`, `Store`, `DashboardStore` — tous trois demandent
+le même traitement d'état mutable que `session.js` et `brouillon-equipe.js`.
 ## Pourquoi ce refactor
 
 `index.html` fait **12 701 lignes pour 500 Ko**. Un seul fichier porte le style,
