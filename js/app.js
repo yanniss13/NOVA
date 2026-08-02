@@ -1,7 +1,7 @@
 /* Les `import` doivent précéder l'IIFE : ils vivent au niveau du module, pas
    dans sa portée interne. */
 import { shouldIgnoreAvailabilityEcho } from "./metier/dispos-logique.js";
-import { ModalStack } from "./vues/modal-stack.js";
+import { ModalStack, closeModalAfterAsyncRefresh } from "./vues/modal-stack.js";
 import { canManageTeam, sessionCourante } from "./etat/session.js";
 import { brouillonEquipe } from "./etat/brouillon-equipe.js";
 import { authMessage, sb } from "./noyau/supabase-client.js";
@@ -162,27 +162,6 @@ import { $, uid, norm, initials, el } from "./noyau/dom.js";
       '<div class="empty-state"><p class="big">data.js introuvable</p>' +
       '<p>Lance <b>generate-data.ps1</b> puis recharge la page.</p></div>';
     return;
-  }
-
-  function closeModalAfterAsyncRefresh(overlay, closeAction, restoreTarget){
-    const active = document.activeElement;
-    const preserveExternalFocus = !!active &&
-      active.isConnected &&
-      active !== document.body &&
-      active !== document.documentElement &&
-      !overlay.contains(active) &&
-      active.getClientRects().length > 0;
-    if(restoreTarget){
-      ModalStack.setRestoreFocus(overlay, restoreTarget);
-    }
-    closeAction();
-    if(
-      preserveExternalFocus &&
-      active.isConnected &&
-      active.getClientRects().length > 0
-    ){
-      active.focus();
-    }
   }
 
   /* ============================ Équipes : local + Supabase ============================ */

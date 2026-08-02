@@ -164,4 +164,30 @@
     return { open, close, focusTop, setRestoreFocus };
   })();
 
-export { ModalStack };
+  /* Fermer une modale APRES un rafraichissement asynchrone : le rendu a pu
+     remplacer le declencheur d'origine, et `closeAction` rendrait alors le
+     focus a un noeud detache — donc au body, ce qui perd la place du
+     lecteur. On note qui a reellement le focus AVANT de fermer, et on le lui
+     rend s'il est toujours affiche hors de la modale. */
+  function closeModalAfterAsyncRefresh(overlay, closeAction, restoreTarget){
+    const active = document.activeElement;
+    const preserveExternalFocus = !!active &&
+      active.isConnected &&
+      active !== document.body &&
+      active !== document.documentElement &&
+      !overlay.contains(active) &&
+      active.getClientRects().length > 0;
+    if(restoreTarget){
+      ModalStack.setRestoreFocus(overlay, restoreTarget);
+    }
+    closeAction();
+    if(
+      preserveExternalFocus &&
+      active.isConnected &&
+      active.getClientRects().length > 0
+    ){
+      active.focus();
+    }
+  }
+
+export { ModalStack, closeModalAfterAsyncRefresh };
