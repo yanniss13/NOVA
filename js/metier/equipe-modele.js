@@ -284,13 +284,16 @@ import { buildWeaponGrade } from "./build-config.js";
   }
 
 export {
-  normalizeRosterCharacter,  normalizeRosterBuild,  compatibleWeaponGroups,  normalizeBuildFields,
+  compatibleWeaponGroups,
+  favoriteRosterWeaponType,
+  normalizeBuildFields,
   normalizeHero,
   normalizePotentiel,
+  normalizeRosterBuild,
+  normalizeRosterCharacter,
   normalizeTeam,
   normalizeTeamName,
   normalizeWeaponConfig,
-  favoriteRosterWeaponType,
   rosterHeroSnapshot,
   teamBuildSnapshot,
   teamFromBossSnapshot

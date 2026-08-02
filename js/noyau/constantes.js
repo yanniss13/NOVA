@@ -43,9 +43,6 @@
     ICE:    {label:"Glace",    color:"#56b0c9"},
     THUNDER:{label:"Foudre",   color:"#5c74e0"}
   };
-  const ROLES = {
-    ATTACKER:{label:"Attaquant"}, DEFENDER:{label:"Défenseur"}, SUPPORT:{label:"Soutien"}
-  };
   // rôles au niveau des slots d'arme (vocabulaire plus fin du jeu)
   const WSLOT_ROLES = {
     Attacker:"Attaquant", Defender:"Défenseur", Supporter:"Soutien",
@@ -90,7 +87,6 @@ export {
   CLOUD_ROSTER_CACHE_KEY,
   MIGRATION_KEY_PREFIX,
   ELEMENTS,
-  ROLES,
   WSLOT_ROLES,
   WEAPON_ENUM,
   metaOf,

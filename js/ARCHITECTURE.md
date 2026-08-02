@@ -132,8 +132,15 @@ Toujours `npm test` en entier.
 - un symbole employé alors que son module ne l'exporte pas ;
 - un symbole employé alors qu'il est resté dans `app.js` ;
 - un `import` qui ne sert plus ;
+- un **`export` que personne n'importe** ;
 - un import qui **remonte les couches** ;
 - un module absent de `MODULES` ou de `CORE_ASSETS`.
+
+Le contrôle des exports orphelins est le plus récent. Il est sûr parce que le
+chargeur `vm` **retire les `export`** avant de concaténer : un symbole n'a
+jamais besoin d'être exporté pour être testé. Un export que personne n'importe
+est donc mort sans ambiguïté. Il a immédiatement trouvé `ROLES` (trois rôles),
+resté là après le passage à `WSLOT_ROLES` (cinq, « vocabulaire plus fin »).
 
 ## Si tu veux découper davantage
 

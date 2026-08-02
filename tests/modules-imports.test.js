@@ -246,6 +246,32 @@ assert.deepEqual(inutiles, [],
   "Des modules importent des symboles qu'ils n'emploient pas :\n  "
   + inutiles.join("\n  "));
 
+/* Et la symétrie de l'inverse : un symbole EXPORTÉ que personne n'importe.
+
+   Il ne casse rien, donc rien ne le signale — mais il ment sur la surface
+   publique du module, et il survit aux extractions comme les imports morts.
+   `ROLES` (trois rôles) a ainsi survécu au passage à `WSLOT_ROLES` (cinq).
+
+   Le chargeur `vm` des tests unitaires RETIRE les `export` avant de
+   concaténer : un symbole n'a jamais besoin d'être exporté pour être testé.
+   Un export que personne n'importe est donc mort sans ambiguïté. */
+const orphelins = [];
+const importesPartout = new Set();
+for(const source of sources.values()){
+  for(const nom of importsDe(source)) importesPartout.add(nom);
+}
+for(const [fichier, noms] of exportes){
+  for(const nom of noms){
+    if(!importesPartout.has(nom)){
+      orphelins.push("js/" + fichier + " exporte « " + nom + " », que personne n'importe");
+    }
+  }
+}
+
+assert.deepEqual(orphelins, [],
+  "Des modules exportent des symboles que personne n'importe :\n  "
+  + orphelins.join("\n  "));
+
 /* Chaque module doit aussi être servi hors ligne. */
 const sw = fs.readFileSync(path.join(__dirname, "..", "sw.js"), "utf8");
 for(const fichier of MODULES){
