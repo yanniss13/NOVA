@@ -1,6 +1,6 @@
 /* Les `import` doivent précéder l'IIFE : ils vivent au niveau du module, pas
    dans sa portée interne. */
-import { shouldIgnoreAvailabilityEcho } from "./metier/dispos-logique.js";
+
 
 import { enregistrerVue, showView } from "./vues/navigation.js";
 import { closeAuth, openAuth, setAuthBusy, setAuthStatus } from "./vues/modale-auth.js";
@@ -14,6 +14,7 @@ import {
 import { renderMemberRoster } from "./vues/roster-membres.js";
 import { renderAnalyse } from "./vues/analyse.js";
 import { renderRoster } from "./vues/roster-equipes.js";
+import { RealtimeSync } from "./vues/synchro-temps-reel.js";
 import { renderDashboardView } from "./vues/suivi.js";
 import { sessionCourante } from "./etat/session.js";
 import { brouillonEquipe } from "./etat/brouillon-equipe.js";
@@ -37,7 +38,7 @@ import { normalizeTeam } from "./metier/equipe-modele.js";
 
 
 
-import { Availability, renderAvailabilityView } from "./vues/dispos.js";
+import { renderAvailabilityView } from "./vues/dispos.js";
 
 
 import { toast } from "./vues/toast.js";
@@ -56,148 +57,6 @@ import { $, uid, el } from "./noyau/dom.js";
       '<p>Lance <b>generate-data.ps1</b> puis recharge la page.</p></div>';
     return;
   }
-
-  const RealtimeSync = (function(){
-    const tables = [
-      "profiles",
-      "teams",
-      "roster_characters",
-      "boss_sessions",
-      "boss_participation",
-      "boss_run_reports",
-      "member_availability"
-    ];
-    let channel = null;
-    let userId = "";
-    let timer = null;
-    const pending = new Set();
-
-    function setStatus(state, text){
-      const node = $("#liveStatus");
-      if(!node) return;
-      node.dataset.state = state;
-      node.textContent = text;
-    }
-
-    function activeView(){
-      const view = document.querySelector(".view.active");
-      return view ? view.id.replace(/^view-/, "") : "";
-    }
-
-    async function flush(){
-      timer = null;
-      const changed = new Set(pending);
-      pending.clear();
-      const view = activeView();
-      /* « Mon suivi » dérive des équipes et des tables de boss. Quand il est
-         actif il se recharge silencieusement, et sa lecture unique remplace les
-         branches teams/boss pour ce même lot d'événements. Sinon il est
-         seulement marqué sale : Realtime ne change jamais l'onglet actif. */
-      const dashboardChanged = changed.has("teams") || changed.has("boss");
-      const dashboardActive = view === "dashboard";
-      try{
-        if(changed.has("teams") && !dashboardActive){
-          if(view === "roster") await renderRoster();
-          else await Store.refresh();
-        }
-        if(changed.has("roster")){
-          if(view === "member-roster") await renderMemberRoster();
-          if(view === "analyse") await renderAnalyse();
-        }
-        if(changed.has("boss") && view === "boss"){
-          const refreshed = await renderBossView({
-            showLoading:false,
-            ensureWeek:false,
-            showErrorToast:false
-          });
-          if(!refreshed) throw new Error("BOSS_SYNC_FAILED");
-        }
-        if(changed.has("availability") && view === "availability"){
-          const refreshed = await renderAvailabilityView();
-          if(!refreshed) throw new Error("AVAILABILITY_SYNC_FAILED");
-        }
-        if(dashboardChanged){
-          if(dashboardActive){
-            const refreshed = await renderDashboardView({
-              showLoading:false,
-              force:true
-            });
-            if(!refreshed) throw new Error("DASHBOARD_SYNC_FAILED");
-          }else{
-            DashboardStore.markDirty();
-          }
-        }
-      }catch(error){
-        setStatus("offline", "Synchronisation indisponible");
-      }
-    }
-
-    function schedule(table){
-      if(table === "teams") pending.add("teams");
-      if(table === "profiles" || table === "roster_characters"){
-        pending.add("roster");
-      }
-      if(
-        table === "boss_sessions" ||
-        table === "boss_participation" ||
-        table === "boss_run_reports"
-      ){
-        pending.add("boss");
-      }
-      if(table === "member_availability") pending.add("availability");
-      clearTimeout(timer);
-      timer = setTimeout(()=>void flush(), 120);
-    }
-
-    function stop(){
-      clearTimeout(timer);
-      timer = null;
-      pending.clear();
-      const previous = channel;
-      channel = null;
-      userId = "";
-      if(previous && sb) void sb.removeChannel(previous);
-      setStatus("offline", "Hors ligne");
-    }
-
-    function start(nextUserId){
-      if(!sb || !nextUserId){
-        stop();
-        return;
-      }
-      if(channel && userId === nextUserId) return;
-      stop();
-      userId = nextUserId;
-      setStatus("connecting", "Connexion…");
-      let next = sb.channel("confrerie-live-"+nextUserId);
-      tables.forEach(table => {
-        next = next.on("postgres_changes", {
-          event:"*",
-          schema:"public",
-          table
-        }, payload => {
-          /* L'écho de sa PROPRE écriture, pendant qu'on peint encore, ferait
-             réapparaître un masque plus ancien que la sélection en cours. */
-          if(shouldIgnoreAvailabilityEcho(
-            payload && payload.new,
-            userId,
-            Availability.isSaving()
-          )) return;
-          schedule(table);
-        });
-      });
-      channel = next.subscribe(status => {
-        if(channel !== next) return;
-        if(status === "SUBSCRIBED") setStatus("online", "À jour");
-        if(status === "CHANNEL_ERROR" || status === "TIMED_OUT"){
-          setStatus("offline", "Synchronisation indisponible");
-        }
-        if(status === "CLOSED") setStatus("offline", "Hors ligne");
-      });
-    }
-
-    return { start, stop, schedule };
-  })();
 
   /* ============================ Authentification Supabase ============================ */
   async function profilePseudo(user){

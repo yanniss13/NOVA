@@ -63,6 +63,7 @@ const MODULES = [
   "vues/analyse.js",
   "vues/roster-equipes.js",
   "vues/suivi.js",
+  "vues/synchro-temps-reel.js",
 
   /* le reste, pas encore découpé. */
   "app.js"
