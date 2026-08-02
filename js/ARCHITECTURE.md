@@ -50,11 +50,13 @@ ne pouvait sortir de `app.js`.
 
 | Fichier | Contenu |
 |---|---|
+| `catalogue.js` | Index sur les données générées : `nameOfFile`, `charOf` |
 | `armes.js` | Identité d'une arme : dossier, type, compatibilité |
 | `equipement.js` | Sets d'armure et de bijoux, modèles vides |
 | `perles.js` | Perle de sortilège : paliers, longueur des enchantements |
 | `build-config.js` | Lecture du catalogue généré + diagnostic d'une configuration saisie |
 | `stats-calcul.js` | **Le moteur de calcul des stats** |
+| `equipe-modele.js` | Normalisation de toute équipe venue du dehors |
 | `dispos-logique.js` | Masques de disponibilité, semaines, agrégation |
 | `boss-logique.js` | Semaine de boss, projection « Mon suivi », scores |
 
@@ -62,23 +64,40 @@ ne pouvait sortir de `app.js`.
 du passif de l'arme » — et non des totaux opaques. C'est ce qui permet à
 l'interface d'expliquer chaque chiffre au membre. Ne casse pas ça.
 
+`equipe-modele.js` aussi : ses fonctions **ne lèvent jamais**. Elles complètent
+ce qui manque et rognent ce qui déborde, pour qu'une équipe sauvegardée par une
+version plus ancienne du site reste ouvrable.
+
 ### `donnees/` — le réseau
 
 | Fichier | Contenu |
 |---|---|
 | `roster-profils.js` | Les pseudos de la confrérie, lus une fois puis mis en cache |
+| `equipes-store.js` | Les équipes : `LocalTeams` (localStorage) et `Store` (arbitre local/nuage) |
+| `roster-store.js` | Le roster des membres, cache indexé par propriétaire |
 | `boss-store.js` | Sessions de boss : groupes, inscriptions, rapports |
+| `suivi-store.js` | « Mon suivi » : assemblage et cache hors ligne |
 
 ### `vues/` — l'écran
 
 | Fichier | Contenu |
 |---|---|
+| `elements.js` | Briques de rendu partagées : `gearSlot`, `renderBonus` |
 | `toast.js` | Le bandeau de notification |
 | `modal-stack.js` | La pile de modales : ouverture, fermeture, restitution du focus |
 | `picker.js` | La modale de sélection réutilisable |
-| `stats-affichage.js` | Mise en forme des termes de stats |
+| `stats-affichage.js` | Mise en forme des termes de stats, libellés partagés |
+| `stats-heros.js` | Le bloc de statistiques d'un héros, dans les fiches |
 | `editeur-arme.js` | La modale de configuration d'une arme |
+| `editeur-equipement.js` | La modale de configuration d'une pièce d'équipement |
 | `dispos.js` | La vue des disponibilités hebdomadaires |
+
+**Un cas instructif :** `weaponTermLabel` et `gearTermLabel` vivaient dans les
+deux éditeurs. Quand `stats-heros.js` en a eu besoin, le contrôle des couches a
+refusé — un module d'affichage de stats ne peut pas importer d'un éditeur
+déclaré après lui. La règle a désigné le bon rangement toute seule : ces
+libellés appartenaient à `stats-affichage.js`. **Quand le test des couches
+proteste, c'est presque toujours le rangement qui a tort, pas le test.**
 
 ## Les trois fichiers à ne jamais oublier
 
@@ -114,17 +133,43 @@ Toujours `npm test` en entier.
 
 ## Si tu veux découper davantage
 
-`app.js` n'est pas fini. La méthode qui marche, et l'état exact du chantier,
-sont dans
-[docs/superpowers/specs/2026-08-01-refactor-index-passation.md](../docs/superpowers/specs/2026-08-01-refactor-index-passation.md).
+`app.js` n'est pas fini : il reste ~5 100 lignes, soit le Builder, le Roster,
+les sessions de boss, l'authentification et le démarrage.
 
-En résumé : construis le graphe de dépendances entre déclarations de premier
-niveau, calcule la **clôture transitive** de chaque déclaration, et extrais une
-clôture entière. Par construction elle ne dépend de rien d'autre — donc pas de
-cycle. Découper « par zone de commentaire » ne marche plus depuis longtemps.
+**Les quatre plus gros morceaux encore dedans**, tous des modales, tous avec
+une clôture fermée — donc extractibles sans cycle :
 
-Deux pièges de renommage, tous deux rencontrés pour de vrai :
+| Racine | Lignes | Symboles |
+|---|---|---|
+| `openRosterDetailFor` | ~600 | 29 |
+| `bossReportParticipant` | ~500 | 24 |
+| `openTeamDetail` | ~450 | 21 |
+| `heroDetail` | ~420 | 19 |
 
-- un nom peut être **aussi un paramètre local** ailleurs (`draft` l'était dans
-  neuf fonctions) — vérifier l'ombrage avant tout renommage global ;
-- un nom peut être une **clé d'objet** (`draft:initial`) — à ne pas renommer.
+Ils partagent un noyau commun de 19 symboles (`heroDetail`, `badgesRow`,
+`weaponSlotBadge`, `authMessage`…). **Sortir ce noyau d'abord** : chacun des
+trois autres tombera alors à moins de dix symboles. C'est l'ordre qui a
+fonctionné à chaque fois — `dom.js` avant les vues, le modèle avant les stores,
+`stats-heros.js` avant les fiches.
+
+## La méthode
+
+Construis le graphe de dépendances entre déclarations de premier niveau,
+calcule la **clôture transitive** de chaque déclaration, et extrais une clôture
+entière. Par construction elle ne dépend de rien d'autre — donc pas de cycle.
+Découper « par zone de commentaire » ne marche plus depuis longtemps.
+
+Le script est dans
+[la passation](../docs/superpowers/specs/2026-08-01-refactor-index-passation.md).
+L'écrire dans un fichier, **pas dans un heredoc** : le shell y mange les
+accents graves des expressions régulières.
+
+Trois pièges rencontrés pour de vrai :
+
+- **l'ombrage** : un nom peut être aussi un paramètre local ailleurs (`draft`
+  l'était dans neuf fonctions). Vérifier avant tout renommage global, et
+  relire ensuite chaque occurrence restante.
+- **les clés d'objet** : `draft:initial` n'est pas un emploi du symbole.
+- **l'ordre des déclarations** : garder l'ordre d'origine dans le module
+  produit. Un `const` déplacé avant son initialisation ne casse pas au
+  chargement, seulement plus tard, à l'usage.

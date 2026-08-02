@@ -121,33 +121,41 @@ dépendances réelles avant de choisir.** La commande est donnée plus bas.
 `js/` est rangé en cinq couches. **Lire [js/ARCHITECTURE.md](../../../js/ARCHITECTURE.md)**
 avant toute reprise : la carte, la règle des couches et les pièges y sont.
 
+**`index.html` : 12 752 → 2 263. `js/app.js` : 10 489 → 5139.** 30 modules.
+
 | Fichier | Lignes |
 |---|---|
 | `index.html` | 2 263 |
-| `js/app.js` | **6315** |
+| `js/app.js` | **5139** |
 | `js/metier/stats-calcul.js` | 1119 |
-| `js/vues/editeur-arme.js` | 837 |
+| `js/vues/editeur-arme.js` | 823 |
 | `js/vues/dispos.js` | 718 |
 | `js/metier/build-config.js` | 406 |
+| `js/vues/editeur-equipement.js` | 353 |
 | `js/metier/boss-logique.js` | 292 |
 | `js/metier/dispos-logique.js` | 282 |
-| `js/vues/stats-affichage.js` | 239 |
+| `js/vues/stats-heros.js` | 267 |
+| `js/vues/stats-affichage.js` | 264 |
+| `js/metier/equipe-modele.js` | 248 |
 | `js/vues/modal-stack.js` | 167 |
+| `js/donnees/suivi-store.js` | 162 |
+| `js/donnees/roster-store.js` | 158 |
 | `js/donnees/boss-store.js` | 127 |
+| `js/donnees/equipes-store.js` | 120 |
 | `js/metier/equipement.js` | 107 |
 | `js/noyau/constantes.js` | 99 |
 | `js/vues/picker.js` | 98 |
 | `js/metier/perles.js` | 76 |
 | `js/noyau/dom.js` | 45 |
+| `js/vues/elements.js` | 43 |
 | `js/metier/armes.js` | 32 |
+| `js/metier/catalogue.js` | 26 |
 | `js/vues/toast.js` | 24 |
 | `js/donnees/roster-profils.js` | 24 |
 | `js/etat/brouillon-equipe.js` | 21 |
 | `js/etat/session.js` | 20 |
 | `js/noyau/outils.js` | 14 |
 | `js/noyau/supabase-client.js` | 13 |
-
-**`index.html` : 12 752 → 2 263. `js/app.js` : 10 489 → 6315.**
 
 ### La méthode de relevé — REMPLACÉE, lire ceci d'abord
 
@@ -533,20 +541,48 @@ Rencontrés en portant `draft` vers `brouillonEquipe.equipe` :
 Corollaire : l'heuristique qui détecte l'ombrage doit exclure `if(x){`, qui
 ressemble à une liste de paramètres. Ce détail a coûté une régression.
 
+### Lots 25 à 30 — les éditeurs, le modèle, les stores
+
+| Module | Lignes |
+|---|---|
+| `metier/equipe-modele.js` | 248 |
+| `vues/editeur-equipement.js` | 353 |
+| `vues/stats-heros.js` | 267 |
+| `donnees/suivi-store.js` | 162 |
+| `donnees/roster-store.js` | 158 |
+| `donnees/equipes-store.js` | 120 |
+| `vues/elements.js` + `metier/catalogue.js` | 69 |
+
+**La leçon qui s'est répétée trois fois : sortir la base avant ce qui s'appuie
+dessus.** Les clôtures avant / après :
+
+| | avant | après |
+|---|---|---|
+| éditeur d'équipement (après `elements`/`catalogue`) | 21 symb | **12** |
+| `Store` (après `equipe-modele`) | 17 | **7** |
+| `MemberRosterStore` (idem) | 14 | **7** |
+| `DashboardStore` (idem) | 23 | **6** |
+
+### Le contrôle des couches a désigné un rangement tout seul
+
+`weaponTermLabel` et `gearTermLabel` vivaient dans les deux éditeurs. Quand
+`stats-heros.js` en a eu besoin, le test a refusé l'import : un module
+d'affichage de stats ne peut pas dépendre d'un éditeur déclaré après lui. Ces
+libellés appartenaient à `stats-affichage.js`. **Quand ce test proteste, c'est
+presque toujours le rangement qui a tort.**
+
 ### Où ça s'arrête
 
-**`js/app.js` : 10 489 → 6 315 lignes.** Ce qui reste est le Builder, le Roster,
-les sessions de boss, l'authentification et l'éditeur d'équipement — fortement
-entrelacés, sans clôture contiguë.
+**`js/app.js` : 10 489 → 5 139 lignes**, 30 modules.
 
-**Le prochain candidat sérieux est l'éditeur d'équipement** (~390 lignes,
-clôture fermée). Il n'a pas été sorti parce que sa clôture happe `gearSlot`,
-`nameOfFile` et `renderBonus`, des aides partagées avec le Builder : les sortir
-avec lui les mettrait dans le mauvais module. **Les déplacer d'abord**, comme
-`BUILD_STAT_FAMILY_LABELS` l'a été vers `stats-affichage.js`.
+Restent quatre grosses modales, toutes à clôture fermée donc extractibles sans
+cycle : `openRosterDetailFor` (~600 lignes), `bossReportParticipant` (~500),
+`openTeamDetail` (~450), `heroDetail` (~420).
 
-Ensuite : `MemberRosterStore`, `Store`, `DashboardStore` — tous trois demandent
-le même traitement d'état mutable que `session.js` et `brouillon-equipe.js`.
+Elles partagent un **noyau commun de 19 symboles** (`heroDetail`, `badgesRow`,
+`weaponSlotBadge`, `authMessage`…). Sortir ce noyau d'abord fait tomber les
+trois autres sous dix symboles chacune. C'est exactement l'ordre qui a marché
+à chaque fois.
 ## Pourquoi ce refactor
 
 `index.html` fait **12 701 lignes pour 500 Ko**. Un seul fichier porte le style,
