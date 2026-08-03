@@ -1,17 +1,14 @@
 "use strict";
 
-/* L'apport de chaque pièce, vérifié dans un vrai navigateur.
+/* L'apport d'une piece, verifie dans un vrai navigateur.
 
-   Conception : docs/superpowers/specs/2026-08-03-apport-par-piece-design.md
+   Conception : docs/superpowers/specs/2026-08-03-apport-par-piece-modale-design.md
 
-   L'équipe est amorcée dans `localStorage` plutôt que construite au clic :
-   le parcours d'équipement complet est déjà couvert par
-   potentiel-commun.playwright.js, et le rejouer ici rendrait ce test
-   sensible à des évolutions d'interface qu'il ne cherche pas à protéger.
+   L'equipe est amorcee dans localStorage plutot que construite au clic : le
+   parcours d'equipement est deja couvert par potentiel-commun.playwright.js.
 
-   Le héros porte volontairement une pièce configurée ET une pièce équipée
-   mais non configurée : c'est le cas qui a fait échouer la conception
-   initiale, et le seul qui prouve la tolérance de calculateBuildStats. */
+   Le heros porte une piece configuree ET une piece non configuree : c'est ce
+   qui permet de verifier l'ordre du parcours. */
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
@@ -21,7 +18,6 @@ const STORAGE_KEY = "confrerie7ds.teams";
 const HAUT = "7ds-armures-ssr/Haut/Haut de l'araignée de l'ombre.webp";
 const BAS = "7ds-armures-ssr/Bas/Bas de l'araignée de l'ombre.webp";
 
-/* gearConfigStatus exige qualityMin <= level <= qualityMax : 120 minimum. */
 const CONFIG = { version:1, level:120, reinforce:0, enchantments:[], passiveLevel:null };
 
 const EQUIPE = {
@@ -59,58 +55,94 @@ const EQUIPE = {
     await page.locator('[data-view="roster"]').click();
     await page.getByRole("button", { name:/Voir l.équipement/ }).first().click();
 
-    /* La pièce configurée porte un résumé non vide. */
-    const resume = page.locator(".eq-contribution:not(.empty) > summary").first();
-    await resume.waitFor({ state:"visible" });
-    const texte = (await resume.textContent()).trim();
-    assert.ok(
-      texte.length > 2,
-      "le resume d'une piece configuree n'est pas vide, recu : " + texte
-    );
-    assert.match(
-      texte,
-      /Défense/,
-      "le premier apport affiche est la statistique principale, recu : " + texte
-    );
-    assert.doesNotMatch(
-      texte,
-      /% ?%/,
-      "le pourcentage n'est pose qu'une fois, recu : " + texte
-    );
+    /* La ligne d'une piece equipee est un bouton, et elle ouvre la modale. */
+    const ligne = page.locator("button.eq-line").first();
+    await ligne.waitFor({ state:"visible" });
+    await ligne.click();
 
-    /* Il est replié à l'ouverture, et se déplie au clic. */
-    const details = page.locator(".eq-contribution:not(.empty)").first();
+    const overlay = page.locator("#pieceDetailOverlay");
+    await overlay.waitFor({ state:"visible" });
     assert.equal(
-      await details.evaluate(node => node.open),
-      false,
-      "le detail est replie a l'ouverture de la modale"
-    );
-    await resume.click();
-    assert.equal(
-      await details.evaluate(node => node.open),
+      await overlay.evaluate(node => node.classList.contains("on")),
       true,
-      "un clic sur le resume deplie le detail"
-    );
-    assert.ok(
-      await details.locator("details").count() > 0,
-      "le detail deplie contient la ventilation par terme"
+      "un clic sur la ligne ouvre la modale de la piece"
     );
 
-    /* La pièce équipée mais non configurée l'annonce au lieu de rester muette. */
-    const nonConfiguree = page.locator(".eq-contribution.empty").first();
-    await nonConfiguree.waitFor({ state:"visible" });
+    /* Le titre nomme la piece, et la piece configuree vient en premier. */
     assert.equal(
-      (await nonConfiguree.textContent()).trim(),
-      "À configurer",
-      "une piece equipee mais non configuree affiche sa mention"
+      (await page.locator("#pieceDetailTitle").textContent()).trim(),
+      "Haut de l'araignée de l'ombre",
+      "la modale est titree du nom de la piece, configuree d'abord"
+    );
+    assert.equal(
+      (await page.locator("#pieceDetailPosition").textContent()).trim(),
+      "1 / 2",
+      "la position reflete le parcours"
+    );
+    assert.ok(
+      await page.locator("#pieceDetailBody .weapon-stat").count() > 0,
+      "une piece configuree affiche ses statistiques"
     );
 
-    /* Une pièce non configurée n'efface pas les résumés des autres : c'est
-       ce que calculateHeroStats aurait fait, et la raison du choix de
-       calculateBuildStats comme source. */
-    assert.ok(
-      await page.locator(".eq-contribution:not(.empty)").count() >= 1,
-      "une piece non configuree n'efface pas le resume des autres"
+    /* Aux bornes, les fleches sont desactivees. */
+    assert.equal(
+      await page.locator("#pieceDetailPrev").isDisabled(),
+      true,
+      "la fleche precedente est desactivee sur la premiere entree"
+    );
+
+    /* La navigation passe a la piece suivante sans refermer la modale. */
+    await page.locator("#pieceDetailNext").click();
+    assert.equal(
+      (await page.locator("#pieceDetailPosition").textContent()).trim(),
+      "2 / 2",
+      "la fleche suivante avance dans le parcours"
+    );
+    assert.equal(
+      (await page.locator("#pieceDetailTitle").textContent()).trim(),
+      "Bas de l'araignée de l'ombre",
+      "le titre suit la navigation"
+    );
+    assert.equal(
+      await page.locator("#pieceDetailNext").isDisabled(),
+      true,
+      "la fleche suivante est desactivee sur la derniere entree"
+    );
+
+    /* Une piece non configuree annonce son etat, sans statistique. */
+    assert.match(
+      await page.locator("#pieceDetailBody").textContent(),
+      /pas encore configurée/,
+      "une piece non configuree affiche son message"
+    );
+    assert.equal(
+      await page.locator("#pieceDetailBody .weapon-stat").count(),
+      0,
+      "une piece non configuree n'affiche aucune statistique"
+    );
+
+    /* Echap ferme la modale de piece SANS fermer la modale d'equipe qui la
+       porte : ModalStack ne leve son verrou de defilement qu'a la derniere
+       fermeture, une regression ici casserait le defilement de la page. */
+    await page.keyboard.press("Escape");
+    assert.equal(
+      await overlay.evaluate(node => node.classList.contains("on")),
+      false,
+      "Echap ferme la modale de la piece"
+    );
+    assert.equal(
+      await page.locator("#teamOverlay").evaluate(node => node.classList.contains("on")),
+      true,
+      "la modale d'equipe reste ouverte dessous"
+    );
+
+    /* Le focus revient sur la ligne d'origine. */
+    assert.equal(
+      await page.evaluate(() =>
+        document.activeElement && document.activeElement.classList.contains("eq-line")
+      ),
+      true,
+      "le focus revient sur la ligne qui a ouvert la modale"
     );
 
     assert.deepEqual(errors, [], "aucune erreur de page pendant le scenario");

@@ -446,7 +446,8 @@ async function installRosterFocusFakeSupabase(page){
       "Ouvrir un détail depuis l'Analyse ne doit relire aucune table Supabase"
     );
     assert.equal(
-      await rosterFocusPage.locator(".roster-detail-nav").isHidden(),
+      await rosterFocusPage
+        .locator("#rosterDetailOverlay .roster-detail-nav").isHidden(),
       true,
       "La navigation précédente/suivante doit disparaître depuis l'Analyse"
     );
