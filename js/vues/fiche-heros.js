@@ -33,17 +33,9 @@ import {
   normalizeRosterBuild,
   normalizeRosterCharacter
 } from "../metier/equipe-modele.js";
-import {
-  groupBuildStatResults,
-  groupBuildTermsBySlot,
-  summaryTermsFor
-} from "../metier/stats-calcul.js";
+import { orderedBuildEntries } from "../metier/stats-calcul.js";
 import { MemberRosterStore } from "../donnees/roster-store.js";
-import {
-  formatBuildStatValue,
-  gearTermLabel,
-  statTermsDetails
-} from "./stats-affichage.js";
+import { openPieceDetail } from "./detail-piece.js";
 import { heroStatsSection } from "./stats-heros.js";
 import { toast } from "./toast.js";
 
@@ -90,57 +82,34 @@ import { toast } from "./toast.js";
     return compact ? row : (row.children.length ? row : null);
   }
 
-  /* « PV de l'équipement » sous une pièce d'équipement dit deux fois la même
-     chose, et la place manque : la modale affiche jusqu'à huit héros de neuf
-     pièces. Le suffixe ne tombe que dans le résumé compact — le détail
-     déplié garde le libellé entier du catalogue. */
-  function shortStatLabel(label){
-    return String(label).replace(/\s+de l’équipement$/, "")
-      .replace(/\s+de l'équipement$/, "");
-  }
-
-  /* `formatBuildStatValue` pose deja le « % » sur les dix-milliemes, et le
-     resume compact se passe du suffixe « points » des valeurs plates. */
-  function contributionText(item){
-    return shortStatLabel(item.label)+" "+formatBuildStatValue(item.value, item.unit);
-  }
-
-  /* L'apport d'une pièce : un résumé toujours visible, le détail au clic.
-     Le détail passe par la chaîne d'affichage déjà utilisée par les éditeurs,
-     donc le membre y retrouve une présentation qu'il connaît. */
-  function equipContribution(entry){
-    const resume = summaryTermsFor(entry, 3);
-    if(!resume.length){
-      return el("span",{ class:"eq-contribution empty", text:"À configurer" });
-    }
-    const box = el("details",{class:"eq-contribution"});
-    box.appendChild(el("summary",{ text:resume.map(contributionText).join(" · ") }));
-    groupBuildStatResults(entry).forEach(group => {
-      group.stats.forEach(stat => {
-        box.appendChild(statTermsDetails(stat, {
-          termLabel:gearTermLabel,
-          termValue:term => formatBuildStatValue(term.value, term.unit),
-          termProvenance:term => term.source.component
-        }));
-      });
-    });
-    return box;
-  }
-
-  /* `entry` vient de groupBuildTermsBySlot. Absente, la ligne se dessine
-     comme avant : les appelants sans build à montrer restent valides. */
-  function equipLine(file, slotLabel, variant, entry){
+  /* La ligne d'une pièce. `onOpen` présente, elle devient un bouton qui
+     ouvre l'apport de la pièce ; absente, elle reste un simple div — un
+     emplacement vide n'a rien à montrer. */
+  function equipLine(file, slotLabel, variant, onOpen){
     const thumb = el("div",{class:"eq-thumb"+(variant?" "+variant:"")+(file?"":" empty")});
     if(file) thumb.style.backgroundImage = "url('"+file.replace(/'/g,"%27")+"')";
     const txt = el("div",{class:"eq-txt"},[
       el("span",{class:"eq-slot", text:slotLabel}),
       el("span",{class:"eq-name", text: file ? nameOfFile(file) : "—"})
     ]);
-    if(file && entry) txt.appendChild(equipContribution(entry));
-    return el("div",{class:"eq-line"+(file?"":" empty"), title: file ? nameOfFile(file) : ""},[
+    if(!file || !onOpen){
+      return el("div",{class:"eq-line"+(file?"":" empty"), title: file ? nameOfFile(file) : ""},[
+        thumb,
+        txt
+      ]);
+    }
+    const line = el("button",{
+      class:"eq-line",
+      type:"button",
+      title:nameOfFile(file),
+      "aria-label":"Voir l’apport — "+nameOfFile(file)
+    },[
       thumb,
-      txt
+      txt,
+      el("span",{class:"eq-chevron", "aria-hidden":"true", text:"›"})
     ]);
+    line.addEventListener("click", ()=>onOpen(line));
+    return line;
   }
 
   function heroDetail(h, options){
@@ -167,29 +136,44 @@ import { toast } from "./toast.js";
     if(h.potentiel && h.potentiel.tier > 0)
       col.appendChild(el("div",{class:"hd-pot", text:"✦ P"+h.potentiel.tier}));
 
-    /* Une seule passe de calcul pour tout le héros : les termes sont déjà
-       produits par l'agrégation, on ne fait que les ranger par emplacement. */
-    const entries = groupBuildTermsBySlot(h);
-    const entryOf = slot => entries.find(item => item.slot === slot) || null;
+    /* Une seule passe de calcul pour tout le héros, et un seul ordre de
+       parcours : la position affichée dans la modale doit correspondre à
+       ce que le membre voit ici. */
+    const entries = orderedBuildEntries(h);
+    const indexOfSlot = slot => entries.findIndex(item => item.slot === slot);
+    const opener = slot => {
+      const index = indexOfSlot(slot);
+      if(index < 0) return null;
+      return trigger => openPieceDetail(entries, index, trigger);
+    };
 
     const gear = el("div",{class:"hd-gear"});
     gear.appendChild(el("div",{class:"hd-group-t", text:"Arme"}));
-    gear.appendChild(equipLine(h.weapon, "Arme", "weapon", entryOf("weapon")));
+    gear.appendChild(equipLine(h.weapon, "Arme", "weapon", opener("weapon")));
     gear.appendChild(el("div",{class:"hd-group-t", text:"Armures"}));
     ARMOR_SLOTS.forEach(s=>gear.appendChild(
-      equipLine(h.armor ? h.armor[s] : null, ARMOR_LABELS[s], "", entryOf(s))
+      equipLine(h.armor ? h.armor[s] : null, ARMOR_LABELS[s], "", opener(s))
     ));
     gear.appendChild(el("div",{class:"hd-group-t", text:"Bijoux"}));
     JEWEL_SLOTS.forEach(s=>gear.appendChild(
-      equipLine(h.jewel ? h.jewel[s] : null, JEWEL_LABELS[s], "jewel", entryOf(s))
+      equipLine(h.jewel ? h.jewel[s] : null, JEWEL_LABELS[s], "jewel", opener(s))
     ));
-    /* Le bonus d'ensemble n'appartient à aucune pièce : le répartir serait
-       faux, le taire ferait que la somme des résumés ne fait plus le total. */
-    const setEntry = entryOf("set");
-    if(setEntry && setEntry.terms.length){
-      gear.appendChild(el("div",{class:"hd-group-t", text:"Bonus d’ensemble"}));
-      const bonus = el("div",{class:"eq-set-bonus"});
-      bonus.appendChild(equipContribution(setEntry));
+    /* Le bonus d'ensemble n'est pas une pièce : il n'a ni vignette ni
+       emplacement, mais il a un apport, donc il a sa ligne et sa place dans
+       le parcours. */
+    const setIndex = indexOfSlot("set");
+    if(setIndex >= 0 && entries[setIndex].terms.length){
+      const bonus = el("button",{
+        class:"eq-line eq-set-line",
+        type:"button",
+        "aria-label":"Voir l’apport — bonus d’ensemble"
+      },[
+        el("div",{class:"eq-txt"},[
+          el("span",{class:"eq-name", text:"Bonus d’ensemble"})
+        ]),
+        el("span",{class:"eq-chevron", "aria-hidden":"true", text:"›"})
+      ]);
+      bonus.addEventListener("click", ()=>openPieceDetail(entries, setIndex, bonus));
       gear.appendChild(bonus);
     }
     col.appendChild(gear);
