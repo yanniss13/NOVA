@@ -1,10 +1,17 @@
 name: Rappel Discord — Boss de Guilde
 
 # Relance sur Discord les membres qui n'ont rejoint aucun groupe de la semaine.
-# Le boss de confrérie reset le LUNDI 9h -> rappel chaque DIMANCHE à MIDI (Paris).
-# GitHub Actions tourne en UTC : on lance à 10:00 ET 11:00 UTC le dimanche
-# (couvre midi Paris en heure d'été comme en heure d'hiver) ; le script ne poste
-# que si l'heure locale de Paris est bien dimanche 12h.
+# Le boss de confrérie reset le LUNDI 9h -> rappel chaque DIMANCHE (Paris).
+#
+# UN SEUL cron, et le script ne vérifie plus que le JOUR.
+#
+# La version d'origine visait midi pile avec deux crons (été/hiver), et le
+# rappel n'est de ce fait JAMAIS parti : GitHub Actions lance ses crons avec
+# 20 à 90 minutes de retard sur les runners partagés, et les quatre exécutions
+# des 26 juillet et 2 août 2026 ont toutes vu 13h à Paris.
+#
+# Ne PAS rajouter de second cron sans verrou par semaine : la fenêtre couvrant
+# désormais tout le dimanche, deux déclenchements posteraient deux messages.
 #
 # 2 secrets requis (Settings -> Secrets and variables -> Actions) :
 #   SUPABASE_SERVICE_ROLE : clé "service_role" Supabase (secrète)
@@ -12,9 +19,8 @@ name: Rappel Discord — Boss de Guilde
 
 on:
   schedule:
-    - cron: "0 10 * * 0"   # dimanche 10:00 UTC (= 12:00 Paris en été)
-    - cron: "0 11 * * 0"   # dimanche 11:00 UTC (= 12:00 Paris en hiver)
-  workflow_dispatch: {}     # + bouton "Run workflow" manuel (ignore la fenêtre horaire)
+    - cron: "0 10 * * 0"   # dimanche 10:00 UTC (11h Paris l'hiver, 12h l'été)
+  workflow_dispatch: {}     # + bouton "Run workflow" manuel (ignore la fenêtre)
 
 jobs:
   remind:

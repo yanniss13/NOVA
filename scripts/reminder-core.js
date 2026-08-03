@@ -1,14 +1,26 @@
 "use strict";
 /* Logique pure du rappel Discord des groupes de boss (aucun réseau -> testable).
-   6 groupes sont créés chaque semaine (reset lundi 9h). Chaque dimanche à midi
-   (heure de Paris), on relance les membres sous 3/3 runs. */
+   6 groupes sont créés chaque semaine (reset lundi 9h). Chaque dimanche, on
+   relance les membres sous 3/3 runs. */
 
 const REMINDER_WEEKDAY = 0; // dimanche (getDay : 0 = dimanche)
-const REMINDER_HOUR = 12;   // midi, heure locale de Paris
 
-// Fenêtre d'envoi : dimanche 12h (heure de Paris). Le runner fournit l'heure Paris.
-function isReminderWindow(parisWeekday, parisHour) {
-  return parisWeekday === REMINDER_WEEKDAY && parisHour === REMINDER_HOUR;
+/* Fenêtre d'envoi : LE DIMANCHE, sans condition d'heure.
+
+   Elle exigeait « 12h pile » à l'origine, et le rappel n'est de ce fait
+   JAMAIS parti. GitHub Actions lance ses crons avec 20 à 90 minutes de retard
+   sur les runners partagés : les quatre exécutions des 26 juillet et 2 août
+   2026 ont toutes vu 13h à Paris et se sont arrêtées là.
+
+   Contrôler l'heure supposait un déclenchement ponctuel — une garantie que
+   GitHub ne donne pas. Le jour, lui, résiste à n'importe quel retard
+   plausible.
+
+   Cette largeur n'expose à aucun doublon TANT QU'UN SEUL cron subsiste dans
+   .github/workflows/boss-reminder.yml. En rajouter un demanderait d'abord un
+   verrou par semaine, sans quoi le salon recevrait deux fois le message. */
+function isReminderWindow(parisWeekday) {
+  return parisWeekday === REMINDER_WEEKDAY;
 }
 
 // Lundi 9h (Paris) de la semaine de boss courante -> "YYYY-MM-DD".
@@ -62,5 +74,5 @@ function reminderMessage(weekLabel, missingMembers) {
 
 module.exports = {
   isReminderWindow, currentBossWeekStart, missingRuns, reminderMessage,
-  REMINDER_WEEKDAY, REMINDER_HOUR
+  REMINDER_WEEKDAY
 };

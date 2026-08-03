@@ -57,10 +57,13 @@ async function main() {
   }
   const now = new Date();
   const { weekday, hour } = parisNow();
-  if (!FORCE && !isReminderWindow(weekday, hour)) {
-    console.log("Hors fenêtre (dimanche 12h Paris). Heure Paris actuelle : jour " + weekday + ", " + hour + "h. Rien à faire.");
+  /* L'heure reste journalisée : c'est elle qui a révélé que le cron partait
+     systématiquement en retard, et elle resservira au prochain doute. */
+  if (!FORCE && !isReminderWindow(weekday)) {
+    console.log("Hors fenêtre (dimanche, heure de Paris). Heure Paris actuelle : jour " + weekday + ", " + hour + "h. Rien à faire.");
     return;
   }
+  console.log("Dans la fenêtre : dimanche, " + hour + "h à Paris. Envoi du rappel.");
 
   const weekStart = currentBossWeekStart(now);
   const { missingMembers } = await collectReminderData(sb, weekStart);

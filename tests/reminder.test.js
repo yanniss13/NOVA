@@ -19,13 +19,50 @@ assert.deepStrictEqual(
   "Importer le collecteur ne doit déclencher ni rappel ni message"
 );
 
-// Fenêtre : dimanche (0) à 12h, heure de Paris.
+/* Fenêtre : le DIMANCHE, quelle que soit l'heure de Paris.
+
+   L'heure exacte a été abandonnée après avoir constaté que le rappel n'était
+   JAMAIS parti. GitHub Actions lance ses crons avec 20 à 90 minutes de retard
+   sur les runners partagés : les quatre exécutions relevées les 26 juillet et
+   2 août 2026 ont toutes vu 13h alors que la fenêtre exigeait 12h pile.
+
+   Un seul cron subsiste, donc un seul déclenchement par dimanche : la fenêtre
+   large ne peut pas produire de doublon. */
 {
   assert.equal(isReminderWindow(0, 12), true);
-  assert.equal(isReminderWindow(0, 11), false); // 11h -> non
-  assert.equal(isReminderWindow(0, 13), false); // 13h -> non
+  assert.equal(isReminderWindow(0, 11), true, "11h : un cron en avance poste quand même");
+  assert.equal(isReminderWindow(0, 13), true, "13h : le retard observé ne doit plus rien annuler");
+  assert.equal(isReminderWindow(0, 0), true, "minuit reste un dimanche");
+  assert.equal(isReminderWindow(0, 23), true, "23h reste un dimanche");
   assert.equal(isReminderWindow(1, 12), false); // lundi -> non
   assert.equal(isReminderWindow(6, 12), false); // samedi -> non
+}
+
+/* L'invariant qui rend la fenêtre large sûre : UN SEUL cron.
+
+   La fenêtre couvrant tout le dimanche, un second déclenchement posterait un
+   second message dans le salon. Le garde-fou vit ici parce que rien dans le
+   code JavaScript ne peut le voir : la faute se commettrait dans le YAML. */
+{
+  const fs = require("node:fs");
+  const path = require("node:path");
+  const workflow = fs.readFileSync(
+    path.join(__dirname, "..", ".github", "workflows", "boss-reminder.yml"),
+    "utf8"
+  );
+  const crons = workflow.match(/^\s*-\s*cron:/gm) || [];
+  assert.equal(
+    crons.length,
+    1,
+    "Un seul cron : la fenêtre couvre tout le dimanche, deux crons enverraient "
+      + "deux messages. En ajouter un exige d'abord un verrou par semaine. "
+      + "Trouvé : " + crons.length
+  );
+  assert.match(
+    workflow,
+    /cron:\s*"0 \d+ \* \* 0"/,
+    "Le cron doit rester calé sur le dimanche (0 en fin d'expression)"
+  );
 }
 
 // currentBossWeekStart : lundi 9h (Paris) de la semaine de boss courante.
