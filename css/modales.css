@@ -339,21 +339,3 @@ body.modal-locked{
 @media(pointer:coarse){
   .gear-config-open{min-height:44px}
 }
-
-/* L'apport d'une pièce, sous son nom. Le résumé tient sur une ligne et se
-   tronque : la modale affiche jusqu'à huit héros de neuf pièces, la hauteur
-   est la ressource rare. Le détail complet vit dans le dépliage. */
-.eq-contribution{margin-top:.15rem;font-size:.78rem;color:var(--gold)}
-.eq-contribution>summary{
-  cursor:pointer;list-style:none;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
-}
-.eq-contribution>summary::-webkit-details-marker{display:none}
-.eq-contribution>summary::before{content:"▸ "}
-.eq-contribution[open]>summary::before{content:"▾ "}
-.eq-contribution[open]>summary{white-space:normal}
-.eq-contribution.empty{display:block;color:var(--muted);font-style:italic}
-.eq-set-bonus{margin-top:.25rem}
-@media(pointer:coarse){
-  .eq-contribution>summary{min-height:44px;display:flex;align-items:center}
-}

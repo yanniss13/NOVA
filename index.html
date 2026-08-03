@@ -361,6 +361,26 @@
   </div>
 </div>
 
+<!-- Apport d'une pièce d'équipement -->
+<div class="overlay" id="pieceDetailOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="pieceDetailTitle" aria-hidden="true">
+  <div class="modal rostermodal">
+    <div class="picker-head">
+      <span class="picker-title" id="pieceDetailTitle">Pièce</span>
+      <button class="icon-btn" id="pieceDetailClose" aria-label="Fermer">✕</button>
+    </div>
+    <div class="roster-detail-nav">
+      <button class="icon-btn" id="pieceDetailPrev" type="button"
+              aria-label="Pièce précédente">‹</button>
+      <span class="roster-detail-position" id="pieceDetailPosition"
+            aria-live="polite"></span>
+      <button class="icon-btn" id="pieceDetailNext" type="button"
+              aria-label="Pièce suivante">›</button>
+    </div>
+    <div class="roster-detail-body" id="pieceDetailBody"></div>
+  </div>
+</div>
+
 <!-- Connexion Supabase -->
 <div class="overlay auth-overlay" id="authOverlay" role="dialog" aria-modal="true"
      aria-labelledby="authTitle" aria-hidden="true">
