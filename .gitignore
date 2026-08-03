@@ -2,6 +2,8 @@ node_modules/
 playwright-report/
 test-results/
 .worktrees/
+.claude/
+.vscode/
 __pycache__/
 debug.log
 .superpowers/
