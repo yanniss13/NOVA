@@ -41,7 +41,10 @@ jobs:
       - name: Envoyer le rappel du dimanche
         run: node scripts/discord-reminder.js
         env:
-          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          # Pas de SUPABASE_URL ici : l'URL du projet est PUBLIQUE (servie à
+          # tous les visiteurs dans supabase-config.js), le script la connaît
+          # donc en dur. La câbler sur un secret inexistant ne faisait que
+          # produire un avertissement « Context access might be invalid ».
           SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
           # Lancement manuel -> on force l'envoi (ignore la fenêtre du dimanche).

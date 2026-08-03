@@ -8,6 +8,10 @@ const {
   isReminderWindow, currentBossWeekStart, missingRuns, reminderMessage
 } = require("./reminder-core.js");
 
+/* L'URL du projet n'est pas un secret : elle est servie à tous les visiteurs
+   dans supabase-config.js. Elle vit donc en dur, et le workflow ne la passe
+   pas. La variable d'environnement reste lue pour permettre aux tests de
+   pointer ailleurs. Ce qui est secret, c'est la clé service_role. */
 const SUPABASE_URL = process.env.SUPABASE_URL || "https://uxouhbgdlolidjmxwgae.supabase.co";
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
 const WEBHOOK = process.env.DISCORD_WEBHOOK_URL;
