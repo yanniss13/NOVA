@@ -5,7 +5,7 @@ import unittest
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
-SPEC = importlib.util.spec_from_file_location("generate_stats", ROOT / "generate-stats.py")
+SPEC = importlib.util.spec_from_file_location("generate_stats", ROOT / "scripts" / "generate-stats.py")
 module = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(module)
 

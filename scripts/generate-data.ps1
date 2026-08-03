@@ -11,7 +11,9 @@
 # =============================================================================
 
 $ErrorActionPreference = 'Stop'
-$root = Split-Path -Parent $MyInvocation.MyCommand.Path
+# Ce script vit dans scripts/ ; les dossiers d'images et data.js sont a la
+# racine du depot, d'ou le second Split-Path.
+$root = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path)
 
 # --- Libelles d'affichage pour les types d'armes (nom de dossier -> libelle) ---
 $typeLabels = [ordered]@{

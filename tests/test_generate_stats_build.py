@@ -10,7 +10,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
-SCRIPT_PATH = REPO_ROOT / "generate-stats-build.py"
+SCRIPT_PATH = REPO_ROOT / "scripts" / "generate-stats-build.py"
 SPEC = importlib.util.spec_from_file_location("generate_stats_build", SCRIPT_PATH)
 module = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(module)

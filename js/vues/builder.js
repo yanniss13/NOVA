@@ -671,7 +671,7 @@ import { toast } from "./toast.js";
     Picker.open({
       title:"Bijou — "+slot, value:brouillonEquipe.equipe.heroes[i].jewel[slot],
       items:(DATA.bijoux[slot]||[]).map(b=>({value:b.file, name:b.name, file:b.file})),
-      emptyHint:"Aucun bijou pour l'instant. Ajoute des images dans 7ds-bijoux/"+slot+"/ puis relance generate-data.ps1.",
+      emptyHint:"Aucun bijou pour l'instant. Ajoute des images dans 7ds-bijoux/"+slot+"/ puis relance scripts/generate-data.ps1.",
       onSelect:v=>{
         applyGearChange(brouillonEquipe.equipe.heroes[i], "jewel", slot, v);
         renderBuilder();

@@ -786,7 +786,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    root = Path(__file__).resolve().parent
+    # scripts/ -> racine du depot : les references locales y vivent.
+    root = Path(__file__).resolve().parent.parent
     catalog = build_catalog(
         root / "7ds-stats",
         root / "7ds-armes",

@@ -13,7 +13,10 @@ import os
 import urllib.request
 
 PAGE = "https://7dsorigin.app/fr/team-builder/create"
-OUT_DIR = "7ds-stats"
+# Racine du depot, et non le dossier courant : ce script vit dans scripts/
+# et doit ecrire dans 7ds-stats/ quel que soit l'endroit d'ou on le lance.
+OUT_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "7ds-stats")
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (compatible; ConfrerieSevenDS/1.0)",
     "Accept-Language": "fr-FR,fr;q=0.9",

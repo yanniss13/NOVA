@@ -9,7 +9,9 @@
 import os, re, json, sys, urllib.request
 
 sys.stdout.reconfigure(encoding='utf-8')
-HERE = os.path.dirname(os.path.abspath(__file__))
+# Ce script vit dans scripts/ ; les donnees qu'il lit et ecrit sont a la
+# racine du depot, d'ou le second .parent.
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 URL = 'https://7dsorigin.app/fr/team-builder/create'
 OUT = os.path.join(HERE, 'personnages-meta.js')
 

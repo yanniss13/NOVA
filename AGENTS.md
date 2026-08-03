@@ -10,7 +10,7 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
 ## État actuel — 2026-08-01
 
 - [x] Assets rangés dans des dossiers (fournis par l'utilisateur, ne pas renommer).
-- [x] `generate-data.ps1` — scanne les dossiers et génère `data.js`.
+- [x] `scripts/generate-data.ps1` — scanne les dossiers et génère `data.js`.
 - [x] `data.js` — données d'assets générées (24 persos, 12 types d'armes, 5 armures).
 - [x] `index.html` — appli complète (builder + page d'affichage), autonome.
 - [x] Bijoux **SSR uniquement** (grade5) : 34 images intégrées
@@ -21,7 +21,7 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       Ring/Necklace/Earring → dossier Anneau/Collier/Boucle d'oreille).
 - [x] Potentiels : palier P0→P10 par héros, façon page team-builder du site.
       Données FR (24 persos × ~3 types d'arme × 10 paliers) dans `potentiels.js`,
-      régénérable via `generate-potentiels.py`. Le palier est **commun au héros** ;
+      régénérable via `scripts/generate-potentiels.py`. Le palier est **commun au héros** ;
       les 3 clés d'armes par héros déterminent les armes compatibles et l'arme
       équipée choisit les descriptions de bonus affichées.
 - [x] Compatibilité des armes : le picker ne propose que les 3 types autorisés
@@ -30,7 +30,7 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       (2 ou 3 par héros). Le picker filtre selon le personnage et retire les
       anciennes valeurs incompatibles.
 - [x] Badges **élément + armes** par personnage. `personnages-meta.js`
-      (`generate-meta.py`) : role/rarity + `weapons` = 3 slots
+      (`scripts/generate-meta.py`) : role/rarity + `weapons` = 3 slots
       `{weapon, role, element}`. ⚠️ L'élément **dépend de l'arme équipée**
       (chaque slot a son élément) — ne PAS afficher `meta.element` fixe.
       `badgesRow(ch, hero, compact)` : la pastille d'élément et le surlignage
@@ -212,14 +212,18 @@ Site Confrérie 7ds/
 ├─ tests/modules-imports.test.js # Garde-fou : tout module importe ce qu'il emploie et est mis en cache.
 ├─ data.js                 # GÉNÉRÉ. window.SEVEN_DS_DATA = { personnages, armes, armures, bijoux }.
 ├─ stats-build.js          # GÉNÉRÉ. Personnages + armes + équipement + sets + passifs.
-├─ generate-stats-build.py # Régénère/valide stats-build.js depuis les références locales.
-├─ generate-data.ps1       # Régénère data.js en scannant les dossiers d'images.
 ├─ potentiels.js           # GÉNÉRÉ. 3 armes compatibles + bonus par héros.
-├─ generate-potentiels.py  # Régénère potentiels.js depuis 7dsorigin.app (internet requis).
 ├─ armures-liees.js        # GÉNÉRÉ. Fichiers d’armure liée par personnage.
-├─ generate-armures-liees.py # Régénération manuelle depuis la page publique.
 ├─ personnages-meta.js     # GÉNÉRÉ. element/role/rarity + weapons[] par personnage.
-├─ generate-meta.py        # Régénère personnages-meta.js depuis 7dsorigin.app.
+├─ scripts/                # Outils hors site. Se lancent DEPUIS LA RACINE.
+│  ├─ generate-data.ps1           # Régénère data.js en scannant les dossiers d'images.
+│  ├─ generate-stats-build.py     # Régénère/valide stats-build.js (références locales).
+│  ├─ generate-stats.py           # Aspire les stats de 7dsorigin.app vers 7ds-stats/.
+│  ├─ generate-potentiels.py      # Régénère potentiels.js depuis 7dsorigin.app (internet).
+│  ├─ generate-armures-liees.py   # Régénère armures-liees.js depuis la page publique.
+│  ├─ generate-meta.py            # Régénère personnages-meta.js depuis 7dsorigin.app.
+│  ├─ discord-reminder.js         # Rappel Discord.
+│  └─ reminder-core.js            # Sa logique pure.
 ├─ 7ds-ui/                 # Icônes d'UI : mastery/<arme>.webp, role-elements/<el>_<role>.webp
 ├─ AGENTS.md               # Ce fichier.
 ├─ docs/superpowers/specs/ # Spec de design détaillée.
@@ -280,7 +284,7 @@ nombre d'emplacements est fixé par les données : toute longueur différente es
 
 ## Stats de référence (`7ds-stats/`)
 
-Données chiffrées du jeu, extraites de 7dsorigin.app par `generate-stats.py`.
+Données chiffrées du jeu, extraites de 7dsorigin.app par `scripts/generate-stats.py`.
 **Aucun de ces JSON n'est chargé par `index.html`** : ce sont des fichiers de
 référence pour générer `stats-build.js`, pas des données d'exécution. Ne les
 précache pas.
@@ -320,12 +324,12 @@ puis les 7 éléments) : sa forme diffère des paliers 1 à 4.
 
 ### Catalogue local et données persistées
 
-`generate-stats-build.py` rapproche les images locales des armes de référence et
+`scripts/generate-stats-build.py` rapproche les images locales des armes de référence et
 génère `stats-build.js`, qui pose `window.SEVEN_DS_BUILD_STATS`. La commande de
 référence est :
 
 ```powershell
-python generate-stats-build.py
+python scripts/generate-stats-build.py
 ```
 
 Le rapprochement tient compte du type d'arme, échoue sur une absence ou une
@@ -811,7 +815,7 @@ d'une réactivation ; aucun rollback SQL destructif n'est requis.
 
 **On ne hardcode JAMAIS la liste des images dans `index.html`.**
 Les assets proviennent de `window.SEVEN_DS_DATA`, régénéré via
-`generate-data.ps1` lorsque l'utilisateur ajoute ou retire des images. La
+`scripts/generate-data.ps1` lorsque l'utilisateur ajoute ou retire des images. La
 compatibilité des armures liées provient de `window.SEVEN_DS_ARMURES_LIEES`.
 
 Pourquoi un fichier généré et pas un scan JS direct ? Le navigateur ne peut pas
@@ -839,8 +843,8 @@ window.SEVEN_DS_ARMURES_LIEES = {
 };
 ```
 
-`generate-armures-liees.py` régénère cet instantané uniquement lorsqu’il est
-lancé manuellement avec `python generate-armures-liees.py`. Il lit la page
+`scripts/generate-armures-liees.py` régénère cet instantané uniquement lorsqu’il est
+lancé manuellement avec `python scripts/generate-armures-liees.py`. Il lit la page
 publique de référence en une requête, sans télécharger aucune image. Il ne
 s’exécute jamais dans le navigateur : `index.html` ne charge que
 `armures-liees.js` local et ne contacte donc jamais cette source.
@@ -1435,4 +1439,4 @@ chaque carte.
 - La logique applicative reste inline dans `index.html` (pas de build). Les seules
   exceptions runtime sont `supabase-config.js` et le client Supabase chargé par CDN.
 - Thème : héraldique sombre (obsidienne + or vieilli + pourpre). Voir la spec.
-- Après modif des dossiers d'images : relancer `generate-data.ps1`.
+- Après modif des dossiers d'images : relancer `scripts/generate-data.ps1`.

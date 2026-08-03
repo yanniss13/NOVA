@@ -26,7 +26,7 @@ import { initAuth } from "./vues/session-auth.js";
   if(!DATA){
     document.getElementById("heroGrid").innerHTML =
       '<div class="empty-state"><p class="big">data.js introuvable</p>' +
-      '<p>Lance <b>generate-data.ps1</b> puis recharge la page.</p></div>';
+      '<p>Lance <b>scripts/generate-data.ps1</b> puis recharge la page.</p></div>';
     return;
   }
 

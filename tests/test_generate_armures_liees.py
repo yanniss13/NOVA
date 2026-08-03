@@ -6,7 +6,7 @@ import unittest
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 SPEC = importlib.util.spec_from_file_location(
-    "generate_armures_liees", ROOT / "generate-armures-liees.py"
+    "generate_armures_liees", ROOT / "scripts" / "generate-armures-liees.py"
 )
 module = importlib.util.module_from_spec(SPEC)
 SPEC.loader.exec_module(module)
