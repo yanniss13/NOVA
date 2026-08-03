@@ -32,6 +32,7 @@ const MODULES = [
   "metier/equipe-modele.js",
   "metier/dispos-logique.js",
   "metier/boss-logique.js",
+  "metier/accueil-logique.js",
 
   /* donnees — lectures et écritures Supabase, sans aucun rendu. */
   "donnees/roster-profils.js",

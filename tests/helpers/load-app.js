@@ -149,6 +149,20 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
     typeof shouldIgnoreAvailabilityEcho === "function"
       ? shouldIgnoreAvailabilityEcho
       : undefined,
+  availabilitySummary:typeof availabilitySummary === "function"
+    ? availabilitySummary
+    : undefined,
+  rosterSummary:typeof rosterSummary === "function"
+    ? rosterSummary
+    : undefined,
+  /* Privee, exposee ici seule : elle porte la regle « le build juge est le
+     favori », qu'un test passant par rosterSummary ne saurait distinguer sans
+     fabriquer un build entierement valide.
+     (Pas d'accent grave dans ce fichier : son contenu vit dans un gabarit de
+     chaine, et un accent grave le refermerait.) */
+  judgedWeaponType:typeof judgedWeaponType === "function"
+    ? judgedWeaponType
+    : undefined,
   normalizePotentiel,
   normalizeHero,
   normalizeTeam,

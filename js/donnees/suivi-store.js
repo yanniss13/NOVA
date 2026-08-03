@@ -13,9 +13,16 @@ import { Store } from "./equipes-store.js";
 import { buildDashboardState, currentBossWeek,
   isBossSchemaCompatibilityError } from "../metier/boss-logique.js";
 import { BossStore } from "./boss-store.js";
+import { availabilitySummary, rosterSummary } from "../metier/accueil-logique.js";
+import { availabilityWeekStart } from "../metier/dispos-logique.js";
+import { MemberRosterStore } from "./roster-store.js";
 
   const DASHBOARD_CACHE_PREFIX = "confrerie7ds.cloud.dashboard.";
-  const DASHBOARD_CACHE_VERSION = 1;
+  /* Version 2 : l'etat porte desormais `availability` et `roster`. Sans ce
+     passage, les enveloppes deja ecrites sur les appareils des membres —
+     depourvues de ces champs — seraient relues comme valides et les trois
+     cartes resteraient absentes jusqu'a la premiere synchro reussie. */
+  const DASHBOARD_CACHE_VERSION = 2;
 
   function dashboardCacheKey(userId, weekStart){
     return DASHBOARD_CACHE_PREFIX+userId+"."+weekStart;
@@ -129,11 +136,29 @@ import { BossStore } from "./boss-store.js";
           }
           throw error;
         });
-      const [membership, reportResult, teams] = await Promise.all([
-        membershipPromise,
-        reportsPromise,
-        teamsPromise
-      ]);
+      /* Les dispos ont LEUR semaine : lundi 0h, quand le boss compte a partir
+         du lundi 9h. Le lundi matin entre les deux, `weekStart` designerait la
+         semaine ecoulee et la carte afficherait les creneaux d'avant. */
+      const availabilityWeek = availabilityWeekStart(new Date());
+      /* Chaque lecture porte SON repli a `null` : l'echec d'une carte ne doit
+         jamais emporter le tableau de bord entier, et `null` se distingue d'une
+         semaine vide — la carte disparait au lieu d'annoncer un faux zero. */
+      const availabilityPromise = sb
+        ? sb.from("member_availability")
+            .select("owner,slots,week_start")
+            .eq("week_start", availabilityWeek)
+            .then(result => result.error ? null : (result.data || []))
+            .catch(() => null)
+        : Promise.resolve(null);
+      const rosterPromise = MemberRosterStore.refresh(userId).catch(() => null);
+      const [membership, reportResult, teams, availabilityRows, rosterCharacters] =
+        await Promise.all([
+          membershipPromise,
+          reportsPromise,
+          teamsPromise,
+          availabilityPromise,
+          rosterPromise
+        ]);
       if(!isCurrent()) return state;
       state = Object.assign(buildDashboardState({
         userId,
@@ -147,7 +172,9 @@ import { BossStore } from "./boss-store.js";
         offline:false
       }), {
         userId,
-        reportsAvailable:reportResult.reportsAvailable
+        reportsAvailable:reportResult.reportsAvailable,
+        availability:availabilitySummary({ rows:availabilityRows, userId }),
+        roster:rosterSummary({ characters:rosterCharacters })
       });
       dirty = false;
       writeDashboardCache(userId, state);
