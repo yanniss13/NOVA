@@ -40,7 +40,8 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       `role-elements/<element>_<role>.webp` (30), depuis `7dsorigin.app/images/ui/`.
 - [x] Roster épuré : les cartes d'équipe ne montrent plus les icônes
       d'équipement (portrait, nom, badge d'arme équipée, potentiel, note).
-      Clic sur la carte / bouton « Voir l'équipement » → modal `#teamOverlay`
+      Clic sur la bande de héros (un `<button>` nommé « Voir l'équipement de
+      … ») → modal `#teamOverlay`
       (`openTeamDetail`/`heroDetail`/`equipLine`) avec l'équipement complet
       (arme + 5 armures + 3 bijoux, noms) par héros.
 - [x] **Partage réseau (Supabase) — Étape 1 implémentée**. Comptes + équipes +

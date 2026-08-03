@@ -79,12 +79,20 @@ import { toast } from "./toast.js";
       who
     ]);
 
-    const heroes = el("div",{class:"team-heroes clickable", title:"Voir l'équipement",
-      onclick:()=>openTeamDetail(t)});
-    (t.heroes||[]).forEach(h=>heroes.appendChild(miniHero(h)));
+    /* La bande de héros EST le bouton. Le libellé « Voir l'équipement ▾ » qui
+       vivait dessous ouvrait la même modale, occupait une ligne sur chaque
+       carte et n'apprenait rien que le survol ne disait déjà.
 
-    const hint = el("button",{class:"team-detail-btn", type:"button",
-      text:"Voir l'équipement ▾", onclick:()=>openTeamDetail(t)});
+       Elle devient donc un vrai <button> plutôt qu'un <div> cliquable : c'est
+       lui qui portait l'accès clavier, et le supprimer sans le remplacer aurait
+       rendu l'équipement inatteignable autrement qu'à la souris. */
+    const heroes = el("button",{
+      class:"team-heroes clickable",
+      type:"button",
+      "aria-label":"Voir l'équipement de "+(t.pseudo || "cette équipe"),
+      onclick:()=>openTeamDetail(t)
+    });
+    (t.heroes||[]).forEach(h=>heroes.appendChild(miniHero(h)));
 
     /* « Dupliquer » est offert sur toute équipe : le registre est partagé, et la
        copie est un brouillon indépendant qu'il faudra enregistrer soi-même.
@@ -114,7 +122,7 @@ import { toast } from "./toast.js";
         onclick:()=>void deleteTeam(t)
       }));
     }
-    return el("div",{class:"team"},[head, heroes, hint, actions]);
+    return el("div",{class:"team"},[head, heroes, actions]);
   }
 
   function miniHero(h){
