@@ -97,8 +97,66 @@ import {
       return AVAIL_DAY_FULL[day]+" "+String(hour).padStart(2, "0")+"h";
     }
 
+    /* Ce qui impose de RECONSTRUIRE la grille, par opposition à ce qui se
+       met à jour dans les cases déjà en place. Tout le reste — le contenu des
+       168 cases — se rafraîchit sans toucher au squelette. */
+    function gridSignature(){
+      return [
+        state.weekStart,
+        state.mode,
+        state.canEdit ? "1" : "0",
+        state.message || ""
+      ].join("|");
+    }
+
+    /* Le contenu des cases, sans reconstruire quoi que ce soit.
+
+       C'est la moitié invisible du correctif : `renderGrid` remplaçait tout
+       le corps à chaque rafraîchissement, donc le conteneur qui défile était
+       détruit puis recréé, et la position de défilement partait avec lui.
+
+       Or un rafraîchissement arrive dès qu'un AUTRE membre enregistre ses
+       disponibilités : Realtime rappelle la vue entière. Un membre en train
+       de peindre ses créneaux se faisait ramener en haut de grille sans avoir
+       rien fait, autant de fois que la confrérie enregistrait. */
+    function updateCells(aggregate){
+      const grid = $("#availGrid");
+      if(!grid) return;
+      grid.querySelectorAll(".avail-cell").forEach(cell => {
+        const index = Number(cell.dataset.index);
+        const day = Number(cell.dataset.day);
+        const hour = Number(cell.dataset.hour);
+        if(state.mode === "guild"){
+          const count = aggregate.counts[index];
+          cell.dataset.tier = String(
+            availabilityDensityTier(count, aggregate.max)
+          );
+          cell.textContent = count ? String(count) : "";
+          cell.classList.toggle("mine", availabilityMaskHas(state.mask, index));
+          cell.setAttribute(
+            "aria-label",
+            cellLabel(day, hour)+" — "+count+" membre"+(count > 1 ? "s" : "")
+          );
+        }else{
+          cell.setAttribute(
+            "aria-pressed", String(availabilityMaskHas(state.mask, index))
+          );
+          cell.disabled = !state.canEdit;
+        }
+      });
+    }
+
     function renderGrid(){
       const body = $("#availBody");
+      const aggregatePrevu = state.mode === "guild"
+        ? aggregateAvailability(state.rows)
+        : null;
+      /* Même squelette : on garde le DOM en place, donc le défilement aussi. */
+      const existant = $("#availGrid");
+      if(existant && existant.dataset.signature === gridSignature()){
+        updateCells(aggregatePrevu);
+        return;
+      }
       body.innerHTML = "";
       if(state.message){
         const note = document.createElement("p");
@@ -106,14 +164,13 @@ import {
         note.textContent = state.message;
         body.appendChild(note);
       }
-      const aggregate = state.mode === "guild"
-        ? aggregateAvailability(state.rows)
-        : null;
+      const aggregate = aggregatePrevu;
       const wrap = document.createElement("div");
       wrap.className = "avail-grid-wrap";
       const grid = document.createElement("div");
       grid.className = "avail-grid";
       grid.id = "availGrid";
+      grid.dataset.signature = gridSignature();
       const corner = document.createElement("div");
       corner.className = "avail-corner avail-head";
       grid.appendChild(corner);
@@ -315,13 +372,9 @@ import {
     function syncCells(){
       const grid = $("#availGrid");
       if(!grid || !state || state.mode !== "mine") return;
-      grid.querySelectorAll(".avail-cell").forEach(cell => {
-        const index = Number(cell.dataset.index);
-        cell.setAttribute(
-          "aria-pressed", String(availabilityMaskHas(state.mask, index))
-        );
-        cell.classList.remove("preview");
-      });
+      updateCells(null);
+      grid.querySelectorAll(".avail-cell.preview")
+        .forEach(cell => cell.classList.remove("preview"));
     }
 
     function applyMask(mask){

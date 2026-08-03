@@ -304,6 +304,61 @@ async function runMobileChecks(browser, baseUrl){
       "La case touchée doit refléter son nouvel état sans reconstruction"
     );
 
+    /* LE BUG REMONTE PAR UN MEMBRE : « quand je descends avec ma molette, ça
+       remonte tout seul ». Realtime rappelle la vue entière dès qu'un AUTRE
+       membre enregistre ses disponibilités, et `renderGrid` remplaçait alors
+       tout le corps — le conteneur qui défile était détruit puis recréé, et
+       la position de défilement partait avec lui.
+
+       Le scénario le reproduit tel quel : on descend, un autre membre
+       enregistre, on vérifie qu'on n'a pas bougé. */
+    await page.evaluate(() => {
+      const wrap = document.querySelector(".avail-grid-wrap");
+      wrap.scrollTop = 400;
+      window.__probeWrap = wrap;
+      window.__probeGrid = document.querySelector("#availGrid");
+    });
+    const defilementAvant = await page.evaluate(
+      () => document.querySelector(".avail-grid-wrap").scrollTop
+    );
+    assert.ok(
+      defilementAvant > 0,
+      "La grille doit pouvoir défiler pour que le test ait un sens, reçu : "
+        + defilementAvant
+    );
+
+    const requetesAvant = await page.evaluate(() =>
+      window.__availState.queryCalls.filter(t => t === "member_availability").length
+    );
+    await page.evaluate(() => {
+      const semaine = window.__availState.member_availability[0].week_start;
+      const ligne = window.__availState.member_availability
+        .find(item => item.owner === "alix");
+      ligne.slots = ligne.slots.slice(0, 60) + "1" + ligne.slots.slice(61);
+      window.__availEmit("member_availability", ligne);
+    });
+    await page.waitForFunction(n =>
+      window.__availState.queryCalls
+        .filter(t => t === "member_availability").length > n,
+      requetesAvant,
+      { timeout:5000 }
+    );
+    await page.waitForTimeout(250);
+
+    assert.equal(
+      await page.evaluate(() => window.__probeGrid
+        === document.querySelector("#availGrid")),
+      true,
+      "L'écriture d'un autre membre ne doit pas reconstruire la grille"
+    );
+    assert.equal(
+      await page.evaluate(
+        () => document.querySelector(".avail-grid-wrap").scrollTop
+      ),
+      defilementAvant,
+      "Le défilement doit rester où le membre l'a laissé"
+    );
+
     assert.deepEqual(errors, [], "Aucune erreur JS sur mobile");
   }finally{
     await page.close();
