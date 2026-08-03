@@ -1,7 +1,8 @@
 /* La fiche d'un heros : portrait, badges d'arme, equipement, stats, note.
 
-   C'est le noyau commun aux quatre grosses modales du site — detail d'une
-   equipe, detail du roster d'un membre, rapport de boss, roster personnel.
+   C'est le noyau commun aux deux modales de consultation — detail d'une
+   equipe et detail du roster d'un membre. Le Builder et le roster des
+   membres n'utilisent que le bloc de stats, pas la fiche entiere.
    Chacune l'appelle avec ses propres options plutot que de redessiner la
    fiche : `badgesFor` remplace la rangee de badges figee par un selecteur
    interactif, `canImport` ajoute le bouton d'import vers le roster.
@@ -32,7 +33,17 @@ import {
   normalizeRosterBuild,
   normalizeRosterCharacter
 } from "../metier/equipe-modele.js";
+import {
+  groupBuildStatResults,
+  groupBuildTermsBySlot,
+  summaryTermsFor
+} from "../metier/stats-calcul.js";
 import { MemberRosterStore } from "../donnees/roster-store.js";
+import {
+  formatBuildStatValue,
+  gearTermLabel,
+  statTermsDetails
+} from "./stats-affichage.js";
 import { heroStatsSection } from "./stats-heros.js";
 import { toast } from "./toast.js";
 
@@ -79,15 +90,56 @@ import { toast } from "./toast.js";
     return compact ? row : (row.children.length ? row : null);
   }
 
-  function equipLine(file, slotLabel, variant){
+  /* « PV de l'équipement » sous une pièce d'équipement dit deux fois la même
+     chose, et la place manque : la modale affiche jusqu'à huit héros de neuf
+     pièces. Le suffixe ne tombe que dans le résumé compact — le détail
+     déplié garde le libellé entier du catalogue. */
+  function shortStatLabel(label){
+    return String(label).replace(/\s+de l’équipement$/, "")
+      .replace(/\s+de l'équipement$/, "");
+  }
+
+  function contributionText(item){
+    return shortStatLabel(item.label)+" "
+      +formatBuildStatValue(item.value, item.unit)
+      +(item.unit === "flat" ? "" : " %");
+  }
+
+  /* L'apport d'une pièce : un résumé toujours visible, le détail au clic.
+     Le détail passe par la chaîne d'affichage déjà utilisée par les éditeurs,
+     donc le membre y retrouve une présentation qu'il connaît. */
+  function equipContribution(entry){
+    const resume = summaryTermsFor(entry, 3);
+    if(!resume.length){
+      return el("span",{ class:"eq-contribution empty", text:"À configurer" });
+    }
+    const box = el("details",{class:"eq-contribution"});
+    box.appendChild(el("summary",{ text:resume.map(contributionText).join(" · ") }));
+    groupBuildStatResults(entry).forEach(group => {
+      group.stats.forEach(stat => {
+        box.appendChild(statTermsDetails(stat, {
+          termLabel:gearTermLabel,
+          termValue:term => formatBuildStatValue(term.value, term.unit),
+          termProvenance:term => term.source.component
+        }));
+      });
+    });
+    return box;
+  }
+
+  /* `entry` vient de groupBuildTermsBySlot. Absente, la ligne se dessine
+     comme avant : les appelants sans build à montrer restent valides. */
+  function equipLine(file, slotLabel, variant, entry){
     const thumb = el("div",{class:"eq-thumb"+(variant?" "+variant:"")+(file?"":" empty")});
     if(file) thumb.style.backgroundImage = "url('"+file.replace(/'/g,"%27")+"')";
+    const txt = el("div",{class:"eq-txt"},[
+      el("span",{class:"eq-slot", text:slotLabel}),
+      el("span",{class:"eq-name", text: file ? nameOfFile(file) : "—"})
+    ]);
+    if(file && entry) txt.appendChild(equipContribution(entry));
     return el("div",{class:"eq-line"+(file?"":" empty"), title: file ? nameOfFile(file) : ""},[
       thumb,
-      el("div",{class:"eq-txt"},[
-        el("span",{class:"eq-slot", text:slotLabel}),
-        el("span",{class:"eq-name", text: file ? nameOfFile(file) : "—"})
-      ])
+      txt
     ]);
   }
 
@@ -115,13 +167,31 @@ import { toast } from "./toast.js";
     if(h.potentiel && h.potentiel.tier > 0)
       col.appendChild(el("div",{class:"hd-pot", text:"✦ P"+h.potentiel.tier}));
 
+    /* Une seule passe de calcul pour tout le héros : les termes sont déjà
+       produits par l'agrégation, on ne fait que les ranger par emplacement. */
+    const entries = groupBuildTermsBySlot(h);
+    const entryOf = slot => entries.find(item => item.slot === slot) || null;
+
     const gear = el("div",{class:"hd-gear"});
     gear.appendChild(el("div",{class:"hd-group-t", text:"Arme"}));
-    gear.appendChild(equipLine(h.weapon, "Arme", "weapon"));
+    gear.appendChild(equipLine(h.weapon, "Arme", "weapon", entryOf("weapon")));
     gear.appendChild(el("div",{class:"hd-group-t", text:"Armures"}));
-    ARMOR_SLOTS.forEach(s=>gear.appendChild(equipLine(h.armor ? h.armor[s] : null, ARMOR_LABELS[s], "")));
+    ARMOR_SLOTS.forEach(s=>gear.appendChild(
+      equipLine(h.armor ? h.armor[s] : null, ARMOR_LABELS[s], "", entryOf(s))
+    ));
     gear.appendChild(el("div",{class:"hd-group-t", text:"Bijoux"}));
-    JEWEL_SLOTS.forEach(s=>gear.appendChild(equipLine(h.jewel ? h.jewel[s] : null, JEWEL_LABELS[s], "jewel")));
+    JEWEL_SLOTS.forEach(s=>gear.appendChild(
+      equipLine(h.jewel ? h.jewel[s] : null, JEWEL_LABELS[s], "jewel", entryOf(s))
+    ));
+    /* Le bonus d'ensemble n'appartient à aucune pièce : le répartir serait
+       faux, le taire ferait que la somme des résumés ne fait plus le total. */
+    const setEntry = entryOf("set");
+    if(setEntry && setEntry.terms.length){
+      gear.appendChild(el("div",{class:"hd-group-t", text:"Bonus d’ensemble"}));
+      const bonus = el("div",{class:"eq-set-bonus"});
+      bonus.appendChild(equipContribution(setEntry));
+      gear.appendChild(bonus);
+    }
     col.appendChild(gear);
 
     const stats = heroStatsSection(h);

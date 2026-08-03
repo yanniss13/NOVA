@@ -1216,5 +1216,7 @@ export {
   calculateHeroStats,
   calculateWeaponStats,
   gearDomainOf,
-  groupBuildStatResults
+  groupBuildStatResults,
+  groupBuildTermsBySlot,
+  summaryTermsFor
 };
