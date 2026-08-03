@@ -301,6 +301,21 @@ body.modal-locked{
   line-height:1.25;text-transform:uppercase
 }
 .hero-stat-card .weapon-stat-details{text-align:left}
+
+/* Tout ce qui suit PV / ATK / DEF se replie : la modale d'équipe montre
+   jusqu'à quatre héros côte à côte, et une trentaine de lignes chacun
+   noyaient les trois chiffres qu'on vient chercher. */
+.hero-stats-more{margin-top:12px}
+.hero-stats-more-summary{
+  min-height:44px;display:flex;align-items:center;gap:6px;cursor:pointer;
+  color:var(--gold-bright);font-size:11px;font-weight:700;
+  letter-spacing:.04em;list-style:none
+}
+.hero-stats-more-summary::-webkit-details-marker{display:none}
+.hero-stats-more-summary::before{content:"▸";font-size:10px}
+.hero-stats-more[open]>.hero-stats-more-summary::before{content:"▾"}
+/* La première famille dépliée ne recolle pas au résumé. */
+.hero-stats-more[open]>.weapon-stats-family:first-of-type{margin-top:4px}
 .hero-passives{
   min-width:0;margin-top:15px;padding-top:12px;border-top:1px solid var(--line-soft)
 }

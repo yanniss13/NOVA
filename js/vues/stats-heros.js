@@ -235,7 +235,32 @@ import { calculateHeroStats, groupBuildStatResults } from "../metier/stats-calcu
     });
     section.appendChild(primary);
 
-    heroStatsGroups(result).forEach(group => {
+    /* PV, ATK et DEF restent visibles ; tout le reste se replie.
+
+       La modale d'equipe affiche jusqu'a quatre heros cote a cote, et ce
+       bloc pouvait faire une trentaine de lignes chacun — les trois chiffres
+       que le membre vient chercher se retrouvaient noyes. Le detail reste a
+       un clic pour qui le veut.
+
+       Un `details` natif plutot qu'un repli maison : il est atteignable au
+       clavier, annonce son etat par un lecteur d'ecran, et la recherche du
+       navigateur y ouvre le contenu toute seule. */
+    const secondaires = heroStatsGroups(result);
+    const passives = heroPassivesSection(result.facts.passives);
+    const compte = secondaires.reduce(
+      (total, group) => total + group.stats.length,
+      0
+    );
+    /* Rien a replier : pas de bouton qui n'ouvre sur rien. */
+    if(!compte && !passives) return section;
+
+    const reste = el("details",{class:"hero-stats-more"});
+    reste.appendChild(el("summary",{
+      class:"hero-stats-more-summary",
+      text:compte ? "Toutes les statistiques ("+compte+")" : "Passifs"
+    }));
+
+    secondaires.forEach(group => {
       const family = el("section",{class:"weapon-stats-family"});
       family.appendChild(el("h4",{
         class:"weapon-stats-family-title",
@@ -255,10 +280,11 @@ import { calculateHeroStats, groupBuildStatResults } from "../metier/stats-calcu
         node.appendChild(heroStatDetails(stat));
         family.appendChild(node);
       });
-      section.appendChild(family);
+      reste.appendChild(family);
     });
-    const passives = heroPassivesSection(result.facts.passives);
-    if(passives) section.appendChild(passives);
+
+    if(passives) reste.appendChild(passives);
+    section.appendChild(reste);
     return section;
   }
 

@@ -2113,6 +2113,37 @@ function merlinGameFixture(hooks){
   assert.ok(details.every(node => !node.open));
   assert.match(fakeText(section), /Base d’application présumée/);
   assert.match(fakeText(section), /Passifs non inclus dans le calcul/);
+
+  /* PV, ATK et DEF restent visibles ; tout le reste se replie. La modale
+     d'equipe montre jusqu'a quatre heros cote a cote, et une trentaine de
+     lignes chacun noyaient les trois chiffres qu'on vient chercher. */
+  const repli = fakeNodes(
+    section,
+    node => node.className
+      && node.className.split(/\s+/).includes("hero-stats-more")
+  );
+  assert.strictEqual(repli.length, 1, "un seul repli sous les trois cartes");
+  assert.ok(!repli[0].open, "le repli est ferme a l'ouverture de la fiche");
+  assert.match(
+    fakeText(repli[0]),
+    /Toutes les statistiques \(\d+\)/,
+    "le repli annonce combien de statistiques il cache"
+  );
+  /* Les trois cartes ne doivent PAS y etre tombees. */
+  assert.strictEqual(
+    fakeNodes(
+      repli[0],
+      node => node.className
+        && node.className.split(/\s+/).includes("hero-stat-card")
+    ).length,
+    0,
+    "PV, ATK et DEF restent hors du repli"
+  );
+  assert.match(
+    fakeText(repli[0]),
+    /Passifs non inclus dans le calcul/,
+    "les passifs passent aussi sous le repli"
+  );
   assert.match(fakeText(section), /Arrondi du jeu/);
   assert.doesNotMatch(fakeText(section), /final-(?:ceil|rounding)/);
 
