@@ -20,6 +20,17 @@ const BAS = "7ds-armures-ssr/Bas/Bas de l'araignée de l'ombre.webp";
 
 const CONFIG = { version:1, level:120, reinforce:0, enchantments:[], passiveLevel:null };
 
+/* Une piece gravable — seules 40 des 96 pieces le sont — avec un jet place
+   au maximum de son intervalle : la jauge doit alors etre pleine, ce qui
+   est la seule valeur qu'on peut affirmer sans recopier le calcul ici. */
+const BOTTES = "7ds-armures-ssr/Bottes/Bottes de combat du venin tissé.webp";
+const BOTTES_STAT = "Debuff_Time_Rate";
+const BOTTES_MAX = 2219;
+const CONFIG_GRAVEE = {
+  version:1, level:120, reinforce:0, passiveLevel:null,
+  enchantments:[{ slot:0, stat:BOTTES_STAT, value:BOTTES_MAX }]
+};
+
 const EQUIPE = {
   id:"apport-1",
   name:"Apport",
@@ -27,8 +38,8 @@ const EQUIPE = {
   heroes:[{
     char:"diane",
     weapon:null,
-    armor:{ Haut:HAUT, Bas:BAS },
-    armorConfig:{ Haut:CONFIG },
+    armor:{ Haut:HAUT, Bas:BAS, Bottes:BOTTES },
+    armorConfig:{ Haut:CONFIG, Bottes:CONFIG_GRAVEE },
     jewel:{},
     jewelConfig:{},
     potentiel:{ tier:0 }
@@ -76,12 +87,34 @@ const EQUIPE = {
     );
     assert.equal(
       (await page.locator("#pieceDetailPosition").textContent()).trim(),
-      "1 / 2",
+      "1 / 3",
       "la position reflete le parcours"
     );
     assert.ok(
       await page.locator("#pieceDetailBody .weapon-stat").count() > 0,
       "une piece configuree affiche ses statistiques"
+    );
+
+    /* Sans gravure, aucune section de tirage : une section vide serait pire
+       que pas de section du tout. */
+    assert.equal(
+      await page.locator("#pieceDetailBody .roll-line").count(),
+      0,
+      "une piece sans gravure n'affiche aucune jauge"
+    );
+
+    /* La vignette de la piece : c'est elle que le membre reconnait dans le
+       jeu, bien avant le libelle du catalogue. */
+    const vignette = page.locator("#pieceDetailThumb");
+    assert.equal(
+      await vignette.isVisible(),
+      true,
+      "la modale montre la vignette de la piece"
+    );
+    assert.match(
+      await vignette.evaluate(node => node.style.backgroundImage),
+      /Haut de l/,
+      "la vignette est bien celle de la piece affichee"
     );
 
     /* Aux bornes, les fleches sont desactivees. */
@@ -95,13 +128,58 @@ const EQUIPE = {
     await page.locator("#pieceDetailNext").click();
     assert.equal(
       (await page.locator("#pieceDetailPosition").textContent()).trim(),
-      "2 / 2",
+      "2 / 3",
       "la fleche suivante avance dans le parcours"
     );
     assert.equal(
       (await page.locator("#pieceDetailTitle").textContent()).trim(),
-      "Bas de l'araignée de l'ombre",
+      "Bottes de combat du venin tissé",
       "le titre suit la navigation"
+    );
+    assert.match(
+      await vignette.evaluate(node => node.style.backgroundImage),
+      /Bottes de combat/,
+      "la vignette suit la navigation, elle ne reste pas sur la piece precedente"
+    );
+
+    /* La gravure, presentee comme dans le jeu : un libelle, une jauge, et la
+       valeur a droite. Le jet est pose au maximum de son intervalle, donc la
+       jauge doit etre pleine — la seule valeur affirmable sans recopier ici
+       le calcul du ratio. */
+    const gravures = page.locator("#pieceDetailBody .roll-line");
+    assert.equal(
+      await gravures.count(),
+      1,
+      "la piece gravee affiche sa gravure"
+    );
+    assert.equal(
+      await page.locator("#pieceDetailBody .roll-gauge-fill").evaluate(
+        node => node.style.width
+      ),
+      "100%",
+      "un jet au maximum de l'intervalle remplit la jauge"
+    );
+    assert.ok(
+      (await gravures.first().locator(".roll-value").textContent()).trim().length > 1,
+      "la jauge porte la valeur du tirage a cote d'elle"
+    );
+    assert.equal(
+      await page.locator("#pieceDetailBody .roll-section .weapon-stats-family-title")
+        .textContent(),
+      "Gravure",
+      "la section des tirages est titree, au singulier pour un seul tirage"
+    );
+
+    await page.locator("#pieceDetailNext").click();
+    assert.equal(
+      (await page.locator("#pieceDetailPosition").textContent()).trim(),
+      "3 / 3",
+      "la piece non configuree ferme le parcours"
+    );
+    assert.equal(
+      (await page.locator("#pieceDetailTitle").textContent()).trim(),
+      "Bas de l'araignée de l'ombre",
+      "la piece non configuree passe apres les configurees"
     );
     assert.equal(
       await page.locator("#pieceDetailNext").isDisabled(),

@@ -223,6 +223,23 @@ body.modal-locked{
   color:var(--parchment);font-size:12px;font-weight:700
 }
 .weapon-stat-total{flex:none;color:var(--gold-bright)}
+
+/* Une gravure, comme dans le jeu : le libellé, puis la jauge du tirage avec
+   sa valeur à droite. Le remplissage dit où tombe le jet entre le minimum et
+   le maximum possibles — c'est la seule lecture qui distingue une bonne
+   gravure d'une mauvaise, et le catalogue la porte déjà. */
+.roll-line{padding:9px 0;border-top:1px solid var(--line-soft)}
+.roll-label{color:var(--parchment);font-size:12px;font-weight:700;margin-bottom:6px}
+.roll-track{display:flex;align-items:center;gap:10px}
+.roll-gauge{
+  flex:1;min-width:0;height:7px;border-radius:4px;
+  background:var(--panel-2);border:1px solid var(--line-soft);overflow:hidden
+}
+.roll-gauge-fill{
+  display:block;height:100%;border-radius:3px;
+  background:linear-gradient(90deg, var(--gold-deep), var(--gold-bright))
+}
+.roll-value{flex:none;color:var(--gold-bright);font-size:12px;font-weight:700}
 .weapon-stat-details{margin-top:7px;color:var(--muted);font-size:11px}
 .weapon-stat-details summary{
   min-height:44px;display:flex;align-items:center;cursor:pointer;

@@ -373,6 +373,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   orderedBuildEntries:typeof orderedBuildEntries === "function"
     ? orderedBuildEntries
     : undefined,
+  randomRollsFor:typeof randomRollsFor === "function"
+    ? randomRollsFor
+    : undefined,
   reconstructStatTotals:typeof reconstructStatTotals === "function"
     ? reconstructStatTotals
     : undefined,

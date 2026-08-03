@@ -216,6 +216,108 @@ function testOrdreContientLesMemesEntrees(){
   );
 }
 
+/* La jauge du jeu : ou se situe le jet entre le minimum et le maximum.
+
+   `HAUT_FILE` ne convient pas ici : son `randomOptions` vaut null — seules
+   40 des 96 pieces du catalogue sont gravables. Celle-ci l'est, avec un
+   unique emplacement, et ses bornes de qualite acceptent le niveau 120. */
+const HAUT_GRAVABLE = "7ds-armures-ssr/Haut/Haut de l'œil de l'étoile sinistre.webp";
+
+function gravure(stat, value){
+  return { slot:0, stat, value };
+}
+
+function buildAvecGravure(stat, value){
+  return {
+    weapon:null,
+    armor:{ Haut:HAUT_GRAVABLE },
+    armorConfig:{ Haut:gearConfig({ enchantments:[gravure(stat, value)] }) },
+    jewel:{},
+    jewelConfig:{}
+  };
+}
+
+/* On lit une option reelle du catalogue plutot que d'inventer des bornes :
+   un min/max invente passerait le test et mentirait sur les vraies donnees. */
+function premiereOptionAleatoire(hooks){
+  const definition = hooks.buildGearDefinition(HAUT_GRAVABLE);
+  const stats = (definition.randomOptions && definition.randomOptions.stats) || [];
+  assert.ok(stats.length > 0, "la piece de reference propose des gravures");
+  const option = stats.find(item => item.max > item.min);
+  assert.ok(option, "au moins une gravure a un intervalle non degenere");
+  return option;
+}
+
+function testTirageExposeSesBornes(){
+  const { hooks } = loadApp();
+  const option = premiereOptionAleatoire(hooks);
+  const milieu = Math.round((option.min + option.max) / 2);
+  const entrees = plain(hooks.orderedBuildEntries(buildAvecGravure(option.stat, milieu)));
+  const haut = entrees.find(entree => entree.slot === "Haut");
+  const tirages = plain(hooks.randomRollsFor(haut));
+
+  assert.strictEqual(tirages.length, 1, "la piece rend un seul tirage");
+  const tirage = tirages[0];
+  assert.strictEqual(tirage.stat, option.stat, "le tirage nomme sa statistique");
+  assert.strictEqual(tirage.min, option.min, "le tirage porte le minimum du catalogue");
+  assert.strictEqual(tirage.max, option.max, "le tirage porte le maximum du catalogue");
+  assert.ok(
+    Math.abs(tirage.ratio - 0.5) < 0.01,
+    "un jet au milieu de l'intervalle donne un ratio de 0,5, recu : " + tirage.ratio
+  );
+  assert.strictEqual(typeof tirage.label, "string", "le tirage porte un libelle affichable");
+}
+
+function testRatioBorneAUnDansLesDeuxSens(){
+  const { hooks } = loadApp();
+  const option = premiereOptionAleatoire(hooks);
+
+  const bas = plain(hooks.randomRollsFor(
+    plain(hooks.orderedBuildEntries(buildAvecGravure(option.stat, option.min)))
+      .find(entree => entree.slot === "Haut")
+  ));
+  assert.strictEqual(bas[0].ratio, 0, "un jet au minimum donne une jauge vide");
+
+  const haut = plain(hooks.randomRollsFor(
+    plain(hooks.orderedBuildEntries(buildAvecGravure(option.stat, option.max)))
+      .find(entree => entree.slot === "Haut")
+  ));
+  assert.strictEqual(haut[0].ratio, 1, "un jet au maximum donne une jauge pleine");
+}
+
+/* Une piece sans gravure ne doit pas faire apparaitre de section vide. */
+function testAucunTiragePourUnePieceSansGravure(){
+  const { hooks } = loadApp();
+  const entrees = plain(hooks.orderedBuildEntries(buildDeuxPieces()));
+  const haut = entrees.find(entree => entree.slot === "Haut");
+  assert.deepStrictEqual(
+    plain(hooks.randomRollsFor(haut)),
+    [],
+    "une piece sans gravure ne rend aucun tirage"
+  );
+}
+
+/* Seuls les termes tires au sort ont une jauge : une stat de niveau n'en a
+   pas, et lui en donner une serait un contresens. */
+function testSeulsLesTermesAleatoiresPortentDesBornes(){
+  const { hooks } = loadApp();
+  const option = premiereOptionAleatoire(hooks);
+  const result = plain(hooks.calculateGearStats(
+    HAUT_GRAVABLE,
+    gearConfig({ enchantments:[gravure(option.stat, option.max)] }),
+    "Haut"
+  ));
+  assert.strictEqual(result.status, "valid", "la piece gravee reste calculable");
+  result.terms.forEach(term => {
+    if(term.role === "enchantment") return;
+    assert.strictEqual(
+      term.roll,
+      undefined,
+      "un terme deterministe ne porte aucune borne de tirage : " + term.id
+    );
+  });
+}
+
 testRolesEquipement();
 testRolesArme();
 testRolesBonusEnsemble();
@@ -225,4 +327,8 @@ testBonusEnsembleNonAttribue();
 testOrdreConfigureesDAbord();
 testOrdreNaturelDansUnGroupe();
 testOrdreContientLesMemesEntrees();
-console.log("PASS apport par piece : roles, regroupement, invariant et ordre");
+testTirageExposeSesBornes();
+testRatioBorneAUnDansLesDeuxSens();
+testAucunTiragePourUnePieceSansGravure();
+testSeulsLesTermesAleatoiresPortentDesBornes();
+console.log("PASS apport par piece : roles, regroupement, invariant, ordre et tirages");

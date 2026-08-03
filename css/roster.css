@@ -265,6 +265,10 @@
 .eq-thumb.weapon{border-color:var(--gold-deep)}
 .eq-thumb.jewel{border-color:rgba(161,44,44,.55)}
 .eq-thumb.empty{opacity:.3}
+/* La même vignette, en tête de la modale d'apport : plus grande, puisque
+   c'est là qu'on identifie la pièce qu'on est en train de lire. */
+.piece-detail-thumb{width:44px;height:44px;border-radius:8px}
+.piece-detail-thumb[hidden]{display:none}
 .eq-txt{flex:1;display:flex;flex-direction:column;min-width:0;line-height:1.2}
 .eq-slot{font-size:9px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted-2)}
 .eq-name{font-size:12.5px;color:var(--parchment);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}

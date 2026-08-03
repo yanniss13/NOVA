@@ -13,7 +13,7 @@
 
 import { $, el } from "../noyau/dom.js";
 import { nameOfFile } from "../metier/catalogue.js";
-import { groupBuildStatResults } from "../metier/stats-calcul.js";
+import { groupBuildStatResults, randomRollsFor } from "../metier/stats-calcul.js";
 import { ModalStack } from "./modal-stack.js";
 import {
   BUILD_STAT_FAMILY_LABELS,
@@ -30,10 +30,63 @@ import {
     return entry.file ? nameOfFile(entry.file) : entry.slot;
   }
 
+  /* La vignette de la piece, a cote de son nom : c'est elle que le membre
+     reconnait dans le jeu, bien avant le libelle du catalogue. Elle reprend
+     les codes couleur de la fiche — bord dore pour l'arme, rouge pour un
+     bijou. Le bonus d'ensemble n'a pas d'image : il n'est pas une piece. */
+  function renderPieceThumb(entry){
+    const thumb = $("#pieceDetailThumb");
+    const domain = entry ? entry.domain : "";
+    thumb.className = "eq-thumb piece-detail-thumb"
+      +(domain === "weapon" || domain === "jewel" ? " "+domain : "");
+    thumb.hidden = !(entry && entry.file);
+    thumb.style.backgroundImage = entry && entry.file
+      ? "url('"+entry.file.replace(/'/g,"%27")+"')"
+      : "";
+  }
+
+  /* Les gravures, presentees comme dans le jeu : le libelle, puis une jauge
+     avec sa valeur a droite.
+
+     La jauge vit ici et NON a cote des statistiques agregees plus bas. Une
+     statistique agregee peut melanger une part venue du niveau et une part
+     tiree au sort ; y coller une jauge bornee par le seul tirage afficherait
+     un remplissage faux. Ici chaque ligne est un tirage et un seul.
+
+     `aria-hidden` sur la jauge : la valeur juste a cote la dit deja en
+     toutes lettres, et un lecteur d'ecran n'a que faire du remplissage. */
+  function randomRollNode(tirage){
+    const remplissage = el("span",{class:"roll-gauge-fill"});
+    remplissage.style.width = Math.round(tirage.ratio * 100)+"%";
+    const jauge = el("div",{class:"roll-gauge", "aria-hidden":"true"},[remplissage]);
+    return el("div",{class:"roll-line"},[
+      el("div",{class:"roll-label", text:tirage.label}),
+      el("div",{class:"roll-track"},[
+        jauge,
+        el("span",{
+          class:"roll-value",
+          text:formatBuildStatValue(tirage.value, tirage.unit)
+            +(tirage.unit === "flat" ? " points" : "")
+        })
+      ])
+    ]);
+  }
+
+  function randomRollsSection(tirages){
+    const section = el("section",{class:"weapon-stats-family roll-section"});
+    section.appendChild(el("h4",{
+      class:"weapon-stats-family-title",
+      text:tirages.length > 1 ? "Gravures" : "Gravure"
+    }));
+    tirages.forEach(tirage => section.appendChild(randomRollNode(tirage)));
+    return section;
+  }
+
   function renderPieceDetail(){
     const entry = pieceDetail.entries[pieceDetail.index];
     const body = $("#pieceDetailBody");
     body.innerHTML = "";
+    renderPieceThumb(entry);
     $("#pieceDetailTitle").textContent = titleOf(entry);
     $("#pieceDetailPosition").textContent =
       (pieceDetail.index + 1) + " / " + pieceDetail.entries.length;
@@ -58,6 +111,8 @@ import {
       }));
       return;
     }
+    const tirages = randomRollsFor(entry);
+    if(tirages.length) body.appendChild(randomRollsSection(tirages));
     groupBuildStatResults(entry).forEach(group => {
       const family = el("section",{class:"weapon-stats-family"});
       family.appendChild(el("h4",{

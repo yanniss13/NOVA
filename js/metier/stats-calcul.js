@@ -34,6 +34,7 @@ import {
   weaponPassiveFact,
   buildWeaponDefinition,
   buildWeaponGrade,
+  enchantmentBounds,
   gameCeil,
   gearConfigStatus,
   gearStatValue,
@@ -391,7 +392,7 @@ import {
   function addWeaponStatTerm(terms, settings){
     if(settings.value === 0) return;
     const metadata = buildStatMetadata(settings.stat);
-    terms.push({
+    const term = {
       id:settings.id,
       stat:settings.stat,
       operation:"add",
@@ -402,7 +403,9 @@ import {
       family:metadata.family,
       source:settings.source,
       confidence:"exact"
-    });
+    };
+    if(settings.roll) term.roll = settings.roll;
+    terms.push(term);
   }
 
   function emptyWeaponStatResult(status){
@@ -456,14 +459,27 @@ import {
         source:{ domain:"weapon", component:"level", id:file, subStat:index }
       });
     });
+    /* Les bornes du tirage, quand elles existent : un enchantement basique se
+       tire entre un minimum et un maximum connus, et l'interface s'en sert
+       pour montrer la qualite du jet. Une perle n'a pas de bornes — elle a des
+       paliers — donc ses termes sortent sans `roll`. */
+    const enchantCatalog = grade.enchantments || {};
+    const enchantOptions = enchantCatalog.type === "basic"
+      ? (enchantCatalog.options || [])
+      : [];
     config.enchantments.forEach((enchantment, slot) => {
       if(enchantment === null) return;
+      const option = enchantOptions.find(item => item && item.stat === enchantment.stat);
+      const slotRate = (enchantCatalog.slots || [])[slot];
       addWeaponStatTerm(terms, {
         id:"weapon:enchantment:"+slot+":"+enchantment.stat,
         role:"enchantment",
         stat:enchantment.stat,
         value:enchantment.value,
         bucket:enchantmentBucket,
+        roll:option && Number.isFinite(Number(slotRate))
+          ? enchantmentBounds(option, slotRate)
+          : null,
         source:{
           domain:"weapon",
           component:"enchantment",
@@ -526,7 +542,7 @@ import {
   function addGearStatTerm(terms, settings){
     if(settings.value === 0) return;
     const metadata = buildStatMetadata(settings.stat);
-    terms.push({
+    const term = {
       id:settings.id,
       stat:settings.stat,
       operation:"add",
@@ -537,7 +553,9 @@ import {
       family:metadata.family,
       source:settings.source,
       confidence:settings.confidence
-    });
+    };
+    if(settings.roll) term.roll = settings.roll;
+    terms.push(term);
   }
   function emptyGearStatResult(status){
     return {
@@ -615,14 +633,20 @@ import {
         confidence:"presumed"
       });
     });
+    /* Idem pour l'equipement : `randomOptions.stats` porte le min et le max de
+       chaque gravure possible. Une stat hors catalogue sort sans `roll` plutot
+       que de faire echouer le calcul. */
+    const randomStats = (definition.randomOptions && definition.randomOptions.stats) || [];
     config.enchantments.forEach((choice, index) => {
       if(!choice || !choice.stat) return;
+      const option = randomStats.find(item => item && item.stat === choice.stat);
       addGearStatTerm(terms, {
         id:bucket + ":enchantment:" + index + ":" + choice.stat,
         role:"enchantment",
         stat:choice.stat,
         value:Number(choice.value) || 0,
         bucket,
+        roll:option ? { min:option.min, max:option.max } : null,
         source:{
           domain,
           component:"enchantment",
@@ -830,6 +854,40 @@ import {
      affichee (« 2 / 9 »). */
   const ENTRY_NATURAL_ORDER = ["weapon"]
     .concat(ARMOR_SLOTS, JEWEL_SLOTS, ["set"]);
+
+  /* Les tirages aleatoires d'une piece, prets a afficher.
+
+     Le jeu montre chaque gravure avec une jauge : ou se situe le jet entre le
+     minimum et le maximum possibles. On ne peut le faire QUE terme par terme.
+     Poser la meme jauge a cote d'une statistique agregee serait faux des
+     qu'elle melange une part de niveau et une part tiree au sort, ce qui est
+     le cas courant.
+
+     `ratio` vaut 0 sur un intervalle degenere (min === max) : la stat n'a
+     alors qu'une seule valeur possible, et parler de qualite de jet n'aurait
+     aucun sens. Il est borne a [0, 1] — une valeur enregistree avant une mise
+     a jour du catalogue peut sortir des bornes actuelles, et une jauge remplie
+     a 130 % deborderait de son conteneur. */
+  function randomRollsFor(entry){
+    const terms = entry && Array.isArray(entry.terms) ? entry.terms : [];
+    return terms
+      .filter(term => term.role === "enchantment" && term.roll)
+      .map(term => {
+        const min = Number(term.roll.min);
+        const max = Number(term.roll.max);
+        const etendue = max - min;
+        const brut = etendue > 0 ? (Number(term.value) - min) / etendue : 0;
+        return {
+          stat:term.stat,
+          label:buildStatMetadata(term.stat).fr || term.stat,
+          value:term.value,
+          unit:term.unit,
+          min,
+          max,
+          ratio:Math.max(0, Math.min(1, brut))
+        };
+      });
+  }
 
   function orderedBuildEntries(build){
     const entries = groupBuildTermsBySlot(build);
@@ -1204,5 +1262,6 @@ export {
   calculateWeaponStats,
   gearDomainOf,
   groupBuildStatResults,
-  orderedBuildEntries
+  orderedBuildEntries,
+  randomRollsFor
 };
