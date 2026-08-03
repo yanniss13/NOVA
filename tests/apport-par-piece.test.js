@@ -174,10 +174,83 @@ function testBonusEnsembleNonAttribue(){
     });
 }
 
+/* Le classement ne compare jamais deux unites entre elles : « PV +4 200 »
+   est en points, « CRIT 12 % » en dix-milliemes. L'ordre vient des roles. */
+function testClassementSuitLesRoles(){
+  const { hooks } = loadApp();
+  const entrees = plain(hooks.groupBuildTermsBySlot(buildDeuxPieces()));
+  const haut = entrees.find(entree => entree.slot === "Haut");
+  const resume = plain(hooks.summaryTermsFor(haut, 3));
+
+  assert.ok(resume.length >= 1, "une piece configuree a au moins un apport");
+  assert.ok(resume.length <= 3, "le resume ne depasse jamais la limite demandee");
+  resume.forEach(item => {
+    assert.strictEqual(typeof item.stat, "string", "chaque apport nomme sa statistique");
+    assert.strictEqual(typeof item.label, "string", "chaque apport porte un libelle affichable");
+    assert.ok(Number.isFinite(item.value), "chaque apport porte une valeur numerique");
+    assert.ok(
+      item.unit === "flat" || item.unit === "ten-thousandths",
+      "chaque apport porte une unite connue"
+    );
+  });
+
+  const premier = resume[0];
+  const termesMain = haut.terms.filter(term => term.role === "main");
+  assert.ok(
+    termesMain.some(term => term.stat === premier.stat),
+    "le premier apport affiche est la statistique principale de la piece"
+  );
+}
+
+/* On ne complete jamais pour atteindre la limite. */
+function testResumeNeCompletePas(){
+  const { hooks } = loadApp();
+  const entree = {
+    slot:"Test",
+    domain:"armor",
+    file:"x.webp",
+    status:"valid",
+    terms:[
+      /* Une VRAIE statistique du catalogue : `addGearStatTerm` appelle
+         `buildStatMetadata` a la creation, donc un terme sans libelle ne
+         peut pas exister en pratique. */
+      {
+        id:"a", stat:"B_Def_Equip", operation:"add", value:1000, unit:"flat",
+        bucket:"armor:Haut", role:"main", family:"main",
+        source:{ domain:"armor", component:"level", slot:"Test" },
+        confidence:"presumed"
+      }
+    ],
+    totals:[]
+  };
+  const resume = plain(hooks.summaryTermsFor(entree, 3));
+  assert.strictEqual(
+    resume.length,
+    1,
+    "une entree a un seul role rend un seul apport, jamais trois"
+  );
+}
+
+function testResumeVidePourPieceNonConfiguree(){
+  const { hooks } = loadApp();
+  const build = buildDeuxPieces();
+  build.armorConfig.Bas = null;
+  const entrees = plain(hooks.groupBuildTermsBySlot(build));
+  const bas = entrees.find(entree => entree.slot === "Bas");
+  assert.deepStrictEqual(
+    plain(hooks.summaryTermsFor(bas, 3)),
+    [],
+    "une piece non configuree ne produit aucun apport"
+  );
+}
+
 testRolesEquipement();
 testRolesArme();
 testRolesBonusEnsemble();
 testInvariantDeSomme();
 testToleranceAuxPiecesNonConfigurees();
 testBonusEnsembleNonAttribue();
-console.log("PASS apport par piece : roles, regroupement et invariant de somme");
+testClassementSuitLesRoles();
+testResumeNeCompletePas();
+testResumeVidePourPieceNonConfiguree();
+console.log("PASS apport par piece : roles, regroupement, invariant et classement");

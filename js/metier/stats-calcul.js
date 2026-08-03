@@ -819,6 +819,45 @@ import {
     }));
   }
 
+  /* Les apports les plus caracteristiques d'une entree.
+
+     On ne compare jamais deux unites entre elles : « PV +4 200 » est en
+     points, « CRIT 12 % » en dix-milliemes, et toute normalisation serait
+     arbitraire. L'ordre vient donc des roles, qui viennent de la structure
+     du jeu. A role egal le tri par valeur est licite : les termes d'un meme
+     role partagent leur unite.
+
+     On ne complete jamais pour atteindre la limite : une piece qui n'a qu'un
+     role rend un seul apport. */
+  const SUMMARY_ROLE_ORDER = ["main", "sub", "extra", "enchantment"];
+
+  function summaryTermsFor(entry, limite){
+    const max = isInteger(limite) && limite > 0 ? limite : 3;
+    const terms = entry && Array.isArray(entry.terms) ? entry.terms : [];
+    if(!terms.length) return [];
+
+    const cumules = new Map();
+    terms.forEach(term => {
+      const rank = SUMMARY_ROLE_ORDER.indexOf(term.role);
+      if(rank < 0) return;
+      const cle = term.role + "|" + term.stat;
+      if(!cumules.has(cle)){
+        cumules.set(cle, { stat:term.stat, unit:term.unit, value:0, rank });
+      }
+      cumules.get(cle).value += term.value;
+    });
+
+    return [...cumules.values()]
+      .sort((a, b) => a.rank - b.rank || b.value - a.value)
+      .slice(0, max)
+      .map(item => ({
+        stat:item.stat,
+        value:item.value,
+        unit:item.unit,
+        label:buildStatMetadata(item.stat).fr || item.stat
+      }));
+  }
+
   const HERO_MAIN_RATE_APPLICATION_MODE = "all-flat-before-passives";
   const HERO_MAIN_RATE_TARGETS = {
     I_AtkAdd_Rate:"B_Atk",
