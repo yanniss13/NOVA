@@ -127,7 +127,7 @@ $content = "// Genere automatiquement par generate-data.ps1 - NE PAS EDITER A LA
            "// Relance le script pour mettre a jour apres ajout/retrait d'images.`r`n" +
            "window.SEVEN_DS_DATA = $json;`r`n"
 
-$outPath = Join-Path $root 'data.js'
+$outPath = Join-Path $root 'data/data.js'
 [System.IO.File]::WriteAllText($outPath, $content, (New-Object System.Text.UTF8Encoding($false)))
 
 Write-Host "OK -> data.js genere" -ForegroundColor Green

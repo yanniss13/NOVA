@@ -15,7 +15,7 @@ assert.match(html, /<link rel="apple-touch-icon" href="icons\/apple-touch-icon-1
 assert.match(html, /navigator\.serviceWorker\.register\("sw\.js"\)/, "enregistrement du SW manquant");
 assert.match(
   html,
-  /<script src="stats-build\.js"><\/script>/,
+  /<script src="data\/stats-build\.js"><\/script>/,
   "le catalogue chiffré local doit être chargé par l’application"
 );
 
@@ -59,7 +59,7 @@ assert.match(sw, /jsdelivr\\.net/, "exclusion CDN requise");
 assert.match(sw, /caches\.keys\(\)/, "purge des anciens caches requise (activate)");
 assert.match(
   sw,
-  /["']\.\/stats-build\.js["']/,
+  /["']\.\/data\/stats-build\.js["']/,
   "le catalogue chiffré local doit faire partie du précache essentiel"
 );
 assert.doesNotMatch(

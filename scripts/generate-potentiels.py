@@ -18,7 +18,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 # racine du depot, d'ou le second .parent.
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 URL = 'https://7dsorigin.app/fr/team-builder/create'
-OUT = os.path.join(HERE, 'potentiels.js')
+OUT = os.path.join(HERE, 'data', 'potentiels.js')
 
 # enum weaponType du site  ->  nom de dossier d'arme local (segment de chemin)
 WT_FOLDER = {

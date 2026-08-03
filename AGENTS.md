@@ -210,11 +210,13 @@ Site Confrérie 7ds/
 ├─ tests/helpers/load-app.js # Concatène les modules de js/ dans `vm` et expose leurs fonctions pures.
 ├─ tests/helpers/modules.js  # Ordre de chargement des modules de js/. Source unique de vérité.
 ├─ tests/modules-imports.test.js # Garde-fou : tout module importe ce qu'il emploie et est mis en cache.
-├─ data.js                 # GÉNÉRÉ. window.SEVEN_DS_DATA = { personnages, armes, armures, bijoux }.
-├─ stats-build.js          # GÉNÉRÉ. Personnages + armes + équipement + sets + passifs.
-├─ potentiels.js           # GÉNÉRÉ. 3 armes compatibles + bonus par héros.
-├─ armures-liees.js        # GÉNÉRÉ. Fichiers d’armure liée par personnage.
-├─ personnages-meta.js     # GÉNÉRÉ. element/role/rarity + weapons[] par personnage.
+├─ data/                   # Catalogues GÉNÉRÉS, chargés en <script> classique.
+│  ├─ data.js                    # window.SEVEN_DS_DATA = { personnages, armes, armures, bijoux }.
+│  ├─ stats-build.js             # Personnages + armes + équipement + sets + passifs.
+│  ├─ potentiels.js              # 3 armes compatibles + bonus par héros.
+│  ├─ armures-liees.js           # Fichiers d’armure liée par personnage.
+│  └─ personnages-meta.js        # element/role/rarity + weapons[] par personnage.
+│  # Ne PAS les éditer à la main : ils sont réécrits par scripts/.
 ├─ scripts/                # Outils hors site. Se lancent DEPUIS LA RACINE.
 │  ├─ generate-data.ps1           # Régénère data.js en scannant les dossiers d'images.
 │  ├─ generate-stats-build.py     # Régénère/valide stats-build.js (références locales).

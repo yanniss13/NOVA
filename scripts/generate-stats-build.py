@@ -795,7 +795,7 @@ def main():
         (root / "7ds-armures-ssr", root / "7ds-bijoux"),
     )
     rendered = render_js(catalog)
-    target = root / "stats-build.js"
+    target = root / "data" / "stats-build.js"
     if args.check:
         if not target.exists() or target.read_text(encoding="utf-8") != rendered:
             raise SystemExit("stats-build.js doit être régénéré")

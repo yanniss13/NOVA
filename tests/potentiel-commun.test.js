@@ -121,13 +121,13 @@ const STORAGE_KEY = "confrerie7ds.teams";
 {
   const armorContext = { window:{} };
   vm.runInNewContext(
-    fs.readFileSync(path.join(ROOT, "armures-liees.js"), "utf8"),
+    fs.readFileSync(path.join(ROOT, "data", "armures-liees.js"), "utf8"),
     armorContext,
     { filename:"armures-liees.js" }
   );
   const dataContext = { window:{} };
   vm.runInNewContext(
-    fs.readFileSync(path.join(ROOT, "data.js"), "utf8"),
+    fs.readFileSync(path.join(ROOT, "data", "data.js"), "utf8"),
     dataContext,
     { filename:"data.js" }
   );
@@ -150,7 +150,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
 {
   const actual = { window:{} };
   vm.runInNewContext(
-    fs.readFileSync(path.join(ROOT, "potentiels.js"), "utf8"),
+    fs.readFileSync(path.join(ROOT, "data", "potentiels.js"), "utf8"),
     actual,
     { filename:"potentiels.js" }
   );
@@ -679,7 +679,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
   // Données générées réelles : 14 sets complets, chacun avec ses 4 fichiers.
   const dataContext = { window:{} };
   vm.runInNewContext(
-    fs.readFileSync(path.join(ROOT, "data.js"), "utf8"),
+    fs.readFileSync(path.join(ROOT, "data", "data.js"), "utf8"),
     dataContext,
     { filename:"data.js" }
   );

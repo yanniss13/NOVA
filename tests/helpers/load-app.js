@@ -626,7 +626,7 @@ function loadApp(initialTeams){
   };
   const catalogSandbox = { window:{} };
   vm.runInNewContext(
-    fs.readFileSync(path.join(ROOT, "stats-build.js"), "utf8"),
+    fs.readFileSync(path.join(ROOT, "data", "stats-build.js"), "utf8"),
     catalogSandbox,
     { filename:"stats-build.js" }
   );

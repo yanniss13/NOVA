@@ -17,7 +17,7 @@ const { serveRepo } = require("./helpers/serve");
 
     // Un module doit être servi avec un type MIME exécutable, sinon le
     // navigateur refuse de l'évaluer.
-    const script = await fetch(server.url + "/data.js");
+    const script = await fetch(server.url + "/data/data.js");
     assert.equal(script.status, 200);
     assert.match(script.headers.get("content-type"), /javascript/);
 

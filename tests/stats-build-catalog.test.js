@@ -12,7 +12,7 @@ const vm = require("node:vm");
 const ROOT = path.resolve(__dirname, "..");
 const sandbox = { window:{} };
 vm.runInNewContext(
-  fs.readFileSync(path.join(ROOT, "stats-build.js"), "utf8"),
+  fs.readFileSync(path.join(ROOT, "data", "stats-build.js"), "utf8"),
   sandbox,
   { filename:"stats-build.js" }
 );

@@ -13,7 +13,7 @@ sys.stdout.reconfigure(encoding='utf-8')
 # racine du depot, d'ou le second .parent.
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 URL = 'https://7dsorigin.app/fr/team-builder/create'
-OUT = os.path.join(HERE, 'personnages-meta.js')
+OUT = os.path.join(HERE, 'data', 'personnages-meta.js')
 
 def fetch():
     req = urllib.request.Request(URL, headers={'User-Agent': 'Mozilla/5.0'})

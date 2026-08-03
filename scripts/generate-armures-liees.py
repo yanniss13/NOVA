@@ -11,7 +11,7 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 URL = "https://7dsorigin.app/fr/team-builder/create"
 ARMOR_DIR = ROOT / "7ds-armures-ssr" / "Armure liee"
 CHARACTER_DIR = ROOT / "7ds-personnages"
-OUT = ROOT / "armures-liees.js"
+OUT = ROOT / "data" / "armures-liees.js"
 
 
 class DataError(RuntimeError):
