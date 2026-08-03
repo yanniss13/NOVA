@@ -34,7 +34,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     );
     assert.equal(await page.locator("#toast").textContent(), "Choisis d'abord un héros.");
 
-    const linkedSlot = armorSlot(firstHero, "Armure liée");
+    const linkedSlot = armorSlot(firstHero, "Armure gravée");
     await linkedSlot.click();
     assert.equal(
       await page.locator("#overlay").evaluate(el => el.classList.contains("on")),
@@ -52,7 +52,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     );
     await page.locator("#pickerClose").click();
 
-    await chooseArmor(page, firstHero, "Armure liée", "Une nouvelle aventure");
+    await chooseArmor(page, firstHero, "Armure gravée", "Une nouvelle aventure");
     await chooseHero(page, firstHero, "Merlin");
     assert.equal(await linkedSlot.evaluate(el => el.classList.contains("filled")), false);
 
@@ -555,7 +555,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     assert.equal(await page.locator(".hero").first().locator(".gear-slot.weapon").evaluate(
       el => el.classList.contains("filled")
     ), false);
-    assert.equal(await armorSlot(page.locator(".hero").first(), "Armure liée").evaluate(
+    assert.equal(await armorSlot(page.locator(".hero").first(), "Armure gravée").evaluate(
       el => el.classList.contains("filled")
     ), false);
     const futureHero = page.locator(".hero").nth(1);

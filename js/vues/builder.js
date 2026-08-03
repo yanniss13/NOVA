@@ -659,7 +659,7 @@ import { toast } from "./toast.js";
       value:hero.armor[slot],
       items,
       emptyHint:slot === LINKED_ARMOR_SLOT
-        ? "Aucune armure liée compatible disponible."
+        ? "Aucune armure gravée compatible disponible."
         : "Aucune armure disponible.",
       onSelect:v=>{
         applyGearChange(hero, "armor", slot, v);

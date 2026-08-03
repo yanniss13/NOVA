@@ -490,7 +490,7 @@ import { toast } from "./toast.js";
       value:build.armor[slot],
       items,
       emptyHint:slot === LINKED_ARMOR_SLOT
-        ? "Aucune armure liée compatible disponible."
+        ? "Aucune armure gravée compatible disponible."
         : "Aucune armure disponible.",
       onSelect:value=>setMemberRosterBuildValue("armor", slot, value)
     });

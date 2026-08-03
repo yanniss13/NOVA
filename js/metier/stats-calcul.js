@@ -865,6 +865,36 @@ import {
       entries.get(slot).terms.push(term);
     });
 
+    /* Le passif de la piece. Il n'est PAS un terme : sa prose conditionnelle
+       (« a chaque utilisation de la competence normale... ») n'est pas
+       chiffrable, et l'inclure dans les totaux mentirait. Mais il appartient a
+       la piece, et c'est sur la piece que le membre le cherche.
+
+       Il vient d'ici plutot que de `calculateHeroStats` pour la meme raison
+       que tout le reste de cette fonction : le resultat du heros se vide des
+       qu'une seule piece n'est pas configuree. */
+    if(source.weapon && entries.has("weapon")){
+      const fact = calculateWeaponStats(source.weapon, source.weaponConfig)
+        .facts.find(item => item.source && item.source.component === "passive");
+      if(fact){
+        entries.get("weapon").passive = {
+          level:fact.level,
+          maxLevel:WEAPON_PASSIVE_MAX_LEVEL,
+          status:"valid",
+          text:fact.text || ""
+        };
+      }
+    }
+    heroGearPassiveFacts(source).forEach(fact => {
+      if(!entries.has(fact.slot)) return;
+      entries.get(fact.slot).passive = {
+        level:fact.level,
+        maxLevel:fact.maxLevel,
+        status:fact.status,
+        text:fact.text
+      };
+    });
+
     return [...entries.values()].map(entry => Object.assign({}, entry, {
       totals:reconstructStatTotals(entry.terms)
     }));

@@ -18,6 +18,7 @@ import {
   groupBuildStatResults,
   randomRollsFor
 } from "../metier/stats-calcul.js";
+import { renderBonus } from "./elements.js";
 import { ModalStack } from "./modal-stack.js";
 import {
   BUILD_STAT_FAMILY_LABELS,
@@ -96,6 +97,40 @@ import {
     return section;
   }
 
+  /* Le passif de la piece, comme le jeu le montre sous ses statistiques.
+
+     Il est annonce « non inclus dans le calcul » : son texte est
+     conditionnel — « a chaque utilisation de la competence normale » — et
+     rien ici ne le chiffre. Le taire laisserait croire que la piece n'en a
+     pas ; le presenter sans reserve laisserait croire qu'il est compte. */
+  function passiveSection(passive){
+    let etat = "Niveau du passif à renseigner";
+    if(passive.status === "valid"){
+      etat = "Niveau "+passive.level+" / "+passive.maxLevel;
+    }else if(passive.status === "incompatible"){
+      etat = "Niveau du passif invalide";
+    }
+    const section = el("section",{class:"weapon-stats-family"});
+    section.appendChild(el("h4",{
+      class:"weapon-stats-family-title",
+      text:"Passif"
+    }));
+    const item = el("article",{class:"hero-passive"},[
+      el("div",{class:"hero-passive-head"},[
+        el("strong",{text:"Non inclus dans le calcul"}),
+        el("span",{text:etat})
+      ])
+    ]);
+    if(passive.status === "valid" && passive.text){
+      item.appendChild(el("p",{
+        class:"hero-passive-text",
+        html:renderBonus(passive.text)
+      }));
+    }
+    section.appendChild(item);
+    return section;
+  }
+
   function renderPieceDetail(){
     const entry = pieceDetail.entries[pieceDetail.index];
     const body = $("#pieceDetailBody");
@@ -158,6 +193,7 @@ import {
 
     const tirages = randomRollsFor(entry);
     if(tirages.length) body.appendChild(randomRollsSection(entry, tirages));
+    if(entry.passive) body.appendChild(passiveSection(entry.passive));
   }
 
   function movePieceDetail(step){

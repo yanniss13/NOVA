@@ -287,7 +287,7 @@ const { chromium } = require("playwright");
 
     /* ---- Équiper un set en un clic (roster) ----
        Un set remplit les 4 emplacements universels et ne touche jamais
-       l'armure liée, qui dépend du personnage. */
+       l'armure gravée, qui dépend du personnage. */
     const rosterSetButton = page.locator(
       '#memberRosterEditor [data-gear-action="armor-set"]'
     );
@@ -321,16 +321,19 @@ const { chromium } = require("playwright");
           filled:node.classList.contains("filled")
         }))
     );
+    /* L'emplacement propre au personnage se reconnait a son libelle
+       « Armure gravée » — le nom du jeu, et celui affiche depuis le
+       renommage. La CLE de stockage, elle, reste « Armure liee ». */
     const universal = armorAfterSet.filter(slot =>
-      !/li[ée]e/i.test(slot.label)
+      !/grav[ée]e/i.test(slot.label)
     );
     assert.equal(universal.length, 4, "Quatre emplacements universels attendus");
     assert.ok(
       universal.every(slot => slot.filled),
       "Le set doit remplir les quatre emplacements universels"
     );
-    const linked = armorAfterSet.find(slot => /li[ée]e/i.test(slot.label));
-    assert.ok(linked && !linked.filled, "L'armure liée ne doit pas être touchée");
+    const linked = armorAfterSet.find(slot => /grav[ée]e/i.test(slot.label));
+    assert.ok(linked && !linked.filled, "L'armure gravée ne doit pas être touchée");
 
     /* Les quatre pièces appartiennent bien au MÊME set : leurs noms de fichier
        partagent la racine, et cette racine correspond au set choisi. */
@@ -338,7 +341,7 @@ const { chromium } = require("playwright");
       [...document.querySelectorAll("#memberRosterEditor .gear-slot")]
         .filter(node => !node.classList.contains("weapon")
           && !node.classList.contains("jewel")
-          && !/li[ée]e/i.test(node.textContent)
+          && !/grav[ée]e/i.test(node.textContent)
           && node.classList.contains("filled"))
         .map(node => node.getAttribute("title") || "")
     );
@@ -447,7 +450,7 @@ const { chromium } = require("playwright");
       [...document.querySelectorAll("#memberRosterEditor .gear-slot")]
         .filter(node => !node.classList.contains("weapon")
           && !node.classList.contains("jewel")
-          && !/li[ée]e/i.test(node.textContent))
+          && !/grav[ée]e/i.test(node.textContent))
         .every(node => node.classList.contains("filled"))
     );
     assert.ok(armorStillFilled, "Équiper des bijoux ne doit pas vider les armures");

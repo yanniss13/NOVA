@@ -21,7 +21,11 @@
   const LINKED_ARMORS = window.SEVEN_DS_ARMURES_LIEES || {};
   const ARMOR_LABELS = {
     "Haut":"Haut","Bas":"Bas","Bottes":"Bottes",
-    "Ceinture":"Ceinture","Armure liee":"Armure liée"
+    /* « Armure gravée » est le nom du jeu. La CLE reste « Armure liee » :
+       elle est ecrite dans localStorage, dans Supabase et dans les chemins
+       des images. Renommer le libelle est cosmetique, renommer la cle
+       demanderait une migration de toutes les configurations enregistrees. */
+    "Ceinture":"Ceinture","Armure liee":"Armure gravée"
   };
   const JEWEL_SLOTS = ["Anneau","Collier","Boucle d'oreille"];
   const JEWEL_LABELS = {

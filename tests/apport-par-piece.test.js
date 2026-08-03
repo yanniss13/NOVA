@@ -429,7 +429,68 @@ function testStatPurementTireeNApparaitPasDansLesFixes(){
   assert.ok(fixees.size >= 1, "la part fixe conserve les statistiques de niveau");
 }
 
+/* Le passif appartient a la piece, pas seulement au heros.
+
+   Il vient de `groupBuildTermsBySlot` et non de `calculateHeroStats` : la
+   seconde vide son resultat des qu'une piece n'est pas configuree, et le
+   passif de l'arme disparaitrait avec. */
+function testPassifDArmeSurSonEntree(){
+  const { hooks } = loadApp();
+  const entrees = plain(hooks.orderedBuildEntries({
+    weapon:HACHE_FILE,
+    weaponConfig:weaponConfig({ overlimit:0 }),
+    armor:{}, armorConfig:{}, jewel:{}, jewelConfig:{}
+  }));
+  const arme = entrees.find(entree => entree.slot === "weapon");
+
+  assert.ok(arme, "l'entree de l'arme existe");
+  assert.ok(arme.passive, "l'arme porte son passif");
+  assert.strictEqual(arme.passive.status, "valid", "le passif de l'arme est lisible");
+  assert.ok(arme.passive.text.length > 0, "le passif de l'arme porte son texte");
+  assert.ok(
+    arme.passive.level >= 1 && arme.passive.level <= arme.passive.maxLevel,
+    "le niveau du passif tient dans ses bornes"
+  );
+}
+
+/* Le passif n'est PAS un terme : sa prose est conditionnelle et rien ne la
+   chiffre. L'ajouter aux totaux serait un faux calcul. */
+function testPassifNestPasUnTerme(){
+  const { hooks } = loadApp();
+  const entrees = plain(hooks.orderedBuildEntries({
+    weapon:HACHE_FILE,
+    weaponConfig:weaponConfig(),
+    armor:{}, armorConfig:{}, jewel:{}, jewelConfig:{}
+  }));
+  const arme = entrees.find(entree => entree.slot === "weapon");
+  arme.terms.forEach(term => {
+    assert.notStrictEqual(
+      term.source.component,
+      "passive",
+      "aucun terme ne provient du passif"
+    );
+  });
+}
+
+/* Une piece sans passif n'en invente pas un. */
+function testPieceSansPassif(){
+  const { hooks } = loadApp();
+  const entrees = plain(hooks.orderedBuildEntries(buildDeuxPieces()));
+  entrees
+    .filter(entree => entree.slot === "set")
+    .forEach(entree => {
+      assert.strictEqual(
+        entree.passive,
+        undefined,
+        "le bonus d'ensemble n'est pas une piece et n'a pas de passif"
+      );
+    });
+}
+
 testTirageExposeSesBornes();
+testPassifDArmeSurSonEntree();
+testPassifNestPasUnTerme();
+testPieceSansPassif();
 testPartitionSansDoublonNiPerte();
 testStatPurementTireeNApparaitPasDansLesFixes();
 testTirageDArmeBasique();

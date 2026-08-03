@@ -36,18 +36,38 @@ const CONFIG_GRAVEE = {
 
    Une HACHE : Diane porte Hache, Gantelets et Cudgel — la normalisation de
    l'equipe ecarte une arme incompatible, et le heros se retrouverait sans
-   arme sans que le test le dise. */
-const ARME = "7ds-armes/Hache/Hache bénie.webp";
+   arme sans que le test le dise.
+
+   Celle-ci precisement, parce qu'AUCUNE hache du catalogue n'a a la fois un
+   passif et un grade a enchantements « basic ». Les sept haches a passif
+   utilisent toutes des perles — d'ou cette fixture, qui couvre du meme coup
+   la jauge d'une perle et le passif de l'arme. */
+const ARME = "7ds-armes/Hache/Hache de l'âme vorace.webp";
 const ARME_CONFIG = {
   version:1,
-  gradeGameId:"131121003",
+  gradeGameId:"131125010",
   level:0,
   promotion:0,
+  /* overlimit 0 donne passiveLevel 1 : le passif est lisible. */
   overlimit:0,
-  /* C_Critical_Dam_Rate vaut [900, 1100] au catalogue, ramene a [450, 550]
-     par le taux de l'emplacement (5000 / 10000). Le jet est pose au maximum :
-     jauge pleine attendue. */
-  enchantments:[{ slot:0, stat:"C_Critical_Dam_Rate", value:550 }]
+  /* Palier 1, un seul emplacement. B_Def_Equip vaut [56, 112] : le jet est
+     pose au maximum, jauge pleine attendue. */
+  enchantments:[{ slot:0, tier:1, element:null, stat:"B_Def_Equip", value:112 }]
+};
+
+/* L'armure gravee de Diane — ce que le jeu appelle une tenue. Toutes les
+   armures gravees portent un passif (66 sur 66). */
+const TENUE = "7ds-armures-ssr/Armure liee/Tenue de combat cloutée.webp";
+const TENUE_CONFIG = {
+  version:1,
+  level:120,
+  reinforce:0,
+  passiveLevel:1,
+  enchantments:[
+    { slot:0, stat:"Buff_Time_Rate", value:3328 },
+    null,
+    null
+  ]
 };
 
 const EQUIPE = {
@@ -58,8 +78,8 @@ const EQUIPE = {
     char:"diane",
     weapon:ARME,
     weaponConfig:ARME_CONFIG,
-    armor:{ Haut:HAUT, Bas:BAS, Bottes:BOTTES },
-    armorConfig:{ Haut:CONFIG, Bottes:CONFIG_GRAVEE },
+    armor:{ Haut:HAUT, Bas:BAS, Bottes:BOTTES, "Armure liee":TENUE },
+    armorConfig:{ Haut:CONFIG, Bottes:CONFIG_GRAVEE, "Armure liee":TENUE_CONFIG },
     jewel:{},
     jewelConfig:{},
     potentiel:{ tier:0 }
@@ -110,12 +130,12 @@ const EQUIPE = {
 
     assert.equal(
       (await titre.textContent()).trim(),
-      "Hache bénie",
+      "Hache de l'âme vorace",
       "la modale est titree du nom de l'arme, qui ouvre le parcours"
     );
     assert.equal(
       (await position.textContent()).trim(),
-      "1 / 4",
+      "1 / 5",
       "la position reflete le parcours"
     );
     assert.equal(
@@ -136,7 +156,7 @@ const EQUIPE = {
       await page.locator("#pieceDetailBody .roll-gauge-fill")
         .evaluate(node => node.style.width),
       "100%",
-      "un jet au maximum de l'intervalle remplit la jauge de l'arme"
+      "un jet au maximum de l'intervalle remplit la jauge de la perle"
     );
     assert.equal(
       (await titreTirages.textContent()).trim(),
@@ -184,6 +204,31 @@ const EQUIPE = {
       "les statistiques fixes passent au-dessus des tirages, recu : " + ordre.join(", ")
     );
 
+    /* Le passif de l'arme, sur l'arme. Il etait relegue au bloc du heros en
+       bas de fiche, alors que le membre le cherche sur la piece. */
+    const passif = page.locator("#pieceDetailBody .hero-passive");
+    assert.equal(
+      await passif.count(),
+      1,
+      "l'arme affiche son passif dans sa propre modale"
+    );
+    assert.match(
+      await passif.locator(".hero-passive-head").textContent(),
+      /Niveau \d+ \/ \d+/,
+      "le passif annonce son niveau et son maximum"
+    );
+    assert.ok(
+      (await passif.locator(".hero-passive-text").textContent()).trim().length > 10,
+      "le passif porte son texte"
+    );
+    /* La reserve doit rester visible : rien ici n'est chiffre dans les
+       totaux, et laisser croire le contraire serait un faux calcul. */
+    assert.match(
+      await page.locator("#pieceDetailBody").textContent(),
+      /Non inclus dans le calcul/,
+      "le passif annonce qu'il n'entre pas dans le calcul"
+    );
+
     /* La vignette : c'est elle que le membre reconnait dans le jeu, bien
        avant le libelle du catalogue. */
     const vignette = page.locator("#pieceDetailThumb");
@@ -194,7 +239,7 @@ const EQUIPE = {
     );
     assert.match(
       await vignette.evaluate(node => node.style.backgroundImage),
-      /Hache bénie/,
+      /Hache de l/,
       "la vignette est bien celle de la piece affichee"
     );
 
@@ -203,7 +248,7 @@ const EQUIPE = {
     await page.locator("#pieceDetailNext").click();
     assert.equal(
       (await position.textContent()).trim(),
-      "2 / 4",
+      "2 / 5",
       "la fleche suivante avance dans le parcours"
     );
     assert.equal(
@@ -244,10 +289,30 @@ const EQUIPE = {
       "une piece d'equipement parle de gravure, pas d'enchantement"
     );
 
+    /* L'ARMURE GRAVEE — ce que le jeu appelle une tenue. Elle porte un
+       passif comme l'arme, et c'est le second cas demande. */
+    await page.locator("#pieceDetailNext").click();
+    assert.equal(
+      (await titre.textContent()).trim(),
+      "Tenue de combat cloutée",
+      "l'armure gravee vient ensuite"
+    );
+    assert.equal(
+      await page.locator("#pieceDetailBody .hero-passive").count(),
+      1,
+      "l'armure gravee affiche son passif dans sa propre modale"
+    );
+    assert.match(
+      await page.locator("#pieceDetailBody .hero-passive .hero-passive-head")
+        .textContent(),
+      /Niveau 1 \/ 3/,
+      "le passif de la tenue annonce son niveau et son maximum"
+    );
+
     await page.locator("#pieceDetailNext").click();
     assert.equal(
       (await position.textContent()).trim(),
-      "4 / 4",
+      "5 / 5",
       "la piece non configuree ferme le parcours"
     );
     assert.equal(
