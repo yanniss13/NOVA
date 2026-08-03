@@ -99,10 +99,10 @@ import { toast } from "./toast.js";
       .replace(/\s+de l'équipement$/, "");
   }
 
+  /* `formatBuildStatValue` pose deja le « % » sur les dix-milliemes, et le
+     resume compact se passe du suffixe « points » des valeurs plates. */
   function contributionText(item){
-    return shortStatLabel(item.label)+" "
-      +formatBuildStatValue(item.value, item.unit)
-      +(item.unit === "flat" ? "" : " %");
+    return shortStatLabel(item.label)+" "+formatBuildStatValue(item.value, item.unit);
   }
 
   /* L'apport d'une pièce : un résumé toujours visible, le détail au clic.
