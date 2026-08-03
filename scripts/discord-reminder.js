@@ -12,6 +12,8 @@ const SUPABASE_URL = process.env.SUPABASE_URL || "https://uxouhbgdlolidjmxwgae.s
 const SERVICE_ROLE = process.env.SUPABASE_SERVICE_ROLE;
 const WEBHOOK = process.env.DISCORD_WEBHOOK_URL;
 const FORCE = process.env.FORCE === "1"; // lancement manuel : ignore la fenêtre horaire
+// Lancement manuel avec un texte : simple vérification du webhook (voir main).
+const TEST_MESSAGE = (process.env.TEST_MESSAGE || "").trim();
 
 // Heure locale de Paris (gère automatiquement l'heure d'été/hiver).
 function parisNow() {
@@ -50,9 +52,42 @@ async function collectReminderData(request, weekStart) {
   };
 }
 
+// Envoi brut sur le webhook. `allowed_mentions` vide : jamais de @everyone.
+async function postToDiscord(content) {
+  const res = await fetch(WEBHOOK, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ content: content, allowed_mentions: { parse: [] } })
+  });
+  if (!res.ok) {
+    console.error("Webhook Discord échec:", res.status, await res.text());
+    return false;
+  }
+  return true;
+}
+
 async function main() {
-  if (!SERVICE_ROLE || !WEBHOOK) {
-    console.log("Secrets manquants (SUPABASE_SERVICE_ROLE / DISCORD_WEBHOOK_URL) — rien à envoyer.");
+  if (!WEBHOOK) {
+    console.log("Secret DISCORD_WEBHOOK_URL manquant — rien à envoyer.");
+    return;
+  }
+
+  /* Message de vérification, passé au lancement manuel. Il ne touche NI
+     Supabase NI la fenêtre horaire : il ne sert qu'à prouver que le webhook
+     répond, typiquement après en avoir changé.
+
+     Il court-circuite volontairement le vrai rappel : envoyer celui-ci hors
+     dimanche listerait la semaine à peine commencée, où tout le monde est à
+     0/3, et sèmerait la confusion dans le salon. */
+  if (TEST_MESSAGE) {
+    console.log("Message de vérification demandé — Supabase n'est pas interrogé.");
+    if (!await postToDiscord(TEST_MESSAGE)) process.exitCode = 1;
+    else console.log("Webhook joignable, message envoyé : " + TEST_MESSAGE);
+    return;
+  }
+
+  if (!SERVICE_ROLE) {
+    console.log("Secret SUPABASE_SERVICE_ROLE manquant — rien à envoyer.");
     return;
   }
   const now = new Date();
@@ -72,14 +107,7 @@ async function main() {
     .toLocaleDateString("fr-FR", { day: "numeric", month: "short", timeZone: "UTC" });
   const content = reminderMessage(weekLabel, missingMembers);
 
-  const post = await fetch(WEBHOOK, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    // allowed_mentions vide : on ne déclenche jamais @everyone/@here par accident.
-    body: JSON.stringify({ content: content, allowed_mentions: { parse: [] } })
-  });
-  if (!post.ok) {
-    console.error("Webhook Discord échec:", post.status, await post.text());
+  if (!await postToDiscord(content)) {
     process.exitCode = 1;
     return;
   }

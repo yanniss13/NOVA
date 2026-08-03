@@ -1,6 +1,8 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
 const {
   isReminderWindow, currentBossWeekStart, missingRuns, reminderMessage
 } = require("../scripts/reminder-core.js");
@@ -44,8 +46,6 @@ assert.deepStrictEqual(
    second message dans le salon. Le garde-fou vit ici parce que rien dans le
    code JavaScript ne peut le voir : la faute se commettrait dans le YAML. */
 {
-  const fs = require("node:fs");
-  const path = require("node:path");
   const workflow = fs.readFileSync(
     path.join(__dirname, "..", ".github", "workflows", "boss-reminder.yml"),
     "utf8"
@@ -62,6 +62,36 @@ assert.deepStrictEqual(
     workflow,
     /cron:\s*"0 \d+ \* \* 0"/,
     "Le cron doit rester calé sur le dimanche (0 en fin d'expression)"
+  );
+  assert.match(
+    workflow,
+    /TEST_MESSAGE:\s*\$\{\{\s*inputs\.message\s*\}\}/,
+    "Le message de vérification doit être câblé depuis l'entrée du workflow"
+  );
+}
+
+/* Le message de vérification n'interroge JAMAIS Supabase.
+
+   C'est ce qui le rend utilisable n'importe quand : envoyer le vrai rappel
+   hors dimanche listerait la semaine à peine commencée, où tout le monde est
+   à 0/3, et sèmerait la confusion dans le salon. */
+{
+  const source = fs.readFileSync(
+    path.join(__dirname, "..", "scripts", "discord-reminder.js"),
+    "utf8"
+  );
+  const debutTest = source.indexOf("if (TEST_MESSAGE)");
+  const premierAppelSupabase = source.indexOf("collectReminderData(sb");
+  assert.ok(debutTest > 0, "La branche de vérification existe");
+  assert.ok(premierAppelSupabase > 0, "L'appel Supabase existe");
+  assert.ok(
+    debutTest < premierAppelSupabase,
+    "La branche de vérification doit court-circuiter l'appel Supabase"
+  );
+  assert.match(
+    source.slice(debutTest, premierAppelSupabase),
+    /return;/,
+    "La branche de vérification doit rendre la main avant le vrai rappel"
   );
 }
 

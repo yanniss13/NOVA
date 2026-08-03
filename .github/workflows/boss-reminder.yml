@@ -20,7 +20,15 @@ name: Rappel Discord — Boss de Guilde
 on:
   schedule:
     - cron: "0 10 * * 0"   # dimanche 10:00 UTC (11h Paris l'hiver, 12h l'été)
-  workflow_dispatch: {}     # + bouton "Run workflow" manuel (ignore la fenêtre)
+  workflow_dispatch:        # + bouton "Run workflow" manuel (ignore la fenêtre)
+    inputs:
+      message:
+        description: >
+          Texte de vérification. Rempli, il est posté tel quel sur Discord
+          SANS interroger Supabase — pour tester le webhook après l'avoir
+          changé. Laissé vide, le vrai rappel de la semaine est envoyé.
+        required: false
+        default: ""
 
 jobs:
   remind:
@@ -36,5 +44,7 @@ jobs:
           SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
           SUPABASE_SERVICE_ROLE: ${{ secrets.SUPABASE_SERVICE_ROLE }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          # Lancement manuel -> on force l'envoi (ignore la fenêtre dimanche 12h).
+          # Lancement manuel -> on force l'envoi (ignore la fenêtre du dimanche).
           FORCE: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
+          # Rempli -> simple vérification du webhook, sans toucher Supabase.
+          TEST_MESSAGE: ${{ inputs.message }}
