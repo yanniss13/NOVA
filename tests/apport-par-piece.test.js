@@ -327,7 +327,58 @@ testBonusEnsembleNonAttribue();
 testOrdreConfigureesDAbord();
 testOrdreNaturelDansUnGroupe();
 testOrdreContientLesMemesEntrees();
+/* L'arme aussi : le jeu montre ses enchantements avec la meme jauge.
+   `grade-axe` propose critRate entre 10 et 20, ramene a [5, 10] par le taux
+   de l'emplacement (5000 / 10000). */
+function testTirageDArmeBasique(){
+  const { hooks } = loadApp();
+  const result = plain(hooks.calculateWeaponStats(HACHE_FILE, weaponConfig({
+    enchantments:[{ slot:0, stat:"critRate", value:7 }]
+  })));
+  assert.strictEqual(result.status, "valid", "l'arme enchantee reste calculable");
+
+  const tirages = plain(hooks.randomRollsFor({ terms:result.terms }));
+  assert.strictEqual(tirages.length, 1, "l'arme rend son enchantement");
+  assert.strictEqual(tirages[0].min, 5, "le minimum suit le taux de l'emplacement");
+  assert.strictEqual(tirages[0].max, 10, "le maximum suit le taux de l'emplacement");
+  assert.ok(
+    Math.abs(tirages[0].ratio - 0.4) < 0.001,
+    "un jet de 7 sur [5, 10] remplit la jauge aux deux cinquiemes, recu : "
+      + tirages[0].ratio
+  );
+}
+
+/* Une perle a bien des bornes, contrairement a ce que la premiere version
+   supposait : chaque palier porte ses propres options min/max, et les
+   privait de jauge etait un bug, pas une limite des donnees.
+
+   L'arme vient du VRAI catalogue : la fixture synthetique n'a pas de courbes
+   sur son grade a perles, donc son calcul n'aboutit pas. Palier 1, un seul
+   emplacement, B_Def_Equip entre 56 et 112. */
+const BAGUETTE_PERLE = "7ds-armes/Baguette/Baguette de l'âme vorace.webp";
+
+function testTirageDePerle(){
+  const { hooks } = loadApp();
+  const result = plain(hooks.calculateWeaponStats(BAGUETTE_PERLE, weaponConfig({
+    gradeGameId:"131065010",
+    enchantments:[{ slot:0, tier:1, element:null, stat:"B_Def_Equip", value:84 }]
+  })));
+  assert.strictEqual(result.status, "valid", "l'arme a perle reste calculable");
+
+  const tirages = plain(hooks.randomRollsFor({ terms:result.terms }));
+  assert.strictEqual(tirages.length, 1, "la perle rend son tirage");
+  assert.strictEqual(tirages[0].min, 56, "la perle porte le minimum de son palier");
+  assert.strictEqual(tirages[0].max, 112, "la perle porte le maximum de son palier");
+  assert.ok(
+    Math.abs(tirages[0].ratio - 0.5) < 0.001,
+    "un jet de 84 sur [56, 112] remplit la jauge a moitie, recu : "
+      + tirages[0].ratio
+  );
+}
+
 testTirageExposeSesBornes();
+testTirageDArmeBasique();
+testTirageDePerle();
 testRatioBorneAUnDansLesDeuxSens();
 testAucunTiragePourUnePieceSansGravure();
 testSeulsLesTermesAleatoiresPortentDesBornes();

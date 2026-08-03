@@ -421,6 +421,44 @@ import {
     };
   }
 
+  /* Les bornes du tirage d'un enchantement d'arme, quand elles existent.
+
+     Les deux familles rangent leurs bornes differemment, et c'est la seule
+     raison d'etre de cette fonction :
+
+     - `basic` : des options communes, ramenees a l'emplacement par son taux.
+       Un meme enchantement ne vaut pas autant dans le premier emplacement que
+       dans le troisieme.
+     - `masterstone` (les perles) : un jeu d'options PAR PALIER, et par element
+       quand le palier en distingue. Elles ont bien des bornes — la premiere
+       version de ce code supposait le contraire et les privait de jauge.
+
+     Une stat absente du catalogue rend `null` plutot que de faire echouer le
+     calcul : le terme existe quand meme, il n'a simplement pas de jauge. */
+  function weaponEnchantmentRoll(catalog, choice, slot){
+    if(!catalog || !choice || !choice.stat) return null;
+    if(catalog.type === "basic"){
+      const option = (catalog.options || [])
+        .find(item => item && item.stat === choice.stat);
+      const slotRate = (catalog.slots || [])[slot];
+      return option && Number.isFinite(Number(slotRate))
+        ? enchantmentBounds(option, slotRate)
+        : null;
+    }
+    if(catalog.type === "masterstone"){
+      const tier = (catalog.tiers || [])
+        .find(item => item && item.tier === choice.tier);
+      if(!tier) return null;
+      const group = tier.elements
+        ? (tier.elements || []).find(item => item && item.element === choice.element)
+        : tier;
+      const option = group && (group.options || [])
+        .find(item => item && item.stat === choice.stat);
+      return option ? { min:option.min, max:option.max } : null;
+    }
+    return null;
+  }
+
   function calculateWeaponStats(file, config){
     const status = weaponConfigStatus(file, config);
     if(status !== "valid") return emptyWeaponStatResult(status);
@@ -459,27 +497,16 @@ import {
         source:{ domain:"weapon", component:"level", id:file, subStat:index }
       });
     });
-    /* Les bornes du tirage, quand elles existent : un enchantement basique se
-       tire entre un minimum et un maximum connus, et l'interface s'en sert
-       pour montrer la qualite du jet. Une perle n'a pas de bornes — elle a des
-       paliers — donc ses termes sortent sans `roll`. */
     const enchantCatalog = grade.enchantments || {};
-    const enchantOptions = enchantCatalog.type === "basic"
-      ? (enchantCatalog.options || [])
-      : [];
     config.enchantments.forEach((enchantment, slot) => {
       if(enchantment === null) return;
-      const option = enchantOptions.find(item => item && item.stat === enchantment.stat);
-      const slotRate = (enchantCatalog.slots || [])[slot];
       addWeaponStatTerm(terms, {
         id:"weapon:enchantment:"+slot+":"+enchantment.stat,
         role:"enchantment",
         stat:enchantment.stat,
         value:enchantment.value,
         bucket:enchantmentBucket,
-        roll:option && Number.isFinite(Number(slotRate))
-          ? enchantmentBounds(option, slotRate)
-          : null,
+        roll:weaponEnchantmentRoll(enchantCatalog, enchantment, slot),
         source:{
           domain:"weapon",
           component:"enchantment",

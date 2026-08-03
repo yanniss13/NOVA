@@ -31,13 +31,33 @@ const CONFIG_GRAVEE = {
   enchantments:[{ slot:0, stat:BOTTES_STAT, value:BOTTES_MAX }]
 };
 
+/* L'arme aussi porte des tirages : le jeu les appelle « Enchanter », et
+   c'est le cas que la premiere version n'avait jamais verifie.
+
+   Une HACHE : Diane porte Hache, Gantelets et Cudgel — la normalisation de
+   l'equipe ecarte une arme incompatible, et le heros se retrouverait sans
+   arme sans que le test le dise. */
+const ARME = "7ds-armes/Hache/Hache bénie.webp";
+const ARME_CONFIG = {
+  version:1,
+  gradeGameId:"131121003",
+  level:0,
+  promotion:0,
+  overlimit:0,
+  /* C_Critical_Dam_Rate vaut [900, 1100] au catalogue, ramene a [450, 550]
+     par le taux de l'emplacement (5000 / 10000). Le jet est pose au maximum :
+     jauge pleine attendue. */
+  enchantments:[{ slot:0, stat:"C_Critical_Dam_Rate", value:550 }]
+};
+
 const EQUIPE = {
   id:"apport-1",
   name:"Apport",
   pseudo:"Apport",
   heroes:[{
     char:"diane",
-    weapon:null,
+    weapon:ARME,
+    weaponConfig:ARME_CONFIG,
     armor:{ Haut:HAUT, Bas:BAS, Bottes:BOTTES },
     armorConfig:{ Haut:CONFIG, Bottes:CONFIG_GRAVEE },
     jewel:{},
@@ -79,32 +99,57 @@ const EQUIPE = {
       "un clic sur la ligne ouvre la modale de la piece"
     );
 
-    /* Le titre nomme la piece, et la piece configuree vient en premier. */
+    /* L'ARME OUVRE LE PARCOURS. C'est le cas que la premiere version n'avait
+       jamais verifie : le code existait, rien ne prouvait qu'il fonctionnait. */
+    const titre = page.locator("#pieceDetailTitle");
+    const position = page.locator("#pieceDetailPosition");
+    const jauges = page.locator("#pieceDetailBody .roll-line");
+    const titreTirages = page.locator(
+      "#pieceDetailBody .roll-section .weapon-stats-family-title"
+    );
+
     assert.equal(
-      (await page.locator("#pieceDetailTitle").textContent()).trim(),
-      "Haut de l'araignée de l'ombre",
-      "la modale est titree du nom de la piece, configuree d'abord"
+      (await titre.textContent()).trim(),
+      "Hache bénie",
+      "la modale est titree du nom de l'arme, qui ouvre le parcours"
     );
     assert.equal(
-      (await page.locator("#pieceDetailPosition").textContent()).trim(),
-      "1 / 3",
+      (await position.textContent()).trim(),
+      "1 / 4",
       "la position reflete le parcours"
     );
-    assert.ok(
-      await page.locator("#pieceDetailBody .weapon-stat").count() > 0,
-      "une piece configuree affiche ses statistiques"
-    );
-
-    /* Sans gravure, aucune section de tirage : une section vide serait pire
-       que pas de section du tout. */
     assert.equal(
-      await page.locator("#pieceDetailBody .roll-line").count(),
-      0,
-      "une piece sans gravure n'affiche aucune jauge"
+      await page.locator("#pieceDetailPrev").isDisabled(),
+      true,
+      "la fleche precedente est desactivee sur la premiere entree"
     );
 
-    /* La vignette de la piece : c'est elle que le membre reconnait dans le
-       jeu, bien avant le libelle du catalogue. */
+    /* L'enchantement de l'arme, avec sa jauge. Le jet est pose au maximum de
+       son intervalle : jauge pleine, la seule valeur affirmable sans recopier
+       ici le calcul du ratio. */
+    assert.equal(
+      await jauges.count(),
+      1,
+      "l'arme enchantee affiche son enchantement"
+    );
+    assert.equal(
+      await page.locator("#pieceDetailBody .roll-gauge-fill")
+        .evaluate(node => node.style.width),
+      "100%",
+      "un jet au maximum de l'intervalle remplit la jauge de l'arme"
+    );
+    assert.equal(
+      (await titreTirages.textContent()).trim(),
+      "Enchantement",
+      "l'arme parle d'enchantement, pas de gravure : c'est le mot du jeu"
+    );
+    assert.ok(
+      (await jauges.first().locator(".roll-value").textContent()).trim().length > 1,
+      "la jauge porte la valeur du tirage a cote d'elle"
+    );
+
+    /* La vignette : c'est elle que le membre reconnait dans le jeu, bien
+       avant le libelle du catalogue. */
     const vignette = page.locator("#pieceDetailThumb");
     assert.equal(
       await vignette.isVisible(),
@@ -113,71 +158,64 @@ const EQUIPE = {
     );
     assert.match(
       await vignette.evaluate(node => node.style.backgroundImage),
-      /Haut de l/,
+      /Hache bénie/,
       "la vignette est bien celle de la piece affichee"
     );
 
-    /* Aux bornes, les fleches sont desactivees. */
-    assert.equal(
-      await page.locator("#pieceDetailPrev").isDisabled(),
-      true,
-      "la fleche precedente est desactivee sur la premiere entree"
-    );
-
-    /* La navigation passe a la piece suivante sans refermer la modale. */
+    /* Une piece configuree mais non gravee : aucune section de tirage. Une
+       section vide serait pire que pas de section du tout. */
     await page.locator("#pieceDetailNext").click();
     assert.equal(
-      (await page.locator("#pieceDetailPosition").textContent()).trim(),
-      "2 / 3",
+      (await position.textContent()).trim(),
+      "2 / 4",
       "la fleche suivante avance dans le parcours"
     );
     assert.equal(
-      (await page.locator("#pieceDetailTitle").textContent()).trim(),
-      "Bottes de combat du venin tissé",
+      (await titre.textContent()).trim(),
+      "Haut de l'araignée de l'ombre",
       "le titre suit la navigation"
     );
     assert.match(
       await vignette.evaluate(node => node.style.backgroundImage),
-      /Bottes de combat/,
+      /Haut de l/,
       "la vignette suit la navigation, elle ne reste pas sur la piece precedente"
     );
-
-    /* La gravure, presentee comme dans le jeu : un libelle, une jauge, et la
-       valeur a droite. Le jet est pose au maximum de son intervalle, donc la
-       jauge doit etre pleine — la seule valeur affirmable sans recopier ici
-       le calcul du ratio. */
-    const gravures = page.locator("#pieceDetailBody .roll-line");
+    assert.ok(
+      await page.locator("#pieceDetailBody .weapon-stat").count() > 0,
+      "une piece configuree affiche ses statistiques"
+    );
     assert.equal(
-      await gravures.count(),
+      await jauges.count(),
+      0,
+      "une piece sans gravure n'affiche aucune jauge"
+    );
+
+    /* Une piece gravee : meme jauge, mais le mot du jeu change. */
+    await page.locator("#pieceDetailNext").click();
+    assert.equal(
+      (await titre.textContent()).trim(),
+      "Bottes de combat du venin tissé",
+      "la piece gravee vient ensuite"
+    );
+    assert.equal(
+      await jauges.count(),
       1,
       "la piece gravee affiche sa gravure"
     );
     assert.equal(
-      await page.locator("#pieceDetailBody .roll-gauge-fill").evaluate(
-        node => node.style.width
-      ),
-      "100%",
-      "un jet au maximum de l'intervalle remplit la jauge"
-    );
-    assert.ok(
-      (await gravures.first().locator(".roll-value").textContent()).trim().length > 1,
-      "la jauge porte la valeur du tirage a cote d'elle"
-    );
-    assert.equal(
-      await page.locator("#pieceDetailBody .roll-section .weapon-stats-family-title")
-        .textContent(),
+      (await titreTirages.textContent()).trim(),
       "Gravure",
-      "la section des tirages est titree, au singulier pour un seul tirage"
+      "une piece d'equipement parle de gravure, pas d'enchantement"
     );
 
     await page.locator("#pieceDetailNext").click();
     assert.equal(
-      (await page.locator("#pieceDetailPosition").textContent()).trim(),
-      "3 / 3",
+      (await position.textContent()).trim(),
+      "4 / 4",
       "la piece non configuree ferme le parcours"
     );
     assert.equal(
-      (await page.locator("#pieceDetailTitle").textContent()).trim(),
+      (await titre.textContent()).trim(),
       "Bas de l'araignée de l'ombre",
       "la piece non configuree passe apres les configurees"
     );

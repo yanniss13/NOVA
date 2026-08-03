@@ -72,11 +72,21 @@ import {
     ]);
   }
 
-  function randomRollsSection(tirages){
+  /* Le jeu ne nomme pas la meme chose des deux cotes : une arme porte des
+     « enchantements », une piece d'equipement une « gravure ». Reprendre son
+     vocabulaire evite au membre d'avoir a traduire. */
+  function rollsTitle(entry, nombre){
+    if(entry && entry.domain === "weapon"){
+      return nombre > 1 ? "Enchantements" : "Enchantement";
+    }
+    return nombre > 1 ? "Gravures" : "Gravure";
+  }
+
+  function randomRollsSection(entry, tirages){
     const section = el("section",{class:"weapon-stats-family roll-section"});
     section.appendChild(el("h4",{
       class:"weapon-stats-family-title",
-      text:tirages.length > 1 ? "Gravures" : "Gravure"
+      text:rollsTitle(entry, tirages.length)
     }));
     tirages.forEach(tirage => section.appendChild(randomRollNode(tirage)));
     return section;
@@ -112,7 +122,7 @@ import {
       return;
     }
     const tirages = randomRollsFor(entry);
-    if(tirages.length) body.appendChild(randomRollsSection(tirages));
+    if(tirages.length) body.appendChild(randomRollsSection(entry, tirages));
     groupBuildStatResults(entry).forEach(group => {
       const family = el("section",{class:"weapon-stats-family"});
       family.appendChild(el("h4",{
