@@ -271,6 +271,20 @@ const EQUIPE = {
       "une piece sans gravure n'affiche aucune jauge"
     );
 
+    /* Pas de « Detail du calcul » ici : il vit une seule fois, dans le bloc
+       de statistiques du heros. Le repeter sur chacune des neuf pieces
+       rallongeait la modale sans rien apprendre de plus. */
+    assert.equal(
+      await page.locator("#pieceDetailBody .weapon-stat-details").count(),
+      0,
+      "la modale d'une piece ne repete pas la ventilation par terme"
+    );
+    assert.doesNotMatch(
+      await page.locator("#pieceDetailBody").textContent(),
+      /Détail du calcul/,
+      "aucun « Detail du calcul » dans la modale d'une piece"
+    );
+
     /* Une piece gravee : meme jauge, mais le mot du jeu change. */
     await page.locator("#pieceDetailNext").click();
     assert.equal(

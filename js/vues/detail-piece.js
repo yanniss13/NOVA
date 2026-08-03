@@ -4,9 +4,11 @@
    son verrou de defilement a la premiere ouverture et ne le leve qu'a la
    derniere, donc l'empilement est deja gere.
 
-   Le rendu passe par la chaine d'affichage des editeurs — familles, totaux,
-   ventilation par terme — pour que le membre y retrouve une presentation
-   qu'il connait. Ce module n'invente aucun balisage de statistique.
+   Le rendu reprend les familles et les totaux des editeurs, pour que le
+   membre y retrouve une presentation qu'il connait, mais PAS la ventilation
+   par terme : le « Detail du calcul » reste disponible une seule fois, dans
+   le bloc de statistiques du heros. Le repeter sur chaque piece rallongeait
+   la modale sans rien apprendre de plus.
 
    L'ordre du parcours vient de metier/stats-calcul.js : il est pur, teste,
    et c'est lui qui donne son sens a la position affichee. */
@@ -22,9 +24,7 @@ import { renderBonus } from "./elements.js";
 import { ModalStack } from "./modal-stack.js";
 import {
   BUILD_STAT_FAMILY_LABELS,
-  formatBuildStatValue,
-  gearTermLabel,
-  statTermsDetails
+  formatBuildStatValue
 } from "./stats-affichage.js";
 
   const pieceDetail = { entries:[], index:0 };
@@ -181,11 +181,6 @@ import {
               +(stat.unit === "flat" ? " points" : "")
           })
         ]));
-        node.appendChild(statTermsDetails(stat, {
-          termLabel:gearTermLabel,
-          termValue:term => formatBuildStatValue(term.value, term.unit),
-          termProvenance:term => term.source.component
-        }));
         family.appendChild(node);
       });
       body.appendChild(family);
