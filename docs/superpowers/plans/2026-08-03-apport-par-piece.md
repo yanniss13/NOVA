@@ -61,13 +61,18 @@ Créer `tests/apport-par-piece.test.js` :
 const assert = require("node:assert");
 const { loadApp, plain } = require("./helpers/load-app");
 
-const HAUT_FILE = "7ds-armures-ssr/Haut/Haut du souverain cupide.webp";
+/* Les armures viennent du VRAI catalogue : `tests/helpers/load-app.js` ne
+   synthetise que `weaponsByFile`, et reprend `gearByFile` tel quel de
+   data/stats-build.js. Les armes, elles, sont synthetiques. */
+const HAUT_FILE = "7ds-armures-ssr/Haut/Haut de l'araignée de l'ombre.webp";
 const HACHE_FILE = "7ds-armes/Hache/hache.webp";
 
+/* `gearConfigStatus` exige qualityMin <= level <= qualityMax. Pour ces
+   pieces, qualityMin vaut 120 : un niveau 0 sortirait « incompatible ». */
 function gearConfig(overrides = {}){
   return Object.assign({
     version:1,
-    level:0,
+    level:120,
     reinforce:0,
     enchantments:[],
     passiveLevel:null
@@ -240,7 +245,7 @@ Un tableau d'entrées. `slot` vaut le nom d'emplacement (`"Haut"`, `"Anneau"`…
 Ajouter dans `tests/apport-par-piece.test.js`, avant les appels finaux :
 
 ```js
-const BAS_FILE = "7ds-armures-ssr/Bas/Bas du souverain cupide.webp";
+const BAS_FILE = "7ds-armures-ssr/Bas/Bas de l'araignée de l'ombre.webp";
 
 function buildDeuxPieces(){
   return {
