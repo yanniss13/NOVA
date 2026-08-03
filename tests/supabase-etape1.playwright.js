@@ -5283,6 +5283,51 @@ const { chromium } = require("playwright");
     assert.match(await dashboardText(), /Groupe 2 · Run \d+/);
     assert.match(await dashboardText(), /Équipe manquante/);
     assert.match(await dashboardText(), /9\s*007\s*199\s*254\s*740\s*991/);
+
+    /* LES CARTES D'ACCUEIL.
+
+       Elles repondent aux questions qu'un membre se pose en arrivant et que le
+       suivi, purement boss, laissait sans reponse. */
+    assert.match(
+      await dashboardText(),
+      /Tes dispos ne sont pas posées/,
+      "Une semaine sans dispo doit le dire et proposer d'y aller"
+    );
+    await page.locator('[data-dashboard-action="post-availability"]').click();
+    await page.locator("#view-availability").waitFor({ state:"visible" });
+    await page.locator('.tab[data-view="dashboard"]').click();
+
+    /* LA REGLE QUI COMPTE : une lecture en echec MASQUE la carte.
+
+       Afficher « tes dispos ne sont pas posees » parce que la requete a echoue
+       pousserait le membre a refaire un travail deja fait. Une donnee absente
+       n'est pas une donnee vide.
+
+       `bossReadFailureOnce` porte un nom trompeur : le faux client le compare a
+       n'importe quel nom de table, pas seulement aux tables de boss. C'est un
+       echec a UN COUP, remis a null des qu'il a servi.
+
+       L'emission Realtime qui suit teste au passage la fraicheur des cartes :
+       sans le cablage de synchro-temps-reel, une ecriture de dispos ne
+       rafraichirait pas l'accueil. */
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.bossReadFailureOnce = {
+        table:"member_availability",
+        message:"Réseau dispos indisponible"
+      };
+      window.__fakeSupabaseEmit("member_availability", "UPDATE");
+    });
+    await page.waitForFunction(() =>
+      window.__fakeSupabaseState.bossReadFailureOnce === null &&
+      !document.querySelector('#dashboardBody [data-card="availability"]'),
+      null, { timeout:5000 }
+    );
+    assert.doesNotMatch(
+      await dashboardText(),
+      /Tes dispos ne sont pas posées/,
+      "Une lecture en echec doit masquer la carte, jamais annoncer un faux zero"
+    );
+
     assert.ok(dashboardWeekStart, "La semaine du tableau de bord doit être connue");
 
     // ---- Cache écrit par compte et par semaine ----
@@ -5815,6 +5860,9 @@ async function installFakeSupabase(page){
       boss_sessions:[],
       boss_participation:[],
       boss_run_reports:[],
+      /* L'accueil lit les dispos de la semaine : sans cette table, la lecture
+         echoue et la carte disparait — le harnais mentirait sur l'etat reel. */
+      member_availability:[],
       calls:[],
       rpcCalls:[],
       bossRpcFailureOnce:null,

@@ -57,7 +57,12 @@ import { renderDashboardView } from "./suivi.js";
          actif il se recharge silencieusement, et sa lecture unique remplace les
          branches teams/boss pour ce même lot d'événements. Sinon il est
          seulement marqué sale : Realtime ne change jamais l'onglet actif. */
-      const dashboardChanged = changed.has("teams") || changed.has("boss");
+      /* L'accueil lit maintenant les dispos et le roster : une ecriture sur
+         l'une de ces tables le perime, exactement comme une ecriture d'equipe
+         ou de boss. Sans ces deux ajouts, un membre qui vient de poser ses
+         dispos relirait « tes dispos ne sont pas posees » juste apres. */
+      const dashboardChanged = changed.has("teams") || changed.has("boss")
+        || changed.has("availability") || changed.has("roster");
       const dashboardActive = view === "dashboard";
       try{
         if(changed.has("teams") && !dashboardActive){

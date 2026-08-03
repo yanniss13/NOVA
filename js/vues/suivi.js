@@ -17,9 +17,11 @@
 import { DashboardStore } from "../donnees/suivi-store.js";
 import { sessionCourante } from "../etat/session.js";
 import { formatBossScore, frDateTime } from "../metier/boss-logique.js";
+import { AVAIL_DAY_FULL } from "../metier/dispos-logique.js";
 import { $, el } from "../noyau/dom.js";
 import { bossViewState, openBossReport, openBossTeamPicker } from "./boss-sessions.js";
 import { resetTeamDraft } from "./builder.js";
+import { Availability } from "./dispos.js";
 import { openAuth } from "./modale-auth.js";
 import { showView } from "./navigation.js";
 import { toast } from "./toast.js";
@@ -117,6 +119,25 @@ import { toast } from "./toast.js";
       $("#rosterTitle").focus();
       return;
     }
+    if(action.type === "post-availability"){
+      await showView("availability");
+      $("#availTitle").focus();
+      return;
+    }
+    if(action.type === "complete-roster"){
+      await showView("member-roster");
+      $("#memberRosterViewTitle").focus();
+      return;
+    }
+    /* Le creneau fort est une lecture collective : arriver en mode « Mes
+       dispos » obligerait le membre a basculer lui-meme pour voir ce que la
+       carte vient de lui annoncer. */
+    if(action.type === "view-planning"){
+      await showView("availability");
+      Availability.setMode("guild");
+      $("#availTitle").focus();
+      return;
+    }
     if(action.type === "find-group"){
       const loaded = await showView("boss");
       if(!loaded) return;
@@ -125,6 +146,18 @@ import { toast } from "./toast.js";
       );
       (target || $("#tab-boss")).focus();
     }
+  }
+
+  function slotsPosedLabel(count){
+    return count + " créneau" + (count > 1 ? "x" : "")
+      + " posé" + (count > 1 ? "s" : "") + " cette semaine";
+  }
+
+  function bestSlotLabel(best){
+    return AVAIL_DAY_FULL[best.day] + " "
+      + String(best.hour).padStart(2, "0") + " h — "
+      + best.count + " membre" + (best.count > 1 ? "s" : "")
+      + " disponible" + (best.count > 1 ? "s" : "");
   }
 
   function dashboardProgressCell(label, value, className){
@@ -248,6 +281,65 @@ import { toast } from "./toast.js";
             dashboardActionButton(action)
           ]))
         )
+      ]));
+    }
+
+    /* Les trois cartes d'accueil. Chacune disparait quand elle n'a rien a
+       dire : donnee absente (lecture en echec) ou rien a signaler. Une carte
+       qui affiche « 0 » est du bruit, et une carte qui affiche un faux « 0 »
+       est un mensonge. */
+    const availability = state.availability;
+    if(availability){
+      const posed = availability.mine.posed;
+      blocks.push(el("section",{
+        class:"dashboard-section",
+        dataset:{ card:"availability" }
+      },[
+        el("strong",{text:posed
+          ? slotsPosedLabel(availability.mine.count)
+          : "Tes dispos ne sont pas posées"}),
+        posed
+          ? null
+          : el("p",{text:"La confrérie ne peut pas te compter dans ses créneaux."}),
+        el("button",{
+          class:"btn "+(posed ? "" : "btn-primary"),
+          type:"button",
+          dataset:{ dashboardAction:"post-availability" },
+          text:posed ? "Modifier mes dispos" : "Poser mes dispos",
+          onclick:()=>void runDashboardAction({ type:"post-availability" })
+        })
+      ]));
+    }
+
+    if(state.roster && state.roster.toComplete > 0){
+      blocks.push(el("section",{
+        class:"dashboard-section",
+        dataset:{ card:"roster" }
+      },[
+        el("strong",{text:state.roster.toComplete+" héros à compléter"}),
+        el("button",{
+          class:"btn",
+          type:"button",
+          dataset:{ dashboardAction:"complete-roster" },
+          text:"Compléter mon roster",
+          onclick:()=>void runDashboardAction({ type:"complete-roster" })
+        })
+      ]));
+    }
+
+    if(availability && availability.best){
+      blocks.push(el("section",{
+        class:"dashboard-section",
+        dataset:{ card:"best-slot" }
+      },[
+        el("strong",{text:bestSlotLabel(availability.best)}),
+        el("button",{
+          class:"btn",
+          type:"button",
+          dataset:{ dashboardAction:"view-planning" },
+          text:"Voir le planning",
+          onclick:()=>void runDashboardAction({ type:"view-planning" })
+        })
       ]));
     }
 
