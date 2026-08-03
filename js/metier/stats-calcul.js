@@ -768,6 +768,57 @@ import {
     };
   }
 
+  /* Range par emplacement les termes deja calcules, sans rien recalculer.
+
+     La source est `calculateBuildStats` et NON `calculateHeroStats` : la
+     seconde renvoie un resultat vide des qu'une seule piece n'est pas
+     configuree, ce qui ferait disparaitre les resumes de toutes les autres.
+     C'est le cas le plus frequent chez les membres.
+
+     L'arme ne porte pas de `source.slot` : on la reconnait a son domaine.
+     Le bonus d'ensemble n'appartient a aucune piece : il sort dans sa propre
+     entree, sans quoi la somme des entrees ne ferait plus le total. */
+  function groupBuildTermsBySlot(build){
+    const source = build || {};
+    const result = calculateBuildStats(source);
+    const entries = new Map();
+
+    const entryFor = (slot, domain, file) => {
+      if(!entries.has(slot)){
+        entries.set(slot, { slot, domain, file, status:"valid", terms:[] });
+      }
+      return entries.get(slot);
+    };
+
+    if(source.weapon){
+      entryFor("weapon", "weapon", source.weapon).status =
+        result.statuses.weapon || "missing";
+    }
+    GEAR_SLOT_DOMAINS.forEach(([storageKey, slots]) => {
+      slots.forEach(slot => {
+        const file = (source[storageKey] || {})[slot];
+        if(!file) return;
+        const domain = gearDomainOf(slot);
+        entryFor(slot, domain, file).status =
+          result.statuses[domain + ":" + slot] || "missing";
+      });
+    });
+
+    result.terms.forEach(term => {
+      if(term.bucket === "set"){
+        entryFor("set", "set", null).terms.push(term);
+        return;
+      }
+      const slot = term.source.domain === "weapon" ? "weapon" : term.source.slot;
+      if(!slot || !entries.has(slot)) return;
+      entries.get(slot).terms.push(term);
+    });
+
+    return [...entries.values()].map(entry => Object.assign({}, entry, {
+      totals:reconstructStatTotals(entry.terms)
+    }));
+  }
+
   const HERO_MAIN_RATE_APPLICATION_MODE = "all-flat-before-passives";
   const HERO_MAIN_RATE_TARGETS = {
     I_AtkAdd_Rate:"B_Atk",

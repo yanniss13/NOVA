@@ -367,6 +367,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   calculateBuildStats:typeof calculateBuildStats === "function"
     ? calculateBuildStats
     : undefined,
+  groupBuildTermsBySlot:typeof groupBuildTermsBySlot === "function"
+    ? groupBuildTermsBySlot
+    : undefined,
   reconstructStatTotals:typeof reconstructStatTotals === "function"
     ? reconstructStatTotals
     : undefined,

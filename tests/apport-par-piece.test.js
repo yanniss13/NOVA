@@ -85,7 +85,99 @@ function testRolesBonusEnsemble(){
     });
 }
 
+const BAS_FILE = "7ds-armures-ssr/Bas/Bas de l'araignée de l'ombre.webp";
+
+function buildDeuxPieces(){
+  return {
+    weapon:null,
+    armor:{ Haut:HAUT_FILE, Bas:BAS_FILE },
+    armorConfig:{ Haut:gearConfig(), Bas:gearConfig() },
+    jewel:{},
+    jewelConfig:{}
+  };
+}
+
+function totalParStat(totals){
+  const somme = new Map();
+  (totals || []).forEach(total => {
+    somme.set(total.stat, (somme.get(total.stat) || 0) + total.value);
+  });
+  return somme;
+}
+
+/* L'invariant central : les entrees ne recalculent rien, elles rangent les
+   memes termes. Leur somme doit donc egaler l'apport total de l'equipement.
+   Attention : pas le total du HEROS, qui ajoute la base du personnage, la
+   maitrise, le potentiel et les passifs. */
+function testInvariantDeSomme(){
+  const { hooks } = loadApp();
+  const build = buildDeuxPieces();
+  const global = plain(hooks.calculateBuildStats(build));
+  const entrees = plain(hooks.groupBuildTermsBySlot(build));
+
+  const attendu = totalParStat(global.totals);
+  const obtenu = new Map();
+  entrees.forEach(entree => {
+    totalParStat(entree.totals).forEach((value, stat) => {
+      obtenu.set(stat, (obtenu.get(stat) || 0) + value);
+    });
+  });
+
+  assert.deepStrictEqual(
+    [...obtenu.keys()].sort(),
+    [...attendu.keys()].sort(),
+    "les entrees couvrent exactement les memes statistiques que le total"
+  );
+  attendu.forEach((value, stat) => {
+    assert.strictEqual(
+      obtenu.get(stat),
+      value,
+      "la somme des entrees egale le total de l'equipement pour " + stat
+    );
+  });
+}
+
+/* Le test qui aurait attrape le defaut de conception initial : bati sur
+   calculateHeroStats, une seule piece non configuree aurait vide le
+   resultat entier et fait disparaitre TOUS les resumes. */
+function testToleranceAuxPiecesNonConfigurees(){
+  const { hooks } = loadApp();
+  const build = buildDeuxPieces();
+  build.armorConfig.Bas = null;
+
+  const entrees = plain(hooks.groupBuildTermsBySlot(build));
+  const haut = entrees.find(entree => entree.slot === "Haut");
+  const bas = entrees.find(entree => entree.slot === "Bas");
+
+  assert.ok(haut, "l'entree de la piece configuree existe");
+  assert.strictEqual(haut.status, "valid", "la piece configuree reste calculee");
+  assert.ok(haut.terms.length > 0, "la piece configuree garde ses termes");
+
+  assert.ok(bas, "l'entree de la piece non configuree existe quand meme");
+  assert.notStrictEqual(bas.status, "valid", "la piece non configuree est signalee");
+  assert.strictEqual(bas.terms.length, 0, "la piece non configuree n'a aucun terme");
+}
+
+function testBonusEnsembleNonAttribue(){
+  const { hooks } = loadApp();
+  const entrees = plain(hooks.groupBuildTermsBySlot(buildDeuxPieces()));
+  entrees
+    .filter(entree => entree.slot !== "set")
+    .forEach(entree => {
+      entree.terms.forEach(term => {
+        assert.notStrictEqual(
+          term.bucket,
+          "set",
+          "aucun terme d'ensemble n'est attribue a une piece"
+        );
+      });
+    });
+}
+
 testRolesEquipement();
 testRolesArme();
 testRolesBonusEnsemble();
-console.log("PASS apport par piece : roles des termes");
+testInvariantDeSomme();
+testToleranceAuxPiecesNonConfigurees();
+testBonusEnsembleNonAttribue();
+console.log("PASS apport par piece : roles, regroupement et invariant de somme");
