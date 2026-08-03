@@ -398,6 +398,7 @@ import {
       value:settings.value,
       unit:metadata.unit,
       bucket:settings.bucket,
+      role:settings.role,
       family:metadata.family,
       source:settings.source,
       confidence:"exact"
@@ -431,6 +432,7 @@ import {
 
     addWeaponStatTerm(terms, {
       id:"weapon:level:"+mainStat,
+      role:"main",
       stat:mainStat,
       value:curveValueAtLevel(grade.mainStatValues, config.level),
       bucket:nativeBucket,
@@ -438,6 +440,7 @@ import {
     });
     addWeaponStatTerm(terms, {
       id:"weapon:promotion:"+mainStat,
+      role:"main",
       stat:mainStat,
       value:promotionValueAt(grade, config.promotion),
       bucket:nativeBucket,
@@ -446,6 +449,7 @@ import {
     (grade.subStats || []).forEach((subStat, index) => {
       addWeaponStatTerm(terms, {
         id:"weapon:level:"+subStat.stat+":"+index,
+        role:"sub",
         stat:subStat.stat,
         value:curveValueAtLevel(subStat.values, config.level),
         bucket:nativeBucket,
@@ -456,6 +460,7 @@ import {
       if(enchantment === null) return;
       addWeaponStatTerm(terms, {
         id:"weapon:enchantment:"+slot+":"+enchantment.stat,
+        role:"enchantment",
         stat:enchantment.stat,
         value:enchantment.value,
         bucket:enchantmentBucket,
@@ -528,6 +533,7 @@ import {
       value:settings.value,
       unit:metadata.unit,
       bucket:settings.bucket,
+      role:settings.role,
       family:metadata.family,
       source:settings.source,
       confidence:settings.confidence
@@ -555,6 +561,7 @@ import {
     const terms = [];
     addGearStatTerm(terms, {
       id:bucket + ":main:" + definition.mainStat,
+      role:"main",
       stat:definition.mainStat,
       value:gearStatValue(
         definition,
@@ -570,6 +577,7 @@ import {
     if(definition.subStat && definition.subValues){
       addGearStatTerm(terms, {
         id:bucket + ":sub:" + definition.subStat,
+        role:"sub",
         stat:definition.subStat,
         value:gearStatValue(
           definition,
@@ -586,6 +594,7 @@ import {
     (definition.extraStats || []).forEach((extra, index) => {
       addGearStatTerm(terms, {
         id:bucket + ":extra:" + index + ":" + extra.stat,
+        role:"extra",
         stat:extra.stat,
         value:gearStatValue(
           definition,
@@ -610,6 +619,7 @@ import {
       if(!choice || !choice.stat) return;
       addGearStatTerm(terms, {
         id:bucket + ":enchantment:" + index + ":" + choice.stat,
+        role:"enchantment",
         stat:choice.stat,
         value:Number(choice.value) || 0,
         bucket,
@@ -669,6 +679,7 @@ import {
       const pushTier = (stats, tier) => {
         (stats || []).forEach(entry => addGearStatTerm(terms, {
           id:"set:" + state.setId + ":" + tier + ":" + entry.stat,
+          role:"bonus",
           stat:entry.stat,
           value:Number(entry.value) || 0,
           bucket:"set",
