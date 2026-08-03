@@ -62,8 +62,11 @@
     };
   }
 
+  /* Un masque valide : 168 créneaux, un caractère par heure de la semaine. */
+  const AVAIL_MASK_PATTERN = /^[01]{168}$/;
+
   function normalizeAvailabilityMask(value){
-    return typeof value === "string" && /^[01]{168}$/.test(value)
+    return typeof value === "string" && AVAIL_MASK_PATTERN.test(value)
       ? value
       : AVAIL_EMPTY_MASK;
   }
@@ -193,10 +196,27 @@
     return (weekStarts || []).filter(week => week < floor);
   }
 
-  /* Sans cette garde, l'écho Realtime de sa PROPRE écriture réapplique un
-     masque plus ancien que celui qu'on est en train de peindre. */
-  function shouldIgnoreAvailabilityEcho(payload, currentUserId, savePending){
-    return !!savePending && !!payload && payload.owner === currentUserId;
+  /* L'écho Realtime de sa PROPRE écriture, ignoré dans deux cas distincts.
+
+     1. Pendant la peinture (`savePending`) : l'écho réappliquerait un masque
+        plus ancien que la sélection en cours.
+
+     2. Après l'enregistrement, quand la ligne renvoyée dit EXACTEMENT ce que
+        la grille affiche déjà. Ce second cas manquait, et c'est celui qui a
+        été signalé : l'écho arrive forcément APRÈS la réponse de l'upsert,
+        donc après que `savePending` soit retombé. Chaque créneau peint
+        déclenchait ainsi une relecture complète — et, à l'époque où la grille
+        était reconstruite, ramenait le membre en haut de page. Un membre seul
+        sur le site se le faisait donc à lui-même.
+
+     Comparer les masques plutôt que poser un délai garde le cas utile : une
+     ligne qui diffère (saisie depuis un autre appareil) reste appliquée. */
+  function shouldIgnoreAvailabilityEcho(
+    payload, currentUserId, savePending, currentMask
+  ){
+    if(!payload || payload.owner !== currentUserId) return false;
+    if(savePending) return true;
+    return AVAIL_MASK_PATTERN.test(payload.slots) && payload.slots === currentMask;
   }
 
   const AVAIL_DAY_LABELS = ["Lun","Mar","Mer","Jeu","Ven","Sam","Dim"];

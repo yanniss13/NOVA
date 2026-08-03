@@ -455,23 +455,69 @@ assert.match(
 
 const { shouldIgnoreAvailabilityEcho } = hooks;
 
+const masqueAffiche = "1" + "0".repeat(167);
+const masqueAutre = "0".repeat(168);
+
 /* Pendant une saisie, l'écho de sa propre écriture ne doit pas écraser la
    sélection en cours de peinture. */
 assert.strictEqual(
-  shouldIgnoreAvailabilityEcho({ owner:"moi" }, "moi", true),
+  shouldIgnoreAvailabilityEcho({ owner:"moi" }, "moi", true, masqueAffiche),
   true
 );
-/* Une fois l'enregistrement terminé, plus rien n'est ignoré. */
+
+/* LE CAS SIGNALÉ : l'écho qui SUIT l'enregistrement.
+
+   Il arrive après la réponse de l'upsert, donc après que `savePending` soit
+   retombé — l'ancienne garde le laissait passer. Chaque créneau peint
+   provoquait alors une relecture complète, et le membre, SEUL sur le site, se
+   faisait ramener en haut de la grille par sa propre saisie. */
 assert.strictEqual(
-  shouldIgnoreAvailabilityEcho({ owner:"moi" }, "moi", false),
+  shouldIgnoreAvailabilityEcho(
+    { owner:"moi", slots:masqueAffiche }, "moi", false, masqueAffiche
+  ),
+  true,
+  "Une ligne identique à ce qui est affiché n'apprend rien : rien à relire"
+);
+
+/* Mais un masque DIFFÉRENT reste appliqué : c'est le même membre depuis un
+   autre appareil, et sa saisie doit arriver jusqu'ici. */
+assert.strictEqual(
+  shouldIgnoreAvailabilityEcho(
+    { owner:"moi", slots:masqueAutre }, "moi", false, masqueAffiche
+  ),
+  false,
+  "Une ligne différente de l'affichage doit être prise en compte"
+);
+
+/* Sans masque exploitable dans la charge utile, on ne peut rien conclure :
+   on rafraîchit plutôt que de risquer d'ignorer un vrai changement. */
+assert.strictEqual(
+  shouldIgnoreAvailabilityEcho({ owner:"moi" }, "moi", false, masqueAffiche),
   false
 );
-/* La saisie d'un autre membre est toujours prise en compte. */
 assert.strictEqual(
-  shouldIgnoreAvailabilityEcho({ owner:"autre" }, "moi", true),
+  shouldIgnoreAvailabilityEcho(
+    { owner:"moi", slots:"pas un masque" }, "moi", false, masqueAffiche
+  ),
   false
 );
-assert.strictEqual(shouldIgnoreAvailabilityEcho(null, "moi", true), false);
+
+/* La saisie d'un autre membre est toujours prise en compte, masque identique
+   compris — deux membres peuvent viser les mêmes créneaux. */
+assert.strictEqual(
+  shouldIgnoreAvailabilityEcho({ owner:"autre" }, "moi", true, masqueAffiche),
+  false
+);
+assert.strictEqual(
+  shouldIgnoreAvailabilityEcho(
+    { owner:"autre", slots:masqueAffiche }, "moi", false, masqueAffiche
+  ),
+  false
+);
+assert.strictEqual(
+  shouldIgnoreAvailabilityEcho(null, "moi", true, masqueAffiche),
+  false
+);
 
 /* La table doit être écoutée par la chaîne Realtime unique. */
 assert.match(
@@ -488,6 +534,12 @@ assert.match(
   indexSource,
   /shouldIgnoreAvailabilityEcho\([\s\S]{0,160}Availability\.isSaving\(\)/,
   "Le gestionnaire Realtime doit consulter la garde de saisie"
+);
+assert.match(
+  indexSource,
+  /shouldIgnoreAvailabilityEcho\([\s\S]{0,260}Availability\.state[\s\S]{0,40}\.mask/,
+  "La garde doit recevoir le masque affiché, sans quoi l'écho de sa propre "
+    + "écriture repasse et relance une relecture complète"
 );
 
 console.log("availability.test.js OK");

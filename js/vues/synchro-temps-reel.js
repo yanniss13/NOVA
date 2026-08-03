@@ -140,12 +140,15 @@ import { renderDashboardView } from "./suivi.js";
           schema:"public",
           table
         }, payload => {
-          /* L'écho de sa PROPRE écriture, pendant qu'on peint encore, ferait
-             réapparaître un masque plus ancien que la sélection en cours. */
+          /* L'écho de sa PROPRE écriture n'apprend rien : soit on peint
+             encore, soit la grille affiche déjà ce que la ligne contient. Le
+             masque courant sert à distinguer ce cas d'une vraie modification
+             venue d'ailleurs (un autre appareil du même membre). */
           if(shouldIgnoreAvailabilityEcho(
             payload && payload.new,
             userId,
-            Availability.isSaving()
+            Availability.isSaving(),
+            Availability.state ? Availability.state.mask : ""
           )) return;
           schedule(table);
         });

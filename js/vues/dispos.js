@@ -115,10 +115,12 @@ import {
        le corps à chaque rafraîchissement, donc le conteneur qui défile était
        détruit puis recréé, et la position de défilement partait avec lui.
 
-       Or un rafraîchissement arrive dès qu'un AUTRE membre enregistre ses
-       disponibilités : Realtime rappelle la vue entière. Un membre en train
-       de peindre ses créneaux se faisait ramener en haut de grille sans avoir
-       rien fait, autant de fois que la confrérie enregistrait. */
+       Le rafraîchissement de trop venait de sa PROPRE écriture, renvoyée par
+       Realtime (voir shouldIgnoreAvailabilityEcho) : un membre SEUL sur le
+       site se ramenait en haut de grille à chaque créneau peint. Cet écho est
+       désormais filtré ; garder la grille en place reste la seconde ligne de
+       défense, car un rafraîchissement légitime — l'écriture d'un autre
+       membre — ne doit pas davantage voler le défilement en cours. */
     function updateCells(aggregate){
       const grid = $("#availGrid");
       if(!grid) return;
@@ -285,8 +287,10 @@ import {
     }
 
     /* Enregistrement différé : un glissement produit un seul upsert, et le
-       drapeau `savePending` sert de garde contre l'écho Realtime de sa propre
-       écriture (voir RealtimeSync). */
+       drapeau `savePending` couvre la PEINTURE en cours contre l'écho Realtime
+       de sa propre écriture. Il ne couvre pas l'écho qui suit l'upsert — celui
+       -là retombe avant que l'écho n'arrive, et c'est le masque affiché qui le
+       neutralise (voir RealtimeSync). */
     let saveTimer = null;
     let savePending = false;
     let anchor = null;

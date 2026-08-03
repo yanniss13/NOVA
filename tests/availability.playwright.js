@@ -304,14 +304,16 @@ async function runMobileChecks(browser, baseUrl){
       "La case touchée doit refléter son nouvel état sans reconstruction"
     );
 
-    /* LE BUG REMONTE PAR UN MEMBRE : « quand je descends avec ma molette, ça
-       remonte tout seul ». Realtime rappelle la vue entière dès qu'un AUTRE
-       membre enregistre ses disponibilités, et `renderGrid` remplaçait alors
-       tout le corps — le conteneur qui défile était détruit puis recréé, et
-       la position de défilement partait avec lui.
+    /* LE BUG REMONTÉ PAR UN MEMBRE : « quand je descends avec ma molette, ça
+       remonte tout seul ».
 
-       Le scénario le reproduit tel quel : on descend, un autre membre
-       enregistre, on vérifie qu'on n'a pas bougé. */
+       Il était SEUL sur le site : le coupable n'est donc pas l'écriture d'un
+       autre membre, mais l'écho Realtime de sa PROPRE saisie. Cet écho arrive
+       après la réponse de l'upsert, quand `savePending` est déjà retombé, et
+       relançait une relecture complète de la vue — laquelle reconstruisait la
+       grille, emportant la position de défilement.
+
+       Deux verrous, vérifiés séparément ci-dessous. */
     await page.evaluate(() => {
       const wrap = document.querySelector(".avail-grid-wrap");
       wrap.scrollTop = 400;
@@ -327,6 +329,35 @@ async function runMobileChecks(browser, baseUrl){
         + defilementAvant
     );
 
+    /* Verrou 1 — la cause : sa propre écriture ne doit RIEN relire.
+       La case 7 vient d'être enregistrée juste au-dessus ; on rejoue l'écho
+       que Supabase renvoie derrière cet enregistrement. */
+    const requetesAvantEcho = await page.evaluate(() =>
+      window.__availState.queryCalls.filter(t => t === "member_availability").length
+    );
+    await page.evaluate(() => {
+      window.__availEmit(
+        "member_availability",
+        window.__availState.member_availability.find(item => item.owner === "moi")
+      );
+    });
+    await page.waitForTimeout(400);
+    assert.equal(
+      await page.evaluate(() => window.__availState.queryCalls
+        .filter(t => t === "member_availability").length),
+      requetesAvantEcho,
+      "L'écho de sa propre écriture ne doit déclencher aucune relecture"
+    );
+    assert.equal(
+      await page.evaluate(
+        () => document.querySelector(".avail-grid-wrap").scrollTop
+      ),
+      defilementAvant,
+      "Sa propre saisie ne doit pas voler le défilement du membre"
+    );
+
+    /* Verrou 2 — le filet : l'écriture d'un AUTRE membre relit bien, elle,
+       mais met la grille à jour sur place au lieu de la reconstruire. */
     const requetesAvant = await page.evaluate(() =>
       window.__availState.queryCalls.filter(t => t === "member_availability").length
     );
