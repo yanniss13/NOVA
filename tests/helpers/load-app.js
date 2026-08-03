@@ -370,8 +370,8 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   groupBuildTermsBySlot:typeof groupBuildTermsBySlot === "function"
     ? groupBuildTermsBySlot
     : undefined,
-  summaryTermsFor:typeof summaryTermsFor === "function"
-    ? summaryTermsFor
+  orderedBuildEntries:typeof orderedBuildEntries === "function"
+    ? orderedBuildEntries
     : undefined,
   reconstructStatTotals:typeof reconstructStatTotals === "function"
     ? reconstructStatTotals

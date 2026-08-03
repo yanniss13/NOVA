@@ -819,43 +819,30 @@ import {
     }));
   }
 
-  /* Les apports les plus caracteristiques d'une entree.
+  /* L'ordre dans lequel la modale fait defiler les pieces.
 
-     On ne compare jamais deux unites entre elles : « PV +4 200 » est en
-     points, « CRIT 12 % » en dix-milliemes, et toute normalisation serait
-     arbitraire. L'ordre vient donc des roles, qui viennent de la structure
-     du jeu. A role egal le tri par valeur est licite : les termes d'un meme
-     role partagent leur unite.
+     Les pieces configurees d'abord : trois heros sur quatre n'ont rien de
+     configure, et enchainer neuf modales vides serait penible. Les non
+     configurees restent atteignables, mais apres.
 
-     On ne complete jamais pour atteindre la limite : une piece qui n'a qu'un
-     role rend un seul apport. */
-  const SUMMARY_ROLE_ORDER = ["main", "sub", "extra", "enchantment"];
+     Le tri vit ici plutot que dans la vue pour rester pur et testable sans
+     navigateur — et parce que c'est lui qui donne son sens a la position
+     affichee (« 2 / 9 »). */
+  const ENTRY_NATURAL_ORDER = ["weapon"]
+    .concat(ARMOR_SLOTS, JEWEL_SLOTS, ["set"]);
 
-  function summaryTermsFor(entry, limite){
-    const max = isInteger(limite) && limite > 0 ? limite : 3;
-    const terms = entry && Array.isArray(entry.terms) ? entry.terms : [];
-    if(!terms.length) return [];
-
-    const cumules = new Map();
-    terms.forEach(term => {
-      const rank = SUMMARY_ROLE_ORDER.indexOf(term.role);
-      if(rank < 0) return;
-      const cle = term.role + "|" + term.stat;
-      if(!cumules.has(cle)){
-        cumules.set(cle, { stat:term.stat, unit:term.unit, value:0, rank });
-      }
-      cumules.get(cle).value += term.value;
+  function orderedBuildEntries(build){
+    const entries = groupBuildTermsBySlot(build);
+    const rank = slot => {
+      const index = ENTRY_NATURAL_ORDER.indexOf(slot);
+      return index < 0 ? ENTRY_NATURAL_ORDER.length : index;
+    };
+    return entries.slice().sort((a, b) => {
+      const aVide = a.terms.length === 0;
+      const bVide = b.terms.length === 0;
+      if(aVide !== bVide) return aVide ? 1 : -1;
+      return rank(a.slot) - rank(b.slot);
     });
-
-    return [...cumules.values()]
-      .sort((a, b) => a.rank - b.rank || b.value - a.value)
-      .slice(0, max)
-      .map(item => ({
-        stat:item.stat,
-        value:item.value,
-        unit:item.unit,
-        label:buildStatMetadata(item.stat).fr || item.stat
-      }));
   }
 
   const HERO_MAIN_RATE_APPLICATION_MODE = "all-flat-before-passives";
@@ -1217,6 +1204,5 @@ export {
   calculateWeaponStats,
   gearDomainOf,
   groupBuildStatResults,
-  groupBuildTermsBySlot,
-  summaryTermsFor
+  orderedBuildEntries
 };
