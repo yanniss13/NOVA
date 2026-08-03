@@ -13,7 +13,11 @@
 
 import { $, el } from "../noyau/dom.js";
 import { nameOfFile } from "../metier/catalogue.js";
-import { groupBuildStatResults, randomRollsFor } from "../metier/stats-calcul.js";
+import {
+  fixedStatsOf,
+  groupBuildStatResults,
+  randomRollsFor
+} from "../metier/stats-calcul.js";
 import { ModalStack } from "./modal-stack.js";
 import {
   BUILD_STAT_FAMILY_LABELS,
@@ -121,9 +125,11 @@ import {
       }));
       return;
     }
-    const tirages = randomRollsFor(entry);
-    if(tirages.length) body.appendChild(randomRollsSection(entry, tirages));
-    groupBuildStatResults(entry).forEach(group => {
+    /* L'ordre du jeu : les statistiques fixes de la piece d'abord, les
+       tirages ensuite. Et les deux parts sont DISJOINTES — `fixedStatsOf`
+       retire les termes tires au sort — donc un meme apport n'apparait
+       jamais dans les deux sections. */
+    groupBuildStatResults(fixedStatsOf(entry)).forEach(group => {
       const family = el("section",{class:"weapon-stats-family"});
       family.appendChild(el("h4",{
         class:"weapon-stats-family-title",
@@ -149,6 +155,9 @@ import {
       });
       body.appendChild(family);
     });
+
+    const tirages = randomRollsFor(entry);
+    if(tirages.length) body.appendChild(randomRollsSection(entry, tirages));
   }
 
   function movePieceDetail(step){

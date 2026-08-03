@@ -148,6 +148,42 @@ const EQUIPE = {
       "la jauge porte la valeur du tirage a cote d'elle"
     );
 
+    /* LE DOUBLON FRANC, sur cette arme precise : « Degats crit. » vient
+       ENTIEREMENT de l'enchantement, et s'affichait a l'identique dans la
+       section des enchantements et dans les statistiques agregees.
+
+       L'assertion ne vaut que pour cette arme. Une piece peut legitimement
+       porter la meme statistique en fixe ET en gravure, avec deux valeurs
+       differentes : ce n'est pas un doublon, c'est deux apports distincts. */
+    const libellesTires = await page.locator("#pieceDetailBody .roll-label")
+      .evaluateAll(ns => ns.map(n => n.textContent.trim()));
+    const libellesFixes = await page
+      .locator("#pieceDetailBody .weapon-stat .weapon-stat-head > span:first-child")
+      .evaluateAll(ns => ns.map(n => n.textContent.trim()));
+    const communs = libellesTires.filter(l => libellesFixes.includes(l));
+    assert.deepEqual(
+      communs,
+      [],
+      "sur cette arme, une statistique purement tiree ne doit pas etre "
+        + "repetee en fixe, recu : " + communs.join(", ")
+    );
+
+    /* L'ordre du jeu : les statistiques fixes de la piece AVANT les tirages. */
+    const ordre = await page.evaluate(() => {
+      const sections = [...document.querySelectorAll(
+        "#pieceDetailBody .weapon-stats-family"
+      )];
+      return sections.map(n => n.classList.contains("roll-section") ? "tirages" : "fixes");
+    });
+    assert.ok(
+      ordre.indexOf("fixes") >= 0 && ordre.indexOf("tirages") >= 0,
+      "l'arme presente les deux sections, recu : " + ordre.join(", ")
+    );
+    assert.ok(
+      ordre.indexOf("fixes") < ordre.indexOf("tirages"),
+      "les statistiques fixes passent au-dessus des tirages, recu : " + ordre.join(", ")
+    );
+
     /* La vignette : c'est elle que le membre reconnait dans le jeu, bien
        avant le libelle du catalogue. */
     const vignette = page.locator("#pieceDetailThumb");

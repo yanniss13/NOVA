@@ -376,7 +376,62 @@ function testTirageDePerle(){
   );
 }
 
+/* La partition fixe / tire au sort : exhaustive et sans recouvrement.
+   C'est elle qui garantit qu'aucun apport ne s'affiche deux fois. */
+function testPartitionSansDoublonNiPerte(){
+  const { hooks } = loadApp();
+  const option = premiereOptionAleatoire(hooks);
+  const entrees = plain(hooks.orderedBuildEntries(
+    buildAvecGravure(option.stat, option.max)
+  ));
+  const haut = entrees.find(entree => entree.slot === "Haut");
+
+  const fixes = plain(hooks.fixedStatsOf(haut));
+  const tirages = plain(hooks.randomRollsFor(haut));
+
+  assert.ok(tirages.length > 0, "la piece gravee a bien un tirage");
+  assert.strictEqual(
+    fixes.terms.length + haut.terms.filter(t => t.role === "enchantment").length,
+    haut.terms.length,
+    "les deux parts couvrent tous les termes, sans en perdre"
+  );
+  fixes.terms.forEach(term => {
+    assert.notStrictEqual(
+      term.role,
+      "enchantment",
+      "aucun terme tire au sort ne reste dans la part fixe"
+    );
+  });
+}
+
+/* Le doublon concret que l'utilisateur a vu : une statistique dont la
+   TOTALITE vient d'un enchantement s'affichait dans les deux sections. */
+function testStatPurementTireeNApparaitPasDansLesFixes(){
+  const { hooks } = loadApp();
+  const result = plain(hooks.calculateWeaponStats(HACHE_FILE, weaponConfig({
+    enchantments:[{ slot:0, stat:"critRate", value:7 }]
+  })));
+  const entree = { terms:result.terms };
+
+  const tirees = new Set(plain(hooks.randomRollsFor(entree)).map(t => t.stat));
+  const fixees = new Set(plain(hooks.fixedStatsOf(entree)).totals.map(t => t.stat));
+
+  assert.ok(tirees.has("critRate"), "critRate est bien un tirage ici");
+  /* L'arme porte aussi critRate en sous-statistique de niveau : au niveau 0
+     elle vaut 20, donc la stat reste dans les fixes. Ce que le test protege,
+     c'est que la part TIREE n'y soit pas comptee deux fois. */
+  const totalFixe = plain(hooks.fixedStatsOf(entree)).totals
+    .find(total => total.stat === "critRate");
+  assert.ok(
+    !totalFixe || totalFixe.value !== 27,
+    "le total fixe n'additionne pas la part tiree au sort (20 + 7)"
+  );
+  assert.ok(fixees.size >= 1, "la part fixe conserve les statistiques de niveau");
+}
+
 testTirageExposeSesBornes();
+testPartitionSansDoublonNiPerte();
+testStatPurementTireeNApparaitPasDansLesFixes();
 testTirageDArmeBasique();
 testTirageDePerle();
 testRatioBorneAUnDansLesDeuxSens();

@@ -916,6 +916,22 @@ import {
       });
   }
 
+  /* La part FIXE d'une entree : tout sauf les tirages.
+
+     Le jeu presente les deux separement et ne les additionne jamais dans ce
+     panneau. Les melanger produisait un doublon franc : sur une arme dont les
+     degats critiques ne viennent que d'un enchantement, « Degats crit. +21,5 %
+     » s'affichait une fois dans la section des enchantements et une fois dans
+     les statistiques agregees.
+
+     La partition est exhaustive et sans recouvrement — chaque terme est soit
+     un tirage, soit fixe — donc rien ne se perd et rien ne compte double. */
+  function fixedStatsOf(entry){
+    const terms = (entry && Array.isArray(entry.terms) ? entry.terms : [])
+      .filter(term => term.role !== "enchantment");
+    return { terms, totals:reconstructStatTotals(terms) };
+  }
+
   function orderedBuildEntries(build){
     const entries = groupBuildTermsBySlot(build);
     const rank = slot => {
@@ -1288,6 +1304,7 @@ export {
   calculateHeroStats,
   calculateWeaponStats,
   gearDomainOf,
+  fixedStatsOf,
   groupBuildStatResults,
   orderedBuildEntries,
   randomRollsFor

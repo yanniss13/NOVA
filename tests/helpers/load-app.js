@@ -376,6 +376,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   randomRollsFor:typeof randomRollsFor === "function"
     ? randomRollsFor
     : undefined,
+  fixedStatsOf:typeof fixedStatsOf === "function"
+    ? fixedStatsOf
+    : undefined,
   reconstructStatTotals:typeof reconstructStatTotals === "function"
     ? reconstructStatTotals
     : undefined,
