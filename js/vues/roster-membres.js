@@ -311,18 +311,23 @@ import { toast } from "./toast.js";
           class:"btn member-roster-edit",
           type:"button",
           text:"Modifier",
-          onclick:()=>openMemberRosterEditor(entry)
+          /* La carte entière ouvre la fiche : sans cet arrêt, « Modifier »
+             déclencherait les deux. */
+          onclick:event=>{ event.stopPropagation(); openMemberRosterEditor(entry); }
         }),
         el("button",{
           class:"btn btn-danger member-roster-delete",
           type:"button",
           text:"Retirer",
-          onclick:()=>void deleteMemberRosterCharacter(entry)
+          onclick:event=>{
+            event.stopPropagation();
+            void deleteMemberRosterCharacter(entry);
+          }
         })
       ]));
     }
-    /* Roster consulté : la fiche entière ouvre le détail, et le bouton donne
-       le même accès au clavier. */
+    /* La carte entière ouvre le détail, et le bouton donne le même accès au
+       clavier — une carte n'est pas focalisable. */
     if(openDetail){
       card.classList.add("clickable");
       card.addEventListener("click", openDetail);
@@ -366,10 +371,15 @@ import { toast } from "./toast.js";
       ]));
       return;
     }
+    /* La fiche s'ouvre depuis TOUTE carte, y compris les siennes. Elle en
+       était exclue tant qu'on la croyait réservée à la consultation ; depuis
+       qu'elle porte le classement de puissance, un membre qui n'y accède pas
+       ne verrait jamais quel de SES builds frappe le plus fort. « Modifier »
+       reste le seul chemin vers l'éditeur. */
     filtered.forEach((entry, index) => grid.appendChild(memberRosterCard(
       entry,
       editable,
-      editable ? null : ()=>openRosterDetail(index)
+      ()=>openRosterDetail(index)
     )));
   }
 
