@@ -84,7 +84,9 @@ async function installFakeSupabase(page, weekStart, semaineBoss){
       queryCalls:[],
       /* Promesse qui retient la reponse de l'upsert, posee par
          `window.__availHoldUpsert()` et levee par `window.__availReleaseUpsert()`. */
-      upsertHold:null
+      upsertHold:null,
+      /* Vrai -> tout upsert echoue sans rien ecrire. */
+      upsertFailure:false
     };
 
     function query(table){
@@ -110,6 +112,13 @@ async function installFakeSupabase(page, weekStart, semaineBoss){
         upsert(value){
           operation = "upsert";
           payload = clone(value);
+          /* Echec d'ecriture : rien n'est ecrit et l'erreur remonte, comme un
+             reseau coupe. Pose par `state.upsertFailure`. */
+          if(state.upsertFailure){
+            return Promise.resolve({
+              data:null, error:{ message:"Ecriture refusee" }
+            });
+          }
           const rows = state[table] || (state[table] = []);
           const at = rows.findIndex(row =>
             row.owner === payload.owner && row.week_start === payload.week_start
@@ -762,6 +771,49 @@ async function runMobileChecks(browser, baseUrl){
         .find(row => row.owner === "moi");
       return ligne && ligne.slots[52] === "1";
     }, null, { timeout:5000 });
+
+    /* ENREGISTREMENT EN ÉCHEC : la saisie ne doit pas disparaître.
+
+       Hors ligne — métro, coupure — l'upsert échoue. Le drapeau `savePending`
+       retombait quand même, si bien que la première relecture venue rendait
+       au membre le masque du serveur : ses créneaux s'effaçaient en silence,
+       alors que le bandeau lui disait seulement de réessayer plus tard.
+
+       On vérifie trois choses : la saisie tient à l'écran, elle survit à une
+       relecture, et elle repart toute seule au retour du réseau. */
+    await page.evaluate(() => { window.__availState.upsertFailure = true; });
+    await page.click('#availGrid .avail-cell[data-index="60"]');
+    await page.waitForFunction(
+      () => document.querySelector("#availSaveStatus").dataset.state === "error",
+      null, { timeout:5000 }
+    );
+
+    await page.evaluate(() => {
+      window.__availEmit("member_availability", {
+        owner:"alix",
+        week_start:window.__availState.member_availability
+          .find(row => row.owner === "moi").week_start,
+        slots:"1".repeat(168)
+      });
+    });
+    await page.waitForTimeout(400);
+    assert.equal(
+      await page.locator('#availGrid .avail-cell[data-index="60"]')
+        .getAttribute("aria-pressed"),
+      "true",
+      "Une saisie non enregistree ne doit pas etre effacee par une relecture"
+    );
+
+    /* Le reseau revient : la saisie repart sans que le membre y touche. */
+    await page.evaluate(() => {
+      window.__availState.upsertFailure = false;
+      window.dispatchEvent(new Event("online"));
+    });
+    await page.waitForFunction(() => {
+      const ligne = window.__availState.member_availability
+        .find(row => row.owner === "moi");
+      return ligne && ligne.slots[60] === "1";
+    }, null, { timeout:8000 });
 
     /* Purge : une semaine vieille de plus de quatre semaines part au prochain
        enregistrement, la semaine précédente reste. */

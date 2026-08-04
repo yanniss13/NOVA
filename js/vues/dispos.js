@@ -302,6 +302,11 @@ import {
        l'écran, passait alors la garde et `refresh()` écrasait les derniers
        créneaux. D'où le symptôme signalé — « quand je clique sur plusieurs
        créneaux rapidement, certains ne sont pas pris en compte ». */
+    /* Un glissement produit un seul upsert au bout de ce délai. */
+    const SAVE_DEBOUNCE = 600;
+    /* Après un échec, on retente sans rien demander au membre. L'événement
+       `online` court-circuite cette attente quand le réseau revient plus tôt. */
+    const SAVE_RETRY_DELAY = 15000;
     let saveTimer = null;
     let savePending = false;
     let saveToken = 0;
@@ -341,17 +346,27 @@ import {
       };
       const { error } = await sb.from("member_availability")
         .upsert(payload, { onConflict:"owner,week_start" });
+      if(error){
+        /* ÉCHEC : les créneaux peints n'existent que dans cet onglet. Baisser
+           le drapeau les livrerait à la prochaine relecture, qui rendrait le
+           masque du serveur et les effacerait sans un mot — le bandeau se
+           contentait de conseiller de réessayer plus tard.
+
+           On garde donc la protection levée, on dépose la saisie dans le cache
+           local pour qu'elle survive à un rechargement, et on réessaie seul. */
+        savePending = true;
+        cachePendingMask();
+        setSaveStatus("error", "Non enregistré — nouvelle tentative…");
+        toast("Dispos non enregistrées : nouvelle tentative en cours.", true);
+        scheduleSave(SAVE_RETRY_DELAY);
+        return false;
+      }
       /* Un créneau peint PENDANT l'upsert a replanifié un enregistrement : le
          drapeau doit rester levé jusqu'à ce que celui-là aboutisse. Le baisser
          ici laisserait passer l'écho de l'écriture qu'on vient de terminer,
          plus ancienne que l'écran, et le membre verrait ses derniers créneaux
          s'effacer seuls. */
       if(token === saveToken) savePending = false;
-      if(error){
-        setSaveStatus("error", "Non enregistré");
-        toast("Dispos non enregistrées : réessaie une fois reconnecté.", true);
-        return false;
-      }
       const own = state.rows.find(row => row.owner === sessionCourante.user.id);
       if(own) own.slots = state.mask;
       else state.rows.push({ owner:sessionCourante.user.id, slots:state.mask });
@@ -381,11 +396,30 @@ import {
       return true;
     }
 
-    function scheduleSave(){
+    /* Le cache local est le filet du rechargement : la protection en mémoire
+       meurt avec l'onglet, pas lui. Déposer une saisie non confirmée y est
+       légitime — elle appartient à ce membre, et `refresh()` ne lit ce cache
+       que hors ligne, quand le serveur n'a de toute façon rien de mieux. */
+    function cachePendingMask(){
+      if(!sessionCourante.user || !state) return;
+      const rows = state.rows.map(row =>
+        row.owner === sessionCourante.user.id
+          ? Object.assign({}, row, { slots:state.mask })
+          : row
+      );
+      if(!rows.some(row => row.owner === sessionCourante.user.id)){
+        rows.push({ owner:sessionCourante.user.id, slots:state.mask });
+      }
+      writeAvailabilityCache(sessionCourante.user.id, state.weekStart, rows);
+    }
+
+    function scheduleSave(delay){
       savePending = true;
       saveToken += 1;
       clearTimeout(saveTimer);
-      saveTimer = setTimeout(()=>void saveNow(), 600);
+      saveTimer = setTimeout(
+        ()=>void saveNow(), delay === undefined ? SAVE_DEBOUNCE : delay
+      );
     }
 
     /* Mise à jour chirurgicale : on ne touche qu'aux attributs des 168 cases
@@ -746,6 +780,12 @@ import {
       get state(){ return state; }
     };
   })();
+
+  /* Le réseau revient : on republie tout de suite ce qui attendait, plutôt que
+     de laisser le membre devant « Non enregistré » jusqu'au prochain essai. */
+  window.addEventListener("online", ()=>{
+    if(Availability.isSaving()) void Availability.saveNow();
+  });
 
   $("#availSlotClose").addEventListener("click", ()=>Availability.closeSlot());
 

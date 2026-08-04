@@ -678,6 +678,14 @@ function loadApp(initialTeams){
     charactersBySlug:realBuildStats.charactersBySlug
   };
   sandbox.window = sandbox;
+  /* Le bac a sable modelise un navigateur : il lui faut donc les points
+     d'accroche globaux que le code utilise. Les dispos ecoutent `online` pour
+     republier une saisie restee en echec ; sans ce stub, le simple chargement
+     des modules jetait "window.addEventListener is not a function". */
+  if(typeof sandbox.addEventListener !== "function"){
+    sandbox.addEventListener = function(){};
+    sandbox.removeEventListener = function(){};
+  }
   vm.runInNewContext(exposed, sandbox, { filename:"index.html" });
   return { hooks:sandbox.__hooks, localStorage };
 }
