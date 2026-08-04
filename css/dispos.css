@@ -23,6 +23,21 @@
 .avail-week{font-size:13px;color:var(--muted)}
 .avail-note{font-size:13px;color:var(--muted);margin:10px 0 0}
 
+/* Cadre immobile autour de la zone qui défile : le voile du bas s'y accroche.
+   Posé sur `.avail-grid-wrap`, il descendrait avec la grille. */
+.avail-grid-frame{position:relative}
+.avail-grid-frame::after{
+  content:"";position:absolute;left:1px;right:1px;bottom:1px;height:38px;
+  border-radius:0 0 11px 11px;pointer-events:none;opacity:0;
+  transition:opacity .18s;
+  background:linear-gradient(to bottom, transparent, var(--obsidian-2))
+}
+/* Les barres de défilement sont masquées sur tout le site — choix assumé que
+   protège tests/scrollbars-invisibles.playwright.js. Ce voile est donc le seul
+   indice qu'il reste des heures plus bas. Il s'efface une fois en bas, pour ne
+   pas promettre un contenu qui n'existe plus. */
+.avail-grid-frame[data-more="bottom"]::after{opacity:1}
+
 /* La grille défile dans son propre conteneur : les cases gardent 44 px même
    sur 320 px de large, sans jamais faire déborder la page. */
 .avail-grid-wrap{overflow:auto;max-height:70vh;border:1px solid var(--line);border-radius:12px}

@@ -772,6 +772,32 @@ async function runMobileChecks(browser, baseUrl){
       return ligne && ligne.slots[52] === "1";
     }, null, { timeout:5000 });
 
+    /* LE VOILE DE DÉFILEMENT : présent seulement s'il dit vrai.
+
+       Les barres sont masquées sur tout le site, si bien que rien n'annonçait
+       les 24 heures de grille sous la ligne de flottaison. Le voile le dit —
+       et disparaît une fois en bas, sous peine de promettre du vide. */
+    assert.equal(
+      await page.locator(".avail-grid-frame").getAttribute("data-more"),
+      "bottom",
+      "En haut de grille, le voile doit annoncer la suite"
+    );
+    await page.evaluate(() => {
+      const wrap = document.querySelector(".avail-grid-wrap");
+      wrap.scrollTop = wrap.scrollHeight;
+    });
+    await page.waitForFunction(
+      () => document.querySelector(".avail-grid-frame").dataset.more === "none",
+      null, { timeout:5000 }
+    );
+    await page.evaluate(() => {
+      document.querySelector(".avail-grid-wrap").scrollTop = 0;
+    });
+    await page.waitForFunction(
+      () => document.querySelector(".avail-grid-frame").dataset.more === "bottom",
+      null, { timeout:5000 }
+    );
+
     /* ENREGISTREMENT EN ÉCHEC : la saisie ne doit pas disparaître.
 
        Hors ligne — métro, coupure — l'upsert échoue. Le drapeau `savePending`

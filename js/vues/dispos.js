@@ -148,6 +148,21 @@ import {
       });
     }
 
+    /* Les barres de défilement sont masquées sur tout le site — choix assumé,
+       protégé par tests/scrollbars-invisibles.playwright.js. Restait que rien
+       n'annonçait les 24 heures de grille sous la ligne de flottaison : un
+       membre pouvait croire avoir tout vu.
+
+       Le voile n'est posé que s'il dit vrai. Arrivé en bas, il disparaît :
+       un dégradé permanent promettrait du contenu inexistant. */
+    function syncScrollHint(){
+      const wrap = $("#availBody .avail-grid-wrap");
+      const frame = $("#availBody .avail-grid-frame");
+      if(!wrap || !frame) return;
+      const reste = wrap.scrollHeight - wrap.clientHeight - wrap.scrollTop;
+      frame.dataset.more = reste > 4 ? "bottom" : "none";
+    }
+
     function renderGrid(){
       const body = $("#availBody");
       const aggregatePrevu = state.mode === "guild"
@@ -157,6 +172,7 @@ import {
       const existant = $("#availGrid");
       if(existant && existant.dataset.signature === gridSignature()){
         updateCells(aggregatePrevu);
+        syncScrollHint();
         return;
       }
       body.innerHTML = "";
@@ -223,7 +239,14 @@ import {
         }
       }
       wrap.appendChild(grid);
-      body.appendChild(wrap);
+      /* Le cadre ne défile pas : c'est lui qui porte le voile du bas, sans
+         quoi le repère glisserait avec la grille au lieu de rester au bord. */
+      const frame = document.createElement("div");
+      frame.className = "avail-grid-frame";
+      frame.appendChild(wrap);
+      body.appendChild(frame);
+      wrap.addEventListener("scroll", syncScrollHint);
+      syncScrollHint();
       if(state.mode === "guild"){
         grid.addEventListener("click", event => {
           const cell = event.target.closest(".avail-cell[data-index]");
