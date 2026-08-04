@@ -12,10 +12,10 @@
 import { Store } from "../donnees/equipes-store.js";
 import { DashboardStore } from "../donnees/suivi-store.js";
 import { shouldIgnoreAvailabilityEcho } from "../metier/dispos-logique.js";
-import { $ } from "../noyau/dom.js";
 import { sb } from "../noyau/supabase-client.js";
 import { renderAnalyse } from "./analyse.js";
 import { renderBossView } from "./boss-sessions.js";
+import { setSyncStatus } from "./etat-synchro.js";
 import { Availability, renderAvailabilityView } from "./dispos.js";
 import { renderRoster } from "./roster-equipes.js";
 import { renderMemberRoster } from "./roster-membres.js";
@@ -36,12 +36,10 @@ import { renderDashboardView } from "./suivi.js";
     let timer = null;
     const pending = new Set();
 
-    function setStatus(state, text){
-      const node = $("#liveStatus");
-      if(!node) return;
-      node.dataset.state = state;
-      node.textContent = text;
-    }
+    /* L'ecriture du temoin vit dans `etat-synchro.js` : le Roster doit y
+       ecrire aussi, sans pouvoir importer ce module-ci qui lui est posterieur
+       dans l'ordre des couches. */
+    const setStatus = setSyncStatus;
 
     function activeView(){
       const view = document.querySelector(".view.active");

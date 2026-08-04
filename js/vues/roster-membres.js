@@ -24,7 +24,8 @@ import {
   favoriteRosterWeaponType,
   normalizeHero,
   normalizeRosterCharacter,
-  rosterHeroSnapshot
+  rosterHeroSnapshot,
+  rosterSignature
 } from "../metier/equipe-modele.js";
 import { ARMOR_SET_SLOTS, emptyArmor, emptyJewel } from "../metier/equipement.js";
 import {
@@ -45,6 +46,7 @@ import { $, el, norm } from "../noyau/dom.js";
 import { jsonCopy } from "../noyau/outils.js";
 import { authMessage } from "../noyau/supabase-client.js";
 import { openRosterDetailFor, rosterDetailOwnerLabel } from "./detail-roster.js";
+import { markSyncOffline } from "./etat-synchro.js";
 import {
   closeWeaponConfigEditor,
   setWeaponConfigRestoreFocus,
@@ -387,20 +389,34 @@ import { toast } from "./toast.js";
   async function renderMemberRoster(){
     const renderId = ++memberRosterRenderId;
     const grid = $("#memberRosterGrid");
-    grid.innerHTML = "";
     if(!sessionCourante.user){
+      grid.innerHTML = "";
       grid.appendChild(el("div",{class:"empty-state"},[
         el("p",{class:"big",text:"Connecte-toi pour consulter le roster."}),
         el("button",{class:"btn btn-primary",text:"Connexion",onclick:()=>openAuth()})
       ]));
       return;
     }
-    grid.appendChild(el("div",{class:"empty-state"},[
-      el("p",{class:"big",text:"Ouverture du registre…"})
-    ]));
     let ownerId = memberRosterMode === "mine"
       ? sessionCourante.user.id
       : memberRosterOwnerId;
+    /* Mon roster est écrit depuis cet appareil : le cache local en est une
+       copie fidèle, on peint donc avant le réseau. Le roster d'un autre membre
+       garde l'attente : on n'affiche jamais une copie locale de données
+       écrites par quelqu'un d'autre. */
+    const cached = memberRosterMode === "mine"
+      ? MemberRosterStore.all(sessionCourante.user.id)
+      : [];
+    const paintedFromCache = cached.length > 0;
+    if(paintedFromCache){
+      renderMemberRosterControls(sessionCourante.rosterProfiles, ownerId);
+      renderMemberRosterCards(cached, ownerId === sessionCourante.user.id);
+    }else{
+      grid.innerHTML = "";
+      grid.appendChild(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:"Ouverture du registre…"})
+      ]));
+    }
     try{
       const profiles = await refreshRosterProfiles();
       if(memberRosterMode === "others" && !ownerId){
@@ -411,11 +427,23 @@ import { toast } from "./toast.js";
       const entries = ownerId ? await MemberRosterStore.refresh(ownerId) : [];
       if(renderId !== memberRosterRenderId) return;
       renderMemberRosterControls(profiles, ownerId);
+      /* La condition porte aussi sur `paintedFromCache` : sur un cache vide et
+         un roster vide côté serveur les deux empreintes seraient identiques,
+         et « Ouverture du registre… » resterait affiché indéfiniment. */
+      if(paintedFromCache
+        && rosterSignature(entries) === rosterSignature(cached)) return;
       renderMemberRosterCards(entries, ownerId === sessionCourante.user.id);
     }catch(error){
       if(renderId !== memberRosterRenderId) return;
+      if(paintedFromCache){
+        markSyncOffline();
+        return;
+      }
       renderMemberRosterControls(sessionCourante.rosterProfiles, ownerId);
-      renderMemberRosterCards(MemberRosterStore.all(ownerId), ownerId === sessionCourante.user.id);
+      renderMemberRosterCards(
+        MemberRosterStore.all(ownerId),
+        ownerId === sessionCourante.user.id
+      );
       toast("Roster indisponible, affichage du cache local.", true);
     }
   }

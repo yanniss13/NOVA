@@ -155,6 +155,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   rosterSummary:typeof rosterSummary === "function"
     ? rosterSummary
     : undefined,
+  rosterSignature:typeof rosterSignature === "function"
+    ? rosterSignature
+    : undefined,
   /* Privee, exposee ici seule : elle porte la regle « le build juge est le
      favori », qu'un test passant par rosterSummary ne saurait distinguer sans
      fabriquer un build entierement valide.

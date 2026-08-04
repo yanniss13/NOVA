@@ -192,6 +192,79 @@ const { chromium } = require("playwright");
     assert.match(await page.locator("#memberRosterGrid").textContent(), /Meliodas/);
     assert.equal(await page.locator("#memberRosterGrid .member-roster-edit").count(), 1);
 
+    /* Affichage instantané : rouvrir l'onglet doit peindre depuis le cache
+       local avant toute réponse Supabase, et ne rien redessiner ensuite si la
+       réponse est identique.
+       On quitte vers l'onglet "builder" (vue par défaut, purement locale)
+       plutôt que "boss" : ce dernier n'a encore jamais été ouvert à ce stade
+       du parcours, et le test plus loin sur "Groupes indisponibles" (~2107)
+       suppose justement ce tout premier chargement. */
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.evaluate(() =>
+      window.__fakeSupabaseHoldBossRead("roster_characters")
+    );
+    await page.locator('.tab[data-view="member-roster"]').click();
+    await page.locator("#memberRosterGrid .member-roster-card").first().waitFor();
+    assert.doesNotMatch(
+      await page.locator("#memberRosterGrid").textContent(),
+      /Ouverture du registre/,
+      "Le Roster doit se peindre depuis le cache sans attendre Supabase"
+    );
+    assert.match(
+      await page.locator("#memberRosterGrid").textContent(),
+      /Meliodas/
+    );
+    // La carte affichée ne doit pas être remplacée par la réponse réseau.
+    await page.evaluate(() => {
+      document.querySelector("#memberRosterGrid .member-roster-card")
+        .dataset.temoinInstantane = "1";
+    });
+    await page.waitForFunction(() =>
+      typeof window.__fakeSupabaseState.bossReadHold?.release === "function"
+    );
+    await page.evaluate(() => window.__fakeSupabaseReleaseBossRead());
+    await page.waitForFunction(() => !window.__fakeSupabaseState.bossReadHold);
+    await page.waitForTimeout(200);
+    assert.equal(
+      await page.locator(
+        '#memberRosterGrid .member-roster-card[data-temoin-instantane="1"]'
+      ).count(),
+      1,
+      "Une réponse identique ne doit provoquer aucune reconstruction du DOM"
+    );
+
+    /* Cache vide et roster vide : l'état vide doit remplacer le message
+       d'attente, alors que les deux empreintes sont identiques.
+       L'état partagé du faux Supabase est restauré aussitôt : la suite du
+       fichier compte sur la fiche Meliodas. */
+    const rosterRowsSauvegardees = await page.evaluate(() => {
+      const rows = window.__fakeSupabaseState.roster_characters.slice();
+      window.__fakeSupabaseState.roster_characters = [];
+      window.localStorage.removeItem("confrerie7ds.cloud.roster");
+      return rows;
+    });
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.locator('.tab[data-view="member-roster"]').click();
+    await page.getByText("Ton roster est vide").waitFor();
+    /* Ce premier réaffichage vide aussi le cache mémoire côté client (encore
+       chargé avec Meliodas jusque-là). La vraie collision d'empreintes —
+       cache local ET serveur déjà vides tous les deux — ne se produit qu'à
+       la réouverture suivante. */
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.locator('.tab[data-view="member-roster"]').click();
+    await page.getByText("Ton roster est vide").waitFor();
+    assert.doesNotMatch(
+      await page.locator("#memberRosterGrid").textContent(),
+      /Ouverture du registre/,
+      "Un roster vide doit afficher son état vide, pas le message d'attente"
+    );
+    await page.evaluate(rows => {
+      window.__fakeSupabaseState.roster_characters = rows;
+    }, rosterRowsSauvegardees);
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.locator('.tab[data-view="member-roster"]').click();
+    await page.locator("#memberRosterGrid .member-roster-card").first().waitFor();
+
     /* Filtres de catégorie : quatre listes déroulantes, plus aucun rail
        défilant horizontalement. */
     assert.equal(

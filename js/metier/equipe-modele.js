@@ -248,6 +248,21 @@ import { buildWeaponGrade } from "./build-config.js";
     }));
   }
 
+  /* Empreinte stable d'un roster, servant a decider s'il faut redessiner.
+     Le tri par `charId` la rend insensible a l'ordre de retour de Supabase.
+     `builds` est serialise en entier plutot que resume par `updatedAtToken` :
+     `upsert` ecrit ce jeton a vide apres un ajout local, une empreinte fondee
+     dessus verrait donc une difference factice et repeindrait pour rien. */
+  function rosterSignature(entries){
+    return JSON.stringify(
+      (Array.isArray(entries) ? entries : [])
+        .map(normalizeRosterCharacter)
+        .filter(Boolean)
+        .sort((a, b) => a.charId.localeCompare(b.charId))
+        .map(entry => [entry.charId, entry.potentialTier, entry.builds])
+    );
+  }
+
   /* Deux lectures d'une entree de roster, remontees ici depuis app.js : la
      modale de detail les partageait avec sept autres appelants, dont
      copyFavoriteRosterBuild juste au-dessus. Une aide de modele ne peut pas
@@ -295,6 +310,7 @@ export {
   normalizeTeamName,
   normalizeWeaponConfig,
   rosterHeroSnapshot,
+  rosterSignature,
   teamBuildSnapshot,
   teamFromBossSnapshot
 };
