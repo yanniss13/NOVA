@@ -230,15 +230,17 @@ async function installRosterFocusFakeSupabase(page){
     assert.equal(await tabs.nth(1).getAttribute("aria-selected"), "false");
     assert.equal(await tabs.nth(1).getAttribute("tabindex"), "-1");
 
+    /* Le premier onglet est « Accueil » : c'est la vue d'arrivee, et le Team
+       Builder l'a cede pour ne plus imposer un editeur d'equipe a l'ouverture. */
     await tabs.nth(0).focus();
     await page.keyboard.press("ArrowRight");
     assert.equal(await tabs.nth(1).getAttribute("aria-selected"), "true");
-    assert.equal(await page.locator("#view-dashboard").isVisible(), true);
+    assert.equal(await page.locator("#view-builder").isVisible(), true);
 
-    // Flèche gauche revient sur le Team Builder, sans sauter d'onglet.
+    // Flèche gauche revient sur l'accueil, sans sauter d'onglet.
     await page.keyboard.press("ArrowLeft");
     assert.equal(await tabs.nth(0).getAttribute("aria-selected"), "true");
-    assert.equal(await page.locator("#view-builder").isVisible(), true);
+    assert.equal(await page.locator("#view-dashboard").isVisible(), true);
 
     await page.keyboard.press("End");
     assert.equal(await tabs.nth(6).getAttribute("aria-selected"), "true");
@@ -246,7 +248,7 @@ async function installRosterFocusFakeSupabase(page){
 
     await page.keyboard.press("Home");
     assert.equal(await tabs.nth(0).getAttribute("aria-selected"), "true");
-    assert.equal(await page.locator("#view-builder").isVisible(), true);
+    assert.equal(await page.locator("#view-dashboard").isVisible(), true);
 
     /* « Mon suivi » déconnecté propose la connexion, et fermer la modale par
        Échap rend le focus au bouton qui l'a ouverte. */
@@ -1390,6 +1392,11 @@ async function installRosterFocusFakeSupabase(page){
       assert.ok(box && box.height >= 44, selector+" doit mesurer au moins 44 px");
     }
 
+    /* L'arrivee se fait sur l'accueil : atteindre le Builder demande un clic.
+       Ce bloc mesure des cibles tactiles, pas la vue de depart. */
+    await mobile.locator("#tab-builder").click();
+    await mobile.locator("#view-builder").waitFor({ state:"visible" });
+
     await mobile.locator(".hero .portrait").first().click();
     await mobile.locator('#pickerGrid .tile[title="Meliodas"]').click();
     const gearBox = await mobile.locator(".hero .gear-slot.weapon")
@@ -1481,6 +1488,11 @@ async function installRosterFocusFakeSupabase(page){
       await headerPage.goto(
         server.url + "/index.html"
       );
+      /* Le header ne se replie qu'au defilement : il faut une vue assez haute.
+         L'accueil, vue d'arrivee, tient dans un ecran une fois deconnecte —
+         on passe donc au Builder, qui deroule ses quatre emplacements. */
+      await headerPage.locator("#tab-builder").click();
+      await headerPage.locator("#view-builder").waitFor({ state:"visible" });
       await headerPage.evaluate(() => {
         document.querySelector("#accountLogin").hidden = true;
         document.querySelector("#accountConnected").hidden = false;
@@ -1739,6 +1751,10 @@ async function installRosterFocusFakeSupabase(page){
     await motionPage.goto(
       server.url + "/index.html"
     );
+    /* Meme raison qu'au-dessus : le repli s'observe en defilant, et l'accueil
+       deconnecte tient dans un ecran. Le Builder fournit la hauteur. */
+    await motionPage.locator("#tab-builder").click();
+    await motionPage.locator("#view-builder").waitFor({ state:"visible" });
     await motionPage.evaluate(() => {
       document.querySelector("#accountLogin").hidden = true;
       document.querySelector("#accountConnected").hidden = false;

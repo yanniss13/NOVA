@@ -90,9 +90,24 @@ const { chromium } = require("playwright");
       "Le fake doit appliquer l'authentification et la lecture RLS à toutes les ressources Boss"
     );
 
-    // Déconnecté, le Team Builder reste la vue initiale.
-    assert.equal(await page.locator("#view-builder").isVisible(), true);
-    assert.equal(await page.locator("#view-dashboard").isVisible(), false);
+    /* L'ARRIVEE : l'accueil, connecte ou non.
+
+       Le membre atterrissait sur le Builder, puis session-auth basculait vers
+       le tableau de bord : un clignotement a chaque ouverture. Deconnecte,
+       l'accueil invite a se connecter plutot que d'ouvrir un editeur d'equipe
+       que rien ne permet d'enregistrer. */
+    assert.equal(await page.locator("#view-dashboard").isVisible(), true);
+    assert.equal(await page.locator("#view-builder").isVisible(), false);
+    assert.equal(
+      await page.locator(".tabs .tab").first().getAttribute("id"),
+      "tab-dashboard",
+      "L'accueil doit etre le premier onglet"
+    );
+    assert.equal(await page.locator("#tab-dashboard").textContent(), "Accueil");
+    assert.match(
+      await page.locator("#dashboardBody").textContent(),
+      /Connecte-toi pour afficher ton suivi/
+    );
 
     await page.locator("#authEmail").fill("yannis@example.test");
     await page.locator("#authPassword").fill("mot-de-passe-test");

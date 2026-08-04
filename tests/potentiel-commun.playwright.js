@@ -21,6 +21,11 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await page.evaluate(key => localStorage.removeItem(key), STORAGE_KEY);
     await page.reload();
 
+    /* L'arrivee se fait sur l'accueil : le Builder demande un clic explicite.
+       Ce test parle du potentiel commun, pas de la vue de depart. */
+    await page.locator("#tab-builder").click();
+    await page.locator("#view-builder").waitFor({ state:"visible" });
+
     const firstHero = page.locator(".hero").first();
     assert.doesNotMatch(
       await firstHero.locator(".note").getAttribute("placeholder"),

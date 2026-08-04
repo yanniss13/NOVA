@@ -42,12 +42,12 @@
        pendant que les onglets défilent, donc hors du conteneur défilant. -->
   <div class="tabs-rail">
   <nav class="tabs" role="tablist">
-    <button class="tab active" id="tab-builder" data-view="builder"
-            role="tab" aria-controls="view-builder"
-            aria-selected="true" tabindex="0">Créer une équipe</button>
-    <button class="tab" id="tab-dashboard" data-view="dashboard"
+    <button class="tab active" id="tab-dashboard" data-view="dashboard"
             role="tab" aria-controls="view-dashboard"
-            aria-selected="false" tabindex="-1">Mon suivi</button>
+            aria-selected="true" tabindex="0">Accueil</button>
+    <button class="tab" id="tab-builder" data-view="builder"
+            role="tab" aria-controls="view-builder"
+            aria-selected="false" tabindex="-1">Créer une équipe</button>
     <button class="tab" id="tab-roster" data-view="roster"
             role="tab" aria-controls="view-roster"
             aria-selected="false" tabindex="-1">Boss de Guilde</button>
@@ -82,13 +82,13 @@
 
 <main>
   <!-- ============ MON SUIVI ============ -->
-  <section id="view-dashboard" class="view" role="tabpanel"
+  <section id="view-dashboard" class="view active" role="tabpanel"
            aria-labelledby="tab-dashboard">
     <div class="dashboard-heading">
       <div>
-        <p class="section-eyebrow">Boss de Guilde</p>
-        <h1 class="section-title" id="dashboardTitle" tabindex="-1">Mon suivi</h1>
-        <p class="section-lead">Tes trois runs de la semaine et la prochaine action utile.</p>
+        <p class="section-eyebrow">Confrérie 7DS</p>
+        <h1 class="section-title" id="dashboardTitle" tabindex="-1">Accueil</h1>
+        <p class="section-lead">Ce qu'il te reste à faire cette semaine.</p>
       </div>
       <div id="dashboardSyncMeta" class="dashboard-sync-meta"></div>
     </div>
@@ -98,7 +98,7 @@
   </section>
 
   <!-- ============ BUILDER ============ -->
-  <section id="view-builder" class="view active" role="tabpanel"
+  <section id="view-builder" class="view" role="tabpanel"
            aria-labelledby="tab-builder">
     <p class="section-eyebrow">Forge des équipes</p>
     <h1 class="section-title" id="builderTitle" tabindex="-1">Composer une équipe</h1>

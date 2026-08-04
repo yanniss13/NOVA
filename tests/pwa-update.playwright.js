@@ -138,6 +138,10 @@ async function openPage(browser, options){
 }
 
 async function configureWeaponAndReadContribution(page){
+  /* L'arrivee se fait sur l'accueil : le Builder demande un clic explicite.
+     Ce test verifie le calcul d'arme hors ligne, pas la vue de depart. */
+  await page.locator("#tab-builder").click();
+  await page.locator("#view-builder").waitFor({ state:"visible" });
   const hero = page.locator(".hero").first();
   await hero.locator(".portrait").click();
   await page.locator("#pickerGrid").getByTitle("Meliodas").click();
