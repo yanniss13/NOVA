@@ -71,13 +71,16 @@ Bloc relevé sur Banakro :
  "blockDmgResist":9500}
 ```
 
-**Hypothèse d'échelle à vérifier, non acquise :** `critResist:1000` vaut
-vraisemblablement 10 %, la page de formule donnant 10 % comme résistance
-critique de référence. Les pourcentages seraient donc exprimés en centièmes de
-point (`valeur / 100 = pourcentage`). Cette lecture repose sur **un seul point
-de concordance** : le plan doit la confirmer sur une seconde valeur connue
-avant de s'en servir, faute de quoi tous les chiffres seraient faux d'un
-facteur 100.
+**Échelle — hypothèse levée.** `critResist:1000` vaut 10 %. Deux sources
+concordantes et indépendantes :
+
+1. la page de formule donne 10 % comme résistance critique de référence ;
+2. le dépôt décode déjà ces valeurs sous l'unité `"ten-thousandths"`, et
+   `js/vues/stats-affichage.js:17` les divise par 100 pour l'affichage en
+   pourcentage.
+
+Le moteur réutilisera donc `formatBuildStatValue` et l'unité existante plutôt
+que d'introduire une conversion parallèle. `valeur / 10000` donne le rapport.
 
 `def` est brut et s'emploie tel quel dans `K/(K+DEF)`.
 
@@ -93,7 +96,7 @@ autres — le site est une PWA et doit fonctionner hors ligne.
 Les passifs sont écartés du catalogue de calcul — ils rejoignent la liste
 « Non inclus » de la section suivante.
 
-Contenu : pour chacun des 21 personnages, ces compétences réduites aux champs
+Contenu : pour chacun des 24 personnages, ces compétences réduites aux champs
 utiles au calcul :
 
 ```js
@@ -112,7 +115,7 @@ Mode `--check` obligatoire, sur le modèle de
 `python scripts/generate-stats-build.py --check` déjà présent dans `npm test` :
 la suite détecte alors une dérive du catalogue sans réseau.
 
-**Politique réseau :** 21 requêtes, séquentielles. Le générateur n'est lancé
+**Politique réseau :** 24 requêtes, séquentielles. Le générateur n'est lancé
 qu'à la main ; `--check` compare le fichier commité à lui-même sans réseau.
 
 ### 2. `js/metier/degats-calcul.js` *(créé)*
