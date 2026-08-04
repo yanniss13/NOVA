@@ -81,7 +81,10 @@ async function installFakeSupabase(page, weekStart, semaineBoss){
         { owner:"bea", week_start:injectedWeekStart, slots:maskOf([21]) }
       ],
       channels:[],
-      queryCalls:[]
+      queryCalls:[],
+      /* Promesse qui retient la reponse de l'upsert, posee par
+         `window.__availHoldUpsert()` et levee par `window.__availReleaseUpsert()`. */
+      upsertHold:null
     };
 
     function query(table){
@@ -113,6 +116,13 @@ async function installFakeSupabase(page, weekStart, semaineBoss){
           );
           if(at === -1) rows.push(clone(payload));
           else rows[at] = clone(payload);
+          /* La ligne est ecrite, la REPONSE peut etre retenue : c'est le seul
+             moyen de faire cliquer le membre pendant que l'upsert vole, ce que
+             la vraie latence reseau produit sans effort. */
+          if(state.upsertHold){
+            const attente = state.upsertHold;
+            return attente.then(execute);
+          }
           return execute();
         },
         then(resolve, reject){ return execute().then(resolve, reject); }
@@ -148,6 +158,16 @@ async function installFakeSupabase(page, weekStart, semaineBoss){
     }
 
     window.__availState = state;
+    let libererUpsert = null;
+    window.__availHoldUpsert = () => {
+      state.upsertHold = new Promise(resolve => { libererUpsert = resolve; });
+    };
+    window.__availReleaseUpsert = () => {
+      const liberer = libererUpsert;
+      state.upsertHold = null;
+      libererUpsert = null;
+      if(liberer) liberer();
+    };
     window.__availEmit = (table, row) => {
       state.channels.forEach(item => item.handlers
         .filter(handler =>
@@ -648,10 +668,103 @@ async function runMobileChecks(browser, baseUrl){
       return cell && cell.textContent.trim() === "3";
     }, null, { timeout:5000 });
 
-    /* Purge : une semaine vieille de plus de quatre semaines part au prochain
-       enregistrement, la semaine précédente reste. */
     await page.click("#availModeMine");
     await page.waitForSelector('#availGrid .avail-cell[aria-pressed]');
+
+    /* CLICS RAPIDES : aucun créneau ne doit se perdre.
+
+       Le bug remonté : « quand je clique sur plusieurs créneaux rapidement,
+       certains ne sont pas pris en compte ».
+
+       Le scénario reproduit la course exacte. Un premier clic déclenche
+       l'enregistrement différé ; pendant que l'upsert vole, un second clic
+       peint un autre créneau. L'écho Realtime de la PREMIÈRE écriture arrive
+       ensuite, porteur d'un masque plus ancien que ce qui est affiché.
+
+       `savePending` retombait à la réponse de l'upsert sans regarder si une
+       saisie plus récente attendait déjà : l'écho passait la garde, et
+       `refresh()` remplaçait le masque local par celui du serveur. Le second
+       créneau disparaissait de l'écran ET du prochain enregistrement. */
+    await page.evaluate(() => {
+      const ligne = window.__availState.member_availability
+        .find(row => row.owner === "moi");
+      ligne.slots = "0".repeat(168);
+      window.__availHoldUpsert();
+    });
+    await page.click('#availGrid .avail-cell[data-index="40"]');
+    /* On attend que l'upsert soit VRAIMENT parti : la ligne stockée porte déjà
+       le premier créneau, mais la réponse est retenue. */
+    await page.waitForFunction(() => {
+      const ligne = window.__availState.member_availability
+        .find(row => row.owner === "moi");
+      return ligne && ligne.slots[40] === "1";
+    }, null, { timeout:5000 });
+
+    await page.click('#availGrid .avail-cell[data-index="41"]');
+    await page.evaluate(() => window.__availReleaseUpsert());
+    /* La réponse doit avoir été TRAITÉE avant d'émettre l'écho : sinon
+       `savePending` n'est pas encore retombé et la garde masquerait la course
+       qu'on cherche justement à provoquer. */
+    await page.waitForFunction(
+      () => document.querySelector("#availSaveStatus")
+        .dataset.state === "saved",
+      null, { timeout:5000 }
+    );
+    await page.evaluate(() => {
+      /* L'écho de la première écriture : le serveur ne connaît pas encore le
+         second créneau. */
+      window.__availEmit("member_availability", {
+        owner:"moi",
+        week_start:window.__availState.member_availability
+          .find(row => row.owner === "moi").week_start,
+        slots:"0".repeat(40) + "1" + "0".repeat(127)
+      });
+    });
+    await page.waitForTimeout(400);
+
+    assert.equal(
+      await page.locator('#availGrid .avail-cell[data-index="41"]')
+        .getAttribute("aria-pressed"),
+      "true",
+      "Un créneau peint pendant l'enregistrement ne doit pas disparaitre"
+    );
+    await page.waitForFunction(() => {
+      const ligne = window.__availState.member_availability
+        .find(row => row.owner === "moi");
+      return ligne && ligne.slots[40] === "1" && ligne.slots[41] === "1";
+    }, null, { timeout:5000 });
+
+    /* MÊME PERTE, AUTRE DÉCLENCHEUR : l'écriture d'un AUTRE membre.
+
+       L'enregistrement est différé de 600 ms. Si un rafraîchissement légitime
+       tombe dans cette fenêtre, `refresh()` relit le serveur — qui ignore
+       encore le créneau qu'on vient de peindre — et l'efface. Le membre voit
+       le même symptôme sans qu'aucun écho de sa propre écriture soit en jeu. */
+    await page.click('#availGrid .avail-cell[data-index="52"]');
+    await page.evaluate(() => {
+      const semaine = window.__availState.member_availability
+        .find(row => row.owner === "moi").week_start;
+      window.__availEmit("member_availability", {
+        owner:"alix",
+        week_start:semaine,
+        slots:"1".repeat(168)
+      });
+    });
+    await page.waitForTimeout(300);
+    assert.equal(
+      await page.locator('#availGrid .avail-cell[data-index="52"]')
+        .getAttribute("aria-pressed"),
+      "true",
+      "L'ecriture d'un autre membre ne doit pas effacer une saisie en attente"
+    );
+    await page.waitForFunction(() => {
+      const ligne = window.__availState.member_availability
+        .find(row => row.owner === "moi");
+      return ligne && ligne.slots[52] === "1";
+    }, null, { timeout:5000 });
+
+    /* Purge : une semaine vieille de plus de quatre semaines part au prochain
+       enregistrement, la semaine précédente reste. */
     await page.evaluate(() => {
       const rows = window.__availState.member_availability;
       const current = rows.find(row => row.owner === "moi").week_start;

@@ -275,6 +275,11 @@ import {
         }
       }
       await loadOwnersWithGroup();
+      /* Une saisie pas encore enregistrée survit à la relecture : le serveur
+         ignore forcément les créneaux peints depuis moins de 600 ms, et les
+         reprendre les effacerait sous les doigts du membre. L'enregistrement
+         différé, lui, part quand même et les publiera. */
+      const masqueEnAttente = state && savePending ? state.mask : null;
       state = availabilityViewState({
         now:new Date(),
         rows,
@@ -282,17 +287,24 @@ import {
         mode:state ? state.mode : "mine",
         online
       });
+      if(masqueEnAttente) state.mask = masqueEnAttente;
       render();
       return true;
     }
 
     /* Enregistrement différé : un glissement produit un seul upsert, et le
-       drapeau `savePending` couvre la PEINTURE en cours contre l'écho Realtime
-       de sa propre écriture. Il ne couvre pas l'écho qui suit l'upsert — celui
-       -là retombe avant que l'écho n'arrive, et c'est le masque affiché qui le
-       neutralise (voir RealtimeSync). */
+       drapeau `savePending` couvre la saisie en cours contre l'écho Realtime
+       de sa propre écriture.
+
+       `saveToken` compte les saisies. Il existe parce que `savePending` était
+       baissé à la réponse de l'upsert sans regarder si un créneau avait été
+       peint ENTRE-TEMPS : l'écho de cette écriture-là, plus ancienne que
+       l'écran, passait alors la garde et `refresh()` écrasait les derniers
+       créneaux. D'où le symptôme signalé — « quand je clique sur plusieurs
+       créneaux rapidement, certains ne sont pas pris en compte ». */
     let saveTimer = null;
     let savePending = false;
+    let saveToken = 0;
     let anchor = null;
     let lastCell = null;
     let paintFill = true;
@@ -315,6 +327,7 @@ import {
     async function saveNow(){
       clearTimeout(saveTimer);
       saveTimer = null;
+      const token = saveToken;
       if(!state || !state.canEdit || !sessionCourante.user || !sb){
         savePending = false;
         return false;
@@ -328,7 +341,12 @@ import {
       };
       const { error } = await sb.from("member_availability")
         .upsert(payload, { onConflict:"owner,week_start" });
-      savePending = false;
+      /* Un créneau peint PENDANT l'upsert a replanifié un enregistrement : le
+         drapeau doit rester levé jusqu'à ce que celui-là aboutisse. Le baisser
+         ici laisserait passer l'écho de l'écriture qu'on vient de terminer,
+         plus ancienne que l'écran, et le membre verrait ses derniers créneaux
+         s'effacer seuls. */
+      if(token === saveToken) savePending = false;
       if(error){
         setSaveStatus("error", "Non enregistré");
         toast("Dispos non enregistrées : réessaie une fois reconnecté.", true);
@@ -365,6 +383,7 @@ import {
 
     function scheduleSave(){
       savePending = true;
+      saveToken += 1;
       clearTimeout(saveTimer);
       saveTimer = setTimeout(()=>void saveNow(), 600);
     }
