@@ -148,8 +148,8 @@ const weaponsWithPassive = Object.entries(catalog.weaponsByFile)
   .filter(([, entry]) => (entry.passiveLevels || []).length);
 assert.equal(
   weaponsWithPassive.length,
-  81,
-  "les 81 armes concernées doivent conserver leurs sept niveaux de passif"
+  94,
+  "les 94 armes concernées doivent conserver leurs sept niveaux de passif"
 );
 weaponsWithPassive.forEach(([file, entry]) => {
   assert.equal(entry.passiveLevels.length, 7, file + " : passif d'arme incomplet");

@@ -56,7 +56,7 @@ const ARME_CONFIG = {
 };
 
 /* L'armure gravee de Diane — ce que le jeu appelle une tenue. Toutes les
-   armures gravees portent un passif (66 sur 66). */
+   armures gravees portent un passif (68 sur 68). */
 const TENUE = "7ds-armures-ssr/Armure liee/Tenue de combat cloutée.webp";
 const TENUE_CONFIG = {
   version:1,

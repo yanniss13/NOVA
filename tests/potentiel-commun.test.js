@@ -733,7 +733,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
   });
 
   const realJewelSets = plain(jewelSetsFrom(dataContext.window.SEVEN_DS_DATA.bijoux));
-  assert.strictEqual(realJewelSets.length, 10, "10 sets de bijoux attendus");
+  assert.strictEqual(realJewelSets.length, 11, "11 sets de bijoux attendus");
   const jewelSlots = ["Anneau", "Collier", "Boucle d'oreille"];
   const jewelFiles = {};
   jewelSlots.forEach(slot => {
@@ -753,7 +753,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     realJewelSets.some(set => set.name === "100 jours"),
     "Le set « 100 jours » ne doit pas être perdu à cause de l'accord au pluriel"
   );
-  assert.strictEqual(new Set(realJewelSets.map(s => s.name)).size, 10);
+  assert.strictEqual(new Set(realJewelSets.map(s => s.name)).size, 11);
 }
 
 console.log("PASS potentiel commun");

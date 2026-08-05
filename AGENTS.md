@@ -13,12 +13,17 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
 - [x] `scripts/generate-data.ps1` — scanne les dossiers et génère `data.js`.
 - [x] `data.js` — données d'assets générées (25 persos, 12 types d'armes, 5 armures).
 - [x] `index.html` — appli complète (builder + page d'affichage), autonome.
-- [x] Bijoux **SSR uniquement** (grade5) : 34 images intégrées
-      (11 anneaux, 12 colliers, 11 boucles d'oreilles) — correspond aux badges
+- [x] Bijoux **SSR uniquement** (grade5) : 37 images intégrées
+      (12 anneaux, 13 colliers, 12 boucles d'oreilles) — correspond aux badges
       « SSR » du site. Source : `https://7dsorigin.app/images/items/<gameId>.webp`
       (gameId lu dans le JSON embarqué de `7dsorigin.app/fr/bijoux`, filtré sur
       `grade == grade5`, `displayName` = nom de fichier, `slot`
       Ring/Necklace/Earring → dossier Anneau/Collier/Boucle d'oreille).
+- [x] Armes : 155 images, une par arme du jeu, dans les 12 dossiers de type.
+      Source : `https://7dsorigin.app/images/weapons/<gameId>.webp` (`iconUrl`
+      publié par `7dsorigin.app/fr/armes`, `displayName` = nom de fichier).
+      `scripts/telecharger-images.py` complète armes et bijoux : il ne
+      télécharge que ce qui manque et ne remplace jamais un fichier existant.
 - [x] Potentiels : palier P0→P10 par héros, façon page team-builder du site.
       Données FR (25 persos × ~3 types d'arme × 10 paliers) dans `potentiels.js`,
       régénérable via `scripts/generate-potentiels.py`. Le palier est **commun au héros** ;
@@ -225,6 +230,7 @@ Site Confrérie 7ds/
 │  ├─ generate-potentiels.py      # Régénère potentiels.js depuis 7dsorigin.app (internet).
 │  ├─ generate-armures-liees.py   # Régénère armures-liees.js depuis la page publique.
 │  ├─ generate-meta.py            # Régénère personnages-meta.js depuis 7dsorigin.app.
+│  ├─ telecharger-images.py       # Télécharge les images d'armes/bijoux qui manquent.
 │  ├─ discord-reminder.js         # Rappel Discord.
 │  └─ reminder-core.js            # Sa logique pure.
 ├─ 7ds-ui/                 # Icônes d'UI : mastery/<arme>.webp, role-elements/<el>_<role>.webp
@@ -313,8 +319,8 @@ Quatre points à ne pas réapprendre à la dure :
   la racine de l'objet. Chercher `item.randomOptions` renvoie toujours vide, et
   les 152 occurrences de ce mot dans le payload sont surtout des libellés
   d'interface ;
-- seules **67 des 229** armures ont des options aléatoires (les hauts grades),
-  contre **83 sur 83** pour les gravées. Un compte partiel n'est pas un bug ;
+- seules **70 des 232** armures ont des options aléatoires (les hauts grades),
+  contre **85 sur 85** pour les gravées. Un compte partiel n'est pas un bug ;
 - les codes de stat ont deux sources de libellés : les objets `{stat, nameFr}`
   répartis dans l'arbre, et un dictionnaire court `statLabels`
   (« ATK », « Perforation ») qui couvre 8 codes absents des premiers. Il faut
@@ -1443,3 +1449,5 @@ chaque carte.
   exceptions runtime sont `supabase-config.js` et le client Supabase chargé par CDN.
 - Thème : héraldique sombre (obsidienne + or vieilli + pourpre). Voir la spec.
 - Après modif des dossiers d'images : relancer `scripts/generate-data.ps1`.
+- Après une mise à jour du jeu : `python scripts/telecharger-images.py --liste`
+  annonce les images d'armes et de bijoux qui manquent, sans rien écrire.

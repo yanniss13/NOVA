@@ -303,6 +303,10 @@
   "family": "additional",
   "unit": "ten-thousandths"
  },
+ "activeThirdDmg": {
+  "family": "damage",
+  "unit": "ten-thousandths"
+ },
  "baseSpd": {
   "family": "main",
   "unit": "flat"

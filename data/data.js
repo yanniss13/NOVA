@@ -1,7 +1,7 @@
 // Genere automatiquement par generate-data.ps1 - NE PAS EDITER A LA MAIN.
 // Relance le script pour mettre a jour apres ajout/retrait d'images.
 window.SEVEN_DS_DATA = {
-    "generatedAt":  "2026-08-05 23:58:39",
+    "generatedAt":  "2026-08-06 00:18:21",
     "personnages":  [
                         {
                             "id":  "bug",
@@ -172,6 +172,10 @@ window.SEVEN_DS_DATA = {
                                        "file":  "7ds-armes/Baguette/Baguette du poursuiveur.webp"
                                    },
                                    {
+                                       "name":  "Baguette du rugissement de la liche draconique",
+                                       "file":  "7ds-armes/Baguette/Baguette du rugissement de la liche draconique.webp"
+                                   },
+                                   {
                                        "name":  "Baguette flamboyante",
                                        "file":  "7ds-armes/Baguette/Baguette flamboyante.webp"
                                    },
@@ -216,6 +220,10 @@ window.SEVEN_DS_DATA = {
                                 {
                                     "name":  "Bâton du poursuiveur",
                                     "file":  "7ds-armes/Baton/Bâton du poursuiveur.webp"
+                                },
+                                {
+                                    "name":  "Bâton du rugissement de la liche draconique",
+                                    "file":  "7ds-armes/Baton/Bâton du rugissement de la liche draconique.webp"
                                 },
                                 {
                                     "name":  "Bâton flamboyant",
@@ -266,6 +274,10 @@ window.SEVEN_DS_DATA = {
                                                {
                                                    "name":  "Épée et bouclier du poursuiveur",
                                                    "file":  "7ds-armes/Bouclier/Épée et bouclier du poursuiveur.webp"
+                                               },
+                                               {
+                                                   "name":  "Épée et bouclier du rugissement de la liche draconique",
+                                                   "file":  "7ds-armes/Bouclier/Épée et bouclier du rugissement de la liche draconique.webp"
                                                },
                                                {
                                                    "name":  "Épée et bouclier flamboyants",
@@ -322,6 +334,10 @@ window.SEVEN_DS_DATA = {
                                               "file":  "7ds-armes/Epee 1 main/Épée longue du poursuiveur.webp"
                                           },
                                           {
+                                              "name":  "Épée longue du rugissement de la liche draconique",
+                                              "file":  "7ds-armes/Epee 1 main/Épée longue du rugissement de la liche draconique.webp"
+                                          },
+                                          {
                                               "name":  "Épée longue flamboyante",
                                               "file":  "7ds-armes/Epee 1 main/Épée longue flamboyante.webp"
                                           },
@@ -372,6 +388,10 @@ window.SEVEN_DS_DATA = {
                                                 "file":  "7ds-armes/Epee 2 mains/Espadon du poursuiveur.webp"
                                             },
                                             {
+                                                "name":  "Espadon du rugissement de la liche draconique",
+                                                "file":  "7ds-armes/Epee 2 mains/Espadon du rugissement de la liche draconique.webp"
+                                            },
+                                            {
                                                 "name":  "Espadon flamboyant",
                                                 "file":  "7ds-armes/Epee 2 mains/Espadon flamboyant.webp"
                                             },
@@ -418,6 +438,10 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armes/Epees doubles/Épées doubles du poursuiveur.webp"
                                         },
                                         {
+                                            "name":  "Épées doubles du rugissement de la liche draconique",
+                                            "file":  "7ds-armes/Epees doubles/Épées doubles du rugissement de la liche draconique.webp"
+                                        },
+                                        {
                                             "name":  "Épées doubles flamboyantes",
                                             "file":  "7ds-armes/Epees doubles/Épées doubles flamboyantes.webp"
                                         },
@@ -452,6 +476,10 @@ window.SEVEN_DS_DATA = {
                                         "file":  "7ds-armes/Gantelets/Gantelets de la volonté corrompue.webp"
                                     },
                                     {
+                                        "name":  "Gantelets de l\u0027âme vorace",
+                                        "file":  "7ds-armes/Gantelets/Gantelets de l\u0027âme vorace.webp"
+                                    },
+                                    {
                                         "name":  "Gantelets des ailes de la flamme noire",
                                         "file":  "7ds-armes/Gantelets/Gantelets des ailes de la flamme noire.webp"
                                     },
@@ -462,6 +490,10 @@ window.SEVEN_DS_DATA = {
                                     {
                                         "name":  "Gantelets du poursuiveur",
                                         "file":  "7ds-armes/Gantelets/Gantelets du poursuiveur.webp"
+                                    },
+                                    {
+                                        "name":  "Gantelets du rugissement de la liche draconique",
+                                        "file":  "7ds-armes/Gantelets/Gantelets du rugissement de la liche draconique.webp"
                                     },
                                     {
                                         "name":  "Gantelets flamboyants",
@@ -514,6 +546,10 @@ window.SEVEN_DS_DATA = {
                                     "file":  "7ds-armes/Hache/Hache du poursuiveur.webp"
                                 },
                                 {
+                                    "name":  "Hache du rugissement de la liche draconique",
+                                    "file":  "7ds-armes/Hache/Hache du rugissement de la liche draconique.webp"
+                                },
+                                {
                                     "name":  "Hache flamboyante",
                                     "file":  "7ds-armes/Hache/Hache flamboyante.webp"
                                 },
@@ -558,6 +594,10 @@ window.SEVEN_DS_DATA = {
                                 {
                                     "name":  "Lance du poursuiveur",
                                     "file":  "7ds-armes/Lance/Lance du poursuiveur.webp"
+                                },
+                                {
+                                    "name":  "Lance du rugissement de la liche draconique",
+                                    "file":  "7ds-armes/Lance/Lance du rugissement de la liche draconique.webp"
                                 },
                                 {
                                     "name":  "Lance flamboyante",
@@ -618,6 +658,10 @@ window.SEVEN_DS_DATA = {
                                        "file":  "7ds-armes/Livre/Grimoire du poursuiveur.webp"
                                    },
                                    {
+                                       "name":  "Grimoire du rugissement de la liche draconique",
+                                       "file":  "7ds-armes/Livre/Grimoire du rugissement de la liche draconique.webp"
+                                   },
+                                   {
                                        "name":  "Grimoire flamboyant",
                                        "file":  "7ds-armes/Livre/Grimoire flamboyant.webp"
                                    },
@@ -658,6 +702,10 @@ window.SEVEN_DS_DATA = {
                                    {
                                        "name":  "Nunchaku du poursuiveur",
                                        "file":  "7ds-armes/Nunchaku/Nunchaku du poursuiveur.webp"
+                                   },
+                                   {
+                                       "name":  "Nunchaku du rugissement de la liche draconique",
+                                       "file":  "7ds-armes/Nunchaku/Nunchaku du rugissement de la liche draconique.webp"
                                    },
                                    {
                                        "name":  "Nunchaku du souffle de l\u0027esprit mort",
@@ -712,6 +760,10 @@ window.SEVEN_DS_DATA = {
                                   {
                                       "name":  "Rapière du poursuiveur",
                                       "file":  "7ds-armes/Rapiere/Rapière du poursuiveur.webp"
+                                  },
+                                  {
+                                      "name":  "Rapière du rugissement de la liche draconique",
+                                      "file":  "7ds-armes/Rapiere/Rapière du rugissement de la liche draconique.webp"
                                   },
                                   {
                                       "name":  "Rapière flamboyante",
@@ -1290,6 +1342,10 @@ window.SEVEN_DS_DATA = {
                                       "file":  "7ds-bijoux/Anneau/Anneau du cristal de vie.webp"
                                   },
                                   {
+                                      "name":  "Anneau du murmure de l\u0027oasis",
+                                      "file":  "7ds-bijoux/Anneau/Anneau du murmure de l\u0027oasis.webp"
+                                  },
+                                  {
                                       "name":  "Anneau du serment de la flamme cramoisie",
                                       "file":  "7ds-bijoux/Anneau/Anneau du serment de la flamme cramoisie.webp"
                                   },
@@ -1344,6 +1400,10 @@ window.SEVEN_DS_DATA = {
                                        "file":  "7ds-bijoux/Collier/Collier du cristal de vie.webp"
                                    },
                                    {
+                                       "name":  "Collier du murmure de l\u0027oasis",
+                                       "file":  "7ds-bijoux/Collier/Collier du murmure de l\u0027oasis.webp"
+                                   },
+                                   {
                                        "name":  "Collier du souverain cupide",
                                        "file":  "7ds-bijoux/Collier/Collier du souverain cupide.webp"
                                    },
@@ -1388,6 +1448,10 @@ window.SEVEN_DS_DATA = {
                                                  {
                                                      "name":  "Boucles d\u0027oreilles du cristal de vie",
                                                      "file":  "7ds-bijoux/Boucle d\u0027oreille/Boucles d\u0027oreilles du cristal de vie.webp"
+                                                 },
+                                                 {
+                                                     "name":  "Boucles d\u0027oreilles du murmure de l\u0027oasis",
+                                                     "file":  "7ds-bijoux/Boucle d\u0027oreille/Boucles d\u0027oreilles du murmure de l\u0027oasis.webp"
                                                  },
                                                  {
                                                      "name":  "Boucles d\u0027oreilles du souverain cupide",
