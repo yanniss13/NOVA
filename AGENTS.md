@@ -11,7 +11,7 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
 
 - [x] Assets rangés dans des dossiers (fournis par l'utilisateur, ne pas renommer).
 - [x] `scripts/generate-data.ps1` — scanne les dossiers et génère `data.js`.
-- [x] `data.js` — données d'assets générées (24 persos, 12 types d'armes, 5 armures).
+- [x] `data.js` — données d'assets générées (25 persos, 12 types d'armes, 5 armures).
 - [x] `index.html` — appli complète (builder + page d'affichage), autonome.
 - [x] Bijoux **SSR uniquement** (grade5) : 34 images intégrées
       (11 anneaux, 12 colliers, 11 boucles d'oreilles) — correspond aux badges
@@ -20,13 +20,13 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       `grade == grade5`, `displayName` = nom de fichier, `slot`
       Ring/Necklace/Earring → dossier Anneau/Collier/Boucle d'oreille).
 - [x] Potentiels : palier P0→P10 par héros, façon page team-builder du site.
-      Données FR (24 persos × ~3 types d'arme × 10 paliers) dans `potentiels.js`,
+      Données FR (25 persos × ~3 types d'arme × 10 paliers) dans `potentiels.js`,
       régénérable via `scripts/generate-potentiels.py`. Le palier est **commun au héros** ;
       les 3 clés d'armes par héros déterminent les armes compatibles et l'arme
       équipée choisit les descriptions de bonus affichées.
 - [x] Compatibilité des armes : le picker ne propose que les 3 types autorisés
       du héros. Toute arme incompatible est automatiquement retirée.
-- [x] Compatibilité des armures liées : 66 images locales associées aux 24 héros
+- [x] Compatibilité des armures liées : 68 images locales associées aux 25 héros
       (2 ou 3 par héros). Le picker filtre selon le personnage et retire les
       anciennes valeurs incompatibles.
 - [x] Badges **élément + armes** par personnage. `personnages-meta.js`
@@ -294,13 +294,13 @@ précache pas.
 
 | Fichier | Contenu |
 | --- | --- |
-| `personnages.json` | 24 personnages : `baseHp/baseAtk/baseDef/baseSpd`, précision, blocage, crit (taux, dégâts, résistances), PvP, `weaponSlots`, 15 niveaux de maîtrise, 30 paliers de potentiel, costumes |
-| `armes.json` | 142 armes, 262 variantes de grade : `mainStat`, `subStats` (`base`, `max`, `progression`), enchantements, passifs |
-| `armures.json` | 229 pièces sur 7 emplacements × 5 grades : `mainStat`, `subStat`, `setId`, `reinforceMax`, qualité, `growth` |
-| `armures-gravees.json` | 83 équipements gravés, rapprochés de leur costume et de leur personnage, avec passifs de gravure et matériaux |
-| `enchantements.json` | 181 tables basiques, 81 tables de pierre maîtresse, 67 armures, 83 armures gravées |
-| `sets.json` | 21 ensembles avec bonus 2 et 4 pièces |
-| `libelles-stats.json` | 71 codes de stat → libellés FR/EN, `taux`, libellé court |
+| `personnages.json` | 25 personnages : `baseHp/baseAtk/baseDef/baseSpd`, précision, blocage, crit (taux, dégâts, résistances), PvP, `weaponSlots`, 15 niveaux de maîtrise, 30 paliers de potentiel, costumes |
+| `armes.json` | 155 armes, 275 variantes de grade : `mainStat`, `subStats` (`base`, `max`, `progression`), enchantements, passifs |
+| `armures.json` | 232 pièces sur 7 emplacements × 5 grades : `mainStat`, `subStat`, `setId`, `reinforceMax`, qualité, `growth` |
+| `armures-gravees.json` | 85 équipements gravés, rapprochés de leur costume et de leur personnage, avec passifs de gravure et matériaux |
+| `enchantements.json` | 181 tables basiques, 94 tables de pierre maîtresse, 70 armures, 85 armures gravées |
+| `sets.json` | 22 ensembles avec bonus 2 et 4 pièces |
+| `libelles-stats.json` | 72 codes de stat → libellés FR/EN, `taux`, libellé court |
 | `stat-metadata.json` | Métadonnées explicites `{family, unit}` des codes émis |
 
 Quatre points à ne pas réapprendre à la dure :

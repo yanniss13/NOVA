@@ -5,7 +5,8 @@
   "subStat": "Ultimateskill_Damadd_Rate",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -577,7 +578,8 @@
   "subStat": "Fire_Burst_Gauge_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -1153,7 +1155,8 @@
   "subStat": "Ultimateskill_Damadd_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -1729,7 +1732,8 @@
   "subStat": "Wind_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -2305,7 +2309,8 @@
   "subStat": "Debuff_Time_Rate",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -2877,7 +2882,8 @@
   "subStat": "Debuff_Time_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -3453,7 +3459,8 @@
   "subStat": "H_HealPower_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -4029,7 +4036,8 @@
   "subStat": "I_MaxHpAdd_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -4605,7 +4613,8 @@
   "subStat": "Thunder_Add",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -5177,7 +5186,8 @@
   "subStat": "Thunder_Burst_Gauge_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -5788,7 +5798,8 @@
   "subStat": "P_Shield_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -6399,6 +6410,7 @@
   "subStat": "Thunder_Add",
   "qualityMin": 111,
   "qualityMax": 130,
+  "qualityMinLive": null,
   "qualityMaxLive": null,
   "tierBoundaries": [
    110,
@@ -6975,7 +6987,8 @@
   "subStat": "Wind_Add",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -7547,7 +7560,8 @@
   "subStat": "Wind_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -8123,7 +8137,8 @@
   "subStat": "Activethird_Damadd_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -8734,7 +8749,8 @@
   "subStat": "I_DefAdd_Rate",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -9306,7 +9322,8 @@
   "subStat": "P_Shield_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -9917,7 +9934,8 @@
   "subStat": "Default_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -10493,7 +10511,8 @@
   "subStat": "Holy_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -11104,7 +11123,8 @@
   "subStat": "Dark_Add",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -11676,7 +11696,8 @@
   "subStat": "Dark_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -12252,7 +12273,8 @@
   "subStat": "Dark_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -12828,7 +12850,8 @@
   "subStat": "MF_ChargeEffic_Rate",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -13400,7 +13423,8 @@
   "subStat": "Wind_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -13976,7 +14000,8 @@
   "subStat": "Holy_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -14552,6 +14577,7 @@
   "subStat": "P_Shield_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
+  "qualityMinLive": null,
   "qualityMaxLive": null,
   "tierBoundaries": [
    110,
@@ -15163,7 +15189,8 @@
   "subStat": "C_Critical_Dam_Rate",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -15735,7 +15762,8 @@
   "subStat": "Default_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -16311,7 +16339,8 @@
   "subStat": "Normalskill_Damadd_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -16922,7 +16951,8 @@
   "subStat": "Holy_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -17498,7 +17528,8 @@
   "subStat": "MF_ChargeEffic_Rate",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -18070,7 +18101,8 @@
   "subStat": "H_HealPower_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -18681,7 +18713,8 @@
   "subStat": "Default_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -19257,7 +19290,8 @@
   "subStat": "Dark_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -19833,7 +19867,8 @@
   "subStat": "Debuff_Time_Rate",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -20405,7 +20440,8 @@
   "subStat": "Activethird_Damadd_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -20981,7 +21017,8 @@
   "subStat": "Default_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -21592,7 +21629,8 @@
   "subStat": "Default_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -22168,7 +22206,8 @@
   "subStat": "C_Critical_Rate",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -22740,7 +22779,8 @@
   "subStat": "Normalskill_Damadd_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -23316,7 +23356,8 @@
   "subStat": "P_Shield_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -23892,7 +23933,8 @@
   "subStat": "Fire_Burst_Gauge_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -24468,7 +24510,8 @@
   "subStat": "Default_Add",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -25040,7 +25083,8 @@
   "subStat": "P_Shield_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -25616,7 +25660,8 @@
   "subStat": "Default_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -26192,7 +26237,8 @@
   "subStat": "Ice_Add",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -26764,7 +26810,8 @@
   "subStat": "Ice_Burst_Gauge_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -27340,7 +27387,8 @@
   "subStat": "P_Shield_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -27916,7 +27964,8 @@
   "subStat": "Ice_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -28492,7 +28541,8 @@
   "subStat": "I_MaxHpAdd_Rate",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -29064,7 +29114,8 @@
   "subStat": "Holy_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -29640,7 +29691,8 @@
   "subStat": "H_HealPower_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -30216,7 +30268,8 @@
   "subStat": "I_DefAdd_Rate",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -30788,7 +30841,8 @@
   "subStat": "Activethird_Damadd_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -31399,7 +31453,8 @@
   "subStat": "Earth_Burst_Gauge_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -31975,6 +32030,7 @@
   "subStat": "P_Shield_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
+  "qualityMinLive": null,
   "qualityMaxLive": null,
   "tierBoundaries": [
    110,
@@ -32551,7 +32607,8 @@
   "subStat": "H_HealPower_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -33092,7 +33149,8 @@
   "subStat": "Debuff_Time_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -33668,7 +33726,8 @@
   "subStat": "Thunder_Add",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -34240,7 +34299,8 @@
   "subStat": "Thunder_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -34851,7 +34911,8 @@
   "subStat": "Thunder_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -35462,6 +35523,7 @@
   "subStat": "Thunder_Burst_Gauge_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
+  "qualityMinLive": null,
   "qualityMaxLive": null,
   "tierBoundaries": [
    110,
@@ -36038,7 +36100,8 @@
   "subStat": "I_MaxHpAdd_Rate",
   "qualityMin": 76,
   "qualityMax": 85,
-  "qualityMaxLive": 85,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    75,
    85
@@ -36610,7 +36673,8 @@
   "subStat": "Debuff_Time_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -37186,7 +37250,8 @@
   "subStat": "Ice_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -37762,7 +37827,8 @@
   "subStat": "Ice_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -38338,7 +38404,8 @@
   "subStat": "Ultimateskill_Damadd_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -38914,7 +38981,8 @@
   "subStat": "Thunder_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -39525,7 +39593,8 @@
   "subStat": "Wind_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -40101,7 +40170,8 @@
   "subStat": "Wind_Burst_Gauge_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -40677,7 +40747,8 @@
   "subStat": "Buff_Time_Rate",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -41253,7 +41324,8 @@
   "subStat": "Wind_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -41829,7 +41901,8 @@
   "subStat": "Dark_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -42405,7 +42478,8 @@
   "subStat": "Dark_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -42981,7 +43055,8 @@
   "subStat": "Dark_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -43557,7 +43632,8 @@
   "subStat": "Fire_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -44133,7 +44209,8 @@
   "subStat": "Holy_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -44709,7 +44786,8 @@
   "subStat": "Fire_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -45285,7 +45363,8 @@
   "subStat": "Ice_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -45861,7 +45940,8 @@
   "subStat": "Thunder_Add",
   "qualityMin": 111,
   "qualityMax": 130,
-  "qualityMaxLive": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
   "tierBoundaries": [
    110,
    130
@@ -46472,6 +46552,7 @@
   "subStat": "Fire_Add",
   "qualityMin": 111,
   "qualityMax": 130,
+  "qualityMinLive": null,
   "qualityMaxLive": null,
   "tierBoundaries": [
    110,
@@ -46996,18 +47077,18 @@
     "levels": [
      {
       "level": 1,
-      "descEn": "When the hero activates a [#0F5CD8]Burst[-], all allied heroes' [#0F5CD8]Fire Attack[-] increases by [#1A7331]12%[-] for [#1A7331]30 sec[-].\nUsing the Ultimate Move increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]18%[-], Ultimate Move [#0F5CD8]Crit Damage[-] by [#1A7331]40%[-] for [#1A7331]12 sec[-], and the hero's own [#0F5CD8]Max HP[-] by [#1A7331]10%[-].",
-      "descFr": "Lorsque le héros active un [#0F5CD8]Déluge[-], augmente [#0F5CD8]l'attaque de Feu[-] de tous les héros alliés de [#1A7331]12%[-] pendant [#1A7331]30 s[-].\nL'utilisation de l'attaque ultime augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]18%[-], les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]40%[-] pendant [#1A7331]12 s[-] et les [#0F5CD8]PV max[-] du héros lui-même de [#1A7331]10%[-]."
+      "descEn": "When the hero activates a [#0F5CD8]Burst[-], all allied heroes' [#0F5CD8]Fire Attack[-] increases by [#1A7331]12%[-] for [#1A7331]30 sec[-].\nUsing the Ultimate Move increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]18%[-], Ultimate Move [#0F5CD8]Crit Damage[-] by [#1A7331]40%[-] for [#1A7331]12 sec[-], and the hero's [#0F5CD8]Max HP[-] by [#1A7331]10%[-].",
+      "descFr": "Lorsque le héros active un [#0F5CD8]Déluge[-], augmente [#0F5CD8]l'attaque de Feu[-] de tous les héros alliés de [#1A7331]12%[-] pendant [#1A7331]30 s[-].\nL'utilisation de l'attaque ultime augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]18%[-], les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]40%[-] pendant [#1A7331]12 s[-] et les [#0F5CD8]PV max[-] du héros de [#1A7331]10%[-]."
      },
      {
       "level": 2,
-      "descEn": "When the hero activates a [#0F5CD8]Burst[-], all allied heroes' [#0F5CD8]Fire Attack[-] increases by [#1A7331]16%[-] for [#1A7331]30 sec[-].\nUsing the Ultimate Move increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]24%[-], Ultimate Move [#0F5CD8]Crit Damage[-] by [#1A7331]50%[-] for [#1A7331]12 sec[-], and the hero's own [#0F5CD8]Max HP[-] by [#1A7331]13%[-].",
-      "descFr": "Lorsque le héros active un [#0F5CD8]Déluge[-], augmente [#0F5CD8]l'attaque de Feu[-] de tous les héros alliés de [#1A7331]16%[-] pendant [#1A7331]30 s[-].\nL'utilisation de l'attaque ultime augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]24%[-], les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]50%[-] pendant [#1A7331]12 s[-] et les [#0F5CD8]PV max[-] du héros lui-même de [#1A7331]13%[-]."
+      "descEn": "When the hero activates a [#0F5CD8]Burst[-], all allied heroes' [#0F5CD8]Fire Attack[-] increases by [#1A7331]16%[-] for [#1A7331]30 sec[-].\nUsing the Ultimate Move increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]24%[-], Ultimate Move [#0F5CD8]Crit Damage[-] by [#1A7331]50%[-] for [#1A7331]12 sec[-], and the hero's [#0F5CD8]Max HP[-] by [#1A7331]13%[-].",
+      "descFr": "Lorsque le héros active un [#0F5CD8]Déluge[-], augmente [#0F5CD8]l'attaque de Feu[-] de tous les héros alliés de [#1A7331]16%[-] pendant [#1A7331]30 s[-].\nL'utilisation de l'attaque ultime augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]24%[-], les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]50%[-] pendant [#1A7331]12 s[-] et les [#0F5CD8]PV max[-] du héros de [#1A7331]13%[-]."
      },
      {
       "level": 3,
-      "descEn": "When the hero activates a [#0F5CD8]Burst[-], all allied heroes' [#0F5CD8]Fire Attack[-] increases by [#1A7331]20%[-] for [#1A7331]30 sec[-].\nUsing the Ultimate Move increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]30%[-], Ultimate Move [#0F5CD8]Crit Damage[-] by [#1A7331]60%[-] for [#1A7331]12 sec[-], and the hero's own [#0F5CD8]Max HP[-] by [#1A7331]16%[-].",
-      "descFr": "Lorsque le héros active un [#0F5CD8]Déluge[-], augmente [#0F5CD8]l'attaque de Feu[-] de tous les héros alliés de [#1A7331]20%[-] pendant [#1A7331]30 s[-].\nL'utilisation de l'attaque ultime augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]30%[-], les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]60%[-] pendant [#1A7331]12 s[-] et les [#0F5CD8]PV max[-] du héros lui-même de [#1A7331]16%[-]."
+      "descEn": "When the hero activates a [#0F5CD8]Burst[-], all allied heroes' [#0F5CD8]Fire Attack[-] increases by [#1A7331]20%[-] for [#1A7331]30 sec[-].\nUsing the Ultimate Move increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]30%[-], Ultimate Move [#0F5CD8]Crit Damage[-] by [#1A7331]60%[-] for [#1A7331]12 sec[-], and the hero's [#0F5CD8]Max HP[-] by [#1A7331]16%[-].",
+      "descFr": "Lorsque le héros active un [#0F5CD8]Déluge[-], augmente [#0F5CD8]l'attaque de Feu[-] de tous les héros alliés de [#1A7331]20%[-] pendant [#1A7331]30 s[-].\nL'utilisation de l'attaque ultime augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]30%[-], les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]60%[-] pendant [#1A7331]12 s[-] et les [#0F5CD8]PV max[-] du héros de [#1A7331]16%[-]."
      }
     ],
     "nameEn": "Explosive Meteor",
@@ -47048,6 +47129,7 @@
   "subStat": "Thunder_Add",
   "qualityMin": 111,
   "qualityMax": 130,
+  "qualityMinLive": null,
   "qualityMaxLive": null,
   "tierBoundaries": [
    110,
@@ -47624,6 +47706,7 @@
   "subStat": "Default_Add",
   "qualityMin": 111,
   "qualityMax": 130,
+  "qualityMinLive": null,
   "qualityMaxLive": null,
   "tierBoundaries": [
    110,
@@ -48193,5 +48276,1159 @@
    }
   ],
   "iconUrl": "/images/costumes/icon_Gowther_003.webp"
+ },
+ {
+  "gameId": "133414001",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": "Dark_Add",
+  "qualityMin": 111,
+  "qualityMax": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": [
+   110,
+   130
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    },
+    {
+     "key": "Buff_Time_Rate",
+     "slot": "sub",
+     "isRate": true,
+     "nameEn": "Buff Duration Efficiency",
+     "nameFr": "Efficacité de la durée des bonus",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "Buff_Time_Rate",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "Buff_Time_Rate",
+      "progression": [
+       13
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "Buff_Time_Rate",
+      "progression": [
+       1358
+      ]
+     }
+    }
+   ],
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "Dark_Add",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Darkness Attack",
+    "nameFr": "Attaque des Ténèbres"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 3,
+    "stats": [
+     {
+      "key": "Normalskillchangetag_Damadd_Rate",
+      "max": 4252,
+      "min": 1701,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Tag Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence de relève"
+     },
+     {
+      "key": "Normalattack_Damadd_Rate",
+      "max": 3451,
+      "min": 1380,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque normale"
+     },
+     {
+      "key": "Debuff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Debuff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des malus"
+     },
+     {
+      "key": "Buff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Buff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des bonus"
+     },
+     {
+      "key": "TickDam_Rate",
+      "max": 3219,
+      "min": 1288,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "DoT Efficiency",
+      "nameFr": "Efficacité des dégâts sur la durée"
+     },
+     {
+      "key": "Activethird_Damadd_Rate",
+      "max": 3142,
+      "min": 1257,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Special Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque spéciale"
+     },
+     {
+      "key": "Normalskill_Damadd_Rate",
+      "max": 2418,
+      "min": 968,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence normale"
+     },
+     {
+      "key": "C_Critical_Dam_Rate",
+      "max": 1988,
+      "min": 795,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Damage",
+      "nameFr": "Dégâts crit."
+     },
+     {
+      "key": "C_Critical_DamRes_Rate",
+      "max": 1988,
+      "min": 795,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Defense",
+      "nameFr": "Défense crit."
+     },
+     {
+      "key": "P_Shield_Rate",
+      "max": 1927,
+      "min": 771,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Barrier Efficiency",
+      "nameFr": "Efficacité des barrières"
+     },
+     {
+      "key": "Ultimateskill_Damadd_Rate",
+      "max": 1895,
+      "min": 758,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Ultimate Move Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque ultime"
+     },
+     {
+      "key": "MF_ChargeEffic_Rate",
+      "max": 1665,
+      "min": 666,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Magic Charging Efficiency",
+      "nameFr": "Efficacité de recharge de la magie"
+     },
+     {
+      "key": "H_HealPower_Rate",
+      "max": 1541,
+      "min": 617,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Healing Efficiency",
+      "nameFr": "Efficacité de guérison"
+     },
+     {
+      "key": "Burst_Gauge_Rate",
+      "max": 1249,
+      "min": 500,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "All Elemental Burst Efficiency",
+      "nameFr": "Efficacité de Déluge de tous les éléments"
+     },
+     {
+      "key": "C_Critical_Rate",
+      "max": 1126,
+      "min": 450,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Chance",
+      "nameFr": "Chances crit."
+     },
+     {
+      "key": "C_Critical_ResRate",
+      "max": 1126,
+      "min": 450,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Resistance",
+      "nameFr": "Résistance crit."
+     },
+     {
+      "key": "I_AtkAdd_Rate",
+      "max": 787,
+      "min": 315,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Attack Increase",
+      "nameFr": "Augmentation de l'attaque"
+     },
+     {
+      "key": "I_DefAdd_Rate",
+      "max": 632,
+      "min": 253,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Defense Increase",
+      "nameFr": "Augmentation de la défense"
+     },
+     {
+      "key": "I_MaxHpAdd_Rate",
+      "max": 464,
+      "min": 186,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "HP Increase",
+      "nameFr": "Augmentation des PV"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 156,
+     "gold": 572,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 728,
+     "gold": 2964,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 2288,
+     "gold": 9724,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 4992,
+     "gold": 21112,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 7280,
+     "gold": 30680,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 364,
+     "gold": 780,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1820,
+     "gold": 4056,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 5876,
+     "gold": 13312,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 12740,
+     "gold": 28912,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 18564,
+     "gold": 42016,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 728,
+     "gold": 1144,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 3692,
+     "gold": 6292,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 11960,
+     "gold": 20540,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 26000,
+     "gold": 44512,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 37804,
+     "gold": 64636,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 1352,
+     "gold": 1976,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 7124,
+     "gold": 10660,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 23140,
+     "gold": 34892,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 50232,
+     "gold": 75660,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 73008,
+     "gold": 109876,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 2548,
+     "gold": 3588,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 13624,
+     "gold": 19448,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 44408,
+     "gold": 63596,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 96408,
+     "gold": 138008,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 140088,
+     "gold": 200408,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "Dark_Add",
+    "progression": [
+     12
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "Dark_Add",
+    "progression": [
+     1234
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     137
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     14739
+    ]
+   }
+  },
+  "personnage": "derieri",
+  "personnageNomFr": "Derrierie",
+  "costumeSlug": "derieri-costume-134102002",
+  "nameFr": "Résistance et révolution",
+  "nameEn": "Resistance and Revolution",
+  "rarity": "SSR",
+  "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé de Derrierie",
+  "engravingPassives": [
+   {
+    "id": "EpEq_Derieri_B",
+    "icon": "equippassive_equip_derieri_b_ssr",
+    "levels": [
+     {
+      "level": 1,
+      "descEn": "Each Darkness hit on an enemy while [#0F5CD8]Strike Combo[-] is active has a [#1A7331]25%[-] chance to inflict additional damage equal to [#1A7331]20%[-] of Attack and additionally grant [#0F5CD8]Strike Combo[-] for [#1A7331]5 sec[-].\nUsing the Special Attack increases the Ultimate Move's [#0F5CD8]Crit Chance[-] by [#1A7331]12%[-] and [#0F5CD8]Crit Damage[-] by [#1A7331]12%[-] for [#1A7331]7 sec[-].",
+      "descFr": "Chaque attaque des Ténèbres portée sur un ennemi lorsque l'effet [#0F5CD8]Combo de coups[-] est actif a [#1A7331]25%[-] de chances d'infliger des dégâts supplémentaires égaux à [#1A7331]20%[-] de l'attaque et d'octroyer un autre effet [#0F5CD8]Combo de coups[-] pendant [#1A7331]5 s[-].\nUtiliser l'attaque spéciale augmente les [#0F5CD8]chances crit.[-] d'attaque ultime de [#1A7331]12%[-] et les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]12%[-] pendant [#1A7331]7 s[-]."
+     },
+     {
+      "level": 2,
+      "descEn": "Each Darkness hit on an enemy while [#0F5CD8]Strike Combo[-] is active has a [#1A7331]30%[-] chance to inflict additional damage equal to [#1A7331]20%[-] of Attack and additionally grant [#0F5CD8]Strike Combo[-] for [#1A7331]5 sec[-].\nUsing the Special Attack increases the Ultimate Move's [#0F5CD8]Crit Chance[-] by [#1A7331]16%[-] and [#0F5CD8]Crit Damage[-] by [#1A7331]16%[-] for [#1A7331]7 sec[-].",
+      "descFr": "Chaque attaque des Ténèbres portée sur un ennemi lorsque l'effet [#0F5CD8]Combo de coups[-] est actif a [#1A7331]30%[-] de chances d'infliger des dégâts supplémentaires égaux à [#1A7331]20%[-] de l'attaque et d'octroyer un autre effet [#0F5CD8]Combo de coups[-] pendant [#1A7331]5 s[-].\nUtiliser l'attaque spéciale augmente les [#0F5CD8]chances crit.[-] d'attaque ultime de [#1A7331]16%[-] et les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]16%[-] pendant [#1A7331]7 s[-]."
+     },
+     {
+      "level": 3,
+      "descEn": "Each Darkness hit on an enemy while [#0F5CD8]Strike Combo[-] is active has a [#1A7331]35%[-] chance to inflict additional damage equal to [#1A7331]20%[-] of Attack and additionally grant [#0F5CD8]Strike Combo[-] for [#1A7331]5 sec[-].\nUsing the Special Attack increases the Ultimate Move's [#0F5CD8]Crit Chance[-] by [#1A7331]20%[-] and [#0F5CD8]Crit Damage[-] by [#1A7331]20%[-] for [#1A7331]7 sec[-].",
+      "descFr": "Chaque attaque des Ténèbres portée sur un ennemi lorsque l'effet [#0F5CD8]Combo de coups[-] est actif a [#1A7331]35%[-] de chances d'infliger des dégâts supplémentaires égaux à [#1A7331]20%[-] de l'attaque et d'octroyer un autre effet [#0F5CD8]Combo de coups[-] pendant [#1A7331]5 s[-].\nUtiliser l'attaque spéciale augmente les [#0F5CD8]chances crit.[-] d'attaque ultime de [#1A7331]20%[-] et les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]20%[-] pendant [#1A7331]7 s[-]."
+     }
+    ],
+    "nameEn": "Two Fists of Darkness",
+    "nameFr": "Double poing des Ténèbres"
+   }
+  ],
+  "bindingMaterials": [
+   {
+    "itemId": "132124030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132224030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132324030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132424030",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "/images/costumes/icon_Derieri_002.webp"
+ },
+ {
+  "gameId": "133415002",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": "Fire_Add",
+  "qualityMin": 111,
+  "qualityMax": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": [
+   110,
+   130
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    },
+    {
+     "key": "I_MaxHPAdd_Rate",
+     "slot": "sub",
+     "isRate": true,
+     "nameEn": "HP Increase",
+     "nameFr": "Augmentation des PV",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "I_MaxHPAdd_Rate",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "I_MaxHPAdd_Rate",
+      "progression": [
+       5
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "I_MaxHPAdd_Rate",
+      "progression": [
+       470
+      ]
+     }
+    }
+   ],
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "Fire_Add",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Fire Attack",
+    "nameFr": "Attaque de Feu"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 3,
+    "stats": [
+     {
+      "key": "Normalskillchangetag_Damadd_Rate",
+      "max": 4252,
+      "min": 1701,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Tag Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence de relève"
+     },
+     {
+      "key": "Normalattack_Damadd_Rate",
+      "max": 3451,
+      "min": 1380,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque normale"
+     },
+     {
+      "key": "Debuff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Debuff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des malus"
+     },
+     {
+      "key": "Buff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Buff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des bonus"
+     },
+     {
+      "key": "TickDam_Rate",
+      "max": 3219,
+      "min": 1288,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "DoT Efficiency",
+      "nameFr": "Efficacité des dégâts sur la durée"
+     },
+     {
+      "key": "Activethird_Damadd_Rate",
+      "max": 3142,
+      "min": 1257,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Special Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque spéciale"
+     },
+     {
+      "key": "Normalskill_Damadd_Rate",
+      "max": 2418,
+      "min": 968,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence normale"
+     },
+     {
+      "key": "C_Critical_Dam_Rate",
+      "max": 1988,
+      "min": 795,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Damage",
+      "nameFr": "Dégâts crit."
+     },
+     {
+      "key": "C_Critical_DamRes_Rate",
+      "max": 1988,
+      "min": 795,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Defense",
+      "nameFr": "Défense crit."
+     },
+     {
+      "key": "P_Shield_Rate",
+      "max": 1927,
+      "min": 771,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Barrier Efficiency",
+      "nameFr": "Efficacité des barrières"
+     },
+     {
+      "key": "Ultimateskill_Damadd_Rate",
+      "max": 1895,
+      "min": 758,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Ultimate Move Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque ultime"
+     },
+     {
+      "key": "MF_ChargeEffic_Rate",
+      "max": 1665,
+      "min": 666,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Magic Charging Efficiency",
+      "nameFr": "Efficacité de recharge de la magie"
+     },
+     {
+      "key": "H_HealPower_Rate",
+      "max": 1541,
+      "min": 617,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Healing Efficiency",
+      "nameFr": "Efficacité de guérison"
+     },
+     {
+      "key": "Burst_Gauge_Rate",
+      "max": 1249,
+      "min": 500,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "All Elemental Burst Efficiency",
+      "nameFr": "Efficacité de Déluge de tous les éléments"
+     },
+     {
+      "key": "C_Critical_Rate",
+      "max": 1126,
+      "min": 450,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Chance",
+      "nameFr": "Chances crit."
+     },
+     {
+      "key": "C_Critical_ResRate",
+      "max": 1126,
+      "min": 450,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Resistance",
+      "nameFr": "Résistance crit."
+     },
+     {
+      "key": "I_AtkAdd_Rate",
+      "max": 787,
+      "min": 315,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Attack Increase",
+      "nameFr": "Augmentation de l'attaque"
+     },
+     {
+      "key": "I_DefAdd_Rate",
+      "max": 632,
+      "min": 253,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Defense Increase",
+      "nameFr": "Augmentation de la défense"
+     },
+     {
+      "key": "I_MaxHpAdd_Rate",
+      "max": 464,
+      "min": 186,
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "HP Increase",
+      "nameFr": "Augmentation des PV"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 156,
+     "gold": 572,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 728,
+     "gold": 2964,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 2288,
+     "gold": 9724,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 4992,
+     "gold": 21112,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 7280,
+     "gold": 30680,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 364,
+     "gold": 780,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1820,
+     "gold": 4056,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 5876,
+     "gold": 13312,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 12740,
+     "gold": 28912,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 18564,
+     "gold": 42016,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 728,
+     "gold": 1144,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 3692,
+     "gold": 6292,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 11960,
+     "gold": 20540,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 26000,
+     "gold": 44512,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 37804,
+     "gold": 64636,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 1352,
+     "gold": 1976,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 7124,
+     "gold": 10660,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 23140,
+     "gold": 34892,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 50232,
+     "gold": 75660,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 73008,
+     "gold": 109876,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 2548,
+     "gold": 3588,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 13624,
+     "gold": 19448,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 44408,
+     "gold": 63596,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 96408,
+     "gold": 138008,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 140088,
+     "gold": 200408,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "Fire_Add",
+    "progression": [
+     7
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "Fire_Add",
+    "progression": [
+     701
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     137
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     14739
+    ]
+   }
+  },
+  "personnage": "derieri",
+  "personnageNomFr": "Derrierie",
+  "costumeSlug": "derieri-costume-134102004",
+  "nameFr": "Courtoisie minimale",
+  "nameEn": "Minimal Courtesy",
+  "rarity": "SSR",
+  "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé de Derrierie",
+  "engravingPassives": [
+   {
+    "id": "EpEq_Derieri_C",
+    "icon": "equippassive_equip_derieri_c_ssr",
+    "levels": [
+     {
+      "level": 1,
+      "descEn": "While a [#0F5CD8]Max HP[-] boost is active on the hero, each hit on an enemy increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]3%[-] for [#1A7331]30 sec[-]. (Max: [#1A7331]18%[-])\nIncreases all allied Fire heroes' [#0F5CD8]Crit Damage[-] dealt to enemies with reduced [#0F5CD8]Fire Defense[-] by [#1A7331]24%[-].",
+      "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]3%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]18%[-])\nAugmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Feu avec une [#0F5CD8]défense de Feu[-] réduite de [#1A7331]24%[-]."
+     },
+     {
+      "level": 2,
+      "descEn": "While a [#0F5CD8]Max HP[-] boost is active on the hero, each hit on an enemy increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]4%[-] for [#1A7331]30 sec[-]. (Max: [#1A7331]24%[-])\nIncreases all allied Fire heroes' [#0F5CD8]Crit Damage[-] dealt to enemies with reduced [#0F5CD8]Fire Defense[-] by [#1A7331]32%[-].",
+      "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]4%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]24%[-])\nAugmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Feu avec une [#0F5CD8]défense de Feu[-] réduite de [#1A7331]32%[-]."
+     },
+     {
+      "level": 3,
+      "descEn": "While a [#0F5CD8]Max HP[-] boost is active on the hero, each hit on an enemy increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]5%[-] for [#1A7331]30 sec[-]. (Max: [#1A7331]30%[-])\nIncreases all allied Fire heroes' [#0F5CD8]Crit Damage[-] dealt to enemies with reduced [#0F5CD8]Fire Defense[-] by [#1A7331]40%[-].",
+      "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]5%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]30%[-])\nAugmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Feu avec une [#0F5CD8]défense de Feu[-] réduite de [#1A7331]40%[-]."
+     }
+    ],
+    "nameEn": "Burning Spirit",
+    "nameFr": "Esprit ardent"
+   }
+  ],
+  "bindingMaterials": [
+   {
+    "itemId": "132134026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434026",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "/images/costumes/icon_Derieri_004.webp"
  }
 ]

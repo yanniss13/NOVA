@@ -24,11 +24,11 @@ HEADERS = {
 # Collections extraites du payload, avec le nombre attendu au moment de l'ecriture
 # de ce script. Un ecart n'est pas une erreur (le jeu evolue) mais est signale.
 EXPECTED = {
-    "characters": 24,
-    "weapons": 142,
-    "equipItems": 229,
-    "costumeArmors": 83,
-    "gearSets": 21,
+    "characters": 25,
+    "weapons": 155,
+    "equipItems": 232,
+    "costumeArmors": 85,
+    "gearSets": 22,
 }
 
 

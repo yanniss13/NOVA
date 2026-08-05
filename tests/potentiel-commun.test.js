@@ -136,9 +136,9 @@ const STORAGE_KEY = "confrerie7ds.teams";
   const localArmorFiles = dataContext.window.SEVEN_DS_DATA.armures["Armure liee"]
     .map(item => item.file);
 
-  assert.strictEqual(Object.keys(linked).length, 24);
-  assert.strictEqual(files.length, 66);
-  assert.strictEqual(new Set(files).size, 66);
+  assert.strictEqual(Object.keys(linked).length, 25);
+  assert.strictEqual(files.length, 68);
+  assert.strictEqual(new Set(files).size, 68);
   assert.ok(Object.values(linked).every(items => [2, 3].includes(items.length)));
   assert.deepStrictEqual(
     plain([...files].sort()),
@@ -146,7 +146,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
   );
 }
 
-// Donnée générée réelle : 24 héros, exactement 3 types d'armes chacun.
+// Donnée générée réelle : 25 héros, exactement 3 types d'armes chacun.
 {
   const actual = { window:{} };
   vm.runInNewContext(
@@ -155,7 +155,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     { filename:"potentiels.js" }
   );
   const actualPot = actual.window.SEVEN_DS_POTENTIELS;
-  assert.strictEqual(Object.keys(actualPot).length, 24);
+  assert.strictEqual(Object.keys(actualPot).length, 25);
   assert.ok(Object.values(actualPot).every(
     byWeapon => Object.keys(byWeapon).length === 3
   ));

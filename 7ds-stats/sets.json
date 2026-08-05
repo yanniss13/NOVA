@@ -1,6 +1,6 @@
 [
  {
-  "id": "cms29784m004x2lp2qcdjri3k",
+  "id": "cmsfp5jew005b2mp2ak35enfe",
   "gameId": "equip_t4_scale_1",
   "slug": "equip-t4-scale-1",
   "nameFr": "Cœur ardent",
@@ -28,7 +28,7 @@
   "partsCount": 4
  },
  {
-  "id": "cms29784m004y2lp28rv9jals",
+  "id": "cmsfp5jew005c2mp2hinkiau9",
   "gameId": "equip_t4_scale_2",
   "slug": "equip-t4-scale-2",
   "nameFr": "Pétales éparpillés",
@@ -51,7 +51,7 @@
   "partsCount": 3
  },
  {
-  "id": "cms29784m004z2lp2iwyov4ap",
+  "id": "cmsfp5jew005d2mp2o9pm5vfj",
   "gameId": "equip_t4_scale_3",
   "slug": "equip-t4-scale-3",
   "nameFr": "Flash aveuglant",
@@ -79,7 +79,7 @@
   "partsCount": 4
  },
  {
-  "id": "cms29784m00502lp2h05hw6q8",
+  "id": "cmsfp5jew005e2mp2rnqnn152",
   "gameId": "equip_t4_scale_4",
   "slug": "equip-t4-scale-4",
   "nameFr": "Horizon vacillant",
@@ -114,7 +114,7 @@
   "partsCount": 7
  },
  {
-  "id": "cms29784m00512lp2vc4gtx7w",
+  "id": "cmsfp5jew005f2mp2fri9lfaz",
   "gameId": "armor_t4_ferzen",
   "slug": "armor-t4-ferzen",
   "nameFr": "Ruines de la mine abandonnée",
@@ -149,7 +149,7 @@
   "partsCount": 7
  },
  {
-  "id": "cms29784m00522lp2x65h84h2",
+  "id": "cmsfp5jew005g2mp2u1lq2ua8",
   "gameId": "armor_t5_spider",
   "slug": "armor-t5-spider",
   "nameFr": "Rancœur du nid d'araignée",
@@ -184,7 +184,7 @@
   "partsCount": 7
  },
  {
-  "id": "cms29784m00532lp2yzvs21sa",
+  "id": "cmsfp5jew005h2mp2b234m2fw",
   "gameId": "armor_t5_dead",
   "slug": "armor-t5-dead",
   "nameFr": "Cris des âmes",
@@ -219,7 +219,7 @@
   "partsCount": 7
  },
  {
-  "id": "cms29784m00542lp2wiq2v9l1",
+  "id": "cmsfp5jew005i2mp2g9q5fya9",
   "gameId": "armor_t5_undying",
   "slug": "armor-t5-undying",
   "nameFr": "Observateur",
@@ -247,7 +247,7 @@
   "partsCount": 4
  },
  {
-  "id": "cms29784m00552lp2iwswur1c",
+  "id": "cmsfp5jew005j2mp2k3v3l02n",
   "gameId": "accessory_t5_corruption",
   "slug": "accessory-t5-corruption",
   "nameFr": "Au bord du néant",
@@ -275,7 +275,7 @@
   "partsCount": 3
  },
  {
-  "id": "cms29784m00562lp293nvbp11",
+  "id": "cmsfp5jew005k2mp2se9ykn0i",
   "gameId": "armor_t4_ocean",
   "slug": "armor-t4-ocean",
   "nameFr": "Fragment tranchant",
@@ -303,7 +303,7 @@
   "partsCount": 4
  },
  {
-  "id": "cms29784m00572lp2yiui6h91",
+  "id": "cmsfp5jew005l2mp2d6sxby91",
   "gameId": "accessory_t5_crystal",
   "slug": "accessory-t5-crystal",
   "nameFr": "Fragment mortel",
@@ -331,7 +331,7 @@
   "partsCount": 4
  },
  {
-  "id": "cms29784m00582lp2e9se4lkb",
+  "id": "cmsfp5jew005m2mp2nuq7sqau",
   "gameId": "armor_t4_immortal",
   "slug": "armor-t4-immortal",
   "nameFr": "Brillance lavande",
@@ -354,7 +354,7 @@
   "partsCount": 3
  },
  {
-  "id": "cms29784m00592lp2odwtwkmi",
+  "id": "cmsfp5jew005n2mp2n6k4qvuy",
   "gameId": "accessory_t5_thought",
   "slug": "accessory-t5-thought",
   "nameFr": "Ombre lavande",
@@ -377,7 +377,7 @@
   "partsCount": 3
  },
  {
-  "id": "cms29784m005a2lp2y4cu9n34",
+  "id": "cmsfp5jew005o2mp2udf6uei1",
   "gameId": "armor_t5_fortrees",
   "slug": "armor-t5-fortrees",
   "nameFr": "Rite gravé",
@@ -400,7 +400,7 @@
   "partsCount": 4
  },
  {
-  "id": "cms29784m005b2lp2efono9e6",
+  "id": "cmsfp5jew005p2mp2jgyckebb",
   "gameId": "accessory_t5_curse",
   "slug": "accessory-t5-curse",
   "nameFr": "Talent caché",
@@ -428,7 +428,7 @@
   "partsCount": 3
  },
  {
-  "id": "cms29784m005c2lp21qabujsj",
+  "id": "cmsfp5jew005q2mp2ajmr9y98",
   "gameId": "accessory_t5_heart_acc",
   "slug": "accessory-t5-heart-acc",
   "nameFr": "Serment éternel",
@@ -451,7 +451,7 @@
   "partsCount": 3
  },
  {
-  "id": "cms29784m005d2lp2bxr90sc2",
+  "id": "cmsfp5jew005r2mp23lnzmd7t",
   "gameId": "accessory_t5_hymn",
   "slug": "accessory-t5-hymn",
   "nameFr": "Énergie revigorante",
@@ -479,7 +479,7 @@
   "partsCount": 3
  },
  {
-  "id": "cms29784w005e2lp21fxm0d8b",
+  "id": "cmsfp5jew005s2mp2mjqvuag1",
   "gameId": "equip_t5_greed",
   "slug": "equip-t5-greed",
   "nameFr": "Souverain cupide",
@@ -514,7 +514,30 @@
   "partsCount": 7
  },
  {
-  "id": "cms29784x005f2lp22y2idcci",
+  "id": "cmsfp5jew005t2mp2aqbkmidt",
+  "gameId": "accessory_t5_tropical",
+  "slug": "accessory-t5-tropical",
+  "nameFr": "Cocktail de Dalmally",
+  "nameEn": "Dalmally Cocktail",
+  "bonusTwoFr": "PV [#D67314]+15%[-]\nRestaure l'[#0F5CD8]endurance[-] de [#1A7331]2000[-] toutes les [#1A7331]0.5s[-] pendant [#1A7331]5s[-] lorsque vous effectuez une esquive en combat alors que votre [#0F5CD8]endurance[-] est inférieure ou égale à [#1A7331]30%[-]. (Durée fixe, temps de recharge : [#1A7331]30s[-])",
+  "bonusTwoEn": "HP [#D67314]+15%[-]\nRestores [#0F5CD8]Stamina[-] by a fixed amount of [#1A7331]2000[-] every [#1A7331]0.5 sec[-] for [#1A7331]5 sec[-] if you dodge when your [#0F5CD8]Stamina[-] is [#1A7331]30%[-] or lower while in combat. (Fixed duration, Cooldown: [#1A7331]30 sec[-])",
+  "bonusFourFr": "",
+  "bonusFourEn": "",
+  "bonusTwoCount": 3,
+  "bonusTwoStats": [
+   {
+    "stat": "I_MaxHpAdd_Rate",
+    "value": 1500
+   }
+  ],
+  "bonusFourCount": null,
+  "bonusFourStats": null,
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 3
+ },
+ {
+  "id": "cmsfp5jew005u2mp2lxf3gbv8",
   "gameId": "armor_t5_wildroar",
   "slug": "armor-t5-wildroar",
   "nameFr": "Rite des liens",
@@ -542,7 +565,7 @@
   "partsCount": 4
  },
  {
-  "id": "cms29784x005g2lp2vly150l3",
+  "id": "cmsfp5jew005v2mp2iiltikh5",
   "gameId": "equip_t5_splinter",
   "slug": "equip-t5-splinter",
   "nameFr": "Aube du cauchemar",
@@ -577,7 +600,7 @@
   "partsCount": 6
  },
  {
-  "id": "cms29784x005h2lp265qso9b0",
+  "id": "cmsfp5jew005w2mp259iyhe9v",
   "gameId": "equip_t5_darksand",
   "slug": "equip-t5-darksand",
   "nameFr": "Reine des profondeurs",

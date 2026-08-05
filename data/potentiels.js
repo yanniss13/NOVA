@@ -459,6 +459,44 @@ window.SEVEN_DS_POTENTIELS = {
    "Renforce la puissance de la dernière frappe de l'attaque spéciale de [#1A7331]300%[-] et réduit la résistance au percement de l'ennemi de [#1A7331]15%[-] pendant [#1A7331]40s[-]."
   ]
  },
+ "derieri": {
+  "Hache": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Renforce la puissance de l'attaque normale de [#1A7331]20%[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de la compétence normale de [#1A7331]40%[-].",
+   "Augmente légèrement la portée de l'attaque spéciale et renforce la puissance de l'attaque spéciale de [#1A7331]60%[-].\nLa dernière frappe de l'attaque spéciale augmente la durée du [#0F5CD8]Déluge des Ténèbres[-] de la cible de [#1A7331]3s[-].",
+   "Renforce la puissance de [#0F5CD8]Floraison nocturne[-] de [#1A7331]50%[-].",
+   "La dernière frappe de la compétence normale inflige des dégâts supplémentaires égaux à [#1A7331]220%[-] de l'attaque.\nCette attaque augmente les dégâts de compétence normale subis par l'ennemi de [#1A7331]50%[-] pendant [#1A7331]20[-] s.",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Renforce la puissance de l'attaque ultime de [#1A7331]120%[-], et augmente le percement de défense de l'attaque ultime de [#1A7331]20%[-].",
+   "L'utilisation de la compétence normale augmente l'attaque des Ténèbres de tous les héros alliés à hauteur de [#1A7331]30%[-] de l'attaque du héros pendant [#1A7331]30s[-]. (Max : [#1A7331]4000[-])\nLa dernière frappe de l'attaque ultime inflige des dégâts égaux à [#1A7331]35%[-] de l'attaque toutes les [#1A7331]0.25s[-] pendant [#1A7331]5s[-]."
+  ],
+  "Gantelets": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Renforce la puissance de l'attaque spéciale de [#1A7331]30%[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de la compétence normale de [#1A7331]45%[-].",
+   "Lorsque le héros bénéficie d'au moins [#1A7331]25[-] cumuls de [#0F5CD8]Combo de coups[-], augmente les dégâts crit. du héros de [#1A7331]50%[-]. Lorsque l'effet [#0F5CD8]Combo de coups[-] atteint le nombre de cumuls max, augmente la perforation de [#1A7331]100[-].",
+   "Renforce la puissance de [#3C22D6]Attaque ultime : Dévastation[-] de [#1A7331]65%[-].\nRenforce la puissance des dégâts supplémentaires de [#0F5CD8]Duel[-] de [#1A7331]50%[-].",
+   "Augmente légèrement la portée de la 2e frappe de la compétence normale et augmente le boost de dégâts de Duel octroyé par [#0F5CD8]Combo de coups[-] de [#1A7331]20%[-].\nAjoute [#1A7331]1[-] coup à la 2e frappe de la compétence normale ; ce coup inflige les mêmes dégâts que la 2e frappe.",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Renforce la puissance de [#3C22D6]Attaque ultime : Dévastation[-] de [#1A7331]125%[-]. Augmente le percement de défense du héros de [#1A7331]20%[-] lorsque l'effet [#0F5CD8]Combo de coups[-] a atteint le nombre de cumuls max.",
+   "Augmente légèrement la portée de l'attaque spéciale. Augmente les dégâts crit. du héros de [#1A7331]100%[-] pendant [#1A7331]7s[-] lorsque tous les coups de l'attaque spéciale font mouche.\nAjoute [#1A7331]1[-] coup à la 2e frappe de l'attaque spéciale ; ce coup inflige les mêmes dégâts que la 2e frappe.\nAjoute [#1A7331]2[-] coups à la 3e frappe de l'attaque spéciale ; chacun inflige les mêmes dégâts que la 3e frappe."
+  ],
+  "Epee 2 mains": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Renforce la puissance de l'attaque spéciale de [#1A7331]30%[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de la compétence normale de [#1A7331]45%[-].",
+   "La dernière frappe de l'attaque spéciale inflige des dégâts supplémentaires égaux à [#1A7331]120%[-] de l'attaque.\nAugmente la réduction de la défense de Feu de l'attaque spéciale de [#1A7331]10%[-].",
+   "Renforce la puissance de l'attaque spéciale de [#1A7331]50%[-].\nAugmente le boost de PV octroyé par l'attaque spéciale de [#1A7331]10%[-].",
+   "La dernière frappe de la compétence normale inflige des dégâts supplémentaires égaux à [#1A7331]40%[-] de l'attaque [#1A7331]5 fois[-].\nLorsque des dégâts supplémentaires sont infligés, augmente les dégâts d'attaque ultime et d'attaque combinée subis par la cible de [#1A7331]50%[-] pendant [#1A7331]20s[-].",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Augmente la valeur maximale d'augmentation de l'attaque de Feu issue de la compétence normale de [#1A7331]3000[-].\nL'utilisation de la compétence normale augmente le percement de défense de tous les héros alliés d'attribut Feu de [#1A7331]15%[-] pendant [#1A7331]30s[-].",
+   "Augmente légèrement la portée de l'attaque ultime. Augmente les dégâts crit. d'attaque ultime et d'attaque combinée des héros alliés d'attribut Feu à portée de [#1A7331]50%[-] pendant [#1A7331]20s[-] toutes les [#1A7331]1s[-]."
+  ]
+ },
  "diane": {
   "Hache": [
    "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
@@ -660,7 +698,7 @@ window.SEVEN_DS_POTENTIELS = {
    "Renforce la puissance des dégâts supplémentaires de [#0F5CD8]Lien[-] de [#1A7331]100%[-], et réduit le temps de recharge de [#1A7331]2s[-].",
    "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
    "Renforce la puissance de l'attaque ultime de [#1A7331]125%[-].",
-   "Augmente la durée de l'effet [#0F5CD8]Extinction[-] de [#1A7331]3s[-] et augmente le boost de dégâts subis de [#1A7331]40[-]."
+   "Augmente la durée de l'effet [#0F5CD8]Extinction[-] de [#1A7331]3s[-].\nUtiliser l'attaque ultime réduit la défense crit. de l'ennemi de [#1A7331]40%[-] pendant [#1A7331]40s[-]."
   ],
   "Baton": [
    "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",

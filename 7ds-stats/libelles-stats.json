@@ -260,6 +260,11 @@
   "en": "All Elemental Burst Efficiency",
   "taux": true
  },
+ "I_MaxHPAdd_Rate": {
+  "fr": "Augmentation des PV",
+  "en": "HP Increase",
+  "taux": true
+ },
  "A_Block": {
   "fr": "Persévérance",
   "en": "Perseverance",

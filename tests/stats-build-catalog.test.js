@@ -156,7 +156,7 @@ weaponsWithPassive.forEach(([file, entry]) => {
 });
 
 const characters = Object.entries(catalog.charactersBySlug);
-assert.equal(characters.length, 24, "les 24 personnages doivent être rapprochés");
+assert.equal(characters.length, 25, "les 25 personnages doivent être rapprochés");
 characters.forEach(([slug, character]) => {
   assert.equal(character.baseStats.length, 13, slug + " : base incomplète");
   assert.ok(character.commonMasteryStats.length, slug + " : maîtrise commune absente");

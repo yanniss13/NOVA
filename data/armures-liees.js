@@ -1,5 +1,5 @@
 // Généré manuellement depuis la page publique du team builder 7dsorigin.app.
-// Date de génération : 2026-07-24T23:39:11+02:00
+// Date de génération : 2026-08-05T23:58:47+02:00
 // Instantané local : aucun appel réseau n'est effectué par index.html.
 window.SEVEN_DS_ARMURES_LIEES = {
   "bug": [
@@ -10,6 +10,10 @@ window.SEVEN_DS_ARMURES_LIEES = {
     "7ds-armures-ssr/Armure liee/Petite exploratrice.webp",
     "7ds-armures-ssr/Armure liee/Robe de printemps.webp",
     "7ds-armures-ssr/Armure liee/Souffle d'exploration.webp"
+  ],
+  "derieri": [
+    "7ds-armures-ssr/Armure liee/Courtoisie minimale.webp",
+    "7ds-armures-ssr/Armure liee/Résistance et révolution.webp"
   ],
   "diane": [
     "7ds-armures-ssr/Armure liee/Fille enjouée.webp",

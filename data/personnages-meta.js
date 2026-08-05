@@ -267,6 +267,28 @@ window.SEVEN_DS_META = {
    }
   ]
  },
+ "derieri": {
+  "element": "DARK",
+  "rarity": "SSR",
+  "role": "ATTACKER",
+  "weapons": [
+   {
+    "role": "Attacker",
+    "weapon": "Gauntlets",
+    "element": "Dark"
+   },
+   {
+    "role": "Supporter",
+    "weapon": "Sword2h",
+    "element": "Fire"
+   },
+   {
+    "role": "Supporter",
+    "weapon": "Axe",
+    "element": "Dark"
+   }
+  ]
+ },
  "diane": {
   "element": "EARTH",
   "rarity": "SSR",

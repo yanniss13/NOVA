@@ -1,6 +1,6 @@
 [
  {
-  "id": "cms2976t4000e2lp2f8psqqm6",
+  "id": "cmsfp5hwg000e2mp2slqqxf1h",
   "slug": "bug",
   "nameFr": "Bug",
   "nameEn": "Bug",
@@ -27,7 +27,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf007l2lp23ed80tcl",
+    "id": "cmsfp5jlj00812mp20te3ktri",
     "slug": "bug-costume-134101501",
     "nameFr": "Démon timide",
     "nameEn": "Shy Demon",
@@ -42,7 +42,7 @@
     "iconUrl": "/images/costumes/icon_Bug_001.webp"
    },
    {
-    "id": "cms2978bf007m2lp26fzp69kp",
+    "id": "cmsfp5jlj00822mp2h4u5rl7o",
     "slug": "bug-costume-134101502",
     "nameFr": "Sortie du démon",
     "nameEn": "Demon's Outing",
@@ -102,7 +102,7 @@
     "iconUrl": "/images/costumes/icon_Bug_002.webp"
    },
    {
-    "id": "cms2978bf007n2lp28ix3pstv",
+    "id": "cmsfp5jlj00832mp24seblgt3",
     "slug": "bug-costume-134101503",
     "nameFr": "Marche des ombres",
     "nameEn": "Shadow Walk",
@@ -166,7 +166,7 @@
     "iconUrl": "/images/costumes/icon_Bug_003.webp"
    },
    {
-    "id": "cms2978bf007o2lp2g2k3h9qf",
+    "id": "cmsfp5jlj00842mp2ebuvx3ol",
     "slug": "bug-costume-134101504",
     "nameFr": "Furtivité du démon",
     "nameEn": "Demon's Stealth",
@@ -805,12 +805,12 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 85
+        "stat": "C_Critical_ResRate",
+        "value": 105
        },
        {
-        "stat": "A_Accuracy",
-        "value": 30
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 390
        }
       ]
      },
@@ -851,12 +851,12 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_ResRate",
-        "value": 105
+        "stat": "B_Atk",
+        "value": 85
        },
        {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 390
+        "stat": "A_Accuracy",
+        "value": 30
        }
       ]
      },
@@ -1301,6 +1301,34 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_Rate",
+        "value": 173
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 473
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 85
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 255
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 115
        },
@@ -1325,34 +1353,6 @@
        {
         "stat": "B_MaxHp",
         "value": 160
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_Rate",
-        "value": 173
-       },
-       {
-        "stat": "C_Critical_Dam_Rate",
-        "value": 473
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 85
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 255
        }
       ]
      },
@@ -2361,7 +2361,7 @@
   "bannerUrl": "/images/characters/banners/bug.webp"
  },
  {
-  "id": "cms2976t400022lp2yh1h7upi",
+  "id": "cmsfp5hwg00022mp2vzfmw61q",
   "slug": "dreydrin",
   "nameFr": "Dreydrin",
   "nameEn": "Dredrin",
@@ -2388,7 +2388,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf00602lp25mmbi2mu",
+    "id": "cmsfp5jli006g2mp2x6psj7fj",
     "slug": "dreydrin-costume-134100301",
     "nameFr": "Chevalier sacré apprenti amical",
     "nameEn": "Friendly Apprentice Holy Knight",
@@ -2403,7 +2403,7 @@
     "iconUrl": "/images/costumes/icon_Dreydrin_001.webp"
    },
    {
-    "id": "cms2978bf00612lp2682dc2ck",
+    "id": "cmsfp5jli006h2mp201xrtdmy",
     "slug": "dreydrin-costume-134100302",
     "nameFr": "Une belle journée de repos",
     "nameEn": "A Nice Day Off",
@@ -2463,7 +2463,7 @@
     "iconUrl": "/images/costumes/icon_Dreydrin_002.webp"
    },
    {
-    "id": "cms2978bf00622lp2uitnecez",
+    "id": "cmsfp5jli006i2mp212q02tsz",
     "slug": "dreydrin-costume-134100303",
     "nameFr": "Ascendance royale",
     "nameEn": "Descendant of Royalty",
@@ -2527,7 +2527,7 @@
     "iconUrl": "/images/costumes/icon_Dreydrin_003.webp"
    },
    {
-    "id": "cms2978bf00632lp28k2tr81l",
+    "id": "cmsfp5jli006j2mp2n6phdb4j",
     "slug": "dreydrin-costume-134100304",
     "nameFr": "Préparation minutieuse",
     "nameEn": "Thorough Preparation",
@@ -2591,7 +2591,7 @@
     "iconUrl": "/images/costumes/icon_Dreydrin_004.webp"
    },
    {
-    "id": "cms2978bf00642lp2kue5c89e",
+    "id": "cmsfp5jli006k2mp2lie1lifb",
     "slug": "dreydrin-costume-134100305",
     "nameFr": "Défense solide",
     "nameEn": "Solid Defense",
@@ -4786,7 +4786,7 @@
   "bannerUrl": "/images/characters/banners/dreydrin.webp"
  },
  {
-  "id": "cms2976t4000a2lp26pk7fb3k",
+  "id": "cmsfp5hwg000a2mp2lgxoz8ib",
   "slug": "dreyfus",
   "nameFr": "Dreyfus",
   "nameEn": "Dreyfus",
@@ -4813,7 +4813,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf00722lp244vzxva7",
+    "id": "cmsfp5jli007i2mp2fzopousc",
     "slug": "dreyfus-costume-134101101",
     "nameFr": "Instructeur de combat à l'épée du royaume",
     "nameEn": "Kingdom Sword Art Instructor",
@@ -4828,7 +4828,7 @@
     "iconUrl": "/images/costumes/icon_Dreyfus_001.webp"
    },
    {
-    "id": "cms2978bf00732lp2yp438223",
+    "id": "cmsfp5jli007j2mp2gl2z9znt",
     "slug": "dreyfus-costume-134101102",
     "nameFr": "Majordome royal",
     "nameEn": "Royal Butler",
@@ -4888,7 +4888,7 @@
     "iconUrl": "/images/costumes/icon_Dreyfus_002.webp"
    },
    {
-    "id": "cms2978bf00742lp2re54m46t",
+    "id": "cmsfp5jli007k2mp2bufdzxfu",
     "slug": "dreyfus-costume-134101103",
     "nameFr": "Honneur au vieux soldat",
     "nameEn": "Old Soldier's Honor",
@@ -4952,7 +4952,7 @@
     "iconUrl": "/images/costumes/icon_Dreyfus_003.webp"
    },
    {
-    "id": "cms2978bf00752lp2ae874qfe",
+    "id": "cmsfp5jli007l2mp2oh35p10v",
     "slug": "dreyfus-costume-134101104",
     "nameFr": "Tenue modeste",
     "nameEn": "Simple Attire",
@@ -5016,7 +5016,7 @@
     "iconUrl": "/images/costumes/icon_Dreyfus_004.webp"
    },
    {
-    "id": "cms2978bf00762lp2r3pq283i",
+    "id": "cmsfp5jli007m2mp2abwip92u",
     "slug": "dreyfus-costume-134101105",
     "nameFr": "Chevalier honorable",
     "nameEn": "Honorable Knight",
@@ -5159,6 +5159,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 85
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 255
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 115
        },
@@ -5197,20 +5211,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 473
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 85
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 255
        }
       ]
      },
@@ -7211,7 +7211,7 @@
   "bannerUrl": "/images/characters/banners/dreyfus.webp"
  },
  {
-  "id": "cms2976t400052lp245b0l6oq",
+  "id": "cmsfp5hwg00052mp26uokstbu",
   "slug": "gil-thunder",
   "nameFr": "Gilthunder",
   "nameEn": "Gilthunder",
@@ -7238,7 +7238,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf006e2lp2a4a4l3r6",
+    "id": "cmsfp5jli006u2mp26p2eroxd",
     "slug": "gil-thunder-costume-134100601",
     "nameFr": "Jeune chevalier sacré",
     "nameEn": "Young Holy Knight",
@@ -7253,7 +7253,7 @@
     "iconUrl": "/images/costumes/icon_Gil_Thunder_001.webp"
    },
    {
-    "id": "cms2978bf006f2lp212l6ybj0",
+    "id": "cmsfp5jli006v2mp2e69ejagx",
     "slug": "gil-thunder-costume-134100602",
     "nameFr": "Chevalier sacré exemplaire",
     "nameEn": "Exemplary Holy Knight",
@@ -7313,7 +7313,7 @@
     "iconUrl": "/images/costumes/icon_Gil_Thunder_002.webp"
    },
    {
-    "id": "cms2978bf006g2lp2sjlszkti",
+    "id": "cmsfp5jli006w2mp26976ar2m",
     "slug": "gil-thunder-costume-134100603",
     "nameFr": "Chevalier sacré de la foudre",
     "nameEn": "Holy Knight of Lightning",
@@ -7377,7 +7377,7 @@
     "iconUrl": "/images/costumes/icon_Gil_Thunder_003.webp"
    },
    {
-    "id": "cms2978bf006h2lp2eshoygly",
+    "id": "cmsfp5jli006x2mp25hmlm8er",
     "slug": "gil-thunder-costume-134100604",
     "nameFr": "Aventure exemplaire",
     "nameEn": "Exemplary Adventure",
@@ -7441,7 +7441,7 @@
     "iconUrl": "/images/costumes/icon_Gil_Thunder_004.webp"
    },
    {
-    "id": "cms2978bf006i2lp2npd20rwg",
+    "id": "cmsfp5jli006y2mp29k58myjr",
     "slug": "gil-thunder-costume-134100605",
     "nameFr": "Chevalier sacré prometteur",
     "nameEn": "Promising Holy Knight",
@@ -9636,7 +9636,7 @@
   "bannerUrl": "/images/characters/banners/gil-thunder.webp"
  },
  {
-  "id": "cms2976t4000d2lp2dyglto7l",
+  "id": "cmsfp5hwg000d2mp22zikdsc5",
   "slug": "griamore",
   "nameFr": "Griamor",
   "nameEn": "Griamore",
@@ -9663,7 +9663,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf007h2lp2gx8tjtwu",
+    "id": "cmsfp5jlj007x2mp2p3nke9te",
     "slug": "griamore-costume-134101401",
     "nameFr": "Chevalier gardien de la princesse",
     "nameEn": "Princess's Guardian Knight",
@@ -9678,7 +9678,7 @@
     "iconUrl": "/images/costumes/icon_Griamore_001.webp"
    },
    {
-    "id": "cms2978bf007i2lp2fmlnw7sl",
+    "id": "cmsfp5jlj007y2mp2gn8imfrq",
     "slug": "griamore-costume-134101402",
     "nameFr": "Sortie décontractée",
     "nameEn": "Casual Outing",
@@ -9738,7 +9738,7 @@
     "iconUrl": "/images/costumes/icon_Griamore_002.webp"
    },
    {
-    "id": "cms2978bf007j2lp25rw5cnpd",
+    "id": "cmsfp5jlj007z2mp206oox0h4",
     "slug": "griamore-costume-134101403",
     "nameFr": "Chevalier sacré du mur de fer",
     "nameEn": "Holy Knight of the Iron Wall",
@@ -9802,7 +9802,7 @@
     "iconUrl": "/images/costumes/icon_Griamore_003.webp"
    },
    {
-    "id": "cms2978bf007k2lp2qcjvp19d",
+    "id": "cmsfp5jlj00802mp283wgiuka",
     "slug": "griamore-costume-134101404",
     "nameFr": "Barricade de fortune",
     "nameEn": "Makeshift Barricade",
@@ -11997,7 +11997,7 @@
   "bannerUrl": "/images/characters/banners/griamore.webp"
  },
  {
-  "id": "cms2976t400032lp2yhnugt8b",
+  "id": "cmsfp5hwg00032mp23bcgowyx",
   "slug": "howzer",
   "nameFr": "Hauser",
   "nameEn": "Howzer",
@@ -12024,7 +12024,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf00652lp2yim5ii9j",
+    "id": "cmsfp5jli006l2mp2ytstxrzi",
     "slug": "howzer-costume-134100401",
     "nameFr": "Grand maître digne de confiance",
     "nameEn": "Trusted Grandmaster",
@@ -12039,7 +12039,7 @@
     "iconUrl": "/images/costumes/icon_Howzer_001.webp"
    },
    {
-    "id": "cms2978bf00662lp2sgm8sxx0",
+    "id": "cmsfp5jli006m2mp2b14baqjk",
     "slug": "howzer-costume-134100402",
     "nameFr": "Choppe de bière de la fin des temps",
     "nameEn": "End-of-Day Mug of Ale",
@@ -12099,7 +12099,7 @@
     "iconUrl": "/images/costumes/icon_Howzer_002.webp"
    },
    {
-    "id": "cms2978bf00672lp2gvhs5fgr",
+    "id": "cmsfp5jli006n2mp2ay2w3ll5",
     "slug": "howzer-costume-134100403",
     "nameFr": "Chevalier sacré de la tempête",
     "nameEn": "Holy Knight of Storms",
@@ -12163,7 +12163,7 @@
     "iconUrl": "/images/costumes/icon_Howzer_003.webp"
    },
    {
-    "id": "cms2978bf00682lp2ttaia5mf",
+    "id": "cmsfp5jli006o2mp2qvx2e5hf",
     "slug": "howzer-costume-134100404",
     "nameFr": "Aventure en toute sécurité",
     "nameEn": "Secure Adventure",
@@ -12802,20 +12802,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 85
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 30
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 79
        },
@@ -12840,6 +12826,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 333
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 85
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 30
        }
       ]
      },
@@ -13298,6 +13298,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 60
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 225
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 110
        },
@@ -13336,20 +13350,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 525
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 60
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 225
        }
       ]
      },
@@ -14358,7 +14358,7 @@
   "bannerUrl": "/images/characters/banners/howzer.webp"
  },
  {
-  "id": "cms2976t4000b2lp2w4icbjrh",
+  "id": "cmsfp5hwg000b2mp2g7k7r6dk",
   "slug": "hendrickson",
   "nameFr": "Hendrickson",
   "nameEn": "Hendrickson",
@@ -14385,7 +14385,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf00772lp2fyvc6qy7",
+    "id": "cmsfp5jli007n2mp27g3qzbgk",
     "slug": "hendrickson-costume-134101201",
     "nameFr": "Apothicaire de Liones",
     "nameEn": "Liones Apothecary",
@@ -14400,7 +14400,7 @@
     "iconUrl": "/images/costumes/icon_Hendrickson_001.webp"
    },
    {
-    "id": "cms2978bf00782lp2iekakd61",
+    "id": "cmsfp5jli007o2mp2jzt42jdc",
     "slug": "hendrickson-costume-134101202",
     "nameFr": "Gris romantique",
     "nameEn": "Romantic Gray",
@@ -14460,7 +14460,7 @@
     "iconUrl": "/images/costumes/icon_Hendrickson_002.webp"
    },
    {
-    "id": "cms2978bf007a2lp2yx76jvuc",
+    "id": "cmsfp5jli007q2mp2adxbjnhv",
     "slug": "hendrickson-costume-134101204",
     "nameFr": "Vêtements de travail de l'apothicaire",
     "nameEn": "Apothecary's Workwear",
@@ -14524,7 +14524,7 @@
     "iconUrl": "/images/costumes/icon_Hendrickson_004.webp"
    },
    {
-    "id": "cms2978bf007b2lp28aoqj7zc",
+    "id": "cmsfp5jli007r2mp2vmk4jstp",
     "slug": "hendrickson-costume-134101205",
     "nameFr": "Retour du Chevalier Sacré",
     "nameEn": "Returned Holy Knight",
@@ -14588,7 +14588,7 @@
     "iconUrl": "/images/costumes/icon_Hendrickson_005.webp"
    },
    {
-    "id": "cms2978bf00792lp2zm1b80zv",
+    "id": "cmsfp5jli007p2mp273jdxnrk",
     "slug": "hendrickson-costume-134101203",
     "nameFr": "Une tenue de jeunesse",
     "nameEn": "A Suit From Younger Days",
@@ -15227,20 +15227,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 90
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 30
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 83
        },
@@ -15265,6 +15251,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 298
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 90
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 30
        }
       ]
      },
@@ -16783,7 +16783,7 @@
   "bannerUrl": "/images/characters/banners/hendrickson.webp"
  },
  {
-  "id": "cms2976t4000c2lp2mifa94fp",
+  "id": "cmsfp5hwg000c2mp2z3hzojxf",
   "slug": "slader",
   "nameFr": "Slader",
   "nameEn": "Slater",
@@ -16810,7 +16810,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf007c2lp24hsyvfje",
+    "id": "cmsfp5jli007s2mp2glnis3jp",
     "slug": "slader-costume-134101301",
     "nameFr": "Chevalier sacré vétéran",
     "nameEn": "Veteran Holy Knight",
@@ -16825,7 +16825,7 @@
     "iconUrl": "/images/costumes/icon_Slader_001.webp"
    },
    {
-    "id": "cms2978bf007d2lp2i3n2c979",
+    "id": "cmsfp5jli007t2mp2oklr70tf",
     "slug": "slader-costume-134101302",
     "nameFr": "Ami loyal",
     "nameEn": "Loyal Friend",
@@ -16885,7 +16885,7 @@
     "iconUrl": "/images/costumes/icon_Slader_002.webp"
    },
    {
-    "id": "cms2978bf007e2lp2sz82m4kp",
+    "id": "cmsfp5jli007u2mp2zxvyroc7",
     "slug": "slader-costume-134101303",
     "nameFr": "Épée du vieux roi",
     "nameEn": "Sword of the Old King",
@@ -16949,7 +16949,7 @@
     "iconUrl": "/images/costumes/icon_Slader_003.webp"
    },
    {
-    "id": "cms2978bf007f2lp25y9kki5e",
+    "id": "cmsfp5jli007v2mp2m74u9ia7",
     "slug": "slader-costume-134101304",
     "nameFr": "Mission secrète",
     "nameEn": "Secret Mission",
@@ -17013,7 +17013,7 @@
     "iconUrl": "/images/costumes/icon_Slader_004.webp"
    },
    {
-    "id": "cms2978bf007g2lp2pd4fw4sz",
+    "id": "cmsfp5jli007w2mp2msvdkvxt",
     "slug": "slader-costume-134101305",
     "nameFr": "Préparation totale",
     "nameEn": "Total Readiness",
@@ -19208,7 +19208,7 @@
   "bannerUrl": "/images/characters/banners/slader.webp"
  },
  {
-  "id": "cms2976t400012lp2c7cy5v4i",
+  "id": "cmsfp5hwg00012mp23wihuz9m",
   "slug": "tioreh",
   "nameFr": "Tioré",
   "nameEn": "Tioreh",
@@ -19235,7 +19235,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf005v2lp2j8y33puv",
+    "id": "cmsfp5jli006b2mp20uqqjgi9",
     "slug": "tioreh-costume-134100201",
     "nameFr": "Fée adorable",
     "nameEn": "Adorable Fairy",
@@ -19250,7 +19250,7 @@
     "iconUrl": "/images/costumes/icon_Tioreh_001.webp"
    },
    {
-    "id": "cms2978bf005w2lp288ede1gf",
+    "id": "cmsfp5jli006c2mp201todewb",
     "slug": "tioreh-costume-134100202",
     "nameFr": "Sortie décontractée",
     "nameEn": "Casual Outing",
@@ -19310,7 +19310,7 @@
     "iconUrl": "/images/costumes/icon_Tioreh_002.webp"
    },
    {
-    "id": "cms2978bf005x2lp22n3y0bv9",
+    "id": "cmsfp5jli006d2mp29awnnjfp",
     "slug": "tioreh-costume-134100203",
     "nameFr": "Fille de la forêt et de la terre",
     "nameEn": "Daughter of the Forest and Earth",
@@ -19374,7 +19374,7 @@
     "iconUrl": "/images/costumes/icon_Tioreh_003.webp"
    },
    {
-    "id": "cms2978bf005y2lp2hegz045s",
+    "id": "cmsfp5jli006e2mp2djcavkht",
     "slug": "tioreh-costume-134100204",
     "nameFr": "Début de l'aventure",
     "nameEn": "Adventure's Beginning",
@@ -19438,7 +19438,7 @@
     "iconUrl": "/images/costumes/icon_Tioreh_004.webp"
    },
    {
-    "id": "cms2978bf005z2lp2xc80eafo",
+    "id": "cmsfp5jli006f2mp2929w1c7d",
     "slug": "tioreh-costume-134100205",
     "nameFr": "Protection de la fée",
     "nameEn": "Fairy's Protection",
@@ -19581,6 +19581,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 105
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 390
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 85
        },
@@ -19619,20 +19633,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 333
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 105
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 390
        }
       ]
      },
@@ -20573,20 +20573,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 90
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 30
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 83
        },
@@ -20651,6 +20637,20 @@
        {
         "stat": "A_Block",
         "value": 8
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 90
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 30
        }
       ]
      }
@@ -21633,7 +21633,7 @@
   "bannerUrl": "/images/characters/banners/tioreh.webp"
  },
  {
-  "id": "cms2976t400002lp2grvqpowg",
+  "id": "cmsfp5hwg00002mp2e3xjc1pb",
   "slug": "tristan",
   "nameFr": "Tristan",
   "nameEn": "Tristan",
@@ -21660,7 +21660,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf005p2lp270agqt5v",
+    "id": "cmsfp5jli00652mp26qizqxwu",
     "slug": "tristan-costume-134100101",
     "nameFr": "Petit prince",
     "nameEn": "Little Prince",
@@ -21675,7 +21675,7 @@
     "iconUrl": "/images/costumes/icon_Tristan_001.webp"
    },
    {
-    "id": "cms2978bf005q2lp2u1d9f9zp",
+    "id": "cmsfp5jli00662mp2ef2nbv99",
     "slug": "tristan-costume-134100100",
     "nameFr": "Tenue d'entraînement de prince",
     "nameEn": "Prince's Training Outfit",
@@ -21711,7 +21711,7 @@
     "iconUrl": "/images/costumes/icon_Tristan_006.webp"
    },
    {
-    "id": "cms2978bf005r2lp2452oh9f9",
+    "id": "cmsfp5jli00672mp2835y49sk",
     "slug": "tristan-costume-134100102",
     "nameFr": "Tenue de cérémonie",
     "nameEn": "Formal Attire",
@@ -21771,7 +21771,7 @@
     "iconUrl": "/images/costumes/icon_Tristan_002.webp"
    },
    {
-    "id": "cms2978bf005s2lp2bw4yhex4",
+    "id": "cmsfp5jli00682mp208d3trwh",
     "slug": "tristan-costume-134100103",
     "nameFr": "Dignité royale",
     "nameEn": "Royal Dignity",
@@ -21835,7 +21835,7 @@
     "iconUrl": "/images/costumes/icon_Tristan_003.webp"
    },
    {
-    "id": "cms2978bf005t2lp2pc41p58z",
+    "id": "cmsfp5jli00692mp27p4oensz",
     "slug": "tristan-costume-134100104",
     "nameFr": "Aventure du prince",
     "nameEn": "Prince's Adventure",
@@ -21899,7 +21899,7 @@
     "iconUrl": "/images/costumes/icon_Tristan_004.webp"
    },
    {
-    "id": "cms2978bf005u2lp2m1gkp4qk",
+    "id": "cmsfp5jli006a2mp24nlyq4du",
     "slug": "tristan-costume-134100105",
     "nameFr": "Vœu du prince",
     "nameEn": "Prince's Vow",
@@ -24094,7 +24094,7 @@
   "bannerUrl": "/images/characters/banners/tristan.webp"
  },
  {
-  "id": "cms2976t4000m2lp23tmw2a0k",
+  "id": "cmsfp5hwh000n2mp2ois581d5",
   "slug": "klotho",
   "nameFr": "Clotho",
   "nameEn": "Clotho",
@@ -24121,7 +24121,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bg008p2lp2j1od7ov3",
+    "id": "cmsfp5jlj00992mp2j64g9ryw",
     "slug": "klotho-costume-134102701",
     "nameFr": "Uniforme d'exploratrice",
     "nameEn": "Explorer's Uniform",
@@ -24136,7 +24136,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_001.webp"
    },
    {
-    "id": "cms2978bg008q2lp26q14aety",
+    "id": "cmsfp5jlj009a2mp2eqy72b4w",
     "slug": "klotho-costume-134102702",
     "nameFr": "Tenue de fête légère",
     "nameEn": "Light Party Outfit",
@@ -24200,7 +24200,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_002.webp"
    },
    {
-    "id": "cms2978bg008r2lp281ye6nkz",
+    "id": "cmsfp5jlj009b2mp2nyrktrwn",
     "slug": "klotho-costume-134102703",
     "nameFr": "Formalité de l'érudite en chef",
     "nameEn": "Head Scholar's Formality",
@@ -24264,7 +24264,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_003.webp"
    },
    {
-    "id": "cms2978bg008s2lp2lr661s98",
+    "id": "cmsfp5jlj009c2mp2um5usk25",
     "slug": "klotho-costume-134102704",
     "nameFr": "Tenue d'exercice d'exploratrice",
     "nameEn": "Explorer's Activewear",
@@ -24328,7 +24328,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_004.webp"
    },
    {
-    "id": "cms2978bg008t2lp25iw3ue65",
+    "id": "cmsfp5jlj009d2mp25a91qrob",
     "slug": "klotho-costume-134102705",
     "nameFr": "Jeu de la lune à l'aube",
     "nameEn": "Dawn Moon's Play",
@@ -24343,7 +24343,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_005.webp"
    },
    {
-    "id": "cms2978bg008u2lp20bhmshf4",
+    "id": "cmsfp5jlj009e2mp2gs2u9n5d",
     "slug": "klotho-costume-134102706",
     "nameFr": "Ombre étoilée",
     "nameEn": "Starlight Shadow",
@@ -24358,7 +24358,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_006.webp"
    },
    {
-    "id": "cms2978bf005m2lp2610o6r6u",
+    "id": "cmsfp5jli00612mp28zgwghyj",
     "slug": "klotho-costume-135102701",
     "nameFr": "Épée sacrée Sephiora",
     "nameEn": "Sacred Sword Sephiora",
@@ -24452,6 +24452,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 180
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 608
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 135
        },
@@ -24490,20 +24504,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 447
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 180
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 608
        }
       ]
      },
@@ -25444,20 +25444,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 173
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 42
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 90
        },
@@ -25482,6 +25468,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 709
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 173
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 42
        }
       ]
      },
@@ -26504,7 +26504,7 @@
   "bannerUrl": "/images/characters/banners/klotho.webp"
  },
  {
-  "id": "cms2976t4000n2lp2pd8frrtt",
+  "id": "cmsfp5hwh000o2mp259et28gm",
   "slug": "daisy",
   "nameFr": "Daisy",
   "nameEn": "Daisy",
@@ -26531,7 +26531,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bg008v2lp27aqaaru6",
+    "id": "cmsfp5jlj009f2mp22w15wswb",
     "slug": "daisy-costume-134102801",
     "nameFr": "Fée du passé",
     "nameEn": "Fairy of the Past",
@@ -26546,7 +26546,7 @@
     "iconUrl": "/images/costumes/icon_Daisy_001.webp"
    },
    {
-    "id": "cms2978bg008w2lp2wisr4a29",
+    "id": "cmsfp5jlj009g2mp2nqzrctek",
     "slug": "daisy-costume-134102802",
     "nameFr": "Petite exploratrice",
     "nameEn": "Small Explorer",
@@ -26610,7 +26610,7 @@
     "iconUrl": "/images/costumes/icon_Daisy_002.webp"
    },
    {
-    "id": "cms2978bg008x2lp26109tscc",
+    "id": "cmsfp5jlj009h2mp2a4r1hxcq",
     "slug": "daisy-costume-134102803",
     "nameFr": "Senteur d'automne",
     "nameEn": "Autumn Scent",
@@ -26625,7 +26625,7 @@
     "iconUrl": "/images/costumes/icon_Daisy_003.webp"
    },
    {
-    "id": "cms2978bg008y2lp27ariqp9w",
+    "id": "cmsfp5jlj009i2mp2f5m6gi70",
     "slug": "daisy-costume-134102804",
     "nameFr": "Souffle d'exploration",
     "nameEn": "Spirit of Exploration",
@@ -26689,7 +26689,7 @@
     "iconUrl": "/images/costumes/icon_Daisy_004.webp"
    },
    {
-    "id": "cms2978bg008z2lp2k9qdzlaz",
+    "id": "cmsfp5jlj009j2mp2sgqm3l9e",
     "slug": "daisy-costume-134102805",
     "nameFr": "Robe de printemps",
     "nameEn": "Spring Robe",
@@ -26753,7 +26753,7 @@
     "iconUrl": "/images/costumes/icon_Daisy_005.webp"
    },
    {
-    "id": "cms2978bf005n2lp2owj3p13t",
+    "id": "cmsfp5jli00622mp2q6jp5jrt",
     "slug": "daisy-costume-135102801",
     "nameFr": "Clé temporelle",
     "nameEn": "Key of Time",
@@ -28899,7 +28899,1948 @@
   "bannerUrl": "/images/characters/banners/daisy.webp"
  },
  {
-  "id": "cms2976t4000i2lp2s0cg14q1",
+  "id": "cmsfp5hwg000j2mp2msmtx53k",
+  "slug": "derieri",
+  "nameFr": "Derrierie",
+  "nameEn": "Derieri",
+  "element": "DARK",
+  "rarity": "SSR",
+  "role": "ATTACKER",
+  "portraitUrl": "/images/characters/derieri.webp",
+  "weaponSlots": [
+   {
+    "role": "Attacker",
+    "weapon": "Gauntlets",
+    "element": "Dark"
+   },
+   {
+    "role": "Supporter",
+    "weapon": "Sword2h",
+    "element": "Fire"
+   },
+   {
+    "role": "Supporter",
+    "weapon": "Axe",
+    "element": "Dark"
+   }
+  ],
+  "costumes": [
+   {
+    "id": "cmsfp5jlj008o2mp2ui67mi4b",
+    "slug": "derieri-costume-134102001",
+    "nameFr": "Derrierie de la 「Pureté」",
+    "nameEn": "Derieri of 「Purity」",
+    "effectNameFr": "Tenue de base",
+    "effectNameEn": "Basic Outfit",
+    "effectDescFr": "Costume d'antan de Derrierie. C'est une tenue élégante qui reflète sa personnalité affirmée.",
+    "effectDescEn": "A skin for Derieri from the past. A stylish outfit that matches her outspoken personality.",
+    "rarity": "R",
+    "engravingPassives": null,
+    "bindingMaterials": null,
+    "itemGameId": "134102001",
+    "iconUrl": "/images/costumes/icon_Derieri_001.webp"
+   },
+   {
+    "id": "cmsfp5jlj008p2mp2p43vyk7e",
+    "slug": "derieri-costume-134102002",
+    "nameFr": "Résistance et révolution",
+    "nameEn": "Resistance and Revolution",
+    "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé de Derrierie",
+    "effectNameEn": "Unlocks upon acquiring Derieri's Engraved Equipment",
+    "effectDescFr": "Costume d'antan de Derrierie. Briser les conventions, c'est l'essence même de la résistance.",
+    "effectDescEn": "A skin for Derieri from the past. Breaking from the norm is the true spirit of resistance.",
+    "rarity": "SSR",
+    "engravingPassives": [
+     {
+      "id": "EpEq_Derieri_B",
+      "icon": "equippassive_equip_derieri_b_ssr",
+      "levels": [
+       {
+        "level": 1,
+        "descEn": "Each Darkness hit on an enemy while [#0F5CD8]Strike Combo[-] is active has a [#1A7331]25%[-] chance to inflict additional damage equal to [#1A7331]20%[-] of Attack and additionally grant [#0F5CD8]Strike Combo[-] for [#1A7331]5 sec[-].\nUsing the Special Attack increases the Ultimate Move's [#0F5CD8]Crit Chance[-] by [#1A7331]12%[-] and [#0F5CD8]Crit Damage[-] by [#1A7331]12%[-] for [#1A7331]7 sec[-].",
+        "descFr": "Chaque attaque des Ténèbres portée sur un ennemi lorsque l'effet [#0F5CD8]Combo de coups[-] est actif a [#1A7331]25%[-] de chances d'infliger des dégâts supplémentaires égaux à [#1A7331]20%[-] de l'attaque et d'octroyer un autre effet [#0F5CD8]Combo de coups[-] pendant [#1A7331]5 s[-].\nUtiliser l'attaque spéciale augmente les [#0F5CD8]chances crit.[-] d'attaque ultime de [#1A7331]12%[-] et les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]12%[-] pendant [#1A7331]7 s[-]."
+       },
+       {
+        "level": 2,
+        "descEn": "Each Darkness hit on an enemy while [#0F5CD8]Strike Combo[-] is active has a [#1A7331]30%[-] chance to inflict additional damage equal to [#1A7331]20%[-] of Attack and additionally grant [#0F5CD8]Strike Combo[-] for [#1A7331]5 sec[-].\nUsing the Special Attack increases the Ultimate Move's [#0F5CD8]Crit Chance[-] by [#1A7331]16%[-] and [#0F5CD8]Crit Damage[-] by [#1A7331]16%[-] for [#1A7331]7 sec[-].",
+        "descFr": "Chaque attaque des Ténèbres portée sur un ennemi lorsque l'effet [#0F5CD8]Combo de coups[-] est actif a [#1A7331]30%[-] de chances d'infliger des dégâts supplémentaires égaux à [#1A7331]20%[-] de l'attaque et d'octroyer un autre effet [#0F5CD8]Combo de coups[-] pendant [#1A7331]5 s[-].\nUtiliser l'attaque spéciale augmente les [#0F5CD8]chances crit.[-] d'attaque ultime de [#1A7331]16%[-] et les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]16%[-] pendant [#1A7331]7 s[-]."
+       },
+       {
+        "level": 3,
+        "descEn": "Each Darkness hit on an enemy while [#0F5CD8]Strike Combo[-] is active has a [#1A7331]35%[-] chance to inflict additional damage equal to [#1A7331]20%[-] of Attack and additionally grant [#0F5CD8]Strike Combo[-] for [#1A7331]5 sec[-].\nUsing the Special Attack increases the Ultimate Move's [#0F5CD8]Crit Chance[-] by [#1A7331]20%[-] and [#0F5CD8]Crit Damage[-] by [#1A7331]20%[-] for [#1A7331]7 sec[-].",
+        "descFr": "Chaque attaque des Ténèbres portée sur un ennemi lorsque l'effet [#0F5CD8]Combo de coups[-] est actif a [#1A7331]35%[-] de chances d'infliger des dégâts supplémentaires égaux à [#1A7331]20%[-] de l'attaque et d'octroyer un autre effet [#0F5CD8]Combo de coups[-] pendant [#1A7331]5 s[-].\nUtiliser l'attaque spéciale augmente les [#0F5CD8]chances crit.[-] d'attaque ultime de [#1A7331]20%[-] et les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]20%[-] pendant [#1A7331]7 s[-]."
+       }
+      ],
+      "nameEn": "Two Fists of Darkness",
+      "nameFr": "Double poing des Ténèbres"
+     }
+    ],
+    "bindingMaterials": [
+     {
+      "itemId": "132124030",
+      "quantity": 1
+     },
+     {
+      "itemId": "132224030",
+      "quantity": 1
+     },
+     {
+      "itemId": "132324030",
+      "quantity": 1
+     },
+     {
+      "itemId": "132424030",
+      "quantity": 1
+     },
+     {
+      "itemId": "101100102",
+      "quantity": 1
+     },
+     {
+      "itemId": "101120297",
+      "quantity": 1
+     }
+    ],
+    "itemGameId": "133414001",
+    "iconUrl": "/images/costumes/icon_Derieri_002.webp"
+   },
+   {
+    "id": "cmsfp5jlj008q2mp2hjkiq2l3",
+    "slug": "derieri-costume-134102003",
+    "nameFr": "Flamme rouge du royaume des démons",
+    "nameEn": "Red Flame of the Demon Realm",
+    "effectNameFr": "Se débloque en obtenant une récompense spécifique de tirage de skin exclusif.",
+    "effectNameEn": "Unlocks upon obtaining a specific Exclusive Skin Draw reward.",
+    "effectDescFr": "Costume d'antan de Derrierie. Sa conception allie robustesse et liberté de mouvement, un atout majeur en combat.",
+    "effectDescEn": "A skin for Derieri from the past. The sturdy but unobstructive design is a big plus in combat.",
+    "rarity": "SSR",
+    "engravingPassives": null,
+    "bindingMaterials": null,
+    "itemGameId": "134102003",
+    "iconUrl": "/images/costumes/icon_Derieri_003.webp"
+   },
+   {
+    "id": "cmsfp5jlj008r2mp2t29zp9j8",
+    "slug": "derieri-costume-134102004",
+    "nameFr": "Courtoisie minimale",
+    "nameEn": "Minimal Courtesy",
+    "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé de Derrierie",
+    "effectNameEn": "Unlocks upon acquiring Derieri's Engraved Equipment",
+    "effectDescFr": "Costume d'antan de Derrierie.\nMême elle doit parfois faire preuve d'un brin de courtoisie.",
+    "effectDescEn": "A skin for Derieri from the past. Sometimes, even she must show a little bit of courtesy.",
+    "rarity": "SSR",
+    "engravingPassives": [
+     {
+      "id": "EpEq_Derieri_C",
+      "icon": "equippassive_equip_derieri_c_ssr",
+      "levels": [
+       {
+        "level": 1,
+        "descEn": "While a [#0F5CD8]Max HP[-] boost is active on the hero, each hit on an enemy increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]3%[-] for [#1A7331]30 sec[-]. (Max: [#1A7331]18%[-])\nIncreases all allied Fire heroes' [#0F5CD8]Crit Damage[-] dealt to enemies with reduced [#0F5CD8]Fire Defense[-] by [#1A7331]24%[-].",
+        "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]3%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]18%[-])\nAugmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Feu avec une [#0F5CD8]défense de Feu[-] réduite de [#1A7331]24%[-]."
+       },
+       {
+        "level": 2,
+        "descEn": "While a [#0F5CD8]Max HP[-] boost is active on the hero, each hit on an enemy increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]4%[-] for [#1A7331]30 sec[-]. (Max: [#1A7331]24%[-])\nIncreases all allied Fire heroes' [#0F5CD8]Crit Damage[-] dealt to enemies with reduced [#0F5CD8]Fire Defense[-] by [#1A7331]32%[-].",
+        "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]4%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]24%[-])\nAugmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Feu avec une [#0F5CD8]défense de Feu[-] réduite de [#1A7331]32%[-]."
+       },
+       {
+        "level": 3,
+        "descEn": "While a [#0F5CD8]Max HP[-] boost is active on the hero, each hit on an enemy increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]5%[-] for [#1A7331]30 sec[-]. (Max: [#1A7331]30%[-])\nIncreases all allied Fire heroes' [#0F5CD8]Crit Damage[-] dealt to enemies with reduced [#0F5CD8]Fire Defense[-] by [#1A7331]40%[-].",
+        "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]5%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]30%[-])\nAugmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Feu avec une [#0F5CD8]défense de Feu[-] réduite de [#1A7331]40%[-]."
+       }
+      ],
+      "nameEn": "Burning Spirit",
+      "nameFr": "Esprit ardent"
+     }
+    ],
+    "bindingMaterials": [
+     {
+      "itemId": "132134026",
+      "quantity": 1
+     },
+     {
+      "itemId": "132234026",
+      "quantity": 1
+     },
+     {
+      "itemId": "132334026",
+      "quantity": 1
+     },
+     {
+      "itemId": "132434026",
+      "quantity": 1
+     },
+     {
+      "itemId": "101100102",
+      "quantity": 1
+     },
+     {
+      "itemId": "101120297",
+      "quantity": 1
+     }
+    ],
+    "itemGameId": "133415002",
+    "iconUrl": "/images/costumes/icon_Derieri_004.webp"
+   },
+   {
+    "id": "cmsfp5jli00642mp2fp9z6qme",
+    "slug": "derieri-costume-135102001",
+    "nameFr": "Gantelets démoniaques Derrakin",
+    "nameEn": "Demon Gauntlets Derrakin",
+    "effectNameFr": "Se débloque en obtenant une récompense spécifique de tirage de skin exclusif.",
+    "effectNameEn": "Unlocks upon obtaining a specific Exclusive Skin Draw reward.",
+    "effectDescFr": "Des gantelets magiques forgés avec les écailles d'une bête du purgatoire et le miasme du royaume des démons. Ils sont assez solides pour endurer la puissance de l'attaque « Étoile combo » de Derrierie.\nApparence uniquement, aucun effet supplémentaire.",
+    "effectDescEn": "Magic gauntlets forged from the scales of a Purgatory beast and the miasma of the Demon Realm. They are sturdy enough to withstand the power of Derieri's \"Combo Star.\"\nAppearance only, no additional effects.",
+    "rarity": "SSR",
+    "engravingPassives": null,
+    "bindingMaterials": null,
+    "itemGameId": "135102001",
+    "iconUrl": "/images/costumes/Short_Costume_Derieri_Gauntlets_0001.webp"
+   }
+  ],
+  "weaponMasteries": [
+   {
+    "weaponType": "Axe",
+    "level": 1,
+    "subLevels": [
+     {
+      "exp": 18750,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 102
+       }
+      ]
+     },
+     {
+      "exp": 37500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 95
+       }
+      ]
+     },
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 264
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": []
+     }
+    ]
+   },
+   {
+    "weaponType": "Axe",
+    "level": 2,
+    "subLevels": [
+     {
+      "exp": 28125,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 153
+       }
+      ]
+     },
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 142
+       }
+      ]
+     },
+     {
+      "exp": 84375,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 396
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 128
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 119
+       },
+       {
+        "stat": "A_Block",
+        "value": 25
+       },
+       {
+        "stat": "B_MaxHp",
+        "value": 330
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Rate",
+        "value": 192
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 499
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 158
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 585
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 12
+       },
+       {
+        "stat": "A_Block",
+        "value": 9
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Axe",
+    "level": 3,
+    "subLevels": [
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 204
+       }
+      ]
+     },
+     {
+      "exp": 112500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 189
+       }
+      ]
+     },
+     {
+      "exp": 168750,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 528
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 178
+       },
+       {
+        "stat": "C_Critical_Rate",
+        "value": 287
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 192
+       },
+       {
+        "stat": "A_Block",
+        "value": 32
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "A_Accuracy",
+        "value": 45
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 878
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 495
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 237
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 749
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 15
+       },
+       {
+        "stat": "A_Block",
+        "value": 13
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Axe",
+    "level": 4,
+    "subLevels": [
+     {
+      "exp": 168750,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 255
+       }
+      ]
+     },
+     {
+      "exp": 337500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 237
+       }
+      ]
+     },
+     {
+      "exp": 506250,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 660
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 998
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 1170
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 255
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 315
+       },
+       {
+        "stat": "A_Block",
+        "value": 39
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 660
+       },
+       {
+        "stat": "C_Critical_Rate",
+        "value": 383
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 237
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 56
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 25
+       },
+       {
+        "stat": "A_Block",
+        "value": 20
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Axe",
+    "level": 5,
+    "subLevels": [],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 825
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 1247
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Rate",
+        "value": 479
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 66
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 297
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 394
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 1463
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 319
+       },
+       {
+        "stat": "A_Block",
+        "value": 46
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 46
+       },
+       {
+        "stat": "A_Block",
+        "value": 38
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Gauntlets",
+    "level": 1,
+    "subLevels": [
+     {
+      "exp": 18750,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 132
+       }
+      ]
+     },
+     {
+      "exp": 37500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 72
+       }
+      ]
+     },
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 192
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": []
+     }
+    ]
+   },
+   {
+    "weaponType": "Gauntlets",
+    "level": 2,
+    "subLevels": [
+     {
+      "exp": 28125,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 198
+       }
+      ]
+     },
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 108
+       }
+      ]
+     },
+     {
+      "exp": 84375,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 288
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 90
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 338
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 165
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 37
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 90
+       },
+       {
+        "stat": "A_Block",
+        "value": 21
+       },
+       {
+        "stat": "B_MaxHp",
+        "value": 240
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Rate",
+        "value": 338
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 788
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 13
+       },
+       {
+        "stat": "A_Block",
+        "value": 8
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Gauntlets",
+    "level": 3,
+    "subLevels": [
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 264
+       }
+      ]
+     },
+     {
+      "exp": 112500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 144
+       }
+      ]
+     },
+     {
+      "exp": 168750,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 384
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 136
+       },
+       {
+        "stat": "C_Critical_Rate",
+        "value": 507
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 248
+       },
+       {
+        "stat": "A_Block",
+        "value": 27
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "A_Accuracy",
+        "value": 48
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 507
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 360
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 135
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 1182
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 16
+       },
+       {
+        "stat": "A_Block",
+        "value": 11
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Gauntlets",
+    "level": 4,
+    "subLevels": [
+     {
+      "exp": 168750,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 330
+       }
+      ]
+     },
+     {
+      "exp": 337500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 180
+       }
+      ]
+     },
+     {
+      "exp": 506250,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 480
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 1575
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 675
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 330
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 180
+       },
+       {
+        "stat": "A_Block",
+        "value": 34
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 480
+       },
+       {
+        "stat": "C_Critical_Rate",
+        "value": 675
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 180
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 58
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 26
+       },
+       {
+        "stat": "A_Block",
+        "value": 17
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Gauntlets",
+    "level": 5,
+    "subLevels": [],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 600
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 1969
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Rate",
+        "value": 844
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 69
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 226
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 225
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 844
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 413
+       },
+       {
+        "stat": "A_Block",
+        "value": 40
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 49
+       },
+       {
+        "stat": "A_Block",
+        "value": 33
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Sword2h",
+    "level": 1,
+    "subLevels": [
+     {
+      "exp": 18750,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 102
+       }
+      ]
+     },
+     {
+      "exp": 37500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 95
+       }
+      ]
+     },
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 264
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": []
+     }
+    ]
+   },
+   {
+    "weaponType": "Sword2h",
+    "level": 2,
+    "subLevels": [
+     {
+      "exp": 28125,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 153
+       }
+      ]
+     },
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 142
+       }
+      ]
+     },
+     {
+      "exp": 84375,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 396
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 119
+       },
+       {
+        "stat": "A_Block",
+        "value": 25
+       },
+       {
+        "stat": "B_MaxHp",
+        "value": 330
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Rate",
+        "value": 192
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 499
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 128
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 158
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 585
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 12
+       },
+       {
+        "stat": "A_Block",
+        "value": 9
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Sword2h",
+    "level": 3,
+    "subLevels": [
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 204
+       }
+      ]
+     },
+     {
+      "exp": 112500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 189
+       }
+      ]
+     },
+     {
+      "exp": 168750,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 528
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 178
+       },
+       {
+        "stat": "C_Critical_Rate",
+        "value": 287
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 192
+       },
+       {
+        "stat": "A_Block",
+        "value": 32
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "A_Accuracy",
+        "value": 45
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 878
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 495
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 237
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 749
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 15
+       },
+       {
+        "stat": "A_Block",
+        "value": 13
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Sword2h",
+    "level": 4,
+    "subLevels": [
+     {
+      "exp": 168750,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 255
+       }
+      ]
+     },
+     {
+      "exp": 337500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 237
+       }
+      ]
+     },
+     {
+      "exp": 506250,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 660
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 998
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 1170
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 255
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 315
+       },
+       {
+        "stat": "A_Block",
+        "value": 39
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 660
+       },
+       {
+        "stat": "C_Critical_Rate",
+        "value": 383
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 237
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 56
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 25
+       },
+       {
+        "stat": "A_Block",
+        "value": 20
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Sword2h",
+    "level": 5,
+    "subLevels": [],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 825
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 1247
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Rate",
+        "value": 479
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 66
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 297
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 394
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 1463
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 319
+       },
+       {
+        "stat": "A_Block",
+        "value": 46
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 46
+       },
+       {
+        "stat": "A_Block",
+        "value": 38
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "potentials": [
+   {
+    "weaponType": "Axe",
+    "tier": 1,
+    "bonusFr": "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]5%[-], Defense by [#1A7331]4%[-], and Max HP by [#1A7331]2%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Axe",
+    "tier": 2,
+    "bonusFr": "Renforce la puissance de l'attaque normale de [#1A7331]20%[-].",
+    "bonusEn": "Amplifies Normal Attack power by [#1A7331]20%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Axe",
+    "tier": 3,
+    "bonusFr": "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]10%[-], Defense by [#1A7331]8%[-], and Max HP by [#1A7331]3%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Axe",
+    "tier": 4,
+    "bonusFr": "Renforce la puissance de la compétence normale de [#1A7331]40%[-].",
+    "bonusEn": "Amplifies Normal Skill power by [#1A7331]40%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Axe",
+    "tier": 5,
+    "bonusFr": "Augmente légèrement la portée de l'attaque spéciale et renforce la puissance de l'attaque spéciale de [#1A7331]60%[-].\nLa dernière frappe de l'attaque spéciale augmente la durée du [#0F5CD8]Déluge des Ténèbres[-] de la cible de [#1A7331]3s[-].",
+    "bonusEn": "Slightly increases the range of the Special Attack, and amplifies the Special Attack's skill power by [#1A7331]60%[-].\nThe final strike of the Special Attack increases the target's [#0F5CD8]Darkness Burst[-] duration by [#1A7331]3 sec[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Axe",
+    "tier": 6,
+    "bonusFr": "Renforce la puissance de [#0F5CD8]Floraison nocturne[-] de [#1A7331]50%[-].",
+    "bonusEn": "Amplifies the power of [#0F5CD8]Night Bloom[-] by [#1A7331]50%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Axe",
+    "tier": 7,
+    "bonusFr": "La dernière frappe de la compétence normale inflige des dégâts supplémentaires égaux à [#1A7331]220%[-] de l'attaque.\nCette attaque augmente les dégâts de compétence normale subis par l'ennemi de [#1A7331]50%[-] pendant [#1A7331]20[-] s.",
+    "bonusEn": "The final strike of the Normal Skill inflicts additional damage equal to [#1A7331]220%[-] of Attack.\nThis attack increases the enemy's Normal Skill damage taken by [#1A7331]50%[-] for [#1A7331]20[-] sec.",
+    "stats": []
+   },
+   {
+    "weaponType": "Axe",
+    "tier": 8,
+    "bonusFr": "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]15%[-], Defense by [#1A7331]12%[-], and Max HP by [#1A7331]5%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Axe",
+    "tier": 9,
+    "bonusFr": "Renforce la puissance de l'attaque ultime de [#1A7331]120%[-], et augmente le percement de défense de l'attaque ultime de [#1A7331]20%[-].",
+    "bonusEn": "Amplifies the Ultimate Move's skill power by [#1A7331]120%[-], and increases the Ultimate Move's Defense Shatter by [#1A7331]20%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Axe",
+    "tier": 10,
+    "bonusFr": "L'utilisation de la compétence normale augmente l'attaque des Ténèbres de tous les héros alliés à hauteur de [#1A7331]30%[-] de l'attaque du héros pendant [#1A7331]30s[-]. (Max : [#1A7331]4000[-])\nLa dernière frappe de l'attaque ultime inflige des dégâts égaux à [#1A7331]35%[-] de l'attaque toutes les [#1A7331]0.25s[-] pendant [#1A7331]5s[-].",
+    "bonusEn": "Using the Normal Skill increases all allied heroes' Darkness Attack by [#1A7331]30%[-] of the hero's Attack for [#1A7331]30 sec[-]. (Max: [#1A7331]4000[-])\nThe final strike of the Ultimate Move inflicts damage equal to [#1A7331]35%[-] of Attack every [#1A7331]0.25 sec[-] for [#1A7331]5 sec[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 1,
+    "bonusFr": "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]5%[-], Defense by [#1A7331]4%[-], and Max HP by [#1A7331]2%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 2,
+    "bonusFr": "Renforce la puissance de l'attaque spéciale de [#1A7331]30%[-].",
+    "bonusEn": "Amplifies Special Attack power by [#1A7331]30%[-]",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 3,
+    "bonusFr": "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]10%[-], Defense by [#1A7331]8%[-], and Max HP by [#1A7331]3%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 4,
+    "bonusFr": "Renforce la puissance de la compétence normale de [#1A7331]45%[-].",
+    "bonusEn": "Amplifies Normal Skill power by [#1A7331]45%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 5,
+    "bonusFr": "Lorsque le héros bénéficie d'au moins [#1A7331]25[-] cumuls de [#0F5CD8]Combo de coups[-], augmente les dégâts crit. du héros de [#1A7331]50%[-]. Lorsque l'effet [#0F5CD8]Combo de coups[-] atteint le nombre de cumuls max, augmente la perforation de [#1A7331]100[-].",
+    "bonusEn": "While [#1A7331]25[-] or more stacks of [#0F5CD8]Strike Combo[-] are active, the hero's Crit Damage increases by [#1A7331]50%[-]. While [#0F5CD8]Strike Combo[-] is at max stacks, Pierce increases by [#1A7331]100[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 6,
+    "bonusFr": "Renforce la puissance de [#3C22D6]Attaque ultime : Dévastation[-] de [#1A7331]65%[-].\nRenforce la puissance des dégâts supplémentaires de [#0F5CD8]Duel[-] de [#1A7331]50%[-].",
+    "bonusEn": "Amplifies [#3C22D6]Ultimate Move: Devastator[-] skill power by [#1A7331]65%[-].\nAmplifies the additional damage power of [#0F5CD8]Showdown[-] by [#1A7331]50%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 7,
+    "bonusFr": "Augmente légèrement la portée de la 2e frappe de la compétence normale et augmente le boost de dégâts de Duel octroyé par [#0F5CD8]Combo de coups[-] de [#1A7331]20%[-].\nAjoute [#1A7331]1[-] coup à la 2e frappe de la compétence normale ; ce coup inflige les mêmes dégâts que la 2e frappe.",
+    "bonusEn": "Slightly increases the range of the Normal Skill's 2nd hit, and additionally increases the Showdown damage boost of [#0F5CD8]Strike Combo[-] by [#1A7331]20%[-].\nThe number of hits of the Normal Skill's 2nd hit increases by [#1A7331]1[-], and the added hit deals damage equal to the Normal Skill's 2nd hit.",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 8,
+    "bonusFr": "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]15%[-], Defense by [#1A7331]12%[-], and Max HP by [#1A7331]5%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 9,
+    "bonusFr": "Renforce la puissance de [#3C22D6]Attaque ultime : Dévastation[-] de [#1A7331]125%[-]. Augmente le percement de défense du héros de [#1A7331]20%[-] lorsque l'effet [#0F5CD8]Combo de coups[-] a atteint le nombre de cumuls max.",
+    "bonusEn": "Amplifies [#3C22D6]Ultimate Move: Devastator[-] skill power by [#1A7331]125%[-]. Increases the hero's Defense Shatter by [#1A7331]20%[-] while [#0F5CD8]Strike Combo[-] is at max stacks.",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 10,
+    "bonusFr": "Augmente légèrement la portée de l'attaque spéciale. Augmente les dégâts crit. du héros de [#1A7331]100%[-] pendant [#1A7331]7s[-] lorsque tous les coups de l'attaque spéciale font mouche.\nAjoute [#1A7331]1[-] coup à la 2e frappe de l'attaque spéciale ; ce coup inflige les mêmes dégâts que la 2e frappe.\nAjoute [#1A7331]2[-] coups à la 3e frappe de l'attaque spéciale ; chacun inflige les mêmes dégâts que la 3e frappe.",
+    "bonusEn": "Slightly increases the range of the Special Attack. Increases the hero's Crit Damage by [#1A7331]100%[-] for [#1A7331]7 sec[-] when landing all Special Attack hits.\nThe number of hits of the Special Attack's 2nd hit increases by [#1A7331]1[-], and the added hit deals damage equal to the Special Attack's 2nd hit.\nThe number of hits of the Special Attack's 3rd hit increases by [#1A7331]2[-], and each added hit deals damage equal to the Special Attack's 3rd hit.",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 1,
+    "bonusFr": "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]5%[-], Defense by [#1A7331]4%[-], and Max HP by [#1A7331]2%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 2,
+    "bonusFr": "Renforce la puissance de l'attaque spéciale de [#1A7331]30%[-].",
+    "bonusEn": "Amplifies Special Attack power by [#1A7331]30%[-]",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 3,
+    "bonusFr": "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]10%[-], Defense by [#1A7331]8%[-], and Max HP by [#1A7331]3%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 4,
+    "bonusFr": "Renforce la puissance de la compétence normale de [#1A7331]45%[-].",
+    "bonusEn": "Amplifies Normal Skill power by [#1A7331]45%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 5,
+    "bonusFr": "La dernière frappe de l'attaque spéciale inflige des dégâts supplémentaires égaux à [#1A7331]120%[-] de l'attaque.\nAugmente la réduction de la défense de Feu de l'attaque spéciale de [#1A7331]10%[-].",
+    "bonusEn": "The final strike of the Special Attack inflicts additional damage equal to [#1A7331]120%[-] of Attack.\nThe Special Attack's Fire Defense reduction additionally increases by [#1A7331]10%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 6,
+    "bonusFr": "Renforce la puissance de l'attaque spéciale de [#1A7331]50%[-].\nAugmente le boost de PV octroyé par l'attaque spéciale de [#1A7331]10%[-].",
+    "bonusEn": "Amplifies Special Attack power by [#1A7331]50%[-].\nThe Special Attack's HP boost additionally increases by [#1A7331]10%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 7,
+    "bonusFr": "La dernière frappe de la compétence normale inflige des dégâts supplémentaires égaux à [#1A7331]40%[-] de l'attaque [#1A7331]5 fois[-].\nLorsque des dégâts supplémentaires sont infligés, augmente les dégâts d'attaque ultime et d'attaque combinée subis par la cible de [#1A7331]50%[-] pendant [#1A7331]20s[-].",
+    "bonusEn": "The final strike of the Normal Skill inflicts additional damage equal to [#1A7331]40%[-] of Attack [#1A7331]5 time(s)[-].\nWhen the additional damage lands, the target's Ultimate Move and Combined Attack damage taken increases by [#1A7331]50%[-] for [#1A7331]20 sec[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 8,
+    "bonusFr": "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]15%[-], Defense by [#1A7331]12%[-], and Max HP by [#1A7331]5%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 9,
+    "bonusFr": "Augmente la valeur maximale d'augmentation de l'attaque de Feu issue de la compétence normale de [#1A7331]3000[-].\nL'utilisation de la compétence normale augmente le percement de défense de tous les héros alliés d'attribut Feu de [#1A7331]15%[-] pendant [#1A7331]30s[-].",
+    "bonusEn": "Increases the Normal Skill's maximum Fire Attack Increase by [#1A7331]3000[-].\nUsing the Normal Skill increases all allied Fire heroes' Defense Shatter by [#1A7331]15%[-] for [#1A7331]30 sec[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 10,
+    "bonusFr": "Augmente légèrement la portée de l'attaque ultime. Augmente les dégâts crit. d'attaque ultime et d'attaque combinée des héros alliés d'attribut Feu à portée de [#1A7331]50%[-] pendant [#1A7331]20s[-] toutes les [#1A7331]1s[-].",
+    "bonusEn": "Slightly increases the Ultimate Move's range. Increases the Ultimate Move and Combined Attack Crit Damage of Fire heroes of allies in range by [#1A7331]50%[-] for [#1A7331]20 sec[-] every [#1A7331]1 sec[-].",
+    "stats": []
+   }
+  ],
+  "commonMasteryTid": "11002",
+  "baseHp": 2000,
+  "baseAtk": 250,
+  "baseDef": 200,
+  "baseSpd": 500,
+  "accuracy": 80,
+  "block": 50,
+  "critRate": 1000,
+  "critDamage": 2500,
+  "critResist": 300,
+  "critDmgResist": 1000,
+  "blockDmgResist": 9500,
+  "pvpDmgUp": 150,
+  "pvpDmgDown": 125,
+  "commonMasteryStats": [
+   {
+    "stat": "B_Atk",
+    "value": 624
+   },
+   {
+    "stat": "B_Def",
+    "value": 480
+   },
+   {
+    "stat": "B_MaxHp",
+    "value": 1248
+   },
+   {
+    "stat": "A_Accuracy",
+    "value": 156
+   },
+   {
+    "stat": "A_Block",
+    "value": 120
+   }
+  ],
+  "bannerUrl": "/images/characters/banners/derieri.webp"
+ },
+ {
+  "id": "cmsfp5hwg000i2mp20qyas7bh",
   "slug": "diane",
   "nameFr": "Diane",
   "nameEn": "Diane",
@@ -28926,7 +30867,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bg00832lp28nr07xcn",
+    "id": "cmsfp5jlj008j2mp27r35uxrx",
     "slug": "diane-costume-134101901",
     "nameFr": "Géante amoureuse",
     "nameEn": "Giant Girl in Love",
@@ -28941,7 +30882,7 @@
     "iconUrl": "/images/costumes/icon_Diane_001.webp"
    },
    {
-    "id": "cms2978bg00842lp2cio5fsiy",
+    "id": "cmsfp5jlj008k2mp2ejsylmev",
     "slug": "diane-costume-134101902",
     "nameFr": "Serveuse de la taverne",
     "nameEn": "Tavern Hostess",
@@ -29001,7 +30942,7 @@
     "iconUrl": "/images/costumes/icon_Diane_002.webp"
    },
    {
-    "id": "cms2978bg00852lp2ewgddyd5",
+    "id": "cmsfp5jlj008l2mp2qqa0mn12",
     "slug": "diane-costume-134101903",
     "nameFr": "Le Serpent de l'Envie",
     "nameEn": "The Serpent Sin of Envy",
@@ -29065,7 +31006,7 @@
     "iconUrl": "/images/costumes/icon_Diane_003.webp"
    },
    {
-    "id": "cms2978bg00862lp2dpybv919",
+    "id": "cmsfp5jlj008m2mp2c3e8oxuk",
     "slug": "diane-costume-134101904",
     "nameFr": "Fille enjouée",
     "nameEn": "Cheerful Girl",
@@ -29129,7 +31070,7 @@
     "iconUrl": "/images/costumes/icon_Diane_004.webp"
    },
    {
-    "id": "cms2978bg00872lp2ae2710ka",
+    "id": "cmsfp5jlj008n2mp2l8kdp4r7",
     "slug": "diane-costume-134101905",
     "nameFr": "Tenue de combat cloutée",
     "nameEn": "Spiked Combat Outfit",
@@ -29768,6 +31709,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 225
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 675
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 120
        },
@@ -29806,20 +31761,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 420
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 225
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 675
        }
       ]
      },
@@ -31324,7 +33265,7 @@
   "bannerUrl": "/images/characters/banners/diane.webp"
  },
  {
-  "id": "cms2976t4000l2lp22kjiziiy",
+  "id": "cmsfp5hwh000m2mp24lwq9wl4",
   "slug": "drake",
   "nameFr": "Drake",
   "nameEn": "Drake",
@@ -31351,7 +33292,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bg008k2lp2sp9acpvd",
+    "id": "cmsfp5jlj00942mp2kl19ujc0",
     "slug": "drake-costume-134102601",
     "nameFr": "Descendant du dragon",
     "nameEn": "Dragon Descendent",
@@ -31366,7 +33307,7 @@
     "iconUrl": "/images/costumes/icon_Drake_002.webp"
    },
    {
-    "id": "cms2978bg008l2lp206arzqev",
+    "id": "cmsfp5jlj00952mp2zbenrugw",
     "slug": "drake-costume-134102602",
     "nameFr": "Serment du trône",
     "nameEn": "Oath of the Throne",
@@ -31426,7 +33367,7 @@
     "iconUrl": "/images/costumes/icon_Drake_003.webp"
    },
    {
-    "id": "cms2978bg008m2lp2x9e7ijow",
+    "id": "cmsfp5jlj00962mp2b7ysccc0",
     "slug": "drake-costume-134102603",
     "nameFr": "Gloire du passé",
     "nameEn": "Glory of the Past",
@@ -31490,7 +33431,7 @@
     "iconUrl": "/images/costumes/icon_Drake_004.webp"
    },
    {
-    "id": "cms2978bg008n2lp2tb3q8hpn",
+    "id": "cmsfp5jlj00972mp226c9y6ei",
     "slug": "drake-costume-134102604",
     "nameFr": "Seigneur des ombres",
     "nameEn": "Shadow Lord",
@@ -31554,7 +33495,7 @@
     "iconUrl": "/images/costumes/icon_Drake_005.webp"
    },
    {
-    "id": "cms2978bg008o2lp27oduuci4",
+    "id": "cmsfp5jlj00982mp2ovqyhvuj",
     "slug": "drake-costume-134102605",
     "nameFr": "Chevalier impérial",
     "nameEn": "Imperial Knight",
@@ -33749,7 +35690,7 @@
   "bannerUrl": "/images/characters/banners/drake.webp"
  },
  {
-  "id": "cms2976t400082lp2fppdovn4",
+  "id": "cmsfp5hwg00082mp2luyxd6uo",
   "slug": "elaine",
   "nameFr": "Elaine",
   "nameEn": "Elaine",
@@ -33776,7 +35717,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf006t2lp227kh5tt4",
+    "id": "cmsfp5jli00792mp28g8hrl7g",
     "slug": "elaine-costume-134100901",
     "nameFr": "Saint gardien de la Fontaine de jouvence",
     "nameEn": "Guardian Saint of the Fountain of Youth",
@@ -33791,7 +35732,7 @@
     "iconUrl": "/images/costumes/icon_Elaine_001.webp"
    },
    {
-    "id": "cms2978bf006u2lp2m1o20erv",
+    "id": "cmsfp5jli007a2mp211ce2oci",
     "slug": "elaine-costume-134100902",
     "nameFr": "Employé saisonnier",
     "nameEn": "Temp Employee",
@@ -33851,7 +35792,7 @@
     "iconUrl": "/images/costumes/icon_Elaine_002.webp"
    },
    {
-    "id": "cms2978bf006v2lp2kgvlzc2v",
+    "id": "cmsfp5jli007b2mp2m8ve48au",
     "slug": "elaine-costume-134100903",
     "nameFr": "Lumière de guidance",
     "nameEn": "Guiding Light",
@@ -33915,7 +35856,7 @@
     "iconUrl": "/images/costumes/icon_Elaine_003.webp"
    },
    {
-    "id": "cms2978bf006w2lp20q6uk53j",
+    "id": "cmsfp5jli007c2mp2dgbyvaa0",
     "slug": "elaine-costume-134100904",
     "nameFr": "Sortie joyeuse",
     "nameEn": "Cheerful Outing",
@@ -33979,7 +35920,7 @@
     "iconUrl": "/images/costumes/icon_Elaine_004.webp"
    },
    {
-    "id": "cms2978bf006x2lp2urib7igf",
+    "id": "cmsfp5jli007d2mp205nb8ggb",
     "slug": "elaine-costume-134100905",
     "nameFr": "Dignité de la sainte",
     "nameEn": "Saintess's Dignity",
@@ -36174,7 +38115,7 @@
   "bannerUrl": "/images/characters/banners/elaine.webp"
  },
  {
-  "id": "cms2976t4000g2lp25o1tam9m",
+  "id": "cmsfp5hwg000g2mp22nf1pjs2",
   "slug": "elizabeth",
   "nameFr": "Elizabeth",
   "nameEn": "Elizabeth",
@@ -36201,7 +38142,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf007u2lp2yjcb3w1p",
+    "id": "cmsfp5jlj008a2mp2i3788usc",
     "slug": "elizabeth-costume-134101706",
     "nameFr": "Rêverie estivale",
     "nameEn": "Midsummer Reverie",
@@ -36216,7 +38157,7 @@
     "iconUrl": "/images/costumes/icon_Elizabeth_006.webp"
    },
    {
-    "id": "cms2978bg007v2lp2w73c0ste",
+    "id": "cmsfp5jlj008b2mp21wjjy9cw",
     "slug": "elizabeth-costume-134101702",
     "nameFr": "Vedette de la taverne",
     "nameEn": "Star of the Tavern",
@@ -36280,7 +38221,7 @@
     "iconUrl": "/images/costumes/icon_Elizabeth_002.webp"
    },
    {
-    "id": "cms2978bg007w2lp2kvyyv4lc",
+    "id": "cmsfp5jlj008c2mp25e2mptgg",
     "slug": "elizabeth-costume-134101703",
     "nameFr": "Héros de Liones",
     "nameEn": "Hero of Liones",
@@ -36344,7 +38285,7 @@
     "iconUrl": "/images/costumes/icon_Elizabeth_003.webp"
    },
    {
-    "id": "cms2978bg007x2lp2ek4q2fp4",
+    "id": "cmsfp5jlj008d2mp2kus5qu3a",
     "slug": "elizabeth-costume-134101701",
     "nameFr": "La princesse qui a retrouvé la mémoire",
     "nameEn": "The Princess Who Regained Her Memory",
@@ -36359,7 +38300,7 @@
     "iconUrl": "/images/costumes/icon_Elizabeth_001.webp"
    },
    {
-    "id": "cms2978bf005k2lp203rp6t5l",
+    "id": "cmsfp5jli005z2mp2n3iy47ne",
     "slug": "elizabeth-costume-135101701",
     "nameFr": "Tome interdit Solvire",
     "nameEn": "Forbidden Tome Solvire",
@@ -36453,20 +38394,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 135
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 124
        },
@@ -36491,6 +38418,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 447
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 135
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
        }
       ]
      },
@@ -38505,7 +40446,7 @@
   "bannerUrl": "/images/characters/banners/elizabeth.webp"
  },
  {
-  "id": "cms2976t4000j2lp2yhbk9j54",
+  "id": "cmsfp5hwg000k2mp28qrbe2ik",
   "slug": "escanor",
   "nameFr": "Escanor",
   "nameEn": "Escanor",
@@ -38532,7 +40473,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bg00882lp2bc2086bk",
+    "id": "cmsfp5jlj008s2mp2022cycgu",
     "slug": "escanor-costume-134102301",
     "nameFr": "Poète arrogant",
     "nameEn": "Arrogant Poet",
@@ -38547,7 +40488,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_001.webp"
    },
    {
-    "id": "cms2978bg00892lp2f61wb499",
+    "id": "cmsfp5jlj008t2mp2zc3pym76",
     "slug": "escanor-costume-134102302",
     "nameFr": "Violence nordique",
     "nameEn": "Northern Wildness",
@@ -38611,7 +40552,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_002.webp"
    },
    {
-    "id": "cms2978bg008a2lp26a3wntns",
+    "id": "cmsfp5jlj008u2mp21oyyx0jb",
     "slug": "escanor-costume-134102303",
     "nameFr": "Le Lion de l'Orgueil",
     "nameEn": "The Lion Sin of Pride",
@@ -38626,7 +40567,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_003.webp"
    },
    {
-    "id": "cms2978bg008b2lp24deea833",
+    "id": "cmsfp5jlj008v2mp2yvfquob3",
     "slug": "escanor-costume-134102304",
     "nameFr": "Arrogance adéquate",
     "nameEn": "Sufficient Arrogance",
@@ -38690,7 +40631,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_004.webp"
    },
    {
-    "id": "cms2978bg008c2lp2r70u7gf2",
+    "id": "cmsfp5jlj008w2mp2no2opi3t",
     "slug": "escanor-costume-134102305",
     "nameFr": "Dignité dorée",
     "nameEn": "Golden Dignity",
@@ -38754,7 +40695,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_005.webp"
    },
    {
-    "id": "cms2978bg008d2lp2kc6qi2z7",
+    "id": "cmsfp5jlj008x2mp26xdqwxhx",
     "slug": "escanor-costume-134102306",
     "nameFr": "Incarnation de l'Orgueil",
     "nameEn": "Epitome of Pride",
@@ -38769,7 +40710,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_006.webp"
    },
    {
-    "id": "cms2978bf005l2lp2yncna60y",
+    "id": "cmsfp5jli00602mp2u62u3htu",
     "slug": "escanor-costume-135102301",
     "nameFr": "Hache sacrée Rhitta",
     "nameEn": "Sacred Axe Rhitta",
@@ -38863,6 +40804,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 150
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 113
        },
@@ -38901,20 +40856,6 @@
        {
         "stat": "C_Critical_DamRes_Rate",
         "value": 450
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 150
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
        }
       ]
      },
@@ -39359,6 +41300,34 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 150
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 450
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 150
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 113
        },
@@ -39383,34 +41352,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 525
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 150
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 450
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 150
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
        }
       ]
      },
@@ -39855,6 +41796,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 150
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 113
        },
@@ -39893,20 +41848,6 @@
        {
         "stat": "C_Critical_DamRes_Rate",
         "value": 450
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 150
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
        }
       ]
      },
@@ -40915,7 +42856,7 @@
   "bannerUrl": "/images/characters/banners/escanor.webp"
  },
  {
-  "id": "cms2976t400072lp28tzhn0ix",
+  "id": "cmsfp5hwg00072mp20tn89cq1",
   "slug": "gowther",
   "nameFr": "Gowther",
   "nameEn": "Gowther",
@@ -40942,7 +42883,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf006p2lp29z3xgl2x",
+    "id": "cmsfp5jli00752mp22g6p1iwf",
     "slug": "gowther-costume-134100801",
     "nameFr": "Poupée sans cœur",
     "nameEn": "Heartless Doll",
@@ -40957,7 +42898,7 @@
     "iconUrl": "/images/costumes/icon_Gowther_001.webp"
    },
    {
-    "id": "cms2978bf005o2lp2lo2nvsyf",
+    "id": "cmsfp5jli00632mp216zar2bc",
     "slug": "gowther-costume-135100801",
     "nameFr": "Œil du sage corrompu",
     "nameEn": "Eye of the Corrupted Sage",
@@ -40972,7 +42913,7 @@
     "iconUrl": "/images/costumes/Short_Costume_Gowther_Wand_0001.webp"
    },
    {
-    "id": "cms2978bf006q2lp2n2jv9x9t",
+    "id": "cmsfp5jli00762mp262hscjcp",
     "slug": "gowther-costume-134100802",
     "nameFr": "Tenue de soirée pour un rendez-vous secret",
     "nameEn": "Secret Date Night Look",
@@ -41036,7 +42977,7 @@
     "iconUrl": "/images/costumes/icon_Gowther_002.webp"
    },
    {
-    "id": "cms2978bf006r2lp2obocgo3l",
+    "id": "cmsfp5jli00772mp2nubfall3",
     "slug": "gowther-costume-134100803",
     "nameFr": "Le Bélier de la Luxure",
     "nameEn": "The Goat Sin of Lust",
@@ -41100,7 +43041,7 @@
     "iconUrl": "/images/costumes/icon_Gowther_003.webp"
    },
    {
-    "id": "cms2978bf006s2lp2dfb8ir1c",
+    "id": "cmsfp5jli00782mp2zuonwrij",
     "slug": "gowther-costume-134100804",
     "nameFr": "Quête de soi",
     "nameEn": "Journey of Self-discovery",
@@ -41194,6 +43135,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 128
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 119
        },
@@ -41232,20 +43187,6 @@
        {
         "stat": "C_Critical_DamRes_Rate",
         "value": 585
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 128
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
        }
       ]
      },
@@ -41690,6 +43631,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 113
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 124
        },
@@ -41728,20 +43683,6 @@
        {
         "stat": "C_Critical_DamRes_Rate",
         "value": 563
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 113
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
        }
       ]
      },
@@ -42186,6 +44127,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 150
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 113
        },
@@ -42224,20 +44179,6 @@
        {
         "stat": "C_Critical_DamRes_Rate",
         "value": 450
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 150
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
        }
       ]
      },
@@ -42672,8 +44613,8 @@
    {
     "weaponType": "Book",
     "tier": 10,
-    "bonusFr": "Augmente la durée de l'effet [#0F5CD8]Extinction[-] de [#1A7331]3s[-] et augmente le boost de dégâts subis de [#1A7331]40[-].",
-    "bonusEn": "Increases the duration of [#0F5CD8]Shutdown[-] by [#1A7331]3 sec[-], and increases the damage taken boost by [#1A7331]40[-].",
+    "bonusFr": "Augmente la durée de l'effet [#0F5CD8]Extinction[-] de [#1A7331]3s[-].\nUtiliser l'attaque ultime réduit la défense crit. de l'ennemi de [#1A7331]40%[-] pendant [#1A7331]40s[-].",
+    "bonusEn": "Increases the duration of [#0F5CD8]Shutdown[-] by [#1A7331]3 sec[-].\nLanding the Ultimate Move decreases the enemy's Crit Defense by [#1A7331]40%[-] for [#1A7331]40 sec[-].",
     "stats": []
    },
    {
@@ -42856,7 +44797,7 @@
   "bannerUrl": "/images/characters/banners/gowther.webp"
  },
  {
-  "id": "cms2976t4000h2lp2k9782m8z",
+  "id": "cmsfp5hwg000h2mp2z10wwnwt",
   "slug": "guila",
   "nameFr": "Guila",
   "nameEn": "Guila",
@@ -42883,7 +44824,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bg007y2lp2wzhgspeb",
+    "id": "cmsfp5jlj008e2mp2w35tgbmr",
     "slug": "guila-costume-134101801",
     "nameFr": "Le seul et unique chevalier sacré",
     "nameEn": "One and Only Holy Knight",
@@ -42898,7 +44839,7 @@
     "iconUrl": "/images/costumes/icon_Guila_001.webp"
    },
    {
-    "id": "cms2978bg007z2lp2te2uj4x1",
+    "id": "cmsfp5jlj008f2mp2f2b6q2ul",
     "slug": "guila-costume-134101802",
     "nameFr": "Moment en famille",
     "nameEn": "Family Time",
@@ -42958,7 +44899,7 @@
     "iconUrl": "/images/costumes/icon_Guila_002.webp"
    },
    {
-    "id": "cms2978bg00802lp2stdmtjj4",
+    "id": "cmsfp5jlj008g2mp2hxu9d4ei",
     "slug": "guila-costume-134101803",
     "nameFr": "Chevalier sacré des explosions",
     "nameEn": "Holy Knight of Explosions",
@@ -43022,7 +44963,7 @@
     "iconUrl": "/images/costumes/icon_Guila_003.webp"
    },
    {
-    "id": "cms2978bg00812lp2w5gqfrnq",
+    "id": "cmsfp5jlj008h2mp24gsdje1i",
     "slug": "guila-costume-134101804",
     "nameFr": "Pas légers",
     "nameEn": "Light Footsteps",
@@ -43086,7 +45027,7 @@
     "iconUrl": "/images/costumes/icon_Guila_004.webp"
    },
    {
-    "id": "cms2978bg00822lp2vsyoim7j",
+    "id": "cmsfp5jlj008i2mp2bbbly54s",
     "slug": "guila-costume-134101805",
     "nameFr": "Piste de la flamme cramoisie",
     "nameEn": "Crimson Flame's Trail",
@@ -43229,6 +45170,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 90
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 338
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 165
        },
@@ -43267,20 +45222,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 788
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 90
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 338
        }
       ]
      },
@@ -44221,20 +46162,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 120
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 141
        },
@@ -44259,6 +46186,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 420
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 120
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
        }
       ]
      },
@@ -45281,7 +47222,7 @@
   "bannerUrl": "/images/characters/banners/guila.webp"
  },
  {
-  "id": "cms2976t4000f2lp2z8e4nu9d",
+  "id": "cmsfp5hwg000f2mp2hss6bmf7",
   "slug": "jericho",
   "nameFr": "Jericho",
   "nameEn": "Jericho",
@@ -45308,7 +47249,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf007p2lp2vrcglzhu",
+    "id": "cmsfp5jlj00852mp2dwazeqod",
     "slug": "jericho-costume-134101601",
     "nameFr": "Chevalier sacré en fuite",
     "nameEn": "Runaway Holy Knight",
@@ -45323,7 +47264,7 @@
     "iconUrl": "/images/costumes/icon_Jericho_001.webp"
    },
    {
-    "id": "cms2978bf007q2lp24qkcgxg7",
+    "id": "cmsfp5jlj00862mp2z45rdt56",
     "slug": "jericho-costume-134101602",
     "nameFr": "Moment de détente",
     "nameEn": "Leisurely Moment",
@@ -45383,7 +47324,7 @@
     "iconUrl": "/images/costumes/icon_Jericho_002.webp"
    },
    {
-    "id": "cms2978bf007r2lp2yitla3pt",
+    "id": "cmsfp5jlj00872mp2gqtfkvt5",
     "slug": "jericho-costume-134101603",
     "nameFr": "Chevalier sacré à la visière en étoile",
     "nameEn": "Holy Knight With the Star-Shaped Visor",
@@ -45447,7 +47388,7 @@
     "iconUrl": "/images/costumes/icon_Jericho_003.webp"
    },
    {
-    "id": "cms2978bf007s2lp2bfst65r3",
+    "id": "cmsfp5jlj00882mp28ex4p0y5",
     "slug": "jericho-costume-134101604",
     "nameFr": "Voyageuse cachottière",
     "nameEn": "Secretive Traveler",
@@ -45511,7 +47452,7 @@
     "iconUrl": "/images/costumes/icon_Jericho_004.webp"
    },
    {
-    "id": "cms2978bf007t2lp2xm5571no",
+    "id": "cmsfp5jlj00892mp2e55c2a8k",
     "slug": "jericho-costume-134101605",
     "nameFr": "Traces de souvenirs",
     "nameEn": "Trace of Memories",
@@ -45654,6 +47595,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 225
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 675
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 120
        },
@@ -45692,20 +47647,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 420
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 225
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 675
        }
       ]
      },
@@ -46150,20 +48091,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 165
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 37
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 90
        },
@@ -46188,6 +48115,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 788
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 165
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 37
        }
       ]
      },
@@ -47706,7 +49647,7 @@
   "bannerUrl": "/images/characters/banners/jericho.webp"
  },
  {
-  "id": "cms2976t400092lp2l2agzz18",
+  "id": "cmsfp5hwg00092mp2525e8pvo",
   "slug": "king",
   "nameFr": "King",
   "nameEn": "King",
@@ -47733,7 +49674,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf006y2lp2qitvrqaw",
+    "id": "cmsfp5jli007e2mp2n1omu56c",
     "slug": "king-costume-134101001",
     "nameFr": "Roi des fées inexpérimenté",
     "nameEn": "Inexperienced Fairy King",
@@ -47748,7 +49689,7 @@
     "iconUrl": "/images/costumes/icon_King_001.webp"
    },
    {
-    "id": "cms2978bf006z2lp2jholm8qp",
+    "id": "cmsfp5jli007f2mp2hos2tg68",
     "slug": "king-costume-134101002",
     "nameFr": "Traces de la forêt",
     "nameEn": "Forest's Footsteps",
@@ -47808,7 +49749,7 @@
     "iconUrl": "/images/costumes/icon_King_004.webp"
    },
    {
-    "id": "cms2978bf00702lp2tnuaqtn6",
+    "id": "cmsfp5jli007g2mp2gk9b6qtz",
     "slug": "king-costume-134101003",
     "nameFr": "Le Grizzly de la Paresse",
     "nameEn": "The Grizzly Sin of Sloth",
@@ -47872,7 +49813,7 @@
     "iconUrl": "/images/costumes/icon_King_003.webp"
    },
    {
-    "id": "cms2978bf00712lp2r70r6bwc",
+    "id": "cmsfp5jli007h2mp235gh3cbx",
     "slug": "king-costume-134101004",
     "nameFr": "L'ombre de la forêt profonde",
     "nameEn": "Shadow of the Deep Forest",
@@ -50067,7 +52008,7 @@
   "bannerUrl": "/images/characters/banners/king.webp"
  },
  {
-  "id": "cms2976t4000k2lp2hodeoka4",
+  "id": "cmsfp5hwg000l2mp2qklxw58p",
   "slug": "manny",
   "nameFr": "Mannie",
   "nameEn": "Mannie",
@@ -50094,7 +52035,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bg008e2lp2v7ho1ddt",
+    "id": "cmsfp5jlj008y2mp2at7x28e4",
     "slug": "manny-costume-134102501",
     "nameFr": "Prêtresse exaltée",
     "nameEn": "Exalted Priestess",
@@ -50109,7 +52050,7 @@
     "iconUrl": "/images/costumes/icon_Manny_001.webp"
    },
    {
-    "id": "cms2978bg008f2lp228p6iyoz",
+    "id": "cmsfp5jlj008z2mp2oxfvuj21",
     "slug": "manny-costume-134102502",
     "nameFr": "Cœur de prière",
     "nameEn": "Heart of Prayer",
@@ -50169,7 +52110,7 @@
     "iconUrl": "/images/costumes/icon_Manny_002.webp"
    },
    {
-    "id": "cms2978bg008g2lp2rubk5206",
+    "id": "cmsfp5jlj00902mp21vq0fl4a",
     "slug": "manny-costume-134102503",
     "nameFr": "Prestige de l'archiprêtresse",
     "nameEn": "Arch Priestess's Prestige",
@@ -50233,7 +52174,7 @@
     "iconUrl": "/images/costumes/icon_Manny_003.webp"
    },
    {
-    "id": "cms2978bg008h2lp2qqwr2c1u",
+    "id": "cmsfp5jlj00912mp24o2y14k0",
     "slug": "manny-costume-134102504",
     "nameFr": "Exploration de l'inconnu",
     "nameEn": "Exploration of the Unknown",
@@ -50297,7 +52238,7 @@
     "iconUrl": "/images/costumes/icon_Manny_004.webp"
    },
    {
-    "id": "cms2978bg008i2lp2iio1rh20",
+    "id": "cmsfp5jlj00922mp2h6mdu7n3",
     "slug": "manny-costume-134102505",
     "nameFr": "Rituel sacré",
     "nameEn": "Holy Ritual",
@@ -50361,7 +52302,7 @@
     "iconUrl": "/images/costumes/icon_Manny_005.webp"
    },
    {
-    "id": "cms2978bg008j2lp2aibhxj2r",
+    "id": "cmsfp5jlj00932mp2gbm1hjg5",
     "slug": "manny-costume-134102506",
     "nameFr": "Récif de corail azuré",
     "nameEn": "Azure Coral Reef",
@@ -50455,6 +52396,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 158
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 563
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 113
        },
@@ -50493,20 +52448,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 473
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 158
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 563
        }
       ]
      },
@@ -51447,20 +53388,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 128
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 119
        },
@@ -51485,6 +53412,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 499
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 128
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
        }
       ]
      },
@@ -52507,7 +54448,7 @@
   "bannerUrl": "/images/characters/banners/manny.webp"
  },
  {
-  "id": "cms2976t400042lp23a84c34j",
+  "id": "cmsfp5hwg00042mp2p0mgrbs9",
   "slug": "meliodas",
   "nameFr": "Meliodas",
   "nameEn": "Meliodas",
@@ -52534,7 +54475,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf00692lp24pjlv0ct",
+    "id": "cmsfp5jli006p2mp26p25ycdi",
     "slug": "meliodas-costume-134100501",
     "nameFr": "Tavernier ordinaire",
     "nameEn": "Ordinary Tavern Owner",
@@ -52549,7 +54490,7 @@
     "iconUrl": "/images/costumes/icon_Meliodas_001.webp"
    },
    {
-    "id": "cms2978bf005i2lp29heypc8x",
+    "id": "cmsfp5jli005x2mp2ircplz78",
     "slug": "meliodas-costume-135100501",
     "nameFr": "Épée démoniaque Lostvayne",
     "nameEn": "Demon Sword Lostvayne",
@@ -52564,7 +54505,7 @@
     "iconUrl": "/images/costumes/Short_Costume_Meliodas_Sword1H_0001.webp"
    },
    {
-    "id": "cms2978bf006a2lp2fdhi5kwm",
+    "id": "cmsfp5jli006q2mp2godmqxd5",
     "slug": "meliodas-costume-134100502",
     "nameFr": "Une nouvelle aventure",
     "nameEn": "A New Adventure",
@@ -52628,7 +54569,7 @@
     "iconUrl": "/images/costumes/icon_Meliodas_002.webp"
    },
    {
-    "id": "cms2978bf006b2lp2e39xsm7m",
+    "id": "cmsfp5jli006r2mp2zuybln4o",
     "slug": "meliodas-costume-134100503",
     "nameFr": "Le Dragon de la Colère",
     "nameEn": "The Dragon Sin of Wrath",
@@ -52643,7 +54584,7 @@
     "iconUrl": "/images/costumes/icon_Meliodas_003.webp"
    },
    {
-    "id": "cms2978bf006c2lp2636e69h0",
+    "id": "cmsfp5jli006s2mp2trkabz1p",
     "slug": "meliodas-costume-134100504",
     "nameFr": "Défense simple",
     "nameEn": "Simple Defense",
@@ -52707,7 +54648,7 @@
     "iconUrl": "/images/costumes/icon_Meliodas_004.webp"
    },
    {
-    "id": "cms2978bf006d2lp25eqqzkm9",
+    "id": "cmsfp5jli006t2mp2oyf16duj",
     "slug": "meliodas-costume-134100505",
     "nameFr": "Majesté bien malveillante",
     "nameEn": "Most Malevolent Majesty",
@@ -52850,26 +54791,12 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_Rate",
-        "value": 259
+        "stat": "B_Atk",
+        "value": 173
        },
        {
-        "stat": "C_Critical_Dam_Rate",
-        "value": 709
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 128
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 383
+        "stat": "A_Accuracy",
+        "value": 42
        }
       ]
      },
@@ -52896,12 +54823,26 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 173
+        "stat": "C_Critical_Rate",
+        "value": 259
        },
        {
-        "stat": "A_Accuracy",
-        "value": 42
+        "stat": "C_Critical_Dam_Rate",
+        "value": 709
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 128
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 383
        }
       ]
      },
@@ -53842,6 +55783,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 165
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 37
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 90
        },
@@ -53880,20 +55835,6 @@
        {
         "stat": "C_Critical_DamRes_Rate",
         "value": 338
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 165
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 37
        }
       ]
      },
@@ -54902,7 +56843,7 @@
   "bannerUrl": "/images/characters/banners/meliodas.webp"
  },
  {
-  "id": "cms2976t400062lp2iwt51w6f",
+  "id": "cmsfp5hwg00062mp2trhrtvmf",
   "slug": "merlin",
   "nameFr": "Merlin",
   "nameEn": "Merlin",
@@ -54929,7 +56870,7 @@
   ],
   "costumes": [
    {
-    "id": "cms2978bf006j2lp2svf49ys2",
+    "id": "cmsfp5jli006z2mp2egqf7j8e",
     "slug": "merlin-costume-134100701",
     "nameFr": "Grand mage ésotérique",
     "nameEn": "Esoteric Great Mage",
@@ -54944,7 +56885,7 @@
     "iconUrl": "/images/costumes/icon_Merlin_001.webp"
    },
    {
-    "id": "cms2978bf005j2lp22dasjc3k",
+    "id": "cmsfp5jli005y2mp20u0wcqga",
     "slug": "merlin-costume-135100701",
     "nameFr": "L'Étoile du Matin Aldan",
     "nameEn": "Morning Star Aldan",
@@ -54959,7 +56900,7 @@
     "iconUrl": "/images/costumes/Short_Costume_Merlin_Book_0001.webp"
    },
    {
-    "id": "cms2978bf006k2lp22zgt0odf",
+    "id": "cmsfp5jli00702mp2m7ddv8fj",
     "slug": "merlin-costume-134100702",
     "nameFr": "Vêtements formels légers",
     "nameEn": "Light Formalwear",
@@ -55023,7 +56964,7 @@
     "iconUrl": "/images/costumes/icon_Merlin_002.webp"
    },
    {
-    "id": "cms2978bf006l2lp2ejkn1i50",
+    "id": "cmsfp5jli00712mp22sd8rorq",
     "slug": "merlin-costume-134100703",
     "nameFr": "Le Sanglier de la Gourmandise",
     "nameEn": "The Boar Sin of Gluttony",
@@ -55087,7 +57028,7 @@
     "iconUrl": "/images/costumes/icon_Merlin_003.webp"
    },
    {
-    "id": "cms2978bf006m2lp215udqbd6",
+    "id": "cmsfp5jli00722mp2kv03f7d7",
     "slug": "merlin-costume-134100704",
     "nameFr": "Chercheuse de savoir",
     "nameEn": "Seeker of Knowledge",
@@ -55103,18 +57044,18 @@
       "levels": [
        {
         "level": 1,
-        "descEn": "When the hero activates a [#0F5CD8]Burst[-], all allied heroes' [#0F5CD8]Fire Attack[-] increases by [#1A7331]12%[-] for [#1A7331]30 sec[-].\nUsing the Ultimate Move increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]18%[-], Ultimate Move [#0F5CD8]Crit Damage[-] by [#1A7331]40%[-] for [#1A7331]12 sec[-], and the hero's own [#0F5CD8]Max HP[-] by [#1A7331]10%[-].",
-        "descFr": "Lorsque le héros active un [#0F5CD8]Déluge[-], augmente [#0F5CD8]l'attaque de Feu[-] de tous les héros alliés de [#1A7331]12%[-] pendant [#1A7331]30 s[-].\nL'utilisation de l'attaque ultime augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]18%[-], les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]40%[-] pendant [#1A7331]12 s[-] et les [#0F5CD8]PV max[-] du héros lui-même de [#1A7331]10%[-]."
+        "descEn": "When the hero activates a [#0F5CD8]Burst[-], all allied heroes' [#0F5CD8]Fire Attack[-] increases by [#1A7331]12%[-] for [#1A7331]30 sec[-].\nUsing the Ultimate Move increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]18%[-], Ultimate Move [#0F5CD8]Crit Damage[-] by [#1A7331]40%[-] for [#1A7331]12 sec[-], and the hero's [#0F5CD8]Max HP[-] by [#1A7331]10%[-].",
+        "descFr": "Lorsque le héros active un [#0F5CD8]Déluge[-], augmente [#0F5CD8]l'attaque de Feu[-] de tous les héros alliés de [#1A7331]12%[-] pendant [#1A7331]30 s[-].\nL'utilisation de l'attaque ultime augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]18%[-], les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]40%[-] pendant [#1A7331]12 s[-] et les [#0F5CD8]PV max[-] du héros de [#1A7331]10%[-]."
        },
        {
         "level": 2,
-        "descEn": "When the hero activates a [#0F5CD8]Burst[-], all allied heroes' [#0F5CD8]Fire Attack[-] increases by [#1A7331]16%[-] for [#1A7331]30 sec[-].\nUsing the Ultimate Move increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]24%[-], Ultimate Move [#0F5CD8]Crit Damage[-] by [#1A7331]50%[-] for [#1A7331]12 sec[-], and the hero's own [#0F5CD8]Max HP[-] by [#1A7331]13%[-].",
-        "descFr": "Lorsque le héros active un [#0F5CD8]Déluge[-], augmente [#0F5CD8]l'attaque de Feu[-] de tous les héros alliés de [#1A7331]16%[-] pendant [#1A7331]30 s[-].\nL'utilisation de l'attaque ultime augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]24%[-], les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]50%[-] pendant [#1A7331]12 s[-] et les [#0F5CD8]PV max[-] du héros lui-même de [#1A7331]13%[-]."
+        "descEn": "When the hero activates a [#0F5CD8]Burst[-], all allied heroes' [#0F5CD8]Fire Attack[-] increases by [#1A7331]16%[-] for [#1A7331]30 sec[-].\nUsing the Ultimate Move increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]24%[-], Ultimate Move [#0F5CD8]Crit Damage[-] by [#1A7331]50%[-] for [#1A7331]12 sec[-], and the hero's [#0F5CD8]Max HP[-] by [#1A7331]13%[-].",
+        "descFr": "Lorsque le héros active un [#0F5CD8]Déluge[-], augmente [#0F5CD8]l'attaque de Feu[-] de tous les héros alliés de [#1A7331]16%[-] pendant [#1A7331]30 s[-].\nL'utilisation de l'attaque ultime augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]24%[-], les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]50%[-] pendant [#1A7331]12 s[-] et les [#0F5CD8]PV max[-] du héros de [#1A7331]13%[-]."
        },
        {
         "level": 3,
-        "descEn": "When the hero activates a [#0F5CD8]Burst[-], all allied heroes' [#0F5CD8]Fire Attack[-] increases by [#1A7331]20%[-] for [#1A7331]30 sec[-].\nUsing the Ultimate Move increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]30%[-], Ultimate Move [#0F5CD8]Crit Damage[-] by [#1A7331]60%[-] for [#1A7331]12 sec[-], and the hero's own [#0F5CD8]Max HP[-] by [#1A7331]16%[-].",
-        "descFr": "Lorsque le héros active un [#0F5CD8]Déluge[-], augmente [#0F5CD8]l'attaque de Feu[-] de tous les héros alliés de [#1A7331]20%[-] pendant [#1A7331]30 s[-].\nL'utilisation de l'attaque ultime augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]30%[-], les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]60%[-] pendant [#1A7331]12 s[-] et les [#0F5CD8]PV max[-] du héros lui-même de [#1A7331]16%[-]."
+        "descEn": "When the hero activates a [#0F5CD8]Burst[-], all allied heroes' [#0F5CD8]Fire Attack[-] increases by [#1A7331]20%[-] for [#1A7331]30 sec[-].\nUsing the Ultimate Move increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]30%[-], Ultimate Move [#0F5CD8]Crit Damage[-] by [#1A7331]60%[-] for [#1A7331]12 sec[-], and the hero's [#0F5CD8]Max HP[-] by [#1A7331]16%[-].",
+        "descFr": "Lorsque le héros active un [#0F5CD8]Déluge[-], augmente [#0F5CD8]l'attaque de Feu[-] de tous les héros alliés de [#1A7331]20%[-] pendant [#1A7331]30 s[-].\nL'utilisation de l'attaque ultime augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]30%[-], les [#0F5CD8]dégâts crit.[-] d'attaque ultime de [#1A7331]60%[-] pendant [#1A7331]12 s[-] et les [#0F5CD8]PV max[-] du héros de [#1A7331]16%[-]."
        }
       ],
       "nameEn": "Explosive Meteor",
@@ -55151,7 +57092,7 @@
     "iconUrl": "/images/costumes/icon_Merlin_004.webp"
    },
    {
-    "id": "cms2978bf006n2lp2a0p538en",
+    "id": "cmsfp5jli00732mp2l0g0fiqq",
     "slug": "merlin-costume-134100705",
     "nameFr": "Banquet de sorcière",
     "nameEn": "Witch's Banquet",
@@ -55166,7 +57107,7 @@
     "iconUrl": "/images/costumes/icon_Merlin_005.webp"
    },
    {
-    "id": "cms2978bf006o2lp272krvvki",
+    "id": "cmsfp5jli00742mp2uou6h0kk",
     "slug": "merlin-costume-134100706",
     "nameFr": "Jeux de bords de mer",
     "nameEn": "Seaside Frolic",
@@ -55292,12 +57233,12 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_ResRate",
-        "value": 90
+        "stat": "B_Atk",
+        "value": 165
        },
        {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 338
+        "stat": "A_Accuracy",
+        "value": 37
        }
       ]
      },
@@ -55306,12 +57247,12 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 165
+        "stat": "C_Critical_ResRate",
+        "value": 90
        },
        {
-        "stat": "A_Accuracy",
-        "value": 37
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 338
        }
       ]
      },
@@ -55756,6 +57697,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 150
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 113
        },
@@ -55794,20 +57749,6 @@
        {
         "stat": "C_Critical_DamRes_Rate",
         "value": 450
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 150
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
        }
       ]
      },
@@ -56252,6 +58193,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 173
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 42
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 90
        },
@@ -56290,20 +58245,6 @@
        {
         "stat": "C_Critical_DamRes_Rate",
         "value": 383
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 173
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 42
        }
       ]
      },

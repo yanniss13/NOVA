@@ -1,7 +1,7 @@
 // Genere automatiquement par generate-data.ps1 - NE PAS EDITER A LA MAIN.
 // Relance le script pour mettre a jour apres ajout/retrait d'images.
 window.SEVEN_DS_DATA = {
-    "generatedAt":  "2026-07-24 20:50:27",
+    "generatedAt":  "2026-08-05 23:58:39",
     "personnages":  [
                         {
                             "id":  "bug",
@@ -12,6 +12,11 @@ window.SEVEN_DS_DATA = {
                             "id":  "daisy",
                             "name":  "Daisy",
                             "file":  "7ds-personnages/daisy.webp"
+                        },
+                        {
+                            "id":  "derieri",
+                            "name":  "Derieri",
+                            "file":  "7ds-personnages/derieri.webp"
                         },
                         {
                             "id":  "diane",
@@ -1037,6 +1042,10 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Chevalier sacré prometteur.webp"
                                         },
                                         {
+                                            "name":  "Courtoisie minimale",
+                                            "file":  "7ds-armures-ssr/Armure liee/Courtoisie minimale.webp"
+                                        },
+                                        {
                                             "name":  "Début de l\u0027aventure",
                                             "file":  "7ds-armures-ssr/Armure liee/Début de l\u0027aventure.webp"
                                         },
@@ -1159,6 +1168,10 @@ window.SEVEN_DS_DATA = {
                                         {
                                             "name":  "Protection de la fée",
                                             "file":  "7ds-armures-ssr/Armure liee/Protection de la fée.webp"
+                                        },
+                                        {
+                                            "name":  "Résistance et révolution",
+                                            "file":  "7ds-armures-ssr/Armure liee/Résistance et révolution.webp"
                                         },
                                         {
                                             "name":  "Retour du Chevalier Sacré",
