@@ -70,6 +70,7 @@ const MODULES = [
   "vues/suivi.js",
   "vues/synchro-temps-reel.js",
   "vues/session-auth.js",
+  "vues/wiki-blocs.js",
   "vues/wiki.js",
   "vues/wiki-fiche-heros.js",
 

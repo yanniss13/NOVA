@@ -17,7 +17,7 @@ import { linkedArmorsOf } from "../metier/armes.js";
 import { armesDuHeros, competencesParArme } from "../metier/wiki-competences.js";
 import { renderBonus } from "./elements.js";
 import { ModalStack } from "./modal-stack.js";
-import { formatBuildStatValue } from "./stats-affichage.js";
+import { listeDeStats, repliable, titreSection } from "./wiki-blocs.js";
 import { ROLES_HEROS, brancherFiche } from "./wiki.js";
 
   const fiche = { entries:[], index:0, arme:null };
@@ -104,23 +104,6 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
     return rangee;
   }
 
-  /* Un titre barre, comme sur la fiche de reference : un filet, puis le
-     libelle en petites capitales. Le `ton` colore les deux. */
-  function titreSection(texte, ton){
-    return el("div",{class:"wiki-section wiki-section-"+ton},[
-      el("span",{class:"wiki-section-rule"}),
-      el("span",{class:"wiki-section-label", text:texte})
-    ]);
-  }
-
-  function repliable(titre, contenu){
-    if(!contenu) return null;
-    return el("details",{class:"wiki-fold"},[
-      el("summary",{text:titre}),
-      contenu
-    ]);
-  }
-
   function blocPotentiels(charId, arme){
     const dossier = ENUM_TO_FOLDER[arme];
     const paliers = (POT[charId] || {})[dossier];
@@ -136,35 +119,11 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
     return liste.children.length ? liste : null;
   }
 
-  /* Un code de stat rendu lisible. Le libelle francais et l'unite viennent du
-     catalogue, jamais d'une table ecrite ici : un code inedit apparait des la
-     regeneration, sans toucher a ce fichier. Un code absent du catalogue est
-     tu plutot que d'afficher « B_Atk » a un membre. */
-  function ligneDeStat(code, valeur){
-    const libelle = (BUILD_STATS.statLabels || {})[code];
-    if(!libelle || !libelle.fr) return null;
-    let texte;
-    try{
-      texte = formatBuildStatValue(valeur, libelle.unit);
-    }catch(erreur){
-      return null;
-    }
-    return el("li",{class:"wiki-stat"},[
-      el("span",{class:"wiki-stat-name", text:libelle.fr}),
-      el("span",{class:"wiki-stat-value", text:texte})
-    ]);
-  }
-
   function blocStatsDeBase(charId){
     const personnage = (BUILD_STATS.charactersBySlug || {})[charId];
     const stats = personnage && personnage.baseStats;
     if(!Array.isArray(stats) || !stats.length) return null;
-    const liste = el("ul",{class:"wiki-stats"});
-    stats.forEach(item => {
-      const ligne = ligneDeStat(item.stat, item.value);
-      if(ligne) liste.appendChild(ligne);
-    });
-    return liste.children.length ? liste : null;
+    return listeDeStats(stats.map(item => [item.stat, item.value]));
   }
 
   /* Le total qu'apporte la branche de maitrise une fois montee.
@@ -185,13 +144,9 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
       if(!item || !item.stat) return;
       totaux.set(item.stat, (totaux.get(item.stat) || 0) + Number(item.value || 0));
     });
-    const liste = el("ul",{class:"wiki-stats"});
-    totaux.forEach((valeur, code) => {
-      if(valeur === 0) return;
-      const ligne = ligneDeStat(code, valeur);
-      if(ligne) liste.appendChild(ligne);
-    });
-    return liste.children.length ? liste : null;
+    /* Un apport nul ne s'affiche pas : la branche le publie, mais « 0 » ne
+       dit rien de ce qu'elle rapporte. */
+    return listeDeStats([...totaux].filter(paire => paire[1] !== 0));
   }
 
   function blocArmuresLiees(charId){
