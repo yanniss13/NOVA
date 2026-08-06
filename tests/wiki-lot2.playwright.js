@@ -143,6 +143,158 @@ const EFFECTIFS = {
       }
     );
 
+    /* ====================== Les fiches d'objet ====================== */
+
+    // Une arme à passif : sept pastilles, ouvertes sur le niveau maximum.
+    await page.locator("#wikiCategoryArmes").click();
+    await attendreTuiles(155);
+    await page.locator("#wikiFilterWeaponPassive").selectOption("oui");
+    await attendreTuiles(94);
+    await tuiles().first().click();
+    await page.locator("#wikiItemOverlay.on").waitFor();
+
+    const niveaux = page.locator("#wikiItemBody .wiki-level");
+    assert.equal(await niveaux.count(), 7, "un passif d'arme a sept niveaux");
+    assert.equal(
+      await niveaux.nth(6).getAttribute("aria-pressed"), "true",
+      "la fiche doit s'ouvrir sur le niveau maximum"
+    );
+
+    /* Le balisage couleur du jeu est rendu, pas affiché tel quel : c'est le
+       contrat de renderBonus(). */
+    const passifMax = await page.locator("#wikiItemBody .wiki-skill-desc")
+      .first().textContent();
+    assert.ok(passifMax.length > 0 && !passifMax.includes("[#"),
+      "le balisage couleur doit être rendu, pas laissé brut");
+
+    // Changer de niveau change le texte : ce sont les mêmes phrases, d'autres
+    // chiffres.
+    await niveaux.nth(0).click();
+    await page.waitForFunction(
+      avant => document.querySelector("#wikiItemBody .wiki-skill-desc")
+        .textContent !== avant,
+      passifMax
+    );
+
+    /* Les deux blocs repliables d'une arme tirent des données déjà chargées :
+       aucun appel réseau n'est fait à l'ouverture d'une fiche. */
+    assert.deepEqual(
+      await page.locator("#wikiItemBody .wiki-fold > summary")
+        .evaluateAll(nodes => nodes.map(node => node.textContent)),
+      ["Statistiques par rareté", "Enchantements"]
+    );
+
+    // La navigation clavier passe à l'arme suivante, et repart de son maximum.
+    const position = await page.locator("#wikiItemPosition").textContent();
+    await page.keyboard.press("ArrowRight");
+    await page.waitForFunction(
+      avant => document.querySelector("#wikiItemPosition").textContent !== avant,
+      position
+    );
+    assert.equal(
+      await page.locator("#wikiItemBody .wiki-level.active").getAttribute("aria-label"),
+      "Niveau 7",
+      "changer d'arme doit rouvrir sur le niveau maximum"
+    );
+    await page.locator("#wikiItemClose").click();
+    await page.locator("#wikiItemOverlay.on").waitFor({ state:"detached" });
+
+    /* Une arme SANS passif n'affiche pas de section vide : 61 armes sont dans
+       ce cas, et une rubrique creuse laisserait croire à une donnée manquante
+       plutôt qu'à une arme qui n'en a pas. */
+    await page.locator("#wikiFilterWeaponPassive").selectOption("non");
+    await attendreTuiles(61);
+    await tuiles().first().click();
+    await page.locator("#wikiItemOverlay.on").waitFor();
+    assert.equal(await page.locator("#wikiItemBody .wiki-level").count(), 0);
+    assert.equal(
+      await page.locator("#wikiItemBody .wiki-section-label")
+        .evaluateAll(nodes => nodes.filter(n => n.textContent === "Passif").length),
+      0,
+      "aucune section Passif pour une arme qui n'en a pas"
+    );
+    await page.locator("#wikiItemClose").click();
+    await page.locator("#wikiItemOverlay.on").waitFor({ state:"detached" });
+
+    /* Une pièce d'ensemble : le nom de l'ensemble, sa prose, et ses pièces
+       sœurs — y compris celles de l'autre grille. */
+    await page.locator("#wikiCategoryArmures").click();
+    await attendreTuiles(62);
+    await page.locator("#wikiFilterArmorSet").selectOption({ index:1 });
+    await page.waitForFunction(
+      () => document.querySelectorAll("#wikiGrid .wiki-tile").length > 0
+    );
+    await tuiles().first().click();
+    await page.locator("#wikiItemOverlay.on").waitFor();
+
+    assert.ok(
+      (await page.locator("#wikiItemBody .wiki-set-name").textContent()).length > 2,
+      "l'ensemble doit être nommé"
+    );
+    assert.ok(
+      await page.locator("#wikiItemBody .wiki-set-tier").count() >= 1,
+      "l'ensemble doit annoncer au moins un palier"
+    );
+    /* Le seuil se lit dans les données : « 2 pièces » est un abus de langage,
+       il vaut 3 dans une bonne moitié des ensembles. */
+    assert.match(
+      await page.locator("#wikiItemBody .wiki-set-count").first().textContent(),
+      /^\d+ pièces?$/
+    );
+    const proses = await page.locator("#wikiItemBody .wiki-set-text")
+      .evaluateAll(nodes => nodes.map(node => node.textContent));
+    assert.ok(proses.length > 0, "un palier doit porter sa prose");
+    assert.ok(proses.every(texte => !texte.includes("[#")),
+      "la prose d'ensemble doit être rendue, pas laissée brute");
+
+    const soeurs = page.locator("#wikiItemBody .wiki-set-piece");
+    assert.ok(await soeurs.count() >= 2, "un ensemble a plusieurs pièces");
+    assert.equal(
+      await page.locator("#wikiItemBody .wiki-set-piece.active").count(), 1,
+      "la pièce courante doit être marquée parmi ses sœurs"
+    );
+
+    // Cliquer une sœur ouvre sa fiche, sans quitter la modale.
+    const titreAvant = await page.locator("#wikiItemTitle").textContent();
+    await soeurs.locator(":not(.active)").first().click();
+    await page.waitForFunction(
+      avant => document.querySelector("#wikiItemTitle").textContent !== avant,
+      titreAvant
+    );
+    await page.locator("#wikiItemClose").click();
+    await page.locator("#wikiItemOverlay.on").waitFor({ state:"detached" });
+
+    /* Une armure gravée : son héros, et le seul chemin qui mène d'un objet à
+       un personnage. */
+    await page.locator("#wikiCategoryGravees").click();
+    await attendreTuiles(68);
+    await page.locator("#wikiFilterEngravedHero").selectOption({ label:"Derieri" });
+    await page.waitForFunction(
+      () => document.querySelectorAll("#wikiGrid .wiki-tile").length > 0
+    );
+    await tuiles().first().click();
+    await page.locator("#wikiItemOverlay.on").waitFor();
+
+    assert.equal(
+      await page.locator("#wikiItemBody .wiki-level").count(), 3,
+      "un passif d'armure gravée a trois niveaux"
+    );
+    assert.equal(await page.locator("#wikiItemBody .wiki-set").count(), 0,
+      "une armure gravée n'appartient à aucun ensemble");
+
+    const versHeros = page.locator("#wikiItemBody .wiki-linked-hero");
+    assert.equal(await versHeros.getAttribute("data-char"), "derieri");
+    await versHeros.click();
+    await page.locator("#wikiHeroOverlay.on").waitFor();
+    assert.equal(await page.locator("#wikiHeroTitle").textContent(), "Derieri");
+    /* La fiche de héros s'empile PAR-DESSUS : la fermer doit rendre la fiche
+       d'objet, pas laisser le membre sur la grille. */
+    await page.locator("#wikiHeroClose").click();
+    await page.locator("#wikiHeroOverlay.on").waitFor({ state:"detached" });
+    await page.locator("#wikiItemOverlay.on").waitFor();
+    await page.locator("#wikiItemClose").click();
+    await page.locator("#wikiItemOverlay.on").waitFor({ state:"detached" });
+
     /* Revenir aux personnages restaure les quatre filtres du lot 1, avec leurs
        identifiants d'origine. */
     await page.locator("#wikiCategoryHeros").click();

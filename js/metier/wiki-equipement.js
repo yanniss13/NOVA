@@ -162,14 +162,11 @@ import {
     return null;
   }
 
-/* `ensembleDe` et `objetDuWiki` ne sortent pas encore : le depot refuse toute
-   sortie que personne n'importe. Les fiches d'objet les publieront.
-
-   (Aucune ligne de commentaire ne doit commencer par le mot-cle de sortie de
-   module : le chargeur `vm` des tests la prendrait pour une declaration.) */
 export {
   armesDuWiki,
   armuresDuWiki,
   bijouxDuWiki,
-  graveesDuWiki
+  ensembleDe,
+  graveesDuWiki,
+  objetDuWiki
 };

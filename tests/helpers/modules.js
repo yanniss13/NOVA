@@ -73,6 +73,9 @@ const MODULES = [
   "vues/wiki-blocs.js",
   "vues/wiki.js",
   "vues/wiki-fiche-heros.js",
+  "vues/wiki-corps-arme.js",
+  "vues/wiki-corps-equipement.js",
+  "vues/wiki-fiche-objet.js",
 
   /* le reste, pas encore découpé. */
   "app.js"

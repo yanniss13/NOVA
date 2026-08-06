@@ -183,15 +183,109 @@
   border:1px solid var(--line)
 }
 
+/* ---------- Fiche d'objet : arme, piece, armure gravee ---------- */
+/* L'en-tete reprend la composition de la fiche de heros — vignette a gauche,
+   identite a droite — mais SANS le losange : une arme n'est pas un portrait,
+   et la faire pivoter couperait sa lame. */
+.wiki-item-head{display:flex;gap:16px;align-items:center;margin:0 0 6px}
+.wiki-item-frame{
+  width:78px;height:78px;flex:none;display:grid;place-items:center;
+  background:radial-gradient(circle at 50% 40%,#211d2b,#0d0b12);
+  border:1px solid var(--gold-deep);border-radius:12px;
+  box-shadow:0 0 22px -10px var(--gold)
+}
+.wiki-item-image{width:64px;height:64px;object-fit:contain;display:block}
+.wiki-item-id{min-width:0}
+.wiki-item-name{
+  font-family:var(--display);font-size:23px;line-height:1.15;
+  color:var(--parchment)
+}
+.wiki-item-chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0}
+.wiki-chip-fort{color:var(--gold-bright);border-color:var(--gold-deep)}
+.wiki-item-note{margin:8px 0 4px;color:var(--muted);font-size:12.5px}
+
+/* Les pastilles de niveau : le chiffre porte l'information, rien d'autre. */
+.wiki-levels{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.wiki-level{
+  min-width:34px;height:34px;padding:0 8px;
+  background:var(--panel-2);color:var(--muted);
+  border:1px solid var(--line);border-radius:9px;cursor:pointer;
+  font-variant-numeric:tabular-nums;font-size:13px;transition:.14s
+}
+.wiki-level:hover{border-color:var(--gold-deep);color:var(--parchment)}
+.wiki-level.active{
+  border-color:var(--gold-bright);color:var(--ink);
+  background:linear-gradient(180deg,var(--gold-bright),var(--gold));
+  font-weight:700
+}
+
+/* Les statistiques par rarete d'une arme : un bloc par grade. */
+.wiki-grades{display:flex;flex-direction:column;gap:12px;margin:8px 0 4px}
+.wiki-grade-title{
+  margin:0;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold)
+}
+
+/* L'ensemble : son nom, ses paliers, puis ses pieces. */
+.wiki-set{
+  background:var(--panel-2);border:1px solid var(--line-soft);
+  border-radius:12px;padding:12px 14px;margin:0 0 4px
+}
+.wiki-set-name{
+  font-family:var(--display);font-size:17px;color:var(--gold-bright);
+  margin:0 0 8px
+}
+.wiki-set-tier{margin:0 0 10px}
+.wiki-set-count{
+  display:inline-block;padding:2px 9px;border-radius:999px;
+  background:rgba(217,164,65,.14);border:1px solid var(--gold-deep);
+  color:var(--gold-bright);font-size:11.5px;letter-spacing:.05em
+}
+.wiki-set-text{margin:6px 0 0;line-height:1.55}
+.wiki-set-pieces{
+  display:flex;gap:7px;flex-wrap:wrap;margin:12px 0 0;
+  border-top:1px solid var(--line-soft);padding:12px 0 0
+}
+.wiki-set-piece{
+  width:50px;height:50px;padding:0;cursor:pointer;
+  background:#0b0910;border:1px solid var(--line);border-radius:8px;
+  transition:.14s
+}
+.wiki-set-piece img{width:100%;height:100%;object-fit:contain;display:block}
+.wiki-set-piece:hover{border-color:var(--gold-deep);transform:translateY(-2px)}
+/* La piece courante n'est pas cliquable : elle marque ou l'on est. */
+.wiki-set-piece.active{border-color:var(--gold-bright);cursor:default}
+.wiki-set-piece.active:hover{transform:none}
+
+/* Le heros d'une armure gravee : le seul chemin d'un objet vers un
+   personnage, donc il doit se voir comme un lien. */
+.wiki-linked-hero{
+  display:flex;align-items:center;gap:11px;width:100%;padding:8px 12px 8px 8px;
+  background:var(--panel-2);border:1px solid var(--line-soft);
+  border-radius:12px;cursor:pointer;color:var(--parchment);
+  text-align:left;transition:.14s
+}
+.wiki-linked-hero:hover{border-color:var(--gold-deep);color:var(--gold-bright)}
+.wiki-linked-hero img{
+  width:44px;height:44px;border-radius:8px;object-fit:cover;
+  background:#0b0910;flex:none
+}
+
 @media (max-width:520px){
   .wiki-hero-name{font-size:24px}
   .wiki-hero-frame{width:66px;height:66px}
   .wiki-hero-portrait{width:96px;height:96px;margin:-15px 0 0 -15px}
   .wiki-hero-weapon{min-width:0;flex:1 1 0;padding:9px 6px}
+  .wiki-item-name{font-size:20px}
+  .wiki-item-frame{width:64px;height:64px}
+  .wiki-item-image{width:52px;height:52px}
+  .wiki-set{padding:10px 11px}
 }
 
 @media (prefers-reduced-motion:reduce){
-  .wiki-hero-weapon,.wiki-hero-weapon-icon,.wiki-tile,.wiki-category{
+  .wiki-hero-weapon,.wiki-hero-weapon-icon,.wiki-tile,.wiki-category,
+  .wiki-level,.wiki-set-piece,.wiki-linked-hero{
     transition:none
   }
+  .wiki-set-piece:hover{transform:none}
 }

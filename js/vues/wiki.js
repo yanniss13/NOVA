@@ -24,6 +24,7 @@ import { charOf } from "../metier/catalogue.js";
 import {
   armesDuWiki, armuresDuWiki, bijouxDuWiki, graveesDuWiki
 } from "../metier/wiki-equipement.js";
+import { libelleDeRarete } from "./wiki-blocs.js";
 
   /* SEVEN_DS_META parle le vocabulaire du PERSONNAGE — `SUPPORT` — et non
      celui des slots d'arme de WSLOT_ROLES, qui dit `Supporter`. Les deux ne
@@ -37,7 +38,16 @@ import {
      module. Tant qu'ils valent null, une tuile reste inerte plutot que de
      lever. */
   let ouvrirFiche = null;
+  let ouvrirObjet = null;
   const brancherFiche = fonction => { ouvrirFiche = fonction; };
+  const brancherFicheObjet = fonction => { ouvrirObjet = fonction; };
+
+  /* Ouvrir la fiche d'un heros depuis ailleurs que sa grille — l'armure gravee
+     qui lui est liee. On passe TOUS les heros et non le seul concerne, pour
+     que le « precedent / suivant » de la fiche reste utilisable. */
+  function ouvrirHerosDuWiki(slug){
+    if(ouvrirFiche) ouvrirFiche(slug, DATA.personnages || []);
+  }
 
   let chargement = null;
 
@@ -73,9 +83,6 @@ import {
 
   const libelleArme = code => (WEAPON_ENUM[code] || {}).label || code;
   const libelleElement = code => (ELEMENTS[code] || {}).label || code;
-  /* « grade5 » est le vocabulaire des donnees, pas celui du jeu. Le tri par
-     libelle reste juste : « Grade 1 » a « Grade 5 » s'ordonnent bien. */
-  const libelleRarete = code => String(code).replace(/^grade/, "Grade ");
   const libelleEnsemble = id =>
     ((BUILD_STATS.gearSets || {})[id] || {}).nameFr || id;
   const libelleHeros = slug => (charOf(slug) || {}).name || slug;
@@ -145,7 +152,7 @@ import {
         filtreSimple("wikiFilterWeaponType", "Type", "Tous les types",
           entree => entree.type, libelleArme),
         filtreSimple("wikiFilterWeaponGrade", "Rareté", "Toutes les raretés",
-          entree => entree.rareteMax, libelleRarete),
+          entree => entree.rareteMax, libelleDeRarete),
         {
           id:"wikiFilterWeaponPassive", libelle:"Passif", vide:"Toutes",
           /* Un booleen, pas un vocabulaire du jeu : les deux options sont
@@ -205,7 +212,9 @@ import {
     categorie.nom = entree => entree.nom;
     categorie.image = entree => entree.file;
     categorie.marque = entree => ({ file:entree.file });
-    categorie.ouvrir = () => {};
+    categorie.ouvrir = (entree, liste) => {
+      if(ouvrirObjet) ouvrirObjet(entree, liste);
+    };
   });
 
   let active = "heros";
@@ -325,4 +334,10 @@ import {
 /* `chargerCatalogue` reste interne : le depot refuse tout export que personne
    n'importe. `ROLES_HEROS` sort parce que la fiche affiche le meme libelle que
    le filtre — une seule table, pas deux. */
-export { ROLES_HEROS, brancherFiche, renderWiki };
+export {
+  ROLES_HEROS,
+  brancherFiche,
+  brancherFicheObjet,
+  ouvrirHerosDuWiki,
+  renderWiki
+};

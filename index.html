@@ -401,6 +401,31 @@
   </div>
 </div>
 
+<!-- Fiche d'objet du wiki : arme, pièce d'équipement, armure gravée.
+     ⚠️ DÉCLARÉE AVANT #wikiHeroOverlay, et l'ordre compte : une armure
+     gravée ouvre la fiche de son héros PAR-DESSUS celle-ci, or tous les
+     overlays partagent le même z-index (css/modales.css) et c'est l'ordre
+     du document qui tranche. Même raison que #pieceDetailOverlay, placé
+     après #rosterDetailOverlay. -->
+<div class="overlay" id="wikiItemOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="wikiItemTitle" aria-hidden="true">
+  <div class="modal rostermodal">
+    <div class="picker-head">
+      <span class="picker-title" id="wikiItemTitle">Objet</span>
+      <button class="icon-btn" id="wikiItemClose" aria-label="Fermer">✕</button>
+    </div>
+    <div class="roster-detail-nav">
+      <button class="icon-btn" id="wikiItemPrev" type="button"
+              aria-label="Objet précédent">‹</button>
+      <span class="roster-detail-position" id="wikiItemPosition"
+            aria-live="polite"></span>
+      <button class="icon-btn" id="wikiItemNext" type="button"
+              aria-label="Objet suivant">›</button>
+    </div>
+    <div class="roster-detail-body" id="wikiItemBody"></div>
+  </div>
+</div>
+
 <!-- Fiche de héros du wiki -->
 <div class="overlay" id="wikiHeroOverlay" role="dialog" aria-modal="true"
      aria-labelledby="wikiHeroTitle" aria-hidden="true">
