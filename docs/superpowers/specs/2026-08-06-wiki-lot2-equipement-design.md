@@ -255,6 +255,33 @@ automatiquement les nouveaux fichiers une fois déclarés.
   dans une grille d'images.
 - La fusion avec `data/competences.js` du comparateur, toujours différée.
 
+## Ce que l'exécution a corrigé dans cette spec
+
+Trois points relevés à la mesure une fois le code écrit. Ils sont notés ici
+plutôt que réécrits en silence : la spec avait tort, pas les données.
+
+**Une pièce n'appartient pas forcément à un ensemble.** La spec supposait que
+si. En réalité 69 pièces sur 99 en ont un ; des 30 autres, 20 sont le palier bas
+(qualité 86-100) et ne portent que leurs statistiques, 10 (qualité 101-130)
+portent un passif à trois niveaux **à la place** de l'ensemble. Aucune pièce
+d'ensemble n'a de passif. La fiche affiche donc l'un OU l'autre, et sait
+n'afficher ni l'un ni l'autre.
+
+**Les enchantements d'arme ont deux formes.** La spec n'en connaissait qu'une.
+Les grades 1 à 3 publient une liste plate d'options ; les grades 4 et 5 — soit
+exactement les 94 armes à passif, celles qu'on vient lire — publient cinq
+paliers successifs. Ne traiter que la première forme laissait la section vide
+sur toutes les armes intéressantes. Le cinquième palier publie neuf pools
+élémentaires de treize options chacun : 117 lignes n'ont pas leur place dans
+une fiche, et l'éditeur d'arme du Builder les donne déjà, exactes et selon
+l'élément. La fiche y renvoie d'une ligne plutôt que de les recopier.
+
+**L'ordre des overlays dans `index.html` porte l'empilement.** Une armure
+gravée ouvre la fiche de son héros par-dessus la sienne. Tous les overlays
+partageant le même `z-index`, `#wikiItemOverlay` doit être déclaré **avant**
+`#wikiHeroOverlay` — même contrainte que `#pieceDetailOverlay` après
+`#rosterDetailOverlay`.
+
 ## Risques
 
 - **Le poids de `stats-build.js`.** Il est déjà précaché et pèse 2,3 Mo ; les

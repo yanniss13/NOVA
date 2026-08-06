@@ -1445,6 +1445,64 @@ chaque carte.
   (outrepassement, origine des segments d'armure, taux principaux du héros)
   avant de retirer leurs mentions « présumée ».
 
+## Wiki — cinq catégories
+
+L'onglet range tout par catégorie : `Personnages · Armes · Armures · Bijoux ·
+Armures gravées`. Le rail est une **table de données** dans `js/vues/wiki.js` —
+chaque catégorie déclare sa source, son champ de recherche, ses filtres et ce
+que fait un clic. Ajouter une catégorie, c'est ajouter une ligne.
+
+Les listes déroulantes ne sont **pas figées dans `index.html`** : la vue les
+reconstruit à chaque changement de catégorie, dans `#wikiFilters`. Leurs valeurs
+se dérivent des entrées réellement listées, jamais d'une liste écrite à la main.
+Les filtres des personnages gardent leurs identifiants d'origine
+(`#wikiFilterElement`, `#wikiFilterWeapon`, `#wikiFilterRole`,
+`#wikiFilterRarity`) : `tests/wiki.playwright.js` s'y appuie.
+
+### Les objets : aucune aspiration, une jointure
+
+Les quatre catégories d'objets **ne téléchargent rien**, contrairement au
+catalogue des compétences. `js/metier/wiki-equipement.js` joint `data/data.js`
+(les images et les noms) à `data/stats-build.js` (les chiffres et les textes)
+**par le chemin de l'image**, qui est justement la clé de `weaponsByFile`,
+`gearByFile` et `engravedByFile`. Une pièce dont l'image existe sans ses
+statistiques reste listée, champs à `null` : un trou silencieux est pire.
+
+Le seul ajout à un générateur est la **prose des bonus d'ensemble**
+(`twoTextFr` / `fourTextFr` / `sevenTextFr` dans `gear_set_entry`). Les
+`*Stats` ne retiennent que ce qui se chiffre ; la prose porte en plus des
+clauses conditionnelles — « activer un Déluge restaure la jauge de magie de
+200 » — qu'aucun code de stat ne représente.
+
+**Ce qu'il ne faut pas réapprendre à la dure :**
+
+- **une pièce n'appartient pas forcément à un ensemble.** 69 sur 99 en ont un ;
+  des 30 autres, 20 sont le palier bas (qualité 86-100) et ne portent que leurs
+  statistiques, 10 (qualité 101-130) portent un passif à trois niveaux **à la
+  place** de l'ensemble. Aucune pièce d'ensemble n'a de passif ;
+- **les seuils d'ensemble ne sont pas 2 / 4 / 7.** Ils se lisent dans les
+  données : `twoCount` vaut 3 dans une bonne moitié du catalogue ;
+- **les enchantements d'arme ont deux formes.** Grades 1 à 3 : une liste plate
+  d'`options` avec ses `slots`. Grades 4 et 5 — exactement les 94 armes à
+  passif : cinq `tiers` successifs, dont le dernier publie neuf pools
+  élémentaires de treize options au lieu d'`options`. Ne traiter que la
+  première forme laisse la section vide sur toutes les armes intéressantes ;
+- **`#wikiItemOverlay` est déclaré AVANT `#wikiHeroOverlay`** dans
+  `index.html`. Une armure gravée ouvre la fiche de son héros par-dessus la
+  sienne, or tous les overlays partagent le même `z-index` : c'est l'ordre du
+  document qui tranche. Même raison que `#pieceDetailOverlay` après
+  `#rosterDetailOverlay` ;
+- **les noms de premier niveau sont uniques dans tout `js/`.** Le chargeur `vm`
+  des tests concatène tous les modules dans une portée commune : deux
+  `function entete()` dans deux fichiers différents sont une redéclaration, et
+  `tests/mon-suivi.test.js` échoue sur une `SyntaxError` sans rapport apparent.
+
+Les fiches d'objet sont servies par `js/vues/wiki-fiche-objet.js` (la modale et
+son aiguillage), `wiki-corps-arme.js` et `wiki-corps-equipement.js` (les corps),
+au-dessus des briques partagées de `wiki-blocs.js`. Les statistiques d'une pièce
+passent par `gearStatValue` du comparateur, à qualité et renforcement maximaux :
+une seule règle, un seul endroit où elle peut avoir tort.
+
 ## Wiki — catalogue des compétences
 
 `data/wiki-competences.js` pose `window.SEVEN_DS_WIKI_COMPETENCES` :
