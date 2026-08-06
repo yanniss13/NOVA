@@ -197,35 +197,30 @@
            aria-labelledby="tab-wiki">
     <p class="section-eyebrow">Référence</p>
     <h1 class="section-title">Wiki</h1>
-    <p class="section-lead">Les compétences et les passifs de chaque héros, arme par arme, en français.</p>
+    <p class="section-lead">Les compétences, les passifs et les statistiques du jeu, en français.</p>
     <!-- Un groupe, pas un `tablist` : ces boutons ne contrôlent aucun
          `tabpanel`, et un `role="tab"` ici mentirait aux lecteurs d'écran en
          plus de polluer le décompte des onglets principaux. -->
     <div class="wiki-categories" role="group" aria-label="Catégories du wiki">
       <button class="wiki-category active" id="wikiCategoryHeros" type="button"
               aria-pressed="true">Personnages</button>
+      <button class="wiki-category" id="wikiCategoryArmes" type="button"
+              aria-pressed="false">Armes</button>
+      <button class="wiki-category" id="wikiCategoryArmures" type="button"
+              aria-pressed="false">Armures</button>
+      <button class="wiki-category" id="wikiCategoryBijoux" type="button"
+              aria-pressed="false">Bijoux</button>
+      <button class="wiki-category" id="wikiCategoryGravees" type="button"
+              aria-pressed="false">Armures gravées</button>
     </div>
-    <div class="wiki-filters">
+    <!-- Les listes déroulantes ne sont pas figées ici : chaque catégorie a les
+         siennes, et la vue les reconstruit au changement. Seule la recherche
+         est permanente — elle sert à toutes. -->
+    <div class="wiki-filters" id="wikiFilters">
       <label class="wiki-field">
         <span>Recherche</span>
         <input id="wikiSearch" type="search" placeholder="Nom d'un héros…"
                autocomplete="off">
-      </label>
-      <label class="wiki-field">
-        <span>Élément</span>
-        <select id="wikiFilterElement"></select>
-      </label>
-      <label class="wiki-field">
-        <span>Arme</span>
-        <select id="wikiFilterWeapon"></select>
-      </label>
-      <label class="wiki-field">
-        <span>Rôle</span>
-        <select id="wikiFilterRole"></select>
-      </label>
-      <label class="wiki-field">
-        <span>Rareté</span>
-        <select id="wikiFilterRarity"></select>
       </label>
     </div>
     <p class="wiki-state" id="wikiState" role="status" aria-live="polite"></p>

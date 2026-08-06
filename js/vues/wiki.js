@@ -1,18 +1,29 @@
-/* L'onglet Wiki : rail de categories, filtres, grille de heros.
+/* L'onglet Wiki : rail de categories, filtres, grille.
 
-   Le catalogue des competences n'est PAS precache : ~190 Ko de prose pour un
-   onglet qu'on ouvre deliberement. Il est injecte a la premiere ouverture,
-   par une balise <script> classique — la meme forme que les autres fichiers
-   de donnees, qui posent tous un window.*. Le gestionnaire `fetch` du service
-   worker le met en cache au passage, donc hors ligne ensuite.
+   Cinq categories, decrites par une TABLE et non par cinq branches de code.
+   Chacune declare sa source, le texte de son champ de recherche, ses filtres
+   et ce que fait un clic. Ajouter une categorie, c'est ajouter une ligne.
 
-   Les valeurs des filtres sont derivees de SEVEN_DS_META : aucune liste
-   d'elements, de roles ou de raretes n'est ecrite ici. Un heros ajoute au jeu
-   apparait donc sans toucher a ce fichier. */
+   Le catalogue des competences n'est PAS precache : ~210 Ko de prose pour un
+   onglet qu'on ouvre deliberement. Il est injecte a la premiere ouverture, par
+   une balise <script> classique — la meme forme que les autres fichiers de
+   donnees, qui posent tous un window.*. Le gestionnaire `fetch` du service
+   worker le met en cache au passage, donc hors ligne ensuite. Les quatre
+   categories d'objets n'en ont pas besoin : leurs donnees vivent dans
+   data/stats-build.js, deja precache.
 
-import { DATA, ELEMENTS, META, WEAPON_ENUM, metaOf }
-  from "../noyau/constantes.js";
+   Les valeurs des listes deroulantes sont derivees des entrees REELLEMENT
+   listees, jamais ecrites a la main. C'est la regle qui a evite le piege
+   SUPPORT / Supporter au lot 1. */
+
+import {
+  BUILD_STATS, DATA, ELEMENTS, META, WEAPON_ENUM, metaOf
+} from "../noyau/constantes.js";
 import { $, el, norm } from "../noyau/dom.js";
+import { charOf } from "../metier/catalogue.js";
+import {
+  armesDuWiki, armuresDuWiki, bijouxDuWiki, graveesDuWiki
+} from "../metier/wiki-equipement.js";
 
   /* SEVEN_DS_META parle le vocabulaire du PERSONNAGE — `SUPPORT` — et non
      celui des slots d'arme de WSLOT_ROLES, qui dit `Supporter`. Les deux ne
@@ -22,8 +33,9 @@ import { $, el, norm } from "../noyau/dom.js";
     ATTACKER:"Attaquant", DEFENDER:"Défenseur", SUPPORT:"Soutien"
   };
 
-  /* Point d'extension : la fiche de heros s'y branche au chargement de son
-     module. Tant qu'il vaut null, une tuile reste inerte plutot que de lever. */
+  /* Points d'extension : les fiches s'y branchent au chargement de leur
+     module. Tant qu'ils valent null, une tuile reste inerte plutot que de
+     lever. */
   let ouvrirFiche = null;
   const brancherFiche = fonction => { ouvrirFiche = fonction; };
 
@@ -47,97 +59,256 @@ import { $, el, norm } from "../noyau/dom.js";
     return chargement;
   }
 
-  /* Les valeurs d'un filtre : celles que les heros portent REELLEMENT, triees
-     par libelle. `lire` extrait les valeurs d'une meta, `libelle` les nomme. */
-  function valeursDe(lire, libelle){
+  /* Les valeurs d'un filtre : celles que les entrees portent REELLEMENT,
+     triees par libelle. `lire` en extrait les valeurs, `libelle` les nomme. */
+  function valeursPortees(entrees, lire, libelle){
     const portees = new Set();
-    Object.values(META).forEach(meta => {
-      (lire(meta) || []).forEach(valeur => { if(valeur) portees.add(valeur); });
+    (entrees || []).forEach(entree => {
+      (lire(entree) || []).forEach(valeur => { if(valeur) portees.add(valeur); });
     });
     return [...portees]
       .map(valeur => ({ valeur, libelle:libelle(valeur) }))
       .sort((a, b) => a.libelle.localeCompare(b.libelle, "fr-FR"));
   }
 
-  function remplirFiltre(selecteur, valeurs, libelleVide){
-    const champ = $(selecteur);
-    if(champ.options.length) return;
-    champ.appendChild(el("option",{ value:"", text:libelleVide }));
-    valeurs.forEach(item => {
-      champ.appendChild(el("option",{ value:item.valeur, text:item.libelle }));
-    });
-    champ.addEventListener("change", renderGrid);
-  }
+  const libelleArme = code => (WEAPON_ENUM[code] || {}).label || code;
+  const libelleElement = code => (ELEMENTS[code] || {}).label || code;
+  /* « grade5 » est le vocabulaire des donnees, pas celui du jeu. Le tri par
+     libelle reste juste : « Grade 1 » a « Grade 5 » s'ordonnent bien. */
+  const libelleRarete = code => String(code).replace(/^grade/, "Grade ");
+  const libelleEnsemble = id =>
+    ((BUILD_STATS.gearSets || {})[id] || {}).nameFr || id;
+  const libelleHeros = slug => (charOf(slug) || {}).name || slug;
 
-  function remplirFiltres(){
-    remplirFiltre("#wikiFilterElement",
-      valeursDe(meta => [meta.element],
-        code => (ELEMENTS[code] || {}).label || code),
-      "Tous les éléments");
-    remplirFiltre("#wikiFilterWeapon",
-      valeursDe(meta => (meta.weapons || []).map(slot => slot.weapon),
-        code => (WEAPON_ENUM[code] || {}).label || code),
-      "Toutes les armes");
-    remplirFiltre("#wikiFilterRole",
-      valeursDe(meta => [meta.role], code => ROLES_HEROS[code] || code),
-      "Tous les rôles");
-    remplirFiltre("#wikiFilterRarity",
-      valeursDe(meta => [meta.rarity], code => code),
-      "Toutes les raretés");
-  }
+  /* Un filtre sur une valeur simple : le cas de loin le plus courant. */
+  const filtreSimple = (id, libelle, vide, lire, nommer) => ({
+    id, libelle, vide,
+    valeurs:entrees => valeursPortees(entrees, entree => [lire(entree)], nommer),
+    garde:(entree, valeur) => lire(entree) === valeur
+  });
 
-  function correspond(character){
-    const meta = metaOf(character.id) || {};
-    const recherche = norm($("#wikiSearch").value.trim());
-    if(recherche && !norm(character.name).includes(recherche)) return false;
-    const element = $("#wikiFilterElement").value;
-    if(element && meta.element !== element) return false;
-    const role = $("#wikiFilterRole").value;
-    if(role && meta.role !== role) return false;
-    const rarete = $("#wikiFilterRarity").value;
-    if(rarete && meta.rarity !== rarete) return false;
-    const arme = $("#wikiFilterWeapon").value;
-    if(arme && !(meta.weapons || []).some(slot => slot.weapon === arme)){
-      return false;
+  const CATEGORIES = [
+    {
+      cle:"heros",
+      bouton:"#wikiCategoryHeros",
+      recherche:"Nom d'un héros…",
+      vide:"Aucun héros ne correspond à cette recherche.",
+      source:() => DATA.personnages || [],
+      nom:entree => entree.name,
+      image:entree => entree.file,
+      marque:entree => ({ char:entree.id }),
+      /* Les filtres du lot 1, inchanges — identifiants compris : les tests du
+         parcours heros s'y appuient. Ils se derivent de META et non des
+         entrees listees, parce que les armes d'un heros y sont imbriquees. */
+      filtres:[
+        {
+          id:"wikiFilterElement", libelle:"Élément", vide:"Tous les éléments",
+          valeurs:() => valeursPortees(
+            Object.values(META), meta => [meta.element], libelleElement),
+          garde:(entree, valeur) => (metaOf(entree.id) || {}).element === valeur
+        },
+        {
+          id:"wikiFilterWeapon", libelle:"Arme", vide:"Toutes les armes",
+          valeurs:() => valeursPortees(
+            Object.values(META),
+            meta => (meta.weapons || []).map(slot => slot.weapon),
+            libelleArme),
+          garde:(entree, valeur) =>
+            ((metaOf(entree.id) || {}).weapons || [])
+              .some(slot => slot.weapon === valeur)
+        },
+        {
+          id:"wikiFilterRole", libelle:"Rôle", vide:"Tous les rôles",
+          valeurs:() => valeursPortees(
+            Object.values(META), meta => [meta.role],
+            code => ROLES_HEROS[code] || code),
+          garde:(entree, valeur) => (metaOf(entree.id) || {}).role === valeur
+        },
+        {
+          id:"wikiFilterRarity", libelle:"Rareté", vide:"Toutes les raretés",
+          valeurs:() => valeursPortees(
+            Object.values(META), meta => [meta.rarity], code => code),
+          garde:(entree, valeur) => (metaOf(entree.id) || {}).rarity === valeur
+        }
+      ],
+      ouvrir:(entree, liste) => {
+        if(ouvrirFiche) ouvrirFiche(entree.id, liste);
+      }
+    },
+    {
+      cle:"armes",
+      bouton:"#wikiCategoryArmes",
+      recherche:"Nom d'une arme…",
+      vide:"Aucune arme ne correspond à cette recherche.",
+      source:armesDuWiki,
+      filtres:[
+        filtreSimple("wikiFilterWeaponType", "Type", "Tous les types",
+          entree => entree.type, libelleArme),
+        filtreSimple("wikiFilterWeaponGrade", "Rareté", "Toutes les raretés",
+          entree => entree.rareteMax, libelleRarete),
+        {
+          id:"wikiFilterWeaponPassive", libelle:"Passif", vide:"Toutes",
+          /* Un booleen, pas un vocabulaire du jeu : les deux options sont
+             ecrites ici sans que ce soit une liste en dur a maintenir. */
+          valeurs:() => [
+            { valeur:"oui", libelle:"Avec passif" },
+            { valeur:"non", libelle:"Sans passif" }
+          ],
+          garde:(entree, valeur) => entree.aPassif === (valeur === "oui")
+        }
+      ]
+    },
+    {
+      cle:"armures",
+      bouton:"#wikiCategoryArmures",
+      recherche:"Nom d'une armure…",
+      vide:"Aucune armure ne correspond à cette recherche.",
+      source:armuresDuWiki,
+      filtres:[
+        filtreSimple("wikiFilterArmorSlot", "Emplacement",
+          "Tous les emplacements", entree => entree.famille, code => code),
+        filtreSimple("wikiFilterArmorSet", "Ensemble", "Tous les ensembles",
+          entree => entree.setId, libelleEnsemble)
+      ]
+    },
+    {
+      cle:"bijoux",
+      bouton:"#wikiCategoryBijoux",
+      recherche:"Nom d'un bijou…",
+      vide:"Aucun bijou ne correspond à cette recherche.",
+      source:bijouxDuWiki,
+      filtres:[
+        filtreSimple("wikiFilterJewelSlot", "Emplacement",
+          "Tous les emplacements", entree => entree.famille, code => code),
+        filtreSimple("wikiFilterJewelSet", "Ensemble", "Tous les ensembles",
+          entree => entree.setId, libelleEnsemble)
+      ]
+    },
+    {
+      cle:"gravees",
+      bouton:"#wikiCategoryGravees",
+      recherche:"Nom d'une armure gravée…",
+      vide:"Aucune armure gravée ne correspond à cette recherche.",
+      source:graveesDuWiki,
+      filtres:[
+        filtreSimple("wikiFilterEngravedHero", "Héros", "Tous les héros",
+          entree => entree.heros, libelleHeros)
+      ]
     }
-    return true;
+  ];
+
+  /* Les quatre categories d'objets partagent la meme forme d'entree : le
+     module metier rend `{file, nom}`. Les combler ici evite de repeter ces
+     trois lignes quatre fois dans la table. */
+  CATEGORIES.forEach(categorie => {
+    if(categorie.nom) return;
+    categorie.nom = entree => entree.nom;
+    categorie.image = entree => entree.file;
+    categorie.marque = entree => ({ file:entree.file });
+    categorie.ouvrir = () => {};
+  });
+
+  let active = "heros";
+  let filtresPour = null;
+  const categorieActive = () =>
+    CATEGORIES.find(categorie => categorie.cle === active) || CATEGORIES[0];
+
+  function construireFiltres(categorie){
+    const zone = $("#wikiFilters");
+    zone.querySelectorAll("[data-filtre]").forEach(noeud => noeud.remove());
+    $("#wikiSearch").placeholder = categorie.recherche;
+    $("#wikiEmpty").textContent = categorie.vide;
+    const entrees = categorie.source();
+    (categorie.filtres || []).forEach(filtre => {
+      const champ = el("select",{ id:filtre.id, onchange:renderGrid });
+      champ.appendChild(el("option",{ value:"", text:filtre.vide }));
+      filtre.valeurs(entrees).forEach(item => {
+        champ.appendChild(el("option",{ value:item.valeur, text:item.libelle }));
+      });
+      zone.appendChild(el("label",{
+        class:"wiki-field", dataset:{ filtre:filtre.id }
+      },[
+        el("span",{ text:filtre.libelle }),
+        champ
+      ]));
+    });
   }
 
-  const retenus = () => (DATA.personnages || []).filter(correspond);
+  function retenus(){
+    const categorie = categorieActive();
+    const recherche = norm($("#wikiSearch").value.trim());
+    return categorie.source().filter(entree => {
+      if(recherche && !norm(categorie.nom(entree)).includes(recherche)){
+        return false;
+      }
+      return (categorie.filtres || []).every(filtre => {
+        const champ = $("#" + filtre.id);
+        const valeur = champ ? champ.value : "";
+        return !valeur || filtre.garde(entree, valeur);
+      });
+    });
+  }
 
-  function tuile(character){
+  function tuile(categorie, entree, liste){
     return el("button",{
       class:"wiki-tile",
       type:"button",
-      title:character.name,
-      dataset:{ char:character.id },
-      onclick:()=>{ if(ouvrirFiche) ouvrirFiche(character.id, retenus()); }
+      title:categorie.nom(entree),
+      dataset:categorie.marque(entree),
+      onclick:()=>categorie.ouvrir(entree, liste)
     },[
-      el("img",{ src:character.file, alt:"", loading:"lazy" }),
-      el("span",{ class:"wiki-tile-name", text:character.name })
+      el("img",{ src:categorie.image(entree), alt:"", loading:"lazy" }),
+      el("span",{ class:"wiki-tile-name", text:categorie.nom(entree) })
     ]);
   }
 
   function renderGrid(){
+    const categorie = categorieActive();
     const grille = $("#wikiGrid");
     grille.innerHTML = "";
     const liste = retenus();
-    liste.forEach(character => grille.appendChild(tuile(character)));
+    liste.forEach(entree => {
+      grille.appendChild(tuile(categorie, entree, liste));
+    });
     $("#wikiEmpty").hidden = liste.length > 0;
+  }
+
+  function afficher(){
+    const categorie = categorieActive();
+    if(filtresPour !== categorie.cle){
+      construireFiltres(categorie);
+      filtresPour = categorie.cle;
+    }
+    renderGrid();
+  }
+
+  function choisir(cle){
+    if(active === cle) return;
+    active = cle;
+    CATEGORIES.forEach(categorie => {
+      const bouton = $(categorie.bouton);
+      const choisie = categorie.cle === cle;
+      bouton.classList.toggle("active", choisie);
+      bouton.setAttribute("aria-pressed", String(choisie));
+    });
+    /* La recherche d'une categorie n'a pas de sens dans une autre : « derieri »
+       ne designe aucune arme. On repart d'un champ vide plutot que d'une
+       grille mysterieusement vide. */
+    $("#wikiSearch").value = "";
+    afficher();
   }
 
   function renderWiki(){
     const etat = $("#wikiState");
     if(window.SEVEN_DS_WIKI_COMPETENCES){
       etat.textContent = "";
-      renderGrid();
+      afficher();
       return Promise.resolve(true);
     }
     etat.textContent = "Chargement du wiki…";
     return chargerCatalogue().then(()=>{
       etat.textContent = "";
-      remplirFiltres();
-      renderGrid();
+      afficher();
       return true;
     }).catch(()=>{
       etat.textContent = "Le wiki n’a pas pu être chargé. Vérifie ta connexion "
@@ -147,8 +318,11 @@ import { $, el, norm } from "../noyau/dom.js";
   }
 
   $("#wikiSearch").addEventListener("input", renderGrid);
+  CATEGORIES.forEach(categorie => {
+    $(categorie.bouton).addEventListener("click", ()=>choisir(categorie.cle));
+  });
 
 /* `chargerCatalogue` reste interne : le depot refuse tout export que personne
-   n'importe (tests/modules-imports.test.js). `ROLES_HEROS` sort parce que la
-   fiche affiche le meme libelle que le filtre — une seule table, pas deux. */
+   n'importe. `ROLES_HEROS` sort parce que la fiche affiche le meme libelle que
+   le filtre — une seule table, pas deux. */
 export { ROLES_HEROS, brancherFiche, renderWiki };
