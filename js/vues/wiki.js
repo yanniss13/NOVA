@@ -149,5 +149,6 @@ import { $, el, norm } from "../noyau/dom.js";
   $("#wikiSearch").addEventListener("input", renderGrid);
 
 /* `chargerCatalogue` reste interne : le depot refuse tout export que personne
-   n'importe (tests/modules-imports.test.js). */
-export { brancherFiche, renderWiki };
+   n'importe (tests/modules-imports.test.js). `ROLES_HEROS` sort parce que la
+   fiche affiche le meme libelle que le filtre — une seule table, pas deux. */
+export { ROLES_HEROS, brancherFiche, renderWiki };

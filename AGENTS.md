@@ -235,7 +235,8 @@ Site Confrérie 7ds/
 │  ├─ generate-wiki.py            # Régénère wiki-competences.js (compétences FR + passifs).
 │  ├─ discord-reminder.js         # Rappel Discord.
 │  └─ reminder-core.js            # Sa logique pure.
-├─ 7ds-ui/                 # Icônes d'UI : mastery/<arme>.webp, role-elements/<el>_<role>.webp
+├─ 7ds-ui/                 # Icônes d'UI : mastery/<arme>.webp, role-elements/<el>_<role>.webp,
+│                          # skills/<Nom>.webp (313 icônes de compétences, wiki)
 ├─ AGENTS.md               # Ce fichier.
 ├─ docs/superpowers/specs/ # Spec de design détaillée.
 ├─ 7ds-personnages/        # <id>.webp  (ex. meliodas.webp)
@@ -1456,6 +1457,21 @@ Ne pas le confondre avec `data/competences.js` (comparateur de dégâts) : celui
 est un catalogue de **calcul**, en anglais, dont les passifs sont exclus par
 construction. Les deux coexistent volontairement tant que le comparateur n'a pas
 atterri sur `main` ; leur fusion est un chantier à ouvrir après.
+
+Chaque compétence porte le nom de fichier de son icône, servie localement
+depuis `7ds-ui/skills/`. `python scripts/telecharger-images.py` complète le
+dossier : il lit les noms dans le catalogue commité, sans revisiter les 25
+fiches. `tests/wiki-catalogue.test.js` refuse une icône citée mais absente.
+
+**Deux pièges de la source, relevés à la mesure et pas supposés :**
+
+- une description peut n'être qu'un **renvoi** — `"$38"` — vers un texte rangé
+  ailleurs dans le flux React. Deux cas sur 451 (le passif d'Escanor, une
+  compétence de Merlin). Le générateur les suit, et refuse d'écrire s'il reste
+  un renvoi non résolu ;
+- la longueur annoncée par un morceau `<id>:T<hex>,` est en **octets**, pas en
+  caractères : 0x41d = 1053 octets pour 1034 caractères sur le passif
+  d'Escanor. Couper au caractère déborde sur le morceau suivant.
 
 **Ce fichier n'est pas précaché.** 190 Ko de prose pour un onglet qu'on ouvre
 délibérément : `js/vues/wiki.js` l'injecte par une balise `<script>` à la

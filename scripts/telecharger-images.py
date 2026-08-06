@@ -17,6 +17,7 @@
 # =============================================================================
 import argparse
 import importlib.util
+import json
 import os
 import sys
 import urllib.request
@@ -73,6 +74,28 @@ def attendus():
             continue
         yield (os.path.join("7ds-bijoux", dossier), bijou["displayName"],
                "%s/images/items/%s.webp" % (BASE, bijou["gameId"]))
+
+    # Icones de competences : la liste vient du catalogue DEJA COMMITE, pas
+    # d'une nouvelle visite des 25 fiches. Regenerer le catalogue est le
+    # travail de generate-wiki.py ; ici on ne fait que combler les images.
+    for nom in icones_de_competences():
+        yield (os.path.join("7ds-ui", "skills"), nom,
+               "%s/images/skills/%s.webp" % (BASE, nom))
+
+
+def icones_de_competences():
+    """Les noms d'icone cites par data/wiki-competences.js, sans doublon."""
+    chemin = os.path.join(RACINE, "data", "wiki-competences.js")
+    if not os.path.exists(chemin):
+        return []
+    with open(chemin, encoding="utf-8") as fichier:
+        texte = fichier.read()
+    debut = texte.index("{")
+    fin = texte.rstrip().rstrip(";").rindex("}") + 1
+    catalogue = json.loads(texte[debut:fin])
+    noms = {competence.get("icone", "")
+            for liste in catalogue.values() for competence in liste}
+    return sorted(nom[:-5] for nom in noms if nom.endswith(".webp"))
 
 
 def main():

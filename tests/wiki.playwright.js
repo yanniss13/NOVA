@@ -11,7 +11,15 @@ const { chromium } = require("playwright");
   const browser = await chromium.launch({ headless:true });
   const page = await browser.newPage({ viewport:{ width:1440, height:1000 } });
   const errors = [];
+  const imagesRatees = [];
   page.on("pageerror", error => errors.push(error.message));
+  /* Une icone absente ne casse rien de visible en test : sans ce guetteur,
+     la fiche afficherait des cadres vides au vu et au su de personne. */
+  page.on("response", reponse => {
+    if(reponse.status() >= 400 && /\.webp$/.test(reponse.url())){
+      imagesRatees.push(reponse.url());
+    }
+  });
 
   try{
     await page.route("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*", route =>
@@ -90,6 +98,13 @@ const { chromium } = require("playwright");
     assert.equal(
       await page.locator(".wiki-hero-weapon").count(), 3,
       "Derieri a trois types d'arme"
+    );
+
+    /* Chaque compétence porte le médaillon du jeu. */
+    assert.equal(
+      await page.locator(".wiki-skill-icon").count(),
+      await page.locator(".wiki-skill").count(),
+      "chaque compétence doit porter son icône"
     );
 
     // Le passif vient en tête des compétences de l'arme affichée.
@@ -172,6 +187,7 @@ const { chromium } = require("playwright");
     await page.context().setOffline(false);
 
     assert.deepEqual(errors, [], "aucune erreur de page attendue");
+    assert.deepEqual(imagesRatees, [], "aucune image manquante attendue");
   } finally {
     await browser.close();
     await server.close();

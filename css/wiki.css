@@ -50,50 +50,148 @@
 }
 
 /* ---------- Fiche d'un heros ---------- */
-.wiki-hero-head{display:flex;gap:12px;align-items:center;margin:0 0 12px}
-.wiki-hero-portrait{
-  width:72px;height:72px;border-radius:8px;object-fit:cover;background:#0b0910
+
+/* L'en-tete est la seule piece ou la fiche se permet d'etre spectaculaire :
+   portrait en losange, lueur teintee par l'element du heros (--aura, posee
+   en ligne par la vue). Tout le reste reste sobre — une seule audace. */
+.wiki-hero-head{
+  position:relative;display:flex;gap:18px;align-items:center;
+  padding:6px 2px 18px;margin:0 0 4px;
+  border-bottom:1px solid var(--line)
 }
-.wiki-hero-name{font-family:var(--display);font-weight:700;font-size:18px;
-  color:var(--parchment)}
-.wiki-hero-badges{font-size:12.5px;color:var(--muted)}
+.wiki-hero-head::before{
+  content:"";position:absolute;left:-10px;top:-12px;width:220px;height:150px;
+  background:radial-gradient(circle at 60px 60px,var(--aura),transparent 68%);
+  opacity:.22;pointer-events:none
+}
+.wiki-hero-frame{
+  position:relative;z-index:1;flex:none;
+  width:82px;height:82px;overflow:hidden;
+  transform:rotate(45deg);border-radius:14px;
+  border:2px solid var(--aura);background:#0b0910;
+  box-shadow:0 0 26px -8px var(--aura)
+}
+/* Le portrait est contre-tourne et deborde : la diagonale d'un carre de 82
+   fait 116, il faut donc au moins ca pour que les angles restent couverts. */
+.wiki-hero-portrait{
+  width:118px;height:118px;object-fit:cover;
+  transform:rotate(-45deg);margin:-18px 0 0 -18px;display:block
+}
+.wiki-hero-id{position:relative;z-index:1;min-width:0}
+.wiki-hero-name{
+  font-family:var(--display);font-weight:700;font-size:30px;line-height:1.05;
+  letter-spacing:.02em;color:var(--parchment);
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap
+}
+/* La rarete en gemme, comme le petit losange dore de la fiche de reference. */
+.wiki-hero-gem{
+  font-family:var(--ui);font-size:11px;font-weight:700;letter-spacing:.08em;
+  color:var(--obsidian);background:linear-gradient(160deg,var(--gold-bright),var(--gold-deep));
+  padding:3px 9px;border-radius:4px;transform:skewX(-12deg)
+}
+.wiki-hero-chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0}
+.wiki-chip{
+  font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--muted);border:1px solid var(--line);border-radius:4px;
+  padding:3px 9px
+}
+.wiki-chip-element{color:var(--aura);border-color:var(--aura)}
 .wiki-hero-hint{color:var(--muted)}
 
-.wiki-hero-weapons{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
-.wiki-hero-weapon{
-  appearance:none;cursor:pointer;font:inherit;min-height:44px;
-  background:var(--obsidian-2);color:var(--parchment);
-  border:1px solid var(--line);border-radius:999px;padding:6px 16px;
-  transition:.14s
+/* Les armes en cartes a icone : c'est l'icone que le membre reconnait du jeu,
+   pas le libelle. */
+.wiki-hero-weapons{
+  display:flex;gap:8px;flex-wrap:wrap;margin:16px 0 18px
 }
-.wiki-hero-weapon:hover{border-color:var(--gold-deep)}
-.wiki-hero-weapon.active{border-color:var(--gold-bright);color:var(--gold-bright)}
+.wiki-hero-weapon{
+  appearance:none;cursor:pointer;font:inherit;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  min-width:92px;min-height:44px;padding:10px 12px;
+  background:var(--obsidian-2);color:var(--muted);
+  border:1px solid var(--line);border-radius:9px;transition:.14s
+}
+.wiki-hero-weapon:hover{border-color:var(--gold-deep);color:var(--parchment)}
+.wiki-hero-weapon-icon{width:28px;height:28px;opacity:.65;transition:.14s}
+.wiki-hero-weapon-label{font-size:12px;letter-spacing:.02em}
+.wiki-hero-weapon.active{
+  border-color:var(--gold-bright);color:var(--gold-bright);
+  background:linear-gradient(180deg,rgba(217,164,65,.12),transparent)
+}
+.wiki-hero-weapon.active .wiki-hero-weapon-icon{opacity:1}
+
+/* Titre barre : un filet, puis le libelle. La couleur porte la categorie —
+   l'or pour ce que le heros est en permanence, le pourpre pour l'ultime. */
+.wiki-section{display:flex;align-items:center;gap:10px;margin:18px 0 10px}
+.wiki-section-rule{width:26px;height:1px;flex:none;background:currentColor}
+.wiki-section-label{
+  font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase
+}
+.wiki-section-passif{color:var(--gold)}
+.wiki-section-ultime{color:var(--crimson-bright)}
+.wiki-section-normal{color:var(--muted)}
 
 .wiki-skill{
-  border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin:0 0 10px
+  border:1px solid var(--line);border-radius:9px;padding:11px 13px;margin:0 0 8px;
+  background:var(--obsidian-2)
 }
-.wiki-skill-head{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.wiki-skill-head{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
+/* Le medaillon de competence, tel que le jeu l'affiche. Le fond sombre
+   et le liseré evitent qu'une icone claire flotte sans attache. */
+.wiki-skill-icon{
+  width:34px;height:34px;flex:none;border-radius:8px;
+  background:#0b0910;border:1px solid var(--line);padding:2px
+}
+/* La touche en pastille : Q, E, R se lisent d'un coup d'oeil, et « Passif »
+   ou « Attaque sautee » gardent leur mot entier plutot qu'un pictogramme. */
 .wiki-skill-kind{
-  font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)
+  font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--gold);border:1px solid var(--gold-deep);border-radius:4px;
+  padding:2px 7px;flex:none
 }
-.wiki-skill-name{font-weight:600;color:var(--parchment)}
-.wiki-skill-cd{margin-left:auto;font-size:12px;color:var(--muted)}
-.wiki-skill-desc{margin:6px 0 0;line-height:1.5}
-
-.wiki-fold{border-top:1px solid var(--line-soft);margin:10px 0 0;padding:6px 0 0}
-.wiki-fold>summary{
-  cursor:pointer;min-height:44px;display:flex;align-items:center;
+.wiki-skill-name{
+  font-family:var(--display);font-weight:600;font-size:15px;
   color:var(--parchment)
 }
-.wiki-pot{margin:8px 0 0;padding-left:18px}
+.wiki-skill-cd{
+  margin-left:auto;font-size:11.5px;letter-spacing:.04em;color:var(--muted);
+  font-variant-numeric:tabular-nums
+}
+.wiki-skill-desc{margin:8px 0 0;line-height:1.55}
+
+.wiki-fold{border-top:1px solid var(--line-soft);margin:12px 0 0;padding:4px 0 0}
+.wiki-fold>summary{
+  cursor:pointer;min-height:44px;display:flex;align-items:center;gap:8px;
+  font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted)
+}
+.wiki-fold>summary:hover{color:var(--gold)}
+.wiki-fold[open]>summary{color:var(--gold)}
+.wiki-pot{margin:8px 0 4px;padding-left:18px}
 .wiki-pot li{margin:0 0 6px}
-.wiki-pot-tier{font-weight:600;color:var(--gold);margin-right:6px}
-.wiki-stats{margin:8px 0 0;padding:0;list-style:none}
+.wiki-pot-tier{font-weight:700;color:var(--gold);margin-right:6px}
+.wiki-stats{margin:8px 0 4px;padding:0;list-style:none}
 .wiki-stat{
-  display:flex;justify-content:space-between;gap:12px;padding:4px 0;
+  display:flex;justify-content:space-between;gap:12px;padding:5px 0;
   border-bottom:1px solid var(--line-soft)
 }
 .wiki-stat:last-child{border-bottom:0}
+.wiki-stat-name{color:var(--muted)}
 .wiki-stat-value{font-variant-numeric:tabular-nums;color:var(--parchment)}
-.wiki-linked{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 0}
-.wiki-linked img{width:56px;height:56px;border-radius:8px;background:#0b0910}
+.wiki-linked{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 4px}
+.wiki-linked img{
+  width:56px;height:56px;border-radius:8px;background:#0b0910;
+  border:1px solid var(--line)
+}
+
+@media (max-width:520px){
+  .wiki-hero-name{font-size:24px}
+  .wiki-hero-frame{width:66px;height:66px}
+  .wiki-hero-portrait{width:96px;height:96px;margin:-15px 0 0 -15px}
+  .wiki-hero-weapon{min-width:0;flex:1 1 0;padding:9px 6px}
+}
+
+@media (prefers-reduced-motion:reduce){
+  .wiki-hero-weapon,.wiki-hero-weapon-icon,.wiki-tile,.wiki-category{
+    transition:none
+  }
+}

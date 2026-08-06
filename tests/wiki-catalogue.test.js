@@ -66,6 +66,26 @@ slugs.forEach(slug => {
   });
 });
 
+/* Chaque icône citée doit exister en local : sans ce contrôle, une fiche
+   afficherait des cadres vides et aucun test ne le verrait. */
+const iconesCitees = new Set();
+Object.values(catalogue).forEach(liste => {
+  liste.forEach(competence => {
+    assert.ok(
+      competence.icone,
+      "icône absente pour "+competence.gameId
+    );
+    iconesCitees.add(competence.icone);
+  });
+});
+const dossierIcones = path.join(RACINE, "7ds-ui", "skills");
+const iconesLocales = new Set(fs.readdirSync(dossierIcones));
+const manquantes = [...iconesCitees].filter(nom => !iconesLocales.has(nom));
+assert.deepEqual(
+  manquantes, [],
+  "icônes citées mais absentes de 7ds-ui/skills : "+manquantes.join(", ")
+);
+
 console.log(
   "PASS wiki : catalogue cohérent ("+slugs.length+" personnages, "
   + Object.values(catalogue).reduce((total, l) => total + l.length, 0)

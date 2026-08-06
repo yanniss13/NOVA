@@ -18,6 +18,7 @@
 import argparse
 import importlib.util
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -88,8 +89,43 @@ def _objets_portant(payload, cle):
     return trouves
 
 
+# Une description peut n'etre qu'un renvoi — "$38" — vers un morceau de texte
+# range ailleurs dans le flux React. Deux cas sur 451 au moment d'ecrire ceci
+# (le passif d'Escanor, une competence de Merlin), mais les taire afficherait
+# « $38 » a un membre.
+RENVOI = re.compile(r"^\$([0-9a-zA-Z]+)$")
+# Un morceau de texte se declare `<id>:T<longueur hex>,` en debut de ligne du
+# flux. Cette longueur est en OCTETS, pas en caracteres : mesure faite sur le
+# passif d'Escanor, 0x41d = 1053 octets pour 1034 caracteres, l'ecart etant
+# celui des accents. Couper au caractere deborde sur le morceau suivant.
+DEBUT_MORCEAU = re.compile(r"(?:^|\n)([0-9a-fA-F]+):T([0-9a-fA-F]+),")
+
+
+def morceaux_de_texte(payload):
+    """Les textes ranges a part dans le flux, par identifiant de morceau."""
+    morceaux = {}
+    for depart in DEBUT_MORCEAU.finditer(payload):
+        longueur = int(depart.group(2), 16)
+        # Une fenetre de `longueur` CARACTERES contient forcement les
+        # `longueur` octets voulus : en UTF-8 un caractere pese au moins un
+        # octet. On y coupe ensuite au bon endroit, sans encoder tout le flux.
+        fenetre = payload[depart.end():depart.end() + longueur]
+        texte = fenetre.encode("utf-8")[:longueur].decode("utf-8", "ignore")
+        morceaux[depart.group(1)] = texte.replace('\\"', '"').replace("\\n", "\n")
+    return morceaux
+
+
+def resout(description, morceaux):
+    """Suit un renvoi vers un morceau ; rend le texte tel quel sinon."""
+    renvoi = RENVOI.match(description or "")
+    if not renvoi:
+        return description
+    return morceaux.get(renvoi.group(1), description)
+
+
 def competences_du_payload(payload):
     """Les competences d'un heros, dans l'ordre ou la source les publie."""
+    morceaux = morceaux_de_texte(payload)
     retenues = []
     vus = set()
     for brut in _objets_portant(payload, "skillCategory"):
@@ -106,8 +142,11 @@ def competences_du_payload(payload):
             "weaponType": skill.get("weaponType"),
             "categorie": skill.get("skillCategory"),
             "nomFr": skill.get("nameFr") or "",
-            "descriptionFr": skill.get("descriptionFr") or "",
+            "descriptionFr": resout(skill.get("descriptionFr"), morceaux) or "",
             "recharge": nombre_ou_none(skill.get("cooldown")),
+            # Le nom de fichier seul : le prefixe local vit dans la vue, comme
+            # pour les icones de maitrise de WEAPON_ENUM.
+            "icone": (skill.get("iconUrl") or "").rsplit("/", 1)[-1],
         })
     return retenues
 
@@ -124,6 +163,13 @@ def valide(slug, competences):
             raise CatalogueIncomplet(
                 "%s : description francaise absente (%s)"
                 % (slug, competence["gameId"]))
+        if not competence["icone"]:
+            raise CatalogueIncomplet(
+                "%s : icone absente (%s)" % (slug, competence["gameId"]))
+        if RENVOI.match(competence["descriptionFr"]):
+            raise CatalogueIncomplet(
+                "%s : renvoi non resolu %s (%s)"
+                % (slug, competence["descriptionFr"], competence["gameId"]))
     par_arme = {}
     for competence in competences:
         par_arme.setdefault(competence["weaponType"], []).append(competence)

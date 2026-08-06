@@ -18,9 +18,22 @@ import { armesDuHeros, competencesParArme } from "../metier/wiki-competences.js"
 import { renderBonus } from "./elements.js";
 import { ModalStack } from "./modal-stack.js";
 import { formatBuildStatValue } from "./stats-affichage.js";
-import { brancherFiche } from "./wiki.js";
+import { ROLES_HEROS, brancherFiche } from "./wiki.js";
 
   const fiche = { entries:[], index:0, arme:null };
+
+  /* Les competences d'une arme, rangees par ce qu'elles SONT. La couleur du
+     titre porte l'information : l'or pour ce que le heros est en permanence,
+     le pourpre pour l'ultime qu'on attend, le neutre pour le reste. La
+     derniere section ramasse tout le reste — une competence inedite doit
+     apparaitre quelque part plutot que disparaitre. */
+  const SECTIONS = [
+    { titre:"Passif", ton:"passif", garde:c => c.categorie === "PASSIVE" },
+    { titre:"Compétences", ton:"normal",
+      garde:c => /skill_q|skill_e/.test(c.gameId) },
+    { titre:"Ultime", ton:"ultime", garde:c => /skill_r/.test(c.gameId) },
+    { titre:"Autres attaques", ton:"normal", garde:()=>true }
+  ];
 
   /* Le libelle de la touche, lu sur le gameId. Les suffixes composes du jeu
      (`skill_q_1`, `skill_r_enchant`) designent la meme touche, d'ou la
@@ -40,12 +53,21 @@ import { brancherFiche } from "./wiki.js";
 
   function blocCompetence(competence){
     const entete = el("div",{class:"wiki-skill-head"},[
+      /* L'icone du jeu, en medaillon : c'est elle que le membre reconnait a
+         l'ecran de combat. Absente du catalogue, la ligne se rabat sur la
+         seule pastille de touche plutot que de reserver un trou. */
+      competence.icone ? el("img",{
+        class:"wiki-skill-icon",
+        src:"7ds-ui/skills/"+competence.icone,
+        alt:"", loading:"lazy"
+      }) : null,
       el("span",{class:"wiki-skill-kind", text:toucheDe(competence.gameId)}),
       el("span",{class:"wiki-skill-name", text:competence.nomFr})
     ]);
-    /* Une recharge absente n'est pas une recharge nulle : on ne l'annonce pas
-       plutot que d'afficher « 0 s ». */
-    if(competence.recharge !== null && competence.recharge !== undefined){
+    /* Ni une recharge absente ni une recharge nulle ne s'annoncent : un
+       passif est permanent, une attaque normale n'attend rien, et « 0 s »
+       laisserait croire a un compte a rebours qui n'existe pas. */
+    if(competence.recharge){
       entete.appendChild(
         el("span",{class:"wiki-skill-cd", text:competence.recharge+" s"})
       );
@@ -56,19 +78,39 @@ import { brancherFiche } from "./wiki.js";
     ]);
   }
 
+  /* Une carte par arme, avec son icone de maitrise : c'est elle que le membre
+     reconnait dans le jeu, bien avant le libelle. Les icones sont deja dans
+     le depot, aucune n'est telechargee ici. */
   function selecteurArmes(armes){
     const rangee = el("div",{class:"wiki-hero-weapons"});
     armes.forEach(arme => {
-      const libelle = (WEAPON_ENUM[arme] && WEAPON_ENUM[arme].label) || arme;
+      const info = WEAPON_ENUM[arme] || {};
+      const libelle = info.label || arme;
       rangee.appendChild(el("button",{
         class:"wiki-hero-weapon"+(arme === fiche.arme ? " active" : ""),
         type:"button",
         "aria-pressed":String(arme === fiche.arme),
-        text:libelle,
+        title:libelle,
         onclick:()=>{ fiche.arme = arme; renderFiche(); }
-      }));
+      },[
+        info.icon ? el("img",{
+          class:"wiki-hero-weapon-icon",
+          src:"7ds-ui/mastery/"+info.icon+".webp",
+          alt:"", loading:"lazy"
+        }) : null,
+        el("span",{class:"wiki-hero-weapon-label", text:libelle})
+      ]));
     });
     return rangee;
+  }
+
+  /* Un titre barre, comme sur la fiche de reference : un filet, puis le
+     libelle en petites capitales. Le `ton` colore les deux. */
+  function titreSection(texte, ton){
+    return el("div",{class:"wiki-section wiki-section-"+ton},[
+      el("span",{class:"wiki-section-rule"}),
+      el("span",{class:"wiki-section-label", text:texte})
+    ]);
   }
 
   function repliable(titre, contenu){
@@ -198,14 +240,31 @@ import { brancherFiche } from "./wiki.js";
 
     const meta = metaOf(entree.id) || {};
     const element = ELEMENTS[meta.element];
-    corps.appendChild(el("div",{class:"wiki-hero-head"},[
-      el("img",{class:"wiki-hero-portrait", src:character.file, alt:"", loading:"lazy"}),
-      el("div",{class:"wiki-hero-id"},[
-        el("div",{class:"wiki-hero-name", text:character.name}),
-        el("div",{class:"wiki-hero-badges", text:[
-          meta.rarity, element && element.label
-        ].filter(Boolean).join(" · ")})
-      ])
+    /* L'element du heros teinte le cadre et la lueur de l'en-tete : c'est la
+       seule variable vraiment propre a chaque personnage, et c'est ce qui
+       fait qu'aucune fiche ne ressemble a la precedente. Repli sur l'or quand
+       l'element est inconnu, pour ne jamais rendre une couleur vide. */
+    const aura = (element && element.color) || "#d9a441";
+    const chips = el("div",{class:"wiki-hero-chips"});
+    if(element){
+      chips.appendChild(el("span",{
+        class:"wiki-chip wiki-chip-element", text:element.label
+      }));
+    }
+    if(meta.role){
+      chips.appendChild(el("span",{
+        class:"wiki-chip", text:ROLES_HEROS[meta.role] || meta.role
+      }));
+    }
+    const nom = el("div",{class:"wiki-hero-name", text:character.name});
+    if(meta.rarity){
+      nom.appendChild(el("span",{class:"wiki-hero-gem", text:meta.rarity}));
+    }
+    corps.appendChild(el("div",{class:"wiki-hero-head", style:"--aura:"+aura},[
+      el("div",{class:"wiki-hero-frame"},[
+        el("img",{class:"wiki-hero-portrait", src:character.file, alt:"", loading:"lazy"})
+      ]),
+      el("div",{class:"wiki-hero-id"},[nom, chips])
     ]));
 
     const armes = armesDuHeros(entree.id);
@@ -224,9 +283,19 @@ import { brancherFiche } from "./wiki.js";
       if(remplacant) remplacant.focus();
     }
 
-    const parArme = competencesParArme(entree.id);
-    (parArme[fiche.arme] || []).forEach(competence => {
-      corps.appendChild(blocCompetence(competence));
+    /* Une competence n'entre que dans UNE section, la premiere qui la
+       reconnait. La derniere garde vaut toujours : rien ne se perd. */
+    const restantes = (competencesParArme(entree.id)[fiche.arme] || []).slice();
+    SECTIONS.forEach(section => {
+      const prises = restantes.filter(section.garde);
+      if(!prises.length) return;
+      prises.forEach(competence => {
+        restantes.splice(restantes.indexOf(competence), 1);
+      });
+      corps.appendChild(titreSection(section.titre, section.ton));
+      prises.forEach(competence => {
+        corps.appendChild(blocCompetence(competence));
+      });
     });
 
     [
