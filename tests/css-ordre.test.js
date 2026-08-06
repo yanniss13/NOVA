@@ -37,7 +37,8 @@ const FEUILLES = [
   "modales",
   "notifications",
   "responsive",
-  "dispos"
+  "dispos",
+  "wiki"
 ];
 
 const html = fs.readFileSync(path.join(RACINE, "index.html"), "utf8");

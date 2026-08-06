@@ -27,6 +27,7 @@
 <link rel="stylesheet" href="./css/notifications.css">
 <link rel="stylesheet" href="./css/responsive.css">
 <link rel="stylesheet" href="./css/dispos.css">
+<link rel="stylesheet" href="./css/wiki.css">
 </head>
 <body>
 
@@ -63,6 +64,9 @@
     <button class="tab" id="tab-boss" data-view="boss"
             role="tab" aria-controls="view-boss"
             aria-selected="false" tabindex="-1">Sessions de boss</button>
+    <button class="tab" id="tab-wiki" data-view="wiki"
+            role="tab" aria-controls="view-wiki"
+            aria-selected="false" tabindex="-1">Wiki</button>
   </nav>
     <span class="tabs-cue tabs-cue-left" aria-hidden="true">‹</span>
     <span class="tabs-cue tabs-cue-right" aria-hidden="true">›</span>
@@ -186,6 +190,47 @@
       <span class="roster-count" id="bossCount"></span>
     </div>
     <div id="bossBody"></div>
+  </section>
+
+  <!-- ============ WIKI ============ -->
+  <section id="view-wiki" class="view" role="tabpanel"
+           aria-labelledby="tab-wiki">
+    <p class="section-eyebrow">Référence</p>
+    <h1 class="section-title">Wiki</h1>
+    <p class="section-lead">Les compétences et les passifs de chaque héros, arme par arme, en français.</p>
+    <!-- Un groupe, pas un `tablist` : ces boutons ne contrôlent aucun
+         `tabpanel`, et un `role="tab"` ici mentirait aux lecteurs d'écran en
+         plus de polluer le décompte des onglets principaux. -->
+    <div class="wiki-categories" role="group" aria-label="Catégories du wiki">
+      <button class="wiki-category active" id="wikiCategoryHeros" type="button"
+              aria-pressed="true">Personnages</button>
+    </div>
+    <div class="wiki-filters">
+      <label class="wiki-field">
+        <span>Recherche</span>
+        <input id="wikiSearch" type="search" placeholder="Nom d'un héros…"
+               autocomplete="off">
+      </label>
+      <label class="wiki-field">
+        <span>Élément</span>
+        <select id="wikiFilterElement"></select>
+      </label>
+      <label class="wiki-field">
+        <span>Arme</span>
+        <select id="wikiFilterWeapon"></select>
+      </label>
+      <label class="wiki-field">
+        <span>Rôle</span>
+        <select id="wikiFilterRole"></select>
+      </label>
+      <label class="wiki-field">
+        <span>Rareté</span>
+        <select id="wikiFilterRarity"></select>
+      </label>
+    </div>
+    <p class="wiki-state" id="wikiState" role="status" aria-live="polite"></p>
+    <p class="wiki-empty" id="wikiEmpty" hidden>Aucun héros ne correspond à cette recherche.</p>
+    <div class="wiki-grid" id="wikiGrid"></div>
   </section>
 
   <!-- ============ DISPOS ============ -->
@@ -358,6 +403,26 @@
               aria-label="Personnage suivant">›</button>
     </div>
     <div class="roster-detail-body" id="rosterDetailBody"></div>
+  </div>
+</div>
+
+<!-- Fiche de héros du wiki -->
+<div class="overlay" id="wikiHeroOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="wikiHeroTitle" aria-hidden="true">
+  <div class="modal rostermodal">
+    <div class="picker-head">
+      <span class="picker-title" id="wikiHeroTitle">Personnage</span>
+      <button class="icon-btn" id="wikiHeroClose" aria-label="Fermer">✕</button>
+    </div>
+    <div class="roster-detail-nav">
+      <button class="icon-btn" id="wikiHeroPrev" type="button"
+              aria-label="Personnage précédent">‹</button>
+      <span class="roster-detail-position" id="wikiHeroPosition"
+            aria-live="polite"></span>
+      <button class="icon-btn" id="wikiHeroNext" type="button"
+              aria-label="Personnage suivant">›</button>
+    </div>
+    <div class="roster-detail-body" id="wikiHeroBody"></div>
   </div>
 </div>
 

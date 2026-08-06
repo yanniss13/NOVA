@@ -18,6 +18,9 @@ import { renderMemberRoster } from "./vues/roster-membres.js";
 import { renderAnalyse } from "./vues/analyse.js";
 import { renderRoster } from "./vues/roster-equipes.js";
 import { renderDashboardView } from "./vues/suivi.js";
+import { renderWiki } from "./vues/wiki.js";
+/* Importe pour effet de bord : il branche la fiche sur wiki.js. */
+import "./vues/wiki-fiche-heros.js";
 import { initAuth } from "./vues/session-auth.js";
 
 (function(){
@@ -42,6 +45,7 @@ import { initAuth } from "./vues/session-auth.js";
   enregistrerVue("analyse", ()=>Promise.resolve(renderAnalyse()).then(()=>true));
   enregistrerVue("boss", renderBossView);
   enregistrerVue("availability", renderAvailabilityView);
+  enregistrerVue("wiki", renderWiki);
 
   /* ============================ Démarrage ============================ */
   $("#databar").textContent =

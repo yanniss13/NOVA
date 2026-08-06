@@ -33,6 +33,7 @@ const MODULES = [
   "metier/dispos-logique.js",
   "metier/boss-logique.js",
   "metier/accueil-logique.js",
+  "metier/wiki-competences.js",
 
   /* donnees — lectures et écritures Supabase, sans aucun rendu. */
   "donnees/roster-profils.js",
@@ -68,6 +69,8 @@ const MODULES = [
   "vues/suivi.js",
   "vues/synchro-temps-reel.js",
   "vues/session-auth.js",
+  "vues/wiki.js",
+  "vues/wiki-fiche-heros.js",
 
   /* le reste, pas encore découpé. */
   "app.js"

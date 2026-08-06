@@ -221,6 +221,7 @@ Site Confrérie 7ds/
 │  ├─ stats-build.js             # Personnages + armes + équipement + sets + passifs.
 │  ├─ potentiels.js              # 3 armes compatibles + bonus par héros.
 │  ├─ armures-liees.js           # Fichiers d’armure liée par personnage.
+│  ├─ wiki-competences.js        # Compétences et passifs FR par héros (catalogue du wiki).
 │  └─ personnages-meta.js        # element/role/rarity + weapons[] par personnage.
 │  # Ne PAS les éditer à la main : ils sont réécrits par scripts/.
 ├─ scripts/                # Outils hors site. Se lancent DEPUIS LA RACINE.
@@ -231,6 +232,7 @@ Site Confrérie 7ds/
 │  ├─ generate-armures-liees.py   # Régénère armures-liees.js depuis la page publique.
 │  ├─ generate-meta.py            # Régénère personnages-meta.js depuis 7dsorigin.app.
 │  ├─ telecharger-images.py       # Télécharge les images d'armes/bijoux qui manquent.
+│  ├─ generate-wiki.py            # Régénère wiki-competences.js (compétences FR + passifs).
 │  ├─ discord-reminder.js         # Rappel Discord.
 │  └─ reminder-core.js            # Sa logique pure.
 ├─ 7ds-ui/                 # Icônes d'UI : mastery/<arme>.webp, role-elements/<el>_<role>.webp
@@ -1442,6 +1444,34 @@ chaque carte.
   (outrepassement, origine des segments d'armure, taux principaux du héros)
   avant de retirer leurs mentions « présumée ».
 
+## Wiki — catalogue des compétences
+
+`data/wiki-competences.js` pose `window.SEVEN_DS_WIKI_COMPETENCES` :
+`{ [slug]: [{ gameId, weaponType, categorie, nomFr, descriptionFr, recharge }] }`.
+Régénérable par `python scripts/generate-wiki.py`, qui lit les pages
+**françaises** `7dsorigin.app/fr/characters/<slug>`. 18 compétences par héros,
+six par type d'arme, **passifs compris** (451 au total, 190 Ko).
+
+Ne pas le confondre avec `data/competences.js` (comparateur de dégâts) : celui-là
+est un catalogue de **calcul**, en anglais, dont les passifs sont exclus par
+construction. Les deux coexistent volontairement tant que le comparateur n'a pas
+atterri sur `main` ; leur fusion est un chantier à ouvrir après.
+
+**Ce fichier n'est pas précaché.** 190 Ko de prose pour un onglet qu'on ouvre
+délibérément : `js/vues/wiki.js` l'injecte par une balise `<script>` à la
+première ouverture, et `networkFirst` de `sw.js` le met en cache au passage.
+
+Trois conséquences à ne pas réapprendre à la dure :
+
+- `js/metier/wiki-competences.js` lit `window.SEVEN_DS_WIKI_COMPETENCES` **à
+  chaque appel**, jamais à l'évaluation du module — le catalogue arrive après ;
+- le catalogue n'est disponible hors ligne qu'à partir de la **deuxième**
+  session. Au tout premier chargement la page n'est pas encore contrôlée par le
+  service worker : la requête lui échappe et rien n'est mis en cache ;
+- le rail de catégories du wiki est un `role="group"`, **pas** un `tablist`.
+  Ses boutons ne contrôlent aucun `tabpanel`, et un `role="tab"` fausserait le
+  décompte des onglets principaux que vérifie `accessibilite-mobile`.
+
 ## Conventions
 
 - Français partout dans l'UI.
@@ -1451,3 +1481,5 @@ chaque carte.
 - Après modif des dossiers d'images : relancer `scripts/generate-data.ps1`.
 - Après une mise à jour du jeu : `python scripts/telecharger-images.py --liste`
   annonce les images d'armes et de bijoux qui manquent, sans rien écrire.
+- Après l'ajout d'un héros : relancer aussi `python scripts/generate-wiki.py`,
+  sinon `tests/wiki-catalogue.test.js` passe au rouge.

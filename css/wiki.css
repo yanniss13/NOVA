@@ -1,0 +1,99 @@
+/* Onglet Wiki : rail de categories, filtres, grille de heros.
+
+   Charge en dernier, apres dispos.css : il ne surcharge rien et n'est
+   surcharge par rien. Les couleurs reprennent celles du picker (.tile) pour
+   que la grille du wiki se lise comme un selecteur deja connu. */
+
+.wiki-categories{
+  display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px
+}
+.wiki-category{
+  appearance:none;cursor:pointer;font:inherit;min-height:44px;
+  background:var(--obsidian-2);color:var(--parchment);
+  border:1px solid var(--line);border-radius:999px;padding:6px 18px;
+  transition:.14s
+}
+.wiki-category:hover{border-color:var(--gold-deep)}
+.wiki-category.active{border-color:var(--gold-bright);color:var(--gold-bright)}
+
+.wiki-filters{
+  display:grid;gap:12px;margin:0 0 16px;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr))
+}
+.wiki-field{display:flex;flex-direction:column;gap:4px}
+.wiki-field>span{font-size:12.5px;color:var(--muted)}
+.wiki-field input,.wiki-field select{
+  min-height:44px;background:var(--panel-2);color:inherit;
+  border:1px solid var(--line);border-radius:8px;padding:0 10px;font:inherit
+}
+
+.wiki-state,.wiki-empty{color:var(--muted);margin:0 0 16px}
+
+.wiki-grid{
+  display:grid;gap:12px;
+  grid-template-columns:repeat(auto-fill,minmax(104px,1fr))
+}
+.wiki-tile{
+  appearance:none;cursor:pointer;font:inherit;
+  border:1px solid var(--line);background:var(--obsidian-2);
+  border-radius:9px;padding:8px 6px;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  transition:.14s;color:var(--parchment)
+}
+.wiki-tile:hover{border-color:var(--gold-deep);transform:translateY(-2px)}
+.wiki-tile img{
+  width:100%;aspect-ratio:1/1;border-radius:6px;object-fit:cover;
+  background:#0b0910
+}
+.wiki-tile-name{
+  font-size:11px;line-height:1.2;text-align:center;word-break:break-word
+}
+
+/* ---------- Fiche d'un heros ---------- */
+.wiki-hero-head{display:flex;gap:12px;align-items:center;margin:0 0 12px}
+.wiki-hero-portrait{
+  width:72px;height:72px;border-radius:8px;object-fit:cover;background:#0b0910
+}
+.wiki-hero-name{font-family:var(--display);font-weight:700;font-size:18px;
+  color:var(--parchment)}
+.wiki-hero-badges{font-size:12.5px;color:var(--muted)}
+.wiki-hero-hint{color:var(--muted)}
+
+.wiki-hero-weapons{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 16px}
+.wiki-hero-weapon{
+  appearance:none;cursor:pointer;font:inherit;min-height:44px;
+  background:var(--obsidian-2);color:var(--parchment);
+  border:1px solid var(--line);border-radius:999px;padding:6px 16px;
+  transition:.14s
+}
+.wiki-hero-weapon:hover{border-color:var(--gold-deep)}
+.wiki-hero-weapon.active{border-color:var(--gold-bright);color:var(--gold-bright)}
+
+.wiki-skill{
+  border:1px solid var(--line);border-radius:9px;padding:10px 12px;margin:0 0 10px
+}
+.wiki-skill-head{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}
+.wiki-skill-kind{
+  font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--gold)
+}
+.wiki-skill-name{font-weight:600;color:var(--parchment)}
+.wiki-skill-cd{margin-left:auto;font-size:12px;color:var(--muted)}
+.wiki-skill-desc{margin:6px 0 0;line-height:1.5}
+
+.wiki-fold{border-top:1px solid var(--line-soft);margin:10px 0 0;padding:6px 0 0}
+.wiki-fold>summary{
+  cursor:pointer;min-height:44px;display:flex;align-items:center;
+  color:var(--parchment)
+}
+.wiki-pot{margin:8px 0 0;padding-left:18px}
+.wiki-pot li{margin:0 0 6px}
+.wiki-pot-tier{font-weight:600;color:var(--gold);margin-right:6px}
+.wiki-stats{margin:8px 0 0;padding:0;list-style:none}
+.wiki-stat{
+  display:flex;justify-content:space-between;gap:12px;padding:4px 0;
+  border-bottom:1px solid var(--line-soft)
+}
+.wiki-stat:last-child{border-bottom:0}
+.wiki-stat-value{font-variant-numeric:tabular-nums;color:var(--parchment)}
+.wiki-linked{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 0}
+.wiki-linked img{width:56px;height:56px;border-radius:8px;background:#0b0910}
