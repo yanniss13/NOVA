@@ -56,7 +56,6 @@ import {
           type:(stats && stats.weaponType)
             || FOLDER_TO_ENUM[String(arme.file).split("/")[1]] || null,
           raretes,
-          rareteMax:raretes.length ? raretes[raretes.length - 1] : null,
           aPassif:!!(stats && stats.passiveLevels && stats.passiveLevels.length)
         });
       });

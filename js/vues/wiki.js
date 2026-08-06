@@ -151,8 +151,19 @@ import { libelleDeRarete } from "./wiki-blocs.js";
       filtres:[
         filtreSimple("wikiFilterWeaponType", "Type", "Tous les types",
           entree => entree.type, libelleArme),
-        filtreSimple("wikiFilterWeaponGrade", "Rareté", "Toutes les raretés",
-          entree => entree.rareteMax, libelleDeRarete),
+        {
+          id:"wikiFilterWeaponGrade", libelle:"Rareté",
+          vide:"Toutes les raretés",
+          /* ⚠️ Sur TOUTES les raretes ou l'arme existe, pas sur la plus
+             haute. Une arme monte de grade 1 a grade 3, ou n'existe qu'en
+             grade 4 ou 5 — jamais les deux. Filtrer sur le maximum faisait
+             disparaitre « Grade 2 », qui n'est jamais un plafond : le membre
+             lisait « Grade 1, Grade 3, Grade 4, Grade 5 » et ne pouvait pas
+             chercher les armes qui existent en grade 2. */
+          valeurs:entrees => valeursPortees(
+            entrees, entree => entree.raretes, libelleDeRarete),
+          garde:(entree, valeur) => entree.raretes.indexOf(valeur) !== -1
+        },
         {
           id:"wikiFilterWeaponPassive", libelle:"Passif", vide:"Toutes",
           /* Un booleen, pas un vocabulaire du jeu : les deux options sont

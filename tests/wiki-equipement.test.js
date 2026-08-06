@@ -137,7 +137,6 @@ const STATS_TEST = {
      grille — un trou silencieux, le pire des états. */
   const orpheline = liste[0];
   assert.deepEqual(orpheline.raretes, []);
-  assert.equal(orpheline.rareteMax, null);
   assert.equal(orpheline.aPassif, false);
   /* Son type reste connu : il se lit sur le DOSSIER de l'image. Attention, le
      dossier (« Bouclier ») n'est pas la clé de DATA.armes (« Epee & bouclier »),
@@ -150,7 +149,6 @@ const STATS_TEST = {
   const { armesDuWiki } = charger(DATA_TEST, STATS_TEST);
   const hacheA = plain(armesDuWiki()).find(arme => arme.nom === "Hache A");
   assert.deepEqual(hacheA.raretes, ["grade1", "grade2", "grade3"]);
-  assert.equal(hacheA.rareteMax, "grade3");
   assert.equal(hacheA.aPassif, true);
 
   const hacheB = plain(armesDuWiki()).find(arme => arme.nom === "Hache B");

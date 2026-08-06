@@ -1482,6 +1482,14 @@ clauses conditionnelles — « activer un Déluge restaure la jauge de magie de
   place** de l'ensemble. Aucune pièce d'ensemble n'a de passif ;
 - **les seuils d'ensemble ne sont pas 2 / 4 / 7.** Ils se lisent dans les
   données : `twoCount` vaut 3 dans une bonne moitié du catalogue ;
+- **une arme n'a pas une rareté, elle en a plusieurs.** 60 armes existent en
+  grade 1, 2 et 3 ; les 94 autres n'existent qu'en grade 4 **ou** grade 5, et ce
+  sont celles qui portent un passif. Aucune arme ne passe d'une famille à
+  l'autre. Conséquence : un filtre bâti sur la rareté *maximale* fait
+  disparaître « Grade 2 », qui n'est jamais un plafond — le membre lit
+  « Grade 1, Grade 3, Grade 4, Grade 5 » et croit à un bug. Filtrer sur toutes
+  les raretés portées ; `tests/wiki-lot2.playwright.js` refuse un trou dans la
+  suite des grades ;
 - **les enchantements d'arme ont deux formes.** Grades 1 à 3 : une liste plate
   d'`options` avec ses `slots`. Grades 4 et 5 — exactement les 94 armes à
   passif : cinq `tiers` successifs, dont le dernier publie neuf pools

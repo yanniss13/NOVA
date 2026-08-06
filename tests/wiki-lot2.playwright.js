@@ -77,9 +77,31 @@ const EFFECTIFS = {
     await page.locator("#wikiFilterWeaponType").selectOption({ label:"Hache" });
     await attendreTuiles(13);
 
+    /* ⚠️ Les raretés ne doivent présenter AUCUN trou.
+
+       Une arme monte de grade 1 à grade 3, ou n'existe qu'en grade 4 ou 5 —
+       jamais les deux. Un filtre bâti sur la rareté MAXIMALE faisait donc
+       disparaître « Grade 2 », qui n'est jamais un plafond : la liste affichait
+       « Grade 1, Grade 3, Grade 4, Grade 5 » et un membre ne pouvait pas
+       chercher les armes qui existent en grade 2. Le filtre porte sur toutes
+       les raretés où l'arme existe. */
+    await page.locator("#wikiFilterWeaponType").selectOption("");
+    const grades = await page.locator("#wikiFilterWeaponGrade option")
+      .evaluateAll(nodes => nodes.slice(1).map(node => node.textContent));
+    const rangs = grades.map(texte => Number(texte.replace(/\D/g, "")));
+    assert.deepEqual(
+      rangs,
+      rangs.map((_, index) => rangs[0] + index),
+      "les raretés doivent se suivre sans trou, reçu " + JSON.stringify(grades)
+    );
+    // Grade 2 n'est le plafond d'aucune arme, mais 60 armes y existent.
+    await page.locator("#wikiFilterWeaponGrade").selectOption({ label:"Grade 2" });
+    await attendreTuiles(60);
+    await page.locator("#wikiFilterWeaponGrade").selectOption("");
+    await attendreTuiles(155);
+
     /* Le filtre passif : 94 armes sur 155 en portent un. Les 61 autres sont
        listées quand même — leur fiche ne doit simplement rien inventer. */
-    await page.locator("#wikiFilterWeaponType").selectOption("");
     await page.locator("#wikiFilterWeaponPassive").selectOption("oui");
     await attendreTuiles(94);
     await page.locator("#wikiFilterWeaponPassive").selectOption("non");
