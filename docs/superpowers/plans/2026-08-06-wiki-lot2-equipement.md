@@ -59,7 +59,7 @@ générateurs Python, tests `node:test` + Playwright.
 `.fourTextFr` et `.sevenTextFr` (string ou `null`, alignés sur la présence du
 seuil correspondant).
 
-- [ ] **Étape 1 : écrire l'assertion qui échoue**
+- [x] **Étape 1 : écrire l'assertion qui échoue**
 
 Dans la boucle `sets.forEach` de `tests/stats-build-catalog.test.js`, exiger que
 tout palier publié porte son texte, et qu'un palier absent n'en porte pas :
@@ -76,12 +76,12 @@ tout palier publié porte son texte, et qu'un palier absent n'en porte pas :
     });
 ```
 
-- [ ] **Étape 2 : vérifier l'échec**
+- [x] **Étape 2 : vérifier l'échec**
 
 `node --test tests/stats-build-catalog.test.js` → échec sur `twoTextFr`
 `undefined`.
 
-- [ ] **Étape 3 : ajouter les trois champs au générateur**
+- [x] **Étape 3 : ajouter les trois champs au générateur**
 
 Dans `gear_set_entry`, à côté des `*Stats` :
 
@@ -94,7 +94,7 @@ Dans `gear_set_entry`, à côté des `*Stats` :
 Le texte part tel quel, balisage `[#RRGGBB]texte[-]` compris : `renderBonus()`
 le rend côté vue, comme pour les potentiels et les compétences.
 
-- [ ] **Étape 4 : régénérer et vérifier**
+- [x] **Étape 4 : régénérer et vérifier**
 
 ```
 python scripts/generate-stats-build.py
@@ -102,7 +102,7 @@ node --test tests/stats-build-catalog.test.js
 python scripts/generate-stats-build.py --check
 ```
 
-- [ ] **Étape 5 : commit**
+- [x] **Étape 5 : commit**
 
 ```
 git add scripts/generate-stats-build.py data/stats-build.js tests/stats-build-catalog.test.js
@@ -141,7 +141,7 @@ objetDuWiki(file) // l'entrée de liste correspondant au chemin, ou null
 **Interfaces consommées :** `DATA.armes`, `DATA.armures`, `DATA.bijoux`,
 `BUILD_STATS.weaponsByFile`, `.gearByFile`, `.engravedByFile`, `.gearSets`.
 
-- [ ] **Étape 1 : écrire `tests/wiki-equipement.test.js`**
+- [x] **Étape 1 : écrire `tests/wiki-equipement.test.js`**
 
 Le module tourne dans un `vm` via `tests/helpers/load-app.js` ; comparer avec
 `plain()` pour éviter le piège des tableaux inter-royaumes. Cas couverts :
@@ -155,27 +155,27 @@ Le module tourne dans un `vm` via `tests/helpers/load-app.js` ; comparer avec
 - un ensemble sans seuil 7 n'expose pas de palier 7 ;
 - les listes sont triées par nom.
 
-- [ ] **Étape 2 : vérifier l'échec**
+- [x] **Étape 2 : vérifier l'échec**
 
 `node --test tests/wiki-equipement.test.js` → module introuvable.
 
-- [ ] **Étape 3 : écrire `js/metier/wiki-equipement.js`**
+- [x] **Étape 3 : écrire `js/metier/wiki-equipement.js`**
 
 Pur, sans DOM. Une pièce sans entrée statistique **reste listée** : une image
 ajoutée avant la régénération doit apparaître, pas disparaître.
 
-- [ ] **Étape 4 : déclarer le module**
+- [x] **Étape 4 : déclarer le module**
 
 `tests/helpers/modules.js` — dans la couche `metier`, après
 `metier/wiki-competences.js`. `sw.js` — dans `CORE_ASSETS`.
 
-- [ ] **Étape 5 : vérifier**
+- [x] **Étape 5 : vérifier**
 
 `node --test tests/wiki-equipement.test.js` puis `npm test` : `modules-imports`
 doit **échouer** ici, personne n'important encore le module. C'est le signal
 attendu ; l'étape suivante le résout.
 
-- [ ] **Étape 6 : le rail et les filtres dans `index.html`**
+- [x] **Étape 6 : le rail et les filtres dans `index.html`**
 
 Les quatre boutons de catégorie à la suite de `#wikiCategoryHeros`, avec les
 identifiants `#wikiCategoryArmes`, `#wikiCategoryArmures`, `#wikiCategoryBijoux`,
@@ -183,7 +183,7 @@ identifiants `#wikiCategoryArmes`, `#wikiCategoryArmures`, `#wikiCategoryBijoux`
 `<div class="wiki-filters" id="wikiFilters"></div>` ; le champ `#wikiSearch`
 reste dans l'HTML, seul son `placeholder` change selon la catégorie.
 
-- [ ] **Étape 7 : la table des catégories dans `js/vues/wiki.js`**
+- [x] **Étape 7 : la table des catégories dans `js/vues/wiki.js`**
 
 Chaque catégorie déclare : `cle`, `libelle`, `source()`, `recherche`
 (le placeholder), `filtres[]` (chacun avec son `id`, son libellé, son extracteur
@@ -195,19 +195,19 @@ Les filtres de la catégorie Personnages **gardent leurs identifiants**
 
 Les valeurs se dérivent des entrées listées, jamais d'une liste écrite ici.
 
-- [ ] **Étape 8 : écrire `tests/wiki-lot2.playwright.js`** *(volet grilles)*
+- [x] **Étape 8 : écrire `tests/wiki-lot2.playwright.js`** *(volet grilles)*
 
 Passer d'une catégorie à l'autre ; vérifier que le nombre de tuiles change et
 correspond aux effectifs (155 / 62 / 37 / 68) ; qu'un filtre restreint la
 grille dans chacune ; que revenir sur Personnages restaure ses quatre filtres.
 Guetteur de réponses `.webp` ≥ 400, comme `wiki.playwright.js`.
 
-- [ ] **Étape 9 : brancher le test et vérifier**
+- [x] **Étape 9 : brancher le test et vérifier**
 
 Ajouter le fichier aux trois scripts de `package.json`, puis `npm test` :
 tout au vert, `tests/wiki.playwright.js` compris et non modifié.
 
-- [ ] **Étape 10 : commit**
+- [x] **Étape 10 : commit**
 
 ```
 git commit -m "feat: ouvrir le wiki aux armes, armures, bijoux et gravees"
@@ -234,7 +234,7 @@ selecteurNiveaux(niveaux, actif, auChangement)  // <div class="wiki-levels">
 repliable(titre, contenu)     // <details class="wiki-fold"> ou null
 ```
 
-- [ ] **Étape 1 : créer `js/vues/wiki-blocs.js`**
+- [x] **Étape 1 : créer `js/vues/wiki-blocs.js`**
 
 Y déplacer `titreSection`, `ligneDeStat` et `repliable` **à l'identique** depuis
 `wiki-fiche-heros.js`, commentaires compris. Y ajouter `listeDeStats` et
@@ -244,16 +244,16 @@ le même souffle.
 `selecteurNiveaux` reprend la forme du sélecteur d'arme : des boutons
 `aria-pressed`, l'actif marqué `.active`.
 
-- [ ] **Étape 2 : faire importer `wiki-fiche-heros.js`**
+- [x] **Étape 2 : faire importer `wiki-fiche-heros.js`**
 
 Retirer ses trois définitions privées, importer depuis `./wiki-blocs.js`.
 
-- [ ] **Étape 3 : déclarer le module**
+- [x] **Étape 3 : déclarer le module**
 
 `tests/helpers/modules.js` — couche `vues`, **avant** `vues/wiki-fiche-heros.js`.
 `sw.js` — dans `CORE_ASSETS`.
 
-- [ ] **Étape 4 : vérifier**
+- [x] **Étape 4 : vérifier**
 
 `npm test`. `tests/wiki.playwright.js` passe sans retouche : les replis
 « Potentiels / Maîtrises d'arme / Stats de base / Armures gravées » et les
@@ -263,7 +263,7 @@ titres de section sont rendus à l'identique.
 Si `modules-imports.test.js` les refuse, les ajouter en tâche 4 plutôt qu'ici,
 et n'extraire à cette étape que les trois helpers déplacés.*
 
-- [ ] **Étape 5 : commit**
+- [x] **Étape 5 : commit**
 
 ```
 git commit -m "refactor: partager les briques de rendu du wiki"
@@ -287,19 +287,19 @@ git commit -m "refactor: partager les briques de rendu du wiki"
 **Interfaces produites :** `brancherFicheObjet(fonction)` exporté par `wiki.js`,
 appelé par `wiki-fiche-objet.js` au chargement — le patron de `brancherFiche`.
 
-- [ ] **Étape 1 : l'overlay dans `index.html`**
+- [x] **Étape 1 : l'overlay dans `index.html`**
 
 `#wikiItemOverlay` calqué sur `#wikiHeroOverlay` : `#wikiItemTitle`,
 `#wikiItemClose`, `#wikiItemPrev`, `#wikiItemPosition`, `#wikiItemNext`,
 `#wikiItemBody`.
 
-- [ ] **Étape 2 : `js/vues/wiki-corps-arme.js`**
+- [x] **Étape 2 : `js/vues/wiki-corps-arme.js`**
 
 Rend les nœuds du corps d'une arme, dans l'ordre de la spec : en-tête, passif à
 sélecteur 1→7 ouvert sur le maximum, statistique principale par rareté,
 enchantements. **Pas de section passif** pour les 61 armes qui n'en ont pas.
 
-- [ ] **Étape 3 : `js/vues/wiki-corps-equipement.js`**
+- [x] **Étape 3 : `js/vues/wiki-corps-equipement.js`**
 
 En-tête, provenance (ensemble et ses pièces sœurs cliquables, ou héros lié
 cliquable), passif 1→3 si présent, statistiques, gravures. Les deux rappels
@@ -307,7 +307,7 @@ cliquable), passif 1→3 si présent, statistiques, gravures. Les deux rappels
 reçues en paramètre plutôt que par un import : le corps ne connaît pas la
 modale qui l'affiche.
 
-- [ ] **Étape 4 : `js/vues/wiki-fiche-objet.js`**
+- [x] **Étape 4 : `js/vues/wiki-fiche-objet.js`**
 
 La modale : `ouvrirFicheObjet(file, entrees)`, précédent / suivant, flèches
 gauche / droite, compteur, fermeture, et l'aiguillage vers l'un des deux corps.
@@ -318,19 +318,19 @@ flèches meurent après un clic :
    le rendre à son remplaçant ;
 2. rendre le focus quand `precedent`/`suivant` devient `disabled`.
 
-- [ ] **Étape 5 : brancher**
+- [x] **Étape 5 : brancher**
 
 `wiki.js` exporte `brancherFicheObjet` et l'appelle depuis la tuile des quatre
 catégories. `app.js` importe `./vues/wiki-fiche-objet.js` pour effet de bord.
 Déclarer les trois modules dans `tests/helpers/modules.js` et `sw.js`.
 
-- [ ] **Étape 6 : le CSS**
+- [x] **Étape 6 : le CSS**
 
 À la suite de `css/wiki.css` : en-tête d'objet, pastilles de niveau, pièces
 sœurs, bloc d'ensemble, héros lié. Traiter la coupure à 520 px et le bloc
 `prefers-reduced-motion` déjà présents.
 
-- [ ] **Étape 7 : étendre `tests/wiki-lot2.playwright.js`** *(volet fiches)*
+- [x] **Étape 7 : étendre `tests/wiki-lot2.playwright.js`** *(volet fiches)*
 
 Ouvrir une arme à passif et vérifier les 7 pastilles ; changer de niveau et
 voir le texte changer ; ouvrir une arme sans passif et vérifier l'absence de la
@@ -338,11 +338,11 @@ section ; ouvrir une pièce d'ensemble, vérifier la prose rendue (pas de `[#`
 laissé brut) et cliquer une pièce sœur ; ouvrir une armure gravée et cliquer
 son héros pour arriver sur `#wikiHeroOverlay` ; naviguer au clavier.
 
-- [ ] **Étape 8 : vérifier**
+- [x] **Étape 8 : vérifier**
 
 `npm test` complet, `tests/wiki.playwright.js` toujours inchangé.
 
-- [ ] **Étape 9 : commit**
+- [x] **Étape 9 : commit**
 
 ```
 git commit -m "feat: ouvrir les fiches d'arme, de piece et d'armure gravee"
@@ -354,14 +354,14 @@ git commit -m "feat: ouvrir les fiches d'arme, de piece et d'armure gravee"
 
 **Fichiers :** `AGENTS.md`
 
-- [ ] **Étape 1 : compléter la section wiki**
+- [x] **Étape 1 : compléter la section wiki**
 
 Les cinq catégories, la provenance de chaque table, et le point à retenir : le
 lot 2 **n'aspire rien**, il joint `data.js` à `stats-build.js` par le chemin
 d'image. Nommer aussi le seul ajout à un générateur, la prose des ensembles, et
 pourquoi elle ne pouvait pas venir des `*Stats`.
 
-- [ ] **Étape 2 : vérifier et commit**
+- [x] **Étape 2 : vérifier et commit**
 
 `npm test`, puis :
 
