@@ -253,14 +253,34 @@ def gear_set_entry(raw, known):
             for item in items
         ]
 
+    def texte(valeur):
+        """Une absence de palier, quelle que soit la forme qu'elle prend.
+
+        ⚠️ La source n'est pas coherente avec elle-meme : un palier 4 absent
+        se dit `""` (six ensembles), un palier 7 absent se dit `null` (quinze).
+        Les deux disent la meme chose ; le catalogue n'en garde qu'une.
+        """
+        return valeur or None
+
     return {
         "nameFr": raw.get("nameFr"),
         "twoCount": raw.get("bonusTwoCount"),
         "twoStats": stats(raw.get("bonusTwoStats")),
+        # Le texte du palier, tel que publie, balisage [#RRGGBB]texte[-]
+        # compris : renderBonus() le rend cote vue.
+        #
+        # ⚠️ Il n'est pas redondant avec `*Stats`. Ceux-ci ne retiennent que
+        # ce qui se chiffre ; la prose porte en plus des clauses
+        # conditionnelles — « l'activation d'un Deluge restaure la jauge de
+        # magie de 200 » — qu'aucun code de stat ne represente. Le wiki les
+        # affiche, le comparateur ne les compte pas.
+        "twoTextFr": texte(raw.get("bonusTwoFr")),
         "fourCount": raw.get("bonusFourCount"),
         "fourStats": stats(raw.get("bonusFourStats")),
+        "fourTextFr": texte(raw.get("bonusFourFr")),
         "sevenCount": raw.get("bonusSevenCount"),
         "sevenStats": stats(raw.get("bonusSevenStats")),
+        "sevenTextFr": texte(raw.get("bonusSevenFr")),
     }
 
 

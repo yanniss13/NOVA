@@ -242,6 +242,32 @@ sets.forEach(([id, entry]) => {
     });
 });
 
+/* Les statistiques chiffrées ne disent pas tout : la prose d'un palier porte
+   des clauses qu'aucun code de stat ne représente — « activer un Déluge
+   restaure la jauge de magie de 200 ». Le wiki l'affiche, donc le catalogue
+   doit la porter, et un palier publié sans son texte est une amputation. */
+sets.forEach(([id, entry]) => {
+  assert.equal(
+    typeof entry.twoTextFr, "string",
+    id + " : premier palier sans texte"
+  );
+  [["fourCount", "fourTextFr"], ["sevenCount", "sevenTextFr"]]
+    .forEach(([count, texte]) => {
+      if(entry[count] === null || entry[count] === undefined){
+        assert.equal(
+          entry[texte],
+          null,
+          id + " : " + texte + " sans seuil correspondant"
+        );
+        return;
+      }
+      assert.equal(
+        typeof entry[texte], "string",
+        id + " : " + count + " sans texte"
+      );
+    });
+});
+
 // Tout code cité doit avoir son libellé, sa famille et son unité.
 const cited = new Set();
 gear.concat(engraved).forEach(([, entry]) => {
