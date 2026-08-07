@@ -2,7 +2,7 @@
 
 > **Pour l'exécutant :** spec de référence
 > `docs/superpowers/specs/2026-08-07-collection-suivi-design.md`.
-> Les étapes se cochent (`- [ ]`) au fur et à mesure.
+> Les étapes se cochent (`- [x]`) au fur et à mesure.
 
 **But :** un onglet où le membre coche les armes et armures gravées qu'il
 possède, pour ne garder sous les yeux que ce qui lui reste à chercher.
@@ -64,7 +64,7 @@ Indépendante du reste : elle ne touche que du SQL et son test de forme.
 created_at)`, clé primaire `(owner, item)`, politiques `collection_read`,
 `collection_insert`, `collection_delete`.
 
-- [ ] **Étape 1 : écrire le test qui échoue**
+- [x] **Étape 1 : écrire le test qui échoue**
 
 Créer `tests/collection-schema.test.js`, sur le modèle de
 `tests/roster-schema.test.js` :
@@ -102,12 +102,12 @@ assert.equal(
 console.log("PASS schema : collection_items et ses politiques");
 ```
 
-- [ ] **Étape 2 : vérifier l'échec**
+- [x] **Étape 2 : vérifier l'échec**
 
 Run : `node tests/collection-schema.test.js`
 Attendu : ÉCHEC sur `create table if not exists public.collection_items`.
 
-- [ ] **Étape 3 : ajouter la table au schéma**
+- [x] **Étape 3 : ajouter la table au schéma**
 
 Dans `supabase/schema.sql`, après le bloc du roster (section 4), insérer :
 
@@ -142,17 +142,17 @@ create policy collection_insert on public.collection_items for insert to authent
 create policy collection_delete on public.collection_items for delete to authenticated using (owner = auth.uid());
 ```
 
-- [ ] **Étape 4 : vérifier que le test passe**
+- [x] **Étape 4 : vérifier que le test passe**
 
 Run : `node tests/collection-schema.test.js`
 Attendu : `PASS schema : collection_items et ses politiques`.
 
-- [ ] **Étape 5 : brancher le test**
+- [x] **Étape 5 : brancher le test**
 
 Dans `package.json`, ajouter `&& node tests/collection-schema.test.js` juste
 après `node tests/roster-schema.test.js`, dans **`test` et `test:unit`**.
 
-- [ ] **Étape 6 : commit**
+- [x] **Étape 6 : commit**
 
 ```bash
 git add supabase/schema.sql tests/collection-schema.test.js package.json
@@ -194,7 +194,7 @@ utilesAuRoster(entrees, objets)     // Set<string> des chemins qui servent
 progressionDe(objets, possessions)  // {total, possedes, manquants}
 ```
 
-- [ ] **Étape 1 : écrire le test du module métier**
+- [x] **Étape 1 : écrire le test du module métier**
 
 Créer `tests/collection.test.js`. Le module tourne dans un `vm` avec ses
 dépendances posées en globales, comme `tests/wiki-equipement.test.js` :
@@ -317,12 +317,12 @@ const OBJETS = [
 console.log("PASS collection : possession, utilite au roster et progression");
 ```
 
-- [ ] **Étape 2 : vérifier l'échec**
+- [x] **Étape 2 : vérifier l'échec**
 
 Run : `node tests/collection.test.js`
 Attendu : ÉCHEC, `js/metier/collection.js` n'existe pas.
 
-- [ ] **Étape 3 : écrire le module métier**
+- [x] **Étape 3 : écrire le module métier**
 
 Créer `js/metier/collection.js` :
 
@@ -410,12 +410,12 @@ import { weaponTypesOf } from "./armes.js";
 export { equipesDuRoster, possessionsDe, progressionDe, utilesAuRoster };
 ```
 
-- [ ] **Étape 4 : vérifier que le test passe**
+- [x] **Étape 4 : vérifier que le test passe**
 
 Run : `node tests/collection.test.js`
 Attendu : `PASS collection : possession, utilite au roster et progression`.
 
-- [ ] **Étape 5 : le balisage de l'onglet**
+- [x] **Étape 5 : le balisage de l'onglet**
 
 Dans `index.html` :
 
@@ -466,7 +466,7 @@ Le sélecteur `#collectionOwner` est posé dès maintenant mais reste **masqué*
 tant que la tâche 4 ne l'alimente pas : un contrôle vide qui ne fait rien est
 une promesse non tenue. La vue lui met `hidden = true` à cette étape.
 
-- [ ] **Étape 6 : écrire la vue**
+- [x] **Étape 6 : écrire la vue**
 
 Créer `js/vues/collection.js`. Elle réemploie les listes du Wiki et construit
 ses filtres comme `wiki.js` — dérivés des objets réellement listés, jamais
@@ -620,7 +620,7 @@ Chaque `change` écrit dans `etat` puis rappelle `renderCollection`.
 **À cette étape, une tuile n'a aucun gestionnaire de clic** : le marquage
 arrive en tâche 3. Les tuiles équipées sont déjà `disabled`.
 
-- [ ] **Étape 7 : écrire la feuille de style**
+- [x] **Étape 7 : écrire la feuille de style**
 
 Créer `css/collection.css`. Elle ne redéfinit ni `.wiki-grid` ni `.wiki-tile`,
 qu'elle réemploie, et n'ajoute que ce qui lui est propre :
@@ -659,7 +659,7 @@ qu'elle réemploie, et n'ajoute que ce qui lui est propre :
 ⚠️ `.wiki-tile` doit être `position:relative` pour que le `::after` se place.
 Le vérifier dans `css/wiki.css` et l'y ajouter si absent.
 
-- [ ] **Étape 8 : brancher la vue**
+- [x] **Étape 8 : brancher la vue**
 
 - `js/app.js` : `import { renderCollection } from "./vues/collection.js";` puis
   `enregistrerVue("collection", renderCollection);` après la ligne du wiki ;
@@ -669,13 +669,13 @@ Le vérifier dans `css/wiki.css` et l'y ajouter si absent.
 - `sw.js` : les deux modules et `"./css/collection.css"` dans `CORE_ASSETS` ;
 - `tests/css-ordre.test.js` : `collection.css` en dernier de la liste ordonnée.
 
-- [ ] **Étape 9 : ajuster le test d'accessibilité**
+- [x] **Étape 9 : ajuster le test d'accessibilité**
 
 Dans `tests/accessibilite-mobile.playwright.js`, remplacer le décompte de 8
 onglets par 9, et la cible de la touche `Fin` : `tabs.nth(8)` et
 `#view-collection`.
 
-- [ ] **Étape 10 : vérifier**
+- [x] **Étape 10 : vérifier**
 
 ```bash
 node tests/collection.test.js
@@ -687,7 +687,7 @@ node tests/accessibilite-mobile.playwright.js
 
 Puis `npm test` complet.
 
-- [ ] **Étape 11 : commit**
+- [x] **Étape 11 : commit**
 
 ```bash
 git add -A
@@ -718,7 +718,7 @@ CollectionStore.mark(item)        // Promise<void>, insert pour l'utilisateur co
 CollectionStore.unmark(item)      // Promise<void>, delete pour l'utilisateur courant
 ```
 
-- [ ] **Étape 1 : la clé de cache**
+- [x] **Étape 1 : la clé de cache**
 
 Dans `js/noyau/constantes.js`, à côté des deux autres :
 
@@ -728,7 +728,7 @@ Dans `js/noyau/constantes.js`, à côté des deux autres :
 
 et l'ajouter au bloc d'exports.
 
-- [ ] **Étape 2 : écrire le store**
+- [x] **Étape 2 : écrire le store**
 
 Créer `js/donnees/collection-store.js`, sur le modèle de `roster-store.js` :
 
@@ -809,7 +809,7 @@ import { sessionCourante } from "../etat/session.js";
 export { CollectionStore };
 ```
 
-- [ ] **Étape 3 : le geste dans la vue**
+- [x] **Étape 3 : le geste dans la vue**
 
 Dans `js/vues/collection.js` :
 
@@ -835,18 +835,18 @@ Dans `js/vues/collection.js` :
 avant confirmation ferait disparaître un objet qu'une erreur réseau laisserait
 non marqué, et le membre le croirait acquis.
 
-- [ ] **Étape 4 : le temps réel**
+- [x] **Étape 4 : le temps réel**
 
 Dans `js/vues/synchro-temps-reel.js`, ajouter `"collection_items"` au tableau
 `tables`, et re-rendre la vue Collection dans le même aiguillage que les autres
 tables.
 
-- [ ] **Étape 5 : déclarer le module**
+- [x] **Étape 5 : déclarer le module**
 
 `tests/helpers/modules.js` : `"donnees/collection-store.js"` dans la couche
 `donnees`. `sw.js` : dans `CORE_ASSETS`.
 
-- [ ] **Étape 6 : écrire le parcours Playwright**
+- [x] **Étape 6 : écrire le parcours Playwright**
 
 Créer `tests/collection.playwright.js`, en réutilisant le faux Supabase de
 `tests/supabase-etape1.playwright.js` : y ajouter `collection_items:[]` à
@@ -859,12 +859,12 @@ Créer `tests/collection.playwright.js`, en réutilisant le faux Supabase de
   ne réagit pas au clic ;
 - le filtre « utile à ce roster » restreint la grille.
 
-- [ ] **Étape 7 : vérifier**
+- [x] **Étape 7 : vérifier**
 
 `npm test` complet. Le test doit **échouer** si l'on retire le `onclick` :
 le vérifier une fois à la main avant de commiter.
 
-- [ ] **Étape 8 : commit**
+- [x] **Étape 8 : commit**
 
 ```bash
 git add -A
@@ -881,29 +881,29 @@ git commit -m "feat: marquer et demarquer un objet de sa collection"
 `refreshRosterProfiles()` (`js/donnees/roster-profils.js`),
 `MemberRosterStore.refresh(ownerId)`.
 
-- [ ] **Étape 1 : alimenter le sélecteur**
+- [x] **Étape 1 : alimenter le sélecteur**
 
 Remplir `#collectionOwner` avec « Ma collection » puis les autres profils,
 sur le modèle de `renderMemberRosterControls`. Le retirer de `hidden`.
 
-- [ ] **Étape 2 : lire la collection et le roster du membre choisi**
+- [x] **Étape 2 : lire la collection et le roster du membre choisi**
 
 `CollectionStore.refresh(ownerId)` et `MemberRosterStore.refresh(ownerId)`
 prennent tous deux l'identifiant affiché. Le filtre d'utilité et les objets
 verrouillés se rapportent donc au **membre affiché**, pas à celui qui regarde.
 
-- [ ] **Étape 3 : lecture seule sur autrui**
+- [x] **Étape 3 : lecture seule sur autrui**
 
 Quand `ownerId !== sessionCourante.user.id`, aucune tuile ne reçoit de
 `onclick` et le libellé du filtre d'utilité devient
 `Utile au roster de <pseudo>`.
 
-- [ ] **Étape 4 : étendre le test**
+- [x] **Étape 4 : étendre le test**
 
 Ajouter à `tests/collection.playwright.js` : choisir un autre membre affiche sa
 collection, le décompte change, et un clic sur une tuile ne modifie rien.
 
-- [ ] **Étape 5 : vérifier et commit**
+- [x] **Étape 5 : vérifier et commit**
 
 ```bash
 npm test
@@ -917,7 +917,7 @@ git commit -m "feat: consulter la collection d'un autre membre"
 
 **Fichiers :** `AGENTS.md`
 
-- [ ] **Étape 1 : décrire le domaine**
+- [x] **Étape 1 : décrire le domaine**
 
 Ajouter une section « Collection » : la table à une ligne par objet et pourquoi
 elle n'est pas un tableau ; la règle de possession (marqué **ou** équipé) et le
@@ -925,7 +925,7 @@ fait que l'équipé se dérive au lieu de se stocker ; le piège des deux
 vocabulaires d'arme (`weaponTypesOf` rend un dossier, les objets un enum,
 `FOLDER_TO_ENUM` fait le pont) ; l'absence de politique `update`.
 
-- [ ] **Étape 2 : vérifier et commit**
+- [x] **Étape 2 : vérifier et commit**
 
 ```bash
 npm test
