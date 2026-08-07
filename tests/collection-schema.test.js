@@ -50,4 +50,14 @@ assert.match(
   "owner doit référencer auth.users avec suppression en cascade"
 );
 
-console.log("PASS schema : collection_items et ses politiques");
+/* La table doit être PUBLIÉE en Realtime, sinon `synchro-temps-reel.js`
+   écoute un canal qui n'émettra jamais rien : deux appareils du même membre ne
+   se verraient pas, et rien ne le signalerait — ni erreur, ni test rouge. Le
+   défaut a bien été commis : l'écoute a été branchée côté client sans que la
+   table entre dans la publication. */
+assert.ok(
+  /foreach realtime_table in array array\[[^\]]*'collection_items'[^\]]*\]/i.test(sql),
+  "collection_items manque au tableau des tables publiées en Realtime"
+);
+
+console.log("PASS schema : collection_items, politiques et publication Realtime");

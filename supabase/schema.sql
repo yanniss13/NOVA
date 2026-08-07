@@ -1121,7 +1121,8 @@ begin
     'boss_sessions',
     'boss_participation',
     'boss_run_reports',
-    'member_availability'
+    'member_availability',
+    'collection_items'
   ]
   loop
     if not exists (
