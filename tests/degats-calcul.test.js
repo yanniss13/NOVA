@@ -248,6 +248,59 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   assert.equal(CIBLE_REFERENCE.critDmgResist, 5000);
   assert.equal(CIBLE_REFERENCE.resistanceElementaire, 3000);
   assert.equal(CIBLE_REFERENCE.faiblesse, 0);
+  /* Celle-ci n'est PAS un releve : la source ne publie aucune resistance au
+     percement pour Akumu. Le zero est une hypothese, et ce test existe pour
+     qu'elle reste visible plutot que de se fondre dans les autres. */
+  assert.equal(CIBLE_REFERENCE.resistancePercement, 0);
+}
+
+/* Le percement de defense (« Defense Shatter ») retranche un POURCENTAGE de
+   la defense de la cible AVANT la mitigation. DEF 5600 percee a 50 % tombe a
+   2800, donc K/(K+DEF) passe de 0,5 a 5600/8400. */
+{
+  const r = degatsAttendus({
+    stats:{ atk:1000, percementDefense:5000 },
+    competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
+  });
+  assert.equal(Math.round(r.total), 667);
+}
+
+/* La resistance au percement de la cible s'y oppose, et c'est la difference
+   qui compte. */
+{
+  const r = degatsAttendus({
+    stats:{ atk:1000, percementDefense:5000 },
+    competence:COUP_SIMPLE,
+    cible:Object.assign({}, CIBLE_NEUTRE, { resistancePercement:2000 })
+  });
+  assert.equal(Math.round(r.total), 588, "50 % - 20 % = 30 % de percement net");
+}
+
+/* Le percement net est borne des deux cotes : il ne peut ni annuler plus que
+   la defense entiere, ni la RENFORCER quand la cible sur-resiste. */
+{
+  const excedent = degatsAttendus({
+    stats:{ atk:1000, percementDefense:15000 },
+    competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
+  });
+  assert.equal(Math.round(excedent.total), 1000, "au plus, la defense tombe a zero");
+
+  const surResiste = degatsAttendus({
+    stats:{ atk:1000, percementDefense:1000 },
+    competence:COUP_SIMPLE,
+    cible:Object.assign({}, CIBLE_NEUTRE, { resistancePercement:9000 })
+  });
+  assert.equal(Math.round(surResiste.total), 500,
+    "un percement negatif laisse la defense intacte, il ne l'augmente pas");
+}
+
+/* Un build sans percement retrouve exactement la mitigation de base : le
+   terme est neutre par defaut, jamais penalisant. */
+{
+  const r = degatsAttendus({
+    stats:SANS_CRITIQUE, competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
+  });
+  assert.equal(r.total, 500);
 }
 
 /* Les trois colonnes sont trois lectures d'un SEUL calcul. L'esperance est

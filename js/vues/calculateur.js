@@ -29,7 +29,13 @@ import { showView } from "./navigation.js";
   const BASES = [
     { cle:"atk", code:"B_Atk", label:"ATK" },
     { cle:"critRate", code:"C_Critical_Rate", label:"Taux critique (%)" },
-    { cle:"critDamage", code:"C_Critical_Dam_Rate", label:"Dégâts critiques (%)" }
+    { cle:"critDamage", code:"C_Critical_Dam_Rate", label:"Dégâts critiques (%)" },
+    /* Visible et retouchable comme les autres : il retranche un pourcentage
+       de la defense d'Akumu, donc il deplace CHAQUE ligne du tableau. Le
+       laisser invisible ferait bouger les chiffres sans que le membre puisse
+       voir d'ou vient l'ecart. */
+    { cle:"percementDefense", code:"D_Protect_Cur_Rate",
+      label:"Percement de défense (%)" }
   ];
 
   /* Etat de la page. `retouches` ne contient que ce que le membre a
@@ -128,6 +134,7 @@ import { showView } from "./navigation.js";
         maxHp:lire("B_MaxHp"),
         critRate:lire("C_Critical_Rate"),
         critDamage:lire("C_Critical_Dam_Rate"),
+        percementDefense:lire("D_Protect_Cur_Rate"),
         attaqueElementaire:
           (majuscule ? lire(majuscule + "_Add") : 0) + lire("AllElement_Add")
       }

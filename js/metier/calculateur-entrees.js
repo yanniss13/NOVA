@@ -32,6 +32,10 @@ import { degatsAttendus } from "./degats-calcul.js";
          buffs invisibles sur tout build deja proche du plafond. */
       C_Critical_Rate:"critRateAllie",
       C_Critical_Dam_Rate:"critDamage",
+      /* « Defense Shatter » : un pourcentage retranche a la defense de la
+         cible. A ne pas confondre avec `A_Accuracy` (« Perforation »), plate
+         et non modelisee. */
+      D_Protect_Cur_Rate:"percementDefense",
       /* « Attaque de tous les elements » : le moteur l'ajoute a l'ATK pour
          toute composante de base `atk`, voir baseDeComposante(). */
       AllElement_Add:"attaqueElementaire"
@@ -77,6 +81,7 @@ import { degatsAttendus } from "./degats-calcul.js";
          de soutien coches, et le moteur l'ajoute apres le plafond de 90 %. */
       critRateAllie:0,
       critDamage:Number(stats.critDamage) || 0,
+      percementDefense:Number(stats.percementDefense) || 0,
       bonusGlobal:0,
       bonusElementaire:0,
       bonusCategorie:0

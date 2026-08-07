@@ -82,7 +82,7 @@ const { buffsApplicables, entreesDuCalcul, resultatsParCompetence } = hooks;
    fixture doit mesurer le BRANCHEMENT, jamais la base. */
 const NEUTRE = {
   atk:1000, attaqueElementaire:500, def:400, maxHp:20000,
-  critRate:3000, critDamage:12000
+  critRate:3000, critDamage:12000, percementDefense:500
 };
 
 /* Aucun buff ne doit etre silencieusement ignore : si son code n'est pas
@@ -171,6 +171,27 @@ tousLesBuffs.forEach(buff => {
   assert.equal(p.attaqueElementaire, 3500,
     "une attaque elementaire plate alimente attaqueElementaire, pas atk");
   assert.equal(p.atk, 1000, "l'ATK de base n'est pas touchee");
+}
+
+/* Le percement de defense a son entree propre. `A_Accuracy` (« Perforation »),
+   qui est une valeur PLATE et une autre statistique, n'en a toujours pas :
+   la confondre avec celle-ci gonflerait tous les chiffres. */
+{
+  const r = entreesDuCalcul({
+    statsDuBuild:NEUTRE,
+    buffsCoches:[{ stat:"D_Protect_Cur_Rate", operation:"add",
+                   valeur:1500, unite:"ten-thousandths" }]
+  });
+  assert.equal(r.percementDefense, NEUTRE.percementDefense + 1500);
+  assert.equal(r.def, NEUTRE.def, "il perce la cible, il ne change pas notre DEF");
+
+  const perforation = entreesDuCalcul({
+    statsDuBuild:NEUTRE,
+    buffsCoches:[{ stat:"A_Accuracy", operation:"add",
+                   valeur:100, unite:"flat" }]
+  });
+  assert.deepEqual(perforation, entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:[] }),
+    "la perforation reste sans effet tant que sa mecanique n'est pas etablie");
 }
 
 /* Les bonus de degats elementaires atterrissent dans le seau du moteur. */

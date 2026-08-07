@@ -37,7 +37,12 @@
     critResist:2000,
     critDmgResist:5000,
     resistanceElementaire:3000,
-    faiblesse:0
+    faiblesse:0,
+    /* NON PUBLIEE par la source. Zero est une hypothese, pas un releve : si
+       Akumu resiste au percement, tous les builds qui en portent sont
+       surestimes ici. A confirmer avant de presenter ces chiffres comme
+       autre chose qu'un comparatif. */
+    resistancePercement:0
   };
 
   const RAPPORT = 10000;
@@ -122,7 +127,28 @@
       - (Number(cible.critDmgResist) || 0)) / RAPPORT;
     const multiplicateurCritique = Math.max(0, 1 + degatsCrit);
     const critique = 1 + taux * (multiplicateurCritique - 1);
-    const mitigation = K / (K + (Number(cible.def) || 0));
+    /* Le percement de defense (`D_Protect_Cur_Rate`) retranche un POURCENTAGE
+       de la defense de la cible avant la mitigation. Son libelle anglais dans
+       7ds-stats/libelles-stats.json est « Defense Shatter », mot pour mot le
+       champ `ds` de l'outil de reference : la correspondance est etablie par
+       la chaine elle-meme, pas par une deduction.
+
+       A ne pas confondre avec la « Perforation » (`A_Accuracy`), une valeur
+       PLATE que ni la formule publiee ni l'outil de reference ne modelisent,
+       et qui reste donc non branchee.
+
+       La cible peut s'y opposer par sa resistance au percement
+       (`D_Protect_CurRes_Rate`). Akumu n'en publie aucune : elle vaut zero,
+       et cette hypothese est ecrite plutot que dissimulee.
+
+       Le percement net est borne a 100 % : au-dela, la defense deviendrait
+       negative et la mitigation depasserait 1. */
+    const percementNet = Math.min(RAPPORT, Math.max(
+      0, (Number(stats.percementDefense) || 0)
+        - (Number(cible.resistancePercement) || 0)
+    ));
+    const defEffective = (Number(cible.def) || 0) * (1 - percementNet / RAPPORT);
+    const mitigation = K / (K + defEffective);
     const resistance = 1 - (Number(cible.resistanceElementaire) || 0) / RAPPORT;
     const faiblesse = 1 + (Number(cible.faiblesse) || 0) / RAPPORT;
 

@@ -280,6 +280,40 @@ courant, pas théorique.
 Ces trois règles viennent de mesures consignées dans
 `RAPPORT-analyse-tapscreen.md`, pas d'une déduction.
 
+### Percement de défense, et ce qu'il ne faut pas confondre
+
+Le jeu porte **trois** statistiques voisines, que `7ds-stats/libelles-stats.json`
+sépare nettement :
+
+| Code | Libellé FR | Libellé EN | Unité | Modélisé |
+|---|---|---|---|---|
+| `D_Protect_Cur_Rate` | Percement de défense | **Defense Shatter** | taux | **oui** |
+| `D_Protect_CurRes_Rate` | Résistance au percement | Shatter Resistance | taux | oui, côté cible |
+| `A_Accuracy` | Perforation | — | plate | **non** |
+
+Le champ `ds` de l'outil de référence est libellé « Defense shatter % » — mot
+pour mot le libellé anglais de `D_Protect_Cur_Rate`. La correspondance est
+établie par la chaîne elle-même, pas par une déduction. Le terme entre donc
+avant la mitigation :
+
+```text
+percementNet = min(100, max(0, percement − résistanceAuPercement))
+DEF_effective = DEF × (1 − percementNet)
+mitigation    = K / (K + DEF_effective)
+```
+
+La **perforation** (`A_Accuracy`) reste délibérément non branchée : elle est
+plate là où le champ de l'outil de référence est un pourcentage, elle n'apparaît
+dans aucune des deux formules publiées, et son code signifie « précision ».
+Versée dans un terme en pourcentage, une valeur plate de 100 ferait tomber la
+DEF d'Akumu à zéro et gonflerait **tous** les chiffres de +62 % — sans qu'aucun
+test ne bronche. Un test de `calculateur-entrees.test.js` vérifie qu'un buff
+portant ce code ne change strictement rien.
+
+`CIBLE_REFERENCE.resistancePercement` vaut zéro **par hypothèse** : la source ne
+publie pas cette valeur pour Akumu. Si le boss y résiste, tout build qui porte du
+percement est surestimé ici.
+
 `degatsAttendus` ne rend aujourd'hui que l'espérance, sous le nom `total`. Elle
 gagne deux champs, `sansCritique` et `critique`, calculés depuis le **même**
 `facteur` intermédiaire. Ne pas les obtenir en rappelant la fonction avec un
