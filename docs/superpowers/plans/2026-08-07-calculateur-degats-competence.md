@@ -69,7 +69,7 @@ traduit « build + buffs cochés » en entrées ; la vue ne calcule rien.
 | `tests/test_generate_competences.py` *(importé)* | Unitaire du générateur, hors réseau. |
 | `js/metier/degats-calcul.js` *(importé, modifié)* | La formule et ses termes. Cible Akumu, trois colonnes. |
 | `tests/degats-calcul.test.js` *(importé, modifié)* | Régressions du moteur. |
-| `data/buffs-supports.js` *(créé, ÉCRIT À LA MAIN)* | Buffs des sept supports réellement joués. |
+| `data/buffs-supports.js` *(créé, ÉCRIT À LA MAIN)* | Buffs des huit supports réellement joués. |
 | `js/metier/calculateur-entrees.js` *(créé)* | Pur : build + buffs cochés → entrées du moteur, et buffs applicables à un build. |
 | `tests/calculateur-entrees.test.js` *(créé)* | Unitaire du module ci-dessus, table de buffs comprise. |
 | `js/vues/calculateur.js` *(créé)* | La page : sélection, retouche, soutiens, tableau. Aucun calcul. |
@@ -416,7 +416,7 @@ git commit -m "feat: viser le boss de confrerie et exposer les trois colonnes"
 - [ ] **Étape 1 : relever la matière première**
 
 La table est écrite à la main, mais **aucune valeur ne s'invente**. Extraire
-les descriptions françaises des sept supports :
+les descriptions françaises des huit supports :
 
 ```bash
 python -c "
@@ -425,7 +425,7 @@ sys.stdout.reconfigure(encoding='utf-8',errors='replace')
 s=open('data/wiki-competences.js',encoding='utf-8').read()
 cat=json.loads(s[s.index('{'):s.rindex('}')+1])
 mot=re.compile(r'alli|equipe|équipe',re.I)
-for c in ['elizabeth','daisy','manny','howzer','gowther','guila','dreydrin']:
+for c in ['elizabeth','daisy','manny','howzer','gowther','guila','dreydrin','derieri']:
     print('=== '+c)
     for k in cat.get(c,[]):
         if mot.search(k['descriptionFr'] or ''):
@@ -435,10 +435,11 @@ for c in ['elizabeth','daisy','manny','howzer','gowther','guila','dreydrin']:
 "
 ```
 
-⚠️ **`dreydrin` est à confirmer auprès du propriétaire.** Le catalogue contient
-aussi `derieri`, dont les buffs sont offensifs là où ceux de `dreydrin` sont
-défensifs. Si la réponse est `derieri`, remplacer le slug dans la commande et
-dans la table — rien d'autre ne change.
+**Huit supports, `dreydrin` et `derieri` compris.** « Dedrin » désignait l'un
+des deux sans qu'on puisse trancher, et le propriétaire les joue tous les
+deux. Leurs buffs ne se recouvrent pas : ceux de `dreydrin` sont défensifs —
+une seule de ses compétences entrera dans la table —, ceux de `derieri`
+offensifs.
 
 - [ ] **Étape 2 : écrire la table**
 
@@ -493,7 +494,7 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
 };
 ```
 
-Compléter les sept supports sur ce modèle, à partir de la sortie de l'étape 1.
+Compléter les huit supports sur ce modèle, à partir de la sortie de l'étape 1.
 Un support dont aucune compétence ne produit d'effet offensif reste présent
 avec un tableau **vide** — son absence ferait croire à un oubli.
 
@@ -529,14 +530,17 @@ const wiki = (() => {
   return bac2.window.SEVEN_DS_WIKI_COMPETENCES;
 })();
 
-const SUPPORTS = ["elizabeth","daisy","manny","howzer","gowther","guila","dreydrin"];
+const SUPPORTS = [
+  "elizabeth","daisy","manny","howzer",
+  "gowther","guila","dreydrin","derieri"
+];
 const STATS_CONNUES = new Set([
   "B_Atk", "C_Critical_Rate", "C_Critical_Dam_Rate",
   "AllElement_Add", "AllSkill_Add", "AllCategory_Add"
 ]);
 
 assert.deepEqual(Object.keys(TABLE).sort(), [...SUPPORTS].sort(),
-  "La table doit couvrir exactement les sept supports joues");
+  "La table doit couvrir exactement les huit supports joues");
 
 SUPPORTS.forEach(slug => {
   TABLE[slug].forEach(buff => {
@@ -1146,9 +1150,9 @@ sélectif sans rebase → tâches 1 et 2 étape 1. Quatre enregistrements → t�
    a montré deux formes irréductibles — « +10 % de l'attaque des alliés »
    (multiplicatif) et « à hauteur de 30 % de l'attaque du héros, Max 3000 »
    (plat). Les aplatir aurait produit des chiffres faux.
-5. Le slug de « Dedrin » reste à confirmer (`dreydrin` ou `derieri`). La tâche 3
-   étape 1 le signale ; c'est une valeur de liste, pas une décision
-   d'architecture.
+5. La spec initiale ne retenait que sept supports, dont un `dreydrin` incertain.
+   Le propriétaire joue **les deux** homonymes possibles : la table en couvre
+   huit. Leurs buffs ne se recouvrent pas, donc aucune entrée n'est en double.
 
 **Cohérence des types.** `degatsAttendus` rend `{ total, sansCritique,
 avecCritique, parCoup, termes }` en tâche 2 ; `resultatsParCompetence` le

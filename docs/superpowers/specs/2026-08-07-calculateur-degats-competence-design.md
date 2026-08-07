@@ -155,7 +155,7 @@ règles écrites à la main.
 D'où une table **écrite et maintenue à la main**, `data/buffs-supports.js`,
 couvrant les seuls supports que la confrérie joue réellement.
 
-### Les sept supports retenus
+### Les huit supports retenus
 
 Relevés dans `data/wiki-competences.js`, avec le nombre de compétences
 mentionnant explicitement les alliés :
@@ -168,13 +168,12 @@ mentionnant explicitement les alliés :
 | `howzer` | Hauser | 3 |
 | `gowther` | Gowther | 6 |
 | `guila` | Guila | 2 |
-| `dreydrin` | Dedrin | 4 |
+| `dreydrin` | Dreydrin | 4 |
+| `derieri` | Derieri | 7 |
 
-⚠️ **`dreydrin` est à confirmer.** Le catalogue contient aussi `derieri`, dont
-7 compétences visent les alliés, et dont les buffs sont offensifs — attaque de
-Feu, dégâts de compétence normale des héros Ténèbres — là où ceux de `dreydrin`
-sont défensifs. Les deux tables n'auraient presque aucun contenu commun. Ne pas
-trancher au jugé.
+« Dedrin » désignait l'un des deux sans qu'on puisse trancher : les deux sont
+retenus. Leurs buffs ne se recouvrent pas — ceux de `dreydrin` sont défensifs,
+ceux de `derieri` offensifs — donc aucune table n'en absorbe l'autre.
 
 ### Forme
 
