@@ -31,13 +31,31 @@
   .topbar{row-gap:12px}
   .account{margin-left:auto}
   .tabs-rail{order:3;flex-basis:100%;justify-content:center}
-  /* Entre 561 px et ~1060 px, neuf onglets depassent meme une ligne entiere :
+  /* Entre 561 px et ~1060 px, dix onglets depassent meme une ligne entiere :
      le rail defile alors, comme en mobile, plutot que d'elargir le document. */
   .tabs{max-width:100%;overflow-x:auto;scrollbar-width:none}
   .tabs::-webkit-scrollbar{height:0}
   .tabs-rail.can-scroll-left .tabs-cue-left,
   .tabs-rail.can-scroll-right .tabs-cue-right{opacity:1}
   .tab{white-space:nowrap}
+}
+
+/* Au-dela de ~1060 px, la ligne entiere suffit aux dix onglets - mais de
+   justesse, et la marge depend du RENDU DES POLICES : les memes libelles
+   tiennent sur Windows et debordent sur le Linux de l'integration continue.
+
+   Plutot que de calibrer une largeur sur une police qu'on ne maitrise pas, on
+   retire la possibilite du debordement : les onglets passent a la ligne. Tant
+   qu'ils tiennent, rien ne change a l'ecran ; quand ils ne tiennent pas, ils
+   restent TOUS visibles d'un coup d'oeil - ce qui est precisement ce que le
+   rail defilant coutait, et la raison pour laquelle il a ete refuse ici.
+
+   Les reperes de defilement n'ont donc plus lieu d'etre a ces largeurs, et
+   sont eteints meme si le controleur pose ses classes. */
+@media(min-width:1061px) and (max-width:1860px){
+  .tabs{flex-wrap:wrap;overflow-x:visible;justify-content:center}
+  .tabs-rail.can-scroll-left .tabs-cue-left,
+  .tabs-rail.can-scroll-right .tabs-cue-right{opacity:0}
 }
 
 @media(max-width:900px){
