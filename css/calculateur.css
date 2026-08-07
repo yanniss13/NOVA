@@ -1,0 +1,40 @@
+/* Le calculateur de dégâts. Rien d'exotique : les mêmes jetons de couleur que
+   le reste, et un tableau qui doit rester lisible à 320 px. */
+
+.calc-form{
+  display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px
+}
+.calc-champ{display:flex;flex-direction:column;gap:4px;min-width:150px}
+.calc-champ label{font-size:12px;color:var(--muted)}
+.calc-champ input,.calc-champ select{min-height:44px}
+.calc-armes{display:flex;flex-wrap:wrap;gap:6px}
+
+/* Une valeur retouchée doit se voir sans qu'on la cherche : c'est elle qui
+   fait que le chiffre ne décrit plus le build enregistré. */
+.calc-retouche{color:var(--gold-bright)}
+
+.calc-avertissement{font-size:12px;color:var(--muted);margin:8px 0 16px}
+.calc-avertissement ul{margin:6px 0 0 18px}
+
+.calc-soutiens{
+  margin:16px 0;border-top:1px solid var(--line-soft);padding-top:12px
+}
+.calc-buff{display:flex;gap:10px;align-items:center;padding:6px 0;min-height:44px}
+
+.calc-table{width:100%;border-collapse:collapse;margin-bottom:16px}
+.calc-table th,.calc-table td{
+  padding:8px 6px;text-align:right;border-bottom:1px solid var(--line-soft)
+}
+.calc-table th:first-child,.calc-table td:first-child{text-align:left}
+.calc-valeur{font-variant-numeric:tabular-nums}
+
+/* Une compétence non chiffrable garde sa ligne : la masquer ferait croire
+   qu'elle n'existe pas, la chiffrer à zéro qu'elle ne fait rien. */
+.calc-muette{color:var(--muted);font-style:italic}
+
+@media (max-width:560px){
+  /* La colonne « Crit » cède la place avant que le tableau ne déborde ;
+     non-crit et espérance suffisent à comparer. */
+  .calc-table th:nth-child(3),.calc-table td:nth-child(3){display:none}
+  .calc-champ{min-width:120px}
+}

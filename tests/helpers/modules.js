@@ -62,6 +62,9 @@ const MODULES = [
   "vues/edition-build.js",
   "vues/dispos.js",
   "vues/detail-piece.js",
+  /* Avant `fiche-heros.js`, qui l'importe pour son lien « Calculer les
+     dégâts » : un module n'importe jamais un module déclaré après lui. */
+  "vues/calculateur.js",
   "vues/fiche-heros.js",
   "vues/detail-equipe.js",
   "vues/equipe-boss.js",

@@ -19,6 +19,7 @@ import { renderAnalyse } from "./vues/analyse.js";
 import { renderRoster } from "./vues/roster-equipes.js";
 import { renderDashboardView } from "./vues/suivi.js";
 import { renderCollection } from "./vues/collection.js";
+import { renderCalculateur } from "./vues/calculateur.js";
 import { renderWiki } from "./vues/wiki.js";
 /* Importe pour effet de bord : il branche la fiche sur wiki.js. */
 import "./vues/wiki-fiche-heros.js";
@@ -49,6 +50,7 @@ import { initAuth } from "./vues/session-auth.js";
   enregistrerVue("availability", renderAvailabilityView);
   enregistrerVue("wiki", renderWiki);
   enregistrerVue("collection", renderCollection);
+  enregistrerVue("calculateur", renderCalculateur);
 
   /* ============================ Démarrage ============================ */
   $("#databar").textContent =

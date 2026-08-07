@@ -161,7 +161,17 @@
       }
     });
 
-    return { open, close, focusTop, setRestoreFocus };
+    /* Quitter la pile pour aller ailleurs dans l'appli. Un lien qui change
+       d'onglet doit fermer ce qui le recouvrait, sinon la vue cible s'affiche
+       DERRIERE la modale, et le document reste fige.
+
+       On parcourt une COPIE inversee : `close` retire du tableau au fur et a
+       mesure, et iterer sur l'original en sauterait un sur deux. */
+    function closeAll(){
+      [...stack].reverse().forEach(record => close(record.overlay));
+    }
+
+    return { open, close, closeAll, focusTop, setRestoreFocus };
   })();
 
   /* Fermer une modale APRES un rafraichissement asynchrone : le rendu a pu

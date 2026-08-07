@@ -29,6 +29,7 @@
 <link rel="stylesheet" href="./css/dispos.css">
 <link rel="stylesheet" href="./css/wiki.css">
 <link rel="stylesheet" href="./css/collection.css">
+<link rel="stylesheet" href="./css/calculateur.css">
 </head>
 <body>
 
@@ -71,6 +72,9 @@
     <button class="tab" id="tab-collection" data-view="collection"
             role="tab" aria-controls="view-collection"
             aria-selected="false" tabindex="-1">Collection</button>
+    <button class="tab" id="tab-calculateur" data-view="calculateur"
+            role="tab" aria-controls="view-calculateur"
+            aria-selected="false" tabindex="-1">Calculateur</button>
   </nav>
     <span class="tabs-cue tabs-cue-left" aria-hidden="true">‹</span>
     <span class="tabs-cue tabs-cue-right" aria-hidden="true">›</span>
@@ -257,6 +261,15 @@
     </div>
     <p class="wiki-state" id="collectionState" role="status" aria-live="polite"></p>
     <div id="collectionBody"></div>
+  </section>
+
+  <!-- ============ CALCULATEUR ============ -->
+  <section id="view-calculateur" class="view" role="tabpanel"
+           aria-labelledby="tab-calculateur">
+    <p class="section-eyebrow">Boss de confrérie</p>
+    <h1 class="section-title">Calculateur de dégâts</h1>
+    <p class="section-lead">Les dégâts de chaque compétence de tes builds contre Akumu. Un chiffre par compétence, jamais un dégât par seconde : les temps d'animation ne sont mesurés nulle part.</p>
+    <div id="calculateurBody"></div>
   </section>
 
   <!-- ============ DISPOS ============ -->

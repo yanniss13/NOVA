@@ -35,6 +35,7 @@ import {
 } from "../metier/equipe-modele.js";
 import { orderedBuildEntries } from "../metier/stats-calcul.js";
 import { MemberRosterStore } from "../donnees/roster-store.js";
+import { ouvrirCalculateur } from "./calculateur.js";
 import { openPieceDetail } from "./detail-piece.js";
 import { heroStatsSection } from "./stats-heros.js";
 import { toast } from "./toast.js";
@@ -180,6 +181,19 @@ import { toast } from "./toast.js";
 
     const stats = heroStatsSection(h);
     if(stats) col.appendChild(stats);
+
+    /* La fiche ne calcule aucun degat elle-meme : un seul calcul, un seul
+       endroit a corriger. Le lien porte le heros ET son type d'arme, pour que
+       la page s'ouvre sur le build qu'on regardait. */
+    const typeCalcul = weaponFolderOf(h.weapon);
+    if(h.char && typeCalcul){
+      col.appendChild(el("button",{
+        class:"btn btn-ghost hd-calcul",
+        type:"button",
+        text:"Calculer les dégâts",
+        onclick:()=>{ void ouvrirCalculateur(h.char, typeCalcul, h); }
+      }));
+    }
 
     if(h.note && h.note.trim())
       col.appendChild(el("div",{class:"hd-note", text:h.note.trim()}));
