@@ -22,6 +22,7 @@ import { armesDuWiki, graveesDuWiki } from "../metier/wiki-equipement.js";
 import {
   equipesDuRoster, possessionsDe, progressionDe, utilesAuRoster
 } from "../metier/collection.js";
+import { refreshRosterProfiles } from "../donnees/roster-profils.js";
 import { CollectionStore } from "../donnees/collection-store.js";
 import { MemberRosterStore } from "../donnees/roster-store.js";
 import { sessionCourante } from "../etat/session.js";
@@ -50,8 +51,23 @@ import { toast } from "./toast.js";
 
   const objetsDeLaCollection = () => armesDuWiki().concat(graveesDuWiki());
 
-  const ownerAffiche = () => sessionCourante.user ? sessionCourante.user.id : "";
+  /* Le membre AFFICHE, qui n'est pas forcement celui qui regarde : on consulte
+     la collection d'un autre pour savoir quoi lui echanger. `""` signifie
+     « moi », pour qu'une deconnexion ramene naturellement a sa propre vue. */
+  let ownerChoisi = "";
+  const moiMeme = () => sessionCourante.user ? sessionCourante.user.id : "";
+  function ownerAffiche(){
+    const moi = moiMeme();
+    return moi ? (ownerChoisi || moi) : "";
+  }
+  const estMaCollection = () => !!moiMeme() && ownerAffiche() === moiMeme();
   const rosterAffiche = () => MemberRosterStore.all(ownerAffiche());
+
+  const pseudoDe = id => {
+    const profil = (sessionCourante.rosterProfiles || [])
+      .find(item => item.id === id);
+    return (profil && profil.pseudo) || "ce membre";
+  };
 
   /* La relecture se fait UNE FOIS par proprietaire, pas a chaque rendu :
      `renderCollection` s'appelle a chaque filtre, et une relecture qui re-rend
@@ -82,6 +98,40 @@ import { toast } from "./toast.js";
      ne change jamais l'onglet actif. */
   function invaliderCollection(){
     relulePour = "";
+  }
+
+  /* La liste des membres, lue une fois. Elle sert au selecteur ET au libelle
+     du filtre d'utilite, qui nomme le roster consulte. */
+  let profilsDemandes = false;
+
+  function relireLesProfils(){
+    if(profilsDemandes || !moiMeme()) return;
+    profilsDemandes = true;
+    refreshRosterProfiles()
+      .then(()=>{ renderCollection(); })
+      .catch(()=>{ profilsDemandes = false; });
+  }
+
+  let membresPoses = "";
+
+  /* Le selecteur reste MASQUE tant qu'il n'y a personne d'autre a regarder :
+     un controle a une seule option est une promesse non tenue. */
+  function selecteurDeMembre(){
+    const moi = moiMeme();
+    const autres = (sessionCourante.rosterProfiles || [])
+      .filter(profil => profil.id !== moi);
+    $("#collectionOwnerField").hidden = !moi || !autres.length;
+    const signature = moi + "|"
+      + autres.map(profil => profil.id + ":" + profil.pseudo).join(",");
+    if(membresPoses === signature) return;
+    membresPoses = signature;
+    const champ = $("#collectionOwner");
+    champ.innerHTML = "";
+    champ.appendChild(el("option",{ value:"", text:"Ma collection" }));
+    autres.forEach(profil => champ.appendChild(el("option",{
+      value:profil.id, text:profil.pseudo
+    })));
+    champ.value = ownerChoisi;
   }
 
   /* Le rendu n'a lieu qu'APRES la reponse de Supabase. Retirer la tuile avant
@@ -144,6 +194,18 @@ import { toast } from "./toast.js";
       valeurs:() => [{ valeur:"oui", libelle:"Utile à mon roster" }]
     }
   ];
+
+  /* Le filtre d'utilite se rapporte au roster AFFICHE, pas a celui qui
+     regarde. Le libelle doit le dire, sinon « utile » ne veut plus rien dire
+     des qu'on consulte quelqu'un d'autre. */
+  function libelleDUtilite(){
+    const option = document.querySelector(
+      "#collectionFilterUtiles option[value=\"oui\"]");
+    if(!option) return;
+    option.textContent = estMaCollection()
+      ? "Utile à mon roster"
+      : "Utile au roster de " + pseudoDe(ownerAffiche());
+  }
 
   /* Les listes deroulantes ne se reconstruisent PAS a chaque rendu : leurs
      valeurs viennent d'un catalogue fige, et les recreer arracherait le focus
@@ -232,7 +294,22 @@ import { toast } from "./toast.js";
     ]);
   }
 
+  /* La deconnexion ou le changement de compte remet la vue a zero : garder
+     `ownerChoisi` afficherait la collection d'un membre a quelqu'un qui vient
+     de changer d'identite. */
+  let moiConnu = "";
+
   function renderCollection(){
+    const moi = moiMeme();
+    if(moi !== moiConnu){
+      moiConnu = moi;
+      ownerChoisi = "";
+      profilsDemandes = false;
+      membresPoses = "";
+    }
+    relireLesProfils();
+    selecteurDeMembre();
+
     const ownerId = ownerAffiche();
     /* Le cache est indexe par proprietaire : le relire a chaque rendu suffit
        a ce qu'une deconnexion n'affiche jamais la collection du precedent. */
@@ -244,12 +321,15 @@ import { toast } from "./toast.js";
     const equipements = equipesDuRoster(roster);
     const possessions = possessionsDe(marques, equipements);
     const utiles = utilesAuRoster(roster, objets);
-    const contexte = { possessions, equipements, modifiable:!!ownerId };
+    /* Lecture seule sur autrui : la RLS refuserait l'ecriture de toute facon,
+       mais offrir un geste qui sera rejete est une promesse non tenue. */
+    const contexte = { possessions, equipements, modifiable:estMaCollection() };
 
     if(!filtresPoses){
       filtresDeCollection(objets);
       filtresPoses = true;
     }
+    libelleDUtilite();
 
     const compte = progressionDe(objets, possessions);
     const progression = $("#collectionProgress");
@@ -269,21 +349,27 @@ import { toast } from "./toast.js";
         liste.filter(objet => objet.nature === "gravee"), contexte)
     ].forEach(zone => { if(zone) corps.appendChild(zone); });
 
-    /* Sans compte, la grille reste consultable mais rien ne se coche : la
-       collection vit dans Supabase, et un clic sans effet serait pire qu'un
-       clic annonce impossible. */
+    /* Deux raisons de ne rien pouvoir cocher, et elles ne se disent pas
+       pareil : sans compte la collection n'existe pas encore, chez autrui
+       elle ne nous appartient pas. */
     $("#collectionState").textContent = !liste.length
       ? "Rien à afficher avec ces filtres."
       : (contexte.modifiable
         ? ""
-        : "Connecte-toi pour cocher ce que tu possèdes.");
+        : (moi
+          ? "Collection de " + pseudoDe(ownerId) + " — lecture seule."
+          : "Connecte-toi pour cocher ce que tu possèdes."));
     return Promise.resolve(true);
   }
 
-  $("#collectionSearch").addEventListener("input", renderCollection);
-  /* Le selecteur de membre est pose dans le balisage mais reste masque tant
-     que rien ne l'alimente : un controle vide qui ne fait rien est une
-     promesse non tenue. */
+  /* Masque des le chargement : le premier rendu tranchera, mais un selecteur
+     vide ne doit jamais exister, pas meme le temps d'une image. */
   $("#collectionOwnerField").hidden = true;
+
+  $("#collectionSearch").addEventListener("input", renderCollection);
+  $("#collectionOwner").addEventListener("change", evenement => {
+    ownerChoisi = evenement.target.value;
+    renderCollection();
+  });
 
 export { invaliderCollection, renderCollection };

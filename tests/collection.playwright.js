@@ -35,6 +35,11 @@ const EQUIPEES = [
   const lignesEnBase = () => page.evaluate(() =>
     window.__fakeSupabaseState.collection_items.map(row => row.owner + "|" + row.item)
   );
+  const ecrituresCollection = () => page.evaluate(() =>
+    window.__fakeSupabaseState.calls.filter(appel =>
+      appel.table === "collection_items" && appel.operation !== "select"
+    ).length
+  );
   const progression = () => page.locator("#collectionProgress").textContent();
   const attendreTuiles = nombre => page.waitForFunction(
     attendu =>
@@ -139,6 +144,88 @@ const EQUIPEES = [
        FOLDER_TO_ENUM, cette liste serait vide — en silence. */
     assert.deepEqual(dossiers, ["Armure liee", "Epee 1 main", "Epees doubles", "Hache"],
       "seuls les types maniés par le roster et ses gravures");
+
+    /* ---- La collection d'un AUTRE membre : consultable, jamais modifiable.
+       Merlin possède un objet et manie le livre ; Meliodas ni l'un ni l'autre. */
+    await page.selectOption("#collectionFilterUtiles", "");
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.collection_items.push({
+        owner:"user-2",
+        item:"7ds-armes/Livre/Grimoire béni.webp",
+        created_at:"2026-07-25T11:30:00.000Z"
+      });
+    });
+    await attendreTuiles(total);
+
+    const champMembre = page.locator("#collectionOwner");
+    assert.equal(await page.locator("#collectionOwnerField").isVisible(), true,
+      "le sélecteur apparaît dès qu'il y a quelqu'un d'autre à regarder");
+    assert.deepEqual(
+      await champMembre.locator("option").allTextContents(),
+      ["Ma collection", "Merlin"]
+    );
+
+    await champMembre.selectOption("user-2");
+    await page.getByText("Collection de Merlin — lecture seule").waitFor();
+    /* Merlin possède le Grimoire (marqué) et le porte (équipé) : la fusion des
+       deux ensembles ne doit pas le compter deux fois. */
+    assert.match(await progression(), /1 \/ 223 possédés — 222 à trouver/);
+
+    /* Le Grimoire est à la fois MARQUÉ et ÉQUIPÉ par Merlin : la fusion des
+       deux ensembles ne doit pas le compter deux fois — d'où le 1 ci-dessus. */
+    assert.ok(await tuileDe("7ds-armes/Livre/Grimoire béni.webp")
+      .evaluate(noeud => noeud.classList.contains("collection-owned")),
+      "possédé par Merlin");
+
+    /* La lecture seule se vérifie sur une tuile LIBRE : le Grimoire est équipé,
+       donc verrouillé pour une tout autre raison, et cliquer dessus ne
+       prouverait rien.
+
+       Et on compte les ÉCRITURES, pas l'état final : décocher la ligne d'un
+       autre supprimerait `owner = moi AND item = …`, qui n'existe pas — la
+       base serait inchangée et une assertion naïve passerait alors qu'un ordre
+       est bel et bien parti. */
+    await page.selectOption("#collectionFilterPossession", "manquants");
+    await attendreTuiles(total - 1);
+    const libre = await tuiles().first().getAttribute("data-file");
+    const ecrituresAvant = await ecrituresCollection();
+    await tuiles().first().click({ force:true });
+    await page.waitForTimeout(250);
+    assert.equal(await ecrituresCollection(), ecrituresAvant,
+      "consulter autrui ne doit envoyer aucune écriture (" + libre + ")");
+    assert.deepEqual(await lignesEnBase(), ["user-2|7ds-armes/Livre/Grimoire béni.webp"],
+      "et ne rien changer en base");
+    await page.selectOption("#collectionFilterPossession", "tout");
+    await attendreTuiles(total);
+
+    /* Le filtre d'utilité se rapporte au roster AFFICHÉ, pas à celui qui
+       regarde — et son libellé doit le dire. */
+    assert.equal(
+      await page.locator('#collectionFilterUtiles option[value="oui"]')
+        .textContent(),
+      "Utile au roster de Merlin"
+    );
+    await page.selectOption("#collectionFilterUtiles", "oui");
+    await page.waitForFunction(() => {
+      const tuilesVues = [...document.querySelectorAll("#collectionBody .wiki-tile")];
+      return tuilesVues.length > 0 && tuilesVues.length < 223;
+    });
+    const dossiersMerlin = await tuiles().evaluateAll(noeuds =>
+      [...new Set(noeuds.map(noeud => noeud.dataset.file.split("/")[1]))].sort()
+    );
+    /* Baguette, Bâton et Livre sont TROIS dossiers pour UN type — l'enum
+       « Book ». Le filtre raisonne sur le type manié, pas sur le dossier :
+       attendre le seul « Livre » serait confondre l'image et la règle. */
+    assert.deepEqual(dossiersMerlin, ["Armure liee", "Baguette", "Baton", "Livre"],
+      "le roster de Merlin, pas celui du visiteur");
+
+    // Revenir sur soi rend le geste, et le décompte de départ.
+    await champMembre.selectOption("");
+    await page.getByText("Collection de Merlin — lecture seule")
+      .waitFor({ state:"hidden" });
+    await page.selectOption("#collectionFilterUtiles", "");
+    await attendreTuiles(total);
+    assert.match(await progression(), /3 \/ 223 possédés — 220 à trouver/);
 
     assert.deepEqual(errors, [], "aucune erreur de page");
     console.log("PASS Playwright: collection, marquage, verrou et filtres");
