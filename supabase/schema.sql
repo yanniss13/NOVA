@@ -42,6 +42,29 @@ create table if not exists public.roster_characters (
 create index if not exists roster_characters_owner_idx
   on public.roster_characters(owner);
 
+-- 4bis) Collection : les armes et armures gravées qu'un membre possède.
+--
+-- UNE LIGNE PAR OBJET, et non un tableau par membre. Cocher est alors un
+-- insert, décocher un delete : deux opérations atomiques que rien ne peut
+-- écraser. Un tableau imposerait de réécrire les 223 entrées à chaque clic, et
+-- deux appareils ouverts en même temps se perdraient mutuellement des coches —
+-- c'est exactement ce qui a imposé un compare-and-swap à roster_characters.
+--
+-- `item` est le chemin de l'image (« 7ds-armes/Hache/Hache de guerre.webp »),
+-- qui sert déjà de clé aux grilles, aux statistiques et aux builds du roster.
+--
+-- La clé primaire composite EST la règle métier : on ne possède pas deux fois
+-- le même objet. C'est la base qui le garantit, pas le client, et c'est ce qui
+-- rend un double clic inoffensif.
+create table if not exists public.collection_items (
+  owner      uuid not null references auth.users(id) on delete cascade,
+  item       text not null,
+  created_at timestamptz not null default now(),
+  primary key (owner, item)
+);
+create index if not exists collection_items_owner_idx
+  on public.collection_items(owner);
+
 create schema if not exists private;
 revoke all on schema private from public;
 
@@ -328,6 +351,17 @@ create policy roster_read   on public.roster_characters for select to authentica
 create policy roster_insert on public.roster_characters for insert to authenticated with check (owner = auth.uid());
 create policy roster_update on public.roster_characters for update to authenticated using (owner = auth.uid()) with check (owner = auth.uid());
 create policy roster_delete on public.roster_characters for delete to authenticated using (owner = auth.uid());
+
+-- collection : lecture par tout membre ; écriture/suppression de la sienne.
+-- PAS de politique update : une ligne existe ou n'existe pas, il n'y a rien à
+-- y modifier. En créer une ouvrirait un droit dont personne n'a besoin.
+alter table public.collection_items enable row level security;
+drop policy if exists collection_read   on public.collection_items;
+drop policy if exists collection_insert on public.collection_items;
+drop policy if exists collection_delete on public.collection_items;
+create policy collection_read   on public.collection_items for select to authenticated using (true);
+create policy collection_insert on public.collection_items for insert to authenticated with check (owner = auth.uid());
+create policy collection_delete on public.collection_items for delete to authenticated using (owner = auth.uid());
 
 -- Mise à jour atomique d'un seul build. Le timestamp lu par le client sert de
 -- compare-and-swap : une modification concurrente ne peut jamais être écrasée.
