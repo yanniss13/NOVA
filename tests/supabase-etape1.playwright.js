@@ -594,7 +594,32 @@ const { chromium } = require("playwright");
       /build favori/i
     );
 
+    /* La fiche s'ouvre depuis SES PROPRES cartes, pas seulement depuis celles
+       d'un autre membre. Elle en était exclue tant qu'on la croyait réservée à
+       la consultation : un membre pouvait lire la fiche complète des
+       personnages de tout le monde sauf les siens, où il ne lui restait que
+       l'éditeur — un formulaire de saisie, pas une lecture. */
+    const detailOverlay = page.locator("#rosterDetailOverlay");
+    assert.equal(
+      await meliodasCard.locator(".member-roster-detail-btn").count(),
+      1,
+      "Sa propre carte doit offrir l'accès à la fiche"
+    );
+    // Le clic sur le corps de la carte, pas sur le bouton : c'est le geste réel.
+    await meliodasCard.locator(".member-roster-name").click();
+    await detailOverlay.waitFor({ state:"visible" });
+    assert.match(await page.locator("#rosterDetailBody").textContent(), /Meliodas/);
+    await page.locator("#rosterDetailClose").click();
+    await detailOverlay.waitFor({ state:"hidden" });
+
     await meliodasCard.locator(".member-roster-edit").click();
+    /* « Modifier » arrête la propagation : sans cela il ouvrirait AUSSI la
+       fiche, par-dessus l'éditeur. */
+    assert.equal(
+      await detailOverlay.evaluate(node => node.classList.contains("on")),
+      false,
+      "« Modifier » ne doit pas ouvrir la fiche par-dessus l'éditeur"
+    );
     assert.match(
       await page.locator("#memberRosterEditor .weapon-config-summary").textContent(),
       /Configurée .* Nv\. 10 .* Outrepassement 1/
