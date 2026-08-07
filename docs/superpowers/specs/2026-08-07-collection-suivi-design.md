@@ -154,11 +154,15 @@ Pur, sans DOM ni réseau, donc testable seul :
 
 ```js
 equipesDuRoster(entrees)              // Set des chemins équipés dans un roster
-possedes(marques, equipes)            // Set fusionné, la règle de possession
-estVerrouille(item, equipes)          // équipé, donc non décochable
-utilesAuRoster(entrees)               // Set des chemins qui servent à ce roster
-progression(objets, possedes)         // {total, possedes, manquants}
+possessionsDe(marques, equipes)       // Set fusionné, la règle de possession
+utilesAuRoster(entrees, objets)       // Set des chemins qui servent à ce roster
+progressionDe(objets, possessions)    // {total, possedes, manquants}
 ```
+
+Pas de fonction `estVerrouille()` : un objet est verrouillé s'il appartient à
+l'ensemble rendu par `equipesDuRoster`, et une fonction d'une ligne pour le
+dire n'ajouterait qu'un nom à retenir. `utilesAuRoster` reçoit les objets parce
+que l'utilité se juge sur leur type et leur héros, que le roster ignore.
 
 `utilesAuRoster` : une armure gravée sert si son `character` figure dans le
 roster ; une arme sert si son `weaponType` correspond à un type manié par un
