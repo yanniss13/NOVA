@@ -145,16 +145,22 @@ const STORAGE_KEY = "confrerie7ds.teams";
       "l'ouverture doit charger le catalogue"
     );
 
-    /* LES TROIS COLONNES, et leur ordre : l'esperance est toujours encadree
-       par le coup sans critique et le coup critique plein. */
+    /* LES TROIS COLONNES. L'esperance est une ponderation des deux autres,
+       donc elle reste toujours entre elles - mais leur ORDRE n'est pas acquis :
+       quand les degats critiques du build passent sous la defense critique de
+       la cible, le coup critique frappe plus faiblement que le coup normal et
+       les deux bornes s'echangent. Akumu resiste a 50 %, ce n'est pas un cas
+       theorique. */
     const ligne = page.locator(".calc-table tbody tr").first();
     const chiffres = (await ligne.locator(".calc-valeur").allTextContents())
       .map(t => Number(t.replace(/[^0-9]/g, "")));
     assert.equal(chiffres.length, 3, "trois colonnes par competence");
     assert.ok(chiffres.every(n => n > 0), "aucune colonne ne doit valoir zero");
+    const [nonCrit, crit, esperance] = chiffres;
     assert.ok(
-      chiffres[0] <= chiffres[2] && chiffres[2] <= chiffres[1],
-      "non-crit <= esperance <= crit, recu : " + chiffres.join(", ")
+      Math.min(nonCrit, crit) <= esperance && esperance <= Math.max(nonCrit, crit),
+      "l'esperance doit rester encadree par les deux bornes, recu : "
+        + chiffres.join(", ")
     );
 
     /* Une competence non chiffrable garde sa ligne et n'affiche JAMAIS un

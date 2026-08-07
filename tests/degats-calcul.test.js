@@ -110,14 +110,106 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   assert.equal(Math.round(r.total), 850, "500 x 1,7 = 850");
 }
 
-/* La resistance critique de la cible se retranche aux degats critiques. */
+/* La resistance critique de la cible se retranche aux degats critiques. Le
+   taux reste a 9000 pour que le plafond de 90 % ne se melange pas a la mesure
+   faite ici. */
 {
   const r = degatsAttendus({
-    stats:{ atk:1000, critRate:10000, critDamage:14000, bonusType:0 },
+    stats:{ atk:1000, critRate:9000, critDamage:14000, bonusType:0 },
     competence:COUP_SIMPLE,
     cible:Object.assign({}, CIBLE_NEUTRE, { critDmgResist:4000 })
   });
-  assert.equal(Math.round(r.total), 1000, "500 x (1 + 1 x 1,0) = 1000");
+  assert.equal(Math.round(r.total), 950, "500 x (1 + 0,9 x 1,0) = 950");
+}
+
+/* Le critique PROPRE du heros plafonne a 90 %, quoi qu'affiche sa fiche. */
+{
+  const r = degatsAttendus({
+    stats:{ atk:1000, critRate:12000, critDamage:20000 },
+    competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
+  });
+  assert.equal(Math.round(r.total), 1400, "500 x (1 + 0,9 x 2) — 120 % plafonne a 90 %");
+}
+
+/* Les buffs de SOUTIEN s'ajoutent apres ce plafond et n'y sont pas soumis :
+   c'est ce qui rend nos soutiens utiles sur un build deja au plafond. Verses
+   dans le seau du heros, les memes points seraient purement perdus. */
+{
+  const commun = { atk:1000, critDamage:20000 };
+  const avecSoutien = degatsAttendus({
+    stats:Object.assign({}, commun, { critRate:9000, critRateAllie:2000 }),
+    competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
+  });
+  const memesPointsEnPropre = degatsAttendus({
+    stats:Object.assign({}, commun, { critRate:11000 }),
+    competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
+  });
+  assert.equal(Math.round(avecSoutien.total), 1500, "9000 + 2000 borne a 100 %");
+  assert.equal(Math.round(memesPointsEnPropre.total), 1400, "11000 propre reste plafonne");
+  assert.ok(avecSoutien.total > memesPointsEnPropre.total,
+    "un buff allie doit rapporter la ou le critique propre est deja plafonne");
+}
+
+/* Les quatre configurations relevees sur l'outil de reference, transcrites
+   telles quelles (RAPPORT-analyse-tapscreen.md). Avec 200 % de degats
+   critiques et aucune resistance, total = 500 x (1 + 2 x taux) : chaque ligne
+   fixe donc le taux effectif attendu. */
+{
+  [
+    { cc:6000, allie:6000, resist:0, taux:"100 %", total:1500 },
+    { cc:8500, allie:1000, resist:0, taux:"95 %", total:1450 },
+    { cc:10000, allie:500, resist:0, taux:"95 %", total:1450 },
+    { cc:8000, allie:2000, resist:1500, taux:"85 %", total:1350 }
+  ].forEach(cas => {
+    const r = degatsAttendus({
+      stats:{ atk:1000, critRate:cas.cc, critRateAllie:cas.allie, critDamage:20000 },
+      competence:COUP_SIMPLE,
+      cible:Object.assign({}, CIBLE_NEUTRE, { critResist:cas.resist })
+    });
+    assert.equal(Math.round(r.total), cas.total,
+      "cc " + cas.cc + " / allie " + cas.allie + " / resist " + cas.resist
+        + " doit donner un taux de " + cas.taux);
+  });
+}
+
+/* Un coup critique peut frapper PLUS FAIBLE qu'un coup normal quand la
+   defense critique de la cible depasse les degats critiques du build. Mesure
+   de reference : 0 de degats critiques contre 42,93 % de defense critique
+   donne un rapport de 0,5707. */
+{
+  const r = degatsAttendus({
+    stats:{ atk:1000, critRate:10000, critDamage:0 },
+    competence:COUP_SIMPLE,
+    cible:Object.assign({}, CIBLE_NEUTRE, { critDmgResist:4293 })
+  });
+  assert.equal(Math.round(r.avecCritique), 285, "500 x 0,5707");
+  assert.ok(r.avecCritique < r.total && r.total < r.sansCritique,
+    "l'ordre des colonnes s'inverse quand le critique devient une malchance");
+}
+
+/* Cette penalite se borne a zero : des degats negatifs n'auraient aucun sens. */
+{
+  const r = degatsAttendus({
+    stats:{ atk:1000, critRate:10000, critDamage:0 },
+    competence:COUP_SIMPLE,
+    cible:Object.assign({}, CIBLE_NEUTRE, { critDmgResist:15000 })
+  });
+  assert.equal(r.avecCritique, 0);
+  assert.ok(r.total >= 0, "l'esperance ne peut pas devenir negative");
+}
+
+/* Regression : l'esperance ne doit JAMAIS depasser le coup critique plein.
+   Sans plafond, ces entrees donnaient un taux de 1,9 et une esperance de 2400
+   pour un critique plein de 1500 - une colonne du tableau au-dessus de sa
+   propre borne. */
+{
+  const r = degatsAttendus({
+    stats:{ atk:1000, critRate:12000, critRateAllie:7000, critDamage:20000 },
+    competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
+  });
+  assert.ok(r.total <= r.avecCritique,
+    "esperance " + r.total + " au-dessus du critique plein " + r.avecCritique);
+  assert.equal(Math.round(r.total), 1500, "le taux sature a 100 %");
 }
 
 /* La repartition par coup somme au total, et chaque coup est chiffre. */

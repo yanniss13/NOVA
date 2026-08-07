@@ -122,7 +122,8 @@ offensives sont produites par `calculateHeroStats`, lues par code de stat via
 `groupBuildStatResults` :
 
 - `B_Atk` → ATK ;
-- `C_Critical_Rate` → taux critique ;
+- `C_Critical_Rate` → taux critique **allié** (`critRateAllie`), jamais celui du
+  héros : il échappe au plafond de 90 %, voir plus bas ;
 - `C_Critical_Dam_Rate` → dégâts critiques.
 
 Un build dont le statut n'est ni `valid` ni `partial` ne porte aucun chiffre :
@@ -258,6 +259,27 @@ Rossée des ténèbres             9 118    19 512       13 806
 Les trois colonnes sont montrées parce que l'espérance seule masque la variance
 qu'un joueur ressent, et que le critique seul flatte.
 
+**Le critique se calcule en deux seaux**, et non en un total :
+
+```text
+taux = min(100, min(90, max(0, critRate − critResist)) + critRateAllie)
+```
+
+Le plafond de 90 % ne mord que sur le critique **propre** du héros, une fois
+retranchée la résistance de la cible ; les buffs alliés s'ajoutent **après** ce
+plafond et seule la borne à 100 % les arrête. Nos huit soutiens cumulent +70 %
+de taux critique : un seau unique les rendrait invisibles sur tout build déjà
+au plafond, et faisait déborder `taux` au-delà de 1, plaçant l'espérance
+au-dessus du coup critique plein.
+
+De même, `1 + (critDamage − critDmgResist)/10000` **peut descendre sous 1** — le
+coup critique frappe alors plus faiblement que le coup normal. Seul le
+multiplicateur est borné, et à zéro. Akumu résiste à 50 %, donc ce cas est
+courant, pas théorique.
+
+Ces trois règles viennent de mesures consignées dans
+`RAPPORT-analyse-tapscreen.md`, pas d'une déduction.
+
 `degatsAttendus` ne rend aujourd'hui que l'espérance, sous le nom `total`. Elle
 gagne deux champs, `sansCritique` et `critique`, calculés depuis le **même**
 `facteur` intermédiaire. Ne pas les obtenir en rappelant la fonction avec un
@@ -352,8 +374,14 @@ fonctionne hors ligne. Un test unitaire neuf rejoint **les deux** scripts
 - `tests/competences-catalogue.test.js`, repris.
 - La jointure par `gameId` est mesurée : un `gameId` chiffré sans équivalent
   dans `wiki-competences.js` garde son chiffre et retombe sur son nom anglais.
-- `degatsAttendus` rend `sansCritique ≤ total ≤ critique` pour tout taux
-  critique compris entre 0 et 100 %.
+- `degatsAttendus` rend une espérance toujours **encadrée** par `sansCritique`
+  et `avecCritique`. L'ordre de ces deux bornes n'est pas garanti : sous la
+  défense critique de la cible, le coup critique devient le plus faible des
+  deux. Affirmer `sansCritique ≤ total ≤ avecCritique`, comme le faisait cette
+  spec, revenait à décrire le bornage du moteur plutôt que le jeu.
+- Le taux critique effectif suit
+  `min(100, min(90, max(0, critRate − critResist)) + critRateAllie)`, vérifié
+  sur les quatre configurations relevées dans `RAPPORT-analyse-tapscreen.md`.
 
 ### Page
 

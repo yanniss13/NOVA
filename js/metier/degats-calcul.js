@@ -42,6 +42,21 @@
 
   const RAPPORT = 10000;
 
+  /* Le taux critique n'est pas un simple total. La regle, relevee sur l'outil
+     de reference et consignee dans RAPPORT-analyse-tapscreen.md :
+
+       taux = min(100, min(90, max(0, critRate - critResist)) + critRateAllie)
+
+     Le plafond de 90 % ne mord que sur le critique PROPRE du heros, une fois
+     retranchee la resistance de la cible. Les buffs allies s'ajoutent APRES ce
+     plafond et n'y sont pas soumis ; seule la borne a 100 % les arrete.
+
+     Confondre les deux seaux ne serait pas un detail : nos soutiens cumulent
+     +70 % de taux critique, donc un seau unique ferait deborder `taux` au-dela
+     de 1 et l'esperance passerait AU-DESSUS du coup critique plein. */
+  const PLAFOND_PROPRE = 9000;
+  const PLAFOND_TOTAL = 10000;
+
   function nombreFini(valeur){
     return typeof valeur === "number" && Number.isFinite(valeur);
   }
@@ -90,21 +105,35 @@
         + (Number(stats.bonusElementaire) || 0)
         + (Number(stats.bonusGlobal) || 0)
       : (Number(stats.bonusType) || 0)) / RAPPORT;
-    const taux = Math.max(
-      0, ((Number(stats.critRate) || 0) - (Number(cible.critResist) || 0)) / RAPPORT
-    );
-    const degatsCrit = Math.max(
-      0,
-      ((Number(stats.critDamage) || 0) - (Number(cible.critDmgResist) || 0)) / RAPPORT
-    );
-    const critique = 1 + taux * degatsCrit;
+    const critPropre = Math.min(PLAFOND_PROPRE, Math.max(
+      0, (Number(stats.critRate) || 0) - (Number(cible.critResist) || 0)
+    ));
+    const critAllie = Math.max(0, Number(stats.critRateAllie) || 0);
+    const taux = Math.min(PLAFOND_TOTAL, critPropre + critAllie) / RAPPORT;
+
+    /* Un coup critique peut frapper PLUS FAIBLE qu'un coup normal, quand la
+       defense critique de la cible depasse les degats critiques du build : le
+       critique devient alors une malchance. Borner cet ecart a zero, comme le
+       faisait ce module, effacait la penalite et surestimait ces builds.
+
+       Seul le multiplicateur est borne, et a zero : des degats negatifs
+       n'auraient aucun sens. */
+    const degatsCrit = ((Number(stats.critDamage) || 0)
+      - (Number(cible.critDmgResist) || 0)) / RAPPORT;
+    const multiplicateurCritique = Math.max(0, 1 + degatsCrit);
+    const critique = 1 + taux * (multiplicateurCritique - 1);
     const mitigation = K / (K + (Number(cible.def) || 0));
     const resistance = 1 - (Number(cible.resistanceElementaire) || 0) / RAPPORT;
     const faiblesse = 1 + (Number(cible.faiblesse) || 0) / RAPPORT;
 
-    const facteur = bonusOffensif * critique * mitigation
-      * resistance * faiblesse;
-    const total = facteur * base;
+    /* Un SEUL calcul, lu trois fois : le facteur commun porte tout sauf le
+       critique, donc le coup sans critique s'obtient sans le retirer, et les
+       deux autres colonnes n'en sont que deux ponderations. Trois appels aux
+       entrees differentes ouvriraient trois occasions de diverger. */
+    const facteurCommun = bonusOffensif * mitigation * resistance * faiblesse;
+    const sansCritique = facteurCommun * base;
+    const avecCritique = sansCritique * multiplicateurCritique;
+    const total = sansCritique * critique;
 
     /* La repartition par coup, quand la source la donne. A defaut, un coup
        unique portant tout : mieux vaut un detail pauvre qu'un detail faux. */
@@ -117,13 +146,6 @@
     const parCoup = parts
       ? parts.map(part => total * (Number(part) || 0) / competence.pourcentage)
       : [total];
-
-    /* Trois lectures d'un SEUL calcul, jamais trois appels : `facteur` porte
-       deja le critique en esperance, donc l'en retirer donne le coup sans
-       critique, et y substituer le critique plein donne l'autre borne. Trois
-       appels aux entrees differentes ouvriraient trois occasions de diverger. */
-    const sansCritique = total / critique;
-    const avecCritique = sansCritique * (1 + degatsCrit);
 
     return {
       total,

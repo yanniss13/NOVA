@@ -26,7 +26,11 @@ import { degatsAttendus } from "./degats-calcul.js";
     {
       /* Un taux sur l'attaque du heros, pas une valeur plate. */
       I_AtkAdd_Rate:"atk",
-      C_Critical_Rate:"critRate",
+      /* Le taux critique venu d'un SOUTIEN a son propre seau : le moteur
+         plafonne le critique propre du heros a 90 % et ajoute celui des
+         allies APRES ce plafond. Le verser dans `critRate` rendrait ces
+         buffs invisibles sur tout build deja proche du plafond. */
+      C_Critical_Rate:"critRateAllie",
       C_Critical_Dam_Rate:"critDamage",
       /* « Attaque de tous les elements » : le moteur l'ajoute a l'ATK pour
          toute composante de base `atk`, voir baseDeComposante(). */
@@ -69,6 +73,9 @@ import { degatsAttendus } from "./degats-calcul.js";
       def:Number(stats.def) || 0,
       maxHp:Number(stats.maxHp) || 0,
       critRate:Number(stats.critRate) || 0,
+      /* Le build n'alimente jamais ce seau : il ne se remplit que des buffs
+         de soutien coches, et le moteur l'ajoute apres le plafond de 90 %. */
+      critRateAllie:0,
       critDamage:Number(stats.critDamage) || 0,
       bonusGlobal:0,
       bonusElementaire:0,

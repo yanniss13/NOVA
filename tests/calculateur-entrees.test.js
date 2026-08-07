@@ -129,6 +129,31 @@ tousLesBuffs.forEach(buff => {
   assert.equal(avec.critRate, nu.critRate);
 }
 
+/* Un buff de taux critique venu d'un SOUTIEN remplit le seau allie, jamais
+   celui du heros : le moteur plafonne le critique propre a 90 % et ajoute
+   celui des allies apres ce plafond. Verse dans `critRate`, un buff de Daisy
+   serait purement perdu sur un build deja au plafond. */
+{
+  const r = entreesDuCalcul({
+    statsDuBuild:NEUTRE,
+    buffsCoches:[{ stat:"C_Critical_Rate", operation:"add",
+                   valeur:2000, unite:"ten-thousandths" }]
+  });
+  assert.equal(r.critRate, NEUTRE.critRate, "le critique propre n'est pas touche");
+  assert.equal(r.critRateAllie, 2000);
+}
+
+/* Et les buffs de taux critique de la table cumulent dans ce seau. */
+{
+  const critiques = tousLesBuffs.filter(b => b.stat === "C_Critical_Rate");
+  assert.ok(critiques.length >= 2,
+    "la table doit porter plusieurs buffs de taux critique");
+  const r = entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:critiques });
+  assert.equal(r.critRateAllie,
+    critiques.reduce((somme, b) => somme + b.valeur, 0));
+  assert.equal(r.critRate, NEUTRE.critRate);
+}
+
 /* `multiply` multiplie la valeur du heros ; `add` s'y ajoute. */
 {
   const r = entreesDuCalcul({
