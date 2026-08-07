@@ -15,7 +15,10 @@ import { charOf } from "../metier/catalogue.js";
 import { equippedEnumOf } from "../metier/armes.js";
 import { rosterHeroSnapshot } from "../metier/equipe-modele.js";
 import { calculateHeroStats, groupBuildStatResults } from "../metier/stats-calcul.js";
-import { CIBLE_REFERENCE } from "../metier/degats-calcul.js";
+import {
+  CIBLE_REFERENCE, CONSTANTE_PAR_DEFAUT, calibrerConstante
+} from "../metier/degats-calcul.js";
+import { CalibrationStore } from "../donnees/calibration-store.js";
 import {
   buffsApplicables, entreesDuCalcul, resultatsParCompetence
 } from "../metier/calculateur-entrees.js";
@@ -45,7 +48,40 @@ import { showView } from "./navigation.js";
     typeArme:null,
     heroImpose:null,
     retouches:{},
-    coches:new Set()
+    coches:new Set(),
+    /* La calibration : index de la competence choisie, degats saisis, et le
+       dernier message rendu. Le message est garde dans l'etat parce que la
+       page se redessine entierement a chaque action. */
+    calibrationCompetence:0,
+    degatsObserves:"",
+    messageCalibration:null
+  };
+
+  /* La SAISIE s'oublie a chaque changement de build ; la constante mesuree,
+     elle, reste rangee par build. Garder un message issu d'un autre
+     personnage le ferait lire comme s'il portait sur celui-ci. */
+  function oublierSaisieCalibration(){
+    etat.calibrationCompetence = 0;
+    etat.degatsObserves = "";
+    etat.messageCalibration = null;
+  }
+
+  /* Chaque refus de calibrerConstante() dit au membre QUOI corriger. Un
+     « impossible » sec le laisserait sans recours, alors que ces trois cas
+     ont chacun une cause concrete et frequente. */
+  const MESSAGES_CALIBRATION = {
+    "degats-manquants":
+      "Entre les dégâts d'un coup non critique.",
+    "degats-trop-faibles":
+      "Ces dégâts sont trop faibles pour ce build : aucune constante ne les "
+      + "produit. Le coup a-t-il été bloqué, ou la cible protégée ?",
+    "degats-au-dela-de-la-pre-armure":
+      "Ces dégâts dépassent ce que le build peut produire avant armure. "
+      + "C'était probablement un coup critique — reprends un coup normal.",
+    "defense-nulle":
+      "Sans défense sur la cible, aucun coup ne peut révéler la constante.",
+    "build-incomplet":
+      "Ce build est incomplet, la calibration ne peut pas aboutir."
   };
 
   let chargementCatalogues = null;
@@ -245,6 +281,106 @@ import { showView } from "./navigation.js";
     return section;
   }
 
+  /* Mesurer C sur un coup reel plutot que de garder la constante par defaut.
+     C'est ce qui fait passer la page de « compare deux builds » a « annonce
+     un chiffre ». Elle est propre au personnage, a son arme et a ses
+     potentiels debloques, donc elle se range par build et se recalibre. */
+  function sectionCalibration(competences, entrees, mesuree, redessiner){
+    const section = el("section",{class:"calc-calibration"});
+    section.appendChild(el("h3",{text:"Constante C"}));
+    section.appendChild(el("p",{class:"calc-muette",
+      text:mesuree
+        ? "Mesurée sur ce build : " + NOMBRE.format(Math.round(mesuree))
+          + ". Elle change à chaque potentiel débloqué — recalibre après."
+        : "Valeur par défaut : " + NOMBRE.format(CONSTANTE_PAR_DEFAUT)
+          + ". Les chiffres classent les builds entre eux, ils n'annoncent "
+          + "pas encore ce que tu verras en jeu."}));
+
+    const chiffrees = resultatsParCompetence({
+      competences, entrees, cible:CIBLE_REFERENCE
+    }).filter(ligne => ligne.resultat).map(ligne => ligne.competence);
+
+    if(!chiffrees.length){
+      section.appendChild(el("p",{class:"calc-muette",
+        text:"Aucune compétence chiffrée ici : rien à calibrer."}));
+      return section;
+    }
+
+    /* L'index est borne a chaque dessin : changer de personnage ou d'arme
+       raccourcit la liste, et un index conserve pointerait dans le vide. */
+    const choisi = Math.min(
+      Math.max(0, Number(etat.calibrationCompetence) || 0), chiffrees.length - 1
+    );
+    const choix = el("select",{
+      class:"calc-calibration-competence",
+      onchange:event => {
+        etat.calibrationCompetence = Number(event.target.value) || 0;
+      }
+    });
+    chiffrees.forEach((competence, rang) => {
+      const option = el("option",{
+        value:String(rang), text:libelleDe(etat.charId, competence).nom
+      });
+      option.selected = rang === choisi;
+      choix.appendChild(option);
+    });
+
+    const saisie = el("input",numericKeyboardInputProps({
+      class:"calc-valeur",
+      value:String(etat.degatsObserves || ""),
+      onchange:event => { etat.degatsObserves = event.target.value; }
+    }));
+
+    section.appendChild(el("div",{class:"calc-champ"},[
+      el("label",{text:"Compétence mesurée"}), choix
+    ]));
+    section.appendChild(el("div",{class:"calc-champ"},[
+      el("label",{text:"Dégâts du coup NON critique"}), saisie
+    ]));
+    section.appendChild(el("p",{class:"calc-muette",
+      text:"Si la compétence affiche plusieurs nombres pour un même coup, "
+        + "additionne-les et entre le total."}));
+
+    section.appendChild(el("button",{
+      class:"btn", type:"button", text:"Calibrer",
+      onclick:()=>{
+        const resultat = calibrerConstante({
+          stats:entrees,
+          competence:chiffrees[choisi],
+          cible:CIBLE_REFERENCE,
+          degatsObserves:Number(etat.degatsObserves)
+        });
+        if(resultat && Number.isFinite(resultat.constante)){
+          CalibrationStore.set(etat.charId, etat.typeArme, resultat.constante);
+          etat.messageCalibration = "Constante mesurée : "
+            + NOMBRE.format(Math.round(resultat.constante))
+            + ". Le tableau est recalculé avec elle.";
+        } else {
+          etat.messageCalibration = MESSAGES_CALIBRATION[resultat && resultat.erreur]
+            || "La calibration n'a pas abouti.";
+        }
+        redessiner();
+      }
+    }));
+
+    if(mesuree){
+      section.appendChild(el("button",{
+        class:"btn btn-ghost", type:"button", text:"Oublier la mesure",
+        onclick:()=>{
+          CalibrationStore.clear(etat.charId, etat.typeArme);
+          etat.messageCalibration = null;
+          redessiner();
+        }
+      }));
+    }
+
+    if(etat.messageCalibration){
+      section.appendChild(el("p",{class:"calc-avertissement calc-calibration-message",
+        text:etat.messageCalibration}));
+    }
+    return section;
+  }
+
   function tableauDesCompetences(charId, competences, entrees){
     const lignes = resultatsParCompetence({
       competences, entrees, cible:CIBLE_REFERENCE
@@ -310,6 +446,7 @@ import { showView } from "./navigation.js";
         etat.typeArme = types[0] || null;
         etat.retouches = {};
         etat.coches.clear();
+        oublierSaisieCalibration();
         redessiner();
       }
     });
@@ -339,6 +476,7 @@ import { showView } from "./navigation.js";
         onclick:()=>{
           etat.typeArme = type;
           etat.retouches = {};
+          oublierSaisieCalibration();
           redessiner();
         }
       }));
@@ -377,6 +515,7 @@ import { showView } from "./navigation.js";
                 etat.heroImpose = null;
                 etat.retouches = {};
                 etat.coches.clear();
+                oublierSaisieCalibration();
                 dessiner();
               }
             })
@@ -445,12 +584,19 @@ import { showView } from "./navigation.js";
     const entrees = entreesDuCalcul({
       statsDuBuild:statsRetouchees, buffsCoches:coches
     });
+    /* La constante mesurée, quand ce build en a une. Absente, le moteur
+       retombe sur sa valeur par défaut - c'est lui qui décide de son repli,
+       pas cette vue. */
+    const mesuree = CalibrationStore.get(etat.charId, etat.typeArme);
+    if(mesuree) entrees.constanteC = mesuree;
+
     const competences = competencesDu(etat.charId, etat.typeArme);
     if(!competences.length){
       vue.appendChild(el("p",{class:"calc-muette",
         text:"Aucune compétence connue pour ce type d'arme."}));
     } else {
       vue.appendChild(tableauDesCompetences(etat.charId, competences, entrees));
+      vue.appendChild(sectionCalibration(competences, entrees, mesuree, dessiner));
     }
     vue.appendChild(avertissements());
   }
@@ -478,6 +624,7 @@ import { showView } from "./navigation.js";
     etat.heroImpose = hero || null;
     etat.retouches = {};
     etat.coches.clear();
+    oublierSaisieCalibration();
     /* Le lien part d'une fiche ouverte DANS une modale. Sans cette fermeture,
        la page s'afficherait derriere elle et le document resterait fige. */
     ModalStack.closeAll();

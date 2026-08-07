@@ -4,7 +4,9 @@ const assert = require("node:assert/strict");
 const { loadApp } = require("./helpers/load-app");
 
 const { hooks } = loadApp();
-const { degatsAttendus, CIBLE_REFERENCE } = hooks;
+const {
+  degatsAttendus, CIBLE_REFERENCE, calibrerConstante, CONSTANTE_PAR_DEFAUT
+} = hooks;
 
 /* Cible neutre et lisible : aucune resistance, aucune faiblesse, et une
    defense choisie pour que K/(K+DEF) tombe juste. K vaut 5600, donc
@@ -425,6 +427,112 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   });
   assert.equal(Math.round(r.total), Math.round(r.sansCritique));
   assert.equal(Math.round(r.avecCritique), 1200);
+}
+
+/* Sans constante mesuree, le moteur retombe sur sa valeur par defaut - c'est
+   elle qui a servi a tous les chiffres precedents. */
+{
+  const sans = degatsAttendus({
+    stats:{ atk:1000 }, competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
+  });
+  const avecLeDefaut = degatsAttendus({
+    stats:{ atk:1000, constanteC:CONSTANTE_PAR_DEFAUT },
+    competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
+  });
+  assert.equal(CONSTANTE_PAR_DEFAUT, 5600);
+  assert.equal(sans.total, avecLeDefaut.total);
+
+  const autre = degatsAttendus({
+    stats:{ atk:1000, constanteC:11200 },
+    competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
+  });
+  assert.equal(Math.round(autre.total), 667, "11200/(11200+5600)");
+}
+
+/* LE ROUND-TRIP : calculer avec une constante donnee, puis la retrouver
+   depuis le seul coup non critique. Zero ecart, sur des configurations qui
+   different par le build ET par la cible.
+
+   C'est la seule verification capable d'attraper une inversion ayant derive
+   de la formule directe - et c'est exactement ce que l'outil de reference
+   reussit sur ses propres entrees. */
+{
+  [
+    { c:5600, stats:{ atk:1000 }, cible:CIBLE_NEUTRE },
+    { c:3200, stats:{ atk:12345, critRate:5000, critDamage:14000 },
+      cible:CIBLE_NEUTRE },
+    { c:9000, stats:{ atk:8000, percementDefense:2500 }, cible:CIBLE_REFERENCE },
+    { c:4100, stats:{ atk:6000, reductionDefense:2000, bonusGlobal:1500 },
+      cible:CIBLE_REFERENCE }
+  ].forEach(cas => {
+    const stats = Object.assign({}, cas.stats, { constanteC:cas.c });
+    const attendu = degatsAttendus({
+      stats, competence:COUP_SIMPLE, cible:cas.cible
+    });
+    const retrouve = calibrerConstante({
+      stats, competence:COUP_SIMPLE, cible:cas.cible,
+      degatsObserves:attendu.sansCritique
+    });
+    assert.ok(retrouve && Number.isFinite(retrouve.constante),
+      "la calibration doit aboutir, recu : " + JSON.stringify(retrouve));
+    assert.ok(Math.abs(retrouve.constante - cas.c) < 1e-6,
+      "constante " + cas.c + " retrouvee a " + retrouve.constante);
+  });
+}
+
+/* Quatre refus explicites plutot qu'une constante absurde. Une constante
+   fausse serait le pire des resultats : elle se sauvegarderait, puis
+   fausserait chaque ligne du tableau sans plus jamais se signaler. */
+{
+  const commun = {
+    stats:{ atk:1000 }, competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
+  };
+
+  assert.equal(
+    calibrerConstante(Object.assign({}, commun, { degatsObserves:0 })).erreur,
+    "degats-manquants"
+  );
+  assert.equal(
+    calibrerConstante(Object.assign({}, commun, { degatsObserves:-5 })).erreur,
+    "degats-manquants"
+  );
+  /* La base vaut 1000 : au-dela, la mitigation depasserait 1 et C divergerait. */
+  assert.equal(
+    calibrerConstante(Object.assign({}, commun, { degatsObserves:1000 })).erreur,
+    "degats-au-dela-de-la-pre-armure"
+  );
+  /* Sans defense, la mitigation vaut 1 quelle que soit C : aucun coup ne peut
+     la reveler. L'outil de reference refuse exactement ce cas. */
+  assert.equal(
+    calibrerConstante(Object.assign({}, commun, {
+      cible:Object.assign({}, CIBLE_NEUTRE, { def:0 }), degatsObserves:500
+    })).erreur,
+    "defense-nulle"
+  );
+  /* Trop faibles : le percement seul depasse deja la mitigation observee. */
+  assert.equal(
+    calibrerConstante({
+      stats:{ atk:1000, percementDefense:5000 },
+      competence:COUP_SIMPLE, cible:CIBLE_NEUTRE, degatsObserves:400
+    }).erreur,
+    "degats-trop-faibles"
+  );
+}
+
+/* Calibrer sur un coup CRITIQUE est l'erreur que le membre fera. Le garde-fou
+   l'attrape au lieu de rendre une constante trop grande. */
+{
+  const stats = { atk:1000, critRate:10000, critDamage:14000, constanteC:5600 };
+  const r = degatsAttendus({
+    stats, competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
+  });
+  assert.equal(
+    calibrerConstante({
+      stats, competence:COUP_SIMPLE, cible:CIBLE_NEUTRE,
+      degatsObserves:r.avecCritique
+    }).erreur,
+    "degats-au-dela-de-la-pre-armure"
+  );
 }
 
 console.log("degats-calcul.test.js OK");

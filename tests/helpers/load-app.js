@@ -95,6 +95,12 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   CIBLE_REFERENCE:typeof CIBLE_REFERENCE === "object"
     ? CIBLE_REFERENCE
     : undefined,
+  calibrerConstante:typeof calibrerConstante === "function"
+    ? calibrerConstante
+    : undefined,
+  CONSTANTE_PAR_DEFAUT:typeof CONSTANTE_PAR_DEFAUT === "number"
+    ? CONSTANTE_PAR_DEFAUT
+    : undefined,
   buffsApplicables:typeof buffsApplicables === "function"
     ? buffsApplicables
     : undefined,

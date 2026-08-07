@@ -38,9 +38,10 @@ const STORAGE_KEY = "confrerie7ds.teams";
   );
   assert.strictEqual(
     (source.match(/numericKeyboardInputProps\(\{/g) || []).length,
-    6,
-    "Les six créations de champs numériques dynamiques doivent partager le "
-      + "contrat — la sixième est la retouche des bases du calculateur"
+    7,
+    "Les sept créations de champs numériques dynamiques doivent partager le "
+      + "contrat — la sixième est la retouche des bases du calculateur, la "
+      + "septième la saisie des dégâts observés pour calibrer la constante C"
   );
   assert.strictEqual(
     (source.match(/type:"number"/g) || []).length,

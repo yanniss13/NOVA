@@ -46,6 +46,7 @@ const MODULES = [
   "donnees/collection-store.js",
   "donnees/boss-store.js",
   "donnees/suivi-store.js",
+  "donnees/calibration-store.js",
 
   /* vues — tout ce qui touche au DOM. */
   "vues/navigation.js",
