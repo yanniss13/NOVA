@@ -222,10 +222,10 @@ async function installRosterFocusFakeSupabase(page){
     );
     await page.goto(server.url + "/index.html");
     const tabs = page.getByRole("tab");
-    /* 8 onglets depuis l'ajout du « Wiki », place en dernier. Le rail de
+    /* 9 onglets depuis l'ajout de « Collection », placé en dernier. Le rail de
        categories du wiki n'en fait PAS partie : c'est un `role="group"`,
        precisement pour ne pas se compter parmi les onglets principaux. */
-    assert.equal(await tabs.count(), 8);
+    assert.equal(await tabs.count(), 9);
     assert.equal(await tabs.nth(3).getAttribute("id"), "tab-availability");
     assert.equal(await tabs.nth(0).getAttribute("aria-selected"), "true");
     assert.equal(await tabs.nth(0).getAttribute("tabindex"), "0");
@@ -245,8 +245,8 @@ async function installRosterFocusFakeSupabase(page){
     assert.equal(await page.locator("#view-dashboard").isVisible(), true);
 
     await page.keyboard.press("End");
-    assert.equal(await tabs.nth(7).getAttribute("aria-selected"), "true");
-    assert.equal(await page.locator("#view-wiki").isVisible(), true);
+    assert.equal(await tabs.nth(8).getAttribute("aria-selected"), "true");
+    assert.equal(await page.locator("#view-collection").isVisible(), true);
 
     await page.keyboard.press("Home");
     assert.equal(await tabs.nth(0).getAttribute("aria-selected"), "true");

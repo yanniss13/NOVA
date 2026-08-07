@@ -1,0 +1,31 @@
+/* L'onglet Collection.
+
+   Les grilles et les tuiles viennent de wiki.css : cette feuille ne les
+   redefinit pas, elle n'ajoute que l'etat de possession et la progression. */
+
+.collection-toolbar{
+  display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;margin:0 0 14px
+}
+.collection-progress{
+  margin:0;color:var(--muted);font-variant-numeric:tabular-nums
+}
+.collection-progress b{color:var(--gold-bright)}
+.collection-section-title{
+  margin:18px 0 10px;font-size:11.5px;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--gold)
+}
+/* Un objet possede reste visible sous le filtre « Tout » : on l'estompe au
+   lieu de le retirer, pour que la grille garde sa forme. */
+.wiki-tile.collection-owned{opacity:.42}
+.wiki-tile.collection-owned::after{
+  content:"✓";position:absolute;top:6px;right:8px;
+  color:var(--gold-bright);font-size:15px;font-weight:700
+}
+/* Equipe : possede et non decochable. Le cadenas dit pourquoi. */
+.wiki-tile.collection-locked{cursor:default}
+.wiki-tile.collection-locked:hover{transform:none;border-color:var(--line)}
+.wiki-tile.collection-locked::after{content:"🔒"}
+
+@media (prefers-reduced-motion:reduce){
+  .wiki-tile.collection-owned{transition:none}
+}

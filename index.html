@@ -28,6 +28,7 @@
 <link rel="stylesheet" href="./css/responsive.css">
 <link rel="stylesheet" href="./css/dispos.css">
 <link rel="stylesheet" href="./css/wiki.css">
+<link rel="stylesheet" href="./css/collection.css">
 </head>
 <body>
 
@@ -67,6 +68,9 @@
     <button class="tab" id="tab-wiki" data-view="wiki"
             role="tab" aria-controls="view-wiki"
             aria-selected="false" tabindex="-1">Wiki</button>
+    <button class="tab" id="tab-collection" data-view="collection"
+            role="tab" aria-controls="view-collection"
+            aria-selected="false" tabindex="-1">Collection</button>
   </nav>
     <span class="tabs-cue tabs-cue-left" aria-hidden="true">‹</span>
     <span class="tabs-cue tabs-cue-right" aria-hidden="true">›</span>
@@ -226,6 +230,33 @@
     <p class="wiki-state" id="wikiState" role="status" aria-live="polite"></p>
     <p class="wiki-empty" id="wikiEmpty" hidden>Aucun héros ne correspond à cette recherche.</p>
     <div class="wiki-grid" id="wikiGrid"></div>
+  </section>
+
+  <!-- ============ COLLECTION ============ -->
+  <section id="view-collection" class="view" role="tabpanel"
+           aria-labelledby="tab-collection">
+    <p class="section-eyebrow">Chasse</p>
+    <h1 class="section-title">Collection</h1>
+    <p class="section-lead">Ce qu'il te reste à trouver, arme par arme et gravure par gravure.</p>
+    <div class="collection-toolbar">
+      <label class="wiki-field" id="collectionOwnerField">
+        <span>Membre</span>
+        <select id="collectionOwner"></select>
+      </label>
+      <p class="collection-progress" id="collectionProgress"
+         role="status" aria-live="polite"></p>
+    </div>
+    <!-- Mêmes listes déroulantes que le Wiki : construites en JS à partir des
+         objets réellement listés, jamais figées ici. -->
+    <div class="wiki-filters" id="collectionFilters">
+      <label class="wiki-field">
+        <span>Recherche</span>
+        <input id="collectionSearch" type="search" placeholder="Nom d'un objet…"
+               autocomplete="off">
+      </label>
+    </div>
+    <p class="wiki-state" id="collectionState" role="status" aria-live="polite"></p>
+    <div id="collectionBody"></div>
   </section>
 
   <!-- ============ DISPOS ============ -->

@@ -1,6 +1,6 @@
 /* Le point d'assemblage du site.
 
-   Ce fichier ne dessine rien. Il declare les sept onglets aupres du registre
+   Ce fichier ne dessine rien. Il declare les onglets aupres du registre
    de vues/navigation.js, affiche la banniere de donnees, puis lance le
    Builder et la session. Tout le reste vit dans js/, range en cinq couches :
    lis js/ARCHITECTURE.md.
@@ -19,6 +19,7 @@ import { renderAnalyse } from "./vues/analyse.js";
 import { renderRoster } from "./vues/roster-equipes.js";
 import { renderDashboardView } from "./vues/suivi.js";
 import { renderWiki } from "./vues/wiki.js";
+import { renderCollection } from "./vues/collection.js";
 /* Importe pour effet de bord : il branche la fiche sur wiki.js. */
 import "./vues/wiki-fiche-heros.js";
 import "./vues/wiki-fiche-objet.js";
@@ -47,6 +48,7 @@ import { initAuth } from "./vues/session-auth.js";
   enregistrerVue("boss", renderBossView);
   enregistrerVue("availability", renderAvailabilityView);
   enregistrerVue("wiki", renderWiki);
+  enregistrerVue("collection", renderCollection);
 
   /* ============================ Démarrage ============================ */
   $("#databar").textContent =

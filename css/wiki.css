@@ -33,7 +33,10 @@
   display:grid;gap:12px;
   grid-template-columns:repeat(auto-fill,minmax(104px,1fr))
 }
+/* `position:relative` sert de repere au ::after de collection.css — la coche
+   et le cadenas s'ancrent au coin de la tuile. */
 .wiki-tile{
+  position:relative;
   appearance:none;cursor:pointer;font:inherit;
   border:1px solid var(--line);background:var(--obsidian-2);
   border-radius:9px;padding:8px 6px;
