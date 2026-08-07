@@ -537,3 +537,206 @@ un plancher dur à 0 (`max(0, 1 + (CD−défCrit)/100)`) pour empêcher un multi
 Aucune cible accessible dans la liste n'a une défense critique assez haute pour pousser ce
 plancher en dehors de la zone [0,1] déjà démontrée ci-dessus ; je ne l'ai donc pas vérifié
 directement.
+
+---
+
+# Session 3 (2026-08-07) — le champ `ds` et cinq questions de vérification
+
+Même périmètre que les sessions précédentes : boîte noire, `calculator.html` isolé, aucune
+lecture de bundle, aucune extraction massive de leur base d'ennemis, aucune donnée privée.
+Une mesure à la fois, séquentielle (pas de boucle async groupée cette fois, précisément pour
+éviter l'incident de pollution de la session 2).
+
+**Note de méthode sur cette session** : pour figer la DEF ennemie à des valeurs rondes
+exactes (5600, 2800, 10000, 7000 — demandées telles quelles), j'ai écrit directement dans le
+champ caché `edef` (auto-rempli d'ordinaire par la sélection d'ennemi, invisible dans l'UI —
+aucun texte de la page n'affiche jamais la DEF exacte d'un ennemi à l'utilisateur). Je l'ai fait
+avec la même méthode `.value` + `dispatchEvent('input'/'change')` utilisée depuis le début pour
+tous les champs, visibles ou non — ce n'est pas un contournement de protection (aucune protection
+n'existe sur ce champ), seulement le seul moyen d'obtenir des DEF rondes exactes pour isoler
+algébriquement `ds`. Je le signale explicitement par transparence. **Piège découvert et évité** :
+sur le Training Dummy, écrire dans `edef` produit un résultat incohérent avec la formule
+(edef=5600 → sortie 94 697 au lieu des 50 000 attendus) — le Dummy a un cas spécial interne qui
+ignore en partie ce champ. Vérifié ensuite sur un vrai boss (Red Demon WL4) : `edef=5600` donne
+exactement 51 000, pile la prédiction. **Tous les tests ci-dessous utilisent donc un vrai
+ennemi (Red Demon, World Level 4) avec `edef` écrasé**, jamais le Training Dummy.
+
+Config commune à tous les tests de la section 1 et 2 (relevé complet, pour reproductibilité) :
+`char-sel=Diane`, `build-sel=Axe`, compétence = Special Skill (*Quake Smash*, coef 100%/307%),
+`enemy-sel=Red Demon (World Level 4)` (fournit `ecr=15`, `ecdr=42.93`, `eew=20`, `eflatres=15` —
+tous inchangés), `atk=100000`, `rhp=0`, `ea=0`, `cd=0`, `cc=0`, `edi=0`, `eai=0`, `dmgpct=0`,
+`skilldmg=0`, `cval=5600`, tous les `d-*` = 0. Seuls `edef` et `ds` varient (précisés à chaque
+ligne). Référence : à `edef=0, ds=0` (mitigation=1, DEF nulle), `out-nc = 102 000` — c'est le
+plafond « pré-armure » déjà mesuré en session 1.
+
+## 1. PRIORITÉ ABSOLUE — où `ds` entre-t-il dans la formule ?
+
+| Test | `edef` | `ds` | `out-nc` mesuré |
+|---|---|---|---|
+| A | 5600 | 0 | **51 000** |
+| B | 5600 | 50 | **102 000** |
+| C | 2800 | 0 | **68 000** |
+
+**B est-il égal à C ? Non — très clairement non.** 102 000 contre 68 000, un écart de 50 %,
+aucune ambiguïté d'arrondi possible.
+
+**Quelle DEF donnerait le résultat B avec `ds=0` ?** Mitigation à `ds=0` s'écrit `C/(C+DEF)` ;
+pour retomber sur 102 000 (= la sortie à mitigation exactement 1), il faut `DEF = 0`. Autrement
+dit : `ds=50` avec une DEF de 5600 ne fait PAS « comme si la DEF était réduite de moitié
+(2800) » — ça fait **comme si la DEF était nulle**, et un peu plus même (voir point 2 : à
+`ds=100` sur la même DEF, la sortie dépasse encore le cas DEF=0).
+
+**Second couple, pour écarter toute coïncidence arithmétique** :
+
+| Test | `edef` | `ds` | `out-nc` mesuré | Prédiction additive `Mitig=C/(C+DEF)+ds/100` |
+|---|---|---|---|---|
+| D | 10000 | 30 | **67 215** | 5600/15600 + 0,30 = 0,658974 → 102000×0,658974 = 67 215,4 |
+| E | 7000 | 0 | **45 333** | 5600/12600 = 0,444444 → 102000×0,444444 = 45 333,3 |
+
+D ≠ E (67 215 contre 45 333) alors que l'hypothèse « `ds` multiplie la DEF par (1−ds) »
+prédirait D = E puisque 10000×(1−0,30) = 7000 exactement. Les deux paires (A/B/C et D/E)
+convergent vers la **même** formule, au dixième d'unité près (arrondi d'affichage), avec zéro
+paramètre ajusté après coup.
+
+**MESURÉ, sans ambiguïté : `ds` n'agit pas en multipliant la DEF par `(1 − ds/100)`. Il
+s'ajoute directement au ratio de mitigation** : `Mitig = C/(C+DEF_eff) + ds/100`, exactement la
+formule retenue en session 1. Le code déjà écrit qui implémente cette addition est donc
+**confirmé**, pas seulement plausible — deux couples indépendants, prédits à l'avance, tombent
+juste à chaque fois.
+
+## 2. `ds` est-il borné ?
+
+Config identique, `edef=5600` fixe (référence DEF=0 → 102 000 ; référence `ds=50` → 102 000
+déjà vu ci-dessus).
+
+| `ds` | `out-nc` mesuré | Comparaison à la sortie DEF=0 (102 000) |
+|---|---|---|
+| 100 | **153 000** | **Dépasse** de 50 000 (×1,5) — ne se contente pas d'égaler le cas DEF=0 |
+| 150 | **204 000** | **Dépasse** encore, exactement ×2,0 par rapport à DEF=0 |
+
+**Réponse aux deux sous-questions** :
+- `ds=100` n'égale PAS les dégâts à DEF=0 : il les dépasse largement (153 000 contre 102 000).
+  La mitigation à `ds=100, DEF=5600` vaut `5600/11200 + 1,0 = 1,5`, pas `1,0`.
+- `ds=150` ne plafonne pas : 204 000 = 102 000 × 2,0 exactement (`Mitig = 0,5 + 1,5 = 2,0`),
+  cohérent point pour point avec la continuation linéaire déjà observée en session 1
+  (`ds` 0→200 sur Red Demon, strictement linéaire). **MESURÉ : aucun plafond, la progression
+  reste linéaire au moins jusqu'à `ds=150`.**
+
+## 3. La résistance au percement (« Shatter Resistance ») existe-t-elle chez eux ?
+
+**Recherche de champ** : aucun identifiant de champ ne contient "shatter", "resist", "pen" ou
+"protect" au sens d'une stat DISTINCTE de `ds` du côté ennemi, à une exception : un champ
+existe bien sous le nom **« Enemy protection resist reduction % »** (`d-epr`, debuff) avec son
+pendant côté ennemi **`epr`** (« protection resist » propre à l'ennemi, champ caché,
+auto-rempli). C'est le candidat le plus proche conceptuellement d'une « résistance au
+percement ».
+
+**Est-il branché ?** Testé les deux, isolément, à `edef=5600, ds=0` (référence 51 000) :
+
+| Champ modifié | Valeur | `out-nc` |
+|---|---|---|
+| (aucun) | — | 51 000 (référence) |
+| `d-epr` (debuff joueur) | 50 | **51 000 — aucun effet** |
+| `epr` (stat propre de l'ennemi, écrasée directement) | 50 | **51 000 — aucun effet** |
+
+**MESURÉ : `epr`/`d-epr` (« protection resist ») sont des champs totalement inertes.** Ni la
+stat de l'ennemi ni le debuff qui est censé la réduire n'ont le moindre effet sur la sortie —
+confirmé dans les deux sens. La session 1 avait déjà repéré `d-epr` comme « champ mort » ;
+cette session confirme que le champ ennemi correspondant (`epr`) l'est tout autant, avec des
+valeurs différentes (50 au lieu de 0/50 en session 1) pour écarter une coïncidence.
+
+**Leur base porte-t-elle Akumu ?** Recherche dans les 64 options de `enemy-sel` : **aucune
+entrée « Akumu » ni « Demonic Beast » n'existe** dans leur liste d'ennemis. La question de la
+valeur de protection resist d'Akumu chez eux est donc sans objet — ce boss n'est simplement pas
+dans leur base.
+
+**`ds` est-il décrit comme net d'une résistance ?** Recherche du mot « shatter » sur toute la
+page : **2 occurrences seulement**, toutes deux le libellé du champ ou son rappel dans le mode
+d'emploi (*« ...Elemental ATK, Crit DMG, Crit Chance, Elemental DMG, Defense Shatter and Skill
+Damage % from your in-game stat screen »*). Aucun texte n'évoque une soustraction, une
+résistance opposée, ou une notion de valeur « nette ». **Indéterminé — rien de tel n'est écrit
+nulle part sur cette page.**
+
+## 4. `ds` : stat du héros ou malus sur l'ennemi ?
+
+Recherche de texte explicite tranchant la question : **aucune trouvée**. Ni dans le libellé de
+`ds` (« Defense shatter % », sans commentaire), ni dans le mode d'emploi, ni dans une infobulle
+(il n'y en a pas sur ce champ, confirmé en session 1).
+
+**Fait structurel mesuré, qui ne tranche pas mais qui éclaire** : `ds` est positionné dans le
+bloc *« Character & Skill »* du formulaire, au même niveau que `atk`, `ea`, `cd`, `cc`, `edi`,
+`eai` — c'est-à-dire dans le groupe des stats personnelles à relever sur l'écran de stats du
+héros (le mode d'emploi le confirme : *« Elemental ATK, Crit DMG, Crit Chance, Elemental DMG,
+Defense Shatter and Skill Damage % from your in-game stat screen »* — `ds` est cité dans la
+même phrase que les stats d'équipement du héros). Les debuffs de compétence qui réduisent la
+défense de l'ennemi (« réduit sa défense de 20 % ») vivent dans un bloc séparé et plus loin dans
+le formulaire, *« Applied debuffs — enemy reductions »*, sous le nom `d-edef` (« Enemy defense
+reduction % ») — un champ différent de `ds`, déjà présent dans la formule DEF_eff
+(`DEF × (1−d-edef/100)`, confirmé en session 1) et distinct du ratio de mitigation où vit `ds`.
+
+**Réponse : indéterminé pour la question posée** (aucun texte ne dit explicitement si `ds`
+couvre l'équipement du héros, les debuffs de compétence sur l'ennemi, ou la somme des deux) —
+mais **mesuré** que TapScreen les traite comme deux mécanismes distincts dans son formulaire :
+`ds` (bloc héros, entre dans `Mitig` en addition) et `d-edef` (bloc debuffs ennemi, entre dans
+`DEF_eff` en facteur multiplicatif). Ce ne sont pas juste deux noms pour la même case.
+
+## 5. La défense critique de l'ennemi est-elle abaissable ?
+
+Oui, via `d-ecdr` (« Enemy crit defense reduction % »), déjà repéré en session 1. Cette session
+tranche précisément l'ambiguïté points/multiplicateur avec des nombres ronds.
+
+Config : `ecdr` (défense critique propre de l'ennemi, champ caché) écrasé à exactement **50**,
+`cd=0` (dégâts critiques du héros à zéro pour isoler proprement le multiplicateur), le reste
+inchangé (`edef=5600`, `ds=0` → référence non-crit 51 000).
+
+| `d-ecdr` | `out-nc` | `out-crit` | Ratio crit/non-crit |
+|---|---|---|---|
+| 0 | 51 000 | 25 500 | 0,50 = `1 + (0−50)/100` |
+| **50** | 51 000 | **51 000** | **1,00** |
+
+Avec `d-ecdr=50` sur une défense critique ennemie de 50, le ratio devient exactement 1,00 —
+c'est-à-dire que le malus de défense critique de la cible est intégralement annulé
+(`max(0, 50−50) = 0`). Si le champ avait été un multiplicateur (« réduit de 50 % »), la défense
+critique serait tombée à 25 et le ratio aurait dû être `1+(0−25)/100 = 0,75` (soit
+`out-crit = 38 250`), pas 1,00.
+
+**MESURÉ, sans ambiguïté : `d-ecdr` est en points de pourcentage, retranchés directement de la
+défense critique de la cible** (`max(0, critDéf_cible − d-ecdr)`), **pas un multiplicateur**.
+Une défense critique de 50 réduite de « 50 » tombe à 0, pas à 25 — exactement le cas que tu
+posais en exemple.
+
+## 6. Le protocole de calibration de C est-il documenté ?
+
+Oui, texte intégral relevé dans le panneau *« Defense Penetration Constant (C) »* :
+
+> *« C is a hidden character-specific value that determines how much of your damage gets
+> through enemy armor. It cannot be read from any stat screen — it must be measured from a
+> real hit. Once calibrated, save it for future use. C changes when you unlock new potentials.
+> You can calibrate C using any skill — pick whichever is easiest to get a clean number from.
+> The C value applies equally to all skills for that character and build. If a skill shows more
+> than one damage number on screen: add all the numbers from a single hit together and enter
+> the total. For example if you see 1,405 and 1,405 appear from one hit, enter 2,810. »*
+
+Et dans le sous-panneau du solveur lui-même :
+
+> *« C Calibration Helper — Uses the skill card you have selected above. Select your skill, fill
+> in all stats, enter your non-crit damage below, and hit Solve. »*
+
+**MESURÉ : oui, procédure documentée**, et elle correspond exactement à ce que tu décris
+(« frappe un ennemi, relève les dégâts, entre-les ») — avec trois précisions utiles qui ne
+figuraient pas dans ta description : (1) elle exige spécifiquement un coup **non-critique** ;
+(2) sur un skill à coups multiples affichant plusieurs nombres, il faut les **additionner** avant
+de les entrer ; (3) C doit être **recalibré à chaque déblocage de potentiel** — ce n'est pas une
+valeur figée à vie pour un personnage donné, contrairement à ce que « propre au personnage et au
+build » pourrait laisser penser isolément.
+
+## Récapitulatif — ce qui change pour le code déjà écrit
+
+| Sujet | Verdict de cette session |
+|---|---|
+| `Mitig = C/(C+DEF_eff) + ds/100` | **Confirmé** par deux couples indépendants, prédits à l'avance |
+| Plafond sur `ds` | **Aucun trouvé** jusqu'à 150 %, progression strictement linéaire |
+| Résistance au percement opposée à `ds` | **N'existe pas chez TapScreen** — champ `epr`/`d-epr` présent mais mesuré inerte des deux côtés. Ne pas en chercher l'équivalent pour caler `ds` : `ds` s'applique chez eux sans aucune résistance en face. |
+| `ds` = stat héros ou debuff ennemi ? | Indéterminé dans leur documentation ; mesuré qu'ils le traitent structurellement à part de `d-edef` (bloc différent, rôle différent dans la formule) |
+| `d-ecdr` points ou multiplicateur | **Points**, confirmé sans ambiguïté (50 sur 50 → 0, pas 25) |
+| Protocole de calibration de C | Documenté texto ; recalibration nécessaire à chaque nouveau potentiel débloqué (fait à ne pas perdre) |

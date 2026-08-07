@@ -38,10 +38,10 @@
     critDmgResist:5000,
     resistanceElementaire:3000,
     faiblesse:0,
-    /* NON PUBLIEE par la source. Zero est une hypothese, pas un releve : si
-       Akumu resiste au percement, tous les builds qui en portent sont
-       surestimes ici. A confirmer avant de presenter ces chiffres comme
-       autre chose qu'un comparatif. */
+    /* NON PUBLIEE, et sans equivalent actif dans l'outil de reference, dont
+       les champs de resistance au percement sont mesures inertes. Akumu ne
+       figure d'ailleurs pas dans sa base de 64 ennemis. Zero reproduit donc
+       son calcul a l'identique ; ce n'est pas pour autant un releve. */
     resistancePercement:0
   };
 
@@ -127,11 +127,27 @@
       - (Number(cible.critDmgResist) || 0)) / RAPPORT;
     const multiplicateurCritique = Math.max(0, 1 + degatsCrit);
     const critique = 1 + taux * (multiplicateurCritique - 1);
-    /* Le percement de defense (`D_Protect_Cur_Rate`) retranche un POURCENTAGE
-       de la defense de la cible avant la mitigation. Son libelle anglais dans
-       7ds-stats/libelles-stats.json est « Defense Shatter », mot pour mot le
-       champ `ds` de l'outil de reference : la correspondance est etablie par
-       la chaine elle-meme, pas par une deduction.
+    /* Le percement de defense (`D_Protect_Cur_Rate`, « Defense Shatter »)
+       s'AJOUTE au rapport de mitigation. Il ne divise PAS la defense :
+
+         mitigation = K/(K+DEF) + percement
+
+       Ce n'est pas une deduction. Cinq mesures predites a l'avance tombent
+       juste (RAPPORT-analyse-tapscreen.md, session 3) : a DEF 5600, percer
+       de 50 % rend exactement le chiffre d'une defense NULLE, quand diviser
+       la defense par deux en rendrait un tout autre. La premiere version de
+       ce module retenait la division, et se trompait de 50 %.
+
+       Consequence assumee : la mitigation peut depasser 1, et les degats
+       depasser alors la valeur pre-armure. C'est ce que fait l'outil de
+       reference, mesure sans aucun plafond jusqu'a 150 % de percement. Ce
+       terme est une linearisation, pas une mecanique physique - ne pas le
+       borner « par bon sens » sans mesure a l'appui.
+
+       A NE PAS CONFONDRE avec la reduction de defense infligee a l'ennemi
+       par une competence (« reduit sa defense de 20 % ») : celle-la
+       MULTIPLIE la defense et vit dans un champ separe chez eux (`d-edef`).
+       Elle n'est pas encore modelisee ici.
 
        A ne pas confondre avec la « Perforation » (`A_Accuracy`), qui ne perce
        AUCUNE defense : elle s'oppose a la « Perseverance » de l'ennemi
@@ -142,18 +158,18 @@
        tant que cette couche n'aura pas sa propre formule - la brancher ici
        reviendrait a la faire passer pour de la penetration d'armure.
 
-       La cible peut s'y opposer par sa resistance au percement
-       (`D_Protect_CurRes_Rate`). Akumu n'en publie aucune : elle vaut zero,
-       et cette hypothese est ecrite plutot que dissimulee.
-
-       Le percement net est borne a 100 % : au-dela, la defense deviendrait
-       negative et la mitigation depasserait 1. */
-    const percementNet = Math.min(RAPPORT, Math.max(
+       Le jeu porte une resistance au percement (`D_Protect_CurRes_Rate`) que
+       l'outil de reference ne modelise PAS : ses champs `epr` et `d-epr` ont
+       ete mesures inertes des deux cotes. Zero reproduit donc exactement son
+       calcul, et le terme reste ici pour le jour ou la valeur d'un boss sera
+       publiee. Seul le plancher a zero est conserve : sur-resister ne doit
+       pas RENFORCER la defense. */
+    const percementNet = Math.max(
       0, (Number(stats.percementDefense) || 0)
         - (Number(cible.resistancePercement) || 0)
-    ));
-    const defEffective = (Number(cible.def) || 0) * (1 - percementNet / RAPPORT);
-    const mitigation = K / (K + defEffective);
+    );
+    const mitigation = K / (K + (Number(cible.def) || 0))
+      + percementNet / RAPPORT;
     const resistance = 1 - (Number(cible.resistanceElementaire) || 0) / RAPPORT;
     const faiblesse = 1 + (Number(cible.faiblesse) || 0) / RAPPORT;
 

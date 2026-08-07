@@ -254,44 +254,77 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   assert.equal(CIBLE_REFERENCE.resistancePercement, 0);
 }
 
-/* Le percement de defense (« Defense Shatter ») retranche un POURCENTAGE de
-   la defense de la cible AVANT la mitigation. DEF 5600 percee a 50 % tombe a
-   2800, donc K/(K+DEF) passe de 0,5 a 5600/8400. */
+/* Le percement de defense (« Defense Shatter ») s'AJOUTE au rapport de
+   mitigation ; il ne divise pas la defense. Les cinq mesures de l'outil de
+   reference, transcrites telles quelles (RAPPORT-analyse-tapscreen.md,
+   session 3). Sa constante valait 5600, comme notre K : les chiffres se
+   comparent donc directement. Avec 1000 d'ATK et une competence a 100 %,
+   total = 1000 x mitigation. */
 {
-  const r = degatsAttendus({
+  [
+    { def:5600, percement:0, total:500, note:"5600/11200 = 0,5" },
+    { def:5600, percement:5000, total:1000, note:"0,5 + 0,5, soit une defense NULLE" },
+    { def:2800, percement:0, total:667, note:"5600/8400" },
+    { def:10000, percement:3000, total:659, note:"5600/15600 + 0,30" },
+    { def:7000, percement:0, total:444, note:"5600/12600" }
+  ].forEach(cas => {
+    const r = degatsAttendus({
+      stats:{ atk:1000, percementDefense:cas.percement },
+      competence:COUP_SIMPLE,
+      cible:Object.assign({}, CIBLE_NEUTRE, { def:cas.def })
+    });
+    assert.equal(Math.round(r.total), cas.total,
+      "DEF " + cas.def + " / percement " + cas.percement + " : " + cas.note);
+  });
+}
+
+/* La preuve que ce n'est PAS une division de la defense : percer 50 % d'une
+   defense de 5600 ne rend pas le chiffre d'une defense de 2800. C'est
+   exactement la mesure qui a invalide la premiere version de ce module. */
+{
+  const perce = degatsAttendus({
     stats:{ atk:1000, percementDefense:5000 },
     competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
   });
-  assert.equal(Math.round(r.total), 667);
+  const defenseMoitie = degatsAttendus({
+    stats:{ atk:1000 }, competence:COUP_SIMPLE,
+    cible:Object.assign({}, CIBLE_NEUTRE, { def:2800 })
+  });
+  assert.notEqual(Math.round(perce.total), Math.round(defenseMoitie.total),
+    "percer de moitie n'est pas diviser la defense de moitie");
+  assert.equal(Math.round(perce.total), 1000);
+  assert.equal(Math.round(defenseMoitie.total), 667);
 }
 
-/* La resistance au percement de la cible s'y oppose, et c'est la difference
-   qui compte. */
+/* La resistance au percement se retranche au percement, et a rien d'autre. */
 {
   const r = degatsAttendus({
     stats:{ atk:1000, percementDefense:5000 },
     competence:COUP_SIMPLE,
     cible:Object.assign({}, CIBLE_NEUTRE, { resistancePercement:2000 })
   });
-  assert.equal(Math.round(r.total), 588, "50 % - 20 % = 30 % de percement net");
+  assert.equal(Math.round(r.total), 800, "0,5 + (50 % - 20 %)");
 }
 
-/* Le percement net est borne des deux cotes : il ne peut ni annuler plus que
-   la defense entiere, ni la RENFORCER quand la cible sur-resiste. */
+/* AUCUN plafond en haut : la mitigation peut depasser 1, et les degats
+   depasser la valeur pre-armure. C'est mesure jusqu'a 150 % de percement chez
+   la reference - borner « par bon sens » nous en ecarterait. */
 {
-  const excedent = degatsAttendus({
+  const r = degatsAttendus({
     stats:{ atk:1000, percementDefense:15000 },
     competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
   });
-  assert.equal(Math.round(excedent.total), 1000, "au plus, la defense tombe a zero");
+  assert.equal(Math.round(r.total), 2000, "0,5 + 1,5 = 2,0");
+}
 
-  const surResiste = degatsAttendus({
+/* Un plancher a zero en revanche : sur-resister ne RENFORCE pas la defense. */
+{
+  const r = degatsAttendus({
     stats:{ atk:1000, percementDefense:1000 },
     competence:COUP_SIMPLE,
     cible:Object.assign({}, CIBLE_NEUTRE, { resistancePercement:9000 })
   });
-  assert.equal(Math.round(surResiste.total), 500,
-    "un percement negatif laisse la defense intacte, il ne l'augmente pas");
+  assert.equal(Math.round(r.total), 500);
 }
 
 /* Un build sans percement retrouve exactement la mitigation de base : le

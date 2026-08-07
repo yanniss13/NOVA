@@ -295,14 +295,33 @@ sépare nettement :
 
 Le champ `ds` de l'outil de référence est libellé « Defense shatter % » — mot
 pour mot le libellé anglais de `D_Protect_Cur_Rate`. La correspondance est
-établie par la chaîne elle-même, pas par une déduction. Le terme entre donc
-avant la mitigation :
+établie par la chaîne elle-même, pas par une déduction.
+
+Le terme **s'ajoute au rapport de mitigation**, il ne divise pas la défense :
 
 ```text
-percementNet = min(100, max(0, percement − résistanceAuPercement))
-DEF_effective = DEF × (1 − percementNet)
-mitigation    = K / (K + DEF_effective)
+percementNet = max(0, percement − résistanceAuPercement)
+mitigation   = K / (K + DEF) + percementNet
 ```
+
+Cinq mesures prédites à l'avance le confirment (`RAPPORT-analyse-tapscreen.md`,
+session 3) : à DEF 5600, percer de 50 % rend **exactement** le chiffre d'une
+défense nulle, là où diviser la défense par deux en rendrait un tout autre. La
+première version de ce module retenait la division et se trompait de 50 % — les
+deux lectures sont indiscernables sur le papier et divergent d'emblée à la
+mesure.
+
+**Aucun plafond en haut** : la mitigation peut dépasser 1, donc les dégâts
+dépasser la valeur pré-armure. C'est mesuré sans plafond jusqu'à 150 % de
+percement. Ce terme est une linéarisation, pas une mécanique physique ; le
+borner « par bon sens » nous écarterait de la référence. Seul le plancher à
+zéro est conservé — sur-résister ne doit pas *renforcer* la défense.
+
+**À ne pas confondre avec la réduction de défense infligée à l'ennemi** par une
+compétence (« réduit sa défense de 20 % »). L'outil de référence la traite dans
+un champ séparé, `d-edef`, avec une forme différente — `DEF × (1 − d-edef)`,
+multiplicative sur la défense. Elle n'est pas encore modélisée ici, et fera le
+lot suivant : cinq de nos huit soutiens en portent une.
 
 La **perforation** (`A_Accuracy`) ne perce aucune défense : elle s'oppose à la
 **Persévérance** de l'ennemi (`A_Block`, et son taux `A_Block_Rate`). Les trois
@@ -321,9 +340,11 @@ Persévérance et que le build en face manque de Perforation, les dégâts réel
 sont inférieurs à ceux affichés ici. Ni la source ni l'outil de référence ne
 publient cette valeur pour le boss.
 
-`CIBLE_REFERENCE.resistancePercement` vaut zéro **par hypothèse** : la source ne
-publie pas cette valeur pour Akumu. Si le boss y résiste, tout build qui porte du
-percement est surestimé ici.
+`CIBLE_REFERENCE.resistancePercement` vaut zéro. La source ne publie pas cette
+valeur pour Akumu, et l'outil de référence ne modélise pas du tout cette
+résistance : ses champs `epr` et `d-epr` ont été mesurés **inertes des deux
+côtés**, et Akumu ne figure pas dans sa base de 64 ennemis. Zéro reproduit donc
+son calcul à l'identique — ce n'en reste pas moins une valeur non relevée.
 
 `degatsAttendus` ne rend aujourd'hui que l'espérance, sous le nom `total`. Elle
 gagne deux champs, `sansCritique` et `critique`, calculés depuis le **même**
