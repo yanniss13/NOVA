@@ -89,6 +89,12 @@ function makeLocalStorage(initialTeams){
 }
 
 const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
+  degatsAttendus:typeof degatsAttendus === "function"
+    ? degatsAttendus
+    : undefined,
+  CIBLE_REFERENCE:typeof CIBLE_REFERENCE === "object"
+    ? CIBLE_REFERENCE
+    : undefined,
   numericKeyboardInputProps:
     typeof numericKeyboardInputProps === "function"
       ? numericKeyboardInputProps

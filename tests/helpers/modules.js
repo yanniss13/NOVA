@@ -29,6 +29,7 @@ const MODULES = [
   "metier/perles.js",
   "metier/build-config.js",
   "metier/stats-calcul.js",
+  "metier/degats-calcul.js",
   "metier/equipe-modele.js",
   "metier/dispos-logique.js",
   "metier/boss-logique.js",
