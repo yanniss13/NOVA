@@ -133,9 +133,14 @@
        champ `ds` de l'outil de reference : la correspondance est etablie par
        la chaine elle-meme, pas par une deduction.
 
-       A ne pas confondre avec la « Perforation » (`A_Accuracy`), une valeur
-       PLATE que ni la formule publiee ni l'outil de reference ne modelisent,
-       et qui reste donc non branchee.
+       A ne pas confondre avec la « Perforation » (`A_Accuracy`), qui ne perce
+       AUCUNE defense : elle s'oppose a la « Perseverance » de l'ennemi
+       (`A_Block`, et son taux `A_Block_Rate`). Les trois partagent le prefixe
+       `A_` et sont plates la ou le percement est un taux : c'est un
+       affrontement toucher / bloquer, une couche entiere que la formule
+       publiee ne modelise pas. Elle reste donc non branchee, et le restera
+       tant que cette couche n'aura pas sa propre formule - la brancher ici
+       reviendrait a la faire passer pour de la penetration d'armure.
 
        La cible peut s'y opposer par sa resistance au percement
        (`D_Protect_CurRes_Rate`). Akumu n'en publie aucune : elle vaut zero,

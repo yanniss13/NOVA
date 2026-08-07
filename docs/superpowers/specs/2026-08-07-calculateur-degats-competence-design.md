@@ -290,6 +290,8 @@ sépare nettement :
 | `D_Protect_Cur_Rate` | Percement de défense | **Defense Shatter** | taux | **oui** |
 | `D_Protect_CurRes_Rate` | Résistance au percement | Shatter Resistance | taux | oui, côté cible |
 | `A_Accuracy` | Perforation | — | plate | **non** |
+| `A_Block` | Persévérance | Perseverance | plate | non |
+| `A_Block_Rate` | — | — | taux | non |
 
 Le champ `ds` de l'outil de référence est libellé « Defense shatter % » — mot
 pour mot le libellé anglais de `D_Protect_Cur_Rate`. La correspondance est
@@ -302,13 +304,22 @@ DEF_effective = DEF × (1 − percementNet)
 mitigation    = K / (K + DEF_effective)
 ```
 
-La **perforation** (`A_Accuracy`) reste délibérément non branchée : elle est
-plate là où le champ de l'outil de référence est un pourcentage, elle n'apparaît
-dans aucune des deux formules publiées, et son code signifie « précision ».
-Versée dans un terme en pourcentage, une valeur plate de 100 ferait tomber la
-DEF d'Akumu à zéro et gonflerait **tous** les chiffres de +62 % — sans qu'aucun
-test ne bronche. Un test de `calculateur-entrees.test.js` vérifie qu'un buff
-portant ce code ne change strictement rien.
+La **perforation** (`A_Accuracy`) ne perce aucune défense : elle s'oppose à la
+**Persévérance** de l'ennemi (`A_Block`, et son taux `A_Block_Rate`). Les trois
+partagent le préfixe `A_` dans `stat-metadata.json` et sont plates là où le
+percement est un taux. C'est un affrontement *toucher contre bloquer* — une
+couche entière que la formule publiée ne modélise pas, et que l'outil de
+référence ne modélise pas davantage.
+
+Elle reste donc non branchée, et un test de `calculateur-entrees.test.js`
+vérifie qu'un buff portant ce code ne change strictement rien. Versée dans le
+terme de percement, une valeur plate de 100 ferait tomber la DEF d'Akumu à zéro
+et gonflerait **tous** les chiffres de +62 %, sans qu'aucun test ne bronche.
+
+**Limite qui en découle**, à énoncer si elle se confirme : si Akumu porte de la
+Persévérance et que le build en face manque de Perforation, les dégâts réels
+sont inférieurs à ceux affichés ici. Ni la source ni l'outil de référence ne
+publient cette valeur pour le boss.
 
 `CIBLE_REFERENCE.resistancePercement` vaut zéro **par hypothèse** : la source ne
 publie pas cette valeur pour Akumu. Si le boss y résiste, tout build qui porte du
