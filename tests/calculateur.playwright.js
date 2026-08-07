@@ -225,6 +225,55 @@ const STORAGE_KEY = "confrerie7ds.teams";
       "reinitialiser doit retirer l'avertissement"
     );
 
+    /* LA CALIBRATION, bouclee de bout en bout par l'interface : on relit le
+       coup non critique que la page vient d'afficher, on le saisit comme s'il
+       venait du jeu, et la constante retrouvee doit etre celle qui a servi a
+       le produire. Le seul ecart tolere vient de l'arrondi a l'affichage. */
+    const calibration = page.locator(".calc-calibration");
+    await calibration.waitFor();
+    assert.match(await calibration.textContent(), /Valeur par défaut/,
+      "sans mesure, le panneau doit dire qu'il ne predit pas encore");
+
+    const chiffree = page.locator(".calc-table tbody tr:not(.calc-muette)").first();
+    const nonCritAffiche = Number(
+      (await chiffree.locator(".calc-valeur").first().textContent())
+        .replace(/[^0-9]/g, "")
+    );
+    assert.ok(nonCritAffiche > 0, "il faut un coup non critique a saisir");
+
+    const mesure = calibration.locator("input[type=number]");
+    await mesure.fill(String(nonCritAffiche));
+    await mesure.blur();
+    await calibration.getByRole("button", { name:"Calibrer" }).click();
+    await page.locator(".calc-calibration-message").waitFor();
+
+    const message = await page.locator(".calc-calibration-message").textContent();
+    const retrouvee = Number(message.replace(/[^0-9]/g, ""));
+    assert.ok(Math.abs(retrouvee - 5600) <= 20,
+      "la constante retrouvee doit etre celle qui a produit le chiffre, recu : "
+        + message);
+    assert.match(await calibration.textContent(), /Mesurée sur ce build/,
+      "une fois calibree, le panneau doit le dire");
+
+    /* Le refus : un coup CRITIQUE saisi par erreur donne des degats au-dela
+       du possible. La page doit le dire plutot qu'enregistrer une constante
+       fausse, qui fausserait ensuite chaque ligne sans plus se signaler. */
+    await mesure.fill(String(nonCritAffiche * 10));
+    await mesure.blur();
+    await calibration.getByRole("button", { name:"Calibrer" }).click();
+    await page.locator(".calc-calibration-message").waitFor();
+    assert.match(
+      await page.locator(".calc-calibration-message").textContent(),
+      /dépassent/,
+      "des degats impossibles doivent etre refuses"
+    );
+
+    /* Et la mesure s'oublie. */
+    await page.getByRole("button", { name:"Oublier la mesure" }).click();
+    await calibration.waitFor();
+    assert.match(await calibration.textContent(), /Valeur par défaut/,
+      "oublier la mesure doit rendre la constante par defaut");
+
     /* Les limites annoncees a l'ecran, pas releguees en commentaire. */
     const bas = await page.locator("#calculateurBody").textContent();
     assert.match(bas, /Non inclus dans le calcul/);

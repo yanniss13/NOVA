@@ -32,6 +32,25 @@
    qu'elle n'existe pas, la chiffrer à zéro qu'elle ne fait rien. */
 .calc-muette{color:var(--muted);font-style:italic}
 
+/* La calibration est un bloc à part, et doit le rester : c'est la seule
+   section où le membre saisit une mesure venue du jeu plutôt qu'un chiffre
+   que la page a calculé pour lui. */
+.calc-calibration{
+  margin:24px 0 8px;border-top:1px solid var(--line-soft);padding-top:12px;
+  display:flex;flex-direction:column;gap:10px;align-items:flex-start
+}
+.calc-calibration h3{margin:0;font-size:15px}
+.calc-calibration .calc-champ{min-width:min(100%,260px)}
+.calc-calibration select,.calc-calibration input{min-height:44px}
+.calc-calibration p{margin:0;max-width:60ch}
+
+/* Le retour de la calibration parle au membre — réussite comme refus — donc
+   il ne se fond pas dans les avertissements permanents au-dessus. */
+.calc-calibration-message{
+  color:var(--gold-bright);border-left:2px solid var(--gold-bright);
+  padding-left:10px
+}
+
 @media (max-width:560px){
   /* La colonne « Crit » cède la place avant que le tableau ne déborde ;
      non-crit et espérance suffisent à comparer. */
