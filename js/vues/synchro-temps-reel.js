@@ -15,6 +15,7 @@ import { shouldIgnoreAvailabilityEcho } from "../metier/dispos-logique.js";
 import { sb } from "../noyau/supabase-client.js";
 import { renderAnalyse } from "./analyse.js";
 import { renderBossView } from "./boss-sessions.js";
+import { invaliderCollection, renderCollection } from "./collection.js";
 import { setSyncStatus } from "./etat-synchro.js";
 import { Availability, renderAvailabilityView } from "./dispos.js";
 import { renderRoster } from "./roster-equipes.js";
@@ -29,7 +30,8 @@ import { renderDashboardView } from "./suivi.js";
       "boss_sessions",
       "boss_participation",
       "boss_run_reports",
-      "member_availability"
+      "member_availability",
+      "collection_items"
     ];
     let channel = null;
     let userId = "";
@@ -83,6 +85,13 @@ import { renderDashboardView } from "./suivi.js";
           const refreshed = await renderAvailabilityView();
           if(!refreshed) throw new Error("AVAILABILITY_SYNC_FAILED");
         }
+        /* La collection s'invalide TOUJOURS, active ou non : son cache ne se
+           relit qu'une fois par propriétaire, et sans cet oubli volontaire un
+           onglet rouvert plus tard resservirait la version périmée. */
+        if(changed.has("collection")){
+          invaliderCollection();
+          if(view === "collection") await renderCollection();
+        }
         if(dashboardChanged){
           if(dashboardActive){
             const refreshed = await renderDashboardView({
@@ -112,6 +121,7 @@ import { renderDashboardView } from "./suivi.js";
         pending.add("boss");
       }
       if(table === "member_availability") pending.add("availability");
+      if(table === "collection_items") pending.add("collection");
       clearTimeout(timer);
       timer = setTimeout(()=>void flush(), 120);
     }

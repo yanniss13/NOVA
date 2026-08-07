@@ -41,6 +41,7 @@ const MODULES = [
   "donnees/roster-profils.js",
   "donnees/equipes-store.js",
   "donnees/roster-store.js",
+  "donnees/collection-store.js",
   "donnees/boss-store.js",
   "donnees/suivi-store.js",
 
@@ -69,6 +70,9 @@ const MODULES = [
   "vues/analyse.js",
   "vues/roster-equipes.js",
   "vues/suivi.js",
+  /* Avant `synchro-temps-reel.js`, qui la re-rend quand `collection_items`
+     bouge : un module n'importe jamais un module declare apres lui. */
+  "vues/collection.js",
   "vues/synchro-temps-reel.js",
   "vues/session-auth.js",
   "vues/wiki-blocs.js",
@@ -77,7 +81,6 @@ const MODULES = [
   "vues/wiki-corps-arme.js",
   "vues/wiki-corps-equipement.js",
   "vues/wiki-fiche-objet.js",
-  "vues/collection.js",
 
   /* le reste, pas encore découpé. */
   "app.js"

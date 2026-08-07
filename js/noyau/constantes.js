@@ -36,6 +36,7 @@
   const META = window.SEVEN_DS_META || {};
   const CLOUD_TEAMS_CACHE_KEY = "confrerie7ds.cloud.teams";
   const CLOUD_ROSTER_CACHE_KEY = "confrerie7ds.cloud.roster";
+  const CLOUD_COLLECTION_CACHE_KEY = "confrerie7ds.cloud.collection";
   const MIGRATION_KEY_PREFIX = "confrerie7ds.supabase.migrated.";
 
   const ELEMENTS = {
@@ -89,6 +90,7 @@ export {
   META,
   CLOUD_TEAMS_CACHE_KEY,
   CLOUD_ROSTER_CACHE_KEY,
+  CLOUD_COLLECTION_CACHE_KEY,
   MIGRATION_KEY_PREFIX,
   ELEMENTS,
   WSLOT_ROLES,

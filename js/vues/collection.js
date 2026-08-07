@@ -6,7 +6,7 @@
    dans tout le site.
 
    La possession se CALCULE a chaque rendu (metier/collection.js) : le marque
-   viendra du store, l'equipe se derive du roster deja charge. Tenir a jour deux
+   vient du store, l'equipe se derive du roster deja charge. Tenir a jour deux
    verites separement les ferait diverger, et il faudrait alors decider laquelle
    ment.
 
@@ -22,8 +22,10 @@ import { armesDuWiki, graveesDuWiki } from "../metier/wiki-equipement.js";
 import {
   equipesDuRoster, possessionsDe, progressionDe, utilesAuRoster
 } from "../metier/collection.js";
+import { CollectionStore } from "../donnees/collection-store.js";
 import { MemberRosterStore } from "../donnees/roster-store.js";
 import { sessionCourante } from "../etat/session.js";
+import { toast } from "./toast.js";
 
   /* L'onglet s'ouvre sur les manquants : c'est la question qu'on vient lui
      poser. « Tout » reste a un clic pour verifier ce qu'on possede deja. */
@@ -43,15 +45,58 @@ import { sessionCourante } from "../etat/session.js";
     possession:"manquants", famille:"", type:"", heros:"", utiles:""
   };
 
-  /* Les objets marques dans Supabase. Vides tant que le store n'existe pas :
-     a cette etape, seul l'equipe compte comme possede. */
+  /* Les objets marques dans Supabase, pour le membre affiche. */
   let marques = new Set();
 
   const objetsDeLaCollection = () => armesDuWiki().concat(graveesDuWiki());
 
-  function rosterAffiche(){
-    const id = sessionCourante.user ? sessionCourante.user.id : "";
-    return id ? MemberRosterStore.all(id) : [];
+  const ownerAffiche = () => sessionCourante.user ? sessionCourante.user.id : "";
+  const rosterAffiche = () => MemberRosterStore.all(ownerAffiche());
+
+  /* La relecture se fait UNE FOIS par proprietaire, pas a chaque rendu :
+     `renderCollection` s'appelle a chaque filtre, et une relecture qui re-rend
+     qui relit serait une boucle sans fin. */
+  let relulePour = "";
+
+  /* Le ROSTER se relit avec la collection, et non seulement dans son onglet :
+     c'est lui qui dit ce qui est equipe, donc possede d'office. Sans cela, un
+     membre qui ouvre Collection en premier verrait ses pieces portees comme
+     restant a trouver — le contraire de ce que l'onglet promet. */
+  function relireLeMembre(ownerId){
+    if(!ownerId || relulePour === ownerId) return;
+    relulePour = ownerId;
+    Promise.all([
+      CollectionStore.refresh(ownerId),
+      MemberRosterStore.refresh(ownerId)
+    ]).then(()=>{
+      renderCollection();
+    }).catch(()=>{
+      /* Hors ligne, le cache local suffit a afficher. Pas de bandeau : le
+         membre n'a rien demande, il a juste ouvert un onglet. */
+      relulePour = "";
+    });
+  }
+
+  /* Le temps reel a vu la table bouger : la prochaine lecture doit repasser
+     par Supabase. Rendre ou non est la decision de l'appelant — un evenement
+     ne change jamais l'onglet actif. */
+  function invaliderCollection(){
+    relulePour = "";
+  }
+
+  /* Le rendu n'a lieu qu'APRES la reponse de Supabase. Retirer la tuile avant
+     confirmation ferait disparaitre un objet qu'une panne reseau laisserait
+     non marque, et le membre le croirait acquis. */
+  async function basculerPossession(objet, estPossede){
+    try{
+      if(estPossede) await CollectionStore.unmark(objet.file);
+      else await CollectionStore.mark(objet.file);
+      toast(objet.nom
+        + (estPossede ? " remis à trouver" : " marqué comme possédé"));
+      renderCollection();
+    }catch(erreur){
+      toast("Impossible d’enregistrer. Vérifie ta connexion.", true);
+    }
   }
 
   /* Les valeurs d'un filtre : celles que les objets portent REELLEMENT,
@@ -154,9 +199,9 @@ import { sessionCourante } from "../etat/session.js";
   /* Une tuile. `equipe` la verrouille : l'objet est possede parce qu'il est
      porte, et se dire non possedant de ce qu'on equipe serait se contredire.
      Le titre dit pourquoi, sans quoi le cadenas serait une enigme. */
-  function tuileDeCollection(objet, possessions, equipements){
-    const possede = possessions.has(objet.file);
-    const equipe = equipements.has(objet.file);
+  function tuileDeCollection(objet, contexte){
+    const possede = contexte.possessions.has(objet.file);
+    const equipe = contexte.equipements.has(objet.file);
     const bouton = el("button",{
       class:"wiki-tile"
         +(possede ? " collection-owned" : "")
@@ -171,24 +216,35 @@ import { sessionCourante } from "../etat/session.js";
     /* La propriete, pas l'attribut : `el` poserait `disabled="null"` pour une
        tuile libre, et l'attribut desactive des qu'il est present. */
     if(equipe) bouton.disabled = true;
+    else if(contexte.modifiable){
+      bouton.addEventListener("click",
+        ()=>void basculerPossession(objet, possede));
+    }
     return bouton;
   }
 
-  function grilleDeCollection(titre, objets, possessions, equipements){
+  function grilleDeCollection(titre, objets, contexte){
     if(!objets.length) return null;
     return el("div",{},[
       el("h2",{ class:"collection-section-title", text:titre }),
       el("div",{ class:"wiki-grid" },
-        objets.map(objet => tuileDeCollection(objet, possessions, equipements)))
+        objets.map(objet => tuileDeCollection(objet, contexte)))
     ]);
   }
 
   function renderCollection(){
+    const ownerId = ownerAffiche();
+    /* Le cache est indexe par proprietaire : le relire a chaque rendu suffit
+       a ce qu'une deconnexion n'affiche jamais la collection du precedent. */
+    marques = CollectionStore.all(ownerId);
+    relireLeMembre(ownerId);
+
     const objets = objetsDeLaCollection();
     const roster = rosterAffiche();
     const equipements = equipesDuRoster(roster);
     const possessions = possessionsDe(marques, equipements);
     const utiles = utilesAuRoster(roster, objets);
+    const contexte = { possessions, equipements, modifiable:!!ownerId };
 
     if(!filtresPoses){
       filtresDeCollection(objets);
@@ -208,16 +264,19 @@ import { sessionCourante } from "../etat/session.js";
     corps.innerHTML = "";
     [
       grilleDeCollection("Armes",
-        liste.filter(objet => objet.nature === "arme"),
-        possessions, equipements),
+        liste.filter(objet => objet.nature === "arme"), contexte),
       grilleDeCollection("Armures gravées",
-        liste.filter(objet => objet.nature === "gravee"),
-        possessions, equipements)
+        liste.filter(objet => objet.nature === "gravee"), contexte)
     ].forEach(zone => { if(zone) corps.appendChild(zone); });
 
-    $("#collectionState").textContent = liste.length
-      ? ""
-      : "Rien à afficher avec ces filtres.";
+    /* Sans compte, la grille reste consultable mais rien ne se coche : la
+       collection vit dans Supabase, et un clic sans effet serait pire qu'un
+       clic annonce impossible. */
+    $("#collectionState").textContent = !liste.length
+      ? "Rien à afficher avec ces filtres."
+      : (contexte.modifiable
+        ? ""
+        : "Connecte-toi pour cocher ce que tu possèdes.");
     return Promise.resolve(true);
   }
 
@@ -227,4 +286,4 @@ import { sessionCourante } from "../etat/session.js";
      promesse non tenue. */
   $("#collectionOwnerField").hidden = true;
 
-export { renderCollection };
+export { invaliderCollection, renderCollection };

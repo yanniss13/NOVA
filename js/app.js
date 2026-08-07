@@ -18,8 +18,8 @@ import { renderMemberRoster } from "./vues/roster-membres.js";
 import { renderAnalyse } from "./vues/analyse.js";
 import { renderRoster } from "./vues/roster-equipes.js";
 import { renderDashboardView } from "./vues/suivi.js";
-import { renderWiki } from "./vues/wiki.js";
 import { renderCollection } from "./vues/collection.js";
+import { renderWiki } from "./vues/wiki.js";
 /* Importe pour effet de bord : il branche la fiche sur wiki.js. */
 import "./vues/wiki-fiche-heros.js";
 import "./vues/wiki-fiche-objet.js";
