@@ -123,8 +123,16 @@
 
        Seul le multiplicateur est borne, et a zero : des degats negatifs
        n'auraient aucun sens. */
-    const degatsCrit = ((Number(stats.critDamage) || 0)
-      - (Number(cible.critDmgResist) || 0)) / RAPPORT;
+    /* La defense critique de la cible se reduit en POINTS, jamais en facteur.
+       Mesure sans ambiguite : retrancher « 50 » a une defense critique de 50
+       donne 0, pas 25. C'est ce qui rend Daisy si forte contre Akumu, dont
+       les 50 % de defense critique sont precisement ce qui fait passer le
+       coup critique sous le coup normal. */
+    const defCritCible = Math.max(
+      0, (Number(cible.critDmgResist) || 0)
+        - Math.max(0, Number(stats.reductionDefenseCritique) || 0)
+    );
+    const degatsCrit = ((Number(stats.critDamage) || 0) - defCritCible) / RAPPORT;
     const multiplicateurCritique = Math.max(0, 1 + degatsCrit);
     const critique = 1 + taux * (multiplicateurCritique - 1);
     /* Le percement de defense (`D_Protect_Cur_Rate`, « Defense Shatter »)
@@ -168,8 +176,20 @@
       0, (Number(stats.percementDefense) || 0)
         - (Number(cible.resistancePercement) || 0)
     );
-    const mitigation = K / (K + (Number(cible.def) || 0))
-      + percementNet / RAPPORT;
+    /* La reduction de defense infligee a l'ennemi par une competence
+       MULTIPLIE sa defense, la ou le percement s'ajoute au rapport. Deux
+       formes distinctes pour deux mecaniques distinctes, et cette difference
+       est mesuree, pas supposee : chez la reference, `d-edef` multiplie
+       tandis que `ds` s'ajoute.
+
+       Le plafond a 100 % est un GARDE-FOU, pas un releve : personne n'a
+       verifie ce que fait la reference au-dela, et une defense negative
+       n'aurait aucune lecture. Nos malus culminent a 50 % cumules. */
+    const reductionDef = Math.min(RAPPORT, Math.max(
+      0, Number(stats.reductionDefense) || 0
+    ));
+    const defEffective = (Number(cible.def) || 0) * (1 - reductionDef / RAPPORT);
+    const mitigation = K / (K + defEffective) + percementNet / RAPPORT;
     const resistance = 1 - (Number(cible.resistanceElementaire) || 0) / RAPPORT;
     const faiblesse = 1 + (Number(cible.faiblesse) || 0) / RAPPORT;
 

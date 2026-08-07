@@ -336,6 +336,71 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   assert.equal(r.total, 500);
 }
 
+/* La reduction de defense infligee a l'ennemi MULTIPLIE sa defense, la ou le
+   percement s'ajoute au rapport. DEF 5600 reduite de 20 % tombe a 4480, donc
+   K/(K+DEF) vaut 5600/10080. Si ce malus s'ajoutait au rapport comme le
+   percement, on lirait 700 : les deux formes ne sont pas interchangeables. */
+{
+  const r = degatsAttendus({
+    stats:{ atk:1000, reductionDefense:2000 },
+    competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
+  });
+  assert.equal(Math.round(r.total), 556);
+  assert.notEqual(Math.round(r.total), 700, "ce malus multiplie, il ne s'ajoute pas");
+}
+
+/* La defense critique de la cible se reduit en POINTS, pas en facteur. Une
+   defense critique de 50 % reduite de « 50 » tombe a ZERO, pas a 25. */
+{
+  const cible = Object.assign({}, CIBLE_NEUTRE, { critDmgResist:5000 });
+  const base = { atk:1000, critRate:10000, critDamage:0 };
+
+  const sansMalus = degatsAttendus({
+    stats:base, competence:COUP_SIMPLE, cible
+  });
+  assert.equal(Math.round(sansMalus.avecCritique), 250, "500 x (1 - 0,5)");
+
+  const avecMalus = degatsAttendus({
+    stats:Object.assign({}, base, { reductionDefenseCritique:5000 }),
+    competence:COUP_SIMPLE, cible
+  });
+  assert.equal(Math.round(avecMalus.avecCritique), 500,
+    "defense critique annulee : le critique cesse d'etre une penalite");
+  assert.notEqual(Math.round(avecMalus.avecCritique), 375,
+    "un facteur aurait laisse 25 % de defense critique, et non zero");
+
+  /* Et elle ne descend pas sous zero : sur-reduire ne rend pas de bonus. */
+  const surReduit = degatsAttendus({
+    stats:Object.assign({}, base, { reductionDefenseCritique:9000 }),
+    competence:COUP_SIMPLE, cible
+  });
+  assert.equal(Math.round(surReduit.avecCritique),
+    Math.round(avecMalus.avecCritique));
+}
+
+/* Le cas qui motive tout ce lot : sur Akumu, dont les 50 % de defense
+   critique font passer le coup critique SOUS le coup normal pour un build a
+   40 % de degats critiques, annuler cette defense retourne la penalite en
+   bonus. C'est le plus gros mouvement de chiffres de la serie. */
+{
+  const base = { atk:1000, critRate:10000, critDamage:4000 };
+
+  const seul = degatsAttendus({
+    stats:base, competence:COUP_SIMPLE, cible:CIBLE_REFERENCE
+  });
+  assert.ok(seul.avecCritique < seul.sansCritique,
+    "sans soutien, le critique est une malchance sur Akumu");
+
+  const avecDaisy = degatsAttendus({
+    stats:Object.assign({}, base, { reductionDefenseCritique:5000 }),
+    competence:COUP_SIMPLE, cible:CIBLE_REFERENCE
+  });
+  assert.ok(avecDaisy.avecCritique > avecDaisy.sansCritique,
+    "defense critique annulee, le critique redevient un gain");
+  assert.equal(Math.round(seul.sansCritique), Math.round(avecDaisy.sansCritique),
+    "un malus de defense CRITIQUE ne touche pas le coup non critique");
+}
+
 /* Les trois colonnes sont trois lectures d'un SEUL calcul. L'esperance est
    forcement encadree par le coup sans critique et le coup critique plein :
    c'est ce qui interdit qu'une colonne derive des deux autres. */

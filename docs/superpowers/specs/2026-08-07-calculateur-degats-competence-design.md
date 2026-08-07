@@ -317,11 +317,50 @@ percement. Ce terme est une linéarisation, pas une mécanique physique ; le
 borner « par bon sens » nous écarterait de la référence. Seul le plancher à
 zéro est conservé — sur-résister ne doit pas *renforcer* la défense.
 
-**À ne pas confondre avec la réduction de défense infligée à l'ennemi** par une
-compétence (« réduit sa défense de 20 % »). L'outil de référence la traite dans
-un champ séparé, `d-edef`, avec une forme différente — `DEF × (1 − d-edef)`,
-multiplicative sur la défense. Elle n'est pas encore modélisée ici, et fera le
-lot suivant : cinq de nos huit soutiens en portent une.
+### Les malus infligés à l'ennemi
+
+**À ne pas confondre avec le percement**, qui est une statistique du héros. Les
+malus lancés par des compétences sur l'ennemi sont un mécanisme séparé, et leurs
+deux formes sont **mesurées, pas supposées** :
+
+| Malus | Forme | Entrée du moteur |
+|---|---|---|
+| Défense de l'ennemi | `DEF × (1 − r)`, **multiplicative** | `reductionDefense` |
+| Défense critique de l'ennemi | **points** retranchés | `reductionDefenseCritique` |
+
+Retrancher « 50 » à une défense critique de 50 donne **zéro**, pas 25 — vérifié
+sans ambiguïté sur l'outil de référence. Les deux formes ne sont donc pas
+interchangeables, et un test le verrouille dans les deux sens.
+
+Cinq soutiens en portent, et ces lignes n'ont **aucun code de stat** :
+`libelles-stats.json` ne décrit que des statistiques de héros. Leur en inventer
+un aurait désactivé le test qui refuse les codes inventés. Elles portent donc
+`cible:"ennemi"` et un `effet` pris dans une liste fermée, et le schéma exige
+`stat` **ou** `effet`, jamais les deux.
+
+| Soutien | Effet | Valeur |
+|---|---|---|
+| Elisabeth | défense (Éclaboussures) | −20 % |
+| Gowther | défense | −20 % |
+| Dreydrin | défense (ennemi entravé) | −10 % |
+| Daisy | défense critique | −50 points |
+| Manny | défense critique (Gelure, 10 cumuls) | −20 points |
+
+**Ce que Daisy change.** Les 50 % de défense critique d'Akumu sont exactement ce
+qui fait passer le coup critique *sous* le coup normal pour tout build en
+dessous de 50 % de dégâts critiques. Les annuler retourne la pénalité en bonus :
+c'est le plus gros mouvement de chiffres de toute la série, et un test le fige.
+
+**Deux choix assumés, non mesurés.** Les malus de même nature s'**additionnent**
+(20 + 20 + 10 = 50 %) alors que le jeu pourrait ne pas les cumuler, ou les
+composer ; et la réduction de défense est plafonnée à 100 %, ce qui est un
+garde-fou et non un relevé. L'outil de référence n'expose qu'un champ unique où
+le joueur saisit un total déjà fait — il ne tranche donc pas non plus.
+
+**Exclus, et pourquoi** : les réductions de défense *élémentaire*
+(`derieri_sword2h_skill_q`, Feu −20 % ; `gowther_wand_skill_e`, Foudre −6 % ×4)
+visent une défense que la cible ne sépare pas encore de sa défense générale. Les
+y verser supposerait que le jeu confond les deux.
 
 La **perforation** (`A_Accuracy`) ne perce aucune défense : elle s'oppose à la
 **Persévérance** de l'ennemi (`A_Block`, et son taux `A_Block_Rate`). Les trois

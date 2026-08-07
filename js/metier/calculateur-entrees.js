@@ -46,6 +46,21 @@ import { degatsAttendus } from "./degats-calcul.js";
     Object.fromEntries(ELEMENTS_BUFF.map(e => [e + "_Element_Rate", "bonusElementaire"]))
   );
 
+  /* Ou atterrit un malus inflige a la CIBLE. Ces lignes n'ont pas de code de
+     stat : libelles-stats.json ne decrit que des statistiques de heros, et
+     leur en inventer un aurait desactive le test qui refuse les codes
+     inventes.
+
+     Les malus de meme nature s'ADDITIONNENT ici (20 % + 20 % + 10 % = 50 %).
+     C'est un choix, pas une mesure : le jeu pourrait aussi bien ne pas les
+     cumuler, ou les composer (1-0,2)x(1-0,2). L'outil de reference n'expose
+     qu'un seul champ ou le joueur saisit un total deja fait, donc il ne
+     tranche pas non plus. */
+  const EFFET_SUR_LA_CIBLE = {
+    defense:"reductionDefense",
+    defenseCritique:"reductionDefenseCritique"
+  };
+
   function tableDesBuffs(){
     return window.SEVEN_DS_BUFFS_SUPPORTS || {};
   }
@@ -84,11 +99,17 @@ import { degatsAttendus } from "./degats-calcul.js";
       percementDefense:Number(stats.percementDefense) || 0,
       bonusGlobal:0,
       bonusElementaire:0,
-      bonusCategorie:0
+      bonusCategorie:0,
+      /* Deux seaux de malus sur la cible. Le build ne les alimente jamais :
+         ils ne viennent que des competences d'equipe cochees. */
+      reductionDefense:0,
+      reductionDefenseCritique:0
     };
 
     coches.forEach(buff => {
-      const cle = CIBLE_DU_BUFF[buff && buff.stat];
+      const cle = buff && buff.effet
+        ? EFFET_SUR_LA_CIBLE[buff.effet]
+        : CIBLE_DU_BUFF[buff && buff.stat];
       if(!cle) return;
       const valeur = Number(buff.valeur);
       if(!Number.isFinite(valeur)) return;

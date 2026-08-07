@@ -46,8 +46,22 @@ tousLesBuffs.forEach(buff => {
   assert.ok(!identifiants.has(buff.id), "identifiant en double : " + buff.id);
   identifiants.add(buff.id);
 
-  assert.ok(Object.prototype.hasOwnProperty.call(LIBELLES, buff.stat),
-    buff.id + " : code de stat inconnu du depot -> " + buff.stat);
+  /* Une entree porte SOIT un code de stat du heros, SOIT un effet sur la
+     cible. Jamais les deux, jamais aucun : sans cette exclusion, une ligne
+     mal ecrite tomberait dans la branche permissive et passerait. */
+  const surLaCible = Object.prototype.hasOwnProperty.call(buff, "effet");
+  assert.notEqual(surLaCible, Object.prototype.hasOwnProperty.call(buff, "stat"),
+    buff.id + " : une entree porte `stat` OU `effet`, exactement un des deux");
+
+  if(surLaCible){
+    assert.ok(["defense", "defenseCritique"].includes(buff.effet),
+      buff.id + " : effet inconnu sur la cible -> " + buff.effet);
+    assert.equal(buff.cible, "ennemi",
+      buff.id + " : un malus sur la cible doit porter cible:\"ennemi\"");
+  } else {
+    assert.ok(Object.prototype.hasOwnProperty.call(LIBELLES, buff.stat),
+      buff.id + " : code de stat inconnu du depot -> " + buff.stat);
+  }
   assert.ok(["add", "multiply"].includes(buff.operation),
     buff.id + " : operation invalide -> " + buff.operation);
   assert.ok(["flat", "ten-thousandths"].includes(buff.unite),
@@ -192,6 +206,37 @@ tousLesBuffs.forEach(buff => {
   });
   assert.deepEqual(perforation, entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:[] }),
     "la perforation reste sans effet tant que sa mecanique n'est pas etablie");
+}
+
+/* Les malus infliges a la CIBLE ont leurs deux seaux propres, et le build ne
+   les alimente jamais : ils ne viennent que des competences d'equipe. */
+{
+  const nu = entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:[] });
+  assert.equal(nu.reductionDefense, 0);
+  assert.equal(nu.reductionDefenseCritique, 0);
+
+  const avec = entreesDuCalcul({
+    statsDuBuild:NEUTRE,
+    buffsCoches:[
+      { cible:"ennemi", effet:"defense", operation:"add",
+        valeur:2000, unite:"ten-thousandths" },
+      { cible:"ennemi", effet:"defenseCritique", operation:"add",
+        valeur:5000, unite:"ten-thousandths" }
+    ]
+  });
+  assert.equal(avec.reductionDefense, 2000);
+  assert.equal(avec.reductionDefenseCritique, 5000);
+  assert.equal(avec.def, NEUTRE.def, "ces malus visent la cible, pas notre build");
+}
+
+/* Les malus de meme nature se cumulent : les trois reductions de defense de
+   la table donnent 50 %. Choix documente, pas mesure. */
+{
+  const reductions = tousLesBuffs.filter(b => b.effet === "defense");
+  assert.equal(reductions.length, 3,
+    "Elisabeth, Gowther et Dreydrin reduisent la defense generale");
+  const r = entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:reductions });
+  assert.equal(r.reductionDefense, 5000, "20 % + 20 % + 10 %");
 }
 
 /* Les bonus de degats elementaires atterrissent dans le seau du moteur. */

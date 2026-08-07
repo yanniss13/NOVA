@@ -10,11 +10,33 @@
 // quand le jeu dement une valeur, on sait quelle phrase avait ete lue. Un test
 // verifie que la phrase est un extrait LITTERAL de la description du gameId.
 //
-// stat      : code du depot, present dans 7ds-stats/libelles-stats.json.
+// Deux formes, selon QUI la ligne modifie. Une entree porte l'une ou l'autre,
+// jamais les deux, et un test le verifie :
+//
+//   BONUS SUR LE HEROS
+//     stat    : code du depot, present dans 7ds-stats/libelles-stats.json.
+//
+//   MALUS SUR L'ENNEMI          (cible:"ennemi")
+//     effet   : "defense"          la defense de la cible, MULTIPLIEE
+//                                  par (1 - valeur)
+//               "defenseCritique"  sa defense critique, en POINTS retranches
+//
+//     Ces deux formes ne sont pas interchangeables et la difference est
+//     mesuree, pas supposee : chez l'outil de reference, `d-edef` multiplie
+//     la defense tandis que `d-ecdr` se retranche en points (une defense
+//     critique de 50 reduite de « 50 » tombe a 0, pas a 25).
+//
+//     Il n'existe AUCUN code de stat pour ces malus : libelles-stats.json ne
+//     decrit que des statistiques de heros. Leur inventer un code aurait
+//     desactive le test qui refuse les codes inventes.
+//
 // operation : "add" ajoute la valeur, "multiply" multiplie celle du heros.
 // element   : null, ou l'attribut vise quand le buff ne concerne que lui.
 //             L'element d'un heros vient de son ARME equipee, pas du perso.
 // unite     : "ten-thousandths" pour un taux, "flat" pour une valeur brute.
+//
+// Les valeurs a CUMULS sont transcrites au maximum atteignable, comme le
+// reste de la table : « 2 % par cumul, max 10 fois » s'ecrit 2000.
 //
 // CE QUI N'Y FIGURE PAS, ET POURQUOI :
 //
@@ -32,9 +54,31 @@
 //     derieri_axe_skill_q      degats de competence normale (Tenebres) +50 %
 //     derieri_sword2h_passive  degats crit. d'ultime et d'attaque combinee +60 %
 // - la perforation et les efficacites de duree : le moteur n'a pas d'entree
-//   pour elles.
+//   pour elles. La perforation ne perce d'ailleurs aucune defense - elle
+//   s'oppose a la Perseverance de l'ennemi, une couche que la formule
+//   publiee ne modelise pas du tout.
+// - les reductions de defense ELEMENTAIRE, qui visent une defense distincte
+//   de la defense generale et que le moteur ne separe pas :
+//     derieri_sword2h_skill_q  defense de Feu -20 % de la defense
+//     gowther_wand_skill_e     defense de Foudre -6 % de la defense, max 4x
+//   Les verser dans la reduction generale supposerait que le jeu confond les
+//   deux. Elles reviendront quand la cible portera ses defenses par element.
 window.SEVEN_DS_BUFFS_SUPPORTS = {
   "daisy": [
+    {
+      id:"daisy-salve-defense-crit",
+      libelle:"Défense crit. de l'ennemi −50 %",
+      cible:"ennemi",
+      effet:"defenseCritique",
+      operation:"add",
+      valeur:5000,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"daisy_book_skill_q",
+        phrase:"réduit leur défense crit. de 50% pendant 10s"
+      }
+    },
     {
       id:"daisy-reveil-degats-crit",
       libelle:"Dégâts crit. des alliés +15 %",
@@ -118,6 +162,20 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
   ],
   "dreydrin": [
     {
+      id:"dreydrin-sens-du-combat-defense",
+      libelle:"Défense de l'ennemi −10 % (ennemi entravé)",
+      cible:"ennemi",
+      effet:"defense",
+      operation:"add",
+      valeur:1000,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"dreydrin_axe_passive",
+        phrase:"réduit sa défense de 10% pendant 30s"
+      }
+    },
+    {
       id:"dreydrin-combat-divin-attaque",
       libelle:"Attaque des alliés +10 %",
       stat:"I_AtkAdd_Rate",
@@ -132,6 +190,20 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
     }
   ],
   "elizabeth": [
+    {
+      id:"elizabeth-eclaboussures-defense",
+      libelle:"Éclaboussures : défense de l'ennemi −20 %",
+      cible:"ennemi",
+      effet:"defense",
+      operation:"add",
+      valeur:2000,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"elizabeth_book_skill_q",
+        phrase:"réduit la défense de 20%"
+      }
+    },
     {
       id:"elizabeth-vague-attaque-vent",
       libelle:"Attaque de Vent +30 % de l'ATK d'Elisabeth (plafond 3000)",
@@ -173,6 +245,20 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
     }
   ],
   "gowther": [
+    {
+      id:"gowther-dissonance-defense",
+      libelle:"Défense de l'ennemi −20 %",
+      cible:"ennemi",
+      effet:"defense",
+      operation:"add",
+      valeur:2000,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"gowther_book_skill_q",
+        phrase:"réduit sa défense de 20% pendant 30s"
+      }
+    },
     {
       id:"gowther-charge-degats-foudre",
       libelle:"Charge : dégâts de Foudre +25 %",
@@ -257,6 +343,20 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
     }
   ],
   "manny": [
+    {
+      id:"manny-gelure-defense-crit",
+      libelle:"Gelure : défense crit. de l'ennemi −20 % (10 cumuls)",
+      cible:"ennemi",
+      effet:"defenseCritique",
+      operation:"add",
+      valeur:2000,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"manny_sworddual_jumpatk",
+        phrase:"réduit la défense crit. de 2%"
+      }
+    },
     {
       id:"manny-pretresse-degats-crit",
       libelle:"Prêtresse draco : dégâts crit. +30 %",
