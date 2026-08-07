@@ -1838,6 +1838,60 @@ async function installRosterFocusFakeSupabase(page){
     );
     await deskHeader.close();
 
+    /* L'en-tête ne doit jamais laisser le BLOC COMPTE seul sur une ligne sous
+       les onglets. C'est ce que `flex-wrap` produisait dès que les neuf onglets
+       ne tenaient plus à côté de la marque : le compte calé à gauche sous le
+       logo, un grand vide à sa droite — on lisait un défaut de mise en page.
+
+       Quand il faut deux étages, ce sont les ONGLETS qui prennent la seconde
+       ligne, sur toute la largeur : c'est le bloc qui grandit à chaque nouvel
+       onglet, et les neuf doivent rester visibles d'un coup d'œil. */
+    for(const largeur of [1903, 1536, 1280]){
+      const contexte = await browser.newContext({
+        viewport:{ width:largeur, height:900 }
+      });
+      const vue = await contexte.newPage();
+      await vue.route("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*",
+        route => route.fulfill({
+          status:200,
+          contentType:"application/javascript",
+          body:"window.supabase=undefined;"
+        })
+      );
+      await vue.goto(server.url + "/index.html");
+      const entete = await vue.evaluate(() => {
+        /* On compare les CENTRES, pas les bords : sur une même ligne le blason
+           (44 px) et un bouton (34 px) n'ont pas le même haut. */
+        const centre = selecteur => {
+          const boite = document.querySelector(selecteur).getBoundingClientRect();
+          return Math.round(boite.top + boite.height / 2);
+        };
+        const rail = document.querySelector(".tabs").getBoundingClientRect();
+        return {
+          marque:centre(".brand"),
+          onglets:centre(".tabs-rail"),
+          compte:centre(".account"),
+          horsCadre:[...document.querySelectorAll(".tab")].filter(onglet => {
+            const boite = onglet.getBoundingClientRect();
+            return boite.left < rail.left - 1 || boite.right > rail.right + 1;
+          }).length,
+          deborde:document.documentElement.scrollWidth
+            > document.documentElement.clientWidth
+        };
+      });
+      assert.ok(Math.abs(entete.compte - entete.marque) <= 20,
+        largeur + "px : le bloc compte doit rester sur la ligne de la marque, "
+        + "jamais seul sous les onglets (écart "
+        + (entete.compte - entete.marque) + "px)");
+      assert.ok(entete.onglets >= entete.marque - 20,
+        largeur + "px : les onglets prennent la seconde ligne, pas le compte");
+      assert.equal(entete.horsCadre, 0,
+        largeur + "px : les neuf onglets doivent être visibles sans défiler");
+      assert.equal(entete.deborde, false,
+        largeur + "px : l'en-tête ne doit pas élargir le document");
+      await contexte.close();
+    }
+
     assert.deepStrictEqual(errors, []);
     console.log("PASS accessibilité : onglets, modales, header rétractable et mobile");
   }finally{

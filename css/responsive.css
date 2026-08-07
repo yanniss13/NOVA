@@ -8,6 +8,38 @@
    index.html et verifie par tests/css-ordre.test.js. */
 
 /* ---------- Responsive ---------- */
+
+/* En-tete sur deux etages tant que les onglets ne tiennent pas a cote de la
+   marque et du compte.
+
+   Mesure a l'origine de cette regle : avec neuf onglets, les trois blocs
+   demandent 1845 px. En dessous, `flex-wrap` renvoyait le BLOC COMPTE seul a
+   la ligne, cale a gauche sous le logo, avec un grand vide a sa droite — on
+   lisait un defaut de mise en page, et c'est ce que le membre a signale. Le
+   defaut precede l'onglet Collection : a 1536 px, huit onglets se repliaient
+   deja.
+
+   On choisit donc qui passe a la ligne. Ce sont les ONGLETS, sur toute la
+   largeur et centres : c'est le bloc qui grandit a chaque nouvel onglet, et
+   les neuf restent visibles d'un coup d'oeil. Un rail defilant les aurait
+   caches derriere un chevron — la hauteur gagnee ne vaut pas ca.
+
+   ⚠️ Flexbox ne permet pas de choisir librement : une ligne se remplit dans
+   l'ordre des elements, et seul le DERNIER peut passer a la ligne. C'est
+   `order:3` sur le rail qui le place en fin de file, donc en second etage. */
+@media(min-width:561px) and (max-width:1860px){
+  .topbar{row-gap:12px}
+  .account{margin-left:auto}
+  .tabs-rail{order:3;flex-basis:100%;justify-content:center}
+  /* Entre 561 px et ~1060 px, neuf onglets depassent meme une ligne entiere :
+     le rail defile alors, comme en mobile, plutot que d'elargir le document. */
+  .tabs{max-width:100%;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{height:0}
+  .tabs-rail.can-scroll-left .tabs-cue-left,
+  .tabs-rail.can-scroll-right .tabs-cue-right{opacity:1}
+  .tab{white-space:nowrap}
+}
+
 @media(max-width:900px){
   .hero-grid{grid-template-columns:repeat(2,1fr)}
   .team-heroes{grid-template-columns:repeat(4,1fr)}
