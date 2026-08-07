@@ -19,7 +19,23 @@
 .calc-soutiens{
   margin:16px 0;border-top:1px solid var(--line-soft);padding-top:12px
 }
-.calc-buff{display:flex;gap:10px;align-items:center;padding:6px 0;min-height:44px}
+/* En colonnes : vingt-quatre buffs en liste plate faisaient défiler la page
+   entière avant d'atteindre le tableau, qui est pourtant l'objet de la page. */
+.calc-soutiens-grille{
+  display:grid;gap:16px 28px;margin-top:12px;
+  grid-template-columns:repeat(auto-fill,minmax(250px,1fr))
+}
+.calc-soutien-nom{
+  margin:0 0 2px;font-size:12px;font-weight:600;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--gold-bright)
+}
+.calc-buff{
+  display:flex;gap:9px;align-items:flex-start;padding:3px 0;min-height:30px;
+  line-height:1.35;font-size:14px;cursor:pointer
+}
+.calc-buff input{
+  flex:none;margin-top:2px;width:17px;height:17px;accent-color:var(--gold-bright)
+}
 
 .calc-table{width:100%;border-collapse:collapse;margin-bottom:16px}
 .calc-table th,.calc-table td{
@@ -56,4 +72,8 @@
      non-crit et espérance suffisent à comparer. */
   .calc-table th:nth-child(3),.calc-table td:nth-child(3){display:none}
   .calc-champ{min-width:120px}
+  /* La cible tactile reprend ses 44 px : la densité gagnée sur grand écran
+     ne doit pas se payer au doigt. */
+  .calc-buff{min-height:44px;align-items:center}
+  .calc-soutiens-grille{grid-template-columns:1fr;gap:12px}
 }

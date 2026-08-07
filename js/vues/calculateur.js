@@ -257,6 +257,15 @@ import { showView } from "./navigation.js";
     return form;
   }
 
+  /* Le catalogue nomme les personnages ; la table des buffs ne connait que
+     leur slug. On passe par le catalogue, et on capitalise le slug en dernier
+     recours plutot que d'afficher « daisy » a l'ecran. */
+  function nomDuSoutien(slug){
+    const perso = charOf(slug) || {};
+    return perso.name || perso.nom || perso.nomFr
+      || slug.charAt(0).toUpperCase() + slug.slice(1);
+  }
+
   function sectionSoutiens(element, redessiner){
     const dispo = buffsApplicables(element);
     const section = el("section",{class:"calc-soutiens"},[
@@ -271,7 +280,20 @@ import { showView } from "./navigation.js";
         text:"Aucun buff connu ne s'applique à l'élément de ce build."}));
       return section;
     }
+    /* REGROUPES PAR SOUTIEN. En liste plate, le nom se repetait sur chacune
+       des vingt-quatre lignes et le membre lisait vingt-quatre fois « daisy »
+       au lieu de voir cinq blocs. */
+    const parSoutien = new Map();
     dispo.forEach(buff => {
+      if(!parSoutien.has(buff.support)) parSoutien.set(buff.support, []);
+      parSoutien.get(buff.support).push(buff);
+    });
+
+    const grilleSoutiens = el("div",{class:"calc-soutiens-grille"});
+    parSoutien.forEach((buffs, slug) => {
+      const bloc = el("div",{class:"calc-soutien"});
+      bloc.appendChild(el("h4",{class:"calc-soutien-nom", text:nomDuSoutien(slug)}));
+      buffs.forEach(buff => {
       /* La case se coche par PROPRIETE, jamais par attribut : `el()` passe
          toute valeur a setAttribute, et setAttribute("checked", undefined)
          ecrit la chaine "undefined" - donc une case cochee. Les six buffs
@@ -285,11 +307,14 @@ import { showView } from "./navigation.js";
         }
       });
       caseACocher.checked = etat.coches.has(buff.id);
-      section.appendChild(el("label",{class:"calc-buff"},[
-        caseACocher,
-        el("span",{text:buff.support + " — " + buff.libelle})
-      ]));
+        bloc.appendChild(el("label",{class:"calc-buff"},[
+          caseACocher,
+          el("span",{text:buff.libelle})
+        ]));
+      });
+      grilleSoutiens.appendChild(bloc);
     });
+    section.appendChild(grilleSoutiens);
     return section;
   }
 
