@@ -153,20 +153,44 @@ effets personnels : `scripts/effets-dps-regles.py` y consacre 765 lignes de
 règles écrites à la main.
 
 D'où une table **écrite et maintenue à la main**, `data/buffs-supports.js`,
-couvrant les seuls supports que la confrérie joue réellement :
+couvrant les seuls supports que la confrérie joue réellement.
+
+### Les sept supports retenus
+
+Relevés dans `data/wiki-competences.js`, avec le nombre de compétences
+mentionnant explicitement les alliés :
+
+| Slug | Nom donné | Compétences citant les alliés |
+|---|---|---:|
+| `elizabeth` | Elisabeth | 8 |
+| `daisy` | Daisy | 4 |
+| `manny` | Mannie | 5 |
+| `howzer` | Hauser | 3 |
+| `gowther` | Gowther | 6 |
+| `guila` | Guila | 2 |
+| `dreydrin` | Dedrin | 4 |
+
+⚠️ **`dreydrin` est à confirmer.** Le catalogue contient aussi `derieri`, dont
+7 compétences visent les alliés, et dont les buffs sont offensifs — attaque de
+Feu, dégâts de compétence normale des héros Ténèbres — là où ceux de `dreydrin`
+sont défensifs. Les deux tables n'auraient presque aucun contenu commun. Ne pas
+trancher au jugé.
+
+### Forme
 
 ```js
 window.SEVEN_DS_BUFFS_SUPPORTS = {
   "<charId>": [
     {
       id:"<identifiant stable>",
-      libelle:"Augmente les dégâts de Ténèbres de 30 %",
-      stat:"AllElement_Add",
-      valeur:3000,
+      libelle:"Dégâts crit. des alliés +15 %",
+      stat:"C_Critical_Dam_Rate",
+      valeur:1500,
       unite:"ten-thousandths",
+      element:null,          // ou "wind", "fire", … si le buff cible un élément
       provenance:{
-        gameId:"bug_axe_skill_q",
-        phrase:"Augmente les dégâts des Ténèbres du héros de 30% pendant 20s"
+        gameId:"daisy_book_skill_q",
+        phrase:"Augmente les dégâts crit. des alliés de 15% pendant 40s"
       }
     }
   ]
@@ -185,7 +209,34 @@ en jeu, on sait quelle phrase avait été lue et où.
 accepte déjà — `atk`, `critRate`, `critDamage`, `bonusType`. Aucune
 modification du moteur n'est nécessaire.
 
-**Interface.** Une section « Soutiens » liste les buffs disponibles, chacun
+Trois natures de buff sont apparues au relevé, et la table doit les distinguer
+au lieu de les aplatir :
+
+1. **Buff chiffrable directement** — « Augmente les dégâts crit. des alliés de
+   15 % ». Il entre tel quel.
+2. **Buff indexé sur le support lui-même** — « Augmente l'attaque de Vent de
+   tous les héros alliés à hauteur de 30 % de l'attaque du héros (Max : 3000) ».
+   Sa valeur dépend du build du *support*, que le calculateur ne connaît pas.
+   La table porte alors la valeur **plafond** relevée et l'annonce comme telle ;
+   le membre la corrige à ce que son propre support produit. C'est précisément
+   ce que le champ modifiable sert à couvrir.
+3. **Buff conditionnel** — « lorsqu'un héros allié attaque un ennemi affecté par
+   Lien ». Aucune condition n'est modélisée : cocher le buff, c'est déclarer la
+   condition remplie, et la page le dit.
+
+Un soin, une barrière ou un gain de défense n'entre pas dans la table : sans
+conversion offensive, il ne change aucun dégât. Ne pas l'y mettre à zéro — il
+n'y a pas sa place du tout.
+
+**Élément.** Beaucoup de ces buffs ne visent qu'un élément — « dégâts de Vent »,
+« attaque de Feu », « héros alliés d'attribut Ténèbres ». Or l'élément d'un
+héros **dépend de l'arme équipée**, pas du personnage : c'est le piège
+documenté dans `AGENTS.md`, et `FOLDER_TO_ENUM` donne l'élément du slot d'arme
+via `personnages-meta.js`. Un buff portant un `element` n'est proposé que si le
+build affiché a cet élément. Il n'est ni grisé ni affiché à zéro : il est
+absent, comme une compétence sans coefficient.
+
+**Interface.** Une section « Soutiens » liste les buffs applicables, chacun
 avec une case à cocher et sa valeur modifiable. **Tout est décoché par
 défaut** : le chiffre par défaut est celui du héros seul, et l'en-tête indique
 « héros seul » ou « avec N buff(s) d'équipe ». Les durées ne sont pas
@@ -287,8 +338,13 @@ fonctionne hors ligne. Un test unitaire neuf rejoint **les deux** scripts
 - Un buff coché modifie l'entrée attendue et une seule ; décoché, le résultat
   est strictement celui du héros seul.
 - Chaque buff de `data/buffs-supports.js` porte un `stat` connu des
-  métadonnées, une `unite` autorisée, et une `provenance` avec `gameId` et
-  phrase.
+  métadonnées, une `unite` autorisée, et une `provenance` dont le `gameId`
+  existe dans `wiki-competences.js` et dont la `phrase` est un extrait littéral
+  de la `descriptionFr` correspondante. C'est ce qui empêche une valeur
+  inventée de s'installer.
+- Un buff portant un `element` est proposé pour un build de cet élément et
+  absent des autres, l'élément étant lu depuis l'**arme équipée** et non depuis
+  le personnage.
 - Aucun générateur de `scripts/` ne cite `buffs-supports.js`.
 - Un build de statut autre que `valid` ou `partial` ne produit aucune entrée.
 
