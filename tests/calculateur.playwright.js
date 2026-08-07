@@ -274,6 +274,29 @@ const STORAGE_KEY = "confrerie7ds.teams";
     assert.match(await calibration.textContent(), /Valeur par défaut/,
       "oublier la mesure doit rendre la constante par defaut");
 
+    /* Les pourcentages s'affichent en POURCENTS et non en dix-milliemes : un
+       membre a 30 % de taux critique doit lire 30, pas 3000. */
+    const champTaux = page.locator(".calc-form .calc-champ").nth(1)
+      .locator("input[type=number]");
+    const affiche = Number(await champTaux.inputValue());
+    assert.ok(affiche >= 0 && affiche < 200,
+      "le taux critique doit s'afficher en pourcent, lu : " + affiche);
+
+    /* Et la saisie repart bien en dix-milliemes : a 0 % de critique,
+       l'esperance rejoint exactement le coup non critique. Si la conversion
+       manquait dans ce sens, le moteur lirait la valeur cent fois trop
+       petite et l'ecart persisterait. */
+    await champTaux.fill("0");
+    await champTaux.blur();
+    await page.locator(".calc-table tbody tr").first().waitFor();
+    const aZeroCrit = (await page
+      .locator(".calc-table tbody tr:not(.calc-muette)").first()
+      .locator(".calc-valeur").allTextContents())
+      .map(t => Number(t.replace(/[^0-9]/g, "")));
+    assert.equal(aZeroCrit[2], aZeroCrit[0],
+      "a 0 % de critique, l'esperance vaut le coup non critique, recu : "
+        + aZeroCrit.join(", "));
+
     /* Les limites annoncees a l'ecran, pas releguees en commentaire. */
     const bas = await page.locator("#calculateurBody").textContent();
     assert.match(bas, /Non inclus dans le calcul/);

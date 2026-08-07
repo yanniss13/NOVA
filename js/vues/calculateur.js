@@ -29,16 +29,23 @@ import { showView } from "./navigation.js";
   const NOMBRE = new Intl.NumberFormat("fr-FR");
 
   /* Les trois bases offensives, et le code de stat qui les porte. */
+  /* `taux` dit si la valeur est un POURCENTAGE. Le depot range les taux en
+     dix-milliemes, donc 30 % s'y ecrit 3000 : les afficher tels quels sous une
+     etiquette « (%) » faisait lire « 3000 % » a un membre a 30 %. La
+     conversion se fait ici, a l'affichage et a la saisie, et nulle part
+     ailleurs - le moteur ne connait que les dix-milliemes. */
   const BASES = [
     { cle:"atk", code:"B_Atk", label:"ATK" },
-    { cle:"critRate", code:"C_Critical_Rate", label:"Taux critique (%)" },
-    { cle:"critDamage", code:"C_Critical_Dam_Rate", label:"Dégâts critiques (%)" },
+    { cle:"critRate", code:"C_Critical_Rate", label:"Taux critique (%)",
+      taux:true },
+    { cle:"critDamage", code:"C_Critical_Dam_Rate", label:"Dégâts critiques (%)",
+      taux:true },
     /* Visible et retouchable comme les autres : il retranche un pourcentage
        de la defense d'Akumu, donc il deplace CHAQUE ligne du tableau. Le
        laisser invisible ferait bouger les chiffres sans que le membre puisse
        voir d'ou vient l'ecart. */
     { cle:"percementDefense", code:"D_Protect_Cur_Rate",
-      label:"Percement de défense (%)" }
+      label:"Percement de défense (%)", taux:true }
   ];
 
   /* Etat de la page. `retouches` ne contient que ce que le membre a
@@ -221,11 +228,16 @@ import { showView } from "./navigation.js";
          tests/potentiel-commun.test.js compte les occurrences pour l'imposer. */
       const input = el("input",numericKeyboardInputProps({
         class:"calc-valeur" + (modifie ? " calc-retouche" : ""),
-        value:String(Math.round(courante)),
+        value:String(base.taux
+          ? Math.round(courante) / 100
+          : Math.round(courante)),
         onchange:event => {
           const lu = Number(event.target.value);
           if(!Number.isFinite(lu)) return;
-          etat.retouches[base.cle] = lu;
+          /* Retour aux dix-milliemes AVANT de quitter la vue : une retouche
+             rangee en pourcentage se propagerait au moteur, qui la lirait
+             cent fois trop petite. */
+          etat.retouches[base.cle] = base.taux ? lu * 100 : lu;
           redessiner();
         }
       }));
