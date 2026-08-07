@@ -1022,9 +1022,14 @@ d'éléments ou d'armes n'est écrite en dur.
 ## Synchronisation Supabase Realtime
 
 Une chaîne `confrerie-live-<userId>` écoute `profiles`, `teams`,
-`roster_characters`, `boss_sessions` et `boss_participation`. Les événements
-sont regroupés puis seule la vue active concernée est relue. L'Analyse réagit au
-roster et aux profils, dont elle est entièrement dérivée.
+`roster_characters`, `boss_sessions`, `boss_participation`,
+`member_availability` et `collection_items`. Les événements sont regroupés puis
+seule la vue active concernée est relue. L'Analyse réagit au roster et aux
+profils, dont elle est entièrement dérivée.
+
+Exception : la Collection **s'invalide toujours**, active ou non. Son cache ne
+se relit qu'une fois par propriétaire, et sans cet oubli volontaire un onglet
+rouvert plus tard resservirait une version périmée.
 
 Après déploiement de cette fonction, rejouer `supabase/schema.sql` une fois dans
 le SQL Editor afin d'ajouter les tables à la publication
@@ -1553,6 +1558,58 @@ Trois conséquences à ne pas réapprendre à la dure :
 - le rail de catégories du wiki est un `role="group"`, **pas** un `tablist`.
   Ses boutons ne contrôlent aucun `tabpanel`, et un `role="tab"` fausserait le
   décompte des onglets principaux que vérifie `accessibilite-mobile`.
+
+## Collection — ce qu'il reste à trouver
+
+L'onglet « Collection » liste les **223 armes et armures gravées** et n'affiche,
+par défaut, que celles que le membre ne possède pas encore. Il n'énumère aucun
+objet lui-même : `armesDuWiki()` et `graveesDuWiki()` joignent déjà les images
+aux statistiques par le chemin de l'image, et **ce même chemin sert de clé à la
+collection** — une seule identité d'objet dans tout le site.
+
+**Une ligne par objet, pas un tableau par membre.** `collection_items(owner,
+item, created_at)`, clé primaire `(owner, item)`. Cocher est un `insert`,
+décocher un `delete` : deux opérations atomiques. Un tableau imposerait de
+réécrire les 223 entrées à chaque clic, et deux appareils ouverts en même temps
+s'écraseraient — c'est exactement ce qui a imposé un verrou de
+comparaison-et-échange à `roster_characters`. La clé primaire rend aussi le
+double clic inoffensif : `23505` est traité comme un succès, le résultat voulu
+étant atteint.
+
+**Pas de politique `update`.** Une ligne de collection n'a rien à modifier :
+elle existe ou elle n'existe pas. En créer une ouvrirait un droit dont personne
+n'a besoin, et `tests/collection-schema.test.js` refuse qu'elle apparaisse.
+
+**Possédé = marqué OU équipé, et l'équipé ne se stocke pas.** Il se dérive du
+roster à chaque rendu (`js/metier/collection.js`). Tenir à jour deux vérités —
+la table et le roster — les ferait tôt ou tard diverger, et il faudrait alors
+décider laquelle ment. Conséquence visible : une pièce portée est possédée
+d'office, sa tuile est `disabled` et porte un cadenas — se dire non possédant de
+ce qu'on équipe serait se contredire. Le roster se relit donc **avec** la
+collection, et pas seulement dans son onglet : sinon un membre qui ouvre
+Collection en premier verrait ses pièces portées comme restant à trouver.
+
+**⚠️ Le piège des deux vocabulaires d'arme.** `weaponTypesOf(charId)` rend des
+noms de **dossier** (« Hache », « Livre »), les objets du Wiki portent un **enum**
+(« Axe », « Book »). `FOLDER_TO_ENUM` fait le pont ; comparer sans lui rendrait
+un ensemble vide et le filtre « utile à ce roster » n'afficherait jamais rien —
+**en silence**. Noter au passage que la correspondance n'est pas bijective :
+`Baguette`, `Baton` et `Livre` sont trois dossiers pour le seul enum `Book`.
+
+**Lecture partagée, écriture personnelle.** Le sélecteur de membre n'apparaît
+que s'il y a quelqu'un d'autre à regarder. Sur la collection d'autrui, aucune
+tuile ne reçoit de geste : la RLS refuserait l'écriture de toute façon, mais
+offrir un clic qui sera rejeté est une promesse non tenue. Le filtre d'utilité
+se rapporte au roster **affiché**, et son libellé le dit.
+
+**Le rendu n'a lieu qu'après la réponse de Supabase.** Retirer la tuile avant
+confirmation ferait disparaître un objet qu'une panne réseau laisserait non
+marqué, et le membre le croirait acquis.
+
+`js/vues/collection.js` est déclaré **avant** `synchro-temps-reel.js` dans
+`tests/helpers/modules.js` : c'est ce dernier qui l'importe pour la re-rendre
+quand `collection_items` bouge, et un module n'importe jamais un module déclaré
+après lui.
 
 ## Conventions
 
