@@ -95,6 +95,15 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   CIBLE_REFERENCE:typeof CIBLE_REFERENCE === "object"
     ? CIBLE_REFERENCE
     : undefined,
+  buffsApplicables:typeof buffsApplicables === "function"
+    ? buffsApplicables
+    : undefined,
+  entreesDuCalcul:typeof entreesDuCalcul === "function"
+    ? entreesDuCalcul
+    : undefined,
+  resultatsParCompetence:typeof resultatsParCompetence === "function"
+    ? resultatsParCompetence
+    : undefined,
   numericKeyboardInputProps:
     typeof numericKeyboardInputProps === "function"
       ? numericKeyboardInputProps
@@ -683,6 +692,16 @@ function loadApp(initialTeams){
     gearSets:realBuildStats.gearSets,
     charactersBySlug:realBuildStats.charactersBySlug
   };
+  /* La table des buffs de soutien est ECRITE A LA MAIN : la doubler par une
+     fixture ferait tester une invention plutot que le fichier livre. On charge
+     donc la vraie, comme stats-build.js juste au-dessus. */
+  const buffsSandbox = { window:{} };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(ROOT, "data", "buffs-supports.js"), "utf8"),
+    buffsSandbox,
+    { filename:"buffs-supports.js" }
+  );
+  sandbox.SEVEN_DS_BUFFS_SUPPORTS = buffsSandbox.window.SEVEN_DS_BUFFS_SUPPORTS;
   sandbox.window = sandbox;
   /* Le bac a sable modelise un navigateur : il lui faut donc les points
      d'accroche globaux que le code utilise. Les dispos ecoutent `online` pour
