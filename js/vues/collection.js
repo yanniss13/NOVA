@@ -258,46 +258,97 @@ import { toast } from "./toast.js";
     });
   }
 
+  /* Les tuiles deja construites, par chemin d'image.
+
+     ⚠️ ELLES SE REUTILISENT, elles ne se recreent pas. Un `<img>` recree
+     repart d'un document vide : le navigateur le repeint, et 220 images qui
+     repartent ensemble pour UN objet coche, c'est le clignotement que le
+     membre voyait. Deplacer un noeud existant, lui, ne recharge rien. */
+  const tuilesConnues = new Map();
+
   /* Une tuile. `equipe` la verrouille : l'objet est possede parce qu'il est
      porte, et se dire non possedant de ce qu'on equipe serait se contredire.
      Le titre dit pourquoi, sans quoi le cadenas serait une enigme. */
-  function tuileDeCollection(objet, contexte){
-    const possede = contexte.possessions.has(objet.file);
-    const equipe = contexte.equipements.has(objet.file);
-    const bouton = el("button",{
-      class:"wiki-tile"
-        +(possede ? " collection-owned" : "")
-        +(equipe ? " collection-locked" : ""),
+  function tuileDeCollection(objet){
+    return el("button",{
+      class:"wiki-tile",
       type:"button",
-      title:equipe ? "Équipé — possédé d’office" : objet.nom,
+      title:objet.nom,
       dataset:{ file:objet.file }
     },[
       el("img",{ src:objet.file, alt:"", loading:"lazy" }),
       el("span",{ class:"wiki-tile-name", text:objet.nom })
     ]);
+  }
+
+  function majTuile(bouton, objet, contexte){
+    const possede = contexte.possessions.has(objet.file);
+    const equipe = contexte.equipements.has(objet.file);
+    bouton.classList.toggle("collection-owned", possede);
+    bouton.classList.toggle("collection-locked", equipe);
+    bouton.title = equipe ? "Équipé — possédé d’office" : objet.nom;
     /* La propriete, pas l'attribut : `el` poserait `disabled="null"` pour une
        tuile libre, et l'attribut desactive des qu'il est present. */
-    if(equipe) bouton.disabled = true;
-    else if(contexte.modifiable){
-      bouton.addEventListener("click",
-        ()=>void basculerPossession(objet, possede));
-    }
+    bouton.disabled = equipe;
     return bouton;
   }
 
-  function grilleDeCollection(titre, objets, contexte){
-    if(!objets.length) return null;
-    return el("div",{},[
-      el("h2",{ class:"collection-section-title", text:titre }),
-      el("div",{ class:"wiki-grid" },
-        objets.map(objet => tuileDeCollection(objet, contexte)))
-    ]);
+  /* Aligne les enfants de `grille` sur `objets`, en place.
+
+     ⚠️ On RETIRE D'ABORD, on place ensuite. Placer d'abord semble equivalent
+     mais ne l'est pas : retirer le premier objet d'une liste decale tous les
+     suivants, et chacun se fait alors repositionner — 151 deplacements pour un
+     seul objet coche. Purger la grille avant de la parcourir ramene ce meme
+     geste a zero deplacement. */
+  function reconcilierGrille(grille, objets, contexte){
+    const voulus = new Set(objets.map(objet => objet.file));
+    [...grille.children].forEach(enfant => {
+      if(!voulus.has(enfant.dataset.file)) grille.removeChild(enfant);
+    });
+
+    let precedent = null;
+    objets.forEach(objet => {
+      let bouton = tuilesConnues.get(objet.file);
+      if(!bouton){
+        bouton = tuileDeCollection(objet);
+        tuilesConnues.set(objet.file, bouton);
+      }
+      majTuile(bouton, objet, contexte);
+      const attendu = precedent ? precedent.nextSibling : grille.firstChild;
+      if(bouton !== attendu) grille.insertBefore(bouton, attendu);
+      precedent = bouton;
+    });
+  }
+
+  /* Les deux sections existent des le premier rendu et ne sont plus jamais
+     detruites : seul leur contenu bouge, et elles se masquent quand elles se
+     vident. */
+  const SECTIONS_COLLECTION = [
+    { nature:"arme",   titre:"Armes" },
+    { nature:"gravee", titre:"Armures gravées" }
+  ];
+
+  function poserLesSections(){
+    const corps = $("#collectionBody");
+    SECTIONS_COLLECTION.forEach(section => {
+      if(section.zone) return;
+      section.grille = el("div",{ class:"wiki-grid" });
+      section.zone = el("div",{},[
+        el("h2",{ class:"collection-section-title", text:section.titre }),
+        section.grille
+      ]);
+      corps.appendChild(section.zone);
+    });
   }
 
   /* La deconnexion ou le changement de compte remet la vue a zero : garder
      `ownerChoisi` afficherait la collection d'un membre a quelqu'un qui vient
      de changer d'identite. */
   let moiConnu = "";
+
+  /* L'etat exact que le document porte deja. `null` tant que rien n'est peint,
+     pour que le premier rendu ait toujours lieu. */
+  let empreinteRendue = null;
 
   function renderCollection(){
     const moi = moiMeme();
@@ -332,6 +383,42 @@ import { toast } from "./toast.js";
     libelleDUtilite();
 
     const compte = progressionDe(objets, possessions);
+    const liste = retenusDeCollection(objets, possessions, utiles);
+    /* Deux raisons de ne rien pouvoir cocher, et elles ne se disent pas
+       pareil : sans compte la collection n'existe pas encore, chez autrui
+       elle ne nous appartient pas. */
+    const message = !liste.length
+      ? "Rien à afficher avec ces filtres."
+      : (contexte.modifiable
+        ? ""
+        : (moi
+          ? "Collection de " + pseudoDe(ownerId) + " — lecture seule."
+          : "Connecte-toi pour cocher ce que tu possèdes."));
+
+    /* ⚠️ NE PAS REPEINDRE CE QUI N'A PAS CHANGE.
+
+       Un seul clic declenchait TROIS reconstructions de la grille en 92 ms :
+       le rendu du clic, celui de l'echo Realtime de notre PROPRE ecriture, et
+       celui de la relecture que cet echo declenchait. Les 220 tuiles et leurs
+       images etaient detruites puis recreees a chaque fois — le site
+       clignotait, et le membre le voyait.
+
+       Les deux rendus surnumeraires produisent un DOM identique : le cache
+       local porte deja l'ecriture quand l'echo arrive. Cette empreinte les
+       arrete avant qu'ils ne touchent au document. Meme lecon que
+       `shouldIgnoreAvailabilityEcho` pour les dispos : l'echo de sa propre
+       ecriture n'apprend rien. */
+    const empreinte = JSON.stringify({
+      modifiable:contexte.modifiable,
+      message,
+      compte,
+      tuiles:liste.map(objet => objet.file
+        + (possessions.has(objet.file) ? "|P" : "")
+        + (equipements.has(objet.file) ? "|E" : ""))
+    });
+    if(empreinte === empreinteRendue) return Promise.resolve(true);
+    empreinteRendue = empreinte;
+
     const progression = $("#collectionProgress");
     progression.innerHTML = "";
     progression.appendChild(el("b",{ text:String(compte.possedes) }));
@@ -339,32 +426,34 @@ import { toast } from "./toast.js";
       " / " + compte.total + " possédés — " + compte.manquants + " à trouver"
     ));
 
-    const liste = retenusDeCollection(objets, possessions, utiles);
-    const corps = $("#collectionBody");
-    corps.innerHTML = "";
-    [
-      grilleDeCollection("Armes",
-        liste.filter(objet => objet.nature === "arme"), contexte),
-      grilleDeCollection("Armures gravées",
-        liste.filter(objet => objet.nature === "gravee"), contexte)
-    ].forEach(zone => { if(zone) corps.appendChild(zone); });
+    poserLesSections();
+    SECTIONS_COLLECTION.forEach(section => {
+      const siennes = liste.filter(objet => objet.nature === section.nature);
+      reconcilierGrille(section.grille, siennes, contexte);
+      section.zone.hidden = !siennes.length;
+    });
 
-    /* Deux raisons de ne rien pouvoir cocher, et elles ne se disent pas
-       pareil : sans compte la collection n'existe pas encore, chez autrui
-       elle ne nous appartient pas. */
-    $("#collectionState").textContent = !liste.length
-      ? "Rien à afficher avec ces filtres."
-      : (contexte.modifiable
-        ? ""
-        : (moi
-          ? "Collection de " + pseudoDe(ownerId) + " — lecture seule."
-          : "Connecte-toi pour cocher ce que tu possèdes."));
+    $("#collectionState").textContent = message;
     return Promise.resolve(true);
   }
 
   /* Masque des le chargement : le premier rendu tranchera, mais un selecteur
      vide ne doit jamais exister, pas meme le temps d'une image. */
   $("#collectionOwnerField").hidden = true;
+
+  /* Un seul ecouteur pour toutes les tuiles, pose une fois pour toutes.
+
+     Un ecouteur PAR tuile devrait etre repose a chaque rendu, ce qui obligeait
+     a recreer les noeuds — la cause meme du clignotement. Une tuile verrouillee
+     est `disabled` et n'emet aucun clic : le verrou tient toujours. */
+  $("#collectionBody").addEventListener("click", evenement => {
+    const bouton = evenement.target.closest(".wiki-tile");
+    if(!bouton || !estMaCollection()) return;
+    const objet = objetsDeLaCollection()
+      .find(item => item.file === bouton.dataset.file);
+    if(!objet) return;
+    void basculerPossession(objet, bouton.classList.contains("collection-owned"));
+  });
 
   $("#collectionSearch").addEventListener("input", renderCollection);
   $("#collectionOwner").addEventListener("change", evenement => {

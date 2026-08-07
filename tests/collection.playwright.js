@@ -102,6 +102,40 @@ const EQUIPEES = [
     // ---- Le geste : cocher un objet le retire de « À trouver ».
     await page.selectOption("#collectionFilterPossession", "manquants");
     await attendreTuiles(total - EQUIPEES.length);
+
+    /* ⚠️ LE CLIGNOTEMENT. Un clic ne doit RECRÉER aucune tuile.
+
+       Le site clignotait pour de vrai : le clic re-rendait, l'écho Realtime de
+       notre propre écriture invalidait et re-rendait, et la relecture ainsi
+       déclenchée re-rendait encore. Trois fois 220 tuiles en 92 ms, et à chaque
+       reconstruction les 27 images visibles repartaient d'un document vide.
+
+       On marque les tuiles présentes ; celles qui n'ont plus la marque après le
+       clic sont neuves — ce sont elles qui repeignent. Un `MutationObserver`
+       ne suffirait pas : il rapporte un simple DÉPLACEMENT comme un retrait
+       suivi d'un ajout, et confondrait les deux. */
+    const marquerLesTuiles = () => page.evaluate(() =>
+      document.querySelectorAll("#collectionBody .wiki-tile")
+        .forEach(noeud => { noeud.dataset.sonde = "1"; })
+    );
+    const tuilesNeuves = () => page.evaluate(() =>
+      document.querySelectorAll(
+        "#collectionBody .wiki-tile:not([data-sonde])").length
+    );
+    await marquerLesTuiles();
+
+    /* Et le compteur de progression ne doit être réécrit QU'UNE fois. C'est la
+       trace des rendus surnuméraires : sans le garde d'empreinte, l'écho
+       Realtime et sa relecture en déclenchent deux de plus, qui repassent sur
+       les 220 objets pour aboutir au même document. */
+    await page.evaluate(() => {
+      window.__reecrituresProgression = 0;
+      new MutationObserver(lots => lots.forEach(lot => {
+        if(lot.addedNodes.length) window.__reecrituresProgression++;
+      })).observe(document.querySelector("#collectionProgress"),
+        { childList:true });
+    });
+
     const cible = await tuiles().first().getAttribute("data-file");
     await tuiles().first().click();
     await page.getByText("marqué comme possédé", { exact:false }).waitFor();
@@ -111,6 +145,28 @@ const EQUIPEES = [
       "le marquage doit être une ligne en base, pas un état local");
     assert.equal(await tuileDe(cible).count(), 0,
       "l'objet coché quitte la liste des manquants");
+
+    /* On laisse passer l'écho Realtime et la relecture qu'il déclenchait. */
+    await page.waitForTimeout(800);
+    assert.equal(await tuilesNeuves(), 0,
+      "aucune tuile ne doit être recréée par un clic — c'est le clignotement");
+    /* Deux nœuds écrits par rendu : le nombre en gras et le texte qui suit. */
+    assert.equal(
+      await page.evaluate(() => window.__reecrituresProgression), 2,
+      "un clic ne doit produire qu'un seul rendu, pas trois");
+
+    /* Et le filtrage non plus : réduire la grille puis la rétablir doit
+       réutiliser les mêmes nœuds, jamais en reconstruire. */
+    await marquerLesTuiles();
+    await page.fill("#collectionSearch", "hache");
+    await page.waitForFunction(() =>
+      document.querySelectorAll("#collectionBody .wiki-tile").length < 30);
+    assert.equal(await tuilesNeuves(), 0,
+      "filtrer ne doit retirer que des tuiles, jamais en reconstruire");
+    await page.fill("#collectionSearch", "");
+    await attendreTuiles(total - EQUIPEES.length - 1);
+    assert.equal(await tuilesNeuves(), 0,
+      "revenir à la grille complète doit réattacher les tuiles conservées");
 
     // ---- Le filtre « Possédés » le retrouve, et un second clic le rend.
     await page.selectOption("#collectionFilterPossession", "possedes");
