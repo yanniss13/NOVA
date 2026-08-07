@@ -317,6 +317,46 @@ percement. Ce terme est une linéarisation, pas une mécanique physique ; le
 borner « par bon sens » nous écarterait de la référence. Seul le plancher à
 zéro est conservé — sur-résister ne doit pas *renforcer* la défense.
 
+### La calibration de la constante C
+
+C ne se lit sur aucun écran du jeu et ne se déduit d'aucune table : elle est
+propre au personnage, à son arme **et à ses potentiels débloqués**, et se mesure
+sur un coup réel. Sans elle, `CONSTANTE_PAR_DEFAUT = 5600` sert de repli et la
+page reste honnête comme **comparateur** — l'incertitude se simplifie dans un
+rapport entre deux builds. Avec elle, elle devient **prédictive**.
+
+L'inversion du coup non critique :
+
+```text
+m = D / (base × bonusOffensif × résistance × faiblesse) − percement
+C = m × DEF / (1 − m)
+```
+
+Elle vit dans le **même fichier** que la formule directe, et les deux partagent
+`facteursHorsConstante()`. Ce n'est pas de l'économie de lignes : une inversion
+rangée à l'écart dérive de son modèle sans que rien ne le signale, et le seul
+symptôme serait une constante fausse chez un membre. Un round-trip sur quatre
+configurations la retrouve à zéro écart, et le test end-to-end boucle la même
+vérification **par l'interface**.
+
+**Quatre refus explicites** plutôt qu'une constante absurde — une constante
+fausse se sauvegarderait, puis fausserait chaque ligne du tableau sans plus
+jamais se signaler :
+
+| Refus | Cause |
+|---|---|
+| `degats-manquants` | rien de saisi, ou négatif |
+| `degats-trop-faibles` | le percement dépasse la mitigation lue |
+| `degats-au-dela-de-la-pre-armure` | C diverge — c'est le cas d'un coup **critique** saisi par erreur |
+| `defense-nulle` | aucun coup ne peut révéler C |
+
+La procédure publiée exige un coup **non critique** et demande d'**additionner**
+les nombres d'une compétence à coups multiples : la vue le dit à l'écran.
+
+Le stockage est **local et volontairement pas synchronisé** : C dépend des
+potentiels débloqués du membre, donc proposer celle d'un autre donnerait un
+chiffre faux avec l'autorité d'un chiffre mesuré.
+
 ### Les malus infligés à l'ennemi
 
 **À ne pas confondre avec le percement**, qui est une statistique du héros. Les
