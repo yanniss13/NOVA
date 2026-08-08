@@ -30,6 +30,7 @@ import {
 } from "../metier/calculateur-entrees.js";
 import { buffsDeLEquipe } from "../metier/equipe-buffs.js";
 import { passifsGravesApplicables } from "../metier/passifs-graves.js";
+import { potentielsEquipeApplicables } from "../metier/potentiels-equipe.js";
 import {
   buildGearDefinition, gearPassiveStatus
 } from "../metier/build-config.js";
@@ -141,7 +142,9 @@ import { showView } from "./navigation.js";
       window.SEVEN_DS_BUFFS_SUPPORTS
         ? Promise.resolve(true) : injecter("./data/buffs-supports.js"),
       window.SEVEN_DS_PASSIFS_GRAVES
-        ? Promise.resolve(true) : injecter("./data/passifs-graves.js")
+        ? Promise.resolve(true) : injecter("./data/passifs-graves.js"),
+      window.SEVEN_DS_POTENTIELS_EQUIPE
+        ? Promise.resolve(true) : injecter("./data/potentiels-equipe.js")
     ]).catch(erreur => {
       /* Rejouable : un echec reseau ne doit pas condamner l'onglet pour toute
          la duree de la session. */
@@ -301,6 +304,33 @@ import { showView } from "./navigation.js";
     etat.coequipiers.forEach(choix => {
       if(!choix) return;
       liste.push(porteurDeTenue(choix.charId, herosDuChoix(choix), false));
+    });
+    return liste.filter(Boolean);
+  }
+
+  /* Ce dont potentiels-equipe.js a besoin pour un porteur.
+
+     Le PALIER est commun a toutes les armes d'un personnage - c'est ainsi que
+     le roster le stocke - mais la BRANCHE de potentiels, elle, depend de
+     l'arme equipee. Les deux voyagent donc ensemble.
+
+     L'ATK sert aux lignes indexees dessus, comme pour les buffs de soutien :
+     le palier 10 de Derieri donne « 30 % de l'attaque du heros ». */
+  function porteurDePotentiels(charId, typeArme, heros, estLeHeros){
+    if(!heros) return null;
+    const palier = heros.potentiel ? heros.potentiel.tier : null;
+    return { charId, typeArme, palier, atk:atkDuBuild(heros), estLeHeros };
+  }
+
+  function porteursDePotentiels(hero){
+    const liste = [
+      porteurDePotentiels(etat.charId, etat.typeArme, hero, true)
+    ];
+    etat.coequipiers.forEach(choix => {
+      if(!choix) return;
+      liste.push(porteurDePotentiels(
+        choix.charId, choix.typeArme, herosDuChoix(choix), false
+      ));
     });
     return liste.filter(Boolean);
   }
@@ -526,6 +556,58 @@ import { showView } from "./navigation.js";
         if(passif.niveauInconnu){
           bloc.appendChild(el("p",{class:"calc-muette",
             text:"Niveau de passif non renseigné — valeur du niveau 1."}));
+        }
+      });
+      grille.appendChild(bloc);
+    });
+    section.appendChild(grille);
+    return section;
+  }
+
+  /* Les potentiels tournes vers l'equipe. Une section a PART des deux autres,
+     parce que la question qu'ils posent au membre est differente : ni « qui
+     est dans mon equipe » ni « quelle tenue porte-t-il », mais « jusqu'ou a-t-il
+     monte son personnage ». Le palier est ecrit sur chaque ligne pour cette
+     raison - c'est le levier sur lequel le membre peut agir. */
+  function sectionPotentiels(potentiels, redessiner){
+    const section = el("section",{class:"calc-potentiels"},[
+      el("strong",{text:"Potentiels d'équipe"})
+    ]);
+    if(!potentiels.length){
+      section.appendChild(el("p",{class:"calc-muette",
+        text:"Aucun potentiel d'équipe ne s'applique à ce build. Les paliers "
+          + "des coéquipiers viennent de leur fiche de roster."}));
+      return section;
+    }
+    const parPorteur = new Map();
+    potentiels.forEach(ligne => {
+      const cle = ligne.support + "|" + ligne.arme;
+      if(!parPorteur.has(cle)) parPorteur.set(cle, []);
+      parPorteur.get(cle).push(ligne);
+    });
+
+    const grille = el("div",{class:"calc-soutiens-grille"});
+    parPorteur.forEach(lignes => {
+      const bloc = el("div",{class:"calc-soutien"});
+      bloc.appendChild(el("h4",{class:"calc-soutien-nom",
+        text:nomDuPersonnage(lignes[0].support) + " · " + lignes[0].arme}));
+      lignes.forEach(ligne => {
+        const caseACocher = el("input",{
+          type:"checkbox",
+          onchange:()=>{
+            if(etat.coches.has(ligne.id)) etat.coches.delete(ligne.id);
+            else etat.coches.add(ligne.id);
+            redessiner();
+          }
+        });
+        caseACocher.checked = etat.coches.has(ligne.id);
+        bloc.appendChild(el("label",{class:"calc-buff"},[
+          caseACocher,
+          el("span",{text:"T" + ligne.palier + " — " + ligne.libelle})
+        ]));
+        if(ligne.repli){
+          bloc.appendChild(el("p",{class:"calc-muette",
+            text:"ATK du porteur illisible — valeur au plafond."}));
         }
       });
       grille.appendChild(bloc);
@@ -944,11 +1026,18 @@ import { showView } from "./navigation.js";
     });
     vue.appendChild(sectionTenuesGravees(passifsGraves, dessiner));
 
-    /* Les deux sources se rejoignent ici, et une seule fois : buffs de soutien
-       et passifs graves portent la meme forme - `stat`, `valeur`,
-       `operation` - donc le moteur ignore d'ou ils viennent. */
+    const potentiels = potentielsEquipeApplicables({
+      element, porteurs:porteursDePotentiels(hero)
+    });
+    vue.appendChild(sectionPotentiels(potentiels, dessiner));
+
+    /* Les trois sources se rejoignent ici, et une seule fois : buffs de
+       soutien, passifs graves et potentiels d'equipe portent la meme forme -
+       `stat` ou `effet`, `valeur`, `operation` - donc le moteur ignore d'ou
+       ils viennent. */
     const coches = buffsProposes(element)
       .concat(passifsGraves)
+      .concat(potentiels)
       .filter(entree => etat.coches.has(entree.id));
 
     /* Les bonus de categorie du BUILD et ceux des buffs coches s'ADDITIONNENT :

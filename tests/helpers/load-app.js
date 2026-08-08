@@ -110,6 +110,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   buffsDeLEquipe:typeof buffsDeLEquipe === "function"
     ? buffsDeLEquipe
     : undefined,
+  potentielsEquipeApplicables:typeof potentielsEquipeApplicables === "function"
+    ? potentielsEquipeApplicables
+    : undefined,
   passifsGravesApplicables:typeof passifsGravesApplicables === "function"
     ? passifsGravesApplicables
     : undefined,
@@ -729,6 +732,17 @@ function loadApp(initialTeams){
     { filename:"passifs-graves.js" }
   );
   sandbox.SEVEN_DS_PASSIFS_GRAVES = passifsSandbox.window.SEVEN_DS_PASSIFS_GRAVES;
+  /* Meme raison encore : les potentiels tournes vers l'equipe sont ecrits a
+     la main, et un test verifie qu'ils ne sont jamais inertes. Une fixture
+     rendrait ce test complaisant. */
+  const potentielsSandbox = { window:{} };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(ROOT, "data", "potentiels-equipe.js"), "utf8"),
+    potentielsSandbox,
+    { filename:"potentiels-equipe.js" }
+  );
+  sandbox.SEVEN_DS_POTENTIELS_EQUIPE =
+    potentielsSandbox.window.SEVEN_DS_POTENTIELS_EQUIPE;
   sandbox.window = sandbox;
   /* Le bac a sable modelise un navigateur : il lui faut donc les points
      d'accroche globaux que le code utilise. Les dispos ecoutent `online` pour
