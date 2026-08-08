@@ -174,6 +174,39 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   });
 }
 
+/* La RESISTANCE critique de la cible se reduit en POINTS, et il ne faut pas la
+   confondre avec sa DEFENSE critique : l'une decide si le coup critique part,
+   l'autre de ce qu'il rapporte.
+
+   Avec 200 % de degats critiques, total = 500 x (1 + 2 x taux). A 60 % de
+   critique propre contre 20 % de resistance, le taux vaut 40 % ; en retrancher
+   20 points a la resistance le ramene a 60 %. */
+{
+  const contre = reduction => degatsAttendus({
+    stats:{ atk:1000, critRate:6000, critDamage:20000,
+      reductionResistanceCritique:reduction },
+    competence:COUP_SIMPLE,
+    cible:Object.assign({}, CIBLE_NEUTRE, { critResist:2000 })
+  });
+  assert.equal(Math.round(contre(0).total), 900, "sans reduction, taux 40 %");
+  assert.equal(Math.round(contre(2000).total), 1100,
+    "20 points retranches ramenent la resistance a zero, taux 60 %");
+  /* Sur-reduire ne doit RIEN rendre de plus : le plancher est a zero, sans
+     quoi une cible sans resistance se mettrait a offrir du critique. */
+  assert.equal(Math.round(contre(9000).total), 1100,
+    "sur-reduire ne depasse pas la resistance nulle");
+  /* Et elle ne se confond pas avec la defense critique : reduire l'une ne doit
+     rien changer a l'autre. */
+  const memesPoints = degatsAttendus({
+    stats:{ atk:1000, critRate:6000, critDamage:20000,
+      reductionDefenseCritique:2000 },
+    competence:COUP_SIMPLE,
+    cible:Object.assign({}, CIBLE_NEUTRE, { critResist:2000 })
+  });
+  assert.equal(Math.round(memesPoints.total), 900,
+    "reduire la DEFENSE critique ne touche pas la RESISTANCE critique");
+}
+
 /* Un coup critique peut frapper PLUS FAIBLE qu'un coup normal quand la
    defense critique de la cible depasse les degats critiques du build. Mesure
    de reference : 0 de degats critiques contre 42,93 % de defense critique

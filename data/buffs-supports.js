@@ -17,14 +17,19 @@
 //     stat    : code du depot, present dans 7ds-stats/libelles-stats.json.
 //
 //   MALUS SUR L'ENNEMI          (cible:"ennemi")
-//     effet   : "defense"          la defense de la cible, MULTIPLIEE
-//                                  par (1 - valeur)
-//               "defenseCritique"  sa defense critique, en POINTS retranches
+//     effet   : "defense"             la defense de la cible, MULTIPLIEE
+//                                     par (1 - valeur)
+//               "defenseCritique"     sa defense critique, en POINTS retranches
+//               "resistanceCritique"  sa resistance critique, en POINTS aussi
 //
-//     Ces deux formes ne sont pas interchangeables et la difference est
-//     mesuree, pas supposee : chez l'outil de reference, `d-edef` multiplie
-//     la defense tandis que `d-ecdr` se retranche en points (une defense
-//     critique de 50 reduite de « 50 » tombe a 0, pas a 25).
+//     Ces formes ne sont pas interchangeables et la difference est mesuree,
+//     pas supposee : chez l'outil de reference, `d-edef` multiplie la defense
+//     tandis que `d-ecdr` se retranche en points (une defense critique de 50
+//     reduite de « 50 » tombe a 0, pas a 25).
+//
+//     DEFENSE critique et RESISTANCE critique sont deux choses : la seconde
+//     decide si le coup critique PART, la premiere de ce qu'il rapporte. Les
+//     confondre ferait payer deux fois le meme debuff.
 //
 //     Il n'existe AUCUN code de stat pour ces malus : libelles-stats.json ne
 //     decrit que des statistiques de heros. Leur inventer un code aurait
@@ -41,8 +46,18 @@
 //             support est inconnue - sans equipe choisie, ou build incomplet.
 //             Un test refuse que `plafond` et `valeur` divergent.
 //
-// Les valeurs a CUMULS sont transcrites au maximum atteignable, comme le
-// reste de la table : « 2 % par cumul, max 10 fois » s'ecrit 2000.
+// Les valeurs a CUMULS sont transcrites au maximum atteignable, et ce produit
+// est VERIFIE plutot que pose : la ligne porte `parCumul` et `cumuls`, chacun
+// designe par sa propre phrase, et un test controle que `valeur` vaut bien
+// leur produit.
+//
+//   « 2 % par cumul, (Max : 10 fois) »  ->  parCumul 200, cumuls 10, valeur 2000
+//
+// Ces cinq valeurs ont longtemps ete des multiplications faites de tete, que
+// rien ne relisait : le texte publiait 2 et 10, la table stockait 2000, et une
+// erreur de facteur dix serait passee sans bruit. C'est desormais le seul
+// endroit de ce fichier ou les nombres sont relus un a un ; les autres lignes
+// ne sont verifiees que par la presence LITTERALE de leur phrase.
 //
 // CE QUI N'Y FIGURE PAS, ET POURQUOI :
 //
@@ -113,12 +128,46 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       libelle:"Chances crit. +5 % par cumul, 4 cumuls",
       stat:"C_Critical_Rate",
       operation:"add",
+      parCumul:500,
+      cumuls:4,
       valeur:2000,
       unite:"ten-thousandths",
       element:null,
       provenance:{
         gameId:"daisy_wand_skill_rmb_ready",
-        phrase:"augmente les chances crit. de tous les héros alliés de 5% pendant 40s tant que la posture est maintenue"
+        phrase:"augmente les chances crit. de tous les héros alliés de ",
+        phraseCumuls:"(Max : "
+      }
+    },
+    {
+      id:"daisy-electroaimant-resistance-crit",
+      libelle:"Électroaimant : résistance crit. de l'ennemi −20 %",
+      cible:"ennemi",
+      effet:"resistanceCritique",
+      operation:"add",
+      valeur:2000,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"daisy_book_passive",
+        phrase:"※ Électroaimant : réduit la résistance crit. de 20%"
+      }
+    },
+    {
+      id:"daisy-bombe-resistance-crit",
+      libelle:"Bombe de graine : résistance crit. de l'ennemi −6 % par coup, 4 cumuls",
+      cible:"ennemi",
+      effet:"resistanceCritique",
+      operation:"add",
+      parCumul:600,
+      cumuls:4,
+      valeur:2400,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"daisy_wand_skill_e",
+        phrase:"réduit la résistance crit. de l'ennemi de ",
+        phraseCumuls:"(Max : "
       }
     },
     {
@@ -126,12 +175,15 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       libelle:"Charge électrique : dégâts crit. +2 % par cumul, 20 cumuls",
       stat:"C_Critical_Dam_Rate",
       operation:"add",
+      parCumul:200,
+      cumuls:20,
       valeur:4000,
       unite:"ten-thousandths",
       element:"thunder",
       provenance:{
         gameId:"daisy_book_skill_e",
-        phrase:"augmente les dégâts crit. des héros d'attribut Foudre de 2% et leurs chances crit. de 1.5%"
+        phrase:"augmente les dégâts crit. des héros d'attribut Foudre de ",
+        phraseCumuls:"(Max : "
       }
     },
     {
@@ -139,12 +191,15 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       libelle:"Charge électrique : chances crit. +1,5 % par cumul, 20 cumuls",
       stat:"C_Critical_Rate",
       operation:"add",
+      parCumul:150,
+      cumuls:20,
       valeur:3000,
       unite:"ten-thousandths",
       element:"thunder",
       provenance:{
         gameId:"daisy_book_skill_e",
-        phrase:"augmente les dégâts crit. des héros d'attribut Foudre de 2% et leurs chances crit. de 1.5%"
+        phrase:"et leurs chances crit. de ",
+        phraseCumuls:"(Max : "
       }
     }
   ],
@@ -314,12 +369,15 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       libelle:"Synchronisation : attaque +1 % par cumul, 25 cumuls",
       stat:"I_AtkAdd_Rate",
       operation:"multiply",
+      parCumul:100,
+      cumuls:25,
       valeur:2500,
       unite:"ten-thousandths",
       element:null,
       provenance:{
         gameId:"gowther_book_passive",
-        phrase:"augmente l'attaque de 1%"
+        phrase:"※ Synchronisation : augmente l'attaque de ",
+        phraseCumuls:"(Max : "
       }
     },
     {
@@ -369,6 +427,37 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       }
     },
     {
+      id:"howzer-rafale-resistance-crit",
+      libelle:"Sous barrière : résistance crit. de l'ennemi −15 %",
+      cible:"ennemi",
+      effet:"resistanceCritique",
+      operation:"add",
+      valeur:1500,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"howzer_cudgel3c_skill_q",
+        phrase:"réduit la résistance crit. de l'ennemi de 15% pendant 40s"
+      }
+    },
+    {
+      id:"howzer-impact-resistance-crit",
+      libelle:"Cible qui saigne : résistance crit. de l'ennemi −5 % par cumul, 3 cumuls",
+      cible:"ennemi",
+      effet:"resistanceCritique",
+      operation:"add",
+      parCumul:500,
+      cumuls:3,
+      valeur:1500,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"howzer_gauntlets_skill_rmb_1",
+        phrase:"La deuxième frappe réduit la résistance crit. de ",
+        phraseCumuls:"(Max : "
+      }
+    },
+    {
       id:"howzer-rugissement-degats-vent",
       libelle:"Dégâts de Vent +20 % sur cible qui saigne",
       stat:"Wind_Element_Rate",
@@ -389,12 +478,17 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       cible:"ennemi",
       effet:"defenseCritique",
       operation:"add",
+      parCumul:200,
+      cumuls:10,
       valeur:2000,
       unite:"ten-thousandths",
       element:null,
       provenance:{
         gameId:"manny_sworddual_jumpatk",
-        phrase:"réduit la défense crit. de 2%"
+        phrase:"réduit la défense crit. de ",
+        /* Un « max » MINUSCULE ici, quand tout le reste du catalogue ecrit
+           « Max ». On cite ce que la source ecrit. */
+        phraseCumuls:"(max : "
       }
     },
     {

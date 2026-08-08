@@ -43,9 +43,14 @@
 // personnages ont eux aussi des potentiels tournes vers l'equipe ; ils
 // viendront quand la confrerie les jouera.
 //
+// Une valeur a CUMULS - « 5 % par cumul, (Max : 20 fois) » - porte `parCumul`
+// et `cumuls`, chacun designe par sa propre phrase, et le test controle que
+// `valeur` vaut leur produit. Un maximum qui se CALCULE ne se pose pas de
+// tete : +100 % de degats critiques merite d'etre relu.
+//
 // CE QUI N'Y FIGURE PAS, ET POURQUOI. Sur les vingt-sept lignes des huit
-// soutiens qui visent l'equipe ou la cible, QUATORZE sont transcrites. Les
-// treize autres sont nommees plutot qu'approximees :
+// soutiens qui visent l'equipe ou la cible, SEIZE sont transcrites. Les onze
+// autres sont nommees plutot qu'approximees :
 //
 //   Soins, PV, barrieres, jauges de magie, vitesse de deplacement, reduction
 //     de degats subis (dreydrin Rapiere T7 et Bouclier T7, elizabeth Livre T9,
@@ -54,19 +59,9 @@
 //     hauteur de 10% de la DEFENSE du heros » : indexe sur la defense du
 //     lanceur, quand la vue ne transmet que son ATK. Une ligne de plumberie a
 //     ajouter le jour ou une deuxieme s'y indexera.
-//   elizabeth Baguette T10, deuxieme effet   « degats crit. +5% (Max : 20
-//     fois) » : le maximum ne s'ecrit nulle part en clair, il se CALCULE
-//     (5 x 20). La garde refuse un nombre qu'aucune phrase ne designe - c'est
-//     exactement son role - et 100 % de degats critiques est trop gros pour
-//     etre pose au jugé.
 //   derieri Epee 2 mains T10, elizabeth Baton T6   des degats critiques
 //     restreints a UNE categorie de competence. Le moteur porte les deux
 //     notions separement, jamais croisees.
-//   gowther Baton T5   « reduit la resistance crit. de l'ennemi de 20% » : la
-//     cible porte bien une resistance critique, mais le moteur n'a aucun seau
-//     pour la reduire. L'outil de reference, lui, expose ce champ (`d-ecr`) et
-//     il n'est pas au nombre de ses champs morts : c'est le seau le plus
-//     facile a ajouter ensuite.
 //   manny Epees doubles T7   « reduit la resistance au Froid de l'ennemi » :
 //     une resistance elementaire, dont la valeur de base est elle-meme en
 //     suspens (voir AKUMU_ELEMENTAIRE dans js/metier/degats-calcul.js).
@@ -80,6 +75,13 @@
 //     toutes les 1s pendant 20s » : un cumul sans maximum publie. On ne sait
 //     pas ou il s'arrete.
 //   derieri Hache T5   la duree d'un Deluge, sans effet sur les statistiques.
+//
+// Deux lignes ont deja quitte cette liste : le T5 Baton de gowther attendait
+// un seau de reduction de RESISTANCE critique, qui existe desormais dans
+// js/metier/degats-calcul.js, et le second effet du T10 Baguette d'elizabeth
+// attendait que le produit « pas x cumuls » puisse etre VERIFIE plutot que
+// pose. C'est ce que cette liste est censee produire : des retours, pas des
+// oublis.
 window.SEVEN_DS_POTENTIELS_EQUIPE = {
   "daisy": {
     "Livre": {
@@ -241,6 +243,26 @@ window.SEVEN_DS_POTENTIELS_EQUIPE = {
           provenance:{
             phrase:"augmente les dégâts de Terre de tous les héros alliés "
           }
+        },
+        {
+          /* Le maximum ne s'ecrit nulle part : il se CALCULE, 5 x 20. La ligne
+             porte donc les DEUX facteurs, chacun designe par sa phrase, et le
+             test compare leur produit a `valeur`. Sans cela, +100 % de degats
+             critiques serait un nombre pose de tete. */
+          id:"elizabeth-baguette-t10-degats-crit",
+          libelle:"Coups sur cible sous Déluge : dégâts crit. des alliés Terre +5 % par cumul, 20 cumuls",
+          cible:"allies",
+          stat:"C_Critical_Dam_Rate",
+          operation:"add",
+          parCumul:500,
+          cumuls:20,
+          valeur:10000,
+          unite:"ten-thousandths",
+          element:"earth",
+          provenance:{
+            phrase:"augmente les dégâts crit. des héros d'attribut Terre de ",
+            phraseCumuls:"(Max : "
+          }
         }
       ]
     }
@@ -263,6 +285,20 @@ window.SEVEN_DS_POTENTIELS_EQUIPE = {
       ]
     },
     "Baton": {
+      "5": [
+        {
+          id:"gowther-baton-t5-resistance-crit",
+          libelle:"Attaque spéciale : résistance crit. de l'ennemi −20 %",
+          cible:"allies",
+          cibleEnnemi:true,
+          effet:"resistanceCritique",
+          operation:"add",
+          valeur:2000,
+          unite:"ten-thousandths",
+          element:null,
+          provenance:{ phrase:"réduit la résistance crit. de l'ennemi de " }
+        }
+      ],
       "6": [
         {
           id:"gowther-baton-t6-attaque-foudre",

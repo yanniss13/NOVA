@@ -32,11 +32,8 @@ const LIBELLES = JSON.parse(fs.readFileSync(
   path.join(racine, "7ds-stats", "libelles-stats.json"), "utf8"
 ));
 
-/* Les cinq categories du catalogue de competences, celles que le moteur
-   distingue. Une vulnerabilite doit en nommer une. */
-const CATEGORIES = [
-  "NORMAL", "NORMAL_SKILL", "ACTIVE_THIRD", "ULTIMATE", "TAG_SKILL"
-];
+const { EFFETS_SUR_LA_CIBLE,
+  CATEGORIES_DE_COMPETENCE } = require("./helpers/effets-cible");
 
 const nu = texte => (texte || "").replace(/\[#?[0-9A-Fa-f-]*\]/g, "");
 const identifiants = new Set();
@@ -85,16 +82,14 @@ Object.keys(TABLE).forEach(perso => {
           Object.prototype.hasOwnProperty.call(ligne, "stat"),
           quoi + " : une ligne porte `stat` OU `effet`, exactement un des deux");
         if(surLaCible){
-          assert.ok(
-            ["defense", "defenseCritique", "vulnerabiliteCategorie"]
-              .includes(ligne.effet),
+          assert.ok(EFFETS_SUR_LA_CIBLE.includes(ligne.effet),
             quoi + " : effet inconnu sur la cible -> " + ligne.effet);
           assert.equal(ligne.cibleEnnemi, true,
             quoi + " : un effet sur la cible doit porter cibleEnnemi:true");
           /* Une vulnerabilite DOIT nommer sa categorie : sans elle, elle
              tomberait dans aucun seau et serait cochable sans rien faire. */
           if(ligne.effet === "vulnerabiliteCategorie"){
-            assert.ok(CATEGORIES.includes(ligne.categorie),
+            assert.ok(CATEGORIES_DE_COMPETENCE.includes(ligne.categorie),
               quoi + " : categorie inconnue -> " + ligne.categorie);
           }
         }else{
@@ -114,11 +109,13 @@ Object.keys(TABLE).forEach(perso => {
           quoi + " : une valeur absente s'omet, elle ne vaut jamais zero");
 
         /* LA GARDE. Le nombre qui suit la phrase citee doit valoir la valeur
-           stockee - ou, pour une ligne indexee sur l'ATK, son TAUX. */
+           stockee - ou, pour une ligne indexee sur l'ATK, son TAUX ; ou, pour
+           une valeur a cumuls, le pas d'UN cumul. */
+        const aDesCumuls = Object.prototype.hasOwnProperty.call(ligne, "cumuls");
+        const brut = aDesCumuls ? ligne.parCumul : ligne.valeur;
         const attenduPrincipal = ligne.indexeSurAtk
           ? ligne.indexeSurAtk.taux / 100
-          : (ligne.unite === "ten-thousandths"
-            ? ligne.valeur / 100 : ligne.valeur);
+          : (ligne.unite === "ten-thousandths" ? brut / 100 : brut);
         assert.equal(
           nombreApres(texte, ligne.provenance.phrase, quoi), attenduPrincipal,
           quoi + " : le texte du palier " + palier + " annonce un autre nombre "
@@ -143,6 +140,30 @@ Object.keys(TABLE).forEach(perso => {
           assert.ok(!Object.prototype.hasOwnProperty.call(ligne, "phrasePlafond"),
             quoi + " : un plafond n'a de sens que sur une ligne indexee");
         }
+
+        /* LES CUMULS. Une valeur a cumuls est un PRODUIT, et le produit se
+           VERIFIE : deux phrases, deux nombres, et `valeur` comparee a leur
+           multiplication. Sans cela, « 5 % x 20 cumuls = 100 % » serait un
+           calcul de tete que rien ne relirait - et une erreur de facteur dix
+           passerait sans bruit. */
+        assert.equal(aDesCumuls,
+          Object.prototype.hasOwnProperty.call(ligne, "parCumul"),
+          quoi + " : `cumuls` et `parCumul` vont ensemble, ou pas du tout");
+        assert.equal(aDesCumuls,
+          Object.prototype.hasOwnProperty.call(ligne.provenance, "phraseCumuls"),
+          quoi + " : une valeur a cumuls doit citer la phrase de son compte");
+        if(aDesCumuls){
+          assert.ok(Number.isInteger(ligne.cumuls) && ligne.cumuls > 1,
+            quoi + " : un compte de cumuls est un entier superieur a un");
+          assert.equal(
+            nombreApres(texte, ligne.provenance.phraseCumuls, quoi + " (cumuls)"),
+            ligne.cumuls,
+            quoi + " : le texte annonce un autre nombre de cumuls que la table");
+          assert.equal(ligne.parCumul * ligne.cumuls, ligne.valeur,
+            quoi + " : la valeur doit etre le PRODUIT du pas par le nombre de "
+              + "cumuls, soit " + (ligne.parCumul * ligne.cumuls) + ", recu "
+              + ligne.valeur);
+        }
       });
     });
   });
@@ -152,7 +173,7 @@ Object.keys(TABLE).forEach(perso => {
    l'equipe ou la cible. Les treize autres sont NOMMEES dans l'en-tete de
    data/potentiels-equipe.js avec la raison de leur absence. Ce compte empeche
    qu'un oubli passe inapercu. */
-assert.equal(lignes, 14, "14 lignes attendues, recu " + lignes);
+assert.equal(lignes, 16, "16 lignes attendues, recu " + lignes);
 
 /* data/potentiels.js n'emploie PAS d'espace insecable, contrairement a
    stats-build.js. Si la source changeait d'avis, les phrases citees ici
@@ -183,17 +204,22 @@ assert.equal(lignes, 14, "14 lignes attendues, recu " + lignes);
     element:"thunder", porteurs:[porteur(extra)]
   }).map(ligne => ligne.id);
 
-  /* LE PALIER COMMANDE. Au palier 10, le T6 et le T10 sortent ; au palier 6,
-     le T6 seul ; au palier 5, rien. C'est le coeur de ce module : sans lui, un
-     coequipier a peine debloque rendrait les buffs d'un palier 10. */
+  /* LE PALIER COMMANDE, et il commande CUMULATIVEMENT : au palier 10, les
+     trois paliers ecrits sortent ; au palier 6, les deux premiers ; au palier
+     4, aucun. C'est le coeur de ce module - sans lui, un coequipier a peine
+     debloque rendrait les buffs d'un palier 10. */
   assert.deepEqual(plain(idsPour({ estLeHeros:true }).sort()),
-    ["gowther-baton-t10-degats-crit", "gowther-baton-t6-attaque-foudre"],
-    "au palier 10, les deux paliers ecrits doivent sortir");
+    ["gowther-baton-t10-degats-crit", "gowther-baton-t5-resistance-crit",
+      "gowther-baton-t6-attaque-foudre"],
+    "au palier 10, les trois paliers ecrits doivent sortir");
   assert.deepEqual(plain(idsPour({ palier:6, estLeHeros:true })),
-    ["gowther-baton-t6-attaque-foudre"],
+    ["gowther-baton-t5-resistance-crit", "gowther-baton-t6-attaque-foudre"],
     "au palier 6, le palier 10 ne doit pas sortir");
-  assert.deepEqual(plain(idsPour({ palier:5, estLeHeros:true })), [],
-    "au palier 5, rien de ce qui est ecrit n'est encore ouvert");
+  assert.deepEqual(plain(idsPour({ palier:5, estLeHeros:true })),
+    ["gowther-baton-t5-resistance-crit"],
+    "au palier 5, seul le premier palier ecrit est ouvert");
+  assert.deepEqual(plain(idsPour({ palier:4, estLeHeros:true })), [],
+    "au palier 4, rien de ce qui est ecrit n'est encore ouvert");
   assert.deepEqual(plain(idsPour({ palier:null, estLeHeros:true })), [],
     "palier inconnu : rien, jamais tout");
 
@@ -207,17 +233,22 @@ assert.equal(lignes, 14, "14 lignes attendues, recu " + lignes);
     ["gowther-livre-t10-defense-crit"],
     "chaque arme a sa propre branche de potentiels");
 
-  /* Un potentiel « soi » porte par un COEQUIPIER n'atteint pas le heros. */
-  assert.deepEqual(plain(idsPour({})), ["gowther-baton-t6-attaque-foudre"],
+  /* Un potentiel « soi » porte par un COEQUIPIER n'atteint pas le heros - ici
+     le T10, seul des trois a ne viser que son porteur. */
+  assert.deepEqual(plain(idsPour({})),
+    ["gowther-baton-t5-resistance-crit", "gowther-baton-t6-attaque-foudre"],
     "le potentiel « soi » d'un coequipier ne doit pas atteindre le heros");
 
-  /* L'element filtre par-dessus, comme pour les soutiens et les tenues. */
+  /* L'element filtre par-dessus, comme pour les soutiens et les tenues, et il
+     ne mord QUE sur les lignes qui nomment un element : le T5 vise l'ennemi
+     sans condition d'attribut, donc il survit a un build Feu. */
   assert.deepEqual(
     plain(potentielsEquipeApplicables({
       element:"fire", porteurs:[porteur({ estLeHeros:true })]
-    })),
-    [],
-    "un build Feu ne recoit pas les potentiels Foudre de Gowther");
+    }).map(l => l.id)),
+    ["gowther-baton-t5-resistance-crit"],
+    "un build Feu ne recoit pas les potentiels FOUDRE de Gowther, mais garde "
+      + "ce qui n'a pas d'element");
 
   /* Une ligne indexee sur l'ATK : chiffree quand l'ATK est connue, au plafond
      sinon, et le drapeau `repli` dit lequel des deux. */

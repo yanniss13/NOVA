@@ -271,8 +271,25 @@
     if(!nombreFini(base) || base <= 0) return null;
 
     const facteurs = facteursHorsConstante(stats, cible);
+    /* La resistance critique de la cible se reduit en POINTS, comme sa defense
+       critique juste en dessous, et pour la meme raison : les deux sont des
+       taux en dix-milliemes que le jeu retranche l'un a l'autre.
+
+       Ce n'est pas une pure deduction. L'outil de reference expose ce debuff
+       sous le nom `d-ecr` et il ne figure PAS parmi ses champs mesures inertes
+       (RAPPORT-analyse-tapscreen.md, section 4, qui nomme `eai`, `d-edi`,
+       `d-nadmg` et `d-epr`). Son voisin `d-ecdr`, lui, a ete mesure en points
+       - retrancher « 50 » a une defense critique de 50 donne 0, pas 25 - et
+       rien ne suggere que les deux champs voisins se comportent autrement.
+
+       Le plancher a zero est un garde-fou : sur-reduire ne doit pas RENDRE du
+       critique a la cible. */
+    const resistCritCible = Math.max(
+      0, (Number(cible.critResist) || 0)
+        - Math.max(0, Number(stats.reductionResistanceCritique) || 0)
+    );
     const critPropre = Math.min(PLAFOND_PROPRE, Math.max(
-      0, (Number(stats.critRate) || 0) - (Number(cible.critResist) || 0)
+      0, (Number(stats.critRate) || 0) - resistCritCible
     ));
     const critAllie = Math.max(0, Number(stats.critRateAllie) || 0);
     const taux = Math.min(PLAFOND_TOTAL, critPropre + critAllie) / RAPPORT;

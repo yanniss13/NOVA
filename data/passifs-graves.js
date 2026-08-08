@@ -47,9 +47,9 @@
 //
 // CE QUI N'Y FIGURE PAS, ET POURQUOI. Sur les 68 tenues, 28 n'ont aucun effet
 // offensif - barrieres, soins, recharges, jauges, deplacement. Restaient 26
-// passifs offensifs pour leur seul porteur et 14 qui buffent l'equipe. TRENTE
-// tenues sont transcrites ici. Les douze autres ne le sont pas, et il vaut
-// mieux le dire que les approximer :
+// passifs offensifs pour leur seul porteur et 14 qui buffent l'equipe.
+// TRENTE-DEUX tenues sont transcrites ici. Les dix autres ne le sont pas, et
+// il vaut mieux le dire que les approximer :
 //
 //   Chevalier sacre prometteur (gil-thunder)   « degats infliges aux ennemis
 //     affectes par Electrocution » : un bonus GLOBAL, dont aucun code de stat
@@ -58,10 +58,6 @@
 //   Chevalier sacre a la visiere en etoile (jericho) et Piste de la flamme
 //     cramoisie (guila)   « resistance au Deluge » : une resistance de jauge,
 //     distincte de la resistance elementaire que la cible porte.
-//   Fille de la foret et de la terre (tioreh)   « degats de competence normale
-//     SUBIS PAR L'ENNEMI » : une vulnerabilite de la cible. La verser dans le
-//     bonus du heros supposerait que le jeu confond les deux - meme raison qui
-//     tient les reductions de defense elementaire hors de buffs-supports.js.
 //   Le Serpent de l'Envie (diane) et Dignite de la sainte (elaine)   leur
 //     plafond s'ecrit « (Max\u00a0: 56%, 24%) », et le second nombre ne suit aucune
 //     phrase STABLE d'un niveau a l'autre, puisque le premier change avec le
@@ -92,7 +88,13 @@
 //     Batir une reduction sur un socle conteste ferait deux erreurs au lieu
 //     d'une.
 //
-// Ces douze reviendront le jour ou le moteur portera le seau qui leur manque.
+// Ces dix reviendront le jour ou le moteur portera le seau qui leur manque.
+// Deux l'ont deja fait : Fille de la foret et de la terre (tioreh) et
+// Seigneur des ombres (drake) attendaient toutes deux un seau de reduction de
+// RESISTANCE critique, qui existe desormais. La premiere attendait en plus la
+// vulnerabilite par categorie, arrivee avec les potentiels d'equipe. C'est
+// exactement ce que cette liste est censee produire : des retours, pas des
+// oublis.
 window.SEVEN_DS_PASSIFS_GRAVES = {
   "7ds-armures-ssr/Armure liee/Aventure du prince.webp":[
     {
@@ -291,6 +293,36 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       element:null,
       niveaux:[2500, 3000, 3500],
       provenance:{ phrase:"Augmente les dégâts de compétence normale de " }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Fille de la forêt et de la terre.webp":[
+    {
+      /* Cette tenue a longtemps ete NOMMEE dans la liste des absentes : ses
+         deux effets visent la cible, et le moteur n'avait de seau pour aucun
+         des deux. Les deux existent maintenant. */
+      id:"tioreh-fille-foret-resistance-crit",
+      libelle:"Coups sur cible en Combustion : résistance crit. de l'ennemi −42 %",
+      cible:"allies",
+      cibleEnnemi:true,
+      effet:"resistanceCritique",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[3000, 3600, 4200],
+      provenance:{ phrase:"(Max\u00a0: " }
+    },
+    {
+      id:"tioreh-fille-foret-vulnerabilite-competence-normale",
+      libelle:"Cumuls au maximum : compétence normale subie par l'ennemi +30 %",
+      cible:"allies",
+      cibleEnnemi:true,
+      effet:"vulnerabiliteCategorie",
+      categorie:"NORMAL_SKILL",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[1000, 2000, 3000],
+      provenance:{ phrase:"subis par l'ennemi de " }
     }
   ],
   "7ds-armures-ssr/Armure liee/Formalité de l'érudite en chef.webp":[
@@ -529,6 +561,20 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:null,
       niveaux:[3200, 4000, 4800],
+      provenance:{ phrase:"(Max\u00a0: " }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Seigneur des ombres.webp":[
+    {
+      id:"drake-seigneur-ombres-resistance-crit",
+      libelle:"Coups sur cible à défense crit. réduite : résistance crit. de l'ennemi −70 %",
+      cible:"allies",
+      cibleEnnemi:true,
+      effet:"resistanceCritique",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[5000, 6000, 7000],
       provenance:{ phrase:"(Max\u00a0: " }
     }
   ],

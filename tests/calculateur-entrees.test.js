@@ -10,6 +10,7 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 const { loadApp, plain } = require("./helpers/load-app");
+const { EFFETS_SUR_LA_CIBLE } = require("./helpers/effets-cible");
 
 const racine = path.join(__dirname, "..");
 
@@ -54,7 +55,7 @@ tousLesBuffs.forEach(buff => {
     buff.id + " : une entree porte `stat` OU `effet`, exactement un des deux");
 
   if(surLaCible){
-    assert.ok(["defense", "defenseCritique"].includes(buff.effet),
+    assert.ok(EFFETS_SUR_LA_CIBLE.includes(buff.effet),
       buff.id + " : effet inconnu sur la cible -> " + buff.effet);
     assert.equal(buff.cible, "ennemi",
       buff.id + " : un malus sur la cible doit porter cible:\"ennemi\"");
@@ -92,6 +93,19 @@ tousLesBuffs.forEach(buff => {
   }
 });
 
+/* Le nombre qui suit une phrase, apres avoir verifie qu'elle apparait
+   EXACTEMENT une fois - sinon on ne saurait pas de quel nombre on parle. */
+function nombreApres(texte, phrase, quoi){
+  const morceaux = texte.split(phrase);
+  assert.equal(morceaux.length, 2,
+    quoi + " : la phrase doit apparaitre EXACTEMENT une fois, trouvee "
+      + (morceaux.length - 1) + " fois\n  cherche : " + phrase);
+  const trouve = /^(-?\d+(?:[.,]\d+)?)\s*%?/.exec(morceaux[1]);
+  assert.ok(trouve && trouve[1],
+    quoi + " : aucun nombre ne suit la phrase\n  cherche : " + phrase);
+  return Number(trouve[1].replace(",", "."));
+}
+
 /* La provenance doit designer une competence REELLE du support, et sa phrase
    doit etre un extrait LITTERAL de sa description francaise. C'est ce qui
    empeche une valeur inventee de s'installer discretement. */
@@ -105,6 +119,38 @@ SUPPORTS.forEach(slug => {
     assert.ok(nue.includes(buff.provenance.phrase),
       buff.id + " : la phrase n'est pas un extrait de " + source.nomFr
         + "\n  cherche : " + buff.provenance.phrase);
+
+    /* LES CUMULS, et c'est le seul endroit de ce fichier ou les nombres sont
+       relus un a un. Une valeur a cumuls est un PRODUIT - « 2 % par cumul,
+       (Max : 10 fois) » vaut 2000 - et ce produit etait jusqu'ici pose de
+       tete : le texte publiait 2 et 10, la table stockait 2000, et une erreur
+       de facteur dix serait passee sans bruit.
+
+       Deux phrases, deux nombres, et le produit compare. Le transcripteur ne
+       peut plus se tromper en silence. */
+    const aDesCumuls = Object.prototype.hasOwnProperty.call(buff, "cumuls");
+    assert.equal(aDesCumuls,
+      Object.prototype.hasOwnProperty.call(buff, "parCumul"),
+      buff.id + " : `cumuls` et `parCumul` vont ensemble, ou pas du tout");
+    assert.equal(aDesCumuls,
+      Object.prototype.hasOwnProperty.call(buff.provenance, "phraseCumuls"),
+      buff.id + " : une valeur a cumuls doit citer la phrase de son compte");
+    if(!aDesCumuls) return;
+
+    assert.ok(Number.isInteger(buff.cumuls) && buff.cumuls > 1,
+      buff.id + " : un compte de cumuls est un entier superieur a un");
+    assert.equal(
+      nombreApres(nue, buff.provenance.phrase, buff.id + " (par cumul)"),
+      buff.parCumul / 100,
+      buff.id + " : le texte annonce une autre valeur par cumul que la table");
+    assert.equal(
+      nombreApres(nue, buff.provenance.phraseCumuls, buff.id + " (cumuls)"),
+      buff.cumuls,
+      buff.id + " : le texte annonce un autre nombre de cumuls que la table");
+    assert.equal(buff.parCumul * buff.cumuls, buff.valeur,
+      buff.id + " : la valeur doit etre le PRODUIT du pas par le nombre de "
+        + "cumuls, soit " + (buff.parCumul * buff.cumuls) + ", recu "
+        + buff.valeur);
   });
 });
 
