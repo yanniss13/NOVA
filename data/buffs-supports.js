@@ -21,6 +21,14 @@
 //                                     par (1 - valeur)
 //               "defenseCritique"     sa defense critique, en POINTS retranches
 //               "resistanceCritique"  sa resistance critique, en POINTS aussi
+//               "vulnerabiliteGlobale"  « augmente les degats subis de N % » :
+//                                     tout ce que la cible encaisse, sans
+//                                     distinction de categorie ni d'element
+//
+//     PIEGE, et il a deja coute une ligne : ces effets se cachent souvent dans
+//     la DEFINITION d'un etat - « ※ Extinction : … augmente les degats subis
+//     de 100 % » - et non dans la phrase principale de la competence. Lire les
+//     seules premieres phrases fait manquer les plus gros buffs de la table.
 //
 //     Ces formes ne sont pas interchangeables et la difference est mesuree,
 //     pas supposee : chez l'outil de reference, `d-edef` multiplie la defense
@@ -349,6 +357,29 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       provenance:{
         gameId:"gowther_book_skill_q",
         phrase:"réduit sa défense de 20% pendant 30s"
+      }
+    },
+    {
+      /* OUBLI, pas exclusion : cette ligne aurait du figurer ici des le
+         premier lot. Elle n'a pas ete ecartee pour une raison documentee -
+         elle est simplement passee entre les mailles, parce qu'elle se cache
+         dans la definition d'un EFFET (« ※ Extinction : … ») et non dans la
+         phrase principale de la competence.
+
+         C'est de loin le plus gros buff de la table : +100 % de degats subis
+         DOUBLE la ligne de degats. Il ne dure que 5 s et se reapplique toutes
+         les 60 s, donc le cocher est une declaration forte. */
+      id:"gowther-extinction-degats-subis",
+      libelle:"Extinction : dégâts subis par l'ennemi +100 % (5 s)",
+      cible:"ennemi",
+      effet:"vulnerabiliteGlobale",
+      operation:"add",
+      valeur:10000,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"gowther_book_skill_r",
+        phrase:"Augmente les dégâts subis de 100%"
       }
     },
     {
