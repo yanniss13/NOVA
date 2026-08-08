@@ -1,7 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
-const { loadApp } = require("./helpers/load-app");
+const { loadApp, plain } = require("./helpers/load-app");
 
 const { hooks } = loadApp();
 const {
@@ -254,6 +254,89 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
      percement pour Akumu. Le zero est une hypothese, et ce test existe pour
      qu'elle reste visible plutot que de se fondre dans les autres. */
   assert.equal(CIBLE_REFERENCE.resistancePercement, 0);
+}
+
+/* Les 21 cibles selectionnables : les 20 niveaux d'Akumu, puis le mannequin.
+
+   Le releve integral vit dans docs/akumu-20-niveaux.md. Deux niveaux servent
+   de temoins parce qu'ils ont ete verifies a la main sur la page source. */
+{
+  const CIBLES = plain(hooks.CIBLES);
+  assert.equal(CIBLES.length, 21);
+
+  const parId = Object.fromEntries(CIBLES.map(c => [c.id, c]));
+
+  /* Le niveau 1 est exactement l'ancienne CIBLE_REFERENCE : ajouter les
+     niveaux ne doit deplacer aucun chiffre deja affiche. */
+  assert.deepEqual(parId["akumu-1"], Object.assign({
+    id:"akumu-1", niveau:1, hp:2090121
+  }, plain(CIBLE_REFERENCE)));
+
+  assert.equal(parId["akumu-20"].def, 38544);
+  assert.equal(parId["akumu-20"].critResist, 12235);
+  assert.equal(parId["akumu-20"].critDmgResist, 21582);
+  assert.equal(parId["akumu-20"].hp, 96543801);
+
+  /* Constantes verifiees sur les 20 paliers, pas sur deux. */
+  CIBLES.filter(c => c.niveau).forEach(cible => {
+    assert.equal(cible.resistanceElementaire, 3000, cible.id);
+    assert.equal(cible.faiblesse, 0, cible.id);
+    assert.equal(cible.resistancePercement, 0, cible.id);
+  });
+
+  /* La DEF et les deux stats critiques croissent a chaque palier : une
+     coquille de transcription se verrait ici. */
+  const niveaux = CIBLES.filter(c => c.niveau)
+    .sort((a, b) => a.niveau - b.niveau);
+  assert.equal(niveaux.length, 20);
+  niveaux.forEach((cible, index) => {
+    assert.equal(cible.niveau, index + 1);
+    if(index === 0) return;
+    const avant = niveaux[index - 1];
+    assert.ok(cible.def > avant.def, "DEF croissante au palier " + cible.niveau);
+    assert.ok(cible.critResist > avant.critResist, cible.id);
+    assert.ok(cible.critDmgResist > avant.critDmgResist, cible.id);
+    assert.ok(cible.hp > avant.hp, cible.id);
+  });
+}
+
+/* Le mannequin d'entrainement : aucune defense, aucune resistance.
+
+   Il rend visible le coefficient brut d'une competence — degats = ATK x coef —
+   parce que tous les autres facteurs valent 1. C'est aussi la seule cible que
+   l'outil de reference possede AUSSI, donc la seule sur laquelle les deux
+   calculateurs se comparent sans qu'on force les stats de l'un dans l'autre. */
+{
+  const mannequin = plain(hooks.CIBLES).find(c => c.id === "mannequin");
+  assert.ok(mannequin, "le mannequin doit figurer dans les cibles");
+  assert.equal(mannequin.def, 0);
+  assert.equal(mannequin.critResist, 0);
+  assert.equal(mannequin.critDmgResist, 0);
+  assert.equal(mannequin.resistanceElementaire, 0);
+  assert.equal(mannequin.faiblesse, 0);
+  assert.equal(mannequin.resistancePercement, 0);
+  assert.equal(mannequin.niveau, null);
+
+  const sortie = degatsAttendus({
+    stats:{ atk:1000, critRate:0, critDamage:0 },
+    competence:COUP_SIMPLE,
+    cible:mannequin
+  });
+  assert.equal(sortie.sansCritique, 1000, "degats = ATK x coef, sans perte");
+
+  /* Sans defense, aucun coup ne peut reveler la constante : le refus est le
+     meme que celui de l'outil de reference sur son propre mannequin, et il est
+     NOMME pour que la vue explique quoi corriger au lieu d'un « impossible »
+     sec. */
+  assert.deepEqual(
+    plain(calibrerConstante({
+      degatsObserves:1000,
+      stats:{ atk:1000 },
+      competence:COUP_SIMPLE,
+      cible:mannequin
+    })),
+    { erreur:"defense-nulle" }
+  );
 }
 
 /* Le percement de defense (« Defense Shatter ») s'AJOUTE au rapport de

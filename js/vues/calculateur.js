@@ -16,7 +16,7 @@ import { equippedEnumOf } from "../metier/armes.js";
 import { rosterHeroSnapshot } from "../metier/equipe-modele.js";
 import { calculateHeroStats, groupBuildStatResults } from "../metier/stats-calcul.js";
 import {
-  CIBLE_REFERENCE, CONSTANTE_PAR_DEFAUT, calibrerConstante
+  CIBLES, CONSTANTE_PAR_DEFAUT, calibrerConstante
 } from "../metier/degats-calcul.js";
 import { CalibrationStore } from "../donnees/calibration-store.js";
 import {
@@ -54,6 +54,11 @@ import { showView } from "./navigation.js";
     charId:null,
     typeArme:null,
     heroImpose:null,
+    /* Le palier d'Akumu affronte par la confrerie, ou le mannequin. Le defaut
+       reste le palier 1 : c'etait la cible unique avant que les vingt niveaux
+       ne soient releves, et ajouter le choix ne doit deplacer aucun chiffre
+       tant que le membre n'a rien touche. */
+    cibleId:"akumu-1",
     retouches:{},
     coches:new Set(),
     /* La calibration : index de la competence choisie, degats saisis, et le
@@ -63,6 +68,13 @@ import { showView } from "./navigation.js";
     degatsObserves:"",
     messageCalibration:null
   };
+
+  /* La cible choisie, toujours une entree reelle du catalogue : un identifiant
+     devenu inconnu retombe sur le premier palier plutot que de rendre
+     `undefined` et de vider tout le tableau. */
+  function cibleCourante(){
+    return CIBLES.find(cible => cible.id === etat.cibleId) || CIBLES[0];
+  }
 
   /* La SAISIE s'oublie a chaque changement de build ; la constante mesuree,
      elle, reste rangee par build. Garder un message issu d'un autre
@@ -334,7 +346,7 @@ import { showView } from "./navigation.js";
           + "pas encore ce que tu verras en jeu."}));
 
     const chiffrees = resultatsParCompetence({
-      competences, entrees, cible:CIBLE_REFERENCE
+      competences, entrees, cible:cibleCourante()
     }).filter(ligne => ligne.resultat).map(ligne => ligne.competence);
 
     if(!chiffrees.length){
@@ -384,7 +396,7 @@ import { showView } from "./navigation.js";
         const resultat = calibrerConstante({
           stats:entrees,
           competence:chiffrees[choisi],
-          cible:CIBLE_REFERENCE,
+          cible:cibleCourante(),
           degatsObserves:Number(etat.degatsObserves)
         });
         if(resultat && Number.isFinite(resultat.constante)){
@@ -420,7 +432,7 @@ import { showView } from "./navigation.js";
 
   function tableauDesCompetences(charId, competences, entrees){
     const lignes = resultatsParCompetence({
-      competences, entrees, cible:CIBLE_REFERENCE
+      competences, entrees, cible:cibleCourante()
     });
     const corps = el("tbody");
     lignes.forEach(ligne => {
@@ -457,11 +469,12 @@ import { showView } from "./navigation.js";
 
   function avertissements(){
     return el("section",{class:"calc-avertissement"},[
-      el("p",{text:"Cible : " + CIBLE_REFERENCE.nom + ". La source ne publie "
-        + "qu'un seul jeu de statistiques alors que le boss a vingt niveaux de "
-        + "difficulté — ce chiffre ne vaut donc pas pour un niveau choisi."}),
-      el("p",{text:"Sur Akumu, l'élément ne change rien : les huit résistances "
-        + "élémentaires valent 30 % et aucune faiblesse n'est publiée."}),
+      el("p",{text:cibleCourante().niveau
+        ? "Sur Akumu, l'élément ne change rien : les huit résistances "
+          + "élémentaires valent 30 % et aucune faiblesse n'est publiée."
+        : "Le mannequin n'a ni défense ni résistance : les dégâts affichés "
+          + "valent exactement l'ATK multipliée par le coefficient de la "
+          + "compétence. La constante C n'y change rien et ne s'y calibre pas."}),
       el("strong",{text:"Non inclus dans le calcul"}),
       el("ul",{},[
         el("li",{text:"les passifs conditionnels du héros et de son équipement"}),
@@ -469,9 +482,43 @@ import { showView } from "./navigation.js";
         el("li",{text:"les debuffs appliqués à la cible"}),
         el("li",{text:"les temps d'animation, donc toute notion de dégâts par seconde"}),
         el("li",{text:"les attaques normales, les compétences de relève et les attaques combinées"}),
-        el("li",{text:"les mécaniques d'Akumu : pierres élémentaires, attaque dorsale, renforcement à chaque mort"})
+        el("li",{text:"les mécaniques d'Akumu : pierres élémentaires, attaque dorsale, renforcement à chaque mort"}),
+        /* Publiee par la source (20 %, constante sur les vingt paliers) mais
+           laissee a zero dans le calcul : voir le commentaire de
+           AKUMU_ELEMENTAIRE dans js/metier/degats-calcul.js. Le dire ici plutot
+           que de le taire, puisque cela gonfle le percement affiche. */
+        el("li",{text:"la résistance au percement du boss (20 %), qui réduirait le percement de défense"})
       ])
     ]);
+  }
+
+  /* Le choix de la cible. Vingt paliers d'Akumu, puis le mannequin.
+
+     Le palier change TOUT le tableau — la defense triple entre le 1 et le 10 —
+     donc il vit en haut du formulaire, a cote du personnage, et pas dans un
+     repli. La constante C calibree, elle, ne depend pas de la cible : elle
+     reste valable d'un palier a l'autre. */
+  function selecteurCible(redessiner){
+    const choix = el("select",{
+      class:"calc-cible",
+      onchange:event => {
+        etat.cibleId = event.target.value;
+        /* La saisie de calibration porte sur un coup observe CONTRE une cible
+           donnee : la garder en changeant de palier la ferait relire comme si
+           elle valait pour le nouveau. */
+        oublierSaisieCalibration();
+        redessiner();
+      }
+    });
+    CIBLES.forEach(cible => {
+      const option = el("option",{
+        value:cible.id,
+        text:cible.niveau ? "Akumu — niveau " + cible.niveau : cible.nom
+      });
+      option.selected = cible.id === etat.cibleId;
+      choix.appendChild(option);
+    });
+    return el("div",{class:"calc-champ"},[el("label",{text:"Cible"}), choix]);
   }
 
   function selecteurs(entries, redessiner){
@@ -520,6 +567,7 @@ import { showView } from "./navigation.js";
     });
     armes.appendChild(rail);
     bloc.appendChild(armes);
+    bloc.appendChild(selecteurCible(redessiner));
     return bloc;
   }
 
@@ -556,7 +604,11 @@ import { showView } from "./navigation.js";
                 dessiner();
               }
             })
-          : null
+          : null,
+        /* La cible ne depend pas du chemin d'entree : un build ouvert depuis
+           une fiche de heros se compare aux memes paliers qu'un build choisi
+           dans le roster. */
+        selecteurCible(dessiner)
       ]));
     } else {
       if(!entries.length){

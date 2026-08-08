@@ -95,6 +95,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   CIBLE_REFERENCE:typeof CIBLE_REFERENCE === "object"
     ? CIBLE_REFERENCE
     : undefined,
+  CIBLES:typeof CIBLES === "object"
+    ? CIBLES
+    : undefined,
   calibrerConstante:typeof calibrerConstante === "function"
     ? calibrerConstante
     : undefined,

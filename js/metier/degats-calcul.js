@@ -31,30 +31,111 @@
   }
 
   /* Valeurs REELLES relevees sur le boss de confrerie, page
-     7dsorigin.app/en/knighthood-boss/demonic-beast-akumu. Jamais inventees.
+     7dsorigin.app/fr/boss-de-confrerie/akumu-bete-demoniaque. Jamais inventees.
 
-     La source ne publie qu'un seul bloc de statistiques alors que le boss a
-     vingt niveaux de difficulte : la vue doit le dire, et rien ici ne doit
-     extrapoler un niveau choisi.
-
-     Les huit resistances elementaires valent 30 % et aucune faiblesse n'est
-     publiee : sur Akumu, l'element ne change rien.
+     Les VINGT niveaux sont desormais publies et releves un par un : le detail
+     et la methode vivent dans docs/akumu-20-niveaux.md. Les niveaux 1 et 20
+     ont ete verifies a la main sur la page source ; entre les deux, DEF, HP et
+     les deux statistiques critiques croissent strictement, ce qu'un test
+     controle. Le palier 10 -> 11 fait un saut irregulier sur DEF et HP : c'est
+     leur donnee, relue deux fois, pas une coquille de transcription.
 
      `nom` duplique volontairement BOSS_NAME de js/donnees/boss-store.js : un
      module metier pur n'importe pas depuis js/donnees/. */
-  const CIBLE_REFERENCE = {
-    nom:"Akumu, bête démoniaque",
-    def:3454,
-    critResist:2000,
-    critDmgResist:5000,
+
+  /* niveau, DEF, resistance crit., defense crit., HP — taux en dix-milliemes */
+  const AKUMU_PALIERS = [
+    [1,   3454,  2000,  5000,  2090121],
+    [2,   4161,  2200,  5400,  2923402],
+    [3,   5045,  2420,  5832,  3974208],
+    [4,   6009,  2662,  6299,  5180389],
+    [5,   7054,  2928,  6803,  6541945],
+    [6,   8316,  3221,  7347,  8198714],
+    [7,   9819,  3543,  7935, 10197308],
+    [8,  11436,  3897,  8570, 12413428],
+    [9,  13165,  4287,  9256, 14847073],
+    [10, 14453,  4716,  9996, 17700232],
+    [11, 17891,  5188, 10796, 24022303],
+    [12, 19521,  5707, 11660, 28721553],
+    [13, 21333,  6278, 12593, 34135530],
+    [14, 23326,  6906, 13600, 40334151],
+    [15, 25500,  7597, 14688, 47387335],
+    [16, 27674,  8357, 15863, 54999870],
+    [17, 30029,  9193, 17132, 63560194],
+    [18, 32747, 10112, 18503, 73549970],
+    [19, 35464, 11123, 19983, 84238935],
+    [20, 38544, 12235, 21582, 96543801]
+  ];
+
+  /* EN SUSPENS, et volontairement laisse en l'etat.
+
+     La source publie DEUX nombres elementaires, et on ne sait pas encore
+     lequel joue quel role : huit resistances par element a 30 %, et une
+     « resistance elementaire de base » a 50 % dont l'infobulle dit
+     « reduction de degats plate appliquee a tous les elements, EN PLUS des
+     faiblesses ».
+
+     Chez l'outil de reference, le facteur multiplicatif vient du champ
+     `eflatres` — flat resistance — et les valeurs par element tombent dans le
+     seau additif. Si la correspondance des deux vocabulaires se confirme, ces
+     deux lignes deviennent resistanceElementaire 5000 et faiblesse -3000, et
+     tous les chiffres contre Akumu baissent d'environ moitie.
+
+     Le test qui trancherait tient en une lecture : la fiche du Demon rouge sur
+     7dsorigin, au niveau de monde ou DEF = 3373, doit afficher une resistance
+     elementaire de base de 15 % pour correspondre au `eflatres = 15` mesure.
+     Tant que personne ne l'a lue, on ne change rien : se tromper ici fausserait
+     les vingt paliers d'un facteur deux. */
+  const AKUMU_ELEMENTAIRE = {
     resistanceElementaire:3000,
     faiblesse:0,
     /* NON PUBLIEE, et sans equivalent actif dans l'outil de reference, dont
-       les champs de resistance au percement sont mesures inertes. Akumu ne
-       figure d'ailleurs pas dans sa base de 64 ennemis. Zero reproduit donc
-       son calcul a l'identique ; ce n'est pas pour autant un releve. */
+       les champs de resistance au percement sont mesures inertes. La source
+       publie pourtant une « resistance au percement » de 20 %, constante sur
+       les vingt paliers : la passer a 2000 rapprocherait du jeu et eloignerait
+       de la reference, et la facon dont le jeu la retranche n'est pas mesuree.
+       Zero reproduit le calcul de la reference ; ce n'est pas un releve. */
     resistancePercement:0
   };
+
+  const CIBLES = AKUMU_PALIERS.map(([niveau, def, critResist, critDmgResist, hp]) =>
+    Object.assign({
+      id:"akumu-" + niveau,
+      nom:"Akumu, bête démoniaque",
+      niveau,
+      def,
+      critResist,
+      critDmgResist,
+      hp
+    }, AKUMU_ELEMENTAIRE)
+  ).concat([{
+    /* Le mannequin d'entrainement. Tous ses facteurs valent 1, donc les degats
+       affiches SONT le coefficient de la competence multiplie par l'ATK : c'est
+       la seule cible qui rend ce coefficient lisible de l'exterieur.
+
+       C'est aussi la seule que l'outil de reference possede AUSSI, donc la
+       seule ou les deux calculateurs se comparent sans forcer les statistiques
+       de l'un dans l'autre — et la seule que les deux inconnues elementaires
+       ci-dessus ne peuvent pas contaminer, puisqu'il n'a aucune resistance. */
+    id:"mannequin",
+    nom:"Mannequin d'entraînement",
+    niveau:null,
+    def:0,
+    critResist:0,
+    critDmgResist:0,
+    hp:null,
+    resistanceElementaire:0,
+    faiblesse:0,
+    resistancePercement:0
+  }]);
+
+  /* Le palier 1, garde sous son ancien nom : il etait la cible unique avant
+     que les vingt niveaux ne soient releves, et rien de ce qui etait affiche
+     ne doit bouger du seul fait d'avoir ajoute les autres. */
+  const CIBLE_REFERENCE = (() => {
+    const { id, niveau, hp, ...reste } = CIBLES[0];
+    return reste;
+  })();
 
   const RAPPORT = 10000;
 
@@ -318,6 +399,10 @@
    tests/helpers/load-app.js verifie par expression reguliere qu'aucune
    declaration ne survit a la concatenation, et une prose mal coupee la
    declenche. */
+/* CIBLE_REFERENCE n'est plus exportee : la vue choisit desormais son palier
+   dans CIBLES. Elle reste dans le module — les tests la lisent par le
+   chargeur — parce qu'elle documente le point de depart, le palier 1, celui
+   que la page affichait quand il etait la seule cible connue. */
 export {
-  CIBLE_REFERENCE, CONSTANTE_PAR_DEFAUT, calibrerConstante, degatsAttendus
+  CIBLES, CONSTANTE_PAR_DEFAUT, calibrerConstante, degatsAttendus
 };

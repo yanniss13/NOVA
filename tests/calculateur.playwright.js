@@ -276,7 +276,11 @@ const STORAGE_KEY = "confrerie7ds.teams";
 
     /* Les pourcentages s'affichent en POURCENTS et non en dix-milliemes : un
        membre a 30 % de taux critique doit lire 30, pas 3000. */
-    const champTaux = page.locator(".calc-form .calc-champ").nth(1)
+    /* Repere par son LIBELLE, pas par son rang : l'ordre des champs a deja
+       change une fois — l'ajout du selecteur de cible — et un index decale
+       faisait echouer ce test sur un champ qui n'avait rien a se reprocher. */
+    const champTaux = page.locator(".calc-champ")
+      .filter({ hasText:"Taux critique" })
       .locator("input[type=number]");
     const affiche = Number(await champTaux.inputValue());
     assert.ok(affiche >= 0 && affiche < 200,
@@ -300,8 +304,36 @@ const STORAGE_KEY = "confrerie7ds.teams";
     /* Les limites annoncees a l'ecran, pas releguees en commentaire. */
     const bas = await page.locator("#calculateurBody").textContent();
     assert.match(bas, /Non inclus dans le calcul/);
-    assert.match(bas, /vingt niveaux de difficulté/,
-      "la page doit dire que la cible n'a qu'un seul jeu de stats publie");
+    assert.match(bas, /résistance au percement du boss/,
+      "la page doit dire que la résistance au percement n'est pas appliquée");
+
+    /* Le choix de la cible : vingt paliers d'Akumu, puis le mannequin. */
+    const cible = page.locator(".calc-cible");
+    assert.equal(await cible.locator("option").count(), 21);
+    assert.equal(await cible.inputValue(), "akumu-1",
+      "le palier 1 reste le defaut, pour ne deplacer aucun chiffre affiche");
+
+    /* Le mannequin n'a ni defense ni resistance : les degats affiches valent
+       exactement l'ATK multipliee par le coefficient, donc ils MONTENT quand
+       on quitte un boss qui absorbe. Le verifier de bout en bout garantit que
+       le choix atteint reellement le calcul, pas seulement l'affichage. */
+    const avant = (await page
+      .locator(".calc-table tbody tr:not(.calc-muette)").first()
+      .locator(".calc-valeur").allTextContents())
+      .map(t => Number(t.replace(/[^0-9]/g, "")));
+    await cible.selectOption("mannequin");
+    await page.locator(".calc-table tbody tr").first().waitFor();
+    const surMannequin = (await page
+      .locator(".calc-table tbody tr:not(.calc-muette)").first()
+      .locator(".calc-valeur").allTextContents())
+      .map(t => Number(t.replace(/[^0-9]/g, "")));
+    assert.ok(surMannequin[0] > avant[0],
+      "sur le mannequin, le coup non critique doit depasser celui du boss, recu : "
+        + surMannequin.join(", ") + " contre " + avant.join(", "));
+
+    const basMannequin = await page.locator("#calculateurBody").textContent();
+    assert.match(basMannequin, /ne s'y calibre pas/,
+      "la page doit dire que la constante C ne se calibre pas sans defense");
 
     assert.deepEqual(errors, [], "aucune erreur de page attendue");
   } finally {
