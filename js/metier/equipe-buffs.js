@@ -34,27 +34,36 @@ import { buffsApplicables } from "./calculateur-entrees.js";
       .includes("_" + enumArme.toLowerCase() + "_");
   }
 
-  /* La valeur effective d'un buff, et si elle est un repli.
-
-     Trois buffs valent un pourcentage de l'ATK de leur LANCEUR, plafonne. Sans
-     equipe, ou quand le build du support n'est pas lisible, on rend `valeur` -
-     c'est-a-dire le plafond, donc exactement le chiffre d'avant ce module.
+  /* « X % de l'attaque du heros, au plus P » : le chiffre, ou null quand l'ATK
+     du lanceur est inconnue. Deux tables s'en servent - les buffs de soutien
+     ici, les potentiels d'equipe chez le voisin - et elles doivent rendre le
+     MEME nombre, d'ou cette fonction plutot qu'une formule recopiee.
 
      HYPOTHESE, non mesuree : « 30 % de l'attaque du heros » est lu comme la
      seule ATK, sans l'attaque elementaire. Le moteur de degats, lui, ajoute
      l'attaque elementaire a l'ATK pour les composantes de base `atk` : les deux
      lectures ne coincident pas, et rien ne dit laquelle le jeu applique ici.
      La vue passe B_Atk. */
+  function valeurIndexeeSurAtk(indexe, atk){
+    const nombre = Number(atk);
+    if(!indexe || !Number.isFinite(nombre) || nombre <= 0) return null;
+    return Math.min(
+      indexe.plafond, Math.round(indexe.taux * nombre / TAUX_PLEIN)
+    );
+  }
+
+  /* La valeur effective d'un buff, et si elle est un repli.
+
+     Trois buffs valent un pourcentage de l'ATK de leur LANCEUR, plafonne. Sans
+     equipe, ou quand le build du support n'est pas lisible, on rend `valeur` -
+     c'est-a-dire le plafond, donc exactement le chiffre d'avant ce module. */
   function chiffre(buff, membre){
     const indexe = buff.indexeSurAtk;
-    const atk = membre ? Number(membre.atk) : NaN;
-    const chiffrable = Boolean(indexe) && Number.isFinite(atk) && atk > 0;
+    const chiffree = valeurIndexeeSurAtk(indexe, membre && membre.atk);
     return Object.assign({}, buff, {
       arme:membre ? membre.typeArme : null,
-      valeur:chiffrable
-        ? Math.min(indexe.plafond, Math.round(indexe.taux * atk / TAUX_PLEIN))
-        : buff.valeur,
-      repli:Boolean(indexe) && !chiffrable
+      valeur:chiffree === null ? buff.valeur : chiffree,
+      repli:Boolean(indexe) && chiffree === null
     });
   }
 
@@ -78,4 +87,4 @@ import { buffsApplicables } from "./calculateur-entrees.js";
       .map(buff => chiffre(buff, membre)));
   }
 
-export { buffsDeLEquipe };
+export { buffsDeLEquipe, valeurIndexeeSurAtk };

@@ -148,6 +148,31 @@ import { degatsAttendus } from "./degats-calcul.js";
       .map(([categorie, code]) => [code, categorie])
   );
 
+  /* Une VULNERABILITE de la cible : « augmente les degats de competence
+     normale SUBIS PAR L'ENNEMI de 50 % ». Ce n'est pas un bonus du heros, et
+     la table le dit - la ligne porte `effet`, pas un code de stat, parce que
+     libelles-stats.json ne decrit que des statistiques de heros.
+
+     Elle atterrit pourtant dans le MEME seau additif que le bonus du heros,
+     et ce choix est une ANALOGIE, pas une mesure. Ce qui la fonde : la
+     FAIBLESSE de l'ennemi, mesuree chez l'outil de reference, tombe elle
+     aussi dans le seau additif des bonus au lieu de former un facteur separe
+     (RAPPORT-analyse-tapscreen.md, section 5). C'est le cas connu le plus
+     proche - une propriete de la cible qui amplifie les degats.
+
+     Rien ne la mesure directement, et rien ne le pourra bientot : l'outil de
+     reference n'a AUCUN champ de degats subis par categorie. Le jour ou une
+     mesure existera, c'est ici qu'elle se posera, en un seul endroit. */
+  const VULNERABILITE_CATEGORIE = "vulnerabiliteCategorie";
+
+  /* La categorie que vise une ligne cochee, quelle que soit sa forme : le code
+     de stat d'un bonus du heros, ou la categorie nommee d'une vulnerabilite. */
+  function categorieVisee(buff){
+    if(!buff) return null;
+    if(buff.effet === VULNERABILITE_CATEGORIE) return buff.categorie || null;
+    return CATEGORIE_DE_LA_STAT[buff.stat] || null;
+  }
+
   /* Les bonus de categorie apportes par des buffs COCHES.
 
      Ils ne peuvent pas passer par entreesDuCalcul, dont les seaux valent pour
@@ -160,7 +185,7 @@ import { degatsAttendus } from "./degats-calcul.js";
   function bonusCategorieDesBuffs(buffsCoches){
     const liste = Array.isArray(buffsCoches) ? buffsCoches : [];
     return liste.reduce((bonus, buff) => {
-      const categorie = CATEGORIE_DE_LA_STAT[buff && buff.stat];
+      const categorie = categorieVisee(buff);
       const valeur = Number(buff && buff.valeur);
       if(!categorie || !Number.isFinite(valeur)) return bonus;
       bonus[categorie] = (bonus[categorie] || 0) + valeur;

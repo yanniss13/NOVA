@@ -16,7 +16,10 @@
 .calc-avertissement{font-size:12px;color:var(--muted);margin:8px 0 16px}
 .calc-avertissement ul{margin:6px 0 0 18px}
 
-.calc-soutiens{
+/* Les trois sources de buffs - soutiens, tenues gravées, potentiels - portent
+   le même habillage : empilées sans séparateur, elles se lisaient comme une
+   seule liste, et le membre ne voyait plus d'où venait chaque case. */
+.calc-soutiens,.calc-tenues,.calc-potentiels{
   margin:16px 0;border-top:1px solid var(--line-soft);padding-top:12px
 }
 /* En colonnes : vingt-quatre buffs en liste plate faisaient défiler la page
