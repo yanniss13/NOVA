@@ -740,3 +740,318 @@ build » pourrait laisser penser isolément.
 | `ds` = stat héros ou debuff ennemi ? | Indéterminé dans leur documentation ; mesuré qu'ils le traitent structurellement à part de `d-edef` (bloc différent, rôle différent dans la formule) |
 | `d-ecdr` points ou multiplicateur | **Points**, confirmé sans ambiguïté (50 sur 50 → 0, pas 25) |
 | Protocole de calibration de C | Documenté texto ; recalibration nécessaire à chaque nouveau potentiel débloqué (fait à ne pas perdre) |
+
+---
+
+# Session 4 (2026-08-08) — le moteur est-il conscient des catégories de compétence ?
+
+Même périmètre que les trois sessions précédentes : boîte noire, `calculator.html` ouvert
+directement, mode **Advanced**, aucune lecture de bundle, aucune extraction de leur base
+d'ennemis, aucun contournement. Une mesure à la fois, tout synchrone.
+
+**Aucune mesure des sessions 1 à 3 n'a été refaite**, à deux exceptions volontaires et
+signalées : les valeurs de référence `out-nc` = 63 658 (Special) et 236 170 (Ultimate)
+retombent au chiffre près sur celles des sessions 1 et 2 — c'est le témoin qui prouve que
+cette session travaille bien sur la même configuration, pas une reprise de mesure.
+
+## Configuration commune (relevé intégral, tous les champs, y compris non touchés)
+
+`char-sel=Diane` · `build-sel=Axe` · `pot-sel=0 — None` · `enemy-sel=Red Demon (World Level 4)`
+· mode Normal Attack = **Full Combo** (par défaut)
+
+| Bloc | Champs et valeurs |
+|---|---|
+| Stats perso | `atk=100000`, `ea=0`, `rhp=0`, `cd=0`, `cc=0`, `edi=0`, `eai=0`, `ds=0`, `dmgpct=0`, `skilldmg=0` |
+| Calibration | `cval=5600` |
+| Cible (auto-rempli, **jamais écrasé cette fois**) | `edef=3373`, `ecr=15`, `ecdr=42.93`, `eew=20`, `eflatres=15`, `epr=0` |
+| Buffs alliés | `d-cc=0`, `d-cd=0`, `d-atk=0`, `d-nadmg=0`, `d-tagdmg=0`, `d-edi=0` |
+| Debuffs ennemi | `d-ecr=0`, `d-ecdr=0`, `d-edef=0`, `d-epr=0`, `d-eew=0`, `d-elementres=0`, `d-def=0`, `d-hp=0` |
+
+Contrairement à la session 3, `edef` n'a **pas** été écrasé : la DEF native du boss (3373) est
+utilisée telle quelle, donc aucun risque de réveiller le cas spécial du Training Dummy.
+
+Cartes de compétence lues sur chaque onglet, et ligne de base à `skilldmg=0` :
+
+| Onglet | Compétence affichée | Coef | `out-nc` de base — MESURÉ |
+|---|---|---|---|
+| Normal Attack | *Earth Cleaver* | 109 % (3 coups 26/31/52) | **69 387** |
+| Normal Skill | *Charged Slash* | 205 % | **130 498** |
+| Special Skill | *Quake Smash* | 100 % / 307 % (le moteur utilise le 100 %) | **63 658** |
+| Ultimate Move | *Rock Blast* | 371 % | **236 170** |
+| Tag Skill | *Ground Down* | 143 % | **91 030** |
+
+**Repère de lecture pour tous les tableaux qui suivent** : sur Red Demon WL4 la faiblesse
+élémentaire vaut +20 %, donc un `+50` qui tombe dans le seau additif unique ne donne pas ×1,5
+mais **×1,41667 = (1,2 + 0,5) / 1,2** — exactement la pente établie en session 1. Un facteur
+mesuré à 1,41667 signifie donc « le champ entre dans le seau », et 1,00000 signifie « champ
+mort ».
+
+## Incident de méthode (à ne pas répéter)
+
+En cours de session 1re passe, `atktab-tag.click()` a cessé d'être pris en compte (l'onglet
+actif restait `atktab-ultimate`) **et** `out-nc` s'est figé sur 236 170 : les captures d'écran
+échouaient sur *« Script injection timed out »* alors que le JavaScript répondait toujours.
+Détecté parce que l'onglet Special renvoyait le chiffre de l'Ultimate — un résultat
+arithmétiquement impossible. **Toutes les mesures de la question 1.c ont été refaites sur une
+page rechargée à neuf**, et à partir de là chaque relevé vérifie dans le même appel synchrone
+l'onglet actif, la carte de compétence affichée, et le retour à la ligne de base après reset.
+Rien de ce qui figure ci-dessous ne provient de la fenêtre polluée.
+
+---
+
+## QUESTION 1 — le moteur est-il conscient des catégories ?
+
+**Réponse courte : les deux à la fois, et c'est le point important.**
+Un mécanisme d'aiguillage par catégorie **existe** dans leur moteur — `d-tagdmg` ne s'active
+que sur l'onglet Tag, c'est prouvé. Mais `skilldmg`, le champ principal, **ne l'utilise pas** :
+c'est un multiplicateur global appliqué aveuglément sur les cinq onglets. Ils ont donc le
+dispositif, et ils ne s'en servent pas là où on l'attendrait.
+
+### 1.a — `skilldmg = 50`, rien d'autre modifié, sur les cinq onglets
+
+| Onglet | `skilldmg` | `out-nc` — MESURÉ | Facteur vs base | Verdict |
+|---|---|---|---|---|
+| Normal Attack | 0 | 69 387 | — | ligne de base |
+| Normal Attack | 50 | **98 298** | **×1,41667** | s'applique |
+| Normal Skill | 0 | 130 498 | — | ligne de base |
+| Normal Skill | 50 | **184 872** | **×1,41667** | s'applique |
+| Special Skill | 0 | 63 658 | — | ligne de base |
+| Special Skill | 50 | **90 182** | **×1,41667** | s'applique |
+| Ultimate Move | 0 | 236 170 | — | ligne de base |
+| Ultimate Move | 50 | **334 574** | **×1,41667** | s'applique |
+| Tag Skill | 0 | 91 030 | — | ligne de base |
+| Tag Skill | 50 | **128 960** | **×1,41667** | s'applique |
+
+Toutes les lignes : MESURÉ. Facteur identique aux cinq décimales sur les cinq onglets.
+
+**Conclusion, à dire clairement : leur champ `skilldmg` est un simple multiplicateur global,
+et le joueur est seul responsable de la cohérence.** Le moteur ne vérifie jamais que la valeur
+tapée correspond à la compétence sélectionnée.
+
+Deux faits d'interface qui confirment cette lecture, sans ambiguïté possible :
+
+1. **Le libellé du champ est renommé à chaque changement d'onglet** — MESURÉ :
+   « Normal attack damage increase % » / « Normal skill damage increase % » / « Special skill
+   damage increase % » / « Ultimate move damage increase % » / « Tag skill damage increase % ».
+   L'UI fait donc croire à cinq champs distincts là où il n'y en a qu'un.
+2. **Le texte d'aide sous le champ dit la chose explicitement** — relevé texto :
+   > *« From stat screen — use the value matching your skill type (Normal Attack / Normal Skill / Special / Ultimate) »*
+
+   C'est une consigne adressée à l'utilisateur, pas une garantie du moteur : ils demandent au
+   joueur de saisir la bonne valeur en face du bon onglet, précisément parce que rien côté
+   calcul ne le vérifie.
+
+### 1.b — `d-nadmg = 50` (« Bonus normal attack damage %, ally buff ») sur les cinq onglets
+
+| Onglet | `d-nadmg` | `out-nc` — MESURÉ | Facteur | Verdict |
+|---|---|---|---|---|
+| Normal Attack | 0 | 69 387 | — | ligne de base |
+| Normal Attack | **50** | **69 387** | **×1,00000** | **mort** |
+| Normal Skill | 50 | 130 498 | ×1,00000 | mort |
+| Special Skill | 50 | 63 658 | ×1,00000 | mort |
+| Ultimate Move | 50 | 236 170 | ×1,00000 | mort |
+| Tag Skill | 50 | 91 030 | ×1,00000 | mort |
+
+Toutes les lignes : MESURÉ.
+
+**Vérifié trois fois plutôt que deux, comme demandé**, parce qu'une découverte sur cet onglet
+aurait été majeure :
+
+| Contre-épreuve | Résultat — MESURÉ |
+|---|---|
+| `d-nadmg = 500` (au lieu de 50) sur Normal Attack | 69 387 — **identique**, y compris `out-crit` 39 599 et `out-avg` 69 387 |
+| `d-nadmg = 50` sur Normal Attack en mode **1st Hit Only** | 16 551 — identique à la base 1st-hit |
+| Reprise complète sur page rechargée à neuf | 69 387 — identique |
+| **Témoin** : `d-atk = 50` sur ce même onglet Normal Attack | **104 080** = ×1,50000 exactement |
+
+Le témoin est ce qui rend le verdict solide : dans cette configuration précise, sur cet onglet
+précis, le bloc des buffs alliés **est bien lu** par le calcul. `d-nadmg` n'est donc pas
+victime d'un panneau non chargé ou d'un artefact de session — le champ est bel et bien inerte.
+**Aucune découverte à rapporter ici : la session 1 avait raison, et elle avait raison sur les
+cinq onglets, pas seulement sur celui qu'elle avait testé.**
+
+### 1.c — `d-tagdmg = 50` (jamais testé jusqu'ici) sur les cinq onglets
+
+| Onglet | `d-tagdmg` | `out-nc` — MESURÉ | Facteur | Verdict |
+|---|---|---|---|---|
+| Normal Attack | 50 | 69 387 | ×1,00000 | inerte sur cet onglet |
+| Normal Skill | 50 | 130 498 | ×1,00000 | inerte sur cet onglet |
+| Special Skill | 50 | 63 658 | ×1,00000 | inerte sur cet onglet |
+| Ultimate Move | 50 | 236 170 | ×1,00000 | inerte sur cet onglet |
+| **Tag Skill** | **50** | **128 960** | **×1,41667** | **ACTIF** |
+
+Toutes les lignes : MESURÉ.
+
+**`d-tagdmg` est vivant, et uniquement sur l'onglet Tag Skill.** C'est la découverte de la
+session, et elle a été confirmée **trois fois de façon indépendante** : une première fois dans
+la fenêtre où la page s'est ensuite figée, une deuxième fois après rechargement complet de la
+page, une troisième fois isolément avec relevé intégral des 31 champs du formulaire
+(`out-nc` 128 960, `out-crit` 73 597, `out-avg` 128 960, tous les autres champs à 0 sauf
+`atk=100000`, `cval=5600` et les stats natives du boss).
+
+Dans quel seau tombe-t-il ? Le seau additif unique, comme tout le reste — MESURÉ :
+
+| Onglet Tag | `skilldmg` | `d-tagdmg` | `out-nc` — MESURÉ |
+|---|---|---|---|
+| Tag Skill | 0 | 0 | 91 030 |
+| Tag Skill | 0 | 100 | **166 889** |
+| Tag Skill | 100 | 0 | **166 889** |
+| Tag Skill | 50 | 50 | **166 889** |
+
+Trois chemins différents, un seul et même chiffre : `d-tagdmg` et `skilldmg` sont
+interchangeables au point près dans le seau `Bracket = 1 + faiblesse + (…)/100`. Prédiction
+avant mesure : 91 030 × (1,2+1,0)/1,2 = 166 888,3 → affiché 166 889. Aucun paramètre ajusté
+après coup.
+
+### Contrôle supplémentaire non demandé mais utile : `d-edi` est-il lui aussi conditionnel ?
+
+Puisque `d-tagdmg` s'est révélé conditionné par l'onglet, j'ai repassé `d-edi` (déclaré mort en
+session 1) sur les cinq onglets, pour vérifier que ce verdict-là ne souffrait pas du même angle
+mort.
+
+| Onglet | `d-edi` | `out-nc` — MESURÉ | Facteur |
+|---|---|---|---|
+| Normal Attack | 50 | 69 387 | ×1,00000 |
+| Normal Skill | 50 | 130 498 | ×1,00000 |
+| Special Skill | 50 | 63 658 | ×1,00000 |
+| Ultimate Move | 50 | 236 170 | ×1,00000 |
+| Tag Skill | 50 | 91 030 | ×1,00000 |
+
+**`d-edi` est mort sur les cinq onglets. La session 1 est confirmée**, cette fois sur toute la
+surface.
+
+### Ce que ça dit de leur architecture (DÉDUIT du tableau ci-dessus)
+
+Leur moteur contient bien un test « la compétence sélectionnée est-elle de catégorie X ? » —
+`d-tagdmg` en est la preuve directe, il ne peut pas s'activer sur un seul onglet par hasard.
+Ce test est câblé pour la catégorie Tag et **pour elle seule** parmi les champs mesurés :
+son symétrique évident `d-nadmg`, dont le nom annonce exactement le même comportement pour la
+catégorie Normal Attack, ne se déclenche sur aucun onglet, pas même le sien. C'est un
+demi-mécanisme : soit un branchement oublié, soit un chantier laissé en plan.
+
+Et le champ le plus utilisé du formulaire, `skilldmg`, contourne complètement ce mécanisme :
+il est renommé par catégorie à l'écran, mais appliqué globalement dans le calcul.
+
+---
+
+## QUESTION 2 — `skilldmg` se souvient-il de l'onglet ?
+
+**Non. Une seule valeur globale, jamais remise à zéro, jamais mémorisée par catégorie.**
+
+Protocole : saisie de 50 sur l'onglet Special, puis parcours des quatre autres onglets, puis
+retour sur Special. Lecture de `skilldmg` **avant** toute réécriture à chaque étape.
+
+| Étape | `skilldmg` lu — MESURÉ | Libellé du champ à cet instant — MESURÉ |
+|---|---|---|
+| Saisie de 50 sur Special Skill | **50** | « Special skill damage increase % » |
+| → Ultimate Move | **50** | « Ultimate move damage increase % » |
+| → Normal Attack | **50** | « Normal attack damage increase % » |
+| → Tag Skill | **50** | « Tag skill damage increase % » |
+| → Normal Skill | **50** | « Normal skill damage increase % » |
+| → retour Special Skill | **50** | « Special skill damage increase % » |
+
+La valeur traverse les cinq onglets sans jamais bouger. Mesure indépendante faite plus tôt dans
+la session, sur un autre chemin (Normal Attack → Normal Skill), même résultat : 50 conservé.
+
+**Le piège concret pour l'utilisateur, MESURÉ** : il tape son « +50 % Ultimate » depuis son
+écran de stats sur l'onglet Ultimate, passe sur l'onglet Special pour comparer — et son +50 %
+d'Ultimate s'applique intégralement au Special, sous un libellé qui affiche désormais
+« Special skill damage increase % ». Rien ne l'avertit. C'est exactement le scénario que leur
+texte d'aide essaie de prévenir à la main.
+
+---
+
+## QUESTION 3 — cumul et bornes de `skilldmg`
+
+Onglet fixe : **Special Skill** (*Quake Smash*), configuration commune inchangée, seul
+`skilldmg` varie. Ligne de base 63 658.
+
+| `skilldmg` | `out-nc` — MESURÉ | Facteur vs base | Prédiction du seau additif `(1,2 + s/100)/1,2` |
+|---|---|---|---|
+| 0 | **63 658** | 1,00000 | 63 658 |
+| 25 | **76 920** | 1,20833 | 76 920 |
+| 50 | **90 182** | 1,41667 | 90 182 |
+| 100 | **116 706** | 1,83333 | 116 706 |
+| 200 | **169 754** | 2,66667 | 169 755 |
+| 500 | **328 898** | 5,16667 | 328 898 |
+| 2000 | **1 124 618** | 17,66667 | 1 124 618 |
+| −50 | **37 134** | 0,58333 | 37 134 |
+
+Toutes les lignes : MESURÉ. La colonne « prédiction » est calculée à partir du seau établi en
+session 1, sans aucun ajustement — l'écart maximal sur les huit points est de **1 unité
+d'affichage** (arrondi).
+
+**Plafond : aucun.** La progression reste strictement linéaire jusqu'à 2000 (soit ×17,67), et
+`2000` est accepté sans le moindre avertissement. Le champ a `min="0"`, `step="0.01"` et
+**pas d'attribut `max`**.
+
+**Valeurs négatives : acceptées, et elles retranchent réellement.** La validation HTML5 native
+les signale (`checkValidity()` = `false`, message *« La valeur doit être supérieure ou égale à
+0 »*) mais **ne bloque pas `calculate()`**. Poussé plus loin :
+
+| `skilldmg` | `out-nc` — MESURÉ | `out-crit` | `out-avg` |
+|---|---|---|---|
+| −100 | **10 610** | 6 055 | 10 610 |
+| **−120** | **0** | 0 | 0 |
+| −150 | **−15 914** | −9 082 | −15 914 |
+| −200 | **−42 438** | −24 220 | −42 438 |
+
+**Il n'y a aucun plancher.** Le seau s'annule exactement à `skilldmg = −120`, c'est-à-dire à
+`−100 × (1 + faiblesse)` = −120 sur cette cible, puis passe en négatif et le calculateur
+**affiche des dégâts négatifs**, sans erreur ni message. Leur formule n'écrit donc pas de
+`max(0, …)` autour du seau offensif.
+
+**Contradiction assumée avec le comportement de `ds`** : la session 2 avait mesuré `ds = -50`
+comme **clampé à 0** (sortie identique à `ds = 0`). Ce n'est pas le cas de `skilldmg`, qui
+descend sans filet jusqu'aux valeurs négatives. Les deux champs sont donc traités
+différemment vis-à-vis du signe — ce n'est pas une politique générale de l'outil, c'est un
+clamp posé sur un champ et pas sur l'autre.
+
+---
+
+## QUESTION 4 — le variant multi-coups (Full Combo / 1st Hit Only)
+
+Onglet Normal Attack, *Earth Cleaver* : 109 % au total, 3 coups de 26 % / 31 % / 52 %.
+
+| Mode | `skilldmg` | `out-nc` — MESURÉ |
+|---|---|---|
+| **Full Combo** | 0 | **69 387** |
+| **Full Combo** | 50 | **98 298** |
+| **1st Hit Only** | 0 | **16 551** |
+| **1st Hit Only** | 50 | **23 447** |
+
+Toutes les lignes : MESURÉ.
+
+| Rapport | Valeur | Lecture |
+|---|---|---|
+| 98 298 / 69 387 | **1,41667** | facteur de `skilldmg` en Full Combo |
+| 23 447 / 16 551 | **1,41665** | facteur de `skilldmg` en 1st Hit Only |
+| 16 551 / 69 387 | **0,23853** | = 26 / 109 exactement (0,238532) |
+
+**Réponse : le facteur relatif est rigoureusement le même sur les deux réglages** (l'écart de
+0,000 02 est l'arrondi d'affichage sur un nombre 4 fois plus petit). Le bouton « 1st Hit Only »
+ne fait que substituer le coefficient de compétence — 26 % au lieu de 109 % — dans une formule
+par ailleurs inchangée ; `skilldmg` agit ensuite en aval, sur le résultat, exactement de la
+même façon. Il n'y a **aucune interaction** entre le variant multi-coups et le bonus.
+
+Contrôle joint, déjà cité en 1.b : `d-nadmg = 50` en mode 1st Hit Only donne 16 551, soit la
+ligne de base — le champ ne se réveille pas davantage sur le premier coup seul.
+
+---
+
+## Récapitulatif de la session 4
+
+| Question | Réponse | Statut |
+|---|---|---|
+| `skilldmg` est-il aiguillé par catégorie ? | **Non** — multiplicateur global sur les cinq onglets, ×1,41667 partout. Le libellé change, le calcul non. Le joueur est seul garant de la cohérence. | MESURÉ |
+| `d-nadmg` s'anime-t-il sur Normal Attack ? | **Non**, sur aucun des cinq onglets, ni à 50 ni à 500 ni en 1st-hit. Témoin `d-atk` actif sur le même onglet. La session 1 est confirmée et élargie. | MESURÉ |
+| `d-tagdmg` (jamais testé) | **VIVANT, et uniquement sur l'onglet Tag Skill** — ×1,41667. Confirmé 3 fois, dont une sur page rechargée à neuf. Tombe dans le même seau additif que `skilldmg` (100 seul = 100 seul = 50+50 = 166 889). | MESURÉ |
+| Leur moteur connaît-il les catégories ? | **Oui, le mécanisme existe** (prouvé par `d-tagdmg`) **mais `skilldmg` ne l'utilise pas** et `d-nadmg`, son symétrique évident, ne se déclenche jamais. Demi-mécanisme. | MESURÉ pour les faits, DÉDUIT pour l'intention |
+| `d-edi` réexaminé sur les 5 onglets | Mort partout. Session 1 confirmée. | MESURÉ |
+| `skilldmg` mémorisé par onglet ? | **Non** — valeur unique et globale, conservée à l'identique sur les cinq onglets et au retour. Seul le libellé est renommé. | MESURÉ |
+| Plafond de `skilldmg` | **Aucun** jusqu'à 2000 (×17,67), linéarité parfaite, pas d'attribut `max`. | MESURÉ |
+| `skilldmg` négatif | **Accepté et appliqué.** Pas de plancher : seau nul à −120, dégâts **négatifs** affichés en dessous. Contredit le clamp observé sur `ds` en session 2 — les deux champs ne suivent pas la même règle. | MESURÉ |
+| Full Combo vs 1st Hit Only | **Facteur identique** (1,41667 vs 1,41665). Le variant ne change que le coefficient (26 % au lieu de 109 %) ; `skilldmg` agit en aval sans interaction. | MESURÉ |
+
+**Rien n'est resté indéterminé dans cette session.** Les quatre questions ont toutes reçu une
+réponse mesurée.
