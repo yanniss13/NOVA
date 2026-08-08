@@ -174,40 +174,39 @@ const STORAGE_KEY = "confrerie7ds.teams";
         "une competence non chiffrable ne doit afficher aucun chiffre");
     }
 
-    /* LE CHOIX D'EQUIPE. Localise par son LIBELLE, jamais par un index : un
-       `.calc-champ` de plus decale tout reperage positionnel, et c'est
-       exactement ce qui a casse ce fichier une fois deja. */
-    const choixEquipe = page.locator(".calc-champ", { hasText:"Équipe" })
-      .locator("select");
-    await choixEquipe.waitFor();
-    assert.equal(await choixEquipe.inputValue(), "",
-      "le calculateur doit demarrer sans equipe : aucun chiffre ne bouge tant "
+    /* LES EMPLACEMENTS DE COEQUIPIER. Localises par LIBELLE, jamais par
+       index : un `.calc-champ` de plus decale tout reperage positionnel, et
+       c'est exactement ce qui a casse ce fichier une fois deja.
+
+       Ce parcours est celui d'une equipe LOCALE, sans compte - et le roster
+       est lie au compte. Il n'y a donc rien a choisir ici, et c'est
+       precisement ce qu'on verifie : les emplacements existent, ils sont
+       vides, et la page DIT pourquoi au lieu de laisser trois listes muettes.
+
+       Le filtrage lui-meme est couvert par tests/equipe-buffs.test.js, qui
+       n'a besoin d'aucune session pour l'exercer. */
+    const premierCoequipier = page
+      .locator(".calc-champ", { hasText:"Coéquipier 1" }).locator("select");
+    await premierCoequipier.waitFor();
+    assert.equal(await premierCoequipier.inputValue(), "",
+      "les emplacements doivent demarrer vides : aucun chiffre ne bouge tant "
         + "que le membre n'a rien touche");
-
-    const soutiensAvant = await page.locator(".calc-soutien").count();
-    assert.ok(soutiensAvant > 0,
-      "sans equipe, tous les soutiens du catalogue doivent etre proposes");
-
-    /* L'equipe de la fixture ne porte que Meliodas, qui n'apporte aucun buff
-       modelise : choisir cette equipe doit donc VIDER la liste, et le dire au
-       lieu de la laisser muette. */
-    await choixEquipe.selectOption({ index:1 });
-    await page.locator(".calc-table tbody tr").first().waitFor();
-    const soutiensApres = await page.locator(".calc-soutien").count();
-    assert.ok(soutiensApres < soutiensAvant,
-      "choisir une equipe qui n'apporte rien doit reduire la liste, recu "
-        + soutiensApres + " apres " + soutiensAvant);
-    assert.match(
-      await page.locator(".calc-soutiens").textContent(),
-      /n'apporte de buff modélisé|Aucun buff modélisé/,
-      "un coequipier sans buff modelise doit etre nomme, pas tu"
+    assert.equal(
+      await page.locator(".calc-coequipier").count(), 3,
+      "trois emplacements, le heros calcule occupant le quatrieme siege"
     );
+    assert.match(
+      await page.locator(".calc-coequipiers").textContent(),
+      /Aucun build dans ton roster/,
+      "sans roster, la page doit dire pourquoi aucun coequipier n'est proposable"
+    );
+    assert.ok(await premierCoequipier.isDisabled(),
+      "un emplacement sans rien a proposer doit etre desactive");
 
-    /* Revenir a « Aucune equipe » restaure la liste complete. */
-    await choixEquipe.selectOption("");
-    await page.locator(".calc-table tbody tr").first().waitFor();
-    assert.equal(await page.locator(".calc-soutien").count(), soutiensAvant,
-      "revenir a « Aucune equipe » doit restaurer la liste complete");
+    /* Sans coequipier retenu, tous les soutiens du catalogue restent
+       proposes : c'est le comportement d'avant, et il ne doit pas bouger. */
+    assert.ok(await page.locator(".calc-soutien").count() > 0,
+      "sans coequipier, tous les soutiens du catalogue doivent etre proposes");
 
     /* Les buffs de soutien sont DECOCHES par defaut : le chiffre par defaut
        est celui du heros seul. */

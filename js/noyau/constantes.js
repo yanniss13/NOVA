@@ -40,9 +40,14 @@
   /* Pas de prefixe `cloud.` : la constante C se mesure sur SON build et ne se
      partage pas, voir js/donnees/calibration-store.js. */
   const CALIBRATION_KEY = "confrerie7ds.calibration";
-  /* Quelle equipe le calculateur regarde. Un reglage d'ecran, pas une donnee
-     de confrerie : les EQUIPES vivent dans STORAGE_KEY et se synchronisent. */
-  const EQUIPE_CHOISIE_KEY = "confrerie7ds.calculateur.equipe";
+  /* Les coequipiers que le calculateur prend en compte. Un reglage d'ecran,
+     pas une donnee de confrerie : on ne retient que des couples personnage +
+     arme designant des builds du roster, jamais les builds eux-memes.
+
+     L'ancienne cle `confrerie7ds.calculateur.equipe` retenait un identifiant
+     d'equipe et devient morte. Elle n'est pas migree : elle ne portait qu'un
+     reglage d'ecran, et le nouveau store ignore ce qu'il ne sait pas relire. */
+  const COEQUIPIERS_KEY = "confrerie7ds.calculateur.coequipiers";
   const MIGRATION_KEY_PREFIX = "confrerie7ds.supabase.migrated.";
 
   const ELEMENTS = {
@@ -98,7 +103,7 @@ export {
   CLOUD_ROSTER_CACHE_KEY,
   CLOUD_COLLECTION_CACHE_KEY,
   CALIBRATION_KEY,
-  EQUIPE_CHOISIE_KEY,
+  COEQUIPIERS_KEY,
   MIGRATION_KEY_PREFIX,
   ELEMENTS,
   WSLOT_ROLES,

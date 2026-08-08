@@ -19,8 +19,9 @@ import {
   CIBLES, CONSTANTE_PAR_DEFAUT, calibrerConstante
 } from "../metier/degats-calcul.js";
 import { CalibrationStore } from "../donnees/calibration-store.js";
-import { EquipeChoisieStore } from "../donnees/equipe-choisie-store.js";
-import { Store } from "../donnees/equipes-store.js";
+import {
+  EMPLACEMENTS_COEQUIPIERS, CoequipiersStore
+} from "../donnees/coequipiers-store.js";
 import {
   STAT_DE_LA_CATEGORIE,
   entreesDeLaCompetence, entreesDuCalcul, resultatsParCompetence
@@ -63,10 +64,10 @@ import { showView } from "./navigation.js";
        ne soient releves, et ajouter le choix ne doit deplacer aucun chiffre
        tant que le membre n'a rien touche. */
     cibleId:"akumu-1",
-    /* L'equipe regardee, restauree du stockage : le membre la retrouve a la
-       visite suivante. `null` vaut « aucune equipe », qui reste le defaut et
-       rend la liste complete des buffs, comme avant ce choix. */
-    equipeId:EquipeChoisieStore.get(),
+    /* Les coequipiers retenus, restaures du stockage. Trois cases vides par
+       defaut : le chiffre reste celui du heros seul tant qu'on n'y touche
+       pas. */
+    coequipiers:CoequipiersStore.get(),
     retouches:{},
     coches:new Set(),
     /* La calibration : index de la competence choisie, degats saisis, et le
@@ -212,36 +213,28 @@ import { showView } from "./navigation.js";
     };
   }
 
-  /* Les equipes lisibles ici et maintenant. Hors ligne ou deconnecte, le store
-     rend ce qu'il a en cache : mieux vaut une liste ancienne qu'un onglet
-     vide. */
-  function equipesDisponibles(){
-    /* `Store`, sans alias : c'est le nom sous lequel les quatre autres vues
-       importent le magasin d'equipes, et le test des imports ne suit pas les
-       renommages. Il ne s'emploie qu'ICI pour que le reste du fichier ne
-       manipule jamais un nom aussi vague. */
-    const liste = Store.all();
-    return Array.isArray(liste) ? liste : [];
+  /* Tous les builds du roster, un par couple personnage + arme.
+
+     C'est le bon grain : l'arme decide quels buffs le coequipier apporte -
+     Daisy au Livre et Daisy a la Baguette n'en donnent pas les memes. Un seul
+     choix plutot que deux, donc, et rien a deviner. */
+  function buildsDuRoster(){
+    return fichesDuMembre()
+      .flatMap(fiche => typesDe(fiche).map(typeArme => ({
+        charId:fiche.charId,
+        typeArme,
+        libelle:nomDuPersonnage(fiche.charId) + " · " + typeArme
+      })))
+      .sort((a, b) => a.libelle.localeCompare(b.libelle, "fr"));
   }
 
-  /* Un identifiant devenu inconnu - equipe supprimee depuis, ou cache d'un
-     autre compte - rend `null` plutot qu'une equipe au hasard : la page
-     retombe alors sur la liste complete, jamais sur une equipe qui n'est pas
-     celle du membre. */
-  function equipeCourante(){
-    if(!etat.equipeId) return null;
-    return equipesDisponibles().find(equipe => equipe.id === etat.equipeId)
-      || null;
-  }
+  /* L'ATK d'un coequipier, ou null si son build n'est pas exploitable.
 
-  /* L'ATK d'un membre d'equipe, ou null si son build n'est pas exploitable.
-
-     Un heros d'equipe a EXACTEMENT la forme qu'attend calculateHeroStats -
-     c'est normalizeHero qui la produit, pour le roster comme pour l'equipe -
-     donc aucune conversion n'est necessaire ici. Son potentiel, son arme et sa
-     tenue gravee entrent dans ce chiffre sans travail supplementaire. */
-  function atkDuMembre(heros){
-    if(!heros || !heros.char) return null;
+     rosterHeroSnapshot rend EXACTEMENT la forme qu'attend calculateHeroStats -
+     la meme que pour le heros calcule - donc son potentiel, son arme et sa
+     tenue gravee entrent dans ce chiffre sans conversion. */
+  function atkDuBuild(heros){
+    if(!heros) return null;
     const result = calculateHeroStats(heros);
     if(result.status !== "valid" && result.status !== "partial") return null;
     const trouve = groupBuildStatResults(result)
@@ -250,19 +243,26 @@ import { showView } from "./navigation.js";
     return trouve && Number.isFinite(trouve.value) ? trouve.value : null;
   }
 
-  /* Les coequipiers reduits a ce dont le module pur a besoin. Les QUATRE
-     sieges comptent, le heros calcule compris : le jeu dit « tous les heros
-     allies », et ses passifs ne sont pas deja dans ses statistiques. */
-  function coequipiersDeLEquipe(){
-    const equipe = equipeCourante();
-    if(!equipe) return null;
-    return (equipe.heroes || [])
-      .filter(heros => heros && heros.char)
-      .map(heros => ({
-        charId:heros.char,
-        typeArme:heros.activeWeaponType,
-        atk:atkDuMembre(heros)
-      }));
+  /* Le build d'un coequipier retenu, ou null si le roster ne le porte plus. */
+  function herosDuChoix(choix){
+    if(!choix) return null;
+    const fiche = ficheDe(choix.charId);
+    return fiche ? rosterHeroSnapshot(fiche, choix.typeArme) : null;
+  }
+
+  /* Les coequipiers reduits a ce dont equipe-buffs.js a besoin. `null` quand
+     aucun emplacement n'est rempli : le module rend alors la liste complete
+     des buffs, comme avant tout choix. */
+  function coequipiersChoisis(){
+    const retenus = etat.coequipiers
+      .map(choix => ({ choix, heros:herosDuChoix(choix) }))
+      .filter(entree => entree.heros);
+    if(!retenus.length) return null;
+    return retenus.map(entree => ({
+      charId:entree.choix.charId,
+      typeArme:entree.choix.typeArme,
+      atk:atkDuBuild(entree.heros)
+    }));
   }
 
   /* Le roster range ses builds par DOSSIER d'image (« Hache »), le catalogue
@@ -341,7 +341,7 @@ import { showView } from "./navigation.js";
   /* Le catalogue nomme les personnages ; la table des buffs ne connait que
      leur slug. On passe par le catalogue, et on capitalise le slug en dernier
      recours plutot que d'afficher « daisy » a l'ecran. */
-  function nomDuSoutien(slug){
+  function nomDuPersonnage(slug){
     const perso = charOf(slug) || {};
     return perso.name || perso.nom || perso.nomFr
       || slug.charAt(0).toUpperCase() + slug.slice(1);
@@ -356,12 +356,12 @@ import { showView } from "./navigation.js";
      continuerait d'agir. */
   function buffsProposes(element){
     return buffsDeLEquipe({
-      element, coequipiers:coequipiersDeLEquipe()
+      element, coequipiers:coequipiersChoisis()
     });
   }
 
   function sectionSoutiens(element, redessiner){
-    const coequipiers = coequipiersDeLEquipe();
+    const coequipiers = coequipiersChoisis();
     const dispo = buffsProposes(element);
     const section = el("section",{class:"calc-soutiens"},[
       el("strong",{text:"Soutiens"}),
@@ -397,8 +397,8 @@ import { showView } from "./navigation.js";
       const armeDuGroupe = buffs.find(buff => buff.arme);
       bloc.appendChild(el("h4",{class:"calc-soutien-nom",
         text:armeDuGroupe
-          ? nomDuSoutien(slug) + " · " + armeDuGroupe.arme
-          : nomDuSoutien(slug)}));
+          ? nomDuPersonnage(slug) + " · " + armeDuGroupe.arme
+          : nomDuPersonnage(slug)}));
       buffs.forEach(buff => {
       /* La case se coche par PROPRIETE, jamais par attribut : `el()` passe
          toute valeur a setAttribute, et setAttribute("checked", undefined)
@@ -434,7 +434,7 @@ import { showView } from "./navigation.js";
     if(coequipiers){
       const muets = coequipiers
         .filter(membre => !dispo.some(buff => buff.support === membre.charId))
-        .map(membre => nomDuSoutien(membre.charId));
+        .map(membre => nomDuPersonnage(membre.charId));
       if(muets.length){
         section.appendChild(el("p",{class:"calc-muette",
           text:"Aucun buff modélisé : " + muets.join(", ") + "."}));
@@ -639,30 +639,74 @@ import { showView } from "./navigation.js";
     return el("div",{class:"calc-champ"},[el("label",{text:"Cible"}), choix]);
   }
 
-  function selecteurEquipe(redessiner){
+  function selecteurCoequipier(index, redessiner){
     const choix = el("select",{
-      class:"calc-equipe",
+      class:"calc-coequipier",
       onchange:event => {
-        etat.equipeId = EquipeChoisieStore.set(event.target.value || null);
-        /* Changer d'equipe change les buffs PROPOSES : ceux qui etaient coches
-           et ne le sont plus n'auraient plus de case pour les decocher, et
-           continueraient d'agir sans rien a l'ecran pour le dire. */
+        const brut = event.target.value || "";
+        const separateur = brut.indexOf("|");
+        const suivants = etat.coequipiers.slice();
+        suivants[index] = separateur > 0
+          ? {
+              charId:brut.slice(0, separateur),
+              typeArme:brut.slice(separateur + 1)
+            }
+          : null;
+        /* Un meme personnage ne peut pas tenir deux sieges : le jeu ne le
+           permet pas, et ses buffs se cumuleraient a tort. Le choisir ici le
+           retire donc de l'emplacement ou il etait. */
+        if(suivants[index]){
+          suivants.forEach((autre, rang) => {
+            if(rang !== index && autre
+              && autre.charId === suivants[index].charId){
+              suivants[rang] = null;
+            }
+          });
+        }
+        etat.coequipiers = CoequipiersStore.set(suivants);
+        /* Changer de coequipier change les buffs PROPOSES : ceux qui etaient
+           coches et ne le sont plus n'auraient plus de case pour etre
+           decoches, et continueraient d'agir sans rien a l'ecran pour le
+           dire. */
         etat.coches.clear();
         redessiner();
       }
     });
-    const aucune = el("option",{ value:"", text:"Aucune équipe" });
-    aucune.selected = !etat.equipeId;
-    choix.appendChild(aucune);
-    equipesDisponibles().forEach((equipe, index) => {
-      const option = el("option",{
-        value:equipe.id,
-        text:equipe.name || "Équipe " + (index + 1)
-      });
-      option.selected = equipe.id === etat.equipeId;
+    const vide = el("option",{ value:"", text:"—" });
+    vide.selected = !etat.coequipiers[index];
+    choix.appendChild(vide);
+    const builds = buildsDuRoster();
+    if(!builds.length) choix.disabled = true;
+    builds.forEach(build => {
+      const valeur = build.charId + "|" + build.typeArme;
+      const retenu = etat.coequipiers[index];
+      const option = el("option",{ value:valeur, text:build.libelle });
+      option.selected = Boolean(retenu)
+        && retenu.charId === build.charId
+        && retenu.typeArme === build.typeArme;
       choix.appendChild(option);
     });
-    return el("div",{class:"calc-champ"},[el("label",{text:"Équipe"}), choix]);
+    return el("div",{class:"calc-champ"},[
+      el("label",{text:"Coéquipier " + (index + 1)}), choix
+    ]);
+  }
+
+  /* Les trois emplacements, dessines ensemble.
+
+     Le roster est lie au COMPTE : MemberRosterStore rend une liste vide sans
+     session. Trois listes vides sans un mot se liraient comme une panne, donc
+     on dit pourquoi il n'y a rien a choisir. */
+  function selecteursCoequipiers(redessiner){
+    const bloc = el("div",{class:"calc-coequipiers"});
+    for(let index = 0; index < EMPLACEMENTS_COEQUIPIERS; index++){
+      bloc.appendChild(selecteurCoequipier(index, redessiner));
+    }
+    if(!buildsDuRoster().length){
+      bloc.appendChild(el("p",{class:"calc-muette",
+        text:"Aucun build dans ton roster : connecte-toi et enregistre un "
+          + "build pour pouvoir choisir des coéquipiers."}));
+    }
+    return bloc;
   }
 
   function selecteurs(entries, redessiner){
@@ -712,7 +756,7 @@ import { showView } from "./navigation.js";
     armes.appendChild(rail);
     bloc.appendChild(armes);
     bloc.appendChild(selecteurCible(redessiner));
-    bloc.appendChild(selecteurEquipe(redessiner));
+    bloc.appendChild(selecteursCoequipiers(redessiner));
     return bloc;
   }
 
@@ -754,7 +798,7 @@ import { showView } from "./navigation.js";
            ouvert depuis une fiche de heros se compare aux memes paliers, et
            avec les memes coequipiers, qu'un build choisi dans le roster. */
         selecteurCible(dessiner),
-        selecteurEquipe(dessiner)
+        selecteursCoequipiers(dessiner)
       ]));
     } else {
       if(!entries.length){
