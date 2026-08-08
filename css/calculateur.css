@@ -19,8 +19,13 @@
 /* Les trois sources de buffs - soutiens, tenues gravées, potentiels - portent
    le même habillage : empilées sans séparateur, elles se lisaient comme une
    seule liste, et le membre ne voyait plus d'où venait chaque case. */
-.calc-soutiens,.calc-tenues,.calc-potentiels{
+.calc-soutiens,.calc-tenues,.calc-potentiels,.calc-supplements{
   margin:16px 0;border-top:1px solid var(--line-soft);padding-top:12px
+}
+/* Une ligne déjà comptée, sans case à cocher : elle doit se lire comme un
+   constat, pas comme une option qu'on aurait oublié de cocher. */
+.calc-supplement-actif{
+  margin:4px 0;font-size:14px;line-height:1.35;color:var(--gold-bright)
 }
 /* En colonnes : vingt-quatre buffs en liste plate faisaient défiler la page
    entière avant d'atteindre le tableau, qui est pourtant l'objet de la page. */
