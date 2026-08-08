@@ -21,9 +21,9 @@ import {
 import { CalibrationStore } from "../donnees/calibration-store.js";
 import {
   STAT_DE_LA_CATEGORIE,
-  buffsApplicables, entreesDeLaCompetence, entreesDuCalcul,
-  resultatsParCompetence
+  entreesDeLaCompetence, entreesDuCalcul, resultatsParCompetence
 } from "../metier/calculateur-entrees.js";
+import { buffsDeLEquipe } from "../metier/equipe-buffs.js";
 import { MemberRosterStore } from "../donnees/roster-store.js";
 import { ModalStack } from "./modal-stack.js";
 import { showView } from "./navigation.js";
@@ -288,8 +288,21 @@ import { showView } from "./navigation.js";
       || slug.charAt(0).toUpperCase() + slug.slice(1);
   }
 
+  /* Les buffs que l'equipe courante propose.
+
+     UNE seule fonction pour les deux lectures - la liste affichee et les cases
+     retenues pour le calcul - parce qu'elles doivent porter les MEMES valeurs.
+     Les lire separement ouvrirait la porte a une case qui applique un chiffre
+     different de celui qu'elle affiche, et a un buff coche puis exclu qui
+     continuerait d'agir. */
+  function buffsProposes(element){
+    /* `coequipiers` reste null tant qu'aucune equipe n'est choisissable : la
+       liste est alors celle d'avant, a l'identique. */
+    return buffsDeLEquipe({ element, coequipiers:null });
+  }
+
   function sectionSoutiens(element, redessiner){
-    const dispo = buffsApplicables(element);
+    const dispo = buffsProposes(element);
     const section = el("section",{class:"calc-soutiens"},[
       el("strong",{text:"Soutiens"}),
       el("p",{class:"calc-avertissement",
@@ -673,7 +686,7 @@ import { showView } from "./navigation.js";
 
     vue.appendChild(sectionSoutiens(element, dessiner));
 
-    const coches = buffsApplicables(element)
+    const coches = buffsProposes(element)
       .filter(buff => etat.coches.has(buff.id));
     vue.appendChild(el("p",{class:"calc-avertissement",
       text:coches.length
