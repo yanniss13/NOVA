@@ -1055,3 +1055,223 @@ ligne de base — le champ ne se réveille pas davantage sur le premier coup seu
 
 **Rien n'est resté indéterminé dans cette session.** Les quatre questions ont toutes reçu une
 réponse mesurée.
+
+---
+
+# Session 5 (2026-08-08) — comparaison A ↔ B sur le mannequin d'entraînement
+
+Première session à deux calculateurs :
+
+- **A** = `tapscreen.app/calculator.html`, mode Advanced
+- **B** = `yanniss13.github.io/NOVA/`, onglet *Calculateur*
+
+Mesure uniquement, aucune lecture de bundle. Sur B, seuls le sélecteur de cible, les quatre
+champs de retouche (ATK, taux critique, dégâts critiques, percement), le champ de calibration et
+les cases de soutien ont été touchés — roster, équipes, collection et dispos n'ont jamais été
+approchés.
+
+**Ce que le mannequin teste, et surtout ce qu'il ne teste pas.** Le mannequin n'a ni défense, ni
+résistance élémentaire, ni faiblesse, ni résistance/défense critique. Il ne met donc à l'épreuve
+que la **moitié gauche** de la formule : coefficients de compétence, seau des bonus, multiplicateur
+critique et plafond de taux critique. **La constante C, la mitigation `C/(C+DEF)`, la réduction de
+défense et les résistances élémentaires ne sont PAS testées ici.** Aucune conclusion de cette
+section ne doit être lue comme « les deux sites sont d'accord » tout court.
+
+## Configuration commune
+
+**Personnage : Meliodas.** Diane, qui sert de référence aux sessions 1 à 4, **n'existe pas dans le
+sélecteur de B** (B propose Gowther, Daisy, Derieri, Elizabeth, Escanor, Howzer, Merlin, Meliodas).
+Escanor est présent des deux côtés mais son build est marqué « Configuration à compléter » sur B.
+Meliodas est le seul candidat pleinement configuré des deux côtés.
+
+Build : **A = « Longsword », B = « Epee 1 main »** — les cinq compétences portent exactement les
+mêmes noms des deux côtés (Dark Slash, Chain Attack, Blazing Cross, Abyssal Dash, Dark Force),
+l'appariement se fait donc par nom sans ambiguïté.
+
+| Côté | Champs relevés intégralement |
+|---|---|
+| **A** | `char-sel=Meliodas`, `build-sel=Longsword`, `enemy-sel=Training Dummy`, `atk=100000`, `ea=0`, `rhp=0`, `cd=0`, `cc=0`, `edi=0`, `eai=0`, `ds=0`, `dmgpct=0`, `skilldmg=0`, `cval=5600`, `edef=0`, `ecr=0`, `ecdr=0`, `eew=0`, `eflatres=0`, `epr=0`, tous les `d-*` = 0. Mode Normal Attack = Full Combo. |
+| **B** | personnage `meliodas`, build `Epee 1 main`, cible `mannequin`, ATK = 100000, taux critique = 0, dégâts critiques = 0, percement = 0, **0 case de soutien cochée**, champ de calibration vide. |
+
+`edef` vaut 0 sur A **parce que c'est la valeur native du Training Dummy** : il n'a jamais été
+écrasé, contrairement à la session 3. Le piège du cas spécial `edef` ne s'applique donc pas ici.
+
+## Incident de méthode — le piège de la session 2, repayé
+
+Un script groupant quatre mesures dans une boucle `await` sur B a **expiré au bout de 45 s** tout
+en continuant de tourner. Séquelle : la page a cessé de se re-rendre. Les lectures suivantes
+étaient périmées sans le dire — la colonne *Crit* affichait la même valeur que *Non-crit* alors que
+les dégâts critiques valaient 50, ce qui **donnait à croire que B ignorait le critique sur le
+mannequin**. C'était faux. Détecté en écrivant ATK = 50 000 : le tableau n'a pas bougé.
+
+Page rechargée, et **toutes les mesures de B refaites** avec un protocole strict : une écriture par
+appel, une lecture dans l'appel suivant, **jamais d'`await` dans le script de page**. La ligne de
+base d'après rechargement reproduit les valeurs d'avant incident au chiffre près
+(188 163 / 290 733 / 913 269 / 94 539 / 135 201), ce qui est ce qui autorise à conserver les
+chiffres de l'étape 1.
+
+## ÉTAPE 0 — B est-il à jour ?
+
+**Oui.** Un bandeau « Nouvelle version disponible » attendait à l'ouverture ; appliqué (rechargement
+local, n'écrit rien). Le sélecteur « Cible » propose ensuite **21 entrées** — MESURÉ :
+`akumu-1` … `akumu-20`, puis `mannequin` (« Mannequin d'entraînement »). Déploiement confirmé.
+
+## ÉTAPE 1 — les coefficients de compétence
+
+### Une correction indispensable avant de comparer : B ajoute 1 655 d'ATK plate
+
+Le champ ATK de B **ne contrôle pas toute l'ATK**. MESURÉ sur trois points :
+
+| ATK saisie sur B | Dark Slash | Chain Attack | Blazing Cross | Abyssal Dash | Dark Force |
+|---:|---:|---:|---:|---:|---:|
+| 0 | 3 063 | 4 733 | 14 869 | 1 539 | 2 201 |
+| 100 000 | 188 163 | 290 733 | 913 269 | 94 539 | 135 201 |
+| 200 000 | 373 263 | 576 733 | 1 811 669 | 187 539 | 268 201 |
+
+Les trois points sont **exactement alignés** sur chacune des cinq compétences (le pas 0→100 000 et
+le pas 100 000→200 000 sont identiques au chiffre près). En résolvant, l'ordonnée à l'origine
+divisée par la pente vaut **1 655,0 sur les cinq compétences** — même valeur partout.
+
+**MESURÉ : sur B, dégâts = coefficient × (ATK saisie + 1 655).** À ATK = 0 le calculateur affiche
+encore des dégâts, ce qui exclut toute autre lecture. Le naïf « coef = dégâts / 100 000 » demandé
+au protocole surestime donc tous les coefficients de B de 1,655 %. Les deux colonnes sont données
+ci-dessous, la corrigée est celle qui a un sens.
+
+### Le tableau
+
+| Compétence | A non-crit | B non-crit | coef A | coef B (naïf) | coef B (corrigé) | écart A↔B |
+|---|---:|---:|---:|---:|---:|---:|
+| Dark Slash *(Normal Attack)* | 160 000 | 188 163 | **1,600** | 1,88163 | **1,851** | **+15,7 %** |
+| Chain Attack *(Normal Skill)* | 286 000 | 290 733 | **2,860** | 2,90733 | **2,860** | **0,00 %** |
+| Blazing Cross *(Ultimate)* | 449 000 | 913 269 | **4,490** | 9,13269 | **8,984** | **+100,1 %** |
+| Abyssal Dash *(Special)* | 93 000 | 94 539 | **0,930** | 0,94539 | **0,930** | **0,00 %** |
+| Dark Force *(Tag)* | 133 000 | 135 201 | **1,330** | 1,35201 | **1,330** | **0,00 %** |
+
+Toutes les lignes : MESURÉ. Les coefficients de A sont lus à la fois dans la sortie
+(dégâts / 100 000, mitigation = 1 sur le mannequin) **et** écrits en toutes lettres sur la carte de
+compétence — les deux concordent exactement sur les cinq.
+
+**Trois compétences sur cinq tombent au chiffre près.** C'est la partie rassurante : une fois les
+1 655 d'ATK plate retirés, Chain Attack, Abyssal Dash et Dark Force donnent le même coefficient
+à la troisième décimale, sur trois catégories différentes (Normal Skill, Special, Tag).
+
+**Deux divergent.** Sans chercher à les expliquer, voici les faits bruts adjacents :
+
+- **Dark Slash** — A affiche « 160% · 4 hits | Per hit: 24%;31%… » (24 / 26 / 42 / 68, somme 160).
+  Le mode *1st Hit Only* de A donne 24 000, soit 0,24 — ce n'est donc pas non plus la variante que
+  B calcule. B donne 1,851.
+- **Blazing Cross** — A affiche « 449% », et la description de la carte ajoute :
+  *« Attacking enemies with Darkness Burst activated increases damage by 100%. »* B donne 8,984,
+  soit **2,0009 ×** le coefficient de A. Pas exactement le double (898,4 contre 898,0) : je le
+  signale sans trancher.
+
+**Divergence de catalogue, pas de formule** : les trois compétences qui concordent prouvent que le
+moteur multiplicatif est le même ; ce sont deux entrées de la table des coefficients qui ne disent
+pas la même chose.
+
+## ÉTAPE 2 — le critique
+
+Compétence retenue : **Chain Attack**, précisément parce que son coefficient est identique des deux
+côtés — toute divergence observée ici viendra du critique, pas du catalogue.
+
+### 2.a — dégâts critiques variables, taux critique fixé à 50
+
+| dégâts crit. | A non-crit | A crit | A moyenne | B non-crit | B crit | B espérance | ratio crit/non-crit A | ratio crit/non-crit B | écart |
+|---:|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| 0 | 286 000 | 286 000 | 286 000 | 290 733 | 290 733 | 290 733 | **1,000** | **1,000** | 0,00 % |
+| 50 | 286 000 | 429 000 | 357 500 | 290 733 | 436 100 | 363 417 | **1,500** | **1,500** | 0,00 % |
+| 100 | 286 000 | 572 000 | 429 000 | 290 733 | 581 467 | 436 100 | **2,000** | **2,000** | 0,00 % |
+| 200 | 286 000 | 858 000 | 572 000 | 290 733 | 872 200 | 581 467 | **3,000** | **3,000** | 0,00 % |
+
+Toutes les lignes : MESURÉ. Le multiplicateur critique vaut exactement `1 + dégâts critiques/100`
+des deux côtés, sur les quatre points. L'écart en valeur absolue entre les deux colonnes est
+intégralement expliqué par les 1 655 d'ATK plate de B (2,86 × 101 655 = 290 733,3 → 290 733).
+
+### 2.b — taux critique variable, dégâts critiques fixés à 100
+
+| taux crit. | A moyenne | A « effective crit chance » affichée | B espérance | espérance/non-crit A | espérance/non-crit B | écart |
+|---:|---:|---:|---:|---:|---:|---:|
+| 0 | 286 000 | 0,0 % | 290 733 | 1,000 | 1,000 | 0,00 % |
+| 25 | 357 500 | 25,0 % | 363 417 | 1,250 | 1,250 | 0,00 % |
+| 50 | 429 000 | 50,0 % | 436 100 | 1,500 | 1,500 | 0,00 % |
+| 85 | 529 100 | 85,0 % | 537 857 | 1,850 | 1,850 | 0,00 % |
+| **90** | 543 400 | 90,0 % | 552 393 | **1,900** | **1,900** | 0,00 % |
+| **95** | 543 400 | **90,0 %** (plafonné) | 552 393 | **1,900** | **1,900** | 0,00 % |
+| **100** | 543 400 | **90,0 %** (plafonné) | 552 393 | **1,900** | **1,900** | 0,00 % |
+
+Toutes les lignes : MESURÉ.
+
+**Le plafond de 90 % apparaît des DEUX côtés**, à la même valeur et avec la même bascule nette
+entre 90 et 95 : la sortie cesse strictement de bouger. Sur A l'affichage le dit explicitement
+(« 90.0% effective crit chance » alors que le champ vaut 95 ou 100) ; sur B il n'y a pas de
+libellé, mais l'espérance est figée au même chiffre exact. Le plafond mesuré en session 2 est donc
+implémenté à l'identique des deux côtés.
+
+## ÉTAPE 3 — le percement sur une cible sans défense : LA divergence
+
+| Percement | A (`ds`) — non-crit Chain Attack | B (« Percement de défense ») — non-crit Chain Attack |
+|---:|---:|---:|
+| 0 | **286 000** | **290 733** |
+| 50 | **286 000** — aucun effet | **436 100** — **×1,50000** |
+| 100 | non mesuré ici | **581 467** — **×2,00000** |
+| retour à 0 | 286 000 | 290 733 (aucune dérive) |
+
+Toutes les lignes : MESURÉ.
+
+**Les deux modèles divergent franchement.** Sur une cible dont la défense vaut zéro :
+
+- **A ignore le percement.** Cohérent avec la session 1, qui avait déjà établi le cas particulier
+  *« si `DEF_eff = 0`, le shatter est ignoré »*. La ligne A du tableau est une relecture d'appariement,
+  pas une découverte — je la donne pour que la comparaison ait ses deux colonnes.
+- **B l'applique quand même, en plein.** Le percement multiplie la sortie par `1 + p/100`
+  exactement, vérifié sur deux valeurs (50 → ×1,5 ; 100 → ×2,0) et sur les cinq compétences
+  simultanément (Dark Slash 188 163 → 282 245, Blazing Cross 913 269 → 1 369 903, etc. — tous
+  ×1,50000 à p = 50).
+
+C'est bien un **écart de modèle**, pas un écart de catalogue : B ajoute le percement au ratio de
+mitigation sans vérifier qu'il reste une armure à percer, si bien qu'un ratio déjà à 1 monte à 1,5.
+A, lui, court-circuite le terme quand la défense est nulle.
+
+## ÉTAPE 4 — la calibration de C sur le mannequin
+
+**A** : refus déjà mesuré et cité intégralement en **session 2, §1.b** (*« C calibration not needed
+for the Training Dummy — it has no Defense, so C has no effect. Use a real enemy to calibrate C. »*).
+Non refait.
+
+**B** : refuse également. Protocole — cible = mannequin, compétence mesurée = Dark Slash, champ
+« Dégâts du coup NON critique » = 290 733, clic sur *Calibrer*. Message exact renvoyé, MESURÉ :
+
+> Sans défense sur la cible, aucun coup ne peut révéler la constante.
+
+Et, affiché en permanence sous le panneau, indépendamment de tout clic :
+
+> Le mannequin n'a ni défense ni résistance : les dégâts affichés valent exactement l'ATK multipliée par le coefficient de la compétence. La constante C n'y change rien et ne s'y calibre pas.
+
+Aucune valeur n'a été écrite : le refus remplace le résultat, il ne l'enregistre pas.
+
+## Récapitulatif de la session 5
+
+| Sujet | A | B | Verdict |
+|---|---|---|---|
+| Multiplicateur critique | `1 + CD/100` | `1 + CD/100` | **identiques**, 4 points, écart 0,00 % |
+| Plafond de taux critique | 90 % | 90 % | **identiques**, bascule au même point |
+| Espérance | `nc + p×(crit−nc)` | idem | **identiques**, 7 points, écart 0,00 % |
+| Coefficients Chain Attack / Abyssal Dash / Dark Force | 2,86 / 0,93 / 1,33 | 2,86 / 0,93 / 1,33 | **identiques au chiffre près** |
+| Coefficient Dark Slash | 1,600 | 1,851 | **+15,7 %** — divergence de catalogue |
+| Coefficient Blazing Cross | 4,490 | 8,984 | **+100,1 %** — divergence de catalogue |
+| ATK effective | exactement la valeur saisie (`ea` = 0) | valeur saisie **+ 1 655** de plate non exposée | **écart d'assiette**, +1,655 % sur tout |
+| Percement sur cible à défense nulle | sans effet | **×(1 + p/100)** | **écart de modèle, le vrai** |
+| Calibration de C sur le mannequin | refus explicite | refus explicite | **même comportement** |
+
+### La phrase de conclusion
+
+**Non, les deux calculateurs ne sont pas d'accord sur le mannequin : ils tombent exactement d'accord
+sur tout le bloc critique (multiplicateur, plafond à 90 %, espérance, écart 0,00 % sur onze points de
+mesure) et sur trois coefficients de compétence sur cinq, mais ils divergent sur trois choses
+précises — deux coefficients de catalogue (Dark Slash +15,7 %, Blazing Cross +100,1 %), une assiette
+d'ATK (B ajoute 1 655 de plate que son champ ATK n'expose pas) et surtout un point de modèle, le
+percement, que B applique en plein sur une cible sans défense là où A l'ignore.**
+
+Rappel, parce qu'il compte : tout ceci ne juge que la moitié gauche de la formule. La constante C,
+la mitigation `C/(C+DEF)`, la réduction de défense et les résistances élémentaires restent
+**non comparées** — le mannequin, par construction, ne peut rien en dire.
