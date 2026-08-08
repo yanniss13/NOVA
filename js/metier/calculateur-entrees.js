@@ -123,6 +123,45 @@ import { degatsAttendus } from "./degats-calcul.js";
     return sorties;
   }
 
+  /* Chaque categorie de competence a son propre bonus de degats, et le
+     catalogue de competences porte exactement les cinq categories que le jeu
+     publie. La correspondance n'est pas une convention locale : le code de
+     stat `Activethird_Damadd_Rate` et la categorie `ACTIVE_THIRD` sont deux
+     ecritures du meme identifiant amont.
+
+     Ces bonus ne peuvent pas rejoindre les entrees communes, qui valent pour
+     toutes les competences a la fois : verser le bonus d'ultime dans une
+     attaque normale la gonflerait a tort. Ils s'appliquent donc ligne par
+     ligne, au moment ou chaque competence est chiffree. */
+  const STAT_DE_LA_CATEGORIE = {
+    NORMAL:"Normalattack_Damadd_Rate",
+    NORMAL_SKILL:"Normalskill_Damadd_Rate",
+    ACTIVE_THIRD:"Activethird_Damadd_Rate",
+    ULTIMATE:"Ultimateskill_Damadd_Rate",
+    TAG_SKILL:"Normalskillchangetag_Damadd_Rate"
+  };
+
+  /* Les entrees vues par UNE competence : les entrees communes, plus le bonus
+     de sa seule categorie.
+
+     La CALIBRATION s'en sert autant que le tableau, et c'est la raison d'etre
+     de cette fonction. Elle inverse la formule sur une competence precise :
+     lui passer des entrees sans le bonus de categorie, alors que le tableau
+     l'applique, ferait mesurer une constante fausse — d'autant plus fausse
+     que le bonus est gros, et il monte a +115 % sur certains paliers. */
+  function entreesDeLaCompetence(entrees, bonusParCategorie, competence){
+    const bonus = Number(
+      (bonusParCategorie || {})[competence && competence.categorie]
+    ) || 0;
+    if(!bonus) return entrees;
+    /* Le bonus S'AJOUTE au seau : un buff de soutien deja verse dans
+       `bonusCategorie` par entreesDuCalcul() doit survivre, sinon cocher un
+       soutien effacerait l'apport des potentiels. */
+    return Object.assign({}, entrees, {
+      bonusCategorie:(Number(entrees && entrees.bonusCategorie) || 0) + bonus
+    });
+  }
+
   /* Une competence non chiffrable garde sa ligne et rend `null`. La masquer
      ferait croire qu'elle n'existe pas ; la chiffrer a zero, qu'elle ne fait
      rien. */
@@ -132,9 +171,17 @@ import { degatsAttendus } from "./degats-calcul.js";
     return liste.map(competence => ({
       competence,
       resultat:degatsAttendus({
-        stats:source.entrees, competence, cible:source.cible
+        stats:entreesDeLaCompetence(
+          source.entrees, source.bonusParCategorie, competence
+        ),
+        competence,
+        cible:source.cible
       })
     }));
   }
 
-export { buffsApplicables, entreesDuCalcul, resultatsParCompetence };
+export {
+  STAT_DE_LA_CATEGORIE,
+  buffsApplicables, entreesDeLaCompetence, entreesDuCalcul,
+  resultatsParCompetence
+};

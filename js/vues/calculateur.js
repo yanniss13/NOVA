@@ -20,7 +20,9 @@ import {
 } from "../metier/degats-calcul.js";
 import { CalibrationStore } from "../donnees/calibration-store.js";
 import {
-  buffsApplicables, entreesDuCalcul, resultatsParCompetence
+  STAT_DE_LA_CATEGORIE,
+  buffsApplicables, entreesDeLaCompetence, entreesDuCalcul,
+  resultatsParCompetence
 } from "../metier/calculateur-entrees.js";
 import { MemberRosterStore } from "../donnees/roster-store.js";
 import { ModalStack } from "./modal-stack.js";
@@ -192,7 +194,15 @@ import { showView } from "./navigation.js";
         percementDefense:lire("D_Protect_Cur_Rate"),
         attaqueElementaire:
           (majuscule ? lire(majuscule + "_Add") : 0) + lire("AllElement_Add")
-      }
+      },
+      /* A part des autres, et pour une bonne raison : ces cinq bonus ne
+         valent QUE pour les competences de leur categorie. Les ranger dans
+         `stats` les appliquerait a toutes les lignes du tableau. Ils viennent
+         des paliers de potentiel, des armes et de l'equipement. */
+      bonusParCategorie:Object.fromEntries(
+        Object.entries(STAT_DE_LA_CATEGORIE)
+          .map(([categorie, code]) => [categorie, lire(code)])
+      )
     };
   }
 
@@ -334,7 +344,7 @@ import { showView } from "./navigation.js";
      C'est ce qui fait passer la page de « compare deux builds » a « annonce
      un chiffre ». Elle est propre au personnage, a son arme et a ses
      potentiels debloques, donc elle se range par build et se recalibre. */
-  function sectionCalibration(competences, entrees, mesuree, redessiner){
+  function sectionCalibration(competences, entrees, bonusParCategorie, mesuree, redessiner){
     const section = el("section",{class:"calc-calibration"});
     section.appendChild(el("h3",{text:"Constante C"}));
     section.appendChild(el("p",{class:"calc-muette",
@@ -346,7 +356,7 @@ import { showView } from "./navigation.js";
           + "pas encore ce que tu verras en jeu."}));
 
     const chiffrees = resultatsParCompetence({
-      competences, entrees, cible:cibleCourante()
+      competences, entrees, bonusParCategorie, cible:cibleCourante()
     }).filter(ligne => ligne.resultat).map(ligne => ligne.competence);
 
     if(!chiffrees.length){
@@ -394,7 +404,12 @@ import { showView } from "./navigation.js";
       class:"btn", type:"button", text:"Calibrer",
       onclick:()=>{
         const resultat = calibrerConstante({
-          stats:entrees,
+          /* Les memes entrees que la ligne du tableau, bonus de categorie
+             compris : les deux sens de la formule doivent voir le meme seau,
+             sinon la constante mesuree corrigerait un ecart imaginaire. */
+          stats:entreesDeLaCompetence(
+            entrees, bonusParCategorie, chiffrees[choisi]
+          ),
           competence:chiffrees[choisi],
           cible:cibleCourante(),
           degatsObserves:Number(etat.degatsObserves)
@@ -430,9 +445,9 @@ import { showView } from "./navigation.js";
     return section;
   }
 
-  function tableauDesCompetences(charId, competences, entrees){
+  function tableauDesCompetences(charId, competences, entrees, bonusParCategorie){
     const lignes = resultatsParCompetence({
-      competences, entrees, cible:cibleCourante()
+      competences, entrees, bonusParCategorie, cible:cibleCourante()
     });
     const corps = el("tbody");
     lignes.forEach(ligne => {
@@ -684,8 +699,12 @@ import { showView } from "./navigation.js";
       vue.appendChild(el("p",{class:"calc-muette",
         text:"Aucune compétence connue pour ce type d'arme."}));
     } else {
-      vue.appendChild(tableauDesCompetences(etat.charId, competences, entrees));
-      vue.appendChild(sectionCalibration(competences, entrees, mesuree, dessiner));
+      vue.appendChild(tableauDesCompetences(
+        etat.charId, competences, entrees, bases.bonusParCategorie
+      ));
+      vue.appendChild(sectionCalibration(
+        competences, entrees, bases.bonusParCategorie, mesuree, dessiner
+      ));
     }
     vue.appendChild(avertissements());
   }

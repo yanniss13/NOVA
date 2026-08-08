@@ -270,6 +270,87 @@ tousLesBuffs.forEach(buff => {
   assert.strictEqual(lignes[1].resultat, null, "la muette rend null, pas zero");
 }
 
+/* Les bonus de degats par CATEGORIE de competence.
+
+   Le jeu en publie cinq — attaque normale, competence normale, speciale,
+   ultime, competence de releve — et le catalogue de competences porte
+   exactement les cinq categories correspondantes. Ils viennent des paliers de
+   potentiel, des armes et de l'equipement.
+
+   Ils ne peuvent PAS entrer dans les entrees communes : celles-ci valent pour
+   toutes les competences a la fois, et appliquer le bonus d'ultime a une
+   attaque normale serait faux. C'est ce qui les tenait hors du calcul.
+
+   L'outil de reference ne tranche pas la question : son champ unique est un
+   multiplicateur GLOBAL applique sur les cinq onglets, et son texte d'aide
+   demande au joueur de saisir a la main la valeur correspondant a l'onglet
+   affiche (RAPPORT-analyse-tapscreen.md, session 4). Chez lui une seule
+   competence est visible a la fois, donc l'approximation passe ; notre tableau
+   les montre toutes ensemble, donc elle ne passerait pas. */
+{
+  const cible = { def:0, critResist:0, critDmgResist:0,
+                  resistanceElementaire:0, faiblesse:0 };
+  const entrees = { atk:1000, attaqueElementaire:0, def:0, maxHp:0,
+                    critRate:0, critDamage:0, bonusCategorie:0 };
+  const coup = { pourcentage:100, repartition:[100],
+                 composantes:[{ base:"atk", pourcentage:100 }] };
+  const competences = [
+    Object.assign({ nom:"normale", categorie:"NORMAL" }, coup),
+    Object.assign({ nom:"skill", categorie:"NORMAL_SKILL" }, coup),
+    Object.assign({ nom:"speciale", categorie:"ACTIVE_THIRD" }, coup),
+    Object.assign({ nom:"ultime", categorie:"ULTIMATE" }, coup),
+    Object.assign({ nom:"releve", categorie:"TAG_SKILL" }, coup)
+  ];
+
+  /* Sans bonus, les cinq lignes valent l'ATK : la cible n'absorbe rien. */
+  const nues = resultatsParCompetence({ competences, entrees, cible });
+  nues.forEach(ligne => assert.equal(
+    Math.round(ligne.resultat.sansCritique), 1000, ligne.competence.nom
+  ));
+
+  /* +100 % sur la seule competence normale : UNE ligne double, les autres ne
+     bougent pas d'une unite. C'est la regression que ce bloc garde. */
+  const cible100 = resultatsParCompetence({
+    competences, entrees, cible,
+    bonusParCategorie:{ NORMAL_SKILL:10000 }
+  });
+  assert.deepEqual(
+    cible100.map(l => Math.round(l.resultat.sansCritique)),
+    [1000, 2000, 1000, 1000, 1000],
+    "seule la competence normale doit doubler"
+  );
+
+  /* Les cinq categories sont cablees, aucune oubliee. */
+  const toutes = resultatsParCompetence({
+    competences, entrees, cible,
+    bonusParCategorie:{
+      NORMAL:10000, NORMAL_SKILL:10000, ACTIVE_THIRD:10000,
+      ULTIMATE:10000, TAG_SKILL:10000
+    }
+  });
+  assert.deepEqual(
+    toutes.map(l => Math.round(l.resultat.sansCritique)),
+    [2000, 2000, 2000, 2000, 2000]
+  );
+
+  /* Une categorie inconnue ne doit rien ajouter, et surtout rien casser. */
+  const inconnue = resultatsParCompetence({
+    competences:[Object.assign({ nom:"bizarre", categorie:"AUTRE" }, coup)],
+    entrees, cible, bonusParCategorie:{ NORMAL:10000 }
+  });
+  assert.equal(Math.round(inconnue[0].resultat.sansCritique), 1000);
+
+  /* Le bonus de categorie s'AJOUTE au seau, il ne le remplace pas : un buff
+     de soutien deja verse dans bonusCategorie doit survivre. */
+  const cumule = resultatsParCompetence({
+    competences:[competences[1]],
+    entrees:Object.assign({}, entrees, { bonusCategorie:5000 }),
+    cible,
+    bonusParCategorie:{ NORMAL_SKILL:10000 }
+  });
+  assert.equal(Math.round(cumule[0].resultat.sansCritique), 2500);
+}
+
 console.log(
   "calculateur-entrees.test.js OK (" + tousLesBuffs.length + " buffs sur "
     + SUPPORTS.length + " supports)"
