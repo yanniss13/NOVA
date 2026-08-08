@@ -23,7 +23,7 @@ import {
   EMPLACEMENTS_COEQUIPIERS, CoequipiersStore
 } from "../donnees/coequipiers-store.js";
 import {
-  STAT_DE_LA_CATEGORIE,
+  STAT_DE_LA_CATEGORIE, bonusCategorieDesBuffs,
   entreesDeLaCompetence, entreesDuCalcul, resultatsParCompetence
 } from "../metier/calculateur-entrees.js";
 import { buffsDeLEquipe } from "../metier/equipe-buffs.js";
@@ -850,6 +850,16 @@ import { showView } from "./navigation.js";
 
     const coches = buffsProposes(element)
       .filter(buff => etat.coches.has(buff.id));
+
+    /* Les bonus de categorie du BUILD et ceux des buffs coches s'ADDITIONNENT :
+       ils viennent de sources differentes - potentiels, equipement, tenue
+       gravee, soutiens - et le jeu les cumule. */
+    const bonusDesBuffs = bonusCategorieDesBuffs(coches);
+    const bonusParCategorie = Object.assign({}, bases.bonusParCategorie);
+    Object.keys(bonusDesBuffs).forEach(categorie => {
+      bonusParCategorie[categorie] =
+        (Number(bonusParCategorie[categorie]) || 0) + bonusDesBuffs[categorie];
+    });
     vue.appendChild(el("p",{class:"calc-avertissement",
       text:coches.length
         ? "Avec " + coches.length + " buff(s) d'équipe."
@@ -875,10 +885,10 @@ import { showView } from "./navigation.js";
         text:"Aucune compétence connue pour ce type d'arme."}));
     } else {
       vue.appendChild(tableauDesCompetences(
-        etat.charId, competences, entrees, bases.bonusParCategorie
+        etat.charId, competences, entrees, bonusParCategorie
       ));
       vue.appendChild(sectionCalibration(
-        competences, entrees, bases.bonusParCategorie, mesuree, dessiner
+        competences, entrees, bonusParCategorie, mesuree, dessiner
       ));
     }
     vue.appendChild(avertissements());

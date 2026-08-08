@@ -9,7 +9,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
-const { loadApp } = require("./helpers/load-app");
+const { loadApp, plain } = require("./helpers/load-app");
 
 const racine = path.join(__dirname, "..");
 
@@ -369,6 +369,50 @@ tousLesBuffs.forEach(buff => {
     bonusParCategorie:{ NORMAL_SKILL:10000 }
   });
   assert.equal(Math.round(cumule[0].resultat.sansCritique), 2500);
+}
+
+/* Les bonus de categorie ne peuvent pas traverser entreesDuCalcul : ses seaux
+   valent pour TOUTES les competences a la fois, et y verser un bonus de
+   competence normale gonflerait l'ultime. Ils sortent donc a part. */
+{
+  const { bonusCategorieDesBuffs } = hooks;
+  assert.equal(typeof bonusCategorieDesBuffs, "function",
+    "bonusCategorieDesBuffs doit etre expose par le chargeur de tests");
+
+  assert.deepEqual(plain(bonusCategorieDesBuffs([])), {},
+    "sans buff, aucune categorie ne recoit quoi que ce soit");
+
+  assert.deepEqual(
+    plain(bonusCategorieDesBuffs([
+      { stat:"Normalskill_Damadd_Rate", valeur:8000 }
+    ])),
+    { NORMAL_SKILL:8000 },
+    "un buff de categorie atterrit dans SA categorie, et nulle part ailleurs"
+  );
+
+  /* Deux buffs de la meme categorie s'additionnent : ils viennent de sources
+     differentes - une tenue gravee et un soutien - et le jeu les cumule. */
+  assert.deepEqual(
+    plain(bonusCategorieDesBuffs([
+      { stat:"Normalskill_Damadd_Rate", valeur:8000 },
+      { stat:"Normalskill_Damadd_Rate", valeur:5000 }
+    ])),
+    { NORMAL_SKILL:13000 }
+  );
+
+  /* Un buff ordinaire n'y met rien : il a deja son seau dans le moteur. */
+  assert.deepEqual(
+    plain(bonusCategorieDesBuffs([{ stat:"C_Critical_Rate", valeur:2000 }])), {},
+    "un buff hors categorie ne doit rien ajouter"
+  );
+
+  /* Une valeur illisible est ignoree, elle ne devient jamais NaN : un NaN dans
+     le seau ferait disparaitre toute la ligne de degats. */
+  assert.deepEqual(
+    plain(bonusCategorieDesBuffs([
+      { stat:"Ultimateskill_Damadd_Rate", valeur:"beaucoup" }
+    ])), {}
+  );
 }
 
 console.log(

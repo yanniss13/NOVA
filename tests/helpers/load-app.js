@@ -110,6 +110,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   buffsDeLEquipe:typeof buffsDeLEquipe === "function"
     ? buffsDeLEquipe
     : undefined,
+  bonusCategorieDesBuffs:typeof bonusCategorieDesBuffs === "function"
+    ? bonusCategorieDesBuffs
+    : undefined,
   entreesDuCalcul:typeof entreesDuCalcul === "function"
     ? entreesDuCalcul
     : undefined,

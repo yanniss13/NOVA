@@ -141,6 +141,33 @@ import { degatsAttendus } from "./degats-calcul.js";
     TAG_SKILL:"Normalskillchangetag_Damadd_Rate"
   };
 
+  /* L'inverse de la table ci-dessus, derive d'ELLE plutot que reecrit : deux
+     listes tenues en parallele finiraient par diverger. */
+  const CATEGORIE_DE_LA_STAT = Object.fromEntries(
+    Object.entries(STAT_DE_LA_CATEGORIE)
+      .map(([categorie, code]) => [code, categorie])
+  );
+
+  /* Les bonus de categorie apportes par des buffs COCHES.
+
+     Ils ne peuvent pas passer par entreesDuCalcul, dont les seaux valent pour
+     toutes les competences a la fois : y verser un bonus de competence normale
+     gonflerait l'ultime. Ils sortent donc a part, pour etre fusionnes avec
+     ceux que le build porte deja.
+
+     Une valeur illisible est ignoree plutot que propagee : un NaN dans le seau
+     ferait disparaitre la ligne de degats entiere, sans rien dire. */
+  function bonusCategorieDesBuffs(buffsCoches){
+    const liste = Array.isArray(buffsCoches) ? buffsCoches : [];
+    return liste.reduce((bonus, buff) => {
+      const categorie = CATEGORIE_DE_LA_STAT[buff && buff.stat];
+      const valeur = Number(buff && buff.valeur);
+      if(!categorie || !Number.isFinite(valeur)) return bonus;
+      bonus[categorie] = (bonus[categorie] || 0) + valeur;
+      return bonus;
+    }, {});
+  }
+
   /* Les entrees vues par UNE competence : les entrees communes, plus le bonus
      de sa seule categorie.
 
@@ -182,6 +209,7 @@ import { degatsAttendus } from "./degats-calcul.js";
 
 export {
   STAT_DE_LA_CATEGORIE,
+  bonusCategorieDesBuffs,
   buffsApplicables, entreesDeLaCompetence, entreesDuCalcul,
   resultatsParCompetence
 };
