@@ -1,3 +1,4 @@
+import collections
 import copy
 import importlib.util
 import json
@@ -75,6 +76,198 @@ class CanonicalStatTests(unittest.TestCase):
     def test_distinct_stats_are_never_merged_by_the_election(self):
         elected = module.elect_canonical({"Dark_Add": 5, "Dark_Res": 5}, {})
         self.assertEqual(elected, {"Dark_Add", "Dark_Res"})
+
+
+class StatSynonymTests(unittest.TestCase):
+    """Les sources amont parlent DEUX vocabulaires pour les mêmes statistiques.
+
+    Dans `armes.json`, un même grade décrit ses `subStats` en vocabulaire
+    « lisible » (`critDamage`) et ses `enchantments` en code de jeu
+    (`C_Critical_Dam_Rate`). Les statistiques de base des personnages emploient
+    le premier, les maîtrises et l'équipement le second. `canonical_key` ne
+    peut rien pour ce cas : ce ne sont pas des variantes d'orthographe mais
+    deux mots différents, donc il faut la table explicite.
+
+    Sans elle, une arme dont la sous-stat ET l'enchantement donnent des dégâts
+    critiques produit DEUX lignes qui ne s'additionnent pas."""
+
+    def test_a_readable_code_resolves_to_the_game_code(self):
+        known = {"C_Critical_Dam_Rate", "C_Critical_Rate", "D_Protect_Cur_Rate"}
+        self.assertEqual(
+            module.canonical_stat("critDamage", known), "C_Critical_Dam_Rate"
+        )
+        self.assertEqual(module.canonical_stat("critRate", known), "C_Critical_Rate")
+        self.assertEqual(
+            module.canonical_stat("defense", known), "D_Protect_Cur_Rate"
+        )
+
+    def test_the_synonym_wins_even_when_the_readable_code_is_known(self):
+        """`known` contient les deux orthographes tant que la table de
+        métadonnées décrit encore l'ancienne : le synonyme doit primer sur le
+        retour anticipé, sinon rien ne fusionne."""
+        known = {"critDamage", "C_Critical_Dam_Rate"}
+        self.assertEqual(
+            module.canonical_stat("critDamage", known), "C_Critical_Dam_Rate"
+        )
+
+    def test_a_stat_without_synonym_is_left_alone(self):
+        self.assertEqual(module.canonical_stat("baseSpd", {"baseSpd"}), "baseSpd")
+
+    def test_every_synonym_targets_a_code_of_the_same_unit_and_family(self):
+        """Fusionner deux unités différentes produirait un total faux — et
+        `reconstructStatTotals` le refuserait à l'exécution."""
+        metadata = json.loads(
+            (REPO_ROOT / "7ds-stats" / "stat-metadata.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        for readable, game_code in module.STAT_SYNONYMS.items():
+            with self.subTest(synonym=readable):
+                self.assertIn(readable, metadata, f"{readable} sans métadonnée")
+                self.assertIn(game_code, metadata, f"{game_code} sans métadonnée")
+                self.assertEqual(
+                    metadata[readable]["unit"],
+                    metadata[game_code]["unit"],
+                    f"{readable} et {game_code} n'ont pas la même unité",
+                )
+                self.assertEqual(
+                    metadata[readable]["family"],
+                    metadata[game_code]["family"],
+                    f"{readable} et {game_code} n'ont pas la même famille",
+                )
+
+    def test_no_synonym_points_at_another_synonym(self):
+        """Une chaîne `a -> b -> c` laisserait `b` dans le catalogue."""
+        for readable, game_code in module.STAT_SYNONYMS.items():
+            self.assertNotIn(
+                game_code,
+                module.STAT_SYNONYMS,
+                f"{readable} vise {game_code}, lui-même un synonyme",
+            )
+
+
+class PotentialTextTests(unittest.TestCase):
+    """Les paliers de potentiel chiffrent leur bonus de CATÉGORIE dans la seule
+    prose : le champ `stats` de la source ne porte jamais que l'attaque, la
+    défense et les PV. « Renforce la puissance de la compétence normale de
+    100% » n'atteignait donc aucun calcul.
+
+    La convention des valeurs conditionnelles est le MAXIMUM atteignable, la
+    même que `data/buffs-supports.js` applique aux cumuls."""
+
+    def deltas(self, texte):
+        return dict(module.potential_tier_deltas(texte))
+
+    def test_the_five_plain_category_forms_are_read(self):
+        cas = {
+            "l'attaque normale": "Normalattack_Damadd_Rate",
+            "la compétence normale": "Normalskill_Damadd_Rate",
+            "l'attaque spéciale": "Activethird_Damadd_Rate",
+            "l'attaque ultime": "Ultimateskill_Damadd_Rate",
+            "la compétence de relève": "Normalskillchangetag_Damadd_Rate",
+        }
+        for libelle, code in cas.items():
+            with self.subTest(categorie=libelle):
+                texte = f"Renforce la puissance de {libelle} de 70%."
+                self.assertEqual(self.deltas(texte), {code: 7000})
+
+    def test_the_colour_markup_is_stripped(self):
+        texte = (
+            "Renforce la puissance de la compétence normale "
+            "de [#1A7331]100%[-]."
+        )
+        self.assertEqual(
+            self.deltas(texte), {"Normalskill_Damadd_Rate": 10000}
+        )
+
+    def test_a_conditional_value_keeps_the_highest(self):
+        for texte, attendu in [
+            ("Renforce la puissance de la compétence normale de 50%,"
+             " ou 60% lorsque l'effet est actif.", 6000),
+            ("Renforce la puissance de l'attaque spéciale de 25% / 35%.", 3500),
+            ("Renforce la puissance de l'attaque ultime de 20% / 30% / 40%"
+             " en fonction du niveau de charge.", 4000),
+        ]:
+            with self.subTest(texte=texte[:40]):
+                self.assertEqual(max(self.deltas(texte).values()), attendu)
+
+    def test_a_second_effect_after_et_is_ignored(self):
+        """« et augmente le percement de défense de 20% » décrit une AUTRE
+        statistique : la lire comme un bonus de catégorie la doublerait."""
+        texte = (
+            "Renforce la puissance de l'attaque ultime de 120%, et augmente"
+            " le percement de défense de l'attaque ultime de 20%."
+        )
+        self.assertEqual(self.deltas(texte), {"Ultimateskill_Damadd_Rate": 12000})
+
+    def test_a_named_skill_or_a_sub_part_is_refused(self):
+        """Ces bonus visent UNE compétence ou la dernière frappe, pas toute la
+        catégorie : les y verser gonflerait toutes les autres compétences."""
+        for texte in [
+            "Renforce la puissance de Floraison nocturne de 50%.",
+            "Renforce la puissance de la dernière frappe de l'attaque ultime de 100%.",
+            "Renforce la puissance des dégâts supplémentaires de Duel de 50%.",
+            "Renforce la puissance de l'attaque spéciale améliorée de 20%.",
+            "Renforce la puissance du passif de 75%.",
+            "Renforce la puissance de Compétence normale : Jugement divin de 70%.",
+        ]:
+            with self.subTest(texte=texte[:50]):
+                self.assertEqual(self.deltas(texte), {})
+
+    def test_the_attack_defence_hp_form_is_read(self):
+        texte = (
+            "Augmente l'attaque de 5%, la défense de 4% et les PV max de 2%."
+        )
+        self.assertEqual(self.deltas(texte), {
+            "I_AtkAdd_Rate": 500,
+            "I_DefAdd_Rate": 400,
+            "I_MaxHpAdd_Rate": 200,
+        })
+
+    def test_an_unquantifiable_sentence_yields_nothing(self):
+        for texte in [
+            "Augmente légèrement la portée de l'attaque ultime.",
+            "La dernière frappe de la compétence normale inflige des dégâts"
+            " supplémentaires égaux à 160% de l'attaque.",
+            "",
+            None,
+        ]:
+            with self.subTest(texte=str(texte)[:40]):
+                self.assertEqual(self.deltas(texte), {})
+
+    def test_the_published_stats_prove_the_cumulative_reading(self):
+        """LE test de fond : les paliers portent un CUMUL, pas un delta.
+
+        Reconstruire ce cumul depuis les seules phrases doit reproduire au
+        centième près les `stats` déjà publiées des 23 personnages qui en ont.
+        S'il passe, appliquer la même lecture aux 2 qui n'en ont pas n'est plus
+        une supposition."""
+        personnages = json.loads(
+            (REPO_ROOT / "7ds-stats" / "personnages.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        base = ("I_AtkAdd_Rate", "I_DefAdd_Rate", "I_MaxHpAdd_Rate")
+        compares = 0
+        for character in personnages:
+            par_arme = {}
+            for pot in character.get("potentials") or []:
+                par_arme.setdefault(pot["weaponType"], {})[pot["tier"]] = pot
+            for tiers in par_arme.values():
+                cumul = collections.Counter()
+                for tier in sorted(tiers):
+                    pot = tiers[tier]
+                    cumul.update(module.potential_tier_deltas(pot.get("bonusFr")))
+                    publie = {s["stat"]: s["value"] for s in pot.get("stats") or []}
+                    if not publie:
+                        continue
+                    compares += 1
+                    self.assertEqual(
+                        {code: cumul[code] for code in base},
+                        {code: publie.get(code, 0) for code in base},
+                        f"{character['slug']} palier {tier}",
+                    )
+        self.assertEqual(compares, 690, "les 690 paliers publiés sont comparés")
 
 
 class GearCatalogTests(unittest.TestCase):

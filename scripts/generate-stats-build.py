@@ -1,4 +1,5 @@
 import argparse
+import collections
 import json
 import re
 import unicodedata
@@ -58,8 +59,144 @@ def canonical_key(code):
     return re.sub(r"[^a-z0-9]+", "", code.casefold())
 
 
+# Deux vocabulaires décrivent les mêmes statistiques dans les sources amont.
+#
+# Un même grade d'arme, dans `armes.json`, nomme ses `subStats` en clair
+# (`critDamage`) et ses `enchantments` en code de jeu (`C_Critical_Dam_Rate`).
+# Les statistiques de base des personnages emploient le premier vocabulaire,
+# les maîtrises et tout l'équipement le second. `canonical_key` ne peut rien
+# pour ce cas : ce ne sont pas des variantes d'orthographe mais deux mots
+# différents, d'où cette table explicite.
+#
+# Sans elle, une arme dont la sous-stat ET l'enchantement donnent des dégâts
+# critiques produisait deux lignes « Dégâts crit. » qui ne s'additionnaient
+# jamais — et le calculateur, qui ne lit que le code de jeu, ignorait purement
+# et simplement la part venue de la sous-stat et de la base du personnage.
+#
+# N'y entrent que des paires de MÊME unité et de MÊME famille : un test le
+# vérifie. Deux codes de même libellé mais d'unité différente sont deux mesures
+# distinctes tant qu'un relevé en jeu ne prouve pas le contraire — c'est le cas
+# de `accuracy`/`A_Accuracy` (« Perforation ») et `block`/`A_Block`
+# (« Persévérance »), volontairement absents.
+STAT_SYNONYMS = {
+    "activeThirdDmg": "Activethird_Damadd_Rate",
+    "atkRate": "I_AtkAdd_Rate",
+    "burstGauge": "Burst_Gauge_Rate",
+    "critDamage": "C_Critical_Dam_Rate",
+    "critDmgResist": "C_Critical_DamRes_Rate",
+    "critRate": "C_Critical_Rate",
+    "critResist": "C_Critical_ResRate",
+    "defRate": "I_DefAdd_Rate",
+    "defense": "D_Protect_Cur_Rate",
+    "healPower": "H_HealPower_Rate",
+    "normalAtkDamage": "Normalattack_Damadd_Rate",
+    "thunderBurstGauge": "Thunder_Burst_Gauge_Rate",
+    "ultimateDmg": "Ultimateskill_Damadd_Rate",
+    "windBurstGauge": "Wind_Burst_Gauge_Rate",
+}
+
+
+# Les bonus de catégorie d'un palier de potentiel ne vivent QUE dans sa prose.
+#
+# Le champ `stats` de la source ne porte jamais que l'attaque, la défense et
+# les PV : « Renforce la puissance de la compétence normale de 100% » (Meliodas
+# Épée 1 main, palier 9) n'atteignait donc aucun calcul. Ces cinq codes de jeu
+# existent déjà, portés par les armes et l'équipement — les paliers les
+# rejoignent au lieu d'ouvrir un vocabulaire parallèle.
+POTENTIAL_CATEGORY_STATS = {
+    "l'attaque normale": "Normalattack_Damadd_Rate",
+    "la compétence normale": "Normalskill_Damadd_Rate",
+    "l'attaque spéciale": "Activethird_Damadd_Rate",
+    "l'attaque ultime": "Ultimateskill_Damadd_Rate",
+    "la compétence de relève": "Normalskillchangetag_Damadd_Rate",
+}
+
+# La forme chiffrée que la source publie déjà dans `stats`. On la relit quand
+# même : c'est elle qui prouve la lecture cumulative, et elle comble les deux
+# personnages (derieri, gowther) dont TOUS les paliers ont un `stats` vide.
+POTENTIAL_BASE_FORM = re.compile(
+    r"^Augmente l'attaque de (\d+)%, la défense de (\d+)% "
+    r"et les PV max de (\d+)%\.$"
+)
+POTENTIAL_BASE_STATS = ("I_AtkAdd_Rate", "I_DefAdd_Rate", "I_MaxHpAdd_Rate")
+
+# Les mots tolérés APRÈS le pourcentage d'un bonus de catégorie. Ils relient
+# des variantes du même bonus — « ou 60% lorsque l'effet est actif » — sans en
+# introduire un second. Tout autre mot fait refuser la phrase : mieux vaut un
+# bonus manquant qu'un bonus attribué à la mauvaise statistique.
+POTENTIAL_CONNECTORS = {
+    "ou", "de", "d", "en", "fonction", "du", "niveau", "charge",
+    "lorsque", "l", "effet", "état", "etat", "est", "actif", "active",
+    "le", "la", "les", "un", "une",
+}
+
+POTENTIAL_PERCENT = re.compile(r"(\d+(?:[.,]\d+)?)\s*%")
+COLOUR_MARKUP = re.compile(r"\[[^\]]*\]")
+
+
+def potential_phrases(text):
+    """Les phrases d'un palier, débarrassées du balisage de couleur."""
+    plain = COLOUR_MARKUP.sub("", text or "").strip()
+    return [part.strip() for part in re.split(r"(?<=\.)\s+|\n", plain) if part.strip()]
+
+
+def _category_only(clause):
+    """La clause ne décrit-elle QUE des variantes du bonus de catégorie ?"""
+    words = re.findall(r"[^\W\d_]+", POTENTIAL_PERCENT.sub(" ", clause), re.UNICODE)
+    return all(word.casefold() in POTENTIAL_CONNECTORS for word in words)
+
+
+def potential_tier_deltas(text):
+    """Ce que CE palier ajoute, par code de stat, en dix-millièmes.
+
+    Rien n'est deviné : une phrase qui ne tombe pas exactement dans l'une des
+    deux formes reconnues ne produit aucun chiffre. Les bonus qui visent une
+    compétence nommée (« Floraison nocturne »), une sous-partie (« la dernière
+    frappe ») ou un état (« l'attaque spéciale améliorée ») sont refusés — les
+    verser dans la catégorie entière gonflerait toutes les autres compétences.
+    """
+    deltas = collections.Counter()
+    for phrase in potential_phrases(text):
+        base = POTENTIAL_BASE_FORM.match(phrase)
+        if base:
+            for code, percent in zip(POTENTIAL_BASE_STATS, base.groups()):
+                deltas[code] += int(percent) * 100
+            continue
+        for label, code in POTENTIAL_CATEGORY_STATS.items():
+            prefix = "Renforce la puissance de " + label + " de "
+            if not phrase.startswith(prefix):
+                continue
+            # Un second effet s'annonce par « et » : seule la première clause
+            # parle encore du bonus de catégorie.
+            clause = re.split(r",?\s+et\s+", phrase[len(prefix):])[0]
+            if not _category_only(clause):
+                break
+            values = [
+                round(float(found.replace(",", ".")) * 100)
+                for found in POTENTIAL_PERCENT.findall(clause)
+            ]
+            if values:
+                # « max atteignable », la convention de data/buffs-supports.js.
+                deltas[code] += max(values)
+            break
+    return deltas
+
+
 def canonical_stat(code, known):
-    """Ramène un code à l'orthographe de référence, celle que `known` contient."""
+    """Ramène un code à l'orthographe de référence, celle que `known` contient.
+
+    Le synonyme est résolu AVANT le retour anticipé : `stat-metadata.json`
+    décrit encore les deux vocabulaires, donc `critDamage` est dans `known` et
+    un `if code in known` placé d'abord le renverrait tel quel, sans rien
+    fusionner.
+
+    Il ne s'applique cependant que si sa cible est elle-même connue : rabattre
+    un code sur une statistique absente de la table de métadonnées le priverait
+    de famille et d'unité, et ferait échouer la génération plus loin.
+    """
+    synonym = STAT_SYNONYMS.get(code)
+    if synonym is not None and synonym in known:
+        return synonym
     if code in known:
         return code
     key = canonical_key(code)
@@ -472,12 +609,19 @@ def validate_grade(grade, weapon_slug):
             raise ValueError(f"overlimit invalide pour {weapon_slug}/{grade['gameId']}")
 
 
-def grade_stat_labels(grade):
+def grade_stat_labels(grade, known=()):
+    """Libellés français rencontrés dans un grade d'arme.
+
+    Les clés passent par `canonical_stat` : sans quoi le libellé d'une
+    sous-stat resterait rangé sous `critDamage` alors que le catalogue ne
+    contient plus que `C_Critical_Dam_Rate`, et le code canonique se
+    retrouverait sans libellé de repli.
+    """
     labels = {}
     for sub_stat in grade.get("subStats") or []:
         label = sub_stat.get("statLabel", {}).get("nameFr")
         if label:
-            labels.setdefault(sub_stat["stat"], label)
+            labels.setdefault(canonical_stat(sub_stat["stat"], known), label)
 
     enchantments = grade.get("enchantments") or {}
     for option in enchantments.get("options") or []:
@@ -494,7 +638,7 @@ def grade_stat_labels(grade):
     return labels
 
 
-def compact_grade(grade, weapon_slug):
+def compact_grade(grade, weapon_slug, known=()):
     validate_grade(grade, weapon_slug)
     compact = {
         "gameId": grade["gameId"],
@@ -505,7 +649,10 @@ def compact_grade(grade, weapon_slug):
             else None
         ),
         "subStats": [
-            {"stat": item["stat"], "values": compact_values(item["values"])}
+            {
+                "stat": canonical_stat(item["stat"], known),
+                "values": compact_values(item["values"]),
+            }
             for item in sorted(grade.get("subStats") or [], key=lambda item: item["stat"])
         ],
         "promotionSteps": [
@@ -546,7 +693,10 @@ def compact_character(character, known):
         details = known.get(stat)
         if not details or details.get("unit") != expected_unit:
             raise ValueError(f"{slug} : unite explicite incoherente pour {stat}")
-        base_stats.append({"stat": stat, "value": value})
+        # L'unité se vérifie sur le code SOURCE, la valeur se range sous le
+        # code canonique : le taux critique de base d'un personnage et celui de
+        # son équipement décrivent une seule statistique et doivent s'ajouter.
+        base_stats.append({"stat": canonical_stat(stat, known), "value": value})
 
     common = []
     for item in character.get("commonMasteryStats") or []:
@@ -607,6 +757,7 @@ def compact_character(character, known):
         }
 
     potentials_by_weapon = {}
+    texts_by_weapon = {}
     for potential in character.get("potentials") or []:
         weapon_type = potential.get("weaponType")
         tier = potential.get("tier")
@@ -623,6 +774,32 @@ def compact_character(character, known):
             }
             for item in potential.get("stats") or []
         ]
+        texts_by_weapon.setdefault(weapon_type, {})[tier] = potential.get("bonusFr")
+
+    # Un palier porte le CUMUL de tout ce qui est débloqué jusqu'à lui, jamais
+    # son seul apport : la source l'écrit ainsi pour l'attaque, la défense et
+    # les PV, et les 690 paliers déjà publiés le prouvent au chiffre près (un
+    # test le vérifie). Les bonus de catégorie lus dans la prose suivent donc
+    # la même règle.
+    for weapon_type, texts in texts_by_weapon.items():
+        cumulative = collections.Counter()
+        published = potentials_by_weapon[weapon_type]
+        for tier in sorted(texts):
+            cumulative.update(potential_tier_deltas(texts[tier]))
+            entries = published[str(tier)]
+            declared = {item["stat"] for item in entries}
+            for code, value in sorted(cumulative.items()):
+                # La source reste la référence là où elle parle : on ne comble
+                # que ce qu'elle laisse vide — les bonus de catégorie pour
+                # tous, l'attaque/défense/PV pour derieri et gowther, dont
+                # TOUS les paliers sortent sans la moindre statistique.
+                if code in declared or not value:
+                    continue
+                entries.append({
+                    "stat": canonical_stat(code, known),
+                    "value": value,
+                })
+            entries.sort(key=lambda item: item["stat"])
 
     return {
         "baseStats": base_stats,
@@ -677,6 +854,8 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict,
         key = (weapon["weaponType"], normalize_name(weapon["nameFr"]))
         official_by_key.setdefault(key, []).append(weapon)
 
+    # Les armes en ont besoin dès leur compactage, avant les personnages.
+    known = set(metadata)
     weapons_by_file = {}
     fallback_labels = {}
     for image_path in sorted(weapons_root.rglob("*.webp")):
@@ -714,12 +893,11 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict,
         }
         for grade in sorted(source.get("grades") or [], key=lambda grade: grade["gameId"]):
             compact_weapon["gradesByGameId"][grade["gameId"]] = compact_grade(
-                grade, source["slug"]
+                grade, source["slug"], known
             )
-            fallback_labels.update(grade_stat_labels(grade))
+            fallback_labels.update(grade_stat_labels(grade, known))
         weapons_by_file[catalog_file] = compact_weapon
 
-    known = set(metadata)
     characters_by_slug = {}
     for character in official_characters:
         slug = character.get("slug")

@@ -240,6 +240,13 @@ import {
     B_Def_Equip:"B_Def",
     B_MaxHp_Equip:"B_MaxHp"
   };
+  /* Le nom du champ SOURCE d'ou vient chaque statistique de base, pour que la
+     provenance affichee dise « champ critDamage » et non le code de jeu.
+
+     Les cles sont les codes CANONIQUES du catalogue : le generateur ramene
+     desormais `critDamage` sur `C_Critical_Dam_Rate` pour que la base du
+     personnage s'ajoute a l'apport de l'equipement au lieu d'ouvrir une
+     seconde ligne. Les codes restes en clair n'ont pas d'equivalent de jeu. */
   const CHARACTER_BASE_SOURCE_FIELDS = {
     B_MaxHp:"baseHp",
     B_Atk:"baseAtk",
@@ -247,10 +254,10 @@ import {
     baseSpd:"baseSpd",
     accuracy:"accuracy",
     block:"block",
-    critRate:"critRate",
-    critDamage:"critDamage",
-    critResist:"critResist",
-    critDmgResist:"critDmgResist",
+    C_Critical_Rate:"critRate",
+    C_Critical_Dam_Rate:"critDamage",
+    C_Critical_ResRate:"critResist",
+    C_Critical_DamRes_Rate:"critDmgResist",
     blockDmgResist:"blockDmgResist",
     pvpDmgUp:"pvpDmgUp",
     pvpDmgDown:"pvpDmgDown"

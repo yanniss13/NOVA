@@ -1304,11 +1304,38 @@ function merlinGameFixture(hooks){
     && term.bucket === "character:base"
     && term.source.field === "baseAtk"
   ));
+  /* Le taux critique de base porte le code de JEU, pas le code lisible de la
+     source : c'est ce qui lui permet de s'ajouter a l'apport des maitrises et
+     de l'equipement au lieu d'ouvrir une seconde ligne « Chances crit. ». */
   assert.ok(base.some(term =>
-    term.stat === "critRate"
+    term.stat === "C_Critical_Rate"
     && term.value === 1000
     && term.unit === "ten-thousandths"
+    && term.source.field === "critRate"
   ));
+  assert.ok(
+    !base.some(term => term.stat === "critRate" || term.stat === "critDamage"),
+    "les codes lisibles ne doivent plus atteindre les termes"
+  );
+
+  /* La regression que ce bloc garde : la base du personnage et la maitrise
+     tombaient dans deux totaux distincts, donc les degats critiques affiches
+     valaient la maitrise SEULE. */
+  {
+    const baseCrit = base.find(term => term.stat === "C_Critical_Dam_Rate");
+    const masteryCrit = plain(hooks.fullMasteryTerms(definition, "Axe"))
+      .filter(term => term.stat === "C_Critical_Dam_Rate")
+      .reduce((sum, term) => sum + term.value, 0);
+    assert.ok(baseCrit && baseCrit.value > 0);
+    assert.ok(masteryCrit > 0);
+    const totals = plain(hooks.reconstructStatTotals(
+      hooks.characterBaseTerms(definition)
+        .concat(hooks.fullMasteryTerms(definition, "Axe"))
+    ));
+    const cumul = totals.filter(total => total.stat === "C_Critical_Dam_Rate");
+    assert.strictEqual(cumul.length, 1, "un seul total de dégâts critiques");
+    assert.strictEqual(cumul[0].value, baseCrit.value + masteryCrit);
+  }
 
   const mastery = plain(hooks.fullMasteryTerms(definition, "Axe"));
   assert.strictEqual(
@@ -1369,11 +1396,24 @@ function merlinGameFixture(hooks){
   assert.deepStrictEqual(
     p3.map(term => [term.stat, term.value]),
     [
+      /* Le P2 de Meliodas Hache dit « Renforce la puissance de l'attaque
+         speciale de 20% ». Ce bonus ne vit que dans la prose du palier : la
+         source ne le chiffre nulle part, et il n'atteignait donc aucun
+         calcul. Le generateur le lit desormais. */
+      ["Activethird_Damadd_Rate", 2000],
       ["I_AtkAdd_Rate", 1500],
       ["I_DefAdd_Rate", 1200],
       ["I_MaxHpAdd_Rate", 500]
     ],
     "P3 est un instantané cumulé et ne doit pas additionner P1+P2+P3"
+  );
+  /* Le cumul reste un cumul : le P9 Epee 1 main porte les 15 % du P2 ET les
+     100 % du P9, sans jamais rejouer les paliers intermediaires deux fois. */
+  assert.deepStrictEqual(
+    plain(hooks.potentialTerms(definition, "Sword1h", 9))
+      .filter(term => term.stat === "Normalskill_Damadd_Rate")
+      .map(term => term.value),
+    [11500]
   );
   assert.ok(p3.every(term =>
     term.bucket === "potential:Axe:3"

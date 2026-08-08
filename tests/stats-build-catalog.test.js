@@ -319,4 +319,29 @@ assert.deepStrictEqual(
   "variantes de casse non fusionnées : " + JSON.stringify(duplicates)
 );
 
+/* Ni synonyme : les sources amont parlent deux vocabulaires pour les mêmes
+   statistiques — `critDamage` dans les sous-stats d'une arme,
+   `C_Critical_Dam_Rate` dans ses enchantements. La casse ne les rapproche pas,
+   donc le test ci-dessus les laissait passer, et le roster affichait « Dégâts
+   crit. » DEUX fois sans jamais les additionner.
+
+   Le critère est le triplet (libellé, unité, famille) : même nom, même unité,
+   même famille décrivent forcément une seule statistique. Deux codes qui
+   partagent le libellé mais PAS l'unité restent tolérés — « Perforation »
+   plate et « Perforation » en pourcentage sont deux mesures distinctes tant
+   qu'aucun relevé en jeu ne prouve le contraire. */
+const bySemantics = new Map();
+Object.entries(catalog.statLabels).forEach(([code, meta]) => {
+  const key = [meta.fr, meta.unit, meta.family].join("|");
+  bySemantics.set(key, (bySemantics.get(key) || []).concat(code));
+});
+const synonyms = [...bySemantics.entries()]
+  .filter(([, codes]) => codes.length > 1)
+  .map(([key, codes]) => key.split("|")[0] + " : " + codes.join(" + "));
+assert.deepStrictEqual(
+  synonyms,
+  [],
+  "synonymes non fusionnés : " + JSON.stringify(synonyms)
+);
+
 console.log("PASS catalogue de builds : équipement, gravures, ensembles");
