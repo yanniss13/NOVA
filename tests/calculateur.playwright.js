@@ -369,6 +369,15 @@ const STORAGE_KEY = "confrerie7ds.teams";
     assert.match(basMannequin, /ne s'y calibre pas/,
       "la page doit dire que la constante C ne se calibre pas sans defense");
 
+    /* La section des tenues gravees existe, et ses cases sont DECOCHEES : ces
+       passifs sont presque tous conditionnels, donc rien ne s'applique sans un
+       geste du membre. La fixture equipe Meliodas d'une tenue gravee reelle,
+       choisie parmi celles que le catalogue connait. */
+    const tenues = page.locator(".calc-tenues");
+    await tenues.waitFor();
+    assert.equal(await tenues.locator("input:checked").count(), 0,
+      "aucun passif de tenue gravee coche par defaut");
+
     assert.deepEqual(errors, [], "aucune erreur de page attendue");
   } finally {
     await browser.close();

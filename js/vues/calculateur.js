@@ -8,7 +8,9 @@
    ordre de rotation. C'est un choix, pas un oubli - les donnees qui manquent
    sont precisement celles dont un DPS dependrait. */
 
-import { FOLDER_TO_ENUM, metaOf } from "../noyau/constantes.js";
+import {
+  FOLDER_TO_ENUM, LINKED_ARMOR_SLOT, metaOf
+} from "../noyau/constantes.js";
 import { $, el, numericKeyboardInputProps } from "../noyau/dom.js";
 import { sessionCourante } from "../etat/session.js";
 import { charOf } from "../metier/catalogue.js";
@@ -27,6 +29,10 @@ import {
   entreesDeLaCompetence, entreesDuCalcul, resultatsParCompetence
 } from "../metier/calculateur-entrees.js";
 import { buffsDeLEquipe } from "../metier/equipe-buffs.js";
+import { passifsGravesApplicables } from "../metier/passifs-graves.js";
+import {
+  buildGearDefinition, gearPassiveStatus
+} from "../metier/build-config.js";
 import { MemberRosterStore } from "../donnees/roster-store.js";
 import { ModalStack } from "./modal-stack.js";
 import { showView } from "./navigation.js";
@@ -118,7 +124,8 @@ import { showView } from "./navigation.js";
      lignes : le charger au demarrage le ferait payer a chaque visiteur qui ne
      calcule rien. Motif repris de js/vues/wiki.js. */
   function chargerCatalogues(){
-    if(window.SEVEN_DS_COMPETENCES && window.SEVEN_DS_BUFFS_SUPPORTS){
+    if(window.SEVEN_DS_COMPETENCES && window.SEVEN_DS_BUFFS_SUPPORTS
+      && window.SEVEN_DS_PASSIFS_GRAVES){
       return Promise.resolve(true);
     }
     if(chargementCatalogues) return chargementCatalogues;
@@ -132,7 +139,9 @@ import { showView } from "./navigation.js";
       window.SEVEN_DS_COMPETENCES
         ? Promise.resolve(true) : injecter("./data/competences.js"),
       window.SEVEN_DS_BUFFS_SUPPORTS
-        ? Promise.resolve(true) : injecter("./data/buffs-supports.js")
+        ? Promise.resolve(true) : injecter("./data/buffs-supports.js"),
+      window.SEVEN_DS_PASSIFS_GRAVES
+        ? Promise.resolve(true) : injecter("./data/passifs-graves.js")
     ]).catch(erreur => {
       /* Rejouable : un echec reseau ne doit pas condamner l'onglet pour toute
          la duree de la session. */
@@ -263,6 +272,37 @@ import { showView } from "./navigation.js";
       typeArme:entree.choix.typeArme,
       atk:atkDuBuild(entree.heros)
     }));
+  }
+
+  /* La tenue gravee d'un build, et le niveau de son passif.
+
+     Le niveau vaut null quand le membre ne l'a pas renseigne : c'est un etat
+     normal, que gearPassiveStatus nomme « missing ». Le module pur retombe
+     alors sur la valeur plancher. */
+  function porteurDeTenue(charId, heros, estLeHeros){
+    const tenue = heros && heros.armor
+      ? heros.armor[LINKED_ARMOR_SLOT] : null;
+    if(!tenue) return null;
+    const config = heros.armorConfig
+      ? heros.armorConfig[LINKED_ARMOR_SLOT] : null;
+    const statut = gearPassiveStatus(buildGearDefinition(tenue), config);
+    return {
+      charId,
+      tenue,
+      niveau:statut === "valid" ? config.passiveLevel : null,
+      estLeHeros
+    };
+  }
+
+  /* Le heros calcule d'abord, puis ses coequipiers : le membre lit sa propre
+     tenue en tete, avant celles qu'il emprunte. */
+  function porteursDeTenues(hero){
+    const liste = [porteurDeTenue(etat.charId, hero, true)];
+    etat.coequipiers.forEach(choix => {
+      if(!choix) return;
+      liste.push(porteurDeTenue(choix.charId, herosDuChoix(choix), false));
+    });
+    return liste.filter(Boolean);
   }
 
   /* Le roster range ses builds par DOSSIER d'image (« Hache »), le catalogue
@@ -440,6 +480,57 @@ import { showView } from "./navigation.js";
           text:"Aucun buff modélisé : " + muets.join(", ") + "."}));
       }
     }
+    return section;
+  }
+
+  /* Les passifs de tenue gravee. Une section a PART des soutiens, qui restent
+     les buffs venus des competences : la tenue du heros calcule n'est pas un
+     soutien, et les melanger brouillerait les deux. */
+  function sectionTenuesGravees(passifs, redessiner){
+    const section = el("section",{class:"calc-tenues"},[
+      el("strong",{text:"Tenues gravées"})
+    ]);
+    if(!passifs.length){
+      section.appendChild(el("p",{class:"calc-muette",
+        text:"Aucun passif de tenue gravée ne s'applique à ce build."}));
+      return section;
+    }
+    const parPorteur = new Map();
+    passifs.forEach(passif => {
+      const cle = passif.support + "|" + passif.tenue;
+      if(!parPorteur.has(cle)) parPorteur.set(cle, []);
+      parPorteur.get(cle).push(passif);
+    });
+
+    const grille = el("div",{class:"calc-soutiens-grille"});
+    parPorteur.forEach(lignes => {
+      const bloc = el("div",{class:"calc-soutien"});
+      const nomTenue = String(lignes[0].tenue).split("/").pop()
+        .replace(/\.webp$/, "");
+      bloc.appendChild(el("h4",{class:"calc-soutien-nom",
+        text:nomDuPersonnage(lignes[0].support) + " · " + nomTenue}));
+      lignes.forEach(passif => {
+        const caseACocher = el("input",{
+          type:"checkbox",
+          onchange:()=>{
+            if(etat.coches.has(passif.id)) etat.coches.delete(passif.id);
+            else etat.coches.add(passif.id);
+            redessiner();
+          }
+        });
+        caseACocher.checked = etat.coches.has(passif.id);
+        bloc.appendChild(el("label",{class:"calc-buff"},[
+          caseACocher,
+          el("span",{text:passif.libelle})
+        ]));
+        if(passif.niveauInconnu){
+          bloc.appendChild(el("p",{class:"calc-muette",
+            text:"Niveau de passif non renseigné — valeur du niveau 1."}));
+        }
+      });
+      grille.appendChild(bloc);
+    });
+    section.appendChild(grille);
     return section;
   }
 
@@ -848,8 +939,17 @@ import { showView } from "./navigation.js";
 
     vue.appendChild(sectionSoutiens(element, dessiner));
 
+    const passifsGraves = passifsGravesApplicables({
+      element, porteurs:porteursDeTenues(hero)
+    });
+    vue.appendChild(sectionTenuesGravees(passifsGraves, dessiner));
+
+    /* Les deux sources se rejoignent ici, et une seule fois : buffs de soutien
+       et passifs graves portent la meme forme - `stat`, `valeur`,
+       `operation` - donc le moteur ignore d'ou ils viennent. */
     const coches = buffsProposes(element)
-      .filter(buff => etat.coches.has(buff.id));
+      .concat(passifsGraves)
+      .filter(entree => etat.coches.has(entree.id));
 
     /* Les bonus de categorie du BUILD et ceux des buffs coches s'ADDITIONNENT :
        ils viennent de sources differentes - potentiels, equipement, tenue

@@ -110,6 +110,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   buffsDeLEquipe:typeof buffsDeLEquipe === "function"
     ? buffsDeLEquipe
     : undefined,
+  passifsGravesApplicables:typeof passifsGravesApplicables === "function"
+    ? passifsGravesApplicables
+    : undefined,
   bonusCategorieDesBuffs:typeof bonusCategorieDesBuffs === "function"
     ? bonusCategorieDesBuffs
     : undefined,
@@ -717,6 +720,15 @@ function loadApp(initialTeams){
     { filename:"buffs-supports.js" }
   );
   sandbox.SEVEN_DS_BUFFS_SUPPORTS = buffsSandbox.window.SEVEN_DS_BUFFS_SUPPORTS;
+  /* Meme raison : la table des passifs graves est ecrite a la main, donc on
+     charge la VRAIE plutot qu'une fixture qui testerait une invention. */
+  const passifsSandbox = { window:{} };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(ROOT, "data", "passifs-graves.js"), "utf8"),
+    passifsSandbox,
+    { filename:"passifs-graves.js" }
+  );
+  sandbox.SEVEN_DS_PASSIFS_GRAVES = passifsSandbox.window.SEVEN_DS_PASSIFS_GRAVES;
   sandbox.window = sandbox;
   /* Le bac a sable modelise un navigateur : il lui faut donc les points
      d'accroche globaux que le code utilise. Les dispos ecoutent `online` pour

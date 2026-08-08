@@ -14,6 +14,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
+const { plain } = require("./helpers/load-app");
 
 const racine = path.join(__dirname, "..");
 
@@ -112,6 +113,116 @@ Object.keys(TABLE).forEach(fichier => {
    il devra monter le jour ou l'un de ces seaux existera. */
 assert.equal(Object.keys(TABLE).length, 17,
   "17 tenues attendues dans ce lot, recu " + Object.keys(TABLE).length);
+
+/* Le module pur : qui recoit quoi, et a quelle valeur. */
+{
+  const { loadApp } = require("./helpers/load-app");
+  const hooks = loadApp().hooks;
+  const { passifsGravesApplicables, entreesDuCalcul,
+    bonusCategorieDesBuffs } = hooks;
+  assert.equal(typeof passifsGravesApplicables, "function",
+    "passifsGravesApplicables doit etre expose par le chargeur de tests");
+
+  const TENUE = "7ds-armures-ssr/Armure liee/Défense simple.webp";
+  const porteur = extra => Object.assign(
+    { charId:"meliodas", tenue:TENUE, niveau:3, estLeHeros:true }, extra
+  );
+
+  /* Le heros recoit les passifs « soi » de SA tenue. */
+  const sien = passifsGravesApplicables({
+    element:"dark", porteurs:[porteur()]
+  });
+  assert.ok(sien.length > 0, "le heros doit recevoir les passifs de sa tenue");
+  assert.equal(sien[0].support, "meliodas",
+    "chaque ligne doit nommer son porteur");
+  assert.equal(sien[0].valeur, 8000,
+    "au niveau 3, la valeur est la troisieme du tableau");
+  assert.equal(sien[0].niveauInconnu, false);
+
+  /* Le passif « soi » d'un COEQUIPIER ne concerne pas le heros. */
+  assert.deepEqual(
+    plain(passifsGravesApplicables({
+      element:"dark", porteurs:[porteur({ estLeHeros:false })]
+    })),
+    [],
+    "un passif « soi » porte par un coequipier ne doit pas atteindre le heros"
+  );
+
+  /* Le niveau decide de la valeur. */
+  assert.equal(
+    passifsGravesApplicables({
+      element:"dark", porteurs:[porteur({ niveau:1 })]
+    })[0].valeur,
+    5000
+  );
+
+  /* Niveau inconnu : la valeur PLANCHER, et le drapeau leve. Le plancher et
+     non le plafond : le chiffre ne peut alors qu'etre sous-estime, jamais
+     flatte. */
+  const inconnu = passifsGravesApplicables({
+    element:"dark", porteurs:[porteur({ niveau:null })]
+  })[0];
+  assert.equal(inconnu.valeur, 5000, "niveau inconnu : la valeur plancher");
+  assert.equal(inconnu.niveauInconnu, true, "et le drapeau doit etre leve");
+
+  /* Une tenue sans passif modelise n'apporte rien, et ne casse rien. */
+  assert.deepEqual(
+    plain(passifsGravesApplicables({
+      element:"dark", porteurs:[porteur({ tenue:"inconnue.webp" })]
+    })),
+    []
+  );
+
+  /* Un malus sur la CIBLE porte « allies » : un coequipier qui l'inflige en
+     fait profiter le heros. */
+  const HOWZER = "7ds-armures-ssr/Armure liee/Aventure en toute sécurité.webp";
+  assert.equal(
+    passifsGravesApplicables({
+      element:"wind",
+      porteurs:[{ charId:"howzer", tenue:HOWZER, niveau:3, estLeHeros:false }]
+    }).length,
+    1,
+    "un malus sur la cible inflige par un coequipier doit atteindre le heros"
+  );
+
+  /* Le filtre par element s'applique par-dessus, comme pour les soutiens. */
+  const GRIZZLY = "7ds-armures-ssr/Armure liee/Le Grizzly de la Paresse.webp";
+  const grizzly = pourElement => passifsGravesApplicables({
+    element:pourElement,
+    porteurs:[{ charId:"king", tenue:GRIZZLY, niveau:3, estLeHeros:true }]
+  }).map(ligne => ligne.id);
+  assert.ok(grizzly("holy").includes("king-grizzly-sacre"),
+    "un build Sacre doit recevoir le buff de degats du Sacre");
+  assert.ok(!grizzly("fire").includes("king-grizzly-sacre"),
+    "un build Feu ne doit pas le recevoir");
+  assert.ok(grizzly("fire").includes("king-grizzly-chances-crit"),
+    "le buff sans element, lui, vaut pour tous");
+
+  /* AUCUNE ENTREE INERTE. Cochee, une ligne doit changer quelque chose : soit
+     une entree du moteur, soit un bonus de categorie.
+
+     Ce filet a deja attrape des codes de stat inventes dans buffs-supports.js,
+     mais il doit ici accepter les DEUX sorties : un buff de categorie ne
+     touche justement aucune entree du moteur, et le filet d'origine le
+     rejetterait a tort - alors que c'est exactement ce qu'on construit. */
+  const NEUTRE = {
+    atk:1000, attaqueElementaire:500, def:400, maxHp:20000,
+    critRate:3000, critDamage:12000, percementDefense:500
+  };
+  Object.keys(TABLE).forEach(fichier => TABLE[fichier].forEach(passif => {
+    const ligne = Object.assign({}, passif, { valeur:passif.niveaux[2] });
+    const nuEntrees = entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:[] });
+    const avec = entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:[ligne] });
+    const changeLeMoteur = Object.keys(nuEntrees)
+      .some(cle => nuEntrees[cle] !== avec[cle]);
+    const changeUneCategorie =
+      Object.keys(bonusCategorieDesBuffs([ligne])).length > 0;
+    assert.ok(changeLeMoteur || changeUneCategorie,
+      passif.id + " : ce passif ne change NI une entree du moteur NI un bonus "
+        + "de categorie. Son code de stat n'est branche nulle part, donc il "
+        + "serait coche sans rien faire.");
+  }));
+}
 
 console.log("passifs-graves.test.js OK (" + lignes + " lignes sur "
   + Object.keys(TABLE).length + " tenues)");
