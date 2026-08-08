@@ -7,7 +7,7 @@
 
 Sur l'onglet Calculateur, choisir une **équipe déjà enregistrée** et ne voir
 que les buffs que cette équipe apporte réellement : ceux de ses membres, venant
-de l'arme que chacun a équipée, et — pour les deux buffs qui valent un
+de l'arme que chacun a équipée, et — pour les trois buffs qui valent un
 pourcentage de l'attaque du support — chiffrés sur son build réel plutôt que sur
 un plafond supposé.
 
@@ -89,20 +89,28 @@ huit supports de la table, six portent des buffs venant de plusieurs armes.
 Chaque buff porte `provenance.gameId`, du genre `derieri_sword2h_skill_e`, qui
 nomme l'arme. **Ce texte ne doit pas être découpé par position** :
 `gil_thunder_lance_jumpatk` piégerait un découpage naïf, le slug contenant déjà
-un tiret bas. La règle retenue : un buff appartient à l'arme *T* si son gameId
-contient `_<t>_`, avec *T* pris dans les armes que le catalogue autorise à ce
-personnage (`weaponTypesOf`). Le jeton d'arme est l'enum en minuscules —
-`Sword1h` → `sword1h`, `SwordDual` → `sworddual`.
+un tiret bas.
 
-## Les deux buffs indexés sur l'attaque du support
+La règle retenue va dans l'autre sens, et c'est plus sûr : on ne cherche pas
+quelle arme le gameId nomme, on vérifie que le gameId **contient le jeton de
+l'arme équipée**. Le roster range les armes par DOSSIER français
+(`Epee 2 mains`) et `FOLDER_TO_ENUM` donne l'enum (`Sword2h`) ; le jeton est
+cet enum en minuscules, encadré de tirets bas — `_sword2h_`. Rien à deviner,
+rien à découper.
 
-Deux lignes de la table valent un pourcentage de l'attaque de celui qui les
-lance, plafonné :
+Le piège à ne pas manquer : `weaponTypesOf(charId)` rend des **dossiers**, pas
+des enums. Passer un dossier au jeton ne trouverait jamais rien.
 
-| Support | Buff | Stat | Aujourd'hui |
-|---|---|---|---|
-| derieri | Attaque de Feu, 30 % de son ATK | `Fire_Add` | 3000, le plafond |
-| gowther | Attaque de Foudre, 10 % de son ATK | `Thunder_Add` | 3000, le plafond |
+## Les trois buffs indexés sur l'attaque du support
+
+Trois lignes de la table valent un pourcentage de l'attaque de celui qui les
+lance, plafonné. Ce sont exactement les trois entrées portant `unite:"flat"` :
+
+| Support | `id` | Buff | Stat | Aujourd'hui |
+|---|---|---|---|---|
+| derieri | `derieri-taillade-attaque-feu` | Attaque de Feu, 30 % de son ATK | `Fire_Add` | 3000, le plafond |
+| elizabeth | `elizabeth-vague-attaque-vent` | Attaque de Vent, 30 % de son ATK | `Wind_Add` | 3000, le plafond |
+| gowther | `gowther-confusion-attaque-foudre` | Attaque de Foudre, 10 % de son ATK | `Thunder_Add` | 3000, le plafond |
 
 La table ne garde que le plafond, donc le pourcentage est perdu. Il faut
 l'écrire, sans retirer le plafond qui sert de repli :
@@ -153,7 +161,7 @@ Lire les équipes, tenir `etat.equipeId`, dessiner le choix, appeler
 `B_Atk`, puis passer la liste réduite au module pur. La vue ne calcule aucune
 valeur de buff.
 
-**`data/buffs-supports.js`** gagne le champ `indexeSurAtk` sur ses deux lignes
+**`data/buffs-supports.js`** gagne le champ `indexeSurAtk` sur ses trois lignes
 concernées. Le fichier reste écrit à la main, comme son en-tête l'exige.
 
 **Mémorisation.** L'identifiant de l'équipe choisie est retenu sur l'appareil,
@@ -198,7 +206,7 @@ passif est un chantier de saisie à part entière, qui suivra celui-ci.
 
 Les **statistiques** de la tenue gravée, elles, entrent déjà dans le calcul :
 elles deviennent des termes comme n'importe quelle pièce, et alimentent donc
-l'ATK du support qui sert aux deux buffs indexés.
+l'ATK du support qui sert aux trois buffs indexés.
 
 **Les buffs restreints à une catégorie de compétence.** Cinq sont connus et
 listés dans l'en-tête de `data/buffs-supports.js` — dont les +50 % de dégâts de
