@@ -23,7 +23,7 @@
 //   PIEGE : la source ecrit « (Max\u00a0: » avec une ESPACE INSECABLE avant les
 //   deux-points, comme le veut la typographie francaise. Un « (Max\u00a0: » tape au
 //   clavier ne correspond a rien. Les phrases citees ici l'echappent donc en
-//     plutot que de dependre de ce qu'un editeur aura insere.
+//   `\u00a0` plutot que de dependre de ce qu'un editeur aura insere.
 //
 // niveaux : les trois valeurs, du niveau 1 au niveau 3, en dix-milliemes.
 // cible   : "soi"     le passif ne profite qu'a celui qui porte la tenue ;
@@ -32,10 +32,23 @@
 //                     frappe cette cible en beneficie.
 // element : null, ou l'attribut vise quand le buff ne concerne que lui.
 //
+// QUI RECOIT QUOI, quand le texte ne le dit pas d'un mot. La source distingue
+// deux tournures, et la difference porte tout le sens :
+//
+//     « Lorsqu'un heros allie attaque …, augmente SES degats de Vent »
+//        le possessif renvoie a l'allie qui frappe   ->  cible "allies"
+//     « Augmente LES degats de competence normale … lorsqu'un heros allie … »
+//        aucun possessif, l'allie n'est que la CONDITION  ->  cible "soi"
+//
+// Cette lecture vaut pour tout le fichier, et elle se verifie sur les cas ou
+// la source tranche elle-meme : partout ou l'equipe est visee, elle ecrit
+// « de tous les heros allies ». Une tournure sans possessif ET sans « allies »
+// ne buffe que son porteur.
+//
 // CE QUI N'Y FIGURE PAS, ET POURQUOI. Sur les 68 tenues, 28 n'ont aucun effet
-// offensif - barrieres, soins, recharges, jauges, deplacement - et 14 buffent
-// l'equipe, lot suivant. Restaient 26 passifs offensifs pour leur porteur.
-// DIX-SEPT sont transcrits ici. Les NEUF autres ne le sont pas, et il vaut
+// offensif - barrieres, soins, recharges, jauges, deplacement. Restaient 26
+// passifs offensifs pour leur seul porteur et 14 qui buffent l'equipe. TRENTE
+// tenues sont transcrites ici. Les douze autres ne le sont pas, et il vaut
 // mieux le dire que les approximer :
 //
 //   Chevalier sacre prometteur (gil-thunder)   « degats infliges aux ennemis
@@ -49,20 +62,37 @@
 //     SUBIS PAR L'ENNEMI » : une vulnerabilite de la cible. La verser dans le
 //     bonus du heros supposerait que le jeu confond les deux - meme raison qui
 //     tient les reductions de defense elementaire hors de buffs-supports.js.
-//   Le Serpent de l'Envie (diane)   son plafond s'ecrit « (… : 56%, 24%) », et
-//     le 24 ne suit aucune phrase STABLE d'un niveau a l'autre : la garde
-//     refuse une valeur qu'on ne peut pas designer sans ambiguite. C'est
-//     exactement son role.
-//   Lumiere de guidance (elaine)   « augmente l'attaque de Vent de 16% » : un
-//     POURCENTAGE, quand le seau `Wind_Add` du moteur est une valeur plate.
+//   Le Serpent de l'Envie (diane) et Dignite de la sainte (elaine)   leur
+//     plafond s'ecrit « (Max\u00a0: 56%, 24%) », et le second nombre ne suit aucune
+//     phrase STABLE d'un niveau a l'autre, puisque le premier change avec le
+//     niveau. La garde refuse une valeur qu'on ne peut pas designer sans
+//     ambiguite ; c'est exactement son role.
 //   Retour du Chevalier Sacre (hendrickson), Resistance et revolution
 //     (derieri), Tenue modeste (dreyfus)   des degats critiques ou
 //     elementaires restreints a UNE categorie de competence. Le moteur porte
 //     les deux notions separement, jamais croisees.
 //   Tenue de fete legere (klotho)   des degats de proc, sans effet sur les
 //     statistiques.
+//   Protection de la fee (tioreh)   seule la defense des allies monte : rien
+//     d'offensif a chiffrer.
 //
-// Ces neuf reviendront le jour ou le moteur portera le seau qui leur manque.
+// Et, DANS des tenues par ailleurs transcrites, trois effets isoles restent
+// dehors pour la meme raison - un seau qui manque :
+//
+//   Chercheuse de savoir (merlin)   « les degats crit. d'attaque ultime » :
+//     du critique croise avec une categorie, que le moteur ne croise pas.
+//   Le Belier de la Luxure (gowther)   « tous les degats elementaires » :
+//     aucun code du depot ne le porte. `AllElement_Add` est une ATTAQUE plate
+//     et `Default_Element_Rate` vise le physique ; ni l'un ni l'autre ne dit
+//     « degats de tous les elements ».
+//   Vedette de la taverne (elizabeth)   « reduit la resistance a tous les
+//     elements de la cible » : la cible n'a pas de seau de reduction de
+//     resistance, et la VALEUR DE BASE de cette resistance est elle-meme en
+//     suspens (voir l'encadre AKUMU_ELEMENTAIRE de js/metier/degats-calcul.js).
+//     Batir une reduction sur un socle conteste ferait deux erreurs au lieu
+//     d'une.
+//
+// Ces douze reviendront le jour ou le moteur portera le seau qui leur manque.
 window.SEVEN_DS_PASSIFS_GRAVES = {
   "7ds-armures-ssr/Armure liee/Aventure du prince.webp":[
     {
@@ -93,6 +123,35 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       provenance:{ phrase:"réduit la défense crit. de " }
     }
   ],
+  "7ds-armures-ssr/Armure liee/Chercheuse de savoir.webp":[
+    {
+      /* Un POURCENTAGE d'attaque elementaire, donc `multiply` sur le seau
+         plat : c'est la forme deja retenue pour manny-champ-attaque-froid
+         dans buffs-supports.js, et non une nouvelle convention. */
+      id:"merlin-chercheuse-attaque-feu",
+      libelle:"Déluge activé : attaque de Feu des alliés +20 %",
+      cible:"allies",
+      stat:"Fire_Add",
+      operation:"multiply",
+      unite:"ten-thousandths",
+      element:"fire",
+      niveaux:[1200, 1600, 2000],
+      provenance:{ phrase:"augmente l'attaque de Feu de tous les héros alliés de " }
+    },
+    {
+      id:"merlin-chercheuse-ultime",
+      libelle:"Après l'ultime : ultime des alliés Feu +30 %",
+      cible:"allies",
+      stat:"Ultimateskill_Damadd_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:"fire",
+      niveaux:[1800, 2400, 3000],
+      provenance:{
+        phrase:"augmente les dégâts d'attaque ultime de tous les héros alliés d'attribut Feu de "
+      }
+    }
+  ],
   "7ds-armures-ssr/Armure liee/Chevalier honorable.webp":[
     {
       id:"dreyfus-chevalier-honorable-ultime",
@@ -115,6 +174,32 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       element:"holy",
       niveaux:[2400, 3200, 4000],
       provenance:{ phrase:"Augmente les dégâts du Sacré de " }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Chevalier impérial.webp":[
+    {
+      /* « Augmente LES degats … lorsqu'un heros allie … » : l'allie est la
+         CONDITION, pas le beneficiaire. Voir l'en-tete. */
+      id:"drake-chevalier-imperial-competence-normale",
+      libelle:"Allié Foudre sous Pulsion : compétence normale +30 %",
+      cible:"soi",
+      stat:"Normalskill_Damadd_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[1800, 2400, 3000],
+      provenance:{ phrase:"Augmente les dégâts de compétence normale de " }
+    },
+    {
+      id:"drake-chevalier-imperial-degats-foudre",
+      libelle:"Coups de Pulsion cumulés : dégâts de Foudre des alliés +20 %",
+      cible:"allies",
+      stat:"Thunder_Element_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:"thunder",
+      niveaux:[1200, 1600, 2000],
+      provenance:{ phrase:"(Max\u00a0: " }
     }
   ],
   "7ds-armures-ssr/Armure liee/Chevalier sacré de la tempête.webp":[
@@ -143,6 +228,30 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       element:null,
       niveaux:[10000, 12500, 15000],
       provenance:{ phrase:"des bonus pendant 30\u00a0s. (Max\u00a0: " }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Courtoisie minimale.webp":[
+    {
+      id:"derieri-courtoisie-ultime",
+      libelle:"Coups sous boost de PV max : ultime des alliés Feu +30 %",
+      cible:"allies",
+      stat:"Ultimateskill_Damadd_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:"fire",
+      niveaux:[1800, 2400, 3000],
+      provenance:{ phrase:"(Max\u00a0: " }
+    },
+    {
+      id:"derieri-courtoisie-degats-crit",
+      libelle:"Défense de Feu réduite : dégâts crit. des alliés Feu +40 %",
+      cible:"allies",
+      stat:"C_Critical_Dam_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:"fire",
+      niveaux:[2400, 3200, 4000],
+      provenance:{ phrase:"avec une défense de Feu réduite de " }
     }
   ],
   "7ds-armures-ssr/Armure liee/Défense simple.webp":[
@@ -184,6 +293,30 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       provenance:{ phrase:"Augmente les dégâts de compétence normale de " }
     }
   ],
+  "7ds-armures-ssr/Armure liee/Formalité de l'érudite en chef.webp":[
+    {
+      id:"klotho-formalite-chances-crit",
+      libelle:"Pierre ou Barrière runique : chances crit. des alliés Froid +20 %",
+      cible:"allies",
+      stat:"C_Critical_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:"ice",
+      niveaux:[1000, 1500, 2000],
+      provenance:{ phrase:"augmente les chances crit. de " }
+    },
+    {
+      id:"klotho-formalite-degats-crit",
+      libelle:"Pierre ou Barrière runique : dégâts crit. des alliés Froid +50 %",
+      cible:"allies",
+      stat:"C_Critical_Dam_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:"ice",
+      niveaux:[3000, 4000, 5000],
+      provenance:{ phrase:"les dégâts crit. de " }
+    }
+  ],
   "7ds-armures-ssr/Armure liee/Gloire du passé.webp":[
     {
       id:"drake-gloire-du-passe-foudre",
@@ -195,6 +328,57 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       element:"thunder",
       niveaux:[1800, 2400, 3000],
       provenance:{ phrase:"(Max\u00a0: " }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Héros de Liones.webp":[
+    {
+      id:"elizabeth-heros-de-liones-degats-crit",
+      libelle:"Ennemi sous Altération : dégâts crit. de Vent des alliés +42 %",
+      cible:"allies",
+      stat:"C_Critical_Dam_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:"wind",
+      niveaux:[2600, 3400, 4200],
+      provenance:{ phrase:"infligés aux ennemis affectés par Altération de " }
+    },
+    {
+      id:"elizabeth-heros-de-liones-attaque",
+      libelle:"Après une compétence de relève : attaque +20 %",
+      cible:"soi",
+      stat:"I_AtkAdd_Rate",
+      operation:"multiply",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[1200, 1600, 2000],
+      provenance:{ phrase:"Augmente l'attaque du héros de " }
+    },
+    {
+      /* Le beneficiaire est le heros qui ENTRE en releve, pas Elisabeth : la
+         source dit « si le heros change est d'attribut Vent ». D'ou « allies »,
+         et l'element Vent. */
+      id:"elizabeth-heros-de-liones-chances-crit",
+      libelle:"Relève vers un héros Vent : chances crit. +20 %",
+      cible:"allies",
+      stat:"C_Critical_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:"wind",
+      niveaux:[1200, 1600, 2000],
+      provenance:{ phrase:"augmente les chances crit. de " }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Le Bélier de la Luxure.webp":[
+    {
+      id:"gowther-belier-degats-crit",
+      libelle:"Après l'ultime : dégâts crit. des alliés +20 %",
+      cible:"allies",
+      stat:"C_Critical_Dam_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[1200, 1600, 2000],
+      provenance:{ phrase:"augmente les dégâts crit. de tous les héros alliés de " }
     }
   ],
   "7ds-armures-ssr/Armure liee/Le Grizzly de la Paresse.webp":[
@@ -242,6 +426,23 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:null,
       niveaux:[1600, 2000, 2400],
+      provenance:{ phrase:"(Max\u00a0: " }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Lumière de guidance.webp":[
+    {
+      /* Le lot precedent l'ecartait au motif que `Wind_Add` est un seau PLAT
+         quand la source donne un pourcentage. C'etait une erreur de ma part :
+         buffs-supports.js modelise deja le meme cas par `multiply`
+         (manny-champ-attaque-froid). La tenue rejoint donc la table. */
+      id:"elaine-lumiere-attaque-vent",
+      libelle:"Boosts de dégâts crit. cumulés : attaque de Vent +72 %",
+      cible:"soi",
+      stat:"Wind_Add",
+      operation:"multiply",
+      unite:"ten-thousandths",
+      element:"wind",
+      niveaux:[4800, 6000, 7200],
       provenance:{ phrase:"(Max\u00a0: " }
     }
   ],
@@ -306,6 +507,73 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       provenance:{ phrase:"(Max\u00a0: " }
     }
   ],
+  "7ds-armures-ssr/Armure liee/Robe de printemps.webp":[
+    {
+      id:"daisy-robe-chances-crit",
+      libelle:"Chances crit. des alliés +10 %",
+      cible:"allies",
+      stat:"C_Critical_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[600, 800, 1000],
+      provenance:{ phrase:"Augmente les chances crit. de tous les héros alliés de " }
+    },
+    {
+      id:"daisy-robe-defense-crit",
+      libelle:"Coups crit. sur résistance crit. réduite : défense crit. de l'ennemi −48 %",
+      cible:"allies",
+      cibleEnnemi:true,
+      effet:"defenseCritique",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[3200, 4000, 4800],
+      provenance:{ phrase:"(Max\u00a0: " }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Sortie joyeuse.webp":[
+    {
+      id:"elaine-sortie-joyeuse-releve",
+      libelle:"Déluge activé : compétence de relève des alliés +50 %",
+      cible:"allies",
+      stat:"Normalskillchangetag_Damadd_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[3000, 4000, 5000],
+      provenance:{
+        phrase:"augmente les dégâts de la compétence de relève de tous les héros alliés de "
+      }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Souffle d'exploration.webp":[
+    {
+      /* Deux « \u00a0: » dans ce texte - le plafond du cumul, puis un temps de
+         recharge. La phrase citee garde la parenthese ouvrante, qui n'apparait
+         qu'une fois. */
+      id:"daisy-souffle-degats-foudre",
+      libelle:"Boosts de chances crit. cumulés : dégâts de Foudre des alliés +20 %",
+      cible:"allies",
+      stat:"Thunder_Element_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:"thunder",
+      niveaux:[1000, 1500, 2000],
+      provenance:{ phrase:"(Max\u00a0: " }
+    },
+    {
+      id:"daisy-souffle-degats-crit",
+      libelle:"Cumuls au maximum : dégâts crit. des alliés +30 %",
+      cible:"allies",
+      stat:"C_Critical_Dam_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[2000, 2500, 3000],
+      provenance:{ phrase:"augmente les dégâts crit. de tous les héros alliés de " }
+    }
+  ],
   "7ds-armures-ssr/Armure liee/Tenue d'exercice d'exploratrice.webp":[
     {
       id:"klotho-exercice-attaque-normale",
@@ -317,6 +585,41 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       element:null,
       niveaux:[2500, 3000, 3500],
       provenance:{ phrase:"(Max\u00a0: " }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Tenue de soirée pour un rendez-vous secret.webp":[
+    {
+      id:"gowther-tenue-de-soiree-degats-foudre",
+      libelle:"Ennemi sous Déluge : dégâts de Foudre +60 %",
+      cible:"soi",
+      stat:"Thunder_Element_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:"thunder",
+      niveaux:[3600, 4800, 6000],
+      provenance:{ phrase:"Augmente les dégâts de Foudre de " }
+    },
+    {
+      id:"gowther-tenue-de-soiree-percement",
+      libelle:"Ennemi sous Déluge : percement de défense +10 %",
+      cible:"soi",
+      stat:"D_Protect_Cur_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[600, 800, 1000],
+      provenance:{ phrase:"le percement de défense de " }
+    },
+    {
+      id:"gowther-tenue-de-soiree-attaque-foudre",
+      libelle:"Déluge de Foudre activé : attaque de Foudre des alliés +30 %",
+      cible:"allies",
+      stat:"Thunder_Add",
+      operation:"multiply",
+      unite:"ten-thousandths",
+      element:"thunder",
+      niveaux:[1800, 2400, 3000],
+      provenance:{ phrase:"augmente l'attaque de Foudre de tous les héros alliés de " }
     }
   ],
   "7ds-armures-ssr/Armure liee/Traces de souvenirs.webp":[
@@ -332,6 +635,19 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       provenance:{ phrase:"(Max\u00a0: " }
     }
   ],
+  "7ds-armures-ssr/Armure liee/Vedette de la taverne.webp":[
+    {
+      id:"elizabeth-vedette-degats-crit",
+      libelle:"Soins sur la durée reçus : dégâts crit. des alliés +40 %",
+      cible:"allies",
+      stat:"C_Critical_Dam_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[2400, 3200, 4000],
+      provenance:{ phrase:"augmente les dégâts crit. de tous les héros alliés de " }
+    }
+  ],
   "7ds-armures-ssr/Armure liee/Vêtements formels légers.webp":[
     {
       id:"merlin-vetements-formels-degats-crit",
@@ -343,6 +659,24 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       element:null,
       niveaux:[2400, 3200, 4000],
       provenance:{ phrase:"Augmente les dégâts crit. de " }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Vœu du prince.webp":[
+    {
+      /* Le Deluge de Vent est la CONDITION, pas un filtre sur le beneficiaire :
+         la source buffe « tous les heros allies », sans mention d'attribut.
+         D'ou element null. */
+      id:"tristan-voeu-du-prince-attaque-normale",
+      libelle:"Déluge de Vent d'un allié : attaque normale des alliés +20 %",
+      cible:"allies",
+      stat:"Normalattack_Damadd_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[1200, 1600, 2000],
+      provenance:{
+        phrase:"augmente les dégâts d'attaque normale de tous les héros alliés de "
+      }
     }
   ]
 };

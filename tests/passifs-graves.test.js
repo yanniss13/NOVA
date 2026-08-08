@@ -106,13 +106,25 @@ Object.keys(TABLE).forEach(fichier => {
   });
 });
 
-/* Dix-sept tenues sur les vingt-six passifs offensifs « sur soi ». Les neuf
-   autres sont NOMMEES dans l'en-tete de data/passifs-graves.js avec la raison
-   de leur absence - un seau qui manque au moteur, ou une valeur que la garde
-   refuse de laisser designer. Ce compte empeche qu'un oubli passe inapercu, et
-   il devra monter le jour ou l'un de ces seaux existera. */
-assert.equal(Object.keys(TABLE).length, 17,
-  "17 tenues attendues dans ce lot, recu " + Object.keys(TABLE).length);
+/* Trente tenues sur les quarante qui portent un passif offensif : vingt-six
+   pour leur seul porteur, quatorze pour l'equipe. Les douze absentes sont
+   NOMMEES dans l'en-tete de data/passifs-graves.js avec la raison de leur
+   absence - un seau qui manque au moteur, ou une valeur que la garde refuse de
+   laisser designer. Ce compte empeche qu'un oubli passe inapercu, et il devra
+   monter le jour ou l'un de ces seaux existera. */
+assert.equal(Object.keys(TABLE).length, 30,
+  "30 tenues attendues, recu " + Object.keys(TABLE).length);
+
+/* Les deux cibles doivent etre REPRESENTEES. Le lot « allies » est arrive
+   apres coup : sans ce controle, un fichier ou toutes les lignes seraient
+   retombees sur "soi" - l'erreur la plus facile a commettre en transcrivant -
+   passerait tous les autres tests sans qu'aucun buff d'equipe n'agisse. */
+{
+  const cibles = Object.values(TABLE).flat().map(p => p.cible);
+  assert.ok(cibles.includes("soi"), "aucun passif « soi » : lot 1 a disparu");
+  assert.ok(cibles.includes("allies"),
+    "aucun passif « allies » : les tenues des coequipiers ne servent a rien");
+}
 
 /* Le module pur : qui recoit quoi, et a quelle valeur. */
 {
