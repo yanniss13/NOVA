@@ -58,7 +58,11 @@ import { degatsAttendus } from "./degats-calcul.js";
      tranche pas non plus. */
   const EFFET_SUR_LA_CIBLE = {
     defense:"reductionDefense",
-    defenseCritique:"reductionDefenseCritique"
+    defenseCritique:"reductionDefenseCritique",
+    /* La resistance critique, distincte de la defense critique : l'une decide
+       si le coup critique PART, l'autre de ce qu'il rapporte. Les confondre
+       ferait payer deux fois le meme debuff, ou disparaitre l'autre. */
+    resistanceCritique:"reductionResistanceCritique"
   };
 
   function tableDesBuffs(){
@@ -100,10 +104,11 @@ import { degatsAttendus } from "./degats-calcul.js";
       bonusGlobal:0,
       bonusElementaire:0,
       bonusCategorie:0,
-      /* Deux seaux de malus sur la cible. Le build ne les alimente jamais :
+      /* Trois seaux de malus sur la cible. Le build ne les alimente jamais :
          ils ne viennent que des competences d'equipe cochees. */
       reductionDefense:0,
-      reductionDefenseCritique:0
+      reductionDefenseCritique:0,
+      reductionResistanceCritique:0
     };
 
     coches.forEach(buff => {

@@ -15,6 +15,8 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 const { plain } = require("./helpers/load-app");
+const { EFFETS_SUR_LA_CIBLE,
+  CATEGORIES_DE_COMPETENCE } = require("./helpers/effets-cible");
 
 const racine = path.join(__dirname, "..");
 
@@ -58,10 +60,16 @@ Object.keys(TABLE).forEach(fichier => {
       Object.prototype.hasOwnProperty.call(passif, "stat"),
       passif.id + " : une entree porte `stat` OU `effet`, exactement un des deux");
     if(surLaCible){
-      assert.ok(["defense", "defenseCritique"].includes(passif.effet),
+      assert.ok(EFFETS_SUR_LA_CIBLE.includes(passif.effet),
         passif.id + " : effet inconnu sur la cible -> " + passif.effet);
       assert.equal(passif.cibleEnnemi, true,
         passif.id + " : un malus sur la cible doit porter cibleEnnemi:true");
+      /* Une vulnerabilite DOIT nommer sa categorie : sans elle, elle ne
+         tomberait dans aucun seau et serait cochable sans rien faire. */
+      if(passif.effet === "vulnerabiliteCategorie"){
+        assert.ok(CATEGORIES_DE_COMPETENCE.includes(passif.categorie),
+          passif.id + " : categorie inconnue -> " + passif.categorie);
+      }
     }else{
       assert.ok(Object.prototype.hasOwnProperty.call(LIBELLES, passif.stat),
         passif.id + " : code de stat inconnu du depot -> " + passif.stat);
@@ -106,14 +114,17 @@ Object.keys(TABLE).forEach(fichier => {
   });
 });
 
-/* Trente tenues sur les quarante qui portent un passif offensif : vingt-six
-   pour leur seul porteur, quatorze pour l'equipe. Les douze absentes sont
-   NOMMEES dans l'en-tete de data/passifs-graves.js avec la raison de leur
+/* Trente-deux tenues sur les quarante qui portent un passif offensif :
+   vingt-six pour leur seul porteur, quatorze pour l'equipe. Les dix absentes
+   sont NOMMEES dans l'en-tete de data/passifs-graves.js avec la raison de leur
    absence - un seau qui manque au moteur, ou une valeur que la garde refuse de
-   laisser designer. Ce compte empeche qu'un oubli passe inapercu, et il devra
-   monter le jour ou l'un de ces seaux existera. */
-assert.equal(Object.keys(TABLE).length, 30,
-  "30 tenues attendues, recu " + Object.keys(TABLE).length);
+   laisser designer.
+
+   Ce compte empeche qu'un oubli passe inapercu, et il MONTE quand un seau
+   arrive : il valait 30 avant que le moteur ne sache reduire la resistance
+   critique de la cible, ce qui a fait revenir deux tenues nommees. */
+assert.equal(Object.keys(TABLE).length, 32,
+  "32 tenues attendues, recu " + Object.keys(TABLE).length);
 
 /* Les deux cibles doivent etre REPRESENTEES. Le lot « allies » est arrive
    apres coup : sans ce controle, un fichier ou toutes les lignes seraient
