@@ -34,6 +34,12 @@
 // element   : null, ou l'attribut vise quand le buff ne concerne que lui.
 //             L'element d'un heros vient de son ARME equipee, pas du perso.
 // unite     : "ten-thousandths" pour un taux, "flat" pour une valeur brute.
+// indexeSurAtk : present UNIQUEMENT sur les buffs plats, qui valent un
+//             pourcentage de l'ATK de leur LANCEUR, plafonne. `taux` est ce
+//             pourcentage en dix-milliemes, `plafond` la borne publiee.
+//             `valeur` reste le plafond : c'est le repli servi quand l'ATK du
+//             support est inconnue - sans equipe choisie, ou build incomplet.
+//             Un test refuse que `plafond` et `valeur` divergent.
 //
 // Les valeurs a CUMULS sont transcrites au maximum atteignable, comme le
 // reste de la table : « 2 % par cumul, max 10 fois » s'ecrit 2000.
@@ -153,6 +159,7 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       operation:"add",
       valeur:3000,
       unite:"flat",
+      indexeSurAtk:{ taux:3000, plafond:3000 },
       element:"fire",
       provenance:{
         gameId:"derieri_sword2h_skill_e",
@@ -211,6 +218,7 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       operation:"add",
       valeur:3000,
       unite:"flat",
+      indexeSurAtk:{ taux:3000, plafond:3000 },
       element:"wind",
       provenance:{
         gameId:"elizabeth_staff_skill_e",
@@ -292,6 +300,9 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       operation:"add",
       valeur:3000,
       unite:"flat",
+      /* 10 %, pas 30 % : la phrase de Gowther dit bien « a hauteur de 10% de
+         l'attaque du heros », la ou Derieri et Elisabeth en donnent 30. */
+      indexeSurAtk:{ taux:1000, plafond:3000 },
       element:"thunder",
       provenance:{
         gameId:"gowther_wand_passive",

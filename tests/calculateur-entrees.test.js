@@ -70,6 +70,26 @@ tousLesBuffs.forEach(buff => {
     buff.id + " : une valeur absente vaut null, jamais zero");
   assert.ok(buff.libelle && buff.libelle.trim(),
     buff.id + " : un buff sans libelle est illisible a l'ecran");
+
+  /* Un buff plat vaut un pourcentage de l'ATK de son lanceur, plafonne. La
+     table gardait le seul plafond, donc le taux etait perdu et la valeur
+     figee : `indexeSurAtk` le rend, et `valeur` reste le repli utilise quand
+     l'ATK du support est inconnue.
+
+     Le plafond et le repli DOIVENT rester egaux. S'ils divergeaient, le repli
+     cesserait d'etre le chiffre d'avant sans que rien ne le signale. */
+  if(buff.unite === "flat"){
+    assert.ok(buff.indexeSurAtk,
+      buff.id + " : un buff plat doit porter indexeSurAtk");
+    assert.ok(Number.isFinite(buff.indexeSurAtk.taux)
+      && buff.indexeSurAtk.taux > 0,
+      buff.id + " : indexeSurAtk.taux doit etre un taux positif");
+    assert.equal(buff.indexeSurAtk.plafond, buff.valeur,
+      buff.id + " : le plafond et la valeur de repli doivent rester egaux");
+  }else{
+    assert.ok(!Object.prototype.hasOwnProperty.call(buff, "indexeSurAtk"),
+      buff.id + " : indexeSurAtk n'a de sens que sur un buff plat");
+  }
 });
 
 /* La provenance doit designer une competence REELLE du support, et sa phrase
