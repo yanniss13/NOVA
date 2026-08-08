@@ -378,6 +378,49 @@ const STORAGE_KEY = "confrerie7ds.teams";
     assert.equal(await tenues.locator("input:checked").count(), 0,
       "aucun passif de tenue gravee coche par defaut");
 
+    /* « TOUT COCHER » doit vraiment tout cocher. Une case qui n'en attraperait
+       que trois sur quatre serait pire que pas de case du tout : le membre
+       croirait avoir tout declare, et le chiffre serait faux sans rien dire.
+
+       On compte donc les cases AVANT et APRES, sur toute la page - et le
+       chiffre doit bouger, sans quoi le test passerait sur une page vide. */
+    const toutes = page.locator(
+      ".calc-soutiens input, .calc-tenues input, .calc-potentiels input, "
+        + ".calc-supplements input"
+    );
+    const combien = await toutes.count();
+    assert.ok(combien > 0, "la page doit proposer au moins une case a cocher");
+
+    /* La case « tout cocher » ne doit PAS compter parmi les buffs : elle les
+       commande. Si elle portait leur classe, « cocher le premier buff »
+       cocherait la page entiere - c'est arrive, et c'est ce que ce controle
+       empeche de reproduire. */
+    assert.equal(await page.locator(".calc-tout-cocher .calc-buff").count(), 0,
+      "la case « tout cocher » ne doit pas se presenter comme un buff");
+
+    const pageNue = await page.locator("#calculateurBody").textContent();
+    await page.locator(".calc-tout-cocher input").check();
+    await page.waitForFunction(
+      n => document.querySelectorAll(
+        ".calc-soutiens input:checked, .calc-tenues input:checked, "
+          + ".calc-potentiels input:checked, .calc-supplements input:checked"
+      ).length === n,
+      combien
+    );
+
+    /* Et le CHIFFRE doit avoir bouge : cocher sans rien changer au tableau
+       signalerait des buffs branches nulle part. */
+    const pageBuffee = await page.locator("#calculateurBody").textContent();
+    assert.notEqual(pageBuffee, pageNue,
+      "tout cocher doit deplacer les degats affiches");
+
+    /* Decochee, elle rend l'etat de depart - elle retire ce qu'elle a mis. */
+    await page.locator(".calc-tout-cocher input").uncheck();
+    await page.waitForFunction(() => document.querySelectorAll(
+      ".calc-soutiens input:checked, .calc-tenues input:checked, "
+        + ".calc-potentiels input:checked, .calc-supplements input:checked"
+    ).length === 0);
+
     assert.deepEqual(errors, [], "aucune erreur de page attendue");
   } finally {
     await browser.close();

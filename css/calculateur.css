@@ -22,6 +22,15 @@
 .calc-soutiens,.calc-tenues,.calc-potentiels,.calc-supplements{
   margin:16px 0;border-top:1px solid var(--line-soft);padding-top:12px
 }
+/* « Tout cocher » commande les quatre sections suivantes : elle est au-dessus
+   d'elles, et sans trait de séparation, pour se lire comme leur en-tête et non
+   comme une cinquième source de buffs. */
+.calc-tout-cocher{margin:16px 0 0}
+.calc-tout-cocher-case{
+  display:flex;gap:9px;align-items:flex-start;padding:3px 0;min-height:30px;
+  line-height:1.35;font-size:14px;font-weight:600;cursor:pointer
+}
+.calc-tout-cocher .calc-avertissement{margin:2px 0 0}
 /* Une ligne déjà comptée, sans case à cocher : elle doit se lire comme un
    constat, pas comme une option qu'on aurait oublié de cocher. */
 .calc-supplement-actif{

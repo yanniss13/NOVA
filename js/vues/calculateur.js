@@ -621,6 +621,56 @@ import { showView } from "./navigation.js";
     return section;
   }
 
+  /* Tout ce qui porte une case a cocher sur cette page, dans l'ordre ou le
+     membre le lit. Les degats supplementaires INCONDITIONNELS en sont exclus :
+     ils n'ont pas de case, puisqu'ils sont deja comptes. */
+  function idsCochables(element, passifsGraves, potentiels, supplements){
+    return buffsProposes(element)
+      .concat(passifsGraves)
+      .concat(potentiels)
+      .concat(supplements.filter(ligne => ligne.condition))
+      .map(entree => entree.id);
+  }
+
+  /* « Tout cocher ».
+
+     Ce n'est pas un raccourci anodin, et l'avertissement le dit : cocher une
+     case, c'est declarer sa condition remplie. Tout cocher, c'est declarer que
+     les quatre sections sont simultanement vraies - Extinction comprise, qui
+     double la ligne et ne dure que 5 s. Le chiffre obtenu est un PLAFOND
+     theorique, pas ce qu'un combat rend.
+
+     Elle ne se contente pas d'ajouter : decochee, elle retire exactement les
+     memes identifiants. Vider `etat.coches` en entier effacerait des choix
+     portant sur un autre build, que la page reproposera plus tard. */
+  function sectionToutCocher(ids, redessiner){
+    const section = el("section",{class:"calc-tout-cocher"});
+    if(!ids.length) return section;
+    const toutes = ids.every(id => etat.coches.has(id));
+    const caseACocher = el("input",{
+      type:"checkbox",
+      onchange:()=>{
+        ids.forEach(id => {
+          if(toutes) etat.coches.delete(id);
+          else etat.coches.add(id);
+        });
+        redessiner();
+      }
+    });
+    caseACocher.checked = toutes;
+    /* PAS la classe `calc-buff` : cette case COMMANDE les buffs, elle n'en est
+       pas un. Les confondre ferait d'elle le premier element de toute liste de
+       buffs - et « cocher le premier buff » cocherait alors la page entiere. */
+    section.appendChild(el("label",{class:"calc-tout-cocher-case"},[
+      caseACocher,
+      el("span",{text:"Tout cocher — " + ids.length + " buff(s) disponible(s)"})
+    ]));
+    section.appendChild(el("p",{class:"calc-avertissement",
+      text:"Toutes conditions déclarées remplies en même temps : c'est un "
+        + "plafond théorique, pas ce qu'un combat rend."}));
+    return section;
+  }
+
   /* Les degats supplementaires que les potentiels du heros CALCULE ajoutent.
      Aucun ne vient d'un coequipier : « la derniere frappe de SA competence
      normale » ne profite qu'a celui qui frappe. */
@@ -636,8 +686,8 @@ import { showView } from "./navigation.js";
      les autres seulement coches. La regle est celle de tout le reste de la
      page - cocher, c'est declarer sa condition remplie - mais elle ne
      s'applique qu'a ce qui a une condition. */
-  function supplementsRetenus(hero){
-    return supplementsDuHeros(hero)
+  function supplementsRetenus(supplements){
+    return supplements
       .filter(ligne => !ligne.condition || etat.coches.has(ligne.id));
   }
 
@@ -1081,23 +1131,33 @@ import { showView } from "./navigation.js";
         text:"Valeurs retouchées — ne reflète plus ton build."}));
     }
 
-    vue.appendChild(sectionSoutiens(element, dessiner));
-
     const passifsGraves = passifsGravesApplicables({
       element, porteurs:porteursDeTenues(hero)
     });
-    vue.appendChild(sectionTenuesGravees(passifsGraves, dessiner));
-
     const potentiels = potentielsEquipeApplicables({
       element, porteurs:porteursDePotentiels(hero)
     });
+    const supplements = supplementsDuHeros(hero);
+
+    /* TOUT COCHER d'abord, au-dessus des quatre sections qu'elle commande :
+       le membre lit ce qu'elle fait avant de voir les cases, pas apres. */
+    vue.appendChild(sectionToutCocher(
+      idsCochables(element, passifsGraves, potentiels, supplements), dessiner
+    ));
+    vue.appendChild(sectionSoutiens(element, dessiner));
+    vue.appendChild(sectionTenuesGravees(passifsGraves, dessiner));
     vue.appendChild(sectionPotentiels(potentiels, dessiner));
-    vue.appendChild(sectionSupplements(supplementsDuHeros(hero), dessiner));
+    vue.appendChild(sectionSupplements(supplements, dessiner));
 
     /* Les trois sources se rejoignent ici, et une seule fois : buffs de
        soutien, passifs graves et potentiels d'equipe portent la meme forme -
        `stat` ou `effet`, `valeur`, `operation` - donc le moteur ignore d'ou
-       ils viennent. */
+       ils viennent.
+
+       Les degats supplementaires N'Y SONT PAS : ils ne sont pas des buffs mais
+       des composantes de competence, et competenceAvecSupplements() les pose
+       plus bas. Les verser ici les rendrait muets - ils n'ont ni `stat` ni
+       `effet` - et le compte affiche mentirait dans l'autre sens. */
     const coches = buffsProposes(element)
       .concat(passifsGraves)
       .concat(potentiels)
@@ -1112,9 +1172,15 @@ import { showView } from "./navigation.js";
       bonusParCategorie[categorie] =
         (Number(bonusParCategorie[categorie]) || 0) + bonusDesBuffs[categorie];
     });
+    /* Le compte annonce ce que le membre a COCHE, donc les degats
+       supplementaires conditionnels en font partie : ils ne passent pas par
+       `coches`, mais une case cochee qui n'apparaitrait pas dans le total
+       donnerait l'impression de n'avoir rien fait. */
+    const cochesVisibles = coches.length
+      + supplements.filter(l => l.condition && etat.coches.has(l.id)).length;
     vue.appendChild(el("p",{class:"calc-avertissement",
-      text:coches.length
-        ? "Avec " + coches.length + " buff(s) d'équipe."
+      text:cochesVisibles
+        ? "Avec " + cochesVisibles + " buff(s) d'équipe."
         : "Héros seul."}));
 
     const statsRetouchees = Object.assign({}, bases.stats);
@@ -1135,9 +1201,10 @@ import { showView } from "./navigation.js";
        cochent pas quand ils sont inconditionnels : ils font partie du kit au
        meme titre que les +115 % du palier, et rien a l'ecran ne demanderait au
        membre de confirmer que sa derniere frappe frappe. */
-    const supplements = supplementsRetenus(hero);
     const competences = competencesDu(etat.charId, etat.typeArme)
-      .map(competence => competenceAvecSupplements(competence, supplements));
+      .map(competence => competenceAvecSupplements(
+        competence, supplementsRetenus(supplements)
+      ));
     if(!competences.length){
       vue.appendChild(el("p",{class:"calc-muette",
         text:"Aucune compétence connue pour ce type d'arme."}));
