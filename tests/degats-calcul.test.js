@@ -324,6 +324,44 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   });
   assert.equal(sortie.sansCritique, 1000, "degats = ATK x coef, sans perte");
 
+  /* Sans armure, le percement n'a RIEN a percer : il ne doit pas s'appliquer.
+
+     La mitigation vaut deja 1 quand la defense est nulle ; y ajouter le
+     percement la pousserait au-dessus de 1, c'est-a-dire au-dessus des degats
+     d'avant armure — un coup qui frappe plus fort que sa propre puissance.
+
+     C'est le comportement de l'outil de reference, mesure en session 1
+     (« si DEF_eff = 0, le shatter est ignore ») puis reconfirme en session 5,
+     ou son percement laisse la sortie du mannequin strictement inchangee. */
+  [0, 50, 100, 5000].forEach(percement => {
+    assert.equal(
+      degatsAttendus({
+        stats:{ atk:1000, critRate:0, critDamage:0, percementDefense:percement },
+        competence:COUP_SIMPLE,
+        cible:mannequin
+      }).sansCritique,
+      1000,
+      "le percement ne doit rien changer sans defense, essaye : " + percement
+    );
+  });
+
+  /* Le percement reste PLEINEMENT actif des qu'il y a une armure : le
+     correctif ci-dessus ne doit pas l'avoir neutralise ailleurs. Sur
+     CIBLE_NEUTRE, C = DEF = 5600 donne une mitigation de 0,5, que 5000
+     dix-milliemes de percement portent a 1,0 — donc le double. */
+  assert.equal(
+    degatsAttendus({
+      stats:{ atk:1000, critRate:0, critDamage:0, percementDefense:5000 },
+      competence:COUP_SIMPLE,
+      cible:CIBLE_NEUTRE
+    }).sansCritique,
+    2 * degatsAttendus({
+      stats:{ atk:1000, critRate:0, critDamage:0 },
+      competence:COUP_SIMPLE,
+      cible:CIBLE_NEUTRE
+    }).sansCritique
+  );
+
   /* Sans defense, aucun coup ne peut reveler la constante : le refus est le
      meme que celui de l'outil de reference sur son propre mannequin, et il est
      NOMME pour que la vue explique quoi corriger au lieu d'un « impossible »

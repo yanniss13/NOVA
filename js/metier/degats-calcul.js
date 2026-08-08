@@ -297,8 +297,22 @@
     const multiplicateurCritique = Math.max(0, 1 + degatsCrit);
     const critique = 1 + taux * (multiplicateurCritique - 1);
     const constante = constanteDe(stats);
-    const mitigation = constante / (constante + facteurs.defEffective)
-      + facteurs.percementNet / RAPPORT;
+    /* Sans armure, le percement n'a rien a percer.
+
+       La mitigation vaut deja 1 quand la defense est nulle ; y ajouter le
+       percement la pousserait au-dessus de 1, c'est-a-dire au-dessus des
+       degats d'avant armure — un coup qui frapperait plus fort que sa propre
+       puissance. C'est le comportement de l'outil de reference, mesure en
+       session 1 (« si DEF_eff = 0, le shatter est ignore ») puis reconfirme
+       en session 5, ou son percement laisse la sortie du mannequin
+       strictement inchangee alors que la notre montait de moitie.
+
+       Le garde ne porte QUE sur ce cas : des qu'une armure existe, le
+       percement s'ajoute en plein et sans plafond, comme mesure. */
+    const mitigation = facteurs.defEffective > 0
+      ? constante / (constante + facteurs.defEffective)
+        + facteurs.percementNet / RAPPORT
+      : 1;
 
     /* Un SEUL calcul, lu trois fois : le facteur commun porte tout sauf le
        critique, donc le coup sans critique s'obtient sans le retirer, et les
