@@ -24,7 +24,10 @@ const EFFETS_SUR_LA_CIBLE = [
   "resistanceCritique",
   /* « Degats de competence normale SUBIS par l'ennemi » : une vulnerabilite,
      qui nomme la categorie qu'elle amplifie. */
-  "vulnerabiliteCategorie"
+  "vulnerabiliteCategorie",
+  /* « Augmente les degats subis de 100 % » : la meme, sans categorie. Elle
+     amplifie TOUT ce que la cible encaisse. */
+  "vulnerabiliteGlobale"
 ];
 
 /* Les cinq categories du catalogue de competences, celles que le moteur

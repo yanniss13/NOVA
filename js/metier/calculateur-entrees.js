@@ -62,7 +62,13 @@ import { degatsAttendus } from "./degats-calcul.js";
     /* La resistance critique, distincte de la defense critique : l'une decide
        si le coup critique PART, l'autre de ce qu'il rapporte. Les confondre
        ferait payer deux fois le meme debuff, ou disparaitre l'autre. */
-    resistanceCritique:"reductionResistanceCritique"
+    resistanceCritique:"reductionResistanceCritique",
+    /* « Augmente les degats subis de 100 % » : une vulnerabilite qui ne vise
+       AUCUNE categorie en particulier. Elle va donc dans `bonusGlobal`, un
+       seau que le moteur additionne deja aux deux autres et que rien
+       n'alimentait - meme raisonnement que la vulnerabilite par categorie,
+       sans la restriction, donc meme analogie avec la faiblesse mesuree. */
+    vulnerabiliteGlobale:"bonusGlobal"
   };
 
   function tableDesBuffs(){

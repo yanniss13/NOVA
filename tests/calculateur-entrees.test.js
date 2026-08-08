@@ -469,6 +469,35 @@ tousLesBuffs.forEach(buff => {
   );
 }
 
+/* LA VULNERABILITE GLOBALE d'Extinction : +100 % de degats subis DOUBLE la
+   ligne, sur toutes les categories a la fois. C'est le plus gros buff de la
+   table, et il est reste absent tout un lot faute d'un seau pour le porter -
+   ce test fixe ce qu'il fait, pour que personne n'ait a le redecouvrir. */
+{
+  const { degatsAttendus } = hooks;
+  const extinction = TABLE.gowther
+    .find(b => b.id === "gowther-extinction-degats-subis");
+  assert.ok(extinction, "le buff d'Extinction doit exister");
+  assert.equal(extinction.effet, "vulnerabiliteGlobale");
+
+  const cible = { def:0, critResist:0, critDmgResist:0,
+    resistanceElementaire:0, faiblesse:0, resistancePercement:0 };
+  const stats = { atk:1000, critRate:0, critDamage:0 };
+  const contre = coches => degatsAttendus({
+    stats:entreesDuCalcul({ statsDuBuild:stats, buffsCoches:coches }),
+    competence:{ categorie:"ULTIMATE", pourcentage:250 },
+    cible
+  }).total;
+  assert.equal(Math.round(contre([])), 2500, "250 % de 1000 d'ATK");
+  assert.equal(Math.round(contre([extinction])), 5000,
+    "+100 % de degats subis doit exactement doubler la ligne");
+
+  /* Et elle ne se restreint a AUCUNE categorie, contrairement a sa voisine :
+     une attaque normale la recoit autant qu'un ultime. */
+  assert.deepEqual(plain(bonusCategorieDesBuffs([extinction])), {},
+    "une vulnerabilite globale ne doit pas se poser sur une categorie");
+}
+
 console.log(
   "calculateur-entrees.test.js OK (" + tousLesBuffs.length + " buffs sur "
     + SUPPORTS.length + " supports)"
