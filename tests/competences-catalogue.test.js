@@ -168,6 +168,45 @@ assert.strictEqual(
   "La charge maximale de Meliodas vaut 140 % + 302 %, pas les coups tronques"
 );
 
+/* Le nombre AFFICHE et le nombre CALCULE ne peuvent pas se contredire.
+
+   La fiche montre `pourcentage`, le moteur additionne `composantes` : quand
+   l'attaque est la seule base, les deux sont le meme total vu deux fois. Le
+   catalogue a vecu avec l'ecart - Flash Fruit annoncait 43 % et frappait pour
+   98, Invasion Field affichait 87 pour 90 rendus - parce que deux fonctions
+   lisaient la meme description sans classer leurs sources dans le meme ordre.
+
+   Les competences a plusieurs bases sont hors de cette regle : un pourcentage
+   unique ne peut pas porter a la fois de l'ATK et de la DEF. */
+const surLaSeuleAttaque = c => Array.isArray(c.composantes)
+  && c.composantes.length
+  && c.composantes.every(part => part.base === "atk");
+
+slugs.forEach(slug => (catalogue[slug] || []).forEach(competence => {
+  if(!surLaSeuleAttaque(competence)) return;
+  const somme = competence.composantes.reduce(
+    (cumul, part) => cumul + part.pourcentage, 0
+  );
+  assert.ok(
+    Math.abs(somme - competence.pourcentage) < 0.01,
+    slug + " / " + competence.nom + " affiche " + competence.pourcentage
+      + " % et en calcule " + somme
+  );
+}));
+
+/* Une competence chiffrable dans ses composantes mais pas dans son
+   pourcentage se presente comme non chiffree tout en produisant des degats.
+   Le cas est CONNU et unique : Cleansing Fire ouvre sur « The first hit
+   inflicts... », tournure que la regle du coup garanti ne reconnait pas. Le
+   test nomme l'exception pour qu'une SECONDE fasse echouer la suite. */
+const muettes = slugs.flatMap(slug => (catalogue[slug] || [])
+  .filter(c => c.pourcentage == null && (c.composantes || []).length)
+  .map(c => slug + "/" + c.nom));
+assert.deepStrictEqual(
+  muettes, ["escanor/Cleansing Fire"],
+  "competences calculees mais annoncees non chiffrees, recu : " + muettes
+);
+
 console.log(
   "competences : catalogue coherent (" + slugs.length + " personnages, "
   + total + " competences dont " + chiffrees + " chiffrees)"

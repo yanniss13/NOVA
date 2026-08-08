@@ -47,18 +47,24 @@ CHARGE = re.compile(
     r"(-?\d+(?:\.\d+)?)% of Attack based on the charge level",
     re.IGNORECASE,
 )
-PERIODIQUE = re.compile(r"damage equal to (-?\d+(?:\.\d+)?)% of Attack")
 INTERVALLE = re.compile(r"every (\d+(?:\.\d+)?) sec")
 DUREE = re.compile(r"(?:for|lasts) (\d+(?:\.\d+)?) sec", re.IGNORECASE)
 POSTURE_DUREE = re.compile(
     r"Maintains stance for up to (\d+(?:\.\d+)?) sec", re.IGNORECASE
 )
+# Une composante de degats. Ce motif ne se cherche JAMAIS au fil du texte : il
+# s'ancre en tete de ce qui reste a lire apres « damage equal to ». Voir
+# groupes_de_degats(), qui porte la raison.
 COMPOSANTE = re.compile(
     r"(-?\d+(?:\.\d+)?)% of "
     r"(?:(?:the )?(?:hero's|caster's) )?"
     r"(remaining HP|Max HP|Defense|Attack)",
     re.IGNORECASE,
 )
+DEGATS_EGAUX = re.compile(r"damage equal to\s+", re.IGNORECASE)
+# Deux composantes d'un MEME coup se lient par « + ». Une virgule, un « then »
+# ou un « and » ouvrent autre chose : un buff, une jauge, une seconde frappe.
+CONNECTEUR = re.compile(r"\s*\+\s*")
 BASES = {
     "attack": "atk",
     "defense": "def",
@@ -131,6 +137,63 @@ def premiere_phrase(description):
     return PHRASE.split(nu)[0] if nu else ""
 
 
+def groupes_de_degats(phrase):
+    """Les composantes rattachees a chaque « damage equal to », et leur place.
+
+    Un pourcentage ne compte comme degat que s'il SUIT « damage equal to » et
+    reste dans la chaine de « + » qui la prolonge. Chercher le motif au fil du
+    texte, comme le faisait ce module, comptait comme degats tout pourcentage
+    indexe sur une statistique du heros :
+
+    - « Increases all allied heroes' Fire Attack by 30% of the hero's Attack,
+      then inflicts damage equal to 114% of Attack » ajoutait le BUFF de 30 %
+      aux degats, et Rending Slam frappait pour 144 % ;
+    - « inflicts damage equal to 157% of Attack, then additionally increases
+      the Burst Gauge by 3% of Attack » ajoutait le remplissage de JAUGE.
+
+    La position de chaque groupe est rendue avec lui : c'est elle qui dit
+    laquelle de plusieurs frappes porte le « every N sec » d'un degat
+    periodique.
+    """
+    groupes = []
+    for tete in DEGATS_EGAUX.finditer(phrase):
+        reste = phrase[tete.end():]
+        composantes = []
+        while True:
+            trouve = COMPOSANTE.match(reste)
+            if not trouve:
+                break
+            composantes.append({
+                "base": BASES[trouve.group(2).lower()],
+                "pourcentage": float(trouve.group(1)),
+            })
+            reste = reste[trouve.end():]
+            suite = CONNECTEUR.match(reste)
+            if not suite:
+                break
+            reste = reste[suite.end():]
+        if composantes:
+            groupes.append((tete.start(), composantes))
+    return groupes
+
+
+def groupe_periodique(phrase):
+    """Le groupe de degats auquel « every N sec » se rapporte, s'il y en a un.
+
+    C'est le DERNIER groupe qui precede l'intervalle, jamais le premier de la
+    phrase. « The first hit inflicts damage equal to 203% of Attack, then
+    inflicts damage equal to 20% of Attack every 1 sec for 10 sec » : prendre
+    le premier revenait a repeter dix fois la frappe d'ouverture. L'ultime de
+    Derieri valait 2030 % au lieu de 403 %, cinq fois trop.
+    """
+    pas = INTERVALLE.search(phrase)
+    if not pas:
+        return None
+    avant = [groupe for groupe in groupes_de_degats(phrase)
+             if groupe[0] < pas.start()]
+    return avant[-1] if avant else None
+
+
 def degats_de(skill):
     """(pourcentage, nature) pour une competence brute.
 
@@ -175,16 +238,26 @@ def degats_de(skill):
             total = max(total, SAUT + direct)
         return (round(total, 2), "direct")
 
-    tick = PERIODIQUE.search(phrase)
-    pas = INTERVALLE.search(phrase)
-    if tick and pas:
-        fin = DUREE.search(phrase)
-        intervalle = float(pas.group(1))
-        if fin and intervalle > 0:
-            ticks = int(float(fin.group(1)) // intervalle)
-            if ticks > 0:
-                return (round(float(tick.group(1)) * ticks, 2), "duree")
-        return (None, "non-chiffree")
+    groupe = groupe_periodique(phrase)
+    if groupe:
+        # Le compte de ticks vient de periodique_de(), qui divise en decimal.
+        # Cette branche le calculait a part, en flottant, et « 10 // 0.4 »
+        # rend 24 la ou la division exacte en rend 25 : deux fonctions lisant
+        # la meme phrase n'en tiraient pas le meme total.
+        periodique = periodique_de(skill)
+        if not periodique:
+            return (None, "non-chiffree")
+        total = periodique["pourcentageParTick"] * periodique["ticks"]
+        # Une frappe annoncee AVANT le tick est portee une fois, pas a chaque
+        # tick : elle s'ajoute au total au lieu d'etre multipliee par lui.
+        total += sum(
+            composante["pourcentage"]
+            for position, composantes in groupes_de_degats(phrase)
+            if position != groupe[0]
+            for composante in composantes
+            if composante["base"] == "atk"
+        )
+        return (round(total, 2), "duree")
 
     if direct is not None:
         return (round(SAUT + direct, 2) if saute else direct, "direct")
@@ -201,16 +274,20 @@ def periodique_de(skill):
         return None
     description = BALISE.sub("", skill.get("descriptionEn") or "").strip()
     phrase = PHRASE.split(description)[0] if description else ""
-    if not re.search(r"\bdamage equal to\b", phrase, re.IGNORECASE):
+    groupe = groupe_periodique(phrase)
+    if not groupe:
         return None
-    tick = COMPOSANTE.search(phrase)
     pas = INTERVALLE.search(phrase)
     if "while the stance is maintained" in phrase.lower():
         fin = POSTURE_DUREE.search(description)
     else:
         fin = DUREE.search(phrase)
-    if not (tick and pas and fin):
+    if not fin:
         return None
+    # Le rythme ne retient que la PREMIERE base de son groupe : la structure
+    # n'en porte qu'une, et les douze periodiques du catalogue battent toutes
+    # sur l'attaque.
+    tick = groupe[1][0]
     intervalle = float(pas.group(1))
     duree = float(fin.group(1))
     ticks = (int(Decimal(fin.group(1)) / Decimal(pas.group(1)))
@@ -218,8 +295,8 @@ def periodique_de(skill):
     if ticks <= 0:
         return None
     return {
-        "base": BASES[tick.group(2).lower()],
-        "pourcentageParTick": float(tick.group(1)),
+        "base": tick["base"],
+        "pourcentageParTick": tick["pourcentage"],
         "intervalle": intervalle,
         "duree": duree,
         "ticks": ticks,
@@ -227,28 +304,29 @@ def periodique_de(skill):
 
 
 def composantes_de(skill):
-    """Conserve les bases chiffrées qui composent les dégâts d'un lancement."""
+    """Conserve les bases chiffrées qui composent les dégâts d'un lancement.
+
+    La vue affiche `pourcentage`, le moteur calcule sur `composantes` : quand
+    une competence porte l'attaque pour seule base, les deux DOIVENT dire le
+    meme nombre. Ce module les faisait diverger en classant ses sources dans
+    deux ordres opposes - la repartition publiee d'abord ici, le rythme des
+    ticks d'abord la - et Flash Fruit annoncait 43 % en frappant pour 98.
+    Le total en attaque vient donc de degats_de(), sans exception.
+
+    Les autres bases - defense, PV - gardent leur propre lecture : un
+    pourcentage unique ne saurait porter deux unites.
+    """
     if est_maintien_non_borne(skill):
         return []
-    periodique = periodique_de(skill)
-    if periodique:
-        pourcentage = periodique["pourcentageParTick"] * periodique["ticks"]
-        repartition = repartition_de(skill)
-        if (repartition
-                and repartition[0] == periodique["pourcentageParTick"]):
-            pourcentage += sum(repartition[1:])
-        return [{
-            "base": periodique["base"],
-            "pourcentage": round(pourcentage, 2),
-        }]
+    if periodique_de(skill):
+        pourcentage, _nature = degats_de(skill)
+        return ([{"base": "atk", "pourcentage": pourcentage}]
+                if pourcentage is not None else [])
 
     phrase = premiere_phrase(skill.get("descriptionEn"))
-    trouvees = []
-    if re.search(r"\bdamage equal to\b", phrase, re.IGNORECASE):
-        trouvees = [
-            {"base": BASES[base.lower()], "pourcentage": float(pourcentage)}
-            for pourcentage, base in COMPOSANTE.findall(phrase)
-        ]
+    trouvees = [composante
+                for _position, composantes in groupes_de_degats(phrase)
+                for composante in composantes]
     if len(trouvees) > 1 or (trouvees and trouvees[0]["base"] != "atk"):
         return trouvees
 

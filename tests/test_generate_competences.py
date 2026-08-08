@@ -265,9 +265,6 @@ class CatalogueDps(unittest.TestCase):
 
         self.assertEqual(compact["periodique"]["duree"], 5.0)
         self.assertEqual(compact["periodique"]["ticks"], 6)
-        self.assertEqual(compact["composantes"], [
-            {"base": "atk", "pourcentage": 98.0}
-        ])
 
     def test_un_soin_periodique_n_est_pas_un_degat_pv(self):
         """Une base chiffrée de soin ne doit jamais entrer dans le DPS."""
@@ -281,6 +278,111 @@ class CatalogueDps(unittest.TestCase):
 
         self.assertIsNone(compact["periodique"])
         self.assertEqual(compact["composantes"], [])
+
+    def test_une_premiere_frappe_n_est_pas_le_tick(self):
+        """« 203 % puis 20 % toutes les 1 s » : le tick vaut 20, jamais 203.
+
+        Le module cherchait le premier « damage equal to » de la phrase et le
+        prenait pour le tick, sans regarder lequel portait le « every N sec ».
+        L'ultime de Derieri valait 2030 % - dix fois sa frappe d'ouverture -
+        au lieu de 403 %, soit cinq fois trop.
+        """
+        c = compet(
+            "derieri_sword2h_skill_r",
+            "The first hit inflicts damage equal to %s203%%%s of Attack + "
+            "%s21%%%s of remaining HP, then inflicts damage equal to %s20%%%s "
+            "of Attack + %s3%%%s of the whole team's remaining HP every "
+            "%s1 sec%s to enemies in range for %s10 sec%s."
+            % (V, F, V, F, V, F, V, F, V, F, V, F),
+            skillCategory="ULTIMATE",
+        )
+
+        compact = _gen.compacte_competence(c)
+
+        self.assertEqual(compact["periodique"]["pourcentageParTick"], 20.0)
+        self.assertEqual(compact["periodique"]["ticks"], 10)
+        # 20 x 10 ticks + la frappe d'ouverture, portee UNE fois.
+        self.assertEqual(compact["pourcentage"], 403.0)
+        self.assertEqual(compact["composantes"], [
+            {"base": "atk", "pourcentage": 403.0}
+        ])
+
+    def test_un_buff_indexe_sur_l_attaque_n_est_pas_un_degat(self):
+        """« Fire Attack by 30% of the hero's Attack » buffe, ne frappe pas.
+
+        Les composantes se lisaient au fil du texte, donc tout pourcentage
+        indexe sur l'attaque devenait des degats : Rending Slam frappait pour
+        144 % la ou la description en annonce 114.
+        """
+        c = compet(
+            "derieri_sword2h_skill_e",
+            "Increases all allied heroes' Fire Attack by %s30%%%s of the "
+            "hero's Attack (Max: %s3000%s) for %s40 sec%s, then inflicts "
+            "damage equal to %s114%%%s of Attack + %s13%%%s of the whole "
+            "team's remaining HP." % (V, F, V, F, V, F, V, F, V, F),
+        )
+
+        compact = _gen.compacte_competence(c)
+
+        self.assertEqual(compact["pourcentage"], 114.0)
+        self.assertEqual(compact["composantes"], [
+            {"base": "atk", "pourcentage": 114.0}
+        ])
+
+    def test_une_jauge_remplie_en_pourcent_d_attaque_n_est_pas_un_degat(self):
+        """La jauge de Deluge se remplit ; elle n'inflige rien.
+
+        Seule une composante rattachee a « damage equal to », et liee aux
+        suivantes par « + », compte. La virgule de « , then additionally
+        increases » ferme la chaine.
+        """
+        c = compet(
+            "elizabeth_wand_skill_e",
+            "Inflicts damage equal to %s157%%%s of Attack, then additionally "
+            "increases the Burst Gauge by %s3%%%s of Attack. (Max: %s500%s)"
+            % (V, F, V, F, V, F),
+            damagePercent="157% ATK",
+            hitCount=1,
+        )
+
+        compact = _gen.compacte_competence(c)
+
+        self.assertEqual(compact["pourcentage"], 157.0)
+        self.assertEqual(compact["composantes"], [
+            {"base": "atk", "pourcentage": 157.0}
+        ])
+
+    def test_le_total_affiche_est_celui_qui_est_calcule(self):
+        """`pourcentage` et `composantes` ne peuvent pas se contredire.
+
+        La vue lit `pourcentage`, le moteur lit `composantes` : les laisser
+        diverger affiche un chiffre et en applique un autre. Flash Fruit
+        annoncait 43 % et frappait pour 98, parce que les deux chemins ne
+        classaient pas les memes sources dans le meme ordre.
+        """
+        c = compet(
+            "daisy_wand_skill_rmb_ready",
+            "Inflicts damage equal to 11% of Attack on nearby enemies every "
+            "0.8 sec and increases all allied heroes' Crit Chance by 5% for "
+            "40 sec while the stance is maintained.\nMaintains stance for up "
+            "to 5 sec. When maintained for the maximum duration, the stance "
+            "is removed, inflicting damage equal to 32% of Attack.",
+            damagePercent="43% ATK",
+            hitCount=2,
+            hitDamages=["11%", "32%"],
+        )
+
+        compact = _gen.compacte_competence(c)
+
+        # La repartition publiee par la source fait foi, comme partout
+        # ailleurs : sa somme vaut le total qu'elle affiche (43 % ATK).
+        self.assertEqual(compact["pourcentage"], 43.0)
+        self.assertEqual(compact["composantes"], [
+            {"base": "atk", "pourcentage": 43.0}
+        ])
+        # Le rythme reste decrit, lui : c'est ce qui fait vivre le DPS.
+        self.assertEqual(compact["periodique"]["duree"], 5.0)
+        self.assertEqual(compact["periodique"]["ticks"], 6)
 
     def test_parse_les_recharges_sevencodex_sans_decaler_les_competences(self):
         """Un bloc sans CD ne doit pas voler celui du bloc suivant."""

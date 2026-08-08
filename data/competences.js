@@ -552,7 +552,7 @@ window.SEVEN_DS_COMPETENCES = {
    "composantes": [
     {
      "base": "atk",
-     "pourcentage": 98.0
+     "pourcentage": 43.0
     }
    ],
    "coups": 2,
@@ -805,10 +805,6 @@ window.SEVEN_DS_COMPETENCES = {
    "composantes": [
     {
      "base": "atk",
-     "pourcentage": 30.0
-    },
-    {
-     "base": "atk",
      "pourcentage": 114.0
     }
    ],
@@ -829,10 +825,6 @@ window.SEVEN_DS_COMPETENCES = {
     {
      "base": "atk",
      "pourcentage": 66.0
-    },
-    {
-     "base": "def",
-     "pourcentage": 20.0
     }
    ],
    "coups": null,
@@ -851,7 +843,7 @@ window.SEVEN_DS_COMPETENCES = {
    "composantes": [
     {
      "base": "atk",
-     "pourcentage": 2030.0
+     "pourcentage": 403.0
     }
    ],
    "coups": null,
@@ -862,11 +854,11 @@ window.SEVEN_DS_COMPETENCES = {
     "base": "atk",
     "duree": 10.0,
     "intervalle": 1.0,
-    "pourcentageParTick": 203.0,
+    "pourcentageParTick": 20.0,
     "ticks": 10
    },
    "portee": "Melee",
-   "pourcentage": 2030.0,
+   "pourcentage": 403.0,
    "recharge": 10.0,
    "repartition": [],
    "weaponType": "Sword2h"
@@ -2598,10 +2590,6 @@ window.SEVEN_DS_COMPETENCES = {
     {
      "base": "atk",
      "pourcentage": 157.0
-    },
-    {
-     "base": "atk",
-     "pourcentage": 3.0
     }
    ],
    "coups": 1,
@@ -2862,10 +2850,6 @@ window.SEVEN_DS_COMPETENCES = {
    "composantes": [
     {
      "base": "def",
-     "pourcentage": 210.0
-    },
-    {
-     "base": "def",
      "pourcentage": 110.0
     }
    ],
@@ -2876,7 +2860,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 210.0,
-   "recharge": 25.0,
+   "recharge": 25.5,
    "repartition": [
     100.0,
     110.0
@@ -2980,7 +2964,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 173.0,
-   "recharge": 13.0,
+   "recharge": 13.5,
    "repartition": [],
    "weaponType": "Sword2h"
   },
@@ -3137,10 +3121,6 @@ window.SEVEN_DS_COMPETENCES = {
     {
      "base": "atk",
      "pourcentage": 170.0
-    },
-    {
-     "base": "maxHp",
-     "pourcentage": 10.0
     }
    ],
    "coups": 1,
@@ -3467,7 +3447,7 @@ window.SEVEN_DS_COMPETENCES = {
     "ticks": 30
    },
    "portee": "Melee",
-   "pourcentage": 87.0,
+   "pourcentage": 90.0,
    "recharge": 16.3,
    "repartition": [],
    "weaponType": "Staff"
@@ -4146,7 +4126,7 @@ window.SEVEN_DS_COMPETENCES = {
     "ticks": 25
    },
    "portee": "Melee",
-   "pourcentage": 192.0,
+   "pourcentage": 200.0,
    "recharge": 10.0,
    "repartition": [],
    "weaponType": "Shield"
