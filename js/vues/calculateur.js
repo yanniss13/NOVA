@@ -31,6 +31,8 @@ import {
 import { buffsDeLEquipe } from "../metier/equipe-buffs.js";
 import { passifsGravesApplicables } from "../metier/passifs-graves.js";
 import { potentielsEquipeApplicables } from "../metier/potentiels-equipe.js";
+import { competenceAvecSupplements,
+  degatsSupplementairesApplicables } from "../metier/degats-supplementaires.js";
 import {
   buildGearDefinition, gearPassiveStatus
 } from "../metier/build-config.js";
@@ -126,7 +128,8 @@ import { showView } from "./navigation.js";
      calcule rien. Motif repris de js/vues/wiki.js. */
   function chargerCatalogues(){
     if(window.SEVEN_DS_COMPETENCES && window.SEVEN_DS_BUFFS_SUPPORTS
-      && window.SEVEN_DS_PASSIFS_GRAVES){
+      && window.SEVEN_DS_PASSIFS_GRAVES && window.SEVEN_DS_POTENTIELS_EQUIPE
+      && window.SEVEN_DS_DEGATS_SUPPLEMENTAIRES){
       return Promise.resolve(true);
     }
     if(chargementCatalogues) return chargementCatalogues;
@@ -144,7 +147,9 @@ import { showView } from "./navigation.js";
       window.SEVEN_DS_PASSIFS_GRAVES
         ? Promise.resolve(true) : injecter("./data/passifs-graves.js"),
       window.SEVEN_DS_POTENTIELS_EQUIPE
-        ? Promise.resolve(true) : injecter("./data/potentiels-equipe.js")
+        ? Promise.resolve(true) : injecter("./data/potentiels-equipe.js"),
+      window.SEVEN_DS_DEGATS_SUPPLEMENTAIRES
+        ? Promise.resolve(true) : injecter("./data/degats-supplementaires.js")
     ]).catch(erreur => {
       /* Rejouable : un echec reseau ne doit pas condamner l'onglet pour toute
          la duree de la session. */
@@ -616,6 +621,63 @@ import { showView } from "./navigation.js";
     return section;
   }
 
+  /* Les degats supplementaires que les potentiels du heros CALCULE ajoutent.
+     Aucun ne vient d'un coequipier : « la derniere frappe de SA competence
+     normale » ne profite qu'a celui qui frappe. */
+  function supplementsDuHeros(hero){
+    return degatsSupplementairesApplicables({
+      charId:etat.charId,
+      typeArme:etat.typeArme,
+      palier:hero && hero.potentiel ? hero.potentiel.tier : null
+    });
+  }
+
+  /* Ceux qui entrent VRAIMENT dans le calcul : les inconditionnels toujours,
+     les autres seulement coches. La regle est celle de tout le reste de la
+     page - cocher, c'est declarer sa condition remplie - mais elle ne
+     s'applique qu'a ce qui a une condition. */
+  function supplementsRetenus(hero){
+    return supplementsDuHeros(hero)
+      .filter(ligne => !ligne.condition || etat.coches.has(ligne.id));
+  }
+
+  /* Une section qui MELANGE deux sortes de lignes, a dessein : celles qui
+     agissent seules et celles qui attendent une case. Les separer en deux
+     blocs aurait laisse croire que les premieres sont facultatives, alors
+     qu'elles sont deja dans le chiffre affiche. */
+  function sectionSupplements(supplements, redessiner){
+    const section = el("section",{class:"calc-supplements"},[
+      el("strong",{text:"Dégâts supplémentaires"})
+    ]);
+    if(!supplements.length){
+      section.appendChild(el("p",{class:"calc-muette",
+        text:"Aucun potentiel de ce build n'ajoute de dégâts à une compétence."}));
+      return section;
+    }
+    supplements.forEach(ligne => {
+      const texte = "T" + ligne.palier + " — " + ligne.libelle;
+      if(!ligne.condition){
+        section.appendChild(el("p",{class:"calc-supplement-actif",
+          text:texte + " — compté"}));
+        return;
+      }
+      const caseACocher = el("input",{
+        type:"checkbox",
+        onchange:()=>{
+          if(etat.coches.has(ligne.id)) etat.coches.delete(ligne.id);
+          else etat.coches.add(ligne.id);
+          redessiner();
+        }
+      });
+      caseACocher.checked = etat.coches.has(ligne.id);
+      section.appendChild(el("label",{class:"calc-buff"},[
+        caseACocher,
+        el("span",{text:texte + " — " + ligne.condition})
+      ]));
+    });
+    return section;
+  }
+
   /* Mesurer C sur un coup reel plutot que de garder la constante par defaut.
      C'est ce qui fait passer la page de « compare deux builds » a « annonce
      un chiffre ». Elle est propre au personnage, a son arme et a ses
@@ -1030,6 +1092,7 @@ import { showView } from "./navigation.js";
       element, porteurs:porteursDePotentiels(hero)
     });
     vue.appendChild(sectionPotentiels(potentiels, dessiner));
+    vue.appendChild(sectionSupplements(supplementsDuHeros(hero), dessiner));
 
     /* Les trois sources se rejoignent ici, et une seule fois : buffs de
        soutien, passifs graves et potentiels d'equipe portent la meme forme -
@@ -1068,7 +1131,13 @@ import { showView } from "./navigation.js";
     const mesuree = CalibrationStore.get(etat.charId, etat.typeArme);
     if(mesuree) entrees.constanteC = mesuree;
 
-    const competences = competencesDu(etat.charId, etat.typeArme);
+    /* Les degats qu'un potentiel AJOUTE aux competences du heros. Ils ne se
+       cochent pas quand ils sont inconditionnels : ils font partie du kit au
+       meme titre que les +115 % du palier, et rien a l'ecran ne demanderait au
+       membre de confirmer que sa derniere frappe frappe. */
+    const supplements = supplementsRetenus(hero);
+    const competences = competencesDu(etat.charId, etat.typeArme)
+      .map(competence => competenceAvecSupplements(competence, supplements));
     if(!competences.length){
       vue.appendChild(el("p",{class:"calc-muette",
         text:"Aucune compétence connue pour ce type d'arme."}));

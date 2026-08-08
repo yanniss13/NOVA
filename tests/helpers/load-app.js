@@ -110,6 +110,12 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   buffsDeLEquipe:typeof buffsDeLEquipe === "function"
     ? buffsDeLEquipe
     : undefined,
+  degatsSupplementairesApplicables:typeof degatsSupplementairesApplicables === "function"
+    ? degatsSupplementairesApplicables
+    : undefined,
+  competenceAvecSupplements:typeof competenceAvecSupplements === "function"
+    ? competenceAvecSupplements
+    : undefined,
   potentielsEquipeApplicables:typeof potentielsEquipeApplicables === "function"
     ? potentielsEquipeApplicables
     : undefined,
@@ -743,6 +749,17 @@ function loadApp(initialTeams){
   );
   sandbox.SEVEN_DS_POTENTIELS_EQUIPE =
     potentielsSandbox.window.SEVEN_DS_POTENTIELS_EQUIPE;
+  /* Et la table des degats supplementaires, pour la meme raison : un test
+     verifie qu'aucune de ses lignes n'augmente une categorie que son
+     personnage ne joue pas, ce qu'une fixture ne prouverait pas. */
+  const supplementsSandbox = { window:{} };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(ROOT, "data", "degats-supplementaires.js"), "utf8"),
+    supplementsSandbox,
+    { filename:"degats-supplementaires.js" }
+  );
+  sandbox.SEVEN_DS_DEGATS_SUPPLEMENTAIRES =
+    supplementsSandbox.window.SEVEN_DS_DEGATS_SUPPLEMENTAIRES;
   sandbox.window = sandbox;
   /* Le bac a sable modelise un navigateur : il lui faut donc les points
      d'accroche globaux que le code utilise. Les dispos ecoutent `online` pour
