@@ -109,7 +109,8 @@ SUPPORTS.forEach(slug => {
 });
 
 const { hooks } = loadApp();
-const { buffsApplicables, entreesDuCalcul, resultatsParCompetence } = hooks;
+const { bonusCategorieDesBuffs, buffsApplicables, entreesDuCalcul,
+  resultatsParCompetence } = hooks;
 
 /* Aucune base a zero : un buff `multiply` sur une base nulle ne changerait
    rien, et la sonde ci-dessous le prendrait pour un code non branche. La
@@ -120,15 +121,22 @@ const NEUTRE = {
 };
 
 /* Aucun buff ne doit etre silencieusement ignore : si son code n'est pas
-   branche sur une entree du moteur, il ne changerait rien et personne ne le
-   verrait. Ce test est le filet qui aurait attrape AllSkill_Add. */
+   branche, il ne changerait rien et personne ne le verrait. Ce test est le
+   filet qui aurait attrape AllSkill_Add.
+
+   DEUX sorties valides, pas une. Un buff de CATEGORIE ne touche justement
+   aucune entree du moteur - les seaux communs valent pour toutes les
+   competences a la fois, y verser un bonus de competence normale gonflerait
+   l'ultime - et le filet d'origine l'aurait rejete a tort. */
 tousLesBuffs.forEach(buff => {
   const nu = entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:[] });
   const avec = entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:[buff] });
-  const change = Object.keys(nu).some(cle => nu[cle] !== avec[cle]);
-  assert.ok(change,
-    buff.id + " : ce buff ne change aucune entree du moteur, son code "
-      + buff.stat + " n'est branche nulle part");
+  const changeLeMoteur = Object.keys(nu).some(cle => nu[cle] !== avec[cle]);
+  const changeUneCategorie =
+    Object.keys(bonusCategorieDesBuffs([buff])).length > 0;
+  assert.ok(changeLeMoteur || changeUneCategorie,
+    buff.id + " : ce buff ne change NI une entree du moteur NI un bonus de "
+      + "categorie, son code " + buff.stat + " n'est branche nulle part");
 });
 
 /* Un buff sans element vaut pour tout build ; un buff elementaire n'est

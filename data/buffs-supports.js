@@ -49,16 +49,26 @@
 // - les soins, barrieres, gains de defense ou de PV : sans conversion
 //   offensive ils ne changent aucun degat. Les mettre a zero serait pire que
 //   les omettre, car un zero se lit comme « ce buff ne sert a rien ».
-// - les buffs restreints a une CATEGORIE de competence - « degats d'attaque
-//   ultime +30 % », « degats de competence normale +50 % ». Les entrees du
-//   moteur sont calculees une fois pour toutes les competences : appliquer un
-//   bonus d'attaque normale a une ultime serait faux. Ils sont connus, listes
-//   ci-dessous, et attendent que le calcul devienne par competence :
-//     elizabeth_staff_skill_q  degats crit. des attaques normales +50 %
-//     elizabeth_staff_passive  degats d'attaque normale +60 %
-//     manny_staff_passive      degats d'attaque ultime +30 %
-//     derieri_axe_skill_q      degats de competence normale (Tenebres) +50 %
-//     derieri_sword2h_passive  degats crit. d'ultime et d'attaque combinee +60 %
+// - QUATRE des cinq buffs restreints a une CATEGORIE de competence. Le
+//   cinquieme, derieri_axe_skill_q, figure desormais dans la table : le calcul
+//   est devenu par competence, et bonusCategorieDesBuffs() de
+//   js/metier/calculateur-entrees.js pose son bonus sur la seule categorie
+//   visee. Les quatre autres restent dehors, et pas pour la meme raison :
+//
+//     elizabeth_staff_skill_q  « degats crit. des attaques normales des
+//     derieri_sword2h_passive  allies », « degats crit. d'attaque ultime et
+//       d'attaque combinee »  -  du CRITIQUE croise avec une CATEGORIE. Le
+//       moteur porte les deux notions, jamais croisees : verser ces valeurs
+//       dans les degats critiques les appliquerait a toutes les competences.
+//       « Attaque combinee » n'est de surcroit pas une categorie du catalogue.
+//
+//     elizabeth_staff_passive  « Lorsqu'un heros allie attaque un ennemi
+//     manny_staff_passive      affecte par X, augmente LES degats … »  -  la
+//       phrase ne dit pas QUI recoit. Howzer et Manny ecrivent « augmente SES
+//       degats » quand l'allie est le beneficiaire, et « de tous les heros
+//       allies » quand c'est l'equipe ; ici les deux marques manquent, donc le
+//       bonus revient au support lui-meme et n'atteint pas le heros calcule.
+//       Le supposer collectif gonflerait chaque build de 30 a 60 %.
 // - la perforation et les efficacites de duree : le moteur n'a pas d'entree
 //   pour elles. La perforation ne perce d'ailleurs aucune defense - elle
 //   s'oppose a la Perseverance de l'ennemi, une couche que la formule
@@ -150,6 +160,25 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       provenance:{
         gameId:"derieri_axe_passive",
         phrase:"augmente les dégâts crit. des héros alliés d'attribut Ténèbres de 40% pendant 30s"
+      }
+    },
+    {
+      /* Le seul buff de categorie de la table, et le seul des cinq dont la
+         source dit explicitement qui recoit : « des heros allies d'attribut
+         Tenebres ». Il ne passe pas par entreesDuCalcul - dont les seaux
+         valent pour toutes les competences a la fois - mais par
+         bonusCategorieDesBuffs(), qui le pose sur la competence normale
+         seule. */
+      id:"derieri-lancer-competence-normale",
+      libelle:"Ennemi sous Déluge : compétence normale des alliés Ténèbres +50 %",
+      stat:"Normalskill_Damadd_Rate",
+      operation:"add",
+      valeur:5000,
+      unite:"ten-thousandths",
+      element:"dark",
+      provenance:{
+        gameId:"derieri_axe_skill_q",
+        phrase:"Augmente les dégâts de compétence normale des héros alliés d'attribut Ténèbres de 50% pendant 15s"
       }
     },
     {
