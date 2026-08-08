@@ -174,6 +174,41 @@ const STORAGE_KEY = "confrerie7ds.teams";
         "une competence non chiffrable ne doit afficher aucun chiffre");
     }
 
+    /* LE CHOIX D'EQUIPE. Localise par son LIBELLE, jamais par un index : un
+       `.calc-champ` de plus decale tout reperage positionnel, et c'est
+       exactement ce qui a casse ce fichier une fois deja. */
+    const choixEquipe = page.locator(".calc-champ", { hasText:"Équipe" })
+      .locator("select");
+    await choixEquipe.waitFor();
+    assert.equal(await choixEquipe.inputValue(), "",
+      "le calculateur doit demarrer sans equipe : aucun chiffre ne bouge tant "
+        + "que le membre n'a rien touche");
+
+    const soutiensAvant = await page.locator(".calc-soutien").count();
+    assert.ok(soutiensAvant > 0,
+      "sans equipe, tous les soutiens du catalogue doivent etre proposes");
+
+    /* L'equipe de la fixture ne porte que Meliodas, qui n'apporte aucun buff
+       modelise : choisir cette equipe doit donc VIDER la liste, et le dire au
+       lieu de la laisser muette. */
+    await choixEquipe.selectOption({ index:1 });
+    await page.locator(".calc-table tbody tr").first().waitFor();
+    const soutiensApres = await page.locator(".calc-soutien").count();
+    assert.ok(soutiensApres < soutiensAvant,
+      "choisir une equipe qui n'apporte rien doit reduire la liste, recu "
+        + soutiensApres + " apres " + soutiensAvant);
+    assert.match(
+      await page.locator(".calc-soutiens").textContent(),
+      /n'apporte de buff modélisé|Aucun buff modélisé/,
+      "un coequipier sans buff modelise doit etre nomme, pas tu"
+    );
+
+    /* Revenir a « Aucune equipe » restaure la liste complete. */
+    await choixEquipe.selectOption("");
+    await page.locator(".calc-table tbody tr").first().waitFor();
+    assert.equal(await page.locator(".calc-soutien").count(), soutiensAvant,
+      "revenir a « Aucune equipe » doit restaurer la liste complete");
+
     /* Les buffs de soutien sont DECOCHES par defaut : le chiffre par defaut
        est celui du heros seul. */
     const cases = page.locator(".calc-buff input");

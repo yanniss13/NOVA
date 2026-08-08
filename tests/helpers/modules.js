@@ -43,6 +43,7 @@ const MODULES = [
   /* donnees — lectures et écritures Supabase, sans aucun rendu. */
   "donnees/roster-profils.js",
   "donnees/equipes-store.js",
+  "donnees/equipe-choisie-store.js",
   "donnees/roster-store.js",
   "donnees/collection-store.js",
   "donnees/boss-store.js",

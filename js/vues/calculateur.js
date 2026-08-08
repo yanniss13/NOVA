@@ -19,6 +19,8 @@ import {
   CIBLES, CONSTANTE_PAR_DEFAUT, calibrerConstante
 } from "../metier/degats-calcul.js";
 import { CalibrationStore } from "../donnees/calibration-store.js";
+import { EquipeChoisieStore } from "../donnees/equipe-choisie-store.js";
+import { Store } from "../donnees/equipes-store.js";
 import {
   STAT_DE_LA_CATEGORIE,
   entreesDeLaCompetence, entreesDuCalcul, resultatsParCompetence
@@ -61,6 +63,10 @@ import { showView } from "./navigation.js";
        ne soient releves, et ajouter le choix ne doit deplacer aucun chiffre
        tant que le membre n'a rien touche. */
     cibleId:"akumu-1",
+    /* L'equipe regardee, restauree du stockage : le membre la retrouve a la
+       visite suivante. `null` vaut « aucune equipe », qui reste le defaut et
+       rend la liste complete des buffs, comme avant ce choix. */
+    equipeId:EquipeChoisieStore.get(),
     retouches:{},
     coches:new Set(),
     /* La calibration : index de la competence choisie, degats saisis, et le
@@ -206,6 +212,59 @@ import { showView } from "./navigation.js";
     };
   }
 
+  /* Les equipes lisibles ici et maintenant. Hors ligne ou deconnecte, le store
+     rend ce qu'il a en cache : mieux vaut une liste ancienne qu'un onglet
+     vide. */
+  function equipesDisponibles(){
+    /* `Store`, sans alias : c'est le nom sous lequel les quatre autres vues
+       importent le magasin d'equipes, et le test des imports ne suit pas les
+       renommages. Il ne s'emploie qu'ICI pour que le reste du fichier ne
+       manipule jamais un nom aussi vague. */
+    const liste = Store.all();
+    return Array.isArray(liste) ? liste : [];
+  }
+
+  /* Un identifiant devenu inconnu - equipe supprimee depuis, ou cache d'un
+     autre compte - rend `null` plutot qu'une equipe au hasard : la page
+     retombe alors sur la liste complete, jamais sur une equipe qui n'est pas
+     celle du membre. */
+  function equipeCourante(){
+    if(!etat.equipeId) return null;
+    return equipesDisponibles().find(equipe => equipe.id === etat.equipeId)
+      || null;
+  }
+
+  /* L'ATK d'un membre d'equipe, ou null si son build n'est pas exploitable.
+
+     Un heros d'equipe a EXACTEMENT la forme qu'attend calculateHeroStats -
+     c'est normalizeHero qui la produit, pour le roster comme pour l'equipe -
+     donc aucune conversion n'est necessaire ici. Son potentiel, son arme et sa
+     tenue gravee entrent dans ce chiffre sans travail supplementaire. */
+  function atkDuMembre(heros){
+    if(!heros || !heros.char) return null;
+    const result = calculateHeroStats(heros);
+    if(result.status !== "valid" && result.status !== "partial") return null;
+    const trouve = groupBuildStatResults(result)
+      .flatMap(groupe => groupe.stats)
+      .find(stat => stat.stat === "B_Atk");
+    return trouve && Number.isFinite(trouve.value) ? trouve.value : null;
+  }
+
+  /* Les coequipiers reduits a ce dont le module pur a besoin. Les QUATRE
+     sieges comptent, le heros calcule compris : le jeu dit « tous les heros
+     allies », et ses passifs ne sont pas deja dans ses statistiques. */
+  function coequipiersDeLEquipe(){
+    const equipe = equipeCourante();
+    if(!equipe) return null;
+    return (equipe.heroes || [])
+      .filter(heros => heros && heros.char)
+      .map(heros => ({
+        charId:heros.char,
+        typeArme:heros.activeWeaponType,
+        atk:atkDuMembre(heros)
+      }));
+  }
+
   /* Le roster range ses builds par DOSSIER d'image (« Hache »), le catalogue
      les publie par ENUM (« Axe ») : FOLDER_TO_ENUM fait le pont, et il existe
      deja. */
@@ -296,12 +355,13 @@ import { showView } from "./navigation.js";
      different de celui qu'elle affiche, et a un buff coche puis exclu qui
      continuerait d'agir. */
   function buffsProposes(element){
-    /* `coequipiers` reste null tant qu'aucune equipe n'est choisissable : la
-       liste est alors celle d'avant, a l'identique. */
-    return buffsDeLEquipe({ element, coequipiers:null });
+    return buffsDeLEquipe({
+      element, coequipiers:coequipiersDeLEquipe()
+    });
   }
 
   function sectionSoutiens(element, redessiner){
+    const coequipiers = coequipiersDeLEquipe();
     const dispo = buffsProposes(element);
     const section = el("section",{class:"calc-soutiens"},[
       el("strong",{text:"Soutiens"}),
@@ -312,7 +372,10 @@ import { showView } from "./navigation.js";
     ]);
     if(!dispo.length){
       section.appendChild(el("p",{class:"calc-muette",
-        text:"Aucun buff connu ne s'applique à l'élément de ce build."}));
+        text:coequipiers
+          ? "Aucun membre de cette équipe n'apporte de buff modélisé "
+            + "pour l'élément de ce build."
+          : "Aucun buff connu ne s'applique à l'élément de ce build."}));
       return section;
     }
     /* REGROUPES PAR SOUTIEN. En liste plate, le nom se repetait sur chacune
@@ -327,7 +390,15 @@ import { showView } from "./navigation.js";
     const grilleSoutiens = el("div",{class:"calc-soutiens-grille"});
     parSoutien.forEach((buffs, slug) => {
       const bloc = el("div",{class:"calc-soutien"});
-      bloc.appendChild(el("h4",{class:"calc-soutien-nom", text:nomDuSoutien(slug)}));
+      /* L'arme sur l'EN-TETE, jamais sur chaque ligne : les buffs sont
+         regroupes par soutien precisement pour ne pas repeter son nom
+         vingt-quatre fois, et avec une equipe ils viennent tous de la meme
+         arme. */
+      const armeDuGroupe = buffs.find(buff => buff.arme);
+      bloc.appendChild(el("h4",{class:"calc-soutien-nom",
+        text:armeDuGroupe
+          ? nomDuSoutien(slug) + " · " + armeDuGroupe.arme
+          : nomDuSoutien(slug)}));
       buffs.forEach(buff => {
       /* La case se coche par PROPRIETE, jamais par attribut : `el()` passe
          toute valeur a setAttribute, et setAttribute("checked", undefined)
@@ -346,10 +417,29 @@ import { showView } from "./navigation.js";
           caseACocher,
           el("span",{text:buff.libelle})
         ]));
+        /* Le repli est DIT : sans cette ligne, un plafond servi faute de build
+           lisible se lirait comme une valeur mesuree sur le coequipier. */
+        if(buff.repli){
+          bloc.appendChild(el("p",{class:"calc-muette",
+            text:"Build du coéquipier incomplet — valeur plafond."}));
+        }
       });
       grilleSoutiens.appendChild(bloc);
     });
     section.appendChild(grilleSoutiens);
+
+    /* Un coequipier sans buff modelise garde une ligne. Le taire le ferait
+       lire comme absent de l'equipe ; le chiffrer a zero le ferait lire comme
+       inutile. C'est la meme regle qu'une competence sans coefficient. */
+    if(coequipiers){
+      const muets = coequipiers
+        .filter(membre => !dispo.some(buff => buff.support === membre.charId))
+        .map(membre => nomDuSoutien(membre.charId));
+      if(muets.length){
+        section.appendChild(el("p",{class:"calc-muette",
+          text:"Aucun buff modélisé : " + muets.join(", ") + "."}));
+      }
+    }
     return section;
   }
 
@@ -549,6 +639,32 @@ import { showView } from "./navigation.js";
     return el("div",{class:"calc-champ"},[el("label",{text:"Cible"}), choix]);
   }
 
+  function selecteurEquipe(redessiner){
+    const choix = el("select",{
+      class:"calc-equipe",
+      onchange:event => {
+        etat.equipeId = EquipeChoisieStore.set(event.target.value || null);
+        /* Changer d'equipe change les buffs PROPOSES : ceux qui etaient coches
+           et ne le sont plus n'auraient plus de case pour les decocher, et
+           continueraient d'agir sans rien a l'ecran pour le dire. */
+        etat.coches.clear();
+        redessiner();
+      }
+    });
+    const aucune = el("option",{ value:"", text:"Aucune équipe" });
+    aucune.selected = !etat.equipeId;
+    choix.appendChild(aucune);
+    equipesDisponibles().forEach((equipe, index) => {
+      const option = el("option",{
+        value:equipe.id,
+        text:equipe.name || "Équipe " + (index + 1)
+      });
+      option.selected = equipe.id === etat.equipeId;
+      choix.appendChild(option);
+    });
+    return el("div",{class:"calc-champ"},[el("label",{text:"Équipe"}), choix]);
+  }
+
   function selecteurs(entries, redessiner){
     const bloc = el("div",{class:"calc-form"});
     const choix = el("select",{
@@ -596,6 +712,7 @@ import { showView } from "./navigation.js";
     armes.appendChild(rail);
     bloc.appendChild(armes);
     bloc.appendChild(selecteurCible(redessiner));
+    bloc.appendChild(selecteurEquipe(redessiner));
     return bloc;
   }
 
@@ -633,10 +750,11 @@ import { showView } from "./navigation.js";
               }
             })
           : null,
-        /* La cible ne depend pas du chemin d'entree : un build ouvert depuis
-           une fiche de heros se compare aux memes paliers qu'un build choisi
-           dans le roster. */
-        selecteurCible(dessiner)
+        /* Ni la cible ni l'equipe ne dependent du chemin d'entree : un build
+           ouvert depuis une fiche de heros se compare aux memes paliers, et
+           avec les memes coequipiers, qu'un build choisi dans le roster. */
+        selecteurCible(dessiner),
+        selecteurEquipe(dessiner)
       ]));
     } else {
       if(!entries.length){

@@ -40,6 +40,9 @@
   /* Pas de prefixe `cloud.` : la constante C se mesure sur SON build et ne se
      partage pas, voir js/donnees/calibration-store.js. */
   const CALIBRATION_KEY = "confrerie7ds.calibration";
+  /* Quelle equipe le calculateur regarde. Un reglage d'ecran, pas une donnee
+     de confrerie : les EQUIPES vivent dans STORAGE_KEY et se synchronisent. */
+  const EQUIPE_CHOISIE_KEY = "confrerie7ds.calculateur.equipe";
   const MIGRATION_KEY_PREFIX = "confrerie7ds.supabase.migrated.";
 
   const ELEMENTS = {
@@ -95,6 +98,7 @@ export {
   CLOUD_ROSTER_CACHE_KEY,
   CLOUD_COLLECTION_CACHE_KEY,
   CALIBRATION_KEY,
+  EQUIPE_CHOISIE_KEY,
   MIGRATION_KEY_PREFIX,
   ELEMENTS,
   WSLOT_ROLES,
