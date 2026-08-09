@@ -45,12 +45,25 @@
 //               presente, ils demandent une case a cocher, selon la meme regle
 //               que partout ailleurs - cocher, c'est declarer sa condition
 //               remplie.
+// coups       : LE COUP RECOPIE. « Ajoute 1 coup a la 2e frappe de la
+// frappeCopiee  competence normale ; ce coup inflige les memes degats que la
+//               2e frappe. » Le palier ne chiffre rien - il DESIGNE une frappe
+//               dont le catalogue publie le coefficient. La ligne porte donc
+//               le nombre de coups ajoutes, la frappe recopiee (`gameId` et
+//               `rang`), et un test refait le produit contre la repartition
+//               par coup de data/wiki-competences.js.
+//
+//               C'est une troisieme forme, apres le total sec et la
+//               repetition, et elle existe parce que le nombre a stocker vit
+//               dans deux textes a la fois : le compte de coups dans le
+//               palier, le coefficient dans la competence.
 //
 // LA REGLE DE TRANSCRIPTION, la meme que pour les tenues et les potentiels :
 // `provenance.phrase` est choisie pour que le nombre qui la suit soit la
 // valeur stockee, et elle doit apparaitre exactement UNE fois dans le texte du
 // palier. data/potentiels.js n'emploie pas d'espace insecable, donc les
-// phrases citees ici s'ecrivent avec des espaces ordinaires.
+// phrases citees ici s'ecrivent avec des espaces ordinaires. Pour un coup
+// recopie, ce nombre est le COMPTE DE COUPS, jamais le pourcentage.
 //
 // CE QUI N'Y FIGURE PAS. Trois lignes disent « chaque coup » sans publier le
 // nombre de coups, et leur total en depend :
@@ -61,6 +74,15 @@
 // non ; s'en servir la ou elle existe et deviner ailleurs donnerait deux
 // regimes pour une meme table. Elles reviendront le jour ou le nombre de coups
 // sera connu partout.
+//
+// DEUX AUTRES ABSENTES, pour une raison differente : derieri Gantelets T10
+// ajoute un coup a la 2e frappe de l'attaque speciale et deux a la 3e, soit
+// +432 % sur Ruee sauvage. La competence qu'elles augmentent n'a AUCUN
+// coefficient dans data/competences.js - le generateur la classe
+// « non-chiffree » - donc la page l'exclut deja du calcul. Les poser ici ne
+// changerait pas un chiffre : une composante s'ajoute a une base qui n'existe
+// pas, et le total reste nul. Elles attendent que Ruee sauvage soit chiffree,
+// ce qui se joue dans scripts/generate-competences.py, pas dans cette table.
 window.SEVEN_DS_DEGATS_SUPPLEMENTAIRES = {
   "bug": {
     "Epees doubles": {
@@ -102,6 +124,29 @@ window.SEVEN_DS_DEGATS_SUPPLEMENTAIRES = {
             phrase:"dégâts supplémentaires égaux à ",
             phraseRepetitions:"% de l'attaque "
           }
+        }
+      ]
+    },
+    "Gantelets": {
+      "7": [
+        {
+          /* Le seul coup RECOPIE de la table. Le palier ne chiffre rien : il
+             renvoie a la 2e frappe d'Assaut fulgurant, que le catalogue
+             publie a 315 %. La competence passe donc de 501 % a 816 %.
+
+             A savoir, et volontairement non corrige ici : la mesure sur le
+             mannequin donne 316,7 % pour cette 2e frappe, pas 315. L'ecart de
+             0,5 % est deja dans le coefficient de base, qu'on n'a pas retouche
+             non plus - le recopier tel quel garde la table coherente avec le
+             catalogue qu'elle cite. */
+          id:"derieri-gantelets-t7-coup-ajoute",
+          libelle:"Compétence normale : 1 coup de plus, copie de la 2e frappe "
+            + "(+315 % de l'ATK)",
+          categorie:"NORMAL_SKILL",
+          pourcentage:315,
+          coups:1,
+          frappeCopiee:{ gameId:"derieri_gauntlets_skill_e_1", rang:2 },
+          provenance:{ phrase:"Ajoute " }
         }
       ]
     },
