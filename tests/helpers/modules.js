@@ -33,6 +33,7 @@ const MODULES = [
   "metier/calculateur-entrees.js",
   "metier/equipe-buffs.js",
   "metier/passifs-graves.js",
+  "metier/passifs-cumuls.js",
   "metier/potentiels-equipe.js",
   "metier/degats-supplementaires.js",
   "metier/equipe-modele.js",

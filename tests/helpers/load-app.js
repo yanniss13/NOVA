@@ -122,6 +122,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   passifsGravesApplicables:typeof passifsGravesApplicables === "function"
     ? passifsGravesApplicables
     : undefined,
+  passifsCumulsApplicables:typeof passifsCumulsApplicables === "function"
+    ? passifsCumulsApplicables
+    : undefined,
   bonusCategorieDesBuffs:typeof bonusCategorieDesBuffs === "function"
     ? bonusCategorieDesBuffs
     : undefined,
@@ -760,6 +763,16 @@ function loadApp(initialTeams){
   );
   sandbox.SEVEN_DS_DEGATS_SUPPLEMENTAIRES =
     supplementsSandbox.window.SEVEN_DS_DEGATS_SUPPLEMENTAIRES;
+  /* Et les passifs a cumuls. Table la plus fragile des cinq : sa valeur ne se
+     transcrit d'aucun texte du jeu, elle se mesure. Une fixture la rendrait
+     inverifiable. */
+  const cumulsSandbox = { window:{} };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(ROOT, "data", "passifs-cumuls.js"), "utf8"),
+    cumulsSandbox,
+    { filename:"passifs-cumuls.js" }
+  );
+  sandbox.SEVEN_DS_PASSIFS_CUMULS = cumulsSandbox.window.SEVEN_DS_PASSIFS_CUMULS;
   sandbox.window = sandbox;
   /* Le bac a sable modelise un navigateur : il lui faut donc les points
      d'accroche globaux que le code utilise. Les dispos ecoutent `online` pour

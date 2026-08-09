@@ -232,8 +232,8 @@ const STORAGE_KEY = "confrerie7ds.teams";
     assert.match(
       await page.locator(".calc-avertissement").allTextContents()
         .then(liste => liste.join(" ")),
-      /buff\(s\) d.équipe/,
-      "l'en-tete doit annoncer le nombre de buffs actifs"
+      /Avec 1 case\(s\) cochée\(s\)/,
+      "l'en-tete doit annoncer le nombre de cases cochees"
     );
 
     /* Retoucher une base doit se voir : le chiffre ne decrit alors plus le
@@ -379,13 +379,14 @@ const STORAGE_KEY = "confrerie7ds.teams";
       "aucun passif de tenue gravee coche par defaut");
 
     /* « TOUT COCHER » doit vraiment tout cocher. Une case qui n'en attraperait
-       que trois sur quatre serait pire que pas de case du tout : le membre
+       que quatre sur cinq serait pire que pas de case du tout : le membre
        croirait avoir tout declare, et le chiffre serait faux sans rien dire.
 
        On compte donc les cases AVANT et APRES, sur toute la page - et le
        chiffre doit bouger, sans quoi le test passerait sur une page vide. */
     const toutes = page.locator(
       ".calc-soutiens input, .calc-tenues input, .calc-potentiels input, "
+        + ".calc-cumuls input, "
         + ".calc-supplements input"
     );
     const combien = await toutes.count();
@@ -403,7 +404,9 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await page.waitForFunction(
       n => document.querySelectorAll(
         ".calc-soutiens input:checked, .calc-tenues input:checked, "
-          + ".calc-potentiels input:checked, .calc-supplements input:checked"
+          + ".calc-potentiels input:checked, "
+          + ".calc-cumuls input:checked, "
+          + ".calc-supplements input:checked"
       ).length === n,
       combien
     );
@@ -418,14 +421,17 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await page.locator(".calc-tout-cocher input").uncheck();
     await page.waitForFunction(() => document.querySelectorAll(
       ".calc-soutiens input:checked, .calc-tenues input:checked, "
-        + ".calc-potentiels input:checked, .calc-supplements input:checked"
+        + ".calc-potentiels input:checked, "
+        + ".calc-cumuls input:checked, "
+        + ".calc-supplements input:checked"
     ).length === 0);
 
-    /* L'HABILLAGE. Les quatre sources de buffs sont des cartes titrees, comme
+    /* L'HABILLAGE. Les cinq sources de buffs sont des cartes titrees, comme
        partout ailleurs sur le site : c'etait le seul onglet a empiler des
        sections nues sous un <strong>. */
     for(const classe of [
-      "calc-soutiens","calc-tenues","calc-potentiels","calc-supplements"
+      "calc-soutiens","calc-tenues","calc-potentiels","calc-cumuls",
+      "calc-supplements"
     ]){
       const carte = page.locator("." + classe);
       assert.ok(
@@ -438,17 +444,32 @@ const STORAGE_KEY = "confrerie7ds.teams";
         classe + " ne doit plus avoir de <strong> de titre");
     }
 
-    /* Quatre liseres DISTINCTS, tous sur l'axe dore : les sept teintes
+    /* Cinq liseres DISTINCTS, tous sur l'axe dore : les sept teintes
        d'element sont deja prises, et le badge d'element du build est sur cette
        meme page. On lit la couleur calculee, pas la variable : elle resout les
        jetons et ne depend pas du navigateur. */
     const liseres = await page.evaluate(() => [
-      "calc-soutiens","calc-tenues","calc-potentiels","calc-supplements"
+      "calc-soutiens","calc-tenues","calc-potentiels","calc-cumuls",
+      "calc-supplements"
     ].map(c => getComputedStyle(
       document.querySelector("." + c)).borderTopColor));
-    assert.equal(new Set(liseres).size, 4,
-      "les quatre sources doivent avoir quatre liseres distincts, recu : "
+    assert.equal(new Set(liseres).size, 5,
+      "les cinq sources doivent avoir cinq liseres distincts, recu : "
         + liseres.join(" / "));
+
+    /* La section des passifs a cumuls EXISTE meme sur un build qui n'en a
+       aucun - la fixture joue Meliodas a la Hache. Une section absente se
+       lirait « le calculateur ignore cette mecanique » ; une section vide dit
+       « ce build n'en a pas », ce qui n'est pas la meme information.
+
+       Le cas REMPLI est couvert ailleurs : tests/passifs-cumuls.test.js verifie
+       que la ligne sort pour le bon couple personnage/arme, et
+       tests/degats-calcul.test.js rejoue les quatre releves de Derieri. */
+    assert.match(
+      await page.locator(".calc-cumuls").textContent(),
+      /Aucun passif à cumuls mesuré pour ce build/,
+      "un build sans passif a cumuls doit le DIRE, pas laisser la carte nue"
+    );
 
     /* La carte REMPLACE le separateur : les garder tous les deux poserait un
        filet a l'interieur du cadre. */

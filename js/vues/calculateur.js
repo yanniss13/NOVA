@@ -30,6 +30,7 @@ import {
 } from "../metier/calculateur-entrees.js";
 import { buffsDeLEquipe } from "../metier/equipe-buffs.js";
 import { passifsGravesApplicables } from "../metier/passifs-graves.js";
+import { passifsCumulsApplicables } from "../metier/passifs-cumuls.js";
 import { potentielsEquipeApplicables } from "../metier/potentiels-equipe.js";
 import { competenceAvecSupplements,
   degatsSupplementairesApplicables } from "../metier/degats-supplementaires.js";
@@ -129,7 +130,8 @@ import { showView } from "./navigation.js";
   function chargerCatalogues(){
     if(window.SEVEN_DS_COMPETENCES && window.SEVEN_DS_BUFFS_SUPPORTS
       && window.SEVEN_DS_PASSIFS_GRAVES && window.SEVEN_DS_POTENTIELS_EQUIPE
-      && window.SEVEN_DS_DEGATS_SUPPLEMENTAIRES){
+      && window.SEVEN_DS_DEGATS_SUPPLEMENTAIRES
+      && window.SEVEN_DS_PASSIFS_CUMULS){
       return Promise.resolve(true);
     }
     if(chargementCatalogues) return chargementCatalogues;
@@ -149,7 +151,9 @@ import { showView } from "./navigation.js";
       window.SEVEN_DS_POTENTIELS_EQUIPE
         ? Promise.resolve(true) : injecter("./data/potentiels-equipe.js"),
       window.SEVEN_DS_DEGATS_SUPPLEMENTAIRES
-        ? Promise.resolve(true) : injecter("./data/degats-supplementaires.js")
+        ? Promise.resolve(true) : injecter("./data/degats-supplementaires.js"),
+      window.SEVEN_DS_PASSIFS_CUMULS
+        ? Promise.resolve(true) : injecter("./data/passifs-cumuls.js")
     ]).catch(erreur => {
       /* Rejouable : un echec reseau ne doit pas condamner l'onglet pour toute
          la duree de la session. */
@@ -640,13 +644,53 @@ import { showView } from "./navigation.js";
     return section;
   }
 
+  /* Les passifs a cumuls du heros calcule. Une section a PART des trois
+     autres, parce qu'ils ne viennent d'aucun coequipier ni d'aucun palier :
+     ils appartiennent au kit de son arme, et il les a des le palier 1.
+
+     Une seule case par passif, et elle vaut le PLAFOND de cumuls. Le nombre
+     exact change a chaque coup porte - le demander au membre lui ferait saisir
+     une valeur perimee avant d'etre lue. */
+  function sectionPassifsCumuls(cumuls, redessiner){
+    const section = el("section",{class:"calc-cumuls calc-carte"},[
+      el("h3",{class:"calc-carte-titre",text:"Passifs à cumuls"})
+    ]);
+    if(!cumuls.length){
+      section.appendChild(el("p",{class:"calc-muette",
+        text:"Aucun passif à cumuls mesuré pour ce build."}));
+      return section;
+    }
+    cumuls.forEach(ligne => {
+      const caseACocher = el("input",{
+        type:"checkbox",
+        onchange:()=>{
+          if(etat.coches.has(ligne.id)) etat.coches.delete(ligne.id);
+          else etat.coches.add(ligne.id);
+          redessiner();
+        }
+      });
+      caseACocher.checked = etat.coches.has(ligne.id);
+      section.appendChild(el("label",{class:"calc-buff"},[
+        caseACocher,
+        el("span",{text:ligne.libelle})
+      ]));
+    });
+    /* Le releve est DIT. Ces valeurs sont les seules de la page qui ne se
+       lisent nulle part dans le jeu : l'infobulle du passif est muette sur les
+       degats de competence. Le taire les ferait passer pour transcrites. */
+    section.appendChild(el("p",{class:"calc-muette",
+      text:"Mesuré sur le mannequin — le jeu ne publie pas ce chiffre."}));
+    return section;
+  }
+
   /* Tout ce qui porte une case a cocher sur cette page, dans l'ordre ou le
      membre le lit. Les degats supplementaires INCONDITIONNELS en sont exclus :
      ils n'ont pas de case, puisqu'ils sont deja comptes. */
-  function idsCochables(element, passifsGraves, potentiels, supplements){
+  function idsCochables(element, passifsGraves, potentiels, cumuls, supplements){
     return buffsProposes(element)
       .concat(passifsGraves)
       .concat(potentiels)
+      .concat(cumuls)
       .concat(supplements.filter(ligne => ligne.condition))
       .map(entree => entree.id);
   }
@@ -655,9 +699,10 @@ import { showView } from "./navigation.js";
 
      Ce n'est pas un raccourci anodin, et l'avertissement le dit : cocher une
      case, c'est declarer sa condition remplie. Tout cocher, c'est declarer que
-     les quatre sections sont simultanement vraies - Extinction comprise, qui
-     double la ligne et ne dure que 5 s. Le chiffre obtenu est un PLAFOND
-     theorique, pas ce qu'un combat rend.
+     les cinq sections sont simultanement vraies - Extinction comprise, qui
+     double la ligne et ne dure que 5 s, et un combo deja plein alors que le
+     premier coup n'est pas parti. Le chiffre obtenu est un PLAFOND theorique,
+     pas ce qu'un combat rend.
 
      Elle ne se contente pas d'ajouter : decochee, elle retire exactement les
      memes identifiants. Vider `etat.coches` en entier effacerait des choix
@@ -1170,22 +1215,27 @@ import { showView } from "./navigation.js";
     const potentiels = potentielsEquipeApplicables({
       element, porteurs:porteursDePotentiels(hero)
     });
+    const cumuls = passifsCumulsApplicables({
+      charId:etat.charId, typeArme:etat.typeArme
+    });
     const supplements = supplementsDuHeros(hero);
 
-    /* TOUT COCHER d'abord, au-dessus des quatre sections qu'elle commande :
+    /* TOUT COCHER d'abord, au-dessus des cinq sections qu'elle commande :
        le membre lit ce qu'elle fait avant de voir les cases, pas apres. */
     vue.appendChild(sectionToutCocher(
-      idsCochables(element, passifsGraves, potentiels, supplements), dessiner
+      idsCochables(element, passifsGraves, potentiels, cumuls, supplements),
+      dessiner
     ));
     vue.appendChild(sectionSoutiens(element, dessiner));
     vue.appendChild(sectionTenuesGravees(passifsGraves, dessiner));
     vue.appendChild(sectionPotentiels(potentiels, dessiner));
+    vue.appendChild(sectionPassifsCumuls(cumuls, dessiner));
     vue.appendChild(sectionSupplements(supplements, dessiner));
 
-    /* Les trois sources se rejoignent ici, et une seule fois : buffs de
-       soutien, passifs graves et potentiels d'equipe portent la meme forme -
-       `stat` ou `effet`, `valeur`, `operation` - donc le moteur ignore d'ou
-       ils viennent.
+    /* Les quatre sources se rejoignent ici, et une seule fois : buffs de
+       soutien, passifs graves, potentiels d'equipe et passifs a cumuls portent
+       la meme forme - `stat` ou `effet`, `valeur`, `operation` - donc le
+       moteur ignore d'ou ils viennent.
 
        Les degats supplementaires N'Y SONT PAS : ils ne sont pas des buffs mais
        des composantes de competence, et competenceAvecSupplements() les pose
@@ -1194,6 +1244,7 @@ import { showView } from "./navigation.js";
     const coches = buffsProposes(element)
       .concat(passifsGraves)
       .concat(potentiels)
+      .concat(cumuls)
       .filter(entree => etat.coches.has(entree.id));
 
     /* Les bonus de categorie du BUILD et ceux des buffs coches s'ADDITIONNENT :
@@ -1211,9 +1262,13 @@ import { showView } from "./navigation.js";
        donnerait l'impression de n'avoir rien fait. */
     const cochesVisibles = coches.length
       + supplements.filter(l => l.condition && etat.coches.has(l.id)).length;
+    /* « case(s) cochee(s) » et non « buff(s) d'equipe » : depuis les passifs a
+       cumuls, tout ce qui se coche ne vient plus de l'equipe. Le combo de
+       Derieri est son propre passif, et l'annoncer comme un apport d'equipe
+       ferait chercher un coequipier qui n'existe pas. */
     vue.appendChild(el("p",{class:"calc-avertissement",
       text:cochesVisibles
-        ? "Avec " + cochesVisibles + " buff(s) d'équipe."
+        ? "Avec " + cochesVisibles + " case(s) cochée(s)."
         : "Héros seul."}));
 
     const statsRetouchees = Object.assign({}, bases.stats);

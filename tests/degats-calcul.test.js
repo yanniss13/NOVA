@@ -95,6 +95,71 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   }).total), 719, "500 x 1,2505 x 1,15 - et non 500 x 1,4005 = 700");
 }
 
+/* LES TROIS RELEVES DE DERIERI, rejoues tels quels.
+
+   Ils protegent la seule valeur du depot qui ne se lise dans AUCUN texte du
+   jeu : le bonus par cumul de « Combo de coups », mesure sur le mannequin et
+   range dans data/passifs-cumuls.js. L'infobulle du passif ne parle que des
+   degats de Duel ; elle est muette sur les degats de competence, que le cumul
+   augmente pourtant. Sans ce bloc, une retouche de la table ou du seau
+   `bonusGlobal` passerait sans un bruit.
+
+   Derieri, Gantelets, palier 5, mannequin (ni defense ni resistance),
+   « Assaut fulgurant » - deux frappes, 186 % puis 315 %.
+
+     ATK (4 382 + 8 817) x 1,51 + 270 + 5 281 = 25 481,49
+     ecran de stats : « degats de competence normale » 0,00 %
+     palier 4 : « Renforce la puissance de la competence normale de 45 % »
+     degats critiques 126,46 %
+
+   La frappe 2 porte toujours UN cumul de plus que la frappe 1 : chaque coup
+   porte en octroie un, et le premier vient d'etre porte.
+
+   L'ecart tolere est de 0,01 %. Il n'est pas decoratif : le bonus par cumul
+   est une MOYENNE de trois estimations dispersees de 0,05 %, et exiger
+   l'egalite exacte reviendrait a figer le bruit de la mesure. */
+{
+  const MANNEQUIN = {
+    def:0, critResist:0, critDmgResist:0,
+    resistanceElementaire:0, faiblesse:0, resistancePercement:0
+  };
+  /* Le bonus par cumul, relu dans la table plutot que recopie : c'est ce qui
+     fait de ce bloc un test de la valeur EXPEDIEE, et non d'une constante
+     jumelle qui vivrait sa vie ici. */
+  const PAR_CUMUL = require("./helpers/passifs-cumuls-table")
+    .derieri.Gantelets[0].parCumul;
+
+  const derieri = (cumuls, critRate) => ({
+    atk:19930.49, attaqueElementaire:5551,
+    critRate, critDamage:12646,
+    bonusCategorie:0, bonusElementaire:0,
+    bonusGlobal:PAR_CUMUL * cumuls,
+    bonusCategoriePotentiel:4500
+  });
+  const frappe = pourcentage => ({ pourcentage, repartition:[] });
+
+  const releves = [
+    { quoi:"frappe 1, 0 cumul", coup:186, cumuls:0, crit:false, attendu:68724 },
+    { quoi:"frappe 1, 4 cumuls", coup:186, cumuls:4, crit:false, attendu:70221 },
+    { quoi:"frappe 2, 1 cumul", coup:315, cumuls:1, crit:false, attendu:117021 },
+    { quoi:"frappe 2, 5 cumuls, critique",
+      coup:315, cumuls:5, crit:true, attendu:270747 }
+  ];
+  releves.forEach(releve => {
+    const r = degatsAttendus({
+      stats:derieri(releve.cumuls, releve.crit ? 10000 : 0),
+      competence:frappe(releve.coup),
+      cible:MANNEQUIN
+    });
+    const obtenu = releve.crit ? r.avecCritique : r.sansCritique;
+    const ecart = Math.abs(obtenu - releve.attendu) / releve.attendu;
+    assert.ok(ecart < 1e-4,
+      "Derieri, " + releve.quoi + " : releve en jeu " + releve.attendu
+        + ", calcule " + obtenu.toFixed(1) + ", ecart "
+        + (ecart * 100).toFixed(4) + " %");
+  });
+}
+
 /* Le terme de defense : K/(K+DEF). Avec DEF = K, il vaut 0,5. */
 {
   const r = degatsAttendus({
