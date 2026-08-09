@@ -2,12 +2,50 @@
    le reste, et un tableau qui doit rester lisible à 320 px. */
 
 .calc-form{
-  display:flex;flex-wrap:wrap;gap:12px;align-items:flex-end;margin-bottom:16px
+  display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-end;
+  margin-bottom:16px
 }
-.calc-champ{display:flex;flex-direction:column;gap:4px;min-width:150px}
-.calc-champ label{font-size:12px;color:var(--muted)}
-.calc-champ input,.calc-champ select{min-height:44px}
+.calc-champ{display:flex;flex-direction:column;gap:5px;min-width:150px}
+/* L'étiquette est celle du Roster (`.member-roster-filter-field span`) : le
+   calculateur avait la sienne, plus grosse et plus pâle, et deux dialectes
+   d'étiquette sur un même site se voient. */
+.calc-champ label{
+  font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--muted-2)
+}
+
+/* LES CHAMPS. Rien ne les habillait : ni cette feuille, qui posait seulement
+   une hauteur, ni `base.css`, qui n'a aucun style global d'`input`/`select`.
+   Le navigateur rendait donc ses propres boîtes blanches au milieu d'une page
+   sombre. Même habillage que `.member-roster-filter-field select`. */
+.calc-champ input,.calc-champ select{
+  min-height:44px;width:100%;min-width:0;
+  font-family:var(--ui);font-size:13.5px;color:var(--parchment);
+  background:var(--obsidian-2);border:1px solid var(--line);
+  border-radius:8px;padding:9px 11px;transition:.16s
+}
+.calc-champ select{cursor:pointer;padding-right:30px}
+.calc-champ input:hover,.calc-champ select:hover{border-color:var(--gold-deep)}
+
 .calc-armes{display:flex;flex-wrap:wrap;gap:6px}
+/* Le build affiché doit se voir : la classe `active` était posée par la vue
+   depuis toujours, mais aucune feuille ne la dessinait — les trois armes se
+   ressemblaient, et rien ne disait laquelle on regardait. */
+.calc-armes .btn.active{
+  border-color:var(--gold-bright);color:var(--gold-bright);
+  background:linear-gradient(180deg,rgba(217,164,65,.14),var(--obsidian-2))
+}
+
+/* Les trois coéquipiers tiennent leur propre ligne. Sans règle, ce bloc était
+   un `<div>` nu : ses trois champs s'empilaient en colonne, et
+   `align-items:flex-end` alignait tout le reste du formulaire sur le bas de
+   cette colonne — d'où le trou béant au-dessus de « Personnage ». */
+.calc-coequipiers{
+  display:flex;flex-wrap:wrap;gap:12px 16px;align-items:flex-end;
+  flex:1 1 100%
+}
+.calc-coequipiers .calc-champ{flex:1 1 180px}
+.calc-coequipiers .calc-muette{flex:1 1 100%;margin:0}
 
 /* Une valeur retouchée doit se voir sans qu'on la cherche : c'est elle qui
    fait que le chiffre ne décrit plus le build enregistré. */
@@ -15,6 +53,11 @@
 
 .calc-avertissement{font-size:12px;color:var(--muted);margin:8px 0 16px}
 .calc-avertissement ul{margin:6px 0 0 18px}
+/* Une phrase glissée dans le formulaire prend sa propre ligne : en tant que
+   simple élément flex, elle se posait à côté d'un champ et décalait tout
+   l'alignement de la rangée. */
+.calc-form > .calc-avertissement,.calc-form > .btn{flex:1 1 100%;margin:0}
+.calc-form > .btn{flex:0 0 auto;align-self:flex-start}
 
 /* Chaque source de buffs est une carte, sur le modèle de `.cov-card`
    d'analyse.css : le calculateur était le seul onglet du site à empiler des
