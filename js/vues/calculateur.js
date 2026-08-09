@@ -857,16 +857,25 @@ import { showView } from "./navigation.js";
           text:NOMBRE.format(Math.round(ligne.resultat.total))})
       ]));
     });
-    return el("table",{class:"calc-table"},[
-      el("thead",{},[
-        el("tr",{},[
-          el("th",{text:"Compétence"}),
-          el("th",{text:"Non-crit"}),
-          el("th",{text:"Crit"}),
-          el("th",{text:"Espérance"})
-        ])
-      ]),
-      corps
+    /* Le tableau est l'objet de la page : il porte donc son propre panneau,
+       plutot que de flotter sur le fond comme une liste parmi d'autres.
+
+       Le <table> lui-meme n'est PAS remplace par des <div> : un tableau de
+       nombres reste un tableau, et les tests le lisent en `tbody tr`.
+       L'ordre est celui du kit - aucun tri, aucune ligne mise en avant. */
+    return el("div",{class:"calc-resultat"},[
+      el("div",{class:"calc-resultat-titre",text:"Dégâts par compétence"}),
+      el("table",{class:"calc-table"},[
+        el("thead",{},[
+          el("tr",{},[
+            el("th",{text:"Compétence"}),
+            el("th",{text:"Non-crit"}),
+            el("th",{text:"Crit"}),
+            el("th",{text:"Espérance"})
+          ])
+        ]),
+        corps
+      ])
     ]);
   }
 

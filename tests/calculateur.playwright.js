@@ -473,6 +473,40 @@ const STORAGE_KEY = "confrerie7ds.teams";
     assert.equal(await page.locator(".calc-tout-cocher.calc-carte").count(), 0,
       "« tout cocher » doit rester l'en-tete des sections, pas une carte");
 
+    /* LE PANNEAU DE RESULTAT. Le tableau reste un vrai <table> - les
+       assertions plus haut le lisent en `tbody tr` -, il est seulement
+       enveloppe. */
+    const panneau = page.locator(".calc-resultat");
+    assert.equal(await panneau.count(), 1, "un seul panneau de resultat");
+    assert.equal(await panneau.locator("> .calc-resultat-titre").count(), 1,
+      "le panneau porte un bandeau");
+    assert.equal(await panneau.locator("> table.calc-table").count(), 1,
+      "le tableau reste un <table>, enfant direct du panneau");
+    assert.equal(
+      (await panneau.locator(".calc-resultat-titre").textContent()).trim(),
+      "Dégâts par compétence",
+      "le bandeau annonce ce que le tableau contient"
+    );
+
+    /* Le bandeau ne doit PAS etre un `.calc-avertissement` : trois assertions
+       plus haut comparent le texte complet de cette classe, et un texte de plus
+       les ferait mentir. */
+    assert.equal(
+      await page.locator(".calc-resultat-titre.calc-avertissement").count(), 0,
+      "le bandeau ne doit pas se presenter comme un avertissement"
+    );
+
+    /* NI TRI, NI VEDETTE. Seule `calc-muette` a le droit d'habiller une ligne :
+       toute autre classe signalerait une mise en avant, explicitement hors
+       perimetre. */
+    const classesDeLigne = await page.evaluate(() =>
+      [...document.querySelectorAll(".calc-table tbody tr")]
+        .map(tr => tr.className.trim())
+        .filter(c => c && c !== "calc-muette"));
+    assert.deepEqual(classesDeLigne, [],
+      "aucune ligne mise en avant : pas de tri, pas de vedette, recu : "
+        + classesDeLigne.join(" / "));
+
     assert.deepEqual(errors, [], "aucune erreur de page attendue");
   } finally {
     await browser.close();
