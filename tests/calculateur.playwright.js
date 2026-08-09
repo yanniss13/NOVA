@@ -507,6 +507,43 @@ const STORAGE_KEY = "confrerie7ds.teams";
       "aucune ligne mise en avant : pas de tri, pas de vedette, recu : "
         + classesDeLigne.join(" / "));
 
+    /* A 320 PX. La densite gagnee sur grand ecran ne doit pas se payer en
+       largeur utile : la carte perd du rembourrage, pas le tableau sa
+       lisibilite. */
+    await page.setViewportSize({ width:320, height:720 });
+    await page.locator(".calc-table tbody tr").first().waitFor();
+
+    const debord = await page.evaluate(() =>
+      document.documentElement.scrollWidth
+        - document.documentElement.clientWidth);
+    assert.ok(debord <= 1,
+      "aucun debordement horizontal a 320 px, recu : " + debord + " px");
+
+    /* La colonne Crit cede la place - regle deja en place, on verifie qu'elle
+       survit au panneau. Non-crit et esperance suffisent a comparer. */
+    assert.equal(
+      await page.locator(".calc-table tbody tr").first()
+        .locator(".calc-valeur:visible").count(),
+      2,
+      "sous 560 px, la colonne Crit est masquee"
+    );
+
+    /* La cible tactile reste a 44 px : c'est la regle du site, et une carte
+       plus dense ne l'annule pas. */
+    const hauteurCase = await page.locator(".calc-buff").first()
+      .evaluate(n => n.getBoundingClientRect().height);
+    assert.ok(hauteurCase >= 44,
+      "une case a cocher reste a 44 px au doigt, recu : " + hauteurCase);
+
+    /* Le rembourrage de carte se resserre, sans disparaitre. */
+    const rembourrage = await page.locator(".calc-soutiens")
+      .evaluate(n => parseFloat(getComputedStyle(n).paddingLeft));
+    assert.ok(rembourrage > 0 && rembourrage < 14,
+      "la carte se resserre sous 560 px sans coller au bord, recu : "
+        + rembourrage);
+
+    await page.setViewportSize({ width:1280, height:720 });
+
     assert.deepEqual(errors, [], "aucune erreur de page attendue");
   } finally {
     await browser.close();
