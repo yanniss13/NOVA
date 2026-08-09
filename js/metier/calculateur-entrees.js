@@ -46,10 +46,10 @@ import { degatsAttendus } from "./degats-calcul.js";
     Object.fromEntries(ELEMENTS_BUFF.map(e => [e + "_Element_Rate", "bonusElementaire"]))
   );
 
-  /* Ou atterrit un malus inflige a la CIBLE. Ces lignes n'ont pas de code de
-     stat : libelles-stats.json ne decrit que des statistiques de heros, et
-     leur en inventer un aurait desactive le test qui refuse les codes
-     inventes.
+  /* Ou atterrit une ligne qui n'a PAS de code de stat - un malus inflige a la
+     cible, pour l'essentiel. libelles-stats.json ne decrit que des
+     statistiques de heros, et leur en inventer un aurait desactive le test qui
+     refuse les codes inventes.
 
      Les malus de meme nature s'ADDITIONNENT ici (20 % + 20 % + 10 % = 50 %).
      C'est un choix, pas une mesure : le jeu pourrait aussi bien ne pas les
@@ -57,6 +57,17 @@ import { degatsAttendus } from "./degats-calcul.js";
      qu'un seul champ ou le joueur saisit un total deja fait, donc il ne
      tranche pas non plus. */
   const EFFET_SUR_LA_CIBLE = {
+    /* Le seul effet de cette table qui ne vise PAS la cible : un bonus de
+       degats du heros lui-meme, sans categorie nommee - aujourd'hui le
+       « Combo de coups » de Derieri. Il n'a pas plus de code de stat que les
+       vulnerabilites : `AllSkill_Add` et consorts n'existent nulle part.
+
+       Il rejoint le meme seau additif que la vulnerabilite globale, et ce
+       n'est pas par commodite : un bonus de degats sans categorie et une
+       vulnerabilite sans categorie amplifient exactement la meme chose. Le
+       moteur ne saurait pas les distinguer, et rien de mesure ne l'y invite.
+       Le raisonnement complet est dans l'en-tete de data/passifs-cumuls.js. */
+    bonusDegatsHeros:"bonusGlobal",
     defense:"reductionDefense",
     defenseCritique:"reductionDefenseCritique",
     /* La resistance critique, distincte de la defense critique : l'une decide

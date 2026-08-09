@@ -80,10 +80,15 @@
 /* Le dégradé d'or, dans l'ordre d'affichage : du clair à l'éteint. AUCUNE
    teinte nouvelle — les sept couleurs d'élément de js/noyau/constantes.js sont
    déjà prises, et le badge d'élément du build s'affiche sur cette même page :
-   un liseré violet s'y lirait comme un indice de Ténèbres. */
+   un liseré violet s'y lirait comme un indice de Ténèbres.
+
+   Cinq sources, cinq jetons déjà définis dans base.css. La cinquième s'est
+   glissée entre les potentiels et les suppléments sans casser la progression :
+   `--muted` est la marche qui manquait entre `--gold-deep` et `--muted-2`. */
 .calc-soutiens{--ec:var(--gold-bright)}
 .calc-tenues{--ec:var(--gold)}
 .calc-potentiels{--ec:var(--gold-deep)}
+.calc-cumuls{--ec:var(--muted)}
 .calc-supplements{--ec:var(--muted-2)}
 
 /* La calibration et les avertissements prennent la coque, jamais le liseré :
