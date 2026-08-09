@@ -92,11 +92,11 @@ Object.keys(TABLE).forEach(perso => {
          endroit ou une faute de frappe passerait inapercue. */
       assert.ok(Number.isFinite(ligne.parCumul) && ligne.parCumul > 0,
         quoi + " : parCumul doit etre un nombre positif.");
-      assert.ok(Number.isInteger(ligne.cumulMax) && ligne.cumulMax > 0,
-        quoi + " : cumulMax doit etre un entier positif.");
-      assert.ok(Math.abs(ligne.valeur - ligne.parCumul * ligne.cumulMax) < 1e-6,
+      assert.ok(Number.isInteger(ligne.cumuls) && ligne.cumuls > 0,
+        quoi + " : cumuls doit etre un entier positif.");
+      assert.ok(Math.abs(ligne.valeur - ligne.parCumul * ligne.cumuls) < 1e-6,
         quoi + " : valeur (" + ligne.valeur + ") doit valoir parCumul x "
-          + "cumulMax (" + ligne.parCumul * ligne.cumulMax + ").");
+          + "cumuls (" + ligne.parCumul * ligne.cumuls + ").");
 
       /* Le PLAFOND, lui, est publie. Il se relit dans le texte du passif cite,
          exactement comme les quatre autres tables relisent leurs valeurs. */
@@ -117,9 +117,9 @@ Object.keys(TABLE).forEach(perso => {
       const publie = /^(\d+)/.exec(morceaux[1]);
       assert.ok(publie,
         quoi + " : aucun nombre ne suit « " + phrase + " ».");
-      assert.equal(Number(publie[1]), ligne.cumulMax,
+      assert.equal(Number(publie[1]), ligne.cumuls,
         quoi + " : le jeu publie un plafond de " + publie[1] + " cumuls, la "
-          + "table en stocke " + ligne.cumulMax + ".");
+          + "table en stocke " + ligne.cumuls + ".");
     });
   });
 });

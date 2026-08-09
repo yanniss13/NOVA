@@ -111,8 +111,67 @@ Object.keys(TABLE).forEach(fichier => {
         passif.id + " : niveau " + source.level + ", le texte annonce " + lu
           + " et la table stocke " + attendu);
     });
+
+    /* LES CUMULS. Trois champs qui vont ensemble, ou pas du tout : un pas sans
+       plafond ne saurait pas quand s'arreter, un plafond sans phrase serait un
+       nombre tape a la main. */
+    const aDesCumuls =
+      Object.prototype.hasOwnProperty.call(passif, "cumuls");
+    assert.equal(aDesCumuls,
+      Object.prototype.hasOwnProperty.call(passif, "parCumul"),
+      passif.id + " : `cumuls` et `parCumul` vont ensemble, ou pas du tout");
+    assert.equal(aDesCumuls,
+      Object.prototype.hasOwnProperty.call(passif.provenance, "phraseCumul"),
+      passif.id + " : un cumul doit citer la phrase de son PAS");
+    if(aDesCumuls){
+      assert.ok(Number.isInteger(passif.cumuls) && passif.cumuls > 1,
+        passif.id + " : cumuls doit etre un entier superieur a 1 - a un seul"
+          + " cran, une case a cocher suffirait");
+      assert.equal(passif.parCumul.length, 3,
+        passif.id + " : un pas par niveau, comme `niveaux`");
+
+      niveaux.forEach((source, index) => {
+        const texte = nu(source.textFr);
+        const bouts = texte.split(passif.provenance.phraseCumul);
+        assert.equal(bouts.length, 2,
+          passif.id + " : la phrase du pas doit apparaitre EXACTEMENT une fois"
+            + " au niveau " + source.level + ", trouvee " + (bouts.length - 1)
+            + " fois\n  cherche : " + passif.provenance.phraseCumul);
+        const trouve = /^(-?\d+(?:[.,]\d+)?)\s*%?/.exec(bouts[1]);
+        assert.ok(trouve && trouve[1],
+          passif.id + " : aucun nombre ne suit la phrase du pas au niveau "
+            + source.level);
+        const lu = Number(trouve[1].replace(",", "."));
+        const attendu = passif.unite === "ten-thousandths"
+          ? passif.parCumul[index] / 100
+          : passif.parCumul[index];
+        assert.equal(lu, attendu,
+          passif.id + " : niveau " + source.level + ", le texte annonce un pas"
+            + " de " + lu + " et la table stocke " + attendu);
+
+        /* LE PRODUIT. Le plafond reste la valeur de reference, et les deux
+           ecritures doivent tomber d'accord : sans ce controle, un pas retouche
+           laisserait un plafond perime, et le selecteur mentirait a son
+           dernier cran. */
+        assert.equal(passif.parCumul[index] * passif.cumuls,
+          passif.niveaux[index],
+          passif.id + " : niveau " + source.level + ", " + passif.parCumul[index]
+            + " x " + passif.cumuls + " = "
+            + (passif.parCumul[index] * passif.cumuls) + ", mais le plafond "
+            + "stocke vaut " + passif.niveaux[index]);
+      });
+    }
   });
 });
+
+/* Seize lignes a cumuls sur quarante-huit. Ce compte MONTE quand une ligne
+   gagne son grain : sans lui, en oublier une passerait inapercu, et sa case
+   continuerait d'envoyer au plafond un build qui n'y est pas. */
+{
+  const aCumuls = Object.values(TABLE).flat().filter(p => p.cumuls);
+  assert.equal(aCumuls.length, 16,
+    "16 passifs a cumuls attendus, recu " + aCumuls.length);
+}
 
 /* Trente-deux tenues sur les quarante qui portent un passif offensif :
    vingt-six pour leur seul porteur, quatorze pour l'equipe. Les dix absentes
