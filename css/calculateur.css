@@ -16,11 +16,37 @@
 .calc-avertissement{font-size:12px;color:var(--muted);margin:8px 0 16px}
 .calc-avertissement ul{margin:6px 0 0 18px}
 
-/* Les trois sources de buffs - soutiens, tenues gravées, potentiels - portent
-   le même habillage : empilées sans séparateur, elles se lisaient comme une
-   seule liste, et le membre ne voyait plus d'où venait chaque case. */
-.calc-soutiens,.calc-tenues,.calc-potentiels,.calc-supplements{
-  margin:16px 0;border-top:1px solid var(--line-soft);padding-top:12px
+/* Chaque source de buffs est une carte, sur le modèle de `.cov-card`
+   d'analyse.css : le calculateur était le seul onglet du site à empiler des
+   sections nues sous un titre en gras, et c'est ce qui lui donnait son air de
+   brouillon. La bordure de la carte REMPLACE le séparateur d'avant — les deux
+   ensemble poseraient un filet à l'intérieur du cadre.
+
+   `--ec` porte le liseré, et rien d'autre ne change de couleur. */
+.calc-carte{
+  --ec:var(--gold);
+  margin:12px 0;padding:12px 14px;
+  background:var(--panel);border:1px solid var(--line);
+  border-top:2px solid var(--ec);border-radius:var(--radius)
+}
+.calc-carte-titre{
+  margin:0 0 8px;font-family:var(--display);font-size:13px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--ec)
+}
+
+/* Le dégradé d'or, dans l'ordre d'affichage : du clair à l'éteint. AUCUNE
+   teinte nouvelle — les sept couleurs d'élément de js/noyau/constantes.js sont
+   déjà prises, et le badge d'élément du build s'affiche sur cette même page :
+   un liseré violet s'y lirait comme un indice de Ténèbres. */
+.calc-soutiens{--ec:var(--gold-bright)}
+.calc-tenues{--ec:var(--gold)}
+.calc-potentiels{--ec:var(--gold-deep)}
+.calc-supplements{--ec:var(--muted-2)}
+
+/* La calibration et les avertissements prennent la coque, jamais le liseré :
+   le dégradé signifie « source de buff », et ces deux blocs n'en sont pas. */
+.calc-calibration.calc-carte,.calc-avertissement.calc-carte{
+  border-top:1px solid var(--line)
 }
 /* « Tout cocher » commande les quatre sections suivantes : elle est au-dessus
    d'elles, et sans trait de séparation, pour se lire comme leur en-tête et non
@@ -69,10 +95,9 @@
    section où le membre saisit une mesure venue du jeu plutôt qu'un chiffre
    que la page a calculé pour lui. */
 .calc-calibration{
-  margin:24px 0 8px;border-top:1px solid var(--line-soft);padding-top:12px;
+  margin:24px 0 8px;
   display:flex;flex-direction:column;gap:10px;align-items:flex-start
 }
-.calc-calibration h3{margin:0;font-size:15px}
 .calc-calibration .calc-champ{min-width:min(100%,260px)}
 .calc-calibration select,.calc-calibration input{min-height:44px}
 .calc-calibration p{margin:0;max-width:60ch}

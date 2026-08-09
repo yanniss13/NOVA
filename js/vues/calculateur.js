@@ -438,8 +438,8 @@ import { showView } from "./navigation.js";
   function sectionSoutiens(element, redessiner){
     const coequipiers = coequipiersChoisis();
     const dispo = buffsProposes(element);
-    const section = el("section",{class:"calc-soutiens"},[
-      el("strong",{text:"Soutiens"}),
+    const section = el("section",{class:"calc-soutiens calc-carte"},[
+      el("h3",{class:"calc-carte-titre",text:"Soutiens"}),
       el("p",{class:"calc-avertissement",
         text:"Décoché, le chiffre est celui du héros seul. Cocher un buff, "
           + "c'est déclarer sa condition remplie : les durées ne sont pas "
@@ -522,8 +522,8 @@ import { showView } from "./navigation.js";
      les buffs venus des competences : la tenue du heros calcule n'est pas un
      soutien, et les melanger brouillerait les deux. */
   function sectionTenuesGravees(passifs, redessiner){
-    const section = el("section",{class:"calc-tenues"},[
-      el("strong",{text:"Tenues gravées"})
+    const section = el("section",{class:"calc-tenues calc-carte"},[
+      el("h3",{class:"calc-carte-titre",text:"Tenues gravées"})
     ]);
     if(!passifs.length){
       section.appendChild(el("p",{class:"calc-muette",
@@ -575,8 +575,8 @@ import { showView } from "./navigation.js";
      monte son personnage ». Le palier est ecrit sur chaque ligne pour cette
      raison - c'est le levier sur lequel le membre peut agir. */
   function sectionPotentiels(potentiels, redessiner){
-    const section = el("section",{class:"calc-potentiels"},[
-      el("strong",{text:"Potentiels d'équipe"})
+    const section = el("section",{class:"calc-potentiels calc-carte"},[
+      el("h3",{class:"calc-carte-titre",text:"Potentiels d'équipe"})
     ]);
     if(!potentiels.length){
       section.appendChild(el("p",{class:"calc-muette",
@@ -696,8 +696,8 @@ import { showView } from "./navigation.js";
      blocs aurait laisse croire que les premieres sont facultatives, alors
      qu'elles sont deja dans le chiffre affiche. */
   function sectionSupplements(supplements, redessiner){
-    const section = el("section",{class:"calc-supplements"},[
-      el("strong",{text:"Dégâts supplémentaires"})
+    const section = el("section",{class:"calc-supplements calc-carte"},[
+      el("h3",{class:"calc-carte-titre",text:"Dégâts supplémentaires"})
     ]);
     if(!supplements.length){
       section.appendChild(el("p",{class:"calc-muette",
@@ -733,8 +733,8 @@ import { showView } from "./navigation.js";
      un chiffre ». Elle est propre au personnage, a son arme et a ses
      potentiels debloques, donc elle se range par build et se recalibre. */
   function sectionCalibration(competences, entrees, bonusParCategorie, mesuree, redessiner){
-    const section = el("section",{class:"calc-calibration"});
-    section.appendChild(el("h3",{text:"Constante C"}));
+    const section = el("section",{class:"calc-calibration calc-carte"});
+    section.appendChild(el("h3",{class:"calc-carte-titre",text:"Constante C"}));
     section.appendChild(el("p",{class:"calc-muette",
       text:mesuree
         ? "Mesurée sur ce build : " + NOMBRE.format(Math.round(mesuree))
@@ -871,7 +871,7 @@ import { showView } from "./navigation.js";
   }
 
   function avertissements(){
-    return el("section",{class:"calc-avertissement"},[
+    return el("section",{class:"calc-avertissement calc-carte"},[
       el("p",{text:cibleCourante().niveau
         ? "Sur Akumu, l'élément ne change rien : les huit résistances "
           + "élémentaires valent 30 % et aucune faiblesse n'est publiée."

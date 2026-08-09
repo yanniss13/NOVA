@@ -421,6 +421,58 @@ const STORAGE_KEY = "confrerie7ds.teams";
         + ".calc-potentiels input:checked, .calc-supplements input:checked"
     ).length === 0);
 
+    /* L'HABILLAGE. Les quatre sources de buffs sont des cartes titrees, comme
+       partout ailleurs sur le site : c'etait le seul onglet a empiler des
+       sections nues sous un <strong>. */
+    for(const classe of [
+      "calc-soutiens","calc-tenues","calc-potentiels","calc-supplements"
+    ]){
+      const carte = page.locator("." + classe);
+      assert.ok(
+        await carte.evaluate(n => n.classList.contains("calc-carte")),
+        classe + " doit porter la coque de carte"
+      );
+      assert.equal(await carte.locator("h3.calc-carte-titre").count(), 1,
+        classe + " doit porter un titre h3, pas un <strong> nu");
+      assert.equal(await carte.locator("> strong").count(), 0,
+        classe + " ne doit plus avoir de <strong> de titre");
+    }
+
+    /* Quatre liseres DISTINCTS, tous sur l'axe dore : les sept teintes
+       d'element sont deja prises, et le badge d'element du build est sur cette
+       meme page. On lit la couleur calculee, pas la variable : elle resout les
+       jetons et ne depend pas du navigateur. */
+    const liseres = await page.evaluate(() => [
+      "calc-soutiens","calc-tenues","calc-potentiels","calc-supplements"
+    ].map(c => getComputedStyle(
+      document.querySelector("." + c)).borderTopColor));
+    assert.equal(new Set(liseres).size, 4,
+      "les quatre sources doivent avoir quatre liseres distincts, recu : "
+        + liseres.join(" / "));
+
+    /* La carte REMPLACE le separateur : les garder tous les deux poserait un
+       filet a l'interieur du cadre. */
+    assert.equal(
+      await page.locator(".calc-soutiens")
+        .evaluate(n => getComputedStyle(n).borderTopWidth),
+      "2px",
+      "le bord haut de la carte est le lisere, pas l'ancien separateur d'1px"
+    );
+
+    /* La calibration prend la coque mais JAMAIS le lisere : le degrade signifie
+       « source de buff », et elle n'en est pas une. */
+    assert.equal(
+      await page.locator(".calc-calibration")
+        .evaluate(n => getComputedStyle(n).borderTopWidth),
+      "1px",
+      "la calibration porte un bord neutre, pas le lisere de 2px"
+    );
+
+    /* « Tout cocher » n'est PAS une carte : elle commande les quatre sections,
+       elle n'en est pas une cinquieme. */
+    assert.equal(await page.locator(".calc-tout-cocher.calc-carte").count(), 0,
+      "« tout cocher » doit rester l'en-tete des sections, pas une carte");
+
     assert.deepEqual(errors, [], "aucune erreur de page attendue");
   } finally {
     await browser.close();
