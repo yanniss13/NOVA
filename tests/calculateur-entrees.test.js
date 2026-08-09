@@ -536,6 +536,131 @@ tousLesBuffs.forEach(buff => {
   );
 }
 
+/* LES DEUX STATISTIQUES ELEMENTAIRES DU BUILD.
+
+   Elles existaient dans le catalogue - 94 objets portent `X_Rate`, 94 portent
+   `X_Element_Rate` - et rien ne les lisait. Le calculateur ne remontait que
+   `X_Add`, donc un membre qui roulait une stat elementaire ne voyait pas son
+   chiffre bouger. */
+{
+  const { statsElementairesDuBuild, entreesDuCalcul,
+    degatsAttendus } = loadApp().hooks;
+  assert.equal(typeof statsElementairesDuBuild, "function",
+    "statsElementairesDuBuild n'est pas exposee par le chargeur de tests");
+
+  /* Un lecteur de statistiques factice qui NOTE ce qu'on lui demande : c'est
+     ainsi qu'un code de stat mal orthographie se fait prendre. Un `lire()`
+     rend zero pour un code inconnu, donc une faute de frappe serait
+     silencieuse - elle ne ferait que rabaisser le chiffre. */
+  const lecteurEspion = valeurs => {
+    const demandes = [];
+    const lire = code => {
+      demandes.push(code);
+      return Object.prototype.hasOwnProperty.call(valeurs, code)
+        ? valeurs[code] : 0;
+    };
+    return { lire, demandes };
+  };
+
+  {
+    /* Verifies contre `statLabels` du catalogue genere, et non contre
+       libelles-stats.json comme le reste de ce fichier : c'est statLabels que
+       l'application elle-meme interroge, par buildStatMetadata(). L'ecart
+       n'est pas theorique - `AllElement_Rate` figure dans le catalogue, et un
+       objet le porte, mais libelles-stats.json l'ignore. */
+    const STAT_LABELS = catalogueDe("stats-build.js", "SEVEN_DS_BUILD_STATS")
+      .statLabels;
+    const espion = lecteurEspion({});
+    statsElementairesDuBuild(espion.lire, "thunder");
+    espion.demandes.forEach(code => assert.ok(STAT_LABELS[code],
+      "code de stat inconnu du catalogue : " + code));
+    assert.deepEqual([...espion.demandes].sort(), [
+      "AllElement_Add", "AllElement_Rate",
+      "Thunder_Add", "Thunder_Element_Rate", "Thunder_Rate"
+    ], "les quatre codes de l'element, plus les deux « tous elements »");
+  }
+
+  /* Le taux de l'element majore SON plat, jamais celui qui vaut pour tous.
+     Le taux « tous elements » majore les deux. Les deux taux s'additionnent
+     avant de multiplier. */
+  {
+    const sortie = statsElementairesDuBuild(lecteurEspion({
+      Thunder_Add:1000, Thunder_Rate:5000,
+      AllElement_Add:200, AllElement_Rate:1000,
+      Thunder_Element_Rate:1244
+    }).lire, "thunder");
+    assert.equal(sortie.attaqueElementaire, 1000 * 1.6 + 200 * 1.1,
+      "1 000 x (1 + 0,50 + 0,10) + 200 x (1 + 0,10)");
+    assert.equal(sortie.bonusElementaire, 1244);
+  }
+
+  /* Sans element - une arme physique dont le slot n'en porte aucun - seules
+     les deux lignes « tous elements » subsistent. Rien ne doit exploser. */
+  {
+    const sortie = statsElementairesDuBuild(lecteurEspion({
+      AllElement_Add:300, Thunder_Add:9999
+    }).lire, null);
+    assert.equal(sortie.attaqueElementaire, 300);
+    assert.equal(sortie.bonusElementaire, 0);
+  }
+
+  /* Le seau elementaire du BUILD amorce l'entree, et les buffs de soutien
+     s'ajoutent par-dessus. Avant, le build etait ignore et seul un
+     coequipier pouvait remplir ce seau. */
+  {
+    const entrees = entreesDuCalcul({
+      statsDuBuild:{ atk:1000, bonusElementaire:1244 },
+      buffsCoches:[{ stat:"Thunder_Element_Rate", valeur:1000 }]
+    });
+    assert.equal(entrees.bonusElementaire, 2244,
+      "1 244 du build + 1 000 du soutien");
+  }
+
+  /* LA MESURE. Mannequin, Merlin p10 Baguette, Jugement foudroyant (159 %,
+     NORMAL_SKILL), releve juste apres un rerolle d'enchantement.
+
+       Attaque 4 813 + Attaque de l'equipement 10 374, Augmentation de
+       l'attaque 73,16 % ; Attaque de Foudre 1 409 ; Augmentation de l'attaque
+       de Foudre 43,76 % ; Augmentation des degats de Foudre 12,44 % ;
+       competence normale 23,81 % ; palier 4 +15 %.
+
+     Le releve vaut 70 563. Il tient l'ensemble de la chaine d'un bout a
+     l'autre : les quatre codes elementaires, le seau additif partage avec le
+     bonus de categorie, et le facteur multiplicatif du palier. */
+  {
+    const elementaires = statsElementairesDuBuild(lecteurEspion({
+      Thunder_Add:1409, Thunder_Rate:4376, Thunder_Element_Rate:1244
+    }).lire, "thunder");
+    assert.ok(Math.abs(elementaires.attaqueElementaire - 2025.58) < 0.01,
+      "1 409 x 1,4376 = 2 025,6 d'attaque de Foudre, taux compris");
+
+    const entrees = entreesDuCalcul({
+      statsDuBuild:{
+        atk:(4813 + 10374) * 1.7316,
+        attaqueElementaire:elementaires.attaqueElementaire,
+        bonusElementaire:elementaires.bonusElementaire,
+        critRate:0, critDamage:0
+      },
+      buffsCoches:[]
+    });
+    const resultat = degatsAttendus({
+      stats:Object.assign({}, entrees, {
+        bonusCategorie:2381, bonusCategoriePotentiel:1500
+      }),
+      competence:{ pourcentage:159, repartition:[] },
+      cible:{
+        def:0, critResist:0, critDmgResist:0,
+        resistanceElementaire:0, faiblesse:0, resistancePercement:0
+      }
+    });
+    const ecart = Math.abs(resultat.sansCritique - 70563) / 70563;
+    assert.ok(ecart < 1e-4,
+      "Merlin p10, Jugement foudroyant : releve en jeu 70 563, calcule "
+        + resultat.sansCritique.toFixed(1) + ", ecart "
+        + (ecart * 100).toFixed(4) + " %");
+  }
+}
+
 console.log(
   "calculateur-entrees.test.js OK (" + tousLesBuffs.length + " buffs sur "
     + SUPPORTS.length + " supports)"

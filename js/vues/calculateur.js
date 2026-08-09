@@ -26,7 +26,8 @@ import {
 } from "../donnees/coequipiers-store.js";
 import {
   STAT_DE_LA_CATEGORIE, bonusCategorieDesBuffs,
-  entreesDeLaCompetence, entreesDuCalcul, resultatsParCompetence
+  entreesDeLaCompetence, entreesDuCalcul, resultatsParCompetence,
+  statsElementairesDuBuild
 } from "../metier/calculateur-entrees.js";
 import { buffsDeLEquipe } from "../metier/equipe-buffs.js";
 import { passifsGravesApplicables } from "../metier/passifs-graves.js";
@@ -217,11 +218,10 @@ import { showView } from "./navigation.js";
           && Number.isFinite(valeur) ? somme + valeur : somme;
       }, 0);
     };
-    /* L'attaque elementaire du build : celle de son element, plus celle qui
-       vaut pour tous. Le moteur les ajoute a l'ATK. */
-    const majuscule = element
-      ? element.charAt(0).toUpperCase() + element.slice(1)
-      : null;
+    /* Les deux entrees elementaires du build. Le detail des quatre codes
+       lus, et de la mesure qui les fonde, vit dans calculateur-entrees.js -
+       cette vue ne fait que passer le lecteur de statistiques. */
+    const elementaires = statsElementairesDuBuild(lire, element);
     return {
       statut:result.status,
       manques:[],
@@ -232,8 +232,8 @@ import { showView } from "./navigation.js";
         critRate:lire("C_Critical_Rate"),
         critDamage:lire("C_Critical_Dam_Rate"),
         percementDefense:lire("D_Protect_Cur_Rate"),
-        attaqueElementaire:
-          (majuscule ? lire(majuscule + "_Add") : 0) + lire("AllElement_Add")
+        attaqueElementaire:elementaires.attaqueElementaire,
+        bonusElementaire:elementaires.bonusElementaire
       },
       /* A part des autres, et pour une bonne raison : ces cinq bonus ne
          valent QUE pour les competences de leur categorie. Les ranger dans

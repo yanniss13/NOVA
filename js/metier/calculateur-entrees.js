@@ -82,6 +82,69 @@ import { degatsAttendus } from "./degats-calcul.js";
     vulnerabiliteGlobale:"bonusGlobal"
   };
 
+  /* LES DEUX STATISTIQUES ELEMENTAIRES DU BUILD, que rien ne lisait.
+
+     Seul `X_Add` remontait au moteur. Les trois autres codes existaient dans
+     le catalogue - 94 objets portent `X_Rate`, 94 portent `X_Element_Rate` -
+     sans que rien ne les branche. Un membre qui roulait « Augmentation des
+     degats de Foudre » ne voyait donc pas son chiffre bouger d'un point.
+
+     MESURE EN JEU, mannequin (ni defense ni resistance), Merlin p10 Baguette,
+     Jugement foudroyant a 159 %, releve juste apres un rerolle
+     d'enchantement :
+
+       ecran : Attaque de Foudre 1 409, Augmentation de l'attaque de Foudre
+               43,76 %, Augmentation des degats de Foudre 12,44 %,
+               competence normale 23,81 %, palier 4 +15 %
+
+       [15 187 x 1,7316 + 1 409 x 1,4376] x 1,59 x 1,3625 x 1,15 = 70 563
+                                                    -> releve en jeu : 70 563
+       les memes sans le taux d'attaque             -> 69 027, 2,2 % trop bas
+       les memes sans le bonus de degats            -> 64 738, 8,3 % trop bas
+
+     CE QUE LA MESURE ETABLIT. Le taux ne se replie PAS dans le nombre
+     affiche : l'ecran montre toujours 1 409 et range les 43,76 % dans un bloc
+     « Stats elementaires (%) » separe. L'ecran de stats n'est pas l'entree du
+     calcul - meme piege que les bonus de categorie venus d'un potentiel.
+
+     Elle etablit aussi que le bonus de degats elementaire tombe dans le MEME
+     seau additif que le bonus de categorie : les faire se multiplier donnerait
+     72 097, soit 2,2 % de trop. C'etait jusqu'ici une deduction reprise de
+     l'outil de reference ; c'est desormais un releve.
+
+     CE QU'ELLE N'ETABLIT PAS, et qui est donc un CHOIX. Les deux
+     statistiques « tous elements » de Merlin sont nulles, donc rien ici ne les
+     mesure :
+       - `AllElement_Rate` dit « augmentation de TOUTES les attaques
+         elementaires » : il majore les deux plats. `X_Rate` ne nomme qu'un
+         element : il ne majore que le sien. Chaque taux porte ce que son
+         libelle dit, et rien de plus.
+       - les deux taux s'ADDITIONNENT avant de multiplier, par analogie avec
+         `I_AtkAdd_Rate`, taux unique deja somme sur toutes ses sources.
+     L'enjeu reste mince : un seul objet du catalogue porte `AllElement_Rate`.
+
+     La fonction prend `lire` en argument plutot que le build : les codes de
+     stat vivent ici, avec le reste du vocabulaire, et un test peut les
+     verifier sans navigateur. */
+  function statsElementairesDuBuild(lire, element){
+    const lecture = typeof lire === "function" ? lire : () => 0;
+    const valeur = code => Number(lecture(code)) || 0;
+    const prefixe = element
+      ? String(element).charAt(0).toUpperCase()
+        + String(element).slice(1).toLowerCase()
+      : null;
+    const propre = prefixe ? valeur(prefixe + "_Add") : 0;
+    const tauxPropre = prefixe ? valeur(prefixe + "_Rate") : 0;
+    const tous = valeur("AllElement_Add");
+    const tauxTous = valeur("AllElement_Rate");
+    return {
+      attaqueElementaire:
+        propre * (1 + (tauxPropre + tauxTous) / DIX_MILLIEMES)
+        + tous * (1 + tauxTous / DIX_MILLIEMES),
+      bonusElementaire:prefixe ? valeur(prefixe + "_Element_Rate") : 0
+    };
+  }
+
   function tableDesBuffs(){
     return window.SEVEN_DS_BUFFS_SUPPORTS || {};
   }
@@ -119,7 +182,12 @@ import { degatsAttendus } from "./degats-calcul.js";
       critDamage:Number(stats.critDamage) || 0,
       percementDefense:Number(stats.percementDefense) || 0,
       bonusGlobal:0,
-      bonusElementaire:0,
+      /* Le build ALIMENTE ce seau, contrairement aux deux autres : son bonus
+         de degats elementaire vaut pour toutes ses competences a la fois,
+         donc il a sa place dans les entrees communes. Le bonus de CATEGORIE
+         ne l'a pas - il ne vaut que pour une categorie, et voyage a part dans
+         `bonusParCategorie`. Les buffs de soutien s'ajoutent par-dessus. */
+      bonusElementaire:Number(stats.bonusElementaire) || 0,
       bonusCategorie:0,
       /* Trois seaux de malus sur la cible. Le build ne les alimente jamais :
          ils ne viennent que des competences d'equipe cochees. */
@@ -270,5 +338,5 @@ export {
   STAT_DE_LA_CATEGORIE,
   bonusCategorieDesBuffs,
   buffsApplicables, entreesDeLaCompetence, entreesDuCalcul,
-  resultatsParCompetence
+  resultatsParCompetence, statsElementairesDuBuild
 };

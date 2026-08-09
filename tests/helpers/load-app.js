@@ -131,6 +131,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   entreesDuCalcul:typeof entreesDuCalcul === "function"
     ? entreesDuCalcul
     : undefined,
+  statsElementairesDuBuild:typeof statsElementairesDuBuild === "function"
+    ? statsElementairesDuBuild
+    : undefined,
   resultatsParCompetence:typeof resultatsParCompetence === "function"
     ? resultatsParCompetence
     : undefined,
