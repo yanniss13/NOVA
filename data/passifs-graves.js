@@ -26,6 +26,28 @@
 //   `\u00a0` plutot que de dependre de ce qu'un editeur aura insere.
 //
 // niveaux : les trois valeurs, du niveau 1 au niveau 3, en dix-milliemes.
+//
+// LES CUMULS. Seize de ces quarante-huit lignes montent par paliers, et
+// `niveaux` n'en stocke que le PLAFOND. Trois champs ouvrent le grain :
+//
+//   parCumul    le pas, un par niveau, dans le meme ordre que `niveaux`.
+//   cumuls      le nombre de crans. Il vaut 3 a 30 selon la ligne, et il est
+//               toujours le MEME aux trois niveaux. Meme nom et meme role que
+//               dans buffs-supports.js, ou le pas est un scalaire faute de
+//               niveaux : deux noms pour une seule notion finiraient par
+//               diverger.
+//   phraseCumul l'ancre du pas, sous la meme regle que `phrase` - une
+//               occurrence unique dans le texte, le nombre juste apres.
+//
+// Le plafond reste la reference : un test verifie que `parCumul[i] x cumuls`
+// vaut exactement `niveaux[i]` aux trois niveaux, donc les deux ecritures ne
+// peuvent pas diverger.
+//
+// POURQUOI CE GRAIN. Mesure en jeu sur le mannequin, Merlin p10 : son passif
+// de tenue rendait +6 % de degats critiques, pas +24 %. Un cumul sur quatre.
+// La case tout-ou-rien envoyait donc au plafond un build qui n'y etait pas, et
+// l'ecart valait 14 % de degats sur un coup critique.
+//
 // cible   : "soi"     le passif ne profite qu'a celui qui porte la tenue ;
 //           "allies"  il profite a l'equipe ENTIERE, porteur compris. Les
 //                     malus infliges a l'ENNEMI portent "allies" : quiconque
@@ -164,7 +186,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:null,
       niveaux:[4500, 6000, 7500],
-      provenance:{ phrase:"(Max\u00a0: " }
+      parCumul:[900, 1200, 1500],
+      cumuls:5,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"augmente les dégâts d'attaque ultime de "
+      }
     },
     {
       id:"dreyfus-chevalier-honorable-sacre",
@@ -201,7 +228,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:"thunder",
       niveaux:[1200, 1600, 2000],
-      provenance:{ phrase:"(Max\u00a0: " }
+      parCumul:[120, 160, 200],
+      cumuls:10,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"par les héros alliés de "
+      }
     }
   ],
   "7ds-armures-ssr/Armure liee/Chevalier sacré de la tempête.webp":[
@@ -214,7 +246,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:"wind",
       niveaux:[3000, 3750, 4500],
-      provenance:{ phrase:"(Max\u00a0: " }
+      parCumul:[200, 250, 300],
+      cumuls:15,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"augmente les dégâts de Vent de "
+      }
     }
   ],
   "7ds-armures-ssr/Armure liee/Chevalier sacré des explosions.webp":[
@@ -229,7 +266,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:null,
       niveaux:[10000, 12500, 15000],
-      provenance:{ phrase:"des bonus pendant 30\u00a0s. (Max\u00a0: " }
+      parCumul:[1000, 1250, 1500],
+      cumuls:10,
+      provenance:{
+        phrase:"des bonus pendant 30\u00a0s. (Max\u00a0: ",
+        phraseCumul:"augmente les dégâts de compétence normale de "
+      }
     }
   ],
   "7ds-armures-ssr/Armure liee/Courtoisie minimale.webp":[
@@ -242,7 +284,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:"fire",
       niveaux:[1800, 2400, 3000],
-      provenance:{ phrase:"(Max\u00a0: " }
+      parCumul:[300, 400, 500],
+      cumuls:6,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"d'attribut Feu de "
+      }
     },
     {
       id:"derieri-courtoisie-degats-crit",
@@ -309,7 +356,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:null,
       niveaux:[3000, 3600, 4200],
-      provenance:{ phrase:"(Max\u00a0: " }
+      parCumul:[100, 120, 140],
+      cumuls:30,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"réduit sa résistance crit. de "
+      }
     },
     {
       id:"tioreh-fille-foret-vulnerabilite-competence-normale",
@@ -359,7 +411,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:"thunder",
       niveaux:[1800, 2400, 3000],
-      provenance:{ phrase:"(Max\u00a0: " }
+      parCumul:[600, 800, 1000],
+      cumuls:3,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"augmente les dégâts de Foudre de "
+      }
     }
   ],
   "7ds-armures-ssr/Armure liee/Héros de Liones.webp":[
@@ -423,7 +480,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:null,
       niveaux:[1200, 1600, 2000],
-      provenance:{ phrase:"(Max\u00a0: " }
+      parCumul:[120, 160, 200],
+      cumuls:10,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"augmente les chances crit. de "
+      }
     },
     {
       id:"king-grizzly-sacre",
@@ -458,7 +520,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:null,
       niveaux:[1600, 2000, 2400],
-      provenance:{ phrase:"(Max\u00a0: " }
+      parCumul:[400, 500, 600],
+      cumuls:4,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"augmente les dégâts crit. de "
+      }
     }
   ],
   "7ds-armures-ssr/Armure liee/Lumière de guidance.webp":[
@@ -475,7 +542,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:"wind",
       niveaux:[4800, 6000, 7200],
-      provenance:{ phrase:"(Max\u00a0: " }
+      parCumul:[1600, 2000, 2400],
+      cumuls:3,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"augmente l'attaque de Vent de "
+      }
     }
   ],
   "7ds-armures-ssr/Armure liee/Majesté bien malveillante.webp":[
@@ -536,7 +608,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:"ice",
       niveaux:[3000, 3750, 4500],
-      provenance:{ phrase:"(Max\u00a0: " }
+      parCumul:[200, 250, 300],
+      cumuls:15,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"les dégâts de Froid de "
+      }
     }
   ],
   "7ds-armures-ssr/Armure liee/Robe de printemps.webp":[
@@ -561,7 +638,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:null,
       niveaux:[3200, 4000, 4800],
-      provenance:{ phrase:"(Max\u00a0: " }
+      parCumul:[800, 1000, 1200],
+      cumuls:4,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"réduit la défense crit. de la cible de "
+      }
     }
   ],
   "7ds-armures-ssr/Armure liee/Seigneur des ombres.webp":[
@@ -575,7 +657,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:null,
       niveaux:[5000, 6000, 7000],
-      provenance:{ phrase:"(Max\u00a0: " }
+      parCumul:[1000, 1200, 1400],
+      cumuls:5,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"réduit sa résistance crit. de "
+      }
     }
   ],
   "7ds-armures-ssr/Armure liee/Sortie joyeuse.webp":[
@@ -606,7 +693,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:"thunder",
       niveaux:[1000, 1500, 2000],
-      provenance:{ phrase:"(Max\u00a0: " }
+      parCumul:[200, 300, 400],
+      cumuls:5,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"augmente les dégâts de Foudre de tous les héros alliés de "
+      }
     },
     {
       id:"daisy-souffle-degats-crit",
@@ -630,7 +722,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:null,
       niveaux:[2500, 3000, 3500],
-      provenance:{ phrase:"(Max\u00a0: " }
+      parCumul:[500, 600, 700],
+      cumuls:5,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"que l'utilisateur lui inflige de "
+      }
     }
   ],
   "7ds-armures-ssr/Armure liee/Tenue de soirée pour un rendez-vous secret.webp":[
@@ -678,7 +775,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:"ice",
       niveaux:[3200, 4000, 4800],
-      provenance:{ phrase:"(Max\u00a0: " }
+      parCumul:[800, 1000, 1200],
+      cumuls:4,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"augmente les dégâts de Froid de "
+      }
     }
   ],
   "7ds-armures-ssr/Armure liee/Vedette de la taverne.webp":[

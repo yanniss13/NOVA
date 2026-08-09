@@ -128,6 +128,24 @@
   flex:none;margin-top:2px;width:17px;height:17px;accent-color:var(--gold-bright)
 }
 
+/* Un passif qui monte par cumuls se règle au lieu de se cocher. Le nom garde
+   l'alignement des lignes cochables au-dessus ; le réglage passe dessous, à
+   la même marge que le texte, pour que l'œil descende sans zigzaguer. */
+.calc-cumul-ligne{
+  display:flex;flex-direction:column;gap:4px;padding:5px 0;
+  line-height:1.35;font-size:14px
+}
+.calc-cumul-reglage{display:flex;gap:9px;align-items:center}
+.calc-cumuls-choix{
+  flex:none;width:60px;padding:3px 6px;background:var(--panel-2);
+  color:inherit;border:1px solid var(--gold-deep);
+  border-radius:calc(var(--radius) / 2);font:inherit
+}
+.calc-cumuls-choix:focus-visible{outline:2px solid var(--gold-bright)}
+/* L'apport réel, jamais le plafond : c'est le seul chiffre de la ligne qui
+   bouge avec le réglage, donc celui qui doit se voir. */
+.calc-cumul-apport{color:var(--gold-bright);font-size:13px}
+
 /* Le tableau cesse de flotter sur le fond : bandeau doré, bordure accentuée,
    coins arrondis. L'ordre reste celui du kit et aucune ligne n'est mise en
    avant — c'est un choix, pas un oubli. */
@@ -189,6 +207,7 @@
   /* La cible tactile reprend ses 44 px : la densité gagnée sur grand écran
      ne doit pas se payer au doigt. */
   .calc-buff{min-height:44px;align-items:center}
+  .calc-cumuls-choix{min-height:44px;width:72px}
   .calc-soutiens-grille{grid-template-columns:1fr;gap:12px}
   /* La carte se resserre : 28 px de rembourrage horizontal sur un écran de
      320 px mangeaient une colonne du tableau. */

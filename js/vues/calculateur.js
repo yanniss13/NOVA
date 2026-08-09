@@ -81,6 +81,11 @@ import { showView } from "./navigation.js";
     coequipiers:CoequipiersStore.get(),
     retouches:{},
     coches:new Set(),
+    /* Les passifs qui montent par CUMULS : leur nombre de crans, par
+       identifiant. Un etat a part de `coches`, parce qu'une case ne sait dire
+       que oui ou non, et que ces passifs-la valent 0, 1, 2 … jusqu'a leur
+       plafond. Absent du dictionnaire = zero cumul = eteint. */
+    cumuls:{},
     /* La calibration : index de la competence choisie, degats saisis, et le
        dernier message rendu. Le message est garde dans l'etat parce que la
        page se redessine entierement a chaque action. */
@@ -458,6 +463,88 @@ import { showView } from "./navigation.js";
     });
   }
 
+  /* LES QUATRE FONCTIONS DES CUMULS, ecrites une fois pour toutes.
+
+     Une ligne REGLABLE n'est pas cochee, elle est reglee au cran. Tout ce qui,
+     ailleurs sur cette page, demandait « cette ligne est-elle cochee ? » doit
+     donc passer par ici : la case « tout cocher », le compte affiche, et la
+     liste qui part au moteur. Les laisser interroger `etat.coches` directement
+     rendrait ces lignes invisibles a l'une ou l'autre.
+
+     `reglable` est pose par la VUE, jamais par les tables, et c'est
+     deliberé. Porter `cumuls` ne suffit pas a meriter un selecteur : les buffs
+     de soutien en portent aussi, et le combo de Derieri egalement, mais leurs
+     sections rendent une case - a 50 crans, le choix a ete fait de declarer le
+     combo plein plutot que de derouler cinquante et une lignes. Deduire le
+     selecteur du seul champ `cumuls` aurait donc casse ces deux sections en
+     silence : elles ecrivent dans `etat.coches`, ces fonctions auraient lu
+     `etat.cumuls`, et rien ne se serait plus allume. */
+  function reglable(ligne){
+    return Boolean(ligne && ligne.reglable && ligne.cumuls);
+  }
+
+  function cumulsDe(ligne){
+    if(!reglable(ligne)) return 0;
+    const lu = Math.round(Number(etat.cumuls[ligne.id]));
+    if(!Number.isFinite(lu)) return 0;
+    return Math.min(Math.max(0, lu), ligne.cumuls);
+  }
+
+  /* « Reglee a fond » vaut « cochee » pour une ligne reglable : c'est ce que
+     declare la case « tout cocher », dont l'avertissement dit deja qu'elle
+     donne un plafond theorique. */
+  function estRetenue(ligne){
+    return reglable(ligne)
+      ? cumulsDe(ligne) >= ligne.cumuls
+      : etat.coches.has(ligne && ligne.id);
+  }
+
+  /* La ligne telle que le MOTEUR doit la voir, ou null si elle est eteinte.
+     Une ligne reglable voit sa `valeur` recalculee - le pas multiplie par les
+     crans declares - pour que rien en aval n'ait a connaitre le mecanisme. */
+  function ligneActive(ligne){
+    if(!ligne) return null;
+    if(!reglable(ligne)){
+      return etat.coches.has(ligne.id) ? ligne : null;
+    }
+    const crans = cumulsDe(ligne);
+    return crans > 0
+      ? Object.assign({}, ligne, { valeur:ligne.parCumul * crans })
+      : null;
+  }
+
+  /* Le selecteur qui remplace la case sur une ligne a cumuls. Le libelle perd
+     son « +24 % » de plafond au profit de la valeur REELLE du reglage : un
+     nombre qui ne bouge pas quand on tourne la molette se lirait comme un
+     reglage sans effet. */
+  function ligneACumuls(ligne, redessiner){
+    const crans = cumulsDe(ligne);
+    const choix = el("select",{
+      class:"calc-cumuls-choix",
+      onchange:event => {
+        etat.cumuls[ligne.id] = Number(event.target.value) || 0;
+        redessiner();
+      }
+    });
+    for(let n = 0; n <= ligne.cumuls; n++){
+      const option = el("option",{ value:String(n), text:String(n) });
+      option.selected = n === crans;
+      choix.appendChild(option);
+    }
+    const apport = ligne.parCumul * crans;
+    return el("div",{class:"calc-cumul-ligne"},[
+      el("span",{class:"calc-cumul-nom",
+        text:ligne.libelle.replace(/\s*[+-][\d.,  ]+%\s*$/, "")}),
+      el("div",{class:"calc-cumul-reglage"},[
+        choix,
+        el("span",{class:"calc-cumul-apport",
+          text:"/ " + ligne.cumuls + " cumuls — "
+            + (crans ? "+" + (apport / 100).toFixed(2).replace(/\.?0+$/, "")
+              + " %" : "éteint")})
+      ])
+    ]);
+  }
+
   function sectionSoutiens(element, redessiner){
     const coequipiers = coequipiersChoisis();
     const dispo = buffsProposes(element);
@@ -568,6 +655,17 @@ import { showView } from "./navigation.js";
       bloc.appendChild(el("h4",{class:"calc-soutien-nom",
         text:nomDuPersonnage(lignes[0].support) + " · " + nomTenue}));
       lignes.forEach(passif => {
+        /* Un passif a paliers se REGLE au lieu de se cocher : sa valeur reelle
+           est presque toujours entre zero et son plafond, et la case
+           envoyait tout le monde au plafond. */
+        if(reglable(passif)){
+          bloc.appendChild(ligneACumuls(passif, redessiner));
+          if(passif.niveauInconnu){
+            bloc.appendChild(el("p",{class:"calc-muette",
+              text:"Niveau de passif non renseigné — valeur du niveau 1."}));
+          }
+          return;
+        }
         const caseACocher = el("input",{
           type:"checkbox",
           onchange:()=>{
@@ -686,13 +784,13 @@ import { showView } from "./navigation.js";
   /* Tout ce qui porte une case a cocher sur cette page, dans l'ordre ou le
      membre le lit. Les degats supplementaires INCONDITIONNELS en sont exclus :
      ils n'ont pas de case, puisqu'ils sont deja comptes. */
-  function idsCochables(element, passifsGraves, potentiels, cumuls, supplements){
+  function lignesCochables(element, passifsGraves, potentiels, cumuls,
+                           supplements){
     return buffsProposes(element)
       .concat(passifsGraves)
       .concat(potentiels)
       .concat(cumuls)
-      .concat(supplements.filter(ligne => ligne.condition))
-      .map(entree => entree.id);
+      .concat(supplements.filter(ligne => ligne.condition));
   }
 
   /* « Tout cocher ».
@@ -707,16 +805,23 @@ import { showView } from "./navigation.js";
      Elle ne se contente pas d'ajouter : decochee, elle retire exactement les
      memes identifiants. Vider `etat.coches` en entier effacerait des choix
      portant sur un autre build, que la page reproposera plus tard. */
-  function sectionToutCocher(ids, redessiner){
+  function sectionToutCocher(lignes, redessiner){
     const section = el("section",{class:"calc-tout-cocher"});
-    if(!ids.length) return section;
-    const toutes = ids.every(id => etat.coches.has(id));
+    if(!lignes.length) return section;
+    /* Une ligne a cumuls compte comme cochee quand elle est A FOND, et cette
+       case l'y envoie. C'est exactement ce que son avertissement annonce : un
+       plafond theorique, pas ce qu'un combat rend. */
+    const toutes = lignes.every(estRetenue);
     const caseACocher = el("input",{
       type:"checkbox",
       onchange:()=>{
-        ids.forEach(id => {
-          if(toutes) etat.coches.delete(id);
-          else etat.coches.add(id);
+        lignes.forEach(ligne => {
+          if(reglable(ligne)){
+            etat.cumuls[ligne.id] = toutes ? 0 : ligne.cumuls;
+            return;
+          }
+          if(toutes) etat.coches.delete(ligne.id);
+          else etat.coches.add(ligne.id);
         });
         redessiner();
       }
@@ -727,7 +832,8 @@ import { showView } from "./navigation.js";
        buffs - et « cocher le premier buff » cocherait alors la page entiere. */
     section.appendChild(el("label",{class:"calc-tout-cocher-case"},[
       caseACocher,
-      el("span",{text:"Tout cocher — " + ids.length + " buff(s) disponible(s)"})
+      el("span",{
+        text:"Tout cocher — " + lignes.length + " buff(s) disponible(s)"})
     ]));
     section.appendChild(el("p",{class:"calc-avertissement",
       text:"Toutes conditions déclarées remplies en même temps : c'est un "
@@ -1209,9 +1315,17 @@ import { showView } from "./navigation.js";
         text:"Valeurs retouchées — ne reflète plus ton build."}));
     }
 
+    /* Les passifs de tenue a paliers sont les SEULS reglables au cran pour
+       l'instant, et le marqueur se pose ici plutot que dans la table : c'est
+       un choix d'interface, pas une propriete du jeu. Les huit buffs de
+       soutien a cumuls et le combo de Derieri portent les memes champs et
+       gardent leur case - a 20, 25 ou 50 crans, declarer le plein reste plus
+       lisible qu'une liste a derouler. */
     const passifsGraves = passifsGravesApplicables({
       element, porteurs:porteursDeTenues(hero)
-    });
+    }).map(passif => passif.cumuls
+      ? Object.assign({}, passif, { reglable:true })
+      : passif);
     const potentiels = potentielsEquipeApplicables({
       element, porteurs:porteursDePotentiels(hero)
     });
@@ -1223,7 +1337,7 @@ import { showView } from "./navigation.js";
     /* TOUT COCHER d'abord, au-dessus des cinq sections qu'elle commande :
        le membre lit ce qu'elle fait avant de voir les cases, pas apres. */
     vue.appendChild(sectionToutCocher(
-      idsCochables(element, passifsGraves, potentiels, cumuls, supplements),
+      lignesCochables(element, passifsGraves, potentiels, cumuls, supplements),
       dessiner
     ));
     vue.appendChild(sectionSoutiens(element, dessiner));
@@ -1245,7 +1359,8 @@ import { showView } from "./navigation.js";
       .concat(passifsGraves)
       .concat(potentiels)
       .concat(cumuls)
-      .filter(entree => etat.coches.has(entree.id));
+      .map(ligneActive)
+      .filter(Boolean);
 
     /* Les bonus de categorie du BUILD et ceux des buffs coches s'ADDITIONNENT :
        ils viennent de sources differentes - potentiels, equipement, tenue
@@ -1256,19 +1371,21 @@ import { showView } from "./navigation.js";
       bonusParCategorie[categorie] =
         (Number(bonusParCategorie[categorie]) || 0) + bonusDesBuffs[categorie];
     });
-    /* Le compte annonce ce que le membre a COCHE, donc les degats
+    /* Le compte annonce ce que le membre a ACTIVE, donc les degats
        supplementaires conditionnels en font partie : ils ne passent pas par
        `coches`, mais une case cochee qui n'apparaitrait pas dans le total
-       donnerait l'impression de n'avoir rien fait. */
+       donnerait l'impression de n'avoir rien fait. Un passif regle a un cumul
+       compte pour un, comme une case : c'est bien une ligne de plus qui agit
+       sur le chiffre. */
     const cochesVisibles = coches.length
       + supplements.filter(l => l.condition && etat.coches.has(l.id)).length;
-    /* « case(s) cochee(s) » et non « buff(s) d'equipe » : depuis les passifs a
-       cumuls, tout ce qui se coche ne vient plus de l'equipe. Le combo de
-       Derieri est son propre passif, et l'annoncer comme un apport d'equipe
-       ferait chercher un coequipier qui n'existe pas. */
+    /* « ligne(s) active(s) » et non « buff(s) d'equipe » : depuis les passifs
+       a cumuls, tout ce qui agit ne vient plus de l'equipe et ne se coche plus
+       forcement. Le combo de Derieri est son propre passif, et un passif de
+       tenue se regle au cran. */
     vue.appendChild(el("p",{class:"calc-avertissement",
       text:cochesVisibles
-        ? "Avec " + cochesVisibles + " case(s) cochée(s)."
+        ? "Avec " + cochesVisibles + " ligne(s) active(s)."
         : "Héros seul."}));
 
     const statsRetouchees = Object.assign({}, bases.stats);

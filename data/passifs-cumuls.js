@@ -57,12 +57,19 @@
 // potentiels-equipe.js et degats-supplementaires.js. Pas de palier : ces
 // passifs appartiennent au kit de base, pas a un potentiel.
 //
-// parCumul  : le bonus d'UN cumul, en dix-milliemes, tel que mesure.
-// cumulMax  : le plafond publie par le jeu - lui, il est ecrit dans
-//             l'infobulle, et le test le compare au texte du catalogue.
-// valeur    : ce que la case applique, soit parCumul x cumulMax. Un maximum
-//             qui se calcule ne se pose pas de tete : le test verifie le
-//             produit, comme pour les repetitions des degats supplementaires.
+// parCumul : le bonus d'UN cumul, en dix-milliemes, tel que mesure.
+// cumuls   : le plafond publie par le jeu - lui, il est ecrit dans
+//            l'infobulle, et le test le compare au texte du catalogue. Meme
+//            nom que dans buffs-supports.js et passifs-graves.js : une seule
+//            notion, un seul mot.
+// valeur   : ce que la case applique, soit parCumul x cumuls. Un maximum qui
+//            se calcule ne se pose pas de tete : le test verifie le produit,
+//            comme pour les repetitions des degats supplementaires.
+//
+// PAS DE SELECTEUR ICI, contrairement aux passifs de tenue a paliers. A
+// cinquante crans, derouler cinquante et une lignes coute plus que le grain ne
+// rapporte, et le combo se remplit vite en combat. La vue ne pose donc son
+// marqueur `reglable` que sur les tenues gravees ; le choix est commente la-bas.
 window.SEVEN_DS_PASSIFS_CUMULS = {
   "derieri": {
     "Gantelets": [
@@ -75,7 +82,7 @@ window.SEVEN_DS_PASSIFS_CUMULS = {
         gameId:"derieri_gauntlets_passive",
         effet:"bonusDegatsHeros",
         parCumul:54.48,
-        cumulMax:50,
+        cumuls:50,
         valeur:2724,
         unite:"ten-thousandths",
         element:null

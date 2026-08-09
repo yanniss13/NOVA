@@ -37,10 +37,18 @@
            que le membre sache quoi renseigner. */
         const niveauInconnu = !(porteur.niveau >= 1 && porteur.niveau <= 3);
         const rang = niveauInconnu ? 0 : porteur.niveau - 1;
+        /* Le PAS du niveau atteint, pour les passifs qui montent par cumuls.
+           `valeur` reste le plafond : elle est ce qu'applique la ligne quand
+           le membre declare le combo plein, et le reste de la chaine - le
+           moteur, le compte de cases cochees - n'a pas a savoir qu'un grain
+           existe. La vue seule multiplie le pas par les cumuls choisis. */
+        const parCumul = Array.isArray(passif.parCumul)
+          ? passif.parCumul[rang] : null;
         return Object.assign({}, passif, {
           support:porteur.charId,
           tenue:porteur.tenue,
           valeur:passif.niveaux[rang],
+          parCumul,
           niveauInconnu
         });
       }));

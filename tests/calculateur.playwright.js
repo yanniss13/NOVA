@@ -229,11 +229,14 @@ const STORAGE_KEY = "confrerie7ds.teams";
     assert.ok(apres[2] > chiffres[2],
       "un buff coche doit augmenter l'esperance, avant : " + chiffres.join(", ")
         + " apres : " + apres.join(", "));
+    /* « ligne(s) active(s) » et non « case(s) cochee(s) » : un passif de tenue
+       a cumuls se REGLE au cran au lieu de se cocher, donc le compte ne peut
+       plus parler de cases. */
     assert.match(
       await page.locator(".calc-avertissement").allTextContents()
         .then(liste => liste.join(" ")),
-      /Avec 1 case\(s\) cochée\(s\)/,
-      "l'en-tete doit annoncer le nombre de cases cochees"
+      /Avec 1 ligne\(s\) active\(s\)/,
+      "l'en-tete doit annoncer le nombre de lignes actives"
     );
 
     /* Retoucher une base doit se voir : le chiffre ne decrit alors plus le
