@@ -212,16 +212,27 @@ import { degatsAttendus } from "./degats-calcul.js";
      lui passer des entrees sans le bonus de categorie, alors que le tableau
      l'applique, ferait mesurer une constante fausse — d'autant plus fausse
      que le bonus est gros, et il monte a +115 % sur certains paliers. */
-  function entreesDeLaCompetence(entrees, bonusParCategorie, competence){
-    const bonus = Number(
-      (bonusParCategorie || {})[competence && competence.categorie]
+  function entreesDeLaCompetence(
+    entrees, bonusParCategorie, competence, bonusPotentielParCategorie
+  ){
+    const categorie = competence && competence.categorie;
+    const bonus = Number((bonusParCategorie || {})[categorie]) || 0;
+    /* Le bonus de PALIER DE POTENTIEL voyage a part, parce qu'il ne s'ajoute
+       pas : il multiplie le seau. Mesure en jeu sur le mannequin, Merlin p10
+       Baguette — l'ecran de stats affiche 25,05 % pour la competence normale
+       et non 40,05 %, et seul le produit des deux retrouve le coup releve.
+       Voir le commentaire de facteursHorsConstante() dans degats-calcul.js. */
+    const potentiel = Number(
+      (bonusPotentielParCategorie || {})[categorie]
     ) || 0;
-    if(!bonus) return entrees;
-    /* Le bonus S'AJOUTE au seau : un buff de soutien deja verse dans
-       `bonusCategorie` par entreesDuCalcul() doit survivre, sinon cocher un
-       soutien effacerait l'apport des potentiels. */
+    if(!bonus && !potentiel) return entrees;
+    /* Le bonus d'equipement S'AJOUTE au seau : un buff de soutien deja verse
+       dans `bonusCategorie` par entreesDuCalcul() doit survivre, sinon cocher
+       un soutien effacerait l'apport de l'equipement. */
     return Object.assign({}, entrees, {
-      bonusCategorie:(Number(entrees && entrees.bonusCategorie) || 0) + bonus
+      bonusCategorie:(Number(entrees && entrees.bonusCategorie) || 0) + bonus,
+      bonusCategoriePotentiel:
+        (Number(entrees && entrees.bonusCategoriePotentiel) || 0) + potentiel
     });
   }
 
@@ -235,7 +246,8 @@ import { degatsAttendus } from "./degats-calcul.js";
       competence,
       resultat:degatsAttendus({
         stats:entreesDeLaCompetence(
-          source.entrees, source.bonusParCategorie, competence
+          source.entrees, source.bonusParCategorie, competence,
+          source.bonusPotentielParCategorie
         ),
         competence,
         cible:source.cible

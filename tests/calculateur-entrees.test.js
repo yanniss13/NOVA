@@ -498,6 +498,44 @@ tousLesBuffs.forEach(buff => {
     "une vulnerabilite globale ne doit pas se poser sur une categorie");
 }
 
+/* Le bonus de categorie d'un PALIER DE POTENTIEL suit son propre chemin :
+   `bonusPotentielParCategorie` doit arriver jusqu'au moteur SANS etre verse
+   dans le seau de l'equipement, qu'il multiplie au lieu de le grossir.
+
+   Mesure en jeu (mannequin, Merlin p10 Baguette, Jugement foudroyant) :
+   l'ecran de stats affiche 25,05 % pour la competence normale et non 40,05 %,
+   et seul le produit des deux retrouve le coup releve. Ce test tient la
+   plomberie ; la formule elle-meme est verifiee dans degats-calcul.test.js. */
+{
+  const competence = {
+    categorie:"NORMAL_SKILL", pourcentage:100, repartition:[100]
+  };
+  const cible = {
+    def:0, critResist:0, critDmgResist:0, resistanceElementaire:0, faiblesse:0
+  };
+  const entrees = {
+    atk:10000, attaqueElementaire:0, critRate:0, critDamage:0,
+    bonusCategorie:0, bonusElementaire:0, bonusGlobal:0
+  };
+  const total = extra => resultatsParCompetence(Object.assign({
+    competences:[competence], entrees,
+    bonusParCategorie:{ NORMAL_SKILL:2505 }, cible
+  }, extra))[0].resultat.total;
+
+  assert.equal(Math.round(total({})), 12505,
+    "l'equipement seul : 10 000 x 1,2505");
+  assert.equal(
+    Math.round(total({ bonusPotentielParCategorie:{ NORMAL_SKILL:1500 } })),
+    14381,
+    "avec le palier : 10 000 x 1,2505 x 1,15, et non x 1,4005 = 14 005"
+  );
+  /* Et il ne deborde pas sur les autres categories. */
+  assert.equal(
+    Math.round(total({ bonusPotentielParCategorie:{ ULTIMATE:1500 } })), 12505,
+    "un palier d'ultime ne doit pas toucher une competence normale"
+  );
+}
+
 console.log(
   "calculateur-entrees.test.js OK (" + tousLesBuffs.length + " buffs sur "
     + SUPPORTS.length + " supports)"

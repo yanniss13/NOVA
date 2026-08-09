@@ -201,6 +201,18 @@ import { showView } from "./navigation.js";
       const stat = parCode.get(code);
       return stat && Number.isFinite(stat.value) ? stat.value : 0;
     };
+    /* La seule part du total qui vienne d'un palier de potentiel. Chaque terme
+       porte sa provenance depuis stats-calcul.js ; c'est elle qu'on relit,
+       plutot que de reparser la prose des paliers une seconde fois. */
+    const lirePotentiel = code => {
+      const stat = parCode.get(code);
+      const termes = stat && Array.isArray(stat.terms) ? stat.terms : [];
+      return termes.reduce((somme, terme) => {
+        const valeur = Number(terme && terme.value);
+        return terme && terme.source && terme.source.domain === "potential"
+          && Number.isFinite(valeur) ? somme + valeur : somme;
+      }, 0);
+    };
     /* L'attaque elementaire du build : celle de son element, plus celle qui
        vaut pour tous. Le moteur les ajoute a l'ATK. */
     const majuscule = element
@@ -221,11 +233,18 @@ import { showView } from "./navigation.js";
       },
       /* A part des autres, et pour une bonne raison : ces cinq bonus ne
          valent QUE pour les competences de leur categorie. Les ranger dans
-         `stats` les appliquerait a toutes les lignes du tableau. Ils viennent
-         des paliers de potentiel, des armes et de l'equipement. */
+         `stats` les appliquerait a toutes les lignes du tableau. */
       bonusParCategorie:Object.fromEntries(
         Object.entries(STAT_DE_LA_CATEGORIE)
-          .map(([categorie, code]) => [categorie, lire(code)])
+          .map(([categorie, code]) => [categorie, lire(code) - lirePotentiel(code)])
+      ),
+      /* Les paliers de potentiel partagent le CODE DE STAT de l'equipement -
+         c'est un choix assume du generateur - mais pas son comportement : eux
+         multiplient le seau au lieu de s'y ajouter. On les ressort donc du
+         total par leur provenance, la seule chose qui les distingue encore. */
+      bonusPotentielParCategorie:Object.fromEntries(
+        Object.entries(STAT_DE_LA_CATEGORIE)
+          .map(([categorie, code]) => [categorie, lirePotentiel(code)])
       )
     };
   }
@@ -732,7 +751,8 @@ import { showView } from "./navigation.js";
      C'est ce qui fait passer la page de « compare deux builds » a « annonce
      un chiffre ». Elle est propre au personnage, a son arme et a ses
      potentiels debloques, donc elle se range par build et se recalibre. */
-  function sectionCalibration(competences, entrees, bonusParCategorie, mesuree, redessiner){
+  function sectionCalibration(competences, entrees, bonusParCategorie, mesuree,
+                              redessiner, bonusPotentielParCategorie){
     const section = el("section",{class:"calc-calibration calc-carte"});
     section.appendChild(el("h3",{class:"calc-carte-titre",text:"Constante C"}));
     section.appendChild(el("p",{class:"calc-muette",
@@ -744,7 +764,8 @@ import { showView } from "./navigation.js";
           + "pas encore ce que tu verras en jeu."}));
 
     const chiffrees = resultatsParCompetence({
-      competences, entrees, bonusParCategorie, cible:cibleCourante()
+      competences, entrees, bonusParCategorie, bonusPotentielParCategorie,
+      cible:cibleCourante()
     }).filter(ligne => ligne.resultat).map(ligne => ligne.competence);
 
     if(!chiffrees.length){
@@ -796,7 +817,8 @@ import { showView } from "./navigation.js";
              compris : les deux sens de la formule doivent voir le meme seau,
              sinon la constante mesuree corrigerait un ecart imaginaire. */
           stats:entreesDeLaCompetence(
-            entrees, bonusParCategorie, chiffrees[choisi]
+            entrees, bonusParCategorie, chiffrees[choisi],
+            bonusPotentielParCategorie
           ),
           competence:chiffrees[choisi],
           cible:cibleCourante(),
@@ -833,9 +855,11 @@ import { showView } from "./navigation.js";
     return section;
   }
 
-  function tableauDesCompetences(charId, competences, entrees, bonusParCategorie){
+  function tableauDesCompetences(charId, competences, entrees, bonusParCategorie,
+                                 bonusPotentielParCategorie){
     const lignes = resultatsParCompetence({
-      competences, entrees, bonusParCategorie, cible:cibleCourante()
+      competences, entrees, bonusParCategorie, bonusPotentielParCategorie,
+      cible:cibleCourante()
     });
     const corps = el("tbody");
     lignes.forEach(ligne => {
@@ -1219,10 +1243,12 @@ import { showView } from "./navigation.js";
         text:"Aucune compétence connue pour ce type d'arme."}));
     } else {
       vue.appendChild(tableauDesCompetences(
-        etat.charId, competences, entrees, bonusParCategorie
+        etat.charId, competences, entrees, bonusParCategorie,
+        bases.bonusPotentielParCategorie
       ));
       vue.appendChild(sectionCalibration(
-        competences, entrees, bonusParCategorie, mesuree, dessiner
+        competences, entrees, bonusParCategorie, mesuree, dessiner,
+        bases.bonusPotentielParCategorie
       ));
     }
     vue.appendChild(avertissements());
