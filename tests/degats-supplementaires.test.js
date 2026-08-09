@@ -26,6 +26,24 @@ const TABLE = catalogueDe("degats-supplementaires.js",
   "SEVEN_DS_DEGATS_SUPPLEMENTAIRES");
 const SOURCE = catalogueDe("potentiels.js", "SEVEN_DS_POTENTIELS");
 const COMPETENCES = catalogueDe("competences.js", "SEVEN_DS_COMPETENCES");
+/* La repartition par coup n'existe QUE dans le catalogue du wiki : celui du
+   comparateur ne garde que le total. Un coup recopie s'y verifie donc. */
+const WIKI = catalogueDe("wiki-competences.js", "SEVEN_DS_WIKI_COMPETENCES");
+
+/* Le coefficient du n-ieme coup d'une competence, tel que le jeu le publie :
+   « 2e coup : 315% ». Rendre null plutot que zero - un coup absent doit faire
+   echouer le test, pas produire un supplement muet. */
+function coupPublie(gameId, rang){
+  const fiche = Object.values(WIKI)
+    .flat()
+    .find(k => k && k.gameId === gameId);
+  if(!fiche) return null;
+  const texte = dep(fiche.descriptionFr);
+  const etiquette = rang === 1 ? "1er coup" : rang + "e coup";
+  const trouve = new RegExp(etiquette + "\\s*:\\s*(\\d+(?:[.,]\\d+)?)\\s*%")
+    .exec(texte);
+  return trouve ? Number(trouve[1].replace(",", ".")) : null;
+}
 
 const dep = texte => (texte || "").replace(/\[#?[0-9A-Fa-f-]*\]/g, "");
 const vus = new Set();
@@ -74,16 +92,26 @@ Object.keys(TABLE).forEach(perso => {
             quoi + " : une condition vide vaut mieux absente");
         }
 
-        /* LA GARDE. Le nombre qui suit la phrase est le PAS quand la source
-           publie une repetition, le total sinon. */
+        /* LA GARDE. Trois formes, une seule a la fois. Le nombre qui suit la
+           phrase est le PAS pour une repetition, le COMPTE DE COUPS pour un
+           coup recopie, le total sinon. */
         const aDesRepetitions =
           Object.prototype.hasOwnProperty.call(ligne, "repetitions");
         assert.equal(aDesRepetitions,
           Object.prototype.hasOwnProperty.call(ligne, "pas"),
           quoi + " : `repetitions` et `pas` vont ensemble, ou pas du tout");
+        const aUnCoupRecopie =
+          Object.prototype.hasOwnProperty.call(ligne, "coups");
+        assert.equal(aUnCoupRecopie,
+          Object.prototype.hasOwnProperty.call(ligne, "frappeCopiee"),
+          quoi + " : `coups` et `frappeCopiee` vont ensemble, ou pas du tout");
+        assert.ok(!(aDesRepetitions && aUnCoupRecopie),
+          quoi + " : une repetition et un coup recopie s'excluent - le nombre "
+            + "qui suit la phrase ne peut pas etre les deux a la fois");
         assert.equal(
           suitLaPhrase(texte, ligne.provenance.phrase, quoi),
-          aDesRepetitions ? ligne.pas : ligne.pourcentage,
+          aDesRepetitions ? ligne.pas
+            : aUnCoupRecopie ? ligne.coups : ligne.pourcentage,
           quoi + " : le texte du palier " + palier + " annonce un autre nombre "
             + "que la table");
 
@@ -101,6 +129,35 @@ Object.keys(TABLE).forEach(perso => {
             quoi + " : le total doit etre le PRODUIT du pas par le nombre de "
               + "repetitions, soit " + (ligne.pas * ligne.repetitions)
               + ", recu " + ligne.pourcentage);
+        }
+
+        /* Un coup RECOPIE se verifie contre la frappe qu'il copie. Le palier
+           ne chiffre rien : il DESIGNE une frappe, et c'est le catalogue qui
+           en publie le coefficient. Sans ce controle, le 315 stocke ici serait
+           un nombre de plus tape a la main. */
+        if(aUnCoupRecopie){
+          const rang = ligne.frappeCopiee.rang;
+          const coef = coupPublie(ligne.frappeCopiee.gameId, rang);
+          assert.ok(coef !== null,
+            quoi + " : le catalogue ne publie pas le coup n" + rang + " de "
+              + ligne.frappeCopiee.gameId);
+          assert.equal(ligne.coups * coef, ligne.pourcentage,
+            quoi + " : " + ligne.coups + " coup(s) x " + coef + " % = "
+              + (ligne.coups * coef) + ", la table stocke "
+              + ligne.pourcentage);
+
+          /* Et elle doit appartenir a une competence de la MEME categorie que
+             le supplement : recopier une frappe d'ultime dans un supplement de
+             competence normale n'aurait aucun sens, et rien d'autre ne le
+             signalerait. */
+          const copiee = (COMPETENCES[perso] || [])
+            .find(k => k.gameId === ligne.frappeCopiee.gameId);
+          assert.ok(copiee,
+            quoi + " : gameId inconnu du catalogue de competences -> "
+              + ligne.frappeCopiee.gameId);
+          assert.equal(copiee.categorie, ligne.categorie,
+            quoi + " : la frappe copiee est de categorie " + copiee.categorie
+              + ", le supplement vise " + ligne.categorie);
         }
 
         /* La categorie annoncee doit exister CHEZ CE PERSONNAGE, avec CETTE
@@ -123,11 +180,11 @@ Object.keys(TABLE).forEach(perso => {
   });
 });
 
-/* Vingt-huit lignes sur les trente et une que les potentiels publient. Les
-   trois absentes sont NOMMEES dans l'en-tete de
-   data/degats-supplementaires.js : leur total depend d'un nombre de coups que
-   le texte ne publie pas. */
-assert.equal(comptees, 28, "28 lignes attendues, recu " + comptees);
+/* Vingt-huit lignes de degats supplementaires sur les trente et une que les
+   potentiels publient - les trois absentes sont NOMMEES dans l'en-tete de
+   data/degats-supplementaires.js, leur total depend d'un nombre de coups que
+   le texte ne publie pas - plus un coup RECOPIE, la vingt-neuvieme. */
+assert.equal(comptees, 29, "29 lignes attendues, recu " + comptees);
 
 /* Le module pur. */
 {
