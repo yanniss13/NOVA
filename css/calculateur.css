@@ -142,4 +142,8 @@
      ne doit pas se payer au doigt. */
   .calc-buff{min-height:44px;align-items:center}
   .calc-soutiens-grille{grid-template-columns:1fr;gap:12px}
+  /* La carte se resserre : 28 px de rembourrage horizontal sur un écran de
+     320 px mangeaient une colonne du tableau. */
+  .calc-carte{padding:10px 11px}
+  .calc-resultat .calc-table th,.calc-resultat .calc-table td{padding:8px 10px}
 }
