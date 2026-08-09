@@ -70,6 +70,31 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   }).total), 800, "500 x (1 + 0,10 + 0,20 + 0,30)");
 }
 
+/* MAIS le bonus de categorie venu d'un PALIER DE POTENTIEL n'entre pas dans ce
+   seau : il forme un facteur a part, applique par-dessus.
+
+   Mesure en jeu, mannequin d'entrainement (ni defense ni resistance), Merlin
+   p10 Baguette, Jugement foudroyant (159 %, categorie NORMAL_SKILL) :
+
+     ATK (4 813 + 10 374) x 1,8026 + 1 409 d'Attaque de Foudre = 28 785
+     ecran de stats : « Augmentation des degats, competence normale » 25,05 %
+     palier 4 : « Renforce la puissance de la competence normale de 15 % »
+
+     28 785 x 1,59 x 1,2505 x 1,15 = 65 818   -> releve en jeu : 65 819
+     28 785 x 1,59 x (1 + 0,2505 + 0,15) = 64 098, soit 2,6 % trop bas
+
+   L'ecran de stats du jeu affiche 25,05 % et non 40,05 % : la preuve que le
+   palier ne rejoint pas la statistique de l'equipement, il s'applique apres. */
+{
+  const stats = Object.assign({}, SANS_CRITIQUE, {
+    bonusCategorie:2505,
+    bonusCategoriePotentiel:1500
+  });
+  assert.equal(Math.round(degatsAttendus({
+    stats, competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
+  }).total), 719, "500 x 1,2505 x 1,15 - et non 500 x 1,4005 = 700");
+}
+
 /* Le terme de defense : K/(K+DEF). Avec DEF = K, il vaut 0,5. */
 {
   const r = degatsAttendus({

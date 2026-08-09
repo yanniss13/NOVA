@@ -196,11 +196,30 @@
   function facteursHorsConstante(stats, cible){
     const bonusPublie = ["bonusCategorie", "bonusElementaire", "bonusGlobal"]
       .some(cle => nombreFini(stats[cle]));
-    const bonusOffensif = 1 + (bonusPublie
+    const seauAdditif = 1 + (bonusPublie
       ? (Number(stats.bonusCategorie) || 0)
         + (Number(stats.bonusElementaire) || 0)
         + (Number(stats.bonusGlobal) || 0)
       : (Number(stats.bonusType) || 0)) / RAPPORT;
+
+    /* Le bonus de categorie d'un PALIER DE POTENTIEL ne rejoint pas ce seau :
+       il se multiplie par-dessus.
+
+       Mesure en jeu, mannequin (ni defense ni resistance), Merlin p10
+       Baguette, Jugement foudroyant a 159 % :
+
+         28 785 x 1,59 x 1,2505 x 1,15         = 65 818  -> releve 65 819
+         28 785 x 1,59 x (1 + 0,2505 + 0,15)   = 64 098, 2,6 % trop bas
+
+       Ce qui tranche sans calcul : l'ecran de stats du jeu affiche « 25,05 % »
+       pour la competence normale, pas 40,05 %. Le palier 4 (« Renforce la
+       puissance de la competence normale de 15 % ») n'est donc PAS verse dans
+       la statistique que porte l'equipement — il s'applique apres elle.
+
+       L'ecart grandit avec les deux bonus : a 60 % de categorie et 50 % de
+       palier, le seau additif se trompe de 19 %. */
+    const bonusOffensif = seauAdditif
+      * (1 + (Number(stats.bonusCategoriePotentiel) || 0) / RAPPORT);
 
     /* Le percement de defense (`D_Protect_Cur_Rate`, « Defense Shatter »)
        s'AJOUTE au rapport de mitigation. Il ne divise PAS la defense :
