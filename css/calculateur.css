@@ -80,7 +80,31 @@
   flex:none;margin-top:2px;width:17px;height:17px;accent-color:var(--gold-bright)
 }
 
-.calc-table{width:100%;border-collapse:collapse;margin-bottom:16px}
+/* Le tableau cesse de flotter sur le fond : bandeau doré, bordure accentuée,
+   coins arrondis. L'ordre reste celui du kit et aucune ligne n'est mise en
+   avant — c'est un choix, pas un oubli. */
+.calc-resultat{
+  margin:16px 0;background:var(--panel-2);border:1px solid var(--gold-deep);
+  border-radius:var(--radius);overflow:hidden
+}
+.calc-resultat-titre{
+  padding:9px 14px;background:rgba(217,164,65,.10);
+  border-bottom:1px solid var(--gold-deep);
+  font-family:var(--display);font-size:12px;font-weight:700;
+  letter-spacing:.10em;text-transform:uppercase;color:var(--gold-bright)
+}
+.calc-table{width:100%;border-collapse:collapse;margin-bottom:0}
+.calc-resultat .calc-table th,.calc-resultat .calc-table td{padding:8px 14px}
+/* L'allure de `.rank-head` d'analyse.css, RECOPIÉE et non empruntée :
+   importer la classe coupleraient deux feuilles dont tests/css-ordre.test.js
+   vérifie l'ordre, et amènerait son fond `--panel`, qui jure avec le
+   `--panel-2` du panneau. */
+.calc-resultat .calc-table th{
+  font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted)
+}
+/* Le dernier filet tomberait sur la bordure du panneau. */
+.calc-resultat .calc-table tbody tr:last-child td{border-bottom:0}
 .calc-table th,.calc-table td{
   padding:8px 6px;text-align:right;border-bottom:1px solid var(--line-soft)
 }
