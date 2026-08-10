@@ -217,6 +217,31 @@ const STORAGE_KEY = "confrerie7ds.teams";
       "aucun buff coche par defaut"
     );
 
+    /* Un soutien a cumuls ne peut pas etre tout ou rien : son selecteur part
+       a zero, montre son apport reel, puis ne retient que les trois crans
+       demandes. Le retour a zero rend le heros seul pour le test suivant. */
+    const cumulDaisy = page.locator(".calc-soutiens .calc-cumul-ligne", {
+      hasText:"Chances crit. +5 % par cumul, 4 cumuls"
+    });
+    const selecteurDaisy = cumulDaisy.locator("select");
+    await selecteurDaisy.waitFor();
+    assert.equal(await selecteurDaisy.inputValue(), "0",
+      "un soutien a cumuls doit demarrer eteint");
+    assert.match(await cumulDaisy.textContent(), /\/ 4 cumuls .*éteint/,
+      "la ligne doit annoncer son etat reel, pas son plafond");
+    await selecteurDaisy.selectOption("3");
+    await page.waitForFunction(() => document.querySelector(".calc-soutiens .calc-cumul-ligne")
+      .textContent.includes("+15 %"));
+    assert.match(
+      await page.locator(".calc-avertissement").allTextContents()
+        .then(liste => liste.join(" ")),
+      /Avec 1 ligne\(s\) active\(s\)/,
+      "trois cumuls de soutien doivent compter comme une ligne active"
+    );
+    await selecteurDaisy.selectOption("0");
+    await page.waitForFunction(() => document.querySelector(".calc-soutiens .calc-cumul-ligne")
+      .textContent.includes("éteint"));
+
     /* Cocher un buff doit faire monter le chiffre, et le dire. */
     await cases.first().check();
     await page.locator(".calc-table tbody tr").first().waitFor();
@@ -394,6 +419,9 @@ const STORAGE_KEY = "confrerie7ds.teams";
     );
     const combien = await toutes.count();
     assert.ok(combien > 0, "la page doit proposer au moins une case a cocher");
+    const cumulsSoutiens = page.locator(".calc-soutiens .calc-cumuls-choix");
+    assert.ok(await cumulsSoutiens.count() > 0,
+      "les soutiens a cumuls doivent proposer leur propre reglage");
 
     /* La case « tout cocher » ne doit PAS compter parmi les buffs : elle les
        commande. Si elle portait leur classe, « cocher le premier buff »
@@ -413,6 +441,9 @@ const STORAGE_KEY = "confrerie7ds.teams";
       ).length === n,
       combien
     );
+    await page.waitForFunction(() => [...document.querySelectorAll(
+      ".calc-soutiens .calc-cumuls-choix"
+    )].every(select => Number(select.value) > 0));
 
     /* Et le CHIFFRE doit avoir bouge : cocher sans rien changer au tableau
        signalerait des buffs branches nulle part. */
@@ -428,6 +459,9 @@ const STORAGE_KEY = "confrerie7ds.teams";
         + ".calc-passifs-armes input:checked, "
         + ".calc-supplements input:checked"
     ).length === 0);
+    await page.waitForFunction(() => [...document.querySelectorAll(
+      ".calc-soutiens .calc-cumuls-choix"
+    )].every(select => select.value === "0"));
 
     /* L'HABILLAGE. Les cinq sources de buffs sont des cartes titrees, comme
        partout ailleurs sur le site : c'etait le seul onglet a empiler des

@@ -546,15 +546,14 @@ import { showView } from "./navigation.js";
     ]);
   }
 
-  function sectionSoutiens(element, redessiner){
+  function sectionSoutiens(dispo, redessiner){
     const coequipiers = coequipiersChoisis();
-    const dispo = buffsProposes(element);
     const section = el("section",{class:"calc-soutiens calc-carte"},[
       el("h3",{class:"calc-carte-titre",text:"Soutiens"}),
       el("p",{class:"calc-avertissement",
-        text:"Décoché, le chiffre est celui du héros seul. Cocher un buff, "
-          + "c'est déclarer sa condition remplie : les durées ne sont pas "
-          + "modélisées."})
+        text:"À zéro, le chiffre est celui du héros seul. Cocher un buff ou "
+          + "régler ses cumuls, c'est déclarer sa condition remplie : les "
+          + "durées ne sont pas modélisées."})
     ]);
     if(!dispo.length){
       section.appendChild(el("p",{class:"calc-muette",
@@ -586,19 +585,27 @@ import { showView } from "./navigation.js";
           ? nomDuPersonnage(slug) + " · " + armeDuGroupe.arme
           : nomDuPersonnage(slug)}));
       buffs.forEach(buff => {
-      /* La case se coche par PROPRIETE, jamais par attribut : `el()` passe
-         toute valeur a setAttribute, et setAttribute("checked", undefined)
-         ecrit la chaine "undefined" - donc une case cochee. Les six buffs
-         sans element l'etaient tous par defaut. */
-      const caseACocher = el("input",{
-        type:"checkbox",
-        onchange:()=>{
-          if(etat.coches.has(buff.id)) etat.coches.delete(buff.id);
-          else etat.coches.add(buff.id);
-          redessiner();
+        if(reglable(buff)){
+          bloc.appendChild(ligneACumuls(buff, redessiner));
+          if(buff.repli){
+            bloc.appendChild(el("p",{class:"calc-muette",
+              text:"Build du coéquipier incomplet — valeur plafond."}));
+          }
+          return;
         }
-      });
-      caseACocher.checked = etat.coches.has(buff.id);
+        /* La case se coche par PROPRIETE, jamais par attribut : `el()` passe
+           toute valeur a setAttribute, et setAttribute("checked", undefined)
+           ecrit la chaine "undefined" - donc une case cochee. Les six buffs
+           sans element l'etaient tous par defaut. */
+        const caseACocher = el("input",{
+          type:"checkbox",
+          onchange:()=>{
+            if(etat.coches.has(buff.id)) etat.coches.delete(buff.id);
+            else etat.coches.add(buff.id);
+            redessiner();
+          }
+        });
+        caseACocher.checked = etat.coches.has(buff.id);
         bloc.appendChild(el("label",{class:"calc-buff"},[
           caseACocher,
           el("span",{text:buff.libelle})
@@ -764,12 +771,12 @@ import { showView } from "./navigation.js";
     return section;
   }
 
-  /* Tout ce qui porte une case a cocher sur cette page, dans l'ordre ou le
-     membre le lit. Les degats supplementaires INCONDITIONNELS en sont exclus :
-     ils n'ont pas de case, puisqu'ils sont deja comptes. */
-  function lignesCochables(element, passifsGraves, potentiels, passifsArmes,
+  /* Tout ce que le membre peut activer sur cette page, dans l'ordre ou il le
+     lit. Les degats supplementaires INCONDITIONNELS en sont exclus : ils n'ont
+     pas de condition a declarer, puisqu'ils sont deja comptes. */
+  function lignesCochables(soutiens, passifsGraves, potentiels, passifsArmes,
                            supplements){
-    return buffsProposes(element)
+    return soutiens
       .concat(passifsGraves)
       .concat(potentiels)
       .concat(passifsArmes)
@@ -1312,7 +1319,10 @@ import { showView } from "./navigation.js";
     }
 
     /* Le marqueur reglable appartient a la vue, jamais aux tables : le meme
-       champ `cumuls` sert aussi a des soutiens qui gardent une case. */
+       champ `cumuls` ne suffit pas a decrire la presentation voulue. */
+    const soutiens = buffsProposes(element).map(buff => buff.cumuls
+      ? Object.assign({}, buff, { reglable:true })
+      : buff);
     const passifsGraves = passifsGravesApplicables({
       element, porteurs:porteursDeTenues(hero)
     }).map(passif => passif.cumuls
@@ -1327,11 +1337,11 @@ import { showView } from "./navigation.js";
        le membre lit ce qu'elle fait avant de voir les cases, pas apres. */
     vue.appendChild(sectionToutCocher(
       lignesCochables(
-        element, passifsGraves, potentiels, passifsArmes, supplements
+        soutiens, passifsGraves, potentiels, passifsArmes, supplements
       ),
       dessiner
     ));
-    vue.appendChild(sectionSoutiens(element, dessiner));
+    vue.appendChild(sectionSoutiens(soutiens, dessiner));
     vue.appendChild(sectionTenuesGravees(passifsGraves, dessiner));
     vue.appendChild(sectionPotentiels(potentiels, dessiner));
     vue.appendChild(sectionPassifsArmes(passifsArmes, dessiner));
@@ -1340,7 +1350,7 @@ import { showView } from "./navigation.js";
     /* Les sources cochees portent une stat ou un effet lisible par le moteur.
        Le taux des passifs d'arme n'y entre pas : il a deja ete applique aux
        bases elementaires, avant cette liste. */
-    const coches = buffsProposes(element)
+    const coches = soutiens
       .concat(passifsGraves)
       .concat(potentiels)
       .map(ligneActive)
