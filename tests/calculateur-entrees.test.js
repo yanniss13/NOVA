@@ -156,7 +156,32 @@ SUPPORTS.forEach(slug => {
 
 const { hooks } = loadApp();
 const { bonusCategorieDesBuffs, buffsApplicables, entreesDuCalcul,
-  resultatsParCompetence } = hooks;
+  resultatsParCompetence, resultatsParCompetenceCompares } = hooks;
+
+/* Une ligne comparee garde le resultat de reference et isole son ecart : un
+   calcul absent ne devient jamais un zero ni un pourcentage invente. */
+{
+  assert.equal(typeof resultatsParCompetenceCompares, "function");
+  const lignes = resultatsParCompetenceCompares([
+    { competence:{ gameId:"a" },
+      resultat:{ sansCritique:100, avecCritique:200, total:150 } },
+    { competence:{ gameId:"b" }, resultat:null },
+    { competence:{ gameId:"c" },
+      resultat:{ sansCritique:0, avecCritique:0, total:0 } }
+  ], [
+    { competence:{ gameId:"a" },
+      resultat:{ sansCritique:125, avecCritique:260, total:180 } },
+    { competence:{ gameId:"b" }, resultat:null },
+    { competence:{ gameId:"c" },
+      resultat:{ sansCritique:20, avecCritique:20, total:20 } }
+  ]);
+  assert.deepEqual(plain(lignes[0].ecarts.total), { absolu:30, relatif:2000 });
+  assert.deepEqual(plain(lignes[0].ecarts.avecCritique), { absolu:60, relatif:3000 });
+  assert.equal(lignes[1].ecarts, null,
+    "une competence non chiffree ne doit pas recevoir de delta");
+  assert.deepEqual(plain(lignes[2].ecarts.total), { absolu:20, relatif:null },
+    "une reference nulle garde son ecart absolu sans division par zero");
+}
 
 /* Aucune base a zero : un buff `multiply` sur une base nulle ne changerait
    rien, et la sonde ci-dessous le prendrait pour un code non branche. La

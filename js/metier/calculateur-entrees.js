@@ -327,9 +327,44 @@ import { degatsAttendus } from "./degats-calcul.js";
     }));
   }
 
+  function resultatChiffre(resultat){
+    return resultat && ["sansCritique", "avecCritique", "total"]
+      .every(cle => Number.isFinite(resultat[cle]));
+  }
+
+  function ecartDeResultat(reference, essai){
+    const absolu = essai - reference;
+    return {
+      absolu,
+      relatif:reference === 0 ? null : Math.round(absolu * 10000 / reference)
+    };
+  }
+
+  function resultatsParCompetenceCompares(reference, essai){
+    const secondes = Array.isArray(essai) ? essai : [];
+    return (Array.isArray(reference) ? reference : []).map((ligne, index) => {
+      const second = secondes[index] || {};
+      const premierResultat = ligne && ligne.resultat;
+      const secondResultat = second.resultat;
+      const ecarts = resultatChiffre(premierResultat) && resultatChiffre(secondResultat)
+        ? {
+            sansCritique:ecartDeResultat(
+              premierResultat.sansCritique, secondResultat.sansCritique
+            ),
+            avecCritique:ecartDeResultat(
+              premierResultat.avecCritique, secondResultat.avecCritique
+            ),
+            total:ecartDeResultat(premierResultat.total, secondResultat.total)
+          }
+        : null;
+      return Object.assign({}, ligne, { essai:secondResultat || null, ecarts });
+    });
+  }
+
 export {
   STAT_DE_LA_CATEGORIE,
   bonusCategorieDesBuffs,
   buffsApplicables, entreesDeLaCompetence, entreesDuCalcul,
-  resultatsParCompetence, statsElementairesDuBuild
+  resultatsParCompetence, resultatsParCompetenceCompares,
+  statsElementairesDuBuild
 };

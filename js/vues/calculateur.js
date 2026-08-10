@@ -32,7 +32,7 @@ import {
 import {
   STAT_DE_LA_CATEGORIE, bonusCategorieDesBuffs,
   entreesDeLaCompetence, entreesDuCalcul, resultatsParCompetence,
-  statsElementairesDuBuild
+  resultatsParCompetenceCompares, statsElementairesDuBuild
 } from "../metier/calculateur-entrees.js";
 import { buffsDeLEquipe } from "../metier/equipe-buffs.js";
 import { passifsGravesApplicables } from "../metier/passifs-graves.js";
@@ -1069,12 +1069,26 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     return section;
   }
 
-  function tableauDesCompetences(charId, competences, entrees, bonusParCategorie,
-                                 bonusPotentielParCategorie){
-    const lignes = resultatsParCompetence({
-      competences, entrees, bonusParCategorie, bonusPotentielParCategorie,
-      cible:cibleCourante()
-    });
+  function texteEcart(ecart){
+    const signe = ecart.absolu >= 0 ? "+" : "−";
+    const points = NOMBRE.format(Math.round(Math.abs(ecart.absolu)));
+    if(ecart.relatif === null) return signe + points;
+    const taux = (Math.abs(ecart.relatif) / 100).toFixed(2).replace(/\.?0+$/, "");
+    return signe + points + " — " + signe + taux + " %";
+  }
+
+  function celluleComparee(reference, essai, ecart){
+    const enfants = [el("span",{text:NOMBRE.format(Math.round(reference))})];
+    if(ecart && ecart.absolu !== 0){
+      enfants.push(el("small",{
+        class:"calc-essai" + (ecart.absolu < 0 ? " calc-essai-negatif" : ""),
+        text:"Essai " + NOMBRE.format(Math.round(essai)) + " — " + texteEcart(ecart)
+      }));
+    }
+    return el("td",{class:"calc-valeur"},enfants);
+  }
+
+  function tableauDesCompetences(charId, lignes){
     const corps = el("tbody");
     lignes.forEach(ligne => {
       const nom = libelleDe(charId, ligne.competence);
@@ -1087,12 +1101,21 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
       }
       corps.appendChild(el("tr",{},[
         el("td",{text:nom.nom}),
-        el("td",{class:"calc-valeur",
-          text:NOMBRE.format(Math.round(ligne.resultat.sansCritique))}),
-        el("td",{class:"calc-valeur",
-          text:NOMBRE.format(Math.round(ligne.resultat.avecCritique))}),
-        el("td",{class:"calc-valeur",
-          text:NOMBRE.format(Math.round(ligne.resultat.total))})
+        celluleComparee(
+          ligne.resultat.sansCritique,
+          ligne.essai && ligne.essai.sansCritique,
+          ligne.ecarts && ligne.ecarts.sansCritique
+        ),
+        celluleComparee(
+          ligne.resultat.avecCritique,
+          ligne.essai && ligne.essai.avecCritique,
+          ligne.ecarts && ligne.ecarts.avecCritique
+        ),
+        celluleComparee(
+          ligne.resultat.total,
+          ligne.essai && ligne.essai.total,
+          ligne.ecarts && ligne.ecarts.total
+        )
       ]));
     });
     /* Le tableau est l'objet de la page : il porte donc son propre panneau,
@@ -1391,6 +1414,8 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
           + (bases.manques.length ? " : " + bases.manques.join(", ") : ".")}));
       return;
     }
+    const heroEssai = herosAvecEssaiEnchantements(hero, etat.essaiEnchantements);
+    const basesEssai = basesDuBuild(heroEssai, element, tauxPassifsArmes);
 
     vue.appendChild(champsDeBase(bases.stats, dessiner));
     vue.appendChild(sectionEssaiEnchantements(
@@ -1465,8 +1490,12 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
         : "Héros seul."}));
 
     const statsRetouchees = Object.assign({}, bases.stats);
+    const statsEssaiRetouchees = Object.assign({}, basesEssai.stats || bases.stats);
     BASES.forEach(base => {
       statsRetouchees[base.cle] = valeurRetouchee(base.cle, bases.stats[base.cle]);
+      statsEssaiRetouchees[base.cle] = valeurRetouchee(
+        base.cle, statsEssaiRetouchees[base.cle]
+      );
     });
 
     const entrees = entreesDuCalcul({
@@ -1477,6 +1506,15 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
        pas cette vue. */
     const mesuree = CalibrationStore.get(etat.charId, etat.typeArme);
     if(mesuree) entrees.constanteC = mesuree;
+    const bonusParCategorieEssai = Object.assign({}, basesEssai.bonusParCategorie);
+    Object.keys(bonusDesBuffs).forEach(categorie => {
+      bonusParCategorieEssai[categorie] =
+        (Number(bonusParCategorieEssai[categorie]) || 0) + bonusDesBuffs[categorie];
+    });
+    const entreesEssai = entreesDuCalcul({
+      statsDuBuild:statsEssaiRetouchees, buffsCoches:coches
+    });
+    if(mesuree) entreesEssai.constanteC = mesuree;
 
     /* Les degats qu'un potentiel AJOUTE aux competences du heros. Ils ne se
        cochent pas quand ils sont inconditionnels : ils font partie du kit au
@@ -1490,9 +1528,18 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
       vue.appendChild(el("p",{class:"calc-muette",
         text:"Aucune compétence connue pour ce type d'arme."}));
     } else {
+      const lignesReference = resultatsParCompetence({
+        competences, entrees, bonusParCategorie,
+        bonusPotentielParCategorie:bases.bonusPotentielParCategorie,
+        cible:cibleCourante()
+      });
+      const lignesEssai = resultatsParCompetence({
+        competences, entrees:entreesEssai, bonusParCategorie:bonusParCategorieEssai,
+        bonusPotentielParCategorie:basesEssai.bonusPotentielParCategorie,
+        cible:cibleCourante()
+      });
       vue.appendChild(tableauDesCompetences(
-        etat.charId, competences, entrees, bonusParCategorie,
-        bases.bonusPotentielParCategorie
+        etat.charId, resultatsParCompetenceCompares(lignesReference, lignesEssai)
       ));
       vue.appendChild(sectionCalibration(
         competences, entrees, bonusParCategorie, mesuree, dessiner,

@@ -137,6 +137,10 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   resultatsParCompetence:typeof resultatsParCompetence === "function"
     ? resultatsParCompetence
     : undefined,
+  resultatsParCompetenceCompares:
+    typeof resultatsParCompetenceCompares === "function"
+      ? resultatsParCompetenceCompares
+      : undefined,
   numericKeyboardInputProps:
     typeof numericKeyboardInputProps === "function"
       ? numericKeyboardInputProps
