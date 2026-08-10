@@ -176,6 +176,11 @@
 }
 .calc-table th:first-child,.calc-table td:first-child{text-align:left}
 .calc-valeur{font-variant-numeric:tabular-nums}
+.calc-essai{
+  display:block;margin-top:3px;color:var(--gold-bright);font-size:12px;
+  font-variant-numeric:tabular-nums;font-weight:500
+}
+.calc-essai-negatif{color:var(--muted)}
 
 /* Une compétence non chiffrable garde sa ligne : la masquer ferait croire
    qu'elle n'existe pas, la chiffrer à zéro qu'elle ne fait rien. */

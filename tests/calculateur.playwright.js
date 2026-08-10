@@ -55,6 +55,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
             && value.promotionValues
             && value.enchantments
             && value.enchantments.type === "basic"
+            && value.enchantments.slots.length > 0
           );
         if(candidate){
           weapon = item.file;
@@ -193,6 +194,57 @@ const STORAGE_KEY = "confrerie7ds.teams";
       "l'esperance doit rester encadree par les deux bornes, recu : "
         + chiffres.join(", ")
     );
+
+    /* L'essai conserve la reference dans chaque cellule et ne touche jamais
+       l'equipe locale. Reinitialiser doit rendre les trois chiffres initiaux. */
+    const teamsAvantEssai = await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY);
+    await page.getByRole("button", {
+      name:"Essayer les enchantements de l'arme"
+    }).click();
+    const statEssai = page.locator(
+      "#weaponConfigOverlay .weapon-config-enchantment-choice"
+    ).first();
+    const optionEssai = await statEssai.locator("option").evaluateAll(options =>
+      options.map(option => option.value).find(value => value !== "none")
+    );
+    await statEssai.selectOption(optionEssai);
+    const valeurEssai = page.locator(
+      "#weaponConfigOverlay .weapon-config-enchantment-value"
+    ).first();
+    await valeurEssai.fill(await valeurEssai.getAttribute("max"));
+    await page.getByRole("button", { name:"Valider la configuration" }).click();
+    await page.locator(".calc-essai").first().waitFor();
+    assert.match(await ligne.textContent(), /Essai.*[+−]/,
+      "chaque valeur doit annoncer la reference, l'essai et son ecart");
+    assert.equal(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY),
+      teamsAvantEssai, "un essai ne doit jamais ecrire l'equipe locale");
+    await page.getByRole("button", { name:"Réinitialiser l'essai" }).click();
+    await page.waitForFunction(() => !document.querySelector(".calc-essai"));
+    const apresEssai = (await ligne.locator(".calc-valeur").allTextContents())
+      .map(t => Number(t.replace(/[^0-9]/g, "")));
+    assert.deepEqual(apresEssai, chiffres,
+      "reinitialiser l'essai doit retrouver les valeurs de reference");
+
+    await page.getByRole("button", {
+      name:"Essayer les enchantements de l'armure gravée"
+    }).click();
+    const statGravure = page.locator(
+      "#gearConfigOverlay .gear-config-enchantment-stat"
+    ).first();
+    const optionGravure = await statGravure.locator("option").evaluateAll(options =>
+      options.map(option => option.value).find(value => value)
+    );
+    await statGravure.selectOption(optionGravure);
+    const valeurGravure = page.locator(
+      "#gearConfigOverlay .gear-config-enchantment-value"
+    ).first();
+    await valeurGravure.fill(await valeurGravure.getAttribute("max"));
+    await page.getByRole("button", { name:"Valider la configuration" }).click();
+    await page.locator(".calc-essai").first().waitFor();
+    await page.getByRole("button", { name:"Réinitialiser l'essai" }).click();
+    await page.waitForFunction(() => !document.querySelector(".calc-essai"));
+    assert.equal(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY),
+      teamsAvantEssai, "un essai de gravure ne doit jamais ecrire l'equipe locale");
 
     /* Une competence non chiffrable garde sa ligne et n'affiche JAMAIS un
        zero : la masquer ferait croire qu'elle n'existe pas. */
