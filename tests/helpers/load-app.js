@@ -122,8 +122,8 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   passifsGravesApplicables:typeof passifsGravesApplicables === "function"
     ? passifsGravesApplicables
     : undefined,
-  passifsCumulsApplicables:typeof passifsCumulsApplicables === "function"
-    ? passifsCumulsApplicables
+  passifsArmesApplicables:typeof passifsArmesApplicables === "function"
+    ? passifsArmesApplicables
     : undefined,
   bonusCategorieDesBuffs:typeof bonusCategorieDesBuffs === "function"
     ? bonusCategorieDesBuffs
@@ -766,16 +766,16 @@ function loadApp(initialTeams){
   );
   sandbox.SEVEN_DS_DEGATS_SUPPLEMENTAIRES =
     supplementsSandbox.window.SEVEN_DS_DEGATS_SUPPLEMENTAIRES;
-  /* Et les passifs a cumuls. Table la plus fragile des cinq : sa valeur ne se
-     transcrit d'aucun texte du jeu, elle se mesure. Une fixture la rendrait
-     inverifiable. */
-  const cumulsSandbox = { window:{} };
+  /* Les passifs d'arme sont ecrits a la main : charger la vraie table evite
+     qu'une fixture ne masque une mauvaise transcription. */
+  const passifsArmesSandbox = { window:{} };
   vm.runInNewContext(
-    fs.readFileSync(path.join(ROOT, "data", "passifs-cumuls.js"), "utf8"),
-    cumulsSandbox,
-    { filename:"passifs-cumuls.js" }
+    fs.readFileSync(path.join(ROOT, "data", "passifs-armes.js"), "utf8"),
+    passifsArmesSandbox,
+    { filename:"passifs-armes.js" }
   );
-  sandbox.SEVEN_DS_PASSIFS_CUMULS = cumulsSandbox.window.SEVEN_DS_PASSIFS_CUMULS;
+  sandbox.SEVEN_DS_PASSIFS_ARMES =
+    passifsArmesSandbox.window.SEVEN_DS_PASSIFS_ARMES;
   sandbox.window = sandbox;
   /* Le bac a sable modelise un navigateur : il lui faut donc les points
      d'accroche globaux que le code utilise. Les dispos ecoutent `online` pour

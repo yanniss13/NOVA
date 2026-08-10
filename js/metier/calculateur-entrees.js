@@ -57,17 +57,6 @@ import { degatsAttendus } from "./degats-calcul.js";
      qu'un seul champ ou le joueur saisit un total deja fait, donc il ne
      tranche pas non plus. */
   const EFFET_SUR_LA_CIBLE = {
-    /* Le seul effet de cette table qui ne vise PAS la cible : un bonus de
-       degats du heros lui-meme, sans categorie nommee - aujourd'hui le
-       « Combo de coups » de Derieri. Il n'a pas plus de code de stat que les
-       vulnerabilites : `AllSkill_Add` et consorts n'existent nulle part.
-
-       Il rejoint le meme seau additif que la vulnerabilite globale, et ce
-       n'est pas par commodite : un bonus de degats sans categorie et une
-       vulnerabilite sans categorie amplifient exactement la meme chose. Le
-       moteur ne saurait pas les distinguer, et rien de mesure ne l'y invite.
-       Le raisonnement complet est dans l'en-tete de data/passifs-cumuls.js. */
-    bonusDegatsHeros:"bonusGlobal",
     defense:"reductionDefense",
     defenseCritique:"reductionDefenseCritique",
     /* La resistance critique, distincte de la defense critique : l'une decide
@@ -126,7 +115,7 @@ import { degatsAttendus } from "./degats-calcul.js";
      La fonction prend `lire` en argument plutot que le build : les codes de
      stat vivent ici, avec le reste du vocabulaire, et un test peut les
      verifier sans navigateur. */
-  function statsElementairesDuBuild(lire, element){
+  function statsElementairesDuBuild(lire, element, tauxSupplementaire){
     const lecture = typeof lire === "function" ? lire : () => 0;
     const valeur = code => Number(lecture(code)) || 0;
     const prefixe = element
@@ -136,7 +125,11 @@ import { degatsAttendus } from "./degats-calcul.js";
     const propre = prefixe ? valeur(prefixe + "_Add") : 0;
     const tauxPropre = prefixe ? valeur(prefixe + "_Rate") : 0;
     const tous = valeur("AllElement_Add");
-    const tauxTous = valeur("AllElement_Rate");
+    /* Les passifs d'arme a cumuls arrivent ici, avant que l'attaque
+       elementaire ne soit resolue. Les envoyer dans entreesDuCalcul serait
+       muet : il ne reste alors plus qu'un nombre deja calcule. */
+    const tauxTous = valeur("AllElement_Rate")
+      + (Number(tauxSupplementaire) || 0);
     return {
       attaqueElementaire:
         propre * (1 + (tauxPropre + tauxTous) / DIX_MILLIEMES)
