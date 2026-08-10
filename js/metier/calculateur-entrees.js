@@ -46,6 +46,14 @@ import { degatsAttendus } from "./degats-calcul.js";
     Object.fromEntries(ELEMENTS_BUFF.map(e => [e + "_Element_Rate", "bonusElementaire"]))
   );
 
+  /* Le set equipe modifie les stats du heros, pas le seau des soutiens. Le
+     critique est le seul code commun dont les deux origines divergent : un
+     soutien arrive apres le plafond, tandis que Souverain cupide le subit. */
+  const CIBLE_DU_BUFF_PROPRE = {
+    C_Critical_Rate:"critRate",
+    D_Protect_Cur_Rate:"percementDefense"
+  };
+
   /* Ou atterrit une ligne qui n'a PAS de code de stat - un malus inflige a la
      cible, pour l'essentiel. libelles-stats.json ne decrit que des
      statistiques de heros, et leur en inventer un aurait desactive le test qui
@@ -192,7 +200,9 @@ import { degatsAttendus } from "./degats-calcul.js";
     coches.forEach(buff => {
       const cle = buff && buff.effet
         ? EFFET_SUR_LA_CIBLE[buff.effet]
-        : CIBLE_DU_BUFF[buff && buff.stat];
+        : buff && buff.porteur === "hero"
+          ? CIBLE_DU_BUFF_PROPRE[buff.stat]
+          : CIBLE_DU_BUFF[buff && buff.stat];
       if(!cle) return;
       const valeur = Number(buff.valeur);
       if(!Number.isFinite(valeur)) return;

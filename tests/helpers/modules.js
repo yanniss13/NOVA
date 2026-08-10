@@ -35,6 +35,7 @@ const MODULES = [
   "metier/equipe-buffs.js",
   "metier/passifs-graves.js",
   "metier/passifs-armes.js",
+  "metier/passifs-ensembles.js",
   "metier/potentiels-equipe.js",
   "metier/degats-supplementaires.js",
   "metier/equipe-modele.js",
