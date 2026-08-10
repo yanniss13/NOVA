@@ -780,6 +780,16 @@ function loadApp(initialTeams){
   );
   sandbox.SEVEN_DS_PASSIFS_ARMES =
     passifsArmesSandbox.window.SEVEN_DS_PASSIFS_ARMES;
+  /* Les scenarios d'ensembles sont une table manuelle : les unites doivent
+     lire celle qui sera livree, pas une fixture qui en masquerait un chiffre. */
+  const passifsEnsemblesSandbox = { window:{} };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(ROOT, "data", "passifs-ensembles.js"), "utf8"),
+    passifsEnsemblesSandbox,
+    { filename:"passifs-ensembles.js" }
+  );
+  sandbox.SEVEN_DS_PASSIFS_ENSEMBLES =
+    passifsEnsemblesSandbox.window.SEVEN_DS_PASSIFS_ENSEMBLES;
   sandbox.window = sandbox;
   /* Le bac a sable modelise un navigateur : il lui faut donc les points
      d'accroche globaux que le code utilise. Les dispos ecoutent `online` pour

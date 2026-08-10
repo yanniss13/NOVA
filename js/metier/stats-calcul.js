@@ -1337,6 +1337,7 @@ import {
   }
 
 export {
+  activeGearSets,
   calculateGearStats,
   calculateHeroStats,
   calculateWeaponStats,

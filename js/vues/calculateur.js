@@ -21,7 +21,9 @@ import {
   herosAvecEssaiEnchantements, reinitialiserEssaiEnchantements,
   remplacerConfigEssai
 } from "../metier/essai-enchantements.js";
-import { calculateHeroStats, groupBuildStatResults } from "../metier/stats-calcul.js";
+import {
+  activeGearSets, calculateHeroStats, groupBuildStatResults
+} from "../metier/stats-calcul.js";
 import {
   CIBLES, CONSTANTE_PAR_DEFAUT, calibrerConstante
 } from "../metier/degats-calcul.js";
@@ -37,6 +39,7 @@ import {
 import { buffsDeLEquipe } from "../metier/equipe-buffs.js";
 import { passifsGravesApplicables } from "../metier/passifs-graves.js";
 import { passifsArmesApplicables } from "../metier/passifs-armes.js";
+import { passifEnsembleApplicable } from "../metier/passifs-ensembles.js";
 import { potentielsEquipeApplicables } from "../metier/potentiels-equipe.js";
 import { competenceAvecSupplements,
   degatsSupplementairesApplicables } from "../metier/degats-supplementaires.js";
@@ -89,6 +92,7 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     coequipiers:CoequipiersStore.get(),
     retouches:{},
     essaiEnchantements:null,
+    etatsEnsembles:{},
     coches:new Set(),
     /* Les passifs qui montent par CUMULS : leur nombre de crans, par
        identifiant. Un etat a part de `coches`, parce qu'une case ne sait dire
@@ -146,7 +150,7 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     if(window.SEVEN_DS_COMPETENCES && window.SEVEN_DS_BUFFS_SUPPORTS
       && window.SEVEN_DS_PASSIFS_GRAVES && window.SEVEN_DS_POTENTIELS_EQUIPE
       && window.SEVEN_DS_DEGATS_SUPPLEMENTAIRES
-      && window.SEVEN_DS_PASSIFS_ARMES){
+      && window.SEVEN_DS_PASSIFS_ARMES && window.SEVEN_DS_PASSIFS_ENSEMBLES){
       return Promise.resolve(true);
     }
     if(chargementCatalogues) return chargementCatalogues;
@@ -168,7 +172,9 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
       window.SEVEN_DS_DEGATS_SUPPLEMENTAIRES
         ? Promise.resolve(true) : injecter("./data/degats-supplementaires.js"),
       window.SEVEN_DS_PASSIFS_ARMES
-        ? Promise.resolve(true) : injecter("./data/passifs-armes.js")
+        ? Promise.resolve(true) : injecter("./data/passifs-armes.js"),
+      window.SEVEN_DS_PASSIFS_ENSEMBLES
+        ? Promise.resolve(true) : injecter("./data/passifs-ensembles.js")
     ]).catch(erreur => {
       /* Rejouable : un echec reseau ne doit pas condamner l'onglet pour toute
          la duree de la session. */
@@ -265,6 +271,16 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
           .map(([categorie, code]) => [categorie, lirePotentiel(code)])
       )
     };
+  }
+
+  /* Les ensembles se reconnaissent par les fichiers deja equipes. Le moteur
+     de stats connait leurs vrais seuils, donc cette vue ne doit pas les
+     reconstituer a partir des noms de pieces. */
+  function ensemblesDuBuild(hero){
+    const source = hero || {};
+    const fichiers = Object.values(source.armor || {})
+      .concat(Object.values(source.jewel || {}));
+    return activeGearSets(fichiers);
   }
 
   /* Tous les builds du roster, un par couple personnage + arme.
@@ -755,6 +771,38 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
       grille.appendChild(bloc);
     });
     section.appendChild(grille);
+    return section;
+  }
+
+  /* Le set est deja porte par le heros. Son etat temporaire est le seul choix
+     local : les trois options remplacent un effet, elles ne se cochent pas. */
+  function sectionPassifEnsemble(scenario, redessiner){
+    if(!scenario) return null;
+    const section = el("section",{class:"calc-ensembles calc-carte"},[
+      el("h3",{class:"calc-carte-titre",text:"Bonus d'ensemble"}),
+      el("p",{class:"calc-avertissement",
+        text:scenario.nom + " — palier " + scenario.seuil + " pièces."})
+    ]);
+    if(scenario.tier === "seven"){
+      section.appendChild(el("p",{class:"calc-muette",
+        text:"Le palier 7 remplace le buff temporaire du palier précédent."}));
+    }
+    const choix = el("select",{
+      "data-set-passive":scenario.setId,
+      onchange:event => {
+        etat.etatsEnsembles[scenario.setId] = Number(event.target.value) || 0;
+        redessiner();
+      }
+    });
+    ["Aucun buff temporaire", "Après une relève", "Après deux relèves"]
+      .forEach((libelle, valeur) => {
+        const option = el("option",{value:String(valeur), text:libelle});
+        option.selected = valeur === scenario.etat;
+        choix.appendChild(option);
+      });
+    section.appendChild(el("label",{class:"calc-champ"},[
+      el("span",{text:"État du bonus"}), choix
+    ]));
     return section;
   }
 
@@ -1277,6 +1325,7 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
         etat.typeArme = types[0] || null;
         etat.retouches = {};
         etat.essaiEnchantements = null;
+        etat.etatsEnsembles = {};
         etat.coches.clear();
         oublierSaisieCalibration();
         redessiner();
@@ -1309,6 +1358,7 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
           etat.typeArme = type;
           etat.retouches = {};
           etat.essaiEnchantements = null;
+          etat.etatsEnsembles = {};
           oublierSaisieCalibration();
           redessiner();
         }
@@ -1350,6 +1400,7 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
                 etat.heroImpose = null;
                 etat.retouches = {};
                 etat.essaiEnchantements = null;
+                etat.etatsEnsembles = {};
                 etat.coches.clear();
                 oublierSaisieCalibration();
                 dessiner();
@@ -1420,11 +1471,18 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     }
     const heroEssai = herosAvecEssaiEnchantements(hero, etat.essaiEnchantements);
     const basesEssai = basesDuBuild(heroEssai, element, tauxPassifsArmes);
+    const scenarioEnsemble = passifEnsembleApplicable({
+      ensembles:ensemblesDuBuild(hero),
+      etats:etat.etatsEnsembles,
+      setId:"equip_t5_greed"
+    });
 
     vue.appendChild(champsDeBase(bases.stats, dessiner));
     vue.appendChild(sectionEssaiEnchantements(
       hero, etat.essaiEnchantements, dessiner
     ));
+    const sectionEnsemble = sectionPassifEnsemble(scenarioEnsemble, dessiner);
+    if(sectionEnsemble) vue.appendChild(sectionEnsemble);
     if(aRetouche()){
       vue.appendChild(el("p",{class:"calc-avertissement calc-retouche",
         text:"Valeurs retouchées — ne reflète plus ton build."}));
@@ -1462,11 +1520,13 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     /* Les sources cochees portent une stat ou un effet lisible par le moteur.
        Le taux des passifs d'arme n'y entre pas : il a deja ete applique aux
        bases elementaires, avant cette liste. */
+    const lignesEnsemble = scenarioEnsemble ? scenarioEnsemble.lignes : [];
     const coches = soutiens
       .concat(passifsGraves)
       .concat(potentiels)
       .map(ligneActive)
-      .filter(Boolean);
+      .filter(Boolean)
+      .concat(lignesEnsemble);
 
     /* Les bonus de categorie du BUILD et ceux des buffs coches s'ADDITIONNENT :
        ils viennent de sources differentes - potentiels, equipement, tenue
@@ -1483,9 +1543,10 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
        donnerait l'impression de n'avoir rien fait. Un passif regle a un cumul
        compte pour un, comme une case : c'est bien une ligne de plus qui agit
        sur le chiffre. */
-    const cochesVisibles = coches.length
+    const cochesVisibles = coches.length - lignesEnsemble.length
       + passifsArmes.filter(passif => cumulsDe(passif) > 0).length
-      + supplements.filter(l => l.condition && etat.coches.has(l.id)).length;
+      + supplements.filter(l => l.condition && etat.coches.has(l.id)).length
+      + (scenarioEnsemble && scenarioEnsemble.etat > 0 ? 1 : 0);
     /* « ligne(s) active(s) » couvre aussi les passifs regles au cran, qui ne
        viennent pas forcement d'un coequipier et ne cochent aucune case. */
     vue.appendChild(el("p",{class:"calc-avertissement",
@@ -1576,6 +1637,7 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     etat.heroImpose = hero || null;
     etat.retouches = {};
     etat.essaiEnchantements = null;
+    etat.etatsEnsembles = {};
     etat.coches.clear();
     oublierSaisieCalibration();
     /* Le lien part d'une fiche ouverte DANS une modale. Sans cette fermeture,

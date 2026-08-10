@@ -256,6 +256,22 @@ tousLesBuffs.forEach(buff => {
   assert.equal(r.critRateAllie, 2000);
 }
 
+/* Un buff temporaire d'ensemble vise le heros lui-meme. Il doit donc rejoindre
+   son critique propre, qui suit le plafond normal, plutot que le seau ajoute
+   apres plafond reserve aux soutiens. */
+{
+  const r = entreesDuCalcul({
+    statsDuBuild:{ critRate:8500, percementDefense:0 },
+    buffsCoches:[
+      { stat:"C_Critical_Rate", valeur:1200, porteur:"hero" },
+      { stat:"D_Protect_Cur_Rate", valeur:1200, porteur:"hero" }
+    ]
+  });
+  assert.equal(r.critRate, 9700);
+  assert.equal(r.critRateAllie, 0);
+  assert.equal(r.percementDefense, 1200);
+}
+
 /* Et les buffs de taux critique de la table cumulent dans ce seau. */
 {
   const critiques = tousLesBuffs.filter(b => b.stat === "C_Critical_Rate");

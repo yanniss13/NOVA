@@ -40,10 +40,12 @@ const STORAGE_KEY = "confrerie7ds.teams";
 
     await page.evaluate(key => {
       const catalog = window.SEVEN_DS_BUILD_STATS;
-      const firstCatalogFile = (items, definitions) => {
-        const match = (items || []).find(item => definitions[item.file]);
-        if(!match) throw new Error("FIXTURE_EQUIPMENT_MISSING");
-        return match.file;
+      const souverainCupide = slot => {
+        const match = Object.entries(catalog.gearByFile)
+          .find(([, definition]) => definition.setId === "equip_t5_greed"
+            && definition.slot === slot);
+        if(!match) throw new Error("FIXTURE_GREED_SLOT_MISSING:"+slot);
+        return match[0];
       };
       let weapon = null;
       let grade = null;
@@ -80,20 +82,18 @@ const STORAGE_KEY = "confrerie7ds.teams";
         };
       };
       const armor = {
-        Haut:firstCatalogFile(window.SEVEN_DS_DATA.armures.Haut, catalog.gearByFile),
-        Bas:firstCatalogFile(window.SEVEN_DS_DATA.armures.Bas, catalog.gearByFile),
-        Bottes:firstCatalogFile(window.SEVEN_DS_DATA.armures.Bottes, catalog.gearByFile),
-        Ceinture:firstCatalogFile(window.SEVEN_DS_DATA.armures.Ceinture, catalog.gearByFile),
+        Haut:souverainCupide("Top"),
+        Bas:souverainCupide("Bottom"),
+        Bottes:souverainCupide("Shoes"),
+        Ceinture:souverainCupide("Belt"),
         "Armure liee":(window.SEVEN_DS_ARMURES_LIEES.meliodas || [])
           .find(file => catalog.engravedByFile[file])
       };
       if(!armor["Armure liee"]) throw new Error("FIXTURE_ENGRAVING_MISSING");
       const jewel = {
-        Anneau:firstCatalogFile(window.SEVEN_DS_DATA.bijoux.Anneau, catalog.gearByFile),
-        Collier:firstCatalogFile(window.SEVEN_DS_DATA.bijoux.Collier, catalog.gearByFile),
-        "Boucle d'oreille":firstCatalogFile(
-          window.SEVEN_DS_DATA.bijoux["Boucle d'oreille"], catalog.gearByFile
-        )
+        Anneau:souverainCupide("Ring"),
+        Collier:souverainCupide("Necklace"),
+        "Boucle d'oreille":souverainCupide("Earring")
       };
       localStorage.setItem(key, JSON.stringify([{
         id:"equipe-calculateur",
@@ -194,6 +194,32 @@ const STORAGE_KEY = "confrerie7ds.teams";
       "l'esperance doit rester encadree par les deux bornes, recu : "
         + chiffres.join(", ")
     );
+
+    /* A sept pieces, seul le palier sept est reglable : +6 % apres une
+       releve, puis +12 % crit. et percement apres la seconde. Le reglage est
+       une simulation locale, jamais une ecriture de l'equipe. */
+    const setCupide = page.locator('[data-set-passive="equip_t5_greed"]');
+    await setCupide.waitFor();
+    assert.match(await setCupide.locator("xpath=../..").innerText(),
+      /palier 7.*remplace/i, "le palier sept doit remplacer le precedent");
+    const equipeAvantSet = await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY);
+    await setCupide.selectOption("1");
+    const apresUneReleve = (await ligne.locator(".calc-valeur").allTextContents())
+      .map(t => Number(t.replace(/[^0-9]/g, "")));
+    assert.notEqual(apresUneReleve[2], esperance,
+      "une releve doit modifier l'esperance par les chances crit.");
+    await setCupide.selectOption("2");
+    const apresDeuxReleves = (await ligne.locator(".calc-valeur").allTextContents())
+      .map(t => Number(t.replace(/[^0-9]/g, "")));
+    assert.notEqual(apresDeuxReleves[0], nonCrit,
+      "deux releves doivent modifier les degats via le percement");
+    assert.equal(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY),
+      equipeAvantSet, "le scenario de set ne doit jamais ecrire l'equipe locale");
+    await setCupide.selectOption("0");
+    const apresReinitialisationSet = (await ligne.locator(".calc-valeur").allTextContents())
+      .map(t => Number(t.replace(/[^0-9]/g, "")));
+    assert.deepEqual(apresReinitialisationSet, chiffres,
+      "retirer le buff de set doit retrouver les valeurs de reference");
 
     /* L'essai conserve la reference dans chaque cellule et ne touche jamais
        l'equipe locale. Reinitialiser doit rendre les trois chiffres initiaux. */
