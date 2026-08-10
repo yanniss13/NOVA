@@ -398,7 +398,7 @@ import {
     renderWeaponConfigEditor();
     ModalStack.open(
       $("#weaponConfigOverlay"),
-      ".weapon-config-grade",
+      context.enchantmentsOnly ? ".weapon-enchantments select" : ".weapon-config-grade",
       closeWeaponConfigEditor,
       restoreFocus
     );
@@ -674,6 +674,8 @@ import {
       return;
     }
 
+    const enchantmentsOnly = Boolean(state.context.enchantmentsOnly);
+    if(!enchantmentsOnly){
     const gradeSelect = el("select",{class:"weapon-config-grade"});
     grades.forEach(item => {
       gradeSelect.appendChild(weaponConfigOption(
@@ -747,6 +749,7 @@ import {
     }else{
       draft.overlimit = 0;
     }
+    }
 
     const enchantments = el("div",{class:"weapon-enchantments"},[
       el("span",{class:"weapon-enchantment-title",text:"Enchantements"})
@@ -795,7 +798,8 @@ import {
     const state = weaponConfigEditorState;
     if(!state) return;
     if(!confirm("Réinitialiser la configuration chiffrée de cette arme ?")) return;
-    state.context.commit(null);
+    state.context.commit(state.context.enchantmentsOnly
+      ? jsonCopy(state.context.resetConfig) : null);
     closeWeaponConfigEditor();
   }
 
