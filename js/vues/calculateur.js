@@ -16,6 +16,11 @@ import { sessionCourante } from "../etat/session.js";
 import { charOf } from "../metier/catalogue.js";
 import { equippedEnumOf } from "../metier/armes.js";
 import { rosterHeroSnapshot } from "../metier/equipe-modele.js";
+import {
+  creerEssaiEnchantements, essaiEnchantementsDiffere,
+  herosAvecEssaiEnchantements, reinitialiserEssaiEnchantements,
+  remplacerConfigEssai
+} from "../metier/essai-enchantements.js";
 import { calculateHeroStats, groupBuildStatResults } from "../metier/stats-calcul.js";
 import {
   CIBLES, CONSTANTE_PAR_DEFAUT, calibrerConstante
@@ -37,11 +42,13 @@ import { competenceAvecSupplements,
   degatsSupplementairesApplicables } from "../metier/degats-supplementaires.js";
 import {
   buildGearDefinition, buildWeaponDefinition, gearPassiveStatus,
-  weaponPassiveFact
+  gearConfigStatus, weaponConfigStatus, weaponPassiveFact
 } from "../metier/build-config.js";
 import { MemberRosterStore } from "../donnees/roster-store.js";
 import { ModalStack } from "./modal-stack.js";
 import { showView } from "./navigation.js";
+import { openWeaponConfigEditor } from "./editeur-arme.js";
+import { openGearConfigEditor } from "./editeur-equipement.js";
 
   const NOMBRE = new Intl.NumberFormat("fr-FR");
 
@@ -81,6 +88,7 @@ import { showView } from "./navigation.js";
        pas. */
     coequipiers:CoequipiersStore.get(),
     retouches:{},
+    essaiEnchantements:null,
     coches:new Set(),
     /* Les passifs qui montent par CUMULS : leur nombre de crans, par
        identifiant. Un etat a part de `coches`, parce qu'une case ne sait dire
@@ -996,6 +1004,71 @@ import { showView } from "./navigation.js";
     return section;
   }
 
+  function sectionEssaiEnchantements(hero, essai, redessiner){
+    const heroEssai = herosAvecEssaiEnchantements(hero, essai);
+    const section = el("section",{class:"calc-essai-enchantements calc-carte"},[
+      el("h3",{class:"calc-carte-titre",text:"Comparer les enchantements"}),
+      el("p",{class:"calc-avertissement",
+        text:"Cet essai reste dans le calculateur et ne modifie pas ton build enregistré."})
+    ]);
+    const armeValide = weaponConfigStatus(hero.weapon, essai.reference.weaponConfig)
+      === "valid";
+    const boutonArme = el("button",{
+      class:"btn", type:"button", text:"Essayer les enchantements de l'arme",
+      onclick:()=>openWeaponConfigEditor({
+        weaponFile:hero.weapon,
+        config:heroEssai.weaponConfig,
+        enchantmentsOnly:true,
+        resetConfig:essai.reference.weaponConfig,
+        commit:config => {
+          etat.essaiEnchantements = remplacerConfigEssai(essai, "weapon", config);
+          redessiner();
+        }
+      }, boutonArme)
+    });
+    boutonArme.disabled = !armeValide;
+    section.appendChild(boutonArme);
+    if(!armeValide){
+      section.appendChild(el("p",{class:"calc-muette",
+        text:"Configuration d'arme à compléter avant de comparer ses enchantements."}));
+    }
+
+    const gravure = heroEssai.armor && heroEssai.armor[LINKED_ARMOR_SLOT];
+    const configGravure = essai.reference.engravingConfig;
+    const gravureValide = gearConfigStatus(gravure, configGravure) === "valid";
+    const boutonGravure = el("button",{
+      class:"btn", type:"button", text:"Essayer les enchantements de l'armure gravée",
+      onclick:()=>openGearConfigEditor({
+        file:gravure,
+        slotKey:LINKED_ARMOR_SLOT,
+        label:"Armure liée",
+        config:heroEssai.armorConfig && heroEssai.armorConfig[LINKED_ARMOR_SLOT],
+        enchantmentsOnly:true,
+        resetConfig:configGravure,
+        commit:config => {
+          etat.essaiEnchantements = remplacerConfigEssai(essai, "engraving", config);
+          redessiner();
+        }
+      }, boutonGravure)
+    });
+    boutonGravure.disabled = !gravureValide;
+    section.appendChild(boutonGravure);
+    if(!gravureValide){
+      section.appendChild(el("p",{class:"calc-muette",
+        text:"Configuration d'armure gravée à compléter avant de comparer ses enchantements."}));
+    }
+    if(essaiEnchantementsDiffere(essai)){
+      section.appendChild(el("button",{
+        class:"btn btn-ghost", type:"button", text:"Réinitialiser l'essai",
+        onclick:()=>{
+          etat.essaiEnchantements = reinitialiserEssaiEnchantements(essai);
+          redessiner();
+        }
+      }));
+    }
+    return section;
+  }
+
   function tableauDesCompetences(charId, competences, entrees, bonusParCategorie,
                                  bonusPotentielParCategorie){
     const lignes = resultatsParCompetence({
@@ -1176,6 +1249,7 @@ import { showView } from "./navigation.js";
         const types = typesDe(ficheDe(etat.charId));
         etat.typeArme = types[0] || null;
         etat.retouches = {};
+        etat.essaiEnchantements = null;
         etat.coches.clear();
         oublierSaisieCalibration();
         redessiner();
@@ -1207,6 +1281,7 @@ import { showView } from "./navigation.js";
         onclick:()=>{
           etat.typeArme = type;
           etat.retouches = {};
+          etat.essaiEnchantements = null;
           oublierSaisieCalibration();
           redessiner();
         }
@@ -1247,6 +1322,7 @@ import { showView } from "./navigation.js";
               onclick:()=>{
                 etat.heroImpose = null;
                 etat.retouches = {};
+                etat.essaiEnchantements = null;
                 etat.coches.clear();
                 oublierSaisieCalibration();
                 dessiner();
@@ -1290,6 +1366,10 @@ import { showView } from "./navigation.js";
       return;
     }
 
+    if(!etat.essaiEnchantements){
+      etat.essaiEnchantements = creerEssaiEnchantements(hero);
+    }
+
     const element = elementDuBuild(etat.charId, hero);
     const faitPassifArme = weaponPassiveFact(
       buildWeaponDefinition(hero.weapon), hero.weaponConfig
@@ -1313,6 +1393,9 @@ import { showView } from "./navigation.js";
     }
 
     vue.appendChild(champsDeBase(bases.stats, dessiner));
+    vue.appendChild(sectionEssaiEnchantements(
+      hero, etat.essaiEnchantements, dessiner
+    ));
     if(aRetouche()){
       vue.appendChild(el("p",{class:"calc-avertissement calc-retouche",
         text:"Valeurs retouchées — ne reflète plus ton build."}));
@@ -1441,6 +1524,7 @@ import { showView } from "./navigation.js";
     etat.typeArme = typeArme || null;
     etat.heroImpose = hero || null;
     etat.retouches = {};
+    etat.essaiEnchantements = null;
     etat.coches.clear();
     oublierSaisieCalibration();
     /* Le lien part d'une fiche ouverte DANS une modale. Sans cette fermeture,

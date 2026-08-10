@@ -285,6 +285,8 @@ import {
       return;
     }
     const draft = state.draft;
+    const enchantmentsOnly = Boolean(state.context.enchantmentsOnly);
+    if(!enchantmentsOnly){
     const level = el("input",numericKeyboardInputProps({
       class:"gear-config-level",
       step:"1",
@@ -314,8 +316,9 @@ import {
       updateGearConfigPreview();
     });
     body.appendChild(weaponConfigField("Renforcement",reinforce));
+    }
     renderGearConfigEnchantments(body, definition, draft);
-    renderGearConfigPassive(body, definition, draft);
+    if(!enchantmentsOnly) renderGearConfigPassive(body, definition, draft);
     updateGearConfigPreview();
   }
 
@@ -335,7 +338,7 @@ import {
     renderGearConfigEditor();
     ModalStack.open(
       $("#gearConfigOverlay"),
-      ".gear-config-level",
+      context.enchantmentsOnly ? ".weapon-enchantments select" : ".gear-config-level",
       closeGearConfigEditor,
       restoreFocus
     );
@@ -439,7 +442,8 @@ import {
     const state = gearConfigEditorState;
     if(!state) return;
     if(!confirm("Réinitialiser la configuration chiffrée de cette pièce ?")) return;
-    state.context.commit(null);
+    state.context.commit(state.context.enchantmentsOnly
+      ? jsonCopy(state.context.resetConfig) : null);
     closeGearConfigEditor();
   }
 

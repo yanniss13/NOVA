@@ -145,6 +145,37 @@ const STORAGE_KEY = "confrerie7ds.teams";
       "l'ouverture doit charger le catalogue"
     );
 
+    /* L'essai d'enchantements reste une branche locale : il ouvre les deux
+       editeurs du build sans exposer niveau, grade ou renforcement. */
+    const essaiEnchantements = page.locator(".calc-essai-enchantements");
+    await essaiEnchantements.waitFor();
+    await page.getByRole("button", {
+      name:"Essayer les enchantements de l'arme"
+    }).click();
+    await page.locator("#weaponConfigOverlay.on").waitFor();
+    assert.equal(await page.locator("#weaponConfigOverlay .weapon-config-grade").count(), 0,
+      "l'essai ne doit pas changer le grade de l'arme");
+    assert.equal(await page.locator("#weaponConfigOverlay .weapon-config-level").count(), 0,
+      "l'essai ne doit pas changer le niveau de l'arme");
+    assert.ok(await page.locator(
+      "#weaponConfigOverlay .weapon-enchantment, #weaponConfigOverlay .weapon-enchantment-slot"
+    ).count() > 0, "l'essai d'arme doit garder ses enchantements");
+    await page.getByRole("button", { name:"Annuler" }).click();
+
+    await page.getByRole("button", {
+      name:"Essayer les enchantements de l'armure gravée"
+    }).click();
+    await page.locator("#gearConfigOverlay.on").waitFor();
+    assert.equal(await page.locator("#gearConfigOverlay .gear-config-level").count(), 0,
+      "l'essai ne doit pas changer le niveau de l'armure gravée");
+    assert.equal(await page.locator("#gearConfigOverlay .gear-config-reinforce").count(), 0,
+      "l'essai ne doit pas changer son renforcement");
+    assert.equal(await page.locator("#gearConfigOverlay .gear-config-passive").count(), 0,
+      "l'essai ne doit pas changer son passif");
+    assert.ok(await page.locator("#gearConfigOverlay [data-gear-slot]").count() > 0,
+      "l'essai de gravure doit garder ses enchantements");
+    await page.getByRole("button", { name:"Annuler" }).click();
+
     /* LES TROIS COLONNES. L'esperance est une ponderation des deux autres,
        donc elle reste toujours entre elles - mais leur ORDRE n'est pas acquis :
        quand les degats critiques du build passent sous la defense critique de
