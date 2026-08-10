@@ -31,12 +31,13 @@ import {
 } from "../metier/calculateur-entrees.js";
 import { buffsDeLEquipe } from "../metier/equipe-buffs.js";
 import { passifsGravesApplicables } from "../metier/passifs-graves.js";
-import { passifsCumulsApplicables } from "../metier/passifs-cumuls.js";
+import { passifsArmesApplicables } from "../metier/passifs-armes.js";
 import { potentielsEquipeApplicables } from "../metier/potentiels-equipe.js";
 import { competenceAvecSupplements,
   degatsSupplementairesApplicables } from "../metier/degats-supplementaires.js";
 import {
-  buildGearDefinition, gearPassiveStatus
+  buildGearDefinition, buildWeaponDefinition, gearPassiveStatus,
+  weaponPassiveFact
 } from "../metier/build-config.js";
 import { MemberRosterStore } from "../donnees/roster-store.js";
 import { ModalStack } from "./modal-stack.js";
@@ -137,7 +138,7 @@ import { showView } from "./navigation.js";
     if(window.SEVEN_DS_COMPETENCES && window.SEVEN_DS_BUFFS_SUPPORTS
       && window.SEVEN_DS_PASSIFS_GRAVES && window.SEVEN_DS_POTENTIELS_EQUIPE
       && window.SEVEN_DS_DEGATS_SUPPLEMENTAIRES
-      && window.SEVEN_DS_PASSIFS_CUMULS){
+      && window.SEVEN_DS_PASSIFS_ARMES){
       return Promise.resolve(true);
     }
     if(chargementCatalogues) return chargementCatalogues;
@@ -158,8 +159,8 @@ import { showView } from "./navigation.js";
         ? Promise.resolve(true) : injecter("./data/potentiels-equipe.js"),
       window.SEVEN_DS_DEGATS_SUPPLEMENTAIRES
         ? Promise.resolve(true) : injecter("./data/degats-supplementaires.js"),
-      window.SEVEN_DS_PASSIFS_CUMULS
-        ? Promise.resolve(true) : injecter("./data/passifs-cumuls.js")
+      window.SEVEN_DS_PASSIFS_ARMES
+        ? Promise.resolve(true) : injecter("./data/passifs-armes.js")
     ]).catch(erreur => {
       /* Rejouable : un echec reseau ne doit pas condamner l'onglet pour toute
          la duree de la session. */
@@ -197,7 +198,7 @@ import { showView } from "./navigation.js";
   /* Les bases offensives du build, par code de stat. Un statut autre que
      `valid` ou `partial` ne porte AUCUN chiffre : on rend null plutot qu'un
      zero, et la page dit « Configuration a completer ». */
-  function basesDuBuild(hero, element){
+  function basesDuBuild(hero, element, tauxElementaire){
     const result = calculateHeroStats(hero);
     if(result.status !== "valid" && result.status !== "partial"){
       return { statut:result.status, manques:result.missing || [], stats:null };
@@ -226,7 +227,7 @@ import { showView } from "./navigation.js";
     /* Les deux entrees elementaires du build. Le detail des quatre codes
        lus, et de la mesure qui les fonde, vit dans calculateur-entrees.js -
        cette vue ne fait que passer le lecteur de statistiques. */
-    const elementaires = statsElementairesDuBuild(lire, element);
+    const elementaires = statsElementairesDuBuild(lire, element, tauxElementaire);
     return {
       statut:result.status,
       manques:[],
@@ -742,54 +743,36 @@ import { showView } from "./navigation.js";
     return section;
   }
 
-  /* Les passifs a cumuls du heros calcule. Une section a PART des trois
-     autres, parce qu'ils ne viennent d'aucun coequipier ni d'aucun palier :
-     ils appartiennent au kit de son arme, et il les a des le palier 1.
-
-     Une seule case par passif, et elle vaut le PLAFOND de cumuls. Le nombre
-     exact change a chaque coup porte - le demander au membre lui ferait saisir
-     une valeur perimee avant d'etre lue. */
-  function sectionPassifsCumuls(cumuls, redessiner){
-    const section = el("section",{class:"calc-cumuls calc-carte"},[
-      el("h3",{class:"calc-carte-titre",text:"Passifs à cumuls"})
+  /* Les passifs de l'arme equipee se reglent au cran : leur duree courte et
+     leur origine precise interdisent de les presenter comme un buff d'equipe. */
+  function sectionPassifsArmes(passifs, redessiner){
+    const section = el("section",{class:"calc-passifs-armes calc-carte"},[
+      el("h3",{class:"calc-carte-titre",text:"Passifs d'arme"})
     ]);
-    if(!cumuls.length){
+    if(!passifs.length){
       section.appendChild(el("p",{class:"calc-muette",
-        text:"Aucun passif à cumuls mesuré pour ce build."}));
+        text:"Aucun passif d'arme chiffré ne s'applique à ce build."}));
       return section;
     }
-    cumuls.forEach(ligne => {
-      const caseACocher = el("input",{
-        type:"checkbox",
-        onchange:()=>{
-          if(etat.coches.has(ligne.id)) etat.coches.delete(ligne.id);
-          else etat.coches.add(ligne.id);
-          redessiner();
-        }
-      });
-      caseACocher.checked = etat.coches.has(ligne.id);
-      section.appendChild(el("label",{class:"calc-buff"},[
-        caseACocher,
-        el("span",{text:ligne.libelle})
-      ]));
+    passifs.forEach(passif => {
+      section.appendChild(ligneACumuls(passif, redessiner));
+      if(passif.niveauInconnu){
+        section.appendChild(el("p",{class:"calc-muette",
+          text:"Niveau de passif non renseigné — valeur du niveau 1."}));
+      }
     });
-    /* Le releve est DIT. Ces valeurs sont les seules de la page qui ne se
-       lisent nulle part dans le jeu : l'infobulle du passif est muette sur les
-       degats de competence. Le taire les ferait passer pour transcrites. */
-    section.appendChild(el("p",{class:"calc-muette",
-      text:"Mesuré sur le mannequin — le jeu ne publie pas ce chiffre."}));
     return section;
   }
 
   /* Tout ce qui porte une case a cocher sur cette page, dans l'ordre ou le
      membre le lit. Les degats supplementaires INCONDITIONNELS en sont exclus :
      ils n'ont pas de case, puisqu'ils sont deja comptes. */
-  function lignesCochables(element, passifsGraves, potentiels, cumuls,
+  function lignesCochables(element, passifsGraves, potentiels, passifsArmes,
                            supplements){
     return buffsProposes(element)
       .concat(passifsGraves)
       .concat(potentiels)
-      .concat(cumuls)
+      .concat(passifsArmes)
       .concat(supplements.filter(ligne => ligne.condition));
   }
 
@@ -1301,7 +1284,20 @@ import { showView } from "./navigation.js";
     }
 
     const element = elementDuBuild(etat.charId, hero);
-    const bases = basesDuBuild(hero, element);
+    const faitPassifArme = weaponPassiveFact(
+      buildWeaponDefinition(hero.weapon), hero.weaponConfig
+    );
+    /* Le taux doit etre connu AVANT les bases : celles-ci resolvent deja
+       l'attaque elementaire. Le verser plus bas dans les entrees ne toucherait
+       aucun chiffre. */
+    const passifsArmes = passifsArmesApplicables({
+      fichier:hero.weapon,
+      niveau:faitPassifArme && faitPassifArme.level
+    }).map(passif => Object.assign({}, passif, { reglable:true }));
+    const tauxPassifsArmes = passifsArmes.reduce(
+      (somme, passif) => somme + passif.parCumul * cumulsDe(passif), 0
+    );
+    const bases = basesDuBuild(hero, element, tauxPassifsArmes);
     if(!bases.stats){
       vue.appendChild(el("p",{class:"calc-muette",
         text:"Configuration à compléter"
@@ -1315,12 +1311,8 @@ import { showView } from "./navigation.js";
         text:"Valeurs retouchées — ne reflète plus ton build."}));
     }
 
-    /* Les passifs de tenue a paliers sont les SEULS reglables au cran pour
-       l'instant, et le marqueur se pose ici plutot que dans la table : c'est
-       un choix d'interface, pas une propriete du jeu. Les huit buffs de
-       soutien a cumuls et le combo de Derieri portent les memes champs et
-       gardent leur case - a 20, 25 ou 50 crans, declarer le plein reste plus
-       lisible qu'une liste a derouler. */
+    /* Le marqueur reglable appartient a la vue, jamais aux tables : le meme
+       champ `cumuls` sert aussi a des soutiens qui gardent une case. */
     const passifsGraves = passifsGravesApplicables({
       element, porteurs:porteursDeTenues(hero)
     }).map(passif => passif.cumuls
@@ -1329,36 +1321,28 @@ import { showView } from "./navigation.js";
     const potentiels = potentielsEquipeApplicables({
       element, porteurs:porteursDePotentiels(hero)
     });
-    const cumuls = passifsCumulsApplicables({
-      charId:etat.charId, typeArme:etat.typeArme
-    });
     const supplements = supplementsDuHeros(hero);
 
     /* TOUT COCHER d'abord, au-dessus des cinq sections qu'elle commande :
        le membre lit ce qu'elle fait avant de voir les cases, pas apres. */
     vue.appendChild(sectionToutCocher(
-      lignesCochables(element, passifsGraves, potentiels, cumuls, supplements),
+      lignesCochables(
+        element, passifsGraves, potentiels, passifsArmes, supplements
+      ),
       dessiner
     ));
     vue.appendChild(sectionSoutiens(element, dessiner));
     vue.appendChild(sectionTenuesGravees(passifsGraves, dessiner));
     vue.appendChild(sectionPotentiels(potentiels, dessiner));
-    vue.appendChild(sectionPassifsCumuls(cumuls, dessiner));
+    vue.appendChild(sectionPassifsArmes(passifsArmes, dessiner));
     vue.appendChild(sectionSupplements(supplements, dessiner));
 
-    /* Les quatre sources se rejoignent ici, et une seule fois : buffs de
-       soutien, passifs graves, potentiels d'equipe et passifs a cumuls portent
-       la meme forme - `stat` ou `effet`, `valeur`, `operation` - donc le
-       moteur ignore d'ou ils viennent.
-
-       Les degats supplementaires N'Y SONT PAS : ils ne sont pas des buffs mais
-       des composantes de competence, et competenceAvecSupplements() les pose
-       plus bas. Les verser ici les rendrait muets - ils n'ont ni `stat` ni
-       `effet` - et le compte affiche mentirait dans l'autre sens. */
+    /* Les sources cochees portent une stat ou un effet lisible par le moteur.
+       Le taux des passifs d'arme n'y entre pas : il a deja ete applique aux
+       bases elementaires, avant cette liste. */
     const coches = buffsProposes(element)
       .concat(passifsGraves)
       .concat(potentiels)
-      .concat(cumuls)
       .map(ligneActive)
       .filter(Boolean);
 
@@ -1378,11 +1362,10 @@ import { showView } from "./navigation.js";
        compte pour un, comme une case : c'est bien une ligne de plus qui agit
        sur le chiffre. */
     const cochesVisibles = coches.length
+      + passifsArmes.filter(passif => cumulsDe(passif) > 0).length
       + supplements.filter(l => l.condition && etat.coches.has(l.id)).length;
-    /* « ligne(s) active(s) » et non « buff(s) d'equipe » : depuis les passifs
-       a cumuls, tout ce qui agit ne vient plus de l'equipe et ne se coche plus
-       forcement. Le combo de Derieri est son propre passif, et un passif de
-       tenue se regle au cran. */
+    /* « ligne(s) active(s) » couvre aussi les passifs regles au cran, qui ne
+       viennent pas forcement d'un coequipier et ne cochent aucune case. */
     vue.appendChild(el("p",{class:"calc-avertissement",
       text:cochesVisibles
         ? "Avec " + cochesVisibles + " ligne(s) active(s)."

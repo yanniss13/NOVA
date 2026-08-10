@@ -1,7 +1,19 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const vm = require("node:vm");
 const { loadApp, plain } = require("./helpers/load-app");
+
+const bacPassifsArmes = { window:{} };
+vm.runInNewContext(fs.readFileSync(
+  path.join(__dirname, "..", "data", "passifs-armes.js"), "utf8"
+), bacPassifsArmes);
+const PASSIF_DERIERI = Object.values(
+  bacPassifsArmes.window.SEVEN_DS_PASSIFS_ARMES
+).flat().find(passif => passif.id === "gantelets-ame-vorace-barrage-tenebres");
+assert.ok(PASSIF_DERIERI, "le passif mesure de Derieri doit etre dans la table.");
 
 const { hooks } = loadApp();
 const {
@@ -95,19 +107,16 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   }).total), 719, "500 x 1,2505 x 1,15 - et non 500 x 1,4005 = 700");
 }
 
-/* LES TROIS RELEVES DE DERIERI, rejoues tels quels.
+/* LES QUATRE RELEVES DE DERIERI, rejoues tels quels.
 
-   Ils protegent la seule valeur du depot qui ne se lise dans AUCUN texte du
-   jeu : le bonus par cumul de « Combo de coups », mesure sur le mannequin et
-   range dans data/passifs-cumuls.js. L'infobulle du passif ne parle que des
-   degats de Duel ; elle est muette sur les degats de competence, que le cumul
-   augmente pourtant. Sans ce bloc, une retouche de la table ou du seau
-   `bonusGlobal` passerait sans un bruit.
+   Ils protegent le taux de l'attaque elementaire de Barrage des Tenebres,
+   publie sur les sept niveaux de Gantelets de l'ame vorace. La table est
+   relue dans tests/passifs-armes.test.js ; ce bloc garde la formule complete.
 
    Derieri, Gantelets, palier 5, mannequin (ni defense ni resistance),
    « Assaut fulgurant » - deux frappes, 186 % puis 315 %.
 
-     ATK (4 382 + 8 817) x 1,51 + 270 + 5 281 = 25 481,49
+     ATK (4 382 + 8 817) x 1,51 + (270 + 5 281) x (1 + 0,025 n)
      ecran de stats : « degats de competence normale » 0,00 %
      palier 4 : « Renforce la puissance de la competence normale de 45 % »
      degats critiques 126,46 %
@@ -115,25 +124,21 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
    La frappe 2 porte toujours UN cumul de plus que la frappe 1 : chaque coup
    porte en octroie un, et le premier vient d'etre porte.
 
-   L'ecart tolere est de 0,01 %. Il n'est pas decoratif : le bonus par cumul
-   est une MOYENNE de trois estimations dispersees de 0,05 %, et exiger
-   l'egalite exacte reviendrait a figer le bruit de la mesure. */
+   L'ecart tolere est de 0,01 %. Il n'est pas decoratif : les chiffres sont
+   mesures dans le jeu, pas produits par le moteur. */
 {
   const MANNEQUIN = {
     def:0, critResist:0, critDmgResist:0,
     resistanceElementaire:0, faiblesse:0, resistancePercement:0
   };
-  /* Le bonus par cumul, relu dans la table plutot que recopie : c'est ce qui
-     fait de ce bloc un test de la valeur EXPEDIEE, et non d'une constante
-     jumelle qui vivrait sa vie ici. */
-  const PAR_CUMUL = require("./helpers/passifs-cumuls-table")
-    .derieri.Gantelets[0].parCumul;
+  const PAR_CUMUL = PASSIF_DERIERI.parCumul[6];
 
   const derieri = (cumuls, critRate) => ({
-    atk:19930.49, attaqueElementaire:5551,
+    atk:19930.49,
+    attaqueElementaire:5551 * (1 + PAR_CUMUL * cumuls / 10000),
     critRate, critDamage:12646,
     bonusCategorie:0, bonusElementaire:0,
-    bonusGlobal:PAR_CUMUL * cumuls,
+    bonusGlobal:0,
     bonusCategoriePotentiel:4500
   });
   const frappe = pourcentage => ({ pourcentage, repartition:[] });

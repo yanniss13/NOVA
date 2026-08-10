@@ -389,7 +389,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
        chiffre doit bouger, sans quoi le test passerait sur une page vide. */
     const toutes = page.locator(
       ".calc-soutiens input, .calc-tenues input, .calc-potentiels input, "
-        + ".calc-cumuls input, "
+        + ".calc-passifs-armes input, "
         + ".calc-supplements input"
     );
     const combien = await toutes.count();
@@ -408,7 +408,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
       n => document.querySelectorAll(
         ".calc-soutiens input:checked, .calc-tenues input:checked, "
           + ".calc-potentiels input:checked, "
-          + ".calc-cumuls input:checked, "
+          + ".calc-passifs-armes input:checked, "
           + ".calc-supplements input:checked"
       ).length === n,
       combien
@@ -425,7 +425,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await page.waitForFunction(() => document.querySelectorAll(
       ".calc-soutiens input:checked, .calc-tenues input:checked, "
         + ".calc-potentiels input:checked, "
-        + ".calc-cumuls input:checked, "
+        + ".calc-passifs-armes input:checked, "
         + ".calc-supplements input:checked"
     ).length === 0);
 
@@ -433,7 +433,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
        partout ailleurs sur le site : c'etait le seul onglet a empiler des
        sections nues sous un <strong>. */
     for(const classe of [
-      "calc-soutiens","calc-tenues","calc-potentiels","calc-cumuls",
+      "calc-soutiens","calc-tenues","calc-potentiels","calc-passifs-armes",
       "calc-supplements"
     ]){
       const carte = page.locator("." + classe);
@@ -452,7 +452,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
        meme page. On lit la couleur calculee, pas la variable : elle resout les
        jetons et ne depend pas du navigateur. */
     const liseres = await page.evaluate(() => [
-      "calc-soutiens","calc-tenues","calc-potentiels","calc-cumuls",
+      "calc-soutiens","calc-tenues","calc-potentiels","calc-passifs-armes",
       "calc-supplements"
     ].map(c => getComputedStyle(
       document.querySelector("." + c)).borderTopColor));
@@ -460,18 +460,12 @@ const STORAGE_KEY = "confrerie7ds.teams";
       "les cinq sources doivent avoir cinq liseres distincts, recu : "
         + liseres.join(" / "));
 
-    /* La section des passifs a cumuls EXISTE meme sur un build qui n'en a
-       aucun - la fixture joue Meliodas a la Hache. Une section absente se
-       lirait « le calculateur ignore cette mecanique » ; une section vide dit
-       « ce build n'en a pas », ce qui n'est pas la meme information.
-
-       Le cas REMPLI est couvert ailleurs : tests/passifs-cumuls.test.js verifie
-       que la ligne sort pour le bon couple personnage/arme, et
-       tests/degats-calcul.test.js rejoue les quatre releves de Derieri. */
+    /* La section des passifs d'arme EXISTE meme sur un build qui n'en a aucun.
+       Une carte vide dit que la mecanique est connue, sans inventer un effet. */
     assert.match(
-      await page.locator(".calc-cumuls").textContent(),
-      /Aucun passif à cumuls mesuré pour ce build/,
-      "un build sans passif a cumuls doit le DIRE, pas laisser la carte nue"
+      await page.locator(".calc-passifs-armes").textContent(),
+      /Aucun passif d'arme chiffré ne s'applique à ce build/,
+      "un build sans passif d'arme doit le DIRE, pas laisser la carte nue"
     );
 
     /* La carte REMPLACE le separateur : les garder tous les deux poserait un
