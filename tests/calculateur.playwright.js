@@ -359,6 +359,11 @@ const STORAGE_KEY = "confrerie7ds.teams";
       /retouch/i,
       "une valeur retouchee doit etre annoncee"
     );
+    assert.match(
+      await page.locator(".calc-essai-enchantements").innerText(),
+      /masquer l.[ée]cart de l.essai/i,
+      "une retouche doit avertir qu'elle peut masquer l'ecart de l'essai"
+    );
 
     /* Et « Reinitialiser » doit rendre le chiffre du build. */
     await page.getByRole("button", { name:"Réinitialiser" }).click();

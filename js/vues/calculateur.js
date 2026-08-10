@@ -1011,6 +1011,10 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
       el("p",{class:"calc-avertissement",
         text:"Cet essai reste dans le calculateur et ne modifie pas ton build enregistré."})
     ]);
+    if(aRetouche()){
+      section.appendChild(el("p",{class:"calc-muette",
+        text:"Les valeurs retouchées peuvent masquer l'écart de l'essai."}));
+    }
     const armeValide = weaponConfigStatus(hero.weapon, essai.reference.weaponConfig)
       === "valid";
     const boutonArme = el("button",{
