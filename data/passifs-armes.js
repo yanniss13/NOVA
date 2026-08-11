@@ -240,7 +240,203 @@ window.SEVEN_DS_PASSIFS_ARMES = [
     ]
   },
   {
-    famille:"Âme vorace",
+    /* Trois armes sans famille commune, mais un passif identique au mot pres.
+       Elles sont donc une famille au sens de cette table : ce qui la definit
+       est le texte partage, pas le nom de l'arme. */
+    famille:"Tirage sur coup critique",
+    armes:[
+      "7ds-armes/Baguette/Baguette des vents tranchants.webp",
+      "7ds-armes/Baton/Bâton de renforcement des nuages sombres.webp",
+      "7ds-armes/Epee 1 main/Épée longue de la conviction corrompue.webp"
+    ],
+    lignes:[
+      {
+        id:"tirage-critique-degats-crit",
+        /* Le jeu tire DEUX fois : une chance sur deux de declencher, puis
+           « 50 % ou 10 % ». Cocher la case declare les deux tirages gagnes,
+           comme pour noir de jais - la page ne joue pas aux des. */
+        libelle:"Sur un critique, au mieux : dégâts crit. +50 % (sinon +10 %)",
+        stat:"C_Critical_Dam_Rate",
+        operation:"add",
+        unite:"ten-thousandths",
+        niveaux:[2600, 3000, 3400, 3800, 4200, 4600, 5000],
+        provenance:{ phrase:"d'augmenter les dégâts crit. de " }
+      }
+    ]
+  },
+  {
+    famille:"Attaques dans le dos",
+    armes:[
+      "7ds-armes/Epees doubles/Épées doubles de la rafale céleste.webp",
+      "7ds-armes/Livre/Grimoire de la mélodie de la tentation.webp"
+    ],
+    lignes:[
+      {
+        id:"attaques-dans-le-dos-resistance-crit",
+        libelle:"Attaque dans le dos : résistance crit. de la cible −40 %",
+        /* La resistance critique decide si le coup critique PART ; la defense
+           critique, de ce qu'il rapporte. Les confondre ferait payer deux fois
+           le meme malus. Sans effet sur le mannequin, qui n'en a aucune. */
+        effet:"resistanceCritique",
+        operation:"add",
+        unite:"ten-thousandths",
+        niveaux:[1600, 2000, 2400, 2800, 3200, 3600, 4000],
+        provenance:{ phrase:"réduisent la résistance crit. de " }
+      }
+    ]
+  },
+  {
+    famille:"Lance de l'épine de la cupidité",
+    armes:["7ds-armes/Lance/Lance de l'épine de la cupidité.webp"],
+    lignes:[
+      {
+        id:"epine-cupidite-degats-sur-la-duree",
+        libelle:"Cible sous dégâts sur la durée : dégâts +10 %",
+        /* « Degats infliges AUX ENNEMIS qui... » : une propriete de la cible,
+           donc le meme seau global qu'une vulnerabilite. Elle ne vise aucune
+           categorie, ce qui est exactement la definition de cet effet. */
+        effet:"vulnerabiliteGlobale",
+        operation:"add",
+        unite:"ten-thousandths",
+        niveaux:[700, 750, 800, 850, 900, 950, 1000],
+        provenance:{ phrase:"sur la durée de " }
+      }
+    ]
+  },
+  {
+    famille:"Rapière du chant du chaos",
+    armes:["7ds-armes/Rapiere/Rapière du chant du chaos.webp"],
+    lignes:[
+      {
+        id:"chant-du-chaos-defense-reduite",
+        libelle:"Cible ralentie : défense −40 %",
+        /* La reduction de defense MULTIPLIE la defense de la cible, la ou le
+           percement s'ajoute au rapport de mitigation. Deux mecaniques
+           distinctes, et la difference est mesuree. */
+        effet:"defense",
+        operation:"add",
+        unite:"ten-thousandths",
+        niveaux:[1600, 2000, 2400, 2800, 3200, 3600, 4000],
+        provenance:{ phrase:"réduit sa défense de " }
+      }
+    ]
+  },
+  {
+    /* LES SEPT ARMES DE L'AME VORACE portent chacune un passif DIFFERENT,
+       taille pour le personnage qui les equipe. Elles ne forment donc pas une
+       famille au sens de cette table, et chacune a son entree. */
+    famille:"Âme vorace — Baguette",
+    armes:["7ds-armes/Baguette/Baguette de l'âme vorace.webp"],
+    lignes:[
+      {
+        id:"baguette-ame-vorace-deluge-foudre",
+        libelle:"Déluge de Foudre allié : dégâts de Foudre +20 % (20 s)",
+        stat:"Thunder_Element_Rate",
+        operation:"add",
+        unite:"ten-thousandths",
+        niveaux:[500, 1000, 1200, 1400, 1600, 1800, 2000],
+        /* L'ancre porte « les degats de » : a partir du niveau 4, une premiere
+           phrase parle de « l'efficacite de Deluge de Foudre de tous les heros
+           allies de », qu'un texte plus court attraperait aussi. */
+        provenance:{
+          phrase:"les dégâts de Foudre de tous les héros alliés de "
+        }
+      },
+      {
+        id:"baguette-ame-vorace-attaque-speciale",
+        libelle:"Cible à défense de Foudre réduite : attaque spéciale +100 %",
+        /* Un bonus de CATEGORIE : il ne vaut que pour l'attaque speciale, donc
+           il ne passe pas par les entrees communes mais par
+           bonusCategorieDesBuffs, qui l'applique a sa seule ligne. */
+        stat:"Activethird_Damadd_Rate",
+        operation:"add",
+        unite:"ten-thousandths",
+        niveaux:[3000, 4500, 5500, 6500, 7500, 8500, 10000],
+        provenance:{
+          phrase:"augmente les dégâts d'attaque spéciale du héros de "
+        }
+      }
+    ]
+  },
+  {
+    famille:"Âme vorace — Épée et bouclier",
+    armes:["7ds-armes/Bouclier/Épée et bouclier de l'âme vorace.webp"],
+    lignes:[
+      {
+        id:"bouclier-ame-vorace-degats-terre",
+        libelle:"Par boost d'ultime reçu : dégâts de Terre +4 %",
+        stat:"Earth_Element_Rate",
+        operation:"add",
+        unite:"ten-thousandths",
+        niveaux:[2200, 3450, 3900, 4350, 4800, 5250, 6000],
+        parCumul:[200, 230, 260, 290, 320, 350, 400],
+        cumuls:[11, 15, 15, 15, 15, 15, 15],
+        provenance:{
+          phrase:"pendant 10s. (Max : ",
+          phraseCumul:"augmente les dégâts de Terre de "
+        }
+      }
+    ]
+  },
+  {
+    famille:"Âme vorace — Épée longue",
+    armes:["7ds-armes/Epee 1 main/Épée longue de l'âme vorace.webp"],
+    lignes:[
+      {
+        id:"epee-longue-ame-vorace-degats-tenebres",
+        libelle:"Par compétence normale : dégâts des Ténèbres +18 %",
+        stat:"Dark_Element_Rate",
+        operation:"add",
+        unite:"ten-thousandths",
+        niveaux:[1800, 3150, 3600, 4050, 4500, 4950, 5400],
+        parCumul:[900, 1050, 1200, 1350, 1500, 1650, 1800],
+        cumuls:[2, 3, 3, 3, 3, 3, 3],
+        provenance:{
+          phrase:"pendant 7s. (Max : ",
+          phraseCumul:"augmente les dégâts des Ténèbres de "
+        }
+      }
+    ]
+  },
+  {
+    famille:"Âme vorace — Hache",
+    armes:["7ds-armes/Hache/Hache de l'âme vorace.webp"],
+    lignes:[
+      {
+        id:"hache-ame-vorace-degats-feu",
+        libelle:"Par boost de PV max reçu : dégâts de Feu +10,5 %",
+        stat:"Fire_Element_Rate",
+        operation:"add",
+        unite:"ten-thousandths",
+        niveaux:[3200, 5400, 6000, 6600, 7200, 7800, 8400],
+        parCumul:[640, 675, 750, 825, 900, 975, 1050],
+        cumuls:[5, 8, 8, 8, 8, 8, 8],
+        provenance:{
+          phrase:"pendant 15s. (Max : ",
+          phraseCumul:"augmente les dégâts de Feu de "
+        }
+      }
+    ]
+  },
+  {
+    famille:"Âme vorace — Rapière",
+    armes:["7ds-armes/Rapiere/Rapière de l'âme vorace.webp"],
+    lignes:[
+      {
+        id:"rapiere-ame-vorace-degats-crit",
+        libelle:"Attaque spéciale réussie : dégâts crit. +80 %",
+        stat:"C_Critical_Dam_Rate",
+        operation:"add",
+        unite:"ten-thousandths",
+        /* Le chiffre stagne aux trois premiers niveaux : c'est le texte du
+           jeu, pas une transcription paresseuse. Le test le relit a chacun. */
+        niveaux:[4000, 4000, 4000, 6000, 6500, 7000, 8000],
+        provenance:{ phrase:"et les dégâts crit. de " }
+      }
+    ]
+  },
+  {
+    famille:"Âme vorace — Gantelets",
     armes:["7ds-armes/Gantelets/Gantelets de l'âme vorace.webp"],
     lignes:[
       {
