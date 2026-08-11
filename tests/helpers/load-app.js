@@ -125,6 +125,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   passifsArmesApplicables:typeof passifsArmesApplicables === "function"
     ? passifsArmesApplicables
     : undefined,
+  versLAttaqueElementaire:typeof versLAttaqueElementaire === "function"
+    ? versLAttaqueElementaire
+    : undefined,
   bonusCategorieDesBuffs:typeof bonusCategorieDesBuffs === "function"
     ? bonusCategorieDesBuffs
     : undefined,

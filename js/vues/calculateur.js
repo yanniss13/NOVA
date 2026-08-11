@@ -38,7 +38,9 @@ import {
 } from "../metier/calculateur-entrees.js";
 import { buffsDeLEquipe } from "../metier/equipe-buffs.js";
 import { passifsGravesApplicables } from "../metier/passifs-graves.js";
-import { passifsArmesApplicables } from "../metier/passifs-armes.js";
+import {
+  passifsArmesApplicables, versLAttaqueElementaire
+} from "../metier/passifs-armes.js";
 import { passifEnsembleApplicable } from "../metier/passifs-ensembles.js";
 import { potentielsEquipeApplicables } from "../metier/potentiels-equipe.js";
 import { competenceAvecSupplements,
@@ -874,7 +876,26 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
       return section;
     }
     passifs.forEach(passif => {
-      section.appendChild(ligneACumuls(passif, redessiner));
+      /* Meme partage que les tenues gravees : ce qui monte par crans se
+         regle, le reste se coche. Derouler un selecteur de zero a zero sur un
+         passif sans cumuls donnerait un reglage qui ne regle rien. */
+      if(reglable(passif)){
+        section.appendChild(ligneACumuls(passif, redessiner));
+      }else{
+        const caseACocher = el("input",{
+          type:"checkbox",
+          onchange:()=>{
+            if(etat.coches.has(passif.id)) etat.coches.delete(passif.id);
+            else etat.coches.add(passif.id);
+            redessiner();
+          }
+        });
+        caseACocher.checked = etat.coches.has(passif.id);
+        section.appendChild(el("label",{class:"calc-buff"},[
+          caseACocher,
+          el("span",{text:passif.libelle})
+        ]));
+      }
       if(passif.niveauInconnu){
         section.appendChild(el("p",{class:"calc-muette",
           text:"Niveau de passif non renseigné — valeur du niveau 1."}));
@@ -1508,16 +1529,21 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     const faitPassifArme = weaponPassiveFact(
       buildWeaponDefinition(hero.weapon), hero.weaponConfig
     );
-    /* Le taux doit etre connu AVANT les bases : celles-ci resolvent deja
-       l'attaque elementaire. Le verser plus bas dans les entrees ne toucherait
-       aucun chiffre. */
+    /* Un passif qui monte par crans se REGLE ; les autres se cochent, comme
+       tout le reste de la page. Le marqueur reste pose par la vue, jamais par
+       la table - voir le commentaire de reglable(). */
     const passifsArmes = passifsArmesApplicables({
       fichier:hero.weapon,
       niveau:faitPassifArme && faitPassifArme.level
-    }).map(passif => Object.assign({}, passif, { reglable:true }));
-    const tauxPassifsArmes = passifsArmes.reduce(
-      (somme, passif) => somme + passif.parCumul * cumulsDe(passif), 0
-    );
+    }).map(passif => passif.cumuls
+      ? Object.assign({}, passif, { reglable:true })
+      : passif);
+    /* Le partage des deux destinations appartient au module pur : cette vue
+       ne fait que suivre versLAttaqueElementaire(). Le taux doit etre connu
+       AVANT les bases, qui resolvent deja la somme elementaire. */
+    const tauxPassifsArmes = passifsArmes
+      .filter(versLAttaqueElementaire)
+      .reduce((somme, passif) => somme + passif.parCumul * cumulsDe(passif), 0);
     const bases = basesDuBuild(hero, element, tauxPassifsArmes);
     if(!bases.stats){
       vue.appendChild(el("p",{class:"calc-muette",
@@ -1579,12 +1605,17 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     vue.appendChild(sectionSupplements(supplements, dessiner));
 
     /* Les sources cochees portent une stat ou un effet lisible par le moteur.
-       Le taux des passifs d'arme n'y entre pas : il a deja ete applique aux
-       bases elementaires, avant cette liste. */
+       Le taux ELEMENTAIRE des passifs d'arme n'y entre pas : il a deja ete
+       applique aux bases, avant cette liste. Les autres passifs d'arme, si :
+       leurs codes - taux d'attaque, taux critique, vulnerabilite - sont
+       precisement ceux qu'entreesDuCalcul sait ranger. */
     const lignesEnsemble = scenarioEnsemble ? scenarioEnsemble.lignes : [];
+    const armesCochables = passifsArmes
+      .filter(passif => !versLAttaqueElementaire(passif));
     const coches = soutiens
       .concat(passifsGraves)
       .concat(potentiels)
+      .concat(armesCochables)
       .map(ligneActive)
       .filter(Boolean)
       .concat(lignesEnsemble);
@@ -1604,8 +1635,12 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
        donnerait l'impression de n'avoir rien fait. Un passif regle a un cumul
        compte pour un, comme une case : c'est bien une ligne de plus qui agit
        sur le chiffre. */
+    /* Seuls les passifs d'arme ELEMENTAIRES s'ajoutent a la main : les autres
+       voyagent deja dans `coches`, et les compter ici les compterait deux
+       fois - une ligne activee en vaudrait deux dans l'annonce. */
     const cochesVisibles = coches.length - lignesEnsemble.length
-      + passifsArmes.filter(passif => cumulsDe(passif) > 0).length
+      + passifsArmes.filter(passif => versLAttaqueElementaire(passif)
+          && cumulsDe(passif) > 0).length
       + supplements.filter(l => l.condition && etat.coches.has(l.id)).length
       + (scenarioEnsemble && scenarioEnsemble.etat > 0 ? 1 : 0);
     /* « ligne(s) active(s) » couvre aussi les passifs regles au cran, qui ne

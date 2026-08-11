@@ -1,14 +1,18 @@
 "use strict";
 
-/* Le passif de l'arme de Derieri est transcrit depuis les sept niveaux publies
-   par le jeu. Le test protege trois erreurs distinctes : un mauvais chiffre,
-   une ancre qui viserait la seconde phrase du passif, et un code de stat qui
-   ne serait lu par personne. */
+/* Les passifs d'arme sont transcrits depuis les sept niveaux publies par le
+   jeu. Ce test tient lieu de GENERATEUR : il relit chaque chiffre dans le
+   texte de CHAQUE fichier que la famille declare, niveau par niveau.
+
+   Il protege quatre erreurs distinctes : un mauvais chiffre, une ancre qui
+   viserait la mauvaise phrase du passif, un code de stat que personne ne lit,
+   et une famille qui rassemblerait des armes dont les textes different. */
 
 const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
+const { EFFETS_SUR_LA_CIBLE } = require("./helpers/effets-cible");
 
 const racine = path.join(__dirname, "..");
 
@@ -36,40 +40,111 @@ function nombreApres(texte, phrase, quoi){
 
 const TABLE = catalogueDe("passifs-armes.js", "SEVEN_DS_PASSIFS_ARMES");
 const BUILD = catalogueDe("stats-build.js", "SEVEN_DS_BUILD_STATS");
+
+/* Les fichiers que le ROSTER peut reellement poser dans `hero.weapon`.
+   Exister dans le catalogue de statistiques ne suffit pas : c'est data.js qui
+   remplit le selecteur d'arme, et une variante d'accent entre les deux
+   listes rendrait le passif introuvable sans qu'aucun chiffre ne soit faux. */
+const ARMES_DU_ROSTER = new Set(
+  Object.values(catalogueDe("data.js", "SEVEN_DS_DATA").armes)
+    .flatMap(liste => liste.map(item => item.file))
+);
+
+assert.ok(Array.isArray(TABLE), "la table doit etre une liste de familles.");
+
 const identifiants = new Set();
+const fichiersVus = new Set();
 let lignes = 0;
+let armes = 0;
 
-Object.entries(TABLE).forEach(([fichier, passifs]) => {
-  const arme = BUILD.weaponsByFile[fichier];
-  assert.ok(arme, "arme inconnue du catalogue : " + fichier);
-  assert.ok(Array.isArray(passifs) && passifs.length,
-    fichier + " : au moins un passif est attendu.");
+TABLE.forEach(famille => {
+  assert.ok(famille.famille, "chaque entree doit se nommer.");
+  assert.ok(Array.isArray(famille.armes) && famille.armes.length,
+    famille.famille + " : au moins une arme est attendue.");
+  assert.ok(Array.isArray(famille.lignes) && famille.lignes.length,
+    famille.famille + " : au moins une ligne est attendue.");
 
-  passifs.forEach(passif => {
+  famille.armes.forEach(fichier => {
+    assert.ok(BUILD.weaponsByFile[fichier],
+      "arme inconnue du catalogue : " + fichier);
+    assert.ok(ARMES_DU_ROSTER.has(fichier),
+      "arme absente de data.js, donc inequipable : " + fichier);
+    /* Une arme dans deux familles recevrait deux fois le meme passif sans que
+       rien ne le signale : le chiffre doublerait en silence. */
+    assert.ok(!fichiersVus.has(fichier),
+      "arme declaree dans deux familles : " + fichier);
+    fichiersVus.add(fichier);
+    armes++;
+  });
+
+  famille.lignes.forEach(ligne => {
     lignes++;
-    assert.ok(!identifiants.has(passif.id), "identifiant en double : " + passif.id);
-    identifiants.add(passif.id);
-    assert.ok(BUILD.statLabels[passif.stat],
-      passif.id + " : code de stat inconnu : " + passif.stat);
-    assert.equal(passif.stat, "AllElement_Rate",
-      passif.id + " : la mesure oblige le taux de toute l'attaque elementaire.");
-    assert.equal(passif.operation, "add", passif.id + " : operation attendue : add.");
-    assert.equal(passif.unite, "ten-thousandths",
-      passif.id + " : les taux se stockent en dix-milliemes.");
-    assert.equal(passif.cumuls, 40, passif.id + " : le plafond est 40 cumuls.");
-    assert.equal(passif.niveaux.length, 7, passif.id + " : sept niveaux attendus.");
-    assert.equal(passif.parCumul.length, 7,
-      passif.id + " : sept pas de cumul attendus.");
+    assert.ok(!identifiants.has(ligne.id), "identifiant en double : " + ligne.id);
+    identifiants.add(ligne.id);
 
-    arme.passiveLevels.forEach((niveau, index) => {
-      const texte = texteNet(niveau.textFr);
-      const quoi = passif.id + " niveau " + niveau.level;
-      assert.equal(nombreApres(texte, passif.provenance.phrase, quoi),
-        passif.niveaux[index], quoi + " : plafond mal transcrit.");
-      assert.equal(nombreApres(texte, passif.provenance.phraseCumul, quoi),
-        passif.parCumul[index], quoi + " : pas mal transcrit.");
-      assert.equal(passif.parCumul[index] * passif.cumuls, passif.niveaux[index],
-        quoi + " : plafond different du pas x cumuls.");
+    /* Une ligne porte SOIT un code de stat du heros, SOIT un effet sur la
+       cible - jamais les deux, jamais aucun. Sans ce controle, une ligne sans
+       cible resterait muette dans le calcul sans rien dire. */
+    const aStat = Boolean(ligne.stat);
+    const aEffet = Boolean(ligne.effet);
+    assert.ok(aStat !== aEffet,
+      ligne.id + " : une ligne porte un code de stat OU un effet, pas les deux.");
+    if(aStat){
+      assert.ok(BUILD.statLabels[ligne.stat],
+        ligne.id + " : code de stat inconnu : " + ligne.stat);
+    }else{
+      assert.ok(EFFETS_SUR_LA_CIBLE.includes(ligne.effet),
+        ligne.id + " : effet inconnu sur la cible : " + ligne.effet);
+    }
+
+    assert.ok(["add", "multiply"].includes(ligne.operation),
+      ligne.id + " : operation attendue : add ou multiply.");
+    assert.equal(ligne.unite, "ten-thousandths",
+      ligne.id + " : les taux se stockent en dix-milliemes.");
+    assert.equal(ligne.niveaux.length, 7,
+      ligne.id + " : sept niveaux attendus.");
+    /* Un taux sur l'attaque du heros DOIT multiplier : verse en `add`, il
+       ajouterait 4 000 points d'attaque plate au lieu de 40 %. */
+    if(ligne.stat === "I_AtkAdd_Rate"){
+      assert.equal(ligne.operation, "multiply",
+        ligne.id + " : un taux d'attaque multiplie, il ne s'ajoute pas.");
+    }
+    /* Le critique venu de l'ARME est celui du heros, donc plafonne a 90 %.
+       Sans `porteur`, entreesDuCalcul le rangerait dans le seau des allies,
+       qui echappe au plafond - et le build en sortirait trop fort. */
+    if(ligne.stat === "C_Critical_Rate"){
+      assert.equal(ligne.porteur, "hero",
+        ligne.id + " : le critique d'une arme est celui du heros.");
+    }
+
+    /* Les trois champs de cumul voyagent ENSEMBLE. Un pas sans plafond, ou un
+       plafond sans ancre, laisserait la vue derouler un selecteur qu'aucun
+       texte publie ne justifie. */
+    const aCumuls = ligne.parCumul !== undefined || ligne.cumuls !== undefined
+      || ligne.provenance.phraseCumul !== undefined;
+    if(aCumuls){
+      assert.ok(Array.isArray(ligne.parCumul) && ligne.parCumul.length === 7,
+        ligne.id + " : sept pas de cumul attendus.");
+      assert.ok(ligne.cumuls, ligne.id + " : un plafond de cumuls est attendu.");
+      assert.ok(ligne.provenance.phraseCumul,
+        ligne.id + " : une ancre de pas est attendue.");
+    }
+
+    famille.armes.forEach(fichier => {
+      BUILD.weaponsByFile[fichier].passiveLevels.forEach((niveau, index) => {
+        const texte = texteNet(niveau.textFr);
+        const quoi = ligne.id + " · " + fichier.split("/").pop()
+          + " niveau " + niveau.level;
+        assert.equal(nombreApres(texte, ligne.provenance.phrase, quoi),
+          ligne.niveaux[index], quoi + " : valeur mal transcrite.");
+        if(!aCumuls) return;
+        const pas = Array.isArray(ligne.cumuls)
+          ? ligne.cumuls[index] : ligne.cumuls;
+        assert.equal(nombreApres(texte, ligne.provenance.phraseCumul, quoi),
+          ligne.parCumul[index], quoi + " : pas mal transcrit.");
+        assert.equal(ligne.parCumul[index] * pas, ligne.niveaux[index],
+          quoi + " : plafond different du pas x cumuls.");
+      });
     });
   });
 });
@@ -88,30 +163,93 @@ assert.ok(lignes > 0, "la table est vide : ce test ne prouverait rien.");
   assert.equal(typeof resolve, "function",
     "passifsArmesApplicables doit etre exposee par le module pur.");
 
-  const fichier = Object.keys(TABLE)[0];
-  const niveauSept = resolve({ fichier, niveau:7 });
+  const vorace = "7ds-armes/Gantelets/Gantelets de l'âme vorace.webp";
+  const niveauSept = resolve({ fichier:vorace, niveau:7 });
   assert.equal(niveauSept.length, 1, "le bon fichier doit rendre son passif.");
   assert.equal(niveauSept[0].parCumul, 250,
     "le niveau 7 doit rendre +2,5 % par cumul.");
   assert.equal(niveauSept[0].valeur, 10000,
     "le niveau 7 doit rendre +100 % au plafond.");
-  assert.equal(resolve({ fichier, niveau:null })[0].valeur, 3200,
+  assert.equal(resolve({ fichier:vorace, niveau:null })[0].valeur, 3200,
     "un niveau absent replie sur le niveau 1, sans flatter le resultat.");
   assert.equal(resolve({ fichier:"7ds-armes/Gantelets/inconnus.webp", niveau:7 }).length, 0,
     "un autre gantelet ne doit jamais recevoir le passif de l'ame vorace.");
+
+  /* Une famille rend son passif a CHACUNE de ses armes, et les deux lignes
+     d'une meme phrase arrivent ensemble. */
+  const noires = resolve({
+    fichier:"7ds-armes/Hache/Hache des ailes de la flamme noire.webp", niveau:7
+  });
+  assert.equal(noires.length, 2,
+    "la famille des ailes porte deux lignes : attaque et critique.");
+  /* Comparaison par chaine, jamais deepEqual : le tableau vient du bac `vm`,
+     donc son Array.prototype n'est pas celui de ce module et l'egalite
+     profonde echoue sur deux listes pourtant identiques. */
+  assert.equal(noires.map(l => l.valeur).join("|"), "4000|1500",
+    "les deux lignes rendent leur valeur de niveau 7.");
+  /* Un passif sans cumuls ne doit rendre NI pas NI plafond : la vue s'en sert
+     pour choisir entre une case et un selecteur. */
+  assert.equal(noires[0].parCumul, null,
+    "un passif sans cumuls ne rend pas de pas.");
+  assert.equal(noires[0].cumuls, null,
+    "un passif sans cumuls ne rend pas de plafond.");
 }
 
-/* Le bonus est un taux de TOUTE l'attaque elementaire. Le laisser passer par
-   entreesDuCalcul le rendrait inerte, car cette somme est deja resolue. */
+/* CHAQUE LIGNE DOIT ATTEINDRE LE CALCUL, par l'une des deux routes.
+
+   C'est le controle qui compte vraiment : une ligne parfaitement transcrite
+   mais rangee du mauvais cote serait soit inerte, soit comptee deux fois, et
+   aucune des assertions ci-dessus ne le verrait. Le test rejoue donc les deux
+   trajets sur de vraies entrees. */
 {
   const { loadApp } = require("./helpers/load-app");
-  const { statsElementairesDuBuild } = loadApp().hooks;
+  const {
+    statsElementairesDuBuild, entreesDuCalcul, versLAttaqueElementaire
+  } = loadApp().hooks;
+
+  const source = fs.readFileSync(
+    path.join(racine, "js", "metier", "passifs-armes.js"), "utf8"
+  ).replace(/^\s*export\s*\{[\s\S]*?\}\s*;\s*$/m, "");
+  const bac = { window:{ SEVEN_DS_PASSIFS_ARMES:TABLE } };
+  vm.runInNewContext(source, bac, { filename:"passifs-armes.js" });
+  const partage = bac.versLAttaqueElementaire;
+  assert.equal(typeof partage, "function",
+    "versLAttaqueElementaire doit etre exposee par le module pur.");
+  assert.equal(typeof versLAttaqueElementaire, "function",
+    "la vue doit pouvoir importer la meme regle de partage.");
+
+  /* Route 1 — l'attaque elementaire, resolue AVANT les entrees. Le laisser
+     passer par entreesDuCalcul le rendrait inerte : la somme y est deja faite. */
   const lire = code => ({ Dark_Add:5281, AllElement_Add:270 })[code] || 0;
-  const fichier = Object.keys(TABLE)[0];
-  const tauxPassif = TABLE[fichier][0].parCumul[6] * 4;
-  const sortie = statsElementairesDuBuild(lire, "dark", tauxPassif);
+  const barrage = TABLE.flatMap(f => f.lignes)
+    .find(ligne => ligne.id === "gantelets-ame-vorace-barrage-tenebres");
+  assert.ok(partage(barrage), "Barrage passe par l'attaque elementaire.");
+  const sortie = statsElementairesDuBuild(lire, "dark", barrage.parCumul[6] * 4);
   assert.equal(sortie.attaqueElementaire, 6106.1,
     "le taux de tous les elements doit majorer les deux attaques elementaires.");
+
+  /* Route 2 — les lignes cochees. Chacune doit deplacer au moins une entree :
+     un code que CIBLE_DU_BUFF ignore laisserait la case sans aucun effet. */
+  const base = {
+    atk:20000, attaqueElementaire:5000, critRate:4000, critDamage:12000,
+    percementDefense:0
+  };
+  const nu = entreesDuCalcul({ statsDuBuild:base, buffsCoches:[] });
+  let cochables = 0;
+  TABLE.flatMap(f => f.lignes).filter(ligne => !partage(ligne))
+    .forEach(ligne => {
+      cochables++;
+      const avec = entreesDuCalcul({
+        statsDuBuild:base,
+        buffsCoches:[Object.assign({}, ligne, { valeur:ligne.niveaux[6] })]
+      });
+      const bouge = Object.keys(nu).some(cle => nu[cle] !== avec[cle]);
+      assert.ok(bouge,
+        ligne.id + " : cochee, cette ligne ne change aucune entree du moteur.");
+    });
+  assert.ok(cochables >= 4,
+    "les familles sans cumuls doivent emprunter la route des lignes cochees.");
 }
 
-console.log("passifs-armes.test.js OK (" + lignes + " ligne(s))");
+console.log("passifs-armes.test.js OK (" + lignes + " ligne(s) sur "
+  + armes + " armes)");
