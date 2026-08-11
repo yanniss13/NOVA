@@ -10,9 +10,12 @@ const bacPassifsArmes = { window:{} };
 vm.runInNewContext(fs.readFileSync(
   path.join(__dirname, "..", "data", "passifs-armes.js"), "utf8"
 ), bacPassifsArmes);
-const PASSIF_DERIERI = Object.values(
-  bacPassifsArmes.window.SEVEN_DS_PASSIFS_ARMES
-).flat().find(passif => passif.id === "gantelets-ame-vorace-barrage-tenebres");
+/* La table range les passifs par FAMILLE d'armes : une entree nomme ses
+   fichiers et porte ses lignes. On aplatit les lignes de toutes les familles
+   pour retrouver celle que les releves de Derieri ont mesuree. */
+const PASSIF_DERIERI = bacPassifsArmes.window.SEVEN_DS_PASSIFS_ARMES
+  .flatMap(famille => famille.lignes)
+  .find(passif => passif.id === "gantelets-ame-vorace-barrage-tenebres");
 assert.ok(PASSIF_DERIERI, "le passif mesure de Derieri doit etre dans la table.");
 
 const { hooks } = loadApp();
