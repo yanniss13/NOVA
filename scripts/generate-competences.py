@@ -137,6 +137,49 @@ def premiere_phrase(description):
     return PHRASE.split(nu)[0] if nu else ""
 
 
+def degat_de_repli(description):
+    """Le coup garanti annonce APRES la premiere phrase, s'il est sans ambiguite.
+
+    La premiere phrase reste la source de verite : partout ou elle chiffre, ce
+    repli n'est jamais atteint, et aucune competence deja chiffree ne bouge.
+    Verifie sur les 25 fiches en ligne : 330 verdicts inchanges, 5 recuperes.
+
+    Il existe parce que certaines competences OUVRENT sur une note qui n'est
+    pas un degat - une immunite, un buff d'equipe, l'activation d'un etat - et
+    repoussent le coup garanti d'un cran. « Tout ce qui suit est conditionnel »
+    reste vrai la plupart du temps, mais pas quand rien ne precede.
+
+    Ruee sauvage en est le cas d'ecole : elle annonce 574 % en deuxieme phrase,
+    et le catalogue la classait « non-chiffree ». La somme de ses coups publies
+    - 93 + 118 + 157 + 206 - vaut exactement 574, ce qui verifie le nombre sans
+    rien mesurer en jeu.
+
+    DEUX GARDES, parce que ce repli marche sur les terres de la suite
+    conditionnelle, qu'on refuse toujours de compter :
+      - une phrase PERIODIQUE donne un tick, jamais un total ;
+      - PLUSIEURS candidates rendraient le choix arbitraire, donc on refuse.
+    L'ancre `^` de DIRECT fait deja le gros du tri : une tournure introduite
+    par une condition, un nom d'etat ou un renvoi « ※ » ne commence pas par
+    « Inflicts ».
+
+    Ce repli passe APRES est_maintien_non_borne() et n'a donc aucun pouvoir de
+    rouvrir ce que cette garde ferme : Tristan annonce bien 81 % en frappe
+    finale, mais ses ticks de posture restent sans borne.
+    """
+    nu = BALISE.sub("", description or "").strip()
+    if not nu:
+        return None
+    trouves = []
+    for phrase in PHRASE.split(nu)[1:]:
+        phrase = phrase.strip()
+        if not phrase or INTERVALLE.search(phrase):
+            continue
+        trouve = DIRECT.search(phrase)
+        if trouve:
+            trouves.append(float(trouve.group(1)))
+    return trouves[0] if len(trouves) == 1 else None
+
+
 def groupes_de_degats(phrase):
     """Les composantes rattachees a chaque « damage equal to », et leur place.
 
@@ -265,6 +308,12 @@ def degats_de(skill):
     champ = nombre(skill.get("damagePercent"))
     if champ is not None and champ > 0:
         return (champ, "direct")
+
+    # DERNIER RECOURS, et lui seul touche des competences aujourd'hui classees
+    # « non-chiffree » : tout ce qui precede a deja rendu. Voir degat_de_repli.
+    repli = degat_de_repli(skill.get("descriptionEn"))
+    if repli is not None:
+        return (repli, "direct")
     return (None, "non-chiffree")
 
 

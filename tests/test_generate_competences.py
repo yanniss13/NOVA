@@ -76,6 +76,89 @@ class DegatsDirects(unittest.TestCase):
         )
         self.assertEqual(_gen.degats_de(c)[0], 159.0)
 
+    def test_un_degat_en_deuxieme_phrase_est_chiffre(self):
+        """Ruée sauvage ouvre sur une immunité, pas sur son coup.
+
+        Le catalogue la classait « non-chiffree » alors que la somme de ses
+        coups publiés — 93 + 118 + 157 + 206 — vaut exactement les 574 %
+        annoncés. C'est ce contrôle indépendant qui a fait accepter le repli."""
+        c = compet(
+            "derieri_gauntlets_skill_q_1",
+            "Becomes immune to Reactions while using the Special Attack.\n"
+            "Inflicts damage equal to %s574%%%s of Attack. If all hits land, "
+            "the hero's Ultimate Move Magic Consumption decreases by %s50%%%s "
+            "for %s7 sec%s.\n1st hit: 93%%\n2nd hit: 118%%\n3rd hit: 157%%\n"
+            "4th hit: 206%%" % (V, F, V, F, V, F),
+            skillCategory="ACTIVE_THIRD",
+        )
+
+        self.assertEqual(_gen.degats_de(c), (574.0, "direct"))
+
+    def test_un_buff_d_equipe_avant_le_coup_ne_le_masque_pas(self):
+        """Même repli, sur une phrase d'ouverture qui buffe au lieu d'immuniser."""
+        c = compet(
+            "griamore_cudgel3c_skill_rmb",
+            "Removes the hero's %sBarrier%s to increase their Attack by "
+            "%s15%%%s for %s20 sec%s.\n"
+            "Inflicts damage equal to %s186%%%s of Attack, then gains a "
+            "%sBarrier%s equal to %s50%%%s of Attack for %s5 sec%s."
+            % (B, F, V, F, V, F, V, F, B, F, V, F, V, F),
+            skillCategory="ACTIVE_THIRD",
+        )
+
+        self.assertEqual(_gen.degats_de(c), (186.0, "direct"))
+
+    def test_un_maintien_non_borne_reste_exclu_malgre_sa_frappe_finale(self):
+        """Le repli ne doit PAS rouvrir ce que la garde des maintiens ferme.
+
+        Tristan annonce 81 % en frappe finale, mais ses ticks de posture ne
+        sont pas bornés : le total reste inconnu, donc la compétence reste
+        hors calcul. La garde passe avant le repli, et c'est voulu."""
+        c = compet(
+            "tristan_sword2h_skill_rmb_ready",
+            "Inflicts damage equal to %s8%%%s of Attack on nearby enemies "
+            "while the stance is maintained. Inflicts damage equal to "
+            "%s81%%%s of Attack with the final strike." % (V, F, V, F),
+            skillCategory="ACTIVE_THIRD",
+        )
+
+        self.assertEqual(_gen.degats_de(c), (None, "non-chiffree"))
+
+    def test_un_tick_periodique_en_seconde_phrase_ne_chiffre_pas(self):
+        """« 3 % toutes les 0,3 s » est un tick, jamais un total.
+
+        Ici l'ancre de DIRECT suffit — la phrase commence par « ※ Pulse: » —
+        mais le repli refuse de son côté toute phrase périodique, pour la
+        variante qui commencerait bien par « Inflicts »."""
+        c = compet(
+            "drake_sword1h_skill_e",
+            "Grants all allied heroes %sPulse%s for %s20 sec%s.\n\n"
+            "※ %sPulse%s: Inflicts damage equal to %s3%%%s of Attack to "
+            "nearby enemies every %s0.3 sec%s. Increases Burst Gauge by "
+            "%s30%s when hit %s5 time(s)%s."
+            % (B, F, V, F, B, F, V, F, V, F, V, F, V, F),
+        )
+
+        self.assertEqual(_gen.degats_de(c), (None, "non-chiffree"))
+
+    def test_le_repli_refuse_deux_candidates(self):
+        """Deux coups garantis annonces plus loin : le choix serait arbitraire.
+
+        Aucune competence du jeu n'expose ce cas aujourd'hui. La description
+        assemble donc DEUX phrases reelles - l'ouverture de Griamore et les
+        deux frappes de Tristan - pour eprouver la garde sans inventer une
+        tournure que la source n'ecrit pas."""
+        c = compet(
+            "essai_deux_candidates",
+            "Removes the hero's %sBarrier%s to increase their Attack by "
+            "%s15%%%s for %s20 sec%s.\n"
+            "Inflicts damage equal to %s186%%%s of Attack.\n"
+            "Inflicts damage equal to %s81%%%s of Attack with the final "
+            "strike." % (B, F, V, F, V, F, V, F, V, F),
+        )
+
+        self.assertEqual(_gen.degats_de(c), (None, "non-chiffree"))
+
     def test_le_champ_fait_foi_quand_la_repartition_est_complete(self):
         """`hitDamages` renseigne : sa somme est le total publie."""
         c = compet(

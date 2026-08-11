@@ -431,14 +431,19 @@ window.SEVEN_DS_COMPETENCES = {
   },
   {
    "categorie": "NORMAL_SKILL",
-   "composantes": [],
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 253.0
+    }
+   ],
    "coups": null,
    "gameId": "daisy_shield_skill_e",
-   "nature": "non-chiffree",
+   "nature": "direct",
    "nom": "Help Me, Domby",
    "periodique": null,
    "portee": "Melee",
-   "pourcentage": null,
+   "pourcentage": 253.0,
    "recharge": 15.0,
    "repartition": [],
    "weaponType": "Shield"
@@ -731,14 +736,19 @@ window.SEVEN_DS_COMPETENCES = {
   },
   {
    "categorie": "ACTIVE_THIRD",
-   "composantes": [],
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 574.0
+    }
+   ],
    "coups": null,
    "gameId": "derieri_gauntlets_skill_q_1",
-   "nature": "non-chiffree",
+   "nature": "direct",
    "nom": "Wild Rush",
    "periodique": null,
    "portee": "Melee",
-   "pourcentage": null,
+   "pourcentage": 574.0,
    "recharge": 17.0,
    "repartition": [],
    "weaponType": "Gauntlets"
@@ -2500,14 +2510,19 @@ window.SEVEN_DS_COMPETENCES = {
   },
   {
    "categorie": "NORMAL_SKILL",
-   "composantes": [],
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 103.0
+    }
+   ],
    "coups": null,
    "gameId": "elizabeth_staff_skill_e",
-   "nature": "non-chiffree",
+   "nature": "direct",
    "nom": "Holy Wave",
    "periodique": null,
    "portee": "Melee",
-   "pourcentage": null,
+   "pourcentage": 103.0,
    "recharge": 23.0,
    "repartition": [],
    "weaponType": "Staff"
@@ -3647,14 +3662,19 @@ window.SEVEN_DS_COMPETENCES = {
   },
   {
    "categorie": "ACTIVE_THIRD",
-   "composantes": [],
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 186.0
+    }
+   ],
    "coups": null,
    "gameId": "griamore_cudgel3c_skill_rmb",
-   "nature": "non-chiffree",
+   "nature": "direct",
    "nom": "Wall Sphere",
    "periodique": null,
    "portee": "Melee",
-   "pourcentage": null,
+   "pourcentage": 186.0,
    "recharge": 15.1,
    "repartition": [],
    "weaponType": "Cudgel3c"
@@ -4094,14 +4114,19 @@ window.SEVEN_DS_COMPETENCES = {
   },
   {
    "categorie": "NORMAL_SKILL",
-   "composantes": [],
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 164.0
+    }
+   ],
    "coups": null,
    "gameId": "guila_shield_skill_e",
-   "nature": "non-chiffree",
+   "nature": "direct",
    "nom": "Ground Ignition",
    "periodique": null,
    "portee": "Melee",
-   "pourcentage": null,
+   "pourcentage": 164.0,
    "recharge": 32.0,
    "repartition": [],
    "weaponType": "Shield"
