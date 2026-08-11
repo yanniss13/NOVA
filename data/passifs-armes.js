@@ -436,6 +436,26 @@ window.SEVEN_DS_PASSIFS_ARMES = [
     ]
   },
   {
+    famille:"Âme vorace — Grimoire",
+    armes:["7ds-armes/Livre/Grimoire de l'âme vorace.webp"],
+    lignes:[
+      {
+        id:"grimoire-ame-vorace-attaque-froid",
+        libelle:"Après une compétence normale : attaque de Froid +50 % (20 s)",
+        /* Un taux d'attaque D'UN SEUL element, la ou Barrage des Tenebres en
+           porte un de TOUS. La difference n'est pas cosmetique : celui-ci ne
+           majore pas l'attaque « tous elements ». C'est seauElementaireDeLaStat
+           qui les separe, et le relevé de Merlin qui fonde la distinction. */
+        stat:"Ice_Rate",
+        operation:"add",
+        unite:"ten-thousandths",
+        /* Le chiffre plafonne des le niveau 4 : c'est le texte du jeu. */
+        niveaux:[2600, 3800, 4400, 5000, 5000, 5000, 5000],
+        provenance:{ phrase:"augmente l'attaque de Froid de " }
+      }
+    ]
+  },
+  {
     famille:"Âme vorace — Gantelets",
     armes:["7ds-armes/Gantelets/Gantelets de l'âme vorace.webp"],
     lignes:[

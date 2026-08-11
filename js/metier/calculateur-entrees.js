@@ -123,7 +123,27 @@ import { degatsAttendus } from "./degats-calcul.js";
      La fonction prend `lire` en argument plutot que le build : les codes de
      stat vivent ici, avec le reste du vocabulaire, et un test peut les
      verifier sans navigateur. */
-  function statsElementairesDuBuild(lire, element, tauxSupplementaire){
+  /* LE SEAU ELEMENTAIRE QU'UNE STAT ALIMENTE, ou null si elle n'en alimente
+     aucun. Deux taux existent et ils ne portent pas la meme chose :
+
+       AllElement_Rate  majore les DEUX attaques elementaires
+       Ice_Rate…        ne majore que celle de son propre element
+
+     Les confondre etait tentant - un seul supplement suffisait tant que seul
+     Barrage des Tenebres passait par ici - mais cela ferait majorer l'attaque
+     « tous elements » par un taux qui ne la nomme pas.
+
+     Le suffixe ne suffit PAS a reconnaitre un taux elementaire :
+     C_Critical_Rate et I_AtkAdd_Rate finissent par _Rate sans etre
+     elementaires. Le nom retire doit figurer dans la liste des elements. */
+  function seauElementaireDeLaStat(stat){
+    if(stat === "AllElement_Rate") return "tous";
+    if(typeof stat !== "string") return null;
+    const nom = stat.replace(/_Rate$/, "");
+    return nom !== stat && ELEMENTS_BUFF.indexOf(nom) !== -1 ? "propre" : null;
+  }
+
+  function statsElementairesDuBuild(lire, element, supplements){
     const lecture = typeof lire === "function" ? lire : () => 0;
     const valeur = code => Number(lecture(code)) || 0;
     const prefixe = element
@@ -131,13 +151,16 @@ import { degatsAttendus } from "./degats-calcul.js";
         + String(element).slice(1).toLowerCase()
       : null;
     const propre = prefixe ? valeur(prefixe + "_Add") : 0;
-    const tauxPropre = prefixe ? valeur(prefixe + "_Rate") : 0;
     const tous = valeur("AllElement_Add");
-    /* Les passifs d'arme a cumuls arrivent ici, avant que l'attaque
-       elementaire ne soit resolue. Les envoyer dans entreesDuCalcul serait
-       muet : il ne reste alors plus qu'un nombre deja calcule. */
+    /* Les passifs d'arme arrivent ici, avant que l'attaque elementaire ne soit
+       resolue. Les envoyer dans entreesDuCalcul serait muet : il ne reste
+       alors plus qu'un nombre deja calcule. Ils arrivent DEJA TRIES par
+       seauElementaireDeLaStat(), un seau par taux. */
+    const apports = supplements || {};
+    const tauxPropre = (prefixe ? valeur(prefixe + "_Rate") : 0)
+      + (Number(apports.propre) || 0);
     const tauxTous = valeur("AllElement_Rate")
-      + (Number(tauxSupplementaire) || 0);
+      + (Number(apports.tous) || 0);
     return {
       attaqueElementaire:
         propre * (1 + (tauxPropre + tauxTous) / DIX_MILLIEMES)
@@ -182,7 +205,16 @@ import { degatsAttendus } from "./degats-calcul.js";
       critRateAllie:0,
       critDamage:Number(stats.critDamage) || 0,
       percementDefense:Number(stats.percementDefense) || 0,
-      bonusGlobal:0,
+      /* Le build alimente ce seau depuis `I_All_DamAdd_Rate`, « Augmentation
+         de tous les degats ». Le code existait dans le catalogue - l'ensemble
+         « Au bord du neant » le porte a +7,5 %, des trois pieces - sans que
+         rien ne le lise : un membre qui roulait cet ensemble voyait 7,5 % de
+         degats disparaitre en silence. Meme famille d'oubli que les deux
+         statistiques elementaires.
+         Les vulnerabilites cochees s'y ajoutent par-dessus, ce qui est juste :
+         le seau vaut pour toutes les competences a la fois, quelle que soit
+         l'origine de ce qui l'alimente. */
+      bonusGlobal:Number(stats.bonusGlobal) || 0,
       /* Le build ALIMENTE ce seau, contrairement aux deux autres : son bonus
          de degats elementaire vaut pour toutes ses competences a la fois,
          donc il a sa place dans les entrees communes. Le bonus de CATEGORIE
@@ -376,5 +408,5 @@ export {
   bonusCategorieDesBuffs,
   buffsApplicables, entreesDeLaCompetence, entreesDuCalcul,
   resultatsParCompetence, resultatsParCompetenceCompares,
-  statsElementairesDuBuild
+  seauElementaireDeLaStat, statsElementairesDuBuild
 };

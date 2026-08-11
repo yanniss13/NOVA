@@ -34,13 +34,12 @@ import {
 import {
   STAT_DE_LA_CATEGORIE, bonusCategorieDesBuffs,
   entreesDeLaCompetence, entreesDuCalcul, resultatsParCompetence,
-  resultatsParCompetenceCompares, statsElementairesDuBuild
+  resultatsParCompetenceCompares, seauElementaireDeLaStat,
+  statsElementairesDuBuild
 } from "../metier/calculateur-entrees.js";
 import { buffsDeLEquipe } from "../metier/equipe-buffs.js";
 import { passifsGravesApplicables } from "../metier/passifs-graves.js";
-import {
-  passifsArmesApplicables, versLAttaqueElementaire
-} from "../metier/passifs-armes.js";
+import { passifsArmesApplicables } from "../metier/passifs-armes.js";
 import { passifEnsembleApplicable } from "../metier/passifs-ensembles.js";
 import { potentielsEquipeApplicables } from "../metier/potentiels-equipe.js";
 import { competenceAvecSupplements,
@@ -214,7 +213,7 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
   /* Les bases offensives du build, par code de stat. Un statut autre que
      `valid` ou `partial` ne porte AUCUN chiffre : on rend null plutot qu'un
      zero, et la page dit « Configuration a completer ». */
-  function basesDuBuild(hero, element, tauxElementaire){
+  function basesDuBuild(hero, element, apportsElementaires){
     const result = calculateHeroStats(hero);
     if(result.status !== "valid" && result.status !== "partial"){
       return { statut:result.status, manques:result.missing || [], stats:null };
@@ -243,7 +242,9 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     /* Les deux entrees elementaires du build. Le detail des quatre codes
        lus, et de la mesure qui les fonde, vit dans calculateur-entrees.js -
        cette vue ne fait que passer le lecteur de statistiques. */
-    const elementaires = statsElementairesDuBuild(lire, element, tauxElementaire);
+    const elementaires = statsElementairesDuBuild(
+      lire, element, apportsElementaires
+    );
     return {
       statut:result.status,
       manques:[],
@@ -255,7 +256,11 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
         critDamage:lire("C_Critical_Dam_Rate"),
         percementDefense:lire("D_Protect_Cur_Rate"),
         attaqueElementaire:elementaires.attaqueElementaire,
-        bonusElementaire:elementaires.bonusElementaire
+        bonusElementaire:elementaires.bonusElementaire,
+        /* « Augmentation de tous les degats » : un bonus qui ne vise aucune
+           categorie, donc sa place est dans le seau global plutot que dans
+           les cinq seaux par categorie. Voir entreesDuCalcul(). */
+        bonusGlobal:lire("I_All_DamAdd_Rate")
       },
       /* A part des autres, et pour une bonne raison : ces cinq bonus ne
          valent QUE pour les competences de leur categorie. Les ranger dans
@@ -1538,13 +1543,24 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     }).map(passif => passif.cumuls
       ? Object.assign({}, passif, { reglable:true })
       : passif);
-    /* Le partage des deux destinations appartient au module pur : cette vue
-       ne fait que suivre versLAttaqueElementaire(). Le taux doit etre connu
-       AVANT les bases, qui resolvent deja la somme elementaire. */
-    const tauxPassifsArmes = passifsArmes
-      .filter(versLAttaqueElementaire)
-      .reduce((somme, passif) => somme + passif.parCumul * cumulsDe(passif), 0);
-    const bases = basesDuBuild(hero, element, tauxPassifsArmes);
+    /* Le partage des destinations appartient au vocabulaire des stats : cette
+       vue ne fait que suivre seauElementaireDeLaStat(). Les apports doivent
+       etre connus AVANT les bases, qui resolvent deja la somme elementaire.
+
+       `ligneActive` porte les deux formes d'activation : un passif a crans
+       rend son pas multiplie par le reglage, un passif a case rend sa valeur
+       de niveau, et l'un comme l'autre rendent null quand ils sont eteints. */
+    const passifsElementaires = passifsArmes
+      .filter(passif => seauElementaireDeLaStat(passif.stat));
+    const apportsElementaires = passifsElementaires
+      .map(ligneActive)
+      .filter(Boolean)
+      .reduce((apports, passif) => {
+        const seau = seauElementaireDeLaStat(passif.stat);
+        apports[seau] += Number(passif.valeur) || 0;
+        return apports;
+      }, { propre:0, tous:0 });
+    const bases = basesDuBuild(hero, element, apportsElementaires);
     if(!bases.stats){
       vue.appendChild(el("p",{class:"calc-muette",
         text:"Configuration à compléter"
@@ -1552,7 +1568,7 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
       return;
     }
     const heroEssai = herosAvecEssaiEnchantements(hero, etat.essaiEnchantements);
-    const basesEssai = basesDuBuild(heroEssai, element, tauxPassifsArmes);
+    const basesEssai = basesDuBuild(heroEssai, element, apportsElementaires);
     const scenarioEnsemble = passifEnsembleApplicable({
       ensembles:ensemblesDuBuild(hero),
       etats:etat.etatsEnsembles,
@@ -1611,7 +1627,7 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
        precisement ceux qu'entreesDuCalcul sait ranger. */
     const lignesEnsemble = scenarioEnsemble ? scenarioEnsemble.lignes : [];
     const armesCochables = passifsArmes
-      .filter(passif => !versLAttaqueElementaire(passif));
+      .filter(passif => !seauElementaireDeLaStat(passif.stat));
     const coches = soutiens
       .concat(passifsGraves)
       .concat(potentiels)
@@ -1639,8 +1655,7 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
        voyagent deja dans `coches`, et les compter ici les compterait deux
        fois - une ligne activee en vaudrait deux dans l'annonce. */
     const cochesVisibles = coches.length - lignesEnsemble.length
-      + passifsArmes.filter(passif => versLAttaqueElementaire(passif)
-          && cumulsDe(passif) > 0).length
+      + passifsElementaires.map(ligneActive).filter(Boolean).length
       + supplements.filter(l => l.condition && etat.coches.has(l.id)).length
       + (scenarioEnsemble && scenarioEnsemble.etat > 0 ? 1 : 0);
     /* « ligne(s) active(s) » couvre aussi les passifs regles au cran, qui ne
