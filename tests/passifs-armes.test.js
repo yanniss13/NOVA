@@ -220,7 +220,8 @@ assert.ok(lignes > 0, "la table est vide : ce test ne prouverait rien.");
 {
   const { loadApp } = require("./helpers/load-app");
   const {
-    statsElementairesDuBuild, entreesDuCalcul, versLAttaqueElementaire
+    statsElementairesDuBuild, entreesDuCalcul, versLAttaqueElementaire,
+    bonusCategorieDesBuffs
   } = loadApp().hooks;
 
   const source = fs.readFileSync(
@@ -244,8 +245,11 @@ assert.ok(lignes > 0, "la table est vide : ce test ne prouverait rien.");
   assert.equal(sortie.attaqueElementaire, 6106.1,
     "le taux de tous les elements doit majorer les deux attaques elementaires.");
 
-  /* Route 2 — les lignes cochees. Chacune doit deplacer au moins une entree :
-     un code que CIBLE_DU_BUFF ignore laisserait la case sans aucun effet. */
+  /* Route 2 — les lignes cochees. Chacune doit deplacer soit une entree
+     commune, soit un bonus de CATEGORIE : ces derniers ne passent pas par
+     entreesDuCalcul, dont les seaux valent pour toutes les competences a la
+     fois, et voyagent a part. Une ligne qui ne bouge ni l'un ni l'autre porte
+     un code que personne ne lit, et sa case ne ferait rien. */
   const base = {
     atk:20000, attaqueElementaire:5000, critRate:4000, critDamage:12000,
     percementDefense:0
@@ -255,12 +259,12 @@ assert.ok(lignes > 0, "la table est vide : ce test ne prouverait rien.");
   TABLE.flatMap(f => f.lignes).filter(ligne => !partage(ligne))
     .forEach(ligne => {
       cochables++;
-      const avec = entreesDuCalcul({
-        statsDuBuild:base,
-        buffsCoches:[Object.assign({}, ligne, { valeur:ligne.niveaux[6] })]
-      });
-      const bouge = Object.keys(nu).some(cle => nu[cle] !== avec[cle]);
-      assert.ok(bouge,
+      const valuee = Object.assign({}, ligne, { valeur:ligne.niveaux[6] });
+      const avec = entreesDuCalcul({ statsDuBuild:base, buffsCoches:[valuee] });
+      const bougeEntree = Object.keys(nu).some(cle => nu[cle] !== avec[cle]);
+      const bougeCategorie =
+        Object.keys(bonusCategorieDesBuffs([valuee])).length > 0;
+      assert.ok(bougeEntree || bougeCategorie,
         ligne.id + " : cochee, cette ligne ne change aucune entree du moteur.");
     });
   assert.ok(cochables >= 4,
