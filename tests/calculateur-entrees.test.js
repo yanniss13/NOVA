@@ -657,6 +657,32 @@ tousLesBuffs.forEach(buff => {
       "1 244 du build + 1 000 du soutien");
   }
 
+  /* LE SEAU GLOBAL, que le build n'alimentait pas non plus.
+
+     `I_All_DamAdd_Rate` - « Augmentation de tous les degats » - existe dans le
+     catalogue : l'ensemble « Au bord du neant » le porte a +7,5 %, des trois
+     pieces. Rien ne le lisait, donc ces 7,5 % disparaissaient sans un mot.
+     Meme famille d'oubli que les deux statistiques elementaires. */
+  {
+    const CATALOGUE = catalogueDe("stats-build.js", "SEVEN_DS_BUILD_STATS");
+    assert.ok(CATALOGUE.statLabels.I_All_DamAdd_Rate,
+      "le code doit exister dans le catalogue interroge par l'application.");
+    const porteurs = Object.entries(CATALOGUE.gearSets).filter(([, set]) =>
+      [].concat(set.twoStats || [], set.fourStats || [], set.sevenStats || [])
+        .some(ligne => ligne.stat === "I_All_DamAdd_Rate"));
+    assert.ok(porteurs.length,
+      "au moins un ensemble doit porter ce code, sinon ce branchement est mort.");
+
+    const entrees = entreesDuCalcul({
+      statsDuBuild:{ atk:1000, bonusGlobal:750 },
+      /* Une vulnerabilite cochee s'ajoute PAR-DESSUS le bonus du build : le
+         seau vaut pour toutes les competences, quelle que soit l'origine. */
+      buffsCoches:[{ effet:"vulnerabiliteGlobale", valeur:5000 }]
+    });
+    assert.equal(entrees.bonusGlobal, 5750,
+      "750 du build + 5 000 de la vulnerabilite");
+  }
+
   /* LA MESURE. Mannequin, Merlin p10 Baguette, Jugement foudroyant (159 %,
      NORMAL_SKILL), releve juste apres un rerolle d'enchantement.
 

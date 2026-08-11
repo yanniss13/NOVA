@@ -220,30 +220,48 @@ assert.ok(lignes > 0, "la table est vide : ce test ne prouverait rien.");
 {
   const { loadApp } = require("./helpers/load-app");
   const {
-    statsElementairesDuBuild, entreesDuCalcul, versLAttaqueElementaire,
+    statsElementairesDuBuild, entreesDuCalcul, seauElementaireDeLaStat,
     bonusCategorieDesBuffs
   } = loadApp().hooks;
+  const partage = ligne => Boolean(seauElementaireDeLaStat(ligne.stat));
 
-  const source = fs.readFileSync(
-    path.join(racine, "js", "metier", "passifs-armes.js"), "utf8"
-  ).replace(/^\s*export\s*\{[\s\S]*?\}\s*;\s*$/m, "");
-  const bac = { window:{ SEVEN_DS_PASSIFS_ARMES:TABLE } };
-  vm.runInNewContext(source, bac, { filename:"passifs-armes.js" });
-  const partage = bac.versLAttaqueElementaire;
-  assert.equal(typeof partage, "function",
-    "versLAttaqueElementaire doit etre exposee par le module pur.");
-  assert.equal(typeof versLAttaqueElementaire, "function",
-    "la vue doit pouvoir importer la meme regle de partage.");
+  /* Route 1 — l'attaque elementaire, resolue AVANT les entrees. La laisser
+     passer par entreesDuCalcul la rendrait inerte : la somme y est deja faite.
 
-  /* Route 1 — l'attaque elementaire, resolue AVANT les entrees. Le laisser
-     passer par entreesDuCalcul le rendrait inerte : la somme y est deja faite. */
+     DEUX SEAUX, et la difference est mesurable. Barrage des Tenebres porte un
+     taux de TOUS les elements, donc il majore aussi l'attaque « tous
+     elements » ; le grimoire de l'ame vorace n'en nomme qu'un, et ne doit
+     majorer que le sien. Les verser dans le meme seau ferait gagner au
+     grimoire une part qu'aucun texte ne lui donne. */
   const lire = code => ({ Dark_Add:5281, AllElement_Add:270 })[code] || 0;
   const barrage = TABLE.flatMap(f => f.lignes)
     .find(ligne => ligne.id === "gantelets-ame-vorace-barrage-tenebres");
-  assert.ok(partage(barrage), "Barrage passe par l'attaque elementaire.");
-  const sortie = statsElementairesDuBuild(lire, "dark", barrage.parCumul[6] * 4);
+  assert.equal(seauElementaireDeLaStat(barrage.stat), "tous",
+    "Barrage porte un taux de tous les elements.");
+  const sortie = statsElementairesDuBuild(lire, "dark", {
+    tous:barrage.parCumul[6] * 4
+  });
   assert.equal(sortie.attaqueElementaire, 6106.1,
     "le taux de tous les elements doit majorer les deux attaques elementaires.");
+
+  const grimoire = TABLE.flatMap(f => f.lignes)
+    .find(ligne => ligne.id === "grimoire-ame-vorace-attaque-froid");
+  assert.equal(seauElementaireDeLaStat(grimoire.stat), "propre",
+    "le grimoire ne nomme que son element.");
+  const froid = statsElementairesDuBuild(
+    code => ({ Ice_Add:1000, AllElement_Add:200 })[code] || 0,
+    "ice", { propre:5000 }
+  );
+  assert.equal(froid.attaqueElementaire, 1000 * 1.5 + 200,
+    "un taux d'un seul element laisse l'attaque « tous elements » intacte.");
+
+  /* Un suffixe _Rate ne suffit pas : deux codes tres frequents finissent
+     ainsi sans etre elementaires, et les prendre pour tels detournerait un
+     taux critique vers l'attaque. */
+  assert.equal(seauElementaireDeLaStat("C_Critical_Rate"), null);
+  assert.equal(seauElementaireDeLaStat("I_AtkAdd_Rate"), null);
+  assert.equal(seauElementaireDeLaStat("Ice_Element_Rate"), null,
+    "le bonus de DEGATS elementaires n'est pas un taux d'ATTAQUE.");
 
   /* Route 2 — les lignes cochees. Chacune doit deplacer soit une entree
      commune, soit un bonus de CATEGORIE : ces derniers ne passent pas par

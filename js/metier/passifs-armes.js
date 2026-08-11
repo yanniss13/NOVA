@@ -49,20 +49,15 @@
       }));
   }
 
-  /* OU VA CE PASSIF, decide ici plutot que dans la vue.
+/* OU VA UN PASSIF : voir seauElementaireDeLaStat() dans calculateur-entrees.js.
 
-     Un taux sur toute l'attaque elementaire doit rejoindre les BASES, avant
-     qu'elles ne resolvent la somme elementaire : verse plus tard, il
-     n'atteindrait qu'un nombre deja calcule et resterait inerte. Tout le reste
-     - taux d'attaque, taux critique, vulnerabilite de la cible - fait le
-     trajet inverse et passe par les lignes cochees, ou entreesDuCalcul sait
-     deja le ranger.
+   Un taux d'attaque elementaire doit rejoindre les BASES, avant qu'elles ne
+   resolvent la somme elementaire ; verse plus tard, il n'atteindrait qu'un
+   nombre deja calcule et resterait inerte. Tout le reste - taux d'attaque,
+   taux critique, bonus de categorie, vulnerabilite de la cible - fait le
+   trajet inverse et passe par les lignes cochees.
 
-     Cette regle vit dans le module PUR pour qu'un test la verifie sans
-     navigateur : se tromper de cote ferait soit disparaitre un passif, soit
-     le compter deux fois. */
-  function versLAttaqueElementaire(passif){
-    return Boolean(passif) && passif.stat === "AllElement_Rate";
-  }
-
-export { passifsArmesApplicables, versLAttaqueElementaire };
+   La regle vit la-bas et non ici, avec le reste du vocabulaire des codes de
+   stat : distinguer Ice_Rate de C_Critical_Rate demande de connaitre la liste
+   des elements, et ce module resterait sinon a la tenir en double. */
+export { passifsArmesApplicables };
