@@ -208,6 +208,14 @@ const STORAGE_KEY = "confrerie7ds.teams";
       .map(t => Number(t.replace(/[^0-9]/g, "")));
     assert.notEqual(apresUneReleve[2], esperance,
       "une releve doit modifier l'esperance par les chances crit.");
+    /* Le buff DIT ce qu'il ajoute, et ou cela se lit. Les deux statistiques de
+       Souverain cupide sont muettes sur Non-crit et Crit : sans cette phrase,
+       un membre qui les regarde croit la page cassee - c'est arrive. */
+    const carteSet = setCupide.locator("xpath=../..");
+    assert.match(await carteSet.innerText(), /taux critique \+6 %/i,
+      "le buff doit annoncer son apport chiffre");
+    assert.match(await carteSet.innerText(), /que la colonne Espérance/i,
+      "le buff doit dire quelle colonne il deplace");
     await setCupide.selectOption("2");
     const apresDeuxReleves = (await ligne.locator(".calc-valeur").allTextContents())
       .map(t => Number(t.replace(/[^0-9]/g, "")));
@@ -510,6 +518,17 @@ const STORAGE_KEY = "confrerie7ds.teams";
     const basMannequin = await page.locator("#calculateurBody").textContent();
     assert.match(basMannequin, /ne s'y calibre pas/,
       "la page doit dire que la constante C ne se calibre pas sans defense");
+
+    /* Le percement est IGNORE sans armure — c'est un releve, pas un oubli.
+       Sur le mannequin la page doit donc le dire, sinon le buff de set y reste
+       silencieux sans raison lisible. */
+    await page.locator('[data-set-passive="equip_t5_greed"]').selectOption("2");
+    assert.match(await page.locator(".calc-ensembles").innerText(),
+      /le percement n'a rien à percer/i,
+      "sur le mannequin, la page doit dire que le percement est inerte");
+    /* Repli sur l'etat neutre, mais PAS sur la cible : tout ce qui suit a
+       toujours ete verifie sur le mannequin. */
+    await page.locator('[data-set-passive="equip_t5_greed"]').selectOption("0");
 
     /* La section des tenues gravees existe, et ses cases sont DECOCHEES : ces
        passifs sont presque tous conditionnels, donc rien ne s'applique sans un
