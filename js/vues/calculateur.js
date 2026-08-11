@@ -25,7 +25,7 @@ import {
   activeGearSets, calculateHeroStats, groupBuildStatResults
 } from "../metier/stats-calcul.js";
 import {
-  CIBLES, CONSTANTE_PAR_DEFAUT, calibrerConstante
+  CIBLES, CONSTANTE_PAR_DEFAUT, PLAFOND_PROPRE, calibrerConstante
 } from "../metier/degats-calcul.js";
 import { CalibrationStore } from "../donnees/calibration-store.js";
 import {
@@ -774,9 +774,63 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     return section;
   }
 
+  /* Ce que porte une ligne d'ensemble, dit en clair. Souverain cupide n'emploie
+     que ces deux codes ; un code inconnu se tait plutot que d'afficher son
+     identifiant brut a un membre. */
+  const LIBELLE_STAT_ENSEMBLE = {
+    C_Critical_Rate:"taux critique",
+    D_Protect_Cur_Rate:"percement de défense"
+  };
+
+  /* CE QUE LE BUFF FAIT REELLEMENT, ET CE QU'IL NE FERA PAS.
+
+     Les deux seules statistiques de Souverain cupide sont muettes sur les
+     colonnes Non-crit et Crit : la formule ne les y fait entrer nulle part. Le
+     taux critique ne pondere que l'esperance, et le percement ne mord que sur
+     une armure - sur le mannequin, degatsAttendus() l'ignore volontairement.
+
+     Un membre qui change d'etat et ne voit aucun chiffre bouger en conclut que
+     la page est cassee. Ces lignes existent pour que le silence du tableau soit
+     un resultat annonce, et non une panne supposee. */
+  function apportDeLEnsemble(scenario, contexte){
+    const lignes = scenario.lignes;
+    if(!lignes.length) return [];
+    const source = contexte || {};
+    const cible = source.cible || {};
+    const dit = lignes
+      .filter(ligne => LIBELLE_STAT_ENSEMBLE[ligne.stat])
+      .map(ligne => LIBELLE_STAT_ENSEMBLE[ligne.stat]
+        + " +" + (Math.round(ligne.valeur) / 100) + " %");
+    const notes = [el("p",{class:"calc-muette",
+      text:"Ce buff ajoute " + dit.join(" et ") + "."})];
+
+    const critique = lignes.find(ligne => ligne.stat === "C_Critical_Rate");
+    /* Le plafond mord sur le taux NET de la resistance de la cible, comme dans
+       degatsAttendus() : l'annoncer sur le taux brut se tromperait contre
+       Akumu, dont la resistance critique monte a 122 %. */
+    const critNet = (Number(source.critRate) || 0) - (Number(cible.critResist) || 0);
+    if(critique && critNet >= PLAFOND_PROPRE){
+      notes.push(el("p",{class:"calc-avertissement",
+        text:"Taux critique déjà au plafond de "
+          + (PLAFOND_PROPRE / 100) + " % : ce bonus n'ajoute rien."}));
+    }else if(critique){
+      notes.push(el("p",{class:"calc-muette",
+        text:"Le taux critique ne déplace que la colonne Espérance — "
+          + "jamais Non-crit ni Crit."}));
+    }
+
+    const percement = lignes.find(ligne => ligne.stat === "D_Protect_Cur_Rate");
+    if(percement && !(Number(cible.def) > 0)){
+      notes.push(el("p",{class:"calc-avertissement",
+        text:"Sans armure, le percement n'a rien à percer : "
+          + "il reste sans effet sur le mannequin."}));
+    }
+    return notes;
+  }
+
   /* Le set est deja porte par le heros. Son etat temporaire est le seul choix
      local : les trois options remplacent un effet, elles ne se cochent pas. */
-  function sectionPassifEnsemble(scenario, redessiner){
+  function sectionPassifEnsemble(scenario, redessiner, contexte){
     if(!scenario) return null;
     const section = el("section",{class:"calc-ensembles calc-carte"},[
       el("h3",{class:"calc-carte-titre",text:"Bonus d'ensemble"}),
@@ -803,6 +857,8 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     section.appendChild(el("label",{class:"calc-champ"},[
       el("span",{text:"État du bonus"}), choix
     ]));
+    apportDeLEnsemble(scenario, contexte)
+      .forEach(note => section.appendChild(note));
     return section;
   }
 
@@ -1481,7 +1537,12 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     vue.appendChild(sectionEssaiEnchantements(
       hero, etat.essaiEnchantements, dessiner
     ));
-    const sectionEnsemble = sectionPassifEnsemble(scenarioEnsemble, dessiner);
+    /* Le taux RETOUCHE, pas celui du build : c'est lui qui entrera dans le
+       moteur, donc lui qui decide si le plafond mord. */
+    const sectionEnsemble = sectionPassifEnsemble(scenarioEnsemble, dessiner, {
+      critRate:valeurRetouchee("critRate", bases.stats.critRate),
+      cible:cibleCourante()
+    });
     if(sectionEnsemble) vue.appendChild(sectionEnsemble);
     if(aRetouche()){
       vue.appendChild(el("p",{class:"calc-avertissement calc-retouche",

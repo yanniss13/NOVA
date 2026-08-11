@@ -453,6 +453,10 @@
    dans CIBLES. Elle reste dans le module — les tests la lisent par le
    chargeur — parce qu'elle documente le point de depart, le palier 1, celui
    que la page affichait quand il etait la seule cible connue. */
+/* PLAFOND_PROPRE sort parce que la VUE doit le dire, pas seulement le subir :
+   un bonus de taux critique verse a un heros deja au plafond ne deplace aucun
+   chiffre, et un membre qui ne voit pas pourquoi croit la page cassee. Le
+   reecrire dans la vue ferait deux plafonds a tenir d'accord. */
 export {
-  CIBLES, CONSTANTE_PAR_DEFAUT, calibrerConstante, degatsAttendus
+  CIBLES, CONSTANTE_PAR_DEFAUT, PLAFOND_PROPRE, calibrerConstante, degatsAttendus
 };
