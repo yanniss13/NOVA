@@ -70,29 +70,40 @@
 // CE QUI N'Y FIGURE PAS, ET POURQUOI. Sur les 68 tenues, 28 n'ont aucun effet
 // offensif - barrieres, soins, recharges, jauges, deplacement. Restaient 26
 // passifs offensifs pour leur seul porteur et 14 qui buffent l'equipe.
-// TRENTE-DEUX tenues sont transcrites ici. Les dix autres ne le sont pas, et
-// il vaut mieux le dire que les approximer :
+// TRENTE-SEPT tenues sont transcrites ici. Les autres ne le sont pas, et il
+// vaut mieux le dire que les approximer :
 //
-//   Chevalier sacre prometteur (gil-thunder)   « degats infliges aux ennemis
-//     affectes par Electrocution » : un bonus GLOBAL, dont aucun code de stat
-//     du depot ne porte le seau. En inventer un desactiverait le test qui
-//     refuse les codes inventes.
 //   Chevalier sacre a la visiere en etoile (jericho) et Piste de la flamme
 //     cramoisie (guila)   « resistance au Deluge » : une resistance de jauge,
 //     distincte de la resistance elementaire que la cible porte.
-//   Le Serpent de l'Envie (diane) et Dignite de la sainte (elaine)   leur
-//     plafond s'ecrit « (Max\u00a0: 56%, 24%) », et le second nombre ne suit aucune
-//     phrase STABLE d'un niveau a l'autre, puisque le premier change avec le
-//     niveau. La garde refuse une valeur qu'on ne peut pas designer sans
-//     ambiguite ; c'est exactement son role.
 //   Retour du Chevalier Sacre (hendrickson), Resistance et revolution
 //     (derieri), Tenue modeste (dreyfus)   des degats critiques ou
 //     elementaires restreints a UNE categorie de competence. Le moteur porte
-//     les deux notions separement, jamais croisees.
+//     les deux notions separement, jamais croisees. Tenue modeste dit
+//     « degats de TERRE de l'attaque ultime » : la ranger en bonus d'ultime
+//     supposerait que tout l'ultime du porteur soit de Terre, et la ranger en
+//     bonus de Terre gonflerait les quatre autres categories. Les deux
+//     rangements sont faux ; on n'en choisit aucun.
 //   Tenue de fete legere (klotho)   des degats de proc, sans effet sur les
 //     statistiques.
 //   Protection de la fee (tioreh)   seule la defense des allies monte : rien
 //     d'offensif a chiffrer.
+//
+// CINQ SONT REVENUES, et voici ce qui les bloquait :
+//
+//   Chevalier sacre prometteur (gil-thunder)   attendait un seau pour les
+//     « degats infliges aux ennemis affectes par Electrocution ». Aucun CODE
+//     DE STAT ne le porte, c'etait exact - mais l'effet vulnerabiliteGlobale
+//     le porte, et ce n'est pas un code invente : c'est un effet sur la cible,
+//     deja branche et deja teste.
+//   Le Serpent de l'Envie (diane) et Dignite de la sainte (elaine)   leur
+//     plafond ecrit DEUX nombres dans la meme parenthese, et il fallait
+//     designer le second. L'ancre retenue est « %, » : ce n'est pas un
+//     nombre, donc elle ne change pas d'un niveau a l'autre, et c'est
+//     justement la virgule qui separe les deux plafonds. Verifiee unique aux
+//     trois niveaux.
+//   Furtivite du demon (drake) et Marche des ombres (drake)   simplement
+//     oubliees : rien ne les bloquait.
 //
 // Et, DANS des tenues par ailleurs transcrites, trois effets isoles restent
 // dehors pour la meme raison - un seau qui manque :
@@ -110,8 +121,8 @@
 //     Batir une reduction sur un socle conteste ferait deux erreurs au lieu
 //     d'une.
 //
-// Ces dix reviendront le jour ou le moteur portera le seau qui leur manque.
-// Deux l'ont deja fait : Fille de la foret et de la terre (tioreh) et
+// Celles qui restent reviendront le jour ou le moteur portera le seau qui leur
+// manque. Sept l'ont deja fait : Fille de la foret et de la terre (tioreh) et
 // Seigneur des ombres (drake) attendaient toutes deux un seau de reduction de
 // RESISTANCE critique, qui existe desormais. La premiere attendait en plus la
 // vulnerabilite par categorie, arrivee avec les potentiels d'equipe. C'est
@@ -824,6 +835,98 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       niveaux:[1200, 1600, 2000],
       provenance:{
         phrase:"augmente les dégâts d'attaque normale de tous les héros alliés de "
+      }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Chevalier sacré prometteur.webp":[
+    {
+      /* « Degats infliges AUX ENNEMIS affectes par… » : une propriete de la
+         cible, pas un bonus du heros, et elle ne vise aucune categorie. */
+      id:"chevalier-sacre-electrocution",
+      libelle:"Cible électrocutée : dégâts subis +25 %",
+      cible:"soi",
+      effet:"vulnerabiliteGlobale",
+      cibleEnnemi:true,
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[1500, 2000, 2500],
+      /* « par Électrocution de » et non « Électrocution » seule : la seconde
+         phrase dit « affecte par Électrocution augmente la duree ». */
+      provenance:{ phrase:"par Électrocution de " }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Dignité de la sainte.webp":[
+    {
+      id:"dignite-sainte-degats-terre",
+      libelle:"Résistance au Déluge de Terre réduite : dégâts de Terre +32 %",
+      cible:"allies",
+      stat:"Earth_Element_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:"earth",
+      niveaux:[1600, 2400, 3200],
+      parCumul:[200, 300, 400],
+      cumuls:8,
+      /* DEUX plafonds dans une seule parenthese - « (Max : 16 %, 32 %) » - un
+         pour la defense, un pour les degats. L'ancre « (Max » designerait le
+         premier. « %, » designe le second, et n'apparait qu'une fois dans tout
+         le texte : c'est precisement cette virgule qui separe les deux. */
+      provenance:{
+        phrase:"%, ",
+        phraseCumul:"et les dégâts de Terre de "
+      }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Furtivité du démon.webp":[
+    {
+      id:"furtivite-demon-degats-tenebres",
+      libelle:"Attaque dans le dos : dégâts des Ténèbres +50 %",
+      cible:"soi",
+      stat:"Dark_Element_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:"dark",
+      niveaux:[3000, 4000, 5000],
+      provenance:{ phrase:"d'augmenter les dégâts des Ténèbres de " }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Le Serpent de l'Envie.webp":[
+    {
+      id:"serpent-envie-degats-terre",
+      libelle:"Cible sous Brise-tout : dégâts de Terre +32 %",
+      cible:"soi",
+      stat:"Earth_Element_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:"earth",
+      niveaux:[2400, 2800, 3200],
+      parCumul:[600, 700, 800],
+      cumuls:4,
+      /* Meme forme a deux plafonds que la Dignite de la sainte, sous un autre
+         libelle : « (Nombre maximal de cumuls pour chaque effet : 80 %, 32 %) ».
+         La virgule reste le seul separateur fiable. */
+      provenance:{
+        phrase:"%, ",
+        phraseCumul:"augmente les dégâts de Terre de "
+      }
+    }
+  ],
+  "7ds-armures-ssr/Armure liee/Marche des ombres.webp":[
+    {
+      id:"marche-des-ombres-degats-tenebres",
+      libelle:"Par coup critique : dégâts des Ténèbres +4,5 %",
+      cible:"soi",
+      stat:"Dark_Element_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:"dark",
+      niveaux:[3500, 4000, 4500],
+      parCumul:[350, 400, 450],
+      cumuls:10,
+      provenance:{
+        phrase:"(Max\u00a0: ",
+        phraseCumul:"augmente les dégâts des Ténèbres de "
       }
     }
   ]

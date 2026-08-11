@@ -164,26 +164,27 @@ Object.keys(TABLE).forEach(fichier => {
   });
 });
 
-/* Seize lignes a cumuls sur quarante-huit. Ce compte MONTE quand une ligne
-   gagne son grain : sans lui, en oublier une passerait inapercu, et sa case
-   continuerait d'envoyer au plafond un build qui n'y est pas. */
+/* Dix-neuf lignes a cumuls. Ce compte MONTE quand une ligne gagne son grain :
+   sans lui, en oublier une passerait inapercu, et sa case continuerait
+   d'envoyer au plafond un build qui n'y est pas. */
 {
   const aCumuls = Object.values(TABLE).flat().filter(p => p.cumuls);
-  assert.equal(aCumuls.length, 16,
-    "16 passifs a cumuls attendus, recu " + aCumuls.length);
+  assert.equal(aCumuls.length, 19,
+    "19 passifs a cumuls attendus, recu " + aCumuls.length);
 }
 
-/* Trente-deux tenues sur les quarante qui portent un passif offensif :
-   vingt-six pour leur seul porteur, quatorze pour l'equipe. Les dix absentes
+/* Trente-sept tenues sur celles qui portent un passif offensif. Les absentes
    sont NOMMEES dans l'en-tete de data/passifs-graves.js avec la raison de leur
    absence - un seau qui manque au moteur, ou une valeur que la garde refuse de
    laisser designer.
 
    Ce compte empeche qu'un oubli passe inapercu, et il MONTE quand un seau
-   arrive : il valait 30 avant que le moteur ne sache reduire la resistance
-   critique de la cible, ce qui a fait revenir deux tenues nommees. */
-assert.equal(Object.keys(TABLE).length, 32,
-  "32 tenues attendues, recu " + Object.keys(TABLE).length);
+   arrive ou quand une ancre est trouvee : il valait 30 avant que le moteur ne
+   sache reduire la resistance critique de la cible, puis 32, et il passe a 37
+   avec cinq retours - un effet de vulnerabilite deja branche, une ancre « %, »
+   qui designe le second de deux plafonds, et deux tenues simplement oubliees. */
+assert.equal(Object.keys(TABLE).length, 37,
+  "37 tenues attendues, recu " + Object.keys(TABLE).length);
 
 /* Les deux cibles doivent etre REPRESENTEES. Le lot « allies » est arrive
    apres coup : sans ce controle, un fichier ou toutes les lignes seraient
