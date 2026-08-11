@@ -35,7 +35,12 @@ function nombreApres(texte, phrase, quoi){
       + (morceaux.length - 1) + " fois.");
   const trouve = /^(\d+(?:\.\d+)?)%/.exec(morceaux[1]);
   assert.ok(trouve, quoi + " : aucun pourcentage ne suit « " + phrase + " ».");
-  return Number(trouve[1]) * 100;
+  /* Arrondi OBLIGATOIRE : le jeu publie des pourcentages a une decimale, et
+     2.2 x 100 vaut 220.00000000000003 en binaire. Sans lui, une transcription
+     juste echouerait sur un chiffre impair - 2,5 % passait, 2,2 % non. Un
+     pourcentage a deux decimales tombe toujours sur un dix-millieme entier,
+     donc l'arrondi ne peut masquer aucune valeur reelle. */
+  return Math.round(Number(trouve[1]) * 100);
 }
 
 const TABLE = catalogueDe("passifs-armes.js", "SEVEN_DS_PASSIFS_ARMES");
@@ -193,6 +198,17 @@ assert.ok(lignes > 0, "la table est vide : ce test ne prouverait rien.");
     "un passif sans cumuls ne rend pas de pas.");
   assert.equal(noires[0].cumuls, null,
     "un passif sans cumuls ne rend pas de plafond.");
+
+  /* UN PLAFOND QUI CHANGE DE COMPTE SELON LE NIVEAU. La vue deroule son
+     selecteur de zero a `cumuls` : rendre le tableau entier au lieu du nombre
+     du niveau y afficherait une liste vide. */
+  const aura = "7ds-armes/Hache/Hache à l'aura triomphale.webp";
+  assert.equal(resolve({ fichier:aura, niveau:1 })[0].cumuls, 13,
+    "l'aura triomphale plafonne a treize coups au niveau 1.");
+  assert.equal(resolve({ fichier:aura, niveau:7 })[0].cumuls, 15,
+    "elle plafonne a quinze coups au niveau 7.");
+  assert.equal(resolve({ fichier:aura, niveau:7 })[0].parCumul, 220,
+    "et rend +2,2 % par coup a ce niveau.");
 }
 
 /* CHAQUE LIGNE DOIT ATTEINDRE LE CALCUL, par l'une des deux routes.

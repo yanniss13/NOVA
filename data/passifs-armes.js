@@ -161,6 +161,85 @@ window.SEVEN_DS_PASSIFS_ARMES = [
     ]
   },
   {
+    famille:"Aura triomphale",
+    armes:[
+      "7ds-armes/Baguette/Baguette à l'aura triomphale.webp",
+      "7ds-armes/Baton/Bâton à l'aura triomphale.webp",
+      "7ds-armes/Bouclier/Épée et bouclier à l'aura triomphale.webp",
+      "7ds-armes/Epee 1 main/Épée longue à l'aura triomphale.webp",
+      "7ds-armes/Epee 2 mains/Espadon à l'aura triomphale.webp",
+      "7ds-armes/Epees doubles/Épées doubles à l'aura triomphale.webp",
+      "7ds-armes/Gantelets/Gantelets à l'aura triomphale.webp",
+      "7ds-armes/Hache/Hache à l'aura triomphale.webp",
+      "7ds-armes/Lance/Lance à l'aura triomphale.webp",
+      "7ds-armes/Livre/Grimoire à l'aura triomphale.webp",
+      "7ds-armes/Nunchaku/Nunchaku à l'aura triomphale.webp",
+      "7ds-armes/Rapiere/Rapière à l'aura triomphale.webp"
+    ],
+    lignes:[
+      {
+        id:"aura-triomphale-coups-attaque",
+        libelle:"Après la spéciale : attaque +2,2 % par coup normal",
+        stat:"I_AtkAdd_Rate",
+        operation:"multiply",
+        unite:"ten-thousandths",
+        niveaux:[2080, 2550, 2700, 2850, 3000, 3150, 3300],
+        parCumul:[160, 170, 180, 190, 200, 210, 220],
+        /* LE PLAFOND CHANGE DE COMPTE SELON LE NIVEAU : treize coups au niveau
+           un, quinze ensuite. Barrage des Tenebres en avait quarante partout,
+           ce qui laissait croire a un nombre constant. Le champ accepte donc
+           un tableau, et le test verifie pas x cumuls = plafond a chacun des
+           sept niveaux - c'est ce produit qui a revele l'irregularite. */
+        cumuls:[13, 15, 15, 15, 15, 15, 15],
+        /* L'ancre du plafond porte « pendant 20s. » : a partir du niveau 4, la
+           seconde phrase ajoute son propre « (Max : » et un plafond nu
+           designerait la mauvaise valeur. */
+        provenance:{
+          phrase:"pendant 20s. (Max : ",
+          phraseCumul:"augmente l'attaque de "
+        }
+      }
+    ]
+  },
+  {
+    famille:"Rugissement de la liche draconique",
+    armes:[
+      "7ds-armes/Baguette/Baguette du rugissement de la liche draconique.webp",
+      "7ds-armes/Baton/Bâton du rugissement de la liche draconique.webp",
+      "7ds-armes/Bouclier/Épée et bouclier du rugissement de la liche draconique.webp",
+      "7ds-armes/Epee 1 main/Épée longue du rugissement de la liche draconique.webp",
+      "7ds-armes/Epee 2 mains/Espadon du rugissement de la liche draconique.webp",
+      "7ds-armes/Epees doubles/Épées doubles du rugissement de la liche draconique.webp",
+      "7ds-armes/Gantelets/Gantelets du rugissement de la liche draconique.webp",
+      "7ds-armes/Hache/Hache du rugissement de la liche draconique.webp",
+      "7ds-armes/Lance/Lance du rugissement de la liche draconique.webp",
+      "7ds-armes/Livre/Grimoire du rugissement de la liche draconique.webp",
+      "7ds-armes/Nunchaku/Nunchaku du rugissement de la liche draconique.webp",
+      "7ds-armes/Rapiere/Rapière du rugissement de la liche draconique.webp"
+    ],
+    /* LA SECONDE MOITIE DE LA PHRASE RESTE DEHORS, et elle est grosse : «
+       augmente l'attaque a hauteur de la valeur de chances crit. qui depasse
+       50 %. (Max : 30 %) ». Ce serait le premier bonus du depot DERIVE d'une
+       autre statistique, et son ordre d'application n'est pas mesure : rien ne
+       dit si les 20 % que ce meme passif vient de poser comptent dans
+       l'excedent. L'ecart va jusqu'a vingt points d'attaque sur un build sous
+       80 % de critique. Une mesure trancherait ; sans elle, on n'invente pas. */
+    lignes:[
+      {
+        id:"liche-draconique-releve-critique",
+        libelle:"Après une relève : chances crit. +20 % (10 s)",
+        stat:"C_Critical_Rate",
+        porteur:"hero",
+        operation:"add",
+        unite:"ten-thousandths",
+        niveaux:[600, 1000, 1200, 1400, 1600, 1800, 2000],
+        /* « les chances crit. de » et non « de chances crit. » : la seconde
+           tournure apparait dans la clause derivee, juste apres. */
+        provenance:{ phrase:"augmente les chances crit. de " }
+      }
+    ]
+  },
+  {
     famille:"Âme vorace",
     armes:["7ds-armes/Gantelets/Gantelets de l'âme vorace.webp"],
     lignes:[
