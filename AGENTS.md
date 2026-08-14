@@ -1063,9 +1063,18 @@ le SQL Editor afin d'ajouter les tables à la publication
   **Exception : si `sb` vaut `null`** — script CDN absent, PWA hors ligne — tout
   reste visible. Aucun compte n'y est possible et le site retombe sur
   localStorage : masquer y enfermerait le membre hors de ses propres équipes.
-  Le calculateur part du roster, donc d'un compte : le bouton « Calculer les
-  dégâts » de chaque héros du Builder est la seule porte qu'un visiteur puisse
-  pousser. Sans elle, son onglet serait un cul-de-sac.
+- **Le calculateur a trois sources de build**, et la troisième existe pour le
+  visiteur. Le roster exige un compte ; `heroImpose` n'arrive que d'une fiche de
+  héros, qui ne s'ouvre que depuis une équipe enregistrée ou un roster. Sans
+  troisième source, l'onglet répondait « Connecte-toi » en renvoyant vers une
+  porte fermée. Elle est **l'équipe en cours d'édition dans le Builder** :
+  `herosDuBrouillon()` lit `brouillonEquipe`, et sans roster le bloc
+  `blocSansRoster()` propose ses héros équipés. Ils ne sont pas convertis en
+  fiches de roster — ils ont déjà la forme qu'attend `heroImpose`, donc le
+  chemin existant est réutilisé entier. Chaque héros du Builder porte en plus
+  un bouton « Calculer les dégâts » qui y mène directement.
+  ⚠️ Un build incomplet ne produit **aucune table** : le calculateur annonce
+  `Configuration à compléter : <manques>`. C'est voulu, pas une panne.
 
 ## Groupes de Boss de Guilde (onglet « Groupes de boss »)
 

@@ -13,8 +13,9 @@ import {
 } from "../noyau/constantes.js";
 import { $, el, numericKeyboardInputProps } from "../noyau/dom.js";
 import { sessionCourante } from "../etat/session.js";
+import { brouillonEquipe } from "../etat/brouillon-equipe.js";
 import { charOf } from "../metier/catalogue.js";
-import { equippedEnumOf } from "../metier/armes.js";
+import { equippedEnumOf, weaponFolderOf } from "../metier/armes.js";
 import { rosterHeroSnapshot } from "../metier/equipe-modele.js";
 import {
   creerEssaiEnchantements, essaiEnchantementsDiffere,
@@ -196,6 +197,30 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
 
   function typesDe(entry){
     return entry && entry.builds ? Object.keys(entry.builds).sort() : [];
+  }
+
+  /* La TROISIEME source de builds : l'equipe en cours d'edition dans le
+     Builder.
+
+     Elle existe parce que les deux autres exigent un compte. Le roster en est
+     un par definition, et le build impose n'arrive que d'une fiche de heros,
+     qui ne s'ouvre que depuis une equipe enregistree ou un roster. Sans
+     celle-ci, l'onglet Calculateur d'un visiteur repondait « Connecte-toi » en
+     le renvoyant vers une porte qu'il ne pouvait pas pousser.
+
+     Les heros du brouillon ne sont PAS convertis en fiches de roster : ils ont
+     deja la forme que `heroImpose` attend — c'est celle que passe la fiche de
+     heros. On reutilise donc ce chemin entier, sans nouvel etat ni nouveau
+     calcul. Un heros sans personnage ou sans arme n'a rien a calculer et ne
+     figure pas dans la liste. */
+  function herosDuBrouillon(){
+    const equipe = brouillonEquipe.equipe;
+    return ((equipe && equipe.heroes) || [])
+      .map(hero => ({ hero, typeArme:weaponFolderOf(hero.weapon) }))
+      .filter(candidat => candidat.hero.char && candidat.typeArme)
+      .map(candidat => Object.assign(candidat, {
+        libelle:nomDuPersonnage(candidat.hero.char) + " — " + candidat.typeArme
+      }));
   }
 
   /* L'element vient de l'ARME equipee, jamais du personnage : chaque slot
@@ -1398,6 +1423,54 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     return bloc;
   }
 
+  /* Ce que voit quelqu'un dont le roster ne donne rien : un visiteur sans
+     compte, ou un membre qui n'a encore rien enregistre.
+
+     Le bloc ne dit plus « connecte-toi » tout seul. Il propose ce qui EXISTE :
+     les heros equipes de l'equipe en cours, et a defaut le chemin pour en
+     composer une. Le roster reste mentionne au membre connecte, parce que
+     c'est la source qu'il retrouvera d'une session a l'autre.
+
+     Pas de `redessiner` en parametre, contrairement aux autres blocs de cette
+     vue : `ouvrirCalculateur` repasse par `showView`, qui redessine lui-meme. */
+  function blocSansRoster(){
+    const bloc = el("div",{class:"calc-form"});
+    const brouillon = herosDuBrouillon();
+    if(brouillon.length){
+      bloc.appendChild(el("p",{class:"calc-muette",
+        text:sessionCourante.user
+          ? "Aucun build dans ton roster. Choisis un héros de l'équipe en "
+            + "cours d'édition :"
+          : "Choisis un héros de l'équipe en cours d'édition :"}));
+      const rail = el("div",{class:"calc-armes"});
+      brouillon.forEach(candidat => {
+        rail.appendChild(el("button",{
+          class:"btn",
+          type:"button",
+          text:candidat.libelle,
+          onclick:()=>void ouvrirCalculateur(
+            candidat.hero.char, candidat.typeArme, candidat.hero
+          )
+        }));
+      });
+      bloc.appendChild(rail);
+      return bloc;
+    }
+    bloc.appendChild(el("p",{class:"calc-muette",
+      text:sessionCourante.user
+        ? "Le calculateur part d'un build, il n'invente aucune valeur. "
+          + "Enregistre un personnage dans ton roster, ou compose une équipe."
+        : "Le calculateur part d'un build, il n'invente aucune valeur. "
+          + "Compose une équipe pour calculer ses dégâts."}));
+    bloc.appendChild(el("button",{
+      class:"btn btn-primary",
+      type:"button",
+      text:"Créer une équipe",
+      onclick:()=>void showView("builder")
+    }));
+    return bloc;
+  }
+
   function selecteurs(entries, redessiner){
     const bloc = el("div",{class:"calc-form"});
     const choix = el("select",{
@@ -1501,12 +1574,7 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
       ]));
     } else {
       if(!entries.length){
-        vue.appendChild(el("p",{class:"calc-muette",
-          text:sessionCourante.user
-            ? "Enregistre d'abord un personnage dans ton roster : le "
-              + "calculateur part de tes builds, il n'invente aucune valeur."
-            : "Connecte-toi pour calculer les dégâts de tes builds, ou ouvre "
-              + "le calculateur depuis la fiche d'un héros."}));
+        vue.appendChild(blocSansRoster());
         return;
       }
       if(!etat.charId || !ficheDe(etat.charId)) etat.charId = entries[0].charId;
