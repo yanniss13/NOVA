@@ -91,24 +91,19 @@ const { chromium } = require("playwright");
       "Le fake doit appliquer l'authentification et la lecture RLS à toutes les ressources Boss"
     );
 
-    /* L'ARRIVEE : l'accueil, connecte ou non.
+    /* L'ARRIVEE, sans compte : le Wiki, et rien qui reclame un compte.
 
-       Le membre atterrissait sur le Builder, puis session-auth basculait vers
-       le tableau de bord : un clignotement a chaque ouverture. Deconnecte,
-       l'accueil invite a se connecter plutot que d'ouvrir un editeur d'equipe
-       que rien ne permet d'enregistrer. */
-    assert.equal(await page.locator("#view-dashboard").isVisible(), true);
-    assert.equal(await page.locator("#view-builder").isVisible(), false);
-    assert.equal(
-      await page.locator(".tabs .tab").first().getAttribute("id"),
-      "tab-dashboard",
-      "L'accueil doit etre le premier onglet"
-    );
-    assert.equal(await page.locator("#tab-dashboard").textContent(), "Accueil");
-    assert.match(
-      await page.locator("#dashboardBody").textContent(),
-      /Connecte-toi pour afficher ton suivi/
-    );
+       L'accueil est le point de chute du MEMBRE. Un visiteur n'y verrait
+       qu'une invitation a se connecter, alors son onglet sort de la barre et
+       la navigation replie sur la seule page entierement consultable.
+
+       Le parcours complet du visiteur — les quatre onglets qui restent, le
+       repli a la deconnexion, le mode hors ligne ou tout redevient visible —
+       vit dans tests/visiteur-anonyme.playwright.js. Ici on ne verifie que le
+       point de depart que tout le reste de ce fichier suppose. */
+    assert.equal(await page.locator("#view-wiki").isVisible(), true);
+    assert.equal(await page.locator("#view-dashboard").isVisible(), false);
+    assert.equal(await page.locator("#tab-dashboard").isVisible(), false);
 
     await page.locator("#authEmail").fill("yannis@example.test");
     await page.locator("#authPassword").fill("mot-de-passe-test");
@@ -122,6 +117,14 @@ const { chromium } = require("playwright");
       await page.locator("#tab-dashboard").getAttribute("aria-selected"),
       "true"
     );
+    /* L'ordre de la barre se lit une fois le membre connecte : c'est le seul
+       moment ou elle est entiere. */
+    assert.equal(
+      await page.locator(".tabs .tab:not([hidden])").first().getAttribute("id"),
+      "tab-dashboard",
+      "L'accueil doit etre le premier onglet"
+    );
+    assert.equal(await page.locator("#tab-dashboard").textContent(), "Accueil");
 
     const authenticatedBossRead = await page.evaluate(async () => {
       const state = window.__fakeSupabaseState;
@@ -3571,10 +3574,15 @@ const { chromium } = require("playwright");
     );
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await authOverlay.waitFor({ state:"visible" });
-    await page.locator("#bossBody").getByText(
-      "Connecte-toi pour les groupes de boss",
-      { exact:true }
-    ).waitFor();
+    /* La vue Boss n'est plus VISIBLE apres une deconnexion — son onglet sort
+       de la barre et la navigation replie sur le Wiki. Elle doit malgre tout
+       avoir ete reecrite : c'est ce que ce scenario surveille, qu'aucune
+       donnee du compte precedent ne survive dans le DOM, visible ou non. */
+    await page.locator("#tab-boss").waitFor({ state:"hidden" });
+    assert.match(
+      await page.locator("#bossBody").textContent(),
+      /^Connecte-toi pour les groupes de boss/
+    );
     assert.equal(await page.locator("#bossCount").textContent(), "");
     await page.evaluate(() => window.__fakeSupabaseReleaseBossRpc());
     await page.waitForFunction(() =>
@@ -5482,9 +5490,13 @@ const { chromium } = require("playwright");
       localStorage.removeItem(key);
       window.__fakeSupabaseApplySession(null);
     }, dashboardCacheKey);
-    await page.getByText("Connecte-toi pour afficher ton suivi", {
-      exact:true
-    }).waitFor();
+    /* Meme raison qu'apres la deconnexion plus haut : le suivi est reecrit
+       puis masque. On lit donc son contenu, pas sa visibilite — ce qui compte
+       ici est qu'il annonce l'absence de compte au lieu d'un faux « 0/3 ». */
+    await page.waitForFunction(() =>
+      document.querySelector("#dashboardBody").textContent
+        .includes("Connecte-toi pour afficher ton suivi")
+    );
     await page.evaluate(() => {
       window.__fakeSupabaseState.bossReadFailureOnce = {
         table:"boss_sessions",

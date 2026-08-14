@@ -50,6 +50,7 @@ import {
 import { $, el, uid } from "../noyau/dom.js";
 import { jsonCopy } from "../noyau/outils.js";
 import { authMessage, sb } from "../noyau/supabase-client.js";
+import { ouvrirCalculateur } from "./calculateur.js";
 import {
   closeWeaponConfigEditor,
   setWeaponConfigRestoreFocus,
@@ -443,6 +444,23 @@ import { toast } from "./toast.js";
         reloadProps.title = "Connexion requise pour recharger le roster";
       }
       sourceActions.appendChild(el("button",reloadProps));
+    }
+    /* La troisieme porte du calculateur, et la seule qu'un visiteur sans
+       compte puisse pousser : les deux autres passent par une fiche de heros,
+       qui ne s'ouvre que depuis une equipe enregistree ou un roster. Sans
+       elle, l'onglet Calculateur d'un visiteur n'afficherait qu'un
+       « Connecte-toi » — une porte peinte sur un mur.
+
+       Le heros est passe tel quel, pas copie : le calculateur relit son etat
+       a chaque ouverture de la vue, donc une retouche faite ensuite dans le
+       Builder se retrouve dans le calcul au lieu de l'ignorer. */
+    if(hero.char && currentWeaponType){
+      sourceActions.appendChild(el("button",{
+        class:"btn hero-calcul",
+        type:"button",
+        text:"Calculer les dégâts",
+        onclick:()=>void ouvrirCalculateur(hero.char, currentWeaponType, hero)
+      }));
     }
 
     // Portrait

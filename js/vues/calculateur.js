@@ -1471,8 +1471,12 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     if(etat.heroImpose){
       hero = etat.heroImpose;
       vue.appendChild(el("div",{class:"calc-form"},[
+        /* Trois portes menent ici — la fiche d'une equipe, la fiche d'un
+           roster, et le Builder — donc la phrase ne peut en nommer aucune.
+           Elle dit la seule chose qui compte pour lire les chiffres : ce
+           build n'est pas celui du roster. */
         el("p",{class:"calc-avertissement",
-          text:"Build ouvert depuis une fiche de héros."}),
+          text:"Ce build ne vient pas de ton roster."}),
         entries.length
           ? el("button",{
               class:"btn btn-ghost",

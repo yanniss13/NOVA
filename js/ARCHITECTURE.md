@@ -39,7 +39,7 @@ projet, et elle est vérifiée par un test.
 
 | Fichier | Contenu |
 |---|---|
-| `session.js` | `sessionCourante` : utilisateur, pseudo, profils du roster — et `canManageTeam`, la seule question qu'on lui pose |
+| `session.js` | `sessionCourante` : utilisateur, pseudo, profils du roster — et les deux questions qu'on lui pose, `canManageTeam` et `visiteurAnonyme` |
 | `brouillon-equipe.js` | `brouillonEquipe` : l'équipe en cours d'édition dans le Builder |
 
 **Pourquoi des objets et pas des `let` exportés ?** Parce qu'une liaison
@@ -83,7 +83,7 @@ version plus ancienne du site reste ouvrable.
 
 | Fichier | Contenu |
 |---|---|
-| `navigation.js` | Les onglets et **le registre des vues** |
+| `navigation.js` | Les onglets, **le registre des vues**, et le portier qui ferme les six onglets réservés à un visiteur sans compte |
 | `elements.js` | Briques de rendu partagées : `gearSlot`, `renderBonus`, `rosterWeaponLabel` |
 | `toast.js` | Le bandeau de notification |
 | `modal-stack.js` | La pile de modales : ouverture, fermeture, restitution du focus |

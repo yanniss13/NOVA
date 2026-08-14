@@ -26,4 +26,22 @@
     return !sessionCourante.user || !!team && team.owner === sessionCourante.user.id;
   }
 
-export { canManageTeam, sessionCourante };
+  /* Un visiteur : quelqu'un dont on SAIT qu'il n'a pas de compte.
+
+     Le detour par `applicationEpoch` n'est pas une precaution de style, il
+     separe deux « pas de compte » que `user === null` confond :
+
+     - avant la premiere application de session, personne n'a encore de
+       compte parce que Supabase n'a pas fini de repondre. Le membre qui
+       clique dans cette fenetre est un membre, pas un visiteur ;
+     - quand la configuration Supabase manque — PWA sans reseau, script CDN
+       absent — `applySession` n'est jamais appelee et le site entier retombe
+       sur localStorage. Y traiter le membre en visiteur l'enfermerait hors de
+       ses propres equipes.
+
+     Dans ces deux cas l'epoque vaut 0, et la reponse est « non ». */
+  function visiteurAnonyme(){
+    return sessionCourante.applicationEpoch > 0 && !sessionCourante.user;
+  }
+
+export { canManageTeam, sessionCourante, visiteurAnonyme };
