@@ -39,6 +39,7 @@
 }
 .hero-source-actions .btn:only-child{grid-column:1/-1}
 .hero-source-actions .hero-roster-reload{grid-column:1/-1}
+.hero-source-actions .hero-calcul{grid-column:1/-1}
 .portrait{
   appearance:none;border:1px solid var(--line);cursor:pointer;
   aspect-ratio:1/1;border-radius:10px;overflow:hidden;padding:0;position:relative;

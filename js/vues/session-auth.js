@@ -25,7 +25,7 @@ import { renderAnalyse } from "./analyse.js";
 import { ensureBossViewOwner, renderBossView } from "./boss-sessions.js";
 import { pseudoInput, renderBuilder, resetBuilderRosterBaselines } from "./builder.js";
 import { closeAuth, openAuth, setAuthBusy, setAuthStatus } from "./modale-auth.js";
-import { showView } from "./navigation.js";
+import { appliquerVisibiliteOnglets, showView } from "./navigation.js";
 import { renderRoster } from "./roster-equipes.js";
 import { renderMemberRoster } from "./roster-membres.js";
 import { renderDashboardView } from "./suivi.js";
@@ -129,6 +129,18 @@ import { Store } from "../donnees/equipes-store.js";
     }else if($("#view-dashboard").classList.contains("active")){
       void renderDashboardView();
     }
+    /* Un seul appel, et il vient EN DERNIER.
+
+       Il couvre la connexion, la deconnexion et la reprise de session au
+       chargement. Sa place a la fin n'est pas indifferente : les rendus
+       ci-dessus ne s'executent que sur une vue active, et cet appel en
+       desactive six. Plus haut, il aurait laisse dans le DOM masque le suivi,
+       les equipes et le roster du compte precedent, jamais reecrits. Ici,
+       chaque vue est d'abord remise a l'etat « sans compte », puis rangee.
+
+       Il peut replier la navigation sur le Wiki : c'est voulu, la vue quittee
+       n'existe plus pour ce visiteur. */
+    appliquerVisibiliteOnglets();
   }
 
   async function signIn(){

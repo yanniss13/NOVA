@@ -1054,6 +1054,18 @@ le SQL Editor afin d'ajouter les tables à la publication
 - Export / Import JSON = sauvegarde de secours et format pivot indépendant de Supabase.
 - Auth Supabase : email + mot de passe sans confirmation email. Toute lecture
   partagée exige un membre authentifié ; RLS limite l'écriture au propriétaire.
+- **Un visiteur sans compte ne voit que quatre onglets** : « Créer une équipe »,
+  Wiki, Collection et Calculateur. Les six autres lisent des données liées à un
+  compte, et il atterrit sur le Wiki. Le portier est `vues/navigation.js`
+  (`VUES_PUBLIQUES`, `appliquerVisibiliteOnglets`), la question posée à la
+  session est `visiteurAnonyme()`, et `applySession` l'appelle **en dernier**
+  pour que chaque vue soit d'abord remise à l'état « sans compte ».
+  **Exception : si `sb` vaut `null`** — script CDN absent, PWA hors ligne — tout
+  reste visible. Aucun compte n'y est possible et le site retombe sur
+  localStorage : masquer y enfermerait le membre hors de ses propres équipes.
+  Le calculateur part du roster, donc d'un compte : le bouton « Calculer les
+  dégâts » de chaque héros du Builder est la seule porte qu'un visiteur puisse
+  pousser. Sans elle, son onglet serait un cul-de-sac.
 
 ## Groupes de Boss de Guilde (onglet « Groupes de boss »)
 
