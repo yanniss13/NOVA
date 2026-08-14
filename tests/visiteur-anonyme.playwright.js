@@ -73,7 +73,23 @@ const vueActive = page => page.evaluate(() => {
       { name:"Continuer hors connexion", exact:true }).click();
     await page.locator("#authOverlay").waitFor({ state:"hidden" });
 
-    /* ---- Le Calculateur, atteint depuis le Builder. ---- */
+    /* ---- Le Calculateur, ouvert par son onglet, equipe vide. ----
+
+       Il partait du roster, donc d'un compte : son onglet repondait
+       « Connecte-toi », en renvoyant vers une fiche de heros qu'un visiteur ne
+       peut pas ouvrir. Il doit maintenant montrer la sortie qui existe. */
+    await page.locator('.tab[data-view="calculateur"]').click();
+    await page.locator("#view-calculateur").waitFor({ state:"visible" });
+    assert.equal(
+      await page.getByText("Connecte-toi pour calculer les dégâts").count(),
+      0,
+      "l'onglet ne doit plus reclamer un compte a un visiteur"
+    );
+    await page.locator("#calculateurBody")
+      .getByRole("button", { name:"Créer une équipe", exact:true })
+      .waitFor({ state:"visible" });
+
+    /* ---- Le Calculateur, ouvert par son onglet, equipe composee. ---- */
     await page.locator('.tab[data-view="builder"]').click();
     const premierHeros = page.locator(".hero").first();
 
@@ -93,6 +109,18 @@ const vueActive = page => page.evaluate(() => {
       .getByRole("button", { name:"Hache", exact:true }).click();
     await page.locator('#pickerGrid .tile[title="Hache bénie"]').click();
 
+    /* L'onglet seul suffit desormais : l'equipe en cours d'edition est une
+       source de builds au meme titre que le roster d'un membre. */
+    await page.locator('.tab[data-view="calculateur"]').click();
+    await page.locator("#view-calculateur").waitFor({ state:"visible" });
+    await page.locator("#calculateurBody")
+      .getByRole("button", { name:"Meliodas — Hache", exact:true })
+      .click();
+    await page.locator("#calculateurBody .calc-avertissement")
+      .waitFor({ state:"visible" });
+
+    /* Et le bouton du Builder mene au meme endroit, sans passer par ce choix. */
+    await page.locator('.tab[data-view="builder"]').click();
     const lien = premierHeros.getByRole("button",
       { name:"Calculer les dégâts", exact:true });
     await lien.waitFor({ state:"visible" });
