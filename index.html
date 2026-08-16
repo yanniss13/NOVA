@@ -41,6 +41,18 @@
       <span class="brand-sub">Team Builder · Boss de Guilde</span>
     </div>
   </div>
+  <!-- Lien affilié : il rapporte au propriétaire du site quand un membre
+       achète après l'avoir suivi. `rel="sponsored"` déclare cette rémunération
+       aux moteurs, comme le veut la convention pour un lien rémunéré ;
+       `noopener` empêche la page ouverte d'accéder à celle-ci.
+       Les dimensions sont celles du fichier (467 × 100) : les écrire évite que
+       la header ne sursaute au moment où l'image arrive. -->
+  <a class="lootbar" id="lootbarLink"
+     href="https://www.lootbar.com/a/raTV3p"
+     target="_blank" rel="sponsored noopener noreferrer">
+    <img src="./lootbar-logo.webp" alt="LootBar"
+         width="467" height="100" decoding="async">
+  </a>
   <!-- Le rail porte les repères de défilement : ils doivent rester immobiles
        pendant que les onglets défilent, donc hors du conteneur défilant. -->
   <div class="tabs-rail">
@@ -763,11 +775,13 @@
   var lastY = 0;
   var queued = false;
 
-  // Seules ces deux zones passent en display:none quand le header se replie.
+  // Seules ces trois zones passent en display:none quand le header se replie.
+  // Le lien LootBar en fait partie : c'est un lien, donc focusable, et un
+  // focus resté sur un élément masqué bloquerait le repli pour de bon.
   function focusInsideHidden() {
     var active = document.activeElement;
     if (!active) return false;
-    var zones = bar.querySelectorAll(".brand, .account");
+    var zones = bar.querySelectorAll(".brand, .lootbar, .account");
     for (var i = 0; i < zones.length; i++) {
       if (zones[i].contains(active)) return true;
     }

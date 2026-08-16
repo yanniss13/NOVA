@@ -26,10 +26,16 @@
 
    ⚠️ Flexbox ne permet pas de choisir librement : une ligne se remplit dans
    l'ordre des elements, et seul le DERNIER peut passer a la ligne. C'est
-   `order:3` sur le rail qui le place en fin de file, donc en second etage. */
-@media(min-width:561px) and (max-width:1860px){
+   `order:3` sur le rail qui le place en fin de file, donc en second etage.
+
+   La borne haute de 1860 px a saute le jour ou le logo LootBar est entre au
+   centre de la premiere ligne. Elle disait « au-dela, les trois blocs tiennent
+   ensemble » : ils sont quatre desormais, et surtout le logo ne serait plus au
+   centre de rien s'il partageait sa ligne avec dix onglets. Les onglets
+   prennent donc leur etage a TOUTES les largeurs, ce qu'ils faisaient deja
+   partout en dessous de 1860 px. */
+@media(min-width:561px){
   .topbar{row-gap:12px}
-  .account{margin-left:auto}
   .tabs-rail{order:3;flex-basis:100%;justify-content:center}
   /* Entre 561 px et ~1060 px, dix onglets depassent meme une ligne entiere :
      le rail defile alors, comme en mobile, plutot que d'elargir le document. */
@@ -52,7 +58,7 @@
 
    Les reperes de defilement n'ont donc plus lieu d'etre a ces largeurs, et
    sont eteints meme si le controleur pose ses classes. */
-@media(min-width:1061px) and (max-width:1860px){
+@media(min-width:1061px){
   .tabs{flex-wrap:wrap;overflow-x:visible;justify-content:center}
   .tabs-rail.can-scroll-left .tabs-cue-left,
   .tabs-rail.can-scroll-right .tabs-cue-right{opacity:0}
@@ -62,7 +68,17 @@
   .hero-grid{grid-template-columns:repeat(2,1fr)}
   .team-heroes{grid-template-columns:repeat(4,1fr)}
   .topbar{gap:12px}
-  .account{margin-left:auto}
+  /* PARTAGER LA LIGNE EN DEUX MOITIES EGALES NE MARCHE QUE SI LA MARQUE Y
+     TIENT. En dessous de 900 px elle n'y tient plus : a 600 px, « Confrerie
+     7DS » se coupait en deux et son sous-titre aussi, pour laisser au logo une
+     moitie qu'il ne remplissait pas.
+
+     Le logo prend donc son propre etage, entre la marque et les onglets. Il y
+     est centre de la meme facon, sans rien ecraser. Mesure : au-dessus de
+     900 px la marque tient sur une ligne a toutes les largeurs testees. */
+  .brand{flex:0 1 auto}
+  .account{flex:0 1 auto;margin-left:auto}
+  .lootbar{order:2;flex-basis:100%;justify-content:center}
 }
 @media(max-width:560px){
   .hero-stats-primary{grid-template-columns:minmax(0,1fr)}
@@ -72,6 +88,10 @@
   .metabar .grow .btn{flex:1;justify-content:center}
   .roster-grid{grid-template-columns:1fr}
   .tabs-rail{order:3;width:100%}
+  /* L'etage dedie vient du bloc 900 px ci-dessus ; au doigt, le logo se fait
+     seulement plus discret. */
+  .lootbar{padding:2px 4px}
+  .lootbar img{height:20px}
   .tabs{width:100%;overflow-x:auto;scrollbar-width:none}
   .tabs::-webkit-scrollbar{height:0}
   /* Le repère n'apparaît que du côté où il reste des onglets à atteindre. */
@@ -92,12 +112,18 @@
      course à la fermeture, sinon le bloc disparaîtrait avant d'avoir replié. */
   .topbar{transition:padding .26s ease, gap .26s ease}
   .topbar .brand,
+  .topbar .lootbar,
   .topbar .account{
     overflow:hidden;max-height:320px;
     transition:max-height .26s ease, opacity .17s ease .05s, visibility 0s
   }
   .topbar.is-retracted{padding-top:8px;padding-bottom:8px;gap:0}
+  /* Le logo se replie avec la marque : replie, le header ne doit rester que
+     les onglets, au plus court. C'est aussi un LIEN, donc focusable - le
+     laisser peint le garderait dans l'ordre de tabulation d'une zone censee
+     avoir disparu. */
   .topbar.is-retracted .brand,
+  .topbar.is-retracted .lootbar,
   .topbar.is-retracted .account{
     max-height:0;opacity:0;visibility:hidden;
     transition:max-height .26s ease, opacity .15s ease, visibility 0s linear .26s
