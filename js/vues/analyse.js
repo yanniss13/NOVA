@@ -124,7 +124,22 @@ import { toast } from "./toast.js";
       .filter(p => p.dps.length);
   }
 
-  const ELEM_ORDER = ["FIRE","ICE","WIND","EARTH","HOLY","DARK","THUNDER"];
+  /* Cette liste pilote TOUT le tableau : les cartes de couverture, les
+     pastilles du classement et les colonnes. Un element absent n'y est pas
+     affiche de travers — il n'existe pas, et les heros qui le portent ne
+     comptent pour rien.
+
+     « Physique » (code DEFAULT) y figure depuis le 15 aout 2026, date a
+     laquelle le jeu en a fait un element a part entiere en y basculant Dreyfus
+     et Griamore. Il ferme la marche parce qu'il ne participe a aucun cycle de
+     faiblesses : ce n'est pas un huitieme element du cercle, c'est l'absence
+     d'affinite, et le lecteur le cherche en dernier.
+
+     tests/analyse-elements.test.js exige que cette liste et `ELEMENTS` se
+     recouvrent exactement. */
+  const ELEM_ORDER = [
+    "FIRE","ICE","WIND","EARTH","HOLY","DARK","THUNDER","DEFAULT"
+  ];
   const elemLabel = e => e==="HOLY" ? "Lumière" : (ELEMENTS[e] ? ELEMENTS[e].label : (e||"—"));
   const elemColor = e => ELEMENTS[e] ? ELEMENTS[e].color : "#8a8a8a";
   const elemOf = charId => { const m = metaOf(charId); return m ? (m.element||"").toUpperCase() : null; };
@@ -132,7 +147,11 @@ import { toast } from "./toast.js";
   function charElements(charId){
     const m = metaOf(charId); if(!m) return [];
     const set = [];
-    (m.weapons||[]).forEach(w=>{ const e=(w.element||"").toUpperCase(); if(e && e!=="DEFAULT" && !set.includes(e)) set.push(e); });
+    /* `DEFAULT` n'est plus ecarte : il valait « pas d'element » avant le
+       15 aout 2026, il vaut « Physique » depuis. L'ecarter revenait a rendre
+       invisibles le Grimoire de Gowther, la rapiere de Dreyfus, et Griamore
+       en entier — ses trois armes le sont. */
+    (m.weapons||[]).forEach(w=>{ const e=(w.element||"").toUpperCase(); if(e && !set.includes(e)) set.push(e); });
     if(!set.length && m.element) set.push((m.element||"").toUpperCase());
     return set;
   }

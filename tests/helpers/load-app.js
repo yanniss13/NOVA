@@ -498,7 +498,21 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
     : undefined,
   jewelSetsFrom:typeof jewelSetsFrom === "function"
     ? jewelSetsFrom
-    : undefined
+    : undefined,
+  libelleDuManque:typeof libelleDuManque === "function"
+    ? libelleDuManque
+    : undefined,
+  libelleDesManques:typeof libelleDesManques === "function"
+    ? libelleDesManques
+    : undefined,
+  /* Exposees pour que le test des manques derive la liste des chemins des
+     MEMES constantes que stats-calcul.js, au lieu de la recopier. */
+  ARMOR_SLOTS:typeof ARMOR_SLOTS === "object" ? ARMOR_SLOTS : undefined,
+  JEWEL_SLOTS:typeof JEWEL_SLOTS === "object" ? JEWEL_SLOTS : undefined,
+  WEAPON_ENUM:typeof WEAPON_ENUM === "object" ? WEAPON_ENUM : undefined,
+  ELEMENTS:typeof ELEMENTS === "object" ? ELEMENTS : undefined,
+  ELEM_ORDER:typeof ELEM_ORDER === "object" ? ELEM_ORDER : undefined,
+  charElements:typeof charElements === "function" ? charElements : undefined
 });})();`;
 
 function testWeaponDefinition(gameId, base, percentOption){
