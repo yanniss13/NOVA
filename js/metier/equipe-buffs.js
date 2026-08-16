@@ -96,4 +96,4 @@ import { buffsApplicables } from "./calculateur-entrees.js";
       .map(buff => chiffre(buff, membre)));
   }
 
-export { buffsDeLEquipe, valeurIndexeeSurAtk };
+export { armeDuGameId, buffsDeLEquipe, valeurIndexeeSurAtk };
