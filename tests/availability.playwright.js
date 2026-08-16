@@ -10,6 +10,13 @@ const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
 const { chromium } = require("playwright");
 
+/* Les Dispos vivent desormais dans le sous-menu de « Boss de Guilde » : on
+   ouvre le groupe, puis l'entree. */
+async function ouvrirDispos(page){
+  await page.click("#tab-roster");
+  await page.click("#tab-availability");
+}
+
 /* La semaine est recalculée à chaque exécution : une valeur en dur ferait
    passer le test aujourd'hui et échouer la semaine prochaine. */
 function isoWeekStart(now){
@@ -249,7 +256,7 @@ async function runMobileChecks(browser, baseUrl){
       page, isoWeekStart(maintenant), bossWeekStart(maintenant)
     );
     await page.goto(baseUrl + "/index.html");
-    await page.click("#tab-availability");
+    await ouvrirDispos(page);
     await page.waitForSelector("#availGrid .avail-cell");
 
     const cdp = await page.context().newCDPSession(page);
@@ -437,7 +444,7 @@ async function runMobileChecks(browser, baseUrl){
       page, isoWeekStart(maintenant), bossWeekStart(maintenant)
     );
     await page.goto(server.url + "/index.html");
-    await page.click("#tab-availability");
+    await ouvrirDispos(page);
     await page.waitForSelector("#availGrid .avail-cell");
 
     // La grille couvre la semaine entière, minuit à minuit.

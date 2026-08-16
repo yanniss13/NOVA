@@ -121,6 +121,27 @@ a{color:var(--gold-bright)}
   background:linear-gradient(180deg,var(--gold-bright),var(--gold));
   color:var(--ink);box-shadow:0 4px 14px rgba(217,164,65,.28);
 }
+/* LA SECONDE LIGNE du groupe « Boss de Guilde », visible dans ses trois vues
+   seulement. `order:4` la place apres le rail d'onglets, donc a l'etage du
+   dessous ; sans lui elle remonterait avant, le rail portant `order:3`.
+
+   ⚠️ Ces regles doivent rester APRES `.tab` et `.tab.active` : elles ont la
+   meme specificite, donc seule la position tranche. Placees plus haut, le
+   `border:0` et le remplissage dore des onglets principaux les effacaient - et
+   le sous-menu ressemblait trait pour trait a la barre du dessus.
+
+   Contour au lieu de remplissage, parce que c'est une navigation de SECOND
+   niveau : elle ne doit pas rivaliser avec la principale au premier coup
+   d'oeil, ni laisser croire a deux onglets actifs en meme temps. */
+.subtabs{order:4;flex-basis:100%;display:flex;gap:6px;flex-wrap:wrap;
+  justify-content:center}
+.subtabs[hidden]{display:none}
+.subtab{font-size:12.5px;padding:6px 14px;border:1px solid var(--line-soft)}
+.subtab:hover{border-color:var(--gold-deep)}
+.subtab.active{
+  background:transparent;color:var(--gold-bright);
+  border-color:var(--gold-bright);box-shadow:none
+}
 .account{display:flex;align-items:center;gap:8px;flex:1 1 0;
   justify-content:flex-end;min-width:0}
 .account-connected{

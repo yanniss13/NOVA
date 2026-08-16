@@ -124,7 +124,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await page.reload();
 
     /* Depuis la fiche de heros d'une equipe locale. */
-    await page.locator('.tab[data-view="roster"]').click();
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     await page.getByRole("button", { name:/Voir l.équipement/ }).first().click();
     const lien = page.getByRole("button", { name:"Calculer les dégâts" }).first();
     await lien.waitFor({ state:"visible" });

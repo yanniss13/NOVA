@@ -510,7 +510,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
       }]));
     }, STORAGE_KEY);
     await page.reload();
-    await page.locator('.tab[data-view="roster"]').click();
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     const partialTeam = page.locator("#rosterGrid .team")
       .filter({ hasText:"Stats partielles" })
       .first();
@@ -554,7 +554,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
       }]));
     }, { key:STORAGE_KEY });
     await page.reload();
-    await page.locator('.tab[data-view="roster"]').click();
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     assert.match(await page.locator(".mini-pot").first().textContent(), /P8/);
     await page.getByRole("button", { name:"Modifier", exact:true }).click();
     assert.equal(await page.locator(".hero").first().locator(".gear-slot.weapon").evaluate(
@@ -584,7 +584,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
       true
     );
     await page.getByRole("button", { name:"Continuer hors connexion", exact:true }).click();
-    await page.locator('.tab[data-view="roster"]').click();
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     page.once("dialog", dialog => dialog.accept());
     await page.getByRole("button", { name:"Supprimer", exact:true }).click();
     await page.waitForFunction(key => {

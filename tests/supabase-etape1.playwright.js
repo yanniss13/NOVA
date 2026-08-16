@@ -5,6 +5,18 @@ const { serveRepo } = require("./helpers/serve");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
+/* Les Sessions de boss vivent desormais dans le sous-menu de « Boss de
+   Guilde » : on ouvre le groupe, puis l'entree. Deux clics au lieu d'un, et
+   c'est exactement le chemin qu'un membre suit a la souris.
+
+   Le second selecteur est SCOPE a `.subtabs` : sans cela il designerait aussi
+   bien un onglet principal, et le test passerait encore le jour ou le
+   sous-menu aurait disparu. */
+async function ouvrirSessionsDeBoss(page){
+  await page.locator('.tabs .tab[data-view="roster"]').click();
+  await page.locator('.subtabs .tab[data-view="boss"]').click();
+}
+
 (async()=>{
   const server = await serveRepo();
   const browser = await chromium.launch({ headless:true });
@@ -1104,7 +1116,7 @@ const { chromium } = require("playwright");
     );
     assert.equal(rosterNote, "Mon build");
 
-    await page.locator('.tab[data-view="roster"]').click();
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     await page.locator("#rosterGrid .team").first().waitFor();
     assert.equal(await page.locator("#rosterGrid .team").count(), 2);
     /* On compte les actions de gestion, pas le conteneur : « Dupliquer » est
@@ -1172,7 +1184,7 @@ const { chromium } = require("playwright");
     );
     assert.equal(saved.data.heroes[0].armorConfig.Haut.reinforce, 5);
 
-    await page.locator('.tab[data-view="roster"]').click();
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       const roster = state.roster_characters.find(item =>
@@ -1361,7 +1373,7 @@ const { chromium } = require("playwright");
       2
     );
     await page.locator("#memberRosterClose").click();
-    await page.locator('.tab[data-view="roster"]').click();
+    await page.locator('.tabs .tab[data-view="roster"]').click();
 
     const otherTeam = page.locator("#rosterGrid .team").filter({ hasText:"Merlin" });
     await otherTeam.getByRole("button", { name:/Voir l'équipement/ }).click();
@@ -1463,7 +1475,7 @@ const { chromium } = require("playwright");
       window.__fakeSupabaseState.teams.length === count + 1,
       teamsBeforeDuplicate
     );
-    await page.locator('.tab[data-view="roster"]').click();
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     await page.locator("#rosterGrid .team-name")
       .filter({ hasText:"Compo dupliquée" }).waitFor();
     /* On rend au jeu de test exactement l'état où on l'a trouvé : la source
@@ -1977,7 +1989,7 @@ const { chromium } = require("playwright");
       });
       window.__fakeSupabaseEmit("teams", "INSERT");
     });
-    await page.locator('.tab[data-view="roster"]').click();
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     const conflictTeamCard = page.locator("#rosterGrid .team")
       .filter({ hasText:"Conflit Team" });
     await conflictTeamCard.locator('[data-team-action="edit"]').click();
@@ -2236,7 +2248,7 @@ const { chromium } = require("playwright");
         });
       }
     });
-    await page.locator('.tab[data-view="boss"]').click();
+    await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadFailureOnce === null
     );
@@ -2290,7 +2302,7 @@ const { chromium } = require("playwright");
       };
     });
     await page.locator('.tab[data-view="builder"]').click();
-    await page.locator('.tab[data-view="boss"]').click();
+    await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadFailureOnce === null
     );
@@ -2462,7 +2474,7 @@ const { chromium } = require("playwright");
       };
     });
     await page.locator('.tab[data-view="builder"]').click();
-    await page.locator('.tab[data-view="boss"]').click();
+    await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadFailureOnce === null
     );
@@ -3342,7 +3354,7 @@ const { chromium } = require("playwright");
     await page.evaluate(teams => {
       window.__fakeSupabaseState.teams.push(...teams);
     }, ownTeams);
-    await page.locator('.tab[data-view="boss"]').click();
+    await ouvrirSessionsDeBoss(page);
     await groupOne.getByRole("button", { name:"Changer", exact:true }).waitFor();
 
     const fullGroup = page.locator(".boss-card", {
@@ -3649,7 +3661,7 @@ const { chromium } = require("playwright");
     await page.getByRole("button", { name:"Se connecter", exact:true }).click();
     // Une connexion réussie ouvre « Mon suivi » : ce scénario revient sur Boss.
     await page.locator("#view-dashboard").waitFor({ state:"visible" });
-    await page.locator('.tab[data-view="boss"]').click();
+    await ouvrirSessionsDeBoss(page);
     await page.locator(".boss-card", { hasText:"Groupe 1 · Run 1" })
       .getByRole("button", { name:"Rejoindre", exact:true }).waitFor();
     assert.match(await page.locator("#bossCount").textContent(), /0\/3/);
@@ -4947,7 +4959,7 @@ const { chromium } = require("playwright");
         .find(item => item.session_id === id).note = "Rotation corrigée.";
     }, archivedId);
     await page.locator('.tab[data-view="builder"]').click();
-    await page.locator('.tab[data-view="boss"]').click();
+    await ouvrirSessionsDeBoss(page);
     await page.locator(".boss-report-card", {
       hasText:"Groupe 2 · Run 1"
     }).getByText("Rotation corrigée.", { exact:true }).waitFor();
@@ -4976,7 +4988,7 @@ const { chromium } = require("playwright");
       );
     }, archivedId);
     await page.locator('.tab[data-view="builder"]').click();
-    await page.locator('.tab[data-view="boss"]').click();
+    await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
         .some(item => item.token === "boss-old-success" && item.claimed)
@@ -4987,7 +4999,7 @@ const { chromium } = require("playwright");
           "Succès récent encore en attente.";
     }, archivedId);
     await page.locator('.tab[data-view="builder"]').click();
-    await page.locator('.tab[data-view="boss"]').click();
+    await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
         .some(item => item.token === "boss-new-success" && item.claimed)
@@ -5025,13 +5037,13 @@ const { chromium } = require("playwright");
       );
     });
     await page.locator('.tab[data-view="builder"]').click();
-    await page.locator('.tab[data-view="boss"]').click();
+    await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
         .some(item => item.token === "boss-old-error" && item.claimed)
     );
     await page.locator('.tab[data-view="builder"]').click();
-    await page.locator('.tab[data-view="boss"]').click();
+    await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
         .some(item => item.token === "boss-new-after-error" && item.claimed)
@@ -5364,7 +5376,7 @@ const { chromium } = require("playwright");
       membership.pseudo = pseudo;
     }, longBossPseudo);
     await page.locator('.tab[data-view="builder"]').click();
-    await page.locator('.tab[data-view="boss"]').click();
+    await ouvrirSessionsDeBoss(page);
     await page.locator(".boss-member-name", { hasText:longBossPseudo }).waitFor();
 
     for(const width of [320, 360, 390]){
@@ -5897,7 +5909,7 @@ const { chromium } = require("playwright");
     assert.equal(await page.locator("#accountPseudo").textContent(), "Merlin");
 
     // La connexion précédente a ouvert « Mon suivi » : ce scénario vise Boss.
-    await page.locator('.tab[data-view="boss"]').click();
+    await ouvrirSessionsDeBoss(page);
     const merlinGroupOne = page.locator(".boss-card", {
       hasText:"Groupe 1 · Run 1"
     });

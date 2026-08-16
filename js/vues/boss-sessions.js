@@ -38,7 +38,7 @@ import { openTeamDetail } from "./detail-equipe.js";
 import { bossReportParticipant, bossTeamBanner } from "./equipe-boss.js";
 import { ModalStack, closeModalAfterAsyncRefresh } from "./modal-stack.js";
 import { openAuth } from "./modale-auth.js";
-import { mainTabs, showView } from "./navigation.js";
+import { ongletDeLaVue, showView } from "./navigation.js";
 import { toast } from "./toast.js";
 
   /* ============================ Sessions de boss ============================ */
@@ -474,7 +474,7 @@ import { toast } from "./toast.js";
         onclick:()=>{
           closeBossTeamPicker();
           showView("builder");
-          const tab = mainTabs.find(button => button.dataset.view === "builder");
+          const tab = ongletDeLaVue("builder");
           if(tab) tab.focus();
         }
       })
@@ -497,7 +497,7 @@ import { toast } from "./toast.js";
       .find(item => item.dataset.sessionId === sessionId);
     return card
       ? card.querySelector(".boss-member-team-action, .boss-join")
-      : mainTabs.find(button => button.dataset.view === "boss");
+      : ongletDeLaVue("boss");
   }
 
   function bossTeamChoice(team, group, requestId){
@@ -882,7 +882,7 @@ import { toast } from "./toast.js";
       target = nextCard && nextCard.querySelector(".boss-join");
     }
     if(!target){
-      target = mainTabs.find(button => button.dataset.view === "boss");
+      target = ongletDeLaVue("boss");
     }
     return target;
   }
