@@ -1054,6 +1054,24 @@ le SQL Editor afin d'ajouter les tables à la publication
 - Export / Import JSON = sauvegarde de secours et format pivot indépendant de Supabase.
 - Auth Supabase : email + mot de passe sans confirmation email. Toute lecture
   partagée exige un membre authentifié ; RLS limite l'écriture au propriétaire.
+- **`DEFAULT` est un élément, pas une absence d'élément.** Il se lit
+  « Physique ». Le jeu l'a promu élément à part entière le **15 août 2026** et y
+  a basculé **Dreyfus et Griamore**, jusque-là classés Terre. Il portait déjà ce
+  code sur dix slots d'arme, où il s'affichait « Default » faute de libellé dans
+  `ELEMENTS`. Sa teinte est neutre à dessein : le physique ne s'oppose à aucun
+  élément, une couleur d'élément le ferait mal lire dans les graphiques de
+  l'Analyse. Les icônes `7ds-ui/role-elements/default_*.webp` existaient déjà.
+  `tests/wiki-catalogue.test.js` refuse désormais **tout élément sans libellé**,
+  dans les deux casses employées par la source (`DEFAULT` sur le personnage,
+  `Default` sur ses slots d'arme).
+- **Les `provenance.phrase` des tables de `data/` cassent quand 7dsorigin.app
+  reformule son français**, sans qu'aucune valeur de jeu ne change. La refonte du
+  15 août 2026 en a cassé **quatre** d'un coup, de trois façons : espace
+  insécable devenue ordinaire (`(Max :`), nombre déplacé en tête de phrase, et
+  synonyme (« la cible » → « les ennemis »). Après toute régénération, lancer
+  `npm run test:unit` et **relire le texte source complet** avant de recoller un
+  ancrage : le test ne vérifie que le nombre qui suit la phrase, donc un ancrage
+  posé au mauvais endroit ferait lire une autre valeur sans protester.
 - **Un visiteur sans compte ne voit que quatre onglets** : « Créer une équipe »,
   Wiki, Collection et Calculateur. Les six autres lisent des données liées à un
   compte, et il atterrit sur le Wiki. Le portier est `vues/navigation.js`

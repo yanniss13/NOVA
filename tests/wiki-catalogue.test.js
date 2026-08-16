@@ -32,6 +32,46 @@ assert.deepEqual(
   "le catalogue doit couvrir exactement les personnages de 7ds-stats"
 );
 
+/* TOUT ELEMENT PRESENT DANS LES DONNEES DOIT AVOIR UN LIBELLE.
+
+   Sans cette garde, un element inconnu ne casse rien : il traverse
+   `(ELEMENTS[code] || {}).label || code` et s'affiche en anglais et en
+   majuscules dans le wiki, au vu de tous. C'est arrive le 15 aout 2026, quand
+   7dsorigin.app a promu « Physique » (code DEFAULT) au rang d'element a part
+   entiere et y a bascule Dreyfus et Griamore, jusque-la classes Terre.
+
+   Les deux casses sont verifiees parce que la source en emploie deux : le
+   personnage porte `DEFAULT`, ses slots d'arme portent `Default`, et
+   editeur-arme.js normalise en majuscules avant de chercher. */
+/* `export` retire, puis la liaison recopiee sur le global : un `const` de
+   haut niveau reste dans la portee du script et n'apparait jamais sur le
+   contexte du vm. */
+const constantes = { window:{} };
+vm.runInNewContext(
+  fs.readFileSync(path.join(RACINE, "js", "noyau", "constantes.js"), "utf8")
+    .replace(/^export\s*\{[\s\S]*?\};?\s*$/m, "")
+  + "\nthis.ELEMENTS = ELEMENTS;",
+  constantes,
+  { filename:"constantes.js" }
+);
+const ELEMENTS = constantes.ELEMENTS;
+assert.ok(ELEMENTS, "ELEMENTS n'a pas pu etre lu depuis constantes.js");
+
+const elementsDesDonnees = new Set();
+personnages.forEach(personnage => {
+  if(personnage.element) elementsDesDonnees.add(String(personnage.element));
+  (personnage.weaponSlots || []).forEach(slot => {
+    if(slot.element) elementsDesDonnees.add(String(slot.element));
+  });
+});
+[...elementsDesDonnees].sort().forEach(element => {
+  assert.ok(
+    ELEMENTS[element.toUpperCase()],
+    "element sans libelle dans js/noyau/constantes.js : " + element
+      + " — il s'afficherait tel quel aux membres"
+  );
+});
+
 slugs.forEach(slug => {
   const competences = catalogue[slug];
   assert.ok(competences.length, slug+" : catalogue vide");

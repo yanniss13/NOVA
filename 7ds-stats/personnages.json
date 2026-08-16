@@ -1,6 +1,6 @@
 [
  {
-  "id": "cmsfp5hwg000e2mp2slqqxf1h",
+  "id": "cmsupro1d000e2lpeg0uozrgu",
   "slug": "bug",
   "nameFr": "Bug",
   "nameEn": "Bug",
@@ -27,7 +27,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jlj00812mp20te3ktri",
+    "id": "cmsuprpub00812lpeia5mutnh",
     "slug": "bug-costume-134101501",
     "nameFr": "Démon timide",
     "nameEn": "Shy Demon",
@@ -42,7 +42,7 @@
     "iconUrl": "/images/costumes/icon_Bug_001.webp"
    },
    {
-    "id": "cmsfp5jlj00822mp2h4u5rl7o",
+    "id": "cmsuprpub00822lpebji5a4ym",
     "slug": "bug-costume-134101502",
     "nameFr": "Sortie du démon",
     "nameEn": "Demon's Outing",
@@ -102,7 +102,7 @@
     "iconUrl": "/images/costumes/icon_Bug_002.webp"
    },
    {
-    "id": "cmsfp5jlj00832mp24seblgt3",
+    "id": "cmsuprpub00832lpe9u8wlx19",
     "slug": "bug-costume-134101503",
     "nameFr": "Marche des ombres",
     "nameEn": "Shadow Walk",
@@ -166,7 +166,7 @@
     "iconUrl": "/images/costumes/icon_Bug_003.webp"
    },
    {
-    "id": "cmsfp5jlj00842mp2ebuvx3ol",
+    "id": "cmsuprpub00842lpeyultubqv",
     "slug": "bug-costume-134101504",
     "nameFr": "Furtivité du démon",
     "nameEn": "Demon's Stealth",
@@ -805,12 +805,12 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_ResRate",
-        "value": 105
+        "stat": "B_Atk",
+        "value": 85
        },
        {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 390
+        "stat": "A_Accuracy",
+        "value": 30
        }
       ]
      },
@@ -851,12 +851,12 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 85
+        "stat": "C_Critical_ResRate",
+        "value": 105
        },
        {
-        "stat": "A_Accuracy",
-        "value": 30
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 390
        }
       ]
      },
@@ -1301,34 +1301,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_Rate",
-        "value": 173
-       },
-       {
-        "stat": "C_Critical_Dam_Rate",
-        "value": 473
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 85
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 255
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Atk",
         "value": 115
        },
@@ -1353,6 +1325,34 @@
        {
         "stat": "B_MaxHp",
         "value": 160
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Rate",
+        "value": 173
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 473
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 85
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 255
        }
       ]
      },
@@ -2361,7 +2361,7 @@
   "bannerUrl": "/images/characters/banners/bug.webp"
  },
  {
-  "id": "cmsfp5hwg00022mp2vzfmw61q",
+  "id": "cmsupro1d00022lpeg2d6wl2k",
   "slug": "dreydrin",
   "nameFr": "Dreydrin",
   "nameEn": "Dredrin",
@@ -2388,7 +2388,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jli006g2mp2x6psj7fj",
+    "id": "cmsuprpub006g2lpev08x1lvf",
     "slug": "dreydrin-costume-134100301",
     "nameFr": "Chevalier sacré apprenti amical",
     "nameEn": "Friendly Apprentice Holy Knight",
@@ -2403,7 +2403,7 @@
     "iconUrl": "/images/costumes/icon_Dreydrin_001.webp"
    },
    {
-    "id": "cmsfp5jli006h2mp201xrtdmy",
+    "id": "cmsuprpub006h2lpep55rmf18",
     "slug": "dreydrin-costume-134100302",
     "nameFr": "Une belle journée de repos",
     "nameEn": "A Nice Day Off",
@@ -2463,7 +2463,7 @@
     "iconUrl": "/images/costumes/icon_Dreydrin_002.webp"
    },
    {
-    "id": "cmsfp5jli006i2mp212q02tsz",
+    "id": "cmsuprpub006i2lpetnjczynh",
     "slug": "dreydrin-costume-134100303",
     "nameFr": "Ascendance royale",
     "nameEn": "Descendant of Royalty",
@@ -2527,7 +2527,7 @@
     "iconUrl": "/images/costumes/icon_Dreydrin_003.webp"
    },
    {
-    "id": "cmsfp5jli006j2mp2n6phdb4j",
+    "id": "cmsuprpub006j2lpee2sd9rin",
     "slug": "dreydrin-costume-134100304",
     "nameFr": "Préparation minutieuse",
     "nameEn": "Thorough Preparation",
@@ -2591,7 +2591,7 @@
     "iconUrl": "/images/costumes/icon_Dreydrin_004.webp"
    },
    {
-    "id": "cmsfp5jli006k2mp2lie1lifb",
+    "id": "cmsuprpub006k2lpegq5zyge7",
     "slug": "dreydrin-costume-134100305",
     "nameFr": "Défense solide",
     "nameEn": "Solid Defense",
@@ -4786,11 +4786,11 @@
   "bannerUrl": "/images/characters/banners/dreydrin.webp"
  },
  {
-  "id": "cmsfp5hwg000a2mp2lgxoz8ib",
+  "id": "cmsupro1d000a2lpe7wxscu1q",
   "slug": "dreyfus",
   "nameFr": "Dreyfus",
   "nameEn": "Dreyfus",
-  "element": "EARTH",
+  "element": "DEFAULT",
   "rarity": "SR",
   "role": "SUPPORT",
   "portraitUrl": "/images/characters/dreyfus.webp",
@@ -4813,7 +4813,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jli007i2mp2fzopousc",
+    "id": "cmsuprpub007i2lpeoev2wh8w",
     "slug": "dreyfus-costume-134101101",
     "nameFr": "Instructeur de combat à l'épée du royaume",
     "nameEn": "Kingdom Sword Art Instructor",
@@ -4828,7 +4828,7 @@
     "iconUrl": "/images/costumes/icon_Dreyfus_001.webp"
    },
    {
-    "id": "cmsfp5jli007j2mp2gl2z9znt",
+    "id": "cmsuprpub007j2lpeltp7y9z4",
     "slug": "dreyfus-costume-134101102",
     "nameFr": "Majordome royal",
     "nameEn": "Royal Butler",
@@ -4888,7 +4888,7 @@
     "iconUrl": "/images/costumes/icon_Dreyfus_002.webp"
    },
    {
-    "id": "cmsfp5jli007k2mp2bufdzxfu",
+    "id": "cmsuprpub007k2lpe8idgmbu2",
     "slug": "dreyfus-costume-134101103",
     "nameFr": "Honneur au vieux soldat",
     "nameEn": "Old Soldier's Honor",
@@ -4952,7 +4952,7 @@
     "iconUrl": "/images/costumes/icon_Dreyfus_003.webp"
    },
    {
-    "id": "cmsfp5jli007l2mp2oh35p10v",
+    "id": "cmsuprpub007l2lpe6ki2cc0e",
     "slug": "dreyfus-costume-134101104",
     "nameFr": "Tenue modeste",
     "nameEn": "Simple Attire",
@@ -5016,7 +5016,7 @@
     "iconUrl": "/images/costumes/icon_Dreyfus_004.webp"
    },
    {
-    "id": "cmsfp5jli007m2mp2abwip92u",
+    "id": "cmsuprpub007m2lpew8lik8hn",
     "slug": "dreyfus-costume-134101105",
     "nameFr": "Chevalier honorable",
     "nameEn": "Honorable Knight",
@@ -5159,20 +5159,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_ResRate",
-        "value": 85
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 255
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Atk",
         "value": 115
        },
@@ -5211,6 +5197,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 473
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 85
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 255
        }
       ]
      },
@@ -7211,7 +7211,7 @@
   "bannerUrl": "/images/characters/banners/dreyfus.webp"
  },
  {
-  "id": "cmsfp5hwg00052mp26uokstbu",
+  "id": "cmsupro1d00052lpe5igjphkn",
   "slug": "gil-thunder",
   "nameFr": "Gilthunder",
   "nameEn": "Gilthunder",
@@ -7238,7 +7238,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jli006u2mp26p2eroxd",
+    "id": "cmsuprpub006u2lpelefp877y",
     "slug": "gil-thunder-costume-134100601",
     "nameFr": "Jeune chevalier sacré",
     "nameEn": "Young Holy Knight",
@@ -7253,7 +7253,7 @@
     "iconUrl": "/images/costumes/icon_Gil_Thunder_001.webp"
    },
    {
-    "id": "cmsfp5jli006v2mp2e69ejagx",
+    "id": "cmsuprpub006v2lpeglxsxkci",
     "slug": "gil-thunder-costume-134100602",
     "nameFr": "Chevalier sacré exemplaire",
     "nameEn": "Exemplary Holy Knight",
@@ -7313,7 +7313,7 @@
     "iconUrl": "/images/costumes/icon_Gil_Thunder_002.webp"
    },
    {
-    "id": "cmsfp5jli006w2mp26976ar2m",
+    "id": "cmsuprpub006w2lpeqgwt7ogn",
     "slug": "gil-thunder-costume-134100603",
     "nameFr": "Chevalier sacré de la foudre",
     "nameEn": "Holy Knight of Lightning",
@@ -7377,7 +7377,7 @@
     "iconUrl": "/images/costumes/icon_Gil_Thunder_003.webp"
    },
    {
-    "id": "cmsfp5jli006x2mp25hmlm8er",
+    "id": "cmsuprpub006x2lperh4a7qpp",
     "slug": "gil-thunder-costume-134100604",
     "nameFr": "Aventure exemplaire",
     "nameEn": "Exemplary Adventure",
@@ -7441,7 +7441,7 @@
     "iconUrl": "/images/costumes/icon_Gil_Thunder_004.webp"
    },
    {
-    "id": "cmsfp5jli006y2mp29k58myjr",
+    "id": "cmsuprpub006y2lpee0dg01qr",
     "slug": "gil-thunder-costume-134100605",
     "nameFr": "Chevalier sacré prometteur",
     "nameEn": "Promising Holy Knight",
@@ -9636,11 +9636,11 @@
   "bannerUrl": "/images/characters/banners/gil-thunder.webp"
  },
  {
-  "id": "cmsfp5hwg000d2mp22zikdsc5",
+  "id": "cmsupro1d000d2lpe3an04jpb",
   "slug": "griamore",
   "nameFr": "Griamor",
   "nameEn": "Griamore",
-  "element": "EARTH",
+  "element": "DEFAULT",
   "rarity": "SR",
   "role": "DEFENDER",
   "portraitUrl": "/images/characters/griamore.webp",
@@ -9663,7 +9663,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jlj007x2mp2p3nke9te",
+    "id": "cmsuprpub007x2lpe6jfo9fd6",
     "slug": "griamore-costume-134101401",
     "nameFr": "Chevalier gardien de la princesse",
     "nameEn": "Princess's Guardian Knight",
@@ -9678,7 +9678,7 @@
     "iconUrl": "/images/costumes/icon_Griamore_001.webp"
    },
    {
-    "id": "cmsfp5jlj007y2mp2gn8imfrq",
+    "id": "cmsuprpub007y2lpeqga8elu2",
     "slug": "griamore-costume-134101402",
     "nameFr": "Sortie décontractée",
     "nameEn": "Casual Outing",
@@ -9738,7 +9738,7 @@
     "iconUrl": "/images/costumes/icon_Griamore_002.webp"
    },
    {
-    "id": "cmsfp5jlj007z2mp206oox0h4",
+    "id": "cmsuprpub007z2lpeil2kxm4m",
     "slug": "griamore-costume-134101403",
     "nameFr": "Chevalier sacré du mur de fer",
     "nameEn": "Holy Knight of the Iron Wall",
@@ -9802,7 +9802,7 @@
     "iconUrl": "/images/costumes/icon_Griamore_003.webp"
    },
    {
-    "id": "cmsfp5jlj00802mp283wgiuka",
+    "id": "cmsuprpub00802lpezil1aqnr",
     "slug": "griamore-costume-134101404",
     "nameFr": "Barricade de fortune",
     "nameEn": "Makeshift Barricade",
@@ -11997,7 +11997,7 @@
   "bannerUrl": "/images/characters/banners/griamore.webp"
  },
  {
-  "id": "cmsfp5hwg00032mp23bcgowyx",
+  "id": "cmsupro1d00032lpenum9oduz",
   "slug": "howzer",
   "nameFr": "Hauser",
   "nameEn": "Howzer",
@@ -12024,7 +12024,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jli006l2mp2ytstxrzi",
+    "id": "cmsuprpub006l2lpegujvidzt",
     "slug": "howzer-costume-134100401",
     "nameFr": "Grand maître digne de confiance",
     "nameEn": "Trusted Grandmaster",
@@ -12039,7 +12039,7 @@
     "iconUrl": "/images/costumes/icon_Howzer_001.webp"
    },
    {
-    "id": "cmsfp5jli006m2mp2b14baqjk",
+    "id": "cmsuprpub006m2lpe40d24v30",
     "slug": "howzer-costume-134100402",
     "nameFr": "Choppe de bière de la fin des temps",
     "nameEn": "End-of-Day Mug of Ale",
@@ -12099,7 +12099,7 @@
     "iconUrl": "/images/costumes/icon_Howzer_002.webp"
    },
    {
-    "id": "cmsfp5jli006n2mp2ay2w3ll5",
+    "id": "cmsuprpub006n2lpet3npspsb",
     "slug": "howzer-costume-134100403",
     "nameFr": "Chevalier sacré de la tempête",
     "nameEn": "Holy Knight of Storms",
@@ -12163,7 +12163,7 @@
     "iconUrl": "/images/costumes/icon_Howzer_003.webp"
    },
    {
-    "id": "cmsfp5jli006o2mp2qvx2e5hf",
+    "id": "cmsuprpub006o2lpe26vukape",
     "slug": "howzer-costume-134100404",
     "nameFr": "Aventure en toute sécurité",
     "nameEn": "Secure Adventure",
@@ -12802,6 +12802,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 85
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 30
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 79
        },
@@ -12826,20 +12840,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 333
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 85
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 30
        }
       ]
      },
@@ -13298,20 +13298,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_ResRate",
-        "value": 60
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 225
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Atk",
         "value": 110
        },
@@ -13350,6 +13336,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 525
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 60
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 225
        }
       ]
      },
@@ -14358,7 +14358,7 @@
   "bannerUrl": "/images/characters/banners/howzer.webp"
  },
  {
-  "id": "cmsfp5hwg000b2mp2g7k7r6dk",
+  "id": "cmsupro1d000b2lpezpadnwt6",
   "slug": "hendrickson",
   "nameFr": "Hendrickson",
   "nameEn": "Hendrickson",
@@ -14385,7 +14385,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jli007n2mp27g3qzbgk",
+    "id": "cmsuprpub007n2lpenxx5ytqh",
     "slug": "hendrickson-costume-134101201",
     "nameFr": "Apothicaire de Liones",
     "nameEn": "Liones Apothecary",
@@ -14400,7 +14400,7 @@
     "iconUrl": "/images/costumes/icon_Hendrickson_001.webp"
    },
    {
-    "id": "cmsfp5jli007o2mp2jzt42jdc",
+    "id": "cmsuprpub007o2lpeo0qnx1qy",
     "slug": "hendrickson-costume-134101202",
     "nameFr": "Gris romantique",
     "nameEn": "Romantic Gray",
@@ -14460,7 +14460,7 @@
     "iconUrl": "/images/costumes/icon_Hendrickson_002.webp"
    },
    {
-    "id": "cmsfp5jli007q2mp2adxbjnhv",
+    "id": "cmsuprpub007q2lpedusaz2to",
     "slug": "hendrickson-costume-134101204",
     "nameFr": "Vêtements de travail de l'apothicaire",
     "nameEn": "Apothecary's Workwear",
@@ -14524,7 +14524,7 @@
     "iconUrl": "/images/costumes/icon_Hendrickson_004.webp"
    },
    {
-    "id": "cmsfp5jli007r2mp2vmk4jstp",
+    "id": "cmsuprpub007r2lpekqh4e15x",
     "slug": "hendrickson-costume-134101205",
     "nameFr": "Retour du Chevalier Sacré",
     "nameEn": "Returned Holy Knight",
@@ -14588,7 +14588,7 @@
     "iconUrl": "/images/costumes/icon_Hendrickson_005.webp"
    },
    {
-    "id": "cmsfp5jli007p2mp273jdxnrk",
+    "id": "cmsuprpub007p2lpev1d4sfgk",
     "slug": "hendrickson-costume-134101203",
     "nameFr": "Une tenue de jeunesse",
     "nameEn": "A Suit From Younger Days",
@@ -15227,6 +15227,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 90
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 30
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 83
        },
@@ -15251,20 +15265,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 298
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 90
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 30
        }
       ]
      },
@@ -16783,7 +16783,7 @@
   "bannerUrl": "/images/characters/banners/hendrickson.webp"
  },
  {
-  "id": "cmsfp5hwg000c2mp2z3hzojxf",
+  "id": "cmsupro1d000c2lpeztzfknfy",
   "slug": "slader",
   "nameFr": "Slader",
   "nameEn": "Slater",
@@ -16810,7 +16810,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jli007s2mp2glnis3jp",
+    "id": "cmsuprpub007s2lpe8jyhm7di",
     "slug": "slader-costume-134101301",
     "nameFr": "Chevalier sacré vétéran",
     "nameEn": "Veteran Holy Knight",
@@ -16825,7 +16825,7 @@
     "iconUrl": "/images/costumes/icon_Slader_001.webp"
    },
    {
-    "id": "cmsfp5jli007t2mp2oklr70tf",
+    "id": "cmsuprpub007t2lpea7zu899f",
     "slug": "slader-costume-134101302",
     "nameFr": "Ami loyal",
     "nameEn": "Loyal Friend",
@@ -16885,7 +16885,7 @@
     "iconUrl": "/images/costumes/icon_Slader_002.webp"
    },
    {
-    "id": "cmsfp5jli007u2mp2zxvyroc7",
+    "id": "cmsuprpub007u2lpeg7o3fcnt",
     "slug": "slader-costume-134101303",
     "nameFr": "Épée du vieux roi",
     "nameEn": "Sword of the Old King",
@@ -16949,7 +16949,7 @@
     "iconUrl": "/images/costumes/icon_Slader_003.webp"
    },
    {
-    "id": "cmsfp5jli007v2mp2m74u9ia7",
+    "id": "cmsuprpub007v2lpemeguqo06",
     "slug": "slader-costume-134101304",
     "nameFr": "Mission secrète",
     "nameEn": "Secret Mission",
@@ -17013,7 +17013,7 @@
     "iconUrl": "/images/costumes/icon_Slader_004.webp"
    },
    {
-    "id": "cmsfp5jli007w2mp2msvdkvxt",
+    "id": "cmsuprpub007w2lpek6ro05d1",
     "slug": "slader-costume-134101305",
     "nameFr": "Préparation totale",
     "nameEn": "Total Readiness",
@@ -19208,7 +19208,7 @@
   "bannerUrl": "/images/characters/banners/slader.webp"
  },
  {
-  "id": "cmsfp5hwg00012mp23wihuz9m",
+  "id": "cmsupro1d00012lpeil27dqyt",
   "slug": "tioreh",
   "nameFr": "Tioré",
   "nameEn": "Tioreh",
@@ -19235,7 +19235,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jli006b2mp20uqqjgi9",
+    "id": "cmsuprpub006b2lper2pmibrk",
     "slug": "tioreh-costume-134100201",
     "nameFr": "Fée adorable",
     "nameEn": "Adorable Fairy",
@@ -19250,7 +19250,7 @@
     "iconUrl": "/images/costumes/icon_Tioreh_001.webp"
    },
    {
-    "id": "cmsfp5jli006c2mp201todewb",
+    "id": "cmsuprpub006c2lpehcu7uabh",
     "slug": "tioreh-costume-134100202",
     "nameFr": "Sortie décontractée",
     "nameEn": "Casual Outing",
@@ -19310,7 +19310,7 @@
     "iconUrl": "/images/costumes/icon_Tioreh_002.webp"
    },
    {
-    "id": "cmsfp5jli006d2mp29awnnjfp",
+    "id": "cmsuprpub006d2lpez4zj6ib9",
     "slug": "tioreh-costume-134100203",
     "nameFr": "Fille de la forêt et de la terre",
     "nameEn": "Daughter of the Forest and Earth",
@@ -19374,7 +19374,7 @@
     "iconUrl": "/images/costumes/icon_Tioreh_003.webp"
    },
    {
-    "id": "cmsfp5jli006e2mp2djcavkht",
+    "id": "cmsuprpub006e2lpe4ey9bt6i",
     "slug": "tioreh-costume-134100204",
     "nameFr": "Début de l'aventure",
     "nameEn": "Adventure's Beginning",
@@ -19438,7 +19438,7 @@
     "iconUrl": "/images/costumes/icon_Tioreh_004.webp"
    },
    {
-    "id": "cmsfp5jli006f2mp2929w1c7d",
+    "id": "cmsuprpub006f2lpez2ctiu4r",
     "slug": "tioreh-costume-134100205",
     "nameFr": "Protection de la fée",
     "nameEn": "Fairy's Protection",
@@ -19581,20 +19581,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_ResRate",
-        "value": 105
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 390
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Atk",
         "value": 85
        },
@@ -19633,6 +19619,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 333
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 105
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 390
        }
       ]
      },
@@ -20573,6 +20573,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 90
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 30
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 83
        },
@@ -20637,20 +20651,6 @@
        {
         "stat": "A_Block",
         "value": 8
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 90
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 30
        }
       ]
      }
@@ -21633,7 +21633,7 @@
   "bannerUrl": "/images/characters/banners/tioreh.webp"
  },
  {
-  "id": "cmsfp5hwg00002mp2e3xjc1pb",
+  "id": "cmsupro1c00002lpeohddt4iv",
   "slug": "tristan",
   "nameFr": "Tristan",
   "nameEn": "Tristan",
@@ -21660,7 +21660,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jli00652mp26qizqxwu",
+    "id": "cmsuprpub00652lpery27qe8c",
     "slug": "tristan-costume-134100101",
     "nameFr": "Petit prince",
     "nameEn": "Little Prince",
@@ -21675,7 +21675,7 @@
     "iconUrl": "/images/costumes/icon_Tristan_001.webp"
    },
    {
-    "id": "cmsfp5jli00662mp2ef2nbv99",
+    "id": "cmsuprpub00662lpe5y5zoo9k",
     "slug": "tristan-costume-134100100",
     "nameFr": "Tenue d'entraînement de prince",
     "nameEn": "Prince's Training Outfit",
@@ -21711,7 +21711,7 @@
     "iconUrl": "/images/costumes/icon_Tristan_006.webp"
    },
    {
-    "id": "cmsfp5jli00672mp2835y49sk",
+    "id": "cmsuprpub00672lpe651ucz2r",
     "slug": "tristan-costume-134100102",
     "nameFr": "Tenue de cérémonie",
     "nameEn": "Formal Attire",
@@ -21771,7 +21771,7 @@
     "iconUrl": "/images/costumes/icon_Tristan_002.webp"
    },
    {
-    "id": "cmsfp5jli00682mp208d3trwh",
+    "id": "cmsuprpub00682lpeve2gzbzu",
     "slug": "tristan-costume-134100103",
     "nameFr": "Dignité royale",
     "nameEn": "Royal Dignity",
@@ -21835,7 +21835,7 @@
     "iconUrl": "/images/costumes/icon_Tristan_003.webp"
    },
    {
-    "id": "cmsfp5jli00692mp27p4oensz",
+    "id": "cmsuprpub00692lpewtwxpb9u",
     "slug": "tristan-costume-134100104",
     "nameFr": "Aventure du prince",
     "nameEn": "Prince's Adventure",
@@ -21899,7 +21899,7 @@
     "iconUrl": "/images/costumes/icon_Tristan_004.webp"
    },
    {
-    "id": "cmsfp5jli006a2mp24nlyq4du",
+    "id": "cmsuprpub006a2lpe12utagvy",
     "slug": "tristan-costume-134100105",
     "nameFr": "Vœu du prince",
     "nameEn": "Prince's Vow",
@@ -24094,7 +24094,7 @@
   "bannerUrl": "/images/characters/banners/tristan.webp"
  },
  {
-  "id": "cmsfp5hwh000n2mp2ois581d5",
+  "id": "cmsupro1d000n2lpexuyvox32",
   "slug": "klotho",
   "nameFr": "Clotho",
   "nameEn": "Clotho",
@@ -24121,7 +24121,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jlj00992mp2j64g9ryw",
+    "id": "cmsuprpuc00992lpe1xtlwz44",
     "slug": "klotho-costume-134102701",
     "nameFr": "Uniforme d'exploratrice",
     "nameEn": "Explorer's Uniform",
@@ -24136,7 +24136,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_001.webp"
    },
    {
-    "id": "cmsfp5jlj009a2mp2eqy72b4w",
+    "id": "cmsuprpuc009a2lpen84sqd7s",
     "slug": "klotho-costume-134102702",
     "nameFr": "Tenue de fête légère",
     "nameEn": "Light Party Outfit",
@@ -24200,7 +24200,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_002.webp"
    },
    {
-    "id": "cmsfp5jlj009b2mp2nyrktrwn",
+    "id": "cmsuprpuc009b2lpe41syry7p",
     "slug": "klotho-costume-134102703",
     "nameFr": "Formalité de l'érudite en chef",
     "nameEn": "Head Scholar's Formality",
@@ -24264,7 +24264,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_003.webp"
    },
    {
-    "id": "cmsfp5jlj009c2mp2um5usk25",
+    "id": "cmsuprpuc009c2lpem144hzyv",
     "slug": "klotho-costume-134102704",
     "nameFr": "Tenue d'exercice d'exploratrice",
     "nameEn": "Explorer's Activewear",
@@ -24328,7 +24328,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_004.webp"
    },
    {
-    "id": "cmsfp5jlj009d2mp25a91qrob",
+    "id": "cmsuprpuc009d2lpesfcoypaw",
     "slug": "klotho-costume-134102705",
     "nameFr": "Jeu de la lune à l'aube",
     "nameEn": "Dawn Moon's Play",
@@ -24343,7 +24343,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_005.webp"
    },
    {
-    "id": "cmsfp5jlj009e2mp2gs2u9n5d",
+    "id": "cmsuprpuc009e2lpe4emw58tc",
     "slug": "klotho-costume-134102706",
     "nameFr": "Ombre étoilée",
     "nameEn": "Starlight Shadow",
@@ -24358,7 +24358,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_006.webp"
    },
    {
-    "id": "cmsfp5jli00612mp28zgwghyj",
+    "id": "cmsuprpub00612lpe8eqku6dq",
     "slug": "klotho-costume-135102701",
     "nameFr": "Épée sacrée Sephiora",
     "nameEn": "Sacred Sword Sephiora",
@@ -24452,20 +24452,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_ResRate",
-        "value": 180
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 608
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Atk",
         "value": 135
        },
@@ -24504,6 +24490,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 447
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 180
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 608
        }
       ]
      },
@@ -25444,6 +25444,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 173
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 42
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 90
        },
@@ -25468,20 +25482,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 709
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 173
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 42
        }
       ]
      },
@@ -26504,7 +26504,7 @@
   "bannerUrl": "/images/characters/banners/klotho.webp"
  },
  {
-  "id": "cmsfp5hwh000o2mp259et28gm",
+  "id": "cmsupro1d000o2lpe35vytyko",
   "slug": "daisy",
   "nameFr": "Daisy",
   "nameEn": "Daisy",
@@ -26531,7 +26531,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jlj009f2mp22w15wswb",
+    "id": "cmsuprpuc009f2lpe3rnzqnhy",
     "slug": "daisy-costume-134102801",
     "nameFr": "Fée du passé",
     "nameEn": "Fairy of the Past",
@@ -26546,7 +26546,7 @@
     "iconUrl": "/images/costumes/icon_Daisy_001.webp"
    },
    {
-    "id": "cmsfp5jlj009g2mp2nqzrctek",
+    "id": "cmsuprpuc009g2lpegghllvcg",
     "slug": "daisy-costume-134102802",
     "nameFr": "Petite exploratrice",
     "nameEn": "Small Explorer",
@@ -26610,7 +26610,7 @@
     "iconUrl": "/images/costumes/icon_Daisy_002.webp"
    },
    {
-    "id": "cmsfp5jlj009h2mp2a4r1hxcq",
+    "id": "cmsuprpuc009h2lpexq6xf7h1",
     "slug": "daisy-costume-134102803",
     "nameFr": "Senteur d'automne",
     "nameEn": "Autumn Scent",
@@ -26625,7 +26625,7 @@
     "iconUrl": "/images/costumes/icon_Daisy_003.webp"
    },
    {
-    "id": "cmsfp5jlj009i2mp2f5m6gi70",
+    "id": "cmsuprpuc009i2lpeazix4a3i",
     "slug": "daisy-costume-134102804",
     "nameFr": "Souffle d'exploration",
     "nameEn": "Spirit of Exploration",
@@ -26689,7 +26689,7 @@
     "iconUrl": "/images/costumes/icon_Daisy_004.webp"
    },
    {
-    "id": "cmsfp5jlj009j2mp2sgqm3l9e",
+    "id": "cmsuprpuc009j2lpeea5f231c",
     "slug": "daisy-costume-134102805",
     "nameFr": "Robe de printemps",
     "nameEn": "Spring Robe",
@@ -26753,7 +26753,7 @@
     "iconUrl": "/images/costumes/icon_Daisy_005.webp"
    },
    {
-    "id": "cmsfp5jli00622mp2q6jp5jrt",
+    "id": "cmsuprpub00622lpeciw4mg7a",
     "slug": "daisy-costume-135102801",
     "nameFr": "Clé temporelle",
     "nameEn": "Key of Time",
@@ -28899,7 +28899,7 @@
   "bannerUrl": "/images/characters/banners/daisy.webp"
  },
  {
-  "id": "cmsfp5hwg000j2mp2msmtx53k",
+  "id": "cmsupro1d000j2lpeabl05jwl",
   "slug": "derieri",
   "nameFr": "Derrierie",
   "nameEn": "Derieri",
@@ -28926,7 +28926,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jlj008o2mp2ui67mi4b",
+    "id": "cmsuprpub008o2lpejrx4fblu",
     "slug": "derieri-costume-134102001",
     "nameFr": "Derrierie de la 「Pureté」",
     "nameEn": "Derieri of 「Purity」",
@@ -28941,7 +28941,7 @@
     "iconUrl": "/images/costumes/icon_Derieri_001.webp"
    },
    {
-    "id": "cmsfp5jlj008p2mp2p43vyk7e",
+    "id": "cmsuprpub008p2lpedz5mepx1",
     "slug": "derieri-costume-134102002",
     "nameFr": "Résistance et révolution",
     "nameEn": "Resistance and Revolution",
@@ -29005,7 +29005,7 @@
     "iconUrl": "/images/costumes/icon_Derieri_002.webp"
    },
    {
-    "id": "cmsfp5jlj008q2mp2hjkiq2l3",
+    "id": "cmsuprpub008q2lpeyfae8abe",
     "slug": "derieri-costume-134102003",
     "nameFr": "Flamme rouge du royaume des démons",
     "nameEn": "Red Flame of the Demon Realm",
@@ -29020,7 +29020,7 @@
     "iconUrl": "/images/costumes/icon_Derieri_003.webp"
    },
    {
-    "id": "cmsfp5jlj008r2mp2t29zp9j8",
+    "id": "cmsuprpub008r2lpegg9djmo8",
     "slug": "derieri-costume-134102004",
     "nameFr": "Courtoisie minimale",
     "nameEn": "Minimal Courtesy",
@@ -29037,17 +29037,17 @@
        {
         "level": 1,
         "descEn": "While a [#0F5CD8]Max HP[-] boost is active on the hero, each hit on an enemy increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]3%[-] for [#1A7331]30 sec[-]. (Max: [#1A7331]18%[-])\nIncreases all allied Fire heroes' [#0F5CD8]Crit Damage[-] dealt to enemies with reduced [#0F5CD8]Fire Defense[-] by [#1A7331]24%[-].",
-        "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]3%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]18%[-])\nAugmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Feu avec une [#0F5CD8]défense de Feu[-] réduite de [#1A7331]24%[-]."
+        "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]3%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]18%[-])\nAugmente de [#1A7331]24%[-] les [#0F5CD8]dégâts crit.[-] infligés par tous les héros alliés d'attribut Feu aux ennemis dont la [#0F5CD8]défense de Feu[-] est réduite."
        },
        {
         "level": 2,
         "descEn": "While a [#0F5CD8]Max HP[-] boost is active on the hero, each hit on an enemy increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]4%[-] for [#1A7331]30 sec[-]. (Max: [#1A7331]24%[-])\nIncreases all allied Fire heroes' [#0F5CD8]Crit Damage[-] dealt to enemies with reduced [#0F5CD8]Fire Defense[-] by [#1A7331]32%[-].",
-        "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]4%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]24%[-])\nAugmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Feu avec une [#0F5CD8]défense de Feu[-] réduite de [#1A7331]32%[-]."
+        "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]4%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]24%[-])\nAugmente de [#1A7331]32%[-] les [#0F5CD8]dégâts crit.[-] infligés par tous les héros alliés d'attribut Feu aux ennemis dont la [#0F5CD8]défense de Feu[-] est réduite."
        },
        {
         "level": 3,
         "descEn": "While a [#0F5CD8]Max HP[-] boost is active on the hero, each hit on an enemy increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]5%[-] for [#1A7331]30 sec[-]. (Max: [#1A7331]30%[-])\nIncreases all allied Fire heroes' [#0F5CD8]Crit Damage[-] dealt to enemies with reduced [#0F5CD8]Fire Defense[-] by [#1A7331]40%[-].",
-        "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]5%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]30%[-])\nAugmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Feu avec une [#0F5CD8]défense de Feu[-] réduite de [#1A7331]40%[-]."
+        "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]5%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]30%[-])\nAugmente de [#1A7331]40%[-] les [#0F5CD8]dégâts crit.[-] infligés par tous les héros alliés d'attribut Feu aux ennemis dont la [#0F5CD8]défense de Feu[-] est réduite."
        }
       ],
       "nameEn": "Burning Spirit",
@@ -29084,7 +29084,7 @@
     "iconUrl": "/images/costumes/icon_Derieri_004.webp"
    },
    {
-    "id": "cmsfp5jli00642mp2fp9z6qme",
+    "id": "cmsuprpub00642lpem7tlpvpi",
     "slug": "derieri-costume-135102001",
     "nameFr": "Gantelets démoniaques Derrakin",
     "nameEn": "Demon Gauntlets Derrakin",
@@ -29178,20 +29178,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 128
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 119
        },
@@ -29230,6 +29216,20 @@
        {
         "stat": "C_Critical_DamRes_Rate",
         "value": 585
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 128
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
        }
       ]
      },
@@ -29674,34 +29674,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_ResRate",
-        "value": 90
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 338
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 165
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 37
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 90
        },
@@ -29726,6 +29698,34 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 788
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 90
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 338
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 165
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 37
        }
       ]
      },
@@ -30202,12 +30202,12 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 128
+        "stat": "C_Critical_ResRate",
+        "value": 158
        },
        {
-        "stat": "A_Accuracy",
-        "value": 35
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 585
        }
       ]
      },
@@ -30216,12 +30216,12 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_ResRate",
-        "value": 158
+        "stat": "B_Atk",
+        "value": 128
        },
        {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 585
+        "stat": "A_Accuracy",
+        "value": 35
        }
       ]
      },
@@ -30622,7 +30622,7 @@
     "weaponType": "Axe",
     "tier": 5,
     "bonusFr": "Augmente légèrement la portée de l'attaque spéciale et renforce la puissance de l'attaque spéciale de [#1A7331]60%[-].\nLa dernière frappe de l'attaque spéciale augmente la durée du [#0F5CD8]Déluge des Ténèbres[-] de la cible de [#1A7331]3s[-].",
-    "bonusEn": "Slightly increases the range of the Special Attack, and amplifies the Special Attack's skill power by [#1A7331]60%[-].\nThe final strike of the Special Attack increases the target's [#0F5CD8]Darkness Burst[-] duration by [#1A7331]3 sec[-].",
+    "bonusEn": "Slightly increases the range of the Special Attack, and amplifies the Special Attack's power by [#1A7331]60%[-].\nThe final strike of the Special Attack increases the target's [#0F5CD8]Darkness Burst[-] duration by [#1A7331]3 sec[-].",
     "stats": []
    },
    {
@@ -30775,8 +30775,8 @@
    {
     "weaponType": "Sword2h",
     "tier": 7,
-    "bonusFr": "La dernière frappe de la compétence normale inflige des dégâts supplémentaires égaux à [#1A7331]40%[-] de l'attaque [#1A7331]5 fois[-].\nLorsque des dégâts supplémentaires sont infligés, augmente les dégâts d'attaque ultime et d'attaque combinée subis par la cible de [#1A7331]50%[-] pendant [#1A7331]20s[-].",
-    "bonusEn": "The final strike of the Normal Skill inflicts additional damage equal to [#1A7331]40%[-] of Attack [#1A7331]5 time(s)[-].\nWhen the additional damage lands, the target's Ultimate Move and Combined Attack damage taken increases by [#1A7331]50%[-] for [#1A7331]20 sec[-].",
+    "bonusFr": "Lors de l'utilisation de la compétence normale, inflige des dégâts supplémentaires [#1A7331]5 fois[-] en ligne droite après le dernier coup. Chaque coup supplémentaire inflige des dégâts égaux à [#1A7331]40%[-] de l'attaque.\nCette attaque augmente les dégâts d'attaque ultime ou d'attaque combinée subis par les ennemis de [#1A7331]50%[-] pendant [#1A7331]20s[-].",
+    "bonusEn": "When using the Normal Skill, inflicts additional damage [#1A7331]5 time(s)[-] in a straight line ahead after the final hit, with each additional hit dealing damage equal to [#1A7331]40%[-] of Attack.\nThis attack increases the enemy's Ultimate Move or Combined Attack damage taken by [#1A7331]50%[-] for [#1A7331]20 sec[-].",
     "stats": []
    },
    {
@@ -30840,7 +30840,7 @@
   "bannerUrl": "/images/characters/banners/derieri.webp"
  },
  {
-  "id": "cmsfp5hwg000i2mp20qyas7bh",
+  "id": "cmsupro1d000i2lpeuoqe3qyz",
   "slug": "diane",
   "nameFr": "Diane",
   "nameEn": "Diane",
@@ -30867,7 +30867,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jlj008j2mp27r35uxrx",
+    "id": "cmsuprpub008j2lpedcc4om8j",
     "slug": "diane-costume-134101901",
     "nameFr": "Géante amoureuse",
     "nameEn": "Giant Girl in Love",
@@ -30882,7 +30882,7 @@
     "iconUrl": "/images/costumes/icon_Diane_001.webp"
    },
    {
-    "id": "cmsfp5jlj008k2mp2ejsylmev",
+    "id": "cmsuprpub008k2lpe7cb3tc1m",
     "slug": "diane-costume-134101902",
     "nameFr": "Serveuse de la taverne",
     "nameEn": "Tavern Hostess",
@@ -30942,7 +30942,7 @@
     "iconUrl": "/images/costumes/icon_Diane_002.webp"
    },
    {
-    "id": "cmsfp5jlj008l2mp2qqa0mn12",
+    "id": "cmsuprpub008l2lpe2ge9tvqr",
     "slug": "diane-costume-134101903",
     "nameFr": "Le Serpent de l'Envie",
     "nameEn": "The Serpent Sin of Envy",
@@ -31006,7 +31006,7 @@
     "iconUrl": "/images/costumes/icon_Diane_003.webp"
    },
    {
-    "id": "cmsfp5jlj008m2mp2c3e8oxuk",
+    "id": "cmsuprpub008m2lpefkhbbau0",
     "slug": "diane-costume-134101904",
     "nameFr": "Fille enjouée",
     "nameEn": "Cheerful Girl",
@@ -31070,7 +31070,7 @@
     "iconUrl": "/images/costumes/icon_Diane_004.webp"
    },
    {
-    "id": "cmsfp5jlj008n2mp2l8kdp4r7",
+    "id": "cmsuprpub008n2lpe1wpnff1a",
     "slug": "diane-costume-134101905",
     "nameFr": "Tenue de combat cloutée",
     "nameEn": "Spiked Combat Outfit",
@@ -31709,20 +31709,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_ResRate",
-        "value": 225
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 675
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Atk",
         "value": 120
        },
@@ -31761,6 +31747,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 420
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 225
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 675
        }
       ]
      },
@@ -33265,7 +33265,7 @@
   "bannerUrl": "/images/characters/banners/diane.webp"
  },
  {
-  "id": "cmsfp5hwh000m2mp24lwq9wl4",
+  "id": "cmsupro1d000m2lpehuz5f160",
   "slug": "drake",
   "nameFr": "Drake",
   "nameEn": "Drake",
@@ -33292,7 +33292,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jlj00942mp2kl19ujc0",
+    "id": "cmsuprpuc00942lpec7diopie",
     "slug": "drake-costume-134102601",
     "nameFr": "Descendant du dragon",
     "nameEn": "Dragon Descendent",
@@ -33307,7 +33307,7 @@
     "iconUrl": "/images/costumes/icon_Drake_002.webp"
    },
    {
-    "id": "cmsfp5jlj00952mp2zbenrugw",
+    "id": "cmsuprpuc00952lpedbnq6xpv",
     "slug": "drake-costume-134102602",
     "nameFr": "Serment du trône",
     "nameEn": "Oath of the Throne",
@@ -33367,7 +33367,7 @@
     "iconUrl": "/images/costumes/icon_Drake_003.webp"
    },
    {
-    "id": "cmsfp5jlj00962mp2b7ysccc0",
+    "id": "cmsuprpuc00962lpe876mm4j7",
     "slug": "drake-costume-134102603",
     "nameFr": "Gloire du passé",
     "nameEn": "Glory of the Past",
@@ -33431,7 +33431,7 @@
     "iconUrl": "/images/costumes/icon_Drake_004.webp"
    },
    {
-    "id": "cmsfp5jlj00972mp226c9y6ei",
+    "id": "cmsuprpuc00972lpeem9hrozw",
     "slug": "drake-costume-134102604",
     "nameFr": "Seigneur des ombres",
     "nameEn": "Shadow Lord",
@@ -33495,7 +33495,7 @@
     "iconUrl": "/images/costumes/icon_Drake_005.webp"
    },
    {
-    "id": "cmsfp5jlj00982mp2ovqyhvuj",
+    "id": "cmsuprpuc00982lpegje4sipp",
     "slug": "drake-costume-134102605",
     "nameFr": "Chevalier impérial",
     "nameEn": "Imperial Knight",
@@ -35690,7 +35690,7 @@
   "bannerUrl": "/images/characters/banners/drake.webp"
  },
  {
-  "id": "cmsfp5hwg00082mp2luyxd6uo",
+  "id": "cmsupro1d00082lpev31eyc4q",
   "slug": "elaine",
   "nameFr": "Elaine",
   "nameEn": "Elaine",
@@ -35717,7 +35717,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jli00792mp28g8hrl7g",
+    "id": "cmsuprpub00792lpe8lx9xb90",
     "slug": "elaine-costume-134100901",
     "nameFr": "Saint gardien de la Fontaine de jouvence",
     "nameEn": "Guardian Saint of the Fountain of Youth",
@@ -35732,7 +35732,7 @@
     "iconUrl": "/images/costumes/icon_Elaine_001.webp"
    },
    {
-    "id": "cmsfp5jli007a2mp211ce2oci",
+    "id": "cmsuprpub007a2lped5i2rss6",
     "slug": "elaine-costume-134100902",
     "nameFr": "Employé saisonnier",
     "nameEn": "Temp Employee",
@@ -35792,7 +35792,7 @@
     "iconUrl": "/images/costumes/icon_Elaine_002.webp"
    },
    {
-    "id": "cmsfp5jli007b2mp2m8ve48au",
+    "id": "cmsuprpub007b2lpeix663zwj",
     "slug": "elaine-costume-134100903",
     "nameFr": "Lumière de guidance",
     "nameEn": "Guiding Light",
@@ -35856,7 +35856,7 @@
     "iconUrl": "/images/costumes/icon_Elaine_003.webp"
    },
    {
-    "id": "cmsfp5jli007c2mp2dgbyvaa0",
+    "id": "cmsuprpub007c2lpe7um001zq",
     "slug": "elaine-costume-134100904",
     "nameFr": "Sortie joyeuse",
     "nameEn": "Cheerful Outing",
@@ -35920,7 +35920,7 @@
     "iconUrl": "/images/costumes/icon_Elaine_004.webp"
    },
    {
-    "id": "cmsfp5jli007d2mp205nb8ggb",
+    "id": "cmsuprpub007d2lpeuwqqwzz4",
     "slug": "elaine-costume-134100905",
     "nameFr": "Dignité de la sainte",
     "nameEn": "Saintess's Dignity",
@@ -38115,7 +38115,7 @@
   "bannerUrl": "/images/characters/banners/elaine.webp"
  },
  {
-  "id": "cmsfp5hwg000g2mp22nf1pjs2",
+  "id": "cmsupro1d000g2lpes3p56rz7",
   "slug": "elizabeth",
   "nameFr": "Elizabeth",
   "nameEn": "Elizabeth",
@@ -38142,7 +38142,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jlj008a2mp2i3788usc",
+    "id": "cmsuprpub008a2lpeumucegwd",
     "slug": "elizabeth-costume-134101706",
     "nameFr": "Rêverie estivale",
     "nameEn": "Midsummer Reverie",
@@ -38157,7 +38157,7 @@
     "iconUrl": "/images/costumes/icon_Elizabeth_006.webp"
    },
    {
-    "id": "cmsfp5jlj008b2mp21wjjy9cw",
+    "id": "cmsuprpub008b2lpe49yg0z6y",
     "slug": "elizabeth-costume-134101702",
     "nameFr": "Vedette de la taverne",
     "nameEn": "Star of the Tavern",
@@ -38221,7 +38221,7 @@
     "iconUrl": "/images/costumes/icon_Elizabeth_002.webp"
    },
    {
-    "id": "cmsfp5jlj008c2mp25e2mptgg",
+    "id": "cmsuprpub008c2lpek8667ri7",
     "slug": "elizabeth-costume-134101703",
     "nameFr": "Héros de Liones",
     "nameEn": "Hero of Liones",
@@ -38285,7 +38285,7 @@
     "iconUrl": "/images/costumes/icon_Elizabeth_003.webp"
    },
    {
-    "id": "cmsfp5jlj008d2mp2kus5qu3a",
+    "id": "cmsuprpub008d2lpe77e12fhh",
     "slug": "elizabeth-costume-134101701",
     "nameFr": "La princesse qui a retrouvé la mémoire",
     "nameEn": "The Princess Who Regained Her Memory",
@@ -38300,7 +38300,7 @@
     "iconUrl": "/images/costumes/icon_Elizabeth_001.webp"
    },
    {
-    "id": "cmsfp5jli005z2mp2n3iy47ne",
+    "id": "cmsuprpub005z2lpeilxosadc",
     "slug": "elizabeth-costume-135101701",
     "nameFr": "Tome interdit Solvire",
     "nameEn": "Forbidden Tome Solvire",
@@ -38394,6 +38394,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 135
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 124
        },
@@ -38418,20 +38432,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 447
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 135
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
        }
       ]
      },
@@ -40446,7 +40446,7 @@
   "bannerUrl": "/images/characters/banners/elizabeth.webp"
  },
  {
-  "id": "cmsfp5hwg000k2mp28qrbe2ik",
+  "id": "cmsupro1d000k2lpeyaotjoj2",
   "slug": "escanor",
   "nameFr": "Escanor",
   "nameEn": "Escanor",
@@ -40473,7 +40473,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jlj008s2mp2022cycgu",
+    "id": "cmsuprpub008s2lpelvf9iu3i",
     "slug": "escanor-costume-134102301",
     "nameFr": "Poète arrogant",
     "nameEn": "Arrogant Poet",
@@ -40488,7 +40488,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_001.webp"
    },
    {
-    "id": "cmsfp5jlj008t2mp2zc3pym76",
+    "id": "cmsuprpub008t2lpekyfcf7tj",
     "slug": "escanor-costume-134102302",
     "nameFr": "Violence nordique",
     "nameEn": "Northern Wildness",
@@ -40552,7 +40552,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_002.webp"
    },
    {
-    "id": "cmsfp5jlj008u2mp21oyyx0jb",
+    "id": "cmsuprpub008u2lpea9yvt8xm",
     "slug": "escanor-costume-134102303",
     "nameFr": "Le Lion de l'Orgueil",
     "nameEn": "The Lion Sin of Pride",
@@ -40567,7 +40567,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_003.webp"
    },
    {
-    "id": "cmsfp5jlj008v2mp2yvfquob3",
+    "id": "cmsuprpub008v2lpeiolfep84",
     "slug": "escanor-costume-134102304",
     "nameFr": "Arrogance adéquate",
     "nameEn": "Sufficient Arrogance",
@@ -40631,7 +40631,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_004.webp"
    },
    {
-    "id": "cmsfp5jlj008w2mp2no2opi3t",
+    "id": "cmsuprpub008w2lpecxhffyxu",
     "slug": "escanor-costume-134102305",
     "nameFr": "Dignité dorée",
     "nameEn": "Golden Dignity",
@@ -40695,7 +40695,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_005.webp"
    },
    {
-    "id": "cmsfp5jlj008x2mp26xdqwxhx",
+    "id": "cmsuprpub008x2lpe4wccshj7",
     "slug": "escanor-costume-134102306",
     "nameFr": "Incarnation de l'Orgueil",
     "nameEn": "Epitome of Pride",
@@ -40710,7 +40710,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_006.webp"
    },
    {
-    "id": "cmsfp5jli00602mp2u62u3htu",
+    "id": "cmsuprpub00602lpey2vrcxv2",
     "slug": "escanor-costume-135102301",
     "nameFr": "Hache sacrée Rhitta",
     "nameEn": "Sacred Axe Rhitta",
@@ -41300,20 +41300,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_ResRate",
-        "value": 150
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 450
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Atk",
         "value": 150
        },
@@ -41352,6 +41338,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 525
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 150
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 450
        }
       ]
      },
@@ -42856,7 +42856,7 @@
   "bannerUrl": "/images/characters/banners/escanor.webp"
  },
  {
-  "id": "cmsfp5hwg00072mp20tn89cq1",
+  "id": "cmsupro1d00072lpe00n1elvu",
   "slug": "gowther",
   "nameFr": "Gowther",
   "nameEn": "Gowther",
@@ -42883,7 +42883,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jli00752mp22g6p1iwf",
+    "id": "cmsuprpub00752lpesy6246mf",
     "slug": "gowther-costume-134100801",
     "nameFr": "Poupée sans cœur",
     "nameEn": "Heartless Doll",
@@ -42898,7 +42898,7 @@
     "iconUrl": "/images/costumes/icon_Gowther_001.webp"
    },
    {
-    "id": "cmsfp5jli00632mp216zar2bc",
+    "id": "cmsuprpub00632lpej0g9ipxm",
     "slug": "gowther-costume-135100801",
     "nameFr": "Œil du sage corrompu",
     "nameEn": "Eye of the Corrupted Sage",
@@ -42913,7 +42913,7 @@
     "iconUrl": "/images/costumes/Short_Costume_Gowther_Wand_0001.webp"
    },
    {
-    "id": "cmsfp5jli00762mp262hscjcp",
+    "id": "cmsuprpub00762lpeftk5muta",
     "slug": "gowther-costume-134100802",
     "nameFr": "Tenue de soirée pour un rendez-vous secret",
     "nameEn": "Secret Date Night Look",
@@ -42977,7 +42977,7 @@
     "iconUrl": "/images/costumes/icon_Gowther_002.webp"
    },
    {
-    "id": "cmsfp5jli00772mp2nubfall3",
+    "id": "cmsuprpub00772lpeb1pc5ruc",
     "slug": "gowther-costume-134100803",
     "nameFr": "Le Bélier de la Luxure",
     "nameEn": "The Goat Sin of Lust",
@@ -43041,7 +43041,7 @@
     "iconUrl": "/images/costumes/icon_Gowther_003.webp"
    },
    {
-    "id": "cmsfp5jli00782mp2zuonwrij",
+    "id": "cmsuprpub00782lperfsuau1f",
     "slug": "gowther-costume-134100804",
     "nameFr": "Quête de soi",
     "nameEn": "Journey of Self-discovery",
@@ -44797,7 +44797,7 @@
   "bannerUrl": "/images/characters/banners/gowther.webp"
  },
  {
-  "id": "cmsfp5hwg000h2mp2z10wwnwt",
+  "id": "cmsupro1d000h2lped4u8rmjz",
   "slug": "guila",
   "nameFr": "Guila",
   "nameEn": "Guila",
@@ -44824,7 +44824,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jlj008e2mp2w35tgbmr",
+    "id": "cmsuprpub008e2lpeixv97x6y",
     "slug": "guila-costume-134101801",
     "nameFr": "Le seul et unique chevalier sacré",
     "nameEn": "One and Only Holy Knight",
@@ -44839,7 +44839,7 @@
     "iconUrl": "/images/costumes/icon_Guila_001.webp"
    },
    {
-    "id": "cmsfp5jlj008f2mp2f2b6q2ul",
+    "id": "cmsuprpub008f2lpen97ffhmc",
     "slug": "guila-costume-134101802",
     "nameFr": "Moment en famille",
     "nameEn": "Family Time",
@@ -44899,7 +44899,7 @@
     "iconUrl": "/images/costumes/icon_Guila_002.webp"
    },
    {
-    "id": "cmsfp5jlj008g2mp2hxu9d4ei",
+    "id": "cmsuprpub008g2lpei89w1av9",
     "slug": "guila-costume-134101803",
     "nameFr": "Chevalier sacré des explosions",
     "nameEn": "Holy Knight of Explosions",
@@ -44963,7 +44963,7 @@
     "iconUrl": "/images/costumes/icon_Guila_003.webp"
    },
    {
-    "id": "cmsfp5jlj008h2mp24gsdje1i",
+    "id": "cmsuprpub008h2lpefuohd5v2",
     "slug": "guila-costume-134101804",
     "nameFr": "Pas légers",
     "nameEn": "Light Footsteps",
@@ -45027,7 +45027,7 @@
     "iconUrl": "/images/costumes/icon_Guila_004.webp"
    },
    {
-    "id": "cmsfp5jlj008i2mp2bbbly54s",
+    "id": "cmsuprpub008i2lpenqr30agg",
     "slug": "guila-costume-134101805",
     "nameFr": "Piste de la flamme cramoisie",
     "nameEn": "Crimson Flame's Trail",
@@ -45170,20 +45170,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_ResRate",
-        "value": 90
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 338
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Atk",
         "value": 165
        },
@@ -45222,6 +45208,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 788
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 90
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 338
        }
       ]
      },
@@ -46162,6 +46162,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 120
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 141
        },
@@ -46186,20 +46200,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 420
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 120
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
        }
       ]
      },
@@ -47222,7 +47222,7 @@
   "bannerUrl": "/images/characters/banners/guila.webp"
  },
  {
-  "id": "cmsfp5hwg000f2mp2hss6bmf7",
+  "id": "cmsupro1d000f2lpeomo3vzdr",
   "slug": "jericho",
   "nameFr": "Jericho",
   "nameEn": "Jericho",
@@ -47249,7 +47249,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jlj00852mp2dwazeqod",
+    "id": "cmsuprpub00852lpe76lnogav",
     "slug": "jericho-costume-134101601",
     "nameFr": "Chevalier sacré en fuite",
     "nameEn": "Runaway Holy Knight",
@@ -47264,7 +47264,7 @@
     "iconUrl": "/images/costumes/icon_Jericho_001.webp"
    },
    {
-    "id": "cmsfp5jlj00862mp2z45rdt56",
+    "id": "cmsuprpub00862lpe7092nu2f",
     "slug": "jericho-costume-134101602",
     "nameFr": "Moment de détente",
     "nameEn": "Leisurely Moment",
@@ -47324,7 +47324,7 @@
     "iconUrl": "/images/costumes/icon_Jericho_002.webp"
    },
    {
-    "id": "cmsfp5jlj00872mp2gqtfkvt5",
+    "id": "cmsuprpub00872lped06j17r6",
     "slug": "jericho-costume-134101603",
     "nameFr": "Chevalier sacré à la visière en étoile",
     "nameEn": "Holy Knight With the Star-Shaped Visor",
@@ -47388,7 +47388,7 @@
     "iconUrl": "/images/costumes/icon_Jericho_003.webp"
    },
    {
-    "id": "cmsfp5jlj00882mp28ex4p0y5",
+    "id": "cmsuprpub00882lped96svq3g",
     "slug": "jericho-costume-134101604",
     "nameFr": "Voyageuse cachottière",
     "nameEn": "Secretive Traveler",
@@ -47452,7 +47452,7 @@
     "iconUrl": "/images/costumes/icon_Jericho_004.webp"
    },
    {
-    "id": "cmsfp5jlj00892mp2e55c2a8k",
+    "id": "cmsuprpub00892lpenn9fzqmz",
     "slug": "jericho-costume-134101605",
     "nameFr": "Traces de souvenirs",
     "nameEn": "Trace of Memories",
@@ -47595,20 +47595,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_ResRate",
-        "value": 225
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 675
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Atk",
         "value": 120
        },
@@ -47647,6 +47633,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 420
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 225
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 675
        }
       ]
      },
@@ -48091,6 +48091,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 165
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 37
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 90
        },
@@ -48115,20 +48129,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 788
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 165
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 37
        }
       ]
      },
@@ -49647,7 +49647,7 @@
   "bannerUrl": "/images/characters/banners/jericho.webp"
  },
  {
-  "id": "cmsfp5hwg00092mp2525e8pvo",
+  "id": "cmsupro1d00092lpe3ljppu4m",
   "slug": "king",
   "nameFr": "King",
   "nameEn": "King",
@@ -49674,7 +49674,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jli007e2mp2n1omu56c",
+    "id": "cmsuprpub007e2lpe4vnrz9nb",
     "slug": "king-costume-134101001",
     "nameFr": "Roi des fées inexpérimenté",
     "nameEn": "Inexperienced Fairy King",
@@ -49689,7 +49689,7 @@
     "iconUrl": "/images/costumes/icon_King_001.webp"
    },
    {
-    "id": "cmsfp5jli007f2mp2hos2tg68",
+    "id": "cmsuprpub007f2lpejustyu4k",
     "slug": "king-costume-134101002",
     "nameFr": "Traces de la forêt",
     "nameEn": "Forest's Footsteps",
@@ -49749,7 +49749,7 @@
     "iconUrl": "/images/costumes/icon_King_004.webp"
    },
    {
-    "id": "cmsfp5jli007g2mp2gk9b6qtz",
+    "id": "cmsuprpub007g2lpe2v7mfo5e",
     "slug": "king-costume-134101003",
     "nameFr": "Le Grizzly de la Paresse",
     "nameEn": "The Grizzly Sin of Sloth",
@@ -49813,7 +49813,7 @@
     "iconUrl": "/images/costumes/icon_King_003.webp"
    },
    {
-    "id": "cmsfp5jli007h2mp235gh3cbx",
+    "id": "cmsuprpub007h2lpeygtboy58",
     "slug": "king-costume-134101004",
     "nameFr": "L'ombre de la forêt profonde",
     "nameEn": "Shadow of the Deep Forest",
@@ -52008,7 +52008,7 @@
   "bannerUrl": "/images/characters/banners/king.webp"
  },
  {
-  "id": "cmsfp5hwg000l2mp2qklxw58p",
+  "id": "cmsupro1d000l2lpenlfqxw3x",
   "slug": "manny",
   "nameFr": "Mannie",
   "nameEn": "Mannie",
@@ -52035,7 +52035,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jlj008y2mp2at7x28e4",
+    "id": "cmsuprpuc008y2lpe4p35anv8",
     "slug": "manny-costume-134102501",
     "nameFr": "Prêtresse exaltée",
     "nameEn": "Exalted Priestess",
@@ -52050,7 +52050,7 @@
     "iconUrl": "/images/costumes/icon_Manny_001.webp"
    },
    {
-    "id": "cmsfp5jlj008z2mp2oxfvuj21",
+    "id": "cmsuprpuc008z2lpewf5r8sr4",
     "slug": "manny-costume-134102502",
     "nameFr": "Cœur de prière",
     "nameEn": "Heart of Prayer",
@@ -52110,7 +52110,7 @@
     "iconUrl": "/images/costumes/icon_Manny_002.webp"
    },
    {
-    "id": "cmsfp5jlj00902mp21vq0fl4a",
+    "id": "cmsuprpuc00902lpecrqluqvj",
     "slug": "manny-costume-134102503",
     "nameFr": "Prestige de l'archiprêtresse",
     "nameEn": "Arch Priestess's Prestige",
@@ -52174,7 +52174,7 @@
     "iconUrl": "/images/costumes/icon_Manny_003.webp"
    },
    {
-    "id": "cmsfp5jlj00912mp24o2y14k0",
+    "id": "cmsuprpuc00912lpeh3i1j51a",
     "slug": "manny-costume-134102504",
     "nameFr": "Exploration de l'inconnu",
     "nameEn": "Exploration of the Unknown",
@@ -52238,7 +52238,7 @@
     "iconUrl": "/images/costumes/icon_Manny_004.webp"
    },
    {
-    "id": "cmsfp5jlj00922mp2h6mdu7n3",
+    "id": "cmsuprpuc00922lpel164qo34",
     "slug": "manny-costume-134102505",
     "nameFr": "Rituel sacré",
     "nameEn": "Holy Ritual",
@@ -52302,7 +52302,7 @@
     "iconUrl": "/images/costumes/icon_Manny_005.webp"
    },
    {
-    "id": "cmsfp5jlj00932mp2gbm1hjg5",
+    "id": "cmsuprpuc00932lpea8s7x8d5",
     "slug": "manny-costume-134102506",
     "nameFr": "Récif de corail azuré",
     "nameEn": "Azure Coral Reef",
@@ -52396,20 +52396,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_ResRate",
-        "value": 158
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 563
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Atk",
         "value": 113
        },
@@ -52448,6 +52434,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 473
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 158
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 563
        }
       ]
      },
@@ -53388,6 +53388,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 128
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 119
        },
@@ -53412,20 +53426,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 499
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 128
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
        }
       ]
      },
@@ -54448,7 +54448,7 @@
   "bannerUrl": "/images/characters/banners/manny.webp"
  },
  {
-  "id": "cmsfp5hwg00042mp2p0mgrbs9",
+  "id": "cmsupro1d00042lpeglcq6w5j",
   "slug": "meliodas",
   "nameFr": "Meliodas",
   "nameEn": "Meliodas",
@@ -54475,7 +54475,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jli006p2mp26p25ycdi",
+    "id": "cmsuprpub006p2lpepvhtrhwa",
     "slug": "meliodas-costume-134100501",
     "nameFr": "Tavernier ordinaire",
     "nameEn": "Ordinary Tavern Owner",
@@ -54490,7 +54490,7 @@
     "iconUrl": "/images/costumes/icon_Meliodas_001.webp"
    },
    {
-    "id": "cmsfp5jli005x2mp2ircplz78",
+    "id": "cmsuprpub005x2lpe5xqapcw8",
     "slug": "meliodas-costume-135100501",
     "nameFr": "Épée démoniaque Lostvayne",
     "nameEn": "Demon Sword Lostvayne",
@@ -54505,7 +54505,7 @@
     "iconUrl": "/images/costumes/Short_Costume_Meliodas_Sword1H_0001.webp"
    },
    {
-    "id": "cmsfp5jli006q2mp2godmqxd5",
+    "id": "cmsuprpub006q2lpe6lj16q13",
     "slug": "meliodas-costume-134100502",
     "nameFr": "Une nouvelle aventure",
     "nameEn": "A New Adventure",
@@ -54569,7 +54569,7 @@
     "iconUrl": "/images/costumes/icon_Meliodas_002.webp"
    },
    {
-    "id": "cmsfp5jli006r2mp2zuybln4o",
+    "id": "cmsuprpub006r2lpel8mr6yir",
     "slug": "meliodas-costume-134100503",
     "nameFr": "Le Dragon de la Colère",
     "nameEn": "The Dragon Sin of Wrath",
@@ -54584,7 +54584,7 @@
     "iconUrl": "/images/costumes/icon_Meliodas_003.webp"
    },
    {
-    "id": "cmsfp5jli006s2mp2trkabz1p",
+    "id": "cmsuprpub006s2lpeqhp4x8f7",
     "slug": "meliodas-costume-134100504",
     "nameFr": "Défense simple",
     "nameEn": "Simple Defense",
@@ -54648,7 +54648,7 @@
     "iconUrl": "/images/costumes/icon_Meliodas_004.webp"
    },
    {
-    "id": "cmsfp5jli006t2mp2oyf16duj",
+    "id": "cmsuprpub006t2lpem4dc7jpu",
     "slug": "meliodas-costume-134100505",
     "nameFr": "Majesté bien malveillante",
     "nameEn": "Most Malevolent Majesty",
@@ -56843,7 +56843,7 @@
   "bannerUrl": "/images/characters/banners/meliodas.webp"
  },
  {
-  "id": "cmsfp5hwg00062mp2trhrtvmf",
+  "id": "cmsupro1d00062lpejkc7vd8x",
   "slug": "merlin",
   "nameFr": "Merlin",
   "nameEn": "Merlin",
@@ -56870,7 +56870,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsfp5jli006z2mp2egqf7j8e",
+    "id": "cmsuprpub006z2lpeo9sl0xpm",
     "slug": "merlin-costume-134100701",
     "nameFr": "Grand mage ésotérique",
     "nameEn": "Esoteric Great Mage",
@@ -56885,7 +56885,7 @@
     "iconUrl": "/images/costumes/icon_Merlin_001.webp"
    },
    {
-    "id": "cmsfp5jli005y2mp20u0wcqga",
+    "id": "cmsuprpub005y2lpesv4txtx3",
     "slug": "merlin-costume-135100701",
     "nameFr": "L'Étoile du Matin Aldan",
     "nameEn": "Morning Star Aldan",
@@ -56900,7 +56900,7 @@
     "iconUrl": "/images/costumes/Short_Costume_Merlin_Book_0001.webp"
    },
    {
-    "id": "cmsfp5jli00702mp2m7ddv8fj",
+    "id": "cmsuprpub00702lpe33psmpti",
     "slug": "merlin-costume-134100702",
     "nameFr": "Vêtements formels légers",
     "nameEn": "Light Formalwear",
@@ -56964,7 +56964,7 @@
     "iconUrl": "/images/costumes/icon_Merlin_002.webp"
    },
    {
-    "id": "cmsfp5jli00712mp22sd8rorq",
+    "id": "cmsuprpub00712lpet8jdc2m3",
     "slug": "merlin-costume-134100703",
     "nameFr": "Le Sanglier de la Gourmandise",
     "nameEn": "The Boar Sin of Gluttony",
@@ -57028,7 +57028,7 @@
     "iconUrl": "/images/costumes/icon_Merlin_003.webp"
    },
    {
-    "id": "cmsfp5jli00722mp2kv03f7d7",
+    "id": "cmsuprpub00722lperv36u2kw",
     "slug": "merlin-costume-134100704",
     "nameFr": "Chercheuse de savoir",
     "nameEn": "Seeker of Knowledge",
@@ -57092,7 +57092,7 @@
     "iconUrl": "/images/costumes/icon_Merlin_004.webp"
    },
    {
-    "id": "cmsfp5jli00732mp2l0g0fiqq",
+    "id": "cmsuprpub00732lpe57ryenq3",
     "slug": "merlin-costume-134100705",
     "nameFr": "Banquet de sorcière",
     "nameEn": "Witch's Banquet",
@@ -57107,7 +57107,7 @@
     "iconUrl": "/images/costumes/icon_Merlin_005.webp"
    },
    {
-    "id": "cmsfp5jli00742mp2uou6h0kk",
+    "id": "cmsuprpub00742lpe6dq35j25",
     "slug": "merlin-costume-134100706",
     "nameFr": "Jeux de bords de mer",
     "nameEn": "Seaside Frolic",
@@ -57201,6 +57201,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 165
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 37
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 90
        },
@@ -57225,20 +57239,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 788
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 165
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 37
        }
       ]
      },

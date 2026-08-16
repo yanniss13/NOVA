@@ -1,5 +1,5 @@
 // Généré manuellement depuis la page publique du team builder 7dsorigin.app.
-// Date de génération : 2026-08-05T23:58:47+02:00
+// Date de génération : 2026-08-16T16:00:26+02:00
 // Instantané local : aucun appel réseau n'est effectué par index.html.
 window.SEVEN_DS_ARMURES_LIEES = {
   "bug": [

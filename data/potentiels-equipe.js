@@ -158,7 +158,10 @@ window.SEVEN_DS_POTENTIELS_EQUIPE = {
           valeur:5000,
           unite:"ten-thousandths",
           element:null,
-          provenance:{ phrase:"subis par la cible de " }
+          /* Ancrage refait le 16/08/2026 : « subis par la cible » est devenu
+             « subis par les ennemis » dans la reformulation francaise du 15.
+             Les 50 % n'ont pas bouge. */
+          provenance:{ phrase:"subis par les ennemis de " }
         }
       ],
       "9": [

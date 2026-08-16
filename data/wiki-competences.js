@@ -346,7 +346,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
   },
   {
    "categorie": "NORMAL_SKILL",
-   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]206%[-] de l'attaque, puis inflige [#0F5CD8]Floraison nocturne[-] à l'ennemi pendant [#1A7331]20s[-].\n\n※ [#0F5CD8]Floraison nocturne[-] : dégâts des Ténèbres supplémentaires égaux à [#1A7331]30%[-] de l'attaque de Derrierie lorsqu'un héros de l'équipe du lanceur reçoit un coup d'une compétence normale d'attribut Ténèbres.",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]206%[-] de l'attaque, puis inflige [#0F5CD8]Floraison nocturne[-] à l'ennemi pendant [#1A7331]20s[-].\n\n※ [#0F5CD8]Floraison nocturne[-] : dégâts des Ténèbres supplémentaires égaux à [#1A7331]30%[-] de l'attaque de Derrierie en subissant une compétence normale d'attribut Ténèbres lancée par un héros de l'équipe de l'utilisateur.",
    "gameId": "derieri_axe_skill_e",
    "icone": "Derieri_Axe_NormalSkill.webp",
    "nomFr": "Croix ascendante",
@@ -436,7 +436,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
   },
   {
    "categorie": "PASSIVE",
-   "descriptionFr": "Octroie [#0F5CD8]Combo de coups[-] au héros pendant [#1A7331]5s[-] pour chaque coup porté à l'ennemi.\nSi le héros effectue une action différente pendant l'utilisation consécutive de l'attaque spéciale, de la compétence normale et de l'attaque ultime, l'action précédente est annulée.\n\n※ [#0F5CD8]Combo de coups[-] : augmente les dégâts de [#0F5CD8]Duel[-] de [#1A7331]10%[-]. (Max : [#1A7331]50 fois[-])",
+   "descriptionFr": "Octroie [#0F5CD8]Combo de coups[-] au héros pendant [#1A7331]5s[-] pour chaque coup porté à l'ennemi.\nEffectuer une autre action tout en utilisant l'attaque spéciale, la compétence normale ou l'attaque ultime à répétition a pour effet d'annuler l'action précédente.\n\n※ [#0F5CD8]Combo de coups[-] : augmente les dégâts de [#0F5CD8]Duel[-] de [#1A7331]10%[-]. (Max : [#1A7331]50 fois[-])",
    "gameId": "derieri_gauntlets_passive",
    "icone": "Derieri_Gauntlets_Passive.webp",
    "nomFr": "Amplification de combo",
@@ -454,7 +454,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
   },
   {
    "categorie": "NORMAL_SKILL",
-   "descriptionFr": "Augmente l'attaque de Feu de tous les héros alliés à hauteur de [#1A7331]30%[-] de l'attaque du héros (Max : [#1A7331]3000[-]) pendant [#1A7331]40s[-], puis inflige des dégâts égaux à [#1A7331]114%[-] de l'attaque + [#1A7331]13%[-] des PV restants de toute l'équipe.",
+   "descriptionFr": "Augmente l'attaque de Feu de tous les héros alliés à hauteur de [#1A7331]30%[-] de l'attaque du héros (Max : [#1A7331]3000[-]) pendant [#1A7331]40s[-], puis inflige des dégâts égaux à [#1A7331]114%[-] de l'attaque + [#1A7331]13%[-] des PV restants de tous les héros alliés.",
    "gameId": "derieri_sword2h_skill_e",
    "icone": "Derieri_Sword2h_NormalSkill.webp",
    "nomFr": "Taillade fracassante",
@@ -463,7 +463,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
   },
   {
    "categorie": "ACTIVE_THIRD",
-   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]66%[-] de l'attaque + [#1A7331]7%[-] des PV restants de toute l'équipe, puis réduit la défense de Feu à hauteur de [#1A7331]20%[-] de la défense pendant [#1A7331]40s[-].",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]66%[-] de l'attaque + [#1A7331]7%[-] des PV restants de tous les héros alliés. Réduit la défense de Feu de l'ennemi de [#1A7331]20%[-] de la défense pendant [#1A7331]40s[-].",
    "gameId": "derieri_sword2h_skill_q",
    "icone": "Derieri_Sword2h_ActiveThird.webp",
    "nomFr": "Entaille en croix",
@@ -481,7 +481,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
   },
   {
    "categorie": "ULTIMATE",
-   "descriptionFr": "La première frappe inflige des dégâts égaux à [#1A7331]203%[-] de l'attaque + [#1A7331]21%[-] des PV restants, puis inflige des dégâts égaux à [#1A7331]20%[-] de l'attaque + [#1A7331]3%[-] des PV restants de toute l'équipe toutes les [#1A7331]1s[-] aux ennemis à portée pendant [#1A7331]10s[-].\nChaque coup de l'attaque augmente les dégâts d'attaque ultime ou d'attaque combinée subis par les ennemis de [#1A7331]30%[-] pendant [#1A7331]20s[-].",
+   "descriptionFr": "La première frappe inflige des dégâts égaux à [#1A7331]203%[-] de l'attaque + [#1A7331]21%[-] des PV restants de tous les héros alliés, puis inflige des dégâts égaux à [#1A7331]20%[-] de l'attaque + [#1A7331]3%[-] des PV restants de tous les héros alliés toutes les [#1A7331]1s[-] aux ennemis à portée pendant [#1A7331]10s[-].\nChaque coup de l'attaque augmente les dégâts d'attaque ultime ou d'attaque combinée subis par les ennemis de [#1A7331]30%[-] pendant [#1A7331]20s[-].",
    "gameId": "derieri_sword2h_skill_r",
    "icone": "Derieri_Sword2h_UltimateSkill.webp",
    "nomFr": "Secousse infernale",
@@ -490,7 +490,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
   },
   {
    "categorie": "PASSIVE",
-   "descriptionFr": "Lorsqu'un héros allié attaque un ennemi dont la défense de Feu est réduite, augmente les dégâts crit. d'attaque ultime et d'attaque combinée des héros d'attribut Feu de [#1A7331]60%[-].\nL'utilisation de l'attaque spéciale augmente les PV max du héros [#1A7331]20%[-] pendant [#1A7331]30s[-].",
+   "descriptionFr": "Lorsqu'un héros allié attaque un ennemi dont la défense de Feu est réduite, augmente les dégâts crit. d'attaque ultime et d'attaque combinée de tous les héros alliés d'attribut Feu de [#1A7331]60%[-].\nL'utilisation de l'attaque spéciale augmente les PV max du héros [#1A7331]20%[-] pendant [#1A7331]30s[-].",
    "gameId": "derieri_sword2h_passive",
    "icone": "Derieri_Sword2h_Passive.webp",
    "nomFr": "Marque ardente",
