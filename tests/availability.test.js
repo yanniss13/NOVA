@@ -308,11 +308,23 @@ const { availabilityViewState, availabilityWeekLabel } = hooks;
 const { appSource } = require("./helpers/app-source");
 const indexSource = appSource();
 
-/* L'onglet et la vue doivent exister et se répondre par leurs attributs ARIA. */
+/* L'onglet et la vue doivent exister et se répondre par leurs attributs ARIA.
+
+   L'onglet porte `subtab` depuis qu'il a rejoint le sous-menu de « Boss de
+   Guilde » : la classe compte, c'est elle qui le range dans la seconde barre
+   et lui donne son allure de second niveau. */
 assert.match(
   indexSource,
-  /<button class="tab" id="tab-availability" data-view="availability"[\s\S]{0,160}aria-controls="view-availability"/,
-  "L'onglet Dispos doit exister et cibler sa vue"
+  /<button class="tab subtab" id="tab-availability" data-view="availability"[\s\S]{0,160}aria-controls="view-availability"/,
+  "L'onglet Dispos doit exister dans le sous-menu et cibler sa vue"
+);
+/* Le sous-menu lui-même : sa barre, son étiquette, et son état par défaut.
+   `hidden` au chargement n'est pas un détail — c'est ce qui le sort de l'ordre
+   de tabulation tant qu'on n'est pas dans le groupe. */
+assert.match(
+  indexSource,
+  /<nav class="subtabs" id="bossSubtabs" role="tablist"[\s\S]{0,80}aria-label="Boss de Guilde" hidden>/,
+  "La seconde barre doit exister, être un tablist nommé, et masquée au départ"
 );
 assert.match(
   indexSource,

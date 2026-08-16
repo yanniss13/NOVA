@@ -222,11 +222,17 @@ async function installRosterFocusFakeSupabase(page){
     );
     await page.goto(server.url + "/index.html");
     const tabs = page.getByRole("tab");
-    /* 10 onglets depuis l'ajout de « Calculateur », placé en dernier. Le rail
-       de categories du wiki n'en fait PAS partie : c'est un `role="group"`,
-       precisement pour ne pas se compter parmi les onglets principaux. */
-    assert.equal(await tabs.count(), 10);
-    assert.equal(await tabs.nth(3).getAttribute("id"), "tab-availability");
+    /* 8 onglets depuis que « Dispos » et « Sessions de boss » sont passés dans
+       le sous-menu de « Boss de Guilde » — la barre principale s'en trouve
+       allégée d'autant. Le rail de categories du wiki n'en fait PAS partie :
+       c'est un `role="group"`, precisement pour ne pas se compter parmi les
+       onglets principaux.
+
+       Les trois onglets du sous-menu ne comptent pas non plus tant qu'on n'est
+       pas dans le groupe : leur barre porte `hidden`, donc elle sort de l'arbre
+       d'accessibilite. C'est ce qui rend ce compte deterministe. */
+    assert.equal(await tabs.count(), 8);
+    assert.equal(await tabs.nth(3).getAttribute("id"), "tab-member-roster");
     assert.equal(await tabs.nth(0).getAttribute("aria-selected"), "true");
     assert.equal(await tabs.nth(0).getAttribute("tabindex"), "0");
     assert.equal(await tabs.nth(1).getAttribute("aria-selected"), "false");
@@ -245,7 +251,7 @@ async function installRosterFocusFakeSupabase(page){
     assert.equal(await page.locator("#view-dashboard").isVisible(), true);
 
     await page.keyboard.press("End");
-    assert.equal(await tabs.nth(9).getAttribute("aria-selected"), "true");
+    assert.equal(await tabs.nth(7).getAttribute("aria-selected"), "true");
     assert.equal(await page.locator("#view-calculateur").isVisible(), true);
 
     await page.keyboard.press("Home");
@@ -1426,11 +1432,17 @@ async function installRosterFocusFakeSupabase(page){
     );
     await mobile.keyboard.press("Escape");
 
+    /* « boss » vit dans le sous-menu : on ouvre son groupe avant de l'atteindre.
+       Le debordement se mesure sur la vue rendue, donc le detour ne change rien
+       a ce que ce bloc verifie. */
     for(const name of [
       "builder", "dashboard", "roster", "member-roster",
       "analyse", "boss"
     ]){
-      await mobile.locator('.tab[data-view="'+name+'"]').click();
+      if(name === "boss"){
+        await mobile.locator('.tabs .tab[data-view="roster"]').click();
+      }
+      await mobile.locator('.tab[data-view="'+name+'"]:visible').click();
       await mobile.waitForTimeout(50);
       const overflow = await mobile.evaluate(() =>
         document.scrollingElement.scrollWidth -
@@ -1885,7 +1897,10 @@ async function installRosterFocusFakeSupabase(page){
           marque:centre(".brand"),
           onglets:centre(".tabs-rail"),
           compte:centre(".account"),
-          horsCadre:[...document.querySelectorAll(".tab")].filter(onglet => {
+          /* Scope au rail PRINCIPAL : les onglets du sous-menu vivent dans une
+             autre barre, et masques ils rendent un rectangle a zero que ce
+             test lirait comme « hors cadre ». */
+          horsCadre:[...document.querySelectorAll(".tabs .tab")].filter(onglet => {
             const boite = onglet.getBoundingClientRect();
             return boite.left < rail.left - 1 || boite.right > rail.right + 1;
           }).length,
@@ -1900,7 +1915,7 @@ async function installRosterFocusFakeSupabase(page){
       assert.ok(entete.onglets >= entete.marque - 20,
         largeur + "px : les onglets prennent la seconde ligne, pas le compte");
       assert.equal(entete.horsCadre, 0,
-        largeur + "px : les neuf onglets doivent être visibles sans défiler");
+        largeur + "px : les huit onglets doivent être visibles sans défiler");
       assert.equal(entete.deborde, false,
         largeur + "px : l'en-tête ne doit pas élargir le document");
       await contexte.close();

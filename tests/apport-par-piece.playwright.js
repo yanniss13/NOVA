@@ -103,7 +103,7 @@ const EQUIPE = {
     }, [STORAGE_KEY, [EQUIPE]]);
     await page.reload();
 
-    await page.locator('[data-view="roster"]').click();
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     await page.getByRole("button", { name:/Voir l.équipement/ }).first().click();
 
     /* La ligne d'une piece equipee est un bouton, et elle ouvre la modale. */

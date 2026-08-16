@@ -24,12 +24,17 @@ const { serveRepo } = require("./helpers/serve");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
-/* Dans l'ordre du DOM : c'est celui que rend `ongletsVisibles`. */
+/* Dans l'ordre du DOM : c'est celui que rend `ongletsVisibles`.
+
+   « Dispos » et « Sessions de boss » n'y figurent plus : ils vivent dans le
+   sous-menu de « Boss de Guilde », replie tant qu'on n'est pas dans le groupe.
+   Leur portee reste verifiee plus bas, la ou le sous-menu est ouvert. */
 const ONGLETS_PUBLICS = ["builder", "wiki", "collection", "calculateur"];
 const ONGLETS_TOUS = [
-  "dashboard", "builder", "roster", "availability", "member-roster",
-  "analyse", "boss", "wiki", "collection", "calculateur"
+  "dashboard", "builder", "roster", "member-roster",
+  "analyse", "wiki", "collection", "calculateur"
 ];
+const SOUS_ONGLETS_BOSS = ["roster", "availability", "boss"];
 
 /* `getClientRects()` et non l'attribut `hidden` : on veut savoir ce que l'oeil
    voit, pas ce que le code a ecrit. Une regle CSS oubliee passerait le second
@@ -148,6 +153,28 @@ const vueActive = page => page.evaluate(() => {
       "un membre connecte retrouve la barre entiere");
     assert.equal(await vueActive(page), "dashboard",
       "la connexion mene au suivi, comme avant");
+
+    /* LE SOUS-MENU, ouvert : c'est la seule facon d'atteindre les Dispos et les
+       Sessions, donc la seule facon de prouver qu'un membre y a droit. */
+    await page.locator('.tabs .tab[data-view="roster"]').click();
+    assert.deepEqual(
+      await page.evaluate(() =>
+        [...document.querySelectorAll(".subtabs .tab[data-view]")]
+          .filter(onglet => onglet.getClientRects().length > 0)
+          .map(onglet => onglet.dataset.view)
+      ),
+      SOUS_ONGLETS_BOSS,
+      "le groupe ouvert doit rendre ses trois entrees atteignables"
+    );
+    await page.locator('.subtabs .tab[data-view="availability"]').click();
+    assert.equal(await vueActive(page), "availability",
+      "un membre connecte atteint les Dispos par le sous-menu");
+    await page.locator('.tab[data-view="wiki"]').click();
+    assert.equal(
+      await page.locator(".subtabs").evaluate(el => el.hidden),
+      true,
+      "quitter le groupe doit replier sa seconde ligne"
+    );
 
     /* ---- Deconnexion : la barre se referme, et la vue avec elle. ---- */
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();

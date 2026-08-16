@@ -22,7 +22,47 @@
 
 import { visiteurAnonyme } from "../etat/session.js";
 
-  const mainTabs = [...document.querySelectorAll(".tab[data-view]")];
+  /* Deux barres, deux niveaux. La principale porte huit onglets ; la seconde
+     n'apparait que dans le groupe « Boss de Guilde » et en porte trois.
+
+     Les selecteurs sont SCOPES a leur barre : un `.tab[data-view]` global
+     melangerait les deux, et la fleche droite du dernier onglet principal
+     partirait dans le sous-menu — un niveau que l'utilisateur n'a pas demande
+     a parcourir. */
+  const mainTabs = [...document.querySelectorAll(".tabs .tab[data-view]")];
+  const subTabs = [...document.querySelectorAll(".subtabs .tab[data-view]")];
+  const subBar = document.querySelector(".subtabs");
+
+  /* LE GROUPE. Trois vues qui parlent du meme sujet et qui encombraient la
+     barre principale : les equipes du Boss de Guilde, les dispos des membres,
+     et les sessions. Le chef est `roster` - c'est la vue qu'ouvre l'onglet du
+     groupe, et celle qui reste surlignee tant qu'on est dans le groupe.
+
+     Une seule liste ici : la barre secondaire est construite dans index.html,
+     mais c'est cette constante qui decide de l'appartenance. Les deux ne
+     peuvent pas diverger sans qu'un test le voie. */
+  const GROUPE_BOSS = "roster";
+  const VUES_DU_GROUPE = new Set(["roster", "availability", "boss"]);
+
+  function chefDuGroupe(nom){
+    return VUES_DU_GROUPE.has(nom) ? GROUPE_BOSS : null;
+  }
+
+  /* L'ONGLET QUI OUVRE UNE VUE, dans l'une ou l'autre barre.
+
+     Les vues appelantes ne doivent pas savoir a quel etage vit un onglet :
+     elles s'en servent pour rendre le focus apres une modale, et le jour ou
+     « Sessions de boss » est passe au sous-menu, une recherche limitee a la
+     barre principale a rendu `undefined` - le focus tombait alors sur le
+     document, sans que rien ne le signale.
+
+     Pour `roster`, la barre principale gagne : c'est l'onglet du groupe, celui
+     qui reste visible quelle que soit la vue ouverte. */
+  function ongletDeLaVue(nom){
+    return mainTabs.find(button => button.dataset.view === nom)
+      || subTabs.find(button => button.dataset.view === nom)
+      || null;
+  }
 
   const rendus = new Map();
 
@@ -41,15 +81,15 @@ import { visiteurAnonyme } from "../etat/session.js";
     return VUES_PUBLIQUES.has(nom) || !visiteurAnonyme();
   }
 
-  function ongletsAtteignables(){
-    return mainTabs.filter(button => !button.hidden);
+  function ongletsAtteignables(barre){
+    return barre.filter(button => !button.hidden);
   }
 
   /* Appelee a chaque changement de session, depuis session-auth.js. Elle
-     range la barre, puis rattrape la navigation si elle vient de fermer la
-     porte sous les pieds du visiteur. */
+     range les deux barres, puis rattrape la navigation si elle vient de
+     fermer la porte sous les pieds du visiteur. */
   function appliquerVisibiliteOnglets(){
-    mainTabs.forEach(button => {
+    mainTabs.concat(subTabs).forEach(button => {
       button.hidden = !vueAutorisee(button.dataset.view);
     });
     const active = document.querySelector(".view.active");
@@ -62,7 +102,22 @@ import { visiteurAnonyme } from "../etat/session.js";
        part laisse l'onglet precedent surligne et la page inchangee, ce qui se
        lit comme une panne. */
     if(!vueAutorisee(name)) return showView(VUE_DE_REPLI);
+    /* L'onglet du groupe reste surligne dans les trois vues qu'il ouvre :
+       sinon la barre principale n'indiquerait plus ou l'on est des qu'on passe
+       aux Dispos ou aux Sessions. */
+    const chef = chefDuGroupe(name);
     mainTabs.forEach(button => {
+      const selected = button.dataset.view === name
+        || (chef !== null && button.dataset.view === chef);
+      button.classList.toggle("active", selected);
+      button.setAttribute("aria-selected", String(selected));
+      button.tabIndex = selected ? 0 : -1;
+    });
+    /* La seconde ligne n'existe que dans le groupe. `hidden` plutot qu'une
+       classe : elle sort ainsi de l'arbre d'accessibilite et de l'ordre de
+       tabulation, au lieu de rester une cible invisible. */
+    if(subBar) subBar.hidden = chef === null;
+    subTabs.forEach(button => {
       const selected = button.dataset.view === name;
       button.classList.toggle("active", selected);
       button.setAttribute("aria-selected", String(selected));
@@ -79,13 +134,16 @@ import { visiteurAnonyme } from "../etat/session.js";
     return result;
   }
 
-  /* La liste parcourue est celle des onglets ATTEIGNABLES, relue a chaque
-     touche : un rang fige a la construction enverrait la fleche sur un bouton
-     masque, donc le focus dans le vide. */
-  mainTabs.forEach(button => {
+  /* La liste parcourue est celle des onglets ATTEIGNABLES de LA MEME barre,
+     relue a chaque touche : un rang fige a la construction enverrait la fleche
+     sur un bouton masque, donc le focus dans le vide. Chaque barre boucle sur
+     elle-meme - c'est ce que la fleche fait dans un `tablist`, et deux
+     niveaux ne se parcourent pas d'une seule touche. */
+  function brancherOnglets(barre){
+  barre.forEach(button => {
     button.addEventListener("click", ()=>showView(button.dataset.view));
     button.addEventListener("keydown", event => {
-      const atteignables = ongletsAtteignables();
+      const atteignables = ongletsAtteignables(barre);
       const index = atteignables.indexOf(button);
       if(index === -1) return;
       let next = null;
@@ -102,5 +160,8 @@ import { visiteurAnonyme } from "../etat/session.js";
       target.focus();
     });
   });
+  }
+  brancherOnglets(mainTabs);
+  brancherOnglets(subTabs);
 
-export { appliquerVisibiliteOnglets, enregistrerVue, mainTabs, showView };
+export { appliquerVisibiliteOnglets, enregistrerVue, ongletDeLaVue, showView };

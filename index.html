@@ -63,21 +63,18 @@
     <button class="tab" id="tab-builder" data-view="builder"
             role="tab" aria-controls="view-builder"
             aria-selected="false" tabindex="-1">Créer une équipe</button>
+    <!-- Chef du groupe « Boss de Guilde » : il ouvre les Équipes ET fait
+         apparaître la seconde ligne, qui porte les trois vues du groupe.
+         Il reste surligné tant qu'on est dans l'une d'elles. -->
     <button class="tab" id="tab-roster" data-view="roster"
             role="tab" aria-controls="view-roster"
             aria-selected="false" tabindex="-1">Boss de Guilde</button>
-    <button class="tab" id="tab-availability" data-view="availability"
-            role="tab" aria-controls="view-availability"
-            aria-selected="false" tabindex="-1">Dispos</button>
     <button class="tab" id="tab-member-roster" data-view="member-roster"
             role="tab" aria-controls="view-member-roster"
             aria-selected="false" tabindex="-1">Roster</button>
     <button class="tab" id="tab-analyse" data-view="analyse"
             role="tab" aria-controls="view-analyse"
             aria-selected="false" tabindex="-1">Analyse</button>
-    <button class="tab" id="tab-boss" data-view="boss"
-            role="tab" aria-controls="view-boss"
-            aria-selected="false" tabindex="-1">Sessions de boss</button>
     <button class="tab" id="tab-wiki" data-view="wiki"
             role="tab" aria-controls="view-wiki"
             aria-selected="false" tabindex="-1">Wiki</button>
@@ -91,6 +88,23 @@
     <span class="tabs-cue tabs-cue-left" aria-hidden="true">‹</span>
     <span class="tabs-cue tabs-cue-right" aria-hidden="true">›</span>
   </div>
+  <!-- La seconde ligne du groupe « Boss de Guilde ». Elle n'existe que
+       lorsqu'on est dans l'une de ses trois vues : ailleurs elle porte
+       `hidden`, donc elle sort aussi de l'arbre d'accessibilité et de l'ordre
+       de tabulation. C'est son propre `tablist` — deux barres de niveaux
+       différents ne se parcourent pas d'une seule flèche. -->
+  <nav class="subtabs" id="bossSubtabs" role="tablist"
+       aria-label="Boss de Guilde" hidden>
+    <button class="tab subtab" id="tab-roster-equipes" data-view="roster"
+            role="tab" aria-controls="view-roster"
+            aria-selected="false" tabindex="-1">Équipes</button>
+    <button class="tab subtab" id="tab-availability" data-view="availability"
+            role="tab" aria-controls="view-availability"
+            aria-selected="false" tabindex="-1">Dispos</button>
+    <button class="tab subtab" id="tab-boss" data-view="boss"
+            role="tab" aria-controls="view-boss"
+            aria-selected="false" tabindex="-1">Sessions de boss</button>
+  </nav>
   <div class="account">
     <button class="btn btn-ghost" id="accountLogin" type="button">Connexion</button>
     <div class="account-connected" id="accountConnected" hidden>
