@@ -32,15 +32,28 @@ const LIBELLES = JSON.parse(fs.readFileSync(
   path.join(racine, "7ds-stats", "libelles-stats.json"), "utf8"
 ));
 
-const SUPPORTS = [
+/* LES PERSONNAGES DE LA TABLE, et non « les supports ».
+
+   Escanor porte son malus de defense avec une Epee a deux mains de role
+   Attaquant, Meliodas n'est support de rien, et King debuffe avec un
+   Grimoire de role Gardien. Ce qui rassemble ces lignes n'est pas un role -
+   c'est un effet sur la cible, ou un bonus rendu a l'equipe.
+
+   La liste est en dur pour qu'un ajout de personnage soit un GESTE : sans
+   elle, une clef mal orthographiee - « gilthunder » au lieu de « gil-thunder »
+   - creerait un quinzieme personnage fantome que rien ne signalerait. */
+const PERSONNAGES = [
   "elizabeth", "daisy", "manny", "howzer",
-  "gowther", "guila", "dreydrin", "derieri"
+  "gowther", "guila", "dreydrin", "derieri",
+  /* Entres avec le recensement « Affaiblissement de la cible » : ils ne
+     donnent rien a l'equipe, ils retirent quelque chose au boss. */
+  "drake", "escanor", "king", "klotho", "slader", "tioreh"
 ];
 
-assert.deepEqual(Object.keys(TABLE).sort(), [...SUPPORTS].sort(),
-  "La table doit couvrir exactement les huit supports joues");
+assert.deepEqual(Object.keys(TABLE).sort(), [...PERSONNAGES].sort(),
+  "La table doit couvrir exactement les personnages declares ici");
 
-const tousLesBuffs = SUPPORTS.flatMap(slug => TABLE[slug]);
+const tousLesBuffs = PERSONNAGES.flatMap(slug => TABLE[slug]);
 const identifiants = new Set();
 
 tousLesBuffs.forEach(buff => {
@@ -109,7 +122,7 @@ function nombreApres(texte, phrase, quoi){
 /* La provenance doit designer une competence REELLE du support, et sa phrase
    doit etre un extrait LITTERAL de sa description francaise. C'est ce qui
    empeche une valeur inventee de s'installer discretement. */
-SUPPORTS.forEach(slug => {
+PERSONNAGES.forEach(slug => {
   TABLE[slug].forEach(buff => {
     const source = (WIKI[slug] || [])
       .find(k => k.gameId === buff.provenance.gameId);
@@ -344,14 +357,14 @@ tousLesBuffs.forEach(buff => {
   assert.equal(avec.def, NEUTRE.def, "ces malus visent la cible, pas notre build");
 }
 
-/* Les malus de meme nature se cumulent : les trois reductions de defense de
-   la table donnent 50 %. Choix documente, pas mesure. */
+/* Les malus de meme nature se cumulent : les sept reductions de defense de
+   la table donnent 119 %. Choix documente, pas mesure. */
 {
   const reductions = tousLesBuffs.filter(b => b.effet === "defense");
-  assert.equal(reductions.length, 3,
-    "Elisabeth, Gowther et Dreydrin reduisent la defense generale");
+  assert.equal(reductions.length, 7,
+    "Elisabeth, Gowther, Dreydrin, Escanor, Guila et Tioreh réduisent la défense générale");
   const r = entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:reductions });
-  assert.equal(r.reductionDefense, 5000, "20 % + 20 % + 10 %");
+  assert.equal(r.reductionDefense, 11900, "10 % + 20 % + 15 % + 20 % + 6 % + 15 % + 15 %");
 }
 
 /* Les bonus de degats elementaires atterrissent dans le seau du moteur. */
@@ -730,5 +743,5 @@ tousLesBuffs.forEach(buff => {
 
 console.log(
   "calculateur-entrees.test.js OK (" + tousLesBuffs.length + " buffs sur "
-    + SUPPORTS.length + " supports)"
+    + PERSONNAGES.length + " personnages)"
 );
