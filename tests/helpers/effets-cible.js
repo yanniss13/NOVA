@@ -27,7 +27,19 @@ const EFFETS_SUR_LA_CIBLE = [
   "vulnerabiliteCategorie",
   /* « Augmente les degats subis de 100 % » : la meme, sans categorie. Elle
      amplifie TOUT ce que la cible encaisse. */
-  "vulnerabiliteGlobale"
+  "vulnerabiliteGlobale",
+  /* « Reduit la resistance a la Foudre de 15 % » : CONSIGNEE, PAS CALCULEE.
+
+     Le moteur connait `resistanceElementaire` sur la cible, mais rien ne la
+     reduit - il n'existe pas de `reductionResistanceElementaire`, et en
+     ajouter un modifierait la formule. Or `d-eew`, le champ correspondant chez
+     l'outil de reference, n'a jamais ete mesure : on ignore s'il se retranche
+     en points ou en pourcentage.
+
+     Toute ligne portant cet effet DOIT donc porter `horsCalcul:true`, et un
+     test le verifie. C'est la seule entree de cette liste que le moteur ne
+     branche nulle part, et c'est voulu. */
+  "resistanceElementaire"
 ];
 
 /* Les cinq categories du catalogue de competences, celles que le moteur

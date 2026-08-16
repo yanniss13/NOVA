@@ -24,6 +24,20 @@
 //               "vulnerabiliteGlobale"  « augmente les degats subis de N % » :
 //                                     tout ce que la cible encaisse, sans
 //                                     distinction de categorie ni d'element
+//               "resistanceElementaire"  CONSIGNEE, PAS CALCULEE. Le moteur
+//                                     connait la resistance elementaire de la
+//                                     cible mais RIEN ne la reduit, et le
+//                                     champ correspondant de l'outil de
+//                                     reference n'a jamais ete mesure. La
+//                                     ligne porte donc `horsCalcul:true` :
+//                                     buffsApplicables() l'ecarte, le
+//                                     recensement de l'Analyse l'affiche. Un
+//                                     test verifie les deux.
+//                                     Ce n'est pas une bizarrerie isolee : 14
+//                                     personnages reduisent la resistance
+//                                     elementaire, et l'enjeu est gros - 15
+//                                     points retires a une resistance de 30 %
+//                                     valent +21 % de degats.
 //
 //     PIEGE, et il a deja coute une ligne : ces effets se cachent souvent dans
 //     la DEFINITION d'un etat - « ※ Extinction : … augmente les degats subis
@@ -281,6 +295,24 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
         phrase:"※ Courant électrique : réduit la défense crit. de ",
         phraseCumuls:"(Max : "
       }
+    },
+    {
+      /* Meme competence que la ligne ci-dessus, autre effet : la Tempete de
+         Foudre pose Courant electrique ET Paralysie. Deux lignes, deux
+         identifiants, une seule source. */
+      id:"drake-paralysie-resistance-foudre",
+      libelle:"Paralysie : résistance à la Foudre de l'ennemi −15 %",
+      cible:"ennemi",
+      effet:"resistanceElementaire",
+      horsCalcul:true,
+      operation:"add",
+      valeur:1500,
+      unite:"ten-thousandths",
+      element:"thunder",
+      provenance:{
+        gameId:"drake_staff_skill_rmb",
+        phrase:"※ Paralysie : immobilisation. Réduit la résistance à la Foudre de 15%"
+      }
     }
   ],
   "dreydrin": [
@@ -406,6 +438,58 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
         gameId:"escanor_sword2h_jumpatk",
         phrase:"Réduit la défense de ",
         phraseCumuls:"sont infligés. (Max : "
+      }
+    }
+  ],
+  /* TROIS ARMES, DEUX ORTHOGRAPHES. Ses identifiants s'ecrivent tantot
+     `gil_thunder_`, tantot `gilthunder_` : la regle du jeton `_<enum>_` de
+     armeDuGameId() les couvre toutes les trois, un decoupage par position n'y
+     survivrait pas. Ses trois lignes sont consignees, aucune n'atteint la
+     formule. */
+  "gil-thunder": [
+    {
+      id:"gil-thunder-paralysie-resistance-foudre",
+      libelle:"Paralysie : résistance à la Foudre de l'ennemi −15 %",
+      cible:"ennemi",
+      effet:"resistanceElementaire",
+      horsCalcul:true,
+      operation:"add",
+      valeur:1500,
+      unite:"ten-thousandths",
+      element:"thunder",
+      provenance:{
+        gameId:"gil_thunder_lance_skill_rmb",
+        phrase:"※ Paralysie : immobilisation. Réduit la résistance à la Foudre de 15%"
+      }
+    },
+    {
+      id:"gil-thunder-barriere-resistance-foudre",
+      libelle:"Barrière de Foudre retirée : résistance à la Foudre de l'ennemi −15 % (30 s)",
+      cible:"ennemi",
+      effet:"resistanceElementaire",
+      horsCalcul:true,
+      operation:"add",
+      valeur:1500,
+      unite:"ten-thousandths",
+      element:"thunder",
+      provenance:{
+        gameId:"gilthunder_shield_passive",
+        phrase:"réduit la résistance à la Foudre des ennemis proches de 15% pendant 30s"
+      }
+    },
+    {
+      id:"gil-thunder-deluge-resistance-foudre",
+      libelle:"Déluge de Foudre activé : résistance à la Foudre de l'ennemi −15 % (20 s)",
+      cible:"ennemi",
+      effet:"resistanceElementaire",
+      horsCalcul:true,
+      operation:"add",
+      valeur:1500,
+      unite:"ten-thousandths",
+      element:"thunder",
+      provenance:{
+        gameId:"gilthunder_sword1h_passive",
+        phrase:"réduit la résistance à la Foudre de l'ennemi de 15% pendant 20s"
       }
     }
   ],
