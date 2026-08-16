@@ -1,6 +1,6 @@
 "use strict";
 
-/* Le recensement "Affaiblissement de la cible" : quelles lignes il montre,
+/* Le recensement « Affaiblissement de la cible » : quelles lignes il montre,
    et qui les possede.
 
    Ce que ce fichier garde, et que rien d'autre ne garde : le critere du

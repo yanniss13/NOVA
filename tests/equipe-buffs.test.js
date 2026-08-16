@@ -135,8 +135,8 @@ const idsDe = liste => liste.map(buff => buff.id).sort();
 
    Le meme personnage s'ecrit `gil_thunder_` sur sa Lance et `gilthunder_` sur
    son Bouclier. C'est exactement le piege que la regle du jeton existe pour
-   eviter : un decoupage par position lirait "thunder" comme une arme sur
-   le premier, et "shield" correctement sur le second. */
+   eviter : un decoupage par position lirait « thunder » comme une arme sur
+   le premier, et « shield » correctement sur le second. */
 {
   const { armeDuGameId } = hooks;
   assert.equal(typeof armeDuGameId, "function",
