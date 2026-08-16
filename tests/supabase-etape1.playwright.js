@@ -1496,18 +1496,41 @@ const { chromium } = require("playwright");
        la table elle-meme, pour qu'ajouter une ligne demain ne casse pas ce
        test sans raison. */
     assert.match(analyseText, /Affaiblissement de la cible/);
-    const lignesAttendues = await page.evaluate(() =>
-      Object.values(window.SEVEN_DS_BUFFS_SUPPORTS || {})
-        .flat()
-        .filter(ligne => ligne.cible === "ennemi")
-        .length
-    );
-    assert.ok(lignesAttendues > 0,
-      "la table des buffs doit etre chargee par l'onglet Analyse lui-meme");
+    assert.match(analyseText, /Renforcement des alliés/);
+    /* Les deux sections tirent des DEUX tables, chargees par l'onglet Analyse
+       lui-meme. Le compte attendu se derive donc des tables plutot que d'un
+       nombre ecrit ici, qui vieillirait a la premiere ligne ajoutee.
+
+       Un passif grave de cible « soi » ne compte dans aucune section : il ne
+       profite qu'a celui qui porte la tenue. */
+    const attendus = await page.evaluate(() => {
+      const armes = Object.values(window.SEVEN_DS_BUFFS_SUPPORTS || {}).flat();
+      const tenues = Object.values(window.SEVEN_DS_PASSIFS_GRAVES || {}).flat()
+        .filter(passif => passif.cible === "allies");
+      return {
+        ennemi:armes.filter(l => l.cible === "ennemi").length
+          + tenues.filter(l => l.cibleEnnemi).length,
+        allies:armes.filter(l => l.cible !== "ennemi").length
+          + tenues.filter(l => !l.cibleEnnemi).length
+      };
+    });
+    assert.ok(attendus.ennemi > 0 && attendus.allies > 0,
+      "les deux tables doivent etre chargees par l'onglet Analyse lui-meme");
     assert.equal(
-      await page.locator("#analyseBody .debuff-row").count(),
-      lignesAttendues,
-      "chaque ligne visant l'ennemi doit avoir sa ligne au recensement"
+      await page.locator('#analyseBody .debuff-row[data-vise="ennemi"]').count(),
+      attendus.ennemi,
+      "chaque effet visant l'ennemi doit avoir sa ligne, arme ou tenue"
+    );
+    assert.equal(
+      await page.locator('#analyseBody .debuff-row[data-vise="allies"]').count(),
+      attendus.allies,
+      "chaque effet rendu aux allies doit avoir sa ligne, arme ou tenue"
+    );
+    /* Une tenue gravee ne se recense pas comme une arme : sa ligne nomme la
+       tenue, et son libelle vaut au niveau 3. */
+    assert.ok(
+      await page.locator('#analyseBody .debuff-row[data-source="tenue"]').count() > 0,
+      "les tenues gravees doivent apparaitre au recensement"
     );
     /* Une ligne consignee se signale a l'ecran, sinon le membre la croirait
        comptee dans ses degats. */

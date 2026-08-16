@@ -17,9 +17,9 @@ import { refreshRosterProfiles } from "../donnees/roster-profils.js";
 import { cloudRosterFromRow } from "../donnees/roster-store.js";
 import { sessionCourante } from "../etat/session.js";
 import {
-  lignesDAffaiblissement,
+  lignesDeSoutien,
   porteursDeLaLigne
-} from "../metier/affaiblissement-cible.js";
+} from "../metier/recensement-supports.js";
 import { charOf } from "../metier/catalogue.js";
 import { favoriteRosterWeaponType } from "../metier/equipe-modele.js";
 import {
@@ -174,109 +174,163 @@ import { toast } from "./toast.js";
     return b;
   }
 
-  /* La table des buffs est chargee A LA DEMANDE, comme au calculateur : un
-     visiteur qui n'ouvre jamais l'Analyse ne doit pas la payer.
+  /* Les deux tables du recensement sont chargees A LA DEMANDE, comme au
+     calculateur : un visiteur qui n'ouvre jamais l'Analyse ne doit pas les
+     payer.
 
      On ne reutilise PAS chargerCatalogues() de js/vues/calculateur.js : il en
-     charge sept, dont six que l'Analyse ne lit jamais - competences.js pese a
+     charge sept, dont cinq que l'Analyse ne lit jamais - competences.js pese a
      lui seul 7491 lignes. Un echec remet la promesse a null : une coupure
-     reseau ne doit pas condamner la section pour toute la session. */
-  let chargementDesBuffs = null;
-  function chargerBuffsSupports(){
-    if(window.SEVEN_DS_BUFFS_SUPPORTS) return Promise.resolve(true);
-    if(chargementDesBuffs) return chargementDesBuffs;
-    chargementDesBuffs = new Promise((resolve, reject) => {
+     reseau ne doit pas condamner les sections pour toute la session. */
+  const TABLES_DU_RECENSEMENT = [
+    { global:"SEVEN_DS_BUFFS_SUPPORTS", src:"./data/buffs-supports.js" },
+    { global:"SEVEN_DS_PASSIFS_GRAVES", src:"./data/passifs-graves.js" }
+  ];
+  let chargementDesTables = null;
+  function injecter(src){
+    return new Promise((resolve, reject) => {
       document.head.appendChild(el("script",{
-        src:"./data/buffs-supports.js",
+        src,
         onload:() => resolve(true),
-        onerror:() => reject(new Error("catalogue introuvable : buffs-supports"))
+        onerror:() => reject(new Error("catalogue introuvable : " + src))
       }));
-    }).catch(erreur => {
-      chargementDesBuffs = null;
-      throw erreur;
     });
-    return chargementDesBuffs;
+  }
+  function chargerTablesDuRecensement(){
+    const manquantes = TABLES_DU_RECENSEMENT.filter(t => !window[t.global]);
+    if(!manquantes.length) return Promise.resolve(true);
+    if(chargementDesTables) return chargementDesTables;
+    chargementDesTables = Promise.all(manquantes.map(t => injecter(t.src)))
+      .then(() => true)
+      .catch(erreur => {
+        chargementDesTables = null;
+        throw erreur;
+      });
+    return chargementDesTables;
   }
 
-  /* LE RECENSEMENT DE L'AFFAIBLISSEMENT, rendu a part parce qu'il ne depend
-     d'AUCUN roster. C'est ce qui lui permet d'apparaitre aussi quand la
-     confrerie n'a rien saisi : un effet que personne ne possede reste une
-     information, et c'est meme celle qui fait recruter.
+  /* UNE LIGNE DE RECENSEMENT, quelle que soit la section.
+
+     Les deux sections posent la meme question - qui apporte quoi - et ne
+     different que par le camp vise. Une seule fonction les rend donc, et le
+     jour ou l'affichage doit changer, il change pour les deux.
 
      `lectureRostersReussie` distingue deux etats que rien ne doit confondre :
      « personne ne l'a » est une affirmation, « on n'a pas pu lire » est un
-     aveu d'ignorance. Les afficher pareil ferait croire a une absence
-     certaine sur une simple coupure reseau. */
-  function rendreAffaiblissement(box, membres, buffsLus, lectureRostersReussie){
-    box.appendChild(el("h2",{class:"an-title", text:"Affaiblissement de la cible"}));
-    box.appendChild(el("p",{class:"an-note",
-      text:"Ce que la confrérie peut retirer au boss lui-même. Le rôle du personnage n'y décide de rien : Escanor porte son malus de défense avec une épée à deux mains d'Attaquant."}));
-    if(!buffsLus){
+     aveu d'ignorance. Les afficher pareil ferait croire a une absence certaine
+     sur une simple coupure reseau. */
+  function ligneDuRecensement(ligne, membres, lectureRostersReussie){
+    const porteurs = porteursDeLaLigne(ligne, membres);
+    const ch = charOf(ligne.support);
+    /* D'ou vient l'effet : l'arme qui le porte, ou la tenue gravee. Sans cette
+       precision la ligne serait trompeuse - un membre irait monter la mauvaise
+       arme, ou chercher un passif sur la mauvaise piece. */
+    const origine = ligne.source === "tenue"
+      ? ligne.tenueNom
+      : (ligne.arme && WEAPON_ENUM[ligne.arme]
+          ? WEAPON_ENUM[ligne.arme].label : "—");
+    const portrait = el("span",{class:"rk-portrait"});
+    if(ch) portrait.appendChild(el("img",{src:ch.file,alt:"",loading:"lazy"}));
+
+    const effet = el("span",{class:"db-effet"},[
+      el("span",{class:"db-libelle", text:ligne.libelle})
+    ]);
+    /* La mention est le pendant a l'ecran du drapeau `horsCalcul` : sans elle,
+       le membre lirait un malus chiffre et le croirait compte dans ses
+       degats. */
+    if(ligne.horsCalcul){
+      effet.appendChild(el("span",{
+        class:"db-hors-calcul",
+        title:"Effet réel, mais absent du calcul : le moteur n'a pas d'entrée pour la résistance élémentaire, et la mécanique du jeu n'a pas été mesurée.",
+        text:"hors calcul"
+      }));
+    }
+    /* Une tenue gravee vaut trois valeurs selon son niveau de passif, et le
+       libelle annonce le MAXIMUM. On le dit, sinon la ligne promet a tout le
+       monde ce que seul un passif de niveau 3 rend. */
+    if(ligne.source === "tenue"){
+      effet.appendChild(el("span",{class:"db-au-max", text:"au niv. 3"}));
+    }
+
+    const qui = el("span",{class:"db-porteurs"});
+    if(porteurs.length){
+      porteurs.forEach(p => {
+        /* P0 est un potentiel RENSEIGNE, pas une valeur manquante : on l'ecrit
+           comme les autres. Le niveau de passif, lui, peut vraiment manquer -
+           et on le dit plutot que de supposer le maximum. */
+        const niveau = ligne.source !== "tenue" ? ""
+          : (p.niveau ? " · N" + p.niveau : " · niv. ?");
+        qui.appendChild(el("span",{
+          class:"db-porteur" + (ligne.source === "tenue" && !p.niveau
+            ? " db-niveau-inconnu" : ""),
+          text:p.nom + " P" + p.potentiel + niveau
+        }));
+      });
+    }else if(lectureRostersReussie){
+      qui.appendChild(el("span",{class:"db-personne", text:"Personne"}));
+    }else{
+      qui.appendChild(el("span",{
+        class:"db-personne",
+        text:"Porteurs indisponibles"
+      }));
+    }
+
+    return el("div",{
+      /* Grisee, jamais retiree. Et jamais grisee sur une lecture en echec : le
+         gris dit « la confrerie ne l'a pas », ce qu'on ignore alors. */
+      class:"debuff-row" + (
+        lectureRostersReussie && !porteurs.length ? " db-absente" : ""
+      ),
+      dataset:{ source:ligne.source, vise:ligne.vise }
+    },[
+      el("span",{class:"db-perso"},[
+        portrait,
+        el("span",{class:"db-nom",
+          text:(ch ? ch.name : ligne.support || "—") + " · " + origine})
+      ]),
+      effet,
+      ligne.element
+        ? elemBadge(String(ligne.element).toUpperCase())
+        : el("span",{class:"db-tous", text:"tous éléments"}),
+      qui
+    ]);
+  }
+
+  /* UNE SECTION DU RECENSEMENT, rendue a part parce qu'elle ne depend d'AUCUN
+     roster. C'est ce qui lui permet d'apparaitre aussi quand la confrerie n'a
+     rien saisi : un effet que personne ne possede reste une information, et
+     c'est meme celle qui fait recruter. */
+  function rendreRecensement(box, section, membres, tablesLues, lectureRostersReussie){
+    box.appendChild(el("h2",{class:"an-title", text:section.titre}));
+    box.appendChild(el("p",{class:"an-note", text:section.note}));
+    if(!tablesLues){
       box.appendChild(el("div",{class:"rank-empty",
-        text:"Recensement indisponible : la table des effets n'a pas pu être lue."}));
+        text:"Recensement indisponible : les tables d'effets n'ont pas pu être lues."}));
       return;
     }
-    const affaiblissements = el("div",{class:"debuff-list"});
-    lignesDAffaiblissement().forEach(ligne => {
-      const porteurs = porteursDeLaLigne(ligne, membres);
-      const ch = charOf(ligne.support);
-      const arme = ligne.arme && WEAPON_ENUM[ligne.arme]
-        ? WEAPON_ENUM[ligne.arme].label : "—";
-      const portrait = el("span",{class:"rk-portrait"});
-      if(ch) portrait.appendChild(el("img",{src:ch.file,alt:"",loading:"lazy"}));
-
-      const effet = el("span",{class:"db-effet"},[
-        el("span",{class:"db-libelle", text:ligne.libelle})
-      ]);
-      /* La mention est le pendant a l'ecran du drapeau `horsCalcul` : sans
-         elle, le membre lirait un malus chiffre et le croirait compte dans
-         ses degats. */
-      if(ligne.horsCalcul){
-        effet.appendChild(el("span",{
-          class:"db-hors-calcul",
-          title:"Effet réel, mais absent du calcul : le moteur n'a pas d'entrée pour la résistance élémentaire, et la mécanique du jeu n'a pas été mesurée.",
-          text:"hors calcul"
-        }));
-      }
-
-      const qui = el("span",{class:"db-porteurs"});
-      if(porteurs.length){
-        porteurs.forEach(p => qui.appendChild(el("span",{
-          class:"db-porteur",
-          /* P0 est un potentiel RENSEIGNE, pas une valeur manquante : on
-             l'ecrit comme les autres. */
-          text:p.nom + " P" + p.potentiel
-        })));
-      }else if(lectureRostersReussie){
-        qui.appendChild(el("span",{class:"db-personne", text:"Personne"}));
-      }else{
-        qui.appendChild(el("span",{
-          class:"db-personne",
-          text:"Porteurs indisponibles"
-        }));
-      }
-
-      affaiblissements.appendChild(el("div",{
-        /* Grisee, jamais retiree. Et jamais grisee sur une lecture en echec :
-           le gris dit « la confrerie ne l'a pas », ce qu'on ignore alors. */
-        class:"debuff-row" + (
-          lectureRostersReussie && !porteurs.length ? " db-absente" : ""
-        )
-      },[
-        el("span",{class:"db-perso"},[
-          portrait,
-          el("span",{class:"db-nom",
-            text:(ch ? ch.name : ligne.support) + " · " + arme})
-        ]),
-        effet,
-        ligne.element
-          ? elemBadge(String(ligne.element).toUpperCase())
-          : el("span",{class:"db-tous", text:"tous éléments"}),
-        qui
-      ]));
-    });
-    box.appendChild(affaiblissements);
+    const liste = el("div",{class:"debuff-list"});
+    lignesDeSoutien()
+      .filter(ligne => ligne.vise === section.vise)
+      .forEach(ligne => liste.appendChild(
+        ligneDuRecensement(ligne, membres, lectureRostersReussie)
+      ));
+    box.appendChild(liste);
   }
+
+  /* Les deux sections, dans l'ordre ou le membre les lit : ce qu'on retire au
+     boss, puis ce qu'on donne au groupe. */
+  const SECTIONS_DU_RECENSEMENT = [
+    {
+      vise:"ennemi",
+      titre:"Affaiblissement de la cible",
+      note:"Ce que la confrérie peut retirer au boss lui-même. Le rôle du personnage n'y décide de rien : Escanor porte son malus de défense avec une épée à deux mains d'Attaquant, et cinq de ces effets viennent d'une tenue gravée."
+    },
+    {
+      vise:"allies",
+      titre:"Renforcement des alliés",
+      note:"Ce que la confrérie peut donner au groupe, par une compétence ou par le passif d'une tenue gravée. Les passifs qui ne profitent qu'à leur porteur n'y figurent pas : ils ne changent rien à ce que le membre apporte."
+    }
+  ];
 
   /* ============================ Analyse ============================ */
   let analyseElem = null;
@@ -399,13 +453,14 @@ import { toast } from "./toast.js";
       lectureRostersReussie = false;
       toast("Analyse indisponible pour l'instant.", true);
     }
-    const buffsLus = await chargerBuffsSupports().then(() => true, () => false);
+    const tablesLues = await chargerTablesDuRecensement()
+      .then(() => true, () => false);
     if(renderId !== analyseRenderId) return;
     box.innerHTML = "";
-    /* Les trois sections DPS ne parlent que des membres qui en ont un. Le
-       recensement d'affaiblissement, lui, parle de tout le monde : un membre
-       qui ne joue que des soutiens y a sa place, et le filtre d'origine le
-       rendait invisible avant meme que la vue ne le voie. */
+    /* Les trois sections DPS ne parlent que des membres qui en ont un. Les deux
+       recensements, eux, parlent de tout le monde : un membre qui ne joue que
+       des soutiens y a sa place, et le filtre d'origine le rendait invisible
+       avant meme que la vue ne le voie. */
     const players = membres.filter(p => (p.dps || []).length);
 
     /* Aucun roster lu : les sections DPS n'ont rien a montrer, et huit cartes
@@ -424,7 +479,9 @@ import { toast } from "./toast.js";
           ? "Les DPS sont calculés depuis les rosters : ajoute des personnages offensifs dans l'onglet « Roster »."
           : "La lecture des rosters a échoué. Le recensement ci-dessous reste exact, mais il ne peut pas dire qui possède quoi."})
       ]));
-      rendreAffaiblissement(box, membres, buffsLus, lectureRostersReussie);
+      SECTIONS_DU_RECENSEMENT.forEach(section => rendreRecensement(
+        box, section, membres, tablesLues, lectureRostersReussie
+      ));
       return;
     }
 
@@ -450,11 +507,14 @@ import { toast } from "./toast.js";
     });
     box.appendChild(covRow);
 
-    // --- 2) Affaiblissement de la cible ---
-    /* Sa place n'est pas indifferente : la couverture pose le decor - qui
-       frappe, et de quel element - et cette section dit qui peut le faire
-       encaisser. Le classement, qui suit, sert a choisir QUI emmener. */
-    rendreAffaiblissement(box, membres, buffsLus, lectureRostersReussie);
+    // --- 2) Affaiblissement de la cible, puis renforcement des alliés ---
+    /* Leur place n'est pas indifferente : la couverture pose le decor - qui
+       frappe, et de quel element - et ces deux sections disent ce que le
+       groupe ajoute autour. Le classement, qui suit, sert a choisir QUI
+       emmener. */
+    SECTIONS_DU_RECENSEMENT.forEach(section => rendreRecensement(
+      box, section, membres, tablesLues, lectureRostersReussie
+    ));
 
     // --- 3) Classement par élément ---
     // Le classement vit dans un conteneur stable : le clic sur un élément ne
