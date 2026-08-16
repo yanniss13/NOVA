@@ -9,7 +9,8 @@
    compteur) reprend celui de detail-roster.js, deja eprouve. */
 
 import {
-  BUILD_STATS, ELEMENTS, ENUM_TO_FOLDER, POT, POT_MAX, WEAPON_ENUM, metaOf
+  BUILD_STATS, ELEMENTS, ENUM_TO_FOLDER, POT, POT_MAX, WEAPON_ENUM,
+  WSLOT_ROLES, metaOf
 } from "../noyau/constantes.js";
 import { $, el } from "../noyau/dom.js";
 import { charOf } from "../metier/catalogue.js";
@@ -194,7 +195,32 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
     }
 
     const meta = metaOf(entree.id) || {};
-    const element = ELEMENTS[meta.element];
+    /* Les armes se resolvent AVANT l'en-tete, parce que l'en-tete en depend
+       desormais. Elles etaient calculees plus bas, juste avant leur selecteur ;
+       les remonter ne change rien pour lui. */
+    const armes = armesDuHeros(entree.id);
+    if(!fiche.arme || !armes.includes(fiche.arme)) fiche.arme = armes[0] || null;
+
+    /* UN HEROS N'A PAS UN ELEMENT, IL EN A UN PAR ARME.
+
+       `meta.element` et `meta.role` decrivent le personnage en bloc ; le jeu,
+       lui, donne a chaque type d'arme son element ET son role. Dreyfus est
+       Soutien Physique a la rapiere et Attaquant Terre a l'epee a une main.
+       Lire les champs figes faisait mentir la fiche sur deux de ses trois
+       armes, et le selecteur d'arme juste en dessous rendait l'erreur
+       visible.
+
+       Le vocabulaire des roles change avec la source : le personnage n'en a
+       que trois (`ROLES_HEROS`), le slot en a cinq — Gardien et Briseur en
+       plus (`WSLOT_ROLES`). On replie sur les champs du personnage quand
+       l'arme est inconnue de `meta.weapons`, pour ne jamais rendre une fiche
+       sans identite. */
+    const slot = (meta.weapons || []).find(w => w.weapon === fiche.arme);
+    const codeElement = (slot && slot.element) || meta.element;
+    const element = ELEMENTS[String(codeElement || "").toUpperCase()];
+    const libelleRole = slot && slot.role
+      ? (WSLOT_ROLES[slot.role] || slot.role)
+      : (ROLES_HEROS[meta.role] || meta.role);
     /* L'element du heros teinte le cadre et la lueur de l'en-tete : c'est la
        seule variable vraiment propre a chaque personnage, et c'est ce qui
        fait qu'aucune fiche ne ressemble a la precedente. Repli sur l'or quand
@@ -206,10 +232,8 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
         class:"wiki-chip wiki-chip-element", text:element.label
       }));
     }
-    if(meta.role){
-      chips.appendChild(el("span",{
-        class:"wiki-chip", text:ROLES_HEROS[meta.role] || meta.role
-      }));
+    if(libelleRole){
+      chips.appendChild(el("span",{class:"wiki-chip", text:libelleRole}));
     }
     const nom = el("div",{class:"wiki-hero-name", text:character.name});
     if(meta.rarity){
@@ -222,7 +246,6 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
       el("div",{class:"wiki-hero-id"},[nom, chips])
     ]));
 
-    const armes = armesDuHeros(entree.id);
     if(!armes.length){
       corps.appendChild(el("p",{
         class:"wiki-hero-hint",
@@ -230,7 +253,6 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
       }));
       return;
     }
-    if(!fiche.arme || !armes.includes(fiche.arme)) fiche.arme = armes[0];
     const selecteur = selecteurArmes(armes);
     corps.appendChild(selecteur);
     if(focusEtaitSurUneArme){

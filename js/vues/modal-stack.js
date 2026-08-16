@@ -59,6 +59,30 @@
       window.scrollTo(0, lockedScrollY);
     }
 
+    /* UNE MODALE S'OUVRE EN HAUT.
+
+       Les overlays sont REUTILISES : le meme #wikiHeroBody sert a tous les
+       heros, le meme #wikiItemBody a tous les objets. Le verrou ci-dessus ne
+       concerne que le defilement du DOCUMENT ; celui des zones internes
+       survivait a la fermeture, si bien qu'ouvrir une fiche apres en avoir lu
+       une longue deposait le lecteur au milieu de la nouvelle.
+
+       C'est ici et non dans chaque vue : le defaut vient de la reutilisation
+       des overlays, que ce module est seul a orchestrer. Toute modale a
+       corriger passe par `open()`, aucune n'est oubliee, et une vue qui veut
+       reellement rouvrir a la meme hauteur reste libre de repositionner apres
+       l'appel.
+
+       Seule l'ouverture rembobine. Naviguer DANS une modale deja ouverte —
+       les fleches d'une fiche a l'autre — n'y passe pas : `open()` sort au
+       premier test quand l'overlay est deja empile. */
+    function rembobiner(overlay){
+      if(overlay.scrollTop) overlay.scrollTop = 0;
+      overlay.querySelectorAll("*").forEach(noeud => {
+        if(noeud.scrollTop) noeud.scrollTop = 0;
+      });
+    }
+
     function open(overlay, initialFocus, requestClose, restoreFocus){
       const existing = stack.find(record => record.overlay === overlay);
       if(existing) return;
@@ -74,6 +98,7 @@
       pendingRestore = null;
       overlay.classList.add("on");
       overlay.setAttribute("aria-hidden", "false");
+      rembobiner(overlay);
       stack.push({ overlay, trigger, requestClose });
       lockDocument();
       setTimeout(() => {
