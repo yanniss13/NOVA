@@ -52,6 +52,7 @@ import {
 import { MemberRosterStore } from "../donnees/roster-store.js";
 import { ModalStack } from "./modal-stack.js";
 import { showView } from "./navigation.js";
+import { libelleDesManques } from "./stats-affichage.js";
 import { openWeaponConfigEditor } from "./editeur-arme.js";
 import { openGearConfigEditor } from "./editeur-equipement.js";
 
@@ -1634,9 +1635,12 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
       }, { propre:0, tous:0 });
     const bases = basesDuBuild(hero, element, apportsElementaires);
     if(!bases.stats){
+      /* « Il manque » plutot que « Configuration a completer : » — la liste
+         cite deja des configurations, et la phrase se repetait. */
       vue.appendChild(el("p",{class:"calc-muette",
-        text:"Configuration à compléter"
-          + (bases.manques.length ? " : " + bases.manques.join(", ") : ".")}));
+        text:bases.manques.length
+          ? "Il manque " + libelleDesManques(bases.manques) + "."
+          : "Configuration à compléter."}));
       return;
     }
     const heroEssai = herosAvecEssaiEnchantements(hero, etat.essaiEnchantements);
