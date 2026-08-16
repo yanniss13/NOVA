@@ -69,6 +69,35 @@ import { armeDuGameId } from "./equipe-buffs.js";
     return feuille.replace(/\.webp$/i, "");
   }
 
+  /* LE SENS DE L'EFFET, lu dans le libelle.
+
+     Rien d'autre ne le porte. `valeur` est une magnitude — 5000 pour « −50 % »
+     comme pour « +50 % » — et `cible` ne tranche pas : « degats subis par
+     l'ennemi +2 % » vise l'ennemi et MONTE, quand « defense de l'ennemi −20 % »
+     vise l'ennemi et baisse. Le libelle, lui, ecrit son signe, et il n'y en a
+     qu'un par ligne.
+
+     Seuls « + » et le vrai signe moins (U+2212) comptent, ceux qu'emploient
+     les tables. Une ligne future ecrite au trait d'union rend null, et la vue
+     se taira : mieux vaut ne rien annoncer qu'annoncer le mauvais sens. */
+  function sensDuLibelle(libelle){
+    const marque = String(libelle || "").match(/[+−]\s*\d/);
+    if(!marque) return null;
+    return marque[0][0] === "+" ? 1 : -1;
+  }
+
+  /* Le libelle donne-t-il le taux PAR CUMUL au lieu du total ?
+
+     « Inflammation : defense de l'ennemi −0,15 % par cumul, 100 cumuls » vaut
+     −15 %, et rien ne le dit. « Gelure : defense crit. de l'ennemi −20 %
+     (10 cumuls) » n'est PAS dans ce cas : son chiffre est deja le total. La
+     tournure fait donc foi, pas la seule presence de `cumuls`. */
+  function libelleParCumul(ligne){
+    return ligne.cumuls > 1
+      && ligne.unite === "ten-thousandths"
+      && /par (cumul|coup)/.test(String(ligne.libelle || ""));
+  }
+
   /* Une ligne d'ARME. `cible:"ennemi"` marque un malus inflige a la cible ;
      tout le reste est un bonus rendu aux allies - la table n'accueille que ce
      qui atteint l'equipe, les bonus qui ne profitent qu'a leur porteur en ont
@@ -92,7 +121,12 @@ import { armeDuGameId } from "./equipe-buffs.js";
              l'un et interroge le roster avec l'autre. */
           armeDossier:arme ? ENUM_TO_FOLDER[arme] || null : null,
           tenue:null,
-          tenueNom:null
+          tenueNom:null,
+          sens:sensDuLibelle(ligne.libelle),
+          /* Le total a cumuls pleins, quand le libelle ne donne que le taux
+             unitaire ; null quand il l'annonce deja. */
+          totalCumule:libelleParCumul(ligne) ? ligne.valeur : null,
+          niveaux:null
         };
       })
     );
@@ -122,7 +156,15 @@ import { armeDuGameId } from "./equipe-buffs.js";
           arme:null,
           armeDossier:null,
           tenue,
-          tenueNom:nomDeLaTenue(tenue)
+          tenueNom:nomDeLaTenue(tenue),
+          sens:sensDuLibelle(passif.libelle),
+          totalCumule:null,
+          /* Les trois valeurs du passif, du niveau 1 au niveau 3, DEJA
+             cumulees quand la ligne a des cumuls. Le libelle n'annonce que la
+             derniere, et l'ecart va jusqu'au triple : c'est ce tableau qui
+             permet de dire ce qu'un porteur apporte VRAIMENT. */
+          niveaux:(passif.unite === "ten-thousandths"
+            && Array.isArray(passif.niveaux)) ? passif.niveaux.slice() : null
         }))
     );
   }

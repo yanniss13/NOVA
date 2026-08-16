@@ -188,10 +188,26 @@ async function ouvrirAnalyse(page){
       "allies",
       "un passif qui renforce l'equipe appartient au second recensement"
     );
+    /* CE QUE CE MEMBRE APPORTE, et non ce que la tenue rend au maximum.
+
+       « Déluge activé : attaque de Feu des alliés +20 % » vaut [12, 16, 20] %
+       selon le niveau du passif. Le membre l'a declare au niveau 2 : sa ligne
+       doit donc annoncer +16 %, pas +20 %, et surtout pas un « N2 » qui
+       laissait le calcul a faire. */
+    assert.match(
+      await chercheuse.locator(".db-libelle").textContent(),
+      /\+20 %/,
+      "le libelle continue d'annoncer le maximum de la tenue"
+    );
     assert.equal(
       await chercheuse.locator(".db-porteur").first().textContent(),
-      "Yannis P9 · N2",
-      "la ligne d'une tenue montre le niveau de passif declare par le membre"
+      "Yannis P9 · +16 %",
+      "le porteur annonce la valeur A SON niveau, pas le maximum de la tenue"
+    );
+    assert.equal(
+      await chercheuse.locator(".db-porteur").first().getAttribute("title"),
+      "Passif de niveau 2 sur 3",
+      "le niveau reste lisible, mais il cede la place a la valeur qu'il vaut"
     );
     /* Le libelle d'une tenue annonce son MAXIMUM : la ligne doit le dire,
        sinon elle promet a tout le monde ce que seul un niveau 3 rend. */
