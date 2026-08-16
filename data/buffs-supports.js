@@ -96,12 +96,17 @@
 //   pour elles. La perforation ne perce d'ailleurs aucune defense - elle
 //   s'oppose a la Perseverance de l'ennemi, une couche que la formule
 //   publiee ne modelise pas du tout.
-// - les reductions de defense ELEMENTAIRE, qui visent une defense distincte
-//   de la defense generale et que le moteur ne separe pas :
-//     derieri_sword2h_skill_q  defense de Feu -20 % de la defense
-//     gowther_wand_skill_e     defense de Foudre -6 % de la defense, max 4x
-//   Les verser dans la reduction generale supposerait que le jeu confond les
-//   deux. Elles reviendront quand la cible portera ses defenses par element.
+// - la reduction de defense ELEMENTAIRE, sauf pour la FOUDRE. Elle vise une
+//   defense distincte de la defense generale, que le moteur ne separe pas :
+//   la verser dans la reduction generale suppose que le jeu confond les deux.
+//   On l'assume pour la seule Foudre, parce que la confrerie mene ses runs de
+//   Boss de Guilde avec des Merlin Foudre - `gowther_wand_skill_e` figure donc
+//   dans la table, portee par `element:"thunder"` pour qu'aucun build d'un
+//   autre element ne la voie.
+//     derieri_sword2h_skill_q  defense de Feu -20 %, reste dehors
+//   Elle reviendra quand la cible portera ses defenses par element ; la ligne
+//   de Derieri est deja lue et chiffree dans la spec du recensement, sa
+//   reintegration ne coute que sa transcription.
 window.SEVEN_DS_BUFFS_SUPPORTS = {
   "daisy": [
     {
@@ -259,6 +264,25 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       }
     }
   ],
+  "drake": [
+    {
+      id:"drake-courant-electrique-defense-crit",
+      libelle:"Courant électrique : défense crit. de l'ennemi −8 % par cumul, 5 cumuls",
+      cible:"ennemi",
+      effet:"defenseCritique",
+      operation:"add",
+      parCumul:800,
+      cumuls:5,
+      valeur:4000,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"drake_staff_skill_rmb",
+        phrase:"※ Courant électrique : réduit la défense crit. de ",
+        phraseCumuls:"(Max : "
+      }
+    }
+  ],
   "dreydrin": [
     {
       id:"dreydrin-sens-du-combat-defense",
@@ -289,6 +313,26 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
     }
   ],
   "elizabeth": [
+    {
+      /* Les 50 cumuls ne s'empilent qu'« en subissant des attaques de Vent ».
+         La valeur transcrite est le maximum atteignable, comme partout dans
+         cette table, mais une équipe sans Vent ne l'atteindra pas. */
+      id:"elizabeth-rupture-defense-crit",
+      libelle:"Rupture : défense crit. de l'ennemi −0,8 % par cumul, 50 cumuls",
+      cible:"ennemi",
+      effet:"defenseCritique",
+      operation:"add",
+      parCumul:80,
+      cumuls:50,
+      valeur:4000,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"elizabeth_staff_skill_r",
+        phrase:"et réduit la défense crit. de ",
+        phraseCumuls:"(Max : "
+      }
+    },
     {
       id:"elizabeth-eclaboussures-defense",
       libelle:"Éclaboussures : défense de l'ennemi −20 %",
@@ -344,6 +388,27 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       }
     }
   ],
+  "escanor": [
+    {
+      /* L'ancre des cumuls est longue : « (Max : » apparaît deux fois dans
+         cette description. On vise celui de la réduction de défense. */
+      id:"escanor-inflammation-defense",
+      libelle:"Inflammation : défense de l'ennemi −0,15 % par cumul, 100 cumuls",
+      cible:"ennemi",
+      effet:"defense",
+      operation:"add",
+      parCumul:15,
+      cumuls:100,
+      valeur:1500,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"escanor_sword2h_jumpatk",
+        phrase:"Réduit la défense de ",
+        phraseCumuls:"sont infligés. (Max : "
+      }
+    }
+  ],
   "gowther": [
     {
       id:"gowther-dissonance-defense",
@@ -380,6 +445,23 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       provenance:{
         gameId:"gowther_book_skill_r",
         phrase:"Augmente les dégâts subis de 100%"
+      }
+    },
+    {
+      id:"gowther-salve-defense-foudre",
+      libelle:"Salve de flèches : défense de Foudre de l'ennemi −6 % par cumul, 4 cumuls",
+      cible:"ennemi",
+      effet:"defense",
+      operation:"add",
+      parCumul:600,
+      cumuls:4,
+      valeur:2400,
+      unite:"ten-thousandths",
+      element:"thunder",
+      provenance:{
+        gameId:"gowther_wand_skill_e",
+        phrase:"réduit la défense de Foudre de l'ennemi à hauteur de ",
+        phraseCumuls:"pendant 30s. (Max : "
       }
     },
     {
@@ -440,6 +522,23 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       provenance:{
         gameId:"guila_shield_passive",
         phrase:"Augmente les dégâts de Feu de tous les héros alliés de 30% lorsqu'une barrière appliquée par le héros est active sur lui."
+      }
+    },
+    {
+      id:"guila-inflammation-defense",
+      libelle:"Inflammation : défense de l'ennemi −0,15 % par cumul, 100 cumuls",
+      cible:"ennemi",
+      effet:"defense",
+      operation:"add",
+      parCumul:15,
+      cumuls:100,
+      valeur:1500,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"guila_rapier_skill_e",
+        phrase:"Réduit la défense de ",
+        phraseCumuls:"sont infligés. (Max : "
       }
     }
   ],
@@ -502,6 +601,41 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       }
     }
   ],
+  "king": [
+    {
+      id:"king-marque-degats-subis",
+      libelle:"Marque de la forêt : dégâts subis par l'ennemi +2 % par cumul, 10 cumuls",
+      cible:"ennemi",
+      effet:"vulnerabiliteGlobale",
+      operation:"add",
+      parCumul:200,
+      cumuls:10,
+      valeur:2000,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"king_book_skill_e",
+        phrase:"※ Marque de la forêt : augmente les dégâts subis de ",
+        phraseCumuls:"(Max : "
+      }
+    }
+  ],
+  "klotho": [
+    {
+      id:"klotho-erosion-defense-crit",
+      libelle:"Érosion dimensionnelle : défense crit. de l'ennemi −10 %",
+      cible:"ennemi",
+      effet:"defenseCritique",
+      operation:"add",
+      valeur:1000,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"klotho_staff_skill_e",
+        phrase:"※ Érosion dimensionnelle : réduit la défense crit. de 10%"
+      }
+    }
+  ],
   "manny": [
     {
       id:"manny-gelure-defense-crit",
@@ -559,6 +693,41 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       provenance:{
         gameId:"manny_sworddual_passive",
         phrase:"augmente ses dégâts de Froid de 35%"
+      }
+    }
+  ],
+  "slader": [
+    {
+      id:"slader-blessure-degats-subis",
+      libelle:"Blessure profonde : dégâts subis par l'ennemi +25 %",
+      cible:"ennemi",
+      effet:"vulnerabiliteGlobale",
+      operation:"add",
+      valeur:2500,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"slader_axe_skill_q",
+        phrase:"※ Blessure profonde : augmente les dégâts subis de 25%"
+      }
+    }
+  ],
+  "tioreh": [
+    {
+      id:"tioreh-inflammation-defense",
+      libelle:"Inflammation : défense de l'ennemi −0,15 % par cumul, 100 cumuls",
+      cible:"ennemi",
+      effet:"defense",
+      operation:"add",
+      parCumul:15,
+      cumuls:100,
+      valeur:1500,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"tioreh_wand_skill_q",
+        phrase:"Réduit la défense de ",
+        phraseCumuls:"sont infligés. (Max : "
       }
     }
   ]
