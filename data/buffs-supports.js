@@ -346,9 +346,9 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
   ],
   "elizabeth": [
     {
-      /* Les 50 cumuls ne s'empilent qu'« en subissant des attaques de Vent ».
+      /* Les 50 cumuls ne s'empilent qu'"en subissant des attaques de Vent".
          La valeur transcrite est le maximum atteignable, comme partout dans
-         cette table, mais une équipe sans Vent ne l'atteindra pas. */
+         cette table, mais une equipe sans Vent ne l'atteindra pas. */
       id:"elizabeth-rupture-defense-crit",
       libelle:"Rupture : défense crit. de l'ennemi −0,8 % par cumul, 50 cumuls",
       cible:"ennemi",
@@ -422,8 +422,8 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
   ],
   "escanor": [
     {
-      /* L'ancre des cumuls est longue : « (Max : » apparaît deux fois dans
-         cette description. On vise celui de la réduction de défense. */
+      /* L'ancre des cumuls est longue : "(Max :" apparait deux fois dans
+         cette description. On vise celui de la reduction de defense. */
       id:"escanor-inflammation-defense",
       libelle:"Inflammation : défense de l'ennemi −0,15 % par cumul, 100 cumuls",
       cible:"ennemi",

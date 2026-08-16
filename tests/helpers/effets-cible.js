@@ -28,7 +28,7 @@ const EFFETS_SUR_LA_CIBLE = [
   /* « Augmente les degats subis de 100 % » : la meme, sans categorie. Elle
      amplifie TOUT ce que la cible encaisse. */
   "vulnerabiliteGlobale",
-  /* « Reduit la resistance a la Foudre de 15 % » : CONSIGNEE, PAS CALCULEE.
+  /* "Reduit la resistance a la Foudre de 15 %" : CONSIGNEE, PAS CALCULEE.
 
      Le moteur connait `resistanceElementaire` sur la cible, mais rien ne la
      reduit - il n'existe pas de `reductionResistanceElementaire`, et en

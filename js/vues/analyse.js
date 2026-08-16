@@ -304,10 +304,12 @@ import { toast } from "./toast.js";
       return;
     }
     let membres;
+    let lectureRostersReussie = true;
     try{
       membres = await rosterDerivedPlayers();
     }catch(error){
       membres = [];
+      lectureRostersReussie = false;
       toast("Analyse indisponible pour l'instant.", true);
     }
     const buffsLus = await chargerBuffsSupports().then(() => true, () => false);
@@ -362,7 +364,7 @@ import { toast } from "./toast.js";
         if(ligne.horsCalcul){
           effet.appendChild(el("span",{
             class:"db-hors-calcul",
-            title:"Effet reel, mais absent du calcul : le moteur n'a pas d'entree pour la resistance elementaire, et la mecanique du jeu n'a pas ete mesuree.",
+            title:"Effet réel, mais absent du calcul : le moteur n'a pas d'entrée pour la résistance élémentaire, et la mécanique du jeu n'a pas été mesurée.",
             text:"hors calcul"
           }));
         }
@@ -371,15 +373,22 @@ import { toast } from "./toast.js";
         if(porteurs.length){
           porteurs.forEach(p => qui.appendChild(el("span",{
             class:"db-porteur",
-            text:p.nom + (p.potentiel > 0 ? " P" + p.potentiel : "")
+            text:p.nom + " P" + p.potentiel
           })));
-        }else{
+        }else if(lectureRostersReussie){
           qui.appendChild(el("span",{class:"db-personne", text:"Personne"}));
+        }else{
+          qui.appendChild(el("span",{
+            class:"db-personne",
+            text:"Porteurs indisponibles"
+          }));
         }
 
         affaiblissements.appendChild(el("div",{
           /* Grey but never remove: an unavailable effect guides recruitment. */
-          class:"debuff-row" + (porteurs.length ? "" : " db-absente")
+          class:"debuff-row" + (
+            lectureRostersReussie && !porteurs.length ? " db-absente" : ""
+          )
         },[
           el("span",{class:"db-perso"},[
             portrait,
