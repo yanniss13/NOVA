@@ -78,5 +78,3 @@ import { armeDuGameId } from "./equipe-buffs.js";
         })))
       .sort((a, b) => b.potentiel - a.potentiel);
   }
-
-export { lignesDAffaiblissement, porteursDeLaLigne };
