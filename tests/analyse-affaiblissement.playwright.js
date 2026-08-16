@@ -101,6 +101,63 @@ async function ouvrirAnalyse(page){
       "le potentiel zero doit etre affiche comme tout potentiel renseigne"
     );
 
+    /* LE MEMBRE SOUTIEN-SEULEMENT, et c'est lui qui justifie tout le retrait
+       du filtre DPS de rosterDerivedPlayers().
+
+       King au Grimoire est de role Gardien : il ne produit aucune entree DPS,
+       donc l'ancien filtre ecartait son proprietaire de l'analyse entiere.
+       Il porte pourtant la Marque de la foret. Sans ce cas, rien ne verifiait
+       que la vue passe bien la liste NON filtree au recensement - et la
+       regression serait passee inapercue, le test P0 ci-dessus utilisant
+       Escanor, qui est un DPS. */
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.roster_characters = [{
+        owner:"user-1",
+        char_id:"king",
+        potential_tier:6,
+        builds:{ "Livre":{} },
+        updated_at:"2026-08-16T12:00:00.000Z"
+      }];
+    });
+    await ouvrirAnalyse(page);
+    const king = page.locator("#analyseBody .debuff-row")
+      .filter({ hasText:"King" });
+    assert.equal(await king.count(), 1, "King doit avoir une ligne");
+    assert.equal(
+      await king.locator(".db-porteur").textContent(),
+      "Yannis P6",
+      "un membre sans aucun DPS doit tout de meme etre compte comme porteur"
+    );
+    assert.equal(
+      await king.locator(".db-personne").count(),
+      0,
+      "sa ligne ne doit plus annoncer une absence"
+    );
+    /* Et la consigne reste : sans aucun DPS, l'onglet doit encore dire quoi
+       faire, au lieu d'aligner des sections vides. */
+    assert.equal(
+      await page.getByText("Rien à analyser", { exact:true }).count(),
+      0,
+      "un roster non vide ne doit pas afficher l'etat vide"
+    );
+
+    /* Aucun roster du tout : la consigne revient, et le recensement reste. */
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.roster_characters = [];
+    });
+    await ouvrirAnalyse(page);
+    assert.equal(
+      await page.getByText("Rien à analyser", { exact:true }).count(),
+      1,
+      "sans aucun roster, la consigne doit dire ou ajouter des personnages"
+    );
+    assert.ok(
+      await page.locator("#analyseBody .debuff-row").count() > 0,
+      "la consigne ne doit pas emporter le recensement avec elle"
+    );
+
     assert.deepEqual(errors, [], "aucune erreur de page");
     console.log("analyse-affaiblissement.playwright.js OK");
   }finally{

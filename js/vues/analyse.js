@@ -125,8 +125,10 @@ import { toast } from "./toast.js";
       return "Membre";
     };
     return Object.keys(byOwner)
-      /* No DPS filter here: support-only members still belong in the target
-         debuff census. DPS sections filter locally for their own purpose. */
+      /* Plus de filtre sur `dps.length` ici : un membre qui ne joue que des
+         soutiens a sa place au recensement d'affaiblissement, et ce filtre le
+         rendait invisible avant meme que la vue ne le voie. Les sections DPS
+         filtrent desormais elles-memes, au plus pres de leur besoin. */
       .map(owner => rosterPlayerFrom(owner, nameOf(owner), byOwner[owner]));
   }
 
@@ -172,8 +174,13 @@ import { toast } from "./toast.js";
     return b;
   }
 
-  /* Loaded only when Analyse opens. A failure clears the promise so a later
-     render can retry after a transient network interruption. */
+  /* La table des buffs est chargee A LA DEMANDE, comme au calculateur : un
+     visiteur qui n'ouvre jamais l'Analyse ne doit pas la payer.
+
+     On ne reutilise PAS chargerCatalogues() de js/vues/calculateur.js : il en
+     charge sept, dont six que l'Analyse ne lit jamais - competences.js pese a
+     lui seul 7491 lignes. Un echec remet la promesse a null : une coupure
+     reseau ne doit pas condamner la section pour toute la session. */
   let chargementDesBuffs = null;
   function chargerBuffsSupports(){
     if(window.SEVEN_DS_BUFFS_SUPPORTS) return Promise.resolve(true);
@@ -189,6 +196,86 @@ import { toast } from "./toast.js";
       throw erreur;
     });
     return chargementDesBuffs;
+  }
+
+  /* LE RECENSEMENT DE L'AFFAIBLISSEMENT, rendu a part parce qu'il ne depend
+     d'AUCUN roster. C'est ce qui lui permet d'apparaitre aussi quand la
+     confrerie n'a rien saisi : un effet que personne ne possede reste une
+     information, et c'est meme celle qui fait recruter.
+
+     `lectureRostersReussie` distingue deux etats que rien ne doit confondre :
+     « personne ne l'a » est une affirmation, « on n'a pas pu lire » est un
+     aveu d'ignorance. Les afficher pareil ferait croire a une absence
+     certaine sur une simple coupure reseau. */
+  function rendreAffaiblissement(box, membres, buffsLus, lectureRostersReussie){
+    box.appendChild(el("h2",{class:"an-title", text:"Affaiblissement de la cible"}));
+    box.appendChild(el("p",{class:"an-note",
+      text:"Ce que la confrérie peut retirer au boss lui-même. Le rôle du personnage n'y décide de rien : Escanor porte son malus de défense avec une épée à deux mains d'Attaquant."}));
+    if(!buffsLus){
+      box.appendChild(el("div",{class:"rank-empty",
+        text:"Recensement indisponible : la table des effets n'a pas pu être lue."}));
+      return;
+    }
+    const affaiblissements = el("div",{class:"debuff-list"});
+    lignesDAffaiblissement().forEach(ligne => {
+      const porteurs = porteursDeLaLigne(ligne, membres);
+      const ch = charOf(ligne.support);
+      const arme = ligne.arme && WEAPON_ENUM[ligne.arme]
+        ? WEAPON_ENUM[ligne.arme].label : "—";
+      const portrait = el("span",{class:"rk-portrait"});
+      if(ch) portrait.appendChild(el("img",{src:ch.file,alt:"",loading:"lazy"}));
+
+      const effet = el("span",{class:"db-effet"},[
+        el("span",{class:"db-libelle", text:ligne.libelle})
+      ]);
+      /* La mention est le pendant a l'ecran du drapeau `horsCalcul` : sans
+         elle, le membre lirait un malus chiffre et le croirait compte dans
+         ses degats. */
+      if(ligne.horsCalcul){
+        effet.appendChild(el("span",{
+          class:"db-hors-calcul",
+          title:"Effet réel, mais absent du calcul : le moteur n'a pas d'entrée pour la résistance élémentaire, et la mécanique du jeu n'a pas été mesurée.",
+          text:"hors calcul"
+        }));
+      }
+
+      const qui = el("span",{class:"db-porteurs"});
+      if(porteurs.length){
+        porteurs.forEach(p => qui.appendChild(el("span",{
+          class:"db-porteur",
+          /* P0 est un potentiel RENSEIGNE, pas une valeur manquante : on
+             l'ecrit comme les autres. */
+          text:p.nom + " P" + p.potentiel
+        })));
+      }else if(lectureRostersReussie){
+        qui.appendChild(el("span",{class:"db-personne", text:"Personne"}));
+      }else{
+        qui.appendChild(el("span",{
+          class:"db-personne",
+          text:"Porteurs indisponibles"
+        }));
+      }
+
+      affaiblissements.appendChild(el("div",{
+        /* Grisee, jamais retiree. Et jamais grisee sur une lecture en echec :
+           le gris dit « la confrerie ne l'a pas », ce qu'on ignore alors. */
+        class:"debuff-row" + (
+          lectureRostersReussie && !porteurs.length ? " db-absente" : ""
+        )
+      },[
+        el("span",{class:"db-perso"},[
+          portrait,
+          el("span",{class:"db-nom",
+            text:(ch ? ch.name : ligne.support) + " · " + arme})
+        ]),
+        effet,
+        ligne.element
+          ? elemBadge(String(ligne.element).toUpperCase())
+          : el("span",{class:"db-tous", text:"tous éléments"}),
+        qui
+      ]));
+    });
+    box.appendChild(affaiblissements);
   }
 
   /* ============================ Analyse ============================ */
@@ -315,9 +402,31 @@ import { toast } from "./toast.js";
     const buffsLus = await chargerBuffsSupports().then(() => true, () => false);
     if(renderId !== analyseRenderId) return;
     box.innerHTML = "";
-    /* The debuff census remains useful with no roster: missing effects are
-       actionable information. DPS-only sections use this filtered view. */
+    /* Les trois sections DPS ne parlent que des membres qui en ont un. Le
+       recensement d'affaiblissement, lui, parle de tout le monde : un membre
+       qui ne joue que des soutiens y a sa place, et le filtre d'origine le
+       rendait invisible avant meme que la vue ne le voie. */
     const players = membres.filter(p => (p.dps || []).length);
+
+    /* Aucun roster lu : les sections DPS n'ont rien a montrer, et huit cartes
+       a zero suivies d'une matrice vide ne feraient que du bruit. On garde la
+       consigne qui dit quoi faire - elle avait disparu avec le retour
+       anticipe - et le recensement, qui reste entier sans roster.
+
+       Le titre change selon ce qu'on SAIT : une lecture en echec n'autorise
+       pas a dire « rien a analyser », qui affirmerait un vide constate. */
+    if(!membres.length){
+      box.appendChild(el("div",{class:"empty-state"},[
+        el("p",{class:"big", text:lectureRostersReussie
+          ? "Rien à analyser"
+          : "Rosters indisponibles"}),
+        el("p",{text:lectureRostersReussie
+          ? "Les DPS sont calculés depuis les rosters : ajoute des personnages offensifs dans l'onglet « Roster »."
+          : "La lecture des rosters a échoué. Le recensement ci-dessous reste exact, mais il ne peut pas dire qui possède quoi."})
+      ]));
+      rendreAffaiblissement(box, membres, buffsLus, lectureRostersReussie);
+      return;
+    }
 
     // --- 1) Couverture par élément ---
     const cov = {}; ELEM_ORDER.forEach(e=>cov[e]={players:0,dps:0});
@@ -341,71 +450,13 @@ import { toast } from "./toast.js";
     });
     box.appendChild(covRow);
 
-    // --- 2) Target debuffs ---
-    box.appendChild(el("h2",{class:"an-title", text:"Affaiblissement de la cible"}));
-    box.appendChild(el("p",{class:"an-note",
-      text:"Ce que la confrérie peut retirer au boss lui-même. Le rôle du personnage n'y décide de rien : Escanor porte son malus de défense avec une épée à deux mains d'Attaquant."}));
-    if(!buffsLus){
-      box.appendChild(el("div",{class:"rank-empty",
-        text:"Recensement indisponible : la table des effets n'a pas pu être lue."}));
-    }else{
-      const affaiblissements = el("div",{class:"debuff-list"});
-      lignesDAffaiblissement().forEach(ligne => {
-        const porteurs = porteursDeLaLigne(ligne, membres);
-        const ch = charOf(ligne.support);
-        const arme = ligne.arme && WEAPON_ENUM[ligne.arme]
-          ? WEAPON_ENUM[ligne.arme].label : "—";
-        const portrait = el("span",{class:"rk-portrait"});
-        if(ch) portrait.appendChild(el("img",{src:ch.file,alt:"",loading:"lazy"}));
+    // --- 2) Affaiblissement de la cible ---
+    /* Sa place n'est pas indifferente : la couverture pose le decor - qui
+       frappe, et de quel element - et cette section dit qui peut le faire
+       encaisser. Le classement, qui suit, sert a choisir QUI emmener. */
+    rendreAffaiblissement(box, membres, buffsLus, lectureRostersReussie);
 
-        const effet = el("span",{class:"db-effet"},[
-          el("span",{class:"db-libelle", text:ligne.libelle})
-        ]);
-        if(ligne.horsCalcul){
-          effet.appendChild(el("span",{
-            class:"db-hors-calcul",
-            title:"Effet réel, mais absent du calcul : le moteur n'a pas d'entrée pour la résistance élémentaire, et la mécanique du jeu n'a pas été mesurée.",
-            text:"hors calcul"
-          }));
-        }
-
-        const qui = el("span",{class:"db-porteurs"});
-        if(porteurs.length){
-          porteurs.forEach(p => qui.appendChild(el("span",{
-            class:"db-porteur",
-            text:p.nom + " P" + p.potentiel
-          })));
-        }else if(lectureRostersReussie){
-          qui.appendChild(el("span",{class:"db-personne", text:"Personne"}));
-        }else{
-          qui.appendChild(el("span",{
-            class:"db-personne",
-            text:"Porteurs indisponibles"
-          }));
-        }
-
-        affaiblissements.appendChild(el("div",{
-          /* Grey but never remove: an unavailable effect guides recruitment. */
-          class:"debuff-row" + (
-            lectureRostersReussie && !porteurs.length ? " db-absente" : ""
-          )
-        },[
-          el("span",{class:"db-perso"},[
-            portrait,
-            el("span",{class:"db-nom",
-              text:(ch ? ch.name : ligne.support) + " · " + arme})
-          ]),
-          effet,
-          ligne.element
-            ? elemBadge(String(ligne.element).toUpperCase())
-            : el("span",{class:"db-tous", text:"tous éléments"}),
-          qui
-        ]));
-      });
-      box.appendChild(affaiblissements);
-    }
-
-    // --- 3) Element ranking ---
+    // --- 3) Classement par élément ---
     // Le classement vit dans un conteneur stable : le clic sur un élément ne
     // remplace que ce conteneur (aucun rechargement Supabase, aucun reflow global).
     box.appendChild(el("h2",{class:"an-title", text:"Classement par potentiel"}));
@@ -436,7 +487,7 @@ import { toast } from "./toast.js";
        cible de focus détachée. */
     renderRankTable(rankBox);
 
-    // --- 4) Member x element matrix ---
+    // --- 4) Matrice joueur × élément ---
     box.appendChild(el("h2",{class:"an-title", text:"Matrice membre × élément"}));
     const wrap = el("div",{class:"matrix-wrap"});
     const table = el("table",{class:"matrix"});

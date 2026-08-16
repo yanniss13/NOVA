@@ -6,7 +6,8 @@
 /* ---------- Analyse ---------- */
 .an-title{font-family:var(--display);font-weight:700;font-size:20px;color:var(--parchment);
   margin:28px 0 12px;letter-spacing:.03em}
-/* Eight columns: Physique is a full element, not a wrapped afterthought. */
+/* HUIT colonnes, pas sept : « Physique » est un element a part entiere depuis
+   le 15 aout 2026, et il tombait seul sur une deuxieme ligne. */
 .cov-row{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
 .cov-card{--ec:var(--gold);background:var(--panel);border:1px solid var(--line);
   border-top:2px solid var(--ec);border-radius:10px;padding:12px 10px;text-align:center;
@@ -50,7 +51,7 @@
 .mx-item{color:var(--parchment);white-space:nowrap}
 .mx-empty{color:var(--muted-2);text-align:center}
 
-/* ---------- Target debuffs ---------- */
+/* ---------- Affaiblissement de la cible ---------- */
 .an-note{margin:-6px 0 12px;color:var(--muted);font-size:12.5px;max-width:74ch}
 .debuff-list{display:flex;flex-direction:column;border:1px solid var(--line);
   border-radius:10px;overflow:hidden}
@@ -58,6 +59,7 @@
   align-items:center;gap:10px;padding:8px 14px;
   border-bottom:1px solid var(--line-soft)}
 .debuff-row:last-child{border-bottom:0}
+/* Une ligne que personne ne possede s'efface, elle ne disparait pas. */
 .debuff-row.db-absente{opacity:.55}
 .db-perso{display:flex;align-items:center;gap:8px;min-width:0}
 .db-nom{color:var(--parchment);font-size:13px;white-space:nowrap;
