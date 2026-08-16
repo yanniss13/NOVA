@@ -242,6 +242,62 @@ const buildAvec = (tenue, niveau) => ({
     "entre deux builds, on retient le meilleur niveau de passif");
 }
 
+/* ---- LE CHIFFRE COMPARABLE : sens, total cumule, valeurs par niveau ----
+
+   Le libelle d'une ligne a cumuls n'annonce que le taux UNITAIRE, et rien
+   dans la table ne porte le sens de l'effet : `valeur` est une magnitude, et
+   `cible` ne tranche pas — « degats subis par l'ennemi +2 % » vise l'ennemi
+   et monte. Le sens se lit donc dans le libelle. Ces controles existent pour
+   qu'une ligne ajoutee demain sans signe lisible se voie ici, et non a
+   l'ecran sous la forme d'un « + » invente. */
+{
+  const aCumuls = lignes.filter(ligne => ligne.totalCumule !== null);
+  assert.ok(aCumuls.length > 0,
+    "des lignes doivent annoncer leur taux par cumul plutot que leur total");
+  aCumuls.forEach(ligne => {
+    assert.ok(ligne.sens === 1 || ligne.sens === -1,
+      "sens illisible pour « " + ligne.libelle + " » : la vue afficherait un "
+        + "total sans savoir s'il monte ou s'il descend");
+    assert.ok(/par (cumul|coup)/.test(ligne.libelle),
+      "seul un libelle qui donne un taux unitaire merite qu'on affiche son "
+        + "total : « " + ligne.libelle + " »");
+  });
+
+  /* Le contre-exemple qui fixe la regle. Sa valeur est bien cumulee, mais son
+     libelle donne DEJA le total : afficher « −20 % » a cote de « −20 % »
+     n'aiderait personne. C'est la tournure qui decide, pas `cumuls`. */
+  const gelure = lignes.find(ligne => /^Gelure/.test(ligne.libelle));
+  assert.ok(gelure, "la ligne Gelure doit exister");
+  assert.equal(gelure.totalCumule, null,
+    "un libelle qui donne deja son total ne doit pas se le voir repeter");
+
+  const inflammation = parId("escanor-inflammation-defense");
+  assert.equal(inflammation.totalCumule, 1500,
+    "« −0,15 % par cumul, 100 cumuls » vaut −15 %, soit 1500 dix-millemes");
+  assert.equal(inflammation.sens, -1);
+
+  /* Une tenue gravee porte ses trois valeurs DEJA cumulees : c'est ce qui
+     permet d'annoncer ce qu'un porteur apporte a SON niveau plutot que le
+     maximum de la tenue. */
+  const chercheuse = tenues.find(ligne =>
+    ligne.id === "merlin-chercheuse-attaque-feu");
+  assert.ok(chercheuse, "la tenue de Merlin doit figurer au recensement");
+  assert.deepEqual(plain(chercheuse.niveaux), [1200, 1600, 2000],
+    "les trois niveaux du passif doivent voyager avec la ligne");
+  assert.equal(chercheuse.sens, 1);
+  assert.equal(chercheuse.totalCumule, null,
+    "une tenue ne passe pas par le total cumule : ses niveaux le portent");
+
+  /* Toute ligne de tenue doit pouvoir se chiffrer, sinon la vue retombe sur
+     un « N2 » que le membre doit traduire lui-meme. */
+  tenues.forEach(ligne => {
+    assert.ok(Array.isArray(ligne.niveaux) && ligne.niveaux.length === 3,
+      "trois niveaux attendus pour « " + ligne.libelle + " »");
+    assert.ok(ligne.sens === 1 || ligne.sens === -1,
+      "sens illisible pour la tenue « " + ligne.libelle + " »");
+  });
+}
+
 /* ---- Une ligne que personne ne possede reste une ligne ---- */
 assert.deepEqual(plain(porteursDeLaLigne(escanor, [])), [],
   "aucun porteur ne doit lever : savoir qu'un effet manque est une information");

@@ -223,6 +223,40 @@ import { toast } from "./toast.js";
     return b;
   }
 
+  /* Un dix-millieme rendu lisible : 1500 et -1 donnent « −15 % ».
+
+     Le sens vient du libelle, pas de la valeur, qui n'est qu'une magnitude.
+     `fr-FR` pose la virgule decimale, et deux decimales suffisent : la table
+     ne descend pas plus bas. */
+  function pourcent(valeur, sens){
+    const nombre = (valeur / 100)
+      .toLocaleString("fr-FR", { maximumFractionDigits:2 });
+    return (sens < 0 ? "−" : "+") + nombre + " %";
+  }
+
+  /* CE QUE CE PORTEUR APPORTE, en toutes lettres.
+
+     Une ligne d'arme ne dit rien de plus que son potentiel. Une ligne de tenue
+     gravee, elle, vaut trois valeurs selon le niveau du passif — jusqu'au
+     TRIPLE d'ecart — et le libelle n'annonce que le maximum. Ecrire « · N2 »
+     laissait le membre chercher lui-meme ce que valait un niveau 2 ; on ecrit
+     donc la valeur, et le niveau passe en infobulle.
+
+     Le niveau inconnu reste dit : c'est un champ a remplir, et le supposer
+     plein promettrait le maximum a quelqu'un qui ne l'a peut-etre pas. */
+  function apportDuPorteur(ligne, porteur){
+    if(ligne.source !== "tenue") return { suffixe:"", titre:"" };
+    if(!porteur.niveau) return { suffixe:" · niv. ?", titre:"" };
+    const valeur = ligne.niveaux ? ligne.niveaux[porteur.niveau - 1] : null;
+    if(valeur == null || ligne.sens === null){
+      return { suffixe:" · N" + porteur.niveau, titre:"" };
+    }
+    return {
+      suffixe:" · " + pourcent(valeur, ligne.sens),
+      titre:"Passif de niveau " + porteur.niveau + " sur 3"
+    };
+  }
+
   /* UNE LIGNE DE RECENSEMENT, quelle que soit la section.
 
      Les deux sections posent la meme question - qui apporte quoi - et ne
@@ -264,6 +298,16 @@ import { toast } from "./toast.js";
     const effet = el("span",{class:"db-effet"},[
       el("span",{class:"db-libelle", text:ligne.libelle})
     ]);
+    /* LE TOTAL, quand le libelle ne donne que le taux unitaire. Douze lignes
+       obligeaient a multiplier de tete — « −0,15 % par cumul, 100 cumuls » —
+       pour arriver au seul chiffre comparable d'une ligne a l'autre. */
+    if(ligne.totalCumule !== null && ligne.sens !== null){
+      effet.appendChild(el("span",{
+        class:"db-total",
+        title:"Total une fois les cumuls au maximum",
+        text:pourcent(ligne.totalCumule, ligne.sens)
+      }));
+    }
     /* La mention est le pendant a l'ecran du drapeau `horsCalcul` : sans elle,
        le membre lirait un malus chiffre et le croirait compte dans ses
        degats. */
@@ -285,15 +329,17 @@ import { toast } from "./toast.js";
     if(porteurs.length){
       porteurs.forEach(p => {
         /* P0 est un potentiel RENSEIGNE, pas une valeur manquante : on l'ecrit
-           comme les autres. Le niveau de passif, lui, peut vraiment manquer -
-           et on le dit plutot que de supposer le maximum. */
-        const niveau = ligne.source !== "tenue" ? ""
-          : (p.niveau ? " · N" + p.niveau : " · niv. ?");
-        qui.appendChild(el("span",{
+           comme les autres. */
+        const apport = apportDuPorteur(ligne, p);
+        const porteur = el("span",{
           class:"db-porteur" + (ligne.source === "tenue" && !p.niveau
             ? " db-niveau-inconnu" : ""),
-          text:p.nom + " P" + p.potentiel + niveau
-        }));
+          text:p.nom + " P" + p.potentiel + apport.suffixe
+        });
+        /* Pose seulement s'il y a quelque chose a dire : un `title` vide est
+           un attribut de plus dans le DOM et rien pour le lecteur. */
+        if(apport.titre) porteur.title = apport.titre;
+        qui.appendChild(porteur);
       });
     }else if(lectureRostersReussie){
       qui.appendChild(el("span",{class:"db-personne", text:"Personne"}));

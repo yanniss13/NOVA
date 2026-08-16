@@ -87,6 +87,11 @@
 .db-origine{font-size:11.5px;color:var(--muted);line-height:1.35;min-width:0}
 .db-effet{display:flex;align-items:center;gap:8px;min-width:0}
 .db-libelle{font-size:12.5px;color:var(--parchment);min-width:0;line-height:1.4}
+/* LE TOTAL A CUMULS PLEINS. Contrairement aux deux mentions qui suivent, c'en
+   est une donnee — et meme la seule comparable d'une ligne a l'autre — donc
+   elle se lit, en or et non en gris. */
+.db-total{flex:none;font-size:12px;font-weight:700;color:var(--gold-bright);
+  white-space:nowrap;font-variant-numeric:tabular-nums}
 /* Les deux mentions sont des notes de bas de page, pas des donnees : elles
    etaient aussi voyantes que les badges d'element, et sur des dizaines de
    lignes cela suffisait a brouiller la colonne. */
