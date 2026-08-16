@@ -137,16 +137,18 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       heure de Paris, et NON la semaine de boss qui bascule le lundi à 9h. Les
       deux diffèrent entre minuit et 9h le lundi : ne jamais les joindre.
 
-- [ ] **Recensement « Affaiblissement de la cible » — conçu, planifié, pas
-      encore écrit.** L'Analyse recense les DPS ; elle ne dit rien de qui peut
-      affaiblir le boss. Treize lignes à transcrire dans
-      `data/buffs-supports.js` (neuf calculées, quatre consignées **hors
-      calcul**), puis une section dans `js/vues/analyse.js`.
+- [x] **Recensement « Affaiblissement de la cible ».** L'Analyse affiche les
+      effets qui affaiblissent le boss, l'arme qui les porte et les membres
+      qui possèdent le build requis, avec leur potentiel. Treize lignes ont
+      rejoint `data/buffs-supports.js` : neuf sont proposées au calculateur et
+      quatre réductions de résistance à la Foudre restent explicitement
+      **hors calcul**. `buffsApplicables()` ne rend jamais ces quatre lignes.
       Le critère est **l'effet transcrit, jamais le rôle** : Escanor porte son
       malus de défense avec une épée à deux mains de rôle Attaquant, et c'est
       lui qu'on veut voir.
-      👉 **Codex : lis `docs/superpowers/specs/2026-08-16-affaiblissement-cible-passation.md`**
-      (état, pièges et règles), puis la spec et le plan qu'elle référence.
+      La logique pure vit dans `js/metier/affaiblissement-cible.js`; la vue
+      charge seule la table à la demande, distingue roster vide et lecture en
+      échec, et conserve les effets absents afin de guider la composition.
 
 Après cette mise à jour, l'utilisateur doit rejouer le contenu complet de
 `supabase/schema.sql` dans le SQL Editor Supabase afin d'appliquer le schéma,
