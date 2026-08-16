@@ -158,6 +158,65 @@ const { chromium } = require("playwright");
     await page.locator("#wikiHeroClose").click();
     await page.locator("#wikiHeroOverlay.on").waitFor({ state:"detached" });
 
+    /* LES PUCES SUIVENT L'ARME, elles ne decrivent pas le personnage.
+
+       Un heros n'a pas UN element et UN role : chaque type d'arme porte les
+       siens. Dreyfus est Soutien Physique a la rapiere, et Attaquant Terre a
+       l'epee a une main — afficher une seule paire figee ferait mentir la
+       fiche sur deux de ses trois armes.
+
+       Les armes sont visees par leur libelle et non par un rang : l'ordre
+       vient du catalogue de competences, qu'un patch peut reordonner. */
+    const puceElement = page.locator(".wiki-chip-element");
+    const puceRole = page.locator(".wiki-hero-chips .wiki-chip:not(.wiki-chip-element)");
+    const armeDite = nom =>
+      page.locator('.wiki-hero-weapon[title="' + nom + '"]');
+
+    await page.locator('#wikiGrid .wiki-tile[data-char="dreyfus"]').click();
+    await page.locator("#wikiHeroOverlay.on").waitFor();
+
+    await armeDite("Rapière").click();
+    await page.waitForFunction(() =>
+      document.querySelector('.wiki-hero-weapon[title="Rapière"]')
+        .classList.contains("active"));
+    assert.equal(await puceElement.textContent(), "Physique",
+      "à la rapière, Dreyfus est Physique");
+    assert.equal(await puceRole.textContent(), "Soutien",
+      "à la rapière, Dreyfus est Soutien");
+
+    await armeDite("Épée à une main").click();
+    await page.waitForFunction(() =>
+      document.querySelector('.wiki-hero-weapon[title="Épée à une main"]')
+        .classList.contains("active"));
+    assert.equal(await puceElement.textContent(), "Terre",
+      "à l'épée à une main, Dreyfus est Terre");
+    assert.equal(await puceRole.textContent(), "Attaquant",
+      "à l'épée à une main, Dreyfus est Attaquant");
+
+    /* UNE FICHE S'OUVRE EN HAUT.
+
+       La modale est un element REUTILISE : le meme #wikiHeroBody sert a tous
+       les heros. Sans remise a zero, ouvrir une fiche apres en avoir lu une
+       longue depose le lecteur au milieu de la nouvelle, sur une section qu'il
+       n'a pas demandee. */
+    const defilement = () => page.evaluate(() =>
+      document.querySelector("#wikiHeroBody").scrollTop);
+    await page.evaluate(() => {
+      const corps = document.querySelector("#wikiHeroBody");
+      corps.scrollTop = corps.scrollHeight;
+    });
+    await page.waitForFunction(() =>
+      document.querySelector("#wikiHeroBody").scrollTop > 0);
+    await page.locator("#wikiHeroClose").click();
+    await page.locator("#wikiHeroOverlay.on").waitFor({ state:"detached" });
+
+    await page.locator('#wikiGrid .wiki-tile[data-char="derieri"]').click();
+    await page.locator("#wikiHeroOverlay.on").waitFor();
+    assert.equal(await defilement(), 0,
+      "une fiche ouverte doit commencer en haut, pas la ou finissait la precedente");
+    await page.locator("#wikiHeroClose").click();
+    await page.locator("#wikiHeroOverlay.on").waitFor({ state:"detached" });
+
     /* Hors ligne : le catalogue a été mis en cache par le service worker au
        premier passage, la fiche doit donc rester consultable.
 
