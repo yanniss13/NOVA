@@ -47,7 +47,7 @@ const PERSONNAGES = [
   "gowther", "guila", "dreydrin", "derieri",
   /* Entres avec le recensement « Affaiblissement de la cible » : ils ne
      donnent rien a l'equipe, ils retirent quelque chose au boss. */
-  "drake", "escanor", "king", "klotho", "slader", "tioreh"
+  "drake", "escanor", "gil-thunder", "king", "klotho", "slader", "tioreh"
 ];
 
 assert.deepEqual(Object.keys(TABLE).sort(), [...PERSONNAGES].sort(),
@@ -76,6 +76,20 @@ tousLesBuffs.forEach(buff => {
     assert.ok(Object.prototype.hasOwnProperty.call(LIBELLES, buff.stat),
       buff.id + " : code de stat inconnu du depot -> " + buff.stat);
   }
+  /* LE DRAPEAU ET SON EFFET VONT ENSEMBLE, dans les deux sens.
+
+     Sans le premier sens, une ligne de resistance elementaire oubliee de
+     drapeau atteindrait le calculateur. Sans le second, un drapeau pose par
+     erreur sur un malus reel le ferait disparaitre des cases a cocher, en
+     silence et sans qu'aucun chiffre ne bouge - le pire des deux. */
+  const consignee = Object.prototype.hasOwnProperty.call(buff, "horsCalcul");
+  if(consignee){
+    assert.equal(buff.horsCalcul, true,
+      buff.id + " : `horsCalcul` ne s'ecrit qu'a true, ou pas du tout");
+  }
+  assert.equal(consignee, buff.effet === "resistanceElementaire",
+    buff.id + " : `horsCalcul` et l'effet `resistanceElementaire` vont "
+      + "ensemble, ou pas du tout");
   assert.ok(["add", "multiply"].includes(buff.operation),
     buff.id + " : operation invalide -> " + buff.operation);
   assert.ok(["flat", "ten-thousandths"].includes(buff.unite),
@@ -204,24 +218,46 @@ const NEUTRE = {
   critRate:3000, critDamage:12000, percementDefense:500
 };
 
-/* Aucun buff ne doit etre silencieusement ignore : si son code n'est pas
-   branche, il ne changerait rien et personne ne le verrait. Ce test est le
-   filet qui aurait attrape AllSkill_Add.
-
-   DEUX sorties valides, pas une. Un buff de CATEGORIE ne touche justement
-   aucune entree du moteur - les seaux communs valent pour toutes les
-   competences a la fois, y verser un bonus de competence normale gonflerait
-   l'ultime - et le filet d'origine l'aurait rejete a tort. */
 tousLesBuffs.forEach(buff => {
   const nu = entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:[] });
   const avec = entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:[buff] });
   const changeLeMoteur = Object.keys(nu).some(cle => nu[cle] !== avec[cle]);
   const changeUneCategorie =
     Object.keys(bonusCategorieDesBuffs([buff])).length > 0;
+  /* UNE LIGNE CONSIGNEE NE CHANGE RIEN, et c'est sa definition. Le filet
+     s'inverse pour elle : au lieu d'exiger qu'elle branche quelque chose, on
+     exige qu'elle ne branche RIEN. Une ligne hors calcul qui deplacerait une
+     entree du moteur serait un mensonge silencieux. */
+  if(buff.horsCalcul){
+    assert.ok(!changeLeMoteur && !changeUneCategorie,
+      buff.id + " : une ligne hors calcul ne doit toucher AUCUNE entree du "
+        + "moteur, or celle-ci en change une");
+    return;
+  }
   assert.ok(changeLeMoteur || changeUneCategorie,
     buff.id + " : ce buff ne change NI une entree du moteur NI un bonus de "
       + "categorie, son code " + buff.stat + " n'est branche nulle part");
 });
+
+/* LA GARDE QUI COMPTE LE PLUS DE TOUT CE CHANTIER.
+
+   Une ligne consignee vit dans le recensement de l'Analyse, pour composer un
+   groupe. Elle ne doit JAMAIS apparaitre en case a cocher du calculateur : le
+   membre la cocherait, verrait son total ne pas bouger, et croirait pourtant
+   son effet compte. Le silence est ici pire que l'absence. */
+{
+  const consignees = tousLesBuffs.filter(buff => buff.horsCalcul);
+  assert.ok(consignees.length > 0,
+    "la table doit porter au moins une ligne consignee, sinon cette garde ne "
+      + "verifie rien");
+  ["", "fire", "ice", "wind", "earth", "holy", "dark", "thunder", "default"]
+    .forEach(element => {
+      const proposes = new Set(buffsApplicables(element).map(buff => buff.id));
+      consignees.forEach(ligne => assert.ok(!proposes.has(ligne.id),
+        ligne.id + " : ligne hors calcul proposee au calculateur pour l'element « "
+          + element + " »"));
+    });
+}
 
 /* Un buff sans element vaut pour tout build ; un buff elementaire n'est
    propose qu'au build de cet element, et il est ABSENT des autres - ni grise
