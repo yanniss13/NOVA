@@ -33,9 +33,10 @@ const MODULES = [
   "metier/degats-calcul.js",
   "metier/calculateur-entrees.js",
   "metier/equipe-buffs.js",
-  /* Apres `equipe-buffs.js`, dont il importe la regle du jeton d'arme : un
-     module n'importe jamais un module declare apres lui. */
-  "metier/affaiblissement-cible.js",
+  /* Apres `equipe-buffs.js` et `build-config.js`, dont il importe la regle du
+     jeton d arme et le juge du niveau de passif : un module n importe jamais un
+     module declare apres lui. */
+  "metier/recensement-supports.js",
   "metier/passifs-graves.js",
   "metier/passifs-armes.js",
   "metier/passifs-ensembles.js",

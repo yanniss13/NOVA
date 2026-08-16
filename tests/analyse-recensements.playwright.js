@@ -1,6 +1,7 @@
 "use strict";
 
-/* Les etats du recensement d'affaiblissement qui dependent du reseau.
+/* Les etats des deux recensements de l'Analyse qui dependent du reseau, et la
+   possession par TENUE GRAVEE, qui ne se lit nulle part ailleurs.
 
    Le faux Supabase partage reproduit la chaine reelle `from().select()` et
    ses erreurs. Le rendu est exerce dans Chromium : ce test porte sur les
@@ -158,8 +159,62 @@ async function ouvrirAnalyse(page){
       "la consigne ne doit pas emporter le recensement avec elle"
     );
 
+    /* LA POSSESSION PAR TENUE GRAVEE, qui n'obeit pas a la regle des armes :
+       ce n'est pas le couple personnage + arme qui compte, mais le fichier
+       d'armure REELLEMENT equipe dans un build - et le niveau de son passif,
+       parce que la valeur en depend du simple au tiers pres. */
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.roster_characters = [{
+        owner:"user-1",
+        char_id:"merlin",
+        potential_tier:9,
+        builds:{
+          "Livre":{
+            armor:{ "Armure liee":"7ds-armures-ssr/Armure liee/Chercheuse de savoir.webp" },
+            armorConfig:{ "Armure liee":{ passiveLevel:2 } }
+          }
+        },
+        updated_at:"2026-08-16T12:00:00.000Z"
+      }];
+    });
+    await ouvrirAnalyse(page);
+    const chercheuse = page.locator('#analyseBody .debuff-row[data-source="tenue"]')
+      .filter({ hasText:"Chercheuse de savoir" }).first();
+    assert.ok(await chercheuse.count() > 0,
+      "la tenue gravee doit nommer la tenue, pas une arme");
+    assert.equal(
+      await chercheuse.getAttribute("data-vise"),
+      "allies",
+      "un passif qui renforce l'equipe appartient au second recensement"
+    );
+    assert.equal(
+      await chercheuse.locator(".db-porteur").first().textContent(),
+      "Yannis P9 · N2",
+      "la ligne d'une tenue montre le niveau de passif declare par le membre"
+    );
+    /* Le libelle d'une tenue annonce son MAXIMUM : la ligne doit le dire,
+       sinon elle promet a tout le monde ce que seul un niveau 3 rend. */
+    assert.ok(await chercheuse.locator(".db-au-max").count() > 0,
+      "une ligne de tenue doit signaler que son libelle vaut au niveau 3");
+
+    /* Niveau non renseigne : dit, jamais suppose. */
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.roster_characters[0].builds.Livre.armorConfig = {};
+      window.__fakeSupabaseEmit("roster_characters", "UPDATE");
+    });
+    await ouvrirAnalyse(page);
+    assert.equal(
+      await page.locator('#analyseBody .debuff-row[data-source="tenue"]')
+        .filter({ hasText:"Chercheuse de savoir" }).first()
+        .locator(".db-porteur").first().textContent(),
+      "Yannis P9 · niv. ?",
+      "un niveau absent se dit, il ne se remplace pas par le maximum"
+    );
+
     assert.deepEqual(errors, [], "aucune erreur de page");
-    console.log("analyse-affaiblissement.playwright.js OK");
+    console.log("analyse-recensements.playwright.js OK");
   }finally{
     await browser.close();
     await server.close();

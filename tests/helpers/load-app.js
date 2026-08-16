@@ -113,8 +113,8 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   armeDuGameId:typeof armeDuGameId === "function"
     ? armeDuGameId
     : undefined,
-  lignesDAffaiblissement:typeof lignesDAffaiblissement === "function"
-    ? lignesDAffaiblissement
+  lignesDeSoutien:typeof lignesDeSoutien === "function"
+    ? lignesDeSoutien
     : undefined,
   porteursDeLaLigne:typeof porteursDeLaLigne === "function"
     ? porteursDeLaLigne
@@ -123,6 +123,7 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
     ? ENUM_TO_FOLDER
     : undefined,
   SEVEN_DS_BUFFS_SUPPORTS:window.SEVEN_DS_BUFFS_SUPPORTS,
+  SEVEN_DS_PASSIFS_GRAVES:window.SEVEN_DS_PASSIFS_GRAVES,
   degatsSupplementairesApplicables:typeof degatsSupplementairesApplicables === "function"
     ? degatsSupplementairesApplicables
     : undefined,
@@ -820,6 +821,19 @@ function loadApp(initialTeams){
   );
   sandbox.SEVEN_DS_PASSIFS_ENSEMBLES =
     passifsEnsemblesSandbox.window.SEVEN_DS_PASSIFS_ENSEMBLES;
+  /* Les armures liees sont GENEREES, pas ecrites a la main - mais le
+     recensement s'en sert pour rattacher une tenue gravee a son personnage, et
+     la fixture n'en decrivait que deux. Charger la vraie table est un
+     sur-ensemble strict : ses entrees Meliodas et Merlin sont identiques a
+     celles que la fixture posait, verifiees avant le remplacement. */
+  const armuresLieesSandbox = { window:{} };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(ROOT, "data", "armures-liees.js"), "utf8"),
+    armuresLieesSandbox,
+    { filename:"armures-liees.js" }
+  );
+  sandbox.SEVEN_DS_ARMURES_LIEES =
+    armuresLieesSandbox.window.SEVEN_DS_ARMURES_LIEES;
   sandbox.window = sandbox;
   /* Le bac a sable modelise un navigateur : il lui faut donc les points
      d'accroche globaux que le code utilise. Les dispos ecoutent `online` pour
