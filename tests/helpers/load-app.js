@@ -113,6 +113,12 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   armeDuGameId:typeof armeDuGameId === "function"
     ? armeDuGameId
     : undefined,
+  lignesDAffaiblissement:typeof lignesDAffaiblissement === "function"
+    ? lignesDAffaiblissement
+    : undefined,
+  porteursDeLaLigne:typeof porteursDeLaLigne === "function"
+    ? porteursDeLaLigne
+    : undefined,
   ENUM_TO_FOLDER:typeof ENUM_TO_FOLDER === "object"
     ? ENUM_TO_FOLDER
     : undefined,
