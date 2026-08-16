@@ -51,38 +51,79 @@
 .mx-item{color:var(--parchment);white-space:nowrap}
 .mx-empty{color:var(--muted-2);text-align:center}
 
-/* ---------- Affaiblissement de la cible ---------- */
+/* ---------- Recensements : affaiblissement et renforcement ---------- */
 .an-note{margin:-6px 0 12px;color:var(--muted);font-size:12.5px;max-width:74ch}
+/* Combien la confrerie en couvre, avant la liste : soixante lignes ne se
+   comptent pas a l'oeil. */
+.db-compte{margin:0 0 10px;font-size:12px;color:var(--gold-bright);
+  font-weight:600;letter-spacing:.02em}
+.db-compte.db-aucun{color:var(--muted)}
 .debuff-list{display:flex;flex-direction:column;border:1px solid var(--line);
   border-radius:10px;overflow:hidden}
-.debuff-row{display:grid;grid-template-columns:1.3fr 1.9fr auto 1fr;
+/* UN GROUPE = UN PERSONNAGE. Son trait de separation est plus marque que
+   celui qui separe deux lignes du meme heros : c'est ce contraste, et lui
+   seul, qui rend les groupes lisibles sans en-tete supplementaire. */
+.debuff-groupe{border-bottom:1px solid var(--line)}
+.debuff-groupe:last-child{border-bottom:0}
+.debuff-row{display:grid;
+  grid-template-columns:158px 132px minmax(0,1fr) 104px 148px;
   align-items:center;gap:10px;padding:8px 14px;
   border-bottom:1px solid var(--line-soft)}
 .debuff-row:last-child{border-bottom:0}
 /* Une ligne que personne ne possede s'efface, elle ne disparait pas. */
 .debuff-row.db-absente{opacity:.55}
 .db-perso{display:flex;align-items:center;gap:8px;min-width:0}
-.db-nom{color:var(--parchment);font-size:13px;white-space:nowrap;
-  overflow:hidden;text-overflow:ellipsis}
+/* LA LIGNE DE SUITE. Sa cellule de personnage reste en place — c'est elle qui
+   aligne les colonnes d'un bout a l'autre de la liste — mais elle ne porte
+   plus qu'un filet, place sous le centre du portrait, qui relie la ligne a la
+   tete de son groupe. `stretch` est indispensable : centre, le filet ne
+   toucherait pas les lignes voisines et le trait serait pointille. */
+.db-suite .db-perso{align-self:stretch;margin-left:13px;
+  border-left:1px solid var(--line)}
+.db-nom{color:var(--parchment);font-weight:600;font-size:13px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* D'ou vient l'effet. Les noms de tenues gravees sont longs — « Fille de la
+   forêt et de la terre » — donc cette cellule s'enroule au lieu de couper. */
+.db-origine{font-size:11.5px;color:var(--muted);line-height:1.35;min-width:0}
 .db-effet{display:flex;align-items:center;gap:8px;min-width:0}
-.db-libelle{font-size:12.5px;color:var(--muted);min-width:0}
-.db-hors-calcul{flex:none;font-size:10px;letter-spacing:.08em;
-  text-transform:uppercase;color:var(--muted-2);border:1px solid var(--line);
-  border-radius:999px;padding:1px 7px;white-space:nowrap}
+.db-libelle{font-size:12.5px;color:var(--parchment);min-width:0;line-height:1.4}
+/* Les deux mentions sont des notes de bas de page, pas des donnees : elles
+   etaient aussi voyantes que les badges d'element, et sur des dizaines de
+   lignes cela suffisait a brouiller la colonne. */
+.db-hors-calcul{flex:none;font-size:10.5px;color:var(--muted-2);
+  border:1px solid var(--line-soft);border-radius:999px;padding:1px 7px;
+  white-space:nowrap}
 /* « au niv. 3 » : le libelle d'une tenue gravee annonce son MAXIMUM, et les
    trois niveaux ecartent parfois du simple au tiers. Sans cette mention la
    ligne promettrait a tout le monde ce que seul un passif plein rend. */
-.db-au-max{flex:none;font-size:10px;letter-spacing:.06em;color:var(--muted-2);
+.db-au-max{flex:none;font-size:10.5px;color:var(--muted-2);
   border:1px solid var(--line-soft);border-radius:999px;padding:1px 6px;
   white-space:nowrap}
 /* Un niveau non renseigne s'affiche en retrait : c'est un champ a remplir,
    pas un porteur de moins. */
 .db-porteur.db-niveau-inconnu{color:var(--muted)}
-.db-tous{font-size:11px;color:var(--muted-2);white-space:nowrap}
+/* « Tous » emprunte la FORME d'un badge d'element — c'est ce qui aligne la
+   colonne — mais pas son poids : il vaut « aucun element en particulier »,
+   soit le cas par defaut de plus de la moitie des lignes. Vingt pastilles
+   pleines feraient exactement le bruit qu'on retire. */
+.db-tous{border-color:var(--line-soft);background:transparent;
+  color:var(--muted-2);font-weight:500}
+.db-tous .dot{box-shadow:none;opacity:.55}
 .db-porteurs{display:flex;flex-wrap:wrap;gap:4px 8px;justify-content:flex-end}
 .db-porteur{font-size:12px;color:var(--gold-bright);white-space:nowrap}
 .db-personne{font-size:12px;color:var(--muted-2)}
+@media(max-width:1180px){
+  .debuff-row{grid-template-columns:130px 112px minmax(0,1fr) 96px 124px;
+    gap:8px;padding:8px 10px}
+}
 @media(max-width:820px){
-  .debuff-row{grid-template-columns:1fr;gap:4px}
+  .debuff-row{grid-template-columns:1fr;gap:4px;padding:8px 14px}
+  /* Empilee, la cellule vide d'une ligne de suite n'aligne plus rien : elle
+     ne ferait qu'un blanc. Le groupe se dit alors par un retrait. */
+  .db-suite .db-perso{display:none}
+  .db-suite{border-left:2px solid var(--line);padding-left:12px}
   .db-porteurs{justify-content:flex-start}
+  /* Empilee, la colonne d'element devient pleine largeur, et la pastille avec
+     elle : « Foudre » s'etirait sur trois cents pixels. */
+  .debuff-row>.elem-badge{justify-self:start}
 }

@@ -209,6 +209,20 @@ import { toast } from "./toast.js";
     return chargementDesTables;
   }
 
+  /* La pastille « tous elements », de la MEME forme que celle d'un element.
+
+     Le texte gris qu'elle remplace revenait sur quarante lignes sur soixante-
+     six : c'est le cas par defaut, pas une information, et il rompait la
+     colonne en alternant du texte et des badges. */
+  function badgeTous(){
+    const b = el("span",{class:"elem-badge db-tous",
+      title:"Cet effet ne dépend d'aucun élément"});
+    b.style.setProperty("--ec", "#6f6960");
+    b.appendChild(el("span",{class:"dot"}));
+    b.appendChild(el("span",{text:"Tous"}));
+    return b;
+  }
+
   /* UNE LIGNE DE RECENSEMENT, quelle que soit la section.
 
      Les deux sections posent la meme question - qui apporte quoi - et ne
@@ -218,9 +232,14 @@ import { toast } from "./toast.js";
      `lectureRostersReussie` distingue deux etats que rien ne doit confondre :
      « personne ne l'a » est une affirmation, « on n'a pas pu lire » est un
      aveu d'ignorance. Les afficher pareil ferait croire a une absence certaine
-     sur une simple coupure reseau. */
-  function ligneDuRecensement(ligne, membres, lectureRostersReussie){
-    const porteurs = porteursDeLaLigne(ligne, membres);
+     sur une simple coupure reseau.
+
+     `teteDeGroupe` dit si cette ligne ouvre le groupe de son personnage. Elle
+     seule porte le portrait et le nom : Gil Thunder tenait trois lignes de
+     suite, Gowther trois autres, et repeter le nom ne l'apprenait a personne.
+     Les porteurs arrivent tout calcules - le groupe en a besoin AVANT le rendu
+     pour se classer, et les recalculer ici ferait le travail deux fois. */
+  function ligneDuRecensement(ligne, porteurs, lectureRostersReussie, teteDeGroupe){
     const ch = charOf(ligne.support);
     /* D'ou vient l'effet : l'arme qui le porte, ou la tenue gravee. Sans cette
        precision la ligne serait trompeuse - un membre irait monter la mauvaise
@@ -229,8 +248,18 @@ import { toast } from "./toast.js";
       ? ligne.tenueNom
       : (ligne.arme && WEAPON_ENUM[ligne.arme]
           ? WEAPON_ENUM[ligne.arme].label : "—");
-    const portrait = el("span",{class:"rk-portrait"});
-    if(ch) portrait.appendChild(el("img",{src:ch.file,alt:"",loading:"lazy"}));
+
+    /* La cellule reste presente meme vide sur les lignes de suite : c'est elle
+       qui aligne toutes les colonnes d'un bout a l'autre de la liste, et son
+       filet gauche relie visuellement le groupe. */
+    const perso = el("span",{class:"db-perso"});
+    if(teteDeGroupe){
+      const portrait = el("span",{class:"rk-portrait"});
+      if(ch) portrait.appendChild(el("img",{src:ch.file,alt:"",loading:"lazy"}));
+      perso.appendChild(portrait);
+      perso.appendChild(el("span",{class:"db-nom",
+        text:ch ? ch.name : (ligne.support || "—")}));
+    }
 
     const effet = el("span",{class:"db-effet"},[
       el("span",{class:"db-libelle", text:ligne.libelle})
@@ -278,22 +307,70 @@ import { toast } from "./toast.js";
     return el("div",{
       /* Grisee, jamais retiree. Et jamais grisee sur une lecture en echec : le
          gris dit « la confrerie ne l'a pas », ce qu'on ignore alors. */
-      class:"debuff-row" + (
-        lectureRostersReussie && !porteurs.length ? " db-absente" : ""
-      ),
+      class:"debuff-row"
+        + (teteDeGroupe ? "" : " db-suite")
+        + (lectureRostersReussie && !porteurs.length ? " db-absente" : ""),
       dataset:{ source:ligne.source, vise:ligne.vise }
     },[
-      el("span",{class:"db-perso"},[
-        portrait,
-        el("span",{class:"db-nom",
-          text:(ch ? ch.name : ligne.support || "—") + " · " + origine})
-      ]),
+      perso,
+      el("span",{class:"db-origine", text:origine}),
       effet,
       ligne.element
         ? elemBadge(String(ligne.element).toUpperCase())
-        : el("span",{class:"db-tous", text:"tous éléments"}),
+        : badgeTous(),
       qui
     ]);
+  }
+
+  /* LES GROUPES D'UNE SECTION : un par personnage, dans l'ordre ou le membre
+     a interet a les lire.
+
+     Le tri alphabetique d'origine dispersait les trois lignes que la confrerie
+     porte au milieu de vingt-cinq qui ne concernent personne. Ici les groupes
+     portes passent devant, du plus haut potentiel au plus bas ; le reste suit
+     par ordre alphabetique, grise mais entier - un effet que personne n'a
+     reste une information, et c'est meme celle qui fait recruter.
+
+     `potentiel` vaut -1 quand aucune ligne du groupe n'est portee : c'est ce
+     qui separe les deux blocs, et P0 doit rester du bon cote — un potentiel
+     zero est renseigne, pas manquant. */
+  function groupesDuRecensement(vise, membres){
+    const parSupport = new Map();
+    lignesDeSoutien()
+      .filter(ligne => ligne.vise === vise)
+      .forEach(ligne => {
+        const cle = ligne.support || "";
+        if(!parSupport.has(cle)) parSupport.set(cle, []);
+        parSupport.get(cle).push({
+          ligne,
+          porteurs:porteursDeLaLigne(ligne, membres)
+        });
+      });
+    return [...parSupport.entries()]
+      .map(([support, lignes]) => {
+        const ch = charOf(support);
+        return {
+          support,
+          nom:ch ? ch.name : (support || "—"),
+          /* Le meme classement A L'INTERIEUR du groupe : un groupe monte en
+             tete parce qu'un membre le porte, la ligne qui lui vaut cette
+             place doit donc se lire la premiere. Le tri est stable, l'ordre
+             de la table — armes puis tenues — survit a egalite. */
+          lignes:lignes.slice().sort((a, b) =>
+            (b.porteurs.length ? 1 : 0) - (a.porteurs.length ? 1 : 0)
+          ),
+          potentiel:lignes.reduce((max, item) => Math.max(
+            max, ...item.porteurs.map(p => p.potentiel)
+          ), -1)
+        };
+      })
+      .sort((a, b) => {
+        const porteA = a.potentiel >= 0 ? 1 : 0;
+        const porteB = b.potentiel >= 0 ? 1 : 0;
+        return porteB - porteA
+          || b.potentiel - a.potentiel
+          || a.nom.localeCompare(b.nom, "fr");
+      });
   }
 
   /* UNE SECTION DU RECENSEMENT, rendue a part parce qu'elle ne depend d'AUCUN
@@ -308,12 +385,31 @@ import { toast } from "./toast.js";
         text:"Recensement indisponible : les tables d'effets n'ont pas pu être lues."}));
       return;
     }
+    const groupes = groupesDuRecensement(section.vise, membres);
+    const total = groupes.reduce((n, g) => n + g.lignes.length, 0);
+    const portes = groupes.reduce((n, g) =>
+      n + g.lignes.filter(item => item.porteurs.length).length, 0);
+    /* Le compte se lit AVANT la liste : sans lui il faut parcourir soixante
+       lignes pour savoir combien la confrerie en couvre. Il se tait sur une
+       lecture en echec, ou il affirmerait un vide qu'on ignore. */
+    if(lectureRostersReussie){
+      /* Zero se dit en gris : l'or annonce une couverture, et un compte nul
+         n'en est pas une. */
+      box.appendChild(el("p",{class:"db-compte" + (portes ? "" : " db-aucun"),
+        text:portes + (portes > 1 ? " effets portés" : " effet porté")
+          + " sur " + total + " par la confrérie"}));
+    }
     const liste = el("div",{class:"debuff-list"});
-    lignesDeSoutien()
-      .filter(ligne => ligne.vise === section.vise)
-      .forEach(ligne => liste.appendChild(
-        ligneDuRecensement(ligne, membres, lectureRostersReussie)
+    groupes.forEach(groupe => {
+      const bloc = el("div",{class:"debuff-groupe",
+        dataset:{ support:groupe.support }});
+      groupe.lignes.forEach((item, index) => bloc.appendChild(
+        ligneDuRecensement(
+          item.ligne, item.porteurs, lectureRostersReussie, index === 0
+        )
       ));
+      liste.appendChild(bloc);
+    });
     box.appendChild(liste);
   }
 
@@ -507,16 +603,7 @@ import { toast } from "./toast.js";
     });
     box.appendChild(covRow);
 
-    // --- 2) Affaiblissement de la cible, puis renforcement des alliés ---
-    /* Leur place n'est pas indifferente : la couverture pose le decor - qui
-       frappe, et de quel element - et ces deux sections disent ce que le
-       groupe ajoute autour. Le classement, qui suit, sert a choisir QUI
-       emmener. */
-    SECTIONS_DU_RECENSEMENT.forEach(section => rendreRecensement(
-      box, section, membres, tablesLues, lectureRostersReussie
-    ));
-
-    // --- 3) Classement par élément ---
+    // --- 2) Classement par élément ---
     // Le classement vit dans un conteneur stable : le clic sur un élément ne
     // remplace que ce conteneur (aucun rechargement Supabase, aucun reflow global).
     box.appendChild(el("h2",{class:"an-title", text:"Classement par potentiel"}));
@@ -547,7 +634,7 @@ import { toast } from "./toast.js";
        cible de focus détachée. */
     renderRankTable(rankBox);
 
-    // --- 4) Matrice joueur × élément ---
+    // --- 3) Matrice joueur × élément ---
     box.appendChild(el("h2",{class:"an-title", text:"Matrice membre × élément"}));
     const wrap = el("div",{class:"matrix-wrap"});
     const table = el("table",{class:"matrix"});
@@ -571,6 +658,20 @@ import { toast } from "./toast.js";
     });
     wrap.appendChild(table);
     box.appendChild(wrap);
+
+    /* --- 4) Les deux recensements, en fin de page ---
+
+       Ils occupaient le milieu, entre la couverture et le classement, du temps
+       ou ils tenaient sur quelques lignes. A soixante-six lignes ils repoussent
+       le classement au-dela du quatrieme ecran — c'est-a-dire hors de portee,
+       alors que c'est LUI qui repond a « qui j'emmene ».
+
+       La coupure suit maintenant la nature de la donnee : au-dessus ce que la
+       confrerie possede, derive des rosters ; en dessous ce que le jeu offre,
+       lu dans deux tables qui ne dependent d'aucun roster. */
+    SECTIONS_DU_RECENSEMENT.forEach(section => rendreRecensement(
+      box, section, membres, tablesLues, lectureRostersReussie
+    ));
   }
 
 export { renderAnalyse };

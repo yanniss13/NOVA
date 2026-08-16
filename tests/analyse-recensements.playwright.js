@@ -213,6 +213,80 @@ async function ouvrirAnalyse(page){
       "un niveau absent se dit, il ne se remplace pas par le maximum"
     );
 
+    /* ===== LE GROUPEMENT PAR PERSONNAGE, ET L'ORDRE QU'IL PORTE. =====
+
+       Gil Thunder tient trois lignes contre la cible, une par arme. Un membre
+       qui ne joue que son Epee a une main n'en apporte QU'UNE - c'est ce qui
+       fait de lui le bon cas : le groupe doit remonter en tete de section, la
+       ligne portee doit ouvrir le groupe, et les deux autres rester la, grises,
+       sans repeter son nom.
+
+       Le tri alphabetique d'origine l'aurait laisse entre Escanor et Gowther,
+       ses trois lignes melees a vingt-cinq que personne ne porte. */
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.roster_characters = [{
+        owner:"user-1",
+        char_id:"gil-thunder",
+        potential_tier:5,
+        builds:{ "Epee 1 main":{} },
+        updated_at:"2026-08-16T12:00:00.000Z"
+      }];
+    });
+    await ouvrirAnalyse(page);
+
+    /* La premiere liste est celle de l'affaiblissement : les deux sections
+       sont rendues dans l'ordre de SECTIONS_DU_RECENSEMENT. */
+    const affaiblissement = page.locator("#analyseBody .debuff-list").first();
+    const gil = affaiblissement
+      .locator('.debuff-groupe[data-support="gil-thunder"]');
+    assert.equal(await gil.locator(".debuff-row").count(), 3,
+      "les trois effets d'un meme personnage tiennent dans un seul groupe");
+    assert.equal(
+      await affaiblissement.locator(".debuff-groupe").first()
+        .getAttribute("data-support"),
+      "gil-thunder",
+      "le seul groupe que la confrerie porte doit ouvrir la section"
+    );
+    assert.equal(await gil.locator(".db-nom").count(), 1,
+      "le nom ne s'ecrit qu'une fois : trois lignes de suite ne l'apprenaient a personne");
+    assert.equal(await gil.locator(".db-nom").textContent(), "Gil Thunder");
+    assert.equal(await gil.locator(".debuff-row.db-suite").count(), 2,
+      "les lignes qui suivent la tete de groupe se signalent comme telles");
+
+    const teteDuGroupe = gil.locator(".debuff-row").first();
+    assert.equal(
+      await teteDuGroupe.locator(".db-origine").textContent(),
+      "Épée à une main",
+      "dans le groupe aussi, la ligne portee passe devant celles que personne n'a"
+    );
+    assert.equal(
+      await teteDuGroupe.locator(".db-porteur").textContent(),
+      "Yannis P5",
+      "et c'est bien l'arme possedee qui lui vaut sa place"
+    );
+    assert.equal(
+      await gil.locator(".debuff-row.db-absente").count(),
+      2,
+      "les deux armes qu'il ne joue pas restent visibles, mais effacees"
+    );
+
+    /* Le compte epargne de parcourir soixante lignes pour se situer. Il se
+       derive de la table, comme partout ailleurs : un effet ajoute demain ne
+       doit pas casser ce test sans raison. */
+    const totalContreLaCible = await page.evaluate(() => {
+      const armes = Object.values(window.SEVEN_DS_BUFFS_SUPPORTS || {}).flat()
+        .filter(ligne => ligne.cible === "ennemi").length;
+      const tenues = Object.values(window.SEVEN_DS_PASSIFS_GRAVES || {}).flat()
+        .filter(passif => passif.cible === "allies" && passif.cibleEnnemi).length;
+      return armes + tenues;
+    });
+    assert.equal(
+      await page.locator("#analyseBody .db-compte").first().textContent(),
+      "1 effet porté sur " + totalContreLaCible + " par la confrérie",
+      "la section annonce ce que la confrerie couvre avant de derouler la liste"
+    );
+
     assert.deepEqual(errors, [], "aucune erreur de page");
     console.log("analyse-recensements.playwright.js OK");
   }finally{
