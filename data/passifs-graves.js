@@ -298,7 +298,7 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       parCumul:[300, 400, 500],
       cumuls:6,
       provenance:{
-        phrase:"(Max\u00a0: ",
+        phrase:"(Max : ",
         phraseCumul:"d'attribut Feu de "
       }
     },
@@ -311,7 +311,11 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       unite:"ten-thousandths",
       element:"fire",
       niveaux:[2400, 3200, 4000],
-      provenance:{ phrase:"avec une défense de Feu réduite de " }
+      /* Ancrage refait le 16/08/2026 : le 15, 7dsorigin.app a reformule cette
+         phrase et deplace le pourcentage en tete — « Augmente de 24% les
+         degats crit. ... dont la defense de Feu est reduite. ». Le nombre ne
+         suit plus « reduite de ». La valeur, elle, n'a pas bouge. */
+      provenance:{ phrase:"Augmente de " }
     }
   ],
   "7ds-armures-ssr/Armure liee/Défense simple.webp":[

@@ -491,7 +491,7 @@ window.SEVEN_DS_POTENTIELS = {
    "Renforce la puissance de la compétence normale de [#1A7331]45%[-].",
    "La dernière frappe de l'attaque spéciale inflige des dégâts supplémentaires égaux à [#1A7331]120%[-] de l'attaque.\nAugmente la réduction de la défense de Feu de l'attaque spéciale de [#1A7331]10%[-].",
    "Renforce la puissance de l'attaque spéciale de [#1A7331]50%[-].\nAugmente le boost de PV octroyé par l'attaque spéciale de [#1A7331]10%[-].",
-   "La dernière frappe de la compétence normale inflige des dégâts supplémentaires égaux à [#1A7331]40%[-] de l'attaque [#1A7331]5 fois[-].\nLorsque des dégâts supplémentaires sont infligés, augmente les dégâts d'attaque ultime et d'attaque combinée subis par la cible de [#1A7331]50%[-] pendant [#1A7331]20s[-].",
+   "Lors de l'utilisation de la compétence normale, inflige des dégâts supplémentaires [#1A7331]5 fois[-] en ligne droite après le dernier coup. Chaque coup supplémentaire inflige des dégâts égaux à [#1A7331]40%[-] de l'attaque.\nCette attaque augmente les dégâts d'attaque ultime ou d'attaque combinée subis par les ennemis de [#1A7331]50%[-] pendant [#1A7331]20s[-].",
    "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
    "Augmente la valeur maximale d'augmentation de l'attaque de Feu issue de la compétence normale de [#1A7331]3000[-].\nL'utilisation de la compétence normale augmente le percement de défense de tous les héros alliés d'attribut Feu de [#1A7331]15%[-] pendant [#1A7331]30s[-].",
    "Augmente légèrement la portée de l'attaque ultime. Augmente les dégâts crit. d'attaque ultime et d'attaque combinée des héros alliés d'attribut Feu à portée de [#1A7331]50%[-] pendant [#1A7331]20s[-] toutes les [#1A7331]1s[-]."

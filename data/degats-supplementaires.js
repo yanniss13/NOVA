@@ -120,9 +120,16 @@ window.SEVEN_DS_DEGATS_SUPPLEMENTAIRES = {
           pourcentage:200,
           pas:40,
           repetitions:5,
+          /* Ancrages refaits le 16/08/2026. La phrase du 15 aout coupe l'effet
+             en deux : « inflige des degats supplementaires 5 fois … Chaque coup
+             supplementaire inflige des degats egaux a 40% de l'attaque. »
+             Avant, un seul membre portait les deux nombres (« egaux a 40% de
+             l'attaque 5 fois »), d'ou l'ancien `phraseRepetitions` qui lisait le
+             compte juste apres le pourcentage. Les deux valeurs, 40 et 5, sont
+             inchangees ; seul l'endroit ou les lire a bouge. */
           provenance:{
-            phrase:"dégâts supplémentaires égaux à ",
-            phraseRepetitions:"% de l'attaque "
+            phrase:"Chaque coup supplémentaire inflige des dégâts égaux à ",
+            phraseRepetitions:"inflige des dégâts supplémentaires "
           }
         }
       ]

@@ -48,7 +48,7 @@ window.SEVEN_DS_META = {
   ]
  },
  "dreyfus": {
-  "element": "EARTH",
+  "element": "DEFAULT",
   "rarity": "SR",
   "role": "SUPPORT",
   "weapons": [
@@ -92,7 +92,7 @@ window.SEVEN_DS_META = {
   ]
  },
  "griamore": {
-  "element": "EARTH",
+  "element": "DEFAULT",
   "rarity": "SR",
   "role": "DEFENDER",
   "weapons": [

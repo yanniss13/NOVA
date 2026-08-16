@@ -1,6 +1,6 @@
 [
  {
-  "id": "cmsfp5rvh04fc2mp27b1es455",
+  "id": "cmsupryh604fc2lpeixqpfh06",
   "gameId": "132804001",
   "slug": "immortal-guardian-ring",
   "slugFr": "anneau-de-gardien-immortel",
@@ -459,7 +459,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gx2mp2kaieuaty",
+  "id": "cmsupryh704gx2lpencm0fl9w",
   "gameId": "132805011",
   "slug": "shadow-spider-breath-ring",
   "slugFr": "anneau-de-l-araignee-de-l-ombre",
@@ -917,7 +917,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fl2mp2w56ffls1",
+  "id": "cmsupryh604fl2lpevad7pjol",
   "gameId": "132804013",
   "slug": "hymn-of-regeneration-ring",
   "slugFr": "anneau-de-l-hymne-regenerateur",
@@ -931,8 +931,8 @@
   "reinforceMax": 5,
   "qualityMin": 96,
   "qualityMax": 125,
-  "qualityMinLive": 96,
-  "qualityMaxLive": 96,
+  "qualityMinLive": 115,
+  "qualityMaxLive": 125,
   "tierBoundaries": [
    95,
    112,
@@ -1386,7 +1386,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gu2mp2ou7iepj6",
+  "id": "cmsupryh704gu2lpes4thl822",
   "gameId": "132805010",
   "slug": "deathwraith-shard-ring",
   "slugFr": "anneau-de-l-eclat-spectral",
@@ -1844,7 +1844,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fr2mp278rem8iy",
+  "id": "cmsupryh604fr2lpewdlif3ud",
   "gameId": "132804003",
   "slug": "gentle-breeze-ring-finest",
   "slugFr": "anneau-de-la-brise-legere-incomparable",
@@ -2313,7 +2313,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fo2mp2acj0v7nk",
+  "id": "cmsupryh604fo2lpe5y5vkx1g",
   "gameId": "132803009",
   "slug": "gentle-breeze-ring-sturdy",
   "slugFr": "anneau-de-la-brise-legere-robuste",
@@ -2787,7 +2787,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gc2mp2ier0dubu",
+  "id": "cmsupryh704gc2lpeprwpphjs",
   "gameId": "132805005",
   "slug": "arachne-s-melody-ring",
   "slugFr": "anneau-de-la-melodie-d-arachnee",
@@ -3251,7 +3251,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04g62mp265glc8gs",
+  "id": "cmsupryh704g62lpezdf00qxl",
   "gameId": "132805002",
   "slug": "twisted-thought-ring",
   "slugFr": "anneau-de-la-pensee-pervertie",
@@ -3266,7 +3266,7 @@
   "qualityMin": 96,
   "qualityMax": 110,
   "qualityMinLive": 96,
-  "qualityMaxLive": 96,
+  "qualityMaxLive": 110,
   "tierBoundaries": [
    95,
    110
@@ -3710,7 +3710,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fx2mp2ml3dg6pr",
+  "id": "cmsupryh704fx2lpeqqdr7x2g",
   "gameId": "132804006",
   "slug": "scorching-gust-ring-finest",
   "slugFr": "anneau-de-la-rafale-brulante-incomparable",
@@ -4179,7 +4179,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fu2mp2dcgjtd8f",
+  "id": "cmsupryh704fu2lpe7324cq3b",
   "gameId": "132803015",
   "slug": "scorching-gust-ring-sturdy",
   "slugFr": "anneau-de-la-rafale-brulante-robuste",
@@ -4653,7 +4653,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gl2mp28liah74y",
+  "id": "cmsupryh704gl2lpef7p2fl2a",
   "gameId": "132805007",
   "slug": "cursed-pulse-ring",
   "slugFr": "anneau-de-pulsion-maudite",
@@ -4667,7 +4667,7 @@
   "reinforceMax": 5,
   "qualityMin": 96,
   "qualityMax": 125,
-  "qualityMinLive": 96,
+  "qualityMinLive": 100,
   "qualityMaxLive": 125,
   "tierBoundaries": [
    95,
@@ -5122,7 +5122,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04go2mp2rxvurodv",
+  "id": "cmsupryh704go2lpei0ri21pw",
   "gameId": "132805008",
   "slug": "100-day-ring-never-used",
   "slugFr": "anneau-des-100-jours-jamais-porte",
@@ -5581,7 +5581,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gf2mp29z95j5bo",
+  "id": "cmsupryh704gf2lpexqk92ogo",
   "gameId": "132805006",
   "slug": "life-crystal-ring",
   "slugFr": "anneau-du-cristal-de-vie",
@@ -6045,7 +6045,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04g92mp2sm8oun0u",
+  "id": "cmsupryh704g92lpe9yjap5gs",
   "gameId": "132805004",
   "slug": "mad-miner-ring",
   "slugFr": "anneau-du-mineur-fou",
@@ -6514,7 +6514,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gr2mp2dew7o7rd",
+  "id": "cmsupryh704gr2lpe7no5bypw",
   "gameId": "132805009",
   "slug": "oasis-whisper-ring",
   "slugFr": "anneau-du-murmure-de-l-oasis",
@@ -6866,7 +6866,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04g32mp2n41fhq66",
+  "id": "cmsupryh704g32lper2l53igm",
   "gameId": "132804007",
   "slug": "noble-hero-s-ring-finest",
   "slugFr": "anneau-du-noble-heros-incomparable",
@@ -7340,7 +7340,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04g02mp2tmlycl17",
+  "id": "cmsupryh704g02lpenv8xyuxi",
   "gameId": "132803018",
   "slug": "noble-hero-s-ring-sturdy",
   "slugFr": "anneau-du-noble-heros-robuste",
@@ -7804,7 +7804,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gi2mp2sc4w0hea",
+  "id": "cmsupryh704gi2lpepgpqtku6",
   "gameId": "132809003",
   "slug": "crimson-flame-oath-ring",
   "slugFr": "anneau-du-serment-de-la-flamme-cramoisie",
@@ -8174,7 +8174,7 @@
   }
  },
  {
-  "id": "cmsfp5rvh04fi2mp2rhb416xj",
+  "id": "cmsupryh604fi2lpedw46i7q2",
   "gameId": "132805001",
   "slug": "greedy-ruler-ring",
   "slugFr": "anneau-du-souverain-cupide",
@@ -8632,7 +8632,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04ff2mp2ilasdg99",
+  "id": "cmsupryh604ff2lpewvwlycna",
   "gameId": "132804004",
   "slug": "corrupted-watcher-s-ring",
   "slugFr": "anneau-du-vigile-corrompu",
@@ -9096,7 +9096,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04f62mp2aqnk6wgb",
+  "id": "cmsupryh604f62lpe9btnodqb",
   "gameId": "132802001",
   "slug": "casual-ring",
   "slugFr": "anneau-decontracte",
@@ -9392,7 +9392,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04f32mp2b67f57c4",
+  "id": "cmsupryh604f32lpenv8t0mu3",
   "gameId": "132801001",
   "slug": "decorative-ring",
   "slugFr": "anneau-decoratif",
@@ -9688,7 +9688,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04f92mp2itp333ur",
+  "id": "cmsupryh604f92lpe8kc3gshl",
   "gameId": "132803001",
   "slug": "ordinary-ring",
   "slugFr": "anneau-ordinaire",
@@ -10152,7 +10152,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048q2mp2iot42yki",
+  "id": "cmsuprxhi048q2lpegadmr4a0",
   "gameId": "132233003",
   "slug": "blessed-bottoms-132233003",
   "slugFr": "bas-beni-132233003",
@@ -10485,7 +10485,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048m2mp2purv283r",
+  "id": "cmsuprxhi048m2lpeypntyuut",
   "gameId": "132232003",
   "slug": "blessed-bottoms-132232003",
   "slugFr": "bas-beni-132232003",
@@ -10781,7 +10781,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048i2mp21z4pttyb",
+  "id": "cmsuprxhi048i2lpedzxh6atc",
   "gameId": "132231003",
   "slug": "blessed-bottoms",
   "slugFr": "bas-beni",
@@ -11077,7 +11077,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049m2mp2vplun142",
+  "id": "cmsuprxhi049m2lpeec93iu3n",
   "gameId": "132212010",
   "slug": "artisan-s-fine-bottoms-132212010",
   "slugFr": "bas-d-artisan-delicat-132212010",
@@ -11373,7 +11373,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049q2mp2lib761oj",
+  "id": "cmsuprxhi049q2lpeaxz1upti",
   "gameId": "132213010",
   "slug": "artisan-s-fine-bottoms-132213010",
   "slugFr": "bas-d-artisan-delicat-132213010",
@@ -11706,7 +11706,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049i2mp25pvow2gb",
+  "id": "cmsuprxhi049i2lpep85ffklx",
   "gameId": "132211010",
   "slug": "artisan-s-fine-bottoms",
   "slugFr": "bas-d-artisan-delicat",
@@ -12002,7 +12002,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw0048a2mp20ye5ufum",
+  "id": "cmsuprxhi048a2lpef2c13yc0",
   "gameId": "132212001",
   "slug": "adventurer-s-bottoms-132212001",
   "slugFr": "bas-d-aventurier-132212001",
@@ -12298,7 +12298,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048e2mp2h9mcxua3",
+  "id": "cmsuprxhi048e2lpeaw73ladb",
   "gameId": "132213001",
   "slug": "adventurer-s-bottoms-132213001",
   "slugFr": "bas-d-aventurier-132213001",
@@ -12631,7 +12631,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw004862mp25ok52ol6",
+  "id": "cmsuprxhi04862lpe0dpaxt8z",
   "gameId": "132211001",
   "slug": "adventurer-s-bottoms",
   "slugFr": "bas-d-aventurier",
@@ -12927,7 +12927,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dr2mp2tww9gj6w",
+  "id": "cmsuprxhj04dr2lpeoyy5k4t7",
   "gameId": "132214027",
   "slug": "shadow-spider-breath-bottoms",
   "slugFr": "bas-de-l-araignee-de-l-ombre",
@@ -13254,7 +13254,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04eq2mp2efp1aaza",
+  "id": "cmsupryh604eq2lpe9o968oee",
   "gameId": "132255001",
   "slug": "watcher-s-armor-bottoms",
   "slugFr": "bas-de-l-armure-du-vigile",
@@ -13269,7 +13269,7 @@
   "qualityMin": 106,
   "qualityMax": 120,
   "qualityMinLive": 106,
-  "qualityMaxLive": 106,
+  "qualityMaxLive": 120,
   "tierBoundaries": [
    105,
    120
@@ -13582,7 +13582,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cn2mp2mxyzio3s",
+  "id": "cmsuprxhj04cn2lpejeadtqhw",
   "gameId": "132224001",
   "slug": "fiery-essence-bottoms-finest",
   "slugFr": "bas-de-l-essence-incandescente-incomparable",
@@ -13920,7 +13920,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cj2mp217ekw46e",
+  "id": "cmsuprxhj04cj2lpeohomcehk",
   "gameId": "132223004",
   "slug": "fiery-essence-bottoms-sturdy",
   "slugFr": "bas-de-l-essence-incandescente-robuste",
@@ -14263,7 +14263,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04ey2mp23cekd0fj",
+  "id": "cmsupryh604ey2lpeb3v2bpem",
   "gameId": "132255002",
   "slug": "deathwraith-shard-bottoms",
   "slugFr": "bas-de-l-eclat-spectral",
@@ -14590,7 +14590,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04eb2mp2z0cxzfss",
+  "id": "cmsupryh604eb2lpepy90h9ug",
   "gameId": "132225005",
   "slug": "arachne-s-melody-bottoms",
   "slugFr": "bas-de-la-melodie-d-arachnee",
@@ -14605,7 +14605,7 @@
   "qualityMin": 96,
   "qualityMax": 120,
   "qualityMinLive": 96,
-  "qualityMaxLive": 96,
+  "qualityMaxLive": 120,
   "tierBoundaries": [
    95,
    112,
@@ -14923,7 +14923,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04ek2mp2thyiq8vv",
+  "id": "cmsupryh604ek2lpe9gd68hbl",
   "gameId": "132229003",
   "slug": "twisted-might-bottoms",
   "slugFr": "bas-de-la-puissance-retorse",
@@ -15293,7 +15293,7 @@
   }
  },
  {
-  "id": "cmsfp5qw204d32mp2kaqme2qy",
+  "id": "cmsuprxhj04d32lpeyoc1k3kz",
   "gameId": "132224004",
   "slug": "scorching-gust-bottoms-finest",
   "slugFr": "bas-de-la-rafale-brulante-incomparable",
@@ -15631,7 +15631,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cz2mp28gwvo21z",
+  "id": "cmsuprxhj04cz2lpeps98tlle",
   "gameId": "132223016",
   "slug": "scorching-gust-bottoms-sturdy",
   "slugFr": "bas-de-la-rafale-brulante-robuste",
@@ -15974,7 +15974,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dv2mp2cozou2l9",
+  "id": "cmsuprxhj04dv2lpecbc8iy8h",
   "gameId": "132224028",
   "slug": "revived-nightmare-bottoms",
   "slugFr": "bas-du-cauchemar-ressuscite",
@@ -16312,7 +16312,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04ef2mp2d1f9ngh8",
+  "id": "cmsupryh604ef2lpe4rhl2dq8",
   "gameId": "132225006",
   "slug": "life-crystal-bottoms",
   "slugFr": "bas-du-cristal-de-vie",
@@ -16327,7 +16327,7 @@
   "qualityMin": 96,
   "qualityMax": 120,
   "qualityMinLive": 96,
-  "qualityMaxLive": 96,
+  "qualityMaxLive": 120,
   "tierBoundaries": [
    95,
    112,
@@ -16645,7 +16645,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204e32mp2vhk9xypm",
+  "id": "cmsuprxhk04e32lpecz5aevzk",
   "gameId": "132235003",
   "slug": "jet-black-crystal-bottoms",
   "slugFr": "bas-du-cristal-noir-de-jais",
@@ -16660,7 +16660,7 @@
   "qualityMin": 96,
   "qualityMax": 110,
   "qualityMinLive": 96,
-  "qualityMaxLive": 96,
+  "qualityMaxLive": 110,
   "tierBoundaries": [
    95,
    110
@@ -16973,7 +16973,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dj2mp2lb9dbv9s",
+  "id": "cmsuprxhj04dj2lpehr8yyk3w",
   "gameId": "132214024",
   "slug": "twisted-wish-bottoms",
   "slugFr": "bas-du-desir-corrompu",
@@ -16988,7 +16988,7 @@
   "qualityMin": 86,
   "qualityMax": 100,
   "qualityMinLive": 86,
-  "qualityMaxLive": 95,
+  "qualityMaxLive": 100,
   "tierBoundaries": [
    85,
    89,
@@ -17311,7 +17311,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dz2mp2cc6zkvmz",
+  "id": "cmsuprxhk04dz2lpettkwmi2x",
   "gameId": "132224030",
   "slug": "corroded-desire-bottoms",
   "slugFr": "bas-du-desir-erode",
@@ -17649,7 +17649,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048u2mp2myh61m0g",
+  "id": "cmsuprxhi048u2lperss4w7fi",
   "gameId": "132221005",
   "slug": "guardian-s-bottoms",
   "slugFr": "bas-du-gardien",
@@ -17945,7 +17945,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw104922mp27yb1jgcz",
+  "id": "cmsuprxhi04922lpenv4jambf",
   "gameId": "132223005",
   "slug": "guardian-s-bottoms-132223005",
   "slugFr": "bas-du-gardien-132223005",
@@ -18278,7 +18278,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048y2mp2wq9kwr79",
+  "id": "cmsuprxhi048y2lpejtpwsbni",
   "gameId": "132222005",
   "slug": "guardian-s-bottoms-132222005",
   "slugFr": "bas-du-gardien-132222005",
@@ -18574,7 +18574,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204df2mp2cilkmvgu",
+  "id": "cmsuprxhj04df2lpeli7a4u8b",
   "gameId": "132234022",
   "slug": "star-guardian-bottoms",
   "slugFr": "bas-du-gardien-des-etoiles",
@@ -18912,7 +18912,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04e72mp2rdoja8c4",
+  "id": "cmsupryh604e72lpexqf65x5l",
   "gameId": "132225004",
   "slug": "mad-miner-bottoms",
   "slugFr": "bas-du-mineur-fou",
@@ -19250,7 +19250,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204db2mp2zbwy7uj8",
+  "id": "cmsuprxhj04db2lpes6iyu0af",
   "gameId": "132214005",
   "slug": "noble-hero-s-bottoms-finest",
   "slugFr": "bas-du-noble-heros-incomparable",
@@ -19593,7 +19593,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204d72mp23w785wcz",
+  "id": "cmsuprxhj04d72lpecdkx900z",
   "gameId": "132213019",
   "slug": "noble-hero-s-bottoms-sturdy",
   "slugFr": "bas-du-noble-heros-robuste",
@@ -19926,7 +19926,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049e2mp2h50cmr1i",
+  "id": "cmsuprxhi049e2lpep8ek1ehv",
   "gameId": "132223008",
   "slug": "pursuer-s-bottoms-132223008",
   "slugFr": "bas-du-poursuiveur-132223008",
@@ -20259,7 +20259,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049a2mp2qaid5ggw",
+  "id": "cmsuprxhi049a2lpe8pwaiqkf",
   "gameId": "132222008",
   "slug": "pursuer-s-bottoms-132222008",
   "slugFr": "bas-du-poursuiveur-132222008",
@@ -20555,7 +20555,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw104962mp2rm89xg6w",
+  "id": "cmsuprxhi04962lpexrcunzbt",
   "gameId": "132221008",
   "slug": "pursuer-s-bottoms",
   "slugFr": "bas-du-poursuiveur",
@@ -20851,7 +20851,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04eu2mp2pkvt6ck0",
+  "id": "cmsupryh604eu2lpeozgvnuyp",
   "gameId": "132235004",
   "slug": "untamed-roar-bottoms",
   "slugFr": "bas-du-rugissement-sauvage",
@@ -20866,7 +20866,7 @@
   "qualityMin": 106,
   "qualityMax": 120,
   "qualityMinLive": 106,
-  "qualityMaxLive": 106,
+  "qualityMaxLive": 120,
   "tierBoundaries": [
    105,
    120
@@ -21179,7 +21179,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cf2mp2cn3gebxm",
+  "id": "cmsuprxhj04cf2lpec4eratma",
   "gameId": "132225002",
   "slug": "greedy-ruler-bottoms",
   "slugFr": "bas-du-souverain-cupide",
@@ -21506,7 +21506,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204c72mp2k1a17ih6",
+  "id": "cmsuprxhj04c72lpev7uiw1dg",
   "gameId": "132225001",
   "slug": "ruler-of-the-ocean-bottoms",
   "slugFr": "bas-du-souverain-des-oceans",
@@ -21834,7 +21834,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dn2mp25ovu1xxm",
+  "id": "cmsuprxhj04dn2lpe90owr9s2",
   "gameId": "132234026",
   "slug": "ferocious-watcher-s-bottoms",
   "slugFr": "bas-du-vigile-feroce",
@@ -22172,7 +22172,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cb2mp2pvave68e",
+  "id": "cmsuprxhj04cb2lpekd3yyh9p",
   "gameId": "132214016",
   "slug": "immortal-watcher-bottoms",
   "slugFr": "bas-du-vigile-immortel",
@@ -22505,7 +22505,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04ej2mp2x6ri24sl",
+  "id": "cmsupryh604ej2lpeqvvlkdba",
   "gameId": "132229002",
   "slug": "silent-watcher-bottoms",
   "slugFr": "bas-du-vigile-silencieux",
@@ -22875,7 +22875,7 @@
   }
  },
  {
-  "id": "cmsfp5qw204cv2mp2gzbhmkb3",
+  "id": "cmsuprxhj04cv2lpeyvn8382l",
   "gameId": "132234003",
   "slug": "thunderous-bottoms-finest",
   "slugFr": "bas-tonitruant-incomparable",
@@ -23213,7 +23213,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cr2mp2l7x9q2yq",
+  "id": "cmsuprxhj04cr2lpea3y9qbw1",
   "gameId": "132233013",
   "slug": "thunderous-bottoms-sturdy",
   "slugFr": "bas-tonitruant-robuste",
@@ -23556,7 +23556,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048o2mp2yiwmdzi3",
+  "id": "cmsuprxhi048o2lpeig541tbd",
   "gameId": "132432003",
   "slug": "blessed-combat-boots-132432003",
   "slugFr": "bottes-de-combat-benies-132432003",
@@ -23852,7 +23852,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048k2mp2g3jag28a",
+  "id": "cmsuprxhi048k2lpex45f586a",
   "gameId": "132431003",
   "slug": "blessed-combat-boots",
   "slugFr": "bottes-de-combat-benies",
@@ -24148,7 +24148,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048s2mp2cx2ioqtf",
+  "id": "cmsuprxhi048s2lpev2e7y5kn",
   "gameId": "132433003",
   "slug": "blessed-combat-boots-132433003",
   "slugFr": "bottes-de-combat-benies-132433003",
@@ -24481,7 +24481,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049s2mp23ksx13qj",
+  "id": "cmsuprxhi049s2lpeu42t5nyr",
   "gameId": "132413010",
   "slug": "artisan-s-fine-combat-boots-132413010",
   "slugFr": "bottes-de-combat-d-artisan-delicat-132413010",
@@ -24814,7 +24814,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049o2mp2o9x9071l",
+  "id": "cmsuprxhi049o2lpehou1b6e8",
   "gameId": "132412010",
   "slug": "artisan-s-fine-combat-boots-132412010",
   "slugFr": "bottes-de-combat-d-artisan-delicat-132412010",
@@ -25110,7 +25110,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049k2mp2alezp3i1",
+  "id": "cmsuprxhi049k2lpeut13cuwo",
   "gameId": "132411010",
   "slug": "artisan-s-fine-combat-boots",
   "slugFr": "bottes-de-combat-d-artisan-delicat",
@@ -25406,7 +25406,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048c2mp2kzun1pph",
+  "id": "cmsuprxhi048c2lpeh0cu52b2",
   "gameId": "132412001",
   "slug": "adventurer-s-combat-boots-132412001",
   "slugFr": "bottes-de-combat-d-aventurier-132412001",
@@ -25702,7 +25702,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw004882mp225vm789e",
+  "id": "cmsuprxhi04882lpej62q57l6",
   "gameId": "132411001",
   "slug": "adventurer-s-combat-boots",
   "slugFr": "bottes-de-combat-d-aventurier",
@@ -25998,7 +25998,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048g2mp2ycbqv1lk",
+  "id": "cmsuprxhi048g2lpemvwm6zvq",
   "gameId": "132413001",
   "slug": "adventurer-s-combat-boots-132413001",
   "slugFr": "bottes-de-combat-d-aventurier-132413001",
@@ -26331,7 +26331,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dt2mp28g61ljzb",
+  "id": "cmsuprxhj04dt2lpeptz65iq3",
   "gameId": "132414027",
   "slug": "shadow-spider-breath-combat-boots",
   "slugFr": "bottes-de-combat-de-l-araignee-de-l-ombre",
@@ -26658,7 +26658,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04es2mp25h3kyf5o",
+  "id": "cmsupryh604es2lpeylnx6m5y",
   "gameId": "132455001",
   "slug": "watcher-s-armor-combat-boots",
   "slugFr": "bottes-de-combat-de-l-armure-du-vigile",
@@ -26673,7 +26673,7 @@
   "qualityMin": 106,
   "qualityMax": 120,
   "qualityMinLive": 106,
-  "qualityMaxLive": 106,
+  "qualityMaxLive": 120,
   "tierBoundaries": [
    105,
    120
@@ -26986,7 +26986,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cp2mp2r1cj5lex",
+  "id": "cmsuprxhj04cp2lpe9w6tvi30",
   "gameId": "132424001",
   "slug": "fiery-essence-combat-boots-finest",
   "slugFr": "bottes-de-combat-de-l-essence-incandescente-incomparables",
@@ -27324,7 +27324,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cl2mp2r7i6q37v",
+  "id": "cmsuprxhj04cl2lpea5x6y5uc",
   "gameId": "132423004",
   "slug": "fiery-essence-combat-boots-sturdy",
   "slugFr": "bottes-de-combat-de-l-essence-incandescente-robustes",
@@ -27667,7 +27667,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04f02mp2mwtmoxcc",
+  "id": "cmsupryh604f02lpebd4r8do3",
   "gameId": "132455002",
   "slug": "deathwraith-shard-combat-boots",
   "slugFr": "bottes-de-combat-de-l-eclat-spectral",
@@ -27994,7 +27994,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04ed2mp27humsev6",
+  "id": "cmsupryh604ed2lped9iyjmjb",
   "gameId": "132425005",
   "slug": "arachne-s-melody-combat-boots",
   "slugFr": "bottes-de-combat-de-la-melodie-d-arachnee",
@@ -28009,7 +28009,7 @@
   "qualityMin": 96,
   "qualityMax": 120,
   "qualityMinLive": 96,
-  "qualityMaxLive": 96,
+  "qualityMaxLive": 120,
   "tierBoundaries": [
    95,
    112,
@@ -28327,7 +28327,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204d52mp2ixgq7ih8",
+  "id": "cmsuprxhj04d52lpe217o776t",
   "gameId": "132424004",
   "slug": "scorching-gust-combat-boots-finest",
   "slugFr": "bottes-de-combat-de-la-rafale-brulante-incomparables",
@@ -28665,7 +28665,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204d12mp2wqw6lurm",
+  "id": "cmsuprxhj04d12lpe8baaq1tg",
   "gameId": "132423016",
   "slug": "scorching-gust-combat-boots-sturdy",
   "slugFr": "bottes-de-combat-de-la-rafale-brulante-robustes",
@@ -29008,7 +29008,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dx2mp2kvy4u589",
+  "id": "cmsuprxhk04dx2lpe99mk1bfh",
   "gameId": "132424028",
   "slug": "revived-nightmare-combat-boots",
   "slugFr": "bottes-de-combat-du-cauchemar-ressuscite",
@@ -29346,7 +29346,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04eh2mp2wdgbqge8",
+  "id": "cmsupryh604eh2lpe3jzmbvbo",
   "gameId": "132425006",
   "slug": "life-crystal-combat-boots",
   "slugFr": "bottes-de-combat-du-cristal-de-vie",
@@ -29679,7 +29679,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04e52mp2mc0pxw3l",
+  "id": "cmsupryh604e52lpesyu6ym05",
   "gameId": "132435003",
   "slug": "jet-black-crystal-combat-boots",
   "slugFr": "bottes-de-combat-du-cristal-noir-de-jais",
@@ -29694,7 +29694,7 @@
   "qualityMin": 96,
   "qualityMax": 110,
   "qualityMinLive": 96,
-  "qualityMaxLive": 96,
+  "qualityMaxLive": 110,
   "tierBoundaries": [
    95,
    110
@@ -30007,7 +30007,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dl2mp2qmybxnwm",
+  "id": "cmsuprxhj04dl2lpex18p1s3v",
   "gameId": "132414024",
   "slug": "twisted-wish-combat-boots",
   "slugFr": "bottes-de-combat-du-desir-corrompu",
@@ -30022,7 +30022,7 @@
   "qualityMin": 86,
   "qualityMax": 100,
   "qualityMinLive": 86,
-  "qualityMaxLive": 95,
+  "qualityMaxLive": 100,
   "tierBoundaries": [
    85,
    89,
@@ -30345,7 +30345,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204e12mp2bf3k66yj",
+  "id": "cmsuprxhk04e12lpes5crjznc",
   "gameId": "132424030",
   "slug": "corroded-desire-combat-boots",
   "slugFr": "bottes-de-combat-du-desir-erode",
@@ -30683,7 +30683,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw104942mp2v548wawq",
+  "id": "cmsuprxhi04942lpex0itqgqe",
   "gameId": "132423005",
   "slug": "guardian-s-combat-boots-132423005",
   "slugFr": "bottes-de-combat-du-gardien-132423005",
@@ -31016,7 +31016,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048w2mp25d9tiabx",
+  "id": "cmsuprxhi048w2lpeyhy7rtco",
   "gameId": "132421005",
   "slug": "guardian-s-combat-boots",
   "slugFr": "bottes-de-combat-du-gardien",
@@ -31312,7 +31312,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw104902mp235ci9ecm",
+  "id": "cmsuprxhi04902lpedhqcmrh8",
   "gameId": "132422005",
   "slug": "guardian-s-combat-boots-132422005",
   "slugFr": "bottes-de-combat-du-gardien-132422005",
@@ -31608,7 +31608,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dh2mp2zrbvphwf",
+  "id": "cmsuprxhj04dh2lpetxwl9rsi",
   "gameId": "132434022",
   "slug": "star-guardian-combat-boots",
   "slugFr": "bottes-de-combat-du-gardien-des-etoiles",
@@ -31946,7 +31946,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04e92mp2a5ri5519",
+  "id": "cmsupryh604e92lpegxejwceq",
   "gameId": "132425004",
   "slug": "mad-miner-combat-boots",
   "slugFr": "bottes-de-combat-du-mineur-fou",
@@ -32284,7 +32284,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dd2mp23j3vcjxr",
+  "id": "cmsuprxhj04dd2lpetiw32t43",
   "gameId": "132414005",
   "slug": "noble-hero-s-combat-boots-finest",
   "slugFr": "bottes-de-combat-du-noble-heros-incomparables",
@@ -32627,7 +32627,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204d92mp25b4iayyi",
+  "id": "cmsuprxhj04d92lpec1ru3ruk",
   "gameId": "132413019",
   "slug": "noble-hero-s-combat-boots-sturdy",
   "slugFr": "bottes-de-combat-du-noble-heros-robustes",
@@ -32960,7 +32960,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049g2mp2fo67u1na",
+  "id": "cmsuprxhi049g2lpe2g20r8sr",
   "gameId": "132423008",
   "slug": "pursuer-s-combat-boots-132423008",
   "slugFr": "bottes-de-combat-du-poursuiveur-132423008",
@@ -33293,7 +33293,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw104982mp2xki4i4ol",
+  "id": "cmsuprxhi04982lpek8z895nf",
   "gameId": "132421008",
   "slug": "pursuer-s-combat-boots",
   "slugFr": "bottes-de-combat-du-poursuiveur",
@@ -33589,7 +33589,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049c2mp25q9mgi1b",
+  "id": "cmsuprxhi049c2lpeptcax31v",
   "gameId": "132422008",
   "slug": "pursuer-s-combat-boots-132422008",
   "slugFr": "bottes-de-combat-du-poursuiveur-132422008",
@@ -33885,7 +33885,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04ew2mp2arhwpml9",
+  "id": "cmsupryh604ew2lpeclxmooji",
   "gameId": "132435004",
   "slug": "untamed-roar-combat-boots",
   "slugFr": "bottes-de-combat-du-rugissement-sauvage",
@@ -33900,7 +33900,7 @@
   "qualityMin": 106,
   "qualityMax": 120,
   "qualityMinLive": 106,
-  "qualityMaxLive": 106,
+  "qualityMaxLive": 120,
   "tierBoundaries": [
    105,
    120
@@ -34213,7 +34213,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204ch2mp2t6xdmoea",
+  "id": "cmsuprxhj04ch2lpe4ze4a9yf",
   "gameId": "132425002",
   "slug": "greedy-ruler-combat-boots",
   "slugFr": "bottes-de-combat-du-souverain-cupide",
@@ -34540,7 +34540,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204c92mp22exj20hp",
+  "id": "cmsuprxhj04c92lpejft3f391",
   "gameId": "132425001",
   "slug": "ruler-of-the-ocean-combat-boots",
   "slugFr": "bottes-de-combat-du-souverain-des-oceans",
@@ -34868,7 +34868,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04em2mp2ewiskjwu",
+  "id": "cmsupryh604em2lpeu73o4jll",
   "gameId": "132429005",
   "slug": "venom-spindle-combat-boots",
   "slugFr": "bottes-de-combat-du-venin-tisse",
@@ -35238,7 +35238,7 @@
   }
  },
  {
-  "id": "cmsfp5qw204dp2mp2ezdf2qs9",
+  "id": "cmsuprxhj04dp2lpe4lf1frnl",
   "gameId": "132434026",
   "slug": "ferocious-watcher-s-combat-boots",
   "slugFr": "bottes-de-combat-du-vigile-feroce",
@@ -35576,7 +35576,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cd2mp2p3ee417s",
+  "id": "cmsuprxhj04cd2lped9zfr8pn",
   "gameId": "132414016",
   "slug": "immortal-watcher-combat-boots",
   "slugFr": "bottes-de-combat-du-vigile-immortel",
@@ -35909,7 +35909,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cx2mp26o6rpg7d",
+  "id": "cmsuprxhj04cx2lpeamwqi79t",
   "gameId": "132434003",
   "slug": "thunderous-combat-boots-finest",
   "slugFr": "bottes-de-combat-tonitruantes-incomparables",
@@ -36247,7 +36247,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204ct2mp2gzggr80y",
+  "id": "cmsuprxhj04ct2lpedvf13jq7",
   "gameId": "132433013",
   "slug": "thunderous-combat-boots-sturdy",
   "slugFr": "bottes-de-combat-tonitruantes-robustes",
@@ -36590,7 +36590,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fa2mp2aa9u3l4g",
+  "id": "cmsupryh604fa2lpezh0kfv5b",
   "gameId": "132704001",
   "slug": "immortal-guardian-earrings",
   "slugFr": "boucles-d-oreilles-de-gardien-immortel",
@@ -37022,7 +37022,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gv2mp2vlzzjnuk",
+  "id": "cmsupryh704gv2lpeiyyksurl",
   "gameId": "132705011",
   "slug": "shadow-spider-breath-earrings",
   "slugFr": "boucles-d-oreilles-de-l-araignee-de-l-ombre",
@@ -37453,7 +37453,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fj2mp2o79ga6xh",
+  "id": "cmsupryh604fj2lpe9wwhvjpm",
   "gameId": "132704013",
   "slug": "hymn-of-regeneration-earrings",
   "slugFr": "boucles-d-oreilles-de-l-hymne-regenerateur",
@@ -37467,8 +37467,8 @@
   "reinforceMax": 5,
   "qualityMin": 96,
   "qualityMax": 125,
-  "qualityMinLive": 96,
-  "qualityMaxLive": 96,
+  "qualityMinLive": 115,
+  "qualityMaxLive": 125,
   "tierBoundaries": [
    95,
    112,
@@ -37895,7 +37895,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gs2mp232s2p3ca",
+  "id": "cmsupryh704gs2lpetta8bqfy",
   "gameId": "132705010",
   "slug": "deathwraith-shard-earrings",
   "slugFr": "boucles-d-oreilles-de-l-eclat-spectral",
@@ -38326,7 +38326,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fp2mp2kqqb8vl3",
+  "id": "cmsupryh604fp2lpe2p0ufyjh",
   "gameId": "132704003",
   "slug": "gentle-breeze-earrings-finest",
   "slugFr": "boucles-d-oreilles-de-la-brise-legere-incomparables",
@@ -38768,7 +38768,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fm2mp27epnjnav",
+  "id": "cmsupryh604fm2lpe0uw8pi6e",
   "gameId": "132703009",
   "slug": "gentle-breeze-earrings-sturdy",
   "slugFr": "boucles-d-oreilles-de-la-brise-legere-robustes",
@@ -39215,7 +39215,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04ga2mp2lxcqyyr2",
+  "id": "cmsupryh704ga2lpel0w863o1",
   "gameId": "132705005",
   "slug": "arachne-s-melody-earrings",
   "slugFr": "boucles-d-oreilles-de-la-melodie-d-arachnee",
@@ -39652,7 +39652,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04g42mp29x47p73l",
+  "id": "cmsupryh704g42lpe9czwefze",
   "gameId": "132705002",
   "slug": "twisted-thought-earrings",
   "slugFr": "boucles-d-oreilles-de-la-pensee-pervertie",
@@ -39667,7 +39667,7 @@
   "qualityMin": 96,
   "qualityMax": 110,
   "qualityMinLive": 96,
-  "qualityMaxLive": 96,
+  "qualityMaxLive": 110,
   "tierBoundaries": [
    95,
    110
@@ -40084,7 +40084,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fv2mp2yf7pa49h",
+  "id": "cmsupryh704fv2lpee5cdood9",
   "gameId": "132704006",
   "slug": "scorching-gust-earrings-finest",
   "slugFr": "boucles-d-oreilles-de-la-rafale-brulante-incomparable",
@@ -40526,7 +40526,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fs2mp2wikl25jj",
+  "id": "cmsupryh604fs2lpevo6mkcbe",
   "gameId": "132703015",
   "slug": "scorching-gust-earrings-sturdy",
   "slugFr": "boucles-d-oreilles-de-la-rafale-brulante-robustes",
@@ -40973,7 +40973,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gj2mp2vd4l8f76",
+  "id": "cmsupryh704gj2lpe9revsgwc",
   "gameId": "132705007",
   "slug": "cursed-pulse-earrings",
   "slugFr": "boucles-d-oreilles-de-pulsion-maudite",
@@ -40987,7 +40987,7 @@
   "reinforceMax": 5,
   "qualityMin": 96,
   "qualityMax": 125,
-  "qualityMinLive": 96,
+  "qualityMinLive": 100,
   "qualityMaxLive": 125,
   "tierBoundaries": [
    95,
@@ -41415,7 +41415,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gm2mp2jl88g8ud",
+  "id": "cmsupryh704gm2lpereopzhyj",
   "gameId": "132705008",
   "slug": "100-day-earrings-never-used",
   "slugFr": "boucles-d-oreilles-des-100-jours-jamais-portees",
@@ -41847,7 +41847,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gg2mp29xn6leq2",
+  "id": "cmsupryh704gg2lpeo64ppeax",
   "gameId": "132709001",
   "slug": "dark-chaos-earrings",
   "slugFr": "boucles-d-oreilles-du-chaos-tenebreux",
@@ -42217,7 +42217,7 @@
   }
  },
  {
-  "id": "cmsfp5rvh04gd2mp2sqjcvosd",
+  "id": "cmsupryh704gd2lpelrluyxw2",
   "gameId": "132705006",
   "slug": "life-crystal-earrings",
   "slugFr": "boucles-d-oreilles-du-cristal-de-vie",
@@ -42654,7 +42654,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04g72mp262g7pr9a",
+  "id": "cmsupryh704g72lpec38nwwv6",
   "gameId": "132705004",
   "slug": "mad-miner-earrings",
   "slugFr": "boucles-d-oreilles-du-mineur-fou",
@@ -43096,7 +43096,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gp2mp2pme7860m",
+  "id": "cmsupryh704gp2lpekbc2m9ir",
   "gameId": "132705009",
   "slug": "oasis-whisper-earrings",
   "slugFr": "boucles-d-oreilles-du-murmure-de-l-oasis",
@@ -43448,7 +43448,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04g12mp2zmtknezv",
+  "id": "cmsupryh704g12lpeo1mze7xn",
   "gameId": "132704007",
   "slug": "noble-hero-s-earrings-finest",
   "slugFr": "boucles-d-oreilles-du-noble-heros-incomparables",
@@ -43895,7 +43895,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fy2mp2a5cnxp6z",
+  "id": "cmsupryh704fy2lpeovvkpt45",
   "gameId": "132703018",
   "slug": "noble-hero-s-earrings-sturdy",
   "slugFr": "boucles-d-oreilles-du-noble-heros-robustes",
@@ -44332,7 +44332,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fg2mp22amw55al",
+  "id": "cmsupryh604fg2lpeq140nt89",
   "gameId": "132705001",
   "slug": "greedy-ruler-earrings",
   "slugFr": "boucles-d-oreilles-du-souverain-cupide",
@@ -44763,7 +44763,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fd2mp2dermbk4o",
+  "id": "cmsupryh604fd2lpety15ha0l",
   "gameId": "132704004",
   "slug": "corrupted-watcher-s-earrings",
   "slugFr": "boucles-d-oreilles-du-vigile-corrompu",
@@ -45200,7 +45200,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04f42mp2kf3dqrhk",
+  "id": "cmsupryh604f42lpef6ojb32n",
   "gameId": "132702001",
   "slug": "casual-earrings",
   "slugFr": "boucles-d-oreilles-decontractees",
@@ -45496,7 +45496,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04f12mp2ed8xt6p6",
+  "id": "cmsupryh604f12lpeqb1q5iuz",
   "gameId": "132701001",
   "slug": "decorative-earrings",
   "slugFr": "boucles-d-oreilles-decoratives",
@@ -45792,7 +45792,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04f72mp2h4fb99ct",
+  "id": "cmsupryh604f72lpe65yp2ex4",
   "gameId": "132703001",
   "slug": "ordinary-earrings",
   "slugFr": "boucles-d-oreilles-ordinaires",
@@ -46229,7 +46229,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048n2mp2y4glvxyr",
+  "id": "cmsuprxhi048n2lpeoecuo3c7",
   "gameId": "132332003",
   "slug": "blessed-belt-132332003",
   "slugFr": "ceinture-benie-132332003",
@@ -46525,7 +46525,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048r2mp2bsiec56z",
+  "id": "cmsuprxhi048r2lpe8be2jbqk",
   "gameId": "132333003",
   "slug": "blessed-belt-132333003",
   "slugFr": "ceinture-benie-132333003",
@@ -46858,7 +46858,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048j2mp279e1qu00",
+  "id": "cmsuprxhi048j2lpe1ycukq8b",
   "gameId": "132331003",
   "slug": "blessed-belt",
   "slugFr": "ceinture-benie",
@@ -47154,7 +47154,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049r2mp20ei63cmr",
+  "id": "cmsuprxhi049r2lpehskvmr8d",
   "gameId": "132313010",
   "slug": "artisan-s-fine-belt-132313010",
   "slugFr": "ceinture-d-artisan-delicat-132313010",
@@ -47487,7 +47487,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049j2mp2jjmpni5r",
+  "id": "cmsuprxhi049j2lpe7294pbdp",
   "gameId": "132311010",
   "slug": "artisan-s-fine-belt",
   "slugFr": "ceinture-d-artisan-delicat",
@@ -47783,7 +47783,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049n2mp26tc7mboe",
+  "id": "cmsuprxhi049n2lpefia2o51g",
   "gameId": "132312010",
   "slug": "artisan-s-fine-belt-132312010",
   "slugFr": "ceinture-d-artisan-delicat-132312010",
@@ -48079,7 +48079,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048b2mp2gv4g3y8x",
+  "id": "cmsuprxhi048b2lpefavblx21",
   "gameId": "132312001",
   "slug": "adventurer-s-belt-132312001",
   "slugFr": "ceinture-d-aventurier-132312001",
@@ -48375,7 +48375,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048f2mp28l5cx6le",
+  "id": "cmsuprxhi048f2lpeaaqp7mcy",
   "gameId": "132313001",
   "slug": "adventurer-s-belt-132313001",
   "slugFr": "ceinture-d-aventurier-132313001",
@@ -48708,7 +48708,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw004872mp2ekpclhb3",
+  "id": "cmsuprxhi04872lpeocwzm7xp",
   "gameId": "132311001",
   "slug": "adventurer-s-belt",
   "slugFr": "ceinture-d-aventurier",
@@ -49004,7 +49004,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04el2mp2f8e3aswz",
+  "id": "cmsupryh604el2lpextduuc7c",
   "gameId": "132329004",
   "slug": "bloody-scale-belt",
   "slugFr": "ceinture-d-ecailles-ensanglantees",
@@ -49374,7 +49374,7 @@
   }
  },
  {
-  "id": "cmsfp5qw204ds2mp2yfbfpjlk",
+  "id": "cmsuprxhj04ds2lpeea7cw0sf",
   "gameId": "132314027",
   "slug": "shadow-spider-breath-belt",
   "slugFr": "ceinture-de-l-araignee-de-l-ombre",
@@ -49701,7 +49701,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04er2mp26nuv4hlt",
+  "id": "cmsupryh604er2lpebtehhzmo",
   "gameId": "132355001",
   "slug": "watcher-s-armor-belt",
   "slugFr": "ceinture-de-l-armure-du-vigile",
@@ -49716,7 +49716,7 @@
   "qualityMin": 106,
   "qualityMax": 120,
   "qualityMinLive": 106,
-  "qualityMaxLive": 106,
+  "qualityMaxLive": 120,
   "tierBoundaries": [
    105,
    120
@@ -50029,7 +50029,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204co2mp2bchjma28",
+  "id": "cmsuprxhj04co2lped7ctmn4n",
   "gameId": "132324001",
   "slug": "fiery-essence-belt-finest",
   "slugFr": "ceinture-de-l-essence-incandescente-incomparable",
@@ -50367,7 +50367,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204ck2mp2oe5fhe8u",
+  "id": "cmsuprxhj04ck2lpe5axyqo9l",
   "gameId": "132323004",
   "slug": "fiery-essence-belt-sturdy",
   "slugFr": "ceinture-de-l-essence-incandescente-robuste",
@@ -50710,7 +50710,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04ez2mp26klew17n",
+  "id": "cmsupryh604ez2lpe1l0g98a2",
   "gameId": "132355002",
   "slug": "deathwraith-shard-belt",
   "slugFr": "ceinture-de-l-eclat-spectral",
@@ -51037,7 +51037,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04ec2mp21eg81s0m",
+  "id": "cmsupryh604ec2lpetyhwgdlx",
   "gameId": "132325005",
   "slug": "arachne-s-melody-belt",
   "slugFr": "ceinture-de-la-melodie-d-arachnee",
@@ -51052,7 +51052,7 @@
   "qualityMin": 96,
   "qualityMax": 120,
   "qualityMinLive": 96,
-  "qualityMaxLive": 96,
+  "qualityMaxLive": 120,
   "tierBoundaries": [
    95,
    112,
@@ -51370,7 +51370,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204d42mp2lez0mpbu",
+  "id": "cmsuprxhj04d42lpee7wkprcd",
   "gameId": "132324004",
   "slug": "scorching-gust-belt-finest",
   "slugFr": "ceinture-de-la-rafale-brulante-incomparable",
@@ -51708,7 +51708,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204d02mp2hw7owcgg",
+  "id": "cmsuprxhj04d02lpeycp9opsv",
   "gameId": "132323016",
   "slug": "scorching-gust-belt-sturdy",
   "slugFr": "ceinture-de-la-rafale-brulante-robuste",
@@ -52051,7 +52051,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dw2mp2h4com9a9",
+  "id": "cmsuprxhj04dw2lpers2d7n2z",
   "gameId": "132324028",
   "slug": "revived-nightmare-belt",
   "slugFr": "ceinture-du-cauchemar-ressuscite",
@@ -52389,7 +52389,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04eg2mp2j37o2ia2",
+  "id": "cmsupryh604eg2lpeqnbm8et8",
   "gameId": "132325006",
   "slug": "life-crystal-belt",
   "slugFr": "ceinture-du-cristal-de-vie",
@@ -52404,7 +52404,7 @@
   "qualityMin": 96,
   "qualityMax": 120,
   "qualityMinLive": 96,
-  "qualityMaxLive": 96,
+  "qualityMaxLive": 120,
   "tierBoundaries": [
    95,
    112,
@@ -52722,7 +52722,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04e42mp2vtkmyjv8",
+  "id": "cmsupryh604e42lpey7ota3z6",
   "gameId": "132335003",
   "slug": "jet-black-crystal-belt",
   "slugFr": "ceinture-du-cristal-noir-de-jais",
@@ -52737,7 +52737,7 @@
   "qualityMin": 96,
   "qualityMax": 110,
   "qualityMinLive": 96,
-  "qualityMaxLive": 96,
+  "qualityMaxLive": 110,
   "tierBoundaries": [
    95,
    110
@@ -53050,7 +53050,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dk2mp2qr9lqaer",
+  "id": "cmsuprxhj04dk2lpeko4ly3ox",
   "gameId": "132314024",
   "slug": "twisted-wish-belt",
   "slugFr": "ceinture-du-desir-corrompu",
@@ -53388,7 +53388,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204e02mp2lzhzujfm",
+  "id": "cmsuprxhk04e02lpe79k6xx3f",
   "gameId": "132324030",
   "slug": "corroded-desire-belt",
   "slugFr": "ceinture-du-desir-erode",
@@ -53726,7 +53726,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048z2mp2sotk26wn",
+  "id": "cmsuprxhi048z2lpey5da8ykc",
   "gameId": "132322005",
   "slug": "guardian-s-belt-132322005",
   "slugFr": "ceinture-du-gardien-132322005",
@@ -54022,7 +54022,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw104932mp2s8g0re8z",
+  "id": "cmsuprxhi04932lpeee57z9pe",
   "gameId": "132323005",
   "slug": "guardian-s-belt-132323005",
   "slugFr": "ceinture-du-gardien-132323005",
@@ -54355,7 +54355,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048v2mp2athmn1ed",
+  "id": "cmsuprxhi048v2lpeceqli76w",
   "gameId": "132321005",
   "slug": "guardian-s-belt",
   "slugFr": "ceinture-du-gardien",
@@ -54651,7 +54651,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dg2mp2iv3d18ur",
+  "id": "cmsuprxhj04dg2lpeh9rat73f",
   "gameId": "132334022",
   "slug": "star-guardian-belt",
   "slugFr": "ceinture-du-gardien-des-etoiles",
@@ -54989,7 +54989,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04e82mp2ebx3fyx7",
+  "id": "cmsupryh604e82lpe3j98zx23",
   "gameId": "132325004",
   "slug": "mad-miner-belt",
   "slugFr": "ceinture-du-mineur-fou",
@@ -55327,7 +55327,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dc2mp2n0ptpv6a",
+  "id": "cmsuprxhj04dc2lpezo6w15tf",
   "gameId": "132314005",
   "slug": "noble-hero-s-belt-finest",
   "slugFr": "ceinture-du-noble-heros-incomparable",
@@ -55670,7 +55670,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204d82mp2x4zl1s0p",
+  "id": "cmsuprxhj04d82lper8kvwbwn",
   "gameId": "132313019",
   "slug": "noble-hero-s-belt-sturdy",
   "slugFr": "ceinture-du-noble-heros-robuste",
@@ -56003,7 +56003,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw104972mp2ae9l9wfj",
+  "id": "cmsuprxhi04972lpen78lsvrl",
   "gameId": "132321008",
   "slug": "pursuer-s-belt",
   "slugFr": "ceinture-du-poursuiveur",
@@ -56299,7 +56299,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049b2mp2ccg5nvgv",
+  "id": "cmsuprxhi049b2lpe22rzvtf3",
   "gameId": "132322008",
   "slug": "pursuer-s-belt-132322008",
   "slugFr": "ceinture-du-poursuiveur-132322008",
@@ -56595,7 +56595,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049f2mp2poruod7f",
+  "id": "cmsuprxhi049f2lpeelbgeosm",
   "gameId": "132323008",
   "slug": "pursuer-s-belt-132323008",
   "slugFr": "ceinture-du-poursuiveur-132323008",
@@ -56928,7 +56928,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04ev2mp2n5b69h77",
+  "id": "cmsupryh604ev2lpet3h65ys4",
   "gameId": "132335004",
   "slug": "untamed-roar-belt",
   "slugFr": "ceinture-du-rugissement-sauvage",
@@ -56943,7 +56943,7 @@
   "qualityMin": 106,
   "qualityMax": 120,
   "qualityMinLive": 106,
-  "qualityMaxLive": 106,
+  "qualityMaxLive": 120,
   "tierBoundaries": [
    105,
    120
@@ -57256,7 +57256,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cg2mp2l8zjco76",
+  "id": "cmsuprxhj04cg2lpeamttefav",
   "gameId": "132325002",
   "slug": "greedy-ruler-belt",
   "slugFr": "ceinture-du-souverain-cupide",
@@ -57583,7 +57583,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204c82mp2jeadv4li",
+  "id": "cmsuprxhj04c82lpeown7f8v0",
   "gameId": "132325001",
   "slug": "ruler-of-the-ocean-belt",
   "slugFr": "ceinture-du-souverain-des-oceans",
@@ -57911,7 +57911,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204do2mp2laew0d5p",
+  "id": "cmsuprxhj04do2lpezsvzykc0",
   "gameId": "132334026",
   "slug": "ferocious-watcher-s-belt",
   "slugFr": "ceinture-du-vigile-feroce",
@@ -58249,7 +58249,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cc2mp265vfuu7b",
+  "id": "cmsuprxhj04cc2lpey6xh126s",
   "gameId": "132314016",
   "slug": "immortal-watcher-belt",
   "slugFr": "ceinture-du-vigile-immortel",
@@ -58582,7 +58582,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cw2mp2hswa8ilm",
+  "id": "cmsuprxhj04cw2lpeqia1h2dr",
   "gameId": "132334003",
   "slug": "thunderous-belt-finest",
   "slugFr": "ceinture-tonitruante-incomparable",
@@ -58920,7 +58920,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cs2mp2bjngddxt",
+  "id": "cmsuprxhj04cs2lpenm08iqr3",
   "gameId": "132333013",
   "slug": "thunderous-belt-sturdy",
   "slugFr": "ceinture-tonitruante-robuste",
@@ -59263,7 +59263,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gy2mp2ymqzf41f",
+  "id": "cmsupryh704gy2lpe72ydukjj",
   "gameId": "132609004",
   "slug": "oath-talisman-necklace",
   "slugFr": "collier-au-talisman-du-serment",
@@ -59633,7 +59633,7 @@
   }
  },
  {
-  "id": "cmsfp5rvh04gh2mp2jecree7a",
+  "id": "cmsupryh704gh2lpej7t4366k",
   "gameId": "132609002",
   "slug": "shadowstorm-craftwork-necklace",
   "slugFr": "collier-d-artisanat-de-la-tempete-des-ombres",
@@ -60003,7 +60003,7 @@
   }
  },
  {
-  "id": "cmsfp5rvh04fb2mp2jzmh8a8c",
+  "id": "cmsupryh604fb2lpefpmksqvu",
   "gameId": "132604001",
   "slug": "immortal-guardian-necklace",
   "slugFr": "collier-de-gardien-immortel",
@@ -60462,7 +60462,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gw2mp2zgq50ny9",
+  "id": "cmsupryh704gw2lpe298p2bum",
   "gameId": "132605011",
   "slug": "shadow-spider-breath-necklace",
   "slugFr": "collier-de-l-araignee-de-l-ombre",
@@ -60920,7 +60920,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fk2mp2crgek3fo",
+  "id": "cmsupryh604fk2lpehewc1n2j",
   "gameId": "132604013",
   "slug": "hymn-of-regeneration-necklace",
   "slugFr": "collier-de-l-hymne-regenerateur",
@@ -60934,8 +60934,8 @@
   "reinforceMax": 5,
   "qualityMin": 96,
   "qualityMax": 125,
-  "qualityMinLive": 96,
-  "qualityMaxLive": 96,
+  "qualityMinLive": 115,
+  "qualityMaxLive": 125,
   "tierBoundaries": [
    95,
    112,
@@ -61389,7 +61389,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gt2mp2qoxz8eoh",
+  "id": "cmsupryh704gt2lpeu7gdoo0a",
   "gameId": "132605010",
   "slug": "deathwraith-shard-necklace",
   "slugFr": "collier-de-l-eclat-spectral",
@@ -61847,7 +61847,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fq2mp213kaasdp",
+  "id": "cmsupryh604fq2lpe6u10z6ss",
   "gameId": "132604003",
   "slug": "gentle-breeze-necklace-finest",
   "slugFr": "collier-de-la-brise-legere-incomparable",
@@ -62316,7 +62316,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fn2mp2gfdqwr6j",
+  "id": "cmsupryh604fn2lpe4bkd2jr4",
   "gameId": "132603009",
   "slug": "gentle-breeze-necklace-sturdy",
   "slugFr": "collier-de-la-brise-legere-robuste",
@@ -62790,7 +62790,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gb2mp24nx16tv7",
+  "id": "cmsupryh704gb2lpe7kfsgtoz",
   "gameId": "132605005",
   "slug": "arachne-s-melody-necklace",
   "slugFr": "collier-de-la-melodie-d-arachnee",
@@ -63254,7 +63254,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04g52mp2r5w2a8n3",
+  "id": "cmsupryh704g52lpe50a7rz2p",
   "gameId": "132605002",
   "slug": "twisted-thought-necklace",
   "slugFr": "collier-de-la-pensee-pervertie",
@@ -63269,7 +63269,7 @@
   "qualityMin": 96,
   "qualityMax": 110,
   "qualityMinLive": 96,
-  "qualityMaxLive": 96,
+  "qualityMaxLive": 110,
   "tierBoundaries": [
    95,
    110
@@ -63713,7 +63713,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fw2mp2qf5ncvck",
+  "id": "cmsupryh704fw2lpes8zn63gr",
   "gameId": "132604006",
   "slug": "scorching-gust-necklace-finest",
   "slugFr": "collier-de-la-rafale-brulante-incomparable",
@@ -64182,7 +64182,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04ft2mp2mxbbp1zi",
+  "id": "cmsupryh704ft2lpe0zz26n6c",
   "gameId": "132603015",
   "slug": "scorching-gust-necklace-sturdy",
   "slugFr": "collier-de-la-rafale-brulante-robuste",
@@ -64656,7 +64656,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gk2mp2kx2u8v2x",
+  "id": "cmsupryh704gk2lpezojokzej",
   "gameId": "132605007",
   "slug": "cursed-pulse-necklace",
   "slugFr": "collier-de-pulsion-maudite",
@@ -64670,7 +64670,7 @@
   "reinforceMax": 5,
   "qualityMin": 96,
   "qualityMax": 125,
-  "qualityMinLive": 96,
+  "qualityMinLive": 100,
   "qualityMaxLive": 125,
   "tierBoundaries": [
    95,
@@ -65125,7 +65125,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gn2mp2ijaoahnp",
+  "id": "cmsupryh704gn2lpe5scr12vt",
   "gameId": "132605008",
   "slug": "100-day-necklace-never-used",
   "slugFr": "collier-des-100-jours-jamais-porte",
@@ -65584,7 +65584,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04ge2mp2smrn02lp",
+  "id": "cmsupryh704ge2lpeyejok1w0",
   "gameId": "132605006",
   "slug": "life-crystal-necklace",
   "slugFr": "collier-du-cristal-de-vie",
@@ -66048,7 +66048,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04g82mp20o0wh9f8",
+  "id": "cmsupryh704g82lpexiup7ruq",
   "gameId": "132605004",
   "slug": "mad-miner-necklace",
   "slugFr": "collier-du-mineur-fou",
@@ -66517,7 +66517,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04gq2mp2s1fpjx02",
+  "id": "cmsupryh704gq2lpe84pnapoq",
   "gameId": "132605009",
   "slug": "oasis-whisper-necklace",
   "slugFr": "collier-du-murmure-de-l-oasis",
@@ -66869,7 +66869,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04g22mp2s1gk47ie",
+  "id": "cmsupryh704g22lpe6fcpl9ph",
   "gameId": "132604007",
   "slug": "noble-hero-s-necklace-finest",
   "slugFr": "collier-du-noble-heros-incomparable",
@@ -67343,7 +67343,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fz2mp2dc91dmfd",
+  "id": "cmsupryh704fz2lpeb4wsoz4n",
   "gameId": "132603018",
   "slug": "noble-hero-s-necklace-sturdy",
   "slugFr": "collier-du-noble-heros-robuste",
@@ -67807,7 +67807,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fh2mp2f2snflo1",
+  "id": "cmsupryh604fh2lpe0c3gwmxs",
   "gameId": "132605001",
   "slug": "greedy-ruler-necklace",
   "slugFr": "collier-du-souverain-cupide",
@@ -68265,7 +68265,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04fe2mp2pclbglc3",
+  "id": "cmsupryh604fe2lpegy3a2mtl",
   "gameId": "132604004",
   "slug": "corrupted-watcher-s-necklace",
   "slugFr": "collier-du-vigile-corrompu",
@@ -68729,7 +68729,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04f52mp2b4s8ttw0",
+  "id": "cmsupryh604f52lpe4ecwmps0",
   "gameId": "132602001",
   "slug": "casual-necklace",
   "slugFr": "collier-decontracte",
@@ -69025,7 +69025,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04f22mp22m44fiun",
+  "id": "cmsupryh604f22lpekprvv6cu",
   "gameId": "132601001",
   "slug": "decorative-necklace",
   "slugFr": "collier-decoratif",
@@ -69321,7 +69321,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvh04f82mp2e0myf663",
+  "id": "cmsupryh604f82lpecxuifdkc",
   "gameId": "132603001",
   "slug": "ordinary-necklace",
   "slugFr": "collier-ordinaire",
@@ -69785,7 +69785,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048h2mp2vztjmey7",
+  "id": "cmsuprxhi048h2lpe5hfhna0o",
   "gameId": "132131003",
   "slug": "blessed-top",
   "slugFr": "haut-beni",
@@ -70081,7 +70081,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048p2mp29osqipae",
+  "id": "cmsuprxhi048p2lpek7pkxdap",
   "gameId": "132133003",
   "slug": "blessed-top-132133003",
   "slugFr": "haut-beni-132133003",
@@ -70414,7 +70414,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048l2mp21362lie9",
+  "id": "cmsuprxhi048l2lpe11ujk94m",
   "gameId": "132132003",
   "slug": "blessed-top-132132003",
   "slugFr": "haut-beni-132132003",
@@ -70710,7 +70710,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049h2mp2p2n1py7p",
+  "id": "cmsuprxhi049h2lpelnweefvu",
   "gameId": "132111010",
   "slug": "artisan-s-fine-top",
   "slugFr": "haut-d-artisan-delicat",
@@ -71006,7 +71006,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049p2mp27uucgxd2",
+  "id": "cmsuprxhi049p2lpefm5f5plb",
   "gameId": "132113010",
   "slug": "artisan-s-fine-top-132113010",
   "slugFr": "haut-d-artisan-delicat-132113010",
@@ -71339,7 +71339,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049l2mp285abuvcw",
+  "id": "cmsuprxhi049l2lpehi1n8id4",
   "gameId": "132112010",
   "slug": "artisan-s-fine-top-132112010",
   "slugFr": "haut-d-artisan-delicat-132112010",
@@ -71635,7 +71635,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048d2mp26zvb62ae",
+  "id": "cmsuprxhi048d2lpe8oyf6g63",
   "gameId": "132113001",
   "slug": "adventurer-s-top-132113001",
   "slugFr": "haut-d-aventurier-132113001",
@@ -71968,7 +71968,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw004852mp2cdze5hyw",
+  "id": "cmsuprxhi04852lpe6zfoo12o",
   "gameId": "132111001",
   "slug": "adventurer-s-top",
   "slugFr": "haut-d-aventurier",
@@ -72264,7 +72264,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw004892mp2nevra580",
+  "id": "cmsuprxhi04892lpemn9vfgaz",
   "gameId": "132112001",
   "slug": "adventurer-s-top-132112001",
   "slugFr": "haut-d-aventurier-132112001",
@@ -72560,7 +72560,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dq2mp2y14cvjh9",
+  "id": "cmsuprxhj04dq2lpeci9lw044",
   "gameId": "132114027",
   "slug": "shadow-spider-breath-top",
   "slugFr": "haut-de-l-araignee-de-l-ombre",
@@ -72887,7 +72887,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04ep2mp2zg2qmuia",
+  "id": "cmsupryh604ep2lpe9xex4xp6",
   "gameId": "132155001",
   "slug": "watcher-s-armor-top",
   "slugFr": "haut-de-l-armure-du-vigile",
@@ -72902,7 +72902,7 @@
   "qualityMin": 106,
   "qualityMax": 120,
   "qualityMinLive": 106,
-  "qualityMaxLive": 106,
+  "qualityMaxLive": 120,
   "tierBoundaries": [
    105,
    120
@@ -73215,7 +73215,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cm2mp2v6j5m9z3",
+  "id": "cmsuprxhj04cm2lpe8i3jjzhq",
   "gameId": "132124001",
   "slug": "fiery-essence-top-finest",
   "slugFr": "haut-de-l-essence-incandescente-incomparable",
@@ -73553,7 +73553,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204ci2mp2aiv17k6g",
+  "id": "cmsuprxhj04ci2lpecbp8vmcc",
   "gameId": "132123004",
   "slug": "fiery-essence-top-sturdy",
   "slugFr": "haut-de-l-essence-incandescente-robuste",
@@ -73896,7 +73896,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04ex2mp20eh04al3",
+  "id": "cmsupryh604ex2lpecrs5xe5i",
   "gameId": "132155002",
   "slug": "deathwraith-shard-top",
   "slugFr": "haut-de-l-eclat-spectral",
@@ -74223,7 +74223,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04eo2mp2y1fwgzwg",
+  "id": "cmsupryh604eo2lped435s1k0",
   "gameId": "132129006",
   "slug": "eye-of-the-ominous-star-top",
   "slugFr": "haut-de-l-il-de-l-etoile-sinistre",
@@ -74593,7 +74593,7 @@
   }
  },
  {
-  "id": "cmsfp5rvg04ea2mp2nwuwajmk",
+  "id": "cmsupryh604ea2lpexusyejkw",
   "gameId": "132125005",
   "slug": "arachne-s-melody-top",
   "slugFr": "haut-de-la-melodie-d-arachnee",
@@ -74926,7 +74926,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204d22mp2myh5rl1s",
+  "id": "cmsuprxhj04d22lpefgg8ivc7",
   "gameId": "132124004",
   "slug": "scorching-gust-top-finest",
   "slugFr": "haut-de-la-rafale-brulante-incomparable",
@@ -75264,7 +75264,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cy2mp2jowtyu8j",
+  "id": "cmsuprxhj04cy2lpec27ft0xq",
   "gameId": "132123016",
   "slug": "scorching-gust-top-sturdy",
   "slugFr": "haut-de-la-rafale-brulante-robuste",
@@ -75607,7 +75607,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204du2mp2ks3ju9er",
+  "id": "cmsuprxhj04du2lpexc5ihiv7",
   "gameId": "132124028",
   "slug": "revived-nightmare-top",
   "slugFr": "haut-du-cauchemar-ressuscite",
@@ -75945,7 +75945,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04ee2mp2sj2wo2mj",
+  "id": "cmsupryh604ee2lpeqv0vy0tv",
   "gameId": "132125006",
   "slug": "life-crystal-top",
   "slugFr": "haut-du-cristal-de-vie",
@@ -76278,7 +76278,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204e22mp2ls7fmsvg",
+  "id": "cmsuprxhk04e22lpecpvorrfv",
   "gameId": "132135003",
   "slug": "jet-black-crystal-top",
   "slugFr": "haut-du-cristal-noir-de-jais",
@@ -76293,7 +76293,7 @@
   "qualityMin": 96,
   "qualityMax": 110,
   "qualityMinLive": 96,
-  "qualityMaxLive": 96,
+  "qualityMaxLive": 110,
   "tierBoundaries": [
    95,
    110
@@ -76606,7 +76606,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04ei2mp2u5rl55zj",
+  "id": "cmsupryh604ei2lpetszvi1xp",
   "gameId": "132129001",
   "slug": "tyrant-dragon-s-black-heart-top",
   "slugFr": "haut-du-c-ur-noir-de-dragon-tyran",
@@ -76976,7 +76976,7 @@
   }
  },
  {
-  "id": "cmsfp5qw204di2mp22naujphn",
+  "id": "cmsuprxhj04di2lpedencla2q",
   "gameId": "132114024",
   "slug": "twisted-wish-top",
   "slugFr": "haut-du-desir-corrompu",
@@ -77314,7 +77314,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dy2mp2obul8j8j",
+  "id": "cmsuprxhk04dy2lpe1wbski58",
   "gameId": "132124030",
   "slug": "corroded-desire-top",
   "slugFr": "haut-du-desir-erode",
@@ -77652,7 +77652,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw104912mp2mg5sijh1",
+  "id": "cmsuprxhi04912lper3xlqf7m",
   "gameId": "132123005",
   "slug": "guardian-s-top-132123005",
   "slugFr": "haut-du-gardien-132123005",
@@ -77985,7 +77985,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048x2mp2xffwm4u9",
+  "id": "cmsuprxhi048x2lpevv8ksu3b",
   "gameId": "132122005",
   "slug": "guardian-s-top-132122005",
   "slugFr": "haut-du-gardien-132122005",
@@ -78281,7 +78281,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1048t2mp2ipqns2ge",
+  "id": "cmsuprxhi048t2lpeqxqkpafw",
   "gameId": "132121005",
   "slug": "guardian-s-top",
   "slugFr": "haut-du-gardien",
@@ -78577,7 +78577,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204de2mp2x4xdhdl5",
+  "id": "cmsuprxhj04de2lpejxoeyygc",
   "gameId": "132134022",
   "slug": "star-guardian-top",
   "slugFr": "haut-du-gardien-des-etoiles",
@@ -78915,7 +78915,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04e62mp2wg8yhm0f",
+  "id": "cmsupryh604e62lpex1t2pyoq",
   "gameId": "132125004",
   "slug": "mad-miner-top",
   "slugFr": "haut-du-mineur-fou",
@@ -79253,7 +79253,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204da2mp2jv6gpdyn",
+  "id": "cmsuprxhj04da2lpecrd9gcb0",
   "gameId": "132114005",
   "slug": "noble-hero-s-top-finest",
   "slugFr": "haut-du-noble-heros-incomparable",
@@ -79596,7 +79596,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204d62mp2tta9xbp1",
+  "id": "cmsuprxhj04d62lpeoe5kjnhx",
   "gameId": "132113019",
   "slug": "noble-hero-s-top-sturdy",
   "slugFr": "haut-du-noble-heros-robuste",
@@ -79929,7 +79929,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw104992mp22h7lawpg",
+  "id": "cmsuprxhi04992lpe6e8top06",
   "gameId": "132122008",
   "slug": "pursuer-s-top-132122008",
   "slugFr": "haut-du-poursuiveur-132122008",
@@ -80225,7 +80225,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw1049d2mp269bydfoy",
+  "id": "cmsuprxhi049d2lpebfzump8s",
   "gameId": "132123008",
   "slug": "pursuer-s-top-132123008",
   "slugFr": "haut-du-poursuiveur-132123008",
@@ -80558,7 +80558,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw104952mp2on0ziojw",
+  "id": "cmsuprxhi04952lpefd85wb49",
   "gameId": "132121008",
   "slug": "pursuer-s-top",
   "slugFr": "haut-du-poursuiveur",
@@ -80854,7 +80854,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5rvg04et2mp279svqn09",
+  "id": "cmsupryh604et2lpe592zkb8y",
   "gameId": "132135004",
   "slug": "untamed-roar-top",
   "slugFr": "haut-du-rugissement-sauvage",
@@ -80869,7 +80869,7 @@
   "qualityMin": 106,
   "qualityMax": 120,
   "qualityMinLive": 106,
-  "qualityMaxLive": 106,
+  "qualityMaxLive": 120,
   "tierBoundaries": [
    105,
    120
@@ -81182,7 +81182,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204ce2mp2kfz5cvrh",
+  "id": "cmsuprxhj04ce2lpejbgy3jzd",
   "gameId": "132125002",
   "slug": "greedy-ruler-top",
   "slugFr": "haut-du-souverain-cupide",
@@ -81509,7 +81509,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204c62mp2l6mqsris",
+  "id": "cmsuprxhj04c62lpe2ierahyi",
   "gameId": "132125001",
   "slug": "ruler-of-the-ocean-top",
   "slugFr": "haut-du-souverain-des-oceans",
@@ -81837,7 +81837,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204dm2mp2kwu4wr1h",
+  "id": "cmsuprxhj04dm2lpeuyf7tzin",
   "gameId": "132134026",
   "slug": "ferocious-watcher-s-top",
   "slugFr": "haut-du-vigile-feroce",
@@ -82175,7 +82175,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204ca2mp2ukc7clos",
+  "id": "cmsuprxhj04ca2lpe18vfl7qu",
   "gameId": "132114016",
   "slug": "immortal-watcher-top",
   "slugFr": "haut-du-vigile-immortel",
@@ -82508,7 +82508,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cu2mp2a35i6ghr",
+  "id": "cmsuprxhj04cu2lpeaxh8eacr",
   "gameId": "132134003",
   "slug": "thunderous-top-finest",
   "slugFr": "haut-tonitruant-incomparable",
@@ -82846,7 +82846,7 @@
   "equipPassive": null
  },
  {
-  "id": "cmsfp5qw204cq2mp2c440tg0t",
+  "id": "cmsuprxhj04cq2lpewgfharn8",
   "gameId": "132133013",
   "slug": "thunderous-top-sturdy",
   "slugFr": "haut-tonitruant-robuste",

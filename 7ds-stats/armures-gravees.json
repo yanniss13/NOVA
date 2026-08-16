@@ -49386,17 +49386,17 @@
      {
       "level": 1,
       "descEn": "While a [#0F5CD8]Max HP[-] boost is active on the hero, each hit on an enemy increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]3%[-] for [#1A7331]30 sec[-]. (Max: [#1A7331]18%[-])\nIncreases all allied Fire heroes' [#0F5CD8]Crit Damage[-] dealt to enemies with reduced [#0F5CD8]Fire Defense[-] by [#1A7331]24%[-].",
-      "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]3%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]18%[-])\nAugmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Feu avec une [#0F5CD8]défense de Feu[-] réduite de [#1A7331]24%[-]."
+      "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]3%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]18%[-])\nAugmente de [#1A7331]24%[-] les [#0F5CD8]dégâts crit.[-] infligés par tous les héros alliés d'attribut Feu aux ennemis dont la [#0F5CD8]défense de Feu[-] est réduite."
      },
      {
       "level": 2,
       "descEn": "While a [#0F5CD8]Max HP[-] boost is active on the hero, each hit on an enemy increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]4%[-] for [#1A7331]30 sec[-]. (Max: [#1A7331]24%[-])\nIncreases all allied Fire heroes' [#0F5CD8]Crit Damage[-] dealt to enemies with reduced [#0F5CD8]Fire Defense[-] by [#1A7331]32%[-].",
-      "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]4%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]24%[-])\nAugmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Feu avec une [#0F5CD8]défense de Feu[-] réduite de [#1A7331]32%[-]."
+      "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]4%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]24%[-])\nAugmente de [#1A7331]32%[-] les [#0F5CD8]dégâts crit.[-] infligés par tous les héros alliés d'attribut Feu aux ennemis dont la [#0F5CD8]défense de Feu[-] est réduite."
      },
      {
       "level": 3,
       "descEn": "While a [#0F5CD8]Max HP[-] boost is active on the hero, each hit on an enemy increases all allied Fire heroes' [#0F5CD8]Ultimate Move Damage[-] by [#1A7331]5%[-] for [#1A7331]30 sec[-]. (Max: [#1A7331]30%[-])\nIncreases all allied Fire heroes' [#0F5CD8]Crit Damage[-] dealt to enemies with reduced [#0F5CD8]Fire Defense[-] by [#1A7331]40%[-].",
-      "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]5%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]30%[-])\nAugmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Feu avec une [#0F5CD8]défense de Feu[-] réduite de [#1A7331]40%[-]."
+      "descFr": "Lorsqu'un boost de [#0F5CD8]PV max[-] est actif sur le héros, chaque coup porté sur l'ennemi augmente les [#0F5CD8]dégâts d'attaque ultime[-] de tous les héros alliés d'attribut Feu de [#1A7331]5%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]30%[-])\nAugmente de [#1A7331]40%[-] les [#0F5CD8]dégâts crit.[-] infligés par tous les héros alliés d'attribut Feu aux ennemis dont la [#0F5CD8]défense de Feu[-] est réduite."
      }
     ],
     "nameEn": "Burning Spirit",

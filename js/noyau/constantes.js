@@ -50,6 +50,14 @@
   const COEQUIPIERS_KEY = "confrerie7ds.calculateur.coequipiers";
   const MIGRATION_KEY_PREFIX = "confrerie7ds.supabase.migrated.";
 
+  /* Le code `DEFAULT` n'est pas une absence d'element : c'est « Physique »,
+     promu element a part entiere par le jeu le 15 aout 2026. Dreyfus et
+     Griamore, jusque-la classes Terre, y sont passes. Il portait deja ce code
+     sur dix slots d'arme, ou il s'affichait « Default » faute de libelle.
+     Sa teinte est neutre a dessein : le physique ne s'oppose a aucun element,
+     et lui donner une couleur d'element le ferait lire comme tel dans les
+     graphiques de l'Analyse.
+     tests/wiki-catalogue.test.js refuse desormais tout element sans libelle. */
   const ELEMENTS = {
     FIRE:   {label:"Feu",      color:"#d24b3e"},
     WIND:   {label:"Vent",     color:"#4fa563"},
@@ -57,7 +65,8 @@
     EARTH:  {label:"Terre",    color:"#c0863e"},
     HOLY:   {label:"Sacré",    color:"#e6c766"},
     ICE:    {label:"Glace",    color:"#56b0c9"},
-    THUNDER:{label:"Foudre",   color:"#5c74e0"}
+    THUNDER:{label:"Foudre",   color:"#5c74e0"},
+    DEFAULT:{label:"Physique", color:"#9aa3ad"}
   };
   // rôles au niveau des slots d'arme (vocabulaire plus fin du jeu)
   const WSLOT_ROLES = {
