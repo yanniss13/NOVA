@@ -62,9 +62,25 @@
   padding:6px 2px 18px;margin:0 0 4px;
   border-bottom:1px solid var(--line)
 }
+/* La lueur doit s'eteindre AVANT les bords de sa boite, sinon on voit le carre.
+
+   L'ancienne version le montrait : dans une boite de 220x150 avec le centre a
+   (60,60), `farthest-corner` vaut 182px, donc `transparent 68%` ne s'eteignait
+   qu'a 124px — alors que les bords gauche et haut n'etaient qu'a 60px. Le
+   degrade y etait encore opaque et se faisait trancher net. A droite, le bord
+   etant a 160px, rien ne se voyait : d'ou un carre qui semblait decale.
+
+   Deux precautions ici. La boite est CARREE et le centre au centre, si bien que
+   `closest-side` vaut la meme distance dans les quatre directions — 150px. Et
+   le fondu se termine a 72% de cette distance, soit 108px, ce qui laisse 42px
+   de marge transparente sur tout le pourtour.
+
+   Les decalages placent ce centre sur le portrait, mesure a (43,47) dans
+   l'en-tete. En mobile le cadre retrecit et le centre glisse de quelques
+   pixels : la marge l'absorbe, et une lueur diffuse ne se lit pas au pixel. */
 .wiki-hero-head::before{
-  content:"";position:absolute;left:-10px;top:-12px;width:220px;height:150px;
-  background:radial-gradient(circle at 60px 60px,var(--aura),transparent 68%);
+  content:"";position:absolute;left:-107px;top:-103px;width:300px;height:300px;
+  background:radial-gradient(circle closest-side,var(--aura),transparent 72%);
   opacity:.22;pointer-events:none
 }
 .wiki-hero-frame{
