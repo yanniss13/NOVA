@@ -36,6 +36,10 @@ sans raison :
    personnages ajoutés.
 3. **Quatre dimensions par ligne** : qui le possède dans la confrérie et à quel
    potentiel, l'effet chiffré, l'arme concernée, l'élément visé.
+4. **Aucune défense élémentaire hors Foudre.** La confrérie mène ses runs de
+   Boss de Guilde avec des Merlin Foudre : un malus de défense de Feu ou de
+   Vent ne sert aucune de ses compositions. Détail des lignes écartées et de ce
+   que ce choix coûte en 5.4.
 
 ---
 
@@ -66,41 +70,84 @@ davantage au boss — pas le rôle du porteur.
 
 ## 5. Volet données
 
-### 5.1 Périmètre chiffré
+### 5.1 Périmètre chiffré — établi par lecture, non par relevé
 
-Relevé par expressions régulières sur `data/wiki-competences.js` :
+Un premier relevé par expressions régulières annonçait 19 personnages et ~33
+lignes. **Il était faux dans les deux sens**, et la lecture intégrale des 17
+couples candidats l'a corrigé :
 
-Décompte en **personnages**, l'union étant ce qui décide du travail :
+- il comptait « réduit les dégâts subis de 20 % » — un bonus **défensif sur le
+  porteur** — comme un malus sur l'ennemi. 21 phrases écartées à ce titre ;
+- il ne pouvait pas voir la **portée** d'un effet, parce que la restriction
+  vit souvent dans une autre phrase que l'effet. Chez Meliodas : « réduit la
+  résistance crit. *contre les attaques de Meliodas* de 3 %. Réduit **en
+  outre** la défense crit. de 50 % … » — la phrase qui porte « défense » ne
+  porte pas la restriction.
 
-| | Concernés | Déjà couverts |
-|---|---|---|
-| Malus de défense | 15 | 7 |
-| Vulnérabilité | 12 | 1 |
-| **Union** | **19** | **7** |
+**Aucun relevé automatique ne peut donc établir ce périmètre.** Les 17 couples
+ont été lus en entier, un par un.
 
-La table compte aujourd'hui 8 personnages et 30 lignes. Le huitième, howzer,
-ne pose ni malus ni vulnérabilité : il buffe les alliés, et sort donc de ce
-décompte sans sortir de la table.
+### 5.2 Les neuf lignes retenues
 
-À ajouter : **12 personnages** — drake, elaine, escanor, gil-thunder, griamore,
-hendrickson, jericho, king, klotho, meliodas, slader, tioreh — pour environ
-**33 lignes**.
+| Personnage / arme | Effet | Valeur | État source |
+|---|---|---|---|
+| drake / Bâton | `defenseCritique` | −8 % × 5 = 40 % | Courant électrique |
+| elizabeth / Bâton | `defenseCritique` | −0,8 % × 50 = 40 % | Rupture |
+| escanor / Épée 2 mains | `defense` | −0,15 % × 100 = 15 % | Inflammation |
+| gowther / Baguette | `defense` (Foudre) | −6 % × 4 = 24 % | Salve de flèches |
+| guila / Rapière | `defense` | −0,15 % × 100 = 15 % | Inflammation |
+| king / Grimoire | `vulnerabiliteGlobale` | +2 % × 10 = 20 % | Marque de la forêt |
+| klotho / Bâton | `defenseCritique` | −10 % | Érosion dimensionnelle |
+| slader / Hache | `vulnerabiliteGlobale` | +25 % | Blessure profonde |
+| tioreh / Baguette | `defense` | −0,15 % × 100 = 15 % | Inflammation |
 
-### 5.2 Les deux limites, écrites d'avance
+Escanor, Guila et Tioreh partagent le **même état Inflammation**, aux mêmes
+valeurs : une cohérence qui conforte la lecture.
 
-**Le relevé est approximatif.** Le commentaire en tête de la table prévient que
-les effets se cachent souvent dans la *définition d'un état* — « ※ Extinction :
-… augmente les dégâts subis de 100 % » — et non dans la phrase principale de la
-compétence. Une expression régulière sur les descriptions en manque. La table
-sera plus complète qu'aujourd'hui ; elle ne sera pas exhaustive, et on ne
-saura pas ce qui manque.
+Le schéma actuel suffit : `parCumul` + `cumuls` + `valeur` expriment déjà les
+effets cumulatifs, et `provenance.phraseCumuls` ancre le plafond. Aucune
+modification de format.
+
+### 5.3 Déjà couverts, rien à faire
+
+daisy/Grimoire, dreydrin/Hache, elizabeth/Grimoire, gowther/Grimoire,
+manny/Épées doubles.
+
+### 5.4 Écartés, et pourquoi — à ne pas rajouter par erreur
+
+- **Défense élémentaire autre que la Foudre.** Décision du propriétaire : la
+  confrérie mène ses runs de Boss de Guilde avec des Merlin Foudre, donc un
+  malus de défense de Feu ou de Vent ne sert aucune de ses compositions. Sont
+  écartés à ce titre : **derieri / Épée 2 mains** (défense de Feu −20 %) et le
+  volet *Altération* d'**elizabeth / Bâton** (défense de Vent −30 %). Seul
+  gowther / Baguette reste, sa cible étant la Foudre.
+  ⚠️ Ce choix fige la méta du moment dans les données, et prive le calculateur
+  d'options pour une équipe Feu ou Vent. Les deux lignes sont déjà lues et
+  chiffrées ci-dessus : les réintégrer ne coûte que leur transcription.
+- **meliodas / Épées doubles** : ambiguïté de portée décrite en 5.1. « En
+  outre » rattache la réduction de défense crit. à une phrase restreinte
+  « contre les attaques de Meliodas ». Attribuer au groupe un bonus qui ne
+  profite peut-être qu'au porteur serait pire que l'omettre. À vérifier en jeu.
+- **drake / Bâton, effet Paralysie** : « réduit la résistance à la Foudre de
+  15 % ». Ni défense, ni défense critique, ni vulnérabilité — le vocabulaire
+  d'`effet` n'a pas de case pour une résistance élémentaire, et en ouvrir une
+  dépasse ce périmètre.
+
+### 5.5 Les deux limites qui subsistent
+
+**L'exhaustivité n'est pas atteinte.** Les 17 couples lus sont ceux qu'un
+relevé imparfait a désignés. Un effet dont la formulation échappe à toutes mes
+expressions — et le commentaire en tête de la table prévient qu'ils se cachent
+volontiers dans la définition d'un état — n'a jamais été présenté à la lecture.
+La table sera plus complète qu'aujourd'hui ; elle ne sera pas complète, et on
+ne saura pas ce qui manque.
 
 **La transcription lit des phrases, elle ne joue pas au jeu.** Une valeur mal
 interprétée passe les tests sans broncher : le test vérifie que la phrase citée
 existe, pas qu'elle a été comprise. Les valeurs restent donc à vérifier en jeu,
 comme les trois hypothèses de formule déjà signalées dans AGENTS.md.
 
-### 5.3 Effet de bord, et il est bienvenu
+### 5.6 Effet de bord, et il est bienvenu
 
 `js/metier/equipe-buffs.js` lit cette table pour alimenter le calculateur. Les
 33 nouvelles lignes y apparaîtront comme autant de **cases à cocher**
