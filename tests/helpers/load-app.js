@@ -110,6 +110,13 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   buffsDeLEquipe:typeof buffsDeLEquipe === "function"
     ? buffsDeLEquipe
     : undefined,
+  armeDuGameId:typeof armeDuGameId === "function"
+    ? armeDuGameId
+    : undefined,
+  ENUM_TO_FOLDER:typeof ENUM_TO_FOLDER === "object"
+    ? ENUM_TO_FOLDER
+    : undefined,
+  SEVEN_DS_BUFFS_SUPPORTS:window.SEVEN_DS_BUFFS_SUPPORTS,
   degatsSupplementairesApplicables:typeof degatsSupplementairesApplicables === "function"
     ? degatsSupplementairesApplicables
     : undefined,
