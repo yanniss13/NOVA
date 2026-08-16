@@ -16,13 +16,18 @@
 import { refreshRosterProfiles } from "../donnees/roster-profils.js";
 import { cloudRosterFromRow } from "../donnees/roster-store.js";
 import { sessionCourante } from "../etat/session.js";
+import {
+  lignesDAffaiblissement,
+  porteursDeLaLigne
+} from "../metier/affaiblissement-cible.js";
 import { charOf } from "../metier/catalogue.js";
 import { favoriteRosterWeaponType } from "../metier/equipe-modele.js";
 import {
   ELEMENTS,
   ENUM_TO_FOLDER,
   FOLDER_TO_ENUM,
-  metaOf
+  metaOf,
+  WEAPON_ENUM
 } from "../noyau/constantes.js";
 import { $, el } from "../noyau/dom.js";
 import { owns } from "../noyau/outils.js";
@@ -120,8 +125,9 @@ import { toast } from "./toast.js";
       return "Membre";
     };
     return Object.keys(byOwner)
-      .map(owner => rosterPlayerFrom(owner, nameOf(owner), byOwner[owner]))
-      .filter(p => p.dps.length);
+      /* No DPS filter here: support-only members still belong in the target
+         debuff census. DPS sections filter locally for their own purpose. */
+      .map(owner => rosterPlayerFrom(owner, nameOf(owner), byOwner[owner]));
   }
 
   /* Cette liste pilote TOUT le tableau : les cartes de couverture, les
@@ -164,6 +170,25 @@ import { toast } from "./toast.js";
     b.appendChild(el("span",{class:"dot"}));
     b.appendChild(el("span",{text:elemLabel(e)}));
     return b;
+  }
+
+  /* Loaded only when Analyse opens. A failure clears the promise so a later
+     render can retry after a transient network interruption. */
+  let chargementDesBuffs = null;
+  function chargerBuffsSupports(){
+    if(window.SEVEN_DS_BUFFS_SUPPORTS) return Promise.resolve(true);
+    if(chargementDesBuffs) return chargementDesBuffs;
+    chargementDesBuffs = new Promise((resolve, reject) => {
+      document.head.appendChild(el("script",{
+        src:"./data/buffs-supports.js",
+        onload:() => resolve(true),
+        onerror:() => reject(new Error("catalogue introuvable : buffs-supports"))
+      }));
+    }).catch(erreur => {
+      chargementDesBuffs = null;
+      throw erreur;
+    });
+    return chargementDesBuffs;
   }
 
   /* ============================ Analyse ============================ */
@@ -278,22 +303,19 @@ import { toast } from "./toast.js";
       ]));
       return;
     }
-    let players;
+    let membres;
     try{
-      players = await rosterDerivedPlayers();
+      membres = await rosterDerivedPlayers();
     }catch(error){
-      players = [];
+      membres = [];
       toast("Analyse indisponible pour l'instant.", true);
     }
+    const buffsLus = await chargerBuffsSupports().then(() => true, () => false);
     if(renderId !== analyseRenderId) return;
     box.innerHTML = "";
-    if(!players.length){
-      box.appendChild(el("div",{class:"empty-state"},[
-        el("p",{class:"big",text:"Rien à analyser"}),
-        el("p",{text:"Les DPS sont calculés depuis les rosters : ajoute des personnages offensifs dans l'onglet « Roster »."})
-      ]));
-      return;
-    }
+    /* The debuff census remains useful with no roster: missing effects are
+       actionable information. DPS-only sections use this filtered view. */
+    const players = membres.filter(p => (p.dps || []).length);
 
     // --- 1) Couverture par élément ---
     const cov = {}; ELEM_ORDER.forEach(e=>cov[e]={players:0,dps:0});
@@ -317,7 +339,64 @@ import { toast } from "./toast.js";
     });
     box.appendChild(covRow);
 
-    // --- 2) Classement par élément ---
+    // --- 2) Target debuffs ---
+    box.appendChild(el("h2",{class:"an-title", text:"Affaiblissement de la cible"}));
+    box.appendChild(el("p",{class:"an-note",
+      text:"Ce que la confrérie peut retirer au boss lui-même. Le rôle du personnage n'y décide de rien : Escanor porte son malus de défense avec une épée à deux mains d'Attaquant."}));
+    if(!buffsLus){
+      box.appendChild(el("div",{class:"rank-empty",
+        text:"Recensement indisponible : la table des effets n'a pas pu être lue."}));
+    }else{
+      const affaiblissements = el("div",{class:"debuff-list"});
+      lignesDAffaiblissement().forEach(ligne => {
+        const porteurs = porteursDeLaLigne(ligne, membres);
+        const ch = charOf(ligne.support);
+        const arme = ligne.arme && WEAPON_ENUM[ligne.arme]
+          ? WEAPON_ENUM[ligne.arme].label : "—";
+        const portrait = el("span",{class:"rk-portrait"});
+        if(ch) portrait.appendChild(el("img",{src:ch.file,alt:"",loading:"lazy"}));
+
+        const effet = el("span",{class:"db-effet"},[
+          el("span",{class:"db-libelle", text:ligne.libelle})
+        ]);
+        if(ligne.horsCalcul){
+          effet.appendChild(el("span",{
+            class:"db-hors-calcul",
+            title:"Effet reel, mais absent du calcul : le moteur n'a pas d'entree pour la resistance elementaire, et la mecanique du jeu n'a pas ete mesuree.",
+            text:"hors calcul"
+          }));
+        }
+
+        const qui = el("span",{class:"db-porteurs"});
+        if(porteurs.length){
+          porteurs.forEach(p => qui.appendChild(el("span",{
+            class:"db-porteur",
+            text:p.nom + (p.potentiel > 0 ? " P" + p.potentiel : "")
+          })));
+        }else{
+          qui.appendChild(el("span",{class:"db-personne", text:"Personne"}));
+        }
+
+        affaiblissements.appendChild(el("div",{
+          /* Grey but never remove: an unavailable effect guides recruitment. */
+          class:"debuff-row" + (porteurs.length ? "" : " db-absente")
+        },[
+          el("span",{class:"db-perso"},[
+            portrait,
+            el("span",{class:"db-nom",
+              text:(ch ? ch.name : ligne.support) + " · " + arme})
+          ]),
+          effet,
+          ligne.element
+            ? elemBadge(String(ligne.element).toUpperCase())
+            : el("span",{class:"db-tous", text:"tous éléments"}),
+          qui
+        ]));
+      });
+      box.appendChild(affaiblissements);
+    }
+
+    // --- 3) Element ranking ---
     // Le classement vit dans un conteneur stable : le clic sur un élément ne
     // remplace que ce conteneur (aucun rechargement Supabase, aucun reflow global).
     box.appendChild(el("h2",{class:"an-title", text:"Classement par potentiel"}));
@@ -348,7 +427,7 @@ import { toast } from "./toast.js";
        cible de focus détachée. */
     renderRankTable(rankBox);
 
-    // --- 3) Matrice joueur × élément ---
+    // --- 4) Member x element matrix ---
     box.appendChild(el("h2",{class:"an-title", text:"Matrice membre × élément"}));
     const wrap = el("div",{class:"matrix-wrap"});
     const table = el("table",{class:"matrix"});

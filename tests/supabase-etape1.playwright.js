@@ -1489,6 +1489,33 @@ const { chromium } = require("playwright");
     assert.match(analyseText, /Merlin/);
     assert.match(analyseText, /Meliodas/);
 
+    /* LE RECENSEMENT D'AFFAIBLISSEMENT NE DEPEND D'AUCUN ROSTER : une ligne
+       que personne ne possede reste affichee, parce que savoir qu'un effet
+       manque a la confrerie est une information. Son compte doit donc valoir
+       exactement le nombre de lignes visant l'ennemi dans la table - derive de
+       la table elle-meme, pour qu'ajouter une ligne demain ne casse pas ce
+       test sans raison. */
+    assert.match(analyseText, /Affaiblissement de la cible/);
+    const lignesAttendues = await page.evaluate(() =>
+      Object.values(window.SEVEN_DS_BUFFS_SUPPORTS || {})
+        .flat()
+        .filter(ligne => ligne.cible === "ennemi")
+        .length
+    );
+    assert.ok(lignesAttendues > 0,
+      "la table des buffs doit etre chargee par l'onglet Analyse lui-meme");
+    assert.equal(
+      await page.locator("#analyseBody .debuff-row").count(),
+      lignesAttendues,
+      "chaque ligne visant l'ennemi doit avoir sa ligne au recensement"
+    );
+    /* Une ligne consignee se signale a l'ecran, sinon le membre la croirait
+       comptee dans ses degats. */
+    assert.ok(
+      await page.locator("#analyseBody .db-hors-calcul").count() > 0,
+      "les lignes hors calcul doivent porter leur mention"
+    );
+
     /* Les anciennes clés sont volontairement conservées, mais le frontend ne
        les lit plus et ne consulte plus la table Supabase correspondante. */
     assert.deepEqual(
