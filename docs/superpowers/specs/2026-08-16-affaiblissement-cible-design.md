@@ -40,14 +40,19 @@ sans raison :
    Boss de Guilde avec des Merlin Foudre : un malus de défense de Feu ou de
    Vent ne sert aucune de ses compositions. Détail des lignes écartées et de ce
    que ce choix coûte en 5.4.
+5. **La résistance élémentaire est consignée, pas calculée.** Elle entre dans
+   la table avec un drapeau `horsCalcul`, apparaît dans le recensement et
+   n'atteint jamais la formule. Mesurer d'abord aurait retardé le recensement
+   de plusieurs jours. Voir 5.5.
 
 ---
 
 ## 3. Ce qui est acquis et ne bouge pas
 
-- `data/buffs-supports.js` garde sa forme actuelle. On ajoute des entrées, on
-  ne change pas le schéma. Les tests existants couvrent donc les nouvelles
-  lignes sans modification.
+- `data/buffs-supports.js` garde sa forme actuelle, à **une** exception près :
+  le drapeau `horsCalcul` de la décision 5. Tout le reste — `cible`, `effet`,
+  `parCumul`, `cumuls`, `provenance` — est inchangé, et les tests existants
+  couvrent les nouvelles lignes sans modification.
 - La règle « une entrée porte un `stat` OU un `effet`, jamais les deux »
   reste, et son test aussi.
 - `provenance.gameId` + `provenance.phrase` restent obligatoires. Le test
@@ -128,12 +133,51 @@ manny/Épées doubles.
   outre » rattache la réduction de défense crit. à une phrase restreinte
   « contre les attaques de Meliodas ». Attribuer au groupe un bonus qui ne
   profite peut-être qu'au porteur serait pire que l'omettre. À vérifier en jeu.
-- **drake / Bâton, effet Paralysie** : « réduit la résistance à la Foudre de
-  15 % ». Ni défense, ni défense critique, ni vulnérabilité — le vocabulaire
-  d'`effet` n'a pas de case pour une résistance élémentaire, et en ouvrir une
-  dépasse ce périmètre.
+Les réductions de **résistance élémentaire** ne sont pas écartées : elles
+entrent par une autre porte, décrite en 5.5.
 
-### 5.5 Les deux limites qui subsistent
+### 5.5 La résistance élémentaire — consignée, hors calcul
+
+**Ce n'est pas une bizarrerie de Drake : 14 personnages réduisent la résistance
+élémentaire.** C'est une mécanique entière, et elle pèse lourd — Akumu porte
+30 % de résistance, que la formule traduit en facteur ×0,70. Retirer 15 points
+le porterait à ×0,85, **+21 % de dégâts**.
+
+Le moteur connaît déjà `resistanceElementaire` sur la cible, mais **rien ne la
+réduit** : il n'existe pas de `reductionResistanceElementaire`. Y brancher ces
+lignes modifierait la formule.
+
+Or `d-eew`, le champ correspondant chez l'outil de référence, **n'a jamais été
+mesuré** par `RAPPORT-analyse-tapscreen.md`. On ignore s'il se retranche en
+points ou en pourcentage, et comment il se compose. Ajouter un terme non mesuré
+à la formule est précisément ce que ce dépôt refuse.
+
+D'où le drapeau. Une ligne `horsCalcul:true` est **vraie, sourcée et
+inexploitable par le moteur** : le recensement l'affiche pour composer un
+groupe, `buffsApplicables` l'ignore, et aucune case à cocher mensongère
+n'apparaît dans le calculateur. Précédent maison : `uncovered` dans
+`stats-calcul.js`, qui garde les passifs en prose connus mais hors des nombres.
+
+Même filtre Foudre que la décision 4 — quatre lignes, toutes à −15 % :
+
+| Personnage / arme | Déclencheur | gameId |
+|---|---|---|
+| drake / Bâton | état Paralysie, exige Électrocution | `drake_staff_skill_rmb` |
+| gil-thunder / Lance | état Paralysie, exige Électrocution | `gil_thunder_lance_skill_rmb` |
+| gil-thunder / Bouclier | retrait de la barrière de Foudre, 30 s | `gilthunder_shield_passive` |
+| gil-thunder / Épée 1 main | activation du Déluge de Foudre, 20 s | `gilthunder_sword1h_passive` |
+
+⚠️ Les identifiants de Gil Thunder s'écrivent **tantôt `gil_thunder_`, tantôt
+`gilthunder_`**. La règle du jeton `_<enum>_` de `vientDeLArme` les couvre
+toutes les trois ; un découpage par position n'y survivrait pas.
+
+**Suite prévue, hors de ce périmètre** : mesurer `d-eew` chez tapscreen selon
+la méthode déjà éprouvée, puis retirer le drapeau sans retoucher les données.
+Réserve honnête : le rapport signale une anomalie inexpliquée sur le voisin
+`d-elementres`, qui se comporte différemment sur un vrai boss et sur le
+mannequin. Si `d-eew` fait de même, la mesure pourrait ne rien conclure.
+
+### 5.6 Les deux limites qui subsistent
 
 **L'exhaustivité n'est pas atteinte.** Les 17 couples lus sont ceux qu'un
 relevé imparfait a désignés. Un effet dont la formulation échappe à toutes mes
@@ -147,7 +191,7 @@ interprétée passe les tests sans broncher : le test vérifie que la phrase cit
 existe, pas qu'elle a été comprise. Les valeurs restent donc à vérifier en jeu,
 comme les trois hypothèses de formule déjà signalées dans AGENTS.md.
 
-### 5.6 Effet de bord, et il est bienvenu
+### 5.7 Effet de bord, et il est bienvenu
 
 `js/metier/equipe-buffs.js` lit cette table pour alimenter le calculateur. Les
 33 nouvelles lignes y apparaîtront comme autant de **cases à cocher**
@@ -209,6 +253,15 @@ l'inverse, et jamais recopié.
   - un personnage à slot Soutien **sans** malus mesuré n'y figure pas ;
   - l'arme affichée est celle du `gameId`, pas la première du personnage ;
   - un effet que personne ne possède reste listé.
+- **`horsCalcul`** : deux gardes, et la seconde est la plus importante —
+  - la ligne apparaît bien dans le recensement ;
+  - **`buffsApplicables` ne la rend jamais.** Sans ce test, une ligne
+    consignée finirait un jour en case à cocher du calculateur, et le membre
+    croirait son effet compté dans les dégâts.
+- **Jeton d'arme** : `gil_thunder_lance_skill_rmb` et
+  `gilthunder_shield_passive` doivent tous deux se rattacher à leur arme. Les
+  deux orthographes du même personnage sont le piège que
+  `vientDeLArme` existe pour éviter.
 - **Parcours** : une assertion dans le Playwright de l'Analyse, si un membre
   connecté y est déjà mis en scène.
 
