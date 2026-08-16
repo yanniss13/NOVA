@@ -32,7 +32,7 @@ const LIBELLES = JSON.parse(fs.readFileSync(
   path.join(racine, "7ds-stats", "libelles-stats.json"), "utf8"
 ));
 
-/* LES PERSONNAGES DE LA TABLE, et non « les supports ».
+/* LES PERSONNAGES DE LA TABLE, et non "les supports".
 
    Escanor porte son malus de defense avec une Epee a deux mains de role
    Attaquant, Meliodas n'est support de rien, et King debuffe avec un
@@ -40,12 +40,12 @@ const LIBELLES = JSON.parse(fs.readFileSync(
    c'est un effet sur la cible, ou un bonus rendu a l'equipe.
 
    La liste est en dur pour qu'un ajout de personnage soit un GESTE : sans
-   elle, une clef mal orthographiee - « gilthunder » au lieu de « gil-thunder »
+   elle, une clef mal orthographiee - "gilthunder" au lieu de "gil-thunder"
    - creerait un quinzieme personnage fantome que rien ne signalerait. */
 const PERSONNAGES = [
   "elizabeth", "daisy", "manny", "howzer",
   "gowther", "guila", "dreydrin", "derieri",
-  /* Entres avec le recensement « Affaiblissement de la cible » : ils ne
+  /* Entres avec le recensement "Affaiblissement de la cible" : ils ne
      donnent rien a l'equipe, ils retirent quelque chose au boss. */
   "drake", "escanor", "gil-thunder", "king", "klotho", "slader", "tioreh"
 ];
@@ -400,7 +400,7 @@ tousLesBuffs.forEach(buff => {
   assert.equal(reductions.length, 7,
     "Elisabeth, Gowther, Dreydrin, Escanor, Guila et Tioreh réduisent la défense générale");
   const r = entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:reductions });
-  assert.equal(r.reductionDefense, 11900, "10 % + 20 % + 15 % + 20 % + 6 % + 15 % + 15 %");
+  assert.equal(r.reductionDefense, 11900, "10 % + 20 % + 15 % + 20 % + 24 % + 15 % + 15 %");
 }
 
 /* Les bonus de degats elementaires atterrissent dans le seau du moteur. */
