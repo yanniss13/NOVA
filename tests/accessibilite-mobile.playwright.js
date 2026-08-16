@@ -1521,6 +1521,7 @@ async function installRosterFocusFakeSupabase(page){
           height:Math.round(bar.getBoundingClientRect().height),
           retracted:bar.classList.contains("is-retracted"),
           brandVisible:visible(".brand"),
+          lootbarVisible:visible(".lootbar"),
           accountVisible:visible("#accountConnected"),
           tabsVisible:visible(".tabs"),
           overflow:root.scrollWidth - root.clientWidth,
@@ -1535,6 +1536,10 @@ async function installRosterFocusFakeSupabase(page){
       );
       assert.equal(expanded.retracted, false);
       assert.equal(expanded.brandVisible, true);
+      /* Sans cette moitie-ci, l'assertion de repli plus bas serait
+         complaisante : un logo absent du document la passerait aussi. */
+      assert.equal(expanded.lootbarVisible, true,
+        `Logo LootBar absent du header déployé à ${width}px`);
       assert.equal(expanded.accountVisible, true);
 
       /* Repère de défilement des onglets : un fondu surmonté d'un chevron
@@ -1631,6 +1636,15 @@ async function installRosterFocusFakeSupabase(page){
       );
       const retracted = await headerMetrics();
       assert.equal(retracted.brandVisible, false, `Marque encore visible à ${width}px`);
+      /* Le logo LootBar se replie avec la marque, et pas seulement pour la
+         hauteur gagnee : c'est un LIEN, donc focusable. Rester peint alors que
+         le header est replie le laisserait dans l'ordre de tabulation d'une
+         zone censee avoir disparu. */
+      assert.equal(
+        retracted.lootbarVisible,
+        false,
+        `Logo LootBar encore visible à ${width}px`
+      );
       assert.equal(
         retracted.accountVisible,
         false,
