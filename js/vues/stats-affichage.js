@@ -6,7 +6,77 @@
    Sept declarations sur onze restent privees : le regroupement par cle, les
    noeuds de rendu et les notes de seau n'ont aucun sens hors d'ici. */
 
+import { WEAPON_ENUM } from "../noyau/constantes.js";
 import { el } from "../noyau/dom.js";
+
+  /* LES MANQUES D'UN BUILD, DITS EN FRANCAIS.
+
+     `calculateHeroStats` rend ses manques sous forme de chemins de donnees —
+     `armor.Haut`, `rosterBuilds.Axe.weaponConfig`. C'est ce qu'il faut au
+     code, et c'est illisible a l'ecran : deux vues les affichaient tels quels,
+     si bien qu'un membre au build incomplet lisait « Configuration a
+     completer : rosterBuilds.Axe.weaponConfig ».
+
+     Deux formes par emplacement, parce que le francais en exige deux : la
+     piece se nomme « les bottes » quand elle manque, et « la configuration DES
+     bottes » quand c'est son reglage. Une table unique aurait produit « la
+     configuration de les bottes ».
+
+     Les libelles courts de `ARMOR_LABELS` ne conviennent pas ici : ce sont des
+     en-tetes de colonne, abreges pour tenir dans une case — « B. oreille » se
+     lit mal au milieu d'une phrase. */
+  const MANQUES_SIMPLES = {
+    character:"le personnage",
+    potential:"le potentiel",
+    weapon:"l'arme",
+    weaponConfig:"la configuration de l'arme",
+    mastery:"la maîtrise d'arme"
+  };
+  const MANQUES_EMPLACEMENTS = {
+    "Haut":{ seul:"le haut d'armure", de:"du haut d'armure" },
+    "Bas":{ seul:"le bas d'armure", de:"du bas d'armure" },
+    "Bottes":{ seul:"les bottes", de:"des bottes" },
+    "Ceinture":{ seul:"la ceinture", de:"de la ceinture" },
+    "Armure liee":{ seul:"l'armure gravée", de:"de l'armure gravée" },
+    "Anneau":{ seul:"l'anneau", de:"de l'anneau" },
+    "Collier":{ seul:"le collier", de:"du collier" },
+    "Boucle d'oreille":{
+      seul:"la boucle d'oreille", de:"de la boucle d'oreille"
+    }
+  };
+
+  /* Un chemin inconnu ressort TEL QUEL. C'est laid, et c'est voulu : une
+     omission silencieuse laisserait le membre chercher une piece que plus rien
+     ne nomme. Mieux vaut un code affiche qu'un manque efface. */
+  function libelleDuManque(chemin){
+    const code = String(chemin || "");
+    if(MANQUES_SIMPLES[code]) return MANQUES_SIMPLES[code];
+
+    const emplacement = /^(armor|jewel)(Config)?\.(.+)$/.exec(code);
+    if(emplacement){
+      const formes = MANQUES_EMPLACEMENTS[emplacement[3]];
+      if(formes){
+        return emplacement[2]
+          ? "la configuration " + formes.de
+          : formes.seul;
+      }
+    }
+
+    const secondaire = /^rosterBuilds\.(.+)\.(weapon|weaponConfig)$/.exec(code);
+    if(secondaire){
+      const arme = (WEAPON_ENUM[secondaire[1]] || {}).label || secondaire[1];
+      return secondaire[2] === "weaponConfig"
+        ? "la configuration de l'arme du build " + arme
+        : "l'arme du build " + arme;
+    }
+    return code;
+  }
+
+  /* Les doublons se fondent : deux chemins distincts peuvent viser la meme
+     piece, et « les bottes, les bottes » se lirait comme une erreur. */
+  function libelleDesManques(manques){
+    return [...new Set((manques || []).map(libelleDuManque))].join(", ");
+  }
 
   function formatBuildStatValue(value, unit){
     if(unit !== "flat" && unit !== "ten-thousandths"){
@@ -268,6 +338,7 @@ import { el } from "../noyau/dom.js";
 export {
   gearTermLabel,  weaponTermLabel,  buildStatsTitle,  BUILD_STAT_FAMILY_LABELS,  BUILD_BUCKET_LABELS,
   formatBuildStatValue,
+  libelleDesManques,
   mainRateValueText,
   statTermsDetails
 };

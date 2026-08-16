@@ -15,6 +15,7 @@ import {
   BUILD_STAT_FAMILY_LABELS,
   formatBuildStatValue,
   gearTermLabel,
+  libelleDesManques,
   mainRateValueText,
   statTermsDetails,
   weaponTermLabel
@@ -190,7 +191,7 @@ import { calculateHeroStats, groupBuildStatResults } from "../metier/stats-calcu
       result.status === "valid" || result.status === "partial";
     if(!hasNumericResult){
       const details = result.missing.length
-        ? " À compléter : "+result.missing.join(", ")+"."
+        ? " Il manque "+libelleDesManques(result.missing)+"."
         : "";
       section.appendChild(el("p",{
         class:"weapon-stats-state",
