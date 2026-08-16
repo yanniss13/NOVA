@@ -7,7 +7,7 @@
    a { charId, typeArme, atk }. */
 
 const assert = require("node:assert/strict");
-const { loadApp } = require("./helpers/load-app");
+const { loadApp, plain } = require("./helpers/load-app");
 
 const { hooks } = loadApp();
 const { buffsApplicables, buffsDeLEquipe } = hooks;
@@ -128,6 +128,44 @@ const idsDe = liste => liste.map(buff => buff.id).sort();
   }).filter(buff => buff.unite !== "flat").forEach(buff => {
     assert.equal(buff.repli, false,
       buff.id + " : un buff a valeur fixe n'est jamais un repli");
+  });
+}
+
+/* L'ARME QUE NOMME UN gameId, et les deux orthographes de Gil Thunder.
+
+   Le meme personnage s'ecrit `gil_thunder_` sur sa Lance et `gilthunder_` sur
+   son Bouclier. C'est exactement le piege que la regle du jeton existe pour
+   eviter : un decoupage par position lirait « thunder » comme une arme sur
+   le premier, et « shield » correctement sur le second. */
+{
+  const { armeDuGameId } = hooks;
+  assert.equal(typeof armeDuGameId, "function",
+    "armeDuGameId doit etre expose par le chargeur de tests");
+
+  assert.equal(armeDuGameId("gil_thunder_lance_skill_rmb"), "Lance",
+    "un slug a tiret bas ne doit pas decaler la lecture de l'arme");
+  assert.equal(armeDuGameId("gilthunder_shield_passive"), "Shield",
+    "l'autre orthographe du meme personnage doit rendre la meme reponse");
+  assert.equal(armeDuGameId("escanor_sword2h_jumpatk"), "Sword2h",
+    "Sword1h et Sword2h sont deux jetons distincts");
+  assert.equal(armeDuGameId("manny_sworddual_jumpatk"), "SwordDual");
+
+  assert.equal(armeDuGameId("daisy_passive"), null,
+    "un gameId sans jeton d'arme ne doit nommer aucune arme");
+  assert.equal(armeDuGameId(null), null);
+  assert.equal(armeDuGameId(""), null);
+
+  const armesConnues = Object.keys(plain(hooks.ENUM_TO_FOLDER));
+  assert.equal(armesConnues.length, 12, "le depot connait douze types d'arme");
+  const tousLesIds = Object.values(plain(hooks.SEVEN_DS_BUFFS_SUPPORTS || {}))
+    .flat()
+    .map(ligne => ligne.provenance.gameId);
+  assert.ok(tousLesIds.length > 0, "la table doit fournir des gameId a verifier");
+  tousLesIds.forEach(gameId => {
+    const nommees = armesConnues.filter(arme => String(gameId).toLowerCase()
+      .includes("_" + arme.toLowerCase() + "_"));
+    assert.equal(nommees.length, 1,
+      gameId + " : doit nommer exactement une arme, trouve " + nommees.join(", "));
   });
 }
 

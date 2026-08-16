@@ -8,7 +8,7 @@
    deja reduits a { charId, typeArme, atk } ; c'est elle qui appelle
    calculateHeroStats et en extrait B_Atk. */
 
-import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
+import { ENUM_TO_FOLDER, FOLDER_TO_ENUM } from "../noyau/constantes.js";
 import { buffsApplicables } from "./calculateur-entrees.js";
 
   /* 10 000 dix-milliemes valent 100 %. Le nom differe de `DIX_MILLIEMES` chez
@@ -18,20 +18,29 @@ import { buffsApplicables } from "./calculateur-entrees.js";
      idee. */
   const TAUX_PLEIN = 10000;
 
-  /* Le buff vient-il de l'arme equipee ?
+  /* L'ARME QUE NOMME UN gameId, ou null.
 
-     On ne cherche PAS quelle arme le gameId nomme : on verifie qu'il contient
-     le jeton de l'arme equipee. Le sens compte, parce qu'un gameId s'ecrit
-     <slug>_<arme>_<reste> et que le slug peut lui-meme contenir un tiret bas -
-     `gil_thunder_lance_jumpatk` piegerait tout decoupage par position.
+     On ne decoupe PAS par position : un gameId s'ecrit <slug>_<arme>_<reste>
+     et le slug peut lui-meme contenir un tiret bas. Gil Thunder l'ecrit des
+     DEUX facons - `gil_thunder_lance_skill_rmb` et `gilthunder_shield_passive`
+     - et un decoupage par position se tromperait sur la premiere.
 
-     Le roster range les armes par DOSSIER francais ; FOLDER_TO_ENUM donne
-     l'enum, et le jeton est cet enum en minuscules, encadre de tirets bas. */
+     On cherche donc le JETON `_<enum>_`, en minuscules. Un test verifie qu'un
+     gameId de la table n'en contient jamais deux ; sans lui, ce `find`
+     rendrait la premiere arme trouvee sans que personne ne le sache. */
+  function armeDuGameId(gameId){
+    const nu = String(gameId || "").toLowerCase();
+    return Object.keys(ENUM_TO_FOLDER).find(
+      enumArme => nu.includes("_" + enumArme.toLowerCase() + "_")
+    ) || null;
+  }
+
+  /* Le buff vient-il de l'arme equipee ? Le roster range les armes par DOSSIER
+     francais ; FOLDER_TO_ENUM donne l'enum que le gameId, lui, ecrit. */
   function vientDeLArme(gameId, typeArme){
     const enumArme = FOLDER_TO_ENUM[typeArme];
     if(!enumArme) return false;
-    return String(gameId || "").toLowerCase()
-      .includes("_" + enumArme.toLowerCase() + "_");
+    return armeDuGameId(gameId) === enumArme;
   }
 
   /* « X % de l'attaque du heros, au plus P » : le chiffre, ou null quand l'ATK
