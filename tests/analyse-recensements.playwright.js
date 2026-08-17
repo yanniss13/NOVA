@@ -43,6 +43,68 @@ async function ouvrirAnalyse(page, section = "supports"){
     await page.getByRole("button", { name:"Se connecter", exact:true }).click();
     await page.locator("#accountPseudo").getByText("Yannis", { exact:true }).waitFor();
 
+    /* LA SOUS-NAVIGATION MOBILE tient entière dans la largeur utile. Ce rail
+       n'est pas la navigation principale : trois choix seulement doivent
+       rester visibles ensemble, sans demander un geste horizontal caché. */
+    await ouvrirAnalyse(page, "overview");
+    assert.match(
+      await page.locator("#view-analyse .section-lead").textContent(),
+      /soutiens généraux et Foudre/,
+      "le texte long doit expliquer que les soutiens ne sont pas tous Foudre"
+    );
+    for(const width of [320, 360, 390]){
+      await page.setViewportSize({ width, height:844 });
+      const sousNavigation = await page.locator(".analyse-subnav").evaluate(nav => {
+        const box = nav.getBoundingClientRect();
+        const buttons = [...nav.querySelectorAll(".analyse-subnav-button")];
+        return {
+          overflow:nav.scrollWidth - nav.clientWidth,
+          documentOverflow:document.scrollingElement.scrollWidth
+            - document.scrollingElement.clientWidth,
+          overflowX:getComputedStyle(nav).overflowX,
+          labels:buttons.map(button => button.textContent.trim()),
+          fontSizes:buttons.map(button => parseFloat(getComputedStyle(button).fontSize)),
+          widths:buttons.map(button => button.getBoundingClientRect().width),
+          heights:buttons.map(button => button.getBoundingClientRect().height),
+          buttonsInside:buttons.every(button => {
+            const rect = button.getBoundingClientRect();
+            return rect.left >= box.left - 1 && rect.right <= box.right + 1;
+          })
+        };
+      });
+      assert.deepEqual(
+        sousNavigation.labels,
+        ["Vue d'ensemble", "DPS par élément", "Soutiens"],
+        "le bouton court ne doit pas faire croire que tous les soutiens sont Foudre"
+      );
+      assert.ok(
+        sousNavigation.overflow <= 1
+          && sousNavigation.documentOverflow <= 1
+          && sousNavigation.overflowX !== "auto",
+        `la sous-navigation ne doit pas défiler horizontalement à ${width}px`
+      );
+      assert.ok(
+        Math.max(...sousNavigation.widths) - Math.min(...sousNavigation.widths) <= 1,
+        `les trois colonnes doivent être égales à ${width}px`
+      );
+      assert.ok(
+        sousNavigation.fontSizes.every(size => size < 12.5),
+        `la police mobile doit être réduite à ${width}px `
+          + `(${sousNavigation.fontSizes.join(", ")}px)`
+      );
+      assert.ok(
+        sousNavigation.heights.every(height => height >= 43.5),
+        `les cibles tactiles doivent conserver 44px à ${width}px `
+          + `(${sousNavigation.heights.join(", ")}px)`
+      );
+      assert.equal(
+        sousNavigation.buttonsInside,
+        true,
+        `les trois boutons doivent rester dans le rail à ${width}px`
+      );
+    }
+    await page.setViewportSize({ width:1280, height:900 });
+
     /* LE TRI DE LA MATRICE reste local : il ne relit pas Supabase. Jericho
        donne a Yannis deux DPS, dont un Glace P2. Merlin doit donc passer devant
        sur la colonne Glace grace a son P9, puis ceder la tete au total. */
