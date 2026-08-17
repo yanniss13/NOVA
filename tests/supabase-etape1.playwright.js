@@ -1495,7 +1495,7 @@ async function ouvrirSessionsDeBoss(page){
 
     // #5 : l'Analyse est l'unique vue DPS et dérive directement des rosters.
     await page.locator('.tab[data-view="analyse"]').click();
-    await page.locator("#analyseBody .rank-table").waitFor();
+    await page.locator("#analyseBody .matrix").waitFor();
     const analyseText = await page.locator("#analyseBody").textContent();
     assert.match(analyseText, /Yannis/);
     assert.match(analyseText, /Merlin/);
@@ -1585,7 +1585,7 @@ async function ouvrirSessionsDeBoss(page){
       window.__fakeSupabaseEmit("profiles", "UPDATE");
     });
     await page.waitForFunction(() =>
-      [...document.querySelectorAll("#analyseBody .rank-row")]
+      [...document.querySelectorAll("#analyseBody .mx-action")]
         .some(row =>
           row.textContent.includes("Merlin") &&
           row.textContent.includes("P10")
