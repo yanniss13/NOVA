@@ -490,6 +490,12 @@ import { toast } from "./toast.js";
      defaut - le nombre de DPS. Il remplace l'ancien element du classement :
      meme etat conserve d'un rendu a l'autre, meme question posee. */
   let analyseTri = null;
+  /* Les membres coches pour comparer un sous-groupe, par identifiant d'owner.
+     Vide = filtre inactif, toute la confrerie s'affiche dans la matrice. Meme
+     etat conserve d'un rendu a l'autre que le tri, et comme lui il ne touche
+     QU'A la matrice : les compteurs de la vue d'ensemble restent calcules sur
+     tout le monde. */
+  const analyseMembres = new Set();
 
   function ligneVisibleDansAnalyse(ligne){
     return !ligne.element
@@ -640,33 +646,94 @@ import { toast } from "./toast.js";
     );
   }
 
+  /* LES PUCES DE FILTRE PAR MEMBRE : une case a cocher accessible par membre,
+     plus une remise a zero « Tous ». Cocher un ou plusieurs membres restreint
+     la matrice a leurs lignes, pour comparer un sous-groupe ; « Tous » vide la
+     selection. Le filtre ne relit jamais le reseau : il ne fait que masquer des
+     lignes deja rendues. La rangee se construit une seule fois par rendu et se
+     met a jour en place — la reconstruire a chaque clic perdrait le focus. */
+  function filtreMembres(wrap, players){
+    const groupe = el("div",{
+      class:"matrix-membres",
+      role:"group",
+      "aria-label":"Filtrer la matrice par membre"
+    });
+    /* « Tous » n'est pas un membre : c'est l'etat « aucun filtre », actif quand
+       la selection est vide. En tete, il devient le point de retour naturel. */
+    const puceTous = el("button",{
+      class:"matrix-membre matrix-membre-tous"
+        + (analyseMembres.size ? "" : " active"),
+      type:"button",
+      "aria-pressed":String(analyseMembres.size === 0),
+      text:"Tous",
+      onclick:()=>{
+        if(!analyseMembres.size) return;
+        analyseMembres.clear();
+        synchroniser();
+        rendreMatrice(wrap, players);
+      }
+    });
+    groupe.appendChild(puceTous);
+    const puces = players.map(joueur => {
+      const actif = analyseMembres.has(joueur.owner);
+      const puce = el("button",{
+        class:"matrix-membre" + (actif ? " active" : ""),
+        type:"button",
+        dataset:{ owner:joueur.owner || "" },
+        "aria-pressed":String(actif),
+        text:joueur.name,
+        onclick:()=>{
+          if(analyseMembres.has(joueur.owner)) analyseMembres.delete(joueur.owner);
+          else analyseMembres.add(joueur.owner);
+          synchroniser();
+          rendreMatrice(wrap, players);
+        }
+      });
+      groupe.appendChild(puce);
+      return puce;
+    });
+    function synchroniser(){
+      const vide = analyseMembres.size === 0;
+      puceTous.classList.toggle("active", vide);
+      puceTous.setAttribute("aria-pressed", String(vide));
+      puces.forEach(puce => {
+        const actif = analyseMembres.has(puce.dataset.owner);
+        puce.classList.toggle("active", actif);
+        puce.setAttribute("aria-pressed", String(actif));
+      });
+    }
+    return groupe;
+  }
+
   /* LA MATRICE, dans son conteneur stable. Aucune lecture reseau : elle ne
      travaille que sur les joueurs deja charges. */
   function rendreMatrice(wrap, players){
-    const selectTriMobile = el("select",{
-      class:"matrix-mobile-sort-select"
-    });
-    const optionTotal = el("option",{value:"total", text:"Total"});
-    optionTotal.selected = analyseTri === null;
-    selectTriMobile.appendChild(optionTotal);
-    ELEM_ORDER.forEach(e => {
-      const option = el("option",{value:e, text:elemLabel(e)});
-      option.selected = analyseTri === e;
-      selectTriMobile.appendChild(option);
-    });
-    selectTriMobile.addEventListener("change",()=>{
-      const garderFocus = document.activeElement === selectTriMobile;
-      analyseTri = selectTriMobile.value === "total" ? null : selectTriMobile.value;
-      rendreMatrice(wrap, players);
-      if(garderFocus){
-        const remplacement = wrap.querySelector(".matrix-mobile-sort-select");
-        if(remplacement) remplacement.focus();
-      }
-    });
-    const triMobile = el("label",{class:"matrix-mobile-sort"},[
-      el("span",{text:"Trier par"}),
-      selectTriMobile
-    ]);
+    /* Le select de tri PERSISTE d'un rendu a l'autre. Le reconstruire puis lui
+       rendre le focus rouvrait le picker natif sur mobile a CHAQUE choix : le
+       `.focus()` programmatique sur un <select> tactile ordonne au systeme de
+       rouvrir la liste. On garde donc le meme noeud vivant — il conserve son
+       focus tout seul, sans qu'on le rappelle — et on ne remplace que la
+       table. Le tri peut aussi venir d'un clic sur un en-tete de colonne
+       (ordinateur), d'ou la mise a jour de `value` a chaque passage. */
+    let triMobile = wrap.querySelector(".matrix-mobile-sort");
+    let selectTriMobile = triMobile
+      && triMobile.querySelector(".matrix-mobile-sort-select");
+    if(!selectTriMobile){
+      selectTriMobile = el("select",{class:"matrix-mobile-sort-select"});
+      selectTriMobile.appendChild(el("option",{value:"total", text:"Total"}));
+      ELEM_ORDER.forEach(e =>
+        selectTriMobile.appendChild(el("option",{value:e, text:elemLabel(e)})));
+      selectTriMobile.addEventListener("change",()=>{
+        analyseTri = selectTriMobile.value === "total"
+          ? null : selectTriMobile.value;
+        rendreMatrice(wrap, players);
+      });
+      triMobile = el("label",{class:"matrix-mobile-sort"},[
+        el("span",{text:"Trier par"}),
+        selectTriMobile
+      ]);
+    }
+    selectTriMobile.value = analyseTri === null ? "total" : analyseTri;
     const table = el("table",{class:"matrix"});
     const thead = el("tr",{class:"mx-header-row"},[
       el("th",{class:"mx-player", text:"Membre"}),
@@ -696,7 +763,13 @@ import { toast } from "./toast.js";
       thead.appendChild(th);
     });
     table.appendChild(thead);
-    membresTries(players).forEach(p => {
+    /* Le filtre par membre ne restreint QUE les lignes affichees. Vide = toute
+       la confrerie ; la selection ne contient que des membres presents (elle
+       est purgee au rendu), donc la matrice ne peut pas se retrouver vide. */
+    const affiches = analyseMembres.size
+      ? players.filter(joueur => analyseMembres.has(joueur.owner))
+      : players;
+    membresTries(affiches).forEach(p => {
       const total = (p.dps || []).length;
       const tr = el("tr",{class:"mx-player-card"});
       tr.appendChild(el("td",{class:"mx-player", text:p.name}));
@@ -723,7 +796,11 @@ import { toast } from "./toast.js";
       });
       table.appendChild(tr);
     });
-    wrap.replaceChildren(triMobile, table);
+    /* Ne remplacer QUE la table : le select garde son identite, donc son focus,
+       et ne se rouvre pas sur mobile. Au tout premier rendu, poser les deux. */
+    const ancienneTable = wrap.querySelector("table.matrix");
+    if(ancienneTable) ancienneTable.replaceWith(table);
+    else wrap.replaceChildren(triMobile, table);
     /* Le tableau doit deja etre connecte : si Realtime reconstruit la vue
        pendant que la modale est ouverte, ModalStack refuse a juste titre une
        cible de focus detachee. */
@@ -851,8 +928,19 @@ import { toast } from "./toast.js";
     dpsPanel.appendChild(el("p",{class:"an-note",
       text:"Clique un élément pour classer les membres sur cette colonne, ou une case pour ouvrir le build correspondant."}));
     if(players.length){
-      /* Le conteneur reste stable : changer de tri ne relit pas Supabase. */
+      /* On aligne la selection sur les membres presents : un membre disparu
+         depuis le dernier rendu (build supprime en direct) en sort tout seul,
+         donc le filtre se soigne et la matrice ne peut pas se vider. */
+      if(analyseMembres.size){
+        const presents = new Set(players.map(joueur => joueur.owner));
+        [...analyseMembres].forEach(owner => {
+          if(!presents.has(owner)) analyseMembres.delete(owner);
+        });
+      }
+      /* Le conteneur reste stable : changer de tri ou de filtre ne relit pas
+         Supabase. Le filtre par membre se pose au-dessus, la matrice dessous. */
       const wrap = el("div",{class:"matrix-wrap"});
+      dpsPanel.appendChild(filtreMembres(wrap, players));
       dpsPanel.appendChild(wrap);
       rendreMatrice(wrap, players);
     }else{

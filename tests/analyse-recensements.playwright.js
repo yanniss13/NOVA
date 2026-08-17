@@ -183,6 +183,68 @@ async function ouvrirAnalyse(page, section = "supports"){
       "restaurer l'ordre par defaut ne doit pas relire Supabase"
     );
 
+    /* FILTRE PAR MEMBRE : cocher un sous-groupe restreint la matrice a ses
+       lignes, pour comparer. On ajoute un TROISIEME membre afin de prouver que
+       les autres disparaissent vraiment — deux coches sur trois. */
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.profiles.push({ id:"user-3", pseudo:"Escanor" });
+      window.__fakeSupabaseState.roster_characters.push({
+        owner:"user-3",
+        char_id:"jericho",
+        potential_tier:5,
+        builds:{ Rapiere:{} },
+        updated_at:"2026-08-17T09:00:00.000Z"
+      });
+    });
+    await ouvrirAnalyse(page, "dps");
+    const nomsDeLignes = () => page.locator(
+      "#analysePanel-dps .matrix td.mx-player"
+    ).allTextContents();
+    const puceMembre = nom => page.locator(
+      "#analysePanel-dps .matrix-membre"
+    ).filter({ hasText:new RegExp("^" + nom + "$") });
+    const puceTous = page.locator("#analysePanel-dps .matrix-membre-tous");
+
+    assert.deepEqual(
+      (await page.locator("#analysePanel-dps .matrix-membre").allTextContents())
+        .sort(),
+      ["Escanor", "Merlin", "Tous", "Yannis"],
+      "une puce par membre, plus « Tous »"
+    );
+    assert.equal((await nomsDeLignes()).length, 3,
+      "sans filtre, les trois membres s'affichent");
+    assert.equal(await puceTous.getAttribute("aria-pressed"), "true",
+      "« Tous » est actif tant qu'aucun membre n'est coche");
+
+    await page.evaluate(() => { window.__fakeSupabaseState.calls.length = 0; });
+    await puceMembre("Merlin").click();
+    await puceMembre("Escanor").click();
+    assert.deepEqual(
+      (await nomsDeLignes()).sort(),
+      ["Escanor", "Merlin"],
+      "cocher Merlin et Escanor masque Yannis"
+    );
+    assert.equal(await puceTous.getAttribute("aria-pressed"), "false",
+      "« Tous » n'est plus actif quand un membre est coche");
+    assert.equal(
+      await page.evaluate(() => window.__fakeSupabaseState.calls.length),
+      0,
+      "filtrer par membre ne doit relire aucune table Supabase"
+    );
+
+    await puceMembre("Tous").click();
+    assert.equal((await nomsDeLignes()).length, 3,
+      "« Tous » restaure les trois membres");
+    /* On retire le membre d'appoint : les tests mobiles suivants raisonnent sur
+       la confrerie d'origine. */
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.profiles =
+        window.__fakeSupabaseState.profiles.filter(p => p.id !== "user-3");
+      window.__fakeSupabaseState.roster_characters =
+        window.__fakeSupabaseState.roster_characters.filter(r => r.owner !== "user-3");
+    });
+    await ouvrirAnalyse(page, "dps");
+
     /* SUR TELEPHONE, chaque membre devient une carte : son nom et son total
        restent en tete, puis les huit elements tiennent en quatre colonnes.
        Le tableau semantique reste unique afin que les actions de build et la
@@ -200,6 +262,13 @@ async function ouvrirAnalyse(page, section = "supports"){
       window.__fakeSupabaseState.calls.length = 0;
     });
     await triMobile.focus();
+    /* On MARQUE le noeud du select avant de trier. S'il survit au rendu, c'est
+       qu'on ne l'a pas reconstruit : reconstruire puis rappeler `.focus()`
+       rouvrait le picker natif sur mobile a chaque choix. Le focus conserve, a
+       lui seul, ne le prouve pas — un select neuf refocalise le passerait. */
+    await page.evaluate(() => {
+      document.querySelector(".matrix-mobile-sort-select").dataset.probeTri = "1";
+    });
     await triMobile.selectOption("ICE");
     assert.equal(await premierMembre(), "Merlin",
       "le tri mobile Glace doit placer le meilleur potentiel en tete");
@@ -209,6 +278,13 @@ async function ouvrirAnalyse(page, section = "supports"){
       )),
       true,
       "le tri mobile doit conserver le focus apres le rendu"
+    );
+    assert.equal(
+      await page.evaluate(() =>
+        document.querySelector(".matrix-mobile-sort-select").dataset.probeTri
+      ),
+      "1",
+      "le select de tri doit rester le meme noeud (sinon le picker se rouvre sur mobile)"
     );
     assert.equal(
       await page.evaluate(() => window.__fakeSupabaseState.calls.length),
