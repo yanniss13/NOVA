@@ -787,4 +787,81 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   );
 }
 
+/* ======================================================================
+   LE TERME D'AVANTAGE ELEMENTAIRE, enfin exerce, et ses deux bornes.
+
+   Toutes les cibles du jeu accessibles ici sont Akumu, dont la faiblesse est
+   nulle : ce terme n'etait couvert par AUCUN releve. Les multiplicateurs
+   publies par l'outil de reference pour Diane (Terre) contre une cible faible
+   a la Terre le fixent (page formule-de-degats, exemple de validation).
+   ====================================================================== */
+
+/* Faiblesse et resistance elementaire ensemble : resistance 15 % -> x0,85,
+   faiblesse +2000 -> x1,2. Sans defense, le total isole ces deux termes. */
+{
+  const r = degatsAttendus({
+    stats:{ atk:1000, critRate:0, critDamage:0 },
+    competence:COUP_SIMPLE,
+    cible:Object.assign({}, CIBLE_NEUTRE, {
+      def:0, resistanceElementaire:1500, faiblesse:2000
+    })
+  });
+  assert.equal(Math.round(r.total), 1020,
+    "1000 x 0,85 (resist 15 %) x 1,2 (faiblesse +2000)");
+}
+
+/* Frapper une RESISTANCE, non une faiblesse : le terme signe descend sous 1. */
+{
+  const r = degatsAttendus({
+    stats:{ atk:1000 }, competence:COUP_SIMPLE,
+    cible:Object.assign({}, CIBLE_NEUTRE, { def:0, faiblesse:-2000 })
+  });
+  assert.equal(Math.round(r.total), 800, "faiblesse -2000 -> x0,8");
+}
+
+/* LE PLAFOND d'avantage elementaire a x6 (+500 %) : la somme faiblesse + burst
+   + stuff est capee la. Datamine 7dsorigin. Aucune cible du jeu accessible ici
+   n'en approche - un garde pour une cible extreme a venir, pas un chiffre
+   d'aujourd'hui. */
+{
+  const auCap = degatsAttendus({
+    stats:{ atk:1000 }, competence:COUP_SIMPLE,
+    cible:Object.assign({}, CIBLE_NEUTRE, { def:0, faiblesse:50000 })
+  });
+  assert.equal(Math.round(auCap.total), 6000, "50000 = +500 % -> x6 pile");
+  const auDela = degatsAttendus({
+    stats:{ atk:1000 }, competence:COUP_SIMPLE,
+    cible:Object.assign({}, CIBLE_NEUTRE, { def:0, faiblesse:120000 })
+  });
+  assert.equal(Math.round(auDela.total), 6000,
+    "au-dela du cap, le terme reste borne a x6");
+}
+
+/* LE PLANCHER de degats a 5 % : la reduction defense x resistance ne peut pas
+   ramener un coup sous 5 % de sa valeur d'avant mitigation. Datamine
+   7dsorigin. Cible extreme fabriquee, aucune n'existe a ce jour. */
+{
+  const r = degatsAttendus({
+    stats:{ atk:1000 }, competence:COUP_SIMPLE,
+    cible:Object.assign({}, CIBLE_NEUTRE, {
+      def:5600, resistanceElementaire:9900
+    })
+  });
+  /* Sans plancher : 1000 x 0,5 x 0,01 = 5. Avec : 1000 x 0,05 = 50. */
+  assert.equal(Math.round(r.total), 50,
+    "0,5 x 0,01 = 0,005 remonte au plancher 0,05");
+}
+
+/* Et le plancher NE MORD PAS dans la plage reelle : Akumu, resistance 30 %,
+   defense de moitie, reste loin au-dessus de 5 %. Le coup garde sa valeur
+   exacte - preuve que le garde n'a rien deplace. */
+{
+  const r = degatsAttendus({
+    stats:{ atk:1000 }, competence:COUP_SIMPLE,
+    cible:Object.assign({}, CIBLE_NEUTRE, { resistanceElementaire:3000 })
+  });
+  assert.equal(Math.round(r.total), 350,
+    "0,5 x 0,7 = 0,35, bien au-dessus du plancher");
+}
+
 console.log("degats-calcul.test.js OK");

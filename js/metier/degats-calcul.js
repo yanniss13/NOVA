@@ -154,6 +154,19 @@
   const PLAFOND_PROPRE = 9000;
   const PLAFOND_TOTAL = 10000;
 
+  /* Deux bornes elementaires du datamine 7dsorigin (page formule-de-degats,
+     section « Validation »), absentes de nos releves directs parce qu'AUCUNE
+     cible accessible ici ne les atteint : Akumu n'a aucune faiblesse, et sa
+     resistance est modeste. Elles ne deplacent donc aucun chiffre affiche
+     aujourd'hui - elles restent justes le jour ou une cible extreme paraitra.
+
+     PLAFOND_FAIBLESSE : la somme faiblesse + burst + stuff est capee de sorte
+     que le terme d'avantage elementaire ne depasse jamais x6 (+500 %).
+     PLANCHER_DEGATS : la reduction defense x resistance ne peut pas ramener un
+     coup sous 5 % de sa valeur d'avant mitigation. */
+  const PLAFOND_FAIBLESSE = 6;
+  const PLANCHER_DEGATS = 0.05;
+
   function nombreFini(valeur){
     return typeof valeur === "number" && Number.isFinite(valeur);
   }
@@ -276,7 +289,14 @@
       percementNet,
       defEffective:(Number(cible.def) || 0) * (1 - reductionDef / RAPPORT),
       resistance:1 - (Number(cible.resistanceElementaire) || 0) / RAPPORT,
-      faiblesse:1 + (Number(cible.faiblesse) || 0) / RAPPORT
+      /* Cape a x6 : le terme signe peut monter (faiblesse) ou descendre
+         (resistance), mais la somme des sources ne l'amplifie pas au-dela de
+         +500 %. Le plafond ne mord que par le haut - frapper une resistance
+         reste pleinement penalisant. */
+      faiblesse:Math.min(
+        PLAFOND_FAIBLESSE,
+        1 + (Number(cible.faiblesse) || 0) / RAPPORT
+      )
     };
   }
 
@@ -354,8 +374,20 @@
        critique, donc le coup sans critique s'obtient sans le retirer, et les
        deux autres colonnes n'en sont que deux ponderations. Trois appels aux
        entrees differentes ouvriraient trois occasions de diverger. */
-    const facteurCommun = facteurs.bonusOffensif * mitigation
-      * facteurs.resistance * facteurs.faiblesse;
+    /* Le plancher de degats : la reduction cote cible — defense puis
+       resistance elementaire — ne peut pas faire tomber le coup sous 5 % de sa
+       valeur d'avant mitigation. Datamine 7dsorigin.
+
+       Il ne vit QU'ICI, en avant : calibrerConstante() ne l'inverse pas, parce
+       qu'aucune cible reelle ne l'atteint et qu'un coup deja plancher a perdu
+       l'information dont la calibration a besoin. Les termes `mitigation` et
+       `resistance` restent affiches bruts plus bas ; leur produit n'est floore
+       que dans ce cas extreme, ou le detail cede le pas a la justesse du total. */
+    const reductionCible = Math.max(
+      PLANCHER_DEGATS, mitigation * facteurs.resistance
+    );
+    const facteurCommun = facteurs.bonusOffensif * reductionCible
+      * facteurs.faiblesse;
     const sansCritique = facteurCommun * base;
     const avecCritique = sansCritique * multiplicateurCritique;
     const total = sansCritique * critique;
