@@ -1,36 +1,4 @@
 {
- "I_AtkAdd_Rate": {
-  "fr": "Augmentation de l'attaque",
-  "en": "Attack Increase",
-  "taux": true
- },
- "I_DefAdd_Rate": {
-  "fr": "Augmentation de la défense",
-  "en": "Defense Increase",
-  "taux": true
- },
- "I_MaxHpAdd_Rate": {
-  "fr": "Augmentation des PV",
-  "en": "HP Increase",
-  "taux": true
- },
- "C_Critical_Rate": {
-  "fr": "Chances crit.",
-  "en": "Crit Chance",
-  "taux": true,
-  "court": "Taux critique"
- },
- "C_Critical_Dam_Rate": {
-  "fr": "Dégâts crit.",
-  "en": "Crit Damage",
-  "taux": true,
-  "court": "Dégâts crit."
- },
- "D_Protect_Cur_Rate": {
-  "fr": "Percement de défense",
-  "en": "Defense Shatter",
-  "taux": true
- },
  "B_Atk_Equip": {
   "fr": "Attaque de l'équipement",
   "en": "Equipment Attack"
@@ -43,6 +11,18 @@
  "B_MaxHp_Equip": {
   "fr": "PV de l'équipement",
   "en": "Equipment HP"
+ },
+ "C_Critical_Rate": {
+  "fr": "Chances crit.",
+  "en": "Crit Chance",
+  "taux": true,
+  "court": "Taux critique"
+ },
+ "C_Critical_Dam_Rate": {
+  "fr": "Dégâts crit.",
+  "en": "Crit Damage",
+  "taux": true,
+  "court": "Dégâts crit."
  },
  "C_Critical_ResRate": {
   "fr": "Résistance crit.",
@@ -83,6 +63,21 @@
  "Ultimateskill_Damadd_Rate": {
   "fr": "Augmentation des dégâts d'attaque ultime",
   "en": "Ultimate Move Damage Increase",
+  "taux": true
+ },
+ "I_AtkAdd_Rate": {
+  "fr": "Augmentation de l'attaque",
+  "en": "Attack Increase",
+  "taux": true
+ },
+ "I_DefAdd_Rate": {
+  "fr": "Augmentation de la défense",
+  "en": "Defense Increase",
+  "taux": true
+ },
+ "I_MaxHpAdd_Rate": {
+  "fr": "Augmentation des PV",
+  "en": "HP Increase",
   "taux": true
  },
  "Default_Rate": {
@@ -179,6 +174,11 @@
  "Holy_Element_Rate": {
   "fr": "Augmentation des dégâts du Sacré",
   "en": "Holy Damage Increase"
+ },
+ "D_Protect_Cur_Rate": {
+  "fr": "Percement de défense",
+  "en": "Defense Shatter",
+  "taux": true
  },
  "TickDam_Rate": {
   "fr": "Efficacité des dégâts sur la durée",
