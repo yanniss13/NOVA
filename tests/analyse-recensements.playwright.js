@@ -46,6 +46,20 @@ async function ouvrirAnalyse(page){
       });
     });
     await ouvrirAnalyse(page);
+    const elementsDuRecensement = await page.locator(
+      "#analyseBody .debuff-row .elem-badge"
+    ).allTextContents();
+    assert.ok(elementsDuRecensement.length > 0);
+    assert.ok(
+      elementsDuRecensement.every(label => ["Tous", "Foudre"].includes(label.trim())),
+      "l'Analyse ne doit lister que les supports generaux ou Foudre"
+    );
+    assert.equal(
+      await page.locator("#analyseBody .debuff-row .elem-badge")
+        .filter({hasNotText:/^(Tous|Foudre)$/}).count(),
+      0,
+      "Feu, Tenebres et les autres elements doivent etre absents"
+    );
     const premierMembre = () => page.locator(
       "#analyseBody .matrix .mx-player"
     ).nth(1).textContent();
@@ -223,11 +237,11 @@ async function ouvrirAnalyse(page){
     await page.evaluate(() => {
       window.__fakeSupabaseState.roster_characters = [{
         owner:"user-1",
-        char_id:"merlin",
+        char_id:"drake",
         potential_tier:9,
         builds:{
-          "Livre":{
-            armor:{ "Armure liee":"7ds-armures-ssr/Armure liee/Chercheuse de savoir.webp" },
+          "Baton":{
+            armor:{ "Armure liee":"7ds-armures-ssr/Armure liee/Chevalier impérial.webp" },
             armorConfig:{ "Armure liee":{ passiveLevel:2 } }
           }
         },
@@ -235,51 +249,52 @@ async function ouvrirAnalyse(page){
       }];
     });
     await ouvrirAnalyse(page);
-    const chercheuse = page.locator('#analyseBody .debuff-row[data-source="tenue"]')
-      .filter({ hasText:"Chercheuse de savoir" }).first();
-    assert.ok(await chercheuse.count() > 0,
+    const imperial = page.locator('#analyseBody .debuff-row[data-source="tenue"]')
+      .filter({ hasText:"Chevalier impérial" }).first();
+    assert.ok(await imperial.count() > 0,
       "la tenue gravee doit nommer la tenue, pas une arme");
     assert.equal(
-      await chercheuse.getAttribute("data-vise"),
+      await imperial.getAttribute("data-vise"),
       "allies",
       "un passif qui renforce l'equipe appartient au second recensement"
     );
     /* CE QUE CE MEMBRE APPORTE, et non ce que la tenue rend au maximum.
 
-       « Déluge activé : attaque de Feu des alliés +20 % » vaut [12, 16, 20] %
+       « Coups de Pulsion : dégâts de Foudre des alliés +20 % » vaut
+       [12, 16, 20] %
        selon le niveau du passif. Le membre l'a declare au niveau 2 : sa ligne
        doit donc annoncer +16 %, pas +20 %, et surtout pas un « N2 » qui
        laissait le calcul a faire. */
     assert.match(
-      await chercheuse.locator(".db-libelle").textContent(),
+      await imperial.locator(".db-libelle").textContent(),
       /\+20 %/,
       "le libelle continue d'annoncer le maximum de la tenue"
     );
     assert.equal(
-      await chercheuse.locator(".db-porteur").first().textContent(),
+      await imperial.locator(".db-porteur").first().textContent(),
       "Yannis P9 · +16 %",
       "le porteur annonce la valeur A SON niveau, pas le maximum de la tenue"
     );
     assert.equal(
-      await chercheuse.locator(".db-porteur").first().getAttribute("title"),
+      await imperial.locator(".db-porteur").first().getAttribute("title"),
       "Passif de niveau 2 sur 3",
       "le niveau reste lisible, mais il cede la place a la valeur qu'il vaut"
     );
     /* Le libelle d'une tenue annonce son MAXIMUM : la ligne doit le dire,
        sinon elle promet a tout le monde ce que seul un niveau 3 rend. */
-    assert.ok(await chercheuse.locator(".db-au-max").count() > 0,
+    assert.ok(await imperial.locator(".db-au-max").count() > 0,
       "une ligne de tenue doit signaler que son libelle vaut au niveau 3");
 
     /* Niveau non renseigne : dit, jamais suppose. */
     await page.locator('.tab[data-view="builder"]').click();
     await page.evaluate(() => {
-      window.__fakeSupabaseState.roster_characters[0].builds.Livre.armorConfig = {};
+      window.__fakeSupabaseState.roster_characters[0].builds.Baton.armorConfig = {};
       window.__fakeSupabaseEmit("roster_characters", "UPDATE");
     });
     await ouvrirAnalyse(page);
     assert.equal(
       await page.locator('#analyseBody .debuff-row[data-source="tenue"]')
-        .filter({ hasText:"Chercheuse de savoir" }).first()
+        .filter({ hasText:"Chevalier impérial" }).first()
         .locator(".db-porteur").first().textContent(),
       "Yannis P9 · niv. ?",
       "un niveau absent se dit, il ne se remplace pas par le maximum"
@@ -348,9 +363,11 @@ async function ouvrirAnalyse(page){
        doit pas casser ce test sans raison. */
     const totalContreLaCible = await page.evaluate(() => {
       const armes = Object.values(window.SEVEN_DS_BUFFS_SUPPORTS || {}).flat()
-        .filter(ligne => ligne.cible === "ennemi").length;
+        .filter(ligne => ligne.cible === "ennemi"
+          && (!ligne.element || ligne.element === "thunder")).length;
       const tenues = Object.values(window.SEVEN_DS_PASSIFS_GRAVES || {}).flat()
-        .filter(passif => passif.cible === "allies" && passif.cibleEnnemi).length;
+        .filter(passif => passif.cible === "allies" && passif.cibleEnnemi
+          && (!passif.element || passif.element === "thunder")).length;
       return armes + tenues;
     });
     assert.equal(

@@ -149,6 +149,10 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       La logique pure vit dans `js/metier/affaiblissement-cible.js`; la vue
       charge seule la table à la demande, distingue roster vide et lecture en
       échec, et conserve les effets absents afin de guider la composition.
+      Dans l'interface Analyse, les deux recensements sont volontairement
+      limités aux effets **Foudre** (`element:"thunder"`) et **généraux**
+      (`element:null`). Les autres éléments restent dans les catalogues pour
+      le calculateur : ne pas les supprimer des fichiers de données.
 
 Après cette mise à jour, l'utilisateur doit rejouer le contenu complet de
 `supabase/schema.sql` dans le SQL Editor Supabase afin d'appliquer le schéma,
