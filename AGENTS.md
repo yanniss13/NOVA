@@ -153,6 +153,10 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       limités aux effets **Foudre** (`element:"thunder"`) et **généraux**
       (`element:null`). Les autres éléments restent dans les catalogues pour
       le calculateur : ne pas les supprimer des fichiers de données.
+      L'interface sépare désormais ces données en trois sous-vues locales :
+      **Vue d'ensemble**, **DPS par élément** et **Supports Foudre**. Elles sont
+      toutes construites depuis une même lecture des rosters et des tables :
+      changer de sous-vue ne doit jamais déclencher une requête Supabase.
 
 Après cette mise à jour, l'utilisateur doit rejouer le contenu complet de
 `supabase/schema.sql` dans le SQL Editor Supabase afin d'appliquer le schéma,
