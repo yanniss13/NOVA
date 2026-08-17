@@ -484,7 +484,7 @@ import { toast } from "./toast.js";
   const ANALYSE_SOUS_VUES = [
     { id:"overview", label:"Vue d'ensemble" },
     { id:"dps", label:"DPS par élément" },
-    { id:"supports", label:"Supports Foudre" }
+    { id:"supports", label:"Soutiens" }
   ];
   /* L'element sur lequel la matrice est triee, ou null pour l'ordre par
      defaut - le nombre de DPS. Il remplace l'ancien element du classement :
