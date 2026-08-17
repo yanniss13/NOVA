@@ -435,6 +435,9 @@ async function installRosterFocusFakeSupabase(page){
     await rosterFocusPage.locator("#memberRosterOverlay")
       .waitFor({ state:"hidden" });
     await rosterFocusPage.locator('.tab[data-view="analyse"]').click();
+    await rosterFocusPage.locator(
+      '.analyse-subnav-button[data-analyse-section="dps"]'
+    ).click();
     const meliodasRank = rosterFocusPage.locator(
       '.mx-action[data-owner="focus-user"][data-char="meliodas"][data-elem="DARK"]'
     );

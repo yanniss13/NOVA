@@ -12,9 +12,19 @@ const { serveRepo } = require("./helpers/serve");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
-async function ouvrirAnalyse(page){
+async function ouvrirAnalyse(page, section = "supports"){
   await page.locator('.tab[data-view="analyse"]').click();
-  await page.locator("#analyseBody .debuff-row").first().waitFor();
+  const bouton = page.locator(
+    `.analyse-subnav-button[data-analyse-section="${section}"]`
+  );
+  await bouton.waitFor();
+  if(await bouton.getAttribute("aria-pressed") !== "true") await bouton.click();
+  const cible = section === "dps"
+    ? "#analysePanel-dps .matrix"
+    : section === "overview"
+      ? "#analysePanel-overview .analyse-summary"
+      : "#analysePanel-supports .debuff-row";
+  await page.locator(cible).first().waitFor();
 }
 
 (async()=>{
@@ -45,20 +55,28 @@ async function ouvrirAnalyse(page){
         updated_at:"2026-08-17T08:00:00.000Z"
       });
     });
-    await ouvrirAnalyse(page);
-    const elementsDuRecensement = await page.locator(
-      "#analyseBody .debuff-row .elem-badge"
-    ).allTextContents();
-    assert.ok(elementsDuRecensement.length > 0);
-    assert.ok(
-      elementsDuRecensement.every(label => ["Tous", "Foudre"].includes(label.trim())),
-      "l'Analyse ne doit lister que les supports generaux ou Foudre"
+    await ouvrirAnalyse(page, "overview");
+    assert.equal(
+      await page.locator("#analysePanel-overview").isVisible(),
+      true,
+      "la vue d'ensemble doit etre affichee par defaut"
     );
     assert.equal(
-      await page.locator("#analyseBody .debuff-row .elem-badge")
-        .filter({hasNotText:/^(Tous|Foudre)$/}).count(),
+      await page.locator("#analysePanel-dps").isHidden(),
+      true,
+      "la matrice ne doit pas encombrer la vue d'ensemble"
+    );
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.calls.length = 0;
+    });
+    await page.locator(
+      '.analyse-subnav-button[data-analyse-section="dps"]'
+    ).click();
+    await page.locator("#analysePanel-dps .matrix").waitFor();
+    assert.equal(
+      await page.evaluate(() => window.__fakeSupabaseState.calls.length),
       0,
-      "Feu, Tenebres et les autres elements doivent etre absents"
+      "changer de sous-vue ne doit relire aucune table Supabase"
     );
     const premierMembre = () => page.locator(
       "#analyseBody .matrix .mx-player"
@@ -101,6 +119,24 @@ async function ouvrirAnalyse(page){
       await page.evaluate(() => window.__fakeSupabaseState.calls.length),
       0,
       "restaurer l'ordre par defaut ne doit pas relire Supabase"
+    );
+
+    await page.locator(
+      '.analyse-subnav-button[data-analyse-section="supports"]'
+    ).click();
+    const elementsDuRecensement = await page.locator(
+      "#analysePanel-supports .debuff-row .elem-badge"
+    ).allTextContents();
+    assert.ok(elementsDuRecensement.length > 0);
+    assert.ok(
+      elementsDuRecensement.every(label => ["Tous", "Foudre"].includes(label.trim())),
+      "l'Analyse ne doit lister que les supports generaux ou Foudre"
+    );
+    assert.equal(
+      await page.locator("#analysePanel-supports .debuff-row .elem-badge")
+        .filter({hasNotText:/^(Tous|Foudre)$/}).count(),
+      0,
+      "Feu, Tenebres et les autres elements doivent etre absents"
     );
 
     /* Une lecture reussie et vide affirme que personne ne possede l'effet. */

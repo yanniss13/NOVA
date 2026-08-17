@@ -387,8 +387,7 @@ import { toast } from "./toast.js";
          confrerie. Les effets generaux restent utiles a toute equipe ; les
          bonus propres aux autres elements restent dans le catalogue pour le
          calculateur, mais n'encombrent plus ce recensement. */
-      .filter(ligne => ligne.vise === vise
-        && (!ligne.element || String(ligne.element).toLowerCase() === "thunder"))
+      .filter(ligne => ligne.vise === vise && ligneVisibleDansAnalyse(ligne))
       .forEach(ligne => {
         const cle = ligne.support || "";
         if(!parSupport.has(cle)) parSupport.set(cle, []);
@@ -481,10 +480,85 @@ import { toast } from "./toast.js";
 
   /* ============================ Analyse ============================ */
   let analyseRenderId = 0;
+  let analyseSousVue = "overview";
+  const ANALYSE_SOUS_VUES = [
+    { id:"overview", label:"Vue d'ensemble" },
+    { id:"dps", label:"DPS par élément" },
+    { id:"supports", label:"Supports Foudre" }
+  ];
   /* L'element sur lequel la matrice est triee, ou null pour l'ordre par
      defaut - le nombre de DPS. Il remplace l'ancien element du classement :
      meme etat conserve d'un rendu a l'autre, meme question posee. */
   let analyseTri = null;
+
+  function ligneVisibleDansAnalyse(ligne){
+    return !ligne.element
+      || String(ligne.element).toLowerCase() === "thunder";
+  }
+
+  function afficherSousVueAnalyse(box, sousVue, donnerLeFocus = false){
+    if(!ANALYSE_SOUS_VUES.some(item => item.id === sousVue)) return;
+    analyseSousVue = sousVue;
+    box.querySelectorAll(".analyse-subnav-button").forEach(button => {
+      const active = button.dataset.analyseSection === sousVue;
+      button.classList.toggle("active", active);
+      button.setAttribute("aria-pressed", String(active));
+      if(active && donnerLeFocus) button.focus();
+    });
+    box.querySelectorAll(".analyse-panel").forEach(panel => {
+      panel.hidden = panel.dataset.analyseSection !== sousVue;
+    });
+  }
+
+  function navigationAnalyse(box){
+    const nav = el("div",{
+      class:"analyse-subnav",
+      role:"group",
+      "aria-label":"Sections de l'analyse"
+    });
+    ANALYSE_SOUS_VUES.forEach(item => {
+      nav.appendChild(el("button",{
+        id:"analyseSubpage-" + item.id,
+        class:"analyse-subnav-button" + (analyseSousVue === item.id ? " active" : ""),
+        type:"button",
+        dataset:{ analyseSection:item.id },
+        "aria-controls":"analysePanel-" + item.id,
+        "aria-pressed":String(analyseSousVue === item.id),
+        text:item.label,
+        onclick:()=>afficherSousVueAnalyse(box, item.id)
+      }));
+    });
+    return nav;
+  }
+
+  function panneauAnalyse(id){
+    return el("section",{
+      id:"analysePanel-" + id,
+      class:"analyse-panel",
+      dataset:{ analyseSection:id },
+      "aria-labelledby":"analyseSubpage-" + id
+    });
+  }
+
+  function carteResume(valeur, libelle, detail){
+    return el("div",{class:"analyse-summary-card"},[
+      el("strong",{class:"analyse-summary-value", text:String(valeur)}),
+      el("span",{class:"analyse-summary-label", text:libelle}),
+      el("span",{class:"analyse-summary-detail", text:detail})
+    ]);
+  }
+
+  function resumeDesSupports(membres, tablesLues, lectureRostersReussie){
+    if(!tablesLues || !lectureRostersReussie) return null;
+    const groupes = SECTIONS_DU_RECENSEMENT.flatMap(section =>
+      groupesDuRecensement(section.vise, membres)
+    );
+    return {
+      total:groupes.reduce((n, groupe) => n + groupe.lignes.length, 0),
+      portes:groupes.reduce((n, groupe) =>
+        n + groupe.lignes.filter(item => item.porteurs.length).length, 0)
+    };
+  }
 
   function celluleParClef(root, key){
     if(!root || !key) return null;
@@ -664,85 +738,106 @@ import { toast } from "./toast.js";
        avant meme que la vue ne le voie. */
     const players = membres.filter(p => (p.dps || []).length);
 
-    /* Aucun roster lu : les sections DPS n'ont rien a montrer, et huit cartes
-       a zero suivies d'une matrice vide ne feraient que du bruit. On garde la
-       consigne qui dit quoi faire - elle avait disparu avec le retour
-       anticipe - et le recensement, qui reste entier sans roster.
+    /* Les panneaux sont tous construits depuis la meme lecture. Changer de
+       sous-vue ne rappelle donc ni les rosters ni les tables d'effets. */
+    const overview = panneauAnalyse("overview");
+    const dpsPanel = panneauAnalyse("dps");
+    const supportsPanel = panneauAnalyse("supports");
+    box.append(
+      navigationAnalyse(box),
+      overview,
+      dpsPanel,
+      supportsPanel
+    );
 
-       Le titre change selon ce qu'on SAIT : une lecture en echec n'autorise
-       pas a dire « rien a analyser », qui affirmerait un vide constate. */
-    if(!membres.length){
-      box.appendChild(el("div",{class:"empty-state"},[
-        el("p",{class:"big", text:lectureRostersReussie
-          ? "Rien à analyser"
-          : "Rosters indisponibles"}),
-        el("p",{text:lectureRostersReussie
-          ? "Les DPS sont calculés depuis les rosters : ajoute des personnages offensifs dans l'onglet « Roster »."
-          : "La lecture des rosters a échoué. Le recensement ci-dessous reste exact, mais il ne peut pas dire qui possède quoi."})
-      ]));
-      SECTIONS_DU_RECENSEMENT.forEach(section => rendreRecensement(
-        box, section, membres, tablesLues, lectureRostersReussie
-      ));
-      return;
-    }
-
-    // --- 1) Couverture par élément ---
     const cov = {}; ELEM_ORDER.forEach(e=>cov[e]={players:0,dps:0});
     players.forEach(p=>{
       const has={};
       (p.dps||[]).forEach(d=>{ const e=dpsElem(d); if(cov[e]){ cov[e].dps++; has[e]=true; } });
       ELEM_ORDER.forEach(e=>{ if(has[e]) cov[e].players++; });
     });
-    box.appendChild(el("h2",{class:"an-title", text:"Couverture par élément"}));
-    const covRow = el("div",{class:"cov-row"});
-    ELEM_ORDER.forEach(e=>{
-      const c = el("div",{class:"cov-card"});
-      c.style.setProperty("--ec", elemColor(e));
-      c.appendChild(elemBadge(e));
-      c.appendChild(el("div",{class:"cov-nums"},[
-        el("span",{class:"cov-big", text:String(cov[e].players)}),
-        el("span",{class:"cov-lbl", text:"membre"+(cov[e].players>1?"s":"")})
+    const supports = resumeDesSupports(
+      membres, tablesLues, lectureRostersReussie
+    );
+    const totalDps = players.reduce((n, joueur) =>
+      n + (joueur.dps || []).length, 0);
+    const dpsFoudre = players.reduce((n, joueur) => n + (joueur.dps || [])
+      .filter(personnage => dpsElem(personnage) === "THUNDER").length, 0);
+
+    overview.appendChild(el("h2",{class:"an-title", text:"En un coup d'œil"}));
+    overview.appendChild(el("div",{class:"analyse-summary"},[
+      carteResume(
+        lectureRostersReussie ? membres.length : "—",
+        "Membres analysés",
+        lectureRostersReussie ? "rosters lus" : "lecture indisponible"
+      ),
+      carteResume(
+        lectureRostersReussie ? totalDps : "—",
+        "DPS recensés",
+        "tous éléments"
+      ),
+      carteResume(
+        lectureRostersReussie ? dpsFoudre : "—",
+        "DPS Foudre",
+        "prêts pour une composition Foudre"
+      ),
+      carteResume(
+        supports ? supports.portes + " / " + supports.total : "—",
+        "Supports couverts",
+        supports ? "effets généraux ou Foudre" : "donnée indisponible"
+      )
+    ]));
+    if(membres.length){
+      overview.appendChild(el("h2",{class:"an-title", text:"Couverture par élément"}));
+      const covRow = el("div",{class:"cov-row"});
+      ELEM_ORDER.forEach(e=>{
+        const c = el("div",{class:"cov-card"});
+        c.style.setProperty("--ec", elemColor(e));
+        c.appendChild(elemBadge(e));
+        c.appendChild(el("div",{class:"cov-nums"},[
+          el("span",{class:"cov-big", text:String(cov[e].players)}),
+          el("span",{class:"cov-lbl", text:"membre"+(cov[e].players>1?"s":"")})
+        ]));
+        c.appendChild(el("div",{class:"cov-sub", text:cov[e].dps+" DPS"}));
+        covRow.appendChild(c);
+      });
+      overview.appendChild(covRow);
+    }else{
+      overview.appendChild(el("div",{class:"empty-state analyse-empty"},[
+        el("p",{class:"big", text:lectureRostersReussie
+          ? "Rien à analyser"
+          : "Rosters indisponibles"}),
+        el("p",{text:lectureRostersReussie
+          ? "Ajoute des personnages dans l'onglet « Roster » pour calculer la couverture."
+          : "La lecture des rosters a échoué. Les supports restent consultables sans afficher de fausse absence."})
       ]));
-      c.appendChild(el("div",{class:"cov-sub", text:cov[e].dps+" DPS"}));
-      covRow.appendChild(c);
-    });
-    box.appendChild(covRow);
+    }
 
-    /* --- 2) Matrice membre × élément ---
-
-       Elle a absorbe le « Classement par potentiel », qui posait la meme
-       question — qui a un DPS de cet element, et a quel potentiel — mais pour
-       UN element a la fois, derriere une pastille a cliquer, et dont la
-       colonne « DPS » repetait le meme nom du haut en bas. La matrice les
-       montre tous les huit d'un coup.
-
-       Deux choses ont ete reprises du classement pour ne rien perdre : ses
-       cases s'ouvrent sur la fiche du membre, et l'en-tete d'un element trie
-       les membres par leur meilleur potentiel dans cet element - c'est-a-dire
-       le classement lui-meme, rendu dans le tableau. */
-    box.appendChild(el("h2",{class:"an-title", text:"Matrice membre × élément"}));
-    box.appendChild(el("p",{class:"an-note",
+    dpsPanel.appendChild(el("h2",{class:"an-title", text:"Matrice membre × élément"}));
+    dpsPanel.appendChild(el("p",{class:"an-note",
       text:"Clique un élément pour classer les membres sur cette colonne, ou une case pour ouvrir le build correspondant."}));
-    /* La matrice vit dans un conteneur STABLE, comme le classement avant elle :
-       changer de colonne de tri ne remplace que ce conteneur. Passer par
-       `renderAnalyse()` relirait Supabase a chaque clic d'en-tete. */
-    const wrap = el("div",{class:"matrix-wrap"});
-    box.appendChild(wrap);
-    rendreMatrice(wrap, players);
+    if(players.length){
+      /* Le conteneur reste stable : changer de tri ne relit pas Supabase. */
+      const wrap = el("div",{class:"matrix-wrap"});
+      dpsPanel.appendChild(wrap);
+      rendreMatrice(wrap, players);
+    }else{
+      dpsPanel.appendChild(el("div",{class:"empty-state analyse-empty"},[
+        el("p",{class:"big", text:lectureRostersReussie
+          ? "Aucun DPS recensé"
+          : "Matrice indisponible"}),
+        el("p",{text:lectureRostersReussie
+          ? "Ajoute un personnage offensif dans l'onglet « Roster »."
+          : "La lecture des rosters a échoué."})
+      ]));
+    }
 
-    /* --- 3) Les deux recensements, en fin de page ---
-
-       Ils occupaient le milieu, entre la couverture et la matrice, du temps ou
-       ils tenaient sur quelques lignes. A soixante-six lignes ils repoussaient
-       la matrice au-dela du quatrieme ecran — c'est-a-dire hors de portee,
-       alors que c'est ELLE qui repond a « qui j'emmene ».
-
-       La coupure suit maintenant la nature de la donnee : au-dessus ce que la
-       confrerie possede, derive des rosters ; en dessous ce que le jeu offre,
-       lu dans deux tables qui ne dependent d'aucun roster. */
+    supportsPanel.appendChild(el("p",{class:"analyse-panel-intro",
+      text:"Uniquement les effets généraux et Foudre utiles à la composition de la confrérie."}));
     SECTIONS_DU_RECENSEMENT.forEach(section => rendreRecensement(
-      box, section, membres, tablesLues, lectureRostersReussie
+      supportsPanel, section, membres, tablesLues, lectureRostersReussie
     ));
+    afficherSousVueAnalyse(box, analyseSousVue);
   }
 
 export { renderAnalyse };
