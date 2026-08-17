@@ -45,6 +45,22 @@
 .rk-portrait img{width:100%;height:100%;object-fit:cover}
 .rank-empty{padding:18px;text-align:center;color:var(--muted)}
 .matrix-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+/* Filtre par membre : une rangee de puces au-dessus de la matrice pour comparer
+   un sous-groupe. Meme grammaire que les autres controles de l'Analyse — pilule
+   discrete, or quand active. Pas de `min-height` ici : la regle mobile
+   `pointer:coarse` cible deja `button` et donne les 44 px tactiles, le desktop
+   restant compact via le seul rembourrage. */
+.matrix-membres{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
+.matrix-membre{appearance:none;cursor:pointer;padding:6px 12px;
+  border:1px solid var(--line);border-radius:999px;background:var(--panel-2);
+  color:var(--muted);font:600 12px var(--ui);
+  transition:color .14s,border-color .14s,background-color .14s}
+.matrix-membre:hover{color:var(--parchment);border-color:var(--gold-deep)}
+.matrix-membre.active{color:var(--gold-bright);border-color:var(--gold-bright);
+  background:var(--panel)}
+.matrix-membre:focus-visible{outline:2px solid var(--gold-bright);outline-offset:2px}
+/* « Tous » est le retour au non-filtre : un filet tireté le detache des membres. */
+.matrix-membre-tous{border-style:dashed}
 .matrix-mobile-sort{display:none}
 .matrix{border-collapse:collapse;width:100%;min-width:760px;font-size:12px}
 .matrix th,.matrix td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line-soft);vertical-align:top}
