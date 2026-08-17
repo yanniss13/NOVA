@@ -314,7 +314,8 @@ async function ouvrirAnalyse(page, section = "supports"){
           elementCount:cells.length,
           labels:labels.map(label => ({
             text:label.textContent.trim(),
-            display:getComputedStyle(label).display
+            display:getComputedStyle(label).display,
+            color:getComputedStyle(label).color
           })),
           cellsPerLine:lignes.map(top => tops.filter(value => value === top).length),
           cardInside:rect.left >= wrapRect.left - 1 && rect.right <= wrapRect.right + 1,
@@ -338,6 +339,13 @@ async function ouvrirAnalyse(page, section = "supports"){
           && carteMobile.labels.every(label => label.text && label.display !== "none"),
         `chaque case doit nommer son element a ${width}px`
       );
+      /* Chaque libelle porte la couleur de son element : sur telephone, c'est
+         le seul repere d'element de la carte. L'ordre suit ELEM_ORDER, donc le
+         premier est Feu (#d24b3e) et le deuxieme Glace (#56b0c9). */
+      assert.equal(carteMobile.labels[0].color, "rgb(210, 75, 62)",
+        `le libelle Feu doit porter sa couleur d'element a ${width}px`);
+      assert.equal(carteMobile.labels[1].color, "rgb(86, 176, 201)",
+        `le libelle Glace doit porter sa couleur d'element a ${width}px`);
       assert.deepEqual(carteMobile.cellsPerLine, [4, 4],
         `les elements doivent former une grille 4 par 2 a ${width}px`);
       assert.ok(
