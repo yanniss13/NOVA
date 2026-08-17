@@ -16,31 +16,10 @@
 .cov-big{font-family:var(--display);font-weight:700;font-size:26px;color:var(--parchment)}
 .cov-lbl{font-size:10px;color:var(--muted)}
 .cov-sub{font-size:11px;color:var(--gold-bright);font-weight:600}
-.elem-chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px}
-.elem-chip{appearance:none;cursor:pointer;background:var(--panel-2);border:1px solid var(--line);
-  border-radius:999px;padding:3px;transition:.14s}
-.elem-chip:hover{border-color:var(--gold-deep)}
-.elem-chip.active{border-color:var(--gold-bright);box-shadow:0 0 0 1px var(--gold-bright)}
-.elem-chip .elem-badge{border:0;background:transparent;padding:2px 8px}
-.rank-table{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden}
-.rank-row{display:grid;grid-template-columns:44px 1fr 1.6fr 90px;align-items:center;gap:10px;
-  padding:8px 14px;border-bottom:1px solid var(--line-soft)}
-.rank-action{appearance:none;width:100%;min-height:44px;border:0;
-  border-bottom:1px solid var(--line-soft);background:transparent;color:inherit;
-  font:inherit;text-align:left;cursor:pointer}
-.rank-action:hover{background:rgba(218,165,56,.06)}
-.rank-action:focus-visible{outline:2px solid var(--gold-bright);outline-offset:-2px;
-  position:relative;z-index:1}
-.rank-row:last-child{border-bottom:0}
-.rank-head{background:var(--panel);color:var(--muted);font-size:11px;letter-spacing:.1em;text-transform:uppercase}
-.rank-row.top .rk-pos{color:var(--gold-bright);font-weight:700}
-.rk-pos{font-family:var(--display);text-align:center;color:var(--muted)}
-.rk-player{font-weight:600;color:var(--parchment);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.rk-dps{display:flex;align-items:center;gap:8px;color:var(--parchment);font-size:13.5px;min-width:0}
-.rk-dps>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* Le portrait sert encore au recensement, qui l'emprunte au classement
+   disparu. */
 .rk-portrait{display:block;width:28px;height:28px;flex:none;border-radius:6px;overflow:hidden;background:#0b0910 center/cover no-repeat;border:1px solid var(--line-soft)}
 .rk-portrait img{width:100%;height:100%;object-fit:cover}
-.rk-pot{font-family:var(--display);font-weight:700;color:var(--gold-bright);text-align:right}
 .rank-empty{padding:18px;text-align:center;color:var(--muted)}
 .matrix-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
 .matrix{border-collapse:collapse;width:100%;min-width:760px;font-size:12px}
@@ -48,7 +27,30 @@
 .matrix th{background:var(--panel);position:sticky;top:0}
 .matrix .mx-player{font-weight:600;color:var(--parchment);white-space:nowrap}
 .matrix .mx-total{font-family:var(--display);color:var(--gold-bright);text-align:center;font-weight:700}
-.mx-item{color:var(--parchment);white-space:nowrap}
+/* L'EN-TETE QUI CLASSE. Il remplace les pastilles de l'ancien classement :
+   meme geste, meme reponse, mais sans une section a lui tout seul. */
+.mx-tri{appearance:none;cursor:pointer;background:transparent;border:1px solid transparent;
+  border-radius:999px;padding:2px;font:inherit;color:inherit;transition:.14s}
+.mx-tri:hover{border-color:var(--gold-deep)}
+.mx-tri.active{border-color:var(--gold-bright);box-shadow:0 0 0 1px var(--gold-bright)}
+.mx-tri:focus-visible{outline:2px solid var(--gold-bright);outline-offset:2px}
+/* La colonne qui classe se distingue du reste, sinon rien ne dirait sur quoi
+   le tableau est trie une fois l'en-tete sorti de l'ecran. */
+.matrix .mx-colonne-triee{background:rgba(218,165,56,.05)}
+/* UNE CASE CLIQUABLE. Elle ouvre le build, ce que seules les lignes du
+   classement savaient faire. `min-height:44px` est la cible tactile minimale,
+   heritee de ces lignes. */
+.mx-item{display:flex;align-items:baseline;gap:6px;white-space:nowrap;
+  color:var(--parchment)}
+.mx-action{appearance:none;width:100%;min-height:44px;border:1px solid transparent;
+  border-radius:8px;background:transparent;font:inherit;text-align:left;
+  cursor:pointer;padding:2px 6px;margin:-2px 0}
+.mx-action:hover{background:rgba(218,165,56,.08);border-color:var(--line)}
+.mx-action:focus-visible{outline:2px solid var(--gold-bright);outline-offset:-2px;
+  position:relative;z-index:1}
+.mx-nom{overflow:hidden;text-overflow:ellipsis}
+.mx-pot{font-family:var(--display);font-weight:700;color:var(--gold-bright);
+  font-variant-numeric:tabular-nums}
 .mx-empty{color:var(--muted-2);text-align:center}
 
 /* ---------- Recensements : affaiblissement et renforcement ---------- */

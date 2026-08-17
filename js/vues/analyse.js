@@ -475,101 +475,155 @@ import { toast } from "./toast.js";
   ];
 
   /* ============================ Analyse ============================ */
-  let analyseElem = null;
   let analyseRenderId = 0;
-  let analysePlayers = [];   // joueurs déjà chargés par renderAnalyse (filtrage local)
+  /* L'element sur lequel la matrice est triee, ou null pour l'ordre par
+     defaut - le nombre de DPS. Il remplace l'ancien element du classement :
+     meme etat conserve d'un rendu a l'autre, meme question posee. */
+  let analyseTri = null;
 
-  function rankRowForFocusKey(root, key){
+  function celluleParClef(root, key){
     if(!root || !key) return null;
-    return [...root.querySelectorAll(".rank-action")].find(row =>
-      row.dataset.owner === String(key.owner || "")
-      && row.dataset.char === String(key.char || "")
-      && row.dataset.elem === String(key.element || "")
+    return [...root.querySelectorAll(".mx-action")].find(cell =>
+      cell.dataset.owner === String(key.owner || "")
+      && cell.dataset.char === String(key.char || "")
+      && cell.dataset.elem === String(key.element || "")
     ) || null;
   }
 
-  // Construit le tableau du classement dans son conteneur stable, à partir des
-  // joueurs déjà chargés et de l'élément choisi. Aucune lecture réseau ici.
-  function renderRankTable(rankBox){
-    const entries = [];
-    analysePlayers.forEach(p=>(p.dps||[]).forEach(d=>{
-      if(dpsElem(d)===analyseElem){
-        entries.push({
-          player:p.name,
-          owner:p.owner,
-          characters:p.characters,
-          dps:d
+  /* Realtime peut remplacer la case qui a ouvert la modale. On corrige la
+     cible de restitution dans la pile AVANT la fermeture ; ModalStack reste
+     l'unique mecanisme qui deplace effectivement le focus. */
+  function rendreLaCibleDuFocus(racine){
+    const overlay = $("#rosterDetailOverlay");
+    if(!overlay.classList.contains("on") || !rosterDetail.returnFocusKey) return;
+    const remplacante = celluleParClef(racine, rosterDetail.returnFocusKey);
+    if(remplacante) ModalStack.setRestoreFocus(overlay, remplacante);
+  }
+
+  /* UNE CASE DE LA MATRICE : un membre, un element, un personnage.
+
+     C'est l'unite qu'exploitait le classement — meme trio owner/char/element,
+     meme fiche ouverte, meme cle de restitution du focus. La matrice le porte
+     desormais elle-meme, ce qui a permis de retirer une section qui reposait
+     la question a laquelle celle-ci repond deja, mais pour un seul element a
+     la fois. Aucune lecture reseau : l'entree de roster est deja chargee. */
+  function caseDeLaMatrice(joueur, dps){
+    const ch = charOf(dps.char);
+    const element = dpsElem(dps);
+    return el("button",{
+      class:"mx-item mx-action",
+      type:"button",
+      dataset:{ owner:joueur.owner || "", char:dps.char, elem:element },
+      title:(ch ? ch.name : dps.char) + " — ouvrir le build de " + joueur.name,
+      onclick:()=>{
+        const entree = (joueur.characters || [])
+          .find(personnage => personnage.charId === dps.char);
+        if(!entree) return;
+        openRosterDetailFor({
+          entries:[entree],
+          index:0,
+          memberName:joueur.name,
+          weaponTypes:dps.weaponTypes,
+          weaponType:dps.preferredWeaponType,
+          showNavigation:false,
+          returnFocusKey:{ owner:joueur.owner, char:dps.char, element }
         });
       }
-    }));
-    entries.sort((a,b)=>(b.dps.pot||0)-(a.dps.pot||0));
-    const rank = el("div",{class:"rank-table"});
-    rank.appendChild(el("div",{class:"rank-row rank-head"},[
-      el("span",{class:"rk-pos",text:"#"}), el("span",{class:"rk-player",text:"Membre"}),
-      el("span",{class:"rk-dps",text:"DPS"}), el("span",{class:"rk-pot",text:"Potentiel"})
-    ]));
-    if(!entries.length) rank.appendChild(el("div",{class:"rank-empty", text:"Aucun DPS "+elemLabel(analyseElem)+" recensé."}));
-    entries.forEach((en,i)=>{
-      const ch=charOf(en.dps.char);
-      const element = dpsElem(en.dps);
-      const port=el("span",{class:"rk-portrait"});
-      if(ch) port.appendChild(el("img",{src:ch.file,alt:"",loading:"lazy"}));
-      const row = el("button",{
-        class:"rank-row rank-action"+(i<3?" top":""),
-        type:"button",
-        dataset:{ owner:en.owner || "", char:en.dps.char, elem:element },
-        onclick:()=>{
-          const entry = (en.characters||[])
-            .find(character => character.charId === en.dps.char);
-          if(!entry) return;
-          openRosterDetailFor({
-            entries:[entry],
-            index:0,
-            memberName:en.player,
-            weaponTypes:en.dps.weaponTypes,
-            weaponType:en.dps.preferredWeaponType,
-            showNavigation:false,
-            returnFocusKey:{
-              owner:en.owner,
-              char:en.dps.char,
-              element
-            }
-          });
-        }
-      },[
-        el("span",{class:"rk-pos", text:String(i+1)}),
-        el("span",{class:"rk-player", text:en.player}),
-        el("span",{class:"rk-dps"},[
-          port,
-          el("span",{text: ch?ch.name:en.dps.char})
-        ]),
-        el("span",{
-          class:"rk-pot",
-          text:en.dps.pot>0 ? ("P"+en.dps.pot) : "—"
-        })
-      ]);
-      rank.appendChild(row);
-    });
-    rankBox.replaceChildren(rank);
-    /* Realtime peut remplacer la ligne qui a ouvert la modale. On corrige la
-       cible de restitution dans la pile AVANT la fermeture ; ModalStack reste
-       l'unique mécanisme qui déplace effectivement le focus. */
-    const overlay = $("#rosterDetailOverlay");
-    if(overlay.classList.contains("on") && rosterDetail.returnFocusKey){
-      const replacement = rankRowForFocusKey(
-        rankBox, rosterDetail.returnFocusKey
-      );
-      if(replacement) ModalStack.setRestoreFocus(overlay, replacement);
+    },[
+      el("span",{class:"mx-nom", text:ch ? ch.name : dps.char}),
+      /* P0 est un potentiel renseigne : il s'ecrit, comme au recensement. Ne
+         rien mettre laissait croire a une donnee manquante. */
+      el("span",{class:"mx-pot", text:"P" + (dps.pot || 0)})
+    ]);
+  }
+
+  /* Le meilleur potentiel d'un membre pour un element, ou -1 s'il n'en a
+     aucun : c'est la cle du tri par colonne, et -1 range les absents apres
+     les P0, qui eux sont renseignes. */
+  function meilleurPotentiel(joueur, element){
+    return (joueur.dps || [])
+      .filter(dps => dpsElem(dps) === element)
+      .reduce((max, dps) => Math.max(max, dps.pot || 0), -1);
+  }
+
+  /* L'ordre des membres. Par defaut le nombre de DPS, comme avant ; par
+     colonne quand le membre a clique un element, ce qui remplace exactement
+     le classement : le meilleur porteur de l'element passe en tete. */
+  function membresTries(joueurs){
+    const ordonnes = joueurs.slice();
+    if(analyseTri === null){
+      return ordonnes.sort((a, b) => (b.dps || []).length - (a.dps || []).length);
     }
+    return ordonnes.sort((a, b) =>
+      meilleurPotentiel(b, analyseTri) - meilleurPotentiel(a, analyseTri)
+      || (b.dps || []).length - (a.dps || []).length
+      || a.name.localeCompare(b.name, "fr")
+    );
+  }
+
+  /* LA MATRICE, dans son conteneur stable. Aucune lecture reseau : elle ne
+     travaille que sur les joueurs deja charges. */
+  function rendreMatrice(wrap, players){
+    const table = el("table",{class:"matrix"});
+    const thead = el("tr",{},[
+      el("th",{class:"mx-player", text:"Membre"}),
+      el("th",{text:"Total"})
+    ]);
+    ELEM_ORDER.forEach(e => {
+      const trie = analyseTri === e;
+      const th = el("th",{
+        /* `aria-sort` sur l'en-tete, et non une classe : c'est ce que lit une
+           aide technique pour annoncer l'ordre du tableau. */
+        "aria-sort":trie ? "descending" : "none"
+      });
+      th.appendChild(el("button",{
+        class:"mx-tri" + (trie ? " active" : ""),
+        type:"button",
+        dataset:{ elem:e },
+        title:trie
+          ? "Classement par " + elemLabel(e) + " — cliquer pour revenir au total"
+          : "Classer les membres par leur meilleur potentiel " + elemLabel(e),
+        /* Un second clic sur la meme colonne rend l'ordre par defaut : sans
+           cette sortie, le membre ne pourrait plus revenir au total. */
+        onclick:()=>{
+          analyseTri = trie ? null : e;
+          rendreMatrice(wrap, players);
+        }
+      },[ elemBadge(e) ]));
+      thead.appendChild(th);
+    });
+    table.appendChild(thead);
+    membresTries(players).forEach(p => {
+      const tr = el("tr",{});
+      tr.appendChild(el("td",{class:"mx-player", text:p.name}));
+      tr.appendChild(el("td",{class:"mx-total", text:String((p.dps||[]).length)}));
+      ELEM_ORDER.forEach(e => {
+        const dps = (p.dps||[]).filter(d => dpsElem(d) === e)
+          .sort((a,b) => (b.pot||0) - (a.pot||0));
+        const td = el("td",{
+          class:(dps.length ? "" : "mx-empty")
+            + (analyseTri === e ? " mx-colonne-triee" : "")
+        });
+        if(dps.length) dps.forEach(d => td.appendChild(caseDeLaMatrice(p, d)));
+        else td.textContent = "—";
+        tr.appendChild(td);
+      });
+      table.appendChild(tr);
+    });
+    wrap.replaceChildren(table);
+    /* Le tableau doit deja etre connecte : si Realtime reconstruit la vue
+       pendant que la modale est ouverte, ModalStack refuse a juste titre une
+       cible de focus detachee. */
+    rendreLaCibleDuFocus(wrap);
   }
 
   async function renderAnalyse(){
     const renderId = ++analyseRenderId;
     const box = $("#analyseBody");
-    /* Le rafraîchissement détache immédiatement les lignes du classement. Si
+    /* Le rafraîchissement détache immédiatement les cases de la matrice. Si
        celle qui a ouvert la modale ne réapparaît pas (build supprimé ou lecture
-       en échec), l'onglet Analyse reste une cible logique et visible. Une ligne
-       reconstruite remplacera ce repli dans `renderRankTable()`. */
+       en échec), l'onglet Analyse reste une cible logique et visible. Une case
+       reconstruite remplacera ce repli dans `rendreLaCibleDuFocus()`. */
     const detailOverlay = $("#rosterDetailOverlay");
     if(detailOverlay.classList.contains("on") && rosterDetail.returnFocusKey){
       ModalStack.setRestoreFocus(detailOverlay, $("#tab-analyse"));
@@ -649,68 +703,34 @@ import { toast } from "./toast.js";
     });
     box.appendChild(covRow);
 
-    // --- 2) Classement par élément ---
-    // Le classement vit dans un conteneur stable : le clic sur un élément ne
-    // remplace que ce conteneur (aucun rechargement Supabase, aucun reflow global).
-    box.appendChild(el("h2",{class:"an-title", text:"Classement par potentiel"}));
-    if(analyseElem===null){
-      analyseElem = ELEM_ORDER.find(e=>cov[e].dps>0) || ELEM_ORDER[0];
-    }
-    analysePlayers = players;
-    const chips = el("div",{class:"elem-chips"});
-    const rankBox = el("div",{class:"rank-box"});
-    ELEM_ORDER.forEach(e=>{
-      chips.appendChild(el("button",{class:"elem-chip"+(e===analyseElem?" active":""),
-        "aria-pressed": e===analyseElem ? "true" : "false",
-        dataset:{elem:e},
-        onclick:()=>{
-          analyseElem=e;
-          [...chips.children].forEach(b=>{
-            const on = b.dataset.elem===analyseElem;
-            b.classList.toggle("active", on);
-            b.setAttribute("aria-pressed", on ? "true" : "false");
-          });
-          renderRankTable(rankBox);
-        }},[ elemBadge(e) ]));
-    });
-    box.appendChild(chips);
-    box.appendChild(rankBox);
-    /* Le conteneur doit déjà être connecté : si Realtime reconstruit la vue
-       pendant que la modale est ouverte, ModalStack refuse à juste titre une
-       cible de focus détachée. */
-    renderRankTable(rankBox);
+    /* --- 2) Matrice membre × élément ---
 
-    // --- 3) Matrice joueur × élément ---
+       Elle a absorbe le « Classement par potentiel », qui posait la meme
+       question — qui a un DPS de cet element, et a quel potentiel — mais pour
+       UN element a la fois, derriere une pastille a cliquer, et dont la
+       colonne « DPS » repetait le meme nom du haut en bas. La matrice les
+       montre tous les huit d'un coup.
+
+       Deux choses ont ete reprises du classement pour ne rien perdre : ses
+       cases s'ouvrent sur la fiche du membre, et l'en-tete d'un element trie
+       les membres par leur meilleur potentiel dans cet element - c'est-a-dire
+       le classement lui-meme, rendu dans le tableau. */
     box.appendChild(el("h2",{class:"an-title", text:"Matrice membre × élément"}));
+    box.appendChild(el("p",{class:"an-note",
+      text:"Clique un élément pour classer les membres sur cette colonne, ou une case pour ouvrir le build correspondant."}));
+    /* La matrice vit dans un conteneur STABLE, comme le classement avant elle :
+       changer de colonne de tri ne remplace que ce conteneur. Passer par
+       `renderAnalyse()` relirait Supabase a chaque clic d'en-tete. */
     const wrap = el("div",{class:"matrix-wrap"});
-    const table = el("table",{class:"matrix"});
-    const thead = el("tr",{},[ el("th",{class:"mx-player",text:"Membre"}), el("th",{text:"Total"}) ]);
-    ELEM_ORDER.forEach(e=>{ const th=el("th",{}); th.appendChild(elemBadge(e)); thead.appendChild(th); });
-    table.appendChild(thead);
-    players.slice().sort((a,b)=>(b.dps||[]).length-(a.dps||[]).length).forEach(p=>{
-      const tr=el("tr",{});
-      tr.appendChild(el("td",{class:"mx-player", text:p.name}));
-      tr.appendChild(el("td",{class:"mx-total", text:String((p.dps||[]).length)}));
-      ELEM_ORDER.forEach(e=>{
-        const cell = (p.dps||[]).filter(d=>dpsElem(d)===e)
-          .sort((a,b)=>(b.pot||0)-(a.pot||0))
-          .map(d=>{ const ch=charOf(d.char); return (ch?ch.name:d.char)+(d.pot>0?" P"+d.pot:""); });
-        const td = el("td",{class:cell.length?"":"mx-empty"});
-        if(cell.length) cell.forEach(t=>td.appendChild(el("div",{class:"mx-item",text:t})));
-        else td.textContent="—";
-        tr.appendChild(td);
-      });
-      table.appendChild(tr);
-    });
-    wrap.appendChild(table);
     box.appendChild(wrap);
+    rendreMatrice(wrap, players);
 
-    /* --- 4) Les deux recensements, en fin de page ---
+    /* --- 3) Les deux recensements, en fin de page ---
 
-       Ils occupaient le milieu, entre la couverture et le classement, du temps
-       ou ils tenaient sur quelques lignes. A soixante-six lignes ils repoussent
-       le classement au-dela du quatrieme ecran — c'est-a-dire hors de portee,
-       alors que c'est LUI qui repond a « qui j'emmene ».
+       Ils occupaient le milieu, entre la couverture et la matrice, du temps ou
+       ils tenaient sur quelques lignes. A soixante-six lignes ils repoussaient
+       la matrice au-dela du quatrieme ecran — c'est-a-dire hors de portee,
+       alors que c'est ELLE qui repond a « qui j'emmene ».
 
        La coupure suit maintenant la nature de la donnee : au-dessus ce que la
        confrerie possede, derive des rosters ; en dessous ce que le jeu offre,

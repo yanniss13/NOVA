@@ -33,6 +33,62 @@ async function ouvrirAnalyse(page){
     await page.getByRole("button", { name:"Se connecter", exact:true }).click();
     await page.locator("#accountPseudo").getByText("Yannis", { exact:true }).waitFor();
 
+    /* LE TRI DE LA MATRICE reste local : il ne relit pas Supabase. Jericho
+       donne a Yannis deux DPS, dont un Glace P2. Merlin doit donc passer devant
+       sur la colonne Glace grace a son P9, puis ceder la tete au total. */
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.roster_characters.push({
+        owner:"user-1",
+        char_id:"jericho",
+        potential_tier:2,
+        builds:{ Rapiere:{} },
+        updated_at:"2026-08-17T08:00:00.000Z"
+      });
+    });
+    await ouvrirAnalyse(page);
+    const premierMembre = () => page.locator(
+      "#analyseBody .matrix .mx-player"
+    ).nth(1).textContent();
+    assert.equal(await premierMembre(), "Yannis",
+      "l'ordre par defaut doit placer le membre qui a le plus de DPS en tete");
+
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.calls.length = 0;
+    });
+    const triGlace = page.locator('#analyseBody .mx-tri[data-elem="ICE"]');
+    await triGlace.click();
+    assert.equal(await premierMembre(), "Merlin",
+      "le meilleur potentiel Glace doit passer en tete");
+    assert.equal(
+      await triGlace.locator("..").getAttribute("aria-sort"),
+      "descending",
+      "l'en-tete Glace doit annoncer son ordre descendant"
+    );
+    assert.equal(
+      await page.locator('#analyseBody .matrix th[aria-sort="none"]').count(),
+      7,
+      "les sept autres elements ne doivent annoncer aucun tri"
+    );
+    assert.equal(
+      await page.evaluate(() => window.__fakeSupabaseState.calls.length),
+      0,
+      "trier la matrice ne doit relire aucune table Supabase"
+    );
+
+    await triGlace.click();
+    assert.equal(await premierMembre(), "Yannis",
+      "un second clic doit restaurer l'ordre par nombre de DPS");
+    assert.equal(
+      await page.locator('#analyseBody .matrix th[aria-sort="none"]').count(),
+      8,
+      "aucune colonne ne doit rester triee apres le second clic"
+    );
+    assert.equal(
+      await page.evaluate(() => window.__fakeSupabaseState.calls.length),
+      0,
+      "restaurer l'ordre par defaut ne doit pas relire Supabase"
+    );
+
     /* Une lecture reussie et vide affirme que personne ne possede l'effet. */
     await page.evaluate(() => {
       window.__fakeSupabaseState.roster_characters = [];
