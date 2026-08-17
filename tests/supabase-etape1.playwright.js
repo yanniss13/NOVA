@@ -1493,13 +1493,29 @@ async function ouvrirSessionsDeBoss(page){
       cardsBeforeDuplicate
     );
 
-    // #5 : l'Analyse est l'unique vue DPS et dérive directement des rosters.
+    // #5 : l'Analyse dérive ses trois sous-vues directement des rosters.
     await page.locator('.tab[data-view="analyse"]').click();
-    await page.locator("#analyseBody .matrix").waitFor();
-    const analyseText = await page.locator("#analyseBody").textContent();
-    assert.match(analyseText, /Yannis/);
-    assert.match(analyseText, /Merlin/);
-    assert.match(analyseText, /Meliodas/);
+    await page.locator("#analysePanel-overview .analyse-summary").waitFor();
+    assert.equal(
+      await page.locator("#analysePanel-overview").isVisible(),
+      true,
+      "la vue d'ensemble doit accueillir le membre dans l'Analyse"
+    );
+    await page.locator(
+      '.analyse-subnav-button[data-analyse-section="dps"]'
+    ).click();
+    await page.locator("#analysePanel-dps .matrix").waitFor();
+    const analyseDpsText = await page.locator("#analysePanel-dps .matrix")
+      .textContent();
+    assert.match(analyseDpsText, /Yannis/);
+    assert.match(analyseDpsText, /Merlin/);
+    assert.match(analyseDpsText, /Meliodas/);
+
+    await page.locator(
+      '.analyse-subnav-button[data-analyse-section="supports"]'
+    ).click();
+    const panneauSupports = page.locator("#analysePanel-supports");
+    await panneauSupports.locator(".debuff-row").first().waitFor();
 
     /* LE RECENSEMENT D'AFFAIBLISSEMENT NE DEPEND D'AUCUN ROSTER : une ligne
        que personne ne possede reste affichee, parce que savoir qu'un effet
@@ -1507,8 +1523,9 @@ async function ouvrirSessionsDeBoss(page){
        exactement le nombre de lignes visant l'ennemi dans la table - derive de
        la table elle-meme, pour qu'ajouter une ligne demain ne casse pas ce
        test sans raison. */
-    assert.match(analyseText, /Affaiblissement de la cible/);
-    assert.match(analyseText, /Renforcement des alliés/);
+    const supportsText = await panneauSupports.textContent();
+    assert.match(supportsText, /Affaiblissement de la cible/);
+    assert.match(supportsText, /Renforcement des alliés/);
     /* Les deux sections tirent des DEUX tables, chargees par l'onglet Analyse
        lui-meme. Le compte attendu se derive donc des tables plutot que d'un
        nombre ecrit ici, qui vieillirait a la premiere ligne ajoutee.
@@ -1516,9 +1533,12 @@ async function ouvrirSessionsDeBoss(page){
        Un passif grave de cible « soi » ne compte dans aucune section : il ne
        profite qu'a celui qui porte la tenue. */
     const attendus = await page.evaluate(() => {
-      const armes = Object.values(window.SEVEN_DS_BUFFS_SUPPORTS || {}).flat();
+      const visible = ligne => !ligne.element
+        || String(ligne.element).toLowerCase() === "thunder";
+      const armes = Object.values(window.SEVEN_DS_BUFFS_SUPPORTS || {}).flat()
+        .filter(visible);
       const tenues = Object.values(window.SEVEN_DS_PASSIFS_GRAVES || {}).flat()
-        .filter(passif => passif.cible === "allies");
+        .filter(passif => passif.cible === "allies" && visible(passif));
       return {
         ennemi:armes.filter(l => l.cible === "ennemi").length
           + tenues.filter(l => l.cibleEnnemi).length,
@@ -1529,25 +1549,25 @@ async function ouvrirSessionsDeBoss(page){
     assert.ok(attendus.ennemi > 0 && attendus.allies > 0,
       "les deux tables doivent etre chargees par l'onglet Analyse lui-meme");
     assert.equal(
-      await page.locator('#analyseBody .debuff-row[data-vise="ennemi"]').count(),
+      await panneauSupports.locator('.debuff-row[data-vise="ennemi"]').count(),
       attendus.ennemi,
       "chaque effet visant l'ennemi doit avoir sa ligne, arme ou tenue"
     );
     assert.equal(
-      await page.locator('#analyseBody .debuff-row[data-vise="allies"]').count(),
+      await panneauSupports.locator('.debuff-row[data-vise="allies"]').count(),
       attendus.allies,
       "chaque effet rendu aux allies doit avoir sa ligne, arme ou tenue"
     );
     /* Une tenue gravee ne se recense pas comme une arme : sa ligne nomme la
        tenue, et son libelle vaut au niveau 3. */
     assert.ok(
-      await page.locator('#analyseBody .debuff-row[data-source="tenue"]').count() > 0,
+      await panneauSupports.locator('.debuff-row[data-source="tenue"]').count() > 0,
       "les tenues gravees doivent apparaitre au recensement"
     );
     /* Une ligne consignee se signale a l'ecran, sinon le membre la croirait
        comptee dans ses degats. */
     assert.ok(
-      await page.locator("#analyseBody .db-hors-calcul").count() > 0,
+      await panneauSupports.locator(".db-hors-calcul").count() > 0,
       "les lignes hors calcul doivent porter leur mention"
     );
 
@@ -1576,6 +1596,10 @@ async function ouvrirSessionsDeBoss(page){
       "L'ancienne table doit rester intacte sans être lue par le frontend"
     );
 
+    await page.locator(
+      '.analyse-subnav-button[data-analyse-section="dps"]'
+    ).click();
+    await page.locator("#analysePanel-dps .matrix").waitFor();
     await page.evaluate(() => {
       window.__fakeSupabaseState.calls.length = 0;
       const row = window.__fakeSupabaseState.roster_characters
@@ -1585,7 +1609,7 @@ async function ouvrirSessionsDeBoss(page){
       window.__fakeSupabaseEmit("profiles", "UPDATE");
     });
     await page.waitForFunction(() =>
-      [...document.querySelectorAll("#analyseBody .mx-action")]
+      [...document.querySelectorAll("#analysePanel-dps .mx-action")]
         .some(row =>
           row.textContent.includes("Merlin") &&
           row.textContent.includes("P10")
