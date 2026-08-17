@@ -9,6 +9,7 @@
    portee interne. Ils suivent l'ordre de MODULES (tests/helpers/modules.js). */
 
 import { DATA, POT } from "./noyau/constantes.js";
+import { buildStatsReady, ensureBuildStats } from "./noyau/catalogue-build.js";
 import { $ } from "./noyau/dom.js";
 import { enregistrerVue } from "./vues/navigation.js";
 import { renderAvailabilityView } from "./vues/dispos.js";
@@ -25,6 +26,7 @@ import { renderWiki } from "./vues/wiki.js";
 import "./vues/wiki-fiche-heros.js";
 import "./vues/wiki-fiche-objet.js";
 import { initAuth } from "./vues/session-auth.js";
+import { toast } from "./vues/toast.js";
 
 (function(){
   "use strict";
@@ -37,20 +39,29 @@ import { initAuth } from "./vues/session-auth.js";
   }
 
   /* ============================ Navigation onglets ============================ */
+  const withBuildStats = renderer => () => {
+    const render = () => Promise.resolve(renderer()).then(()=>true);
+    if(buildStatsReady()) return render();
+    return ensureBuildStats()
+      .then(render)
+      .catch(()=>{
+        toast("Catalogue chiffré indisponible.", true);
+        return false;
+      });
+  };
   /* Chaque vue s'annonce au registre de vues/navigation.js. L'enveloppe dit ce
      que `showView` doit renvoyer : les trois vues enveloppees ici renvoyaient
      deja `true` quel que soit leur resultat, seul le rendu comptait. */
   enregistrerVue("dashboard", renderDashboardView);
-  enregistrerVue("builder", ()=>{ renderBuilder(); return true; });
-  enregistrerVue("roster", ()=>Promise.resolve(renderRoster()).then(()=>true));
-  enregistrerVue("member-roster",
-    ()=>Promise.resolve(renderMemberRoster()).then(()=>true));
-  enregistrerVue("analyse", ()=>Promise.resolve(renderAnalyse()).then(()=>true));
+  enregistrerVue("builder", withBuildStats(renderBuilder));
+  enregistrerVue("roster", withBuildStats(renderRoster));
+  enregistrerVue("member-roster", withBuildStats(renderMemberRoster));
+  enregistrerVue("analyse", withBuildStats(renderAnalyse));
   enregistrerVue("boss", renderBossView);
   enregistrerVue("availability", renderAvailabilityView);
-  enregistrerVue("wiki", renderWiki);
-  enregistrerVue("collection", renderCollection);
-  enregistrerVue("calculateur", renderCalculateur);
+  enregistrerVue("wiki", withBuildStats(renderWiki));
+  enregistrerVue("collection", withBuildStats(renderCollection));
+  enregistrerVue("calculateur", withBuildStats(renderCalculateur));
 
   /* ============================ Démarrage ============================ */
   $("#databar").textContent =

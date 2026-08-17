@@ -17,8 +17,10 @@
    `bossViewState`, qui devra sortir en premier. */
 
 import { BOSS_NAME, BossStore } from "../donnees/boss-store.js";
+import { loadBossRecommendationData } from "../donnees/recommandation-groupes-store.js";
 import { Store } from "../donnees/equipes-store.js";
 import { sessionCourante } from "../etat/session.js";
+import { bestBossSlots, recommendBossGroups } from "../metier/recommandation-groupes.js";
 import {
   bossEvolutionPercentage,
   bossScoreBigInt,
@@ -32,6 +34,7 @@ import {
 } from "../metier/boss-logique.js";
 import { charOf } from "../metier/catalogue.js";
 import { teamFromBossSnapshot } from "../metier/equipe-modele.js";
+import { ELEMENTS } from "../noyau/constantes.js";
 import { $, el } from "../noyau/dom.js";
 import { authMessage } from "../noyau/supabase-client.js";
 import { openTeamDetail } from "./detail-equipe.js";
@@ -59,6 +62,9 @@ import { toast } from "./toast.js";
     ready:false
   });
   let bossViewState = emptyBossViewState("");
+  let bossRecommendationState = {
+    userId:"", loading:false, data:null, slotIndex:null, error:""
+  };
   const bossPendingActions = new Map();
 
   function invalidateBossRenders(){
@@ -77,6 +83,9 @@ import { toast } from "./toast.js";
     }
     invalidateBossRenders();
     bossViewState = emptyBossViewState(userId);
+    bossRecommendationState = {
+      userId, loading:false, data:null, slotIndex:null, error:""
+    };
     bossPendingActions.clear();
   }
 
@@ -161,6 +170,154 @@ import { toast } from "./toast.js";
     ]);
   }
 
+  function bossRecommendationGroupCard(group){
+    const card = el("article",{class:"boss-reco-group"});
+    const average = group.members.length
+      ? (group.potential / group.members.length).toFixed(1).replace(".0", "")
+      : "0";
+    card.appendChild(el("div",{class:"boss-reco-group-head"},[
+      el("h3",{text:"Groupe proposé "+group.index}),
+      el("span",{text:group.members.length+" membre"+
+        (group.members.length > 1 ? "s" : "")+" · potentiel moyen "+average})
+    ]));
+    const members = el("ul",{class:"boss-reco-members"});
+    group.members.forEach(member => {
+      const elements = member.elements.length
+        ? member.elements.map(code => ELEMENTS[code]?.label || code).join(", ")
+        : "élément non renseigné";
+      members.appendChild(el("li",{},[
+        el("span",{class:"boss-reco-member-name",text:member.pseudo}),
+        el("span",{
+          class:"boss-reco-member-meta",
+          text:"P"+member.potential+" · "+member.preparedBuilds+" build"+
+            (member.preparedBuilds > 1 ? "s" : "")+" · "+elements+
+            " · "+member.runs+"/3 runs"
+        })
+      ]));
+    });
+    card.appendChild(members);
+    return card;
+  }
+
+  function bossRecommendationPanel(currentSessions, memberships){
+    const panel = el("section",{
+      class:"boss-recommendation",
+      "aria-labelledby":"bossRecommendationTitle"
+    });
+    const heading = el("div",{class:"boss-reco-head"},[
+      el("div",{},[
+        el("div",{class:"boss-reco-kicker",text:"Assistant de composition"}),
+        el("h2",{id:"bossRecommendationTitle",text:"Proposer des groupes disponibles"})
+      ]),
+      el("button",{
+        class:"btn btn-secondary",
+        type:"button",
+        text:bossRecommendationState.data ? "Actualiser" : "Préparer une proposition",
+        disabled:bossRecommendationState.loading,
+        "aria-busy":bossRecommendationState.loading ? "true" : "false",
+        onclick:()=>void refreshBossRecommendation()
+      })
+    ]);
+    panel.appendChild(heading);
+    panel.appendChild(el("p",{
+      class:"boss-reco-note",
+      text:"Lecture seule : NOVA croise les disponibilités, les potentiels et les builds renseignés. Aucune inscription n’est effectuée."
+    }));
+    if(bossRecommendationState.loading){
+      panel.appendChild(el("p",{class:"boss-reco-status",text:"Analyse des rosters et des disponibilités…"}));
+      return panel;
+    }
+    if(bossRecommendationState.error){
+      panel.appendChild(el("p",{class:"boss-reco-error",role:"alert",text:bossRecommendationState.error}));
+      return panel;
+    }
+    const data = bossRecommendationState.data;
+    if(!data) return panel;
+    panel.appendChild(el("p",{
+      class:"boss-reco-week",
+      text:"Disponibilités utilisées : semaine ISO du "+frDate(data.weekStart)+
+        " (bascule lundi à 00 h)."
+    }));
+    const slots = bestBossSlots(data.availabilityRows);
+    if(!slots.length){
+      panel.appendChild(el("p",{
+        class:"boss-reco-status",
+        text:"Aucune disponibilité n’est encore renseignée pour la semaine du "+frDate(data.weekStart)+"."
+      }));
+      return panel;
+    }
+    const selectedIndex = slots.some(slot => slot.index === bossRecommendationState.slotIndex)
+      ? bossRecommendationState.slotIndex : slots[0].index;
+    bossRecommendationState.slotIndex = selectedIndex;
+    const slotRail = el("div",{class:"boss-reco-slots",role:"group","aria-label":"Meilleurs créneaux"});
+    slots.forEach(slot => slotRail.appendChild(el("button",{
+      class:"boss-reco-slot"+(slot.index === selectedIndex ? " active" : ""),
+      type:"button",
+      text:slot.label+" · "+slot.count,
+      "aria-pressed":slot.index === selectedIndex ? "true" : "false",
+      onclick:()=>{
+        bossRecommendationState.slotIndex = slot.index;
+        renderBossContent();
+      }
+    })));
+    panel.appendChild(slotRail);
+    const result = recommendBossGroups({
+      slotIndex:selectedIndex,
+      availabilityRows:data.availabilityRows,
+      profiles:data.profiles,
+      roster:data.roster,
+      sessions:currentSessions,
+      memberships
+    });
+    panel.appendChild(el("p",{
+      class:"boss-reco-summary",
+      text:result.available+" membre"+(result.available > 1 ? "s" : "")+
+        " disponible"+(result.available > 1 ? "s" : "")+
+        " et sous la limite de 3 runs · "+result.groups.length+" groupe"+
+        (result.groups.length > 1 ? "s" : "")+" proposé"+
+        (result.groups.length > 1 ? "s" : "")
+    }));
+    if(!result.groups.length) return panel;
+    const grid = el("div",{class:"boss-reco-grid"});
+    result.groups.forEach(group => grid.appendChild(bossRecommendationGroupCard(group)));
+    panel.appendChild(grid);
+    if(result.excluded.length){
+      panel.appendChild(el("p",{
+        class:"boss-reco-warning",
+        text:result.excluded.length+" membre(s) hors proposition : capacité maximale de 30 places."
+      }));
+    }
+    return panel;
+  }
+
+  async function refreshBossRecommendation(){
+    const userId = sessionCourante.user?.id || "";
+    if(!userId || bossRecommendationState.loading) return;
+    bossRecommendationState = Object.assign({}, bossRecommendationState, {
+      userId, loading:true, error:""
+    });
+    renderBossContent();
+    try{
+      const data = await loadBossRecommendationData();
+      if(sessionCourante.user?.id !== userId) return;
+      const slots = bestBossSlots(data.availabilityRows);
+      bossRecommendationState = {
+        userId,
+        loading:false,
+        data,
+        slotIndex:slots[0]?.index ?? null,
+        error:""
+      };
+    }catch(error){
+      if(sessionCourante.user?.id !== userId) return;
+      bossRecommendationState = {
+        userId, loading:false, data:null, slotIndex:null,
+        error:"Impossible de préparer une proposition pour le moment."
+      };
+    }
+    renderBossContent();
+  }
+
   function focusedBossActionIdentity(){
     const body = $("#bossBody");
     const active = document.activeElement;
@@ -212,6 +369,7 @@ import { toast } from "./toast.js";
       el("div",{class:"boss-weekboss", text:BOSS_NAME}),
       el("div",{class:"boss-weeksub", text:"Semaine du "+frDate(week.startDate)+" au "+frDate(week.endDate)+" · reset lundi 9h"})
     ]));
+    body.appendChild(bossRecommendationPanel(weekGroups, membership));
     body.appendChild(bossStatsBlock(allGroups, reports, week.startDate));
 
     if(!current.length){

@@ -38,6 +38,13 @@ const STORAGE_KEY = "confrerie7ds.teams";
       "le catalogue ne doit pas etre charge au demarrage"
     );
 
+    /* Le catalogue chiffre est lui aussi charge a la demande. Le Builder est
+       la premiere vue de ce parcours qui en a besoin. */
+    await page.locator("#tab-builder").click();
+    await page.waitForFunction(() =>
+      Object.keys(window.SEVEN_DS_BUILD_STATS?.weaponsByFile || {}).length > 0
+    );
+
     await page.evaluate(key => {
       const catalog = window.SEVEN_DS_BUILD_STATS;
       const souverainCupide = slot => {

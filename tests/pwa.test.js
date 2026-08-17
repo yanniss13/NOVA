@@ -13,10 +13,10 @@ assert.match(html, /<link rel="manifest" href="manifest\.webmanifest">/, "lien m
 assert.match(html, /<meta name="theme-color" content="#0e0d12">/, "theme-color manquant");
 assert.match(html, /<link rel="apple-touch-icon" href="icons\/apple-touch-icon-180\.png">/, "apple-touch-icon manquant");
 assert.match(html, /navigator\.serviceWorker\.register\("sw\.js"\)/, "enregistrement du SW manquant");
-assert.match(
+assert.doesNotMatch(
   html,
   /<script src="data\/stats-build\.js"><\/script>/,
-  "le catalogue chiffré local doit être chargé par l’application"
+  "le catalogue chiffré ne doit plus bloquer le premier affichage"
 );
 
 // 2) manifest.webmanifest est un JSON valide avec les champs requis + icônes.
@@ -57,11 +57,7 @@ assert.match(sw, /staleWhileRevalidate/);
 assert.match(sw, /supabase\\.co/, "exclusion Supabase requise");
 assert.match(sw, /jsdelivr\\.net/, "exclusion CDN requise");
 assert.match(sw, /caches\.keys\(\)/, "purge des anciens caches requise (activate)");
-assert.match(
-  sw,
-  /["']\.\/data\/stats-build\.js["']/,
-  "le catalogue chiffré local doit faire partie du précache essentiel"
-);
+assert.match(sw, /CACHE_BUILD_STATS/, "mise en cache à la première utilisation requise");
 assert.doesNotMatch(
   sw,
   /7ds-stats\/.*\.json/,
@@ -72,6 +68,11 @@ const coreAssetsSource = sw.match(
   /const CORE_ASSETS = \[([\s\S]*?)\];/
 )?.[1];
 assert.ok(coreAssetsSource, "la liste CORE_ASSETS doit rester extractible");
+assert.doesNotMatch(
+  coreAssetsSource,
+  /["']\.\/data\/stats-build\.js["']/,
+  "le catalogue chiffré lourd ne doit pas faire partie du précache essentiel"
+);
 const coreAssets = [...coreAssetsSource.matchAll(/["']([^"']+)["']/g)]
   .map(match => match[1]);
 assert.ok(coreAssets.length > 0, "CORE_ASSETS ne doit pas être vide");

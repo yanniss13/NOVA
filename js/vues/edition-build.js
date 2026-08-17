@@ -39,6 +39,7 @@ import {
   jewelSetsFrom
 } from "../metier/equipement.js";
 import { DATA, JEWEL_SLOTS, LINKED_ARMOR_SLOT } from "../noyau/constantes.js";
+import { buildStatsReady, ensureBuildStats } from "../noyau/catalogue-build.js";
 import { el } from "../noyau/dom.js";
 import { jsonCopy } from "../noyau/outils.js";
 import { WEAPON_RARITY_LABELS, openWeaponConfigEditor } from "./editeur-arme.js";
@@ -46,6 +47,13 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
 import { gearSlot } from "./elements.js";
 import { Picker } from "./picker.js";
 import { toast } from "./toast.js";
+
+  function withBuildStats(action){
+    if(buildStatsReady()) return action();
+    return ensureBuildStats()
+      .then(action)
+      .catch(()=>toast("Catalogue chiffré indisponible.", true));
+  }
 
   function weaponConfigSummary(file, config){
     const status = weaponConfigStatus(file, config);
@@ -76,9 +84,9 @@ import { toast } from "./toast.js";
       class:"btn weapon-config-open",
       type:"button",
       text:status === "valid" ? "Modifier la configuration" : "Configurer l’arme",
-      onclick:()=>openWeaponConfigEditor(context, button)
+      onclick:()=>withBuildStats(()=>openWeaponConfigEditor(context, button))
     });
-    if(status === "unavailable") button.disabled = true;
+    if(status === "unavailable" && buildStatsReady()) button.disabled = true;
     return el("div",{
       class:"weapon-config-control"+(status === "valid" ? " is-valid" : "")
     },[
@@ -112,9 +120,9 @@ import { toast } from "./toast.js";
       "aria-label":status === "valid"
         ? "Modifier la configuration chiffrée — "+context.label
         : "Configurer "+context.label,
-      onclick:()=>openGearConfigEditor(context, button)
+      onclick:()=>withBuildStats(()=>openGearConfigEditor(context, button))
     });
-    if(status === "unavailable") button.disabled = true;
+    if(status === "unavailable" && buildStatsReady()) button.disabled = true;
     return button;
   }
 

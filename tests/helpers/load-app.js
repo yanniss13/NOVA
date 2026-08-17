@@ -193,6 +193,12 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   aggregateAvailability:typeof aggregateAvailability === "function"
     ? aggregateAvailability
     : undefined,
+  bestBossSlots:typeof bestBossSlots === "function"
+    ? bestBossSlots
+    : undefined,
+  recommendBossGroups:typeof recommendBossGroups === "function"
+    ? recommendBossGroups
+    : undefined,
   availabilityDensityTier:typeof availabilityDensityTier === "function"
     ? availabilityDensityTier
     : undefined,

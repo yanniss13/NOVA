@@ -9,11 +9,18 @@
    etre reaffectee depuis un importateur. */
 
   const DATA = window.SEVEN_DS_DATA;
+  /* Objet volontairement stable : stats-build.js est charge a la demande et
+     le remplit sans casser les references deja capturees par les modules. */
   const BUILD_STATS = window.SEVEN_DS_BUILD_STATS || {
     version:0,
+    charactersBySlug:{},
     weaponsByFile:{},
+    gearByFile:{},
+    engravedByFile:{},
+    gearSets:{},
     statLabels:{}
   };
+  window.SEVEN_DS_BUILD_STATS = BUILD_STATS;
   const STORAGE_KEY = "confrerie7ds.teams";
   const TEAM_SIZE = 4;
   const ARMOR_SLOTS = ["Haut","Bas","Bottes","Ceinture","Armure liee"];

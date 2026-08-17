@@ -113,7 +113,33 @@ def collect(flight, key):
                     seen.add(signature)
                     merged.append(item)
         index = flight.find(needle, index + 1)
-    return merged
+    return sorted(merged, key=stable_item_key)
+
+
+def stable_item_key(item):
+    """Cle de tri stable, independante de l'ordre des morceaux Next.js.
+
+    Les identifiants lisibles passent avant la representation JSON canonique,
+    qui departage deux entrees sans identifiant sans dependre de l'ordre de
+    leurs proprietes.
+    """
+    if not isinstance(item, dict):
+        return ("", "", "", "", "", canonical_json(item))
+    return tuple(
+        str(item.get(field) or "").casefold()
+        for field in ("slug", "gameId", "id", "nameEn", "nameFr")
+    ) + (canonical_json(item),)
+
+
+def canonical_json(value):
+    return json.dumps(
+        value, sort_keys=True, ensure_ascii=False, separators=(",", ":")
+    )
+
+
+def sorted_mapping(mapping):
+    """Copie un dictionnaire dans un ordre reproductible."""
+    return {key: mapping[key] for key in sorted(mapping, key=str.casefold)}
 
 
 def find_object(flight, key):
@@ -213,6 +239,7 @@ def main():
             entry["bindingMaterials"] = costume.get("bindingMaterials")
             entry["iconUrl"] = costume.get("iconUrl")
         engraved.append(entry)
+    engraved.sort(key=stable_item_key)
 
     # Enchantements : consolides depuis les trois endroits ou ils vivent.
     basic, masterstone, armor_options = [], [], []
@@ -272,7 +299,7 @@ def main():
             "armuresOptions": armor_options,
             "armuresGraveesOptions": engraved_options,
         })),
-        ("libelles-stats.json", write("libelles-stats.json", labels)),
+        ("libelles-stats.json", write("libelles-stats.json", sorted_mapping(labels))),
     ]
     print()
     for name, size in sizes:
