@@ -435,10 +435,8 @@ async function installRosterFocusFakeSupabase(page){
     await rosterFocusPage.locator("#memberRosterOverlay")
       .waitFor({ state:"hidden" });
     await rosterFocusPage.locator('.tab[data-view="analyse"]').click();
-    const darkChip = rosterFocusPage.locator('.elem-chip[data-elem="DARK"]');
-    await darkChip.click();
     const meliodasRank = rosterFocusPage.locator(
-      '.rank-row[data-owner="focus-user"][data-char="meliodas"][data-elem="DARK"]'
+      '.mx-action[data-owner="focus-user"][data-char="meliodas"][data-elem="DARK"]'
     );
     await meliodasRank.waitFor();
     const queryCountBeforeOpen = await rosterFocusPage.evaluate(() =>
@@ -491,13 +489,12 @@ async function installRosterFocusFakeSupabase(page){
       .waitFor({ state:"hidden" });
     await rosterFocusPage.waitForFunction(() =>
       document.activeElement.matches(
-        '.rank-row[data-owner="focus-user"][data-char="meliodas"][data-elem="DARK"]'
+        '.mx-action[data-owner="focus-user"][data-char="meliodas"][data-elem="DARK"]'
       )
     );
 
-    await rosterFocusPage.locator('.elem-chip[data-elem="ICE"]').click();
     const merlinRank = rosterFocusPage.locator(
-      '.rank-row[data-owner="focus-user"][data-char="merlin"][data-elem="ICE"]'
+      '.mx-action[data-owner="focus-user"][data-char="merlin"][data-elem="ICE"]'
     );
     await merlinRank.focus();
     await rosterFocusPage.keyboard.press("Enter");
@@ -526,10 +523,9 @@ async function installRosterFocusFakeSupabase(page){
     await rosterFocusPage.locator("#rosterDetailOverlay")
       .waitFor({ state:"hidden" });
 
-    /* Une mise à jour Realtime remplace le bouton du classement. La pile de
-       modales doit restituer le focus à sa nouvelle incarnation, pas à
-       l'ancien nœud détaché ni au body. */
-    await darkChip.click();
+    /* Une mise a jour Realtime remplace la case de la matrice. La pile de
+       modales doit restituer le focus a sa nouvelle incarnation, pas a
+       l'ancien noeud detache ni au body. */
     await meliodasRank.click();
     await rosterFocusPage.locator("#rosterDetailOverlay")
       .waitFor({ state:"visible" });
@@ -564,7 +560,7 @@ async function installRosterFocusFakeSupabase(page){
     for(const width of [320, 390]){
       await rosterFocusPage.setViewportSize({ width, height:844 });
       const rankMetrics = await rosterFocusPage.locator(
-        '.rank-row[data-owner="focus-user"][data-char="meliodas"][data-elem="DARK"]'
+        '.mx-action[data-owner="focus-user"][data-char="meliodas"][data-elem="DARK"]'
       ).evaluate(node => ({
         height:node.getBoundingClientRect().height,
         overflow:document.scrollingElement.scrollWidth
@@ -572,11 +568,11 @@ async function installRosterFocusFakeSupabase(page){
       }));
       assert.ok(
         rankMetrics.height >= 44,
-        "La ligne du classement doit mesurer 44 px à "+width+"px"
+        "La case de la matrice doit mesurer 44 px à "+width+"px"
       );
       assert.ok(
         rankMetrics.overflow <= 1,
-        "La ligne du classement ne doit pas déborder à "+width+"px"
+        "La case de la matrice ne doit pas déborder à "+width+"px"
       );
     }
 
@@ -594,7 +590,7 @@ async function installRosterFocusFakeSupabase(page){
       window.__focusSupabaseEmit("roster_characters");
     });
     await meliodasRank.waitFor({ state:"detached" });
-    await rosterFocusPage.locator("#analyseBody .rank-table").waitFor();
+    await rosterFocusPage.locator("#analyseBody .matrix").waitFor();
     await rosterFocusPage.keyboard.press("Escape");
     await rosterFocusPage.locator("#rosterDetailOverlay")
       .waitFor({ state:"hidden" });
