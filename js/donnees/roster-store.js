@@ -87,6 +87,15 @@ import { normalizeRosterCharacter } from "../metier/equipe-modele.js";
         (data || []).map(cloudRosterFromRow).filter(Boolean)
       );
     },
+    async refreshAll(){
+      if(!sessionCourante.user || !sb) return cloudRosterCache.slice();
+      const { data, error } = await sb.from("roster_characters")
+        .select("*");
+      if(error) throw error;
+      const entries = (data || []).map(cloudRosterFromRow).filter(Boolean);
+      saveRosterCache(entries);
+      return entries.map(normalizeRosterCharacter).filter(Boolean);
+    },
     async upsert(entry){
       if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
       const normalized = normalizeRosterCharacter(Object.assign({}, entry, {

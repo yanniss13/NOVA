@@ -14,6 +14,7 @@
 const MODULES = [
   /* noyau — aucune dépendance applicative, tout le reste s'appuie dessus. */
   "noyau/constantes.js",
+  "noyau/catalogue-build.js",
   "noyau/outils.js",
   "noyau/dom.js",
   "noyau/supabase-client.js",
@@ -44,6 +45,7 @@ const MODULES = [
   "metier/degats-supplementaires.js",
   "metier/equipe-modele.js",
   "metier/dispos-logique.js",
+  "metier/recommandation-groupes.js",
   "metier/boss-logique.js",
   "metier/accueil-logique.js",
   "metier/wiki-competences.js",
@@ -55,6 +57,7 @@ const MODULES = [
   "donnees/equipes-store.js",
   "donnees/coequipiers-store.js",
   "donnees/roster-store.js",
+  "donnees/recommandation-groupes-store.js",
   "donnees/collection-store.js",
   "donnees/boss-store.js",
   "donnees/suivi-store.js",

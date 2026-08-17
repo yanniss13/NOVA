@@ -237,3 +237,12 @@ Trois pièges rencontrés pour de vrai :
 - **l'ordre des déclarations** : garder l'ordre d'origine dans le module
   produit. Un `const` déplacé avant son initialisation ne casse pas au
   chargement, seulement plus tard, à l'usage.
+
+## Ajouts transversaux récents
+
+- `noyau/catalogue-build.js` charge le catalogue chiffré à la demande tout en
+  conservant une référence `BUILD_STATS` stable.
+- `metier/recommandation-groupes.js` produit une proposition déterministe de
+  créneaux et de groupes de boss, sans DOM ni réseau.
+- `donnees/recommandation-groupes-store.js` rassemble profils, rosters et
+  disponibilités en lecture seule pour cette proposition.

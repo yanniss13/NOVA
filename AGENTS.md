@@ -1674,3 +1674,24 @@ après lui.
   annonce les images d'armes et de bijoux qui manquent, sans rien écrire.
 - Après l'ajout d'un héros : relancer aussi `python scripts/generate-wiki.py`,
   sinon `tests/wiki-catalogue.test.js` passe au rouge.
+
+## Assistant de composition des groupes de boss
+
+Le panneau de l'onglet Boss est strictement **en lecture seule**. Il lit les
+disponibilités de la semaine ISO courante, les rosters et les inscriptions de
+la semaine de boss, puis propose au plus six groupes de cinq membres. Il ne
+rejoint jamais une session et ne choisit aucune équipe à la place d'un membre.
+
+Le classement est déterministe : potentiel maximal déclaré, nombre de builds
+avec une arme, diversité élémentaire, pseudo puis identifiant. Les membres qui
+ont déjà trois runs sur les groupes de la semaine sont exclus. Attention à ne
+pas fusionner les deux calendriers : les disponibilités basculent lundi à 00 h,
+les groupes de boss lundi à 9 h.
+
+## Chargement différé du catalogue chiffré
+
+`data/stats-build.js` n'est plus chargé par `index.html` ni précaché à
+l'installation. `noyau/catalogue-build.js` l'injecte à la première ouverture
+d'une vue qui en dépend. `BUILD_STATS` conserve la même identité et ses
+dictionnaires sont remplis sur place : plusieurs modules gardent une référence
+vers ces objets. Le remplacer directement réintroduirait des catalogues vides.

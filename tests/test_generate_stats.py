@@ -63,6 +63,35 @@ class CollectTests(unittest.TestCase):
     def test_unknown_key_gives_an_empty_list(self):
         self.assertEqual(module.collect('{"weapons":[{"slug":"a"}]}', "armors"), [])
 
+    def test_output_order_does_not_depend_on_chunk_order(self):
+        first = (
+            '{"weapons":[{"slug":"zeta","value":1}]}'
+            '{"weapons":[{"slug":"alpha","value":2}]}'
+        )
+        second = (
+            '{"weapons":[{"value":2,"slug":"alpha"}]}'
+            '{"weapons":[{"value":1,"slug":"zeta"}]}'
+        )
+        self.assertEqual(module.collect(first, "weapons"), module.collect(second, "weapons"))
+        self.assertEqual(
+            [item["slug"] for item in module.collect(first, "weapons")],
+            ["alpha", "zeta"],
+        )
+
+
+class StableSerializationTests(unittest.TestCase):
+    def test_canonical_json_ignores_property_order(self):
+        self.assertEqual(
+            module.canonical_json({"b": 2, "a": 1}),
+            module.canonical_json({"a": 1, "b": 2}),
+        )
+
+    def test_mapping_is_sorted_case_insensitively(self):
+        self.assertEqual(
+            list(module.sorted_mapping({"z": 1, "Alpha": 2, "beta": 3})),
+            ["Alpha", "beta", "z"],
+        )
+
 
 class FindObjectTests(unittest.TestCase):
     def test_reads_the_label_dictionary(self):
