@@ -69,7 +69,7 @@ function reminderMessage(weekLabel, missingMembers) {
   );
   return "🔔 **Boss de confrérie**" + label + " — reset lundi 9h !\n" +
     lines.join("\n") + "\n" +
-    "Réserve tes runs sur NOVA avant le reset ! ⚔️";
+    "Réserve tes runs sur [NOVA](https://yanniss13.github.io/NOVA/) avant le reset ! ⚔️";
 }
 
 module.exports = {

@@ -142,6 +142,11 @@ assert.deepStrictEqual(
   assert.match(msg, /semaine du 20 juil\./);
   assert.match(msg, /Casté : 1 run restante/);
   assert.match(msg, /Syval : 3 runs restantes/);
+  assert.match(
+    msg,
+    /Réserve tes runs sur \[NOVA\]\(https:\/\/yanniss13\.github\.io\/NOVA\/\) avant le reset/,
+    "le nom NOVA doit ouvrir directement le site depuis Discord"
+  );
   assert.match(reminderMessage("semaine du 20 juil.", []), /tout le monde est à 3\/3/);
 }
 
