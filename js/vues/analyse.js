@@ -383,7 +383,12 @@ import { toast } from "./toast.js";
   function groupesDuRecensement(vise, membres){
     const parSupport = new Map();
     lignesDeSoutien()
-      .filter(ligne => ligne.vise === vise)
+      /* L'Analyse sert ici a preparer les compositions Foudre de la
+         confrerie. Les effets generaux restent utiles a toute equipe ; les
+         bonus propres aux autres elements restent dans le catalogue pour le
+         calculateur, mais n'encombrent plus ce recensement. */
+      .filter(ligne => ligne.vise === vise
+        && (!ligne.element || String(ligne.element).toLowerCase() === "thunder"))
       .forEach(ligne => {
         const cle = ligne.support || "";
         if(!parSupport.has(cle)) parSupport.set(cle, []);
@@ -465,12 +470,12 @@ import { toast } from "./toast.js";
     {
       vise:"ennemi",
       titre:"Affaiblissement de la cible",
-      note:"Ce que la confrérie peut retirer au boss lui-même. Le rôle du personnage n'y décide de rien : Escanor porte son malus de défense avec une épée à deux mains d'Attaquant, et cinq de ces effets viennent d'une tenue gravée."
+      note:"Effets généraux ou Foudre que la confrérie peut appliquer au boss. Les effets propres aux autres éléments sont masqués."
     },
     {
       vise:"allies",
       titre:"Renforcement des alliés",
-      note:"Ce que la confrérie peut donner au groupe, par une compétence ou par le passif d'une tenue gravée. Les passifs qui ne profitent qu'à leur porteur n'y figurent pas : ils ne changent rien à ce que le membre apporte."
+      note:"Renforts généraux ou Foudre apportés au groupe par une compétence ou une tenue gravée. Les effets propres aux autres éléments sont masqués."
     }
   ];
 
