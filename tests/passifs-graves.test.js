@@ -39,6 +39,15 @@ const nu = texte => (texte || "").replace(/\[#?[0-9A-Fa-f-]*\]/g, "");
 const identifiants = new Set();
 let lignes = 0;
 
+/* LA DISPENSE, nommee et unique. « Soleil brûlant » (escanor) ne porte aucun
+   pourcentage dans son texte : sa valeur (-15 %) est DERIVEE du plafond ecrit
+   sur l'armure (+100 cumuls) et du pas ecrit sur l'EPEE (-0,15 %/cumul, dans
+   buffs-supports.js). Faute d'un nombre a pointer, la regle « le nombre suit la
+   phrase » ne s'y applique pas. Tant que c'est une exception et non un motif,
+   une liste d'identifiants suffit ; le jour ou une deuxieme ligne derive sa
+   valeur d'ailleurs, il faudra un champ dans la donnee. */
+const DISPENSES_DE_PHRASE = new Set(["escanor-arrogance-inflammation-defense"]);
+
 Object.keys(TABLE).forEach(fichier => {
   const tenue = GRAVEES[fichier];
   assert.ok(tenue, "tenue inconnue du catalogue : " + fichier);
@@ -91,8 +100,10 @@ Object.keys(TABLE).forEach(fichier => {
     /* LA garde. Pour chacun des trois niveaux : la phrase citee doit etre un
        extrait litteral du texte de CE niveau, y apparaitre EXACTEMENT une
        fois - sinon on ne saurait pas de quel nombre on parle - et le nombre
-       qui la suit doit valoir la valeur stockee. */
-    niveaux.forEach((source, index) => {
+       qui la suit doit valoir la valeur stockee.
+       Une ligne DISPENSEE (valeur DERIVEE, sans nombre a pointer dans son
+       propre texte) saute ce seul controle ; tout le reste s'applique. */
+    if(!DISPENSES_DE_PHRASE.has(passif.id)) niveaux.forEach((source, index) => {
       const texte = nu(source.textFr);
       const morceaux = texte.split(passif.provenance.phrase);
       assert.equal(morceaux.length, 2,
@@ -180,11 +191,13 @@ Object.keys(TABLE).forEach(fichier => {
 
    Ce compte empeche qu'un oubli passe inapercu, et il MONTE quand un seau
    arrive ou quand une ancre est trouvee : il valait 30 avant que le moteur ne
-   sache reduire la resistance critique de la cible, puis 32, et il passe a 37
-   avec cinq retours - un effet de vulnerabilite deja branche, une ancre « %, »
-   qui designe le second de deux plafonds, et deux tenues simplement oubliees. */
-assert.equal(Object.keys(TABLE).length, 37,
-  "37 tenues attendues, recu " + Object.keys(TABLE).length);
+   sache reduire la resistance critique de la cible, puis 32, 37 avec cinq
+   retours - un effet de vulnerabilite deja branche, une ancre « %, » qui
+   designe le second de deux plafonds, et deux tenues simplement oubliees -, et
+   38 avec la ligne DERIVEE d'Escanor (« Soleil brûlant », dispensee de la regle
+   de phrase). */
+assert.equal(Object.keys(TABLE).length, 38,
+  "38 tenues attendues, recu " + Object.keys(TABLE).length);
 
 /* Les deux cibles doivent etre REPRESENTEES. Le lot « allies » est arrive
    apres coup : sans ce controle, un fichier ou toutes les lignes seraient

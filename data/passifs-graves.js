@@ -70,7 +70,8 @@
 // CE QUI N'Y FIGURE PAS, ET POURQUOI. Sur les 68 tenues, 28 n'ont aucun effet
 // offensif - barrieres, soins, recharges, jauges, deplacement. Restaient 26
 // passifs offensifs pour leur seul porteur et 14 qui buffent l'equipe.
-// TRENTE-SEPT tenues sont transcrites ici. Les autres ne le sont pas, et il
+// TRENTE-HUIT tenues sont transcrites ici, dont UNE a valeur derivee (voir
+// l'encadre « LE CAS DERIVE » plus bas). Les autres ne le sont pas, et il
 // vaut mieux le dire que les approximer :
 //
 //   Chevalier sacre a la visiere en etoile (jericho) et Piste de la flamme
@@ -128,6 +129,18 @@
 // vulnerabilite par categorie, arrivee avec les potentiels d'equipe. C'est
 // exactement ce que cette liste est censee produire : des retours, pas des
 // oublis.
+//
+// LE CAS DERIVE, UNIQUE. « Soleil brûlant » (Arrogance adequate, escanor) est
+// la seule ligne dont la valeur n'est pas transcrite mais DERIVEE. L'armure
+// n'ecrit aucun pourcentage : elle ajoute +100 cumuls d'Inflammation, et
+// chaque cumul vaut -0,15 % de defense — un pas qui vit sur l'epee a deux mains
+// d'Escanor (escanor-inflammation-defense, buffs-supports.js), pas ici. Le
+// -15 % stocke est donc le produit de deux sources : le plafond ecrit sur
+// l'armure (100) et le pas ecrit sur l'epee (0,15). Faute d'un nombre a pointer
+// dans CE texte, la regle « le nombre suit la phrase » ne s'y applique pas ;
+// passifs-graves.test.js en dispense NOMMEMENT cette seule ligne. Le jour ou
+// une deuxieme ligne derivera sa valeur d'ailleurs, ce n'est plus une exception
+// mais un motif : il faudra un champ, pas une liste d'identifiants.
 window.SEVEN_DS_PASSIFS_GRAVES = {
   "7ds-armures-ssr/Armure liee/Aventure du prince.webp":[
     {
@@ -931,6 +944,36 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       provenance:{
         phrase:"(Max\u00a0: ",
         phraseCumul:"augmente les dégâts des Ténèbres de "
+      }
+    }
+  ],
+  /* CAS A PART, ET ASSUME (le seul du fichier). Cette armure gravee n'ecrit
+     AUCUN pourcentage : elle porte le plafond d'Inflammation de +100 cumuls
+     (« Max : 100 »), et chaque cumul vaut -0,15 % de defense — un pas qui
+     vit sur l'EPEE a deux mains d'Escanor (escanor-inflammation-defense dans
+     buffs-supports.js), PAS ici. Le -15 % (1500) est donc DERIVE de deux
+     sources : le plafond ecrit ici et le pas ecrit la-bas. Aucune phrase de CE
+     texte ne porte « 15 » : la regle « le nombre suit la phrase » ne peut pas
+     s'y appliquer, et le test en dispense NOMMEMENT cette seule ligne (voir
+     DISPENSES_DE_PHRASE dans passifs-graves.test.js). Tout le reste — effet
+     valide, cible, trois niveaux, non-inertie — reste verifie. */
+  "7ds-armures-ssr/Armure liee/Arrogance adéquate.webp":[
+    {
+      id:"escanor-arrogance-inflammation-defense",
+      libelle:"Soleil brûlant : défense de l'ennemi −15 % (100 cumuls d'Inflammation en plus)",
+      cible:"allies",
+      cibleEnnemi:true,
+      effet:"defense",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      /* Identique aux trois niveaux : seuls les degats du Sacre du passif
+         montent (24/32/40 %), les cumuls de defense restent a 100. */
+      niveaux:[1500, 1500, 1500],
+      provenance:{
+        /* Valeur DERIVEE, pas transcrite. Voir le commentaire ci-dessus et la
+           dispense nommee dans le test. */
+        deriveDe:"escanor-inflammation-defense"
       }
     }
   ]
