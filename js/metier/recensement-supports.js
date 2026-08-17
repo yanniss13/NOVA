@@ -26,7 +26,21 @@
    CE QUI RESTE DEHORS : les passifs graves de cible « soi ». Ils ne profitent
    qu'a celui qui porte la tenue, donc ils ne disent rien de ce que le membre
    apporte au groupe. Les recenser gonflerait les deux sections de vingt-neuf
-   lignes qui ne repondent a aucune des deux questions. */
+   lignes qui ne repondent a aucune des deux questions.
+
+   DEHORS AUSSI, mais pour une autre raison : les passives d'armes GENERIQUES,
+   comme « Initiative » sur les douze armes flamboyantes (blazing). Elle
+   augmente les degats subis de la cible de 20 % (niveau 1) a 50 % (niveau 7)
+   pendant 20 s, mais au PREMIER coup seulement - condition : cible a 100 % de
+   PV. Deux choses l'ecartent. D'abord, ce recensement est organise PAR
+   PERSONNAGE et repond a « quel membre, via quel de ses heros, apporte ce
+   debuff » : une passive que n'importe quelle arme d'une serie porte n'a pas
+   de heros, pas de possession « perso + arme ». Ensuite, un effet d'ouverture
+   ne se lit qu'au premier coup d'un boss, la ou les autres lignes sont des
+   debuffs soutenus. La rattacher a un faux personnage salirait la table. Le
+   jour ou plusieurs passives d'armes generiques affaibliront la cible, elles
+   auront leur propre section ; pour une seule, et d'ouverture, non.
+   Source : 7dsorigin.app/fr/armes/blazing-*. */
 
 import {
   buildGearDefinition,
