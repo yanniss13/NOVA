@@ -1759,6 +1759,59 @@ async function installRosterFocusFakeSupabase(page){
       await headerContext.close();
     }
 
+    /* PAYSAGE sur téléphone : large mais court, il tombe hors de
+       `max-width:560px`. La hauteur d'écran y est pourtant la ressource rare,
+       et le header doit se replier comme en portrait étroit — ce que l'ancienne
+       condition en largeur seule ne faisait pas. */
+    {
+      const paysageContext = await browser.newContext({
+        viewport:{ width:812, height:375 },
+        isMobile:true,
+        hasTouch:true,
+        reducedMotion:"reduce"
+      });
+      const paysagePage = await paysageContext.newPage();
+      await paysagePage.route(
+        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*",
+        route => route.fulfill({
+          status:200,
+          contentType:"application/javascript",
+          body:"window.supabase=undefined;"
+        })
+      );
+      await paysagePage.goto(server.url + "/index.html");
+      await paysagePage.locator("#tab-builder").click();
+      await paysagePage.locator("#view-builder").waitFor({ state:"visible" });
+      const brandHeight = () => paysagePage.evaluate(() =>
+        document.querySelector(".brand").getBoundingClientRect().height
+      );
+      assert.equal(
+        await paysagePage.evaluate(() =>
+          document.querySelector(".topbar").classList.contains("is-retracted")
+        ),
+        false,
+        "en paysage, le header part déployé en haut de page"
+      );
+      assert.ok(await brandHeight() > 0,
+        "en paysage déployé, la marque du header est peinte");
+      await paysagePage.evaluate(() => window.scrollTo({ top:600 }));
+      await paysagePage.waitForFunction(() =>
+        document.querySelector(".topbar").classList.contains("is-retracted"),
+        undefined,
+        { timeout:4000 }
+      );
+      /* On attend la fin du repli plutôt que de lire aussitôt : `max-height`
+         s'anime, et une lecture immédiate verrait une hauteur intermédiaire. */
+      await paysagePage.waitForFunction(() =>
+        document.querySelector(".brand").getBoundingClientRect().height < 1,
+        undefined,
+        { timeout:4000 }
+      );
+      assert.ok(await brandHeight() < 1,
+        "en paysage, défiler doit replier la marque du header");
+      await paysageContext.close();
+    }
+
     /* Le repli doit être animé, pas instantané : sans réduction de mouvement,
        la hauteur du header doit passer par des valeurs intermédiaires entre
        l'état déployé et l'état replié. */

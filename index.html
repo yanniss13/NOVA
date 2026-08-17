@@ -777,7 +777,14 @@
 (function () {
   var bar = document.querySelector(".topbar");
   if (!bar || !window.matchMedia || !window.requestAnimationFrame) return;
-  var compact = window.matchMedia("(max-width:560px)");
+  /* On replie sur mobile étroit, mais AUSSI sur un téléphone couché : large
+     mais court, il n'entre pas dans `max-width:560px` alors que la hauteur y
+     est justement la ressource rare. La faible hauteur en paysage distingue le
+     téléphone de l'ordinateur, qui reste déployé. La condition suit celle de
+     css/responsive.css, sinon le JS replierait sans que la CSS ne le montre. */
+  var compact = window.matchMedia(
+    "(max-width:560px), (max-height:500px) and (orientation:landscape)"
+  );
   var RETRACT_FROM = 140;
   /* Le header ne se redéploie qu'en haut de page, pas au moindre scroll vers le
      haut : remonter pour relire un paragraphe ne doit pas recouvrir la page.

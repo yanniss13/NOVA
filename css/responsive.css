@@ -103,31 +103,9 @@
      élargir le document (cause du scroll latéral iPhone). */
   .topbar > *{min-width:0}
   .account{width:100%;order:2}
-  /* Header rétractable : en descendant, la marque et le bloc compte se
-     replient et seule la barre d'onglets reste collante.
-     On anime `max-height` + `opacity` (jamais `display`, qui ne se transitionne
-     pas) et on termine sur `visibility:hidden` : c'est ce qui retire ces
-     contrôles de l'ordre de tabulation, comme le faisait `display:none`.
-     `visibility` bascule sans délai à l'ouverture, mais seulement en fin de
-     course à la fermeture, sinon le bloc disparaîtrait avant d'avoir replié. */
-  .topbar{transition:padding .26s ease, gap .26s ease}
-  .topbar .brand,
-  .topbar .lootbar,
-  .topbar .account{
-    overflow:hidden;max-height:320px;
-    transition:max-height .26s ease, opacity .17s ease .05s, visibility 0s
-  }
-  .topbar.is-retracted{padding-top:8px;padding-bottom:8px;gap:0}
-  /* Le logo se replie avec la marque : replie, le header ne doit rester que
-     les onglets, au plus court. C'est aussi un LIEN, donc focusable - le
-     laisser peint le garderait dans l'ordre de tabulation d'une zone censee
-     avoir disparu. */
-  .topbar.is-retracted .brand,
-  .topbar.is-retracted .lootbar,
-  .topbar.is-retracted .account{
-    max-height:0;opacity:0;visibility:hidden;
-    transition:max-height .26s ease, opacity .15s ease, visibility 0s linear .26s
-  }
+  /* Header rétractable : les règles vivent dans un bloc dédié plus bas, pour
+     couvrir AUSSI le téléphone en paysage — large mais court, hors de portée
+     de `max-width:560px`. */
   .account-connected{flex:1;min-width:0;flex-wrap:wrap;justify-content:center;padding:6px 10px}
   .account-connected .btn{flex:1 1 auto;justify-content:center}
   .account-pseudo{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -146,6 +124,37 @@
   .member-roster-editor{padding:14px}
   .hero-source-actions{grid-template-columns:1fr}
   .hero-source-actions .hero-roster-reload{grid-column:auto}
+}
+/* Header rétractable : sur mobile étroit ET sur téléphone en paysage (large
+   mais court). Ce bloc vit hors de `max-width:560px` pour couvrir ce second
+   cas — la hauteur d'écran, faible, y est la ressource rare, et cette faible
+   hauteur distingue le téléphone de l'ordinateur, qui reste déployé. La
+   condition suit celle du script inline d'index.html, sinon le JS replierait
+   sans que la CSS ne le montre.
+   On anime `max-height` + `opacity` (jamais `display`, qui ne se transitionne
+   pas) et on termine sur `visibility:hidden` : c'est ce qui retire ces
+   contrôles de l'ordre de tabulation, comme le faisait `display:none`.
+   `visibility` bascule sans délai à l'ouverture, mais seulement en fin de
+   course à la fermeture, sinon le bloc disparaîtrait avant d'avoir replié. */
+@media(max-width:560px), (max-height:500px) and (orientation:landscape){
+  .topbar{transition:padding .26s ease, gap .26s ease}
+  .topbar .brand,
+  .topbar .lootbar,
+  .topbar .account{
+    overflow:hidden;max-height:320px;
+    transition:max-height .26s ease, opacity .17s ease .05s, visibility 0s
+  }
+  .topbar.is-retracted{padding-top:8px;padding-bottom:8px;gap:0}
+  /* Le logo se replie avec la marque : replie, le header ne doit rester que
+     les onglets, au plus court. C'est aussi un LIEN, donc focusable - le
+     laisser peint le garderait dans l'ordre de tabulation d'une zone censee
+     avoir disparu. */
+  .topbar.is-retracted .brand,
+  .topbar.is-retracted .lootbar,
+  .topbar.is-retracted .account{
+    max-height:0;opacity:0;visibility:hidden;
+    transition:max-height .26s ease, opacity .15s ease, visibility 0s linear .26s
+  }
 }
 @media (pointer:coarse), (max-width:560px){
   button,.btn,.tab,.chip,.gear-slot,.pot-btn,
