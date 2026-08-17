@@ -643,8 +643,32 @@ import { toast } from "./toast.js";
   /* LA MATRICE, dans son conteneur stable. Aucune lecture reseau : elle ne
      travaille que sur les joueurs deja charges. */
   function rendreMatrice(wrap, players){
+    const selectTriMobile = el("select",{
+      class:"matrix-mobile-sort-select"
+    });
+    const optionTotal = el("option",{value:"total", text:"Total"});
+    optionTotal.selected = analyseTri === null;
+    selectTriMobile.appendChild(optionTotal);
+    ELEM_ORDER.forEach(e => {
+      const option = el("option",{value:e, text:elemLabel(e)});
+      option.selected = analyseTri === e;
+      selectTriMobile.appendChild(option);
+    });
+    selectTriMobile.addEventListener("change",()=>{
+      const garderFocus = document.activeElement === selectTriMobile;
+      analyseTri = selectTriMobile.value === "total" ? null : selectTriMobile.value;
+      rendreMatrice(wrap, players);
+      if(garderFocus){
+        const remplacement = wrap.querySelector(".matrix-mobile-sort-select");
+        if(remplacement) remplacement.focus();
+      }
+    });
+    const triMobile = el("label",{class:"matrix-mobile-sort"},[
+      el("span",{text:"Trier par"}),
+      selectTriMobile
+    ]);
     const table = el("table",{class:"matrix"});
-    const thead = el("tr",{},[
+    const thead = el("tr",{class:"mx-header-row"},[
       el("th",{class:"mx-player", text:"Membre"}),
       el("th",{text:"Total"})
     ]);
@@ -673,23 +697,33 @@ import { toast } from "./toast.js";
     });
     table.appendChild(thead);
     membresTries(players).forEach(p => {
-      const tr = el("tr",{});
+      const total = (p.dps || []).length;
+      const tr = el("tr",{class:"mx-player-card"});
       tr.appendChild(el("td",{class:"mx-player", text:p.name}));
-      tr.appendChild(el("td",{class:"mx-total", text:String((p.dps||[]).length)}));
+      tr.appendChild(el("td",{
+        class:"mx-total",
+        text:String(total),
+        "aria-label":"Total : " + total + " DPS"
+      }));
       ELEM_ORDER.forEach(e => {
         const dps = (p.dps||[]).filter(d => dpsElem(d) === e)
           .sort((a,b) => (b.pot||0) - (a.pot||0));
         const td = el("td",{
           class:(dps.length ? "" : "mx-empty")
-            + (analyseTri === e ? " mx-colonne-triee" : "")
+            + (analyseTri === e ? " mx-colonne-triee" : ""),
+          dataset:{ mxElement:e }
         });
+        td.appendChild(el("span",{
+          class:"mx-element-label",
+          text:elemLabel(e)
+        }));
         if(dps.length) dps.forEach(d => td.appendChild(caseDeLaMatrice(p, d)));
-        else td.textContent = "—";
+        else td.appendChild(el("span",{class:"mx-empty-mark", text:"—"}));
         tr.appendChild(td);
       });
       table.appendChild(tr);
     });
-    wrap.replaceChildren(table);
+    wrap.replaceChildren(triMobile, table);
     /* Le tableau doit deja etre connecte : si Realtime reconstruit la vue
        pendant que la modale est ouverte, ModalStack refuse a juste titre une
        cible de focus detachee. */
