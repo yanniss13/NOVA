@@ -212,8 +212,8 @@
     text-align:center;overflow:hidden}
   .matrix .mx-player-card>td.mx-colonne-triee{background:rgba(218,165,56,.08);
     border-color:var(--gold-deep)}
-  .mx-element-label{display:block;margin-bottom:2px;color:var(--muted);
-    font-size:9px;font-weight:600;line-height:1.15;overflow:hidden;
+  .mx-element-label{display:block;margin-bottom:2px;color:var(--ec, var(--muted));
+    font-size:9px;font-weight:700;line-height:1.15;overflow:hidden;
     text-overflow:ellipsis;white-space:nowrap}
   .mx-action{display:flex;flex-direction:column;align-items:center;
     justify-content:center;gap:1px;margin:0;padding:3px 2px;text-align:center}

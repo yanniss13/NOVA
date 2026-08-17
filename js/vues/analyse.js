@@ -786,10 +786,12 @@ import { toast } from "./toast.js";
             + (analyseTri === e ? " mx-colonne-triee" : ""),
           dataset:{ mxElement:e }
         });
-        td.appendChild(el("span",{
-          class:"mx-element-label",
-          text:elemLabel(e)
-        }));
+        /* Le libelle prend la couleur de son element : sur telephone, l'en-tete
+           colore du tableau est masque, et cette pastille devient le seul repere
+           d'element de la carte. */
+        const label = el("span",{class:"mx-element-label", text:elemLabel(e)});
+        label.style.setProperty("--ec", elemColor(e));
+        td.appendChild(label);
         if(dps.length) dps.forEach(d => td.appendChild(caseDeLaMatrice(p, d)));
         else td.appendChild(el("span",{class:"mx-empty-mark", text:"—"}));
         tr.appendChild(td);
