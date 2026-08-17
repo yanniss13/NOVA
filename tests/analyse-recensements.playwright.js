@@ -183,6 +183,111 @@ async function ouvrirAnalyse(page, section = "supports"){
       "restaurer l'ordre par defaut ne doit pas relire Supabase"
     );
 
+    /* SUR TELEPHONE, chaque membre devient une carte : son nom et son total
+       restent en tete, puis les huit elements tiennent en quatre colonnes.
+       Le tableau semantique reste unique afin que les actions de build et la
+       restitution du focus ne soient jamais dupliquees. */
+    await page.setViewportSize({ width:390, height:844 });
+    const triMobile = page.locator("#analysePanel-dps .matrix-mobile-sort-select");
+    assert.equal(await triMobile.isVisible(), true,
+      "le tri doit rester disponible au-dessus des cartes mobiles");
+    assert.deepEqual(
+      await triMobile.locator("option").allTextContents(),
+      ["Total", "Feu", "Glace", "Vent", "Terre", "Lumière", "Ténèbres", "Foudre", "Physique"],
+      "le tri mobile doit proposer le total et les huit elements"
+    );
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.calls.length = 0;
+    });
+    await triMobile.focus();
+    await triMobile.selectOption("ICE");
+    assert.equal(await premierMembre(), "Merlin",
+      "le tri mobile Glace doit placer le meilleur potentiel en tete");
+    assert.equal(
+      await page.evaluate(() => document.activeElement.matches(
+        ".matrix-mobile-sort-select"
+      )),
+      true,
+      "le tri mobile doit conserver le focus apres le rendu"
+    );
+    assert.equal(
+      await page.evaluate(() => window.__fakeSupabaseState.calls.length),
+      0,
+      "le tri mobile ne doit relire aucune table Supabase"
+    );
+    await triMobile.selectOption("total");
+    assert.equal(await premierMembre(), "Yannis",
+      "le tri Total mobile doit restaurer l'ordre par nombre de DPS");
+
+    for(const width of [320, 390, 640]){
+      await page.setViewportSize({ width, height:844 });
+      const carteMobile = await page.locator(
+        "#analysePanel-dps .matrix .mx-player-card"
+      ).first().evaluate(card => {
+        const matrix = card.closest(".matrix");
+        const wrap = card.closest(".matrix-wrap");
+        const cells = [...card.querySelectorAll("td[data-mx-element]")];
+        const labels = [...card.querySelectorAll(".mx-element-label")];
+        const tops = cells.map(cell => Math.round(cell.getBoundingClientRect().top));
+        const lignes = [...new Set(tops)];
+        const rect = card.getBoundingClientRect();
+        const wrapRect = wrap.getBoundingClientRect();
+        return {
+          display:getComputedStyle(card).display,
+          headerDisplay:getComputedStyle(matrix.querySelector(".mx-header-row")).display,
+          elementCount:cells.length,
+          labels:labels.map(label => ({
+            text:label.textContent.trim(),
+            display:getComputedStyle(label).display
+          })),
+          cellsPerLine:lignes.map(top => tops.filter(value => value === top).length),
+          cardInside:rect.left >= wrapRect.left - 1 && rect.right <= wrapRect.right + 1,
+          cardFills:Math.abs(rect.width - wrapRect.width) <= 2,
+          wrapOverflow:wrap.scrollWidth - wrap.clientWidth,
+          matrixOverflow:matrix.scrollWidth - matrix.clientWidth,
+          documentOverflow:document.scrollingElement.scrollWidth
+            - document.scrollingElement.clientWidth,
+          actionHeights:[...card.querySelectorAll(".mx-action")]
+            .map(action => action.getBoundingClientRect().height)
+        };
+      });
+      assert.equal(carteMobile.display, "grid",
+        `chaque membre doit devenir une carte a ${width}px`);
+      assert.equal(carteMobile.headerDisplay, "none",
+        `l'en-tete du tableau doit ceder la place aux libelles des cartes a ${width}px`);
+      assert.equal(carteMobile.elementCount, 8,
+        `les huit elements doivent rester visibles dans chaque carte a ${width}px`);
+      assert.ok(
+        carteMobile.labels.length === 8
+          && carteMobile.labels.every(label => label.text && label.display !== "none"),
+        `chaque case doit nommer son element a ${width}px`
+      );
+      assert.deepEqual(carteMobile.cellsPerLine, [4, 4],
+        `les elements doivent former une grille 4 par 2 a ${width}px`);
+      assert.ok(
+        carteMobile.cardInside
+          && carteMobile.cardFills
+          && carteMobile.wrapOverflow <= 1
+          && carteMobile.matrixOverflow <= 1
+          && carteMobile.documentOverflow <= 1,
+        `les cartes DPS ne doivent provoquer aucun debordement horizontal a ${width}px`
+      );
+      assert.ok(
+        carteMobile.actionHeights.every(height => height >= 43.5),
+        `les builds doivent conserver une cible tactile de 44px a ${width}px`
+      );
+    }
+    await page.setViewportSize({ width:1280, height:900 });
+    assert.equal(
+      await page.locator("#analysePanel-dps .mx-header-row").evaluate(row =>
+        getComputedStyle(row).display
+      ),
+      "table-row",
+      "le tableau desktop doit rester intact"
+    );
+    assert.equal(await triMobile.isHidden(), true,
+      "le tri mobile ne doit pas doubler les en-tetes sur ordinateur");
+
     await page.locator(
       '.analyse-subnav-button[data-analyse-section="supports"]'
     ).click();
