@@ -12,6 +12,15 @@ import { sessionCourante } from "../etat/session.js";
   const BOSS_GROUPS = 6;
 
   const BossStore = {
+    async sessionById(sessionId){
+      if(!sessionCourante.user || !sb) return null;
+      const { data, error } = await sb.from("boss_sessions")
+        .select("*")
+        .eq("id", sessionId)
+        .maybeSingle();
+      if(error) throw error;
+      return data || null;
+    },
     async listAll(){
       if(!sessionCourante.user || !sb) return [];
       const { data, error } = await sb.from("boss_sessions").select("*")

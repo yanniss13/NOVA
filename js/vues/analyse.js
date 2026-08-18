@@ -15,6 +15,7 @@
 
 import { refreshRosterProfiles } from "../donnees/roster-profils.js";
 import { cloudRosterFromRow } from "../donnees/roster-store.js";
+import { BossStore } from "../donnees/boss-store.js";
 import { sessionCourante } from "../etat/session.js";
 import {
   lignesDeSoutien,
@@ -22,6 +23,7 @@ import {
 } from "../metier/recensement-supports.js";
 import { charOf } from "../metier/catalogue.js";
 import { favoriteRosterWeaponType } from "../metier/equipe-modele.js";
+import { fragmentDeRoute, lireRoute } from "../metier/routage.js";
 import {
   ELEMENTS,
   ENUM_TO_FOLDER,
@@ -35,6 +37,8 @@ import { sb } from "../noyau/supabase-client.js";
 import { openRosterDetailFor, rosterDetail } from "./detail-roster.js";
 import { ModalStack } from "./modal-stack.js";
 import { openAuth } from "./modale-auth.js";
+import { showView } from "./navigation.js";
+import { enregistrerGestionnaireRoute } from "./routage.js";
 import { toast } from "./toast.js";
 
   /* ===== #5 Analyse : DPS dérivés du Roster ===== */
@@ -496,6 +500,36 @@ import { toast } from "./toast.js";
      QU'A la matrice : les compteurs de la vue d'ensemble restent calcules sur
      tout le monde. */
   const analyseMembres = new Set();
+  let analyseGroupContext = { status:"none" };
+
+  function routeAnalyseGroupeCourante(){
+    const route = lireRoute(location.hash);
+    return route && route.type === "group" && route.view === "analyse"
+      ? route
+      : null;
+  }
+
+  function synchroniserContexteAnalyse(){
+    const route = routeAnalyseGroupeCourante();
+    if(!route || route.sessionId !== analyseGroupContext.sessionId){
+      analyseGroupContext = { status:"none" };
+    }
+    return route;
+  }
+
+  function participantsAnalyse(membership){
+    const uniques = new Map();
+    (membership || []).forEach(item => {
+      const owner = String(item && item.owner || "");
+      if(owner && !uniques.has(owner)){
+        uniques.set(owner, {
+          owner,
+          pseudo:String(item.pseudo || "Membre")
+        });
+      }
+    });
+    return [...uniques.values()];
+  }
 
   function ligneVisibleDansAnalyse(ligne){
     return !ligne.element
@@ -809,9 +843,139 @@ import { toast } from "./toast.js";
     rendreLaCibleDuFocus(wrap);
   }
 
+  function bandeauGroupeAnalyse(context, options){
+    const settings = Object.assign({
+      lectureRostersReussie:true,
+      sansRoster:0
+    }, options || {});
+    const title = context.group.title + " · Run " + (context.group.run_no || 1);
+    const nombre = context.participants.length;
+    const details = [
+      el("span",{
+        class:"analyse-group-meta",
+        text:nombre + " participant" + (nombre > 1 ? "s" : "")
+      })
+    ];
+    if(!settings.lectureRostersReussie){
+      details.push(el("span",{
+        class:"analyse-group-meta analyse-group-error",
+        text:"Données de roster indisponibles"
+      }));
+    }else if(settings.sansRoster > 0){
+      details.push(el("span",{
+        class:"analyse-group-meta analyse-group-warning",
+        text:settings.sansRoster + " sans roster exploitable"
+      }));
+    }
+    return el("section",{
+      class:"analyse-group-context",
+      role:"region",
+      "aria-labelledby":"analyseGroupTitle"
+    },[
+      el("div",{class:"analyse-group-main"},[
+        el("h2",{
+          id:"analyseGroupTitle",
+          class:"analyse-group-title",
+          tabindex:-1,
+          text:title
+        }),
+        el("div",{class:"analyse-group-details"},details)
+      ]),
+      el("button",{
+        class:"btn btn-secondary analyse-group-all",
+        type:"button",
+        text:"Toute la confrérie",
+        onclick:()=>void showView("analyse")
+      })
+    ]);
+  }
+
+  function etatRouteAnalyse(message, action){
+    const box = $("#analyseBody");
+    box.innerHTML = "";
+    const content = [
+      el("p",{
+        id:"analyseGroupTitle",
+        class:"big",
+        tabindex:-1,
+        text:message
+      })
+    ];
+    if(action){
+      content.push(el("a",{
+        class:"btn btn-secondary",
+        href:action.href,
+        dataset:{appRoute:""},
+        text:action.label
+      }));
+    }
+    box.appendChild(el("div",{
+      class:"empty-state analyse-route-state",
+      role:"status"
+    },content));
+  }
+
+  function rendreGroupeAnalyseVide(context){
+    const box = $("#analyseBody");
+    box.innerHTML = "";
+    const overview = panneauAnalyse("overview");
+    const dpsPanel = panneauAnalyse("dps");
+    const supportsPanel = panneauAnalyse("supports");
+    dpsPanel.appendChild(el("div",{class:"empty-state analyse-empty"},[
+      el("p",{
+        class:"big",
+        text:"Ce groupe ne contient encore aucun participant."
+      })
+    ]));
+    box.append(
+      bandeauGroupeAnalyse(context),
+      navigationAnalyse(box),
+      overview,
+      dpsPanel,
+      supportsPanel
+    );
+    afficherSousVueAnalyse(box, "dps");
+  }
+
+  async function ouvrirRouteAnalyseGroupe(route){
+    analyseSousVue = "dps";
+    analyseGroupContext = {
+      status:"loading",
+      sessionId:route.sessionId
+    };
+    const loaded = await showView("analyse", {historyMode:"none"});
+    if(!loaded) return false;
+    try{
+      const group = await BossStore.sessionById(route.sessionId);
+      if(!group || group.status !== "open"){
+        analyseGroupContext = {
+          status:"not-found",
+          sessionId:route.sessionId
+        };
+      }else{
+        const membership = await BossStore.listMembership([route.sessionId]);
+        analyseGroupContext = {
+          status:"ready",
+          sessionId:route.sessionId,
+          group,
+          participants:participantsAnalyse(membership)
+        };
+      }
+    }catch(error){
+      analyseGroupContext = {
+        status:"read-error",
+        sessionId:route.sessionId
+      };
+    }
+    await renderAnalyse();
+    $("#analyseGroupTitle")?.focus();
+    return true;
+  }
+
   async function renderAnalyse(){
     const renderId = ++analyseRenderId;
     const box = $("#analyseBody");
+    synchroniserContexteAnalyse();
     /* Le rafraîchissement détache immédiatement les cases de la matrice. Si
        celle qui a ouvert la modale ne réapparaît pas (build supprimé ou lecture
        en échec), l'onglet Analyse reste une cible logique et visible. Une case
@@ -832,6 +996,42 @@ import { toast } from "./toast.js";
       ]));
       return;
     }
+    if(analyseGroupContext.status === "loading"){
+      box.innerHTML = "";
+      box.appendChild(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:"Chargement du groupe…"})
+      ]));
+      return;
+    }
+    if(analyseGroupContext.status === "not-found"){
+      etatRouteAnalyse(
+        "Ce groupe n’est plus ouvert ou n’existe plus.",
+        {
+          label:"Retour aux sessions",
+          href:fragmentDeRoute({ type:"view", view:"boss" })
+        }
+      );
+      return;
+    }
+    if(analyseGroupContext.status === "read-error"){
+      etatRouteAnalyse(
+        "Impossible de lire les participants du groupe.",
+        {
+          label:"Réessayer",
+          href:fragmentDeRoute({
+            type:"group",
+            view:"analyse",
+            sessionId:analyseGroupContext.sessionId
+          })
+        }
+      );
+      return;
+    }
+    if(analyseGroupContext.status === "ready"
+      && analyseGroupContext.participants.length === 0){
+      rendreGroupeAnalyseVide(analyseGroupContext);
+      return;
+    }
     let membres;
     let lectureRostersReussie = true;
     try{
@@ -845,18 +1045,40 @@ import { toast } from "./toast.js";
       .then(() => true, () => false);
     if(renderId !== analyseRenderId) return;
     box.innerHTML = "";
+    const participantOwners = analyseGroupContext.status === "ready"
+      ? new Set(analyseGroupContext.participants.map(item => item.owner))
+      : null;
+    const membresAnalyses = participantOwners
+      ? membres.filter(membre => participantOwners.has(membre.owner))
+      : membres;
     /* Les trois sections DPS ne parlent que des membres qui en ont un. Les deux
        recensements, eux, parlent de tout le monde : un membre qui ne joue que
        des soutiens y a sa place, et le filtre d'origine le rendait invisible
        avant meme que la vue ne le voie. */
-    const players = membres.filter(p => (p.dps || []).length);
+    const players = membresAnalyses.filter(p => (p.dps || []).length);
 
     /* Les panneaux sont tous construits depuis la meme lecture. Changer de
        sous-vue ne rappelle donc ni les rosters ni les tables d'effets. */
     const overview = panneauAnalyse("overview");
     const dpsPanel = panneauAnalyse("dps");
     const supportsPanel = panneauAnalyse("supports");
+    const ownersAvecRoster = new Set(
+      membresAnalyses.map(item => item.owner)
+    );
+    const sansRoster = analyseGroupContext.status === "ready"
+      && lectureRostersReussie
+      ? analyseGroupContext.participants.filter(
+        item => !ownersAvecRoster.has(item.owner)
+      ).length
+      : 0;
+    const groupBanner = analyseGroupContext.status === "ready"
+      ? bandeauGroupeAnalyse(analyseGroupContext, {
+        lectureRostersReussie,
+        sansRoster
+      })
+      : null;
     box.append(
+      ...(groupBanner ? [groupBanner] : []),
       navigationAnalyse(box),
       overview,
       dpsPanel,
@@ -870,7 +1092,7 @@ import { toast } from "./toast.js";
       ELEM_ORDER.forEach(e=>{ if(has[e]) cov[e].players++; });
     });
     const supports = resumeDesSupports(
-      membres, tablesLues, lectureRostersReussie
+      membresAnalyses, tablesLues, lectureRostersReussie
     );
     const totalDps = players.reduce((n, joueur) =>
       n + (joueur.dps || []).length, 0);
@@ -880,7 +1102,7 @@ import { toast } from "./toast.js";
     overview.appendChild(el("h2",{class:"an-title", text:"En un coup d'œil"}));
     overview.appendChild(el("div",{class:"analyse-summary"},[
       carteResume(
-        lectureRostersReussie ? membres.length : "—",
+        lectureRostersReussie ? membresAnalyses.length : "—",
         "Membres analysés",
         lectureRostersReussie ? "rosters lus" : "lecture indisponible"
       ),
@@ -900,7 +1122,7 @@ import { toast } from "./toast.js";
         supports ? "effets généraux ou Foudre" : "donnée indisponible"
       )
     ]));
-    if(membres.length){
+    if(membresAnalyses.length){
       overview.appendChild(el("h2",{class:"an-title", text:"Couverture par élément"}));
       const covRow = el("div",{class:"cov-row"});
       ELEM_ORDER.forEach(e=>{
@@ -959,9 +1181,11 @@ import { toast } from "./toast.js";
     supportsPanel.appendChild(el("p",{class:"analyse-panel-intro",
       text:"Uniquement les effets généraux et Foudre utiles à la composition de la confrérie."}));
     SECTIONS_DU_RECENSEMENT.forEach(section => rendreRecensement(
-      supportsPanel, section, membres, tablesLues, lectureRostersReussie
+      supportsPanel, section, membresAnalyses, tablesLues, lectureRostersReussie
     ));
     afficherSousVueAnalyse(box, analyseSousVue);
   }
+
+enregistrerGestionnaireRoute("analyse", ouvrirRouteAnalyseGroupe);
 
 export { renderAnalyse };
