@@ -1,8 +1,12 @@
 name: Tests et déploiement GitHub Pages
 
 on:
+  # Les tests tournent sur TOUTE branche poussee : une regression trouvee sur
+  # une branche de fonctionnalite coute une minute, la meme regression trouvee
+  # apres fusion coute une enquete. Le deploiement, lui, reste reserve a `main`
+  # par la condition des jobs `package` et `deploy`.
   push:
-    branches: [main]
+    branches: ['**']
   pull_request:
     branches: [main]
   workflow_dispatch:
