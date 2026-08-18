@@ -49,8 +49,8 @@ async function ouvrirAnalyse(page, section = "supports"){
     await ouvrirAnalyse(page, "overview");
     assert.match(
       await page.locator("#view-analyse .section-lead").textContent(),
-      /soutiens généraux et Foudre/,
-      "le texte long doit expliquer que les soutiens ne sont pas tous Foudre"
+      /soutiens de tous les éléments/,
+      "le texte long doit annoncer le recensement complet"
     );
     for(const width of [320, 360, 390]){
       await page.setViewportSize({ width, height:844 });
@@ -379,16 +379,110 @@ async function ouvrirAnalyse(page, section = "supports"){
       "#analysePanel-supports .debuff-row .elem-badge"
     ).allTextContents();
     assert.ok(elementsDuRecensement.length > 0);
-    assert.ok(
-      elementsDuRecensement.every(label => ["Tous", "Foudre"].includes(label.trim())),
-      "l'Analyse ne doit lister que les supports generaux ou Foudre"
+    const elementsSpecialises = new Set(
+      elementsDuRecensement.map(label => label.trim()).filter(label => label !== "Tous")
     );
+    const codesDuCatalogue = await page.evaluate(() => {
+      const armes = Object.values(window.SEVEN_DS_BUFFS_SUPPORTS || {}).flat();
+      const tenues = Object.values(window.SEVEN_DS_PASSIFS_GRAVES || {}).flat()
+        .filter(passif => passif.cible === "allies");
+      return [...new Set(armes.concat(tenues)
+        .map(ligne => String(ligne.element || "").toUpperCase())
+        .filter(Boolean))];
+    });
+    const libelleParCode = {
+      FIRE:"Feu", ICE:"Glace", WIND:"Vent", EARTH:"Terre",
+      HOLY:"Lumière", DARK:"Ténèbres", THUNDER:"Foudre", DEFAULT:"Physique"
+    };
+    assert.deepEqual(
+      [...elementsSpecialises].sort(),
+      codesDuCatalogue.map(code => libelleParCode[code]).sort(),
+      "Tous les supports elementaires doivent etre visibles par defaut"
+    );
+
+    const filtreTous = page.locator(
+      '#analysePanel-supports .supports-element-filter [data-support-element=""]'
+    );
+    const filtreFeu = page.locator(
+      '#analysePanel-supports .supports-element-filter [data-support-element="FIRE"]'
+    );
+    const filtreTenebres = page.locator(
+      '#analysePanel-supports .supports-element-filter [data-support-element="DARK"]'
+    );
+    assert.equal(await filtreTous.getAttribute("aria-pressed"), "true",
+      "Tous doit etre actif par defaut");
+
+    await filtreFeu.click();
+    await filtreTenebres.click();
+    const elementsFiltres = (await page.locator(
+      "#analysePanel-supports .debuff-row .elem-badge"
+    ).allTextContents()).map(label => label.trim());
+    assert.ok(elementsFiltres.includes("Tous"),
+      "les effets generaux doivent rester visibles avec un filtre");
+    assert.ok(elementsFiltres.includes("Feu") && elementsFiltres.includes("Ténèbres"),
+      "plusieurs elements doivent pouvoir etre selectionnes ensemble");
+    assert.ok(elementsFiltres.every(label =>
+      ["Tous", "Feu", "Ténèbres"].includes(label)
+    ), "le filtre doit masquer les elements non selectionnes");
+    assert.equal(await filtreTous.getAttribute("aria-pressed"), "false");
+    assert.equal(await filtreFeu.getAttribute("aria-pressed"), "true");
+    assert.equal(await filtreTenebres.getAttribute("aria-pressed"), "true");
     assert.equal(
-      await page.locator("#analysePanel-supports .debuff-row .elem-badge")
-        .filter({hasNotText:/^(Tous|Foudre)$/}).count(),
-      0,
-      "Feu, Tenebres et les autres elements doivent etre absents"
+      await page.evaluate(() => document.activeElement?.dataset.supportElement),
+      "DARK",
+      "le bouton active doit garder le focus apres le filtrage"
     );
+
+    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirAnalyse(page);
+    assert.equal(await filtreFeu.getAttribute("aria-pressed"), "true",
+      "le filtre Feu doit survivre a un nouveau rendu de l'Analyse");
+    assert.equal(await filtreTenebres.getAttribute("aria-pressed"), "true",
+      "le filtre Tenebres doit survivre a un nouveau rendu de l'Analyse");
+    assert.ok((await page.locator(
+      "#analysePanel-supports .debuff-row .elem-badge"
+    ).allTextContents()).map(label => label.trim()).every(label =>
+      ["Tous", "Feu", "Ténèbres"].includes(label)
+    ), "le nouveau rendu doit conserver la selection multiple");
+
+    await filtreTous.click();
+    assert.equal(
+      await page.locator("#analysePanel-supports .debuff-row").count(),
+      elementsDuRecensement.length,
+      "Tous doit restaurer le recensement complet"
+    );
+
+    for(const width of [320, 390]){
+      await page.setViewportSize({ width, height:844 });
+      const dispositionFiltre = await page.locator(
+        "#analysePanel-supports .supports-element-filter"
+      ).evaluate(filtre => {
+        const box = filtre.getBoundingClientRect();
+        const boutons = [...filtre.querySelectorAll("button")];
+        return {
+          flexWrap:getComputedStyle(filtre).flexWrap,
+          overflow:filtre.scrollWidth - filtre.clientWidth,
+          documentOverflow:document.scrollingElement.scrollWidth
+            - document.scrollingElement.clientWidth,
+          heights:boutons.map(bouton => bouton.getBoundingClientRect().height),
+          inside:boutons.every(bouton => {
+            const rect = bouton.getBoundingClientRect();
+            return rect.left >= box.left - 1 && rect.right <= box.right + 1;
+          })
+        };
+      });
+      assert.equal(dispositionFiltre.flexWrap, "wrap",
+        `le filtre doit se replier sur plusieurs lignes a ${width}px`);
+      assert.ok(
+        dispositionFiltre.overflow <= 1
+          && dispositionFiltre.documentOverflow <= 1
+          && dispositionFiltre.inside,
+        `le filtre ne doit pas deborder horizontalement a ${width}px`
+      );
+      assert.ok(dispositionFiltre.heights.every(height => height >= 43.5),
+        `chaque filtre doit conserver une cible tactile de 44px a ${width}px`);
+    }
+    await page.setViewportSize({ width:1280, height:900 });
 
     /* Une lecture reussie et vide affirme que personne ne possede l'effet. */
     await page.evaluate(() => {
@@ -650,11 +744,9 @@ async function ouvrirAnalyse(page, section = "supports"){
        doit pas casser ce test sans raison. */
     const totalContreLaCible = await page.evaluate(() => {
       const armes = Object.values(window.SEVEN_DS_BUFFS_SUPPORTS || {}).flat()
-        .filter(ligne => ligne.cible === "ennemi"
-          && (!ligne.element || ligne.element === "thunder")).length;
+        .filter(ligne => ligne.cible === "ennemi").length;
       const tenues = Object.values(window.SEVEN_DS_PASSIFS_GRAVES || {}).flat()
-        .filter(passif => passif.cible === "allies" && passif.cibleEnnemi
-          && (!passif.element || passif.element === "thunder")).length;
+        .filter(passif => passif.cible === "allies" && passif.cibleEnnemi).length;
       return armes + tenues;
     });
     assert.equal(

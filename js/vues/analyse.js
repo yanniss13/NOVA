@@ -188,6 +188,11 @@ import { toast } from "./toast.js";
      QU'A la matrice : les compteurs de la vue d'ensemble restent calcules sur
      tout le monde. */
   const analyseMembres = new Set();
+  /* Vide signifie « Tous ». Une selection contient un ou plusieurs codes
+     d'element et conserve toujours les effets generaux, utiles a toute
+     composition. Comme le filtre des membres, cet etat survit aux rendus
+     Realtime sans etre persiste entre deux chargements de page. */
+  const analyseElementsSupports = new Set();
   let analyseGroupContext = { status:"none" };
 
   function routeAnalyseGroupeCourante(){
@@ -419,6 +424,58 @@ import { toast } from "./toast.js";
         puce.setAttribute("aria-pressed", String(actif));
       });
     }
+    return groupe;
+  }
+
+  /* LE MULTI-FILTRE DES SOUTIENS. Les huit elements restent proposes meme si
+     aucun effet specialise n'est encore transcrit pour l'un d'eux : le filtre
+     de l'Analyse partage ainsi le meme vocabulaire que la couverture DPS.
+     « Tous » vide la selection ; desactivee jusqu'au dernier element, celle-ci
+     revient naturellement a l'etat complet. */
+  function filtreElementsSupports(rafraichir){
+    const groupe = el("div",{
+      class:"supports-element-filter",
+      role:"group",
+      "aria-label":"Filtrer les soutiens par élément"
+    });
+    groupe.appendChild(el("span",{
+      class:"supports-element-filter-label",
+      text:"Éléments affichés"
+    }));
+    const choix = [{ id:"", label:"Tous" }].concat(
+      ELEM_ORDER.map(id => ({ id, label:elemLabel(id) }))
+    );
+    choix.forEach(choixElement => {
+      const actif = choixElement.id
+        ? analyseElementsSupports.has(choixElement.id)
+        : analyseElementsSupports.size === 0;
+      const bouton = el("button",{
+        class:"support-element-button"
+          + (choixElement.id ? "" : " support-element-tous")
+          + (actif ? " active" : ""),
+        type:"button",
+        dataset:{ supportElement:choixElement.id },
+        "aria-pressed":String(actif),
+        onclick:()=>{
+          if(!choixElement.id){
+            if(!analyseElementsSupports.size) return;
+            analyseElementsSupports.clear();
+          }else if(analyseElementsSupports.has(choixElement.id)){
+            analyseElementsSupports.delete(choixElement.id);
+          }else{
+            analyseElementsSupports.add(choixElement.id);
+          }
+          rafraichir(choixElement.id);
+        }
+      },[
+        el("span",{class:"support-element-dot", "aria-hidden":"true"}),
+        el("span",{text:choixElement.label})
+      ]);
+      bouton.style.setProperty(
+        "--ec", choixElement.id ? elemColor(choixElement.id) : "#6f6960"
+      );
+      groupe.appendChild(bouton);
+    });
     return groupe;
   }
 
@@ -802,7 +859,7 @@ import { toast } from "./toast.js";
       carteResume(
         supports ? supports.portes + " / " + supports.total : "—",
         "Supports couverts",
-        supports ? "effets généraux ou Foudre" : "donnée indisponible"
+        supports ? "tous éléments" : "donnée indisponible"
       )
     ]));
     if(membresAnalyses.length){
@@ -861,11 +918,26 @@ import { toast } from "./toast.js";
       ]));
     }
 
-    supportsPanel.appendChild(el("p",{class:"analyse-panel-intro",
-      text:"Uniquement les effets généraux et Foudre utiles à la composition de la confrérie."}));
-    SECTIONS_DU_RECENSEMENT.forEach(section => rendreRecensement(
-      supportsPanel, section, membresAnalyses, tablesLues, lectureRostersReussie
-    ));
+    function rendreSupports(elementAFocaliser = null){
+      supportsPanel.innerHTML = "";
+      supportsPanel.appendChild(el("p",{class:"analyse-panel-intro",
+        text:"Tous les effets utiles à la composition, avec sélection de plusieurs éléments."}));
+      supportsPanel.appendChild(filtreElementsSupports(rendreSupports));
+      SECTIONS_DU_RECENSEMENT.forEach(section => rendreRecensement(
+        supportsPanel,
+        section,
+        membresAnalyses,
+        tablesLues,
+        lectureRostersReussie,
+        analyseElementsSupports
+      ));
+      if(elementAFocaliser !== null){
+        supportsPanel.querySelector(
+          `[data-support-element="${elementAFocaliser}"]`
+        )?.focus();
+      }
+    }
+    rendreSupports();
     afficherSousVueAnalyse(box, analyseSousVue);
   }
 
