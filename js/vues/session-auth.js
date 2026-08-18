@@ -28,6 +28,10 @@ import { closeAuth, openAuth, setAuthBusy, setAuthStatus } from "./modale-auth.j
 import { appliquerVisibiliteOnglets, showView } from "./navigation.js";
 import { renderRoster } from "./roster-equipes.js";
 import { renderMemberRoster } from "./roster-membres.js";
+import {
+  ignorerRepliDeconnexionAuProchainLogin,
+  reprendreRouteCourante
+} from "./routage.js";
 import { renderDashboardView } from "./suivi.js";
 import { RealtimeSync } from "./synchro-temps-reel.js";
 import { toast } from "./toast.js";
@@ -84,6 +88,9 @@ import { Store } from "../donnees/equipes-store.js";
     const previousUserId = sessionCourante.user ? sessionCourante.user.id : "";
     sessionCourante.user = expectedUser;
     const sessionChanged = previousUserId !== expectedUserId;
+    if(sessionChanged && previousUserId && !expectedUserId){
+      ignorerRepliDeconnexionAuProchainLogin();
+    }
     if(sessionChanged){
       ensureBossViewOwner();
       resetBuilderRosterBaselines();
@@ -125,7 +132,11 @@ import { Store } from "../donnees/equipes-store.js";
        l'extérieur, comme un TOKEN_REFRESHED, ne déplace jamais la navigation :
        il se contente de réafficher le suivi du bon compte s'il est visible. */
     if(sessionChanged && !previousUserId && sessionCourante.user){
-      void showView("dashboard");
+      const routeReprise = await reprendreRouteCourante();
+      if(!isCurrentApplication()) return;
+      if(!routeReprise){
+        await showView("dashboard", { historyMode:"replace" });
+      }
     }else if($("#view-dashboard").classList.contains("active")){
       void renderDashboardView();
     }
@@ -140,7 +151,9 @@ import { Store } from "../donnees/equipes-store.js";
 
        Il peut replier la navigation sur le Wiki : c'est voulu, la vue quittee
        n'existe plus pour ce visiteur. */
-    appliquerVisibiliteOnglets();
+    appliquerVisibiliteOnglets({
+      historyMode:!sessionCourante.user && !previousUserId ? "none" : "replace"
+    });
   }
 
   async function signIn(){

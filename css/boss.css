@@ -83,6 +83,20 @@
   font-weight:700;line-height:1.35;overflow-wrap:anywhere}
 .boss-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .boss-actions .btn{min-width:0;width:100%;justify-content:center}
+.boss-secondary-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.boss-secondary-actions .btn{min-width:0;min-height:44px;width:100%;justify-content:center;
+  overflow-wrap:anywhere;text-align:center}
+.boss-analyse-link[aria-disabled="true"]{pointer-events:none;opacity:.48;cursor:not-allowed}
+.boss-route-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin-top:16px;padding:12px 14px;border:1px solid rgba(217,164,65,.45);
+  border-radius:10px;background:rgba(217,164,65,.08)}
+.boss-route-notice p{margin:0;min-width:0;overflow-wrap:anywhere}
+.boss-route-notice .btn{min-height:44px;flex:none}
+@media(max-width:480px){
+  .boss-secondary-actions{grid-template-columns:1fr}
+  .boss-route-notice{align-items:stretch;flex-direction:column}
+  .boss-route-notice .btn{width:100%;justify-content:center}
+}
 .modal.boss-team-modal{width:min(720px,100%)}
 .modal-head{display:flex;align-items:center;gap:12px;padding:16px 18px;
   border-bottom:1px solid var(--line)}
