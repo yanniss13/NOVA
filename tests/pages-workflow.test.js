@@ -10,7 +10,10 @@ assert.ok(fs.existsSync(workflowPath), "workflow Pages manquant");
 
 const yaml = fs.readFileSync(workflowPath, "utf8");
 const required = [
-  /push:\s*\n\s*branches:\s*\[main\]/,
+  /* Les tests tournent sur TOUTE branche poussee : une regression trouvee sur
+     une branche coute une minute, la meme trouvee apres fusion coute une
+     enquete. Le garde-fou du deploiement est verifie plus bas. */
+  /push:\s*\n\s*branches:\s*\['\*\*'\]/,
   /pull_request:\s*\n\s*branches:\s*\[main\]/,
   /workflow_dispatch:/,
   /actions\/checkout@v6/,
@@ -44,6 +47,12 @@ assert.ok(
 assert.ok(
   (yaml.match(/github\.event_name != 'pull_request'/g) || []).length >= 2,
   "paquetage et déploiement doivent être exclus des pull requests"
+);
+/* Depuis que le workflow se declenche sur toute branche, c'est CETTE condition
+   qui empeche une branche de fonctionnalite de publier le site. */
+assert.ok(
+  (yaml.match(/github\.ref == 'refs\/heads\/main'/g) || []).length >= 2,
+  "paquetage et déploiement doivent rester réservés à main"
 );
 assert.match(yaml, /deploy:[\s\S]*needs:\s*package/);
 
