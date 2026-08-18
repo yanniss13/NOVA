@@ -5,9 +5,15 @@
    Supabase ; il valide et transforme seulement des valeurs. */
 
 const ROUTE_SESSION_ID_MAX_LENGTH = 128;
+/* `calculateur` est routable comme vue NUE : la route nomme l'onglet ouvert et
+   ne transporte aucun build. Sans elle, `showView` ne trouvait pas de fragment
+   a ecrire et laissait celui de l'onglet precedent : l'URL annoncait
+   `#builder` pendant que le Calculateur etait affiche. Le lien vers un
+   calculateur PRECONFIGURE reste hors perimetre — il demanderait de serialiser
+   un contexte que la route ne sait pas reconstruire. */
 const ROUTE_VIEWS = new Set([
   "dashboard", "builder", "roster", "member-roster", "availability",
-  "boss", "analyse", "wiki", "collection"
+  "boss", "analyse", "wiki", "collection", "calculateur"
 ]);
 const GROUP_ROUTE_VIEWS = new Set(["boss", "analyse"]);
 const SESSION_ID_PATTERN = /^[A-Za-z0-9_-]{1,128}$/;

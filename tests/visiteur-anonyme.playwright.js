@@ -85,6 +85,8 @@ const vueActive = page => page.evaluate(() => {
        peut pas ouvrir. Il doit maintenant montrer la sortie qui existe. */
     await page.locator('.tab[data-view="calculateur"]').click();
     await page.locator("#view-calculateur").waitFor({ state:"visible" });
+    assert.equal(await page.evaluate(() => location.hash), "#calculateur",
+      "l'onglet Calculateur doit nommer sa vue dans l'URL");
     assert.equal(
       await page.getByText("Connecte-toi pour calculer les dégâts").count(),
       0,
@@ -133,6 +135,10 @@ const vueActive = page => page.evaluate(() => {
 
     await page.locator("#view-calculateur").waitFor({ state:"visible" });
     assert.equal(await vueActive(page), "calculateur");
+    /* Le fragment suivait la vue affichee, pas l'onglet d'ou l'on vient :
+       arriver par le Builder annoncait `#builder` sur le Calculateur. */
+    assert.equal(await page.evaluate(() => location.hash), "#calculateur",
+      "arrive par le Builder, l'URL ne doit pas rester sur #builder");
     await page.locator("#calculateurBody .calc-avertissement")
       .waitFor({ state:"visible" });
     assert.equal(

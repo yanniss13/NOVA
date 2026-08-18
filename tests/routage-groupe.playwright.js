@@ -62,6 +62,19 @@ async function openHistoryFragment(page, fragment){
       "une vue publique directe doit survivre au rechargement");
     await publicPage.locator("#authOffline").click();
 
+    /* Le Calculateur a une route nue : l'onglet se nomme dans l'URL et
+       survit au rechargement. Le build en cours, lui, ne se serialise pas. */
+    await openAppFragment(publicPage, "#calculateur");
+    await publicPage.locator("#view-calculateur.active").waitFor();
+    assert.equal(await publicPage.evaluate(() => location.hash), "#calculateur");
+    await publicPage.reload();
+    await publicPage.locator("#view-calculateur.active").waitFor();
+    assert.equal(await activeView(publicPage), "view-calculateur",
+      "une route de calculateur doit survivre au rechargement");
+    /* Le rechargement ramene la modale : on rend la main au visiteur avant
+       de poursuivre, sinon elle intercepte les clics suivants. */
+    await publicPage.locator("#authOffline").click();
+
     await publicPage.locator('.tab[data-view="builder"]').click();
     await publicPage.locator("#view-builder.active").waitFor();
     assert.equal(await publicPage.evaluate(() => location.hash), "#builder");

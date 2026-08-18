@@ -19,7 +19,7 @@ assert.equal(typeof urlAbsolueDeRoute, "function", "les liens partagés doivent 
 
 const stableViews = [
   "dashboard", "builder", "roster", "member-roster", "availability",
-  "boss", "analyse", "wiki", "collection"
+  "boss", "analyse", "wiki", "collection", "calculateur"
 ];
 
 stableViews.forEach(view => {
@@ -27,7 +27,9 @@ stableViews.forEach(view => {
   assert.equal(fragmentDeRoute(routeDeVue(view)), "#" + view);
 });
 
-assert.equal(routeDeVue("calculateur"), null);
+/* Le Calculateur a une route NUE, jamais une route porteuse de contexte :
+   un build ne se serialise pas dans le fragment. */
+assert.equal(lireRoute("#calculateur/groupe/abc-123"), null);
 assert.deepEqual(plain(lireRoute("#boss/groupe/run_2026-08-17")), {
   type:"group", view:"boss", sessionId:"run_2026-08-17"
 });
