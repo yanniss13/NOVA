@@ -34,6 +34,11 @@ import {
 } from "../metier/boss-logique.js";
 import { charOf } from "../metier/catalogue.js";
 import { teamFromBossSnapshot } from "../metier/equipe-modele.js";
+import {
+  fragmentDeRoute,
+  lireRoute,
+  urlAbsolueDeRoute
+} from "../metier/routage.js";
 import { ELEMENTS } from "../noyau/constantes.js";
 import { $, el } from "../noyau/dom.js";
 import { authMessage } from "../noyau/supabase-client.js";
@@ -42,6 +47,7 @@ import { bossReportParticipant, bossTeamBanner } from "./equipe-boss.js";
 import { ModalStack, closeModalAfterAsyncRefresh } from "./modal-stack.js";
 import { openAuth } from "./modale-auth.js";
 import { ongletDeLaVue, showView } from "./navigation.js";
+import { enregistrerGestionnaireRoute } from "./routage.js";
 import { toast } from "./toast.js";
 
   /* ============================ Sessions de boss ============================ */
@@ -53,6 +59,7 @@ import { toast } from "./toast.js";
   let bossRenderIssuedId = 0;
   let bossRenderAppliedId = 0;
   let bossViewOwnerVersion = 0;
+  let bossRouteTargetId = "";
   const emptyBossViewState = userId => ({
     userId:userId || "",
     week:null,
@@ -449,6 +456,9 @@ import { toast } from "./toast.js";
       showErrorToast:true
     }, options || {});
     const body = $("#bossBody");
+    const currentRoute = lireRoute(location.hash);
+    if(!currentRoute || currentRoute.type !== "group"
+      || currentRoute.view !== "boss") bossRouteTargetId = "";
     ensureBossViewOwner();
     const renderUserId = sessionCourante.user?.id || "";
     const renderId = ++bossRenderIssuedId;
@@ -1298,6 +1308,31 @@ import { toast } from "./toast.js";
       ...(completeButton ? [completeButton] : [])
     ]);
 
+    const groupRoute = { type:"group", view:"boss", sessionId:g.id };
+    const analyseRoute = { type:"group", view:"analyse", sessionId:g.id };
+    const analyseLink = el("a",{
+      class:"btn btn-secondary boss-analyse-link",
+      href:fragmentDeRoute(analyseRoute),
+      dataset:{ appRoute:"", bossAction:"analyse" },
+      text:"Analyser ce groupe",
+      "aria-disabled":String(members.length === 0),
+      tabindex:members.length === 0 ? -1 : 0
+    });
+    if(!members.length){
+      analyseLink.addEventListener("click", event => event.preventDefault());
+    }
+    const copyButton = el("button",{
+      class:"btn boss-copy-link",
+      type:"button",
+      dataset:{ bossAction:"copy" },
+      text:"Copier le lien",
+      onclick:()=>void copierLienBoss(groupRoute)
+    });
+    const secondaryActions = el("div",{class:"boss-secondary-actions"},[
+      analyseLink,
+      copyButton
+    ]);
+
     return el("div",{
       class:"boss-card"+(mine?" mine":""),
       dataset:{sessionId:g.id}
@@ -1313,8 +1348,73 @@ import { toast } from "./toast.js";
         })
       ]),
       list,
-      actions
+      actions,
+      secondaryActions
     ]);
+  }
+
+  async function copierLienBoss(route){
+    const url = urlAbsolueDeRoute(route, location.href);
+    if(!url) return false;
+    try{
+      if(!navigator.clipboard || !navigator.clipboard.writeText){
+        throw new Error("CLIPBOARD_UNAVAILABLE");
+      }
+      await navigator.clipboard.writeText(url);
+      toast("Lien du groupe copié.");
+      return true;
+    }catch(error){
+      window.prompt("Copie ce lien", url);
+      return false;
+    }
+  }
+
+  function retirerAvisRouteBoss(){
+    $("#bossBody")?.querySelector(".boss-route-notice")?.remove();
+  }
+
+  function afficherAvisRouteBoss(){
+    retirerAvisRouteBoss();
+    const body = $("#bossBody");
+    const notice = el("div",{
+      class:"boss-route-notice",
+      role:"status"
+    },[
+      el("p",{text:"Ce groupe n’est plus ouvert ou n’existe plus."}),
+      el("a",{
+        class:"btn btn-secondary",
+        href:fragmentDeRoute({ type:"view", view:"boss" }),
+        dataset:{appRoute:""},
+        text:"Retour aux groupes"
+      })
+    ]);
+    body.insertBefore(notice, body.firstChild);
+  }
+
+  function ciblerGroupeBoss(sessionId){
+    retirerAvisRouteBoss();
+    const card = [...$("#bossBody").querySelectorAll(".boss-card")]
+      .find(item => item.dataset.sessionId === sessionId);
+    if(!card){
+      afficherAvisRouteBoss();
+      return false;
+    }
+    card.scrollIntoView({block:"center"});
+    const analyse = card.querySelector('[data-boss-action="analyse"]');
+    const copy = card.querySelector('[data-boss-action="copy"]');
+    const target = analyse?.getAttribute("aria-disabled") === "false"
+      ? analyse
+      : copy;
+    target?.focus();
+    return true;
+  }
+
+  async function ouvrirRouteBossGroupe(route){
+    bossRouteTargetId = route.sessionId;
+    const loaded = await showView("boss", {historyMode:"none"});
+    if(!loaded) return false;
+    ciblerGroupeBoss(bossRouteTargetId);
+    return true;
   }
 
   function bossReportCard(group, members, report){
@@ -1430,6 +1530,8 @@ import { toast } from "./toast.js";
     });
     return wrap;
   }
+
+enregistrerGestionnaireRoute("boss", ouvrirRouteBossGroupe);
 
 export {
   bossViewState,

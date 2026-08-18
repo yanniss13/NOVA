@@ -26,6 +26,7 @@ import { renderWiki } from "./vues/wiki.js";
 import "./vues/wiki-fiche-heros.js";
 import "./vues/wiki-fiche-objet.js";
 import { initAuth } from "./vues/session-auth.js";
+import { initialiserRoutage } from "./vues/routage.js";
 import { toast } from "./vues/toast.js";
 
 (function(){
@@ -73,5 +74,5 @@ import { toast } from "./vues/toast.js";
     (DATA.generatedAt ? "  ·  données du "+DATA.generatedAt : "");
 
   renderBuilder();
-  void initAuth();
+  void initialiserRoutage().finally(() => void initAuth());
 })();

@@ -21,6 +21,7 @@
    seul ait a connaitre la session. */
 
 import { visiteurAnonyme } from "../etat/session.js";
+import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
 
   /* Deux barres, deux niveaux. La principale porte huit onglets ; la seconde
      n'apparait que dans le groupe « Boss de Guilde » et en porte trois.
@@ -77,8 +78,12 @@ import { visiteurAnonyme } from "../etat/session.js";
   const VUES_PUBLIQUES = new Set(["builder", "wiki", "collection", "calculateur"]);
   const VUE_DE_REPLI = "wiki";
 
+  function vuePublique(nom){
+    return VUES_PUBLIQUES.has(nom);
+  }
+
   function vueAutorisee(nom){
-    return VUES_PUBLIQUES.has(nom) || !visiteurAnonyme();
+    return vuePublique(nom) || !visiteurAnonyme();
   }
 
   function ongletsAtteignables(barre){
@@ -88,20 +93,38 @@ import { visiteurAnonyme } from "../etat/session.js";
   /* Appelee a chaque changement de session, depuis session-auth.js. Elle
      range les deux barres, puis rattrape la navigation si elle vient de
      fermer la porte sous les pieds du visiteur. */
-  function appliquerVisibiliteOnglets(){
+  function appliquerVisibiliteOnglets(options){
+    const settings = Object.assign({ historyMode:"replace" }, options || {});
     mainTabs.concat(subTabs).forEach(button => {
       button.hidden = !vueAutorisee(button.dataset.view);
     });
     const active = document.querySelector(".view.active");
     const nomActif = active ? active.id.replace(/^view-/, "") : "";
-    if(nomActif && !vueAutorisee(nomActif)) void showView(VUE_DE_REPLI);
+    if(nomActif && !vueAutorisee(nomActif)){
+      void showView(VUE_DE_REPLI, { historyMode:settings.historyMode });
+    }
   }
 
-  function showView(name){
+  function showView(name, options){
+    const settings = Object.assign({ historyMode:"push" }, options || {});
     /* Le repli est prefere a un retour sec : une navigation qui ne mene nulle
        part laisse l'onglet precedent surligne et la page inchangee, ce qui se
        lit comme une panne. */
-    if(!vueAutorisee(name)) return showView(VUE_DE_REPLI);
+    if(!vueAutorisee(name)){
+      return showView(VUE_DE_REPLI, {
+        historyMode:settings.historyMode === "none" ? "none" : "replace"
+      });
+    }
+    const route = routeDeVue(name);
+    const fragment = route && fragmentDeRoute(route);
+    if(fragment && settings.historyMode !== "none"
+      && location.hash !== fragment){
+      if(settings.historyMode === "replace"){
+        history.replaceState(null, "", fragment);
+      }else{
+        history.pushState(null, "", fragment);
+      }
+    }
     /* L'onglet du groupe reste surligne dans les trois vues qu'il ouvre :
        sinon la barre principale n'indiquerait plus ou l'on est des qu'on passe
        aux Dispos ou aux Sessions. */
@@ -164,4 +187,11 @@ import { visiteurAnonyme } from "../etat/session.js";
   brancherOnglets(mainTabs);
   brancherOnglets(subTabs);
 
-export { appliquerVisibiliteOnglets, enregistrerVue, ongletDeLaVue, showView };
+export {
+  appliquerVisibiliteOnglets,
+  enregistrerVue,
+  ongletDeLaVue,
+  showView,
+  vueAutorisee,
+  vuePublique
+};

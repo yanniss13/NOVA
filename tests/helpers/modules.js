@@ -24,6 +24,7 @@ const MODULES = [
   "etat/brouillon-equipe.js",
 
   /* metier — logique pure, testable sans navigateur. Ni DOM ni réseau. */
+  "metier/routage.js",
   "metier/catalogue.js",
   "metier/armes.js",
   "metier/equipement.js",
@@ -70,6 +71,7 @@ const MODULES = [
   "vues/toast.js",
   "vues/modal-stack.js",
   "vues/modale-auth.js",
+  "vues/routage.js",
   "vues/picker.js",
   "vues/stats-affichage.js",
   "vues/stats-heros.js",

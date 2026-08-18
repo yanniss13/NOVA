@@ -89,6 +89,18 @@ function makeLocalStorage(initialTeams){
 }
 
 const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
+  ROUTE_SESSION_ID_MAX_LENGTH:
+    typeof ROUTE_SESSION_ID_MAX_LENGTH === "number"
+      ? ROUTE_SESSION_ID_MAX_LENGTH
+      : undefined,
+  lireRoute:typeof lireRoute === "function" ? lireRoute : undefined,
+  fragmentDeRoute:typeof fragmentDeRoute === "function"
+    ? fragmentDeRoute
+    : undefined,
+  routeDeVue:typeof routeDeVue === "function" ? routeDeVue : undefined,
+  urlAbsolueDeRoute:typeof urlAbsolueDeRoute === "function"
+    ? urlAbsolueDeRoute
+    : undefined,
   degatsAttendus:typeof degatsAttendus === "function"
     ? degatsAttendus
     : undefined,
@@ -600,17 +612,28 @@ function loadApp(initialTeams){
 
   const document = makeDocument();
   const localStorage = makeLocalStorage(initialTeams);
+  class SandboxURL extends URL {}
+  SandboxURL.createObjectURL = () => "blob:test";
+  SandboxURL.revokeObjectURL = () => {};
   const sandbox = {
     __hooks:{},
     Blob:class {},
     FileReader:class {},
-    URL:{ createObjectURL:() => "blob:test", revokeObjectURL(){} },
+    URL:SandboxURL,
     clearTimeout(){},
     confirm:() => true,
     console,
     crypto:{ randomUUID:() => "test-uuid" },
     document,
+    history:{ pushState(){}, replaceState(){} },
+    location:{
+      hash:"",
+      href:"http://localhost/index.html",
+      origin:"http://localhost",
+      pathname:"/index.html"
+    },
     localStorage,
+    scrollTo(){},
     setTimeout:() => 1,
     SEVEN_DS_DATA:{
       generatedAt:"",
