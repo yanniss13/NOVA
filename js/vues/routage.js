@@ -57,7 +57,18 @@ async function ouvrirRoute(route){
   return !!(await handler(route));
 }
 
-async function reprendreRouteCourante(){
+async function reprendreRouteCourante(options){
+  /* Une connexion ne rejoue QUE la route réservée mise en attente. Sans
+     elle, « Mon suivi » reste l'ouverture par défaut : un visiteur qui
+     parcourait le Builder puis s'identifie ne doit pas rester sur le
+     Builder. Relire location.hash ici rejouerait n'importe quelle vue
+     publique déjà ouverte, ce que la spécification exclut. */
+  if(options && options.apresConnexion){
+    const attendue = routeEnAttente;
+    routeEnAttente = null;
+    fragmentIgnoreAuProchainLogin = "";
+    return attendue ? ouvrirRoute(attendue) : false;
+  }
   if(!location.hash) return false;
   if(fragmentIgnoreAuProchainLogin){
     const ignore = location.hash === fragmentIgnoreAuProchainLogin;

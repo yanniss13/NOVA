@@ -132,7 +132,7 @@ import { Store } from "../donnees/equipes-store.js";
        l'extérieur, comme un TOKEN_REFRESHED, ne déplace jamais la navigation :
        il se contente de réafficher le suivi du bon compte s'il est visible. */
     if(sessionChanged && !previousUserId && sessionCourante.user){
-      const routeReprise = await reprendreRouteCourante();
+      const routeReprise = await reprendreRouteCourante({ apresConnexion:true });
       if(!isCurrentApplication()) return;
       if(!routeReprise){
         await showView("dashboard", { historyMode:"replace" });
