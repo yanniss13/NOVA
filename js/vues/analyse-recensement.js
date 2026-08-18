@@ -224,14 +224,11 @@ import { elemBadge } from "./badge-element.js";
      `potentiel` vaut -1 quand aucune ligne du groupe n'est portee : c'est ce
      qui separe les deux blocs, et P0 doit rester du bon cote — un potentiel
      zero est renseigne, pas manquant. */
-  function groupesDuRecensement(vise, membres){
+  function groupesDuRecensement(vise, membres, elementsSelectionnes = null){
     const parSupport = new Map();
     lignesDeSoutien()
-      /* L'Analyse sert ici a preparer les compositions Foudre de la
-         confrerie. Les effets generaux restent utiles a toute equipe ; les
-         bonus propres aux autres elements restent dans le catalogue pour le
-         calculateur, mais n'encombrent plus ce recensement. */
-      .filter(ligne => ligne.vise === vise && ligneVisibleDansAnalyse(ligne))
+      .filter(ligne => ligne.vise === vise
+        && ligneVisibleDansAnalyse(ligne, elementsSelectionnes))
       .forEach(ligne => {
         const cle = ligne.support || "";
         if(!parSupport.has(cle)) parSupport.set(cle, []);
@@ -271,7 +268,14 @@ import { elemBadge } from "./badge-element.js";
      roster. C'est ce qui lui permet d'apparaitre aussi quand la confrerie n'a
      rien saisi : un effet que personne ne possede reste une information, et
      c'est meme celle qui fait recruter. */
-  function rendreRecensement(box, section, membres, tablesLues, lectureRostersReussie){
+  function rendreRecensement(
+    box,
+    section,
+    membres,
+    tablesLues,
+    lectureRostersReussie,
+    elementsSelectionnes = null
+  ){
     box.appendChild(el("h2",{class:"an-title", text:section.titre}));
     box.appendChild(el("p",{class:"an-note", text:section.note}));
     if(!tablesLues){
@@ -279,7 +283,9 @@ import { elemBadge } from "./badge-element.js";
         text:"Recensement indisponible : les tables d'effets n'ont pas pu être lues."}));
       return;
     }
-    const groupes = groupesDuRecensement(section.vise, membres);
+    const groupes = groupesDuRecensement(
+      section.vise, membres, elementsSelectionnes
+    );
     const total = groupes.reduce((n, g) => n + g.lignes.length, 0);
     const portes = groupes.reduce((n, g) =>
       n + g.lignes.filter(item => item.porteurs.length).length, 0);
@@ -313,18 +319,22 @@ import { elemBadge } from "./badge-element.js";
     {
       vise:"ennemi",
       titre:"Affaiblissement de la cible",
-      note:"Effets généraux ou Foudre que la confrérie peut appliquer au boss. Les effets propres aux autres éléments sont masqués."
+      note:"Effets que la confrérie peut appliquer au boss avec les éléments affichés."
     },
     {
       vise:"allies",
       titre:"Renforcement des alliés",
-      note:"Renforts généraux ou Foudre apportés au groupe par une compétence ou une tenue gravée. Les effets propres aux autres éléments sont masqués."
+      note:"Renforts apportés au groupe par une compétence ou une tenue gravée."
     }
   ];
 
-  function ligneVisibleDansAnalyse(ligne){
+  function ligneVisibleDansAnalyse(ligne, elementsSelectionnes){
+    const selection = elementsSelectionnes instanceof Set
+      ? elementsSelectionnes
+      : new Set();
     return !ligne.element
-      || String(ligne.element).toLowerCase() === "thunder";
+      || !selection.size
+      || selection.has(String(ligne.element).toUpperCase());
   }
 
 export {

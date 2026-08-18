@@ -1533,12 +1533,9 @@ async function ouvrirSessionsDeBoss(page){
        Un passif grave de cible « soi » ne compte dans aucune section : il ne
        profite qu'a celui qui porte la tenue. */
     const attendus = await page.evaluate(() => {
-      const visible = ligne => !ligne.element
-        || String(ligne.element).toLowerCase() === "thunder";
-      const armes = Object.values(window.SEVEN_DS_BUFFS_SUPPORTS || {}).flat()
-        .filter(visible);
+      const armes = Object.values(window.SEVEN_DS_BUFFS_SUPPORTS || {}).flat();
       const tenues = Object.values(window.SEVEN_DS_PASSIFS_GRAVES || {}).flat()
-        .filter(passif => passif.cible === "allies" && visible(passif));
+        .filter(passif => passif.cible === "allies");
       return {
         ennemi:armes.filter(l => l.cible === "ennemi").length
           + tenues.filter(l => l.cibleEnnemi).length,
