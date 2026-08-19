@@ -23,7 +23,10 @@ const required = [
   /python-version:\s*["']?3\.13["']?/,
   /pip install -r requirements-dev\.txt/,
   /npm ci/,
-  /npx playwright install --with-deps chromium/,
+  /npx playwright install chromium/,
+  // Le cache du navigateur est ce qui tient la duree du job : sans lui,
+  // l'installation a deja pris de 22 s a 1806 s selon le debit du CDN.
+  /path:\s*~\/\.cache\/ms-playwright/,
   /npm test/,
   /git archive HEAD/,
   /__BUILD_VERSION__/,
@@ -40,6 +43,16 @@ const required = [
 required.forEach(pattern =>
   assert.match(yaml, pattern, "contrat manquant : " + pattern)
 );
+/* `--with-deps` declenche un apt-get update qui va chercher les listes de
+   paquets Ubuntu a chaque execution : 732 s mesurees le 19 aout, contre 3 s
+   pour le cache du navigateur juste avant. L'image ubuntu-latest fournit deja
+   les bibliotheques necessaires, et un manque se verrait aussitot au premier
+   parcours Playwright. */
+assert.ok(
+  !/run:.*--with-deps/.test(yaml),
+  "with-deps rallonge le job de plusieurs minutes sans rien apporter ici"
+);
+
 assert.ok(
   (yaml.match(/needs:\s*test/g) || []).length >= 1,
   "le paquetage doit dépendre des tests"
