@@ -93,6 +93,24 @@ const { chromium } = require("playwright");
       "le recul doit viser le milieu de l'image precedente, vu " + recul
     );
 
+    /* L'avance suit la meme regle : l'image suivante occupe [T + d, T + 2d),
+       son milieu est a T + 1,5 d. Supposer 60 img/s sur une capture a 30
+       faisait sauter d'une demi-image, d'ou une avance qui ne marchait qu'une
+       fois sur deux. */
+    const avance = await page.evaluate(() => {
+      const video = document.getElementById("video");
+      const etat = window.ChronoPage.etat;
+      etat.dureeImage = 1 / 30;
+      etat.mediaTime = 2;
+      video.currentTime = 2;
+      document.dispatchEvent(new KeyboardEvent("keydown", { key:"ArrowRight" }));
+      return video.currentTime;
+    });
+    assert.ok(
+      Math.abs(avance - (2 + 1.5 / 30)) < 1e-6,
+      "l'avance doit viser le milieu de l'image suivante, vu " + avance
+    );
+
     console.log("chrono-animation.playwright.js : OK");
   } finally {
     await navigateur.close();
