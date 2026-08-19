@@ -58,6 +58,7 @@ const SUITES = {
     "node tests/wiki-equipement.test.js",
     "node tests/competences-catalogue.test.js",
     "node tests/degats-calcul.test.js",
+    "node tests/chrono-calcul.test.js",
     "node tests/calculateur-entrees.test.js",
     "node tests/essai-enchantements.test.js",
     "node tests/equipe-buffs.test.js",
