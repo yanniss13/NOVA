@@ -1,6 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const { CIBLE_TACTILE_PX } = require("./helpers/cible-tactile");
 const path = require("node:path");
 const { serveRepo } = require("./helpers/serve");
 const { chromium } = require("playwright");
@@ -570,7 +571,7 @@ async function installRosterFocusFakeSupabase(page){
           - document.scrollingElement.clientWidth
       }));
       assert.ok(
-        rankMetrics.height >= 44,
+        rankMetrics.height >= CIBLE_TACTILE_PX,
         "La case de la matrice doit mesurer 44 px à "+width+"px"
       );
       assert.ok(
@@ -650,11 +651,11 @@ async function installRosterFocusFakeSupabase(page){
       for(const key of ["apply", "close"]){
         const box = bannerLayout[key];
         assert.ok(
-          box.height >= 44,
+          box.height >= CIBLE_TACTILE_PX,
           "Bandeau "+width+"px : "+key+" doit mesurer 44 px de haut"
         );
         assert.ok(
-          box.width >= 44,
+          box.width >= CIBLE_TACTILE_PX,
           "Bandeau "+width+"px : "+key+" doit mesurer 44 px de large"
         );
       }
@@ -986,15 +987,15 @@ async function installRosterFocusFakeSupabase(page){
           );
         });
         assert.ok(
-          bossModalLayout.closeWidth >= 44 &&
-          bossModalLayout.closeHeight >= 44,
+          bossModalLayout.closeWidth >= CIBLE_TACTILE_PX &&
+          bossModalLayout.closeHeight >= CIBLE_TACTILE_PX,
           "La fermeture "+modalCase.label+" doit mesurer 44 × 44 px à "+
             width+"px"
         );
         if(modalCase.submit){
           assert.ok(
-            bossModalLayout.submitWidth >= 44 &&
-            bossModalLayout.submitHeight >= 44,
+            bossModalLayout.submitWidth >= CIBLE_TACTILE_PX &&
+            bossModalLayout.submitHeight >= CIBLE_TACTILE_PX,
             "La validation du rapport doit mesurer 44 × 44 px à "+
               width+"px"
           );
@@ -1035,7 +1036,7 @@ async function installRosterFocusFakeSupabase(page){
       for(let index = 0; index < 3; index += 1){
         const box = await builderSwitches.nth(index).boundingBox();
         assert.ok(
-          box.width >= 44 && box.height >= 44,
+          box.width >= CIBLE_TACTILE_PX && box.height >= CIBLE_TACTILE_PX,
           "Chaque changement de build doit mesurer 44 × 44 px à "
             +width+"px"
         );
@@ -1133,7 +1134,7 @@ async function installRosterFocusFakeSupabase(page){
       );
       weaponConfigLayout.actionBoxes.forEach(box => {
         assert.ok(
-          box.width >= 44 && box.height >= 44,
+          box.width >= CIBLE_TACTILE_PX && box.height >= CIBLE_TACTILE_PX,
           box.selector+" doit mesurer au moins 44 × 44 px à "+width+"px"
         );
       });
@@ -1192,7 +1193,7 @@ async function installRosterFocusFakeSupabase(page){
             +"("+detailMetrics.overflow+"px)"
         );
         assert.ok(
-          detailMetrics.shortestSummary >= 44,
+          detailMetrics.shortestSummary >= CIBLE_TACTILE_PX,
           "Les replis du calcul doivent mesurer 44px à "+width+"px "
             +"("+detailMetrics.shortestSummary+"px)"
         );
@@ -1232,7 +1233,7 @@ async function installRosterFocusFakeSupabase(page){
           );
           const triggerBox = await open.boundingBox();
           assert.ok(
-            triggerBox && triggerBox.height >= 44,
+            triggerBox && triggerBox.height >= CIBLE_TACTILE_PX,
             "Le contrôle chiffré "+slot+" doit mesurer 44 px à "+width+"px"
           );
           await open.click();
@@ -1312,7 +1313,7 @@ async function installRosterFocusFakeSupabase(page){
         );
         gearConfigLayout.controls.forEach(control => {
           assert.ok(
-            control.height >= 44,
+            control.height >= CIBLE_TACTILE_PX,
             control.name+" doit mesurer au moins 44 px à "+width+"px"
           );
           assert.ok(
@@ -1368,7 +1369,7 @@ async function installRosterFocusFakeSupabase(page){
             +"("+heroDetailMetrics.overflow+"px)"
         );
         assert.ok(
-          heroDetailMetrics.shortestGroup >= 44,
+          heroDetailMetrics.shortestGroup >= CIBLE_TACTILE_PX,
           "Les groupes du héros doivent mesurer 44px à "+width+"px "
             +"("+heroDetailMetrics.shortestGroup+"px)"
         );
@@ -1397,11 +1398,11 @@ async function installRosterFocusFakeSupabase(page){
 
     const mobileNavBox = await mobile.locator(".mobile-nav-item:visible")
       .first().boundingBox();
-    assert.ok(mobileNavBox && mobileNavBox.height >= 44,
+    assert.ok(mobileNavBox && mobileNavBox.height >= CIBLE_TACTILE_PX,
       ".mobile-nav-item doit mesurer au moins 44 px");
     await mobile.locator("#mobileNavMore").click();
     const mobileLoginBox = await mobile.locator("#mobileAccountLogin").boundingBox();
-    assert.ok(mobileLoginBox && mobileLoginBox.height >= 44,
+    assert.ok(mobileLoginBox && mobileLoginBox.height >= CIBLE_TACTILE_PX,
       "le bouton de connexion dans Plus doit mesurer au moins 44 px");
     await mobile.keyboard.press("Escape");
 
@@ -1420,14 +1421,14 @@ async function installRosterFocusFakeSupabase(page){
     await gearSlot.waitFor({ state:"visible" });
     const gearBox = await gearSlot.boundingBox();
     assert.ok(gearBox, ".gear-slot introuvable ou invisible apres le choix du heros");
-    assert.ok(gearBox.height >= 44,
+    assert.ok(gearBox.height >= CIBLE_TACTILE_PX,
       `.gear-slot mesure ${gearBox.height.toFixed(3)} px (< 44)`);
     await mobile.locator(".hero .gear-slot.weapon").first().click();
     await mobile.locator("#overlay").waitFor({state:"visible"});
     for(const selector of [".icon-btn", ".chip"]){
       const box = await mobile.locator(selector).first().boundingBox();
-      assert.ok(box && box.height >= 44, selector+" doit mesurer au moins 44 px");
-      assert.ok(box.width >= 44, selector+" doit mesurer au moins 44 px de large");
+      assert.ok(box && box.height >= CIBLE_TACTILE_PX, selector+" doit mesurer au moins 44 px");
+      assert.ok(box.width >= CIBLE_TACTILE_PX, selector+" doit mesurer au moins 44 px de large");
     }
     const compactChipWidth = await mobile.evaluate(() => {
       const chip = document.createElement("button");
@@ -1439,7 +1440,7 @@ async function installRosterFocusFakeSupabase(page){
       return width;
     });
     assert.ok(
-      compactChipWidth >= 44,
+      compactChipWidth >= CIBLE_TACTILE_PX,
       ".chip compacte doit mesurer au moins 44 px de large"
     );
     await mobile.keyboard.press("Escape");
