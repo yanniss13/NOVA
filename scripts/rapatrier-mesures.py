@@ -14,6 +14,7 @@ a l'epee longue sont deux animations distinctes, avec des degats differents.
 """
 
 import getpass
+import importlib.util
 import json
 import os
 import sys
@@ -25,6 +26,42 @@ MESURES = os.path.join(RACINE, "data", "animations-mesurees.json")
 CONFIG = os.path.join(RACINE, "supabase-config.js")
 
 ECART_TOLERE = 0.10
+
+
+def _generateur():
+    """Le generateur porte deja les libelles francais d'armes et de categories,
+    et sait lire le wiki. Les redupliquer ici les ferait diverger un jour."""
+    chemin = os.path.join(RACINE, "scripts", "lister-chronometrage.py")
+    spec = importlib.util.spec_from_file_location("lister_chronometrage", chemin)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def libelles():
+    """gameId -> « heros, arme, nom de la competence », en francais.
+
+    Un identifiant comme bug_sworddual_jumpatk ne dit rien a personne. Ce qui
+    permet de trancher, c'est le nom que le membre a vu dans l'outil.
+    """
+    generateur = _generateur()
+    noms = generateur.noms_francais()
+    table = {}
+    for heros, liste in generateur.catalogue().items():
+        for skill in liste:
+            game_id = skill.get("gameId")
+            if not game_id:
+                continue
+            arme = generateur.LIBELLES_ARMES.get(
+                skill.get("weaponType"), skill.get("weaponType") or "?"
+            )
+            nom = noms.get(game_id) or skill.get("nom") or game_id
+            table[game_id] = "%s, %s — %s" % (heros, arme, nom)
+    return table
+
+
+def decrire(table, game_id):
+    return table.get(game_id, game_id)
 
 
 def desaccords(envois):
@@ -101,10 +138,11 @@ def main():
     with open(MESURES, encoding="utf-8") as fichier:
         mesures = json.load(fichier)
 
+    noms = libelles()
     envois = _envois()
 
     for game_id, liste in desaccords(envois):
-        print("DESACCORD sur %s :" % game_id)
+        print("DESACCORD sur %s :" % decrire(noms, game_id))
         for envoi in liste:
             print("   %-12s %s s (%s)" % (
                 envoi.get("pseudo") or "?", envoi["seconds"], envoi["mode"]))
@@ -118,8 +156,10 @@ def main():
 
     retenus = 0
     for envoi in nouveaux:
-        reponse = input("%s = %s s (%s) -> ecrire ? [o/N] " % (
-            envoi["game_id"], envoi["seconds"], envoi.get("pseudo") or "?"))
+        question = "%s%s   %s s (%s) -> ecrire ? [o/N] " % (
+            decrire(noms, envoi["game_id"]), chr(10),
+            envoi["seconds"], envoi.get("pseudo") or "?")
+        reponse = input(question)
         if reponse.strip().lower() == "o":
             appliquer(mesures, envoi["game_id"], float(envoi["seconds"]))
             retenus += 1
