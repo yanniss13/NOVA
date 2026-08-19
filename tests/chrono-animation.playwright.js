@@ -55,6 +55,17 @@ const { chromium } = require("playwright");
     const avancement = await page.locator("#avancement").textContent();
     assert.match(avancement, /Avancement : \d+ \/ 161 animations mesurées\./);
 
+    /* L'envoi lui-meme demande une session, qu'un test ne peut pas ouvrir.
+       On verifie donc la seule propriete stable : un clic ne reste jamais
+       sans reponse. Un bouton muet laisserait le membre croire que sa mesure
+       est partie. */
+    await page.click("#envoyer");
+    await page.waitForFunction(
+      () => document.getElementById("retourEnvoi").textContent.trim().length > 0
+    );
+    const retour = await page.locator("#retourEnvoi").textContent();
+    assert.ok(retour.trim().length > 0, "le bouton d'envoi doit toujours repondre");
+
     console.log("chrono-animation.playwright.js : OK");
   } finally {
     await navigateur.close();

@@ -41,8 +41,13 @@
   <p>Début <output id="sortieDebut">—</output> ·
      Fin <output id="sortieFin">—</output></p>
   <p>Durée : <output id="sortieDuree">—</output> s</p>
+
+  <button type="button" id="envoyer">Envoyer ma mesure</button>
+  <p id="retourEnvoi" role="status"></p>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../supabase-config.js"></script>
 <script src="../data/competences.js"></script>
 <script src="chrono-calcul.js"></script>
 <script src="chrono-animation.js"></script>
