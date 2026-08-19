@@ -119,7 +119,12 @@
   }
   .modes label:has(input:focus-visible){outline:2px solid var(--gold-bright);outline-offset:2px}
 
-  .marqueurs{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+  /* Sous l'afficheur, dans l'instrument : on marque en regardant l'image,
+     pas en la cherchant plus bas dans la page. */
+  .marqueurs{
+    display:flex;flex-wrap:wrap;gap:10px;padding:14px 16px;
+    border-top:1px solid var(--line);background:var(--panel)
+  }
   .marqueurs .btn{flex:1 1 160px;justify-content:center;min-height:44px}
 
   .envoi{margin-top:22px;display:flex;flex-wrap:wrap;align-items:center;gap:14px}

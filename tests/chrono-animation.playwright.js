@@ -72,6 +72,25 @@ const { chromium } = require("playwright");
       () => document.getElementById("retourEnvoi").textContent.trim().length > 0
     );
 
+    /* Reculer reste une recherche, et son pas doit suivre la cadence MESUREE
+       de la video, pas 60 img/s code en dur. Avancer, lui, ne cherche plus :
+       il lit une image et met en pause, seul moyen d'eviter que le decodeur
+       ne retombe sur une image-cle et ne bondisse de soixante-dix images. */
+    const recul = await page.evaluate(() => {
+      const video = document.getElementById("video");
+      const etat = window.ChronoPage.etat;
+      etat.dureeImage = 1 / 30;
+      etat.mediaTime = 2;
+      video.currentTime = 2;
+      document.dispatchEvent(new KeyboardEvent("keydown", { key:"ArrowLeft" }));
+      return video.currentTime;
+    });
+    // 2 s moins une image de 1/30, moins la demi-image qui vise son milieu.
+    assert.ok(
+      Math.abs(recul - (2 - 1 / 30 - 1 / 60)) < 1e-6,
+      "le recul doit suivre la cadence mesuree, vu " + recul
+    );
+
     console.log("chrono-animation.playwright.js : OK");
   } finally {
     await navigateur.close();
