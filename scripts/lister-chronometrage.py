@@ -48,10 +48,13 @@ LIBELLES_CATEGORIES = {
     "TAG_SKILL": "Compétence de relève",
 }
 
+# Verifie en jeu. Les noms internes des gameId ont derive : `skill_rmb_ready`
+# se declenche sur Q et `skill_q` sur R. La categorie reste donc la source de
+# la touche, et c'est bien elle qui portait l'erreur.
 TOUCHES_CATEGORIES = {
     "NORMAL": "clic gauche",
-    "NORMAL_SKILL": "Q",
-    "ACTIVE_THIRD": "E",
+    "NORMAL_SKILL": "E",
+    "ACTIVE_THIRD": "Q",
     "ULTIMATE": "R",
     "TAG_SKILL": "1 à 4",
 }
