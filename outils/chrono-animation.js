@@ -179,5 +179,52 @@
   remplirSlots();
   chargerAvancement();
 
+  /* Le meme contrat que les stores du site : `sb` vaut null sans
+     configuration, et tout appelant le teste avant usage. La page reste alors
+     utilisable pour mesurer, seul l'envoi est indisponible. */
+  const sb = window.supabase && window.SB_URL && window.SB_KEY
+    ? window.supabase.createClient(window.SB_URL, window.SB_KEY)
+    : null;
+
+  async function envoyer(){
+    const retour = document.getElementById("retourEnvoi");
+    if(!sb){ retour.textContent = "Connexion au registre indisponible."; return; }
+
+    let mesure;
+    try{
+      mesure = mesureCourante();
+    }catch(erreur){
+      retour.textContent = erreur.message;
+      return;
+    }
+    if(!mesure){ retour.textContent = "Marque d'abord un début et une fin."; return; }
+
+    const reponseUtilisateur = await sb.auth.getUser();
+    const utilisateur = reponseUtilisateur.data && reponseUtilisateur.data.user;
+    if(!utilisateur){
+      retour.textContent = "Connecte-toi sur le site avant d'envoyer.";
+      return;
+    }
+
+    const profil = await sb.from("profiles")
+      .select("pseudo").eq("id", utilisateur.id).maybeSingle();
+
+    const { error } = await sb.from("animation_measures").insert({
+      owner:utilisateur.id,
+      pseudo:(profil.data && profil.data.pseudo) || null,
+      hero:mesure.heros,
+      slot:mesure.slot,
+      seconds:mesure.secondes,
+      mode:mesure.mode,
+      reps:mesure.repetitions,
+      fps:etat.cadence
+    });
+    retour.textContent = error
+      ? "L'envoi a échoué : " + error.message
+      : "Mesure envoyée, merci.";
+  }
+
+  document.getElementById("envoyer").addEventListener("click", envoyer);
+
   window.ChronoPage = { mesureCourante, etat, chargerAvancement };
 })();
