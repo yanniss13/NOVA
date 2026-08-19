@@ -23,12 +23,55 @@
     return (window.SEVEN_DS_COMPETENCES || {})[nomHeros] || [];
   }
 
+  /* Les cinq libelles du jeu, dans l'ordre ou un joueur enchaine ses touches.
+     Les identifiants internes (skill_rmb_ready, skill_e_1...) ne veulent rien
+     dire pour un membre : il choisit une competence, pas un slot. */
+  const ORDRE = ["NORMAL", "NORMAL_SKILL", "ACTIVE_THIRD", "ULTIMATE", "TAG_SKILL"];
+  const LIBELLES = {
+    NORMAL:"Attaque normale",
+    NORMAL_SKILL:"Compétence normale",
+    ACTIVE_THIRD:"Attaque spéciale",
+    ULTIMATE:"Attaque ultime",
+    TAG_SKILL:"Compétence de relève"
+  };
+
+  function categorieDe(nomHeros, slot){
+    const trouvee = competencesDe(nomHeros).find(competence =>
+      competence.gameId
+      && window.ChronoCalcul.slotDeGameId(competence.gameId) === slot);
+    return trouvee ? trouvee.categorie : null;
+  }
+
+  /* 23 heros sur 25 ont deux emplacements dans une meme categorie : le clic
+     droit simple et le clic droit charge sont deux animations distinctes. Sans
+     ce mot, deux lignes identiques designeraient des mesures differentes. */
+  function nuance(slot){
+    if(slot.endsWith("_ready")) return " chargée";
+    if(slot.includes("_enchant")) return " enchantée";
+    return "";
+  }
+
   function slotsDe(nomHeros){
-    return [...new Set(
+    const bruts = [...new Set(
       competencesDe(nomHeros)
         .filter(competence => competence.gameId)
         .map(competence => window.ChronoCalcul.slotDeGameId(competence.gameId))
-    )].sort();
+    )];
+    bruts.sort((a, b) => {
+      const rang = ORDRE.indexOf(categorieDe(nomHeros, a))
+        - ORDRE.indexOf(categorieDe(nomHeros, b));
+      return rang !== 0 ? rang : a.localeCompare(b);
+    });
+    const vus = {};
+    return bruts.map(slot => {
+      const categorie = categorieDe(nomHeros, slot);
+      let libelle = (LIBELLES[categorie] || categorie) + nuance(slot);
+      vus[libelle] = (vus[libelle] || 0) + 1;
+      /* Dernier recours pour les variantes dont j'ignore le sens (_1, _a) :
+         mieux vaut un numero qu'un identifiant technique ou un faux nom. */
+      if(vus[libelle] > 1) libelle += " (" + vus[libelle] + ")";
+      return { slot:slot, libelle:libelle };
+    });
   }
 
   function gameIdsDe(nomHeros, slot){
@@ -106,10 +149,12 @@
     const select = document.getElementById("slot");
     const nomHeros = document.getElementById("heros").value;
     select.innerHTML = "";
-    slotsDe(nomHeros).forEach(slot => {
+    slotsDe(nomHeros).forEach(entree => {
       const option = document.createElement("option");
-      option.value = slot;
-      option.textContent = slotDejaMesure(nomHeros, slot) ? slot + " ✓" : slot;
+      option.value = entree.slot;
+      option.textContent = slotDejaMesure(nomHeros, entree.slot)
+        ? entree.libelle + " ✓"
+        : entree.libelle;
       select.append(option);
     });
     majGameIdsVises();
@@ -125,9 +170,9 @@
     }
     let faits = 0;
     let total = 0;
-    tousLesHeros().forEach(nom => slotsDe(nom).forEach(slot => {
+    tousLesHeros().forEach(nom => slotsDe(nom).forEach(entree => {
       total += 1;
-      if(slotDejaMesure(nom, slot)) faits += 1;
+      if(slotDejaMesure(nom, entree.slot)) faits += 1;
     }));
     document.getElementById("avancement").textContent =
       "Avancement : " + faits + " / " + total + " animations mesurées.";
