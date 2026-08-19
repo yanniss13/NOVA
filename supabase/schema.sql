@@ -1140,3 +1140,40 @@ begin
   end loop;
 end
 $$;
+
+-- =============================================================================
+--  Boite de reception des temps d'animation.
+--
+--  Une ligne = un envoi date, jamais modifie. data/animations-mesurees.json
+--  reste la source de verite : cette table alimente une relecture humaine,
+--  elle ne la remplace pas. D'ou l'absence de colonne de statut et de role
+--  d'administration — accepter une mesure, c'est l'ecrire dans le fichier et
+--  le commiter. Inventer un role admin pour trois contributeurs couterait
+--  plus qu'il ne rapporte.
+--
+--  `mode` est obligatoire : sans lui, `seconds` est ininterpretable. En
+--  rafale c'est une moyenne sur `reps` lancements, en unique une mesure
+--  directe entre deux marqueurs.
+-- =============================================================================
+create table if not exists public.animation_measures (
+  id         uuid primary key default gen_random_uuid(),
+  owner      uuid not null references auth.users(id) on delete cascade,
+  pseudo     text,
+  hero       text not null,
+  slot       text not null,
+  seconds    numeric not null check (seconds > 0),
+  mode       text not null check (mode in ('rafale', 'unique')),
+  reps       integer check (reps is null or reps >= 1),
+  fps        numeric,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists animation_measures_hero_slot
+  on public.animation_measures (hero, slot);
+
+alter table public.animation_measures enable row level security;
+
+drop policy if exists animation_measures_read   on public.animation_measures;
+drop policy if exists animation_measures_insert on public.animation_measures;
+create policy animation_measures_read   on public.animation_measures for select to authenticated using (true);
+create policy animation_measures_insert on public.animation_measures for insert to authenticated with check (owner = auth.uid());
