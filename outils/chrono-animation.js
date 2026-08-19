@@ -34,7 +34,11 @@
 
   const video = document.getElementById("video");
   const etat = {
-    secondeDebut:null, secondeFin:null, cadence:CADENCE, mesurees:new Set()
+    secondeDebut:null, secondeFin:null, cadence:CADENCE, mesurees:new Set(),
+    /* mediaTime est le temps EXACT de l'image affichee, donne par le
+       navigateur. currentTime, lui, est la position demandee : apres un
+       saut il ne correspond a aucune image precise. */
+    mediaTime:null, dureeImage:0
   };
 
   const $ = id => document.getElementById(id);
@@ -118,10 +122,19 @@
     };
   }
 
+  function tempsCourant(){
+    return etat.mediaTime !== null ? etat.mediaTime : video.currentTime;
+  }
+
   function afficher(){
-    $("secondeCourante").textContent = video.currentTime.toFixed(3);
-    $("imageCourante").textContent =
-      String(Math.round(video.currentTime * etat.cadence));
+    const t = tempsCourant();
+    $("secondeCourante").textContent = t.toFixed(3);
+    $("imageCourante").textContent = etat.dureeImage
+      ? String(Math.round(t / etat.dureeImage))
+      : String(Math.round(t * etat.cadence));
+    $("cadence").textContent = etat.dureeImage
+      ? (1 / etat.dureeImage).toFixed(2) + " img/s"
+      : "lance la vidéo une seconde pour la mesurer";
     $("sortieDebut").textContent =
       etat.secondeDebut === null ? "—" : etat.secondeDebut.toFixed(3);
     $("sortieFin").textContent =
@@ -216,14 +229,81 @@
     majCompetences();
   }
 
-  function deplacer(images){
+  /* Avancer en LISANT, pas en cherchant.
+
+     Un enregistrement d'ecran n'a une image-cle que toutes les une a deux
+     secondes ; entre elles, chaque image n'est qu'une difference. Demander une
+     position par currentTime oblige alors le decodeur a repartir de l'image-cle
+     la plus proche — d'ou des bonds de soixante-dix images, tantot presents,
+     tantot non, selon l'endroit vise.
+
+     Lire une image puis mettre en pause fait avancer le decodeur lineairement.
+     Il ne saute jamais, et l'image obtenue est exactement la suivante. */
+  function avancer(nombre){
+    if(typeof video.requestVideoFrameCallback !== "function"){
+      reculer(-nombre);
+      return;
+    }
+    let restant = nombre;
+    const muetAvant = video.muted;
+    video.muted = true;
+    const etape = () => video.requestVideoFrameCallback(() => {
+      restant -= 1;
+      if(restant > 0){ etape(); return; }
+      video.pause();
+      video.muted = muetAvant;
+      afficher();
+    });
+    const lecture = video.play();
+    if(lecture && typeof lecture.then === "function"){
+      lecture.then(etape).catch(() => { video.muted = muetAvant; });
+    }else{
+      etape();
+    }
+  }
+
+  /* Reculer impose une recherche : on ne lit pas une video a l'envers. Le
+     decodeur peut donc retomber sur une image-cle. Ce n'est pas silencieux :
+     l'afficheur montre le temps reel de l'image atteinte, et il suffit de
+     ravancer image par image, ce qui, lui, est exact. */
+  function reculer(nombre){
     video.pause();
-    video.currentTime = Math.max(0, video.currentTime + images / etat.cadence);
+    const pas = etat.dureeImage || (1 / etat.cadence);
+    video.currentTime = Math.max(0, tempsCourant() - nombre * pas - pas / 2);
+  }
+
+  function deplacer(images){
+    if(images > 0) avancer(images);
+    else reculer(-images);
+  }
+
+  /* Le navigateur annonce chaque image affichee avec son temps exact. Deux
+     annonces consecutives pendant la lecture donnent la duree reelle d'une
+     image : on cesse ainsi de supposer 60 img/s, hypothese qui faisait sauter
+     des images sur tout enregistrement d'une autre cadence. */
+  function suivreImages(){
+    if(typeof video.requestVideoFrameCallback !== "function") return;
+    video.requestVideoFrameCallback(function surImage(_, infos){
+      const precedent = etat.mediaTime;
+      etat.mediaTime = infos.mediaTime;
+      if(!video.paused && precedent !== null){
+        const delta = infos.mediaTime - precedent;
+        // Entre 10 et 240 images par seconde : au-dela c'est un saut, pas une image.
+        if(delta > 0.004 && delta < 0.1) etat.dureeImage = delta;
+      }
+      afficher();
+      video.requestVideoFrameCallback(surImage);
+    });
   }
 
   $("fichierVideo").addEventListener("change", evenement => {
     const fichier = evenement.target.files && evenement.target.files[0];
-    if(fichier) video.src = URL.createObjectURL(fichier);
+    if(fichier){
+      etat.mediaTime = null;
+      etat.dureeImage = 0;
+      video.src = URL.createObjectURL(fichier);
+      suivreImages();
+    }
   });
 
   video.addEventListener("seeked", afficher);
@@ -241,11 +321,11 @@
   });
 
   $("marquerDebut").addEventListener("click", () => {
-    etat.secondeDebut = video.currentTime;
+    etat.secondeDebut = tempsCourant();
     afficher();
   });
   $("marquerFin").addEventListener("click", () => {
-    etat.secondeFin = video.currentTime;
+    etat.secondeFin = tempsCourant();
     afficher();
   });
   $("heros").addEventListener("change", majArmes);
