@@ -73,6 +73,7 @@ const SUITES = {
     "node tests/apport-par-piece.test.js",
     "node tests/manques-libelles.test.js",
     "node tests/animations-mesurees.test.js",
+    "python -m unittest tests/test_lister_chronometrage.py",
     "python scripts/lister-chronometrage.py --check",
     "node tests/routage.test.js",
     "node tests/analyse-elements.test.js",
