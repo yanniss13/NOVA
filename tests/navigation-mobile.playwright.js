@@ -1,6 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const { CIBLE_TACTILE_PX } = require("./helpers/cible-tactile");
 const { chromium } = require("playwright");
 const { serveRepo } = require("./helpers/serve");
 
@@ -182,7 +183,7 @@ async function installConnectedSupabase(page, connected = true){
     });
     assert.ok(bossDock.top >= 0 && bossDock.bottom <= bossDock.navTop + 1,
       "le dock Boss doit rester entierement visible au-dessus de la barre");
-    bossDock.targets.forEach(height => assert.ok(height >= 44,
+    bossDock.targets.forEach(height => assert.ok(height >= CIBLE_TACTILE_PX,
       "chaque sous-vue Boss doit conserver une cible de 44 px"));
 
     await nav.getByRole("button", { name:"Créer" }).click();
@@ -232,7 +233,7 @@ async function installConnectedSupabase(page, connected = true){
       assert.ok(metrics.scrollPaddingBottom >= metrics.navHeight,
         `le focus ne doit pas etre masque par la barre a ${width}px`);
       metrics.targets.forEach(target => {
-        assert.ok(target.width >= 44 && target.height >= 44,
+        assert.ok(target.width >= CIBLE_TACTILE_PX && target.height >= CIBLE_TACTILE_PX,
           `chaque destination doit mesurer au moins 44 px a ${width}px`);
       });
     }

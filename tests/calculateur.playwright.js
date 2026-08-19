@@ -12,6 +12,7 @@
    qui prouve que le lien de la fiche de heros ne mene pas a une impasse. */
 
 const assert = require("node:assert/strict");
+const { CIBLE_TACTILE_PX } = require("./helpers/cible-tactile");
 const { serveRepo } = require("./helpers/serve");
 const { chromium } = require("playwright");
 
@@ -724,7 +725,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
        plus dense ne l'annule pas. */
     const hauteurCase = await page.locator(".calc-buff").first()
       .evaluate(n => n.getBoundingClientRect().height);
-    assert.ok(hauteurCase >= 44,
+    assert.ok(hauteurCase >= CIBLE_TACTILE_PX,
       "une case a cocher reste a 44 px au doigt, recu : " + hauteurCase);
 
     /* Le rembourrage de carte se resserre, sans disparaitre. */

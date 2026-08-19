@@ -7,6 +7,7 @@
    semaines s'en sert). */
 
 const assert = require("node:assert/strict");
+const { CIBLE_TACTILE_PX } = require("./helpers/cible-tactile");
 const { serveRepo } = require("./helpers/serve");
 const { chromium } = require("playwright");
 
@@ -474,7 +475,7 @@ async function runMobileChecks(browser, baseUrl){
     // Les cibles tactiles respectent 44 px.
     const box = await page.locator('#availGrid .avail-cell[data-index="0"]')
       .boundingBox();
-    assert.ok(box.height >= 44, "Une case doit faire au moins 44 px de haut");
+    assert.ok(box.height >= CIBLE_TACTILE_PX, "Une case doit faire au moins 44 px de haut");
 
     // Un clic bascule un créneau et déclenche un enregistrement.
     await page.click('#availGrid .avail-cell[data-index="20"]');

@@ -1,6 +1,7 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const { CIBLE_TACTILE_PX } = require("./helpers/cible-tactile");
 const { serveRepo } = require("./helpers/serve");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
@@ -2798,12 +2799,12 @@ async function ouvrirSessionsDeBoss(page){
       }
       modalMetrics.choices.forEach(rect => {
         assert.ok(
-          rect.height >= 44 && rect.width >= 44,
+          rect.height >= CIBLE_TACTILE_PX && rect.width >= CIBLE_TACTILE_PX,
           "Une équipe doit rester une cible tactile de 44 × 44 px"
         );
       });
       assert.ok(
-        modalMetrics.closeWidth >= 44 && modalMetrics.closeHeight >= 44,
+        modalMetrics.closeWidth >= CIBLE_TACTILE_PX && modalMetrics.closeHeight >= CIBLE_TACTILE_PX,
         `La fermeture du sélecteur doit mesurer 44 × 44 px à ${width}px`
       );
       await page.locator("#bossTeamClose").focus();
@@ -4367,23 +4368,23 @@ async function ouvrirSessionsDeBoss(page){
         );
       }
       assert.ok(
-        reportMetrics.score.width >= 44 &&
-        reportMetrics.score.height >= 44 &&
+        reportMetrics.score.width >= CIBLE_TACTILE_PX &&
+        reportMetrics.score.height >= CIBLE_TACTILE_PX &&
         reportMetrics.scoreOverflow <= 1,
         `Le score maximal doit rester contenu et mesurer 44 px à ${width}px`
       );
       assert.ok(
-        reportMetrics.note.width >= 44 &&
-        reportMetrics.note.height >= 44 &&
+        reportMetrics.note.width >= CIBLE_TACTILE_PX &&
+        reportMetrics.note.height >= CIBLE_TACTILE_PX &&
         reportMetrics.noteOverflow <= 1,
         `La note non sécable doit rester contenue à ${width}px`
       );
       assert.ok(
-        reportMetrics.submitHeight >= 44 && reportMetrics.submitWidth >= 44,
+        reportMetrics.submitHeight >= CIBLE_TACTILE_PX && reportMetrics.submitWidth >= CIBLE_TACTILE_PX,
         "L’enregistrement doit rester une cible de 44 px"
       );
       assert.ok(
-        reportMetrics.closeWidth >= 44 && reportMetrics.closeHeight >= 44,
+        reportMetrics.closeWidth >= CIBLE_TACTILE_PX && reportMetrics.closeHeight >= CIBLE_TACTILE_PX,
         `La fermeture du rapport doit mesurer 44 × 44 px à ${width}px`
       );
       await page.locator("#bossReportClose").focus();
@@ -5413,7 +5414,7 @@ async function ouvrirSessionsDeBoss(page){
         `Débordement des archives de ${archiveMetrics.overflow}px à ${width}px`
       );
       assert.ok(archiveMetrics.cardRight <= width, "Le rapport doit rester dans la fenêtre");
-      assert.ok(archiveMetrics.actionHeight >= 44, "Voir l’équipe doit rester une cible de 44 px");
+      assert.ok(archiveMetrics.actionHeight >= CIBLE_TACTILE_PX, "Voir l’équipe doit rester une cible de 44 px");
     }
     await page.setViewportSize({ width:390, height:844 });
 
@@ -5933,7 +5934,7 @@ async function ouvrirSessionsDeBoss(page){
       assert.ok(metrics.controls.length > 0, `Aucune action mesurée à ${width}px`);
       assert.ok(metrics.cards.length > 0, `Aucune carte mesurée à ${width}px`);
       metrics.controls.forEach(control => {
-        assert.ok(control.height >= 44,
+        assert.ok(control.height >= CIBLE_TACTILE_PX,
           `Action de ${control.height.toFixed(3)} px (< 44) a ${width}px : ${control.repere}`);
         assert.ok(control.right <= metrics.viewport + 1);
       });
