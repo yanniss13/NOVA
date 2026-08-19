@@ -18,6 +18,17 @@
   </p>
   <p class="jauge" id="avancement">Chargement…</p>
 
+  <div class="alerte" id="alerte" hidden>
+    <b>Ta vidéo n'est pas précise à l'image près.</b>
+    Un enregistrement d'écran ne place une image-clé que toutes les quatre
+    secondes environ, soit 128 images. Entre elles, le lecteur ne peut pas
+    s'arrêter où on lui demande et recule jusqu'à la clé précédente.
+    Convertis l'extrait qui t'intéresse, chaque image devient alors autonome :
+    <code>ffmpeg -ss 20 -t 10 -i tavideo.mp4 -c:v libx264 -g 1 -crf 20 -an precis.mp4</code>
+    <span>« -ss 20 » est la seconde de départ, « -t 10 » la durée. Compte 3 Mo
+    par seconde, d'où l'intérêt de ne convertir que le passage utile.</span>
+  </div>
+
   <section class="instrument">
     <div class="depot">
       <label for="fichierVideo">Ton enregistrement</label>
