@@ -70,8 +70,8 @@ class ListerChronometrageTests(unittest.TestCase):
 
         for categorie, touche in [
             ("Attaque normale", "clic gauche"),
-            ("Compétence normale", "Q"),
-            ("Attaque spéciale", "E"),
+            ("Compétence normale", "E"),
+            ("Attaque spéciale", "Q"),
             ("Attaque ultime", "R"),
             ("Compétence de relève", "1 à 4"),
         ]:
