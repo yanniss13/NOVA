@@ -48,12 +48,18 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
-      # Borne explicite : un telechargement qui s'eternise doit echouer vite
-      # et sous son propre nom, plutot que d'epuiser le budget du job et de
-      # se presenter comme une annulation sans cause lisible.
+      # Pas de `--with-deps` : cette option lance un apt-get update qui va
+      # chercher les listes de paquets Ubuntu a chaque execution. Mesure du
+      # 19 aout : cache du navigateur touche en 3 s, puis 732 s passees dans
+      # apt seul, jusqu'a epuiser la borne. L'image ubuntu-latest embarque
+      # deja les bibliotheques dont Chromium a besoin.
+      #
+      # La verification est gratuite et immediate : si une bibliotheque
+      # manquait, le premier des seize parcours Playwright echouerait aussitot
+      # sur un lancement de navigateur impossible, message parfaitement lisible.
       - name: Installer Chromium
-        timeout-minutes: 12
-        run: npx playwright install --with-deps chromium
+        timeout-minutes: 5
+        run: npx playwright install chromium
       - name: Tester le site
         run: npm test
 
