@@ -1,0 +1,12 @@
+{
+  "_lisezmoi": [
+    "Temps d'animation mesures EN JEU, en secondes.",
+    "Ce fichier est ecrit A LA MAIN et n'est jamais regenere : aucune source",
+    "publique ne publie ces durees, elles n'existent que parce qu'on les mesure.",
+    "La cle est le `gameId` de data/competences.js, qui lui est regenere.",
+    "Apres chaque ajout : python scripts/lister-chronometrage.py",
+    "Quoi mesurer d'abord : docs/chronometrage-animations.md"
+  ],
+  "_unite": "secondes",
+  "animations": {}
+}
