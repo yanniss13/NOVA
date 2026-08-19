@@ -50,12 +50,17 @@ import { Store } from "../donnees/equipes-store.js";
   function updateAccountUi(){
     $("#accountLogin").hidden = !!sessionCourante.user;
     $("#accountConnected").hidden = !sessionCourante.user;
-    $("#accountPseudo").textContent = sessionCourante.pseudo || (sessionCourante.user && sessionCourante.user.email) || "";
+    $("#mobileAccountLogin").hidden = !!sessionCourante.user;
+    $("#mobileAccountConnected").hidden = !sessionCourante.user;
+    const accountName = sessionCourante.pseudo
+      || (sessionCourante.user && sessionCourante.user.email) || "";
+    $("#accountPseudo").textContent = accountName;
+    $("#mobileAccountPseudo").textContent = accountName;
     /* Bouton à usage unique : il n'apparaît que s'il reste vraiment quelque
        chose à importer depuis CE navigateur. Une fois la migration faite — ou
        s'il n'y a aucune donnée locale — il disparaît au lieu de rester
        désactivé, car il occupait une ligne entière du header mobile. */
-    const migrationButton = $("#btnMigrateLocal");
+    const migrationButtons = [$("#btnMigrateLocal"), $("#mobileBtnMigrateLocal")];
     const migrated = !!sessionCourante.user &&
       localStorage.getItem(MIGRATION_KEY_PREFIX+sessionCourante.user.id) === "1";
     let hasLocalData = false;
@@ -64,9 +69,11 @@ import { Store } from "../donnees/equipes-store.js";
     }catch(error){
       hasLocalData = false;
     }
-    migrationButton.hidden = !sessionCourante.user || migrated || !hasLocalData;
-    migrationButton.disabled = migrated;
-    migrationButton.textContent = "Importer mes données locales";
+    migrationButtons.forEach(migrationButton => {
+      migrationButton.hidden = !sessionCourante.user || migrated || !hasLocalData;
+      migrationButton.disabled = migrated;
+      migrationButton.textContent = "Importer mes données locales";
+    });
     /* `pseudoInput` vient d'un module : il est initialisé avant que ce
        fichier ne s'exécute. Le garde `typeof` d'avant ne protégeait déjà de
        rien — sur un `const` en zone morte, `typeof` lève au lieu de renvoyer
@@ -224,8 +231,10 @@ import { Store } from "../donnees/equipes-store.js";
     }
   }
 
-  $("#accountLogin").addEventListener("click", ()=>
-    openAuth(sb ? "" : "Connexion indisponible hors ligne.", !sb)
+  [$("#accountLogin"), $("#mobileAccountLogin")].forEach(button =>
+    button.addEventListener("click", () =>
+      openAuth(sb ? "" : "Connexion indisponible hors ligne.", !sb)
+    )
   );
   $("#authOffline").addEventListener("click", closeAuth);
   $("#authSignIn").addEventListener("click", ()=>void signIn());
@@ -233,15 +242,17 @@ import { Store } from "../donnees/equipes-store.js";
   $("#authPassword").addEventListener("keydown", event => {
     if(event.key === "Enter") void signIn();
   });
-  $("#authLogout").addEventListener("click", async()=>{
-    if(!sb) return;
-    const { error } = await sb.auth.signOut();
-    if(error) toast(authMessage(error), true);
-  });
+  [$("#authLogout"), $("#mobileAuthLogout")].forEach(button =>
+    button.addEventListener("click", async()=>{
+      if(!sb) return;
+      const { error } = await sb.auth.signOut();
+      if(error) toast(authMessage(error), true);
+    })
+  );
 
-  /* Importer dans son compte les equipes reste es en local. Le bouton vit
-     a cote de « Deconnexion » dans index.html, et l'operation ne veut rien
-     dire sans compte : sa place est avec la session. */
+  /* Importer dans son compte les equipes reste es en local. Les miroirs
+     desktop/mobile vivent a cote de « Deconnexion » dans index.html, et
+     l'operation ne veut rien dire sans compte : sa place est avec la session. */
   async function migrateLocalData(){
     if(!sessionCourante.user || !sb){
       openAuth("Connecte-toi pour importer tes données locales.", true);
@@ -249,10 +260,12 @@ import { Store } from "../donnees/equipes-store.js";
     }
     const migrationKey = MIGRATION_KEY_PREFIX+sessionCourante.user.id;
     if(localStorage.getItem(migrationKey) === "1") return;
-    const button = $("#btnMigrateLocal");
-    const oldText = button.textContent;
-    button.disabled = true;
-    button.textContent = "Import en cours…";
+    const buttons = [$("#btnMigrateLocal"), $("#mobileBtnMigrateLocal")];
+    const oldTexts = buttons.map(button => button.textContent);
+    buttons.forEach(button => {
+      button.disabled = true;
+      button.textContent = "Import en cours…";
+    });
     try{
       const localTeams = LocalTeams.all();
       if(!localTeams.length){
@@ -280,12 +293,15 @@ import { Store } from "../donnees/equipes-store.js";
       toast("Import local impossible : "+authMessage(error), true);
     }finally{
       if(localStorage.getItem(migrationKey) !== "1"){
-        button.disabled = false;
-        button.textContent = oldText;
+        buttons.forEach((button, index) => {
+          button.disabled = false;
+          button.textContent = oldTexts[index];
+        });
       }
     }
   }
   $("#btnMigrateLocal").addEventListener("click", ()=>void migrateLocalData());
+  $("#mobileBtnMigrateLocal").addEventListener("click", ()=>void migrateLocalData());
 
 /* updateAccountUi est redevenue privee quand la migration des donnees
    locales l a rejointe : c etait son dernier appelant du dehors. */

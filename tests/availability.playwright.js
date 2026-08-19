@@ -13,8 +13,15 @@ const { chromium } = require("playwright");
 /* Les Dispos vivent desormais dans le sous-menu de « Boss de Guilde » : on
    ouvre le groupe, puis l'entree. */
 async function ouvrirDispos(page){
-  await page.click("#tab-roster");
-  await page.click("#tab-availability");
+  if(await page.locator("#mobileNavBoss").isVisible()){
+    await page.locator("#mobileNavBoss").click();
+    await page.locator(
+      '#mobileBossSubtabs [data-mobile-view="availability"]'
+    ).click();
+  }else{
+    await page.locator("#tab-roster").click();
+    await page.locator("#tab-availability").click();
+  }
 }
 
 /* La semaine est recalculée à chaque exécution : une valeur en dur ferait
