@@ -1412,12 +1412,13 @@ async function installRosterFocusFakeSupabase(page){
 
     await mobile.locator(".hero .portrait").first().click();
     await mobile.locator('#pickerGrid .tile[title="Meliodas"]').click();
-    const gearBox = await mobile.locator(".hero .gear-slot.weapon")
-      .first().boundingBox();
-    /* Un encadre absent et un encadre trop petit echouaient sur le meme
-       message, alors que l'un est une course au rendu et l'autre une
-       regression de mise en page. Les separer dit lequel des deux s'est
-       produit sur le runner. */
+    /* Choisir un heros reconstruit la carte : mesurer sans attendre lisait
+       un encadre pas encore rendu, et boundingBox() rendait null. Le runner,
+       plus lent, perdait cette course la ou une machine locale la gagnait.
+       C'est l'attente qui manquait, pas des pixels. */
+    const gearSlot = mobile.locator(".hero .gear-slot.weapon").first();
+    await gearSlot.waitFor({ state:"visible" });
+    const gearBox = await gearSlot.boundingBox();
     assert.ok(gearBox, ".gear-slot introuvable ou invisible apres le choix du heros");
     assert.ok(gearBox.height >= 44,
       `.gear-slot mesure ${gearBox.height.toFixed(3)} px (< 44)`);
