@@ -6,10 +6,9 @@ humain a valide. Les chiffres qu'il produit determinent tout le calcul de DPS
 de la confrerie — une valeur fausse qui passe inapercue vaut moins que pas de
 valeur du tout.
 
-Une mesure vaut pour un couple heros x emplacement, donc pour toutes les armes
-du meme heros : le moveset appartient au heros, pas a l'arme equipee. Le
-fichier reste indexe par gameId, ce qui laisse la possibilite d'ecraser une
-seule ligne le jour ou une arme s'avererait faire exception.
+Une mesure vaut pour UN gameId : un heros, une arme, un emplacement. Un heros
+n'a pas le meme moveset selon l'arme equipee — Meliodas a la hache et Meliodas
+a l'epee longue sont deux animations distinctes, avec des degats differents.
 
     python scripts/rapatrier-mesures.py
 """
@@ -20,53 +19,29 @@ import sys
 import urllib.request
 
 RACINE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-CATALOGUE = os.path.join(RACINE, "data", "competences.js")
 MESURES = os.path.join(RACINE, "data", "animations-mesurees.json")
 CONFIG = os.path.join(RACINE, "supabase-config.js")
 
-DEBUTS_DE_SLOT = ("jumpatk", "normalatk", "skill_")
 ECART_TOLERE = 0.10
 
 
-def slot_de_game_id(game_id):
-    texte = str(game_id or "")
-    positions = [texte.find(debut) for debut in DEBUTS_DE_SLOT]
-    positions = [position for position in positions if position >= 0]
-    return texte[min(positions):] if positions else texte
-
-
-def game_ids_du_couple(catalogue, heros, slot):
-    return [
-        skill["gameId"]
-        for skill in catalogue.get(heros, [])
-        if skill.get("gameId") and slot_de_game_id(skill["gameId"]) == slot
-    ]
-
-
 def desaccords(envois):
-    par_couple = {}
+    par_animation = {}
     for envoi in envois:
-        par_couple.setdefault((envoi["hero"], envoi["slot"]), []).append(envoi)
+        par_animation.setdefault(envoi["game_id"], []).append(envoi)
     signales = []
-    for couple, liste in par_couple.items():
+    for game_id, liste in par_animation.items():
         valeurs = [float(envoi["seconds"]) for envoi in liste]
         if len(valeurs) < 2:
             continue
         if (max(valeurs) - min(valeurs)) / min(valeurs) > ECART_TOLERE:
-            signales.append((couple, liste))
+            signales.append((game_id, liste))
     return signales
 
 
-def appliquer(mesures, catalogue, heros, slot, secondes):
-    for game_id in game_ids_du_couple(catalogue, heros, slot):
-        mesures["animations"][game_id] = secondes
+def appliquer(mesures, game_id, secondes):
+    mesures["animations"][game_id] = secondes
     return mesures
-
-
-def _charge_js(chemin):
-    with open(chemin, encoding="utf-8") as fichier:
-        source = fichier.read()
-    return json.loads(source[source.index("{"):].rstrip().rstrip(";"))
 
 
 def _config():
@@ -90,41 +65,35 @@ def _envois():
 
 
 def main():
-    catalogue = _charge_js(CATALOGUE)
     with open(MESURES, encoding="utf-8") as fichier:
         mesures = json.load(fichier)
 
     envois = _envois()
 
-    for couple, liste in desaccords(envois):
-        print("DESACCORD sur %s / %s :" % couple)
+    for game_id, liste in desaccords(envois):
+        print("DESACCORD sur %s :" % game_id)
         for envoi in liste:
             print("   %-12s %s s (%s)" % (
                 envoi.get("pseudo") or "?", envoi["seconds"], envoi["mode"]))
-        print("   -> tranche a la main, ce script ne choisira pas pour toi.\n")
+        print("   -> tranche a la main, ce script ne choisira pas pour toi.")
+        print()
 
-    deja = set(mesures["animations"])
-    nouveaux = [
-        envoi for envoi in envois
-        if not set(game_ids_du_couple(catalogue, envoi["hero"], envoi["slot"])) & deja
-    ]
+    nouveaux = [e for e in envois if e["game_id"] not in mesures["animations"]]
     if not nouveaux:
         print("Rien de nouveau.")
         return 0
 
     for envoi in nouveaux:
-        cibles = game_ids_du_couple(catalogue, envoi["hero"], envoi["slot"])
-        reponse = input("%s / %s = %s s (%s) -> ecrire sur %d gameId ? [o/N] " % (
-            envoi["hero"], envoi["slot"], envoi["seconds"],
-            envoi.get("pseudo") or "?", len(cibles)))
+        reponse = input("%s = %s s (%s) -> ecrire ? [o/N] " % (
+            envoi["game_id"], envoi["seconds"], envoi.get("pseudo") or "?"))
         if reponse.strip().lower() == "o":
-            appliquer(mesures, catalogue, envoi["hero"], envoi["slot"],
-                      float(envoi["seconds"]))
+            appliquer(mesures, envoi["game_id"], float(envoi["seconds"]))
 
     with open(MESURES, "w", encoding="utf-8") as fichier:
         json.dump(mesures, fichier, ensure_ascii=False, indent=2)
         fichier.write("\n")
-    print("\nEcrit. Relance maintenant : python scripts/lister-chronometrage.py")
+    print()
+    print("Ecrit. Relance maintenant : python scripts/lister-chronometrage.py")
     return 0
 
 

@@ -15,6 +15,7 @@ const sql = fs.readFileSync(
 
 [
   /create table if not exists public\.animation_measures/i,
+  /game_id\s+text\s+not null/i,
   /alter table public\.animation_measures enable row level security/i,
   /create policy animation_measures_read[\s\S]*?for select to authenticated using\s*\(\s*true\s*\)/i,
   /create policy animation_measures_insert[\s\S]*?with check\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i
@@ -34,5 +35,16 @@ const sql = fs.readFileSync(
 /* Le mode conditionne la lecture du chiffre : sans lui, on ne sait pas si
    `seconds` est une mesure directe ou une moyenne sur `reps` lancements. */
 assert.match(sql, /mode\s+text\s+not null[\s\S]*?rafale[\s\S]*?unique/i);
+
+/* La cle est le game_id, qui porte le heros, l'arme ET l'emplacement. Un
+   heros change de moveset avec son arme : stocker heros + emplacement
+   melangeait deux animations differentes sous une seule mesure. */
+["hero", "slot"].forEach(colonne => {
+  assert.equal(
+    new RegExp("^\s+" + colonne + "\s+text", "im").test(sql),
+    false,
+    colonne + " ne suffit pas a designer une animation : utiliser game_id"
+  );
+});
 
 console.log("animation-measures-schema.test.js : OK");
