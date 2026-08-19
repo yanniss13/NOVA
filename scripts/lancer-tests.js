@@ -37,6 +37,7 @@ const SUITES = {
     "node tests/accueil.test.js",
     "node tests/roster-schema.test.js",
     "node tests/collection-schema.test.js",
+    "node tests/animation-measures-schema.test.js",
     "node tests/roster-affichage-instantane.test.js",
     "node tests/stats-build-catalog.test.js",
     "node tests/stats-build-schema.test.js",
