@@ -135,3 +135,20 @@
   @media(prefers-reduced-motion:reduce){
     .outil *{transition-duration:.001ms!important}
   }
+
+  /* L'avertissement de video non decoupable. Il ne s'affiche que lorsque
+     l'outil a constate un ecart entre l'image demandee et l'image obtenue :
+     inutile d'inquieter quelqu'un dont le fichier va bien. */
+  .alerte{
+    margin-top:18px;padding:16px 18px;border-radius:var(--radius);
+    border:1px solid var(--gold-deep);background:rgba(217,164,65,.08);
+    font-size:14px;line-height:1.65;color:var(--parchment)
+  }
+  .alerte b{display:block;margin-bottom:6px;color:var(--gold-bright)}
+  .alerte code{
+    display:block;margin:10px 0;padding:10px 12px;overflow-x:auto;
+    font-family:var(--mono);font-size:12.5px;white-space:pre;
+    border:1px solid var(--line);border-radius:8px;background:var(--obsidian-2);
+    color:var(--parchment)
+  }
+  .alerte span{display:block;font-size:12.5px;color:var(--muted)}

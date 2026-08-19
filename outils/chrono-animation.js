@@ -38,7 +38,7 @@
     /* mediaTime est le temps EXACT de l'image affichee, donne par le
        navigateur. currentTime, lui, est la position demandee : apres un
        saut il ne correspond a aucune image precise. */
-    mediaTime:null, dureeImage:0
+    mediaTime:null, dureeImage:0, viseeRecul:null
   };
 
   const $ = id => document.getElementById(id);
@@ -275,7 +275,9 @@
     /* L'image courante commence a T, la precedente occupe [T - 1 image, T).
        Viser son MILIEU, donc T - 0,5 image pour un pas de un. Retirer 1,5
        image visait celle d'encore avant, d'ou un recul de deux. */
-    video.currentTime = Math.max(0, tempsCourant() - (nombre - 0.5) * pas);
+    const vise = Math.max(0, tempsCourant() - (nombre - 0.5) * pas);
+    etat.viseeRecul = vise;
+    video.currentTime = vise;
   }
 
   function deplacer(images){
@@ -312,7 +314,20 @@
     }
   });
 
-  video.addEventListener("seeked", afficher);
+  /* Apres une recherche, comparer ou l'on voulait aller et ou l'on a atterri.
+     Un enregistrement d'ecran n'a qu'une image-cle toutes les quatre secondes
+     environ — 128 images sur une capture a 30 img/s. Le decodeur ne peut donc
+     pas toujours servir l'image demandee et recule jusqu'a la cle. Le dire
+     franchement vaut mieux que de laisser croire a un outil defaillant. */
+  video.addEventListener("seeked", () => {
+    const pas = etat.dureeImage || (1 / etat.cadence);
+    if(etat.viseeRecul !== null && pas){
+      const ecart = Math.abs(tempsCourant() - etat.viseeRecul);
+      if(ecart > pas * 2) $("alerte").hidden = false;
+      etat.viseeRecul = null;
+    }
+    afficher();
+  });
   video.addEventListener("timeupdate", afficher);
 
   document.addEventListener("keydown", evenement => {
