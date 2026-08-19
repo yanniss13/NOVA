@@ -85,10 +85,12 @@ const { chromium } = require("playwright");
       document.dispatchEvent(new KeyboardEvent("keydown", { key:"ArrowLeft" }));
       return video.currentTime;
     });
-    // 2 s moins une image de 1/30, moins la demi-image qui vise son milieu.
+    /* L'image courante commence a 2 s, la precedente occupe [2 - 1/30, 2).
+       On vise son milieu : 2 - 1/60. Retirer 1.5 image visait celle d'encore
+       avant, et reculait donc de deux. */
     assert.ok(
-      Math.abs(recul - (2 - 1 / 30 - 1 / 60)) < 1e-6,
-      "le recul doit suivre la cadence mesuree, vu " + recul
+      Math.abs(recul - (2 - 1 / 60)) < 1e-6,
+      "le recul doit viser le milieu de l'image precedente, vu " + recul
     );
 
     console.log("chrono-animation.playwright.js : OK");
