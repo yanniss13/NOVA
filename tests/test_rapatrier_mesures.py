@@ -1,4 +1,5 @@
 import importlib.util
+import os
 import pathlib
 import unittest
 
@@ -38,6 +39,32 @@ class RapatrierMesuresTests(unittest.TestCase):
     def test_un_seul_envoi_ne_declenche_aucun_desaccord(self):
         envois = [{"game_id": "bug_axe_jumpatk", "seconds": 1.1, "pseudo": "a"}]
         self.assertEqual(MODULE.desaccords(envois), [])
+
+
+    def test_un_mauvais_mot_de_passe_arrete_proprement(self):
+        """Verifie en direct le 19 aout : l'endpoint rend 400 invalid_credentials.
+        Un membre qui se trompe doit lire une phrase, pas une pile d'erreurs."""
+        import urllib.error
+        import urllib.request
+
+        def refuser(requete, timeout=None):
+            raise urllib.error.HTTPError(
+                requete.full_url, 400, "Bad Request", {}, None
+            )
+
+        origine = urllib.request.urlopen
+        environnement = dict(os.environ)
+        os.environ["CONFRERIE_EMAIL"] = "sonde@invalide.test"
+        os.environ["CONFRERIE_MOTDEPASSE"] = "mauvais"
+        urllib.request.urlopen = refuser
+        try:
+            with self.assertRaises(SystemExit) as leve:
+                MODULE._jeton({"SB_URL": "https://exemple.test", "SB_KEY": "cle"})
+            self.assertIn("incorrect", str(leve.exception))
+        finally:
+            urllib.request.urlopen = origine
+            os.environ.clear()
+            os.environ.update(environnement)
 
 
 if __name__ == "__main__":

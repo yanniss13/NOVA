@@ -13,9 +13,11 @@ a l'epee longue sont deux animations distinctes, avec des degats differents.
     python scripts/rapatrier-mesures.py
 """
 
+import getpass
 import json
 import os
 import sys
+import urllib.error
 import urllib.request
 
 RACINE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -53,12 +55,43 @@ def _config():
     return valeurs
 
 
+def _jeton(config):
+    """Ouvre une session Supabase et rend son jeton d'acces.
+
+    La table n'est lisible que par un membre connecte, comme le reste du site.
+    Le script s'authentifie donc au lieu d'ouvrir la lecture a tout le monde :
+    ces envois portent des pseudos et des identifiants de comptes, et toutes
+    les autres tables les protegent deja.
+
+    Les identifiants se donnent au clavier, ou par les variables
+    CONFRERIE_EMAIL et CONFRERIE_MOTDEPASSE pour un usage automatise. Rien
+    n'est ecrit sur le disque.
+    """
+    email = os.environ.get("CONFRERIE_EMAIL") or input("Email du compte : ")
+    motdepasse = (os.environ.get("CONFRERIE_MOTDEPASSE")
+                  or getpass.getpass("Mot de passe : "))
+    corps = json.dumps({"email": email, "password": motdepasse}).encode("utf-8")
+    requete = urllib.request.Request(
+        config["SB_URL"] + "/auth/v1/token?grant_type=password",
+        data=corps,
+        headers={"apikey": config["SB_KEY"], "Content-Type": "application/json"},
+    )
+    try:
+        with urllib.request.urlopen(requete, timeout=30) as reponse:
+            return json.loads(reponse.read().decode("utf-8"))["access_token"]
+    except urllib.error.HTTPError as erreur:
+        if erreur.code in (400, 401):
+            raise SystemExit("Connexion refusee : email ou mot de passe incorrect.")
+        raise
+
+
 def _envois():
     config = _config()
+    jeton = _jeton(config)
     url = config["SB_URL"] + "/rest/v1/animation_measures?select=*&order=created_at"
     requete = urllib.request.Request(url, headers={
         "apikey": config["SB_KEY"],
-        "Authorization": "Bearer " + config["SB_KEY"],
+        "Authorization": "Bearer " + jeton,
     })
     with urllib.request.urlopen(requete, timeout=30) as reponse:
         return json.loads(reponse.read().decode("utf-8"))
