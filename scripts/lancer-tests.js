@@ -53,6 +53,7 @@ const SUITES = {
     "python -m unittest tests/test_generate_wiki.py",
     "python scripts/generate-wiki.py --check",
     "python -m unittest tests/test_generate_competences.py",
+    "python -m unittest tests/test_rapatrier_mesures.py",
     "python scripts/generate-competences.py --check",
     "node tests/wiki-catalogue.test.js",
     "node tests/wiki-competences.test.js",
