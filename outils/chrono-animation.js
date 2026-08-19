@@ -254,11 +254,14 @@
       video.muted = muetAvant;
       afficher();
     });
+    /* Ecouter AVANT de lancer la lecture. La promesse de play() ne se
+       resout qu'une fois la lecture reellement demarree, et la video a deja
+       defile pendant ce temps : s'y abonner apres coup faisait avancer de
+       quarante images au lieu d'une. */
+    etape();
     const lecture = video.play();
-    if(lecture && typeof lecture.then === "function"){
-      lecture.then(etape).catch(() => { video.muted = muetAvant; });
-    }else{
-      etape();
+    if(lecture && typeof lecture.catch === "function"){
+      lecture.catch(() => { video.muted = muetAvant; });
     }
   }
 
@@ -269,7 +272,10 @@
   function reculer(nombre){
     video.pause();
     const pas = etat.dureeImage || (1 / etat.cadence);
-    video.currentTime = Math.max(0, tempsCourant() - nombre * pas - pas / 2);
+    /* L'image courante commence a T, la precedente occupe [T - 1 image, T).
+       Viser son MILIEU, donc T - 0,5 image pour un pas de un. Retirer 1,5
+       image visait celle d'encore avant, d'ou un recul de deux. */
+    video.currentTime = Math.max(0, tempsCourant() - (nombre - 0.5) * pas);
   }
 
   function deplacer(images){
