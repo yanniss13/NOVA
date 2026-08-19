@@ -166,15 +166,34 @@
     majCompetences();
   }
 
+  /* Seules les auto-attaques s'enchainent : toutes les autres competences ont
+     une recharge. La rafale ne concerne donc qu'elles, et comme une
+     auto-attaque est un cycle de plusieurs coups, ce sont des cycles entiers
+     qu'on compte, pas des coups. */
+  function estAutoAttaque(gameId){
+    return /jumpatk|normalatk/.test(gameId);
+  }
+
   function majDetail(){
     const competence = competenceChoisie();
     const detail = $("detail");
     if(!competence){ detail.textContent = ""; afficher(); return; }
-    const deja = etat.mesurees.has(competence.gameId);
-    detail.textContent = competence.recharge
-      ? "Recharge de " + competence.recharge + " s — utilise le mode unique."
-      : "Sans recharge — utilise le mode rafale, c'est là que la précision compte le plus.";
-    if(deja) detail.textContent += " Déjà mesurée : ta valeur remplacera l'ancienne.";
+
+    if(estAutoAttaque(competence.gameId)){
+      const coups = Array.isArray(competence.repartition)
+        ? competence.repartition.length : 0;
+      detail.textContent = (coups ? "Enchaînement de " + coups + " coups. " : "")
+        + "En rafale, compte des cycles entiers : marque le premier coup,"
+        + " laisse tourner dix cycles, puis marque le premier coup du onzième.";
+    }else{
+      detail.textContent = "Une seule fois : cette compétence a une recharge"
+        + (competence.recharge ? " de " + competence.recharge + " s" : "")
+        + ", elle ne s'enchaîne pas.";
+    }
+
+    if(etat.mesurees.has(competence.gameId)){
+      detail.textContent += " Déjà mesurée : ta valeur remplacera l'ancienne.";
+    }
     afficher();
   }
 
