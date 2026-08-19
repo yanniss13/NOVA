@@ -1414,7 +1414,13 @@ async function installRosterFocusFakeSupabase(page){
     await mobile.locator('#pickerGrid .tile[title="Meliodas"]').click();
     const gearBox = await mobile.locator(".hero .gear-slot.weapon")
       .first().boundingBox();
-    assert.ok(gearBox && gearBox.height >= 44, ".gear-slot doit mesurer 44 px");
+    /* Un encadre absent et un encadre trop petit echouaient sur le meme
+       message, alors que l'un est une course au rendu et l'autre une
+       regression de mise en page. Les separer dit lequel des deux s'est
+       produit sur le runner. */
+    assert.ok(gearBox, ".gear-slot introuvable ou invisible apres le choix du heros");
+    assert.ok(gearBox.height >= 44,
+      `.gear-slot mesure ${gearBox.height.toFixed(3)} px (< 44)`);
     await mobile.locator(".hero .gear-slot.weapon").first().click();
     await mobile.locator("#overlay").waitFor({state:"visible"});
     for(const selector of [".icon-btn", ".chip"]){

@@ -5908,7 +5908,13 @@ async function ouvrirSessionsDeBoss(page){
           "#view-dashboard button:not([hidden])"
         )].filter(node => node.getClientRects().length).map(node => {
           const rect = node.getBoundingClientRect();
-          return { width:rect.width, height:rect.height, right:rect.right };
+          return {
+            width:rect.width, height:rect.height, right:rect.right,
+            /* Sans de quoi identifier le bouton, un echec ne dit pas quoi
+               corriger : il faut son id, ses classes et son libelle. */
+            repere:(node.id || node.className || "?") + " «" +
+              (node.textContent || "").trim().slice(0, 24) + "»"
+          };
         });
         const cards = [...document.querySelectorAll(
           "#view-dashboard .dashboard-run-card"
@@ -5927,7 +5933,8 @@ async function ouvrirSessionsDeBoss(page){
       assert.ok(metrics.controls.length > 0, `Aucune action mesurée à ${width}px`);
       assert.ok(metrics.cards.length > 0, `Aucune carte mesurée à ${width}px`);
       metrics.controls.forEach(control => {
-        assert.ok(control.height >= 44, `Action inférieure à 44 px à ${width}px`);
+        assert.ok(control.height >= 44,
+          `Action de ${control.height.toFixed(3)} px (< 44) a ${width}px : ${control.repere}`);
         assert.ok(control.right <= metrics.viewport + 1);
       });
       metrics.cards.forEach(card => {
