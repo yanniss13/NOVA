@@ -229,61 +229,55 @@
     majCompetences();
   }
 
-  /* Avancer en LISANT, pas en cherchant.
+  /* Un pas d'image est une recherche, avec la duree REELLE d'une image.
 
-     Un enregistrement d'ecran n'a une image-cle que toutes les une a deux
-     secondes ; entre elles, chaque image n'est qu'une difference. Demander une
-     position par currentTime oblige alors le decodeur a repartir de l'image-cle
-     la plus proche — d'ou des bonds de soixante-dix images, tantot presents,
-     tantot non, selon l'endroit vise.
+     Viser la frontiere d'une image tombe une fois sur deux du mauvais cote.
+     On vise donc son MILIEU : l'image n occupe [T + n*d, T + (n+1)*d), son
+     milieu est a T + (n + 0,5)*d. La formule vaut dans les deux sens, +1
+     donnant l'image suivante et -1 la precedente.
 
-     Lire une image puis mettre en pause fait avancer le decodeur lineairement.
-     Il ne saute jamais, et l'image obtenue est exactement la suivante. */
-  function avancer(nombre){
-    if(typeof video.requestVideoFrameCallback !== "function"){
-      reculer(-nombre);
-      return;
-    }
-    let restant = nombre;
+     C'est la cadence qui manquait, pas la methode : supposer 60 img/s sur une
+     capture a 30 faisait sauter d'une demi-image, d'ou une avance qui ne
+     marchait qu'une fois sur deux. */
+  function deplacer(images){
+    video.pause();
+    const pas = etat.dureeImage || (1 / etat.cadence);
+    const vise = Math.max(0, tempsCourant() + (images + 0.5) * pas);
+    etat.viseeRecul = vise;
+    video.currentTime = vise;
+  }
+
+  /* Mesurer la cadence sans rien demander a personne.
+
+     Elle ne se lit que sur des images successives, donc pendant une lecture.
+     Quelqu'un qui avance image par image sans jamais lire ne la mesurait
+     jamais, et l'outil restait sur son hypothese de 60 img/s. On lit donc un
+     quart de seconde en sourdine des le chargement, puis on revient au debut. */
+  function mesurerCadence(){
+    if(typeof video.requestVideoFrameCallback !== "function") return;
+    const releves = [];
     const muetAvant = video.muted;
     video.muted = true;
-    const etape = () => video.requestVideoFrameCallback(() => {
-      restant -= 1;
-      if(restant > 0){ etape(); return; }
+    const voir = () => video.requestVideoFrameCallback((_, infos) => {
+      releves.push(infos.mediaTime);
+      if(releves.length < 6 && !video.paused){ voir(); return; }
       video.pause();
       video.muted = muetAvant;
+      const ecarts = releves.slice(1)
+        .map((t, i) => t - releves[i])
+        .filter(d => d > 0.004 && d < 0.1)
+        .sort((a, b) => a - b);
+      if(ecarts.length) etat.dureeImage = ecarts[Math.floor(ecarts.length / 2)];
+      video.currentTime = 0;
       afficher();
     });
-    /* Ecouter AVANT de lancer la lecture. La promesse de play() ne se
-       resout qu'une fois la lecture reellement demarree, et la video a deja
-       defile pendant ce temps : s'y abonner apres coup faisait avancer de
-       quarante images au lieu d'une. */
-    etape();
+    voir();
     const lecture = video.play();
     if(lecture && typeof lecture.catch === "function"){
       lecture.catch(() => { video.muted = muetAvant; });
     }
   }
 
-  /* Reculer impose une recherche : on ne lit pas une video a l'envers. Le
-     decodeur peut donc retomber sur une image-cle. Ce n'est pas silencieux :
-     l'afficheur montre le temps reel de l'image atteinte, et il suffit de
-     ravancer image par image, ce qui, lui, est exact. */
-  function reculer(nombre){
-    video.pause();
-    const pas = etat.dureeImage || (1 / etat.cadence);
-    /* L'image courante commence a T, la precedente occupe [T - 1 image, T).
-       Viser son MILIEU, donc T - 0,5 image pour un pas de un. Retirer 1,5
-       image visait celle d'encore avant, d'ou un recul de deux. */
-    const vise = Math.max(0, tempsCourant() - (nombre - 0.5) * pas);
-    etat.viseeRecul = vise;
-    video.currentTime = vise;
-  }
-
-  function deplacer(images){
-    if(images > 0) avancer(images);
-    else reculer(-images);
-  }
 
   /* Le navigateur annonce chaque image affichee avec son temps exact. Deux
      annonces consecutives pendant la lecture donnent la duree reelle d'une
@@ -311,6 +305,7 @@
       etat.dureeImage = 0;
       video.src = URL.createObjectURL(fichier);
       suivreImages();
+      video.addEventListener("loadeddata", mesurerCadence, { once:true });
     }
   });
 
