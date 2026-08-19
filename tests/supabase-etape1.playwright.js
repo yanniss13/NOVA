@@ -5,6 +5,37 @@ const { serveRepo } = require("./helpers/serve");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
+async function ouvrirVue(page, name){
+  const mobile = {
+    dashboard:"#mobileNavDashboard",
+    builder:"#mobileNavBuilder",
+    roster:"#mobileNavBoss",
+    "member-roster":"#mobileNavRoster"
+  };
+  if(await page.locator("#mobileNavMore").isVisible()){
+    if(mobile[name]){
+      await page.locator(mobile[name]).click();
+      return;
+    }
+    if(["analyse","wiki","collection","calculateur"].includes(name)){
+      await page.locator("#mobileNavMore").click();
+      await page.locator(
+        `#mobileMorePanel [data-mobile-view="${name}"]`
+      ).click();
+      return;
+    }
+  }
+  await page.locator(`.tab[data-view="${name}"]`).click();
+}
+
+async function attendrePseudo(page, pseudo){
+  await page.waitForFunction(value =>
+    ["#accountPseudo","#mobileAccountPseudo"].every(selector =>
+      document.querySelector(selector)?.textContent === value
+    ),
+  pseudo);
+}
+
 /* Les Sessions de boss vivent desormais dans le sous-menu de « Boss de
    Guilde » : on ouvre le groupe, puis l'entree. Deux clics au lieu d'un, et
    c'est exactement le chemin qu'un membre suit a la souris.
@@ -13,8 +44,15 @@ const { chromium } = require("playwright");
    bien un onglet principal, et le test passerait encore le jour ou le
    sous-menu aurait disparu. */
 async function ouvrirSessionsDeBoss(page){
-  await page.locator('.tabs .tab[data-view="roster"]').click();
-  await page.locator('.subtabs .tab[data-view="boss"]').click();
+  if(await page.locator("#mobileNavBoss").isVisible()){
+    await page.locator("#mobileNavBoss").click();
+    await page.locator(
+      '#mobileBossSubtabs [data-mobile-view="boss"]'
+    ).click();
+  }else{
+    await page.locator('.tabs .tab[data-view="roster"]').click();
+    await page.locator('.subtabs .tab[data-view="boss"]').click();
+  }
 }
 
 (async()=>{
@@ -121,7 +159,7 @@ async function ouvrirSessionsDeBoss(page){
     await page.locator("#authPassword").fill("mot-de-passe-test");
     await page.getByRole("button", { name:"Se connecter", exact:true }).click();
 
-    await page.locator("#accountPseudo").getByText("Yannis", { exact:true }).waitFor();
+    await attendrePseudo(page, "Yannis");
 
     // Après connexion, « Mon suivi » devient la vue par défaut.
     await page.locator("#view-dashboard").waitFor({ state:"visible" });
@@ -180,7 +218,9 @@ async function ouvrirSessionsDeBoss(page){
       "Un membre authentifié doit lire les sessions, participations et rapports partagés"
     );
     assert.equal(await authOverlay.evaluate(el => el.classList.contains("on")), false);
-    await page.getByText("À jour", { exact:true }).waitFor();
+    await page.waitForFunction(() =>
+      document.querySelector("#liveStatus")?.textContent === "À jour"
+    );
     assert.equal(
       await page.evaluate(() => window.__fakeSupabaseState.realtimeChannels.length),
       1
@@ -195,14 +235,19 @@ async function ouvrirSessionsDeBoss(page){
       window.__fakeSupabaseState.realtimeChannels[0]
         .statusCallback("CHANNEL_ERROR");
     });
-    await page.getByText("Synchronisation indisponible", { exact:true }).waitFor();
+    await page.waitForFunction(() =>
+      document.querySelector("#liveStatus")?.textContent
+        === "Synchronisation indisponible"
+    );
     await page.evaluate(() => {
       window.__fakeSupabaseState.realtimeChannels[0]
         .statusCallback("SUBSCRIBED");
     });
-    await page.getByText("À jour", { exact:true }).waitFor();
+    await page.waitForFunction(() =>
+      document.querySelector("#liveStatus")?.textContent === "À jour"
+    );
 
-    await page.locator('.tab[data-view="member-roster"]').click();
+    await ouvrirVue(page, "member-roster");
     await page.locator("#memberRosterGrid .member-roster-card").first().waitFor();
     assert.equal(await page.locator("#memberRosterGrid .member-roster-card").count(), 1);
     assert.match(await page.locator("#memberRosterGrid").textContent(), /Meliodas/);
@@ -215,11 +260,11 @@ async function ouvrirSessionsDeBoss(page){
        plutôt que "boss" : ce dernier n'a encore jamais été ouvert à ce stade
        du parcours, et le test plus loin sur "Groupes indisponibles" (~2107)
        suppose justement ce tout premier chargement. */
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     await page.evaluate(() =>
       window.__fakeSupabaseHoldBossRead("roster_characters")
     );
-    await page.locator('.tab[data-view="member-roster"]').click();
+    await ouvrirVue(page, "member-roster");
     await page.locator("#memberRosterGrid .member-roster-card").first().waitFor();
     assert.doesNotMatch(
       await page.locator("#memberRosterGrid").textContent(),
@@ -259,15 +304,15 @@ async function ouvrirSessionsDeBoss(page){
       window.localStorage.removeItem("confrerie7ds.cloud.roster");
       return rows;
     });
-    await page.locator('.tab[data-view="builder"]').click();
-    await page.locator('.tab[data-view="member-roster"]').click();
+    await ouvrirVue(page, "builder");
+    await ouvrirVue(page, "member-roster");
     await page.getByText("Ton roster est vide").waitFor();
     /* Ce premier réaffichage vide aussi le cache mémoire côté client (encore
        chargé avec Meliodas jusque-là). La vraie collision d'empreintes —
        cache local ET serveur déjà vides tous les deux — ne se produit qu'à
        la réouverture suivante. */
-    await page.locator('.tab[data-view="builder"]').click();
-    await page.locator('.tab[data-view="member-roster"]').click();
+    await ouvrirVue(page, "builder");
+    await ouvrirVue(page, "member-roster");
     await page.getByText("Ton roster est vide").waitFor();
     assert.doesNotMatch(
       await page.locator("#memberRosterGrid").textContent(),
@@ -277,8 +322,8 @@ async function ouvrirSessionsDeBoss(page){
     await page.evaluate(rows => {
       window.__fakeSupabaseState.roster_characters = rows;
     }, rosterRowsSauvegardees);
-    await page.locator('.tab[data-view="builder"]').click();
-    await page.locator('.tab[data-view="member-roster"]').click();
+    await ouvrirVue(page, "builder");
+    await ouvrirVue(page, "member-roster");
     await page.locator("#memberRosterGrid .member-roster-card").first().waitFor();
 
     /* Filtres de catégorie : quatre listes déroulantes, plus aucun rail
@@ -830,7 +875,7 @@ async function ouvrirSessionsDeBoss(page){
       document.querySelectorAll("#memberRosterGrid .member-roster-card").length === 1
     );
 
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     const rosterHeroSlot = page.locator(".hero").first();
     await rosterHeroSlot
       .getByRole("button", { name:"Depuis mon roster", exact:true })
@@ -1167,7 +1212,7 @@ async function ouvrirSessionsDeBoss(page){
       document.querySelectorAll("#rosterGrid .team").length === 2
     );
 
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     const firstHero = page.locator(".hero").first();
     await firstHero.locator(".portrait").click();
     await page.locator('#pickerGrid .tile[title="Meliodas"]').click();
@@ -1334,7 +1379,7 @@ async function ouvrirSessionsDeBoss(page){
     /* Le panneau chiffré de l'éditeur roster doit recevoir les trois builds du
        brouillon. Sinon les deux armes secondaires configurées sont prises pour
        absentes et l'ATK reste faussement partielle. */
-    await page.locator('.tab[data-view="member-roster"]').click();
+    await ouvrirVue(page, "member-roster");
     await page.locator("#memberRosterMine").click();
     const importedMeliodas = page.locator(
       "#memberRosterGrid .member-roster-card"
@@ -1494,7 +1539,7 @@ async function ouvrirSessionsDeBoss(page){
     );
 
     // #5 : l'Analyse dérive ses trois sous-vues directement des rosters.
-    await page.locator('.tab[data-view="analyse"]').click();
+    await ouvrirVue(page, "analyse");
     await page.locator("#analysePanel-overview .analyse-summary").waitFor();
     assert.equal(
       await page.locator("#analysePanel-overview").isVisible(),
@@ -1652,7 +1697,7 @@ async function ouvrirSessionsDeBoss(page){
        pour toujours. */
     await migrateButton.waitFor({ state:"hidden" });
     assert.equal(await migrateButton.isVisible(), false);
-    await page.locator('.tab[data-view="member-roster"]').click();
+    await ouvrirVue(page, "member-roster");
     await page.locator("#memberRosterMine").click();
     await page.locator("#memberRosterGrid .member-roster-edit").click();
     const rosterEditorNote = page.locator("#memberRosterEditor textarea");
@@ -2186,7 +2231,7 @@ async function ouvrirSessionsDeBoss(page){
 
     /* Une nouvelle équipe n'a aucune source distante : elle ne doit jamais
        produire de faux conflit dans le panneau. */
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     await page.locator("#btnNew").click();
     await page.locator(".hero").first()
       .getByRole("button", { name:"Depuis mon roster", exact:true }).click();
@@ -2206,7 +2251,7 @@ async function ouvrirSessionsDeBoss(page){
 
     for(const width of [320, 360, 390]){
       await page.setViewportSize({ width, height:844 });
-      await page.locator('.tab[data-view="member-roster"]').click();
+      await ouvrirVue(page, "member-roster");
       await page.waitForTimeout(100);
       const overflow = await page.evaluate(() => {
         const root = document.scrollingElement;
@@ -2322,7 +2367,7 @@ async function ouvrirSessionsDeBoss(page){
           "PGRST205: Could not find the table 'public.boss_run_reports' in the schema cache"
       };
     });
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadFailureOnce === null
@@ -2494,7 +2539,7 @@ async function ouvrirSessionsDeBoss(page){
         message:"Échec plus récent simulé"
       };
     });
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadFailureOnce === null
@@ -3550,7 +3595,10 @@ async function ouvrirSessionsDeBoss(page){
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadFailureOnce === null
     );
-    await page.getByText("Synchronisation indisponible", { exact:true }).waitFor();
+    await page.waitForFunction(() =>
+      document.querySelector("#liveStatus")?.textContent
+        === "Synchronisation indisponible"
+    );
     const realtimeFailureToast = await page.locator("#toast").textContent();
     assert.match(
       realtimeFailureToast,
@@ -4979,7 +5027,7 @@ async function ouvrirSessionsDeBoss(page){
       window.__fakeSupabaseState.boss_run_reports
         .find(item => item.session_id === id).note = "Rotation corrigée.";
     }, archivedId);
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     await ouvrirSessionsDeBoss(page);
     await page.locator(".boss-report-card", {
       hasText:"Groupe 2 · Run 1"
@@ -5008,7 +5056,7 @@ async function ouvrirSessionsDeBoss(page){
         "boss_run_reports"
       );
     }, archivedId);
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
@@ -5019,7 +5067,7 @@ async function ouvrirSessionsDeBoss(page){
         .find(item => item.session_id === id).note =
           "Succès récent encore en attente.";
     }, archivedId);
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
@@ -5057,13 +5105,13 @@ async function ouvrirSessionsDeBoss(page){
         "boss_run_reports"
       );
     });
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
         .some(item => item.token === "boss-old-error" && item.claimed)
     );
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
@@ -5099,7 +5147,7 @@ async function ouvrirSessionsDeBoss(page){
       id:"user-2",
       email:"merlin@example.test"
     }));
-    await page.locator("#accountPseudo").getByText("Merlin", { exact:true }).waitFor();
+    await attendrePseudo(page, "Merlin");
     const reportForNonParticipant = page.locator(".boss-report-card", {
       hasText:"Groupe 2 · Run 1"
     });
@@ -5129,7 +5177,7 @@ async function ouvrirSessionsDeBoss(page){
       id:"user-1",
       email:"yannis@example.test"
     }));
-    await page.locator("#accountPseudo").getByText("Yannis", { exact:true }).waitFor();
+    await attendrePseudo(page, "Yannis");
     await page.locator(".boss-report-card", {
       hasText:"Groupe 2 · Run 1"
     }).getByRole("button", {
@@ -5396,7 +5444,7 @@ async function ouvrirSessionsDeBoss(page){
       );
       membership.pseudo = pseudo;
     }, longBossPseudo);
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     await ouvrirSessionsDeBoss(page);
     await page.locator(".boss-member-name", { hasText:longBossPseudo }).waitFor();
 
@@ -5477,7 +5525,7 @@ async function ouvrirSessionsDeBoss(page){
       });
       return week;
     });
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await ouvrirVue(page, "dashboard");
 
     await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
     const dashboardText = () => page.locator("#dashboardBody").textContent();
@@ -5500,7 +5548,7 @@ async function ouvrirSessionsDeBoss(page){
     );
     await page.locator('[data-dashboard-action="post-availability"]').click();
     await page.locator("#view-availability").waitFor({ state:"visible" });
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await ouvrirVue(page, "dashboard");
 
     /* LA REGLE QUI COMPTE : une lecture en echec MASQUE la carte.
 
@@ -5548,7 +5596,7 @@ async function ouvrirSessionsDeBoss(page){
     );
 
     // ---- Hors ligne avec cache : dernier état connu + badge ----
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     await page.evaluate(() => {
       window.__fakeSupabaseState.bossReadFailureOnce = {
         table:"boss_sessions",
@@ -5556,7 +5604,7 @@ async function ouvrirSessionsDeBoss(page){
       };
       window.__fakeSupabaseEmit("boss_participation", "UPDATE");
     });
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await ouvrirVue(page, "dashboard");
     await page.getByText("Hors ligne", { exact:true }).waitFor();
     assert.match(await dashboardText(), /Runs engagées 2\/3/);
     assert.match(await dashboardText(), /Données potentiellement anciennes/);
@@ -5607,7 +5655,7 @@ async function ouvrirSessionsDeBoss(page){
       )
     );
 
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     await page.evaluate(() => {
       window.__fakeSupabaseState.calls.length = 0;
       window.__fakeSupabaseEmit("boss_participation", "UPDATE");
@@ -5622,7 +5670,7 @@ async function ouvrirSessionsDeBoss(page){
       false,
       "Realtime ne doit pas relire le dashboard inactif"
     );
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await ouvrirVue(page, "dashboard");
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.calls.some(call =>
         call.table === "boss_sessions" && call.operation === "select"
@@ -5630,19 +5678,19 @@ async function ouvrirSessionsDeBoss(page){
     );
 
     // ---- Course : une lecture ancienne ne remplace pas un état plus récent ----
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     await page.evaluate(() => {
       window.__fakeSupabaseQueueBossRead("dashboard-old", "boss_sessions");
       window.__fakeSupabaseEmit("boss_participation", "UPDATE");
     });
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await ouvrirVue(page, "dashboard");
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue.some(item =>
         item.token === "dashboard-old" && item.claimed
       )
     );
 
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     await page.evaluate(() => {
       const run = window.__fakeSupabaseState.boss_sessions.find(item =>
         item.slot === 2 && item.status === "open"
@@ -5650,7 +5698,7 @@ async function ouvrirSessionsDeBoss(page){
       run.title = "Groupe actualisé";
       window.__fakeSupabaseEmit("boss_sessions", "UPDATE");
     });
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await ouvrirVue(page, "dashboard");
     await page.getByText(/Groupe actualisé · Run \d+/).first().waitFor();
     await page.evaluate(() =>
       window.__fakeSupabaseReleaseQueuedBossRead("dashboard-old")
@@ -5665,7 +5713,7 @@ async function ouvrirSessionsDeBoss(page){
     /* ---- Aucune fuite entre comptes ----
        Merlin est vidé de ses participations pour que son 0/3 soit déterministe
        et distinct des 2/3 de Yannis. */
-    await page.locator('.tab[data-view="builder"]').click();
+    await ouvrirVue(page, "builder");
     await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       state.boss_participation = state.boss_participation
@@ -5673,7 +5721,7 @@ async function ouvrirSessionsDeBoss(page){
       window.__fakeSupabaseQueueBossRead("dashboard-user-1", "boss_sessions");
       window.__fakeSupabaseEmit("boss_sessions", "UPDATE");
     });
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await ouvrirVue(page, "dashboard");
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue.some(item =>
         item.token === "dashboard-user-1" && item.claimed
@@ -5683,7 +5731,7 @@ async function ouvrirSessionsDeBoss(page){
       id:"user-2",
       email:"merlin@example.test"
     }));
-    await page.locator("#accountPseudo").getByText("Merlin", { exact:true }).waitFor();
+    await attendrePseudo(page, "Merlin");
     await page.getByText("Runs engagées 0/3", { exact:true }).waitFor();
     await page.evaluate(() =>
       window.__fakeSupabaseReleaseQueuedBossRead("dashboard-user-1")
@@ -5696,10 +5744,10 @@ async function ouvrirSessionsDeBoss(page){
       id:"user-1",
       email:"yannis@example.test"
     }));
-    await page.locator("#accountPseudo").getByText("Yannis", { exact:true }).waitFor();
+    await attendrePseudo(page, "Yannis");
 
     /* ---- Actions directes : chaque bouton ouvre la vraie interface ---- */
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await ouvrirVue(page, "dashboard");
     await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
 
     // Choisir mon équipe -> sélecteur d'équipe de la bonne participation.
@@ -5717,7 +5765,7 @@ async function ouvrirSessionsDeBoss(page){
     );
 
     // Voir le groupe -> onglet Boss, focus sur la carte de la bonne session.
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await ouvrirVue(page, "dashboard");
     await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       const membership = state.boss_participation.find(item =>
@@ -5741,7 +5789,7 @@ async function ouvrirSessionsDeBoss(page){
     );
 
     // Corriger le rapport -> modale de rapport en mode correction.
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await ouvrirVue(page, "dashboard");
     await page.locator('[data-dashboard-action="edit-report"]').first().click();
     await page.locator("#bossReportOverlay").waitFor({ state:"visible" });
     assert.equal(
@@ -5754,7 +5802,7 @@ async function ouvrirSessionsDeBoss(page){
     );
 
     // Trouver un groupe -> onglet Boss, focus sur un Rejoindre disponible.
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await ouvrirVue(page, "dashboard");
     await page.locator('[data-dashboard-action="find-group"]').click();
     await page.locator("#view-boss").waitFor({ state:"visible" });
     assert.equal(
@@ -5766,7 +5814,7 @@ async function ouvrirSessionsDeBoss(page){
     );
 
     // Voir mes équipes -> onglet des équipes, focus sur son titre.
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await ouvrirVue(page, "dashboard");
     await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       const membership = state.boss_participation.find(item =>
@@ -5785,7 +5833,7 @@ async function ouvrirSessionsDeBoss(page){
     );
 
     // Créer une équipe -> builder vierge, hors mode édition.
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await ouvrirVue(page, "dashboard");
     const ownTeamsForDashboard = await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       const removed = state.teams.filter(team => team.owner === "user-1");
@@ -5808,7 +5856,7 @@ async function ouvrirSessionsDeBoss(page){
     }, ownTeamsForDashboard);
 
     // Une run devenue archivée entre le clic et le rendu ne doit rien ouvrir.
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await ouvrirVue(page, "dashboard");
     await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
     await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
@@ -5848,11 +5896,11 @@ async function ouvrirSessionsDeBoss(page){
     });
 
     /* ---- Mon suivi : mobile de 320 à 390 px ---- */
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await ouvrirVue(page, "dashboard");
     await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
     for(const width of [320, 360, 375, 390]){
       await page.setViewportSize({ width, height:844 });
-      await page.locator('.tab[data-view="dashboard"]').click();
+      await ouvrirVue(page, "dashboard");
       await page.locator("#dashboardBody").waitFor();
       const metrics = await page.evaluate(() => {
         const root = document.scrollingElement;
@@ -5922,7 +5970,7 @@ async function ouvrirSessionsDeBoss(page){
         email:"merlin@example.test"
       });
     });
-    await page.locator("#accountPseudo").getByText("Merlin", { exact:true }).waitFor();
+    await attendrePseudo(page, "Merlin");
     await page.evaluate(() => window.__fakeSupabaseReleaseProfileRead());
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.profileReadHold === null

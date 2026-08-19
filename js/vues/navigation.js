@@ -33,6 +33,14 @@ import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
   const mainTabs = [...document.querySelectorAll(".tabs .tab[data-view]")];
   const subTabs = [...document.querySelectorAll(".subtabs .tab[data-view]")];
   const subBar = document.querySelector(".subtabs");
+  const mobileViewButtons = [
+    ...document.querySelectorAll("[data-mobile-view]")
+  ];
+  const mobileNavMore = document.querySelector("#mobileNavMore");
+  const mobileBossSubBar = document.querySelector("#mobileBossSubtabs");
+  const mobileMorePanel = document.querySelector("#mobileMorePanel");
+  const mobileMoreBackdrop = document.querySelector("#mobileMoreBackdrop");
+  let mobileMoreScrollLock = null;
 
   /* LE GROUPE. Trois vues qui parlent du meme sujet et qui encombraient la
      barre principale : les equipes du Boss de Guilde, les dispos des membres,
@@ -44,6 +52,7 @@ import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
      peuvent pas diverger sans qu'un test le voie. */
   const GROUPE_BOSS = "roster";
   const VUES_DU_GROUPE = new Set(["roster", "availability", "boss"]);
+  const VUES_DANS_PLUS = new Set(["analyse", "wiki", "collection", "calculateur"]);
 
   function chefDuGroupe(nom){
     return VUES_DU_GROUPE.has(nom) ? GROUPE_BOSS : null;
@@ -95,8 +104,9 @@ import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
      fermer la porte sous les pieds du visiteur. */
   function appliquerVisibiliteOnglets(options){
     const settings = Object.assign({ historyMode:"replace" }, options || {});
-    mainTabs.concat(subTabs).forEach(button => {
-      button.hidden = !vueAutorisee(button.dataset.view);
+    mainTabs.concat(subTabs, mobileViewButtons).forEach(button => {
+      const vue = button.dataset.view || button.dataset.mobileView;
+      button.hidden = !vueAutorisee(vue);
     });
     const active = document.querySelector(".view.active");
     const nomActif = active ? active.id.replace(/^view-/, "") : "";
@@ -129,6 +139,7 @@ import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
        sinon la barre principale n'indiquerait plus ou l'on est des qu'on passe
        aux Dispos ou aux Sessions. */
     const chef = chefDuGroupe(name);
+    document.documentElement.classList.toggle("has-mobile-subnav", chef !== null);
     mainTabs.forEach(button => {
       const selected = button.dataset.view === name
         || (chef !== null && button.dataset.view === chef);
@@ -140,12 +151,31 @@ import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
        classe : elle sort ainsi de l'arbre d'accessibilite et de l'ordre de
        tabulation, au lieu de rester une cible invisible. */
     if(subBar) subBar.hidden = chef === null;
+    if(mobileBossSubBar) mobileBossSubBar.hidden = chef === null;
     subTabs.forEach(button => {
       const selected = button.dataset.view === name;
       button.classList.toggle("active", selected);
       button.setAttribute("aria-selected", String(selected));
       button.tabIndex = selected ? 0 : -1;
     });
+    mobileViewButtons.forEach(button => {
+      const vue = button.dataset.mobileView;
+      const selected = vue === name
+        || (vue === GROUPE_BOSS && chef !== null);
+      button.classList.toggle("active", selected);
+      if(button.getAttribute("role") === "tab"){
+        button.setAttribute("aria-selected", String(selected));
+      }
+      if(selected) button.setAttribute("aria-current", "page");
+      else button.removeAttribute("aria-current");
+    });
+    if(mobileNavMore){
+      const selected = VUES_DANS_PLUS.has(name);
+      mobileNavMore.classList.toggle("active", selected);
+      if(selected) mobileNavMore.setAttribute("aria-current", "page");
+      else mobileNavMore.removeAttribute("aria-current");
+    }
+    fermerPlusMobile(false);
     document.querySelectorAll(".view").forEach(view => {
       view.classList.toggle("active", view.id === "view-"+name);
     });
@@ -186,6 +216,118 @@ import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
   }
   brancherOnglets(mainTabs);
   brancherOnglets(subTabs);
+
+  function verrouillerFondPlus(){
+    if(mobileMoreScrollLock) return;
+    const body = document.body;
+    mobileMoreScrollLock = {
+      scrollY:window.scrollY,
+      position:body.style.position,
+      top:body.style.top,
+      left:body.style.left,
+      right:body.style.right,
+      width:body.style.width,
+      overflow:body.style.overflow
+    };
+    body.classList.add("mobile-more-open");
+    body.style.position = "fixed";
+    body.style.top = `-${mobileMoreScrollLock.scrollY}px`;
+    body.style.left = "0";
+    body.style.right = "0";
+    body.style.width = "100%";
+    body.style.overflow = "hidden";
+  }
+
+  function deverrouillerFondPlus(){
+    if(!mobileMoreScrollLock) return;
+    const body = document.body;
+    const lock = mobileMoreScrollLock;
+    mobileMoreScrollLock = null;
+    body.style.position = lock.position;
+    body.style.top = lock.top;
+    body.style.left = lock.left;
+    body.style.right = lock.right;
+    body.style.width = lock.width;
+    body.style.overflow = lock.overflow;
+    body.classList.remove("mobile-more-open");
+    window.scrollTo(0, lock.scrollY);
+  }
+
+  function fermerPlusMobile(restaurerFocus){
+    if(!mobileMorePanel || mobileMorePanel.hidden) return;
+    mobileMorePanel.hidden = true;
+    if(mobileMoreBackdrop) mobileMoreBackdrop.hidden = true;
+    if(mobileNavMore) mobileNavMore.setAttribute("aria-expanded", "false");
+    deverrouillerFondPlus();
+    if(restaurerFocus && mobileNavMore) mobileNavMore.focus();
+  }
+
+  function ouvrirPlusMobile(){
+    if(!mobileMorePanel || !mobileNavMore) return;
+    mobileMorePanel.hidden = false;
+    if(mobileMoreBackdrop) mobileMoreBackdrop.hidden = false;
+    mobileNavMore.setAttribute("aria-expanded", "true");
+    verrouillerFondPlus();
+    const active = mobileMorePanel.querySelector("[aria-current='page']:not([hidden])");
+    const first = mobileMorePanel.querySelector("button:not([hidden])");
+    (active || first || mobileMorePanel).focus();
+  }
+
+  mobileViewButtons.forEach(button => {
+    button.addEventListener("click", () => {
+      const depuisPlus = mobileMorePanel && mobileMorePanel.contains(button);
+      void showView(button.dataset.mobileView);
+      if(depuisPlus && mobileNavMore) mobileNavMore.focus();
+    });
+  });
+  if(mobileNavMore){
+    mobileNavMore.addEventListener("click", () => {
+      if(mobileMorePanel && mobileMorePanel.hidden) ouvrirPlusMobile();
+      else fermerPlusMobile(false);
+    });
+  }
+  if(mobileMoreBackdrop){
+    mobileMoreBackdrop.addEventListener("click", () => fermerPlusMobile(true));
+  }
+  document.addEventListener("keydown", event => {
+    if(event.key === "Escape" && mobileMorePanel && !mobileMorePanel.hidden){
+      event.preventDefault();
+      fermerPlusMobile(true);
+    }
+  });
+  document.addEventListener("focusin", event => {
+    if(!mobileMorePanel || mobileMorePanel.hidden) return;
+    if(mobileMorePanel.contains(event.target) || event.target === mobileNavMore) return;
+    fermerPlusMobile(false);
+  });
+
+  ["mobileAccountLogin", "mobileAuthLogout", "mobileBtnMigrateLocal"]
+    .map(id => document.getElementById(id))
+    .filter(Boolean)
+    .forEach(button => button.addEventListener("click", () => fermerPlusMobile(false)));
+
+  const mobileBreakpoint = window.matchMedia
+    ? window.matchMedia("(max-width:560px)")
+    : null;
+  function normaliserPlusHorsMobile(event){
+    if(event.matches || !mobileMorePanel || mobileMorePanel.hidden) return;
+    const focusEtaitMobile = mobileMorePanel.contains(document.activeElement)
+      || document.activeElement === mobileNavMore;
+    const active = document.querySelector(".view.active");
+    const nomActif = active ? active.id.replace(/^view-/, "") : "";
+    fermerPlusMobile(false);
+    if(focusEtaitMobile){
+      const onglet = ongletDeLaVue(nomActif);
+      if(onglet) onglet.focus();
+    }
+  }
+  if(mobileBreakpoint){
+    if(mobileBreakpoint.addEventListener){
+      mobileBreakpoint.addEventListener("change", normaliserPlusHorsMobile);
+    }else if(mobileBreakpoint.addListener){
+      mobileBreakpoint.addListener(normaliserPlusHorsMobile);
+    }
+  }
 
 export {
   appliquerVisibiliteOnglets,

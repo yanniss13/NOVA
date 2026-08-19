@@ -1335,69 +1335,57 @@ l'autre.
 
 ## Accessibilité et mobile
 
-**Header rétractable sur mobile** (≤ 560 px). En défilant vers le bas au-delà de
-`RETRACT_FROM` (140 px), `.topbar` reçoit `is-retracted` : la marque et le bloc
-compte se replient et seule la barre d'onglets reste collante. Le header passe de
-211 px à 73 px, soit 138 px rendus au contenu (25 % → 9 % de l'écran).
+**Navigation mobile au pouce** (≤ 560 px). Le rail horizontal du header est
+masqué et remplacé par une barre fixe en bas. Un membre connecté y trouve
+exactement cinq destinations stables : **Accueil**, **Créer**, **Boss**,
+**Roster** et **Plus**. Les icônes sont décoratives ; les libellés visibles
+restent les noms accessibles. L'état actif utilise `aria-current="page"` et
+le sceau doré, jamais la couleur seule.
 
-Il ne se replie jamais en haut de page ni en desktop, et **ne se redéploie qu'en
-haut de page** (`EXPAND_AT`, 4 px) : remonter à mi-page pour relire un paragraphe
-ne doit pas recouvrir la lecture. Le seuil est volontairement bas — se replier
-raccourcit le document et le navigateur recale `scrollY` d'environ 90 px pendant
-l'animation ; un seuil large ferait rebondir le header entre les deux états.
+`Plus` ouvre `#mobileMorePanel` avec Analyse, Wiki, Collection, Calculateur
+et le compte. Le panneau bloque le défilement de la page, contient son propre
+défilement, se ferme après une navigation, avec Échap, sur l'arrière-plan ou
+quand le focus le quitte. Échap et l'arrière-plan rendent le focus à
+`#mobileNavMore`. Ne pas transformer ce panneau en modale `ModalStack` :
+c'est une navigation de divulgation courte, pas une tâche isolée.
 
-Le repli est **animé** : `max-height` + `opacity` sur les deux zones, `padding` +
-`gap` sur le header, environ 0,26 s.
+Les droits restent ceux de `vueAutorisee()`. Pour un visiteur dont l'absence
+de compte a été confirmée par Supabase, la barre ne montre que **Créer** et
+**Plus** ; ce dernier conserve Wiki, Collection, Calculateur et Connexion.
+Une PWA réellement hors réseau n'est volontairement pas assimilée à ce
+visiteur : elle garde l'accès aux caches locaux du membre, conformément à
+`visiteurAnonyme()`.
 
-Cinq garde-fous à ne pas retirer :
+Dans le groupe Boss, `#mobileBossSubtabs` ajoute un dock contextuel
+**Équipes / Dispos / Sessions** juste au-dessus de la barre principale. C'est
+un élément frère du header, jamais un descendant : `backdrop-filter` sur
+`.topbar` créerait sinon le bloc de référence de son `position:fixed` et
+placerait le dock hors du viewport. `html.has-mobile-subnav` augmente à la
+fois le `padding-bottom` du contenu et `scroll-padding-bottom`.
 
-- l'état replié se termine sur `visibility:hidden`, **jamais** un simple
-  `max-height:0`. C'est lui qui retire ces contrôles de l'ordre de tabulation, ce
-  que faisait `display:none` avant l'animation (`display` ne se transitionne
-  pas). Il ne bascule qu'en fin de course au repli, sinon le bloc disparaîtrait
-  avant d'avoir replié ;
-- corollaire pour les tests : un bloc replié **garde un rectangle client** de
-  hauteur nulle. Tester `getClientRects().length` ne prouve donc plus rien ;
-  comparer hauteur peinte **et** `visibility` calculée ;
-- comme ils quittent l'ordre de tabulation, **toute frappe de Tab redéploie le
-  header**, sinon un membre au clavier ne pourrait plus jamais les atteindre ;
-- le garde « ne pas masquer un contrôle focalisé » ne teste que `.brand` et
-  `.account`, **jamais `.topbar` entière**. Les onglets vivent aussi dans le
-  header mais restent visibles replié : les inclure faisait que le focus laissé
-  sur l'onglet cliqué bloquait le repli définitivement, donc plus aucun repli
-  après la moindre navigation ;
-- `lastY` est relu **après** le basculement, jamais avant. Le header est dans le
-  flux : le replier raccourcit le document et le navigateur recale aussitôt
-  `scrollY`. Lire la position avant laisserait ce saut auto-infligé passer pour
-  un scroll vers le haut au coup suivant, et l'oscillation deviendrait infinie.
-  Un amortisseur en nombre de frames corrigeait aussi l'oscillation, mais il
-  avalait un scroll réel arrivant juste après une navigation.
+Quatre garde-fous à ne pas retirer :
 
-Ce code vit dans un bloc `<script>` séparé, car le bac à sable `vm` des tests
-unitaires ne fournit ni `window.addEventListener`, ni `matchMedia`, ni
-`requestAnimationFrame`.
+- la barre et le contenu utilisent les quatre `env(safe-area-inset-*)` utiles ;
+- les cibles restent à 44 × 44 px minimum entre 320 et 390 px ;
+- `main` et `scroll-padding-bottom` réservent au moins la hauteur des docks,
+  afin qu'aucun contenu ni focus ne soit masqué par un élément fixe ;
+- le bandeau PWA est décalé au-dessus des docks. L'échelle mobile est :
+  bandeau 55, arrière-plan de Plus 56, dock Boss 57, barre 58, panneau Plus
+  59, puis les modales à partir de 60.
 
-**Repères de défilement des onglets.** Sept onglets pour 390 px : `.tabs` défile
-en `overflow-x:auto` avec la barre masquée, donc rien n'indiquait qu'on pouvait
-défiler. Un fondu surmonté d'un chevron doré (`.tabs-cue-left` /
-`.tabs-cue-right`) apparaît du côté où il reste des onglets à atteindre.
+Le header portrait devient compact, `position:relative`, et défile avec la
+page : marque courte, LootBar réduit, compte déplacé dans Plus. L'ancien
+contrôleur `is-retracted` ne fonctionne plus qu'en **paysage court**
+(`min-width:561px`, `max-height:500px`), où le rail desktop reste affiché et
+la hauteur est la ressource rare. Dans ce seul cas, ses règles historiques
+restent valables : repli animé après 140 px, réouverture au sommet, protection
+du focus et lecture de `lastY` après le changement de hauteur.
 
-Trois contraintes à respecter :
-
-- les repères vivent dans l'enveloppe `.tabs-rail`, **hors** du conteneur
-  défilant. Un pseudo-élément posé sur `.tabs` défilerait avec les onglets, le
-  conteneur de bloc d'un descendant absolu étant l'aire de débordement ;
-- `pointer-events:none` obligatoire : le repère recouvre le dernier onglet
-  visible et ne doit jamais lui voler une touche. Le test le vérifie par
-  `elementFromPoint` au centre du repère, qui doit rendre un `.tab` ;
-- le contrôleur pose seulement `can-scroll-left` / `can-scroll-right` sur le
-  rail — le CSS décide de les rendre visibles, et ne le fait que dans la requête
-  média mobile. En desktop les onglets ne défilent pas : aucun repère, même si
-  les classes sont posées.
-
-`.tabs-rail` porte `order:3` et `width:100%` en mobile (c'est lui le
-flex-item de `.topbar`, plus `.tabs`).
-
+Au-delà de 560 px, la navigation desktop et ses deux niveaux restent inchangés.
+Entre 561 et environ 1060 px, `.tabs` peut défiler et
+`.tabs-cue-left` / `.tabs-cue-right` signalent le contenu restant sans
+intercepter les clics (`pointer-events:none`). À partir de 1061 px, les
+onglets reviennent à la ligne et les repères restent invisibles.
 **Document figé pendant qu'une modale est ouverte.** Sur iOS Safari, un overlay
 `position:fixed` **n'empêche pas** la page dessous de se déplacer au doigt : on
 pouvait faire glisser le site latéralement derrière la modale, et
@@ -1424,8 +1412,9 @@ mémorisée, et c'est celle-là qui doit être restituée.
 **Bouton « Importer mes données locales »** : action à usage unique, affichée
 seulement s'il reste réellement des données dans le `localStorage` de ce
 navigateur et que la migration n'a pas déjà eu lieu. Elle disparaît ensuite au
-lieu de rester désactivée — elle occupait une ligne entière du header mobile
-pour toujours, et le bloc compte est ainsi passé de 136 px à 58 px.
+lieu de rester désactivée. Sur mobile, son miroir vit dans `Plus` avec le
+pseudo, l'état de synchronisation et la déconnexion ; les deux boutons gardent
+strictement le même état et la même progression d'import.
 
 Les onglets principaux suivent le motif ARIA et se pilotent avec les flèches,
 Début et Fin. Toutes les modales passent par `ModalStack`, qui gère la pile, le

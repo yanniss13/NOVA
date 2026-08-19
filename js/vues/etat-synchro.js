@@ -7,17 +7,17 @@
    plus haut que le premier dans l'ordre des couches — l'importer serait
    interdit, et `tests/modules-imports.test.js` le refuserait.
 
-   Un seul proprietaire du noeud evite aussi que deux ecrivains se chassent
-   l'un l'autre, ecueil deja rencontre avec l'indicateur d'enregistrement des
-   disponibilites, qui a du recevoir son propre noeud pour cette raison. */
+   Un seul proprietaire des deux miroirs desktop/mobile evite aussi que deux
+   ecrivains se chassent l'un l'autre, ecueil deja rencontre avec l'indicateur
+   d'enregistrement des disponibilites. */
 
 import { $ } from "../noyau/dom.js";
 
   function setSyncStatus(state, text){
-    const node = $("#liveStatus");
-    if(!node) return;
-    node.dataset.state = state;
-    node.textContent = text;
+    [$("#liveStatus"), $("#mobileLiveStatus")].filter(Boolean).forEach(node => {
+      node.dataset.state = state;
+      node.textContent = text;
+    });
   }
 
   /* Une lecture qui echoue alors que l'ecran affiche deja le cache local ne

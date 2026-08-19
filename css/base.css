@@ -142,6 +142,7 @@ a{color:var(--gold-bright)}
   background:transparent;color:var(--gold-bright);
   border-color:var(--gold-bright);box-shadow:none
 }
+.mobile-nav,.mobile-boss-subnav,.mobile-more-panel,.mobile-more-backdrop{display:none}
 .account{display:flex;align-items:center;gap:8px;flex:1 1 0;
   justify-content:flex-end;min-width:0}
 .account-connected{

@@ -81,34 +81,141 @@
   .lootbar{order:2;flex-basis:100%;justify-content:center}
 }
 @media(max-width:560px){
+  html{
+    scroll-padding-bottom:calc(82px + env(safe-area-inset-bottom));
+    scroll-padding-top:12px
+  }
+  main{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
+  html.has-mobile-subnav{
+    scroll-padding-bottom:calc(132px + env(safe-area-inset-bottom))
+  }
+  html.has-mobile-subnav main{
+    padding-bottom:calc(140px + env(safe-area-inset-bottom))
+  }
+  .topbar{
+    position:relative;z-index:1;display:flex;flex-wrap:nowrap;
+    padding:max(10px,env(safe-area-inset-top)) 14px 10px;gap:10px
+  }
+  .brand{min-width:0;flex:1 1 auto}
+  .crest{width:36px;height:36px;font-size:16px}
+  .brand-txt{min-width:0}
+  .brand-title{font-size:14px;white-space:nowrap}
+  .brand-sub{display:none}
+  .lootbar{order:initial;flex:0 0 auto;padding:3px 4px}
+  .lootbar img{height:17px}
+  .tabs-rail,.subtabs,.account{display:none!important}
+  .mobile-boss-subnav:not([hidden]){
+    position:fixed;z-index:57;left:8px;right:8px;
+    bottom:calc(70px + env(safe-area-inset-bottom));display:flex;
+    flex-wrap:nowrap;gap:4px;padding:4px;border:1px solid var(--line);
+    border-radius:13px;background:rgba(24,21,30,.98);
+    box-shadow:0 -6px 22px rgba(0,0,0,.32);backdrop-filter:blur(12px)
+  }
+  .mobile-boss-subnav-item{
+    appearance:none;border:1px solid var(--line-soft);border-radius:9px;
+    background:transparent;color:var(--muted);font-family:var(--ui);
+    min-width:0;min-height:44px;flex:1 1 0;padding:7px 5px;
+    font-size:11px;font-weight:600;white-space:normal;cursor:pointer
+  }
+  .mobile-boss-subnav-item.active{
+    color:var(--gold-bright);border-color:var(--gold-bright)
+  }
+  .mobile-boss-subnav-item:focus-visible{
+    outline:2px solid var(--gold-bright);outline-offset:2px
+  }
+
+  .mobile-nav{
+    position:fixed;z-index:58;left:0;right:0;bottom:0;
+    display:flex;align-items:stretch;
+    padding:5px max(4px,env(safe-area-inset-right))
+      max(5px,env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left));
+    background:linear-gradient(180deg,rgba(27,25,34,.97),rgba(14,13,18,.99));
+    border-top:1px solid var(--line);box-shadow:0 -10px 30px rgba(0,0,0,.3);
+    backdrop-filter:blur(14px)
+  }
+  .mobile-nav-item{
+    appearance:none;min-width:0;min-height:58px;flex:1 1 0;border:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:3px;padding:4px 2px;border-radius:10px;background:transparent;
+    color:var(--muted);font:600 10.5px/1 var(--ui);letter-spacing:.01em;
+    cursor:pointer
+  }
+  .mobile-nav-item svg{
+    width:23px;height:23px;padding:3px;box-sizing:content-box;border-radius:9px;
+    fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;
+    stroke-linejoin:round;transition:background .18s,color .18s,transform .18s
+  }
+  .mobile-nav-item.active{color:var(--gold-bright)}
+  .mobile-nav-item.active svg{
+    color:var(--ink);background:linear-gradient(180deg,var(--gold-bright),var(--gold));
+    box-shadow:0 4px 14px rgba(217,164,65,.28);transform:translateY(-1px)
+  }
+  .mobile-nav-item:focus-visible{outline:2px solid var(--gold-bright);outline-offset:-2px}
+  body.mobile-more-open{overflow:hidden;overscroll-behavior:none}
+
+  .mobile-more-backdrop:not([hidden]){
+    position:fixed;z-index:56;inset:0;display:block;background:rgba(5,4,8,.58);
+    backdrop-filter:blur(2px);touch-action:none
+  }
+  .mobile-more-panel:not([hidden]){
+    position:fixed;z-index:59;left:12px;right:12px;
+    bottom:calc(76px + env(safe-area-inset-bottom));display:block;
+    max-height:calc(100dvh - 112px - env(safe-area-inset-bottom));overflow-y:auto;
+    overscroll-behavior:contain;touch-action:pan-y;
+    padding:16px;border:1px solid var(--line);border-radius:18px;
+    background:linear-gradient(155deg,rgba(38,34,45,.99),rgba(18,16,23,.99));
+    box-shadow:0 20px 60px rgba(0,0,0,.55)
+  }
+  .mobile-more-title{
+    margin:0 0 10px;color:var(--gold);font:700 12px/1 var(--display);
+    letter-spacing:.18em;text-transform:uppercase
+  }
+  .mobile-more-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .mobile-more-link{
+    appearance:none;min-width:0;min-height:48px;border:1px solid var(--line-soft);
+    border-radius:11px;padding:10px 12px;display:flex;align-items:center;
+    justify-content:space-between;gap:8px;background:rgba(255,255,255,.025);
+    color:var(--parchment);font:600 13px/1.2 var(--ui);cursor:pointer;text-align:left
+  }
+  .mobile-more-link.active{border-color:var(--gold-deep);color:var(--gold-bright)}
+  .mobile-more-link:focus-visible{outline:2px solid var(--gold-bright);outline-offset:2px}
+  .mobile-account-card{
+    margin-top:12px;padding-top:12px;border-top:1px solid var(--line-soft)
+  }
+  .mobile-account-card>.btn{width:100%;justify-content:center}
+  .mobile-account-connected{display:grid;grid-template-columns:1fr auto;gap:8px}
+  .mobile-account-connected[hidden]{display:none}
+  .mobile-account-identity{
+    grid-column:1/-1;display:flex;align-items:center;gap:8px;min-width:0;
+    padding:2px 4px 6px
+  }
+  .mobile-account-identity .account-pseudo{
+    min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+  }
+  .mobile-account-identity .live-status{margin-left:auto}
+  .mobile-account-connected .btn{min-width:0;justify-content:center}
+  .mobile-account-connected #mobileBtnMigrateLocal{grid-column:1/-1}
+  .pwa-update{bottom:calc(82px + env(safe-area-inset-bottom))}
+  body.pwa-update-on .toast{
+    bottom:calc(var(--pwa-banner-h,124px) + 94px + env(safe-area-inset-bottom))
+  }
+  html.has-mobile-subnav .pwa-update{
+    bottom:calc(132px + env(safe-area-inset-bottom))
+  }
+  html.has-mobile-subnav body.pwa-update-on .toast{
+    bottom:calc(var(--pwa-banner-h,124px) + 144px + env(safe-area-inset-bottom))
+  }
+
   .hero-stats-primary{grid-template-columns:minmax(0,1fr)}
   .hero-grid{grid-template-columns:1fr}
   .team-heroes{grid-template-columns:repeat(2,1fr)}
   .metabar .grow{margin-left:0;width:100%}
   .metabar .grow .btn{flex:1;justify-content:center}
   .roster-grid{grid-template-columns:1fr}
-  .tabs-rail{order:3;width:100%}
-  /* L'etage dedie vient du bloc 900 px ci-dessus ; au doigt, le logo se fait
-     seulement plus discret. */
-  .lootbar{padding:2px 4px}
-  .lootbar img{height:20px}
-  .tabs{width:100%;overflow-x:auto;scrollbar-width:none}
-  .tabs::-webkit-scrollbar{height:0}
-  /* Le repère n'apparaît que du côté où il reste des onglets à atteindre. */
-  .tabs-rail.can-scroll-left .tabs-cue-left,
-  .tabs-rail.can-scroll-right .tabs-cue-right{opacity:1}
-  .tab{padding:9px 13px;white-space:nowrap}
   .auth-actions{grid-template-columns:1fr}
   /* Barre de compte : pleine largeur, replis autorisés — ne doit jamais
      élargir le document (cause du scroll latéral iPhone). */
   .topbar > *{min-width:0}
-  .account{width:100%;order:2}
-  /* Header rétractable : les règles vivent dans un bloc dédié plus bas, pour
-     couvrir AUSSI le téléphone en paysage — large mais court, hors de portée
-     de `max-width:560px`. */
-  .account-connected{flex:1;min-width:0;flex-wrap:wrap;justify-content:center;padding:6px 10px}
-  .account-connected .btn{flex:1 1 auto;justify-content:center}
-  .account-pseudo{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   /* iOS Safari zoome automatiquement (et reste zoomé) au focus d'un champ
      dont la police est < 16px — cause du décentrage + scroll latéral signalés
      sur iPhone. On force 16px sur tous les contrôles de saisie en mobile. */
@@ -136,7 +243,7 @@
    contrôles de l'ordre de tabulation, comme le faisait `display:none`.
    `visibility` bascule sans délai à l'ouverture, mais seulement en fin de
    course à la fermeture, sinon le bloc disparaîtrait avant d'avoir replié. */
-@media(max-width:560px), (max-height:500px) and (orientation:landscape){
+@media (max-height:500px) and (orientation:landscape) and (min-width:561px){
   .topbar{transition:padding .26s ease, gap .26s ease}
   .topbar .brand,
   .topbar .lootbar,

@@ -702,7 +702,8 @@ async function installRosterFocusFakeSupabase(page){
       /* Écran court : c'est là que le bandeau et la modale se chevauchent
          réellement. Aucun bouton de la modale ne doit être intercepté. */
       await pickerPage.setViewportSize({width, height:640});
-      await pickerPage.locator("#accountLogin").click();
+      await pickerPage.locator("#mobileNavMore").click();
+      await pickerPage.locator("#mobileAccountLogin").click();
       await pickerPage.locator("#authOverlay").waitFor({state:"visible"});
       const blocked = await pickerPage.evaluate(() => {
         const banner = document.querySelector("#pwaUpdateBanner")
@@ -737,7 +738,7 @@ async function installRosterFocusFakeSupabase(page){
          latéralement, et rien ne doit y dépasser sa largeur. Le symptôme
          n'apparaissait que sur Safari, qui ne rétrécit pas un `<select>` sous sa
          plus longue option — d'où un contrat CSS plutôt qu'une mesure. */
-      await pickerPage.locator('.tab[data-view="builder"]').click();
+      await pickerPage.locator("#mobileNavBuilder").click();
       /* Héroïque : 2 stats garanties sur 3. Légendaire : 3 sur 4. */
       for(const pearl of [{tier:"4", slots:3, requiredSlots:2, element:null},
                           {tier:"5", slots:4, requiredSlots:3, element:"generic"}]){
@@ -813,7 +814,7 @@ async function installRosterFocusFakeSupabase(page){
          dessous de se déplacer au doigt : on pouvait faire glisser le site
          latéralement derrière la modale. Le document doit donc être figé tant
          qu'une modale est ouverte, et sa position restituée ensuite. */
-      await pickerPage.locator('.tab[data-view="builder"]').click();
+      await pickerPage.locator("#mobileNavBuilder").click();
       await pickerPage.evaluate(() => window.scrollTo(0, 400));
       /* La position réelle est lue juste avant l'ouverture : changer de vue
          raccourcit le document, et le navigateur ramène le défilement à son
@@ -1394,14 +1395,19 @@ async function installRosterFocusFakeSupabase(page){
     assert.equal(await mobile.locator("#toast").getAttribute("role"), "status");
     assert.equal(await mobile.locator("#toast").getAttribute("aria-live"), "polite");
 
-    for(const selector of [".tab", ".btn"]){
-      const box = await mobile.locator(selector).first().boundingBox();
-      assert.ok(box && box.height >= 44, selector+" doit mesurer au moins 44 px");
-    }
+    const mobileNavBox = await mobile.locator(".mobile-nav-item:visible")
+      .first().boundingBox();
+    assert.ok(mobileNavBox && mobileNavBox.height >= 44,
+      ".mobile-nav-item doit mesurer au moins 44 px");
+    await mobile.locator("#mobileNavMore").click();
+    const mobileLoginBox = await mobile.locator("#mobileAccountLogin").boundingBox();
+    assert.ok(mobileLoginBox && mobileLoginBox.height >= 44,
+      "le bouton de connexion dans Plus doit mesurer au moins 44 px");
+    await mobile.keyboard.press("Escape");
 
     /* L'arrivee se fait sur l'accueil : atteindre le Builder demande un clic.
        Ce bloc mesure des cibles tactiles, pas la vue de depart. */
-    await mobile.locator("#tab-builder").click();
+    await mobile.locator("#mobileNavBuilder").click();
     await mobile.locator("#view-builder").waitFor({ state:"visible" });
 
     await mobile.locator(".hero .portrait").first().click();
@@ -1438,10 +1444,21 @@ async function installRosterFocusFakeSupabase(page){
       "builder", "dashboard", "roster", "member-roster",
       "analyse", "boss"
     ]){
-      if(name === "boss"){
-        await mobile.locator('.tabs .tab[data-view="roster"]').click();
+      const direct = {
+        builder:"#mobileNavBuilder",
+        dashboard:"#mobileNavDashboard",
+        roster:"#mobileNavBoss",
+        "member-roster":"#mobileNavRoster"
+      };
+      if(direct[name]){
+        await mobile.locator(direct[name]).click();
+      }else if(name === "analyse"){
+        await mobile.locator("#mobileNavMore").click();
+        await mobile.locator('[data-mobile-view="analyse"]').click();
+      }else if(name === "boss"){
+        await mobile.locator("#mobileNavBoss").click();
+        await mobile.locator('#mobileBossSubtabs [data-mobile-view="boss"]').click();
       }
-      await mobile.locator('.tab[data-view="'+name+'"]:visible').click();
       await mobile.waitForTimeout(50);
       const overflow = await mobile.evaluate(() =>
         document.scrollingElement.scrollWidth -
@@ -1478,10 +1495,9 @@ async function installRosterFocusFakeSupabase(page){
       "Les trois statistiques principales doivent s'empiler sous 560 px"
     );
     await mobileContext.close();
-
-    /* Header rétractable : en descendant, la marque et le bloc compte se
-       replient et seule la barre d'onglets reste collante. Le compte connecté
-       est révélé de force pour mesurer le cas réel le plus haut. */
+    /* En portrait etroit, l'identite est compacte et defile avec la page.
+       La navigation persistante vit en bas : l'ancien rail horizontal et le
+       bloc compte du header ne doivent plus occuper la hauteur utile. */
     for(const width of [320, 390]){
       const headerContext = await browser.newContext({
         viewport:{width,height:844},
@@ -1498,264 +1514,57 @@ async function installRosterFocusFakeSupabase(page){
           body:"window.supabase=undefined;"
         })
       );
-      await headerPage.goto(
-        server.url + "/index.html"
-      );
-      /* Le header ne se replie qu'au defilement : il faut une vue assez haute.
-         L'accueil, vue d'arrivee, tient dans un ecran une fois deconnecte —
-         on passe donc au Builder, qui deroule ses quatre emplacements. */
-      await headerPage.locator("#tab-builder").click();
+      await headerPage.goto(server.url + "/index.html");
+      await headerPage.locator("#mobileNavBuilder").click();
       await headerPage.locator("#view-builder").waitFor({ state:"visible" });
-      await headerPage.evaluate(() => {
-        document.querySelector("#accountLogin").hidden = true;
-        document.querySelector("#accountConnected").hidden = false;
-        document.querySelector("#accountPseudo").textContent = "Yannis";
-        document.querySelector("#liveStatus").textContent = "À jour";
-      });
 
-      const headerMetrics = () => headerPage.evaluate(() => {
+      const metrics = () => headerPage.evaluate(() => {
         const bar = document.querySelector(".topbar");
-        /* Le repli est animé : les zones repliées gardent un rectangle client
-           de hauteur nulle. « Visible » veut donc dire peint — une hauteur
-           réelle ET une `visibility` qui ne l'exclut pas du rendu (et donc de
-           l'ordre de tabulation). */
+        const root = document.scrollingElement;
         const visible = selector => {
           const node = document.querySelector(selector);
           if(!node) return false;
           const rect = node.getBoundingClientRect();
-          return rect.height > 0
-            && rect.width > 0
+          return rect.width > 0 && rect.height > 0
             && getComputedStyle(node).visibility !== "hidden";
         };
-        const root = document.scrollingElement;
         return {
           height:Math.round(bar.getBoundingClientRect().height),
+          position:getComputedStyle(bar).position,
           retracted:bar.classList.contains("is-retracted"),
           brandVisible:visible(".brand"),
           lootbarVisible:visible(".lootbar"),
-          accountVisible:visible("#accountConnected"),
-          tabsVisible:visible(".tabs"),
-          overflow:root.scrollWidth - root.clientWidth,
-          scrollable:root.scrollHeight - root.clientHeight
+          accountVisible:visible(".account"),
+          tabsVisible:visible(".tabs-rail"),
+          mobileNavVisible:visible(".mobile-nav"),
+          overflow:root.scrollWidth-root.clientWidth
         };
       });
 
-      const expanded = await headerMetrics();
-      assert.ok(
-        expanded.scrollable > 400,
-        `La page doit être défilable pour tester le header à ${width}px`
-      );
-      assert.equal(expanded.retracted, false);
-      assert.equal(expanded.brandVisible, true);
-      /* Sans cette moitie-ci, l'assertion de repli plus bas serait
-         complaisante : un logo absent du document la passerait aussi. */
-      assert.equal(expanded.lootbarVisible, true,
-        `Logo LootBar absent du header déployé à ${width}px`);
-      assert.equal(expanded.accountVisible, true);
-
-      /* Repère de défilement des onglets : un fondu surmonté d'un chevron
-         apparaît du côté où il reste des onglets à atteindre, et disparaît au
-         bout de la course. Il ne doit jamais intercepter une touche. */
-      const tabsCue = () => headerPage.evaluate(() => {
-        const rail = document.querySelector(".tabs-rail");
-        const tabs = document.querySelector(".tabs");
-        const opacityOf = selector => {
-          const node = document.querySelector(selector);
-          return node ? Number(getComputedStyle(node).opacity) : null;
-        };
-        const box = document.querySelector(".tabs-cue-right").getBoundingClientRect();
-        const under = document.elementFromPoint(
-          Math.round(box.left + box.width / 2),
-          Math.round(box.top + box.height / 2)
-        );
-        return {
-          overflowing:tabs.scrollWidth - tabs.clientWidth > 2,
-          left:rail.classList.contains("can-scroll-left"),
-          right:rail.classList.contains("can-scroll-right"),
-          leftOpacity:opacityOf(".tabs-cue-left"),
-          rightOpacity:opacityOf(".tabs-cue-right"),
-          underCue:under ? under.className : ""
-        };
-      });
-      const setTabsScroll = value => headerPage.evaluate(target => {
-        const tabs = document.querySelector(".tabs");
-        tabs.scrollLeft = target === "end"
-          ? tabs.scrollWidth
-          : (target === "middle"
-            ? Math.round((tabs.scrollWidth - tabs.clientWidth) / 2)
-            : 0);
-      }, value);
-
-      const cueAtStart = await tabsCue();
-      assert.ok(
-        cueAtStart.overflowing,
-        `Les onglets doivent déborder pour justifier un repère à ${width}px`
-      );
-      assert.equal(
-        cueAtStart.right,
-        true,
-        `Au départ, le repère de droite doit être présent à ${width}px`
-      );
-      assert.equal(
-        cueAtStart.left,
-        false,
-        `Au départ, aucun repère à gauche à ${width}px`
-      );
-      assert.ok(
-        cueAtStart.rightOpacity > 0.5,
-        `Le repère de droite doit être visible à ${width}px `
-        +`(opacité ${cueAtStart.rightOpacity})`
-      );
-      assert.equal(cueAtStart.leftOpacity, 0);
-      assert.ok(
-        !/tabs-cue/.test(cueAtStart.underCue),
-        `Le repère ne doit pas intercepter la touche à ${width}px `
-        +`(élément touché : ${cueAtStart.underCue})`
-      );
-
-      await setTabsScroll("middle");
-      await headerPage.waitForFunction(() => {
-        const rail = document.querySelector(".tabs-rail");
-        return rail.classList.contains("can-scroll-left")
-          && rail.classList.contains("can-scroll-right");
-      });
-
-      await setTabsScroll("end");
-      await headerPage.waitForFunction(() =>
-        !document.querySelector(".tabs-rail").classList.contains("can-scroll-right")
-      );
-      const cueAtEnd = await tabsCue();
-      assert.equal(
-        cueAtEnd.left,
-        true,
-        `Au bout de la course, le repère passe à gauche à ${width}px`
-      );
-      assert.ok(cueAtEnd.leftOpacity > 0.5);
-      assert.equal(
-        cueAtEnd.rightOpacity,
-        0,
-        `Plus rien à atteindre à droite : le repère doit disparaître à ${width}px`
-      );
-      await setTabsScroll("start");
-      await headerPage.waitForFunction(() =>
-        !document.querySelector(".tabs-rail").classList.contains("can-scroll-left")
-      );
+      const before = await metrics();
+      assert.equal(before.position, "relative",
+        `Le header mobile doit defiler avec la page a ${width}px`);
+      assert.equal(before.retracted, false);
+      assert.equal(before.brandVisible, true);
+      assert.equal(before.lootbarVisible, true);
+      assert.equal(before.accountVisible, false);
+      assert.equal(before.tabsVisible, false);
+      assert.equal(before.mobileNavVisible, true);
+      assert.ok(before.height <= 64,
+        `Le header mobile doit rester compact a ${width}px (${before.height}px)`);
+      assert.ok(before.overflow <= 1,
+        `Le header compact ne doit pas deborder a ${width}px`);
 
       await headerPage.evaluate(() => window.scrollTo({ top:600 }));
-      await headerPage.waitForFunction(() =>
-        document.querySelector(".topbar").classList.contains("is-retracted")
-      );
-      const retracted = await headerMetrics();
-      assert.equal(retracted.brandVisible, false, `Marque encore visible à ${width}px`);
-      /* Le logo LootBar se replie avec la marque, et pas seulement pour la
-         hauteur gagnee : c'est un LIEN, donc focusable. Rester peint alors que
-         le header est replie le laisserait dans l'ordre de tabulation d'une
-         zone censee avoir disparu. */
-      assert.equal(
-        retracted.lootbarVisible,
-        false,
-        `Logo LootBar encore visible à ${width}px`
-      );
-      assert.equal(
-        retracted.accountVisible,
-        false,
-        `Bloc compte encore visible à ${width}px`
-      );
-      assert.equal(
-        retracted.tabsVisible,
-        true,
-        `Les onglets doivent rester atteignables à ${width}px`
-      );
-      assert.ok(
-        retracted.height <= expanded.height * 0.5,
-        `Le header replié doit perdre au moins la moitié de sa hauteur `+
-        `à ${width}px (${expanded.height} -> ${retracted.height})`
-      );
-      assert.ok(retracted.overflow <= 1, `Débordement au repli à ${width}px`);
-      // Un contrôle replié ne doit plus être atteignable au clavier.
-      assert.equal(
-        await headerPage.evaluate(() => {
-          const logout = document.querySelector("#authLogout");
-          logout.focus();
-          return document.activeElement === logout;
-        }),
-        false,
-        `Le bouton replié ne doit pas être focalisable à ${width}px`
-      );
-
-      /* Remonter sans atteindre le haut ne redéploie plus rien : le header ne
-         revient qu'une fois en haut de la page. */
-      await headerPage.evaluate(() => window.scrollTo({ top:300 }));
-      await headerPage.waitForTimeout(150);
-      assert.equal(
-        await headerPage.evaluate(() =>
-          document.querySelector(".topbar").classList.contains("is-retracted")
-        ),
-        true,
-        `Remonter à mi-page doit laisser le header replié à ${width}px`
-      );
-      /* Se déployer rallongerait le document et le navigateur recalerait la
-         position : rester replié garantit aussi l'absence de ce saut. */
-      assert.ok(
-        await headerPage.evaluate(() => Math.round(window.scrollY) <= 305),
-        `Remonter à mi-page ne doit pas déplacer la position à ${width}px`
-      );
-
-      // Remonter jusqu'en haut redéploie le header.
-      await headerPage.evaluate(() => window.scrollTo({ top:0 }));
-      await headerPage.waitForFunction(() =>
-        !document.querySelector(".topbar").classList.contains("is-retracted")
-      );
-      const restored = await headerMetrics();
-      assert.equal(restored.brandVisible, true, `Marque non restaurée à ${width}px`);
-      assert.equal(restored.height, expanded.height);
-
-      /* Naviguer laisse le focus sur l'onglet cliqué, et les onglets vivent dans
-         le header. Comme ils restent visibles une fois replié, ils ne doivent
-         jamais bloquer le repli. */
-      await headerPage.locator('.tab[data-view="builder"]').click();
-      await headerPage.waitForFunction(() =>
-        document.activeElement === document.querySelector('.tab[data-view="builder"]')
-      );
-      await headerPage.evaluate(() => window.scrollTo({ top:800 }));
-      await headerPage.waitForFunction(() =>
-        document.querySelector(".topbar").classList.contains("is-retracted"),
-        undefined,
-        { timeout:4000 }
-      );
-
-      /* À l'inverse, un contrôle du bloc compte détient le focus : le replier le
-         ferait disparaître sous les doigts, donc on s'en abstient. */
-      await headerPage.evaluate(() => window.scrollTo({ top:0 }));
-      await headerPage.waitForFunction(() =>
-        !document.querySelector(".topbar").classList.contains("is-retracted")
-      );
-      await headerPage.locator("#authLogout").focus();
-      await headerPage.evaluate(() => window.scrollTo({ top:800 }));
-      await headerPage.waitForTimeout(250);
-      assert.equal(
-        await headerPage.evaluate(() =>
-          document.querySelector(".topbar").classList.contains("is-retracted")
-        ),
-        false,
-        `Le focus dans le bloc compte doit empêcher le repli à ${width}px`
-      );
-      /* Focus relâché : le repli redevient possible. Les deux défilements sont
-         séparés par une frame, sinon le throttle `requestAnimationFrame` les
-         fusionne et le contrôleur ne voit que la position finale — un doigt ne
-         peut pas se téléporter de 0 à 800 en une frame. */
-      await headerPage.evaluate(() => document.activeElement.blur());
-      await headerPage.evaluate(() => window.scrollTo({ top:0 }));
-      await headerPage.waitForFunction(() => Math.round(window.scrollY) === 0);
       await headerPage.evaluate(() => new Promise(resolve =>
         requestAnimationFrame(() => requestAnimationFrame(resolve))
       ));
-      await headerPage.evaluate(() => window.scrollTo({ top:800 }));
-      await headerPage.waitForFunction(() =>
-        document.querySelector(".topbar").classList.contains("is-retracted"),
-        undefined,
-        { timeout:4000 }
-      );
+      const after = await metrics();
+      assert.equal(after.retracted, false,
+        `L'ancien repli doit rester inactif en portrait a ${width}px`);
+      assert.equal(after.height, before.height,
+        `Le header compact ne doit pas changer de hauteur a ${width}px`);
+
       await headerContext.close();
     }
 
@@ -1812,11 +1621,10 @@ async function installRosterFocusFakeSupabase(page){
       await paysageContext.close();
     }
 
-    /* Le repli doit être animé, pas instantané : sans réduction de mouvement,
-       la hauteur du header doit passer par des valeurs intermédiaires entre
-       l'état déployé et l'état replié. */
+    /* En paysage court, où le rail supérieur reste le meilleur compromis, le
+       repli doit être animé plutôt qu'instantané. */
     const motionContext = await browser.newContext({
-      viewport:{width:390,height:844},
+      viewport:{width:812,height:375},
       isMobile:true,
       hasTouch:true
     });
