@@ -37,7 +37,22 @@ jobs:
         run: pip install -r requirements-dev.txt
       - name: Installer les dépendances Node
         run: npm ci
+      # Sans ce cache, chaque execution retelechargeait Chromium, ~170 Mo.
+      # Mesure sur cinq runs consecutifs : 22 s, 32 s, 77 s, 339 s, 1806 s.
+      # La derniere a mange les 30 minutes du job, qui a ete annule avant
+      # d'avoir lance un seul test. La duree des tests, elle, ne bouge pas :
+      # 150 s a trois secondes pres. Le telechargement etait donc le seul
+      # facteur, et il ne dependait que du debit d'en face.
+      - name: Cache des navigateurs Playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      # Borne explicite : un telechargement qui s'eternise doit echouer vite
+      # et sous son propre nom, plutot que d'epuiser le budget du job et de
+      # se presenter comme une annulation sans cause lisible.
       - name: Installer Chromium
+        timeout-minutes: 12
         run: npx playwright install --with-deps chromium
       - name: Tester le site
         run: npm test
