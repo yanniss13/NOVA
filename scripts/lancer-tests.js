@@ -88,6 +88,7 @@ const SUITES = {
     "node tests/supabase-etape1.playwright.js",
     "node tests/analyse-recensements.playwright.js",
     "node tests/accessibilite-mobile.playwright.js",
+    "node tests/chrono-animation.playwright.js",
     "node tests/availability.playwright.js",
     "node tests/pwa-update.playwright.js",
     "node tests/apport-par-piece.playwright.js",
