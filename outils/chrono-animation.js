@@ -2,83 +2,91 @@
 
 /* La page de chronometrage.
 
-   La cadence est fixee une fois et sert uniquement a afficher un numero
-   d'image lisible et a calculer le pas des fleches. Le calcul de duree, lui,
-   n'utilise que currentTime : il reste juste meme si la cadence declaree ne
-   correspond pas a celle de l'enregistrement. */
+   Une mesure vaut pour UN gameId : un heros, une arme, une competence.
+   Meliodas a la hache et Meliodas a l'epee longue n'ont pas le meme moveset,
+   leurs animations se mesurent donc separement.
+
+   Les competences non chiffrables sont ecartees : sans pourcentage de degats,
+   leur animation n'entre dans aucun calcul de DPS. Restent 335 mesures, le
+   compte exact de docs/chronometrage-animations.md.
+
+   La cadence sert uniquement a afficher un numero d'image lisible et a fixer
+   le pas des fleches. Le calcul de duree n'utilise que currentTime : il reste
+   juste meme si la cadence declaree ne correspond pas a l'enregistrement. */
 
 (function(){
   const CADENCE = 60;
+
+  const ARMES = {
+    Axe:"Hache", Book:"Grimoire", SwordDual:"Épées doubles", Rapier:"Rapière",
+    Shield:"Épée & bouclier", Lance:"Lance", Sword1h:"Épée à une main",
+    Cudgel3c:"Nunchaku", Gauntlets:"Gantelets", Sword2h:"Épée à deux mains",
+    Staff:"Bâton", Wand:"Baguette"
+  };
+  const ORDRE = ["NORMAL", "NORMAL_SKILL", "ACTIVE_THIRD", "ULTIMATE", "TAG_SKILL"];
+  const CATEGORIES = {
+    NORMAL:{ nom:"Attaque normale", touche:"clic gauche" },
+    NORMAL_SKILL:{ nom:"Compétence normale", touche:"E" },
+    ACTIVE_THIRD:{ nom:"Attaque spéciale", touche:"Q" },
+    ULTIMATE:{ nom:"Attaque ultime", touche:"R" },
+    TAG_SKILL:{ nom:"Compétence de relève", touche:"1 à 4" }
+  };
 
   const video = document.getElementById("video");
   const etat = {
     secondeDebut:null, secondeFin:null, cadence:CADENCE, mesurees:new Set()
   };
 
-  function tousLesHeros(){
-    return Object.keys(window.SEVEN_DS_COMPETENCES || {}).sort();
+  const $ = id => document.getElementById(id);
+
+  /* Les noms francais vivent dans le wiki, le catalogue de calcul est en
+     anglais. Sans le wiki on affiche le nom d'origine plutot que rien. */
+  function nomFrancais(gameId){
+    const wiki = window.SEVEN_DS_WIKI_COMPETENCES || {};
+    for(const liste of Object.values(wiki)){
+      const trouvee = liste.find(skill => skill.gameId === gameId);
+      if(trouvee && trouvee.nomFr) return trouvee.nomFr;
+    }
+    return null;
   }
 
-  function competencesDe(nomHeros){
-    return (window.SEVEN_DS_COMPETENCES || {})[nomHeros] || [];
-  }
-
-  /* Les cinq libelles du jeu, dans l'ordre ou un joueur enchaine ses touches.
-     Les identifiants internes (skill_rmb_ready, skill_e_1...) ne veulent rien
-     dire pour un membre : il choisit une competence, pas un slot. */
-  const ORDRE = ["NORMAL", "NORMAL_SKILL", "ACTIVE_THIRD", "ULTIMATE", "TAG_SKILL"];
-  const LIBELLES = {
-    NORMAL:"Attaque normale",
-    NORMAL_SKILL:"Compétence normale",
-    ACTIVE_THIRD:"Attaque spéciale",
-    ULTIMATE:"Attaque ultime",
-    TAG_SKILL:"Compétence de relève"
-  };
-
-  function categorieDe(nomHeros, slot){
-    const trouvee = competencesDe(nomHeros).find(competence =>
-      competence.gameId
-      && window.ChronoCalcul.slotDeGameId(competence.gameId) === slot);
-    return trouvee ? trouvee.categorie : null;
-  }
-
-  /* 23 heros sur 25 ont deux emplacements dans une meme categorie : le clic
-     droit simple et le clic droit charge sont deux animations distinctes. Sans
-     ce mot, deux lignes identiques designeraient des mesures differentes. */
-  function nuance(slot){
-    if(slot.endsWith("_ready")) return " chargée";
-    if(slot.includes("_enchant")) return " enchantée";
-    return "";
-  }
-
-  function slotsDe(nomHeros){
-    const bruts = [...new Set(
-      competencesDe(nomHeros)
-        .filter(competence => competence.gameId)
-        .map(competence => window.ChronoCalcul.slotDeGameId(competence.gameId))
-    )];
-    bruts.sort((a, b) => {
-      const rang = ORDRE.indexOf(categorieDe(nomHeros, a))
-        - ORDRE.indexOf(categorieDe(nomHeros, b));
-      return rang !== 0 ? rang : a.localeCompare(b);
-    });
-    const vus = {};
-    return bruts.map(slot => {
-      const categorie = categorieDe(nomHeros, slot);
-      let libelle = (LIBELLES[categorie] || categorie) + nuance(slot);
-      vus[libelle] = (vus[libelle] || 0) + 1;
-      /* Dernier recours pour les variantes dont j'ignore le sens (_1, _a) :
-         mieux vaut un numero qu'un identifiant technique ou un faux nom. */
-      if(vus[libelle] > 1) libelle += " (" + vus[libelle] + ")";
-      return { slot:slot, libelle:libelle };
-    });
-  }
-
-  function gameIdsDe(nomHeros, slot){
-    return competencesDe(nomHeros)
+  function mesurablesDe(nomHeros){
+    return ((window.SEVEN_DS_COMPETENCES || {})[nomHeros] || [])
       .filter(competence => competence.gameId
-        && window.ChronoCalcul.slotDeGameId(competence.gameId) === slot)
-      .map(competence => competence.gameId);
+        && competence.nature !== "non-chiffree");
+  }
+
+  function tousLesHeros(){
+    return Object.keys(window.SEVEN_DS_COMPETENCES || {})
+      .filter(nom => mesurablesDe(nom).length)
+      .sort();
+  }
+
+  function armesDe(nomHeros){
+    return [...new Set(mesurablesDe(nomHeros).map(c => c.weaponType))]
+      .sort((a, b) => (ARMES[a] || a).localeCompare(ARMES[b] || b));
+  }
+
+  function competencesDe(nomHeros, arme){
+    return mesurablesDe(nomHeros)
+      .filter(competence => competence.weaponType === arme)
+      .sort((a, b) => ORDRE.indexOf(a.categorie) - ORDRE.indexOf(b.categorie));
+  }
+
+  function libelleDe(competence){
+    const categorie = CATEGORIES[competence.categorie];
+    const nom = nomFrancais(competence.gameId) || competence.nom;
+    return categorie
+      ? nom + " — " + categorie.nom + " (" + categorie.touche + ")"
+      : nom;
+  }
+
+  function competenceChoisie(){
+    const nomHeros = $("heros").value;
+    const arme = $("arme").value;
+    const gameId = $("competence").value;
+    return competencesDe(nomHeros, arme)
+      .find(competence => competence.gameId === gameId) || null;
   }
 
   function modeChoisi(){
@@ -88,9 +96,9 @@
 
   function mesureCourante(){
     if(etat.secondeDebut === null || etat.secondeFin === null) return null;
-    const nomHeros = document.getElementById("heros").value;
-    const slot = document.getElementById("slot").value;
-    const repetitions = Number(document.getElementById("repetitions").value);
+    const competence = competenceChoisie();
+    if(!competence) return null;
+    const repetitions = Number($("repetitions").value);
     const mode = modeChoisi();
     const bornes = { secondeDebut:etat.secondeDebut, secondeFin:etat.secondeFin };
     const secondes = mode === "rafale"
@@ -101,23 +109,22 @@
         })
       : window.ChronoCalcul.dureeUnique(bornes);
     return {
-      heros:nomHeros,
-      slot:slot,
+      gameId:competence.gameId,
+      heros:$("heros").value,
+      arme:competence.weaponType,
       secondes:secondes,
       mode:mode,
-      repetitions:mode === "rafale" ? repetitions : null,
-      gameIds:gameIdsDe(nomHeros, slot)
+      repetitions:mode === "rafale" ? repetitions : null
     };
   }
 
   function afficher(){
-    document.getElementById("secondeCourante").textContent =
-      video.currentTime.toFixed(3);
-    document.getElementById("imageCourante").textContent =
+    $("secondeCourante").textContent = video.currentTime.toFixed(3);
+    $("imageCourante").textContent =
       String(Math.round(video.currentTime * etat.cadence));
-    document.getElementById("sortieDebut").textContent =
+    $("sortieDebut").textContent =
       etat.secondeDebut === null ? "—" : etat.secondeDebut.toFixed(3);
-    document.getElementById("sortieFin").textContent =
+    $("sortieFin").textContent =
       etat.secondeFin === null ? "—" : etat.secondeFin.toFixed(3);
     let duree = "—";
     try{
@@ -126,38 +133,49 @@
     }catch(erreur){
       duree = erreur.message;
     }
-    document.getElementById("sortieDuree").textContent = duree;
+    $("sortieDuree").textContent = duree;
   }
 
-  function majGameIdsVises(){
-    const nomHeros = document.getElementById("heros").value;
-    const slot = document.getElementById("slot").value;
-    document.getElementById("gameIdsVises").textContent =
-      "Cette mesure renseignera : " + gameIdsDe(nomHeros, slot).join(", ");
-    afficher();
-  }
-
-  /* L'avancement partage. Sans lui, deux membres mesurent le meme heros le
-     meme soir sans le savoir : c'est le seul vrai risque d'une collecte a
-     plusieurs, la saisie elle-meme ne pose pas de probleme. */
-  function slotDejaMesure(nomHeros, slot){
-    const cibles = gameIdsDe(nomHeros, slot);
-    return cibles.length > 0 && cibles.every(id => etat.mesurees.has(id));
-  }
-
-  function remplirSlots(){
-    const select = document.getElementById("slot");
-    const nomHeros = document.getElementById("heros").value;
+  function remplir(select, entrees){
     select.innerHTML = "";
-    slotsDe(nomHeros).forEach(entree => {
+    entrees.forEach(entree => {
       const option = document.createElement("option");
-      option.value = entree.slot;
-      option.textContent = slotDejaMesure(nomHeros, entree.slot)
-        ? entree.libelle + " ✓"
-        : entree.libelle;
+      option.value = entree.valeur;
+      option.textContent = entree.libelle;
       select.append(option);
     });
-    majGameIdsVises();
+  }
+
+  function majCompetences(){
+    const nomHeros = $("heros").value;
+    const arme = $("arme").value;
+    remplir($("competence"), competencesDe(nomHeros, arme).map(competence => ({
+      valeur:competence.gameId,
+      libelle:etat.mesurees.has(competence.gameId)
+        ? libelleDe(competence) + " ✓"
+        : libelleDe(competence)
+    })));
+    majDetail();
+  }
+
+  function majArmes(){
+    const nomHeros = $("heros").value;
+    remplir($("arme"), armesDe(nomHeros).map(arme => ({
+      valeur:arme, libelle:ARMES[arme] || arme
+    })));
+    majCompetences();
+  }
+
+  function majDetail(){
+    const competence = competenceChoisie();
+    const detail = $("detail");
+    if(!competence){ detail.textContent = ""; afficher(); return; }
+    const deja = etat.mesurees.has(competence.gameId);
+    detail.textContent = competence.recharge
+      ? "Recharge de " + competence.recharge + " s — utilise le mode unique."
+      : "Sans recharge — utilise le mode rafale, c'est là que la précision compte le plus.";
+    if(deja) detail.textContent += " Déjà mesurée : ta valeur remplacera l'ancienne.";
+    afficher();
   }
 
   async function chargerAvancement(){
@@ -168,15 +186,15 @@
     }catch(erreur){
       etat.mesurees = new Set();
     }
-    let faits = 0;
     let total = 0;
-    tousLesHeros().forEach(nom => slotsDe(nom).forEach(entree => {
+    let faits = 0;
+    tousLesHeros().forEach(nom => mesurablesDe(nom).forEach(competence => {
       total += 1;
-      if(slotDejaMesure(nom, entree.slot)) faits += 1;
+      if(etat.mesurees.has(competence.gameId)) faits += 1;
     }));
-    document.getElementById("avancement").textContent =
-      "Avancement : " + faits + " / " + total + " animations mesurées.";
-    remplirSlots();
+    $("avancement").innerHTML =
+      "<b>" + faits + " / " + total + "</b> animations mesurées";
+    majCompetences();
   }
 
   function deplacer(images){
@@ -184,7 +202,7 @@
     video.currentTime = Math.max(0, video.currentTime + images / etat.cadence);
   }
 
-  document.getElementById("fichierVideo").addEventListener("change", evenement => {
+  $("fichierVideo").addEventListener("change", evenement => {
     const fichier = evenement.target.files && evenement.target.files[0];
     if(fichier) video.src = URL.createObjectURL(fichier);
   });
@@ -194,45 +212,44 @@
 
   document.addEventListener("keydown", evenement => {
     if(evenement.key !== "ArrowLeft" && evenement.key !== "ArrowRight") return;
+    const cible = evenement.target;
+    /* Les fleches servent a naviguer dans une liste deroulante : on ne les
+       detourne pas quand le focus est sur un champ. */
+    if(cible && /^(SELECT|INPUT|TEXTAREA)$/.test(cible.tagName)) return;
     evenement.preventDefault();
     const pas = evenement.shiftKey ? 10 : 1;
     deplacer(evenement.key === "ArrowRight" ? pas : -pas);
   });
 
-  document.getElementById("marquerDebut").addEventListener("click", () => {
+  $("marquerDebut").addEventListener("click", () => {
     etat.secondeDebut = video.currentTime;
     afficher();
   });
-  document.getElementById("marquerFin").addEventListener("click", () => {
+  $("marquerFin").addEventListener("click", () => {
     etat.secondeFin = video.currentTime;
     afficher();
   });
-  document.getElementById("heros").addEventListener("change", remplirSlots);
-  document.getElementById("slot").addEventListener("change", majGameIdsVises);
-  document.getElementById("repetitions").addEventListener("input", afficher);
+  $("heros").addEventListener("change", majArmes);
+  $("arme").addEventListener("change", majCompetences);
+  $("competence").addEventListener("change", majDetail);
+  $("repetitions").addEventListener("input", afficher);
   Array.from(document.querySelectorAll("input[name=mode]")).forEach(bouton => {
     bouton.addEventListener("change", afficher);
   });
 
-  const selectHeros = document.getElementById("heros");
-  tousLesHeros().forEach(nom => {
-    const option = document.createElement("option");
-    option.value = nom;
-    option.textContent = nom;
-    selectHeros.append(option);
-  });
-  remplirSlots();
+  remplir($("heros"), tousLesHeros().map(nom => ({ valeur:nom, libelle:nom })));
+  majArmes();
   chargerAvancement();
 
-  /* Le meme contrat que les stores du site : `sb` vaut null sans
-     configuration, et tout appelant le teste avant usage. La page reste alors
-     utilisable pour mesurer, seul l'envoi est indisponible. */
+  /* Meme contrat que les stores du site : `sb` vaut null sans configuration,
+     et l'appelant le teste. La page reste alors utilisable pour mesurer,
+     seul l'envoi est indisponible. */
   const sb = window.supabase && window.SB_URL && window.SB_KEY
     ? window.supabase.createClient(window.SB_URL, window.SB_KEY)
     : null;
 
   async function envoyer(){
-    const retour = document.getElementById("retourEnvoi");
+    const retour = $("retourEnvoi");
     if(!sb){ retour.textContent = "Connexion au registre indisponible."; return; }
 
     let mesure;
@@ -257,8 +274,7 @@
     const { error } = await sb.from("animation_measures").insert({
       owner:utilisateur.id,
       pseudo:(profil.data && profil.data.pseudo) || null,
-      hero:mesure.heros,
-      slot:mesure.slot,
+      game_id:mesure.gameId,
       seconds:mesure.secondes,
       mode:mesure.mode,
       reps:mesure.repetitions,
@@ -269,7 +285,7 @@
       : "Mesure envoyée, merci.";
   }
 
-  document.getElementById("envoyer").addEventListener("click", envoyer);
+  $("envoyer").addEventListener("click", envoyer);
 
   window.ChronoPage = { mesureCourante, etat, chargerAvancement };
 })();

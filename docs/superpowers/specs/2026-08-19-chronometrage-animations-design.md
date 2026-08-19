@@ -15,19 +15,35 @@ Il manque de quoi mesurer.
 
 ## Ce que l'exploration a établi
 
-**L'animation appartient au héros, pas à l'arme.** Un héros garde le même
-moveset quelle que soit l'arme équipée. Deux héros à la hache n'ont pas la
-même animation. La mesure porte donc sur un couple **héros × emplacement**,
-et non sur chaque `gameId`.
+**L'animation dépend du héros ET de l'arme.** Meliodas à la hache frappe
+« Dark Axe » à 189 %, à l'épée à une main « Dark Slash » à 185,1 %, aux épées
+doubles « Dark Dual Slash » à 187,3 %. Trois noms, trois valeurs, trois
+animations. La mesure porte donc sur un `gameId`, qui porte les trois
+informations : héros, arme, emplacement.
 
-| | compétences | mesures réelles |
-|---|---:|---:|
-| Sans recharge (débloquent) | 151 | **56** |
-| Avec recharge (affinent) | 225 | 105 |
-| **Total** | **376** | **161** |
+| | mesures |
+|---|---:|
+| Sans recharge (débloquent) | **151** |
+| Avec recharge (affinent) | 225 |
+| Non chiffrables (hors calcul) | 41 |
+| **À mesurer** | **335** |
 
-**Le goulot n'est pas le volume, c'est la possession.** 56 mesures avec un
-outil correct tiennent en une soirée. Mais mesurer `klotho_*` suppose de
+> **Correction du 19 août, après un premier jet.** Cette conception affirmait
+> d'abord que le moveset appartenait au héros seul, ce qui ramenait le travail
+> à 161 mesures. C'était faux, et l'erreur venait d'une question mal posée de
+> ma part : « est-ce la même animation quelle que soit l'arme ? » a été
+> comprise comme « entre deux haches du même héros ». Les données le disaient
+> pourtant — noms et pourcentages distincts par arme.
+>
+> Découvert avant toute mesure, donc sans donnée corrompue. Ce qui a changé :
+> l'outil demande l'arme, une mesure ne renseigne qu'un `gameId`, la table
+> Supabase est indexée par `game_id`, et deux tests qui verrouillaient le
+> mauvais modèle ont été repris. Effet secondaire heureux : chaque mesure
+> correspondant désormais à une seule compétence, la liste affiche son vrai
+> nom français au lieu d'un libellé inventé.
+
+**Le goulot est double : le volume et la possession.** 151 mesures ne tiennent
+pas en une soirée. Mais mesurer `klotho_*` suppose de
 posséder Klotho. Il manque deux héros au propriétaire du site ; d'autres
 membres les ont. La collecte est donc partagée par nécessité de roster, pas
 par volume — et par envie de ne pas tout faire seul.

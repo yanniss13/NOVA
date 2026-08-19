@@ -9,10 +9,6 @@ const path = require("node:path");
 
 const outils = require(path.resolve(__dirname, "..", "outils", "chrono-calcul.js"));
 
-assert.equal(outils.slotDeGameId("bug_axe_jumpatk"), "jumpatk");
-assert.equal(outils.slotDeGameId("gil_thunder_lance_skill_tag"), "skill_tag");
-assert.equal(outils.slotDeGameId("meliodas_axe_skill_rmb_ready"), "skill_rmb_ready");
-assert.equal(outils.slotDeGameId("daisy_book_normalatk_1_enchant"), "normalatk_1_enchant");
 
 // Dix lancements entre 1.000 s et 13.000 s : 1.2 s chacun.
 assert.equal(

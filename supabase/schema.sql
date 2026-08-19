@@ -1147,9 +1147,12 @@ $$;
 --  Une ligne = un envoi date, jamais modifie. data/animations-mesurees.json
 --  reste la source de verite : cette table alimente une relecture humaine,
 --  elle ne la remplace pas. D'ou l'absence de colonne de statut et de role
---  d'administration — accepter une mesure, c'est l'ecrire dans le fichier et
---  le commiter. Inventer un role admin pour trois contributeurs couterait
---  plus qu'il ne rapporte.
+--  d'administration — accepter une mesure, c'est l'ecrire dans le fichier.
+--
+--  La cle est le `game_id`, qui porte le heros, l'arme ET l'emplacement. Un
+--  heros n'a pas le meme moveset selon l'arme equipee : Meliodas a la hache
+--  et Meliodas a l'epee longue sont deux animations distinctes, avec des
+--  degats differents. Stocker heros + emplacement melangeait les deux.
 --
 --  `mode` est obligatoire : sans lui, `seconds` est ininterpretable. En
 --  rafale c'est une moyenne sur `reps` lancements, en unique une mesure
@@ -1159,8 +1162,7 @@ create table if not exists public.animation_measures (
   id         uuid primary key default gen_random_uuid(),
   owner      uuid not null references auth.users(id) on delete cascade,
   pseudo     text,
-  hero       text not null,
-  slot       text not null,
+  game_id    text not null,
   seconds    numeric not null check (seconds > 0),
   mode       text not null check (mode in ('rafale', 'unique')),
   reps       integer check (reps is null or reps >= 1),
@@ -1168,8 +1170,15 @@ create table if not exists public.animation_measures (
   created_at timestamptz not null default now()
 );
 
-create index if not exists animation_measures_hero_slot
-  on public.animation_measures (hero, slot);
+-- Reprise des installations creees avec heros + emplacement, avant qu'on
+-- constate que l'arme change le moveset. La table etait vide, la conversion
+-- ne perd donc rien.
+alter table public.animation_measures add column if not exists game_id text;
+alter table public.animation_measures drop column if exists hero;
+alter table public.animation_measures drop column if exists slot;
+
+create index if not exists animation_measures_game_id
+  on public.animation_measures (game_id);
 
 alter table public.animation_measures enable row level security;
 

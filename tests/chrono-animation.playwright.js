@@ -18,8 +18,26 @@ const { chromium } = require("playwright");
     const nombreHeros = await page.locator("#heros option").count();
     assert.ok(nombreHeros >= 20, "les heros doivent etre proposes, vu " + nombreHeros);
 
+    /* Le meme heros n'a pas le meme moveset selon l'arme : Meliodas a la hache
+       et Meliodas a l'epee longue sont deux animations a mesurer separement.
+       Une mesure ne vaut donc que pour un seul gameId. */
     await page.selectOption("#heros", "meliodas");
-    await page.selectOption("#slot", "jumpatk");
+    await page.selectOption("#arme", "Axe");
+    const avecHache = await page.evaluate(() =>
+      document.getElementById("competence").value);
+    await page.selectOption("#arme", "Sword1h");
+    const avecEpee = await page.evaluate(() =>
+      document.getElementById("competence").value);
+    assert.ok(avecHache.startsWith("meliodas_axe_"), "vu " + avecHache);
+    assert.ok(avecEpee.startsWith("meliodas_sword1h_"), "vu " + avecEpee);
+    assert.notEqual(avecHache, avecEpee, "changer d'arme doit changer la mesure");
+
+    /* Les competences portent leur nom francais, pas leur identifiant. */
+    const libelle = await page.locator("#competence option").first().textContent();
+    assert.ok(!/_/.test(libelle), "aucun identifiant technique visible : " + libelle);
+    assert.match(libelle, /clic gauche|\(E\)|\(Q\)|\(R\)|1 à 4/);
+
+    await page.selectOption("#arme", "Axe");
 
     // Dix lancements entre 1.000 s et 13.000 s : 1.2 s chacun.
     await page.evaluate(() => {
@@ -33,38 +51,26 @@ const { chromium } = require("playwright");
     const mesure = await page.evaluate(() => window.ChronoPage.mesureCourante());
     assert.equal(mesure.secondes, 1.2);
     assert.equal(mesure.heros, "meliodas");
-    assert.equal(mesure.slot, "jumpatk");
-    assert.ok(
-      mesure.gameIds.every(id => id.startsWith("meliodas_")),
-      "la mesure ne doit viser que les gameId de meliodas"
-    );
-    assert.ok(
-      mesure.gameIds.length > 1,
-      "une animation couvre plusieurs armes du meme heros"
-    );
+    assert.equal(mesure.arme, "Axe");
+    assert.ok(mesure.gameId.startsWith("meliodas_axe_"), "vu " + mesure.gameId);
 
     const affiche = await page.locator("#sortieDuree").textContent();
     assert.equal(affiche.trim(), "1.2");
 
-    /* Le denominateur de l'avancement vaut le nombre de couples heros x slot.
-       S'il valait 376, slotDeGameId ne regrouperait rien et chaque arme
-       demanderait sa propre mesure. */
+    /* 335 competences chiffrables, le compte exact du guide. Les 41 sans
+       pourcentage de degats n'entrent dans aucun calcul de DPS. */
     await page.waitForFunction(
-      () => !/chargement/.test(document.getElementById("avancement").textContent)
+      () => /\d+ \/ \d+/.test(document.getElementById("avancement").textContent)
     );
     const avancement = await page.locator("#avancement").textContent();
-    assert.match(avancement, /Avancement : \d+ \/ 161 animations mesurées\./);
+    assert.match(avancement, /\d+ \/ 335 animations mesurées/);
 
-    /* L'envoi lui-meme demande une session, qu'un test ne peut pas ouvrir.
-       On verifie donc la seule propriete stable : un clic ne reste jamais
-       sans reponse. Un bouton muet laisserait le membre croire que sa mesure
-       est partie. */
+    /* L'envoi demande une session, qu'un test ne peut pas ouvrir. On verifie
+       la seule propriete stable : un clic ne reste jamais sans reponse. */
     await page.click("#envoyer");
     await page.waitForFunction(
       () => document.getElementById("retourEnvoi").textContent.trim().length > 0
     );
-    const retour = await page.locator("#retourEnvoi").textContent();
-    assert.ok(retour.trim().length > 0, "le bouton d'envoi doit toujours repondre");
 
     console.log("chrono-animation.playwright.js : OK");
   } finally {
