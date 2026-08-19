@@ -116,17 +116,28 @@ def main():
         print("Rien de nouveau.")
         return 0
 
+    retenus = 0
     for envoi in nouveaux:
         reponse = input("%s = %s s (%s) -> ecrire ? [o/N] " % (
             envoi["game_id"], envoi["seconds"], envoi.get("pseudo") or "?"))
         if reponse.strip().lower() == "o":
             appliquer(mesures, envoi["game_id"], float(envoi["seconds"]))
+            retenus += 1
+
+    # N'ecrire que si quelque chose a ete accepte. Reecrire un fichier
+    # inchange en annoncant « Ecrit » fait douter de ce que le script a
+    # vraiment fait, et c'est la derniere chose qu'on veut d'un outil qui
+    # touche a des mesures saisies a la main.
+    print()
+    if not retenus:
+        print("Rien de retenu, le fichier n'a pas ete touche.")
+        return 0
 
     with open(MESURES, "w", encoding="utf-8") as fichier:
         json.dump(mesures, fichier, ensure_ascii=False, indent=2)
         fichier.write("\n")
-    print()
-    print("Ecrit. Relance maintenant : python scripts/lister-chronometrage.py")
+    print("%d mesure(s) ecrite(s). Relance maintenant :" % retenus)
+    print("    python scripts/lister-chronometrage.py")
     return 0
 
 
