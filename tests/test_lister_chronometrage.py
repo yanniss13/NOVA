@@ -92,5 +92,22 @@ class ListerChronometrageTests(unittest.TestCase):
             self.assertNotIn("| %s |" % code, document)
 
 
+    def test_toute_competence_reelle_a_un_nom_francais(self):
+        """Le document est genere depuis les vraies donnees : aucune
+        competence ne doit retomber sur son nom anglais de competences.js."""
+        noms = MODULE.noms_francais()
+        sans_traduction = [
+            (heros, skill["gameId"])
+            for heros, liste in MODULE.catalogue().items()
+            for skill in liste
+            if skill.get("gameId") and skill["gameId"] not in noms
+        ]
+        self.assertEqual(
+            sans_traduction,
+            [],
+            "ces competences sortiraient en anglais dans le document",
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
