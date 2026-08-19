@@ -28,6 +28,7 @@ import sys
 
 RACINE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CATALOGUE = os.path.join(RACINE, "data", "competences.js")
+WIKI = os.path.join(RACINE, "data", "wiki-competences.js")
 MESURES = os.path.join(RACINE, "data", "animations-mesurees.json")
 SORTIE = os.path.join(RACINE, "docs", "chronometrage-animations.md")
 
@@ -39,11 +40,55 @@ ANIMATION_SUPPOSEE = 1.5
 # joueur les enchaine. Une categorie absente d'ici reste listee, en queue.
 ORDRE_CATEGORIES = ["NORMAL", "NORMAL_SKILL", "ACTIVE_THIRD", "ULTIMATE", "TAG_SKILL"]
 
+LIBELLES_CATEGORIES = {
+    "NORMAL": "Attaque normale",
+    "NORMAL_SKILL": "Compétence normale",
+    "ACTIVE_THIRD": "Attaque spéciale",
+    "ULTIMATE": "Attaque ultime",
+    "TAG_SKILL": "Compétence de relève",
+}
+
+TOUCHES_CATEGORIES = {
+    "NORMAL": "clic gauche",
+    "NORMAL_SKILL": "Q",
+    "ACTIVE_THIRD": "E",
+    "ULTIMATE": "R",
+    "TAG_SKILL": "1 à 4",
+}
+
+LIBELLES_ARMES = {
+    "Axe": "Hache",
+    "Book": "Grimoire",
+    "SwordDual": "Épées doubles",
+    "Rapier": "Rapière",
+    "Shield": "Épée & bouclier",
+    "Lance": "Lance",
+    "Sword1h": "Épée à une main",
+    "Cudgel3c": "Nunchaku",
+    "Gauntlets": "Gantelets",
+    "Sword2h": "Épée à deux mains",
+    "Staff": "Bâton",
+    "Wand": "Baguette",
+}
+
 
 def catalogue():
     source = open(CATALOGUE, encoding="utf-8").read()
     debut = source.index("{", source.index("="))
     return json.loads(source[debut:].rstrip().rstrip(";"))
+
+
+def noms_francais():
+    with open(WIKI, encoding="utf-8") as fichier:
+        source = fichier.read()
+    debut = source.index("{", source.index("="))
+    wiki = json.loads(source[debut:].rstrip().rstrip(";"))
+    return {
+        skill["gameId"]: skill["nomFr"]
+        for liste in wiki.values()
+        for skill in liste
+        if skill.get("gameId") and skill.get("nomFr")
+    }
 
 
 def competences():
@@ -67,15 +112,21 @@ def mesures_existantes():
 
 def lignes():
     mesurees = mesures_existantes()
+    noms = noms_francais()
     debloquent, affinent = [], []
     for heros, skill in competences():
         recharge = skill.get("recharge") or 0
+        categorie = skill.get("categorie") or "?"
+        arme = skill.get("weaponType") or "-"
+        game_id = skill.get("gameId") or ""
         ligne = {
             "heros": heros,
-            "arme": skill.get("weaponType") or "-",
-            "nom": skill.get("nom") or "?",
-            "gameId": skill.get("gameId") or "",
-            "categorie": skill.get("categorie") or "?",
+            "arme": LIBELLES_ARMES.get(arme, arme),
+            "nom": noms.get(game_id) or skill.get("nom") or "?",
+            "gameId": game_id,
+            "categorie": categorie,
+            "categorieLabel": LIBELLES_CATEGORIES.get(categorie, categorie),
+            "touche": TOUCHES_CATEGORIES.get(categorie, "-"),
             "recharge": recharge,
             "degats": skill.get("pourcentage") or 0,
             "mesure": mesurees.get(skill.get("gameId") or ""),
@@ -123,8 +174,9 @@ def rendre():
         "",
     ]
     out += tableau(
-        ["héros", "arme", "compétence", "catégorie", "dégâts %", "mesure (s)"],
-        [[l["heros"], l["arme"], l["nom"], l["categorie"],
+        ["héros", "arme", "compétence", "catégorie", "touche", "dégâts %", "mesure (s)"],
+        [[l["heros"], l["arme"], l["nom"], l["categorieLabel"],
+          l["touche"],
           "%g" % l["degats"],
           ("**%g**" % l["mesure"]) if l["mesure"] is not None else ""]
          for l in debloquent])
@@ -138,8 +190,9 @@ def rendre():
         "",
     ]
     out += tableau(
-        ["héros", "arme", "compétence", "catégorie", "recharge", "erreur", "mesure (s)"],
-        [[l["heros"], l["arme"], l["nom"], l["categorie"],
+        ["héros", "arme", "compétence", "catégorie", "touche", "recharge", "erreur", "mesure (s)"],
+        [[l["heros"], l["arme"], l["nom"], l["categorieLabel"],
+          l["touche"],
           "%g s" % l["recharge"], "%.0f %%" % l["impact"],
           ("**%g**" % l["mesure"]) if l["mesure"] is not None else ""]
          for l in affinent])

@@ -15,159 +15,159 @@ d'abord, et ce que chaque mesure rapporte.
 Sans recharge : la compétence se rejoue quand son animation finit.
 L'animation **est** le dénominateur. Sans elle, aucun DPS n'est calculable.
 
-| héros | arme | compétence | catégorie | dégâts % | mesure (s) |
-|---|---|---|---|---|---|
-| klotho | Staff | Dimensional Projection | NORMAL | 366 |  |
-| escanor | Axe | Merciless Cleave | NORMAL | 227 |  |
-| escanor | Shield | Mark of the Sun | NORMAL | 211 |  |
-| drake | Sword2h | Lightning Blade | NORMAL | 206 |  |
-| escanor | Sword2h | Solar Orbit | NORMAL | 193 |  |
-| meliodas | Axe | Dark Axe | NORMAL | 189 |  |
-| diane | Gauntlets | Terra Punch | NORMAL | 188 |  |
-| meliodas | SwordDual | Dark Dual Slash | NORMAL | 187.3 |  |
-| bug | SwordDual | Dual Shadow Slash | NORMAL | 187 |  |
-| tristan | Sword2h | Flame Sword | NORMAL | 187 |  |
-| meliodas | Sword1h | Dark Slash | NORMAL | 185.1 |  |
-| bug | Axe | Shadow Cleaver | NORMAL | 185 |  |
-| guila | Lance | Flame Shot | NORMAL | 184 |  |
-| howzer | Lance | Lance Strike | NORMAL | 183 |  |
-| daisy | Shield | Secret Fairy Technique: Wild Swings | NORMAL | 181 |  |
-| elaine | Wand | Wind Bead | NORMAL | 179 |  |
-| merlin | Wand | Electrostream | NORMAL | 179 |  |
-| merlin | Book | Spatial Freeze | NORMAL | 175 |  |
-| dreyfus | Lance | Holy Stab | NORMAL | 173 |  |
-| griamore | Cudgel3c | Wall Smash | NORMAL | 173 |  |
-| hendrickson | SwordDual | Dual Strike | NORMAL | 168 |  |
-| slader | Sword2h | Giant Sword | NORMAL | 168 |  |
-| king | Staff | Piercing Staff | NORMAL | 165 |  |
-| derieri | Gauntlets | Beat Rush | NORMAL | 164 |  |
-| gil-thunder | Lance | Lightning Thrust | NORMAL | 163 |  |
-| klotho | Rapier | Inscription Barrage | NORMAL | 163 |  |
-| jericho | Rapier | Frost Slash | NORMAL | 161 |  |
-| dreydrin | Shield | Guard Slash | NORMAL | 140 |  |
-| tristan | SwordDual | Dual Flame Slash | NORMAL | 136 |  |
-| dreyfus | Sword1h | Earth Slash | NORMAL | 135 |  |
-| hendrickson | Lance | Abyss Lance | NORMAL | 135 |  |
-| tioreh | Wand | Fairy Flame | NORMAL | 135 |  |
-| diane | Axe | Earth Cleaver | NORMAL | 134 |  |
-| elaine | Staff | Light Seed | NORMAL | 134 |  |
-| gil-thunder | Sword1h | Thunderstrike | NORMAL | 133 |  |
-| elizabeth | Wand | Rolling Ham Attack | NORMAL | 131 |  |
-| tristan | Sword1h | Wind Sword | NORMAL | 131 |  |
-| slader | Cudgel3c | Triple Swing | NORMAL | 127 |  |
-| drake | Sword1h | Lightning Slash | NORMAL | 126 |  |
-| gowther | Wand | Brute Strike | NORMAL | 122 |  |
-| merlin | Staff | Ignition Calculation | NORMAL | 121 |  |
-| guila | Rapier | Blazing Stab | NORMAL | 117 |  |
-| elaine | Book | Windflower | NORMAL | 114 |  |
-| guila | Shield | Flame Guard Slash | NORMAL | 114 |  |
-| jericho | Lance | Ice Stab | NORMAL | 114 |  |
-| diane | Cudgel3c | Earth Strike | NORMAL | 112.2 |  |
-| howzer | Cudgel3c | Wind Smash | NORMAL | 112 |  |
-| bug | Book | Dark Punch | NORMAL | 111 |  |
-| drake | Staff | Lightning Rod | NORMAL | 109 |  |
-| dreydrin | Axe | Full-body Slash | NORMAL | 108 |  |
-| manny | Staff | Priestess's Light | NORMAL | 108 |  |
-| klotho | Book | Rune Projection | NORMAL | 106 |  |
-| gil-thunder | Shield | Lightning Barrier Strike | NORMAL | 104 |  |
-| daisy | Wand | Fairy's Command | NORMAL | 102 |  |
-| griamore | Shield | Shield Strike | NORMAL | 102 |  |
-| elizabeth | Staff | Awkward Swing | NORMAL | 101 |  |
-| daisy | Book | Fruit Bomb | NORMAL | 100 |  |
-| hendrickson | Sword1h | Radiant Slash | NORMAL | 100 |  |
-| howzer | Gauntlets | Wind Punch | NORMAL | 100 |  |
-| gowther | Book | Invasion Edge | NORMAL | 99 |  |
-| tioreh | Staff | Shooting Star | NORMAL | 99 |  |
-| king | Book | Guardian Punch | NORMAL | 97 |  |
-| gowther | Staff | Mind Impulse | NORMAL | 96 |  |
-| manny | SwordDual | Flying Blades | NORMAL | 96 |  |
-| tioreh | Book | Fire Bolt | NORMAL | 95 |  |
-| derieri | Axe | Night Assault | NORMAL | 94 |  |
-| derieri | Sword2h | Blade Brawl | NORMAL | 90 |  |
-| dreyfus | Rapier | Piercing Sting | NORMAL | 87 |  |
-| jericho | SwordDual | Dual Ice Cut | NORMAL | 87 |  |
-| dreydrin | Rapier | Divine Bayonet | NORMAL | 86 |  |
-| griamore | Gauntlets | Gravity Punch | NORMAL | 86 |  |
-| king | Wand | Earth Shot | NORMAL | 77 |  |
-| slader | Axe | Axe Swing | NORMAL | 76 |  |
-| manny | Sword1h | Sword Dance | NORMAL | 33 |  |
-| elizabeth | Book | Summerlight Droplets | NORMAL | 25 |  |
-| merlin | Book | Spatial Freeze | ACTIVE_THIRD | 150 |  |
-| daisy | Shield | Here Comes Daisy | TAG_SKILL | 160 |  |
-| merlin | Book | Frost Sweep | TAG_SKILL | 150 |  |
-| diane | Axe | Ground Down | TAG_SKILL | 143 |  |
-| escanor | Sword2h | Solar Ray | TAG_SKILL | 143 |  |
-| klotho | Staff | Dimensional Breach | TAG_SKILL | 139 |  |
-| elaine | Wand | Forest Tornado | TAG_SKILL | 138 |  |
-| escanor | Axe | Sun's Arrival | TAG_SKILL | 138 |  |
-| tristan | Sword2h | Surprise Attack | TAG_SKILL | 137 |  |
-| howzer | Lance | Wind Drop | TAG_SKILL | 135 |  |
-| meliodas | Axe | Power Arc | TAG_SKILL | 134 |  |
-| meliodas | Sword1h | Dark Force | TAG_SKILL | 133 |  |
-| jericho | Rapier | Cold Strike | TAG_SKILL | 132 |  |
-| meliodas | SwordDual | X Slash | TAG_SKILL | 132 |  |
-| dreyfus | Sword1h | Angled Earth Slash | TAG_SKILL | 131 |  |
-| hendrickson | Lance | Dark Stab | TAG_SKILL | 130 |  |
-| bug | Axe | Dark Axe Slash | TAG_SKILL | 129 |  |
-| drake | Sword2h | Lightning Dragon Strike | TAG_SKILL | 129 |  |
-| hendrickson | SwordDual | Double Slash | TAG_SKILL | 127 |  |
-| merlin | Wand | Lightning Ray | TAG_SKILL | 124 |  |
-| bug | SwordDual | Blade Dance | TAG_SKILL | 120 |  |
-| derieri | Gauntlets | Drop Slam | TAG_SKILL | 120 |  |
-| slader | Sword2h | Strike | TAG_SKILL | 118 |  |
-| king | Staff | Bee Chase | TAG_SKILL | 114 |  |
-| griamore | Cudgel3c | Wall Rising | TAG_SKILL | 113 |  |
-| dreyfus | Lance | Spear Fall | TAG_SKILL | 110 |  |
-| guila | Lance | Fire Drop | TAG_SKILL | 104 |  |
-| manny | Sword1h | Frost Blade | TAG_SKILL | 104 |  |
-| gil-thunder | Lance | Lightning Lance | TAG_SKILL | 96 |  |
-| klotho | Rapier | Inscription Flurry | TAG_SKILL | 89 |  |
-| diane | Gauntlets | Rock Down | TAG_SKILL | 88 |  |
-| drake | Sword1h | Thunder Slash | TAG_SKILL | 88 |  |
-| elaine | Staff | Holy Shine | TAG_SKILL | 88 |  |
-| tristan | Sword1h | Wind Strike | TAG_SKILL | 88 |  |
-| guila | Rapier | Blazing Slash | TAG_SKILL | 87 |  |
-| jericho | SwordDual | Frozen Slash | TAG_SKILL | 87 |  |
-| manny | Staff | Holy Light | TAG_SKILL | 87 |  |
-| tristan | SwordDual | Burning Blow | TAG_SKILL | 87 |  |
-| gil-thunder | Sword1h | Lightning Strike | TAG_SKILL | 86 |  |
-| merlin | Staff | Infinite Deployment | TAG_SKILL | 86 |  |
-| slader | Cudgel3c | Blade Wave | TAG_SKILL | 86 |  |
-| gowther | Wand | Brute Drop | TAG_SKILL | 85 |  |
-| griamore | Shield | Shell Drop | TAG_SKILL | 85 |  |
-| hendrickson | Sword1h | Thrusting Slash | TAG_SKILL | 85 |  |
-| elizabeth | Wand | Saint's Retribution | TAG_SKILL | 78 |  |
-| klotho | Book | Frost Rune: Crushing Impact | TAG_SKILL | 74 |  |
-| dreydrin | Rapier | Spear of Light | TAG_SKILL | 73 |  |
-| dreyfus | Rapier | Flash Drop | TAG_SKILL | 73 |  |
-| howzer | Cudgel3c | Chain Uppercut | TAG_SKILL | 73 |  |
-| diane | Cudgel3c | Crushing Art | TAG_SKILL | 72 |  |
-| dreydrin | Shield | Sword Landing | TAG_SKILL | 72 |  |
-| gil-thunder | Shield | Blue Lightning | TAG_SKILL | 72 |  |
-| guila | Shield | Shield Drop | TAG_SKILL | 72 |  |
-| jericho | Lance | Frozen Slicer | TAG_SKILL | 72 |  |
-| tioreh | Wand | Fire Mist | TAG_SKILL | 72 |  |
-| elizabeth | Book | Is This How I Shoot It? | TAG_SKILL | 71 |  |
-| king | Book | Upper Arc | TAG_SKILL | 70 |  |
-| elaine | Book | Forest Savior | TAG_SKILL | 66 |  |
-| escanor | Shield | Majestic Strike | TAG_SKILL | 65 |  |
-| tioreh | Book | Fire Strike | TAG_SKILL | 65 |  |
-| dreydrin | Axe | Axe Uppercut | TAG_SKILL | 63 |  |
-| slader | Axe | Axe Slash | TAG_SKILL | 63 |  |
-| drake | Staff | Lightning Staff Strike | TAG_SKILL | 62 |  |
-| gowther | Staff | Pain Slash | TAG_SKILL | 62 |  |
-| howzer | Gauntlets | Rising Fist | TAG_SKILL | 62 |  |
-| king | Wand | Earth Impact | TAG_SKILL | 62 |  |
-| tioreh | Staff | Earth Circle | TAG_SKILL | 62 |  |
-| manny | SwordDual | White Snow | TAG_SKILL | 61 |  |
-| elizabeth | Staff | Unyielding Will | TAG_SKILL | 60 |  |
-| daisy | Wand | Here Comes Daisy | TAG_SKILL | 59 |  |
-| griamore | Gauntlets | Shield Fist | TAG_SKILL | 59 |  |
-| bug | Book | Dark Flare | TAG_SKILL | 56 |  |
-| derieri | Axe | Abyssal Stab | TAG_SKILL | 56 |  |
-| derieri | Sword2h | Rising Claw | TAG_SKILL | 56 |  |
-| gowther | Book | Darkness Boom | TAG_SKILL | 55 |  |
-| daisy | Book | Here Comes Daisy | TAG_SKILL | 54 |  |
+| héros | arme | compétence | catégorie | touche | dégâts % | mesure (s) |
+|---|---|---|---|---|---|---|
+| klotho | Bâton | Projection dimensionnelle | Attaque normale | clic gauche | 366 |  |
+| escanor | Hache | Entaille impitoyable | Attaque normale | clic gauche | 227 |  |
+| escanor | Épée & bouclier | Marque du soleil | Attaque normale | clic gauche | 211 |  |
+| drake | Épée à deux mains | Lame foudroyante | Attaque normale | clic gauche | 206 |  |
+| escanor | Épée à deux mains | Orbite solaire | Attaque normale | clic gauche | 193 |  |
+| meliodas | Hache | Hache des Ténèbres | Attaque normale | clic gauche | 189 |  |
+| diane | Gantelets | Coup de poing terrestre | Attaque normale | clic gauche | 188 |  |
+| meliodas | Épées doubles | Double taillade des Ténèbres | Attaque normale | clic gauche | 187.3 |  |
+| bug | Épées doubles | Double taillade des ombres | Attaque normale | clic gauche | 187 |  |
+| tristan | Épée à deux mains | Épée de flamme | Attaque normale | clic gauche | 187 |  |
+| meliodas | Épée à une main | Taillade obscure | Attaque normale | clic gauche | 185.1 |  |
+| bug | Hache | Fendoir des ombres | Attaque normale | clic gauche | 185 |  |
+| guila | Lance | Tir enflammé | Attaque normale | clic gauche | 184 |  |
+| howzer | Lance | Coup de lance | Attaque normale | clic gauche | 183 |  |
+| daisy | Épée & bouclier | Technique secrète des fées : Coups déchaînés | Attaque normale | clic gauche | 181 |  |
+| elaine | Baguette | Perle de Vent | Attaque normale | clic gauche | 179 |  |
+| merlin | Baguette | Flux électrique | Attaque normale | clic gauche | 179 |  |
+| merlin | Grimoire | Gel spatial | Attaque normale | clic gauche | 175 |  |
+| dreyfus | Lance | Poignard du Sacré | Attaque normale | clic gauche | 173 |  |
+| griamore | Nunchaku | Pulvérisation murale | Attaque normale | clic gauche | 173 |  |
+| hendrickson | Épées doubles | Double frappe | Attaque normale | clic gauche | 168 |  |
+| slader | Épée à deux mains | Épée géante | Attaque normale | clic gauche | 168 |  |
+| king | Bâton | Bâton perforant | Attaque normale | clic gauche | 165 |  |
+| derieri | Gantelets | Rafale de coups | Attaque normale | clic gauche | 164 |  |
+| gil-thunder | Lance | Percée foudroyante | Attaque normale | clic gauche | 163 |  |
+| klotho | Rapière | Salve d'inscriptions | Attaque normale | clic gauche | 163 |  |
+| jericho | Rapière | Entaille glaciale | Attaque normale | clic gauche | 161 |  |
+| dreydrin | Épée & bouclier | Taillade de garde | Attaque normale | clic gauche | 140 |  |
+| tristan | Épées doubles | Double taillade enflammée | Attaque normale | clic gauche | 136 |  |
+| dreyfus | Épée à une main | Taillade de Terre | Attaque normale | clic gauche | 135 |  |
+| hendrickson | Lance | Lance abyssale | Attaque normale | clic gauche | 135 |  |
+| tioreh | Baguette | Flamme féérique | Attaque normale | clic gauche | 135 |  |
+| diane | Hache | Fendoir terrestre | Attaque normale | clic gauche | 134 |  |
+| elaine | Bâton | Graine de lumière | Attaque normale | clic gauche | 134 |  |
+| gil-thunder | Épée à une main | Frappe foudroyante | Attaque normale | clic gauche | 133 |  |
+| elizabeth | Baguette | Attaque jambon qui roule | Attaque normale | clic gauche | 131 |  |
+| tristan | Épée à une main | Épée de Vent | Attaque normale | clic gauche | 131 |  |
+| slader | Nunchaku | Triple coup | Attaque normale | clic gauche | 127 |  |
+| drake | Épée à une main | Taillade foudroyante | Attaque normale | clic gauche | 126 |  |
+| gowther | Baguette | Frappe brutale | Attaque normale | clic gauche | 122 |  |
+| merlin | Bâton | Calcul de combustion | Attaque normale | clic gauche | 121 |  |
+| guila | Rapière | Transpercement flamboyant | Attaque normale | clic gauche | 117 |  |
+| elaine | Grimoire | Fleur de Vent | Attaque normale | clic gauche | 114 |  |
+| guila | Épée & bouclier | Taillade de garde enflammée | Attaque normale | clic gauche | 114 |  |
+| jericho | Lance | Poignard de glace | Attaque normale | clic gauche | 114 |  |
+| diane | Nunchaku | Frappe de Terre | Attaque normale | clic gauche | 112.2 |  |
+| howzer | Nunchaku | Vent pulvérisant | Attaque normale | clic gauche | 112 |  |
+| bug | Grimoire | Poing des Ténèbres | Attaque normale | clic gauche | 111 |  |
+| drake | Bâton | Paratonnerre | Attaque normale | clic gauche | 109 |  |
+| dreydrin | Hache | Taillade intégrale | Attaque normale | clic gauche | 108 |  |
+| manny | Bâton | Lumière de la prêtresse | Attaque normale | clic gauche | 108 |  |
+| klotho | Grimoire | Projection runique | Attaque normale | clic gauche | 106 |  |
+| gil-thunder | Épée & bouclier | Frappe de barrière de Foudre | Attaque normale | clic gauche | 104 |  |
+| daisy | Baguette | Ordre de fée | Attaque normale | clic gauche | 102 |  |
+| griamore | Épée & bouclier | Frappe de bouclier | Attaque normale | clic gauche | 102 |  |
+| elizabeth | Bâton | Coup maladroit | Attaque normale | clic gauche | 101 |  |
+| daisy | Grimoire | Bombe fruitée | Attaque normale | clic gauche | 100 |  |
+| hendrickson | Épée à une main | Taillade resplendissante | Attaque normale | clic gauche | 100 |  |
+| howzer | Gantelets | Coup de poing du Vent | Attaque normale | clic gauche | 100 |  |
+| gowther | Grimoire | Pointe d'intrusion | Attaque normale | clic gauche | 99 |  |
+| tioreh | Bâton | Étoile filante | Attaque normale | clic gauche | 99 |  |
+| king | Grimoire | Coup de poing de gardien | Attaque normale | clic gauche | 97 |  |
+| gowther | Bâton | Impulsion de l'esprit | Attaque normale | clic gauche | 96 |  |
+| manny | Épées doubles | Lames volantes | Attaque normale | clic gauche | 96 |  |
+| tioreh | Grimoire | Trait de feu | Attaque normale | clic gauche | 95 |  |
+| derieri | Hache | Assaut obscur | Attaque normale | clic gauche | 94 |  |
+| derieri | Épée à deux mains | Lame furieuse | Attaque normale | clic gauche | 90 |  |
+| dreyfus | Rapière | Piqûre perçante | Attaque normale | clic gauche | 87 |  |
+| jericho | Épées doubles | Double entaille glacée | Attaque normale | clic gauche | 87 |  |
+| dreydrin | Rapière | Baïonnette divine | Attaque normale | clic gauche | 86 |  |
+| griamore | Gantelets | Coup de poing gravitationnel | Attaque normale | clic gauche | 86 |  |
+| king | Baguette | Tir terrestre | Attaque normale | clic gauche | 77 |  |
+| slader | Hache | Coup de hache | Attaque normale | clic gauche | 76 |  |
+| manny | Épée à une main | Danse de l'épée | Attaque normale | clic gauche | 33 |  |
+| elizabeth | Grimoire | Gouttelettes illuminées par l'été | Attaque normale | clic gauche | 25 |  |
+| merlin | Grimoire | Gel spatial | Attaque spéciale | E | 150 |  |
+| daisy | Épée & bouclier | Et voilà Daisy | Compétence de relève | 1 à 4 | 160 |  |
+| merlin | Grimoire | Balayage glacial | Compétence de relève | 1 à 4 | 150 |  |
+| diane | Hache | Écrasement | Compétence de relève | 1 à 4 | 143 |  |
+| escanor | Épée à deux mains | Rayon solaire | Compétence de relève | 1 à 4 | 143 |  |
+| klotho | Bâton | Brèche dimensionnelle | Compétence de relève | 1 à 4 | 139 |  |
+| elaine | Baguette | Tornade de la forêt | Compétence de relève | 1 à 4 | 138 |  |
+| escanor | Hache | Arrivée du soleil | Compétence de relève | 1 à 4 | 138 |  |
+| tristan | Épée à deux mains | Attaque-surprise | Compétence de relève | 1 à 4 | 137 |  |
+| howzer | Lance | Que s'abatte le vent | Compétence de relève | 1 à 4 | 135 |  |
+| meliodas | Hache | Arc de puissance | Compétence de relève | 1 à 4 | 134 |  |
+| meliodas | Épée à une main | Force ténébreuse | Compétence de relève | 1 à 4 | 133 |  |
+| jericho | Rapière | Frappe glaciale | Compétence de relève | 1 à 4 | 132 |  |
+| meliodas | Épées doubles | Taillade en croix | Compétence de relève | 1 à 4 | 132 |  |
+| dreyfus | Épée à une main | Entaille terrestre oblique | Compétence de relève | 1 à 4 | 131 |  |
+| hendrickson | Lance | Transpercement ténébreux | Compétence de relève | 1 à 4 | 130 |  |
+| bug | Hache | Taillade de hache des ténèbres | Compétence de relève | 1 à 4 | 129 |  |
+| drake | Épée à deux mains | Frappe du dragon foudroyant | Compétence de relève | 1 à 4 | 129 |  |
+| hendrickson | Épées doubles | Double taillade | Compétence de relève | 1 à 4 | 127 |  |
+| merlin | Baguette | Faisceau électrique | Compétence de relève | 1 à 4 | 124 |  |
+| bug | Épées doubles | Danse tranchante | Compétence de relève | 1 à 4 | 120 |  |
+| derieri | Gantelets | Smash fracassant | Compétence de relève | 1 à 4 | 120 |  |
+| slader | Épée à deux mains | Frappe | Compétence de relève | 1 à 4 | 118 |  |
+| king | Bâton | Abeilles traqueuses | Compétence de relève | 1 à 4 | 114 |  |
+| griamore | Nunchaku | Mur ascendant | Compétence de relève | 1 à 4 | 113 |  |
+| dreyfus | Lance | Impact de lance | Compétence de relève | 1 à 4 | 110 |  |
+| guila | Lance | Que s'abatte le feu | Compétence de relève | 1 à 4 | 104 |  |
+| manny | Épée à une main | Lame de givre | Compétence de relève | 1 à 4 | 104 |  |
+| gil-thunder | Lance | Lance foudroyante | Compétence de relève | 1 à 4 | 96 |  |
+| klotho | Rapière | Rafale d'inscriptions | Compétence de relève | 1 à 4 | 89 |  |
+| diane | Gantelets | Chute de pierres | Compétence de relève | 1 à 4 | 88 |  |
+| drake | Épée à une main | Taillade du tonnerre | Compétence de relève | 1 à 4 | 88 |  |
+| elaine | Bâton | Éclat sacré | Compétence de relève | 1 à 4 | 88 |  |
+| tristan | Épée à une main | Frappe venteuse | Compétence de relève | 1 à 4 | 88 |  |
+| guila | Rapière | Taillade flamboyante | Compétence de relève | 1 à 4 | 87 |  |
+| jericho | Épées doubles | Taillade glaciale | Compétence de relève | 1 à 4 | 87 |  |
+| manny | Bâton | Lumière sacrée | Compétence de relève | 1 à 4 | 87 |  |
+| tristan | Épées doubles | Coup ardent | Compétence de relève | 1 à 4 | 87 |  |
+| gil-thunder | Épée à une main | Attaque foudroyante | Compétence de relève | 1 à 4 | 86 |  |
+| merlin | Bâton | Déploiement infini | Compétence de relève | 1 à 4 | 86 |  |
+| slader | Nunchaku | Onde tranchante | Compétence de relève | 1 à 4 | 86 |  |
+| gowther | Baguette | Chute brutale | Compétence de relève | 1 à 4 | 85 |  |
+| griamore | Épée & bouclier | Que s'abatte la coquille | Compétence de relève | 1 à 4 | 85 |  |
+| hendrickson | Épée à une main | Taillade d'estoc | Compétence de relève | 1 à 4 | 85 |  |
+| elizabeth | Baguette | Châtiment de la sainte | Compétence de relève | 1 à 4 | 78 |  |
+| klotho | Grimoire | Rune de givre : Impact écrasant | Compétence de relève | 1 à 4 | 74 |  |
+| dreydrin | Rapière | Lance de lumière | Compétence de relève | 1 à 4 | 73 |  |
+| dreyfus | Rapière | Plongeon fulgurant | Compétence de relève | 1 à 4 | 73 |  |
+| howzer | Nunchaku | Enchaînement d'uppercuts | Compétence de relève | 1 à 4 | 73 |  |
+| diane | Nunchaku | Fracas artistique | Compétence de relève | 1 à 4 | 72 |  |
+| dreydrin | Épée & bouclier | Descente d'épée | Compétence de relève | 1 à 4 | 72 |  |
+| gil-thunder | Épée & bouclier | Foudre azurée | Compétence de relève | 1 à 4 | 72 |  |
+| guila | Épée & bouclier | Que s'abatte le bouclier | Compétence de relève | 1 à 4 | 72 |  |
+| jericho | Lance | Entaille glaciale | Compétence de relève | 1 à 4 | 72 |  |
+| tioreh | Baguette | Brume de feu | Compétence de relève | 1 à 4 | 72 |  |
+| elizabeth | Grimoire | C'est comme ça qu'on tire ? | Compétence de relève | 1 à 4 | 71 |  |
+| king | Grimoire | Arc supérieur | Compétence de relève | 1 à 4 | 70 |  |
+| elaine | Grimoire | Sauveuse de la forêt | Compétence de relève | 1 à 4 | 66 |  |
+| escanor | Épée & bouclier | Frappe majestueuse | Compétence de relève | 1 à 4 | 65 |  |
+| tioreh | Grimoire | Frappe ardente | Compétence de relève | 1 à 4 | 65 |  |
+| dreydrin | Hache | Hache ascendante | Compétence de relève | 1 à 4 | 63 |  |
+| slader | Hache | Taillade de hache | Compétence de relève | 1 à 4 | 63 |  |
+| drake | Bâton | Frappe du bâton foudroyant | Compétence de relève | 1 à 4 | 62 |  |
+| gowther | Bâton | Taillade douloureuse | Compétence de relève | 1 à 4 | 62 |  |
+| howzer | Gantelets | Poing ascendant | Compétence de relève | 1 à 4 | 62 |  |
+| king | Baguette | Impact terrestre | Compétence de relève | 1 à 4 | 62 |  |
+| tioreh | Bâton | Cercle terrestre | Compétence de relève | 1 à 4 | 62 |  |
+| manny | Épées doubles | Neige blanche | Compétence de relève | 1 à 4 | 61 |  |
+| elizabeth | Bâton | Volonté inflexible | Compétence de relève | 1 à 4 | 60 |  |
+| daisy | Baguette | Et voilà Daisy | Compétence de relève | 1 à 4 | 59 |  |
+| griamore | Gantelets | Poing bouclier | Compétence de relève | 1 à 4 | 59 |  |
+| bug | Grimoire | Flamboiement des ténèbres | Compétence de relève | 1 à 4 | 56 |  |
+| derieri | Hache | Perforation abyssale | Compétence de relève | 1 à 4 | 56 |  |
+| derieri | Épée à deux mains | Griffe ascendante | Compétence de relève | 1 à 4 | 56 |  |
+| gowther | Grimoire | Explosion ténébreuse | Compétence de relève | 1 à 4 | 55 |  |
+| daisy | Grimoire | Et voilà Daisy | Compétence de relève | 1 à 4 | 54 |  |
 
 ## 2. Ce que la mesure affine — 184 compétences
 
@@ -175,189 +175,189 @@ Avec recharge : l'animation ajoute un retard. La colonne « erreur »
 donne ce qu'on se trompe en l'ignorant, pour une animation supposée
 de 1.5 s. Classement par erreur décroissante.
 
-| héros | arme | compétence | catégorie | recharge | erreur | mesure (s) |
-|---|---|---|---|---|---|---|
-| diane | Gauntlets | Combination Kick | ACTIVE_THIRD | 5 s | 23 % |  |
-| dreydrin | Axe | Power Crash | ACTIVE_THIRD | 7 s | 18 % |  |
-| drake | Sword2h | Piercing Slash | ACTIVE_THIRD | 7.5 s | 17 % |  |
-| dreyfus | Rapier | Sting Breaker | ACTIVE_THIRD | 7.5 s | 17 % |  |
-| gil-thunder | Lance | Lightning Surge | ACTIVE_THIRD | 7.5 s | 17 % |  |
-| guila | Lance | Flame Cannon | ACTIVE_THIRD | 7.5 s | 17 % |  |
-| hendrickson | Sword1h | Divine Pierce | ACTIVE_THIRD | 7.5 s | 17 % |  |
-| king | Staff | Tempest Staff | ACTIVE_THIRD | 7.5 s | 17 % |  |
-| slader | Sword2h | Finishing Strike | ACTIVE_THIRD | 7.5 s | 17 % |  |
-| tristan | SwordDual | Dual Inferno Slash | ACTIVE_THIRD | 7.8 s | 16 % |  |
-| dreyfus | Lance | Sacred Breaker | ACTIVE_THIRD | 7.9 s | 16 % |  |
-| merlin | Book | Cold Intellect | ACTIVE_THIRD | 8 s | 16 % |  |
-| dreydrin | Rapier | Light Pulse | ACTIVE_THIRD | 8.2 s | 15 % |  |
-| drake | Staff | Lightning Tempest | ACTIVE_THIRD | 8.5 s | 15 % |  |
-| slader | Axe | Charged Strike | ACTIVE_THIRD | 9 s | 14 % |  |
-| tristan | Sword1h | Storm Sword | ACTIVE_THIRD | 9.3 s | 14 % |  |
-| bug | Axe | Death Swarm | ULTIMATE | 10 s | 13 % |  |
-| bug | Book | Solo Stage | ULTIMATE | 10 s | 13 % |  |
-| bug | SwordDual | The End | ULTIMATE | 10 s | 13 % |  |
-| daisy | Book | Fruit Barrage! | ULTIMATE | 10 s | 13 % |  |
-| daisy | Shield | Go Away | ULTIMATE | 10 s | 13 % |  |
-| derieri | Axe | Axe Throw | ACTIVE_THIRD | 10 s | 13 % |  |
-| derieri | Axe | Darkfall Cleave | ULTIMATE | 10 s | 13 % |  |
-| derieri | Gauntlets | "Combo Star" | ULTIMATE | 10 s | 13 % |  |
-| derieri | Sword2h | Inferno Quake | ULTIMATE | 10 s | 13 % |  |
-| diane | Axe | Rock Blast | ULTIMATE | 10 s | 13 % |  |
-| diane | Cudgel3c | Ground Rising | ULTIMATE | 10 s | 13 % |  |
-| diane | Gauntlets | Metal Drop | ULTIMATE | 10 s | 13 % |  |
-| drake | Staff | Lightning Overdrive | ULTIMATE | 10 s | 13 % |  |
-| drake | Sword1h | Phantom Blade | ULTIMATE | 10 s | 13 % |  |
-| drake | Sword2h | Lightning Dragon's Wrath | ULTIMATE | 10 s | 13 % |  |
-| dreydrin | Axe | Giant's Cry | ULTIMATE | 10 s | 13 % |  |
-| dreyfus | Lance | Light Spear | ULTIMATE | 10 s | 13 % |  |
-| dreyfus | Rapier | Light Bomber | ULTIMATE | 10 s | 13 % |  |
-| dreyfus | Sword1h | Earth Break | ULTIMATE | 10 s | 13 % |  |
-| elaine | Book | Dust Seal | ULTIMATE | 10 s | 13 % |  |
-| elaine | Wand | Wind Blast | ULTIMATE | 10 s | 13 % |  |
-| elizabeth | Wand | Trail of Scraps | ACTIVE_THIRD | 10 s | 13 % |  |
-| escanor | Shield | Celestial Judgment - Overheat | ULTIMATE | 10 s | 13 % |  |
-| escanor | Sword2h | Rising Sun | ULTIMATE | 10 s | 13 % |  |
-| gil-thunder | Lance | Lightning Bolt | ULTIMATE | 10 s | 13 % |  |
-| gil-thunder | Shield | Shackles of the Lightning King | ULTIMATE | 10 s | 13 % |  |
-| gil-thunder | Sword1h | Lightning Flash | ULTIMATE | 10 s | 13 % |  |
-| gowther | Staff | Prism Ray | ULTIMATE | 10 s | 13 % |  |
-| gowther | Wand | Eclipse Arrow | ULTIMATE | 10 s | 13 % |  |
-| griamore | Cudgel3c | Wall Crash | ULTIMATE | 10 s | 13 % |  |
-| griamore | Gauntlets | Emission Shield | ULTIMATE | 10 s | 13 % |  |
-| griamore | Shield | Wall Drop Strike | ULTIMATE | 10 s | 13 % |  |
-| guila | Shield | Radiant Explosion | ULTIMATE | 10 s | 13 % |  |
-| guila | Shield | Flame Rampart | ACTIVE_THIRD | 10 s | 13 % |  |
-| hendrickson | Lance | "Acid Down" | ULTIMATE | 10 s | 13 % |  |
-| hendrickson | SwordDual | Knight's Sword | ULTIMATE | 10 s | 13 % |  |
-| howzer | Cudgel3c | Gust | ULTIMATE | 10 s | 13 % |  |
-| howzer | Gauntlets | Whirl Shock | ULTIMATE | 10 s | 13 % |  |
-| howzer | Lance | Super Cyclone | ULTIMATE | 10 s | 13 % |  |
-| jericho | Lance | Ice Field | ULTIMATE | 10 s | 13 % |  |
-| jericho | Lance | Ice Wave | ACTIVE_THIRD | 10 s | 13 % |  |
-| jericho | Rapier | Glacial Blitz | ULTIMATE | 10 s | 13 % |  |
-| jericho | SwordDual | Ice Needle | ULTIMATE | 10 s | 13 % |  |
-| king | Staff | Shining Blaze | ULTIMATE | 10 s | 13 % |  |
-| klotho | Rapier | Rune Inscription: Collapse | ULTIMATE | 10 s | 13 % |  |
-| manny | Sword1h | Priestess's Barrier | ULTIMATE | 10 s | 13 % |  |
-| manny | Sword1h | Frost Blade Whirl | ACTIVE_THIRD | 10 s | 13 % |  |
-| manny | SwordDual | Snowfield of the Void | ULTIMATE | 10 s | 13 % |  |
-| meliodas | Axe | Demon's Fighting Spirit | ULTIMATE | 10 s | 13 % |  |
-| meliodas | Sword1h | Blazing Cross | ULTIMATE | 10 s | 13 % |  |
-| meliodas | SwordDual | X Slash - Flurry | ULTIMATE | 10 s | 13 % |  |
-| merlin | Book | Iceberg Descent | ULTIMATE | 10 s | 13 % |  |
-| merlin | Wand | Plasma Dome: Overload | ULTIMATE | 10 s | 13 % |  |
-| slader | Axe | Bloody Arc | ULTIMATE | 10 s | 13 % |  |
-| slader | Cudgel3c | Iron Fury | ULTIMATE | 10 s | 13 % |  |
-| slader | Sword2h | Power Smite | ULTIMATE | 10 s | 13 % |  |
-| tioreh | Book | Dragon Breath | ULTIMATE | 10 s | 13 % |  |
-| tioreh | Staff | Bear Landing | ULTIMATE | 10 s | 13 % |  |
-| tioreh | Wand | Burning Lion | ULTIMATE | 10 s | 13 % |  |
-| tristan | Sword1h | Blade Storm | ULTIMATE | 10 s | 13 % |  |
-| tristan | Sword2h | Severing Cut | ULTIMATE | 10 s | 13 % |  |
-| tristan | SwordDual | Rain of Fire | ULTIMATE | 10 s | 13 % |  |
-| drake | Sword1h | Bolt Slash | ACTIVE_THIRD | 10.4 s | 13 % |  |
-| gil-thunder | Sword1h | Lightning Divide | ACTIVE_THIRD | 10.4 s | 13 % |  |
-| griamore | Gauntlets | Power Punch | ACTIVE_THIRD | 10.5 s | 12 % |  |
-| slader | Cudgel3c | Chain Stab | ACTIVE_THIRD | 10.5 s | 12 % |  |
-| howzer | Gauntlets | Cyclone Impact | ACTIVE_THIRD | 10.8 s | 12 % |  |
-| elizabeth | Wand | Super Ham Explosion | ULTIMATE | 11 s | 12 % |  |
-| hendrickson | SwordDual | Flash Sword | ACTIVE_THIRD | 11.6 s | 11 % |  |
-| gowther | Book | Memory Break | ACTIVE_THIRD | 11.8 s | 11 % |  |
-| guila | Rapier | Blazing Thrust | ACTIVE_THIRD | 11.9 s | 11 % |  |
-| daisy | Book | Summon Shocking Streetlamp | NORMAL_SKILL | 12 s | 11 % |  |
-| elaine | Staff | Divine Forest Swarm | NORMAL_SKILL | 12 s | 11 % |  |
-| hendrickson | SwordDual | Rapid Edge | NORMAL_SKILL | 12 s | 11 % |  |
-| king | Book | Guardian Shield | ACTIVE_THIRD | 12 s | 11 % |  |
-| king | Staff | Holy Swarm | NORMAL_SKILL | 12 s | 11 % |  |
-| slader | Axe | Axe Charge | NORMAL_SKILL | 12 s | 11 % |  |
-| slader | Sword2h | Power Drop | NORMAL_SKILL | 12 s | 11 % |  |
-| tristan | Sword2h | Punisher | NORMAL_SKILL | 12 s | 11 % |  |
-| howzer | Cudgel3c | Precise Stab | ACTIVE_THIRD | 12.6 s | 11 % |  |
-| elaine | Book | Saintess's Domain | ACTIVE_THIRD | 12.7 s | 11 % |  |
-| escanor | Axe | Condensed Sun | ACTIVE_THIRD | 13 s | 10 % |  |
-| drake | Staff | Lightning Spear | NORMAL_SKILL | 13.2 s | 10 % |  |
-| gil-thunder | Lance | Charge Electricity | NORMAL_SKILL | 13.2 s | 10 % |  |
-| escanor | Sword2h | Solar Impact | ACTIVE_THIRD | 13.5 s | 10 % |  |
-| griamore | Cudgel3c | Wall Push | NORMAL_SKILL | 13.5 s | 10 % |  |
-| jericho | SwordDual | Ice Twin Dance | ACTIVE_THIRD | 13.6 s | 10 % |  |
-| manny | SwordDual | Frost Spike Dash | ACTIVE_THIRD | 13.6 s | 10 % |  |
-| bug | Axe | Dark Thrash | NORMAL_SKILL | 14 s | 10 % |  |
-| bug | SwordDual | Dual Abyss Slash | ACTIVE_THIRD | 14 s | 10 % |  |
-| griamore | Shield | Drop Attack | NORMAL_SKILL | 14 s | 10 % |  |
-| daisy | Shield | Help Me, Domby | NORMAL_SKILL | 15 s | 9 % |  |
-| diane | Gauntlets | Martial Drive | NORMAL_SKILL | 15 s | 9 % |  |
-| dreyfus | Sword1h | Terra Slash | ACTIVE_THIRD | 15 s | 9 % |  |
-| escanor | Axe | Prideful Line | NORMAL_SKILL | 15 s | 9 % |  |
-| gil-thunder | Shield | Lightning Barrier | ACTIVE_THIRD | 15 s | 9 % |  |
-| guila | Lance | Shot Bombs | NORMAL_SKILL | 15 s | 9 % |  |
-| guila | Rapier | Blazing Burst | NORMAL_SKILL | 15 s | 9 % |  |
-| hendrickson | Lance | Abyss Lance Breaker | ACTIVE_THIRD | 15 s | 9 % |  |
-| king | Wand | Sharp Slash | ULTIMATE | 15 s | 9 % |  |
-| griamore | Cudgel3c | Wall Sphere | ACTIVE_THIRD | 15.1 s | 9 % |  |
-| gil-thunder | Sword1h | Lightning Sword | NORMAL_SKILL | 15.6 s | 9 % |  |
-| hendrickson | Lance | "Acid Tower" | NORMAL_SKILL | 15.7 s | 9 % |  |
-| howzer | Lance | Pulling Gust | NORMAL_SKILL | 15.7 s | 9 % |  |
-| bug | Axe | Abyss Smasher | ACTIVE_THIRD | 16 s | 9 % |  |
-| daisy | Wand | Flash Fruit | ACTIVE_THIRD | 16 s | 9 % |  |
-| derieri | Sword2h | Cross Cleave | ACTIVE_THIRD | 16 s | 9 % |  |
-| king | Book | Protector of the Forest | NORMAL_SKILL | 16 s | 9 % |  |
-| dreydrin | Shield | Shield Crush | NORMAL_SKILL | 16.2 s | 8 % |  |
-| slader | Cudgel3c | Chain Thrust | NORMAL_SKILL | 16.2 s | 8 % |  |
-| tristan | SwordDual | Vertical Slice | NORMAL_SKILL | 16.2 s | 8 % |  |
-| gowther | Staff | Invasion Field | ACTIVE_THIRD | 16.3 s | 8 % |  |
-| merlin | Staff | Seeking Crimson | NORMAL_SKILL | 16.5 s | 8 % |  |
-| merlin | Wand | Electromagnetic Field | ACTIVE_THIRD | 16.5 s | 8 % |  |
-| derieri | Gauntlets | Wild Rush | ACTIVE_THIRD | 17 s | 8 % |  |
-| elizabeth | Wand | Hawk Impact | NORMAL_SKILL | 17 s | 8 % |  |
-| griamore | Gauntlets | Shield Rush | NORMAL_SKILL | 17 s | 8 % |  |
-| meliodas | Sword1h | Abyssal Dash | ACTIVE_THIRD | 17 s | 8 % |  |
-| jericho | Rapier | Frostfang Stab | ACTIVE_THIRD | 17.2 s | 8 % |  |
-| dreydrin | Axe | Battle Cry | NORMAL_SKILL | 17.3 s | 8 % |  |
-| elaine | Wand | Razorwind | NORMAL_SKILL | 17.3 s | 8 % |  |
-| dreyfus | Sword1h | Earth Blade | NORMAL_SKILL | 17.4 s | 8 % |  |
-| klotho | Rapier | Storm Slash | NORMAL_SKILL | 17.5 s | 8 % |  |
-| dreydrin | Rapier | Divine Will | NORMAL_SKILL | 17.6 s | 8 % |  |
-| tristan | Sword1h | Wind Thrust | NORMAL_SKILL | 17.9 s | 8 % |  |
-| drake | Sword2h | Lightning Stream | NORMAL_SKILL | 18 s | 8 % |  |
-| howzer | Lance | Gale Lance Burst | ACTIVE_THIRD | 18 s | 8 % |  |
-| klotho | Book | Frost Rune: Deployment | NORMAL_SKILL | 18 s | 8 % |  |
-| dreyfus | Lance | Pillar of Light | NORMAL_SKILL | 18.1 s | 8 % |  |
-| daisy | Wand | Seed Bomb | NORMAL_SKILL | 18.2 s | 8 % |  |
-| dreyfus | Rapier | Piercing Lightning | NORMAL_SKILL | 18.2 s | 8 % |  |
-| howzer | Gauntlets | Combo | NORMAL_SKILL | 18.7 s | 7 % |  |
-| escanor | Shield | Oppressing Flames | NORMAL_SKILL | 19 s | 7 % |  |
-| escanor | Sword2h | "Cruel Sun" | NORMAL_SKILL | 19 s | 7 % |  |
-| gowther | Staff | Circle Impact | NORMAL_SKILL | 19.9 s | 7 % |  |
-| merlin | Wand | Judgment of Thunder | NORMAL_SKILL | 19.9 s | 7 % |  |
-| diane | Axe | Charged Slash | NORMAL_SKILL | 20 s | 7 % |  |
-| diane | Cudgel3c | Terra Shot | ACTIVE_THIRD | 20 s | 7 % |  |
-| king | Wand | Fairy Power | NORMAL_SKILL | 20 s | 7 % |  |
-| meliodas | SwordDual | Dark Rapid Slash | ACTIVE_THIRD | 20 s | 7 % |  |
-| bug | SwordDual | Annihilation | NORMAL_SKILL | 20.9 s | 7 % |  |
-| derieri | Axe | Rising Cross | NORMAL_SKILL | 21 s | 7 % |  |
-| manny | Staff | Holy Judgment | NORMAL_SKILL | 21 s | 7 % |  |
-| klotho | Staff | Dimensional Wave | NORMAL_SKILL | 21.4 s | 7 % |  |
-| elizabeth | Book | Princess's Water Cannon | ACTIVE_THIRD | 22 s | 6 % |  |
-| meliodas | Axe | Circle Slash | NORMAL_SKILL | 22 s | 6 % |  |
-| jericho | Rapier | Ice Blade Dance | NORMAL_SKILL | 22.1 s | 6 % |  |
-| elizabeth | Staff | Holy Wave | NORMAL_SKILL | 23 s | 6 % |  |
-| derieri | Gauntlets | Chasing Kick | NORMAL_SKILL | 25 s | 6 % |  |
-| diane | Axe | Quake Smash | ACTIVE_THIRD | 25 s | 6 % |  |
-| meliodas | Axe | Abyssal Power Smash | ACTIVE_THIRD | 25 s | 6 % |  |
-| merlin | Book | Frost Seed | NORMAL_SKILL | 25 s | 6 % |  |
-| tioreh | Staff | Summon: Sheep | NORMAL_SKILL | 25 s | 6 % |  |
-| escanor | Shield | Solar Onslaught | ACTIVE_THIRD | 25.5 s | 6 % |  |
-| manny | SwordDual | Frozen Soul Shatter | NORMAL_SKILL | 26.9 s | 5 % |  |
-| derieri | Sword2h | Rending Slam | NORMAL_SKILL | 27 s | 5 % |  |
-| meliodas | Sword1h | Chain Attack | NORMAL_SKILL | 27 s | 5 % |  |
-| gowther | Book | Nightmare Link | NORMAL_SKILL | 27.7 s | 5 % |  |
-| gowther | Wand | Arrow Barrage | NORMAL_SKILL | 28.1 s | 5 % |  |
-| diane | Cudgel3c | Desert Sands | NORMAL_SKILL | 30 s | 5 % |  |
-| jericho | SwordDual | Weapon Enchantment | NORMAL_SKILL | 30 s | 5 % |  |
-| manny | Sword1h | Frost Release | NORMAL_SKILL | 31 s | 5 % |  |
-| guila | Shield | Ground Ignition | NORMAL_SKILL | 32 s | 4 % |  |
-| meliodas | SwordDual | Burning Slash | NORMAL_SKILL | 32 s | 4 % |  |
-| elaine | Book | Guardian's Blossom | NORMAL_SKILL | 35 s | 4 % |  |
-| gil-thunder | Shield | Judgment | NORMAL_SKILL | 35 s | 4 % |  |
-| jericho | Lance | Ice Rock | NORMAL_SKILL | 35.4 s | 4 % |  |
-| gowther | Book | Blackout Field | ULTIMATE | 60 s | 2 % |  |
+| héros | arme | compétence | catégorie | touche | recharge | erreur | mesure (s) |
+|---|---|---|---|---|---|---|---|
+| diane | Gantelets | Combinaison de coups de pied | Attaque spéciale | E | 5 s | 23 % |  |
+| dreydrin | Hache | Écrasement puissant | Attaque spéciale | E | 7 s | 18 % |  |
+| drake | Épée à deux mains | Taillade perforante | Attaque spéciale | E | 7.5 s | 17 % |  |
+| dreyfus | Rapière | Brise-dard | Attaque spéciale | E | 7.5 s | 17 % |  |
+| gil-thunder | Lance | Déferlement foudroyant | Attaque spéciale | E | 7.5 s | 17 % |  |
+| guila | Lance | Canon de flamme | Attaque spéciale | E | 7.5 s | 17 % |  |
+| hendrickson | Épée à une main | Perforation divine | Attaque spéciale | E | 7.5 s | 17 % |  |
+| king | Bâton | Bâton de tempête | Attaque spéciale | E | 7.5 s | 17 % |  |
+| slader | Épée à deux mains | Frappe finale | Attaque spéciale | E | 7.5 s | 17 % |  |
+| tristan | Épées doubles | Double taillade infernale | Attaque spéciale | E | 7.8 s | 16 % |  |
+| dreyfus | Lance | Brisure sacrée | Attaque spéciale | E | 7.9 s | 16 % |  |
+| merlin | Grimoire | Esprit glacial | Attaque spéciale | E | 8 s | 16 % |  |
+| dreydrin | Rapière | Pulsation lumineuse | Attaque spéciale | E | 8.2 s | 15 % |  |
+| drake | Bâton | Tempête de Foudre | Attaque spéciale | E | 8.5 s | 15 % |  |
+| slader | Hache | Frappe chargée | Attaque spéciale | E | 9 s | 14 % |  |
+| tristan | Épée à une main | Épée de tempête | Attaque spéciale | E | 9.3 s | 14 % |  |
+| bug | Hache | Essaim de la mort | Attaque ultime | R | 10 s | 13 % |  |
+| bug | Grimoire | Seul en scène | Attaque ultime | R | 10 s | 13 % |  |
+| bug | Épées doubles | Fin | Attaque ultime | R | 10 s | 13 % |  |
+| daisy | Grimoire | Salve de fruits | Attaque ultime | R | 10 s | 13 % |  |
+| daisy | Épée & bouclier | Va-t'en | Attaque ultime | R | 10 s | 13 % |  |
+| derieri | Hache | Lancer de hache | Attaque spéciale | E | 10 s | 13 % |  |
+| derieri | Hache | Entaille crépusculaire | Attaque ultime | R | 10 s | 13 % |  |
+| derieri | Gantelets | « Étoile combo » | Attaque ultime | R | 10 s | 13 % |  |
+| derieri | Épée à deux mains | Secousse infernale | Attaque ultime | R | 10 s | 13 % |  |
+| diane | Hache | Éclatement rocheux | Attaque ultime | R | 10 s | 13 % |  |
+| diane | Nunchaku | Soulèvement terrestre | Attaque ultime | R | 10 s | 13 % |  |
+| diane | Gantelets | Plongeon métallique | Attaque ultime | R | 10 s | 13 % |  |
+| drake | Bâton | Surcharge foudroyante | Attaque ultime | R | 10 s | 13 % |  |
+| drake | Épée à une main | Lame fantomatique | Attaque ultime | R | 10 s | 13 % |  |
+| drake | Épée à deux mains | Courroux du dragon foudroyant | Attaque ultime | R | 10 s | 13 % |  |
+| dreydrin | Hache | Cri de géant | Attaque ultime | R | 10 s | 13 % |  |
+| dreyfus | Lance | Lance lumineuse | Attaque ultime | R | 10 s | 13 % |  |
+| dreyfus | Rapière | Bombardier de lumière | Attaque ultime | R | 10 s | 13 % |  |
+| dreyfus | Épée à une main | Fracture terrestre | Attaque ultime | R | 10 s | 13 % |  |
+| elaine | Grimoire | Sceau de poussière | Attaque ultime | R | 10 s | 13 % |  |
+| elaine | Baguette | Rafale de vent | Attaque ultime | R | 10 s | 13 % |  |
+| elizabeth | Baguette | Trajectoire des restes | Attaque spéciale | E | 10 s | 13 % |  |
+| escanor | Épée & bouclier | Jugement céleste - Surchauffe | Attaque ultime | R | 10 s | 13 % |  |
+| escanor | Épée à deux mains | Soleil levant | Attaque ultime | R | 10 s | 13 % |  |
+| gil-thunder | Lance | Éclair | Attaque ultime | R | 10 s | 13 % |  |
+| gil-thunder | Épée & bouclier | Entraves du roi de la Foudre | Attaque ultime | R | 10 s | 13 % |  |
+| gil-thunder | Épée à une main | Éclair foudroyant | Attaque ultime | R | 10 s | 13 % |  |
+| gowther | Bâton | Rayon prismatique | Attaque ultime | R | 10 s | 13 % |  |
+| gowther | Baguette | Flèche de l'éclipse | Attaque ultime | R | 10 s | 13 % |  |
+| griamore | Nunchaku | Écrasement mural | Attaque ultime | R | 10 s | 13 % |  |
+| griamore | Gantelets | Bouclier d'émission | Attaque ultime | R | 10 s | 13 % |  |
+| griamore | Épée & bouclier | Chute de mur | Attaque ultime | R | 10 s | 13 % |  |
+| guila | Épée & bouclier | Explosion resplendissante | Attaque ultime | R | 10 s | 13 % |  |
+| guila | Épée & bouclier | Rempart de flammes | Attaque spéciale | E | 10 s | 13 % |  |
+| hendrickson | Lance | « Corruption de toute vie » | Attaque ultime | R | 10 s | 13 % |  |
+| hendrickson | Épées doubles | Épée de chevalier | Attaque ultime | R | 10 s | 13 % |  |
+| howzer | Nunchaku | Rafale | Attaque ultime | R | 10 s | 13 % |  |
+| howzer | Gantelets | Choc tournoyant | Attaque ultime | R | 10 s | 13 % |  |
+| howzer | Lance | Super cyclone | Attaque ultime | R | 10 s | 13 % |  |
+| jericho | Lance | Glacier | Attaque ultime | R | 10 s | 13 % |  |
+| jericho | Lance | Vague de froid | Attaque spéciale | E | 10 s | 13 % |  |
+| jericho | Rapière | Bombardement glacial | Attaque ultime | R | 10 s | 13 % |  |
+| jericho | Épées doubles | Aiguille de glace | Attaque ultime | R | 10 s | 13 % |  |
+| king | Bâton | Flambée resplendissante | Attaque ultime | R | 10 s | 13 % |  |
+| klotho | Rapière | Inscription runique : Affaissement | Attaque ultime | R | 10 s | 13 % |  |
+| manny | Épée à une main | Barrière de la prêtresse | Attaque ultime | R | 10 s | 13 % |  |
+| manny | Épée à une main | Lame de givre tournoyante | Attaque spéciale | E | 10 s | 13 % |  |
+| manny | Épées doubles | Champ de neige du vide | Attaque ultime | R | 10 s | 13 % |  |
+| meliodas | Hache | Esprit combatif de démon | Attaque ultime | R | 10 s | 13 % |  |
+| meliodas | Épée à une main | Croix flamboyante | Attaque ultime | R | 10 s | 13 % |  |
+| meliodas | Épées doubles | Taillade en croix - Enchaînement | Attaque ultime | R | 10 s | 13 % |  |
+| merlin | Grimoire | Chute de glace | Attaque ultime | R | 10 s | 13 % |  |
+| merlin | Baguette | Dôme de plasma : Surcharge | Attaque ultime | R | 10 s | 13 % |  |
+| slader | Hache | Arc sanglant | Attaque ultime | R | 10 s | 13 % |  |
+| slader | Nunchaku | Fureur de fer | Attaque ultime | R | 10 s | 13 % |  |
+| slader | Épée à deux mains | Frappe de puissance | Attaque ultime | R | 10 s | 13 % |  |
+| tioreh | Grimoire | Souffle de dragon | Attaque ultime | R | 10 s | 13 % |  |
+| tioreh | Bâton | Descente d'ours | Attaque ultime | R | 10 s | 13 % |  |
+| tioreh | Baguette | Lion ardent | Attaque ultime | R | 10 s | 13 % |  |
+| tristan | Épée à une main | Tempête de lames | Attaque ultime | R | 10 s | 13 % |  |
+| tristan | Épée à deux mains | Entaille d'amputation | Attaque ultime | R | 10 s | 13 % |  |
+| tristan | Épées doubles | Pluie de flammes | Attaque ultime | R | 10 s | 13 % |  |
+| drake | Épée à une main | Taillade éclair | Attaque spéciale | E | 10.4 s | 13 % |  |
+| gil-thunder | Épée à une main | Division foudroyante | Attaque spéciale | E | 10.4 s | 13 % |  |
+| griamore | Gantelets | Poing de puissance | Attaque spéciale | E | 10.5 s | 12 % |  |
+| slader | Nunchaku | Perforation en chaîne | Attaque spéciale | E | 10.5 s | 12 % |  |
+| howzer | Gantelets | Impact cyclonique | Attaque spéciale | E | 10.8 s | 12 % |  |
+| elizabeth | Baguette | Super explosion jambonique | Attaque ultime | R | 11 s | 12 % |  |
+| hendrickson | Épées doubles | Épée éclair | Attaque spéciale | E | 11.6 s | 11 % |  |
+| gowther | Grimoire | Dissonance mémorielle | Attaque spéciale | E | 11.8 s | 11 % |  |
+| guila | Rapière | Perforation ardente | Attaque spéciale | E | 11.9 s | 11 % |  |
+| daisy | Grimoire | Invocation de Lampadaire électrifié | Compétence normale | Q | 12 s | 11 % |  |
+| elaine | Bâton | Nuée de la forêt divine | Compétence normale | Q | 12 s | 11 % |  |
+| hendrickson | Épées doubles | Tranchant rapide | Compétence normale | Q | 12 s | 11 % |  |
+| king | Grimoire | Bouclier gardien | Attaque spéciale | E | 12 s | 11 % |  |
+| king | Bâton | Essaim sacré | Compétence normale | Q | 12 s | 11 % |  |
+| slader | Hache | Charge de hache | Compétence normale | Q | 12 s | 11 % |  |
+| slader | Épée à deux mains | Chute de puissance | Compétence normale | Q | 12 s | 11 % |  |
+| tristan | Épée à deux mains | Punisseur | Compétence normale | Q | 12 s | 11 % |  |
+| howzer | Nunchaku | Poignard précis | Attaque spéciale | E | 12.6 s | 11 % |  |
+| elaine | Grimoire | Domaine de la sainte | Attaque spéciale | E | 12.7 s | 11 % |  |
+| escanor | Hache | Soleil condensé | Attaque spéciale | E | 13 s | 10 % |  |
+| drake | Bâton | Lance foudroyante | Compétence normale | Q | 13.2 s | 10 % |  |
+| gil-thunder | Lance | Charge électrique | Compétence normale | Q | 13.2 s | 10 % |  |
+| escanor | Épée à deux mains | Impact solaire | Attaque spéciale | E | 13.5 s | 10 % |  |
+| griamore | Nunchaku | Pression murale | Compétence normale | Q | 13.5 s | 10 % |  |
+| jericho | Épées doubles | Danse jumelle de glace | Attaque spéciale | E | 13.6 s | 10 % |  |
+| manny | Épées doubles | Ruée du pic de givre | Attaque spéciale | E | 13.6 s | 10 % |  |
+| bug | Hache | Rossée des ténèbres | Compétence normale | Q | 14 s | 10 % |  |
+| bug | Épées doubles | Double taillade des abysses | Attaque spéciale | E | 14 s | 10 % |  |
+| griamore | Épée & bouclier | Attaque plongeante | Compétence normale | Q | 14 s | 10 % |  |
+| daisy | Épée & bouclier | Domby, à moi | Compétence normale | Q | 15 s | 9 % |  |
+| diane | Gantelets | Ferveur martiale | Compétence normale | Q | 15 s | 9 % |  |
+| dreyfus | Épée à une main | Taillade terrestre | Attaque spéciale | E | 15 s | 9 % |  |
+| escanor | Hache | Lignée orgueilleuse | Compétence normale | Q | 15 s | 9 % |  |
+| gil-thunder | Épée & bouclier | Barrière de Foudre | Attaque spéciale | E | 15 s | 9 % |  |
+| guila | Lance | Tir de bombe | Compétence normale | Q | 15 s | 9 % |  |
+| guila | Rapière | Déluge ardent | Compétence normale | Q | 15 s | 9 % |  |
+| hendrickson | Lance | Brise-lance abyssal | Attaque spéciale | E | 15 s | 9 % |  |
+| king | Baguette | Taillade tranchante | Attaque ultime | R | 15 s | 9 % |  |
+| griamore | Nunchaku | Sphère murale | Attaque spéciale | E | 15.1 s | 9 % |  |
+| gil-thunder | Épée à une main | Épée foudroyante | Compétence normale | Q | 15.6 s | 9 % |  |
+| hendrickson | Lance | « Tour d'acide » | Compétence normale | Q | 15.7 s | 9 % |  |
+| howzer | Lance | Rafale aspirante | Compétence normale | Q | 15.7 s | 9 % |  |
+| bug | Hache | Pulvérisation des abysses | Attaque spéciale | E | 16 s | 9 % |  |
+| daisy | Baguette | Flash fruité | Attaque spéciale | E | 16 s | 9 % |  |
+| derieri | Épée à deux mains | Entaille en croix | Attaque spéciale | E | 16 s | 9 % |  |
+| king | Grimoire | Protecteur de la forêt | Compétence normale | Q | 16 s | 9 % |  |
+| dreydrin | Épée & bouclier | Bouclier fracassant | Compétence normale | Q | 16.2 s | 8 % |  |
+| slader | Nunchaku | Chaîne perforante | Compétence normale | Q | 16.2 s | 8 % |  |
+| tristan | Épées doubles | Taillade verticale | Compétence normale | Q | 16.2 s | 8 % |  |
+| gowther | Bâton | Champ d'intrusion | Attaque spéciale | E | 16.3 s | 8 % |  |
+| merlin | Bâton | Poursuite pourpre | Compétence normale | Q | 16.5 s | 8 % |  |
+| merlin | Baguette | Champ électromagnétique | Attaque spéciale | E | 16.5 s | 8 % |  |
+| derieri | Gantelets | Ruée sauvage | Attaque spéciale | E | 17 s | 8 % |  |
+| elizabeth | Baguette | Impact de Hawk | Compétence normale | Q | 17 s | 8 % |  |
+| griamore | Gantelets | Charge de bouclier | Compétence normale | Q | 17 s | 8 % |  |
+| meliodas | Épée à une main | Ruée abyssale | Attaque spéciale | E | 17 s | 8 % |  |
+| jericho | Rapière | Poignard croc-de-givre | Attaque spéciale | E | 17.2 s | 8 % |  |
+| dreydrin | Hache | Cri de guerre | Compétence normale | Q | 17.3 s | 8 % |  |
+| elaine | Baguette | Vents tranchants | Compétence normale | Q | 17.3 s | 8 % |  |
+| dreyfus | Épée à une main | Lame de Terre | Compétence normale | Q | 17.4 s | 8 % |  |
+| klotho | Rapière | Tempête d'entailles | Compétence normale | Q | 17.5 s | 8 % |  |
+| dreydrin | Rapière | Volonté divine | Compétence normale | Q | 17.6 s | 8 % |  |
+| tristan | Épée à une main | Vent perforant | Compétence normale | Q | 17.9 s | 8 % |  |
+| drake | Épée à deux mains | Torrent de foudre | Compétence normale | Q | 18 s | 8 % |  |
+| howzer | Lance | Déluge de lance tempétueuse | Attaque spéciale | E | 18 s | 8 % |  |
+| klotho | Grimoire | Rune de givre : Déploiement | Compétence normale | Q | 18 s | 8 % |  |
+| dreyfus | Lance | Pilier de lumière | Compétence normale | Q | 18.1 s | 8 % |  |
+| daisy | Baguette | Bombe de graine | Compétence normale | Q | 18.2 s | 8 % |  |
+| dreyfus | Rapière | Foudre perçante | Compétence normale | Q | 18.2 s | 8 % |  |
+| howzer | Gantelets | Combo | Compétence normale | Q | 18.7 s | 7 % |  |
+| escanor | Épée & bouclier | Flammes oppressantes | Compétence normale | Q | 19 s | 7 % |  |
+| escanor | Épée à deux mains | « Soleil cruel » | Compétence normale | Q | 19 s | 7 % |  |
+| gowther | Bâton | Impact circulaire | Compétence normale | Q | 19.9 s | 7 % |  |
+| merlin | Baguette | Jugement foudroyant | Compétence normale | Q | 19.9 s | 7 % |  |
+| diane | Hache | Taillade chargée | Compétence normale | Q | 20 s | 7 % |  |
+| diane | Nunchaku | Tir terrestre | Attaque spéciale | E | 20 s | 7 % |  |
+| king | Baguette | Pouvoir des fées | Compétence normale | Q | 20 s | 7 % |  |
+| meliodas | Épées doubles | Taillade rapide des Ténèbres | Attaque spéciale | E | 20 s | 7 % |  |
+| bug | Épées doubles | Extermination | Compétence normale | Q | 20.9 s | 7 % |  |
+| derieri | Hache | Croix ascendante | Compétence normale | Q | 21 s | 7 % |  |
+| manny | Bâton | Jugement Sacré | Compétence normale | Q | 21 s | 7 % |  |
+| klotho | Bâton | Onde dimensionnelle | Compétence normale | Q | 21.4 s | 7 % |  |
+| elizabeth | Grimoire | Canon à eau de la princesse | Attaque spéciale | E | 22 s | 6 % |  |
+| meliodas | Hache | Taillade circulaire | Compétence normale | Q | 22 s | 6 % |  |
+| jericho | Rapière | Danse de la lame de givre | Compétence normale | Q | 22.1 s | 6 % |  |
+| elizabeth | Bâton | Vague sacrée | Compétence normale | Q | 23 s | 6 % |  |
+| derieri | Gantelets | Assaut fulgurant | Compétence normale | Q | 25 s | 6 % |  |
+| diane | Hache | Écrasement sismique | Attaque spéciale | E | 25 s | 6 % |  |
+| meliodas | Hache | Pulvérisation des abysses | Attaque spéciale | E | 25 s | 6 % |  |
+| merlin | Grimoire | Graine de givre | Compétence normale | Q | 25 s | 6 % |  |
+| tioreh | Bâton | Invocation : mouton | Compétence normale | Q | 25 s | 6 % |  |
+| escanor | Épée & bouclier | Assaut solaire | Attaque spéciale | E | 25.5 s | 6 % |  |
+| manny | Épées doubles | Rupture d'âme gelée | Compétence normale | Q | 26.9 s | 5 % |  |
+| derieri | Épée à deux mains | Taillade fracassante | Compétence normale | Q | 27 s | 5 % |  |
+| meliodas | Épée à une main | Attaque enchaînée | Compétence normale | Q | 27 s | 5 % |  |
+| gowther | Grimoire | Lien cauchemardesque | Compétence normale | Q | 27.7 s | 5 % |  |
+| gowther | Baguette | Salve de flèches | Compétence normale | Q | 28.1 s | 5 % |  |
+| diane | Nunchaku | Sables du désert | Compétence normale | Q | 30 s | 5 % |  |
+| jericho | Épées doubles | Enchantement d'arme | Compétence normale | Q | 30 s | 5 % |  |
+| manny | Épée à une main | Éruption de givre | Compétence normale | Q | 31 s | 5 % |  |
+| guila | Épée & bouclier | Déflagration terrestre | Compétence normale | Q | 32 s | 4 % |  |
+| meliodas | Épées doubles | Taillade brûlante | Compétence normale | Q | 32 s | 4 % |  |
+| elaine | Grimoire | Fleur de la gardienne | Compétence normale | Q | 35 s | 4 % |  |
+| gil-thunder | Épée & bouclier | Jugement | Compétence normale | Q | 35 s | 4 % |  |
+| jericho | Lance | Roche de glace | Compétence normale | Q | 35.4 s | 4 % |  |
+| gowther | Grimoire | Champ d'évanouissement | Attaque ultime | R | 60 s | 2 % |  |
