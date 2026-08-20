@@ -15,6 +15,7 @@ try {
 } finally {
   console.log = originalConsoleLog;
 }
+
 assert.deepStrictEqual(
   reminderLogs,
   [],
@@ -81,7 +82,8 @@ assert.deepStrictEqual(
     "utf8"
   );
   const debutTest = source.indexOf("if (TEST_MESSAGE)");
-  const premierAppelSupabase = source.indexOf("collectReminderData(sb");
+  const appel = /await collectReminderData\(\s*sb,/.exec(source);
+  const premierAppelSupabase = appel ? appel.index : -1;
   assert.ok(debutTest > 0, "La branche de vérification existe");
   assert.ok(premierAppelSupabase > 0, "L'appel Supabase existe");
   assert.ok(
@@ -181,7 +183,9 @@ async function testReminderCollectionWithoutSessions() {
   );
 }
 
-testReminderCollectionWithoutSessions()
+Promise.all([
+  testReminderCollectionWithoutSessions()
+])
   .then(() => console.log("PASS rappel Discord (logique pure + collecte)"))
   .catch(error => {
     console.error(error);

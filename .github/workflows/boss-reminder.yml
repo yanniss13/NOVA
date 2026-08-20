@@ -1,6 +1,6 @@
 name: Rappel Discord — Boss de Guilde
 
-# Relance sur Discord les membres qui n'ont rejoint aucun groupe de la semaine.
+# Relance sur Discord les membres qui n'ont pas terminé leurs trois runs.
 # Le boss de confrérie reset le LUNDI 9h -> rappel chaque DIMANCHE (Paris).
 #
 # UN SEUL cron, et le script ne vérifie plus que le JOUR.

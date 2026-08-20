@@ -1,0 +1,7 @@
+project_id = "nova"
+
+[functions.discord-planning]
+verify_jwt = false
+
+[edge_runtime]
+policy = "per_worker"

@@ -59,9 +59,9 @@ async function collectReminderData(request, weekStart) {
 // Envoi brut sur le webhook. `allowed_mentions` vide : jamais de @everyone.
 async function postToDiscord(content) {
   const res = await fetch(WEBHOOK, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ content: content, allowed_mentions: { parse: [] } })
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ content, allowed_mentions:{ parse:[] } })
   });
   if (!res.ok) {
     console.error("Webhook Discord échec:", res.status, await res.text());

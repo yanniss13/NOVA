@@ -12,6 +12,8 @@ NOVA est une PWA communautaire pour **The Seven Deadly Sins: Origin**. Elle réu
 - Roster partagé des personnages et des équipes, synchronisé avec Supabase.
 - Analyse des forces de la confrérie par élément et calculateur de dégâts.
 - Disponibilités hebdomadaires sous forme de grille de 168 créneaux.
+- Deux images du planning visibles dans Discord (tableau hebdomadaire et
+  créneaux écrits par membre), générées à la demande avec `/planning`.
 - Sessions de boss, trois runs par membre, rapports et historique des scores.
 - Assistant de composition en lecture seule : meilleurs créneaux et groupes équilibrés de cinq membres maximum.
 - Wiki des héros et de l’équipement, suivi de collection et fonctionnement PWA hors ligne.

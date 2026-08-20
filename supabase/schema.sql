@@ -1108,6 +1108,51 @@ create policy avail_update on public.member_availability
 create policy avail_delete on public.member_availability
   for delete to authenticated using (owner = auth.uid());
 
+-- 8bis) Anti-spam atomique de la commande Discord `/planning`.
+-- La table reste dans le schéma privé et aucune API cliente ne peut la lire.
+-- Seule l'Edge Function, authentifiée en service_role, peut réclamer une
+-- génération. L'UPSERT conditionnel empêche deux instances Edge concurrentes
+-- de produire deux PDF pendant la même fenêtre.
+create table if not exists private.discord_planning_cooldown (
+  scope        text primary key check (char_length(scope) between 1 and 200),
+  requested_at timestamptz not null default now()
+);
+
+revoke all on table private.discord_planning_cooldown from public;
+
+create or replace function public.claim_discord_planning_request(
+  p_scope text,
+  p_cooldown_seconds integer default 30
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = pg_catalog, public, private
+as $$
+declare
+  v_claimed boolean := false;
+begin
+  if nullif(trim(p_scope), '') is null or char_length(p_scope) > 200 then
+    return false;
+  end if;
+
+  insert into private.discord_planning_cooldown as cooldown (scope, requested_at)
+  values (p_scope, now())
+  on conflict (scope) do update
+    set requested_at = excluded.requested_at
+    where cooldown.requested_at <= now()
+      - make_interval(secs => greatest(1, least(p_cooldown_seconds, 300)))
+  returning true into v_claimed;
+
+  return coalesce(v_claimed, false);
+end;
+$$;
+
+revoke all on function public.claim_discord_planning_request(text, integer)
+  from public;
+grant execute on function public.claim_discord_planning_request(text, integer)
+  to service_role;
+
 -- ============================ Realtime ============================
 -- Chaque table est vérifiée séparément pour que le schéma complet reste rejouable.
 do $$
