@@ -232,8 +232,8 @@ Site Confrérie 7ds/
 ├─ supabase/schema.sql     # Tables partagées, RPC boss, RLS et publication Realtime.
 ├─ supabase/config.toml    # Configuration locale Supabase de l'Edge Function Discord.
 ├─ supabase/functions/
-│  ├─ discord-planning/index.ts # Endpoint signé de la commande Discord `/planning`.
-│  └─ _shared/             # Images de planning et règles Discord partagées/testables depuis Node.
+│  ├─ discord-planning/index.ts # Endpoint signé des commandes Discord `/planning` et `/run`.
+│  └─ _shared/             # Images de planning, rappel de boss et règles Discord partagés/testables depuis Node.
 ├─ supabase/rollback-boss-reports.sql # Retour arrière fonctionnel, non destructif des rapports de boss.
 ├─ package.json            # Scripts de test Node + Playwright (développement uniquement).
 ├─ package-lock.json       # Versions verrouillées des dépendances de test.
@@ -260,8 +260,8 @@ Site Confrérie 7ds/
 │  ├─ generate-wiki.py            # Régénère wiki-competences.js (compétences FR + passifs).
 │  ├─ discord-reminder.js         # Rappel Discord.
 │  ├─ availability-pdf.js         # Adaptateur Node vers le générateur d'images partagé.
-│  ├─ register-discord-planning.js # Enregistrement administratif de `/planning`.
-│  └─ reminder-core.js            # Sa logique pure.
+│  ├─ register-discord-planning.js # Enregistrement administratif de `/planning` et `/run`.
+│  └─ reminder-core.js            # Adaptateur Node vers la logique de rappel partagée.
 ├─ 7ds-ui/                 # Icônes d'UI : mastery/<arme>.webp, role-elements/<el>_<role>.webp,
 │                          # skills/<Nom>.webp (313 icônes de compétences, wiki)
 ├─ AGENTS.md               # Ce fichier.
@@ -1171,9 +1171,18 @@ le SQL Editor afin d'ajouter les tables à la publication
 - **Rappel Discord** : dimanche midi Paris (`scripts/discord-reminder.js` + GitHub Actions),
   liste les membres sous `3/3` et le nombre de runs manquantes. Il reste un
   message texte et ne génère aucun planning : les joueurs le demandent avec
-  `/planning` quand ils en ont besoin.
+  `/planning` quand ils en ont besoin. La logique vit dans
+  `supabase/functions/_shared/boss-reminder.js` (calcul de la semaine, libellé,
+  collecte Supabase, texte du message) ; `scripts/reminder-core.js` n'en est
+  que l'adaptateur Node. **Ne jamais recopier ce texte ailleurs** : `/run` doit
+  afficher exactement ce que le salon reçoit le dimanche, et un test verrouille
+  le fait que les deux chemins pointent sur le même objet.
+- **Commande Discord `/run`** : même Edge Function, parce que Discord route
+  toutes les interactions d'une application vers une seule URL. Elle republie à
+  la demande le message du rappel du dimanche, n'importe quel jour de la
+  semaine, avec le même contrôle d'accès que `/planning`.
 - **Commande Discord `/planning`** : `supabase/functions/discord-planning/index.ts`
-  vérifie la signature Ed25519 de Discord, limite la commande au serveur et aux
+  vérifie la signature Ed25519 de Discord, limite les commandes au serveur et aux
   salons configurés (`DISCORD_PLANNING_CHANNEL_ID` accepte une liste séparée
   par des virgules), répond immédiatement en différé, puis génère deux images
   PNG : le tableau hebdomadaire et les créneaux écrits par membre. Le message
@@ -1181,8 +1190,9 @@ le SQL Editor afin d'ajouter les tables à la publication
   partagé est `supabase/functions/_shared/availability-pdf.js`, utilisé côté
   Node via `scripts/availability-pdf.js`. La RPC
   `claim_discord_planning_request` impose un délai
-  atomique de 30 secondes par salon. Le token Bot sert uniquement à enregistrer la
-  commande avec `npm run discord:register-planning` et ne doit jamais être
+  atomique par commande et par salon : 30 secondes pour `/planning`,
+  10 pour `/run`. Le token Bot sert uniquement à enregistrer les
+  commandes avec `npm run discord:register` et ne doit jamais être
   stocké dans Supabase ou le dépôt. Procédure : `docs/discord-planning.md`.
   Voir `docs/superpowers/specs/2026-07-25-boss-trois-runs-design.md`.
 - Après une modification de ce schéma, réexécuter le contenu complet de

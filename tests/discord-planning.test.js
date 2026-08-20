@@ -7,7 +7,7 @@ const ROOT = path.resolve(__dirname, "..");
 const helpers = require("../supabase/functions/_shared/discord-planning.js");
 const pdfFromNode = require("../scripts/availability-pdf.js");
 const pdfShared = require("../supabase/functions/_shared/availability-pdf.js");
-const { registerPlanningCommand } = require("../scripts/register-discord-planning.js");
+const { registerGuildCommands } = require("../scripts/register-discord-planning.js");
 
 assert.deepStrictEqual(helpers.planningCommandDefinition(), {
   name:"planning",
@@ -15,6 +15,10 @@ assert.deepStrictEqual(helpers.planningCommandDefinition(), {
   type:1
 });
 assert.ok(helpers.planningCommandDefinition().description.length <= 100);
+assert.equal(helpers.runCommandDefinition().name, "run");
+assert.equal(helpers.runCommandDefinition().type, 1);
+assert.ok(helpers.runCommandDefinition().description.length <= 100);
+assert.ok(helpers.runCommandDefinition().description.length > 0);
 assert.strictEqual(pdfFromNode, pdfShared,
   "Node et l'Edge Function doivent utiliser le même générateur d'images");
 
@@ -58,25 +62,25 @@ const baseInteraction = {
   guild_id:"guild", channel_id:"channel",
   member:{ roles:["member"], permissions:"0" }
 };
-assert.equal(helpers.planningAuthorizationError(baseInteraction, {
+assert.equal(helpers.commandAuthorizationError(baseInteraction, {
   guildId:"guild", channelIds:["channel"], allowedRoleIds:[]
 }), "");
-assert.match(helpers.planningAuthorizationError(baseInteraction, {
+assert.match(helpers.commandAuthorizationError(baseInteraction, {
   guildId:"autre", channelIds:["channel"], allowedRoleIds:[]
 }), /serveur/);
-assert.match(helpers.planningAuthorizationError(baseInteraction, {
+assert.match(helpers.commandAuthorizationError(baseInteraction, {
   guildId:"guild", channelIds:["autre"], allowedRoleIds:[]
 }), /salon/);
-assert.match(helpers.planningAuthorizationError(baseInteraction, {
+assert.match(helpers.commandAuthorizationError(baseInteraction, {
   guildId:"guild", channelIds:["channel"], allowedRoleIds:["officier"]
 }), /rôle/);
-assert.equal(helpers.planningAuthorizationError({
+assert.equal(helpers.commandAuthorizationError({
   ...baseInteraction,
   member:{ roles:["officier"], permissions:"0" }
 }, {
   guildId:"guild", channelIds:["channel"], allowedRoleIds:["officier"]
 }), "");
-assert.equal(helpers.planningAuthorizationError({
+assert.equal(helpers.commandAuthorizationError({
   ...baseInteraction,
   member:{ roles:[], permissions:"32" }
 }, {
@@ -85,20 +89,20 @@ assert.equal(helpers.planningAuthorizationError({
 
 /* Plusieurs salons peuvent recevoir la commande : chacun doit être accepté,
    et un salon absent de la liste reste refusé. */
-assert.equal(helpers.planningAuthorizationError(baseInteraction, {
+assert.equal(helpers.commandAuthorizationError(baseInteraction, {
   guildId:"guild", channelIds:["salon-2", "channel"], allowedRoleIds:[]
 }), "", "un salon ajouté à la liste garde l'accès");
-assert.equal(helpers.planningAuthorizationError({
+assert.equal(helpers.commandAuthorizationError({
   ...baseInteraction, channel_id:"salon-2"
 }, {
   guildId:"guild", channelIds:["channel", "salon-2"], allowedRoleIds:[]
 }), "", "le second salon configuré est autorisé");
-assert.match(helpers.planningAuthorizationError({
+assert.match(helpers.commandAuthorizationError({
   ...baseInteraction, channel_id:"salon-3"
 }, {
   guildId:"guild", channelIds:["channel", "salon-2"], allowedRoleIds:[]
 }), /salon/, "un salon hors liste reste refusé");
-assert.match(helpers.planningAuthorizationError(baseInteraction, {
+assert.match(helpers.commandAuthorizationError(baseInteraction, {
   guildId:"guild", channelIds:[], allowedRoleIds:[]
 }), /configurée/, "aucun salon configuré bloque la commande");
 
@@ -125,8 +129,12 @@ const edgeSource = fs.readFileSync(path.join(
   /X-Signature-Timestamp/,
   /nacl\.sign\.detached\.verify/,
   /interaction\.type === 1/,
-  /interaction\.data\?\.name !== "planning"/,
-  /EdgeRuntime\.waitUntil\(generateAndPublishPlanning/,
+  /commandName !== "planning" && commandName !== "run"/,
+  /publishBossRunReminder/,
+  /boss-reminder\.js/,
+  /reminderMessage\(bossWeekLabel\(weekStart\), missingMembers\)/,
+  /EdgeRuntime\.waitUntil\(commandName === "run"/,
+  /generateAndPublishPlanning\(interaction, config\)\)/,
   /return jsonResponse\(\{ type:5 \}\)/,
   /rpc\/claim_discord_planning_request/,
   /parseIdList\(Deno\.env\.get\("DISCORD_PLANNING_CHANNEL_ID"\)\)/,
@@ -149,6 +157,10 @@ assert.doesNotMatch(edgeSource, /DISCORD_WEBHOOK_URL|DISCORD_BOT_TOKEN/,
   "la fonction n'a besoin ni du webhook historique ni du token Bot");
 assert.doesNotMatch(edgeSource, /application\/pdf|generateAvailabilityPdf/,
   "la commande /planning ne doit plus générer ni joindre de PDF");
+assert.doesNotMatch(edgeSource, /Boss de confr|runs? restante/,
+  "/run doit reprendre le texte du module partagé, jamais une copie locale");
+assert.match(edgeSource, /p_scope:commandName \+ ":" \+ config\.guildId/,
+  "chaque commande garde son propre délai : /run ne doit pas bloquer /planning");
 
 const fontSource = fs.readFileSync(path.join(
   ROOT, "supabase", "functions", "_shared", "availability-font.js"
@@ -171,16 +183,18 @@ async function testRegistrationCreatesWithoutReplacing() {
   const request = async (url, init) => {
     calls.push({ url, init });
     if(init.method === "GET") return new Response("[]", { status:200 });
-    return new Response(JSON.stringify({ id:"new", name:"planning" }), { status:201 });
+    return new Response(JSON.stringify({ id:"new" }), { status:201 });
   };
-  const result = await registerPlanningCommand({
+  const results = await registerGuildCommands({
     request, applicationId:"app", guildId:"guild", token:"secret"
   });
-  assert.equal(result.action, "created");
-  assert.deepStrictEqual(calls.map(call => call.init.method), ["GET", "POST"]);
+  assert.deepStrictEqual(results.map(result => result.name), ["planning", "run"]);
+  assert.deepStrictEqual(results.map(result => result.action), ["created", "created"]);
+  assert.deepStrictEqual(calls.map(call => call.init.method), ["GET", "POST", "POST"]);
   assert.doesNotMatch(calls[1].url, /\/commands\//);
   assert.equal(calls[1].init.headers.Authorization, "Bot secret");
   assert.deepStrictEqual(JSON.parse(calls[1].init.body), helpers.planningCommandDefinition());
+  assert.deepStrictEqual(JSON.parse(calls[2].init.body), helpers.runCommandDefinition());
 }
 
 function assertPng(png, expectedHeight) {
@@ -214,12 +228,14 @@ async function testRegistrationUpdatesExisting() {
     }
     return new Response(JSON.stringify({ id:"planning-id", name:"planning" }), { status:200 });
   };
-  const result = await registerPlanningCommand({
+  const results = await registerGuildCommands({
     request, applicationId:"app", guildId:"guild", token:"secret"
   });
-  assert.equal(result.action, "updated");
-  assert.deepStrictEqual(calls.map(call => call.init.method), ["GET", "PATCH"]);
+  assert.deepStrictEqual(results.map(result => result.action), ["updated", "created"]);
+  assert.deepStrictEqual(calls.map(call => call.init.method), ["GET", "PATCH", "POST"]);
   assert.match(calls[1].url, /\/commands\/planning-id$/);
+  assert.doesNotMatch(calls[2].url, /\/commands\//,
+    "/run n'existe pas encore : elle doit être créée, pas modifiée");
   assert.equal(calls.some(call => call.init.method === "PUT"), false,
     "PUT remplacerait toutes les commandes de l'application");
 }

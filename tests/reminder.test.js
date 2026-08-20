@@ -4,7 +4,8 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const path = require("node:path");
 const {
-  isReminderWindow, currentBossWeekStart, missingRuns, reminderMessage
+  isReminderWindow, currentBossWeekStart, missingRuns, reminderMessage,
+  bossWeekLabel
 } = require("../scripts/reminder-core.js");
 const reminderLogs = [];
 const originalConsoleLog = console.log;
@@ -21,6 +22,37 @@ assert.deepStrictEqual(
   [],
   "Importer le collecteur ne doit déclencher ni rappel ni message"
 );
+
+/* Le cron du dimanche et la commande /run doivent partager le MÊME module :
+   une copie divergerait au premier changement de formulation du rappel. */
+{
+  const partage = require("../supabase/functions/_shared/boss-reminder.js");
+  assert.strictEqual(
+    require("../scripts/reminder-core.js"),
+    partage,
+    "scripts/reminder-core.js doit réexporter le module partagé"
+  );
+  assert.equal(
+    typeof partage.collectReminderData,
+    "function",
+    "la collecte Supabase doit vivre dans le module partagé, pas dans le script Node"
+  );
+  assert.strictEqual(
+    collectReminderData,
+    partage.collectReminderData,
+    "le script Node doit réexporter la collecte partagée"
+  );
+}
+
+/* Le libellé de semaine vit dans le module partagé : affiché à un autre
+   endroit, il produirait sinon un texte différent de celui du dimanche. */
+{
+  assert.ok(
+    bossWeekLabel("2026-07-20").startsWith("semaine du 20 "),
+    "libellé inattendu : " + bossWeekLabel("2026-07-20")
+  );
+  assert.ok(bossWeekLabel("2026-08-17").startsWith("semaine du 17 "));
+}
 
 /* Fenêtre : le DIMANCHE, quelle que soit l'heure de Paris.
 

@@ -7,7 +7,7 @@
     "test": "node scripts/lancer-tests.js",
     "test:unit": "node scripts/lancer-tests.js unit",
     "test:e2e": "node scripts/lancer-tests.js e2e",
-    "discord:register-planning": "node scripts/register-discord-planning.js",
+    "discord:register": "node scripts/register-discord-planning.js",
     "test:stats-builds-lot1": "python -m unittest tests/test_generate_stats_build.py && python scripts/generate-stats-build.py --check && node tests/stats-build.test.js && node tests/stats-build-catalog.test.js && node tests/stats-build-schema.test.js && node tests/pwa.test.js && node tests/potentiel-commun.playwright.js && node tests/supabase-etape1.playwright.js && node tests/accessibilite-mobile.playwright.js && node tests/pwa-update.playwright.js"
   },
   "keywords": [],
