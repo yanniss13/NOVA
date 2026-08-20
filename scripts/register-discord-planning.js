@@ -1,11 +1,12 @@
 "use strict";
 
-/* Enregistre `/planning` dans UN serveur Discord sans remplacer les autres
-   commandes de l'application. Le token Bot ne sert qu'à cette opération
-   administrative et ne doit jamais rejoindre le dépôt ni Supabase. */
+/* Enregistre les commandes NOVA (`/planning` et `/run`) dans UN serveur Discord
+   sans remplacer les autres commandes de l'application. Le token Bot ne sert
+   qu'à cette opération administrative et ne doit jamais rejoindre le dépôt ni
+   Supabase. */
 
 const {
-  DISCORD_API, planningCommandDefinition
+  DISCORD_API, guildCommandDefinitions
 } = require("../supabase/functions/_shared/discord-planning.js");
 
 async function discordApi(request, url, token, init) {
@@ -22,7 +23,7 @@ async function discordApi(request, url, token, init) {
   return text ? JSON.parse(text) : null;
 }
 
-async function registerPlanningCommand(options) {
+async function registerGuildCommands(options) {
   const config = options || {};
   const request = config.request || fetch;
   const applicationId = config.applicationId || process.env.DISCORD_APPLICATION_ID;
@@ -40,24 +41,38 @@ async function registerPlanningCommand(options) {
   const collectionUrl = DISCORD_API + "/applications/"
     + encodeURIComponent(applicationId) + "/guilds/" + encodeURIComponent(guildId)
     + "/commands";
+  /* Un seul GET pour toutes les commandes : chacune est ensuite créée ou mise à
+     jour individuellement. Le PUT global, lui, effacerait les commandes de
+     l'application qui ne figurent pas dans cette liste. */
   const commands = await discordApi(request, collectionUrl, token, { method:"GET" });
-  const existing = (commands || []).find(command => command.name === "planning");
-  const command = planningCommandDefinition();
-  const url = existing ? collectionUrl + "/" + encodeURIComponent(existing.id) : collectionUrl;
-  const method = existing ? "PATCH" : "POST";
-  const saved = await discordApi(request, url, token, {
-    method,
-    body:JSON.stringify(command)
-  });
-  return { action:existing ? "updated" : "created", command:saved };
+  const results = [];
+  for(const command of guildCommandDefinitions()){
+    const existing = (commands || []).find(known => known.name === command.name);
+    const url = existing
+      ? collectionUrl + "/" + encodeURIComponent(existing.id)
+      : collectionUrl;
+    const saved = await discordApi(request, url, token, {
+      method:existing ? "PATCH" : "POST",
+      body:JSON.stringify(command)
+    });
+    results.push({
+      name:command.name,
+      action:existing ? "updated" : "created",
+      command:saved
+    });
+  }
+  return results;
 }
 
 async function main() {
-  const result = await registerPlanningCommand();
-  console.log(
-    "Commande /planning " + (result.action === "created" ? "créée" : "mise à jour")
-    + " dans le serveur " + process.env.DISCORD_GUILD_ID + "."
-  );
+  const results = await registerGuildCommands();
+  results.forEach(result => {
+    console.log(
+      "Commande /" + result.name + " "
+      + (result.action === "created" ? "créée" : "mise à jour")
+      + " dans le serveur " + process.env.DISCORD_GUILD_ID + "."
+    );
+  });
   console.log(
     "Autorisation de l'application : https://discord.com/oauth2/authorize?client_id="
     + encodeURIComponent(process.env.DISCORD_APPLICATION_ID)
@@ -69,9 +84,9 @@ async function main() {
 
 if(require.main === module){
   main().catch(error => {
-    console.error("Échec de l'enregistrement de /planning : " + error.message);
+    console.error("Échec de l'enregistrement des commandes : " + error.message);
     process.exitCode = 1;
   });
 }
 
-module.exports = { registerPlanningCommand };
+module.exports = { registerGuildCommands };

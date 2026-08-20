@@ -6,6 +6,7 @@ type EdgeSharedGlobal = typeof globalThis & {
   NOVA_AVAILABILITY_FONT?: unknown;
   NOVA_AVAILABILITY_PDF?: unknown;
   NOVA_DISCORD_PLANNING?: unknown;
+  NOVA_BOSS_REMINDER?: unknown;
 };
 
 /* Le déploiement Supabase refuse le media type `.cjs`. Les modules partagés
@@ -16,8 +17,10 @@ edgeSharedGlobal.Buffer = Buffer;
 await import("../_shared/availability-font.js");
 await import("../_shared/availability-pdf.js");
 await import("../_shared/discord-planning.js");
+await import("../_shared/boss-reminder.js");
 const availabilityPdfModule = edgeSharedGlobal.NOVA_AVAILABILITY_PDF;
 const planningHelpersModule = edgeSharedGlobal.NOVA_DISCORD_PLANNING;
+const bossReminderModule = edgeSharedGlobal.NOVA_BOSS_REMINDER;
 
 declare const EdgeRuntime: {
   waitUntil(promise: Promise<unknown>): void;
@@ -66,14 +69,14 @@ const {
 
 const {
   parseIdList,
-  planningAuthorizationError,
+  commandAuthorizationError,
   isFreshDiscordTimestamp,
   hexToUint8Array,
   originalInteractionUrl,
   ephemeralInteractionMessage
 } = planningHelpersModule as {
   parseIdList(value?: string): string[];
-  planningAuthorizationError(
+  commandAuthorizationError(
     interaction: DiscordInteraction,
     config: { guildId: string; channelIds: string[]; allowedRoleIds: string[] }
   ): string;
@@ -81,6 +84,24 @@ const {
   hexToUint8Array(value: string): Uint8Array | null;
   originalInteractionUrl(applicationId: string, token: string): string;
   ephemeralInteractionMessage(content: string): unknown;
+};
+
+/* `/run` republie à la demande le rappel que le webhook envoie le dimanche.
+   Le texte vient donc du module partagé avec le cron Node, jamais d'une copie
+   locale qui divergerait à la première reformulation. */
+type MissingMember = { pseudo: string; missing: number };
+const {
+  currentBossWeekStart,
+  bossWeekLabel,
+  collectReminderData,
+  reminderMessage
+} = bossReminderModule as {
+  currentBossWeekStart(now?: Date): string;
+  bossWeekLabel(weekStart: string): string;
+  collectReminderData(
+    request: (pathname: string) => Promise<unknown>, weekStart: string
+  ): Promise<{ missingMembers: MissingMember[] }>;
+  reminderMessage(weekLabel: string, missingMembers: MissingMember[]): string;
 };
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -152,17 +173,20 @@ async function supabaseJson<T>(
   return await response.json() as T;
 }
 
-/* Chaque salon autorisé garde son propre délai : une demande dans l'un
-   n'empêche pas un autre salon de publier son planning. */
+/* Chaque salon garde son propre délai, et chaque commande le sien : une demande
+   dans un salon n'empêche ni les autres salons de répondre, ni `/run` de
+   s'exécuter pendant qu'un planning se génère. */
 async function claimGeneration(
   interaction: DiscordInteraction,
-  config: PlanningConfig
+  config: PlanningConfig,
+  commandName: string,
+  cooldownSeconds: number
 ): Promise<boolean> {
   return await supabaseJson<boolean>(config, "rpc/claim_discord_planning_request", {
     method:"POST",
     body:JSON.stringify({
-      p_scope:config.guildId + ":" + (interaction.channel_id || ""),
-      p_cooldown_seconds:30
+      p_scope:commandName + ":" + config.guildId + ":" + (interaction.channel_id || ""),
+      p_cooldown_seconds:cooldownSeconds
     })
   });
 }
@@ -236,7 +260,7 @@ async function generateAndPublishPlanning(
   config: PlanningConfig
 ): Promise<void> {
   try {
-    if(!await claimGeneration(interaction, config)){
+    if(!await claimGeneration(interaction, config, "planning", 30)){
       await editOriginalText(
         interaction,
         "⏳ Un planning vient déjà d'être demandé. Réessaie dans quelques secondes."
@@ -278,6 +302,43 @@ async function generateAndPublishPlanning(
   }
 }
 
+/* Trois lectures Supabase avant de pouvoir répondre : la réponse différée reste
+   nécessaire, Discord n'accorde que trois secondes. Le délai anti-spam est plus
+   court que celui du planning — il s'agit de texte, pas de deux images à
+   dessiner. */
+async function publishBossRunReminder(
+  interaction: DiscordInteraction,
+  config: PlanningConfig
+): Promise<void> {
+  try {
+    if(!await claimGeneration(interaction, config, "run", 10)){
+      await editOriginalText(
+        interaction,
+        "⏳ Un rappel vient déjà d'être affiché. Réessaie dans quelques secondes."
+      );
+      return;
+    }
+
+    const weekStart = currentBossWeekStart(new Date());
+    const { missingMembers } = await collectReminderData(
+      pathname => supabaseJson<unknown>(config, pathname), weekStart
+    );
+    await editOriginalText(
+      interaction, reminderMessage(bossWeekLabel(weekStart), missingMembers)
+    );
+  } catch (error) {
+    console.error("Échec de /run", error);
+    try {
+      await editOriginalText(
+        interaction,
+        "❌ Le rappel n'a pas pu être affiché. Un administrateur peut consulter les logs Supabase."
+      );
+    } catch (editError) {
+      console.error("Impossible de publier l'erreur Discord", editError);
+    }
+  }
+}
+
 Deno.serve(async request => {
   if(request.method !== "POST"){
     return jsonResponse({ error:"Méthode non autorisée" }, 405);
@@ -301,10 +362,12 @@ Deno.serve(async request => {
   }
 
   if(interaction.type === 1) return jsonResponse({ type:1 });
-  if(interaction.type !== 2 || interaction.data?.name !== "planning"){
+  const commandName = interaction.data?.name || "";
+  if(interaction.type !== 2
+    || (commandName !== "planning" && commandName !== "run")){
     return jsonResponse(ephemeralInteractionMessage("Commande Discord inconnue."));
   }
-  const authorizationError = planningAuthorizationError(interaction, config);
+  const authorizationError = commandAuthorizationError(interaction, config);
   if(authorizationError){
     return jsonResponse(ephemeralInteractionMessage(authorizationError));
   }
@@ -315,6 +378,8 @@ Deno.serve(async request => {
   /* Discord exige une première réponse en moins de trois secondes. La réponse
      différée (type 5) crée le message d'attente ; les images remplacent ensuite ce
      message dans la tâche de fond gardée en vie par Supabase. */
-  EdgeRuntime.waitUntil(generateAndPublishPlanning(interaction, config));
+  EdgeRuntime.waitUntil(commandName === "run"
+    ? publishBossRunReminder(interaction, config)
+    : generateAndPublishPlanning(interaction, config));
   return jsonResponse({ type:5 });
 });

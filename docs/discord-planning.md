@@ -1,6 +1,19 @@
-# Activer la commande Discord `/planning`
+# Activer les commandes Discord `/planning` et `/run`
 
-La commande génère à la demande deux images PNG affichées directement dans
+Les deux commandes vivent dans la même Edge Function, parce que Discord envoie
+toutes les interactions d'une application vers une seule URL. Elles partagent
+donc le serveur, les salons et les rôles autorisés.
+
+`/run` republie à la demande le rappel que le webhook envoie le dimanche : la
+liste des membres sous 3/3 runs avant le reset du lundi 9h. Le texte sort du
+module partagé `supabase/functions/_shared/boss-reminder.js`, celui-là même
+qu'utilise le cron GitHub Actions — les deux ne peuvent donc pas diverger.
+Contrairement au rappel automatique, `/run` répond n'importe quel jour ; en
+début de semaine, tout le monde apparaît logiquement à 0/3.
+
+## La commande `/planning`
+
+Elle génère à la demande deux images PNG affichées directement dans
 Discord : la grille agrégée des 168 heures de la semaine ISO avec les meilleurs
 créneaux, puis le détail écrit par membre. Le message invite aussi les joueurs à
 ouvrir directement la page Disponibilités de NOVA. Elle répond dans les salons
@@ -90,7 +103,7 @@ La mettre dans **General Information → Interactions Endpoint URL** de
 l'application Discord. Discord envoie un PING signé ; l'enregistrement réussit
 uniquement si la fonction et `DISCORD_PUBLIC_KEY` sont corrects.
 
-## 4. Enregistrer `/planning` dans le serveur
+## 4. Enregistrer les commandes dans le serveur
 
 Dans un terminal local, définir temporairement ces trois variables :
 
@@ -98,13 +111,14 @@ Dans un terminal local, définir temporairement ces trois variables :
 $env:DISCORD_APPLICATION_ID = "<application-id>"
 $env:DISCORD_GUILD_ID = "<id-du-serveur>"
 $env:DISCORD_BOT_TOKEN = "<token-bot>"
-npm run discord:register-planning
+npm run discord:register
 Remove-Item Env:DISCORD_BOT_TOKEN
 ```
 
-Le script crée la commande ou met à jour celle qui existe déjà, sans remplacer
-les autres commandes de l'application. Il affiche aussi le lien d'autorisation
-`applications.commands` à ouvrir pour installer l'application dans le serveur.
+Le script traite `/planning` puis `/run` : il crée celles qui manquent et met à
+jour celles qui existent déjà, sans toucher aux autres commandes de
+l'application. Il affiche aussi le lien d'autorisation `applications.commands`
+à ouvrir pour installer l'application dans le serveur.
 
 ## 5. Vérification
 
@@ -117,12 +131,18 @@ remplacé par :
 - un bouton **NOVA - Renseigner mes créneaux** ouvrant directement
   `https://yanniss13.github.io/NOVA/#availability`.
 
+Puis `/run` dans le même salon. Le message d'attente doit être remplacé par la
+liste des membres sous 3/3 runs, ou par `✅ tout le monde est à 3/3` — exactement
+le texte que le salon reçoit le dimanche.
+
 En cas d'échec, la commande affiche un message neutre. Le détail technique est
 visible dans **Supabase → Edge Functions → discord-planning → Logs**.
 
 ## Retour arrière
 
-Supprimer la commande dans le portail Discord ou retirer l'Interactions
-Endpoint URL suffit à la désactiver. La fonction peut ensuite être supprimée
+Supprimer les commandes dans le portail Discord ou retirer l'Interactions
+Endpoint URL suffit à les désactiver — le rappel automatique du dimanche, lui,
+continue de partir : il passe par GitHub Actions et le webhook, sans jamais
+toucher à l'Edge Function. La fonction peut ensuite être supprimée
 avec `supabase functions delete discord-planning`. La petite table privée de
 délai est sans effet sur le site et peut rester en place.

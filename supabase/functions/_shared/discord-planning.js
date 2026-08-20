@@ -12,8 +12,23 @@ function planningCommandDefinition() {
   };
 }
 
+/* L'ordre fait foi : c'est celui dans lequel le script d'enregistrement crée
+   ou met à jour les commandes du serveur. */
+function guildCommandDefinitions() {
+  return [planningCommandDefinition(), runCommandDefinition()];
+}
+
 /* Les salons comme les rôles arrivent en une chaîne séparée par des
    virgules : un seul identifiant reste valide, plusieurs se cumulent. */
+/* Rappel à la demande, avec le texte que le webhook publie le dimanche. */
+function runCommandDefinition() {
+  return {
+    name:"run",
+    description:"Affiche les runs de boss restantes avant le reset de lundi",
+    type:1
+  };
+}
+
 function parseIdList(value) {
   return String(value || "")
     .split(",")
@@ -32,18 +47,19 @@ function hasManagementPermission(value) {
 }
 
 /* Renvoie un message utilisateur, ou une chaîne vide quand l'interaction est
-   autorisée. Le serveur et au moins un salon sont obligatoires : les
-   images contiennent les disponibilités nominatives de toute la confrérie. */
-function planningAuthorizationError(interaction, config) {
+   autorisée. Vaut pour `/planning` comme pour `/run` : le serveur et au moins
+   un salon sont obligatoires, car les deux commandes nomment les membres de la
+   confrérie — disponibilités pour l'une, runs manquantes pour l'autre. */
+function commandAuthorizationError(interaction, config) {
   const allowedChannels = config.channelIds || [];
   if(!config.guildId || !allowedChannels.length){
-    return "La commande /planning n'est pas encore configurée par l'administrateur.";
+    return "Les commandes NOVA ne sont pas encore configurées par l'administrateur.";
   }
   if(!interaction || interaction.guild_id !== config.guildId){
     return "Cette commande n'est pas autorisée sur ce serveur.";
   }
   if(!allowedChannels.includes(interaction.channel_id)){
-    return "Utilise /planning dans un salon Discord configuré pour les disponibilités.";
+    return "Utilise cette commande dans un salon Discord configuré pour la confrérie.";
   }
 
   const allowedRoles = config.allowedRoleIds || [];
@@ -52,7 +68,7 @@ function planningAuthorizationError(interaction, config) {
   const memberRoles = new Set(member.roles || []);
   if(allowedRoles.some(role => memberRoles.has(role))) return "";
   if(hasManagementPermission(member.permissions)) return "";
-  return "Tu n'as pas le rôle Discord requis pour générer ce planning.";
+  return "Tu n'as pas le rôle Discord requis pour lancer cette commande.";
 }
 
 function isFreshDiscordTimestamp(value, nowMs, toleranceMs) {
@@ -93,9 +109,11 @@ function ephemeralInteractionMessage(content) {
 const discordPlanningApi = {
   DISCORD_API,
   planningCommandDefinition,
+  runCommandDefinition,
+  guildCommandDefinitions,
   parseIdList,
   hasManagementPermission,
-  planningAuthorizationError,
+  commandAuthorizationError,
   isFreshDiscordTimestamp,
   hexToUint8Array,
   originalInteractionUrl,

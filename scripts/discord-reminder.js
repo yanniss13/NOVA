@@ -5,7 +5,8 @@
    GitHub) et relance sur le webhook Discord les membres sous 3/3 runs de la
    semaine. Ni la clé ni le webhook n'apparaissent dans le site public. */
 const {
-  isReminderWindow, currentBossWeekStart, missingRuns, reminderMessage
+  isReminderWindow, currentBossWeekStart, reminderMessage,
+  bossWeekLabel, collectReminderData
 } = require("./reminder-core.js");
 
 /* L'URL du projet n'est pas un secret : elle est servie à tous les visiteurs
@@ -35,25 +36,6 @@ async function sb(pathname, opts) {
   }, opts || {}));
   if (!res.ok) throw new Error(pathname + " -> " + res.status + " " + await res.text());
   return res.status === 204 ? null : res.json();
-}
-
-async function collectReminderData(request, weekStart) {
-  const sessions = await request(
-    "boss_sessions?week_start=eq." + weekStart + "&select=id"
-  );
-  const profiles = await request("profiles?select=id,pseudo");
-  const ids = (sessions || []).map(session => session.id);
-  const memberships = ids.length
-    ? await request(
-      "boss_participation?select=owner&session_id=in.(" + ids.join(",") + ")"
-    )
-    : [];
-  return {
-    sessions:sessions || [],
-    profiles:profiles || [],
-    memberships:memberships || [],
-    missingMembers:missingRuns(profiles || [], memberships || [])
-  };
 }
 
 // Envoi brut sur le webhook. `allowed_mentions` vide : jamais de @everyone.
@@ -107,9 +89,7 @@ async function main() {
   const weekStart = currentBossWeekStart(now);
   const { missingMembers } = await collectReminderData(sb, weekStart);
 
-  const weekLabel = "semaine du " + new Date(weekStart + "T00:00:00Z")
-    .toLocaleDateString("fr-FR", { day: "numeric", month: "short", timeZone: "UTC" });
-  const content = reminderMessage(weekLabel, missingMembers);
+  const content = reminderMessage(bossWeekLabel(weekStart), missingMembers);
 
   if (!await postToDiscord(content)) {
     process.exitCode = 1;
