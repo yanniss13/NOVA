@@ -133,8 +133,8 @@
       ? String(Math.round(t / etat.dureeImage))
       : String(Math.round(t * etat.cadence));
     $("cadence").textContent = etat.dureeImage
-      ? (1 / etat.dureeImage).toFixed(2) + " img/s"
-      : "lance la vidéo une seconde pour la mesurer";
+      ? (1 / etat.dureeImage).toFixed(0) + " img/s"
+      : "—";
     $("sortieDebut").textContent =
       etat.secondeDebut === null ? "—" : etat.secondeDebut.toFixed(3);
     $("sortieFin").textContent =
