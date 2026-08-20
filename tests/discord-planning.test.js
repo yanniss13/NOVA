@@ -48,7 +48,7 @@ assert.deepStrictEqual(sampleAvailabilityReport.best.slice(0, 2), [
 ]);
 assert.deepStrictEqual(pdfShared.memberDayIntervals(maskA, 0), [{ start:18, end:21 }]);
 
-assert.deepStrictEqual(helpers.parseAllowedRoles(" a, b ,,a "), ["a", "b", "a"]);
+assert.deepStrictEqual(helpers.parseIdList(" a, b ,,a "), ["a", "b", "a"]);
 assert.equal(helpers.hasManagementPermission("8"), true, "Administrator");
 assert.equal(helpers.hasManagementPermission("32"), true, "Manage Guild");
 assert.equal(helpers.hasManagementPermission("0"), false);
@@ -59,29 +59,48 @@ const baseInteraction = {
   member:{ roles:["member"], permissions:"0" }
 };
 assert.equal(helpers.planningAuthorizationError(baseInteraction, {
-  guildId:"guild", channelId:"channel", allowedRoleIds:[]
+  guildId:"guild", channelIds:["channel"], allowedRoleIds:[]
 }), "");
 assert.match(helpers.planningAuthorizationError(baseInteraction, {
-  guildId:"autre", channelId:"channel", allowedRoleIds:[]
+  guildId:"autre", channelIds:["channel"], allowedRoleIds:[]
 }), /serveur/);
 assert.match(helpers.planningAuthorizationError(baseInteraction, {
-  guildId:"guild", channelId:"autre", allowedRoleIds:[]
+  guildId:"guild", channelIds:["autre"], allowedRoleIds:[]
 }), /salon/);
 assert.match(helpers.planningAuthorizationError(baseInteraction, {
-  guildId:"guild", channelId:"channel", allowedRoleIds:["officier"]
+  guildId:"guild", channelIds:["channel"], allowedRoleIds:["officier"]
 }), /rôle/);
 assert.equal(helpers.planningAuthorizationError({
   ...baseInteraction,
   member:{ roles:["officier"], permissions:"0" }
 }, {
-  guildId:"guild", channelId:"channel", allowedRoleIds:["officier"]
+  guildId:"guild", channelIds:["channel"], allowedRoleIds:["officier"]
 }), "");
 assert.equal(helpers.planningAuthorizationError({
   ...baseInteraction,
   member:{ roles:[], permissions:"32" }
 }, {
-  guildId:"guild", channelId:"channel", allowedRoleIds:["officier"]
+  guildId:"guild", channelIds:["channel"], allowedRoleIds:["officier"]
 }), "", "un membre qui gère le serveur garde l'accès");
+
+/* Plusieurs salons peuvent recevoir la commande : chacun doit être accepté,
+   et un salon absent de la liste reste refusé. */
+assert.equal(helpers.planningAuthorizationError(baseInteraction, {
+  guildId:"guild", channelIds:["salon-2", "channel"], allowedRoleIds:[]
+}), "", "un salon ajouté à la liste garde l'accès");
+assert.equal(helpers.planningAuthorizationError({
+  ...baseInteraction, channel_id:"salon-2"
+}, {
+  guildId:"guild", channelIds:["channel", "salon-2"], allowedRoleIds:[]
+}), "", "le second salon configuré est autorisé");
+assert.match(helpers.planningAuthorizationError({
+  ...baseInteraction, channel_id:"salon-3"
+}, {
+  guildId:"guild", channelIds:["channel", "salon-2"], allowedRoleIds:[]
+}), /salon/, "un salon hors liste reste refusé");
+assert.match(helpers.planningAuthorizationError(baseInteraction, {
+  guildId:"guild", channelIds:[], allowedRoleIds:[]
+}), /configurée/, "aucun salon configuré bloque la commande");
 
 const now = Date.UTC(2026, 7, 20, 12, 0, 0);
 assert.equal(helpers.isFreshDiscordTimestamp(String(now / 1000), now), true);
@@ -110,6 +129,8 @@ const edgeSource = fs.readFileSync(path.join(
   /EdgeRuntime\.waitUntil\(generateAndPublishPlanning/,
   /return jsonResponse\(\{ type:5 \}\)/,
   /rpc\/claim_discord_planning_request/,
+  /parseIdList\(Deno\.env\.get\("DISCORD_PLANNING_CHANNEL_ID"\)\)/,
+  /config\.guildId \+ ":" \+ \(interaction\.channel_id/,
   /availability-font\.js/,
   /member_availability\?week_start=eq\./,
   /generateAvailabilityTablePng\(report\)/,

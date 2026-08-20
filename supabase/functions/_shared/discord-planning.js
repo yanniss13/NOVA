@@ -12,10 +12,12 @@ function planningCommandDefinition() {
   };
 }
 
-function parseAllowedRoles(value) {
+/* Les salons comme les rôles arrivent en une chaîne séparée par des
+   virgules : un seul identifiant reste valide, plusieurs se cumulent. */
+function parseIdList(value) {
   return String(value || "")
     .split(",")
-    .map(role => role.trim())
+    .map(identifiant => identifiant.trim())
     .filter(Boolean);
 }
 
@@ -30,17 +32,18 @@ function hasManagementPermission(value) {
 }
 
 /* Renvoie un message utilisateur, ou une chaîne vide quand l'interaction est
-   autorisée. Le serveur et le salon sont obligatoires : les images contiennent les
-   disponibilités nominatives de toute la confrérie. */
+   autorisée. Le serveur et au moins un salon sont obligatoires : les
+   images contiennent les disponibilités nominatives de toute la confrérie. */
 function planningAuthorizationError(interaction, config) {
-  if(!config.guildId || !config.channelId){
+  const allowedChannels = config.channelIds || [];
+  if(!config.guildId || !allowedChannels.length){
     return "La commande /planning n'est pas encore configurée par l'administrateur.";
   }
   if(!interaction || interaction.guild_id !== config.guildId){
     return "Cette commande n'est pas autorisée sur ce serveur.";
   }
-  if(interaction.channel_id !== config.channelId){
-    return "Utilise /planning dans le salon Discord configuré pour les disponibilités.";
+  if(!allowedChannels.includes(interaction.channel_id)){
+    return "Utilise /planning dans un salon Discord configuré pour les disponibilités.";
   }
 
   const allowedRoles = config.allowedRoleIds || [];
@@ -90,7 +93,7 @@ function ephemeralInteractionMessage(content) {
 const discordPlanningApi = {
   DISCORD_API,
   planningCommandDefinition,
-  parseAllowedRoles,
+  parseIdList,
   hasManagementPermission,
   planningAuthorizationError,
   isFreshDiscordTimestamp,

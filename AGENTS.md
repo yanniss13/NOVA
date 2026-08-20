@@ -1173,14 +1173,15 @@ le SQL Editor afin d'ajouter les tables à la publication
   message texte et ne génère aucun planning : les joueurs le demandent avec
   `/planning` quand ils en ont besoin.
 - **Commande Discord `/planning`** : `supabase/functions/discord-planning/index.ts`
-  vérifie la signature Ed25519 de Discord, limite la commande au serveur et au
-  salon configurés, répond immédiatement en différé, puis génère deux images
+  vérifie la signature Ed25519 de Discord, limite la commande au serveur et aux
+  salons configurés (`DISCORD_PLANNING_CHANNEL_ID` accepte une liste séparée
+  par des virgules), répond immédiatement en différé, puis génère deux images
   PNG : le tableau hebdomadaire et les créneaux écrits par membre. Le message
   contient un lien direct vers la page Disponibilités de NOVA. Le générateur
   partagé est `supabase/functions/_shared/availability-pdf.js`, utilisé côté
   Node via `scripts/availability-pdf.js`. La RPC
   `claim_discord_planning_request` impose un délai
-  atomique de 30 secondes. Le token Bot sert uniquement à enregistrer la
+  atomique de 30 secondes par salon. Le token Bot sert uniquement à enregistrer la
   commande avec `npm run discord:register-planning` et ne doit jamais être
   stocké dans Supabase ou le dépôt. Procédure : `docs/discord-planning.md`.
   Voir `docs/superpowers/specs/2026-07-25-boss-trois-runs-design.md`.
