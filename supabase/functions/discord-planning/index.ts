@@ -36,7 +36,7 @@ type DiscordInteraction = {
 type PlanningConfig = {
   publicKey: string;
   guildId: string;
-  channelId: string;
+  channelIds: string[];
   allowedRoleIds: string[];
   supabaseUrl: string;
   serviceRoleKey: string;
@@ -65,17 +65,17 @@ const {
 };
 
 const {
-  parseAllowedRoles,
+  parseIdList,
   planningAuthorizationError,
   isFreshDiscordTimestamp,
   hexToUint8Array,
   originalInteractionUrl,
   ephemeralInteractionMessage
 } = planningHelpersModule as {
-  parseAllowedRoles(value?: string): string[];
+  parseIdList(value?: string): string[];
   planningAuthorizationError(
     interaction: DiscordInteraction,
-    config: { guildId: string; channelId: string; allowedRoleIds: string[] }
+    config: { guildId: string; channelIds: string[]; allowedRoleIds: string[] }
   ): string;
   isFreshDiscordTimestamp(value: string): boolean;
   hexToUint8Array(value: string): Uint8Array | null;
@@ -94,8 +94,8 @@ function environment(): PlanningConfig {
   return {
     publicKey:Deno.env.get("DISCORD_PUBLIC_KEY") || "",
     guildId:Deno.env.get("DISCORD_GUILD_ID") || "",
-    channelId:Deno.env.get("DISCORD_PLANNING_CHANNEL_ID") || "",
-    allowedRoleIds:parseAllowedRoles(Deno.env.get("DISCORD_PLANNING_ROLE_IDS")),
+    channelIds:parseIdList(Deno.env.get("DISCORD_PLANNING_CHANNEL_ID")),
+    allowedRoleIds:parseIdList(Deno.env.get("DISCORD_PLANNING_ROLE_IDS")),
     supabaseUrl:Deno.env.get("SUPABASE_URL") || "",
     serviceRoleKey:Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || ""
   };
@@ -152,11 +152,16 @@ async function supabaseJson<T>(
   return await response.json() as T;
 }
 
-async function claimGeneration(config: PlanningConfig): Promise<boolean> {
+/* Chaque salon autorisé garde son propre délai : une demande dans l'un
+   n'empêche pas un autre salon de publier son planning. */
+async function claimGeneration(
+  interaction: DiscordInteraction,
+  config: PlanningConfig
+): Promise<boolean> {
   return await supabaseJson<boolean>(config, "rpc/claim_discord_planning_request", {
     method:"POST",
     body:JSON.stringify({
-      p_scope:config.guildId + ":" + config.channelId,
+      p_scope:config.guildId + ":" + (interaction.channel_id || ""),
       p_cooldown_seconds:30
     })
   });
@@ -231,7 +236,7 @@ async function generateAndPublishPlanning(
   config: PlanningConfig
 ): Promise<void> {
   try {
-    if(!await claimGeneration(config)){
+    if(!await claimGeneration(interaction, config)){
       await editOriginalText(
         interaction,
         "⏳ Un planning vient déjà d'être demandé. Réessaie dans quelques secondes."

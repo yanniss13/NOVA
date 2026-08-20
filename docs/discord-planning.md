@@ -3,8 +3,9 @@
 La commande génère à la demande deux images PNG affichées directement dans
 Discord : la grille agrégée des 168 heures de la semaine ISO avec les meilleurs
 créneaux, puis le détail écrit par membre. Le message invite aussi les joueurs à
-ouvrir directement la page Disponibilités de NOVA. Elle répond dans le salon Discord configuré ; GitHub Actions
-n'entre pas dans ce chemin et le rappel du dimanche reste un message texte.
+ouvrir directement la page Disponibilités de NOVA. Elle répond dans les salons
+Discord configurés ; GitHub Actions n'entre pas dans ce chemin et le rappel du
+dimanche reste un message texte.
 
 ## Architecture et sécurité
 
@@ -12,7 +13,8 @@ n'entre pas dans ce chemin et le rappel du dimanche reste un message texte.
 2. La fonction vérifie `X-Signature-Ed25519` et
    `X-Signature-Timestamp`, puis refuse toute requête vieille de plus de cinq
    minutes.
-3. Le serveur et le salon doivent correspondre aux identifiants configurés.
+3. Le serveur doit correspondre à l'identifiant configuré, et le salon
+   d'où part la commande doit figurer parmi les salons autorisés.
    Si `DISCORD_PLANNING_ROLE_IDS` est renseigné, seuls ces rôles et les membres
    qui gèrent le serveur passent.
 4. Discord reçoit immédiatement une réponse différée. La lecture Supabase, la
@@ -41,7 +43,7 @@ Dans <https://discord.com/developers/applications> :
 3. ouvrir **Bot**, créer le bot si nécessaire et générer son token ;
 4. ne placer aucune de ces valeurs dans un fichier du dépôt.
 
-Pour obtenir les identifiants du serveur, du salon et éventuellement des rôles,
+Pour obtenir les identifiants du serveur, des salons et éventuellement des rôles,
 activer le mode développeur dans Discord, puis utiliser **Copier l'identifiant**
 dans leur menu contextuel.
 
@@ -55,6 +57,14 @@ supabase link --project-ref uxouhbgdlolidjmxwgae
 supabase secrets set DISCORD_PUBLIC_KEY=<public-key>
 supabase secrets set DISCORD_GUILD_ID=<id-du-serveur>
 supabase secrets set DISCORD_PLANNING_CHANNEL_ID=<id-du-salon>
+```
+
+`DISCORD_PLANNING_CHANNEL_ID` accepte plusieurs salons séparés par des
+virgules ; la commande répond alors dans chacun d'eux, chaque salon gardant
+son propre délai de trente secondes :
+
+```powershell
+supabase secrets set DISCORD_PLANNING_CHANNEL_ID=<id-salon-1>,<id-salon-2>
 ```
 
 Facultatif, pour limiter la commande à un ou plusieurs rôles (séparés par des
@@ -98,7 +108,7 @@ les autres commandes de l'application. Il affiche aussi le lien d'autorisation
 
 ## 5. Vérification
 
-Dans le salon configuré, lancer `/planning`. Le message d'attente doit être
+Dans un salon configuré, lancer `/planning`. Le message d'attente doit être
 remplacé par :
 
 - le nombre de membres ayant renseigné leurs disponibilités ;
