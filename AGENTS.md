@@ -230,6 +230,10 @@ Site Confrérie 7ds/
 ├─ .github/workflows/boss-reminder.yml # Rappel Discord (secrets propres). Indépendant du déploiement.
 ├─ supabase-config.js      # URL + clé publique publishable (jamais de service_role).
 ├─ supabase/schema.sql     # Tables partagées, RPC boss, RLS et publication Realtime.
+├─ supabase/config.toml    # Configuration locale Supabase de l'Edge Function Discord.
+├─ supabase/functions/
+│  ├─ discord-planning/index.ts # Endpoint signé de la commande Discord `/planning`.
+│  └─ _shared/             # Images de planning et règles Discord partagées/testables depuis Node.
 ├─ supabase/rollback-boss-reports.sql # Retour arrière fonctionnel, non destructif des rapports de boss.
 ├─ package.json            # Scripts de test Node + Playwright (développement uniquement).
 ├─ package-lock.json       # Versions verrouillées des dépendances de test.
@@ -255,6 +259,8 @@ Site Confrérie 7ds/
 │  ├─ telecharger-images.py       # Télécharge les images d'armes/bijoux qui manquent.
 │  ├─ generate-wiki.py            # Régénère wiki-competences.js (compétences FR + passifs).
 │  ├─ discord-reminder.js         # Rappel Discord.
+│  ├─ availability-pdf.js         # Adaptateur Node vers le générateur d'images partagé.
+│  ├─ register-discord-planning.js # Enregistrement administratif de `/planning`.
 │  └─ reminder-core.js            # Sa logique pure.
 ├─ 7ds-ui/                 # Icônes d'UI : mastery/<arme>.webp, role-elements/<el>_<role>.webp,
 │                          # skills/<Nom>.webp (313 icônes de compétences, wiki)
@@ -1163,7 +1169,20 @@ le SQL Editor afin d'ajouter les tables à la publication
   score moyen, dernier score et variation hebdomadaire.
 - Semaine courante = `currentBossWeek()` (lundi 9h Paris le plus récent ≤ maintenant).
 - **Rappel Discord** : dimanche midi Paris (`scripts/discord-reminder.js` + GitHub Actions),
-  liste les membres sous `3/3` et le nombre de runs manquantes.
+  liste les membres sous `3/3` et le nombre de runs manquantes. Il reste un
+  message texte et ne génère aucun planning : les joueurs le demandent avec
+  `/planning` quand ils en ont besoin.
+- **Commande Discord `/planning`** : `supabase/functions/discord-planning/index.ts`
+  vérifie la signature Ed25519 de Discord, limite la commande au serveur et au
+  salon configurés, répond immédiatement en différé, puis génère deux images
+  PNG : le tableau hebdomadaire et les créneaux écrits par membre. Le message
+  contient un lien direct vers la page Disponibilités de NOVA. Le générateur
+  partagé est `supabase/functions/_shared/availability-pdf.js`, utilisé côté
+  Node via `scripts/availability-pdf.js`. La RPC
+  `claim_discord_planning_request` impose un délai
+  atomique de 30 secondes. Le token Bot sert uniquement à enregistrer la
+  commande avec `npm run discord:register-planning` et ne doit jamais être
+  stocké dans Supabase ou le dépôt. Procédure : `docs/discord-planning.md`.
   Voir `docs/superpowers/specs/2026-07-25-boss-trois-runs-design.md`.
 - Après une modification de ce schéma, réexécuter le contenu complet de
   `supabase/schema.sql` dans le SQL Editor Supabase.

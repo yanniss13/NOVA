@@ -10,3 +10,4 @@ debug.log
 .VSCodeCounter/
 *.tmp.py
 *.tmp.js
+supabase/.temp/

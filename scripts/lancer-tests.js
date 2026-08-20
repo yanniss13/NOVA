@@ -48,6 +48,7 @@ const SUITES = {
     "node --test tests/boss-account-retention.test.js",
     "node tests/pwa.test.js",
     "node tests/reminder.test.js",
+    "node tests/discord-planning.test.js",
     "python -m unittest tests/test_generate_armures_liees.py",
     "python -m unittest tests/test_generate_stats.py",
     "python -m unittest tests/test_generate_wiki.py",
