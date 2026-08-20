@@ -157,6 +157,13 @@ async function installConnectedSupabase(page, connected = true){
     await page.setViewportSize({ width:700, height:780 });
     assert.equal(await panel.isHidden(), true,
       "quitter le breakpoint mobile doit normaliser le panneau Plus");
+    /* Le CSS masque le panneau des le redimensionnement, mais aria-expanded
+       est remis a jour par un ecouteur matchMedia, dans une tache ulterieure.
+       Verifier aussitot gagnait la course en local et la perdait sur le
+       runner. Attendre l'attribut ne masque rien : s'il ne changeait jamais,
+       l'attente expirerait et le test echouerait tout autant. */
+    await page.waitForFunction(() =>
+      document.querySelector("#mobileNavMore").getAttribute("aria-expanded") === "false");
     assert.equal(await page.locator("#mobileNavMore").getAttribute("aria-expanded"), "false");
     await page.setViewportSize({ width:390, height:780 });
     assert.equal(await panel.isHidden(), true,
