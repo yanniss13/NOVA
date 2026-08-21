@@ -115,6 +115,14 @@
   <div class="envoi">
     <button type="button" class="btn btn-primary" id="envoyer">Envoyer ma mesure</button>
     <p class="retour" id="retourEnvoi" role="status"></p>
+    <!-- L'outil ne porte pas de formulaire de connexion : il lit la session
+         ouverte sur NOVA, qui partage la même origine. Sans ce lien, un membre
+         déconnecté n'a aucun moyen de savoir où aller. -->
+    <p class="retour-aide">
+      L'envoi demande d'être connecté sur
+      <a href="../index.html" target="_blank" rel="noopener">NOVA</a>.
+      La mesure reste affichée ici en attendant.
+    </p>
   </div>
 </main>
 

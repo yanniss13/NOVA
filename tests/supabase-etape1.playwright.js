@@ -177,6 +177,21 @@ async function ouvrirSessionsDeBoss(page){
     );
     assert.equal(await page.locator("#tab-dashboard").textContent(), "Accueil");
 
+    /* La carte de chronometrage arrive apres le rendu : elle lit un fichier
+       statique, et sans elle aucun membre ne peut trouver outils/. */
+    const carteChrono = page.locator('[data-card="chronometrage"]');
+    await carteChrono.getByRole("link", { name:"Chronométrer une animation" })
+      .waitFor();
+    assert.match(
+      await carteChrono.textContent(),
+      /animations mesurées/,
+      "la carte doit annoncer l'avancement, pas seulement le lien"
+    );
+    assert.equal(
+      await carteChrono.getByRole("link").getAttribute("href"),
+      "outils/chrono-animation.html"
+    );
+
     const authenticatedBossRead = await page.evaluate(async () => {
       const state = window.__fakeSupabaseState;
       const reads = {};

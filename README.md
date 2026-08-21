@@ -11,6 +11,11 @@ NOVA est une PWA communautaire pour **The Seven Deadly Sins: Origin**. Elle réu
 - Team Builder avec armes, armures, bijoux, potentiels et statistiques expliquées.
 - Roster partagé des personnages et des équipes, synchronisé avec Supabase.
 - Analyse des forces de la confrérie par élément et calculateur de dégâts.
+- Classement des builds d'un même héros par DPS des compétences sur 60 s,
+  dans sa fiche du roster.
+- Chronométrage collaboratif des temps d'animation, depuis « Mon suivi ».
+- Commande Discord `/chrono` : avancement du chronométrage et prochaines
+  mesures les plus utiles.
 - Disponibilités hebdomadaires sous forme de grille de 168 créneaux.
 - Deux images du planning visibles dans Discord (tableau hebdomadaire et
   créneaux écrits par membre), générées à la demande avec `/planning`.
@@ -32,7 +37,7 @@ noyau → état → métier pur → données Supabase → vues DOM → app.js
 
 Le détail des responsabilités se trouve dans [js/ARCHITECTURE.md](js/ARCHITECTURE.md).
 
-Le catalogue chiffré `data/stats-build.js` pèse environ 2,4 Mo. Il est chargé à la demande uniquement lorsqu’une vue de calcul, de wiki, d’analyse ou de configuration en a besoin. Après ce premier usage, le service worker peut le servir hors ligne.
+Deux catalogues sont trop lourds pour le démarrage et se chargent à la demande. `data/stats-build.js` pèse environ 2,4 Mo et n’arrive qu’avec une vue de calcul, de wiki, d’analyse ou de configuration. `data/effets-dps.js` pèse environ 1,3 Mo et n’arrive qu’avec la fiche d’un héros qui compte au moins deux builds enregistrés. Après ce premier usage, le service worker peut les servir hors ligne.
 
 ## Lancer le projet
 
@@ -64,6 +69,7 @@ Les fichiers de `7ds-stats/` et `data/` sont produits par les scripts du dossier
 python scripts/generate-stats.py
 python scripts/generate-stats-build.py
 python scripts/generate-wiki.py
+python scripts/generate-effets-dps.py
 ```
 
 La source publique utilisée est `7dsorigin.app`. NOVA est un projet communautaire indépendant, sans affiliation avec Netmarble ou les ayants droit de la licence.
