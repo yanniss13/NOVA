@@ -7,7 +7,7 @@ const ROOT = path.resolve(__dirname, "..");
 const helpers = require("../supabase/functions/_shared/discord-planning.js");
 const pdfFromNode = require("../scripts/availability-pdf.js");
 const pdfShared = require("../supabase/functions/_shared/availability-pdf.js");
-const { registerGuildCommands } = require("../scripts/register-discord-planning.js");
+const { registerPlanningCommand } = require("../scripts/register-discord-planning.js");
 
 assert.deepStrictEqual(helpers.planningCommandDefinition(), {
   name:"planning",
@@ -62,25 +62,25 @@ const baseInteraction = {
   guild_id:"guild", channel_id:"channel",
   member:{ roles:["member"], permissions:"0" }
 };
-assert.equal(helpers.commandAuthorizationError(baseInteraction, {
+assert.equal(helpers.planningAuthorizationError(baseInteraction, {
   guildId:"guild", channelIds:["channel"], allowedRoleIds:[]
 }), "");
-assert.match(helpers.commandAuthorizationError(baseInteraction, {
+assert.match(helpers.planningAuthorizationError(baseInteraction, {
   guildId:"autre", channelIds:["channel"], allowedRoleIds:[]
 }), /serveur/);
-assert.match(helpers.commandAuthorizationError(baseInteraction, {
+assert.match(helpers.planningAuthorizationError(baseInteraction, {
   guildId:"guild", channelIds:["autre"], allowedRoleIds:[]
 }), /salon/);
-assert.match(helpers.commandAuthorizationError(baseInteraction, {
+assert.match(helpers.planningAuthorizationError(baseInteraction, {
   guildId:"guild", channelIds:["channel"], allowedRoleIds:["officier"]
 }), /rôle/);
-assert.equal(helpers.commandAuthorizationError({
+assert.equal(helpers.planningAuthorizationError({
   ...baseInteraction,
   member:{ roles:["officier"], permissions:"0" }
 }, {
   guildId:"guild", channelIds:["channel"], allowedRoleIds:["officier"]
 }), "");
-assert.equal(helpers.commandAuthorizationError({
+assert.equal(helpers.planningAuthorizationError({
   ...baseInteraction,
   member:{ roles:[], permissions:"32" }
 }, {
@@ -89,20 +89,20 @@ assert.equal(helpers.commandAuthorizationError({
 
 /* Plusieurs salons peuvent recevoir la commande : chacun doit être accepté,
    et un salon absent de la liste reste refusé. */
-assert.equal(helpers.commandAuthorizationError(baseInteraction, {
+assert.equal(helpers.planningAuthorizationError(baseInteraction, {
   guildId:"guild", channelIds:["salon-2", "channel"], allowedRoleIds:[]
 }), "", "un salon ajouté à la liste garde l'accès");
-assert.equal(helpers.commandAuthorizationError({
+assert.equal(helpers.planningAuthorizationError({
   ...baseInteraction, channel_id:"salon-2"
 }, {
   guildId:"guild", channelIds:["channel", "salon-2"], allowedRoleIds:[]
 }), "", "le second salon configuré est autorisé");
-assert.match(helpers.commandAuthorizationError({
+assert.match(helpers.planningAuthorizationError({
   ...baseInteraction, channel_id:"salon-3"
 }, {
   guildId:"guild", channelIds:["channel", "salon-2"], allowedRoleIds:[]
 }), /salon/, "un salon hors liste reste refusé");
-assert.match(helpers.commandAuthorizationError(baseInteraction, {
+assert.match(helpers.planningAuthorizationError(baseInteraction, {
   guildId:"guild", channelIds:[], allowedRoleIds:[]
 }), /configurée/, "aucun salon configuré bloque la commande");
 
@@ -121,6 +121,86 @@ assert.deepStrictEqual(helpers.ephemeralInteractionMessage("Refus"), {
   data:{ content:"Refus", flags:64, allowed_mentions:{ parse:[] } }
 });
 
+/* /chrono : le message est une fonction pure, verifiee sans reseau. */
+assert.deepStrictEqual(helpers.chronoCommandDefinition(), {
+  name:"chrono",
+  description:"Où en est le chronométrage des animations, et quoi mesurer",
+  type:1
+});
+assert.ok(helpers.chronoCommandDefinition().description.length <= 100);
+assert.deepStrictEqual(
+  helpers.commandDefinitions().map(commande => commande.name),
+  ["planning", "chrono", "run"]
+);
+
+const avancementExemple = {
+  total:335,
+  mesurees:4,
+  debloquent:151,
+  prochaines:[{
+    gameId:"klotho_staff_normalatk_enchant_ready",
+    heros:"klotho",
+    arme:"Bâton",
+    nom:"Projection dimensionnelle",
+    categorie:"Attaque normale",
+    touche:"clic gauche",
+    role:"debloque"
+  }]
+};
+const messageChrono = helpers.formatChronoMessage(avancementExemple, 7);
+assert.match(messageChrono, /4\/335 mesurées/);
+assert.match(messageChrono, /151 compétences n'ont aucun DPS calculable/);
+assert.match(messageChrono, /7 mesure\(s\) reçue\(s\)/);
+assert.match(messageChrono, /klotho · Bâton · Projection dimensionnelle/);
+assert.match(messageChrono, /attaque normale, clic gauche/);
+
+/* Ne pas pouvoir compter la boite de reception et la trouver vide sont deux
+   informations differentes : la seconde seule s'annonce. */
+assert.doesNotMatch(
+  helpers.formatChronoMessage(avancementExemple, null), /reçue\(s\)/
+);
+assert.doesNotMatch(
+  helpers.formatChronoMessage(avancementExemple, 0), /reçue\(s\)/
+);
+
+assert.match(
+  helpers.formatChronoMessage({ total:335, mesurees:335, prochaines:[] }, 0),
+  /Tout est fait/
+);
+assert.match(helpers.formatChronoMessage(null, null), /indisponible/);
+
+/* Cinq lignes au plus : le fichier en publie cinq, mais le rendu ne doit pas
+   dependre de cette promesse pour rester lisible dans Discord. */
+assert.equal(
+  helpers.formatChronoMessage({
+    total:335, mesurees:0, debloquent:151,
+    prochaines:Array.from({ length:9 }, (_, index) => ({
+      heros:"h"+index, arme:"Hache", nom:"n"+index,
+      categorie:"Attaque normale", touche:"clic gauche"
+    }))
+  }, null).split("\n").filter(ligne => ligne.startsWith("•")).length,
+  5
+);
+
+assert.deepStrictEqual(helpers.chronoInteractionComponents(), [{
+  type:1,
+  components:[{
+    type:2,
+    style:5,
+    label:"NOVA - Chronométrer une animation",
+    url:helpers.NOVA_CHRONO_URL
+  }]
+}]);
+assert.match(helpers.NOVA_CHRONO_URL, /outils\/chrono-animation\.html$/);
+
+/* Le libelle de refus nomme la commande refusee, sinon /chrono renvoie le
+   membre vers /planning. */
+assert.match(
+  helpers.planningAuthorizationError({ guild_id:"g", channel_id:"autre" },
+    { guildId:"g", channelIds:["salon"] }, "chrono"),
+  /Utilise \/chrono/
+);
+
 const edgeSource = fs.readFileSync(path.join(
   ROOT, "supabase", "functions", "discord-planning", "index.ts"
 ), "utf8");
@@ -129,12 +209,18 @@ const edgeSource = fs.readFileSync(path.join(
   /X-Signature-Timestamp/,
   /nacl\.sign\.detached\.verify/,
   /interaction\.type === 1/,
-  /commandName !== "planning" && commandName !== "run"/,
-  /publishBossRunReminder/,
+  /planning:generateAndPublishPlanning/,
+  /chrono:publishChronoProgress/,
+  /run:publishBossRunReminder/,
+  /* Une table de routage indexée par une chaîne venue du réseau : sans cette
+     garde, « constructor » remonterait une fonction héritée d'Object. */
+  /hasOwnProperty\.call\(taches, commandName\)/,
+  /EdgeRuntime\.waitUntil\(tache\(interaction, config\)\)/,
+  /chronometrage-avancement\.json/,
+  /animation_measures\?select=id/,
+  /chronoInteractionComponents\(\)/,
   /boss-reminder\.js/,
   /reminderMessage\(bossWeekLabel\(weekStart\), missingMembers\)/,
-  /EdgeRuntime\.waitUntil\(commandName === "run"/,
-  /generateAndPublishPlanning\(interaction, config\)\)/,
   /return jsonResponse\(\{ type:5 \}\)/,
   /rpc\/claim_discord_planning_request/,
   /parseIdList\(Deno\.env\.get\("DISCORD_PLANNING_CHANNEL_ID"\)\)/,
@@ -159,7 +245,7 @@ assert.doesNotMatch(edgeSource, /application\/pdf|generateAvailabilityPdf/,
   "la commande /planning ne doit plus générer ni joindre de PDF");
 assert.doesNotMatch(edgeSource, /Boss de confr|runs? restante/,
   "/run doit reprendre le texte du module partagé, jamais une copie locale");
-assert.match(edgeSource, /p_scope:commandName \+ ":" \+ config\.guildId/,
+assert.match(edgeSource, /commandName === "planning" \? "" : ":" \+ commandName/,
   "chaque commande garde son propre délai : /run ne doit pas bloquer /planning");
 
 const fontSource = fs.readFileSync(path.join(
@@ -185,16 +271,23 @@ async function testRegistrationCreatesWithoutReplacing() {
     if(init.method === "GET") return new Response("[]", { status:200 });
     return new Response(JSON.stringify({ id:"new" }), { status:201 });
   };
-  const results = await registerGuildCommands({
+  const result = await registerPlanningCommand({
     request, applicationId:"app", guildId:"guild", token:"secret"
   });
-  assert.deepStrictEqual(results.map(result => result.name), ["planning", "run"]);
-  assert.deepStrictEqual(results.map(result => result.action), ["created", "created"]);
-  assert.deepStrictEqual(calls.map(call => call.init.method), ["GET", "POST", "POST"]);
+  assert.equal(result.action, "created");
+  /* Une seule lecture, puis un POST par commande : les trois commandes
+     partagent l'unique endpoint d'interactions de l'application. */
+  assert.deepStrictEqual(
+    calls.map(call => call.init.method), ["GET", "POST", "POST", "POST"]
+  );
+  assert.deepStrictEqual(
+    result.commands.map(commande => commande.name), ["planning", "chrono", "run"]
+  );
   assert.doesNotMatch(calls[1].url, /\/commands\//);
   assert.equal(calls[1].init.headers.Authorization, "Bot secret");
   assert.deepStrictEqual(JSON.parse(calls[1].init.body), helpers.planningCommandDefinition());
-  assert.deepStrictEqual(JSON.parse(calls[2].init.body), helpers.runCommandDefinition());
+  assert.deepStrictEqual(JSON.parse(calls[2].init.body), helpers.chronoCommandDefinition());
+  assert.deepStrictEqual(JSON.parse(calls[3].init.body), helpers.runCommandDefinition());
 }
 
 function assertPng(png, expectedHeight) {
@@ -228,14 +321,21 @@ async function testRegistrationUpdatesExisting() {
     }
     return new Response(JSON.stringify({ id:"planning-id", name:"planning" }), { status:200 });
   };
-  const results = await registerGuildCommands({
+  const result = await registerPlanningCommand({
     request, applicationId:"app", guildId:"guild", token:"secret"
   });
-  assert.deepStrictEqual(results.map(result => result.action), ["updated", "created"]);
-  assert.deepStrictEqual(calls.map(call => call.init.method), ["GET", "PATCH", "POST"]);
+  /* /planning existe déjà, /chrono et /run non : la première est corrigée sur
+     place, les deux autres sont créées, et la commande « autre » d'une autre
+     application du serveur n'est jamais touchée. */
+  assert.equal(result.action, "updated");
+  assert.deepStrictEqual(
+    calls.map(call => call.init.method), ["GET", "PATCH", "POST", "POST"]
+  );
   assert.match(calls[1].url, /\/commands\/planning-id$/);
-  assert.doesNotMatch(calls[2].url, /\/commands\//,
-    "/run n'existe pas encore : elle doit être créée, pas modifiée");
+  assert.doesNotMatch(calls[2].url, /\/commands\//);
+  assert.deepStrictEqual(
+    result.commands.map(commande => commande.action), ["updated", "created", "created"]
+  );
   assert.equal(calls.some(call => call.init.method === "PUT"), false,
     "PUT remplacerait toutes les commandes de l'application");
 }
@@ -245,7 +345,7 @@ Promise.all([
   testRegistrationUpdatesExisting(),
   testAvailabilityImages()
 ]).then(() => {
-  console.log("PASS /planning : autorisation, deux images et lien NOVA");
+  console.log("PASS Discord : /planning en images, /chrono en avancement, autorisation");
 }).catch(error => {
   console.error(error);
   process.exitCode = 1;
