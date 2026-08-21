@@ -207,6 +207,9 @@ const edgeSource = fs.readFileSync(path.join(
   /interaction\.type === 1/,
   /planning:generateAndPublishPlanning/,
   /chrono:publishChronoProgress/,
+  /* Une table de routage indexée par une chaîne venue du réseau : sans cette
+     garde, « constructor » remonterait une fonction héritée d'Object. */
+  /hasOwnProperty\.call\(taches, commandName\)/,
   /EdgeRuntime\.waitUntil\(tache\(interaction, config\)\)/,
   /chronometrage-avancement\.json/,
   /animation_measures\?select=id/,

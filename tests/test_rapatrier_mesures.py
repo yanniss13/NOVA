@@ -57,6 +57,34 @@ class RapatrierMesuresTests(unittest.TestCase):
         self.assertEqual(groupes["bug_axe_jumpatk"][0]["seconds"], 1.2)
         self.assertEqual(MODULE.desaccords(envois), [])
 
+    def test_le_plus_recent_gagne_quel_que_soit_l_ordre_d_arrivee(self):
+        """La requete trie deja par created_at, mais la fonction ne doit pas
+        tenir QUE sous cette condition : appelee autrement, elle retiendrait
+        la mesure corrigee avant la correction."""
+        recente = {"game_id": "x", "owner": "u1", "seconds": 1.2,
+                   "created_at": "2026-08-21T10:00:00Z"}
+        ancienne = {"game_id": "x", "owner": "u1", "seconds": 2.0,
+                    "created_at": "2026-08-20T10:00:00Z"}
+
+        for ordre in ([ancienne, recente], [recente, ancienne]):
+            with self.subTest([envoi["seconds"] for envoi in ordre]):
+                retenus = MODULE.grouper(ordre)["x"]
+                self.assertEqual(len(retenus), 1)
+                self.assertEqual(retenus[0]["seconds"], 1.2)
+
+    def test_un_envoi_sans_date_ne_fait_pas_echouer_le_groupement(self):
+        """Une ligne anterieure a la colonne created_at, ou un export partiel,
+        ne doit pas lever : elle passe simplement pour la plus ancienne."""
+        envois = [
+            {"game_id": "x", "owner": "u1", "seconds": 2.0},
+            {"game_id": "x", "owner": "u1", "seconds": 1.2,
+             "created_at": "2026-08-20T10:00:00Z"},
+        ]
+        retenus = MODULE.grouper(envois)["x"]
+
+        self.assertEqual(len(retenus), 1)
+        self.assertEqual(retenus[0]["seconds"], 1.2)
+
     def test_la_mediane_resiste_a_un_releve_aberrant(self):
         """Une moyenne suivrait le membre qui s'est trompe d'un facteur deux.
         Une mediane ne bouge pas des que deux autres l'encadrent."""

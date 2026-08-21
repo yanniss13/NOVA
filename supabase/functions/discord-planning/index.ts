@@ -45,6 +45,8 @@ type PlanningConfig = {
 type Profile = { id: string; pseudo: string | null };
 type AvailabilityRow = { owner: string; slots: string };
 const NOVA_AVAILABILITY_URL = "https://yanniss13.github.io/NOVA/#availability";
+const NOVA_CHRONO_PROGRESS_URL =
+  "https://yanniss13.github.io/NOVA/data/chronometrage-avancement.json";
 
 const {
   currentAvailabilityWeekStart,
@@ -266,7 +268,7 @@ async function editOriginalWithComponents(
    annoncer deux chiffres. */
 async function readChronoProgress(): Promise<unknown> {
   const response = await fetch(
-    "https://yanniss13.github.io/NOVA/data/chronometrage-avancement.json",
+    NOVA_CHRONO_PROGRESS_URL,
     { headers:{ Accept:"application/json" } }
   );
   if(!response.ok){
@@ -402,7 +404,16 @@ Deno.serve(async request => {
     planning:generateAndPublishPlanning,
     chrono:publishChronoProgress
   };
-  const tache = interaction.type === 2 ? taches[commandName] : undefined;
+  /* `hasOwnProperty` et non un accès direct : sans lui, un nom comme
+     « constructor » remonterait une fonction héritée d'Object.prototype et
+     passerait la garde ci-dessous. Discord ne peut envoyer que des commandes
+     enregistrées, et la signature Ed25519 est déjà vérifiée — mais une table
+     de routage indexée par une chaîne venue du réseau se referme ici, pas
+     dans le raisonnement de celui qui la relit. */
+  const tache = interaction.type === 2
+    && Object.prototype.hasOwnProperty.call(taches, commandName)
+    ? taches[commandName]
+    : undefined;
   if(!tache){
     return jsonResponse(ephemeralInteractionMessage("Commande Discord inconnue."));
   }

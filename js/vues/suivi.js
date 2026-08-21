@@ -249,7 +249,15 @@ import { toast } from "./toast.js";
     if(chronoAvancement) return chronoAvancement;
     chronoAvancement = fetch(CHRONO_AVANCEMENT)
       .then(reponse => reponse.ok ? reponse.json() : null)
-      .catch(() => null);
+      .catch(() => null)
+      .then(avancement => {
+        /* Rejouable, comme les autres chargements différés du site : un premier
+           rendu hors ligne, ou un fichier pas encore déployé, ne doit pas
+           condamner la carte pour toute la durée de la session. Sans cette
+           remise à zéro, la promesse mémorisée rendrait `null` à jamais. */
+        if(!avancement) chronoAvancement = null;
+        return avancement;
+      });
     return chronoAvancement;
   }
 
@@ -259,7 +267,7 @@ import { toast } from "./toast.js";
     return el("p",{class:"dashboard-chrono-prochaine"},[
       el("span",{text:"À mesurer en premier : "}),
       el("strong",{text:prochaine.heros+" · "+prochaine.arme+" · "+prochaine.nom}),
-      el("span",{text:" ("+prochaine.categorie.toLowerCase()
+      el("span",{text:" ("+String(prochaine.categorie || "").toLowerCase()
         +", touche "+prochaine.touche+")"})
     ]);
   }
@@ -282,12 +290,14 @@ import { toast } from "./toast.js";
           ? " — et "+debloquent+" compétences n'en ont aucun, faute de recharge."
           : ".")}),
       chronoProchaine(avancement),
+      /* Un lien, pas un bouton `data-dashboard-action` : l'outil est une page
+         hors PWA, il s'ouvre à côté au lieu de piloter une vue de NOVA, et
+         `runDashboardAction` n'a donc rien à connaître de lui. */
       el("a",{
         class:"btn btn-primary",
         href:CHRONO_OUTIL,
         target:"_blank",
         rel:"noopener",
-        dataset:{ dashboardAction:"chronometrer" },
         text:"Chronométrer une animation"
       })
     ]);
@@ -434,10 +444,13 @@ import { toast } from "./toast.js";
       ]));
     }
 
-    /* L'hote de la carte de chronometrage : elle se remplace elle-meme des
-       que le fichier d'avancement repond, et disparait s'il ne dit rien. */
+    /* L'hôte de la carte de chronométrage : elle se remplace elle-même dès
+       que le fichier d'avancement répond, et disparaît s'il ne dit rien.
+       Il reste SANS la classe `dashboard-section` et masqué : celle-ci porte
+       une bordure et un fond, et un encadré vide clignoterait à chaque rendu
+       le temps de la lecture. */
     const hoteChrono = el("section",{
-      class:"dashboard-section",
+      hidden:"hidden",
       dataset:{ card:"chronometrage", chronometrage:"attente" }
     });
     blocks.push(hoteChrono);
