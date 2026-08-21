@@ -472,10 +472,37 @@
     return { constante:m * facteurs.defEffective / (1 - m) };
   }
 
-/* `degatsDuCycle` a ete retiree en meme temps que la mesure de cycle : le
-   calculateur chiffre chaque competence separement, et le depot refuse une
-   sortie que personne n'importe. Elle reste recuperable sur la branche
-   comparateur-degats-lot1, avec le simulateur temporel qui l'accompagnait.
+  /* Le score d'un cycle : chaque competence chiffree une fois, additionnee.
+     Il mesure le burst, la ou le simulateur temporel mesure le rendement. Les
+     competences que la source ne chiffre pas ne valent pas zero : elles sont
+     comptees dans `nonInclus` plutot que fondues dans le total.
+
+     Rendre null sur une liste entierement non chiffree est delibere : un
+     heros dont aucun coefficient n'est publie doit rester ABSENT du
+     classement, pas y figurer au dernier rang. */
+  function degatsDuCycle(entree){
+    const source = entree || {};
+    const liste = Array.isArray(source.competences) ? source.competences : [];
+    const detail = liste
+      .map(competence => ({
+        competence,
+        resultat:degatsAttendus({
+          stats:source.stats, competence, cible:source.cible
+        })
+      }))
+      .filter(ligne => ligne.resultat !== null)
+      .map(ligne => ({ competence:ligne.competence, total:ligne.resultat.total }));
+    if(!detail.length) return null;
+    return {
+      total:detail.reduce((somme, ligne) => somme + ligne.total, 0),
+      detail,
+      nonInclus:liste.length - detail.length
+    };
+  }
+
+/* `degatsDuCycle` est revenue avec le simulateur temporel de la branche
+   comparateur-degats-lot1 : la fiche de heros a de nouveau un consommateur,
+   et le depot refuse une sortie que personne n'importe.
 
    Ne pas commencer une ligne de commentaire par le mot-cle d'un module :
    tests/helpers/load-app.js verifie par expression reguliere qu'aucune
@@ -490,5 +517,6 @@
    chiffre, et un membre qui ne voit pas pourquoi croit la page cassee. Le
    reecrire dans la vue ferait deux plafonds a tenir d'accord. */
 export {
-  CIBLES, CONSTANTE_PAR_DEFAUT, PLAFOND_PROPRE, calibrerConstante, degatsAttendus
+  CIBLES, CONSTANTE_PAR_DEFAUT, PLAFOND_PROPRE, calibrerConstante,
+  degatsAttendus, degatsDuCycle
 };

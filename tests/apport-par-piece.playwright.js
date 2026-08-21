@@ -54,6 +54,47 @@ const ARME_CONFIG = {
      pose au maximum, jauge pleine attendue. */
   enchantments:[{ slot:0, tier:1, element:null, stat:"B_Def_Equip", value:112 }]
 };
+const ARME_SECONDAIRE = "7ds-armes/Gantelets/Gantelets bénis.webp";
+const ARME_SECONDAIRE_CONFIG = {
+  version:1,
+  gradeGameId:"131073003",
+  level:0,
+  promotion:0,
+  overlimit:0,
+  enchantments:[]
+};
+const ARME_TERTIAIRE = "7ds-armes/Nunchaku/Nunchaku béni.webp";
+const ARME_TERTIAIRE_CONFIG = {
+  version:1,
+  gradeGameId:"131053003",
+  level:0,
+  promotion:0,
+  overlimit:0,
+  enchantments:[]
+};
+const CEINTURE = "7ds-armures-ssr/Ceinture/Ceinture de l'araignée de l'ombre.webp";
+const ANNEAU = "7ds-bijoux/Anneau/Anneau de l'araignée de l'ombre.webp";
+const COLLIER = "7ds-bijoux/Collier/Collier de l'araignée de l'ombre.webp";
+const BOUCLES = "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de l'araignée de l'ombre.webp";
+const BIJOU_CONFIG = {
+  Anneau:{
+    version:1, level:120, reinforce:0, passiveLevel:null,
+    enchantments:[{ slot:0, stat:"AllElement_Add", value:208 }]
+  },
+  Collier:{
+    version:1, level:120, reinforce:0, passiveLevel:null,
+    enchantments:[{ slot:0, stat:"AllElement_Res", value:166 }]
+  },
+  "Boucle d'oreille":{
+    version:1, level:120, reinforce:0, passiveLevel:null,
+    enchantments:[{ slot:0, stat:"Buff_Time_Rate", value:785 }]
+  }
+};
+const BIJOUX_COMPLETS = {
+  Anneau:ANNEAU,
+  Collier:COLLIER,
+  "Boucle d'oreille":BOUCLES
+};
 
 /* L'armure gravee de Diane — ce que le jeu appelle une tenue. Toutes les
    armures gravees portent un passif (68 sur 68). */
@@ -69,6 +110,20 @@ const TENUE_CONFIG = {
     null
   ]
 };
+const ARMURE_COMPLETE = {
+  Haut:HAUT,
+  Bas:BAS,
+  Bottes:BOTTES,
+  Ceinture:CEINTURE,
+  "Armure liee":TENUE
+};
+const ARMURE_COMPLETE_CONFIG = {
+  Haut:CONFIG,
+  Bas:CONFIG,
+  Bottes:CONFIG_GRAVEE,
+  Ceinture:CONFIG,
+  "Armure liee":TENUE_CONFIG
+};
 
 const EQUIPE = {
   id:"apport-1",
@@ -82,7 +137,37 @@ const EQUIPE = {
     armorConfig:{ Haut:CONFIG, Bottes:CONFIG_GRAVEE, "Armure liee":TENUE_CONFIG },
     jewel:{},
     jewelConfig:{},
-    potentiel:{ tier:0 }
+    potentiel:{ tier:0 },
+    rosterBuilds:{
+      Hache:{
+        weapon:ARME,
+        weaponConfig:ARME_CONFIG,
+        armor:{ Haut:HAUT, Bas:BAS, Bottes:BOTTES, "Armure liee":TENUE },
+        armorConfig:{
+          Haut:CONFIG,
+          Bottes:CONFIG_GRAVEE,
+          "Armure liee":TENUE_CONFIG
+        },
+        jewel:{},
+        jewelConfig:{}
+      },
+      Gantelets:{
+        weapon:ARME_SECONDAIRE,
+        weaponConfig:ARME_SECONDAIRE_CONFIG,
+        armor:ARMURE_COMPLETE,
+        armorConfig:ARMURE_COMPLETE_CONFIG,
+        jewel:BIJOUX_COMPLETS,
+        jewelConfig:BIJOU_CONFIG
+      },
+      Nunchaku:{
+        weapon:ARME_TERTIAIRE,
+        weaponConfig:ARME_TERTIAIRE_CONFIG,
+        armor:ARMURE_COMPLETE,
+        armorConfig:ARMURE_COMPLETE_CONFIG,
+        jewel:BIJOUX_COMPLETS,
+        jewelConfig:BIJOU_CONFIG
+      }
+    }
   }]
 };
 
@@ -105,6 +190,39 @@ const EQUIPE = {
 
     await page.locator('.tabs .tab[data-view="roster"]').click();
     await page.getByRole("button", { name:/Voir l.équipement/ }).first().click();
+
+    await page.getByText(/DPS des compétences sur 60 s/).first()
+      .waitFor({ state:"visible" });
+    await page.getByText("Rotation optimale selon les données connues")
+      .first().click();
+    assert.match(await page.locator(".hd-puissance-detail").first().textContent(),
+      /Ouverture/);
+    assert.match(await page.locator(".hd-puissance-detail").first().textContent(),
+      /Animations non mesurées/);
+
+    await page.setViewportSize({ width:320, height:900 });
+    const boiteLigne = await page.locator(".hd-puissance-ligne").first().boundingBox();
+    const boiteDetail = await page.locator(".hd-puissance-detail").first().boundingBox();
+    const boiteResume = await page.locator(".hd-puissance-detail summary")
+      .first().boundingBox();
+    assert.ok(
+      boiteDetail.width >= boiteLigne.width - 2,
+      "le detail de rotation doit occuper toute la ligne a 320 px"
+    );
+    assert.ok(
+      boiteResume.height >= 44,
+      "le resume de rotation doit conserver une cible tactile de 44 px"
+    );
+    /* Le triangle natif du <summary> disparait des qu'on lui donne un
+       `display` autre que `list-item` : plus rien n'annoncerait que la ligne
+       s'ouvre. La cible tactile ne doit pas se payer de ce prix. */
+    assert.equal(
+      await page.locator(".hd-puissance-detail summary").first()
+        .evaluate(noeud => getComputedStyle(noeud).display),
+      "list-item",
+      "le resume de rotation doit garder son marqueur natif"
+    );
+    await page.setViewportSize({ width:1440, height:1000 });
 
     /* La ligne d'une piece equipee est un bouton, et elle ouvre la modale. */
     const ligne = page.locator("button.eq-line").first();

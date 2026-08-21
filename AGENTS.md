@@ -108,6 +108,19 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       builds du roster sont copiés dans l'instantané d'équipe et leurs icônes
       permettent de changer de build sans perdre les brouillons. Une arme
       secondaire manquante rend seulement l'ATK partielle.
+- [x] **Comparateur DPS des compétences sur 60 s**, dans la fiche d'un héros du
+      roster, à partir de deux builds enregistrés. Le cycle historique reste
+      visible ; le DPS simule compétence normale, attaque spéciale et ultime
+      avec ressources illimitées. Les niveaux réels du potentiel, des armes et
+      des passifs d'équipement sont conservés, tandis que les conditions et
+      cumuls des passifs personnels sont maximisés. L'ouverture, les priorités,
+      la chronologie, les hypothèses et les effets non inclus sont consultables.
+      Les attaques normales et temps d'animation restent explicitement non
+      chiffrés : `data/animations-mesurees.json` est le fichier qui lèvera
+      cette réserve, et la section « Chronométrage des animations » dit comment
+      il se remplit. `data/effets-dps.js` pèse 1,3 Mo et n'est donc ni chargé
+      par `index.html` ni précaché : la fiche l'injecte à la demande, avec
+      `data/competences.js`, comme le calculateur le fait déjà.
 - [x] **Dispos hebdomadaires des membres**. Un onglet « Dispos » où chacun peint
       ses créneaux d'une heure sur la semaine — grille maison en CSS Grid, de
       minuit à minuit, sans aucune bibliothèque de calendrier. Glissement

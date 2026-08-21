@@ -18,6 +18,12 @@ assert.doesNotMatch(
   /<script src="data\/stats-build\.js"><\/script>/,
   "le catalogue chiffré ne doit plus bloquer le premier affichage"
 );
+assert.doesNotMatch(
+  html,
+  /<script src="data\/effets-dps\.js"><\/script>/,
+  "le catalogue d'effets DPS pèse 1,3 Mo : la fiche de héros l'injecte"
+    + " à la demande"
+);
 
 // 2) manifest.webmanifest est un JSON valide avec les champs requis + icônes.
 const manifest = JSON.parse(read("manifest.webmanifest"));
@@ -73,6 +79,15 @@ assert.doesNotMatch(
   /["']\.\/data\/stats-build\.js["']/,
   "le catalogue chiffré lourd ne doit pas faire partie du précache essentiel"
 );
+assert.doesNotMatch(
+  coreAssetsSource,
+  /["']\.\/data\/effets-dps\.js["']/,
+  "le catalogue d'effets DPS non plus : il doublerait le poids installé"
+);
+/* Les modules, eux, sont légers et indispensables dès la première fiche
+   ouverte hors ligne. */
+assert.match(coreAssetsSource, /["']\.\/js\/metier\/dps-effets\.js["']/);
+assert.match(coreAssetsSource, /["']\.\/js\/metier\/dps-simulation\.js["']/);
 const coreAssets = [...coreAssetsSource.matchAll(/["']([^"']+)["']/g)]
   .map(match => match[1]);
 assert.ok(coreAssets.length > 0, "CORE_ASSETS ne doit pas être vide");

@@ -33,6 +33,8 @@ const MODULES = [
   "metier/essai-enchantements.js",
   "metier/stats-calcul.js",
   "metier/degats-calcul.js",
+  "metier/dps-effets.js",
+  "metier/dps-simulation.js",
   "metier/calculateur-entrees.js",
   "metier/equipe-buffs.js",
   /* Apres `equipe-buffs.js` et `build-config.js`, dont il importe la regle du
