@@ -70,6 +70,12 @@ def decrire(table, game_id):
     return table.get(game_id, game_id)
 
 
+def _horodatage(envoi):
+    """La date d'un envoi, comparable telle quelle : Supabase rend de l'ISO
+    8601, dont l'ordre lexicographique est l'ordre chronologique."""
+    return str(envoi.get("created_at") or "")
+
+
 def grouper(envois):
     """Les envois rassembles par animation, un seul par auteur.
 
@@ -80,9 +86,16 @@ def grouper(envois):
     par_animation = {}
     for envoi in envois:
         auteurs = par_animation.setdefault(envoi["game_id"], {})
-        auteurs[envoi.get("owner") or envoi.get("pseudo") or id(envoi)] = envoi
+        cle = envoi.get("owner") or envoi.get("pseudo") or id(envoi)
+        # Comparer les dates plutot que se fier a l'ordre d'arrivee. La requete
+        # trie deja par created_at, mais une fonction qui ne tient que sous
+        # cette condition finit par etre appelee autrement, et elle retiendrait
+        # alors la mesure corrigee AVANT la correction.
+        connu = auteurs.get(cle)
+        if connu is None or _horodatage(envoi) >= _horodatage(connu):
+            auteurs[cle] = envoi
     return {
-        game_id: sorted(auteurs.values(), key=lambda e: str(e.get("created_at") or ""))
+        game_id: sorted(auteurs.values(), key=_horodatage)
         for game_id, auteurs in par_animation.items()
     }
 
