@@ -14,6 +14,8 @@ NOVA est une PWA communautaire pour **The Seven Deadly Sins: Origin**. Elle réu
 - Classement des builds d'un même héros par DPS des compétences sur 60 s,
   dans sa fiche du roster.
 - Chronométrage collaboratif des temps d'animation, depuis « Mon suivi ».
+- Commande Discord `/chrono` : avancement du chronométrage et prochaines
+  mesures les plus utiles.
 - Disponibilités hebdomadaires sous forme de grille de 168 créneaux.
 - Deux images du planning visibles dans Discord (tableau hebdomadaire et
   créneaux écrits par membre), générées à la demande avec `/planning`.
