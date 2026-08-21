@@ -1206,9 +1206,12 @@ le SQL Editor afin d'ajouter les tables à la publication
   contient un lien direct vers la page Disponibilités de NOVA. Le générateur
   partagé est `supabase/functions/_shared/availability-pdf.js`, utilisé côté
   Node via `scripts/availability-pdf.js`. La RPC
-  `claim_discord_planning_request` impose un délai
-  atomique de 30 secondes par salon. Le token Bot sert uniquement à enregistrer la
-  commande avec `npm run discord:register-planning` et ne doit jamais être
+  `claim_discord_planning_request` impose un délai atomique de 30 secondes
+  par salon **et par commande**. Discord n'accepte qu'un seul endpoint
+  d'interactions par application : `/chrono`, qui annonce l'avancement du
+  chronométrage en texte, passe par la même fonction et le même secret,
+  et c'est le nom de la commande qui les sépare. Le token Bot sert uniquement à enregistrer la
+  commande avec `npm run discord:register-commands` et ne doit jamais être
   stocké dans Supabase ou le dépôt. Procédure : `docs/discord-planning.md`.
   Voir `docs/superpowers/specs/2026-07-25-boss-trois-runs-design.md`.
 - Après une modification de ce schéma, réexécuter le contenu complet de
