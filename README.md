@@ -35,7 +35,7 @@ noyau → état → métier pur → données Supabase → vues DOM → app.js
 
 Le détail des responsabilités se trouve dans [js/ARCHITECTURE.md](js/ARCHITECTURE.md).
 
-Le catalogue chiffré `data/stats-build.js` pèse environ 2,4 Mo. Il est chargé à la demande uniquement lorsqu’une vue de calcul, de wiki, d’analyse ou de configuration en a besoin. Après ce premier usage, le service worker peut le servir hors ligne.
+Deux catalogues sont trop lourds pour le démarrage et se chargent à la demande. `data/stats-build.js` pèse environ 2,4 Mo et n’arrive qu’avec une vue de calcul, de wiki, d’analyse ou de configuration. `data/effets-dps.js` pèse environ 1,3 Mo et n’arrive qu’avec la fiche d’un héros qui compte au moins deux builds enregistrés. Après ce premier usage, le service worker peut les servir hors ligne.
 
 ## Lancer le projet
 

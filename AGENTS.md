@@ -7,7 +7,7 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
 > Ce fichier est le point d'entrée pour tout agent (Codex, Claude, etc.) qui
 > reprend le projet. Lis-le en entier avant de coder.
 
-## État actuel — 2026-08-01
+## État actuel — 2026-08-21
 
 - [x] Assets rangés dans des dossiers (fournis par l'utilisateur, ne pas renommer).
 - [x] `scripts/generate-data.ps1` — scanne les dossiers et génère `data.js`.
@@ -260,8 +260,13 @@ Site Confrérie 7ds/
 │  ├─ potentiels.js              # 3 armes compatibles + bonus par héros.
 │  ├─ armures-liees.js           # Fichiers d’armure liée par personnage.
 │  ├─ wiki-competences.js        # Compétences et passifs FR par héros (catalogue du wiki).
-│  └─ personnages-meta.js        # element/role/rarity + weapons[] par personnage.
-│  # Ne PAS les éditer à la main : ils sont réécrits par scripts/.
+│  ├─ personnages-meta.js        # element/role/rarity + weapons[] par personnage.
+│  ├─ competences.js             # Coefficients et recharges figés, socle du calcul de dégâts.
+│  ├─ effets-dps.js              # 1,3 Mo. Effets offensifs normalisés. Chargé à la demande.
+│  ├─ chronometrage-avancement.json # Compte et cinq prochaines mesures, pour « Mon suivi ».
+│  └─ animations-mesurees.json   # ⚠ ÉCRIT À LA MAIN. Le seul de data/ à ne pas être généré.
+│  # Ne PAS les éditer à la main : ils sont réécrits par scripts/. La seule
+│  # exception est animations-mesurees.json, qu'aucune source ne peut générer.
 ├─ scripts/                # Outils hors site. Se lancent DEPUIS LA RACINE.
 │  ├─ generate-data.ps1           # Régénère data.js en scannant les dossiers d'images.
 │  ├─ generate-stats-build.py     # Régénère/valide stats-build.js (références locales).
@@ -274,7 +279,15 @@ Site Confrérie 7ds/
 │  ├─ discord-reminder.js         # Rappel Discord.
 │  ├─ availability-pdf.js         # Adaptateur Node vers le générateur d'images partagé.
 │  ├─ register-discord-planning.js # Enregistrement administratif de `/planning`.
-│  └─ reminder-core.js            # Sa logique pure.
+│  ├─ reminder-core.js            # Sa logique pure.
+│  ├─ generate-competences.py     # Régénère competences.js depuis 7dsorigin.app.
+│  ├─ generate-effets-dps.py      # Régénère effets-dps.js. Ses exceptions auditées :
+│  ├─ effets-dps-regles.py        #   schéma fermé des règles et classements par gameId.
+│  ├─ lister-chronometrage.py     # Régénère la liste de travail ET l'avancement.
+│  ├─ rapatrier-mesures.py        # Arbitre les mesures reçues sous les yeux d'un humain.
+│  └─ lancer-tests.js             # Lance toute la suite et rend un récapitulatif.
+├─ outils/                 # Pages hors PWA, en Disallow. chrono-animation.html mesure
+│                          # les temps d'animation image par image.
 ├─ 7ds-ui/                 # Icônes d'UI : mastery/<arme>.webp, role-elements/<el>_<role>.webp,
 │                          # skills/<Nom>.webp (313 icônes de compétences, wiki)
 ├─ AGENTS.md               # Ce fichier.
@@ -1696,8 +1709,17 @@ après lui.
 ## Conventions
 
 - Français partout dans l'UI.
-- La logique applicative reste inline dans `index.html` (pas de build). Les seules
-  exceptions runtime sont `supabase-config.js` et le client Supabase chargé par CDN.
+- **Pas d'étape de build**, mais plus de logique inline : l'applicatif vit dans
+  `js/`, en modules ES, réparti sur cinq couches contrôlées automatiquement par
+  `tests/modules-imports.test.js`. Le détail est dans
+  [js/ARCHITECTURE.md](js/ARCHITECTURE.md). `index.html` ne garde que deux
+  blocs de démarrage — l'enregistrement du service worker et le header
+  rétractable — parce que le bac à sable `vm` des tests unitaires ne fournit ni
+  `navigator`, ni `matchMedia`, ni `requestAnimationFrame`. Ne pas y ajouter de
+  logique métier : elle échapperait à la garde de couches.
+- Un module qui exporte un symbole que personne n'importe fait rougir
+  `tests/modules-imports.test.js`, et un module absent de `CORE_ASSETS` de
+  `sw.js` aussi. Les deux gardent le mode hors ligne, pas le style.
 - Thème : héraldique sombre (obsidienne + or vieilli + pourpre). Voir la spec.
 - Après modif des dossiers d'images : relancer `scripts/generate-data.ps1`.
 - Après une mise à jour du jeu : `python scripts/telecharger-images.py --liste`
