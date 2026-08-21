@@ -31,6 +31,14 @@ CATALOGUE = os.path.join(RACINE, "data", "competences.js")
 WIKI = os.path.join(RACINE, "data", "wiki-competences.js")
 MESURES = os.path.join(RACINE, "data", "animations-mesurees.json")
 SORTIE = os.path.join(RACINE, "docs", "chronometrage-animations.md")
+# Le meme classement, reduit a ce qu'une page web a besoin d'afficher. Le
+# tableau complet pese trop pour etre charge par le navigateur, et « Mon suivi »
+# n'a besoin que du compte et des toutes prochaines mesures.
+AVANCEMENT = os.path.join(RACINE, "data", "chronometrage-avancement.json")
+
+# Cinq lignes : de quoi donner une direction sans transformer une carte de
+# tableau de bord en second tableau.
+PROCHAINES = 5
 
 # Hypothese de travail pour classer, PAS une valeur utilisee dans un calcul :
 # elle ne sert qu'a comparer les competences entre elles.
@@ -203,15 +211,59 @@ def rendre():
     return "\n".join(out)
 
 
+def rendre_avancement():
+    """Le meme classement, reduit a ce que « Mon suivi » affiche.
+
+    Les competences qui debloquent passent devant : sans leur animation, aucun
+    DPS n'est calculable, tandis qu'une competence a recharge n'est qu'imprecise.
+    Une mesure deja faite ne se propose plus."""
+    debloquent, affinent = lignes()
+    faites = sum(1 for l in debloquent + affinent if l["mesure"] is not None)
+    restantes = [
+        dict(l, role="debloque" if l["impact"] is None else "affine")
+        for l in debloquent + affinent
+        if l["mesure"] is None
+    ]
+    contenu = {
+        "_lisezmoi": [
+            "Genere par scripts/lister-chronometrage.py, comme",
+            "docs/chronometrage-animations.md. Ne pas editer a la main.",
+            "Les mesures se saisissent dans data/animations-mesurees.json.",
+        ],
+        "total": len(debloquent) + len(affinent),
+        "mesurees": faites,
+        "debloquent": len(debloquent),
+        "prochaines": [
+            {
+                "gameId": l["gameId"],
+                "heros": l["heros"],
+                "arme": l["arme"],
+                "nom": l["nom"],
+                "categorie": l["categorieLabel"],
+                "touche": l["touche"],
+                "role": l["role"],
+            }
+            for l in restantes[:PROCHAINES]
+        ],
+    }
+    return json.dumps(contenu, ensure_ascii=False, indent=1) + "\n"
+
+
 if __name__ == "__main__":
     texte = rendre()
+    avancement = rendre_avancement()
+    sorties = [(SORTIE, texte), (AVANCEMENT, avancement)]
     if "--check" in sys.argv:
-        actuel = open(SORTIE, encoding="utf-8").read() if os.path.exists(SORTIE) else ""
-        if actuel != texte:
-            print("docs/chronometrage-animations.md n'est plus a jour : "
-                  "relancer python scripts/lister-chronometrage.py")
-            sys.exit(1)
+        for chemin, attendu in sorties:
+            actuel = (open(chemin, encoding="utf-8").read()
+                      if os.path.exists(chemin) else "")
+            if actuel != attendu:
+                print(os.path.relpath(chemin, RACINE).replace(os.sep, "/")
+                      + " n'est plus a jour : "
+                      "relancer python scripts/lister-chronometrage.py")
+                sys.exit(1)
         print("chronometrage : liste a jour")
     else:
-        open(SORTIE, "w", encoding="utf-8", newline="\n").write(texte)
-        print("ecrit " + os.path.relpath(SORTIE, RACINE))
+        for chemin, contenu in sorties:
+            open(chemin, "w", encoding="utf-8", newline="\n").write(contenu)
+            print("ecrit " + os.path.relpath(chemin, RACINE).replace(os.sep, "/"))

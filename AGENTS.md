@@ -1725,3 +1725,35 @@ l'installation. `noyau/catalogue-build.js` l'injecte à la première ouverture
 d'une vue qui en dépend. `BUILD_STATS` conserve la même identité et ses
 dictionnaires sont remplis sur place : plusieurs modules gardent une référence
 vers ces objets. Le remplacer directement réintroduirait des catalogues vides.
+
+## Chronométrage des animations
+
+Aucune source publique ne donne les temps d'animation de 7DS Origin. Ils se
+mesurent en jeu, image par image, et cette collecte est la dernière pièce qui
+manque au calcul de DPS : `js/metier/dps-simulation.js` les compte à zéro et
+l'annonce sous chaque rotation.
+
+La chaîne complète, dans l'ordre où elle se parcourt :
+
+1. `outils/chrono-animation.html` — l'outil de mesure image par image. Page
+   autonome, hors PWA, `Disallow` dans `robots.txt`. La vidéo ne quitte jamais
+   l'appareil ; seul le chiffre part. L'outil ne porte pas de formulaire de
+   connexion : il lit la session ouverte sur NOVA, même origine.
+2. `animation_measures` (Supabase) — une **boîte de réception**, pas la source
+   de vérité. Tout membre connecté peut y écrire, et lire ce qui s'y trouve.
+3. `python scripts/rapatrier-mesures.py` — montre ce qui est arrivé, signale
+   les désaccords, et n'écrit que ce qu'un humain a validé.
+4. `data/animations-mesurees.json` — écrit **à la main**, jamais régénéré.
+5. `python scripts/lister-chronometrage.py` — régénère
+   `docs/chronometrage-animations.md` (le tableau de travail complet) **et**
+   `data/chronometrage-avancement.json` (le compte et les cinq prochaines
+   mesures). Les deux sortent du même classement : elles ne peuvent pas
+   diverger. `--check` vérifie les deux fichiers.
+
+La carte `[data-card="chronometrage"]` de « Mon suivi » est **le seul chemin**
+du site vers l'outil. Sans elle, un membre n'a aucun moyen de le trouver, et le
+compteur reste à zéro quoi qu'il arrive. Elle disparaît quand tout est mesuré.
+
+Ce qui débloque passe devant ce qui affine : une compétence **sans recharge**
+ne se rejoue qu'à la fin de son animation, qui est alors le dénominateur entier
+de son DPS. Une compétence à recharge n'en tire qu'un retard.

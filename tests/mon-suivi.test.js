@@ -238,4 +238,53 @@ assert.equal(
   );
 }
 
+
+/* La carte de chronometrage : la seule porte du site vers l'outil de mesure.
+   Elle est testee sans reseau — le fichier d'avancement est fourni ici. */
+{
+  const { chronoCarte } = hooks;
+  assert.equal(
+    typeof chronoCarte,
+    "function",
+    "le rendu de la carte de chronometrage doit rester isolable"
+  );
+
+  const texte = noeud => {
+    if(noeud === null || noeud === undefined) return "";
+    if(typeof noeud === "string") return noeud;
+    return String(noeud.textContent || "")
+      + (Array.isArray(noeud.children) ? noeud.children.map(texte).join("") : "");
+  };
+
+  const carte = chronoCarte({
+    total:335,
+    mesurees:0,
+    debloquent:151,
+    prochaines:[{
+      gameId:"klotho_staff_normalatk_enchant_ready",
+      heros:"klotho",
+      arme:"Bâton",
+      nom:"Projection dimensionnelle",
+      categorie:"Attaque normale",
+      touche:"clic gauche",
+      role:"debloque"
+    }]
+  });
+  const lu = texte(carte);
+  assert.match(lu, /0 \/ 335 animations mesurées/);
+  assert.match(lu, /151 compétences n'en ont aucun/);
+  assert.match(lu, /Projection dimensionnelle/);
+
+  const lien = (carte.children || []).find(noeud => noeud.tag === "a");
+  assert.ok(lien, "la carte doit porter le lien vers l'outil");
+  assert.equal(lien.href, "outils/chrono-animation.html");
+  assert.equal(lien.target, "_blank");
+  assert.equal(lien.rel, "noopener");
+
+  /* Un travail fini n'a pas de carte : la meme regle que les trois cartes
+     d'accueil, qu'un « 0 » affiche rendrait bruyantes. */
+  assert.equal(chronoCarte({ total:335, mesurees:335, prochaines:[] }), null);
+  assert.equal(chronoCarte({ total:0, mesurees:0, prochaines:[] }), null);
+}
+
 console.log("PASS Mon suivi : compteurs, priorités, échéances et cache");

@@ -233,6 +233,77 @@ import { toast } from "./toast.js";
     return card;
   }
 
+  /* ---------- Chronométrage des animations ----------
+     Le seul endroit du site qui mène à outils/chrono-animation.html. L'outil
+     existe depuis le 19 août ; sans cette carte, aucun membre ne peut le
+     trouver, et le compteur reste à zéro quoi qu'il arrive.
+
+     Le fichier lu est minuscule et généré par le même script que
+     docs/chronometrage-animations.md : le classement ne peut pas diverger
+     entre la page et la liste de travail. */
+  const CHRONO_AVANCEMENT = "./data/chronometrage-avancement.json";
+  const CHRONO_OUTIL = "outils/chrono-animation.html";
+  let chronoAvancement = null;
+
+  function chargerChronoAvancement(){
+    if(chronoAvancement) return chronoAvancement;
+    chronoAvancement = fetch(CHRONO_AVANCEMENT)
+      .then(reponse => reponse.ok ? reponse.json() : null)
+      .catch(() => null);
+    return chronoAvancement;
+  }
+
+  function chronoProchaine(avancement){
+    const prochaine = (avancement.prochaines || [])[0];
+    if(!prochaine) return null;
+    return el("p",{class:"dashboard-chrono-prochaine"},[
+      el("span",{text:"À mesurer en premier : "}),
+      el("strong",{text:prochaine.heros+" · "+prochaine.arme+" · "+prochaine.nom}),
+      el("span",{text:" ("+prochaine.categorie.toLowerCase()
+        +", touche "+prochaine.touche+")"})
+    ]);
+  }
+
+  /* Rien à afficher quand tout est mesuré : une carte qui annonce un travail
+     fini est du bruit, comme les trois cartes d'accueil juste au-dessus. */
+  function chronoCarte(avancement){
+    const total = Number(avancement && avancement.total) || 0;
+    const mesurees = Number(avancement && avancement.mesurees) || 0;
+    if(!total || mesurees >= total) return null;
+    const debloquent = Number(avancement.debloquent) || 0;
+    return el("section",{
+      class:"dashboard-section",
+      dataset:{ card:"chronometrage" }
+    },[
+      el("strong",{text:mesurees+" / "+total+" animations mesurées"}),
+      el("p",{text:"Aucune source publique ne publie ces durées. Sans elles, le"
+        + " DPS des compétences reste théorique"
+        + (debloquent
+          ? " — et "+debloquent+" compétences n'en ont aucun, faute de recharge."
+          : ".")}),
+      chronoProchaine(avancement),
+      el("a",{
+        class:"btn btn-primary",
+        href:CHRONO_OUTIL,
+        target:"_blank",
+        rel:"noopener",
+        dataset:{ dashboardAction:"chronometrer" },
+        text:"Chronométrer une animation"
+      })
+    ]);
+  }
+
+  /* La carte arrive après le reste : le tableau de bord ne doit pas attendre un
+     fichier statique pour s'afficher. Un tableau de bord re-rendu entre-temps
+     laisse un hôte détaché, et `replaceWith` n'y fait rien. */
+  function ajouterChronoCarte(hote){
+    chargerChronoAvancement().then(avancement => {
+      const carte = avancement && chronoCarte(avancement);
+      if(carte) hote.replaceWith(carte);
+      else hote.remove();
+    });
+  }
+
   function renderDashboardContent(state){
     const body = $("#dashboardBody");
     const blocks = [];
@@ -363,6 +434,14 @@ import { toast } from "./toast.js";
       ]));
     }
 
+    /* L'hote de la carte de chronometrage : elle se remplace elle-meme des
+       que le fichier d'avancement repond, et disparait s'il ne dit rien. */
+    const hoteChrono = el("section",{
+      class:"dashboard-section",
+      dataset:{ card:"chronometrage", chronometrage:"attente" }
+    });
+    blocks.push(hoteChrono);
+
     blocks.push(el("section",{
       class:"dashboard-deadline",
       dataset:{ level:state.deadlineStatus.level }
@@ -371,6 +450,7 @@ import { toast } from "./toast.js";
     ]));
 
     body.replaceChildren(...blocks);
+    ajouterChronoCarte(hoteChrono);
     if(state.offline){
       body.querySelectorAll('[data-dashboard-network-action="true"]')
         .forEach(button => {
