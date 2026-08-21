@@ -10,6 +10,12 @@ Une mesure vaut pour UN gameId : un heros, une arme, un emplacement. Un heros
 n'a pas le meme moveset selon l'arme equipee — Meliodas a la hache et Meliodas
 a l'epee longue sont deux animations distinctes, avec des degats differents.
 
+La table est en ajout seul, par choix : une mesure envoyee est un fait date,
+pas un brouillon. C'est donc ICI que se fait l'arbitrage. Les envois sont
+regroupes par animation, un seul par auteur — le plus recent, puisqu'un membre
+qui reenvoie corrige sa mesure au lieu de voter deux fois — et le script
+propose leur MEDIANE. Une question par animation, pas une par ligne recue.
+
     python scripts/rapatrier-mesures.py
 """
 
@@ -64,17 +70,75 @@ def decrire(table, game_id):
     return table.get(game_id, game_id)
 
 
-def desaccords(envois):
+def grouper(envois):
+    """Les envois rassembles par animation, un seul par auteur.
+
+    La contrainte d'unicite de `animation_measures` le garantit deja en base,
+    mais un export anterieur a cette contrainte peut encore porter plusieurs
+    lignes du meme membre. Le plus recent gagne : un membre qui reenvoie
+    corrige sa mesure, il ne vote pas deux fois."""
     par_animation = {}
     for envoi in envois:
-        par_animation.setdefault(envoi["game_id"], []).append(envoi)
+        auteurs = par_animation.setdefault(envoi["game_id"], {})
+        auteurs[envoi.get("owner") or envoi.get("pseudo") or id(envoi)] = envoi
+    return {
+        game_id: sorted(auteurs.values(), key=lambda e: str(e.get("created_at") or ""))
+        for game_id, auteurs in par_animation.items()
+    }
+
+
+def mediane(valeurs):
+    tries = sorted(valeurs)
+    milieu = len(tries) // 2
+    if len(tries) % 2:
+        return tries[milieu]
+    return (tries[milieu - 1] + tries[milieu]) / 2
+
+
+def consensus(liste):
+    """Ce que N auteurs disent d'une meme animation, et s'ils s'accordent.
+
+    La mediane, pas la moyenne : un membre qui se trompe d'un facteur deux
+    deplacerait une moyenne, il ne deplace pas une mediane des que deux autres
+    l'encadrent. L'ecart est relatif au plus petit releve, comme le seuil de
+    dix pour cent qu'il sert a comparer."""
+    valeurs = [float(envoi["seconds"]) for envoi in liste]
+    minimum = min(valeurs)
+    return {
+        "valeur": round(mediane(valeurs), 3),
+        "auteurs": len(valeurs),
+        "valeurs": sorted(valeurs),
+        "ecart": (max(valeurs) - minimum) / minimum if minimum else 0.0,
+    }
+
+
+def desaccords(envois):
     signales = []
-    for game_id, liste in par_animation.items():
-        valeurs = [float(envoi["seconds"]) for envoi in liste]
-        if len(valeurs) < 2:
+    for game_id, liste in grouper(envois).items():
+        if len(liste) < 2:
             continue
-        if (max(valeurs) - min(valeurs)) / min(valeurs) > ECART_TOLERE:
+        if consensus(liste)["ecart"] > ECART_TOLERE:
             signales.append((game_id, liste))
+    return signales
+
+
+def dementis(envois, mesures):
+    """Les animations DEJA ecrites que les envois recents contredisent.
+
+    Sans ce controle, une mesure fausse validee une fois est definitive : le
+    script ne repropose jamais une animation deja renseignee, et les envois qui
+    la contredisent disparaissent en silence."""
+    ecrites = (mesures or {}).get("animations") or {}
+    signales = []
+    for game_id, liste in grouper(envois).items():
+        if game_id not in ecrites:
+            continue
+        ecrite = float(ecrites[game_id])
+        accord = consensus(liste)
+        if not ecrite:
+            continue
+        if abs(accord["valeur"] - ecrite) / ecrite > ECART_TOLERE:
+            signales.append((game_id, ecrite, accord))
     return signales
 
 
@@ -149,19 +213,52 @@ def main():
         print("   -> tranche a la main, ce script ne choisira pas pour toi.")
         print()
 
-    nouveaux = [e for e in envois if e["game_id"] not in mesures["animations"]]
-    if not nouveaux:
+    for game_id, ecrite, accord in dementis(envois, mesures):
+        print("DEMENTI sur %s :" % decrire(noms, game_id))
+        print("   deja ecrit %s s, %d envoi(s) donnent %s s" % (
+            ecrite, accord["auteurs"], accord["valeur"]))
+        print("   -> corrige data/animations-mesurees.json a la main si besoin.")
+        print()
+
+    nouvelles = {
+        game_id: liste
+        for game_id, liste in grouper(envois).items()
+        if game_id not in mesures["animations"]
+    }
+    if not nouvelles:
         print("Rien de nouveau.")
         return 0
 
+    # Une question par ANIMATION, non par ligne recue : avec cinq membres qui
+    # chronometrent la meme competence, l'ancienne boucle posait cinq fois la
+    # meme question et n'en gardait qu'une reponse au hasard.
     retenus = 0
-    for envoi in nouveaux:
-        question = "%s%s   %s s (%s) -> ecrire ? [o/N] " % (
-            decrire(noms, envoi["game_id"]), chr(10),
-            envoi["seconds"], envoi.get("pseudo") or "?")
-        reponse = input(question)
-        if reponse.strip().lower() == "o":
-            appliquer(mesures, envoi["game_id"], float(envoi["seconds"]))
+    for game_id, liste in nouvelles.items():
+        accord = consensus(liste)
+        detail = ", ".join(
+            "%s %s s" % (envoi.get("pseudo") or "?", envoi["seconds"])
+            for envoi in liste
+        )
+        alerte = "   ATTENTION : %.0f %% d'ecart entre les envois.%s" % (
+            accord["ecart"] * 100, chr(10)
+        ) if accord["ecart"] > ECART_TOLERE else ""
+        question = "%s%s   %d envoi(s) : %s%s   mediane %s s -> ecrire ? [o/N/valeur] " % (
+            decrire(noms, game_id), chr(10),
+            accord["auteurs"], detail, chr(10) + alerte,
+            accord["valeur"])
+        reponse = input(question).strip().lower()
+        if reponse == "o":
+            appliquer(mesures, game_id, accord["valeur"])
+            retenus += 1
+            continue
+        # Une valeur tapee remplace la mediane : c'est l'humain qui tranche,
+        # et il peut avoir mesure lui-meme apres avoir vu le desaccord.
+        try:
+            saisie = float(reponse.replace(",", "."))
+        except ValueError:
+            continue
+        if saisie > 0:
+            appliquer(mesures, game_id, saisie)
             retenus += 1
 
     # N'ecrire que si quelque chose a ete accepte. Reecrire un fichier

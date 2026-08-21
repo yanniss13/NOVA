@@ -1748,8 +1748,17 @@ La chaîne complète, dans l'ordre où elle se parcourt :
    connexion : il lit la session ouverte sur NOVA, même origine.
 2. `animation_measures` (Supabase) — une **boîte de réception**, pas la source
    de vérité. Tout membre connecté peut y écrire, et lire ce qui s'y trouve.
-3. `python scripts/rapatrier-mesures.py` — montre ce qui est arrivé, signale
-   les désaccords, et n'écrit que ce qu'un humain a validé.
+   La table est en **ajout seul**, sans politique `update` ni `delete` : une
+   mesure envoyée est un fait daté, pas un brouillon
+   (`tests/animation-measures-schema.test.js` le garde).
+3. `python scripts/rapatrier-mesures.py` — l'arbitrage se fait **ici**, faute
+   de pouvoir se faire en base. Les envois sont regroupés par animation, un
+   seul par auteur — le plus récent, un renvoi corrigeant au lieu de voter
+   deux fois — et le script propose leur **médiane** : une moyenne suivrait
+   le membre qui s'est trompé d'un facteur deux. Une question par animation,
+   pas une par ligne reçue. Il signale les désaccords au-delà de 10 %, ceux
+   qui **démentent** une valeur déjà écrite, et n'écrit que ce qu'un humain a
+   validé — au clavier, la médiane ou une valeur tapée.
 4. `data/animations-mesurees.json` — écrit **à la main**, jamais régénéré.
 5. `python scripts/lister-chronometrage.py` — régénère
    `docs/chronometrage-animations.md` (le tableau de travail complet) **et**
