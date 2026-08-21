@@ -420,4 +420,64 @@ assert.ok(
   "avec son declencheur joue, la regle doit reellement ajouter des degats"
 );
 
+
+/* Le verrouillage d'animation. Une competence a 10 s de recharge et 4 s
+   d'animation ne se rejoue pas toutes les 10 s : la recharge court depuis le
+   lancement, mais le heros reste occupe jusqu'a 4 s. Ici la recharge est plus
+   longue que l'animation, les instants ne bougent donc pas — c'est le cas
+   suivant, ou l'animation depasse la recharge, qui les deplace. */
+{
+  const competence = {
+    gameId:"skill-3",
+    nom:"Trois secondes de recharge",
+    categorie:"NORMAL_SKILL",
+    recharge:3,
+    composantes:[{ base:"atk", pourcentage:100 }],
+    pourcentage:100,
+    repartition:[100]
+  };
+  const entree = animations => simulerDpsCompetences({
+    stats:SANS_CRITIQUE,
+    competences:[competence],
+    effets:[],
+    cible:CIBLE_NEUTRE,
+    duree:60,
+    animations
+  });
+
+  const sansMesure = entree(undefined);
+  /* `Array.from` recopie dans ce realm : la rotation sort du bac a sable,
+     et deepStrictEqual compare aussi les prototypes. */
+  const instants = resultat => Array.from(resultat.rotation
+    .filter(evenement => evenement.type === "action")
+    .map(evenement => evenement.temps));
+  assert.deepStrictEqual(instants(sansMesure).slice(0, 3), [0, 3, 6]);
+  assert.equal(sansMesure.animations.mesurees, 0);
+  assert.equal(sansMesure.animations.total, 1);
+  assert.ok(
+    sansMesure.hypotheses.includes("animations-non-mesurees"),
+    "sans mesure, le resultat doit continuer a le dire"
+  );
+
+  /* 5 s d'animation contre 3 s de recharge : c'est l'animation qui commande,
+     et le nombre d'actions dans la fenetre chute. */
+  const mesuree = entree({ "skill-3":5 });
+  assert.deepStrictEqual(instants(mesuree).slice(0, 3), [0, 5, 10]);
+  assert.ok(
+    mesuree.total < sansMesure.total,
+    "une animation mesuree ne peut que reduire un DPS calcule sans elle"
+  );
+  assert.equal(mesuree.animations.mesurees, 1);
+  assert.ok(
+    !mesuree.hypotheses.includes("animations-non-mesurees"),
+    "toutes les animations mesurees, la reserve n'a plus lieu d'etre"
+  );
+
+  /* Une mesure pour une competence absente de la rotation ne compte pas :
+     le rapport doit parler des competences simulees, pas de la table. */
+  const etrangere = entree({ "skill-inconnue":5 });
+  assert.equal(etrangere.animations.mesurees, 0);
+  assert.deepStrictEqual(instants(etrangere).slice(0, 3), [0, 3, 6]);
+}
+
 console.log("dps-simulation.test.js OK");

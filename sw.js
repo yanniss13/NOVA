@@ -23,7 +23,7 @@ const CACHE = CACHE_PREFIX + BUILD_VERSION;
 const CORE_ASSETS = [
   "./", "./index.html", "./css/base.css", "./css/builder.css", "./css/roster.css", "./css/analyse.css", "./css/boss.css", "./css/suivi.css", "./css/modales.css", "./css/notifications.css", "./css/responsive.css", "./css/dispos.css", "./css/wiki.css", "./css/collection.css", "./css/calculateur.css",
   "./data/data.js", "./data/potentiels.js", "./data/armures-liees.js",
-  "./data/personnages-meta.js", "./data/chronometrage-avancement.json", "./data/competences.js", "./data/buffs-supports.js", "./data/passifs-graves.js", "./data/potentiels-equipe.js", "./data/degats-supplementaires.js", "./data/passifs-armes.js", "./supabase-config.js",
+  "./data/personnages-meta.js", "./data/chronometrage-avancement.json", "./data/animations-mesurees.json", "./data/competences.js", "./data/buffs-supports.js", "./data/passifs-graves.js", "./data/potentiels-equipe.js", "./data/degats-supplementaires.js", "./data/passifs-armes.js", "./supabase-config.js",
   /* Le logo LootBar est dans le header de CHAQUE page : sans lui ici, le mode
      hors ligne afficherait une image cassee au premier chargement. 13 Ko. */
   "./lootbar-logo.webp",

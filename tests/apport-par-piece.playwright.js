@@ -197,8 +197,10 @@ const EQUIPE = {
       .first().click();
     assert.match(await page.locator(".hd-puissance-detail").first().textContent(),
       /Ouverture/);
+    /* Le compte, pas une reserve muette : Diane a trois competences
+       simulees et data/animations-mesurees.json est encore vide. */
     assert.match(await page.locator(".hd-puissance-detail").first().textContent(),
-      /Animations non mesurées/);
+      /Animations mesurées : 0 \/ 3/);
 
     await page.setViewportSize({ width:320, height:900 });
     const boiteLigne = await page.locator(".hd-puissance-ligne").first().boundingBox();
