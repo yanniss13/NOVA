@@ -2,9 +2,10 @@
 
    La fenetre est semi-ouverte : une action ou un tick a exactement 60 s ne
    compte pas dans [0, 60 s[. Les temps deviennent une seule fois des
-   millisecondes entieres. Les animations valent encore zero ; la recherche
-   teste donc les ordres possibles a chaque instant utile et memorise les
-   etats equivalents pour conserver le meilleur total connu. */
+   millisecondes entieres. Une animation mesuree verrouille le heros apres son
+   action ; une animation absente de la table vaut zero, jamais une duree
+   supposee. La recherche teste les ordres possibles a chaque instant utile et
+   memorise les etats equivalents pour conserver le meilleur total connu. */
 
 import { degatsAttendus } from "./degats-calcul.js";
 import { effetsDuBuild } from "./dps-effets.js";
@@ -575,12 +576,19 @@ import { effetsDuBuild } from "./dps-effets.js";
     const stats = copierObjet(source.stats || contexte && contexte.stats || {});
     stats.bonusCategorie = copierObjet(stats.bonusCategorie);
     const cible = copierObjet(source.cible);
+    /* Les animations mesurees en jeu, en secondes, par gameId. Une competence
+       absente de la table vaut zero et non une duree supposee : le jour ou la
+       moitie du tableau sera remplie, un chiffre invente serait indiscernable
+       d'une mesure. `mesurees` compte ce qui l'est reellement, pour que la vue
+       puisse dire a quel point elle est optimiste. */
+    const animations = copierObjet(source.animations);
     let competences = (Array.isArray(source.competences)
       ? source.competences : []).filter(Boolean)
       .map(competence => Object.assign({}, competence, {
         composantes:(competence.composantes || []).map(copierObjet),
         periodique:competence.periodique
-          ? copierObjet(competence.periodique) : null
+          ? copierObjet(competence.periodique) : null,
+        animationMs:Math.max(0, enMs(animations[competence.gameId]) || 0)
       }));
     const competencesParId = Object.fromEntries(
       competences.map(competence => [competence.gameId, competence])
@@ -652,7 +660,11 @@ import { effetsDuBuild } from "./dps-effets.js";
       rechargesPlates,
       rechargesTaux,
       nonInclus,
-      idsCouverture
+      idsCouverture,
+      animations:{
+        mesurees:competences.filter(competence => competence.animationMs > 0).length,
+        total:competences.length
+      }
     };
   }
 
@@ -740,6 +752,12 @@ import { effetsDuBuild } from "./dps-effets.js";
     const reaction = appliquerDeclencheurs(
       etat, competence, "action", dommage, configuration, borne
     );
+    /* Le verrouillage d'animation vient EN DERNIER : la recharge part du
+       lancement, les ticks periodiques aussi, et les declencheurs se resolvent
+       a l'instant de la frappe. Seule la disponibilite du heros pour l'action
+       suivante recule. Une competence non mesuree avance de zero, et la
+       simulation reste alors exactement celle d'avant la collecte. */
+    etat.tempsMs += competence.animationMs || 0;
     return {
       etat,
       total:dommage + reaction.supplement,
@@ -1068,7 +1086,8 @@ import { effetsDuBuild } from "./dps-effets.js";
     if(!(borne > 0)){
       return {
         total:0, dps:0, duree:0, rotation:[], ouverture:[], priorites:[],
-        nonInclus, hypotheses:[], couverture:[]
+        nonInclus, hypotheses:[],
+        animations:configuration.animations, couverture:[]
       };
     }
     if(!configuration.competences.length){
@@ -1081,6 +1100,7 @@ import { effetsDuBuild } from "./dps-effets.js";
           "animations-non-mesurees",
           "attaques-normales-non-chiffrees"
         ],
+        animations:configuration.animations,
         couverture:[]
       };
     }
@@ -1123,9 +1143,11 @@ import { effetsDuBuild } from "./dps-effets.js";
       hypotheses:[
         ...(contexte ? contexte.hypotheses : []),
         "ressources-illimitees",
-        "animations-non-mesurees",
+        ...(configuration.animations.mesurees < configuration.animations.total
+          ? ["animations-non-mesurees"] : []),
         "attaques-normales-non-chiffrees"
       ],
+      animations:configuration.animations,
       couverture:configuration.idsCouverture
     };
   }

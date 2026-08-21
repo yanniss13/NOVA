@@ -98,4 +98,32 @@ assert.strictEqual(
   null
 );
 
+
+/* La reserve sur les animations se dit avec un compte : une mesure manquante
+   vaut zero dans la simulation, donc elle gonfle le DPS affiche. Le membre
+   qui a chronometre doit voir ou en est sa contribution. */
+{
+  const avecCompte = puissanceSection([
+    {
+      arme:"Baguette", cycle:1000, dps:100, nonInclus:0,
+      ouverture:[], priorites:[], rotation:[],
+      hypotheses:["animations-non-mesurees"],
+      animations:{ mesurees:2, total:3 }
+    },
+    {
+      arme:"Livre", cycle:900, dps:90, nonInclus:0,
+      ouverture:[], priorites:[], rotation:[],
+      hypotheses:["animations-non-mesurees"],
+      animations:{ mesurees:0, total:0 }
+    }
+  ]);
+  const lu = fakeText(avecCompte);
+  assert.match(lu, /Animations mesurées : 2 \/ 3/);
+  assert.match(
+    lu,
+    /Animations non mesurées/,
+    "sans competence simulee, le libelle nu reste le seul honnete"
+  );
+}
+
 console.log("fiche-heros.test.js OK");

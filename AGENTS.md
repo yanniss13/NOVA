@@ -116,9 +116,9 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       cumuls des passifs personnels sont maximisés. L'ouverture, les priorités,
       la chronologie, les hypothèses et les effets non inclus sont consultables.
       Les attaques normales et temps d'animation restent explicitement non
-      chiffrés : `data/animations-mesurees.json` est le fichier qui lèvera
-      cette réserve, et la section « Chronométrage des animations » dit comment
-      il se remplit. `data/effets-dps.js` pèse 1,3 Mo et n'est donc ni chargé
+      chiffrées, et les animations valent zéro tant qu'elles ne sont pas
+      mesurées dans `data/animations-mesurees.json` — voir la section
+      « Chronométrage des animations ». `data/effets-dps.js` pèse 1,3 Mo et n'est donc ni chargé
       par `index.html` ni précaché : la fiche l'injecte à la demande, avec
       `data/competences.js`, comme le calculateur le fait déjà.
 - [x] **Dispos hebdomadaires des membres**. Un onglet « Dispos » où chacun peint
@@ -1730,8 +1730,15 @@ vers ces objets. Le remplacer directement réintroduirait des catalogues vides.
 
 Aucune source publique ne donne les temps d'animation de 7DS Origin. Ils se
 mesurent en jeu, image par image, et cette collecte est la dernière pièce qui
-manque au calcul de DPS : `js/metier/dps-simulation.js` les compte à zéro et
-l'annonce sous chaque rotation.
+manque au calcul de DPS.
+
+`js/metier/dps-simulation.js` **consomme** ces durées : une animation mesurée
+verrouille le héros après son action, la recharge partant elle du lancement.
+Une compétence absente de la table avance de zéro — jamais d'une durée
+supposée, qui serait indiscernable d'une mesure une fois le tableau à moitié
+rempli. Le résultat porte donc `animations:{mesurees, total}`, et la fiche
+affiche « Animations mesurées : 2 / 3 » plutôt qu'une réserve muette : chaque
+mesure manquante gonfle le DPS affiché, et le lecteur doit savoir de combien.
 
 La chaîne complète, dans l'ordre où elle se parcourt :
 

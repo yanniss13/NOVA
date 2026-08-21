@@ -132,10 +132,12 @@ import { toast } from "./toast.js";
      ferait payer a chaque visiteur qui n'ouvre jamais une fiche de heros.
      Motif repris de js/vues/calculateur.js. */
   let chargementDps = null;
+  let animationsMesurees = null;
 
   function cataloguesDpsPrets(){
     return Boolean(typeof window !== "undefined"
-      && window.SEVEN_DS_COMPETENCES && window.SEVEN_DS_EFFETS_DPS);
+      && window.SEVEN_DS_COMPETENCES && window.SEVEN_DS_EFFETS_DPS
+      && animationsMesurees);
   }
 
   function chargerCataloguesDps(){
@@ -151,7 +153,18 @@ import { toast } from "./toast.js";
       window.SEVEN_DS_COMPETENCES
         ? Promise.resolve(true) : injecter("./data/competences.js"),
       window.SEVEN_DS_EFFETS_DPS
-        ? Promise.resolve(true) : injecter("./data/effets-dps.js")
+        ? Promise.resolve(true) : injecter("./data/effets-dps.js"),
+      /* Les animations mesurees en jeu. Un JSON, pas un script : il s'ecrit a
+         la main et ne porte aucun code. Son absence n'est pas une panne — la
+         table est vide tant que la confrerie n'a rien mesure, et le simulateur
+         compte alors zero. */
+      fetch("./data/animations-mesurees.json")
+        .then(reponse => reponse.ok ? reponse.json() : null)
+        .then(contenu => {
+          animationsMesurees = (contenu && contenu.animations) || {};
+          return true;
+        })
+        .catch(() => { animationsMesurees = {}; return true; })
     ]).catch(erreur => {
       /* Rejouable : un echec reseau ne doit pas condamner la fiche pour toute
          la duree de la session. */
@@ -269,7 +282,8 @@ import { toast } from "./toast.js";
           competences:competencesDpsDuBuild(hero.char, dossierArme),
           effets:contexte.effets,
           cible:CIBLE_CLASSEMENT,
-          duree:60
+          duree:60,
+          animations:animationsMesurees
         });
         const categoriesDps = new Set([
           "NORMAL_SKILL", "ACTIVE_THIRD", "ULTIMATE"
@@ -290,21 +304,34 @@ import { toast } from "./toast.js";
           ouverture:simulation.ouverture.map(action => action.nom),
           priorites:simulation.priorites,
           rotation:simulation.rotation,
-          hypotheses:simulation.hypotheses
+          hypotheses:simulation.hypotheses,
+          animations:simulation.animations
         } : null;
       })
       .filter(Boolean)
       .sort(parDpsPuisParCycle);
   }
 
-  function libelleHypothese(hypothese){
+  /* « Animations non mesurées » se dit avec un compte : un membre qui a
+     chronométré deux compétences sur trois doit voir sa contribution, et
+     savoir de combien le chiffre reste optimiste. Un temps d'animation non
+     mesuré vaut zéro dans la simulation, donc chaque mesure manquante gonfle
+     le DPS affiché. */
+  function libelleHypothese(hypothese, animations){
+    if(hypothese === "animations-non-mesurees"){
+      const total = Number(animations && animations.total) || 0;
+      const mesurees = Number(animations && animations.mesurees) || 0;
+      return total
+        ? "Animations mesurées : "+mesurees+" / "+total
+          +" — le DPS reste optimiste pour les autres"
+        : "Animations non mesurées";
+    }
     const libelles = {
       "passifs-personnels-actifs-au-maximum":
         "Passifs personnels activés au maximum de leur niveau réel",
       "cumuls-personnels-au-maximum":"Cumuls personnels au maximum",
       "pv-restants-egaux-aux-pv-max":"PV restants égaux aux PV max",
       "ressources-illimitees":"Ressources illimitées",
-      "animations-non-mesurees":"Animations non mesurées",
       "attaques-normales-non-chiffrees":"Attaques normales non chiffrées"
     };
     return libelles[hypothese] || hypothese;
@@ -336,7 +363,8 @@ import { toast } from "./toast.js";
       listeDetail("Ouverture", ligne.ouverture, true),
       listeDetail("Priorité", ligne.priorites, false),
       listeDetail("Chronologie", chronologie, false),
-      listeDetail("Hypothèses", (ligne.hypotheses || []).map(libelleHypothese), false),
+      listeDetail("Hypothèses", (ligne.hypotheses || [])
+        .map(hypothese => libelleHypothese(hypothese, ligne.animations)), false),
       listeDetail("Non inclus dans le calcul", exclusions, false)
     ].filter(Boolean).forEach(groupe => details.appendChild(groupe));
     return details;
