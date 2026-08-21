@@ -342,3 +342,29 @@
   border:1px solid color-mix(in srgb, var(--ec) 55%, var(--line));
   background:color-mix(in srgb, var(--ec) 14%, var(--obsidian-2));color:var(--parchment)}
 .elem-badge .dot{width:8px;height:8px;border-radius:50%;background:var(--ec);flex:none;box-shadow:0 0 6px var(--ec)}
+
+/* Classement de puissance dans la fiche de héros. Le chiffre compare des
+   builds entre eux ; la note qui l'accompagne dit ce qu'il n'est pas. */
+.hd-puissance{margin-top:14px;border-top:1px solid var(--line-soft);padding-top:12px}
+.hd-puissance-note{font-size:12px;color:var(--muted);margin:4px 0 10px}
+.hd-puissance-ligne{
+  display:grid;grid-template-columns:minmax(0,1fr) auto;
+  align-items:start;gap:12px;
+  padding:6px 0;border-bottom:1px solid var(--line-soft)
+}
+.hd-puissance-ligne:last-child{border-bottom:0}
+.hd-puissance-valeur{font-variant-numeric:tabular-nums;color:var(--gold-bright)}
+.hd-puissance-mesures{display:grid;gap:4px;text-align:right;font-size:13px}
+.hd-puissance-valeur.secondaire{color:var(--muted)}
+.hd-puissance-detail{grid-column:1/-1;min-width:0;font-size:12px}
+/* `display:flex` atteignait bien les 44 px, mais supprimait le triangle natif
+   du <summary> : plus rien n'annoncait que la ligne s'ouvre. `list-item` le
+   conserve, et le remplissage vertical porte seul la cible tactile. */
+.hd-puissance-detail summary{
+  cursor:pointer;color:var(--gold-bright);
+  display:list-item;list-style-position:inside;
+  box-sizing:border-box;padding:13px 0;min-height:44px
+}
+.hd-puissance-groupe{margin-top:8px;color:var(--muted)}
+.hd-puissance-rotation{margin:4px 0 0;padding-left:20px;overflow-wrap:anywhere}
+.hd-puissance-temps{font-variant-numeric:tabular-nums}
