@@ -1,12 +1,14 @@
 "use strict";
 
-/* Enregistre les commandes NOVA (`/planning` et `/run`) dans UN serveur Discord
-   sans remplacer les autres commandes de l'application. Le token Bot ne sert
-   qu'à cette opération administrative et ne doit jamais rejoindre le dépôt ni
-   Supabase. */
+/* Enregistre `/planning`, `/chrono` et `/run` dans UN serveur Discord sans remplacer
+   les autres commandes de l'application. Le token Bot ne sert qu'à cette
+   opération administrative et ne doit jamais rejoindre le dépôt ni Supabase.
+
+   Les trois commandes s'enregistrent ensemble parce qu'elles partagent un seul
+   endpoint d'interactions : Discord n'en accepte qu'un par application. */
 
 const {
-  DISCORD_API, guildCommandDefinitions
+  DISCORD_API, commandDefinitions
 } = require("../supabase/functions/_shared/discord-planning.js");
 
 async function discordApi(request, url, token, init) {
@@ -23,7 +25,7 @@ async function discordApi(request, url, token, init) {
   return text ? JSON.parse(text) : null;
 }
 
-async function registerGuildCommands(options) {
+async function registerPlanningCommand(options) {
   const config = options || {};
   const request = config.request || fetch;
   const applicationId = config.applicationId || process.env.DISCORD_APPLICATION_ID;
@@ -45,9 +47,9 @@ async function registerGuildCommands(options) {
      jour individuellement. Le PUT global, lui, effacerait les commandes de
      l'application qui ne figurent pas dans cette liste. */
   const commands = await discordApi(request, collectionUrl, token, { method:"GET" });
-  const results = [];
-  for(const command of guildCommandDefinitions()){
-    const existing = (commands || []).find(known => known.name === command.name);
+  const resultats = [];
+  for(const command of commandDefinitions()){
+    const existing = (commands || []).find(item => item.name === command.name);
     const url = existing
       ? collectionUrl + "/" + encodeURIComponent(existing.id)
       : collectionUrl;
@@ -55,21 +57,24 @@ async function registerGuildCommands(options) {
       method:existing ? "PATCH" : "POST",
       body:JSON.stringify(command)
     });
-    results.push({
+    resultats.push({
       name:command.name,
       action:existing ? "updated" : "created",
       command:saved
     });
   }
-  return results;
+  /* `action` et `command` restent au premier niveau : /planning est la
+     commande historique, et les appelants qui ne connaissent qu'elle
+     continuent de lire son resultat sans changement. */
+  return Object.assign({}, resultats[0], { commands:resultats });
 }
 
 async function main() {
-  const results = await registerGuildCommands();
-  results.forEach(result => {
+  const result = await registerPlanningCommand();
+  result.commands.forEach(commande => {
     console.log(
-      "Commande /" + result.name + " "
-      + (result.action === "created" ? "créée" : "mise à jour")
+      "Commande /" + commande.name + " "
+      + (commande.action === "created" ? "créée" : "mise à jour")
       + " dans le serveur " + process.env.DISCORD_GUILD_ID + "."
     );
   });
@@ -89,4 +94,4 @@ if(require.main === module){
   });
 }
 
-module.exports = { registerGuildCommands };
+module.exports = { registerPlanningCommand };

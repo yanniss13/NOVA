@@ -1,6 +1,6 @@
-# Activer les commandes Discord `/planning` et `/run`
+# Activer les commandes Discord `/planning`, `/chrono` et `/run`
 
-Les deux commandes vivent dans la même Edge Function, parce que Discord envoie
+Les trois commandes vivent dans la même Edge Function, parce que Discord envoie
 toutes les interactions d'une application vers une seule URL. Elles partagent
 donc le serveur, les salons et les rôles autorisés.
 
@@ -19,6 +19,30 @@ créneaux, puis le détail écrit par membre. Le message invite aussi les joueur
 ouvrir directement la page Disponibilités de NOVA. Elle répond dans les salons
 Discord configurés ; GitHub Actions n'entre pas dans ce chemin et le rappel du
 dimanche reste un message texte.
+
+## La commande `/chrono`
+
+Discord n'accepte qu'**un seul** endpoint d'interactions par application :
+`/chrono` passe donc par la même Edge Function, le même secret et les mêmes
+salons autorisés que `/planning`. C'est le nom de la commande qui les sépare.
+
+`/chrono` répond en texte, pas en images : l'avancement du chronométrage des
+animations, le nombre de compétences dont le DPS n'est pas calculable sans
+elles, les mesures reçues en attente de validation, les cinq mesures les plus
+utiles à faire, et un bouton **NOVA - Chronométrer une animation**.
+
+L'avancement est lu sur GitHub Pages, dans
+`data/chronometrage-avancement.json` — le fichier que
+`scripts/lister-chronometrage.py` publie, donc exactement le compte affiché
+par « Mon suivi ». Deux chemins qui liraient deux sources finiraient par
+annoncer deux chiffres. Le nombre d'envois en attente vient, lui, de
+`animation_measures` ; si cette lecture échoue, la ligne est tue plutôt
+qu'affichée à zéro — « personne n'a rien envoyé » et « je n'ai pas pu
+compter » ne sont pas la même information.
+
+Le délai anti-spam de trente secondes est indexé sur le salon **et** sur la
+commande : `/chrono` ne coûte qu'une lecture, il n'a aucune raison d'être
+retenu parce qu'un planning vient d'être publié dans le même salon.
 
 ## Architecture et sécurité
 
@@ -103,7 +127,7 @@ La mettre dans **General Information → Interactions Endpoint URL** de
 l'application Discord. Discord envoie un PING signé ; l'enregistrement réussit
 uniquement si la fonction et `DISCORD_PUBLIC_KEY` sont corrects.
 
-## 4. Enregistrer les commandes dans le serveur
+## 4. Enregistrer les trois commandes dans le serveur
 
 Dans un terminal local, définir temporairement ces trois variables :
 
@@ -111,14 +135,14 @@ Dans un terminal local, définir temporairement ces trois variables :
 $env:DISCORD_APPLICATION_ID = "<application-id>"
 $env:DISCORD_GUILD_ID = "<id-du-serveur>"
 $env:DISCORD_BOT_TOKEN = "<token-bot>"
-npm run discord:register
+npm run discord:register-commands
 Remove-Item Env:DISCORD_BOT_TOKEN
 ```
 
-Le script traite `/planning` puis `/run` : il crée celles qui manquent et met à
-jour celles qui existent déjà, sans toucher aux autres commandes de
-l'application. Il affiche aussi le lien d'autorisation `applications.commands`
-à ouvrir pour installer l'application dans le serveur.
+Le script traite les trois commandes : il crée celles qui manquent, met à jour
+celles qui existent déjà, et ne remplace jamais les autres commandes de
+l'application. Il affiche aussi le lien d'autorisation
+`applications.commands` à ouvrir pour installer l'application dans le serveur.
 
 ## 5. Vérification
 
@@ -131,9 +155,13 @@ remplacé par :
 - un bouton **NOVA - Renseigner mes créneaux** ouvrant directement
   `https://yanniss13.github.io/NOVA/#availability`.
 
-Puis `/run` dans le même salon. Le message d'attente doit être remplacé par la
-liste des membres sous 3/3 runs, ou par `✅ tout le monde est à 3/3` — exactement
-le texte que le salon reçoit le dimanche.
+Dans le même salon, lancer `/chrono`. Le message d'attente doit être remplacé
+par l'avancement, la liste des prochaines mesures et le bouton
+**NOVA - Chronométrer une animation**.
+
+Puis lancer `/run`. Le message d'attente doit être remplacé par la liste des
+membres sous 3/3 runs, ou par `✅ tout le monde est à 3/3` — exactement le texte
+que le salon reçoit le dimanche.
 
 En cas d'échec, la commande affiche un message neutre. Le détail technique est
 visible dans **Supabase → Edge Functions → discord-planning → Logs**.

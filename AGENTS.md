@@ -7,7 +7,7 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
 > Ce fichier est le point d'entrée pour tout agent (Codex, Claude, etc.) qui
 > reprend le projet. Lis-le en entier avant de coder.
 
-## État actuel — 2026-08-01
+## État actuel — 2026-08-21
 
 - [x] Assets rangés dans des dossiers (fournis par l'utilisateur, ne pas renommer).
 - [x] `scripts/generate-data.ps1` — scanne les dossiers et génère `data.js`.
@@ -108,6 +108,19 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
       builds du roster sont copiés dans l'instantané d'équipe et leurs icônes
       permettent de changer de build sans perdre les brouillons. Une arme
       secondaire manquante rend seulement l'ATK partielle.
+- [x] **Comparateur DPS des compétences sur 60 s**, dans la fiche d'un héros du
+      roster, à partir de deux builds enregistrés. Le cycle historique reste
+      visible ; le DPS simule compétence normale, attaque spéciale et ultime
+      avec ressources illimitées. Les niveaux réels du potentiel, des armes et
+      des passifs d'équipement sont conservés, tandis que les conditions et
+      cumuls des passifs personnels sont maximisés. L'ouverture, les priorités,
+      la chronologie, les hypothèses et les effets non inclus sont consultables.
+      Les attaques normales et temps d'animation restent explicitement non
+      chiffrées, et les animations valent zéro tant qu'elles ne sont pas
+      mesurées dans `data/animations-mesurees.json` — voir la section
+      « Chronométrage des animations ». `data/effets-dps.js` pèse 1,3 Mo et n'est donc ni chargé
+      par `index.html` ni précaché : la fiche l'injecte à la demande, avec
+      `data/competences.js`, comme le calculateur le fait déjà.
 - [x] **Dispos hebdomadaires des membres**. Un onglet « Dispos » où chacun peint
       ses créneaux d'une heure sur la semaine — grille maison en CSS Grid, de
       minuit à minuit, sans aucune bibliothèque de calendrier. Glissement
@@ -247,8 +260,13 @@ Site Confrérie 7ds/
 │  ├─ potentiels.js              # 3 armes compatibles + bonus par héros.
 │  ├─ armures-liees.js           # Fichiers d’armure liée par personnage.
 │  ├─ wiki-competences.js        # Compétences et passifs FR par héros (catalogue du wiki).
-│  └─ personnages-meta.js        # element/role/rarity + weapons[] par personnage.
-│  # Ne PAS les éditer à la main : ils sont réécrits par scripts/.
+│  ├─ personnages-meta.js        # element/role/rarity + weapons[] par personnage.
+│  ├─ competences.js             # Coefficients et recharges figés, socle du calcul de dégâts.
+│  ├─ effets-dps.js              # 1,3 Mo. Effets offensifs normalisés. Chargé à la demande.
+│  ├─ chronometrage-avancement.json # Compte et cinq prochaines mesures, pour « Mon suivi ».
+│  └─ animations-mesurees.json   # ⚠ ÉCRIT À LA MAIN. Le seul de data/ à ne pas être généré.
+│  # Ne PAS les éditer à la main : ils sont réécrits par scripts/. La seule
+│  # exception est animations-mesurees.json, qu'aucune source ne peut générer.
 ├─ scripts/                # Outils hors site. Se lancent DEPUIS LA RACINE.
 │  ├─ generate-data.ps1           # Régénère data.js en scannant les dossiers d'images.
 │  ├─ generate-stats-build.py     # Régénère/valide stats-build.js (références locales).
@@ -260,8 +278,16 @@ Site Confrérie 7ds/
 │  ├─ generate-wiki.py            # Régénère wiki-competences.js (compétences FR + passifs).
 │  ├─ discord-reminder.js         # Rappel Discord.
 │  ├─ availability-pdf.js         # Adaptateur Node vers le générateur d'images partagé.
-│  ├─ register-discord-planning.js # Enregistrement administratif de `/planning` et `/run`.
-│  └─ reminder-core.js            # Adaptateur Node vers la logique de rappel partagée.
+│  ├─ register-discord-planning.js # Enregistrement de `/planning`, `/chrono` et `/run`.
+│  ├─ reminder-core.js            # Adaptateur Node vers la logique de rappel partagée.
+│  ├─ generate-competences.py     # Régénère competences.js depuis 7dsorigin.app.
+│  ├─ generate-effets-dps.py      # Régénère effets-dps.js. Ses exceptions auditées :
+│  ├─ effets-dps-regles.py        #   schéma fermé des règles et classements par gameId.
+│  ├─ lister-chronometrage.py     # Régénère la liste de travail ET l'avancement.
+│  ├─ rapatrier-mesures.py        # Arbitre les mesures reçues sous les yeux d'un humain.
+│  └─ lancer-tests.js             # Lance toute la suite et rend un récapitulatif.
+├─ outils/                 # Pages hors PWA, en Disallow. chrono-animation.html mesure
+│                          # les temps d'animation image par image.
 ├─ 7ds-ui/                 # Icônes d'UI : mastery/<arme>.webp, role-elements/<el>_<role>.webp,
 │                          # skills/<Nom>.webp (313 icônes de compétences, wiki)
 ├─ AGENTS.md               # Ce fichier.
@@ -1189,10 +1215,13 @@ le SQL Editor afin d'ajouter les tables à la publication
   contient un lien direct vers la page Disponibilités de NOVA. Le générateur
   partagé est `supabase/functions/_shared/availability-pdf.js`, utilisé côté
   Node via `scripts/availability-pdf.js`. La RPC
-  `claim_discord_planning_request` impose un délai
-  atomique par commande et par salon : 30 secondes pour `/planning`,
-  10 pour `/run`. Le token Bot sert uniquement à enregistrer les
-  commandes avec `npm run discord:register` et ne doit jamais être
+  `claim_discord_planning_request` impose un délai atomique par salon **et par
+  commande** : 30 secondes pour `/planning` et `/chrono`, 10 pour `/run`.
+  Discord n'accepte qu'un seul endpoint
+  d'interactions par application : `/chrono`, qui annonce l'avancement du
+  chronométrage en texte, passe par la même fonction et le même secret,
+  et c'est le nom de la commande qui les sépare. Le token Bot sert uniquement à
+  enregistrer les commandes avec `npm run discord:register-commands` et ne doit jamais être
   stocké dans Supabase ou le dépôt. Procédure : `docs/discord-planning.md`.
   Voir `docs/superpowers/specs/2026-07-25-boss-trois-runs-design.md`.
 - Après une modification de ce schéma, réexécuter le contenu complet de
@@ -1693,8 +1722,17 @@ après lui.
 ## Conventions
 
 - Français partout dans l'UI.
-- La logique applicative reste inline dans `index.html` (pas de build). Les seules
-  exceptions runtime sont `supabase-config.js` et le client Supabase chargé par CDN.
+- **Pas d'étape de build**, mais plus de logique inline : l'applicatif vit dans
+  `js/`, en modules ES, réparti sur cinq couches contrôlées automatiquement par
+  `tests/modules-imports.test.js`. Le détail est dans
+  [js/ARCHITECTURE.md](js/ARCHITECTURE.md). `index.html` ne garde que deux
+  blocs de démarrage — l'enregistrement du service worker et le header
+  rétractable — parce que le bac à sable `vm` des tests unitaires ne fournit ni
+  `navigator`, ni `matchMedia`, ni `requestAnimationFrame`. Ne pas y ajouter de
+  logique métier : elle échapperait à la garde de couches.
+- Un module qui exporte un symbole que personne n'importe fait rougir
+  `tests/modules-imports.test.js`, et un module absent de `CORE_ASSETS` de
+  `sw.js` aussi. Les deux gardent le mode hors ligne, pas le style.
 - Thème : héraldique sombre (obsidienne + or vieilli + pourpre). Voir la spec.
 - Après modif des dossiers d'images : relancer `scripts/generate-data.ps1`.
 - Après une mise à jour du jeu : `python scripts/telecharger-images.py --liste`
@@ -1722,3 +1760,51 @@ l'installation. `noyau/catalogue-build.js` l'injecte à la première ouverture
 d'une vue qui en dépend. `BUILD_STATS` conserve la même identité et ses
 dictionnaires sont remplis sur place : plusieurs modules gardent une référence
 vers ces objets. Le remplacer directement réintroduirait des catalogues vides.
+
+## Chronométrage des animations
+
+Aucune source publique ne donne les temps d'animation de 7DS Origin. Ils se
+mesurent en jeu, image par image, et cette collecte est la dernière pièce qui
+manque au calcul de DPS.
+
+`js/metier/dps-simulation.js` **consomme** ces durées : une animation mesurée
+verrouille le héros après son action, la recharge partant elle du lancement.
+Une compétence absente de la table avance de zéro — jamais d'une durée
+supposée, qui serait indiscernable d'une mesure une fois le tableau à moitié
+rempli. Le résultat porte donc `animations:{mesurees, total}`, et la fiche
+affiche « Animations mesurées : 2 / 3 » plutôt qu'une réserve muette : chaque
+mesure manquante gonfle le DPS affiché, et le lecteur doit savoir de combien.
+
+La chaîne complète, dans l'ordre où elle se parcourt :
+
+1. `outils/chrono-animation.html` — l'outil de mesure image par image. Page
+   autonome, hors PWA, `Disallow` dans `robots.txt`. La vidéo ne quitte jamais
+   l'appareil ; seul le chiffre part. L'outil ne porte pas de formulaire de
+   connexion : il lit la session ouverte sur NOVA, même origine.
+2. `animation_measures` (Supabase) — une **boîte de réception**, pas la source
+   de vérité. Tout membre connecté peut y écrire, et lire ce qui s'y trouve.
+   La table est en **ajout seul**, sans politique `update` ni `delete` : une
+   mesure envoyée est un fait daté, pas un brouillon
+   (`tests/animation-measures-schema.test.js` le garde).
+3. `python scripts/rapatrier-mesures.py` — l'arbitrage se fait **ici**, faute
+   de pouvoir se faire en base. Les envois sont regroupés par animation, un
+   seul par auteur — le plus récent, un renvoi corrigeant au lieu de voter
+   deux fois — et le script propose leur **médiane** : une moyenne suivrait
+   le membre qui s'est trompé d'un facteur deux. Une question par animation,
+   pas une par ligne reçue. Il signale les désaccords au-delà de 10 %, ceux
+   qui **démentent** une valeur déjà écrite, et n'écrit que ce qu'un humain a
+   validé — au clavier, la médiane ou une valeur tapée.
+4. `data/animations-mesurees.json` — écrit **à la main**, jamais régénéré.
+5. `python scripts/lister-chronometrage.py` — régénère
+   `docs/chronometrage-animations.md` (le tableau de travail complet) **et**
+   `data/chronometrage-avancement.json` (le compte et les cinq prochaines
+   mesures). Les deux sortent du même classement : elles ne peuvent pas
+   diverger. `--check` vérifie les deux fichiers.
+
+La carte `[data-card="chronometrage"]` de « Mon suivi » est **le seul chemin**
+du site vers l'outil. Sans elle, un membre n'a aucun moyen de le trouver, et le
+compteur reste à zéro quoi qu'il arrive. Elle disparaît quand tout est mesuré.
+
+Ce qui débloque passe devant ce qui affine : une compétence **sans recharge**
+ne se rejoue qu'à la fin de son animation, qui est alors le dénominateur entier
+de son DPS. Une compétence à recharge n'en tire qu'un retard.
