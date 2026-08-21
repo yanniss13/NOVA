@@ -131,6 +131,8 @@
   .envoi .btn{min-height:44px}
   .retour{margin:0;font-size:13px;color:var(--muted)}
   .retour:empty{display:none}
+  .retour-aide{margin:6px 0 0;font-size:12px;color:var(--muted)}
+  .retour-aide a{color:var(--gold-bright)}
 
   @media(prefers-reduced-motion:reduce){
     .outil *{transition-duration:.001ms!important}

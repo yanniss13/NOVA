@@ -119,6 +119,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   statsDeCycleHistorique:typeof statsDeCycleHistorique === "function"
     ? statsDeCycleHistorique
     : undefined,
+  chronoCarte:typeof chronoCarte === "function"
+    ? chronoCarte
+    : undefined,
   CIBLE_REFERENCE:typeof CIBLE_REFERENCE === "object"
     ? CIBLE_REFERENCE
     : undefined,

@@ -11,6 +11,9 @@ NOVA est une PWA communautaire pour **The Seven Deadly Sins: Origin**. Elle réu
 - Team Builder avec armes, armures, bijoux, potentiels et statistiques expliquées.
 - Roster partagé des personnages et des équipes, synchronisé avec Supabase.
 - Analyse des forces de la confrérie par élément et calculateur de dégâts.
+- Classement des builds d'un même héros par DPS des compétences sur 60 s,
+  dans sa fiche du roster.
+- Chronométrage collaboratif des temps d'animation, depuis « Mon suivi ».
 - Disponibilités hebdomadaires sous forme de grille de 168 créneaux.
 - Deux images du planning visibles dans Discord (tableau hebdomadaire et
   créneaux écrits par membre), générées à la demande avec `/planning`.
@@ -64,6 +67,7 @@ Les fichiers de `7ds-stats/` et `data/` sont produits par les scripts du dossier
 python scripts/generate-stats.py
 python scripts/generate-stats-build.py
 python scripts/generate-wiki.py
+python scripts/generate-effets-dps.py
 ```
 
 La source publique utilisée est `7dsorigin.app`. NOVA est un projet communautaire indépendant, sans affiliation avec Netmarble ou les ayants droit de la licence.

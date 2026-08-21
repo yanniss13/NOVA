@@ -1,0 +1,57 @@
+{
+ "_lisezmoi": [
+  "Genere par scripts/lister-chronometrage.py, comme",
+  "docs/chronometrage-animations.md. Ne pas editer a la main.",
+  "Les mesures se saisissent dans data/animations-mesurees.json."
+ ],
+ "total": 335,
+ "mesurees": 0,
+ "debloquent": 151,
+ "prochaines": [
+  {
+   "gameId": "klotho_staff_normalatk_enchant_ready",
+   "heros": "klotho",
+   "arme": "Bâton",
+   "nom": "Projection dimensionnelle",
+   "categorie": "Attaque normale",
+   "touche": "clic gauche",
+   "role": "debloque"
+  },
+  {
+   "gameId": "escanor_axe_jumpatk",
+   "heros": "escanor",
+   "arme": "Hache",
+   "nom": "Entaille impitoyable",
+   "categorie": "Attaque normale",
+   "touche": "clic gauche",
+   "role": "debloque"
+  },
+  {
+   "gameId": "escanor_shield_jumpatk",
+   "heros": "escanor",
+   "arme": "Épée & bouclier",
+   "nom": "Marque du soleil",
+   "categorie": "Attaque normale",
+   "touche": "clic gauche",
+   "role": "debloque"
+  },
+  {
+   "gameId": "drake_sword2h_jumpatk",
+   "heros": "drake",
+   "arme": "Épée à deux mains",
+   "nom": "Lame foudroyante",
+   "categorie": "Attaque normale",
+   "touche": "clic gauche",
+   "role": "debloque"
+  },
+  {
+   "gameId": "escanor_sword2h_jumpatk",
+   "heros": "escanor",
+   "arme": "Épée à deux mains",
+   "nom": "Orbite solaire",
+   "categorie": "Attaque normale",
+   "touche": "clic gauche",
+   "role": "debloque"
+  }
+ ]
+}
