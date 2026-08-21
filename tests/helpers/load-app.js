@@ -104,6 +104,24 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   degatsAttendus:typeof degatsAttendus === "function"
     ? degatsAttendus
     : undefined,
+  effetsDuBuild:typeof effetsDuBuild === "function"
+    ? effetsDuBuild
+    : undefined,
+  simulerDpsCompetences:typeof simulerDpsCompetences === "function"
+    ? simulerDpsCompetences
+    : undefined,
+  degatsDuCycle:typeof degatsDuCycle === "function"
+    ? degatsDuCycle
+    : undefined,
+  puissanceSection:typeof puissanceSection === "function"
+    ? puissanceSection
+    : undefined,
+  statsDeCycleHistorique:typeof statsDeCycleHistorique === "function"
+    ? statsDeCycleHistorique
+    : undefined,
+  chronoCarte:typeof chronoCarte === "function"
+    ? chronoCarte
+    : undefined,
   CIBLE_REFERENCE:typeof CIBLE_REFERENCE === "object"
     ? CIBLE_REFERENCE
     : undefined,
@@ -763,6 +781,15 @@ function loadApp(initialTeams){
         "7ds-armes/Epees doubles/doubles.webp":
           testWeaponDefinition("grade-dual", 200, true)
       }
+    },
+    /* Le vrai catalogue d'effets pese plus d'un mega-octet et n'apporte
+       rien aux builds fabriques ici : les tests qui mesurent un effet le
+       fournissent eux-memes. Un catalogue vide suffit a charger le
+       module sans lui faire lire un global absent. */
+    SEVEN_DS_EFFETS_DPS:{
+      version:1,
+      heroes:{}, skills:{}, weapons:{},
+      gear:{ armors:{}, engravings:{} }, sets:{}
     }
   };
   const catalogSandbox = { window:{} };

@@ -220,3 +220,12 @@
 @media(max-width:520px){
   .cov-row{grid-template-columns:repeat(2,1fr)}
 }
+
+/* La carte de chronometrage : la seule porte du site vers l'outil de
+   mesure. La ligne « a mesurer en premier » doit rester lisible a 320 px,
+   ou un nom de competence francais depasse souvent la largeur. */
+.dashboard-chrono-prochaine{
+  margin:6px 0 10px;font-size:13px;color:var(--muted);overflow-wrap:anywhere
+}
+.dashboard-chrono-prochaine strong{color:var(--parchment)}
+[data-card="chronometrage"] .btn{display:inline-block;text-decoration:none}

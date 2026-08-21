@@ -22,6 +22,7 @@ import {
   JEWEL_SLOTS,
   WEAPON_ENUM,
   WSLOT_ROLES,
+  FOLDER_TO_ENUM,
   metaOf
 } from "../noyau/constantes.js";
 import { authMessage } from "../noyau/supabase-client.js";
@@ -33,7 +34,13 @@ import {
   normalizeRosterBuild,
   normalizeRosterCharacter
 } from "../metier/equipe-modele.js";
-import { orderedBuildEntries } from "../metier/stats-calcul.js";
+import {
+  calculateHeroStats,
+  orderedBuildEntries
+} from "../metier/stats-calcul.js";
+import { CIBLES, degatsDuCycle } from "../metier/degats-calcul.js";
+import { effetsDuBuild } from "../metier/dps-effets.js";
+import { simulerDpsCompetences } from "../metier/dps-simulation.js";
 import { MemberRosterStore } from "../donnees/roster-store.js";
 import { ouvrirCalculateur } from "./calculateur.js";
 import { openPieceDetail } from "./detail-piece.js";
@@ -111,6 +118,339 @@ import { toast } from "./toast.js";
     ]);
     line.addEventListener("click", ()=>onOpen(line));
     return line;
+  }
+
+  /* Le classement compare les builds d'un MEME heros : la cible n'a qu'a
+     rester constante d'une ligne a l'autre. Le palier 1 d'Akumu est celui que
+     la page affichait quand il etait la seule cible connue. Le figer ici evite
+     qu'un changement de palier dans le calculateur deplace un classement que
+     personne n'a touche. */
+  const CIBLE_CLASSEMENT = CIBLES[0];
+
+  /* Les deux catalogues du classement pesent 1,4 Mo : effets-dps.js est le
+     deuxieme fichier du depot par la taille. Les charger au demarrage les
+     ferait payer a chaque visiteur qui n'ouvre jamais une fiche de heros.
+     Motif repris de js/vues/calculateur.js. */
+  let chargementDps = null;
+  let animationsMesurees = null;
+
+  function cataloguesDpsPrets(){
+    return Boolean(typeof window !== "undefined"
+      && window.SEVEN_DS_COMPETENCES && window.SEVEN_DS_EFFETS_DPS
+      && animationsMesurees);
+  }
+
+  function chargerCataloguesDps(){
+    if(cataloguesDpsPrets()) return Promise.resolve(true);
+    if(chargementDps) return chargementDps;
+    const injecter = src => new Promise((resolve, reject) => {
+      document.head.appendChild(el("script",{
+        src, onload:()=>resolve(true),
+        onerror:()=>reject(new Error("catalogue introuvable : "+src))
+      }));
+    });
+    chargementDps = Promise.all([
+      window.SEVEN_DS_COMPETENCES
+        ? Promise.resolve(true) : injecter("./data/competences.js"),
+      window.SEVEN_DS_EFFETS_DPS
+        ? Promise.resolve(true) : injecter("./data/effets-dps.js"),
+      /* Les animations mesurees en jeu. Un JSON, pas un script : il s'ecrit a
+         la main et ne porte aucun code. Son absence n'est pas une panne — la
+         table est vide tant que la confrerie n'a rien mesure, et le simulateur
+         compte alors zero. */
+      fetch("./data/animations-mesurees.json")
+        .then(reponse => reponse.ok ? reponse.json() : null)
+        .then(contenu => {
+          animationsMesurees = (contenu && contenu.animations) || {};
+          return true;
+        })
+        .catch(() => { animationsMesurees = {}; return true; })
+    ]).catch(erreur => {
+      /* Rejouable : un echec reseau ne doit pas condamner la fiche pour toute
+         la duree de la session. */
+      chargementDps = null;
+      throw erreur;
+    });
+    return chargementDps;
+  }
+
+  /* Les competences du catalogue rattachees a un build du roster. Le roster
+     range ses builds par DOSSIER d'image (« Hache »), la source les publie par
+     ENUM (« Axe ») : FOLDER_TO_ENUM fait le pont, et il existait deja. */
+  function competencesDuBuild(charId, dossierArme){
+    const catalogue = (typeof window !== "undefined"
+      && window.SEVEN_DS_COMPETENCES) || {};
+    const enumArme = FOLDER_TO_ENUM[dossierArme];
+    if(!enumArme) return [];
+    return (catalogue[charId] || [])
+      .filter(competence => competence.weaponType === enumArme);
+  }
+
+  /* Les entrees du moteur, lues par CODE dans le resultat groupe.
+     `calculateBuildStats` n'est pas exportee : `calculateHeroStats` est la
+     porte publique. Un statut autre que `valid` ou `partial` ne porte aucun
+     chiffre — la ligne est alors absente plutot que fausse. */
+  function resultatStatsDeFrappe(hero){
+    const result = calculateHeroStats(hero);
+    if(!result || (result.status !== "valid" && result.status !== "partial")){
+      return null;
+    }
+    const atk = result.totals.find(total => total.stat === "B_Atk");
+    return atk && typeof atk.value === "number" ? result : null;
+  }
+
+  function statsDeCycleHistorique(statsResult){
+    const totaux = statsResult && Array.isArray(statsResult.totals)
+      ? statsResult.totals : [];
+    const valeur = stat => {
+      const ligne = totaux.find(total => total.stat === stat);
+      return ligne && typeof ligne.value === "number" ? ligne.value : 0;
+    };
+    const atk = valeur("B_Atk");
+    return typeof atk === "number" ? {
+      atk,
+      critRate:valeur("C_Critical_Rate"),
+      critDamage:valeur("C_Critical_Dam_Rate"),
+      bonusType:0
+    } : null;
+  }
+
+  function competencesDpsDuBuild(charId, dossierArme){
+    const competences = competencesDuBuild(charId, dossierArme);
+    const catalogue = (typeof window !== "undefined"
+      && window.SEVEN_DS_EFFETS_DPS) || {};
+    const enumArme = FOLDER_TO_ENUM[dossierArme];
+    const synthetiques = Object.entries(catalogue.skills || {})
+      .filter(([, competence]) => competence.synthetic
+        && competence.weaponType === enumArme)
+      .map(([gameId, competence]) => Object.assign({ gameId }, competence));
+    return competences.concat(synthetiques);
+  }
+
+  /* Deux builds enregistres au minimum : avec un seul, un classement n'apprend
+     rien, et rien ne justifie de telecharger 1,4 Mo de catalogues. */
+  function classementPossible(hero){
+    return Object.keys((hero && hero.rosterBuilds) || {}).length >= 2;
+  }
+
+  function parDpsPuisParCycle(a, b){
+    const aConnu = Number.isFinite(a.dps);
+    const bConnu = Number.isFinite(b.dps);
+    if(aConnu !== bConnu) return aConnu ? -1 : 1;
+    return aConnu ? b.dps - a.dps : b.cycle - a.cycle;
+  }
+
+  /* Le classement des builds enregistres, du plus fort au plus faible.
+     Un build dont aucune competence n'est connue est ABSENT du classement :
+     l'afficher a zero le ferait passer pour mauvais alors qu'il est seulement
+     inconnu du catalogue — le cas de Gowther, dont la source ne publie aucun
+     coefficient. */
+  function classementPuissance(hero){
+    const builds = (hero && hero.rosterBuilds) || {};
+    if(!classementPossible(hero)) return [];
+    return Object.keys(builds)
+      .map(dossierArme => {
+        const build = builds[dossierArme] || {};
+        const competences = competencesDuBuild(hero.char, dossierArme);
+        if(!competences.length) return null;
+        const actif = Object.assign({}, hero, {
+          weapon:build.weapon,
+          weaponConfig:build.weaponConfig,
+          armor:build.armor,
+          armorConfig:build.armorConfig,
+          jewel:build.jewel,
+          jewelConfig:build.jewelConfig,
+          activeWeaponType:dossierArme
+        });
+        const statsResult = resultatStatsDeFrappe(actif);
+        if(!statsResult) return null;
+        const catalogue = (typeof window !== "undefined"
+          && window.SEVEN_DS_EFFETS_DPS) || {};
+        const contexte = effetsDuBuild({
+          hero:actif,
+          dossierArme,
+          catalogue,
+          statsResult
+        });
+        const cycle = degatsDuCycle({
+          stats:statsDeCycleHistorique(statsResult),
+          competences,
+          cible:CIBLE_CLASSEMENT
+        });
+        const simulation = simulerDpsCompetences({
+          stats:contexte.stats,
+          competences:competencesDpsDuBuild(hero.char, dossierArme),
+          effets:contexte.effets,
+          cible:CIBLE_CLASSEMENT,
+          duree:60,
+          animations:animationsMesurees
+        });
+        const categoriesDps = new Set([
+          "NORMAL_SKILL", "ACTIVE_THIRD", "ULTIMATE"
+        ]);
+        const nonChiffrees = competences.filter(competence =>
+          categoriesDps.has(competence.categorie)
+          && !(competence.composantes || []).some(composante =>
+            Number.isFinite(Number(composante.pourcentage))
+          )
+        ).length;
+        return cycle ? {
+          arme:dossierArme,
+          cycle:cycle.total,
+          dps:Number.isFinite(simulation.dps) ? simulation.dps : null,
+          nonInclus:nonChiffrees + contexte.nonInclus.length
+            + simulation.nonInclus.length,
+          exclusions:contexte.nonInclus.concat(simulation.nonInclus),
+          ouverture:simulation.ouverture.map(action => action.nom),
+          priorites:simulation.priorites,
+          rotation:simulation.rotation,
+          hypotheses:simulation.hypotheses,
+          animations:simulation.animations
+        } : null;
+      })
+      .filter(Boolean)
+      .sort(parDpsPuisParCycle);
+  }
+
+  /* « Animations non mesurées » se dit avec un compte : un membre qui a
+     chronométré deux compétences sur trois doit voir sa contribution, et
+     savoir de combien le chiffre reste optimiste. Un temps d'animation non
+     mesuré vaut zéro dans la simulation, donc chaque mesure manquante gonfle
+     le DPS affiché. */
+  function libelleHypothese(hypothese, animations){
+    if(hypothese === "animations-non-mesurees"){
+      const total = Number(animations && animations.total) || 0;
+      const mesurees = Number(animations && animations.mesurees) || 0;
+      return total
+        ? "Animations mesurées : "+mesurees+" / "+total
+          +" — le DPS reste optimiste pour les autres"
+        : "Animations non mesurées";
+    }
+    const libelles = {
+      "passifs-personnels-actifs-au-maximum":
+        "Passifs personnels activés au maximum de leur niveau réel",
+      "cumuls-personnels-au-maximum":"Cumuls personnels au maximum",
+      "pv-restants-egaux-aux-pv-max":"PV restants égaux aux PV max",
+      "ressources-illimitees":"Ressources illimitées",
+      "attaques-normales-non-chiffrees":"Attaques normales non chiffrées"
+    };
+    return libelles[hypothese] || hypothese;
+  }
+
+  function listeDetail(titre, valeurs, ordonnee){
+    if(!Array.isArray(valeurs) || !valeurs.length) return null;
+    return el("div",{class:"hd-puissance-groupe"},[
+      el("strong",{text:titre}),
+      el(ordonnee ? "ol" : "ul",{class:"hd-puissance-rotation"},
+        valeurs.map(valeur => el("li",{text:String(valeur)})))
+    ]);
+  }
+
+  function detailRotation(ligne){
+    const chronologie = (ligne.rotation || [])
+      .filter(evenement => evenement.type !== "attente")
+      .map(evenement => {
+        const temps = Number(evenement.temps || 0).toFixed(1).replace(".", ",");
+        return temps+" s — "+(evenement.nom || evenement.gameId || "Effet");
+      });
+    const exclusions = (ligne.exclusions || []).map(exclusion =>
+      exclusion.texteFr || exclusion.nom || exclusion.id || exclusion.raison
+    );
+    const details = el("details",{class:"hd-puissance-detail"},[
+      el("summary",{text:"Rotation optimale selon les données connues"})
+    ]);
+    [
+      listeDetail("Ouverture", ligne.ouverture, true),
+      listeDetail("Priorité", ligne.priorites, false),
+      listeDetail("Chronologie", chronologie, false),
+      listeDetail("Hypothèses", (ligne.hypotheses || [])
+        .map(hypothese => libelleHypothese(hypothese, ligne.animations)), false),
+      listeDetail("Non inclus dans le calcul", exclusions, false)
+    ].filter(Boolean).forEach(groupe => details.appendChild(groupe));
+    return details;
+  }
+
+  function puissanceSection(classement){
+    if(!Array.isArray(classement) || classement.length < 2) return null;
+    const lignes = classement.slice().sort(parDpsPuisParCycle);
+    const nonInclus = lignes.reduce((total, ligne) =>
+      total + (Number.isInteger(ligne.nonInclus) && ligne.nonInclus > 0
+        ? ligne.nonInclus
+        : 0), 0);
+    const contenu = [
+      el("strong",{text:"Puissance par arme"}),
+      el("p",{class:"hd-puissance-note",
+        text:"DPS des compétences sur 60 s — théorique. Ressources illimitées, "
+          + "passifs personnels activés au maximum de leur niveau réel. "
+          + "Attaques normales et temps d'animation non chiffrés."})
+    ];
+    if(nonInclus){
+      contenu.push(el("p",{
+        class:"hd-puissance-note hd-puissance-non-inclus"
+      },[
+        el("strong",{text:"Non inclus dans le calcul"}),
+        " : "+nonInclus+" effet"+(nonInclus > 1 ? "s" : "")
+          +" non chiffré"+(nonInclus > 1 ? "s" : "")+"."
+      ]));
+    }
+    const bloc = el("section",{
+      class:"hd-puissance",
+      dataset:{ puissance:String(lignes.length) }
+    }, contenu);
+    lignes.forEach(ligne => {
+      const mesures = el("span",{class:"hd-puissance-mesures"},[
+        el("span",{},[
+          el("span",{text:"DPS des compétences sur 60 s : "}),
+          el("span",{class:"hd-puissance-valeur",
+            text:Number.isFinite(ligne.dps)
+              ? new Intl.NumberFormat("fr-FR").format(Math.round(ligne.dps))+"/s"
+              : "Non disponible"})
+        ]),
+        el("span",{},[
+          el("span",{text:"Dégâts d'un cycle : "}),
+          el("span",{class:"hd-puissance-valeur secondaire",
+            text:new Intl.NumberFormat("fr-FR").format(Math.round(ligne.cycle))})
+        ])
+      ]);
+      bloc.appendChild(el("div",{class:"hd-puissance-ligne"},[
+        el("strong",{text:ligne.arme}),
+        mesures,
+        detailRotation(ligne)
+      ]));
+    });
+    return bloc;
+  }
+
+  /* La fiche s'ouvre sans attendre le reseau : tant que les catalogues ne sont
+     pas la, la section annonce son attente puis se remplace elle-meme. Une
+     fiche refermee entre-temps laisse un noeud detache, et `replaceWith` n'y
+     fait rien — c'est la sortie voulue, pas un cas a rattraper. */
+  function ajouterPuissance(col, hero){
+    if(!classementPossible(hero)) return;
+    if(cataloguesDpsPrets()){
+      const bloc = puissanceSection(classementPuissance(hero));
+      if(bloc) col.appendChild(bloc);
+      return;
+    }
+    const attente = el("section",{
+      class:"hd-puissance",
+      dataset:{ puissance:"attente" }
+    },[
+      el("strong",{text:"Puissance par arme"}),
+      el("p",{class:"hd-puissance-note", text:"Chargement du catalogue…"})
+    ]);
+    col.appendChild(attente);
+    chargerCataloguesDps().then(() => {
+      const bloc = puissanceSection(classementPuissance(hero));
+      if(bloc) attente.replaceWith(bloc);
+      else attente.remove();
+    }).catch(() => {
+      attente.replaceWith(el("section",{class:"hd-puissance"},[
+        el("strong",{text:"Puissance par arme"}),
+        el("p",{class:"hd-puissance-note",
+          text:"Catalogue indisponible : le classement n'a pas pu être calculé."})
+      ]));
+    });
   }
 
   function heroDetail(h, options){
@@ -213,6 +553,10 @@ import { toast } from "./toast.js";
       if(!valid) props.disabled = "disabled";
       col.appendChild(el("button",props));
     }
+
+    /* Classement des builds enregistres. Il n'apparait qu'a partir de DEUX
+       builds chiffrables : avec un seul, un classement n'apprend rien. */
+    ajouterPuissance(col, h);
     return col;
   }
 
