@@ -24,8 +24,8 @@
 
   function dureeRafale({ secondeDebut, secondeFin, repetitions }){
     verifierBornes(secondeDebut, secondeFin);
-    if(!(repetitions >= 1)){
-      throw new Error("Il faut au moins une repetition.");
+    if(!(repetitions >= 2)){
+      throw new Error("Il faut au moins deux repetitions.");
     }
     return arrondirAuMillieme((secondeFin - secondeDebut) / repetitions);
   }
@@ -35,7 +35,29 @@
     return arrondirAuMillieme(secondeFin - secondeDebut);
   }
 
-  const API = { dureeRafale, dureeUnique };
+  function estAutoAttaque(gameId){
+    return /jumpatk|normalatk/.test(String(gameId || ""));
+  }
+
+  function protocolePour(gameId){
+    return estAutoAttaque(gameId)
+      ? { mode:"rafale", repetitions:10 }
+      : { mode:"unique", repetitions:null };
+  }
+
+  function protocoleValide({ gameId, mode, repetitions }){
+    const attendu = protocolePour(gameId);
+    if(mode !== attendu.mode) return false;
+    if(mode === "unique") return repetitions === null;
+    return Number.isInteger(repetitions) && repetitions >= 2;
+  }
+
+  function fpsPour(dureeImage, cadenceRepli=60){
+    const fps = Number(dureeImage) > 0 ? 1 / Number(dureeImage) : cadenceRepli;
+    return Math.round(fps * 1000) / 1000;
+  }
+
+  const API = { dureeRafale, dureeUnique, protocolePour, protocoleValide, fpsPour };
 
   if(typeof module !== "undefined" && module.exports) module.exports = API;
   if(typeof window !== "undefined") window.ChronoCalcul = API;

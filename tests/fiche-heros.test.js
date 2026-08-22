@@ -31,7 +31,11 @@ const bloc = puissanceSection([
       "Jugement divin dès que disponible"
     ],
     rotation:[{ temps:0, nom:"Champ électromagnétique" }],
-    hypotheses:["Ressources illimitées", "Animations non mesurées"]
+    hypotheses:[
+      "Ressources illimitées",
+      "Animations non mesurées",
+      "attaques-normales-remplissage"
+    ]
   },
   {
     arme:"Livre",
@@ -41,7 +45,8 @@ const bloc = puissanceSection([
     ouverture:["Graine de givre"],
     priorites:[],
     rotation:[],
-    hypotheses:[]
+    hypotheses:[],
+    exclusions:[{ raison:"releve-hors-simulation-equipe" }]
   },
   {
     arme:"Bâton",
@@ -61,7 +66,12 @@ assert.match(texte, /DPS des compétences sur 60 s/);
 assert.match(texte, /8.?432\/s/);
 assert.match(texte, /Dégâts d'un cycle/);
 assert.match(texte, /Ouverture/);
-assert.match(texte, /Rotation optimale selon les données connues/);
+assert.match(texte, /Rotation simulée selon les priorités connues/);
+assert.doesNotMatch(texte, /Rotation optimale selon les données connues/);
+assert.match(
+  texte,
+  /Attaques normales utilisées uniquement entre les compétences à recharge/
+);
 assert.match(texte, /Non inclus dans le calcul/);
 assert.match(texte, /DPS des compétences sur 60 s : Non disponible/);
 assert.doesNotMatch(texte, /Bâton[^]*0\/s/);
@@ -80,6 +90,20 @@ const annonce = bloc.children.find(child =>
 );
 assert.ok(annonce, "le bloc doit annoncer les effets non chiffres");
 assert.match(fakeText(annonce), /4 effets non chiffrés/);
+
+const ligneSansHypotheseNormale = lignes.find(ligne =>
+  fakeText(ligne).includes("Livre")
+);
+assert.ok(ligneSansHypotheseNormale, "la ligne Livre doit être rendue");
+assert.doesNotMatch(
+  fakeText(ligneSansHypotheseNormale),
+  /Attaques normales non chiffrées/,
+  "un build sans cette hypothèse ne doit pas l'inventer dans son détail"
+);
+assert.match(
+  fakeText(ligneSansHypotheseNormale),
+  /Compétence de relève hors simulation d’équipe/
+);
 
 assert.deepStrictEqual(
   JSON.parse(JSON.stringify(statsDeCycleHistorique({ totals:[

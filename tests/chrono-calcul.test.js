@@ -34,4 +34,27 @@ assert.throws(
   /repetition/i
 );
 
+assert.deepStrictEqual(
+  outils.protocolePour("meliodas_axe_jumpatk"),
+  { mode:"rafale", repetitions:10 }
+);
+assert.deepStrictEqual(
+  outils.protocolePour("meliodas_axe_skill_e"),
+  { mode:"unique", repetitions:null }
+);
+assert.equal(outils.protocoleValide({
+  gameId:"x_normalatk", mode:"rafale", repetitions:10
+}), true);
+assert.equal(outils.protocoleValide({
+  gameId:"x_normalatk", mode:"unique", repetitions:null
+}), false);
+assert.equal(outils.protocoleValide({
+  gameId:"x_skill_e", mode:"rafale", repetitions:10
+}), false);
+assert.equal(outils.protocoleValide({
+  gameId:"x_normalatk", mode:"rafale", repetitions:1
+}), false);
+assert.equal(outils.fpsPour(1 / 30), 30);
+assert.equal(outils.fpsPour(0), 60);
+
 console.log("chrono-calcul.test.js : OK");

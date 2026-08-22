@@ -89,7 +89,7 @@
     <section class="bloc">
       <h2>Comment tu mesures</h2>
       <div class="champ">
-        <label>Méthode</label>
+        <label>Méthode imposée par la compétence</label>
         <div class="modes">
           <label><input type="radio" name="mode" value="rafale" checked><span>Rafale</span></label>
           <label><input type="radio" name="mode" value="unique"><span>Une seule fois</span></label>
@@ -101,13 +101,12 @@
         laisse tourner dix cycles entiers, puis marque le premier coup du
         onzième. L'outil divise par dix, ce qui divise aussi ton erreur de
         marquage.<br><br>
-        <b>Une seule fois</b> — pour toutes les autres compétences, qui ont
-        une recharge et ne s'enchaînent donc pas. Marque le début et la fin
-        d'un lancement.
+        <b>Une seule fois</b> — pour toutes les autres compétences. Marque le
+        début et la fin d'un lancement.
       </p>
       <div class="champ">
         <label for="repetitions">Nombre de cycles enchaînés</label>
-        <input type="number" id="repetitions" min="1" value="10">
+        <input type="number" id="repetitions" min="2" value="10">
       </div>
     </section>
   </div>

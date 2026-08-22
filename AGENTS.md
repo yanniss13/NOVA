@@ -1773,7 +1773,25 @@ Une compétence absente de la table avance de zéro — jamais d'une durée
 supposée, qui serait indiscernable d'une mesure une fois le tableau à moitié
 rempli. Le résultat porte donc `animations:{mesurees, total}`, et la fiche
 affiche « Animations mesurées : 2 / 3 » plutôt qu'une réserve muette : chaque
-mesure manquante gonfle le DPS affiché, et le lecteur doit savoir de combien.
+mesure manquante d'une compétence prise en charge gonfle le DPS affiché, et le
+lecteur doit savoir de combien.
+
+Le protocole est **automatique** : les attaques dont le `gameId` contient
+`jumpatk` ou `normalatk` se mesurent en **rafale de 10** répétitions ; toutes
+les autres se mesurent en **unique**, avec `reps:null`. Les radios sont donc
+indicatifs et verrouillés par la compétence choisie. Le FPS envoyé est la
+cadence réellement lue (`1 / durée d'image`, arrondie à trois décimales) ; si
+elle est indisponible, l'outil annonce et envoie le repli de **60 img/s**. Une
+cadence réelle hors de `[10, 240]` img/s bloque l'envoi.
+
+L'importateur refuse les identifiants inconnus, les secondes non finies hors de
+`]0, 30]`, un couple `mode`/`reps` invalide (`unique` exige `reps:null`,
+`rafale` exige un entier `>= 2`) et tout FPS non fini hors de `[10, 240]`.
+`fps:null` reste uniquement admis pour lire les mesures historiques. Avant de
+publier ce lot, rejouer intégralement
+`supabase/schema.sql` dans le SQL Editor : ses contraintes idempotentes
+appliquent ces mêmes bornes aux tables existantes et signalent les anciennes
+lignes invalides.
 
 La chaîne complète, dans l'ordre où elle se parcourt :
 
@@ -1793,7 +1811,10 @@ La chaîne complète, dans l'ordre où elle se parcourt :
    le membre qui s'est trompé d'un facteur deux. Une question par animation,
    pas une par ligne reçue. Il signale les désaccords au-delà de 10 %, ceux
    qui **démentent** une valeur déjà écrite, et n'écrit que ce qu'un humain a
-   validé — au clavier, la médiane ou une valeur tapée.
+   validé — au clavier, la médiane ou une valeur tapée. La lecture Supabase
+   est paginée dans l'ordre stable `created_at,id`; les identifiants inconnus
+   et les durées non finies, hors de `]0, 30]` secondes, sont refusés. Le JSON
+   validé est remplacé atomiquement afin qu'une interruption ne le tronque pas.
 4. `data/animations-mesurees.json` — écrit **à la main**, jamais régénéré.
 5. `python scripts/lister-chronometrage.py` — régénère
    `docs/chronometrage-animations.md` (le tableau de travail complet) **et**
@@ -1805,6 +1826,31 @@ La carte `[data-card="chronometrage"]` de « Mon suivi » est **le seul chemin**
 du site vers l'outil. Sans elle, un membre n'a aucun moyen de le trouver, et le
 compteur reste à zéro quoi qu'il arrive. Elle disparaît quand tout est mesuré.
 
-Ce qui débloque passe devant ce qui affine : une compétence **sans recharge**
-ne se rejoue qu'à la fin de son animation, qui est alors le dénominateur entier
-de son DPS. Une compétence à recharge n'en tire qu'un retard.
+Le générateur sépare trois groupes — actuellement **76 → 184 → 75**. Les 76
+attaques normales (`NORMAL`) et spéciales (`ACTIVE_THIRD`) sans recharge
+deviennent calculables quand leur animation est mesurée : le simulateur les
+garde hors rotation tant que ce garde-fou ne fournit pas une durée strictement
+positive, plutôt que d'inventer une cadence. Les 184 compétences avec recharge
+sont déjà calculées ; leur durée mesurée affine leur DPS. Les 75 compétences de
+relève (`TAG_SKILL`) restent hors du comparateur individuel et attendent une
+simulation d'équipe, même si leur animation est mesurée.
+
+L'hypothèse `attaques-normales-non-chiffrees` disparaît seulement lorsqu'une
+attaque normale effectivement calculée figure dans la rotation ; une spéciale
+ou une animation absente ne suffit pas à la retirer.
+
+Une attaque normale mesurée est un **remplissage déterministe**, pas une branche
+de l'optimiseur exhaustif : toute compétence à recharge déjà disponible passe
+d'abord. Quand aucune ne l'est, la normale ne part que si son animation finit
+au plus tard au prochain cooldown réel ; le moteur projette pour cela ses
+échéances et événements déjà planifiés, dont les ticks et événements périodiques,
+jusqu'à la fin de l'animation. Un événement réducteur intermédiaire ne bloque
+donc pas le remplissage s'il ne rend encore aucune compétence disponible. Une
+réduction causée par la normale candidate ne peut pas interdire son propre
+déclencheur ; elle s'applique après le lancement avec le verrouillage normal de
+l'action. Si un retour indépendant précède la fin, le moteur attend. Cette règle empêche
+l'explosion combinatoire sur la fenêtre de 60 s. L'hypothèse
+`attaques-normales-remplissage` l'annonce dans la fiche, dont le détail s'appelle
+« Rotation simulée selon les priorités connues » — ne pas réintroduire une
+promesse d'optimum global sans remplacer ce modèle par un ordonnanceur exact et
+borné.

@@ -6,7 +6,9 @@
  ],
  "total": 335,
  "mesurees": 0,
- "debloquent": 151,
+ "debloquent": 76,
+ "affinent": 184,
+ "releves": 75,
  "prochaines": [
   {
    "gameId": "klotho_staff_normalatk_enchant_ready",

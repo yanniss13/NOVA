@@ -10,10 +10,10 @@ d'abord, et ce que chaque mesure rapporte.
 
 **Avancement : 0 / 335 mesurées.**
 
-## 1. Ce que la mesure débloque — 151 compétences
+## 1. Mesures qui débloquent maintenant — 76 compétences
 
-Sans recharge : la compétence se rejoue quand son animation finit.
-L'animation **est** le dénominateur. Sans elle, aucun DPS n'est calculable.
+Sans recharge : l'animation sert de dénominateur au modèle de cadence.
+Ces attaques normales et spéciales débloquent maintenant le calcul du DPS.
 
 | héros | arme | compétence | catégorie | touche | dégâts % | mesure (s) |
 |---|---|---|---|---|---|---|
@@ -93,87 +93,13 @@ L'animation **est** le dénominateur. Sans elle, aucun DPS n'est calculable.
 | manny | Épée à une main | Danse de l'épée | Attaque normale | clic gauche | 33 |  |
 | elizabeth | Grimoire | Gouttelettes illuminées par l'été | Attaque normale | clic gauche | 25 |  |
 | merlin | Grimoire | Gel spatial | Attaque spéciale | Q | 150 |  |
-| daisy | Épée & bouclier | Et voilà Daisy | Compétence de relève | 1 à 4 | 160 |  |
-| merlin | Grimoire | Balayage glacial | Compétence de relève | 1 à 4 | 150 |  |
-| diane | Hache | Écrasement | Compétence de relève | 1 à 4 | 143 |  |
-| escanor | Épée à deux mains | Rayon solaire | Compétence de relève | 1 à 4 | 143 |  |
-| klotho | Bâton | Brèche dimensionnelle | Compétence de relève | 1 à 4 | 139 |  |
-| elaine | Baguette | Tornade de la forêt | Compétence de relève | 1 à 4 | 138 |  |
-| escanor | Hache | Arrivée du soleil | Compétence de relève | 1 à 4 | 138 |  |
-| tristan | Épée à deux mains | Attaque-surprise | Compétence de relève | 1 à 4 | 137 |  |
-| howzer | Lance | Que s'abatte le vent | Compétence de relève | 1 à 4 | 135 |  |
-| meliodas | Hache | Arc de puissance | Compétence de relève | 1 à 4 | 134 |  |
-| meliodas | Épée à une main | Force ténébreuse | Compétence de relève | 1 à 4 | 133 |  |
-| jericho | Rapière | Frappe glaciale | Compétence de relève | 1 à 4 | 132 |  |
-| meliodas | Épées doubles | Taillade en croix | Compétence de relève | 1 à 4 | 132 |  |
-| dreyfus | Épée à une main | Entaille terrestre oblique | Compétence de relève | 1 à 4 | 131 |  |
-| hendrickson | Lance | Transpercement ténébreux | Compétence de relève | 1 à 4 | 130 |  |
-| bug | Hache | Taillade de hache des ténèbres | Compétence de relève | 1 à 4 | 129 |  |
-| drake | Épée à deux mains | Frappe du dragon foudroyant | Compétence de relève | 1 à 4 | 129 |  |
-| hendrickson | Épées doubles | Double taillade | Compétence de relève | 1 à 4 | 127 |  |
-| merlin | Baguette | Faisceau électrique | Compétence de relève | 1 à 4 | 124 |  |
-| bug | Épées doubles | Danse tranchante | Compétence de relève | 1 à 4 | 120 |  |
-| derieri | Gantelets | Smash fracassant | Compétence de relève | 1 à 4 | 120 |  |
-| slader | Épée à deux mains | Frappe | Compétence de relève | 1 à 4 | 118 |  |
-| king | Bâton | Abeilles traqueuses | Compétence de relève | 1 à 4 | 114 |  |
-| griamore | Nunchaku | Mur ascendant | Compétence de relève | 1 à 4 | 113 |  |
-| dreyfus | Lance | Impact de lance | Compétence de relève | 1 à 4 | 110 |  |
-| guila | Lance | Que s'abatte le feu | Compétence de relève | 1 à 4 | 104 |  |
-| manny | Épée à une main | Lame de givre | Compétence de relève | 1 à 4 | 104 |  |
-| gil-thunder | Lance | Lance foudroyante | Compétence de relève | 1 à 4 | 96 |  |
-| klotho | Rapière | Rafale d'inscriptions | Compétence de relève | 1 à 4 | 89 |  |
-| diane | Gantelets | Chute de pierres | Compétence de relève | 1 à 4 | 88 |  |
-| drake | Épée à une main | Taillade du tonnerre | Compétence de relève | 1 à 4 | 88 |  |
-| elaine | Bâton | Éclat sacré | Compétence de relève | 1 à 4 | 88 |  |
-| tristan | Épée à une main | Frappe venteuse | Compétence de relève | 1 à 4 | 88 |  |
-| guila | Rapière | Taillade flamboyante | Compétence de relève | 1 à 4 | 87 |  |
-| jericho | Épées doubles | Taillade glaciale | Compétence de relève | 1 à 4 | 87 |  |
-| manny | Bâton | Lumière sacrée | Compétence de relève | 1 à 4 | 87 |  |
-| tristan | Épées doubles | Coup ardent | Compétence de relève | 1 à 4 | 87 |  |
-| gil-thunder | Épée à une main | Attaque foudroyante | Compétence de relève | 1 à 4 | 86 |  |
-| merlin | Bâton | Déploiement infini | Compétence de relève | 1 à 4 | 86 |  |
-| slader | Nunchaku | Onde tranchante | Compétence de relève | 1 à 4 | 86 |  |
-| gowther | Baguette | Chute brutale | Compétence de relève | 1 à 4 | 85 |  |
-| griamore | Épée & bouclier | Que s'abatte la coquille | Compétence de relève | 1 à 4 | 85 |  |
-| hendrickson | Épée à une main | Taillade d'estoc | Compétence de relève | 1 à 4 | 85 |  |
-| elizabeth | Baguette | Châtiment de la sainte | Compétence de relève | 1 à 4 | 78 |  |
-| klotho | Grimoire | Rune de givre : Impact écrasant | Compétence de relève | 1 à 4 | 74 |  |
-| dreydrin | Rapière | Lance de lumière | Compétence de relève | 1 à 4 | 73 |  |
-| dreyfus | Rapière | Plongeon fulgurant | Compétence de relève | 1 à 4 | 73 |  |
-| howzer | Nunchaku | Enchaînement d'uppercuts | Compétence de relève | 1 à 4 | 73 |  |
-| diane | Nunchaku | Fracas artistique | Compétence de relève | 1 à 4 | 72 |  |
-| dreydrin | Épée & bouclier | Descente d'épée | Compétence de relève | 1 à 4 | 72 |  |
-| gil-thunder | Épée & bouclier | Foudre azurée | Compétence de relève | 1 à 4 | 72 |  |
-| guila | Épée & bouclier | Que s'abatte le bouclier | Compétence de relève | 1 à 4 | 72 |  |
-| jericho | Lance | Entaille glaciale | Compétence de relève | 1 à 4 | 72 |  |
-| tioreh | Baguette | Brume de feu | Compétence de relève | 1 à 4 | 72 |  |
-| elizabeth | Grimoire | C'est comme ça qu'on tire ? | Compétence de relève | 1 à 4 | 71 |  |
-| king | Grimoire | Arc supérieur | Compétence de relève | 1 à 4 | 70 |  |
-| elaine | Grimoire | Sauveuse de la forêt | Compétence de relève | 1 à 4 | 66 |  |
-| escanor | Épée & bouclier | Frappe majestueuse | Compétence de relève | 1 à 4 | 65 |  |
-| tioreh | Grimoire | Frappe ardente | Compétence de relève | 1 à 4 | 65 |  |
-| dreydrin | Hache | Hache ascendante | Compétence de relève | 1 à 4 | 63 |  |
-| slader | Hache | Taillade de hache | Compétence de relève | 1 à 4 | 63 |  |
-| drake | Bâton | Frappe du bâton foudroyant | Compétence de relève | 1 à 4 | 62 |  |
-| gowther | Bâton | Taillade douloureuse | Compétence de relève | 1 à 4 | 62 |  |
-| howzer | Gantelets | Poing ascendant | Compétence de relève | 1 à 4 | 62 |  |
-| king | Baguette | Impact terrestre | Compétence de relève | 1 à 4 | 62 |  |
-| tioreh | Bâton | Cercle terrestre | Compétence de relève | 1 à 4 | 62 |  |
-| manny | Épées doubles | Neige blanche | Compétence de relève | 1 à 4 | 61 |  |
-| elizabeth | Bâton | Volonté inflexible | Compétence de relève | 1 à 4 | 60 |  |
-| daisy | Baguette | Et voilà Daisy | Compétence de relève | 1 à 4 | 59 |  |
-| griamore | Gantelets | Poing bouclier | Compétence de relève | 1 à 4 | 59 |  |
-| bug | Grimoire | Flamboiement des ténèbres | Compétence de relève | 1 à 4 | 56 |  |
-| derieri | Hache | Perforation abyssale | Compétence de relève | 1 à 4 | 56 |  |
-| derieri | Épée à deux mains | Griffe ascendante | Compétence de relève | 1 à 4 | 56 |  |
-| gowther | Grimoire | Explosion ténébreuse | Compétence de relève | 1 à 4 | 55 |  |
-| daisy | Grimoire | Et voilà Daisy | Compétence de relève | 1 à 4 | 54 |  |
 
-## 2. Ce que la mesure affine — 184 compétences
+## 2. Mesures qui affinent maintenant — 184 compétences
 
-Avec recharge : l'animation ajoute un retard. La colonne « erreur »
-donne ce qu'on se trompe en l'ignorant, pour une animation supposée
-de 1.5 s. Classement par erreur décroissante.
+Avec recharge : le simulateur calcule déjà la compétence et
+l'animation ajoute un retard. La colonne « erreur » donne ce qu'on
+se trompe en l'ignorant, pour une animation supposée de 1.5 s.
+Classement par erreur décroissante.
 
 | héros | arme | compétence | catégorie | touche | recharge | erreur | mesure (s) |
 |---|---|---|---|---|---|---|---|
@@ -361,3 +287,87 @@ de 1.5 s. Classement par erreur décroissante.
 | gil-thunder | Épée & bouclier | Jugement | Compétence normale | E | 35 s | 4 % |  |
 | jericho | Lance | Roche de glace | Compétence normale | E | 35.4 s | 4 % |  |
 | gowther | Grimoire | Champ d'évanouissement | Attaque ultime | R | 60 s | 2 % |  |
+
+## 3. Relèves — simulation d’équipe future — 75 compétences
+
+Les compétences de relève seront calculées avec une future simulation
+d'équipe. Leur mesure est utile pour préparer ce modèle, sans modifier
+encore le DPS affiché.
+
+| héros | arme | compétence | catégorie | touche | dégâts % | mesure (s) |
+|---|---|---|---|---|---|---|
+| daisy | Épée & bouclier | Et voilà Daisy | Compétence de relève | 1 à 4 | 160 |  |
+| merlin | Grimoire | Balayage glacial | Compétence de relève | 1 à 4 | 150 |  |
+| diane | Hache | Écrasement | Compétence de relève | 1 à 4 | 143 |  |
+| escanor | Épée à deux mains | Rayon solaire | Compétence de relève | 1 à 4 | 143 |  |
+| klotho | Bâton | Brèche dimensionnelle | Compétence de relève | 1 à 4 | 139 |  |
+| elaine | Baguette | Tornade de la forêt | Compétence de relève | 1 à 4 | 138 |  |
+| escanor | Hache | Arrivée du soleil | Compétence de relève | 1 à 4 | 138 |  |
+| tristan | Épée à deux mains | Attaque-surprise | Compétence de relève | 1 à 4 | 137 |  |
+| howzer | Lance | Que s'abatte le vent | Compétence de relève | 1 à 4 | 135 |  |
+| meliodas | Hache | Arc de puissance | Compétence de relève | 1 à 4 | 134 |  |
+| meliodas | Épée à une main | Force ténébreuse | Compétence de relève | 1 à 4 | 133 |  |
+| jericho | Rapière | Frappe glaciale | Compétence de relève | 1 à 4 | 132 |  |
+| meliodas | Épées doubles | Taillade en croix | Compétence de relève | 1 à 4 | 132 |  |
+| dreyfus | Épée à une main | Entaille terrestre oblique | Compétence de relève | 1 à 4 | 131 |  |
+| hendrickson | Lance | Transpercement ténébreux | Compétence de relève | 1 à 4 | 130 |  |
+| bug | Hache | Taillade de hache des ténèbres | Compétence de relève | 1 à 4 | 129 |  |
+| drake | Épée à deux mains | Frappe du dragon foudroyant | Compétence de relève | 1 à 4 | 129 |  |
+| hendrickson | Épées doubles | Double taillade | Compétence de relève | 1 à 4 | 127 |  |
+| merlin | Baguette | Faisceau électrique | Compétence de relève | 1 à 4 | 124 |  |
+| bug | Épées doubles | Danse tranchante | Compétence de relève | 1 à 4 | 120 |  |
+| derieri | Gantelets | Smash fracassant | Compétence de relève | 1 à 4 | 120 |  |
+| slader | Épée à deux mains | Frappe | Compétence de relève | 1 à 4 | 118 |  |
+| king | Bâton | Abeilles traqueuses | Compétence de relève | 1 à 4 | 114 |  |
+| griamore | Nunchaku | Mur ascendant | Compétence de relève | 1 à 4 | 113 |  |
+| dreyfus | Lance | Impact de lance | Compétence de relève | 1 à 4 | 110 |  |
+| guila | Lance | Que s'abatte le feu | Compétence de relève | 1 à 4 | 104 |  |
+| manny | Épée à une main | Lame de givre | Compétence de relève | 1 à 4 | 104 |  |
+| gil-thunder | Lance | Lance foudroyante | Compétence de relève | 1 à 4 | 96 |  |
+| klotho | Rapière | Rafale d'inscriptions | Compétence de relève | 1 à 4 | 89 |  |
+| diane | Gantelets | Chute de pierres | Compétence de relève | 1 à 4 | 88 |  |
+| drake | Épée à une main | Taillade du tonnerre | Compétence de relève | 1 à 4 | 88 |  |
+| elaine | Bâton | Éclat sacré | Compétence de relève | 1 à 4 | 88 |  |
+| tristan | Épée à une main | Frappe venteuse | Compétence de relève | 1 à 4 | 88 |  |
+| guila | Rapière | Taillade flamboyante | Compétence de relève | 1 à 4 | 87 |  |
+| jericho | Épées doubles | Taillade glaciale | Compétence de relève | 1 à 4 | 87 |  |
+| manny | Bâton | Lumière sacrée | Compétence de relève | 1 à 4 | 87 |  |
+| tristan | Épées doubles | Coup ardent | Compétence de relève | 1 à 4 | 87 |  |
+| gil-thunder | Épée à une main | Attaque foudroyante | Compétence de relève | 1 à 4 | 86 |  |
+| merlin | Bâton | Déploiement infini | Compétence de relève | 1 à 4 | 86 |  |
+| slader | Nunchaku | Onde tranchante | Compétence de relève | 1 à 4 | 86 |  |
+| gowther | Baguette | Chute brutale | Compétence de relève | 1 à 4 | 85 |  |
+| griamore | Épée & bouclier | Que s'abatte la coquille | Compétence de relève | 1 à 4 | 85 |  |
+| hendrickson | Épée à une main | Taillade d'estoc | Compétence de relève | 1 à 4 | 85 |  |
+| elizabeth | Baguette | Châtiment de la sainte | Compétence de relève | 1 à 4 | 78 |  |
+| klotho | Grimoire | Rune de givre : Impact écrasant | Compétence de relève | 1 à 4 | 74 |  |
+| dreydrin | Rapière | Lance de lumière | Compétence de relève | 1 à 4 | 73 |  |
+| dreyfus | Rapière | Plongeon fulgurant | Compétence de relève | 1 à 4 | 73 |  |
+| howzer | Nunchaku | Enchaînement d'uppercuts | Compétence de relève | 1 à 4 | 73 |  |
+| diane | Nunchaku | Fracas artistique | Compétence de relève | 1 à 4 | 72 |  |
+| dreydrin | Épée & bouclier | Descente d'épée | Compétence de relève | 1 à 4 | 72 |  |
+| gil-thunder | Épée & bouclier | Foudre azurée | Compétence de relève | 1 à 4 | 72 |  |
+| guila | Épée & bouclier | Que s'abatte le bouclier | Compétence de relève | 1 à 4 | 72 |  |
+| jericho | Lance | Entaille glaciale | Compétence de relève | 1 à 4 | 72 |  |
+| tioreh | Baguette | Brume de feu | Compétence de relève | 1 à 4 | 72 |  |
+| elizabeth | Grimoire | C'est comme ça qu'on tire ? | Compétence de relève | 1 à 4 | 71 |  |
+| king | Grimoire | Arc supérieur | Compétence de relève | 1 à 4 | 70 |  |
+| elaine | Grimoire | Sauveuse de la forêt | Compétence de relève | 1 à 4 | 66 |  |
+| escanor | Épée & bouclier | Frappe majestueuse | Compétence de relève | 1 à 4 | 65 |  |
+| tioreh | Grimoire | Frappe ardente | Compétence de relève | 1 à 4 | 65 |  |
+| dreydrin | Hache | Hache ascendante | Compétence de relève | 1 à 4 | 63 |  |
+| slader | Hache | Taillade de hache | Compétence de relève | 1 à 4 | 63 |  |
+| drake | Bâton | Frappe du bâton foudroyant | Compétence de relève | 1 à 4 | 62 |  |
+| gowther | Bâton | Taillade douloureuse | Compétence de relève | 1 à 4 | 62 |  |
+| howzer | Gantelets | Poing ascendant | Compétence de relève | 1 à 4 | 62 |  |
+| king | Baguette | Impact terrestre | Compétence de relève | 1 à 4 | 62 |  |
+| tioreh | Bâton | Cercle terrestre | Compétence de relève | 1 à 4 | 62 |  |
+| manny | Épées doubles | Neige blanche | Compétence de relève | 1 à 4 | 61 |  |
+| elizabeth | Bâton | Volonté inflexible | Compétence de relève | 1 à 4 | 60 |  |
+| daisy | Baguette | Et voilà Daisy | Compétence de relève | 1 à 4 | 59 |  |
+| griamore | Gantelets | Poing bouclier | Compétence de relève | 1 à 4 | 59 |  |
+| bug | Grimoire | Flamboiement des ténèbres | Compétence de relève | 1 à 4 | 56 |  |
+| derieri | Hache | Perforation abyssale | Compétence de relève | 1 à 4 | 56 |  |
+| derieri | Épée à deux mains | Griffe ascendante | Compétence de relève | 1 à 4 | 56 |  |
+| gowther | Grimoire | Explosion ténébreuse | Compétence de relève | 1 à 4 | 55 |  |
+| daisy | Grimoire | Et voilà Daisy | Compétence de relève | 1 à 4 | 54 |  |

@@ -6,15 +6,17 @@ dernier ecrit noir sur blanc que le vrai DPS demande le temps d'animation et
 qu'il ne le modelise pas. La mesure est donc manuelle, et cette liste sert a la
 rendre finie : elle dit quoi mesurer d'abord, et ce que chaque mesure rapporte.
 
-Deux regimes, et ils ne se valent pas :
+Trois groupes, selon ce que la mesure apporte au simulateur :
 
-  - Une competence SANS recharge ne se rejoue que lorsque son animation se
-    termine. Son animation n'est pas une correction, c'est le denominateur
-    entier : sans elle, son DPS n'existe pas. Ces mesures debloquent.
+  - Une attaque normale ou speciale SANS recharge utilise son animation comme
+    denominateur du modele de cadence. Ces mesures debloquent le DPS actuel.
 
-  - Une competence AVEC recharge se rejoue quand sa recharge tombe. L'animation
-    n'ajoute qu'un retard : ignorer 1,5 s sur 12 s de recharge se trompe de
-    11 %. Ces mesures affinent.
+  - Une competence AVEC recharge est deja prise en charge par le simulateur.
+    Son animation ajoute un retard : ignorer 1,5 s sur 12 s de recharge se
+    trompe de 11 %. Ces mesures affinent le DPS actuel.
+
+  - Une competence de releve `TAG_SKILL`, avec ou sans recharge, attend la
+    simulation d'equipe. Sa mesure preparera ce modele futur.
 
 Le tableau se remplit a la main dans data/animations-mesurees.json, jamais ici :
 ce fichier-ci est regenere, celui-la ne l'est pas.
@@ -45,8 +47,10 @@ PROCHAINES = 5
 ANIMATION_SUPPOSEE = 1.5
 
 # Les categories qui pesent dans une rotation offensive, dans l'ordre ou un
-# joueur les enchaine. Une categorie absente d'ici reste listee, en queue.
+# joueur les enchaine. Une categorie inconnue est refusee explicitement.
 ORDRE_CATEGORIES = ["NORMAL", "NORMAL_SKILL", "ACTIVE_THIRD", "ULTIMATE", "TAG_SKILL"]
+CATEGORIES_SIMULEES = {"NORMAL", "NORMAL_SKILL", "ACTIVE_THIRD", "ULTIMATE"}
+CATEGORIES_DEBLOQUEES = {"NORMAL", "ACTIVE_THIRD"}
 
 LIBELLES_CATEGORIES = {
     "NORMAL": "Attaque normale",
@@ -84,7 +88,8 @@ LIBELLES_ARMES = {
 
 
 def catalogue():
-    source = open(CATALOGUE, encoding="utf-8").read()
+    with open(CATALOGUE, encoding="utf-8") as fichier:
+        source = fichier.read()
     debut = source.index("{", source.index("="))
     return json.loads(source[debut:].rstrip().rstrip(";"))
 
@@ -117,14 +122,15 @@ def rang_categorie(nom):
 def mesures_existantes():
     if not os.path.exists(MESURES):
         return {}
-    contenu = json.load(open(MESURES, encoding="utf-8"))
+    with open(MESURES, encoding="utf-8") as fichier:
+        contenu = json.load(fichier)
     return contenu.get("animations", {})
 
 
 def lignes():
     mesurees = mesures_existantes()
     noms = noms_francais()
-    debloquent, affinent = [], []
+    debloquent, affinent, releves = [], [], []
     for heros, skill in competences():
         recharge = skill.get("recharge") or 0
         categorie = skill.get("categorie") or "?"
@@ -142,15 +148,28 @@ def lignes():
             "degats": skill.get("pourcentage") or 0,
             "mesure": mesurees.get(skill.get("gameId") or ""),
         }
-        if recharge > 0:
+        if categorie == "TAG_SKILL":
+            ligne["impact"] = None
+            releves.append(ligne)
+        elif categorie not in CATEGORIES_SIMULEES:
+            raise ValueError(
+                "Compétence hors catalogue : %s (%s)" % (game_id, categorie)
+            )
+        elif recharge > 0:
             ligne["impact"] = ANIMATION_SUPPOSEE / (recharge + ANIMATION_SUPPOSEE) * 100
             affinent.append(ligne)
-        else:
+        elif categorie in CATEGORIES_DEBLOQUEES:
             ligne["impact"] = None
             debloquent.append(ligne)
+        else:
+            raise ValueError(
+                "Compétence sans recharge hors catalogue : %s (%s)"
+                % (game_id, categorie)
+            )
     debloquent.sort(key=lambda l: (rang_categorie(l["categorie"]), -l["degats"]))
     affinent.sort(key=lambda l: -l["impact"])
-    return debloquent, affinent
+    releves.sort(key=lambda l: (rang_categorie(l["categorie"]), -l["degats"]))
+    return debloquent, affinent, releves
 
 
 def tableau(entetes, corps):
@@ -161,9 +180,10 @@ def tableau(entetes, corps):
 
 
 def rendre():
-    debloquent, affinent = lignes()
-    faites = sum(1 for l in debloquent + affinent if l["mesure"] is not None)
-    total = len(debloquent) + len(affinent)
+    debloquent, affinent, releves = lignes()
+    toutes = debloquent + affinent + releves
+    faites = sum(1 for l in toutes if l["mesure"] is not None)
+    total = len(toutes)
 
     out = [
         "# Chronométrage des animations",
@@ -178,10 +198,10 @@ def rendre():
         "",
         "**Avancement : %d / %d mesurées.**" % (faites, total),
         "",
-        "## 1. Ce que la mesure débloque — %d compétences" % len(debloquent),
+        "## 1. Mesures qui débloquent maintenant — %d compétences" % len(debloquent),
         "",
-        "Sans recharge : la compétence se rejoue quand son animation finit.",
-        "L'animation **est** le dénominateur. Sans elle, aucun DPS n'est calculable.",
+        "Sans recharge : l'animation sert de dénominateur au modèle de cadence.",
+        "Ces attaques normales et spéciales débloquent maintenant le calcul du DPS.",
         "",
     ]
     out += tableau(
@@ -193,11 +213,12 @@ def rendre():
          for l in debloquent])
     out += [
         "",
-        "## 2. Ce que la mesure affine — %d compétences" % len(affinent),
+        "## 2. Mesures qui affinent maintenant — %d compétences" % len(affinent),
         "",
-        "Avec recharge : l'animation ajoute un retard. La colonne « erreur »",
-        "donne ce qu'on se trompe en l'ignorant, pour une animation supposée",
-        "de %g s. Classement par erreur décroissante." % ANIMATION_SUPPOSEE,
+        "Avec recharge : le simulateur calcule déjà la compétence et",
+        "l'animation ajoute un retard. La colonne « erreur » donne ce qu'on",
+        "se trompe en l'ignorant, pour une animation supposée de %g s." % ANIMATION_SUPPOSEE,
+        "Classement par erreur décroissante.",
         "",
     ]
     out += tableau(
@@ -207,6 +228,22 @@ def rendre():
           "%g s" % l["recharge"], "%.0f %%" % l["impact"],
           ("**%g**" % l["mesure"]) if l["mesure"] is not None else ""]
          for l in affinent])
+    out += [
+        "",
+        "## 3. Relèves — simulation d’équipe future — %d compétences" % len(releves),
+        "",
+        "Les compétences de relève seront calculées avec une future simulation",
+        "d'équipe. Leur mesure est utile pour préparer ce modèle, sans modifier",
+        "encore le DPS affiché.",
+        "",
+    ]
+    out += tableau(
+        ["héros", "arme", "compétence", "catégorie", "touche", "dégâts %", "mesure (s)"],
+        [[l["heros"], l["arme"], l["nom"], l["categorieLabel"],
+          l["touche"],
+          "%g" % l["degats"],
+          ("**%g**" % l["mesure"]) if l["mesure"] is not None else ""]
+         for l in releves])
     out.append("")
     return "\n".join(out)
 
@@ -214,14 +251,16 @@ def rendre():
 def rendre_avancement():
     """Le meme classement, reduit a ce que « Mon suivi » affiche.
 
-    Les competences qui debloquent passent devant : sans leur animation, aucun
-    DPS n'est calculable, tandis qu'une competence a recharge n'est qu'imprecise.
-    Une mesure deja faite ne se propose plus."""
-    debloquent, affinent = lignes()
-    faites = sum(1 for l in debloquent + affinent if l["mesure"] is not None)
+    Les normales et speciales sans recharge debloquent le modele de cadence,
+    les recharges affinent le modele actuel, les releves attendent le modele
+    d'equipe. Une mesure deja faite ne se propose plus."""
+    debloquent, affinent, releves = lignes()
+    toutes = debloquent + affinent + releves
+    faites = sum(1 for l in toutes if l["mesure"] is not None)
     restantes = [
-        dict(l, role="debloque" if l["impact"] is None else "affine")
-        for l in debloquent + affinent
+        dict(l, role=role)
+        for role, liste in (("debloque", debloquent), ("affine", affinent), ("releve", releves))
+        for l in liste
         if l["mesure"] is None
     ]
     contenu = {
@@ -230,9 +269,11 @@ def rendre_avancement():
             "docs/chronometrage-animations.md. Ne pas editer a la main.",
             "Les mesures se saisissent dans data/animations-mesurees.json.",
         ],
-        "total": len(debloquent) + len(affinent),
+        "total": len(toutes),
         "mesurees": faites,
         "debloquent": len(debloquent),
+        "affinent": len(affinent),
+        "releves": len(releves),
         "prochaines": [
             {
                 "gameId": l["gameId"],
@@ -255,8 +296,11 @@ if __name__ == "__main__":
     sorties = [(SORTIE, texte), (AVANCEMENT, avancement)]
     if "--check" in sys.argv:
         for chemin, attendu in sorties:
-            actuel = (open(chemin, encoding="utf-8").read()
-                      if os.path.exists(chemin) else "")
+            if os.path.exists(chemin):
+                with open(chemin, encoding="utf-8") as fichier:
+                    actuel = fichier.read()
+            else:
+                actuel = ""
             if actuel != attendu:
                 print(os.path.relpath(chemin, RACINE).replace(os.sep, "/")
                       + " n'est plus a jour : "
@@ -265,5 +309,6 @@ if __name__ == "__main__":
         print("chronometrage : liste a jour")
     else:
         for chemin, contenu in sorties:
-            open(chemin, "w", encoding="utf-8", newline="\n").write(contenu)
+            with open(chemin, "w", encoding="utf-8", newline="\n") as fichier:
+                fichier.write(contenu)
             print("ecrit " + os.path.relpath(chemin, RACINE).replace(os.sep, "/"))

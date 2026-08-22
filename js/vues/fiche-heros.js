@@ -332,9 +332,20 @@ import { toast } from "./toast.js";
       "cumuls-personnels-au-maximum":"Cumuls personnels au maximum",
       "pv-restants-egaux-aux-pv-max":"PV restants égaux aux PV max",
       "ressources-illimitees":"Ressources illimitées",
-      "attaques-normales-non-chiffrees":"Attaques normales non chiffrées"
+      "attaques-normales-non-chiffrees":"Attaques normales non chiffrées",
+      "attaques-normales-remplissage":
+        "Attaques normales utilisées uniquement entre les compétences à recharge"
     };
     return libelles[hypothese] || hypothese;
+  }
+
+  function libelleExclusion(exclusion){
+    if(exclusion && exclusion.raison === "releve-hors-simulation-equipe"){
+      return "Compétence de relève hors simulation d’équipe";
+    }
+    return exclusion && (
+      exclusion.texteFr || exclusion.nom || exclusion.id || exclusion.raison
+    );
   }
 
   function listeDetail(titre, valeurs, ordonnee){
@@ -353,11 +364,9 @@ import { toast } from "./toast.js";
         const temps = Number(evenement.temps || 0).toFixed(1).replace(".", ",");
         return temps+" s — "+(evenement.nom || evenement.gameId || "Effet");
       });
-    const exclusions = (ligne.exclusions || []).map(exclusion =>
-      exclusion.texteFr || exclusion.nom || exclusion.id || exclusion.raison
-    );
+    const exclusions = (ligne.exclusions || []).map(libelleExclusion);
     const details = el("details",{class:"hd-puissance-detail"},[
-      el("summary",{text:"Rotation optimale selon les données connues"})
+      el("summary",{text:"Rotation simulée selon les priorités connues"})
     ]);
     [
       listeDetail("Ouverture", ligne.ouverture, true),
@@ -382,7 +391,7 @@ import { toast } from "./toast.js";
       el("p",{class:"hd-puissance-note",
         text:"DPS des compétences sur 60 s — théorique. Ressources illimitées, "
           + "passifs personnels activés au maximum de leur niveau réel. "
-          + "Attaques normales et temps d'animation non chiffrés."})
+          + "La couverture exacte des animations et effets est détaillée pour chaque build."})
     ];
     if(nonInclus){
       contenu.push(el("p",{

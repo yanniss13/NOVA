@@ -22,8 +22,10 @@ propose leur MEDIANE. Une question par animation, pas une par ligne recue.
 import getpass
 import importlib.util
 import json
+import math
 import os
 import sys
+import tempfile
 import urllib.error
 import urllib.request
 
@@ -32,6 +34,82 @@ MESURES = os.path.join(RACINE, "data", "animations-mesurees.json")
 CONFIG = os.path.join(RACINE, "supabase-config.js")
 
 ECART_TOLERE = 0.10
+MESURE_MAX = 30.0
+
+
+def ecart_significatif(ecart):
+    """Vrai uniquement au-dela du seuil, sans faux positif d'arrondi."""
+    return ecart > ECART_TOLERE and not math.isclose(
+        ecart, ECART_TOLERE, rel_tol=1e-12, abs_tol=1e-12
+    )
+
+
+def normaliser_mesure(valeur):
+    """Convertit une saisie en secondes, ou refuse une valeur non plausible."""
+    try:
+        texte = valeur.replace(",", ".") if isinstance(valeur, str) else valeur
+        secondes = float(texte)
+    except (TypeError, ValueError):
+        return None
+    if not math.isfinite(secondes) or secondes <= 0 or secondes > MESURE_MAX:
+        return None
+    return secondes
+
+
+def protocole_mesure_valide(envoi):
+    mode = envoi.get("mode")
+    reps = envoi.get("reps")
+    fps = envoi.get("fps")
+    if mode == "unique":
+        if reps is not None:
+            return False
+    elif mode == "rafale":
+        if isinstance(reps, bool) or not isinstance(reps, int) or reps < 2:
+            return False
+    else:
+        return False
+    if fps is None:
+        return True
+    try:
+        fps = float(fps)
+    except (TypeError, ValueError):
+        return False
+    return math.isfinite(fps) and 10 <= fps <= 240
+
+
+def trier_envois(envois, game_ids_connus):
+    """Separe les lignes exploitables des identifiants et valeurs a verifier."""
+    valides, inconnus, invalides = [], [], []
+    # Choisir d'abord la correction courante de chaque auteur. Filtrer avant
+    # ferait ressurgir son ancienne valeur lorsqu'un nouvel envoi est invalide.
+    courants = [
+        envoi
+        for liste in grouper(envois).values()
+        for envoi in liste
+    ]
+    for envoi in courants:
+        if envoi.get("game_id") not in game_ids_connus:
+            inconnus.append(envoi)
+        elif (normaliser_mesure(envoi.get("seconds")) is None
+              or not protocole_mesure_valide(envoi)):
+            invalides.append(envoi)
+        else:
+            valides.append(envoi)
+    return valides, inconnus, invalides
+
+
+def detail_envoi(envoi):
+    # La valeur seule ne permet pas de verifier comment elle a ete relevee.
+    protocole = [str(envoi.get("mode") or "mode inconnu")]
+    if envoi.get("reps") is not None:
+        protocole.append("%s repetitions" % envoi["reps"])
+    if envoi.get("fps") is not None:
+        protocole.append("%s fps" % envoi["fps"])
+    else:
+        protocole.append("fps inconnu")
+    return "%s %s s (%s)" % (
+        envoi.get("pseudo") or "?", envoi.get("seconds"), ", ".join(protocole)
+    )
 
 
 def _generateur():
@@ -53,16 +131,15 @@ def libelles():
     generateur = _generateur()
     noms = generateur.noms_francais()
     table = {}
-    for heros, liste in generateur.catalogue().items():
-        for skill in liste:
-            game_id = skill.get("gameId")
-            if not game_id:
-                continue
-            arme = generateur.LIBELLES_ARMES.get(
-                skill.get("weaponType"), skill.get("weaponType") or "?"
-            )
-            nom = noms.get(game_id) or skill.get("nom") or game_id
-            table[game_id] = "%s, %s — %s" % (heros, arme, nom)
+    for heros, skill in generateur.competences():
+        game_id = skill.get("gameId")
+        if not game_id:
+            continue
+        arme = generateur.LIBELLES_ARMES.get(
+            skill.get("weaponType"), skill.get("weaponType") or "?"
+        )
+        nom = noms.get(game_id) or skill.get("nom") or game_id
+        table[game_id] = "%s, %s — %s" % (heros, arme, nom)
     return table
 
 
@@ -76,11 +153,14 @@ def _horodatage(envoi):
     return str(envoi.get("created_at") or "")
 
 
+def _ordre_envoi(envoi):
+    return _horodatage(envoi), str(envoi.get("id") or "")
+
+
 def grouper(envois):
     """Les envois rassembles par animation, un seul par auteur.
 
-    La contrainte d'unicite de `animation_measures` le garantit deja en base,
-    mais un export anterieur a cette contrainte peut encore porter plusieurs
+    La table est volontairement en ajout seul et peut donc porter plusieurs
     lignes du meme membre. Le plus recent gagne : un membre qui reenvoie
     corrige sa mesure, il ne vote pas deux fois."""
     par_animation = {}
@@ -92,10 +172,10 @@ def grouper(envois):
         # cette condition finit par etre appelee autrement, et elle retiendrait
         # alors la mesure corrigee AVANT la correction.
         connu = auteurs.get(cle)
-        if connu is None or _horodatage(envoi) >= _horodatage(connu):
+        if connu is None or _ordre_envoi(envoi) >= _ordre_envoi(connu):
             auteurs[cle] = envoi
     return {
-        game_id: sorted(auteurs.values(), key=_horodatage)
+        game_id: sorted(auteurs.values(), key=_ordre_envoi)
         for game_id, auteurs in par_animation.items()
     }
 
@@ -130,7 +210,7 @@ def desaccords(envois):
     for game_id, liste in grouper(envois).items():
         if len(liste) < 2:
             continue
-        if consensus(liste)["ecart"] > ECART_TOLERE:
+        if ecart_significatif(consensus(liste)["ecart"]):
             signales.append((game_id, liste))
     return signales
 
@@ -150,7 +230,7 @@ def dementis(envois, mesures):
         accord = consensus(liste)
         if not ecrite:
             continue
-        if abs(accord["valeur"] - ecrite) / ecrite > ECART_TOLERE:
+        if ecart_significatif(abs(accord["valeur"] - ecrite) / ecrite):
             signales.append((game_id, ecrite, accord))
     return signales
 
@@ -158,6 +238,30 @@ def dementis(envois, mesures):
 def appliquer(mesures, game_id, secondes):
     mesures["animations"][game_id] = secondes
     return mesures
+
+
+def ecrire_mesures_atomiquement(chemin, mesures):
+    """N'expose jamais un JSON partiellement ecrit en cas d'interruption."""
+    chemin = os.fspath(chemin)
+    dossier = os.path.dirname(os.path.abspath(chemin))
+    temporaire = None
+    try:
+        with tempfile.NamedTemporaryFile(
+            "w", encoding="utf-8", newline="\n", dir=dossier,
+            prefix=".animations-mesurees-", suffix=".tmp", delete=False,
+        ) as fichier:
+            temporaire = fichier.name
+            json.dump(
+                mesures, fichier, ensure_ascii=False, indent=2, allow_nan=False
+            )
+            fichier.write("\n")
+            fichier.flush()
+            os.fsync(fichier.fileno())
+        os.replace(temporaire, chemin)
+        temporaire = None
+    finally:
+        if temporaire and os.path.exists(temporaire):
+            os.remove(temporaire)
 
 
 def _config():
@@ -199,16 +303,28 @@ def _jeton(config):
         raise
 
 
-def _envois():
+def _envois(taille_page=500):
     config = _config()
     jeton = _jeton(config)
-    url = config["SB_URL"] + "/rest/v1/animation_measures?select=*&order=created_at"
-    requete = urllib.request.Request(url, headers={
-        "apikey": config["SB_KEY"],
-        "Authorization": "Bearer " + jeton,
-    })
-    with urllib.request.urlopen(requete, timeout=30) as reponse:
-        return json.loads(reponse.read().decode("utf-8"))
+    url = (config["SB_URL"]
+           + "/rest/v1/animation_measures?select=*&order=created_at.asc,id.asc")
+    envois = []
+    debut = 0
+    while True:
+        requete = urllib.request.Request(url, headers={
+            "apikey": config["SB_KEY"],
+            "Authorization": "Bearer " + jeton,
+            "Range-Unit": "items",
+            "Range": "%d-%d" % (debut, debut + taille_page - 1),
+        })
+        with urllib.request.urlopen(requete, timeout=30) as reponse:
+            page = json.loads(reponse.read().decode("utf-8"))
+        if not page:
+            return envois
+        envois.extend(page)
+        # Avancer du nombre effectivement rendu reste correct meme si le
+        # plafond PostgREST est plus petit que la taille demandee.
+        debut += len(page)
 
 
 def main():
@@ -216,13 +332,21 @@ def main():
         mesures = json.load(fichier)
 
     noms = libelles()
-    envois = _envois()
+    envois, inconnus, invalides = trier_envois(_envois(), set(noms))
+
+    for envoi in inconnus:
+        print("IGNORE : identifiant inconnu %s." % (envoi.get("game_id") or "?"))
+    for envoi in invalides:
+        print("IGNORE : mesure invalide pour %s (%r s)." % (
+            decrire(noms, envoi.get("game_id")), envoi.get("seconds")
+        ))
+    if inconnus or invalides:
+        print()
 
     for game_id, liste in desaccords(envois):
         print("DESACCORD sur %s :" % decrire(noms, game_id))
         for envoi in liste:
-            print("   %-12s %s s (%s)" % (
-                envoi.get("pseudo") or "?", envoi["seconds"], envoi["mode"]))
+            print("   " + detail_envoi(envoi))
         print("   -> tranche a la main, ce script ne choisira pas pour toi.")
         print()
 
@@ -248,13 +372,10 @@ def main():
     retenus = 0
     for game_id, liste in nouvelles.items():
         accord = consensus(liste)
-        detail = ", ".join(
-            "%s %s s" % (envoi.get("pseudo") or "?", envoi["seconds"])
-            for envoi in liste
-        )
+        detail = ", ".join(detail_envoi(envoi) for envoi in liste)
         alerte = "   ATTENTION : %.0f %% d'ecart entre les envois.%s" % (
             accord["ecart"] * 100, chr(10)
-        ) if accord["ecart"] > ECART_TOLERE else ""
+        ) if ecart_significatif(accord["ecart"]) else ""
         question = "%s%s   %d envoi(s) : %s%s   mediane %s s -> ecrire ? [o/N/valeur] " % (
             decrire(noms, game_id), chr(10),
             accord["auteurs"], detail, chr(10) + alerte,
@@ -266,11 +387,8 @@ def main():
             continue
         # Une valeur tapee remplace la mediane : c'est l'humain qui tranche,
         # et il peut avoir mesure lui-meme apres avoir vu le desaccord.
-        try:
-            saisie = float(reponse.replace(",", "."))
-        except ValueError:
-            continue
-        if saisie > 0:
+        saisie = normaliser_mesure(reponse)
+        if saisie is not None:
             appliquer(mesures, game_id, saisie)
             retenus += 1
 
@@ -283,9 +401,7 @@ def main():
         print("Rien de retenu, le fichier n'a pas ete touche.")
         return 0
 
-    with open(MESURES, "w", encoding="utf-8") as fichier:
-        json.dump(mesures, fichier, ensure_ascii=False, indent=2)
-        fichier.write("\n")
+    ecrire_mesures_atomiquement(MESURES, mesures)
     print("%d mesure(s) ecrite(s). Relance maintenant :" % retenus)
     print("    python scripts/lister-chronometrage.py")
     return 0

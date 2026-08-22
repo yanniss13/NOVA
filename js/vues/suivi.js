@@ -279,16 +279,26 @@ import { toast } from "./toast.js";
     const mesurees = Number(avancement && avancement.mesurees) || 0;
     if(!total || mesurees >= total) return null;
     const debloquent = Number(avancement.debloquent) || 0;
+    const affinent = Number(avancement.affinent) || 0;
+    const releves = Number(avancement.releves) || 0;
+    const calculs = [];
+    if(debloquent){
+      calculs.push(debloquent+" compétences sans recharge deviennent calculables"
+        + " avec leur mesure");
+    }
+    if(affinent){
+      calculs.push(affinent+" calculs existants sont affinés");
+    }
+    const explication = "Aucune source publique ne publie ces durées."
+      + (calculs.length ? " "+calculs.join(" ; ")+"." : "")
+      + (releves ? " "+releves+" compétences de relève attendent une simulation"
+        + " d’équipe." : "");
     return el("section",{
       class:"dashboard-section",
       dataset:{ card:"chronometrage" }
     },[
       el("strong",{text:mesurees+" / "+total+" animations mesurées"}),
-      el("p",{text:"Aucune source publique ne publie ces durées. Sans elles, le"
-        + " DPS des compétences reste théorique"
-        + (debloquent
-          ? " — et "+debloquent+" compétences n'en ont aucun, faute de recharge."
-          : ".")}),
+      el("p",{text:explication}),
       chronoProchaine(avancement),
       /* Un lien, pas un bouton `data-dashboard-action` : l'outil est une page
          hors PWA, il s'ouvre à côté au lieu de piloter une vue de NOVA, et

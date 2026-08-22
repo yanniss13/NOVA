@@ -259,7 +259,9 @@ assert.equal(
   const carte = chronoCarte({
     total:335,
     mesurees:0,
-    debloquent:151,
+    debloquent:76,
+    affinent:184,
+    releves:75,
     prochaines:[{
       gameId:"klotho_staff_normalatk_enchant_ready",
       heros:"klotho",
@@ -272,7 +274,8 @@ assert.equal(
   });
   const lu = texte(carte);
   assert.match(lu, /0 \/ 335 animations mesurées/);
-  assert.match(lu, /151 compétences n'en ont aucun/);
+  assert.match(lu, /76 compétences sans recharge deviennent calculables avec leur mesure/);
+  assert.match(lu, /75 compétences de relève attendent une simulation d’équipe/);
   assert.match(lu, /Projection dimensionnelle/);
 
   const lien = (carte.children || []).find(noeud => noeud.tag === "a");
@@ -280,6 +283,61 @@ assert.equal(
   assert.equal(lien.href, "outils/chrono-animation.html");
   assert.equal(lien.target, "_blank");
   assert.equal(lien.rel, "noopener");
+
+  const lireChrono = compteurs => texte(chronoCarte(Object.assign({
+    total:335,
+    mesurees:0,
+    prochaines:[]
+  }, compteurs)));
+  const clauses = {
+    debloque:/compétences sans recharge deviennent calculables avec leur mesure/,
+    affine:/calculs existants sont affinés/,
+    releve:/compétences de relève attendent une simulation d’équipe/
+  };
+
+  /* Les anciens caches ne publient que le premier compteur. Les deux groupes
+     ajoutés ne doivent ni apparaître, ni interpoler une valeur absente. */
+  const ancienCache = lireChrono({ debloquent:8 });
+  assert.match(ancienCache, /8 compétences sans recharge deviennent calculables avec leur mesure/);
+  assert.doesNotMatch(ancienCache, clauses.affine);
+  assert.doesNotMatch(ancienCache, clauses.releve);
+  assert.doesNotMatch(ancienCache, /undefined/);
+
+  [
+    ["debloque", { debloquent:7, affinent:0, releves:0 }],
+    ["affine", { debloquent:0, affinent:8, releves:0 }],
+    ["releve", { debloquent:0, affinent:0, releves:9 }]
+  ].forEach(([seuleClause, compteurs]) => {
+    const lu = lireChrono(compteurs);
+    Object.entries(clauses).forEach(([nom, clause]) => {
+      assert.equal(clause.test(lu), nom === seuleClause,
+        "seule la clause "+seuleClause+" est rendue");
+    });
+  });
+
+  const deuxClauses = lireChrono({ debloquent:2, affinent:3, releves:0 });
+  assert.match(deuxClauses,
+    /2 compétences sans recharge deviennent calculables avec leur mesure ; 3 calculs existants sont affinés\./);
+  assert.doesNotMatch(deuxClauses, /  |\.\./);
+
+  [
+    [{ debloquent:2, affinent:0, releves:5 },
+      /2 compétences sans recharge deviennent calculables avec leur mesure\. 5 compétences de relève attendent une simulation d’équipe/],
+    [{ debloquent:0, affinent:3, releves:5 },
+      /3 calculs existants sont affinés\. 5 compétences de relève attendent une simulation d’équipe/],
+    [{ debloquent:2, affinent:3, releves:5 },
+      /2 compétences sans recharge deviennent calculables avec leur mesure ; 3 calculs existants sont affinés\. 5 compétences de relève attendent une simulation d’équipe/]
+  ].forEach(([compteurs, attendu]) => {
+    const lu = lireChrono(compteurs);
+    assert.match(lu, attendu,
+      "la relève commence une nouvelle phrase après les calculs");
+    assert.doesNotMatch(lu, /; 5 compétences de relève/,
+      "la relève ne rejoint jamais les clauses de calcul");
+  });
+
+  const aucunCompteur = lireChrono({ debloquent:0, affinent:0, releves:0 });
+  assert.match(aucunCompteur, /Aucune source publique ne publie ces durées\./);
+  assert.doesNotMatch(aucunCompteur, /undefined|NaN|compétences sans recharge|calculs existants|compétences de relève/);
 
   /* Un travail fini n'a pas de carte : la meme regle que les trois cartes
      d'accueil, qu'un « 0 » affiche rendrait bruyantes. */

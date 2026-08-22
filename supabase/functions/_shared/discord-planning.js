@@ -109,9 +109,17 @@ function formatChronoMessage(avancement, recues) {
       + " mesurées."
   ];
   const debloquent = Number(avancement.debloquent) || 0;
+  const affinent = Number(avancement.affinent) || 0;
+  const releves = Number(avancement.releves) || 0;
+  const calculs = [];
   if(debloquent){
-    lignes.push("Aucune source publique ne publie ces durées. Sans elles, "
-      + debloquent + " compétences n'ont aucun DPS calculable.");
+    calculs.push(debloquent+" compétences sans recharge deviennent calculables"
+      + " par leur mesure");
+  }
+  if(affinent) calculs.push(affinent+" calculs existants sont affinés");
+  if(calculs.length) lignes.push(calculs.join(" ; ")+".");
+  if(releves){
+    lignes.push(releves+" relèves restent hors du comparateur individuel.");
   }
   if(Number.isFinite(Number(recues)) && Number(recues) > 0){
     lignes.push(Number(recues) + " mesure(s) reçue(s) attendent d'être validées.");
