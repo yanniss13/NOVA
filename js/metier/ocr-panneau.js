@@ -295,4 +295,11 @@
     return stats;
   }
 
-export { detecterPanneau, extraireStats, EST_NOMBRE_PANNEAU };
+export {
+  detecterPanneau,
+  detecterEntete,
+  extraireStats,
+  lireEntete,
+  niveauDePassif,
+  EST_NOMBRE_PANNEAU
+};

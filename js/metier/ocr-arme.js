@@ -108,4 +108,4 @@ import { calculateWeaponStats } from "./stats-calcul.js";
     return { statut:candidats.length === 1 ? "unique" : "ambigu", candidats };
   }
 
-export {};
+export { deduireArme };

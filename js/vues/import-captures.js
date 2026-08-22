@@ -15,12 +15,14 @@
    y passerait inapercue. */
 
 import { $, el } from "../noyau/dom.js";
-import { gearConfigStatus } from "../metier/build-config.js";
+import { ensureBuildStats } from "../noyau/catalogue-build.js";
+import { gearConfigStatus, weaponConfigStatus } from "../metier/build-config.js";
 import {
-  detecterPanneau, extraireStats,
+  detecterPanneau, detecterEntete, extraireStats, lireEntete, niveauDePassif,
   EST_NOMBRE_PANNEAU
 } from "../metier/ocr-panneau.js";
 import { deduirePiece } from "../metier/ocr-deduction.js";
+import { deduireArme } from "../metier/ocr-arme.js";
 import { ModalStack } from "./modal-stack.js";
 
   /* Deux bases differentes cohabitent : un `import()` dynamique se resout
@@ -84,8 +86,8 @@ import { ModalStack } from "./modal-stack.js";
        jeu un ciel etoile. La marge entre les deux est large. */
     return (x, y) => {
       const i = (y * largeur + x) * 4;
-      return (pixels[i] * 0.299 + pixels[i + 1] * 0.587
-        + pixels[i + 2] * 0.114) > 195;
+      return pixels[i] * 0.299 + pixels[i + 1] * 0.587
+        + pixels[i + 2] * 0.114;
     };
   }
 
@@ -99,11 +101,17 @@ import { ModalStack } from "./modal-stack.js";
   }
 
   async function lireCaptureReelle(fichier){
+    /* Le catalogue est charge a la demande. La lecture OCR peut finir avant
+       son injection sur une premiere visite : attendre ici empeche une
+       deduction vide, sans ralentir les appels suivants qui reutilisent la
+       meme promesse. */
+    await ensureBuildStats();
     const image = await chargerImage(fichier);
+    const luminance = luminanceDe(image);
     const zone = detecterPanneau({
       largeur:image.naturalWidth,
       hauteur:image.naturalHeight,
-      estClair:luminanceDe(image)
+      estClair:(x, y) => luminance(x, y) > 195
     });
     if(!zone){
       return { statut:"panneau-introuvable", stats:[] };
@@ -112,6 +120,9 @@ import { ModalStack } from "./modal-stack.js";
       return { statut:"resolution-insuffisante", stats:[] };
     }
 
+    const enteteZone = detecterEntete({
+      estCarte:(x, y) => luminance(x, y) >= 80
+    }, zone);
     const ocr = await moteur();
     const rectangle = {
       left:zone.left, top:zone.top, width:zone.width, height:zone.height
@@ -154,7 +165,17 @@ import { ModalStack } from "./modal-stack.js";
     valeurs.forEach(mot => mots.push(mot));
 
     const stats = extraireStats(mots);
-    return { statut:"ok", stats };
+    let motsEntete = [];
+    if(enteteZone){
+      const enteteLu = await ocr.recognize(fichier, {
+        rectangle:enteteZone
+      }, { blocks:true });
+      motsEntete = motsDe(enteteLu.data);
+    }
+    const entete = lireEntete(motsEntete);
+    const passif = niveauDePassif([...motsPleins, ...motsEntete]
+      .map(mot => String(mot.text)).join(" "));
+    return { statut:"ok", stats, entete, passif };
   }
 
   /* Remplacable par les tests : la lecture d'image est la seule partie qu'on ne
@@ -179,7 +200,15 @@ import { ModalStack } from "./modal-stack.js";
         });
         continue;
       }
-      const deduite = deduirePiece({ stats:lue.stats, herosSlug });
+      const deduite = lue.entete && lue.entete.niveau !== null
+        ? deduireArme({
+          nom:lue.entete.nom,
+          niveau:lue.entete.niveau,
+          passif:lue.passif === undefined ? null : lue.passif,
+          stats:lue.stats,
+          herosSlug
+        })
+        : deduirePiece({ stats:lue.stats, herosSlug });
       lignes.push({
         fichier:fichiers[i],
         statut:deduite.statut === "aucun" ? "echec" : deduite.statut,
@@ -201,6 +230,16 @@ import { ModalStack } from "./modal-stack.js";
   }
 
   function configDeLigne(choix){
+    if(choix.slot === "Arme"){
+      return {
+        version:1,
+        gradeGameId:choix.gradeGameId,
+        level:choix.level,
+        promotion:choix.promotion,
+        overlimit:choix.overlimit,
+        enchantments:choix.enchantments
+      };
+    }
     return {
       version:1,
       level:choix.level,
@@ -252,12 +291,27 @@ import { ModalStack } from "./modal-stack.js";
     ligne.candidats.forEach((candidat, rang) => {
       choix.appendChild(el("option", {
         value:String(rang),
-        text:nomDePiece(candidat.fichier) + " · niveau " + candidat.level
-          + " · +" + candidat.reinforce,
+        text:candidat.slot === "Arme" ? detailDuChoix(candidat)
+          : nomDePiece(candidat.fichier) + " · niveau " + candidat.level
+            + " · +" + candidat.reinforce,
         selected:ligne.choix === candidat
       }));
     });
     return choix;
+  }
+
+  function detailDuChoix(choix){
+    if(choix.slot !== "Arme"){
+      return choix.slot + " · niveau " + choix.level + " · +" + choix.reinforce;
+    }
+    const remplis = (choix.enchantments || []).filter(entry => entry !== null).length;
+    const details = ["Arme", "niveau " + choix.level,
+      "grade " + choix.gradeGameId, "promotion " + choix.promotion,
+      "outrepassement " + choix.overlimit,
+      remplis + " enchantement" + (remplis > 1 ? "s" : "") + " rempli"
+        + (remplis > 1 ? "s" : "")];
+    if(choix.elementSuppose) details.push("élément supposé");
+    return details.join(" · ");
   }
 
   function ligneDuTableau(ligne, index, conflits){
@@ -277,8 +331,7 @@ import { ModalStack } from "./modal-stack.js";
       }));
       cellules.push(el("span", {
         class:"import-captures-detail",
-        text:ligne.choix.slot + " · niveau " + ligne.choix.level
-          + " · +" + ligne.choix.reinforce
+        text:detailDuChoix(ligne.choix)
       }));
       const existant = etatCourant.existant[ligne.choix.slot];
       if(existant){
@@ -313,16 +366,17 @@ import { ModalStack } from "./modal-stack.js";
     if(enregistrement) enregistrement.disabled = retenues.length === 0;
   }
 
-  /* Le dernier verrou. `gearConfigStatus` est le juge de la saisie manuelle :
-     une configuration deduite ne doit jamais entrer par une porte qu'une saisie
-     a la main n'aurait pas franchie. */
+  /* Le dernier verrou : chaque famille passe par le juge de sa saisie manuelle. */
   function enregistrer(){
     const conflits = emplacementsEnConflit(etatCourant.lignes);
     const parEmplacement = {};
     etatCourant.lignes.forEach(ligne => {
       if(!ligne.choix || conflits.has(ligne.choix.slot)) return;
       const config = configDeLigne(ligne.choix);
-      if(gearConfigStatus(ligne.choix.fichier, config) !== "valid") return;
+      const statut = ligne.choix.slot === "Arme"
+        ? weaponConfigStatus(ligne.choix.fichier, config)
+        : gearConfigStatus(ligne.choix.fichier, config);
+      if(statut !== "valid") return;
       parEmplacement[ligne.choix.slot] = {
         fichier:ligne.choix.fichier, config
       };
