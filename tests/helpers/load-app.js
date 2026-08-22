@@ -345,6 +345,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   favoriteRosterWeaponType,
   setFavoriteRosterBuild,
   copyFavoriteRosterBuild,
+  appliquerImportRosterCaptures:typeof appliquerImportRosterCaptures === "function"
+    ? appliquerImportRosterCaptures
+    : undefined,
   rosterHeroSnapshot,
   buildWeaponDefinition:typeof buildWeaponDefinition === "function"
     ? buildWeaponDefinition
