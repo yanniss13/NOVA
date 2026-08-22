@@ -92,18 +92,11 @@
     };
   }
 
-  /* Les valeurs sont les mots numeriques colles au bord droit du panneau. Leur
-     x0 le plus a gauche donne la frontiere de la colonne. La deduire ainsi
-     plutot que par une marge fixe evite qu'un libelle long soit pris pour une
-     valeur — ce qui arrivait au mot « degats, » sur les lignes les plus
-     larges. */
-  function seuilColonneValeur(mots){
-    const bordDroit = Math.max(...mots.map(m => m.bbox.x1));
-    const valeurs = mots.filter(m =>
-      EST_NOMBRE_PANNEAU.test(String(m.text).trim())
-      && m.bbox.x1 >= bordDroit - 25);
-    if(!valeurs.length) return bordDroit - 90;
-    return Math.min(...valeurs.map(m => m.bbox.x0)) - 12;
+  /* Le bord droit du panneau, ou toutes les valeurs sont alignees. C'est le
+     seul repere global qu'on s'autorise, et il est fiable : les valeurs y sont
+     collees quelle que soit la resolution. */
+  function bordDroit(mots){
+    return Math.max(...mots.map(m => m.bbox.x1));
   }
 
   function rangsVisuels(mots, tolerance){
@@ -136,7 +129,7 @@
      silencieux — le seul mode d'echec vraiment dangereux ici. */
   function extraireStats(mots){
     if(!Array.isArray(mots) || !mots.length) return [];
-    const seuil = seuilColonneValeur(mots);
+    const droite = bordDroit(mots);
     const stats = [];
     let bloc = [];
     let attente = null;
@@ -150,11 +143,18 @@
     };
 
     for(const rang of rangsVisuels(mots, 14)){
-      const gauche = rang.mots.filter(m => m.bbox.x1 <= seuil)
+      /* La valeur est LOCALE a la ligne : c'est son dernier mot, s'il est
+         numerique et colle au bord droit. Une frontiere verticale globale
+         tranchait au milieu du dernier mot des libelles longs, qui partaient
+         alors a la poubelle. */
+      const dernier = rang.mots[rang.mots.length - 1];
+      const candidat = dernier ? String(dernier.text).trim() : "";
+      const estValeur = !!dernier
+        && EST_NOMBRE_PANNEAU.test(candidat)
+        && dernier.bbox.x1 >= droite - 40;
+      const valeur = estValeur ? candidat : null;
+      const gauche = (estValeur ? rang.mots.slice(0, -1) : rang.mots)
         .map(m => m.text).join(" ").trim();
-      const droite = rang.mots.filter(m => m.bbox.x1 > seuil)
-        .map(m => m.text).join("").trim();
-      const valeur = EST_NOMBRE_PANNEAU.test(droite) ? droite : null;
       const lettres = gauche.replace(/[^\p{L}]/gu, "").length;
       const texte = lettres > 3 ? gauche.replace(/^[^\p{L}]+/u, "").trim() : "";
 
@@ -185,5 +185,4 @@
     return stats;
   }
 
-export { detecterPanneau, extraireStats,
-  seuilColonneValeur, EST_NOMBRE_PANNEAU };
+export { detecterPanneau, extraireStats, EST_NOMBRE_PANNEAU };
