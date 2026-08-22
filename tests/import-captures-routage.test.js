@@ -7,11 +7,13 @@ const assert = require("node:assert/strict");
 const { loadApp, plain } = require("./helpers/load-app");
 
 const { hooks } = loadApp();
-const { analyserCaptures, __remplacerLecteur } = hooks;
+const { analyserCaptures, __remplacerLecteur, detailDuChoix } = hooks;
 assert.equal(typeof analyserCaptures, "function",
   "analyserCaptures doit etre exposable pour couvrir son aiguillage");
 assert.equal(typeof __remplacerLecteur, "function",
   "le lecteur doit etre remplacable dans le test de routage");
+assert.equal(typeof detailDuChoix, "function",
+  "le detail de recapitulatif doit etre testable sans DOM");
 
 const BAGUETTE = "7ds-armes/Baguette/Baguette des ailes de la flamme noire.webp";
 const CEINTURE = "7ds-armures-ssr/Ceinture/Ceinture du souverain cupide.webp";
@@ -52,6 +54,19 @@ __remplacerLecteur(async fichier => fichier === "baguette.png" ? {
   assert.equal(piece.choix.slot, "Ceinture");
   assert.equal(piece.choix.level, 159);
   assert.equal(piece.choix.reinforce, 5);
+
+  const gravee = {
+    slot:"Armure liee",
+    level:130,
+    reinforce:5,
+    enchantments:[
+      { slot:0, stat:"Normalskill_Damadd_Rate", value:1766 },
+      null,
+      { slot:2, stat:"C_Critical_Rate", value:450 }
+    ]
+  };
+  assert.match(detailDuChoix(gravee), /2 enchantements remplis/,
+    "une piece gravee affiche ses enchantements remplis dans le recapitulatif");
 
   console.log("import-captures routage : OK");
 })().catch(erreur => {
