@@ -11,6 +11,8 @@
    qu'un seul candidat se detache. */
 
 import { BUILD_STATS } from "../noyau/constantes.js";
+import { buildGearDefinition, gearEnchantmentLength } from "./build-config.js";
+import { calculateGearStats } from "./stats-calcul.js";
 
   const STAT_LABELS = BUILD_STATS.statLabels || {};
 
@@ -108,6 +110,55 @@ import { BUILD_STATS } from "../noyau/constantes.js";
         rival:second.entree.code };
     }
     return { statut:"rattrape", code:meilleur.entree.code, rival:null };
+  }
+
+  /* Une configuration « nue » : le bon nombre d'emplacements d'enchantement,
+     tous vides. On ne cherche ici que le couple (niveau, renforcement), et les
+     enchantements n'entrent ni dans la valeur principale ni dans la
+     secondaire — c'est ce qui rend l'inversion possible sans les connaitre. */
+  function configNue(definition, level, reinforce){
+    return {
+      version:1,
+      level,
+      reinforce,
+      enchantments:Array.from(
+        { length:gearEnchantmentLength(definition) }, () => null),
+      passiveLevel:Array.isArray(definition.passiveLevels)
+        && definition.passiveLevels.length ? 1 : null
+    };
+  }
+
+  function valeurDuRole(resultat, role){
+    const terme = (resultat.terms || []).find(t => t.role === role);
+    return terme ? terme.value : null;
+  }
+
+  /* Le site calcule configuration -> valeurs. Ici on parcourt l'espace des
+     configurations possibles et on garde celles qui reproduisent ce qui est
+     affiche.
+
+     L'espace est petit — au plus une quarantaine de niveaux fois six
+     renforcements — donc la force brute est le bon outil. Surtout, elle appelle
+     les vraies formules du jeu au lieu de les reimplementer : si les tables
+     evoluent, l'inversion suit sans qu'on y touche. */
+  function configsDePiece(fichier, slotKey, valeurPrincipale, valeurSecondaire){
+    const definition = buildGearDefinition(fichier);
+    if(!definition) return [];
+    const attendueSecondaire = (valeurSecondaire === null
+      || valeurSecondaire === undefined) ? null : valeurSecondaire;
+    const trouvees = [];
+    for(let level = definition.qualityMin; level <= definition.qualityMax; level++){
+      for(let reinforce = 0; reinforce <= definition.reinforceMax; reinforce++){
+        const resultat = calculateGearStats(
+          fichier, configNue(definition, level, reinforce), slotKey);
+        if(!resultat || resultat.status !== "valid") continue;
+        if(valeurDuRole(resultat, "main") !== valeurPrincipale) continue;
+        if(attendueSecondaire !== null
+          && valeurDuRole(resultat, "sub") !== attendueSecondaire) continue;
+        trouvees.push({ level, reinforce });
+      }
+    }
+    return trouvees;
   }
 
 /* Aucun `export` tant qu'aucun module n'importe d'ici : le depot exige que

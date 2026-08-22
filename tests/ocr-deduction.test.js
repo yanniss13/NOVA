@@ -9,7 +9,7 @@
    piece peut porter. */
 
 const assert = require("node:assert/strict");
-const { loadApp } = require("./helpers/load-app");
+const { loadApp, plain } = require("./helpers/load-app");
 
 const { hooks } = loadApp();
 const { recalerLibelle } = hooks;
@@ -72,4 +72,46 @@ assert.equal(recalerLibelle("Échanger", "0", []).statut, "rejete");
 assert.equal(recalerLibelle("", "0", []).statut, "rejete");
 assert.equal(recalerLibelle(null, null, []).statut, "rejete");
 
-console.log("ocr-deduction (recalage) : OK");
+/* ---------------------------------------------------------------------------
+   L'inversion : de la valeur affichee vers le couple (niveau, renforcement).
+
+   Le panneau du jeu montre des resultats ; le site stocke une configuration.
+   Les trois donnees qui identifient une piece — le niveau en chiffres dores, le
+   badge de renforcement, l'icone — sont precisement celles qui se lisent le
+   plus mal. On ne les lit donc pas, on les deduit.
+   ------------------------------------------------------------------------- */
+
+const { configsDePiece } = hooks;
+assert.equal(typeof configsDePiece, "function",
+  "configsDePiece doit etre expose par js/metier/ocr-deduction.js");
+
+/* Valeurs relevees a l'oeil sur une capture reelle : la ceinture de Merlin
+   affiche « PV de l'equipement 12 560 ». Une seule configuration la produit. */
+assert.deepEqual(
+  plain(configsDePiece("7ds-armures-ssr/Ceinture/Ceinture du souverain cupide.webp",
+    "belt", 12560, null)),
+  [{ level:159, reinforce:5 }]
+);
+
+/* La piece gravee, avec sa stat secondaire : PV 21 678 et Foudre 1 409. */
+assert.deepEqual(
+  plain(configsDePiece("7ds-armures-ssr/Armure liee/Le Sanglier de la Gourmandise.webp",
+    "engraved", 21678, 1409)),
+  [{ level:130, reinforce:5 }]
+);
+
+/* Le point qui compte le plus. Les valeurs atteignables sont RARES dans leur
+   intervalle — 3,56 % des entiers en mediane. Un chiffre mal lu ne correspond
+   donc presque jamais a une configuration : l'erreur se signale au lieu de
+   s'ecrire. C'est ce filet qui rend l'import sur, bien plus que la qualite de
+   l'OCR lui-meme. */
+assert.deepEqual(
+  plain(configsDePiece("7ds-armures-ssr/Ceinture/Ceinture du souverain cupide.webp",
+    "belt", 12561, null)),
+  []
+);
+
+/* Un fichier inconnu ne doit pas lever, seulement ne rien proposer. */
+assert.deepEqual(plain(configsDePiece("inexistant.webp", "belt", 100, null)), []);
+
+console.log("ocr-deduction (recalage + inversion) : OK");

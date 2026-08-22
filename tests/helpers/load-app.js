@@ -101,6 +101,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   urlAbsolueDeRoute:typeof urlAbsolueDeRoute === "function"
     ? urlAbsolueDeRoute
     : undefined,
+  configsDePiece:typeof configsDePiece === "function"
+    ? configsDePiece
+    : undefined,
   recalerLibelle:typeof recalerLibelle === "function"
     ? recalerLibelle
     : undefined,
