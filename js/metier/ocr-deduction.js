@@ -161,6 +161,94 @@ import { calculateGearStats } from "./stats-calcul.js";
     return trouvees;
   }
 
+  /* Le dossier du fichier porte l'emplacement : c'est la source de verite du
+     catalogue, on ne la duplique pas dans une table parallele qui divergerait. */
+  const SLOT_PAR_DOSSIER = {
+    "Haut":"top", "Bas":"bottom", "Bottes":"shoes", "Ceinture":"belt",
+    "Anneau":"ring", "Collier":"necklace", "Boucle d'oreille":"earring",
+    "Armure liee":"engraved"
+  };
+
+  function slotDuFichier(fichier){
+    return SLOT_PAR_DOSSIER[String(fichier).split("/")[1]] || null;
+  }
+
+  function toutesLesPieces(){
+    return [
+      ...Object.keys(BUILD_STATS.gearByFile || {}),
+      ...Object.keys(BUILD_STATS.engravedByFile || {})
+    ];
+  }
+
+  /* Le nombre lu par l'OCR vers l'entier que le catalogue manipule. Les
+     pourcentages y sont stockes en dix-millemes : « 5.53% » vaut 553. Les
+     separateurs de milliers du jeu sont des espaces insecables fines, que le
+     nettoyage doit retirer sans quoi « 12 560 » deviendrait 12. */
+  function valeurNumerique(brut){
+    const net = String(brut).replace(/[\s\u00a0\u202f]/g, "");
+    const pourcentage = /%$/.test(net);
+    const nombre = Number(net.replace(/%$/, "").replace(/,/g, "."));
+    if(!Number.isFinite(nombre)) return null;
+    return pourcentage ? Math.round(nombre * 100) : nombre;
+  }
+
+  /* Les stats qu'une piece peut porter : sa principale, sa secondaire, et ses
+     enchantements possibles. C'est ce qui ramene les candidats du recalage de
+     quatre-vingts a une quinzaine, et fait tomber la confusion entre libelles
+     elementaires voisins. */
+  function codesPossibles(definition){
+    const options = ((definition.randomOptions || {}).stats) || [];
+    return [definition.mainStat, definition.subStat,
+      ...options.map(o => o.stat)].filter(Boolean);
+  }
+
+  function deduirePiece(entree){
+    const stats = (entree && Array.isArray(entree.stats)) ? entree.stats : [];
+    if(!stats.length) return { statut:"aucun", candidats:[] };
+
+    const candidats = [];
+    for(const fichier of toutesLesPieces()){
+      const slot = slotDuFichier(fichier);
+      const definition = buildGearDefinition(fichier);
+      if(!slot || !definition) continue;
+
+      /* Une piece gravee est liee a un personnage. Connaitre le heros suffit
+         donc a ecarter les cinq autres qui partagent son profil de statistiques
+         — sans ce filtre, la gravee restait le seul cas vraiment ambigu. */
+      if(definition.character && entree.herosSlug
+        && definition.character !== entree.herosSlug) continue;
+
+      const permis = codesPossibles(definition);
+      const lues = stats
+        .map(s => ({
+          recale:recalerLibelle(s.libelle, s.valeur, permis),
+          nombre:valeurNumerique(s.valeur)
+        }))
+        .filter(s => s.recale.statut !== "rejete" && s.nombre !== null);
+
+      const principale = lues.find(s => s.recale.code === definition.mainStat);
+      if(!principale) continue;
+      const secondaire = definition.subStat
+        ? lues.find(s => s.recale.code === definition.subStat) : null;
+
+      for(const config of configsDePiece(fichier, slot, principale.nombre,
+        secondaire ? secondaire.nombre : null)){
+        candidats.push({
+          fichier,
+          slot,
+          level:config.level,
+          reinforce:config.reinforce,
+          enchantments:Array.from(
+            { length:gearEnchantmentLength(definition) }, () => null),
+          passiveLevel:Array.isArray(definition.passiveLevels)
+            && definition.passiveLevels.length ? 1 : null
+        });
+      }
+    }
+    if(!candidats.length) return { statut:"aucun", candidats:[] };
+    return { statut:candidats.length === 1 ? "unique" : "ambigu", candidats };
+  }
+
 /* Aucun `export` tant qu'aucun module n'importe d'ici : le depot exige que
    tout symbole exporte soit consomme, et `tests/modules-imports.test.js`
    le verifie. Les tests unitaires passent par les hooks du chargeur `vm`,
