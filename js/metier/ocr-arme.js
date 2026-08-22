@@ -12,6 +12,17 @@ import { enchantementsDArme, nueDArme } from "./ocr-enchantements.js";
 import { normaliserLibelle, rapprocher, recalerLibelle, valeurNumerique } from "./ocr-libelles.js";
 import { calculateWeaponStats } from "./stats-calcul.js";
 
+  function statistiquesNativesDArme(){
+    /* Le catalogue est injecte a la demande. Sa reference reste stable mais
+       son contenu arrive apres les modules, donc cette lecture doit rester
+       dynamique. */
+    return new Set(Object.values(BUILD_STATS.weaponsByFile || {})
+      .flatMap(weapon => [weapon && weapon.mainStatCode,
+        ...Object.values((weapon && weapon.gradesByGameId) || {})
+          .flatMap(grade => (grade && grade.subStats) || [])
+          .map(sub => sub && sub.stat)]).filter(Boolean));
+  }
+
   function nomDuFichier(fichier){
     return String(fichier).split("/").pop().replace(/\.webp$/i, "");
   }
@@ -29,10 +40,18 @@ import { calculateWeaponStats } from "./stats-calcul.js";
       valeur:valeurNumerique(ligne && ligne.valeur)
     }));
     if(lues.some(ligne => !ligne.recale.code || ligne.recale.statut === "rejete"
-      || ligne.valeur === null || !codes.has(ligne.recale.code))){
+      || ligne.valeur === null)){
       return null;
     }
-    return lues;
+    /* Le panneau peut aussi montrer une statistique du heros, hors de toute
+       configuration d'arme. Les autres stats natives restent un filet : si
+       elles ne sont pas portees par le grade courant, la candidate est rejetee. */
+    if(lues.some(ligne => !codes.has(ligne.recale.code)
+      && statistiquesNativesDArme().has(ligne.recale.code))){
+      return null;
+    }
+    const natives = lues.filter(ligne => codes.has(ligne.recale.code));
+    return natives.length ? natives : null;
   }
 
   function totauxCorrespondent(fichier, config, lues){

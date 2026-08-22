@@ -41,6 +41,30 @@ const ATTENDU = [
   }
 ];
 
+const ARMES_ATTENDUES = [
+  {
+    fichier:"pc-arme-baguette.png",
+    herosSlug:"merlin",
+    nom:"Baguette des ailes de la flamme noire",
+    details:["Arme", "niveau 50", "promotion 4", "outrepassement 6",
+      "4 enchantements remplis"],
+    elementSuppose:false,
+    fichierArme:"7ds-armes/Baguette/Baguette des ailes de la flamme noire.webp",
+    config:{ gradeGameId:"131065005", level:50, promotion:4, overlimit:6 },
+    element:null
+  },
+  {
+    fichier:"ultrawide-arme-rapiere.png",
+    herosSlug:"dreyfus",
+    nom:"Rapi\u00e8re de l'\u00e2me vorace",
+    details:["Arme", "niveau 50", "3 enchantements remplis"],
+    elementSuppose:true,
+    fichierArme:"7ds-armes/Rapiere/Rapi\u00e8re de l'\u00e2me vorace.webp",
+    config:{ gradeGameId:"131085010", level:50, promotion:4, overlimit:0 },
+    element:"wind"
+  }
+];
+
 (async () => {
   const serveur = await serveRepo();
   const navigateur = await chromium.launch({ headless:true });
@@ -116,6 +140,67 @@ const ATTENDU = [
     assert.equal(ecrit.length, 1, "un seul envoi apres le clic");
     assert.deepEqual(Object.keys(ecrit[0]).sort(), ["Armure liee", "Ceinture"],
       "les deux emplacements deduits doivent etre ecrits");
+
+    for(const attendu of ARMES_ATTENDUES){
+      const avantArme = await page.evaluate(async herosSlug => {
+        const module = await import("./js/vues/import-captures.js");
+        window.__importVu = [];
+        module.ouvrirImportCaptures({
+          herosSlug,
+          existant:{},
+          surEnregistrement:parEmplacement => window.__importVu.push(parEmplacement)
+        });
+        return window.__importVu.length;
+      }, attendu.herosSlug);
+      assert.equal(avantArme, 0, attendu.fichier + " : ouvrir ne doit rien ecrire");
+
+      await page.setInputFiles("#importCapturesFichiers",
+        path.join(FIXTURES, attendu.fichier));
+      await page.waitForFunction(
+        () => document.querySelectorAll(".import-captures-ligne").length === 1,
+        null, { timeout:180000 });
+
+      const lue = await page.evaluate(() => {
+        const ligne = document.querySelector(".import-captures-ligne");
+        return {
+          statut:ligne.dataset.statut,
+          piece:(ligne.querySelector(".import-captures-piece") || {}).textContent,
+          detail:(ligne.querySelector(".import-captures-detail") || {}).textContent
+        };
+      });
+      assert.equal(lue.statut, "unique", attendu.fichier + " doit etre unique");
+      assert.equal(lue.piece, attendu.nom, attendu.fichier + " : nom attendu");
+      attendu.details.forEach(detail => assert.ok((lue.detail || "").includes(detail),
+        attendu.fichier + " : detail attendu Â« " + detail + " Â»"));
+      assert.equal((lue.detail || "").includes("élément supposé"), attendu.elementSuppose,
+        attendu.fichier + " : signalement d'element suppose");
+
+      assert.equal(await page.evaluate(() => window.__importVu.length), 0,
+        attendu.fichier + " : rien ne doit etre ecrit avant Enregistrer");
+      await page.click("#importCapturesSave");
+      const sortie = await page.evaluate(() => window.__importVu);
+      assert.equal(sortie.length, 1, attendu.fichier + " : un seul envoi apres le clic");
+      assert.deepEqual(Object.keys(sortie[0]), ["Arme"],
+        attendu.fichier + " : seule l'arme est ecrite");
+      const arme = sortie[0].Arme;
+      assert.equal(arme.fichier, attendu.fichierArme, attendu.fichier + " : fichier attendu");
+      assert.equal(arme.config.gradeGameId, attendu.config.gradeGameId);
+      assert.equal(arme.config.level, attendu.config.level);
+      assert.equal(arme.config.promotion, attendu.config.promotion);
+      assert.equal(arme.config.overlimit, attendu.config.overlimit);
+      assert.equal(arme.config.enchantments.filter(Boolean).length,
+        attendu.details.some(detail => detail.startsWith("4 ")) ? 4 : 3,
+        attendu.fichier + " : enchantements attendus");
+      if(attendu.element){
+        assert.ok(arme.config.enchantments.filter(Boolean).every(enchantement =>
+          enchantement.element === attendu.element),
+        attendu.fichier + " : enchantements Vent attendus");
+      }
+      assert.equal(await page.evaluate(async ({ fichier, config }) => {
+        const { weaponConfigStatus } = await import("./js/metier/build-config.js");
+        return weaponConfigStatus(fichier, config);
+      }, arme), "valid", attendu.fichier + " : configuration valide");
+    }
 
     console.log("import-captures (bout en bout) : OK");
   }finally{

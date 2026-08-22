@@ -52,8 +52,11 @@ assert.equal(weaponConfigStatus(BAGUETTE, {
 const rapiere = plain(deduireArme({
   nom:"Rapière de l'âme vorace",
   niveau:50,
-  passif:null,
+  passif:1,
   stats:[
+    /* La capture ultrawide affiche aussi cette stat du heros. Elle n'est pas
+       portee par l'arme et ne doit pas rejeter ses deux stats natives utiles. */
+    { libelle:"Attaque de Vent", valeur:"3 453", section:null },
     { libelle:"Attaque de l'équipement", valeur:"3 291", section:null },
     { libelle:"Efficacité de Déluge de Vent", valeur:"43.17%", section:null },
     { libelle:"Dégâts crit.", valeur:"11.71%", section:"Perle" },
