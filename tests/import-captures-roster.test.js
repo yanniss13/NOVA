@@ -73,6 +73,19 @@ function draftMerlin(){
   assert.equal(draft.builds.Baguette.weapon, null);
 }
 
+// Une arme incompatible ne devient pas valide parce que l'onglet courant porte
+// deja son dossier : Merlin ne peut jamais enregistrer une Hache.
+{
+  const draft = draftMerlin();
+  const resultat = plain(appliquer(draft, "Hache", {
+    Arme:{ fichier:HACHE, config:WEAPON_CONFIG }
+  }));
+
+  assert.deepEqual(resultat, { weaponType:"Hache", applied:0 });
+  assert.equal(Object.hasOwn(draft.builds, "Hache"), false);
+  assert.equal(draft.builds.Baguette.weapon, null);
+}
+
 {
   const draft = draftMerlin();
   const resultat = plain(appliquer(draft, "Livre", {

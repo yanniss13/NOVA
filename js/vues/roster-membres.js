@@ -506,16 +506,18 @@ import { toast } from "./toast.js";
     const emplacements = Object.keys(parEmplacement || {});
     const arme = parEmplacement && parEmplacement.Arme;
     const typeArme = arme && weaponFolderOf(arme.fichier);
-    if(typeArme && weaponTypesOf(draft.charId).includes(typeArme)){
+    const armeCompatible = typeArme
+      && weaponTypesOf(draft.charId).includes(typeArme);
+    if(armeCompatible){
       weaponType = typeArme;
     }
     const pieces = emplacements.filter(slot => slot !== "Arme");
-    const armeCompatible = arme && typeArme === weaponType;
-    if(!armeCompatible && !pieces.length) return { weaponType, applied:0 };
+    const armeApplicable = arme && armeCompatible && typeArme === weaponType;
+    if(!armeApplicable && !pieces.length) return { weaponType, applied:0 };
     const cible = draft.builds[weaponType]
       || (draft.builds[weaponType] = emptyRosterBuild());
     let applied = 0;
-    if(armeCompatible){
+    if(armeApplicable){
       cible.weapon = arme.fichier;
       cible.weaponConfig = arme.config;
       applied++;
