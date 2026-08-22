@@ -42,6 +42,7 @@ const MODULES = [
      avant `ocr-deduction.js`, qui lui confie les lignes d une piece. */
   "metier/ocr-enchantements.js",
   "metier/ocr-deduction.js",
+  "metier/ocr-arme.js",
   "metier/degats-calcul.js",
   "metier/dps-effets.js",
   "metier/dps-simulation.js",
