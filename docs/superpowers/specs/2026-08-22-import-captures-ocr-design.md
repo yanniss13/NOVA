@@ -8,9 +8,8 @@ Branche : `worktree-ocr-stats-screens`
 Permettre à un membre de remplir la configuration d'équipement d'un héros en
 déposant des captures d'écran du jeu, au lieu de saisir chaque champ à la main.
 
-La saisie manuelle d'un héros complet représente neuf éléments — huit pièces
-d'équipement et une arme — chacun avec son niveau, son renforcement et ses
-enchantements. C'est le principal frein au
+La saisie manuelle d'un héros complet représente huit pièces,
+chacune avec son niveau, son renforcement et ses enchantements. C'est le principal frein au
 remplissage du roster.
 
 ## Périmètre
@@ -18,12 +17,23 @@ remplissage du roster.
 Dans le périmètre :
 
 - les sept pièces d'armure et de bijouterie (Haut, Bas, Ceinture, Bottes,
-  Anneau, Collier, Boucle d'oreille), la pièce gravée et l'arme ;
+  Anneau, Collier, Boucle d'oreille) et la pièce gravée ;
 - un héros à la fois, choisi avant l'import ;
 - l'OCR exécuté dans le navigateur du membre.
 
 Hors périmètre pour cette version :
 
+- **l'arme.** Contrairement à une armure, elle ne calcule pas ses statistiques
+  sans ses enchantements : une configuration aux emplacements vides est refusée
+  — `incompatible` pour les enchantements `basic`, `incomplete` pour les perles
+  `masterstone`. Mesure sur le catalogue : **60 armes sur 155** acceptent une
+  configuration nue ; les 95 autres n'en produisent aucune, dont les armes SSR
+  de fin de jeu.
+
+  L'inversion décrite plus bas ne leur transfère donc pas. Les traiter
+  demanderait de lire **et** de déduire les enchantements conjointement — le
+  panneau les affiche, mais c'est un problème sensiblement plus gros, non
+  mesuré. L'arme reste éditable à la main ;
 - l'import de plusieurs héros en une fois. Il supposerait de reconnaître le
   héros sur chaque capture, ce qui n'a pas été testé ;
 - la lecture de la grille de vignettes et des badges de renforcement. Elle
@@ -42,10 +52,9 @@ captures réelles : six iPhone en 2796x1290 et deux PC en 1920x1080.
 | Inversion valeur principale vers (niveau, renfort) | unique dans 99,67 % des cas |
 | Identification de la pièce par ses seules stats | 3 pièces sur 4 identifiées seules |
 | Détection d'une valeur mal lue par l'inversion | 94,3 % en moyenne |
-| Inversion pour une arme de niveau 40 ou plus | unique sur les 155 armes du catalogue |
-| Lecture du nom de l'arme et de son `Lv.XX` | trouvés sur PC comme sur mobile |
+| Armes acceptant une configuration sans enchantements | 60 sur 155 — d'où leur exclusion |
 | Seuil de résolution | s'effondre sous 0,6x ; la compression JPEG 50 ne gêne pas |
-| Durée d'une capture | 0,86 s sur PC, environ 8 s pour neuf |
+| Durée d'une capture | 0,86 s sur PC, environ 7 s pour huit |
 
 Le moteur (`tesseract-core-lstm.wasm` 2,86 Mo, `fra.traineddata` 1,25 Mo, plus
 le worker) pèse environ 5 Mo.
@@ -55,7 +64,7 @@ le worker) pèse environ 5 Mo.
 Le point d'entrée est la page de build d'un héros. Le héros est donc connu
 d'emblée, ce qui restreint les candidats pour la pièce gravée.
 
-1. **Dépôt.** Le membre dépose une à neuf captures. Aucun ordre ni nommage
+1. **Dépôt.** Le membre dépose une à huit captures. Aucun ordre ni nommage
    imposé : l'emplacement se déduit de la pièce identifiée, qui se déduit
    elle-même des stats lues.
 2. **Traitement.** Une barre de progression, capture par capture. Rien n'est
@@ -68,15 +77,15 @@ d'emblée, ce qui restreint les candidats pour la pièce gravée.
    passe par `gearConfigStatus()`, le validateur de la saisie manuelle. Une
    configuration qu'il refuse ne part pas, même si le membre a cliqué.
 
-Un import partiel est accepté : trois captures sur neuf remplissent trois
+Un import partiel est accepté : trois captures sur huit remplissent trois
 emplacements et laissent les autres intacts.
 
 ## Modules
 
 ### `js/metier/ocr-lecture.js`
 
-Entrée : une image. Sortie : une liste de `{libelle, valeur}`, le contenu du
-bandeau (`titre`, `niveau`), et un état (`ok`, `panneau-introuvable`).
+Entrée : une image. Sortie : une liste de `{libelle, valeur}` et un état
+(`ok`, `panneau-introuvable`).
 
 Détection du panneau, double passe OCR, regroupement en lignes, recollage des
 libellés coupés. Ce module ne connaît rien au 7DS : ni les stats, ni les
@@ -94,11 +103,10 @@ Trois mécanismes y sont validés et doivent être conservés :
   valeur. Deux dispositions coexistent dans le jeu — valeur sur la première
   ligne du libellé, ou valeur après une barre de progression — et la présence
   de texte réel sur la ligne de la valeur les distingue ;
-- **lecture du bandeau**, au-dessus du panneau clair. Elle sert à l'arme, dont
-  elle fournit le nom et le niveau (`Lv.XX`). La bande utile se situe autour de
-  22 à 30 % de la hauteur du panneau au-dessus de celui-ci ; les bandes plus
-  étroites ne rendent que du bruit. Le module renvoie ce qu'il lit sans le
-  juger : c'est la déduction qui le recale.
+- **lecture du bandeau**, au-dessus du panneau clair, autour de 22 à 30 % de la
+  hauteur du panneau ; les bandes plus étroites ne rendent que du bruit. Elle
+  n'est pas utilisée par la v1 — elle servait à l'arme — mais reste mesurée et
+  documentée pour le jour où l'arme entrera.
 
 Ne pas revenir à une détection fondée sur les icônes en début de ligne :
 l'OCR les rate sur mobile, ce qui produisait un faux silencieux.
@@ -123,29 +131,6 @@ Deux étapes :
    la stat secondaire lues, tester les couples (niveau, renforcement), retenir
    ceux qui reproduisent les valeurs observées.
 
-Pour l'arme, l'inversion porte sur quatre dimensions (`gradeGameId`, `level`,
-`promotion`, `overlimit`) et non deux. Deux éléments la ramènent au même niveau
-de fiabilité :
-
-- le bandeau du panneau donne le **nom de l'arme**, qui se recale sur les 155
-  du catalogue, et son **niveau** (`Lv.XX`) — les deux ont été lus sur PC comme
-  sur mobile ;
-- la **promotion n'agit que sur le plafond de niveau** : elle ne modifie aucune
-  statistique. Elle est donc invisible dans les chiffres tant que l'arme n'a pas
-  atteint ce plafond.
-
-D'où une ambiguïté entièrement dépendante du niveau, mesurée sur le catalogue
-complet :
-
-| Niveau de l'arme | Armes à inversion unique | Combinaisons ambiguës |
-|---|---|---|
-| n'importe lequel | 95 / 155 | 75,61 % |
-| 30 ou plus | 95 / 155 | 9,09 % |
-| 40 ou plus | 155 / 155 | 0 % |
-
-Une arme montée se détermine donc entièrement. Une arme peu montée produit deux
-à quatre candidats qui ne diffèrent **que par la promotion** : c'est l'état
-« à confirmer », résolu en un clic, pas un échec.
 
 Ce module s'appuie sur `stats-calcul.js` et `build-config.js` : il ne
 réimplémente aucune formule. Si les tables du jeu évoluent, l'import suit.
@@ -238,9 +223,7 @@ donc celui à couvrir le plus. Trois familles :
 - déduction unique : stats connues vers configuration attendue ;
 - ambiguïté : deux candidats attendus, aucun choix automatique ;
 - valeur incohérente : état `aucun`, aucune configuration proposée ;
-- arme montée : niveau 40 ou plus, déduction unique attendue ;
-- arme peu montée : plusieurs candidats ne différant que par la promotion,
-  état « à confirmer » et non échec.
+- entrée dégénérée : liste vide ou héros inconnu, aucun candidat, aucune levée.
 
 ### `ocr-lecture.js`
 
@@ -266,14 +249,17 @@ tableau, correction d'une ligne ambiguë, et surtout vérification qu'aucune
 
 - **Appariement d'icônes** contre les 285 fichiers du dépôt pour identifier la
   pièce. Rendu inutile par la déduction à partir des stats.
-- **Exclure l'arme du périmètre.** Écartée après mesure : l'exclusion reposait
-  sur une inconnue (quatre dimensions au lieu de deux) qui s'est révélée sans
-  objet une fois le niveau lu dans le bandeau.
+- **Faire entrer l'arme dans le périmètre.** Tentée, puis retirée. La mesure
+  qui l'avait justifiée était fausse : elle comptait comme « sans ambiguïté »
+  les 95 armes qui ne produisaient aucune configuration. Le signal était
+  pourtant visible — seulement 60 combinaisons distinctes pour 155 armes — et
+  n'a pas été diagnostiqué. Leçon retenue : un dénominateur qui s'effondre est
+  un symptôme, pas un détail.
 - **Lecture de la grille de vignettes** pour récupérer les niveaux des sept
   pièces d'un coup. Les niveaux s'y lisent bien, mais les badges de
   renforcement sont illisibles, et l'inversion fournit les deux.
 - **OCR côté serveur** dans une fonction edge. Écarté : coût, envoi des images,
-  perte du mode hors ligne, alors que 8 s de traitement local suffisent.
+  perte du mode hors ligne, alors que 7 s de traitement local suffisent.
 - **Écriture directe avec signalement des doutes seulement.** Écartée : un
   roster est lu par d'autres membres, et une lecture fausse mais confiante
   s'écrirait sans que personne ne la voie.

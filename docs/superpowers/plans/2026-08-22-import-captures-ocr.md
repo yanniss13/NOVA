@@ -655,208 +655,20 @@ git commit -m "feat(ocr): deduire une piece complete a partir des stats lues"
 
 ---
 
-### Tâche 4 : Déduction d'une arme
+### ~~Tâche 4 : Déduction d'une arme~~ — RETIRÉE
 
-**Fichiers :**
-- Modifier : `js/metier/ocr-deduction.js`
-- Créer : `tests/ocr-deduction-arme.test.js`
-- Modifier : `tests/helpers/load-app.js`, `scripts/lancer-tests.js`
+L'arme est sortie du périmètre v1 après mesure. Contrairement à une armure, elle
+ne calcule pas ses statistiques sans ses enchantements : **60 armes sur 155**
+seulement acceptent une configuration aux emplacements vides, et les 95 autres —
+dont les SSR de fin de jeu — n'en produisent aucune.
 
-**Interfaces :**
-- Consomme : `buildWeaponDefinition`, `buildWeaponGrade`, `weaponConfigStatus`
-  de `js/metier/build-config.js` ; `calculateWeaponStats` de
-  `js/metier/stats-calcul.js`.
-- Produit : `deduireArme({ stats, titre, niveau })` où `titre` est le nom lu
-  dans le bandeau et `niveau` l'entier lu dans `Lv.XX` (ou `null`). Rend
-  `{ statut, candidats }`, `candidats` étant un tableau de
-  `{ fichier, gradeGameId, level, promotion, overlimit, enchantments }`.
+La mesure qui avait justifié son entrée était fausse : elle comptait comme
+« sans ambiguïté » les armes qui ne produisaient rien du tout. Le signal était
+visible — 60 combinaisons distinctes pour 155 armes — et n'a pas été
+diagnostiqué.
 
-- [ ] **Étape 1 : écrire le test qui échoue**
-
-Créer `tests/ocr-deduction-arme.test.js` :
-
-```js
-"use strict";
-
-/* La deduction d'une arme.
-
-   Une armure a deux inconnues, une arme en a quatre. Deux elements ramenent
-   l'arme au meme niveau de fiabilite : le bandeau donne son nom et son niveau,
-   et la promotion ne modifie AUCUNE statistique — elle ne fait que relever le
-   plafond de niveau. Elle est donc invisible dans les chiffres tant que l'arme
-   n'a pas atteint ce plafond, et parfaitement determinee au-dela. */
-
-const assert = require("node:assert/strict");
-const { loadApp } = require("./helpers/load-app");
-
-const { hooks } = loadApp();
-const { deduireArme } = hooks;
-assert.equal(typeof deduireArme, "function", "deduireArme doit etre expose");
-
-/* Releve reel : la baguette de Merlin, lue sur PC et sur mobile a l'identique. */
-const montee = deduireArme({
-  titre:"Baguette des ailes de la flamme noire",
-  niveau:50,
-  stats:[
-    { libelle:"Attaque de l'équipement", valeur:"4 731" },
-    { libelle:"Dégâts crit.", valeur:"48.82%" }
-  ]
-});
-assert.equal(montee.statut, "unique");
-assert.match(montee.candidats[0].fichier, /flamme noire/);
-assert.equal(montee.candidats[0].level, 50);
-
-/* Le nom lu sert a identifier l'arme, et il tolere une lecture approximative
-   comme n'importe quel libelle. */
-assert.match(
-  deduireArme({
-    titre:"Baguette des ailes de la flarnme noir",
-    niveau:50,
-    stats:[{ libelle:"Attaque de l'équipement", valeur:"4 731" }]
-  }).candidats[0].fichier,
-  /flamme noire/
-);
-
-/* Un titre illisible ne doit pas faire echouer : on retombe sur la recherche
-   par statistiques dans tout le catalogue. */
-assert.notEqual(
-  deduireArme({
-    titre:"@F à",
-    niveau:50,
-    stats:[{ libelle:"Attaque de l'équipement", valeur:"4 731" }]
-  }).statut,
-  "aucun"
-);
-
-/* Valeur incoherente : aucun candidat, comme pour une armure. */
-assert.equal(deduireArme({
-  titre:"Baguette des ailes de la flamme noire",
-  niveau:50,
-  stats:[{ libelle:"Attaque de l'équipement", valeur:"4 732" }]
-}).statut, "aucun");
-
-console.log("ocr-deduction (arme) : OK");
-```
-
-- [ ] **Étape 2 : lancer le test et vérifier qu'il échoue**
-
-Commande : `node tests/ocr-deduction-arme.test.js`
-Attendu : échec sur `deduireArme doit etre expose`.
-
-- [ ] **Étape 3 : écrire l'implémentation**
-
-Compléter les imports en tête de `js/metier/ocr-deduction.js` :
-
-```js
-import {
-  buildGearDefinition, gearEnchantmentLength,
-  buildWeaponDefinition, buildWeaponGrade, weaponConfigStatus
-} from "./build-config.js";
-import { calculateGearStats, calculateWeaponStats } from "./stats-calcul.js";
-```
-
-Puis, avant le bloc `export` :
-
-```js
-  /* Le nom de l'arme se recale sur les 155 du catalogue exactement comme un
-     libelle de stat : meme normalisation, meme distance, meme tolerance. */
-  function armeParLeTitre(titre){
-    const cible = normaliserLibelle(titre);
-    if(cible.length < 4) return null;
-    let meilleur = null;
-    for(const fichier of Object.keys(BUILD_STATS.weaponsByFile || {})){
-      const nom = fichier.split("/").pop().replace(/\.webp$/, "");
-      const d = distance(cible, normaliserLibelle(nom));
-      if(!meilleur || d < meilleur.d) meilleur = { fichier, d, nom };
-    }
-    if(!meilleur) return null;
-    const relative = meilleur.d
-      / Math.max(cible.length, normaliserLibelle(meilleur.nom).length);
-    return relative <= TOLERANCE ? meilleur.fichier : null;
-  }
-
-  function deduireArme(entree){
-    const stats = (entree && Array.isArray(entree.stats)) ? entree.stats : [];
-    if(!stats.length) return { statut:"aucun", candidats:[] };
-
-    /* Le titre restreint a une seule arme quand il est lisible ; sinon on
-       parcourt le catalogue, ce qui reste tenable et evite un echec sec. */
-    const parLeTitre = armeParLeTitre(entree.titre);
-    const fichiers = parLeTitre
-      ? [parLeTitre] : Object.keys(BUILD_STATS.weaponsByFile || {});
-
-    const candidats = [];
-    for(const fichier of fichiers){
-      const definition = buildWeaponDefinition(fichier);
-      if(!definition) continue;
-      const permis = [definition.mainStat].filter(Boolean);
-      const lues = stats
-        .map(s => ({ recale:recalerLibelle(s.libelle, s.valeur, []),
-          nombre:valeurNumerique(s.valeur) }))
-        .filter(s => s.recale.statut !== "rejete" && s.nombre !== null);
-      const principale = lues.find(s => s.recale.code === definition.mainStat);
-      if(!principale) continue;
-
-      for(const id of Object.keys(definition.gradesByGameId || {})){
-        const grade = buildWeaponGrade(fichier, Number(id));
-        if(!grade) continue;
-        const promotions = (grade.promotionSteps || []).length;
-        const paliers = (grade.overlimit && Array.isArray(grade.overlimit.levels))
-          ? grade.overlimit.levels.map(l => l.level) : [0];
-        const nbEnchantements = (((grade.enchantments || {}).tiers) || []).length;
-        for(let promotion = 0; promotion <= promotions; promotion++){
-          for(const overlimit of paliers){
-            const niveaux = Number.isInteger(entree.niveau)
-              ? [entree.niveau] : Array.from({ length:61 }, (_, n) => n);
-            for(const level of niveaux){
-              const config = {
-                version:1, gradeGameId:Number(id), level, promotion, overlimit,
-                enchantments:Array.from({ length:nbEnchantements }, () => null)
-              };
-              if(weaponConfigStatus(fichier, config) === "incompatible") continue;
-              const resultat = calculateWeaponStats(fichier, config);
-              if(!resultat || resultat.status !== "valid") continue;
-              if(valeurDuRole(resultat, "main") !== principale.nombre) continue;
-              candidats.push({ fichier, gradeGameId:Number(id), level,
-                promotion, overlimit, enchantments:config.enchantments });
-            }
-          }
-        }
-      }
-    }
-    if(!candidats.length) return { statut:"aucun", candidats:[] };
-    return { statut:candidats.length === 1 ? "unique" : "ambigu", candidats };
-  }
-```
-
-Compléter le bloc `export` en y ajoutant `deduireArme`.
-
-- [ ] **Étape 4 : exposer et inscrire**
-
-Dans `tests/helpers/load-app.js`, ajouter à `HOOK_EXPORT` :
-
-```js
-  deduireArme:typeof deduireArme === "function" ? deduireArme : undefined,
-```
-
-Dans `scripts/lancer-tests.js`, ajouter à `SUITES.unit` :
-
-```js
-    "node tests/ocr-deduction-arme.test.js",
-```
-
-- [ ] **Étape 5 : lancer les tests et vérifier qu'ils passent**
-
-Commande : `node tests/ocr-deduction-arme.test.js`
-Attendu : `ocr-deduction (arme) : OK`
-
-- [ ] **Étape 6 : commiter**
-
-```bash
-git add js/metier/ocr-deduction.js tests/ocr-deduction-arme.test.js \
-        tests/helpers/load-app.js scripts/lancer-tests.js
-git commit -m "feat(ocr): deduire une arme depuis son bandeau et ses stats"
-```
+Les tâches suivantes gardent leur numéro : la renumérotation créerait plus de
+confusion qu'elle n'en éviterait.
 
 ---
 
@@ -1772,6 +1584,11 @@ git commit -m "test(ocr): verrouiller la lecture sur des captures reelles"
   de libellés homonymes produisent 4,3 % de faux silencieux.
 - **`gearConfigStatus()` reste le dernier mot avant écriture.** L'import ne doit
   jamais écrire une configuration que la saisie manuelle refuserait.
-- Ce qui **n'a pas été vérifié de bout en bout** : la chaîne complète sur une
-  capture d'arme. Le bandeau et l'inversion ont été mesurés séparément, leur
-  assemblage non. Le traiter comme le point le plus susceptible de surprendre.
+- **Se méfier d'un dénominateur qui s'effondre.** L'arme est entrée puis
+  ressortie du périmètre parce qu'une mesure comptait comme « sans ambiguïté »
+  95 armes qui ne produisaient aucune donnée. Le symptôme visible était le
+  nombre de cas testés, tombé de 2 460 à 60 sans explication. Devant un tel
+  écart, vérifier d'abord que le calcul produit quelque chose.
+- **Les deux catalogues ne nomment pas la même chose pareil.** Pour une armure,
+  `mainStat` EST le code de la statistique ; pour une arme, il vaut `"attack"`
+  et le code vit dans `mainStatCode`.
