@@ -122,6 +122,7 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   __remplacerLecteur:typeof __remplacerLecteur === "function"
     ? __remplacerLecteur
     : undefined,
+  detailDuChoix:typeof detailDuChoix === "function" ? detailDuChoix : undefined,
   extraireStats:typeof extraireStats === "function"
     ? extraireStats
     : undefined,

@@ -291,9 +291,7 @@ import { ModalStack } from "./modal-stack.js";
     ligne.candidats.forEach((candidat, rang) => {
       choix.appendChild(el("option", {
         value:String(rang),
-        text:candidat.slot === "Arme" ? detailDuChoix(candidat)
-          : nomDePiece(candidat.fichier) + " · niveau " + candidat.level
-            + " · +" + candidat.reinforce,
+        text:nomDePiece(candidat.fichier) + " · " + detailDuChoix(candidat),
         selected:ligne.choix === candidat
       }));
     });
@@ -301,15 +299,17 @@ import { ModalStack } from "./modal-stack.js";
   }
 
   function detailDuChoix(choix){
-    if(choix.slot !== "Arme"){
-      return choix.slot + " · niveau " + choix.level + " · +" + choix.reinforce;
-    }
     const remplis = (choix.enchantments || []).filter(entry => entry !== null).length;
+    const detailEnchantements = remplis + " enchantement"
+      + (remplis > 1 ? "s" : "") + " rempli" + (remplis > 1 ? "s" : "");
+    if(choix.slot !== "Arme"){
+      return choix.slot + " · niveau " + choix.level + " · +" + choix.reinforce
+        + " · " + detailEnchantements;
+    }
     const details = ["Arme", "niveau " + choix.level,
       "grade " + choix.gradeGameId, "promotion " + choix.promotion,
       "outrepassement " + choix.overlimit,
-      remplis + " enchantement" + (remplis > 1 ? "s" : "") + " rempli"
-        + (remplis > 1 ? "s" : "")];
+      detailEnchantements];
     if(choix.elementSuppose) details.push("élément supposé");
     return details.join(" · ");
   }
