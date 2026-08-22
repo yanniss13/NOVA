@@ -118,6 +118,10 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
     ? enchantementsDArme
     : undefined,
   deduireArme:typeof deduireArme === "function" ? deduireArme : undefined,
+  analyserCaptures:typeof analyserCaptures === "function" ? analyserCaptures : undefined,
+  __remplacerLecteur:typeof __remplacerLecteur === "function"
+    ? __remplacerLecteur
+    : undefined,
   extraireStats:typeof extraireStats === "function"
     ? extraireStats
     : undefined,
