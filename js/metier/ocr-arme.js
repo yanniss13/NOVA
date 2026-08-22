@@ -70,16 +70,15 @@ import { calculateWeaponStats } from "./stats-calcul.js";
     const fichier = rapprochement.code;
     const weapon = buildWeaponDefinition(fichier);
     if(!weapon) return { statut:"aucun", candidats:[] };
-    const codes = new Set([weapon.mainStatCode,
-      ...(weapon.gradesByGameId ? Object.values(weapon.gradesByGameId)
-        .flatMap(grade => (grade.subStats || []).map(sub => sub.stat)) : [])]
-      .filter(Boolean));
-    const lues = statsNatives(natives, codes);
-    if(!lues) return { statut:"aucun", candidats:[] };
-
     const candidats = [];
     for(const grade of Object.values(weapon.gradesByGameId || {})){
       if(!grade) continue;
+      /* Une sous-stat est propre au grade : l'union de tous les grades
+         accepterait une ligne que la candidate courante ne peut pas porter. */
+      const codes = new Set([weapon.mainStatCode,
+        ...(grade.subStats || []).map(sub => sub && sub.stat)].filter(Boolean));
+      const lues = statsNatives(natives, codes);
+      if(!lues) continue;
       for(let promotion = 0; promotion <= (grade.promotionSteps || []).length; promotion++){
         const plafond = weaponLevelCap(grade, promotion);
         if(plafond < 0) continue;

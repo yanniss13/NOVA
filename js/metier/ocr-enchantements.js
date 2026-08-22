@@ -180,7 +180,6 @@ import { recalerLibelle, valeurNumerique } from "./ocr-libelles.js";
     };
   }
 
-/* `enchantementsDArme` n'est pas encore exporte : `ocr-arme.js`, son seul
-   consommateur, reste a ecrire. Le depot exige qu'un symbole exporte soit
-   importe quelque part — c'est ce qui empeche le code mort. */
+/* L'inversion d'arme reutilise ces deux formes afin de soumettre le resultat
+   au meme juge que la saisie manuelle. */
 export { enchantementsDArme, enchantementsDePiece, nueDArme };
