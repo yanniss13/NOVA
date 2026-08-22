@@ -92,6 +92,99 @@
     };
   }
 
+  /* L'en-tete de la carte, au-dessus du panneau de statistiques.
+
+     `detecterPanneau` s'arrete sous lui : le cadre dore plafonne a 192,8 de
+     luminance quand la detection en exige 195, si bien que le nom de la
+     piece et son `Lv.` restaient dehors. Or le nom est la seule chose qui
+     identifie une arme — sans lui, l'inversion ne tranche que dans onze cas
+     sur cent, contre quatre-vingt-dix-huit avec.
+
+     On remonte donc depuis le haut du panneau tant que la ligne appartient
+     encore a la carte. Le releve sur captures reelles laisse une marge
+     enorme : le fond du jeu mesure 20 a 40 de luminance moyenne, la carte
+     ne descend jamais sous 92. C'est a l'appelant de fixer le seuil, comme
+     pour `estClair` — ce module ne touche pas un pixel. */
+  const PART_DE_CARTE = 0.5;
+  /* Quelques rangs sombres au milieu de l'en-tete ne le terminent pas : une
+     bande de separation en fait partie. Au-dela, on est sorti de la carte. */
+  const TROU_TOLERE = 4;
+
+  function detecterEntete(image, zone){
+    if(!image || typeof image.estCarte !== "function") return null;
+    if(!zone || !zone.width || zone.top <= 0) return null;
+    const gauche = zone.left;
+    const droite = zone.left + zone.width;
+    const estRangDeCarte = y => {
+      let sur = 0;
+      let total = 0;
+      for(let x = gauche; x <= droite; x += 3){
+        total++;
+        if(image.estCarte(x, y)) sur++;
+      }
+      return total > 0 && sur / total >= PART_DE_CARTE;
+    };
+
+    let haut = zone.top;
+    let trou = 0;
+    for(let y = zone.top - 1; y >= 0; y--){
+      if(estRangDeCarte(y)){
+        haut = y;
+        trou = 0;
+      }else if(++trou > TROU_TOLERE){
+        break;
+      }
+    }
+    const hauteur = zone.top - haut;
+    /* Sous un vingtieme du panneau, ce n'est pas un en-tete mais le liset du
+       panneau lui-meme. Rendre `null` vaut mieux que faire lire du vide. */
+    if(hauteur < zone.height * 0.05) return null;
+    return { left:gauche, top:haut, width:zone.width, height:hauteur };
+  }
+
+  /* Une arme affiche `Lv.50`, une armure jamais : elle affiche son
+     emplacement et deux badges de renforcement. C'est le discriminant entre
+     les deux familles, et il ne coute rien — le meme motif rend le niveau. */
+  const NIVEAU_AFFICHE = /\bLv\.?\s*([0-9]{1,3})\b/i;
+  const NIVEAU_DE_PASSIF = /\bNiv\.?\s*([0-9]{1,2})\b/i;
+
+  function lireEntete(mots){
+    const rangs = rangsVisuels(Array.isArray(mots) ? mots : [], 14)
+      .map(rang => rang.mots.map(mot => String(mot.text)).join(" ").trim());
+    let niveau = null;
+    let type = "";
+    let rangDuNiveau = -1;
+    rangs.forEach((texte, index) => {
+      if(niveau !== null) return;
+      const trouve = NIVEAU_AFFICHE.exec(texte);
+      if(!trouve) return;
+      niveau = Number(trouve[1]);
+      type = texte.slice(0, trouve.index).trim();
+      rangDuNiveau = index;
+    });
+
+    /* Le nom est la ligne la plus fournie en lettres au-dessus de celle du
+       niveau. Le critere resiste au bruit : les debris que l'OCR ramasse
+       au-dessus du titre ne font jamais plus de quelques lettres. */
+    const lettresDe = texte => texte.replace(/[^\p{L}]/gu, "").length;
+    const candidats = rangDuNiveau >= 0 ? rangs.slice(0, rangDuNiveau) : rangs;
+    let nom = "";
+    for(const texte of candidats){
+      if(lettresDe(texte) > lettresDe(nom)) nom = texte;
+    }
+    return { nom, type, niveau };
+  }
+
+  /* Le passif d'une arme s'affiche `Niv. 7`, et ce nombre vaut exactement le
+     depassement plus un. Le lire fait passer l'inversion de 99,47 % a
+     99,96 % de reponses uniques. Il est facultatif : mal lu, il est ignore
+     plutot que de fausser la deduction. */
+  function niveauDePassif(texte){
+    const brut = (texte === undefined || texte === null) ? "" : String(texte);
+    const trouve = NIVEAU_DE_PASSIF.exec(brut);
+    return trouve ? Number(trouve[1]) : null;
+  }
+
   /* Le bord droit du panneau, ou toutes les valeurs sont alignees. C'est le
      seul repere global qu'on s'autorise, et il est fiable : les valeurs y sont
      collees quelle que soit la resolution. */
@@ -134,9 +227,16 @@
     let bloc = [];
     let attente = null;
 
+    /* La section d'appartenance voyage avec la ligne. Un panneau d'arme
+       range ses enchantements sous « Enchanter », une piece gravee ses
+       options aleatoires sous « Bonus de gravure » : sans ce marquage, ces
+       lignes seraient confondues avec les statistiques natives, et
+       l'inversion chercherait une piece capable de les porter toutes. */
+    let section = null;
+
     const fermerBloc = () => {
       if(bloc.length && attente){
-        stats.push({ libelle:bloc.join(" "), valeur:attente });
+        stats.push({ libelle:bloc.join(" "), valeur:attente, section });
       }
       bloc = [];
       attente = null;
@@ -156,10 +256,20 @@
       const gauche = (estValeur ? rang.mots.slice(0, -1) : rang.mots)
         .map(m => m.text).join(" ").trim();
       const lettres = gauche.replace(/[^\p{L}]/gu, "").length;
-      const texte = lettres > 3 ? gauche.replace(/^[^\p{L}]+/u, "").trim() : "";
+      /* Un fragment qui OUVRE un libelle doit contenir un mot d'au moins
+         quatre lettres. La bordure superieure du panneau laisse des debris
+         — « Le V4 LS », « Le ee » — que l'ancien decompte global de lettres
+         laissait passer : ils se collaient alors au vrai libelle suivant.
+         Les treize libelles releves sur captures reelles portent tous un
+         mot de quatre lettres, aucun debris n'en porte. La regle ne vaut
+         pas pour un fragment de CONTINUATION, qui peut etre court. */
+      const utile = lettres > 3
+        && (bloc.length > 0 || /\p{L}{4,}/u.test(gauche));
+      const texte = utile ? gauche.replace(/^[^\p{L}]+/u, "").trim() : "";
 
       if(texte && estSection(texte)){
         fermerBloc();
+        section = nettoyerTexte(texte);
         continue;
       }
       if(texte && valeur){
