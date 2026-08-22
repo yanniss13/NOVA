@@ -200,8 +200,13 @@ import { calculateGearStats } from "./stats-calcul.js";
      elementaires voisins. */
   function codesPossibles(definition){
     const options = ((definition.randomOptions || {}).stats) || [];
+    /* Une piece gravee porte en plus des `extraStats` fixes — defense,
+       degats crit., degats de competence normale selon la piece. Les omettre
+       rendait ses propres lignes inexplicables, et la piece etait ecartee. */
+    const supplements = (definition.extraStats || [])
+      .map(extra => extra && extra.stat);
     return [definition.mainStat, definition.subStat,
-      ...options.map(o => o.stat)].filter(Boolean);
+      ...options.map(o => o.stat), ...supplements].filter(Boolean);
   }
 
   function deduirePiece(entree){
@@ -221,12 +226,30 @@ import { calculateGearStats } from "./stats-calcul.js";
         && definition.character !== entree.herosSlug) continue;
 
       const permis = codesPossibles(definition);
-      const lues = stats
-        .map(s => ({
-          recale:recalerLibelle(s.libelle, s.valeur, permis),
-          nombre:valeurNumerique(s.valeur)
-        }))
-        .filter(s => s.recale.statut !== "rejete" && s.nombre !== null);
+      const lues = stats.map(s => ({
+        /* Deux recalages, et la difference entre eux porte tout le
+           raisonnement. Contre le catalogue ENTIER : ce texte est-il une vraie
+           statistique ? Contre les stats PERMISES : cette piece peut-elle la
+           porter ? */
+        connue:recalerLibelle(s.libelle, s.valeur, []),
+        recale:recalerLibelle(s.libelle, s.valeur, permis),
+        nombre:valeurNumerique(s.valeur)
+      }));
+
+      /* Une vraie statistique que la piece ne peut pas porter la disqualifie.
+         Sans ce controle, une ceinture atteignant par hasard la meme valeur
+         principale qu'une armure gravee etait retenue, ses stats surnumeraires
+         simplement ignorees — et le resultat sortait en « unique », donc avec
+         confiance, entierement faux.
+
+         Un texte qui ne correspond a AUCUNE statistique est du bruit : le
+         panneau contient aussi des descriptions de bonus d'ensemble, que l'OCR
+         agglomere parfois en une fausse ligne. On l'ignore au lieu de
+         condamner la piece. */
+      const contredite = lues.some(s =>
+        s.connue.statut !== "rejete"
+        && (s.recale.statut === "rejete" || s.nombre === null));
+      if(contredite) continue;
 
       const principale = lues.find(s => s.recale.code === definition.mainStat);
       if(!principale) continue;

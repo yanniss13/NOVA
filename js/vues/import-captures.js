@@ -18,7 +18,7 @@ import { $, el } from "../noyau/dom.js";
 import { gearConfigStatus } from "../metier/build-config.js";
 import {
   detecterPanneau, extraireStats,
-  seuilColonneValeur, EST_NOMBRE_PANNEAU
+  EST_NOMBRE_PANNEAU
 } from "../metier/ocr-panneau.js";
 import { deduirePiece } from "../metier/ocr-deduction.js";
 import { ModalStack } from "./modal-stack.js";
@@ -133,17 +133,24 @@ import { ModalStack } from "./modal-stack.js";
     const valeurs = motsDe(droite.data)
       .filter(mot => EST_NOMBRE_PANNEAU.test(String(mot.text).trim()));
 
-    /* La frontiere entre libelles et valeurs vient de la SECONDE passe : elle
-       seule voit toutes les valeurs. La deduire de la premiere la placait trop
-       a gauche des qu'une valeur y manquait, et le decoupage tranchait alors au
-       milieu du dernier mot d'un libelle long. */
-    const seuil = valeurs.length
-      ? Math.min(...valeurs.map(mot => mot.bbox.x0)) - 12
-      : seuilColonneValeur(motsPleins);
+    /* On ne DECOUPE pas la premiere passe a une frontiere verticale : elle
+       tranchait au milieu du dernier mot des libelles longs, qui partaient
+       alors a la poubelle et laissaient « Defense de » au lieu de « Defense de
+       l'equipement ».
 
-    /* On ne garde de la premiere passe que la colonne des libelles : concatener
-       les deux passes telles quelles ferait apparaitre chaque valeur en double. */
-    const mots = motsPleins.filter(mot => mot.bbox.x1 <= seuil);
+       On garde donc tous ses mots, et on retire seulement ceux que la seconde
+       passe recouvre — meme ligne, meme abscisse. Sans ce retrait, chaque
+       valeur apparaitrait deux fois et sa ligne perdrait son nombre. */
+    const centreY = mot => (mot.bbox.y0 + mot.bbox.y1) / 2;
+    /* Un doublon de valeur est forcement un NOMBRE. Sans cette condition, le
+       dernier mot d'un libelle long — qui commence tout pres de la valeur —
+       etait pris pour un doublon et jete : « Defense de » au lieu de
+       « Defense de l'equipement ». */
+    const doublon = mot => EST_NOMBRE_PANNEAU.test(String(mot.text).trim())
+      && valeurs.some(valeur =>
+        Math.abs(centreY(valeur) - centreY(mot)) < 12
+        && valeur.bbox.x0 < mot.bbox.x1 && mot.bbox.x0 < valeur.bbox.x1);
+    const mots = motsPleins.filter(mot => !doublon(mot));
     valeurs.forEach(mot => mots.push(mot));
 
     const stats = extraireStats(mots);
