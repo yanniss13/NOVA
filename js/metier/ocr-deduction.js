@@ -161,16 +161,18 @@ import { calculateGearStats } from "./stats-calcul.js";
     return trouvees;
   }
 
-  /* Le dossier du fichier porte l'emplacement : c'est la source de verite du
-     catalogue, on ne la duplique pas dans une table parallele qui divergerait. */
-  const SLOT_PAR_DOSSIER = {
-    "Haut":"top", "Bas":"bottom", "Bottes":"shoes", "Ceinture":"belt",
-    "Anneau":"ring", "Collier":"necklace", "Boucle d'oreille":"earring",
-    "Armure liee":"engraved"
-  };
+  /* Le dossier du fichier EST la cle d'emplacement de l'application : elle
+     ecrit « Haut », « Ceinture », « Armure liee ». Aucune table de traduction —
+     `gearDomainOf` compare a ces memes noms, et une cle anglaise y tomberait
+     silencieusement dans « armor », rangeant un anneau parmi les armures. */
+  const EMPLACEMENTS_CONNUS = new Set([
+    "Haut", "Bas", "Bottes", "Ceinture", "Armure liee",
+    "Anneau", "Collier", "Boucle d'oreille"
+  ]);
 
   function slotDuFichier(fichier){
-    return SLOT_PAR_DOSSIER[String(fichier).split("/")[1]] || null;
+    const dossier = String(fichier).split("/")[1];
+    return EMPLACEMENTS_CONNUS.has(dossier) ? dossier : null;
   }
 
   function toutesLesPieces(){
@@ -249,8 +251,4 @@ import { calculateGearStats } from "./stats-calcul.js";
     return { statut:candidats.length === 1 ? "unique" : "ambigu", candidats };
   }
 
-/* Aucun `export` tant qu'aucun module n'importe d'ici : le depot exige que
-   tout symbole exporte soit consomme, et `tests/modules-imports.test.js`
-   le verifie. Les tests unitaires passent par les hooks du chargeur `vm`,
-   pas par les imports. La vue d'import ajoutera la ligne le jour ou elle
-   consommera `deduirePiece`. */
+export { deduirePiece };

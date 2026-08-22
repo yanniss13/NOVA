@@ -35,6 +35,7 @@ const FEUILLES = [
   "boss",
   "suivi",
   "modales",
+  "import-captures",
   "notifications",
   "responsive",
   "dispos",

@@ -30,7 +30,7 @@ const ceinture = plain(deduirePiece({
 }));
 assert.equal(ceinture.statut, "unique");
 assert.equal(ceinture.candidats.length, 1);
-assert.equal(ceinture.candidats[0].slot, "belt");
+assert.equal(ceinture.candidats[0].slot, "Ceinture");
 assert.equal(ceinture.candidats[0].level, 159);
 assert.equal(ceinture.candidats[0].reinforce, 5);
 assert.match(ceinture.candidats[0].fichier, /Ceinture du souverain cupide/);
@@ -44,7 +44,7 @@ const haut = plain(deduirePiece({
   ]
 }));
 assert.equal(haut.statut, "unique");
-assert.equal(haut.candidats[0].slot, "top");
+assert.equal(haut.candidats[0].slot, "Haut");
 assert.equal(haut.candidats[0].level, 159);
 
 /* Un libelle abime doit passer aussi : c'est tout l'interet du recalage. */

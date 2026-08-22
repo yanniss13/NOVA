@@ -79,6 +79,7 @@ const MODULES = [
   "vues/toast.js",
   "vues/modal-stack.js",
   "vues/modale-auth.js",
+  "vues/import-captures.js",
   "vues/routage.js",
   "vues/picker.js",
   "vues/stats-affichage.js",

@@ -185,6 +185,5 @@
     return stats;
   }
 
-/* Aucun `export` tant qu'aucun module n'importe d'ici : le depot exige que tout
-   symbole exporte soit consomme. La vue d'import ajoutera la ligne le jour ou
-   elle consommera ces fonctions. */
+export { detecterPanneau, extraireStats,
+  seuilColonneValeur, EST_NOMBRE_PANNEAU };

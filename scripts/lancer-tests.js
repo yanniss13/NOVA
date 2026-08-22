@@ -106,6 +106,7 @@ const SUITES = {
     "node tests/chrono-animation.playwright.js",
     "node tests/availability.playwright.js",
     "node tests/pwa-update.playwright.js",
+    "node tests/import-captures.playwright.js",
     "node tests/apport-par-piece.playwright.js",
     "node tests/wiki.playwright.js",
     "node tests/wiki-lot2.playwright.js",
