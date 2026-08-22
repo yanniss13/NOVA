@@ -136,7 +136,9 @@ assert.deepStrictEqual(
 const avancementExemple = {
   total:335,
   mesurees:4,
-  debloquent:151,
+  debloquent:76,
+  affinent:184,
+  releves:75,
   prochaines:[{
     gameId:"klotho_staff_normalatk_enchant_ready",
     heros:"klotho",
@@ -149,10 +151,66 @@ const avancementExemple = {
 };
 const messageChrono = helpers.formatChronoMessage(avancementExemple, 7);
 assert.match(messageChrono, /4\/335 mesurées/);
-assert.match(messageChrono, /151 compétences n'ont aucun DPS calculable/);
+assert.match(messageChrono, /76 compétences sans recharge deviennent calculables par leur mesure/);
+assert.match(messageChrono, /75 relèves restent hors du comparateur individuel/);
 assert.match(messageChrono, /7 mesure\(s\) reçue\(s\)/);
 assert.match(messageChrono, /klotho · Bâton · Projection dimensionnelle/);
 assert.match(messageChrono, /attaque normale, clic gauche/);
+
+const chronoSansReception = compteurs => helpers.formatChronoMessage(Object.assign({
+  total:335,
+  mesurees:0,
+  prochaines:[]
+}, compteurs), null);
+const clausesChrono = {
+  debloque:/compétences sans recharge deviennent calculables par leur mesure/,
+  affine:/calculs existants sont affinés/,
+  releve:/relèves restent hors du comparateur individuel/
+};
+
+/* Les caches émis avant les deux nouveaux compteurs restent lisibles. */
+const ancienCacheChrono = chronoSansReception({ debloquent:8 });
+assert.match(ancienCacheChrono, /8 compétences sans recharge deviennent calculables par leur mesure/);
+assert.doesNotMatch(ancienCacheChrono, clausesChrono.affine);
+assert.doesNotMatch(ancienCacheChrono, clausesChrono.releve);
+assert.doesNotMatch(ancienCacheChrono, /undefined/);
+
+[
+  ["debloque", { debloquent:7, affinent:0, releves:0 }],
+  ["affine", { debloquent:0, affinent:8, releves:0 }],
+  ["releve", { debloquent:0, affinent:0, releves:9 }]
+].forEach(([seuleClause, compteurs]) => {
+  const message = chronoSansReception(compteurs);
+  Object.entries(clausesChrono).forEach(([nom, clause]) => {
+    assert.equal(clause.test(message), nom === seuleClause,
+      "seule la clause "+seuleClause+" est envoyée");
+  });
+});
+
+const deuxClausesChrono = chronoSansReception({ debloquent:2, affinent:3, releves:0 });
+assert.match(deuxClausesChrono,
+  /2 compétences sans recharge deviennent calculables par leur mesure ; 3 calculs existants sont affinés\./);
+assert.doesNotMatch(deuxClausesChrono, /  |\.\./);
+
+[
+  [{ debloquent:2, affinent:0, releves:5 },
+    /2 compétences sans recharge deviennent calculables par leur mesure\.\n5 relèves restent hors du comparateur individuel/],
+  [{ debloquent:0, affinent:3, releves:5 },
+    /3 calculs existants sont affinés\.\n5 relèves restent hors du comparateur individuel/],
+  [{ debloquent:2, affinent:3, releves:5 },
+    /2 compétences sans recharge deviennent calculables par leur mesure ; 3 calculs existants sont affinés\.\n5 relèves restent hors du comparateur individuel/]
+].forEach(([compteurs, attendu]) => {
+  const message = chronoSansReception(compteurs);
+  assert.match(message, attendu,
+    "la relève commence sur une nouvelle ligne après les calculs");
+  assert.doesNotMatch(message, /; 5 relèves restent/,
+    "la relève ne rejoint jamais les clauses de calcul");
+});
+
+const aucunCompteurChrono = chronoSansReception({ debloquent:0, affinent:0, releves:0 });
+assert.match(aucunCompteurChrono, /0\/335 mesurées\./);
+assert.doesNotMatch(aucunCompteurChrono,
+  /undefined|NaN|compétences sans recharge|calculs existants|relèves restent/);
 
 /* Ne pas pouvoir compter la boite de reception et la trouver vide sont deux
    informations differentes : la seconde seule s'annonce. */
@@ -173,7 +231,7 @@ assert.match(helpers.formatChronoMessage(null, null), /indisponible/);
    dependre de cette promesse pour rester lisible dans Discord. */
 assert.equal(
   helpers.formatChronoMessage({
-    total:335, mesurees:0, debloquent:151,
+    total:335, mesurees:0, debloquent:76,
     prochaines:Array.from({ length:9 }, (_, index) => ({
       heros:"h"+index, arme:"Hache", nom:"n"+index,
       categorie:"Attaque normale", touche:"clic gauche"

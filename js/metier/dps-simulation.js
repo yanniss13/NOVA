@@ -11,6 +11,7 @@ import { degatsAttendus } from "./degats-calcul.js";
 import { effetsDuBuild } from "./dps-effets.js";
 
   const CATEGORIE_DPS = {
+    NORMAL:"normal",
     NORMAL_SKILL:"normal-skill",
     ACTIVE_THIRD:"special",
     ULTIMATE:"ultimate"
@@ -26,6 +27,12 @@ import { effetsDuBuild } from "./dps-effets.js";
 
   const enMs = secondes => Math.round(Number(secondes) * 1000);
   const enSecondes = ms => ms / 1000;
+  const normaliserCibleDegats = cible => cible === "normal-attack" ? "normal" : cible;
+  const animationMsMesuree = (animations, gameId) => {
+    const secondes = Number(animations && animations[gameId]);
+    return Number.isFinite(secondes) && secondes > 0
+      ? Math.max(0, enMs(secondes)) : 0;
+  };
 
   function copierObjet(source){
     return Object.assign({}, source || {});
@@ -88,7 +95,7 @@ import { effetsDuBuild } from "./dps-effets.js";
   function ajouterBonus(stats, regle, competence, estTick){
     const valeur = Number(regle.valeur) || 0;
     const categorie = CATEGORIE_DPS[competence.categorie];
-    const cible = regle.cible;
+    const cible = normaliserCibleDegats(regle.cible);
     if(cible === categorie){
       stats.bonusCategorie += valeur;
     }else if(cible === competence.gameId){
@@ -330,9 +337,10 @@ import { effetsDuBuild } from "./dps-effets.js";
         ? null : "formule-offensive-inconnue";
     }
     if(regle.type === "bonus-degats"){
-      const cibles = ["normal-skill", "special", "ultimate", "periodic",
+      const cible = normaliserCibleDegats(regle.cible);
+      const cibles = ["normal", "normal-skill", "special", "ultimate", "periodic",
         "all-elements", "any-skill", "global", "self"];
-      return cibles.includes(regle.cible) || competencesParId[regle.cible]
+      return cibles.includes(cible) || competencesParId[regle.cible]
         ? null : "categorie-de-degats-hors-perimetre";
     }
     if(regle.type === "bonus-critique"){
@@ -588,7 +596,7 @@ import { effetsDuBuild } from "./dps-effets.js";
         composantes:(competence.composantes || []).map(copierObjet),
         periodique:competence.periodique
           ? copierObjet(competence.periodique) : null,
-        animationMs:Math.max(0, enMs(animations[competence.gameId]) || 0)
+        animationMs:animationMsMesuree(animations, competence.gameId)
       }));
     const competencesParId = Object.fromEntries(
       competences.map(competence => [competence.gameId, competence])
@@ -700,6 +708,9 @@ import { effetsDuBuild } from "./dps-effets.js";
   }
 
   function dureeRecharge(competence, configuration){
+    if(enMs(competence.recharge) === 0){
+      return Math.max(1, competence.animationMs);
+    }
     const categorie = CATEGORIE_DPS[competence.categorie];
     const plate = configuration.rechargesPlates[categorie] || 0;
     const taux = Math.min(9999, configuration.rechargesTaux[categorie] || 0);
@@ -871,6 +882,48 @@ import { effetsDuBuild } from "./dps-effets.js";
     return candidats.length ? Math.min(...candidats) : borne;
   }
 
+  function prochaineDisponibiliteHorsNormalePendant(
+    etat, normale, configuration, borne
+  ){
+    const categories = Array.from(new Set(configuration.competences
+      .filter(competence => competence.categorie !== "NORMAL")
+      .map(competence => CATEGORIE_DPS[competence.categorie])
+      .filter(Boolean)));
+    if(!categories.length) return null;
+
+    /* La projection avance les evenements deja planifies jusqu'a la fin de
+       l'animation. Elle n'execute pas la normale candidate : une reduction
+       causee par cette action ne peut pas servir a interdire son propre
+       declencheur. Les ticks intermediaires independants ne deviennent une
+       barriere que lorsqu'ils rendent vraiment une competence disponible. */
+    const fin = Math.min(etat.tempsMs + normale.animationMs, borne);
+    const projection = copierEtat(etat);
+
+    while(projection.tempsMs <= fin){
+      const recharges = categories
+        .map(categorie => projection.recharges[categorie])
+        .filter(Number.isFinite);
+      const disponible = recharges.length ? Math.min(...recharges) : null;
+      if(disponible !== null && disponible <= projection.tempsMs){
+        return projection.tempsMs;
+      }
+      const forces = [
+        ...projection.ticks.map(tick => tick.tempsMs),
+        ...Object.values(projection.periodiques)
+      ].filter(temps => Number.isFinite(temps)
+        && temps > projection.tempsMs && temps <= fin);
+      const prochainForce = forces.length ? Math.min(...forces) : null;
+      if(disponible !== null && disponible <= fin
+        && (prochainForce === null || disponible <= prochainForce)){
+        return disponible;
+      }
+      if(prochainForce === null) return null;
+      projection.tempsMs = prochainForce;
+      traiterEvenementsForces(projection, configuration);
+    }
+    return null;
+  }
+
   function prochainAlignementUtile(etat, actions, configuration, borne){
     const cibles = [];
     actions.forEach(action => {
@@ -878,8 +931,8 @@ import { effetsDuBuild } from "./dps-effets.js";
         if(!regle.duree || !declenche(regle, action, "action")) return;
         let categories = [];
         if(regle.type === "bonus-degats"
-          && Object.values(CATEGORIE_DPS).includes(regle.cible)){
-          categories = [regle.cible];
+          && Object.values(CATEGORIE_DPS).includes(normaliserCibleDegats(regle.cible))){
+          categories = [normaliserCibleDegats(regle.cible)];
         }else if(regle.type === "deblocage-competence"){
           const competence = configuration.competencesParId[regle.competence];
           if(competence) categories = [CATEGORIE_DPS[competence.categorie]];
@@ -968,7 +1021,19 @@ import { effetsDuBuild } from "./dps-effets.js";
       futur = { total:0, evenements:[] };
       if(etat.tempsMs < borne){
         let meilleur = null;
-        const actions = actionsDisponibles(etat, configuration);
+        const disponibles = actionsDisponibles(etat, configuration);
+        const normales = disponibles.filter(action => action.categorie === "NORMAL");
+        const aRecharge = disponibles.filter(action => action.categorie !== "NORMAL");
+        const normalesQuiRentrent = normales.filter(action => {
+          const prochaineRecharge = prochaineDisponibiliteHorsNormalePendant(
+            etat, action, configuration, borne
+          );
+          return prochaineRecharge === null
+            || etat.tempsMs + action.animationMs <= prochaineRecharge;
+        });
+        const actions = aRecharge.length
+          ? aRecharge
+          : normalesQuiRentrent;
         actions.forEach(competence => {
           const transition = executerAction(etat, competence, configuration, borne);
           const suite = rechercher(transition.etat, configuration, borne, memo);
@@ -980,13 +1045,13 @@ import { effetsDuBuild } from "./dps-effets.js";
             }, suite)
           );
         });
+        /* Les normales remplissent uniquement les creux. Si elles debordent
+           sur le prochain cooldown, `actions` reste vide et `prochain` fait
+           avancer l'horloge. Les attentes d'alignement restent reservees aux
+           competences a recharge et a leurs effets temporaires. */
         const prochain = prochainInstant(etat, configuration, borne);
-        /* Un effet de preparation court peut devoir attendre la prochaine
-           frappe : le lancer des qu'il revient ferait expirer son bonus avant
-           la cible. Cette branche n'est ajoutee que si une duree temporelle
-           peut donc changer l'ordre optimal. */
-        const alignement = actions.length
-          ? prochainAlignementUtile(etat, actions, configuration, borne)
+        const alignement = aRecharge.length
+          ? prochainAlignementUtile(etat, aRecharge, configuration, borne)
           : null;
         const instantAttente = actions.length ? alignement : prochain;
         if(instantAttente !== null && instantAttente < borne){
@@ -1037,12 +1102,12 @@ import { effetsDuBuild } from "./dps-effets.js";
     return resultat;
   }
 
-  function prioritesDe(rotation){
+  function prioritesDe(rotation, attaqueNormaleIncluse){
     const noms = [];
     rotation.filter(item => item.type === "action").forEach(action => {
       if(!noms.includes(action.nom)) noms.push(action.nom);
     });
-    if(rotation.some(item => item.type === "attente")){
+    if(!attaqueNormaleIncluse && rotation.some(item => item.type === "attente")){
       noms.push("Attaques normales pendant l'attente");
     }
     return noms;
@@ -1055,12 +1120,20 @@ import { effetsDuBuild } from "./dps-effets.js";
       : null;
     const borne = enMs(source.duree);
     const nonInclus = contexte ? contexte.nonInclus.slice() : [];
+    const animations = copierObjet(source.animations);
+    const animationMsDe = competence => animationMsMesuree(
+      animations, competence && competence.gameId
+    );
     const competences = (Array.isArray(source.competences)
       ? source.competences : []).filter(competence => {
       const categorieValide = Object.prototype.hasOwnProperty.call(
         CATEGORIE_DPS, competence && competence.categorie
       );
-      const rechargeValide = enMs(competence && competence.recharge) > 0;
+      const rechargeMs = enMs(competence && competence.recharge);
+      const sansRechargeModelisee = rechargeMs === 0
+        && ["NORMAL", "ACTIVE_THIRD"].includes(competence && competence.categorie)
+        && animationMsDe(competence) > 0;
+      const rechargeValide = rechargeMs > 0 || sansRechargeModelisee;
       const chiffree = (competence && Array.isArray(competence.composantes)
         && competence.composantes.some(composante =>
           Number.isFinite(Number(composante.pourcentage))
@@ -1071,9 +1144,11 @@ import { effetsDuBuild } from "./dps-effets.js";
         nonInclus.push({
           id:competence && competence.gameId,
           nom:competence && competence.nom,
-          raison:!chiffree
-            ? "degats-non-chiffres"
-            : "categorie-ou-recharge-non-modelisee"
+          raison:competence && competence.categorie === "TAG_SKILL"
+            ? "releve-hors-simulation-equipe"
+            : !chiffree
+              ? "degats-non-chiffres"
+              : "categorie-ou-recharge-non-modelisee"
         });
       }
       return categorieValide && rechargeValide && chiffree;
@@ -1090,6 +1165,9 @@ import { effetsDuBuild } from "./dps-effets.js";
         animations:configuration.animations, couverture:[]
       };
     }
+    const attaqueNormaleIncluse = configuration.competences.some(competence =>
+      competence.categorie === "NORMAL"
+    );
     if(!configuration.competences.length){
       return {
         total:null, dps:null, duree:borne / 1000,
@@ -1098,7 +1176,8 @@ import { effetsDuBuild } from "./dps-effets.js";
           ...(contexte ? contexte.hypotheses : []),
           "ressources-illimitees",
           "animations-non-mesurees",
-          "attaques-normales-non-chiffrees"
+          ...(!attaqueNormaleIncluse
+            ? ["attaques-normales-non-chiffrees"] : [])
         ],
         animations:configuration.animations,
         couverture:[]
@@ -1106,7 +1185,7 @@ import { effetsDuBuild } from "./dps-effets.js";
     }
     const etat = {
       tempsMs:0,
-      recharges:{ "normal-skill":0, special:0, ultimate:0 },
+      recharges:{ normal:0, "normal-skill":0, special:0, ultimate:0 },
       buffs:{},
       deblocages:{},
       remplacements:{},
@@ -1138,14 +1217,16 @@ import { effetsDuBuild } from "./dps-effets.js";
       duree:borne / 1000,
       rotation,
       ouverture:ouvertureDe(rotation),
-      priorites:prioritesDe(rotation),
+      priorites:prioritesDe(rotation, attaqueNormaleIncluse),
       nonInclus,
       hypotheses:[
         ...(contexte ? contexte.hypotheses : []),
         "ressources-illimitees",
         ...(configuration.animations.mesurees < configuration.animations.total
           ? ["animations-non-mesurees"] : []),
-        "attaques-normales-non-chiffrees"
+        ...(!attaqueNormaleIncluse
+          ? ["attaques-normales-non-chiffrees"]
+          : ["attaques-normales-remplissage"])
       ],
       animations:configuration.animations,
       couverture:configuration.idsCouverture

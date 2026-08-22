@@ -1208,10 +1208,16 @@ create table if not exists public.animation_measures (
   owner      uuid not null references auth.users(id) on delete cascade,
   pseudo     text,
   game_id    text not null,
-  seconds    numeric not null check (seconds > 0),
+  seconds    numeric not null constraint animation_measures_seconds_range_check
+             check (seconds > 0 and seconds <= 30),
   mode       text not null check (mode in ('rafale', 'unique')),
-  reps       integer check (reps is null or reps >= 1),
-  fps        numeric,
+  reps       integer,
+  fps        numeric constraint animation_measures_fps_range_check
+             check (fps is null or (fps >= 10 and fps <= 240)),
+  constraint animation_measures_protocol_check check (
+    (mode = 'unique' and reps is null)
+    or (mode = 'rafale' and reps is not null and reps >= 2)
+  ),
   created_at timestamptz not null default now()
 );
 
@@ -1221,6 +1227,24 @@ create table if not exists public.animation_measures (
 alter table public.animation_measures add column if not exists game_id text;
 alter table public.animation_measures drop column if exists hero;
 alter table public.animation_measures drop column if exists slot;
+
+alter table public.animation_measures
+  drop constraint if exists animation_measures_seconds_check,
+  drop constraint if exists animation_measures_reps_check,
+  drop constraint if exists animation_measures_seconds_range_check,
+  drop constraint if exists animation_measures_fps_range_check,
+  drop constraint if exists animation_measures_protocol_check;
+
+alter table public.animation_measures
+  add constraint animation_measures_seconds_range_check
+  check (seconds > 0 and seconds <= 30),
+  add constraint animation_measures_fps_range_check
+  check (fps is null or (fps >= 10 and fps <= 240)),
+  add constraint animation_measures_protocol_check
+  check (
+    (mode = 'unique' and reps is null)
+    or (mode = 'rafale' and reps is not null and reps >= 2)
+  );
 
 create index if not exists animation_measures_game_id
   on public.animation_measures (game_id);

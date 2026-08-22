@@ -1,6 +1,8 @@
 "use strict";
 
 const assert = require("node:assert/strict");
+const path = require("node:path");
+const { spawnSync } = require("node:child_process");
 const { loadApp } = require("./helpers/load-app");
 
 const { hooks } = loadApp();
@@ -478,6 +480,348 @@ assert.ok(
   const etrangere = entree({ "skill-inconnue":5 });
   assert.equal(etrangere.animations.mesurees, 0);
   assert.deepStrictEqual(instants(etrangere).slice(0, 3), [0, 3, 6]);
+}
+
+/* Les actions sans recharge ne sont planifiables qu'avec une animation
+   mesuree qui borne leur frequence. Une normale sans mesure reste donc hors
+   calcul, tandis qu'une mesure d'une seconde ouvre les instants 0, 1 et 2. */
+{
+  const attaqueNormale = {
+    gameId:"auto", nom:"Auto-attaque", categorie:"NORMAL", recharge:0,
+    composantes:[{ base:"atk", pourcentage:100 }], pourcentage:100
+  };
+  const sansAnimation = lancer([attaqueNormale], [], 3);
+  assert.equal(sansAnimation.dps, null);
+  assert.ok(sansAnimation.nonInclus.some(e =>
+    e.id === "auto" && e.raison === "categorie-ou-recharge-non-modelisee"
+  ));
+
+  const avecAnimation = simulerDpsCompetences({
+    stats:SANS_CRITIQUE, competences:[attaqueNormale],
+    effets:[], cible:CIBLE_NEUTRE, duree:3, animations:{ auto:1 }
+  });
+  assert.deepStrictEqual(
+    Array.from(avecAnimation.rotation.filter(e => e.type === "action").map(e => e.temps)),
+    [0, 1, 2]
+  );
+  assert.equal(avecAnimation.animations.mesurees, 1);
+  assert.equal(avecAnimation.animations.total, 1);
+  assert.ok(!avecAnimation.hypotheses.includes("attaques-normales-non-chiffrees"));
+  assert.ok(!avecAnimation.priorites.includes("Attaques normales pendant l'attente"),
+    "le verrou d'une normale déjà modélisée n'est pas une attente libre");
+}
+
+/* ACTIVE_THIRD est le seul autre cas sans recharge borne par une animation
+   mesuree : la rotation peut la rejouer exactement a la fin de celle-ci. */
+{
+  const speciale = {
+    gameId:"speciale-zero", nom:"Spéciale", categorie:"ACTIVE_THIRD",
+    recharge:0, composantes:[{ base:"atk", pourcentage:100 }], pourcentage:100
+  };
+  const simulation = simulerDpsCompetences({
+    stats:SANS_CRITIQUE, competences:[speciale], effets:[],
+    cible:CIBLE_NEUTRE, duree:2, animations:{ "speciale-zero":0.5 }
+  });
+  assert.deepStrictEqual(
+    Array.from(simulation.rotation.filter(e => e.type === "action").map(e => e.temps)),
+    [0, 0.5, 1, 1.5]
+  );
+}
+
+/* La relève n'est jamais simulee isolément, même lorsqu'une animation
+   bornerait sa frequence : l'exclusion doit le dire explicitement. */
+{
+  const releve = simulerDpsCompetences({
+    stats:SANS_CRITIQUE,
+    competences:[{
+      gameId:"tag", nom:"Relève", categorie:"TAG_SKILL", recharge:0,
+      composantes:[{ base:"atk", pourcentage:100 }], pourcentage:100
+    }],
+    effets:[], cible:CIBLE_NEUTRE, duree:3, animations:{ tag:1 }
+  });
+  assert.equal(releve.dps, null);
+  assert.ok(releve.nonInclus.some(e =>
+    e.id === "tag" && e.raison === "releve-hors-simulation-equipe"
+  ));
+}
+
+/* Une auto disponible ne doit pas masquer le prochain gros cooldown :
+   l'optimiseur compare aussi l'attente jusqu'au burst à 5 s. */
+{
+  const simulation = simulerDpsCompetences({
+    stats:SANS_CRITIQUE,
+    competences:[
+      { gameId:"auto-cadence", nom:"Auto", categorie:"NORMAL", recharge:0,
+        composantes:[{ base:"atk", pourcentage:100 }], pourcentage:100 },
+      { gameId:"burst-cadence", nom:"Burst", categorie:"NORMAL_SKILL", recharge:5,
+        composantes:[{ base:"atk", pourcentage:1000 }], pourcentage:1000 }
+    ],
+    effets:[], cible:CIBLE_NEUTRE, duree:6, animations:{ "auto-cadence":2 }
+  });
+  assert.deepStrictEqual(tempsActions(simulation, "burst-cadence"), [0, 5]);
+  assert.ok(
+    simulation.rotation.filter(e => e.type === "action").length <= 5,
+    "l'attente et les candidats dédupliqués ne doivent pas exploser la rotation"
+  );
+}
+
+/* Le catalogue appelle la catégorie interne `normal` « normal-attack » :
+   cette forme doit être couverte et ajouter ses +50 % à chaque auto. */
+{
+  const simulation = simulerDpsCompetences({
+    stats:SANS_CRITIQUE,
+    competences:[{
+      gameId:"auto-bonus", nom:"Auto", categorie:"NORMAL", recharge:0,
+      composantes:[{ base:"atk", pourcentage:100 }], pourcentage:100
+    }],
+    effets:[{
+      id:"bonus-normal-attack",
+      regles:[{ type:"bonus-degats", cible:"normal-attack", valeur:5000 }]
+    }],
+    cible:CIBLE_NEUTRE, duree:6, animations:{ "auto-bonus":2 }
+  });
+  assert.deepStrictEqual(
+    Array.from(simulation.rotation.filter(e => e.type === "action").map(e => e.total)),
+    [750, 750, 750]
+  );
+  assert.ok(!simulation.nonInclus.some(e =>
+    e.id === "bonus-normal-attack:bonus-degats:0"
+  ));
+}
+
+/* Une animation mesurée doit être finie et strictement positive. Les valeurs
+   invalides ne déverrouillent pas une auto, ni ne bloquent une recharge. */
+{
+  const auto = {
+    gameId:"auto-invalide", nom:"Auto", categorie:"NORMAL", recharge:0,
+    composantes:[{ base:"atk", pourcentage:100 }], pourcentage:100
+  };
+  [0, Infinity, NaN].forEach(animation => {
+    const simulation = simulerDpsCompetences({
+      stats:SANS_CRITIQUE, competences:[auto], effets:[], cible:CIBLE_NEUTRE,
+      duree:3, animations:{ "auto-invalide":animation }
+    });
+    assert.equal(simulation.dps, null);
+    assert.equal(simulation.animations.mesurees, 0);
+    assert.ok(simulation.nonInclus.some(e => e.id === "auto-invalide"));
+  });
+
+  const rechargee = simulerDpsCompetences({
+    stats:SANS_CRITIQUE,
+    competences:[{
+      gameId:"recharge-infinie", nom:"Recharge", categorie:"NORMAL_SKILL", recharge:1,
+      composantes:[{ base:"atk", pourcentage:100 }], pourcentage:100
+    }],
+    effets:[], cible:CIBLE_NEUTRE, duree:3,
+    animations:{ "recharge-infinie":Infinity }
+  });
+  assert.deepStrictEqual(tempsActions(rechargee, "recharge-infinie"), [0, 1, 2]);
+  assert.equal(rechargee.animations.mesurees, 0);
+}
+
+/* Une auto qui finit exactement au retour du cooldown ne le retarde pas. */
+{
+  const frontiere = simulerDpsCompetences({
+    stats:SANS_CRITIQUE,
+    competences:[
+      { gameId:"auto-frontiere", nom:"Auto", categorie:"NORMAL", recharge:0,
+        composantes:[{ base:"atk", pourcentage:100 }], pourcentage:100 },
+      { gameId:"burst-frontiere", nom:"Burst", categorie:"NORMAL_SKILL", recharge:6,
+        composantes:[{ base:"atk", pourcentage:1000 }], pourcentage:1000 }
+    ],
+    effets:[], cible:CIBLE_NEUTRE, duree:7,
+    animations:{ "auto-frontiere":2 }
+  });
+  assert.deepStrictEqual(tempsActions(frontiere, "auto-frontiere"), [0, 2, 4, 6]);
+  assert.deepStrictEqual(tempsActions(frontiere, "burst-frontiere"), [0, 6]);
+  assert.deepStrictEqual(
+    Array.from(frontiere.rotation.filter(item =>
+      item.type === "action" && item.temps === 6
+    ).map(item => item.gameId)),
+    ["burst-frontiere", "auto-frontiere"]
+  );
+}
+
+/* Une competence a recharge prete passe avant l'auto de remplissage. */
+{
+  const priorite = simulerDpsCompetences({
+    stats:SANS_CRITIQUE,
+    competences:[
+      { gameId:"auto-priorite", nom:"Auto", categorie:"NORMAL", recharge:0,
+        composantes:[{ base:"atk", pourcentage:100 }], pourcentage:100 },
+      { gameId:"skill-prioritaire", nom:"Competence", categorie:"NORMAL_SKILL",
+        recharge:10, composantes:[{ base:"atk", pourcentage:100 }], pourcentage:100 }
+    ],
+    effets:[], cible:CIBLE_NEUTRE, duree:3,
+    animations:{ "auto-priorite":2 }
+  });
+  assert.equal(
+    priorite.rotation.find(item => item.type === "action").gameId,
+    "skill-prioritaire"
+  );
+}
+
+/* Un evenement periodique qui avance une recharge est lui aussi une frontiere
+   de remplissage. L'auto ne doit pas le traverser et repousser la competence
+   que cet evenement rend disponible. */
+{
+  const rechargePeriodique = simulerDpsCompetences({
+    stats:SANS_CRITIQUE,
+    competences:[
+      { gameId:"auto-recharge-periodique", nom:"Auto", categorie:"NORMAL",
+        recharge:0, composantes:[{ base:"atk", pourcentage:100 }],
+        pourcentage:100 },
+      { gameId:"burst-recharge-periodique", nom:"Burst",
+        categorie:"NORMAL_SKILL", recharge:10,
+        composantes:[{ base:"atk", pourcentage:1000 }], pourcentage:1000 }
+    ],
+    effets:[{
+      id:"recharge-periodique-test",
+      regles:[{
+        type:"recharge-periodique", cible:"normal-skill",
+        secondes:5, intervalle:5
+      }]
+    }],
+    cible:CIBLE_NEUTRE,
+    duree:10,
+    animations:{ "auto-recharge-periodique":4 }
+  });
+  assert.deepStrictEqual(
+    tempsActions(rechargePeriodique, "burst-recharge-periodique"),
+    [0, 5],
+    "une auto ne doit pas masquer la recharge avancee a 5 s"
+  );
+}
+
+/* Les evenements reducteurs ne sont pas tous des barrieres : la projection
+   doit autoriser les autos qui finissent avant le retour reel du cooldown. */
+{
+  const reductionsFrequentes = simulerDpsCompetences({
+    stats:SANS_CRITIQUE,
+    competences:[
+      { gameId:"auto-reductions-frequentes", nom:"Auto", categorie:"NORMAL",
+        recharge:0, composantes:[{ base:"atk", pourcentage:100 }],
+        pourcentage:100 },
+      { gameId:"burst-reductions-frequentes", nom:"Burst",
+        categorie:"NORMAL_SKILL", recharge:10,
+        composantes:[{ base:"atk", pourcentage:1000 }], pourcentage:1000 }
+    ],
+    effets:[{
+      id:"reductions-frequentes-test",
+      regles:[{
+        type:"recharge-periodique", cible:"normal-skill",
+        secondes:2, intervalle:1
+      }]
+    }],
+    cible:CIBLE_NEUTRE,
+    duree:10,
+    animations:{ "auto-reductions-frequentes":2 }
+  });
+  assert.deepStrictEqual(
+    tempsActions(reductionsFrequentes, "burst-reductions-frequentes"),
+    [0, 4, 8]
+  );
+  assert.deepStrictEqual(
+    tempsActions(reductionsFrequentes, "auto-reductions-frequentes"),
+    [0, 2, 4, 6, 8],
+    "les reductions intermediaires ne doivent pas affamer le remplissage"
+  );
+}
+
+/* Une reduction causee par l'auto ne doit pas interdire cette meme auto : sans
+   elle, la disponibilite anticipee n'existerait pas. Son animation reste le
+   verrou normal de l'action qui produit la reduction. */
+{
+  const reductionParAuto = simulerDpsCompetences({
+    stats:SANS_CRITIQUE,
+    competences:[
+      { gameId:"auto-reduction-directe", nom:"Auto", categorie:"NORMAL",
+        recharge:0, composantes:[{ base:"atk", pourcentage:100 }],
+        pourcentage:100 },
+      { gameId:"burst-reduction-directe", nom:"Burst",
+        categorie:"NORMAL_SKILL", recharge:5,
+        composantes:[{ base:"atk", pourcentage:1000 }], pourcentage:1000 }
+    ],
+    effets:[{
+      id:"skill:auto-reduction-directe",
+      origine:"skill",
+      regles:[{
+        type:"recharge-plate", cible:"normal-skill", secondes:1,
+        sourceId:"skill:auto-reduction-directe"
+      }]
+    }],
+    cible:CIBLE_NEUTRE,
+    duree:6,
+    animations:{ "auto-reduction-directe":2 }
+  });
+  assert.deepStrictEqual(
+    tempsActions(reductionParAuto, "auto-reduction-directe"),
+    [0, 2, 4],
+    "une reduction causee par l'auto ne doit pas bloquer son declencheur"
+  );
+  assert.deepStrictEqual(
+    tempsActions(reductionParAuto, "burst-reduction-directe"),
+    [0, 4]
+  );
+  assert.deepStrictEqual(
+    Array.from(reductionParAuto.rotation.filter(item =>
+      item.type === "action" && item.temps === 4
+    ).map(item => item.gameId)),
+    ["burst-reduction-directe", "auto-reduction-directe"]
+  );
+}
+
+/* Cas catalogue Howzer : l'attaque normale remet la speciale a zero. Si la
+   projection utilise ce reset pour refuser l'auto, le declencheur ne part
+   jamais et la speciale attend a tort sa recharge native. */
+{
+  const resetHowzer = simulerDpsCompetences({
+    stats:SANS_CRITIQUE,
+    competences:[
+      { gameId:"howzer_gauntlets_jumpatk", nom:"Auto Howzer",
+        categorie:"NORMAL", recharge:0,
+        composantes:[{ base:"atk", pourcentage:100 }], pourcentage:100 },
+      { gameId:"howzer_gauntlets_active3", nom:"Speciale Howzer",
+        categorie:"ACTIVE_THIRD", recharge:10.8,
+        composantes:[{ base:"atk", pourcentage:1000 }], pourcentage:1000 }
+    ],
+    effets:[{
+      id:"skill:howzer_gauntlets_jumpatk",
+      origine:"skill",
+      regles:[{
+        type:"recharge-taux", cible:"special", valeur:10000,
+        sourceId:"skill:howzer_gauntlets_jumpatk"
+      }]
+    }],
+    cible:CIBLE_NEUTRE,
+    duree:6,
+    animations:{ howzer_gauntlets_jumpatk:2 }
+  });
+  assert.deepStrictEqual(
+    tempsActions(resetHowzer, "howzer_gauntlets_jumpatk"),
+    [0, 2, 4]
+  );
+  assert.deepStrictEqual(
+    tempsActions(resetHowzer, "howzer_gauntlets_active3"),
+    [0, 2, 4]
+  );
+}
+
+/* Une fenetre reelle de 60 s avec les quatre categories ne doit pas faire
+   exploser la recherche lorsque seule l'auto est mesuree. Le sous-processus
+   transforme une non-terminaison en echec borne au lieu de bloquer la suite. */
+{
+  const performance = spawnSync(
+    process.execPath,
+    [path.join(__dirname, "helpers", "dps-performance-runner.js")],
+    { encoding:"utf8", timeout:5000 }
+  );
+  assert.equal(
+    performance.error && performance.error.code,
+    undefined,
+    "la simulation DPS de 60 s doit terminer en moins de 5 s"
+  );
+  assert.equal(performance.status, 0, performance.stderr || performance.stdout);
 }
 
 console.log("dps-simulation.test.js OK");

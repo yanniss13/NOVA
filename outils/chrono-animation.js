@@ -98,12 +98,36 @@
     return coche ? coche.value : "rafale";
   }
 
+  function synchroniserProtocole(){
+    const competence = competenceChoisie();
+    if(!competence) return;
+    const protocole = window.ChronoCalcul.protocolePour(competence.gameId);
+    document.querySelectorAll("input[name=mode]").forEach(radio => {
+      radio.checked = radio.value === protocole.mode;
+      radio.disabled = true;
+    });
+    const repetitions = $("repetitions");
+    repetitions.disabled = protocole.mode === "unique";
+    if(protocole.repetitions !== null) repetitions.value = protocole.repetitions;
+  }
+
   function mesureCourante(){
     if(etat.secondeDebut === null || etat.secondeFin === null) return null;
     const competence = competenceChoisie();
     if(!competence) return null;
-    const repetitions = Number($("repetitions").value);
     const mode = modeChoisi();
+    const repetitions = mode === "rafale" ? Number($("repetitions").value) : null;
+    if(!window.ChronoCalcul.protocoleValide({
+      gameId:competence.gameId, mode:mode, repetitions:repetitions
+    })){
+      throw new Error(
+        "Protocole attendu : rafale avec un entier >= 2 ; unique avec reps:null."
+      );
+    }
+    const fps = window.ChronoCalcul.fpsPour(etat.dureeImage, etat.cadence);
+    if(!Number.isFinite(fps) || fps < 10 || fps > 240){
+      throw new Error("La cadence calculée doit être comprise entre 10 et 240 img/s.");
+    }
     const bornes = { secondeDebut:etat.secondeDebut, secondeFin:etat.secondeFin };
     const secondes = mode === "rafale"
       ? window.ChronoCalcul.dureeRafale({
@@ -112,13 +136,17 @@
           repetitions:repetitions
         })
       : window.ChronoCalcul.dureeUnique(bornes);
+    if(!(secondes > 0 && secondes <= 30)){
+      throw new Error("La durée doit être supérieure à 0 et ne pas dépasser 30 s.");
+    }
     return {
       gameId:competence.gameId,
       heros:$("heros").value,
       arme:competence.weaponType,
       secondes:secondes,
       mode:mode,
-      repetitions:mode === "rafale" ? repetitions : null
+      repetitions:repetitions,
+      fps:fps
     };
   }
 
@@ -132,9 +160,10 @@
     $("imageCourante").textContent = etat.dureeImage
       ? String(Math.round(t / etat.dureeImage))
       : String(Math.round(t * etat.cadence));
+    const fps = window.ChronoCalcul.fpsPour(etat.dureeImage, etat.cadence);
     $("cadence").textContent = etat.dureeImage
-      ? (1 / etat.dureeImage).toFixed(0) + " img/s"
-      : "—";
+      ? fps + " img/s"
+      : fps + " img/s (repli)";
     $("sortieDebut").textContent =
       etat.secondeDebut === null ? "—" : etat.secondeDebut.toFixed(3);
     $("sortieFin").textContent =
@@ -179,34 +208,27 @@
     majCompetences();
   }
 
-  /* Seules les auto-attaques s'enchainent : toutes les autres competences ont
-     une recharge. La rafale ne concerne donc qu'elles, et comme une
-     auto-attaque est un cycle de plusieurs coups, ce sont des cycles entiers
-     qu'on compte, pas des coups. */
-  function estAutoAttaque(gameId){
-    return /jumpatk|normalatk/.test(gameId);
-  }
-
   function majDetail(){
     const competence = competenceChoisie();
     const detail = $("detail");
     if(!competence){ detail.textContent = ""; afficher(); return; }
 
-    if(estAutoAttaque(competence.gameId)){
+    const protocole = window.ChronoCalcul.protocolePour(competence.gameId);
+    if(protocole.mode === "rafale"){
       const coups = Array.isArray(competence.repartition)
         ? competence.repartition.length : 0;
       detail.textContent = (coups ? "Enchaînement de " + coups + " coups. " : "")
         + "En rafale, compte des cycles entiers : marque le premier coup,"
         + " laisse tourner dix cycles, puis marque le premier coup du onzième.";
     }else{
-      detail.textContent = "Une seule fois : cette compétence a une recharge"
-        + (competence.recharge ? " de " + competence.recharge + " s" : "")
-        + ", elle ne s'enchaîne pas.";
+      detail.textContent = "Une seule fois : mesure un lancement de cette compétence."
+        + (competence.recharge ? " Sa recharge est de " + competence.recharge + " s." : "");
     }
 
     if(etat.mesurees.has(competence.gameId)){
-      detail.textContent += " Déjà mesurée : ta valeur remplacera l'ancienne.";
+      detail.textContent += " Déjà mesurée : ton envoi sera proposé comme correction.";
     }
+    synchroniserProtocole();
     afficher();
   }
 
@@ -362,8 +384,10 @@
   const sb = window.supabase && window.SB_URL && window.SB_KEY
     ? window.supabase.createClient(window.SB_URL, window.SB_KEY)
     : null;
+  let envoiEnCours = false;
 
   async function envoyer(){
+    if(envoiEnCours) return;
     const retour = $("retourEnvoi");
     if(!sb){ retour.textContent = "Connexion au registre indisponible."; return; }
 
@@ -376,28 +400,37 @@
     }
     if(!mesure){ retour.textContent = "Marque d'abord un début et une fin."; return; }
 
-    const reponseUtilisateur = await sb.auth.getUser();
-    const utilisateur = reponseUtilisateur.data && reponseUtilisateur.data.user;
-    if(!utilisateur){
-      retour.textContent = "Connecte-toi sur le site avant d'envoyer.";
-      return;
+    envoiEnCours = true;
+    $("envoyer").disabled = true;
+    try{
+      const reponseUtilisateur = await sb.auth.getUser();
+      const utilisateur = reponseUtilisateur.data && reponseUtilisateur.data.user;
+      if(!utilisateur){
+        retour.textContent = "Connecte-toi sur le site avant d'envoyer.";
+        return;
+      }
+
+      const profil = await sb.from("profiles")
+        .select("pseudo").eq("id", utilisateur.id).maybeSingle();
+
+      const { error } = await sb.from("animation_measures").insert({
+        owner:utilisateur.id,
+        pseudo:(profil.data && profil.data.pseudo) || null,
+        game_id:mesure.gameId,
+        seconds:mesure.secondes,
+        mode:mesure.mode,
+        reps:mesure.repetitions,
+        fps:mesure.fps
+      });
+      retour.textContent = error
+        ? "L'envoi a échoué : " + error.message
+        : "Mesure envoyée, en attente de validation humaine.";
+    }catch(erreur){
+      retour.textContent = "L'envoi a échoué : " + erreur.message;
+    }finally{
+      envoiEnCours = false;
+      $("envoyer").disabled = false;
     }
-
-    const profil = await sb.from("profiles")
-      .select("pseudo").eq("id", utilisateur.id).maybeSingle();
-
-    const { error } = await sb.from("animation_measures").insert({
-      owner:utilisateur.id,
-      pseudo:(profil.data && profil.data.pseudo) || null,
-      game_id:mesure.gameId,
-      seconds:mesure.secondes,
-      mode:mesure.mode,
-      reps:mesure.repetitions,
-      fps:etat.cadence
-    });
-    retour.textContent = error
-      ? "L'envoi a échoué : " + error.message
-      : "Mesure envoyée, merci.";
   }
 
   $("envoyer").addEventListener("click", envoyer);

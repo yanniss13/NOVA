@@ -193,7 +193,7 @@ const EQUIPE = {
 
     await page.getByText(/DPS des compétences sur 60 s/).first()
       .waitFor({ state:"visible" });
-    await page.getByText("Rotation optimale selon les données connues")
+    await page.getByText("Rotation simulée selon les priorités connues")
       .first().click();
     assert.match(await page.locator(".hd-puissance-detail").first().textContent(),
       /Ouverture/);
