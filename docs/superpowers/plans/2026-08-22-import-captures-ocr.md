@@ -36,6 +36,14 @@ servi depuis le dépôt), tests Node en CommonJS et Playwright.
 - **Tout nouveau fichier de test doit être inscrit dans `SUITES` de
   `scripts/lancer-tests.js`** (`unit` ou `e2e`).
 - **Aucun appel à un CDN.** Tout est servi depuis le dépôt.
+- **Le chargeur `vm` des tests concatène tous les modules dans une portée
+  commune.** Deux modules qui déclarent le même nom au premier niveau
+  provoquent une erreur de redéclaration, et toute la suite unitaire tombe.
+  Avant d'introduire un nom de premier niveau, vérifier qu'il est libre :
+  `grep -rn "^  \(const\|let\|function\|class\)\s\+<nom>" js/`.
+  C'est ainsi que `normaliser` (déjà dans `donnees/coequipiers-store.js`) et
+  `SECTIONS` (déjà dans `vues/wiki-fiche-heros.js`) ont été écartés au profit de
+  `normaliserLibelle` et `TITRES_DE_SECTION`.
 - Les tests unitaires sont en CommonJS, avec `node:assert/strict` et des
   assertions au niveau racine du fichier.
 - Commande de vérification : `node scripts/lancer-tests.js unit`
@@ -170,7 +178,7 @@ import { BUILD_STATS } from "../noyau/constantes.js";
   /* Tout ce qu'un OCR abime sans changer le sens disparait ici : accents,
      casse, ponctuation, et les espaces exotiques — l'insecable fine que le jeu
      emploie comme separateur de milliers en fait partie. */
-  function normaliser(texte){
+  function normaliserLibelle(texte){
     return String(texte === undefined || texte === null ? "" : texte)
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "")
@@ -220,11 +228,11 @@ import { BUILD_STATS } from "../noyau/constantes.js";
     return Object.keys(STAT_LABELS)
       .filter(code => !permis || permis.has(code))
       .filter(code => !unite || STAT_LABELS[code].unit === unite)
-      .map(code => ({ code, cle:normaliser(STAT_LABELS[code].fr) }));
+      .map(code => ({ code, cle:normaliserLibelle(STAT_LABELS[code].fr) }));
   }
 
   function recalerLibelle(texte, valeurBrute, codesAutorises){
-    const cible = normaliser(texte);
+    const cible = normaliserLibelle(texte);
     if(!cible) return { statut:"rejete", code:null, rival:null };
     const unite = uniteDeLaValeur(valeurBrute);
     let liste = candidats(codesAutorises, unite);
@@ -250,7 +258,7 @@ import { BUILD_STATS } from "../noyau/constantes.js";
     return { statut:"rattrape", code:meilleur.entree.code, rival:null };
   }
 
-export { normaliser, distance, uniteDeLaValeur, recalerLibelle };
+export { normaliserLibelle, distance, uniteDeLaValeur, recalerLibelle };
 ```
 
 - [ ] **Étape 4 : déclarer le module et exposer la fonction**
@@ -414,7 +422,7 @@ Puis, avant le bloc `export` :
 Compléter la ligne `export` :
 
 ```js
-export { normaliser, distance, uniteDeLaValeur, recalerLibelle, configsDePiece };
+export { normaliserLibelle, distance, uniteDeLaValeur, recalerLibelle, configsDePiece };
 ```
 
 - [ ] **Étape 4 : exposer la fonction**
@@ -743,17 +751,17 @@ Puis, avant le bloc `export` :
   /* Le nom de l'arme se recale sur les 155 du catalogue exactement comme un
      libelle de stat : meme normalisation, meme distance, meme tolerance. */
   function armeParLeTitre(titre){
-    const cible = normaliser(titre);
+    const cible = normaliserLibelle(titre);
     if(cible.length < 4) return null;
     let meilleur = null;
     for(const fichier of Object.keys(BUILD_STATS.weaponsByFile || {})){
       const nom = fichier.split("/").pop().replace(/\.webp$/, "");
-      const d = distance(cible, normaliser(nom));
+      const d = distance(cible, normaliserLibelle(nom));
       if(!meilleur || d < meilleur.d) meilleur = { fichier, d, nom };
     }
     if(!meilleur) return null;
     const relative = meilleur.d
-      / Math.max(cible.length, normaliser(meilleur.nom).length);
+      / Math.max(cible.length, normaliserLibelle(meilleur.nom).length);
     return relative <= TOLERANCE ? meilleur.fichier : null;
   }
 
@@ -959,7 +967,7 @@ Créer `js/metier/ocr-panneau.js` :
 
   const EST_NOMBRE = /^[0-9][0-9\s\u202f\u00a0.,]*%?$/;
 
-  const SECTIONS = ["Enchanter", "Bonus de gravure", "Parametre de promotion",
+  const TITRES_DE_SECTION = ["Enchanter", "Bonus de gravure", "Parametre de promotion",
     "Ensemble 3 pieces", "Ensemble 5 pieces", "Stats"];
 
   function nettoyer(texte){
@@ -969,7 +977,7 @@ Créer `js/metier/ocr-panneau.js` :
 
   function estSection(texte){
     const cible = nettoyer(texte);
-    return !!cible && SECTIONS.some(section => {
+    return !!cible && TITRES_DE_SECTION.some(section => {
       const reference = nettoyer(section);
       return cible === reference
         || (cible.length >= 4 && reference.startsWith(cible))
