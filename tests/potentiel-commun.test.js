@@ -139,9 +139,13 @@ const STORAGE_KEY = "confrerie7ds.teams";
     .map(item => item.file);
 
   assert.strictEqual(Object.keys(linked).length, 25);
-  assert.strictEqual(files.length, 68);
-  assert.strictEqual(new Set(files).size, 68);
-  assert.ok(Object.values(linked).every(items => [2, 3].includes(items.length)));
+  /* 83 depuis l'ajout des gravees SR : le catalogue ne contenait que les SSR,
+     faute d'icones locales. Deux pieces restent dehors, toutes deux nommees
+     « Sortie decontractee » — un meme nom pour deux pieces differentes, et le
+     catalogue identifie une piece par le nom de son fichier image. */
+  assert.strictEqual(files.length, 83);
+  assert.strictEqual(new Set(files).size, 83);
+  assert.ok(Object.values(linked).every(items => items.length >= 2 && items.length <= 4));
   assert.deepStrictEqual(
     plain([...files].sort()),
     plain([...localArmorFiles].sort())
