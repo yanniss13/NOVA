@@ -89,14 +89,6 @@ import { calculateGearStats } from "./stats-calcul.js";
      pourcentages y sont stockes en dix-millemes : « 5.53% » vaut 553. Les
      separateurs de milliers du jeu sont des espaces insecables fines, que le
      nettoyage doit retirer sans quoi « 12 560 » deviendrait 12. */
-  function valeurNumerique(brut){
-    const net = String(brut).replace(/[\s\u00a0\u202f]/g, "");
-    const pourcentage = /%$/.test(net);
-    const nombre = Number(net.replace(/%$/, "").replace(/,/g, "."));
-    if(!Number.isFinite(nombre)) return null;
-    return pourcentage ? Math.round(nombre * 100) : nombre;
-  }
-
   /* Les stats qu'une piece peut porter : sa principale, sa secondaire, et ses
      enchantements possibles. C'est ce qui ramene les candidats du recalage de
      quatre-vingts a une quinzaine, et fait tomber la confusion entre libelles
