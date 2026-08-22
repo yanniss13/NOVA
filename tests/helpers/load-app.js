@@ -104,6 +104,20 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   detecterPanneau:typeof detecterPanneau === "function"
     ? detecterPanneau
     : undefined,
+  detecterEntete:typeof detecterEntete === "function"
+    ? detecterEntete
+    : undefined,
+  lireEntete:typeof lireEntete === "function" ? lireEntete : undefined,
+  niveauDePassif:typeof niveauDePassif === "function"
+    ? niveauDePassif
+    : undefined,
+  enchantementsDePiece:typeof enchantementsDePiece === "function"
+    ? enchantementsDePiece
+    : undefined,
+  enchantementsDArme:typeof enchantementsDArme === "function"
+    ? enchantementsDArme
+    : undefined,
+  deduireArme:typeof deduireArme === "function" ? deduireArme : undefined,
   extraireStats:typeof extraireStats === "function"
     ? extraireStats
     : undefined,
