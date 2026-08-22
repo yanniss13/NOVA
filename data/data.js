@@ -1,7 +1,7 @@
 // Genere automatiquement par generate-data.ps1 - NE PAS EDITER A LA MAIN.
 // Relance le script pour mettre a jour apres ajout/retrait d'images.
 window.SEVEN_DS_DATA = {
-    "generatedAt":  "2026-08-06 00:18:21",
+    "generatedAt":  "2026-08-22 23:24:06",
     "personnages":  [
                         {
                             "id":  "bug",
@@ -1034,6 +1034,10 @@ window.SEVEN_DS_DATA = {
                                  ],
                     "Armure liee":  [
                                         {
+                                            "name":  "Ami loyal",
+                                            "file":  "7ds-armures-ssr/Armure liee/Ami loyal.webp"
+                                        },
+                                        {
                                             "name":  "Arrogance adéquate",
                                             "file":  "7ds-armures-ssr/Armure liee/Arrogance adéquate.webp"
                                         },
@@ -1090,8 +1094,20 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Chevalier sacré du mur de fer.webp"
                                         },
                                         {
+                                            "name":  "Chevalier sacré exemplaire",
+                                            "file":  "7ds-armures-ssr/Armure liee/Chevalier sacré exemplaire.webp"
+                                        },
+                                        {
                                             "name":  "Chevalier sacré prometteur",
                                             "file":  "7ds-armures-ssr/Armure liee/Chevalier sacré prometteur.webp"
+                                        },
+                                        {
+                                            "name":  "Choppe de bière de la fin des temps",
+                                            "file":  "7ds-armures-ssr/Armure liee/Choppe de bière de la fin des temps.webp"
+                                        },
+                                        {
+                                            "name":  "Cœur de prière",
+                                            "file":  "7ds-armures-ssr/Armure liee/Cœur de prière.webp"
                                         },
                                         {
                                             "name":  "Courtoisie minimale",
@@ -1122,6 +1138,10 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Dignité royale.webp"
                                         },
                                         {
+                                            "name":  "Employé saisonnier",
+                                            "file":  "7ds-armures-ssr/Armure liee/Employé saisonnier.webp"
+                                        },
+                                        {
                                             "name":  "Épée du vieux roi",
                                             "file":  "7ds-armures-ssr/Armure liee/Épée du vieux roi.webp"
                                         },
@@ -1148,6 +1168,10 @@ window.SEVEN_DS_DATA = {
                                         {
                                             "name":  "Gloire du passé",
                                             "file":  "7ds-armures-ssr/Armure liee/Gloire du passé.webp"
+                                        },
+                                        {
+                                            "name":  "Gris romantique",
+                                            "file":  "7ds-armures-ssr/Armure liee/Gris romantique.webp"
                                         },
                                         {
                                             "name":  "Héros de Liones",
@@ -1186,12 +1210,24 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Majesté bien malveillante.webp"
                                         },
                                         {
+                                            "name":  "Majordome royal",
+                                            "file":  "7ds-armures-ssr/Armure liee/Majordome royal.webp"
+                                        },
+                                        {
                                             "name":  "Marche des ombres",
                                             "file":  "7ds-armures-ssr/Armure liee/Marche des ombres.webp"
                                         },
                                         {
                                             "name":  "Mission secrète",
                                             "file":  "7ds-armures-ssr/Armure liee/Mission secrète.webp"
+                                        },
+                                        {
+                                            "name":  "Moment de détente",
+                                            "file":  "7ds-armures-ssr/Armure liee/Moment de détente.webp"
+                                        },
+                                        {
+                                            "name":  "Moment en famille",
+                                            "file":  "7ds-armures-ssr/Armure liee/Moment en famille.webp"
                                         },
                                         {
                                             "name":  "Pas légers",
@@ -1242,12 +1278,28 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Seigneur des ombres.webp"
                                         },
                                         {
+                                            "name":  "Serment du trône",
+                                            "file":  "7ds-armures-ssr/Armure liee/Serment du trône.webp"
+                                        },
+                                        {
+                                            "name":  "Serveuse de la taverne",
+                                            "file":  "7ds-armures-ssr/Armure liee/Serveuse de la taverne.webp"
+                                        },
+                                        {
+                                            "name":  "Sortie du démon",
+                                            "file":  "7ds-armures-ssr/Armure liee/Sortie du démon.webp"
+                                        },
+                                        {
                                             "name":  "Sortie joyeuse",
                                             "file":  "7ds-armures-ssr/Armure liee/Sortie joyeuse.webp"
                                         },
                                         {
                                             "name":  "Souffle d\u0027exploration",
                                             "file":  "7ds-armures-ssr/Armure liee/Souffle d\u0027exploration.webp"
+                                        },
+                                        {
+                                            "name":  "Tenue de cérémonie",
+                                            "file":  "7ds-armures-ssr/Armure liee/Tenue de cérémonie.webp"
                                         },
                                         {
                                             "name":  "Tenue de combat cloutée",
@@ -1270,8 +1322,16 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Tenue modeste.webp"
                                         },
                                         {
+                                            "name":  "Traces de la forêt",
+                                            "file":  "7ds-armures-ssr/Armure liee/Traces de la forêt.webp"
+                                        },
+                                        {
                                             "name":  "Traces de souvenirs",
                                             "file":  "7ds-armures-ssr/Armure liee/Traces de souvenirs.webp"
+                                        },
+                                        {
+                                            "name":  "Une belle journée de repos",
+                                            "file":  "7ds-armures-ssr/Armure liee/Une belle journée de repos.webp"
                                         },
                                         {
                                             "name":  "Une nouvelle aventure",
