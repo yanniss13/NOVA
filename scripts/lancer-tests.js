@@ -39,6 +39,7 @@ const SUITES = {
     "node tests/collection-schema.test.js",
     "node tests/animation-measures-schema.test.js",
     "node tests/roster-affichage-instantane.test.js",
+    "node tests/ocr-deduction.test.js",
     "node tests/stats-build-catalog.test.js",
     "node tests/stats-build-schema.test.js",
     "node tests/availability-schema.test.js",

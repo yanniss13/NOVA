@@ -32,6 +32,9 @@ const MODULES = [
   "metier/build-config.js",
   "metier/essai-enchantements.js",
   "metier/stats-calcul.js",
+  /* Apres `stats-calcul.js` et `build-config.js` : la deduction s'appuie
+     sur leurs tables pour inverser une valeur affichee. */
+  "metier/ocr-deduction.js",
   "metier/degats-calcul.js",
   "metier/dps-effets.js",
   "metier/dps-simulation.js",

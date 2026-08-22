@@ -36,6 +36,16 @@ servi depuis le dépôt), tests Node en CommonJS et Playwright.
 - **Tout nouveau fichier de test doit être inscrit dans `SUITES` de
   `scripts/lancer-tests.js`** (`unit` ou `e2e`).
 - **Aucun appel à un CDN.** Tout est servi depuis le dépôt.
+- **Tout symbole exporté doit être importé par quelqu'un**, sinon
+  `tests/modules-imports.test.js` échoue. Les tests unitaires n'accèdent PAS aux
+  modules par `import` mais par les hooks du chargeur `vm` : tant qu'aucun
+  consommateur n'existe, un module ne porte donc **aucune ligne `export`**. Les
+  tâches 1 à 5 créent des modules sans export ; la tâche 7 les ajoute en même
+  temps que la vue qui les importe.
+- **Tout module `js/` doit figurer dans `CORE_ASSETS` de `sw.js`**, sinon le
+  mode hors ligne casse et `tests/modules-imports.test.js` échoue. À faire dans
+  la tâche qui crée le module, pas plus tard. Seul `vendor/tesseract/` reste
+  volontairement dehors : il est chargé à la demande.
 - **Le chargeur `vm` des tests concatène tous les modules dans une portée
   commune.** Deux modules qui déclarent le même nom au premier niveau
   provoquent une erreur de redéclaration, et toute la suite unitaire tombe.
