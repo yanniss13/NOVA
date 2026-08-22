@@ -502,19 +502,45 @@ import { toast } from "./toast.js";
   /* L'import ne connait que des emplacements et des configurations : c'est ici
      qu'on les range dans le build, exactement la ou la saisie manuelle les
      ecrit. Aucun autre chemin d'ecriture n'est cree. */
-  function appliquerImportCaptures(parEmplacement){
-    const cible = currentMemberRosterBuild();
-    const emplacements = Object.keys(parEmplacement);
-    if(!emplacements.length) return;
-    emplacements.forEach(slot => {
+  function appliquerImportRosterCaptures(draft, weaponType, parEmplacement){
+    const emplacements = Object.keys(parEmplacement || {});
+    const arme = parEmplacement && parEmplacement.Arme;
+    const typeArme = arme && weaponFolderOf(arme.fichier);
+    if(typeArme && weaponTypesOf(draft.charId).includes(typeArme)){
+      weaponType = typeArme;
+    }
+    const pieces = emplacements.filter(slot => slot !== "Arme");
+    const armeCompatible = arme && typeArme === weaponType;
+    if(!armeCompatible && !pieces.length) return { weaponType, applied:0 };
+    const cible = draft.builds[weaponType]
+      || (draft.builds[weaponType] = emptyRosterBuild());
+    let applied = 0;
+    if(armeCompatible){
+      cible.weapon = arme.fichier;
+      cible.weaponConfig = arme.config;
+      applied++;
+    }
+    pieces.forEach(slot => {
       const domaine = JEWEL_SLOTS.indexOf(slot) >= 0 ? "jewel" : "armor";
       const cle = domaine + "Config";
       applyGearChange(cible, domaine, slot, parEmplacement[slot].fichier);
       if(!cible[cle]) cible[cle] = {};
       cible[cle][slot] = parEmplacement[slot].config;
+      applied++;
     });
+    return { weaponType, applied };
+  }
+
+  function appliquerImportCaptures(parEmplacement){
+    const resultat = appliquerImportRosterCaptures(
+      memberRosterDraft,
+      memberRosterWeaponType,
+      parEmplacement
+    );
+    memberRosterWeaponType = resultat.weaponType;
+    if(!resultat.applied) return;
     renderMemberRosterEditor();
-    toast(emplacements.length + " pièce(s) remplie(s) depuis les captures.");
+    toast(resultat.applied + " élément(s) rempli(s) depuis les captures.");
   }
 
   function applyMemberRosterArmorSet(set){
@@ -669,7 +695,7 @@ import { toast } from "./toast.js";
         text:"Remplir depuis des captures",
         onclick:()=>ouvrirImportCaptures({
           herosSlug:build.char,
-          existant:Object.assign({}, build.armor, build.jewel),
+          existant:Object.assign({ Arme:build.weapon }, build.armor, build.jewel),
           surEnregistrement:appliquerImportCaptures
         })
       }));
