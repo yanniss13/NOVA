@@ -7,10 +7,21 @@ français `fra.traineddata`.
 |---|---|---|
 | `tesseract.esm.min.js` | `tesseract.js/dist/` | 62 Ko |
 | `worker.min.js` | `tesseract.js/dist/` | 109 Ko |
-| `tesseract-core-lstm.wasm` | `tesseract.js-core/` | 2,8 Mo |
+| `tesseract-core-lstm.wasm.js` | `tesseract.js-core/` | 3,7 Mo |
 | `fra.traineddata` | `tessdata` | 1,2 Mo |
 
-Environ 4 Mo au total.
+Environ 5 Mo au total.
+
+## Deux réglages sans lesquels rien ne démarre
+
+**Le cœur est épinglé.** `corePath` pointe directement sur
+`tesseract-core-lstm.wasm.js`, pas sur le dossier. Sinon le worker choisit une
+variante selon les capacités SIMD du navigateur et réclame un fichier qu'on n'a
+pas versé (`tesseract-core-relaxedsimd-lstm.wasm.js`). La variante retenue
+embarque son WASM : un seul fichier au lieu d'une paire, aucune requête de plus.
+
+**`gzip:false`.** Le moteur réclame `fra.traineddata.gz` par défaut. On sert le
+modèle en clair : un fichier de moins à produire, et il reste inspectable.
 
 ## Pourquoi ils sont dans le dépôt
 

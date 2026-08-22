@@ -19,7 +19,7 @@ const DOSSIER = path.join(RACINE, "vendor", "tesseract");
 const ATTENDUS = {
   "tesseract.esm.min.js":50 * 1024,
   "worker.min.js":10 * 1024,
-  "tesseract-core-lstm.wasm":1024 * 1024,
+  "tesseract-core-lstm.wasm.js":3 * 1024 * 1024,
   "fra.traineddata":512 * 1024
 };
 

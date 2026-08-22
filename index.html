@@ -24,6 +24,7 @@
 <link rel="stylesheet" href="./css/boss.css">
 <link rel="stylesheet" href="./css/suivi.css">
 <link rel="stylesheet" href="./css/modales.css">
+  <link rel="stylesheet" href="./css/import-captures.css">
 <link rel="stylesheet" href="./css/notifications.css">
 <link rel="stylesheet" href="./css/responsive.css">
 <link rel="stylesheet" href="./css/dispos.css">
@@ -663,6 +664,23 @@
   <button class="icon-btn" id="pwaUpdateClose" type="button"
           aria-label="Masquer la mise à jour">×</button>
 </aside>
+
+<div class="overlay" id="importCapturesOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="importCapturesTitle" aria-hidden="true">
+  <div class="modal import-captures-modal">
+    <div class="modal-head">
+      <h2 id="importCapturesTitle">Remplir depuis des captures</h2>
+      <button class="icon-btn" id="importCapturesClose" type="button"
+              aria-label="Fermer">×</button>
+    </div>
+    <div class="import-captures-body" id="importCapturesBody"></div>
+    <div class="import-captures-actions">
+      <button class="btn" id="importCapturesCancel" type="button">Annuler</button>
+      <button class="btn btn-primary" id="importCapturesSave" type="button"
+              disabled>Enregistrer</button>
+    </div>
+  </div>
+</div>
 
 <div class="overlay" id="bossTeamOverlay" role="dialog" aria-modal="true"
      aria-labelledby="bossTeamTitle" aria-hidden="true">

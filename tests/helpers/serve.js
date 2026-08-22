@@ -25,7 +25,11 @@ const TYPES = {
   ".png":"image/png",
   ".jpg":"image/jpeg",
   ".svg":"image/svg+xml",
-  ".ico":"image/x-icon"
+  ".ico":"image/x-icon",
+  /* Le moteur OCR : `WebAssembly.instantiateStreaming` refuse un type
+     generique, et le modele de langue doit arriver tel quel. */
+  ".wasm":"application/wasm",
+  ".traineddata":"application/octet-stream"
 };
 
 async function serveRepo(){

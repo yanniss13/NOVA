@@ -18,6 +18,7 @@ import { refreshRosterProfiles } from "../donnees/roster-profils.js";
 import { MemberRosterStore } from "../donnees/roster-store.js";
 import { sessionCourante } from "../etat/session.js";
 import { linkedArmorsOf, weaponFolderOf, weaponTypesOf } from "../metier/armes.js";
+import { ouvrirImportCaptures } from "./import-captures.js";
 import { charOf } from "../metier/catalogue.js";
 import {
   compatibleWeaponGroups,
@@ -498,6 +499,24 @@ import { toast } from "./toast.js";
       || (memberRosterDraft.builds[type] = emptyRosterBuild());
   }
 
+  /* L'import ne connait que des emplacements et des configurations : c'est ici
+     qu'on les range dans le build, exactement la ou la saisie manuelle les
+     ecrit. Aucun autre chemin d'ecriture n'est cree. */
+  function appliquerImportCaptures(parEmplacement){
+    const cible = currentMemberRosterBuild();
+    const emplacements = Object.keys(parEmplacement);
+    if(!emplacements.length) return;
+    emplacements.forEach(slot => {
+      const domaine = JEWEL_SLOTS.indexOf(slot) >= 0 ? "jewel" : "armor";
+      const cle = domaine + "Config";
+      applyGearChange(cible, domaine, slot, parEmplacement[slot].fichier);
+      if(!cible[cle]) cible[cle] = {};
+      cible[cle][slot] = parEmplacement[slot].config;
+    });
+    renderMemberRosterEditor();
+    toast(emplacements.length + " pièce(s) remplie(s) depuis les captures.");
+  }
+
   function applyMemberRosterArmorSet(set){
     const build = currentMemberRosterBuild();
     ARMOR_SET_SLOTS.forEach(slot => {
@@ -641,6 +660,20 @@ import { toast } from "./toast.js";
       reload(){ return reloadCurrentRosterDraft(); }
     });
     if(configControl) gear.appendChild(configControl);
+    /* Le bouton n'apparait que si le navigateur sait executer le moteur :
+       mieux vaut le masquer que proposer une fonction qui echouera. */
+    if(typeof WebAssembly === "object"){
+      gear.appendChild(el("button",{
+        class:"btn import-captures-open",
+        type:"button",
+        text:"Remplir depuis des captures",
+        onclick:()=>ouvrirImportCaptures({
+          herosSlug:build.char,
+          existant:Object.assign({}, build.armor, build.jewel),
+          surEnregistrement:appliquerImportCaptures
+        })
+      }));
+    }
     gear.appendChild(el("div",{class:"gear-group",text:"Armures"}));
     gear.appendChild(equipmentSetButton("armor", applyMemberRosterArmorSet));
     ARMOR_SLOTS.forEach(slot => gear.appendChild(gearConfigurableSlot(
