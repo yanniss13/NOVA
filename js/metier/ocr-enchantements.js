@@ -183,4 +183,4 @@ import { recalerLibelle, valeurNumerique } from "./ocr-libelles.js";
 /* `enchantementsDArme` n'est pas encore exporte : `ocr-arme.js`, son seul
    consommateur, reste a ecrire. Le depot exige qu'un symbole exporte soit
    importe quelque part — c'est ce qui empeche le code mort. */
-export { enchantementsDePiece };
+export { enchantementsDArme, enchantementsDePiece, nueDArme };

@@ -134,4 +134,4 @@ import { BUILD_STATS } from "../noyau/constantes.js";
    `ocr-arme.js` recalera le nom lu sur les cent cinquante-cinq armes, ce
    qui n'est pas un libelle de statistique et ne passe donc pas par
    `recalerLibelle`. Le depot interdit d'exporter avant d'etre importe. */
-export { recalerLibelle, valeurNumerique };
+export { normaliserLibelle, rapprocher, recalerLibelle, valeurNumerique };
