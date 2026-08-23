@@ -60,8 +60,11 @@ import {
   equipmentSetButton,
   findGearConfigButton,
   gearConfigurableSlot,
+  ouvrirSelecteurPreset,
   weaponConfigControl
 } from "./edition-build.js";
+import { appliquerPreset, capturerPreset, nomPresetValide } from "../metier/presets.js";
+import { PresetsStore } from "../donnees/presets-store.js";
 import { gearSlot, rosterWeaponLabel } from "./elements.js";
 import { badgesRow } from "./fiche-heros.js";
 import { ModalStack } from "./modal-stack.js";
@@ -499,6 +502,38 @@ import { toast } from "./toast.js";
       || (memberRosterDraft.builds[type] = emptyRosterBuild());
   }
 
+  /* Appliquer ecrit dans le build du type d'arme courant, exactement la ou la
+     saisie manuelle ecrit. L'arme de la cible et son armure gravee restent :
+     un preset ne porte ni l'une ni l'autre. */
+  function appliquerPresetAuHeros(preset){
+    const suivant = appliquerPreset(currentMemberRosterBuild(), preset);
+    if(!suivant) return;
+    memberRosterDraft.builds[memberRosterWeaponType] = suivant;
+    renderMemberRosterEditor();
+    toast("Preset « "+preset.nom+" » appliqué.");
+  }
+
+  async function enregistrerPresetDepuisHeros(){
+    const contenu = capturerPreset(currentMemberRosterBuild());
+    if(!contenu){
+      toast("Ce héros ne porte aucune des sept pièces d’un preset.", true);
+      return;
+    }
+    const nom = nomPresetValide(prompt("Nom du preset ?"));
+    if(!nom){
+      toast("Un preset a besoin d’un nom, de 1 à 40 caractères.", true);
+      return;
+    }
+    try{
+      await PresetsStore.save(nom, contenu);
+      toast("Preset « "+nom+" » enregistré.");
+    }catch(erreur){
+      toast(erreur.message === "TROP_DE_PRESETS"
+        ? "Tu as atteint 40 presets. Supprimes-en un d’abord."
+        : "Enregistrement impossible : "+erreur.message, true);
+    }
+  }
+
   /* L'import ne connait que des emplacements et des configurations : c'est ici
      qu'on les range dans le build, exactement la ou la saisie manuelle les
      ecrit. Aucun autre chemin d'ecriture n'est cree. */
@@ -702,6 +737,21 @@ import { toast } from "./toast.js";
         })
       }));
     }
+    /* Les presets encadrent l'equipement plutot que de se ranger sous
+       « Armures » : ils portent aussi les bijoux. */
+    gear.appendChild(el("div",{class:"gear-group",text:"Presets"}));
+    gear.appendChild(el("button",{
+      class:"btn btn-ghost gear-preset-apply",
+      type:"button",
+      text:"Appliquer un preset",
+      onclick:()=>ouvrirSelecteurPreset({ onChoisir:appliquerPresetAuHeros })
+    }));
+    gear.appendChild(el("button",{
+      class:"btn btn-ghost gear-preset-save",
+      type:"button",
+      text:"Enregistrer comme preset",
+      onclick:enregistrerPresetDepuisHeros
+    }));
     gear.appendChild(el("div",{class:"gear-group",text:"Armures"}));
     gear.appendChild(equipmentSetButton("armor", applyMemberRosterArmorSet));
     ARMOR_SLOTS.forEach(slot => gear.appendChild(gearConfigurableSlot(
@@ -833,9 +883,24 @@ import { toast } from "./toast.js";
     ]));
   }
 
+  /* Les presets se relisent a l'ouverture de la fiche, une fois par membre.
+     Sans cela le cache local ferait foi, et un membre qui change d'appareil
+     ouvrirait une liste vide. Meme forme que la Collection : hors ligne, le
+     cache suffit et personne n'est averti — le membre n'a rien demande. */
+  let presetsRelusPour = "";
+  function relirePresets(){
+    const ownerId = sessionCourante.user && sessionCourante.user.id;
+    if(!ownerId || presetsRelusPour === ownerId) return;
+    presetsRelusPour = ownerId;
+    PresetsStore.refresh()
+      .then(renderMemberRosterEditor)
+      .catch(()=>{ presetsRelusPour = ""; });
+  }
+
   function openMemberRosterEditor(entry, restoreFocus){
     const normalized = normalizeRosterCharacter(entry);
     if(!normalized) return;
+    relirePresets();
     memberRosterDraft = JSON.parse(JSON.stringify(normalized));
     memberRosterDraftSourceUpdatedAt = normalized.updatedAt;
     memberRosterDraftInitialJson = JSON.stringify(memberRosterDraft);

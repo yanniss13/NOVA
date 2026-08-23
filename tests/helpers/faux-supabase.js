@@ -115,6 +115,10 @@ async function installFakeSupabase(page){
       member_availability:[],
       /* Collection : une ligne par objet possede, cle primaire (owner, item). */
       collection_items:[],
+      /* Presets d'equipement : une ligne par preset, cle primaire (owner, id).
+         Prive — la lecture elle-meme exige d'etre le proprietaire, et le
+         client filtre deja sur `owner`. */
+      gear_presets:[],
       calls:[],
       rpcCalls:[],
       bossRpcFailureOnce:null,
@@ -146,7 +150,8 @@ async function installFakeSupabase(page){
         "boss_sessions",
         "boss_participation",
         "boss_run_reports",
-        "collection_items"
+        "collection_items",
+        "gear_presets"
       ]),
       rpcOnlyWriteTables:new Set([
         "boss_participation",

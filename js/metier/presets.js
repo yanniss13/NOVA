@@ -99,6 +99,8 @@ import { jsonCopy } from "../noyau/outils.js";
 
 /* On n'exporte qu'un symbole qui a un consommateur : `tests/modules-imports.js`
    refuse un export orphelin, et le chargeur des tests atteint les symboles
-   sans passer par les exports. `capturerPreset` et `appliquerPreset` sortiront
-   quand les vues les appelleront. */
-export { PRESETS_MAX, nomPresetValide, normaliserPreset };
+   sans passer par les exports. `PRESET_ARMOR_SLOTS` et `PRESET_NAME_MAX`
+   restent donc prives : seul ce module en a besoin. */
+export {
+  PRESETS_MAX, appliquerPreset, capturerPreset, nomPresetValide, normaliserPreset
+};

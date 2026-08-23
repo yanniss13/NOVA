@@ -100,6 +100,4 @@ import { sessionCourante } from "../etat/session.js";
     }
   };
 
-/* Pas encore d'export : le garde-fou structurel refuse un export orphelin, et
-   les vues qui appelleront ce store arrivent au lot suivant. Le test l'atteint
-   sans passer par l'export. */
+export { PresetsStore };
