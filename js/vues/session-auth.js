@@ -37,14 +37,17 @@ import { RealtimeSync } from "./synchro-temps-reel.js";
 import { toast } from "./toast.js";
 import { Store } from "../donnees/equipes-store.js";
 
-  async function profilePseudo(user){
-    if(!user || !sb) return "";
+  /* Le pseudo ET les deux drapeaux, en une seule lecture : ils arrivent de la
+     meme ligne, et deux allers-retours ouvriraient une fenetre pendant
+     laquelle la barre d'onglets ne saurait pas encore qui elle sert. */
+  async function profilDuCompte(user){
+    if(!user || !sb) return null;
     const { data, error } = await sb.from("profiles")
-      .select("pseudo")
+      .select("pseudo,membre,admin")
       .eq("id", user.id)
       .maybeSingle();
     if(error) throw error;
-    return data && typeof data.pseudo === "string" ? data.pseudo.trim() : "";
+    return data || null;
   }
 
   function updateAccountUi(){
@@ -106,17 +109,26 @@ import { Store } from "../donnees/equipes-store.js";
       if($("#view-boss").classList.contains("active")) void renderBossView();
     }
     sessionCourante.pseudo = "";
+    sessionCourante.membre = true;
+    sessionCourante.admin = false;
     sessionCourante.rosterProfiles = [];
     if(sessionCourante.user){
-      let loadedPseudo = "";
+      let profil = null;
       try{
-        loadedPseudo = await profilePseudo(expectedUser);
+        profil = await profilDuCompte(expectedUser);
       }catch(error){
         if(!isCurrentApplication()) return;
         toast("Profil indisponible : "+authMessage(error), true);
       }
       if(!isCurrentApplication()) return;
-      sessionCourante.pseudo = loadedPseudo;
+      sessionCourante.pseudo = profil && typeof profil.pseudo === "string"
+        ? profil.pseudo.trim() : "";
+      /* Une lecture en echec laisse `membre` a vrai : voir etat/session.js.
+         La RLS reste le portier, elle ne depend pas de cette ligne. */
+      if(profil){
+        sessionCourante.membre = profil.membre !== false;
+        sessionCourante.admin = profil.admin === true;
+      }
       if(!sessionCourante.pseudo) sessionCourante.pseudo = (sessionCourante.user.email||"membre").split("@")[0];
       closeAuth();
     }else if(sb){
