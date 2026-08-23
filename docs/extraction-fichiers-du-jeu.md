@@ -247,6 +247,32 @@ purement statistiques — et l'essentiel aux paliers 5, 7 et 10.
 Les quatre hypothèses écartées plus haut le sont sur des tests dont deux étaient
 mal posés. Celui-ci s'appuie sur le jeu seul.
 
+## Équipements : `armes.json` et `armures.json` vérifiés
+
+`Item/Option_StaticTable` indexe ses lignes par **le `gameId` du dépôt** :
+`weapon_main1_<gameId>`, `armor_main1_<gameId>`, `accessory_main1_<gameId>`,
+avec les variantes `_reinforce`, `_equiplv`, `_promotion`. Le pont existe donc
+sans passer par la table d'objets bloquée.
+
+| Donnée | Étendue | Écarts |
+|---|---|---|
+| Statistiques d'armes (principale et secondaire) : valeur de base et progression | 428 couples | **0** |
+| Paliers de promotion : niveau, or, renforcement max, matériaux et quantités | 798 | **0** |
+| Dépassement de limite : niveau, expérience, passif, taux, or | 658 | **0** |
+| Armures et bijoux : code de statistique principale et `reinforceMax` | 232 | **0** |
+
+Les bijoux passent par le préfixe `accessory_`, pas `armor_`.
+
+Attention à la casse des codes : le jeu écrit `B_MaxHP_Equip` là où le dépôt
+écrit `B_MaxHp_Equip`, et `I_MaxHPAdd_Rate` contre `I_MaxHpAdd_Rate`. Toute
+comparaison doit être insensible à la casse.
+
+**Non vérifiable** : les bornes d'enchantement de `enchantements.json`. Les 1 086
+options du dépôt ne correspondent à aucune ligne d'`Option_RandomTable`, mais
+leurs 18 triplets distincts suivent un motif trop régulier (270–330 = 300 ±10 %,
+720–880 = 800 ±10 %) pour être faux : elles semblent **calculées** autour d'une
+valeur de base que porte une table bloquée.
+
 ## Ce qui reste à faire
 
 1. **Un usmap généré sur le build `1.8.1.2`** débloquerait d'un coup les 1 097
