@@ -86,6 +86,7 @@ const SUITES = {
     "node tests/potentiels-equipe.test.js",
     "node tests/degats-supplementaires.test.js",
     "node tests/collection.test.js",
+    "node tests/presets.test.js",
     "node tests/potentiel-commun.test.js",
     "node tests/stats-build.test.js",
     "node tests/apport-par-piece.test.js",
