@@ -202,6 +202,51 @@ node outils/fmodel/fusionner.js           # + la table officielle
 node outils/fmodel/cycles-officiels.js    # les cycles
 ```
 
+## La localisation, et ce qu'elle vérifie
+
+`Content/Localization/Game/fr` — **56 400 chaînes françaises**, indexées par
+identifiant. Ce sont des `.locres`, indépendants du usmap.
+
+Le jeu stocke ses textes avec des paramètres (`{0}`, `{1}`) là où le dépôt cite
+les valeurs déjà substituées. Toute comparaison doit donc neutraliser les
+nombres des deux côtés — `outils/fmodel/verifier-phrases.js` le fait.
+
+### Les phrases citées par `data/` : 150 sur 150
+
+| Fichier | Phrases | Confirmées |
+|---|---|---|
+| `buffs-supports.js` | 43 | 43 |
+| `passifs-graves.js` | 53 | 53 |
+| `degats-supplementaires.js` | 29 | 29 |
+| `passifs-armes.js` | 19 | 19 |
+| `passifs-ensembles.js` | 6 | 6 |
+
+Chaque phrase transcrite à la main existe mot pour mot dans le client.
+
+### `sets.json` : intégralement vérifié
+
+22 ensembles, appariés par `gameId`. **45 paliers chiffrés et 29 passifs
+d'ensemble, tous concordants.** 21 noms sur 22 identiques.
+
+Le seul écart n'en est pas un : `equip_t5_greed` pointe la clé
+`local_item_set_name_equip_t5_greed`, qui vaut « Paramètre de promotion » — un
+résidu. Le vrai nom est sous `..._greedyruler` = « Souverain cupide ». Le dépôt
+a raison, la table du jeu pointe une clé périmée.
+
+### Les potentiels : 31 divergences, dont 29 modélisées
+
+Voir `docs/potentiels-divergents.md`. C'est le seul défaut de fond trouvé.
+
+### `grade_N` est le palier de potentiel
+
+La localisation publie `local_skill_<héros>_<arme>_potential_<n>_desc`, et
+**334 des 341 descriptions correspondent à une variante `grade_` de même
+palier** (98 %). La répartition confirme : quasi rien aux paliers 2, 3 et 8 —
+purement statistiques — et l'essentiel aux paliers 5, 7 et 10.
+
+Les quatre hypothèses écartées plus haut le sont sur des tests dont deux étaient
+mal posés. Celui-ci s'appuie sur le jeu seul.
+
 ## Ce qui reste à faire
 
 1. **Un usmap généré sur le build `1.8.1.2`** débloquerait d'un coup les 1 097
