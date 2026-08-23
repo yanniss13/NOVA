@@ -425,7 +425,11 @@ alter table public.roster_characters enable row level security;
 drop policy if exists profiles_read   on public.profiles;
 drop policy if exists profiles_insert on public.profiles;
 drop policy if exists profiles_update on public.profiles;
-create policy profiles_read   on public.profiles for select to authenticated using (true);
+-- « À moi ou membre » : l'invité voit son propre profil, le membre voit la
+-- confrérie. C'est ici que la récursion menaçait — d'où private.est_membre.
+create policy profiles_read on public.profiles
+  for select to authenticated
+  using (id = auth.uid() or private.est_membre(auth.uid()));
 create policy profiles_insert on public.profiles for insert to authenticated with check (id = auth.uid());
 create policy profiles_update on public.profiles for update to authenticated using (id = auth.uid());
 
@@ -434,7 +438,9 @@ drop policy if exists teams_read   on public.teams;
 drop policy if exists teams_insert on public.teams;
 drop policy if exists teams_update on public.teams;
 drop policy if exists teams_delete on public.teams;
-create policy teams_read   on public.teams for select to authenticated using (true);
+create policy teams_read on public.teams
+  for select to authenticated
+  using (owner = auth.uid() or private.est_membre(auth.uid()));
 create policy teams_insert on public.teams for insert to authenticated with check (owner = auth.uid());
 create policy teams_update on public.teams for update to authenticated using (owner = auth.uid());
 create policy teams_delete on public.teams for delete to authenticated using (owner = auth.uid());
@@ -444,17 +450,30 @@ drop policy if exists rec_read   on public.recensement;
 drop policy if exists rec_insert on public.recensement;
 drop policy if exists rec_update on public.recensement;
 drop policy if exists rec_delete on public.recensement;
-create policy rec_read   on public.recensement for select to authenticated using (true);
-create policy rec_insert on public.recensement for insert to authenticated with check (owner = auth.uid());
-create policy rec_update on public.recensement for update to authenticated using (owner = auth.uid());
-create policy rec_delete on public.recensement for delete to authenticated using (owner = auth.uid());
+-- « Membre uniquement », lecture ET écriture. Un recensement écrit par un
+-- invité serait invisible pour lui et bien réel dans l'analyse de la
+-- confrérie : c'est le pire des deux mondes.
+create policy rec_read on public.recensement
+  for select to authenticated
+  using (private.est_membre(auth.uid()));
+create policy rec_insert on public.recensement
+  for insert to authenticated
+  with check (owner = auth.uid() and private.est_membre(auth.uid()));
+create policy rec_update on public.recensement
+  for update to authenticated
+  using (owner = auth.uid() and private.est_membre(auth.uid()));
+create policy rec_delete on public.recensement
+  for delete to authenticated
+  using (owner = auth.uid() and private.est_membre(auth.uid()));
 
 -- roster : lecture par tout membre ; ecriture/suppression de SON roster
 drop policy if exists roster_read   on public.roster_characters;
 drop policy if exists roster_insert on public.roster_characters;
 drop policy if exists roster_update on public.roster_characters;
 drop policy if exists roster_delete on public.roster_characters;
-create policy roster_read   on public.roster_characters for select to authenticated using (true);
+create policy roster_read on public.roster_characters
+  for select to authenticated
+  using (owner = auth.uid() or private.est_membre(auth.uid()));
 create policy roster_insert on public.roster_characters for insert to authenticated with check (owner = auth.uid());
 create policy roster_update on public.roster_characters for update to authenticated using (owner = auth.uid()) with check (owner = auth.uid());
 create policy roster_delete on public.roster_characters for delete to authenticated using (owner = auth.uid());
@@ -466,7 +485,9 @@ alter table public.collection_items enable row level security;
 drop policy if exists collection_read   on public.collection_items;
 drop policy if exists collection_insert on public.collection_items;
 drop policy if exists collection_delete on public.collection_items;
-create policy collection_read   on public.collection_items for select to authenticated using (true);
+create policy collection_read on public.collection_items
+  for select to authenticated
+  using (owner = auth.uid() or private.est_membre(auth.uid()));
 create policy collection_insert on public.collection_items for insert to authenticated with check (owner = auth.uid());
 create policy collection_delete on public.collection_items for delete to authenticated using (owner = auth.uid());
 
@@ -1132,13 +1153,16 @@ drop policy if exists boss_sessions_read   on public.boss_sessions;
 drop policy if exists boss_sessions_insert on public.boss_sessions;
 drop policy if exists boss_sessions_update on public.boss_sessions;
 drop policy if exists boss_sessions_delete on public.boss_sessions;
-create policy boss_sessions_read   on public.boss_sessions for select to authenticated using (true);
+create policy boss_sessions_read on public.boss_sessions
+  for select to authenticated
+  using (private.est_membre(auth.uid()));
 create policy boss_sessions_insert
   on public.boss_sessions
   for insert
   to authenticated
   with check (
     created_by = auth.uid()
+    and private.est_membre(auth.uid())
     and week_start is not null
     and week_start = private.current_boss_week_start()
     and run_no = 1
@@ -1158,12 +1182,15 @@ drop policy if exists boss_part_read   on public.boss_participation;
 drop policy if exists boss_part_insert on public.boss_participation;
 drop policy if exists boss_part_update on public.boss_participation;
 drop policy if exists boss_part_delete on public.boss_participation;
-create policy boss_part_read   on public.boss_participation for select to authenticated using (true);
+create policy boss_part_read on public.boss_participation
+  for select to authenticated
+  using (private.est_membre(auth.uid()));
 
 drop policy if exists boss_reports_read on public.boss_run_reports;
 create policy boss_reports_read
   on public.boss_run_reports
-  for select to authenticated using (true);
+  for select to authenticated
+  using (private.est_membre(auth.uid()));
 
 revoke all on function public.join_boss_run(uuid) from public;
 revoke all on function public.leave_boss_run(uuid) from public;
@@ -1206,14 +1233,18 @@ drop policy if exists avail_update on public.member_availability;
 drop policy if exists avail_delete on public.member_availability;
 
 create policy avail_read on public.member_availability
-  for select to authenticated using (true);
+  for select to authenticated
+  using (private.est_membre(auth.uid()));
 create policy avail_insert on public.member_availability
-  for insert to authenticated with check (owner = auth.uid());
+  for insert to authenticated
+  with check (owner = auth.uid() and private.est_membre(auth.uid()));
 create policy avail_update on public.member_availability
-  for update to authenticated using (owner = auth.uid())
-  with check (owner = auth.uid());
+  for update to authenticated
+  using (owner = auth.uid() and private.est_membre(auth.uid()))
+  with check (owner = auth.uid() and private.est_membre(auth.uid()));
 create policy avail_delete on public.member_availability
-  for delete to authenticated using (owner = auth.uid());
+  for delete to authenticated
+  using (owner = auth.uid() and private.est_membre(auth.uid()));
 
 -- 8bis) Anti-spam atomique de la commande Discord `/planning`.
 -- La table reste dans le schéma privé et aucune API cliente ne peut la lire.
@@ -1360,8 +1391,15 @@ alter table public.animation_measures enable row level security;
 
 drop policy if exists animation_measures_read   on public.animation_measures;
 drop policy if exists animation_measures_insert on public.animation_measures;
-create policy animation_measures_read   on public.animation_measures for select to authenticated using (true);
-create policy animation_measures_insert on public.animation_measures for insert to authenticated with check (owner = auth.uid());
+-- Le chronométrage est un effort de confrérie. Aucun écran du site ne lit
+-- cette table : seul `scripts/rapatrier-mesures.py` la lit, avec la clé de
+-- service, qui ignore la RLS. Le changement n'a donc aucun effet visible.
+create policy animation_measures_read on public.animation_measures
+  for select to authenticated
+  using (private.est_membre(auth.uid()));
+create policy animation_measures_insert on public.animation_measures
+  for insert to authenticated
+  with check (owner = auth.uid() and private.est_membre(auth.uid()));
 
 -- 12) Presets d'équipement : sept emplacements nommés, rangés hors du personnage.
 --

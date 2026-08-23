@@ -17,7 +17,7 @@ const sql = fs.readFileSync(
   /create table if not exists public\.animation_measures/i,
   /game_id\s+text\s+not null/i,
   /alter table public\.animation_measures enable row level security/i,
-  /create policy animation_measures_read[\s\S]*?for select to authenticated using\s*\(\s*true\s*\)/i,
+  /create policy animation_measures_read[\s\S]*?using\s*\(\s*private\.est_membre\(auth\.uid\(\)\)\s*\)/i,
   /create policy animation_measures_insert[\s\S]*?with check\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i
 ].forEach(pattern => assert.match(sql, pattern));
 

@@ -74,8 +74,8 @@ assert.equal(
 );
 assert.match(
   reportPolicies[0],
-  /for select to authenticated using\s*\(\s*true\s*\)/i,
-  "La policy des rapports doit être une lecture authentifiée"
+  /for select to authenticated\s+using\s*\(\s*private\.est_membre\(auth\.uid\(\)\)\s*\)/i,
+  "La policy des rapports doit être réservée aux membres de la confrérie"
 );
 assert.doesNotMatch(
   reportPolicies[0],
