@@ -11,6 +11,34 @@ create table if not exists public.profiles (
   created_at timestamptz not null default now()
 );
 
+-- Deux drapeaux, et non un rôle unique : un admin est toujours membre, mais
+-- séparer les deux axes évite d'inventer une hiérarchie dont personne n'a
+-- besoin. Les deux partent à `false` : un compte fraîchement créé est un
+-- invité, et le reste tant qu'on ne l'accueille pas.
+--
+-- LE BLOC `do` N'EST PAS UNE COQUETTERIE. Ce fichier est rejoué en entier à
+-- chaque évolution du schéma. Un `update ... set membre = true` posé à nu
+-- repromouvrait TOUS LES INVITÉS au collage suivant. La promotion n'a de sens
+-- qu'au moment exact où les colonnes apparaissent : c'est ce que ce garde
+-- exprime, et il tient dans la même transaction que l'ajout.
+do $$
+begin
+  if not exists (
+    select 1 from information_schema.columns
+     where table_schema = 'public'
+       and table_name = 'profiles'
+       and column_name = 'membre'
+  ) then
+    alter table public.profiles
+      add column membre boolean not null default false,
+      add column admin  boolean not null default false;
+    -- Tous les comptes déjà là sont ceux de la confrérie : sans cette ligne,
+    -- elle devient invitée chez elle à la seconde où le schéma est appliqué.
+    update public.profiles set membre = true;
+  end if;
+end
+$$;
+
 -- 2) Équipes : partagées (tout membre les voit), possédées par un membre
 create table if not exists public.teams (
   id         uuid primary key default gen_random_uuid(),
@@ -67,6 +95,85 @@ create index if not exists collection_items_owner_idx
 
 create schema if not exists private;
 revoke all on schema private from public;
+
+-- Le contrôle d'appartenance, et pourquoi il vit dans une fonction.
+--
+-- La politique de lecture de `profiles` doit demander « es-tu membre ? », donc
+-- lire `profiles`. Une fonction ordinaire relancerait la politique sur
+-- elle-même : récursion infinie de RLS, l'erreur classique sur Supabase.
+-- `security definer` contourne la RLS et ferme la boucle.
+--
+-- L'usage du schéma `private` est accordé à `authenticated` plus bas, avec
+-- `private.current_boss_week_start()` : les politiques appellent déjà ce
+-- schéma, c'est un chemin éprouvé.
+create or replace function private.est_membre(p_uid uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = pg_catalog, public
+as $$
+  select coalesce((select membre from public.profiles where id = p_uid), false);
+$$;
+
+create or replace function private.est_admin(p_uid uuid)
+returns boolean
+language sql
+stable
+security definer
+set search_path = pg_catalog, public
+as $$
+  select coalesce((select admin from public.profiles where id = p_uid), false);
+$$;
+
+revoke all on function private.est_membre(uuid) from public;
+revoke all on function private.est_admin(uuid) from public;
+grant execute on function private.est_membre(uuid) to authenticated;
+grant execute on function private.est_admin(uuid) to authenticated;
+
+-- Le drapeau `membre` ne se pose pas soi-même.
+--
+-- `profiles_update` autorise chacun à modifier SA ligne, pseudo compris. Sans
+-- ce verrou, un invité s'accorderait `membre = true` en une requête et toute
+-- la cloison tomberait. Une politique RLS ne peut pas comparer l'ancienne et
+-- la nouvelle ligne : c'est un trigger, ou rien.
+--
+-- `auth.uid()` vaut null hors session JWT — éditeur SQL, `service_role`. C'est
+-- par là, et seulement par là, que le propriétaire se pose `admin = true` la
+-- première fois.
+create or replace function private.verrouiller_drapeaux_de_profil()
+returns trigger
+language plpgsql
+security definer
+set search_path = pg_catalog, public
+as $$
+begin
+  if new.membre is not distinct from old.membre
+     and new.admin is not distinct from old.admin then
+    return new;
+  end if;
+  if auth.uid() is null then
+    return new;
+  end if;
+  if new.admin is distinct from old.admin then
+    raise exception 'ADMIN_NON_MODIFIABLE' using errcode = 'P0001';
+  end if;
+  if not private.est_admin(auth.uid()) then
+    raise exception 'ADMIN_REQUIS' using errcode = 'P0001';
+  end if;
+  -- Se retirer soi-même couperait le dernier responsable de tout ce qu'il
+  -- administre, sans que personne puisse l'y remettre.
+  if new.id = auth.uid() and old.membre and not new.membre then
+    raise exception 'AUTO_RETRAIT_REFUSE' using errcode = 'P0001';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists verrouiller_drapeaux_de_profil on public.profiles;
+create trigger verrouiller_drapeaux_de_profil
+before update of membre, admin on public.profiles
+for each row execute function private.verrouiller_drapeaux_de_profil();
 
 -- Préservation des configs d'équipement indexées par emplacement (armorConfig,
 -- jewelConfig). Une ancienne PWA omet la clé entière ; on ne restaure alors que
