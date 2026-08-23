@@ -110,6 +110,7 @@ const SUITES = {
     "node tests/navigation-mobile.playwright.js",
     "node tests/accessibilite-mobile.playwright.js",
     "node tests/chrono-animation.playwright.js",
+    "node tests/presets.playwright.js",
     "node tests/availability.playwright.js",
     "node tests/pwa-update.playwright.js",
     "node tests/import-captures.playwright.js",

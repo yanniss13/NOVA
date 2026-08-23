@@ -46,6 +46,7 @@ import { WEAPON_RARITY_LABELS, openWeaponConfigEditor } from "./editeur-arme.js"
 import { openGearConfigEditor } from "./editeur-equipement.js";
 import { gearSlot } from "./elements.js";
 import { Picker } from "./picker.js";
+import { PresetsStore } from "../donnees/presets-store.js";
 import { toast } from "./toast.js";
 
   function withBuildStats(action){
@@ -238,6 +239,37 @@ import { toast } from "./toast.js";
     });
   }
 
+  /* Le selecteur de preset vit ici, et non dans une vue, pour la raison qui a
+     fait naitre ce fichier : plusieurs ecrans s'en servent. Il ne decide rien —
+     il rend le preset choisi, et l'appelant en fait ce qu'il veut. C'est ce
+     qui permet au calculateur d'essayer sans jamais ecrire. */
+  function ouvrirSelecteurPreset(config){
+    const presets = PresetsStore.all();
+    if(!presets.length){
+      toast(
+        "Aucun preset enregistré. Habille un héros, puis « Enregistrer comme preset ».",
+        true
+      );
+      return;
+    }
+    Picker.open({
+      title:(config && config.titre) || "Appliquer un preset",
+      allowNone:false,
+      items:presets.map(preset => ({
+        value:preset.id,
+        name:preset.nom,
+        /* La vignette montre le haut du set : c'est la piece qui identifie le
+           mieux une famille d'armure d'un coup d'oeil. */
+        file:preset.armor && preset.armor["Haut"]
+      })),
+      emptyHint:"Aucun preset enregistré.",
+      onSelect:value => {
+        const choisi = PresetsStore.all().find(preset => preset.id === value);
+        if(choisi) config.onChoisir(choisi);
+      }
+    });
+  }
+
   function equipmentSetButton(kind, onApply){
     const armor = kind === "armor";
     return el("button",{
@@ -287,6 +319,7 @@ export {
   equipmentSetButton,
   findGearConfigButton,
   gearConfigurableSlot,
+  ouvrirSelecteurPreset,
   rosterEntryWithActiveHeroBuild,
   storeActiveHeroBuild,
   weaponConfigControl
