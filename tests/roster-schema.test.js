@@ -14,7 +14,10 @@ const sql = fs.readFileSync(
   /primary key\s*\(\s*owner\s*,\s*char_id\s*\)/i,
   /check\s*\(\s*potential_tier\s+between\s+0\s+and\s+10\s*\)/i,
   /alter table public\.roster_characters enable row level security/i,
-  /create policy roster_read[\s\S]*for select to authenticated using\s*\(\s*true\s*\)/i,
+  /* La lecture n'est plus ouverte a tout compte connecte : depuis les
+     comptes invites, un roster se lit par son proprietaire OU par un membre
+     de la confrerie. La regle entiere vit dans comptes-invites-schema. */
+  /create policy roster_read[\s\S]*?owner = auth\.uid\(\) or private\.est_membre\(auth\.uid\(\)\)/i,
   /create policy roster_insert[\s\S]*with check\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i,
   /create policy roster_update[\s\S]*?using\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)[\s\S]*?with check\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i,
   /create policy roster_delete[\s\S]*using\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i
@@ -29,9 +32,13 @@ function normalizedPolicy(name) {
   return sql.slice(start, end + 1).replace(/\s+/g, " ").trim().toLowerCase();
 }
 
+/* Depuis les comptes invites, une equipe se lit par son proprietaire OU
+   par un membre de la confrerie. La regle complete des deux familles vit
+   dans tests/comptes-invites-schema.test.js. */
 assert.equal(
   normalizedPolicy("teams_read"),
-  "create policy teams_read on public.teams for select to authenticated using (true);"
+  "create policy teams_read on public.teams for select to authenticated "
+  + "using (owner = auth.uid() or private.est_membre(auth.uid()));"
 );
 assert.equal(
   normalizedPolicy("teams_insert"),
@@ -69,7 +76,9 @@ assert.equal(
   /alter table public\.boss_sessions\s+enable row level security/i,
   /alter table public\.boss_participation enable row level security/i,
   /create policy boss_sessions_insert[\s\S]*with check[\s\S]*created_by\s*=\s*auth\.uid\(\)[\s\S]*week_start is not null[\s\S]*week_start\s*=\s*private\.current_boss_week_start\s*\(\s*\)[\s\S]*run_no\s*=\s*1[\s\S]*slot\s+between\s+1\s+and\s+6/i,
-  /create policy boss_part_read[\s\S]*for select to authenticated using\s*\(\s*true\s*\)/i,
+  /* Les participations sont une donnee de confrerie : reservees aux membres
+     depuis les comptes invites. */
+  /create policy boss_part_read[\s\S]*?using\s*\(\s*private\.est_membre\(auth\.uid\(\)\)\s*\)/i,
   /grant execute on function public\.join_boss_run\(uuid\) to authenticated/i,
   /grant execute on function public\.leave_boss_run\(uuid\) to authenticated/i,
   /grant execute on function public\.complete_boss_run\(uuid\) to authenticated/i

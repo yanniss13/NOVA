@@ -18,7 +18,8 @@ const sql = fs.readFileSync(
   /create table if not exists public\.collection_items/i,
   /primary key\s*\(\s*owner\s*,\s*item\s*\)/i,
   /alter table public\.collection_items enable row level security/i,
-  /create policy collection_read[\s\S]*?for select to authenticated using\s*\(\s*true\s*\)/i,
+  /* Idem roster : proprietaire OU membre, jamais tout compte connecte. */
+  /create policy collection_read[\s\S]*?owner = auth\.uid\(\) or private\.est_membre\(auth\.uid\(\)\)/i,
   /create policy collection_insert[\s\S]*?with check\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i,
   /create policy collection_delete[\s\S]*?using\s*\(\s*owner\s*=\s*auth\.uid\(\)\s*\)/i
 ].forEach(pattern => assert.match(sql, pattern));

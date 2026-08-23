@@ -107,4 +107,100 @@ assert.equal(verrouBranche(sansVerrou), false,
 assert.equal(verrouBranche(sql), true,
   "le verrou doit être branché");
 
+/* ---- Famille « à moi ou membre » : l'invité lit ses lignes, rien d'autre. ---- */
+
+const AMOI_OU_MEMBRE = [
+  ["profiles_read", "id"],
+  ["teams_read", "owner"],
+  ["roster_read", "owner"],
+  ["collection_read", "owner"]
+];
+
+AMOI_OU_MEMBRE.forEach(([policy, colonne]) => {
+  const bloc = sql.match(
+    new RegExp("create policy " + policy + "[\\s\\S]*?;", "i")
+  );
+  assert.ok(bloc, "la politique " + policy + " doit exister");
+  assert.match(
+    bloc[0],
+    new RegExp(
+      colonne + "\\s*=\\s*auth\\.uid\\(\\)\\s+or\\s+private\\.est_membre\\(auth\\.uid\\(\\)\\)",
+      "i"
+    ),
+    policy + " doit rendre ses propres lignes à un invité, et tout à un membre"
+  );
+});
+
+/* ---- Famille « membre uniquement » : lecture ET écriture. ---- */
+
+const MEMBRE_SEUL_LECTURE = [
+  "rec_read",
+  "avail_read",
+  "boss_sessions_read",
+  "boss_part_read",
+  "boss_reports_read",
+  "animation_measures_read"
+];
+
+MEMBRE_SEUL_LECTURE.forEach(policy => {
+  const bloc = sql.match(
+    new RegExp("create policy " + policy + "[\\s\\S]*?;", "i")
+  );
+  assert.ok(bloc, "la politique " + policy + " doit exister");
+  assert.match(
+    bloc[0],
+    /using\s*\(\s*private\.est_membre\(auth\.uid\(\)\)\s*\)/i,
+    policy + " doit être réservée aux membres"
+  );
+});
+
+/* L'écriture compte autant que la lecture : une ligne de dispo ou de
+   recensement écrite par un invité remonterait dans la grille et dans
+   l'analyse de la confrérie, invisible pour lui et bien réelle pour elle. */
+const MEMBRE_SEUL_ECRITURE = [
+  "rec_insert", "rec_update", "rec_delete",
+  "avail_insert", "avail_update", "avail_delete",
+  "boss_sessions_insert",
+  "animation_measures_insert"
+];
+
+MEMBRE_SEUL_ECRITURE.forEach(policy => {
+  const bloc = sql.match(
+    new RegExp("create policy " + policy + "[\\s\\S]*?;", "i")
+  );
+  assert.ok(bloc, "la politique " + policy + " doit exister");
+  assert.match(
+    bloc[0],
+    /private\.est_membre\(auth\.uid\(\)\)/i,
+    policy + " doit exiger d'être membre"
+  );
+});
+
+/* Plus AUCUNE table de confrérie ne garde `using (true)`. C'est l'assertion
+   qui aurait vu le trou d'origine : dix politiques identiques, ouvertes à tout
+   compte créé en dix secondes depuis l'écran d'inscription. */
+MEMBRE_SEUL_LECTURE.concat(AMOI_OU_MEMBRE.map(paire => paire[0]))
+  .forEach(policy => {
+    const bloc = sql.match(
+      new RegExp("create policy " + policy + "[\\s\\S]*?;", "i")
+    );
+    assert.equal(
+      /using\s*\(\s*true\s*\)/i.test(bloc[0]),
+      false,
+      policy + " ne doit plus être ouverte à tout compte connecté"
+    );
+  });
+
+/* Le détecteur, mis à l'épreuve sur une copie fautive. */
+const rouverte = sql.replace(
+  /create policy rec_read[^;]*;/i,
+  "create policy rec_read on public.recensement for select to authenticated using (true);"
+);
+const lectureOuverte = source =>
+  /create policy rec_read[\s\S]*?using\s*\(\s*true\s*\)/i.test(source);
+assert.equal(lectureOuverte(rouverte), true,
+  "le détecteur doit voir une lecture rouverte");
+assert.equal(lectureOuverte(sql), false,
+  "le recensement ne doit jamais être ouvert à tout compte connecté");
+
 console.log("comptes-invites-schema.test.js : OK");

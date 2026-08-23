@@ -29,26 +29,32 @@ function normalizedPolicy(name) {
   return sql.slice(start, end + 1).replace(/\s+/g, " ").trim().toLowerCase();
 }
 
+/* Les disponibilites sont une donnee de confrerie : un invite n'y lit ni
+   n'y ecrit rien, pas meme ses propres lignes. Une ligne ecrite par lui
+   serait invisible pour lui et bien reelle dans la grille commune. */
 assert.strictEqual(
   normalizedPolicy("avail_read"),
   "create policy avail_read on public.member_availability "
-  + "for select to authenticated using (true);"
+  + "for select to authenticated using (private.est_membre(auth.uid()));"
 );
 assert.strictEqual(
   normalizedPolicy("avail_insert"),
   "create policy avail_insert on public.member_availability "
-  + "for insert to authenticated with check (owner = auth.uid());"
+  + "for insert to authenticated "
+  + "with check (owner = auth.uid() and private.est_membre(auth.uid()));"
 );
 assert.strictEqual(
   normalizedPolicy("avail_update"),
   "create policy avail_update on public.member_availability "
-  + "for update to authenticated using (owner = auth.uid()) "
-  + "with check (owner = auth.uid());"
+  + "for update to authenticated "
+  + "using (owner = auth.uid() and private.est_membre(auth.uid())) "
+  + "with check (owner = auth.uid() and private.est_membre(auth.uid()));"
 );
 assert.strictEqual(
   normalizedPolicy("avail_delete"),
   "create policy avail_delete on public.member_availability "
-  + "for delete to authenticated using (owner = auth.uid());"
+  + "for delete to authenticated "
+  + "using (owner = auth.uid() and private.est_membre(auth.uid()));"
 );
 
 // La table doit être publiée en Realtime comme les autres tables partagées.
