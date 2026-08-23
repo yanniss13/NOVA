@@ -154,3 +154,27 @@
     color:var(--parchment)
   }
   .alerte span{display:block;font-size:12.5px;color:var(--muted)}
+
+  /* Replie par defaut : le conseil doit etre visible, pas encombrant. */
+  .preparer{
+    margin-top:18px;border:1px solid var(--line);border-radius:var(--radius);
+    background:var(--panel-2);font-size:14px;line-height:1.65;color:var(--muted)
+  }
+  .preparer > summary{
+    padding:13px 18px;cursor:pointer;color:var(--gold-bright);
+    font-family:var(--ui);font-weight:600;font-size:13.5px;
+    letter-spacing:.02em;list-style-position:inside
+  }
+  .preparer > summary:hover{color:var(--parchment)}
+  .preparer > summary:focus-visible{
+    outline:2px solid var(--gold-bright);outline-offset:-2px;border-radius:var(--radius)
+  }
+  .preparer > *:not(summary){margin:0 18px 12px;max-width:70ch}
+  .preparer b{color:var(--parchment);font-weight:600}
+  .preparer code{
+    display:block;padding:10px 12px;overflow-x:auto;
+    font-family:var(--mono);font-size:12.5px;white-space:pre;
+    border:1px solid var(--line);border-radius:8px;background:var(--obsidian-2);
+    color:var(--parchment)
+  }
+  .preparer .menu{font-size:12.5px;color:var(--muted-2);padding-bottom:4px}

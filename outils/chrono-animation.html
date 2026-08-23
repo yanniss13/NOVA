@@ -29,6 +29,29 @@
     par seconde, d'où l'intérêt de ne convertir que le passage utile.</span>
   </div>
 
+  <!-- Le conseil de preparation ne vivait que dans l'alerte ci-dessus, donc
+       invisible tant que la mesure n'avait pas deja mal tourne. Il est
+       desormais lisible avant de charger quoi que ce soit. -->
+  <details class="preparer">
+    <summary>Préparer ta vidéo avant de mesurer</summary>
+    <p><b>La cadence n'a presque pas d'importance.</b> 30 img/s suffit : en
+    rafale l'outil divise par dix cycles, donc une image d'erreur devient
+    trois millièmes de seconde. Inutile de chercher du 60 à tout prix.</p>
+    <p><b>Ne fais pas passer ta capture par un logiciel de montage.</b>
+    Clipchamp, CapCut et les autres ré-exportent en 30 img/s et lissent les
+    images, même si tu as enregistré en 60. Envoie le fichier brut du
+    logiciel de capture.</p>
+    <p><b>Ce qui compte vraiment, ce sont les images-clés.</b> Un enregistrement
+    d'écran n'en pose qu'une toutes les quatre secondes environ. Entre deux
+    clés, le lecteur ne peut pas s'arrêter où on lui demande : c'est ça, et
+    non la cadence, qui fait sauter le pas image par image. Si tu le
+    constates, convertis l'extrait utile — chaque image devient autonome :</p>
+    <code>ffmpeg -ss 20 -t 10 -i tavideo.mp4 -c:v libx264 -g 1 -crf 20 -an precis.mp4</code>
+    <p class="menu">« -ss 20 » est la seconde de départ, « -t 10 » la durée.
+    Compte 3 Mo par seconde, d'où l'intérêt de ne convertir que le passage
+    utile.</p>
+  </details>
+
   <section class="instrument">
     <div class="depot">
       <label for="fichierVideo">Ton enregistrement</label>
