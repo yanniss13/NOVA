@@ -86,6 +86,22 @@ dans leur menu contextuel.
 
 ## 3. Configurer et déployer l'Edge Function
 
+> **Le CLI Supabase n'est pas installé**, et n'est pas une dépendance du dépôt.
+> Taper `supabase` tout court répond « n'est pas reconnu comme nom d'applet de
+> commande ». Il s'exécute par `npx`, sans installation ni droits
+> administrateur : **préfixer chaque commande `supabase` de ce document par
+> `npx -y supabase@latest`**.
+>
+> Exemple, la commande de déploiement plus bas :
+>
+> ```powershell
+> npx -y supabase@latest functions deploy discord-planning --project-ref uxouhbgdlolidjmxwgae
+> ```
+>
+> Un raccourci PowerShell (`function supabase { npx … @args }`) semble
+> pratique, mais ne transmet pas les sous-commandes : la forme explicite est la
+> seule vérifiée.
+
 Après connexion au CLI Supabase :
 
 ```powershell
