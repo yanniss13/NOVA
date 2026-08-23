@@ -1255,3 +1255,39 @@ drop policy if exists animation_measures_read   on public.animation_measures;
 drop policy if exists animation_measures_insert on public.animation_measures;
 create policy animation_measures_read   on public.animation_measures for select to authenticated using (true);
 create policy animation_measures_insert on public.animation_measures for insert to authenticated with check (owner = auth.uid());
+
+-- 12) Presets d'équipement : sept emplacements nommés, rangés hors du personnage.
+--
+-- UNE LIGNE PAR PRESET, jamais un tableau dans `profiles`. C'est la leçon déjà
+-- payée sur `collection_items` : un tableau imposerait de tout réécrire à
+-- chaque geste, et deux appareils ouverts se perdraient mutuellement des
+-- entrées.
+--
+-- `payload` porte les quatre clés d'équipement (`armor`, `armorConfig`,
+-- `jewel`, `jewelConfig`). L'emplacement « Armure liee » n'y figure jamais :
+-- il appartient au personnage, pas au preset, et le déplacer d'un héros à
+-- l'autre n'a aucun sens dans le jeu.
+--
+-- Le preset est PRIVÉ. Contrairement au roster, qui se montre à la confrérie,
+-- aucun membre ne lit celui d'un autre : les quatre politiques exigent toutes
+-- `owner = auth.uid()`, la lecture comprise.
+create table if not exists public.gear_presets (
+  owner      uuid not null references auth.users(id) on delete cascade,
+  id         uuid not null,
+  nom        text not null check (length(btrim(nom)) between 1 and 40),
+  payload    jsonb not null,
+  updated_at timestamptz not null default now(),
+  primary key (owner, id)
+);
+create index if not exists gear_presets_owner_idx on public.gear_presets(owner);
+
+alter table public.gear_presets enable row level security;
+
+drop policy if exists gear_presets_read   on public.gear_presets;
+drop policy if exists gear_presets_insert on public.gear_presets;
+drop policy if exists gear_presets_update on public.gear_presets;
+drop policy if exists gear_presets_delete on public.gear_presets;
+create policy gear_presets_read   on public.gear_presets for select to authenticated using (owner = auth.uid());
+create policy gear_presets_insert on public.gear_presets for insert to authenticated with check (owner = auth.uid());
+create policy gear_presets_update on public.gear_presets for update to authenticated using (owner = auth.uid()) with check (owner = auth.uid());
+create policy gear_presets_delete on public.gear_presets for delete to authenticated using (owner = auth.uid());
