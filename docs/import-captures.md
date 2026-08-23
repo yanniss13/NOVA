@@ -131,6 +131,15 @@ claire collée au bord droit, les colonnes se déduisent de son contenu. C'est c
 qui permet à la même lecture de traiter du 1920×1080, du 2796×1290 et du
 3440×1440 — trois résolutions et trois rapports d'image — sans un réglage.
 
+Un seuil de luminance reste néanmoins nécessaire pour séparer la carte du ciel
+étoilé, et il porte plus loin qu'il n'en a l'air : c'est lui qui décide si le
+**bandeau du titre** entre dans la zone lue. Or ce bandeau change de couleur
+selon la pièce — doré sur la `Baguette des ailes de la flamme noire`, violet
+sur le `Grimoire flamboyant`, qui descend à 63 de luminance. Un seuil calé sur
+une seule teinte donne alors l'échec le plus déroutant qui soit : tous les
+chiffres lus correctement, et l'arme introuvable faute de nom. Les deux teintes
+sont en fixture.
+
 | module | rôle |
 |---|---|
 | `js/metier/ocr-libelles.js` | recaler un texte lu sur le catalogue |

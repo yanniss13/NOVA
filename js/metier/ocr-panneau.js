@@ -101,10 +101,11 @@
      sur cent, contre quatre-vingt-dix-huit avec.
 
      On remonte donc depuis le haut du panneau tant que la ligne appartient
-     encore a la carte. Le releve sur captures reelles laisse une marge
-     enorme : le fond du jeu mesure 20 a 40 de luminance moyenne, la carte
-     ne descend jamais sous 92. C'est a l'appelant de fixer le seuil, comme
-     pour `estClair` — ce module ne touche pas un pixel. */
+     encore a la carte. Le fond du jeu mesure 20 a 40 de luminance moyenne,
+     et la carte descend jusqu'a 63 quand son bandeau est violet plutot que
+     dore : la marge reste large, mais elle ne tolere pas un seuil cale sur
+     une seule teinte. C'est a l'appelant de le fixer, comme pour `estClair`
+     — ce module ne touche pas un pixel. */
   const PART_DE_CARTE = 0.5;
   /* Quelques rangs sombres au milieu de l'en-tete ne le terminent pas : une
      bande de separation en fait partie. Au-dela, on est sorti de la carte. */

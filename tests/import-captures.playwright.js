@@ -62,6 +62,22 @@ const ARMES_ATTENDUES = [
     fichierArme:"7ds-armes/Rapiere/Rapi\u00e8re de l'\u00e2me vorace.webp",
     config:{ gradeGameId:"131085010", level:50, promotion:4, overlimit:0 },
     element:"wind"
+  },
+  /* Bandeau VIOLET, la ou les deux precedentes l'ont dore. Le nom de l'arme
+     vit dans ce bandeau, et il ne se deduit pas : sans lui l'inversion ne
+     tranche que dans onze cas sur cent. Un seuil de luminance cale sur le
+     dore laissait donc le titre hors de la zone lue, et cette capture
+     echouait entierement — chiffres impeccables, arme introuvable. */
+  {
+    fichier:"pc-arme-grimoire.png",
+    herosSlug:"gowther",
+    nom:"Grimoire flamboyant",
+    details:["Arme", "niveau 50", "promotion 4", "outrepassement 6",
+      "3 enchantements remplis"],
+    elementSuppose:true,
+    fichierArme:"7ds-armes/Livre/Grimoire flamboyant.webp",
+    config:{ gradeGameId:"131104011", level:50, promotion:4, overlimit:6 },
+    element:"generic"
   }
 ];
 
@@ -194,7 +210,7 @@ const ARMES_ATTENDUES = [
       if(attendu.element){
         assert.ok(arme.config.enchantments.filter(Boolean).every(enchantement =>
           enchantement.element === attendu.element),
-        attendu.fichier + " : enchantements Vent attendus");
+        attendu.fichier + " : enchantements " + attendu.element + " attendus");
       }
       assert.equal(await page.evaluate(async ({ fichier, config }) => {
         const { weaponConfigStatus } = await import("./js/metier/build-config.js");

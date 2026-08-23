@@ -41,6 +41,21 @@ import { ModalStack } from "./modal-stack.js";
      de rendre des chiffres faux. */
   const LARGEUR_MINIMALE = 400;
 
+  /* Au-dessus de cette luminance, un pixel appartient encore a la carte et non
+     au ciel etoile derriere elle. C'est ce seuil qui decide si le NOM de la
+     piece entre dans la zone lue — et une arme sans nom ne se deduit pas.
+
+     Il valait 80, cale sur des bandeaux dores. Le bandeau du Grimoire
+     flamboyant est violet : mesure entre 63 et 75, il passait dessous, si bien
+     que la remontee s'arretait au haut de la carte blanche et laissait le titre
+     dehors. La couleur du bandeau suit la piece, pas la capture : un seuil cale
+     sur une teinte ne tient pas.
+
+     60 garde une marge enorme des deux cotes. Sur la capture violette, le
+     bandeau tient a 92-100 % de rangs reconnus, tandis que le ciel juste
+     au-dessus du panneau reste a 0 % — il y reste meme a 45. */
+  const LUMINANCE_DE_CARTE = 60;
+
   let worker = null;
 
   /* Le moteur pese quatre megaoctets : on ne le charge qu'au premier import, et
@@ -121,7 +136,7 @@ import { ModalStack } from "./modal-stack.js";
     }
 
     const enteteZone = detecterEntete({
-      estCarte:(x, y) => luminance(x, y) >= 80
+      estCarte:(x, y) => luminance(x, y) >= LUMINANCE_DE_CARTE
     }, zone);
     const ocr = await moteur();
     const rectangle = {
