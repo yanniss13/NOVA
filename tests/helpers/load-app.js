@@ -551,6 +551,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   weaponLevelCap:typeof weaponLevelCap === "function"
     ? weaponLevelCap
     : undefined,
+  weaponPromotionForLevel:typeof weaponPromotionForLevel === "function"
+    ? weaponPromotionForLevel
+    : undefined,
   applyWeaponChange:typeof applyWeaponChange === "function"
     ? applyWeaponChange
     : undefined,

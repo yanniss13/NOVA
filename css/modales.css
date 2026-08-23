@@ -183,6 +183,11 @@ body.modal-locked{
   border:1px solid var(--line);border-radius:8px;background:var(--obsidian-2);
   color:var(--parchment);font:inherit
 }
+.weapon-config-promotion-value{
+  min-height:44px;display:flex;align-items:center;padding:8px 10px;
+  border:1px solid var(--line);border-radius:8px;background:var(--obsidian-2);
+  color:var(--parchment);font-weight:700
+}
 .weapon-config-field input:focus,
 .weapon-config-field select:focus{border-color:var(--gold-bright)}
 .weapon-config-field [aria-invalid="true"]{

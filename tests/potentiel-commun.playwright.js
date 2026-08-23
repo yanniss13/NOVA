@@ -156,6 +156,22 @@ const STORAGE_KEY = "confrerie7ds.teams";
     );
     await configButton.click();
     await page.locator("#weaponConfigOverlay").waitFor({ state:"visible" });
+    assert.equal(
+      await page.locator(".weapon-config-level").getAttribute("max"),
+      "50",
+      "Le niveau doit pouvoir atteindre le plafond final sans promotion manuelle"
+    );
+    assert.equal(
+      await page.locator(".weapon-config-promotion").count(),
+      0,
+      "La promotion automatique ne doit plus etre un champ modifiable"
+    );
+    await page.locator(".weapon-config-level").fill("11");
+    assert.equal(
+      (await page.locator(".weapon-config-promotion-value").textContent()).trim(),
+      "1",
+      "Le niveau 11 doit declencher automatiquement la promotion 1"
+    );
     await page.locator(".weapon-config-level").fill("999");
     await page.locator("#weaponConfigCancel").click();
     assert.equal(
@@ -194,7 +210,6 @@ const STORAGE_KEY = "confrerie7ds.teams";
       true,
       "Un palier 5 incomplet doit diriger vers le choix d’élément"
     );
-    await page.locator(".weapon-config-promotion").selectOption("0");
     await page.locator(".weapon-config-overlimit").selectOption("0");
     for(const select of await page.locator(".weapon-config-enchantment-choice").all()){
       await select.selectOption("none");
@@ -243,7 +258,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     );
 
     await configButton.click();
-    await page.locator(".weapon-config-promotion").selectOption("1");
+    await page.locator(".weapon-config-level").fill("11");
     await page.locator("#weaponConfigPreview details")
       .filter({ hasText:"Promotion" }).first().locator("summary").click();
     await assertVisibleText(
@@ -275,7 +290,6 @@ const STORAGE_KEY = "confrerie7ds.teams";
 
     await configButton.click();
     await page.locator(".weapon-config-level").fill("0");
-    await page.locator(".weapon-config-promotion").selectOption("0");
     await page.locator(".weapon-config-overlimit").selectOption("0");
     await page.locator(".weapon-config-enchantment-choice").selectOption("none");
     await page.locator("#weaponConfigSave").click();
