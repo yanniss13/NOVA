@@ -57,7 +57,33 @@
     return Math.round(fps * 1000) / 1000;
   }
 
-  const API = { dureeRafale, dureeUnique, protocolePour, protocoleValide, fpsPour };
+  /* La duree d'une image ne se deduit pas de DEUX images voisines : leur ecart
+     tremble, et le trembler suffit a ecrire 29.999 pour un fichier a 30. On la
+     lit donc sur une fenetre longue, en divisant le temps ecoule par le nombre
+     EXACT d'images ecoulees, que le navigateur compte lui-meme.
+
+     Ce compteur ferme aussi une porte : si un rappel manque des images, elles
+     restent comptees, et la cadence ne se retrouve pas divisee par deux. */
+  function dureeImageMesuree({ tempsDebut, imagesDebut, tempsFin, imagesFin }){
+    const images = Number(imagesFin) - Number(imagesDebut);
+    const temps = Number(tempsFin) - Number(tempsDebut);
+    if(!(images > 0) || !(temps > 0)) return 0;
+    const duree = temps / images;
+    // Entre 10 et 240 images par seconde : au-dela c'est une recherche, pas une image.
+    return (duree > 0.004 && duree < 0.1) ? duree : 0;
+  }
+
+  /* Deux decimales : assez pour distinguer 29.97 de 30, pas assez pour montrer
+     le tremblement de la derniere image. Les zeros de queue tombent, sinon un
+     fichier a 30 s'annoncerait « 30.00 img/s ». */
+  function cadenceAffichee(fps){
+    return String(Number(Number(fps).toFixed(2)));
+  }
+
+  const API = {
+    dureeRafale, dureeUnique, protocolePour, protocoleValide, fpsPour,
+    dureeImageMesuree, cadenceAffichee
+  };
 
   if(typeof module !== "undefined" && module.exports) module.exports = API;
   if(typeof window !== "undefined") window.ChronoCalcul = API;

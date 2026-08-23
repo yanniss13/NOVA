@@ -38,8 +38,17 @@
     /* mediaTime est le temps EXACT de l'image affichee, donne par le
        navigateur. currentTime, lui, est la position demandee : apres un
        saut il ne correspond a aucune image precise. */
-    mediaTime:null, dureeImage:0, viseeRecul:null
+    mediaTime:null, dureeImage:0, viseeRecul:null,
+    /* Point de depart de la mesure de cadence : le temps et le numero d'image
+       d'ou l'on compte. La cadence se lit sur la distance entre cette ancre et
+       l'image courante, jamais sur deux images voisines. */
+    ancre:null, suiviActif:false
   };
+
+  // Images a laisser defiler avant d'annoncer une cadence.
+  const FENETRE = 30;
+  // Au-dela, on re-ancre : une fenetre sans fin finirait par lisser un changement.
+  const FENETRE_MAX = 300;
 
   const $ = id => document.getElementById(id);
 
@@ -161,9 +170,10 @@
       ? String(Math.round(t / etat.dureeImage))
       : String(Math.round(t * etat.cadence));
     const fps = window.ChronoCalcul.fpsPour(etat.dureeImage, etat.cadence);
+    const lisible = window.ChronoCalcul.cadenceAffichee(fps);
     $("cadence").textContent = etat.dureeImage
-      ? fps + " img/s"
-      : fps + " img/s (repli)";
+      ? lisible + " img/s"
+      : lisible + " img/s (repli)";
     $("sortieDebut").textContent =
       etat.secondeDebut === null ? "—" : etat.secondeDebut.toFixed(3);
     $("sortieFin").textContent =
@@ -271,49 +281,70 @@
 
   /* Mesurer la cadence sans rien demander a personne.
 
-     Elle ne se lit que sur des images successives, donc pendant une lecture.
-     Quelqu'un qui avance image par image sans jamais lire ne la mesurait
-     jamais, et l'outil restait sur son hypothese de 60 img/s. On lit donc un
-     quart de seconde en sourdine des le chargement, puis on revient au debut. */
+     Elle ne se lit que pendant une lecture. Quelqu'un qui avance image par
+     image sans jamais lire ne la mesurait jamais, et l'outil restait sur son
+     hypothese de 60 img/s. On lit donc en sourdine des le chargement, juste
+     le temps que la fenetre de mesure se remplisse, puis on revient au debut. */
   function mesurerCadence(){
     if(typeof video.requestVideoFrameCallback !== "function") return;
-    const releves = [];
     const muetAvant = video.muted;
     video.muted = true;
-    const voir = () => video.requestVideoFrameCallback((_, infos) => {
-      releves.push(infos.mediaTime);
-      if(releves.length < 6 && !video.paused){ voir(); return; }
+    const limite = performance.now() + 3000;
+    const rendre = () => {
       video.pause();
       video.muted = muetAvant;
-      const ecarts = releves.slice(1)
-        .map((t, i) => t - releves[i])
-        .filter(d => d > 0.004 && d < 0.1)
-        .sort((a, b) => a - b);
-      if(ecarts.length) etat.dureeImage = ecarts[Math.floor(ecarts.length / 2)];
       video.currentTime = 0;
       afficher();
-    });
-    voir();
+    };
+    const surveiller = () => {
+      if(etat.dureeImage || performance.now() > limite || video.ended){
+        rendre();
+        return;
+      }
+      requestAnimationFrame(surveiller);
+    };
     const lecture = video.play();
     if(lecture && typeof lecture.catch === "function"){
       lecture.catch(() => { video.muted = muetAvant; });
     }
+    requestAnimationFrame(surveiller);
   }
 
+  /* Le navigateur annonce chaque image affichee avec son temps exact ET son
+     numero. On ne compare donc plus deux images voisines : leur ecart tremble
+     de quelques centiemes de milliseconde, ce qui suffisait a afficher 29.999
+     pour un fichier a 30 puis 30.03 l'image d'apres.
 
-  /* Le navigateur annonce chaque image affichee avec son temps exact. Deux
-     annonces consecutives pendant la lecture donnent la duree reelle d'une
-     image : on cesse ainsi de supposer 60 img/s, hypothese qui faisait sauter
-     des images sur tout enregistrement d'une autre cadence. */
+     On garde une ancre, et la cadence se lit sur la distance parcourue depuis
+     elle. Le numero d'image rend cette division exacte meme si un rappel a
+     saute des images : elles restent comptees. */
   function suivreImages(){
     if(typeof video.requestVideoFrameCallback !== "function") return;
+    // Un second appel doublerait la boucle, et les deux se voleraient l'ancre.
+    if(etat.suiviActif) return;
+    etat.suiviActif = true;
     video.requestVideoFrameCallback(function surImage(_, infos){
-      const precedent = etat.mediaTime;
       etat.mediaTime = infos.mediaTime;
-      if(!video.paused && precedent !== null){
-        const delta = infos.mediaTime - precedent;
-        // Entre 10 et 240 images par seconde : au-dela c'est un saut, pas une image.
-        if(delta > 0.004 && delta < 0.1) etat.dureeImage = delta;
+      const images = infos.presentedFrames;
+      if(video.paused || typeof images !== "number"){
+        etat.ancre = null;
+      }else if(!etat.ancre){
+        etat.ancre = { tempsDebut:infos.mediaTime, imagesDebut:images };
+      }else{
+        const duree = window.ChronoCalcul.dureeImageMesuree({
+          tempsDebut:etat.ancre.tempsDebut,
+          imagesDebut:etat.ancre.imagesDebut,
+          tempsFin:infos.mediaTime,
+          imagesFin:images
+        });
+        const ecoulees = images - etat.ancre.imagesDebut;
+        /* Duree nulle : une recherche a fait bondir le temps sans derouler les
+           images. La fenetre ne veut plus rien dire, on repart d'ici. */
+        if(!duree || ecoulees >= FENETRE_MAX){
+          etat.ancre = { tempsDebut:infos.mediaTime, imagesDebut:images };
+        }else if(ecoulees >= FENETRE){
+          etat.dureeImage = duree;
+        }
       }
       afficher();
       video.requestVideoFrameCallback(surImage);
@@ -325,6 +356,7 @@
     if(fichier){
       etat.mediaTime = null;
       etat.dureeImage = 0;
+      etat.ancre = null;
       video.src = URL.createObjectURL(fichier);
       suivreImages();
       video.addEventListener("loadeddata", mesurerCadence, { once:true });
