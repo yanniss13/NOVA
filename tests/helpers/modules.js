@@ -32,6 +32,17 @@ const MODULES = [
   "metier/build-config.js",
   "metier/essai-enchantements.js",
   "metier/stats-calcul.js",
+  /* Socle partage par les trois modules OCR : il vient donc en premier. */
+  "metier/ocr-libelles.js",
+  /* Pur : ni DOM ni pixels. Le decodage d'image vit dans `vues`. */
+  "metier/ocr-panneau.js",
+  /* Apres `stats-calcul.js` et `build-config.js` : la deduction s'appuie
+     sur leurs tables pour inverser une valeur affichee. */
+  /* Apres `build-config.js` et `perles.js`, dont il lit les bornes, et
+     avant `ocr-deduction.js`, qui lui confie les lignes d une piece. */
+  "metier/ocr-enchantements.js",
+  "metier/ocr-deduction.js",
+  "metier/ocr-arme.js",
   "metier/degats-calcul.js",
   "metier/dps-effets.js",
   "metier/dps-simulation.js",
@@ -74,6 +85,7 @@ const MODULES = [
   "vues/toast.js",
   "vues/modal-stack.js",
   "vues/modale-auth.js",
+  "vues/import-captures.js",
   "vues/routage.js",
   "vues/picker.js",
   "vues/stats-affichage.js",

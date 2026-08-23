@@ -14,7 +14,7 @@ const EFFECTIFS = {
   wikiCategoryArmes:155,
   wikiCategoryArmures:62,
   wikiCategoryBijoux:37,
-  wikiCategoryGravees:68
+  wikiCategoryGravees:83
 };
 
 (async()=>{
@@ -155,13 +155,13 @@ const EFFECTIFS = {
     /* Les armures gravées se filtrent par héros : c'est leur seul axe, chacune
        étant liée à un personnage et un seul. */
     await page.locator("#wikiCategoryGravees").click();
-    await attendreTuiles(68);
+    await attendreTuiles(83);
     await page.locator("#wikiFilterEngravedHero")
       .selectOption({ label:"Derieri" });
     await page.waitForFunction(
       () => {
         const compte = document.querySelectorAll("#wikiGrid .wiki-tile").length;
-        return compte > 0 && compte < 68;
+        return compte > 0 && compte < 83;
       }
     );
 
@@ -289,7 +289,7 @@ const EFFECTIFS = {
     /* Une armure gravée : son héros, et le seul chemin qui mène d'un objet à
        un personnage. */
     await page.locator("#wikiCategoryGravees").click();
-    await attendreTuiles(68);
+    await attendreTuiles(83);
     await page.locator("#wikiFilterEngravedHero").selectOption({ label:"Derieri" });
     await page.waitForFunction(
       () => document.querySelectorAll("#wikiGrid .wiki-tile").length > 0

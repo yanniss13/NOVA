@@ -101,6 +101,38 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   urlAbsolueDeRoute:typeof urlAbsolueDeRoute === "function"
     ? urlAbsolueDeRoute
     : undefined,
+  detecterPanneau:typeof detecterPanneau === "function"
+    ? detecterPanneau
+    : undefined,
+  detecterEntete:typeof detecterEntete === "function"
+    ? detecterEntete
+    : undefined,
+  lireEntete:typeof lireEntete === "function" ? lireEntete : undefined,
+  niveauDePassif:typeof niveauDePassif === "function"
+    ? niveauDePassif
+    : undefined,
+  enchantementsDePiece:typeof enchantementsDePiece === "function"
+    ? enchantementsDePiece
+    : undefined,
+  enchantementsDArme:typeof enchantementsDArme === "function"
+    ? enchantementsDArme
+    : undefined,
+  deduireArme:typeof deduireArme === "function" ? deduireArme : undefined,
+  analyserCaptures:typeof analyserCaptures === "function" ? analyserCaptures : undefined,
+  __remplacerLecteur:typeof __remplacerLecteur === "function"
+    ? __remplacerLecteur
+    : undefined,
+  detailDuChoix:typeof detailDuChoix === "function" ? detailDuChoix : undefined,
+  extraireStats:typeof extraireStats === "function"
+    ? extraireStats
+    : undefined,
+  deduirePiece:typeof deduirePiece === "function" ? deduirePiece : undefined,
+  configsDePiece:typeof configsDePiece === "function"
+    ? configsDePiece
+    : undefined,
+  recalerLibelle:typeof recalerLibelle === "function"
+    ? recalerLibelle
+    : undefined,
   degatsAttendus:typeof degatsAttendus === "function"
     ? degatsAttendus
     : undefined,
@@ -313,6 +345,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   favoriteRosterWeaponType,
   setFavoriteRosterBuild,
   copyFavoriteRosterBuild,
+  appliquerImportRosterCaptures:typeof appliquerImportRosterCaptures === "function"
+    ? appliquerImportRosterCaptures
+    : undefined,
   rosterHeroSnapshot,
   buildWeaponDefinition:typeof buildWeaponDefinition === "function"
     ? buildWeaponDefinition

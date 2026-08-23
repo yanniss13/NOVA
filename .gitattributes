@@ -1,0 +1,4 @@
+# Le moteur OCR est repris tel quel en amont : git ne doit pas y toucher aux
+# fins de ligne, sans quoi chaque mise a jour produirait un diff illisible et
+# le correctif des URL CDN deviendrait impossible a rejouer.
+vendor/tesseract/** -text
