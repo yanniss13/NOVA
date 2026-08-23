@@ -634,6 +634,18 @@ function merlinGameFixture(hooks){
   assert.strictEqual(hooks.weaponLevelCap(grade, 3), 40);
   assert.strictEqual(hooks.weaponLevelCap(grade, 4), 50);
   assert.strictEqual(hooks.weaponLevelCap({}, 0), -1);
+  assert.strictEqual(hooks.weaponPromotionForLevel(grade, 0), 0);
+  assert.strictEqual(hooks.weaponPromotionForLevel(grade, 10), 0);
+  assert.strictEqual(hooks.weaponPromotionForLevel(grade, 11), 1);
+  assert.strictEqual(hooks.weaponPromotionForLevel(grade, 20), 1);
+  assert.strictEqual(hooks.weaponPromotionForLevel(grade, 21), 2);
+  assert.strictEqual(hooks.weaponPromotionForLevel(grade, 30), 2);
+  assert.strictEqual(hooks.weaponPromotionForLevel(grade, 31), 3);
+  assert.strictEqual(hooks.weaponPromotionForLevel(grade, 40), 3);
+  assert.strictEqual(hooks.weaponPromotionForLevel(grade, 41), 4);
+  assert.strictEqual(hooks.weaponPromotionForLevel(grade, 50), 4);
+  assert.strictEqual(hooks.weaponPromotionForLevel(grade, 51), -1);
+  assert.strictEqual(hooks.weaponPromotionForLevel({}, 10), -1);
   assert.deepStrictEqual(plain(hooks.emptyWeaponConfig(HACHE_FILE, "grade-axe")), validConfig());
   assert.strictEqual(hooks.emptyWeaponConfig(HACHE_FILE, "grade-inconnue"), null);
 }

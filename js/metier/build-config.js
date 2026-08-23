@@ -200,6 +200,15 @@ import {
     const step = steps[promotion - 1];
     return step ? Number(step.reinforceMax) : -1;
   }
+  function weaponPromotionForLevel(grade, level){
+    const steps = Array.isArray(grade && grade.promotionSteps)
+      ? grade.promotionSteps : [];
+    if(!steps.length || !isInteger(level) || level < 0) return -1;
+    for(let promotion = 0; promotion <= steps.length; promotion += 1){
+      if(level <= weaponLevelCap(grade, promotion)) return promotion;
+    }
+    return -1;
+  }
 
   function nativeWeaponCurveIsComplete(curve){
     return !!curve && typeof curve === "object" && !Array.isArray(curve)
@@ -402,5 +411,6 @@ export {
   gearStatValue,
   weaponConfigStatus,
   weaponPassiveFact,
-  weaponLevelCap
+  weaponLevelCap,
+  weaponPromotionForLevel
 };

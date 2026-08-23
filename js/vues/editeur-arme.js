@@ -35,6 +35,7 @@ import {
   buildWeaponDefinition,
   buildWeaponGrade,
   weaponLevelCap,
+  weaponPromotionForLevel,
   weaponConfigStatus,
   allowedEnchantValueStatus,
   enchantmentChoiceStatus,
@@ -213,13 +214,11 @@ import {
   function weaponConfigFirstInvalidSelector(file, draft){
     const grade = draft && buildWeaponGrade(file, draft.gradeGameId);
     if(!grade) return ".weapon-config-grade";
-    if(!isInteger(draft.promotion)
-      || draft.promotion < 0
-      || draft.promotion > grade.promotionSteps.length){
-      return ".weapon-config-promotion";
+    const maximumLevel = weaponLevelCap(grade, grade.promotionSteps.length);
+    if(!isInteger(draft.level) || draft.level < 0 || draft.level > maximumLevel){
+      return ".weapon-config-level";
     }
-    const cap = weaponLevelCap(grade, draft.promotion);
-    if(!isInteger(draft.level) || draft.level < 0 || draft.level > cap){
+    if(draft.promotion !== weaponPromotionForLevel(grade, draft.level)){
       return ".weapon-config-level";
     }
     const levels = grade.overlimit && Array.isArray(grade.overlimit.levels)
@@ -673,6 +672,8 @@ import {
       updateWeaponConfigPreview();
       return;
     }
+    const automaticPromotion = weaponPromotionForLevel(grade, draft.level);
+    if(automaticPromotion >= 0) draft.promotion = automaticPromotion;
 
     const enchantmentsOnly = Boolean(state.context.enchantmentsOnly);
     if(!enchantmentsOnly){
@@ -698,35 +699,35 @@ import {
     });
     body.appendChild(weaponConfigField("Grade",gradeSelect));
 
+    const maximumLevel = weaponLevelCap(grade, grade.promotionSteps.length);
+    const promotionValue = el("output",{
+      class:"weapon-config-promotion-value",
+      text:automaticPromotion >= 0 ? String(automaticPromotion) : "—"
+    });
     const levelInput = el("input",numericKeyboardInputProps({
       class:"weapon-config-level",
       step:"1",
       min:"0",
-      max:String(weaponLevelCap(grade, draft.promotion)),
+      max:String(maximumLevel),
       value:String(draft.level)
     }));
     levelInput.addEventListener("input", event => {
       draft.level = event.target.value === "" ? null : Math.trunc(Number(event.target.value));
+      const promotion = weaponPromotionForLevel(grade, draft.level);
+      if(promotion >= 0) draft.promotion = promotion;
+      promotionValue.textContent = promotion >= 0 ? String(promotion) : "—";
       updateWeaponConfigPreview();
     });
     body.appendChild(weaponConfigField(
       "Niveau",
       levelInput,
-      "Maximum actuel : "+weaponLevelCap(grade, draft.promotion)+"."
+      "Maximum : "+maximumLevel+"."
     ));
-
-    const promotionSelect = el("select",{class:"weapon-config-promotion"});
-    for(let promotion = 0; promotion <= grade.promotionSteps.length; promotion += 1){
-      promotionSelect.appendChild(weaponConfigOption(promotion,String(promotion)));
-    }
-    promotionSelect.value = String(draft.promotion);
-    promotionSelect.addEventListener("change", event => {
-      draft.promotion = Number(event.target.value);
-      const cap = weaponLevelCap(grade, draft.promotion);
-      if(draft.level > cap) draft.level = cap;
-      renderWeaponConfigEditor();
-    });
-    body.appendChild(weaponConfigField("Promotion",promotionSelect));
+    body.appendChild(weaponConfigField(
+      "Promotion automatique",
+      promotionValue,
+      "Calculée à partir du niveau de l’arme."
+    ));
 
     const overlimitLevels = grade.overlimit && Array.isArray(grade.overlimit.levels)
       ? grade.overlimit.levels : [];

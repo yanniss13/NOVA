@@ -430,14 +430,13 @@ async function ouvrirSessionsDeBoss(page){
       await page.locator("#weaponConfigTitle").textContent(),
       "Configurer l’arme"
     );
-    await page.locator(".weapon-config-level").fill("10");
-    await page.locator(".weapon-config-promotion").selectOption("1");
+    await page.locator(".weapon-config-level").fill("11");
     await page.locator(".weapon-config-overlimit").selectOption("1");
     await page.locator("#weaponConfigSave").click();
     await page.locator("#weaponConfigOverlay").waitFor({ state:"hidden" });
     assert.match(
       await page.locator("#memberRosterEditor .weapon-config-summary").textContent(),
-      /Configurée .* Nv\. 10 .* Outrepassement 1/
+      /Configurée .* Nv\. 11 .* Outrepassement 1/
     );
     await rosterWeaponButton.click();
     await page.locator("#overlay").waitFor({ state:"visible" });
@@ -446,7 +445,7 @@ async function ouvrirSessionsDeBoss(page){
     await page.locator("#overlay").waitFor({ state:"hidden" });
     assert.match(
       await page.locator("#memberRosterEditor .weapon-config-summary").textContent(),
-      /Configurée .* Nv\. 10 .* Outrepassement 1/,
+      /Configurée .* Nv\. 11 .* Outrepassement 1/,
       "Refuser le changement d’arme doit conserver la configuration"
     );
 
@@ -699,7 +698,7 @@ async function ouvrirSessionsDeBoss(page){
     );
     assert.match(
       await page.locator("#memberRosterEditor .weapon-config-summary").textContent(),
-      /Configurée .* Nv\. 10 .* Outrepassement 1/
+      /Configurée .* Nv\. 11 .* Outrepassement 1/
     );
     const reloadedTopConfig = page.locator(
       '#memberRosterEditor .gear-config-open[data-slot="Haut"]'
@@ -1253,6 +1252,8 @@ async function ouvrirSessionsDeBoss(page){
       );
       const team = state.teams.find(item => item.id === "team-own");
       const build = JSON.parse(JSON.stringify(roster.builds.Hache));
+      build.weaponConfig.level = 11;
+      build.weaponConfig.promotion = 1;
       const catalog = window.SEVEN_DS_BUILD_STATS;
       const linked = (window.SEVEN_DS_ARMURES_LIEES.meliodas || [])
         .find(file => catalog.engravedByFile[file]);

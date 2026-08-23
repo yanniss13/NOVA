@@ -151,7 +151,6 @@ async function configureWeaponAndReadContribution(page){
   await hero.locator(".weapon-config-open").click();
   await page.locator("#weaponConfigOverlay").waitFor({ state:"visible" });
   await page.locator(".weapon-config-level").fill("10");
-  await page.locator(".weapon-config-promotion").selectOption("0");
   await page.locator(".weapon-config-overlimit").selectOption("0");
   for(const select of await page.locator(
     ".weapon-config-enchantment-choice"

@@ -1089,7 +1089,7 @@ async function installRosterFocusFakeSupabase(page){
           "#weaponConfigBody .weapon-config-field"
         )].map(field => {
           const label = field.querySelector(":scope > span").getBoundingClientRect();
-          const control = field.querySelector("input,select").getBoundingClientRect();
+          const control = field.querySelector("input,select,output").getBoundingClientRect();
           return {
             label:label.toJSON(),
             control:control.toJSON()
