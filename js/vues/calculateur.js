@@ -17,6 +17,7 @@ import { brouillonEquipe } from "../etat/brouillon-equipe.js";
 import { charOf } from "../metier/catalogue.js";
 import { equippedEnumOf, weaponFolderOf } from "../metier/armes.js";
 import { rosterHeroSnapshot } from "../metier/equipe-modele.js";
+import { appliquerPreset } from "../metier/presets.js";
 import {
   creerEssaiEnchantements, essaiEnchantementsDiffere,
   herosAvecEssaiEnchantements, reinitialiserEssaiEnchantements,
@@ -71,6 +72,7 @@ import { showView } from "./navigation.js";
 import { libelleDesManques } from "./stats-affichage.js";
 import { openWeaponConfigEditor } from "./editeur-arme.js";
 import { openGearConfigEditor } from "./editeur-equipement.js";
+import { ouvrirSelecteurPreset } from "./edition-build.js";
 
   const NOMBRE = new Intl.NumberFormat("fr-FR");
 
@@ -604,6 +606,46 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
     return section;
   }
 
+  /* L'essai de preset : habiller le heros affiche sans toucher a son build
+     enregistre. Le nom du preset reste a l'ecran tant que l'essai dure — sans
+     lui, on lirait des chiffres sans savoir de quel equipement ils parlent. */
+  function sectionPresetEssai(redessiner){
+    const enfants = [
+      el("p",{ class:"calc-note",
+        text:"Un preset essayé ici ne modifie pas ton build enregistré." }),
+      el("button",{
+        class:"btn",
+        type:"button",
+        text:"Essayer un preset",
+        onclick:()=>ouvrirSelecteurPreset({
+          titre:"Essayer un preset",
+          onChoisir:preset => {
+            etat.presetEssai = preset;
+            /* L'essai d'enchantements se rattache au heros affiche : garder
+               l'ancien le collerait a des pieces qui ne sont plus la. */
+            etat.essaiEnchantements = null;
+            redessiner();
+          }
+        })
+      })
+    ];
+    if(etat.presetEssai){
+      enfants.push(el("p",{ class:"calc-preset-actif",
+        text:"Essai en cours : "+etat.presetEssai.nom }));
+      enfants.push(el("button",{
+        class:"btn btn-ghost",
+        type:"button",
+        text:"Revenir à mon build",
+        onclick:()=>{
+          etat.presetEssai = null;
+          etat.essaiEnchantements = null;
+          redessiner();
+        }
+      }));
+    }
+    return el("section",{ class:"calc-preset-essai calc-carte" }, enfants);
+  }
+
   function sectionEssaiEnchantements(hero, essai, redessiner){
     const heroEssai = herosAvecEssaiEnchantements(hero, essai);
     const section = el("section",{class:"calc-essai-enchantements calc-carte"},[
@@ -1043,6 +1085,13 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
       return;
     }
 
+    /* Un preset essaye ici ne quitte JAMAIS la vue : on habille une copie du
+       heros, et rien ne remonte vers le roster. Meme frontiere que l'essai
+       d'enchantements, et pour la meme raison — on compare des hypotheses. */
+    if(etat.presetEssai){
+      hero = appliquerPreset(hero, etat.presetEssai) || hero;
+    }
+
     if(!etat.essaiEnchantements){
       etat.essaiEnchantements = creerEssaiEnchantements(hero);
     }
@@ -1077,6 +1126,10 @@ import { openGearConfigEditor } from "./editeur-equipement.js";
         apports[seau] += Number(passif.valeur) || 0;
         return apports;
       }, { propre:0, tous:0 });
+    /* Place AVANT le garde-fou de completude : c'est precisement quand il
+       manque des pieces qu'on veut essayer un preset pour les combler. */
+    vue.appendChild(sectionPresetEssai(dessiner));
+
     const bases = basesDuBuild(hero, element, apportsElementaires);
     if(!bases.stats){
       /* « Il manque » plutot que « Configuration a completer : » — la liste

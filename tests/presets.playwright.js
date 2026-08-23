@@ -126,6 +126,33 @@ const ARME_EPEE = "En plein cœur !";
     assert.equal(voisin.includes(HAUT), false,
       "seul l'emplacement vise doit changer");
 
+    // ---------- Le calculateur : essayer sans rien ecrire ----------
+    await page.locator('.tab[data-view="calculateur"]').click();
+    await page.locator("#view-calculateur").waitFor({ state:"visible" });
+    /* On n'attend pas le tableau de degats : le build par defaut est
+       incomplet, et c'est justement le cas ou l'on veut essayer un preset. */
+    await page.locator("#calculateurBody .calc-preset-essai").waitFor();
+
+    /* La preuve du contrat : le roster enregistre ne doit pas bouger d'un
+       octet pendant qu'on essaie un preset. */
+    const rosterAvant = await page.evaluate(() =>
+      JSON.stringify(window.__fakeSupabaseState.roster_characters));
+
+    await page.getByRole("button", { name:"Essayer un preset" }).click();
+    await page.getByRole("button", { name:"Set Arachnée" }).click();
+
+    const corps = page.locator("#calculateurBody");
+    await corps.getByText("Set Arachnée").waitFor();
+
+    const rosterApres = await page.evaluate(() =>
+      JSON.stringify(window.__fakeSupabaseState.roster_characters));
+    assert.equal(rosterApres, rosterAvant,
+      "essayer un preset ne doit RIEN ecrire dans le roster");
+
+    // On revient a son build, et l'essai disparait.
+    await corps.getByRole("button", { name:"Revenir à mon build" }).click();
+    await corps.getByText("Set Arachnée").waitFor({ state:"detached" });
+
     assert.deepEqual(errors, [], "aucune erreur de page");
     console.log("presets.playwright.js : OK");
   }finally{

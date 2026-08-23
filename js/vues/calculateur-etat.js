@@ -24,6 +24,8 @@ import { CoequipiersStore } from "../donnees/coequipiers-store.js";
     coequipiers:CoequipiersStore.get(),
     retouches:{},
     essaiEnchantements:null,
+    /* Preset essaye dans la vue, jamais ecrit dans le roster. */
+    presetEssai:null,
     etatsEnsembles:{},
     coches:new Set(),
     /* Les passifs qui montent par CUMULS : leur nombre de crans, par
