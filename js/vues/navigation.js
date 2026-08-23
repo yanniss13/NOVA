@@ -20,7 +20,9 @@
    — « Mon suivi » et les sessions de boss surtout — sont couverts sans qu'un
    seul ait a connaitre la session. */
 
-import { visiteurAnonyme } from "../etat/session.js";
+import {
+  estAdministrateur, inviteHorsConfrerie, visiteurAnonyme
+} from "../etat/session.js";
 import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
 
   /* Deux barres, deux niveaux. La principale porte huit onglets ; la seconde
@@ -91,8 +93,30 @@ import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
     return VUES_PUBLIQUES.has(nom);
   }
 
+  /* Les vues qui montrent la CONFRERIE : elles lisent les donnees de tout le
+     monde, et la RLS les rend vides pour un invite. Un onglet qui n'affiche
+     rien se lit comme une panne — il vaut mieux ne pas l'ouvrir du tout.
+
+     `member-roster` n'y figure pas : c'est SON roster, la raison meme de son
+     compte. `builder`, `wiki`, `collection` et `calculateur` non plus : ils
+     tiennent debout sans aucun compte. */
+  const VUES_DE_CONFRERIE = new Set([
+    "dashboard", "roster", "analyse", "availability", "boss"
+  ]);
+  const VUE_ADMIN = "admin";
+
   function vueAutorisee(nom){
-    return vuePublique(nom) || !visiteurAnonyme();
+    if(vuePublique(nom)) return true;
+    if(visiteurAnonyme()) return false;
+    if(nom === VUE_ADMIN) return estAdministrateur();
+    return !(VUES_DE_CONFRERIE.has(nom) && inviteHorsConfrerie());
+  }
+
+  /* Le repli depend de qui frappe a la porte. Le Wiki accueille le visiteur
+     sans compte ; l'invite, lui, a un roster — l'y renvoyer vaut mieux que de
+     le poser sur une page de consultation. */
+  function vueDeRepli(){
+    return inviteHorsConfrerie() ? "member-roster" : VUE_DE_REPLI;
   }
 
   function ongletsAtteignables(barre){
@@ -111,7 +135,7 @@ import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
     const active = document.querySelector(".view.active");
     const nomActif = active ? active.id.replace(/^view-/, "") : "";
     if(nomActif && !vueAutorisee(nomActif)){
-      void showView(VUE_DE_REPLI, { historyMode:settings.historyMode });
+      void showView(vueDeRepli(), { historyMode:settings.historyMode });
     }
   }
 
@@ -121,7 +145,7 @@ import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
        part laisse l'onglet precedent surligne et la page inchangee, ce qui se
        lit comme une panne. */
     if(!vueAutorisee(name)){
-      return showView(VUE_DE_REPLI, {
+      return showView(vueDeRepli(), {
         historyMode:settings.historyMode === "none" ? "none" : "replace"
       });
     }

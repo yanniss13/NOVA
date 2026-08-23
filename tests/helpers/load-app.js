@@ -600,7 +600,17 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   WEAPON_ENUM:typeof WEAPON_ENUM === "object" ? WEAPON_ENUM : undefined,
   ELEMENTS:typeof ELEMENTS === "object" ? ELEMENTS : undefined,
   ELEM_ORDER:typeof ELEM_ORDER === "object" ? ELEM_ORDER : undefined,
-  charElements:typeof charElements === "function" ? charElements : undefined
+  charElements:typeof charElements === "function" ? charElements : undefined,
+  vueAutorisee:typeof vueAutorisee === "function" ? vueAutorisee : undefined,
+  inviteHorsConfrerie:typeof inviteHorsConfrerie === "function"
+    ? inviteHorsConfrerie
+    : undefined,
+  estAdministrateur:typeof estAdministrateur === "function"
+    ? estAdministrateur
+    : undefined,
+  sessionCourante:typeof sessionCourante === "object"
+    ? sessionCourante
+    : undefined
 });})();`;
 
 function testWeaponDefinition(gameId, base, percentOption){

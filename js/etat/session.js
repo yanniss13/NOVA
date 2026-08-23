@@ -14,9 +14,18 @@
    question posee a la session courante, pas une regle sur l'equipe. Le
    modele d'equipe, lui, doit rester lisible sans connaitre l'utilisateur. */
 
+  /* `membre` part a VRAI, et ce n'est pas une etourderie.
+
+     Hors ligne, ou avant la premiere lecture de profil, personne n'a de
+     drapeau. Traiter ce vide comme « pas membre » enfermerait la confrerie
+     entiere dehors des que Supabase repond mal. La RLS reste le vrai portier :
+     un onglet ouvert sur des donnees vides se repare d'un rechargement, un
+     membre exile de son propre roster, non. */
   const sessionCourante = {
     user: null,
     pseudo: "",
+    membre: true,
+    admin: false,
     applicationEpoch: 0,
     rosterProfiles: []
   };
@@ -44,4 +53,25 @@
     return sessionCourante.applicationEpoch > 0 && !sessionCourante.user;
   }
 
-export { canManageTeam, sessionCourante, visiteurAnonyme };
+  /* L'invite : quelqu'un dont on SAIT qu'il a un compte SANS appartenir a la
+     confrerie. Meme prudence que `visiteurAnonyme` — tant que la session n'a
+     pas ete appliquee, la reponse est « non ». */
+  function inviteHorsConfrerie(){
+    return sessionCourante.applicationEpoch > 0
+      && !!sessionCourante.user
+      && !sessionCourante.membre;
+  }
+
+  /* Le drapeau seul ne suffit pas : il survit en memoire a une deconnexion
+     tant que `applySession` n'a pas fini son travail. */
+  function estAdministrateur(){
+    return !!sessionCourante.user && !!sessionCourante.admin;
+  }
+
+export {
+  canManageTeam,
+  estAdministrateur,
+  inviteHorsConfrerie,
+  sessionCourante,
+  visiteurAnonyme
+};

@@ -41,10 +41,19 @@ async function ouvrirRoute(route){
   const attendConnexion = !vuePublique(route.view)
     && !sessionCourante.user
     && !!sb;
-  if(attendConnexion || !vueAutorisee(route.view)){
+  if(attendConnexion){
     routeEnAttente = route;
     await showView("wiki", { historyMode:"none" });
     openAuth();
+    return true;
+  }
+  /* Vue hors de portee, mais le compte est deja ouvert : un invite n'a rien a
+     faire d'une fenetre de connexion, il en a une. Le repli est confie a
+     `showView`, seul juge de la vue d'accueil de chacun — le Wiki pour un
+     visiteur, son roster pour un invite. */
+  if(!vueAutorisee(route.view)){
+    routeEnAttente = null;
+    await showView(route.view, { historyMode:"none" });
     return true;
   }
   routeEnAttente = null;

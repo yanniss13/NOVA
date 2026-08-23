@@ -27,10 +27,17 @@ async function installFakeSupabase(page){
       removedRealtimeChannels:0,
       failNextRosterUpsert:false,
       rosterConflictOnce:false,
+      /* `user-1` n'est PAS admin par defaut : la barre d'onglets qu'il voit
+         est celle que verifient les tests deja en place. Le parcours
+         d'administration se donne le drapeau lui-meme, avant de se connecter. */
       profiles:[
-        { id:"user-1", pseudo:"Yannis" },
-        { id:"user-2", pseudo:"Merlin" }
+        { id:"user-1", pseudo:"Yannis", membre:true,  admin:false },
+        { id:"user-2", pseudo:"Merlin", membre:true,  admin:false },
+        { id:"user-3", pseudo:"Invité", membre:false, admin:false }
       ],
+      /* L'email choisit le compte. Sans mapping, tous les parcours se
+         connectaient en `user-1` et aucun ne pouvait jouer un invite. */
+      comptesParEmail:{ "invite@example.test":"user-3" },
       teams:[
         {
           id:"team-own",
@@ -157,6 +164,29 @@ async function installFakeSupabase(page){
         "boss_participation",
         "boss_run_reports"
       ]),
+      /* Les tables de la confrerie : un invite n'y lit ni n'y ecrit rien,
+         pas meme ses propres lignes. */
+      membreOnlyTables:new Set([
+        "recensement",
+        "member_availability",
+        "boss_sessions",
+        "boss_participation",
+        "boss_run_reports",
+        "animation_measures"
+      ]),
+      /* Les tables possedees : un invite n'y voit que les siennes. */
+      partageEntreMembres:new Set([
+        "profiles",
+        "teams",
+        "roster_characters",
+        "collection_items"
+      ]),
+      estMembreCourant(){
+        const id = this.owner();
+        if(!id) return false;
+        const profil = state.profiles.find(item => item.id === id);
+        return !!profil && profil.membre === true;
+      },
       owner(){
         return state.session && state.session.user && state.session.user.id;
       },
@@ -172,6 +202,17 @@ async function installFakeSupabase(page){
         return table === "boss_sessions" && operation !== "upsert";
       }
     };
+
+    /* Les cinq fonctions `security definer` qui portent un garde
+       `MEMBRE_REQUIS` dans supabase/schema.sql. La liste est ici, et non dans
+       `bossAcl`, parce qu'elle nomme des RPC et non des tables. */
+    const RPC_RESERVEES_AUX_MEMBRES = new Set([
+      "join_boss_run",
+      "leave_boss_run",
+      "select_boss_team",
+      "complete_boss_run_with_report",
+      "update_boss_run_report"
+    ]);
 
     function currentBossWeekStart(now){
       const p = new Intl.DateTimeFormat("en-CA",{ timeZone:"Europe/Paris",
@@ -193,6 +234,26 @@ async function installFakeSupabase(page){
       const fail = message => ({ data:null, error:{ message } });
       state.rpcCalls.push({ name, args:clone(args) });
       if(!owner) return fail("AUTH_REQUIRED");
+      if(name === "definir_membre"){
+        const acteur = state.profiles.find(item => item.id === owner);
+        if(!acteur || acteur.admin !== true) return fail("ADMIN_REQUIS");
+        if(args.p_uid === owner && !args.p_membre){
+          return fail("AUTO_RETRAIT_REFUSE");
+        }
+        const cible = state.profiles.find(item => item.id === args.p_uid);
+        if(!cible) return fail("PROFIL_INTROUVABLE");
+        cible.membre = !!args.p_membre;
+        return { data:null, error:null };
+      }
+      /* Les RPC du boss traversent la RLS en production : leur garde membre
+         vit dans la fonction SQL, et doit donc vivre ici aussi.
+
+         `update_roster_build` n'en fait PAS partie : elle n'est pas
+         `security definer`, la RLS s'y applique deja, et c'est le roster
+         personnel d'un invite — il y a droit. */
+      if(RPC_RESERVEES_AUX_MEMBRES.has(name) && !bossAcl.estMembreCourant()){
+        return fail("MEMBRE_REQUIS");
+      }
       const hold = state.bossRpcHold;
       if(hold && (!hold.name || hold.name === name)){
         await new Promise(resolve => { hold.release = resolve; });
@@ -461,11 +522,25 @@ async function installFakeSupabase(page){
         if(bossAcl.requiresRpc(table, operation)){
           return rpcRequired();
         }
+        /* Le faux applique les memes refus que la RLS reelle : un harnais plus
+           permissif que la production laisserait passer exactement les fautes
+           qu'on cherche. */
+        if(bossAcl.membreOnlyTables.has(table) && !bossAcl.estMembreCourant()){
+          return operation === "select"
+            ? { data:[], error:null }
+            : { data:null, error:{ message:"MEMBRE_REQUIS" } };
+        }
 
         if(operation === "select"){
-          const selected = bossAcl.canRead(table)
+          let selected = bossAcl.canRead(table)
             ? clone(rows.filter(matchRow))
             : [];
+          if(bossAcl.partageEntreMembres.has(table)
+            && !bossAcl.estMembreCourant()){
+            const moi = bossAcl.owner();
+            selected = selected.filter(row =>
+              (table === "profiles" ? row.id : row.owner) === moi);
+          }
           if(sorts.length){
             selected.sort((a,b) => {
               for(const [col,dir] of sorts){
@@ -734,12 +809,14 @@ async function installFakeSupabase(page){
       auth:{
         async getSession(){ return { data:{ session:clone(state.session) }, error:null }; },
         async signInWithPassword({ email }){
-          state.session = { user:{ id:"user-1", email } };
+          const id = state.comptesParEmail[email] || "user-1";
+          state.session = { user:{ id, email } };
           emit("SIGNED_IN");
           return { data:{ session:clone(state.session), user:clone(state.session.user) }, error:null };
         },
         async signUp({ email }){
-          state.session = { user:{ id:"user-1", email } };
+          const id = state.comptesParEmail[email] || "user-1";
+          state.session = { user:{ id, email } };
           emit("SIGNED_IN");
           return { data:{ session:clone(state.session), user:clone(state.session.user) }, error:null };
         },
