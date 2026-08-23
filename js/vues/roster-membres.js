@@ -18,6 +18,7 @@ import { refreshRosterProfiles } from "../donnees/roster-profils.js";
 import { MemberRosterStore } from "../donnees/roster-store.js";
 import { sessionCourante } from "../etat/session.js";
 import { linkedArmorsOf, weaponFolderOf, weaponTypesOf } from "../metier/armes.js";
+import { ouvrirImportCaptures } from "./import-captures.js";
 import { charOf } from "../metier/catalogue.js";
 import {
   compatibleWeaponGroups,
@@ -498,6 +499,52 @@ import { toast } from "./toast.js";
       || (memberRosterDraft.builds[type] = emptyRosterBuild());
   }
 
+  /* L'import ne connait que des emplacements et des configurations : c'est ici
+     qu'on les range dans le build, exactement la ou la saisie manuelle les
+     ecrit. Aucun autre chemin d'ecriture n'est cree. */
+  function appliquerImportRosterCaptures(draft, weaponType, parEmplacement){
+    const emplacements = Object.keys(parEmplacement || {});
+    const arme = parEmplacement && parEmplacement.Arme;
+    const typeArme = arme && weaponFolderOf(arme.fichier);
+    const armeCompatible = typeArme
+      && weaponTypesOf(draft.charId).includes(typeArme);
+    if(armeCompatible){
+      weaponType = typeArme;
+    }
+    const pieces = emplacements.filter(slot => slot !== "Arme");
+    const armeApplicable = arme && armeCompatible && typeArme === weaponType;
+    if(!armeApplicable && !pieces.length) return { weaponType, applied:0 };
+    const cible = draft.builds[weaponType]
+      || (draft.builds[weaponType] = emptyRosterBuild());
+    let applied = 0;
+    if(armeApplicable){
+      cible.weapon = arme.fichier;
+      cible.weaponConfig = arme.config;
+      applied++;
+    }
+    pieces.forEach(slot => {
+      const domaine = JEWEL_SLOTS.indexOf(slot) >= 0 ? "jewel" : "armor";
+      const cle = domaine + "Config";
+      applyGearChange(cible, domaine, slot, parEmplacement[slot].fichier);
+      if(!cible[cle]) cible[cle] = {};
+      cible[cle][slot] = parEmplacement[slot].config;
+      applied++;
+    });
+    return { weaponType, applied };
+  }
+
+  function appliquerImportCaptures(parEmplacement){
+    const resultat = appliquerImportRosterCaptures(
+      memberRosterDraft,
+      memberRosterWeaponType,
+      parEmplacement
+    );
+    memberRosterWeaponType = resultat.weaponType;
+    if(!resultat.applied) return;
+    renderMemberRosterEditor();
+    toast(resultat.applied + " élément(s) rempli(s) depuis les captures.");
+  }
+
   function applyMemberRosterArmorSet(set){
     const build = currentMemberRosterBuild();
     ARMOR_SET_SLOTS.forEach(slot => {
@@ -641,6 +688,20 @@ import { toast } from "./toast.js";
       reload(){ return reloadCurrentRosterDraft(); }
     });
     if(configControl) gear.appendChild(configControl);
+    /* Le bouton n'apparait que si le navigateur sait executer le moteur :
+       mieux vaut le masquer que proposer une fonction qui echouera. */
+    if(typeof WebAssembly === "object"){
+      gear.appendChild(el("button",{
+        class:"btn import-captures-open",
+        type:"button",
+        text:"Remplir depuis des captures",
+        onclick:()=>ouvrirImportCaptures({
+          herosSlug:build.char,
+          existant:Object.assign({ Arme:build.weapon }, build.armor, build.jewel),
+          surEnregistrement:appliquerImportCaptures
+        })
+      }));
+    }
     gear.appendChild(el("div",{class:"gear-group",text:"Armures"}));
     gear.appendChild(equipmentSetButton("armor", applyMemberRosterArmorSet));
     ARMOR_SLOTS.forEach(slot => gear.appendChild(gearConfigurableSlot(

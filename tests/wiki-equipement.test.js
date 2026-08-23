@@ -243,7 +243,10 @@ const STATS_TEST = {
   assert.equal(armes.length, 155, "155 armes attendues");
   assert.equal(armures.length, 62, "62 armures attendues");
   assert.equal(bijoux.length, 37, "37 bijoux attendus");
-  assert.equal(gravees.length, 68, "68 armures gravées attendues");
+  assert.equal(gravees.length, 83,
+  /* 83 depuis l'ajout des gravees SR au catalogue ; il n'y avait que les
+     SSR, faute d'icones locales. */
+  "83 armures gravées attendues");
 
   assert.equal(
     armes.filter(arme => arme.aPassif).length, 94,

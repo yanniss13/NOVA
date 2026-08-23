@@ -238,6 +238,8 @@ Site Confrérie 7ds/
 ├─ js/metier/              # Logique pure, testable sans navigateur : stats, dispos, boss, armes.
 ├─ js/donnees/             # Accès Supabase, sans aucun rendu : boss-store, roster-profils.
 ├─ js/vues/                # Tout ce qui touche au DOM : dispos, picker, modales, éditeur d'arme.
+├─ vendor/tesseract/       # Moteur OCR versé dans le dépôt (~5 Mo), pour l'import de
+│                          # captures. Hors CORE_ASSETS : mis en cache à la demande.
 ├─ sw.js                   # Service worker. Cache versionné par __BUILD_VERSION__, mise à jour explicite.
 ├─ .github/workflows/pages.yml         # Tests de toute contribution + déploiement Pages du seul `main` testé.
 ├─ .github/workflows/boss-reminder.yml # Rappel Discord (secrets propres). Indépendant du déploiement.
@@ -291,6 +293,7 @@ Site Confrérie 7ds/
 ├─ 7ds-ui/                 # Icônes d'UI : mastery/<arme>.webp, role-elements/<el>_<role>.webp,
 │                          # skills/<Nom>.webp (313 icônes de compétences, wiki)
 ├─ AGENTS.md               # Ce fichier.
+├─ docs/import-captures.md # Remplir un build depuis des captures d'écran (OCR).
 ├─ docs/superpowers/specs/ # Spec de design détaillée.
 ├─ 7ds-personnages/        # <id>.webp  (ex. meliodas.webp)
 ├─ 7ds-armes/<Type>/       # 12 dossiers de types d'armes, *.webp
