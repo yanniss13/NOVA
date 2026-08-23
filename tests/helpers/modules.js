@@ -74,6 +74,7 @@ const MODULES = [
   "donnees/roster-store.js",
   "donnees/recommandation-groupes-store.js",
   "donnees/collection-store.js",
+  "donnees/presets-store.js",
   "donnees/boss-store.js",
   "donnees/suivi-store.js",
   "donnees/calibration-store.js",

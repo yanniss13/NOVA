@@ -16,7 +16,10 @@ import { jsonCopy } from "../noyau/outils.js";
   const PRESET_NAME_MAX = 40;
   const PRESETS_MAX = 40;
 
-  function copie(valeur){
+  /* Les aides privees portent un nom prefixe : le chargeur des tests concatene
+     TOUS les modules dans une seule portee, ou `copie` appartient deja a
+     metier/essai-enchantements.js et `piecesDe` a metier/wiki-equipement.js. */
+  function copiePreset(valeur){
     return valeur == null ? null : jsonCopy(valeur);
   }
 
@@ -27,7 +30,7 @@ import { jsonCopy } from "../noyau/outils.js";
 
   /* Ne garde que les emplacements connus, dans leur ordre canonique. Une cle
      inconnue — « Armure liee » comprise — disparait ici, une fois pour toutes. */
-  function piecesDe(source, emplacements){
+  function piecesPresetDe(source, emplacements){
     const lu = source && typeof source === "object" ? source : {};
     return emplacements.reduce((resultat, emplacement) => {
       const piece = lu[emplacement];
@@ -37,11 +40,11 @@ import { jsonCopy } from "../noyau/outils.js";
   }
 
   /* Une config n'existe que si sa piece est la. */
-  function configsDe(source, pieces, emplacements){
+  function configsPresetDe(source, pieces, emplacements){
     const lu = source && typeof source === "object" ? source : {};
     return emplacements.reduce((resultat, emplacement) => {
       if(pieces[emplacement] && lu[emplacement] != null){
-        resultat[emplacement] = copie(lu[emplacement]);
+        resultat[emplacement] = copiePreset(lu[emplacement]);
       }
       return resultat;
     }, {});
@@ -49,13 +52,13 @@ import { jsonCopy } from "../noyau/outils.js";
 
   function normaliserPreset(source){
     if(!source || typeof source !== "object") return null;
-    const armor = piecesDe(source.armor, PRESET_ARMOR_SLOTS);
-    const jewel = piecesDe(source.jewel, JEWEL_SLOTS);
+    const armor = piecesPresetDe(source.armor, PRESET_ARMOR_SLOTS);
+    const jewel = piecesPresetDe(source.jewel, JEWEL_SLOTS);
     return {
       armor,
-      armorConfig:configsDe(source.armorConfig, armor, PRESET_ARMOR_SLOTS),
+      armorConfig:configsPresetDe(source.armorConfig, armor, PRESET_ARMOR_SLOTS),
       jewel,
-      jewelConfig:configsDe(source.jewelConfig, jewel, JEWEL_SLOTS)
+      jewelConfig:configsPresetDe(source.jewelConfig, jewel, JEWEL_SLOTS)
     };
   }
 
@@ -81,20 +84,21 @@ import { jsonCopy } from "../noyau/outils.js";
       armor[emplacement] = normalise.armor[emplacement];
       const config = normalise.armorConfig[emplacement];
       if(config == null) delete armorConfig[emplacement];
-      else armorConfig[emplacement] = copie(config);
+      else armorConfig[emplacement] = copiePreset(config);
     });
 
     const jewel = Object.assign({}, normalise.jewel);
     const jewelConfig = {};
     JEWEL_SLOTS.forEach(emplacement => {
       const config = normalise.jewelConfig[emplacement];
-      if(config != null) jewelConfig[emplacement] = copie(config);
+      if(config != null) jewelConfig[emplacement] = copiePreset(config);
     });
 
     return Object.assign({}, build, { armor, armorConfig, jewel, jewelConfig });
   }
 
-/* Rien n'est exporte tant que rien ne l'importe : `tests/modules-imports.js`
-   refuse un export orphelin, et le chargeur des tests n'en a pas besoin pour
-   atteindre un symbole. Chaque consommateur ajoutera l'export dont il a
-   besoin, au moment ou il arrive. */
+/* On n'exporte qu'un symbole qui a un consommateur : `tests/modules-imports.js`
+   refuse un export orphelin, et le chargeur des tests atteint les symboles
+   sans passer par les exports. `capturerPreset` et `appliquerPreset` sortiront
+   quand les vues les appelleront. */
+export { PRESETS_MAX, nomPresetValide, normaliserPreset };

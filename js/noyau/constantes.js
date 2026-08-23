@@ -44,6 +44,7 @@
   const CLOUD_TEAMS_CACHE_KEY = "confrerie7ds.cloud.teams";
   const CLOUD_ROSTER_CACHE_KEY = "confrerie7ds.cloud.roster";
   const CLOUD_COLLECTION_CACHE_KEY = "confrerie7ds.cloud.collection";
+  const CLOUD_PRESETS_CACHE_KEY = "confrerie7ds.cloud.presets";
   /* Pas de prefixe `cloud.` : la constante C se mesure sur SON build et ne se
      partage pas, voir js/donnees/calibration-store.js. */
   const CALIBRATION_KEY = "confrerie7ds.calibration";
@@ -118,6 +119,7 @@ export {
   CLOUD_TEAMS_CACHE_KEY,
   CLOUD_ROSTER_CACHE_KEY,
   CLOUD_COLLECTION_CACHE_KEY,
+  CLOUD_PRESETS_CACHE_KEY,
   CALIBRATION_KEY,
   COEQUIPIERS_KEY,
   MIGRATION_KEY_PREFIX,
