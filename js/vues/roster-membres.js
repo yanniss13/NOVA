@@ -883,24 +883,9 @@ import { toast } from "./toast.js";
     ]));
   }
 
-  /* Les presets se relisent a l'ouverture de la fiche, une fois par membre.
-     Sans cela le cache local ferait foi, et un membre qui change d'appareil
-     ouvrirait une liste vide. Meme forme que la Collection : hors ligne, le
-     cache suffit et personne n'est averti — le membre n'a rien demande. */
-  let presetsRelusPour = "";
-  function relirePresets(){
-    const ownerId = sessionCourante.user && sessionCourante.user.id;
-    if(!ownerId || presetsRelusPour === ownerId) return;
-    presetsRelusPour = ownerId;
-    PresetsStore.refresh()
-      .then(renderMemberRosterEditor)
-      .catch(()=>{ presetsRelusPour = ""; });
-  }
-
   function openMemberRosterEditor(entry, restoreFocus){
     const normalized = normalizeRosterCharacter(entry);
     if(!normalized) return;
-    relirePresets();
     memberRosterDraft = JSON.parse(JSON.stringify(normalized));
     memberRosterDraftSourceUpdatedAt = normalized.updatedAt;
     memberRosterDraftInitialJson = JSON.stringify(memberRosterDraft);

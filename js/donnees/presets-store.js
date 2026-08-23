@@ -48,9 +48,29 @@ import { sessionCourante } from "../etat/session.js";
     return String(a.nom).localeCompare(String(b.nom));
   }
 
+  /* Quel membre a deja ete lu au serveur. Vide apres un echec : hors ligne on
+     reessaiera au geste suivant, sans jamais avertir — personne n'a rien
+     demande, le cache suffit a afficher. */
+  let chargePour = "";
+
   const PresetsStore = {
     all(){
       return cachePresets.slice();
+    },
+    /* Le store decide seul quand relire, une fois par membre. Les ecrans
+       demandent le chargement sans se coordonner : sans cela chacun porterait
+       sa propre garde, et celui qu'on oublierait afficherait une liste vide
+       sur un appareil neuf. */
+    async ensureLoaded(){
+      const ownerId = sessionCourante.user && sessionCourante.user.id;
+      if(!ownerId || chargePour === ownerId) return PresetsStore.all();
+      chargePour = ownerId;
+      try{
+        return await PresetsStore.refresh();
+      }catch(erreur){
+        chargePour = "";
+        return PresetsStore.all();
+      }
     },
     async refresh(){
       if(!sessionCourante.user || !sb) return PresetsStore.all();

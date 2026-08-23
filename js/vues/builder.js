@@ -32,6 +32,7 @@ import {
   emptyJewel,
   emptyPot
 } from "../metier/equipement.js";
+import { appliquerPreset } from "../metier/presets.js";
 import {
   ARMOR_LABELS,
   ARMOR_SLOTS,
@@ -65,6 +66,7 @@ import {
   equipmentSetButton,
   findGearConfigButton,
   gearConfigurableSlot,
+  ouvrirSelecteurPreset,
   rosterEntryWithActiveHeroBuild,
   storeActiveHeroBuild,
   weaponConfigControl
@@ -513,6 +515,26 @@ import { toast } from "./toast.js";
       }
     });
     if(configControl) gear.appendChild(configControl);
+    /* Un preset porte l'armure ET les bijoux : il precede les deux groupes
+       plutot que de se ranger sous l'un d'eux. */
+    gear.appendChild(el("div",{class:"gear-group", text:"Presets"}));
+    gear.appendChild(el("button",{
+      class:"btn btn-ghost gear-preset-apply",
+      type:"button",
+      text:"Appliquer un preset",
+      onclick:()=>ouvrirSelecteurPreset({
+        titre:"Appliquer un preset — emplacement "+(i+1),
+        onChoisir:preset => {
+          /* On reecrit l'emplacement plutot que de muter : `appliquerPreset`
+             rend un nouveau heros, comme `applyWeaponChange` juste a cote. */
+          const suivant = appliquerPreset(brouillonEquipe.equipe.heroes[i], preset);
+          if(!suivant) return;
+          brouillonEquipe.equipe.heroes[i] = suivant;
+          renderBuilder();
+          toast("Preset « "+preset.nom+" » équipé.");
+        }
+      })
+    }));
     gear.appendChild(el("div",{class:"gear-group", text:"Armures"}));
     gear.appendChild(equipmentSetButton("armor", set => {
       ARMOR_SET_SLOTS.forEach(slot => {
