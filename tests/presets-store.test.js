@@ -20,6 +20,10 @@ const source = fs.readFileSync(
 
 const memoire = new Map();
 const envois = [];
+/* Le faux serveur garde vraiment ce qu'on lui envoie : sans cela une relecture
+   viderait le cache, et le test ne verrait pas la difference. */
+const lignes = [];
+let lectures = 0;
 
 const bac = {
   CLOUD_PRESETS_CACHE_KEY:"confrerie7ds.cloud.presets",
@@ -43,14 +47,22 @@ const bac = {
       const requete = {
         select(){ return requete; },
         eq(){ return requete; },
-        order(){ return Promise.resolve({ data:[], error:null }); },
+        order(){
+          lectures += 1;
+          return Promise.resolve({ data:lignes.slice(), error:null });
+        },
         upsert(payload){
           envois.push(["upsert", payload]);
+          const index = lignes.findIndex(ligne => ligne.id === payload.id);
+          if(index >= 0) lignes[index] = payload;
+          else lignes.push(payload);
           return Promise.resolve({ error:null });
         },
         delete(){
           return { eq(){ return { eq(cle, valeur){
             envois.push(["delete", valeur]);
+            const index = lignes.findIndex(ligne => ligne.id === valeur);
+            if(index >= 0) lignes.splice(index, 1);
             return Promise.resolve({ error:null });
           } }; } };
         }
@@ -126,6 +138,18 @@ const { PresetsStore } = bac.__api;
   const dernier = PresetsStore.all()[0];
   await PresetsStore.save("renomme", { armor:{}, jewel:{} }, dernier.id);
   assert.equal(PresetsStore.all().length, 40);
+
+  /* Les ecrans ne decident pas quand relire : ils demandent le chargement, et
+     le store ne va au reseau qu'une fois par membre. Sans cela, chaque ecran
+     dupliquerait la meme garde — et celui qu'on oublierait afficherait une
+     liste vide sur un appareil neuf. */
+  const lecturesAvant = lectures;
+  const charges = await PresetsStore.ensureLoaded();
+  assert.equal(lectures, lecturesAvant + 1, "le premier chargement lit le serveur");
+  assert.equal(charges.length, 40, "la relecture ne doit pas vider le cache");
+
+  await PresetsStore.ensureLoaded();
+  assert.equal(lectures, lecturesAvant + 1, "le second appel ne relit pas");
 
   console.log("presets-store.test.js : OK");
 })().catch(erreur => {

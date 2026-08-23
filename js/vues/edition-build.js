@@ -244,7 +244,10 @@ import { toast } from "./toast.js";
      il rend le preset choisi, et l'appelant en fait ce qu'il veut. C'est ce
      qui permet au calculateur d'essayer sans jamais ecrire. */
   function ouvrirSelecteurPreset(config){
-    const presets = PresetsStore.all();
+    return PresetsStore.ensureLoaded().then(presets => ouvrirPicker(config, presets));
+  }
+
+  function ouvrirPicker(config, presets){
     if(!presets.length){
       toast(
         "Aucun preset enregistré. Habille un héros, puis « Enregistrer comme preset ».",

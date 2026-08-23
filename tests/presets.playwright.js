@@ -100,6 +100,32 @@ const ARME_EPEE = "En plein cœur !";
       true
     );
 
+    // ---------- Le Builder : habiller un heros d'une equipe ----------
+    /* Le preset enregistre plus haut doit etre disponible ici sans rien
+       refaire : c'est tout l'interet d'un preset. */
+    await page.locator("#memberRosterClose").click();
+    await page.locator('.tab[data-view="builder"]').click();
+
+    const premierHeros = page.locator("#heroGrid .hero").first();
+    await premierHeros.locator(".gear-slot").first().waitFor();
+
+    await premierHeros.getByRole("button", { name:"Appliquer un preset" }).click();
+    await page.getByRole("button", { name:"Set Arachnée" }).click();
+
+    await page.waitForFunction(nom => {
+      const slot = document.querySelector(
+        '#heroGrid .hero .gear-slot[data-slot="Haut"]'
+      );
+      return slot && (slot.getAttribute("title") || "").includes(nom);
+    }, HAUT);
+
+    /* Le voisin ne bouge pas : appliquer sur un emplacement n'habille que
+       celui-la. */
+    const voisin = await page.locator("#heroGrid .hero").nth(1)
+      .locator('.gear-slot[data-slot="Haut"]').getAttribute("title");
+    assert.equal(voisin.includes(HAUT), false,
+      "seul l'emplacement vise doit changer");
+
     assert.deepEqual(errors, [], "aucune erreur de page");
     console.log("presets.playwright.js : OK");
   }finally{
