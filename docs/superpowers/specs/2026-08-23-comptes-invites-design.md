@@ -111,8 +111,9 @@ exigent donc `private.est_membre(auth.uid())` dans leur `with check`.
 
 `animation_measures` bascule en membre pour la lecture comme pour l'envoi : le
 chronométrage est un effort de confrérie. Aucun écran du site ne lit cette
-table — seul `scripts/rapatrier-mesures.py` la lit, avec la clé de service, qui
-ignore la RLS. Le changement n'a donc aucun effet visible.
+table — seul `scripts/rapatrier-mesures.py` la lit, et il ouvre une session
+avec un compte ordinaire : la RLS s'y applique pleinement. Qui rapatrie doit
+donc être membre, et qui envoie une mesure aussi.
 
 ## Les fonctions RPC du boss
 

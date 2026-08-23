@@ -1422,8 +1422,10 @@ alter table public.animation_measures enable row level security;
 drop policy if exists animation_measures_read   on public.animation_measures;
 drop policy if exists animation_measures_insert on public.animation_measures;
 -- Le chronométrage est un effort de confrérie. Aucun écran du site ne lit
--- cette table : seul `scripts/rapatrier-mesures.py` la lit, avec la clé de
--- service, qui ignore la RLS. Le changement n'a donc aucun effet visible.
+-- cette table : seul `scripts/rapatrier-mesures.py` la lit, et il ouvre une
+-- session avec un compte ordinaire — la RLS s'y applique donc pleinement.
+-- Qui rapatrie doit être membre, et qui envoie une mesure aussi. Un invité
+-- qui chronomètre verra ses envois refusés tant qu'on ne l'a pas accueilli.
 create policy animation_measures_read on public.animation_measures
   for select to authenticated
   using (private.est_membre(auth.uid()));
