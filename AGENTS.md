@@ -235,8 +235,10 @@ Site Confrérie 7ds/
 ├─ js/app.js               # Ce qui n'est pas encore découpé : vues restantes, auth, démarrage.
 ├─ js/noyau/               # Briques sans domaine : dom, outils, constantes, client Supabase.
 ├─ js/etat/                # État mutable partagé : session, brouillon d'équipe.
-├─ js/metier/              # Logique pure, testable sans navigateur : stats, dispos, boss, armes.
-├─ js/donnees/             # Accès Supabase, sans aucun rendu : boss-store, roster-profils.
+├─ js/metier/              # Logique pure, testable sans navigateur : stats, dispos, boss, armes,
+│                            # presets (capture/applique 7 emplacements d'équipement).
+├─ js/donnees/             # Accès Supabase, sans aucun rendu : boss-store, roster-profils,
+│                            # presets-store (presets privés d'un membre).
 ├─ js/vues/                # Tout ce qui touche au DOM : dispos, picker, modales, éditeur d'arme.
 ├─ vendor/tesseract/       # Moteur OCR versé dans le dépôt (~5 Mo), pour l'import de
 │                          # captures. Hors CORE_ASSETS : mis en cache à la demande.
