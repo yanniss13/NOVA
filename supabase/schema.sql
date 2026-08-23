@@ -791,6 +791,12 @@ begin
   if v_owner is null then
     raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
   end if;
+  -- Cette fonction est `security definer` : elle traverse la RLS. Sans ce
+  -- garde, un invité rejoindrait un run par appel direct, quelles que soient
+  -- les politiques posées sur les tables.
+  if not private.est_membre(v_owner) then
+    raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
+  end if;
 
   select week_start, status
     into v_week, v_status
@@ -866,6 +872,12 @@ begin
   if v_owner is null then
     raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
   end if;
+  -- Cette fonction est `security definer` : elle traverse la RLS. Sans ce
+  -- garde, un invité rejoindrait un run par appel direct, quelles que soient
+  -- les politiques posées sur les tables.
+  if not private.est_membre(v_owner) then
+    raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
+  end if;
 
   select week_start, status
     into v_week, v_status
@@ -909,6 +921,12 @@ declare
 begin
   if v_owner is null then
     raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
+  end if;
+  -- Cette fonction est `security definer` : elle traverse la RLS. Sans ce
+  -- garde, un invité rejoindrait un run par appel direct, quelles que soient
+  -- les politiques posées sur les tables.
+  if not private.est_membre(v_owner) then
+    raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
   end if;
 
   select week_start, status
@@ -988,6 +1006,12 @@ declare
 begin
   if v_owner is null then
     raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
+  end if;
+  -- Cette fonction est `security definer` : elle traverse la RLS. Sans ce
+  -- garde, un invité rejoindrait un run par appel direct, quelles que soient
+  -- les politiques posées sur les tables.
+  if not private.est_membre(v_owner) then
+    raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
   end if;
 
   select *
@@ -1087,6 +1111,12 @@ declare
 begin
   if v_owner is null then
     raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
+  end if;
+  -- Cette fonction est `security definer` : elle traverse la RLS. Sans ce
+  -- garde, un invité rejoindrait un run par appel direct, quelles que soient
+  -- les politiques posées sur les tables.
+  if not private.est_membre(v_owner) then
+    raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
   end if;
 
   select session_id
@@ -1436,3 +1466,45 @@ create policy gear_presets_read   on public.gear_presets for select to authentic
 create policy gear_presets_insert on public.gear_presets for insert to authenticated with check (owner = auth.uid());
 create policy gear_presets_update on public.gear_presets for update to authenticated using (owner = auth.uid()) with check (owner = auth.uid());
 create policy gear_presets_delete on public.gear_presets for delete to authenticated using (owner = auth.uid());
+
+-- 13) Promouvoir un compte, et rien d'autre.
+--
+-- L'écran d'administration passe par ici et jamais par un `update` direct :
+-- `profiles_update` reste limité à SA propre ligne, et le trigger
+-- `verrouiller_drapeaux_de_profil` refuse de toute façon un drapeau posé à la
+-- main depuis une session.
+--
+-- Le drapeau `admin` n'est PAS touché ici. Il se pose une fois, à la main,
+-- dans l'éditeur SQL de Supabase — voir docs/comptes-invites.md.
+create or replace function public.definir_membre(p_uid uuid, p_membre boolean)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
+  v_acteur uuid := auth.uid();
+begin
+  if v_acteur is null then
+    raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
+  end if;
+  if not private.est_admin(v_acteur) then
+    raise exception 'ADMIN_REQUIS' using errcode = 'P0001';
+  end if;
+  if p_uid is null or p_membre is null then
+    raise exception 'PARAMETRES_INVALIDES' using errcode = 'P0001';
+  end if;
+  -- Se retirer soi-même de la confrérie couperait le dernier responsable de
+  -- tout ce qu'il administre, sans que personne puisse l'y remettre.
+  if p_uid = v_acteur and not p_membre then
+    raise exception 'AUTO_RETRAIT_REFUSE' using errcode = 'P0001';
+  end if;
+  update public.profiles set membre = p_membre where id = p_uid;
+  if not found then
+    raise exception 'PROFIL_INTROUVABLE' using errcode = 'P0001';
+  end if;
+end;
+$$;
+
+revoke all on function public.definir_membre(uuid, boolean) from public;
+grant execute on function public.definir_membre(uuid, boolean) to authenticated;

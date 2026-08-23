@@ -203,4 +203,61 @@ assert.equal(lectureOuverte(rouverte), true,
 assert.equal(lectureOuverte(sql), false,
   "le recensement ne doit jamais être ouvert à tout compte connecté");
 
+/* ---- Les RPC du boss : la porte dérobée du chantier. ----
+
+   Elles sont `security definer` : les politiques de table ne les arrêtent pas.
+   Un contrôle posé uniquement sur les tables laisserait un invité rejoindre un
+   run par appel direct au client Supabase. */
+
+const RPC_BOSS = [
+  "join_boss_run",
+  "leave_boss_run",
+  "select_boss_team",
+  "complete_boss_run_with_report",
+  "update_boss_run_report"
+];
+
+RPC_BOSS.forEach(nom => {
+  const bloc = sql.match(
+    new RegExp(
+      "create or replace function public\\." + nom + "\\([\\s\\S]*?\\n\\$\\$;",
+      "i"
+    )
+  );
+  assert.ok(bloc, "public." + nom + " doit exister");
+  assert.match(
+    bloc[0],
+    /if not private\.est_membre\(v_owner\) then\s*raise exception 'MEMBRE_REQUIS'/i,
+    "public." + nom + " doit refuser un invité : elle contourne la RLS"
+  );
+});
+
+/* ---- La RPC de promotion : le seul chemin de l'écran d'administration. ---- */
+
+const promotion = sql.match(
+  /create or replace function public\.definir_membre[\s\S]*?\n\$\$;/i
+);
+assert.ok(promotion, "public.definir_membre doit exister");
+assert.match(promotion[0], /security definer/i,
+  "definir_membre doit écrire sur la ligne d'autrui, ce que la RLS interdit");
+assert.match(promotion[0], /private\.est_admin\(v_acteur\)/i,
+  "seul un admin promeut");
+assert.match(promotion[0], /AUTO_RETRAIT_REFUSE/,
+  "un admin ne peut pas se retirer lui-même");
+assert.match(
+  sql,
+  /grant execute on function public\.definir_membre\(uuid, boolean\) to authenticated/i,
+  "la RPC doit être appelable depuis le site"
+);
+
+/* Sans le garde admin, n'importe quel compte se promouvrait par appel direct.
+   On l'ôte d'une copie et on exige que le détecteur le voie. */
+const sansGarde = sql.replace(/private\.est_admin\(v_acteur\)/i, "true");
+const gardeAdmin = source =>
+  /create or replace function public\.definir_membre[\s\S]*?private\.est_admin\(v_acteur\)/i
+    .test(source);
+assert.equal(gardeAdmin(sansGarde), false,
+  "le détecteur doit voir un garde admin retiré");
+assert.equal(gardeAdmin(sql), true, "le garde admin doit être en place");
+
 console.log("comptes-invites-schema.test.js : OK");
