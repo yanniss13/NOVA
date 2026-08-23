@@ -165,6 +165,10 @@
      PLANCHER_DEGATS : la reduction defense x resistance ne peut pas ramener un
      coup sous 5 % de sa valeur d'avant mitigation. */
   const PLAFOND_FAIBLESSE = 6;
+
+  /* `battle_max_sum_protect_cur_rate` du jeu : la somme des sources de
+     percement de defense ne depasse jamais 90 %. */
+  const PLAFOND_PERCEMENT = 9000;
   const PLANCHER_DEGATS = 0.05;
 
   function nombreFini(valeur){
@@ -266,8 +270,20 @@
        calcul, et le terme reste ici pour le jour ou la valeur d'un boss sera
        publiee. Seul le plancher a zero est conserve : sur-resister ne doit
        pas RENFORCER la defense. */
+    /* Le JEU plafonne la SOMME des sources de percement : sa table de combat
+       porte `battle_max_sum_protect_cur_rate = 9000`, soit 90 %. Au-dela, tout
+       point supplementaire est perdu.
+
+       Ce plafond ecarte deliberement le calculateur de l'outil de reference,
+       qui n'en applique aucun et accepte 150 % sans broncher. C'est un choix :
+       la page dit ce qui se passe en COMBAT, pas ce qu'affiche 7dsorigin.app.
+       Les deux chiffres coincident partout ailleurs, et divergent seulement
+       au-dela de 90 % de percement — a 150 %, la reference surestime de 43 %.
+
+       Le plafond porte sur la somme du joueur AVANT la resistance de la
+       cible : c'est ce que dit le nom de la cle (`max_sum`). */
     const percementNet = Math.max(
-      0, (Number(stats.percementDefense) || 0)
+      0, Math.min(PLAFOND_PERCEMENT, Number(stats.percementDefense) || 0)
         - (Number(cible.resistancePercement) || 0)
     );
 

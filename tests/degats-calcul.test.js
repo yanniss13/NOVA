@@ -476,6 +476,29 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
     );
   });
 
+  /* Le JEU plafonne la somme des sources de percement : sa table de combat
+     porte `battle_max_sum_protect_cur_rate = 9000`, soit 90 %. Au-dela, tout
+     point supplementaire est perdu.
+
+     Ce plafond est celui du jeu, PAS celui de l'outil de reference, qui
+     accepte 150 % sans broncher. Les deux chiffres divergent donc au-dela de
+     90 % de percement, et c'est un choix assume : le calculateur dit ce qui
+     se passe en combat, pas ce qu'affiche 7dsorigin.app. */
+  {
+    const avec = percement => degatsAttendus({
+      stats:{ atk:1000, critRate:0, critDamage:0, percementDefense:percement },
+      competence:COUP_SIMPLE,
+      cible:CIBLE_NEUTRE
+    }).sansCritique;
+
+    assert.equal(avec(9000), avec(15000),
+      "au-dela de 90 %, un point de percement de plus ne doit rien rapporter");
+    assert.equal(avec(9000), avec(9001),
+      "le plafond doit mordre des le premier point au-dessus");
+    assert.ok(avec(5000) < avec(9000),
+      "sous le plafond, le percement doit rester pleinement actif");
+  }
+
   /* Le percement reste PLEINEMENT actif des qu'il y a une armure : le
      correctif ci-dessus ne doit pas l'avoir neutralise ailleurs. Sur
      CIBLE_NEUTRE, C = DEF = 5600 donne une mitigation de 0,5, que 5000
@@ -560,15 +583,22 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   assert.equal(Math.round(r.total), 800, "0,5 + (50 % - 20 %)");
 }
 
-/* AUCUN plafond en haut : la mitigation peut depasser 1, et les degats
-   depasser la valeur pre-armure. C'est mesure jusqu'a 150 % de percement chez
-   la reference - borner « par bon sens » nous en ecarterait. */
+/* La mitigation peut depasser 1 — les degats depassent alors la valeur
+   pre-armure — mais le percement qui l'y pousse est PLAFONNE a 90 %.
+
+   Ce test disait l'inverse jusqu'au 23 aout 2026 : il gravait « AUCUN plafond
+   en haut », mesure jusqu'a 150 % chez l'outil de reference. Le jeu, lui,
+   porte `battle_max_sum_protect_cur_rate = 9000`. On a tranche pour le JEU :
+   la page dit ce qui se passe en combat.
+
+   Ne pas rendre ce test a son ancienne forme sans rouvrir cette decision :
+   0,5 + 1,5 = 2,0 est ce que calcule 7dsorigin.app, pas ce que fait le jeu. */
 {
   const r = degatsAttendus({
     stats:{ atk:1000, percementDefense:15000 },
     competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
   });
-  assert.equal(Math.round(r.total), 2000, "0,5 + 1,5 = 2,0");
+  assert.equal(Math.round(r.total), 1400, "0,5 + 0,9 plafonne = 1,4");
 }
 
 /* Un plancher a zero en revanche : sur-resister ne RENFORCE pas la defense. */
