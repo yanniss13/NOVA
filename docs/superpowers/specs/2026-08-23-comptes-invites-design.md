@@ -148,14 +148,28 @@ C'est le point qui fait mal si on le rate. Les deux instructions suivantes sont
 dans **la même transaction** que l'ajout des colonnes :
 
 ```sql
-alter table public.profiles
-  add column if not exists membre boolean not null default false,
-  add column if not exists admin  boolean not null default false;
-
--- Tous les comptes existants sont des membres : sans cette ligne, la
--- confrérie entière devient invitée à la seconde où le schéma est appliqué.
-update public.profiles set membre = true where membre = false;
+do $$
+begin
+  if not exists (
+    select 1 from information_schema.columns
+     where table_schema = 'public'
+       and table_name = 'profiles'
+       and column_name = 'membre'
+  ) then
+    alter table public.profiles
+      add column membre boolean not null default false,
+      add column admin  boolean not null default false;
+    -- Tous les comptes existants sont des membres : sans cette ligne, la
+    -- confrérie entière devient invitée à la seconde où le schéma est appliqué.
+    update public.profiles set membre = true;
+  end if;
+end
+$$;
 ```
+
+Le garde `if not exists` n'est pas décoratif : ce fichier est rejoué en entier
+à chaque évolution du schéma, et un `update` posé à nu repromouvrait tous les
+invités au collage suivant.
 
 Le drapeau `admin` du propriétaire se pose ensuite **à la main, une fois**,
 dans l'éditeur SQL de Supabase :
