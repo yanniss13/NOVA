@@ -202,6 +202,9 @@ const ARMES_ATTENDUES = [
       }, arme), "valid", attendu.fichier + " : configuration valide");
     }
 
+    assert.deepEqual(erreurs, [],
+      "aucune erreur de page pendant les parcours d'armes");
+
     console.log("import-captures (bout en bout) : OK");
   }finally{
     await navigateur.close();
