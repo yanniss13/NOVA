@@ -13,7 +13,7 @@ const ROUTE_SESSION_ID_MAX_LENGTH = 128;
    un contexte que la route ne sait pas reconstruire. */
 const ROUTE_VIEWS = new Set([
   "dashboard", "builder", "roster", "member-roster", "availability",
-  "boss", "analyse", "wiki", "collection", "calculateur"
+  "boss", "analyse", "wiki", "collection", "calculateur", "admin"
 ]);
 const GROUP_ROUTE_VIEWS = new Set(["boss", "analyse"]);
 const SESSION_ID_PATTERN = /^[A-Za-z0-9_-]{1,128}$/;

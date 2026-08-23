@@ -19,7 +19,7 @@ assert.equal(typeof urlAbsolueDeRoute, "function", "les liens partagés doivent 
 
 const stableViews = [
   "dashboard", "builder", "roster", "member-roster", "availability",
-  "boss", "analyse", "wiki", "collection", "calculateur"
+  "boss", "analyse", "wiki", "collection", "calculateur", "admin"
 ];
 
 stableViews.forEach(view => {

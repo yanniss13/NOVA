@@ -116,6 +116,48 @@ async function connecter(page, email){
     assert.equal(await vueActive(page), "dashboard",
       "un membre atterrit sur le suivi, comme avant");
 
+    /* ---- L'admin accueille l'invité, et la barre de l'invité s'élargit. ---- */
+    await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
+    await page.locator("#accountLogin").waitFor({ state:"visible" });
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.profiles[0].admin = true;
+    });
+    await connecter(page, "yannis@example.test");
+    await page.locator("#accountPseudo")
+      .getByText("Yannis", { exact:true }).waitFor();
+
+    const ongletAdmin = page.locator('.tabs .tab[data-view="admin"]');
+    await ongletAdmin.waitFor({ state:"visible" });
+    await ongletAdmin.click();
+    await page.locator("#view-admin").waitFor({ state:"visible" });
+
+    const ligneInvite = page.locator("#adminBody tr")
+      .filter({ hasText:"Invité" });
+    await ligneInvite.getByRole("button",
+      { name:"Accueillir dans la confrérie", exact:true }).click();
+    await ligneInvite.getByRole("button",
+      { name:"Retirer de la confrérie", exact:true }).waitFor();
+
+    /* Un admin ne peut pas se retirer lui-même : le bouton refuse le geste
+       avant que le SQL n'ait à le refuser. */
+    const ligneAdmin = page.locator("#adminBody tr")
+      .filter({ hasText:"Yannis" });
+    assert.equal(
+      await ligneAdmin.getByRole("button",
+        { name:"Retirer de la confrérie", exact:true }).isDisabled(),
+      true,
+      "un admin ne doit pas pouvoir se retirer lui-même"
+    );
+
+    /* Et la promotion se voit : l'ancien invité retrouve la barre entière. */
+    await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
+    await page.locator("#accountLogin").waitFor({ state:"visible" });
+    await connecter(page, "invite@example.test");
+    await page.locator("#accountPseudo")
+      .getByText("Invité", { exact:true }).waitFor();
+    assert.deepEqual(await ongletsVisibles(page), ONGLETS_MEMBRE,
+      "accueilli dans la confrérie, l'invité voit ce qu'un membre voit");
+
     assert.deepEqual(errors, [], "aucune erreur de page");
     console.log("comptes-invites.playwright.js OK");
   }finally{

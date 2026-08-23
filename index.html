@@ -85,6 +85,14 @@
     <button class="tab" id="tab-calculateur" data-view="calculateur"
             role="tab" aria-controls="view-calculateur"
             aria-selected="false" tabindex="-1">Calculateur</button>
+    <!-- Il NAIT masqué, seul de la barre à l'être. Les autres onglets se
+         font ranger par `appliquerVisibiliteOnglets` à l'ouverture de
+         session ; celle-ci n'est jamais appelée hors ligne, et l'onglet
+         serait alors resté visible sans qu'aucune administration existe.
+         `hidden` le sort aussi de l'arbre d'accessibilité. -->
+    <button class="tab" id="tab-admin" data-view="admin" hidden
+            role="tab" aria-controls="view-admin"
+            aria-selected="false" tabindex="-1">Membres</button>
   </nav>
     <span class="tabs-cue tabs-cue-left" aria-hidden="true">‹</span>
     <span class="tabs-cue tabs-cue-right" aria-hidden="true">›</span>
@@ -153,6 +161,9 @@
     </button>
     <button class="mobile-more-link" type="button" data-mobile-view="calculateur">
       <span>Calculateur</span><span aria-hidden="true">›</span>
+    </button>
+    <button class="mobile-more-link" type="button" data-mobile-view="admin" hidden>
+      <span>Membres</span><span aria-hidden="true">›</span>
     </button>
   </div>
   <div class="mobile-account-card">
@@ -377,6 +388,15 @@
     <h1 class="section-title">Calculateur de dégâts</h1>
     <p class="section-lead">Les dégâts de chaque compétence de tes builds contre Akumu. Un chiffre par compétence, jamais un dégât par seconde : les temps d'animation ne sont mesurés nulle part.</p>
     <div id="calculateurBody"></div>
+  </section>
+
+  <!-- ============ MEMBRES ============ -->
+  <section id="view-admin" class="view" role="tabpanel"
+           aria-labelledby="tab-admin">
+    <p class="section-eyebrow">Confrérie</p>
+    <h1 class="section-title">Membres</h1>
+    <p class="section-lead">Qui a accès aux données de la confrérie. Un compte fraîchement créé est invité : il ne voit que son propre roster tant qu'il n'est pas accueilli ici.</p>
+    <div id="adminBody"></div>
   </section>
 
   <!-- ============ DISPOS ============ -->
