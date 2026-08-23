@@ -11,3 +11,13 @@ debug.log
 *.tmp.py
 *.tmp.js
 supabase/.temp/
+
+# Captures d'ecran brutes servant a mettre au point la lecture OCR.
+# Trente-six megaoctets que git n'oublierait plus : leur substance vit deja
+# dans tests/fixtures/ocr/, recadree et versionnee.
+image-ocr/
+
+# Notes de coordination entre sessions d'agents, et documents sans rapport
+# avec NOVA deposes a la racine.
+NOTE-CLAUDE-WORKTREE.md
+AUDIT-*.md
