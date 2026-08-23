@@ -21,6 +21,7 @@ import { renderRoster } from "./vues/roster-equipes.js";
 import { renderDashboardView } from "./vues/suivi.js";
 import { renderCollection } from "./vues/collection.js";
 import { renderCalculateur } from "./vues/calculateur.js";
+import { renderAdministration } from "./vues/administration.js";
 import { renderWiki } from "./vues/wiki.js";
 /* Importe pour effet de bord : il branche la fiche sur wiki.js. */
 import "./vues/wiki-fiche-heros.js";
@@ -63,6 +64,7 @@ import { toast } from "./vues/toast.js";
   enregistrerVue("wiki", withBuildStats(renderWiki));
   enregistrerVue("collection", withBuildStats(renderCollection));
   enregistrerVue("calculateur", withBuildStats(renderCalculateur));
+  enregistrerVue("admin", renderAdministration);
 
   /* ============================ Démarrage ============================ */
   $("#databar").textContent =

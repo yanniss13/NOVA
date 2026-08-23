@@ -75,6 +75,7 @@ const MODULES = [
   "donnees/recommandation-groupes-store.js",
   "donnees/collection-store.js",
   "donnees/presets-store.js",
+  "donnees/administration-store.js",
   "donnees/boss-store.js",
   "donnees/suivi-store.js",
   "donnees/calibration-store.js",
@@ -113,6 +114,7 @@ const MODULES = [
   "vues/analyse.js",
   "vues/roster-equipes.js",
   "vues/suivi.js",
+  "vues/administration.js",
   /* Avant `synchro-temps-reel.js`, qui la re-rend quand `collection_items`
      bouge : un module n'importe jamais un module declare apres lui. */
   "vues/collection.js",

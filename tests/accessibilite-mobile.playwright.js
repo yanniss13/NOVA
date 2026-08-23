@@ -1767,9 +1767,14 @@ async function installRosterFocusFakeSupabase(page){
           compte:centre(".account"),
           /* Scope au rail PRINCIPAL : les onglets du sous-menu vivent dans une
              autre barre, et masques ils rendent un rectangle a zero que ce
-             test lirait comme « hors cadre ». */
+             test lirait comme « hors cadre ».
+
+             Le meme piege vit desormais DANS la barre principale : « Membres »
+             y nait masque. On ecarte donc tout onglet sans surface, plutot que
+             de compter sur le seul decoupage par barre. */
           horsCadre:[...document.querySelectorAll(".tabs .tab")].filter(onglet => {
             const boite = onglet.getBoundingClientRect();
+            if(boite.width === 0 && boite.height === 0) return false;
             return boite.left < rail.left - 1 || boite.right > rail.right + 1;
           }).length,
           deborde:document.documentElement.scrollWidth

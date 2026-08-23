@@ -54,7 +54,9 @@ import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
      peuvent pas diverger sans qu'un test le voie. */
   const GROUPE_BOSS = "roster";
   const VUES_DU_GROUPE = new Set(["roster", "availability", "boss"]);
-  const VUES_DANS_PLUS = new Set(["analyse", "wiki", "collection", "calculateur"]);
+  const VUES_DANS_PLUS = new Set([
+    "analyse", "wiki", "collection", "calculateur", "admin"
+  ]);
 
   function chefDuGroupe(nom){
     return VUES_DU_GROUPE.has(nom) ? GROUPE_BOSS : null;
