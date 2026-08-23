@@ -193,6 +193,25 @@ async function installConnectedSupabase(page, connected = true){
     bossDock.targets.forEach(height => assert.ok(height >= CIBLE_TACTILE_PX,
       "chaque sous-vue Boss doit conserver une cible de 44 px"));
 
+    /* Le sous-onglet « Équipes » porte la MEME vue que le bouton « Boss » de la
+       barre du bas : `roster`. La regle qui garde le chef du groupe allume
+       partout dans le groupe ne doit pas deborder sur lui — sinon deux
+       sous-onglets brillent en meme temps et la barre ment sur l'endroit ou
+       l'on se trouve. */
+    await page.locator('#mobileBossSubtabs [data-mobile-view="boss"]').click();
+    await page.locator("#view-boss").waitFor({ state:"visible" });
+    const sousOngletsActifs = await page.locator("#mobileBossSubtabs")
+      .evaluate(node => [...node.querySelectorAll("button")]
+        .filter(button => button.classList.contains("active"))
+        .map(button => button.textContent.trim()));
+    assert.deepEqual(sousOngletsActifs, ["Sessions"],
+      "un seul sous-onglet Boss doit etre actif a la fois");
+    assert.equal(
+      await nav.getByRole("button", { name:"Boss" }).getAttribute("aria-current"),
+      "page",
+      "le bouton du GROUPE, lui, reste surligne dans toute sa famille de vues"
+    );
+
     await nav.getByRole("button", { name:"Créer" }).click();
     await page.locator("#view-builder").waitFor({ state:"visible" });
     const headerBeforeScroll = await page.locator(".topbar").evaluate(node => ({

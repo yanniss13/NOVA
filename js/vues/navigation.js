@@ -160,8 +160,16 @@ import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
     });
     mobileViewButtons.forEach(button => {
       const vue = button.dataset.mobileView;
+      /* « Le chef reste allume dans tout le groupe » ne vaut que pour la barre
+         du bas, qui designe la FAMILLE de vues. Dans la sous-barre, chaque
+         bouton designe UNE vue : « Équipes » porte pourtant `roster` comme le
+         bouton du groupe, et heritait donc de son surlignage — deux
+         sous-onglets brillaient ensemble et la barre mentait sur l'endroit ou
+         l'on se trouve. */
+      const dansLaSousBarre = !!mobileBossSubBar
+        && mobileBossSubBar.contains(button);
       const selected = vue === name
-        || (vue === GROUPE_BOSS && chef !== null);
+        || (!dansLaSousBarre && vue === GROUPE_BOSS && chef !== null);
       button.classList.toggle("active", selected);
       if(button.getAttribute("role") === "tab"){
         button.setAttribute("aria-selected", String(selected));
