@@ -52,11 +52,42 @@ le site utilise Tesseract. Rien ne casse.
 ### Changer de modèle sans toucher au code
 
 ```powershell
-npx -y supabase@latest secrets set GEMINI_MODEL=gemini-3-flash-preview
+npx -y supabase@latest secrets set GEMINI_MODEL=gemini-flash-latest
 ```
 
-Par défaut `gemini-2.5-flash`. Les modèles en *preview* changent ou
-disparaissent sans préavis : préférer le plus fiable au plus récent.
+Par défaut **`gemini-flash-latest`**, et c'est un alias délibéré.
+
+Le défaut valait `gemini-2.5-flash` jusqu'au 25 août 2026. Google l'a retiré
+**aux clés récentes** — une clé créée la veille se voyait répondre :
+
+```
+404  This model models/gemini-2.5-flash is no longer available to new users.
+```
+
+Le piège tient en une phrase : `models.list` **liste encore** ce modèle, seul
+`generateContent` le refuse. Impossible donc de repérer la panne autrement que
+par les journaux de la fonction. Un nom figé rejouera ce scénario au prochain
+retrait ; l'alias y survit.
+
+L'alias a un prix — le comportement peut dériver sans préavis. Il est tenable
+**ici et seulement ici** : la sortie est jugée par `deduireArme` /
+`deduirePiece`, qui rejettent toute lecture dont les totaux recalculés ne
+reproduisent pas le panneau. Une dérive fait échouer un import ; elle n'écrit
+jamais une valeur fausse dans un roster.
+
+Éviter les modèles en *preview* : ils changent ou disparaissent sans préavis.
+
+### Quand la lecture assistée ne part pas
+
+Le message d'échec de l'import **nomme lui-même l'étape** qui a renoncé —
+« assistée écartée : aucun compte connecté », « … la fonction a répondu une
+erreur — … (Google : 404 NOT_FOUND) ». C'est le premier endroit à regarder,
+avant toute hypothèse.
+
+Si le motif vient de Google, sa réponse intégrale est dans les journaux de la
+fonction, jamais dans le navigateur : elle peut nommer la clé.
+
+[Journaux de `lecture-panneau`](https://supabase.com/dashboard/project/uxouhbgdlolidjmxwgae/functions/lecture-panneau/logs)
 
 ## Deux contrôles d'accès, et pourquoi il en faut deux
 
