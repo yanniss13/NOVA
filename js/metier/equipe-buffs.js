@@ -5,8 +5,8 @@
    alors qu'elle n'en tient qu'une. Six des huit supports sont dans ce cas.
 
    Module PUR : ni DOM, ni reseau, ni roster. La vue lui passe des coequipiers
-   deja reduits a { charId, typeArme, atk } ; c'est elle qui appelle
-   calculateHeroStats et en extrait B_Atk. */
+   deja reduits a { charId, typeArme, atk, def } ; c'est elle qui appelle
+   calculateHeroStats et en extrait B_Atk et B_Def. */
 
 import { ENUM_TO_FOLDER, FOLDER_TO_ENUM } from "../noyau/constantes.js";
 import { buffsApplicables } from "./calculateur-entrees.js";
@@ -43,36 +43,60 @@ import { buffsApplicables } from "./calculateur-entrees.js";
     return armeDuGameId(gameId) === enumArme;
   }
 
-  /* « X % de l'attaque du heros, au plus P » : le chiffre, ou null quand l'ATK
-     du lanceur est inconnue. Deux tables s'en servent - les buffs de soutien
-     ici, les potentiels d'equipe chez le voisin - et elles doivent rendre le
-     MEME nombre, d'ou cette fonction plutot qu'une formule recopiee.
+  /* « X % d'une statistique du lanceur » : le chiffre reel d'une ligne, ou
+     null quand cette statistique est inconnue. Deux tables s'en servent - les
+     buffs de soutien ici, les potentiels d'equipe chez le voisin - et elles
+     doivent rendre le MEME nombre, d'ou cette fonction plutot qu'une formule
+     recopiee.
 
      HYPOTHESE, non mesuree : « 30 % de l'attaque du heros » est lu comme la
      seule ATK, sans l'attaque elementaire. Le moteur de degats, lui, ajoute
      l'attaque elementaire a l'ATK pour les composantes de base `atk` : les deux
      lectures ne coincident pas, et rien ne dit laquelle le jeu applique ici.
-     La vue passe B_Atk. */
-  function valeurIndexeeSurAtk(indexe, atk){
-    const nombre = Number(atk);
-    if(!indexe || !Number.isFinite(nombre) || nombre <= 0) return null;
-    return Math.min(
-      indexe.plafond, Math.round(indexe.taux * nombre / TAUX_PLEIN)
-    );
+     La vue passe B_Atk, et B_Def pour les lignes indexees sur la defense. */
+
+  /* Les statistiques du LANCEUR sur lesquelles une ligne peut s'indexer. La
+     defense est arrivee avec le palier 10 du Livre d'Elizabeth, qui donne aux
+     allies « 10 % de la defense du heros » en attaque. */
+  const INDEXATIONS = [["indexeSurAtk", "atk"], ["indexeSurDef", "def"]];
+
+  function indexationDe(ligne){
+    for(const [champ, stat] of INDEXATIONS){
+      if(ligne && ligne[champ]) return { indexe:ligne[champ], stat };
+    }
+    return null;
+  }
+
+  /* Le chiffre reel d'une ligne indexee, ou null quand la statistique du
+     lanceur n'est pas lisible.
+
+     Le plafond est FACULTATIF. Les trois premieres lignes indexees en
+     portaient toutes un, au point qu'il passait pour obligatoire ; le palier
+     10 du Livre d'Elizabeth n'en annonce aucun. Sans plafond, la ligne vaut
+     exactement son taux. */
+  function valeurIndexee(ligne, porteur){
+    const trouve = indexationDe(ligne);
+    if(!trouve) return null;
+    const nombre = Number(porteur && porteur[trouve.stat]);
+    if(!Number.isFinite(nombre) || nombre <= 0) return null;
+    const brut = Math.round(trouve.indexe.taux * nombre / TAUX_PLEIN);
+    return Number.isFinite(trouve.indexe.plafond)
+      ? Math.min(trouve.indexe.plafond, brut) : brut;
   }
 
   /* La valeur effective d'un buff, et si elle est un repli.
 
-     Trois buffs valent un pourcentage de l'ATK de leur LANCEUR, plafonne. Sans
-     equipe, ou quand le build du support n'est pas lisible, on rend `valeur` -
-     c'est-a-dire le plafond, donc exactement le chiffre d'avant ce module. */
+     Plusieurs buffs valent un pourcentage d'une statistique de leur LANCEUR.
+     Sans equipe, ou quand son build n'est pas lisible, on rend `valeur` : pour
+     une ligne plafonnee c'est le plafond, donc exactement le chiffre d'avant
+     ce module ; pour une ligne SANS plafond c'est zero, faute de tout repli
+     honnete. */
   function chiffre(buff, membre){
-    const indexe = buff.indexeSurAtk;
-    const chiffree = valeurIndexeeSurAtk(indexe, membre && membre.atk);
+    const chiffree = valeurIndexee(buff, membre);
     return Object.assign({}, buff, {
       arme:membre ? membre.typeArme : null,
       valeur:chiffree === null ? buff.valeur : chiffree,
-      repli:Boolean(indexe) && chiffree === null
+      repli:Boolean(indexationDe(buff)) && chiffree === null
     });
   }
 
@@ -96,4 +120,4 @@ import { buffsApplicables } from "./calculateur-entrees.js";
       .map(buff => chiffre(buff, membre)));
   }
 
-export { armeDuGameId, buffsDeLEquipe, valeurIndexeeSurAtk };
+export { armeDuGameId, buffsDeLEquipe, indexationDe, valeurIndexee };
