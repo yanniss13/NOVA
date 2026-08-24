@@ -5,3 +5,11 @@ verify_jwt = false
 
 [edge_runtime]
 policy = "per_worker"
+
+# La lecture de panneau appelle Gemini sur le quota du proprietaire : elle exige
+# un jeton valide (verify_jwt, le defaut) ET, dans la fonction elle-meme, un
+# compte reel. La cle anonyme du projet est publiee dans index.html et forme un
+# jeton valablement signe : sans ce second controle, n'importe qui pourrait
+# vider le quota.
+[functions.lecture-panneau]
+verify_jwt = true
