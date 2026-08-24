@@ -67,7 +67,11 @@ assert.equal(
   /create or replace function public\.leave_boss_run\s*\(\s*p_session_id uuid\s*\)/i,
   /create or replace function public\.complete_boss_run\s*\(\s*p_session_id uuid\s*\)/i,
   /create or replace function private\.current_boss_week_start\s*\(\s*\)[\s\S]*language sql[\s\S]*stable[\s\S]*Europe\/Paris/i,
-  /join_boss_run[\s\S]*pg_advisory_xact_lock[\s\S]*RUN_LIMIT_REACHED/i,
+  /* Le verrou precede le comptage hebdomadaire : sans lui, deux inscriptions
+     simultanees passeraient toutes deux sous la limite de trois runs. Les deux
+     vivent desormais dans `private.rejoindre_run`, ou l'entree du membre et
+     celle de l'administrateur les partagent. */
+  /rejoindre_run[\s\S]*pg_advisory_xact_lock[\s\S]*RUN_LIMIT_REACHED/i,
   /join_boss_run[\s\S]*v_week is null[\s\S]*private\.current_boss_week_start\s*\(\s*\)/i,
   /leave_boss_run[\s\S]*v_week is null[\s\S]*private\.current_boss_week_start\s*\(\s*\)/i,
   /complete_boss_run[\s\S]*v_run\.week_start is null[\s\S]*private\.current_boss_week_start\s*\(\s*\)/i,
@@ -84,9 +88,13 @@ assert.equal(
   /grant execute on function public\.complete_boss_run\(uuid\) to authenticated/i
 ].forEach(pattern => assert.match(sql, pattern));
 
+/* Les regles de l'inscription vivent dans `private.rejoindre_run` : l'entree du
+   membre et celle de l'administrateur s'y branchent toutes deux, et c'est ce
+   partage qui garantit qu'aucun chemin n'echappe aux plafonds. On lit donc la
+   tranche qui va de cette fonction privee a la suivante. */
 const joinBossRun = sql.slice(
-  sql.indexOf("create or replace function public.join_boss_run"),
-  sql.indexOf("create or replace function public.leave_boss_run")
+  sql.indexOf("create or replace function private.rejoindre_run"),
+  sql.indexOf("create or replace function private.quitter_run")
 );
 
 assert.match(
@@ -117,7 +125,7 @@ assert.match(
 
 const sessionLockAt = joinBossRun.search(/for update/i);
 const existingMembershipAt = joinBossRun.search(
-  /if exists\s*\(\s*select 1 from public\.boss_participation\s+where session_id\s*=\s*p_session_id\s+and owner\s*=\s*v_owner\s*\)\s*then\s*return\s*;/i
+  /if exists\s*\(\s*select 1 from public\.boss_participation\s+where session_id\s*=\s*p_session_id\s+and owner\s*=\s*p_owner\s*\)\s*then\s*return\s*;/i
 );
 const capacityCountAt = joinBossRun.search(
   /select\s+count\(\*\)\s+into\s+v_member_count\s+from public\.boss_participation\s+where session_id\s*=\s*p_session_id\s*;/i

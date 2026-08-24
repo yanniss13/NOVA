@@ -131,10 +131,8 @@ test("les participations, snapshots et rapports empêchent la suppression en cas
 });
 
 test("un owner anonymisé ne récupère jamais les droits d'un compte actif", () => {
+  /* Ces deux-là portent encore leurs règles dans leur propre corps. */
   for (const [name, end] of [
-    ["join_boss_run", "create or replace function public.leave_boss_run"],
-    ["leave_boss_run", "create or replace function public.select_boss_team"],
-    ["select_boss_team", "create or replace function public.complete_boss_run_with_report"],
     ["complete_boss_run_with_report", "create or replace function public.update_boss_run_report"],
     ["update_boss_run_report", "create or replace function public.complete_boss_run(p_session_id uuid)"]
   ]) {
@@ -155,6 +153,53 @@ test("un owner anonymisé ne récupère jamais les droits d'un compte actif", ()
       rpc,
       /\bowner\s+is\s+null|coalesce\s*\(\s*owner\s*,/i,
       `${name} : un owner NULL ne doit jamais être assimilé à l'appelant`
+    );
+  }
+
+  /* Les trois gestes de boss sont factorisés depuis qu'un administrateur peut
+     les faire pour autrui. La garantie n'a pas faibli, elle se lit à deux
+     endroits : l'entrée publique fournit l'identité de l'appelant, la fonction
+     privée refuse un propriétaire nul et compare `owner` à l'argument reçu.
+
+     C'est le refus du propriétaire nul qui porte tout le poids ici : un compte
+     supprimé laisse `owner` à NULL, et sans ce refus la comparaison
+     `owner = p_owner` rapprocherait deux NULL. */
+  for (const [prive, entree, finPrive, finEntree] of [
+    ["rejoindre_run", "join_boss_run",
+      "create or replace function public.join_boss_run",
+      "create or replace function public.admin_join_boss_run"],
+    ["quitter_run", "leave_boss_run",
+      "create or replace function public.leave_boss_run",
+      "create or replace function public.admin_leave_boss_run"],
+    ["choisir_equipe_run", "select_boss_team",
+      "create or replace function public.select_boss_team",
+      "create or replace function public.admin_select_boss_team"]
+  ]) {
+    const porteur = between(
+      sql, `create or replace function private.${prive}`, finPrive, prive
+    );
+    const publique = between(
+      sql, `create or replace function public.${entree}`, finEntree, entree
+    );
+    assert.match(
+      publique,
+      new RegExp(`private\\.${prive}\\s*\\(\\s*p_session_id\\s*,\\s*auth\\.uid\\(\\)`, "i"),
+      `${entree} : l'entrée du membre doit passer auth.uid() et rien d'autre`
+    );
+    assert.match(
+      porteur,
+      /if p_owner is null then\s*raise exception 'AUTH_REQUIRED'/i,
+      `${prive} : un propriétaire nul doit être refusé, pas comparé`
+    );
+    assert.match(
+      porteur,
+      /owner\s*=\s*p_owner/i,
+      `${prive} : le droit actif doit comparer owner au propriétaire reçu`
+    );
+    assert.doesNotMatch(
+      porteur,
+      /\bowner\s+is\s+null|coalesce\s*\(\s*owner\s*,/i,
+      `${prive} : un owner NULL ne doit jamais être assimilé à l'appelant`
     );
   }
 });

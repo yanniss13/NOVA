@@ -48,6 +48,39 @@ function assertStrictRpc(source, name) {
   assert.match(source, /AUTH_REQUIRED/i, `${name} : authentification non exigée`);
 }
 
+/* Les trois gestes de boss ont été factorisés le jour où un administrateur a pu
+   les faire pour autrui : la fonction privée porte les règles et reçoit le
+   propriétaire, l'entrée publique lui passe `auth.uid()`.
+
+   `assertStrictRpc` reste employée telle quelle pour les RPC restées entières
+   — dont celles du script de retour arrière, qui n'a pas bougé. Deux formes
+   cohabitent, donc deux assistants : les fondre reviendrait à n'exiger de
+   chacune que ce que l'autre garantit. */
+function assertRpcFactorisee(porteur, publique, prive, nom) {
+  assert.match(
+    porteur,
+    new RegExp(`create or replace function private\\.${prive}\\b`, "i"),
+    `${prive} : signature absente`
+  );
+  assert.match(
+    porteur,
+    /returns void\s+language plpgsql\s+security definer\s+set search_path = public,\s*pg_temp\s+as \$\$/i,
+    `${prive} : sécurité de la fonction incomplète`
+  );
+  assert.match(porteur, /p_owner uuid/i, `${prive} : le propriétaire doit être reçu`);
+  assert.match(porteur, /AUTH_REQUIRED/i, `${prive} : authentification non exigée`);
+  assert.doesNotMatch(
+    porteur,
+    /auth\.uid\(\)/i,
+    `${prive} : elle sert deux appelants, elle ne peut pas lire auth.uid()`
+  );
+  assert.match(
+    publique,
+    new RegExp(`private\\.${prive}\\s*\\(\\s*p_session_id\\s*,\\s*auth\\.uid\\(\\)`, "i"),
+    `${nom} : l'entrée du membre doit passer auth.uid()`
+  );
+}
+
 const reportsTable = between(
   sql,
   "create table if not exists public.boss_run_reports",
@@ -85,11 +118,21 @@ assert.doesNotMatch(
 
 const joinBossRun = between(
   sql,
+  "create or replace function private.rejoindre_run",
   "create or replace function public.join_boss_run",
-  "create or replace function public.leave_boss_run",
+  "rejoindre_run"
+);
+assertRpcFactorisee(
+  joinBossRun,
+  between(
+    sql,
+    "create or replace function public.join_boss_run",
+    "create or replace function public.admin_join_boss_run",
+    "join_boss_run"
+  ),
+  "rejoindre_run",
   "join_boss_run"
 );
-assertStrictRpc(joinBossRun, "join_boss_run");
 assert.match(
   joinBossRun,
   /select count\(\*\)\s+into v_member_count\s+from public\.boss_participation\s+where session_id\s*=\s*p_session_id/i,
@@ -115,18 +158,30 @@ assertOrdered(
 
 const selectBossTeam = between(
   sql,
+  "create or replace function private.choisir_equipe_run",
   "create or replace function public.select_boss_team",
-  "create or replace function public.complete_boss_run_with_report",
+  "choisir_equipe_run"
+);
+assertRpcFactorisee(
+  selectBossTeam,
+  between(
+    sql,
+    "create or replace function public.select_boss_team",
+    "create or replace function public.admin_select_boss_team",
+    "select_boss_team"
+  ),
+  "choisir_equipe_run",
   "select_boss_team"
 );
-assertStrictRpc(selectBossTeam, "select_boss_team");
+/* La signature de l'entrée publique ne bouge pas : le site l'appelle avec ces
+   deux arguments-là, et `create or replace` refuserait d'en changer les noms. */
 assert.match(
-  selectBossTeam,
+  sql,
   /create or replace function public\.select_boss_team\s*\(\s*p_session_id uuid\s*,\s*p_team_id uuid\s*\)/i
 );
 assert.match(selectBossTeam, /v_week <> private\.current_boss_week_start\(\)/i);
 assert.match(selectBossTeam, /v_status <> 'open'/i);
-assert.match(selectBossTeam, /t\.id = p_team_id\s+and t\.owner = v_owner/i);
+assert.match(selectBossTeam, /t\.id = p_team_id\s+and t\.owner = p_owner/i);
 assert.match(
   selectBossTeam,
   /'data'\s*,\s*t\.data/i,
@@ -135,7 +190,7 @@ assert.match(
 assert.match(selectBossTeam, /'capturedAt', now\(\)/i);
 assert.match(
   selectBossTeam,
-  /update public\.boss_participation\s+set team_id = p_team_id,\s+team_snapshot = v_snapshot,\s+updated_at = now\(\)\s+where session_id = p_session_id\s+and owner = v_owner/i
+  /update public\.boss_participation\s+set team_id = p_team_id,\s+team_snapshot = v_snapshot,\s+updated_at = now\(\)\s+where session_id = p_session_id\s+and owner = p_owner/i
 );
 assert.doesNotMatch(selectBossTeam, /\b(?:insert|delete)\b/i);
 assert.doesNotMatch(selectBossTeam, /update public\.(?:boss_sessions|boss_run_reports|teams)/i);
@@ -146,7 +201,7 @@ assertOrdered(
     ["semaine courante", /if v_week <> private\.current_boss_week_start\(\)/i],
     ["statut ouvert", /if v_status <> 'open'/i],
     ["participation", /if not exists\s*\([\s\S]*?from public\.boss_participation/i],
-    ["lecture équipe propriétaire", /from public\.teams[\s\S]*?t\.owner = v_owner/i],
+    ["lecture équipe propriétaire", /from public\.teams[\s\S]*?t\.owner = p_owner/i],
     ["écriture instantané", /update public\.boss_participation/i]
   ],
   "select_boss_team"
@@ -205,6 +260,8 @@ assert.match(
 );
 assert.match(updateReport, /from public\.boss_run_reports[\s\S]*?for update/i);
 assert.match(updateReport, /v_run_status <> 'archived'/i);
+/* `update_boss_run_report` n'a pas été factorisée : elle déduit toujours son
+   propriétaire elle-même, d'où `v_owner` et non `p_owner`. */
 assert.match(
   updateReport,
   /from public\.boss_participation\s+where session_id = p_session_id\s+and owner = v_owner/i

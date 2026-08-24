@@ -110,6 +110,42 @@ import { sessionCourante } from "../etat/session.js";
       });
       if(error) throw error;
     },
+
+    /* LES TROIS GESTES D'UN ADMINISTRATEUR SUR LE GROUPE D'UN AUTRE.
+
+       Ils doublent les trois precedents plutot que de les parametrer : un
+       `owner` optionnel sur `join` ferait passer le geste courant — de loin le
+       plus frequent — par un chemin qui accepte d'agir pour autrui, et une
+       valeur mal transmise y deviendrait une usurpation silencieuse. Deux
+       portes distinctes rendent l'intention lisible a l'appel.
+
+       Le droit ne se verifie pas ici : `private.est_admin` le fait cote base.
+       Ce magasin ne fait qu'appeler. */
+    async adminJoin(sessionId, ownerId){
+      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
+      const { error } = await sb.rpc("admin_join_boss_run", {
+        p_session_id:sessionId,
+        p_owner:ownerId
+      });
+      if(error) throw error;
+    },
+    async adminLeave(sessionId, ownerId){
+      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
+      const { error } = await sb.rpc("admin_leave_boss_run", {
+        p_session_id:sessionId,
+        p_owner:ownerId
+      });
+      if(error) throw error;
+    },
+    async adminSelectTeam(sessionId, ownerId, teamId){
+      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
+      const { error } = await sb.rpc("admin_select_boss_team", {
+        p_session_id:sessionId,
+        p_owner:ownerId,
+        p_team_id:teamId
+      });
+      if(error) throw error;
+    },
     async complete(sessionId, globalScore, note){
       if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
       const { error } = await sb.rpc("complete_boss_run_with_report", {

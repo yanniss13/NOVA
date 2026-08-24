@@ -735,6 +735,21 @@
   </div>
 </div>
 
+<!-- Réservée aux administrateurs : inscrire quelqu'un d'autre dans un groupe.
+     Le bouton qui l'ouvre n'apparaît que pour eux, mais c'est la RPC
+     `admin_join_boss_run` qui refuse réellement les autres. -->
+<div class="overlay" id="bossMemberOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="bossMemberTitle" aria-hidden="true">
+  <div class="modal boss-member-modal">
+    <div class="modal-head">
+      <h2 id="bossMemberTitle">Ajouter un membre</h2>
+      <button class="icon-btn" id="bossMemberClose" type="button"
+              aria-label="Fermer">×</button>
+    </div>
+    <div class="boss-team-list" id="bossMemberList"></div>
+  </div>
+</div>
+
 <div class="overlay" id="bossReportOverlay" role="dialog" aria-modal="true"
      aria-labelledby="bossReportTitle" aria-hidden="true">
   <div class="modal boss-report-modal">

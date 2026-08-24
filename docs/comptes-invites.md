@@ -72,6 +72,36 @@ Depuis un compte invité :
 - son roster s'affiche et s'enregistre normalement ;
 - la page Collection ne propose que son propre pseudo dans la liste des membres.
 
+## Composer un groupe de boss à la place des membres
+
+Un administrateur voit trois gestes de plus dans l'onglet **Sessions de boss** :
+
+- **Ajouter un membre** sur la carte d'un groupe ;
+- **Choisir son équipe** sur la ligne d'un membre, qui propose **les équipes de
+  cette personne** et non les siennes ;
+- **Retirer**, sans quoi une inscription posée sur la mauvaise personne
+  resterait bloquée jusqu'à ce qu'elle se retire elle-même.
+
+**Les règles du jeu ne plient pas.** Cinq membres par groupe, trois runs par
+semaine et par personne, semaine courante uniquement, et une équipe que le
+membre n'a jamais enregistrée reste refusée. Un administrateur compose un
+groupe ; il ne contourne rien.
+
+Ce n'est pas une politesse d'interface : les trois gestes délèguent aux mêmes
+fonctions privées (`private.rejoindre_run`, `private.quitter_run`,
+`private.choisir_equipe_run`) que les gestes ordinaires. **Les plafonds ne sont
+écrits qu'une fois**, et `tests/boss-admin-schema.test.js` refuse qu'un second
+exemplaire apparaisse — deux copies finiraient par diverger, et c'est la copie
+oubliée qui laisserait passer.
+
+Le droit vit dans `private.est_admin(auth.uid())`, vérifié sur l'**appelant**.
+Masquer les boutons n'est qu'une politesse : un membre qui appellerait
+`admin_join_boss_run` depuis la console reçoit `ADMIN_REQUIS`.
+
+⚠️ **Ces fonctions arrivent par le collage de `supabase/schema.sql`** (étape 1).
+Tant qu'il n'est pas rejoué, les boutons apparaissent pour un administrateur et
+chaque clic échoue.
+
 ## Ce qui reste hors périmètre
 
 Confirmation d'email à l'inscription, invitation par code, rôles fins,

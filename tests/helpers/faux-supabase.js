@@ -359,10 +359,41 @@ async function installFakeSupabase(page){
         return fail("RUN_INVALID_WEEK");
       }
 
-      if(name === "join_boss_run"){
+      /* LES TROIS GESTES D'ADMINISTRATION, calques sur le schema.
+
+         Dans `supabase/schema.sql`, chacun delegue a une fonction privee qui
+         porte TOUTES les regles — cinq par groupe, trois runs par semaine,
+         equipe reellement possedee. Ce faux serveur reproduit ce partage :
+         `geste` ramene l'appel admin au geste correspondant, et `cible` designe
+         la personne visee. Sans ce detour, le faux accepterait ce que la vraie
+         base refuse, et le parcours prouverait une chose fausse.
+
+         Le garde `est_admin` porte sur l'APPELANT, le garde `est_membre` sur la
+         CIBLE : ce sont deux questions distinctes. */
+      const GESTES_ADMIN = {
+        admin_join_boss_run:"join_boss_run",
+        admin_leave_boss_run:"leave_boss_run",
+        admin_select_boss_team:"select_boss_team"
+      };
+      let geste = name;
+      let cible = owner;
+      let ciblePseudo = pseudo;
+      if(GESTES_ADMIN[name]){
+        const acteur = state.profiles.find(item => item.id === owner);
+        if(!acteur || acteur.admin !== true) return fail("ADMIN_REQUIS");
+        cible = args && args.p_owner;
+        const profilCible = state.profiles.find(item => item.id === cible);
+        if(!cible || !profilCible || profilCible.membre !== true){
+          return fail("MEMBRE_REQUIS");
+        }
+        ciblePseudo = String(profilCible.pseudo || "").trim() || "Membre";
+        geste = GESTES_ADMIN[name];
+      }
+
+      if(geste === "join_boss_run"){
         if(run.status !== "open") return fail("RUN_ARCHIVED");
         if(state.boss_participation.some(item =>
-          item.session_id === sessionId && item.owner === owner
+          item.session_id === sessionId && item.owner === cible
         )) return { data:null, error:null };
         const memberCount = state.boss_participation.filter(item =>
           item.session_id === sessionId
@@ -372,13 +403,13 @@ async function installFakeSupabase(page){
           .filter(item => item.week_start === run.week_start)
           .map(item => item.id));
         const used = state.boss_participation.filter(item =>
-          item.owner === owner && weekSessionIds.has(item.session_id)
+          item.owner === cible && weekSessionIds.has(item.session_id)
         ).length;
         if(used >= 3) return fail("RUN_LIMIT_REACHED");
         state.boss_participation.push({
           session_id:sessionId,
-          owner,
-          pseudo,
+          owner:cible,
+          pseudo:ciblePseudo,
           team_id:null,
           team_snapshot:null,
           updated_at:"2026-07-25T10:00:00.000Z"
@@ -386,14 +417,16 @@ async function installFakeSupabase(page){
         return { data:null, error:null };
       }
 
-      if(name === "select_boss_team"){
+      if(geste === "select_boss_team"){
         if(run.status !== "open") return fail("RUN_ARCHIVED");
         const membership = state.boss_participation.find(item =>
-          item.session_id === sessionId && item.owner === owner
+          item.session_id === sessionId && item.owner === cible
         );
         if(!membership) return fail("NOT_A_PARTICIPANT");
+        /* L'equipe doit appartenir a la CIBLE, pas a l'administrateur : c'est
+           `t.owner = p_owner` dans le schema. */
         const team = state.teams.find(item =>
-          item.id === args.p_team_id && item.owner === owner
+          item.id === args.p_team_id && item.owner === cible
         );
         if(!team) return fail("TEAM_NOT_OWNED");
         membership.team_id = team.id;
@@ -411,10 +444,10 @@ async function installFakeSupabase(page){
         return { data:null, error:null };
       }
 
-      if(name === "leave_boss_run"){
+      if(geste === "leave_boss_run"){
         if(run.status !== "open") return fail("RUN_ARCHIVED");
         state.boss_participation = state.boss_participation.filter(item =>
-          item.session_id !== sessionId || item.owner !== owner
+          item.session_id !== sessionId || item.owner !== cible
         );
         return { data:null, error:null };
       }

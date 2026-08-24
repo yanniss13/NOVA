@@ -123,6 +123,29 @@
   display:block;margin-bottom:8px;font-family:var(--display);font-weight:600;
   font-size:14px;color:var(--gold-bright);overflow-wrap:anywhere
 }
+/* Sa propre classe, et non celle du choix d'equipe : une liste de pseudos n'a
+   pas besoin des 720 px qu'il faut a quatre portraits. Les confondre avait un
+   second cout, moins visible — un parcours qui visait `.boss-team-modal` en
+   trouvait soudain deux et s'arretait net. */
+.modal.boss-member-modal{width:min(460px,100%)}
+
+/* LES GESTES D'ADMINISTRATION SUR UN GROUPE.
+
+   Le choix d'un membre reprend le cadre de `.boss-team-choice` — meme modale,
+   meme liste — mais ne montre qu'un pseudo la ou une equipe deploie quatre
+   portraits. D'ou la hauteur minimale : sans elle, la ligne tombait sous la
+   cible tactile de 44 px que le parcours d'accessibilite mesure. */
+.boss-member-choice{
+  min-height:44px;display:flex;align-items:center;
+  font-weight:600;font-size:14px
+}
+/* « Retirer » suit « Choisir son équipe » dans la ligne du membre : meme
+   largeur pleine, pour que les deux gestes s'empilent au lieu de se disputer
+   la place sur un ecran etroit. */
+.boss-member-remove{
+  width:100%;justify-content:center;margin-top:7px;
+  min-height:44px;padding:8px 10px;font-size:12px
+}
 .boss-team-empty{text-align:center;padding:28px 16px;color:var(--muted)}
 .boss-team-empty p{margin:0 0 14px;line-height:1.45}
 .boss-team-empty .btn{justify-content:center}
