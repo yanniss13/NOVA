@@ -12,7 +12,9 @@
 import { BUILD_STATS } from "../noyau/constantes.js";
 import { buildGearDefinition, gearEnchantmentLength } from "./build-config.js";
 import { enchantementsDePiece } from "./ocr-enchantements.js";
-import { recalerLibelle, valeurNumerique } from "./ocr-libelles.js";
+import {
+  normaliserLibelle, rapprocher, recalerLibelle, valeurNumerique
+} from "./ocr-libelles.js";
 import { calculateGearStats } from "./stats-calcul.js";
 
   /* Une configuration « nue » : le bon nombre d'emplacements d'enchantement,
@@ -111,6 +113,40 @@ import { calculateGearStats } from "./stats-calcul.js";
      porter — et aucune ne le peut, donc rien ne sortirait. */
   function estNative(ligne){ return !ligne.section; }
 
+  function nomDePieceDuFichier(fichier){
+    return String(fichier).split("/").pop().replace(/\.webp$/i, "");
+  }
+
+  /* LE NOM LU TRANCHE ENTRE DES PIECES INDISCERNABLES.
+
+     Trois armures liees partagent les memes courbes de statistiques : leurs
+     totaux sont identiques au point pres, et l'inversion ne peut pas les
+     departager. Le membre devait choisir a chaque import. Le titre du panneau,
+     lui, les distingue sans ambiguite.
+
+     DEUX GARDE-FOUS, et ils comptent plus que la fonction elle-meme :
+
+     - le nom RESTREINT une liste que le catalogue a deja validee, il n'y ajoute
+       jamais rien. Un nom mal lu ne peut donc pas faire entrer une piece que
+       les chiffres contredisent ;
+     - seule une correspondance EXACTE est retenue. Un rapprochement approximatif
+       transformerait une ambiguite honnete — ou le site pose la question — en
+       certitude fausse, ce qui est bien pire. Tesseract lit rarement un titre
+       au caractere pres et retombe donc sur le comportement d'avant ; la
+       lecture assistee, elle, le rend fidelement. */
+  function restreindreParLeNom(candidats, nom){
+    const cible = normaliserLibelle(nom);
+    if(!cible) return candidats;
+    const fichiers = [...new Set(candidats.map(item => item.fichier))];
+    if(fichiers.length < 2) return candidats;
+    const trouve = rapprocher(cible, fichiers.map(fichier => ({
+      code:fichier, cle:normaliserLibelle(nomDePieceDuFichier(fichier))
+    })));
+    if(trouve.statut !== "exact") return candidats;
+    const retenus = candidats.filter(item => item.fichier === trouve.code);
+    return retenus.length ? retenus : candidats;
+  }
+
   function deduirePiece(entree){
     const lignes = (entree && Array.isArray(entree.stats)) ? entree.stats : [];
     const stats = lignes.filter(estNative);
@@ -178,7 +214,11 @@ import { calculateGearStats } from "./stats-calcul.js";
       }
     }
     if(!candidats.length) return { statut:"aucun", candidats:[] };
-    return { statut:candidats.length === 1 ? "unique" : "ambigu", candidats };
+    const retenus = restreindreParLeNom(candidats, entree && entree.nom);
+    return {
+      statut:retenus.length === 1 ? "unique" : "ambigu",
+      candidats:retenus
+    };
   }
 
 export { deduirePiece };

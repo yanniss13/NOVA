@@ -281,7 +281,15 @@ import { ModalStack } from "./modal-stack.js";
           stats:lue.stats,
           herosSlug
         })
-        : deduirePiece({ stats:lue.stats, herosSlug });
+        /* Le NOM part avec les statistiques : trois armures liees ont les
+           memes courbes, et seul le titre du panneau les separe. Voir
+           restreindreParLeNom — il ne sert qu'a restreindre, jamais a
+           elargir. */
+        : deduirePiece({
+          nom:lue.entete ? lue.entete.nom : null,
+          stats:lue.stats,
+          herosSlug
+        });
       lignes.push({
         fichier:fichiers[i],
         statut:deduite.statut === "aucun" ? "echec" : deduite.statut,
