@@ -1,0 +1,195 @@
+/* Lecture d'un panneau d'equipement par Gemini.
+
+   POURQUOI UNE FONCTION EDGE, et pas un appel direct depuis le navigateur.
+   Le site est statique : tout ce qu'il embarque est telechargeable et lisible.
+   Une cle d'API posee dans le JavaScript serait publique — utilisable par
+   n'importe qui sur le quota du proprietaire, et revoquee d'office par Google
+   des qu'il la repere. Elle reste donc ici, cote serveur, et le navigateur ne
+   parle qu'a cette fonction.
+
+   CE QUE GEMINI FAIT, ET CE QU'IL NE FAIT PAS. Il TRANSCRIT les lignes du
+   panneau, rien de plus. Il ne devine ni l'arme, ni le grade, ni la
+   configuration : c'est `deduireArme` qui parcourt le catalogue et ne retient
+   que les configurations dont les totaux RECALCULES reproduisent ce qui a ete
+   lu. Le modele remplace l'oeil, jamais le juge — une lecture fausse est donc
+   rejetee, pas ecrite dans le build.
+
+   La sortie a exactement la forme que produit Tesseract dans
+   js/vues/import-captures.js, ce qui laisse tout le reste de la chaine
+   intact.
+
+   Secrets attendus : GEMINI_API_KEY.
+*/
+
+const CLE = Deno.env.get("GEMINI_API_KEY") || "";
+/* Flash suffit largement pour lire un panneau de jeu, et coute une fraction
+   de Pro. Surchargeable sans redeploiement du code. */
+const MODELE = Deno.env.get("GEMINI_MODEL") || "gemini-2.5-flash";
+const RACINE = "https://generativelanguage.googleapis.com/v1beta/models/";
+
+/* Une capture de panneau tient largement sous cette taille. La borne protege
+   surtout le quota : sans elle, un envoi malencontreux d'image enorme passe. */
+const OCTETS_MAX = 6 * 1024 * 1024;
+
+const ENTETES = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, content-type",
+  "Content-Type": "application/json; charset=utf-8"
+};
+
+const CONSIGNE = `Tu lis une capture d'ecran du jeu « Seven Deadly Sins: Origin ».
+Le panneau de detail se trouve sur la droite de l'image.
+
+Tu TRANSCRIS ce que le panneau affiche. Tu ne calcules rien, tu ne convertis
+rien, tu ne devines rien. Si une information est absente ou illisible, rends
+null plutot qu'une valeur inventee.
+
+À lire :
+
+1. « nom » : le titre du panneau, tout en haut, recopie mot pour mot.
+   Exemple : « Baguette des ailes de la flamme noire ».
+   Un equipement grave peut porter des chevrons : recopie-les sans les enlever.
+
+2. « niveau » : le nombre qui suit « Lv. ». Un nombre entier, ou null.
+   Ne le confonds pas avec le « +5 » d'un equipement grave, ni avec la
+   puissance affichee a cote d'un losange.
+
+3. « passif » : le nombre qui suit « Niv. », plus bas, devant le nom du passif.
+   Exemple : « Niv. 7 Énergie de la flamme noire » donne 7. Ou null.
+
+4. « stats » : TOUTES les lignes chiffrees du panneau, de haut en bas, dans
+   l'ordre d'affichage. Chaque ligne donne :
+   - « libelle » : le texte de la statistique, recopie mot pour mot, accents
+     compris. Une ligne peut s'ecrire sur deux lignes a l'ecran : rassemble-la
+     en une seule, separee par une espace.
+     Exemple : « Augmentation des dégâts, compétence normale ».
+   - « valeur » : le nombre tel qu'il est AFFICHE, avec son signe pourcent s'il
+     y en a un, et son point decimal. « 48.82% » reste « 48.82% ». Ne convertis
+     jamais en entier.
+   - « section » : le titre de l'encadre qui contient la ligne, recopie mot
+     pour mot — « Enchanter » pour une arme, « Bonus de gravure » pour un
+     equipement grave. Pour une ligne qui se trouve AU-DESSUS de tout titre de
+     section, rends null.
+
+Cette distinction entre section et non-section est la plus importante de la
+lecture : une ligne au-dessus du premier titre est une statistique native de
+l'objet, une ligne sous un titre est un enchantement. Les confondre rend la
+capture inutilisable.
+
+N'inclus pas le texte descriptif du passif, ni les barres de progression, ni
+quoi que ce soit hors du panneau de droite.`;
+
+/* Le schema ferme la sortie : pas de prose, pas de champ surprise, et les
+   types sont garantis a l'arrivee. */
+const SCHEMA = {
+  type: "OBJECT",
+  properties: {
+    nom: { type: "STRING", nullable: true },
+    niveau: { type: "INTEGER", nullable: true },
+    passif: { type: "INTEGER", nullable: true },
+    stats: {
+      type: "ARRAY",
+      items: {
+        type: "OBJECT",
+        properties: {
+          libelle: { type: "STRING" },
+          valeur: { type: "STRING" },
+          section: { type: "STRING", nullable: true }
+        },
+        required: ["libelle", "valeur"]
+      }
+    }
+  },
+  required: ["nom", "stats"]
+};
+
+function refus(message: string, code: number): Response {
+  return new Response(JSON.stringify({ erreur: message }), {
+    status: code, headers: ENTETES
+  });
+}
+
+/* Une image arrive en base64, avec ou sans son prefixe `data:`. On accepte les
+   deux : le navigateur produit naturellement le prefixe, et l'exiger cote
+   client pour le retirer ici serait un aller-retour inutile. */
+function decouperImage(brut: unknown): { donnees: string; type: string } | null {
+  if (typeof brut !== "string" || !brut) return null;
+  const trouve = /^data:([\w/+.-]+);base64,(.*)$/s.exec(brut);
+  const donnees = trouve ? trouve[2] : brut;
+  const type = trouve ? trouve[1] : "image/png";
+  if (!donnees || !/^[A-Za-z0-9+/=\s]+$/.test(donnees)) return null;
+  /* Le base64 pese un tiers de plus que les octets qu'il code. */
+  if (donnees.length * 3 / 4 > OCTETS_MAX) return null;
+  return { donnees: donnees.replace(/\s+/g, ""), type };
+}
+
+Deno.serve(async (requete: Request) => {
+  if (requete.method === "OPTIONS") {
+    return new Response("ok", { headers: ENTETES });
+  }
+  if (requete.method !== "POST") return refus("Méthode non autorisée.", 405);
+  if (!CLE) return refus("La lecture assistée n’est pas configurée.", 503);
+
+  let corps: { image?: unknown };
+  try {
+    corps = await requete.json();
+  } catch {
+    return refus("Corps de requête illisible.", 400);
+  }
+
+  const image = decouperImage(corps.image);
+  if (!image) return refus("Image absente, mal encodée ou trop lourde.", 400);
+
+  let reponse: Response;
+  try {
+    reponse = await fetch(
+      RACINE + encodeURIComponent(MODELE) + ":generateContent?key="
+        + encodeURIComponent(CLE),
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: CONSIGNE }] },
+          contents: [{
+            role: "user",
+            parts: [{ inlineData: { mimeType: image.type, data: image.donnees } }]
+          }],
+          generationConfig: {
+            responseMimeType: "application/json",
+            responseSchema: SCHEMA,
+            /* Une transcription n'a pas a etre creative : on veut la meme
+               lecture pour la meme image. */
+            temperature: 0
+          }
+        })
+      }
+    );
+  } catch {
+    return refus("Le service de lecture est injoignable.", 502);
+  }
+
+  if (!reponse.ok) {
+    /* Le detail de l'erreur amont peut nommer la cle ou le projet : il reste
+       dans les journaux, il ne part pas au navigateur. */
+    console.error("gemini", reponse.status, await reponse.text());
+    return refus(
+      reponse.status === 429
+        ? "Quota de lecture assistée atteint. Réessaie plus tard."
+        : "La lecture assistée a échoué.",
+      reponse.status === 429 ? 429 : 502
+    );
+  }
+
+  const charge = await reponse.json();
+  const texte = charge?.candidates?.[0]?.content?.parts?.[0]?.text;
+  if (typeof texte !== "string") return refus("Réponse illisible.", 502);
+
+  let lu: unknown;
+  try {
+    lu = JSON.parse(texte);
+  } catch {
+    return refus("Réponse mal formée.", 502);
+  }
+
+  return new Response(JSON.stringify(lu), { headers: ENTETES });
+});
