@@ -21,6 +21,12 @@ TYPES_REGLES = {
 CLASSIFICATIONS = {"modelise", "sans-impact-dps", "non-inclus"}
 
 SANS_IMPACT_SPECIFIQUES = {
+    # Le buff 302073010 donne `Ice_Add` en mode `Per` : l'attaque de Froid
+    # gagne 10 % de l'ATTAQUE du heros, en points, pas un taux. Le moteur ne
+    # sait pas indexer l'attaque elementaire sur une autre statistique, et la
+    # regle qui vivait ici multipliait l'attaque de Froid par 1,10 — un tout
+    # autre calcul. Absente vaut mieux que fausse.
+    "skill:merlin_book_skill_e": "attaque-elementaire-indexee-sur-l-attaque",
     "skill:dreyfus_lance_jumpatk": "enhanced-surge-modelise-sur-la-speciale",
     "skill:escanor_axe_skill_e": "flare-modelise-sur-le-passif",
     "skill:king_staff_skill_rmb": "full-bloom-modelise-sur-le-passif",
@@ -52,6 +58,91 @@ NON_INCLUS_SPECIFIQUES = {
 }
 
 REGLES_SPECIFIQUES = {
+    # --- Attaque elementaire contre degats elementaires -------------------
+    #
+    # Le jeu distingue TROIS statistiques la ou la prose n'en nomme qu'une :
+    #
+    #   <Element>_Add          l'attaque elementaire, en points
+    #   <Element>_Rate         le taux qui multiplie cette attaque
+    #   <Element>_Element_Rate le taux de DEGATS de cet element
+    #
+    # `_regle_bonus` traduit « X Attack +n% » par un taux sur l'attaque
+    # elementaire. Les quatre entrees ci-dessous corrigent des cas ou la
+    # description du jeu dit « attaque » alors que le code de la statistique,
+    # lu dans Table/Buff/BuffTable, dit `_Element_Rate`. La table fait foi :
+    # pour Drake, la description de la COMPETENCE dit « attaque de Foudre »
+    # et celle du BUFF dit « Degats de Foudre » — le jeu se contredit, seul le
+    # code tranche.
+    #
+    # Les valeurs sont donnees au maximum de cumuls, ce que `passif-max`
+    # suppose. Verification : node outils/fmodel/verifier-buffs-officiels.js
+    "skill:meliodas_sword1h_skill_rmb": [
+        # buff 302051001 « Hate » : Dark_Element_Rate 1500, 2 cumuls, 7 s
+        {
+            "type": "bonus-degats",
+            "cible": "element:dark",
+            "valeur": 3000,
+            "mode": "passif-max",
+        },
+        {
+            "type": "recharge-taux",
+            "cible": "self",
+            "valeur": 10000,
+            "condition": "active-max",
+            "mode": "passif-max",
+            "declencheur": "skill",
+        },
+    ],
+    "skill:drake_sword2h_skill_e_1": [
+        # buff 302262001 « Magie du roi » : Thunder_Element_Rate 1000 et
+        # C_Critical_Rate 500, 3 cumuls, 20 s. Les deux montent par cumul.
+        #
+        # Le meme buff porte aussi UltimateSkill_DamAdd_Rate 3000, que NI la
+        # description de la competence NI celle du buff ne mentionnent. A +30 %
+        # par cumul ce serait +90 % de degats d'ultime : trop gros pour etre
+        # publie sur la foi d'un champ que deux textes ignorent. A mesurer.
+        {
+            "type": "bonus-degats",
+            "cible": "element:thunder",
+            "valeur": 3000,
+            "mode": "passif-max",
+        },
+        {
+            "type": "bonus-critique",
+            "stat": "critRate",
+            "valeur": 1500,
+            "mode": "passif-max",
+        },
+    ],
+    # Klotho : la part `bonus-degats` etait juste (Ice_Element_Rate 1000 et
+    # 4000). Seule la ligne d'attaque elementaire sautait : le jeu l'indexe sur
+    # les PV max du porteur avec un plafond (`Ice_Add` en `Per`), mecanique que
+    # le moteur ne sait pas exprimer. On garde ce qui est vrai, on retire le
+    # reste plutot que de publier un chiffre faux.
+    "skill:klotho_book_jumpatk": [
+        {
+            "type": "bonus-degats",
+            "cible": "element:ice",
+            "valeur": 1000,
+            "mode": "passif-max",
+        }
+    ],
+    "skill:klotho_book_skill_rmb": [
+        {
+            "type": "bonus-degats",
+            "cible": "element:ice",
+            "valeur": 1000,
+            "mode": "passif-max",
+        }
+    ],
+    "skill:klotho_book_skill_q_a": [
+        {
+            "type": "bonus-degats",
+            "cible": "element:ice",
+            "valeur": 4000,
+            "mode": "passif-max",
+        }
+    ],
     "potential:elaine:Book:6": [
         {
             "type": "recharge-plate",
