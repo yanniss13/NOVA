@@ -21,3 +21,10 @@ image-ocr/
 # avec NOVA deposes a la racine.
 NOTE-CLAUDE-WORKTREE.md
 AUDIT-*.md
+
+# Sorties JETABLES des outils d'extraction (outils/fmodel).
+# `tous-les-chemins.txt` pese 99 Mo : c'est un index de paks qui se regenere
+# en une commande, et que rien ne lit. Le commiter alourdirait le depot pour
+# toujours — l'historique ne s'allege pas apres coup.
+outils/fmodel/tous-les-chemins.txt
+outils/fmodel/animations-completes.json
