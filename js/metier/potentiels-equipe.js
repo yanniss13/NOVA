@@ -9,7 +9,7 @@
      le PALIER jusqu'ou l'a-t-il monte ? Les paliers sont CUMULATIFS.
      la CIBLE  ce potentiel sort-il de son porteur ? */
 
-import { valeurIndexeeSurAtk } from "./equipe-buffs.js";
+import { indexationDe, valeurIndexee } from "./equipe-buffs.js";
 
   /* Charge A LA DEMANDE par la vue, comme les competences, les buffs et les
      passifs graves : le lire par window plutot que par import evite de le
@@ -56,13 +56,13 @@ import { valeurIndexeeSurAtk } from "./equipe-buffs.js";
                retire du roster. Le plafond, pas zero : la ligne resterait
                sinon cochable sans rien faire, ce qui se lit « ce potentiel ne
                sert a rien ». `repli` le dit a l'ecran. */
-            const chiffree = valeurIndexeeSurAtk(ligne.indexeSurAtk, porteur.atk);
+            const chiffree = valeurIndexee(ligne, porteur);
             return Object.assign({}, ligne, {
               support:porteur.charId,
               arme:porteur.typeArme,
               palier:niveau,
               valeur:chiffree === null ? ligne.valeur : chiffree,
-              repli:Boolean(ligne.indexeSurAtk) && chiffree === null
+              repli:Boolean(indexationDe(ligne)) && chiffree === null
             });
           }));
     });

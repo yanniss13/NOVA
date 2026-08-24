@@ -19,7 +19,9 @@ import {
 } from "../metier/armes.js";
 import {
   buildWeaponGrade,
+  gearConfigAuMaximum,
   gearConfigStatus,
+  weaponConfigAuMaximum,
   weaponConfigStatus
 } from "../metier/build-config.js";
 import {
@@ -38,7 +40,7 @@ import {
   emptyJewel,
   jewelSetsFrom
 } from "../metier/equipement.js";
-import { DATA, JEWEL_SLOTS, LINKED_ARMOR_SLOT } from "../noyau/constantes.js";
+import { ARMOR_SLOTS, DATA, JEWEL_SLOTS, LINKED_ARMOR_SLOT } from "../noyau/constantes.js";
 import { buildStatsReady, ensureBuildStats } from "../noyau/catalogue-build.js";
 import { el } from "../noyau/dom.js";
 import { jsonCopy } from "../noyau/outils.js";
@@ -273,6 +275,74 @@ import { toast } from "./toast.js";
     });
   }
 
+  /* TOUT MONTER D'UN COUP.
+
+     « A chaque fois mettre +5 et tout c'est chiant » : onze emplacements a
+     regler un par un, niveau puis renforcement, pour comparer deux builds que
+     le membre voulait de toute facon au plafond.
+
+     Le bouton ne touche QUE des niveaux. Les enchantements et le choix des
+     pieces restent tels quels — voir gearConfigAuMaximum.
+
+     Une ARME sans configuration reste en dehors : sa configuration nomme le
+     grade (`gradeGameId`), et rien ne permet de le deviner. Le compte-rendu le
+     dit plutot que de laisser croire que tout est monte. */
+  function porterAuMaximum(hero){
+    if(!hero) return { montees:0, armeIgnoree:false };
+    let montees = 0;
+    const suivant = config => { montees += 1; return config; };
+
+    const armeConfig = hero.weapon
+      ? weaponConfigAuMaximum(hero.weapon, hero.weaponConfig) : null;
+    if(armeConfig) hero.weaponConfig = suivant(armeConfig);
+    const armeIgnoree = Boolean(hero.weapon) && !armeConfig;
+
+    [["armor", ARMOR_SLOTS], ["jewel", JEWEL_SLOTS]].forEach(([genre, slots]) => {
+      const cle = genre + "Config";
+      slots.forEach(slot => {
+        const fichier = hero[genre] && hero[genre][slot];
+        if(!fichier) return;
+        const config = gearConfigAuMaximum(
+          fichier, hero[cle] && hero[cle][slot]
+        );
+        if(!config) return;
+        if(!hero[cle]) hero[cle] = {};
+        hero[cle][slot] = suivant(config);
+      });
+    });
+    return { montees, armeIgnoree };
+  }
+
+  /* Le compte-rendu que le bouton affiche. Sorti a part pour etre teste sans
+     DOM : c'est la seule partie ou une erreur se verrait a l'ecran. */
+  function messageDuMaximum(bilan){
+    if(!bilan || !bilan.montees){
+      return bilan && bilan.armeIgnoree
+        ? "Configure d’abord l’arme : son grade est nécessaire."
+        : "Rien à monter ici.";
+    }
+    const pieces = bilan.montees + (bilan.montees > 1 ? " pièces" : " pièce");
+    return bilan.armeIgnoree
+      ? pieces + " au maximum. L’arme est restée en dehors : configure son grade d’abord."
+      : pieces + " au maximum.";
+  }
+
+  function boutonToutAuMaximum(hero, onApply){
+    return el("button",{
+      class:"btn btn-ghost gear-maximum",
+      type:"button",
+      dataset:{ gearAction:"tout-au-maximum" },
+      text:"Tout au maximum",
+      title:"Monte l’arme et toutes les pièces à leur niveau, renforcement et "
+        + "passif maximum. Les enchantements ne changent pas.",
+      onclick:()=>{
+        const bilan = porterAuMaximum(hero);
+        if(bilan.montees && typeof onApply === "function") onApply();
+        toast(messageDuMaximum(bilan));
+      }
+    });
+  }
+
   function equipmentSetButton(kind, onApply){
     const armor = kind === "armor";
     return el("button",{
@@ -317,6 +387,7 @@ import { toast } from "./toast.js";
 export {
   activateHeroBuild,
   applyCharacterChange,
+  boutonToutAuMaximum,
   applyGearChange,
   applyWeaponChange,
   equipmentSetButton,

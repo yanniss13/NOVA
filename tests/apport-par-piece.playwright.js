@@ -198,9 +198,10 @@ const EQUIPE = {
     assert.match(await page.locator(".hd-puissance-detail").first().textContent(),
       /Ouverture/);
     /* Le compte, pas une reserve muette : Diane a trois competences
-       simulees et data/animations-mesurees.json est encore vide. */
+       simulees. Son ultime porte le verrou de 2,7 s deduit des fichiers du
+       jeu ; les deux autres n'ont encore aucun temps connu. */
     assert.match(await page.locator(".hd-puissance-detail").first().textContent(),
-      /Animations mesurées : 0 \/ 3/);
+      /Animations mesurées : 1 \/ 3/);
 
     await page.setViewportSize({ width:320, height:900 });
     const boiteLigne = await page.locator(".hd-puissance-ligne").first().boundingBox();

@@ -10,6 +10,17 @@
    barre de progression ni libelle — pour les valeurs. Sans la seconde, deux
    valeurs sur six etaient perdues sur mobile.
 
+   DEPUIS LA LECTURE ASSISTEE, ces deux passes ne servent plus qu'AU MODE HORS
+   LIGNE. Un membre connecte passe par la fonction Edge `lecture-panneau`, qui
+   fait lire la capture par un modele : c'est plus fidele, et surtout ca evite
+   de telecharger les quatre megaoctets du moteur Tesseract. Le repli reste
+   entier — hors ligne, sans compte, ou si l'appel echoue.
+
+   Ce qui ne change pas, et c'est l'essentiel : QUI QUE SOIT LE LECTEUR, le
+   resultat passe par `deduireArme` ou `deduirePiece`, qui ne retiennent que
+   les configurations dont les totaux recalcules reproduisent ce qui a ete lu.
+   Le lecteur remplace l'oeil, jamais le juge.
+
    Rien n'est ecrit avant le clic final. C'est la seule propriete de surete qui
    compte vraiment : un roster est lu par d'autres membres, et une valeur fausse
    y passerait inapercue. */
@@ -23,6 +34,11 @@ import {
 } from "../metier/ocr-panneau.js";
 import { deduirePiece } from "../metier/ocr-deduction.js";
 import { deduireArme } from "../metier/ocr-arme.js";
+import {
+  lectureAssisteeDisponible, normaliserLecture
+} from "../metier/lecture-assistee.js";
+import { sessionCourante } from "../etat/session.js";
+import { sb } from "../noyau/supabase-client.js";
 import { ModalStack } from "./modal-stack.js";
 
   /* Deux bases differentes cohabitent : un `import()` dynamique se resout
@@ -115,12 +131,54 @@ import { ModalStack } from "./modal-stack.js";
     return mots;
   }
 
+  /* L'image part TELLE QUELLE, sans redimensionnement. Les valeurs du panneau
+     se jouent au centieme de pourcent — 16.80 contre 16.81 designent deux
+     enchantements differents — et reduire l'image avant de la faire lire
+     reintroduirait precisement l'imprecision qu'on cherche a fuir. */
+  function enBase64(fichier){
+    return new Promise((resoudre, rejeter) => {
+      const lecteur = new FileReader();
+      lecteur.onload = () => resoudre(String(lecteur.result));
+      lecteur.onerror = () => rejeter(lecteur.error || new Error("lecture"));
+      lecteur.readAsDataURL(fichier);
+    });
+  }
+
+  /* La lecture assistee, ou `null` si elle n'aboutit pas. TOUTE panne rend
+     `null` plutot que de lever : l'appelant retombe alors sur Tesseract, et un
+     quota epuise ou un reseau coupe ne doit pas priver le membre de son
+     import. */
+  async function lireCaptureAssistee(fichier){
+    const disponible = lectureAssisteeDisponible({
+      client:sb,
+      connecte:Boolean(sessionCourante.user),
+      enLigne:typeof navigator === "undefined" ? true : navigator.onLine
+    });
+    if(!disponible) return null;
+    try{
+      const { data, error } = await sb.functions.invoke("lecture-panneau", {
+        body:{ image:await enBase64(fichier) }
+      });
+      if(error || !data) return null;
+      const lue = normaliserLecture(data);
+      return lue.statut === "ok" ? Object.assign(lue, { lecteur:"assiste" }) : null;
+    }catch(erreur){
+      return null;
+    }
+  }
+
   async function lireCaptureReelle(fichier){
     /* Le catalogue est charge a la demande. La lecture OCR peut finir avant
        son injection sur une premiere visite : attendre ici empeche une
        deduction vide, sans ralentir les appels suivants qui reutilisent la
        meme promesse. */
     await ensureBuildStats();
+
+    /* Avant tout traitement d'image : une lecture assistee reussie evite le
+       telechargement du moteur, la detection du panneau et les deux passes. */
+    const assistee = await lireCaptureAssistee(fichier);
+    if(assistee) return assistee;
+
     const image = await chargerImage(fichier);
     const luminance = luminanceDe(image);
     const zone = detecterPanneau({
@@ -190,7 +248,7 @@ import { ModalStack } from "./modal-stack.js";
     const entete = lireEntete(motsEntete);
     const passif = niveauDePassif([...motsPleins, ...motsEntete]
       .map(mot => String(mot.text)).join(" "));
-    return { statut:"ok", stats, entete, passif };
+    return { statut:"ok", stats, entete, passif, lecteur:"local" };
   }
 
   /* Remplacable par les tests : la lecture d'image est la seule partie qu'on ne
@@ -210,6 +268,7 @@ import { ModalStack } from "./modal-stack.js";
           fichier:fichiers[i],
           statut:"echec",
           raison:lue.statut === "ok" ? "aucune-stat-lue" : lue.statut,
+          lecteur:lue.lecteur || null,
           candidats:[],
           choix:null
         });
@@ -223,11 +282,36 @@ import { ModalStack } from "./modal-stack.js";
           stats:lue.stats,
           herosSlug
         })
-        : deduirePiece({ stats:lue.stats, herosSlug });
+        /* Le NOM part avec les statistiques : trois armures liees ont les
+           memes courbes, et seul le titre du panneau les separe. Voir
+           restreindreParLeNom — il ne sert qu'a restreindre, jamais a
+           elargir. */
+        : deduirePiece({
+          nom:lue.entete ? lue.entete.nom : null,
+          stats:lue.stats,
+          herosSlug
+        });
+      /* QUAND RIEN NE COLLE, DIRE CE QU'ON A LU.
+
+         Sans cette trace, un echec d'import est indiagnosticable : le membre
+         voit « aucune configuration ne correspond » et personne ne sait si le
+         lecteur a mal lu, ou si la piece manque au catalogue. Les lignes lues
+         tiennent en trois lignes de console et repondent a la question. */
+      if(deduite.statut === "aucun" && typeof console !== "undefined"){
+        console.warn("[import] aucune configuration ne correspond"
+          + " — lecteur : " + (lue.lecteur || "?")
+          + " — heros : " + (herosSlug || "aucun"), {
+            nom:lue.entete && lue.entete.nom,
+            niveau:lue.entete && lue.entete.niveau,
+            passif:lue.passif,
+            stats:lue.stats
+          });
+      }
       lignes.push({
         fichier:fichiers[i],
         statut:deduite.statut === "aucun" ? "echec" : deduite.statut,
         raison:deduite.statut === "aucun" ? "aucune-config-compatible" : null,
+        lecteur:lue.lecteur || null,
         candidats:deduite.candidats,
         /* Une ambiguite n'est jamais preselectionnee : c'est une question posee
            au membre, pas une decision prise a sa place. */
@@ -283,14 +367,25 @@ import { ModalStack } from "./modal-stack.js";
     return "echec";
   }
 
-  function messageEchec(raison){
+  /* Le lecteur qui a servi, nomme a l'ecran. Sans lui, un membre qui signale
+     un echec ne peut pas dire si la lecture assistee a tourne ou si le site
+     est retombe sur le moteur local — et c'est la premiere question a poser. */
+  function mentionDuLecteur(lecteur){
+    if(lecteur === "assiste") return " (lecture assistée)";
+    if(lecteur === "local") return " (lecture locale)";
+    return "";
+  }
+
+  function messageEchec(raison, lecteur){
     if(raison === "panneau-introuvable"){
       return "Panneau introuvable sur cette image.";
     }
     if(raison === "resolution-insuffisante"){
       return "Image trop petite : envoie le fichier d'origine, non redimensionne.";
     }
-    return "Lecture douteuse : aucune configuration ne correspond.";
+    return "Lecture douteuse : aucune configuration ne correspond."
+      + mentionDuLecteur(lecteur)
+      + " Le détail de ce qui a été lu est dans la console du navigateur.";
   }
 
   function selecteurDeCandidats(ligne){
@@ -335,7 +430,8 @@ import { ModalStack } from "./modal-stack.js";
     ];
     if(ligne.statut === "echec"){
       cellules.push(el("span", {
-        class:"import-captures-raison", text:messageEchec(ligne.raison)
+        class:"import-captures-raison",
+        text:messageEchec(ligne.raison, ligne.lecteur)
       }));
     }else if(ligne.statut === "ambigu"){
       cellules.push(selecteurDeCandidats(ligne));

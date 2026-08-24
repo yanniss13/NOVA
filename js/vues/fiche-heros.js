@@ -154,17 +154,33 @@ import { toast } from "./toast.js";
         ? Promise.resolve(true) : injecter("./data/competences.js"),
       window.SEVEN_DS_EFFETS_DPS
         ? Promise.resolve(true) : injecter("./data/effets-dps.js"),
-      /* Les animations mesurees en jeu. Un JSON, pas un script : il s'ecrit a
-         la main et ne porte aucun code. Son absence n'est pas une panne — la
-         table est vide tant que la confrerie n'a rien mesure, et le simulateur
-         compte alors zero. */
-      fetch("./data/animations-mesurees.json")
-        .then(reponse => reponse.ok ? reponse.json() : null)
-        .then(contenu => {
-          animationsMesurees = (contenu && contenu.animations) || {};
-          return true;
-        })
-        .catch(() => { animationsMesurees = {}; return true; })
+      /* Deux sources, dans cet ordre de confiance.
+
+         `animations-verrous.json` est DEDUIT des fichiers du jeu : le premier
+         instant ou le heros peut relancer une action offensive, lu dans les
+         marqueurs du montage. Il couvre 358 competences, mais reste une
+         deduction.
+
+         `animations-mesurees.json` s'ecrit a la main, chronometre en jeu. Il
+         fait FOI la ou il parle, et ecrase donc le precedent cle par cle.
+
+         L'absence des deux n'est pas une panne : le simulateur compte zero,
+         jamais une duree supposee. */
+      Promise.all([
+        fetch("./data/animations-verrous.json")
+          .then(reponse => reponse.ok ? reponse.json() : null)
+          .catch(() => null),
+        fetch("./data/animations-mesurees.json")
+          .then(reponse => reponse.ok ? reponse.json() : null)
+          .catch(() => null)
+      ]).then(([deduites, mesurees]) => {
+        animationsMesurees = Object.assign(
+          {},
+          (deduites && deduites.animations) || {},
+          (mesurees && mesurees.animations) || {}
+        );
+        return true;
+      })
     ]).catch(erreur => {
       /* Rejouable : un echec reseau ne doit pas condamner la fiche pour toute
          la duree de la session. */
