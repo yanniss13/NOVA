@@ -273,18 +273,81 @@ leurs 18 triplets distincts suivent un motif trop régulier (270–330 = 300 ±1
 720–880 = 800 ±10 %) pour être faux : elles semblent **calculées** autour d'une
 valeur de base que porte une table bloquée.
 
+## Le usmap `mappings-1.7` — 24 aout 2026
+
+Un usmap plus fourni (3,2 Mo bruts contre 2,2 Mo) a debloque l'essentiel.
+Malgre son nom, il fonctionne sur le build `1.8.1.2`.
+
+| | Avant | Apres |
+|---|---|---|
+| Tables lisibles | 420 | **1 409** |
+| Coquilles vides | 1 097 | 108 |
+
+Reglage : `Settings` -> section du jeu -> bloc `Mappings`, case *Overwrite*
+cochee. **Fermer et rouvrir FModel** : le mapping n'est lu qu'au chargement
+des paks.
+
+### 37 tables echouent ENCORE
+
+Une table qui echoue au decodage produit le meme fichier de 430 octets qu'une
+table reellement vide. **La taille ne permet pas de les distinguer** — seul le
+journal le dit :
+
+```
+Output/Logs/FModel-Log-<date>.log
+  [ERR] ... Could not read DataTable correctly
+```
+
+La ligne juste au-dessus nomme le fichier. Sur les 108 coquilles, 37 sont des
+echecs et 71 sont vides pour de bon (Labyrinthos, mini-jeux, peche).
+
+Trois echecs comptent :
+
+```
+Table/Skill/PC_SkillTable      <- la plus importante
+Table/Skill/SkillTable
+Table/Skill/Mon_SkillTable
+```
+
+`PC_SkillTable` est le candidat le plus probable pour les **temps de recharge**
+et les taux de degats des competences. Tant qu'elle ne s'ouvre pas, on ne peut
+pas conclure que ces valeurs sont calculees cote serveur : les 2 703 entrees
+d'attaque de `PC_SkillBehaviorTable` ont toutes `AttackRate = 0`, mais ce n'est
+pas la bonne table.
+
+### Ce que le usmap NE change PAS
+
+Verifie en reexportant tout et en comparant, pas suppose :
+
+| | Resultat |
+|---|---|
+| Montages d'animation (`Cha/PC`) | **1 906 / 1 906 identiques** — duree, impacts, fenetres |
+| `TextDatas/CData/HitNotify` | 0 / 5 155 fichiers modifies |
+| `Localization/Game/fr/Game.json` | octet pour octet identique |
+
+1 410 des 4 271 fichiers de montage ont pourtant **grossi**. Le supplement ne
+concerne que des marqueurs qu'aucun script ne lit — `EAnimNotify_Sound`,
+`EAnimNotifyState_SuperArmor`, cameras. `EEnableSkipBy*`, d'ou sortent les
+fenetres d'annulation, n'apparait dans aucun echec du journal.
+
+Consequence : les 45 % de montages sans fenetre d'annulation sont une
+**propriete de la donnee**, pas un defaut de lecture. Et `animations-verrous.json`
+est valide.
+
+L'ancien export est conserve pour comparaison dans
+`Output/Exports-ANCIEN-usmap-5.5.4/`, avec un LISEZ-MOI.
+
 ## Ce qui reste à faire
 
-1. **Un usmap généré sur le build `1.8.1.2`** débloquerait d'un coup les 1 097
-   tables vides. C'est le geste qui rapporte le plus, et tout le reste en dépend.
-2. **`potentials`** — introuvables dans les 420 tables lisibles.
-   `Skill/HeroPotentialRewardTable` ne porte que la récompense de fin de palier
-   (1 ligne). Les valeurs sont dans le lot bloqué.
-3. **Élément et rôle par emplacement d'arme** — `ElementTable` (lisible) ne
-   contient que des icônes ; le lien héros → élément est dans
-   `Actor/HeroActorTable`, illisible.
-4. **Armes, armures, sets, buffs** — `Item/ItemTable_Equip_*`,
-   `Item/EquipSetOptionTable` et `Buff/BuffTable` sont tous illisibles.
+1. **Un usmap genere sur le build du jour** (la mise a jour de mercredi passe
+   en 2.0). Cible n°1 : `Table/Skill/PC_SkillTable`, puis les 36 autres tables
+   en echec.
+2. **Question 3 des buffs de soutien** — voir
+   `docs/buffs-portee-lue-dans-le-jeu.md` : le taux elementaire du receveur
+   multiplie-t-il le buff plat ? Question de formule, pas de table. Seule une
+   mesure en jeu repond.
+3. **La constante C du calcul de degats** — intestable depuis les fichiers, il
+   faut un coup sur cible defendue.
 
 ## Note d'environnement
 
