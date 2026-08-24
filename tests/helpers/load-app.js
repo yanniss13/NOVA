@@ -89,6 +89,18 @@ function makeLocalStorage(initialTeams){
 }
 
 const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
+  porterAuMaximum:typeof porterAuMaximum === "function"
+    ? porterAuMaximum
+    : undefined,
+  messageDuMaximum:typeof messageDuMaximum === "function"
+    ? messageDuMaximum
+    : undefined,
+  gearConfigAuMaximum:typeof gearConfigAuMaximum === "function"
+    ? gearConfigAuMaximum
+    : undefined,
+  weaponConfigAuMaximum:typeof weaponConfigAuMaximum === "function"
+    ? weaponConfigAuMaximum
+    : undefined,
   ROUTE_SESSION_ID_MAX_LENGTH:
     typeof ROUTE_SESSION_ID_MAX_LENGTH === "number"
       ? ROUTE_SESSION_ID_MAX_LENGTH

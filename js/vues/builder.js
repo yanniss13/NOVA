@@ -63,6 +63,7 @@ import {
   applyCharacterChange,
   applyGearChange,
   applyWeaponChange,
+  boutonToutAuMaximum,
   equipmentSetButton,
   findGearConfigButton,
   gearConfigurableSlot,
@@ -515,6 +516,11 @@ import { toast } from "./toast.js";
       }
     });
     if(configControl) gear.appendChild(configControl);
+    /* Avant les presets et les sets : c'est le geste le plus frequent, et il
+       vaut pour l'arme comme pour les onze emplacements a la fois. */
+    gear.appendChild(boutonToutAuMaximum(
+      brouillonEquipe.equipe.heroes[i], renderBuilder
+    ));
     /* Un preset porte l'armure ET les bijoux : il precede les deux groupes
        plutot que de se ranger sous l'un d'eux. */
     gear.appendChild(el("div",{class:"gear-group", text:"Presets"}));
