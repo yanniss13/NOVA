@@ -144,26 +144,79 @@ import { ModalStack } from "./modal-stack.js";
     });
   }
 
+  /* Le detail que `functions.invoke` cache.
+
+     Sur un statut non-2xx, supabase-js ne rend qu'un « Edge Function returned
+     a non-2xx status code » — le corps, ou vit le vrai motif (« demande un
+     compte », « trop lourde », « quota atteint »), reste dans `error.context`,
+     une Response non lue. Sans ce detour, toute panne serveur se ressemble. */
+  async function motifDuServeur(error){
+    const reponse = error && error.context;
+    if(!reponse || typeof reponse.text !== "function") return "";
+    try{
+      const brut = await reponse.text();
+      const lu = JSON.parse(brut);
+      return (lu && lu.erreur) || brut;
+    }catch(erreur){
+      return "";
+    }
+  }
+
   /* La lecture assistee, ou `null` si elle n'aboutit pas. TOUTE panne rend
      `null` plutot que de lever : l'appelant retombe alors sur Tesseract, et un
      quota epuise ou un reseau coupe ne doit pas priver le membre de son
-     import. */
+     import.
+
+     Mais un repli MUET est indiagnostiquable : le membre voit « la lecture
+     assistee ne marche pas » sans que rien, nulle part, ne dise a quelle
+     etape elle a renonce. Chaque sortie prematuree nomme donc sa raison dans
+     la console, et `raisonDuRepli` la porte jusqu'au message d'echec. */
+  let raisonDuRepli = "";
+
+  function renoncer(raison, detail){
+    raisonDuRepli = raison;
+    console.warn("[import] lecture assistée écartée : " + raison,
+      detail === undefined ? "" : detail);
+    return null;
+  }
+
   async function lireCaptureAssistee(fichier){
-    const disponible = lectureAssisteeDisponible({
+    raisonDuRepli = "";
+    const etat = {
       client:sb,
       connecte:Boolean(sessionCourante.user),
       enLigne:typeof navigator === "undefined" ? true : navigator.onLine
-    });
-    if(!disponible) return null;
+    };
+    if(!lectureAssisteeDisponible(etat)){
+      return renoncer(!etat.client ? "aucun client Supabase (config absente)"
+        : !etat.connecte ? "aucun compte connecté"
+        : "navigateur hors ligne");
+    }
     try{
+      const image = await enBase64(fichier);
+      /* Le base64 pese un tiers de plus que les octets qu'il code, et la
+         fonction refuse au-dela de 6 Mo. Une capture 1440p non compressee
+         peut depasser : autant le dire ici plutot que de lire un 400 sec. */
+      const octets = Math.round(image.length * 3 / 4);
+      console.info("[import] lecture assistée : envoi de "
+        + Math.round(octets / 1024) + " Ko");
       const { data, error } = await sb.functions.invoke("lecture-panneau", {
-        body:{ image:await enBase64(fichier) }
+        body:{ image }
       });
-      if(error || !data) return null;
+      if(error){
+        const motif = await motifDuServeur(error);
+        return renoncer("la fonction a répondu une erreur"
+          + (motif ? " — " + motif : ""), error);
+      }
+      if(!data) return renoncer("la fonction n'a rien renvoyé");
       const lue = normaliserLecture(data);
-      return lue.statut === "ok" ? Object.assign(lue, { lecteur:"assiste" }) : null;
+      if(lue.statut !== "ok"){
+        return renoncer("réponse inexploitable (" + lue.statut + ")", data);
+      }
+      console.info("[import] lecture assistée réussie", lue);
+      return Object.assign(lue, { lecteur:"assiste" });
     }catch(erreur){
-      return null;
+      return renoncer("appel impossible", erreur);
     }
   }
 
@@ -248,7 +301,11 @@ import { ModalStack } from "./modal-stack.js";
     const entete = lireEntete(motsEntete);
     const passif = niveauDePassif([...motsPleins, ...motsEntete]
       .map(mot => String(mot.text)).join(" "));
-    return { statut:"ok", stats, entete, passif, lecteur:"local" };
+    /* `raisonDuRepli` voyage avec la lecture : c'est la seule facon pour le
+       membre d'apprendre POURQUOI Tesseract a pris la main, sans ouvrir la
+       console. */
+    return { statut:"ok", stats, entete, passif, lecteur:"local",
+      raisonAssistee:raisonDuRepli };
   }
 
   /* Remplacable par les tests : la lecture d'image est la seule partie qu'on ne
@@ -269,6 +326,7 @@ import { ModalStack } from "./modal-stack.js";
           statut:"echec",
           raison:lue.statut === "ok" ? "aucune-stat-lue" : lue.statut,
           lecteur:lue.lecteur || null,
+          raisonAssistee:lue.raisonAssistee || "",
           candidats:[],
           choix:null
         });
@@ -312,6 +370,7 @@ import { ModalStack } from "./modal-stack.js";
         statut:deduite.statut === "aucun" ? "echec" : deduite.statut,
         raison:deduite.statut === "aucun" ? "aucune-config-compatible" : null,
         lecteur:lue.lecteur || null,
+        raisonAssistee:lue.raisonAssistee || "",
         candidats:deduite.candidats,
         /* Une ambiguite n'est jamais preselectionnee : c'est une question posee
            au membre, pas une decision prise a sa place. */
@@ -370,21 +429,31 @@ import { ModalStack } from "./modal-stack.js";
   /* Le lecteur qui a servi, nomme a l'ecran. Sans lui, un membre qui signale
      un echec ne peut pas dire si la lecture assistee a tourne ou si le site
      est retombe sur le moteur local — et c'est la premiere question a poser. */
-  function mentionDuLecteur(lecteur){
+  function mentionDuLecteur(lecteur, raisonAssistee){
     if(lecteur === "assiste") return " (lecture assistée)";
-    if(lecteur === "local") return " (lecture locale)";
+    /* Nommer le moteur ne suffit pas : « lecture locale » ne dit pas si le
+       membre n'est pas connecte, si le quota est epuise ou si sa capture est
+       trop lourde. La raison du repli est exactement ce qu'on lui demanderait
+       d'aller chercher dans la console. */
+    if(lecteur === "local"){
+      return raisonAssistee
+        ? " (lecture locale — assistée écartée : " + raisonAssistee + ")"
+        : " (lecture locale)";
+    }
     return "";
   }
 
-  function messageEchec(raison, lecteur){
+  function messageEchec(raison, lecteur, raisonAssistee){
     if(raison === "panneau-introuvable"){
-      return "Panneau introuvable sur cette image.";
+      return "Panneau introuvable sur cette image."
+        + mentionDuLecteur(lecteur, raisonAssistee);
     }
     if(raison === "resolution-insuffisante"){
-      return "Image trop petite : envoie le fichier d'origine, non redimensionne.";
+      return "Image trop petite : envoie le fichier d'origine, non redimensionne."
+        + mentionDuLecteur(lecteur, raisonAssistee);
     }
     return "Lecture douteuse : aucune configuration ne correspond."
-      + mentionDuLecteur(lecteur)
+      + mentionDuLecteur(lecteur, raisonAssistee)
       + " Le détail de ce qui a été lu est dans la console du navigateur.";
   }
 
@@ -431,7 +500,7 @@ import { ModalStack } from "./modal-stack.js";
     if(ligne.statut === "echec"){
       cellules.push(el("span", {
         class:"import-captures-raison",
-        text:messageEchec(ligne.raison, ligne.lecteur)
+        text:messageEchec(ligne.raison, ligne.lecteur, ligne.raisonAssistee)
       }));
     }else if(ligne.statut === "ambigu"){
       cellules.push(selecteurDeCandidats(ligne));
@@ -495,26 +564,155 @@ import { ModalStack } from "./modal-stack.js";
     etatCourant.surEnregistrement(parEmplacement);
   }
 
+  let ecouteurCollage = null;
+
+  function retirerEcouteurCollage(){
+    if(!ecouteurCollage) return;
+    document.removeEventListener("paste", ecouteurCollage);
+    ecouteurCollage = null;
+  }
+
   function fermerImportCaptures(){
     ModalStack.close($("#importCapturesOverlay"));
+  }
+
+  function nettoyerImportCaptures(){
+    retirerEcouteurCollage();
     etatCourant = null;
   }
 
-  async function traiterFichiers(fichiers){
+  function imagesParmi(fichiers){
+    return [...(fichiers || [])].filter(fichier =>
+      fichier && typeof fichier.type === "string"
+        && fichier.type.toLowerCase().startsWith("image/"));
+  }
+
+  function afficherMessageDepot(texte){
+    const message = $(".import-captures-depot-message");
+    if(message) message.textContent = texte || "";
+  }
+
+  function fichiersDuPressePapiers(donnees){
+    const depuisItems = [...(donnees && donnees.items || [])]
+      .filter(item => item.kind === "file")
+      .map(item => item.getAsFile())
+      .filter(Boolean);
+    return depuisItems.length
+      ? depuisItems : [...(donnees && donnees.files || [])];
+  }
+
+  function traiterEntreeFichiers(fichiers){
+    const images = imagesParmi(fichiers);
+    if(!images.length){
+      afficherMessageDepot(
+        "Aucune image détectée. Colle ou dépose une capture au format image."
+      );
+      return false;
+    }
+    /* Le presse-papiers reste global pendant la lecture et le recapitulatif.
+       Sans ce verrou, un second Ctrl+V peut lancer une autre analyse, puis
+       remplacer silencieusement le premier resultat. Une ouverture accepte
+       donc un seul lot — ce lot peut contenir plusieurs images. */
+    if(!etatCourant || etatCourant.importLance) return Boolean(etatCourant);
+    afficherMessageDepot("");
+    const sessionImport = etatCourant;
+    sessionImport.importLance = true;
+    sessionImport.enLecture = true;
+    void traiterFichiers(images, sessionImport);
+    return true;
+  }
+
+  function creerZoneDepot(){
+    let profondeurGlissement = 0;
+    const entree = el("input", {
+      type:"file",
+      multiple:true,
+      accept:"image/*",
+      id:"importCapturesFichiers",
+      class:"import-captures-fichiers",
+      "aria-label":"Choisir des captures d'écran",
+      onchange(evenement){
+        traiterEntreeFichiers(evenement.target.files);
+      }
+    });
+    const zone = el("div", {
+      class:"import-captures-depot",
+      ondragenter(evenement){
+        evenement.preventDefault();
+        profondeurGlissement++;
+        zone.classList.add("is-dragging");
+      },
+      ondragover(evenement){
+        evenement.preventDefault();
+        if(evenement.dataTransfer) evenement.dataTransfer.dropEffect = "copy";
+      },
+      ondragleave(){
+        profondeurGlissement = Math.max(0, profondeurGlissement - 1);
+        if(!profondeurGlissement) zone.classList.remove("is-dragging");
+      },
+      ondragend(){
+        profondeurGlissement = 0;
+        zone.classList.remove("is-dragging");
+      },
+      ondrop(evenement){
+        evenement.preventDefault();
+        profondeurGlissement = 0;
+        zone.classList.remove("is-dragging");
+        traiterEntreeFichiers(evenement.dataTransfer
+          && evenement.dataTransfer.files);
+      }
+    }, [
+      el("span", {
+        class:"import-captures-depot-icone",
+        "aria-hidden":"true",
+        text:"↓"
+      }),
+      el("strong", { text:"Glisse tes captures ici" }),
+      el("span", {
+        class:"import-captures-depot-raccourci",
+        text:"ou colle-les avec Ctrl+V"
+      }),
+      el("span", {
+        class:"import-captures-depot-bouton",
+        text:"Choisir des images"
+      }),
+      el("span", {
+        class:"import-captures-depot-message",
+        role:"status",
+        "aria-live":"polite"
+      }),
+      entree
+    ]);
+    return zone;
+  }
+
+  async function traiterFichiers(fichiers, sessionImport){
     const corps = $("#importCapturesBody");
     corps.innerHTML = "";
     const attente = el("p", {
-      class:"import-captures-progression", text:"Lecture des captures…"
+      class:"import-captures-progression",
+      role:"status",
+      "aria-live":"polite",
+      text:"Lecture des captures…"
     });
     corps.appendChild(attente);
-    etatCourant.lignes = await analyserCaptures(
-      fichiers,
-      etatCourant.herosSlug,
-      (fait, total) => {
-        attente.textContent = "Lecture " + fait + " sur " + total + "…";
-      }
-    );
-    rendreRecapitulatif();
+    try{
+      const lignes = await analyserCaptures(
+        fichiers,
+        sessionImport.herosSlug,
+        (fait, total) => {
+          attente.textContent = "Lecture " + fait + " sur " + total + "…";
+        }
+      );
+      /* Une analyse peut finir apres fermeture, voire apres la reouverture de
+         la meme modale pour un autre heros. Son resultat appartient a son
+         ancienne session : il ne doit jamais remplacer le nouveau contenu. */
+      if(etatCourant !== sessionImport) return;
+      sessionImport.lignes = lignes;
+      rendreRecapitulatif();
+    }finally{
+      if(etatCourant === sessionImport) sessionImport.enLecture = false;
+    }
   }
 
   function ouvrirImportCaptures(contexte){
@@ -524,7 +722,9 @@ import { ModalStack } from "./modal-stack.js";
       herosSlug:contexte.herosSlug,
       existant:contexte.existant || {},
       surEnregistrement:contexte.surEnregistrement,
-      lignes:[]
+      lignes:[],
+      importLance:false,
+      enLecture:false
     };
     const corps = $("#importCapturesBody");
     corps.innerHTML = "";
@@ -534,13 +734,17 @@ import { ModalStack } from "./modal-stack.js";
         + "L'ordre n'a pas d'importance : l'emplacement se déduit de la pièce. "
         + "Envoie les fichiers d'origine, non redimensionnés."
     }));
-    corps.appendChild(el("input", {
-      type:"file",
-      multiple:true,
-      accept:"image/*",
-      id:"importCapturesFichiers",
-      onchange(evenement){ void traiterFichiers([...evenement.target.files]); }
-    }));
+    corps.appendChild(creerZoneDepot());
+
+    retirerEcouteurCollage();
+    ecouteurCollage = evenement => {
+      if(!etatCourant) return;
+      const donnees = evenement.clipboardData;
+      if(!donnees) return;
+      const fichiers = fichiersDuPressePapiers(donnees);
+      if(traiterEntreeFichiers(fichiers)) evenement.preventDefault();
+    };
+    document.addEventListener("paste", ecouteurCollage);
 
     const enregistrement = $("#importCapturesSave");
     enregistrement.disabled = true;
@@ -550,7 +754,13 @@ import { ModalStack } from "./modal-stack.js";
     };
     $("#importCapturesCancel").onclick = fermerImportCaptures;
     $("#importCapturesClose").onclick = fermerImportCaptures;
-    ModalStack.open(overlay, "#importCapturesFichiers", fermerImportCaptures);
+    ModalStack.open(
+      overlay,
+      "#importCapturesFichiers",
+      fermerImportCaptures,
+      undefined,
+      nettoyerImportCaptures
+    );
   }
 
 /* Seule la porte d'entree sort d'ici. Les tests pilotent la vraie interface

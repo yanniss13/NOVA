@@ -7,8 +7,16 @@ récapitulatif, et valide — **rien n'est écrit avant ce clic**.
 ## Pour le membre
 
 Ouvre la fiche du héros dans le roster, clique sur **Importer des captures**,
-et dépose les images de son écran d'équipement. L'ordre n'a aucune importance :
-chaque capture dit elle-même de quel emplacement elle parle.
+et ajoute les images de son écran d'équipement de l'une de ces trois façons :
+
+- glisse-dépose une ou plusieurs captures dans le cadre ;
+- copie une capture, puis colle-la avec **Ctrl+V** tant que la modale est
+  ouverte ;
+- clique sur **Choisir des images** pour passer par le sélecteur de fichiers.
+
+L'ordre n'a aucune importance : chaque capture dit elle-même de quel
+emplacement elle parle. Un dépôt ou un collage sans image est refusé avant de
+lancer la lecture.
 
 Trois règles pratiques :
 

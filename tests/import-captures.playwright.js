@@ -17,11 +17,57 @@
    entiere plutot que sur ses morceaux. */
 
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
 const path = require("node:path");
 const { serveRepo } = require("./helpers/serve");
 const { chromium } = require("playwright");
 
 const FIXTURES = path.join(__dirname, "fixtures", "ocr");
+const PNG_MINUSCULE = [{
+  nom:"pixel.png",
+  type:"image/png",
+  base64:"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII="
+}];
+
+function fichiersPourNavigateur(noms, type="image/png"){
+  return noms.map(nom => ({
+    nom,
+    type,
+    base64:fs.readFileSync(path.join(FIXTURES, nom)).toString("base64")
+  }));
+}
+
+async function envoyerFichiers(page, evenement, cible, fichiers){
+  return page.evaluate(({ evenement, cible, fichiers }) => {
+    const transfert = new DataTransfer();
+    fichiers.forEach(fichier => {
+      const octets = Uint8Array.from(atob(fichier.base64), caractere =>
+        caractere.charCodeAt(0));
+      transfert.items.add(new File([octets], fichier.nom, { type:fichier.type }));
+    });
+    const emis = new Event(evenement, { bubbles:true, cancelable:true });
+    Object.defineProperty(emis,
+      evenement === "paste" ? "clipboardData" : "dataTransfer",
+      { value:transfert });
+    const receveur = cible === "document"
+      ? document : document.querySelector(cible);
+    receveur.dispatchEvent(emis);
+    return emis.defaultPrevented;
+  }, { evenement, cible, fichiers });
+}
+
+async function ouvrirModaleImport(page, herosSlug="merlin"){
+  return page.evaluate(async slug => {
+    const module = await import("./js/vues/import-captures.js");
+    window.__importVu = [];
+    module.ouvrirImportCaptures({
+      herosSlug:slug,
+      existant:{},
+      surEnregistrement:parEmplacement => window.__importVu.push(parEmplacement)
+    });
+    return window.__importVu.length;
+  }, herosSlug);
+}
 
 /* Verite terrain relevee a l'oeil sur chaque capture. */
 const ATTENDU = [
@@ -93,25 +139,134 @@ const ARMES_ATTENDUES = [
     /* On ouvre la modale directement : le bouton vit dans l'editeur de roster,
        qui demande une session connectee. Ce qu'on verifie ici est la chaine de
        lecture, pas le chemin de navigation. */
-    const avantDepot = await page.evaluate(async () => {
+    await page.evaluate(() => {
       /* Sans session, la page ouvre sa modale de connexion, qui recouvre la
          notre et intercepte les clics. On l'ecarte : ce test porte sur la
          lecture des captures, pas sur l'authentification. */
       const auth = document.querySelector("#authOverlay");
       if(auth) auth.remove();
-      const module = await import("./js/vues/import-captures.js");
-      window.__importVu = [];
-      module.ouvrirImportCaptures({
-        herosSlug:"merlin",
-        existant:{},
-        surEnregistrement:parEmplacement => window.__importVu.push(parEmplacement)
-      });
-      return window.__importVu.length;
     });
+    const avantDepot = await ouvrirModaleImport(page);
     assert.equal(avantDepot, 0, "ouvrir la modale ne doit rien ecrire");
 
-    await page.setInputFiles("#importCapturesFichiers",
-      ATTENDU.map(cas => path.join(FIXTURES, cas.fichier)));
+    const zoneDepot = page.locator(".import-captures-depot");
+    await zoneDepot.waitFor({ state:"visible", timeout:5000 });
+    assert.match(await zoneDepot.textContent(), /Glisse.*colle/si,
+      "la zone doit annoncer les deux gestes directs");
+    await page.locator("#importCapturesFichiers").focus();
+    assert.equal(await zoneDepot.evaluate(zone => zone.matches(":focus-within")),
+      true, "le sélecteur transparent doit garder un focus visible sur le cadre");
+
+    await page.setViewportSize({ width:320, height:800 });
+    const mobile = await page.evaluate(() => {
+      const zone = document.querySelector(".import-captures-depot")
+        .getBoundingClientRect();
+      return {
+        zoneWidth:zone.width,
+        zoneHeight:zone.height,
+        viewport:innerWidth,
+        documentWidth:document.documentElement.scrollWidth
+      };
+    });
+    assert.ok(mobile.zoneWidth <= mobile.viewport,
+      "la zone de dépôt doit tenir dans 320 px");
+    assert.ok(mobile.zoneHeight >= 150,
+      "la zone mobile doit conserver une grande cible tactile");
+    assert.ok(mobile.documentWidth <= mobile.viewport,
+      "la modale de dépôt ne doit pas créer de débordement horizontal");
+    await page.setViewportSize({ width:1280, height:720 });
+
+    await page.evaluate(async () => {
+      const { ModalStack } = await import("./js/vues/modal-stack.js");
+      ModalStack.closeAll();
+    });
+    const collageApresFermeture = await envoyerFichiers(page, "paste", "document",
+      fichiersPourNavigateur([ATTENDU[0].fichier]));
+    assert.equal(collageApresFermeture, false,
+      "fermer toutes les modales doit retirer l'écouteur de collage");
+    await ouvrirModaleImport(page);
+    await page.locator(".import-captures-depot")
+      .waitFor({ state:"visible", timeout:5000 });
+
+    await page.evaluate(() => {
+      window.__createObjectURLOriginal = URL.createObjectURL.bind(URL);
+      window.__createObjectURLFiles = [];
+      URL.createObjectURL = fichier => {
+        window.__createObjectURLFiles.push(fichier && fichier.name || "");
+        return window.__createObjectURLOriginal(fichier);
+      };
+    });
+    await envoyerFichiers(page, "drop", ".import-captures-depot",
+      fichiersPourNavigateur([ATTENDU[0].fichier]));
+    await page.locator(".import-captures-progression")
+      .waitFor({ state:"visible", timeout:5000 });
+    const collagePendantLecture = await envoyerFichiers(
+      page, "paste", "document", PNG_MINUSCULE);
+    assert.equal(collagePendantLecture, true,
+      "une image collée pendant la lecture doit être absorbée sans relancer l'OCR");
+    await page.waitForFunction(() =>
+      document.querySelectorAll(".import-captures-ligne").length === 1,
+      null, { timeout:10000 });
+    assert.equal(await page.evaluate(() =>
+      window.__createObjectURLFiles.filter(nom => nom === "pixel.png").length), 0,
+      "une seconde entrée pendant la lecture ne doit pas lancer un second OCR");
+
+    await page.evaluate(async () => {
+      const { ModalStack } = await import("./js/vues/modal-stack.js");
+      ModalStack.closeAll();
+    });
+    await ouvrirModaleImport(page);
+    await envoyerFichiers(page, "drop", ".import-captures-depot",
+      fichiersPourNavigateur([ATTENDU[0].fichier]));
+    await page.locator(".import-captures-progression")
+      .waitFor({ state:"visible", timeout:5000 });
+    await page.evaluate(() => {
+      window.__ancienneProgression = document.querySelector(
+        ".import-captures-progression");
+    });
+    await page.evaluate(async () => {
+      const { ModalStack } = await import("./js/vues/modal-stack.js");
+      ModalStack.closeAll();
+    });
+    await ouvrirModaleImport(page);
+    await page.waitForFunction(() =>
+      window.__ancienneProgression?.textContent.includes("1 sur 1"),
+      null, { timeout:180000 });
+    assert.equal(await page.locator(".import-captures-ligne").count(), 0,
+      "un ancien OCR ne doit pas écrire dans une modale rouverte");
+    await page.locator(".import-captures-depot")
+      .waitFor({ state:"visible", timeout:5000 });
+    await page.evaluate(() => {
+      URL.createObjectURL = window.__createObjectURLOriginal;
+      delete window.__createObjectURLOriginal;
+      delete window.__createObjectURLFiles;
+      delete window.__ancienneProgression;
+    });
+
+    const depotNonImage = await envoyerFichiers(page, "drop",
+      ".import-captures-depot",
+      fichiersPourNavigateur([ATTENDU[0].fichier], "text/plain"));
+    assert.equal(depotNonImage, true,
+      "un fichier non image depose ne doit pas etre ouvert par le navigateur");
+    assert.match(
+      await page.locator(".import-captures-depot-message").textContent(),
+      /Aucune image détectée/,
+      "un depot sans image doit expliquer quoi fournir"
+    );
+
+    await envoyerFichiers(page, "paste", "document",
+      fichiersPourNavigateur([ATTENDU[0].fichier], "text/plain"));
+    assert.match(
+      await page.locator(".import-captures-depot-message").textContent(),
+      /Aucune image détectée/,
+      "un collage sans image doit expliquer quoi fournir"
+    );
+
+    const depotIntercepte = await envoyerFichiers(page, "drop",
+      ".import-captures-depot",
+      fichiersPourNavigateur(ATTENDU.map(cas => cas.fichier)));
+    assert.equal(depotIntercepte, true,
+      "déposer des images doit empêcher le navigateur de les ouvrir");
 
     /* Le moteur se telecharge puis lit deux captures : on laisse largement le
        temps, l'echec interessant serait un resultat faux, pas une lenteur. */
@@ -157,7 +312,7 @@ const ARMES_ATTENDUES = [
     assert.deepEqual(Object.keys(ecrit[0]).sort(), ["Armure liee", "Ceinture"],
       "les deux emplacements deduits doivent etre ecrits");
 
-    for(const attendu of ARMES_ATTENDUES){
+    for(const [indexArme, attendu] of ARMES_ATTENDUES.entries()){
       const avantArme = await page.evaluate(async herosSlug => {
         const module = await import("./js/vues/import-captures.js");
         window.__importVu = [];
@@ -170,8 +325,15 @@ const ARMES_ATTENDUES = [
       }, attendu.herosSlug);
       assert.equal(avantArme, 0, attendu.fichier + " : ouvrir ne doit rien ecrire");
 
-      await page.setInputFiles("#importCapturesFichiers",
-        path.join(FIXTURES, attendu.fichier));
+      if(indexArme === 0){
+        const collageIntercepte = await envoyerFichiers(page, "paste", "document",
+          fichiersPourNavigateur([attendu.fichier]));
+        assert.equal(collageIntercepte, true,
+          "coller une image doit empêcher le collage natif");
+      }else{
+        await page.setInputFiles("#importCapturesFichiers",
+          path.join(FIXTURES, attendu.fichier));
+      }
       await page.waitForFunction(
         () => document.querySelectorAll(".import-captures-ligne").length === 1,
         null, { timeout:180000 });
