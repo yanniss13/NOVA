@@ -31,9 +31,15 @@ const RACINE = "https://generativelanguage.googleapis.com/v1beta/models/";
    surtout le quota : sans elle, un envoi malencontreux d'image enorme passe. */
 const OCTETS_MAX = 6 * 1024 * 1024;
 
+/* La liste des en-tetes autorises doit couvrir TOUT ce que supabase-js envoie,
+   pas seulement ce qu'on lit. Le navigateur compare sa demande a cette liste
+   et bloque l'appel des qu'un en-tete manque — meme si le prevol repond 200,
+   ce qui rend la panne trompeuse. `x-client-info` et `apikey` partent avec
+   chaque `functions.invoke`. */
 const ENTETES = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, content-type",
+  "Access-Control-Allow-Headers":
+    "authorization, content-type, apikey, x-client-info",
   "Content-Type": "application/json; charset=utf-8"
 };
 
