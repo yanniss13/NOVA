@@ -83,7 +83,7 @@
       });
     }
 
-    function open(overlay, initialFocus, requestClose, restoreFocus){
+    function open(overlay, initialFocus, requestClose, restoreFocus, afterClose){
       const existing = stack.find(record => record.overlay === overlay);
       if(existing) return;
       const active = document.activeElement;
@@ -99,7 +99,7 @@
       overlay.classList.add("on");
       overlay.setAttribute("aria-hidden", "false");
       rembobiner(overlay);
-      stack.push({ overlay, trigger, requestClose });
+      stack.push({ overlay, trigger, requestClose, afterClose });
       lockDocument();
       setTimeout(() => {
         if(!stack.some(record => record.overlay === overlay)) return;
@@ -150,6 +150,11 @@
         if(focusWasLost || (top && !top.overlay.contains(active))) restore();
         if(pendingRestore === record.trigger) pendingRestore = null;
       }, 0);
+      /* Certaines vues installent une ressource hors de leur overlay (par
+         exemple un écouteur sur document). `closeAll()` passe directement par
+         `close()` : le nettoyage appartient donc au cycle de la pile, pas au
+         seul bouton de fermeture de la vue. */
+      if(typeof record.afterClose === "function") record.afterClose();
       return record.trigger;
     }
 
