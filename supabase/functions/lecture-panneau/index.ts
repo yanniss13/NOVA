@@ -109,6 +109,32 @@ function refus(message: string, code: number): Response {
   });
 }
 
+/* `verify_jwt` ne suffit PAS a exiger un compte.
+
+   Il verifie la SIGNATURE du jeton, et la cle anonyme du projet est un jeton
+   valablement signe : elle est publiee dans index.html, donc n'importe qui
+   pourrait appeler cette fonction et vider le quota. On lit donc les
+   revendications pour exiger un vrai utilisateur.
+
+   Le jeton n'est pas re-verifie ici : la plateforme l'a deja fait avant de nous
+   passer la requete. On ne fait que LIRE ce qu'elle a valide. */
+function estUnMembreConnecte(requete: Request): boolean {
+  const entete = requete.headers.get("authorization") || "";
+  const jeton = entete.replace(/^Bearer\s+/i, "").trim();
+  const parties = jeton.split(".");
+  if (parties.length !== 3) return false;
+  try {
+    const base64 = parties[1].replace(/-/g, "+").replace(/_/g, "/");
+    const charge = JSON.parse(atob(base64.padEnd(
+      base64.length + (4 - base64.length % 4) % 4, "="
+    )));
+    return charge && charge.role === "authenticated"
+      && typeof charge.sub === "string" && charge.sub.length > 0;
+  } catch {
+    return false;
+  }
+}
+
 /* Une image arrive en base64, avec ou sans son prefixe `data:`. On accepte les
    deux : le navigateur produit naturellement le prefixe, et l'exiger cote
    client pour le retirer ici serait un aller-retour inutile. */
@@ -128,6 +154,9 @@ Deno.serve(async (requete: Request) => {
     return new Response("ok", { headers: ENTETES });
   }
   if (requete.method !== "POST") return refus("Méthode non autorisée.", 405);
+  if (!estUnMembreConnecte(requete)) {
+    return refus("Cette lecture demande un compte.", 401);
+  }
   if (!CLE) return refus("La lecture assistée n’est pas configurée.", 503);
 
   let corps: { image?: unknown };
