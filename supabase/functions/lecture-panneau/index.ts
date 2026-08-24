@@ -23,8 +23,19 @@
 
 const CLE = Deno.env.get("GEMINI_API_KEY") || "";
 /* Flash suffit largement pour lire un panneau de jeu, et coute une fraction
-   de Pro. Surchargeable sans redeploiement du code. */
-const MODELE = Deno.env.get("GEMINI_MODEL") || "gemini-2.5-flash";
+   de Pro. Surchargeable sans redeploiement du code.
+
+   L'ALIAS, ET NON UN NOM FIGE. Le defaut valait `gemini-2.5-flash` : Google
+   l'a retire aux cles recentes, et la fonction rendait un 404 que rien ne
+   nommait. Un nom fige refera cette panne au prochain retrait. `-latest` suit
+   la generation courante et y survit.
+
+   Le prix de l'alias est une derive possible du comportement. Elle est tenable
+   ICI, et seulement ici : la sortie du modele est jugee par `deduireArme` /
+   `deduirePiece`, qui rejettent toute lecture dont les totaux recalcules ne
+   reproduisent pas le panneau. Une derive fait donc echouer un import — elle
+   n'ecrit jamais une valeur fausse dans un roster. */
+const MODELE = Deno.env.get("GEMINI_MODEL") || "gemini-flash-latest";
 const RACINE = "https://generativelanguage.googleapis.com/v1beta/models/";
 
 /* Une capture de panneau tient largement sous cette taille. La borne protege
