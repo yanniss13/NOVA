@@ -89,6 +89,12 @@ function makeLocalStorage(initialTeams){
 }
 
 const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
+  normaliserLecture:typeof normaliserLecture === "function"
+    ? normaliserLecture
+    : undefined,
+  lectureAssisteeDisponible:typeof lectureAssisteeDisponible === "function"
+    ? lectureAssisteeDisponible
+    : undefined,
   porterAuMaximum:typeof porterAuMaximum === "function"
     ? porterAuMaximum
     : undefined,
