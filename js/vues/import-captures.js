@@ -161,7 +161,7 @@ import { ModalStack } from "./modal-stack.js";
       });
       if(error || !data) return null;
       const lue = normaliserLecture(data);
-      return lue.statut === "ok" ? lue : null;
+      return lue.statut === "ok" ? Object.assign(lue, { lecteur:"assiste" }) : null;
     }catch(erreur){
       return null;
     }
@@ -248,7 +248,7 @@ import { ModalStack } from "./modal-stack.js";
     const entete = lireEntete(motsEntete);
     const passif = niveauDePassif([...motsPleins, ...motsEntete]
       .map(mot => String(mot.text)).join(" "));
-    return { statut:"ok", stats, entete, passif };
+    return { statut:"ok", stats, entete, passif, lecteur:"local" };
   }
 
   /* Remplacable par les tests : la lecture d'image est la seule partie qu'on ne
@@ -268,6 +268,7 @@ import { ModalStack } from "./modal-stack.js";
           fichier:fichiers[i],
           statut:"echec",
           raison:lue.statut === "ok" ? "aucune-stat-lue" : lue.statut,
+          lecteur:lue.lecteur || null,
           candidats:[],
           choix:null
         });
@@ -290,10 +291,27 @@ import { ModalStack } from "./modal-stack.js";
           stats:lue.stats,
           herosSlug
         });
+      /* QUAND RIEN NE COLLE, DIRE CE QU'ON A LU.
+
+         Sans cette trace, un echec d'import est indiagnosticable : le membre
+         voit « aucune configuration ne correspond » et personne ne sait si le
+         lecteur a mal lu, ou si la piece manque au catalogue. Les lignes lues
+         tiennent en trois lignes de console et repondent a la question. */
+      if(deduite.statut === "aucun" && typeof console !== "undefined"){
+        console.warn("[import] aucune configuration ne correspond"
+          + " — lecteur : " + (lue.lecteur || "?")
+          + " — heros : " + (herosSlug || "aucun"), {
+            nom:lue.entete && lue.entete.nom,
+            niveau:lue.entete && lue.entete.niveau,
+            passif:lue.passif,
+            stats:lue.stats
+          });
+      }
       lignes.push({
         fichier:fichiers[i],
         statut:deduite.statut === "aucun" ? "echec" : deduite.statut,
         raison:deduite.statut === "aucun" ? "aucune-config-compatible" : null,
+        lecteur:lue.lecteur || null,
         candidats:deduite.candidats,
         /* Une ambiguite n'est jamais preselectionnee : c'est une question posee
            au membre, pas une decision prise a sa place. */
@@ -349,14 +367,25 @@ import { ModalStack } from "./modal-stack.js";
     return "echec";
   }
 
-  function messageEchec(raison){
+  /* Le lecteur qui a servi, nomme a l'ecran. Sans lui, un membre qui signale
+     un echec ne peut pas dire si la lecture assistee a tourne ou si le site
+     est retombe sur le moteur local — et c'est la premiere question a poser. */
+  function mentionDuLecteur(lecteur){
+    if(lecteur === "assiste") return " (lecture assistée)";
+    if(lecteur === "local") return " (lecture locale)";
+    return "";
+  }
+
+  function messageEchec(raison, lecteur){
     if(raison === "panneau-introuvable"){
       return "Panneau introuvable sur cette image.";
     }
     if(raison === "resolution-insuffisante"){
       return "Image trop petite : envoie le fichier d'origine, non redimensionne.";
     }
-    return "Lecture douteuse : aucune configuration ne correspond.";
+    return "Lecture douteuse : aucune configuration ne correspond."
+      + mentionDuLecteur(lecteur)
+      + " Le détail de ce qui a été lu est dans la console du navigateur.";
   }
 
   function selecteurDeCandidats(ligne){
@@ -401,7 +430,8 @@ import { ModalStack } from "./modal-stack.js";
     ];
     if(ligne.statut === "echec"){
       cellules.push(el("span", {
-        class:"import-captures-raison", text:messageEchec(ligne.raison)
+        class:"import-captures-raison",
+        text:messageEchec(ligne.raison, ligne.lecteur)
       }));
     }else if(ligne.statut === "ambigu"){
       cellules.push(selecteurDeCandidats(ligne));
