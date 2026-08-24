@@ -105,7 +105,14 @@ Object.keys(TABLE).forEach(perso => {
           quoi + " : unite invalide -> " + ligne.unite);
         assert.ok(ligne.libelle && ligne.libelle.trim(),
           quoi + " : une ligne sans libelle est illisible a l'ecran");
-        assert.ok(typeof ligne.valeur === "number" && ligne.valeur > 0,
+        /* Une ligne indexee SANS plafond n'a aucun repli honnete : elle vaut
+           zero tant que la statistique du lanceur n'est pas lisible. Partout
+           ailleurs, zero signalerait une valeur oubliee. */
+        const indexeSansPlafond = Boolean(ligne.indexeSurDef)
+          && !Object.prototype.hasOwnProperty.call(ligne.indexeSurDef, "plafond");
+        assert.ok(
+          typeof ligne.valeur === "number"
+            && (indexeSansPlafond ? ligne.valeur === 0 : ligne.valeur > 0),
           quoi + " : une valeur absente s'omet, elle ne vaut jamais zero");
 
         /* LA GARDE. Le nombre qui suit la phrase citee doit valoir la valeur
@@ -113,8 +120,9 @@ Object.keys(TABLE).forEach(perso => {
            une valeur a cumuls, le pas d'UN cumul. */
         const aDesCumuls = Object.prototype.hasOwnProperty.call(ligne, "cumuls");
         const brut = aDesCumuls ? ligne.parCumul : ligne.valeur;
-        const attenduPrincipal = ligne.indexeSurAtk
-          ? ligne.indexeSurAtk.taux / 100
+        const indexation = ligne.indexeSurAtk || ligne.indexeSurDef;
+        const attenduPrincipal = indexation
+          ? indexation.taux / 100
           : (ligne.unite === "ten-thousandths" ? brut / 100 : brut);
         assert.equal(
           nombreApres(texte, ligne.provenance.phrase, quoi), attenduPrincipal,
@@ -125,17 +133,29 @@ Object.keys(TABLE).forEach(perso => {
         /* Le plafond ne se DEDUIT pas du taux : il a sa propre phrase, et son
            propre nombre a verifier. Le repli `valeur` doit lui rester egal,
            faute de quoi il cesserait d'etre le plafond sans rien dire. */
-        if(ligne.indexeSurAtk){
-          assert.ok(ligne.provenance.phrasePlafond,
-            quoi + " : une ligne indexee doit citer la phrase de son plafond");
-          assert.equal(
-            nombreApres(texte, ligne.provenance.phrasePlafond, quoi + " (plafond)"),
-            ligne.indexeSurAtk.plafond,
-            quoi + " : le plafond annonce par le texte differe de la table");
-          assert.equal(ligne.indexeSurAtk.plafond, ligne.valeur,
-            quoi + " : le plafond et la valeur de repli doivent rester egaux");
+        if(indexation){
           assert.equal(ligne.unite, "flat",
-            quoi + " : une valeur indexee sur l'ATK est plate, pas un taux");
+            quoi + " : une valeur indexee est plate, pas un taux");
+          const plafonnee = Object.prototype
+            .hasOwnProperty.call(indexation, "plafond");
+          if(plafonnee){
+            assert.ok(ligne.provenance.phrasePlafond,
+              quoi + " : une ligne plafonnee doit citer la phrase de son plafond");
+            assert.equal(
+              nombreApres(texte, ligne.provenance.phrasePlafond, quoi + " (plafond)"),
+              indexation.plafond,
+              quoi + " : le plafond annonce par le texte differe de la table");
+            assert.equal(indexation.plafond, ligne.valeur,
+              quoi + " : le plafond et la valeur de repli doivent rester egaux");
+          }else{
+            /* Pas de plafond dans le texte, pas de plafond dans la table. Le
+               palier 10 du Livre d'Elizabeth suit la defense du lanceur sans
+               borne annoncee ; en inventer une la trahirait. */
+            assert.ok(!Object.prototype.hasOwnProperty.call(ligne.provenance, "phrasePlafond"),
+              quoi + " : une ligne sans plafond ne doit pas en citer un");
+            assert.equal(ligne.valeur, 0,
+              quoi + " : sans plafond, le repli ne peut valoir que zero");
+          }
         }else{
           assert.ok(!Object.prototype.hasOwnProperty.call(ligne, "phrasePlafond"),
             quoi + " : un plafond n'a de sens que sur une ligne indexee");
@@ -169,11 +189,15 @@ Object.keys(TABLE).forEach(perso => {
   });
 });
 
-/* Quatorze lignes sur les vingt-sept que les huit soutiens tournent vers
-   l'equipe ou la cible. Les treize autres sont NOMMEES dans l'en-tete de
-   data/potentiels-equipe.js avec la raison de leur absence. Ce compte empeche
-   qu'un oubli passe inapercu. */
-assert.equal(lignes, 16, "16 lignes attendues, recu " + lignes);
+/* Les lignes que les soutiens tournent vers l'equipe ou la cible. Celles qui
+   restent dehors sont NOMMEES dans l'en-tete de data/potentiels-equipe.js avec
+   la raison de leur absence. Ce compte empeche qu'un oubli passe inapercu.
+
+   Passe de 16 a 18 le 24 aout 2026 : les paliers 6 et 10 du Baton d'Elizabeth
+   augmentent le boost de degats crit. d'attaque normale que son attaque
+   speciale donne aux allies. La table du jeu donne la suite exacte,
+   +50 % / +70 % / +100 %. */
+assert.equal(lignes, 19, "19 lignes attendues, recu " + lignes);
 
 /* data/potentiels.js n'emploie PAS d'espace insecable, contrairement a
    stats-build.js. Si la source changeait d'avis, les phrases citees ici
@@ -263,12 +287,37 @@ assert.equal(lignes, 16, "16 lignes attendues, recu " + lignes);
   assert.equal(indexee(null).valeur, 4000, "ATK inconnue : le plafond");
   assert.equal(indexee(null).repli, true, "et le drapeau doit etre leve");
 
+  /* Une ligne indexee sur la DEFENSE du lanceur, et SANS plafond : elle suit
+     la defense aussi haut qu'elle monte, et ne vaut rien tant que le build du
+     lanceur n'est pas lisible. */
+  const surDefense = def => potentielsEquipeApplicables({
+    element:"wind",
+    porteurs:[{ charId:"elizabeth", typeArme:"Livre", palier:10,
+      estLeHeros:false, def }]
+  }).find(l => l.id === "elizabeth-livre-t10-attaque-sur-defense");
+  assert.equal(surDefense(8000).valeur, 800, "10 % de 8 000 valent 800");
+  assert.equal(surDefense(8000).repli, false);
+  assert.equal(surDefense(60000).valeur, 6000,
+    "sans plafond, la valeur suit la defense sans etre bornee");
+  assert.equal(surDefense(null).valeur, 0, "defense inconnue : rien");
+  assert.equal(surDefense(null).repli, true, "et le drapeau doit etre leve");
+
   /* AUCUNE LIGNE INERTE. Cochee, une ligne doit changer quelque chose : soit
      une entree du moteur, soit un bonus de categorie. Ce filet a deja attrape
-     des codes de stat inventes ailleurs. */
+     des codes de stat inventes ailleurs.
+
+     Une ligne indexee arrive au moteur DEJA CHIFFREE - c'est
+     potentielsEquipeApplicables qui la resout - donc on la coche ici comme la
+     production la coche, valeur resolue. La cocher brute la ferait passer pour
+     inerte alors qu'elle ne l'est pas. */
   const NEUTRE = {
     atk:1000, attaqueElementaire:500, def:400, maxHp:20000,
     critRate:3000, critDamage:12000, percementDefense:500
+  };
+  const commeEnProduction = ligne => {
+    const indexation = ligne.indexeSurAtk || ligne.indexeSurDef;
+    if(!indexation) return ligne;
+    return Object.assign({}, ligne, { valeur:indexation.taux });
   };
   Object.keys(TABLE).forEach(perso =>
     Object.keys(TABLE[perso]).forEach(arme =>
@@ -278,7 +327,7 @@ assert.equal(lignes, 16, "16 lignes attendues, recu " + lignes);
             statsDuBuild:NEUTRE, buffsCoches:[]
           });
           const avec = entreesDuCalcul({
-            statsDuBuild:NEUTRE, buffsCoches:[ligne]
+            statsDuBuild:NEUTRE, buffsCoches:[commeEnProduction(ligne)]
           });
           const changeLeMoteur = Object.keys(nuEntrees)
             .some(cle => nuEntrees[cle] !== avec[cle]);

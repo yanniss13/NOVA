@@ -26,6 +26,10 @@ import { degatsAttendus } from "./degats-calcul.js";
     {
       /* Un taux sur l'attaque du heros, pas une valeur plate. */
       I_AtkAdd_Rate:"atk",
+      /* Des POINTS d'attaque, eux. Le jeu ecrit les deux avec le meme mot :
+         `I_AtkAdd_Rate` multiplie, `B_Atk` s'ajoute. Le palier 10 du Livre
+         d'Elizabeth donne aux allies 10 % de sa DEFENSE sous cette forme. */
+      B_Atk:"atk",
       /* Le taux critique venu d'un SOUTIEN a son propre seau : le moteur
          plafonne le critique propre du heros a 90 % et ajoute celui des
          allies APRES ce plafond. Le verser dans `critRate` rendrait ces

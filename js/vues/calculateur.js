@@ -322,15 +322,20 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
      rosterHeroSnapshot rend EXACTEMENT la forme qu'attend calculateHeroStats -
      la meme que pour le heros calcule - donc son potentiel, son arme et sa
      tenue gravee entrent dans ce chiffre sans conversion. */
-  function atkDuBuild(heros){
+  function statDuBuild(heros, code){
     if(!heros) return null;
     const result = calculateHeroStats(heros);
     if(result.status !== "valid" && result.status !== "partial") return null;
     const trouve = groupBuildStatResults(result)
       .flatMap(groupe => groupe.stats)
-      .find(stat => stat.stat === "B_Atk");
+      .find(stat => stat.stat === code);
     return trouve && Number.isFinite(trouve.value) ? trouve.value : null;
   }
+
+  const atkDuBuild = heros => statDuBuild(heros, "B_Atk");
+  /* La DEFENSE d'un coequipier sert aux lignes indexees dessus : le palier 10
+     du Livre d'Elizabeth donne aux allies 10 % de la sienne en attaque. */
+  const defDuBuild = heros => statDuBuild(heros, "B_Def");
 
   /* Le build d'un coequipier retenu, ou null si le roster ne le porte plus. */
   function herosDuChoix(choix){
@@ -350,7 +355,8 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
     return retenus.map(entree => ({
       charId:entree.choix.charId,
       typeArme:entree.choix.typeArme,
-      atk:atkDuBuild(entree.heros)
+      atk:atkDuBuild(entree.heros),
+      def:defDuBuild(entree.heros)
     }));
   }
 
@@ -396,7 +402,10 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
   function porteurDePotentiels(charId, typeArme, heros, estLeHeros){
     if(!heros) return null;
     const palier = heros.potentiel ? heros.potentiel.tier : null;
-    return { charId, typeArme, palier, atk:atkDuBuild(heros), estLeHeros };
+    return {
+      charId, typeArme, palier,
+      atk:atkDuBuild(heros), def:defDuBuild(heros), estLeHeros
+    };
   }
 
   function porteursDePotentiels(hero){

@@ -1,0 +1,807 @@
+{
+ "_lisezmoi": [
+  "Cycle d auto-attaque par heros et par arme, build 1.8.1.2.",
+  "Durees issues de la table du jeu (TextDatas/CData/HitNotify).",
+  "Fenetres d annulation issues des marqueurs des montages.",
+  "brut     : somme des durees d animation.",
+  "enchaine : somme des instants d ouverture de la fenetre `normalAttack`,",
+  "           soit le temps du cycle si on enchaine au plus tot.",
+  "fiable   : false si une animation du cycle n a pas de fenetre connue ;",
+  "           sa duree brute est alors comptee, ce qui surestime le cycle.",
+  "Non mesure en jeu."
+ ],
+ "_unite": "secondes",
+ "_build": "1.8.1.2",
+ "cycles": [
+  {
+   "heros": "guila_demon",
+   "arme": "Lance",
+   "coups": 4,
+   "brut": 5.033,
+   "enchaine": 0.819,
+   "sansFenetre": 0,
+   "gain": 84,
+   "fiable": true
+  },
+  {
+   "heros": "guila_demon",
+   "arme": "Rapier",
+   "coups": 4,
+   "brut": 3.059,
+   "enchaine": 0.978,
+   "sansFenetre": 0,
+   "gain": 68,
+   "fiable": true
+  },
+  {
+   "heros": "daisy",
+   "arme": "Shield",
+   "coups": 4,
+   "brut": 6.8,
+   "enchaine": 1.032,
+   "sansFenetre": 0,
+   "gain": 85,
+   "fiable": true
+  },
+  {
+   "heros": "jericho",
+   "arme": "SwordDual",
+   "coups": 4,
+   "brut": 8.667,
+   "enchaine": 1.034,
+   "sansFenetre": 0,
+   "gain": 88,
+   "fiable": true
+  },
+  {
+   "heros": "howzer",
+   "arme": "Lance",
+   "coups": 4,
+   "brut": 7.133,
+   "enchaine": 1.066,
+   "sansFenetre": 0,
+   "gain": 85,
+   "fiable": true
+  },
+  {
+   "heros": "tristan",
+   "arme": "Sword1H",
+   "coups": 4,
+   "brut": 4.867,
+   "enchaine": 1.084,
+   "sansFenetre": 0,
+   "gain": 78,
+   "fiable": true
+  },
+  {
+   "heros": "howzer",
+   "arme": "Cudgel3c",
+   "coups": 4,
+   "brut": 5.634,
+   "enchaine": 1.263,
+   "sansFenetre": 0,
+   "gain": 78,
+   "fiable": true
+  },
+  {
+   "heros": "tioreh",
+   "arme": "Staff",
+   "coups": 4,
+   "brut": 8.133,
+   "enchaine": 1.485,
+   "sansFenetre": 0,
+   "gain": 82,
+   "fiable": true
+  },
+  {
+   "heros": "griamore",
+   "arme": "Gauntlets",
+   "coups": 4,
+   "brut": 7.033,
+   "enchaine": 1.487,
+   "sansFenetre": 0,
+   "gain": 79,
+   "fiable": true
+  },
+  {
+   "heros": "gil_thunder",
+   "arme": "Lance",
+   "coups": 4,
+   "brut": 7,
+   "enchaine": 1.497,
+   "sansFenetre": 0,
+   "gain": 79,
+   "fiable": true
+  },
+  {
+   "heros": "diane",
+   "arme": "Gauntlets",
+   "coups": 4,
+   "brut": 8.7,
+   "enchaine": 1.525,
+   "sansFenetre": 0,
+   "gain": 82,
+   "fiable": true
+  },
+  {
+   "heros": "diane",
+   "arme": "Axe",
+   "coups": 3,
+   "brut": 9.8,
+   "enchaine": 1.541,
+   "sansFenetre": 0,
+   "gain": 84,
+   "fiable": true
+  },
+  {
+   "heros": "guila",
+   "arme": "Shield",
+   "coups": 4,
+   "brut": 5.9,
+   "enchaine": 1.566,
+   "sansFenetre": 0,
+   "gain": 73,
+   "fiable": true
+  },
+  {
+   "heros": "gil_thunder",
+   "arme": "Shield",
+   "coups": 4,
+   "brut": 8.833,
+   "enchaine": 1.59,
+   "sansFenetre": 0,
+   "gain": 82,
+   "fiable": true
+  },
+  {
+   "heros": "howzer",
+   "arme": "Gauntlets",
+   "coups": 4,
+   "brut": 5.833,
+   "enchaine": 1.595,
+   "sansFenetre": 0,
+   "gain": 73,
+   "fiable": true
+  },
+  {
+   "heros": "meliodas",
+   "arme": "Sword1H",
+   "coups": 4,
+   "brut": 8.367,
+   "enchaine": 1.619,
+   "sansFenetre": 0,
+   "gain": 81,
+   "fiable": true
+  },
+  {
+   "heros": "merlin",
+   "arme": "Wand",
+   "coups": 4,
+   "brut": 8.033,
+   "enchaine": 1.621,
+   "sansFenetre": 0,
+   "gain": 80,
+   "fiable": true
+  },
+  {
+   "heros": "diane",
+   "arme": "Cudgel3c",
+   "coups": 4,
+   "brut": 7.6,
+   "enchaine": 1.692,
+   "sansFenetre": 0,
+   "gain": 78,
+   "fiable": true
+  },
+  {
+   "heros": "gowther",
+   "arme": "Staff",
+   "coups": 4,
+   "brut": 5.832,
+   "enchaine": 1.7,
+   "sansFenetre": 0,
+   "gain": 71,
+   "fiable": true
+  },
+  {
+   "heros": "hendrickson",
+   "arme": "SwordDual",
+   "coups": 4,
+   "brut": 8.3,
+   "enchaine": 1.7,
+   "sansFenetre": 0,
+   "gain": 80,
+   "fiable": true
+  },
+  {
+   "heros": "king",
+   "arme": "Wand",
+   "coups": 3,
+   "brut": 4.3,
+   "enchaine": 1.713,
+   "sansFenetre": 0,
+   "gain": 60,
+   "fiable": true
+  },
+  {
+   "heros": "bug",
+   "arme": "Axe",
+   "coups": 4,
+   "brut": 11.333,
+   "enchaine": 1.75,
+   "sansFenetre": 0,
+   "gain": 85,
+   "fiable": true
+  },
+  {
+   "heros": "king",
+   "arme": "Book",
+   "coups": 4,
+   "brut": 9.066,
+   "enchaine": 1.799,
+   "sansFenetre": 0,
+   "gain": 80,
+   "fiable": true
+  },
+  {
+   "heros": "bug",
+   "arme": "Staff",
+   "coups": 4,
+   "brut": 11.433,
+   "enchaine": 1.822,
+   "sansFenetre": 0,
+   "gain": 84,
+   "fiable": true
+  },
+  {
+   "heros": "manny",
+   "arme": "Staff",
+   "coups": 4,
+   "brut": 11.733,
+   "enchaine": 1.857,
+   "sansFenetre": 0,
+   "gain": 84,
+   "fiable": true
+  },
+  {
+   "heros": "drake",
+   "arme": "Sword1H",
+   "coups": 4,
+   "brut": 9.933,
+   "enchaine": 1.866,
+   "sansFenetre": 0,
+   "gain": 81,
+   "fiable": true
+  },
+  {
+   "heros": "tristan",
+   "arme": "SwordDual",
+   "coups": 4,
+   "brut": 6.5,
+   "enchaine": 1.867,
+   "sansFenetre": 0,
+   "gain": 71,
+   "fiable": true
+  },
+  {
+   "heros": "dreyfus",
+   "arme": "Sword1H",
+   "coups": 3,
+   "brut": 5.333,
+   "enchaine": 1.9,
+   "sansFenetre": 0,
+   "gain": 64,
+   "fiable": true
+  },
+  {
+   "heros": "jericho",
+   "arme": "Lance",
+   "coups": 4,
+   "brut": 8.267,
+   "enchaine": 1.928,
+   "sansFenetre": 0,
+   "gain": 77,
+   "fiable": true
+  },
+  {
+   "heros": "guila",
+   "arme": "Rapier",
+   "coups": 4,
+   "brut": 9.034,
+   "enchaine": 1.945,
+   "sansFenetre": 0,
+   "gain": 78,
+   "fiable": true
+  },
+  {
+   "heros": "daisy_golem",
+   "arme": "Shield",
+   "coups": 4,
+   "brut": 7.666,
+   "enchaine": 1.965,
+   "sansFenetre": 0,
+   "gain": 74,
+   "fiable": true
+  },
+  {
+   "heros": "griamore",
+   "arme": "Cudgel3c",
+   "coups": 4,
+   "brut": 8.334,
+   "enchaine": 1.982,
+   "sansFenetre": 0,
+   "gain": 76,
+   "fiable": true
+  },
+  {
+   "heros": "derieri",
+   "arme": "Sword2H",
+   "coups": 4,
+   "brut": 8.7,
+   "enchaine": 2.05,
+   "sansFenetre": 0,
+   "gain": 76,
+   "fiable": true
+  },
+  {
+   "heros": "hendrickson",
+   "arme": "Lance",
+   "coups": 4,
+   "brut": 10.033,
+   "enchaine": 2.059,
+   "sansFenetre": 0,
+   "gain": 79,
+   "fiable": true
+  },
+  {
+   "heros": "bug",
+   "arme": "Book",
+   "coups": 4,
+   "brut": 10.267,
+   "enchaine": 2.067,
+   "sansFenetre": 0,
+   "gain": 80,
+   "fiable": true
+  },
+  {
+   "heros": "manny",
+   "arme": "SwordDual",
+   "coups": 4,
+   "brut": 9.1,
+   "enchaine": 2.107,
+   "sansFenetre": 0,
+   "gain": 77,
+   "fiable": true
+  },
+  {
+   "heros": "klotho",
+   "arme": "Book",
+   "coups": 4,
+   "brut": 11,
+   "enchaine": 2.127,
+   "sansFenetre": 0,
+   "gain": 81,
+   "fiable": true
+  },
+  {
+   "heros": "gil_thunder",
+   "arme": "Sword1H",
+   "coups": 4,
+   "brut": 11.499,
+   "enchaine": 2.145,
+   "sansFenetre": 0,
+   "gain": 81,
+   "fiable": true
+  },
+  {
+   "heros": "griamore",
+   "arme": "Shield",
+   "coups": 4,
+   "brut": 8.3,
+   "enchaine": 2.15,
+   "sansFenetre": 0,
+   "gain": 74,
+   "fiable": true
+  },
+  {
+   "heros": "dreydrin",
+   "arme": "Rapier",
+   "coups": 4,
+   "brut": 6.733,
+   "enchaine": 2.18,
+   "sansFenetre": 0,
+   "gain": 68,
+   "fiable": true
+  },
+  {
+   "heros": "daisy",
+   "arme": "Book",
+   "coups": 4,
+   "brut": 8,
+   "enchaine": 2.21,
+   "sansFenetre": 0,
+   "gain": 72,
+   "fiable": true
+  },
+  {
+   "heros": "dreyfus",
+   "arme": "Rapier",
+   "coups": 4,
+   "brut": 11.366,
+   "enchaine": 2.234,
+   "sansFenetre": 0,
+   "gain": 80,
+   "fiable": true
+  },
+  {
+   "heros": "gowther",
+   "arme": "Book",
+   "coups": 4,
+   "brut": 9.933,
+   "enchaine": 2.269,
+   "sansFenetre": 0,
+   "gain": 77,
+   "fiable": true
+  },
+  {
+   "heros": "drake",
+   "arme": "Staff",
+   "coups": 4,
+   "brut": 10.934,
+   "enchaine": 2.333,
+   "sansFenetre": 0,
+   "gain": 79,
+   "fiable": true
+  },
+  {
+   "heros": "tioreh",
+   "arme": "Wand",
+   "coups": 5,
+   "brut": 9.666,
+   "enchaine": 2.35,
+   "sansFenetre": 0,
+   "gain": 76,
+   "fiable": true
+  },
+  {
+   "heros": "elizabeth",
+   "arme": "Wand",
+   "coups": 4,
+   "brut": 9,
+   "enchaine": 2.385,
+   "sansFenetre": 0,
+   "gain": 74,
+   "fiable": true
+  },
+  {
+   "heros": "dreydrin",
+   "arme": "Axe",
+   "coups": 5,
+   "brut": 14.407,
+   "enchaine": 2.403,
+   "sansFenetre": 0,
+   "gain": 83,
+   "fiable": true
+  },
+  {
+   "heros": "elizabeth",
+   "arme": "Book",
+   "coups": 4,
+   "brut": 9.732,
+   "enchaine": 2.46,
+   "sansFenetre": 0,
+   "gain": 75,
+   "fiable": true
+  },
+  {
+   "heros": "guila",
+   "arme": "Lance",
+   "coups": 4,
+   "brut": 7.7,
+   "enchaine": 2.51,
+   "sansFenetre": 0,
+   "gain": 67,
+   "fiable": true
+  },
+  {
+   "heros": "elaine",
+   "arme": "Wand",
+   "coups": 4,
+   "brut": 7.734,
+   "enchaine": 2.533,
+   "sansFenetre": 0,
+   "gain": 67,
+   "fiable": true
+  },
+  {
+   "heros": "merlin",
+   "arme": "Staff",
+   "coups": 4,
+   "brut": 8.334,
+   "enchaine": 2.537,
+   "sansFenetre": 0,
+   "gain": 70,
+   "fiable": true
+  },
+  {
+   "heros": "dreydrin",
+   "arme": "Shield",
+   "coups": 5,
+   "brut": 9.868,
+   "enchaine": 2.6,
+   "sansFenetre": 0,
+   "gain": 74,
+   "fiable": true
+  },
+  {
+   "heros": "tristan",
+   "arme": "Sword2H",
+   "coups": 4,
+   "brut": 9.9,
+   "enchaine": 2.62,
+   "sansFenetre": 0,
+   "gain": 74,
+   "fiable": true
+  },
+  {
+   "heros": "escanor",
+   "arme": "Sword2H",
+   "coups": 4,
+   "brut": 14.167,
+   "enchaine": 2.627,
+   "sansFenetre": 0,
+   "gain": 81,
+   "fiable": true
+  },
+  {
+   "heros": "merlin",
+   "arme": "Book",
+   "coups": 4,
+   "brut": 12.633,
+   "enchaine": 2.654,
+   "sansFenetre": 0,
+   "gain": 79,
+   "fiable": true
+  },
+  {
+   "heros": "dreyfus",
+   "arme": "Lance",
+   "coups": 4,
+   "brut": 19.4,
+   "enchaine": 2.708,
+   "sansFenetre": 0,
+   "gain": 86,
+   "fiable": true
+  },
+  {
+   "heros": "elaine",
+   "arme": "Staff",
+   "coups": 4,
+   "brut": 8.067,
+   "enchaine": 2.732,
+   "sansFenetre": 0,
+   "gain": 66,
+   "fiable": true
+  },
+  {
+   "heros": "king",
+   "arme": "Staff",
+   "coups": 4,
+   "brut": 9.466,
+   "enchaine": 2.822,
+   "sansFenetre": 0,
+   "gain": 70,
+   "fiable": true
+  },
+  {
+   "heros": "tioreh",
+   "arme": "Book",
+   "coups": 4,
+   "brut": 6.634,
+   "enchaine": 2.84,
+   "sansFenetre": 0,
+   "gain": 57,
+   "fiable": true
+  },
+  {
+   "heros": "slader",
+   "arme": "Axe",
+   "coups": 3,
+   "brut": 9.101,
+   "enchaine": 2.989,
+   "sansFenetre": 0,
+   "gain": 67,
+   "fiable": true
+  },
+  {
+   "heros": "gowther",
+   "arme": "Wand",
+   "coups": 4,
+   "brut": 8.034,
+   "enchaine": 3.001,
+   "sansFenetre": 1,
+   "gain": 63,
+   "fiable": false
+  },
+  {
+   "heros": "derieri",
+   "arme": "Axe",
+   "coups": 4,
+   "brut": 11.733,
+   "enchaine": 3.117,
+   "sansFenetre": 0,
+   "gain": 73,
+   "fiable": true
+  },
+  {
+   "heros": "derieri",
+   "arme": "Gauntlets",
+   "coups": 4,
+   "brut": 8.054,
+   "enchaine": 3.16,
+   "sansFenetre": 1,
+   "gain": 61,
+   "fiable": false
+  },
+  {
+   "heros": "daisy",
+   "arme": "Wand",
+   "coups": 4,
+   "brut": 10.601,
+   "enchaine": 3.3,
+   "sansFenetre": 0,
+   "gain": 69,
+   "fiable": true
+  },
+  {
+   "heros": "slader",
+   "arme": "Sword2H",
+   "coups": 4,
+   "brut": 12.733,
+   "enchaine": 3.319,
+   "sansFenetre": 0,
+   "gain": 74,
+   "fiable": true
+  },
+  {
+   "heros": "meliodas",
+   "arme": "Axe",
+   "coups": 4,
+   "brut": 10.767,
+   "enchaine": 3.325,
+   "sansFenetre": 0,
+   "gain": 69,
+   "fiable": true
+  },
+  {
+   "heros": "elizabeth",
+   "arme": "Staff",
+   "coups": 4,
+   "brut": 11.834,
+   "enchaine": 3.33,
+   "sansFenetre": 0,
+   "gain": 72,
+   "fiable": true
+  },
+  {
+   "heros": "jericho",
+   "arme": "Rapier",
+   "coups": 4,
+   "brut": 10.833,
+   "enchaine": 3.865,
+   "sansFenetre": 1,
+   "gain": 64,
+   "fiable": false
+  },
+  {
+   "heros": "elaine",
+   "arme": "Book",
+   "coups": 4,
+   "brut": 5.901,
+   "enchaine": 4.011,
+   "sansFenetre": 3,
+   "gain": 32,
+   "fiable": false
+  },
+  {
+   "heros": "slader",
+   "arme": "Cudgel3c",
+   "coups": 4,
+   "brut": 7.199,
+   "enchaine": 4.407,
+   "sansFenetre": 2,
+   "gain": 39,
+   "fiable": false
+  },
+  {
+   "heros": "meliodas",
+   "arme": "SwordDual",
+   "coups": 5,
+   "brut": 13.2,
+   "enchaine": 5.208,
+   "sansFenetre": 1,
+   "gain": 61,
+   "fiable": false
+  },
+  {
+   "heros": "bug",
+   "arme": "SwordDual",
+   "coups": 4,
+   "brut": 9.133,
+   "enchaine": 6.283,
+   "sansFenetre": 2,
+   "gain": 31,
+   "fiable": false
+  },
+  {
+   "heros": "hendrickson",
+   "arme": "Sword1H",
+   "coups": 4,
+   "brut": 6.3,
+   "enchaine": 6.3,
+   "sansFenetre": 4,
+   "gain": 0,
+   "fiable": false
+  },
+  {
+   "heros": "drake",
+   "arme": "Sword2H",
+   "coups": 5,
+   "brut": 12.6,
+   "enchaine": 7.134,
+   "sansFenetre": 3,
+   "gain": 43,
+   "fiable": false
+  },
+  {
+   "heros": "escanor",
+   "arme": "Shield",
+   "coups": 4,
+   "brut": 7.767,
+   "enchaine": 7.767,
+   "sansFenetre": 4,
+   "gain": 0,
+   "fiable": false
+  },
+  {
+   "heros": "klotho",
+   "arme": "Staff",
+   "coups": 4,
+   "brut": 11.1,
+   "enchaine": 7.833,
+   "sansFenetre": 3,
+   "gain": 29,
+   "fiable": false
+  },
+  {
+   "heros": "escanor",
+   "arme": "Axe",
+   "coups": 5,
+   "brut": 12.866,
+   "enchaine": 8.353,
+   "sansFenetre": 3,
+   "gain": 35,
+   "fiable": false
+  },
+  {
+   "heros": "manny",
+   "arme": "Sword1H",
+   "coups": 4,
+   "brut": 10.601,
+   "enchaine": 8.643,
+   "sansFenetre": 3,
+   "gain": 18,
+   "fiable": false
+  },
+  {
+   "heros": "klotho",
+   "arme": "Rapier",
+   "coups": 5,
+   "brut": 11.634,
+   "enchaine": 11.634,
+   "sansFenetre": 5,
+   "gain": 0,
+   "fiable": false
+  }
+ ]
+}

@@ -72,3 +72,61 @@ assert.equal(plain(deduirePiece({ herosSlug:"merlin", stats:[] })).statut, "aucu
 assert.equal(plain(deduirePiece({})).statut, "aucun");
 
 console.log("ocr-deduction (piece) : OK");
+
+/* LE NOM TRANCHE ENTRE DES PIECES INDISCERNABLES.
+
+   Trois armures liees partagent les memes courbes : leurs totaux coincident au
+   point pres, et l'inversion seule ne peut pas les departager. Le titre du
+   panneau, lui, le fait. Les valeurs viennent d'une capture reelle des
+   « Vetements formels legers », lue par la fonction de lecture assistee. */
+const GRAVEE = [
+  { libelle:"PV de l'équipement", valeur:"20 822", section:null },
+  { libelle:"Défense de l'équipement", valeur:"7 453", section:null },
+  { libelle:"Attaque de Froid", valeur:"1 703", section:null },
+  { libelle:"Dégâts crit.", valeur:"12.84%", section:null },
+  { libelle:"Dégâts crit.", valeur:"7.95%", section:"Bonus de gravure" },
+  { libelle:"Résistance crit.", valeur:"7.21%", section:"Bonus de gravure" },
+  { libelle:"Augmentation des dégâts, compétence de relève", valeur:"27.21%",
+    section:"Bonus de gravure" }
+];
+
+const sansNom = plain(deduirePiece({ stats:GRAVEE }));
+assert.equal(sansNom.statut, "ambigu",
+  "sans le nom, les statistiques seules ne separent pas ces pieces");
+assert.ok(sansNom.candidats.length > 1);
+
+const avecNom = plain(deduirePiece({
+  nom:"Vêtements formels légers", stats:GRAVEE
+}));
+assert.equal(avecNom.statut, "unique",
+  "le nom lu doit lever l'ambiguite");
+assert.match(avecNom.candidats[0].fichier, /Vêtements formels légers/,
+  "et designer la bonne piece");
+
+/* LE GARDE-FOU. Un nom APPROCHANT ne doit RIEN trancher : transformer une
+   ambiguite honnete — ou le site pose la question au membre — en certitude
+   fausse serait bien pire que de la garder. Seul l'exact compte. */
+for(const approchant of [
+  "Vetements formels leger",
+  "Vêtements formels",
+  "Piste de la flamme",
+  "n'importe quoi"
+]){
+  const flou = plain(deduirePiece({ nom:approchant, stats:GRAVEE }));
+  assert.equal(flou.statut, "ambigu",
+    "un nom approchant a tranche : " + approchant);
+  assert.equal(flou.candidats.length, sansNom.candidats.length,
+    "un nom approchant a restreint la liste : " + approchant);
+}
+
+/* Le nom ne doit jamais ELARGIR : une piece que les chiffres excluent ne peut
+   pas revenir par son titre. */
+const impossible = plain(deduirePiece({
+  nom:"Vêtements formels légers",
+  stats:[{ libelle:"Échanger", valeur:"0" }]
+}));
+assert.equal(impossible.statut, "aucun",
+  "le nom ne doit pas ressusciter une piece que les chiffres refusent");
+
+console.log("ocr-deduction (piece) : le nom leve l'ambiguite, "
+  + sansNom.candidats.length + " candidates -> 1");
