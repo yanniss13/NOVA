@@ -209,28 +209,78 @@ assert.equal(lectureOuverte(sql), false,
    Un contrôle posé uniquement sur les tables laisserait un invité rejoindre un
    run par appel direct au client Supabase. */
 
+/* Le corps d'une fonction, quel que soit son schéma. */
+function corpsDeFonction(qualifie){
+  const bloc = sql.match(
+    new RegExp(
+      "create or replace function " + qualifie.replace(".", "\\.")
+        + "\\s*\\([\\s\\S]*?\\n\\$\\$;",
+      "i"
+    )
+  );
+  return bloc ? bloc[0] : null;
+}
+
+/* Les trois gestes de boss ont été factorisés le jour où un administrateur a
+   pu les faire pour autrui : leurs règles vivent maintenant dans une fonction
+   privée que les deux entrées partagent. Le garde n'a pas disparu, il a changé
+   d'adresse — et ce test doit le suivre plutôt que de conclure à son absence.
+
+   Les entrées « admin » figurent ici au même titre que les autres : elles
+   traversent la RLS elles aussi, et un invité promu administrateur par erreur
+   ne doit toujours pas entrer dans un run. */
+const DELEGATION = {
+  join_boss_run:"private.rejoindre_run",
+  admin_join_boss_run:"private.rejoindre_run",
+  leave_boss_run:"private.quitter_run",
+  admin_leave_boss_run:"private.quitter_run",
+  select_boss_team:"private.choisir_equipe_run",
+  admin_select_boss_team:"private.choisir_equipe_run"
+};
+
 const RPC_BOSS = [
   "join_boss_run",
   "leave_boss_run",
   "select_boss_team",
+  "admin_join_boss_run",
+  "admin_leave_boss_run",
+  "admin_select_boss_team",
   "complete_boss_run_with_report",
   "update_boss_run_report"
 ];
 
 RPC_BOSS.forEach(nom => {
-  const bloc = sql.match(
-    new RegExp(
-      "create or replace function public\\." + nom + "\\([\\s\\S]*?\\n\\$\\$;",
-      "i"
-    )
-  );
+  const bloc = corpsDeFonction("public." + nom);
   assert.ok(bloc, "public." + nom + " doit exister");
+  const delegue = DELEGATION[nom];
+  if(delegue){
+    assert.match(
+      bloc,
+      new RegExp(delegue.replace(".", "\\.") + "\\s*\\("),
+      "public." + nom + " doit déléguer à " + delegue
+    );
+  }
+  /* Le garde se lit là où il est réellement exécuté : dans le corps de la RPC
+     quand elle porte ses règles, dans la fonction privée sinon. */
+  const porteur = delegue ? corpsDeFonction(delegue) : bloc;
+  assert.ok(porteur, (delegue || nom) + " doit exister");
   assert.match(
-    bloc[0],
-    /if not private\.est_membre\(v_owner\) then\s*raise exception 'MEMBRE_REQUIS'/i,
+    porteur,
+    /if not private\.est_membre\([pv]_owner\) then\s*raise exception 'MEMBRE_REQUIS'/i,
     "public." + nom + " doit refuser un invité : elle contourne la RLS"
   );
 });
+
+/* Les trois entrées d'administration ajoutent leur propre barrière, portée sur
+   l'APPELANT. Sans elle, n'importe quel membre inscrirait n'importe qui. */
+["admin_join_boss_run", "admin_leave_boss_run", "admin_select_boss_team"]
+  .forEach(nom => {
+    assert.match(
+      corpsDeFonction("public." + nom),
+      /if not private\.est_admin\(auth\.uid\(\)\) then\s*raise exception 'ADMIN_REQUIS'/i,
+      "public." + nom + " doit exiger que l'appelant soit administrateur"
+    );
+  });
 
 /* ---- La RPC de promotion : le seul chemin de l'écran d'administration. ---- */
 

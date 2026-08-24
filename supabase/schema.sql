@@ -774,27 +774,35 @@ alter table public.boss_sessions      enable row level security;
 alter table public.boss_participation enable row level security;
 alter table public.boss_run_reports   enable row level security;
 
-create or replace function public.join_boss_run(p_session_id uuid)
+-- Les regles d'un run de boss vivent ICI, avec le proprietaire en argument.
+-- Deux entrees publiques s'y branchent : celle du membre, qui agit pour
+-- lui-meme, et celle de l'administrateur, qui compose un groupe pour
+-- autrui. Les recopier dans une variante « admin » les aurait fait diverger
+-- au premier correctif — on aurait corrige la regle du membre en laissant
+-- celle de l'administrateur en arriere.
+create or replace function private.rejoindre_run(
+  p_session_id uuid,
+  p_owner uuid
+)
 returns void
 language plpgsql
 security definer
 set search_path = public, pg_temp
 as $$
-declare
-  v_owner uuid := auth.uid();
+declare
   v_week date;
   v_status text;
   v_member_count integer;
   v_week_count integer;
   v_pseudo text;
 begin
-  if v_owner is null then
+  if p_owner is null then
     raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
   end if;
   -- Cette fonction est `security definer` : elle traverse la RLS. Sans ce
   -- garde, un invité rejoindrait un run par appel direct, quelles que soient
   -- les politiques posées sur les tables.
-  if not private.est_membre(v_owner) then
+  if not private.est_membre(p_owner) then
     raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
   end if;
 
@@ -818,13 +826,13 @@ begin
   end if;
   if exists (
     select 1 from public.boss_participation
-     where session_id = p_session_id and owner = v_owner
+     where session_id = p_session_id and owner = p_owner
   ) then
     return;
   end if;
 
   perform pg_advisory_xact_lock(
-    hashtextextended(v_owner::text || ':' || v_week::text, 0)
+    hashtextextended(p_owner::text || ':' || v_week::text, 0)
   );
 
   select count(*)
@@ -840,7 +848,7 @@ begin
     into v_week_count
     from public.boss_participation bp
     join public.boss_sessions bs on bs.id = bp.session_id
-   where bp.owner = v_owner
+   where bp.owner = p_owner
      and bs.week_start = v_week;
 
   if v_week_count >= 3 then
@@ -850,32 +858,82 @@ begin
   select nullif(trim(pseudo), '')
     into v_pseudo
     from public.profiles
-   where id = v_owner;
+   where id = p_owner;
 
   insert into public.boss_participation(session_id, owner, pseudo, updated_at)
-  values (p_session_id, v_owner, coalesce(v_pseudo, 'Membre'), now())
+  values (p_session_id, p_owner, coalesce(v_pseudo, 'Membre'), now())
   on conflict (session_id, owner) do nothing;
 end;
 $$;
 
-create or replace function public.leave_boss_run(p_session_id uuid)
+create or replace function public.join_boss_run(
+  p_session_id uuid
+)
 returns void
 language plpgsql
 security definer
 set search_path = public, pg_temp
 as $$
-declare
-  v_owner uuid := auth.uid();
+begin
+  perform private.rejoindre_run(p_session_id, auth.uid());
+end;
+$$;
+
+-- Un administrateur inscrit un membre a sa place. Les plafonds du
+-- jeu — cinq par groupe, trois runs par semaine — restent ceux de la
+-- fonction privee : on compose un groupe, on ne plie pas le jeu.
+create or replace function public.admin_join_boss_run(
+  p_session_id uuid,
+  p_owner uuid
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  -- Le garde porte sur l'APPELANT, pas sur la cible. Masquer un bouton
+  -- est une politesse ; c'est cette ligne qui est la barriere.
+  if not private.est_admin(auth.uid()) then
+    raise exception 'ADMIN_REQUIS' using errcode = 'P0001';
+  end if;
+  -- Un administrateur doit nommer quelqu'un. Sans ce controle, la
+  -- fonction privee repondrait AUTH_REQUIRED, qui designe l'appelant et
+  -- enverrait chercher la panne au mauvais endroit.
+  if p_owner is null then
+    raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
+  end if;
+  perform private.rejoindre_run(p_session_id, p_owner);
+end;
+$$;
+
+
+-- Les regles d'un run de boss vivent ICI, avec le proprietaire en argument.
+-- Deux entrees publiques s'y branchent : celle du membre, qui agit pour
+-- lui-meme, et celle de l'administrateur, qui compose un groupe pour
+-- autrui. Les recopier dans une variante « admin » les aurait fait diverger
+-- au premier correctif — on aurait corrige la regle du membre en laissant
+-- celle de l'administrateur en arriere.
+create or replace function private.quitter_run(
+  p_session_id uuid,
+  p_owner uuid
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+declare
   v_week date;
   v_status text;
 begin
-  if v_owner is null then
+  if p_owner is null then
     raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
   end if;
   -- Cette fonction est `security definer` : elle traverse la RLS. Sans ce
   -- garde, un invité rejoindrait un run par appel direct, quelles que soient
   -- les politiques posées sur les tables.
-  if not private.est_membre(v_owner) then
+  if not private.est_membre(p_owner) then
     raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
   end if;
 
@@ -900,12 +958,61 @@ begin
 
   delete from public.boss_participation
    where session_id = p_session_id
-     and owner = v_owner;
+     and owner = p_owner;
 end;
 $$;
 
-create or replace function public.select_boss_team(
+create or replace function public.leave_boss_run(
+  p_session_id uuid
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  perform private.quitter_run(p_session_id, auth.uid());
+end;
+$$;
+
+-- Le retrait par un administrateur n'est pas un confort : sans lui,
+-- une inscription posee sur la mauvaise personne resterait bloquee
+-- jusqu'a ce que cette personne se retire elle-meme.
+create or replace function public.admin_leave_boss_run(
   p_session_id uuid,
+  p_owner uuid
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  -- Le garde porte sur l'APPELANT, pas sur la cible. Masquer un bouton
+  -- est une politesse ; c'est cette ligne qui est la barriere.
+  if not private.est_admin(auth.uid()) then
+    raise exception 'ADMIN_REQUIS' using errcode = 'P0001';
+  end if;
+  -- Un administrateur doit nommer quelqu'un. Sans ce controle, la
+  -- fonction privee repondrait AUTH_REQUIRED, qui designe l'appelant et
+  -- enverrait chercher la panne au mauvais endroit.
+  if p_owner is null then
+    raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
+  end if;
+  perform private.quitter_run(p_session_id, p_owner);
+end;
+$$;
+
+
+-- Les regles d'un run de boss vivent ICI, avec le proprietaire en argument.
+-- Deux entrees publiques s'y branchent : celle du membre, qui agit pour
+-- lui-meme, et celle de l'administrateur, qui compose un groupe pour
+-- autrui. Les recopier dans une variante « admin » les aurait fait diverger
+-- au premier correctif — on aurait corrige la regle du membre en laissant
+-- celle de l'administrateur en arriere.
+create or replace function private.choisir_equipe_run(
+  p_session_id uuid,
+  p_owner uuid,
   p_team_id uuid
 )
 returns void
@@ -913,19 +1020,18 @@ language plpgsql
 security definer
 set search_path = public, pg_temp
 as $$
-declare
-  v_owner uuid := auth.uid();
+declare
   v_week date;
   v_status text;
   v_snapshot jsonb;
 begin
-  if v_owner is null then
+  if p_owner is null then
     raise exception 'AUTH_REQUIRED' using errcode = 'P0001';
   end if;
   -- Cette fonction est `security definer` : elle traverse la RLS. Sans ce
   -- garde, un invité rejoindrait un run par appel direct, quelles que soient
   -- les politiques posées sur les tables.
-  if not private.est_membre(v_owner) then
+  if not private.est_membre(p_owner) then
     raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
   end if;
 
@@ -950,7 +1056,7 @@ begin
   if not exists (
     select 1 from public.boss_participation
      where session_id = p_session_id
-       and owner = v_owner
+       and owner = p_owner
   ) then
     raise exception 'NOT_A_PARTICIPANT' using errcode = 'P0001';
   end if;
@@ -967,7 +1073,7 @@ begin
     into v_snapshot
     from public.teams t
    where t.id = p_team_id
-     and t.owner = v_owner;
+     and t.owner = p_owner;
 
   if v_snapshot is null then
     raise exception 'TEAM_NOT_OWNED' using errcode = 'P0001';
@@ -978,13 +1084,57 @@ begin
          team_snapshot = v_snapshot,
          updated_at = now()
    where session_id = p_session_id
-     and owner = v_owner;
+     and owner = p_owner;
 
   if not found then
     raise exception 'NOT_A_PARTICIPANT' using errcode = 'P0001';
   end if;
 end;
 $$;
+
+create or replace function public.select_boss_team(
+  p_session_id uuid,
+  p_team_id uuid
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  perform private.choisir_equipe_run(p_session_id, auth.uid(), p_team_id);
+end;
+$$;
+
+-- L'administrateur choisit PARMI LES EQUIPES DU MEMBRE : la fonction
+-- privee exige `t.owner = p_owner`, donc une equipe que le membre n'a
+-- pas enregistree reste refusee par TEAM_NOT_OWNED.
+create or replace function public.admin_select_boss_team(
+  p_session_id uuid,
+  p_owner uuid,
+  p_team_id uuid
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  -- Le garde porte sur l'APPELANT, pas sur la cible. Masquer un bouton
+  -- est une politesse ; c'est cette ligne qui est la barriere.
+  if not private.est_admin(auth.uid()) then
+    raise exception 'ADMIN_REQUIS' using errcode = 'P0001';
+  end if;
+  -- Un administrateur doit nommer quelqu'un. Sans ce controle, la
+  -- fonction privee repondrait AUTH_REQUIRED, qui designe l'appelant et
+  -- enverrait chercher la panne au mauvais endroit.
+  if p_owner is null then
+    raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
+  end if;
+  perform private.choisir_equipe_run(p_session_id, p_owner, p_team_id);
+end;
+$$;
+
 
 create or replace function public.complete_boss_run_with_report(
   p_session_id uuid,
@@ -1228,7 +1378,13 @@ revoke all on function public.complete_boss_run(uuid) from public;
 revoke all on function public.select_boss_team(uuid, uuid) from public;
 revoke all on function public.complete_boss_run_with_report(uuid, bigint, text) from public;
 revoke all on function public.update_boss_run_report(uuid, bigint, text) from public;
+revoke all on function public.admin_join_boss_run(uuid, uuid) from public;
+revoke all on function public.admin_leave_boss_run(uuid, uuid) from public;
+revoke all on function public.admin_select_boss_team(uuid, uuid, uuid) from public;
 grant execute on function public.join_boss_run(uuid) to authenticated;
+grant execute on function public.admin_join_boss_run(uuid, uuid) to authenticated;
+grant execute on function public.admin_leave_boss_run(uuid, uuid) to authenticated;
+grant execute on function public.admin_select_boss_team(uuid, uuid, uuid) to authenticated;
 grant execute on function public.leave_boss_run(uuid) to authenticated;
 grant execute on function public.complete_boss_run(uuid) to authenticated;
 grant execute on function public.select_boss_team(uuid, uuid) to authenticated;

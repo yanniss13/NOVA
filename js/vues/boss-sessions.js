@@ -19,7 +19,8 @@
 import { BOSS_NAME, BossStore } from "../donnees/boss-store.js";
 import { loadBossRecommendationData } from "../donnees/recommandation-groupes-store.js";
 import { Store } from "../donnees/equipes-store.js";
-import { sessionCourante } from "../etat/session.js";
+import { estAdministrateur, sessionCourante } from "../etat/session.js";
+import { AdministrationStore } from "../donnees/administration-store.js";
 import { bestBossSlots, recommendBossGroups } from "../metier/recommandation-groupes.js";
 import {
   bossEvolutionPercentage,
@@ -85,6 +86,10 @@ import { toast } from "./toast.js";
     if(bossTeamPickerContext && bossTeamPickerContext.userId !== userId){
       closeBossTeamPicker();
     }
+    /* On n'atteint cette ligne que si le titulaire de la session a change. Une
+       liste de membres restee ouverte appartient a l'administrateur precedent :
+       le suivant n'a aucune raison d'en heriter, et peut n'avoir aucun droit. */
+    closeBossMemberPicker();
     if(bossReportContext && bossReportContext.userId !== userId){
       closeBossReport();
     }
@@ -534,16 +539,34 @@ import { toast } from "./toast.js";
     }
   }
 
-  function bossActionMessage(error){
+  /* `pseudo` n'est renseigne que lorsqu'un administrateur agit POUR QUELQU'UN
+     D'AUTRE. Sans lui, « tes 3 runs » designerait l'administrateur alors que
+     le plafond est celui du membre vise — et enverrait chercher la panne au
+     mauvais endroit. */
+  function bossActionMessage(error, pseudo){
     const message = String(error && error.message || "");
     if(isBossSchemaCompatibilityError(error)){
       return BOSS_SCHEMA_MAINTENANCE_MESSAGE;
     }
     if(message.includes("RUN_INVALID_WEEK")) return "La semaine de boss a changé. La liste a été actualisée.";
     if(message.includes("AUTH_REQUIRED")) return "Ta session a expiré. Reconnecte-toi pour continuer.";
-    if(message.includes("RUN_LIMIT_REACHED")) return "Tes 3 runs de la semaine sont déjà réservés ou terminés.";
+    if(message.includes("ADMIN_REQUIS")) return "Cette action est réservée aux administrateurs.";
+    if(message.includes("MEMBRE_REQUIS")){
+      return pseudo
+        ? pseudo + " n’est pas membre de la confrérie."
+        : "Cette action est réservée aux membres de la confrérie.";
+    }
+    if(message.includes("RUN_LIMIT_REACHED")){
+      return pseudo
+        ? "Les 3 runs de la semaine de " + pseudo + " sont déjà réservés ou terminés."
+        : "Tes 3 runs de la semaine sont déjà réservés ou terminés.";
+    }
     if(message.includes("GROUP_FULL")) return "Ce groupe est déjà complet (5/5).";
-    if(message.includes("TEAM_NOT_OWNED")) return "Cette équipe ne t’appartient plus. Actualise tes équipes puis choisis-en une autre.";
+    if(message.includes("TEAM_NOT_OWNED")){
+      return pseudo
+        ? "Cette équipe n’appartient plus à " + pseudo + "."
+        : "Cette équipe ne t’appartient plus. Actualise tes équipes puis choisis-en une autre.";
+    }
     if(message.includes("NOT_A_PARTICIPANT")) return "Seuls les participants peuvent effectuer cette action.";
     if(message.includes("RUN_ARCHIVED")) return "Cette run vient d’être terminée. La liste a été actualisée.";
     if(message.includes("RUN_MEMBERS_ONLY")) return "Seuls les membres de ce groupe peuvent terminer la run.";
@@ -671,6 +694,11 @@ import { toast } from "./toast.js";
   function bossTeamChoice(team, group, requestId){
     const pickerUserId = bossTeamPickerContext?.userId;
     const pickerOwnerVersion = bossTeamPickerContext?.ownerVersion;
+    /* Fixes A LA CONSTRUCTION, comme `pickerUserId` juste au-dessus : le
+       contexte est remplace a chaque ouverture, et un bouton construit pour un
+       membre ne doit jamais enregistrer pour celui d'apres. */
+    const pourAutrui = bossTeamPickerContext?.pourAutrui === true;
+    const cibleId = bossTeamPickerContext?.cibleId;
     const heroes = el("span",{class:"boss-team-choice-heroes"});
     (team.heroes || []).forEach(hero => {
       const character = hero && hero.char ? charOf(hero.char) : null;
@@ -704,7 +732,9 @@ import { toast } from "./toast.js";
         ) return;
         setBossTeamPickerPending(requestId, true, choice);
         try{
-          await BossStore.selectTeam(group.id, team.id);
+          pourAutrui
+            ? await BossStore.adminSelectTeam(group.id, cibleId, team.id)
+            : await BossStore.selectTeam(group.id, team.id);
           if(!isBossTeamPickerCurrent(requestId)) return;
           const refreshed = await renderBossView({
             showLoading:false,
@@ -832,23 +862,134 @@ import { toast } from "./toast.js";
     return choice;
   }
 
+  /* ---- Les gestes d'un administrateur sur le groupe d'un autre. ----
+
+     Ils ne passent PAS par `changeBossMembership` : celle-ci tient une
+     « intention en attente » par groupe, concue pour le geste qu'on fait sur
+     soi-meme — un seul a la fois. Un administrateur peut en enchainer
+     plusieurs sur le meme groupe, et cette file les ecraserait l'un l'autre.
+     On recharge donc simplement apres coup. */
+
+  async function retirerMembreDuGroupe(group, member){
+    if(!group || !member || !estAdministrateur()) return;
+    const pseudo = member.pseudo || "Ce membre";
+    try{
+      await BossStore.adminLeave(group.id, member.owner);
+      toast(pseudo + " a été retiré du groupe.");
+    }catch(error){
+      toast(bossActionMessage(error, pseudo), true);
+    }
+    await renderBossView({
+      showLoading:false,
+      ensureWeek:false,
+      showErrorToast:false
+    });
+  }
+
+  function closeBossMemberPicker(){
+    ModalStack.close($("#bossMemberOverlay"));
+  }
+
+  /* La liste vient d'`AdministrationStore` et non de `refreshRosterProfiles` :
+     seul le premier porte le drapeau `membre`. Proposer un invite ferait
+     echouer l'ajout sur MEMBRE_REQUIS apres le clic, alors qu'on sait des
+     l'affichage qu'il n'aboutira pas. */
+  async function openBossMemberPicker(group, members){
+    if(!group || !estAdministrateur()) return;
+    const restoreFocus = document.activeElement;
+    const overlay = $("#bossMemberOverlay");
+    const liste = $("#bossMemberList");
+    liste.innerHTML = "";
+    liste.appendChild(el("p",{
+      class:"boss-team-empty",
+      role:"status",
+      text:"Chargement des membres…"
+    }));
+    ModalStack.open(overlay, "#bossMemberClose", closeBossMemberPicker, restoreFocus);
+    let candidats;
+    try{
+      const dedans = new Set((members || []).map(item => item.owner));
+      candidats = (await AdministrationStore.comptes())
+        .filter(compte => compte.membre && !dedans.has(compte.id));
+    }catch(error){
+      liste.innerHTML = "";
+      liste.appendChild(el("p",{
+        class:"boss-team-empty",
+        text:"La liste des membres n’a pas pu être chargée. "
+          + "Vérifie ta connexion puis réessaie."
+      }));
+      return;
+    }
+    liste.innerHTML = "";
+    if(!candidats.length){
+      liste.appendChild(el("p",{
+        class:"boss-team-empty",
+        text:"Tous les membres de la confrérie sont déjà dans ce groupe."
+      }));
+      return;
+    }
+    candidats.forEach(compte => {
+      const bouton = el("button",{
+        class:"boss-team-choice boss-member-choice",
+        type:"button",
+        text:compte.pseudo,
+        onclick:async()=>{
+          if(bouton.disabled) return;
+          bouton.disabled = true;
+          try{
+            await BossStore.adminJoin(group.id, compte.id);
+            toast(compte.pseudo + " a été ajouté au groupe.");
+            closeBossMemberPicker();
+          }catch(error){
+            bouton.disabled = false;
+            toast(bossActionMessage(error, compte.pseudo), true);
+          }
+          await renderBossView({
+            showLoading:false,
+            ensureWeek:false,
+            showErrorToast:false
+          });
+        }
+      });
+      liste.appendChild(bouton);
+    });
+    const premier = liste.querySelector(".boss-member-choice");
+    if(premier) premier.focus();
+  }
+
   async function openBossTeamPicker(group, member){
     const userId = sessionCourante.user && sessionCourante.user.id;
-    if(!userId || !member || member.owner !== userId) return;
+    if(!userId || !member) return;
+    /* Un administrateur ouvre ce choix POUR QUELQU'UN D'AUTRE. Le refus reel
+       vient de `admin_select_boss_team` : ici on evite seulement d'ouvrir une
+       modale qui ne pourrait rien enregistrer. */
+    const pourAutrui = member.owner !== userId;
+    if(pourAutrui && !estAdministrateur()) return;
+    const cibleId = member.owner;
     const restoreFocus = document.activeElement;
     const requestId = ++bossTeamPickerRequestId;
     bossTeamPickerPendingRequestId = null;
     bossTeamPickerContext = {
       requestId,
       userId,
+      cibleId,
+      pourAutrui,
       ownerVersion:bossViewOwnerVersion,
       groupId:group.id
     };
+    /* Le titre nomme la personne : sans lui, rien a l'ecran ne distingue
+       « je choisis mon equipe » de « je choisis celle d'un autre », et les
+       deux modales sont identiques. */
+    $("#bossTeamTitle").textContent = pourAutrui
+      ? "Choisir l’équipe de " + (member.pseudo || "ce membre")
+      : "Choisir mon équipe";
     const overlay = $("#bossTeamOverlay");
     const list = $("#bossTeamList");
     try{
+      /* `teams_read` rend les equipes de toute la confrerie a un membre : la
+         liste d'autrui se lit donc sans droit supplementaire. */
       const teams = (await Store.refresh())
-        .filter(team => team.owner === userId)
+        .filter(team => team.owner === cibleId)
         .sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
       if(!isBossTeamPickerCurrent(requestId)) return;
       bossTeamPickerTeams(list, teams, group, requestId);
@@ -868,7 +1009,10 @@ import { toast } from "./toast.js";
       list.innerHTML = "";
       list.appendChild(el("div",{class:"boss-team-empty"},[
         el("p",{
-          text:"Tes équipes n’ont pas pu être chargées. Vérifie ta connexion puis réessaie."
+          text:(member.owner === (sessionCourante.user && sessionCourante.user.id)
+            ? "Tes équipes n’ont pas pu être chargées."
+            : "Les équipes de ce membre n’ont pas pu être chargées.")
+            + " Vérifie ta connexion puis réessaie."
         }),
         el("button",{
           class:"btn btn-primary",
@@ -890,6 +1034,10 @@ import { toast } from "./toast.js";
   $("#bossTeamClose").addEventListener("click", closeBossTeamPicker);
   $("#bossTeamOverlay").addEventListener("click", event => {
     if(event.target === $("#bossTeamOverlay")) closeBossTeamPicker();
+  });
+  $("#bossMemberClose").addEventListener("click", closeBossMemberPicker);
+  $("#bossMemberOverlay").addEventListener("click", event => {
+    if(event.target === $("#bossMemberOverlay")) closeBossMemberPicker();
   });
 
   const SCORE_RE = /^[1-9]\d*$/;
@@ -1253,7 +1401,12 @@ import { toast } from "./toast.js";
             })
           ])
         ]);
-        if(isMe && team){
+        /* Un administrateur compose le groupe : il voit et change l'equipe de
+           chacun, et peut retirer quelqu'un. Ce test ne protege rien — la
+           barriere est la RPC, qui repond ADMIN_REQUIS. Il evite seulement de
+           proposer un geste dont on connait deja la reponse. */
+        const jeGere = isMe || estAdministrateur();
+        if(jeGere && team){
           row.appendChild(el("button",{
             class:"boss-member-team-preview",
             type:"button",
@@ -1264,13 +1417,24 @@ import { toast } from "./toast.js";
             bossTeamBanner(team)
           ]));
         }
-        if(isMe){
+        if(jeGere){
           row.appendChild(el("button",{
             class:"btn boss-member-team-action",
             type:"button",
             dataset:{bossAction:"team"},
-            text:team ? "Changer" : "Choisir mon équipe",
+            text:team
+              ? "Changer"
+              : (isMe ? "Choisir mon équipe" : "Choisir son équipe"),
             onclick:()=>void openBossTeamPicker(g, member)
+          }));
+        }
+        if(!isMe && estAdministrateur()){
+          row.appendChild(el("button",{
+            class:"btn btn-ghost boss-member-remove",
+            type:"button",
+            dataset:{bossAction:"admin-remove"},
+            text:"Retirer",
+            onclick:()=>void retirerMembreDuGroupe(g, member)
           }));
         }
         list.appendChild(row);
@@ -1303,8 +1467,22 @@ import { toast } from "./toast.js";
     }) : null;
     if(completeButton) completeButton.disabled = pending || overCapacity;
 
+    /* Le bouton d'ajout est distinct de « Rejoindre » a dessein : celui-ci
+       parle de soi, celui-la d'autrui. Les confondre dans un seul bouton
+       ferait dependre le geste d'un etat invisible. */
+    const addButton = estAdministrateur() ? el("button",{
+      class:"btn btn-secondary boss-admin-add",
+      type:"button",
+      dataset:{bossAction:"admin-add"},
+      text:"Ajouter un membre",
+      title:members.length >= 5 ? "Groupe complet : 5/5" : "",
+      onclick:()=>void openBossMemberPicker(g, members)
+    }) : null;
+    if(addButton) addButton.disabled = pending || members.length >= 5;
+
     const actions = el("div",{class:"boss-actions"},[
       joinButton,
+      ...(addButton ? [addButton] : []),
       ...(completeButton ? [completeButton] : [])
     ]);
 
