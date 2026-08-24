@@ -169,11 +169,15 @@ Object.keys(TABLE).forEach(perso => {
   });
 });
 
-/* Quatorze lignes sur les vingt-sept que les huit soutiens tournent vers
-   l'equipe ou la cible. Les treize autres sont NOMMEES dans l'en-tete de
-   data/potentiels-equipe.js avec la raison de leur absence. Ce compte empeche
-   qu'un oubli passe inapercu. */
-assert.equal(lignes, 16, "16 lignes attendues, recu " + lignes);
+/* Les lignes que les soutiens tournent vers l'equipe ou la cible. Celles qui
+   restent dehors sont NOMMEES dans l'en-tete de data/potentiels-equipe.js avec
+   la raison de leur absence. Ce compte empeche qu'un oubli passe inapercu.
+
+   Passe de 16 a 18 le 24 aout 2026 : les paliers 6 et 10 du Baton d'Elizabeth
+   augmentent le boost de degats crit. d'attaque normale que son attaque
+   speciale donne aux allies. La table du jeu donne la suite exacte,
+   +50 % / +70 % / +100 %. */
+assert.equal(lignes, 18, "18 lignes attendues, recu " + lignes);
 
 /* data/potentiels.js n'emploie PAS d'espace insecable, contrairement a
    stats-build.js. Si la source changeait d'avis, les phrases citees ici

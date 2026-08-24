@@ -213,6 +213,27 @@ window.SEVEN_DS_POTENTIELS_EQUIPE = {
       ]
     },
     "Baton": {
+      /* Le boost de degats crit. de l'attaque normale que l'attaque speciale
+         donne aux allies monte par paliers. La table du jeu le confirme buff
+         par buff : 302172014 vaut +50 %, 302172035 (palier 6) +70 %, et
+         302172045 (palier 10) +100 %. La ligne de base vit dans
+         buffs-supports.js ; ici on n'ecrit que les SUPPLEMENTS, puisque les
+         paliers se cumulent. */
+      "6": [
+        {
+          id:"elizabeth-baton-t6-degats-crit-normale",
+          libelle:"Attaque spéciale : dégâts crit. d'attaque normale des alliés +20 % de plus",
+          cible:"allies",
+          stat:"C_Critical_Dam_Rate",
+          operation:"add",
+          valeur:2000,
+          unite:"ten-thousandths",
+          element:null,
+          provenance:{
+            phrase:"octroyé par l'attaque spéciale de "
+          }
+        }
+      ],
       "9": [
         {
           id:"elizabeth-baton-t9-percement",
@@ -227,6 +248,30 @@ window.SEVEN_DS_POTENTIELS_EQUIPE = {
             phrase:"le percement de défense de tous les héros alliés d'attribut Vent de "
           }
         }
+      ],
+      "10": [
+        {
+          id:"elizabeth-baton-t10-degats-crit-normale",
+          libelle:"Attaque spéciale : dégâts crit. d'attaque normale des alliés +30 % de plus",
+          cible:"allies",
+          stat:"C_Critical_Dam_Rate",
+          operation:"add",
+          valeur:3000,
+          unite:"ten-thousandths",
+          element:null,
+          provenance:{
+            phrase:"octroyée par l'attaque spéciale de "
+          }
+        }
+        /* CE PALIER PORTE UN SECOND EFFET, VOLONTAIREMENT ABSENT.
+           « Accroit l'augmentation maximale de l'attaque de Vent octroyee par
+           la competence normale de 3000 » releve le PLAFOND du buff
+           `elizabeth-vague-attaque-vent`, de 3000 a 6000. Ce buff vaut
+           min(30 % de l'ATK, plafond) : relever un plafond ne s'ecrit pas
+           comme une ligne qui s'ajoute. Une seconde ligne indexee donnerait
+           le bon total au-dela de 20 000 d'ATK et le DOUBLE en dessous.
+           Il faut que `potentiels-equipe.js` sache modifier le plafond d'un
+           buff existant ; tant que ce n'est pas le cas, rien plutot que faux. */
       ]
     },
     "Baguette": {
