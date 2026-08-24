@@ -58,6 +58,43 @@ assert.equal(natives[0].valeur, "48.82%",
 assert.equal(LUE.stats.filter(ligne => ligne.section === "Enchanter").length, 4,
   "les quatre enchantements doivent garder leur section");
 
+/* SECONDE CAPTURE REELLE, et la plus instructive : la hache du proprietaire.
+   Sa statistique principale s'affiche « 3 425 », separateur de milliers
+   compris. La premiere version de ce module la refusait — sa regle etait plus
+   stricte que celle de Tesseract — et l'arme perdait son attaque, donc toute
+   chance d'etre reconnue. Ce cas ne doit plus jamais passer inapercu. */
+const HACHE = plain(normaliserLecture({
+  nom:"Hache flamboyante",
+  niveau:50,
+  passif:7,
+  stats:[
+    { libelle:"Attaque de l'équipement", valeur:"3 425", section:null },
+    { libelle:"Perforation", valeur:"82", section:null },
+    { libelle:"Attaque de l'équipement", valeur:"832", section:"Enchanter" },
+    { libelle:"PV de l'équipement", valeur:"1427", section:"Enchanter" }
+  ]
+}));
+assert.equal(HACHE.statut, "ok");
+assert.equal(HACHE.stats.length, 4,
+  "les quatre lignes doivent survivre, separateur de milliers compris");
+assert.equal(HACHE.stats[0].valeur, "3 425",
+  "la valeur reste BRUTE : c'est valeurNumerique, en aval, qui la convertit");
+assert.equal(
+  HACHE.stats.filter(ligne => ligne.section === null).length, 2,
+  "cette arme porte DEUX statistiques natives, pas une"
+);
+
+/* Les trois espaces que le jeu emploie comme separateur de milliers : espace
+   ordinaire, insecable, insecable fine. Elles sont ECHAPPEES a dessein : trois caracteres invisibles cote a cote seraient irrelisibles, et une correction maladroite les remplacerait par des espaces ordinaires sans que personne ne s'en apercoive. */
+for(const espace of [" ", "\u00a0", "\u202f"]){
+  const resultat = plain(normaliserLecture({
+    nom:"X",
+    stats:[{ libelle:"Attaque", valeur:"3" + espace + "425", section:null }]
+  }));
+  assert.equal(resultat.stats.length, 1,
+    "separateur de milliers refuse : " + JSON.stringify(espace));
+}
+
 /* Une section vide vaut « hors section ». Le modele peut rendre l'un ou
    l'autre, le reste du site n'attend que `null`. */
 const videEgaleNul = plain(normaliserLecture({
@@ -133,6 +170,6 @@ assert.equal(lectureAssisteeDisponible({
 assert.equal(lectureAssisteeDisponible(null), false,
   "un etat absent ne doit pas ouvrir la voie");
 
-console.log("lecture-assistee.test.js OK (" + LUE.stats.length
+console.log("lecture-assistee.test.js OK (" + (LUE.stats.length + HACHE.stats.length)
   + " lignes lues, " + natives.length + " native, "
   + rejets.length + " formes rejetees)");

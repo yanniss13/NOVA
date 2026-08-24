@@ -16,10 +16,18 @@
    candidate aux tables du jeu. Une lecture fausse est donc rejetee par le
    catalogue, pas ecrite dans le build. */
 
-  /* Une valeur de panneau est un nombre, eventuellement decimal, eventuellement
-     suivi d'un pourcent. Rien d'autre ne doit passer : `deduireArme` compare
-     des ENTIERS exacts, et un caractere parasite decale tout. */
-  const VALEUR_LISIBLE = /^[+-]?\d+(?:[.,]\d+)?\s*%?$/;
+import { EST_NOMBRE_PANNEAU } from "./ocr-panneau.js";
+import { valeurNumerique } from "./ocr-libelles.js";
+
+  /* Une valeur de panneau se juge avec les MEMES outils que la lecture
+     Tesseract, pas avec une regle recopiee. La premiere version de ce module
+     refusait « 3 425 » — le jeu separe ses milliers par une espace insecable —
+     et jetait donc l'attaque de l'arme, sa statistique principale. Deux
+     lecteurs qui n'acceptent pas les memes valeurs, c'est un bug garanti le
+     jour ou l'un des deux evolue. */
+  function valeurLisible(texte){
+    return EST_NOMBRE_PANNEAU.test(texte) && valeurNumerique(texte) !== null;
+  }
 
   function texteNet(brut){
     return typeof brut === "string" ? brut.replace(/\s+/g, " ").trim() : "";
@@ -42,7 +50,7 @@
     if(!brut || typeof brut !== "object" || Array.isArray(brut)) return null;
     const libelle = texteNet(brut.libelle);
     const valeur = texteNet(brut.valeur);
-    if(!libelle || !VALEUR_LISIBLE.test(valeur)) return null;
+    if(!libelle || !valeurLisible(valeur)) return null;
     const section = texteNet(brut.section);
     /* `null` et chaine vide disent la meme chose - une ligne hors section - et
        le reste du site attend `null`. Les confondre ferait passer une
