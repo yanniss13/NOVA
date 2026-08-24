@@ -205,7 +205,41 @@ body.modal-locked{
 }
 .weapon-enchantment > .weapon-enchantment-title{grid-column:1/-1}
 .weapon-enchantment-master{grid-template-columns:repeat(2,minmax(0,1fr))}
-.weapon-enchantment-master .weapon-config-field:last-child{grid-column:1/-1}
+/* Le combinateur `>` n'est pas cosmetique : sans lui, `:last-child` attrapait
+   le champ « Valeur » niche dans un emplacement — dernier enfant de SON bloc —
+   au lieu du dernier champ de la perle. */
+.weapon-enchantment-master > .weapon-config-field:last-child{grid-column:1/-1}
+
+/* UN EMPLACEMENT EST UN BLOC, PAS DEUX CHAMPS VOISINS.
+
+   Ces deux classes vivaient dans le JavaScript sans aucune regle ici. Leurs
+   champs se confondaient donc avec ceux de la perle elle-meme — palier,
+   element — et le titre « Emplacement 1 sur 3 » tombait en texte courant au
+   milieu de libelles en petites capitales.
+
+   `align-self:start` compte : un emplacement sans valeur choisie est plus court
+   que son voisin, et sans lui il s'etirait sur toute la hauteur de la rangee,
+   laissant un cadre vide sous son selecteur. */
+.weapon-enchantment-slot{
+  display:flex;flex-direction:column;gap:9px;min-width:0;align-self:start;
+  padding:10px;border:1px solid var(--line-soft);border-radius:8px;
+  background:rgba(217,164,65,.045)
+}
+.weapon-enchantment-slot-title{
+  font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--gold-bright)
+}
+/* Le palier et l'element decrivent la perle ENTIERE, les emplacements n'en
+   sont que les cases : les melanger sur une meme rangee mettait « Palier »
+   seul a gauche d'une carte deux fois plus haute, avec un trou dessous.
+   Le premier emplacement repart donc a la colonne 1.
+
+   `:first-of-type` vise le premier `div` de la boite — les champs sont des
+   `label` et le titre un `span`. Aux paliers ou palier et element remplissent
+   deja la rangee, la regle ne fait rien. */
+.weapon-enchantment-master > .weapon-enchantment-slot:first-of-type{
+  grid-column-start:1
+}
 .weapon-stats-title{
   margin:0 0 14px;font-family:var(--display);font-size:17px;
   letter-spacing:.04em;color:var(--gold-bright)
@@ -371,7 +405,7 @@ body.modal-locked{
   .weapon-config-open{width:100%;justify-content:center}
   .weapon-enchantment,
   .weapon-enchantment-master{grid-template-columns:minmax(0,1fr)}
-  .weapon-enchantment-master .weapon-config-field:last-child{grid-column:auto}
+  .weapon-enchantment-master > .weapon-config-field:last-child{grid-column:auto}
 }
 @media(pointer:coarse){
   .gear-config-open{min-height:44px}
