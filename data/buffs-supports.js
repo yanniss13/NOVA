@@ -418,6 +418,28 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
         gameId:"elizabeth_wand_skill_e",
         phrase:"augmente les dégâts de Terre des alliés de 50% des dégâts crit. du héros pendant 40s"
       }
+    },
+    {
+      /* LU dans la table du jeu, pas deduit du texte : le buff 302172012 porte
+         ApplyType `Team`. « les degats » designe donc toute l'equipe, et non
+         le porteur seul comme le depot le lisait jusqu'ici. Le bloc
+         d'identifiants 302172 n'est touche que par des competences d'Elizabeth.
+
+         CONDITIONNEL : l'ennemi doit etre sous Alteration, que la competence
+         speciale du Baton pose pour 30 s. La table ne sait pas exprimer une
+         condition ; la ligne est donc comptee comme acquise, ce qui suppose
+         que le support tient son etat. */
+      id:"elizabeth-vent-favorable-degats-normale",
+      libelle:"Vent favorable : dégâts d'attaque normale des alliés +60 % (cible sous Altération)",
+      stat:"Normalattack_Damadd_Rate",
+      operation:"add",
+      valeur:6000,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"elizabeth_staff_passive",
+        phrase:"Lorsqu'un héros allié attaque un ennemi affecté par Altération, augmente les dégâts d'attaque normale de 60%"
+      }
     }
   ],
   "escanor": [
@@ -777,6 +799,22 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       provenance:{
         gameId:"manny_sworddual_passive",
         phrase:"augmente ses dégâts de Froid de 35%"
+      }
+    },
+    {
+      /* Meme lecture que la ligne d'Elizabeth : buff 302221001, ApplyType
+         `Team`, bloc 302221 exclusif a Manny. CONDITIONNEL : l'ennemi doit
+         etre sous Chatiment, pose par la competence normale du Baton. */
+      id:"manny-pretresse-degats-ultime",
+      libelle:"Prêtresse des dragons : dégâts d'attaque ultime des alliés +30 % (cible sous Châtiment)",
+      stat:"Ultimateskill_Damadd_Rate",
+      operation:"add",
+      valeur:3000,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"manny_staff_passive",
+        phrase:"Augmente les dégâts d'attaque ultime de 30% lorsqu'un héros allié attaque un ennemi affecté par Châtiment"
       }
     }
   ],
