@@ -394,6 +394,27 @@ window.SEVEN_DS_BUFFS_SUPPORTS = {
       }
     },
     {
+      /* La valeur de BASE. Elle monte avec les paliers de potentiel du Baton,
+         et les supplements sont dans potentiels-equipe.js : +20 % au palier 6,
+         +30 % au palier 10. La table du jeu donne la suite complete —
+         302172014 = +50 %, 302172035 = +70 %, 302172045 = +100 %.
+
+         Le jeu restreint ce boost aux ATTAQUES NORMALES ; `C_Critical_Dam_Rate`
+         ne porte pas cette nuance et le moteur l'applique a tout. C'est
+         l'approximation deja retenue pour les autres lignes de degats crit. */
+      id:"elizabeth-priere-degats-crit-normale",
+      libelle:"Attaque spéciale : dégâts crit. d'attaque normale des alliés +50 %",
+      stat:"C_Critical_Dam_Rate",
+      operation:"add",
+      valeur:5000,
+      unite:"ten-thousandths",
+      element:null,
+      provenance:{
+        gameId:"elizabeth_staff_skill_q",
+        phrase:"augmente les dégâts crit. des attaques normales des alliés à portée de 50%"
+      }
+    },
+    {
       id:"elizabeth-priere-chances-crit",
       libelle:"Chances crit. des alliés Terre +20 %",
       stat:"C_Critical_Rate",
