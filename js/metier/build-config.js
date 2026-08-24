@@ -116,6 +116,71 @@ import {
     return status;
   }
 
+  /* PORTER UNE PIECE, OU UNE ARME, A SON MAXIMUM.
+
+     Regler emplacement par emplacement le niveau puis le renforcement de onze
+     pieces est le geste le plus repetitif du site, et un membre qui compare
+     deux builds les veut de toute facon tous les deux au plafond.
+
+     CE QUI MONTE : le niveau, le renforcement, le palier du passif grave, la
+     promotion et le depassement d'une arme.
+     CE QUI NE BOUGE PAS : les ENCHANTEMENTS. Ce sont des choix de
+     statistiques, pas un niveau — le jeu ne les « monte » pas, et les ecraser
+     detruirait une saisie que le membre a faite a la main ou par l'OCR.
+
+     Les deux fonctions rendent une configuration NEUVE, jamais l'ancienne
+     modifiee : le reste du site compare les objets pour savoir s'il doit
+     redessiner. */
+  function gearConfigAuMaximum(file, config){
+    const definition = buildGearDefinition(file);
+    if(!definition) return null;
+    const source = config && typeof config === "object" && !Array.isArray(config)
+      ? config : null;
+    const longueur = gearEnchantmentLength(definition);
+    const gardes = source && Array.isArray(source.enchantments)
+      ? source.enchantments.slice(0, longueur) : [];
+    /* La longueur suit la PIECE, pas la saisie : une configuration heritee
+       d'une autre piece pourrait en compter un de trop ou de moins. */
+    const enchantments = Array.from(
+      { length:longueur }, (rien, index) => gardes[index] === undefined ? null : gardes[index]
+    );
+    const aUnPassif = Array.isArray(definition.passiveLevels)
+      && definition.passiveLevels.length > 0;
+    return {
+      version:1,
+      level:definition.qualityMax,
+      reinforce:definition.reinforceMax,
+      enchantments,
+      passiveLevel:aUnPassif ? GEAR_PASSIVE_MAX_LEVEL : null
+    };
+  }
+
+  function weaponConfigAuMaximum(file, config){
+    const source = config && typeof config === "object" && !Array.isArray(config)
+      ? config : null;
+    const gameId = source ? source.gradeGameId : null;
+    const grade = buildWeaponGrade(file, gameId);
+    if(!grade) return null;
+    const paliers = Array.isArray(grade.promotionSteps) ? grade.promotionSteps : [];
+    /* La derniere promotion, donc le dernier plafond de niveau : 50 pour une
+       arme qui va au bout de ses quatre paliers. */
+    const promotion = paliers.length;
+    const plafond = weaponLevelCap(grade, promotion);
+    if(plafond < 0) return null;
+    const depassements = grade.overlimit && Array.isArray(grade.overlimit.levels)
+      ? grade.overlimit.levels
+        .map(item => item && item.level)
+        .filter(niveau => Number.isFinite(niveau))
+      : [];
+    return Object.assign({}, source, {
+      version:1,
+      gradeGameId:gameId,
+      level:plafond,
+      promotion,
+      overlimit:depassements.length ? Math.max.apply(null, depassements) : 0
+    });
+  }
+
   const ARMOR_LEVEL_ORIGIN_MODE = "segment-lower-bound";
   const REINFORCE_PROGRESSION = [10300, 10700, 11200, 11800, 12500];
   function reinforceMultiplier(level){
@@ -404,11 +469,13 @@ export {
   enchantmentChoiceStatus,
   enchantmentsStatus,
   gameCeil,
+  gearConfigAuMaximum,
   gearConfigStatus,
   gearEnchantmentChoiceStatus,
   gearEnchantmentLength,
   gearPassiveStatus,
   gearStatValue,
+  weaponConfigAuMaximum,
   weaponConfigStatus,
   weaponPassiveFact,
   weaponLevelCap,

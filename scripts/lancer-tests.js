@@ -97,6 +97,7 @@ const SUITES = {
     "node tests/manques-libelles.test.js",
     "node tests/animations-mesurees.test.js",
     "node tests/animations-verrous.test.js",
+    "node tests/tout-au-maximum.test.js",
     "python -m unittest tests/test_lister_chronometrage.py",
     "python scripts/lister-chronometrage.py --check",
     "node tests/routage.test.js",
