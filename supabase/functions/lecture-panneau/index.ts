@@ -120,6 +120,64 @@ const SCHEMA = {
   required: ["nom", "stats"]
 };
 
+/* LA SATURATION N'EST PAS UN REFUS.
+
+   Un 503 « UNAVAILABLE » ne dit pas que notre requete est mauvaise : il dit que
+   Google est sature a cet instant, et la meme requete aboutit le plus souvent
+   deux secondes plus tard. Abandonner au premier essai renvoyait le membre a
+   Tesseract — et a ses quatre megaoctets — pour un incident qui n'a pas dure.
+
+   On ne rejoue QUE la saturation et l'injoignable. Rejouer un 400 ou un 403 ne
+   ferait que retarder un echec certain, et rejouer un 429 aggraverait un quota
+   deja depasse. */
+const SATURATION = new Set([500, 502, 503, 504]);
+/* Deux reprises, deux secondes et demie au pire. Au-dela, l'attente couterait
+   au membre plus que le repli sur le moteur local ne lui coute. */
+const REPRISES = [700, 1800];
+
+async function lireChezGemini(
+  image: { donnees: string; type: string }
+): Promise<Response | null> {
+  const corps = JSON.stringify({
+    systemInstruction: { parts: [{ text: CONSIGNE }] },
+    contents: [{
+      role: "user",
+      parts: [{ inlineData: { mimeType: image.type, data: image.donnees } }]
+    }],
+    generationConfig: {
+      responseMimeType: "application/json",
+      responseSchema: SCHEMA,
+      /* Une transcription n'a pas a etre creative : on veut la meme lecture
+         pour la meme image. */
+      temperature: 0
+    }
+  });
+
+  let derniere: Response | null = null;
+  for (let essai = 0; essai <= REPRISES.length; essai++) {
+    if (essai > 0) {
+      console.warn("gemini saturé, reprise " + essai + "/" + REPRISES.length);
+      await new Promise((suite) => setTimeout(suite, REPRISES[essai - 1]));
+    }
+    try {
+      derniere = await fetch(
+        RACINE + encodeURIComponent(MODELE) + ":generateContent?key="
+          + encodeURIComponent(CLE),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: corps
+        }
+      );
+    } catch {
+      derniere = null;
+      continue;
+    }
+    if (derniere.ok || !SATURATION.has(derniere.status)) return derniere;
+  }
+  return derniere;
+}
+
 function refus(message: string, code: number): Response {
   return new Response(JSON.stringify({ erreur: message }), {
     status: code, headers: ENTETES
@@ -186,33 +244,8 @@ Deno.serve(async (requete: Request) => {
   const image = decouperImage(corps.image);
   if (!image) return refus("Image absente, mal encodée ou trop lourde.", 400);
 
-  let reponse: Response;
-  try {
-    reponse = await fetch(
-      RACINE + encodeURIComponent(MODELE) + ":generateContent?key="
-        + encodeURIComponent(CLE),
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          systemInstruction: { parts: [{ text: CONSIGNE }] },
-          contents: [{
-            role: "user",
-            parts: [{ inlineData: { mimeType: image.type, data: image.donnees } }]
-          }],
-          generationConfig: {
-            responseMimeType: "application/json",
-            responseSchema: SCHEMA,
-            /* Une transcription n'a pas a etre creative : on veut la meme
-               lecture pour la meme image. */
-            temperature: 0
-          }
-        })
-      }
-    );
-  } catch {
-    return refus("Le service de lecture est injoignable.", 502);
-  }
+  const reponse = await lireChezGemini(image);
+  if (!reponse) return refus("Le service de lecture est injoignable.", 502);
 
   if (!reponse.ok) {
     /* Le corps de l'erreur amont peut nommer la cle ou le projet : il reste
@@ -233,6 +266,17 @@ Deno.serve(async (requete: Request) => {
 
     if (reponse.status === 429) {
       return refus("Quota de lecture assistée atteint. Réessaie plus tard.", 429);
+    }
+    /* La saturation a survecu aux reprises : ce n'est pas une panne du site, et
+       le message doit le dire — sinon le membre cherche une erreur de son cote
+       alors qu'il n'a qu'a recommencer. */
+    if (SATURATION.has(reponse.status)) {
+      return refus(
+        "Le service de lecture est saturé en ce moment. Réessaie dans un instant"
+          + " (Google : " + reponse.status
+          + (canonique ? " " + canonique : "") + ").",
+        503
+      );
     }
     return refus(
       "La lecture assistée a échoué (Google : " + reponse.status
