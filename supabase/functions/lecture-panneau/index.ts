@@ -204,14 +204,29 @@ Deno.serve(async (requete: Request) => {
   }
 
   if (!reponse.ok) {
-    /* Le detail de l'erreur amont peut nommer la cle ou le projet : il reste
-       dans les journaux, il ne part pas au navigateur. */
-    console.error("gemini", reponse.status, await reponse.text());
+    /* Le corps de l'erreur amont peut nommer la cle ou le projet : il reste
+       dans les journaux, il ne part JAMAIS au navigateur.
+
+       Mais « la lecture a échoué » tout court est indiagnostiquable : une clé
+       invalide, une API non activée et un nom de modèle périmé donnent le même
+       message, alors que ce sont trois réparations differentes. On remonte donc
+       le statut HTTP et l'enum canonique de Google (`PERMISSION_DENIED`,
+       `INVALID_ARGUMENT`, `NOT_FOUND`…) : ces deux-la designent la cause sans
+       rien reveler du secret. */
+    const brut = await reponse.text();
+    console.error("gemini", reponse.status, brut);
+    let canonique = "";
+    try {
+      canonique = String(JSON.parse(brut)?.error?.status || "");
+    } catch { /* Google n'a pas toujours la politesse du JSON. */ }
+
+    if (reponse.status === 429) {
+      return refus("Quota de lecture assistée atteint. Réessaie plus tard.", 429);
+    }
     return refus(
-      reponse.status === 429
-        ? "Quota de lecture assistée atteint. Réessaie plus tard."
-        : "La lecture assistée a échoué.",
-      reponse.status === 429 ? 429 : 502
+      "La lecture assistée a échoué (Google : " + reponse.status
+        + (canonique ? " " + canonique : "") + ").",
+      502
     );
   }
 
