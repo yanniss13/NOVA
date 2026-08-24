@@ -210,6 +210,30 @@ window.SEVEN_DS_POTENTIELS_EQUIPE = {
             phrase:"toutes les attaques élémentaires des alliés à portée de "
           }
         }
+      ],
+      "10": [
+        {
+          /* La PREMIERE ligne indexee sur la DEFENSE du lanceur, et la
+             premiere SANS plafond : le texte n'annonce aucun « (Max : … ) »,
+             la valeur suit la defense d'Elizabeth aussi haut qu'elle monte.
+             `valeur` reste donc a zero — c'est le repli quand son build n'est
+             pas lisible, et il n'existe aucun repli honnete ici.
+
+             `B_Atk` est bien des POINTS d'attaque, a ne pas confondre avec
+             `I_AtkAdd_Rate` qui est un taux. */
+          id:"elizabeth-livre-t10-attaque-sur-defense",
+          libelle:"Attaque de tous les alliés +10 % de la défense d'Elisabeth",
+          cible:"allies",
+          stat:"B_Atk",
+          operation:"add",
+          valeur:0,
+          unite:"flat",
+          indexeSurDef:{ taux:1000 },
+          element:null,
+          provenance:{
+            phrase:"à hauteur de "
+          }
+        }
       ]
     },
     "Baton": {
