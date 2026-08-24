@@ -27,6 +27,7 @@ const RACINE = path.resolve(__dirname, "..");
 const SUITES = {
   unit: [
     "node tests/serve.test.js",
+    "node tests/social-preview.test.js",
     "node tests/modules-imports.test.js",
     "node tests/css-ordre.test.js",
     "python -m unittest tests/test_schema_sql.py",
