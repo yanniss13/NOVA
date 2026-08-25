@@ -8,93 +8,17 @@ Aucune source publique ne donne ces temps. Ils se mesurent en jeu, et
 cette liste existe pour rendre ce travail fini : elle dit quoi mesurer
 d'abord, et ce que chaque mesure rapporte.
 
-**Avancement : 0 / 198 mesurées.**
+**Avancement : 0 / 13 mesurées.**
 
-## 1. Mesures qui débloquent maintenant — 76 compétences
+## 1. Mesures qui débloquent maintenant — 0 compétences
 
 Sans recharge : l'animation sert de dénominateur au modèle de cadence.
 Ces attaques normales et spéciales débloquent maintenant le calcul du DPS.
 
 | héros | arme | compétence | catégorie | touche | dégâts % | mesure (s) |
 |---|---|---|---|---|---|---|
-| klotho | Bâton | Projection dimensionnelle | Attaque normale | clic gauche | 366 |  |
-| escanor | Hache | Entaille impitoyable | Attaque normale | clic gauche | 227 |  |
-| escanor | Épée & bouclier | Marque du soleil | Attaque normale | clic gauche | 211 |  |
-| drake | Épée à deux mains | Lame foudroyante | Attaque normale | clic gauche | 206 |  |
-| escanor | Épée à deux mains | Orbite solaire | Attaque normale | clic gauche | 193 |  |
-| meliodas | Hache | Hache des Ténèbres | Attaque normale | clic gauche | 189 |  |
-| diane | Gantelets | Coup de poing terrestre | Attaque normale | clic gauche | 188 |  |
-| meliodas | Épées doubles | Double taillade des Ténèbres | Attaque normale | clic gauche | 187.3 |  |
-| bug | Épées doubles | Double taillade des ombres | Attaque normale | clic gauche | 187 |  |
-| tristan | Épée à deux mains | Épée de flamme | Attaque normale | clic gauche | 187 |  |
-| meliodas | Épée à une main | Taillade obscure | Attaque normale | clic gauche | 185.1 |  |
-| bug | Hache | Fendoir des ombres | Attaque normale | clic gauche | 185 |  |
-| guila | Lance | Tir enflammé | Attaque normale | clic gauche | 184 |  |
-| howzer | Lance | Coup de lance | Attaque normale | clic gauche | 183 |  |
-| daisy | Épée & bouclier | Technique secrète des fées : Coups déchaînés | Attaque normale | clic gauche | 181 |  |
-| elaine | Baguette | Perle de Vent | Attaque normale | clic gauche | 179 |  |
-| merlin | Baguette | Flux électrique | Attaque normale | clic gauche | 179 |  |
-| merlin | Grimoire | Gel spatial | Attaque normale | clic gauche | 175 |  |
-| dreyfus | Lance | Poignard du Sacré | Attaque normale | clic gauche | 173 |  |
-| griamore | Nunchaku | Pulvérisation murale | Attaque normale | clic gauche | 173 |  |
-| hendrickson | Épées doubles | Double frappe | Attaque normale | clic gauche | 168 |  |
-| slader | Épée à deux mains | Épée géante | Attaque normale | clic gauche | 168 |  |
-| king | Bâton | Bâton perforant | Attaque normale | clic gauche | 165 |  |
-| derieri | Gantelets | Rafale de coups | Attaque normale | clic gauche | 164 |  |
-| gil-thunder | Lance | Percée foudroyante | Attaque normale | clic gauche | 163 |  |
-| klotho | Rapière | Salve d'inscriptions | Attaque normale | clic gauche | 163 |  |
-| jericho | Rapière | Entaille glaciale | Attaque normale | clic gauche | 161 |  |
-| dreydrin | Épée & bouclier | Taillade de garde | Attaque normale | clic gauche | 140 |  |
-| tristan | Épées doubles | Double taillade enflammée | Attaque normale | clic gauche | 136 |  |
-| dreyfus | Épée à une main | Taillade de Terre | Attaque normale | clic gauche | 135 |  |
-| hendrickson | Lance | Lance abyssale | Attaque normale | clic gauche | 135 |  |
-| tioreh | Baguette | Flamme féérique | Attaque normale | clic gauche | 135 |  |
-| diane | Hache | Fendoir terrestre | Attaque normale | clic gauche | 134 |  |
-| elaine | Bâton | Graine de lumière | Attaque normale | clic gauche | 134 |  |
-| gil-thunder | Épée à une main | Frappe foudroyante | Attaque normale | clic gauche | 133 |  |
-| elizabeth | Baguette | Attaque jambon qui roule | Attaque normale | clic gauche | 131 |  |
-| tristan | Épée à une main | Épée de Vent | Attaque normale | clic gauche | 131 |  |
-| slader | Nunchaku | Triple coup | Attaque normale | clic gauche | 127 |  |
-| drake | Épée à une main | Taillade foudroyante | Attaque normale | clic gauche | 126 |  |
-| gowther | Baguette | Frappe brutale | Attaque normale | clic gauche | 122 |  |
-| merlin | Bâton | Calcul de combustion | Attaque normale | clic gauche | 121 |  |
-| guila | Rapière | Transpercement flamboyant | Attaque normale | clic gauche | 117 |  |
-| elaine | Grimoire | Fleur de Vent | Attaque normale | clic gauche | 114 |  |
-| guila | Épée & bouclier | Taillade de garde enflammée | Attaque normale | clic gauche | 114 |  |
-| jericho | Lance | Poignard de glace | Attaque normale | clic gauche | 114 |  |
-| diane | Nunchaku | Frappe de Terre | Attaque normale | clic gauche | 112.2 |  |
-| howzer | Nunchaku | Vent pulvérisant | Attaque normale | clic gauche | 112 |  |
-| bug | Grimoire | Poing des Ténèbres | Attaque normale | clic gauche | 111 |  |
-| drake | Bâton | Paratonnerre | Attaque normale | clic gauche | 109 |  |
-| dreydrin | Hache | Taillade intégrale | Attaque normale | clic gauche | 108 |  |
-| manny | Bâton | Lumière de la prêtresse | Attaque normale | clic gauche | 108 |  |
-| klotho | Grimoire | Projection runique | Attaque normale | clic gauche | 106 |  |
-| gil-thunder | Épée & bouclier | Frappe de barrière de Foudre | Attaque normale | clic gauche | 104 |  |
-| daisy | Baguette | Ordre de fée | Attaque normale | clic gauche | 102 |  |
-| griamore | Épée & bouclier | Frappe de bouclier | Attaque normale | clic gauche | 102 |  |
-| elizabeth | Bâton | Coup maladroit | Attaque normale | clic gauche | 101 |  |
-| daisy | Grimoire | Bombe fruitée | Attaque normale | clic gauche | 100 |  |
-| hendrickson | Épée à une main | Taillade resplendissante | Attaque normale | clic gauche | 100 |  |
-| howzer | Gantelets | Coup de poing du Vent | Attaque normale | clic gauche | 100 |  |
-| gowther | Grimoire | Pointe d'intrusion | Attaque normale | clic gauche | 99 |  |
-| tioreh | Bâton | Étoile filante | Attaque normale | clic gauche | 99 |  |
-| king | Grimoire | Coup de poing de gardien | Attaque normale | clic gauche | 97 |  |
-| gowther | Bâton | Impulsion de l'esprit | Attaque normale | clic gauche | 96 |  |
-| manny | Épées doubles | Lames volantes | Attaque normale | clic gauche | 96 |  |
-| tioreh | Grimoire | Trait de feu | Attaque normale | clic gauche | 95 |  |
-| derieri | Hache | Assaut obscur | Attaque normale | clic gauche | 94 |  |
-| derieri | Épée à deux mains | Lame furieuse | Attaque normale | clic gauche | 90 |  |
-| dreyfus | Rapière | Piqûre perçante | Attaque normale | clic gauche | 87 |  |
-| jericho | Épées doubles | Double entaille glacée | Attaque normale | clic gauche | 87 |  |
-| dreydrin | Rapière | Baïonnette divine | Attaque normale | clic gauche | 86 |  |
-| griamore | Gantelets | Coup de poing gravitationnel | Attaque normale | clic gauche | 86 |  |
-| king | Baguette | Tir terrestre | Attaque normale | clic gauche | 77 |  |
-| slader | Hache | Coup de hache | Attaque normale | clic gauche | 76 |  |
-| manny | Épée à une main | Danse de l'épée | Attaque normale | clic gauche | 33 |  |
-| elizabeth | Grimoire | Gouttelettes illuminées par l'été | Attaque normale | clic gauche | 25 |  |
-| merlin | Grimoire | Gel spatial | Attaque spéciale | Q | 150 |  |
 
-## 2. Mesures qui affinent maintenant — 122 compétences
+## 2. Mesures qui affinent maintenant — 13 compétences
 
 Avec recharge : le simulateur calcule déjà la compétence et
 l'animation ajoute un retard. La colonne « erreur » donne ce qu'on
@@ -104,127 +28,18 @@ Classement par erreur décroissante.
 | héros | arme | compétence | catégorie | touche | recharge | erreur | mesure (s) |
 |---|---|---|---|---|---|---|---|
 | diane | Gantelets | Combinaison de coups de pied | Attaque spéciale | Q | 5 s | 23 % |  |
-| drake | Épée à deux mains | Taillade perforante | Attaque spéciale | Q | 7.5 s | 17 % |  |
-| dreydrin | Hache | Écrasement puissant | Attaque spéciale | Q | 7.5 s | 17 % |  |
-| dreyfus | Rapière | Brise-dard | Attaque spéciale | Q | 7.5 s | 17 % |  |
-| gil-thunder | Lance | Déferlement foudroyant | Attaque spéciale | Q | 7.5 s | 17 % |  |
-| guila | Lance | Canon de flamme | Attaque spéciale | Q | 7.5 s | 17 % |  |
 | hendrickson | Épée à une main | Perforation divine | Attaque spéciale | Q | 7.5 s | 17 % |  |
-| king | Bâton | Bâton de tempête | Attaque spéciale | Q | 7.5 s | 17 % |  |
-| slader | Épée à deux mains | Frappe finale | Attaque spéciale | Q | 7.5 s | 17 % |  |
-| tristan | Épées doubles | Double taillade infernale | Attaque spéciale | Q | 7.8 s | 16 % |  |
-| dreyfus | Lance | Brisure sacrée | Attaque spéciale | Q | 7.9 s | 16 % |  |
-| merlin | Grimoire | Esprit glacial | Attaque spéciale | Q | 8 s | 16 % |  |
-| dreydrin | Rapière | Pulsation lumineuse | Attaque spéciale | Q | 8.2 s | 15 % |  |
-| drake | Bâton | Tempête de Foudre | Attaque spéciale | Q | 8.5 s | 15 % |  |
-| tristan | Épée à une main | Épée de tempête | Attaque spéciale | Q | 9.3 s | 14 % |  |
-| slader | Hache | Frappe chargée | Attaque spéciale | Q | 9.4 s | 14 % |  |
-| derieri | Hache | Lancer de hache | Attaque spéciale | Q | 10 s | 13 % |  |
 | guila | Épée & bouclier | Explosion resplendissante | Attaque ultime | R | 10 s | 13 % |  |
-| guila | Épée & bouclier | Rempart de flammes | Attaque spéciale | Q | 10 s | 13 % |  |
 | tristan | Épée à deux mains | Entaille d'amputation | Attaque ultime | R | 10 s | 13 % |  |
-| drake | Épée à une main | Taillade éclair | Attaque spéciale | Q | 10.4 s | 13 % |  |
-| gil-thunder | Épée à une main | Division foudroyante | Attaque spéciale | Q | 10.4 s | 13 % |  |
-| griamore | Gantelets | Poing de puissance | Attaque spéciale | Q | 10.5 s | 12 % |  |
-| slader | Nunchaku | Perforation en chaîne | Attaque spéciale | Q | 10.5 s | 12 % |  |
-| howzer | Gantelets | Impact cyclonique | Attaque spéciale | Q | 10.8 s | 12 % |  |
-| elizabeth | Baguette | Trajectoire des restes | Attaque spéciale | Q | 11 s | 12 % |  |
-| manny | Épée à une main | Lame de givre tournoyante | Attaque spéciale | Q | 11.2 s | 12 % |  |
-| hendrickson | Épées doubles | Épée éclair | Attaque spéciale | Q | 11.6 s | 11 % |  |
-| gowther | Grimoire | Dissonance mémorielle | Attaque spéciale | Q | 11.8 s | 11 % |  |
-| guila | Rapière | Perforation ardente | Attaque spéciale | Q | 11.9 s | 11 % |  |
-| daisy | Grimoire | Invocation de Lampadaire électrifié | Compétence normale | E | 12 s | 11 % |  |
-| elaine | Bâton | Nuée de la forêt divine | Compétence normale | E | 12 s | 11 % |  |
-| hendrickson | Épées doubles | Tranchant rapide | Compétence normale | E | 12 s | 11 % |  |
 | king | Grimoire | Bouclier gardien | Attaque spéciale | Q | 12 s | 11 % |  |
-| king | Bâton | Essaim sacré | Compétence normale | E | 12 s | 11 % |  |
-| slader | Hache | Charge de hache | Compétence normale | E | 12 s | 11 % |  |
-| slader | Épée à deux mains | Chute de puissance | Compétence normale | E | 12 s | 11 % |  |
-| tristan | Épée à deux mains | Punisseur | Compétence normale | E | 12 s | 11 % |  |
-| jericho | Lance | Vague de froid | Attaque spéciale | Q | 12.1 s | 11 % |  |
-| howzer | Nunchaku | Poignard précis | Attaque spéciale | Q | 12.6 s | 11 % |  |
-| elaine | Grimoire | Domaine de la sainte | Attaque spéciale | Q | 12.7 s | 11 % |  |
-| drake | Bâton | Lance foudroyante | Compétence normale | E | 13.2 s | 10 % |  |
-| gil-thunder | Lance | Charge électrique | Compétence normale | E | 13.2 s | 10 % |  |
 | escanor | Hache | Soleil condensé | Attaque spéciale | Q | 13.5 s | 10 % |  |
-| escanor | Épée à deux mains | Impact solaire | Attaque spéciale | Q | 13.5 s | 10 % |  |
-| griamore | Nunchaku | Pression murale | Compétence normale | E | 13.5 s | 10 % |  |
-| jericho | Épées doubles | Danse jumelle de glace | Attaque spéciale | Q | 13.6 s | 10 % |  |
-| manny | Épées doubles | Ruée du pic de givre | Attaque spéciale | Q | 13.6 s | 10 % |  |
 | bug | Hache | Rossée des ténèbres | Compétence normale | E | 14 s | 10 % |  |
 | bug | Épées doubles | Double taillade des abysses | Attaque spéciale | Q | 14 s | 10 % |  |
-| griamore | Épée & bouclier | Attaque plongeante | Compétence normale | E | 14 s | 10 % |  |
-| daisy | Épée & bouclier | Domby, à moi | Compétence normale | E | 15 s | 9 % |  |
 | diane | Gantelets | Ferveur martiale | Compétence normale | E | 15 s | 9 % |  |
-| dreyfus | Épée à une main | Taillade terrestre | Attaque spéciale | Q | 15 s | 9 % |  |
 | escanor | Hache | Lignée orgueilleuse | Compétence normale | E | 15 s | 9 % |  |
-| gil-thunder | Épée & bouclier | Barrière de Foudre | Attaque spéciale | Q | 15 s | 9 % |  |
-| guila | Lance | Tir de bombe | Compétence normale | E | 15 s | 9 % |  |
-| guila | Rapière | Déluge ardent | Compétence normale | E | 15 s | 9 % |  |
 | hendrickson | Lance | Brise-lance abyssal | Attaque spéciale | Q | 15 s | 9 % |  |
-| griamore | Nunchaku | Sphère murale | Attaque spéciale | Q | 15.1 s | 9 % |  |
-| gil-thunder | Épée à une main | Épée foudroyante | Compétence normale | E | 15.6 s | 9 % |  |
-| hendrickson | Lance | « Tour d'acide » | Compétence normale | E | 15.7 s | 9 % |  |
-| howzer | Lance | Rafale aspirante | Compétence normale | E | 15.7 s | 9 % |  |
-| derieri | Épée à deux mains | Entaille en croix | Attaque spéciale | Q | 16 s | 9 % |  |
-| king | Grimoire | Protecteur de la forêt | Compétence normale | E | 16 s | 9 % |  |
-| daisy | Baguette | Flash fruité | Attaque spéciale | Q | 16.1 s | 9 % |  |
 | bug | Hache | Pulvérisation des abysses | Attaque spéciale | Q | 16.2 s | 8 % |  |
-| dreydrin | Épée & bouclier | Bouclier fracassant | Compétence normale | E | 16.2 s | 8 % |  |
-| slader | Nunchaku | Chaîne perforante | Compétence normale | E | 16.2 s | 8 % |  |
-| tristan | Épées doubles | Taillade verticale | Compétence normale | E | 16.2 s | 8 % |  |
-| gowther | Bâton | Champ d'intrusion | Attaque spéciale | Q | 16.3 s | 8 % |  |
-| merlin | Bâton | Poursuite pourpre | Compétence normale | E | 16.5 s | 8 % |  |
-| merlin | Baguette | Champ électromagnétique | Attaque spéciale | Q | 16.5 s | 8 % |  |
-| elizabeth | Baguette | Impact de Hawk | Compétence normale | E | 17 s | 8 % |  |
-| griamore | Gantelets | Charge de bouclier | Compétence normale | E | 17 s | 8 % |  |
-| meliodas | Épée à une main | Ruée abyssale | Attaque spéciale | Q | 17 s | 8 % |  |
-| jericho | Rapière | Poignard croc-de-givre | Attaque spéciale | Q | 17.2 s | 8 % |  |
-| dreydrin | Hache | Cri de guerre | Compétence normale | E | 17.3 s | 8 % |  |
-| elaine | Baguette | Vents tranchants | Compétence normale | E | 17.3 s | 8 % |  |
-| dreyfus | Épée à une main | Lame de Terre | Compétence normale | E | 17.4 s | 8 % |  |
-| klotho | Rapière | Tempête d'entailles | Compétence normale | E | 17.5 s | 8 % |  |
-| dreydrin | Rapière | Volonté divine | Compétence normale | E | 17.6 s | 8 % |  |
-| tristan | Épée à une main | Vent perforant | Compétence normale | E | 17.9 s | 8 % |  |
-| drake | Épée à deux mains | Torrent de foudre | Compétence normale | E | 18 s | 8 % |  |
-| howzer | Lance | Déluge de lance tempétueuse | Attaque spéciale | Q | 18 s | 8 % |  |
-| klotho | Grimoire | Rune de givre : Déploiement | Compétence normale | E | 18 s | 8 % |  |
-| dreyfus | Lance | Pilier de lumière | Compétence normale | E | 18.1 s | 8 % |  |
-| daisy | Baguette | Bombe de graine | Compétence normale | E | 18.2 s | 8 % |  |
-| dreyfus | Rapière | Foudre perçante | Compétence normale | E | 18.2 s | 8 % |  |
-| howzer | Gantelets | Combo | Compétence normale | E | 18.7 s | 7 % |  |
-| escanor | Épée & bouclier | Flammes oppressantes | Compétence normale | E | 19 s | 7 % |  |
-| escanor | Épée à deux mains | « Soleil cruel » | Compétence normale | E | 19 s | 7 % |  |
-| gowther | Bâton | Impact circulaire | Compétence normale | E | 19.9 s | 7 % |  |
-| merlin | Baguette | Jugement foudroyant | Compétence normale | E | 19.9 s | 7 % |  |
-| diane | Hache | Taillade chargée | Compétence normale | E | 20 s | 7 % |  |
-| diane | Nunchaku | Tir terrestre | Attaque spéciale | Q | 20 s | 7 % |  |
-| king | Baguette | Pouvoir des fées | Compétence normale | E | 20 s | 7 % |  |
-| meliodas | Épées doubles | Taillade rapide des Ténèbres | Attaque spéciale | Q | 20 s | 7 % |  |
 | bug | Épées doubles | Extermination | Compétence normale | E | 20.9 s | 7 % |  |
-| derieri | Hache | Croix ascendante | Compétence normale | E | 21 s | 7 % |  |
-| manny | Bâton | Jugement Sacré | Compétence normale | E | 21 s | 7 % |  |
-| klotho | Bâton | Onde dimensionnelle | Compétence normale | E | 21.4 s | 7 % |  |
-| elizabeth | Grimoire | Canon à eau de la princesse | Attaque spéciale | Q | 22 s | 6 % |  |
-| meliodas | Hache | Taillade circulaire | Compétence normale | E | 22 s | 6 % |  |
-| jericho | Rapière | Danse de la lame de givre | Compétence normale | E | 22.1 s | 6 % |  |
-| elizabeth | Bâton | Vague sacrée | Compétence normale | E | 23 s | 6 % |  |
-| diane | Hache | Écrasement sismique | Attaque spéciale | Q | 25 s | 6 % |  |
-| merlin | Grimoire | Graine de givre | Compétence normale | E | 25 s | 6 % |  |
-| tioreh | Bâton | Invocation : mouton | Compétence normale | E | 25 s | 6 % |  |
-| escanor | Épée & bouclier | Assaut solaire | Attaque spéciale | Q | 25.5 s | 6 % |  |
-| meliodas | Hache | Pulvérisation des abysses | Attaque spéciale | Q | 25.8 s | 5 % |  |
-| manny | Épées doubles | Rupture d'âme gelée | Compétence normale | E | 26.9 s | 5 % |  |
-| derieri | Épée à deux mains | Taillade fracassante | Compétence normale | E | 27 s | 5 % |  |
-| meliodas | Épée à une main | Attaque enchaînée | Compétence normale | E | 27 s | 5 % |  |
-| gowther | Grimoire | Lien cauchemardesque | Compétence normale | E | 27.7 s | 5 % |  |
-| gowther | Baguette | Salve de flèches | Compétence normale | E | 28.1 s | 5 % |  |
-| diane | Nunchaku | Sables du désert | Compétence normale | E | 30 s | 5 % |  |
-| jericho | Épées doubles | Enchantement d'arme | Compétence normale | E | 30 s | 5 % |  |
-| manny | Épée à une main | Éruption de givre | Compétence normale | E | 31 s | 5 % |  |
-| guila | Épée & bouclier | Déflagration terrestre | Compétence normale | E | 32 s | 4 % |  |
-| meliodas | Épées doubles | Taillade brûlante | Compétence normale | E | 32 s | 4 % |  |
-| jericho | Lance | Roche de glace | Compétence normale | E | 35.4 s | 4 % |  |
 
 ## 3. Relèves — simulation d’équipe future — 0 compétences
 

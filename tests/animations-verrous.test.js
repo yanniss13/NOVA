@@ -48,17 +48,19 @@ const orphelins = [];
 const aberrants = [];
 for(const [cle, valeur] of Object.entries(brut.animations)){
   if(!gameIds.has(cle)) orphelins.push(cle);
-  /* Un verrou nul vaut une absence : le fichier ne doit publier que ce qui
-     immobilise vraiment. Au-dela de trente secondes, ce n'est plus un coup. */
+  /* Zero est desormais une VALEUR, pas une absence : « relancable
+     aussitot » est une reponse, et la publier evite d'envoyer quelqu'un
+     chronometrer ce que le jeu dit deja. Une absence signale une vraie
+     inconnue. Au-dela de trente secondes, ce n'est plus un coup. */
   if(typeof valeur !== "number" || !Number.isFinite(valeur)
-    || valeur <= 0 || valeur > 30){
+    || valeur < 0 || valeur > 30){
     aberrants.push(cle + " = " + JSON.stringify(valeur));
   }
 }
 assert.deepEqual(orphelins, [],
   "verrous rattaches a aucune competence du catalogue");
 assert.deepEqual(aberrants, [],
-  "verrous hors des bornes plausibles (0 s exclu, 30 s max)");
+  "verrous hors des bornes plausibles (0 s admis, 30 s max)");
 
 /* Le releve du client dit que les ultimes immobilisent et que les attaques
    normales non. Si cette repartition s'inversait, c'est que le sens des

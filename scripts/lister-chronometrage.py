@@ -161,8 +161,14 @@ def lignes():
         categorie = skill.get("categorie") or "?"
         arme = skill.get("weaponType") or "-"
         game_id = skill.get("gameId") or ""
-        # Le jeu a deja repondu : rien a mesurer ici.
+        # Le jeu a deja repondu : rien a mesurer ici. Un verrou nul en
+        # fait partie — « relancable aussitot » est une reponse.
         if game_id in deduits:
+            continue
+        # Les attaques sautees sont bridees par le saut, pas par leur
+        # animation, et aucun simulateur ici ne modelise le saut. Les
+        # chronometrer ne changerait aucun chiffre.
+        if "jumpatk" in game_id:
             continue
         ligne = {
             "heros": heros,
