@@ -1,0 +1,186 @@
+{
+ "Activethird_Damres_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Aerialattack_Damres_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "All_Element_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "All_Element_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "AllElement_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "D_All_DamRes_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "D_RefDam_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Dark_Burst_Gauge_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Dark_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Dark_Weakness_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Default_Burst_Gauge_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Default_Element_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Default_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Default_Weakness_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Earth_Element_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Earth_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Earth_Weakness_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Equip_Amplify_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Fire_Element_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Fire_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Fire_Weakness_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "H_VampireHeal_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Holy_Burst_Gauge_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Holy_Element_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Holy_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Holy_Weakness_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Ice_Element_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Ice_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Ice_Weakness_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "MF_Assim_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "MF_Protect_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Normalattack_Damres_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Normalskill_Damres_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Normalskillchangetag_Damres_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "S_MoveSpdAdd_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "S_TownSpdAdd_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Temp_Cold_Res": {
+  "family": null,
+  "unit": "flat"
+ },
+ "Temp_Hot_Res": {
+  "family": null,
+  "unit": "flat"
+ },
+ "Threaten_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Thunder_Element_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Thunder_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Thunder_Weakness_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Ultimateskill_Damres_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Wind_Element_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Wind_Res_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ },
+ "Wind_Weakness_Rate": {
+  "family": null,
+  "unit": "ten-thousandths"
+ }
+}

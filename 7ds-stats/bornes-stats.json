@@ -1,0 +1,3570 @@
+{
+ "a_accuracy": {
+  "codeDepot": "A_Accuracy",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_2",
+  "ordreUI": {
+   "emplacement": 1,
+   "priorite": 1
+  },
+  "priorite": 1,
+  "equipe": false,
+  "nameFr": "Perforation",
+  "nameEn": "Pierce"
+ },
+ "a_block": {
+  "codeDepot": "A_Block",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_2",
+  "ordreUI": {
+   "emplacement": 1,
+   "priorite": 1
+  },
+  "priorite": 2,
+  "equipe": false,
+  "nameFr": "Persévérance",
+  "nameEn": "Perseverance"
+ },
+ "a_block_rate": {
+  "codeDepot": "A_Block_Rate",
+  "min": -9999,
+  "max": 10000,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_2",
+  "ordreUI": {
+   "emplacement": 1,
+   "priorite": 1
+  },
+  "priorite": 4,
+  "equipe": false,
+  "nameFr": "Taux de parade",
+  "nameEn": "Block Rate"
+ },
+ "activethird_damadd_rate": {
+  "codeDepot": "Activethird_Damadd_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 5,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts d'attaque spéciale",
+  "nameEn": "Special Attack Damage Increase"
+ },
+ "activethird_damres_rate": {
+  "codeDepot": "Activethird_Damres_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 6,
+  "equipe": false,
+  "nameFr": "Réduction des dégâts d'attaque spéciale",
+  "nameEn": "Special Attack Damage Decrease"
+ },
+ "aerialattack_damadd_rate": {
+  "codeDepot": "Aerialattack_Damadd_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 3,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts d'attaque plongée",
+  "nameEn": "Plunging Attack Damage Increase"
+ },
+ "aerialattack_damres_rate": {
+  "codeDepot": "Aerialattack_Damres_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 4,
+  "equipe": false,
+  "nameFr": "Réduction des dégâts d'attaque plongée",
+  "nameEn": "Plunging Attack Damage Decrease"
+ },
+ "all_element_rate": {
+  "codeDepot": "All_Element_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 1,
+  "equipe": false,
+  "nameFr": "Augmentation de tous les dégâts élémentaires",
+  "nameEn": "All Elemental Damage Increase"
+ },
+ "all_element_res_rate": {
+  "codeDepot": "All_Element_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 12,
+  "equipe": false,
+  "nameFr": "Résistance à tous les éléments (%)",
+  "nameEn": "All Element Resistance (%)"
+ },
+ "allelement_add": {
+  "codeDepot": "AllElement_Add",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 1,
+  "equipe": false,
+  "nameFr": "Attaque de tous les éléments",
+  "nameEn": "All Element Attack"
+ },
+ "allelement_rate": {
+  "codeDepot": "AllElement_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 1,
+  "equipe": false,
+  "nameFr": "Augmentation de toutes les attaques élémentaires",
+  "nameEn": "All Elemental Attack Increase"
+ },
+ "allelement_res": {
+  "codeDepot": "AllElement_Res",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 12,
+  "equipe": false,
+  "nameFr": "Défense de tous les éléments",
+  "nameEn": "All Element Defense"
+ },
+ "allelement_res_rate": {
+  "codeDepot": "AllElement_Res_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 12,
+  "equipe": false,
+  "nameFr": "Augmentation de toutes les défenses élémentaires",
+  "nameEn": "All Elemental Defense Increase"
+ },
+ "allelement_value": {
+  "codeDepot": "AllElement_Value",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_7",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 3
+  },
+  "priorite": 1,
+  "equipe": false,
+  "nameFr": "Tous les dégâts fixes élémentaires",
+  "nameEn": "All Elemental Fixed Damage"
+ },
+ "attackspdper_rate": {
+  "codeDepot": "AttackSpdPer_Rate",
+  "min": 0,
+  "max": 0,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_10",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 99
+  },
+  "priorite": 1,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "b_atk": {
+  "codeDepot": "B_Atk",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Main",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 1,
+  "equipe": false,
+  "nameFr": "Attaque",
+  "nameEn": "Attack"
+ },
+ "b_atk_equip": {
+  "codeDepot": "B_Atk_Equip",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Main",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 4,
+  "equipe": false,
+  "nameFr": "Attaque de l'équipement",
+  "nameEn": "Equipment Attack"
+ },
+ "b_atk_lvadd": {
+  "codeDepot": "B_Atk_LvAdd",
+  "min": 0,
+  "max": 1,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 4,
+  "equipe": false,
+  "nameFr": "Augmentation de l'attaque au niveau supérieur",
+  "nameEn": "Attack Increase on Level Up"
+ },
+ "b_def": {
+  "codeDepot": "B_Def",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Main",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 2,
+  "equipe": false,
+  "nameFr": "Défense",
+  "nameEn": "Defense"
+ },
+ "b_def_equip": {
+  "codeDepot": "B_Def_Equip",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Main",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 5,
+  "equipe": false,
+  "nameFr": "Défense de l'équipement",
+  "nameEn": "Equipment Defense"
+ },
+ "b_def_lvadd": {
+  "codeDepot": "B_Def_LvAdd",
+  "min": 0,
+  "max": 1,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 5,
+  "equipe": false,
+  "nameFr": "Augmentation de la défense au niveau supérieur",
+  "nameEn": "Defense Increase on Level Up"
+ },
+ "b_maxhp": {
+  "codeDepot": "B_MaxHp",
+  "min": 0,
+  "max": 999999999,
+  "unite": "flat",
+  "type": "Main",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 3,
+  "equipe": true,
+  "nameFr": "PV",
+  "nameEn": "HP"
+ },
+ "b_maxhp_equip": {
+  "codeDepot": "B_MaxHp_Equip",
+  "min": 0,
+  "max": 999999999,
+  "unite": "flat",
+  "type": "Main",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 6,
+  "equipe": true,
+  "nameFr": "PV de l'équipement",
+  "nameEn": "Equipment HP"
+ },
+ "b_maxhp_lvadd": {
+  "codeDepot": "B_MaxHp_LvAdd",
+  "min": 0,
+  "max": 1,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 6,
+  "equipe": true,
+  "nameFr": "Augmentation des PV au niveau supérieur",
+  "nameEn": "HP Increase on Level Up"
+ },
+ "b_pvp_dam_dec": {
+  "codeDepot": "B_PVP_Dam_Dec",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_2",
+  "ordreUI": {
+   "emplacement": 1,
+   "priorite": 1
+  },
+  "priorite": 13,
+  "equipe": false,
+  "nameFr": "Agilité",
+  "nameEn": "Agility"
+ },
+ "b_pvp_dam_inc": {
+  "codeDepot": "B_PVP_Dam_Inc",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_2",
+  "ordreUI": {
+   "emplacement": 1,
+   "priorite": 1
+  },
+  "priorite": 12,
+  "equipe": false,
+  "nameFr": "Robustesse",
+  "nameEn": "Toughness"
+ },
+ "breath_addrate": {
+  "codeDepot": "Breath_AddRate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 1,
+  "equipe": true,
+  "nameFr": "Capacité pulmonaire",
+  "nameEn": "Lung Capacity"
+ },
+ "breath_max_add": {
+  "codeDepot": "Breath_Max_Add",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 2,
+  "equipe": true,
+  "nameFr": "Durée max. de la plongée",
+  "nameEn": "Max Dive Duration"
+ },
+ "breath_recoverytime_rate": {
+  "codeDepot": "Breath_RecoveryTime_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 3,
+  "equipe": true,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "buff_time_rate": {
+  "codeDepot": "Buff_Time_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 12,
+  "equipe": false,
+  "nameFr": "Efficacité de la durée des bonus",
+  "nameEn": "Buff Duration Efficiency"
+ },
+ "burst_gauge_extra": {
+  "codeDepot": "Burst_Gauge_Extra",
+  "min": -9999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 18,
+  "equipe": false,
+  "nameFr": "Bonus de jauge de Déluge",
+  "nameEn": "Burst Gauge Bonus"
+ },
+ "burst_gauge_rate": {
+  "codeDepot": "Burst_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 16,
+  "equipe": false,
+  "nameFr": "Efficacité de Déluge de tous les éléments",
+  "nameEn": "All Elemental Burst Efficiency"
+ },
+ "burst_gauge_res_rate": {
+  "codeDepot": "Burst_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 17,
+  "equipe": false,
+  "nameFr": "Résistance au Déluge de tous les éléments",
+  "nameEn": "All Elemental Burst Resistance"
+ },
+ "burstactivation_duration_rate": {
+  "codeDepot": "burstactivation_duration_rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 20,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "c_critical_dam_rate": {
+  "codeDepot": "C_Critical_Dam_Rate",
+  "min": 0,
+  "max": 50000,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_2",
+  "ordreUI": {
+   "emplacement": 1,
+   "priorite": 1
+  },
+  "priorite": 8,
+  "equipe": false,
+  "nameFr": "Dégâts crit.",
+  "nameEn": "Crit Damage"
+ },
+ "c_critical_damres_rate": {
+  "codeDepot": "C_Critical_DamRes_Rate",
+  "min": 0,
+  "max": 50000,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_2",
+  "ordreUI": {
+   "emplacement": 1,
+   "priorite": 1
+  },
+  "priorite": 9,
+  "equipe": false,
+  "nameFr": "Défense crit.",
+  "nameEn": "Crit Defense"
+ },
+ "c_critical_rate": {
+  "codeDepot": "C_Critical_Rate",
+  "min": 0,
+  "max": 10000,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_2",
+  "ordreUI": {
+   "emplacement": 1,
+   "priorite": 1
+  },
+  "priorite": 6,
+  "equipe": false,
+  "nameFr": "Chances crit.",
+  "nameEn": "Crit Chance"
+ },
+ "c_critical_resrate": {
+  "codeDepot": "C_Critical_ResRate",
+  "min": 0,
+  "max": 10000,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_2",
+  "ordreUI": {
+   "emplacement": 1,
+   "priorite": 1
+  },
+  "priorite": 7,
+  "equipe": false,
+  "nameFr": "Résistance crit.",
+  "nameEn": "Crit Resistance"
+ },
+ "cc_resistper_rate": {
+  "codeDepot": "CC_ResistPer_Rate",
+  "min": 0,
+  "max": 0,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_10",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 99
+  },
+  "priorite": 2,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "d_all_damres_rate": {
+  "codeDepot": "D_All_DamRes_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 14,
+  "equipe": false,
+  "nameFr": "Résistance à tous les dégâts",
+  "nameEn": "All Damage Resistance"
+ },
+ "d_block_damres_rate": {
+  "codeDepot": "D_Block_DamRes_Rate",
+  "min": 0,
+  "max": 10000,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_2",
+  "ordreUI": {
+   "emplacement": 1,
+   "priorite": 1
+  },
+  "priorite": 5,
+  "equipe": false,
+  "nameFr": "Persévérance défense",
+  "nameEn": "Perseverance Defense"
+ },
+ "d_normal_damres_rate": {
+  "codeDepot": "D_Normal_DamRes_Rate",
+  "min": 0,
+  "max": 1,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 2,
+  "equipe": false,
+  "nameFr": "Résistance aux dégâts d'attaque normale",
+  "nameEn": "Normal Attack Damage Resistance"
+ },
+ "d_protect_cur_rate": {
+  "codeDepot": "D_Protect_Cur_Rate",
+  "min": 0,
+  "max": 10000,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_2",
+  "ordreUI": {
+   "emplacement": 1,
+   "priorite": 1
+  },
+  "priorite": 10,
+  "equipe": false,
+  "nameFr": "Percement de défense",
+  "nameEn": "Defense Shatter"
+ },
+ "d_protect_curres_rate": {
+  "codeDepot": "D_Protect_CurRes_Rate",
+  "min": 0,
+  "max": 10000,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_2",
+  "ordreUI": {
+   "emplacement": 1,
+   "priorite": 1
+  },
+  "priorite": 11,
+  "equipe": false,
+  "nameFr": "Résistance au percement",
+  "nameEn": "Shatter Resistance"
+ },
+ "d_refdam_rate": {
+  "codeDepot": "D_RefDam_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 1,
+  "equipe": false,
+  "nameFr": "Taux de renvoi des dégâts",
+  "nameEn": "Damage Reflection Rate"
+ },
+ "d_skill_damres_rate": {
+  "codeDepot": "D_Skill_DamRes_Rate",
+  "min": 0,
+  "max": 1,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 4,
+  "equipe": false,
+  "nameFr": "Résistance aux dégâts de compétence d'attaque",
+  "nameEn": "Skill Attack Damage Resistance"
+ },
+ "dark_add": {
+  "codeDepot": "Dark_Add",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 8,
+  "equipe": false,
+  "nameFr": "Attaque des Ténèbres",
+  "nameEn": "Darkness Attack"
+ },
+ "dark_burst_gauge_rate": {
+  "codeDepot": "Dark_Burst_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 29,
+  "equipe": false,
+  "nameFr": "Efficacité de Déluge des Ténèbres",
+  "nameEn": "Darkness Burst Efficiency"
+ },
+ "dark_burst_gauge_res_rate": {
+  "codeDepot": "Dark_Burst_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 37,
+  "equipe": false,
+  "nameFr": "Résistance au Déluge des Ténèbres",
+  "nameEn": "Darkness Burst Resistance"
+ },
+ "dark_element_rate": {
+  "codeDepot": "Dark_Element_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 8,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts des Ténèbres ",
+  "nameEn": "Darkness Damage Increase "
+ },
+ "dark_element_res_rate": {
+  "codeDepot": "Dark_Element_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 19,
+  "equipe": false,
+  "nameFr": "Résistance aux Ténèbres (%)",
+  "nameEn": "Darkness Resistance (%)"
+ },
+ "dark_event_gauge_rate": {
+  "codeDepot": "Dark_Event_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 45,
+  "equipe": false,
+  "nameFr": "Efficacité de stupeur des Ténèbres",
+  "nameEn": "Darkness Daze Efficiency"
+ },
+ "dark_event_gauge_res_rate": {
+  "codeDepot": "Dark_Event_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 53,
+  "equipe": false,
+  "nameFr": "Résistance à la stupeur des Ténèbres",
+  "nameEn": "Darkness Daze Resistance"
+ },
+ "dark_rate": {
+  "codeDepot": "Dark_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 8,
+  "equipe": false,
+  "nameFr": "Augmentation de l'attaque des Ténèbres ",
+  "nameEn": "Darkness Attack Increase "
+ },
+ "dark_res": {
+  "codeDepot": "Dark_Res",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 19,
+  "equipe": false,
+  "nameFr": "Défense des Ténèbres",
+  "nameEn": "Darkness Defense"
+ },
+ "dark_res_rate": {
+  "codeDepot": "Dark_Res_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 19,
+  "equipe": false,
+  "nameFr": "Augmentation de la défense des Ténèbres ",
+  "nameEn": "Darkness Defense Increase "
+ },
+ "dark_value": {
+  "codeDepot": "Dark_Value",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_7",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 3
+  },
+  "priorite": 8,
+  "equipe": false,
+  "nameFr": "Dégâts des Ténèbres fixes (%)",
+  "nameEn": "Fixed Darkness Damage"
+ },
+ "dark_weakness_rate": {
+  "codeDepot": "Dark_Weakness_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 28,
+  "equipe": false,
+  "nameFr": "Dégâts de faiblesse aux Ténèbres ",
+  "nameEn": "Darkness Weakness Damage "
+ },
+ "debuff_time_rate": {
+  "codeDepot": "Debuff_Time_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 11,
+  "equipe": false,
+  "nameFr": "Efficacité de la durée des malus",
+  "nameEn": "Debuff Duration Efficiency"
+ },
+ "default_add": {
+  "codeDepot": "Default_Add",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 2,
+  "equipe": false,
+  "nameFr": "Attaque physique",
+  "nameEn": "Physical Attack"
+ },
+ "default_burst_gauge_rate": {
+  "codeDepot": "Default_Burst_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 31,
+  "equipe": false,
+  "nameFr": "Efficacité de Déluge physique",
+  "nameEn": "Physical Burst Efficiency"
+ },
+ "default_burst_gauge_res_rate": {
+  "codeDepot": "Default_Burst_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 39,
+  "equipe": false,
+  "nameFr": "Résistance au Déluge physique",
+  "nameEn": "Physical Burst Resistance"
+ },
+ "default_element_rate": {
+  "codeDepot": "Default_Element_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 2,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts physiques ",
+  "nameEn": "Physical Damage Increase "
+ },
+ "default_element_res_rate": {
+  "codeDepot": "Default_Element_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 13,
+  "equipe": false,
+  "nameFr": "Résistance physique (%)",
+  "nameEn": "Physical Resistance (%)"
+ },
+ "default_event_gauge_rate": {
+  "codeDepot": "Default_Event_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 47,
+  "equipe": false,
+  "nameFr": "Efficacité de stupeur physique",
+  "nameEn": "Physical Daze Efficiency"
+ },
+ "default_event_gauge_res_rate": {
+  "codeDepot": "Default_Event_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 55,
+  "equipe": false,
+  "nameFr": "Résistance à la stupeur physique",
+  "nameEn": "Physical Daze Resistance"
+ },
+ "default_rate": {
+  "codeDepot": "Default_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 2,
+  "equipe": false,
+  "nameFr": "Augmentation de l'attaque physique ",
+  "nameEn": "Physical Attack Increase "
+ },
+ "default_res": {
+  "codeDepot": "Default_Res",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 13,
+  "equipe": false,
+  "nameFr": "Défense physique",
+  "nameEn": "Physical Defense"
+ },
+ "default_res_rate": {
+  "codeDepot": "Default_Res_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 13,
+  "equipe": false,
+  "nameFr": "Augmentation de la défense physique ",
+  "nameEn": "Physical Defense Increase "
+ },
+ "default_value": {
+  "codeDepot": "Default_Value",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_7",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 3
+  },
+  "priorite": 2,
+  "equipe": false,
+  "nameFr": "Dégâts physiques fixes (%)",
+  "nameEn": "Fixed Physical Damage"
+ },
+ "default_weakness_rate": {
+  "codeDepot": "Default_Weakness_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 22,
+  "equipe": false,
+  "nameFr": "Dégâts de faiblesse physique ",
+  "nameEn": "Physical Weakness Damage "
+ },
+ "e_atk": {
+  "codeDepot": "e_atk",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 12,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "earth_add": {
+  "codeDepot": "Earth_Add",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 7,
+  "equipe": false,
+  "nameFr": "Attaque de Terre",
+  "nameEn": "Earth Attack"
+ },
+ "earth_burst_gauge_rate": {
+  "codeDepot": "Earth_Burst_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 28,
+  "equipe": false,
+  "nameFr": "Efficacité de Déluge de Terre",
+  "nameEn": "Earth Burst Efficiency"
+ },
+ "earth_burst_gauge_res_rate": {
+  "codeDepot": "Earth_Burst_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 36,
+  "equipe": false,
+  "nameFr": "Résistance au Déluge de Terre",
+  "nameEn": "Earth Burst Resistance"
+ },
+ "earth_element_rate": {
+  "codeDepot": "Earth_Element_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 7,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts de Terre ",
+  "nameEn": "Earth Damage Increase "
+ },
+ "earth_element_res_rate": {
+  "codeDepot": "Earth_Element_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 18,
+  "equipe": false,
+  "nameFr": "Résistance à la Terre (%)",
+  "nameEn": "Earth Resistance (%)"
+ },
+ "earth_event_gauge_rate": {
+  "codeDepot": "Earth_Event_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 44,
+  "equipe": false,
+  "nameFr": "Efficacité de stupeur de Terre",
+  "nameEn": "Earth Daze Efficiency"
+ },
+ "earth_event_gauge_res_rate": {
+  "codeDepot": "Earth_Event_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 52,
+  "equipe": false,
+  "nameFr": "Résistance à la stupeur de Terre",
+  "nameEn": "Earth Daze Resistance"
+ },
+ "earth_rate": {
+  "codeDepot": "Earth_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 7,
+  "equipe": false,
+  "nameFr": "Augmentation de l'attaque de Terre ",
+  "nameEn": "Earth Attack Increase "
+ },
+ "earth_res": {
+  "codeDepot": "Earth_Res",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 18,
+  "equipe": false,
+  "nameFr": "Défense de Terre",
+  "nameEn": "Earth Defense"
+ },
+ "earth_res_rate": {
+  "codeDepot": "Earth_Res_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 18,
+  "equipe": false,
+  "nameFr": "Augmentation de la défense de Terre ",
+  "nameEn": "Earth Defense Increase "
+ },
+ "earth_value": {
+  "codeDepot": "Earth_Value",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_7",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 3
+  },
+  "priorite": 7,
+  "equipe": false,
+  "nameFr": "Dégâts de Terre fixes (%)",
+  "nameEn": "Fixed Earth Damage"
+ },
+ "earth_weakness_rate": {
+  "codeDepot": "Earth_Weakness_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 27,
+  "equipe": false,
+  "nameFr": "Dégâts de faiblesse à la Terre ",
+  "nameEn": "Earth Weakness Damage "
+ },
+ "equip_amplify_rate": {
+  "codeDepot": "Equip_Amplify_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Main",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 7,
+  "equipe": true,
+  "nameFr": "Amplification des stats de l'équipement",
+  "nameEn": "Equipment Stat Amplification"
+ },
+ "falldam_value": {
+  "codeDepot": "FallDam_Value",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 4,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts d'attaque plongée",
+  "nameEn": "Plunging Attack Damage Increase"
+ },
+ "final_all_dam_rate": {
+  "codeDepot": "Final_All_Dam_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 15,
+  "equipe": false,
+  "nameFr": "Taux de dégâts finaux",
+  "nameEn": "Final Damage Rate"
+ },
+ "fire_add": {
+  "codeDepot": "Fire_Add",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 5,
+  "equipe": false,
+  "nameFr": "Attaque de Feu",
+  "nameEn": "Fire Attack"
+ },
+ "fire_burst_gauge_rate": {
+  "codeDepot": "Fire_Burst_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 26,
+  "equipe": false,
+  "nameFr": "Efficacité de Déluge de Feu",
+  "nameEn": "Fire Burst Efficiency"
+ },
+ "fire_burst_gauge_res_rate": {
+  "codeDepot": "Fire_Burst_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 34,
+  "equipe": false,
+  "nameFr": "Résistance au Déluge de Feu",
+  "nameEn": "Fire Burst Resistance"
+ },
+ "fire_element_rate": {
+  "codeDepot": "Fire_Element_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 5,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts de Feu ",
+  "nameEn": "Fire Damage Increase "
+ },
+ "fire_element_res_rate": {
+  "codeDepot": "Fire_Element_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 16,
+  "equipe": false,
+  "nameFr": "Résistance au Feu (%)",
+  "nameEn": "Fire Resistance (%)"
+ },
+ "fire_event_gauge_rate": {
+  "codeDepot": "Fire_Event_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 42,
+  "equipe": false,
+  "nameFr": "Efficacité de stupeur de Feu",
+  "nameEn": "Fire Daze Efficiency"
+ },
+ "fire_event_gauge_res_rate": {
+  "codeDepot": "Fire_Event_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 50,
+  "equipe": false,
+  "nameFr": "Résistance à la stupeur de Feu",
+  "nameEn": "Fire Daze Resistance"
+ },
+ "fire_rate": {
+  "codeDepot": "Fire_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 5,
+  "equipe": false,
+  "nameFr": "Augmentation de l'attaque de Feu ",
+  "nameEn": "Fire Attack Increase "
+ },
+ "fire_res": {
+  "codeDepot": "Fire_Res",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 16,
+  "equipe": false,
+  "nameFr": "Défense de Feu",
+  "nameEn": "Fire Defense"
+ },
+ "fire_res_rate": {
+  "codeDepot": "Fire_Res_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 16,
+  "equipe": false,
+  "nameFr": "Augmentation de la défense de Feu ",
+  "nameEn": "Fire Defense Increase "
+ },
+ "fire_value": {
+  "codeDepot": "Fire_Value",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_7",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 3
+  },
+  "priorite": 5,
+  "equipe": false,
+  "nameFr": "Dégâts de Feu fixes (%)",
+  "nameEn": "Fixed Fire Damage"
+ },
+ "fire_weakness_rate": {
+  "codeDepot": "Fire_Weakness_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 25,
+  "equipe": false,
+  "nameFr": "Dégâts de faiblesse au Feu ",
+  "nameEn": "Fire Weakness Damage "
+ },
+ "h_healpower": {
+  "codeDepot": "H_HealPower",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 5,
+  "equipe": false,
+  "nameFr": "Pouvoir de guérison",
+  "nameEn": "Healing Power"
+ },
+ "h_healpower_rate": {
+  "codeDepot": "H_HealPower_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 6,
+  "equipe": false,
+  "nameFr": "Efficacité de guérison",
+  "nameEn": "Healing Efficiency"
+ },
+ "h_healpower_tick": {
+  "codeDepot": "H_HealPower_Tick",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 7,
+  "equipe": false,
+  "nameFr": "Guérison naturelle",
+  "nameEn": "Natural Healing"
+ },
+ "h_healpower_tick_rate": {
+  "codeDepot": "H_HealPower_Tick_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 8,
+  "equipe": false,
+  "nameFr": "Augmentation de la guérison naturelle",
+  "nameEn": "Natural Healing Increase"
+ },
+ "h_healreceive_rate": {
+  "codeDepot": "H_HealReceive_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 9,
+  "equipe": false,
+  "nameFr": "Augmentation des soins reçus",
+  "nameEn": "Healing Received Increase"
+ },
+ "h_revivalheal_rate": {
+  "codeDepot": "H_RevivalHeal_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 21,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "h_vampireheal_rate": {
+  "codeDepot": "H_VampireHeal_Rate",
+  "min": 0,
+  "max": 2500,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 10,
+  "equipe": false,
+  "nameFr": "Vampirisme",
+  "nameEn": "Lifesteal"
+ },
+ "healreceive_value": {
+  "codeDepot": "HealReceive_Value",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 7,
+  "equipe": false,
+  "nameFr": "Récupération fixe",
+  "nameEn": "Fixed Recovery"
+ },
+ "hero_maxhp": {
+  "codeDepot": "hero_maxhp",
+  "min": 0,
+  "max": 0,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_10",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 99
+  },
+  "priorite": 3,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "holy_add": {
+  "codeDepot": "Holy_Add",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 9,
+  "equipe": false,
+  "nameFr": "Attaque du Sacré",
+  "nameEn": "Holy Attack"
+ },
+ "holy_burst_gauge_rate": {
+  "codeDepot": "Holy_Burst_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 30,
+  "equipe": false,
+  "nameFr": "Efficacité de Déluge du Sacré",
+  "nameEn": "Holy Burst Efficiency"
+ },
+ "holy_burst_gauge_res_rate": {
+  "codeDepot": "Holy_Burst_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 38,
+  "equipe": false,
+  "nameFr": "Résistance au Déluge du Sacré",
+  "nameEn": "Holy Burst Resistance"
+ },
+ "holy_element_rate": {
+  "codeDepot": "Holy_Element_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 9,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts du Sacré ",
+  "nameEn": "Holy Damage Increase "
+ },
+ "holy_element_res_rate": {
+  "codeDepot": "Holy_Element_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 20,
+  "equipe": false,
+  "nameFr": "Résistance au Sacré (%)",
+  "nameEn": "Holy Resistance (%)"
+ },
+ "holy_event_gauge_rate": {
+  "codeDepot": "Holy_Event_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 46,
+  "equipe": false,
+  "nameFr": "Efficacité de stupeur du Sacré",
+  "nameEn": "Holy Daze Efficiency"
+ },
+ "holy_event_gauge_res_rate": {
+  "codeDepot": "Holy_Event_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 54,
+  "equipe": false,
+  "nameFr": "Résistance à la stupeur du Sacré",
+  "nameEn": "Holy Daze Resistance"
+ },
+ "holy_rate": {
+  "codeDepot": "Holy_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 9,
+  "equipe": false,
+  "nameFr": "Augmentation de l'attaque du Sacré ",
+  "nameEn": "Holy Attack Increase "
+ },
+ "holy_res": {
+  "codeDepot": "Holy_Res",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 20,
+  "equipe": false,
+  "nameFr": "Défense du Sacré",
+  "nameEn": "Holy Defense"
+ },
+ "holy_res_rate": {
+  "codeDepot": "Holy_Res_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 20,
+  "equipe": false,
+  "nameFr": "Augmentation de la défense du Sacré ",
+  "nameEn": "Holy Defense Increase "
+ },
+ "holy_value": {
+  "codeDepot": "Holy_Value",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_7",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 3
+  },
+  "priorite": 9,
+  "equipe": false,
+  "nameFr": "Dégâts du Sacré fixes (%)",
+  "nameEn": "Fixed Holy Damage"
+ },
+ "holy_weakness_rate": {
+  "codeDepot": "Holy_Weakness_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 29,
+  "equipe": false,
+  "nameFr": "Dégâts de faiblesse au Sacré ",
+  "nameEn": "Holy Weakness Damage "
+ },
+ "i_all_damadd_rate": {
+  "codeDepot": "I_All_DamAdd_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 13,
+  "equipe": false,
+  "nameFr": "Augmentation : tous les dégâts",
+  "nameEn": "All Damage Increase"
+ },
+ "i_atkadd_rate": {
+  "codeDepot": "I_AtkAdd_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Main",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 8,
+  "equipe": false,
+  "nameFr": "Augmentation de l'attaque",
+  "nameEn": "Attack Increase"
+ },
+ "i_defadd_rate": {
+  "codeDepot": "I_DefAdd_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Main",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 9,
+  "equipe": false,
+  "nameFr": "Augmentation de la défense",
+  "nameEn": "Defense Increase"
+ },
+ "i_maxhpadd_rate": {
+  "codeDepot": "I_MaxHpAdd_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Main",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 10,
+  "equipe": true,
+  "nameFr": "Augmentation des PV",
+  "nameEn": "HP Increase"
+ },
+ "i_normal_damadd_rate": {
+  "codeDepot": "I_Normal_DamAdd_Rate",
+  "min": 0,
+  "max": 1,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 1,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts d'attaque normale",
+  "nameEn": "Normal Attack Damage Increase"
+ },
+ "i_skill_damadd_rate": {
+  "codeDepot": "I_Skill_DamAdd_Rate",
+  "min": 0,
+  "max": 1,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 3,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts, compétence d'attaque",
+  "nameEn": "Skill Attack Damage Increase"
+ },
+ "ice_add": {
+  "codeDepot": "Ice_Add",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 6,
+  "equipe": false,
+  "nameFr": "Attaque de Froid",
+  "nameEn": "Cold Attack"
+ },
+ "ice_burst_gauge_rate": {
+  "codeDepot": "Ice_Burst_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 27,
+  "equipe": false,
+  "nameFr": "Efficacité de Déluge de Froid",
+  "nameEn": "Cold Burst Efficiency"
+ },
+ "ice_burst_gauge_res_rate": {
+  "codeDepot": "Ice_Burst_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 35,
+  "equipe": false,
+  "nameFr": "Résistance au Déluge de Froid",
+  "nameEn": "Cold Burst Resistance"
+ },
+ "ice_element_rate": {
+  "codeDepot": "Ice_Element_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 6,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts de Froid ",
+  "nameEn": "Cold Damage Increase "
+ },
+ "ice_element_res_rate": {
+  "codeDepot": "Ice_Element_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 17,
+  "equipe": false,
+  "nameFr": "Résistance au Froid (%)",
+  "nameEn": "Cold Resistance (%)"
+ },
+ "ice_event_gauge_rate": {
+  "codeDepot": "Ice_Event_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 43,
+  "equipe": false,
+  "nameFr": "Efficacité de stupeur de Froid",
+  "nameEn": "Cold Daze Efficiency"
+ },
+ "ice_event_gauge_res_rate": {
+  "codeDepot": "Ice_Event_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 51,
+  "equipe": false,
+  "nameFr": "Résistance à la stupeur de Froid",
+  "nameEn": "Cold Daze Resistance"
+ },
+ "ice_rate": {
+  "codeDepot": "Ice_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 6,
+  "equipe": false,
+  "nameFr": "Augmentation de l'attaque de Froid ",
+  "nameEn": "Cold Attack Increase "
+ },
+ "ice_res": {
+  "codeDepot": "Ice_Res",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 17,
+  "equipe": false,
+  "nameFr": "Défense de Froid",
+  "nameEn": "Cold Defense"
+ },
+ "ice_res_rate": {
+  "codeDepot": "Ice_Res_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 17,
+  "equipe": false,
+  "nameFr": "Augmentation de la défense de Froid ",
+  "nameEn": "Cold Defense Increase "
+ },
+ "ice_value": {
+  "codeDepot": "Ice_Value",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_7",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 3
+  },
+  "priorite": 6,
+  "equipe": false,
+  "nameFr": "Dégâts de Froid fixes (%)",
+  "nameEn": "Fixed Cold Damage"
+ },
+ "ice_weakness_rate": {
+  "codeDepot": "Ice_Weakness_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 26,
+  "equipe": false,
+  "nameFr": "Dégâts de faiblesse au Froid ",
+  "nameEn": "Cold Weakness Damage "
+ },
+ "m_burst_gauge": {
+  "codeDepot": "M_Burst_Gauge",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 19,
+  "equipe": false,
+  "nameFr": "Coût de Déluge",
+  "nameEn": "Burst Cost"
+ },
+ "m_detectdisadd_rate": {
+  "codeDepot": "M_DetectDIsAdd_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 17,
+  "equipe": false,
+  "nameFr": "Augmentation de la portée de détection",
+  "nameEn": "Detection Range Increase"
+ },
+ "makingtime_res": {
+  "codeDepot": "makingtime_res",
+  "min": -9999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 23,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "makingtime_res_rate": {
+  "codeDepot": "makingtime_res_rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 22,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "max_stamina": {
+  "codeDepot": "Max_Stamina",
+  "min": 0,
+  "max": 10000,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 18,
+  "equipe": true,
+  "nameFr": "Endurance",
+  "nameEn": "Stamina"
+ },
+ "maxsp_rate": {
+  "codeDepot": "MaxSP_Rate",
+  "min": -999999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 20,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "mf_assim_rate": {
+  "codeDepot": "MF_Assim_Rate",
+  "min": -10000,
+  "max": 10000,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 16,
+  "equipe": true,
+  "nameFr": "Taux de conversion magique",
+  "nameEn": "Magic Assimilation"
+ },
+ "mf_chargeeffic_rate": {
+  "codeDepot": "MF_ChargeEffic_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 14,
+  "equipe": false,
+  "nameFr": "Efficacité de recharge de la magie",
+  "nameEn": "Magic Charging Efficiency"
+ },
+ "mf_costreduce_rate_ultimateskill": {
+  "codeDepot": "MF_CostReduce_Rate_UltimateSkill",
+  "min": -10000,
+  "max": 10000,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 22,
+  "equipe": false,
+  "nameFr": "Taux de réduction de magie de l'attaque ultime",
+  "nameEn": "Ultimate Move Magic Reduction Rate"
+ },
+ "mf_protect_rate": {
+  "codeDepot": "MF_Protect_Rate",
+  "min": -10000,
+  "max": 10000,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 15,
+  "equipe": false,
+  "nameFr": "Protection magique",
+  "nameEn": "Magic Protection"
+ },
+ "mf_stackmax": {
+  "codeDepot": "MF_StackMax",
+  "min": 0,
+  "max": 7,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_7",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 3
+  },
+  "priorite": 12,
+  "equipe": true,
+  "nameFr": "Jauge de magie",
+  "nameEn": "Magic Gauge"
+ },
+ "move_spd": {
+  "codeDepot": "Move_Spd",
+  "min": 100,
+  "max": 10000,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_10",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 99
+  },
+  "priorite": 5,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "normalattack_damadd_rate": {
+  "codeDepot": "Normalattack_Damadd_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 1,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts d'attaque normale",
+  "nameEn": "Normal Attack Damage Increase"
+ },
+ "normalattack_damres_rate": {
+  "codeDepot": "Normalattack_Damres_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 2,
+  "equipe": false,
+  "nameFr": "Réduction des dégâts d'attaque normale",
+  "nameEn": "Normal Attack Damage Decrease"
+ },
+ "normalskill_damadd_rate": {
+  "codeDepot": "Normalskill_Damadd_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 7,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts, compétence normale",
+  "nameEn": "Normal Skill Damage Increase"
+ },
+ "normalskill_damres_rate": {
+  "codeDepot": "Normalskill_Damres_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 8,
+  "equipe": false,
+  "nameFr": "Réduction des dégâts de compétence normale",
+  "nameEn": "Normal Skill Damage Decrease"
+ },
+ "normalskillchangetag_damadd_rate": {
+  "codeDepot": "Normalskillchangetag_Damadd_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 9,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts, compétence de relève",
+  "nameEn": "Tag Skill Damage Increase"
+ },
+ "normalskillchangetag_damres_rate": {
+  "codeDepot": "Normalskillchangetag_Damres_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 10,
+  "equipe": false,
+  "nameFr": "Réduction des dégâts de compétence de relève",
+  "nameEn": "Tag Skill Damage Decrease"
+ },
+ "p_shield_add": {
+  "codeDepot": "P_Shield_Add",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 4,
+  "equipe": false,
+  "nameFr": "Absorption des barrières",
+  "nameEn": "Barrier Absorption"
+ },
+ "p_shield_damadd": {
+  "codeDepot": "P_Shield_DamAdd",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 3,
+  "equipe": false,
+  "nameFr": "Bonus de dégâts des barrières",
+  "nameEn": "Barrier Damage Bonus"
+ },
+ "p_shield_rate": {
+  "codeDepot": "P_Shield_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 2,
+  "equipe": false,
+  "nameFr": "Efficacité des barrières",
+  "nameEn": "Barrier Efficiency"
+ },
+ "recfalldam_value": {
+  "codeDepot": "RecFallDam_Value",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 5,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts de chute subis",
+  "nameEn": "Fall Damage Taken Increase"
+ },
+ "recoverysp_rate": {
+  "codeDepot": "MaxSP_Rate",
+  "min": -999999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 21,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "recoverystaminaamount": {
+  "codeDepot": "RecoveryStaminaAmount",
+  "min": -9999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 19,
+  "equipe": true,
+  "nameFr": "Récupération d'endurance",
+  "nameEn": "Stamina Recovery"
+ },
+ "reduced_hp": {
+  "codeDepot": "Reduced_HP",
+  "min": 0,
+  "max": 0,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_10",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 99
+  },
+  "priorite": 3,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "s_glidingspdadd_rate": {
+  "codeDepot": "Gliding_MoveSpd_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 9,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "s_glidingstamina_rate": {
+  "codeDepot": "Gliding_Stamina_Res_Rate",
+  "min": -15000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 12,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "s_movespdadd_rate": {
+  "codeDepot": "S_MoveSpdAdd_Rate",
+  "min": -9999,
+  "max": 10000,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 12,
+  "equipe": false,
+  "nameFr": "Vitesse de déplacement",
+  "nameEn": "Movement Speed"
+ },
+ "s_petflyingspdadd_rate": {
+  "codeDepot": "S_Petflyingspdadd_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 14,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "s_petflyingstamina_rate": {
+  "codeDepot": "S_Petflyingstamina_Rate",
+  "min": -15000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 15,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "s_skillrecycle_rate": {
+  "codeDepot": "S_SkillRecycle_Rate",
+  "min": -999999,
+  "max": 10000,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 11,
+  "equipe": false,
+  "nameFr": "Réduction de temps de recharge",
+  "nameEn": "Cooldown Reduction"
+ },
+ "s_swimspdadd_rate": {
+  "codeDepot": "Swim_MoveSpd_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 10,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "s_swimstamina_rate": {
+  "codeDepot": "Swim_Stamina_Res_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 13,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "s_townspdadd_rate": {
+  "codeDepot": "S_TownSpdAdd_Rate",
+  "min": -9999,
+  "max": 10000,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_4",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 3
+  },
+  "priorite": 13,
+  "equipe": false,
+  "nameFr": "Vitesse de déplacement en ville",
+  "nameEn": "Town Movement Speed"
+ },
+ "s_underwaterspdadd_rate": {
+  "codeDepot": "Diving_MoveSpd_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 11,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "skillrangeangle": {
+  "codeDepot": "SkillRangeAngle",
+  "min": 0,
+  "max": 360,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_10",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 99
+  },
+  "priorite": 4,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "t_atk": {
+  "codeDepot": "t_atk",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 12,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "t_def": {
+  "codeDepot": "t_def",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 12,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "t_maxhp": {
+  "codeDepot": "t_maxhp",
+  "min": -999999999,
+  "max": 999999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_1",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 1
+  },
+  "priorite": 11,
+  "equipe": true,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "temp_cold_res": {
+  "codeDepot": "Temp_Cold_Res",
+  "min": -3,
+  "max": 3,
+  "unite": "flat",
+  "type": "NonHide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 15,
+  "equipe": false,
+  "nameFr": "Résistance au froid",
+  "nameEn": "Cold Resistance"
+ },
+ "temp_hot_res": {
+  "codeDepot": "Temp_Hot_Res",
+  "min": -3,
+  "max": 3,
+  "unite": "flat",
+  "type": "NonHide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 14,
+  "equipe": false,
+  "nameFr": "Résistance au chaud",
+  "nameEn": "Hot Resistance"
+ },
+ "threaten_rate": {
+  "codeDepot": "Threaten_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 13,
+  "equipe": false,
+  "nameFr": "Taux de menace",
+  "nameEn": "Threat Rating"
+ },
+ "thunder_add": {
+  "codeDepot": "Thunder_Add",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 3,
+  "equipe": false,
+  "nameFr": "Attaque de Foudre",
+  "nameEn": "Lightning Attack"
+ },
+ "thunder_burst_gauge_rate": {
+  "codeDepot": "Thunder_Burst_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 24,
+  "equipe": false,
+  "nameFr": "Efficacité de Déluge de Foudre",
+  "nameEn": "Lightning Burst Efficiency"
+ },
+ "thunder_burst_gauge_res_rate": {
+  "codeDepot": "Thunder_Burst_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 32,
+  "equipe": false,
+  "nameFr": "Résistance au Déluge de Foudre",
+  "nameEn": "Lightning Burst Resistance"
+ },
+ "thunder_element_rate": {
+  "codeDepot": "Thunder_Element_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 3,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts de Foudre ",
+  "nameEn": "Lightning Damage Increase "
+ },
+ "thunder_element_res_rate": {
+  "codeDepot": "Thunder_Element_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 14,
+  "equipe": false,
+  "nameFr": "Résistance à la Foudre (%)",
+  "nameEn": "Lightning Resistance (%)"
+ },
+ "thunder_event_gauge_rate": {
+  "codeDepot": "Thunder_Event_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 40,
+  "equipe": false,
+  "nameFr": "Efficacité de stupeur de Foudre",
+  "nameEn": "Lightning Daze Efficiency"
+ },
+ "thunder_event_gauge_res_rate": {
+  "codeDepot": "Thunder_Event_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 48,
+  "equipe": false,
+  "nameFr": "Résistance à la stupeur de Foudre",
+  "nameEn": "Lightning Daze Resistance"
+ },
+ "thunder_rate": {
+  "codeDepot": "Thunder_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 3,
+  "equipe": false,
+  "nameFr": "Augmentation de l'attaque de Foudre ",
+  "nameEn": "Lightning Attack Increase "
+ },
+ "thunder_res": {
+  "codeDepot": "Thunder_Res",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 14,
+  "equipe": false,
+  "nameFr": "Défense de Foudre",
+  "nameEn": "Lightning Defense"
+ },
+ "thunder_res_rate": {
+  "codeDepot": "Thunder_Res_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 14,
+  "equipe": false,
+  "nameFr": "Augmentation de la défense de Foudre ",
+  "nameEn": "Lightning Defense Increase "
+ },
+ "thunder_value": {
+  "codeDepot": "Thunder_Value",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_7",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 3
+  },
+  "priorite": 3,
+  "equipe": false,
+  "nameFr": "Dégâts de Foudre fixes (%)",
+  "nameEn": "Fixed Lightning Damage"
+ },
+ "thunder_weakness_rate": {
+  "codeDepot": "Thunder_Weakness_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 23,
+  "equipe": false,
+  "nameFr": "Dégâts de faiblesse à la Foudre ",
+  "nameEn": "Lightning Weakness Damage "
+ },
+ "tickdam_period_rate": {
+  "codeDepot": "TickDam_Period_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 10,
+  "equipe": false,
+  "nameFr": "Délai d'infliction des dégâts sur la durée",
+  "nameEn": "DoT Interval"
+ },
+ "tickdam_rate": {
+  "codeDepot": "TickDam_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 9,
+  "equipe": false,
+  "nameFr": "Efficacité des dégâts sur la durée",
+  "nameEn": "DoT Efficiency"
+ },
+ "ultimateskill_damadd_rate": {
+  "codeDepot": "Ultimateskill_Damadd_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 11,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts d'attaque ultime",
+  "nameEn": "Ultimate Move Damage Increase"
+ },
+ "ultimateskill_damres_rate": {
+  "codeDepot": "Ultimateskill_Damres_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Sub",
+  "groupe": "group_3",
+  "ordreUI": {
+   "emplacement": 0,
+   "priorite": 2
+  },
+  "priorite": 12,
+  "equipe": false,
+  "nameFr": "Réduction des dégâts d'attaque ultime",
+  "nameEn": "Ultimate Move Damage Decrease"
+ },
+ "vampireheal_value": {
+  "codeDepot": "VampireHeal_Value",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 6,
+  "equipe": false,
+  "nameFr": "Vampirisme fixe",
+  "nameEn": "Fixed Lifesteal"
+ },
+ "venom_add": {
+  "codeDepot": "Venom_Add",
+  "min": 0,
+  "max": 1,
+  "unite": "flat",
+  "type": "NonHide",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 10,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "venom_element_rate": {
+  "codeDepot": "Venom_Element_Rate",
+  "min": 0,
+  "max": 1,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 10,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "venom_element_res_rate": {
+  "codeDepot": "Venom_Element_Res_Rate",
+  "min": 0,
+  "max": 1,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 21,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "venom_rate": {
+  "codeDepot": "Venom_Rate",
+  "min": 0,
+  "max": 1,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 10,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "venom_res": {
+  "codeDepot": "Venom_Res",
+  "min": 0,
+  "max": 1,
+  "unite": "flat",
+  "type": "NonHide",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 21,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "venom_res_rate": {
+  "codeDepot": "Venom_Res_Rate",
+  "min": 0,
+  "max": 1,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 21,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "venom_value": {
+  "codeDepot": "Venom_Value",
+  "min": 0,
+  "max": 1,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_7",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 3
+  },
+  "priorite": 10,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "water_add": {
+  "codeDepot": "Water_Add",
+  "min": 0,
+  "max": 1,
+  "unite": "flat",
+  "type": "NonHide",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 11,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "water_element_rate": {
+  "codeDepot": "Water_Element_Rate",
+  "min": 0,
+  "max": 1,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 11,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "water_element_res_rate": {
+  "codeDepot": "Water_Element_Res_Rate",
+  "min": 0,
+  "max": 1,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 20,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "water_rate": {
+  "codeDepot": "Water_Rate",
+  "min": 0,
+  "max": 1,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 11,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "water_res": {
+  "codeDepot": "Water_Res",
+  "min": 0,
+  "max": 1,
+  "unite": "flat",
+  "type": "NonHide",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 22,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "water_res_rate": {
+  "codeDepot": "Water_Res_Rate",
+  "min": 0,
+  "max": 1,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 22,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "water_value": {
+  "codeDepot": "Water_Value",
+  "min": 0,
+  "max": 1,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_7",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 3
+  },
+  "priorite": 11,
+  "equipe": false,
+  "nameFr": null,
+  "nameEn": null
+ },
+ "wind_add": {
+  "codeDepot": "Wind_Add",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 4,
+  "equipe": false,
+  "nameFr": "Attaque de Vent",
+  "nameEn": "Wind Attack"
+ },
+ "wind_burst_gauge_rate": {
+  "codeDepot": "Wind_Burst_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 25,
+  "equipe": false,
+  "nameFr": "Efficacité de Déluge de Vent",
+  "nameEn": "Wind Burst Efficiency"
+ },
+ "wind_burst_gauge_res_rate": {
+  "codeDepot": "Wind_Burst_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 33,
+  "equipe": false,
+  "nameFr": "Résistance au Déluge de Vent",
+  "nameEn": "Wind Burst Resistance"
+ },
+ "wind_element_rate": {
+  "codeDepot": "Wind_Element_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 4,
+  "equipe": false,
+  "nameFr": "Augmentation des dégâts de Vent ",
+  "nameEn": "Wind Damage Increase "
+ },
+ "wind_element_res_rate": {
+  "codeDepot": "Wind_Element_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 15,
+  "equipe": false,
+  "nameFr": "Résistance au Vent (%)",
+  "nameEn": "Wind Resistance (%)"
+ },
+ "wind_event_gauge_rate": {
+  "codeDepot": "Wind_Event_Gauge_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 41,
+  "equipe": false,
+  "nameFr": "Efficacité de stupeur de Vent",
+  "nameEn": "Wind Daze Efficiency"
+ },
+ "wind_event_gauge_res_rate": {
+  "codeDepot": "Wind_Event_Gauge_Res_Rate",
+  "min": 0,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "Hide",
+  "groupe": "group_9",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 98
+  },
+  "priorite": 49,
+  "equipe": false,
+  "nameFr": "Résistance à la stupeur de Vent",
+  "nameEn": "Wind Daze Resistance"
+ },
+ "wind_rate": {
+  "codeDepot": "Wind_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 4,
+  "equipe": false,
+  "nameFr": "Augmentation de l'attaque de Vent ",
+  "nameEn": "Wind Attack Increase "
+ },
+ "wind_res": {
+  "codeDepot": "Wind_Res",
+  "min": -999999,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Sub",
+  "groupe": "group_5",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 1
+  },
+  "priorite": 15,
+  "equipe": false,
+  "nameFr": "Défense de Vent",
+  "nameEn": "Wind Defense"
+ },
+ "wind_res_rate": {
+  "codeDepot": "Wind_Res_Rate",
+  "min": -9999,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_6",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 2
+  },
+  "priorite": 15,
+  "equipe": false,
+  "nameFr": "Augmentation de la défense de Vent ",
+  "nameEn": "Wind Defense Increase "
+ },
+ "wind_value": {
+  "codeDepot": "Wind_Value",
+  "min": 0,
+  "max": 999999,
+  "unite": "flat",
+  "type": "Hide",
+  "groupe": "group_7",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 3
+  },
+  "priorite": 4,
+  "equipe": false,
+  "nameFr": "Dégâts de Vent fixes (%)",
+  "nameEn": "Fixed Wind Damage"
+ },
+ "wind_weakness_rate": {
+  "codeDepot": "Wind_Weakness_Rate",
+  "min": -10000,
+  "max": 999999,
+  "unite": "ten-thousandths",
+  "type": "NonHide",
+  "groupe": "group_8",
+  "ordreUI": {
+   "emplacement": 2,
+   "priorite": 4
+  },
+  "priorite": 24,
+  "equipe": false,
+  "nameFr": "Dégâts de faiblesse au Vent ",
+  "nameEn": "Wind Weakness Damage "
+ }
+}

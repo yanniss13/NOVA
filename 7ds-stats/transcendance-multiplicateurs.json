@@ -1,0 +1,111 @@
+{
+ "_provenance": {
+  "avertissement": "Les paliers 6 a 15 et tout le bloc `raffinement` ne sont PAS lus dans le client. Ils sont DEDUITS ou releves sur des fiches publiees par des data miners travaillant sur un build plus recent. A remplacer par une lecture directe des que Value_Add_6..10 sera renseigne dans Option_StaticTable.",
+  "paliers1a5": {
+   "source": "Option_StaticTable, entrees armor_*_reinforce_<id>, champs Value_Add_1..5",
+   "lecture": "directe, client build 1.8.1.2, export du 25 aout 2026"
+  },
+  "paliers6a15": {
+   "source": "fiches Promevs Data : 133255003 (Gowther), 133274001 et 133275002 (Ban), 133415003 (Derieri)",
+   "methode": "valeur publiee x 10000 / valeur de base",
+   "verification": "trois heros, quatre objets, trois statistiques (PV, Defense, attaque des Tenebres). 99 valeurs reconstituees, 0 ecart. L'attaque des Tenebres est absente du client : sa base vient de la fiche, mais les multiplicateurs sont les memes, ce qui montre qu'ils ne dependent ni de l'objet ni de la statistique.",
+   "regularite": "progression lineaire, pas constant de 250"
+  },
+  "raffinement": {
+   "source": "releve sur les fiches de 133255003 (Gowther), 133415003 (Derieri) et 133275001 (Ban)",
+   "cequiEstPartage": "les COUTS seulement : taux de reussite, or et nombre de pierres sont identiques sur les trois fiches.",
+   "cequiVarie": "les BONUS. Gowther et Derieri recoivent +10,48 % Augmentation de l'attaque puis +33,27 % Efficacite de duree des buffs ; Ban recoit +15,90 % Degats critiques puis +17,56 Attaque de Terre. Le passif du +15 change aussi de FAMILLE : Support Transcendence pour les deux premiers, Power Transcendence pour Ban. Ne pas generaliser depuis un seul objet.",
+   "note": "la Pierre de gravure de transcendance N'EXISTE PAS dans le client 1.8.1.2. La seule matiere de transcendance qu'il connaisse est 101100201, « Essence de transcendance ». Ne pas confondre non plus avec le systeme de potentiels : `ui_manageheroes_bt_transcendence` se traduit par « Potentiel » et designe autre chose."
+  },
+  "unite": "dix-milliemes : 10300 vaut x1,03",
+  "formule": "valeur au palier N = round(valeur de base x multiplicateur[N] / 10000)"
+ },
+ "multiplicateurs": {
+  "1": 10300,
+  "2": 10700,
+  "3": 11200,
+  "4": 11800,
+  "5": 12500,
+  "6": 12750,
+  "7": 13000,
+  "8": 13250,
+  "9": 13500,
+  "10": 13750,
+  "11": 14000,
+  "12": 14250,
+  "13": 14500,
+  "14": 14750,
+  "15": 15000
+ },
+ "lus_dans_le_client": [
+  1,
+  2,
+  3,
+  4,
+  5
+ ],
+ "deduits": [
+  6,
+  7,
+  8,
+  9,
+  10,
+  11,
+  12,
+  13,
+  14,
+  15
+ ],
+ "raffinement": [
+  {
+   "debloque": "+6 a +10",
+   "tauxDeReussite": 80,
+   "or": 1000000,
+   "pierreDeGravure": 3,
+   "bonusParObjet": {
+    "133255003": "+10.48% Attack Increase",
+    "133415003": "+10.48% Attack Increase",
+    "133275001": "+15.90% Crit Damage"
+   }
+  },
+  {
+   "debloque": "+11 a +14",
+   "tauxDeReussite": 50,
+   "or": 1500000,
+   "pierreDeGravure": 7,
+   "bonusParObjet": {
+    "133255003": "+33.27% Buff Duration Efficiency",
+    "133415003": "+33.27% Buff Duration Efficiency",
+    "133275001": "+17.56 Earth Attack"
+   }
+  },
+  {
+   "debloque": "+15",
+   "tauxDeReussite": 30,
+   "or": 2500000,
+   "pierreDeGravure": 15,
+   "bonusParObjet": {
+    "133255003": "Support Transcendence: Enhancement",
+    "133415003": "Support Transcendence: Enhancement",
+    "133275001": "Power Transcendence: Technique"
+   }
+  }
+ ],
+ "passifsDu15": {
+  "note": "Deux familles observees. Le passif est propre a l objet, pas au heros ni a l element.",
+  "Support Transcendence: Enhancement": {
+   "effet": "Augmente les degats <element> de tous les allies de 30 % pendant 10 s quand un allie utilise une competence de releve.",
+   "bonus": "<element> Damage +10",
+   "observes": {
+    "133255003": "Gowther, Foudre",
+    "133415003": "Derieri, Tenebres"
+   }
+  },
+  "Power Transcendence: Technique": {
+   "effet": "Augmente les degats de competence normale de 50 %.",
+   "observes": {
+    "133275001": "Ban"
+   }
+  }
+ }
+}

@@ -1,0 +1,268 @@
+{
+ "_provenance": {
+  "source": "fiches Promevs Data, relevees a la main les 25 aout 2026",
+  "pourquoi": "Le client 1.8.1.2 ne nomme pas ces passifs. Quatre existent dans ItemTable_Equip_Passive_Base avec leur icone et leurs trois niveaux (epeq_howzer_d, epeq_bug_d, epeq_griamore_d, epeq_king_d) mais aucune langue ne les traduit ; les autres n'y sont pas du tout.",
+  "aRemplacer": "Des qu'un export d'un build plus recent nommera ces passifs, relire ItemTable_Equip_Passive_Base et la localisation plutot que ce fichier.",
+  "structure": "chaque passif a trois niveaux, de chance decroissante 60 / 30 / 10 %",
+  "langue": "textes en anglais, tels que publies",
+  "couverture": "Les 19 armures sont tranchees : 10 passifs releves sur fiches, 2 lus dans le client, 7 sans passif."
+ },
+ "passifs": {
+  "133045003": {
+   "heros": "howzer",
+   "nameEn": "Grandmaster's Dignity",
+   "passifId": "epeq_howzer_d",
+   "passifNom": "Storm's Protection",
+   "niveaux": [
+    {
+     "lv": 1,
+     "chance": 60,
+     "texte": "Each hit on an enemy with the Normal Skill increases Barrier Efficiency by 0.6% for 3 sec. (Max: 30%) When this effect reaches its max, it grants all allied heroes a barrier equal to 80% of Attack for 20 sec. (Cooldown: 30 sec.)"
+    },
+    {
+     "lv": 2,
+     "chance": 30,
+     "texte": "Each hit on an enemy with the Normal Skill increases Barrier Efficiency by 0.7% for 3 sec. (Max: 35%) When this effect reaches its max, it grants all allied heroes a barrier equal to 85% of Attack for 20 sec. (Cooldown: 30 sec.)"
+    },
+    {
+     "lv": 3,
+     "chance": 10,
+     "texte": "Each hit on an enemy with the Normal Skill increases Barrier Efficiency by 0.8% for 3 sec. (Max: 40%) When this effect reaches its max, it grants all allied heroes a barrier equal to 90% of Attack for 20 sec. (Cooldown: 30 sec.)"
+    }
+   ]
+  },
+  "133065003": {
+   "heros": "bug",
+   "nameEn": "Keen Instinct",
+   "passifId": "epeq_bug_d",
+   "passifNom": "Mind's Dominion",
+   "niveaux": [
+    {
+     "lv": 1,
+     "chance": 60,
+     "texte": "Attacking a Taunted enemy applies Curse on them for 10 sec. Increases allied heroes' Darkness damage dealt to enemies with reduced Darkness Resistance by 18%."
+    },
+    {
+     "lv": 2,
+     "chance": 30,
+     "texte": "Attacking a Taunted enemy applies Curse on them for 13 sec. Increases allied heroes' Darkness damage dealt to enemies with reduced Darkness Resistance by 24%."
+    },
+    {
+     "lv": 3,
+     "chance": 10,
+     "texte": "Attacking a Taunted enemy applies Curse on them for 16 sec. Increases allied heroes' Darkness damage dealt to enemies with reduced Darkness Resistance by 30%."
+    }
+   ]
+  },
+  "133125003": {
+   "heros": "griamore",
+   "nameEn": "Impregnable Iron Fortress",
+   "passifId": "epeq_griamore_d",
+   "passifNom": "Seized Opening",
+   "niveaux": [
+    {
+     "lv": 1,
+     "chance": 60,
+     "texte": "Each hit on an enemy with the Special Attack inflicts additional damage equal to 24% of Attack, and Daze for 10 sec if the enemy is not Stunned or Dazed. Enemies affected by Daze have their Movement Speed decreased by 10%. Satisfies the conditions of any skill that requires the enemy to be Stunned."
+    },
+    {
+     "lv": 2,
+     "chance": 30,
+     "texte": "Each hit on an enemy with the Special Attack inflicts additional damage equal to 32% of Attack, and Daze for 10 sec if the enemy is not Stunned or Dazed. Enemies affected by Daze have their Movement Speed decreased by 20%. Satisfies the conditions of any skill that requires the enemy to be Stunned."
+    },
+    {
+     "lv": 3,
+     "chance": 10,
+     "texte": "Each hit on an enemy with the Special Attack inflicts additional damage equal to 40% of Attack, and Daze for 10 sec if the enemy is not Stunned or Dazed. Enemies affected by Daze have their Movement Speed decreased by 30%. Satisfies the conditions of any skill that requires the enemy to be Stunned."
+    }
+   ]
+  },
+  "133145003": {
+   "heros": "king",
+   "nameEn": "Fairy King's Shadow",
+   "passifId": "epeq_king_d",
+   "passifNom": "Arcane Flow",
+   "niveaux": [
+    {
+     "lv": 1,
+     "chance": 60,
+     "texte": "Each time Defense boost is gained, all allied Earth heroes' Crit Damage increases by 6% for 20 sec. (Max: 30%) When the hero uses the Ultimate Move, it increases all allied Earth heroes' Attack and Defense by 12% for 10 sec."
+    },
+    {
+     "lv": 2,
+     "chance": 30,
+     "texte": "Each time Defense boost is gained, all allied Earth heroes' Crit Damage increases by 7% for 20 sec. (Max: 35%) When the hero uses the Ultimate Move, it increases all allied Earth heroes' Attack and Defense by 16% for 10 sec."
+    },
+    {
+     "lv": 3,
+     "chance": 10,
+     "texte": "Each time Defense boost is gained, all allied Earth heroes' Crit Damage increases by 8% for 20 sec. (Max: 40%) When the hero uses the Ultimate Move, it increases all allied Earth heroes' Attack and Defense by 20% for 10 sec."
+    }
+   ]
+  },
+  "133165003": {
+   "heros": "elizabeth",
+   "nameEn": "Light of Liones",
+   "passifId": null,
+   "passifNom": "Fantastic Duo",
+   "niveaux": [
+    {
+     "lv": 1,
+     "chance": 60,
+     "texte": "Each hit on an enemy with an Earth attack while their Earth Burst Gauge is 50% or below increases the Burst Gauge by a fixed value of 60. When the hero activates an Earth Burst, it increases all allied heroes' Earth Attack by 6% of the hero's Attack for 30 sec. (Max: 1800)"
+    },
+    {
+     "lv": 2,
+     "chance": 30,
+     "texte": "Each hit on an enemy with an Earth attack while their Earth Burst Gauge is 50% or below increases the Burst Gauge by a fixed value of 80. When the hero activates an Earth Burst, it increases all allied heroes' Earth Attack by 8% of the hero's Attack for 30 sec. (Max: 2400)"
+    },
+    {
+     "lv": 3,
+     "chance": 10,
+     "texte": "Each hit on an enemy with an Earth attack while their Earth Burst Gauge is 50% or below increases the Burst Gauge by a fixed value of 100. When the hero activates an Earth Burst, it increases all allied heroes' Earth Attack by 10% of the hero's Attack for 30 sec. (Max: 3000)"
+    }
+   ]
+  },
+  "133255003": {
+   "heros": "gowther",
+   "nameEn": "Minimal Defense",
+   "passifId": null,
+   "passifNom": "Spread of Consciousness",
+   "niveaux": [
+    {
+     "lv": 1,
+     "chance": 60,
+     "texte": "Each time an allied Lightning hero with Charge uses the Normal Skill, it increases all allied Lightning heroes' Normal Skill damage by 4% for 10 sec. (Max: 12%) When this effect reaches its max, it is replaced by an effect that increases all allied Lightning heroes' Normal Skill damage by 18% and Movement Speed by 30% for 15 sec. (Does not stack)"
+    },
+    {
+     "lv": 2,
+     "chance": 30,
+     "texte": "Each time an allied Lightning hero with Charge uses the Normal Skill, it increases all allied Lightning heroes' Normal Skill damage by 6% for 10 sec. (Max: 18%) When this effect reaches its max, it is replaced by an effect that increases all allied Lightning heroes' Normal Skill damage by 24% and Movement Speed by 40% for 15 sec. (Does not stack)"
+    },
+    {
+     "lv": 3,
+     "chance": 10,
+     "texte": "Each time an allied Lightning hero with Charge uses the Normal Skill, it increases all allied Lightning heroes' Normal Skill damage by 8% for 10 sec. (Max: 24%) When this effect reaches its max, it is replaced by an effect that increases all allied Lightning heroes' Normal Skill damage by 30% and Movement Speed by 50% for 15 sec. (Does not stack)"
+    }
+   ]
+  },
+  "133274001": {
+   "heros": "ban",
+   "nameEn": "Temporary Cook",
+   "passifId": null,
+   "passifNom": "Plunderer of All Things",
+   "niveaux": [
+    {
+     "lv": 1,
+     "chance": 60,
+     "texte": "Increases the hero's Physical damage by 60% of the Attack of all elements except Physical. Landing the Normal Skill on an enemy affected by Chain increases All Elemental Attack by 12% and Defense Shatter by 6% for 30 sec."
+    },
+    {
+     "lv": 2,
+     "chance": 30,
+     "texte": "Increases the hero's Physical damage by 80% of the Attack of all elements except Physical. Landing the Normal Skill on an enemy affected by Chain increases All Elemental Attack by 16% and Defense Shatter by 8% for 30 sec."
+    },
+    {
+     "lv": 3,
+     "chance": 10,
+     "texte": "Increases the hero's Physical damage by 100% of the Attack of all elements except Physical. Landing the Normal Skill on an enemy affected by Chain increases All Elemental Attack by 20% and Defense Shatter by 10% for 30 sec."
+    }
+   ]
+  },
+  "133275001": {
+   "heros": "ban",
+   "nameEn": "<The Fox Sin of Greed>",
+   "passifId": null,
+   "passifNom": "Frenzied Strike Combo",
+   "niveaux": [
+    {
+     "lv": 1,
+     "chance": 60,
+     "texte": "Increases the duration of Berserker by 20%. Gaining Berserker increases Movement Speed by 30%, and using the Normal Skill 3 time(s) while the effect is active increases Normal Skill damage by 24% and Crit Damage by 24%."
+    },
+    {
+     "lv": 2,
+     "chance": 30,
+     "texte": "Increases the duration of Berserker by 30%. Gaining Berserker increases Movement Speed by 30%, and using the Normal Skill 3 time(s) while the effect is active increases Normal Skill damage by 32% and Crit Damage by 32%."
+    },
+    {
+     "lv": 3,
+     "chance": 10,
+     "texte": "Increases the duration of Berserker by 40%. Gaining Berserker increases Movement Speed by 30%, and using the Normal Skill 3 time(s) while the effect is active increases Normal Skill damage by 40% and Crit Damage by 40%."
+    }
+   ]
+  },
+  "133275002": {
+   "heros": "ban",
+   "nameEn": "Jaunty Marauder",
+   "passifId": null,
+   "passifNom": "Bond of Trust",
+   "niveaux": [
+    {
+     "lv": 1,
+     "chance": 60,
+     "texte": "Using a Combined Attack with the hero's Ultimate Move as the base increases all allied heroes' Darkness damage by 30% for 30 sec, and each hit from the Combined Attack increases the enemy's Darkness Weakness Damage by 3% for 30 sec."
+    },
+    {
+     "lv": 2,
+     "chance": 30,
+     "texte": "Using a Combined Attack with the hero's Ultimate Move as the base increases all allied heroes' Darkness damage by 40% for 30 sec, and each hit from the Combined Attack increases the enemy's Darkness Weakness Damage by 4% for 30 sec."
+    },
+    {
+     "lv": 3,
+     "chance": 10,
+     "texte": "Using a Combined Attack with the hero's Ultimate Move as the base increases all allied heroes' Darkness damage by 50% for 30 sec, and each hit from the Combined Attack increases the enemy's Darkness Weakness Damage by 5% for 30 sec."
+    }
+   ]
+  },
+  "133415003": {
+   "heros": "derieri",
+   "nameEn": "Rebellious Movement",
+   "passifId": null,
+   "passifNom": "Blooming Darkness",
+   "niveaux": [
+    {
+     "lv": 1,
+     "chance": 60,
+     "texte": "Increases all allied Darkness heroes' Normal Skill Crit Chance against enemies affected by Night Bloom by 12%. Each time Night Bloom deals additional damage, it increases all allied Darkness heroes' Crit Damage by 2% for 5 sec. (Max: 36%)"
+    },
+    {
+     "lv": 2,
+     "chance": 30,
+     "texte": "Increases all allied Darkness heroes' Normal Skill Crit Chance against enemies affected by Night Bloom by 16%. Each time Night Bloom deals additional damage, it increases all allied Darkness heroes' Crit Damage by 2.5% for 5 sec. (Max: 45%)"
+    },
+    {
+     "lv": 3,
+     "chance": 10,
+     "texte": "Increases all allied Darkness heroes' Normal Skill Crit Chance against enemies affected by Night Bloom by 20%. Each time Night Bloom deals additional damage, it increases all allied Darkness heroes' Crit Damage by 3% for 5 sec. (Max: 54%)"
+    }
+   ]
+  }
+ },
+ "dansLeClient": {
+  "133195001": {
+   "heros": "daisy",
+   "passifId": "epeq_daisy_a",
+   "passifNom": "Prête à tout",
+   "note": "nom et 3 niveaux lisibles dans ItemTable_Equip_Passive_Base ; texte a extraire de Passive_Group"
+  },
+  "133215001": {
+   "heros": "meliodas",
+   "passifId": "epeq_meliodas_a",
+   "passifNom": "Frappe de l'ombre",
+   "note": "idem"
+  }
+ },
+ "sansPassif": {
+  "_note": "Tenues purement decoratives : skins payants, sans passif d'equipement. Information donnee par l'utilisateur, joueur du jeu. Corroboree par les donnees : le client comptait 6 passifs epeq libres, tous apparies aux 6 autres armures — il n'en restait aucun pour celles-ci.",
+  "armures": {
+   "133165002": "Aventure du barde (Elizabeth)",
+   "133205003": "Jeu de la lune à l'aube (Klotho)",
+   "133225001": "<Le Lion de l'Orgueil> (Escanor)",
+   "133245003": "Banquet de sorcière (Merlin)",
+   "133255002": "Quête de soi (Gowther)",
+   "133275003": "sans nom (Ban)",
+   "133415001": "Flamme rouge du royaume des démons (Derieri)"
+  }
+ }
+}
