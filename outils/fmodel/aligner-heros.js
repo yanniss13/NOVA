@@ -10,7 +10,11 @@ console.log();
 console.log('id    nom (jeu)          masterie commune  armes (icones du jeu)');
 const nomsJeu = {};
 for (const [id, r] of Object.entries(heroMastery)) {
-  const nom = String(r.String_Tid || '').replace(/_SpecialMastery_Reward$/, '');
+  // Le nom du heros vit dans Weapon_Mastery_Reward. Sous le usmap 1.7 cette
+  // colonne etait inconnue et sa valeur atterrissait dans String_Tid, decalant
+  // toute la fin de la ligne ; le repli sur String_Tid garde la lecture des
+  // extractions archivees. Voir docs/extraction-fichiers-du-jeu.md.
+  const nom = String(r.Weapon_Mastery_Reward || r.String_Tid || '').replace(/_SpecialMastery_Reward$/, '');
   nomsJeu[id] = nom;
   const armes = [r.Weapon_1_Mastery_Icon, r.Weapon_2_Mastery_Icon, r.Weapon_3_Mastery_Icon]
     .map(x => String(x || '').replace('icon_mastery_', ''));
