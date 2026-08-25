@@ -21,6 +21,21 @@ const intact = recalerLibelle("PV de l'équipement", "21 678", []);
 assert.equal(intact.statut, "exact");
 assert.equal(intact.code, "B_MaxHp_Equip");
 
+/* Le jeu peut etre configure en anglais : les alias du catalogue doivent
+   conduire exactement aux memes codes que les libelles francais. */
+assert.equal(
+  recalerLibelle("Equipment Attack", "4,937", []).code,
+  "B_Atk_Equip"
+);
+assert.equal(
+  recalerLibelle("Lightning Burst Efficiency", "17.61%", []).code,
+  "Thunder_Burst_Gauge_Rate"
+);
+assert.equal(
+  recalerLibelle("Crit Defense", "12.73%", []).code,
+  "C_Critical_DamRes_Rate"
+);
+
 /* Accents perdus, virgule a la place du point, icone collee devant : la
    normalisation absorbe tout ca avant meme que la distance intervienne. */
 assert.equal(

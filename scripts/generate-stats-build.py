@@ -421,21 +421,35 @@ def gear_set_entry(raw, known):
     }
 
 
+def add_localized_label(labels, code, source):
+    """Conserve les libelles disponibles sans imposer une langue a la source."""
+    if not code:
+        return
+    for locale, field in (("fr", "nameFr"), ("en", "nameEn")):
+        label = source.get(field)
+        if label:
+            labels.setdefault(code, {}).setdefault(locale, label)
+
+
+def merge_localized_labels(target, source):
+    for code, locales in source.items():
+        target.setdefault(code, {}).update(
+            {locale: label for locale, label in locales.items() if label}
+        )
+
+
 def gear_stat_labels(piece):
-    """Libelles francais portes par une piece brute, avant compactage."""
+    """Libelles localises portes par une piece brute, avant compactage."""
     growth = piece.get("growth") or {}
     labels = {}
     for key, code_key in (("mainStatLabel", "mainStat"), ("subStatLabel", "subStat")):
         block = growth.get(key) or {}
         code = piece.get(code_key)
-        if code and block.get("nameFr"):
-            labels.setdefault(code, block["nameFr"])
+        add_localized_label(labels, code, block)
     for item in ((growth.get("randomOptions") or {}).get("stats") or []):
-        if item.get("key") and item.get("nameFr"):
-            labels.setdefault(item["key"], item["nameFr"])
+        add_localized_label(labels, item.get("key"), item)
     for extra in growth.get("extraStats") or []:
-        if extra.get("key") and extra.get("nameFr"):
-            labels.setdefault(extra["key"], extra["nameFr"])
+        add_localized_label(labels, extra.get("key"), extra)
     return labels
 
 
@@ -476,7 +490,7 @@ def build_gear_catalogs(stats_root: Path, gear_roots, known, repo_root=None):
 
     fallback = {}
     for piece in pieces + engraved_pieces:
-        fallback.update(gear_stat_labels(piece))
+        merge_localized_labels(fallback, gear_stat_labels(piece))
 
     gear_by_file = {}
     engraved_by_file = {}
@@ -619,22 +633,21 @@ def grade_stat_labels(grade, known=()):
     """
     labels = {}
     for sub_stat in grade.get("subStats") or []:
-        label = sub_stat.get("statLabel", {}).get("nameFr")
-        if label:
-            labels.setdefault(canonical_stat(sub_stat["stat"], known), label)
+        add_localized_label(
+            labels,
+            canonical_stat(sub_stat["stat"], known),
+            sub_stat.get("statLabel", {}),
+        )
 
     enchantments = grade.get("enchantments") or {}
     for option in enchantments.get("options") or []:
-        if option.get("nameFr"):
-            labels.setdefault(option["stat"], option["nameFr"])
+        add_localized_label(labels, option.get("stat"), option)
     for tier in enchantments.get("tiers") or []:
         for option in tier.get("options") or []:
-            if option.get("nameFr"):
-                labels.setdefault(option["stat"], option["nameFr"])
+            add_localized_label(labels, option.get("stat"), option)
         for group in tier.get("elements") or []:
             for option in group.get("options") or []:
-                if option.get("nameFr"):
-                    labels.setdefault(option["stat"], option["nameFr"])
+                add_localized_label(labels, option.get("stat"), option)
     return labels
 
 
@@ -891,11 +904,13 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict,
             ),
             "gradesByGameId": {},
         }
+        if source.get("nameEn"):
+            compact_weapon["nameEn"] = source["nameEn"]
         for grade in sorted(source.get("grades") or [], key=lambda grade: grade["gameId"]):
             compact_weapon["gradesByGameId"][grade["gameId"]] = compact_grade(
                 grade, source["slug"], known
             )
-            fallback_labels.update(grade_stat_labels(grade, known))
+            merge_localized_labels(fallback_labels, grade_stat_labels(grade, known))
         weapons_by_file[catalog_file] = compact_weapon
 
     characters_by_slug = {}
@@ -910,7 +925,7 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict,
     gear_by_file, engraved_by_file, gear_labels = build_gear_catalogs(
         stats_root, gear_roots, known, weapons_root.parent
     )
-    fallback_labels.update(gear_labels)
+    merge_localized_labels(fallback_labels, gear_labels)
     all_gear = list(gear_by_file.values()) + list(engraved_by_file.values())
     gear_sets = {}
     referenced = {
@@ -954,8 +969,8 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict,
             raise ValueError(f"famille ou unité inconnue pour {code}")
         if code in labels and labels[code].get("fr"):
             french_label = labels[code]["fr"]
-        elif code in fallback_labels:
-            french_label = fallback_labels[code]
+        elif code in fallback_labels and fallback_labels[code].get("fr"):
+            french_label = fallback_labels[code]["fr"]
         elif code in supplement:
             french_label = supplement[code]
         elif code in labels and labels[code].get("court"):
@@ -963,11 +978,17 @@ def build_catalog(stats_root: Path, weapons_root: Path, metadata: dict,
             french_label = labels[code]["court"]
         else:
             raise ValueError(f"Libellé français manquant pour {code}")
-        stat_labels[code] = {
+        stat_label = {
             "fr": french_label,
             "family": details["family"],
             "unit": details["unit"],
         }
+        english_label = (labels.get(code) or {}).get("en") or (
+            fallback_labels.get(code) or {}
+        ).get("en")
+        if english_label:
+            stat_label["en"] = english_label
+        stat_labels[code] = stat_label
 
     return {
         "version": 1,

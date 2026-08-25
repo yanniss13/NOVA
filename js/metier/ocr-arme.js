@@ -79,9 +79,13 @@ import { calculateWeaponStats } from "./stats-calcul.js";
     if(!nom || !natives.length) return { statut:"aucun", candidats:[] };
 
     const fichiers = armesRapprochables(source.herosSlug);
-    const rapprochement = rapprocher(nom, fichiers.map(fichier => ({
-      code:fichier, cle:normaliserLibelle(nomDuFichier(fichier))
-    })));
+    const rapprochement = rapprocher(nom, fichiers.flatMap(fichier => {
+      const weapon = BUILD_STATS.weaponsByFile[fichier] || {};
+      return [nomDuFichier(fichier), weapon.nameEn]
+        .map(normaliserLibelle)
+        .filter(Boolean)
+        .map(cle => ({ code:fichier, cle }));
+    }));
     if(!rapprochement.code || rapprochement.statut === "rejete"){
       return { statut:"aucun", candidats:[] };
     }

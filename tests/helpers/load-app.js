@@ -797,7 +797,10 @@ function loadApp(initialTeams){
     SEVEN_DS_BUILD_STATS:{
       version:1,
       statLabels:{
-        B_Atk_Equip:{ fr:"Attaque de l'équipement", family:"main", unit:"flat" },
+        B_Atk_Equip:{
+          fr:"Attaque de l'équipement", en:"Equipment Attack",
+          family:"main", unit:"flat"
+        },
         I_AtkAdd_Rate:{ fr:"ATK", family:"main", unit:"ten-thousandths" },
         critRate:{ fr:"Chances crit.", family:"additional", unit:"ten-thousandths" }
       },

@@ -71,7 +71,10 @@ import { BUILD_STATS } from "../noyau/constantes.js";
     return Object.keys(STAT_LABELS)
       .filter(code => !permis || permis.has(code))
       .filter(code => !unite || STAT_LABELS[code].unit === unite)
-      .map(code => ({ code, cle:normaliserLibelle(STAT_LABELS[code].fr) }));
+      .flatMap(code => [STAT_LABELS[code].fr, STAT_LABELS[code].en]
+        .map(normaliserLibelle)
+        .filter(Boolean)
+        .map(cle => ({ code, cle })));
   }
 
   /* Le rapprochement d'un texte lu sur une liste de reference. Il sert deux
@@ -81,16 +84,25 @@ import { BUILD_STATS } from "../noyau/constantes.js";
     if(!cible || !liste.length){
       return { statut:"rejete", code:null, rival:null };
     }
-    let meilleur = null;
-    let second = null;
+    /* Une statistique peut maintenant porter plusieurs traductions. On ne
+       conserve que la meilleure distance par code, sinon les alias francais
+       et anglais d'une meme stat deviendraient artificiellement deux rivaux. */
+    const meilleursParCode = new Map();
     for(const entree of liste){
+      if(!entree || !entree.code || !entree.cle) continue;
       const d = distance(cible, entree.cle);
-      if(!meilleur || d < meilleur.d){
-        second = meilleur;
-        meilleur = { entree, d };
-      }else if(!second || d < second.d){
-        second = { entree, d };
+      const actuel = meilleursParCode.get(entree.code);
+      if(!actuel || d < actuel.d){
+        meilleursParCode.set(entree.code, { entree, d });
       }
+    }
+    const classes = [...meilleursParCode.values()].sort((a, b) => a.d - b.d);
+    const meilleur = classes[0];
+    const second = classes[1] || null;
+    if(!meilleur) return { statut:"rejete", code:null, rival:null };
+    if(meilleur.d === 0 && second && second.d === 0){
+      return { statut:"ambigu", code:meilleur.entree.code,
+        rival:second.entree.code };
     }
     if(meilleur.d === 0){
       return { statut:"exact", code:meilleur.entree.code, rival:null };
@@ -125,7 +137,13 @@ import { BUILD_STATS } from "../noyau/constantes.js";
   function valeurNumerique(brut){
     const net = String(brut).replace(/[\s\u00a0\u202f]/g, "");
     const pourcentage = /%$/.test(net);
-    const nombre = Number(net.replace(/%$/, "").replace(/,/g, "."));
+    /* Les valeurs plates sont entieres : le jeu anglais ecrit `4,937`, le
+       francais `4 937`. Pour un pourcentage, virgule et point restent en
+       revanche deux separateurs decimaux equivalents. */
+    const chiffres = net.replace(/%$/, "");
+    const nombre = Number(pourcentage
+      ? chiffres.replace(/,/g, ".")
+      : chiffres.replace(/[,.]/g, ""));
     if(!Number.isFinite(nombre)) return null;
     return pourcentage ? Math.round(nombre * 100) : nombre;
   }
