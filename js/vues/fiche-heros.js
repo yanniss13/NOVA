@@ -158,8 +158,14 @@ import { toast } from "./toast.js";
 
          `animations-verrous.json` est DEDUIT des fichiers du jeu : le premier
          instant ou le heros peut relancer une action offensive, lu dans les
-         marqueurs du montage. Il couvre 358 competences, mais reste une
-         deduction.
+         marqueurs du montage. Il couvre 155 des 376 competences du catalogue,
+         et reste une deduction.
+
+         Les 221 autres ne sont pas des trous : 202 ont une fenetre offensive
+         ouverte des t=0, donc un verrou nul que le simulateur compte deja
+         comme tel, et 18 n'ont aucune fenetre connue. `ecrire-verrous.js`
+         omet les zeros plutot que de les ecrire — le resultat est le meme,
+         mais le fichier ne dit pas la difference entre « nul » et « inconnu ».
 
          `animations-mesurees.json` s'ecrit a la main, chronometre en jeu. Il
          fait FOI la ou il parle, et ecrase donc le precedent cle par cle.
