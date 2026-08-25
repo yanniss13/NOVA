@@ -38,9 +38,13 @@ const CLE = Deno.env.get("GEMINI_API_KEY") || "";
 const MODELE = Deno.env.get("GEMINI_MODEL") || "gemini-flash-latest";
 const RACINE = "https://generativelanguage.googleapis.com/v1beta/models/";
 
-/* Une capture de panneau tient largement sous cette taille. La borne protege
-   surtout le quota : sans elle, un envoi malencontreux d'image enorme passe. */
-const OCTETS_MAX = 6 * 1024 * 1024;
+/* Le navigateur courant n'envoie que la carte de droite, recadree sans perte.
+   Trois Mo laissent une marge tres large a ce panneau. La borne protege aussi
+   les isolates des anciennes PWA qui envoyaient encore toute une capture : le
+   base64 existe plusieurs fois pendant le passage JSON et pouvait depasser la
+   limite de ressources avant meme que Gemini ne reponde. */
+const OCTETS_MAX = 3 * 1024 * 1024;
+const CORPS_MAX = Math.ceil(OCTETS_MAX * 4 / 3) + 64 * 1024;
 
 /* La liste des en-tetes autorises doit couvrir TOUT ce que supabase-js envoie,
    pas seulement ce qu'on lit. Le navigateur compare sa demande a cette liste
@@ -174,6 +178,15 @@ async function lireChezGemini(
       continue;
     }
     if (derniere.ok || !SATURATION.has(derniere.status)) return derniere;
+    /* Une reponse abandonnee doit liberer son flux avant la reprise. La garder
+       ouverte jusqu'a la fin de l'appel immobilise inutilement des ressources
+       de l'isolate, surtout quand plusieurs captures arrivent a la suite. */
+    if (essai < REPRISES.length) {
+      try {
+        await derniere.body?.cancel();
+      } catch { /* Le corps peut deja avoir ete ferme par la plateforme. */ }
+      derniere = null;
+    }
   }
   return derniere;
 }
@@ -233,6 +246,15 @@ Deno.serve(async (requete: Request) => {
     return refus("Cette lecture demande un compte.", 401);
   }
   if (!CLE) return refus("La lecture assistée n’est pas configurée.", 503);
+
+  /* Rejeter une ancienne capture trop lourde AVANT `requete.json()` evite de
+     materialiser son base64 dans le tas du worker. Le proxy fournit cette
+     longueur sur les appels navigateur ; la verification apres lecture reste
+     l'autorite lorsqu'elle est absente. */
+  const longueur = Number(requete.headers.get("content-length") || 0);
+  if (Number.isFinite(longueur) && longueur > CORPS_MAX) {
+    return refus("Image trop lourde. Mets NOVA à jour puis réessaie.", 413);
+  }
 
   let corps: { image?: unknown };
   try {

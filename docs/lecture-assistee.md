@@ -8,6 +8,12 @@ différents — et ça évite de télécharger les quatre mégaoctets du moteur.
 **Tesseract reste entier** pour le mode hors ligne, les visiteurs sans compte,
 et tout appel qui échoue.
 
+Avant l'envoi, le navigateur détecte et recadre la carte de droite. Il ne la
+redimensionne pas : les pixels des valeurs restent intacts, mais le worker ne
+transporte plus le décor d'une capture ultrawide. La fonction refuse au-delà de
+3 Mo afin qu'une ancienne PWA qui envoie encore l'image entière ne puisse pas
+épuiser la mémoire ou le temps CPU de l'isolate.
+
 ## Le principe, et pourquoi il tient
 
 Le modèle **transcrit**, il ne déduit rien. Sa sortie a exactement la forme que
@@ -86,6 +92,12 @@ avant toute hypothèse.
 
 Si le motif vient de Google, sa réponse intégrale est dans les journaux de la
 fonction, jamais dans le navigateur : elle peut nommer la clé.
+
+Un code `WORKER_RESOURCE_LIMIT` vient au contraire de Supabase, avant la
+réponse de Google. Dans les journaux, l'événement d'arrêt précise
+`Memory` ou `CPUTime`. Une occurrence provenant d'une ancienne PWA doit
+disparaître après le déploiement conjoint de la fonction et du frontend, puis
+l'application de la mise à jour proposée par NOVA.
 
 [Journaux de `lecture-panneau`](https://supabase.com/dashboard/project/uxouhbgdlolidjmxwgae/functions/lecture-panneau/logs)
 
