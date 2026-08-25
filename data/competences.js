@@ -1,5 +1,7 @@
 // Genere par generate-competences.py depuis 7dsorigin.app ;
-// recharges combat precisees depuis SevenCodex.
+// recharges lues dans le client du jeu (PC_SkillTable), qui priment sur
+// SevenCodex : celui-ci les tronque a la seconde et en donne quatre de
+// fausses. Voir 7ds-stats/recharges-du-jeu.json.
 // Cle = slug personnage. Les passifs sont exclus ; toute autre
 // competence figure ici, meme celle qu'on ne sait pas chiffrer.
 // pourcentage = % de l'ATK pour un lancement, null si non chiffrable.
@@ -85,7 +87,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 1072.0,
-   "recharge": 16.0,
+   "recharge": 16.2,
    "repartition": [
     166.0,
     166.0,
@@ -573,7 +575,7 @@ window.SEVEN_DS_COMPETENCES = {
    },
    "portee": "Melee",
    "pourcentage": 43.0,
-   "recharge": 16.0,
+   "recharge": 16.1,
    "repartition": [
     11.0,
     32.0
@@ -1594,7 +1596,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 190.0,
-   "recharge": 7.0,
+   "recharge": 7.5,
    "repartition": [
     71.0,
     119.0
@@ -1785,7 +1787,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 20.0,
+   "recharge": 20.2,
    "repartition": [],
    "weaponType": "Shield"
   },
@@ -2373,7 +2375,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 10.0,
+   "recharge": 10.9,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -2633,7 +2635,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 102.0,
-   "recharge": 10.0,
+   "recharge": 11,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -2652,7 +2654,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 276.0,
-   "recharge": 11.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -2760,7 +2762,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 522.0,
-   "recharge": 13.0,
+   "recharge": 13.5,
    "repartition": [
     150.0,
     170.0,
@@ -3553,7 +3555,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 24.0,
+   "recharge": 24.6,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -3876,7 +3878,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 10.0,
+   "recharge": 10.5,
    "repartition": [],
    "weaponType": "Shield"
   },
@@ -4872,7 +4874,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 86.0,
-   "recharge": 10.0,
+   "recharge": 12.1,
    "repartition": [],
    "weaponType": "Lance"
   },
@@ -5544,7 +5546,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 23.0,
+   "recharge": 23.8,
    "repartition": [
     70.0,
     46.0
@@ -5832,7 +5834,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 158.0,
-   "recharge": 10.0,
+   "recharge": 11.2,
    "repartition": [],
    "weaponType": "Sword1h"
   },
@@ -6039,7 +6041,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 442.0,
-   "recharge": 25.0,
+   "recharge": 25.8,
    "repartition": [
     30.0,
     82.0
@@ -6675,7 +6677,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 174.0,
-   "recharge": 9.0,
+   "recharge": 9.4,
    "repartition": [
     64.0,
     110.0
@@ -7159,7 +7161,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": null,
-   "recharge": 8.0,
+   "recharge": 8.5,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -7365,7 +7367,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 8.0,
+   "recharge": 8.4,
    "repartition": [
     24.0,
     81.0

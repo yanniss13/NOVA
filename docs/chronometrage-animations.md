@@ -104,8 +104,8 @@ Classement par erreur décroissante.
 | héros | arme | compétence | catégorie | touche | recharge | erreur | mesure (s) |
 |---|---|---|---|---|---|---|---|
 | diane | Gantelets | Combinaison de coups de pied | Attaque spéciale | Q | 5 s | 23 % |  |
-| dreydrin | Hache | Écrasement puissant | Attaque spéciale | Q | 7 s | 18 % |  |
 | drake | Épée à deux mains | Taillade perforante | Attaque spéciale | Q | 7.5 s | 17 % |  |
+| dreydrin | Hache | Écrasement puissant | Attaque spéciale | Q | 7.5 s | 17 % |  |
 | dreyfus | Rapière | Brise-dard | Attaque spéciale | Q | 7.5 s | 17 % |  |
 | gil-thunder | Lance | Déferlement foudroyant | Attaque spéciale | Q | 7.5 s | 17 % |  |
 | guila | Lance | Canon de flamme | Attaque spéciale | Q | 7.5 s | 17 % |  |
@@ -117,8 +117,8 @@ Classement par erreur décroissante.
 | merlin | Grimoire | Esprit glacial | Attaque spéciale | Q | 8 s | 16 % |  |
 | dreydrin | Rapière | Pulsation lumineuse | Attaque spéciale | Q | 8.2 s | 15 % |  |
 | drake | Bâton | Tempête de Foudre | Attaque spéciale | Q | 8.5 s | 15 % |  |
-| slader | Hache | Frappe chargée | Attaque spéciale | Q | 9 s | 14 % |  |
 | tristan | Épée à une main | Épée de tempête | Attaque spéciale | Q | 9.3 s | 14 % |  |
+| slader | Hache | Frappe chargée | Attaque spéciale | Q | 9.4 s | 14 % |  |
 | bug | Hache | Essaim de la mort | Attaque ultime | R | 10 s | 13 % |  |
 | bug | Grimoire | Seul en scène | Attaque ultime | R | 10 s | 13 % |  |
 | bug | Épées doubles | Fin | Attaque ultime | R | 10 s | 13 % |  |
@@ -140,7 +140,7 @@ Classement par erreur décroissante.
 | dreyfus | Épée à une main | Fracture terrestre | Attaque ultime | R | 10 s | 13 % |  |
 | elaine | Grimoire | Sceau de poussière | Attaque ultime | R | 10 s | 13 % |  |
 | elaine | Baguette | Rafale de vent | Attaque ultime | R | 10 s | 13 % |  |
-| elizabeth | Baguette | Trajectoire des restes | Attaque spéciale | Q | 10 s | 13 % |  |
+| elizabeth | Baguette | Super explosion jambonique | Attaque ultime | R | 10 s | 13 % |  |
 | escanor | Épée & bouclier | Jugement céleste - Surchauffe | Attaque ultime | R | 10 s | 13 % |  |
 | escanor | Épée à deux mains | Soleil levant | Attaque ultime | R | 10 s | 13 % |  |
 | gil-thunder | Lance | Éclair | Attaque ultime | R | 10 s | 13 % |  |
@@ -159,13 +159,11 @@ Classement par erreur décroissante.
 | howzer | Gantelets | Choc tournoyant | Attaque ultime | R | 10 s | 13 % |  |
 | howzer | Lance | Super cyclone | Attaque ultime | R | 10 s | 13 % |  |
 | jericho | Lance | Glacier | Attaque ultime | R | 10 s | 13 % |  |
-| jericho | Lance | Vague de froid | Attaque spéciale | Q | 10 s | 13 % |  |
 | jericho | Rapière | Bombardement glacial | Attaque ultime | R | 10 s | 13 % |  |
 | jericho | Épées doubles | Aiguille de glace | Attaque ultime | R | 10 s | 13 % |  |
 | king | Bâton | Flambée resplendissante | Attaque ultime | R | 10 s | 13 % |  |
 | klotho | Rapière | Inscription runique : Affaissement | Attaque ultime | R | 10 s | 13 % |  |
 | manny | Épée à une main | Barrière de la prêtresse | Attaque ultime | R | 10 s | 13 % |  |
-| manny | Épée à une main | Lame de givre tournoyante | Attaque spéciale | Q | 10 s | 13 % |  |
 | manny | Épées doubles | Champ de neige du vide | Attaque ultime | R | 10 s | 13 % |  |
 | meliodas | Hache | Esprit combatif de démon | Attaque ultime | R | 10 s | 13 % |  |
 | meliodas | Épée à une main | Croix flamboyante | Attaque ultime | R | 10 s | 13 % |  |
@@ -186,7 +184,8 @@ Classement par erreur décroissante.
 | griamore | Gantelets | Poing de puissance | Attaque spéciale | Q | 10.5 s | 12 % |  |
 | slader | Nunchaku | Perforation en chaîne | Attaque spéciale | Q | 10.5 s | 12 % |  |
 | howzer | Gantelets | Impact cyclonique | Attaque spéciale | Q | 10.8 s | 12 % |  |
-| elizabeth | Baguette | Super explosion jambonique | Attaque ultime | R | 11 s | 12 % |  |
+| elizabeth | Baguette | Trajectoire des restes | Attaque spéciale | Q | 11 s | 12 % |  |
+| manny | Épée à une main | Lame de givre tournoyante | Attaque spéciale | Q | 11.2 s | 12 % |  |
 | hendrickson | Épées doubles | Épée éclair | Attaque spéciale | Q | 11.6 s | 11 % |  |
 | gowther | Grimoire | Dissonance mémorielle | Attaque spéciale | Q | 11.8 s | 11 % |  |
 | guila | Rapière | Perforation ardente | Attaque spéciale | Q | 11.9 s | 11 % |  |
@@ -198,11 +197,12 @@ Classement par erreur décroissante.
 | slader | Hache | Charge de hache | Compétence normale | E | 12 s | 11 % |  |
 | slader | Épée à deux mains | Chute de puissance | Compétence normale | E | 12 s | 11 % |  |
 | tristan | Épée à deux mains | Punisseur | Compétence normale | E | 12 s | 11 % |  |
+| jericho | Lance | Vague de froid | Attaque spéciale | Q | 12.1 s | 11 % |  |
 | howzer | Nunchaku | Poignard précis | Attaque spéciale | Q | 12.6 s | 11 % |  |
 | elaine | Grimoire | Domaine de la sainte | Attaque spéciale | Q | 12.7 s | 11 % |  |
-| escanor | Hache | Soleil condensé | Attaque spéciale | Q | 13 s | 10 % |  |
 | drake | Bâton | Lance foudroyante | Compétence normale | E | 13.2 s | 10 % |  |
 | gil-thunder | Lance | Charge électrique | Compétence normale | E | 13.2 s | 10 % |  |
+| escanor | Hache | Soleil condensé | Attaque spéciale | Q | 13.5 s | 10 % |  |
 | escanor | Épée à deux mains | Impact solaire | Attaque spéciale | Q | 13.5 s | 10 % |  |
 | griamore | Nunchaku | Pression murale | Compétence normale | E | 13.5 s | 10 % |  |
 | jericho | Épées doubles | Danse jumelle de glace | Attaque spéciale | Q | 13.6 s | 10 % |  |
@@ -223,10 +223,10 @@ Classement par erreur décroissante.
 | gil-thunder | Épée à une main | Épée foudroyante | Compétence normale | E | 15.6 s | 9 % |  |
 | hendrickson | Lance | « Tour d'acide » | Compétence normale | E | 15.7 s | 9 % |  |
 | howzer | Lance | Rafale aspirante | Compétence normale | E | 15.7 s | 9 % |  |
-| bug | Hache | Pulvérisation des abysses | Attaque spéciale | Q | 16 s | 9 % |  |
-| daisy | Baguette | Flash fruité | Attaque spéciale | Q | 16 s | 9 % |  |
 | derieri | Épée à deux mains | Entaille en croix | Attaque spéciale | Q | 16 s | 9 % |  |
 | king | Grimoire | Protecteur de la forêt | Compétence normale | E | 16 s | 9 % |  |
+| daisy | Baguette | Flash fruité | Attaque spéciale | Q | 16.1 s | 9 % |  |
+| bug | Hache | Pulvérisation des abysses | Attaque spéciale | Q | 16.2 s | 8 % |  |
 | dreydrin | Épée & bouclier | Bouclier fracassant | Compétence normale | E | 16.2 s | 8 % |  |
 | slader | Nunchaku | Chaîne perforante | Compétence normale | E | 16.2 s | 8 % |  |
 | tristan | Épées doubles | Taillade verticale | Compétence normale | E | 16.2 s | 8 % |  |
@@ -269,10 +269,10 @@ Classement par erreur décroissante.
 | elizabeth | Bâton | Vague sacrée | Compétence normale | E | 23 s | 6 % |  |
 | derieri | Gantelets | Assaut fulgurant | Compétence normale | E | 25 s | 6 % |  |
 | diane | Hache | Écrasement sismique | Attaque spéciale | Q | 25 s | 6 % |  |
-| meliodas | Hache | Pulvérisation des abysses | Attaque spéciale | Q | 25 s | 6 % |  |
 | merlin | Grimoire | Graine de givre | Compétence normale | E | 25 s | 6 % |  |
 | tioreh | Bâton | Invocation : mouton | Compétence normale | E | 25 s | 6 % |  |
 | escanor | Épée & bouclier | Assaut solaire | Attaque spéciale | Q | 25.5 s | 6 % |  |
+| meliodas | Hache | Pulvérisation des abysses | Attaque spéciale | Q | 25.8 s | 5 % |  |
 | manny | Épées doubles | Rupture d'âme gelée | Compétence normale | E | 26.9 s | 5 % |  |
 | derieri | Épée à deux mains | Taillade fracassante | Compétence normale | E | 27 s | 5 % |  |
 | meliodas | Épée à une main | Attaque enchaînée | Compétence normale | E | 27 s | 5 % |  |
