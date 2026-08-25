@@ -131,10 +131,16 @@ import { ModalStack } from "./modal-stack.js";
     return mots;
   }
 
-  /* L'image part TELLE QUELLE, sans redimensionnement. Les valeurs du panneau
-     se jouent au centieme de pourcent — 16.80 contre 16.81 designent deux
-     enchantements differents — et reduire l'image avant de la faire lire
-     reintroduirait precisement l'imprecision qu'on cherche a fuir. */
+  /* Le worker Supabase n'a pas besoin du jeu entier : Gemini ne lit que la
+     carte de droite. Envoyer une capture ultrawide de 4 a 6 Mo la faisait
+     pourtant vivre plusieurs fois en memoire (JSON entrant, base64 nettoye,
+     JSON sortant), jusqu'a tuer l'isolate avec WORKER_RESOURCE_LIMIT.
+
+     On recadre donc la carte DANS LE NAVIGATEUR, ou l'image est deja decodee.
+     Aucun redimensionnement : un pixel source reste un pixel envoye, parce que
+     16.80 et 16.81 designent deux enchantements differents. Le PNG conserve
+     egalement ces pixels sans perte. Si le recadrage ne reduit pas le poids,
+     le fichier original reste le meilleur transport. */
   function enBase64(fichier){
     return new Promise((resoudre, rejeter) => {
       const lecteur = new FileReader();
@@ -142,6 +148,51 @@ import { ModalStack } from "./modal-stack.js";
       lecteur.onerror = () => rejeter(lecteur.error || new Error("lecture"));
       lecteur.readAsDataURL(fichier);
     });
+  }
+
+  function blobDeToile(toile){
+    return new Promise((resoudre, rejeter) => {
+      toile.toBlob(blob => {
+        if(blob) resoudre(blob);
+        else rejeter(new Error("encodage du panneau impossible"));
+      }, "image/png");
+    });
+  }
+
+  async function imagePourLectureAssistee(fichier){
+    const image = await chargerImage(fichier);
+    const luminance = luminanceDe(image);
+    const zone = detecterPanneau({
+      largeur:image.naturalWidth,
+      hauteur:image.naturalHeight,
+      estClair:(x, y) => luminance(x, y) > 195
+    });
+    if(!zone) return { fichier, recadree:false };
+
+    const entete = detecterEntete({
+      estCarte:(x, y) => luminance(x, y) >= LUMINANCE_DE_CARTE
+    }, zone);
+    /* Une petite marge garde le lisere de la carte. A droite, le panneau est
+       colle au bord de l'image : conserver ce bord est plus robuste que de
+       supposer que sa derniere colonne claire contient encore chaque valeur. */
+    const marge = Math.max(4, Math.round(zone.width * 0.015));
+    const gauche = Math.max(0, zone.left - marge);
+    const haut = Math.max(0, (entete ? entete.top : zone.top) - marge);
+    const droite = image.naturalWidth;
+    const bas = Math.min(image.naturalHeight,
+      zone.top + zone.height + marge);
+    if(droite <= gauche || bas <= haut) return { fichier, recadree:false };
+
+    const toile = document.createElement("canvas");
+    toile.width = droite - gauche;
+    toile.height = bas - haut;
+    const contexte = toile.getContext("2d");
+    contexte.drawImage(image, gauche, haut, toile.width, toile.height,
+      0, 0, toile.width, toile.height);
+    const panneau = await blobDeToile(toile);
+    return panneau.size < fichier.size
+      ? { fichier:panneau, recadree:true }
+      : { fichier, recadree:false };
   }
 
   /* Le detail que `functions.invoke` cache.
@@ -193,13 +244,17 @@ import { ModalStack } from "./modal-stack.js";
         : "navigateur hors ligne");
     }
     try{
-      const image = await enBase64(fichier);
-      /* Le base64 pese un tiers de plus que les octets qu'il code, et la
-         fonction refuse au-dela de 6 Mo. Une capture 1440p non compressee
-         peut depasser : autant le dire ici plutot que de lire un 400 sec. */
+      const preparee = await imagePourLectureAssistee(fichier);
+      const image = await enBase64(preparee.fichier);
+      /* Le base64 pese un tiers de plus que les octets qu'il code. Le journal
+         rend visible le gain du recadrage si une capture atypique pose encore
+         probleme, sans jamais journaliser son contenu. */
       const octets = Math.round(image.length * 3 / 4);
       console.info("[import] lecture assistée : envoi de "
-        + Math.round(octets / 1024) + " Ko");
+        + Math.round(octets / 1024) + " Ko"
+        + (preparee.recadree
+          ? " (panneau recadré depuis " + Math.round(fichier.size / 1024) + " Ko)"
+          : ""));
       const { data, error } = await sb.functions.invoke("lecture-panneau", {
         body:{ image }
       });
