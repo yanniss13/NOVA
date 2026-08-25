@@ -214,6 +214,7 @@ def tableau(entetes, corps):
 
 
 def rendre():
+    deduits = verrous_deduits()
     debloquent, affinent, releves = lignes()
     toutes = debloquent + affinent + releves
     faites = sum(1 for l in toutes if l["mesure"] is not None)
@@ -226,11 +227,19 @@ def rendre():
         "> Les mesures se saisissent dans `data/animations-mesurees.json`,",
         "> jamais ici : cette page est réécrite à chaque exécution.",
         "",
-        "Aucune source publique ne donne ces temps. Ils se mesurent en jeu, et",
-        "cette liste existe pour rendre ce travail fini : elle dit quoi mesurer",
-        "d'abord, et ce que chaque mesure rapporte.",
+        "Les montages du jeu portent ces temps : `animations-verrous.json` en",
+        "déduit %d verrous, et la liste ci-dessous ne retient plus que ce" % len(deduits),
+        "qu'aucun fichier ne renseigne. Elle dit quoi mesurer d'abord, et ce",
+        "que chaque mesure rapporte.",
         "",
         "**Avancement : %d / %d mesurées.**" % (faites, total),
+        "",
+        "Les %d verrous déduits ne sont pas pour autant acquis : ce sont des" % len(deduits),
+        "lectures de marqueurs, pas des chronomètres. Une mesure saisie dans",
+        "`animations-mesurees.json` **écrase** la déduction pour cette",
+        "compétence. Là où les deux concordent, la déduction est confirmée ;",
+        "là où elles divergent, c'est qu'une mécanique s'intercale — et c'est",
+        "précisément ce qui vaut la peine d'être trouvé.",
         "",
         "## 1. Mesures qui débloquent maintenant — %d compétences" % len(debloquent),
         "",
