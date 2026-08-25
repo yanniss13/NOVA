@@ -413,7 +413,10 @@ class GenerateStatsBuildTests(unittest.TestCase):
             },
         }
         self.labels = {
-            "B_Atk_Equip": {"fr": "Attaque de l'équipement"},
+            "B_Atk_Equip": {
+                "fr": "Attaque de l'équipement",
+                "en": "Equipment Attack",
+            },
             "B_Atk": {"court": "ATK"},
             "B_Def": {"court": "DEF"},
             "B_MaxHp": {"court": "PV max"},
@@ -481,6 +484,7 @@ class GenerateStatsBuildTests(unittest.TestCase):
             {
                 "slug": "test-axe",
                 "nameFr": "Hache test",
+                "nameEn": "Test Axe",
                 "weaponType": "Axe",
                 "mainStat": "attack",
                 "description": "Ne doit jamais sortir",
@@ -663,11 +667,30 @@ class GenerateStatsBuildTests(unittest.TestCase):
         catalog = module.build_catalog(self.stats_root, self.weapons_root, self.metadata)
         weapon = catalog["weaponsByFile"]["7ds-armes/Hache/Hache test.webp"]
         self.assertEqual(weapon["slug"], "test-axe")
+        self.assertEqual(weapon["nameEn"], "Test Axe")
         self.assertEqual(weapon["mainStatCode"], "B_Atk_Equip")
         self.assertIn("grade-axe", weapon["gradesByGameId"])
         self.assertEqual(
             catalog["statLabels"]["B_Atk_Equip"],
-            {"fr": "Attaque de l'équipement", "family": "main", "unit": "flat"},
+            {
+                "fr": "Attaque de l'équipement",
+                "en": "Equipment Attack",
+                "family": "main",
+                "unit": "flat",
+            },
+        )
+
+    def test_catalog_keeps_english_fallback_labels_from_weapon_grades(self):
+        sub_stat = self.fixture_grade()["subStats"][0]
+        sub_stat["statLabel"] = {
+            "nameFr": "Augmentation de l'attaque",
+            "nameEn": "Attack Increase",
+        }
+        self.write_official_weapons()
+        catalog = module.build_catalog(self.stats_root, self.weapons_root, self.metadata)
+        self.assertEqual(
+            catalog["statLabels"]["I_AtkAdd_Rate"]["en"],
+            "Attack Increase",
         )
 
     def test_catalog_compacts_characters_and_weapon_passives(self):

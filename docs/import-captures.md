@@ -18,6 +18,10 @@ L'ordre n'a aucune importance : chaque capture dit elle-même de quel
 emplacement elle parle. Un dépôt ou un collage sans image est refusé avant de
 lancer la lecture.
 
+Les panneaux du jeu en **français et en anglais** sont acceptés. Le nom de
+l'arme et les libellés de statistiques sont rapprochés dans la langue affichée,
+et les nombres anglais comme `4,937` sont lus comme des milliers.
+
 Trois règles pratiques :
 
 - **Envoie les fichiers d'origine.** Une image passée par une messagerie est

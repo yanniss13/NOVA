@@ -12,6 +12,7 @@ assert.equal(typeof deduireArme, "function",
   "deduireArme doit etre expose par js/metier/ocr-arme.js");
 
 const BAGUETTE = "7ds-armes/Baguette/Baguette des ailes de la flamme noire.webp";
+const BAGUETTE_AME = "7ds-armes/Baguette/Baguette de l'âme vorace.webp";
 const RAPIERE = "7ds-armes/Rapiere/Rapière de l'âme vorace.webp";
 
 /* Les deux totaux natifs sont releves sur la capture de la Baguette. Les
@@ -45,6 +46,41 @@ assert.equal(weaponConfigStatus(BAGUETTE, {
   version:1,
   ...baguette.candidats[0]
 }), "valid", "la candidate importee doit rester une vraie configuration");
+
+/* Capture anglaise fournie par un membre : nom, stats natives et perles sont
+   tous affiches en anglais, mais doivent produire la configuration canonique. */
+const baguetteAnglaise = plain(deduireArme({
+  nom:"Gluttonous Soul Wand",
+  niveau:50,
+  passif:7,
+  herosSlug:"gowther",
+  stats:[
+    { libelle:"Equipment Attack", valeur:"4,937", section:null },
+    { libelle:"Lightning Attack", valeur:"3,453", section:null },
+    { libelle:"Lightning Burst Efficiency", valeur:"43.17%", section:null },
+    { libelle:"Lightning Attack Increase", valeur:"31.26%", section:"Enchant" },
+    { libelle:"Lightning Burst Efficiency", valeur:"17.61%", section:"Enchant" },
+    { libelle:"Crit Defense", valeur:"12.73%", section:"Enchant" }
+  ]
+}));
+assert.equal(baguetteAnglaise.statut, "unique");
+assert.equal(baguetteAnglaise.candidats.length, 1);
+assert.equal(baguetteAnglaise.candidats[0].fichier, BAGUETTE_AME);
+assert.equal(baguetteAnglaise.candidats[0].gradeGameId, "131065010");
+assert.equal(baguetteAnglaise.candidats[0].level, 50);
+assert.equal(baguetteAnglaise.candidats[0].promotion, 4);
+assert.equal(baguetteAnglaise.candidats[0].overlimit, 6);
+assert.equal(baguetteAnglaise.candidats[0].elementSuppose, false);
+assert.deepEqual(
+  baguetteAnglaise.candidats[0].enchantments.map(item => ({
+    stat:item.stat, value:item.value, element:item.element
+  })),
+  [
+    { stat:"Thunder_Rate", value:3126, element:"thunder" },
+    { stat:"Thunder_Burst_Gauge_Rate", value:1761, element:"thunder" },
+    { stat:"C_Critical_DamRes_Rate", value:1273, element:"thunder" }
+  ]
+);
 
 /* La Rapiere ne lit aucune statistique elementaire de perle. L'element Vent
    natif departage la configuration retenue, mais la supposition doit rester
