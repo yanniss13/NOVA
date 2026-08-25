@@ -4,11 +4,19 @@
 > Les mesures se saisissent dans `data/animations-mesurees.json`,
 > jamais ici : cette page est réécrite à chaque exécution.
 
-Aucune source publique ne donne ces temps. Ils se mesurent en jeu, et
-cette liste existe pour rendre ce travail fini : elle dit quoi mesurer
-d'abord, et ce que chaque mesure rapporte.
+Les montages du jeu portent ces temps : `animations-verrous.json` en
+déduit 291 verrous, et la liste ci-dessous ne retient plus que ce
+qu'aucun fichier ne renseigne. Elle dit quoi mesurer d'abord, et ce
+que chaque mesure rapporte.
 
 **Avancement : 0 / 13 mesurées.**
+
+Les 291 verrous déduits ne sont pas pour autant acquis : ce sont des
+lectures de marqueurs, pas des chronomètres. Une mesure saisie dans
+`animations-mesurees.json` **écrase** la déduction pour cette
+compétence. Là où les deux concordent, la déduction est confirmée ;
+là où elles divergent, c'est qu'une mécanique s'intercale — et c'est
+précisément ce qui vaut la peine d'être trouvé.
 
 ## 1. Mesures qui débloquent maintenant — 0 compétences
 
