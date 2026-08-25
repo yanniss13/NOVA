@@ -1,0 +1,552 @@
+<title>Défenses des trois monstres</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=JetBrains+Mono:wght@400;600&display=swap">
+
+<style>
+  :root {
+    --ground:      #F6F8F5;
+    --surface:     #FFFFFF;
+    --surface-alt: #EDF1EC;
+    --ink:         #161E1A;
+    --ink-soft:    #4A5A51;
+    --ink-faint:   #7B8A82;
+    --rule:        #D8E0D9;
+    --rule-strong: #B9C6BC;
+    --accent:      #1B6B58;
+    --accent-soft: #E2EFEA;
+    --warn:        #9A5B1E;
+    --warn-soft:   #F7EDE0;
+    --warn-rule:   #DFBE93;
+
+    --f-display: "Bricolage Grotesque", "Trebuchet MS", sans-serif;
+    --f-body:    "Source Serif 4", Georgia, "Times New Roman", serif;
+    --f-mono:    "JetBrains Mono", "Consolas", "Courier New", monospace;
+
+    --step--1: clamp(.78rem, .76rem + .1vw, .84rem);
+    --step-0:  clamp(1rem, .97rem + .15vw, 1.09rem);
+    --step-1:  clamp(1.2rem, 1.13rem + .34vw, 1.42rem);
+    --step-2:  clamp(1.5rem, 1.36rem + .68vw, 1.95rem);
+    --step-3:  clamp(2rem, 1.7rem + 1.4vw, 2.9rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground:      #10150F;
+      --surface:     #171E19;
+      --surface-alt: #1E2721;
+      --ink:         #E7EDE7;
+      --ink-soft:    #A8B8AE;
+      --ink-faint:   #7C8C83;
+      --rule:        #2A352E;
+      --rule-strong: #3C4A41;
+      --accent:      #5FC0A2;
+      --accent-soft: #172A24;
+      --warn:        #DFA363;
+      --warn-soft:   #2A2016;
+      --warn-rule:   #5C4527;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground:      #10150F;
+    --surface:     #171E19;
+    --surface-alt: #1E2721;
+    --ink:         #E7EDE7;
+    --ink-soft:    #A8B8AE;
+    --ink-faint:   #7C8C83;
+    --rule:        #2A352E;
+    --rule-strong: #3C4A41;
+    --accent:      #5FC0A2;
+    --accent-soft: #172A24;
+    --warn:        #DFA363;
+    --warn-soft:   #2A2016;
+    --warn-rule:   #5C4527;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: var(--step-0);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .page {
+    max-width: 62rem;
+    margin: 0 auto;
+    padding: clamp(1.5rem, 1rem + 2.5vw, 4rem) clamp(1rem, .6rem + 2vw, 2.5rem) 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3.25rem;
+  }
+
+  /* ---- en-tete ---- */
+  .masthead { display: flex; flex-direction: column; gap: 1rem; }
+
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: var(--step--1);
+    letter-spacing: .13em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0;
+  }
+
+  h1 {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: var(--step-3);
+    line-height: 1.02;
+    letter-spacing: -.02em;
+    text-wrap: balance;
+    margin: 0;
+  }
+
+  .standfirst {
+    max-width: 40rem;
+    font-size: var(--step-1);
+    line-height: 1.45;
+    color: var(--ink-soft);
+    margin: 0;
+  }
+
+  .provenance {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+    gap: .1rem 1.75rem;
+    padding-top: 1.25rem;
+    border-top: 2px solid var(--rule-strong);
+    font-family: var(--f-mono);
+    font-size: var(--step--1);
+  }
+  .provenance div { display: flex; flex-direction: column; gap: .15rem; padding: .55rem 0; }
+  .provenance dt { color: var(--ink-faint); letter-spacing: .06em; text-transform: uppercase; font-size: .82em; }
+  .provenance dd { margin: 0; color: var(--ink); }
+
+  /* ---- sections ---- */
+  section { display: flex; flex-direction: column; gap: 1.15rem; }
+
+  h2 {
+    font-family: var(--f-display);
+    font-weight: 700;
+    font-size: var(--step-2);
+    line-height: 1.1;
+    letter-spacing: -.015em;
+    margin: 0;
+    padding-bottom: .5rem;
+    border-bottom: 1px solid var(--rule);
+    text-wrap: balance;
+  }
+
+  h3 {
+    font-family: var(--f-display);
+    font-weight: 500;
+    font-size: var(--step-1);
+    margin: 1rem 0 0;
+    color: var(--ink);
+  }
+
+  p { margin: 0; max-width: 42rem; }
+  p + p { margin-top: .7rem; }
+
+  .lede { color: var(--ink-soft); }
+
+  code, .mono { font-family: var(--f-mono); font-size: .88em; }
+  code {
+    background: var(--surface-alt);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+    padding: .08em .34em;
+    word-break: break-word;
+  }
+
+  strong { font-weight: 600; }
+
+  /* ---- encarts ---- */
+  .note {
+    display: flex;
+    flex-direction: column;
+    gap: .45rem;
+    background: var(--warn-soft);
+    border: 1px solid var(--warn-rule);
+    border-left: 4px solid var(--warn);
+    border-radius: 2px;
+    padding: 1rem 1.15rem;
+  }
+  .note .label {
+    font-family: var(--f-mono);
+    font-size: var(--step--1);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--warn);
+  }
+  .note p { max-width: none; }
+
+  .note--calm {
+    background: var(--accent-soft);
+    border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+    border-left-color: var(--accent);
+  }
+  .note--calm .label { color: var(--accent); }
+
+  /* ---- tableaux ---- */
+  .scroller {
+    overflow-x: auto;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    background: var(--surface);
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-family: var(--f-mono);
+    font-size: var(--step--1);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  caption {
+    caption-side: top;
+    text-align: left;
+    font-family: var(--f-display);
+    font-weight: 500;
+    font-size: var(--step-0);
+    padding: .75rem 1rem .6rem;
+    color: var(--ink-soft);
+    white-space: normal;
+  }
+
+  th, td { padding: .5rem .85rem; text-align: right; border-bottom: 1px solid var(--rule); }
+  thead th {
+    position: sticky;
+    top: 0;
+    background: var(--surface-alt);
+    color: var(--ink);
+    font-weight: 600;
+    border-bottom: 2px solid var(--rule-strong);
+    line-height: 1.3;
+  }
+  thead th .sub { display: block; font-weight: 400; color: var(--ink-faint); font-size: .88em; }
+
+  th[scope="row"] {
+    text-align: left;
+    font-weight: 400;
+    font-family: var(--f-body);
+    font-size: 1.06em;
+    white-space: normal;
+    min-width: 13rem;
+  }
+  th[scope="row"] .code { display: block; font-family: var(--f-mono); font-size: .76em; color: var(--ink-faint); }
+
+  tbody tr:last-child th, tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover { background: var(--surface-alt); }
+
+  .zero { color: var(--ink-faint); }
+  .fake { color: var(--warn); }
+  .hot  { color: var(--accent); font-weight: 600; }
+  .absent { color: var(--ink-faint); font-style: italic; font-family: var(--f-body); }
+
+  .rowgroup th {
+    text-align: left;
+    font-family: var(--f-mono);
+    font-size: .96em;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    background: var(--surface-alt);
+    font-weight: 400;
+    padding-top: .6rem;
+    padding-bottom: .6rem;
+  }
+
+  ul { margin: 0; padding-left: 1.15rem; display: flex; flex-direction: column; gap: .4rem; max-width: 42rem; }
+  li::marker { color: var(--accent); }
+
+  footer {
+    border-top: 1px solid var(--rule);
+    padding-top: 1.25rem;
+    color: var(--ink-faint);
+    font-size: var(--step--1);
+    font-family: var(--f-mono);
+    line-height: 1.7;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <p class="eyebrow">Seven Deadly Sins: Origin — données client</p>
+    <h1>Défenses des trois monstres</h1>
+    <p class="standfirst">
+      Statistiques défensives complètes du Lapin mutilateur rapide, du Cache-cache
+      et de la Pousse, lues dans les tables du jeu — pour rétro-ingénierie de la
+      formule de dégâts.
+    </p>
+    <dl class="provenance">
+      <div><dt>Table source</dt><dd>Actor/NpcStatGroupTable</dd></div>
+      <div><dt>Groupes</dt><dd>1 020 × 101 colonnes</dd></div>
+      <div><dt>Build du jeu</dt><dd>1.8.1.2</dd></div>
+      <div><dt>Extraction</dt><dd>25 août 2026</dd></div>
+    </dl>
+  </header>
+
+  <section>
+    <h2>Lire ces nombres</h2>
+    <p class="lede">
+      Trois choses à savoir avant de brancher quoi que ce soit dans une formule.
+      Les deux premières font perdre des heures.
+    </p>
+
+    <div class="note">
+      <span class="label">Piège 1 — l'acteur fantôme</span>
+      <p>
+        Chacun des trois noms possède un acteur pointant sur le groupe
+        <code>stat_poweroverwhelming</code> : <strong>9 999 999 PV, 0 défense,
+        99,99 % de résistance partout</strong>. C'est un groupe de test. Si tes
+        mesures tombent dessus, elles ne veulent rien dire. Les lignes concernées
+        sont écartées des tableaux ci-dessous.
+      </p>
+    </div>
+
+    <div class="note">
+      <span class="label">Piège 2 — un nom, plusieurs créatures</span>
+      <p>
+        Un nom français ne désigne pas une créature mais plusieurs acteurs, de
+        puissances très différentes. « Cache-cache » en compte six, dont deux
+        illusions à 1 PV (<code>stat_common_echomonster</code>) : ce sont les
+        copies de la quête où ils prennent l'apparence de Tioré. Le même nom
+        couvre aussi un palier à 10 935 PV et un autre à 52 693.
+      </p>
+    </div>
+
+    <div class="note note--calm">
+      <span class="label">Unités</span>
+      <p>
+        Tous les taux sont en <strong>dix-millièmes</strong> : <code>1000</code>
+        vaut 10 %, <code>9500</code> vaut 95 %. PV, défense, attaque et précision
+        sont des valeurs brutes.
+      </p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Lapin mutilateur rapide</h2>
+    <p class="lede">
+      Clé <code>local_mon_name_rabbit_0001</code> — 3 acteurs, dont
+      <span class="mono">51100037</span> écarté (groupe de test).
+    </p>
+
+    <div class="scroller">
+      <table>
+        <caption>Deux paliers de puissance sous le même nom.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Statistique</th>
+            <th scope="col">50101117<span class="sub">stat_50101117</span></th>
+            <th scope="col">50105113<span class="sub">stat_50105113</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="rowgroup"><th colspan="3">Base</th></tr>
+          <tr><th scope="row">PV<span class="code">B_MaxHp</span></th><td>980</td><td>8 748</td></tr>
+          <tr><th scope="row">Défense<span class="code">B_Def</span></th><td class="hot">162</td><td class="hot">456</td></tr>
+          <tr><th scope="row">Attaque<span class="code">B_Atk</span></th><td>149</td><td>526</td></tr>
+          <tr><th scope="row">Vitesse<span class="code">Move_Spd</span></th><td>500</td><td>500</td></tr>
+          <tr><th scope="row">Précision<span class="code">A_Accuracy</span></th><td>54</td><td>154</td></tr>
+
+          <tr class="rowgroup"><th colspan="3">Mitigation</th></tr>
+          <tr><th scope="row">Résistance au percement<span class="code">D_Protect_CurRes_Rate</span></th><td>1000 · 10 %</td><td>1000 · 10 %</td></tr>
+          <tr><th scope="row">Réduction de tous les dégâts<span class="code">D_All_DamRes_Rate</span></th><td class="zero">0</td><td class="zero">0</td></tr>
+          <tr><th scope="row">Réduction dégâts normaux<span class="code">D_Normal_DamRes_Rate</span></th><td class="zero">0</td><td class="zero">0</td></tr>
+          <tr><th scope="row">Absorption<span class="code">D_DamAbs_Rate</span></th><td class="zero">0</td><td class="zero">0</td></tr>
+          <tr><th scope="row">Augmentation de défense<span class="code">I_DefAdd_Rate</span></th><td class="zero">0</td><td class="zero">0</td></tr>
+
+          <tr class="rowgroup"><th colspan="3">Critique et blocage</th></tr>
+          <tr><th scope="row">Résistance critique<span class="code">C_Critical_ResRate</span></th><td>1000 · 10 %</td><td>1000 · 10 %</td></tr>
+          <tr><th scope="row">Défense critique<span class="code">C_Critical_DamRes_Rate</span></th><td>300 · 3 %</td><td>610 · 6,1 %</td></tr>
+          <tr><th scope="row">Blocage<span class="code">A_Block</span></th><td class="zero">0</td><td class="zero">0</td></tr>
+          <tr><th scope="row">Taux de blocage<span class="code">A_Block_Rate</span></th><td class="zero">0</td><td class="zero">0</td></tr>
+          <tr><th scope="row">Réduction dégâts bloqués<span class="code">D_Block_DamRes_Rate</span></th><td>9500 · 95 %</td><td>9500 · 95 %</td></tr>
+
+          <tr class="rowgroup"><th colspan="3">Offensif (pour mémoire)</th></tr>
+          <tr><th scope="row">Taux critique<span class="code">C_Critical_Rate</span></th><td>500 · 5 %</td><td>725 · 7,25 %</td></tr>
+          <tr><th scope="row">Dégâts critiques<span class="code">C_Critical_Dam_Rate</span></th><td>1500 · 15 %</td><td>1925 · 19,25 %</td></tr>
+          <tr><th scope="row">Jauge de Déluge<span class="code">M_Burst_Gauge</span></th><td>300</td><td>300</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Élémentaire :</strong> tout à zéro — aucune résistance, aucune faiblesse.</p>
+  </section>
+
+  <section>
+    <h2>Cache-cache</h2>
+    <p class="lede">
+      Clé <code>local_mon_name_hideandseek_0001</code> — 6 acteurs, dont
+      <span class="mono">51100122</span> écarté (groupe de test).
+      Les deux colonnes <span class="mono">50305165</span> et
+      <span class="mono">50305166</span> sont les illusions.
+    </p>
+
+    <div class="scroller">
+      <table>
+        <caption>Cinq acteurs réels : deux paliers de combat, deux illusions, un doublon.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Statistique</th>
+            <th scope="col">50105102<span class="sub">stat_50105102</span></th>
+            <th scope="col">50305101<span class="sub">stat_50305101</span></th>
+            <th scope="col">50305176<span class="sub">stat_50305176</span></th>
+            <th scope="col">50305165 / 66<span class="sub">common_echomonster</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="rowgroup"><th colspan="5">Base</th></tr>
+          <tr><th scope="row">PV<span class="code">B_MaxHp</span></th><td>10 935</td><td>52 693</td><td>52 693</td><td class="fake">1</td></tr>
+          <tr><th scope="row">Défense<span class="code">B_Def</span></th><td class="hot">480</td><td class="hot">1 812</td><td class="hot">1 812</td><td class="fake">0</td></tr>
+          <tr><th scope="row">Attaque<span class="code">B_Atk</span></th><td>585</td><td>2 387</td><td>2 387</td><td class="fake">1</td></tr>
+          <tr><th scope="row">Vitesse<span class="code">Move_Spd</span></th><td>500</td><td>500</td><td>500</td><td>500</td></tr>
+          <tr><th scope="row">Précision<span class="code">A_Accuracy</span></th><td>154</td><td>362</td><td>362</td><td class="fake">0</td></tr>
+
+          <tr class="rowgroup"><th colspan="5">Mitigation</th></tr>
+          <tr><th scope="row">Résistance au percement<span class="code">D_Protect_CurRes_Rate</span></th><td>1000 · 10 %</td><td>1500 · 15 %</td><td>1500 · 15 %</td><td class="fake">0</td></tr>
+          <tr><th scope="row">Réduction de tous les dégâts<span class="code">D_All_DamRes_Rate</span></th><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+          <tr><th scope="row">Réduction dégâts normaux<span class="code">D_Normal_DamRes_Rate</span></th><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+          <tr><th scope="row">Absorption<span class="code">D_DamAbs_Rate</span></th><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+          <tr><th scope="row">Augmentation de défense<span class="code">I_DefAdd_Rate</span></th><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+
+          <tr class="rowgroup"><th colspan="5">Critique et blocage</th></tr>
+          <tr><th scope="row">Résistance critique<span class="code">C_Critical_ResRate</span></th><td>1000 · 10 %</td><td>1500 · 15 %</td><td>1500 · 15 %</td><td class="fake">0</td></tr>
+          <tr><th scope="row">Défense critique<span class="code">C_Critical_DamRes_Rate</span></th><td>610 · 6,1 %</td><td>1943 · 19,43 %</td><td>1943 · 19,43 %</td><td class="fake">0</td></tr>
+          <tr><th scope="row">Blocage<span class="code">A_Block</span></th><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+          <tr><th scope="row">Taux de blocage<span class="code">A_Block_Rate</span></th><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+          <tr><th scope="row">Réduction dégâts bloqués<span class="code">D_Block_DamRes_Rate</span></th><td>9500 · 95 %</td><td>9500 · 95 %</td><td>9500 · 95 %</td><td class="fake">0</td></tr>
+
+          <tr class="rowgroup"><th colspan="5">Offensif (pour mémoire)</th></tr>
+          <tr><th scope="row">Taux critique<span class="code">C_Critical_Rate</span></th><td>725 · 7,25 %</td><td>1693 · 16,93 %</td><td>1693 · 16,93 %</td><td class="fake">0</td></tr>
+          <tr><th scope="row">Dégâts critiques<span class="code">C_Critical_Dam_Rate</span></th><td>1925 · 19,25 %</td><td>3753 · 37,53 %</td><td>3753 · 37,53 %</td><td class="fake">0</td></tr>
+          <tr><th scope="row">Jauge de Déluge<span class="code">M_Burst_Gauge</span></th><td>300</td><td>300</td><td>300</td><td>1000</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p><strong>Élémentaire :</strong> tout à zéro sur les cinq — aucune résistance, aucune faiblesse.</p>
+  </section>
+
+  <section>
+    <h2>Pousse</h2>
+    <p class="lede">
+      Clé <code>local_mon_name_sprout_0001</code> — 2 acteurs, dont
+      <span class="mono">51100029</span> écarté (groupe de test).
+      Un seul acteur réel, et le seul des trois monstres à porter des faiblesses.
+    </p>
+
+    <div class="scroller">
+      <table>
+        <caption>Statistiquement identique au petit lapin — seules les faiblesses la distinguent.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Statistique</th>
+            <th scope="col">50101122<span class="sub">stat_50101122</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="rowgroup"><th colspan="2">Base</th></tr>
+          <tr><th scope="row">PV<span class="code">B_MaxHp</span></th><td>980</td></tr>
+          <tr><th scope="row">Défense<span class="code">B_Def</span></th><td class="hot">162</td></tr>
+          <tr><th scope="row">Attaque<span class="code">B_Atk</span></th><td>149</td></tr>
+          <tr><th scope="row">Vitesse<span class="code">Move_Spd</span></th><td>500</td></tr>
+          <tr><th scope="row">Précision<span class="code">A_Accuracy</span></th><td>54</td></tr>
+
+          <tr class="rowgroup"><th colspan="2">Mitigation</th></tr>
+          <tr><th scope="row">Résistance au percement<span class="code">D_Protect_CurRes_Rate</span></th><td>1000 · 10 %</td></tr>
+          <tr><th scope="row">Réduction de tous les dégâts<span class="code">D_All_DamRes_Rate</span></th><td class="zero">0</td></tr>
+          <tr><th scope="row">Réduction dégâts normaux<span class="code">D_Normal_DamRes_Rate</span></th><td class="zero">0</td></tr>
+          <tr><th scope="row">Absorption<span class="code">D_DamAbs_Rate</span></th><td class="zero">0</td></tr>
+          <tr><th scope="row">Augmentation de défense<span class="code">I_DefAdd_Rate</span></th><td class="zero">0</td></tr>
+
+          <tr class="rowgroup"><th colspan="2">Critique et blocage</th></tr>
+          <tr><th scope="row">Résistance critique<span class="code">C_Critical_ResRate</span></th><td>1000 · 10 %</td></tr>
+          <tr><th scope="row">Défense critique<span class="code">C_Critical_DamRes_Rate</span></th><td>300 · 3 %</td></tr>
+          <tr><th scope="row">Blocage<span class="code">A_Block</span></th><td class="zero">0</td></tr>
+          <tr><th scope="row">Taux de blocage<span class="code">A_Block_Rate</span></th><td class="zero">0</td></tr>
+          <tr><th scope="row">Réduction dégâts bloqués<span class="code">D_Block_DamRes_Rate</span></th><td>9500 · 95 %</td></tr>
+
+          <tr class="rowgroup"><th colspan="2">Faiblesses élémentaires</th></tr>
+          <tr><th scope="row">Vent<span class="code">Wind_Weakness_Rate</span></th><td class="hot">1000 · 10 %</td></tr>
+          <tr><th scope="row">Feu<span class="code">Fire_Weakness_Rate</span></th><td class="hot">1000 · 10 %</td></tr>
+          <tr><th scope="row">Tous les autres éléments</th><td class="zero">0</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Le schéma élémentaire est asymétrique</h2>
+    <p class="lede">
+      Chaque élément devrait avoir trois colonnes. Ce n'est pas le cas, et
+      l'absence n'est pas un zéro : la colonne n'existe pas du tout dans la table.
+    </p>
+
+    <div class="scroller">
+      <table>
+        <caption>Ce qui existe réellement dans <span class="mono">NpcStatGroupTable</span>.</caption>
+        <thead>
+          <tr>
+            <th scope="col">Élément</th>
+            <th scope="col">…_Res<span class="sub">points</span></th>
+            <th scope="col">…_Element_Res_Rate<span class="sub">taux</span></th>
+            <th scope="col">…_Weakness_Rate<span class="sub">faiblesse</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row">Physique <span class="code">Default</span></th><td class="absent">absente</td><td>existe</td><td>existe</td></tr>
+          <tr><th scope="row">Thunder, Wind, Fire, Ice,<br>Earth, Dark, Holy</th><td>existe</td><td>existe</td><td>existe</td></tr>
+          <tr><th scope="row">Venom</th><td>existe</td><td class="absent">absente</td><td class="absent">absente</td></tr>
+          <tr><th scope="row">Water</th><td>existe</td><td class="absent">absente</td><td class="absent">absente</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Bornes du moteur de combat</h2>
+    <p class="lede">
+      Lues dans le client, et souvent responsables de l'écart entre une formule
+      théorique et les dégâts observés.
+    </p>
+    <div class="scroller">
+      <table>
+        <caption>Planchers et plafonds appliqués après calcul.</caption>
+        <thead>
+          <tr><th scope="col">Constante</th><th scope="col">Valeur</th><th scope="col">Effet</th></tr>
+        </thead>
+        <tbody>
+          <tr><th scope="row"><span class="mono">battle_min_final_atk</span></th><td>1</td><td>plancher d'attaque finale</td></tr>
+          <tr><th scope="row"><span class="mono">battle_min_damres_rate</span></th><td>500 · 5 %</td><td>réduction minimale</td></tr>
+          <tr><th scope="row"><span class="mono">battle_max_damres_rate</span></th><td>10000 · 100 %</td><td>réduction maximale</td></tr>
+          <tr><th scope="row"><span class="mono">battle_max_sum_protect_cur_rate</span></th><td>9000 · 90 %</td><td>plafond du percement cumulé</td></tr>
+          <tr><th scope="row"><span class="mono">battle_min_elementdam_rate</span></th><td>500 · 5 %</td><td>plancher de dégâts élémentaires</td></tr>
+          <tr><th scope="row"><span class="mono">battle_max_critical_rate</span></th><td>10000 · 100 %</td><td>plafond du taux critique</td></tr>
+          <tr><th scope="row"><span class="mono">battle_min_critical_dam_rate</span></th><td>10000 · 100 %</td><td>plancher des dégâts critiques</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      Extrait de <span class="mono">Actor/NpcStatGroupTable</span>, résolu depuis
+      <span class="mono">MonsterActorTable</span> et <span class="mono">NPCActorTable</span>
+      via la clé <span class="mono">Local_Key</span> des noms français.<br>
+      Build de jeu 1.8.1.2 · export du 25 août 2026 · toutes les valeurs sont
+      celles du client, non modifiées.
+    </p>
+  </footer>
+
+</div>

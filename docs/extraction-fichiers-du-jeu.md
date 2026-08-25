@@ -1,4 +1,4 @@
-# Extraction des fichiers du jeu (FModel) — état au 23 août 2026
+# Extraction des fichiers du jeu (FModel) — état au 25 août 2026
 
 Point d'arrêt d'une session interrompue. Ce qui est écrit ici a été **vérifié en
 exécutant**, pas planifié. Ce qui reste à faire est signalé comme tel.
@@ -26,10 +26,14 @@ FModel 4.4.4 dans `C:\Users\yanni\Downloads\FModel\FModel.exe`.
 
 - **UE Version : `GAME_UE5_5`** — avec `GAME_UE4_28` (le défaut), tout échoue en
   `OverflowException` et un seul pak se charge.
-- Mapping file : `C:\Users\yanni\Downloads\5.5.4-0+UE5-SevenDeadlySins.usmap`
+- Mapping file : `C:\Users\yanni\Downloads\mappings.usmap` — case *Overwrite*
+  cochée. C'est toujours ce nom-là que FModel lit ; chaque version reçoit en
+  plus une copie nommée (`mappings-1.7.usmap`, `mappings-1.8.usmap`) pour
+  qu'on sache laquelle est chargée.
 - Désactiver `Preview New Explorer System` : sa barre de recherche ne trouve rien,
   pas même des noms de fichiers présents.
-- Output Directory : `C:\Users\yanni\Downloads\FModel\Output`
+- Output Directory : `C:\Users\yanni\Downloads\FModel\Output` — voir la règle
+  de rangement des extractions plus bas.
 
 ## Où sont les données
 
@@ -334,14 +338,484 @@ Consequence : les 45 % de montages sans fenetre d'annulation sont une
 **propriete de la donnee**, pas un defaut de lecture. Et `animations-verrous.json`
 est valide.
 
-L'ancien export est conserve pour comparaison dans
-`Output/Exports-ANCIEN-usmap-5.5.4/`, avec un LISEZ-MOI.
+L'ancien export avait ete conserve pour cette comparaison dans
+`Output/Exports-ANCIEN-usmap-5.5.4/`. Elle est faite : le dossier a ete supprime
+le 25 aout, voir la section suivante.
+
+## Le usmap 1.8 et le rangement des extractions — 25 août 2026
+
+Un usmap plus récent est arrivé : `Downloads/mappings.usmap`, 3 232 103 octets,
+md5 `4ac00d9a71d7ea1be4fca0dac02e98dc`, archivé sous `mappings-1.8.usmap`.
+FModel le charge déjà (`Mappings pulled from 'mappings.usmap'` dans le journal).
+
+`Content/Table` a été exporté le 25 août : 1 492 fichiers, 358 Mo, ~5 minutes.
+
+### La règle : `Exports/` est toujours l'extraction courante
+
+Les ~30 scripts d'`outils/fmodel/` codent en dur
+`Output/Exports/SevenDeadlySins/Content/`. Plutôt que de les repointer à chaque
+usmap, c'est le dossier qui bouge :
+
+1. renommer `Exports/` en `Exports-usmap-<ancienne version>/` ;
+2. y déposer un `LISEZ-MOI.txt` disant ce qu'il contient et pourquoi il survit ;
+3. laisser FModel recréer un `Exports/` vide, où atterrit la nouvelle extraction.
+
+Le renommage marche **FModel ouvert** — inutile de le fermer, contrairement à ce
+qu'a fait croire l'échec sur `UIImg` en août.
+
+État du disque de sortie :
+
+| Dossier | Contenu |
+|---|---|
+| `Output/Exports/` | usmap 1.8 — `Table/` seulement (358 Mo). `Cha`, `TextDatas`, `Localization`, `UIImg` restent à ré-exporter si besoin. |
+| `Output/Exports-usmap-1.7/` | 2,8 Go, l'extraction complète des 23–24 août |
+
+`Exports-ANCIEN-usmap-5.5.4/` a été **supprimé** : sa seule raison d'être était
+la comparaison des montages 1.7 contre 5.5.4, conclue plus haut (1 906 / 1 906
+identiques). Une archive se garde le temps d'une comparaison, pas plus.
+
+### Verdict : 38 tables débloquées, dont les trois tables de compétences
+
+Mesuré en relançant `bilan-tables.js` sur les deux extractions, à la même aune
+(il accepte désormais un chemin en argument) :
+
+| | usmap 1.7 | usmap 1.8 |
+|---|---:|---:|
+| DataTable avec des lignes | 795 / 859 | **833 / 834** |
+| DataTable creuses | 64 | **1** |
+
+Le compte tombe juste : les 64 creuses de la 1.7 se répartissent en 25 non
+ré-exportées (des `Scene/Sector/*_sectortable`, déjà vides), **38 débloquées**,
+et 1 qui résiste — `Quest/QuestAreaPreview`, sans intérêt pour nous.
+
+Et surtout, **zéro `Could not read DataTable correctly` dans le journal du
+25 août** : les 42 erreurs qu'il contient datent toutes du 24.
+
+Les trois cibles du doc sont ouvertes :
+
+| Table | Lignes |
+|---|---:|
+| `Skill/PC_SkillTable` | 2 163 |
+| `Skill/Mon_SkillTable` | 2 357 |
+| `Skill/SkillTable` | 1 156 |
+
+Le reste des 38 : `Actor/MonsterActorTable` (1 451), `Actor/NPCActorTable`
+(1 415), `Achievement/DictionaryTable` (1 690), `Fx/FxTable` (1 288), les sept
+tables `Quest/*` (2 181 au total), `Dungeon`, `Gacha`, `Labyrinthos`, `MiniGame`.
+
+### Piège du bilan : `Table/` ne contient pas que des tables
+
+`Table/Directing/` héberge **657 assets `OGDirecting_*`** — de la mise en scène
+de cinématiques, sans clé `Rows` et sans être en échec pour autant. La première
+version de `bilan-tables.js` les comptait comme vides et annonçait « 833 lues,
+659 vides », soit une régression massive là où il n'y avait qu'un export sain.
+Le script distingue maintenant trois catégories : DataTable lues, DataTable
+creuses, et assets hors-sujet. Seule la deuxième signale un problème.
+
+Un fichier reste à 0 octet dans les deux extractions :
+`Scene/Sector/52003002_sectortable.json`. Antérieur au usmap 1.8.
+
+### Ce que `PC_SkillTable` apporte
+
+2 163 compétences, 115 colonnes, indexées par **le `gameId` du dépôt**
+(`tristan_common_avoidanceskill`). Les 376 compétences de `data/competences.js`
+s'y retrouvent **toutes les 376**.
+
+`Cooltime` est en **millisecondes**. Confronté au champ `recharge` de
+`competences.js`, repris de SevenCodex :
+
+| | Compétences |
+|---|---:|
+| recharge des deux côtés | 224 |
+| concordantes | **207** |
+| divergentes | 17 |
+| aucune recharge des deux côtés | 151 |
+| recharge au dépôt, mais 0 dans le jeu | 1 |
+
+Sur les 17 divergences, **13 sont une troncature à la seconde** de SevenCodex
+(16,2 s publié 16 ; 7,5 s publié 7). Restent **4 vrais désaccords** :
+
+| `gameId` | Dépôt | Jeu |
+|---|---:|---:|
+| `elizabeth_wand_skill_q` | 10,0 s | **11,0 s** |
+| `elizabeth_wand_skill_r` | 11,0 s | **10,0 s** |
+| `jericho_lance_skill_rmb` | 10,0 s | **12,1 s** |
+| `manny_sword1h_skill_rmb` | 10,0 s | **11,2 s** |
+
+Les deux premiers sont **inversés** : Q et R d'Elizabeth se sont échangé leur
+recharge quelque part entre le jeu et la fiche.
+
+Autres colonnes renseignées et pas encore exploitées : `UseStamina`,
+`ChargeTime` (58 compétences), `CoolTimeGroup` (315 — des recharges partagées),
+`ComboSkill`, `SkillMaxStack`, et l'économie de jauges (`UI_BurstGauge`,
+`UI_TagGauge`, `UI_MagicForceGauge`).
+
+**Pas de taux de dégâts dans cette table** : aucune colonne ne les porte. La
+question reste donc ouverte, et `PC_SkillBehaviorTable` — dont les 2 703 entrées
+d'attaque ont toutes `AttackRate = 0` — est à réexaminer avec le usmap 1.8.
+
+### Ce que le usmap 1.8 ne change pas
+
+Vérifié en ré-exportant et en comparant, pas supposé.
+
+| | Résultat |
+|---|---|
+| `TextDatas` (dont `HitNotify`) | **8 323 / 8 323 identiques**, octet pour octet |
+| `Cha/PC` | 16 518 fichiers de part et d'autre, **151 diffèrent en octets** |
+| dont montages `_MTG` | 52 sur 4 489 |
+| **marqueurs exploités** (`SequenceLength`, `EHit`, `EEnableSkipBy`) | **0 changement** |
+
+Les 151 écarts se répartissent en 59 `AnimBP` (de la logique d'animation, pas du
+chronométrage), 52 montages et 40 séquences diverses. Curiosité : **102 fichiers
+ont maigri** avec le usmap le plus récent, contre 49 qui ont grossi.
+
+Conséquence : `data/temps-action.json`, `animations-extraites.json`,
+`cycles-auto-attaque.json` et `animations-verrous.json` **n'ont pas à être
+régénérés**. Deux usmap successifs, le même résultat — la thèse « les montages
+et les fichiers bruts ne dépendent pas du usmap » est maintenant vérifiée deux
+fois plutôt que déduite.
+
+## Comment les mises à jour du jeu arrivent sur le disque — 25 août 2026
+
+**FModel ne suit pas le jeu en temps réel.** Il lit les paks au chargement et ne
+les rouvre plus : ce qu'il montre est l'état du disque à l'instant de son
+démarrage. Un `Directory → Reload` ou un redémarrage suffit à lui faire voir de
+nouveaux paks.
+
+Mais le piège est ailleurs. **`PakCache` est rempli par le téléchargeur du jeu,
+pas par Steam.** Tant que le jeu n'est pas lancé, un correctif publié le jour
+même n'existe nulle part sur la machine. Le 25 août, une mise à jour ajoutait Ban
+et les armures de transcendance ; le disque, lui, n'avait pas bougé depuis le
+**13 août** :
+
+| Contrôle | Commande |
+|---|---|
+| Version installée | `grep BUILD_ID PakCache/CachedBuildManifest.txt` |
+| Paks touchés depuis une date | `find PakCache -name '*.pak' -newermt '2026-08-24'` |
+| Dernier lancement du jeu | date de `Saved/Config/Windows/GameUserSettings.ini` |
+
+Ordre correct : lancer le jeu → laisser le patch descendre en entier → quitter →
+**puis** démarrer FModel → exporter. Et se méfier : un nouveau build peut exiger
+un nouveau usmap, exactement comme le 5.5.4 est devenu inutilisable.
+
+## Le contenu dormant : sept héros livrés sans données
+
+Les paks du 13 août contiennent des assets d'animation pour des héros **absents
+de `HitNotify` comme de `PC_SkillTable`**. Le contenu arrive en couches : les
+modèles et les animations d'abord, les données de jeu avec le correctif qui les
+active.
+
+| Héros | Montages | Avec fenêtre d'annulation | Armes |
+|---|---:|---:|---|
+| **Ban** | 137 | 41 | Cudgel3c, Gauntlets, Sword2H |
+| **Calla** | 120 | 27 | Cudgel3c, Gauntlets, SwordDual |
+| **Lancelot** | 81 | 8 | Staff, Sword1H |
+| Estarossa | 14 | 0 | aucune |
+| Estia, Estia_Var, Melascula | 0 | 0 | dossiers vides |
+
+Pour l'échelle : Tristan pèse 182 montages / 44 fenêtres, Bug 172 / 60. Ban et
+Calla sont donc à environ 75 % d'un héros fini, avec la structure à trois armes.
+
+Leurs **durées et fenêtres d'annulation sont déjà exploitables** :
+`ban_gauntlets_normalatk_1_mtg` donne `SequenceLength = 2,667 s`, un `EHit` et
+6 marqueurs `EEnableSkipBy`. Leurs dégâts et leurs recharges, non — ça vit dans
+les tables, et elles sont vides pour eux.
+
+**Piège d'appariement** : ne jamais découper un identifiant au premier `_`.
+`gil_thunder_sword1h_normalatk_1` se range alors sous `gil` et Gilthunder passe
+pour un héros dormant alors qu'il est publié (slug `gil-thunder` au dépôt,
+identifiants `gil_thunder_*` dans le jeu). Même piège pour `guila_demon` et
+`daisy_golem`, qui ont bien leurs données. Apparier sur le préfixe complet, en
+excluant les noms plus longs.
+
+Au passage, deux entités de combat que le site ne couvre pas : `daisy_golem`
+(12 temps d'action, 13 compétences) et `guila_demon` (16 et 18). Reste à savoir
+si leurs dégâts comptent à part ou sont attribués à Daisy et Guila — les tables
+seules ne le disent pas.
+
+Côté **transcendance**, ne pas chercher dans les tables seules : rien n’y
+apparaît, mais la localisation en porte déjà la trace.
+`local_item_material_name_101100201` vaut « Essence de transcendance », et
+l’objet `101100201` existe dans `Item/ItemTable_Data_Etc`, avec sa recette
+et son démontage.
+
+Attention au vocabulaire : `ui_manageheroes_bt_transcendence` et
+`ui_transcendenceheroes_title` se traduisent tous deux par « **Potentiel** ».
+Ce que le jeu nomme transcendance en interne est le système de potentiels que le
+site couvre déjà — une « armure de transcendance » est donc vraisemblablement
+l’extension de ce système à l’équipement, pas un système sans rapport.
+
+La localisation confirme aussi l’état intermédiaire de Ban : **25 clés
+`local_hero_name_*`** — exactement les 25 héros du site — mais **27 clés
+`local_hero_desc_*`**. Les deux en trop sont `ban_01` et `meliodas_01`
+(distinct de `master_meliodas_01`, le Meliodas jouable). Ban a une fiche, pas
+de nom, pas de compétences.
+
+## Les taux de dégâts ne sont pas dans le client — tranché le 25 août
+
+Question ouverte depuis août, close par la négative. Le usmap 1.8 ouvre les trois
+tables qui manquaient ; aucune ne porte de taux de dégâts.
+
+| Table | Lignes | Colonne de taux |
+|---|---:|---|
+| `Skill/PC_SkillTable` | 2 163 | **aucune** parmi 115 colonnes |
+| `Skill/SkillTable` | 1 156 | **aucune** parmi 115 colonnes |
+| `Skill/PC_SkillBehaviorTable` | 3 845 | `AttackRate` existe, **vaut 0 sur les 2 703 entrées** |
+
+Le doc réservait son jugement : « on ne peut pas conclure que ces valeurs sont
+calculées côté serveur, ce n'est pas la bonne table ». Les bonnes tables sont
+maintenant ouvertes, et la réponse ne change pas.
+
+Le détail d'attaque `BehaviorDetail_AttackTid` porte pourtant toute la
+structure attendue — `AttackRate`, `AddAttackRate_HPRate`,
+`HitTarget_AtkRate`, `CondMyBuff_AtkRate_List`,
+`CondTargetBuff_AtkRate_List` — et **tous ces champs sont à zéro**, y compris
+la `Value` des listes conditionnelles.
+
+Deux exceptions, qui prouvent que le zéro est une donnée et pas un défaut de
+lecture : `BackAtk_AtkRate` vaut 3 500 sur 23 entrées, et
+`Charge_Element_Value` porte 40 à 120 sur 2 172 entrées. Les champs
+fonctionnent ; ce sont les taux de base qui sont absents.
+
+**Conséquence pour le site** : les pourcentages d'ATK de `data/competences.js`,
+repris de 7dsorigin.app, **ne sont pas vérifiables contre les fichiers du jeu**.
+Ils vivent côté serveur. Ne pas relancer cette chasse à chaque nouveau usmap.
+
+## Un usmap plus complet DECALE des colonnes — 25 août 2026
+
+Le piège le plus coûteux de la journée, et il ne ressemble pas à une panne : les
+scripts tournent, ne lèvent aucune erreur, et rendent zéro résultat.
+
+`HeroMastery`, ligne 1001, lue par les deux usmap :
+
+| Colonne | usmap 1.7 | usmap 1.8 |
+|---|---|---|
+| `Weapon_Mastery_Reward` | *colonne inconnue* | `Tristan_SpecialMastery_Reward` |
+| `String_Tid` | `Tristan_SpecialMastery_Reward` | `1001` |
+| `Local_Key` | `1001` | `None` |
+
+Le usmap 1.7 ignorait `Weapon_Mastery_Reward`. Sa valeur atterrissait donc
+dans `String_Tid`, et celle de `String_Tid` dans `Local_Key` : **toute
+la fin de la ligne était décalée d'un cran**. Le 1.8 connaît la colonne et lit
+juste.
+
+Quatre scripts cherchaient le nom du héros dans `String_Tid` et rendaient
+soudain **0 héros apparié** — sans message d'erreur, puisque la colonne existe
+toujours, elle contient juste autre chose. Corrigés en lisant
+`Weapon_Mastery_Reward` avec repli sur `String_Tid`, ce qui garde la
+lecture des extractions archivées :
+`aligner-heros.js`, `comparer-armes.js`, `comparer-masteries.js`,
+`comparer-stats-base.js`.
+
+**La règle à retenir** : un usmap plus complet n'ajoute pas seulement des tables
+lisibles, il peut **changer l'interprétation de tables qui se lisaient déjà**.
+Après tout changement de usmap, relancer les scripts de comparaison et se méfier
+d'un résultat qui tombe à zéro plutôt que de lever une erreur.
+
+### Les conclusions d'août tiennent sous la lecture corrigée
+
+Vérifié en relançant toute la chaîne sur l'extraction 1.8 :
+
+| Contrôle | Résultat |
+|---|---|
+| `comparer-stats-base` | 25 héros appariés, **0 écart** sur 11 champs |
+| `comparer-masteries` | 25 héros vérifiés, **0 écart** |
+| `comparer-armes` | 375 entrées, **0 écart** |
+| `verifier-sets2` | 45 paliers, **45 concordants** |
+| `verifier-passifs-sets` | 29 passifs, **29 retrouvés** |
+| `verifier-phrases` | **153 phrases sur 153** (le doc en annonçait 150 ; `buffs-supports.js` en a gagné 3 depuis) |
+
+Attention en relançant : `verifier-phrases.js` **attend les fichiers en
+argument**, sinon il ne fait rien et sort en code 0 :
+
+```
+node outils/fmodel/verifier-phrases.js buffs-supports.js passifs-graves.js \
+     degats-supplementaires.js passifs-armes.js passifs-ensembles.js
+```
+
+### L'export courant est complet
+
+`Table`, `TextDatas`, `Cha` et `Localization` sont tous présents
+sous le usmap 1.8. `Localization` apporte au passage `GamePatch/`, la
+surcouche de textes d'un correctif live : elle est **vide**, ce qui confirme une
+fois de plus que rien n'est arrivé sur ce client depuis le 13 août.
+`Game.json` fr est identique octet pour octet à celui de la 1.7.
+
+## Le contenu arrive en trois couches — 25 août 2026
+
+Constat le plus utile de la session, et il change la façon de chercher : un objet
+n'apparaît pas d'un coup. Le client reçoit ses morceaux dans un ordre fixe, et
+`Item/ItemTable_Data_Equip` est le **dernier** servi.
+
+| Couche | Ce que le client a | Armures gravées |
+|---|---|---:|
+| 1 — déclarée | ligne d'objet, qualité, rareté, icône, passifs | **85** |
+| 2 — nommée | stats, recette, nom traduit dans les 13 langues | **15** |
+| 3 — muette | stats et recette seulement, aucun nom nulle part | **4** |
+
+Conséquence méthodologique : **ne jamais recenser un type d'objet depuis
+`ItemTable_Data_Equip` seule.** Un recensement fait le 25 août sur cette table
+annonçait « 86 armures liées, 85 au dépôt, une seule nouveauté » — faux. En
+repartant d'`Item/Option_StaticTable`, on trouve **107 équipements qui ont leurs
+statistiques sans ligne d'objet**, dont 19 armures gravées.
+
+La bonne source pour « qu'est-ce qui existe » est `Option_StaticTable` ; la bonne
+source pour « qu'est-ce qui est jouable » est `ItemTable_Data_Equip`.
+
+### Ce que les data miners publient avant nous
+
+Une fiche publiée le 25 août pour `133255003` (« Défense minimale »,
+équipement gravé de Gowther) se reconstruit **au chiffre près** depuis les paks
+du 13 août, jusqu'au renforcement +5 :
+
+```
++N    PV calculé / publié
++0    14739 / 14739     +3    16508 / 16508
++1    15181 / 15181     +4    17392 / 17392
++2    15771 / 15771     +5    18424 / 18424
+```
+
+Formule : `Value_Add_2` d'`armor_main1_<id>` multiplié par chaque
+`Value_Add_1..5` d'`armor_main1_reinforce_<id>`, en dix-millièmes.
+
+Puis ça s'arrête net. Les fiches montrent +6 à +15 sous une bannière
+« Transcendence Refinement » — or **aucune entrée `_reinforce` du jeu ne porte
+de valeur dans `Value_Add_6..10`**, pour aucun objet. Les cinq emplacements
+existent dans le schéma et sont vides partout. La transcendance est exactement
+l'extension du renforcement de +5 à +15, et c'est la seule chose qu'il faut un
+build plus récent pour obtenir.
+
+Autrement dit : ils ont le build suivant, mais l'essentiel de ce qu'ils publient
+est déjà chez nous.
+
+### `armures-gravees-nouvelles.json`
+
+`node outils/fmodel/extraire-gravees-non-declarees.js` écrit les 19 armures
+des couches 2 et 3 dans `7ds-stats/armures-gravees-nouvelles.json`, au format
+d'`armures-gravees.json`.
+
+**Fichier séparé, volontairement.** Les entrées sont incomplètes : sans ligne
+d'objet, `qualityMin`, `qualityMax`, `tierBoundaries`, `rarity`, `personnage`,
+`costumeSlug`, `iconUrl`, `engravingPassives`, `randomOptions` et
+`growth.promotion` restent à `null`. Les fusionner dans le fichier vivant est une
+décision à part, pas un effet de bord de l'extraction. Chaque entrée porte un
+champ `provenance` qui liste ses trous.
+
+Deux pièges rencontrés en écrivant l'extracteur :
+
+- **La casse des codes de stat n'est pas dérivable.** Le jeu écrit
+  `B_MaxHP_Equip` et `UltimateSkill_DamAdd_Rate` ; le dépôt écrit
+  `B_MaxHp_Equip` et `Ultimateskill_Damadd_Rate`. Aucune règle mécanique
+  ne relie les deux — passer par les clés de `libelles-stats.json` et
+  `stat-metadata.json`, comparées sans casse.
+- **La position dans `Value_Add_N` n'est pas une donnée.** Un
+  `equiplv_15` range toujours sa valeur unique en `Value_Add_2`, et le
+  dépôt n'en garde que la valeur. Élaguer les zéros de tête **et** de queue ;
+  les `reinforce`, qui remplissent 1 à 5, en sortent intacts.
+
+Le mappage entre les deux, vérifié sur une entrée déjà publiée et non deviné :
+
+| Jeu | Dépôt |
+|---|---|
+| `armor_main1_<id>` | `mainStat` |
+| `armor_main2_<id>` | `growth.extraStats`, slot `main` |
+| `armor_sub1_<id>` | `subStat` |
+| `armor_sub2_<id>` | `growth.extraStats`, slot `sub` |
+
+## Reconstituer une progression d'équipement — 25 août 2026
+
+Deux modèles, vérifiés chacun contre des fiches publiées par des data miners
+travaillant sur un build plus récent. Les deux partent de données que **notre
+client possède déjà**.
+
+### Armes : 50 paliers depuis deux lignes
+
+Cinq paliers de promotion de dix niveaux. Le client donne tout :
+
+| Ligne | Champ | Rôle |
+|---|---|---|
+| `weapon_main1_<id>` | `Value_Base` | le socle |
+| `weapon_main1_<id>` | `Value_Add_1..5` | le gain par niveau, un par palier |
+| `weapon_main1_promotion_<id>` | `Value_Add_1..4` | le bonus au passage de palier |
+
+```
+depart[0] = Value_Base
+valeur(palier T, niveau L) = depart[T] + pas[T] x L          L de 1 a 10
+depart[T+1]                = depart[T] + pas[T] x 10 + bonus[T]
+```
+
+Éprouvé sur le Nunchaku de l'âme vorace (`131055010`) : base 637,
+pas `[15, 20, 27, 37, 52]`, bonus `[115, 229, 343, 457]`.
+**54 valeurs justes, 0 écart** — les 50 niveaux et les 4 lignes de promotion.
+
+Le `Max Reinforce +50` de la fiche n'a donc pas à être lu : il découle des
+cinq pas de progression.
+
+Le dépassement de limite se lit directement dans
+`ItemTable_Growth_Overlimit` : le groupe `overlimit_weapon_t5_type1`
+reproduit la table « Limit Break » publiée — or, bonus de statistique et niveaux
+de passif, au dernier chiffre.
+
+### Armures : les multiplicateurs de transcendance
+
+Les armures gravées plafonnent à +15, pas +50, et suivent une logique
+multiplicative et non additive. Le client donne les paliers 1 à 5 dans
+`armor_*_reinforce_<id>` (`Value_Add_1..5`) et **laisse 6 à 10 à zéro**.
+
+Ces cinq-là se déduisent des fiches publiées, par division :
+
+```
++1..+5   10300 10700 11200 11800 12500   lus dans le client
++6..+15  12750 13000 13250 13500 13750
+         14000 14250 14500 14750 15000   deduits, pas constant de 250
+```
+
+Vérification : 5 mesures indépendantes aux paliers +6 et +7, 2 par palier
+au-delà, sur **deux héros** (Gowther et Ban) et **deux statistiques** (PV et
+Défense). Aucun désaccord, écart d'arrondi jamais supérieur à 1 pour 10 000.
+
+Consigné dans `7ds-stats/transcendance-multiplicateurs.json`, avec un bloc
+`_provenance` qui distingue le lu du déduit. **À remplacer par une lecture
+directe** dès que `Value_Add_6..10` sera renseigné.
+
+### Les 107 équipements non déclarés
+
+`node outils/fmodel/extraire-equipements-non-declares.js` écrit
+`7ds-stats/equipements-non-declares.json` : **52 armes, 43 armures,
+12 bijoux**, dont **103 portent déjà leur nom français**. Les 4 anonymes sont les
+armures gravées de Ban.
+
+Trois structures, chacune avec sa convention d'élagage :
+
+| Famille | Emplacements | Progression |
+|---|---|---|
+| arme | `main1` (+ `sub1` pour 35) | s'arrête à la première valeur nulle, comme `verifier-stats-armes.js` |
+| bijou | `main1` + `_equiplv` + `_reinforce` | élaguée des deux côtés |
+| armure | jusqu'à `main1 main2 sub1 sub2 sub3` | élaguée des deux côtés |
+
+### Ban : ce qu'on a et ce qu'on n'a pas
+
+Ses quatre armures gravées sont l'index **27** : `133274001`,
+`133275001`, `133275002`, `133275003`. L'index se lit sur les deux
+chiffres qui suivent `133` — 01 Tristan … 25 Gowther, 41 Derieri, et 23, 26,
+27 restaient vides. Que 27 soit Ban n'a **pas** été déduit : les fiches publiées
+portent « Only For : Ban ».
+
+Attention : `Sort` de `HeroActorTable` n'est **pas** cet index — 12
+accords contre 33 désaccords. Ce sont deux numérotations sans rapport, et Ban n'a
+aucune ligne dans `HeroActorTable`.
+
+Et une arme n'appartient à personne : elle va par type. Le Nunchaku de l'âme
+vorace n'est pas « l'arme de Ban » — `Cudgel3c` est déjà manié par Diane,
+Griamore, Howzer et Slader. Les fiches d'arme n'ont d'ailleurs pas de champ
+« Only For », contrairement aux armures gravées.
 
 ## Ce qui reste à faire
 
-1. **Un usmap genere sur le build du jour** (la mise a jour de mercredi passe
-   en 2.0). Cible n°1 : `Table/Skill/PC_SkillTable`, puis les 36 autres tables
-   en echec.
+1. **Exploiter `PC_SkillTable`** : corriger les 4 recharges fausses de
+   `data/competences.js` (dont l'inversion Q/R d'Elizabeth), décider si on
+   publie les décimales que SevenCodex tronque, et regarder ce que valent
+   `CoolTimeGroup` (315 compétences) et l'économie de jauges.
 2. **Question 3 des buffs de soutien** — voir
    `docs/buffs-portee-lue-dans-le-jeu.md` : le taux elementaire du receveur
    multiplie-t-il le buff plat ? Question de formule, pas de table. Seule une
