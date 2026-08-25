@@ -1,0 +1,7647 @@
+[
+ {
+  "gameId": "132603006",
+  "famille": "accessory",
+  "nameFr": "Collier de l'essence incandescente (Robuste)",
+  "nameEn": "Fiery Essence Necklace (Sturdy)",
+  "descFr": "Un petit collier décoratif imprégné d'essence incandescente. Les statistiques de combat augmentent en le portant au cours de la bataille.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_4",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      196,
+      220,
+      255,
+      267
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_4",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      3,
+      7,
+      12,
+      21
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132603012",
+  "famille": "accessory",
+  "nameFr": "Collier tonitruant (Robuste)",
+  "nameEn": "Thunderous Necklace (Sturdy)",
+  "descFr": "Un collier sur lequel différents motifs sont délicatement gravés.\nIl brille d'un éclat resplendissant lorsqu'il capte la lumière.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_4",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      231,
+      263,
+      308,
+      322
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_4",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      4,
+      9,
+      14,
+      25
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132604002",
+  "famille": "accessory",
+  "nameFr": "Collier de l'essence incandescente (Incomparable)",
+  "nameEn": "Fiery Essence Necklace (Finest)",
+  "descFr": "Un petit collier décoratif imprégné d'essence incandescente.\nLes statistiques de combat augmentent en le portant au cours de la bataille.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_7",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      519,
+      549,
+      601
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_7",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5,
+      13,
+      20
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132604005",
+  "famille": "accessory",
+  "nameFr": "Collier tonitruant (Incomparable)",
+  "nameEn": "Thunderous Necklace (Finest)",
+  "descFr": "Un collier sur lequel différents motifs sont délicatement gravés. Il brille d'un éclat resplendissant lorsqu'il capte la lumière.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_7",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      610,
+      646,
+      706
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_7",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      6,
+      15,
+      24
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132703006",
+  "famille": "accessory",
+  "nameFr": "Boucles d'oreilles de l'essence incandescente (Robustes)",
+  "nameEn": "Fiery Essence Earrings (Sturdy)",
+  "descFr": "De petites boucles d'oreilles décoratives imprégnées d'essence incandescente. Les statistiques de combat augmentent en les portant au cours de la bataille.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_4",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      548,
+      612,
+      712,
+      744
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_4",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      8,
+      20,
+      32,
+      59
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132703012",
+  "famille": "accessory",
+  "nameFr": "Boucles d'oreilles tonitruantes (Robustes)",
+  "nameEn": "Thunderous Earrings (Sturdy)",
+  "descFr": "Des boucles d'oreilles sur lesquelles différents motifs sont délicatement gravés.\nElles brillent d'un éclat resplendissant lorsqu'elles captent la lumière.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_4",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      644,
+      724,
+      839,
+      876
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_4",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10,
+      23,
+      37,
+      69
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132704002",
+  "famille": "accessory",
+  "nameFr": "Boucles d'oreilles de l'essence incandescente (Incomparables)",
+  "nameEn": "Fiery Essence Earrings (Finest)",
+  "descFr": "De petites boucles d'oreilles décoratives imprégnées d'essence incandescente.\nLes statistiques de combat augmentent en les portant au cours de la bataille.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_7",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      1448,
+      1532,
+      1672
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_7",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14,
+      35,
+      56
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132704005",
+  "famille": "accessory",
+  "nameFr": "Boucles d'oreilles tonitruantes (Incomparable)",
+  "nameEn": "Thunderous Earrings (Finest)",
+  "descFr": "Des boucles d'oreilles sur lesquelles différents motifs sont délicatement gravés. Elles brillent d'un éclat resplendissant lorsqu'elles captent la lumière.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_7",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      1703,
+      1805,
+      1969
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_7",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      17,
+      41,
+      66
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132803006",
+  "famille": "accessory",
+  "nameFr": "Anneau de l'essence incandescente (Robuste)",
+  "nameEn": "Fiery Essence Ring (Sturdy)",
+  "descFr": "Un petit anneau décoratif imprégné d'essence incandescente. Les statistiques de combat augmentent en le portant au cours de la bataille.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_4",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      155,
+      179,
+      209,
+      218
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_4",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      3,
+      6,
+      9,
+      17
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132803012",
+  "famille": "accessory",
+  "nameFr": "Anneau tonitruant (Robuste)",
+  "nameEn": "Thunderous Ring (Sturdy)",
+  "descFr": "Un anneau sur lequel différents motifs sont délicatement gravés.\nIl brille d'un éclat resplendissant lorsqu'il capte la lumière.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_4",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      183,
+      207,
+      242,
+      253
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_4",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      3,
+      7,
+      11,
+      20
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132804002",
+  "famille": "accessory",
+  "nameFr": "Anneau de l'essence incandescente (Incomparable)",
+  "nameEn": "Fiery Essence Ring (Finest)",
+  "descFr": "Un petit anneau décoratif imprégné d'essence incandescente.\nLes statistiques de combat augmentent en le portant au cours de la bataille.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_7",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      373,
+      397,
+      433
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_7",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      4,
+      9,
+      15
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132804005",
+  "famille": "accessory",
+  "nameFr": "Anneau tonitruant (Incomparable)",
+  "nameEn": "Thunderous Ring (Finest)",
+  "descFr": "Un anneau sur lequel différents motifs sont délicatement gravés. Il brille d'un éclat resplendissant lorsqu'il capte la lumière.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_7",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      439,
+      469,
+      513
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_7",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      5,
+      11,
+      17
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132113009",
+  "famille": "armor",
+  "nameFr": "Haut de la brise légère (Robuste)",
+  "nameEn": "Gentle Breeze Top (Sturdy)",
+  "descFr": "Un haut imprégné de la douce brise de la forêt.\nLéger et confortable, il est particulièrement doux au toucher.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_4",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      322,
+      362,
+      422,
+      441
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_4",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5,
+      12,
+      19,
+      35
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132114002",
+  "famille": "armor",
+  "nameFr": "Haut de la brise légère (Incomparable)",
+  "nameEn": "Gentle Breeze Top (Finest)",
+  "descFr": "Un haut imprégné de la douce brise de la forêt.\nLéger et confortable, il est particulièrement doux au toucher.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_7",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      827,
+      881,
+      969
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_7",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      9,
+      22,
+      35
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132114013",
+  "famille": "armor",
+  "nameFr": "Haut de prédateur 「abyssal」",
+  "nameEn": "「Abyssal」 Predator Top",
+  "descFr": "Un haut façonné en y ajoutant des fragments de prédateur 「abyssal」 nécrotique.\nSuffisamment dur et résistant pour être grandement utile en combat.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_13",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      2058,
+      2432
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_13",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      22,
+      53
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132114031",
+  "famille": "armor",
+  "nameFr": "Haut du fragment de la destruction",
+  "nameEn": "Destruction Fragment Top",
+  "descFr": "Un haut fin et léger dont l'élasticité n'a d'égal que la solidité.\nIl a été fabriqué à partir d'un échantillon de l'Albion qui a été réveillé.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_11",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      1463,
+      1495,
+      1595
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_11",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      8,
+      20,
+      32
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132124025",
+  "famille": "armor",
+  "nameFr": "Haut de l'observateur noir de jais",
+  "nameEn": "Jet-black Observer Top",
+  "descFr": "Un haut robuste façonné à partir de fragments de Nécrotique.\nSon tissage dense et costaud est capable de bloquer n'importe quelle attaque.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_11",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      1671,
+      1707,
+      1822
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_11",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      9,
+      23,
+      36
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132134029",
+  "famille": "armor",
+  "nameFr": "Haut du souvenir du chaos",
+  "nameEn": "Memory of Chaos Top",
+  "descFr": "Un haut robuste façonné à partir de minerai de fer de Ferzen.\nIl porte les traces d'une magie chaotique.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_11",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      1709,
+      1749,
+      1864
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_11",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10,
+      23,
+      37
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132213009",
+  "famille": "armor",
+  "nameFr": "Bas de la brise légère (Robuste)",
+  "nameEn": "Gentle Breeze Bottoms (Sturdy)",
+  "descFr": "Un bas imprégné de la douce brise de la forêt.\nLéger et confortable, il est particulièrement doux au toucher.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_4",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      899,
+      1003,
+      1168,
+      1220
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_4",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      13,
+      33,
+      52,
+      97
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132214002",
+  "famille": "armor",
+  "nameFr": "Bas de la brise légère (Incomparable)",
+  "nameEn": "Gentle Breeze Bottoms (Finest)",
+  "descFr": "Un bas imprégné de la douce brise de la forêt.\nLéger et confortable, il est particulièrement doux au toucher.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_7",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      2309,
+      2453,
+      2693
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_7",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      24,
+      60,
+      95
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132214013",
+  "famille": "armor",
+  "nameFr": "Bas de prédateur 「abyssal」",
+  "nameEn": "「Abyssal」 Predator Bottoms",
+  "descFr": "Un bas façonné en y ajoutant des fragments de prédateur 「abyssal」 nécrotique.\nSuffisamment dur et résistant pour être grandement utile en combat.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_13",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      5748,
+      6751
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_13",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      59,
+      148
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132214031",
+  "famille": "armor",
+  "nameFr": "Bas du fragment de la destruction",
+  "nameEn": "Destruction Fragment Bottoms",
+  "descFr": "Un bas fin et léger dont l'élasticité n'a d'égal que la solidité.\nIl a été fabriqué à partir d'un échantillon de l'Albion qui a été réveillé.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_11",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      4086,
+      4174,
+      4449
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_11",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      22,
+      55,
+      87
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132224025",
+  "famille": "armor",
+  "nameFr": "Bas de l'observateur noir de jais",
+  "nameEn": "Jet-black Observer Bottoms",
+  "descFr": "Un bas robuste façonné à partir de fragments de Nécrotique.\nSon tissage dense et costaud est capable de bloquer n'importe quelle attaque.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_11",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      4668,
+      4768,
+      5083
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_11",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      25,
+      63,
+      100
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132234029",
+  "famille": "armor",
+  "nameFr": "Bas du souvenir du chaos",
+  "nameEn": "Memory of Chaos Bottoms",
+  "descFr": "Un bas robuste façonné à partir de minerai de fer de Ferzen.\nIl porte les traces d'une magie chaotique.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_11",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      4773,
+      4877,
+      5197
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_11",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      26,
+      64,
+      102
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132313009",
+  "famille": "armor",
+  "nameFr": "Ceinture de la brise légère (Robuste)",
+  "nameEn": "Gentle Breeze Belt (Sturdy)",
+  "descFr": "Une ceinture imprégnée de la douce brise de la forêt.\nLégère et confortable, elle est particulièrement douce au toucher.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_4",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      719,
+      807,
+      937,
+      979
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_4",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      11,
+      26,
+      42,
+      78
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132314002",
+  "famille": "armor",
+  "nameFr": "Ceinture de la brise légère (Incomparable)",
+  "nameEn": "Gentle Breeze Belt (Finest)",
+  "descFr": "Une ceinture imprégnée de la douce brise de la forêt.\nLégère et confortable, elle est particulièrement douce au toucher.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_7",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      1847,
+      1961,
+      2153
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_7",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      19,
+      48,
+      76
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132314013",
+  "famille": "armor",
+  "nameFr": "Ceinture de prédateur abyssal",
+  "nameEn": "「Abyssal」 Predator Belt",
+  "descFr": "Une ceinture façonnée en y ajoutant des fragments de prédateur 「abyssal」 nécrotique.\nSuffisamment dure et résistante pour être grandement utile en combat.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_13",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      4599,
+      5415
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_13",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      48,
+      118
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132314031",
+  "famille": "armor",
+  "nameFr": "Ceinture du fragment de la destruction",
+  "nameEn": "Destruction Fragment Belt",
+  "descFr": "Une ceinture fine et légère dont l'élasticité n'a d'égal que la solidité.\nElle a été fabriquée à partir d'un échantillon de l'Albion qui a été réveillé.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_11",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      3269,
+      3341,
+      3561
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_11",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      18,
+      44,
+      70
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132324025",
+  "famille": "armor",
+  "nameFr": "Ceinture de l'observateur noir de jais",
+  "nameEn": "Jet-black Observer Belt",
+  "descFr": "Une ceinture robuste façonnée à partir de fragments de Nécrotique.\nSon tissage dense et costaud est capable de bloquer n'importe quelle attaque.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_11",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      3734,
+      3814,
+      4064
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_11",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      20,
+      50,
+      80
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132334029",
+  "famille": "armor",
+  "nameFr": "Ceinture du souvenir du chaos",
+  "nameEn": "Memory of Chaos Belt",
+  "descFr": "Une ceinture robuste façonnée à partir de minerai de fer de Ferzen.\nElle porte les traces d'une magie chaotique.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_11",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      3818,
+      3902,
+      4157
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_11",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      21,
+      51,
+      82
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132413009",
+  "famille": "armor",
+  "nameFr": "Bottes de la brise légère (Robustes)",
+  "nameEn": "Gentle Breeze Boots (Sturdy)",
+  "descFr": "Des bottes de combat imprégnées de la douce brise de la forêt.\nLégères et confortables, elles sont particulièrement douces au toucher.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_4",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      258,
+      290,
+      340,
+      355
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_4",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      4,
+      10,
+      15,
+      28
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132414002",
+  "famille": "armor",
+  "nameFr": "Bottes de la brise légère (Incomparables)",
+  "nameEn": "Gentle Breeze Boots (Finest)",
+  "descFr": "Des bottes de combat imprégnées de la douce brise de la forêt.\nLégères et confortables, elles sont particulièrement douces au toucher.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_7",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      661,
+      703,
+      775
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_7",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      7,
+      18,
+      28
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132414013",
+  "famille": "armor",
+  "nameFr": "Bottes de combat de prédateur 「abyssal」",
+  "nameEn": "「Abyssal」 Predator Combat Boots",
+  "descFr": "Des bottes de combat façonnées en y ajoutant des fragments de prédateur 「abyssal」 nécrotique.\nSuffisamment dures et résistantes pour être grandement utiles en combat.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_13",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      1646,
+      1935
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_13",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      17,
+      43
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132414031",
+  "famille": "armor",
+  "nameFr": "Bottes de combat du fragment de la destruction",
+  "nameEn": "Destruction Fragment Combat Boots",
+  "descFr": "Des bottes de combat fines et légères, dont l'élasticité n'a d'égal que la solidité.\nElles ont été fabriquées à partir d'un échantillon de l'Albion qui a été réveillé.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_11",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      1170,
+      1198,
+      1278
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_11",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      7,
+      16,
+      25
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132424025",
+  "famille": "armor",
+  "nameFr": "Bottes de combat de l'observateur noir de jais",
+  "nameEn": "Jet-black Observer Combat Boots",
+  "descFr": "Des bottes de combat robustes façonnées à partir de fragments de Nécrotique.\nLeur tissage dense et costaud est capable de bloquer n'importe quelle attaque.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_11",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      1337,
+      1369,
+      1459
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_11",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      8,
+      18,
+      29
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "132434029",
+  "famille": "armor",
+  "nameFr": "Bottes de combat du souvenir du chaos",
+  "nameEn": "Memory of Chaos Combat Boots",
+  "descFr": "Des bottes de combat robustes façonnées à partir de minerai de fer de Ferzen.\nElles portent les traces d'une magie chaotique.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_11",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      1367,
+      1399,
+      1494
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_11",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      8,
+      19,
+      30
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133045003",
+  "famille": "armor",
+  "nameFr": "Dignité du capitaine",
+  "nameEn": "Grandmaster's Dignity",
+  "descFr": "Costume de Hauser, capitaine des Chevaliers Sacrés de Liones.\nL'armure dégage un air d'autorité qui sied à son rôle prestigieux.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "I_MaxHpAdd_Rate",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "I_MaxHpAdd_Rate",
+     "progression": [
+      280
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "I_MaxHpAdd_Rate",
+     "progression": [
+      3
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "I_MaxHpAdd_Rate",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "sub2": {
+    "stat": "P_Shield_Rate",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "P_Shield_Rate",
+     "progression": [
+      1164
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "P_Shield_Rate",
+     "progression": [
+      11
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "P_Shield_Rate",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "sub3": {
+    "stat": "Debuff_Time_Rate",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "Debuff_Time_Rate",
+     "progression": [
+      2011
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "Debuff_Time_Rate",
+     "progression": [
+      19
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "Debuff_Time_Rate",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132134029",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234029",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334029",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434029",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133065003",
+  "famille": "armor",
+  "nameFr": "Instinct incisif",
+  "nameEn": "Keen Instinct",
+  "descFr": "Costume de Bug, le démon secret.\nUne armure robuste qui combine liberté de mouvement et protection.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "Debuff_Time_Rate",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "Debuff_Time_Rate",
+     "progression": [
+      3017
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "Debuff_Time_Rate",
+     "progression": [
+      29
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "Debuff_Time_Rate",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "sub2": {
+    "stat": "I_MaxHpAdd_Rate",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "I_MaxHpAdd_Rate",
+     "progression": [
+      419
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "I_MaxHpAdd_Rate",
+     "progression": [
+      4
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "I_MaxHpAdd_Rate",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132124030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132224030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132324030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132424030",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133125003",
+  "famille": "armor",
+  "nameFr": "Forteresse de fer impénétrable",
+  "nameEn": "Impregnable Iron Fortress",
+  "descFr": "Costume d'antan de Griamor.\nSa défense puissante est impénétrable.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "Default_Add",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "Default_Add",
+     "progression": [
+      796
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "Default_Add",
+     "progression": [
+      8
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "Default_Add",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "sub2": {
+    "stat": "Debuff_Time_Rate",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "Debuff_Time_Rate",
+     "progression": [
+      3017
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "Debuff_Time_Rate",
+     "progression": [
+      29
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "Debuff_Time_Rate",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132134026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434026",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133145003",
+  "famille": "armor",
+  "nameFr": "Ombre du roi des fées",
+  "nameEn": "Fairy King's Shadow",
+  "descFr": "Costume d'antan de King.\nUne armure robuste qui fait étalage de la majesté du roi des fées.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "MF_ChargeEffic_Rate",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "MF_ChargeEffic_Rate",
+     "progression": [
+      1509
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "MF_ChargeEffic_Rate",
+     "progression": [
+      15
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "MF_ChargeEffic_Rate",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "sub2": {
+    "stat": "Buff_Time_Rate",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "Buff_Time_Rate",
+     "progression": [
+      3017
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "Buff_Time_Rate",
+     "progression": [
+      29
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "Buff_Time_Rate",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132124028",
+    "quantity": 1
+   },
+   {
+    "itemId": "132224028",
+    "quantity": 1
+   },
+   {
+    "itemId": "132324028",
+    "quantity": 1
+   },
+   {
+    "itemId": "132424028",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133165002",
+  "famille": "armor",
+  "nameFr": "Aventure du barde",
+  "nameEn": "Bard's Adventure",
+  "descFr": "Costume d'antan d'Elizabeth.\nUne tenue de barde destinée à dissimuler sa véritable identité.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132124025",
+    "quantity": 1
+   },
+   {
+    "itemId": "132224025",
+    "quantity": 1
+   },
+   {
+    "itemId": "132324025",
+    "quantity": 1
+   },
+   {
+    "itemId": "132424025",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120296",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133165003",
+  "famille": "armor",
+  "nameFr": "Lumière de Liones",
+  "nameEn": "Light of Liones",
+  "descFr": "Costume d'antan d'Elizabeth.\nConçu pour projeter toute la dignité d'une princesse en première ligne du champ de bataille.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132134026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434026",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133195001",
+  "famille": "armor",
+  "nameFr": "Senteur d'automne",
+  "nameEn": "Autumn Scent",
+  "descFr": "Costume de la fée Daisy, venue d'un passé lointain.\nCette tenue ressemble aux feuilles qui colorent la forêt d'un rouge profond en automne.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132134022",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234022",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334022",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434022",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120295",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133205003",
+  "famille": "armor",
+  "nameFr": "Jeu de la lune à l'aube",
+  "nameEn": "Dawn Moon's Play",
+  "descFr": "Costume de Clotho, l'exploratrice temporelle.\nUne tenue de banquet pareille à la lune exquise qui illumine le ciel nocturne juste avant l'aube.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132134029",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234029",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334029",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434029",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133215001",
+  "famille": "armor",
+  "nameFr": "<Le Dragon de la Colère>",
+  "nameEn": "<The Dragon Sin of Wrath>",
+  "descFr": "Costume d'antan de Meliodas. L'armure caractéristique de Meliodas des <Seven Deadly Sins>.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132114024",
+    "quantity": 1
+   },
+   {
+    "itemId": "132214024",
+    "quantity": 1
+   },
+   {
+    "itemId": "132314024",
+    "quantity": 1
+   },
+   {
+    "itemId": "132414024",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120295",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133225001",
+  "famille": "armor",
+  "nameFr": "<Le Lion de l'Orgueil>",
+  "nameEn": "<The Lion Sin of Pride>",
+  "descFr": "Costume d'antan d'Escanor. L'armure caractéristique d'Escanor des <Seven Deadly Sins>",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132134022",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234022",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334022",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434022",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120295",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133245003",
+  "famille": "armor",
+  "nameFr": "Banquet de sorcière",
+  "nameEn": "Witch's Banquet",
+  "descFr": "Costume d'antan de Merlin.\nCette tenue dégage un air de confiance, de liberté et de beauté.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132124030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132224030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132324030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132424030",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133255002",
+  "famille": "armor",
+  "nameFr": "Quête de soi",
+  "nameEn": "Journey of Self-discovery",
+  "descFr": "Costume d'antan de Gowther.\nIl est profondément intéressé par l'exploration et l'observation du monde.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132134026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434026",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120296",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133255003",
+  "famille": "armor",
+  "nameFr": "Défense minimale",
+  "nameEn": "Minimal Defense",
+  "descFr": "Costume d'antan de Gowther.\nMême lui a besoin d'équipement pour protéger son corps.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132114027",
+    "quantity": 1
+   },
+   {
+    "itemId": "132214027",
+    "quantity": 1
+   },
+   {
+    "itemId": "132314027",
+    "quantity": 1
+   },
+   {
+    "itemId": "132414027",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133274001",
+  "famille": "armor",
+  "nameFr": null,
+  "nameEn": null,
+  "descFr": "Un costume pour le Ban du passé. L'uniforme officiel de Ma petite gourmandise.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132123005",
+    "quantity": 1
+   },
+   {
+    "itemId": "132223005",
+    "quantity": 1
+   },
+   {
+    "itemId": "132323005",
+    "quantity": 1
+   },
+   {
+    "itemId": "132423005",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100101",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133275001",
+  "famille": "armor",
+  "nameFr": null,
+  "nameEn": null,
+  "descFr": null,
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132124025",
+    "quantity": 1
+   },
+   {
+    "itemId": "132224025",
+    "quantity": 1
+   },
+   {
+    "itemId": "132324025",
+    "quantity": 1
+   },
+   {
+    "itemId": "132424025",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120295",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133275002",
+  "famille": "armor",
+  "nameFr": null,
+  "nameEn": null,
+  "descFr": null,
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132134026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434026",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120296",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133275003",
+  "famille": "armor",
+  "nameFr": null,
+  "nameEn": null,
+  "descFr": null,
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132124028",
+    "quantity": 1
+   },
+   {
+    "itemId": "132224028",
+    "quantity": 1
+   },
+   {
+    "itemId": "132324028",
+    "quantity": 1
+   },
+   {
+    "itemId": "132424028",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133415001",
+  "famille": "armor",
+  "nameFr": "Flamme rouge du royaume des démons",
+  "nameEn": "Red Flame of the Demon Realm",
+  "descFr": "Costume d'antan de Derrierie. Sa conception allie robustesse et liberté de mouvement, un atout majeur en combat.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132114024",
+    "quantity": 1
+   },
+   {
+    "itemId": "132214024",
+    "quantity": 1
+   },
+   {
+    "itemId": "132314024",
+    "quantity": 1
+   },
+   {
+    "itemId": "132414024",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120295",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "133415003",
+  "famille": "armor",
+  "nameFr": "Mouvement rebelle",
+  "nameEn": "Rebellious Movement",
+  "descFr": "Costume d'antan de Derrierie.\nCette armure de qualité supérieure reflète sa personnalité et ses traits distinctifs.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_MaxHp_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      14739
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      137
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_MaxHp_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   },
+   "main2": {
+    "stat": "B_Def_Equip",
+    "statValues": {
+     "base": 0,
+     "growthType": "equiplv_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      5276
+     ]
+    },
+    "equiplv": {
+     "base": 0,
+     "growthType": "equiplv_add_15",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      49
+     ]
+    },
+    "reinforce": {
+     "base": 0,
+     "growthType": "reinforce",
+     "abilityType": "B_Def_Equip",
+     "progression": [
+      10300,
+      10700,
+      11200,
+      11800,
+      12500
+     ]
+    }
+   }
+  },
+  "bindingMaterials": [
+   {
+    "itemId": "132124030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132224030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132324030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132424030",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131014016",
+  "famille": "weapon",
+  "nameFr": "Bâton de chasseur de poison",
+  "nameEn": "Venom Hunter Staff",
+  "descFr": "Un bâton trempé dans le poison de Molbog, le crapaud venimeux.\nMême un détenteur de magie puissante aurait du mal à résister à son poison.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 450,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      11,
+      14,
+      19,
+      26,
+      37
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      81,
+      162,
+      242,
+      323
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131015001",
+  "famille": "weapon",
+  "nameFr": "Bâton de l'ombre de la rupture",
+  "nameEn": "Shadow Rupture Staff",
+  "descFr": "Un bâton confectionné par un maître artisan inconnu.\nIl s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "C_Critical_Rate",
+    "statValues": {
+     "base": 579,
+     "growthType": "promotionlv",
+     "abilityType": "C_Critical_Rate",
+     "progression": [
+      12,
+      28,
+      44,
+      63,
+      87
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131015002",
+  "famille": "weapon",
+  "nameFr": "Bâton de garde indomptable",
+  "nameEn": "Indomitable Guard Staff",
+  "descFr": "Un bâton confectionné par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 611,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      26,
+      36,
+      50
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      111,
+      220,
+      330,
+      439
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "A_Accuracy",
+    "statValues": {
+     "base": 17,
+     "growthType": "promotionlv",
+     "abilityType": "A_Accuracy",
+     "progression": [
+      1,
+      1,
+      2,
+      2,
+      3
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131015003",
+  "famille": "weapon",
+  "nameFr": "Bâton de la grâce éternelle",
+  "nameEn": "Eternal Grace Staff",
+  "descFr": "Un bâton confectionné par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 618,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      36,
+      51
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      112,
+      223,
+      333,
+      444
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "H_HealPower_Rate",
+    "statValues": {
+     "base": 817,
+     "growthType": "promotionlv",
+     "abilityType": "H_HealPower_Rate",
+     "progression": [
+      17,
+      39,
+      62,
+      89,
+      122
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131015010",
+  "famille": "weapon",
+  "nameFr": "Bâton de l'âme vorace",
+  "nameEn": "Gluttonous Soul Staff",
+  "descFr": "Le bâton du Dévoreur d'âmes, que l'on pensait uniquement légendaire.\nCapable de voler l'âme de n'importe qui grâce à sa puissante magie.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131024016",
+  "famille": "weapon",
+  "nameFr": "Épée longue de chasseur de poison",
+  "nameEn": "Venom Hunter Longsword",
+  "descFr": "Une épée longue trempée dans le poison de Molbog, le crapaud venimeux.\nMême un détenteur de magie puissante aurait du mal à résister à son poison.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 450,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      11,
+      14,
+      19,
+      26,
+      37
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      81,
+      162,
+      242,
+      323
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131025001",
+  "famille": "weapon",
+  "nameFr": "Épée longue de l'ombre de la rupture",
+  "nameEn": "Shadow Rupture Longsword",
+  "descFr": "Une épée longue confectionnée par un maître artisan inconnu.\nIl s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "C_Critical_Rate",
+    "statValues": {
+     "base": 579,
+     "growthType": "promotionlv",
+     "abilityType": "C_Critical_Rate",
+     "progression": [
+      12,
+      28,
+      44,
+      63,
+      87
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131025002",
+  "famille": "weapon",
+  "nameFr": "Épée longue de garde indomptable",
+  "nameEn": "Indomitable Guard Longsword",
+  "descFr": "Une épée longue confectionnée par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 611,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      26,
+      36,
+      50
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      111,
+      220,
+      330,
+      439
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "A_Accuracy",
+    "statValues": {
+     "base": 17,
+     "growthType": "promotionlv",
+     "abilityType": "A_Accuracy",
+     "progression": [
+      1,
+      1,
+      2,
+      2,
+      3
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131025003",
+  "famille": "weapon",
+  "nameFr": "Épée longue de la grâce éternelle",
+  "nameEn": "Eternal Grace Longsword",
+  "descFr": "Une épée longue confectionnée par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 618,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      36,
+      51
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      112,
+      223,
+      333,
+      444
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "H_HealPower_Rate",
+    "statValues": {
+     "base": 817,
+     "growthType": "promotionlv",
+     "abilityType": "H_HealPower_Rate",
+     "progression": [
+      17,
+      39,
+      62,
+      89,
+      122
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131034016",
+  "famille": "weapon",
+  "nameFr": "Espadon de chasseur de poison",
+  "nameEn": "Venom Hunter Greatsword",
+  "descFr": "Un espadon trempé dans le poison de Molbog, le crapaud venimeux.\nMême un détenteur de magie puissante aurait du mal à résister à son poison.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 450,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      11,
+      14,
+      19,
+      26,
+      37
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      81,
+      162,
+      242,
+      323
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131035001",
+  "famille": "weapon",
+  "nameFr": "Espadon de l'ombre de la rupture",
+  "nameEn": "Shadow Rupture Greatsword",
+  "descFr": "Un espadon confectionné par un maître artisan inconnu.\nIl s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "C_Critical_Rate",
+    "statValues": {
+     "base": 579,
+     "growthType": "promotionlv",
+     "abilityType": "C_Critical_Rate",
+     "progression": [
+      12,
+      28,
+      44,
+      63,
+      87
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131035002",
+  "famille": "weapon",
+  "nameFr": "Espadon de garde indomptable",
+  "nameEn": "Indomitable Guard Greatsword",
+  "descFr": "Un espadon confectionné par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 611,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      26,
+      36,
+      50
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      111,
+      220,
+      330,
+      439
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "A_Accuracy",
+    "statValues": {
+     "base": 17,
+     "growthType": "promotionlv",
+     "abilityType": "A_Accuracy",
+     "progression": [
+      1,
+      1,
+      2,
+      2,
+      3
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131035003",
+  "famille": "weapon",
+  "nameFr": "Espadon de la grâce éternelle",
+  "nameEn": "Eternal Grace Greatsword",
+  "descFr": "Un espadon confectionné par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 618,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      36,
+      51
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      112,
+      223,
+      333,
+      444
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "H_HealPower_Rate",
+    "statValues": {
+     "base": 817,
+     "growthType": "promotionlv",
+     "abilityType": "H_HealPower_Rate",
+     "progression": [
+      17,
+      39,
+      62,
+      89,
+      122
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131035010",
+  "famille": "weapon",
+  "nameFr": "Espadon de l'âme vorace",
+  "nameEn": "Gluttonous Soul Greatsword",
+  "descFr": "L'espadon du Dévoreur d'âmes, que l'on pensait uniquement légendaire.\nQuiconque est frappé par sa lame verra son âme dérobée.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131044016",
+  "famille": "weapon",
+  "nameFr": "Épée et bouclier de chasseur de poison",
+  "nameEn": "Venom Hunter Sword and Shield",
+  "descFr": "Un ensemble d'épée et bouclier trempé dans le poison de Molbog, le crapaud venimeux.\nMême un détenteur de magie puissante aurait du mal à résister à son poison.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 450,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      11,
+      14,
+      19,
+      26,
+      37
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      81,
+      162,
+      242,
+      323
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131045001",
+  "famille": "weapon",
+  "nameFr": "Épée et bouclier de l'ombre de la rupture",
+  "nameEn": "Shadow Rupture Sword and Shield",
+  "descFr": "Un ensemble d'épée et bouclier confectionné par un maître artisan inconnu.\nIl s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "C_Critical_Rate",
+    "statValues": {
+     "base": 579,
+     "growthType": "promotionlv",
+     "abilityType": "C_Critical_Rate",
+     "progression": [
+      12,
+      28,
+      44,
+      63,
+      87
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131045002",
+  "famille": "weapon",
+  "nameFr": "Épée et bouclier de garde indomptable",
+  "nameEn": "Indomitable Guard Sword and Shield",
+  "descFr": "Un ensemble d'épée et bouclier confectionné par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 611,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      26,
+      36,
+      50
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      111,
+      220,
+      330,
+      439
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "A_Accuracy",
+    "statValues": {
+     "base": 17,
+     "growthType": "promotionlv",
+     "abilityType": "A_Accuracy",
+     "progression": [
+      1,
+      1,
+      2,
+      2,
+      3
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131045003",
+  "famille": "weapon",
+  "nameFr": "Épée et bouclier de la grâce éternelle",
+  "nameEn": "Eternal Grace Sword and Shield",
+  "descFr": "Un ensemble d'épée et bouclier confectionné par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 618,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      36,
+      51
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      112,
+      223,
+      333,
+      444
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "H_HealPower_Rate",
+    "statValues": {
+     "base": 817,
+     "growthType": "promotionlv",
+     "abilityType": "H_HealPower_Rate",
+     "progression": [
+      17,
+      39,
+      62,
+      89,
+      122
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131054016",
+  "famille": "weapon",
+  "nameFr": "Nunchaku de chasseur de poison",
+  "nameEn": "Venom Hunter Nunchaku",
+  "descFr": "Un nunchaku trempé dans le poison de Molbog, le crapaud venimeux.\nMême un détenteur de magie puissante aurait du mal à résister à son poison.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 450,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      11,
+      14,
+      19,
+      26,
+      37
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      81,
+      162,
+      242,
+      323
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131055001",
+  "famille": "weapon",
+  "nameFr": "Nunchaku de l'ombre de la rupture",
+  "nameEn": "Shadow Rupture Nunchaku",
+  "descFr": "Un nunchaku confectionné par un maître artisan inconnu.\nIl s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "C_Critical_Rate",
+    "statValues": {
+     "base": 579,
+     "growthType": "promotionlv",
+     "abilityType": "C_Critical_Rate",
+     "progression": [
+      12,
+      28,
+      44,
+      63,
+      87
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131055002",
+  "famille": "weapon",
+  "nameFr": "Nunchaku de garde indomptable",
+  "nameEn": "Indomitable Guard Nunchaku",
+  "descFr": "Un nunchaku confectionné par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 611,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      26,
+      36,
+      50
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      111,
+      220,
+      330,
+      439
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "A_Accuracy",
+    "statValues": {
+     "base": 17,
+     "growthType": "promotionlv",
+     "abilityType": "A_Accuracy",
+     "progression": [
+      1,
+      1,
+      2,
+      2,
+      3
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131055003",
+  "famille": "weapon",
+  "nameFr": "Nunchaku de la grâce éternelle",
+  "nameEn": "Eternal Grace Nunchaku",
+  "descFr": "Un nunchaku confectionné par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 618,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      36,
+      51
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      112,
+      223,
+      333,
+      444
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "H_HealPower_Rate",
+    "statValues": {
+     "base": 817,
+     "growthType": "promotionlv",
+     "abilityType": "H_HealPower_Rate",
+     "progression": [
+      17,
+      39,
+      62,
+      89,
+      122
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131055010",
+  "famille": "weapon",
+  "nameFr": "Nunchaku de l'âme vorace",
+  "nameEn": "Gluttonous Soul Nunchaku",
+  "descFr": "Le nunchaku du Dévoreur d'âmes, que l'on pensait uniquement légendaire.\nQuiconque en est frappé verra son âme dérobée.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131064016",
+  "famille": "weapon",
+  "nameFr": "Baguette de chasseur de poison",
+  "nameEn": "Venom Hunter Wand",
+  "descFr": "Une baguette trempée dans le poison de Molbog, le crapaud venimeux.\nMême un détenteur de magie puissante aurait du mal à résister à son poison.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 450,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      11,
+      14,
+      19,
+      26,
+      37
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      81,
+      162,
+      242,
+      323
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131065001",
+  "famille": "weapon",
+  "nameFr": "Baguette de l'ombre de la rupture",
+  "nameEn": "Shadow Rupture Wand",
+  "descFr": "Une baguette confectionnée par un maître artisan inconnu.\nIl s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "C_Critical_Rate",
+    "statValues": {
+     "base": 579,
+     "growthType": "promotionlv",
+     "abilityType": "C_Critical_Rate",
+     "progression": [
+      12,
+      28,
+      44,
+      63,
+      87
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131065002",
+  "famille": "weapon",
+  "nameFr": "Baguette de garde indomptable",
+  "nameEn": "Indomitable Guard Wand",
+  "descFr": "Une baguette confectionnée par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 611,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      26,
+      36,
+      50
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      111,
+      220,
+      330,
+      439
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "A_Accuracy",
+    "statValues": {
+     "base": 17,
+     "growthType": "promotionlv",
+     "abilityType": "A_Accuracy",
+     "progression": [
+      1,
+      1,
+      2,
+      2,
+      3
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131065003",
+  "famille": "weapon",
+  "nameFr": "Baguette de la grâce éternelle",
+  "nameEn": "Eternal Grace Wand",
+  "descFr": "Une baguette confectionnée par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 618,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      36,
+      51
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      112,
+      223,
+      333,
+      444
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "H_HealPower_Rate",
+    "statValues": {
+     "base": 817,
+     "growthType": "promotionlv",
+     "abilityType": "H_HealPower_Rate",
+     "progression": [
+      17,
+      39,
+      62,
+      89,
+      122
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131074016",
+  "famille": "weapon",
+  "nameFr": "Gantelets de chasseur de poison",
+  "nameEn": "Venom Hunter Gauntlets",
+  "descFr": "Des gantelets trempés dans le poison de Molbog, le crapaud venimeux.\nMême un détenteur de magie puissante aurait du mal à résister à leur poison.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 450,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      11,
+      14,
+      19,
+      26,
+      37
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      81,
+      162,
+      242,
+      323
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131075001",
+  "famille": "weapon",
+  "nameFr": "Gantelets de l'ombre de la rupture",
+  "nameEn": "Shadow Rupture Gauntlets",
+  "descFr": "Des gantelets confectionnés par un maître artisan inconnu.\nIl s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "C_Critical_Rate",
+    "statValues": {
+     "base": 579,
+     "growthType": "promotionlv",
+     "abilityType": "C_Critical_Rate",
+     "progression": [
+      12,
+      28,
+      44,
+      63,
+      87
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131075002",
+  "famille": "weapon",
+  "nameFr": "Gantelets de garde indomptable",
+  "nameEn": "Indomitable Guard Gauntlets",
+  "descFr": "Des gantelets confectionnés par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 611,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      26,
+      36,
+      50
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      111,
+      220,
+      330,
+      439
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "A_Accuracy",
+    "statValues": {
+     "base": 17,
+     "growthType": "promotionlv",
+     "abilityType": "A_Accuracy",
+     "progression": [
+      1,
+      1,
+      2,
+      2,
+      3
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131075003",
+  "famille": "weapon",
+  "nameFr": "Gantelets de la grâce éternelle",
+  "nameEn": "Eternal Grace Gauntlets",
+  "descFr": "Des gantelets confectionnés par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 618,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      36,
+      51
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      112,
+      223,
+      333,
+      444
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "H_HealPower_Rate",
+    "statValues": {
+     "base": 817,
+     "growthType": "promotionlv",
+     "abilityType": "H_HealPower_Rate",
+     "progression": [
+      17,
+      39,
+      62,
+      89,
+      122
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131084016",
+  "famille": "weapon",
+  "nameFr": "Rapière de chasseur de poison",
+  "nameEn": "Venom Hunter Rapier",
+  "descFr": "Une rapière trempée dans le poison de Molbog, le crapaud venimeux.\nMême un détenteur de magie puissante aurait du mal à résister à son poison.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 450,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      11,
+      14,
+      19,
+      26,
+      37
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      81,
+      162,
+      242,
+      323
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131085001",
+  "famille": "weapon",
+  "nameFr": "Rapière de l'ombre de la rupture",
+  "nameEn": "Shadow Rupture Rapier",
+  "descFr": "Une rapière confectionnée par un maître artisan inconnu.\nIl s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "C_Critical_Rate",
+    "statValues": {
+     "base": 579,
+     "growthType": "promotionlv",
+     "abilityType": "C_Critical_Rate",
+     "progression": [
+      12,
+      28,
+      44,
+      63,
+      87
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131085002",
+  "famille": "weapon",
+  "nameFr": "Rapière de garde indomptable",
+  "nameEn": "Indomitable Guard Rapier",
+  "descFr": "Une rapière confectionnée par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 611,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      26,
+      36,
+      50
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      111,
+      220,
+      330,
+      439
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "A_Accuracy",
+    "statValues": {
+     "base": 17,
+     "growthType": "promotionlv",
+     "abilityType": "A_Accuracy",
+     "progression": [
+      1,
+      1,
+      2,
+      2,
+      3
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131085003",
+  "famille": "weapon",
+  "nameFr": "Rapière de la grâce éternelle",
+  "nameEn": "Eternal Grace Rapier",
+  "descFr": "Une rapière confectionnée par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 618,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      36,
+      51
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      112,
+      223,
+      333,
+      444
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "H_HealPower_Rate",
+    "statValues": {
+     "base": 817,
+     "growthType": "promotionlv",
+     "abilityType": "H_HealPower_Rate",
+     "progression": [
+      17,
+      39,
+      62,
+      89,
+      122
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131094016",
+  "famille": "weapon",
+  "nameFr": "Lance de chasseur de poison",
+  "nameEn": "Venom Hunter Lance",
+  "descFr": "Une lance trempée dans le poison de Molbog, le crapaud venimeux.\nMême un détenteur de magie puissante aurait du mal à résister à son poison.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 450,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      11,
+      14,
+      19,
+      26,
+      37
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      81,
+      162,
+      242,
+      323
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131095001",
+  "famille": "weapon",
+  "nameFr": "Lance de l'ombre de la rupture",
+  "nameEn": "Shadow Rupture Lance",
+  "descFr": "Une lance confectionnée par un maître artisan inconnu.\nIl s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "C_Critical_Rate",
+    "statValues": {
+     "base": 579,
+     "growthType": "promotionlv",
+     "abilityType": "C_Critical_Rate",
+     "progression": [
+      12,
+      28,
+      44,
+      63,
+      87
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131095002",
+  "famille": "weapon",
+  "nameFr": "Lance de garde indomptable",
+  "nameEn": "Indomitable Guard Lance",
+  "descFr": "Une lance confectionnée par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 611,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      26,
+      36,
+      50
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      111,
+      220,
+      330,
+      439
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "A_Accuracy",
+    "statValues": {
+     "base": 17,
+     "growthType": "promotionlv",
+     "abilityType": "A_Accuracy",
+     "progression": [
+      1,
+      1,
+      2,
+      2,
+      3
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131095003",
+  "famille": "weapon",
+  "nameFr": "Lance de la grâce éternelle",
+  "nameEn": "Eternal Grace Lance",
+  "descFr": "Une lance confectionnée par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 618,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      36,
+      51
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      112,
+      223,
+      333,
+      444
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "H_HealPower_Rate",
+    "statValues": {
+     "base": 817,
+     "growthType": "promotionlv",
+     "abilityType": "H_HealPower_Rate",
+     "progression": [
+      17,
+      39,
+      62,
+      89,
+      122
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131095010",
+  "famille": "weapon",
+  "nameFr": "Lance de l'âme vorace",
+  "nameEn": "Gluttonous Soul Lance",
+  "descFr": "La lance du Dévoreur d'âmes, que l'on pensait uniquement légendaire.\nQuiconque est frappé par sa lame verra son âme dérobée.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131104016",
+  "famille": "weapon",
+  "nameFr": "Grimoire de chasseur de poison",
+  "nameEn": "Venom Hunter Grimoire",
+  "descFr": "Un grimoire trempé dans le poison de Molbog, le crapaud venimeux.\nMême un détenteur de magie puissante aurait du mal à résister à son poison.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 450,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      11,
+      14,
+      19,
+      26,
+      37
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      81,
+      162,
+      242,
+      323
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131105002",
+  "famille": "weapon",
+  "nameFr": "Grimoire de garde indomptable",
+  "nameEn": "Indomitable Guard Grimoire",
+  "descFr": "Un grimoire confectionné par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 611,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      26,
+      36,
+      50
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      111,
+      220,
+      330,
+      439
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "A_Accuracy",
+    "statValues": {
+     "base": 17,
+     "growthType": "promotionlv",
+     "abilityType": "A_Accuracy",
+     "progression": [
+      1,
+      1,
+      2,
+      2,
+      3
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131105003",
+  "famille": "weapon",
+  "nameFr": "Grimoire de la grâce éternelle",
+  "nameEn": "Eternal Grace Grimoire",
+  "descFr": "Un grimoire confectionné par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 618,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      36,
+      51
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      112,
+      223,
+      333,
+      444
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "H_HealPower_Rate",
+    "statValues": {
+     "base": 817,
+     "growthType": "promotionlv",
+     "abilityType": "H_HealPower_Rate",
+     "progression": [
+      17,
+      39,
+      62,
+      89,
+      122
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131114016",
+  "famille": "weapon",
+  "nameFr": "Épées doubles de chasseur de poison",
+  "nameEn": "Venom Hunter Dual Swords",
+  "descFr": "Des épées doubles trempées dans le poison de Molbog, le crapaud venimeux.\nMême un détenteur de magie puissante aurait du mal à résister à leur poison.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 450,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      11,
+      14,
+      19,
+      26,
+      37
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      81,
+      162,
+      242,
+      323
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131115001",
+  "famille": "weapon",
+  "nameFr": "Épées doubles de l'ombre de la rupture",
+  "nameEn": "Shadow Rupture Dual Swords",
+  "descFr": "Des épées doubles confectionnées par un maître artisan inconnu.\nIl s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "C_Critical_Rate",
+    "statValues": {
+     "base": 579,
+     "growthType": "promotionlv",
+     "abilityType": "C_Critical_Rate",
+     "progression": [
+      12,
+      28,
+      44,
+      63,
+      87
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131115002",
+  "famille": "weapon",
+  "nameFr": "Épées doubles de garde indomptable",
+  "nameEn": "Indomitable Guard Dual Swords",
+  "descFr": "Des épées doubles confectionnées par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 611,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      26,
+      36,
+      50
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      111,
+      220,
+      330,
+      439
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "A_Accuracy",
+    "statValues": {
+     "base": 17,
+     "growthType": "promotionlv",
+     "abilityType": "A_Accuracy",
+     "progression": [
+      1,
+      1,
+      2,
+      2,
+      3
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131115003",
+  "famille": "weapon",
+  "nameFr": "Épées doubles de la grâce éternelle",
+  "nameEn": "Eternal Grace Dual Swords",
+  "descFr": "Des épées doubles confectionnées par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 618,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      36,
+      51
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      112,
+      223,
+      333,
+      444
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "H_HealPower_Rate",
+    "statValues": {
+     "base": 817,
+     "growthType": "promotionlv",
+     "abilityType": "H_HealPower_Rate",
+     "progression": [
+      17,
+      39,
+      62,
+      89,
+      122
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131115010",
+  "famille": "weapon",
+  "nameFr": "Épées doubles de l'âme vorace",
+  "nameEn": "Gluttonous Soul Dual Swords",
+  "descFr": "Les épées doubles du Dévoreur d'âmes, que l'on pensait uniquement légendaires.\nQuiconque est frappé par leur lame verra son âme dérobée.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131124016",
+  "famille": "weapon",
+  "nameFr": "Hache de chasseur de poison",
+  "nameEn": "Venom Hunter Axe",
+  "descFr": "Une hache trempée dans le poison de Molbog, le crapaud venimeux.\nMême un détenteur de magie puissante aurait du mal à résister à son poison.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 450,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      11,
+      14,
+      19,
+      26,
+      37
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      81,
+      162,
+      242,
+      323
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131125001",
+  "famille": "weapon",
+  "nameFr": "Hache de l'ombre de la rupture",
+  "nameEn": "Shadow Rupture Axe",
+  "descFr": "Une hache confectionnée par un maître artisan inconnu.\nIl s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 637,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "C_Critical_Rate",
+    "statValues": {
+     "base": 579,
+     "growthType": "promotionlv",
+     "abilityType": "C_Critical_Rate",
+     "progression": [
+      12,
+      28,
+      44,
+      63,
+      87
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131125002",
+  "famille": "weapon",
+  "nameFr": "Hache de garde indomptable",
+  "nameEn": "Indomitable Guard Axe",
+  "descFr": "Une hache confectionnée par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 611,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      26,
+      36,
+      50
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      111,
+      220,
+      330,
+      439
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "A_Accuracy",
+    "statValues": {
+     "base": 17,
+     "growthType": "promotionlv",
+     "abilityType": "A_Accuracy",
+     "progression": [
+      1,
+      1,
+      2,
+      2,
+      3
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ },
+ {
+  "gameId": "131125003",
+  "famille": "weapon",
+  "nameFr": "Hache de la grâce éternelle",
+  "nameEn": "Eternal Grace Axe",
+  "descFr": "Une hache confectionnée par un maître artisan inconnu. Il s'agit de l'apogée du talent extraordinaire du maître.",
+  "emplacements": {
+   "main1": {
+    "stat": "B_Atk_Equip",
+    "statValues": {
+     "base": 618,
+     "growthType": "promotionlv",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      15,
+      20,
+      27,
+      36,
+      51
+     ]
+    },
+    "promotion": {
+     "base": 0,
+     "growthType": "promotionbonus",
+     "abilityType": "B_Atk_Equip",
+     "progression": [
+      112,
+      223,
+      333,
+      444
+     ]
+    }
+   },
+   "sub1": {
+    "stat": "H_HealPower_Rate",
+    "statValues": {
+     "base": 817,
+     "growthType": "promotionlv",
+     "abilityType": "H_HealPower_Rate",
+     "progression": [
+      17,
+      39,
+      62,
+      89,
+      122
+     ]
+    }
+   }
+  },
+  "bindingMaterials": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualite",
+    "rarete",
+    "personnage",
+    "icone",
+    "grade",
+    "passifs",
+    "optionsAleatoires",
+    "promotion"
+   ]
+  }
+ }
+]

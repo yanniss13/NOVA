@@ -1,0 +1,232 @@
+{
+ "Activethird_Damres_Rate": {
+  "fr": "Réduction des dégâts d'attaque spéciale",
+  "en": "Special Attack Damage Decrease",
+  "taux": true
+ },
+ "Aerialattack_Damres_Rate": {
+  "fr": "Réduction des dégâts d'attaque plongée",
+  "en": "Plunging Attack Damage Decrease",
+  "taux": true
+ },
+ "All_Element_Rate": {
+  "fr": "Augmentation de tous les dégâts élémentaires",
+  "en": "All Elemental Damage Increase",
+  "taux": true
+ },
+ "All_Element_Res_Rate": {
+  "fr": "Résistance à tous les éléments (%)",
+  "en": "All Element Resistance (%)",
+  "taux": true
+ },
+ "AllElement_Res_Rate": {
+  "fr": "Augmentation de toutes les défenses élémentaires",
+  "en": "All Elemental Defense Increase",
+  "taux": true
+ },
+ "D_All_DamRes_Rate": {
+  "fr": "Résistance à tous les dégâts",
+  "en": "All Damage Resistance",
+  "taux": true
+ },
+ "D_RefDam_Rate": {
+  "fr": "Taux de renvoi des dégâts",
+  "en": "Damage Reflection Rate",
+  "taux": true
+ },
+ "Dark_Burst_Gauge_Rate": {
+  "fr": "Efficacité de Déluge des Ténèbres",
+  "en": "Darkness Burst Efficiency",
+  "taux": true
+ },
+ "Dark_Res_Rate": {
+  "fr": "Augmentation de la défense des Ténèbres ",
+  "en": "Darkness Defense Increase ",
+  "taux": true
+ },
+ "Dark_Weakness_Rate": {
+  "fr": "Dégâts de faiblesse aux Ténèbres ",
+  "en": "Darkness Weakness Damage ",
+  "taux": true
+ },
+ "Default_Burst_Gauge_Rate": {
+  "fr": "Efficacité de Déluge physique",
+  "en": "Physical Burst Efficiency",
+  "taux": true
+ },
+ "Default_Element_Res_Rate": {
+  "fr": "Résistance physique (%)",
+  "en": "Physical Resistance (%)",
+  "taux": true
+ },
+ "Default_Res_Rate": {
+  "fr": "Augmentation de la défense physique ",
+  "en": "Physical Defense Increase ",
+  "taux": true
+ },
+ "Default_Weakness_Rate": {
+  "fr": "Dégâts de faiblesse physique ",
+  "en": "Physical Weakness Damage ",
+  "taux": true
+ },
+ "Earth_Element_Res_Rate": {
+  "fr": "Résistance à la Terre (%)",
+  "en": "Earth Resistance (%)",
+  "taux": true
+ },
+ "Earth_Res_Rate": {
+  "fr": "Augmentation de la défense de Terre ",
+  "en": "Earth Defense Increase ",
+  "taux": true
+ },
+ "Earth_Weakness_Rate": {
+  "fr": "Dégâts de faiblesse à la Terre ",
+  "en": "Earth Weakness Damage ",
+  "taux": true
+ },
+ "Equip_Amplify_Rate": {
+  "fr": "Amplification des stats de l'équipement",
+  "en": "Equipment Stat Amplification",
+  "taux": true
+ },
+ "Fire_Element_Res_Rate": {
+  "fr": "Résistance au Feu (%)",
+  "en": "Fire Resistance (%)",
+  "taux": true
+ },
+ "Fire_Res_Rate": {
+  "fr": "Augmentation de la défense de Feu ",
+  "en": "Fire Defense Increase ",
+  "taux": true
+ },
+ "Fire_Weakness_Rate": {
+  "fr": "Dégâts de faiblesse au Feu ",
+  "en": "Fire Weakness Damage ",
+  "taux": true
+ },
+ "H_VampireHeal_Rate": {
+  "fr": "Vampirisme",
+  "en": "Lifesteal",
+  "taux": true
+ },
+ "Holy_Burst_Gauge_Rate": {
+  "fr": "Efficacité de Déluge du Sacré",
+  "en": "Holy Burst Efficiency",
+  "taux": true
+ },
+ "Holy_Element_Res_Rate": {
+  "fr": "Résistance au Sacré (%)",
+  "en": "Holy Resistance (%)",
+  "taux": true
+ },
+ "Holy_Res_Rate": {
+  "fr": "Augmentation de la défense du Sacré ",
+  "en": "Holy Defense Increase ",
+  "taux": true
+ },
+ "Holy_Weakness_Rate": {
+  "fr": "Dégâts de faiblesse au Sacré ",
+  "en": "Holy Weakness Damage ",
+  "taux": true
+ },
+ "Ice_Element_Res_Rate": {
+  "fr": "Résistance au Froid (%)",
+  "en": "Cold Resistance (%)",
+  "taux": true
+ },
+ "Ice_Res_Rate": {
+  "fr": "Augmentation de la défense de Froid ",
+  "en": "Cold Defense Increase ",
+  "taux": true
+ },
+ "Ice_Weakness_Rate": {
+  "fr": "Dégâts de faiblesse au Froid ",
+  "en": "Cold Weakness Damage ",
+  "taux": true
+ },
+ "MF_Assim_Rate": {
+  "fr": "Taux de conversion magique",
+  "en": "Magic Assimilation",
+  "taux": true
+ },
+ "MF_Protect_Rate": {
+  "fr": "Protection magique",
+  "en": "Magic Protection",
+  "taux": true
+ },
+ "Normalattack_Damres_Rate": {
+  "fr": "Réduction des dégâts d'attaque normale",
+  "en": "Normal Attack Damage Decrease",
+  "taux": true
+ },
+ "Normalskill_Damres_Rate": {
+  "fr": "Réduction des dégâts de compétence normale",
+  "en": "Normal Skill Damage Decrease",
+  "taux": true
+ },
+ "Normalskillchangetag_Damres_Rate": {
+  "fr": "Réduction des dégâts de compétence de relève",
+  "en": "Tag Skill Damage Decrease",
+  "taux": true
+ },
+ "S_MoveSpdAdd_Rate": {
+  "fr": "Vitesse de déplacement",
+  "en": "Movement Speed",
+  "taux": true
+ },
+ "S_TownSpdAdd_Rate": {
+  "fr": "Vitesse de déplacement en ville",
+  "en": "Town Movement Speed",
+  "taux": true
+ },
+ "Temp_Cold_Res": {
+  "fr": "Résistance au froid",
+  "en": "Cold Resistance",
+  "taux": false
+ },
+ "Temp_Hot_Res": {
+  "fr": "Résistance au chaud",
+  "en": "Hot Resistance",
+  "taux": false
+ },
+ "Threaten_Rate": {
+  "fr": "Taux de menace",
+  "en": "Threat Rating",
+  "taux": true
+ },
+ "Thunder_Element_Res_Rate": {
+  "fr": "Résistance à la Foudre (%)",
+  "en": "Lightning Resistance (%)",
+  "taux": true
+ },
+ "Thunder_Res_Rate": {
+  "fr": "Augmentation de la défense de Foudre ",
+  "en": "Lightning Defense Increase ",
+  "taux": true
+ },
+ "Thunder_Weakness_Rate": {
+  "fr": "Dégâts de faiblesse à la Foudre ",
+  "en": "Lightning Weakness Damage ",
+  "taux": true
+ },
+ "Ultimateskill_Damres_Rate": {
+  "fr": "Réduction des dégâts d'attaque ultime",
+  "en": "Ultimate Move Damage Decrease",
+  "taux": true
+ },
+ "Wind_Element_Res_Rate": {
+  "fr": "Résistance au Vent (%)",
+  "en": "Wind Resistance (%)",
+  "taux": true
+ },
+ "Wind_Res_Rate": {
+  "fr": "Augmentation de la défense de Vent ",
+  "en": "Wind Defense Increase ",
+  "taux": true
+ },
+ "Wind_Weakness_Rate": {
+  "fr": "Dégâts de faiblesse au Vent ",
+  "en": "Wind Weakness Damage ",
+  "taux": true
+ }
+}

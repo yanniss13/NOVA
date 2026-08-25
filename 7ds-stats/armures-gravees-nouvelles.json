@@ -1,0 +1,2532 @@
+[
+ {
+  "gameId": "133045003",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": "I_MaxHpAdd_Rate",
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    },
+    {
+     "key": "P_Shield_Rate",
+     "slot": "sub",
+     "isRate": true,
+     "nameEn": "Barrier Efficiency",
+     "nameFr": "Efficacité des barrières",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "P_Shield_Rate",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "P_Shield_Rate",
+      "progression": [
+       11
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "P_Shield_Rate",
+      "progression": [
+       1164
+      ]
+     }
+    },
+    {
+     "key": "Debuff_Time_Rate",
+     "slot": "sub",
+     "isRate": true,
+     "nameEn": "Debuff Duration Efficiency",
+     "nameFr": "Efficacité de la durée des malus",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "Debuff_Time_Rate",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "Debuff_Time_Rate",
+      "progression": [
+       19
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "Debuff_Time_Rate",
+      "progression": [
+       2011
+      ]
+     }
+    }
+   ],
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "I_MaxHpAdd_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "HP Increase",
+    "nameFr": "Augmentation des PV"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": "Dignité du capitaine",
+  "nameEn": "Grandmaster's Dignity",
+  "descFr": "Costume de Hauser, capitaine des Chevaliers Sacrés de Liones.\nL'armure dégage un air d'autorité qui sied à son rôle prestigieux.",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132134029",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234029",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334029",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434029",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "UIImg/Icon_Item/BindArmor/Howzer_Plate_5003.png",
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133065003",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": "Debuff_Time_Rate",
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    },
+    {
+     "key": "I_MaxHpAdd_Rate",
+     "slot": "sub",
+     "isRate": true,
+     "nameEn": "HP Increase",
+     "nameFr": "Augmentation des PV",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "I_MaxHpAdd_Rate",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "I_MaxHpAdd_Rate",
+      "progression": [
+       4
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "I_MaxHpAdd_Rate",
+      "progression": [
+       419
+      ]
+     }
+    }
+   ],
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "Debuff_Time_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Debuff Duration Efficiency",
+    "nameFr": "Efficacité de la durée des malus"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": "Instinct incisif",
+  "nameEn": "Keen Instinct",
+  "descFr": "Costume de Bug, le démon secret.\nUne armure robuste qui combine liberté de mouvement et protection.",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132124030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132224030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132324030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132424030",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "UIImg/Icon_Item/BindArmor/Bug_Plate_5003.png",
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133125003",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": "Default_Add",
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    },
+    {
+     "key": "Debuff_Time_Rate",
+     "slot": "sub",
+     "isRate": true,
+     "nameEn": "Debuff Duration Efficiency",
+     "nameFr": "Efficacité de la durée des malus",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "Debuff_Time_Rate",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "Debuff_Time_Rate",
+      "progression": [
+       29
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "Debuff_Time_Rate",
+      "progression": [
+       3017
+      ]
+     }
+    }
+   ],
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "Default_Add",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Physical Attack",
+    "nameFr": "Attaque physique"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": "Forteresse de fer impénétrable",
+  "nameEn": "Impregnable Iron Fortress",
+  "descFr": "Costume d'antan de Griamor.\nSa défense puissante est impénétrable.",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132134026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434026",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "UIImg/Icon_Item/BindArmor/Griamore_Plate_5003.png",
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133145003",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": "MF_ChargeEffic_Rate",
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    },
+    {
+     "key": "Buff_Time_Rate",
+     "slot": "sub",
+     "isRate": true,
+     "nameEn": "Buff Duration Efficiency",
+     "nameFr": "Efficacité de la durée des bonus",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "Buff_Time_Rate",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "Buff_Time_Rate",
+      "progression": [
+       29
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "Buff_Time_Rate",
+      "progression": [
+       3017
+      ]
+     }
+    }
+   ],
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "MF_ChargeEffic_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Magic Charging Efficiency",
+    "nameFr": "Efficacité de recharge de la magie"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": "Ombre du roi des fées",
+  "nameEn": "Fairy King's Shadow",
+  "descFr": "Costume d'antan de King.\nUne armure robuste qui fait étalage de la majesté du roi des fées.",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132124028",
+    "quantity": 1
+   },
+   {
+    "itemId": "132224028",
+    "quantity": 1
+   },
+   {
+    "itemId": "132324028",
+    "quantity": 1
+   },
+   {
+    "itemId": "132424028",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "UIImg/Icon_Item/BindArmor/King_Plate_5003.png",
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133165002",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": null,
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    }
+   ],
+   "subReinforce": null,
+   "subStatLabel": null,
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": "Aventure du barde",
+  "nameEn": "Bard's Adventure",
+  "descFr": "Costume d'antan d'Elizabeth.\nUne tenue de barde destinée à dissimuler sa véritable identité.",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132124025",
+    "quantity": 1
+   },
+   {
+    "itemId": "132224025",
+    "quantity": 1
+   },
+   {
+    "itemId": "132324025",
+    "quantity": 1
+   },
+   {
+    "itemId": "132424025",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120296",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "UIImg/Icon_Item/BindArmor/Elizabeth_Leather_5002.png",
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133165003",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": null,
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    }
+   ],
+   "subReinforce": null,
+   "subStatLabel": null,
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": "Lumière de Liones",
+  "nameEn": "Light of Liones",
+  "descFr": "Costume d'antan d'Elizabeth.\nConçu pour projeter toute la dignité d'une princesse en première ligne du champ de bataille.",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132134026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434026",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "UIImg/Icon_Item/BindArmor/Elizabeth_Plate_5003.png",
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133195001",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": null,
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    }
+   ],
+   "subReinforce": null,
+   "subStatLabel": null,
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": "Senteur d'automne",
+  "nameEn": "Autumn Scent",
+  "descFr": "Costume de la fée Daisy, venue d'un passé lointain.\nCette tenue ressemble aux feuilles qui colorent la forêt d'un rouge profond en automne.",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132134022",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234022",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334022",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434022",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120295",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "UIImg/Icon_Item/BindArmor/Daisy_Cloth_5001.png",
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133205003",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": null,
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    }
+   ],
+   "subReinforce": null,
+   "subStatLabel": null,
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": "Jeu de la lune à l'aube",
+  "nameEn": "Dawn Moon's Play",
+  "descFr": "Costume de Clotho, l'exploratrice temporelle.\nUne tenue de banquet pareille à la lune exquise qui illumine le ciel nocturne juste avant l'aube.",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132134029",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234029",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334029",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434029",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "UIImg/Icon_Item/BindArmor/Klotho_Plate_5003.png",
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133215001",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": null,
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    }
+   ],
+   "subReinforce": null,
+   "subStatLabel": null,
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": "<Le Dragon de la Colère>",
+  "nameEn": "<The Dragon Sin of Wrath>",
+  "descFr": "Costume d'antan de Meliodas. L'armure caractéristique de Meliodas des <Seven Deadly Sins>.",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132114024",
+    "quantity": 1
+   },
+   {
+    "itemId": "132214024",
+    "quantity": 1
+   },
+   {
+    "itemId": "132314024",
+    "quantity": 1
+   },
+   {
+    "itemId": "132414024",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120295",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "UIImg/Icon_Item/BindArmor/Meliodas_Cloth_5001.png",
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133225001",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": null,
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    }
+   ],
+   "subReinforce": null,
+   "subStatLabel": null,
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": "<Le Lion de l'Orgueil>",
+  "nameEn": "<The Lion Sin of Pride>",
+  "descFr": "Costume d'antan d'Escanor. L'armure caractéristique d'Escanor des <Seven Deadly Sins>",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132134022",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234022",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334022",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434022",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120295",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "UIImg/Icon_Item/BindArmor/Escanor_Cloth_5001.png",
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133245003",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": null,
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    }
+   ],
+   "subReinforce": null,
+   "subStatLabel": null,
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": "Banquet de sorcière",
+  "nameEn": "Witch's Banquet",
+  "descFr": "Costume d'antan de Merlin.\nCette tenue dégage un air de confiance, de liberté et de beauté.",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132124030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132224030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132324030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132424030",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "UIImg/Icon_Item/BindArmor/Merlin_Plate_5003.png",
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133255002",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": null,
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    }
+   ],
+   "subReinforce": null,
+   "subStatLabel": null,
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": "Quête de soi",
+  "nameEn": "Journey of Self-discovery",
+  "descFr": "Costume d'antan de Gowther.\nIl est profondément intéressé par l'exploration et l'observation du monde.",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132134026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434026",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120296",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "UIImg/Icon_Item/BindArmor/Gowther_Leather_5002.png",
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133255003",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": null,
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    }
+   ],
+   "subReinforce": null,
+   "subStatLabel": null,
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": "Défense minimale",
+  "nameEn": "Minimal Defense",
+  "descFr": "Costume d'antan de Gowther.\nMême lui a besoin d'équipement pour protéger son corps.",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132114027",
+    "quantity": 1
+   },
+   {
+    "itemId": "132214027",
+    "quantity": 1
+   },
+   {
+    "itemId": "132314027",
+    "quantity": 1
+   },
+   {
+    "itemId": "132414027",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "UIImg/Icon_Item/BindArmor/Gowther_Plate_5003.png",
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133274001",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": null,
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    }
+   ],
+   "subReinforce": null,
+   "subStatLabel": null,
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": null,
+  "nameEn": null,
+  "descFr": "Un costume pour le Ban du passé. L'uniforme officiel de Ma petite gourmandise.",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132123005",
+    "quantity": 1
+   },
+   {
+    "itemId": "132223005",
+    "quantity": 1
+   },
+   {
+    "itemId": "132323005",
+    "quantity": 1
+   },
+   {
+    "itemId": "132423005",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100101",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion",
+    "iconUrl"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133275001",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": null,
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    }
+   ],
+   "subReinforce": null,
+   "subStatLabel": null,
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": null,
+  "nameEn": null,
+  "descFr": null,
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132124025",
+    "quantity": 1
+   },
+   {
+    "itemId": "132224025",
+    "quantity": 1
+   },
+   {
+    "itemId": "132324025",
+    "quantity": 1
+   },
+   {
+    "itemId": "132424025",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120295",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion",
+    "iconUrl"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133275002",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": null,
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    }
+   ],
+   "subReinforce": null,
+   "subStatLabel": null,
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": null,
+  "nameEn": null,
+  "descFr": null,
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132134026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132234026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132334026",
+    "quantity": 1
+   },
+   {
+    "itemId": "132434026",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120296",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion",
+    "iconUrl"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133275003",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": null,
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    }
+   ],
+   "subReinforce": null,
+   "subStatLabel": null,
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": null,
+  "nameEn": null,
+  "descFr": null,
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132124028",
+    "quantity": 1
+   },
+   {
+    "itemId": "132224028",
+    "quantity": 1
+   },
+   {
+    "itemId": "132324028",
+    "quantity": 1
+   },
+   {
+    "itemId": "132424028",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": null,
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion",
+    "iconUrl"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133415001",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": null,
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    }
+   ],
+   "subReinforce": null,
+   "subStatLabel": null,
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": "Flamme rouge du royaume des démons",
+  "nameEn": "Red Flame of the Demon Realm",
+  "descFr": "Costume d'antan de Derrierie. Sa conception allie robustesse et liberté de mouvement, un atout majeur en combat.",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132114024",
+    "quantity": 1
+   },
+   {
+    "itemId": "132214024",
+    "quantity": 1
+   },
+   {
+    "itemId": "132314024",
+    "quantity": 1
+   },
+   {
+    "itemId": "132414024",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120295",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "UIImg/Icon_Item/BindArmor/Derieri_Cloth_5001.png",
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ },
+ {
+  "gameId": "133415003",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": null,
+  "qualityMin": null,
+  "qualityMax": null,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": null,
+  "growth": {
+   "promotion": null,
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    }
+   ],
+   "subReinforce": null,
+   "subStatLabel": null,
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": null
+  },
+  "personnage": null,
+  "personnageNomFr": null,
+  "costumeSlug": null,
+  "nameFr": "Mouvement rebelle",
+  "nameEn": "Rebellious Movement",
+  "descFr": "Costume d'antan de Derrierie.\nCette armure de qualité supérieure reflète sa personnalité et ses traits distinctifs.",
+  "rarity": null,
+  "effectNameFr": null,
+  "engravingPassives": null,
+  "bindingMaterials": [
+   {
+    "itemId": "132124030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132224030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132324030",
+    "quantity": 1
+   },
+   {
+    "itemId": "132424030",
+    "quantity": 1
+   },
+   {
+    "itemId": "101100102",
+    "quantity": 1
+   },
+   {
+    "itemId": "101120297",
+    "quantity": 1
+   }
+  ],
+  "iconUrl": "UIImg/Icon_Item/BindArmor/Derieri_Plate_5003.png",
+  "provenance": {
+   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "absentDe": "Item/ItemTable_Data_Equip",
+   "champsInconnus": [
+    "qualityMin",
+    "qualityMax",
+    "tierBoundaries",
+    "rarity",
+    "personnage",
+    "costumeSlug",
+    "engravingPassives",
+    "randomOptions",
+    "growth.promotion"
+   ],
+   "transcendance": "absente du client : Value_Add_6..10 valent 0 partout"
+  }
+ }
+]
