@@ -263,16 +263,25 @@ class ListerChronometrageTests(unittest.TestCase):
             (RACINE / "data" / "chronometrage-avancement.json")
             .read_text(encoding="utf-8")
         )
-        # 335 avant que la liste tienne compte des verrous deduits des
-        # fichiers du jeu : elle demandait de chronometrer 137
-        # competences dont le montage donne deja la reponse.
-        self.assertEqual(publie["total"], 198)
-        self.assertEqual(publie["debloquent"], 76)
-        self.assertEqual(publie["affinent"], 122)
+        # 335 avant que la liste tienne compte de ce que le jeu publie.
+        # Restent les seules vraies inconnues : ni verrou deduit, ni
+        # verrou nul, ni attaque sautee — que le simulateur ne modelise
+        # pas et dont la mesure ne changerait aucun chiffre.
+        self.assertEqual(publie["total"], 13)
+        self.assertEqual(publie["debloquent"], 0)
+        self.assertEqual(publie["affinent"], 13)
         self.assertEqual(publie["releves"], 0)
+        # Plus aucune mesure ne « debloque » : tout ce qui manquait au
+        # modele de cadence est desormais lu dans les fichiers du jeu.
+        # On verifie donc la propriete, pas un instantane : les prochaines
+        # sortent dans l'ordre de priorite, sans role inconnu.
+        roles = [ligne["role"] for ligne in publie["prochaines"]]
+        rang = {"debloque": 0, "affine": 1, "releve": 2}
+        self.assertTrue(set(roles) <= set(rang), roles)
         self.assertEqual(
-            [ligne["role"] for ligne in publie["prochaines"]],
-            ["debloque"] * MODULE.PROCHAINES,
+            [rang[r] for r in roles],
+            sorted(rang[r] for r in roles),
+            "les prochaines mesures doivent sortir par priorite",
         )
 
     def test_rien_a_mesurer_de_ce_que_le_jeu_renseigne_deja(self):

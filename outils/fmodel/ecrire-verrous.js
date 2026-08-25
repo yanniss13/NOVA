@@ -61,10 +61,15 @@ for (const liste of Object.values(catalogue)) {
 
     const v = verrouDe(action);
     if (v === null) { sansFenetre++; continue; }
-    /* Un verrou nul ne dit rien de plus qu'une absence : le simulateur compte
-       zero dans les deux cas. On ne publie que ce qui immobilise vraiment. */
-    if (v <= 0) { nul++; continue; }
+    /* Le zero est PUBLIE, pas omis. Pour le simulateur c'est identique —
+       il exige `secondes > 0` pour retenir une valeur, donc un 0 explicite
+       et une clef absente donnent le meme resultat. Mais le fichier dit
+       alors la difference entre « je sais que c'est zero » et « je ne sais
+       pas », et la liste de chronometrage cesse d'envoyer mesurer 202
+       competences dont la reponse est connue. */
+    if (v <= 0) nul++;
     verrous[id] = v;
+    if (v <= 0) continue;   // pas de moyenne sur un verrou nul
     const c = competence.categorie || '?';
     const p = parCategorie[c] || (parCategorie[c] = { n: 0, somme: 0 });
     p.n++; p.somme += v;
@@ -81,8 +86,13 @@ const sortie = {
     "action offensive apres celle-ci. Lu dans les marqueurs EEnableSkipBy* du",
     'montage, en ne retenant que les fenetres activeSkill et normalAttack.',
     '',
-    "Une action dont aucune fenetre n'est connue est ABSENTE de ce fichier :",
-    'le simulateur compte alors zero, comme avant.',
+    'Un verrou NUL est publie tel quel : le heros peut relancer aussitot,',
+    "et c'est une reponse, pas une lacune.",
+    '',
+    "Une action dont aucune fenetre n'est connue est ABSENTE de ce fichier,",
+    'ainsi que les attaques sautees, bridees par le saut et non par',
+    "l'animation. Le simulateur compte zero dans les deux cas — mais",
+    "l'absence signale desormais une vraie inconnue, a chronometrer.",
     '',
     'Regenerer : node outils/fmodel/ecrire-verrous.js',
   ],
@@ -95,7 +105,7 @@ const cible = path.join(racine, 'data', 'animations-verrous.json');
 fs.writeFileSync(cible, JSON.stringify(sortie, null, 1) + '\n');
 
 console.log('verrous ecrits :', Object.keys(verrous).length);
-console.log('  verrou nul, donc omis :', nul, '| attaques sautees ecartees :', saut);
+console.log('  dont verrou nul :', nul, '| attaques sautees ecartees :', saut);
 console.log('  sans fenetre connue :', sansFenetre, '| sans action dans la table :', sansAction);
 console.log('moyenne par categorie :');
 for (const [c, p] of Object.entries(parCategorie).sort((a, b) => b[1].somme / b[1].n - a[1].somme / a[1].n)) {

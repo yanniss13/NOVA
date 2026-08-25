@@ -4,56 +4,56 @@
   "docs/chronometrage-animations.md. Ne pas editer a la main.",
   "Les mesures se saisissent dans data/animations-mesurees.json."
  ],
- "total": 198,
+ "total": 13,
  "mesurees": 0,
- "debloquent": 76,
- "affinent": 122,
+ "debloquent": 0,
+ "affinent": 13,
  "releves": 0,
  "prochaines": [
   {
-   "gameId": "klotho_staff_normalatk_enchant_ready",
-   "heros": "klotho",
-   "arme": "Bâton",
-   "nom": "Projection dimensionnelle",
-   "categorie": "Attaque normale",
-   "touche": "clic gauche",
-   "role": "debloque"
+   "gameId": "diane_gauntlets_skill_rmb_1",
+   "heros": "diane",
+   "arme": "Gantelets",
+   "nom": "Combinaison de coups de pied",
+   "categorie": "Attaque spéciale",
+   "touche": "Q",
+   "role": "affine"
   },
   {
-   "gameId": "escanor_axe_jumpatk",
-   "heros": "escanor",
-   "arme": "Hache",
-   "nom": "Entaille impitoyable",
-   "categorie": "Attaque normale",
-   "touche": "clic gauche",
-   "role": "debloque"
+   "gameId": "hendrickson_sword1h_skill_rmb",
+   "heros": "hendrickson",
+   "arme": "Épée à une main",
+   "nom": "Perforation divine",
+   "categorie": "Attaque spéciale",
+   "touche": "Q",
+   "role": "affine"
   },
   {
-   "gameId": "escanor_shield_jumpatk",
-   "heros": "escanor",
+   "gameId": "guila_shield_skill_q",
+   "heros": "guila",
    "arme": "Épée & bouclier",
-   "nom": "Marque du soleil",
-   "categorie": "Attaque normale",
-   "touche": "clic gauche",
-   "role": "debloque"
+   "nom": "Explosion resplendissante",
+   "categorie": "Attaque ultime",
+   "touche": "R",
+   "role": "affine"
   },
   {
-   "gameId": "drake_sword2h_jumpatk",
-   "heros": "drake",
+   "gameId": "tristan_sword2h_skill_q_ready",
+   "heros": "tristan",
    "arme": "Épée à deux mains",
-   "nom": "Lame foudroyante",
-   "categorie": "Attaque normale",
-   "touche": "clic gauche",
-   "role": "debloque"
+   "nom": "Entaille d'amputation",
+   "categorie": "Attaque ultime",
+   "touche": "R",
+   "role": "affine"
   },
   {
-   "gameId": "escanor_sword2h_jumpatk",
-   "heros": "escanor",
-   "arme": "Épée à deux mains",
-   "nom": "Orbite solaire",
-   "categorie": "Attaque normale",
-   "touche": "clic gauche",
-   "role": "debloque"
+   "gameId": "king_book_skill_rmb_ready",
+   "heros": "king",
+   "arme": "Grimoire",
+   "nom": "Bouclier gardien",
+   "categorie": "Attaque spéciale",
+   "touche": "Q",
+   "role": "affine"
   }
  ]
 }
