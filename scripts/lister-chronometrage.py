@@ -32,6 +32,7 @@ RACINE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 CATALOGUE = os.path.join(RACINE, "data", "competences.js")
 WIKI = os.path.join(RACINE, "data", "wiki-competences.js")
 MESURES = os.path.join(RACINE, "data", "animations-mesurees.json")
+VERROUS = os.path.join(RACINE, "data", "animations-verrous.json")
 SORTIE = os.path.join(RACINE, "docs", "chronometrage-animations.md")
 # Le meme classement, reduit a ce qu'une page web a besoin d'afficher. Le
 # tableau complet pese trop pour etre charge par le navigateur, et « Mon suivi »
@@ -127,8 +128,32 @@ def mesures_existantes():
     return contenu.get("animations", {})
 
 
+def verrous_deduits():
+    """Les verrous que les fichiers du jeu donnent deja.
+
+    Tant qu'`animations-verrous.json` n'existait pas, il fallait
+    chronometrer chaque competence a la main. Ce n'est plus vrai : le
+    montage porte ses marqueurs `EEnableSkipBy*`, et `ecrire-verrous.js`
+    en tire le premier instant ou le heros peut relancer une action
+    offensive.
+
+    Demander une mesure pour une competence deja renseignee, c'est
+    envoyer quelqu'un refaire un travail que le jeu publie. Elles sortent
+    donc de la liste, et le compteur cesse d'afficher un retard qui
+    n'existe pas.
+
+    Restent a mesurer : celles dont aucune fenetre n'est connue, et les
+    attaques sautees, que `ecrire-verrous.js` ecarte volontairement.
+    """
+    if not os.path.exists(VERROUS):
+        return {}
+    with open(VERROUS, encoding="utf-8") as fichier:
+        return json.load(fichier).get("animations", {})
+
+
 def lignes():
     mesurees = mesures_existantes()
+    deduits = verrous_deduits()
     noms = noms_francais()
     debloquent, affinent, releves = [], [], []
     for heros, skill in competences():
@@ -136,6 +161,9 @@ def lignes():
         categorie = skill.get("categorie") or "?"
         arme = skill.get("weaponType") or "-"
         game_id = skill.get("gameId") or ""
+        # Le jeu a deja repondu : rien a mesurer ici.
+        if game_id in deduits:
+            continue
         ligne = {
             "heros": heros,
             "arme": LIBELLES_ARMES.get(arme, arme),

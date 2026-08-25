@@ -4,11 +4,11 @@
   "docs/chronometrage-animations.md. Ne pas editer a la main.",
   "Les mesures se saisissent dans data/animations-mesurees.json."
  ],
- "total": 335,
+ "total": 198,
  "mesurees": 0,
  "debloquent": 76,
- "affinent": 184,
- "releves": 75,
+ "affinent": 122,
+ "releves": 0,
  "prochaines": [
   {
    "gameId": "klotho_staff_normalatk_enchant_ready",

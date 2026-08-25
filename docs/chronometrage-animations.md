@@ -8,7 +8,7 @@ Aucune source publique ne donne ces temps. Ils se mesurent en jeu, et
 cette liste existe pour rendre ce travail fini : elle dit quoi mesurer
 d'abord, et ce que chaque mesure rapporte.
 
-**Avancement : 0 / 335 mesurées.**
+**Avancement : 0 / 198 mesurées.**
 
 ## 1. Mesures qui débloquent maintenant — 76 compétences
 
@@ -94,7 +94,7 @@ Ces attaques normales et spéciales débloquent maintenant le calcul du DPS.
 | elizabeth | Grimoire | Gouttelettes illuminées par l'été | Attaque normale | clic gauche | 25 |  |
 | merlin | Grimoire | Gel spatial | Attaque spéciale | Q | 150 |  |
 
-## 2. Mesures qui affinent maintenant — 184 compétences
+## 2. Mesures qui affinent maintenant — 122 compétences
 
 Avec recharge : le simulateur calcule déjà la compétence et
 l'animation ajoute un retard. La colonne « erreur » donne ce qu'on
@@ -119,66 +119,10 @@ Classement par erreur décroissante.
 | drake | Bâton | Tempête de Foudre | Attaque spéciale | Q | 8.5 s | 15 % |  |
 | tristan | Épée à une main | Épée de tempête | Attaque spéciale | Q | 9.3 s | 14 % |  |
 | slader | Hache | Frappe chargée | Attaque spéciale | Q | 9.4 s | 14 % |  |
-| bug | Hache | Essaim de la mort | Attaque ultime | R | 10 s | 13 % |  |
-| bug | Grimoire | Seul en scène | Attaque ultime | R | 10 s | 13 % |  |
-| bug | Épées doubles | Fin | Attaque ultime | R | 10 s | 13 % |  |
-| daisy | Grimoire | Salve de fruits | Attaque ultime | R | 10 s | 13 % |  |
-| daisy | Épée & bouclier | Va-t'en | Attaque ultime | R | 10 s | 13 % |  |
 | derieri | Hache | Lancer de hache | Attaque spéciale | Q | 10 s | 13 % |  |
-| derieri | Hache | Entaille crépusculaire | Attaque ultime | R | 10 s | 13 % |  |
-| derieri | Gantelets | « Étoile combo » | Attaque ultime | R | 10 s | 13 % |  |
-| derieri | Épée à deux mains | Secousse infernale | Attaque ultime | R | 10 s | 13 % |  |
-| diane | Hache | Éclatement rocheux | Attaque ultime | R | 10 s | 13 % |  |
-| diane | Nunchaku | Soulèvement terrestre | Attaque ultime | R | 10 s | 13 % |  |
-| diane | Gantelets | Plongeon métallique | Attaque ultime | R | 10 s | 13 % |  |
-| drake | Bâton | Surcharge foudroyante | Attaque ultime | R | 10 s | 13 % |  |
-| drake | Épée à une main | Lame fantomatique | Attaque ultime | R | 10 s | 13 % |  |
-| drake | Épée à deux mains | Courroux du dragon foudroyant | Attaque ultime | R | 10 s | 13 % |  |
-| dreydrin | Hache | Cri de géant | Attaque ultime | R | 10 s | 13 % |  |
-| dreyfus | Lance | Lance lumineuse | Attaque ultime | R | 10 s | 13 % |  |
-| dreyfus | Rapière | Bombardier de lumière | Attaque ultime | R | 10 s | 13 % |  |
-| dreyfus | Épée à une main | Fracture terrestre | Attaque ultime | R | 10 s | 13 % |  |
-| elaine | Grimoire | Sceau de poussière | Attaque ultime | R | 10 s | 13 % |  |
-| elaine | Baguette | Rafale de vent | Attaque ultime | R | 10 s | 13 % |  |
-| elizabeth | Baguette | Super explosion jambonique | Attaque ultime | R | 10 s | 13 % |  |
-| escanor | Épée & bouclier | Jugement céleste - Surchauffe | Attaque ultime | R | 10 s | 13 % |  |
-| escanor | Épée à deux mains | Soleil levant | Attaque ultime | R | 10 s | 13 % |  |
-| gil-thunder | Lance | Éclair | Attaque ultime | R | 10 s | 13 % |  |
-| gil-thunder | Épée & bouclier | Entraves du roi de la Foudre | Attaque ultime | R | 10 s | 13 % |  |
-| gil-thunder | Épée à une main | Éclair foudroyant | Attaque ultime | R | 10 s | 13 % |  |
-| gowther | Bâton | Rayon prismatique | Attaque ultime | R | 10 s | 13 % |  |
-| gowther | Baguette | Flèche de l'éclipse | Attaque ultime | R | 10 s | 13 % |  |
-| griamore | Nunchaku | Écrasement mural | Attaque ultime | R | 10 s | 13 % |  |
-| griamore | Gantelets | Bouclier d'émission | Attaque ultime | R | 10 s | 13 % |  |
-| griamore | Épée & bouclier | Chute de mur | Attaque ultime | R | 10 s | 13 % |  |
 | guila | Épée & bouclier | Explosion resplendissante | Attaque ultime | R | 10 s | 13 % |  |
 | guila | Épée & bouclier | Rempart de flammes | Attaque spéciale | Q | 10 s | 13 % |  |
-| hendrickson | Lance | « Corruption de toute vie » | Attaque ultime | R | 10 s | 13 % |  |
-| hendrickson | Épées doubles | Épée de chevalier | Attaque ultime | R | 10 s | 13 % |  |
-| howzer | Nunchaku | Rafale | Attaque ultime | R | 10 s | 13 % |  |
-| howzer | Gantelets | Choc tournoyant | Attaque ultime | R | 10 s | 13 % |  |
-| howzer | Lance | Super cyclone | Attaque ultime | R | 10 s | 13 % |  |
-| jericho | Lance | Glacier | Attaque ultime | R | 10 s | 13 % |  |
-| jericho | Rapière | Bombardement glacial | Attaque ultime | R | 10 s | 13 % |  |
-| jericho | Épées doubles | Aiguille de glace | Attaque ultime | R | 10 s | 13 % |  |
-| king | Bâton | Flambée resplendissante | Attaque ultime | R | 10 s | 13 % |  |
-| klotho | Rapière | Inscription runique : Affaissement | Attaque ultime | R | 10 s | 13 % |  |
-| manny | Épée à une main | Barrière de la prêtresse | Attaque ultime | R | 10 s | 13 % |  |
-| manny | Épées doubles | Champ de neige du vide | Attaque ultime | R | 10 s | 13 % |  |
-| meliodas | Hache | Esprit combatif de démon | Attaque ultime | R | 10 s | 13 % |  |
-| meliodas | Épée à une main | Croix flamboyante | Attaque ultime | R | 10 s | 13 % |  |
-| meliodas | Épées doubles | Taillade en croix - Enchaînement | Attaque ultime | R | 10 s | 13 % |  |
-| merlin | Grimoire | Chute de glace | Attaque ultime | R | 10 s | 13 % |  |
-| merlin | Baguette | Dôme de plasma : Surcharge | Attaque ultime | R | 10 s | 13 % |  |
-| slader | Hache | Arc sanglant | Attaque ultime | R | 10 s | 13 % |  |
-| slader | Nunchaku | Fureur de fer | Attaque ultime | R | 10 s | 13 % |  |
-| slader | Épée à deux mains | Frappe de puissance | Attaque ultime | R | 10 s | 13 % |  |
-| tioreh | Grimoire | Souffle de dragon | Attaque ultime | R | 10 s | 13 % |  |
-| tioreh | Bâton | Descente d'ours | Attaque ultime | R | 10 s | 13 % |  |
-| tioreh | Baguette | Lion ardent | Attaque ultime | R | 10 s | 13 % |  |
-| tristan | Épée à une main | Tempête de lames | Attaque ultime | R | 10 s | 13 % |  |
 | tristan | Épée à deux mains | Entaille d'amputation | Attaque ultime | R | 10 s | 13 % |  |
-| tristan | Épées doubles | Pluie de flammes | Attaque ultime | R | 10 s | 13 % |  |
 | drake | Épée à une main | Taillade éclair | Attaque spéciale | Q | 10.4 s | 13 % |  |
 | gil-thunder | Épée à une main | Division foudroyante | Attaque spéciale | Q | 10.4 s | 13 % |  |
 | griamore | Gantelets | Poing de puissance | Attaque spéciale | Q | 10.5 s | 12 % |  |
@@ -218,7 +162,6 @@ Classement par erreur décroissante.
 | guila | Lance | Tir de bombe | Compétence normale | E | 15 s | 9 % |  |
 | guila | Rapière | Déluge ardent | Compétence normale | E | 15 s | 9 % |  |
 | hendrickson | Lance | Brise-lance abyssal | Attaque spéciale | Q | 15 s | 9 % |  |
-| king | Baguette | Taillade tranchante | Attaque ultime | R | 15 s | 9 % |  |
 | griamore | Nunchaku | Sphère murale | Attaque spéciale | Q | 15.1 s | 9 % |  |
 | gil-thunder | Épée à une main | Épée foudroyante | Compétence normale | E | 15.6 s | 9 % |  |
 | hendrickson | Lance | « Tour d'acide » | Compétence normale | E | 15.7 s | 9 % |  |
@@ -233,7 +176,6 @@ Classement par erreur décroissante.
 | gowther | Bâton | Champ d'intrusion | Attaque spéciale | Q | 16.3 s | 8 % |  |
 | merlin | Bâton | Poursuite pourpre | Compétence normale | E | 16.5 s | 8 % |  |
 | merlin | Baguette | Champ électromagnétique | Attaque spéciale | Q | 16.5 s | 8 % |  |
-| derieri | Gantelets | Ruée sauvage | Attaque spéciale | Q | 17 s | 8 % |  |
 | elizabeth | Baguette | Impact de Hawk | Compétence normale | E | 17 s | 8 % |  |
 | griamore | Gantelets | Charge de bouclier | Compétence normale | E | 17 s | 8 % |  |
 | meliodas | Épée à une main | Ruée abyssale | Attaque spéciale | Q | 17 s | 8 % |  |
@@ -267,7 +209,6 @@ Classement par erreur décroissante.
 | meliodas | Hache | Taillade circulaire | Compétence normale | E | 22 s | 6 % |  |
 | jericho | Rapière | Danse de la lame de givre | Compétence normale | E | 22.1 s | 6 % |  |
 | elizabeth | Bâton | Vague sacrée | Compétence normale | E | 23 s | 6 % |  |
-| derieri | Gantelets | Assaut fulgurant | Compétence normale | E | 25 s | 6 % |  |
 | diane | Hache | Écrasement sismique | Attaque spéciale | Q | 25 s | 6 % |  |
 | merlin | Grimoire | Graine de givre | Compétence normale | E | 25 s | 6 % |  |
 | tioreh | Bâton | Invocation : mouton | Compétence normale | E | 25 s | 6 % |  |
@@ -283,12 +224,9 @@ Classement par erreur décroissante.
 | manny | Épée à une main | Éruption de givre | Compétence normale | E | 31 s | 5 % |  |
 | guila | Épée & bouclier | Déflagration terrestre | Compétence normale | E | 32 s | 4 % |  |
 | meliodas | Épées doubles | Taillade brûlante | Compétence normale | E | 32 s | 4 % |  |
-| elaine | Grimoire | Fleur de la gardienne | Compétence normale | E | 35 s | 4 % |  |
-| gil-thunder | Épée & bouclier | Jugement | Compétence normale | E | 35 s | 4 % |  |
 | jericho | Lance | Roche de glace | Compétence normale | E | 35.4 s | 4 % |  |
-| gowther | Grimoire | Champ d'évanouissement | Attaque ultime | R | 60 s | 2 % |  |
 
-## 3. Relèves — simulation d’équipe future — 75 compétences
+## 3. Relèves — simulation d’équipe future — 0 compétences
 
 Les compétences de relève seront calculées avec une future simulation
 d'équipe. Leur mesure est utile pour préparer ce modèle, sans modifier
@@ -296,78 +234,3 @@ encore le DPS affiché.
 
 | héros | arme | compétence | catégorie | touche | dégâts % | mesure (s) |
 |---|---|---|---|---|---|---|
-| daisy | Épée & bouclier | Et voilà Daisy | Compétence de relève | 1 à 4 | 160 |  |
-| merlin | Grimoire | Balayage glacial | Compétence de relève | 1 à 4 | 150 |  |
-| diane | Hache | Écrasement | Compétence de relève | 1 à 4 | 143 |  |
-| escanor | Épée à deux mains | Rayon solaire | Compétence de relève | 1 à 4 | 143 |  |
-| klotho | Bâton | Brèche dimensionnelle | Compétence de relève | 1 à 4 | 139 |  |
-| elaine | Baguette | Tornade de la forêt | Compétence de relève | 1 à 4 | 138 |  |
-| escanor | Hache | Arrivée du soleil | Compétence de relève | 1 à 4 | 138 |  |
-| tristan | Épée à deux mains | Attaque-surprise | Compétence de relève | 1 à 4 | 137 |  |
-| howzer | Lance | Que s'abatte le vent | Compétence de relève | 1 à 4 | 135 |  |
-| meliodas | Hache | Arc de puissance | Compétence de relève | 1 à 4 | 134 |  |
-| meliodas | Épée à une main | Force ténébreuse | Compétence de relève | 1 à 4 | 133 |  |
-| jericho | Rapière | Frappe glaciale | Compétence de relève | 1 à 4 | 132 |  |
-| meliodas | Épées doubles | Taillade en croix | Compétence de relève | 1 à 4 | 132 |  |
-| dreyfus | Épée à une main | Entaille terrestre oblique | Compétence de relève | 1 à 4 | 131 |  |
-| hendrickson | Lance | Transpercement ténébreux | Compétence de relève | 1 à 4 | 130 |  |
-| bug | Hache | Taillade de hache des ténèbres | Compétence de relève | 1 à 4 | 129 |  |
-| drake | Épée à deux mains | Frappe du dragon foudroyant | Compétence de relève | 1 à 4 | 129 |  |
-| hendrickson | Épées doubles | Double taillade | Compétence de relève | 1 à 4 | 127 |  |
-| merlin | Baguette | Faisceau électrique | Compétence de relève | 1 à 4 | 124 |  |
-| bug | Épées doubles | Danse tranchante | Compétence de relève | 1 à 4 | 120 |  |
-| derieri | Gantelets | Smash fracassant | Compétence de relève | 1 à 4 | 120 |  |
-| slader | Épée à deux mains | Frappe | Compétence de relève | 1 à 4 | 118 |  |
-| king | Bâton | Abeilles traqueuses | Compétence de relève | 1 à 4 | 114 |  |
-| griamore | Nunchaku | Mur ascendant | Compétence de relève | 1 à 4 | 113 |  |
-| dreyfus | Lance | Impact de lance | Compétence de relève | 1 à 4 | 110 |  |
-| guila | Lance | Que s'abatte le feu | Compétence de relève | 1 à 4 | 104 |  |
-| manny | Épée à une main | Lame de givre | Compétence de relève | 1 à 4 | 104 |  |
-| gil-thunder | Lance | Lance foudroyante | Compétence de relève | 1 à 4 | 96 |  |
-| klotho | Rapière | Rafale d'inscriptions | Compétence de relève | 1 à 4 | 89 |  |
-| diane | Gantelets | Chute de pierres | Compétence de relève | 1 à 4 | 88 |  |
-| drake | Épée à une main | Taillade du tonnerre | Compétence de relève | 1 à 4 | 88 |  |
-| elaine | Bâton | Éclat sacré | Compétence de relève | 1 à 4 | 88 |  |
-| tristan | Épée à une main | Frappe venteuse | Compétence de relève | 1 à 4 | 88 |  |
-| guila | Rapière | Taillade flamboyante | Compétence de relève | 1 à 4 | 87 |  |
-| jericho | Épées doubles | Taillade glaciale | Compétence de relève | 1 à 4 | 87 |  |
-| manny | Bâton | Lumière sacrée | Compétence de relève | 1 à 4 | 87 |  |
-| tristan | Épées doubles | Coup ardent | Compétence de relève | 1 à 4 | 87 |  |
-| gil-thunder | Épée à une main | Attaque foudroyante | Compétence de relève | 1 à 4 | 86 |  |
-| merlin | Bâton | Déploiement infini | Compétence de relève | 1 à 4 | 86 |  |
-| slader | Nunchaku | Onde tranchante | Compétence de relève | 1 à 4 | 86 |  |
-| gowther | Baguette | Chute brutale | Compétence de relève | 1 à 4 | 85 |  |
-| griamore | Épée & bouclier | Que s'abatte la coquille | Compétence de relève | 1 à 4 | 85 |  |
-| hendrickson | Épée à une main | Taillade d'estoc | Compétence de relève | 1 à 4 | 85 |  |
-| elizabeth | Baguette | Châtiment de la sainte | Compétence de relève | 1 à 4 | 78 |  |
-| klotho | Grimoire | Rune de givre : Impact écrasant | Compétence de relève | 1 à 4 | 74 |  |
-| dreydrin | Rapière | Lance de lumière | Compétence de relève | 1 à 4 | 73 |  |
-| dreyfus | Rapière | Plongeon fulgurant | Compétence de relève | 1 à 4 | 73 |  |
-| howzer | Nunchaku | Enchaînement d'uppercuts | Compétence de relève | 1 à 4 | 73 |  |
-| diane | Nunchaku | Fracas artistique | Compétence de relève | 1 à 4 | 72 |  |
-| dreydrin | Épée & bouclier | Descente d'épée | Compétence de relève | 1 à 4 | 72 |  |
-| gil-thunder | Épée & bouclier | Foudre azurée | Compétence de relève | 1 à 4 | 72 |  |
-| guila | Épée & bouclier | Que s'abatte le bouclier | Compétence de relève | 1 à 4 | 72 |  |
-| jericho | Lance | Entaille glaciale | Compétence de relève | 1 à 4 | 72 |  |
-| tioreh | Baguette | Brume de feu | Compétence de relève | 1 à 4 | 72 |  |
-| elizabeth | Grimoire | C'est comme ça qu'on tire ? | Compétence de relève | 1 à 4 | 71 |  |
-| king | Grimoire | Arc supérieur | Compétence de relève | 1 à 4 | 70 |  |
-| elaine | Grimoire | Sauveuse de la forêt | Compétence de relève | 1 à 4 | 66 |  |
-| escanor | Épée & bouclier | Frappe majestueuse | Compétence de relève | 1 à 4 | 65 |  |
-| tioreh | Grimoire | Frappe ardente | Compétence de relève | 1 à 4 | 65 |  |
-| dreydrin | Hache | Hache ascendante | Compétence de relève | 1 à 4 | 63 |  |
-| slader | Hache | Taillade de hache | Compétence de relève | 1 à 4 | 63 |  |
-| drake | Bâton | Frappe du bâton foudroyant | Compétence de relève | 1 à 4 | 62 |  |
-| gowther | Bâton | Taillade douloureuse | Compétence de relève | 1 à 4 | 62 |  |
-| howzer | Gantelets | Poing ascendant | Compétence de relève | 1 à 4 | 62 |  |
-| king | Baguette | Impact terrestre | Compétence de relève | 1 à 4 | 62 |  |
-| tioreh | Bâton | Cercle terrestre | Compétence de relève | 1 à 4 | 62 |  |
-| manny | Épées doubles | Neige blanche | Compétence de relève | 1 à 4 | 61 |  |
-| elizabeth | Bâton | Volonté inflexible | Compétence de relève | 1 à 4 | 60 |  |
-| daisy | Baguette | Et voilà Daisy | Compétence de relève | 1 à 4 | 59 |  |
-| griamore | Gantelets | Poing bouclier | Compétence de relève | 1 à 4 | 59 |  |
-| bug | Grimoire | Flamboiement des ténèbres | Compétence de relève | 1 à 4 | 56 |  |
-| derieri | Hache | Perforation abyssale | Compétence de relève | 1 à 4 | 56 |  |
-| derieri | Épée à deux mains | Griffe ascendante | Compétence de relève | 1 à 4 | 56 |  |
-| gowther | Grimoire | Explosion ténébreuse | Compétence de relève | 1 à 4 | 55 |  |
-| daisy | Grimoire | Et voilà Daisy | Compétence de relève | 1 à 4 | 54 |  |

@@ -263,13 +263,33 @@ class ListerChronometrageTests(unittest.TestCase):
             (RACINE / "data" / "chronometrage-avancement.json")
             .read_text(encoding="utf-8")
         )
-        self.assertEqual(publie["total"], 335)
+        # 335 avant que la liste tienne compte des verrous deduits des
+        # fichiers du jeu : elle demandait de chronometrer 137
+        # competences dont le montage donne deja la reponse.
+        self.assertEqual(publie["total"], 198)
         self.assertEqual(publie["debloquent"], 76)
-        self.assertEqual(publie["affinent"], 184)
-        self.assertEqual(publie["releves"], 75)
+        self.assertEqual(publie["affinent"], 122)
+        self.assertEqual(publie["releves"], 0)
         self.assertEqual(
             [ligne["role"] for ligne in publie["prochaines"]],
             ["debloque"] * MODULE.PROCHAINES,
+        )
+
+    def test_rien_a_mesurer_de_ce_que_le_jeu_renseigne_deja(self):
+        """Un membre ne doit jamais etre envoye chronometrer une
+        competence dont `animations-verrous.json` porte deja le verrou :
+        ce serait refaire a la main un travail que le jeu publie."""
+        deduits = MODULE.verrous_deduits()
+        self.assertTrue(deduits, "les verrous deduits doivent exister")
+        debloquent, affinent, releves = MODULE.lignes()
+        listees = {
+            ligne["gameId"]
+            for groupe in (debloquent, affinent, releves)
+            for ligne in groupe
+        }
+        self.assertFalse(
+            listees & set(deduits),
+            "competences deja deduites et pourtant listees a mesurer",
         )
 
     def test_toute_competence_reelle_a_un_nom_francais(self):
