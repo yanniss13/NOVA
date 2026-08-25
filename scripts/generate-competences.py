@@ -411,15 +411,42 @@ def recharges_du(slug):
     return recharges_sevencodex(page)
 
 
+def recharges_du_jeu():
+    """Les recharges lues dans le client, qui priment sur toute autre source.
+
+    `Table/Skill/PC_SkillTable` les donne en millisecondes ; SevenCodex les
+    tronque a la seconde et se trompe sur quatre d'entre elles, dont Q et R
+    d'Elizabeth qui sont inversees. Fichier produit par
+    `node outils/fmodel/extraire-recharges.js`, absent tant que personne n'a
+    extrait le jeu : on se rabat alors silencieusement sur SevenCodex.
+    """
+    chemin = RACINE / "7ds-stats" / "recharges-du-jeu.json"
+    if not chemin.exists():
+        return {}
+    donnees = json.loads(chemin.read_text(encoding="utf-8"))
+    return {cle.lower(): valeur
+            for cle, valeur in (donnees.get("recharges") or {}).items()}
+
+
+_RECHARGES_DU_JEU = None
+
+
 def compacte_competence(skill, recharges_precises=None):
     """Normalise une compétence brute dans le contrat du catalogue local."""
+    global _RECHARGES_DU_JEU
+    if _RECHARGES_DU_JEU is None:
+        _RECHARGES_DU_JEU = recharges_du_jeu()
     pourcentage, nature = degats_de(skill)
     recharges_precises = recharges_precises or {}
-    recharge = recharges_precises.get(skill.get("nameEn"))
+    identifiant = skill.get("gameId") or skill.get("id")
+    # Ordre de confiance : le client du jeu, puis SevenCodex, puis 7dsorigin.
+    recharge = _RECHARGES_DU_JEU.get(str(identifiant or "").lower())
+    if recharge is None:
+        recharge = recharges_precises.get(skill.get("nameEn"))
     if recharge is None:
         recharge = nombre_brut(skill.get("cooldown"))
     return {
-        "gameId": skill.get("gameId") or skill.get("id"),
+        "gameId": identifiant,
         "weaponType": skill.get("weaponType"),
         "categorie": skill.get("skillCategory"),
         "nom": skill.get("nameEn"),
