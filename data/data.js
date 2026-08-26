@@ -1,7 +1,7 @@
 // Genere automatiquement par generate-data.ps1 - NE PAS EDITER A LA MAIN.
 // Relance le script pour mettre a jour apres ajout/retrait d'images.
 window.SEVEN_DS_DATA = {
-    "generatedAt":  "2026-08-26 19:12:46",
+    "generatedAt":  "2026-08-26 23:43:40",
     "personnages":  [
                         {
                             "id":  "ban",
@@ -1123,8 +1123,16 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Courtoisie minimale.webp"
                                         },
                                         {
+                                            "name":  "Cuisinier remplaçant",
+                                            "file":  "7ds-armures-ssr/Armure liee/Cuisinier remplaçant.webp"
+                                        },
+                                        {
                                             "name":  "Début de l\u0027aventure",
                                             "file":  "7ds-armures-ssr/Armure liee/Début de l\u0027aventure.webp"
+                                        },
+                                        {
+                                            "name":  "Défense minimale",
+                                            "file":  "7ds-armures-ssr/Armure liee/Défense minimale.webp"
                                         },
                                         {
                                             "name":  "Défense simple",
@@ -1141,6 +1149,10 @@ window.SEVEN_DS_DATA = {
                                         {
                                             "name":  "Dignité dorée",
                                             "file":  "7ds-armures-ssr/Armure liee/Dignité dorée.webp"
+                                        },
+                                        {
+                                            "name":  "Dignité du capitaine",
+                                            "file":  "7ds-armures-ssr/Armure liee/Dignité du capitaine.webp"
                                         },
                                         {
                                             "name":  "Dignité royale",
@@ -1171,6 +1183,10 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Formalité de l\u0027érudite en chef.webp"
                                         },
                                         {
+                                            "name":  "Forteresse de fer impénétrable",
+                                            "file":  "7ds-armures-ssr/Armure liee/Forteresse de fer impénétrable.webp"
+                                        },
+                                        {
                                             "name":  "Furtivité du démon",
                                             "file":  "7ds-armures-ssr/Armure liee/Furtivité du démon.webp"
                                         },
@@ -1191,12 +1207,20 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Honneur au vieux soldat.webp"
                                         },
                                         {
+                                            "name":  "Instinct incisif",
+                                            "file":  "7ds-armures-ssr/Armure liee/Instinct incisif.webp"
+                                        },
+                                        {
                                             "name":  "Le Bélier de la Luxure",
                                             "file":  "7ds-armures-ssr/Armure liee/Le Bélier de la Luxure.webp"
                                         },
                                         {
                                             "name":  "Le Grizzly de la Paresse",
                                             "file":  "7ds-armures-ssr/Armure liee/Le Grizzly de la Paresse.webp"
+                                        },
+                                        {
+                                            "name":  "Le Renard de l\u0027Avarice",
+                                            "file":  "7ds-armures-ssr/Armure liee/Le Renard de l\u0027Avarice.webp"
                                         },
                                         {
                                             "name":  "Le Sanglier de la Gourmandise",
@@ -1215,12 +1239,20 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Lumière de guidance.webp"
                                         },
                                         {
+                                            "name":  "Lumière de Liones",
+                                            "file":  "7ds-armures-ssr/Armure liee/Lumière de Liones.webp"
+                                        },
+                                        {
                                             "name":  "Majesté bien malveillante",
                                             "file":  "7ds-armures-ssr/Armure liee/Majesté bien malveillante.webp"
                                         },
                                         {
                                             "name":  "Majordome royal",
                                             "file":  "7ds-armures-ssr/Armure liee/Majordome royal.webp"
+                                        },
+                                        {
+                                            "name":  "Maraudeur décontracté",
+                                            "file":  "7ds-armures-ssr/Armure liee/Maraudeur décontracté.webp"
                                         },
                                         {
                                             "name":  "Marche des ombres",
@@ -1237,6 +1269,14 @@ window.SEVEN_DS_DATA = {
                                         {
                                             "name":  "Moment en famille",
                                             "file":  "7ds-armures-ssr/Armure liee/Moment en famille.webp"
+                                        },
+                                        {
+                                            "name":  "Mouvement rebelle",
+                                            "file":  "7ds-armures-ssr/Armure liee/Mouvement rebelle.webp"
+                                        },
+                                        {
+                                            "name":  "Ombre du roi des fées",
+                                            "file":  "7ds-armures-ssr/Armure liee/Ombre du roi des fées.webp"
                                         },
                                         {
                                             "name":  "Pas légers",
