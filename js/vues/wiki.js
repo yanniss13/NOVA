@@ -51,16 +51,30 @@ import { libelleDeRarete } from "./wiki-blocs.js";
 
   let chargement = null;
 
+  function scriptDeDonnees(src){
+    return new Promise((resolve, reject) => {
+      document.head.appendChild(el("script",{
+        src,
+        onload:()=>resolve(true),
+        onerror:()=>reject(new Error("catalogue introuvable : " + src))
+      }));
+    });
+  }
+
+  /* Les competences et les transcendances arrivent ensemble : la fiche d'un
+     heros affiche les deux, et charger la seconde plus tard ferait apparaitre
+     une section apres coup sous les yeux du membre.
+
+     Les transcendances sont volontairement NON bloquantes. Elles viennent
+     d'une extraction locale du jeu, pas de 7dsorigin : le jour ou le fichier
+     manque, la fiche doit perdre une section, pas l'onglet entier. */
   function chargerCatalogue(){
     if(window.SEVEN_DS_WIKI_COMPETENCES) return Promise.resolve(true);
     if(chargement) return chargement;
-    chargement = new Promise((resolve, reject) => {
-      document.head.appendChild(el("script",{
-        src:"./data/wiki-competences.js",
-        onload:()=>resolve(true),
-        onerror:()=>reject(new Error("catalogue introuvable"))
-      }));
-    }).catch(erreur => {
+    chargement = Promise.all([
+      scriptDeDonnees("./data/wiki-competences.js"),
+      scriptDeDonnees("./data/transcendances.js").catch(()=>false)
+    ]).then(()=>true).catch(erreur => {
       /* Rejouable : un echec reseau ne doit pas condamner l'onglet pour toute
          la duree de la session. */
       chargement = null;

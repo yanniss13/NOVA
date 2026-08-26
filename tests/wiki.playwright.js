@@ -136,12 +136,17 @@ const { chromium } = require("playwright");
       "au moins une portion colorée attendue"
     );
 
-    // Les blocs repliables tirent des données déjà chargées par l'appli.
+    /* Les blocs repliables tirent des données déjà chargées par l'appli.
+
+       « Transcendances » s'est intercalé avec la version 2.0, le 26 août 2026.
+       Sa place est voulue : c'est, avec les potentiels, ce qu'un membre compare
+       d'un héros à l'autre, et les deux se lisent ensemble. */
     const replis = await page.locator(".wiki-fold > summary")
       .evaluateAll(nodes => nodes.map(node => node.textContent));
     assert.deepEqual(
       replis,
-      ["Potentiels", "Maîtrises d’arme", "Stats de base", "Armures gravées"]
+      ["Potentiels", "Transcendances", "Maîtrises d’arme", "Stats de base",
+       "Armures gravées"]
     );
 
     /* La navigation clavier passe au héros suivant. Le clavier GLOBAL, pas
