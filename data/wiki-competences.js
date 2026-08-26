@@ -6,6 +6,170 @@
 // ne la publie pas. Le balisage [#RRGGBB]texte[-] est rendu par
 // renderBonus() ; il est conserve tel quel ici.
 window.SEVEN_DS_WIKI_COMPETENCES = {
+ "ban": [
+  {
+   "categorie": "NORMAL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]160%[-] de l'attaque et réduit le temps de recharge de l'attaque spéciale du héros de [#1A7331]1s[-] chaque fois qu'un ennemi affecté par [#0F5CD8]Chaîne[-] est touché.\n1er coup : 23%\n2e coup : 26%\n3e coup : 41%\n4e coup : 70%",
+   "gameId": "ban_cudgel3c_jumpatk",
+   "icone": "common_Cudgel3c_normalAttack.webp",
+   "nomFr": "Triple chaîne",
+   "recharge": null,
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]208%[-] de l'attaque à l'ennemi et augmente toutes les attaques élémentaires du héros de [#1A7331]30%[-] pendant [#1A7331]30s[-].",
+   "gameId": "ban_cudgel3c_skill_e",
+   "icone": "Ban_Cudgel3c_NormalSkill.webp",
+   "nomFr": "Ruée en spirale",
+   "recharge": 18.0,
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "descriptionFr": "Immunise contre les réactions pendant la canalisation de la compétence et inflige des dégâts égaux à [#1A7331]404%[-] de l'attaque à l'ennemi.\n1er coup : 69%\n2e coup : 107%\n3e coup : 228%\n\nAugmente les dégâts crit. de cette attaque de [#1A7331]20%[-] par tranche de [#1A7331]1[-] cumul(s) de [#0F5CD8]Chaîne[-] sur l'ennemi.",
+   "gameId": "ban_cudgel3c_skill_q_1",
+   "icone": "Ban_Cudgel3c_ActiveThird_1.webp",
+   "nomFr": "Balayage rapide",
+   "recharge": 15.0,
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]125%[-] de l'attaque.",
+   "gameId": "ban_cudgel3c_skill_tag",
+   "icone": "Icon_TagSkill.webp",
+   "nomFr": "Frappe en chaîne",
+   "recharge": null,
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]182%[-] de l'attaque et augmente les dégâts infligés par le héros de [#1A7331]12%[-] pendant [#1A7331]10s[-] par tranche de [#1A7331]1[-] cumul(s) de [#0F5CD8]Chaîne[-] sur l'ennemi.\nSi l'attaque fait mouche, le héros effectue une action supplémentaire, qui inflige des dégâts égaux à [#1A7331]120%[-] de l'attaque, et inflige des dégâts supplémentaires égaux à [#1A7331]100%[-] de l'attaque par tranche de [#1A7331]1[-] cumul(s) de [#0F5CD8]Chaîne[-] sur l'ennemi.",
+   "gameId": "ban_cudgel3c_skill_r",
+   "icone": "Ban_Cudgel3c_UltimateSkill.webp",
+   "nomFr": "Chasse du Renard",
+   "recharge": 10.0,
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "PASSIVE",
+   "descriptionFr": "Augmente l'attaque du héros à hauteur de [#1A7331]90%[-] de tous les éléments, sauf Physique.\nChaque fois que le héros touche le même ennemi [#1A7331]3 fois[-], inflige [#0F5CD8]Chaîne[-] sur l'ennemi pendant [#1A7331]20s[-]. (Max : [#1A7331]5 fois[-])\n\n※[#0F5CD8]Chaîne[-] : augmente le percement de défense des attaques infligées par Ban de [#1A7331]2%[-] et les chances crit. de [#1A7331]6%[-].",
+   "gameId": "ban_cudgel3c_passive",
+   "icone": "Ban_Cudgel3c_SkillPassive.webp",
+   "nomFr": "Rythme jubilatoire",
+   "recharge": 0.0,
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "NORMAL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]129%[-] de l'attaque. Coup critique garanti sur les ennemis affectés par [#0F5CD8]Brèche[-].\n1er coup : 18%\n2e coup : 20%\n3e coup : 36%\n4e coup : 55%",
+   "gameId": "ban_gauntlets_jumpatk",
+   "icone": "common_Gauntlets_normalAttack.webp",
+   "nomFr": "Poing obscur",
+   "recharge": null,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "descriptionFr": "La première frappe inflige des dégâts égaux à [#1A7331]79%[-] de l'attaque, puis réduit la défense des Ténèbres à hauteur de [#1A7331]20%[-] de la défense pendant [#1A7331]30s[-].\nPar la suite, la dernière frappe inflige des dégâts égaux à [#1A7331]100%[-] de l'attaque et augmente l'attaque des Ténèbres de tous les héros alliés de [#1A7331]30%[-] pendant [#1A7331]30s[-].",
+   "gameId": "ban_gauntlets_skill_e",
+   "icone": "Ban_Gauntlets_NormalSkill.webp",
+   "nomFr": "« Détournement »",
+   "recharge": 27.0,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]111%[-] de l'attaque et inflige [#0F5CD8]Brèche[-] pendant [#1A7331]30s[-].\n\n※[#0F5CD8]Brèche[-] : réduit la résistance au Déluge de tous les éléments de [#1A7331]20%[-] et augmente les dégâts des Ténèbres subis de [#1A7331]25%[-].",
+   "gameId": "ban_gauntlets_skill_q",
+   "icone": "Ban_Gauntlets_ActiveThird.webp",
+   "nomFr": "Uppercut abyssal",
+   "recharge": 19.0,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]87%[-] de l'attaque.",
+   "gameId": "ban_gauntlets_skill_tag",
+   "icone": "Icon_TagSkill.webp",
+   "nomFr": "Frappe en embuscade",
+   "recharge": null,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]269%[-] de l'attaque.\nUtiliser une attaque combinée avec l'attaque ultime du héros en tant que base améliore la compétence normale pendant [#1A7331]10s[-].\nLa compétence normale améliorée inflige des dégâts égaux à [#1A7331]150%[-] de l'attaque, et sa dernière frappe fige la durée du [#0F5CD8]Déluge des Ténèbres[-] actif sur l'ennemi pendant [#1A7331]6s[-].",
+   "gameId": "ban_gauntlets_skill_r",
+   "icone": "Ban_Gauntlets_UltimateSkill.webp",
+   "nomFr": "Explosion obscure",
+   "recharge": 10.0,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "PASSIVE",
+   "descriptionFr": "Chaque fois que le héros touche [#1A7331]10 fois[-] un ennemi qui n'est pas sous l'effet d'un [#0F5CD8]Déluge[-], inflige « Détournement » pendant [#1A7331]30s[-] et augmente les dégâts crit. de l'attaque normale du héros de [#1A7331]100%[-] contre les ennemis affectés par « Détournement ».\n\n※« Détournement » : si un [#0F5CD8]Déluge des Ténèbres[-] est actif, augmente les dégâts de faiblesse aux Ténèbres de [#1A7331]10%[-] pendant [#1A7331]15s[-]. Lorsque l'équipe de l'utilisateur touche l'ennemi, augmente l'attaque des Ténèbres de l'équipe de l'utilisateur pendant [#1A7331]10s[-] à hauteur de [#1A7331]0.6%[-] de l'attaque de Ban par coup infligé, pour un maximum de [#1A7331]20 fois[-]. (Max : [#1A7331]3000[-])\nPar la suite, l'effet « Détournement » est retiré à la fin du [#0F5CD8]Déluge des Ténèbres[-].",
+   "gameId": "ban_gauntlets_passive",
+   "icone": "Ban_Gauntlets_SkillPassive.webp",
+   "nomFr": "Instinct de voleur",
+   "recharge": 0.0,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "NORMAL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]157%[-] de l'attaque.\n1er coup : 23%\n2e coup : 24%\n3e coup : 40%\n4e coup : 70%",
+   "gameId": "ban_sword2h_jumpatk",
+   "icone": "common_Sword2H_normalAttack.webp",
+   "nomFr": "Tranchant déchaîné",
+   "recharge": null,
+   "weaponType": "Sword2h"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]82%[-] de l'attaque.\n\n[#0F5CD8][Berserker][-]\nSupprime le temps de recharge de la compétence normale. Toucher [#1A7331]4 fois[-] un ennemi avec la compétence normale améliore cette dernière, ce qui inflige des dégâts égaux à [#1A7331]225%[-] de l'attaque et augmente les dégâts crit. de [#1A7331]30%[-].\nUtiliser la compétence normale améliorée sur un ennemi sous l'effet de [#0F5CD8]Déluge de Terre[-] augmente les dégâts de [#1A7331]100%[-] et restaure les PV du héros à hauteur de [#1A7331]70%[-] de l'attaque.",
+   "gameId": "ban_sword2h_skill_e",
+   "icone": "Ban_Sword2h_NormalSkill.webp",
+   "nomFr": "Fracassement",
+   "recharge": 20.0,
+   "weaponType": "Sword2h"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]164%[-] de l'attaque. Augmente les chances crit. du héros de [#1A7331]25%[-] pendant [#1A7331]20s[-].",
+   "gameId": "ban_sword2h_skill_q",
+   "icone": "Ban_Sword2h_ActiveThird.webp",
+   "nomFr": "Broyage brutal",
+   "recharge": 11.0,
+   "weaponType": "Sword2h"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]134%[-] de l'attaque.",
+   "gameId": "ban_sword2h_skill_tag",
+   "icone": "Icon_TagSkill.webp",
+   "nomFr": "Impact percutant",
+   "recharge": null,
+   "weaponType": "Sword2h"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "descriptionFr": "Réinitialise le temps de recharge de la compétence normale du héros, qui entre en état [#0F5CD8][Berserker][-] pendant [#1A7331]12s[-].",
+   "gameId": "ban_sword2h_skill_r",
+   "icone": "Ban_Sword2h_UltimateSkill.webp",
+   "nomFr": "Hurlement inébranlable",
+   "recharge": 10.0,
+   "weaponType": "Sword2h"
+  },
+  {
+   "categorie": "PASSIVE",
+   "descriptionFr": "Chaque fois que le héros utilise la compétence normale dans l'état [#0F5CD8][Berserker][-], augmente les dégâts de compétence normale de [#1A7331]10%[-] pendant [#1A7331]10s[-]. (Max : [#1A7331]5 fois[-])\nLorsque cet effet est actif, augmente les dégâts crit. du héros de [#1A7331]20%[-] et sa défense crit. de [#1A7331]25%[-].",
+   "gameId": "ban_sword2h_passive",
+   "icone": "Ban_Sword2h_SkillPassive.webp",
+   "nomFr": "Physique infatigable",
+   "recharge": 0.0,
+   "weaponType": "Sword2h"
+  }
+ ],
  "bug": [
   {
    "categorie": "NORMAL",
@@ -427,7 +591,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
   },
   {
    "categorie": "ULTIMATE",
-   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]1150%[-] de l'attaque.\nLa première frappe inflige [#0F5CD8]Étourdissement[-] pendant [#1A7331]3s[-].\n1er coup : 350%\n2e coup : 380%\n3e coup : 420%\nNe consomme pas de magie. [#3C22D6]Attaque ultime : Dévastation[-] devient disponible lorsque l'effet [#0F5CD8]Combo de coups[-] atteint le nombre de cumuls max.\n\n[#3C22D6]Dévastation[-]\nInflige des dégâts égaux à [#1A7331]650%[-] de l’attaque, puis retire [#0F5CD8]Combo de coups[-].",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]1150%[-] de l'attaque.\nLa première frappe inflige [#0F5CD8]Étourdissement[-] pendant [#1A7331]3s[-].\n1er coup : 350%\n2e coup : 380%\n3e coup : 420%\nNe consomme pas de magie. [#3C22D6]Attaque ultime : Dévastation[-] devient disponible si l'effet [#0F5CD8]Combo de coups[-] atteint le nombre de cumuls max.\n\n[#3C22D6]Dévastation[-]\nInflige des dégâts égaux à [#1A7331]650%[-] de l’attaque, puis retire [#0F5CD8]Combo de coups[-].",
    "gameId": "derieri_gauntlets_skill_r_enchant",
    "icone": "Derieri_Gauntlets_UltimateSkill_1.webp",
    "nomFr": "« Étoile combo »",

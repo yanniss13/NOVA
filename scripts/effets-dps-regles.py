@@ -55,6 +55,27 @@ NON_INCLUS_SPECIFIQUES = {
     "potential:elizabeth:Staff:10": "buff-equipe-et-animation-attaque-normale",
     "potential:jericho:SwordDual:5": "animation-attaque-normale",
     "potential:manny:SwordDual:5": "animation-attaque-normale",
+    # --- Version 2.0, 26 aout 2026 ---------------------------------------
+    #
+    # Ban est arrive avec trois mecaniques que le schema ne connait pas :
+    # « Detournement » et « Breche », deux etats poses sur l'ennemi, et une
+    # « competence normale amelioree » a l'epee a deux mains qui se debloque
+    # apres un nombre d'attaques. Tant que leur fonctionnement n'est pas
+    # etabli, ces effets restent dehors : son DPS est legerement sous-estime,
+    # ce qui vaut mieux que faux. Le reste de son kit est modelise.
+    "potential:ban:Cudgel3c:9": "degats-supplementaires-d-ultime-hors-schema",
+    "potential:ban:Gauntlets:5": "detournement-mecanique-inconnue",
+    "potential:ban:Sword2h:5": "competence-normale-amelioree-inconnue",
+    "potential:ban:Sword2h:6": "competence-normale-amelioree-inconnue",
+    "skill:ban_gauntlets_jumpatk": "breche-mecanique-inconnue",
+    "hero-passive:ban_gauntlets_passive": "detournement-mecanique-inconnue",
+    # La gravure du costume « Instinct incisif » de Bug, sorti avec la 2.0 :
+    # elle applique Malediction sur un ennemi Provoque et donne +18 % de
+    # degats des Tenebres a TOUTE l'equipe. La part d'equipe sort du perimetre
+    # du comparateur, comme les autres `effet-equipe` ci-dessus.
+    "engraving:133065003:EpEq_Bug_D:1": "effet-equipe",
+    "engraving:133065003:EpEq_Bug_D:2": "effet-equipe",
+    "engraving:133065003:EpEq_Bug_D:3": "effet-equipe",
 }
 
 REGLES_SPECIFIQUES = {
@@ -899,6 +920,28 @@ REGLES_SPECIFIQUES = {
             "cible": "special",
             "competence": "merlin_wand_overdrive",
             "duree": 15.0,
+        }
+    ],
+    # --- Ban : la Chaine, un cumul pose sur l'ennemi ----------------------
+    #
+    # `ban_cudgel3c_passive` (« Rythme jubilatoire ») pose un cumul de Chaine
+    # chaque fois que Ban touche trois fois la meme cible, jusqu'a 5, pour 20 s.
+    # Chaque cumul vaut deja +2 % de percement et +6 % de chances crit., et
+    # plusieurs effets du nunchaku s'indexent en plus dessus.
+    #
+    # Le cycle d'auto-attaque au nunchaku fait 4 coups : 15 coups saturent la
+    # pile, et la fenetre de 20 s la maintient. Confirme par un joueur le
+    # 26 aout 2026 : sur un boss, Ban reste sature en permanence. Les effets
+    # indexes sur la Chaine sont donc donnes AU MAXIMUM, en `passif-max`,
+    # comme ceux de Merlin baguette et de Drake.
+    "potential:ban:Cudgel3c:5": [
+        # 10 % de degats crit. par cumul, 15 s, plafonne a 5 fois.
+        # La portee d'ultime de la premiere phrase ne se chiffre pas.
+        {
+            "type": "bonus-critique",
+            "stat": "critDamage",
+            "valeur": 5000,
+            "mode": "passif-max",
         }
     ],
 }

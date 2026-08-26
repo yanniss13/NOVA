@@ -383,6 +383,44 @@ window.SEVEN_DS_POTENTIELS = {
    "Lorsque le héros active un [#0F5CD8]Déluge de Feu[-], augmente les dégâts de Feu de tous les héros alliés de [#1A7331]15%[-] et augmente les chances crit. des héros d'attribut Feu de [#1A7331]10%[-] pendant [#1A7331]30s[-]."
   ]
  },
+ "ban": {
+  "Nunchaku": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Renforce la puissance de l'attaque spéciale de [#1A7331]25%[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de l'attaque normale de [#1A7331]35%[-].",
+   "Augmente légèrement la portée de l'attaque ultime.\nLa première frappe de l'attaque ultime augmente les dégâts crit. du héros de [#1A7331]10%[-] pendant [#1A7331]15s[-] par tranche de [#1A7331]1[-] cumul(s) de [#0F5CD8]Chaîne[-] sur l'ennemi. (Max : [#1A7331]5 fois[-])",
+   "Augmente la perforation du héros de [#1A7331]20[-] par tranche de [#1A7331]1 cumul(s)[-] de [#0F5CD8]Chaîne[-] sur l'ennemi.\nChaque fois que le héros utilise l'attaque spéciale, augmente toutes les attaques élémentaires du héros de [#1A7331]6%[-] pendant [#1A7331]15s[-]. (Max : [#1A7331]9 fois[-])",
+   "Réduit les dégâts subis lors de l'utilisation de l'attaque spéciale de [#1A7331]30%[-].\nAugmente légèrement la portée de la dernière frappe de l'attaque spéciale et renforce sa puissance de [#1A7331]100%[-].",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Renforce la puissance des dégâts supplémentaires fournis par l'attaque ultime de [#1A7331]120%[-].",
+   "Augmente le nombre de coups des dégâts supplémentaires fournis par l'attaque ultime de [#1A7331]3[-] contre les ennemis qui ont atteint le nombre maximal de cumuls de [#0F5CD8]Chaîne[-].\nToucher un [#0F5CD8][-]tel ennemi avec la première frappe de l'attaque ultime réinitialise le temps de recharge de l'attaque spéciale du héros, le réduit de [#1A7331]80%[-] pendant [#1A7331]10s[-] et augmente le percement de défense du héros de [#1A7331]15%[-] pendant [#1A7331]20s[-]."
+  ],
+  "Gantelets": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Renforce la puissance de l'attaque spéciale de [#1A7331]35%[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de la compétence normale de [#1A7331]30%[-].",
+   "Augmente légèrement la portée de l'attaque normale et amplifie le boost des dégâts crit. contre les ennemis affectés par « Détournement » de [#1A7331]100%[-].\nLorsque l'attaque normale fait mouche, elle réduit la défense des Ténèbres de l'ennemi à hauteur de [#1A7331]2%[-] de la défense pendant [#1A7331]30s[-]. (Max : [#1A7331]10 fois[-])\nLa réduction de la défense des Ténèbres s'applique uniquement lorsque l'ennemi est sous l'effet d'un [#0F5CD8]Déluge[-].",
+   "Augmente de [#1A7331]3s[-] le gel de la durée du [#0F5CD8]Déluge des Ténèbres[-] provenant de la dernière frappe de la compétence normale améliorée, et réduit la défense crit. de l'ennemi de [#1A7331]30%[-] pendant [#1A7331]10s[-].",
+   "Augmente légèrement la portée de l'attaque spéciale et augmente de [#1A7331]30%[-] le boost des dégâts des Ténèbres subis de l'effet [#0F5CD8]Brèche[-].",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Renforce la puissance de l'attaque normale de [#1A7331]200%[-].",
+   "Augmente légèrement la portée de la compétence normale. La dernière frappe de la compétence normale augmente le percement de défense de tous les héros alliés d'attribut Ténèbres de [#1A7331]15%[-] pendant [#1A7331]30s[-]."
+  ],
+  "Epee 2 mains": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Renforce la puissance de l'attaque normale de [#1A7331]30%[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de la compétence normale améliorée de [#0F5CD8][Berserker][-] de [#1A7331]20%[-].",
+   "Réduit le nombre d'attaques requis pour utiliser la compétence normale améliorée de [#0F5CD8][Berserker][-] de [#1A7331]2[-].",
+   "Immunise contre les réactions pendant l'utilisation de la compétence normale.\nRéduit les dégâts subis de [#1A7331]20%[-] et augmente le boost de dégâts crit. de [#1A7331]30%[-] supplémentaires lorsque le héros est dans l'état [#0F5CD8][Berserker][-].",
+   "L'utilisation de la compétence de relève active [#0F5CD8][Berserker][-] pendant [#1A7331]5s[-] et augmente les dégâts de Terre du héros de [#1A7331]50%[-] pendant [#1A7331]20s[-]. (Temps de recharge : [#1A7331]20s[-])",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Renforce la puissance de la compétence normale améliorée de [#0F5CD8][Berserker][-] de [#1A7331]65%[-].",
+   "Augmente légèrement la portée de la compétence normale améliorée et augmente le percement de défense de [#1A7331]15%[-] lorsque le héros est dans l'état [#0F5CD8][Berserker][-].\nFaire mouche [#1A7331]3 fois[-] avec la compétence normale améliorée permet une utilisation supplémentaire de la compétence."
+  ]
+ },
  "klotho": {
   "Livre": [
    "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
@@ -633,7 +671,7 @@ window.SEVEN_DS_POTENTIELS = {
    "Augmente le boost de dégâts crit. de l'attaque normale octroyé par l'attaque spéciale de [#1A7331]20%[-] supplémentaires et augmente les chances crit. de l'attaque normale de [#1A7331]25%[-] pendant [#1A7331]40s[-].\nL'utilisation de la compétence normale augmente la vitesse de déplacement des alliés à portée de [#1A7331]50%[-] pendant [#1A7331]30s[-].",
    "Augmente la durée de l'attaque ultime de [#1A7331]5s[-] et réduit l'intervalle entre les coups de [#1A7331]0.5s[-].\nAugmente le nombre maximal de cumuls de réduction de la défense crit. appliqués avec [#0F5CD8]Rupture[-] de [#1A7331]25[-].",
    "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
-   "Renforce la puissance de [#0F5CD8]Rupture[-] de [#1A7331]100%[-].\nL'utilisation d'une compétence normale augmente le percement de défense de tous les héros alliés d'attribut Vent de [#1A7331]15%[-] pendant [#1A7331]30[-].",
+   "Renforce la puissance de [#0F5CD8]Rupture[-] de [#1A7331]100%[-].\nL'utilisation d'une compétence normale augmente le percement de défense de tous les héros alliés d'attribut Vent de [#1A7331]15%[-] pendant [#1A7331]30[-] s.",
    "Accroît l'augmentation maximale de l'attaque de Vent octroyée par la compétence normale de [#1A7331]3000[-].\nAccroît l'augmentation des dégâts crit. de l'attaque normale octroyée par l'attaque spéciale de [#1A7331]30%[-] supplémentaires."
   ],
   "Baguette": [
@@ -646,7 +684,7 @@ window.SEVEN_DS_POTENTIELS = {
    "La dernière frappe de l'attaque ultime dure [#1A7331]10s[-] et inflige des dégâts égaux à [#1A7331]30%[-] de l'attaque aux ennemis à portée toutes les [#1A7331]1s[-]. Les alliés à portée subissent [#1A7331]3%[-] de dégâts en moins toutes les [#1A7331]1s[-] pendant [#1A7331]30s[-]. (Max : [#1A7331]10 fois[-])",
    "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
    "Renforce la puissance de l'attaque ultime de [#1A7331]80%[-].",
-   "Lorsque le héros active un [#0F5CD8]Déluge de Terre[-], augmente les dégâts de Terre de tous les héros alliés [#1A7331]30%[-] pendant [#1A7331]40s[-].\nLorsqu'un héros allié attaque un ennemi sous l'effet de [#0F5CD8]Déluge de Terre[-], augmente les dégâts crit. des héros d'attribut Terre de [#1A7331]5%[-] pendant [#1A7331]10s[-]. (Max : [#1A7331]20 fois[-])"
+   "Lorsque le héros active un [#0F5CD8]Déluge de Terre[-], augmente les dégâts de Terre de tous les héros alliés de [#1A7331]30%[-] pendant [#1A7331]40s[-].\nLorsqu'un héros allié attaque un ennemi sous l'effet de [#0F5CD8]Déluge de Terre[-], augmente les dégâts crit. des héros d'attribut Terre de [#1A7331]5%[-] pendant [#1A7331]10s[-]. (Max : [#1A7331]20 fois[-])"
   ]
  },
  "escanor": {
@@ -719,7 +757,7 @@ window.SEVEN_DS_POTENTIELS = {
    "Renforce la puissance de l'attaque ultime de [#1A7331]20%[-].",
    "L'utilisation de la compétence normale ajoute [#1A7331]4[-] projectiles qui augmentent chacun la jauge de Déluge de [#1A7331]100[-], et augmente le nombre maximal de cumuls de réduction de la défense de Foudre issus de la compétence normale de [#1A7331]4[-].",
    "Renforce la puissance de l'attaque ultime de [#1A7331]50%[-].\nLorsque le héros active un Déluge de Foudre, augmente les chances crit. de [#1A7331]25%[-] pendant [#1A7331]15s[-].",
-   "L'utilisation de l'attaque spéciale charge complètement l'attaque et inflige des dégâts supplémentaires égaux à [#1A7331]100%[-] de l'attaque.\nUn coup porté sur un ennemi sous l'effet d'un [#0F5CD8]Déluge de Foudre[-] octroie des attaques spéciales supplémentaires pendant [#1A7331]10s[-].",
+   "L'utilisation de l'attaque spéciale charge complètement l'attaque et inflige des dégâts supplémentaires égaux à [#1A7331]100%[-] de l'attaque.\nUn coup porté sur un ennemi sous l'effet de [#0F5CD8]Déluge de Foudre[-] octroie une attaque spéciale supplémentaire pendant [#1A7331]10s[-].",
    "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
    "Renforce la puissance de l'attaque spéciale complètement chargée de [#1A7331]100%[-].",
    "Lorsque l'attaque spéciale est complètement chargée, elle explose et inflige des dégâts supplémentaires égaux à [#1A7331]325%[-] de l'attaque.\nLorsque cette attaque touche un ennemi sous l'effet d'un [#0F5CD8]Déluge de Foudre[-], réduit la résistance au percement de [#1A7331]10%[-] pendant [#1A7331]30s[-]."

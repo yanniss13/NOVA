@@ -188,6 +188,12 @@
 .wiki-pot{margin:8px 0 4px;padding-left:18px}
 .wiki-pot li{margin:0 0 6px}
 .wiki-pot-tier{font-weight:700;color:var(--gold);margin-right:6px}
+/* Une transcendance porte un nom ET une description, la ou un potentiel n'a
+   qu'un texte : le nom passe sur sa propre ligne, sinon les deux se lisent
+   comme une seule phrase. Les noms sont longs — « Transcendance de puissance :
+   Frappe mortelle » — et beaucoup se ressemblent d'un heros a l'autre. */
+.wiki-transcendances .wiki-pot-text{display:block}
+.wiki-transcendance-nom{display:block;color:var(--gold);margin-bottom:2px}
 .wiki-stats{margin:8px 0 4px;padding:0;list-style:none}
 .wiki-stat{
   display:flex;justify-content:space-between;gap:12px;padding:5px 0;

@@ -120,6 +120,33 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
     return liste.children.length ? liste : null;
   }
 
+  /* Les trois transcendances du heros — les passifs de Limit Break arrives
+     avec la version 2.0.
+
+     Elles ne dependent d'AUCUNE arme, contrairement aux potentiels et aux
+     maitrises juste a cote : la section affiche la meme chose quel que soit
+     l'onglet d'arme ouvert. C'est voulu, et c'est ce que dit le jeu.
+
+     La table est chargee avec le catalogue du wiki. Absente — un membre hors
+     ligne dont le cache est incomplet — la section disparait au lieu de
+     s'afficher vide. */
+  function blocTranscendances(charId){
+    const liste = (window.SEVEN_DS_TRANSCENDANCES || {})[charId];
+    if(!Array.isArray(liste) || !liste.length) return null;
+    const rendu = el("ol",{class:"wiki-pot wiki-transcendances"});
+    liste.forEach((transcendance, index) => {
+      if(!transcendance || !transcendance.texte) return;
+      rendu.appendChild(el("li",{},[
+        el("span",{class:"wiki-pot-tier", text:"T"+(index + 1)}),
+        el("span",{class:"wiki-pot-text"},[
+          el("b",{class:"wiki-transcendance-nom", text:transcendance.nom}),
+          el("span",{html:renderBonus(transcendance.texte)})
+        ])
+      ]));
+    });
+    return rendu.children.length ? rendu : null;
+  }
+
   function blocStatsDeBase(charId){
     const personnage = (BUILD_STATS.charactersBySlug || {})[charId];
     const stats = personnage && personnage.baseStats;
@@ -277,6 +304,7 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
 
     [
       repliable("Potentiels", blocPotentiels(entree.id, fiche.arme)),
+      repliable("Transcendances", blocTranscendances(entree.id)),
       repliable("Maîtrises d’arme", blocMaitrises(entree.id, fiche.arme)),
       repliable("Stats de base", blocStatsDeBase(entree.id)),
       repliable("Armures gravées", blocArmuresLiees(entree.id))

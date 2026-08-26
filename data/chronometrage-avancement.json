@@ -4,11 +4,11 @@
   "docs/chronometrage-animations.md. Ne pas editer a la main.",
   "Les mesures se saisissent dans data/animations-mesurees.json."
  ],
- "total": 13,
+ "total": 22,
  "mesurees": 0,
  "debloquent": 0,
- "affinent": 13,
- "releves": 0,
+ "affinent": 19,
+ "releves": 3,
  "prochaines": [
   {
    "gameId": "diane_gauntlets_skill_rmb_1",
@@ -29,30 +29,30 @@
    "role": "affine"
   },
   {
+   "gameId": "ban_cudgel3c_skill_r",
+   "heros": "ban",
+   "arme": "Nunchaku",
+   "nom": "Chasse du Renard",
+   "categorie": "Attaque ultime",
+   "touche": "R",
+   "role": "affine"
+  },
+  {
+   "gameId": "ban_gauntlets_skill_r",
+   "heros": "ban",
+   "arme": "Gantelets",
+   "nom": "Explosion obscure",
+   "categorie": "Attaque ultime",
+   "touche": "R",
+   "role": "affine"
+  },
+  {
    "gameId": "guila_shield_skill_q",
    "heros": "guila",
    "arme": "Épée & bouclier",
    "nom": "Explosion resplendissante",
    "categorie": "Attaque ultime",
    "touche": "R",
-   "role": "affine"
-  },
-  {
-   "gameId": "tristan_sword2h_skill_q_ready",
-   "heros": "tristan",
-   "arme": "Épée à deux mains",
-   "nom": "Entaille d'amputation",
-   "categorie": "Attaque ultime",
-   "touche": "R",
-   "role": "affine"
-  },
-  {
-   "gameId": "king_book_skill_rmb_ready",
-   "heros": "king",
-   "arme": "Grimoire",
-   "nom": "Bouclier gardien",
-   "categorie": "Attaque spéciale",
-   "touche": "Q",
    "role": "affine"
   }
  ]

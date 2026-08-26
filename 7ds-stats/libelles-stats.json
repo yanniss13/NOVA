@@ -171,6 +171,11 @@
   "fr": "Augmentation des dégâts de Feu",
   "en": "Fire Damage Increase"
  },
+ "Fire_Element_Res_Rate": {
+  "fr": "Résistance au Feu (%)",
+  "en": "Fire Resistance (%)",
+  "taux": true
+ },
  "Fire_Rate": {
   "fr": "Augmentation de l'attaque de Feu",
   "en": "Fire Attack Increase",
@@ -311,6 +316,11 @@
   "taux": true
  },
  "Ultimateskill_Damadd_Rate": {
+  "fr": "Augmentation des dégâts d'attaque ultime",
+  "en": "Ultimate Move Damage Increase",
+  "taux": true
+ },
+ "UltimateSkill_DamAdd_Rate": {
   "fr": "Augmentation des dégâts d'attaque ultime",
   "en": "Ultimate Move Damage Increase",
   "taux": true
