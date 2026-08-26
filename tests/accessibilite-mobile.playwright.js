@@ -6,6 +6,39 @@ const path = require("node:path");
 const { serveRepo } = require("./helpers/serve");
 const { chromium } = require("playwright");
 
+/* Mesure un element en REESSAYANT jusqu'a obtenir un encadre.
+
+   `waitFor({state:"visible"})` puis `boundingBox()` ne suffit pas : ce sont
+   deux resolutions distinctes du localisateur. Entre les deux, une vue qui se
+   reconstruit peut detacher le noeud vu par la premiere, et `boundingBox()`
+   rend alors `null` — l'element n'a pas disparu, il a ete remplace.
+
+   Le cas s'est produit sur le runner le 26 aout 2026, apres l'arrivee d'un 26e
+   heros dans le picker : la carte se reconstruit au choix du heros, et une
+   grille plus fournie a suffi a faire perdre la course. La machine locale la
+   gagnait, donc le test passait ici et cassait la-bas.
+
+   Reessayer est la seule reponse juste : on ne veut pas d'un `waitForTimeout`
+   qui ralentit tout le monde pour couvrir un cas rare, ni d'une assertion qui
+   depend de la vitesse du runner. */
+async function mesurer(locator, label, limiteMs = 5000){
+  const fin = Date.now() + limiteMs;
+  let encadre = null;
+  while(Date.now() < fin){
+    try{
+      encadre = await locator.boundingBox();
+    }catch(erreur){
+      /* Le noeud s'est detache entre la resolution et la mesure : c'est
+         precisement le cas qu'on attend, on repasse. */
+      encadre = null;
+    }
+    if(encadre) return encadre;
+    await locator.page().waitForTimeout(50);
+  }
+  assert.fail(label + " : aucun encadré mesurable après "
+    + (limiteMs / 1000) + " s");
+}
+
 async function assertPickerTilesContained(page, label){
   const layout = await page.locator("#pickerGrid").evaluate(grid => ({
     clientHeight:grid.clientHeight,
@@ -1413,14 +1446,14 @@ async function installRosterFocusFakeSupabase(page){
 
     await mobile.locator(".hero .portrait").first().click();
     await mobile.locator('#pickerGrid .tile[title="Meliodas"]').click();
-    /* Choisir un heros reconstruit la carte : mesurer sans attendre lisait
-       un encadre pas encore rendu, et boundingBox() rendait null. Le runner,
-       plus lent, perdait cette course la ou une machine locale la gagnait.
-       C'est l'attente qui manquait, pas des pixels. */
+    /* Choisir un heros reconstruit la carte : mesurer sans attendre lisait un
+       encadre pas encore rendu. L'attente seule ne suffisait pas non plus — la
+       reconstruction pouvait detacher le noeud entre l'attente et la mesure.
+       `mesurer()` reessaie, et c'est ce qui rend l'assertion stable. */
     const gearSlot = mobile.locator(".hero .gear-slot.weapon").first();
     await gearSlot.waitFor({ state:"visible" });
-    const gearBox = await gearSlot.boundingBox();
-    assert.ok(gearBox, ".gear-slot introuvable ou invisible apres le choix du heros");
+    const gearBox = await mesurer(gearSlot,
+      ".gear-slot après le choix du héros");
     assert.ok(gearBox.height >= CIBLE_TACTILE_PX,
       `.gear-slot mesure ${gearBox.height.toFixed(3)} px (< 44)`);
     await mobile.locator(".hero .gear-slot.weapon").first().click();
