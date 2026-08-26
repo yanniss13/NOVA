@@ -7,6 +7,15 @@
   "note": "Prime sur SevenCodex, qui tronque a la seconde. Les competences absentes de ce fichier n'ont pas de recharge dans le jeu (valeur 0)."
  },
  "recharges": {
+  "ban_cudgel3c_skill_e": 18.6,
+  "ban_cudgel3c_skill_q_1": 15.6,
+  "ban_cudgel3c_skill_r": 10,
+  "ban_gauntlets_skill_e": 27.3,
+  "ban_gauntlets_skill_q": 19.6,
+  "ban_gauntlets_skill_r": 10,
+  "ban_sword2h_skill_e": 20.4,
+  "ban_sword2h_skill_q": 11.6,
+  "ban_sword2h_skill_r": 10,
   "bug_axe_skill_e": 14,
   "bug_axe_skill_q": 10,
   "bug_axe_skill_rmb_ready": 16.2,

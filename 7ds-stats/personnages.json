@@ -1,6 +1,2011 @@
 [
  {
-  "id": "cmsupro1d000e2lpeg0uozrgu",
+  "id": "cmtaaoctq000k2lpgsspbvivw",
+  "slug": "ban",
+  "nameFr": "Ban",
+  "nameEn": "Ban",
+  "element": "DEFAULT",
+  "rarity": "SSR",
+  "role": "ATTACKER",
+  "portraitUrl": "/images/characters/ban.webp",
+  "weaponSlots": [
+   {
+    "role": "Attacker",
+    "weapon": "Cudgel3c",
+    "element": "Default"
+   },
+   {
+    "role": "Attacker",
+    "weapon": "Sword2h",
+    "element": "Earth"
+   },
+   {
+    "role": "Buster",
+    "weapon": "Gauntlets",
+    "element": "Dark"
+   }
+  ],
+  "costumes": [
+   {
+    "id": "cmtaaoemr00932lpgcdz7tk5f",
+    "slug": "ban-costume-134102101",
+    "nameFr": "Bandit infatigable",
+    "nameEn": "Undying Bandit",
+    "effectNameFr": "Tenue de base",
+    "effectNameEn": "Basic Outfit",
+    "effectDescFr": "Costume d'antan de Ban. Il l'a « emprunté » à quelqu'un qu'il a croisé.",
+    "effectDescEn": "A skin for Ban from the past. He \"borrowed\" it from someone he met.",
+    "rarity": "R",
+    "engravingPassives": null,
+    "bindingMaterials": null,
+    "itemGameId": "134102101",
+    "iconUrl": "/images/costumes/icon_Ban_001.webp"
+   },
+   {
+    "id": "cmtaaoemq00682lpgmaz3yp9w",
+    "slug": "ban-costume-135102101",
+    "nameFr": "Matraque démoniaque Vesta",
+    "nameEn": "Demon Cudgel Vesta",
+    "effectNameFr": "Se débloque en obtenant une récompense spécifique de tirage de skin exclusif.",
+    "effectNameEn": "Unlocks upon obtaining a specific Exclusive Skin Draw reward.",
+    "effectDescFr": "Un nunchaku confectionné à partir des cornes d'un démon ancien. Il est aussi destructeur qu'il est robuste.\nApparence uniquement, aucun effet supplémentaire.",
+    "effectDescEn": "A nunchaku carved from the horns of an ancient demon. It is capable of destroying anything, and there is nothing that can destroy it.\nAppearance only, no additional effects.",
+    "rarity": "SSR",
+    "engravingPassives": null,
+    "bindingMaterials": null,
+    "itemGameId": "135102101",
+    "iconUrl": "/images/costumes/Short_Costume_Ban_Cudgel3c_0001.webp"
+   },
+   {
+    "id": "cmtaaoemr00942lpgnmf7b96d",
+    "slug": "ban-costume-134102102",
+    "nameFr": "Cuisinier remplaçant",
+    "nameEn": "Temporary Cook",
+    "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé de Ban",
+    "effectNameEn": "Unlocks upon acquiring Ban's Engraved Equipment",
+    "effectDescFr": "Un costume pour le Ban du passé. L'uniforme officiel de Ma petite gourmandise.",
+    "effectDescEn": "A skin for Ban from the past. The official uniform of <My Sweet Gluttony>.",
+    "rarity": "SSR",
+    "engravingPassives": [
+     {
+      "id": "EpEq_Ban_B",
+      "icon": "equippassive_equip_ban_b_ssr",
+      "levels": [
+       {
+        "level": 1,
+        "descEn": "Increases the hero's [#0F5CD8]Physical damage[-] by [#1A7331]60%[-] of the Attack of all elements except Physical.\nLanding the Normal Skill on an enemy affected by [#0F5CD8]Chain[-] increases [#0F5CD8]All Elemental Attack[-] by [#1A7331]12%[-] and [#0F5CD8]Defense Shatter[-] by [#1A7331]6%[-] for [#1A7331]30 sec[-].",
+        "descFr": "Augmente les [#0F5CD8]dégâts physiques[-] du héros à hauteur de [#1A7331]60%[-] de l'attaque de tous les éléments, sauf Physique.\nUn coup porté avec la compétence normale sur un ennemi affecté par [#0F5CD8]Chaîne[-] augmente [#0F5CD8]toutes les attaques élémentaires[-] de [#1A7331]12%[-] et le [#0F5CD8]percement de défense[-] de [#1A7331]6%[-] pendant [#1A7331]30 s[-]."
+       },
+       {
+        "level": 2,
+        "descEn": "Increases the hero's [#0F5CD8]Physical damage[-] by [#1A7331]80%[-] of the Attack of all elements except Physical.\nLanding the Normal Skill on an enemy affected by [#0F5CD8]Chain[-] increases [#0F5CD8]All Elemental Attack[-] by [#1A7331]16%[-] and [#0F5CD8]Defense Shatter[-] by [#1A7331]8%[-] for [#1A7331]30 sec[-].",
+        "descFr": "Augmente les [#0F5CD8]dégâts physiques[-] du héros à hauteur de [#1A7331]80%[-] de l'attaque de tous les éléments, sauf Physique.\nUn coup porté avec la compétence normale sur un ennemi affecté par [#0F5CD8]Chaîne[-] augmente [#0F5CD8]toutes les attaques élémentaires[-] de [#1A7331]16%[-] et le [#0F5CD8]percement de défense[-] de [#1A7331]8%[-] pendant [#1A7331]30 s[-]."
+       },
+       {
+        "level": 3,
+        "descEn": "Increases the hero's [#0F5CD8]Physical damage[-] by [#1A7331]100%[-] of the Attack of all elements except Physical.\nLanding the Normal Skill on an enemy affected by [#0F5CD8]Chain[-] increases [#0F5CD8]All Elemental Attack[-] by [#1A7331]20%[-] and [#0F5CD8]Defense Shatter[-] by [#1A7331]10%[-] for [#1A7331]30 sec[-].",
+        "descFr": "Augmente les [#0F5CD8]dégâts physiques[-] du héros à hauteur de [#1A7331]100%[-] de l'attaque de tous les éléments, sauf Physique.\nUn coup porté avec la compétence normale sur un ennemi affecté par [#0F5CD8]Chaîne[-] augmente [#0F5CD8]toutes les attaques élémentaires[-] de [#1A7331]20%[-] et le [#0F5CD8]percement de défense[-] de [#1A7331]10%[-] pendant [#1A7331]30 s[-]."
+       }
+      ],
+      "nameEn": "Plunderer of All Things",
+      "nameFr": "Pillard ultime"
+     }
+    ],
+    "bindingMaterials": [
+     {
+      "itemId": "132124030",
+      "quantity": 1
+     },
+     {
+      "itemId": "132224030",
+      "quantity": 1
+     },
+     {
+      "itemId": "132324030",
+      "quantity": 1
+     },
+     {
+      "itemId": "132424030",
+      "quantity": 1
+     },
+     {
+      "itemId": "101100102",
+      "quantity": 1
+     },
+     {
+      "itemId": "101120297",
+      "quantity": 1
+     }
+    ],
+    "itemGameId": "133274001",
+    "iconUrl": "/images/costumes/icon_Ban_002.webp"
+   },
+   {
+    "id": "cmtaaoemr00952lpglwwas4ii",
+    "slug": "ban-costume-134102103",
+    "nameFr": "Le Renard de l'Avarice",
+    "nameEn": "The Fox Sin of Greed",
+    "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé de Ban",
+    "effectNameEn": "Unlocks upon acquiring Ban's Engraved Equipment",
+    "effectDescFr": "Costume d'antan de Ban. L'armure caractéristique de Ban des <Seven Deadly Sins>",
+    "effectDescEn": "A skin for Ban from the past. Ban's trademark armor from <The Seven Deadly Sins>.",
+    "rarity": "SSR",
+    "engravingPassives": [
+     {
+      "id": "EpEq_Ban_C",
+      "icon": "equippassive_equip_ban_c_ssr",
+      "levels": [
+       {
+        "level": 1,
+        "descEn": "Increases the duration of [#0F5CD8]Berserker[-] by [#1A7331]20%[-].\nGaining [#0F5CD8]Berserker[-] increases [#0F5CD8]Movement Speed[-] by [#1A7331]30%[-], and using the Normal Skill [#1A7331]3 time(s)[-] while the effect is active increases [#0F5CD8]Normal Skill damage[-] by [#1A7331]24%[-] and [#0F5CD8]Crit Damage[-] by [#1A7331]24%[-].",
+        "descFr": "Augmente la durée de [#0F5CD8]Berserker[-] de [#1A7331]20%[-].\nEntrer en état [#0F5CD8]Berserker[-] augmente la [#0F5CD8]vitesse de déplacement[-] de [#1A7331]30%[-], et utiliser la compétence normale [#1A7331]3 fois[-] lorsque l'effet est actif augmente les [#0F5CD8]dégâts de compétence normale[-] de [#1A7331]24%[-] et les [#0F5CD8]dégâts crit.[-] de [#1A7331]24%[-]."
+       },
+       {
+        "level": 2,
+        "descEn": "Increases the duration of [#0F5CD8]Berserker[-] by [#1A7331]30%[-].\nGaining [#0F5CD8]Berserker[-] increases [#0F5CD8]Movement Speed[-] by [#1A7331]30%[-], and using the Normal Skill [#1A7331]3 time(s)[-] while the effect is active increases [#0F5CD8]Normal Skill damage[-] by [#1A7331]32%[-] and [#0F5CD8]Crit Damage[-] by [#1A7331]32%[-].",
+        "descFr": "Augmente la durée de [#0F5CD8]Berserker[-] de [#1A7331]30%[-].\nEntrer en état [#0F5CD8]Berserker[-] augmente la [#0F5CD8]vitesse de déplacement[-] de [#1A7331]30%[-], et utiliser la compétence normale [#1A7331]3 fois[-] lorsque l'effet est actif augmente les [#0F5CD8]dégâts de compétence normale[-] de [#1A7331]32%[-] et les [#0F5CD8]dégâts crit.[-] de [#1A7331]32%[-]."
+       },
+       {
+        "level": 3,
+        "descEn": "Increases the duration of [#0F5CD8]Berserker[-] by [#1A7331]40%[-].\nGaining [#0F5CD8]Berserker[-] increases [#0F5CD8]Movement Speed[-] by [#1A7331]30%[-], and using the Normal Skill [#1A7331]3 time(s)[-] while the effect is active increases [#0F5CD8]Normal Skill damage[-] by [#1A7331]40%[-] and [#0F5CD8]Crit Damage[-] by [#1A7331]40%[-].",
+        "descFr": "Augmente la durée de [#0F5CD8]Berserker[-] de [#1A7331]40%[-].\nEntrer en état [#0F5CD8]Berserker[-] augmente la [#0F5CD8]vitesse de déplacement[-] de [#1A7331]30%[-], et utiliser la compétence normale [#1A7331]3 fois[-] lorsque l'effet est actif augmente les [#0F5CD8]dégâts de compétence normale[-] de [#1A7331]40%[-] et les [#0F5CD8]dégâts crit.[-] de [#1A7331]40%[-]."
+       }
+      ],
+      "nameEn": "Frenzied Strike Combo",
+      "nameFr": "Combo de coups frénétique"
+     }
+    ],
+    "bindingMaterials": [
+     {
+      "itemId": "132135005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132235005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132335005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132435005",
+      "quantity": 1
+     },
+     {
+      "itemId": "101100102",
+      "quantity": 1
+     },
+     {
+      "itemId": "101120297",
+      "quantity": 1
+     }
+    ],
+    "itemGameId": "133275001",
+    "iconUrl": "/images/costumes/icon_Ban_003.webp"
+   },
+   {
+    "id": "cmtaaoemr00962lpgpp3nrjmh",
+    "slug": "ban-costume-134102104",
+    "nameFr": "Maraudeur décontracté",
+    "nameEn": "Jaunty Marauder",
+    "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé de Ban",
+    "effectNameEn": "Unlocks upon acquiring Ban's Engraved Equipment",
+    "effectDescFr": "Costume d'antan de Ban.\nDoté de tout ce dont il a besoin pour rester lui-même.",
+    "effectDescEn": "A skin for Ban from the past. It has everything he needs to be himself.",
+    "rarity": "SSR",
+    "engravingPassives": [
+     {
+      "id": "EpEq_Ban_D",
+      "icon": "equippassive_equip_ban_d_ssr",
+      "levels": [
+       {
+        "level": 1,
+        "descEn": "Using a Combined Attack with the hero's Ultimate Move as the base increases all allied heroes' [#0F5CD8]Darkness damage[-] by [#1A7331]30%[-] for [#1A7331]30 sec[-], and each hit from the Combined Attack increases the enemy's [#0F5CD8]Darkness Weakness Damage[-] by [#1A7331]3%[-] for [#1A7331]30 sec[-].",
+        "descFr": "Utiliser une attaque combinée avec l'attaque ultime du héros en tant que base augmente les [#0F5CD8]dégâts des Ténèbres[-] de tous les héros alliés de [#1A7331]30%[-] pendant [#1A7331]30 s[-], et chaque coup porté avec l'attaque combinée augmente les [#0F5CD8]dégâts de faiblesse aux Ténèbres[-] de l'ennemi de [#1A7331]3%[-] pendant [#1A7331]30 s[-]."
+       },
+       {
+        "level": 2,
+        "descEn": "Using a Combined Attack with the hero's Ultimate Move as the base increases all allied heroes' [#0F5CD8]Darkness damage[-] by [#1A7331]40%[-] for [#1A7331]30 sec[-], and each hit from the Combined Attack increases the enemy's [#0F5CD8]Darkness Weakness Damage[-] by [#1A7331]4%[-] for [#1A7331]30 sec[-].",
+        "descFr": "Utiliser une attaque combinée avec l'attaque ultime du héros en tant que base augmente les [#0F5CD8]dégâts des Ténèbres[-] de tous les héros alliés de [#1A7331]40%[-] pendant [#1A7331]30 s[-], et chaque coup porté avec l'attaque combinée augmente les [#0F5CD8]dégâts de faiblesse aux Ténèbres[-] de l'ennemi de [#1A7331]4%[-] pendant [#1A7331]30 s[-]."
+       },
+       {
+        "level": 3,
+        "descEn": "Using a Combined Attack with the hero's Ultimate Move as the base increases all allied heroes' [#0F5CD8]Darkness damage[-] by [#1A7331]50%[-] for [#1A7331]30 sec[-], and each hit from the Combined Attack increases the enemy's [#0F5CD8]Darkness Weakness Damage[-] by [#1A7331]5%[-] for [#1A7331]30 sec[-].",
+        "descFr": "Utiliser une attaque combinée avec l'attaque ultime du héros en tant que base augmente les [#0F5CD8]dégâts des Ténèbres[-] de tous les héros alliés de [#1A7331]50%[-] pendant [#1A7331]30 s[-], et chaque coup porté avec l'attaque combinée augmente les [#0F5CD8]dégâts de faiblesse aux Ténèbres[-] de l'ennemi de [#1A7331]5%[-] pendant [#1A7331]30 s[-]."
+       }
+      ],
+      "nameEn": "Bond of Trust",
+      "nameFr": "Lien de confiance"
+     }
+    ],
+    "bindingMaterials": [
+     {
+      "itemId": "132134026",
+      "quantity": 1
+     },
+     {
+      "itemId": "132234026",
+      "quantity": 1
+     },
+     {
+      "itemId": "132334026",
+      "quantity": 1
+     },
+     {
+      "itemId": "132434026",
+      "quantity": 1
+     },
+     {
+      "itemId": "101100102",
+      "quantity": 1
+     },
+     {
+      "itemId": "101120297",
+      "quantity": 1
+     }
+    ],
+    "itemGameId": "133275002",
+    "iconUrl": "/images/costumes/icon_Ban_004.webp"
+   },
+   {
+    "id": "cmtaaoemr00972lpgik5cslw9",
+    "slug": "ban-costume-134102105",
+    "nameFr": "Chevalier sacré irrévérencieux",
+    "nameEn": "Irreverent Holy Knight",
+    "effectNameFr": "Se débloque en obtenant une récompense spécifique de tirage de skin exclusif.",
+    "effectNameEn": "Unlocks upon obtaining a specific Exclusive Skin Draw reward.",
+    "effectDescFr": "Costume d'antan de Ban.\nSes pouvoirs peuvent sembler irrévérencieux, mais il est sans l'ombre d'un doute un Chevalier Sacré.",
+    "effectDescEn": "A skin for Ban from the past. His powers may seem irreverent, but he is undeniably a Holy Knight.",
+    "rarity": "SSR",
+    "engravingPassives": null,
+    "bindingMaterials": null,
+    "itemGameId": "134102105",
+    "iconUrl": "/images/costumes/icon_Ban_005.webp"
+   }
+  ],
+  "weaponMasteries": [
+   {
+    "weaponType": "Cudgel3c",
+    "level": 1,
+    "subLevels": [
+     {
+      "exp": 18750,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 150
+       }
+      ]
+     },
+     {
+      "exp": 37500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 68
+       }
+      ]
+     },
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 192
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": []
+     }
+    ]
+   },
+   {
+    "weaponType": "Cudgel3c",
+    "level": 2,
+    "subLevels": [
+     {
+      "exp": 28125,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 225
+       }
+      ]
+     },
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 102
+       }
+      ]
+     },
+     {
+      "exp": 84375,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 288
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 188
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 37
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 85
+       },
+       {
+        "stat": "A_Block",
+        "value": 21
+       },
+       {
+        "stat": "B_MaxHp",
+        "value": 240
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Rate",
+        "value": 282
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 735
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 120
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 360
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 13
+       },
+       {
+        "stat": "A_Block",
+        "value": 8
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Cudgel3c",
+    "level": 3,
+    "subLevels": [
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 300
+       }
+      ]
+     },
+     {
+      "exp": 112500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 135
+       }
+      ]
+     },
+     {
+      "exp": 168750,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 384
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 128
+       },
+       {
+        "stat": "C_Critical_Rate",
+        "value": 422
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 282
+       },
+       {
+        "stat": "A_Block",
+        "value": 27
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "A_Accuracy",
+        "value": 48
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 540
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 360
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 180
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 1103
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 16
+       },
+       {
+        "stat": "A_Block",
+        "value": 11
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Cudgel3c",
+    "level": 4,
+    "subLevels": [
+     {
+      "exp": 168750,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 375
+       }
+      ]
+     },
+     {
+      "exp": 337500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 169
+       }
+      ]
+     },
+     {
+      "exp": 506250,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 480
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 1470
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 720
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 375
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 240
+       },
+       {
+        "stat": "A_Block",
+        "value": 34
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 480
+       },
+       {
+        "stat": "C_Critical_Rate",
+        "value": 563
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 169
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 58
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 26
+       },
+       {
+        "stat": "A_Block",
+        "value": 17
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Cudgel3c",
+    "level": 5,
+    "subLevels": [],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 600
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 1838
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Rate",
+        "value": 704
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 69
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 212
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 300
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 900
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 469
+       },
+       {
+        "stat": "A_Block",
+        "value": 40
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 49
+       },
+       {
+        "stat": "A_Block",
+        "value": 33
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Gauntlets",
+    "level": 1,
+    "subLevels": [
+     {
+      "exp": 18750,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 120
+       }
+      ]
+     },
+     {
+      "exp": 37500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 90
+       }
+      ]
+     },
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 240
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": []
+     }
+    ]
+   },
+   {
+    "weaponType": "Gauntlets",
+    "level": 2,
+    "subLevels": [
+     {
+      "exp": 28125,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 180
+       }
+      ]
+     },
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 135
+       }
+      ]
+     },
+     {
+      "exp": 84375,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 360
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 150
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 113
+       },
+       {
+        "stat": "A_Block",
+        "value": 23
+       },
+       {
+        "stat": "B_MaxHp",
+        "value": 300
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Rate",
+        "value": 225
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 525
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 150
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 450
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 12
+       },
+       {
+        "stat": "A_Block",
+        "value": 9
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Gauntlets",
+    "level": 3,
+    "subLevels": [
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 240
+       }
+      ]
+     },
+     {
+      "exp": 112500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 180
+       }
+      ]
+     },
+     {
+      "exp": 168750,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 480
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 170
+       },
+       {
+        "stat": "C_Critical_Rate",
+        "value": 338
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 225
+       },
+       {
+        "stat": "A_Block",
+        "value": 30
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "A_Accuracy",
+        "value": 45
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 675
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 450
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 225
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 788
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 15
+       },
+       {
+        "stat": "A_Block",
+        "value": 12
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Gauntlets",
+    "level": 4,
+    "subLevels": [
+     {
+      "exp": 168750,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 300
+       }
+      ]
+     },
+     {
+      "exp": 337500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 225
+       }
+      ]
+     },
+     {
+      "exp": 506250,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 600
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 1050
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 900
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 300
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 300
+       },
+       {
+        "stat": "A_Block",
+        "value": 37
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 600
+       },
+       {
+        "stat": "C_Critical_Rate",
+        "value": 450
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 225
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 56
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 25
+       },
+       {
+        "stat": "A_Block",
+        "value": 19
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Gauntlets",
+    "level": 5,
+    "subLevels": [],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 750
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 1313
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Rate",
+        "value": 563
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 66
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 282
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 375
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 1125
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 375
+       },
+       {
+        "stat": "A_Block",
+        "value": 44
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 46
+       },
+       {
+        "stat": "A_Block",
+        "value": 36
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Sword2h",
+    "level": 1,
+    "subLevels": [
+     {
+      "exp": 18750,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 132
+       }
+      ]
+     },
+     {
+      "exp": 37500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 72
+       }
+      ]
+     },
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 192
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": []
+     }
+    ]
+   },
+   {
+    "weaponType": "Sword2h",
+    "level": 2,
+    "subLevels": [
+     {
+      "exp": 28125,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 198
+       }
+      ]
+     },
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 108
+       }
+      ]
+     },
+     {
+      "exp": 84375,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 288
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 165
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 37
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 90
+       },
+       {
+        "stat": "A_Block",
+        "value": 21
+       },
+       {
+        "stat": "B_MaxHp",
+        "value": 240
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Rate",
+        "value": 338
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 788
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 90
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 338
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 13
+       },
+       {
+        "stat": "A_Block",
+        "value": 8
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Sword2h",
+    "level": 3,
+    "subLevels": [
+     {
+      "exp": 56250,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 264
+       }
+      ]
+     },
+     {
+      "exp": 112500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 144
+       }
+      ]
+     },
+     {
+      "exp": 168750,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 384
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 136
+       },
+       {
+        "stat": "C_Critical_Rate",
+        "value": 507
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 248
+       },
+       {
+        "stat": "A_Block",
+        "value": 27
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "A_Accuracy",
+        "value": 48
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 507
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 360
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 135
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 1182
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 16
+       },
+       {
+        "stat": "A_Block",
+        "value": 11
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Sword2h",
+    "level": 4,
+    "subLevels": [
+     {
+      "exp": 168750,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 330
+       }
+      ]
+     },
+     {
+      "exp": 337500,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 180
+       }
+      ]
+     },
+     {
+      "exp": 506250,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 480
+       }
+      ]
+     }
+    ],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 1575
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 675
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 330
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 180
+       },
+       {
+        "stat": "A_Block",
+        "value": 34
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 480
+       },
+       {
+        "stat": "C_Critical_Rate",
+        "value": 675
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 180
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 58
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 26
+       },
+       {
+        "stat": "A_Block",
+        "value": 17
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "weaponType": "Sword2h",
+    "level": 5,
+    "subLevels": [],
+    "nodes": [
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_MaxHp",
+        "value": 600
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 1969
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_Rate",
+        "value": 844
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 69
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Def",
+        "value": 226
+       },
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 225
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 844
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 413
+       },
+       {
+        "stat": "A_Block",
+        "value": 40
+       }
+      ]
+     },
+     {
+      "nodeType": "Special",
+      "grade": 2,
+      "abilities": [
+       {
+        "stat": "I_AtkAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_DefAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "I_MaxHpAdd_Rate",
+        "value": 300
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 49
+       },
+       {
+        "stat": "A_Block",
+        "value": 33
+       }
+      ]
+     }
+    ]
+   }
+  ],
+  "potentials": [
+   {
+    "weaponType": "Cudgel3c",
+    "tier": 1,
+    "bonusFr": "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]5%[-], Defense by [#1A7331]4%[-], and Max HP by [#1A7331]2%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Cudgel3c",
+    "tier": 2,
+    "bonusFr": "Renforce la puissance de l'attaque spéciale de [#1A7331]25%[-].",
+    "bonusEn": "Amplifies Special Attack power by [#1A7331]25%[-]",
+    "stats": []
+   },
+   {
+    "weaponType": "Cudgel3c",
+    "tier": 3,
+    "bonusFr": "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]10%[-], Defense by [#1A7331]8%[-], and Max HP by [#1A7331]3%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Cudgel3c",
+    "tier": 4,
+    "bonusFr": "Renforce la puissance de l'attaque normale de [#1A7331]35%[-].",
+    "bonusEn": "Amplifies Normal Attack power by [#1A7331]35%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Cudgel3c",
+    "tier": 5,
+    "bonusFr": "Augmente légèrement la portée de l'attaque ultime.\nLa première frappe de l'attaque ultime augmente les dégâts crit. du héros de [#1A7331]10%[-] pendant [#1A7331]15s[-] par tranche de [#1A7331]1[-] cumul(s) de [#0F5CD8]Chaîne[-] sur l'ennemi. (Max : [#1A7331]5 fois[-])",
+    "bonusEn": "Slightly increases the range of the Ultimate Move.\nThe Ultimate Move's first strike increases the hero's own Crit Damage by [#1A7331]10%[-] for [#1A7331]15 sec[-] for every [#1A7331]1[-] stack(s) of [#0F5CD8]Chain[-] on the enemy. (Max: [#1A7331]5 times[-])",
+    "stats": []
+   },
+   {
+    "weaponType": "Cudgel3c",
+    "tier": 6,
+    "bonusFr": "Augmente la perforation du héros de [#1A7331]20[-] par tranche de [#1A7331]1 cumul(s)[-] de [#0F5CD8]Chaîne[-] sur l'ennemi.\nChaque fois que le héros utilise l'attaque spéciale, augmente toutes les attaques élémentaires du héros de [#1A7331]6%[-] pendant [#1A7331]15s[-]. (Max : [#1A7331]9 fois[-])",
+    "bonusEn": "Increases the hero's Pierce by [#1A7331]20[-] for every [#1A7331]1 stack(s)[-] of [#0F5CD8]Chain[-] on the enemy.\nEach time the hero uses the Special Attack, it increases the hero's All Elemental Attack by [#1A7331]6%[-] for [#1A7331]15 sec[-]. (Max: [#1A7331]9 times[-])",
+    "stats": []
+   },
+   {
+    "weaponType": "Cudgel3c",
+    "tier": 7,
+    "bonusFr": "Réduit les dégâts subis lors de l'utilisation de l'attaque spéciale de [#1A7331]30%[-].\nAugmente légèrement la portée de la dernière frappe de l'attaque spéciale et renforce sa puissance de [#1A7331]100%[-].",
+    "bonusEn": "Decreases damage taken while using the Special Attack by [#1A7331]30%[-].\nSlightly increases the range of the Special Attack's final strike and amplifies its power by [#1A7331]100%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Cudgel3c",
+    "tier": 8,
+    "bonusFr": "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]15%[-], Defense by [#1A7331]12%[-], and Max HP by [#1A7331]5%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Cudgel3c",
+    "tier": 9,
+    "bonusFr": "Renforce la puissance des dégâts supplémentaires fournis par l'attaque ultime de [#1A7331]120%[-].",
+    "bonusEn": "Amplifies the Ultimate Move's additional damage power by [#1A7331]120%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Cudgel3c",
+    "tier": 10,
+    "bonusFr": "Augmente le nombre de coups des dégâts supplémentaires fournis par l'attaque ultime de [#1A7331]3[-] contre les ennemis qui ont atteint le nombre maximal de cumuls de [#0F5CD8]Chaîne[-].\nToucher un [#0F5CD8][-]tel ennemi avec la première frappe de l'attaque ultime réinitialise le temps de recharge de l'attaque spéciale du héros, le réduit de [#1A7331]80%[-] pendant [#1A7331]10s[-] et augmente le percement de défense du héros de [#1A7331]15%[-] pendant [#1A7331]20s[-].",
+    "bonusEn": "Increases the Ultimate Move's additional damage hit count by [#1A7331]3 time(s)[-] against enemies with max stacks of [#0F5CD8]Chain[-].\nLanding the Ultimate Move's first strike on an enemy with [#0F5CD8]Chain[-] at maximum resets the hero's Special Attack cooldown, decreases it by [#1A7331]80%[-] for [#1A7331]10 sec[-], and increases the hero's Defense Shatter by [#1A7331]15%[-] for [#1A7331]20 sec[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 1,
+    "bonusFr": "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]5%[-], Defense by [#1A7331]4%[-], and Max HP by [#1A7331]2%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 2,
+    "bonusFr": "Renforce la puissance de l'attaque spéciale de [#1A7331]35%[-].",
+    "bonusEn": "Amplifies Special Attack power by [#1A7331]35%[-]",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 3,
+    "bonusFr": "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]10%[-], Defense by [#1A7331]8%[-], and Max HP by [#1A7331]3%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 4,
+    "bonusFr": "Renforce la puissance de la compétence normale de [#1A7331]30%[-].",
+    "bonusEn": "Amplifies Normal Skill power by [#1A7331]30%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 5,
+    "bonusFr": "Augmente légèrement la portée de l'attaque normale et amplifie le boost des dégâts crit. contre les ennemis affectés par « Détournement » de [#1A7331]100%[-].\nLorsque l'attaque normale fait mouche, elle réduit la défense des Ténèbres de l'ennemi à hauteur de [#1A7331]2%[-] de la défense pendant [#1A7331]30s[-]. (Max : [#1A7331]10 fois[-])\nLa réduction de la défense des Ténèbres s'applique uniquement lorsque l'ennemi est sous l'effet d'un [#0F5CD8]Déluge[-].",
+    "bonusEn": "Slightly increases the range of the Normal Attack and amplifies the Crit Damage boost against enemies affected by \"Snatch\" by [#1A7331]100%[-].\nLanding the Normal Attack decreases the enemy's Darkness Defense by [#1A7331]2%[-] of Defense for [#1A7331]30 sec[-]. (Max: [#1A7331]10 time(s)[-])\nThis Darkness Defense reduction only applies while the enemy has an active [#0F5CD8]Burst[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 6,
+    "bonusFr": "Augmente de [#1A7331]3s[-] le gel de la durée du [#0F5CD8]Déluge des Ténèbres[-] provenant de la dernière frappe de la compétence normale améliorée, et réduit la défense crit. de l'ennemi de [#1A7331]30%[-] pendant [#1A7331]10s[-].",
+    "bonusEn": "Increases the [#0F5CD8]Darkness Burst[-] duration freeze from the final strike of the enhanced Normal Skill by [#1A7331]3 sec[-], and decreases the enemy's Crit Defense by [#1A7331]30%[-] for [#1A7331]10 sec[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 7,
+    "bonusFr": "Augmente légèrement la portée de l'attaque spéciale et augmente de [#1A7331]30%[-] le boost des dégâts des Ténèbres subis de l'effet [#0F5CD8]Brèche[-].",
+    "bonusEn": "Slightly increases the Special Attack's range, and increases the [#0F5CD8]Breach[-] effect's boost to Darkness damage taken by [#1A7331]30%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 8,
+    "bonusFr": "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]15%[-], Defense by [#1A7331]12%[-], and Max HP by [#1A7331]5%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 9,
+    "bonusFr": "Renforce la puissance de l'attaque normale de [#1A7331]200%[-].",
+    "bonusEn": "Amplifies Normal Attack power by [#1A7331]200%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Gauntlets",
+    "tier": 10,
+    "bonusFr": "Augmente légèrement la portée de la compétence normale. La dernière frappe de la compétence normale augmente le percement de défense de tous les héros alliés d'attribut Ténèbres de [#1A7331]15%[-] pendant [#1A7331]30s[-].",
+    "bonusEn": "Slightly increases the Normal Skill's range. The final hit of the Normal Skill increases all allied Darkness heroes' Defense Shatter by [#1A7331]15%[-] for [#1A7331]30 sec[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 1,
+    "bonusFr": "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]5%[-], Defense by [#1A7331]4%[-], and Max HP by [#1A7331]2%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 2,
+    "bonusFr": "Renforce la puissance de l'attaque normale de [#1A7331]30%[-].",
+    "bonusEn": "Amplifies Normal Attack power by [#1A7331]30%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 3,
+    "bonusFr": "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]10%[-], Defense by [#1A7331]8%[-], and Max HP by [#1A7331]3%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 4,
+    "bonusFr": "Renforce la puissance de la compétence normale améliorée de [#0F5CD8][Berserker][-] de [#1A7331]20%[-].",
+    "bonusEn": "Amplifies [#0F5CD8][Berserker][-]'s enhanced Normal Skill power by [#1A7331]20%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 5,
+    "bonusFr": "Réduit le nombre d'attaques requis pour utiliser la compétence normale améliorée de [#0F5CD8][Berserker][-] de [#1A7331]2[-].",
+    "bonusEn": "Decreases the number of attacks required to use [#0F5CD8][Berserker][-]'s enhanced Normal Skill by [#1A7331]2[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 6,
+    "bonusFr": "Immunise contre les réactions pendant l'utilisation de la compétence normale.\nRéduit les dégâts subis de [#1A7331]20%[-] et augmente le boost de dégâts crit. de [#1A7331]30%[-] supplémentaires lorsque le héros est dans l'état [#0F5CD8][Berserker][-].",
+    "bonusEn": "Becomes immune to Reactions while using the Normal Skill.\nDecreases damage taken by [#1A7331]20%[-] and increases the Crit Damage boost by an additional [#1A7331]30%[-] while [#0F5CD8][Berserker][-] is active.",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 7,
+    "bonusFr": "L'utilisation de la compétence de relève active [#0F5CD8][Berserker][-] pendant [#1A7331]5s[-] et augmente les dégâts de Terre du héros de [#1A7331]50%[-] pendant [#1A7331]20s[-]. (Temps de recharge : [#1A7331]20s[-])",
+    "bonusEn": "Using the Tag Skill activates [#0F5CD8][Berserker][-] for [#1A7331]5 sec[-] and increases the hero's Earth damage by [#1A7331]50%[-] for [#1A7331]20 sec[-]. (Cooldown: [#1A7331]20 sec[-])",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 8,
+    "bonusFr": "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+    "bonusEn": "Increases Attack by [#1A7331]15%[-], Defense by [#1A7331]12%[-], and Max HP by [#1A7331]5%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 9,
+    "bonusFr": "Renforce la puissance de la compétence normale améliorée de [#0F5CD8][Berserker][-] de [#1A7331]65%[-].",
+    "bonusEn": "Amplifies [#0F5CD8][Berserker][-]'s enhanced Normal Skill power by [#1A7331]65%[-].",
+    "stats": []
+   },
+   {
+    "weaponType": "Sword2h",
+    "tier": 10,
+    "bonusFr": "Augmente légèrement la portée de la compétence normale améliorée et augmente le percement de défense de [#1A7331]15%[-] lorsque le héros est dans l'état [#0F5CD8][Berserker][-].\nFaire mouche [#1A7331]3 fois[-] avec la compétence normale améliorée permet une utilisation supplémentaire de la compétence.",
+    "bonusEn": "Slightly increases the range of the enhanced Normal Skill and increases Defense Shatter by [#1A7331]15%[-] while [#0F5CD8][Berserker][-] is active.\nLanding the enhanced Normal Skill [#1A7331]3 time(s)[-] allows one more use of the skill.",
+    "stats": []
+   }
+  ],
+  "commonMasteryTid": "11002",
+  "baseHp": 2000,
+  "baseAtk": 250,
+  "baseDef": 200,
+  "baseSpd": 500,
+  "accuracy": 80,
+  "block": 50,
+  "critRate": 1000,
+  "critDamage": 2500,
+  "critResist": 300,
+  "critDmgResist": 1000,
+  "blockDmgResist": 9500,
+  "pvpDmgUp": 150,
+  "pvpDmgDown": 125,
+  "commonMasteryStats": [
+   {
+    "stat": "B_Atk",
+    "value": 624
+   },
+   {
+    "stat": "B_Def",
+    "value": 480
+   },
+   {
+    "stat": "B_MaxHp",
+    "value": 1248
+   },
+   {
+    "stat": "A_Accuracy",
+    "value": 156
+   },
+   {
+    "stat": "A_Block",
+    "value": 120
+   }
+  ],
+  "bannerUrl": "/images/characters/banners/ban.webp"
+ },
+ {
+  "id": "cmtaaoctq000e2lpgp9fyro3i",
   "slug": "bug",
   "nameFr": "Bug",
   "nameEn": "Bug",
@@ -27,7 +2032,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub00812lpeia5mutnh",
+    "id": "cmtaaoemr00892lpgv801guhs",
     "slug": "bug-costume-134101501",
     "nameFr": "Démon timide",
     "nameEn": "Shy Demon",
@@ -42,7 +2047,7 @@
     "iconUrl": "/images/costumes/icon_Bug_001.webp"
    },
    {
-    "id": "cmsuprpub00822lpebji5a4ym",
+    "id": "cmtaaoemr008a2lpghyychacb",
     "slug": "bug-costume-134101502",
     "nameFr": "Sortie du démon",
     "nameEn": "Demon's Outing",
@@ -102,7 +2107,7 @@
     "iconUrl": "/images/costumes/icon_Bug_002.webp"
    },
    {
-    "id": "cmsuprpub00832lpe9u8wlx19",
+    "id": "cmtaaoemr008b2lpgyuuj8oia",
     "slug": "bug-costume-134101503",
     "nameFr": "Marche des ombres",
     "nameEn": "Shadow Walk",
@@ -166,7 +2171,7 @@
     "iconUrl": "/images/costumes/icon_Bug_003.webp"
    },
    {
-    "id": "cmsuprpub00842lpeyultubqv",
+    "id": "cmtaaoemr008c2lpgcvfj831q",
     "slug": "bug-costume-134101504",
     "nameFr": "Furtivité du démon",
     "nameEn": "Demon's Stealth",
@@ -228,6 +2233,70 @@
     ],
     "itemGameId": "133065002",
     "iconUrl": "/images/costumes/icon_Bug_004.webp"
+   },
+   {
+    "id": "cmtaaoemr008d2lpgma1quwk4",
+    "slug": "bug-costume-134101505",
+    "nameFr": "Instinct incisif",
+    "nameEn": "Keen Instinct",
+    "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé de Bug",
+    "effectNameEn": "Unlocks upon acquiring Bug's Engraved Equipment",
+    "effectDescFr": "Costume de Bug, le démon secret.\nUne armure robuste qui combine liberté de mouvement et protection.",
+    "effectDescEn": "A skin for Secretive Demon Bug. Sturdy armor that offers both mobility and protection.",
+    "rarity": "SSR",
+    "engravingPassives": [
+     {
+      "id": "EpEq_Bug_D",
+      "icon": "equippassive_equip_bug_d_ssr",
+      "levels": [
+       {
+        "level": 1,
+        "descEn": "Attacking a [#0F5CD8]Taunted[-] enemy applies [#0F5CD8]Curse[-] on them for [#1A7331]10 sec[-].\nIncreases allied heroes' [#0F5CD8]Darkness damage[-] dealt to enemies with reduced [#0F5CD8]Darkness Resistance[-] by [#1A7331]18%[-].",
+        "descFr": "Attaquer un ennemi [#0F5CD8]Provoqué[-] lui applique [#0F5CD8]Malédiction[-] pendant [#1A7331]10 s[-].\nAugmente de [#1A7331]18%[-] les [#0F5CD8]dégâts des Ténèbres[-] infligés par tous les héros alliés aux ennemis dont la [#0F5CD8]résistance aux Ténèbres[-] est réduite."
+       },
+       {
+        "level": 2,
+        "descEn": "Attacking a [#0F5CD8]Taunted[-] enemy applies [#0F5CD8]Curse[-] on them for [#1A7331]13 sec[-].\nIncreases allied heroes' [#0F5CD8]Darkness damage[-] dealt to enemies with reduced [#0F5CD8]Darkness Resistance[-] by [#1A7331]24%[-].",
+        "descFr": "Attaquer un ennemi [#0F5CD8]Provoqué[-] lui applique [#0F5CD8]Malédiction[-] pendant [#1A7331]13 s[-].\nAugmente de [#1A7331]24%[-] les [#0F5CD8]dégâts des Ténèbres[-] infligés par tous les héros alliés aux ennemis dont la [#0F5CD8]résistance aux Ténèbres[-] est réduite."
+       },
+       {
+        "level": 3,
+        "descEn": "Attacking a [#0F5CD8]Taunted[-] enemy applies [#0F5CD8]Curse[-] on them for [#1A7331]16 sec[-].\nIncreases allied heroes' [#0F5CD8]Darkness damage[-] dealt to enemies with reduced [#0F5CD8]Darkness Resistance[-] by [#1A7331]30%[-].",
+        "descFr": "Attaquer un ennemi [#0F5CD8]Provoqué[-] lui applique [#0F5CD8]Malédiction[-] pendant [#1A7331]16 s[-].\nAugmente de [#1A7331]30%[-] les [#0F5CD8]dégâts des Ténèbres[-] infligés par tous les héros alliés aux ennemis dont la [#0F5CD8]résistance aux Ténèbres[-] est réduite."
+       }
+      ],
+      "nameEn": "Mind's Dominion",
+      "nameFr": "Domination de l'esprit"
+     }
+    ],
+    "bindingMaterials": [
+     {
+      "itemId": "132135005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132235005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132335005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132435005",
+      "quantity": 1
+     },
+     {
+      "itemId": "101100102",
+      "quantity": 1
+     },
+     {
+      "itemId": "101120297",
+      "quantity": 1
+     }
+    ],
+    "itemGameId": "133065003",
+    "iconUrl": "/images/costumes/icon_Bug_005.webp"
    }
   ],
   "weaponMasteries": [
@@ -2361,7 +4430,7 @@
   "bannerUrl": "/images/characters/banners/bug.webp"
  },
  {
-  "id": "cmsupro1d000o2lpe35vytyko",
+  "id": "cmtaaoctr000p2lpgpzhzoe7w",
   "slug": "daisy",
   "nameFr": "Daisy",
   "nameEn": "Daisy",
@@ -2388,7 +4457,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpuc009f2lpe3rnzqnhy",
+    "id": "cmtaaoemr009v2lpgntzhogl4",
     "slug": "daisy-costume-134102801",
     "nameFr": "Fée du passé",
     "nameEn": "Fairy of the Past",
@@ -2403,7 +4472,22 @@
     "iconUrl": "/images/costumes/icon_Daisy_001.webp"
    },
    {
-    "id": "cmsuprpuc009g2lpegghllvcg",
+    "id": "cmtaaoemq00652lpgb5qugky0",
+    "slug": "daisy-costume-135102801",
+    "nameFr": "Clé temporelle",
+    "nameEn": "Key of Time",
+    "effectNameFr": "Se débloque en obtenant une récompense spécifique de tirage de skin exclusif.",
+    "effectNameEn": "Unlocks upon obtaining a specific Exclusive Skin Draw reward.",
+    "effectDescFr": "Un petit ensemble d'épée et bouclier confectionné avec des matériaux solides. Leur grande durabilité leur permet d'endurer n'importe quelle confrontation.\nApparence uniquement, aucun effet supplémentaire.",
+    "effectDescEn": "A small, lightweight sword and shield crafted from long-hardened minerals. They boast exceptional durability, remaining unbreakable in any situation.\nAppearance only, no additional effects.",
+    "rarity": "SSR",
+    "engravingPassives": null,
+    "bindingMaterials": null,
+    "itemGameId": "135102801",
+    "iconUrl": "/images/costumes/Short_Costume_Daisy_Shield_0001.webp"
+   },
+   {
+    "id": "cmtaaoemr009w2lpg2aj5ur6a",
     "slug": "daisy-costume-134102802",
     "nameFr": "Petite exploratrice",
     "nameEn": "Small Explorer",
@@ -2467,7 +4551,7 @@
     "iconUrl": "/images/costumes/icon_Daisy_002.webp"
    },
    {
-    "id": "cmsuprpuc009h2lpexq6xf7h1",
+    "id": "cmtaaoemr009x2lpgnqhva31m",
     "slug": "daisy-costume-134102803",
     "nameFr": "Senteur d'automne",
     "nameEn": "Autumn Scent",
@@ -2482,7 +4566,7 @@
     "iconUrl": "/images/costumes/icon_Daisy_003.webp"
    },
    {
-    "id": "cmsuprpuc009i2lpeazix4a3i",
+    "id": "cmtaaoemr009y2lpgrnqo49z7",
     "slug": "daisy-costume-134102804",
     "nameFr": "Souffle d'exploration",
     "nameEn": "Spirit of Exploration",
@@ -2546,7 +4630,7 @@
     "iconUrl": "/images/costumes/icon_Daisy_004.webp"
    },
    {
-    "id": "cmsuprpuc009j2lpeea5f231c",
+    "id": "cmtaaoemr009z2lpgjlsypurz",
     "slug": "daisy-costume-134102805",
     "nameFr": "Robe de printemps",
     "nameEn": "Spring Robe",
@@ -2608,21 +4692,6 @@
     ],
     "itemGameId": "133195003",
     "iconUrl": "/images/costumes/icon_Daisy_005.webp"
-   },
-   {
-    "id": "cmsuprpub00622lpeciw4mg7a",
-    "slug": "daisy-costume-135102801",
-    "nameFr": "Clé temporelle",
-    "nameEn": "Key of Time",
-    "effectNameFr": "Se débloque en obtenant une récompense spécifique de tirage de skin exclusif.",
-    "effectNameEn": "Unlocks upon obtaining a specific Exclusive Skin Draw reward.",
-    "effectDescFr": "Un petit ensemble d'épée et bouclier confectionné avec des matériaux solides. Leur grande durabilité leur permet d'endurer n'importe quelle confrontation.\nApparence uniquement, aucun effet supplémentaire.",
-    "effectDescEn": "A small, lightweight sword and shield crafted from long-hardened minerals. They boast exceptional durability, remaining unbreakable in any situation.\nAppearance only, no additional effects.",
-    "rarity": "SSR",
-    "engravingPassives": null,
-    "bindingMaterials": null,
-    "itemGameId": "135102801",
-    "iconUrl": "/images/costumes/Short_Costume_Daisy_Shield_0001.webp"
    }
   ],
   "weaponMasteries": [
@@ -2704,20 +4773,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 113
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 124
        },
@@ -2742,6 +4797,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 473
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 113
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
        }
       ]
      },
@@ -3200,6 +5269,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 90
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 338
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 165
        },
@@ -3238,20 +5321,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 788
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 90
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 338
        }
       ]
      },
@@ -4756,7 +6825,7 @@
   "bannerUrl": "/images/characters/banners/daisy.webp"
  },
  {
-  "id": "cmsupro1d000j2lpeabl05jwl",
+  "id": "cmtaaoctq000j2lpgxdutpu58",
   "slug": "derieri",
   "nameFr": "Derrierie",
   "nameEn": "Derieri",
@@ -4783,7 +6852,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub008o2lpejrx4fblu",
+    "id": "cmtaaoemr008y2lpgkj525w5t",
     "slug": "derieri-costume-134102001",
     "nameFr": "Derrierie de la 「Pureté」",
     "nameEn": "Derieri of 「Purity」",
@@ -4798,7 +6867,22 @@
     "iconUrl": "/images/costumes/icon_Derieri_001.webp"
    },
    {
-    "id": "cmsuprpub008p2lpedz5mepx1",
+    "id": "cmtaaoemq00672lpgpb9by1sf",
+    "slug": "derieri-costume-135102001",
+    "nameFr": "Gantelets démoniaques Derrakin",
+    "nameEn": "Demon Gauntlets Derrakin",
+    "effectNameFr": "Se débloque en obtenant une récompense spécifique de tirage de skin exclusif.",
+    "effectNameEn": "Unlocks upon obtaining a specific Exclusive Skin Draw reward.",
+    "effectDescFr": "Des gantelets magiques forgés avec les écailles d'une bête du purgatoire et le miasme du royaume des démons. Ils sont assez solides pour endurer la puissance de l'attaque « Étoile combo » de Derrierie.\nApparence uniquement, aucun effet supplémentaire.",
+    "effectDescEn": "Magic gauntlets forged from the scales of a Purgatory beast and the miasma of the Demon Realm. They are sturdy enough to withstand the power of Derieri's \"Combo Star.\"\nAppearance only, no additional effects.",
+    "rarity": "SSR",
+    "engravingPassives": null,
+    "bindingMaterials": null,
+    "itemGameId": "135102001",
+    "iconUrl": "/images/costumes/Short_Costume_Derieri_Gauntlets_0001.webp"
+   },
+   {
+    "id": "cmtaaoemr008z2lpgwt28ffky",
     "slug": "derieri-costume-134102002",
     "nameFr": "Résistance et révolution",
     "nameEn": "Resistance and Revolution",
@@ -4862,7 +6946,7 @@
     "iconUrl": "/images/costumes/icon_Derieri_002.webp"
    },
    {
-    "id": "cmsuprpub008q2lpeyfae8abe",
+    "id": "cmtaaoemr00902lpg6duajzwr",
     "slug": "derieri-costume-134102003",
     "nameFr": "Flamme rouge du royaume des démons",
     "nameEn": "Red Flame of the Demon Realm",
@@ -4877,7 +6961,7 @@
     "iconUrl": "/images/costumes/icon_Derieri_003.webp"
    },
    {
-    "id": "cmsuprpub008r2lpegg9djmo8",
+    "id": "cmtaaoemr00912lpgi004x19u",
     "slug": "derieri-costume-134102004",
     "nameFr": "Courtoisie minimale",
     "nameEn": "Minimal Courtesy",
@@ -4941,19 +7025,68 @@
     "iconUrl": "/images/costumes/icon_Derieri_004.webp"
    },
    {
-    "id": "cmsuprpub00642lpem7tlpvpi",
-    "slug": "derieri-costume-135102001",
-    "nameFr": "Gantelets démoniaques Derrakin",
-    "nameEn": "Demon Gauntlets Derrakin",
-    "effectNameFr": "Se débloque en obtenant une récompense spécifique de tirage de skin exclusif.",
-    "effectNameEn": "Unlocks upon obtaining a specific Exclusive Skin Draw reward.",
-    "effectDescFr": "Des gantelets magiques forgés avec les écailles d'une bête du purgatoire et le miasme du royaume des démons. Ils sont assez solides pour endurer la puissance de l'attaque « Étoile combo » de Derrierie.\nApparence uniquement, aucun effet supplémentaire.",
-    "effectDescEn": "Magic gauntlets forged from the scales of a Purgatory beast and the miasma of the Demon Realm. They are sturdy enough to withstand the power of Derieri's \"Combo Star.\"\nAppearance only, no additional effects.",
+    "id": "cmtaaoemr00922lpgrvdu35sg",
+    "slug": "derieri-costume-134102005",
+    "nameFr": "Mouvement rebelle",
+    "nameEn": "Rebellious Movement",
+    "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé de Derrierie",
+    "effectNameEn": "Unlocks upon acquiring Derieri's Engraved Equipment",
+    "effectDescFr": "Costume d'antan de Derrierie.\nCette armure de qualité supérieure reflète sa personnalité et ses traits distinctifs.",
+    "effectDescEn": "A skin for Derieri from the past. This superior armor reflects her personality and characteristics.",
     "rarity": "SSR",
-    "engravingPassives": null,
-    "bindingMaterials": null,
-    "itemGameId": "135102001",
-    "iconUrl": "/images/costumes/Short_Costume_Derieri_Gauntlets_0001.webp"
+    "engravingPassives": [
+     {
+      "id": "EpEq_Derieri_D",
+      "icon": "equippassive_equip_derieri_d_ssr",
+      "levels": [
+       {
+        "level": 1,
+        "descEn": "Increases all allied Darkness heroes' Normal Skill [#0F5CD8]Crit Chance[-] against enemies affected by [#0F5CD8]Night Bloom[-] by [#1A7331]12%[-].\nEach time [#0F5CD8]Night Bloom[-] deals additional damage, it increases all allied Darkness heroes' [#0F5CD8]Crit Damage[-] by [#1A7331]2%[-] for [#1A7331]5 sec[-]. (Max: [#1A7331]36%[-])",
+        "descFr": "Augmente de [#1A7331]12%[-] les [#0F5CD8]chances crit.[-] de la compétence normale de tous les héros alliés d'attribut Ténèbres contre les ennemis affectés par [#0F5CD8]Floraison nocturne[-].\nChaque fois que [#0F5CD8]Floraison nocturne[-] inflige des dégâts supplémentaires, augmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Ténèbres de [#1A7331]2%[-] pendant [#1A7331]5 s[-]. (Max : [#1A7331]36%[-])"
+       },
+       {
+        "level": 2,
+        "descEn": "Increases all allied Darkness heroes' Normal Skill [#0F5CD8]Crit Chance[-] against enemies affected by [#0F5CD8]Night Bloom[-] by [#1A7331]16%[-].\nEach time [#0F5CD8]Night Bloom[-] deals additional damage, it increases all allied Darkness heroes' [#0F5CD8]Crit Damage[-] by [#1A7331]2.5%[-] for [#1A7331]5 sec[-]. (Max: [#1A7331]45%[-])",
+        "descFr": "Augmente de [#1A7331]16%[-] les [#0F5CD8]chances crit.[-] de la compétence normale de tous les héros alliés d'attribut Ténèbres contre les ennemis affectés par [#0F5CD8]Floraison nocturne[-].\nChaque fois que [#0F5CD8]Floraison nocturne[-] inflige des dégâts supplémentaires, augmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Ténèbres de [#1A7331]2.5%[-] pendant [#1A7331]5 s[-]. (Max : [#1A7331]45%[-])"
+       },
+       {
+        "level": 3,
+        "descEn": "Increases all allied Darkness heroes' Normal Skill [#0F5CD8]Crit Chance[-] against enemies affected by [#0F5CD8]Night Bloom[-] by [#1A7331]20%[-].\nEach time [#0F5CD8]Night Bloom[-] deals additional damage, it increases all allied Darkness heroes' [#0F5CD8]Crit Damage[-] by [#1A7331]3%[-] for [#1A7331]5 sec[-]. (Max: [#1A7331]54%[-])",
+        "descFr": "Augmente de [#1A7331]20%[-] les [#0F5CD8]chances crit.[-] de la compétence normale de tous les héros alliés d'attribut Ténèbres contre les ennemis affectés par [#0F5CD8]Floraison nocturne[-].\nChaque fois que [#0F5CD8]Floraison nocturne[-] inflige des dégâts supplémentaires, augmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Ténèbres de [#1A7331]3%[-] pendant [#1A7331]5 s[-]. (Max : [#1A7331]54%[-])"
+       }
+      ],
+      "nameEn": "Blooming Darkness",
+      "nameFr": "Ténèbres florissantes"
+     }
+    ],
+    "bindingMaterials": [
+     {
+      "itemId": "132135005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132235005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132335005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132435005",
+      "quantity": 1
+     },
+     {
+      "itemId": "101100102",
+      "quantity": 1
+     },
+     {
+      "itemId": "101120297",
+      "quantity": 1
+     }
+    ],
+    "itemGameId": "133415003",
+    "iconUrl": "/images/costumes/icon_Derieri_005.webp"
    }
   ],
   "weaponMasteries": [
@@ -5035,6 +7168,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "B_Atk",
+        "value": 128
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 119
        },
@@ -5073,20 +7220,6 @@
        {
         "stat": "C_Critical_DamRes_Rate",
         "value": 585
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 128
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
        }
       ]
      },
@@ -5531,6 +7664,34 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 90
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 338
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 165
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 37
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Def",
         "value": 90
        },
@@ -5555,34 +7716,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 788
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 90
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 338
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "B_Atk",
-        "value": 165
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 37
        }
       ]
      },
@@ -6059,12 +8192,12 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "C_Critical_ResRate",
-        "value": 158
+        "stat": "B_Atk",
+        "value": 128
        },
        {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 585
+        "stat": "A_Accuracy",
+        "value": 35
        }
       ]
      },
@@ -6073,12 +8206,12 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 128
+        "stat": "C_Critical_ResRate",
+        "value": 158
        },
        {
-        "stat": "A_Accuracy",
-        "value": 35
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 585
        }
       ]
      },
@@ -6697,7 +8830,7 @@
   "bannerUrl": "/images/characters/banners/derieri.webp"
  },
  {
-  "id": "cmsupro1d000i2lpeuoqe3qyz",
+  "id": "cmtaaoctq000i2lpgxukj6x1g",
   "slug": "diane",
   "nameFr": "Diane",
   "nameEn": "Diane",
@@ -6724,7 +8857,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub008j2lpedcc4om8j",
+    "id": "cmtaaoemr008t2lpgs5x2n284",
     "slug": "diane-costume-134101901",
     "nameFr": "Géante amoureuse",
     "nameEn": "Giant Girl in Love",
@@ -6739,7 +8872,7 @@
     "iconUrl": "/images/costumes/icon_Diane_001.webp"
    },
    {
-    "id": "cmsuprpub008k2lpe7cb3tc1m",
+    "id": "cmtaaoemr008u2lpg2cqmzeda",
     "slug": "diane-costume-134101902",
     "nameFr": "Serveuse de la taverne",
     "nameEn": "Tavern Hostess",
@@ -6799,7 +8932,7 @@
     "iconUrl": "/images/costumes/icon_Diane_002.webp"
    },
    {
-    "id": "cmsuprpub008l2lpe2ge9tvqr",
+    "id": "cmtaaoemr008v2lpg4dwo661f",
     "slug": "diane-costume-134101903",
     "nameFr": "Le Serpent de l'Envie",
     "nameEn": "The Serpent Sin of Envy",
@@ -6863,7 +8996,7 @@
     "iconUrl": "/images/costumes/icon_Diane_003.webp"
    },
    {
-    "id": "cmsuprpub008m2lpefkhbbau0",
+    "id": "cmtaaoemr008w2lpg30pso17x",
     "slug": "diane-costume-134101904",
     "nameFr": "Fille enjouée",
     "nameEn": "Cheerful Girl",
@@ -6927,7 +9060,7 @@
     "iconUrl": "/images/costumes/icon_Diane_004.webp"
    },
    {
-    "id": "cmsuprpub008n2lpe1wpnff1a",
+    "id": "cmtaaoemr008x2lpgrs50fyo0",
     "slug": "diane-costume-134101905",
     "nameFr": "Tenue de combat cloutée",
     "nameEn": "Spiked Combat Outfit",
@@ -9122,7 +11255,7 @@
   "bannerUrl": "/images/characters/banners/diane.webp"
  },
  {
-  "id": "cmsupro1d000m2lpehuz5f160",
+  "id": "cmtaaoctq000n2lpgach9ahp6",
   "slug": "drake",
   "nameFr": "Drake",
   "nameEn": "Drake",
@@ -9149,7 +11282,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpuc00942lpec7diopie",
+    "id": "cmtaaoemr009k2lpgc71w2tmz",
     "slug": "drake-costume-134102601",
     "nameFr": "Descendant du dragon",
     "nameEn": "Dragon Descendent",
@@ -9164,7 +11297,7 @@
     "iconUrl": "/images/costumes/icon_Drake_002.webp"
    },
    {
-    "id": "cmsuprpuc00952lpedbnq6xpv",
+    "id": "cmtaaoemr009l2lpgrbmss68h",
     "slug": "drake-costume-134102602",
     "nameFr": "Serment du trône",
     "nameEn": "Oath of the Throne",
@@ -9224,7 +11357,7 @@
     "iconUrl": "/images/costumes/icon_Drake_003.webp"
    },
    {
-    "id": "cmsuprpuc00962lpe876mm4j7",
+    "id": "cmtaaoemr009m2lpgiitkt4xm",
     "slug": "drake-costume-134102603",
     "nameFr": "Gloire du passé",
     "nameEn": "Glory of the Past",
@@ -9288,7 +11421,7 @@
     "iconUrl": "/images/costumes/icon_Drake_004.webp"
    },
    {
-    "id": "cmsuprpuc00972lpeem9hrozw",
+    "id": "cmtaaoemr009n2lpg0lwofhhd",
     "slug": "drake-costume-134102604",
     "nameFr": "Seigneur des ombres",
     "nameEn": "Shadow Lord",
@@ -9352,7 +11485,7 @@
     "iconUrl": "/images/costumes/icon_Drake_005.webp"
    },
    {
-    "id": "cmsuprpuc00982lpegje4sipp",
+    "id": "cmtaaoemr009o2lpgohjdwant",
     "slug": "drake-costume-134102605",
     "nameFr": "Chevalier impérial",
     "nameEn": "Imperial Knight",
@@ -10487,20 +12620,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 188
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 37
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 85
        },
@@ -10525,6 +12644,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 735
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 188
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 37
        }
       ]
      },
@@ -11547,7 +13680,7 @@
   "bannerUrl": "/images/characters/banners/drake.webp"
  },
  {
-  "id": "cmsupro1d00022lpeg2d6wl2k",
+  "id": "cmtaaoctq00022lpg8rde62g3",
   "slug": "dreydrin",
   "nameFr": "Dreydrin",
   "nameEn": "Dredrin",
@@ -11574,7 +13707,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub006g2lpev08x1lvf",
+    "id": "cmtaaoemq006k2lpg1nulh684",
     "slug": "dreydrin-costume-134100301",
     "nameFr": "Chevalier sacré apprenti amical",
     "nameEn": "Friendly Apprentice Holy Knight",
@@ -11589,7 +13722,7 @@
     "iconUrl": "/images/costumes/icon_Dreydrin_001.webp"
    },
    {
-    "id": "cmsuprpub006h2lpep55rmf18",
+    "id": "cmtaaoemq006l2lpg7uce00mb",
     "slug": "dreydrin-costume-134100302",
     "nameFr": "Une belle journée de repos",
     "nameEn": "A Nice Day Off",
@@ -11649,7 +13782,7 @@
     "iconUrl": "/images/costumes/icon_Dreydrin_002.webp"
    },
    {
-    "id": "cmsuprpub006i2lpetnjczynh",
+    "id": "cmtaaoemq006m2lpgmjya92sb",
     "slug": "dreydrin-costume-134100303",
     "nameFr": "Ascendance royale",
     "nameEn": "Descendant of Royalty",
@@ -11713,7 +13846,7 @@
     "iconUrl": "/images/costumes/icon_Dreydrin_003.webp"
    },
    {
-    "id": "cmsuprpub006j2lpee2sd9rin",
+    "id": "cmtaaoemq006n2lpgc8ofgahg",
     "slug": "dreydrin-costume-134100304",
     "nameFr": "Préparation minutieuse",
     "nameEn": "Thorough Preparation",
@@ -11777,7 +13910,7 @@
     "iconUrl": "/images/costumes/icon_Dreydrin_004.webp"
    },
    {
-    "id": "cmsuprpub006k2lpegq5zyge7",
+    "id": "cmtaaoemq006o2lpgb04ybq19",
     "slug": "dreydrin-costume-134100305",
     "nameFr": "Défense solide",
     "nameEn": "Solid Defense",
@@ -11920,20 +14053,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 85
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 30
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 79
        },
@@ -11958,6 +14077,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 333
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 85
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 30
        }
       ]
      },
@@ -12912,6 +15045,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 150
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 450
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 80
        },
@@ -12950,20 +15097,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 280
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 150
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 450
        }
       ]
      },
@@ -13972,7 +16105,7 @@
   "bannerUrl": "/images/characters/banners/dreydrin.webp"
  },
  {
-  "id": "cmsupro1d000a2lpe7wxscu1q",
+  "id": "cmtaaoctq000a2lpg7b5gpjuh",
   "slug": "dreyfus",
   "nameFr": "Dreyfus",
   "nameEn": "Dreyfus",
@@ -13999,7 +16132,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub007i2lpeoev2wh8w",
+    "id": "cmtaaoemr007p2lpgews40yeg",
     "slug": "dreyfus-costume-134101101",
     "nameFr": "Instructeur de combat à l'épée du royaume",
     "nameEn": "Kingdom Sword Art Instructor",
@@ -14014,7 +16147,7 @@
     "iconUrl": "/images/costumes/icon_Dreyfus_001.webp"
    },
    {
-    "id": "cmsuprpub007j2lpeltp7y9z4",
+    "id": "cmtaaoemr007q2lpg4yec3u34",
     "slug": "dreyfus-costume-134101102",
     "nameFr": "Majordome royal",
     "nameEn": "Royal Butler",
@@ -14074,7 +16207,7 @@
     "iconUrl": "/images/costumes/icon_Dreyfus_002.webp"
    },
    {
-    "id": "cmsuprpub007k2lpe8idgmbu2",
+    "id": "cmtaaoemr007r2lpgohbvd7ot",
     "slug": "dreyfus-costume-134101103",
     "nameFr": "Honneur au vieux soldat",
     "nameEn": "Old Soldier's Honor",
@@ -14138,7 +16271,7 @@
     "iconUrl": "/images/costumes/icon_Dreyfus_003.webp"
    },
    {
-    "id": "cmsuprpub007l2lpe6ki2cc0e",
+    "id": "cmtaaoemr007s2lpg53nsto18",
     "slug": "dreyfus-costume-134101104",
     "nameFr": "Tenue modeste",
     "nameEn": "Simple Attire",
@@ -14202,7 +16335,7 @@
     "iconUrl": "/images/costumes/icon_Dreyfus_004.webp"
    },
    {
-    "id": "cmsuprpub007m2lpew8lik8hn",
+    "id": "cmtaaoemr007t2lpgu4yyz7y7",
     "slug": "dreyfus-costume-134101105",
     "nameFr": "Chevalier honorable",
     "nameEn": "Honorable Knight",
@@ -16397,7 +18530,7 @@
   "bannerUrl": "/images/characters/banners/dreyfus.webp"
  },
  {
-  "id": "cmsupro1d00082lpev31eyc4q",
+  "id": "cmtaaoctq00082lpgu2x3zq7j",
   "slug": "elaine",
   "nameFr": "Elaine",
   "nameEn": "Elaine",
@@ -16424,7 +18557,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub00792lpe8lx9xb90",
+    "id": "cmtaaoemr007f2lpg56niuagi",
     "slug": "elaine-costume-134100901",
     "nameFr": "Saint gardien de la Fontaine de jouvence",
     "nameEn": "Guardian Saint of the Fountain of Youth",
@@ -16439,7 +18572,7 @@
     "iconUrl": "/images/costumes/icon_Elaine_001.webp"
    },
    {
-    "id": "cmsuprpub007a2lped5i2rss6",
+    "id": "cmtaaoemr007g2lpg3cxmw3x2",
     "slug": "elaine-costume-134100902",
     "nameFr": "Employé saisonnier",
     "nameEn": "Temp Employee",
@@ -16499,7 +18632,7 @@
     "iconUrl": "/images/costumes/icon_Elaine_002.webp"
    },
    {
-    "id": "cmsuprpub007b2lpeix663zwj",
+    "id": "cmtaaoemr007h2lpgl8ppmkuu",
     "slug": "elaine-costume-134100903",
     "nameFr": "Lumière de guidance",
     "nameEn": "Guiding Light",
@@ -16563,7 +18696,7 @@
     "iconUrl": "/images/costumes/icon_Elaine_003.webp"
    },
    {
-    "id": "cmsuprpub007c2lpe7um001zq",
+    "id": "cmtaaoemr007i2lpg61edzvrb",
     "slug": "elaine-costume-134100904",
     "nameFr": "Sortie joyeuse",
     "nameEn": "Cheerful Outing",
@@ -16627,7 +18760,7 @@
     "iconUrl": "/images/costumes/icon_Elaine_004.webp"
    },
    {
-    "id": "cmsuprpub007d2lpeuwqqwzz4",
+    "id": "cmtaaoemr007j2lpghntizc0y",
     "slug": "elaine-costume-134100905",
     "nameFr": "Dignité de la sainte",
     "nameEn": "Saintess's Dignity",
@@ -16770,20 +18903,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 120
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 141
        },
@@ -16808,6 +18927,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 420
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 120
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
        }
       ]
      },
@@ -17266,6 +19399,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 150
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 450
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 150
        },
@@ -17304,20 +19451,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 525
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 150
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 450
        }
       ]
      },
@@ -18822,7 +20955,7 @@
   "bannerUrl": "/images/characters/banners/elaine.webp"
  },
  {
-  "id": "cmsupro1d000g2lpes3p56rz7",
+  "id": "cmtaaoctq000g2lpg8qm2xnul",
   "slug": "elizabeth",
   "nameFr": "Elizabeth",
   "nameEn": "Elizabeth",
@@ -18849,7 +20982,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub008a2lpeumucegwd",
+    "id": "cmtaaoemr008j2lpgswigc535",
     "slug": "elizabeth-costume-134101706",
     "nameFr": "Rêverie estivale",
     "nameEn": "Midsummer Reverie",
@@ -18864,7 +20997,22 @@
     "iconUrl": "/images/costumes/icon_Elizabeth_006.webp"
    },
    {
-    "id": "cmsuprpub008b2lpe49yg0z6y",
+    "id": "cmtaaoemq00622lpgvcebrk4g",
+    "slug": "elizabeth-costume-135101701",
+    "nameFr": "Tome interdit Solvire",
+    "nameEn": "Forbidden Tome Solvire",
+    "effectNameFr": "Se débloque en obtenant une récompense spécifique de tirage de skin exclusif.",
+    "effectNameEn": "Unlocks upon obtaining a specific Exclusive Skin Draw reward.",
+    "effectDescFr": "Un grimoire imprégné du pouvoir vertueux des déesses. Son pouvoir se développe en harmonie avec le cœur noble d'Elizabeth.\nApparence uniquement, aucun effet supplémentaire.",
+    "effectDescEn": "A grimoire containing the holy power of the Goddesses. Its power grows in harmony with Elizabeth's virtuous heart.\nAppearance only, no additional effects.",
+    "rarity": "SSR",
+    "engravingPassives": null,
+    "bindingMaterials": null,
+    "itemGameId": "135101701",
+    "iconUrl": "/images/costumes/Short_Costume_Elizabeth_Book_0001.webp"
+   },
+   {
+    "id": "cmtaaoemr008k2lpgbfg7zt50",
     "slug": "elizabeth-costume-134101702",
     "nameFr": "Vedette de la taverne",
     "nameEn": "Star of the Tavern",
@@ -18928,7 +21076,7 @@
     "iconUrl": "/images/costumes/icon_Elizabeth_002.webp"
    },
    {
-    "id": "cmsuprpub008c2lpek8667ri7",
+    "id": "cmtaaoemr008l2lpgvs62sdok",
     "slug": "elizabeth-costume-134101703",
     "nameFr": "Héros de Liones",
     "nameEn": "Hero of Liones",
@@ -18992,7 +21140,71 @@
     "iconUrl": "/images/costumes/icon_Elizabeth_003.webp"
    },
    {
-    "id": "cmsuprpub008d2lpe77e12fhh",
+    "id": "cmtaaoemr008m2lpgn7cr1q2x",
+    "slug": "elizabeth-costume-134101705",
+    "nameFr": "Lumière de Liones",
+    "nameEn": "Light of Liones",
+    "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé d'Elizabeth",
+    "effectNameEn": "Unlocks upon acquiring Elizabeth's Engraved Equipment",
+    "effectDescFr": "Costume d'antan d'Elizabeth.\nConçu pour projeter toute la dignité d'une princesse en première ligne du champ de bataille.",
+    "effectDescEn": "A skin for Elizabeth from the past. Designed to show the dignity of a princess at the front lines of the battlefield.",
+    "rarity": "SSR",
+    "engravingPassives": [
+     {
+      "id": "EpEq_Elizabeth_D",
+      "icon": "equippassive_equip_elizabeth_d_ssr",
+      "levels": [
+       {
+        "level": 1,
+        "descEn": "Each hit on an enemy with an Earth attack while their [#0F5CD8]Earth Burst Gauge[-] is [#1A7331]50%[-] or below increases the [#0F5CD8]Burst Gauge[-] by a fixed value of [#1A7331]60[-].\nWhen the hero activates an [#0F5CD8]Earth Burst[-], it increases all allied heroes' [#0F5CD8]Earth Attack[-] by [#1A7331]6%[-] of the hero's Attack for [#1A7331]30 sec[-]. (Max: [#1A7331]1800[-])",
+        "descFr": "Chaque coup porté avec une attaque de Terre sur un ennemi dont la [#0F5CD8]jauge de Déluge de Terre[-] est inférieure ou égale à [#1A7331]50%[-] augmente la [#0F5CD8]jauge de Déluge[-] d'une valeur fixe de [#1A7331]60[-].\nLorsque le héros active un [#0F5CD8]Déluge de Terre[-], augmente l'[#0F5CD8]attaque de Terre[-] de tous les héros alliés à hauteur de [#1A7331]6%[-] de l'attaque du héros pendant [#1A7331]30 s[-]. (Max : [#1A7331]1800[-])"
+       },
+       {
+        "level": 2,
+        "descEn": "Each hit on an enemy with an Earth attack while their [#0F5CD8]Earth Burst Gauge[-] is [#1A7331]50%[-] or below increases the [#0F5CD8]Burst Gauge[-] by a fixed value of [#1A7331]80[-].\nWhen the hero activates an [#0F5CD8]Earth Burst[-], it increases all allied heroes' [#0F5CD8]Earth Attack[-] by [#1A7331]8%[-] of the hero's Attack for [#1A7331]30 sec[-]. (Max: [#1A7331]2400[-])",
+        "descFr": "Chaque coup porté avec une attaque de Terre sur un ennemi dont la [#0F5CD8]jauge de Déluge de Terre[-] est inférieure ou égale à [#1A7331]50%[-] augmente la [#0F5CD8]jauge de Déluge[-] d'une valeur fixe de [#1A7331]80[-].\nLorsque le héros active un [#0F5CD8]Déluge de Terre[-], augmente l'[#0F5CD8]attaque de Terre[-] de tous les héros alliés à hauteur de [#1A7331]8%[-] de l'attaque du héros pendant [#1A7331]30 s[-]. (Max : [#1A7331]2400[-])"
+       },
+       {
+        "level": 3,
+        "descEn": "Each hit on an enemy with an Earth attack while their [#0F5CD8]Earth Burst Gauge[-] is [#1A7331]50%[-] or below increases the [#0F5CD8]Burst Gauge[-] by a fixed value of [#1A7331]100[-].\nWhen the hero activates an [#0F5CD8]Earth Burst[-], it increases all allied heroes' [#0F5CD8]Earth Attack[-] by [#1A7331]10%[-] of the hero's Attack for [#1A7331]30 sec[-]. (Max: [#1A7331]3000[-])",
+        "descFr": "Chaque coup porté avec une attaque de Terre sur un ennemi dont la [#0F5CD8]jauge de Déluge de Terre[-] est inférieure ou égale à [#1A7331]50%[-] augmente la [#0F5CD8]jauge de Déluge[-] d'une valeur fixe de [#1A7331]100[-].\nLorsque le héros active un [#0F5CD8]Déluge de Terre[-], augmente l'[#0F5CD8]attaque de Terre[-] de tous les héros alliés à hauteur de [#1A7331]10%[-] de l'attaque du héros pendant [#1A7331]30 s[-]. (Max : [#1A7331]3000[-])"
+       }
+      ],
+      "nameEn": "Fantastic Duo",
+      "nameFr": "Duo fantastique"
+     }
+    ],
+    "bindingMaterials": [
+     {
+      "itemId": "132135005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132235005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132335005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132435005",
+      "quantity": 1
+     },
+     {
+      "itemId": "101100102",
+      "quantity": 1
+     },
+     {
+      "itemId": "101120297",
+      "quantity": 1
+     }
+    ],
+    "itemGameId": "133165003",
+    "iconUrl": "/images/costumes/icon_Elizabeth_005.webp"
+   },
+   {
+    "id": "cmtaaoemr008n2lpgh5sfr1cy",
     "slug": "elizabeth-costume-134101701",
     "nameFr": "La princesse qui a retrouvé la mémoire",
     "nameEn": "The Princess Who Regained Her Memory",
@@ -19005,21 +21217,6 @@
     "bindingMaterials": null,
     "itemGameId": "134101701",
     "iconUrl": "/images/costumes/icon_Elizabeth_001.webp"
-   },
-   {
-    "id": "cmsuprpub005z2lpeilxosadc",
-    "slug": "elizabeth-costume-135101701",
-    "nameFr": "Tome interdit Solvire",
-    "nameEn": "Forbidden Tome Solvire",
-    "effectNameFr": "Se débloque en obtenant une récompense spécifique de tirage de skin exclusif.",
-    "effectNameEn": "Unlocks upon obtaining a specific Exclusive Skin Draw reward.",
-    "effectDescFr": "Un grimoire imprégné du pouvoir vertueux des déesses. Son pouvoir se développe en harmonie avec le cœur noble d'Elizabeth.\nApparence uniquement, aucun effet supplémentaire.",
-    "effectDescEn": "A grimoire containing the holy power of the Goddesses. Its power grows in harmony with Elizabeth's virtuous heart.\nAppearance only, no additional effects.",
-    "rarity": "SSR",
-    "engravingPassives": null,
-    "bindingMaterials": null,
-    "itemGameId": "135101701",
-    "iconUrl": "/images/costumes/Short_Costume_Elizabeth_Book_0001.webp"
    }
   ],
   "weaponMasteries": [
@@ -20093,6 +22290,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 150
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 450
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 150
        },
@@ -20131,20 +22342,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 525
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 150
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 450
        }
       ]
      },
@@ -20876,8 +23073,8 @@
    {
     "weaponType": "Staff",
     "tier": 9,
-    "bonusFr": "Renforce la puissance de [#0F5CD8]Rupture[-] de [#1A7331]100%[-].\nL'utilisation d'une compétence normale augmente le percement de défense de tous les héros alliés d'attribut Vent de [#1A7331]15%[-] pendant [#1A7331]30[-].",
-    "bonusEn": "Amplifies the power of the [#0F5CD8]Rupture[-] by [#1A7331]100%[-].\nUsing a Normal Skill increases Defense Shatter of all Wind allied heroes by [#1A7331]15%[-] for [#1A7331]30[-].",
+    "bonusFr": "Renforce la puissance de [#0F5CD8]Rupture[-] de [#1A7331]100%[-].\nL'utilisation d'une compétence normale augmente le percement de défense de tous les héros alliés d'attribut Vent de [#1A7331]15%[-] pendant [#1A7331]30[-] s.",
+    "bonusEn": "Amplifies the power of the [#0F5CD8]Rupture[-] by [#1A7331]100%[-].\nUsing a Normal Skill increases Defense Shatter of all Wind allied heroes by [#1A7331]15%[-] for [#1A7331]30 sec[-].",
     "stats": [
      {
       "stat": "I_AtkAdd_Rate",
@@ -21096,8 +23293,8 @@
    {
     "weaponType": "Wand",
     "tier": 10,
-    "bonusFr": "Lorsque le héros active un [#0F5CD8]Déluge de Terre[-], augmente les dégâts de Terre de tous les héros alliés [#1A7331]30%[-] pendant [#1A7331]40s[-].\nLorsqu'un héros allié attaque un ennemi sous l'effet de [#0F5CD8]Déluge de Terre[-], augmente les dégâts crit. des héros d'attribut Terre de [#1A7331]5%[-] pendant [#1A7331]10s[-]. (Max : [#1A7331]20 fois[-])",
-    "bonusEn": "When the hero activates an [#0F5CD8]Earth Burst[-], all allied heroes' Earth damage increases by [#1A7331]30%[-] for [#1A7331]40 sec[-].\nWhen any allied hero attacks an enemy with [#0F5CD8]Earth Burst[-] activated, Earth heroes' Crit Damage increases by [#1A7331]5%[-] for [#1A7331]10 sec[-]. (Max: [#1A7331]20 times[-])",
+    "bonusFr": "Lorsque le héros active un [#0F5CD8]Déluge de Terre[-], augmente les dégâts de Terre de tous les héros alliés de [#1A7331]30%[-] pendant [#1A7331]40s[-].\nLorsqu'un héros allié attaque un ennemi sous l'effet de [#0F5CD8]Déluge de Terre[-], augmente les dégâts crit. des héros d'attribut Terre de [#1A7331]5%[-] pendant [#1A7331]10s[-]. (Max : [#1A7331]20 fois[-])",
+    "bonusEn": "When the hero activates an [#0F5CD8]Earth Burst[-], all allied heroes' Earth damage increases by [#1A7331]30%[-] for [#1A7331]40 sec[-].\nWhen any allied hero attacks an enemy with [#0F5CD8]Earth Burst[-] activated, Earth heroes' Crit Damage increases by [#1A7331]5%[-] each for [#1A7331]10 sec[-]. (Max: [#1A7331]20 times[-])",
     "stats": [
      {
       "stat": "I_AtkAdd_Rate",
@@ -21153,7 +23350,7 @@
   "bannerUrl": "/images/characters/banners/elizabeth.webp"
  },
  {
-  "id": "cmsupro1d000k2lpeyaotjoj2",
+  "id": "cmtaaoctq000l2lpg0rm62sqp",
   "slug": "escanor",
   "nameFr": "Escanor",
   "nameEn": "Escanor",
@@ -21180,7 +23377,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub008s2lpelvf9iu3i",
+    "id": "cmtaaoemr00982lpgbxtjdkn7",
     "slug": "escanor-costume-134102301",
     "nameFr": "Poète arrogant",
     "nameEn": "Arrogant Poet",
@@ -21195,7 +23392,22 @@
     "iconUrl": "/images/costumes/icon_Escanor_001.webp"
    },
    {
-    "id": "cmsuprpub008t2lpekyfcf7tj",
+    "id": "cmtaaoemq00632lpgwdndc36d",
+    "slug": "escanor-costume-135102301",
+    "nameFr": "Hache sacrée Rhitta",
+    "nameEn": "Sacred Axe Rhitta",
+    "effectNameFr": "Se débloque en obtenant une récompense spécifique de tirage de skin exclusif.",
+    "effectNameEn": "Unlocks upon obtaining a specific Exclusive Skin Draw reward.",
+    "effectDescFr": "Ce Trésor sacré offert par le roi Bartra de Liones peut emmagasiner l'énergie du soleil afin de la libérer à tout moment.\nApparence uniquement, aucun effet supplémentaire.",
+    "effectDescEn": "A Sacred Treasure bestowed by King Bartra of Liones, capable of storing the sun's power and unleashing it at will.\nAppearance only, no additional effects.",
+    "rarity": "SSR",
+    "engravingPassives": null,
+    "bindingMaterials": null,
+    "itemGameId": "135102301",
+    "iconUrl": "/images/costumes/Short_Costume_Escanor_Axe_0001.webp"
+   },
+   {
+    "id": "cmtaaoemr00992lpg6w4wfmga",
     "slug": "escanor-costume-134102302",
     "nameFr": "Violence nordique",
     "nameEn": "Northern Wildness",
@@ -21259,7 +23471,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_002.webp"
    },
    {
-    "id": "cmsuprpub008u2lpea9yvt8xm",
+    "id": "cmtaaoemr009a2lpg5cirf997",
     "slug": "escanor-costume-134102303",
     "nameFr": "Le Lion de l'Orgueil",
     "nameEn": "The Lion Sin of Pride",
@@ -21274,7 +23486,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_003.webp"
    },
    {
-    "id": "cmsuprpub008v2lpeiolfep84",
+    "id": "cmtaaoemr009b2lpgakdugn0o",
     "slug": "escanor-costume-134102304",
     "nameFr": "Arrogance adéquate",
     "nameEn": "Sufficient Arrogance",
@@ -21338,7 +23550,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_004.webp"
    },
    {
-    "id": "cmsuprpub008w2lpecxhffyxu",
+    "id": "cmtaaoemr009c2lpgj8mdhwuq",
     "slug": "escanor-costume-134102305",
     "nameFr": "Dignité dorée",
     "nameEn": "Golden Dignity",
@@ -21402,7 +23614,7 @@
     "iconUrl": "/images/costumes/icon_Escanor_005.webp"
    },
    {
-    "id": "cmsuprpub008x2lpe4wccshj7",
+    "id": "cmtaaoemr009d2lpga4q1pe30",
     "slug": "escanor-costume-134102306",
     "nameFr": "Incarnation de l'Orgueil",
     "nameEn": "Epitome of Pride",
@@ -21415,21 +23627,6 @@
     "bindingMaterials": null,
     "itemGameId": "134102306",
     "iconUrl": "/images/costumes/icon_Escanor_006.webp"
-   },
-   {
-    "id": "cmsuprpub00602lpey2vrcxv2",
-    "slug": "escanor-costume-135102301",
-    "nameFr": "Hache sacrée Rhitta",
-    "nameEn": "Sacred Axe Rhitta",
-    "effectNameFr": "Se débloque en obtenant une récompense spécifique de tirage de skin exclusif.",
-    "effectNameEn": "Unlocks upon obtaining a specific Exclusive Skin Draw reward.",
-    "effectDescFr": "Ce Trésor sacré offert par le roi Bartra de Liones peut emmagasiner l'énergie du soleil afin de la libérer à tout moment.\nApparence uniquement, aucun effet supplémentaire.",
-    "effectDescEn": "A Sacred Treasure bestowed by King Bartra of Liones, capable of storing the sun's power and unleashing it at will.\nAppearance only, no additional effects.",
-    "rarity": "SSR",
-    "engravingPassives": null,
-    "bindingMaterials": null,
-    "itemGameId": "135102301",
-    "iconUrl": "/images/costumes/Short_Costume_Escanor_Axe_0001.webp"
    }
   ],
   "weaponMasteries": [
@@ -23563,7 +25760,7 @@
   "bannerUrl": "/images/characters/banners/escanor.webp"
  },
  {
-  "id": "cmsupro1d00052lpe5igjphkn",
+  "id": "cmtaaoctq00052lpgx2thefap",
   "slug": "gil-thunder",
   "nameFr": "Gilthunder",
   "nameEn": "Gilthunder",
@@ -23590,7 +25787,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub006u2lpelefp877y",
+    "id": "cmtaaoemq006z2lpgmsdhs3ce",
     "slug": "gil-thunder-costume-134100601",
     "nameFr": "Jeune chevalier sacré",
     "nameEn": "Young Holy Knight",
@@ -23605,7 +25802,7 @@
     "iconUrl": "/images/costumes/icon_Gil_Thunder_001.webp"
    },
    {
-    "id": "cmsuprpub006v2lpeglxsxkci",
+    "id": "cmtaaoemq00702lpgwteqcwth",
     "slug": "gil-thunder-costume-134100602",
     "nameFr": "Chevalier sacré exemplaire",
     "nameEn": "Exemplary Holy Knight",
@@ -23665,7 +25862,7 @@
     "iconUrl": "/images/costumes/icon_Gil_Thunder_002.webp"
    },
    {
-    "id": "cmsuprpub006w2lpeqgwt7ogn",
+    "id": "cmtaaoemq00712lpgldkcccvq",
     "slug": "gil-thunder-costume-134100603",
     "nameFr": "Chevalier sacré de la foudre",
     "nameEn": "Holy Knight of Lightning",
@@ -23729,7 +25926,7 @@
     "iconUrl": "/images/costumes/icon_Gil_Thunder_003.webp"
    },
    {
-    "id": "cmsuprpub006x2lperh4a7qpp",
+    "id": "cmtaaoemq00722lpgb7cwr3iq",
     "slug": "gil-thunder-costume-134100604",
     "nameFr": "Aventure exemplaire",
     "nameEn": "Exemplary Adventure",
@@ -23793,7 +25990,7 @@
     "iconUrl": "/images/costumes/icon_Gil_Thunder_004.webp"
    },
    {
-    "id": "cmsuprpub006y2lpee0dg01qr",
+    "id": "cmtaaoemq00732lpgjoeghv4k",
     "slug": "gil-thunder-costume-134100605",
     "nameFr": "Chevalier sacré prometteur",
     "nameEn": "Promising Holy Knight",
@@ -24928,20 +27125,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 100
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 30
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 75
        },
@@ -24966,6 +27149,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 350
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 100
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 30
        }
       ]
      },
@@ -25988,7 +28185,7 @@
   "bannerUrl": "/images/characters/banners/gil-thunder.webp"
  },
  {
-  "id": "cmsupro1d00072lpe00n1elvu",
+  "id": "cmtaaoctq00072lpgyuc2zc54",
   "slug": "gowther",
   "nameFr": "Gowther",
   "nameEn": "Gowther",
@@ -26015,7 +28212,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub00752lpesy6246mf",
+    "id": "cmtaaoemr007a2lpg1urx2map",
     "slug": "gowther-costume-134100801",
     "nameFr": "Poupée sans cœur",
     "nameEn": "Heartless Doll",
@@ -26030,7 +28227,7 @@
     "iconUrl": "/images/costumes/icon_Gowther_001.webp"
    },
    {
-    "id": "cmsuprpub00632lpej0g9ipxm",
+    "id": "cmtaaoemq00662lpgaoxc86it",
     "slug": "gowther-costume-135100801",
     "nameFr": "Œil du sage corrompu",
     "nameEn": "Eye of the Corrupted Sage",
@@ -26045,7 +28242,7 @@
     "iconUrl": "/images/costumes/Short_Costume_Gowther_Wand_0001.webp"
    },
    {
-    "id": "cmsuprpub00762lpeftk5muta",
+    "id": "cmtaaoemr007b2lpg9d7xsiuc",
     "slug": "gowther-costume-134100802",
     "nameFr": "Tenue de soirée pour un rendez-vous secret",
     "nameEn": "Secret Date Night Look",
@@ -26109,7 +28306,7 @@
     "iconUrl": "/images/costumes/icon_Gowther_002.webp"
    },
    {
-    "id": "cmsuprpub00772lpeb1pc5ruc",
+    "id": "cmtaaoemr007c2lpgy6hineug",
     "slug": "gowther-costume-134100803",
     "nameFr": "Le Bélier de la Luxure",
     "nameEn": "The Goat Sin of Lust",
@@ -26173,7 +28370,7 @@
     "iconUrl": "/images/costumes/icon_Gowther_003.webp"
    },
    {
-    "id": "cmsuprpub00782lperfsuau1f",
+    "id": "cmtaaoemr007d2lpgzfsdjrao",
     "slug": "gowther-costume-134100804",
     "nameFr": "Quête de soi",
     "nameEn": "Journey of Self-discovery",
@@ -26186,6 +28383,70 @@
     "bindingMaterials": null,
     "itemGameId": "134100804",
     "iconUrl": "/images/costumes/icon_Gowther_004.webp"
+   },
+   {
+    "id": "cmtaaoemr007e2lpgyv9rrrjx",
+    "slug": "gowther-costume-134100805",
+    "nameFr": "Défense minimale",
+    "nameEn": "Minimal Defense",
+    "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé de Gowther",
+    "effectNameEn": "Unlocks upon acquiring Gowther's Engraved Equipment",
+    "effectDescFr": "Costume d'antan de Gowther.\nMême lui a besoin d'équipement pour protéger son corps.",
+    "effectDescEn": "A skin for Gowther from the past. Even he needs gear to protect his body.",
+    "rarity": "SSR",
+    "engravingPassives": [
+     {
+      "id": "EpEq_Gowther_D",
+      "icon": "equippassive_equip_gowther_d_ssr",
+      "levels": [
+       {
+        "level": 1,
+        "descEn": "Each time an allied Lightning hero with [#0F5CD8]Charge[-] uses the Normal Skill, it increases all allied Lightning heroes' [#0F5CD8]Normal Skill damage[-] by [#1A7331]4%[-] for [#1A7331]10 sec[-]. (Max: [#1A7331]12%[-])\nWhen this effect reaches its max, it is replaced by an effect that increases all allied Lightning heroes' [#0F5CD8]Normal Skill damage[-] by [#1A7331]18%[-] and [#0F5CD8]Movement Speed[-] by [#1A7331]30%[-] for [#1A7331]15 sec[-]. (Does not stack)",
+        "descFr": "Chaque fois qu'un héros allié d'attribut Foudre bénéficiant de [#0F5CD8]Charge[-] utilise la compétence normale, augmente les [#0F5CD8]dégâts de compétence normale[-] de tous les héros alliés d'attribut Foudre de [#1A7331]4%[-] pendant [#1A7331]10 s[-]. (Max : [#1A7331]12%[-])\nLorsque l'effet atteint le max, il est remplacé par un effet qui augmente les [#0F5CD8]dégâts de compétence normale[-] de tous les héros alliés d'attribut Foudre de [#1A7331]18%[-] et leur [#0F5CD8]vitesse de déplacement[-] de [#1A7331]30%[-] pendant [#1A7331]15 s[-]. (Non cumulable)"
+       },
+       {
+        "level": 2,
+        "descEn": "Each time an allied Lightning hero with [#0F5CD8]Charge[-] uses the Normal Skill, it increases all allied Lightning heroes' [#0F5CD8]Normal Skill damage[-] by [#1A7331]6%[-] for [#1A7331]10 sec[-]. (Max: [#1A7331]18%[-])\nWhen this effect reaches its max, it is replaced by an effect that increases all allied Lightning heroes' [#0F5CD8]Normal Skill damage[-] by [#1A7331]24%[-] and [#0F5CD8]Movement Speed[-] by [#1A7331]40%[-] for [#1A7331]15 sec[-]. (Does not stack)",
+        "descFr": "Chaque fois qu'un héros allié d'attribut Foudre bénéficiant de [#0F5CD8]Charge[-] utilise la compétence normale, augmente les [#0F5CD8]dégâts de compétence normale[-] de tous les héros alliés d'attribut Foudre de [#1A7331]6%[-] pendant [#1A7331]10 s[-]. (Max : [#1A7331]18%[-])\nLorsque l'effet atteint le max, il est remplacé par un effet qui augmente les [#0F5CD8]dégâts de compétence normale[-] de tous les héros alliés d'attribut Foudre de [#1A7331]24%[-] et leur [#0F5CD8]vitesse de déplacement[-] de [#1A7331]40%[-] pendant [#1A7331]15 s[-]. (Non cumulable)"
+       },
+       {
+        "level": 3,
+        "descEn": "Each time an allied Lightning hero with [#0F5CD8]Charge[-] uses the Normal Skill, it increases all allied Lightning heroes' [#0F5CD8]Normal Skill damage[-] by [#1A7331]8%[-] for [#1A7331]10 sec[-]. (Max: [#1A7331]24%[-])\nWhen this effect reaches its max, it is replaced by an effect that increases all allied Lightning heroes' [#0F5CD8]Normal Skill damage[-] by [#1A7331]30%[-] and [#0F5CD8]Movement Speed[-] by [#1A7331]50%[-] for [#1A7331]15 sec[-]. (Does not stack)",
+        "descFr": "Chaque fois qu'un héros allié d'attribut Foudre bénéficiant de [#0F5CD8]Charge[-] utilise la compétence normale, augmente les [#0F5CD8]dégâts de compétence normale[-] de tous les héros alliés d'attribut Foudre de [#1A7331]8%[-] pendant [#1A7331]10 s[-]. (Max : [#1A7331]24%[-])\nLorsque l'effet atteint le max, il est remplacé par un effet qui augmente les [#0F5CD8]dégâts de compétence normale[-] de tous les héros alliés d'attribut Foudre de [#1A7331]30%[-] et leur [#0F5CD8]vitesse de déplacement[-] de [#1A7331]50%[-] pendant [#1A7331]15 s[-]. (Non cumulable)"
+       }
+      ],
+      "nameEn": "Spread of Consciousness",
+      "nameFr": "Propagation de conscience"
+     }
+    ],
+    "bindingMaterials": [
+     {
+      "itemId": "132135005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132235005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132335005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132435005",
+      "quantity": 1
+     },
+     {
+      "itemId": "101100102",
+      "quantity": 1
+     },
+     {
+      "itemId": "101120297",
+      "quantity": 1
+     }
+    ],
+    "itemGameId": "133255003",
+    "iconUrl": "/images/costumes/icon_Gowther_005.webp"
    }
   ],
   "weaponMasteries": [
@@ -27259,20 +29520,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 150
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 113
        },
@@ -27297,6 +29544,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 525
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 150
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
        }
       ]
      },
@@ -27864,8 +30125,8 @@
    {
     "weaponType": "Wand",
     "tier": 7,
-    "bonusFr": "L'utilisation de l'attaque spéciale charge complètement l'attaque et inflige des dégâts supplémentaires égaux à [#1A7331]100%[-] de l'attaque.\nUn coup porté sur un ennemi sous l'effet d'un [#0F5CD8]Déluge de Foudre[-] octroie des attaques spéciales supplémentaires pendant [#1A7331]10s[-].",
-    "bonusEn": "Using a Special Attack immediately sets charge to max level and inflicts additional damage equal to [#1A7331]100%[-] of Attack.\nHitting an enemy with [#0F5CD8]Lightning Burst[-] activated allows additional Special Attacks for [#1A7331]10 sec[-].",
+    "bonusFr": "L'utilisation de l'attaque spéciale charge complètement l'attaque et inflige des dégâts supplémentaires égaux à [#1A7331]100%[-] de l'attaque.\nUn coup porté sur un ennemi sous l'effet de [#0F5CD8]Déluge de Foudre[-] octroie une attaque spéciale supplémentaire pendant [#1A7331]10s[-].",
+    "bonusEn": "Using a Special Attack immediately sets charge to max level and inflicts additional damage equal to [#1A7331]100%[-] of Attack.\nHitting an enemy with [#0F5CD8]Lightning Burst[-] activated allows an additional Special Attack for [#1A7331]10 sec[-].",
     "stats": []
    },
    {
@@ -27929,7 +30190,7 @@
   "bannerUrl": "/images/characters/banners/gowther.webp"
  },
  {
-  "id": "cmsupro1d000d2lpe3an04jpb",
+  "id": "cmtaaoctq000d2lpgsd8euggv",
   "slug": "griamore",
   "nameFr": "Griamor",
   "nameEn": "Griamore",
@@ -27956,7 +30217,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub007x2lpe6jfo9fd6",
+    "id": "cmtaaoemr00842lpgasyu5enu",
     "slug": "griamore-costume-134101401",
     "nameFr": "Chevalier gardien de la princesse",
     "nameEn": "Princess's Guardian Knight",
@@ -27971,7 +30232,7 @@
     "iconUrl": "/images/costumes/icon_Griamore_001.webp"
    },
    {
-    "id": "cmsuprpub007y2lpeqga8elu2",
+    "id": "cmtaaoemr00852lpghes9z96u",
     "slug": "griamore-costume-134101402",
     "nameFr": "Sortie décontractée",
     "nameEn": "Casual Outing",
@@ -28031,7 +30292,7 @@
     "iconUrl": "/images/costumes/icon_Griamore_002.webp"
    },
    {
-    "id": "cmsuprpub007z2lpeil2kxm4m",
+    "id": "cmtaaoemr00862lpge1xa4yi2",
     "slug": "griamore-costume-134101403",
     "nameFr": "Chevalier sacré du mur de fer",
     "nameEn": "Holy Knight of the Iron Wall",
@@ -28095,7 +30356,7 @@
     "iconUrl": "/images/costumes/icon_Griamore_003.webp"
    },
    {
-    "id": "cmsuprpub00802lpezil1aqnr",
+    "id": "cmtaaoemr00872lpgc0bu3tod",
     "slug": "griamore-costume-134101404",
     "nameFr": "Barricade de fortune",
     "nameEn": "Makeshift Barricade",
@@ -28157,6 +30418,70 @@
     ],
     "itemGameId": "133125002",
     "iconUrl": "/images/costumes/icon_Griamore_004.webp"
+   },
+   {
+    "id": "cmtaaoemr00882lpgqpjhaaqa",
+    "slug": "griamore-costume-134101405",
+    "nameFr": "Forteresse de fer impénétrable",
+    "nameEn": "Impregnable Iron Fortress",
+    "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé de Griamor",
+    "effectNameEn": "Unlocks upon acquiring Griamore's Engraved Equipment",
+    "effectDescFr": "Costume d'antan de Griamor.\nSa défense puissante est impénétrable.",
+    "effectDescEn": "A skin for Griamore from the past. It boasts unbreakable, powerful defense.",
+    "rarity": "SSR",
+    "engravingPassives": [
+     {
+      "id": "EpEq_Griamore_D",
+      "icon": "equippassive_equip_griamore_d_ssr",
+      "levels": [
+       {
+        "level": 1,
+        "descEn": "Each hit on an enemy with the Special Attack inflicts additional damage equal to [#1A7331]24%[-] of Attack, and [#0F5CD8]Daze[-] for [#1A7331]10 sec[-] if the enemy is not [#0F5CD8]Stunned[-] or [#0F5CD8]Dazed[-].\nEnemies affected by [#0F5CD8]Daze[-] have their [#0F5CD8]Movement Speed[-] decreased by [#1A7331]10%[-]. Satisfies the conditions of any skill that requires the enemy to be [#0F5CD8]Stunned[-].",
+        "descFr": "Chaque coup porté sur un ennemi avec l'attaque spéciale inflige des dégâts supplémentaires égaux à [#1A7331]24%[-] de l'attaque et l'[#0F5CD8]hébète[-] pendant [#1A7331]10 s[-] si l'ennemi n'est pas déjà [#0F5CD8]étourdi[-] ou [#0F5CD8]hébété[-].\nLa [#0F5CD8]vitesse de déplacement[-] des ennemis affectés par [#0F5CD8]Hébétement[-] est réduite de [#1A7331]10%[-]. Satisfait les conditions de toute compétence qui nécessite que l'ennemi soit [#0F5CD8]étourdi[-]."
+       },
+       {
+        "level": 2,
+        "descEn": "Each hit on an enemy with the Special Attack inflicts additional damage equal to [#1A7331]32%[-] of Attack, and [#0F5CD8]Daze[-] for [#1A7331]10 sec[-] if the enemy is not [#0F5CD8]Stunned[-] or [#0F5CD8]Dazed[-].\nEnemies affected by [#0F5CD8]Daze[-] have their [#0F5CD8]Movement Speed[-] decreased by [#1A7331]20%[-]. Satisfies the conditions of any skill that requires the enemy to be [#0F5CD8]Stunned[-].",
+        "descFr": "Chaque coup porté sur un ennemi avec l'attaque spéciale inflige des dégâts supplémentaires égaux à [#1A7331]32%[-] de l'attaque et l'[#0F5CD8]hébète[-] pendant [#1A7331]10 s[-] si l'ennemi n'est pas déjà [#0F5CD8]étourdi[-] ou [#0F5CD8]hébété[-].\nLa [#0F5CD8]vitesse de déplacement[-] des ennemis affectés par [#0F5CD8]Hébétement[-] est réduite de [#1A7331]20%[-]. Satisfait les conditions de toute compétence qui nécessite que l'ennemi soit [#0F5CD8]étourdi[-]."
+       },
+       {
+        "level": 3,
+        "descEn": "Each hit on an enemy with the Special Attack inflicts additional damage equal to [#1A7331]40%[-] of Attack, and [#0F5CD8]Daze[-] for [#1A7331]10 sec[-] if the enemy is not [#0F5CD8]Stunned[-] or [#0F5CD8]Dazed[-].\nEnemies affected by [#0F5CD8]Daze[-] have their [#0F5CD8]Movement Speed[-] decreased by [#1A7331]30%[-]. Satisfies the conditions of any skill that requires the enemy to be [#0F5CD8]Stunned[-].",
+        "descFr": "Chaque coup porté sur un ennemi avec l'attaque spéciale inflige des dégâts supplémentaires égaux à [#1A7331]40%[-] de l'attaque et l'[#0F5CD8]hébète[-] pendant [#1A7331]10 s[-] si l'ennemi n'est pas déjà [#0F5CD8]étourdi[-] ou [#0F5CD8]hébété[-].\nLa [#0F5CD8]vitesse de déplacement[-] des ennemis affectés par [#0F5CD8]Hébétement[-] est réduite de [#1A7331]30%[-]. Satisfait les conditions de toute compétence qui nécessite que l'ennemi soit [#0F5CD8]étourdi[-]."
+       }
+      ],
+      "nameEn": "Seized Opening",
+      "nameFr": "Brèche exploitée"
+     }
+    ],
+    "bindingMaterials": [
+     {
+      "itemId": "132135005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132235005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132335005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132435005",
+      "quantity": 1
+     },
+     {
+      "itemId": "101100102",
+      "quantity": 1
+     },
+     {
+      "itemId": "101120297",
+      "quantity": 1
+     }
+    ],
+    "itemGameId": "133125003",
+    "iconUrl": "/images/costumes/icon_Griamore_005.webp"
    }
   ],
   "weaponMasteries": [
@@ -28238,20 +30563,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 115
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 36
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 60
        },
@@ -28276,6 +30587,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 473
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 115
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 36
        }
       ]
      },
@@ -29230,6 +31555,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 150
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 450
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 80
        },
@@ -29268,20 +31607,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 280
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 150
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 450
        }
       ]
      },
@@ -30290,7 +32615,7 @@
   "bannerUrl": "/images/characters/banners/griamore.webp"
  },
  {
-  "id": "cmsupro1d000h2lped4u8rmjz",
+  "id": "cmtaaoctq000h2lpg602ev4dx",
   "slug": "guila",
   "nameFr": "Guila",
   "nameEn": "Guila",
@@ -30317,7 +32642,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub008e2lpeixv97x6y",
+    "id": "cmtaaoemr008o2lpges2c19gd",
     "slug": "guila-costume-134101801",
     "nameFr": "Le seul et unique chevalier sacré",
     "nameEn": "One and Only Holy Knight",
@@ -30332,7 +32657,7 @@
     "iconUrl": "/images/costumes/icon_Guila_001.webp"
    },
    {
-    "id": "cmsuprpub008f2lpen97ffhmc",
+    "id": "cmtaaoemr008p2lpg8a6uc9xc",
     "slug": "guila-costume-134101802",
     "nameFr": "Moment en famille",
     "nameEn": "Family Time",
@@ -30392,7 +32717,7 @@
     "iconUrl": "/images/costumes/icon_Guila_002.webp"
    },
    {
-    "id": "cmsuprpub008g2lpei89w1av9",
+    "id": "cmtaaoemr008q2lpg9r8ecve3",
     "slug": "guila-costume-134101803",
     "nameFr": "Chevalier sacré des explosions",
     "nameEn": "Holy Knight of Explosions",
@@ -30456,7 +32781,7 @@
     "iconUrl": "/images/costumes/icon_Guila_003.webp"
    },
    {
-    "id": "cmsuprpub008h2lpefuohd5v2",
+    "id": "cmtaaoemr008r2lpgj5ovfrlx",
     "slug": "guila-costume-134101804",
     "nameFr": "Pas légers",
     "nameEn": "Light Footsteps",
@@ -30520,7 +32845,7 @@
     "iconUrl": "/images/costumes/icon_Guila_004.webp"
    },
    {
-    "id": "cmsuprpub008i2lpenqr30agg",
+    "id": "cmtaaoemr008s2lpg216gdmrb",
     "slug": "guila-costume-134101805",
     "nameFr": "Piste de la flamme cramoisie",
     "nameEn": "Crimson Flame's Trail",
@@ -32715,7 +35040,7 @@
   "bannerUrl": "/images/characters/banners/guila.webp"
  },
  {
-  "id": "cmsupro1d000b2lpezpadnwt6",
+  "id": "cmtaaoctq000b2lpg0re8d8nm",
   "slug": "hendrickson",
   "nameFr": "Hendrickson",
   "nameEn": "Hendrickson",
@@ -32742,7 +35067,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub007n2lpenxx5ytqh",
+    "id": "cmtaaoemr007u2lpgctwlwozq",
     "slug": "hendrickson-costume-134101201",
     "nameFr": "Apothicaire de Liones",
     "nameEn": "Liones Apothecary",
@@ -32757,7 +35082,7 @@
     "iconUrl": "/images/costumes/icon_Hendrickson_001.webp"
    },
    {
-    "id": "cmsuprpub007o2lpeo0qnx1qy",
+    "id": "cmtaaoemr007v2lpghcu7grss",
     "slug": "hendrickson-costume-134101202",
     "nameFr": "Gris romantique",
     "nameEn": "Romantic Gray",
@@ -32817,7 +35142,71 @@
     "iconUrl": "/images/costumes/icon_Hendrickson_002.webp"
    },
    {
-    "id": "cmsuprpub007q2lpedusaz2to",
+    "id": "cmtaaoemr007w2lpgo61dnlhu",
+    "slug": "hendrickson-costume-134101203",
+    "nameFr": "Une tenue de jeunesse",
+    "nameEn": "A Suit From Younger Days",
+    "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé d'Hendrickson",
+    "effectNameEn": "Unlocks upon acquiring Hendrickson's Engraved Equipment",
+    "effectDescFr": "Costume du grand maître Hendrickson à la retraite. Il lui rappelle sa jeunesse.",
+    "effectDescEn": "A skin for Retired Grandmaster Hendrickson. It reminds him of his younger days.",
+    "rarity": "SSR",
+    "engravingPassives": [
+     {
+      "id": "EpEq_Hendrickson_B",
+      "icon": "equippassive_equip_hendrickson_b_ssr",
+      "levels": [
+       {
+        "level": 1,
+        "descEn": "Using the Ultimate Move increases all allied heroes' [#0F5CD8]Healing Received[-] by [#1A7331]50%[-] for [#1A7331]14 sec[-] if their [#0F5CD8]remaining HP[-] is [#1A7331]30%[-] or lower.",
+        "descFr": "L'utilisation de l'attaque ultime augmente les [#0F5CD8]soins reçus[-] par tous les héros alliés de [#1A7331]50%[-] pendant [#1A7331]14 s[-] si leurs [#0F5CD8]PV restants[-] ne dépassent pas [#1A7331]30%[-]."
+       },
+       {
+        "level": 2,
+        "descEn": "Using the Ultimate Move increases all allied heroes' [#0F5CD8]Healing Received[-] by [#1A7331]65%[-] for [#1A7331]14 sec[-] if their [#0F5CD8]remaining HP[-] is [#1A7331]30%[-] or lower.",
+        "descFr": "L'utilisation de l'attaque ultime augmente les [#0F5CD8]soins reçus[-] par tous les héros alliés de [#1A7331]65%[-] pendant [#1A7331]14 s[-] si leurs [#0F5CD8]PV restants[-] ne dépassent pas [#1A7331]30%[-]."
+       },
+       {
+        "level": 3,
+        "descEn": "Using the Ultimate Move increases all allied heroes' [#0F5CD8]Healing Received[-] by [#1A7331]80%[-] for [#1A7331]14 sec[-] if their [#0F5CD8]remaining HP[-] is [#1A7331]30%[-] or lower.",
+        "descFr": "L'utilisation de l'attaque ultime augmente les [#0F5CD8]soins reçus[-] par tous les héros alliés de [#1A7331]80%[-] pendant [#1A7331]14 s[-] si leurs [#0F5CD8]PV restants[-] ne dépassent pas [#1A7331]30%[-]."
+       }
+      ],
+      "nameEn": "Druid Healing Arts",
+      "nameFr": "Arts curatifs druidiques"
+     }
+    ],
+    "bindingMaterials": [
+     {
+      "itemId": "132134022",
+      "quantity": 1
+     },
+     {
+      "itemId": "132234022",
+      "quantity": 1
+     },
+     {
+      "itemId": "132334022",
+      "quantity": 1
+     },
+     {
+      "itemId": "132434022",
+      "quantity": 1
+     },
+     {
+      "itemId": "101100102",
+      "quantity": 1
+     },
+     {
+      "itemId": "101120297",
+      "quantity": 1
+     }
+    ],
+    "itemGameId": "133095001",
+    "iconUrl": "/images/costumes/icon_Hendrickson_003.webp"
+   },
+   {
+    "id": "cmtaaoemr007x2lpg21yafl5n",
     "slug": "hendrickson-costume-134101204",
     "nameFr": "Vêtements de travail de l'apothicaire",
     "nameEn": "Apothecary's Workwear",
@@ -32881,7 +35270,7 @@
     "iconUrl": "/images/costumes/icon_Hendrickson_004.webp"
    },
    {
-    "id": "cmsuprpub007r2lpekqh4e15x",
+    "id": "cmtaaoemr007y2lpg0b1y0pes",
     "slug": "hendrickson-costume-134101205",
     "nameFr": "Retour du Chevalier Sacré",
     "nameEn": "Returned Holy Knight",
@@ -32943,70 +35332,6 @@
     ],
     "itemGameId": "133095003",
     "iconUrl": "/images/costumes/icon_Hendrickson_005.webp"
-   },
-   {
-    "id": "cmsuprpub007p2lpev1d4sfgk",
-    "slug": "hendrickson-costume-134101203",
-    "nameFr": "Une tenue de jeunesse",
-    "nameEn": "A Suit From Younger Days",
-    "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé d'Hendrickson",
-    "effectNameEn": "Unlocks upon acquiring Hendrickson's Engraved Equipment",
-    "effectDescFr": "Costume du grand maître Hendrickson à la retraite. Il lui rappelle sa jeunesse.",
-    "effectDescEn": "A skin for Retired Grandmaster Hendrickson. It reminds him of his younger days.",
-    "rarity": "SSR",
-    "engravingPassives": [
-     {
-      "id": "EpEq_Hendrickson_B",
-      "icon": "equippassive_equip_hendrickson_b_ssr",
-      "levels": [
-       {
-        "level": 1,
-        "descEn": "Using the Ultimate Move increases all allied heroes' [#0F5CD8]Healing Received[-] by [#1A7331]50%[-] for [#1A7331]14 sec[-] if their [#0F5CD8]remaining HP[-] is [#1A7331]30%[-] or lower.",
-        "descFr": "L'utilisation de l'attaque ultime augmente les [#0F5CD8]soins reçus[-] par tous les héros alliés de [#1A7331]50%[-] pendant [#1A7331]14 s[-] si leurs [#0F5CD8]PV restants[-] ne dépassent pas [#1A7331]30%[-]."
-       },
-       {
-        "level": 2,
-        "descEn": "Using the Ultimate Move increases all allied heroes' [#0F5CD8]Healing Received[-] by [#1A7331]65%[-] for [#1A7331]14 sec[-] if their [#0F5CD8]remaining HP[-] is [#1A7331]30%[-] or lower.",
-        "descFr": "L'utilisation de l'attaque ultime augmente les [#0F5CD8]soins reçus[-] par tous les héros alliés de [#1A7331]65%[-] pendant [#1A7331]14 s[-] si leurs [#0F5CD8]PV restants[-] ne dépassent pas [#1A7331]30%[-]."
-       },
-       {
-        "level": 3,
-        "descEn": "Using the Ultimate Move increases all allied heroes' [#0F5CD8]Healing Received[-] by [#1A7331]80%[-] for [#1A7331]14 sec[-] if their [#0F5CD8]remaining HP[-] is [#1A7331]30%[-] or lower.",
-        "descFr": "L'utilisation de l'attaque ultime augmente les [#0F5CD8]soins reçus[-] par tous les héros alliés de [#1A7331]80%[-] pendant [#1A7331]14 s[-] si leurs [#0F5CD8]PV restants[-] ne dépassent pas [#1A7331]30%[-]."
-       }
-      ],
-      "nameEn": "Druid Healing Arts",
-      "nameFr": "Arts curatifs druidiques"
-     }
-    ],
-    "bindingMaterials": [
-     {
-      "itemId": "132134022",
-      "quantity": 1
-     },
-     {
-      "itemId": "132234022",
-      "quantity": 1
-     },
-     {
-      "itemId": "132334022",
-      "quantity": 1
-     },
-     {
-      "itemId": "132434022",
-      "quantity": 1
-     },
-     {
-      "itemId": "101100102",
-      "quantity": 1
-     },
-     {
-      "itemId": "101120297",
-      "quantity": 1
-     }
-    ],
-    "itemGameId": "133095001",
-    "iconUrl": "/images/costumes/icon_Hendrickson_003.webp"
    }
   ],
   "weaponMasteries": [
@@ -33088,6 +35413,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 80
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 240
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 125
        },
@@ -33126,20 +35465,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 490
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 80
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 240
        }
       ]
      },
@@ -35140,7 +37465,7 @@
   "bannerUrl": "/images/characters/banners/hendrickson.webp"
  },
  {
-  "id": "cmsupro1d00032lpenum9oduz",
+  "id": "cmtaaoctq00032lpgdq7mtept",
   "slug": "howzer",
   "nameFr": "Hauser",
   "nameEn": "Howzer",
@@ -35167,7 +37492,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub006l2lpegujvidzt",
+    "id": "cmtaaoemq006p2lpgxr4ay823",
     "slug": "howzer-costume-134100401",
     "nameFr": "Grand maître digne de confiance",
     "nameEn": "Trusted Grandmaster",
@@ -35182,7 +37507,7 @@
     "iconUrl": "/images/costumes/icon_Howzer_001.webp"
    },
    {
-    "id": "cmsuprpub006m2lpe40d24v30",
+    "id": "cmtaaoemq006q2lpgnvkpt7q1",
     "slug": "howzer-costume-134100402",
     "nameFr": "Choppe de bière de la fin des temps",
     "nameEn": "End-of-Day Mug of Ale",
@@ -35242,7 +37567,7 @@
     "iconUrl": "/images/costumes/icon_Howzer_002.webp"
    },
    {
-    "id": "cmsuprpub006n2lpet3npspsb",
+    "id": "cmtaaoemq006r2lpgwhiausd9",
     "slug": "howzer-costume-134100403",
     "nameFr": "Chevalier sacré de la tempête",
     "nameEn": "Holy Knight of Storms",
@@ -35306,7 +37631,7 @@
     "iconUrl": "/images/costumes/icon_Howzer_003.webp"
    },
    {
-    "id": "cmsuprpub006o2lpe26vukape",
+    "id": "cmtaaoemq006s2lpgrs81cuqr",
     "slug": "howzer-costume-134100404",
     "nameFr": "Aventure en toute sécurité",
     "nameEn": "Secure Adventure",
@@ -35368,6 +37693,70 @@
     ],
     "itemGameId": "133045002",
     "iconUrl": "/images/costumes/icon_Howzer_004.webp"
+   },
+   {
+    "id": "cmtaaoemq006t2lpg7jt39rty",
+    "slug": "howzer-costume-134100405",
+    "nameFr": "Dignité du capitaine",
+    "nameEn": "Grandmaster's Dignity",
+    "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé de Hauser",
+    "effectNameEn": "Unlocks upon acquiring Howzer's Engraved Equipment",
+    "effectDescFr": "Costume de Hauser, capitaine des Chevaliers Sacrés de Liones.\nL'armure dégage un air d'autorité qui sied à son rôle prestigieux.",
+    "effectDescEn": "A skin for Liones Grandmaster Howzer. The armor carries an air of authority that matches his esteemed role.",
+    "rarity": "SSR",
+    "engravingPassives": [
+     {
+      "id": "EpEq_Howzer_D",
+      "icon": "equippassive_equip_howzer_d_ssr",
+      "levels": [
+       {
+        "level": 1,
+        "descEn": "Each hit on an enemy with the Normal Skill increases [#0F5CD8]Barrier Efficiency[-] by [#1A7331]0.6%[-] for [#1A7331]3 sec[-]. (Max: [#1A7331]30%[-])\nWhen this effect reaches its max, it grants all allied heroes a [#0F5CD8]barrier[-] equal to [#1A7331]80%[-] of Attack for [#1A7331]20 sec[-]. (Cooldown: [#1A7331]30 sec[-])",
+        "descFr": "Chaque coup porté sur un ennemi avec la compétence normale augmente l'[#0F5CD8]efficacité des barrières[-] de [#1A7331]0.6%[-] pendant [#1A7331]3 s[-]. (Max : [#1A7331]30%[-])\nLorsque l'effet atteint le max, il octroie une [#0F5CD8]barrière[-] à tous les héros alliés égale à [#1A7331]80%[-] de l'attaque pendant [#1A7331]20 s[-]. (Temps de recharge : [#1A7331]30 s[-])"
+       },
+       {
+        "level": 2,
+        "descEn": "Each hit on an enemy with the Normal Skill increases [#0F5CD8]Barrier Efficiency[-] by [#1A7331]0.7%[-] for [#1A7331]3 sec[-]. (Max: [#1A7331]35%[-])\nWhen this effect reaches its max, it grants all allied heroes a [#0F5CD8]barrier[-] equal to [#1A7331]85%[-] of Attack for [#1A7331]20 sec[-]. (Cooldown: [#1A7331]30 sec[-])",
+        "descFr": "Chaque coup porté sur un ennemi avec la compétence normale augmente l'[#0F5CD8]efficacité des barrières[-] de [#1A7331]0.7%[-] pendant [#1A7331]3 s[-]. (Max : [#1A7331]35%[-])\nLorsque l'effet atteint le max, il octroie une [#0F5CD8]barrière[-] à tous les héros alliés égale à [#1A7331]85%[-] de l'attaque pendant [#1A7331]20 s[-]. (Temps de recharge : [#1A7331]30 s[-])"
+       },
+       {
+        "level": 3,
+        "descEn": "Each hit on an enemy with the Normal Skill increases [#0F5CD8]Barrier Efficiency[-] by [#1A7331]0.8%[-] for [#1A7331]3 sec[-]. (Max: [#1A7331]40%[-])\nWhen this effect reaches its max, it grants all allied heroes a [#0F5CD8]barrier[-] equal to [#1A7331]90%[-] of Attack for [#1A7331]20 sec[-]. (Cooldown: [#1A7331]30 sec[-])",
+        "descFr": "Chaque coup porté sur un ennemi avec la compétence normale augmente l'[#0F5CD8]efficacité des barrières[-] de [#1A7331]0.8%[-] pendant [#1A7331]3 s[-]. (Max : [#1A7331]40%[-])\nLorsque l'effet atteint le max, il octroie une [#0F5CD8]barrière[-] à tous les héros alliés égale à [#1A7331]90%[-] de l'attaque pendant [#1A7331]20 s[-]. (Temps de recharge : [#1A7331]30 s[-])"
+       }
+      ],
+      "nameEn": "Storm's Protection",
+      "nameFr": "Protection de la tempête"
+     }
+    ],
+    "bindingMaterials": [
+     {
+      "itemId": "132135005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132235005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132335005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132435005",
+      "quantity": 1
+     },
+     {
+      "itemId": "101100102",
+      "quantity": 1
+     },
+     {
+      "itemId": "101120297",
+      "quantity": 1
+     }
+    ],
+    "itemGameId": "133045003",
+    "iconUrl": "/images/costumes/icon_Howzer_005.webp"
    }
   ],
   "weaponMasteries": [
@@ -37501,7 +39890,7 @@
   "bannerUrl": "/images/characters/banners/howzer.webp"
  },
  {
-  "id": "cmsupro1d000f2lpeomo3vzdr",
+  "id": "cmtaaoctq000f2lpg4q9s4xu6",
   "slug": "jericho",
   "nameFr": "Jericho",
   "nameEn": "Jericho",
@@ -37528,7 +39917,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub00852lpe76lnogav",
+    "id": "cmtaaoemr008e2lpgc7jz7ldo",
     "slug": "jericho-costume-134101601",
     "nameFr": "Chevalier sacré en fuite",
     "nameEn": "Runaway Holy Knight",
@@ -37543,7 +39932,7 @@
     "iconUrl": "/images/costumes/icon_Jericho_001.webp"
    },
    {
-    "id": "cmsuprpub00862lpe7092nu2f",
+    "id": "cmtaaoemr008f2lpgsdk4z43a",
     "slug": "jericho-costume-134101602",
     "nameFr": "Moment de détente",
     "nameEn": "Leisurely Moment",
@@ -37603,7 +39992,7 @@
     "iconUrl": "/images/costumes/icon_Jericho_002.webp"
    },
    {
-    "id": "cmsuprpub00872lped06j17r6",
+    "id": "cmtaaoemr008g2lpg85dd3cwn",
     "slug": "jericho-costume-134101603",
     "nameFr": "Chevalier sacré à la visière en étoile",
     "nameEn": "Holy Knight With the Star-Shaped Visor",
@@ -37667,7 +40056,7 @@
     "iconUrl": "/images/costumes/icon_Jericho_003.webp"
    },
    {
-    "id": "cmsuprpub00882lped96svq3g",
+    "id": "cmtaaoemr008h2lpg3pm7hza5",
     "slug": "jericho-costume-134101604",
     "nameFr": "Voyageuse cachottière",
     "nameEn": "Secretive Traveler",
@@ -37731,7 +40120,7 @@
     "iconUrl": "/images/costumes/icon_Jericho_004.webp"
    },
    {
-    "id": "cmsuprpub00892lpenn9fzqmz",
+    "id": "cmtaaoemr008i2lpg41pyu235",
     "slug": "jericho-costume-134101605",
     "nameFr": "Traces de souvenirs",
     "nameEn": "Trace of Memories",
@@ -39926,7 +42315,7 @@
   "bannerUrl": "/images/characters/banners/jericho.webp"
  },
  {
-  "id": "cmsupro1d00092lpe3ljppu4m",
+  "id": "cmtaaoctq00092lpgedonww8l",
   "slug": "king",
   "nameFr": "King",
   "nameEn": "King",
@@ -39953,7 +42342,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub007e2lpe4vnrz9nb",
+    "id": "cmtaaoemr007k2lpgh3hnsbrh",
     "slug": "king-costume-134101001",
     "nameFr": "Roi des fées inexpérimenté",
     "nameEn": "Inexperienced Fairy King",
@@ -39968,7 +42357,7 @@
     "iconUrl": "/images/costumes/icon_King_001.webp"
    },
    {
-    "id": "cmsuprpub007f2lpejustyu4k",
+    "id": "cmtaaoemr007l2lpgidjs69qz",
     "slug": "king-costume-134101002",
     "nameFr": "Traces de la forêt",
     "nameEn": "Forest's Footsteps",
@@ -40028,7 +42417,7 @@
     "iconUrl": "/images/costumes/icon_King_004.webp"
    },
    {
-    "id": "cmsuprpub007g2lpe2v7mfo5e",
+    "id": "cmtaaoemr007m2lpgqo7kgah1",
     "slug": "king-costume-134101003",
     "nameFr": "Le Grizzly de la Paresse",
     "nameEn": "The Grizzly Sin of Sloth",
@@ -40092,7 +42481,7 @@
     "iconUrl": "/images/costumes/icon_King_003.webp"
    },
    {
-    "id": "cmsuprpub007h2lpeygtboy58",
+    "id": "cmtaaoemr007n2lpg4km5uiil",
     "slug": "king-costume-134101004",
     "nameFr": "L'ombre de la forêt profonde",
     "nameEn": "Shadow of the Deep Forest",
@@ -40154,6 +42543,70 @@
     ],
     "itemGameId": "133145002",
     "iconUrl": "/images/costumes/icon_King_002.webp"
+   },
+   {
+    "id": "cmtaaoemr007o2lpgzh1n67iq",
+    "slug": "king-costume-134101005",
+    "nameFr": "Ombre du roi des fées",
+    "nameEn": "Fairy King's Shadow",
+    "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé de King",
+    "effectNameEn": "Unlocks upon acquiring King's Engraved Equipment",
+    "effectDescFr": "Costume d'antan de King.\nUne armure robuste qui fait étalage de la majesté du roi des fées.",
+    "effectDescEn": "A skin for King from the past. A sturdy armor fit to show the majesty of the Fairy King.",
+    "rarity": "SSR",
+    "engravingPassives": [
+     {
+      "id": "EpEq_King_D",
+      "icon": "equippassive_equip_king_d_ssr",
+      "levels": [
+       {
+        "level": 1,
+        "descEn": "Each time [#0F5CD8]Defense[-] boost is gained, all allied Earth heroes' [#0F5CD8]Crit Damage[-] increases by [#1A7331]6%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]30%[-])\nWhen the hero uses the Ultimate Move, it increases all allied Earth heroes' [#0F5CD8]Attack[-] and [#0F5CD8]Defense[-] by [#1A7331]12%[-] for [#1A7331]10 sec[-].",
+        "descFr": "À chaque boost de [#0F5CD8]défense[-] obtenu, augmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Terre de [#1A7331]6%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]30%[-])\nLorsque le héros utilise l'attaque ultime, celle-ci augmente l'[#0F5CD8]attaque[-] et la [#0F5CD8]défense[-] de tous les héros alliés d'attribut Terre de [#1A7331]12%[-] pendant [#1A7331]10 s[-]."
+       },
+       {
+        "level": 2,
+        "descEn": "Each time [#0F5CD8]Defense[-] boost is gained, all allied Earth heroes' [#0F5CD8]Crit Damage[-] increases by [#1A7331]7%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]35%[-])\nWhen the hero uses the Ultimate Move, it increases all allied Earth heroes' [#0F5CD8]Attack[-] and [#0F5CD8]Defense[-] by [#1A7331]16%[-] for [#1A7331]10 sec[-].",
+        "descFr": "À chaque boost de [#0F5CD8]défense[-] obtenu, augmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Terre de [#1A7331]7%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]35%[-])\nLorsque le héros utilise l'attaque ultime, celle-ci augmente l'[#0F5CD8]attaque[-] et la [#0F5CD8]défense[-] de tous les héros alliés d'attribut Terre de [#1A7331]16%[-] pendant [#1A7331]10 s[-]."
+       },
+       {
+        "level": 3,
+        "descEn": "Each time [#0F5CD8]Defense[-] boost is gained, all allied Earth heroes' [#0F5CD8]Crit Damage[-] increases by [#1A7331]8%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]40%[-])\nWhen the hero uses the Ultimate Move, it increases all allied Earth heroes' [#0F5CD8]Attack[-] and [#0F5CD8]Defense[-] by [#1A7331]20%[-] for [#1A7331]10 sec[-].",
+        "descFr": "À chaque boost de [#0F5CD8]défense[-] obtenu, augmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés d'attribut Terre de [#1A7331]8%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]40%[-])\nLorsque le héros utilise l'attaque ultime, celle-ci augmente l'[#0F5CD8]attaque[-] et la [#0F5CD8]défense[-] de tous les héros alliés d'attribut Terre de [#1A7331]20%[-] pendant [#1A7331]10 s[-]."
+       }
+      ],
+      "nameEn": "Arcane Flow",
+      "nameFr": "Flux des arcanes"
+     }
+    ],
+    "bindingMaterials": [
+     {
+      "itemId": "132135005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132235005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132335005",
+      "quantity": 1
+     },
+     {
+      "itemId": "132435005",
+      "quantity": 1
+     },
+     {
+      "itemId": "101100102",
+      "quantity": 1
+     },
+     {
+      "itemId": "101120297",
+      "quantity": 1
+     }
+    ],
+    "itemGameId": "133145003",
+    "iconUrl": "/images/costumes/icon_King_005.webp"
    }
   ],
   "weaponMasteries": [
@@ -40235,6 +42688,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 225
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 675
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 120
        },
@@ -40273,20 +42740,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 420
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 225
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 675
        }
       ]
      },
@@ -41227,20 +43680,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 113
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 35
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 124
        },
@@ -41265,6 +43704,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 473
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 113
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 35
        }
       ]
      },
@@ -42287,7 +44740,7 @@
   "bannerUrl": "/images/characters/banners/king.webp"
  },
  {
-  "id": "cmsupro1d000n2lpexuyvox32",
+  "id": "cmtaaoctq000o2lpgfzl05a9t",
   "slug": "klotho",
   "nameFr": "Clotho",
   "nameEn": "Clotho",
@@ -42314,7 +44767,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpuc00992lpe1xtlwz44",
+    "id": "cmtaaoemr009p2lpgefxh7zes",
     "slug": "klotho-costume-134102701",
     "nameFr": "Uniforme d'exploratrice",
     "nameEn": "Explorer's Uniform",
@@ -42329,7 +44782,22 @@
     "iconUrl": "/images/costumes/icon_Klotho_001.webp"
    },
    {
-    "id": "cmsuprpuc009a2lpen84sqd7s",
+    "id": "cmtaaoemq00642lpgi1ptti33",
+    "slug": "klotho-costume-135102701",
+    "nameFr": "Épée sacrée Sephiora",
+    "nameEn": "Sacred Sword Sephiora",
+    "effectNameFr": "Se débloque en obtenant une récompense spécifique de tirage de skin exclusif.",
+    "effectNameEn": "Unlocks upon obtaining a specific Exclusive Skin Draw reward.",
+    "effectDescFr": "Une rapière forgée après de nombreuses heures de coups de marteau et de trempe. Sa conception légère et robuste lui permet d'asséner des coups précis et rapides.\nApparence uniquement, aucun effet supplémentaire.",
+    "effectDescEn": "A rapier forged after long hours of hammering and tempering. Its light and strong design enables precise, lightning-fast strikes.\nAppearance only, no additional effects.",
+    "rarity": "SSR",
+    "engravingPassives": null,
+    "bindingMaterials": null,
+    "itemGameId": "135102701",
+    "iconUrl": "/images/costumes/Short_Costume_Klotho_Rapier_0001.webp"
+   },
+   {
+    "id": "cmtaaoemr009q2lpgg6xl5ve4",
     "slug": "klotho-costume-134102702",
     "nameFr": "Tenue de fête légère",
     "nameEn": "Light Party Outfit",
@@ -42393,7 +44861,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_002.webp"
    },
    {
-    "id": "cmsuprpuc009b2lpe41syry7p",
+    "id": "cmtaaoemr009r2lpgytdpjfus",
     "slug": "klotho-costume-134102703",
     "nameFr": "Formalité de l'érudite en chef",
     "nameEn": "Head Scholar's Formality",
@@ -42457,7 +44925,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_003.webp"
    },
    {
-    "id": "cmsuprpuc009c2lpem144hzyv",
+    "id": "cmtaaoemr009s2lpg4r0jnnw9",
     "slug": "klotho-costume-134102704",
     "nameFr": "Tenue d'exercice d'exploratrice",
     "nameEn": "Explorer's Activewear",
@@ -42521,7 +44989,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_004.webp"
    },
    {
-    "id": "cmsuprpuc009d2lpesfcoypaw",
+    "id": "cmtaaoemr009t2lpgsicmjr8b",
     "slug": "klotho-costume-134102705",
     "nameFr": "Jeu de la lune à l'aube",
     "nameEn": "Dawn Moon's Play",
@@ -42536,7 +45004,7 @@
     "iconUrl": "/images/costumes/icon_Klotho_005.webp"
    },
    {
-    "id": "cmsuprpuc009e2lpe4emw58tc",
+    "id": "cmtaaoemr009u2lpg1akwsj5h",
     "slug": "klotho-costume-134102706",
     "nameFr": "Ombre étoilée",
     "nameEn": "Starlight Shadow",
@@ -42549,21 +45017,6 @@
     "bindingMaterials": null,
     "itemGameId": "134102706",
     "iconUrl": "/images/costumes/icon_Klotho_006.webp"
-   },
-   {
-    "id": "cmsuprpub00612lpe8eqku6dq",
-    "slug": "klotho-costume-135102701",
-    "nameFr": "Épée sacrée Sephiora",
-    "nameEn": "Sacred Sword Sephiora",
-    "effectNameFr": "Se débloque en obtenant une récompense spécifique de tirage de skin exclusif.",
-    "effectNameEn": "Unlocks upon obtaining a specific Exclusive Skin Draw reward.",
-    "effectDescFr": "Une rapière forgée après de nombreuses heures de coups de marteau et de trempe. Sa conception légère et robuste lui permet d'asséner des coups précis et rapides.\nApparence uniquement, aucun effet supplémentaire.",
-    "effectDescEn": "A rapier forged after long hours of hammering and tempering. Its light and strong design enables precise, lightning-fast strikes.\nAppearance only, no additional effects.",
-    "rarity": "SSR",
-    "engravingPassives": null,
-    "bindingMaterials": null,
-    "itemGameId": "135102701",
-    "iconUrl": "/images/costumes/Short_Costume_Klotho_Rapier_0001.webp"
    }
   ],
   "weaponMasteries": [
@@ -44697,7 +47150,7 @@
   "bannerUrl": "/images/characters/banners/klotho.webp"
  },
  {
-  "id": "cmsupro1d000l2lpenlfqxw3x",
+  "id": "cmtaaoctq000m2lpgpj0su3hy",
   "slug": "manny",
   "nameFr": "Mannie",
   "nameEn": "Mannie",
@@ -44724,7 +47177,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpuc008y2lpe4p35anv8",
+    "id": "cmtaaoemr009e2lpg92g0dd9j",
     "slug": "manny-costume-134102501",
     "nameFr": "Prêtresse exaltée",
     "nameEn": "Exalted Priestess",
@@ -44739,7 +47192,7 @@
     "iconUrl": "/images/costumes/icon_Manny_001.webp"
    },
    {
-    "id": "cmsuprpuc008z2lpewf5r8sr4",
+    "id": "cmtaaoemr009f2lpgygmrwasd",
     "slug": "manny-costume-134102502",
     "nameFr": "Cœur de prière",
     "nameEn": "Heart of Prayer",
@@ -44799,7 +47252,7 @@
     "iconUrl": "/images/costumes/icon_Manny_002.webp"
    },
    {
-    "id": "cmsuprpuc00902lpecrqluqvj",
+    "id": "cmtaaoemr009g2lpgyin4vcku",
     "slug": "manny-costume-134102503",
     "nameFr": "Prestige de l'archiprêtresse",
     "nameEn": "Arch Priestess's Prestige",
@@ -44863,7 +47316,7 @@
     "iconUrl": "/images/costumes/icon_Manny_003.webp"
    },
    {
-    "id": "cmsuprpuc00912lpeh3i1j51a",
+    "id": "cmtaaoemr009h2lpgfwkk5dhh",
     "slug": "manny-costume-134102504",
     "nameFr": "Exploration de l'inconnu",
     "nameEn": "Exploration of the Unknown",
@@ -44927,7 +47380,7 @@
     "iconUrl": "/images/costumes/icon_Manny_004.webp"
    },
    {
-    "id": "cmsuprpuc00922lpel164qo34",
+    "id": "cmtaaoemr009i2lpgdu2hgfzj",
     "slug": "manny-costume-134102505",
     "nameFr": "Rituel sacré",
     "nameEn": "Holy Ritual",
@@ -44991,7 +47444,7 @@
     "iconUrl": "/images/costumes/icon_Manny_005.webp"
    },
    {
-    "id": "cmsuprpuc00932lpea8s7x8d5",
+    "id": "cmtaaoemr009j2lpgrcqjs08o",
     "slug": "manny-costume-134102506",
     "nameFr": "Récif de corail azuré",
     "nameEn": "Azure Coral Reef",
@@ -47137,7 +49590,7 @@
   "bannerUrl": "/images/characters/banners/manny.webp"
  },
  {
-  "id": "cmsupro1d00042lpeglcq6w5j",
+  "id": "cmtaaoctq00042lpgndl8x2yt",
   "slug": "meliodas",
   "nameFr": "Meliodas",
   "nameEn": "Meliodas",
@@ -47164,7 +49617,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub006p2lpepvhtrhwa",
+    "id": "cmtaaoemq006u2lpgfxrwt6q6",
     "slug": "meliodas-costume-134100501",
     "nameFr": "Tavernier ordinaire",
     "nameEn": "Ordinary Tavern Owner",
@@ -47179,7 +49632,7 @@
     "iconUrl": "/images/costumes/icon_Meliodas_001.webp"
    },
    {
-    "id": "cmsuprpub005x2lpe5xqapcw8",
+    "id": "cmtaaoemq00602lpgx8v2cela",
     "slug": "meliodas-costume-135100501",
     "nameFr": "Épée démoniaque Lostvayne",
     "nameEn": "Demon Sword Lostvayne",
@@ -47194,7 +49647,7 @@
     "iconUrl": "/images/costumes/Short_Costume_Meliodas_Sword1H_0001.webp"
    },
    {
-    "id": "cmsuprpub006q2lpe6lj16q13",
+    "id": "cmtaaoemq006v2lpg2xfovp24",
     "slug": "meliodas-costume-134100502",
     "nameFr": "Une nouvelle aventure",
     "nameEn": "A New Adventure",
@@ -47258,7 +49711,7 @@
     "iconUrl": "/images/costumes/icon_Meliodas_002.webp"
    },
    {
-    "id": "cmsuprpub006r2lpel8mr6yir",
+    "id": "cmtaaoemq006w2lpgj2nunkag",
     "slug": "meliodas-costume-134100503",
     "nameFr": "Le Dragon de la Colère",
     "nameEn": "The Dragon Sin of Wrath",
@@ -47273,7 +49726,7 @@
     "iconUrl": "/images/costumes/icon_Meliodas_003.webp"
    },
    {
-    "id": "cmsuprpub006s2lpeqhp4x8f7",
+    "id": "cmtaaoemq006x2lpgouq61je5",
     "slug": "meliodas-costume-134100504",
     "nameFr": "Défense simple",
     "nameEn": "Simple Defense",
@@ -47337,7 +49790,7 @@
     "iconUrl": "/images/costumes/icon_Meliodas_004.webp"
    },
    {
-    "id": "cmsuprpub006t2lpem4dc7jpu",
+    "id": "cmtaaoemq006y2lpg8jqzz02p",
     "slug": "meliodas-costume-134100505",
     "nameFr": "Majesté bien malveillante",
     "nameEn": "Most Malevolent Majesty",
@@ -47480,6 +49933,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 128
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 383
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 173
        },
@@ -47518,20 +49985,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 709
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 128
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 383
        }
       ]
      },
@@ -48472,20 +50925,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 165
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 37
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 90
        },
@@ -48510,6 +50949,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 788
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 165
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 37
        }
       ]
      },
@@ -49532,7 +51985,7 @@
   "bannerUrl": "/images/characters/banners/meliodas.webp"
  },
  {
-  "id": "cmsupro1d00062lpejkc7vd8x",
+  "id": "cmtaaoctq00062lpgdwztoyyc",
   "slug": "merlin",
   "nameFr": "Merlin",
   "nameEn": "Merlin",
@@ -49559,7 +52012,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub006z2lpeo9sl0xpm",
+    "id": "cmtaaoemq00742lpgkp18akiu",
     "slug": "merlin-costume-134100701",
     "nameFr": "Grand mage ésotérique",
     "nameEn": "Esoteric Great Mage",
@@ -49574,7 +52027,7 @@
     "iconUrl": "/images/costumes/icon_Merlin_001.webp"
    },
    {
-    "id": "cmsuprpub005y2lpesv4txtx3",
+    "id": "cmtaaoemq00612lpgcrcwhz3d",
     "slug": "merlin-costume-135100701",
     "nameFr": "L'Étoile du Matin Aldan",
     "nameEn": "Morning Star Aldan",
@@ -49589,7 +52042,7 @@
     "iconUrl": "/images/costumes/Short_Costume_Merlin_Book_0001.webp"
    },
    {
-    "id": "cmsuprpub00702lpe33psmpti",
+    "id": "cmtaaoemr00752lpgjpnaidk2",
     "slug": "merlin-costume-134100702",
     "nameFr": "Vêtements formels légers",
     "nameEn": "Light Formalwear",
@@ -49653,7 +52106,7 @@
     "iconUrl": "/images/costumes/icon_Merlin_002.webp"
    },
    {
-    "id": "cmsuprpub00712lpet8jdc2m3",
+    "id": "cmtaaoemr00762lpg0na9jitr",
     "slug": "merlin-costume-134100703",
     "nameFr": "Le Sanglier de la Gourmandise",
     "nameEn": "The Boar Sin of Gluttony",
@@ -49717,7 +52170,7 @@
     "iconUrl": "/images/costumes/icon_Merlin_003.webp"
    },
    {
-    "id": "cmsuprpub00722lperv36u2kw",
+    "id": "cmtaaoemr00772lpgko3umdfg",
     "slug": "merlin-costume-134100704",
     "nameFr": "Chercheuse de savoir",
     "nameEn": "Seeker of Knowledge",
@@ -49781,7 +52234,7 @@
     "iconUrl": "/images/costumes/icon_Merlin_004.webp"
    },
    {
-    "id": "cmsuprpub00732lpe57ryenq3",
+    "id": "cmtaaoemr00782lpg6ul7qsp3",
     "slug": "merlin-costume-134100705",
     "nameFr": "Banquet de sorcière",
     "nameEn": "Witch's Banquet",
@@ -49796,7 +52249,7 @@
     "iconUrl": "/images/costumes/icon_Merlin_005.webp"
    },
    {
-    "id": "cmsuprpub00742lpe6dq35j25",
+    "id": "cmtaaoemr00792lpg9ijmrz5f",
     "slug": "merlin-costume-134100706",
     "nameFr": "Jeux de bords de mer",
     "nameEn": "Seaside Frolic",
@@ -50386,6 +52839,20 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_ResRate",
+        "value": 150
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 450
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 150
        },
@@ -50424,20 +52891,6 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 525
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 150
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 450
        }
       ]
      },
@@ -51986,7 +54439,7 @@
   "bannerUrl": "/images/characters/banners/merlin.webp"
  },
  {
-  "id": "cmsupro1d000c2lpeztzfknfy",
+  "id": "cmtaaoctq000c2lpgpisu1owx",
   "slug": "slader",
   "nameFr": "Slader",
   "nameEn": "Slater",
@@ -52013,7 +54466,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub007s2lpe8jyhm7di",
+    "id": "cmtaaoemr007z2lpg6pgqtgm7",
     "slug": "slader-costume-134101301",
     "nameFr": "Chevalier sacré vétéran",
     "nameEn": "Veteran Holy Knight",
@@ -52028,7 +54481,7 @@
     "iconUrl": "/images/costumes/icon_Slader_001.webp"
    },
    {
-    "id": "cmsuprpub007t2lpea7zu899f",
+    "id": "cmtaaoemr00802lpgsnc8apq3",
     "slug": "slader-costume-134101302",
     "nameFr": "Ami loyal",
     "nameEn": "Loyal Friend",
@@ -52088,7 +54541,7 @@
     "iconUrl": "/images/costumes/icon_Slader_002.webp"
    },
    {
-    "id": "cmsuprpub007u2lpeg7o3fcnt",
+    "id": "cmtaaoemr00812lpgmms4sayn",
     "slug": "slader-costume-134101303",
     "nameFr": "Épée du vieux roi",
     "nameEn": "Sword of the Old King",
@@ -52152,7 +54605,7 @@
     "iconUrl": "/images/costumes/icon_Slader_003.webp"
    },
    {
-    "id": "cmsuprpub007v2lpemeguqo06",
+    "id": "cmtaaoemr00822lpgvsguk9ij",
     "slug": "slader-costume-134101304",
     "nameFr": "Mission secrète",
     "nameEn": "Secret Mission",
@@ -52216,7 +54669,7 @@
     "iconUrl": "/images/costumes/icon_Slader_004.webp"
    },
    {
-    "id": "cmsuprpub007w2lpek6ro05d1",
+    "id": "cmtaaoemr00832lpgeqa8tgii",
     "slug": "slader-costume-134101305",
     "nameFr": "Préparation totale",
     "nameEn": "Total Readiness",
@@ -53351,20 +55804,6 @@
       "grade": 1,
       "abilities": [
        {
-        "stat": "B_Atk",
-        "value": 115
-       },
-       {
-        "stat": "A_Accuracy",
-        "value": 36
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
         "stat": "B_Def",
         "value": 60
        },
@@ -53389,6 +55828,20 @@
        {
         "stat": "C_Critical_Dam_Rate",
         "value": 473
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "B_Atk",
+        "value": 115
+       },
+       {
+        "stat": "A_Accuracy",
+        "value": 36
        }
       ]
      },
@@ -54411,7 +56864,7 @@
   "bannerUrl": "/images/characters/banners/slader.webp"
  },
  {
-  "id": "cmsupro1d00012lpeil27dqyt",
+  "id": "cmtaaoctq00012lpg7e9bwciu",
   "slug": "tioreh",
   "nameFr": "Tioré",
   "nameEn": "Tioreh",
@@ -54438,7 +56891,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub006b2lper2pmibrk",
+    "id": "cmtaaoemq006f2lpgrco4xunc",
     "slug": "tioreh-costume-134100201",
     "nameFr": "Fée adorable",
     "nameEn": "Adorable Fairy",
@@ -54453,7 +56906,7 @@
     "iconUrl": "/images/costumes/icon_Tioreh_001.webp"
    },
    {
-    "id": "cmsuprpub006c2lpehcu7uabh",
+    "id": "cmtaaoemq006g2lpgzvabsj5s",
     "slug": "tioreh-costume-134100202",
     "nameFr": "Sortie décontractée",
     "nameEn": "Casual Outing",
@@ -54513,7 +56966,7 @@
     "iconUrl": "/images/costumes/icon_Tioreh_002.webp"
    },
    {
-    "id": "cmsuprpub006d2lpez4zj6ib9",
+    "id": "cmtaaoemq006h2lpgjfmhfgwu",
     "slug": "tioreh-costume-134100203",
     "nameFr": "Fille de la forêt et de la terre",
     "nameEn": "Daughter of the Forest and Earth",
@@ -54577,7 +57030,7 @@
     "iconUrl": "/images/costumes/icon_Tioreh_003.webp"
    },
    {
-    "id": "cmsuprpub006e2lpe4ey9bt6i",
+    "id": "cmtaaoemq006i2lpgpvg9f752",
     "slug": "tioreh-costume-134100204",
     "nameFr": "Début de l'aventure",
     "nameEn": "Adventure's Beginning",
@@ -54641,7 +57094,7 @@
     "iconUrl": "/images/costumes/icon_Tioreh_004.webp"
    },
    {
-    "id": "cmsuprpub006f2lpez2ctiu4r",
+    "id": "cmtaaoemq006j2lpgbq4ln63f",
     "slug": "tioreh-costume-134100205",
     "nameFr": "Protection de la fée",
     "nameEn": "Fairy's Protection",
@@ -55280,6 +57733,34 @@
       "grade": 1,
       "abilities": [
        {
+        "stat": "C_Critical_Rate",
+        "value": 128
+       },
+       {
+        "stat": "C_Critical_Dam_Rate",
+        "value": 315
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
+        "stat": "C_Critical_ResRate",
+        "value": 105
+       },
+       {
+        "stat": "C_Critical_DamRes_Rate",
+        "value": 375
+       }
+      ]
+     },
+     {
+      "nodeType": "Normal",
+      "grade": 1,
+      "abilities": [
+       {
         "stat": "B_Atk",
         "value": 75
        },
@@ -55304,34 +57785,6 @@
        {
         "stat": "B_MaxHp",
         "value": 220
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_Rate",
-        "value": 128
-       },
-       {
-        "stat": "C_Critical_Dam_Rate",
-        "value": 315
-       }
-      ]
-     },
-     {
-      "nodeType": "Normal",
-      "grade": 1,
-      "abilities": [
-       {
-        "stat": "C_Critical_ResRate",
-        "value": 105
-       },
-       {
-        "stat": "C_Critical_DamRes_Rate",
-        "value": 375
        }
       ]
      },
@@ -56836,7 +59289,7 @@
   "bannerUrl": "/images/characters/banners/tioreh.webp"
  },
  {
-  "id": "cmsupro1c00002lpeohddt4iv",
+  "id": "cmtaaoctp00002lpg1c2gvrd5",
   "slug": "tristan",
   "nameFr": "Tristan",
   "nameEn": "Tristan",
@@ -56863,7 +59316,7 @@
   ],
   "costumes": [
    {
-    "id": "cmsuprpub00652lpery27qe8c",
+    "id": "cmtaaoemq00692lpg4dtqfgnv",
     "slug": "tristan-costume-134100101",
     "nameFr": "Petit prince",
     "nameEn": "Little Prince",
@@ -56878,7 +59331,7 @@
     "iconUrl": "/images/costumes/icon_Tristan_001.webp"
    },
    {
-    "id": "cmsuprpub00662lpe5y5zoo9k",
+    "id": "cmtaaoemq006a2lpgo0cul2sv",
     "slug": "tristan-costume-134100100",
     "nameFr": "Tenue d'entraînement de prince",
     "nameEn": "Prince's Training Outfit",
@@ -56914,7 +59367,7 @@
     "iconUrl": "/images/costumes/icon_Tristan_006.webp"
    },
    {
-    "id": "cmsuprpub00672lpe651ucz2r",
+    "id": "cmtaaoemq006b2lpg9szc5aeh",
     "slug": "tristan-costume-134100102",
     "nameFr": "Tenue de cérémonie",
     "nameEn": "Formal Attire",
@@ -56974,7 +59427,7 @@
     "iconUrl": "/images/costumes/icon_Tristan_002.webp"
    },
    {
-    "id": "cmsuprpub00682lpeve2gzbzu",
+    "id": "cmtaaoemq006c2lpgc3wv7suc",
     "slug": "tristan-costume-134100103",
     "nameFr": "Dignité royale",
     "nameEn": "Royal Dignity",
@@ -57038,7 +59491,7 @@
     "iconUrl": "/images/costumes/icon_Tristan_003.webp"
    },
    {
-    "id": "cmsuprpub00692lpewtwxpb9u",
+    "id": "cmtaaoemq006d2lpgzgctsrlz",
     "slug": "tristan-costume-134100104",
     "nameFr": "Aventure du prince",
     "nameEn": "Prince's Adventure",
@@ -57102,7 +59555,7 @@
     "iconUrl": "/images/costumes/icon_Tristan_004.webp"
    },
    {
-    "id": "cmsuprpub006a2lpe12utagvy",
+    "id": "cmtaaoemq006e2lpgv923lc12",
     "slug": "tristan-costume-134100105",
     "nameFr": "Vœu du prince",
     "nameEn": "Prince's Vow",

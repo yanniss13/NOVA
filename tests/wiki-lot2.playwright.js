@@ -10,8 +10,10 @@ const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
 const { chromium } = require("playwright");
 
+/* 155 armes avant la version 2.0 : le Nunchaku de l'âme vorace, l'arme de
+   Ban, porte le compte à 156. Les trois autres catégories ne bougent pas. */
 const EFFECTIFS = {
-  wikiCategoryArmes:155,
+  wikiCategoryArmes:156,
   wikiCategoryArmures:62,
   wikiCategoryBijoux:37,
   wikiCategoryGravees:83
@@ -59,7 +61,7 @@ const EFFECTIFS = {
     /* Les filtres appartiennent à la catégorie : ceux du héros n'ont rien à
        faire sur la grille des armes. */
     await page.locator("#wikiCategoryArmes").click();
-    await attendreTuiles(155);
+    await attendreTuiles(156);
     assert.equal(
       await page.locator("#wikiFilterElement").count(), 0,
       "le filtre élément est propre aux personnages"
@@ -98,16 +100,16 @@ const EFFECTIFS = {
     await page.locator("#wikiFilterWeaponGrade").selectOption({ label:"Grade 2" });
     await attendreTuiles(60);
     await page.locator("#wikiFilterWeaponGrade").selectOption("");
-    await attendreTuiles(155);
+    await attendreTuiles(156);
 
-    /* Le filtre passif : 94 armes sur 155 en portent un. Les 61 autres sont
+    /* Le filtre passif : 95 armes sur 156 en portent un. Les 61 autres sont
        listées quand même — leur fiche ne doit simplement rien inventer. */
     await page.locator("#wikiFilterWeaponPassive").selectOption("oui");
-    await attendreTuiles(94);
+    await attendreTuiles(95);
     await page.locator("#wikiFilterWeaponPassive").selectOption("non");
     await attendreTuiles(61);
     await page.locator("#wikiFilterWeaponPassive").selectOption("");
-    await attendreTuiles(155);
+    await attendreTuiles(156);
 
     // La recherche par nom, et l'état vide annoncé plutôt que laissé nu.
     await page.locator("#wikiSearch").fill("zzzzz");
@@ -169,9 +171,9 @@ const EFFECTIFS = {
 
     // Une arme à passif : sept pastilles, ouvertes sur le niveau maximum.
     await page.locator("#wikiCategoryArmes").click();
-    await attendreTuiles(155);
+    await attendreTuiles(156);
     await page.locator("#wikiFilterWeaponPassive").selectOption("oui");
-    await attendreTuiles(94);
+    await attendreTuiles(95);
     await tuiles().first().click();
     await page.locator("#wikiItemOverlay.on").waitFor();
 
@@ -320,7 +322,7 @@ const EFFECTIFS = {
     /* Revenir aux personnages restaure les quatre filtres du lot 1, avec leurs
        identifiants d'origine. */
     await page.locator("#wikiCategoryHeros").click();
-    await attendreTuiles(25);
+    await attendreTuiles(26);
     for(const id of ["wikiFilterElement", "wikiFilterWeapon",
                      "wikiFilterRole", "wikiFilterRarity"]){
       assert.equal(await page.locator("#" + id).count(), 1,
