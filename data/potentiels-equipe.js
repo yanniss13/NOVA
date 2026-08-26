@@ -301,9 +301,12 @@ window.SEVEN_DS_POTENTIELS_EQUIPE = {
     "Baguette": {
       "10": [
         {
-          /* La phrase citee s'arrete AVANT le nombre sans « de » : la source
-             ecrit « de tous les heros allies 30% », sans preposition. On cite
-             ce qu'elle ecrit, pas ce qu'elle aurait du ecrire. */
+          /* La source ecrivait « de tous les heros allies 30% », sans
+             preposition, et la phrase citee s'arretait donc avant le nombre.
+             La version 2.0 du jeu, le 26 aout 2026, a corrige la tournure en
+             « allies DE 30% » : l'ancre suit. On cite ce que la source ecrit,
+             pas ce qu'elle aurait du ecrire — c'est pour attraper exactement
+             ce genre de reformulation que le test relit le texte publie. */
           id:"elizabeth-baguette-t10-degats-terre",
           libelle:"Déluge de Terre : dégâts de Terre des alliés +30 %",
           cible:"allies",
@@ -313,7 +316,7 @@ window.SEVEN_DS_POTENTIELS_EQUIPE = {
           unite:"ten-thousandths",
           element:"earth",
           provenance:{
-            phrase:"augmente les dégâts de Terre de tous les héros alliés "
+            phrase:"augmente les dégâts de Terre de tous les héros alliés de "
           }
         },
         {

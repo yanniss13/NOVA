@@ -10,13 +10,14 @@ const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
 const { chromium } = require("playwright");
 
-/* 155 armes avant la version 2.0 : le Nunchaku de l'âme vorace, l'arme de
-   Ban, porte le compte à 156. Les trois autres catégories ne bougent pas. */
+/* Relevé sur la version 2.0 du jeu, le 26 août 2026 : le Nunchaku de l'âme
+   vorace porte les armes de 155 à 156, et la fournée de costumes les gravées
+   de 83 à 93. Armures et bijoux ne bougent pas. */
 const EFFECTIFS = {
   wikiCategoryArmes:156,
   wikiCategoryArmures:62,
   wikiCategoryBijoux:37,
-  wikiCategoryGravees:83
+  wikiCategoryGravees:93
 };
 
 (async()=>{
@@ -157,13 +158,13 @@ const EFFECTIFS = {
     /* Les armures gravées se filtrent par héros : c'est leur seul axe, chacune
        étant liée à un personnage et un seul. */
     await page.locator("#wikiCategoryGravees").click();
-    await attendreTuiles(83);
+    await attendreTuiles(93);
     await page.locator("#wikiFilterEngravedHero")
       .selectOption({ label:"Derieri" });
     await page.waitForFunction(
       () => {
         const compte = document.querySelectorAll("#wikiGrid .wiki-tile").length;
-        return compte > 0 && compte < 83;
+        return compte > 0 && compte < 93;
       }
     );
 
@@ -291,7 +292,7 @@ const EFFECTIFS = {
     /* Une armure gravée : son héros, et le seul chemin qui mène d'un objet à
        un personnage. */
     await page.locator("#wikiCategoryGravees").click();
-    await attendreTuiles(83);
+    await attendreTuiles(93);
     await page.locator("#wikiFilterEngravedHero").selectOption({ label:"Derieri" });
     await page.waitForFunction(
       () => document.querySelectorAll("#wikiGrid .wiki-tile").length > 0
