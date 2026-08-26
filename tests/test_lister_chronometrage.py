@@ -267,10 +267,15 @@ class ListerChronometrageTests(unittest.TestCase):
         # Restent les seules vraies inconnues : ni verrou deduit, ni
         # verrou nul, ni attaque sautee — que le simulateur ne modelise
         # pas et dont la mesure ne changerait aucun chiffre.
-        self.assertEqual(publie["total"], 13)
+        #
+        # Passe de 13 a 22 avec la version 2.0 du jeu, le 26 aout 2026 :
+        # les neuf entrees ajoutees sont TOUTES celles de Ban, six qui
+        # affinent et ses trois competences de releve — les premieres du
+        # tableau, aucun autre heros n'en ayant.
+        self.assertEqual(publie["total"], 22)
         self.assertEqual(publie["debloquent"], 0)
-        self.assertEqual(publie["affinent"], 13)
-        self.assertEqual(publie["releves"], 0)
+        self.assertEqual(publie["affinent"], 19)
+        self.assertEqual(publie["releves"], 3)
         # Plus aucune mesure ne « debloque » : tout ce qui manquait au
         # modele de cadence est desormais lu dans les fichiers du jeu.
         # On verifie donc la propriete, pas un instantane : les prochaines

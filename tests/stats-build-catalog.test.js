@@ -148,15 +148,15 @@ const weaponsWithPassive = Object.entries(catalog.weaponsByFile)
   .filter(([, entry]) => (entry.passiveLevels || []).length);
 assert.equal(
   weaponsWithPassive.length,
-  94,
-  "les 94 armes concernées doivent conserver leurs sept niveaux de passif"
+  95,
+  "les 95 armes concernées doivent conserver leurs sept niveaux de passif"
 );
 weaponsWithPassive.forEach(([file, entry]) => {
   assert.equal(entry.passiveLevels.length, 7, file + " : passif d'arme incomplet");
 });
 
 const characters = Object.entries(catalog.charactersBySlug);
-assert.equal(characters.length, 25, "les 25 personnages doivent être rapprochés");
+assert.equal(characters.length, 26, "les 26 personnages doivent être rapprochés");
 characters.forEach(([slug, character]) => {
   assert.equal(character.baseStats.length, 13, slug + " : base incomplète");
   assert.ok(character.commonMasteryStats.length, slug + " : maîtrise commune absente");

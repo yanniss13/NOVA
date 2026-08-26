@@ -198,13 +198,14 @@ const { chromium } = require("playwright");
     const affiche = await page.locator("#sortieDuree").textContent();
     assert.equal(affiche.trim(), "1.2");
 
-    /* 335 competences chiffrables, le compte exact du guide. Les 41 sans
-       pourcentage de degats n'entrent dans aucun calcul de DPS. */
+    /* 347 competences chiffrables, le compte exact du guide — 335 avant que
+       Ban n'arrive avec la version 2.0. Les competences sans pourcentage de
+       degats n'entrent dans aucun calcul de DPS et restent ecartees. */
     await page.waitForFunction(
       () => /\d+ \/ \d+/.test(document.getElementById("avancement").textContent)
     );
     const avancement = await page.locator("#avancement").textContent();
-    assert.match(avancement, /\d+ \/ 335 animations mesurées/);
+    assert.match(avancement, /\d+ \/ 347 animations mesurées/);
 
     /* Une ACTIVE_THIRD sans recharge existe dans le catalogue, donc l'aide
        commune ne doit plus attribuer une recharge a toute mesure unique. */

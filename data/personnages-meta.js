@@ -223,6 +223,28 @@ window.SEVEN_DS_META = {
    }
   ]
  },
+ "ban": {
+  "element": "DEFAULT",
+  "rarity": "SSR",
+  "role": "ATTACKER",
+  "weapons": [
+   {
+    "role": "Attacker",
+    "weapon": "Cudgel3c",
+    "element": "Default"
+   },
+   {
+    "role": "Attacker",
+    "weapon": "Sword2h",
+    "element": "Earth"
+   },
+   {
+    "role": "Buster",
+    "weapon": "Gauntlets",
+    "element": "Dark"
+   }
+  ]
+ },
  "klotho": {
   "element": "WIND",
   "rarity": "SSR",

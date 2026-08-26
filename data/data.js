@@ -1,8 +1,13 @@
 // Genere automatiquement par generate-data.ps1 - NE PAS EDITER A LA MAIN.
 // Relance le script pour mettre a jour apres ajout/retrait d'images.
 window.SEVEN_DS_DATA = {
-    "generatedAt":  "2026-08-22 23:24:06",
+    "generatedAt":  "2026-08-26 19:12:46",
     "personnages":  [
+                        {
+                            "id":  "ban",
+                            "name":  "Ban",
+                            "file":  "7ds-personnages/ban.webp"
+                        },
                         {
                             "id":  "bug",
                             "name":  "Bug",
@@ -690,6 +695,10 @@ window.SEVEN_DS_DATA = {
                                    {
                                        "name":  "Nunchaku de la flamme cramoisie",
                                        "file":  "7ds-armes/Nunchaku/Nunchaku de la flamme cramoisie.webp"
+                                   },
+                                   {
+                                       "name":  "Nunchaku de l\u0027âme vorace",
+                                       "file":  "7ds-armes/Nunchaku/Nunchaku de l\u0027âme vorace.webp"
                                    },
                                    {
                                        "name":  "Nunchaku des ailes de la flamme noire",

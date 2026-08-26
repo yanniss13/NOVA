@@ -1,13 +1,283 @@
 // Genere par generate-competences.py depuis 7dsorigin.app ;
-// recharges lues dans le client du jeu (PC_SkillTable), qui priment sur
-// SevenCodex : celui-ci les tronque a la seconde et en donne quatre de
-// fausses. Voir 7ds-stats/recharges-du-jeu.json.
+// recharges combat precisees depuis SevenCodex.
 // Cle = slug personnage. Les passifs sont exclus ; toute autre
 // competence figure ici, meme celle qu'on ne sait pas chiffrer.
 // pourcentage = % de l'ATK pour un lancement, null si non chiffrable.
 // nature : direct | duree (tick x ticks) | non-chiffree.
 // repartition = % par coup, quand la source la publie.
 window.SEVEN_DS_COMPETENCES = {
+ "ban": [
+  {
+   "categorie": "NORMAL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 185.0
+    }
+   ],
+   "coups": null,
+   "gameId": "ban_cudgel3c_jumpatk",
+   "nature": "direct",
+   "nom": "Triple Chain",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 185.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 208.0
+    }
+   ],
+   "coups": null,
+   "gameId": "ban_cudgel3c_skill_e",
+   "nature": "direct",
+   "nom": "Spiral Rush",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 208.0,
+   "recharge": 18.6,
+   "repartition": [],
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "composantes": [],
+   "coups": null,
+   "gameId": "ban_cudgel3c_skill_q_1",
+   "nature": "non-chiffree",
+   "nom": "Rapid Swing",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": null,
+   "recharge": 15.6,
+   "repartition": [],
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 182.0
+    }
+   ],
+   "coups": null,
+   "gameId": "ban_cudgel3c_skill_r",
+   "nature": "direct",
+   "nom": "Fox Hunt",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 182.0,
+   "recharge": 10,
+   "repartition": [],
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 125.0
+    }
+   ],
+   "coups": null,
+   "gameId": "ban_cudgel3c_skill_tag",
+   "nature": "direct",
+   "nom": "Chain Strike",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 125.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "NORMAL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 154.0
+    }
+   ],
+   "coups": null,
+   "gameId": "ban_gauntlets_jumpatk",
+   "nature": "direct",
+   "nom": "Dark Fist",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 154.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "composantes": [],
+   "coups": null,
+   "gameId": "ban_gauntlets_skill_e",
+   "nature": "non-chiffree",
+   "nom": "\"Snatch\"",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": null,
+   "recharge": 27.3,
+   "repartition": [],
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 111.0
+    }
+   ],
+   "coups": null,
+   "gameId": "ban_gauntlets_skill_q",
+   "nature": "direct",
+   "nom": "Abyss Uppercut",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 111.0,
+   "recharge": 19.6,
+   "repartition": [],
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 269.0
+    }
+   ],
+   "coups": null,
+   "gameId": "ban_gauntlets_skill_r",
+   "nature": "direct",
+   "nom": "Black Burst",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 269.0,
+   "recharge": 10,
+   "repartition": [],
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 87.0
+    }
+   ],
+   "coups": null,
+   "gameId": "ban_gauntlets_skill_tag",
+   "nature": "direct",
+   "nom": "Ambush Strike",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 87.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "NORMAL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 182.0
+    }
+   ],
+   "coups": null,
+   "gameId": "ban_sword2h_jumpatk",
+   "nature": "direct",
+   "nom": "Unchained Edge",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 182.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Sword2h"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 82.0
+    }
+   ],
+   "coups": null,
+   "gameId": "ban_sword2h_skill_e",
+   "nature": "direct",
+   "nom": "Breaking Smash",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 82.0,
+   "recharge": 20.4,
+   "repartition": [],
+   "weaponType": "Sword2h"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 164.0
+    }
+   ],
+   "coups": null,
+   "gameId": "ban_sword2h_skill_q",
+   "nature": "direct",
+   "nom": "Rough Grind",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 164.0,
+   "recharge": 11.6,
+   "repartition": [],
+   "weaponType": "Sword2h"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "composantes": [],
+   "coups": null,
+   "gameId": "ban_sword2h_skill_r",
+   "nature": "non-chiffree",
+   "nom": "Unbreakable Howl",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": null,
+   "recharge": 10,
+   "repartition": [],
+   "weaponType": "Sword2h"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 134.0
+    }
+   ],
+   "coups": null,
+   "gameId": "ban_sword2h_skill_tag",
+   "nature": "direct",
+   "nom": "Crash Impact",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 134.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Sword2h"
+  }
+ ],
  "bug": [
   {
    "categorie": "NORMAL",
@@ -49,7 +319,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 188.0,
-   "recharge": 14.0,
+   "recharge": 14,
    "repartition": [],
    "weaponType": "Axe"
   },
@@ -68,7 +338,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 380.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Axe"
   },
@@ -151,7 +421,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 20.0,
+   "recharge": 20,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -170,7 +440,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 191.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -184,7 +454,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 15.0,
+   "recharge": 15,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -266,7 +536,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 326.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "SwordDual"
   },
@@ -285,7 +555,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 165.0,
-   "recharge": 14.0,
+   "recharge": 14,
    "repartition": [],
    "weaponType": "SwordDual"
   },
@@ -350,7 +620,7 @@ window.SEVEN_DS_COMPETENCES = {
    },
    "portee": "Melee",
    "pourcentage": 120.0,
-   "recharge": 12.0,
+   "recharge": 12,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -369,7 +639,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 178.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -446,7 +716,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 253.0,
-   "recharge": 15.0,
+   "recharge": 15,
    "repartition": [],
    "weaponType": "Shield"
   },
@@ -465,7 +735,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 319.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Shield"
   },
@@ -479,7 +749,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 12.0,
+   "recharge": 12,
    "repartition": [],
    "weaponType": "Shield"
   },
@@ -550,7 +820,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -637,7 +907,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 206.0,
-   "recharge": 21.0,
+   "recharge": 21,
    "repartition": [],
    "weaponType": "Axe"
   },
@@ -656,7 +926,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 142.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Axe"
   },
@@ -675,7 +945,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 313.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Axe"
   },
@@ -732,7 +1002,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 501.0,
-   "recharge": 25.0,
+   "recharge": 25,
    "repartition": [],
    "weaponType": "Gauntlets"
   },
@@ -751,7 +1021,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 574.0,
-   "recharge": 17.0,
+   "recharge": 17,
    "repartition": [],
    "weaponType": "Gauntlets"
   },
@@ -770,7 +1040,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 1150.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Gauntlets"
   },
@@ -827,7 +1097,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 114.0,
-   "recharge": 27.0,
+   "recharge": 27,
    "repartition": [],
    "weaponType": "Sword2h"
   },
@@ -846,7 +1116,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 66.0,
-   "recharge": 16.0,
+   "recharge": 16,
    "repartition": [],
    "weaponType": "Sword2h"
   },
@@ -871,7 +1141,7 @@ window.SEVEN_DS_COMPETENCES = {
    },
    "portee": "Melee",
    "pourcentage": 403.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Sword2h"
   },
@@ -935,7 +1205,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 205.0,
-   "recharge": 20.0,
+   "recharge": 20,
    "repartition": [],
    "weaponType": "Axe"
   },
@@ -954,7 +1224,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 371.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Axe"
   },
@@ -973,7 +1243,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 407.0,
-   "recharge": 25.0,
+   "recharge": 25,
    "repartition": [
     100.0,
     307.0
@@ -1045,7 +1315,7 @@ window.SEVEN_DS_COMPETENCES = {
    },
    "portee": "Melee",
    "pourcentage": 160.0,
-   "recharge": 30.0,
+   "recharge": 30,
    "repartition": [],
    "weaponType": "Cudgel3c"
   },
@@ -1064,7 +1334,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 219.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Cudgel3c"
   },
@@ -1083,7 +1353,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 96.0,
-   "recharge": 20.0,
+   "recharge": 20,
    "repartition": [],
    "weaponType": "Cudgel3c"
   },
@@ -1146,7 +1416,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 181.0,
-   "recharge": 15.0,
+   "recharge": 15,
    "repartition": [],
    "weaponType": "Gauntlets"
   },
@@ -1165,7 +1435,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 278.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Gauntlets"
   },
@@ -1184,7 +1454,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 185.0,
-   "recharge": 5.0,
+   "recharge": 5,
    "repartition": [
     40.0,
     55.0,
@@ -1272,7 +1542,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 191.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -1368,7 +1638,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 239.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Sword1h"
   },
@@ -1451,7 +1721,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 276.0,
-   "recharge": 18.0,
+   "recharge": 18,
    "repartition": [],
    "weaponType": "Sword2h"
   },
@@ -1470,7 +1740,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 722.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [
     361.0,
     361.0
@@ -1577,7 +1847,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 186.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Axe"
   },
@@ -1676,7 +1946,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Rapier"
   },
@@ -1773,7 +2043,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Shield"
   },
@@ -1871,7 +2141,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 424.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Lance"
   },
@@ -1972,7 +2242,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 161.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Rapier"
   },
@@ -2072,7 +2342,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 800.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [
     400.0,
     400.0
@@ -2094,7 +2364,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 162.0,
-   "recharge": 15.0,
+   "recharge": 15,
    "repartition": [],
    "weaponType": "Sword1h"
   },
@@ -2153,7 +2423,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 126.0,
-   "recharge": 35.0,
+   "recharge": 35,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -2172,7 +2442,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 206.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -2254,7 +2524,7 @@ window.SEVEN_DS_COMPETENCES = {
    },
    "portee": "Range",
    "pourcentage": 165.0,
-   "recharge": 12.0,
+   "recharge": 12,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -2268,7 +2538,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": null,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -2361,7 +2631,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 402.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -2429,7 +2699,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 31.0,
+   "recharge": 31,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -2448,7 +2718,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 82.0,
-   "recharge": 22.0,
+   "recharge": 22,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -2462,7 +2732,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -2525,7 +2795,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 103.0,
-   "recharge": 23.0,
+   "recharge": 23,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -2539,7 +2809,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 17.0,
+   "recharge": 17,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -2553,7 +2823,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -2616,7 +2886,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 157.0,
-   "recharge": 17.0,
+   "recharge": 17,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -2720,7 +2990,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 279.0,
-   "recharge": 15.0,
+   "recharge": 15,
    "repartition": [],
    "weaponType": "Axe"
   },
@@ -2743,7 +3013,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Axe"
   },
@@ -2833,7 +3103,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 315.0,
-   "recharge": 19.0,
+   "recharge": 19,
    "repartition": [
     145.0,
     170.0
@@ -2855,7 +3125,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 450.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [
     210.0,
     240.0
@@ -2943,7 +3213,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 289.0,
-   "recharge": 19.0,
+   "recharge": 19,
    "repartition": [],
    "weaponType": "Sword2h"
   },
@@ -2962,7 +3232,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 390.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Sword2h"
   },
@@ -3065,7 +3335,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 343.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Lance"
   },
@@ -3147,7 +3417,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 170.0,
-   "recharge": 35.0,
+   "recharge": 35,
    "repartition": [],
    "weaponType": "Shield"
   },
@@ -3166,7 +3436,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 214.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Shield"
   },
@@ -3185,7 +3455,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 84.0,
-   "recharge": 15.0,
+   "recharge": 15,
    "repartition": [],
    "weaponType": "Shield"
   },
@@ -3267,7 +3537,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 259.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Sword1h"
   },
@@ -3383,7 +3653,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 250.0,
-   "recharge": 60.0,
+   "recharge": 60,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -3484,7 +3754,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 205.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -3574,7 +3844,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 275.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -3658,7 +3928,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 425.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Cudgel3c"
   },
@@ -3740,7 +4010,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 128.0,
-   "recharge": 17.0,
+   "recharge": 17,
    "repartition": [],
    "weaponType": "Gauntlets"
   },
@@ -3759,7 +4029,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 179.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Gauntlets"
   },
@@ -3845,7 +4115,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 168.0,
-   "recharge": 14.0,
+   "recharge": 14,
    "repartition": [],
    "weaponType": "Shield"
   },
@@ -3864,7 +4134,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 221.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Shield"
   },
@@ -3937,7 +4207,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 246.0,
-   "recharge": 15.0,
+   "recharge": 15,
    "repartition": [],
    "weaponType": "Lance"
   },
@@ -3951,7 +4221,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 40.0,
+   "recharge": 40,
    "repartition": [],
    "weaponType": "Lance"
   },
@@ -4033,7 +4303,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 187.0,
-   "recharge": 15.0,
+   "recharge": 15,
    "repartition": [],
    "weaponType": "Rapier"
   },
@@ -4047,7 +4317,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 40.0,
+   "recharge": 40,
    "repartition": [],
    "weaponType": "Rapier"
   },
@@ -4129,7 +4399,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 164.0,
-   "recharge": 32.0,
+   "recharge": 32,
    "repartition": [],
    "weaponType": "Shield"
   },
@@ -4154,7 +4424,7 @@ window.SEVEN_DS_COMPETENCES = {
    },
    "portee": "Melee",
    "pourcentage": 200.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Shield"
   },
@@ -4173,7 +4443,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 65.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Shield"
   },
@@ -4256,7 +4526,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 387.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Lance"
   },
@@ -4275,7 +4545,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 161.0,
-   "recharge": 15.0,
+   "recharge": 15,
    "repartition": [],
    "weaponType": "Lance"
   },
@@ -4333,7 +4603,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": null,
-   "recharge": 14.0,
+   "recharge": 14,
    "repartition": [],
    "weaponType": "Sword1h"
   },
@@ -4347,7 +4617,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": null,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Sword1h"
   },
@@ -4429,7 +4699,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 281.0,
-   "recharge": 12.0,
+   "recharge": 12,
    "repartition": [],
    "weaponType": "SwordDual"
   },
@@ -4448,7 +4718,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 421.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "SwordDual"
   },
@@ -4527,7 +4797,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 30.0,
+   "recharge": 30,
    "repartition": [
     40.0,
     74.0
@@ -4549,7 +4819,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 214.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Cudgel3c"
   },
@@ -4650,7 +4920,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 212.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Gauntlets"
   },
@@ -4752,7 +5022,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 406.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Lance"
   },
@@ -4771,7 +5041,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 147.0,
-   "recharge": 18.0,
+   "recharge": 18,
    "repartition": [],
    "weaponType": "Lance"
   },
@@ -4855,7 +5125,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 214.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Lance"
   },
@@ -4956,7 +5226,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 451.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Rapier"
   },
@@ -5037,7 +5307,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 161.0,
-   "recharge": 30.0,
+   "recharge": 30,
    "repartition": [],
    "weaponType": "SwordDual"
   },
@@ -5056,7 +5326,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 246.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "SwordDual"
   },
@@ -5140,7 +5410,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 151.0,
-   "recharge": 16.0,
+   "recharge": 16,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -5154,7 +5424,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": null,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -5173,7 +5443,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 97.0,
-   "recharge": 12.0,
+   "recharge": 12,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -5234,7 +5504,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 245.0,
-   "recharge": 12.0,
+   "recharge": 12,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -5253,7 +5523,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 433.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -5329,7 +5599,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 130.0,
-   "recharge": 20.0,
+   "recharge": 20,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -5348,7 +5618,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 167.0,
-   "recharge": 15.0,
+   "recharge": 15,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -5362,7 +5632,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": null,
-   "recharge": 20.0,
+   "recharge": 20,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -5421,7 +5691,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 76.0,
-   "recharge": 18.0,
+   "recharge": 18,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -5435,7 +5705,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -5532,7 +5802,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 342.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Rapier"
   },
@@ -5629,7 +5899,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -5702,7 +5972,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 168.0,
-   "recharge": 21.0,
+   "recharge": 21,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -5716,7 +5986,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -5730,7 +6000,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 15.0,
+   "recharge": 15,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -5790,7 +6060,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 120.0,
-   "recharge": 31.0,
+   "recharge": 31,
    "repartition": [],
    "weaponType": "Sword1h"
   },
@@ -5815,7 +6085,7 @@ window.SEVEN_DS_COMPETENCES = {
    },
    "portee": "Melee",
    "pourcentage": 330.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Sword1h"
   },
@@ -5916,7 +6186,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 225.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "SwordDual"
   },
@@ -6000,7 +6270,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 368.0,
-   "recharge": 22.0,
+   "recharge": 22,
    "repartition": [
     184.0,
     184.0
@@ -6022,7 +6292,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 407.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Axe"
   },
@@ -6107,7 +6377,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 286.0,
-   "recharge": 27.0,
+   "recharge": 27,
    "repartition": [],
    "weaponType": "Sword1h"
   },
@@ -6126,7 +6396,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 898.4,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [
     449.2,
     449.2
@@ -6148,7 +6418,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 93.0,
-   "recharge": 17.0,
+   "recharge": 17,
    "repartition": [],
    "weaponType": "Sword1h"
   },
@@ -6211,7 +6481,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 267.0,
-   "recharge": 32.0,
+   "recharge": 32,
    "repartition": [],
    "weaponType": "SwordDual"
   },
@@ -6230,7 +6500,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 822.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [
     411.0,
     411.0
@@ -6252,7 +6522,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 160.0,
-   "recharge": 20.0,
+   "recharge": 20,
    "repartition": [],
    "weaponType": "SwordDual"
   },
@@ -6341,7 +6611,7 @@ window.SEVEN_DS_COMPETENCES = {
    },
    "portee": "Melee",
    "pourcentage": 220.0,
-   "recharge": 25.0,
+   "recharge": 25,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -6360,7 +6630,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 50.0,
-   "recharge": 8.0,
+   "recharge": 8,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -6379,7 +6649,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 394.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -6470,7 +6740,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": null,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -6575,7 +6845,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 406.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -6639,7 +6909,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 121.0,
-   "recharge": 12.0,
+   "recharge": 12,
    "repartition": [],
    "weaponType": "Axe"
   },
@@ -6658,7 +6928,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 190.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Axe"
   },
@@ -6762,7 +7032,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 252.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Cudgel3c"
   },
@@ -6844,7 +7114,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 278.0,
-   "recharge": 12.0,
+   "recharge": 12,
    "repartition": [],
    "weaponType": "Sword2h"
   },
@@ -6863,7 +7133,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 416.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Sword2h"
   },
@@ -6966,7 +7236,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 180.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -6980,7 +7250,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": null,
-   "recharge": 15.0,
+   "recharge": 15,
    "repartition": [],
    "weaponType": "Book"
   },
@@ -7037,7 +7307,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 138.0,
-   "recharge": 25.0,
+   "recharge": 25,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -7056,7 +7326,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 161.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Staff"
   },
@@ -7128,7 +7398,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": null,
-   "recharge": 28.0,
+   "recharge": 28,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -7147,7 +7417,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Range",
    "pourcentage": 227.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "Wand"
   },
@@ -7245,7 +7515,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 526.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [
     263.0,
     263.0
@@ -7330,7 +7600,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 275.0,
-   "recharge": 12.0,
+   "recharge": 12,
    "repartition": [],
    "weaponType": "Sword2h"
   },
@@ -7349,7 +7619,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 1307.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [
     405.0,
     435.0,
@@ -7452,7 +7722,7 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 241.0,
-   "recharge": 10.0,
+   "recharge": 10,
    "repartition": [],
    "weaponType": "SwordDual"
   },
