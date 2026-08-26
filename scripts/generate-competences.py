@@ -15,6 +15,7 @@ import html
 import importlib.util
 import json
 import re
+import urllib.error
 from decimal import Decimal
 from pathlib import Path
 
@@ -405,9 +406,26 @@ def recharges_sevencodex(page):
 
 
 def recharges_du(slug):
-    """Télécharge les CD combat, plus précis que les valeurs de la fiche RSC."""
+    """Télécharge les CD combat, plus précis que les valeurs de la fiche RSC.
+
+    SevenCodex publie les nouveaux héros avec du retard : Ban est sorti avec la
+    2.0 le 26 août 2026 alors qu'ils listaient encore les 25 d'avant. Un 404 sur
+    la fiche veut donc dire « pas encore chez eux », pas « le script est cassé ».
+    On rend un catalogue vide : le héros garde les recharges arrondies de
+    7dsorigin, et `extraire-recharges.js` les remplace ensuite par celles du
+    client, au millième. C'est la symétrie du repli de `recharges_du_jeu()`.
+
+    Toute autre erreur reste levée : un 500 ou une coupure réseau signalent un
+    vrai problème, et les avaler donnerait un catalogue faux sans le dire.
+    """
     slug_source = SEVEN_CODEX_ALIASES.get(slug, slug)
-    page = _gen.fetch(FICHE_SEVEN_CODEX.format(slug=slug_source))
+    try:
+        page = _gen.fetch(FICHE_SEVEN_CODEX.format(slug=slug_source))
+    except urllib.error.HTTPError as erreur:
+        if erreur.code != 404:
+            raise
+        print("  %s : absent de SevenCodex, recharges arrondies en attendant" % slug)
+        return {}
     return recharges_sevencodex(page)
 
 

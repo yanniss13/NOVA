@@ -138,13 +138,15 @@ const STORAGE_KEY = "confrerie7ds.teams";
   const localArmorFiles = dataContext.window.SEVEN_DS_DATA.armures["Armure liee"]
     .map(item => item.file);
 
-  assert.strictEqual(Object.keys(linked).length, 25);
+  assert.strictEqual(Object.keys(linked).length, 26);
   /* 83 depuis l'ajout des gravees SR : le catalogue ne contenait que les SSR,
-     faute d'icones locales. Deux pieces restent dehors, toutes deux nommees
-     « Sortie decontractee » — un meme nom pour deux pieces differentes, et le
-     catalogue identifie une piece par le nom de son fichier image. */
-  assert.strictEqual(files.length, 83);
-  assert.strictEqual(new Set(files).size, 83);
+     faute d'icones locales. Puis 93 avec la version 2.0, le 26 aout 2026 :
+     les trois pieces de Ban et les sept costumes de la fournee.
+     Deux pieces restent dehors, toutes deux nommees « Sortie decontractee » —
+     un meme nom pour deux pieces differentes, et le catalogue identifie une
+     piece par le nom de son fichier image. */
+  assert.strictEqual(files.length, 93);
+  assert.strictEqual(new Set(files).size, 93);
   assert.ok(Object.values(linked).every(items => items.length >= 2 && items.length <= 4));
   assert.deepStrictEqual(
     plain([...files].sort()),
@@ -152,7 +154,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
   );
 }
 
-// Donnée générée réelle : 25 héros, exactement 3 types d'armes chacun.
+// Donnée générée réelle : 26 héros, exactement 3 types d'armes chacun.
 {
   const actual = { window:{} };
   vm.runInNewContext(
@@ -161,7 +163,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     { filename:"potentiels.js" }
   );
   const actualPot = actual.window.SEVEN_DS_POTENTIELS;
-  assert.strictEqual(Object.keys(actualPot).length, 25);
+  assert.strictEqual(Object.keys(actualPot).length, 26);
   assert.ok(Object.values(actualPot).every(
     byWeapon => Object.keys(byWeapon).length === 3
   ));

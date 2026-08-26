@@ -10,6 +10,7 @@ site tiers.
 """
 import importlib.util
 import unittest
+import urllib.error
 from pathlib import Path
 
 RACINE = Path(__file__).resolve().parent.parent
@@ -589,6 +590,48 @@ class CatalogueDps(unittest.TestCase):
             {"base": "atk", "pourcentage": 397.0},
             {"base": "remainingHp", "pourcentage": 30.0},
         ])
+
+
+class SevenCodexEnRetard(unittest.TestCase):
+    """Un heros que SevenCodex n'a pas encore ne doit pas faire tomber le script.
+
+    Ban est sorti avec la 2.0 le 26 aout 2026 ; SevenCodex listait toujours ses
+    25 heros d'avant, et renvoyait donc un 404 sur sa fiche. Le catalogue se
+    rabat alors sur les recharges arrondies de 7dsorigin, et `extraire-
+    recharges.js` les remplace ensuite par celles du client, au millieme.
+
+    C'est la symetrie du repli deja en place dans `recharges_du_jeu()`, qui
+    revient a SevenCodex quand l'extraction du jeu manque.
+    """
+
+    def _sans_reseau(self, erreur):
+        """Remplace le telechargement le temps d'un test."""
+        def fetch(url):
+            raise erreur
+        origine = _gen._gen.fetch
+        _gen._gen.fetch = fetch
+        self.addCleanup(lambda: setattr(_gen._gen, "fetch", origine))
+
+    def test_un_404_rend_un_catalogue_vide_sans_lever(self):
+        self._sans_reseau(
+            urllib.error.HTTPError(
+                "https://sevencodex.com/characters/ban/", 404, "Not Found", {}, None
+            )
+        )
+
+        self.assertEqual(_gen.recharges_du("ban"), {})
+
+    def test_une_autre_erreur_http_reste_levee(self):
+        """Un 500 ou une coupure signalent un probleme, pas un heros absent."""
+        self._sans_reseau(
+            urllib.error.HTTPError(
+                "https://sevencodex.com/characters/king/", 500, "Server Error", {}, None
+            )
+        )
+
+        with self.assertRaises(urllib.error.HTTPError):
+            _gen.recharges_du("king")
+
 
 if __name__ == "__main__":
     unittest.main()

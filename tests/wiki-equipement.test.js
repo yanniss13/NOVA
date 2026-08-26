@@ -240,17 +240,18 @@ const STATS_TEST = {
   const bijoux = api.bijouxDuWiki();
   const gravees = api.graveesDuWiki();
 
-  assert.equal(armes.length, 155, "155 armes attendues");
+  assert.equal(armes.length, 156, "156 armes attendues");
   assert.equal(armures.length, 62, "62 armures attendues");
   assert.equal(bijoux.length, 37, "37 bijoux attendus");
-  assert.equal(gravees.length, 83,
+  assert.equal(gravees.length, 93,
   /* 83 depuis l'ajout des gravees SR au catalogue ; il n'y avait que les
-     SSR, faute d'icones locales. */
-  "83 armures gravées attendues");
+     SSR, faute d'icones locales. Puis 93 avec la version 2.0, le 26 aout
+     2026 : les trois pieces de Ban et les sept costumes de la fournee. */
+  "93 armures gravées attendues");
 
   assert.equal(
-    armes.filter(arme => arme.aPassif).length, 94,
-    "94 armes portent un passif ; les 61 autres n'en ont pas, "
+    armes.filter(arme => arme.aPassif).length, 95,
+    "95 armes portent un passif ; les 61 autres n'en ont pas, "
       + "et leur fiche ne doit pas inventer de section"
   );
 

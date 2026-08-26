@@ -23,11 +23,14 @@ HEADERS = {
 }
 # Collections extraites du payload, avec le nombre attendu au moment de l'ecriture
 # de ce script. Un ecart n'est pas une erreur (le jeu evolue) mais est signale.
+# Releve sur la version 2.0 du jeu, le 26 aout 2026 : Ban porte les personnages
+# a 26, son nunchaku les armes a 156, et la fournee de costumes de la 2.0 en
+# ajoute dix.
 EXPECTED = {
-    "characters": 25,
-    "weapons": 155,
-    "equipItems": 232,
-    "costumeArmors": 85,
+    "characters": 26,
+    "weapons": 156,
+    "equipItems": 237,
+    "costumeArmors": 95,
     "gearSets": 22,
 }
 

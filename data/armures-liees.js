@@ -1,9 +1,15 @@
 // Généré manuellement depuis la page publique du team builder 7dsorigin.app.
-// Date de génération : 2026-08-22T23:18:48+02:00
+// Date de génération : 2026-08-26T23:37:28+02:00
 // Instantané local : aucun appel réseau n'est effectué par index.html.
 window.SEVEN_DS_ARMURES_LIEES = {
+  "ban": [
+    "7ds-armures-ssr/Armure liee/Cuisinier remplaçant.webp",
+    "7ds-armures-ssr/Armure liee/Le Renard de l'Avarice.webp",
+    "7ds-armures-ssr/Armure liee/Maraudeur décontracté.webp"
+  ],
   "bug": [
     "7ds-armures-ssr/Armure liee/Furtivité du démon.webp",
+    "7ds-armures-ssr/Armure liee/Instinct incisif.webp",
     "7ds-armures-ssr/Armure liee/Marche des ombres.webp",
     "7ds-armures-ssr/Armure liee/Sortie du démon.webp"
   ],
@@ -14,6 +20,7 @@ window.SEVEN_DS_ARMURES_LIEES = {
   ],
   "derieri": [
     "7ds-armures-ssr/Armure liee/Courtoisie minimale.webp",
+    "7ds-armures-ssr/Armure liee/Mouvement rebelle.webp",
     "7ds-armures-ssr/Armure liee/Résistance et révolution.webp"
   ],
   "diane": [
@@ -48,6 +55,7 @@ window.SEVEN_DS_ARMURES_LIEES = {
   ],
   "elizabeth": [
     "7ds-armures-ssr/Armure liee/Héros de Liones.webp",
+    "7ds-armures-ssr/Armure liee/Lumière de Liones.webp",
     "7ds-armures-ssr/Armure liee/Vedette de la taverne.webp"
   ],
   "escanor": [
@@ -62,12 +70,14 @@ window.SEVEN_DS_ARMURES_LIEES = {
     "7ds-armures-ssr/Armure liee/Chevalier sacré prometteur.webp"
   ],
   "gowther": [
+    "7ds-armures-ssr/Armure liee/Défense minimale.webp",
     "7ds-armures-ssr/Armure liee/Le Bélier de la Luxure.webp",
     "7ds-armures-ssr/Armure liee/Tenue de soirée pour un rendez-vous secret.webp"
   ],
   "griamore": [
     "7ds-armures-ssr/Armure liee/Barricade de fortune.webp",
-    "7ds-armures-ssr/Armure liee/Chevalier sacré du mur de fer.webp"
+    "7ds-armures-ssr/Armure liee/Chevalier sacré du mur de fer.webp",
+    "7ds-armures-ssr/Armure liee/Forteresse de fer impénétrable.webp"
   ],
   "guila": [
     "7ds-armures-ssr/Armure liee/Chevalier sacré des explosions.webp",
@@ -84,7 +94,8 @@ window.SEVEN_DS_ARMURES_LIEES = {
   "howzer": [
     "7ds-armures-ssr/Armure liee/Aventure en toute sécurité.webp",
     "7ds-armures-ssr/Armure liee/Chevalier sacré de la tempête.webp",
-    "7ds-armures-ssr/Armure liee/Choppe de bière de la fin des temps.webp"
+    "7ds-armures-ssr/Armure liee/Choppe de bière de la fin des temps.webp",
+    "7ds-armures-ssr/Armure liee/Dignité du capitaine.webp"
   ],
   "jericho": [
     "7ds-armures-ssr/Armure liee/Chevalier sacré à la visière en étoile.webp",
@@ -95,6 +106,7 @@ window.SEVEN_DS_ARMURES_LIEES = {
   "king": [
     "7ds-armures-ssr/Armure liee/L'ombre de la forêt profonde.webp",
     "7ds-armures-ssr/Armure liee/Le Grizzly de la Paresse.webp",
+    "7ds-armures-ssr/Armure liee/Ombre du roi des fées.webp",
     "7ds-armures-ssr/Armure liee/Traces de la forêt.webp"
   ],
   "klotho": [

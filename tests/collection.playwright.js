@@ -60,7 +60,9 @@ const EQUIPEES = [
     await page.locator("#tab-collection").click();
     await tuiles().first().waitFor();
     const total = await tuiles().count();
-    assert.equal(total, 238, "les armes et les armures gravées du dépôt");
+    /* 238 avant la version 2.0 : le Nunchaku de l'âme vorace porte les armes
+       à 156, et les dix gravées de la fournée 2.0 portent le total à 249. */
+    assert.equal(total, 249, "les armes et les armures gravées du dépôt");
     assert.match(await page.locator("#collectionState").textContent(),
       /Connecte-toi pour cocher/);
     await tuiles().first().click();
@@ -80,7 +82,7 @@ const EQUIPEES = [
     /* Le roster se relit à l'ouverture de l'onglet : les trois armes portées
        quittent « À trouver » sans qu'on ait rien coché. */
     await attendreTuiles(total - EQUIPEES.length);
-    assert.match(await progression(), /3 \/ 238 possédés — 235 à trouver/);
+    assert.match(await progression(), /3 \/ 249 possédés — 246 à trouver/);
 
     /* Une pièce équipée est possédée d'office, verrouillée, et résiste au
        clic : se dire non possédant de ce qu'on équipe serait se contredire. */
@@ -140,7 +142,7 @@ const EQUIPEES = [
     await tuiles().first().click();
     await page.getByText("marqué comme possédé", { exact:false }).waitFor();
     await attendreTuiles(total - EQUIPEES.length - 1);
-    assert.match(await progression(), /4 \/ 238 possédés — 234 à trouver/);
+    assert.match(await progression(), /4 \/ 249 possédés — 245 à trouver/);
     assert.deepEqual(await lignesEnBase(), ["user-1|" + cible],
       "le marquage doit être une ligne en base, pas un état local");
     assert.equal(await tuileDe(cible).count(), 0,
@@ -177,7 +179,7 @@ const EQUIPEES = [
     await attendreTuiles(EQUIPEES.length);
     assert.deepEqual(await lignesEnBase(), [],
       "décocher doit supprimer la ligne, pas la marquer");
-    assert.match(await progression(), /3 \/ 238 possédés — 235 à trouver/);
+    assert.match(await progression(), /3 \/ 249 possédés — 246 à trouver/);
 
     /* ---- « Utile à mon roster » : les armes du type que manie un héros du
        roster, et les gravures de ces héros. Meliodas manie l'épée à une main,
@@ -187,7 +189,7 @@ const EQUIPEES = [
     await page.selectOption("#collectionFilterUtiles", "oui");
     await page.waitForFunction(() =>
       document.querySelectorAll("#collectionBody .wiki-tile").length > 0
-      && document.querySelectorAll("#collectionBody .wiki-tile").length < 238
+      && document.querySelectorAll("#collectionBody .wiki-tile").length < 249
     );
     const utiles = await tuiles().count();
     assert.ok(utiles > 0 && utiles < total,
@@ -231,7 +233,7 @@ const EQUIPEES = [
     await page.getByText("Collection de Merlin — lecture seule").waitFor();
     /* Merlin possède le Grimoire (marqué) et le porte (équipé) : la fusion des
        deux ensembles ne doit pas le compter deux fois. */
-    assert.match(await progression(), /1 \/ 238 possédés — 237 à trouver/);
+    assert.match(await progression(), /1 \/ 249 possédés — 248 à trouver/);
 
     /* Le Grimoire est à la fois MARQUÉ et ÉQUIPÉ par Merlin : la fusion des
        deux ensembles ne doit pas le compter deux fois — d'où le 1 ci-dessus. */
@@ -270,7 +272,7 @@ const EQUIPEES = [
     await page.selectOption("#collectionFilterUtiles", "oui");
     await page.waitForFunction(() => {
       const tuilesVues = [...document.querySelectorAll("#collectionBody .wiki-tile")];
-      return tuilesVues.length > 0 && tuilesVues.length < 238;
+      return tuilesVues.length > 0 && tuilesVues.length < 249;
     });
     const dossiersMerlin = await tuiles().evaluateAll(noeuds =>
       [...new Set(noeuds.map(noeud => noeud.dataset.file.split("/")[1]))].sort()
@@ -287,7 +289,7 @@ const EQUIPEES = [
       .waitFor({ state:"hidden" });
     await page.selectOption("#collectionFilterUtiles", "");
     await attendreTuiles(total);
-    assert.match(await progression(), /3 \/ 238 possédés — 235 à trouver/);
+    assert.match(await progression(), /3 \/ 249 possédés — 246 à trouver/);
 
     assert.deepEqual(errors, [], "aucune erreur de page");
     console.log("PASS Playwright: collection, marquage, verrou et filtres");
