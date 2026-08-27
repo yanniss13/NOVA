@@ -2,8 +2,7 @@
 
 **Date :** 2026-07-29  
 **Base :** `main` = `73aabab` (lots 1 et 2 livrés)  
-**Suite de :** `2026-07-28-stats-builds-passation.md` et
-`2026-07-28-stats-builds-lot2-design.md`
+**Suite de :** `2026-07-28-stats-builds-lot2-design.md`
 
 Cette spécification remplace les anciennes mentions d’un potentiel stocké par
 arme. Le palier de potentiel reste unique pour le personnage ; seule l’arme
