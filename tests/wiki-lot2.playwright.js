@@ -393,6 +393,73 @@ const EFFECTIFS = {
         "#" + id + " doit revenir avec la catégorie Personnages");
     }
 
+    /* LES GRAVURES POSSIBLES SUR UN ECRAN DE TELEPHONE.
+
+       Sur 390 px, « Augmentation des degats, competence de releve » et sa
+       fourchette « +17,01 % -> +42,52 % » font 63 caracteres : ils ne peuvent
+       pas partager une ligne. La valeur doit alors basculer ENTIERE sous le
+       libelle, collee a droite. Avant, elle se coupait au milieu et laissait
+       le « % » seul sur la ligne suivante.
+
+       Les mesures comparent des coordonnees ENTRE ELLES, jamais une largeur en
+       pixels : les polices du runner Linux sont plus larges qu'en local, et un
+       seuil absolu passerait ici pour casser le deploiement. */
+    await page.setViewportSize({ width:390, height:844 });
+    await page.locator("#wikiCategoryGravees").click();
+    await page.locator("#wikiFilterEngravedHero").selectOption({ label:"Meliodas" });
+    await page.locator("#wikiSearch").fill("Une nouvelle aventure");
+    await attendreTuiles(1);
+    await tuiles().first().click();
+    await page.locator("#wikiItemOverlay.on").waitFor();
+
+    const replis = page.locator("#wikiItemBody .wiki-fold > summary");
+    const rangGravures = (await replis.evaluateAll(n => n.map(x => x.textContent)))
+      .indexOf("Gravures possibles");
+    assert.notEqual(rangGravures, -1,
+      "la fiche d'une tenue gravee doit offrir « Gravures possibles »");
+    await replis.nth(rangGravures).click();
+
+    const mesuresGravures = await page
+      .locator("#wikiItemBody .wiki-fold[open] .wiki-stat")
+      .evaluateAll(lignes => lignes.map(ligne => {
+        const nom = ligne.querySelector(".wiki-stat-name");
+        const valeur = ligne.querySelector(".wiki-stat-value");
+        const cadreLigne = ligne.getBoundingClientRect();
+        const cadreNom = nom.getBoundingClientRect();
+        const cadreValeur = valeur.getBoundingClientRect();
+        return {
+          libelle:nom.textContent,
+          texte:valeur.textContent,
+          repliee:cadreValeur.top >= cadreNom.bottom - 1,
+          ecartDroite:Math.abs(cadreLigne.right - cadreValeur.right),
+          debordeAGauche:cadreLigne.left - cadreValeur.left
+        };
+      }));
+    assert.ok(mesuresGravures.length > 0,
+      "les gravures possibles doivent lister des stats");
+
+    assert.deepEqual(mesuresGravures.filter(m => / %/.test(m.texte)), [],
+      "une espace ordinaire devant le % laisserait le navigateur l'isoler");
+    assert.deepEqual(mesuresGravures.filter(m => m.ecartDroite > 1.5), [],
+      "chaque valeur doit rester alignee sur le bord droit de sa ligne");
+    assert.deepEqual(mesuresGravures.filter(m => m.debordeAGauche > 1), [],
+      "aucune valeur ne doit deborder de sa ligne");
+    assert.ok(mesuresGravures.some(m => m.repliee),
+      "sur 390 px, un libelle long doit renvoyer sa valeur a la ligne suivante");
+    /* La ligne au libelle LE PLUS COURT est celle qui discrimine. Une assertion
+       sur « au moins une ligne non repliee » ne prouvait rien : « Efficacite de
+       Deluge de tous les elements » a une valeur courte et restait cote a cote
+       meme avec un flex-basis forfaitaire, qui repliait pourtant « Defense
+       crit. » a tort. */
+    const plusCourte = mesuresGravures
+      .reduce((a, b) => b.libelle.length < a.libelle.length ? b : a);
+    assert.equal(plusCourte.repliee, false,
+      "le libelle le plus court (« " + plusCourte.libelle + " ») doit garder sa "
+      + "valeur sur la meme ligne, sinon le repli est un empilement systematique");
+
+    await page.locator("#wikiItemClose").click();
+    await page.locator("#wikiItemOverlay.on").waitFor({ state:"detached" });
+
     assert.deepEqual(errors, [], "aucune erreur de page attendue");
     assert.deepEqual(imagesRatees, [], "aucune image manquante attendue");
   } finally {

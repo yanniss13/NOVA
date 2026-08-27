@@ -196,8 +196,8 @@ function merlinGameFixture(hooks){
       slot:0, tier:null, element:null, stat:"critRate", value:4
     }]
   })), "incompatible");
-  assert.strictEqual(hooks.formatBuildStatValue(787, "ten-thousandths"), "+7,87 %");
-  assert.strictEqual(hooks.formatBuildStatValue(500, "ten-thousandths"), "+5 %");
+  assert.strictEqual(hooks.formatBuildStatValue(787, "ten-thousandths"), "+7,87\u202f%");
+  assert.strictEqual(hooks.formatBuildStatValue(500, "ten-thousandths"), "+5\u202f%");
   assert.strictEqual(hooks.formatBuildStatValue(3291, "flat"), "+3\u202f291");
   assert.deepStrictEqual(
     plain(hooks.overlimitTargetBuckets("native-before-enchantments")),

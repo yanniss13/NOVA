@@ -78,6 +78,10 @@ import { el } from "../noyau/dom.js";
     return [...new Set((manques || []).map(libelleDuManque))].join(", ");
   }
 
+  /* L'espace devant le « % » est une fine insecable. Avec une espace
+     ordinaire, le navigateur coupe « +13,31 % » en fin de ligne et laisse le
+     signe seul sur la suivante — visible sur la fiche d'equipement en mobile.
+     Intl pose deja la meme insecable dans les milliers. */
   function formatBuildStatValue(value, unit){
     if(unit !== "flat" && unit !== "ten-thousandths"){
       throw new Error("BUILD_STAT_UNIT_INVALID");
@@ -88,7 +92,7 @@ import { el } from "../noyau/dom.js";
     const prefix = displayed >= 0 ? "+" : "";
     return prefix + new Intl.NumberFormat("fr-FR", {
       maximumFractionDigits:2
-    }).format(displayed) + (unit === "ten-thousandths" ? " %" : "");
+    }).format(displayed) + (unit === "ten-thousandths" ? "\u202f%" : "");
   }
 
   /* Dictionnaire partagé par les provenances et par le pied de bloc des seaux

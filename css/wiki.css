@@ -194,13 +194,22 @@
    ressemblent beaucoup d'un heros a l'autre. */
 .wiki-transcendance-nom{display:block;color:var(--gold);margin-bottom:2px}
 .wiki-stats{margin:8px 0 4px;padding:0;list-style:none}
+/* Le repli se decide sur la LARGEUR REELLE du libelle, d'ou `flex-basis:auto`
+   plutot qu'un forfait : avec 12em, « Defense crit. » renvoyait sa valeur a la
+   ligne alors que les deux tenaient cote a cote. Un libelle court garde donc
+   ses deux colonnes ; un libelle long fait basculer la valeur sous lui, ou
+   `margin-left:auto` la garde a droite. `nowrap` protege la fourchette
+   entiere, fleche comprise, pour qu'aucune valeur ne soit coupee en deux. */
 .wiki-stat{
-  display:flex;justify-content:space-between;gap:12px;padding:5px 0;
+  display:flex;flex-wrap:wrap;gap:2px 12px;padding:5px 0;
   border-bottom:1px solid var(--line-soft)
 }
 .wiki-stat:last-child{border-bottom:0}
-.wiki-stat-name{color:var(--muted)}
-.wiki-stat-value{font-variant-numeric:tabular-nums;color:var(--parchment)}
+.wiki-stat-name{color:var(--muted);flex:1 1 auto;min-width:0}
+.wiki-stat-value{
+  font-variant-numeric:tabular-nums;color:var(--parchment);
+  flex:0 0 auto;margin-left:auto;white-space:nowrap
+}
 
 /* Les armures gravees de la fiche de heros : la vignette a gauche, le nom et
    la transcendance qu'elle donne a droite. La liste remplace la rangee
