@@ -76,6 +76,7 @@ const SUITES = {
     "node tests/wiki-equipement.test.js",
     "node tests/competences-catalogue.test.js",
     "node tests/transcendances-catalogue.test.js",
+    "node tests/badges-role-element.test.js",
     "node tests/degats-calcul.test.js",
     "node tests/effets-dps-catalogue.test.js",
     "node tests/dps-effets.test.js",
