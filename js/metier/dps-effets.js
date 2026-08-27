@@ -9,6 +9,7 @@
 import {
   BUILD_STATS,
   FOLDER_TO_ENUM,
+  LINKED_ARMOR_SLOT,
   metaOf
 } from "../noyau/constantes.js";
 
@@ -242,6 +243,62 @@ import {
           });
         });
       });
+
+    /* LA TRANSCENDANCE DE LA TENUE GRAVEE PORTEE.
+
+       Regle du jeu : elle n'agit QUE si la tenue qui l'a donnee est portee,
+       et seulement une fois cette piece transcendee. Le site n'a pas de champ
+       « transcendee » — il n'en a pas besoin.
+
+       Le jeu plafonne le renforcement d'une armure gravee a +5, puis a +10,
+       +14 et enfin +15, un palier par transcendance reussie
+       (ItemTable_Growth_Promotion, groupe `limitbr_armor_t5_default`). Le
+       passif exige le dernier palier. On ne PEUT donc pas atteindre le
+       plafond sans avoir transcende trois fois : le renforcement maximal
+       suffit a le prouver.
+
+       Le sens de l'erreur est voulu. Une piece transcendee mais pas encore
+       renforcee a fond passe ici pour non transcendee, et son bonus manque :
+       le chiffre est sous-estime, jamais flatte. C'est la meme regle que le
+       niveau de passif inconnu plus haut. */
+    const tenueLiee = (sourceHero.armor || {})[LINKED_ARMOR_SLOT];
+    const transcendance = tenueLiee
+      ? ((window.SEVEN_DS_TRANSCENDANCES || {})[sourceHero.char] || [])
+        .find(item => item && item.tenue === tenueLiee)
+      : null;
+    if(transcendance){
+      const definition = definitionEquipement(tenueLiee);
+      const plafond = Number(definition && definition.reinforceMax);
+      const renforcement = Number(
+        ((sourceHero.armorConfig || {})[LINKED_ARMOR_SLOT] || {}).reinforce
+      );
+      const identite = "transcendance:" + transcendance.id;
+      if(!transcendance.regle){
+        /* 48 des 78 majorent l'equipe ou frappent la cible : hors perimetre
+           du comparateur, comme les autres `effet-equipe`. */
+        nonInclus.push({
+          id:identite, origine:"transcendance", slot:LINKED_ARMOR_SLOT,
+          texteFr:transcendance.texte, raison:"effet-equipe"
+        });
+      }else if(!Number.isFinite(plafond) || renforcement !== plafond){
+        nonInclus.push({
+          id:identite, origine:"transcendance", slot:LINKED_ARMOR_SLOT,
+          texteFr:transcendance.texte, raison:"tenue-non-transcendee"
+        });
+      }else{
+        retenir({
+          id:identite,
+          classification:"modelise",
+          texteFr:transcendance.texte,
+          regles:[{
+            type:"bonus-degats",
+            cible:transcendance.regle.cible,
+            valeur:transcendance.regle.valeur,
+            mode:"passif-max"
+          }]
+        }, { origine:"transcendance", slot:LINKED_ARMOR_SLOT });
+      }
+    }
 
     const compteSets = {};
     tousLesFichiers(sourceHero).forEach(file => {

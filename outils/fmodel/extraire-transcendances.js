@@ -35,6 +35,8 @@ function table(chemin) {
 
 const base = table('/Table/Item/ItemTable_Equip_Passive_Base.json');
 const groupes = table('/Table/Item/ItemTable_Equip_Passive_Group.json');
+const costumes = table('/Table/CostumeTable.json');
+const equipements = table('/Table/Item/ItemTable_Data_Equip.json');
 
 /* La table de localisation francaise. Les cles y sont ecrites tantot en
    capitales, tantot en minuscules selon la table qui les cite : on indexe
@@ -55,7 +57,89 @@ const ALIAS = { gilthunder: 'gil-thunder' };
    une erreur, pas un detail : elle serait publiee sans jamais s'afficher. */
 global.window = {};
 require(DEPOT + '/data/personnages-meta.js');
+require(DEPOT + '/data/stats-build.js');
 const slugsDuSite = new Set(Object.keys(global.window.SEVEN_DS_META || {}));
+
+/* LA TENUE QUI PORTE LA TRANSCENDANCE
+
+   Une transcendance n'est active que si la tenue qui l'a donnee est PORTEE
+   (regle du jeu, confirmee par un joueur le 27 aout 2026). Le catalogue doit
+   donc dire laquelle, sans quoi il reste decoratif.
+
+   Le lien ne se lit pas d'un trait, mais il est deterministe — aucun
+   rapprochement par nom, qui echouerait sur les doublons comme « Sortie
+   decontractee », portee par deux heros :
+
+     engravedByFile[fichier].slug   ->  ban-costume-134102102
+     CostumeTable (ligne ItemId)    ->  Open_Condition_Value = 133274001
+     ItemTable_Data_Equip           ->  LimitBreak_Passive = EpLb_Ban_B
+
+   `PromotionLevel` vaut 3 partout : la transcendance ne s'active qu'une fois
+   la piece promue au dernier palier. Le champ est publie plutot que code en
+   dur, pour qu'un patch qui l'abaisse se voie dans le diff. */
+const parCostume = {};
+for (const ligne of Object.values(costumes)) {
+  parCostume[String(ligne.ItemId)] = ligne;
+}
+
+const tenueParTranscendance = {};
+for (const [fichier, tenue] of Object.entries(
+  global.window.SEVEN_DS_BUILD_STATS.engravedByFile || {}
+)) {
+  const decoupe = String(tenue.slug || '').match(/-costume-(\d+)$/);
+  if (!decoupe) continue;
+  const costume = parCostume[decoupe[1]];
+  if (!costume) continue;
+  const equipement = equipements[(costume.Open_Condition_Value || [])[0]];
+  const limite = equipement && (equipement.LimitBreak_Passive || [])[0];
+  if (!limite) continue;
+  tenueParTranscendance[String(limite.EquipPassiveID).toLowerCase()] = {
+    tenue: fichier,
+    promotion: limite.PromotionLevel
+  };
+}
+
+/* LA REGLE DPS D'UNE TRANSCENDANCE
+
+   Le jeu ne publie PAS la statistique touchee. `SkillTable` ne contient qu'une
+   coquille vide de passif, et `BuffTable` n'en cite qu'une sur trois, sans
+   ligne d'abilite : le calcul est cote serveur. Seule la phrase francaise dit
+   a quoi le nombre se rapporte.
+
+   D'ou cette table de CINQ phrases, la seule interpretation de ce fichier.
+   Elle est ancree sur la phrase ENTIERE (^...$) et non sur un fragment : sans
+   cela, « Augmente les degats des Tenebres de tous les heros allies de 30% »
+   passerait pour un bonus au heros.
+
+   Ce qu'elle ne reconnait pas n'a PAS de regle, et le compte final le dit.
+   Un patch qui reformule une phrase fera donc baisser ce compte au lieu de
+   publier un bonus muet — tests/transcendances-catalogue.test.js le refuse. */
+const CIBLE_PAR_PHRASE = [
+  ["Augmente les dégâts de compétence normale de ", "normal-skill"],
+  ["Augmente les dégâts d'attaque ultime de ", "ultimate"],
+  ["Augmente les dégâts d'attaque spéciale de ", "special"],
+  ["Augmente les dégâts d'attaque normale de ", "normal"],
+  ["Augmente les dégâts de compétence de relève de ", "tag-skill"]
+];
+
+/* La valeur est stockee en dix-milliemes, comme partout ailleurs dans le
+   comparateur : 50 % s'ecrit 5000. */
+function regleDe(texte) {
+  for (const [phrase, cible] of CIBLE_PAR_PHRASE) {
+    const motif = new RegExp(
+      '^' + phrase.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        + '(\\d+(?:[.,]\\d+)?)%\\.$'
+    );
+    const trouve = texte.match(motif);
+    if (!trouve) continue;
+    return {
+      cible,
+      valeur: Math.round(parseFloat(trouve[1].replace(',', '.')) * 100),
+      phrase
+    };
+  }
+  return null;
+}
 
 /* Substitue les valeurs et retire les balises de couleur du jeu, qui ne
    veulent rien dire hors de son interface. */
@@ -90,7 +174,14 @@ for (const [cle, ligne] of Object.entries(base)) {
   if (!nom) { trous.push(cle + ' : nom non traduit (' + ligne.Core_Name + ')'); continue; }
   if (!texte) { trous.push(cle + ' : description non traduite (' + groupe.Desc + ')'); continue; }
 
-  (parHeros[slug] = parHeros[slug] || []).push({ rang: decoupe[2], id: cle, nom, texte });
+  const porteuse = tenueParTranscendance[cle];
+  if (!porteuse) { trous.push(cle + ' : aucune tenue gravee ne la donne'); continue; }
+
+  (parHeros[slug] = parHeros[slug] || []).push({
+    rang: decoupe[2], id: cle, nom, texte,
+    tenue: porteuse.tenue, promotion: porteuse.promotion,
+    regle: regleDe(texte)
+  });
 }
 
 for (const liste of Object.values(parHeros)) {
@@ -114,6 +205,11 @@ const entete = `// Les transcendances : les passifs de Limit Break de chaque her
 // Cle = slug du personnage, celui de personnages-meta.js.
 // Trois transcendances par heros, dans l'ordre du jeu.
 //
+// Le champ « tenue » est la tenue gravee qui donne la transcendance, sous la
+// cle de engravedByFile (data/stats-build.js). Elle n'est ACTIVE QUE SI CETTE
+// TENUE EST PORTEE, et une fois la piece promue au palier « promotion ».
+// Sans ce lien, le catalogue ne serait qu'un texte a lire.
+//
 // Les valeurs sont deja substituees dans les descriptions : le jeu les tient
 // a part du gabarit, et un « {0} » survivant serait une substitution manquee.
 // tests/transcendances-catalogue.test.js le refuse.
@@ -123,7 +219,15 @@ const corps = heros.map(slug => {
   const lignes = parHeros[slug].map(entree =>
     '    { id:' + JSON.stringify(entree.id)
     + ', nom:' + JSON.stringify(entree.nom)
-    + ', texte:' + JSON.stringify(entree.texte) + ' }'
+    + ', texte:' + JSON.stringify(entree.texte)
+    + ',\n      tenue:' + JSON.stringify(entree.tenue)
+    + ', promotion:' + JSON.stringify(entree.promotion)
+    + (entree.regle
+      ? ',\n      regle:{ cible:' + JSON.stringify(entree.regle.cible)
+        + ', valeur:' + entree.regle.valeur
+        + ', phrase:' + JSON.stringify(entree.regle.phrase) + ' }'
+      : '')
+    + ' }'
   ).join(',\n');
   return '  ' + JSON.stringify(slug) + ':[\n' + lignes + '\n  ]';
 }).join(',\n');
@@ -136,6 +240,14 @@ fs.writeFileSync(
 
 console.log('heros couverts   : ' + heros.length);
 console.log('transcendances   : ' + total);
+
+/* Le compte des regles est la mesure a surveiller entre deux extractions.
+   S'il baisse, une phrase a change de tournure et un bonus est passe a la
+   trappe en silence — c'est le seul defaut que ce fichier peut avoir. */
+const avecRegle = Object.values(parHeros)
+  .reduce((somme, liste) => somme + liste.filter(e => e.regle).length, 0);
+console.log('dont regle DPS   : ' + avecRegle
+  + '  (le reste vise l\'equipe ou la cible)');
 if (orphelins.length) {
   console.log('\nignores, slug inconnu du site : ' + orphelins.join(', '));
 }

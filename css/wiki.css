@@ -202,11 +202,22 @@
 .wiki-stat:last-child{border-bottom:0}
 .wiki-stat-name{color:var(--muted)}
 .wiki-stat-value{font-variant-numeric:tabular-nums;color:var(--parchment)}
-.wiki-linked{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0 4px}
-.wiki-linked img{
-  width:56px;height:56px;border-radius:8px;background:#0b0910;
+
+/* Les armures gravees de la fiche de heros : la vignette a gauche, le nom et
+   la transcendance qu'elle donne a droite. La liste remplace la rangee
+   d'images seules — un membre doit voir QUELLE piece porte quel bonus. */
+.wiki-gravees-note{
+  margin:6px 0 10px;color:var(--muted);font-size:.85rem;line-height:1.4
+}
+.wiki-gravees{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.wiki-gravee{display:flex;gap:12px;align-items:flex-start}
+.wiki-gravee img{
+  width:56px;height:56px;flex:0 0 56px;border-radius:8px;background:#0b0910;
   border:1px solid var(--line)
 }
+.wiki-gravee-corps{min-width:0;display:flex;flex-direction:column;gap:2px}
+.wiki-gravee-nom{color:var(--parchment)}
+.wiki-gravee-trans{display:block;font-size:.9rem;line-height:1.45}
 
 /* ---------- Fiche d'objet : arme, piece, armure gravee ---------- */
 /* L'en-tete reprend la composition de la fiche de heros — vignette a gauche,

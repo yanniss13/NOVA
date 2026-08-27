@@ -222,6 +222,42 @@ const { chromium } = require("playwright");
     await page.locator("#wikiHeroClose").click();
     await page.locator("#wikiHeroOverlay.on").waitFor({ state:"detached" });
 
+    /* CHAQUE TRANSCENDANCE EST POSEE SUR LA TENUE QUI LA DONNE.
+
+       Elle n'agit que si cette tenue est portee : l'afficher sans le dire
+       ferait croire a un bonus permanent. Tristan est le cas qui discrimine —
+       QUATRE tenues gravees, mais TROIS transcendances. Un heros a 3/3 ne
+       verrait pas la difference entre un rapprochement juste et une simple
+       mise en correspondance dans l'ordre. */
+    await page.locator('#wikiGrid .wiki-tile[data-char="tristan"]').click();
+    await page.locator("#wikiHeroOverlay.on").waitFor();
+    /* La section est repliee au chargement : on l'ouvre comme le ferait un
+       membre, plutot que de lire un contenu que personne ne voit. */
+    await page.locator('.wiki-fold > summary:text-is("Armures gravées")').click();
+    await page.locator(".wiki-gravee").first().waitFor();
+
+    assert.equal(await page.locator(".wiki-gravee").count(), 4,
+      "Tristan a quatre tenues gravees");
+    assert.equal(await page.locator(".wiki-gravee .wiki-gravee-trans").count(), 3,
+      "trois d'entre elles seulement portent une transcendance");
+    assert.match(
+      await page.locator(".wiki-gravees-note").textContent(),
+      /portée/,
+      "la condition de port doit etre annoncee"
+    );
+
+    /* La tenue qui n'en a pas est nommee : si le rapprochement glissait d'un
+       cran, c'est une AUTRE qui se retrouverait nue. */
+    const sansBonus = await page.locator(".wiki-gravee").evaluateAll(nodes =>
+      nodes.filter(node => !node.querySelector(".wiki-gravee-trans"))
+        .map(node => node.querySelector(".wiki-gravee-nom").textContent)
+    );
+    assert.deepEqual(sansBonus, ["Tenue de cérémonie"],
+      "c'est la Tenue de ceremonie qui n'est pas transcendable");
+
+    await page.locator("#wikiHeroClose").click();
+    await page.locator("#wikiHeroOverlay.on").waitFor({ state:"detached" });
+
     /* Hors ligne : le catalogue a été mis en cache par le service worker au
        premier passage, la fiche doit donc rester consultable.
 

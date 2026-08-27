@@ -26,6 +26,16 @@ function charger(fichier, cle){
 
 const table = charger("transcendances.js", "SEVEN_DS_TRANSCENDANCES");
 const meta = charger("personnages-meta.js", "SEVEN_DS_META");
+const gravees = charger("stats-build.js", "SEVEN_DS_BUILD_STATS").engravedByFile;
+
+/* Les cibles que le moteur DPS sait appliquer. Derivees de dps-simulation.js
+   (CATEGORIE_DPS) et des regles deja ecrites : une cible hors de cette liste
+   serait publiee sans jamais etre comptee. */
+const CIBLES = new Set(["normal", "normal-skill", "special", "ultimate", "tag-skill"]);
+let regles = 0;
+
+/* Les tenues deja reclamees, pour prouver qu'aucune n'en porte deux. */
+const tenuesVues = new Map();
 
 assert.ok(table, "Les transcendances doivent s'exposer sur window");
 
@@ -71,6 +81,60 @@ slugs.forEach(slug => {
        interface : les laisser afficherait « [#1A7331]50%[-] » au membre. */
     assert.doesNotMatch(entree.texte, /\[#?[-0-9A-Fa-f]*\]/,
       slug + " : balise de couleur du jeu laissee dans « " + entree.texte + " »");
+
+    /* LA TENUE QUI LA PORTE.
+
+       Une transcendance n'est active que si sa tenue gravee est portee. Sans
+       ce lien elle ne peut pas entrer dans le calcul, et le catalogue
+       retombe au rang de texte a lire. Le rapprochement se fait par
+       identifiants (costume -> equipement -> LimitBreak_Passive), jamais par
+       nom : deux heros partagent « Sortie decontractee ». */
+    const tenue = gravees[entree.tenue];
+    assert.ok(tenue,
+      slug + " : tenue inconnue de engravedByFile — « " + entree.tenue + " »");
+    assert.equal(tenue.character, slug,
+      entree.id + " : rattachee a une tenue de " + tenue.character);
+    assert.equal(entree.promotion, 3,
+      entree.id + " : palier de promotion inattendu (" + entree.promotion + ")");
+
+    /* Une tenue ne donne qu'une transcendance. Si deux la reclamaient, le
+       rapprochement se serait effondre quelque part en amont — et le calcul
+       compterait deux fois le meme bonus. */
+    const dejaVue = tenuesVues.get(entree.tenue);
+    assert.ok(!dejaVue,
+      entree.tenue + " : reclamee par " + entree.id + " ET par " + dejaVue);
+    tenuesVues.set(entree.tenue, entree.id);
+
+    /* LA REGLE DE TRANSCRIPTION, celle de data/passifs-graves.js.
+
+       Le jeu ne publie pas la statistique touchee — elle se deduit de la
+       phrase francaise, et c'est la seule interpretation du catalogue. On
+       verifie donc que la valeur stockee est bien LE NOMBRE QUI SUIT
+       IMMEDIATEMENT la phrase citee, et que cette phrase ouvre le texte.
+       Sans ce controle, rien n'empecherait d'attribuer a un effet la valeur
+       d'un autre. */
+    if(entree.regle){
+      regles++;
+      assert.ok(CIBLES.has(entree.regle.cible),
+        entree.id + " : cible « " + entree.regle.cible + " » inconnue du moteur");
+      assert.ok(entree.texte.startsWith(entree.regle.phrase),
+        entree.id + " : le texte ne commence pas par la phrase citee");
+      const apres = entree.texte.slice(entree.regle.phrase.length);
+      const nombre = apres.match(/^(\d+(?:[.,]\d+)?)%/);
+      assert.ok(nombre,
+        entree.id + " : aucun pourcentage apres la phrase — « " + apres + " »");
+      assert.equal(
+        entree.regle.valeur,
+        Math.round(parseFloat(nombre[1].replace(",", ".")) * 100),
+        entree.id + " : la valeur stockee ne suit pas la phrase citee"
+      );
+    }else{
+      /* Pas de regle : ce doit etre un effet d'equipe ou un debuff de cible,
+         hors perimetre du comparateur. Un bonus au heros SANS regle serait un
+         oubli silencieux — exactement ce que ce test existe pour attraper. */
+      assert.match(entree.texte, /héros alliés|de l'équipe|tous les héros|ennemi|cible|subis/,
+        entree.id + " : bonus au heros sans regle DPS — « " + entree.texte + " »");
+    }
   });
 
   /* Trois transcendances distinctes, pas la meme recopiee : plusieurs heros en
@@ -81,6 +145,21 @@ slugs.forEach(slug => {
 });
 
 assert.equal(total, 78, "78 transcendances attendues, recu : " + total);
+
+/* 30 regles sur 78 : le reste vise l'equipe (43) ou la cible (5). Si ce
+   compte baisse, une phrase du jeu a change de tournure et un bonus est
+   passe a la trappe sans bruit. */
+assert.equal(regles, 30,
+  "30 transcendances doivent porter une regle DPS, recu : " + regles);
+
+/* 93 tenues gravees, 78 transcendables : les 15 restantes sont les quatriemes
+   tenues des heros qui en ont quatre. Le compte se ferme, donc aucune n'a ete
+   perdue en route. */
+assert.equal(tenuesVues.size, 78,
+  "78 tenues distinctes attendues, recu : " + tenuesVues.size);
+const sansTranscendance = Object.keys(gravees).length - tenuesVues.size;
+assert.equal(sansTranscendance, 15,
+  "15 tenues gravees sans transcendance attendues, recu : " + sansTranscendance);
 
 /* Khala est dans les tables du jeu mais n'a aucune transcendance, aucune image
    et pas de cle de competence : elle n'est pas sortie. Sa presence ici
