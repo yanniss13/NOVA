@@ -120,32 +120,17 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
     return liste.children.length ? liste : null;
   }
 
-  /* Les trois transcendances du heros — les passifs de Limit Break arrives
-     avec la version 2.0.
+  /* IL N'Y A PLUS DE SECTION « TRANSCENDANCES ».
 
-     Elles ne dependent d'AUCUNE arme, contrairement aux potentiels et aux
-     maitrises juste a cote : la section affiche la meme chose quel que soit
-     l'onglet d'arme ouvert. C'est voulu, et c'est ce que dit le jeu.
+     Elle listait les trois passifs de Limit Break separement, au-dessus des
+     armures gravees qui les redonnaient un par un : la meme phrase deux fois
+     sur une page qu'on lit en defilant. Pire, elle etait ambigue — Meliodas a
+     DEUX transcendances nommees « Transcendance de puissance : Technique »
+     avec le meme texte, impossible a distinguer hors de leur tenue.
 
-     La table est chargee avec le catalogue du wiki. Absente — un membre hors
-     ligne dont le cache est incomplet — la section disparait au lieu de
-     s'afficher vide. */
-  function blocTranscendances(charId){
-    const liste = (window.SEVEN_DS_TRANSCENDANCES || {})[charId];
-    if(!Array.isArray(liste) || !liste.length) return null;
-    const rendu = el("ol",{class:"wiki-pot wiki-transcendances"});
-    liste.forEach((transcendance, index) => {
-      if(!transcendance || !transcendance.texte) return;
-      rendu.appendChild(el("li",{},[
-        el("span",{class:"wiki-pot-tier", text:"T"+(index + 1)}),
-        el("span",{class:"wiki-pot-text"},[
-          el("b",{class:"wiki-transcendance-nom", text:transcendance.nom}),
-          el("span",{html:renderBonus(transcendance.texte)})
-        ])
-      ]));
-    });
-    return rendu.children.length ? rendu : null;
-  }
+     Les armures gravees tranchent, parce qu'elles disent CE QUI LA DONNE.
+     C'est la seule presentation qui reponde a la question que se pose un
+     membre : quelle piece dois-je monter. Voir `blocArmuresLiees`. */
 
   function blocStatsDeBase(charId){
     const personnage = (BUILD_STATS.charactersBySlug || {})[charId];
@@ -217,10 +202,18 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
         el("b",{class:"wiki-gravee-nom", text:nom})
       ]);
       if(transcendance && transcendance.texte){
+        /* L'arme est un REPERE, pas une condition : le passif suit la tenue,
+           et le bonus tient quelle que soit l'arme equipee. D'ou « conseillée
+           avec » — l'afficher sec ferait croire a une exigence. */
+        const arme = (WEAPON_ENUM[transcendance.arme] || {}).label
+          || transcendance.arme;
         corps.appendChild(el("span",{class:"wiki-gravee-trans"},[
           el("b",{class:"wiki-transcendance-nom", text:transcendance.nom}),
+          arme
+            ? el("span",{class:"wiki-gravee-arme", text:"Conseillée avec : " + arme})
+            : null,
           el("span",{html:renderBonus(transcendance.texte)})
-        ]));
+        ].filter(Boolean)));
       }
       liste.appendChild(el("li",{class:"wiki-gravee"},[
         el("img",{src:fichier, alt:"", loading:"lazy", title:nom}),
@@ -345,7 +338,6 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
 
     [
       repliable("Potentiels", blocPotentiels(entree.id, fiche.arme)),
-      repliable("Transcendances", blocTranscendances(entree.id)),
       repliable("Maîtrises d’arme", blocMaitrises(entree.id, fiche.arme)),
       repliable("Stats de base", blocStatsDeBase(entree.id)),
       repliable("Armures gravées", blocArmuresLiees(entree.id))
