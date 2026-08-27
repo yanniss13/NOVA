@@ -2,8 +2,8 @@
 
 **Date :** 2026-07-28
 **Base :** `main` = `e041807` (lot 1 livré, déployé, vérifié)
-**Suite de :** `2026-07-28-stats-builds-passation.md` (contexte général et
-décisions du propriétaire)
+**Suite de :** le lot 1 (document de passation supprimé au ménage du
+27 août 2026 : l'avancement se lit dans `git log`)
 
 ## 1. Objectif
 

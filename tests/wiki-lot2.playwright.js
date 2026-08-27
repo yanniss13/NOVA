@@ -241,6 +241,45 @@ const EFFECTIFS = {
     await page.locator("#wikiItemClose").click();
     await page.locator("#wikiItemOverlay.on").waitFor({ state:"detached" });
 
+    /* LA TRANSCENDANCE SUR LA FICHE DE LA PIÈCE.
+
+       C'est là qu'elle décide quelque chose : un membre qui ouvre une armure
+       gravée se demande s'il doit la monter jusqu'au bout, et la
+       transcendance ne tombe qu'au renforcement maximal.
+
+       Tristan est le cas qui discrimine — QUATRE tenues gravées, mais TROIS
+       transcendances. La quatrième ne doit afficher aucune section, comme une
+       arme sans passif juste au-dessus : une rubrique creuse ferait croire à
+       une donnée manquante. */
+    await page.locator("#wikiCategoryGravees").click();
+    await attendreTuiles(93);
+    await page.locator("#wikiFilterEngravedHero").selectOption({ label:"Tristan" });
+    await page.waitForFunction(() => {
+      const compte = document.querySelectorAll("#wikiGrid .wiki-tile").length;
+      return compte > 0 && compte < 93;
+    });
+    assert.equal(await tuiles().count(), 4, "Tristan a quatre tenues gravées");
+
+    const transcendancesVues = [];
+    for(let index = 0; index < 4; index++){
+      await tuiles().nth(index).click();
+      await page.locator("#wikiItemOverlay.on").waitFor();
+      if(await page.locator("#wikiItemBody .wiki-transcendance-nom").count()){
+        transcendancesVues.push(
+          await page.locator("#wikiItemBody .wiki-gravee-arme").textContent()
+        );
+      }
+      await page.locator("#wikiItemClose").click();
+      await page.locator("#wikiItemOverlay.on").waitFor({ state:"detached" });
+    }
+    assert.equal(transcendancesVues.length, 3,
+      "trois des quatre tenues de Tristan donnent une transcendance");
+    /* Chaque transcendance vise une arme différente du héros : deux fois la
+       même signalerait un rapprochement effondré en amont. */
+    assert.equal(new Set(transcendancesVues).size, 3,
+      "trois armes conseillées distinctes, reçu "
+      + JSON.stringify(transcendancesVues));
+
     /* Une pièce d'ensemble : le nom de l'ensemble, sa prose, et ses pièces
        sœurs — y compris celles de l'autre grille. */
     await page.locator("#wikiCategoryArmures").click();

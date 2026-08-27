@@ -239,7 +239,7 @@ a raison, la table du jeu pointe une clé périmée.
 
 ### Les potentiels : 31 divergences, dont 29 modélisées
 
-Voir `docs/potentiels-divergents.md`. C'est le seul défaut de fond trouvé.
+Voir `docs/potentiels-du-jeu.md`. C'est le seul défaut de fond trouvé.
 
 ### `grade_N` est le palier de potentiel
 
@@ -1052,6 +1052,61 @@ Le compte se ferme : **93 tenues gravées, 78 transcendables, 15 sans** — les
 quatrièmes tenues des 15 héros qui en ont quatre. Tristan est le cas qui
 discrimine dans les tests : quatre tenues, trois transcendances, donc un
 rapprochement fait dans l'ordre se ferait attraper.
+
+### L'arme de chaque transcendance — un repère, pas une condition
+
+`BindArmor_RecommendEquip_WeaponType` donne le type d'arme de chaque tenue
+transcendable. La correspondance est une **bijection sur les 26 héros** : les
+trois transcendances d'un héros visent ses trois armes, jamais deux fois la
+même. Et l'effet colle au kit à chaque fois — chez Ban, l'ultime au nunchaku,
+la compétence normale à l'épée à deux mains, le buff de Ténèbres d'équipe aux
+gantelets, qui sont justement son arme Ténèbres.
+
+⚠️ **Mais ce n'est qu'une recommandation.** Tranché par un joueur le 27 août
+2026 : le passif de transcendance est lié **à la tenue**, pas à l'arme. Porter
+« Cuisinier remplaçant » avec les gantelets garde les +50 % d'ultime. Le nom du
+champ le disait déjà, et les tables le confirmaient — le passif ne porte aucune
+condition d'arme, et les effets sont génériques (toutes les armes ont un
+ultime).
+
+`dps-effets.js` applique donc le bonus dès que la tenue est portée au
+renforcement maximal, **sans regarder l'arme**. L'arme est publiée pour
+l'affichage seul : le wiki l'annonce « Conseillée avec : Nunchaku », sous le
+nom de la transcendance.
+
+### Où la transcendance s'affiche
+
+**Deux endroits, et ce sont deux questions différentes.**
+
+Sur la **fiche du héros**, section « Armures gravées » : *laquelle de mes trois
+tenues dois-je monter ?* Les trois y sont côte à côte, comparables d'un coup
+d'œil.
+
+Sur la **fiche de la pièce**, section « Transcendance », entre le passif et les
+statistiques : *cette pièce-là vaut-elle d'être poussée jusqu'au bout ?* C'est
+la page qu'on consulte avant de dépenser ses matériaux, et le passif juste
+au-dessus ne répond qu'à moitié — il s'obtient dès le premier niveau, la
+transcendance seulement au renforcement maximal.
+
+Les 15 tenues non transcendables n'affichent **aucune** section, comme une arme
+sans passif : une rubrique creuse ferait croire à une donnée manquante.
+
+### Une seule section, celle des armures gravées
+
+La fiche de héros a porté une section « Transcendances » du 26 au 27 août 2026,
+listant les trois passifs. Elle a été **retirée** : les armures gravées, juste
+en dessous, redonnaient les mêmes trois phrases en disant **en plus quelle
+pièce les donne**.
+
+Le cas qui tranche est Meliodas. Deux de ses transcendances portent le même nom
+*et* le même texte — « Transcendance de puissance : Technique », dégâts de
+compétence normale +50 %. Hors de leur tenue, elles sont **indiscernables**. Sur
+les armures gravées, elles ne le sont plus : l'une vient de « Défense simple »
+(conseillée à la hache), l'autre d'« Une nouvelle aventure » (épée à une main).
+
+La leçon vaut au-delà de ce cas : une liste d'effets sans leur source n'est pas
+une information, c'est un rappel. La question d'un membre n'est jamais « quels
+sont mes trois passifs » mais « quelle pièce dois-je monter ».
 
 ## Savoir si le jeu a bougé sans tout ré-extraire — 27 août 2026
 

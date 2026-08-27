@@ -33,6 +33,7 @@ const gravees = charger("stats-build.js", "SEVEN_DS_BUILD_STATS").engravedByFile
    serait publiee sans jamais etre comptee. */
 const CIBLES = new Set(["normal", "normal-skill", "special", "ultimate", "tag-skill"]);
 let regles = 0;
+const armesVues = [];
 
 /* Les tenues deja reclamees, pour prouver qu'aucune n'en porte deux. */
 const tenuesVues = new Map();
@@ -97,6 +98,20 @@ slugs.forEach(slug => {
     assert.equal(entree.promotion, 3,
       entree.id + " : palier de promotion inattendu (" + entree.promotion + ")");
 
+    /* UNE TRANSCENDANCE VA AVEC UNE ARME, ET LES TROIS SE PARTAGENT LES TROIS
+       ARMES DU HEROS.
+
+       Ce n'est pas une decoration : le jeu range ainsi ses transcendances, et
+       l'effet colle au kit de l'arme — l'ultime au nunchaku de Ban, la
+       competence normale a son epee, le buff d'equipe a ses gantelets. Une
+       arme qui n'est pas la sienne, ou deux transcendances sur la meme arme,
+       signifie que le rapprochement s'est effondre en amont. */
+    const armesDuHeros = (meta[slug].weapons || []).map(slot => slot.weapon);
+    assert.ok(armesDuHeros.includes(entree.arme),
+      entree.id + " : arme « " + entree.arme + " » absente de "
+      + JSON.stringify(armesDuHeros));
+    armesVues.push(slug + "/" + entree.arme);
+
     /* Une tenue ne donne qu'une transcendance. Si deux la reclamaient, le
        rapprochement se serait effondre quelque part en amont — et le calcul
        compterait deux fois le meme bonus. */
@@ -145,6 +160,12 @@ slugs.forEach(slug => {
 });
 
 assert.equal(total, 78, "78 transcendances attendues, recu : " + total);
+
+/* Bijection : 78 couples heros/arme distincts. Deux transcendances sur la
+   meme arme d'un meme heros passeraient les controles individuels et se
+   feraient attraper seulement ici. */
+assert.equal(new Set(armesVues).size, 78,
+  "78 couples heros/arme distincts attendus, recu : " + new Set(armesVues).size);
 
 /* 30 regles sur 78 : le reste vise l'equipe (43) ou la cible (5). Si ce
    compte baisse, une phrase du jeu a change de tournure et un bonus est

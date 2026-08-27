@@ -188,11 +188,10 @@
 .wiki-pot{margin:8px 0 4px;padding-left:18px}
 .wiki-pot li{margin:0 0 6px}
 .wiki-pot-tier{font-weight:700;color:var(--gold);margin-right:6px}
-/* Une transcendance porte un nom ET une description, la ou un potentiel n'a
-   qu'un texte : le nom passe sur sa propre ligne, sinon les deux se lisent
-   comme une seule phrase. Les noms sont longs — « Transcendance de puissance :
-   Frappe mortelle » — et beaucoup se ressemblent d'un heros a l'autre. */
-.wiki-transcendances .wiki-pot-text{display:block}
+/* Le nom d'une transcendance passe sur sa propre ligne, au-dessus de sa
+   description : ils se liraient sinon comme une seule phrase. Les noms sont
+   longs — « Transcendance de puissance : Frappe mortelle » — et se
+   ressemblent beaucoup d'un heros a l'autre. */
 .wiki-transcendance-nom{display:block;color:var(--gold);margin-bottom:2px}
 .wiki-stats{margin:8px 0 4px;padding:0;list-style:none}
 .wiki-stat{
@@ -218,6 +217,10 @@
 .wiki-gravee-corps{min-width:0;display:flex;flex-direction:column;gap:2px}
 .wiki-gravee-nom{color:var(--parchment)}
 .wiki-gravee-trans{display:block;font-size:.9rem;line-height:1.45}
+/* L'arme de la transcendance : un reperage, pas un titre. */
+.wiki-gravee-arme{
+  display:block;color:var(--muted);font-size:.8rem;margin-bottom:2px
+}
 
 /* ---------- Fiche d'objet : arme, piece, armure gravee ---------- */
 /* L'en-tete reprend la composition de la fiche de heros — vignette a gauche,

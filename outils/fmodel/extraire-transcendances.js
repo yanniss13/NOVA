@@ -82,6 +82,32 @@ for (const ligne of Object.values(costumes)) {
   parCostume[String(ligne.ItemId)] = ligne;
 }
 
+/* CHAQUE TRANSCENDANCE VA AVEC UNE ARME, ET UNE SEULE.
+
+   `BindArmor_RecommendEquip_WeaponType` porte le type d'arme de la tenue. La
+   correspondance est une BIJECTION verifiee sur les 26 heros : leurs trois
+   tenues transcendables visent leurs trois armes, jamais deux fois la meme.
+   Ban : nunchaku, epee a deux mains, gantelets — et l'effet colle a chaque
+   fois au kit de l'arme (l'ultime au nunchaku, la competence normale a
+   l'epee, le buff de Tenebres d'equipe aux gantelets).
+
+   MAIS L'ARME N'EST QU'UNE RECOMMANDATION. Tranche par un joueur le 27 aout
+   2026 : le passif de transcendance est lie A LA TENUE, pas a l'arme. Porter
+   « Cuisinier remplacant » avec les gantelets garde donc les +50 % d'ultime.
+   Le nom du champ le disait deja — « Recommend » — et les tables le
+   confirmaient : le passif ne porte aucune condition d'arme, et les effets
+   sont generiques (toutes les armes ont un ultime).
+
+   On publie donc l'arme comme un REPERE, jamais comme une condition de
+   calcul : `dps-effets.js` applique le bonus des que la tenue est portee au
+   renforcement maximal, quelle que soit l'arme. */
+const ARMES_DU_SITE = {};
+for (const heros of Object.values(global.window.SEVEN_DS_META || {})) {
+  for (const slot of heros.weapons || []) {
+    if (slot && slot.weapon) ARMES_DU_SITE[slot.weapon.toLowerCase()] = slot.weapon;
+  }
+}
+
 const tenueParTranscendance = {};
 for (const [fichier, tenue] of Object.entries(
   global.window.SEVEN_DS_BUILD_STATS.engravedByFile || {}
@@ -93,9 +119,11 @@ for (const [fichier, tenue] of Object.entries(
   const equipement = equipements[(costume.Open_Condition_Value || [])[0]];
   const limite = equipement && (equipement.LimitBreak_Passive || [])[0];
   if (!limite) continue;
+  const brute = (equipement.BindArmor_RecommendEquip_WeaponType || [])[0];
   tenueParTranscendance[String(limite.EquipPassiveID).toLowerCase()] = {
     tenue: fichier,
-    promotion: limite.PromotionLevel
+    promotion: limite.PromotionLevel,
+    arme: ARMES_DU_SITE[String(brute || '').toLowerCase()] || null
   };
 }
 
@@ -176,10 +204,12 @@ for (const [cle, ligne] of Object.entries(base)) {
 
   const porteuse = tenueParTranscendance[cle];
   if (!porteuse) { trous.push(cle + ' : aucune tenue gravee ne la donne'); continue; }
+  if (!porteuse.arme) { trous.push(cle + " : aucun type d'arme sur sa tenue"); continue; }
 
   (parHeros[slug] = parHeros[slug] || []).push({
     rang: decoupe[2], id: cle, nom, texte,
     tenue: porteuse.tenue, promotion: porteuse.promotion,
+    arme: porteuse.arme,
     regle: regleDe(texte)
   });
 }
@@ -222,6 +252,7 @@ const corps = heros.map(slug => {
     + ', texte:' + JSON.stringify(entree.texte)
     + ',\n      tenue:' + JSON.stringify(entree.tenue)
     + ', promotion:' + JSON.stringify(entree.promotion)
+    + ', arme:' + JSON.stringify(entree.arme)
     + (entree.regle
       ? ',\n      regle:{ cible:' + JSON.stringify(entree.regle.cible)
         + ', valeur:' + entree.regle.valeur

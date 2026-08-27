@@ -138,15 +138,17 @@ const { chromium } = require("playwright");
 
     /* Les blocs repliables tirent des données déjà chargées par l'appli.
 
-       « Transcendances » s'est intercalé avec la version 2.0, le 26 août 2026.
-       Sa place est voulue : c'est, avec les potentiels, ce qu'un membre compare
-       d'un héros à l'autre, et les deux se lisent ensemble. */
+       Une section « Transcendances » a existé du 26 au 27 août 2026, puis a
+       été retirée : les armures gravées portent les mêmes trois passifs, et
+       elles disent en plus QUELLE PIÈCE les donne. La liste séparée répétait
+       donc la même phrase quelques lignes plus haut — et sans sa tenue, elle
+       était même ambiguë : Meliodas a deux transcendances de même nom et de
+       même texte. */
     const replis = await page.locator(".wiki-fold > summary")
       .evaluateAll(nodes => nodes.map(node => node.textContent));
     assert.deepEqual(
       replis,
-      ["Potentiels", "Transcendances", "Maîtrises d’arme", "Stats de base",
-       "Armures gravées"]
+      ["Potentiels", "Maîtrises d’arme", "Stats de base", "Armures gravées"]
     );
 
     /* La navigation clavier passe au héros suivant. Le clavier GLOBAL, pas
