@@ -253,6 +253,30 @@ const EFFECTIFS = {
        une donnée manquante. */
     await page.locator("#wikiCategoryGravees").click();
     await attendreTuiles(93);
+
+    /* Le plafond des tenues gravées est +15. Les cinq premiers paliers
+       utilisent la même progression que les armures ordinaires, puis les dix
+       paliers de transcendance poursuivent jusqu'au multiplicateur x1,50.
+       "Une nouvelle aventure" distingue le cas : ses valeurs brutes à
+       qualité 130 sont 17 342 / 1 324 / 6 207 / 8,12 %, donc les afficher
+       telles quelles prouve que le +15 a été ignoré. */
+    await page.locator("#wikiFilterEngravedHero")
+      .selectOption({ label:"Meliodas" });
+    await page.locator("#wikiSearch").fill("Une nouvelle aventure");
+    await attendreTuiles(1);
+    await tuiles().first().click();
+    await page.locator("#wikiItemOverlay.on").waitFor();
+    assert.deepEqual(
+      await page.locator("#wikiItemBody .wiki-stat-value")
+        .evaluateAll(nodes => nodes.slice(0, 4)
+          .map(node => node.textContent.replace(/\s/g, ""))),
+      ["+26013", "+1986", "+9311", "+12,18%"],
+      "les statistiques au maximum doivent appliquer le renforcement +15"
+    );
+    await page.locator("#wikiItemClose").click();
+    await page.locator("#wikiItemOverlay.on").waitFor({ state:"detached" });
+    await page.locator("#wikiSearch").fill("");
+
     await page.locator("#wikiFilterEngravedHero").selectOption({ label:"Tristan" });
     await page.waitForFunction(() => {
       const compte = document.querySelectorAll("#wikiGrid .wiki-tile").length;

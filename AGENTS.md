@@ -628,8 +628,12 @@ Correspondance des domaines du moteur :
 Le nombre de segments d'une pièce vaut toujours
 `max(1, tierBoundaries.length - 1)`. Ne jamais créer une table `equiplv_N` :
 ce nom n'est qu'un identifiant redondant. Le renforcement utilise exclusivement
-`REINFORCE_PROGRESSION = [10300, 10700, 11200, 11800, 12500]`, soit les
-multiplicateurs exacts des niveaux +1 à +5.
+`REINFORCE_PROGRESSION`, soit les multiplicateurs des niveaux +1 à +15. Les
+cinq premiers `[10300, 10700, 11200, 11800, 12500]` viennent directement du
+client. Les dix suivants poursuivent par pas de 250 jusqu'à `15000`
+(+15 = ×1,50) et ne concernent que les tenues gravées ; leur provenance et
+leur vérification sur 99 valeurs sont consignées dans
+`7ds-stats/transcendance-multiplicateurs.json`.
 
 > **Attention — les bonus d'ensemble ne s'activent pas uniformément à 2 et
 > 4 pièces.** Lire pour chaque set ses propres `twoCount`, `fourCount` et

@@ -182,7 +182,15 @@ import {
   }
 
   const ARMOR_LEVEL_ORIGIN_MODE = "segment-lower-bound";
-  const REINFORCE_PROGRESSION = [10300, 10700, 11200, 11800, 12500];
+  /* +1 a +5 viennent directement du client. Les tenues gravees poursuivent
+     jusqu'a +15 : les multiplicateurs +6 a +15 ont ete reconstruits depuis
+     les fiches publiees de quatre objets, sans ecart sur 99 valeurs. La
+     provenance complete vit dans 7ds-stats/transcendance-multiplicateurs.json. */
+  const REINFORCE_PROGRESSION = [
+    10300, 10700, 11200, 11800, 12500,
+    12750, 13000, 13250, 13500, 13750,
+    14000, 14250, 14500, 14750, 15000
+  ];
   function reinforceMultiplier(level){
     const step = Math.trunc(Number(level) || 0);
     if(step <= 0) return 1;
