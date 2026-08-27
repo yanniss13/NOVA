@@ -10,7 +10,7 @@
    ouvertures dont il a besoin. C'est ce qui permet a une seule modale de
    servir les trois natures d'objet. */
 
-import { ARMOR_LABELS, JEWEL_LABELS } from "../noyau/constantes.js";
+import { ARMOR_LABELS, JEWEL_LABELS, WEAPON_ENUM } from "../noyau/constantes.js";
 import { el } from "../noyau/dom.js";
 import { charOf } from "../metier/catalogue.js";
 import { buildGearDefinition, gearStatValue } from "../metier/build-config.js";
@@ -159,6 +159,43 @@ import {
     ];
   }
 
+  /* LA TRANSCENDANCE QUE CETTE PIECE DONNE.
+
+     C'est ici qu'elle compte le plus : un membre qui ouvre la fiche d'une
+     armure gravee se demande s'il doit la monter. Le passif juste au-dessus
+     ne repond qu'a moitie — il s'obtient des le premier niveau, la
+     transcendance seulement au bout.
+
+     78 des 93 tenues gravees en donnent une. Les 15 autres n'affichent donc
+     rien, et ce n'est pas un trou : ce sont les quatriemes tenues des heros
+     qui en ont quatre.
+
+     La condition de renforcement est repetee ici, alors que la fiche de heros
+     la dit deja en tete de sa section. Ce n'est pas un doublon : les deux
+     pages s'ouvrent independamment, et celle-ci est justement celle qu'on
+     consulte avant de depenser ses materiaux. */
+  function transcendancePiece(piece){
+    if(!piece || piece.nature !== "gravee") return [];
+    const liste = (window.SEVEN_DS_TRANSCENDANCES || {})[piece.heros] || [];
+    const transcendance = liste.find(item => item && item.tenue === piece.file);
+    if(!transcendance || !transcendance.texte) return [];
+    const arme = (WEAPON_ENUM[transcendance.arme] || {}).label
+      || transcendance.arme;
+    return [
+      titreSection("Transcendance", "passif"),
+      el("p",{ class:"wiki-hero-hint",
+        text:"Débloquée en montant cette pièce au renforcement maximal (+15). "
+          + "Elle n’agit que si la tenue est portée."
+      }),
+      el("p",{ class:"wiki-transcendance-nom", text:transcendance.nom }),
+      arme
+        ? el("p",{ class:"wiki-gravee-arme", text:"Conseillée avec : " + arme })
+        : null,
+      el("p",{ class:"wiki-skill-desc",
+        html:renderBonus(transcendance.texte) })
+    ].filter(Boolean);
+  }
+
   /* Les statistiques a leur plafond : qualite maximale et renforcement
      maximal.
 
@@ -235,6 +272,7 @@ import {
         ? blocHeros(piece, contexte)
         : blocEnsemble(piece, contexte))
       .concat(passifPiece(definition, contexte))
+      .concat(transcendancePiece(piece))
       .concat([
         titreSection("Statistiques au maximum", "normal"),
         statistiquesPiece(definition),
