@@ -1,4 +1,4 @@
-# Extraction des fichiers du jeu (FModel) — état au 25 août 2026
+# Extraction des fichiers du jeu (FModel) — état au 26 août 2026
 
 Point d'arrêt d'une session interrompue. Ce qui est écrit ici a été **vérifié en
 exécutant**, pas planifié. Ce qui reste à faire est signalé comme tel.
@@ -810,17 +810,162 @@ vorace n'est pas « l'arme de Ban » — `Cudgel3c` est déjà manié par Diane,
 Griamore, Howzer et Slader. Les fiches d'arme n'ont d'ailleurs pas de champ
 « Only For », contrairement aux armures gravées.
 
+## La version 2.0 — 26 août 2026
+
+Le jeu est passé en `2.0.0.0`, hash `ad1d412c970_281752`, mise à jour Steam du
+build `24651645` vers `24909433` — 4,53 Go téléchargés, 16,6 Go recomposés.
+
+### Le usmap de la 2.0
+
+| | octets | md5 | noms |
+|---|---|---|---|
+| `mappings-1.7.usmap` | 3 201 369 | | 78 432 |
+| `mappings-1.8.usmap` | 3 232 103 | `4ac00d9a71d7ea1be4fca0dac02e98dc` | 79 213 |
+| **`ban-update.usmap`** | 3 281 061 | `07531df1f5994e3f38926e6c52f463aa` | **80 456** |
+
+Un `.usmap` **ne contient aucun numéro de version du jeu** : les seuls octets de
+version sont ceux du format (`0x04`, identique aux trois). Les noms `1.7` / `1.8`
+sont des étiquettes posées à la main. Pour dater un usmap, il faut comparer son
+contenu — 1 187 noms nouveaux et 94 disparus entre le 1.8 et celui-ci.
+
+Le format se lit ainsi : magie `0x30C4`, version sur un octet, puis le corps
+**à l'offset 16** — nombre de noms sur 4 octets, puis chaque nom précédé de sa
+longueur sur **deux** octets. Partir de l'offset 12 donne du charabia qui
+consomme quand même tout le fichier sans lever : le décodage semble marcher.
+
+### LE PIÈGE : un usmap périmé ment en silence
+
+L'export du 26 août a d'abord tourné avec le usmap 1.8 sur les fichiers 2.0.
+Résultat, invisible sans comparaison :
+
+- **9 tables 2.0** sorties en coquilles vides (~460 octets, un `RowStruct` et
+  rien dedans) : `UELabyrinthos*`, `UEEventBingo*`, `UEPetDoubleJumpTable`…
+- **24 tables lisibles en 1.8 devenues vides** : `SoundSFXAssetTable`
+  14 501 → 0, `Option_StaticTable` 3 464 → 0, `PortalTable` 1 097 → 0,
+  `ItemTable_Data_Equip` 760 → 0.
+- Des **troncatures silencieuses**, les plus vicieuses parce qu'elles ne sont
+  pas vides : `DungeonTable` 132 → **1**, `SectorAreaOpenTable` 76 → **1**,
+  `SoundVoiceAssetTable` 27 067 → **4 793**. Le décodeur s'arrête à la
+  première ligne qu'il ne comprend pas.
+
+Le journal de FModel le dit, à condition de le lire : `Mappings pulled from
+'<fichier>'`, et des `Missing prop mappings for type <UEChose>` pour les types
+inconnus. **Vérifier cette ligne avant toute analyse.**
+
+Bilan des trois combinaisons, en tables `DataTable` porteuses de lignes :
+
+| extraction | avec lignes | vides |
+|---|---|---|
+| jeu 1.8 + usmap 1.8 | 833 | 1 |
+| jeu 2.0 + usmap 1.8 | 832 | **34** |
+| jeu 2.0 + usmap 2.0 | **865** | 1 |
+
+### Vérifier qu'aucune colonne n'a décalé
+
+Le décalage de colonnes documenté plus haut (section du 25 août) ne s'est PAS
+produit au passage 1.8 → 2.0, et c'est vérifié plutôt que supposé. La méthode,
+à refaire à chaque usmap :
+
+1. Comparer les tables **ligne par ligne**, pas fichier par fichier : un diff
+   de 217 793 lignes peut ne contenir aucun écart de valeur.
+2. Pour chaque ligne commune, comparer **champ par champ**. Les seuls écarts
+   admissibles sont des colonnes AJOUTÉES en fin de ligne, avec leur valeur
+   par défaut sur l'existant.
+3. Se méfier des **réordonnancements**. Sur 23 entrées de maîtrise d'arme, les
+   nœuds avaient changé d'ordre sans changer de valeur — tous de grade 1, donc
+   sans conséquence. Comparer les ensembles triés, pas les tableaux.
+
+Ce qui a réellement changé côté colonnes : `Value_Add_11` à `Value_Add_15` sur
+`Option_StaticTable` et `GrowthTypeRangeTable`, `Hide_Passive_Level` sur les
+passifs d'équipement, et `LimitBreak_Passive` / `LimitBreak_Option` /
+`RewardBox_PopupName` sur toutes les `ItemTable_Data_*`.
+
+### Ce que la 2.0 apporte
+
+- **Ban** (`1021`), jouable : trois armes, `Base_Skill_Key: "1021"`, sa ligne
+  dans `HeroMastery`. Son arbre de maîtrise `210211*`–`210213*` existait déjà
+  sous le nom générique `ui_heromastery_weapon_title_special`, renommé en
+  `ui_heromastery_weapon_title_cudgel3c` — « Maîtrise des nunchakus ».
+- **Khala** (`1029`) : posée mais pas sortie. `Base_Skill_Key: "None"`,
+  `StatGroupTid` recopié de Daisy (`stat_1028`), portraits pointant sur
+  `liz_001`, **452 fichiers d'animation et zéro image**.
+- **Le Limit Break** : 78 passifs `eplb_<héros>_b/c/d`, trois par héros pour 26
+  héros, plus 156 lignes `armor_limitbreak1` / `armor_limitbreak2` — deux
+  paliers, armures uniquement.
+- **Les ultimes combinés** : `CombineSkillTable` passe de 630 à 672. Les 42
+  combinaisons ajoutées sont toutes celles de Ban, aucune perdue. Attention,
+  les identifiants de ligne ont été **renumérotés** : comparer par paire
+  (propriétaire, frappeur), jamais par numéro, sous peine de croire que des
+  héros se sont fait voler leurs combinaisons.
+- Deux montures : le **Destrier royal** (`26070118`, le seul familier à double
+  saut) et le **Bourdoléphant du miel** (`26070315`).
+- Labyrinthos et son balayage, le Donjon du 『Livre stellaire』, le boss
+  **Monspiet (Indura)**, un bingo, une lucky box, le chapitre 07.
+
+### La Chaîne, la mécanique de Ban
+
+`ban_cudgel3c_passive` (« Rythme jubilatoire ») pose un cumul de **Chaîne**
+chaque fois que Ban touche trois fois la même cible, jusqu'à 5, pour 20 s.
+Chaque cumul vaut +2 % de percement et +6 % de chances critiques, et plusieurs
+effets du nunchaku s'indexent en plus dessus. Confirmé par un joueur : sur un
+boss, la pile reste saturée. Les effets qui en dépendent sont donc modélisés
+au maximum, en `passif-max`.
+
+Trois mécaniques de Ban restent **inconnues** et ses effets sont hors du
+comparateur DPS : « Détournement », « Brèche », et la compétence normale
+améliorée à l'épée à deux mains.
+
+### Deux familles d'images chez 7dsorigin
+
+Un même costume est servi sous deux formes, et **`iconUrl` publié dans
+`armures-gravees.json` pointe sur la mauvaise** pour notre usage :
+
+| chemin | rend | format |
+|---|---|---|
+| `/images/costumes/icon_<Héros>_00N.webp` | le personnage qui porte la tenue | 256 × 512 |
+| `/images/items/<gameId>.webp` | **la tenue seule** | 256 × 256 |
+
+Le catalogue veut la pièce d'équipement, donc le second. Même logique que les
+bijoux dans `telecharger-images.py`.
+
+Les badges élément/rôle vivent ailleurs encore :
+`/images/ui/role-elements/<element>_<role>.webp`, en 50 × 50. Ils ne sont pas
+dans le jeu — c'est l'artwork de 7dsorigin. Le rôle donne la forme, l'élément
+la couleur. `dark_buster` manquait : les Gantelets de Ban sont la première arme
+Buster de Ténèbres, et un badge absent n'affiche qu'un carré blanc sans rien
+casser. `tests/badges-role-element.test.js` garde désormais le cas.
+
+### SevenCodex publie en retard
+
+SevenCodex n'avait pas Ban le jour de sa sortie — 25 personnages, ceux d'avant
+la 2.0. `generate-competences.py` traite maintenant un 404 sur leur fiche comme
+« pas encore chez eux » et se rabat sur les recharges arrondies de 7dsorigin,
+qu'`extraire-recharges.js` remplace ensuite par celles du client. Toute autre
+erreur reste levée.
+
+L'ordre compte : `extraire-recharges.js` s'apparie au catalogue commité, donc
+un héros neuf n'a ses recharges précises qu'au **second** passage.
+
 ## Ce qui reste à faire
 
-1. **Exploiter `PC_SkillTable`** : corriger les 4 recharges fausses de
-   `data/competences.js` (dont l'inversion Q/R d'Elizabeth), décider si on
-   publie les décimales que SevenCodex tronque, et regarder ce que valent
-   `CoolTimeGroup` (315 compétences) et l'économie de jauges.
-2. **Question 3 des buffs de soutien** — voir
+1. **Les trois mécaniques de Ban** — « Détournement », « Brèche » et la
+   compétence normale améliorée à l'épée à deux mains. Neuf de ses effets
+   restent hors du comparateur DPS (`NON_INCLUS_SPECIFIQUES`) tant qu'elles
+   ne sont pas décrites. Seul un joueur peut trancher.
+2. **Les transcendances dans le calcul** — elles s'affichent sur la fiche du
+   wiki depuis le 26 août, elles ne comptent pas encore.
+3. **Les buffs d'équipe de Ban** — `data/buffs-supports.js` est écrit à la
+   main et ne le contient pas : joué en soutien, son apport est ignoré.
+4. **Khala** le jour où elle sortira : elle demandera une passe complète, de
+   l'image au catalogue.
+5. **`CoolTimeGroup`** (315 compétences) et l'économie de jauges, jamais
+   regardés. Les 4 recharges fausses et les décimales de SevenCodex sont
+   réglées : `extraire-recharges.js` les lit dans le client.
+6. **Question 3 des buffs de soutien** — voir
    `docs/buffs-portee-lue-dans-le-jeu.md` : le taux elementaire du receveur
    multiplie-t-il le buff plat ? Question de formule, pas de table. Seule une
    mesure en jeu repond.
-3. **La constante C du calcul de degats** — intestable depuis les fichiers, il
+7. **La constante C du calcul de degats** — intestable depuis les fichiers, il
    faut un coup sur cible defendue.
 
 ## Note d'environnement
@@ -845,6 +990,8 @@ Dans `outils/fmodel/`, à lancer avec `node` :
 | `aligner-heros.js` | apparie les 27 héros du jeu aux 25 du site |
 | `comparer-masteries.js` | maîtrise commune + types d'armes |
 | `comparer-armes.js` | les 375 entrées de maîtrises d'arme |
+| `extraire-recharges.js` | les recharges de `PC_SkillTable`, au millième |
+| `extraire-transcendances.js` | les 78 passifs de Limit Break → `data/transcendances.js` |
 
 Appel type :
 
