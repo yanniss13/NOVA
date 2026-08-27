@@ -1,4 +1,4 @@
-# Extraction des fichiers du jeu (FModel) — état au 26 août 2026
+# Extraction des fichiers du jeu (FModel) — état au 27 août 2026
 
 Point d'arrêt d'une session interrompue. Ce qui est écrit ici a été **vérifié en
 exécutant**, pas planifié. Ce qui reste à faire est signalé comme tel.
@@ -911,9 +911,43 @@ effets du nunchaku s'indexent en plus dessus. Confirmé par un joueur : sur un
 boss, la pile reste saturée. Les effets qui en dépendent sont donc modélisés
 au maximum, en `passif-max`.
 
-Trois mécaniques de Ban restent **inconnues** et ses effets sont hors du
-comparateur DPS : « Détournement », « Brèche », et la compétence normale
-améliorée à l'épée à deux mains.
+### Les trois mécaniques de Ban — résolues le 27 août 2026
+
+Elles étaient données pour inconnues la veille. Elles ne le sont plus : les
+valeurs se lisent dans `Table/Buff/BuffTable`, une fois le bon nom de buff
+trouvé. Le hotfix du 26 au soir a livré les traductions françaises qui
+manquaient, et c'est un libellé traduit qui a donné le dernier nom.
+
+| Mécanique | Buff | Ce qu'il fait vraiment |
+| --- | --- | --- |
+| **Brèche** | `302293005` | Résistance au Déluge −20 %, dégâts subis **+25 %** |
+| **Brèche** (renforcée) | `302293024` | Résistance au Déluge −20 %, dégâts subis **+55 %** |
+| **Détournement** | `302293021` | `F_Def → Dark_Res` −20 % |
+| **Berserker** | `302292002` / `302292021` | Dégâts crit. +20 %, défense crit. +25 % |
+| **Berserker** (complet) | `302292024` | Dégâts crit. **+50 %**, défense crit. +25 %, dégâts +20 % |
+
+Deux pièges se cachent là-dedans, et ils illustrent la règle de la maison —
+**le code de la stat tranche, jamais la prose du jeu**.
+
+Le premier : les deux lignes de Brèche portent `ActiveElement: None`. La hausse
+des dégâts subis porte donc sur **tous** les dégâts, alors que le texte français
+dit « dégâts des Ténèbres subis ». Le texte se trompe, pas la table.
+
+Le second : Détournement n'est pas un −20 % plat. C'est `F_Def → Dark_Res`, une
+réduction **indexée sur la défense** du porteur. Lu de travers, on obtient un
+tout autre nombre.
+
+Enfin, le +25 % et le +55 % de Brèche ne se contredisent pas : ce sont deux
+lignes distinctes. Le texte de la compétence décrit la première, la table de
+buffs publiée par 7dsorigin affiche la seconde.
+
+**Berserker est permanent, par arithmétique.** L'ultime de l'épée à deux mains
+y fait entrer pour 12 s ; sa recharge est de 10 s. Joué sur recharge, l'état ne
+retombe jamais — ce qui autorise `passif-max` sur les effets qui en dépendent.
+Ce n'est pas une hypothèse de confort comme la saturation de Chaîne, c'est une
+soustraction. Si un patch porte la recharge au-delà de 12 s, la règle devient
+fausse : la vérification tient dans `data/competences.js`, entrée
+`ban_sword2h_skill_r`.
 
 ### Deux familles d'images chez 7dsorigin
 
@@ -946,26 +980,207 @@ erreur reste levée.
 L'ordre compte : `extraire-recharges.js` s'apparie au catalogue commité, donc
 un héros neuf n'a ses recharges précises qu'au **second** passage.
 
+## Les transcendances entrent dans le calcul — 27 août 2026
+
+### La règle du jeu, et pourquoi aucun champ n'a été ajouté
+
+Une transcendance n'agit **que si la tenue gravée qui l'a donnée est portée**.
+Ce n'est pas un bonus de compte.
+
+Elle exige en plus le dernier palier de promotion de la pièce. Le site ne suit
+pas la promotion — et n'en a pas besoin, parce que `ItemTable_Growth_Promotion`
+(groupe `limitbr_armor_t5_default`, identique pour les 78) plafonne le
+renforcement palier par palier :
+
+| Palier | Renforcement max | Réussite |
+| --- | --- | --- |
+| 0 (départ) | +5 | — |
+| 1 | +10 | 80 % |
+| 2 | **+14** | 50 % |
+| 3 | **+15** | 30 % |
+
+**On ne peut donc pas atteindre +15 sans avoir transcendé trois fois.** Le
+renforcement maximal *prouve* la transcendance, et c'est ce que teste
+`dps-effets.js`. Attention au palier 2 : il plafonne à **+14**, pas +15 — une
+suite lue « +5 / +10 / +15 » ferait compter le bonus un cran trop tôt.
+
+Le sens de l'erreur est voulu : une pièce transcendée mais pas encore renforcée
+à fond passe pour non transcendée, et son bonus manque. Le chiffre est
+sous-estimé, jamais flatté — même règle que le niveau de passif inconnu.
+
+Les taux de réussite ci-dessus donnent leur sens à
+`ui_menu_limitbreak_failed_rate` : la troisième transcendance rate deux fois
+sur trois.
+
+### Les 30 règles, dérivées de cinq phrases
+
+Le jeu **ne publie pas** la statistique touchée. `SkillTable` ne contient
+qu'une coquille vide de passif, et `BuffTable` n'en cite qu'une sur trois, sans
+ligne d'abilité : le calcul est côté serveur. Seule la phrase française dit à
+quoi le nombre se rapporte.
+
+`extraire-transcendances.js` porte donc une table de **cinq phrases** — la
+seule interprétation du fichier — ancrée sur la phrase entière (`^…$`) et non
+sur un fragment, sans quoi « Augmente les dégâts des Ténèbres de tous les héros
+alliés de 30 % » passerait pour un bonus au héros :
+
+| Phrase | Cible | Combien |
+| --- | --- | --- |
+| Augmente les dégâts de compétence normale de N % | `normal-skill` | 14 |
+| Augmente les dégâts d'attaque ultime de N % | `ultimate` | 9 |
+| Augmente les dégâts d'attaque spéciale de N % | `special` | 5 |
+| Augmente les dégâts d'attaque normale de N % | `normal` | 1 |
+| Augmente les dégâts de compétence de relève de N % | `tag-skill` | 1 |
+
+Ce que la table ne reconnaît pas n'a **pas** de règle, et l'extracteur affiche
+le compte. Un patch qui reformule une phrase fera donc *baisser* ce compte au
+lieu de publier un bonus muet — `tests/transcendances-catalogue.test.js` refuse
+tout écart à 30, et vérifie pour chacune que la valeur stockée est bien le
+nombre qui suit immédiatement la phrase citée.
+
+### Le lien tenue ↔ transcendance
+
+Par identifiants, jamais par nom : deux héros portent « Sortie décontractée ».
+
+```
+engravedByFile[fichier].slug  →  ban-costume-134102102
+CostumeTable                  →  Open_Condition_Value = 133274001
+ItemTable_Data_Equip          →  LimitBreak_Passive = EpLb_Ban_B
+```
+
+Le compte se ferme : **93 tenues gravées, 78 transcendables, 15 sans** — les
+quatrièmes tenues des 15 héros qui en ont quatre. Tristan est le cas qui
+discrimine dans les tests : quatre tenues, trois transcendances, donc un
+rapprochement fait dans l'ordre se ferait attraper.
+
+## Savoir si le jeu a bougé sans tout ré-extraire — 27 août 2026
+
+Un hotfix est tombé **le soir même de l'extraction 2.0**. Méthode pour mesurer
+ce qu'il a changé sans relancer cinq heures d'export.
+
+### Établir qu'il y a eu un patch
+
+`C:/Program Files (x86)/Steam/logs/content_log.txt` tient l'historique complet
+des mises à jour, horodaté. La ligne qui compte :
+
+```
+[2026-08-26 19:21:39] AppID 3679080 finished update, 1 mounted depots (BuildID 24929381)
+```
+
+L'extraction du matin portait sur le **BuildID 24909433**, celle du soir sur
+**24929381** : 31 fichiers mis à jour, 35,7 Mo téléchargés. Une date de fichier
+ne suffit pas à le dire — Steam réécrit un pak entier pour un delta, et un
+`LastWriteTime` change sans qu'aucun octet utile ne bouge.
+
+Le manifeste du jeu, lui, donne sa propre version :
+`Saved/PersistentDownloadDir/PakCache/CachedBuildManifest.txt`, en tête,
+`$BUILD_ID = 2.0.1.1`. Si `LocalManifest.txt` porte les mêmes SHA1, le client
+est à jour et rien n'est en attente.
+
+### Prouver qu'aucun asset n'a été ajouté ni retiré
+
+FModel journalise chaque pak monté avec son nombre de fichiers :
+
+```
+Mount: Pak "pakchunk950-Windows.pak": 2928 files, mount point: ...
+```
+
+Deux sessions encadrant le patch, un `awk` sur les lignes `Mount:`, et la
+comparaison tombe : **469 paks des deux côtés, aucun écart**. Ça ne prouve pas
+l'égalité des octets, mais ça élimine d'un coup toute création ou suppression
+d'asset — donc tout contenu réellement neuf.
+
+### Ne ré-extraire que ce qui peut avoir bougé
+
+`outils/fmodel/tous-les-chemins.txt` dit quel pak porte quoi. Croisé avec la
+liste des paks modifiés, on sait où regarder :
+
+| Ce qu'on cherche | Pak | Poids |
+| --- | --- | --- |
+| `Content/Table` (1 672 fichiers) | `pakchunk950` | 20 Mo |
+| `Content/Localization` | `pakchunk0` + `pakchunk10` | 94 Mo |
+| `TextDatas/CData/HitNotify` | `pakchunk0` | 13 Mo |
+| `Cha/PC` (animations) | `pakchunk0` | **1,5 Go** |
+
+**Choisir une sonde plutôt que tout sortir.** `HitNotify` vit dans le même pak
+que `Cha/PC` et pèse cent fois moins. Ses 5 411 fichiers ressortis identiques à
+l'octet près rendent une modification des animations voisines très peu crédible
+— les 1,5 Go n'ont pas été extraits, et n'avaient pas à l'être.
+
+### Le résultat, et ce qu'il apprend
+
+Archiver l'export précédent sous `Exports-2.0-build-24909433/` (nommé par
+BuildID : la convention `Exports-usmap-1.8` ne sépare plus rien quand les deux
+extractions partagent le même usmap), ré-exporter, puis comparer en SHA1.
+
+* **Tables : 1 571 identiques sur 1 579.** Les 8 écarts sont de la
+  progression — numérotation de quêtes, verrous de zone, un libellé de
+  classement, quatre costumes de Derieri qui gagnent une récompense. Aucune
+  table de combat n'a bougé : ni `BuffTable`, ni `SkillTable`, ni les
+  potentiels, ni les maîtrises, ni les transcendances.
+* **HitNotify : 5 411 identiques sur 5 411.**
+* **Localization : 12 fichiers de langue sur 28.** Côté français, 36 clés
+  modifiées, **0 ajoutée, 0 retirée** — presque toutes des traductions
+  manquantes enfin remplies (la clé s'affichait telle quelle). Aucune n'est
+  utilisée par `data/` ni `7ds-stats/` : rien à régénérer.
+
+C'est pourtant Localization qui a payé. La clé
+`local_buff_ban_sword2h_1_desc_2`, sans traduction la veille, nomme l'état
+**Berserker** — le dernier des trois blocages de Ban. Le nom trouvé, les
+chiffres suivent dans `BuffTable`.
+
+**Leçon générale : un hotfix qui ne touche aucun chiffre peut quand même
+débloquer un travail, en nommant ce qui n'avait pas de nom.**
+
+### Un raté reproductible de FModel
+
+`Table/ConditionLogic/Condition.uasset` (6 630 lignes, 6,5 Mo dans l'export du
+26) **ne ressort plus**, sur deux tentatives, sans la moindre erreur au journal
+— FModel note pourtant la demande d'extraction. Ses deux voisines de dossier
+sortent identiques, donc le pak est sain. Sans effet sur le site : cette table
+sert aux conditions de déclenchement de quêtes.
+
 ## Ce qui reste à faire
 
-1. **Les trois mécaniques de Ban** — « Détournement », « Brèche » et la
-   compétence normale améliorée à l'épée à deux mains. Neuf de ses effets
-   restent hors du comparateur DPS (`NON_INCLUS_SPECIFIQUES`) tant qu'elles
-   ne sont pas décrites. Seul un joueur peut trancher.
-2. **Les transcendances dans le calcul** — elles s'affichent sur la fiche du
-   wiki depuis le 26 août, elles ne comptent pas encore.
-3. **Les buffs d'équipe de Ban** — `data/buffs-supports.js` est écrit à la
+1. **Ce qui reste dehors chez Ban** — les trois mécaniques sont résolues
+   (section ci-dessus) et deux potentiels de plus sont modélisés, mais six
+   effets restent hors du comparateur, désormais pour des raisons de
+   **structure** et non d'ignorance :
+   * Brèche et Détournement sont des débuffs posés sur la **cible**. Le
+     comparateur compare des builds à cible constante ; ils profitent à toute
+     l'équipe et sortent de son périmètre, comme les `effet-equipe`.
+   * Le passif des gantelets majore les dégâts critiques de la **seule
+     attaque normale**. `bonus-critique` ne porte pas de champ de portée —
+     `cible` n'existe que pour les règles de recharge — et une règle
+     `critDamage` globale majorerait aussi compétences et ultime. Élargir la
+     grammaire des règles reste à faire ; surestimer serait pire que taire.
+   * La **compétence normale améliorée** n'a pas d'entrée propre dans
+     `data/competences.js` : le jeu la décrit à l'intérieur du texte de
+     `ban_sword2h_skill_e` au lieu de lui donner un identifiant. Les
+     potentiels 4 et 9, qui la majorent, n'ont donc rien où s'accrocher.
+2. **Dix potentiels étiquetés à tort `sans-impact-dps`** — la règle générique
+   y range les majorations d'une **sous-partie** nommée d'une compétence (une
+   frappe précise, une forme améliorée) faute de cible à accrocher. Les deux
+   de Ban sont corrigés en `non-inclus` ; il en reste huit, chez Daisy,
+   Derieri, Manny, Meliodas, Slader et Tristan. L'effet existe, il n'est pas
+   compté : `non-inclus` le dit, `sans-impact-dps` le nie.
+3. **Les 48 transcendances hors calcul** — sur 78, **30 sont branchées** dans
+   le comparateur (voir la section ci-dessous). Les 48 autres majorent
+   l'équipe (43) ou frappent la cible (5) : hors périmètre, comme les autres
+   `effet-equipe`. Elles auraient leur place dans
+   `data/buffs-supports.js` le jour où les buffs d'équipe seront traités.
+4. **Les buffs d'équipe de Ban** — `data/buffs-supports.js` est écrit à la
    main et ne le contient pas : joué en soutien, son apport est ignoré.
-4. **Khala** le jour où elle sortira : elle demandera une passe complète, de
+5. **Khala** le jour où elle sortira : elle demandera une passe complète, de
    l'image au catalogue.
-5. **`CoolTimeGroup`** (315 compétences) et l'économie de jauges, jamais
+6. **`CoolTimeGroup`** (315 compétences) et l'économie de jauges, jamais
    regardés. Les 4 recharges fausses et les décimales de SevenCodex sont
    réglées : `extraire-recharges.js` les lit dans le client.
-6. **Question 3 des buffs de soutien** — voir
+7. **Question 3 des buffs de soutien** — voir
    `docs/buffs-portee-lue-dans-le-jeu.md` : le taux elementaire du receveur
    multiplie-t-il le buff plat ? Question de formule, pas de table. Seule une
    mesure en jeu repond.
-7. **La constante C du calcul de degats** — intestable depuis les fichiers, il
+8. **La constante C du calcul de degats** — intestable depuis les fichiers, il
    faut un coup sur cible defendue.
 
 ## Note d'environnement

@@ -959,6 +959,18 @@ function loadApp(initialTeams){
   );
   sandbox.SEVEN_DS_ARMURES_LIEES =
     armuresLieesSandbox.window.SEVEN_DS_ARMURES_LIEES;
+  /* Les transcendances : le catalogue REEL, comme les armures liees juste
+     au-dessus. `dps-effets.js` y cherche la tenue gravee portee, et un
+     catalogue absent ferait simplement disparaitre le bonus — donc un test
+     vert pour de mauvaises raisons. */
+  const transcendancesSandbox = { window:{} };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(ROOT, "data", "transcendances.js"), "utf8"),
+    transcendancesSandbox,
+    { filename:"transcendances.js" }
+  );
+  sandbox.SEVEN_DS_TRANSCENDANCES =
+    transcendancesSandbox.window.SEVEN_DS_TRANSCENDANCES;
   sandbox.window = sandbox;
   /* Le bac a sable modelise un navigateur : il lui faut donc les points
      d'accroche globaux que le code utilise. Les dispos ecoutent `online` pour

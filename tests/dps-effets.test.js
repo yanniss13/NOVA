@@ -185,4 +185,60 @@ assert.ok(passifArmeManquant.nonInclus.some(exclusion =>
   exclusion.id === "weapon:passive:weapon"
 ));
 
+/* LA TRANSCENDANCE SUIT LE RENFORCEMENT DE SA TENUE.
+
+   Le jeu plafonne une armure gravee a +5, puis +10, +14 et +15, un palier par
+   transcendance reussie. Le passif exige le dernier : on ne peut donc pas
+   atteindre +15 sans avoir transcende, et le renforcement suffit a le prouver.
+   Aucun champ « transcendee » n'est necessaire.
+
+   +14 est LE cas qui compte. Un seuil ecrit « >= 10 » ou « > 14 » passerait
+   les autres et se ferait attraper ici — et c'est aussi le palier qu'on
+   oublierait en croyant la suite +5/+10/+15.
+
+   Escanor, parce que « Arrogance adequate » est SA tenue : le catalogue reel
+   est charge par le bac a sable, et une tenue rattachee a un autre heros ne
+   donnerait rien. */
+const tenueEscanor = "7ds-armures-ssr/Armure liee/Arrogance adéquate.webp";
+function effetsAvecRenforcement(reinforce){
+  return plain(effetsDuBuild({
+    hero:{
+      char:"escanor",
+      potentiel:{ tier:0 },
+      weapon:weaponFile,
+      armor:{ "Armure liee":tenueEscanor },
+      armorConfig:{ "Armure liee":{ version:1, reinforce } },
+      jewel:{}
+    },
+    dossierArme:"Hache",
+    catalogue:{},
+    statsResult:{ totals:[], facts:{ passives:[] } }
+  }));
+}
+
+[0, 10, 14].forEach(reinforce => {
+  const partiel = effetsAvecRenforcement(reinforce);
+  assert.ok(
+    !partiel.effets.some(effet => effet.origine === "transcendance"),
+    "renforcement +" + reinforce + " : la tenue n'est pas encore transcendee"
+  );
+  assert.ok(
+    partiel.nonInclus.some(exclusion =>
+      exclusion.origine === "transcendance"
+      && exclusion.raison === "tenue-non-transcendee"),
+    "renforcement +" + reinforce + " : l'exclusion doit etre dite, pas muette"
+  );
+});
+
+const transcendee = effetsAvecRenforcement(15).effets
+  .filter(effet => effet.origine === "transcendance");
+assert.equal(transcendee.length, 1,
+  "au renforcement maximal, la transcendance entre dans le calcul");
+assert.equal(transcendee[0].id, "transcendance:eplb_escanor_c");
+assert.deepStrictEqual(
+  transcendee[0].regles.map(regle => [regle.type, regle.cible, regle.valeur]),
+  [["bonus-degats", "ultimate", 5000]],
+  "« Augmente les degats d'attaque ultime de 50% » vaut 5000 sur l'ultime"
+);
+
 console.log("dps-effets.test.js OK");

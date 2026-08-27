@@ -177,17 +177,58 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
     return listeDeStats([...totaux].filter(paire => paire[1] !== 0));
   }
 
+  /* Les armures gravees, chacune avec la transcendance QU'ELLE donne.
+
+     Le lien n'est pas decoratif, c'est la regle du jeu : une transcendance
+     n'agit que si sa tenue est portee. L'afficher ailleurs que sur la piece
+     laisserait croire a un bonus permanent, et un membre reglerait son stuff
+     dessus.
+
+     Le seuil de renforcement se dit UNE fois, en tete de section, plutot que
+     sur chaque ligne : il vaut +15 pour les 78 tenues transcendables du jeu,
+     et le repeter trois fois n'apprendrait rien de plus.
+
+     Les heros qui ont QUATRE tenues gravees n'en ont que trois de
+     transcendables. La quatrieme s'affiche donc sans bonus — ce n'est pas un
+     trou dans les donnees, c'est le jeu. */
   function blocArmuresLiees(charId){
     const fichiers = linkedArmorsOf(charId);
     if(!fichiers.length) return null;
-    const rangee = el("div",{class:"wiki-linked"});
-    fichiers.forEach(fichier => {
-      rangee.appendChild(el("img",{
-        src:fichier, alt:"", loading:"lazy",
-        title:fichier.split("/").pop().replace(/\.webp$/i, "")
-      }));
+    const transcendances = (window.SEVEN_DS_TRANSCENDANCES || {})[charId] || [];
+    const parTenue = new Map();
+    transcendances.forEach(item => {
+      if(item && item.tenue) parTenue.set(item.tenue, item);
     });
-    return rangee;
+
+    const bloc = el("div",{});
+    if(parTenue.size){
+      bloc.appendChild(el("p",{
+        class:"wiki-gravees-note",
+        text:"Une transcendance n’agit que si sa tenue est portée, "
+          + "et une fois celle-ci renforcée au maximum (+15)."
+      }));
+    }
+
+    const liste = el("ul",{class:"wiki-gravees"});
+    fichiers.forEach(fichier => {
+      const nom = fichier.split("/").pop().replace(/\.webp$/i, "");
+      const transcendance = parTenue.get(fichier);
+      const corps = el("div",{class:"wiki-gravee-corps"},[
+        el("b",{class:"wiki-gravee-nom", text:nom})
+      ]);
+      if(transcendance && transcendance.texte){
+        corps.appendChild(el("span",{class:"wiki-gravee-trans"},[
+          el("b",{class:"wiki-transcendance-nom", text:transcendance.nom}),
+          el("span",{html:renderBonus(transcendance.texte)})
+        ]));
+      }
+      liste.appendChild(el("li",{class:"wiki-gravee"},[
+        el("img",{src:fichier, alt:"", loading:"lazy", title:nom}),
+        corps
+      ]));
+    });
+    bloc.appendChild(liste);
+    return bloc;
   }
 
   function renderFiche(){
