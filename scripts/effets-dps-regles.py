@@ -57,18 +57,55 @@ NON_INCLUS_SPECIFIQUES = {
     "potential:manny:SwordDual:5": "animation-attaque-normale",
     # --- Version 2.0, 26 aout 2026 ---------------------------------------
     #
-    # Ban est arrive avec trois mecaniques que le schema ne connait pas :
-    # « Detournement » et « Breche », deux etats poses sur l'ennemi, et une
-    # « competence normale amelioree » a l'epee a deux mains qui se debloque
-    # apres un nombre d'attaques. Tant que leur fonctionnement n'est pas
-    # etabli, ces effets restent dehors : son DPS est legerement sous-estime,
-    # ce qui vaut mieux que faux. Le reste de son kit est modelise.
+    # Les trois mecaniques de Ban sont desormais ETABLIES, lues dans
+    # Table/Buff/BuffTable le 27 aout 2026 (le hotfix du 26 au soir a livre
+    # les traductions francaises qui manquaient). Ce qui reste dehors ne
+    # l'est plus par ignorance, mais parce que le schema ne sait pas
+    # l'exprimer — chaque entree dit laquelle de ces deux raisons s'applique.
+    #
+    #   « Breche »       buffs 302293005 et 302293024, poses sur la CIBLE :
+    #                    resistance au Deluge -20 %, degats subis +25 %
+    #                    (302293005) ou +55 % (302293024). Le champ
+    #                    ActiveElement vaut None dans les deux : la hausse
+    #                    porte sur TOUS les degats subis, contrairement au
+    #                    texte francais qui dit « degats des Tenebres ».
+    #   « Detournement » buff 302293021 : F_Def -> Dark_Res -20 %, soit une
+    #                    reduction indexee sur la defense, pas un taux plat.
+    #   « Berserker »    buffs 302292002 / 302292021 (+20 % degats crit.) et
+    #                    302292024 (+50 %). Voir REGLES_SPECIFIQUES.
+    #
+    # Breche et Detournement sont des etats poses sur l'ENNEMI. Le
+    # comparateur compare des builds a cible constante : un debuff de cible
+    # profite a toute l'equipe et sort de son perimetre, comme les
+    # `effet-equipe` plus haut.
     "potential:ban:Cudgel3c:9": "degats-supplementaires-d-ultime-hors-schema",
-    "potential:ban:Gauntlets:5": "detournement-mecanique-inconnue",
-    "potential:ban:Sword2h:5": "competence-normale-amelioree-inconnue",
-    "potential:ban:Sword2h:6": "competence-normale-amelioree-inconnue",
-    "skill:ban_gauntlets_jumpatk": "breche-mecanique-inconnue",
-    "hero-passive:ban_gauntlets_passive": "detournement-mecanique-inconnue",
+    "skill:ban_gauntlets_jumpatk": "breche-debuff-sur-la-cible",
+    # T7 majore de 30 % les degats des Tenebres subis via Breche : c'est un
+    # renfort de debuff, il vit sur la cible comme Breche elle-meme.
+    "potential:ban:Gauntlets:7": "breche-debuff-sur-la-cible",
+    # T10 donne du percement de defense a TOUS les heros allies.
+    "potential:ban:Gauntlets:10": "effet-equipe",
+    # Le passif des gantelets pose Detournement, puis majore les degats crit.
+    # de la SEULE attaque normale de 100 %. `bonus-critique` ne porte pas de
+    # champ de portee — `cible` n'existe que pour les regles de recharge — et
+    # une regle `critDamage` globale majorerait aussi les competences et
+    # l'ultime. Surestimer serait pire que taire : un membre reglerait son
+    # stuff sur un chiffre faux.
+    "hero-passive:ban_gauntlets_passive": "crit-limite-a-l-attaque-normale",
+    "potential:ban:Gauntlets:5": "crit-limite-a-l-attaque-normale",
+    # T5 retire 2 des 4 touches requises pour ameliorer la competence normale
+    # en Berserker. C'est une cadence de declenchement, pas une statistique :
+    # rien a majorer, seulement un palier atteint plus tot.
+    "potential:ban:Sword2h:5": "cadence-de-declenchement-hors-schema",
+    # T4 (+20 %) et T9 (+65 %) majorent la competence normale AMELIOREE.
+    # Celle-ci n'a pas d'entree propre dans data/competences.js : le jeu la
+    # decrit a l'interieur du texte de `ban_sword2h_skill_e` au lieu de lui
+    # donner un identifiant. Sans cible a majorer, la regle generique les
+    # laissait tomber en `sans-impact-dps` — un contresens, car ces deux
+    # potentiels augmentent bel et bien des degats. `non-inclus` dit la
+    # verite : l'effet existe, le comparateur ne sait pas ou l'accrocher.
+    "potential:ban:Sword2h:4": "competence-normale-amelioree-hors-catalogue",
+    "potential:ban:Sword2h:9": "competence-normale-amelioree-hors-catalogue",
     # La gravure du costume « Instinct incisif » de Bug, sorti avec la 2.0 :
     # elle applique Malediction sur un ennemi Provoque et donne +18 % de
     # degats des Tenebres a TOUTE l'equipe. La part d'equipe sort du perimetre
@@ -941,6 +978,46 @@ REGLES_SPECIFIQUES = {
             "type": "bonus-critique",
             "stat": "critDamage",
             "valeur": 5000,
+            "mode": "passif-max",
+        }
+    ],
+    # --- Ban : l'etat Berserker, permanent par arithmetique ---------------
+    #
+    # L'ultime de l'epee a deux mains (« Hurlement inebranlable ») fait
+    # entrer en [Berserker] pendant 12 s. Sa recharge est de 10 s.
+    # 12 > 10 : joue sur recharge, l'etat ne retombe jamais. Ce n'est pas
+    # une hypothese de confort comme la saturation de Chaine plus haut,
+    # c'est une soustraction — et c'est ce qui autorise `passif-max` ici.
+    # Si un patch allonge la recharge au-dela de 12 s, cette regle devient
+    # fausse : la verification tient dans data/competences.js, entree
+    # `ban_sword2h_skill_r`.
+    #
+    # Le potentiel 6 porte trois phrases, une seule chiffre des degats :
+    # l'immunite aux reactions et les -20 % de degats subis sont defensifs.
+    # Restent les « 30 % supplementaires » de degats crit. en Berserker.
+    # Ils s'ajoutent aux +20 % du passif d'arme et aux +30 % de la
+    # competence normale amelioree, deja portes par le buff 302292024
+    # (C_Critical_Dam_Rate = 5000 = 2000 + 3000) — d'ou le choix de ne
+    # compter ICI que la part propre au potentiel.
+    "potential:ban:Sword2h:6": [
+        {
+            "type": "bonus-critique",
+            "stat": "critDamage",
+            "valeur": 3000,
+            "condition": "berserker",
+            "mode": "passif-max",
+        }
+    ],
+    # T10 : +15 % de percement de defense en Berserker. Meme raisonnement de
+    # permanence que le T6 ci-dessus. La portee de la premiere phrase ne se
+    # chiffre pas ; la regle generique laissait donc tomber le potentiel
+    # entier en `sans-impact-dps` alors qu'il porte une stat offensive.
+    "potential:ban:Sword2h:10": [
+        {
+            "type": "bonus-stat",
+            "stat": "defenseShatter",
+            "valeur": 1500,
+            "condition": "berserker",
             "mode": "passif-max",
         }
     ],
