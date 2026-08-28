@@ -60,6 +60,23 @@ const { chromium } = require("playwright");
     assert.doesNotMatch(html, /serviceWorker\.register/,
       "la fiche ne doit pas enregistrer le service worker");
 
+    /* Le lien affilie remunere le proprietaire : il doit survivre aux retouches
+       de cette page, avec les attributs qui declarent la remuneration. Les
+       reponses >= 400 sont deja refusees plus bas, donc une image cassee
+       ferait echouer ce parcours. */
+    const lootbar = page.locator("#lootbarLink");
+    assert.equal(await lootbar.count(), 1, "le lien LootBar doit rester dans l'en-tete");
+    assert.equal(
+      await lootbar.getAttribute("href"),
+      "https://www.lootbar.com/a/raTV3p",
+      "le lien affilie doit porter le code du proprietaire"
+    );
+    assert.equal(
+      await lootbar.getAttribute("rel"),
+      "sponsored noopener noreferrer",
+      "un lien remunere se declare, et n'ouvre pas d'acces a cette page"
+    );
+
     const retour = page.locator(".ak-back");
     assert.equal(await retour.getAttribute("href"), "index.html",
       "la fiche doit ramener au site");
