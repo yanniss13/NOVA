@@ -499,11 +499,14 @@ const STORAGE_KEY = "confrerie7ds.teams";
     assert.match(bas, /résistance au percement du boss/,
       "la page doit dire que la résistance au percement n'est pas appliquée");
 
-    /* Le choix de la cible : vingt paliers d'Akumu, puis le mannequin. */
+    /* Le choix de la cible : trente paliers d'Akumu, puis le mannequin. */
     const cible = page.locator(".calc-cible");
-    assert.equal(await cible.locator("option").count(), 21);
+    assert.equal(await cible.locator("option").count(), 31);
     assert.equal(await cible.inputValue(), "akumu-1",
       "le palier 1 reste le defaut, pour ne deplacer aucun chiffre affiche");
+    await cible.selectOption("akumu-30");
+    assert.equal(await cible.inputValue(), "akumu-30",
+      "le dernier palier FModel doit etre selectionnable");
 
     /* Le mannequin n'a ni defense ni resistance : les degats affiches valent
        exactement l'ATK multipliee par le coefficient, donc ils MONTENT quand

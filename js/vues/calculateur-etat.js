@@ -14,7 +14,7 @@ import { CoequipiersStore } from "../donnees/coequipiers-store.js";
     typeArme:null,
     heroImpose:null,
     /* Le palier d'Akumu affronte par la confrerie, ou le mannequin. Le defaut
-       reste le palier 1 : c'etait la cible unique avant que les vingt niveaux
+       reste le palier 1 : c'etait la cible unique avant que les niveaux
        ne soient releves, et ajouter le choix ne doit deplacer aucun chiffre
        tant que le membre n'a rien touche. */
     cibleId:"akumu-1",

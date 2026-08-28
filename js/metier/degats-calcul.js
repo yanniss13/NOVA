@@ -33,12 +33,12 @@
   /* Valeurs REELLES relevees sur le boss de confrerie, page
      7dsorigin.app/fr/boss-de-confrerie/akumu-bete-demoniaque. Jamais inventees.
 
-     Les VINGT niveaux sont desormais publies et releves un par un : le detail
-     et la methode vivent dans docs/akumu-20-niveaux.md. Les niveaux 1 et 20
-     ont ete verifies a la main sur la page source ; entre les deux, DEF, HP et
-     les deux statistiques critiques croissent strictement, ce qu'un test
-     controle. Le palier 10 -> 11 fait un saut irregulier sur DEF et HP : c'est
-     leur donnee, relue deux fois, pas une coquille de transcription.
+     Les niveaux 1 a 20 ont ete releves sur la page publique ; le detail et la
+     methode vivent dans docs/akumu-20-niveaux.md. Les niveaux 21 a 30 viennent
+     directement du client, table Actor/NpcStatGroupTable, groupe
+     stat_50700109. Le palier 21 ouvre un nouveau regime : la resistance
+     critique retombe a 20 %, tandis que DEF, defense critique et PV continuent
+     de croitre. Un test garde cette rupture au lieu de la lisser.
 
      `nom` duplique volontairement BOSS_NAME de js/donnees/boss-store.js : un
      module metier pur n'importe pas depuis js/donnees/. */
@@ -64,7 +64,17 @@
     [17, 30029,  9193, 17132, 63560194],
     [18, 32747, 10112, 18503, 73549970],
     [19, 35464, 11123, 19983, 84238935],
-    [20, 38544, 12235, 21582, 96543801]
+    [20, 38544, 12235, 21582, 96543801],
+    [21, 40175,  2000, 35806, 102375267],
+    [22, 43919,  2000, 38010, 112611620],
+    [23, 47735,  2000, 40114, 123127648],
+    [24, 51811,  2000, 42270, 134412784],
+    [25, 56152,  2000, 44468, 146490333],
+    [26, 60575,  2000, 46554, 158878632],
+    [27, 65271,  2000, 48672, 172090420],
+    [28, 70051,  2000, 50673, 185628496],
+    [29, 75113,  2000, 52694, 200021136],
+    [30, 80264,  2000, 54593, 214755600]
   ];
 
   /* EN SUSPENS, et volontairement laisse en l'etat.
@@ -85,15 +95,16 @@
      7dsorigin, au niveau de monde ou DEF = 3373, doit afficher une resistance
      elementaire de base de 15 % pour correspondre au `eflatres = 15` mesure.
      Tant que personne ne l'a lue, on ne change rien : se tromper ici fausserait
-     les vingt paliers d'un facteur deux. */
+     les trente paliers d'un facteur deux. */
   const AKUMU_ELEMENTAIRE = {
     resistanceElementaire:3000,
     faiblesse:0,
     /* NON PUBLIEE, et sans equivalent actif dans l'outil de reference, dont
        les champs de resistance au percement sont mesures inertes. La source
-       publie pourtant une « resistance au percement » de 20 %, constante sur
-       les vingt paliers : la passer a 2000 rapprocherait du jeu et eloignerait
-       de la reference, et la facon dont le jeu la retranche n'est pas mesuree.
+       publie pourtant une « resistance au percement » de 20 % aux niveaux 1 a
+       20, puis de 20,2 a 22 % aux niveaux 21 a 30. La traduire dans le moteur
+       rapprocherait du jeu et eloignerait de la reference, et la facon dont le
+       jeu la retranche n'est pas mesuree.
        Zero reproduit le calcul de la reference ; ce n'est pas un releve. */
     resistancePercement:0
   };
@@ -130,7 +141,7 @@
   }]);
 
   /* Le palier 1, garde sous son ancien nom : il etait la cible unique avant
-     que les vingt niveaux ne soient releves, et rien de ce qui etait affiche
+     que les niveaux ne soient releves, et rien de ce qui etait affiche
      ne doit bouger du seul fait d'avoir ajoute les autres. */
   const CIBLE_REFERENCE = (() => {
     const { id, niveau, hp, ...reste } = CIBLES[0];

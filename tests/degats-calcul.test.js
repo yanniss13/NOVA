@@ -387,13 +387,13 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   assert.equal(CIBLE_REFERENCE.resistancePercement, 0);
 }
 
-/* Les 21 cibles selectionnables : les 20 niveaux d'Akumu, puis le mannequin.
+/* Les 31 cibles selectionnables : les 30 niveaux d'Akumu, puis le mannequin.
 
-   Le releve integral vit dans docs/akumu-20-niveaux.md. Deux niveaux servent
-   de temoins parce qu'ils ont ete verifies a la main sur la page source. */
+   Les niveaux 1 a 20 ont ete verifies sur la page publique. Les niveaux 21 a
+   30 viennent directement de NpcStatGroupTable, groupe stat_50700109. */
 {
   const CIBLES = plain(hooks.CIBLES);
-  assert.equal(CIBLES.length, 21);
+  assert.equal(CIBLES.length, 31);
 
   const parId = Object.fromEntries(CIBLES.map(c => [c.id, c]));
 
@@ -408,26 +408,45 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   assert.equal(parId["akumu-20"].critDmgResist, 21582);
   assert.equal(parId["akumu-20"].hp, 96543801);
 
-  /* Constantes verifiees sur les 20 paliers, pas sur deux. */
+  /* Le niveau 21 ouvre un nouveau palier : la resistance critique retombe a
+     20 %, tandis que DEF, defense critique et PV poursuivent leur hausse. */
+  assert.equal(parId["akumu-21"].def, 40175);
+  assert.equal(parId["akumu-21"].critResist, 2000);
+  assert.equal(parId["akumu-21"].critDmgResist, 35806);
+  assert.equal(parId["akumu-21"].hp, 102375267);
+
+  assert.equal(parId["akumu-30"].def, 80264);
+  assert.equal(parId["akumu-30"].critResist, 2000);
+  assert.equal(parId["akumu-30"].critDmgResist, 54593);
+  assert.equal(parId["akumu-30"].hp, 214755600);
+
+  /* Valeurs volontairement conservees sur les 30 paliers tant que leur
+     combinaison dans la formule elementaire n'est pas tranchee en jeu. */
   CIBLES.filter(c => c.niveau).forEach(cible => {
     assert.equal(cible.resistanceElementaire, 3000, cible.id);
     assert.equal(cible.faiblesse, 0, cible.id);
     assert.equal(cible.resistancePercement, 0, cible.id);
   });
 
-  /* La DEF et les deux stats critiques croissent a chaque palier : une
-     coquille de transcription se verrait ici. */
+  /* La DEF, la defense critique et les PV croissent a chaque palier : une
+     coquille de transcription se verrait ici. La resistance critique suit
+     deux regimes distincts, verifies juste apres. */
   const niveaux = CIBLES.filter(c => c.niveau)
     .sort((a, b) => a.niveau - b.niveau);
-  assert.equal(niveaux.length, 20);
+  assert.equal(niveaux.length, 30);
   niveaux.forEach((cible, index) => {
     assert.equal(cible.niveau, index + 1);
     if(index === 0) return;
     const avant = niveaux[index - 1];
     assert.ok(cible.def > avant.def, "DEF croissante au palier " + cible.niveau);
-    assert.ok(cible.critResist > avant.critResist, cible.id);
     assert.ok(cible.critDmgResist > avant.critDmgResist, cible.id);
     assert.ok(cible.hp > avant.hp, cible.id);
+  });
+  niveaux.slice(0, 20).forEach((cible, index) => {
+    if(index > 0) assert.ok(cible.critResist > niveaux[index - 1].critResist, cible.id);
+  });
+  niveaux.slice(20).forEach(cible => {
+    assert.equal(cible.critResist, 2000, cible.id);
   });
 }
 

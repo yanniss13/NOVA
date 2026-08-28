@@ -811,16 +811,16 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
         el("li",{text:"les temps d'animation, donc toute notion de dégâts par seconde"}),
         el("li",{text:"les attaques normales, les compétences de relève et les attaques combinées"}),
         el("li",{text:"les mécaniques d'Akumu : pierres élémentaires, attaque dorsale, renforcement à chaque mort"}),
-        /* Publiee par la source (20 %, constante sur les vingt paliers) mais
-           laissee a zero dans le calcul : voir le commentaire de
+        /* Publiee par la source (20 % aux niveaux 1 a 20, puis jusqu'a 22 % au
+           niveau 30) mais laissee a zero dans le calcul : voir le commentaire de
            AKUMU_ELEMENTAIRE dans js/metier/degats-calcul.js. Le dire ici plutot
            que de le taire, puisque cela gonfle le percement affiche. */
-        el("li",{text:"la résistance au percement du boss (20 %), qui réduirait le percement de défense"})
+        el("li",{text:"la résistance au percement du boss (20 à 22 % selon le niveau), qui réduirait le percement de défense"})
       ])
     ]);
   }
 
-  /* Le choix de la cible. Vingt paliers d'Akumu, puis le mannequin.
+  /* Le choix de la cible. Trente paliers d'Akumu, puis le mannequin.
 
      Le palier change TOUT le tableau — la defense triple entre le 1 et le 10 —
      donc il vit en haut du formulaire, a cote du personnage, et pas dans un
