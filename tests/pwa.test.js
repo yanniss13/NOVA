@@ -103,4 +103,31 @@ coreAssets.forEach(asset => {
   );
 });
 
+/* 4) La cle de cache d'un document.
+
+   `networkFirst(request, fallbackKey)` fait `cache.put(fallbackKey || request)`.
+   Tant que TOUTE navigation partait avec "./index.html", ouvrir une seconde page
+   servie a la racine — akumu.html — rangeait son HTML sous la cle de
+   l'application : le membre revenu hors ligne recevait la fiche a la place du
+   site. La decision est donc isolee dans une fonction pure, testee ici. */
+const cleSource = sw.match(
+  /function documentCacheKey\(([\s\S]*?)\n\}/
+)?.[0];
+assert.ok(cleSource, "documentCacheKey doit rester extractible de sw.js");
+const documentCacheKey = new Function(
+  cleSource + "; return documentCacheKey;"
+)();
+
+const cle = (chemin, mode) => documentCacheKey(new URL("https://x.dev" + chemin), mode);
+
+assert.equal(cle("/NOVA/", "navigate"), "./index.html",
+  "la racine reste l'application");
+assert.equal(cle("/NOVA/index.html", "navigate"), "./index.html",
+  "index.html aussi");
+assert.equal(cle("/NOVA/akumu.html", "navigate"), null,
+  "une autre page servie a la racine doit se cacher sous SA propre cle,"
+  + " sinon elle remplace l'application hors ligne");
+assert.equal(cle("/NOVA/css/base.css", "no-cors"), undefined,
+  "une ressource n'est pas un document");
+
 console.log("PASS PWA : manifest, icônes, cycle de mise à jour explicite du service worker");

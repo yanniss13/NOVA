@@ -129,6 +129,7 @@ const SUITES = {
     "node tests/apport-par-piece.playwright.js",
     "node tests/wiki.playwright.js",
     "node tests/wiki-lot2.playwright.js",
+    "node tests/akumu-page.playwright.js",
     "node tests/collection.playwright.js",
     "node tests/calculateur.playwright.js"
   ]

@@ -152,6 +152,22 @@ function isImage(request, url){
     /\.(webp|png|jpg|jpeg|gif|svg|ico)$/i.test(url.pathname);
 }
 
+/* La cle sous laquelle un document se met en cache, ou `undefined` si la
+   requete n'est pas un document.
+
+   `networkFirst` fait `cache.put(fallbackKey || request)`. Renvoyer
+   "./index.html" pour TOUTE navigation rangeait donc le HTML de n'importe
+   quelle page servie a la racine — akumu.html — sous la cle de l'application,
+   qui la servait ensuite a la place du site hors ligne. Seuls la racine et
+   index.html portent desormais cette cle ; les autres documents se cachent
+   sous la leur, d'ou le `null`. */
+function documentCacheKey(url, mode){
+  const estApplication = url.pathname.endsWith("/")
+    || url.pathname.endsWith("index.html");
+  if(mode !== "navigate" && !estApplication) return undefined;
+  return estApplication ? "./index.html" : null;
+}
+
 self.addEventListener("fetch", event => {
   const request = event.request;
   if(request.method !== "GET") return;
@@ -164,10 +180,9 @@ self.addEventListener("fetch", event => {
   // Uniquement notre propre origine.
   if(url.origin !== location.origin) return;
 
-  const isDoc = request.mode === "navigate" ||
-    url.pathname.endsWith("/") || url.pathname.endsWith("index.html");
-  if(isDoc){
-    event.respondWith(networkFirst(request, "./index.html"));
+  const cleDocument = documentCacheKey(url, request.mode);
+  if(cleDocument !== undefined){
+    event.respondWith(networkFirst(request, cleDocument));
     return;
   }
 

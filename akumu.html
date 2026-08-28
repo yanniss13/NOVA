@@ -1,0 +1,404 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Akumu, bête démoniaque · Confrérie 7DS</title>
+<meta name="theme-color" content="#0e0d12">
+<meta name="description" content="Fiche du raid de guilde Akumu : le cycle des cinq pierres, la fenêtre de vulnérabilité, les affaiblissements et les statistiques aux trente niveaux de monde.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon-180.png">
+<!-- Le style vient du site : la fiche herite de ses jetons, donc une retouche
+     du theme la suit sans qu'on y revienne. Les classes propres a cette page
+     sont prefixees `ak-` pour ne rien croiser des feuilles de l'application. -->
+<link rel="stylesheet" href="css/base.css">
+<style>
+.ak-wrap{
+  max-width:900px;margin:0 auto;
+  padding:34px clamp(16px,4vw,40px) 90px;
+  display:flex;flex-direction:column;gap:46px;
+}
+.ak-lede{font-size:18px;color:var(--muted);max-width:62ch;margin:0}
+.ak-eyebrow{
+  font-size:11px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--gold);
+}
+.ak-wrap h1{
+  font-family:var(--display);font-weight:700;letter-spacing:.06em;
+  font-size:clamp(30px,6vw,48px);margin:0;color:var(--parchment);
+  text-wrap:balance;
+}
+.ak-wrap h2{
+  font-family:var(--display);font-weight:600;letter-spacing:.05em;
+  font-size:clamp(20px,3.4vw,27px);margin:0;color:var(--parchment);
+  text-wrap:balance;
+}
+.ak-wrap h3{font-family:var(--display);font-weight:600;font-size:17px;margin:0;letter-spacing:.03em}
+
+.ak-head{display:flex;flex-direction:column;gap:15px;
+  border-bottom:1px solid var(--line);padding-bottom:30px}
+.ak-id{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin:6px 0 0;padding:0}
+.ak-id>div{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:13px 16px;display:flex;flex-direction:column;gap:3px;
+}
+.ak-id dt{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-2);font-weight:700}
+.ak-id dd{margin:0;font-size:18px;font-weight:600;font-variant-numeric:tabular-nums;color:var(--gold-bright)}
+
+.ak-sec{display:flex;flex-direction:column;gap:17px}
+.ak-sechead{display:flex;flex-direction:column;gap:6px}
+.ak-note{color:var(--muted);max-width:66ch;margin:0}
+
+.ak-cycle{display:flex;flex-direction:column;
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:4px 18px}
+.ak-step{display:grid;grid-template-columns:82px 1fr;gap:16px;align-items:start;
+  padding:14px 0;border-top:1px solid var(--line-soft)}
+.ak-step:first-child{border-top:0}
+.ak-dur{font-variant-numeric:tabular-nums;font-weight:700;color:var(--gold);font-size:15px}
+.ak-step b{display:block}
+.ak-step small{display:block;color:var(--muted);font-size:13.5px;margin-top:2px}
+
+.ak-branch{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.ak-branch>div{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px 20px;display:flex;flex-direction:column;gap:9px;
+}
+.ak-win{border-left:3px solid var(--ok)!important}
+.ak-lose{border-left:3px solid var(--crimson-bright)!important}
+.ak-tag{font-size:10.5px;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.ak-win .ak-tag{color:var(--ok)}
+.ak-lose .ak-tag{color:var(--crimson-bright)}
+.ak-branch p{margin:0;font-size:14.5px;color:var(--muted)}
+.ak-branch strong{color:var(--parchment)}
+
+.ak-key{
+  background:linear-gradient(180deg, rgba(217,164,65,.07), rgba(217,164,65,.02));
+  border:1px solid var(--gold-deep);border-radius:var(--radius);
+  padding:22px 24px;display:flex;flex-direction:column;gap:12px;
+}
+.ak-key h3{color:var(--gold-bright)}
+.ak-key p{margin:0;color:var(--muted)}
+.ak-key strong{color:var(--parchment)}
+.ak-tally{display:flex;gap:8px;flex-wrap:wrap;margin:2px 0}
+.ak-tally span{
+  flex:1 1 0;min-width:56px;text-align:center;padding:10px 6px;border-radius:8px;
+  background:var(--obsidian-2);border:1px solid var(--line);
+  font-size:12.5px;font-weight:600;color:var(--muted-2);
+}
+.ak-tally span.on{border-color:currentColor}
+.ak-fire.on{color:#d9663c}
+.ak-ice.on{color:#4ea3cf}
+.ak-thunder.on{color:#d9b13c}
+.ak-wind.on{color:#4fae86}
+.ak-earth.on{color:#b08c5c}
+
+.ak-scroll{overflow-x:auto;background:var(--panel);
+  border:1px solid var(--line);border-radius:var(--radius)}
+.ak-scroll table{border-collapse:collapse;width:100%;font-size:14.5px}
+.ak-scroll th,.ak-scroll td{
+  text-align:left;padding:10px 16px;border-bottom:1px solid var(--line-soft);white-space:nowrap}
+.ak-scroll th{
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-2);
+  font-weight:700;background:var(--panel-2)}
+.ak-scroll tbody tr:last-child td{border-bottom:0}
+.ak-scroll td.n{text-align:right;font-variant-numeric:tabular-nums}
+.ak-dot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:9px}
+.ak-tall{max-height:430px;overflow-y:auto}
+.ak-tall thead th{position:sticky;top:0;z-index:1}
+.ak-neg{color:var(--crimson-bright);font-weight:700}
+.ak-pos{color:var(--ok);font-weight:700}
+
+.ak-prov{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:12px}
+.ak-prov>div{
+  background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);
+  padding:18px 20px;display:flex;flex-direction:column;gap:9px}
+.ak-prov ul{margin:0;padding-left:18px;color:var(--muted);font-size:14px;line-height:1.65}
+.ak-prov li{margin-bottom:5px}
+.ak-mark{font-size:10px;letter-spacing:.18em;text-transform:uppercase;font-weight:700}
+.ak-f .ak-mark{color:var(--ok)}
+.ak-d .ak-mark{color:var(--gold)}
+.ak-v .ak-mark{color:var(--crimson-bright)}
+
+.ak-foot{border-top:1px solid var(--line);padding-top:24px;color:var(--muted-2);
+  font-size:13px;display:flex;flex-direction:column;gap:6px}
+.ak-back{
+  align-self:flex-start;display:inline-block;margin-top:6px;
+  color:var(--gold);text-decoration:none;font-size:14px;
+  border:1px solid var(--gold-deep);border-radius:8px;padding:8px 16px;
+}
+.ak-back:hover,.ak-back:focus-visible{background:rgba(217,164,65,.12);color:var(--gold-bright)}
+
+@media (max-width:640px){
+  .ak-branch{grid-template-columns:1fr}
+  .ak-step{grid-template-columns:64px 1fr;gap:12px}
+}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <div class="crest">7</div>
+    <div class="brand-txt">
+      <span class="brand-title">Confrérie 7DS</span>
+      <span class="brand-sub">Fiche de boss</span>
+    </div>
+  </div>
+</header>
+
+<main class="ak-wrap">
+
+  <div class="ak-head">
+    <span class="ak-eyebrow">Raid de guilde</span>
+    <h1>Akumu, bête démoniaque</h1>
+    <p class="ak-lede">Tout ce qu'il faut savoir du combat : le cycle des cinq pierres, la
+    fenêtre de vulnérabilité, ce qu'Akumu inflige, et ses statistiques aux trente niveaux
+    de monde.</p>
+    <dl class="ak-id">
+      <div><dt>Durée limite</dt><dd>5 min 00</dd></div>
+      <div><dt>Joueurs</dt><dd>5 maximum</dd></div>
+      <div><dt>Niveaux de monde</dt><dd>1 à 30</dd></div>
+    </dl>
+  </div>
+
+  <section class="ak-sec">
+    <div class="ak-sechead">
+      <span class="ak-eyebrow">Le cycle</span>
+      <h2>Une phase de trente secondes, deux issues</h2>
+      <p class="ak-note">Akumu fait apparaître cinq pierres élémentaires, puis prépare une
+      attaque. Ce que fait le groupe pendant ces trente secondes décide de la suite.</p>
+    </div>
+    <div class="ak-cycle">
+      <div class="ak-step">
+        <span class="ak-dur">2,4 s</span>
+        <div><b>Invocation</b><small>Les cinq pierres apparaissent autour de lui.</small></div>
+      </div>
+      <div class="ak-step">
+        <span class="ak-dur">30 s</span>
+        <div><b>Phase des pierres</b><small>Toute la fenêtre pour détruire les cinq. Passé ce
+        délai, l'attaque part.</small></div>
+      </div>
+    </div>
+    <div class="ak-branch">
+      <div class="ak-win">
+        <span class="ak-tag">Les cinq pierres tombent</span>
+        <p><strong>12 s de sonné, puis 3 s de récupération.</strong> Akumu subit
+        <strong>+50 % de dégâts</strong> pendant 15 secondes — exactement la durée des deux
+        états cumulés.</p>
+        <p>Les joueurs gagnent <strong>+25 % d'attaque</strong> pendant 15 s.</p>
+      </div>
+      <div class="ak-lose">
+        <span class="ak-tag">L'attaque part</span>
+        <p><strong>Attaque de Ténèbres qui ignore la défense</strong>, sur une large zone,
+        impact 1,33 s après le départ.</p>
+        <p>Et <strong>−100 % de dégâts critiques</strong> pendant 30 secondes sur le groupe.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="ak-sec">
+    <div class="ak-sechead">
+      <span class="ak-eyebrow">Le piège</span>
+      <h2>Il faut les cinq pierres, pas une</h2>
+    </div>
+    <div class="ak-key">
+      <h3>La vulnérabilité ne se déclenche qu'au cinquième bris</h3>
+      <p>Chaque pierre détruite pose une marque sur Akumu. La vulnérabilité vérifie un compte
+      <em>exact</em> de cinq marques — ni plus, ni moins :</p>
+      <div class="ak-tally">
+        <span class="ak-fire on">Feu</span>
+        <span class="ak-ice on">Glace</span>
+        <span class="ak-thunder on">Foudre</span>
+        <span class="ak-wind on">Vent</span>
+        <span class="ak-earth">Terre</span>
+      </div>
+      <p>Dans cet état — quatre pierres sur cinq — Akumu ne subit <strong>aucun bonus de
+      dégâts</strong>. C'est tout ou rien, et c'est l'erreur la plus coûteuse qu'un groupe
+      puisse faire sur ce combat.</p>
+    </div>
+  </section>
+
+  <section class="ak-sec">
+    <div class="ak-sechead">
+      <span class="ak-eyebrow">Les cibles</span>
+      <h2>Les cinq pierres</h2>
+      <p class="ak-note">Chacune ne peut être blessée que par son propre élément : elle résiste
+      à 99,99 % aux six autres. Il faut donc un porteur du bon élément par pierre, sinon la
+      phase est perdue d'avance.</p>
+    </div>
+    <div class="ak-scroll">
+      <table>
+        <thead><tr><th>Pierre</th><th class="n">Points de vie</th><th class="n">Défense</th><th>Autres éléments</th></tr></thead>
+        <tbody>
+          <tr><td><span class="ak-dot" style="background:#d9663c"></span>Feu</td><td class="n">10 000</td><td class="n">2 215</td><td>résistance 99,99 %</td></tr>
+          <tr><td><span class="ak-dot" style="background:#4ea3cf"></span>Glace</td><td class="n">10 000</td><td class="n">2 215</td><td>résistance 99,99 %</td></tr>
+          <tr><td><span class="ak-dot" style="background:#d9b13c"></span>Foudre</td><td class="n">10 000</td><td class="n">2 215</td><td>résistance 99,99 %</td></tr>
+          <tr><td><span class="ak-dot" style="background:#4fae86"></span>Vent</td><td class="n">10 000</td><td class="n">2 215</td><td>résistance 99,99 %</td></tr>
+          <tr><td><span class="ak-dot" style="background:#b08c5c"></span>Terre</td><td class="n">10 000</td><td class="n">2 215</td><td>résistance 99,99 %</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="ak-note">Seuls ces cinq éléments apparaissent dans la mécanique. Ni Ténèbres ni
+    Sacré n'entrent en jeu, malgré ce qu'on peut lire ailleurs.</p>
+  </section>
+
+  <section class="ak-sec">
+    <div class="ak-sechead">
+      <span class="ak-eyebrow">Le levier permanent</span>
+      <h2>Frapper dans le dos</h2>
+    </div>
+    <div class="ak-scroll">
+      <table>
+        <thead><tr><th>Effet</th><th class="n">Par cumul</th><th class="n">Cumuls max</th><th class="n">Durée d'un cumul</th><th class="n">Plafond</th></tr></thead>
+        <tbody>
+          <tr><td>Dégâts subis par Akumu</td><td class="n ak-pos">+1 %</td><td class="n">100</td><td class="n">5 s</td><td class="n ak-pos">+100 %</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="ak-note">Chaque cumul ne dure que <strong>5 secondes</strong> : c'est une pression
+    à maintenir en continu, pas un stock qu'on accumule tranquillement. Le jeu recommande
+    d'ailleurs explicitement les attaques dorsales dans sa stratégie.</p>
+  </section>
+
+  <section class="ak-sec">
+    <div class="ak-sechead">
+      <span class="ak-eyebrow">Ce qu'il vous fait</span>
+      <h2>Les affaiblissements</h2>
+      <p class="ak-note">Posés par ses attaques normales, tous pendant 30 secondes.</p>
+    </div>
+    <div class="ak-scroll">
+      <table>
+        <thead><tr><th>Effet subi</th><th class="n">Valeur</th></tr></thead>
+        <tbody>
+          <tr><td>Dégâts subis</td><td class="n ak-neg">+50 %</td></tr>
+          <tr><td>Dégâts subis, sur les zones renforcées</td><td class="n ak-neg">+100 %</td></tr>
+          <tr><td>Attaque</td><td class="n ak-neg">−80 %</td></tr>
+          <tr><td>Défense</td><td class="n ak-neg">−70 %</td></tr>
+          <tr><td>Récupération d'endurance</td><td class="n ak-neg">−90 %</td></tr>
+          <tr><td>Soins reçus</td><td class="n ak-neg">−90 %</td></tr>
+          <tr><td>Dégâts critiques, si les pierres tiennent</td><td class="n ak-neg">−100 %</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="ak-sec">
+    <div class="ak-sechead">
+      <span class="ak-eyebrow">La spirale</span>
+      <h2>Quand un joueur meurt</h2>
+    </div>
+    <div class="ak-key">
+      <h3>Akumu gagne de l'attaque, et la garde jusqu'à la fin</h3>
+      <p>Une mort lui donne <strong>+20 % d'attaque par cumul, cinq cumuls maximum</strong>,
+      pour <strong>dix minutes</strong>.</p>
+      <p>Le combat n'en dure que cinq. Ce gain est donc <strong>définitif</strong> : une fois
+      obtenu, il ne retombera jamais avant la fin de la tentative. Chaque mort rend la suivante
+      plus probable.</p>
+    </div>
+  </section>
+
+  <section class="ak-sec">
+    <div class="ak-sechead">
+      <span class="ak-eyebrow">Référence</span>
+      <h2>Statistiques par niveau de monde</h2>
+      <p class="ak-note">Le saut entre le niveau 10 et le niveau 11 est réel, pas une erreur
+      de relevé.</p>
+    </div>
+    <div class="ak-scroll ak-tall">
+      <table>
+        <thead><tr><th class="n">Niv.</th><th class="n">Attaque</th><th class="n">Défense</th><th class="n">Points de vie</th></tr></thead>
+        <tbody id="akNiveaux"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="ak-sec">
+    <div class="ak-sechead">
+      <span class="ak-eyebrow">Subtilité</span>
+      <h2>Deux chiffres, deux mécaniques</h2>
+    </div>
+    <p class="ak-note">La page publique affiche « résistance élémentaire de base 50 % » d'un
+    côté, et huit lignes de résistances à 30 % de l'autre. Ce ne sont pas deux affichages du
+    même nombre : ce sont <strong>deux réductions distinctes</strong>, chacune appliquée sur
+    les huit éléments.</p>
+    <div class="ak-scroll">
+      <table>
+        <thead><tr><th>Réduction</th><th class="n">Valeur</th><th>Portée</th></tr></thead>
+        <tbody>
+          <tr><td>Résistance élémentaire de base</td><td class="n">50 %</td><td>les huit éléments</td></tr>
+          <tr><td>Réduction liée aux faiblesses</td><td class="n">30 %</td><td>les huit éléments</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="ak-note">La façon exacte dont le jeu combine les deux n'est pas établie. Ne pas
+    les additionner ni les multiplier dans un calcul avant de l'avoir vérifié en jeu.</p>
+  </section>
+
+  <section class="ak-sec">
+    <div class="ak-sechead">
+      <span class="ak-eyebrow">Honnêteté</span>
+      <h2>Ce qui est établi, ce qui ne l'est pas</h2>
+    </div>
+    <div class="ak-prov">
+      <div class="ak-f">
+        <span class="ak-mark">Établi</span>
+        <ul>
+          <li>Les cinq pierres, leurs points de vie et leurs résistances</li>
+          <li>Le seuil des cinq pierres pour la vulnérabilité</li>
+          <li>Toutes les valeurs et durées d'affaiblissement</li>
+          <li>Les trente paliers de statistiques</li>
+          <li>La limite de cinq minutes et les cinq joueurs</li>
+        </ul>
+      </div>
+      <div class="ak-d">
+        <span class="ak-mark">Déduit</span>
+        <ul>
+          <li>Qu'une seule mort donne d'emblée les cinq cumuls d'attaque, soit +100 %</li>
+          <li>Que la fenêtre de 15 s recouvre exactement l'état sonné et la récupération : les
+          durées coïncident parfaitement, l'enchaînement lui-même n'est pas visible</li>
+        </ul>
+      </div>
+      <div class="ak-v">
+        <span class="ak-mark">À vérifier en jeu</span>
+        <ul>
+          <li>Ce qui déclenche précisément le bonus de +25 % d'attaque au groupe</li>
+          <li>La combinaison exacte des deux réductions élémentaires</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="ak-foot">
+    <p>Relevé sur la version 2.0.1.1 du jeu, le 28 août 2026.</p>
+    <p>Les valeurs proviennent des données du client, pas d'estimations : aucun chiffre de
+    cette fiche n'est extrapolé.</p>
+    <a class="ak-back" href="index.html">← Retour au site</a>
+  </div>
+
+</main>
+
+<script>
+(function(){
+  "use strict";
+  var N=[[1,8795,3454,2090121],[2,10291,4161,2923402],[3,12164,5045,3974208],
+  [4,14163,6009,5180389],[5,16287,7054,6541945],[6,18852,8316,8198714],
+  [7,21895,9819,10197308],[8,25114,11436,12413428],[9,28508,13165,14847073],
+  [10,33562,14453,17700232],[11,43117,17891,24022303],[12,47078,19521,28721553],
+  [13,51479,21333,34135530],[14,56320,23326,40334151],[15,61602,25500,47387335],
+  [16,66883,27674,54999870],[17,72604,30029,63560194],[18,79206,32747,73549970],
+  [19,85807,35464,84238935],[20,93289,38544,96543801],[21,95583,40175,102375267],
+  [22,101566,43919,112611620],[23,107278,47735,123127648],[24,113128,51811,134412784],
+  [25,119093,56152,146490333],[26,124757,60575,158878632],[27,130506,65271,172090420],
+  [28,135939,70051,185628496],[29,141427,75113,200021136],[30,146582,80264,214755600]];
+  var f=function(n){ return n.toLocaleString("fr-FR"); };
+  document.getElementById("akNiveaux").innerHTML = N.map(function(r){
+    return '<tr><td class="n">'+r[0]+'</td><td class="n">'+f(r[1])+
+      '</td><td class="n">'+f(r[2])+'</td><td class="n">'+f(r[3])+'</td></tr>';
+  }).join("");
+})();
+</script>
+</body>
+</html>
