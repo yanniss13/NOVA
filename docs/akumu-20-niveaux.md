@@ -1,9 +1,10 @@
-# Akumu, bête démoniaque — relevé des 20 niveaux
+# Akumu, bête démoniaque — 30 niveaux
 
-**Source** : https://7dsorigin.app/fr/boss-de-confrerie/akumu-bete-demoniaque
-**Date du relevé** : 2026-08-08
-**Nature** : relevé de données, pas d'analyse. Aucun chiffre n'est calculé, déduit ou complété —
-tout est lu tel qu'affiché par la page.
+**Sources** : page publique pour les niveaux 1 à 20, puis export FModel du
+client pour les niveaux 21 à 30 (`Actor/NpcStatGroupTable`, groupe
+`stat_50700109`).
+**Dates** : relevé public du 2026-08-08 ; complément FModel du 2026-08-28.
+**Nature** : relevé de données, pas d'analyse. Aucun chiffre n'est extrapolé.
 
 Bandeau de consentement : refusé (« Rejeter tout ») avant tout relevé.
 
@@ -84,6 +85,29 @@ quand la décimale est nulle).
 | 18 | 32 747 | 101,12 % | 185,03 % | 73 549 970 |
 | 19 | 35 464 | 111,23 % | 199,83 % | 84 238 935 |
 | 20 | 38 544 | 122,35 % | 215,82 % | 96 543 801 |
+
+### Complément du client — niveaux 21 à 30
+
+Ces dix lignes n'étaient pas publiées sur la page relevée le 8 août. Elles
+proviennent directement de `NpcStatGroupTable`. Le propriétaire a confirmé que
+le sélecteur du jeu va bien jusqu'au niveau 30.
+
+| Niveau | DEF | Résistance crit. | Défense crit. | HP |
+|---:|---:|---:|---:|---:|
+| 21 | 40 175 | 20 % | 358,06 % | 102 375 267 |
+| 22 | 43 919 | 20 % | 380,10 % | 112 611 620 |
+| 23 | 47 735 | 20 % | 401,14 % | 123 127 648 |
+| 24 | 51 811 | 20 % | 422,70 % | 134 412 784 |
+| 25 | 56 152 | 20 % | 444,68 % | 146 490 333 |
+| 26 | 60 575 | 20 % | 465,54 % | 158 878 632 |
+| 27 | 65 271 | 20 % | 486,72 % | 172 090 420 |
+| 28 | 70 051 | 20 % | 506,73 % | 185 628 496 |
+| 29 | 75 113 | 20 % | 526,94 % | 200 021 136 |
+| 30 | 80 264 | 20 % | 545,93 % | 214 755 600 |
+
+La résistance critique change de régime au niveau 21 : elle retombe de
+122,35 % à 20 %, puis reste constante. Ce n'est pas une interpolation du site,
+mais la valeur brute des dix lignes du client.
 
 ### Vérification obligatoire — les deux niveaux connus
 

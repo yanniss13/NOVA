@@ -344,7 +344,7 @@ import { etat } from "./calculateur-etat.js";
     const critique = lignes.find(ligne => ligne.stat === "C_Critical_Rate");
     /* Le plafond mord sur le taux NET de la resistance de la cible, comme dans
        degatsAttendus() : l'annoncer sur le taux brut se tromperait contre
-       Akumu, dont la resistance critique monte a 122 %. */
+       Akumu, dont la resistance critique atteint 122 % au niveau 20. */
     const critNet = (Number(source.critRate) || 0) - (Number(cible.critResist) || 0);
     if(critique && critNet >= PLAFOND_PROPRE){
       notes.push(el("p",{class:"calc-avertissement",
