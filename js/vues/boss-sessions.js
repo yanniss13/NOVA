@@ -683,12 +683,18 @@ import { toast } from "./toast.js";
     }
   }
 
+  /* `.boss-report-card` autant que `.boss-card` : depuis qu'un administrateur
+     repare une run terminee, le declencheur du choix d'equipe peut vivre dans
+     l'archive. Sans elle, le focus repartirait sur l'onglet a chaque
+     correction. */
   function bossTeamActionFor(sessionId){
-    const card = [...document.querySelectorAll(".boss-card")]
+    const card = [...document.querySelectorAll(".boss-card, .boss-report-card")]
       .find(item => item.dataset.sessionId === sessionId);
-    return card
-      ? card.querySelector(".boss-member-team-action, .boss-join")
-      : ongletDeLaVue("boss");
+    /* Une carte d'archive n'offre ces deux gestes qu'a un administrateur.
+       Pour tous les autres il n'y a plus rien a viser dedans, et le focus doit
+       repartir sur l'onglet plutot que de se perdre sur `document.body`. */
+    return card?.querySelector(".boss-member-team-action, .boss-join")
+      || ongletDeLaVue("boss");
   }
 
   function bossTeamChoice(team, group, requestId){
@@ -698,6 +704,10 @@ import { toast } from "./toast.js";
        contexte est remplace a chaque ouverture, et un bouton construit pour un
        membre ne doit jamais enregistrer pour celui d'apres. */
     const pourAutrui = bossTeamPickerContext?.pourAutrui === true;
+    /* Fixe a la construction pour la meme raison : une run terminee refuse
+       `select_boss_team` et `admin_select_boss_team`, seule la RPC de
+       correction y ecrit. */
+    const enCorrection = bossTeamPickerContext?.enCorrection === true;
     const cibleId = bossTeamPickerContext?.cibleId;
     const heroes = el("span",{class:"boss-team-choice-heroes"});
     (team.heroes || []).forEach(hero => {
@@ -732,9 +742,13 @@ import { toast } from "./toast.js";
         ) return;
         setBossTeamPickerPending(requestId, true, choice);
         try{
-          pourAutrui
-            ? await BossStore.adminSelectTeam(group.id, cibleId, team.id)
-            : await BossStore.selectTeam(group.id, team.id);
+          if(enCorrection){
+            await BossStore.adminCorrectTeam(group.id, cibleId, team.id);
+          }else if(pourAutrui){
+            await BossStore.adminSelectTeam(group.id, cibleId, team.id);
+          }else{
+            await BossStore.selectTeam(group.id, team.id);
+          }
           if(!isBossTeamPickerCurrent(requestId)) return;
           const refreshed = await renderBossView({
             showLoading:false,
@@ -803,22 +817,29 @@ import { toast } from "./toast.js";
             if(!pickerIsCurrent) return;
             const currentGroup = (bossViewState.allGroups || [])
               .find(item => item.id === group.id);
+            /* La modale parle de la CIBLE, pas de l'appelant : c'est son
+               appartenance et ses equipes qu'il faut relire. Les confondre
+               fermait la modale des qu'un administrateur choisissait pour
+               quelqu'un d'un groupe ou lui-meme n'etait pas. */
             const currentMembership = (bossViewState.membership || [])
               .find(item =>
                 item.session_id === group.id &&
-                item.owner === sessionCourante.user?.id
+                item.owner === cibleId
               );
             const refreshedTrigger = bossTeamActionFor(group.id);
             ModalStack.setRestoreFocus(
               $("#bossTeamOverlay"),
               refreshedTrigger
             );
-            if(!currentGroup || currentGroup.status !== "open" || !currentMembership){
+            const statutAttendu = enCorrection ? "archived" : "open";
+            if(!currentGroup
+              || currentGroup.status !== statutAttendu
+              || !currentMembership){
               closeBossTeamPicker();
             }else if(teamsResult.status === "fulfilled"){
               bossTeamPickerPendingRequestId = null;
               const teams = teamsResult.value
-                .filter(item => item.owner === sessionCourante.user.id)
+                .filter(item => item.owner === cibleId)
                 .sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
               bossTeamPickerTeams(
                 $("#bossTeamList"),
@@ -870,12 +891,23 @@ import { toast } from "./toast.js";
      plusieurs sur le meme groupe, et cette file les ecraserait l'un l'autre.
      On recharge donc simplement apres coup. */
 
+  /* Une run terminee refuse les trois gestes ordinaires : elle n'est plus
+     ouverte, et sa semaine a souvent tourne. On lit donc le statut du groupe
+     pour choisir la porte — jamais un drapeau passe de loin, qu'un appel
+     distrait pourrait poser sur un groupe vivant. */
+  const bossRunTerminee = group => !!group && group.status === "archived";
+
   async function retirerMembreDuGroupe(group, member){
     if(!group || !member || !estAdministrateur()) return;
     const pseudo = member.pseudo || "Ce membre";
+    const correction = bossRunTerminee(group);
     try{
-      await BossStore.adminLeave(group.id, member.owner);
-      toast(pseudo + " a été retiré du groupe.");
+      correction
+        ? await BossStore.adminCorrectLeave(group.id, member.owner)
+        : await BossStore.adminLeave(group.id, member.owner);
+      toast(pseudo + (correction
+        ? " a été retiré de cette run terminée."
+        : " a été retiré du groupe."));
     }catch(error){
       toast(bossActionMessage(error, pseudo), true);
     }
@@ -936,9 +968,14 @@ import { toast } from "./toast.js";
         onclick:async()=>{
           if(bouton.disabled) return;
           bouton.disabled = true;
+          const correction = bossRunTerminee(group);
           try{
-            await BossStore.adminJoin(group.id, compte.id);
-            toast(compte.pseudo + " a été ajouté au groupe.");
+            correction
+              ? await BossStore.adminCorrectJoin(group.id, compte.id)
+              : await BossStore.adminJoin(group.id, compte.id);
+            toast(compte.pseudo + (correction
+              ? " a été ajouté à cette run terminée."
+              : " a été ajouté au groupe."));
             closeBossMemberPicker();
           }catch(error){
             bouton.disabled = false;
@@ -965,6 +1002,10 @@ import { toast } from "./toast.js";
        modale qui ne pourrait rien enregistrer. */
     const pourAutrui = member.owner !== userId;
     if(pourAutrui && !estAdministrateur()) return;
+    /* Reparer l'equipe d'une run terminee est reserve aux administrateurs, y
+       compris sur sa propre ligne : le geste ecrit dans l'archive. */
+    const correction = bossRunTerminee(group);
+    if(correction && !estAdministrateur()) return;
     const cibleId = member.owner;
     const restoreFocus = document.activeElement;
     const requestId = ++bossTeamPickerRequestId;
@@ -974,15 +1015,18 @@ import { toast } from "./toast.js";
       userId,
       cibleId,
       pourAutrui,
+      enCorrection:correction,
       ownerVersion:bossViewOwnerVersion,
       groupId:group.id
     };
     /* Le titre nomme la personne : sans lui, rien a l'ecran ne distingue
        « je choisis mon equipe » de « je choisis celle d'un autre », et les
        deux modales sont identiques. */
-    $("#bossTeamTitle").textContent = pourAutrui
-      ? "Choisir l’équipe de " + (member.pseudo || "ce membre")
-      : "Choisir mon équipe";
+    $("#bossTeamTitle").textContent = correction
+      ? "Corriger l’équipe de " + (member.pseudo || "ce membre")
+      : (pourAutrui
+        ? "Choisir l’équipe de " + (member.pseudo || "ce membre")
+        : "Choisir mon équipe");
     const overlay = $("#bossTeamOverlay");
     const list = $("#bossTeamList");
     try{
@@ -1222,7 +1266,8 @@ import { toast } from "./toast.js";
       .find(item => item.session_id === context.group.id) || null;
     const mine = members.some(member => member.owner === context.userId);
     const remainsValid = context.mode === "edit"
-      ? !!group && group.status === "archived" && !!report && mine
+      ? !!group && group.status === "archived" && !!report
+        && (mine || estAdministrateur())
       : !!group && group.status === "open" && mine;
 
     if(!remainsValid){
@@ -1247,7 +1292,14 @@ import { toast } from "./toast.js";
     const report = (bossViewState.reports || [])
       .find(item => item.session_id === group.id) || null;
     const mine = members.some(member => member.owner === sessionCourante.user?.id);
-    if(!mine || (selectedMode === "edit" && !report)) return;
+    /* Corriger le rapport d'une run ou l'on n'etait pas est le droit d'un
+       administrateur, et c'est `update_boss_run_report` qui le tranche.
+       Terminer une run, elle, reste un geste de participant : personne ne
+       depose un score pour un groupe dont il ne sait rien. */
+    const autorise = selectedMode === "edit"
+      ? (mine || estAdministrateur())
+      : mine;
+    if(!autorise || (selectedMode === "edit" && !report)) return;
 
     const context = {
       requestId:++bossReportRequestId,
@@ -1595,6 +1647,72 @@ import { toast } from "./toast.js";
     return true;
   }
 
+  /* La liste des participants d'une run terminee. Pour tout le monde elle se
+     lit ; pour un administrateur elle s'edite, avec les deux memes gestes que
+     sur un groupe ouvert. Ce test ne protege rien — la barriere est
+     `private.est_admin` dans le SQL. Il evite de proposer un geste dont on
+     connait deja la reponse. */
+  function bossReportParticipants(group, members){
+    const liste = el("div",{class:"boss-report-participants"});
+    const jeCorrige = estAdministrateur();
+    members.forEach(member => {
+      const row = bossReportParticipant(member);
+      if(jeCorrige){
+        row.appendChild(el("div",{class:"boss-report-participant-actions"},[
+          el("button",{
+            class:"btn boss-member-team-action",
+            type:"button",
+            dataset:{bossAction:"correct-team"},
+            text:"Corriger l’équipe",
+            onclick:()=>void openBossTeamPicker(group, member)
+          }),
+          el("button",{
+            class:"btn btn-ghost boss-member-remove",
+            type:"button",
+            dataset:{bossAction:"correct-remove"},
+            text:"Retirer",
+            onclick:()=>void retirerMembreDuGroupe(group, member)
+          })
+        ]));
+      }
+      liste.appendChild(row);
+    });
+    return liste;
+  }
+
+  /* Les gestes proposes sous une run terminee. « Corriger le rapport » revient
+     a un participant — c'est sa run — ou a un administrateur, qui repare celle
+     des autres. « Ajouter un membre » n'appartient qu'a l'administrateur. */
+  function bossReportCardActions(group, members, report){
+    const boutons = [];
+    const jeCorrige = estAdministrateur();
+    const mine = members.some(member => member.owner === sessionCourante.user?.id);
+    if(report && (mine || jeCorrige)){
+      boutons.push(el("button",{
+        class:"btn boss-report-edit",
+        type:"button",
+        dataset:{bossAction:"report-edit"},
+        text:"Corriger le rapport",
+        onclick:()=>openBossReport(group, "edit")
+      }));
+    }
+    if(jeCorrige){
+      const ajouter = el("button",{
+        class:"btn btn-secondary boss-admin-add",
+        type:"button",
+        dataset:{bossAction:"correct-add"},
+        text:"Ajouter un membre",
+        title:members.length >= 5 ? "Groupe complet : 5/5" : "",
+        onclick:()=>void openBossMemberPicker(group, members)
+      });
+      ajouter.disabled = members.length >= 5;
+      boutons.push(ajouter);
+    }
+    return boutons.length
+      ? el("div",{class:"boss-report-actions"}, boutons)
+      : null;
+  }
+
   function bossReportCard(group, members, report){
     const card = el("article",{
       class:"boss-report-card"+(report?"":" boss-report-unavailable"),
@@ -1615,11 +1733,11 @@ import { toast } from "./toast.js";
       card.appendChild(el("p",{
         text:"Rapport non disponible pour cette ancienne run."
       }));
-      const legacyParticipants = el("div",{class:"boss-report-participants"});
-      members.forEach(member =>
-        legacyParticipants.appendChild(bossReportParticipant(member))
-      );
-      card.appendChild(legacyParticipants);
+      card.appendChild(bossReportParticipants(group, members));
+      /* Sans rapport, il n'y a rien a corriger de ce cote — mais la
+         composition, elle, reste reparable. */
+      const actions = bossReportCardActions(group, members, report);
+      if(actions) card.appendChild(actions);
       return card;
     }
 
@@ -1649,23 +1767,9 @@ import { toast } from "./toast.js";
     }
     card.appendChild(meta);
 
-    const participants = el("div",{class:"boss-report-participants"});
-    members.forEach(member =>
-      participants.appendChild(bossReportParticipant(member))
-    );
-    card.appendChild(participants);
-
-    if(members.some(member => member.owner === sessionCourante.user?.id)){
-      card.appendChild(el("div",{class:"boss-report-actions"},[
-        el("button",{
-          class:"btn boss-report-edit",
-          type:"button",
-          dataset:{bossAction:"report-edit"},
-          text:"Corriger le rapport",
-          onclick:()=>openBossReport(group, "edit")
-        })
-      ]));
-    }
+    card.appendChild(bossReportParticipants(group, members));
+    const actions = bossReportCardActions(group, members, report);
+    if(actions) card.appendChild(actions);
     return card;
   }
 
@@ -1685,9 +1789,21 @@ import { toast } from "./toast.js";
     return wrap;
   }
 
+  /* Chaque geste de correction relance un rendu complet. Sans cette memoire,
+     l'archive se refermerait entre deux corrections et il faudrait la rouvrir
+     — puis retrouver la carte — a chaque clic. Elle vit hors du rendu, comme
+     le reste de l'etat de la vue. */
+  let bossArchivePasseeOuverte = false;
+
   function bossArchive(past, membership, reports){
     const weeks = [...new Set(past.map(g=>g.week_start))].sort().reverse();
     const wrap = el("details",{class:"boss-archive"});
+    /* Jamais `open:false` en attribut : `setAttribute` ecrirait la chaine
+       « false », que le navigateur lit comme une presence. */
+    wrap.open = bossArchivePasseeOuverte;
+    wrap.addEventListener("toggle", ()=>{
+      bossArchivePasseeOuverte = wrap.open;
+    });
     wrap.appendChild(el("summary",{
       text:"Semaines précédentes ("+weeks.length+")"
     }));

@@ -193,7 +193,18 @@
   color:var(--gold-bright)
 }
 .boss-report-team-missing{font-size:11px;color:var(--muted-2)}
-.boss-report-actions{display:flex;justify-content:flex-end;margin-top:12px}
+/* Les gestes de reparation d'un administrateur, sous la ligne d'un membre.
+   Ils tiennent a 320 px : deux colonnes egales plutot qu'une rangee qui
+   deborderait de la carte. */
+.boss-report-participant-actions{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:7px
+}
+.boss-report-participant-actions .btn{
+  min-width:0;padding:6px 8px;font-size:11px;justify-content:center
+}
+.boss-report-actions{
+  display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-end;margin-top:12px
+}
 .boss-report-edit{justify-content:center}
 .boss-report-unavailable p{
   margin:12px 0 0;color:var(--muted);font-size:13px;line-height:1.45

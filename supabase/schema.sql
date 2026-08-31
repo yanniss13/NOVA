@@ -774,6 +774,24 @@ alter table public.boss_sessions      enable row level security;
 alter table public.boss_participation enable row level security;
 alter table public.boss_run_reports   enable row level security;
 
+-- CORRIGER UNE RUN DEJA TERMINEE.
+--
+-- Les trois fonctions privees ci-dessous recoivent desormais `p_correction`.
+-- Il ne relache que deux verrous — la semaine courante et le statut ouvert —
+-- parce qu'une run a reparer est justement archivee, et souvent passee. Les
+-- plafonds du jeu, l'appartenance a la confrerie et l'equipe reellement
+-- possedee restent en place : on repare une saisie, on ne compose pas un
+-- groupe que le jeu n'a jamais permis.
+--
+-- `p_correction` est un argument NOUVEAU, et `create or replace` ne sait pas
+-- ajouter un argument a une fonction existante : il faut qu'elle disparaisse
+-- d'abord. Ces trois retraits ouvrent la voie aux definitions qui suivent, et
+-- comme le fichier est rejoue en entier, ils ne laissent jamais le schema sans
+-- ces fonctions : les `create` tiennent dans le meme collage.
+drop function if exists private.rejoindre_run(uuid, uuid);
+drop function if exists private.quitter_run(uuid, uuid);
+drop function if exists private.choisir_equipe_run(uuid, uuid, uuid);
+
 -- Les regles d'un run de boss vivent ICI, avec le proprietaire en argument.
 -- Deux entrees publiques s'y branchent : celle du membre, qui agit pour
 -- lui-meme, et celle de l'administrateur, qui compose un groupe pour
@@ -782,7 +800,8 @@ alter table public.boss_run_reports   enable row level security;
 -- celle de l'administrateur en arriere.
 create or replace function private.rejoindre_run(
   p_session_id uuid,
-  p_owner uuid
+  p_owner uuid,
+  p_correction boolean
 )
 returns void
 language plpgsql
@@ -818,11 +837,18 @@ begin
   if v_week is null then
     raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
   end if;
-  if v_week <> private.current_boss_week_start() then
-    raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
-  end if;
-  if v_status <> 'open' then
-    raise exception 'RUN_ARCHIVED' using errcode = 'P0001';
+  -- LES DEUX SEULS VERROUS QUE `p_correction` RELACHE. Une run a reparer
+  -- est archivee par definition, et souvent d'une semaine passee : les
+  -- exiger reviendrait a interdire toute correction. Tout ce qui suit —
+  -- plafonds, appartenance, equipe possedee — s'applique a une correction
+  -- comme a un geste ordinaire.
+  if not p_correction then
+    if v_week <> private.current_boss_week_start() then
+      raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
+    end if;
+    if v_status <> 'open' then
+      raise exception 'RUN_ARCHIVED' using errcode = 'P0001';
+    end if;
   end if;
   if exists (
     select 1 from public.boss_participation
@@ -875,7 +901,7 @@ security definer
 set search_path = public, pg_temp
 as $$
 begin
-  perform private.rejoindre_run(p_session_id, auth.uid());
+  perform private.rejoindre_run(p_session_id, auth.uid(), false);
 end;
 $$;
 
@@ -903,7 +929,7 @@ begin
   if p_owner is null then
     raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
   end if;
-  perform private.rejoindre_run(p_session_id, p_owner);
+  perform private.rejoindre_run(p_session_id, p_owner, false);
 end;
 $$;
 
@@ -916,7 +942,8 @@ $$;
 -- celle de l'administrateur en arriere.
 create or replace function private.quitter_run(
   p_session_id uuid,
-  p_owner uuid
+  p_owner uuid,
+  p_correction boolean
 )
 returns void
 language plpgsql
@@ -949,11 +976,18 @@ begin
   if v_week is null then
     raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
   end if;
-  if v_week <> private.current_boss_week_start() then
-    raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
-  end if;
-  if v_status <> 'open' then
-    raise exception 'RUN_ARCHIVED' using errcode = 'P0001';
+  -- LES DEUX SEULS VERROUS QUE `p_correction` RELACHE. Une run a reparer
+  -- est archivee par definition, et souvent d'une semaine passee : les
+  -- exiger reviendrait a interdire toute correction. Tout ce qui suit —
+  -- plafonds, appartenance, equipe possedee — s'applique a une correction
+  -- comme a un geste ordinaire.
+  if not p_correction then
+    if v_week <> private.current_boss_week_start() then
+      raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
+    end if;
+    if v_status <> 'open' then
+      raise exception 'RUN_ARCHIVED' using errcode = 'P0001';
+    end if;
   end if;
 
   delete from public.boss_participation
@@ -971,7 +1005,7 @@ security definer
 set search_path = public, pg_temp
 as $$
 begin
-  perform private.quitter_run(p_session_id, auth.uid());
+  perform private.quitter_run(p_session_id, auth.uid(), false);
 end;
 $$;
 
@@ -999,7 +1033,7 @@ begin
   if p_owner is null then
     raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
   end if;
-  perform private.quitter_run(p_session_id, p_owner);
+  perform private.quitter_run(p_session_id, p_owner, false);
 end;
 $$;
 
@@ -1013,7 +1047,8 @@ $$;
 create or replace function private.choisir_equipe_run(
   p_session_id uuid,
   p_owner uuid,
-  p_team_id uuid
+  p_team_id uuid,
+  p_correction boolean
 )
 returns void
 language plpgsql
@@ -1047,11 +1082,18 @@ begin
   if v_week is null then
     raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
   end if;
-  if v_week <> private.current_boss_week_start() then
-    raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
-  end if;
-  if v_status <> 'open' then
-    raise exception 'RUN_ARCHIVED' using errcode = 'P0001';
+  -- LES DEUX SEULS VERROUS QUE `p_correction` RELACHE. Une run a reparer
+  -- est archivee par definition, et souvent d'une semaine passee : les
+  -- exiger reviendrait a interdire toute correction. Tout ce qui suit —
+  -- plafonds, appartenance, equipe possedee — s'applique a une correction
+  -- comme a un geste ordinaire.
+  if not p_correction then
+    if v_week <> private.current_boss_week_start() then
+      raise exception 'RUN_INVALID_WEEK' using errcode = 'P0001';
+    end if;
+    if v_status <> 'open' then
+      raise exception 'RUN_ARCHIVED' using errcode = 'P0001';
+    end if;
   end if;
   if not exists (
     select 1 from public.boss_participation
@@ -1102,7 +1144,7 @@ security definer
 set search_path = public, pg_temp
 as $$
 begin
-  perform private.choisir_equipe_run(p_session_id, auth.uid(), p_team_id);
+  perform private.choisir_equipe_run(p_session_id, auth.uid(), p_team_id, false);
 end;
 $$;
 
@@ -1131,10 +1173,111 @@ begin
   if p_owner is null then
     raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
   end if;
-  perform private.choisir_equipe_run(p_session_id, p_owner, p_team_id);
+  perform private.choisir_equipe_run(p_session_id, p_owner, p_team_id, false);
 end;
 $$;
 
+
+
+-- ================= Reparer une run deja terminee =================
+--
+-- Trois portes reservees aux administrateurs, qui refont sur une session
+-- archivee les trois gestes de composition. Elles n'existent pas pour le
+-- confort : sans elles, une inscription posee sur la mauvaise personne ou
+-- une equipe choisie par erreur resteraient dans l'archive pour toujours,
+-- et fausseraient l'analyse des runs autant que le score lui-meme.
+--
+-- CE SONT DES PORTES DISTINCTES, et non un drapeau ajoute aux trois portes
+-- admin ordinaires : meme raisonnement que plus haut. Le geste quotidien
+-- passerait alors par un chemin qui accepte d'ecrire dans l'archive, et une
+-- valeur mal transmise y deviendrait une retouche silencieuse de
+-- l'historique. Deux portes rendent l'intention lisible a l'appel.
+--
+-- Elles ne recopient aucune regle : chacune delegue a la fonction privee
+-- avec `p_correction => true`, et se fait donc refuser un sixieme membre ou
+-- une equipe que la personne n'a jamais enregistree, exactement comme le
+-- geste ordinaire.
+
+-- Ajouter apres coup quelqu'un qui a bien participe.
+create or replace function public.admin_correct_boss_run_join(
+  p_session_id uuid,
+  p_owner uuid
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  -- Le garde porte sur l'APPELANT, pas sur la cible. Masquer un bouton
+  -- est une politesse ; c'est cette ligne qui est la barriere.
+  if not private.est_admin(auth.uid()) then
+    raise exception 'ADMIN_REQUIS' using errcode = 'P0001';
+  end if;
+  -- Un administrateur doit nommer quelqu'un. Sans ce controle, la
+  -- fonction privee repondrait AUTH_REQUIRED, qui designe l'appelant et
+  -- enverrait chercher la panne au mauvais endroit.
+  if p_owner is null then
+    raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
+  end if;
+  perform private.rejoindre_run(p_session_id, p_owner, true);
+end;
+$$;
+
+
+-- Retirer apres coup quelqu'un qui n'a jamais participe.
+create or replace function public.admin_correct_boss_run_leave(
+  p_session_id uuid,
+  p_owner uuid
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  -- Le garde porte sur l'APPELANT, pas sur la cible. Masquer un bouton
+  -- est une politesse ; c'est cette ligne qui est la barriere.
+  if not private.est_admin(auth.uid()) then
+    raise exception 'ADMIN_REQUIS' using errcode = 'P0001';
+  end if;
+  -- Un administrateur doit nommer quelqu'un. Sans ce controle, la
+  -- fonction privee repondrait AUTH_REQUIRED, qui designe l'appelant et
+  -- enverrait chercher la panne au mauvais endroit.
+  if p_owner is null then
+    raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
+  end if;
+  perform private.quitter_run(p_session_id, p_owner, true);
+end;
+$$;
+
+
+-- Remettre l'equipe reellement jouee sur la ligne d'un membre.
+create or replace function public.admin_correct_boss_run_team(
+  p_session_id uuid,
+  p_owner uuid,
+  p_team_id uuid
+)
+returns void
+language plpgsql
+security definer
+set search_path = public, pg_temp
+as $$
+begin
+  -- Le garde porte sur l'APPELANT, pas sur la cible. Masquer un bouton
+  -- est une politesse ; c'est cette ligne qui est la barriere.
+  if not private.est_admin(auth.uid()) then
+    raise exception 'ADMIN_REQUIS' using errcode = 'P0001';
+  end if;
+  -- Un administrateur doit nommer quelqu'un. Sans ce controle, la
+  -- fonction privee repondrait AUTH_REQUIRED, qui designe l'appelant et
+  -- enverrait chercher la panne au mauvais endroit.
+  if p_owner is null then
+    raise exception 'MEMBRE_REQUIS' using errcode = 'P0001';
+  end if;
+  perform private.choisir_equipe_run(p_session_id, p_owner, p_team_id, true);
+end;
+$$;
 
 create or replace function public.complete_boss_run_with_report(
   p_session_id uuid,
@@ -1287,7 +1430,9 @@ begin
   if v_run_status <> 'archived' then
     raise exception 'RUN_NOT_ARCHIVED' using errcode = 'P0001';
   end if;
-  if not exists (
+  -- Un administrateur corrige le rapport d'une run ou il n'etait pas : c'est
+  -- tout l'objet du droit. Le membre, lui, ne corrige que celle qu'il a faite.
+  if not private.est_admin(v_owner) and not exists (
     select 1
       from public.boss_participation
      where session_id = p_session_id
@@ -1381,10 +1526,16 @@ revoke all on function public.update_boss_run_report(uuid, bigint, text) from pu
 revoke all on function public.admin_join_boss_run(uuid, uuid) from public;
 revoke all on function public.admin_leave_boss_run(uuid, uuid) from public;
 revoke all on function public.admin_select_boss_team(uuid, uuid, uuid) from public;
+revoke all on function public.admin_correct_boss_run_join(uuid, uuid) from public;
+revoke all on function public.admin_correct_boss_run_leave(uuid, uuid) from public;
+revoke all on function public.admin_correct_boss_run_team(uuid, uuid, uuid) from public;
 grant execute on function public.join_boss_run(uuid) to authenticated;
 grant execute on function public.admin_join_boss_run(uuid, uuid) to authenticated;
 grant execute on function public.admin_leave_boss_run(uuid, uuid) to authenticated;
 grant execute on function public.admin_select_boss_team(uuid, uuid, uuid) to authenticated;
+grant execute on function public.admin_correct_boss_run_join(uuid, uuid) to authenticated;
+grant execute on function public.admin_correct_boss_run_leave(uuid, uuid) to authenticated;
+grant execute on function public.admin_correct_boss_run_team(uuid, uuid, uuid) to authenticated;
 grant execute on function public.leave_boss_run(uuid) to authenticated;
 grant execute on function public.complete_boss_run(uuid) to authenticated;
 grant execute on function public.select_boss_team(uuid, uuid) to authenticated;

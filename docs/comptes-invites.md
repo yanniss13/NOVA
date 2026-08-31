@@ -102,6 +102,50 @@ Masquer les boutons n'est qu'une politesse : un membre qui appellerait
 Tant qu'il n'est pas rejoué, les boutons apparaissent pour un administrateur et
 chaque clic échoue.
 
+## Réparer une run déjà terminée
+
+Une run terminée s'archive, et les gestes ordinaires la refusent : elle n'est
+plus ouverte, et sa semaine a souvent tourné. C'est ce qui protège l'historique
+d'une modification distraite.
+
+Un administrateur, lui, ouvre l'archive — **Semaines précédentes**, ou **Runs
+terminées cette semaine** — et retrouve sur chaque carte :
+
+- **Corriger le rapport** : le score global et la note. Un participant l'a déjà
+  sur ses propres runs ; un administrateur l'a sur **toutes**, y compris celles
+  où il n'était pas.
+- **Corriger l'équipe** sur la ligne d'un membre, qui propose **les équipes de
+  cette personne**.
+- **Retirer**, et **Ajouter un membre** sous la carte.
+
+Aucune limite d'ancienneté : une run d'il y a trois semaines se répare comme
+celle d'hier.
+
+**Les règles du jeu ne plient pas davantage ici.** Cinq membres par groupe,
+trois runs par semaine et par personne — comptés sur **la semaine de la run**,
+pas sur la semaine en cours — et une équipe que le membre n'a jamais
+enregistrée reste refusée.
+
+Ce n'est pas non plus une politesse d'interface. Les gestes de réparation
+passent par trois RPC distinctes — `admin_correct_boss_run_join`, `…_leave`,
+`…_team` — qui délèguent aux **mêmes** fonctions privées que les gestes
+ordinaires, avec un unique argument `p_correction` qui relâche **deux verrous et
+deux seulement** : la semaine courante et le statut ouvert. Les plafonds ne sont
+écrits qu'une fois, et `tests/boss-correction-schema.test.js` refuse qu'une
+règle du jeu tombe dans le bloc relâché.
+
+Portes séparées plutôt qu'un drapeau ajouté aux trois portes admin : le geste
+quotidien passerait sinon par un chemin qui accepte d'écrire dans l'archive, et
+une valeur mal transmise y deviendrait une retouche silencieuse de l'historique.
+
+Ce qui ne se corrige pas : le statut de la run (elle reste terminée) et le run
+suivant, déjà créé à l'archivage. Il n'y a pas de « rouvrir une run ».
+
+⚠️ Ces trois fonctions arrivent, elles aussi, **par le collage de
+`supabase/schema.sql`**. Le fichier retire d'abord les anciennes signatures des
+trois fonctions privées — `create or replace` ne sait pas ajouter un argument —
+puis les redéfinit dans le même collage.
+
 ## Ce qui reste hors périmètre
 
 Confirmation d'email à l'inscription, invitation par code, rôles fins,

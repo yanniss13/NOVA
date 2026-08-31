@@ -340,7 +340,11 @@ async function installFakeSupabase(page){
         const mine = state.boss_participation.some(item =>
           item.session_id === sessionId && item.owner === owner
         );
-        if(!mine) return fail("NOT_A_PARTICIPANT");
+        /* Un administrateur corrige le rapport d'une run ou il n'etait pas :
+           `update_boss_run_report` le prevoit explicitement. */
+        const acteurRapport = state.profiles.find(item => item.id === owner);
+        const adminRapport = !!acteurRapport && acteurRapport.admin === true;
+        if(!mine && !adminRapport) return fail("NOT_A_PARTICIPANT");
         const score = scoreValue(args && args.p_global_score);
         if(!score) return fail("INVALID_SCORE");
         const note = noteValue(args && args.p_note);
@@ -355,7 +359,22 @@ async function installFakeSupabase(page){
 
       const run = state.boss_sessions.find(item => item.id === sessionId);
       if(!run) return fail("RUN_NOT_FOUND");
-      if(!run.week_start || run.week_start !== currentBossWeekStart()){
+
+      /* LES TROIS PORTES DE CORRECTION, calques sur le schema. Elles relachent
+         DEUX verrous et deux seulement — la semaine courante et le statut
+         ouvert — parce qu'une run a reparer est archivee, et souvent passee.
+         Une session sans semaine reste refusee : c'est une donnee cassee, pas
+         une run a reparer. */
+      const GESTES_CORRECTION = {
+        admin_correct_boss_run_join:"join_boss_run",
+        admin_correct_boss_run_leave:"leave_boss_run",
+        admin_correct_boss_run_team:"select_boss_team"
+      };
+      const correction = Object.prototype.hasOwnProperty.call(
+        GESTES_CORRECTION, name
+      );
+      if(!run.week_start) return fail("RUN_INVALID_WEEK");
+      if(!correction && run.week_start !== currentBossWeekStart()){
         return fail("RUN_INVALID_WEEK");
       }
 
@@ -373,7 +392,8 @@ async function installFakeSupabase(page){
       const GESTES_ADMIN = {
         admin_join_boss_run:"join_boss_run",
         admin_leave_boss_run:"leave_boss_run",
-        admin_select_boss_team:"select_boss_team"
+        admin_select_boss_team:"select_boss_team",
+        ...GESTES_CORRECTION
       };
       let geste = name;
       let cible = owner;
@@ -391,7 +411,7 @@ async function installFakeSupabase(page){
       }
 
       if(geste === "join_boss_run"){
-        if(run.status !== "open") return fail("RUN_ARCHIVED");
+        if(!correction && run.status !== "open") return fail("RUN_ARCHIVED");
         if(state.boss_participation.some(item =>
           item.session_id === sessionId && item.owner === cible
         )) return { data:null, error:null };
@@ -418,7 +438,7 @@ async function installFakeSupabase(page){
       }
 
       if(geste === "select_boss_team"){
-        if(run.status !== "open") return fail("RUN_ARCHIVED");
+        if(!correction && run.status !== "open") return fail("RUN_ARCHIVED");
         const membership = state.boss_participation.find(item =>
           item.session_id === sessionId && item.owner === cible
         );
@@ -445,7 +465,7 @@ async function installFakeSupabase(page){
       }
 
       if(geste === "leave_boss_run"){
-        if(run.status !== "open") return fail("RUN_ARCHIVED");
+        if(!correction && run.status !== "open") return fail("RUN_ARCHIVED");
         state.boss_participation = state.boss_participation.filter(item =>
           item.session_id !== sessionId || item.owner !== cible
         );
