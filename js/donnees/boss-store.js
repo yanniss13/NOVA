@@ -146,6 +146,43 @@ import { sessionCourante } from "../etat/session.js";
       });
       if(error) throw error;
     },
+
+    /* LES MEMES TROIS GESTES, SUR UNE RUN DEJA TERMINEE.
+
+       Une run archivee refuse les trois precedents : elle n'est plus ouverte,
+       et sa semaine a souvent tourne. Ces trois-ci passent par des RPC qui
+       relachent ces deux verrous-la et rien d'autre — les plafonds du jeu
+       restent ceux de la fonction privee.
+
+       Portes distinctes plutot qu'un `correction:true` sur les trois
+       precedentes : un geste qui ecrit dans l'archive ne doit pas partager le
+       chemin du geste quotidien, ou un argument oublie deviendrait une
+       retouche silencieuse de l'historique. */
+    async adminCorrectJoin(sessionId, ownerId){
+      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
+      const { error } = await sb.rpc("admin_correct_boss_run_join", {
+        p_session_id:sessionId,
+        p_owner:ownerId
+      });
+      if(error) throw error;
+    },
+    async adminCorrectLeave(sessionId, ownerId){
+      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
+      const { error } = await sb.rpc("admin_correct_boss_run_leave", {
+        p_session_id:sessionId,
+        p_owner:ownerId
+      });
+      if(error) throw error;
+    },
+    async adminCorrectTeam(sessionId, ownerId, teamId){
+      if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
+      const { error } = await sb.rpc("admin_correct_boss_run_team", {
+        p_session_id:sessionId,
+        p_owner:ownerId,
+        p_team_id:teamId
+      });
+      if(error) throw error;
+    },
     async complete(sessionId, globalScore, note){
       if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
       const { error } = await sb.rpc("complete_boss_run_with_report", {
