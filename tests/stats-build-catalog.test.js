@@ -344,4 +344,69 @@ assert.deepStrictEqual(
   "synonymes non fusionnés : " + JSON.stringify(synonyms)
 );
 
-console.log("PASS catalogue de builds : équipement, gravures, ensembles");
+/* ---- LES TROIS PALIERS D'UNE TRANSCENDANCE ----
+
+   Une transcendance ne rend pas que son passif : les deux premiers paliers
+   rendent chacun une statistique. La fiche n'affichait que le troisième, et
+   une gravée se lisait au tiers de ce qu'elle rapporte.
+
+   Ce test garde les deux moitiés du contrat. D'abord la COUVERTURE : autant de
+   pièces portent deux options que de pièces donnent une transcendance — si la
+   génération en perdait, la fiche redeviendrait muette sans rien casser.
+   Ensuite la LISIBILITÉ : la vue écarte toute option dont le code n'a ni
+   libellé ni unité, donc un code non catalogué disparaîtrait de l'écran en
+   silence. C'est exactement ce qui serait arrivé à `All_Element_Res_Rate`. */
+const gravees = Object.entries(catalog.engravedByFile);
+const avecOptions = gravees.filter(([, piece]) => piece.limitBreakOptions);
+assert.equal(
+  avecOptions.length, 78,
+  "78 tenues gravées donnent une transcendance : "
+    + avecOptions.length + " en portent les options"
+);
+
+const muettes = [];
+avecOptions.forEach(([file, piece]) => {
+  /* `Array.from` et pas `.map` : le catalogue vient d'un `vm`, et un tableau
+     ne d'une methode de ce realm porte l'autre prototype — `deepStrictEqual`
+     le refuse alors avec deux cotes identiques a l'ecran. */
+  assert.deepStrictEqual(
+    Array.from(piece.limitBreakOptions, option => option.tier), [1, 2],
+    file + " : les deux paliers d'option attendus"
+  );
+  assert.ok(
+    Number.isInteger(piece.limitBreakPassiveSeuil),
+    file + " : le palier du passif n'a pas de seuil"
+  );
+  let precedent = 0;
+  piece.limitBreakOptions.forEach(option => {
+    /* Les seuils montent, et le passif vient après les deux options : c'est
+       ce qui rend la colonne « +5 / +10 / +14 » lisible de haut en bas. */
+    assert.ok(
+      Number.isInteger(option.seuil) && option.seuil > precedent,
+      file + " palier " + option.tier + " : seuil " + option.seuil
+    );
+    precedent = option.seuil;
+    if(!catalog.statLabels[option.stat]) muettes.push(file + " : " + option.stat);
+  });
+  assert.ok(
+    piece.limitBreakPassiveSeuil > precedent,
+    file + " : le passif ne vient pas après ses deux options"
+  );
+});
+assert.deepStrictEqual(
+  muettes, [],
+  "Ces options n'ont aucun libellé et seraient tues à l'écran :\n  "
+    + muettes.join("\n  ")
+);
+
+/* La contre-épreuve : le code qui manquait doit VRAIMENT être là, sinon
+   l'assertion ci-dessus ne prouverait que l'absence des deux côtés. */
+assert.ok(
+  catalog.statLabels.All_Element_Res_Rate,
+  "All_Element_Res_Rate porte trois options de transcendance"
+);
+
+console.log(
+  "PASS catalogue de builds : équipement, gravures, ensembles ("
+    + avecOptions.length + " transcendances à trois paliers)"
+);
