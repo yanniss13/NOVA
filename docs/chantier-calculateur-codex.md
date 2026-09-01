@@ -118,44 +118,76 @@ raison et il faut l'écrire.
 défaut sur la foi d'un site, c'est troquer une incertitude documentée contre
 une autre qui ne l'est pas.
 
-## Chantier 2 — Le critique contre Akumu : deux modèles incompatibles
+## Chantier 2 — Le critique contre Akumu
 
-**Libre. C'est le point le plus lourd de la liste.**
+**TRANCHÉ par la table du client, 1er septembre 2026. Corrigé.**
 
 Akumu porte une défense critique qui explose avec le palier : 50 % au niveau 1,
 **545,93 %** au niveau 30 (`js/metier/degats-calcul.js`, table `AKUMU_PALIERS`).
-
-Les deux modèles ne divergent que là où le multiplicateur passerait sous 1 —
+Les deux modèles ne divergeaient que là où le multiplicateur passerait sous 1 —
 c'est-à-dire exactement là où la confrérie joue.
 
-Multiplicateur critique obtenu, selon les dégâts critiques du build :
+### Ce qui a tranché
+
+`docs/constantes-combat-du-jeu.md`, section « Plafonds et planchers — les bornes
+que le jeu applique en fin de calcul » :
+
+| Constante | Valeur | En % |
+|---|---:|---:|
+| `battle_min_critical_dam_rate` | 10000 | 100 % |
+
+Elle voisine `battle_min_damres_rate` = 500, dont les 5 % sont exactement ceux
+que le module applique déjà comme `PLANCHER_DEGATS` — ce plancher-là vient du
+datamine 7dsorigin, et la table du client le confirme au chiffre près. Retenir
+une borne de cette section et écarter sa voisine ne se défend pas.
+
+Le plancher ne peut pas mordre **avant** la soustraction de la défense critique :
+les dégâts critiques d'un build valent déjà au moins 100 % par construction
+(`ga_default_criticalpowerper_rate` = 12000). Une borne qui ne mord jamais ne
+serait pas dans la table. Elle s'applique donc après.
+
+### Ce qui plaidait pour l'ancien modèle, et pourquoi ça ne suffit pas
+
+`RAPPORT-analyse-tapscreen.md` section 4 : à `cd` = 0 contre 42,93 % de défense
+critique, tapscreen rend **36 329** en critique contre **63 658** en non-critique
+— ratio 0,5708, mesuré en boîte noire, non ambigu. La mesure est solide.
+
+Mais elle prouve ce que fait **l'outil**, pas ce que fait le jeu — c'est
+exactement ce que dit déjà la table de crédit des sources plus bas. Et l'outil
+d'en face, 7dsorigin, plancherise à ×1,00. Deux modèles tiers qui se
+contredisent ne pèsent pas contre la table du client.
+
+⚠️ **Le commentaire du module induisait en erreur** : il présentait ce
+comportement comme une mécanique de jeu (« un critique peut frapper plus faible
+qu'un coup normal ») sans dire que la source était un calculateur tiers. Corrigé
+en même temps que le code.
+
+### Ce qui change
+
+`Math.max(0, 1 + degatsCrit)` → `Math.max(1, 1 + degatsCrit)`.
 
 | CD build | niv 17 | niv 20 | niv 25 | niv 30 |
 |---|---|---|---|---|
-| 150 % — local | 0,79 | 0,34 | **0,00** | **0,00** |
-| 150 % — 7dsorigin | 1,00 | 1,00 | 1,00 | 1,00 |
-| 350 % — local | 2,79 | 2,34 | **0,05** | **0,00** |
-| 350 % — 7dsorigin | 2,79 | 2,34 | 1,00 | 1,00 |
+| 150 % — avant | 0,79 | 0,34 | **0,00** | **0,00** |
+| 150 % — après | 1,00 | 1,00 | 1,00 | 1,00 |
+| 350 % — avant | 2,79 | 2,34 | **0,05** | **0,00** |
+| 350 % — après | 2,79 | 2,34 | 1,00 | 1,00 |
 
-Le dépôt **assume** ce choix et l'argumente : un critique peut frapper plus
-faible qu'un coup normal, la défense critique se retranche en POINTS (« +50 »
-retranché à 50 donne 0, pas 25), et le module note que borner l'écart à zéro
-« effaçait la pénalité et surestimait ces builds ». C'est aussi ce qui « rend
-Daisy si forte contre Akumu ».
+À partir du palier 21, le taux critique n'est plus un handicap : il est
+**neutre**. Sur un build à 90 % de taux et multiplicateur planché, le facteur
+critique passe de ×0,10 à ×1,00 — un facteur 10 sur la fiche Akumu.
 
-7dsorigin dit l'inverse, sans mesure citée : « The critical multiplier is
-floored at ×1.00 ».
+Daisy garde tout son intérêt, pour une raison plus juste : elle ne retourne plus
+une pénalité en bonus, elle **débloque** un gain que la défense critique
+neutralisait.
 
-**Conséquence pratique** : dans le calculateur, à partir du palier 25, le taux
-critique devient un handicap pur. Si 7dsorigin a raison, il est simplement
-neutre — et tout le classement des builds crit contre Akumu change.
+### Ce qui reste à faire
 
-**Ce qui trancherait** : un seul coup en jeu. Frapper Akumu palier 25+ avec un
-build à critique garanti, relever le chiffre, le comparer à un coup non
-critique. Zéro contre égal, il n'y a pas d'ambiguïté possible.
-
-**Le correctif Ban du patch 2.0.2 rend cette mesure faisable** : les valeurs de
-ses coups s'affichent enfin (voir `docs/extraction-fichiers-du-jeu.md`).
+La mesure en jeu reste souhaitable, non plus pour trancher mais pour confirmer :
+frapper Akumu palier 25+ avec un build à critique garanti et comparer au coup non
+critique. Égal = table confirmée ; inférieur = la table ne dit pas ce qu'on croit.
+**Le correctif Ban du patch 2.0.2 la rend faisable** : les valeurs de ses coups
+s'affichent enfin (voir `docs/extraction-fichiers-du-jeu.md`).
 
 ## Chantier 3 — La formule sort de sa plage mesurée dès le palier 17
 
@@ -192,6 +224,82 @@ faire ». Rien de ce que j'ai vu aujourd'hui ne les déplace :
 6. `CoolTimeGroup` et l'économie de jauges, jamais regardés.
 7. Question 3 des buffs de soutien — mesure en jeu.
 8. La constante C → **devient le chantier 1 ci-dessus**, la mesure existe.
+
+---
+
+## Chantier 5 — Passe systématique des 200 constantes contre le code
+
+**Ouverte. Faite une première fois le 1er septembre 2026, résultats ci-dessous.**
+
+Le chantier 2 est sorti d'une lecture de `docs/constantes-combat-du-jeu.md`,
+pas d'une méthode. La passe complète a été faite ensuite. Voici son état.
+
+### Ce qui concorde, vérifié
+
+| Constante | Valeur | Code |
+|---|---:|---|
+| `ga_critical_rate_max` | 9000 | `PLAFOND_PROPRE` |
+| `battle_max_critical_rate` | 10000 | `PLAFOND_TOTAL` |
+| `battle_max_sum_protect_cur_rate` | 9000 | `PLAFOND_PERCEMENT` |
+| `battle_min_damres_rate` | 500 | `PLANCHER_DEGATS` (5 %) |
+| `battle_min_critical_dam_rate` | 10000 | plancher du multiplicateur, **chantier 2** |
+
+`ga_criticalpowerper_rate_range_max` = 20000 (200 %) n'est **pas** un plafond du
+multiplicateur critique : le relevé Derieri en jeu (dégâts critiques 126,46 %,
+soit un multiplicateur de 2,2646) le dépasse et tombe juste à 1e-4 près. Ne pas
+le brancher.
+
+### Candidat A — la mitigation peut-elle dépasser 1 ?
+
+`battle_max_damres_rate` = **10000**, soit 100 %, dans la même section de bornes
+finales. Si `damres_rate` désigne le facteur de dégâts après mitigation, alors
+`mitigation × résistance` devrait être **plafonné à 1**, et le percement au-delà
+du point où `C/(C+DEF) + percement = 1` ne rendrait plus rien.
+
+Le module fait l'inverse et l'assume : « la mitigation peut dépasser 1, et les
+dégâts dépasser alors la valeur pré-armure », sur cinq mesures tapscreen
+prédites à l'avance (session 3).
+
+**Non tranché, et à ne pas trancher au jugé.** Deux lectures possibles de
+`damres_rate` : facteur de dégâts final (→ plafond) ou statistique de résistance
+`D_All_DamRes_Rate` (→ rien à voir). Le poids de puissance de combat
+`battle_p_d_all_damres_rate` = 4500 existe sous ce nom de stat, ce qui plaide
+pour la seconde. Le module avertit déjà : « ne pas le borner par bon sens sans
+mesure à l'appui ».
+
+**Ce qui trancherait** : un coup en jeu avec plus de percement qu'il n'en faut
+pour annuler la défense de la cible, comparé au même coup sur mannequin nu.
+
+### Candidat B — le plafond de percement, 90 % ou 150 % ?
+
+`PLAFOND_PERCEMENT` = 9000 vient de `battle_max_sum_protect_cur_rate`, dont le
+nom colle exactement à la stat `D_Protect_Cur_Rate`. Mais la table porte aussi
+`ga_pierceper_rate_max` = **15000** (150 %), `min` = 7500, `default` = 10000 —
+et tapscreen accepte justement 150 % sans broncher.
+
+Deux clés, deux mécaniques probablement distinctes (`protect_cur` = brèche
+d'armure, `pierceper` = autre chose). Le choix actuel reste le mieux nommé.
+**Ne rien changer sans savoir ce que `pierceper` désigne.**
+
+### Écart cosmétique, sans effet aujourd'hui
+
+`js/metier/dps-simulation.js:716` borne le taux de réduction de recharge à
+**9999**, garde-fou anti-division-par-zéro, là où le jeu porte
+`battle_max_skillrecycle_rate` = **9000** (90 %).
+
+**Inatteignable** : une seule règle `recharge-taux` en `application:"base"` existe
+dans tout `data/effets-dps.js` — drake/Sword2h, `all-skills`, **30 %**. Aucun
+chiffre affiché ne bouge. À aligner le jour où un héros dépassera 90 %.
+
+### Non modélisé, déjà documenté
+
+La couche précision / blocage (`A_Accuracy` contre `A_Block`) : `ga_accuracy_rate_max`
+= 9500, `ga_block_rate_max` = 6000, `battle_default_block_rate` = 1000. Aucune
+formule publiée pour l'affrontement toucher/bloquer. Reste débranchée.
+
+`PLAFOND_FAIBLESSE` = ×6 vient du datamine 7dsorigin. La table porte
+`ga_weaknessdmgrate` = 50000, lisible en ×5 comme en +500 % (= ×6). Ambigu, et
+sans effet : Akumu n'a aucune faiblesse.
 
 ---
 

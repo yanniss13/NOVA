@@ -360,24 +360,43 @@
     const critAllie = Math.max(0, Number(stats.critRateAllie) || 0);
     const taux = Math.min(PLAFOND_TOTAL, critPropre + critAllie) / RAPPORT;
 
-    /* Un coup critique peut frapper PLUS FAIBLE qu'un coup normal, quand la
-       defense critique de la cible depasse les degats critiques du build : le
-       critique devient alors une malchance. Borner cet ecart a zero, comme le
-       faisait ce module, effacait la penalite et surestimait ces builds.
-
-       Seul le multiplicateur est borne, et a zero : des degats negatifs
-       n'auraient aucun sens. */
     /* La defense critique de la cible se reduit en POINTS, jamais en facteur.
        Mesure sans ambiguite : retrancher « 50 » a une defense critique de 50
-       donne 0, pas 25. C'est ce qui rend Daisy si forte contre Akumu, dont
-       les 50 % de defense critique sont precisement ce qui fait passer le
-       coup critique sous le coup normal. */
+       donne 0, pas 25. C'est ce qui rend Daisy si forte contre Akumu, dont la
+       defense critique annule purement le gain du critique. */
     const defCritCible = Math.max(
       0, (Number(cible.critDmgResist) || 0)
         - Math.max(0, Number(stats.reductionDefenseCritique) || 0)
     );
+    /* LE PLANCHER A 1. Un coup critique ne descend jamais sous le coup normal.
+
+       `battle_min_critical_dam_rate` = 10000, soit 100 %
+       (docs/constantes-combat-du-jeu.md, section « Plafonds et planchers — les
+       bornes que le jeu applique en fin de calcul »).
+
+       Elle voisine `battle_min_damres_rate` = 500, dont les 5 % sont exactement
+       ceux que PLANCHER_DEGATS applique plus bas — ce plancher-la vient du
+       datamine 7dsorigin, et la table du client le confirme au chiffre pres.
+       Retenir une borne de cette section et ecarter sa voisine ne se defend
+       pas.
+
+       Ce module bornait a ZERO, et ce n'etait pas gratuit : tapscreen.app laisse
+       bien le multiplicateur tomber sous 1 (RAPPORT-analyse-tapscreen.md,
+       section 4 : a `cd` = 0 contre 42,93 % de defense critique, 36 329 contre
+       63 658 en non-critique, mesure en boite noire non ambigue). Mais cette
+       mesure prouve ce que fait L'OUTIL, pas ce que fait le jeu — et l'outil
+       d'en face, 7dsorigin, plancherise a x1,00. Deux modeles tiers qui se
+       contredisent ne valent pas la table du client.
+
+       Le plancher ne peut pas mordre AVANT la soustraction : les degats
+       critiques d'un build valent deja au moins 100 % par construction
+       (`ga_default_criticalpowerper_rate` = 12000). Une borne qui ne mord jamais
+       ne serait pas dans la table. Elle s'applique donc apres.
+
+       Consequence : contre Akumu palier 21+, dont la defense critique depasse
+       358 %, le taux critique n'est plus un handicap, il est NEUTRE. */
     const degatsCrit = ((Number(stats.critDamage) || 0) - defCritCible) / RAPPORT;
-    const multiplicateurCritique = Math.max(0, 1 + degatsCrit);
+    const multiplicateurCritique = Math.max(1, 1 + degatsCrit);
     const critique = 1 + taux * (multiplicateurCritique - 1);
     const constante = constanteDe(stats);
     /* Sans armure, le percement n'a rien a percer.
