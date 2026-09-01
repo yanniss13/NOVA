@@ -1111,6 +1111,7 @@ def normaliser_effet(source):
 def collecter_sources(characters, weapons, armors, engraved, sets, hero_skills):
     """Collecte chaque niveau textuel avec une identité stable et sa portée."""
     sources = []
+    couverture = couverture_des_potentiels()
 
     for hero in characters:
         slug = hero["slug"]
@@ -1125,7 +1126,11 @@ def collecter_sources(characters, weapons, armors, engraved, sets, hero_skills):
                 "tier": potentiel["tier"],
                 "textEn": potentiel.get("bonusEn") or "",
                 "textFr": potentiel.get("bonusFr") or "",
-                "statsDejaCalculees": bool(potentiel.get("stats")),
+                # La source reste crue quand elle parle ; le catalogue tranche
+                # quand elle se tait. Voir couverture_des_potentiels().
+                "statsDejaCalculees": bool(potentiel.get("stats")) or (
+                    slug, potentiel["weaponType"], potentiel["tier"]
+                ) in couverture,
                 "provenance": "7ds-stats/personnages.json",
             })
 
@@ -1351,6 +1356,56 @@ def charger_hero_skills(characters):
 
 def charge_json(nom):
     return json.loads((RACINE / "7ds-stats" / nom).read_text(encoding="utf-8"))
+
+
+# Les trois codes sous lesquels le catalogue de build range la forme de base
+# d'un potentiel : « Augmente l'attaque de X%, la défense de Y% et les PV max
+# de Z% ». `stats-calcul` les replie sur B_Atk / B_Def / B_MaxHp.
+STATS_DE_BASE_DU_CATALOGUE = frozenset(
+    ("I_AtkAdd_Rate", "I_DefAdd_Rate", "I_MaxHpAdd_Rate")
+)
+
+
+def couverture_des_potentiels():
+    """Ce que `stats-calcul` compte déjà seul, lu dans l'artefact lui-même.
+
+    LE GARDE NE DOIT PAS JUGER SUR UNE AUTRE SOURCE QUE CELLE QUI COMPTE. Il
+    se posait sur le champ `stats` de `7ds-stats/personnages.json` ; trois
+    héros — ban, derieri, gowther — en sortent avec `stats: []` sur leurs
+    trente paliers, et `generate-stats-build.py` reconstruit alors leurs
+    chiffres depuis la prose. Le garde jugeait donc sur une source que le
+    catalogue avait déjà dépassée : il ne se déclenchait pas, une règle
+    `bonus-stat` était émise en plus, et `dps-effets` la réappliquait sur un
+    total qui la contenait déjà. L'attaque de ces trois-là ressortait à
+    x1,69 au lieu de x1,30 au palier 10.
+
+    On lit désormais `data/stats-build.js`, le fichier que la PWA charge
+    vraiment. La question posée devient exactement celle à laquelle
+    `stats-calcul` répond, et aucune dérive entre les deux générateurs ne peut
+    plus la rendre fausse.
+    """
+    texte = (RACINE / "data" / "stats-build.js").read_text(encoding="utf-8")
+    corps = texte[texte.index("{"):texte.rindex("}") + 1]
+    catalogue = json.loads(corps)
+    couverture = set()
+    for slug, fiche in (catalogue.get("charactersBySlug") or {}).items():
+        for arme, paliers in (fiche.get("potentialsByWeapon") or {}).items():
+            for palier, entrees in (paliers or {}).items():
+                codes = {item["stat"] for item in entrees or []}
+                stats_de_base = codes & STATS_DE_BASE_DU_CATALOGUE
+                if stats_de_base and stats_de_base != STATS_DE_BASE_DU_CATALOGUE:
+                    raise ValueError(
+                        "data/stats-build.js porte une couverture partielle "
+                        "du potentiel %s/%s palier %s" % (slug, arme, palier)
+                    )
+                if stats_de_base == STATS_DE_BASE_DU_CATALOGUE:
+                    couverture.add((slug, arme, int(palier)))
+    if not couverture:
+        raise ValueError(
+            "data/stats-build.js ne porte aucun potentiel : "
+            "le garde anti-double-comptage serait desarme"
+        )
+    return couverture
 
 
 def rendu(catalogue):

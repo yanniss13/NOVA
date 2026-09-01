@@ -1651,6 +1651,74 @@ class CatalogueLocal(unittest.TestCase):
             "hit",
         )
 
+    def test_la_couverture_se_lit_dans_le_catalogue_de_build(self):
+        """Le garde anti-double-comptage doit interroger l'artefact, pas la source.
+
+        `7ds-stats/personnages.json` livre ban, derieri et gowther avec
+        `stats: []` sur leurs trente paliers ; generate-stats-build.py
+        reconstruit leurs chiffres depuis la prose. Un garde pose sur le champ
+        `stats` les croyait donc non couverts, emettait une regle `bonus-stat`
+        en plus, et dps-effets la reappliquait sur un total qui la contenait
+        deja : x1,69 au lieu de x1,30 sur l'attaque au palier 10.
+
+        Ce test relit la vraie couverture. S'il tombe, c'est que le garde a
+        recommence a juger sur une source que le catalogue a depassee.
+        """
+        couverture = _gen.couverture_des_potentiels()
+        self.assertTrue(couverture)
+        for slug, arme in (
+            ("ban", "Cudgel3c"), ("derieri", "Axe"), ("gowther", "Book"),
+            ("meliodas", "Sword1h"),
+        ):
+            for palier in (1, 3, 8):
+                self.assertIn(
+                    (slug, arme, palier), couverture,
+                    "%s/%s palier %d doit etre couvert par data/stats-build.js"
+                    % (slug, arme, palier),
+                )
+
+    def test_la_couverture_refuse_un_potentiel_partiel(self):
+        """Un garde incomplet perdrait ou doublerait une stat silencieusement."""
+        catalogue = {
+            "charactersBySlug": {
+                "essai": {
+                    "potentialsByWeapon": {
+                        "Axe": {
+                            "1": [
+                                {"stat": "I_AtkAdd_Rate", "value": 500},
+                            ],
+                        },
+                    },
+                },
+            },
+        }
+        with tempfile.TemporaryDirectory() as dossier:
+            donnees = Path(dossier) / "data"
+            donnees.mkdir()
+            (donnees / "stats-build.js").write_text(
+                "window.SEVEN_DS_BUILD_STATS = "
+                + json.dumps(catalogue, ensure_ascii=False)
+                + ";\n",
+                encoding="utf-8",
+            )
+            with mock.patch.object(_gen, "RACINE", Path(dossier)):
+                with self.assertRaisesRegex(ValueError, "couverture partielle"):
+                    _gen.couverture_des_potentiels()
+
+    def test_forme_de_base_couverte_ne_produit_aucune_regle_de_stat(self):
+        """La forme de base ne se compte qu'une fois, quelle que soit la source."""
+        effet = _gen.normaliser_effet({
+            "id": "potential:essai:Axe:1",
+            "kind": "potential",
+            "textEn": "Increases Attack by [#1A7331]5%[-], Defense by "
+                      "[#1A7331]4%[-], and Max HP by [#1A7331]2%[-].",
+            "textFr": "Augmente l'attaque de [#1A7331]5%[-], la défense de "
+                      "[#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+            "statsDejaCalculees": True,
+        })
+        self.assertEqual(effet["classification"], "sans-impact-dps")
+        self.assertEqual(effet["regles"], [])
+
     def test_check_ne_touche_jamais_au_reseau(self):
         with tempfile.TemporaryDirectory() as dossier:
             cible = Path(dossier) / "effets-dps.js"

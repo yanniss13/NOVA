@@ -7,6 +7,12 @@ Outil web statique collaboratif pour que les membres d'une confrérie **7DS Orig
 > Ce fichier est le point d'entrée pour tout agent (Codex, Claude, etc.) qui
 > reprend le projet. Lis-le en entier avant de coder.
 
+👉 **Chantier en cours sur le calculateur de dégâts :
+`docs/chantier-calculateur-codex.md`.** Fichier de travail partagé entre
+agents — un chantier par section, avec sa preuve, sa commande de vérification
+et son propriétaire. Il porte aussi la liste des **fausses pistes déjà
+écartées** : la lire évite de rouvrir des enquêtes qui ont déjà coûté cher.
+
 ## État actuel — 2026-08-21
 
 - [x] Assets rangés dans des dossiers (fournis par l'utilisateur, ne pas renommer).
