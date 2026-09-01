@@ -305,30 +305,54 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
     "reduire la DEFENSE critique ne touche pas la RESISTANCE critique");
 }
 
-/* Un coup critique peut frapper PLUS FAIBLE qu'un coup normal quand la
-   defense critique de la cible depasse les degats critiques du build. Mesure
-   de reference : 0 de degats critiques contre 42,93 % de defense critique
-   donne un rapport de 0,5707. */
+/* LE PLANCHER DU MULTIPLICATEUR CRITIQUE, a x1,00.
+
+   `battle_min_critical_dam_rate` = 10000, soit 100 %, dans la section du
+   client « bornes que le jeu applique en fin de calcul » — la voisine directe
+   de `battle_min_damres_rate` = 500 que PLANCHER_DEGATS applique deja.
+
+   Ce module bornait a ZERO, sur la foi de RAPPORT-analyse-tapscreen.md
+   (section 4 : a `cd` = 0 contre 42,93 % de defense critique, tapscreen rend
+   36 329 contre 63 658 en non-critique, soit 0,5707). Cette mesure est
+   solide, mais elle prouve ce que fait L'OUTIL. 7dsorigin, l'autre outil,
+   plancherise a x1,00. Deux modeles tiers qui se contredisent ne pesent pas
+   contre la table du client.
+
+   Ces deux cas etaient donc attendus a 285 et a 0. Ils valent le coup normal. */
 {
-  const r = degatsAttendus({
+  const auPlancher = cible => degatsAttendus({
     stats:{ atk:1000, critRate:10000, critDamage:0 },
     competence:COUP_SIMPLE,
-    cible:Object.assign({}, CIBLE_NEUTRE, { critDmgResist:4293 })
+    cible:Object.assign({}, CIBLE_NEUTRE, { critDmgResist:cible })
   });
-  assert.equal(Math.round(r.avecCritique), 285, "500 x 0,5707");
-  assert.ok(r.avecCritique < r.total && r.total < r.sansCritique,
-    "l'ordre des colonnes s'inverse quand le critique devient une malchance");
+
+  const juste = auPlancher(4293);
+  assert.equal(Math.round(juste.avecCritique), 500,
+    "42,93 % de defense critique ne fait pas descendre le critique sous 1");
+  assert.notEqual(Math.round(juste.avecCritique), 285,
+    "285 etait le chiffre de tapscreen, pas celui de la table du jeu");
+
+  const loin = auPlancher(15000);
+  assert.equal(Math.round(loin.avecCritique), 500,
+    "150 % de defense critique s'arrete au plancher, elle ne creuse pas");
+
+  /* Le plancher rend le critique NEUTRE, jamais nuisible : les trois colonnes
+     se rejoignent au lieu de s'inverser. */
+  [juste, loin].forEach(r => {
+    assert.equal(Math.round(r.total), Math.round(r.sansCritique));
+    assert.equal(Math.round(r.total), Math.round(r.avecCritique));
+  });
 }
 
-/* Cette penalite se borne a zero : des degats negatifs n'auraient aucun sens. */
+/* Et il ne s'applique qu'au multiplicateur : au-dessus de 1, la defense
+   critique mord normalement, sinon le plancher effacerait la stat entiere. */
 {
   const r = degatsAttendus({
-    stats:{ atk:1000, critRate:10000, critDamage:0 },
+    stats:{ atk:1000, critRate:10000, critDamage:20000 },
     competence:COUP_SIMPLE,
-    cible:Object.assign({}, CIBLE_NEUTRE, { critDmgResist:15000 })
+    cible:Object.assign({}, CIBLE_NEUTRE, { critDmgResist:5000 })
   });
-  assert.equal(r.avecCritique, 0);
-  assert.ok(r.total >= 0, "l'esperance ne peut pas devenir negative");
+  assert.equal(Math.round(r.avecCritique), 1250, "500 x (1 + 2,0 - 0,5)");
 }
 
 /* Regression : l'esperance ne doit JAMAIS depasser le coup critique plein.
@@ -654,22 +678,25 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
 
 /* La defense critique de la cible se reduit en POINTS, pas en facteur. Une
    defense critique de 50 % reduite de « 50 » tombe a ZERO, pas a 25. */
+/* Le build porte 200 % de degats critiques pour rester AU-DESSUS du plancher
+   de x1,00 : sous le plancher, les deux lectures rendraient le meme chiffre et
+   ce test ne prouverait plus rien. */
 {
   const cible = Object.assign({}, CIBLE_NEUTRE, { critDmgResist:5000 });
-  const base = { atk:1000, critRate:10000, critDamage:0 };
+  const base = { atk:1000, critRate:10000, critDamage:20000 };
 
   const sansMalus = degatsAttendus({
     stats:base, competence:COUP_SIMPLE, cible
   });
-  assert.equal(Math.round(sansMalus.avecCritique), 250, "500 x (1 - 0,5)");
+  assert.equal(Math.round(sansMalus.avecCritique), 1250, "500 x (1 + 2,0 - 0,5)");
 
   const avecMalus = degatsAttendus({
     stats:Object.assign({}, base, { reductionDefenseCritique:5000 }),
     competence:COUP_SIMPLE, cible
   });
-  assert.equal(Math.round(avecMalus.avecCritique), 500,
-    "defense critique annulee : le critique cesse d'etre une penalite");
-  assert.notEqual(Math.round(avecMalus.avecCritique), 375,
+  assert.equal(Math.round(avecMalus.avecCritique), 1500,
+    "defense critique annulee : le critique rend ses 200 % pleins");
+  assert.notEqual(Math.round(avecMalus.avecCritique), 1375,
     "un facteur aurait laisse 25 % de defense critique, et non zero");
 
   /* Et elle ne descend pas sous zero : sur-reduire ne rend pas de bonus. */
@@ -681,18 +708,19 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
     Math.round(avecMalus.avecCritique));
 }
 
-/* Le cas qui motive tout ce lot : sur Akumu, dont les 50 % de defense
-   critique font passer le coup critique SOUS le coup normal pour un build a
-   40 % de degats critiques, annuler cette defense retourne la penalite en
-   bonus. C'est le plus gros mouvement de chiffres de la serie. */
+/* Le cas qui motive tout ce lot : sur Akumu, dont les 50 % de defense critique
+   annulent entierement le gain d'un build a 40 % de degats critiques — le
+   multiplicateur tomberait a 0,90 sans le plancher, et s'arrete a 1,00 —
+   annuler cette defense fait repasser le critique en bonus. C'est le plus gros
+   mouvement de chiffres de la serie, et la raison d'etre de Daisy. */
 {
   const base = { atk:1000, critRate:10000, critDamage:4000 };
 
   const seul = degatsAttendus({
     stats:base, competence:COUP_SIMPLE, cible:CIBLE_REFERENCE
   });
-  assert.ok(seul.avecCritique < seul.sansCritique,
-    "sans soutien, le critique est une malchance sur Akumu");
+  assert.equal(Math.round(seul.avecCritique), Math.round(seul.sansCritique),
+    "sans soutien, le critique ne rapporte RIEN sur Akumu : il est neutralise");
 
   const avecDaisy = degatsAttendus({
     stats:Object.assign({}, base, { reductionDefenseCritique:5000 }),
