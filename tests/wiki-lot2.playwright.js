@@ -266,12 +266,46 @@ const EFFECTIFS = {
     await attendreTuiles(1);
     await tuiles().first().click();
     await page.locator("#wikiItemOverlay.on").waitFor();
+    /* La liste est qualifiée : la section « Transcendance » juste au-dessus
+       porte elle aussi des `.wiki-stat-value` — les deux statistiques de ses
+       paliers +5 et +10 — et un sélecteur nu lirait celles-là. */
     assert.deepEqual(
-      await page.locator("#wikiItemBody .wiki-stat-value")
+      await page.locator("#wikiItemBody .wiki-stats:not(.wiki-paliers) .wiki-stat-value")
         .evaluateAll(nodes => nodes.slice(0, 4)
           .map(node => node.textContent.replace(/\s/g, ""))),
       ["+26013", "+1986", "+9311", "+12,18%"],
       "les statistiques au maximum doivent appliquer le renforcement +15"
+    );
+
+    /* LES TROIS PALIERS DE LA TRANSCENDANCE.
+
+       La fiche n'affichait que le passif du dernier palier. Les deux premiers
+       rendent chacun une statistique, et un membre qui décide s'il monte la
+       pièce doit les voir : ils tombent bien avant le passif. */
+    const paliers = await page.locator("#wikiItemBody .wiki-paliers .wiki-stat")
+      .evaluateAll(nodes => nodes.map(node => ({
+        seuil:node.querySelector(".wiki-palier-seuil").textContent.trim(),
+        nom:node.querySelector(".wiki-stat-name").textContent.trim(),
+        valeur:node.querySelector(".wiki-stat-value").textContent.replace(/\s/g, "")
+      })));
+    assert.equal(paliers.length, 2,
+      "deux statistiques avant le passif, reçu " + JSON.stringify(paliers));
+    assert.deepEqual(paliers.map(item => item.seuil), ["+5", "+10"],
+      "les deux premiers paliers se débloquent à +5 et +10");
+    paliers.forEach(item => {
+      assert.ok(item.nom.replace(item.seuil, "").trim().length > 2,
+        "un palier sans libellé ne se lit pas : " + JSON.stringify(item));
+      assert.ok(/\d/.test(item.valeur),
+        "un palier sans valeur ne décide rien : " + JSON.stringify(item));
+    });
+    /* Et le passif porte le sien, +14 — pas le +15 que la fiche annonçait :
+       +15 est le plafond que cette transcendance OUVRE, pas celui auquel elle
+       se fait. Un membre qui lisait +15 attendait un palier hors d'atteinte. */
+    assert.equal(
+      (await page.locator("#wikiItemBody .wiki-transcendance-nom .wiki-palier-seuil")
+        .textContent()).trim(),
+      "+14",
+      "le passif se débloque à la troisième transcendance, faite à +14"
     );
     await page.locator("#wikiItemClose").click();
     await page.locator("#wikiItemOverlay.on").waitFor({ state:"detached" });

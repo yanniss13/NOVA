@@ -159,35 +159,85 @@ import {
     ];
   }
 
-  /* LA TRANSCENDANCE QUE CETTE PIECE DONNE.
+  /* LES TROIS PALIERS DE TRANSCENDANCE.
 
-     C'est ici qu'elle compte le plus : un membre qui ouvre la fiche d'une
-     armure gravee se demande s'il doit la monter. Le passif juste au-dessus
-     ne repond qu'a moitie — il s'obtient des le premier niveau, la
-     transcendance seulement au bout.
+     Une transcendance ne rend PAS que son passif. Le jeu la monte en trois
+     fois, et chaque palier rend quelque chose :
 
-     78 des 93 tenues gravees en donnent une. Les 15 autres n'affichent donc
-     rien, et ce n'est pas un trou : ce sont les quatriemes tenues des heros
-     qui en ont quatre.
+       +5   -> une premiere statistique
+       +10  -> une seconde
+       +14  -> le passif, celui que la fiche nommait
 
-     La condition de renforcement est repetee ici, alors que la fiche de heros
-     la dit deja en tete de sa section. Ce n'est pas un doublon : les deux
-     pages s'ouvrent independamment, et celle-ci est justement celle qu'on
-     consulte avant de depenser ses materiaux. */
-  function transcendancePiece(piece){
+     La page n'affichait que le troisieme. Une gravee se lisait donc a un
+     tiers de ce qu'elle rapporte, juste au moment ou un membre decide s'il y
+     met ses materiaux — la question meme que cette section doit trancher.
+
+     Les seuils ne sont pas ecrits ici : ils viennent de la table de promotion
+     du jeu, via `limitBreakOptions[].seuil` et `limitBreakPassiveSeuil`. Les
+     78 gravees concernees partagent aujourd'hui (5, 10, 14), mais une piece
+     qui en sortirait s'afficherait juste sans qu'on y touche.
+
+     78 des 93 tenues gravees donnent une transcendance. Les 15 autres
+     n'affichent rien, et ce n'est pas un trou : ce sont les quatriemes tenues
+     des heros qui en ont quatre.
+
+     La condition de port est repetee ici, alors que la fiche de heros la dit
+     deja en tete de sa section. Ce n'est pas un doublon : les deux pages
+     s'ouvrent independamment, et celle-ci est justement celle qu'on consulte
+     avant de depenser ses materiaux. */
+  function ligneDePalier(seuil, nom, texte){
+    return el("li",{class:"wiki-stat"},[
+      el("span",{class:"wiki-stat-name"},[
+        el("span",{class:"wiki-palier-seuil",
+          text:Number.isFinite(seuil) ? "+" + seuil : "—"}),
+        nom
+      ]),
+      el("span",{class:"wiki-stat-value", text:texte})
+    ]);
+  }
+
+  /* Une option dont le code de stat n'a ni libelle ni unite connus est
+     ECARTEE, pas affichee a moitie : un « +1590 » sans nom ne se lit pas. */
+  function optionsDeTranscendance(definition){
+    const lignes = ((definition && definition.limitBreakOptions) || [])
+      .map(option => {
+        const libelle = libelleDeStat(option.stat);
+        if(!libelle) return null;
+        const texte = texteDeValeur(option.valeur, libelle.unit);
+        return texte === null
+          ? null
+          : ligneDePalier(option.seuil, libelle.fr, texte);
+      });
+    const liste = listeDeLignes(lignes);
+    /* Sa propre classe : la fiche porte deux listes de statistiques — les
+       paliers ici, le total au maximum plus bas — et rien d'autre ne les
+       distingue. Un selecteur `.wiki-stat-value` non qualifie lirait les
+       premieres en croyant lire les secondes. */
+    if(liste) liste.classList.add("wiki-paliers");
+    return liste;
+  }
+
+  function transcendancePiece(piece, definition){
     if(!piece || piece.nature !== "gravee") return [];
     const liste = (window.SEVEN_DS_TRANSCENDANCES || {})[piece.heros] || [];
     const transcendance = liste.find(item => item && item.tenue === piece.file);
     if(!transcendance || !transcendance.texte) return [];
     const arme = (WEAPON_ENUM[transcendance.arme] || {}).label
       || transcendance.arme;
+    const seuilPassif = Number(definition && definition.limitBreakPassiveSeuil);
+    const options = optionsDeTranscendance(definition);
     return [
       titreSection("Transcendance", "passif"),
       el("p",{ class:"wiki-hero-hint",
-        text:"Débloquée en montant cette pièce au renforcement maximal (+15). "
-          + "Elle n’agit que si la tenue est portée."
+        text:"Trois paliers, un par transcendance réussie. Ils n’agissent que "
+          + "si la tenue est portée."
       }),
-      el("p",{ class:"wiki-transcendance-nom", text:transcendance.nom }),
+      options,
+      el("p",{ class:"wiki-transcendance-nom"},[
+        el("span",{class:"wiki-palier-seuil",
+          text:Number.isFinite(seuilPassif) ? "+" + seuilPassif : "—"}),
+        transcendance.nom
+      ]),
       arme
         ? el("p",{ class:"wiki-gravee-arme", text:"Conseillée avec : " + arme })
         : null,
@@ -272,7 +322,7 @@ import {
         ? blocHeros(piece, contexte)
         : blocEnsemble(piece, contexte))
       .concat(passifPiece(definition, contexte))
-      .concat(transcendancePiece(piece))
+      .concat(transcendancePiece(piece, definition))
       .concat([
         titreSection("Statistiques au maximum", "normal"),
         statistiquesPiece(definition),

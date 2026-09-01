@@ -188,6 +188,14 @@
 .wiki-pot{margin:8px 0 4px;padding-left:18px}
 .wiki-pot li{margin:0 0 6px}
 .wiki-pot-tier{font-weight:700;color:var(--gold);margin-right:6px}
+/* Le renforcement auquel un palier de transcendance se debloque. Meme pastille
+   que le palier de potentiel juste au-dessus : c'est la meme question posee au
+   membre — a partir d'ou ce bonus existe-t-il. La largeur fixe aligne les trois
+   paliers en colonne, « +5 » sous « +10 » sous « +14 ». */
+.wiki-palier-seuil{
+  display:inline-block;min-width:2.4em;font-weight:700;color:var(--gold);
+  margin-right:6px;font-variant-numeric:tabular-nums
+}
 /* Le nom d'une transcendance passe sur sa propre ligne, au-dessus de sa
    description : ils se liraient sinon comme une seule phrase. Les noms sont
    longs — « Transcendance de puissance : Frappe mortelle » — et se

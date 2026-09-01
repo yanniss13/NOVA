@@ -31,6 +31,10 @@
   "family": "elemental",
   "unit": "flat"
  },
+ "All_Element_Res_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
  "B_Atk": {
   "family": "main",
   "unit": "flat"

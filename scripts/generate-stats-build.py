@@ -285,6 +285,71 @@ def gear_extra_stats(growth, known):
     return sorted(extras, key=lambda item: item["stat"]) or None
 
 
+def gear_limit_break_options(growth, known):
+    """Les DEUX statistiques que la transcendance rend AVANT son passif.
+
+    Le jeu en donne trois choses, pas une : la premiere transcendance rend une
+    statistique, la deuxieme une autre, la troisieme seulement le passif. Le
+    site n'affichait que la troisieme, et les membres lisaient une piece a un
+    tiers de sa valeur reelle.
+
+    Elles vivent dans `growth.limitBreak.options`, a cote du passif, avec leur
+    `tier` (1 puis 2) et leur valeur brute. 78 gravees sur 95 en portent deux ;
+    les 17 autres sont les quatriemes tenues des heros qui en ont quatre, sans
+    transcendance et donc sans option.
+
+    LE SEUIL SE DEDUIT, il ne se code pas en dur. Une transcendance de palier N
+    se fait quand la piece touche le plafond du palier N-1 : `promotion[0]`
+    plafonne a +5, donc l'option de palier 1 s'obtient a +5. Les 78 partagent
+    aujourd'hui (5, 10, 14, 15), mais lire la table garde le jour ou une piece
+    en sortira."""
+    limit_break = (growth or {}).get("limitBreak") or {}
+    options = limit_break.get("options") or []
+    if not options:
+        return None
+    plafonds = {
+        step.get("tier"): step.get("maxReinforce")
+        for step in ((growth or {}).get("promotion") or [])
+        if isinstance(step.get("maxReinforce"), int)
+    }
+    compact = []
+    for option in sorted(options, key=lambda item: item.get("tier") or 0):
+        tier = option.get("tier")
+        code = option.get("abilityType")
+        if not isinstance(tier, int) or tier < 1 or not code:
+            raise ValueError(f"Option de transcendance invalide : {option}")
+        seuil = plafonds.get(tier - 1)
+        if not isinstance(seuil, int):
+            raise ValueError(f"Palier de promotion {tier - 1} absent pour {code}")
+        compact.append({
+            "tier": tier,
+            "seuil": seuil,
+            "stat": canonical_stat(code, known),
+            "valeur": option.get("value") or 0,
+        })
+    return compact
+
+
+def gear_limit_break_passive_seuil(growth):
+    """Le renforcement auquel se fait la DERNIERE transcendance, celle qui rend
+    le passif. Meme regle que les options : palier N au plafond du palier N-1,
+    soit +14 aujourd'hui pour un passif de palier 3.
+
+    La fiche disait « au renforcement maximal (+15) ». C'est le plafond QUE
+    cette transcendance ouvre, pas celui auquel elle se fait — un membre qui
+    lisait +15 attendait un palier qu'il ne pouvait pas atteindre avant."""
+    limit_break = (growth or {}).get("limitBreak") or {}
+    passive = limit_break.get("passive") or {}
+    tier = passive.get("tier")
+    if not isinstance(tier, int) or tier < 1:
+        return None
+    for step in ((growth or {}).get("promotion") or []):
+        if step.get("tier") == tier - 1:
+            plafond = step.get("maxReinforce")
+            return plafond if isinstance(plafond, int) else None
+    return None
+
+
 def gear_reinforce_max(piece):
     """Plafond de renforcement. Les armures le declarent a la racine ; les
     gravures le cachent dans `growth.promotion[].maxReinforce`."""
@@ -371,6 +436,8 @@ def gear_entry(piece, known):
             piece.get("slug") or piece.get("costumeSlug") or piece.get("nameFr") or "piece",
         ),
         "extraStats": gear_extra_stats(growth, known),
+        "limitBreakOptions": gear_limit_break_options(growth, known),
+        "limitBreakPassiveSeuil": gear_limit_break_passive_seuil(growth),
     }
     return entry
 
@@ -461,6 +528,7 @@ def gear_stat_codes(entry):
     options = entry.get("randomOptions") or {}
     codes.update(item["stat"] for item in options.get("stats") or [])
     codes.update(item["stat"] for item in entry.get("extraStats") or [])
+    codes.update(item["stat"] for item in entry.get("limitBreakOptions") or [])
     return codes
 
 

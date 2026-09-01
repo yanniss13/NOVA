@@ -846,5 +846,81 @@ class GenerateStatsBuildTests(unittest.TestCase):
         self.assertIn("stats-build.js à jour", result.stdout)
 
 
+class LimitBreakOptionTests(unittest.TestCase):
+    """Une transcendance rend TROIS choses, pas une : une statistique au
+    premier palier, une autre au deuxième, le passif au troisième. La fiche
+    n'affichait que le passif, et une gravée se lisait au tiers de sa valeur.
+
+    Le seuil de chaque palier se DÉDUIT de la table de promotion — palier N au
+    plafond du palier N-1 — au lieu d'être écrit en dur. Ces tests gardent la
+    déduction, pas les chiffres du jour."""
+
+    def growth(self):
+        return {
+            "promotion": [
+                {"tier": 0, "maxReinforce": 5},
+                {"tier": 1, "maxReinforce": 10},
+                {"tier": 2, "maxReinforce": 14},
+                {"tier": 3, "maxReinforce": 15},
+            ],
+            "limitBreak": {
+                "options": [
+                    {"tier": 2, "value": 1756, "abilityType": "Earth_Add"},
+                    {"tier": 1, "value": 1590, "abilityType": "C_Critical_Dam_Rate"},
+                ],
+                "passive": {"tier": 3, "descFr": "peu importe"},
+            },
+        }
+
+    def test_le_seuil_vient_du_plafond_du_palier_precedent(self):
+        options = module.gear_limit_break_options(
+            self.growth(), {"Earth_Add", "C_Critical_Dam_Rate"}
+        )
+        self.assertEqual(
+            [(item["tier"], item["seuil"]) for item in options], [(1, 5), (2, 10)]
+        )
+        self.assertEqual(
+            module.gear_limit_break_passive_seuil(self.growth()), 14
+        )
+
+    def test_les_options_sortent_triees_par_palier(self):
+        options = module.gear_limit_break_options(
+            self.growth(), {"Earth_Add", "C_Critical_Dam_Rate"}
+        )
+        self.assertEqual(options[0]["stat"], "C_Critical_Dam_Rate")
+        self.assertEqual(options[0]["valeur"], 1590)
+
+    def test_un_plafond_deplace_deplace_le_seuil(self):
+        """La déduction doit suivre le jeu, pas mémoriser (5, 10, 14)."""
+        growth = self.growth()
+        growth["promotion"][0]["maxReinforce"] = 7
+        options = module.gear_limit_break_options(growth, {"Earth_Add", "C_Critical_Dam_Rate"})
+        self.assertEqual(options[0]["seuil"], 7)
+
+    def test_un_palier_de_promotion_absent_est_refuse(self):
+        """Sans son plafond, un palier s'afficherait « — » : mieux vaut casser
+        la génération que publier un seuil muet."""
+        growth = self.growth()
+        growth["promotion"] = [step for step in growth["promotion"] if step["tier"] != 0]
+        with self.assertRaisesRegex(ValueError, "promotion"):
+            module.gear_limit_break_options(growth, {"Earth_Add", "C_Critical_Dam_Rate"})
+
+    def test_une_piece_sans_transcendance_ne_porte_rien(self):
+        """Les 15 quatrièmes tenues n'en donnent pas. Un tableau vide plutôt
+        qu'une section vide dans la fiche."""
+        self.assertIsNone(module.gear_limit_break_options({"promotion": []}, set()))
+        self.assertIsNone(module.gear_limit_break_passive_seuil({"promotion": []}))
+
+    def test_les_codes_des_options_entrent_dans_les_libelles(self):
+        """Sans cette collecte, `All_Element_Res_Rate` n'aurait ni famille ni
+        libellé, et ses trois lignes disparaîtraient silencieusement de la
+        fiche au lieu de faire échouer la génération."""
+        entry = {
+            "mainStat": "B_Atk",
+            "limitBreakOptions": [{"tier": 1, "seuil": 5, "stat": "Earth_Add", "valeur": 1}],
+        }
+        self.assertIn("Earth_Add", module.gear_stat_codes(entry))
+
+
 if __name__ == "__main__":
     unittest.main()
