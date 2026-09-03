@@ -437,6 +437,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   heroTermLabel:typeof heroTermLabel === "function"
     ? heroTermLabel
     : undefined,
+  gearTermLabel:typeof gearTermLabel === "function"
+    ? gearTermLabel
+    : undefined,
   statTermGroups:typeof statTermGroups === "function"
     ? statTermGroups
     : undefined,

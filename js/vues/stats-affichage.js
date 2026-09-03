@@ -336,6 +336,13 @@ import { el } from "../noyau/dom.js";
         +(Number.isInteger(term.source.index) ? " "+(term.source.index + 1) : "");
     }
     if(term.source.component === "bonus") return "Bonus d’ensemble";
+    /* Le seuil dit tout : une transcendance ne se lit pas a son numero de
+       palier mais au renforcement qui l'ouvre, seul chiffre que le membre
+       reconnait sur sa piece. */
+    if(term.source.component === "transcendance"){
+      return "Transcendance"
+        +(Number.isFinite(term.source.seuil) ? " +"+term.source.seuil : "");
+    }
     return term.source.component;
   }
 
