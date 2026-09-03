@@ -23,7 +23,13 @@
 //               "resistanceCritique"  sa resistance critique, en POINTS aussi
 //               "vulnerabiliteGlobale"  « augmente les degats subis de N % » :
 //                                     tout ce que la cible encaisse, sans
-//                                     distinction de categorie ni d'element
+//                                     distinction de CATEGORIE. Un element
+//                                     peut la restreindre - la Breche de Ban
+//                                     ne vise que les Tenebres - et le champ
+//                                     `element` suffit a le dire : un build ne
+//                                     porte qu'un element, celui de son arme,
+//                                     donc la vulnerabilite reste globale pour
+//                                     ceux qui la voient
 //               "resistanceElementaire"  CONSIGNEE, PAS CALCULEE. Le moteur
 //                                     connait la resistance elementaire de la
 //                                     cible mais RIEN ne la reduit, et le
@@ -110,18 +116,81 @@
 //   pour elles. La perforation ne perce d'ailleurs aucune defense - elle
 //   s'oppose a la Perseverance de l'ennemi, une couche que la formule
 //   publiee ne modelise pas du tout.
-// - la reduction de defense ELEMENTAIRE, sauf pour la FOUDRE. Elle vise une
-//   defense distincte de la defense generale, que le moteur ne separe pas :
-//   la verser dans la reduction generale suppose que le jeu confond les deux.
-//   On l'assume pour la seule Foudre, parce que la confrerie mene ses runs de
-//   Boss de Guilde avec des Merlin Foudre - `gowther_wand_skill_e` figure donc
-//   dans la table, portee par `element:"thunder"` pour qu'aucun build d'un
-//   autre element ne la voie.
+// - la reduction de defense ELEMENTAIRE, sauf pour la FOUDRE et les TENEBRES.
+//   Elle vise une defense distincte de la defense generale, que le moteur ne
+//   separe pas : la verser dans la reduction generale suppose que le jeu
+//   confond les deux. On l'assume pour les deux elements que la confrerie
+//   joue - la Foudre pour ses Merlin de Boss de Guilde, les Tenebres pour ses
+//   equipes Ban - et chaque ligne porte son `element` pour qu'aucun build d'un
+//   autre element ne la voie :
+//     gowther_wand_skill_e  defense de Foudre,   element:"thunder"
+//     ban_gauntlets_skill_e defense des Tenebres, element:"dark"
 //     derieri_sword2h_skill_q  defense de Feu -20 %, reste dehors
 //   Elle reviendra quand la cible portera ses defenses par element ; la ligne
 //   de Derieri est deja lue et chiffree dans la spec du recensement, sa
 //   reintegration ne coute que sa transcription.
 window.SEVEN_DS_BUFFS_SUPPORTS = {
+  /* BAN GANTELETS, le soutien Tenebres. Absent de cette table jusqu'ici, et
+     c'est ce qui manquait a toute equipe Tenebres : ses deux competences de
+     soutien ne bougeaient aucun chiffre du calculateur.
+
+     Ses trois lignes sortent de deux competences seulement. La quatrieme
+     phrase de Breche - « reduit la resistance au Deluge de tous les elements
+     de 20% » - reste dehors, et pas faute de mesure : la resistance au Deluge
+     remplit une jauge de reaction elementaire, elle ne touche ni les degats
+     d'une competence ni sa recharge. `generate-effets-dps.py` la classe deja
+     `sans-impact-dps` pour cette raison. */
+  "ban": [
+    {
+      id:"ban-detournement-defense-tenebres",
+      libelle:"Détournement : défense des Ténèbres de l'ennemi −20 %",
+      cible:"ennemi",
+      effet:"defense",
+      operation:"add",
+      valeur:2000,
+      unite:"ten-thousandths",
+      element:"dark",
+      provenance:{
+        gameId:"ban_gauntlets_skill_e",
+        phrase:"réduit la défense des Ténèbres à hauteur de 20% de la défense pendant 30s"
+      }
+    },
+    {
+      /* Un TAUX sur l'attaque des Tenebres, pas des points et pas un bonus de
+         degats : `Dark_Rate` gonfle le pool d'attaque elementaire que
+         baseDeComposante() ajoute a l'ATK. D'ou `multiply`, seule operation
+         qui rende « +30 % » sur une valeur que le build apporte. */
+      id:"ban-detournement-attaque-tenebres",
+      libelle:"Détournement : attaque des Ténèbres des alliés +30 %",
+      stat:"Dark_Rate",
+      operation:"multiply",
+      valeur:3000,
+      unite:"ten-thousandths",
+      element:"dark",
+      provenance:{
+        gameId:"ban_gauntlets_skill_e",
+        phrase:"augmente l'attaque des Ténèbres de tous les héros alliés de 30% pendant 30s"
+      }
+    },
+    {
+      /* Une vulnerabilite restreinte a un ELEMENT, la premiere de la table.
+         `element:"dark"` la reserve aux builds Tenebres, et pour eux elle est
+         bien globale : un build ne porte qu'un element, celui de son arme,
+         donc toutes ses competences la subissent. */
+      id:"ban-breche-degats-tenebres-subis",
+      libelle:"Brèche : dégâts des Ténèbres subis par l'ennemi +25 % (30 s)",
+      cible:"ennemi",
+      effet:"vulnerabiliteGlobale",
+      operation:"add",
+      valeur:2500,
+      unite:"ten-thousandths",
+      element:"dark",
+      provenance:{
+        gameId:"ban_gauntlets_skill_q",
+        phrase:"augmente les dégâts des Ténèbres subis de 25%"
+      }
+    }
+  ],
   "daisy": [
     {
       id:"daisy-salve-defense-crit",

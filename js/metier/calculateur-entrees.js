@@ -53,7 +53,22 @@ import { degatsAttendus } from "./degats-calcul.js";
     /* Wind_Add… : l'attaque elementaire, plate. */
     Object.fromEntries(ELEMENTS_BUFF.map(e => [e + "_Add", "attaqueElementaire"])),
     /* Wind_Element_Rate… : l'augmentation des degats de cet element. */
-    Object.fromEntries(ELEMENTS_BUFF.map(e => [e + "_Element_Rate", "bonusElementaire"]))
+    Object.fromEntries(ELEMENTS_BUFF.map(e => [e + "_Element_Rate", "bonusElementaire"])),
+    /* Wind_Rate… : « Augmentation de l'attaque de X », un TAUX sur l'attaque
+       elementaire. Trois codes voisins que le jeu distingue et qu'il ne faut
+       pas confondre :
+
+         Dark_Add           « Attaque des Tenebres »                  plate
+         Dark_Rate          « Augmentation de l'attaque des Tenebres » taux
+         Dark_Element_Rate  « Augmentation des degats des Tenebres »   taux
+
+       Les deux derniers sont des taux, mais pas sur la meme chose : l'un
+       gonfle le POOL d'attaque que baseDeComposante() ajoute a l'ATK, l'autre
+       le seau de degats elementaires. Les verser au meme endroit ferait
+       compter le buff de Ban comme un bonus de degats, ce qu'il n'est pas.
+
+       Un taux se pose avec `operation:"multiply"` sur la ligne du buff. */
+    Object.fromEntries(ELEMENTS_BUFF.map(e => [e + "_Rate", "attaqueElementaire"]))
   );
 
   /* Le set equipe modifie les stats du heros, pas le seau des soutiens. Le
