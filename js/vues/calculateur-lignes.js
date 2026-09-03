@@ -40,6 +40,27 @@ import { etat } from "./calculateur-etat.js";
      selecteur du seul champ `cumuls` aurait donc casse ces deux sections en
      silence : elles ecrivent dans `etat.coches`, ces fonctions auraient lu
      `etat.cumuls`, et rien ne se serait plus allume. */
+  /* CE QUE VAUT, EN POINTS, UNE LIGNE INDEXEE SUR LE PORTEUR — ou null quand
+     il n'y a rien a dire.
+
+     « Augmente l'attaque de tous les heros allies a hauteur de 10 % de la
+     defense du heros » n'apprend rien tant qu'on ignore cette defense. Le
+     module d'equipe a deja fait le calcul ; cette fonction ne fait que le
+     rendre lisible.
+
+     Elle se tait dans trois cas, et chacun pour sa raison : une ligne non
+     indexee annonce deja sa valeur dans son libelle, la repeter serait du
+     bruit ; un TAUX ne se compte pas en points ; et zero point n'a rien a
+     annoncer. */
+  function pointsDunApportIndexe(ligne){
+    if(!ligne || (!ligne.indexeSurAtk && !ligne.indexeSurDef)) return null;
+    if(ligne.unite !== "flat") return null;
+    const points = Number(ligne.valeur);
+    if(!Number.isFinite(points) || points <= 0) return null;
+    return "+" + new Intl.NumberFormat("fr-FR").format(points)
+      + " points d’attaque pour chaque allié";
+  }
+
   function reglable(ligne){
     return Boolean(ligne && ligne.reglable && ligne.cumuls);
   }
@@ -303,6 +324,12 @@ import { etat } from "./calculateur-etat.js";
         if(ligne.repli){
           bloc.appendChild(el("p",{class:"calc-muette",
             text:"ATK du porteur illisible — valeur au plafond."}));
+        }else{
+          /* Une ligne indexee sur une statistique du PORTEUR n'annonce qu'un
+             pourcentage : « 10 % de la defense du heros » ne dit pas combien de
+             points ca fait. On rend le chiffre, seul contenu decidable ici. */
+          const points = pointsDunApportIndexe(ligne);
+          if(points) bloc.appendChild(el("p",{class:"calc-muette", text:points}));
         }
       });
       grille.appendChild(bloc);

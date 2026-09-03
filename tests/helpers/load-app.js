@@ -213,6 +213,12 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   potentielsEquipeApplicables:typeof potentielsEquipeApplicables === "function"
     ? potentielsEquipeApplicables
     : undefined,
+  termesDEquipe:typeof termesDEquipe === "function"
+    ? termesDEquipe
+    : undefined,
+  pointsDunApportIndexe:typeof pointsDunApportIndexe === "function"
+    ? pointsDunApportIndexe
+    : undefined,
   passifsGravesApplicables:typeof passifsGravesApplicables === "function"
     ? passifsGravesApplicables
     : undefined,

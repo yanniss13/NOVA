@@ -68,4 +68,52 @@ import { indexationDe, valeurIndexee } from "./equipe-buffs.js";
     });
   }
 
-export { potentielsEquipeApplicables };
+  /* CE QU'UN POTENTIEL D'EQUIPE AJOUTE AUX STATISTIQUES, et non aux entrees du
+     moteur de degats.
+
+     Le palier 10 du Livre d'Elizabeth donne « l'attaque de tous les heros
+     allies a hauteur de 10 % de la defense du heros ». Ce sont des POINTS
+     d'attaque : leur place est dans la fiche de statistiques, a cote de
+     l'equipement et des maitrises, et pas seulement dans une case a cocher du
+     calculateur.
+
+     On rend des TERMES plutot qu'un nombre. C'est la monnaie de
+     stats-calcul.js : chacun porte sa provenance, `reconstructStatTotals` sait
+     les totaliser, et le membre lit d'ou vient chaque point comme pour
+     n'importe quelle autre source.
+
+     DEUX LIGNES SONT ECARTEES, et pour des raisons differentes :
+       - un TAUX, parce qu'il multiplierait des seaux que cette fonction ne
+         connait pas ; sa place reste le moteur de degats ;
+       - une ligne au `repli`, parce que servir un plafond faute de build
+         lisible se defend dans une case a cocher — qui l'annonce a l'ecran —
+         pas dans un total de statistiques, qui se lit comme un fait. */
+  const STATS_PLATES_DEQUIPE = ["B_Atk"];
+
+  function termesDEquipe(entree){
+    return potentielsEquipeApplicables(entree)
+      .filter(ligne => STATS_PLATES_DEQUIPE.indexOf(ligne.stat) !== -1
+        && ligne.unite === "flat"
+        && !ligne.repli
+        && Number.isFinite(Number(ligne.valeur))
+        && Number(ligne.valeur) > 0)
+      .map(ligne => ({
+        id:"equipe:" + ligne.id,
+        stat:ligne.stat,
+        operation:"add",
+        value:Number(ligne.valeur),
+        unit:"flat",
+        bucket:"equipe:" + ligne.support,
+        family:"main",
+        source:{
+          domain:"equipe",
+          component:"potentiel",
+          support:ligne.support,
+          tier:ligne.palier,
+          id:ligne.id
+        },
+        confidence:"exact"
+      }));
+  }
+
+export { potentielsEquipeApplicables, termesDEquipe };

@@ -4,7 +4,7 @@
    des totaux opaques : c'est ce qui permet a l'interface d'expliquer chaque
    chiffre au membre. js/stats-affichage.js met ces termes en forme.
 
-   33 declarations sur 38 sont privees. N'exporter que ce qui est reellement
+   32 declarations sur 38 sont privees. N'exporter que ce qui est reellement
    appele du dehors : la surface de ce module est sa seule protection. */
 
 import {
@@ -1383,5 +1383,9 @@ export {
   fixedStatsOf,
   groupBuildStatResults,
   orderedBuildEntries,
-  randomRollsFor
+  randomRollsFor,
+  /* Sort pour les vues qui doivent AJOUTER un terme au build - l'apport
+     d'un coequipier - puis retotaliser. Sans elle, une vue tiendrait un
+     second chiffre a cote du premier, et les deux divergeraient. */
+  reconstructStatTotals
 };
