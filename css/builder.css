@@ -115,8 +115,34 @@
   grid-column:1 / -1;font-size:9px;letter-spacing:.2em;text-transform:uppercase;
   color:var(--muted-2);margin:3px 0 -3px;padding-left:2px
 }
-/* Bouton d'équipement d'un set : pleine largeur de la grille d'équipement. */
-.gear-set{grid-column:1 / -1;justify-content:center;font-size:12px;padding:7px 10px}
+/* LES ACTIONS QUI PORTENT SUR PLUSIEURS EMPLACEMENTS A LA FOIS traversent la
+   grille au lieu de tenir dans une cellule d'un tiers.
+
+   Seul `.gear-set` le faisait. Les quatre autres tombaient dans une colonne de
+   90 px, ou « Appliquer un preset » se cassait en « Appli / quer / un /
+   prese / t » — le navigateur coupe au milieu d'un mot en dernier recours,
+   faute de place. La largeur est la cause, pas la coupure : on rend donc la
+   largeur plutot que d'interdire la coupure.
+
+   `.import-captures-open` garde son `width:100%` dans sa propre feuille : il
+   ne dit que la largeur DANS une cellule, et ne suffisait donc pas. */
+.gear-maximum,
+.gear-preset-apply,
+.gear-preset-save,
+.gear-set,
+.import-captures-open{
+  grid-column:1 / -1;justify-content:center;text-align:center;
+  font-size:12px;padding:7px 10px;min-height:34px
+}
+/* Le geste le plus frequent de l'ecran — il vaut pour l'arme ET les onze
+   pieces a la fois, d'ou sa place en tete. Il se distingue des autres par la
+   seule teinte qui marque deja un emplacement valide juste en dessous
+   (`.gear-config-open.is-valid`), sans changer ni de forme ni de taille. */
+.gear-maximum{
+  border-color:var(--gold-deep);color:var(--gold-bright);
+  background:rgba(217,164,65,.07)
+}
+.gear-maximum:hover{background:rgba(217,164,65,.14)}
 .gear-slot.jewel.filled{border-color:var(--crimson)}
 .gear-slot.jewel .gear-thumb{border-color:rgba(161,44,44,.4)}
 .gear-configurable-slot{
