@@ -667,6 +667,44 @@ import {
         confidence:"presumed"
       });
     });
+    /* LES DEUX PALIERS DE TRANSCENDANCE, que rien ne lisait.
+
+       Une transcendance rend TROIS choses : une statistique au premier palier,
+       une autre au deuxieme, le passif au troisieme. Le catalogue les porte
+       depuis `limitBreakOptions` - 78 gravees sur 93, deux options chacune -
+       mais seule la fiche du wiki les affichait. Le calcul, lui, s'arretait
+       aux quatre lignes de la piece : un membre au +5 perdait en silence les
+       +10,48 % d'attaque de la tenue de Derieri, et les 156 lignes de meme
+       nature chez les autres.
+
+       Un palier n'est PAS une option aleatoire : sa valeur est fixe, publiee
+       par le jeu, et ne depend ni du niveau ni du renforcement. Le seuil
+       decide seulement si elle compte - d'ou `confidence:"exact"`, comme un
+       enchantement saisi a la main, et non `presumed` comme les courbes.
+
+       Le seuil vient de la table de promotion du jeu et vit dans le catalogue.
+       Ne le comparer qu'a `config.reinforce` : c'est le renforcement qui ouvre
+       une transcendance, pas le niveau de la piece. */
+    (definition.limitBreakOptions || []).forEach(option => {
+      if(!option || !isInteger(option.seuil)
+        || config.reinforce < option.seuil) return;
+      addGearStatTerm(terms, {
+        id:bucket + ":transcendance:" + option.tier + ":" + option.stat,
+        role:"transcendance",
+        stat:option.stat,
+        value:Number(option.valeur) || 0,
+        bucket,
+        source:{
+          domain,
+          component:"transcendance",
+          slot:slotKey,
+          id:file,
+          tier:option.tier,
+          seuil:option.seuil
+        },
+        confidence:"exact"
+      });
+    });
     /* Idem pour l'equipement : `randomOptions.stats` porte le min et le max de
        chaque gravure possible. Une stat hors catalogue sort sans `roll` plutot
        que de faire echouer le calcul. */

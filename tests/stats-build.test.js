@@ -1695,6 +1695,134 @@ function merlinGameFixture(hooks){
   assert.deepStrictEqual(plain(invalid.uncovered), []);
 }
 
+// La transcendance d'une gravée rend ses statistiques dès son seuil de renforcement.
+{
+  const { hooks } = loadApp();
+  const TENUE = "7ds-armures-ssr/Armure liee/Mouvement rebelle.webp";
+  const definition = hooks.buildGearDefinition(TENUE);
+  const options = plain(definition.limitBreakOptions);
+  assert.deepStrictEqual(
+    options,
+    [
+      { seuil:5, stat:"I_AtkAdd_Rate", tier:1, valeur:1048 },
+      { seuil:10, stat:"Debuff_Time_Rate", tier:2, valeur:3327 }
+    ],
+    "la tenue de Derieri porte bien les deux paliers attendus"
+  );
+
+  const auRenforcement = reinforce => {
+    const config = plain(hooks.emptyGearConfig(TENUE));
+    config.level = definition.qualityMax;
+    config.reinforce = reinforce;
+    return plain(hooks.calculateGearStats(TENUE, config, "Armure liee"));
+  };
+  const paliers = resultat => resultat.terms
+    .filter(term => term.source.component === "transcendance")
+    .map(term => [term.stat, term.value]);
+
+  assert.deepStrictEqual(
+    paliers(auRenforcement(4)), [],
+    "sous le seuil, aucun palier ne compte"
+  );
+  assert.deepStrictEqual(
+    paliers(auRenforcement(5)), [["I_AtkAdd_Rate", 1048]],
+    "au +5, le premier palier entre dans le calcul"
+  );
+  assert.deepStrictEqual(
+    paliers(auRenforcement(10)),
+    [["I_AtkAdd_Rate", 1048], ["Debuff_Time_Rate", 3327]],
+    "au +10, les deux paliers comptent"
+  );
+
+  /* Un palier n'est pas une option aléatoire : sa valeur est FIXE, elle ne
+     dépend ni du niveau ni du renforcement. Le seuil décide seulement si elle
+     compte. */
+  const auMaximum = auRenforcement(definition.reinforceMax);
+  assert.deepStrictEqual(
+    paliers(auMaximum),
+    [["I_AtkAdd_Rate", 1048], ["Debuff_Time_Rate", 3327]],
+    "la valeur d'un palier ne bouge plus une fois le seuil franchi"
+  );
+  auMaximum.terms
+    .filter(term => term.source.component === "transcendance")
+    .forEach(term => {
+      assert.strictEqual(term.operation, "add");
+      assert.strictEqual(term.confidence, "exact");
+      assert.strictEqual(term.role, "transcendance");
+      assert.strictEqual(term.source.domain, "engraving");
+      assert.strictEqual(term.bucket, "engraving:Armure liee");
+    });
+  assert.deepStrictEqual(
+    plain(hooks.reconstructStatTotals(auMaximum.terms)),
+    plain(auMaximum.totals),
+    "les totaux restent reconstructibles depuis les seuls termes"
+  );
+
+  /* Les quinze gravées sans transcendance ne doivent rien gagner : ce sont les
+     quatrièmes tenues des héros qui en ont quatre. */
+  const SANS_PALIER = "7ds-armures-ssr/Armure liee/Ami loyal.webp";
+  const definitionSansPalier = hooks.buildGearDefinition(SANS_PALIER);
+  assert.strictEqual(
+    definitionSansPalier.limitBreakOptions, null,
+    "cette tenue n'a bien aucune transcendance"
+  );
+  const configSansPalier = plain(hooks.emptyGearConfig(SANS_PALIER));
+  configSansPalier.reinforce = definitionSansPalier.reinforceMax;
+  assert.deepStrictEqual(
+    paliers(plain(hooks.calculateGearStats(
+      SANS_PALIER, configSansPalier, "Armure liee"
+    ))),
+    [],
+    "une gravée sans transcendance ne produit aucun palier"
+  );
+}
+
+// L'éditeur nomme un palier par son seuil, pas par son code interne.
+{
+  const { hooks } = loadApp();
+  assert.strictEqual(
+    hooks.gearTermLabel({ source:{ component:"transcendance", seuil:5 } }),
+    "Transcendance +5"
+  );
+  assert.strictEqual(
+    hooks.gearTermLabel({ source:{ component:"level" } }),
+    "Niveau et renforcement"
+  );
+}
+
+// Le palier d'une gravée remonte jusqu'au total du héros, pas seulement au terme.
+{
+  const { hooks } = loadApp();
+  const hero = merlinGameFixture(hooks);
+  const TENUE = hero.armor["Armure liee"];
+  assert.deepStrictEqual(
+    plain(hooks.buildGearDefinition(TENUE).limitBreakOptions)[0],
+    { seuil:5, stat:"A_Accuracy", tier:1, valeur:103 },
+    "la tenue de Merlin rend de la perforation à son premier palier"
+  );
+
+  /* La perforation ne vient d'aucune autre ligne de cette tenue : passer le
+     renforcement de +5 à +4 ne peut donc en changer le total que par le
+     palier. */
+  const perforation = () => {
+    const resultat = plain(hooks.calculateHeroStats(hero));
+    assert.strictEqual(resultat.status, "valid");
+    const stat = plain(hooks.groupBuildStatResults(resultat))
+      .flatMap(groupe => groupe.stats)
+      .find(item => item.stat === "A_Accuracy");
+    assert.ok(stat, "la perforation doit figurer dans les totaux");
+    return stat.value;
+  };
+
+  const au5 = perforation();
+  hero.armorConfig["Armure liee"].reinforce = 4;
+  const au4 = perforation();
+  assert.strictEqual(
+    au5 - au4, 103,
+    "franchir le seuil ajoute la valeur du palier au total du héros"
+  );
+}
+
 // Les ensembles suivent leurs seuils réels et le build agrège toutes les sources.
 {
   const { hooks } = loadApp();
