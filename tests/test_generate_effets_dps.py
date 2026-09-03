@@ -1734,5 +1734,47 @@ class CatalogueLocal(unittest.TestCase):
         self.assertEqual(code, 0)
 
 
+class DescriptionFrancaiseTests(unittest.TestCase):
+    """La fiche range ses textes longs a part dans le flux et n'en garde qu'un
+    renvoi — « $1a3 ». Ce generateur lisait `descriptionFr` tel quel : les 393
+    competences du catalogue sortaient avec `texteFr` vide.
+
+    Le classement n'en etait pas fausse — il tourne sur `textEn` — mais la
+    liste des effets NON INCLUS d'une fiche de heros affiche `texteFr` et
+    retombe sur l'identifiant quand il manque : un membre y lisait
+    « ban_gauntlets_skill_e » au lieu de la phrase du jeu.
+    """
+
+    def flux(self, description, texte=None):
+        """Un flux minimal : l'objet de competence, et le morceau vers lequel
+        son renvoi pointe quand il y en a un."""
+        entete = ""
+        if texte is not None:
+            entete = "1a:T%x,%s\n" % (len(texte.encode("utf-8")), texte)
+        return entete + (
+            '2:["$","div",null,{"skillCategory":"ACTIVE_THIRD",'
+            '"gameId":"ban_gauntlets_skill_q","weaponType":"Gauntlets",'
+            '"descriptionFr":"%s"}]' % description
+        )
+
+    def test_un_renvoi_est_suivi_jusqu_a_son_texte(self):
+        phrase = "Inflige Brèche pendant 30s."
+        skills = _gen.extraire_skills_payload("ban", self.flux("$1a", phrase))
+        self.assertEqual(len(skills), 1)
+        self.assertEqual(skills[0]["descriptionFr"], phrase)
+
+    def test_un_texte_direct_passe_intact(self):
+        """Toutes les descriptions ne sont pas des renvois : les courtes sont
+        ecrites en clair, et les resoudre ne doit pas les abimer."""
+        skills = _gen.extraire_skills_payload("ban", self.flux("Uppercut."))
+        self.assertEqual(skills[0]["descriptionFr"], "Uppercut.")
+
+    def test_un_renvoi_non_resolu_casse_la_generation(self):
+        """Pire qu'une absence : « $1a » s'afficherait tel quel dans la liste
+        des effets non inclus."""
+        with self.assertRaisesRegex(ValueError, "renvoi non resolu"):
+            _gen.extraire_skills_payload("ban", self.flux("$1a"))
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -47,7 +47,11 @@ const PERSONNAGES = [
   "gowther", "guila", "dreydrin", "derieri",
   /* Entres avec le recensement « Affaiblissement de la cible » : ils ne
      donnent rien a l'equipe, ils retirent quelque chose au boss. */
-  "drake", "escanor", "gil-thunder", "king", "klotho", "slader", "tioreh"
+  "drake", "escanor", "gil-thunder", "king", "klotho", "slader", "tioreh",
+  /* Ban Gantelets, le soutien Tenebres. Il fait les deux a la fois : il retire
+     de la defense des Tenebres au boss ET rend de l'attaque des Tenebres a
+     l'equipe. Toute equipe Tenebres se calculait sans lui. */
+  "ban"
 ];
 
 assert.deepEqual(Object.keys(TABLE).sort(), [...PERSONNAGES].sort(),
@@ -393,14 +397,48 @@ tousLesBuffs.forEach(buff => {
   assert.equal(avec.def, NEUTRE.def, "ces malus visent la cible, pas notre build");
 }
 
-/* Les malus de meme nature se cumulent : les sept reductions de defense de
-   la table donnent 119 %. Choix documente, pas mesure. */
+/* Les malus de meme nature se cumulent : les huit reductions de defense de
+   la table donnent 139 %. Choix documente, pas mesure.
+
+   Ce total est une somme de MOTEUR, pas une situation de jeu : deux de ces
+   huit lignes sont elementaires - Gowther en Foudre, Ban en Tenebres - et
+   aucun build ne peut les cocher ensemble. Le test qui le garantit est celui
+   du filtre elementaire, plus haut. */
 {
   const reductions = tousLesBuffs.filter(b => b.effet === "defense");
-  assert.equal(reductions.length, 7,
-    "Elisabeth, Gowther, Dreydrin, Escanor, Guila et Tioreh réduisent la défense générale");
+  assert.equal(reductions.length, 8,
+    "Elisabeth, Gowther, Dreydrin, Escanor, Guila, Tioreh et Ban réduisent la défense générale");
   const r = entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:reductions });
-  assert.equal(r.reductionDefense, 11900, "10 % + 20 % + 15 % + 20 % + 24 % + 15 % + 15 %");
+  assert.equal(r.reductionDefense, 13900,
+    "10 % + 20 % + 15 % + 20 % + 24 % + 15 % + 15 % + 20 %");
+}
+
+/* BAN GANTELETS, le soutien Tenebres, absent de la table jusqu'au 1er
+   septembre 2026. Ses trois lignes touchent trois entrees DIFFERENTES du
+   moteur, et c'est ce qui rend son apport reel :
+
+     defense des Tenebres -20 %  -> reductionDefense
+     attaque des Tenebres +30 %  -> attaqueElementaire, MULTIPLIEE
+     degats des Tenebres subis   -> bonusGlobal
+
+   La ligne du milieu est la seule `multiply` de la table cote heros. Une
+   erreur d'operation la ferait ajouter 3000 POINTS d'attaque elementaire a un
+   build qui en porte quelques milliers : le total serait faux du simple au
+   double sans que rien ne le signale. */
+{
+  const banDark = buffsApplicables("dark").filter(b => b.support === "ban");
+  assert.equal(banDark.length, 3, "Ban rend trois lignes a un build Ténèbres");
+  assert.equal(
+    buffsApplicables("thunder").filter(b => b.support === "ban").length, 0,
+    "aucune ligne de Ban ne doit atteindre un build d'un autre élément"
+  );
+
+  const base = Object.assign({}, NEUTRE, { attaqueElementaire:5000 });
+  const r = entreesDuCalcul({ statsDuBuild:base, buffsCoches:banDark });
+  assert.equal(r.reductionDefense, 2000, "défense des Ténèbres −20 %");
+  assert.equal(r.attaqueElementaire, 6500, "5000 x 1,30, et non 5000 + 3000");
+  assert.equal(r.bonusGlobal, 2500, "dégâts des Ténèbres subis +25 %");
+  assert.equal(r.atk, base.atk, "aucune de ces lignes ne touche l'ATK de base");
 }
 
 /* Les bonus de degats elementaires atterrissent dans le seau du moteur. */

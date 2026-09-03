@@ -20,6 +20,14 @@ _spec_competences = importlib.util.spec_from_file_location(
 _competences = importlib.util.module_from_spec(_spec_competences)
 _spec_competences.loader.exec_module(_competences)
 
+# La resolution des renvois de texte vit dans le generateur du wiki. La
+# reecrire ici ferait deux lectures du meme flux, libres de diverger.
+_spec_wiki = importlib.util.spec_from_file_location(
+    "generate_wiki", RACINE / "scripts" / "generate-wiki.py"
+)
+_wiki = importlib.util.module_from_spec(_spec_wiki)
+_spec_wiki.loader.exec_module(_wiki)
+
 fetch = _competences._gen.fetch
 flight_payload = _competences._gen.flight_payload
 FICHE = _competences.FICHE
@@ -1323,7 +1331,20 @@ def construire_catalogue(sources):
 
 
 def extraire_skills_payload(slug, payload):
-    """Extrait passifs et actifs d'une fiche, sans doublon de rendu RSC."""
+    """Extrait passifs et actifs d'une fiche, sans doublon de rendu RSC.
+
+    LA DESCRIPTION FRANCAISE SE RESOUT, elle ne se lit pas telle quelle. La
+    fiche range ses textes longs a part dans le flux et n'en garde qu'un
+    renvoi - « $1a3 ». `generate-wiki.py` le suit depuis toujours ; ce
+    generateur-ci ne le faisait pas, et les 393 competences du catalogue
+    sortaient avec `texteFr` vide.
+
+    Le classement ne s'en trouve pas fausse : il tourne sur `textEn`. Mais la
+    liste des effets NON INCLUS d'une fiche de heros affiche `texteFr` et
+    retombe sur l'identifiant quand il manque - un membre y lisait
+    « ban_gauntlets_skill_e » au lieu de la phrase du jeu.
+    """
+    morceaux = _wiki.morceaux_de_texte(payload)
     skills = []
     vus = set()
     for brut in _competences.objets_portant(payload, "skillCategory"):
@@ -1338,6 +1359,16 @@ def extraire_skills_payload(slug, payload):
             continue
         vus.add(game_id)
         skill["hero"] = slug
+        skill["descriptionFr"] = _wiki.resout(
+            skill.get("descriptionFr"), morceaux
+        ) or ""
+        # Un renvoi non resolu est pire qu'une absence : il s'afficherait tel
+        # quel, « $1a3 », dans la liste des effets non inclus.
+        if _wiki.RENVOI.match(skill["descriptionFr"]):
+            raise ValueError(
+                "renvoi non resolu %s (%s/%s)"
+                % (skill["descriptionFr"], slug, game_id)
+            )
         skills.append(skill)
     return skills
 
