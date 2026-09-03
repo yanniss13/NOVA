@@ -50,10 +50,17 @@ import { BUILD_STATS } from "../noyau/constantes.js";
   }
 
   /* La valeur lue a cote du libelle porte un signal gratuit et tres fiable :
-     un « % » veut dire `ten-thousandths`, son absence veut dire `flat`. Il
-     tranche les sept paires de libelles homonymes du catalogue — `Attaque de
-     Feu` existe en valeur brute et en pourcentage. Sans lui, ces paires
-     produisaient des lectures fausses et silencieuses. */
+     un « % » veut dire `ten-thousandths`, son absence veut dire `flat`.
+
+     Il n'arbitre plus qu'UNE paire homonyme : `Perforation`, portee par
+     `A_Accuracy` en points et par `accuracy` en pourcentage. Les sept autres
+     ont disparu avec la correction des six attaques elementaires de
+     `armes.json` - elles etaient declarees en dix-milliemes alors que la table
+     du jeu les donne plates, ce qui fabriquait un faux jumeau en pourcentage
+     pour chaque `Attaque de X`.
+
+     Le garde-fou reste utile pour autre chose : un « % » avale par l'OCR ne
+     doit pas rattacher une lecture a une stat de l'autre unite. */
   function uniteDeLaValeur(valeurBrute){
     if(valeurBrute === undefined || valeurBrute === null) return null;
     return /%/.test(String(valeurBrute)) ? "ten-thousandths" : "flat";

@@ -349,7 +349,7 @@
  },
  "darkDamage": {
   "family": "elemental",
-  "unit": "ten-thousandths"
+  "unit": "flat"
  },
  "defRate": {
   "family": "additional",
@@ -361,11 +361,11 @@
  },
  "earthDamage": {
   "family": "elemental",
-  "unit": "ten-thousandths"
+  "unit": "flat"
  },
  "fireDamage": {
   "family": "elemental",
-  "unit": "ten-thousandths"
+  "unit": "flat"
  },
  "healPower": {
   "family": "special",
@@ -373,7 +373,7 @@
  },
  "lightDamage": {
   "family": "elemental",
-  "unit": "ten-thousandths"
+  "unit": "flat"
  },
  "normalAtkDamage": {
   "family": "damage",
@@ -397,7 +397,7 @@
  },
  "waterDamage": {
   "family": "elemental",
-  "unit": "ten-thousandths"
+  "unit": "flat"
  },
  "windBurstGauge": {
   "family": "elemental",
@@ -405,6 +405,6 @@
  },
  "windDamage": {
   "family": "elemental",
-  "unit": "ten-thousandths"
+  "unit": "flat"
  }
 }
