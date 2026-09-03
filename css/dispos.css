@@ -90,15 +90,27 @@
 .avail-actions{margin:14px 0 0}
 .avail-best{font-size:13px;color:var(--muted);margin:14px 0 0;
   display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.avail-slot-list{list-style:none;margin:0;padding:0;max-height:60vh;overflow:auto}
+/* LA LISTE D'UN CRENEAU. Les noms couraient jusqu'au bord de la modale et
+   le trait de separation traversait toute sa largeur, jusque sous le dernier
+   nom — la liste avait l'air coupee plutot que terminee. On lui donne les
+   memes marges que le reste de la modale, et on retire le trait du bas. */
+.avail-slot-list{
+  list-style:none;margin:12px 0 0;padding:0;max-height:60vh;overflow:auto;
+  border:1px solid var(--line-soft);border-radius:10px;
+  background:rgba(255,255,255,.02)
+}
 .avail-slot-list li{
-  display:flex;align-items:center;gap:10px;min-height:44px;
+  display:flex;align-items:center;gap:10px;min-height:44px;padding:6px 14px;
   border-bottom:1px solid var(--line-soft);font-size:14px
 }
+.avail-slot-list li:last-child{border-bottom:0}
+/* Le compte connecte se repere d'un coup d'oeil, sans avoir a lire. */
+.avail-slot-list li.me{background:rgba(217,164,65,.06)}
 .avail-slot-list li.me b{color:var(--gold-bright)}
 .avail-slot-tag{
-  margin-left:auto;font-size:11px;letter-spacing:.08em;text-transform:uppercase;
-  color:var(--muted-2);border:1px solid var(--line);border-radius:999px;padding:3px 8px
+  margin-left:auto;flex:none;font-size:10px;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--muted-2);border:1px solid var(--line);
+  border-radius:999px;padding:3px 9px;white-space:nowrap
 }
 
 @media(prefers-reduced-motion:reduce){

@@ -89,6 +89,12 @@ function makeLocalStorage(initialTeams){
 }
 
 const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
+  profilsDeLaConfrerie:typeof profilsDeLaConfrerie === "function"
+    ? profilsDeLaConfrerie
+    : undefined,
+  equipesDeLaConfrerie:typeof equipesDeLaConfrerie === "function"
+    ? equipesDeLaConfrerie
+    : undefined,
   normaliserLecture:typeof normaliserLecture === "function"
     ? normaliserLecture
     : undefined,

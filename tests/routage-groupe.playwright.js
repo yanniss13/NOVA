@@ -238,8 +238,8 @@ async function openHistoryFragment(page, fragment){
       const group = openGroups[0];
       const emptyGroup = openGroups[1];
       state.profiles.push(
-        { id:"user-3", pseudo:"Escanor extérieur" },
-        { id:"user-without-roster", pseudo:"Sans roster" }
+        { id:"user-3", pseudo:"Escanor extérieur", membre:true },
+        { id:"user-without-roster", pseudo:"Sans roster", membre:true }
       );
       state.roster_characters.push({
         owner:"user-3",

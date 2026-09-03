@@ -187,7 +187,7 @@ async function ouvrirAnalyse(page, section = "supports"){
        lignes, pour comparer. On ajoute un TROISIEME membre afin de prouver que
        les autres disparaissent vraiment — deux coches sur trois. */
     await page.evaluate(() => {
-      window.__fakeSupabaseState.profiles.push({ id:"user-3", pseudo:"Escanor" });
+      window.__fakeSupabaseState.profiles.push({ id:"user-3", pseudo:"Escanor", membre:true });
       window.__fakeSupabaseState.roster_characters.push({
         owner:"user-3",
         char_id:"jericho",

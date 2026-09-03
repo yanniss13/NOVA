@@ -218,15 +218,17 @@ const EQUIPEES = [
     const champMembre = page.locator("#collectionOwner");
     assert.equal(await page.locator("#collectionOwnerField").isVisible(), true,
       "le sélecteur apparaît dès qu'il y a quelqu'un d'autre à regarder");
-    /* « Invité » est un compte hors confrérie. Il apparaît ici, et ce n'est pas
-       un accident : la cloison des comptes invités est ASYMÉTRIQUE. L'invité ne
-       voit rien de la confrérie ; la confrérie, elle, lit ses collections et
-       ses rosters — la politique « à moi ou membre » le dit ainsi. Le masquer
-       de cette liste demanderait de filtrer sur `membre`, ce qui viderait la
-       liste de l'invité lui-même. */
+    /* « INVITÉ » N'APPARAÎT PAS. La politique « à moi ou membre » rend bien sa
+       collection lisible à la confrérie — mais un invité n'appartient pas à la
+       confrérie, et le proposer ici revenait à le compter parmi nous.
+
+       La liste vient de `refreshRosterProfiles`, qui ne retourne que des
+       membres. L'invité, lui, garde son propre accès : la RLS ne lui rend que
+       sa ligne, donc son sélecteur ne se vide pas — il n'a simplement personne
+       d'autre à regarder, ce qui est exact. */
     assert.deepEqual(
       await champMembre.locator("option").allTextContents(),
-      ["Ma collection", "Invité", "Merlin"]
+      ["Ma collection", "Merlin"]
     );
 
     await champMembre.selectOption("user-2");

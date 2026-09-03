@@ -43,6 +43,7 @@ const SUITES = {
     "node tests/presets-schema.test.js",
     "node tests/comptes-invites-schema.test.js",
     "node tests/comptes-invites.test.js",
+    "node tests/invites-hors-donnees.test.js",
     "node tests/roster-affichage-instantane.test.js",
     "node tests/vendor-tesseract.test.js",
     "node tests/ocr-panneau.test.js",

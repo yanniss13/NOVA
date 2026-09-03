@@ -80,9 +80,9 @@ async function installFakeSupabase(page, weekStart, semaineBoss){
     const state = {
       session:{ user:{ id:"moi", email:"moi@example.test" } },
       profiles:[
-        { id:"moi", pseudo:"Moi" },
-        { id:"alix", pseudo:"Alix" },
-        { id:"bea", pseudo:"Béa" }
+        { id:"moi", pseudo:"Moi", membre:true },
+        { id:"alix", pseudo:"Alix", membre:true },
+        { id:"bea", pseudo:"Béa", membre:true }
       ],
       teams:[],
       roster_characters:[],

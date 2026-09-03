@@ -70,6 +70,7 @@ const {
 };
 
 const {
+  PLANNING_PROFILES_QUERY,
   parseIdList,
   planningAuthorizationError,
   formatChronoMessage,
@@ -79,6 +80,7 @@ const {
   originalInteractionUrl,
   ephemeralInteractionMessage
 } = planningHelpersModule as {
+  PLANNING_PROFILES_QUERY: string;
   parseIdList(value?: string): string[];
   planningAuthorizationError(
     interaction: DiscordInteraction,
@@ -363,7 +365,7 @@ async function generateAndPublishPlanning(
 
     const weekStart = currentAvailabilityWeekStart(new Date());
     const [profiles, availabilityRows] = await Promise.all([
-      supabaseJson<Profile[]>(config, "profiles?select=id,pseudo"),
+      supabaseJson<Profile[]>(config, PLANNING_PROFILES_QUERY),
       supabaseJson<AvailabilityRow[]>(config,
         "member_availability?week_start=eq." + encodeURIComponent(weekStart)
         + "&select=owner,slots")
