@@ -386,4 +386,86 @@ assert.equal(lignes, 19, "19 lignes attendues, recu " + lignes);
     "ce palier doit atteindre le seau de l'attaque elementaire");
 }
 
+/* LE PALIER 10 DU LIVRE D'ELIZABETH entre dans la FICHE DE STATISTIQUES.
+
+   « Augmente l'attaque de tous les heros allies a hauteur de 10 % de la
+   defense du heros » donne des POINTS d'attaque : sa place est a cote de
+   l'equipement et des maitrises, pas seulement dans une case a cocher. */
+{
+  const { termesDEquipe } = loadApp().hooks;
+  assert.equal(typeof termesDEquipe, "function",
+    "termesDEquipe n'est pas exposee par le chargeur de tests");
+
+  const elizabeth = {
+    charId:"elizabeth", typeArme:"Livre", palier:10,
+    atk:20000, def:12340, estLeHeros:false
+  };
+  const termes = plain(termesDEquipe({ element:"dark", porteurs:[elizabeth] }));
+  assert.equal(termes.length, 1, "un seul potentiel d'equipe rend des points");
+  const terme = termes[0];
+  assert.equal(terme.stat, "B_Atk");
+  assert.equal(terme.value, 1234, "10 % de 12 340");
+  assert.equal(terme.unit, "flat");
+  assert.equal(terme.operation, "add");
+  assert.equal(terme.source.domain, "equipe");
+  assert.equal(terme.source.tier, 10);
+  assert.equal(terme.source.support, "elizabeth");
+
+  /* Un palier trop bas ne rend rien, et une defense illisible non plus : servir
+     un plafond faute de build se defend dans une case a cocher, qui s'annonce,
+     pas dans un total de statistiques qui se lit comme un fait. */
+  assert.deepEqual(
+    plain(termesDEquipe({ element:"dark",
+      porteurs:[Object.assign({}, elizabeth, { palier:9 })] })),
+    [], "le palier 9 ne donne pas l'attaque du palier 10"
+  );
+  assert.deepEqual(
+    plain(termesDEquipe({ element:"dark",
+      porteurs:[Object.assign({}, elizabeth, { def:0 })] })),
+    [], "sans defense lisible, aucun terme"
+  );
+  assert.deepEqual(
+    plain(termesDEquipe({ element:"dark", porteurs:[] })), [],
+    "sans coequipier, aucun terme"
+  );
+}
+
+/* UNE LIGNE INDEXEE DIT SON CHIFFRE. « 10 % de la defense du heros » n'apprend
+   rien tant qu'on ne sait pas ce que vaut cette defense. */
+{
+  const { pointsDunApportIndexe } = loadApp().hooks;
+  assert.equal(typeof pointsDunApportIndexe, "function",
+    "pointsDunApportIndexe n'est pas exposee par le chargeur de tests");
+
+  /* Le separateur de milliers francais est une espace fine INSECABLE (U+202F),
+     celle que rend Intl. L'ecrire en clair dans ce fichier la rendrait
+     indiscernable d'une espace ordinaire a la relecture — et un outil
+     d'edition la remplacerait sans bruit. */
+  const FINE = String.fromCharCode(0x202f);
+  assert.equal(
+    pointsDunApportIndexe({
+      stat:"B_Atk", unite:"flat", valeur:1234, indexeSurDef:{ taux:1000 }
+    }),
+    "+1" + FINE + "234 points d’attaque pour chaque allié"
+  );
+  /* Une ligne qui n'est indexee sur RIEN annonce deja sa valeur dans son
+     libelle : la repeter serait du bruit. */
+  assert.equal(
+    pointsDunApportIndexe({ stat:"C_Critical_Rate", unite:"ten-thousandths",
+      valeur:1000 }),
+    null
+  );
+  /* Un taux ne se compte pas en points. */
+  assert.equal(
+    pointsDunApportIndexe({ stat:"B_Atk", unite:"ten-thousandths",
+      valeur:1000, indexeSurDef:{ taux:1000 } }),
+    null
+  );
+  assert.equal(
+    pointsDunApportIndexe({ stat:"B_Atk", unite:"flat", valeur:0,
+      indexeSurDef:{ taux:1000 } }),
+    null, "zero point n'a rien a annoncer"
+  );
+}
+
 console.log("potentiels-equipe.test.js OK (" + lignes + " lignes)");

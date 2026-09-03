@@ -29,6 +29,7 @@ const SUITES = {
     "node tests/serve.test.js",
     "node tests/social-preview.test.js",
     "node tests/modules-imports.test.js",
+    "node tests/imports-resolus.test.js",
     "node tests/css-ordre.test.js",
     "python -m unittest tests/test_schema_sql.py",
     "python -m unittest tests/test_generate_stats_build.py",

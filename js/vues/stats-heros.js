@@ -20,7 +20,19 @@ import {
   statTermsDetails,
   weaponTermLabel
 } from "./stats-affichage.js";
-import { calculateHeroStats, groupBuildStatResults } from "../metier/stats-calcul.js";
+import {
+  calculateHeroStats,
+  groupBuildStatResults,
+  reconstructStatTotals
+} from "../metier/stats-calcul.js";
+
+  /* Les heros nommes par un potentiel d'equipe. La table n'en compte qu'une
+     poignee, et un identifiant inconnu se dit tel quel plutot que de faire
+     disparaitre la ligne. */
+  const SUPPORTS_DEQUIPE = {
+    elizabeth:"Elizabeth", derieri:"Derieri", daisy:"Daisy",
+    gowther:"Gowther", guila:"Guila", manny:"Manny"
+  };
 
   const HERO_PRIMARY_STATS = [
     ["B_MaxHp", "PV"],
@@ -66,6 +78,12 @@ import { calculateHeroStats, groupBuildStatResults } from "../metier/stats-calcu
       return "Maîtrise "+((meta && meta.label) || source.weaponType || "");
     }
     if(source.domain === "potential") return "Potentiel P"+source.tier;
+    /* Un apport qui ne vient PAS du build : un coequipier le donne. Le nommer
+       evite qu'on le cherche dans son propre equipement. */
+    if(source.domain === "equipe"){
+      return (SUPPORTS_DEQUIPE[source.support] || source.support || "Équipe")
+        +" P"+source.tier;
+    }
     if(source.domain === "set") return "Bonus d’ensemble";
     if(source.domain === "armor" || source.domain === "jewel"
       || source.domain === "engraving"){
@@ -177,8 +195,23 @@ import { calculateHeroStats, groupBuildStatResults } from "../metier/stats-calcu
     });
     return section;
   }
-  function heroStatsSection(hero){
-    const result = calculateHeroStats(hero);
+  /* Les apports d'EQUIPE rejoignent les termes du build avant tout affichage :
+     le total les compte, et le detail les explique, sans que cette vue ait a
+     tenir un second chiffre a cote du premier. Hors equipe, `termesEquipe` est
+     vide et rien ne bouge. */
+  function resultatAvecEquipe(result, termesEquipe){
+    const apports = Array.isArray(termesEquipe) ? termesEquipe : [];
+    if(!apports.length) return result;
+    if(result.status !== "valid" && result.status !== "partial") return result;
+    const terms = result.terms.concat(apports);
+    return Object.assign({}, result, {
+      terms,
+      totals:reconstructStatTotals(terms)
+    });
+  }
+
+  function heroStatsSection(hero, termesEquipe){
+    const result = resultatAvecEquipe(calculateHeroStats(hero), termesEquipe);
     const section = el("section",{
       class:"hero-stats",
       dataset:{status:result.status}

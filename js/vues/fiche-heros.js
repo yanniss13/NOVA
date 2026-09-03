@@ -550,7 +550,11 @@ import { toast } from "./toast.js";
     }
     col.appendChild(gear);
 
-    const stats = heroStatsSection(h);
+    /* Hors equipe - Roster, rapport de boss - personne ne fournit d'apport :
+       la fiche rend alors exactement ce qu'elle rendait. */
+    const stats = heroStatsSection(h,
+      typeof settings.termesEquipePour === "function"
+        ? settings.termesEquipePour(h) : null);
     if(stats) col.appendChild(stats);
 
     /* La fiche ne calcule aucun degat elle-meme : un seul calcul, un seul
