@@ -96,6 +96,62 @@ STAT_SYNONYMS = {
 }
 
 
+# Les attaques élémentaires d'arme, que STAT_SYNONYMS ne peut PAS exprimer.
+#
+# Six codes amont — `darkDamage`, `earthDamage`, `fireDamage`, `lightDamage`,
+# `waterDamage`, `windDamage` — nomment une attaque élémentaire plate. Deux
+# d'entre eux servent DEUX éléments à la fois :
+#
+#   earthDamage  « Attaque de Terre » sur 3 grades, « Attaque physique » sur 3
+#   lightDamage  « Attaque de Foudre » sur 2 grades, « Attaque du Sacré » sur 1
+#
+# Une table code -> code les rabattrait donc tous sur un seul élément. Seul le
+# LIBELLÉ désambiguïse, d'où cette table à deux clés. Le libellé anglais sert
+# de clé : il ne porte ni accent ni espace insécable.
+#
+# LA TABLE DU JEU TRANCHE, pas le raisonnement sur les ordres de grandeur :
+# `Item/ItemTable_Data_Equip` renvoie vers `Item/ItemTable_Growth_Lv`, où
+# `weapon_sub1_131025010` (Épée longue de l'âme vorace) porte
+# `EAbilityType::Dark_Add`. Les 17 grades concernés ont été vérifiés un par un
+# de cette façon.
+#
+# CE QUE ÇA CORRIGE. Sans elle, la sous-stat sortait sous son nom amont, que
+# `statsElementairesDuBuild` ne lit pas — elle cherche `Dark_Add`. Les 3 453
+# points d'attaque des Ténèbres de l'Épée longue de l'âme vorace n'entraient
+# donc dans aucun calcul, et le membre ne voyait rien manquer.
+ELEMENT_SUB_STATS = {
+    ("darkDamage", "Darkness Attack"): "Dark_Add",
+    ("earthDamage", "Earth Attack"): "Earth_Add",
+    ("earthDamage", "Physical Attack"): "Default_Add",
+    ("fireDamage", "Fire Attack"): "Fire_Add",
+    ("lightDamage", "Lightning Attack"): "Thunder_Add",
+    ("lightDamage", "Holy Attack"): "Holy_Add",
+    ("waterDamage", "Cold Attack"): "Ice_Add",
+    ("windDamage", "Wind Attack"): "Wind_Add",
+}
+ELEMENT_SUB_STAT_CODES = {code for code, _ in ELEMENT_SUB_STATS}
+
+
+def weapon_sub_stat_code(sub_stat, known):
+    """Le code de jeu d'une sous-stat d'arme, libellé compris.
+
+    Un code élémentaire inconnu au couple (code, libellé) fait ÉCHOUER la
+    génération. Le repli silencieux serait pire que l'arrêt : ranger une
+    attaque de Feu dans le seau des Ténèbres ne se verrait nulle part, et
+    fausserait le build entier d'un membre."""
+    code = sub_stat["stat"]
+    if code not in ELEMENT_SUB_STAT_CODES:
+        return canonical_stat(code, known)
+    label = (sub_stat.get("statLabel") or {}).get("nameEn")
+    game_code = ELEMENT_SUB_STATS.get((code, label))
+    if game_code is None:
+        raise ValueError(
+            f"Attaque élémentaire non résolue : {code} porte le libellé "
+            f"{label!r}, absent de ELEMENT_SUB_STATS"
+        )
+    return canonical_stat(game_code, known)
+
+
 # Les bonus de catégorie d'un palier de potentiel ne vivent QUE dans sa prose.
 #
 # Le champ `stats` de la source ne porte jamais que l'attaque, la défense et
@@ -703,7 +759,7 @@ def grade_stat_labels(grade, known=()):
     for sub_stat in grade.get("subStats") or []:
         add_localized_label(
             labels,
-            canonical_stat(sub_stat["stat"], known),
+            weapon_sub_stat_code(sub_stat, known),
             sub_stat.get("statLabel", {}),
         )
 
@@ -731,7 +787,7 @@ def compact_grade(grade, weapon_slug, known=()):
         ),
         "subStats": [
             {
-                "stat": canonical_stat(item["stat"], known),
+                "stat": weapon_sub_stat_code(item, known),
                 "values": compact_values(item["values"]),
             }
             for item in sorted(grade.get("subStats") or [], key=lambda item: item["stat"])

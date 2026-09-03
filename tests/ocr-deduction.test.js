@@ -50,11 +50,21 @@ const rattrape = recalerLibelle(
 assert.equal(rattrape.code, "Normalskill_Damadd_Rate");
 assert.equal(rattrape.statut, "rattrape");
 
-/* L'unite est le garde-fou decisif. Sept paires de libelles sont homonymes :
-   `Attaque de Feu` existe en valeur brute ET en pourcentage. Sans le signal du
-   « % », le recalage tranchait a pile ou face. */
+/* L'unite reste le garde-fou, mais elle n'arbitre plus qu'UNE paire homonyme :
+   `Perforation`, portee par `A_Accuracy` en points et par `accuracy` en
+   pourcentage. Les sept autres n'existaient pas : elles venaient des six codes
+   d'attaque elementaire de `armes.json`, declares en dix-milliemes alors que
+   la table du jeu les donne plats — `weapon_sub1_131025010` vaut
+   `EAbilityType::Dark_Add`. Le catalogue ne porte plus ces codes.
+
+   Consequence directe : `Attaque de Feu` n'existe QUE plate. Un pourcentage
+   lu sous ce libelle n'est plus rattache a rien, et c'est juste — inventer un
+   code aurait verse la valeur dans un seau qui n'existe pas. */
 assert.equal(recalerLibelle("Attaque de Feu", "1 409", []).code, "Fire_Add");
-assert.equal(recalerLibelle("Attaque de Feu", "12.34%", []).code, "fireDamage");
+assert.equal(recalerLibelle("Attaque de Feu", "12.34%", []).code, null);
+assert.equal(recalerLibelle("Attaque de Feu", "12.34%", []).statut, "rejete");
+assert.equal(recalerLibelle("Perforation", "120", []).code, "A_Accuracy");
+assert.equal(recalerLibelle("Perforation", "1.20%", []).code, "accuracy");
 
 /* La famille elementaire est le cas le plus serre du catalogue : cinq libelles
    qui ne different que par un mot court. C'est la seule confusion qui subsistait

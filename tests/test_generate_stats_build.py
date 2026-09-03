@@ -146,6 +146,76 @@ class StatSynonymTests(unittest.TestCase):
             )
 
 
+class WeaponSubStatCodeTests(unittest.TestCase):
+    """Six codes d'attaque élémentaire n'ont AUCUN synonyme possible : deux
+    d'entre eux servent deux éléments à la fois.
+
+    `earthDamage` porte « Attaque de Terre » sur trois grades et « Attaque
+    physique » sur trois autres ; `lightDamage` porte « Attaque de Foudre » et
+    « Attaque du Sacré ». Une table code -> code les rabattrait tous sur un
+    seul élément. Seul le libellé désambiguïse, et la table du jeu tranche :
+    `ItemTable_Growth_Lv` donne `weapon_sub1_131025010` = `Dark_Add`."""
+
+    def test_each_pair_resolves_to_its_game_code(self):
+        attendus = {
+            ("darkDamage", "Darkness Attack"): "Dark_Add",
+            ("earthDamage", "Earth Attack"): "Earth_Add",
+            ("earthDamage", "Physical Attack"): "Default_Add",
+            ("fireDamage", "Fire Attack"): "Fire_Add",
+            ("lightDamage", "Lightning Attack"): "Thunder_Add",
+            ("lightDamage", "Holy Attack"): "Holy_Add",
+            ("waterDamage", "Cold Attack"): "Ice_Add",
+            ("windDamage", "Wind Attack"): "Wind_Add",
+        }
+        known = set(attendus.values())
+        for (code, libelle), attendu in attendus.items():
+            with self.subTest(code=code, libelle=libelle):
+                self.assertEqual(
+                    module.weapon_sub_stat_code(
+                        {"stat": code, "statLabel": {"nameEn": libelle}}, known
+                    ),
+                    attendu,
+                )
+
+    def test_an_ordinary_sub_stat_still_goes_through_canonical_stat(self):
+        self.assertEqual(
+            module.weapon_sub_stat_code(
+                {"stat": "critDamage", "statLabel": {"nameEn": "Crit Damage"}},
+                {"C_Critical_Dam_Rate"},
+            ),
+            "C_Critical_Dam_Rate",
+        )
+
+    def test_an_unknown_label_breaks_instead_of_choosing_an_element(self):
+        """Mieux vaut casser la génération que ranger une attaque de Feu dans
+        le seau des Ténèbres : l'erreur serait invisible et fausserait un
+        build entier."""
+        with self.assertRaises(ValueError):
+            module.weapon_sub_stat_code(
+                {"stat": "fireDamage", "statLabel": {"nameEn": "Poison Attack"}},
+                {"Fire_Add"},
+            )
+
+    def test_every_element_sub_stat_is_flat_like_its_target(self):
+        """Une attaque élémentaire est un nombre de points. Les six codes
+        amont étaient déclarés en dix-millièmes, ce qui aurait affiché 3453
+        comme « +34,53 % »."""
+        metadata = json.loads(
+            (REPO_ROOT / "7ds-stats" / "stat-metadata.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        for (code, _), game_code in module.ELEMENT_SUB_STATS.items():
+            with self.subTest(code=code):
+                self.assertIn(code, metadata, f"{code} sans métadonnée")
+                self.assertIn(game_code, metadata, f"{game_code} sans métadonnée")
+                self.assertEqual(metadata[game_code]["unit"], "flat")
+                self.assertEqual(metadata[code]["unit"], metadata[game_code]["unit"])
+                self.assertEqual(
+                    metadata[code]["family"], metadata[game_code]["family"]
+                )
+
+
 class PotentialTextTests(unittest.TestCase):
     """Les paliers de potentiel chiffrent leur bonus de CATÉGORIE dans la seule
     prose : le champ `stats` de la source ne porte jamais que l'attaque, la

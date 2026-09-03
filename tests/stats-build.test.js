@@ -1777,6 +1777,34 @@ function merlinGameFixture(hooks){
   );
 }
 
+// Une sous-stat élémentaire d'arme porte le code du jeu, pas celui de la source.
+{
+  const { hooks } = loadApp();
+  const EPEE = "7ds-armes/Epee 1 main/Épée longue de l'âme vorace.webp";
+  const config = {
+    version:1, gradeGameId:"131025010",
+    level:50, promotion:4, overlimit:6, enchantments:[null]
+  };
+  const resultat = plain(hooks.calculateWeaponStats(EPEE, config));
+  assert.strictEqual(resultat.status, "valid");
+
+  /* `armes.json` nomme cette ligne `darkDamage` ; la table du jeu la déclare
+     `EAbilityType::Dark_Add` (weapon_sub1_131025010). C'est le code du jeu qui
+     doit sortir, sinon le seau élémentaire du calculateur ne la voit jamais. */
+  assert.deepStrictEqual(
+    resultat.terms.filter(term => term.role === "sub")
+      .map(term => term.stat).sort(),
+    ["Dark_Add", "I_AtkAdd_Rate"]
+  );
+  const tenebres = resultat.totals.find(total => total.stat === "Dark_Add");
+  assert.ok(tenebres, "l'attaque des Ténèbres doit figurer dans les totaux");
+  assert.strictEqual(tenebres.value, 3453);
+  assert.strictEqual(
+    tenebres.unit, "flat",
+    "une attaque élémentaire est un nombre de points, pas un taux"
+  );
+}
+
 // L'éditeur nomme un palier par son seuil, pas par son code interne.
 {
   const { hooks } = loadApp();
