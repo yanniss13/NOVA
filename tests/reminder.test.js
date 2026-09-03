@@ -193,7 +193,7 @@ async function testReminderCollectionWithoutSessions() {
   const request = async pathname => {
     requestedPaths.push(pathname);
     if (pathname.startsWith("boss_sessions?")) return [];
-    if (pathname === "profiles?select=id,pseudo") return profiles;
+    if (pathname === "profiles?select=id,pseudo&membre=eq.true") return profiles;
     throw new Error("Requête inattendue : " + pathname);
   };
 
@@ -206,7 +206,7 @@ async function testReminderCollectionWithoutSessions() {
   ]);
   assert.deepStrictEqual(requestedPaths, [
     "boss_sessions?week_start=eq.2026-07-20&select=id",
-    "profiles?select=id,pseudo"
+    "profiles?select=id,pseudo&membre=eq.true"
   ]);
   assert.equal(
     requestedPaths.some(pathname => pathname.startsWith("boss_participation?")),
@@ -223,3 +223,9 @@ Promise.all([
     console.error(error);
     process.exitCode = 1;
   });
+
+/* Le rappel du dimanche part en service_role, sans RLS : sans ce filtre il
+   nommait les invités parmi les membres « sous les 3 runs ». */
+assert.equal(require("../scripts/reminder-core.js").REMINDER_PROFILES_QUERY,
+  "profiles?select=id,pseudo&membre=eq.true",
+  "le rappel de runs doit écarter les invités");

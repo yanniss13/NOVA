@@ -97,11 +97,16 @@ function reminderMessage(weekLabel, missingMembers) {
 
    Une semaine sans session ne déclenche aucune requête de participation :
    `in.()` vide serait une erreur PostgREST. */
+/* LE RAPPEL NE RELANCE QUE DES MEMBRES. La requete part en service_role,
+   donc sans RLS : sans `membre=eq.true`, chaque invite etait compte « sous
+   les 3 runs » et nomme dans le message Discord de la confrerie. */
+const REMINDER_PROFILES_QUERY = "profiles?select=id,pseudo&membre=eq.true";
+
 async function collectReminderData(request, weekStart) {
   const sessions = await request(
     "boss_sessions?week_start=eq." + weekStart + "&select=id"
   );
-  const profiles = await request("profiles?select=id,pseudo");
+  const profiles = await request(REMINDER_PROFILES_QUERY);
   const ids = (sessions || []).map(session => session.id);
   const memberships = ids.length
     ? await request(
@@ -118,6 +123,7 @@ async function collectReminderData(request, weekStart) {
 
 const bossReminderApi = {
   REMINDER_WEEKDAY,
+  REMINDER_PROFILES_QUERY,
   isReminderWindow,
   currentBossWeekStart,
   bossWeekLabel,

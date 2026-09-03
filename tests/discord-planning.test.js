@@ -15,6 +15,14 @@ assert.deepStrictEqual(helpers.planningCommandDefinition(), {
   type:1
 });
 assert.ok(helpers.planningCommandDefinition().description.length <= 100);
+/* LE PLANNING NE COMPTE QUE DES MEMBRES. L'Edge Function lit `profiles` en
+   service_role, donc sans RLS : sans ce filtre, chaque invite entrait dans le
+   tableau comme un membre n'ayant jamais pose ses creneaux, et faussait le
+   « X/Y membres ont renseigne leurs creneaux ». */
+assert.equal(helpers.PLANNING_PROFILES_QUERY,
+  "profiles?select=id,pseudo&membre=eq.true",
+  "la requête du planning doit écarter les invités");
+
 assert.equal(helpers.runCommandDefinition().name, "run");
 assert.equal(helpers.runCommandDefinition().type, 1);
 assert.ok(helpers.runCommandDefinition().description.length <= 100);

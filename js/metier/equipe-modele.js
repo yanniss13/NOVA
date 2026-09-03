@@ -298,8 +298,30 @@ import { buildWeaponGrade } from "./build-config.js";
     });
   }
 
+  /* LES EQUIPES DE LA CONFRERIE, invites exclus.
+
+     `teams_read` rend a un membre les equipes de tout le monde, invites
+     compris. Une compo d'invite n'a pourtant rien a faire dans le registre
+     de la confrerie : elle n'engage personne et brouille le decompte.
+
+     Deux garde-fous, et ce sont eux qui comptent :
+     - on ne masque jamais SES PROPRES equipes. Un invite garde son acces au
+       site ; lui vider son registre sans un mot serait pire que le bruit
+       qu'on cherche a retirer.
+     - tant que la liste des membres n'est pas chargee, on ne masque RIEN.
+       Un filtre applique sur une liste vide viderait l'ecran de tout le
+       monde, y compris des membres. */
+  function equipesDeLaConfrerie(equipes, idsMembres, monId){
+    const liste = equipes || [];
+    const membres = new Set(idsMembres || []);
+    if(!membres.size) return liste.slice();
+    return liste.filter(equipe => equipe
+      && (membres.has(equipe.owner) || (!!monId && equipe.owner === monId)));
+  }
+
 export {
   compatibleWeaponGroups,
+  equipesDeLaConfrerie,
   favoriteRosterWeaponType,
   normalizeBuildFields,
   normalizeHero,

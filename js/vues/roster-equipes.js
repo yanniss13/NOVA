@@ -13,7 +13,12 @@ import { Store } from "../donnees/equipes-store.js";
 import { brouillonEquipe } from "../etat/brouillon-equipe.js";
 import { canManageTeam, sessionCourante } from "../etat/session.js";
 import { charOf, nameOfFile } from "../metier/catalogue.js";
-import { normalizeTeam, normalizeTeamName } from "../metier/equipe-modele.js";
+import {
+  equipesDeLaConfrerie,
+  normalizeTeam,
+  normalizeTeamName
+} from "../metier/equipe-modele.js";
+import { refreshRosterProfiles } from "../donnees/roster-profils.js";
 import { $, el, initials, uid } from "../noyau/dom.js";
 import { LocalTeams } from "../donnees/equipes-store.js";
 import { authMessage } from "../noyau/supabase-client.js";
@@ -30,6 +35,19 @@ import { toast } from "./toast.js";
   const rosterGrid = $("#rosterGrid");
   let rosterRenderId = 0;
 
+  /* PAR JOUEUR d'abord, puis la plus recente de ce joueur.
+
+     Le registre etait trie par date seule : les compos d'une meme personne se
+     retrouvaient eparpillees entre celles des autres, alors qu'on l'ouvre
+     justement pour regarder ce que quelqu'un joue. La date reste, mais en
+     second rang. */
+  function triDesEquipesParJoueur(a, b){
+    const parJoueur = String(a.pseudo || "").localeCompare(
+      String(b.pseudo || ""), "fr", { sensitivity:"base" }
+    );
+    return parJoueur || (b.updatedAt || 0) - (a.updatedAt || 0);
+  }
+
   async function renderRoster(){
     const renderId = ++rosterRenderId;
     rosterGrid.className = "";
@@ -44,8 +62,17 @@ import { toast } from "./toast.js";
       teams = Store.all();
       toast("Registre indisponible, affichage du cache local.", true);
     }
+    /* Qui est membre — pour ecarter les compos des invites du registre de la
+       confrerie. La lecture est mise en cache dans `sessionCourante` ; en cas
+       d'echec on retombe sur ce cache, et une liste vide ne masque rien. */
+    const membres = await refreshRosterProfiles()
+      .catch(() => sessionCourante.rosterProfiles.slice());
     if(renderId !== rosterRenderId) return;
-    teams = teams.slice().sort((a,b)=>(b.updatedAt||0)-(a.updatedAt||0));
+    teams = equipesDeLaConfrerie(
+      teams,
+      (membres || []).map(profil => profil.id),
+      sessionCourante.user && sessionCourante.user.id
+    ).slice().sort(triDesEquipesParJoueur);
     const c = $("#rosterCount");
     c.innerHTML = "<b>"+teams.length+"</b> équipe"+(teams.length>1?"s":"")+" enregistrée"+(teams.length>1?"s":"");
 

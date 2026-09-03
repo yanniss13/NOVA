@@ -110,12 +110,22 @@ import { toast } from "./toast.js";
     return next;
   }
 
+  /* PAR JOUEUR, et non par ordre d'arrivee. Un groupe se lit pour y
+     chercher quelqu'un ; l'ordre d'inscription n'aide personne, et il change
+     d'une semaine a l'autre. `localeCompare` en francais pour que les
+     accents et la casse ne separent pas des pseudos voisins. */
+  function comparerParPseudo(a, b){
+    return String(a && a.pseudo || "").localeCompare(
+      String(b && b.pseudo || ""), "fr", { sensitivity:"base" }
+    );
+  }
+
   function bossVisibleMembership(){
     let membership = (bossViewState.membership || []).slice();
     bossPendingActions.forEach((intent, sessionId) => {
       membership = bossApplyIntent(membership, sessionId, intent);
     });
-    return membership;
+    return membership.sort(comparerParPseudo);
   }
 
   function bossStatCell(label, className, value){
@@ -1101,7 +1111,8 @@ import { toast } from "./toast.js";
 
   function bossReportMembers(group){
     return (bossViewState.membership || [])
-      .filter(member => member.session_id === group.id);
+      .filter(member => member.session_id === group.id)
+      .sort(comparerParPseudo);
   }
 
   function bossMissingTeamMessage(members){

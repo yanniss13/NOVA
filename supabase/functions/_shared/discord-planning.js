@@ -1,6 +1,16 @@
 "use strict";
 
 const DISCORD_API = "https://discord.com/api/v10";
+
+/* LA REQUETE DES PROFILS DU PLANNING, invites exclus.
+
+   L'Edge Function lit `profiles` en service_role : aucune RLS ne la filtre,
+   elle voit donc aussi les invites. Sans `membre=eq.true`, chaque invite
+   entrait dans le tableau comme un membre n'ayant jamais pose ses creneaux,
+   et gonflait le denominateur du « X/Y membres ont renseigne leurs
+   creneaux ». La constante vit ici pour qu'un test puisse la tenir : le
+   fichier `index.ts` n'est pas lisible depuis Node. */
+const PLANNING_PROFILES_QUERY = "profiles?select=id,pseudo&membre=eq.true";
 const ADMINISTRATOR = 1n << 3n;
 const MANAGE_GUILD = 1n << 5n;
 
@@ -188,6 +198,7 @@ function ephemeralInteractionMessage(content) {
 const discordPlanningApi = {
   DISCORD_API,
   NOVA_CHRONO_URL,
+  PLANNING_PROFILES_QUERY,
   planningCommandDefinition,
   chronoCommandDefinition,
   runCommandDefinition,
