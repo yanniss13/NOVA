@@ -30,7 +30,10 @@ _spec_wiki.loader.exec_module(_wiki)
 
 fetch = _competences._gen.fetch
 flight_payload = _competences._gen.flight_payload
-FICHE = _competences.FICHE
+# La fiche francaise porte a la fois `descriptionFr` et `descriptionEn`.
+# L'URL anglaise ne publie que `descriptionEn` : tenter d'y resoudre le champ
+# francais laisse silencieusement toutes les descriptions a vide.
+FICHE = _wiki.FICHE
 
 TYPES_REGLES = _regles.TYPES_REGLES
 CLASSIFICATIONS = _regles.CLASSIFICATIONS

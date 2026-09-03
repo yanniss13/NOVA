@@ -33,6 +33,13 @@ Quatre fichiers modifiés **non commités**, tous verts en test :
 C'est le correctif du chantier 0 ci-dessous. Ne pas régénérer par-dessus sans
 avoir lu ce qu'il fait.
 
+**Mise à jour du 3 septembre 2026.** Le catalogue a été régénéré depuis les
+fiches françaises après correction de l'URL du générateur. Les 391 compétences
+publiques ont désormais leur `texteFr`; le total reste à 2 283 sources et 393
+compétences, avec des règles et classifications strictement identiques hors de
+ces textes. Le test de catalogue refuse désormais toute nouvelle description
+française vide, sauf pour les deux compétences synthétiques.
+
 ---
 
 ## Chantier 0 — FAIT : le double comptage des potentiels
@@ -219,7 +226,11 @@ faire ». Rien de ce que j'ai vu aujourd'hui ne les déplace :
 2. Huit potentiels étiquetés `sans-impact-dps` à tort, chez daisy, derieri,
    manny, meliodas, slader et tristan.
 3. Les 48 transcendances hors calcul (43 pour l'équipe, 5 pour la cible).
-4. Les buffs d'équipe de Ban, absents de `data/buffs-supports.js`.
+4. **Soutien de Ban partiellement fait le 3 septembre 2026** (`a04027f`) :
+   Détournement (défense des Ténèbres −20 %, attaque des Ténèbres +30 %) et
+   Brèche (dégâts subis +25 %) sont dans `data/buffs-supports.js`. Le cumul
+   d'« Instinct de voleur » reste dehors tant que sa permanence en combat
+   n'est pas mesurée (`docs/mesures-en-jeu/1-ban-en-soutien.md`).
 5. Khala, le jour où elle sortira.
 6. `CoolTimeGroup` et l'économie de jauges, jamais regardés.
 7. Question 3 des buffs de soutien — mesure en jeu.
