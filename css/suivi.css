@@ -58,6 +58,15 @@
 .dashboard-action-row,
 .dashboard-run-card{padding:14px}
 .dashboard-action-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+/* CES DEUX CARTES N ONT QU UNE PHRASE ET UN BOUTON, comme les lignes de
+   « A faire maintenant » juste au-dessus. Elles s empilaient pourtant en
+   flux normal, bouton colle au texte, ce qui les faisait lire comme un
+   bloc different alors qu elles disent la meme chose : un constat, une
+   action. Meme disposition, donc — libelle a gauche, bouton a droite. */
+.dashboard-section[data-card="roster"],
+.dashboard-section[data-card="best-slot"]{
+  display:flex;align-items:center;justify-content:space-between;gap:12px
+}
 .dashboard-run-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:12px}
 .dashboard-run-card p{margin:6px 0 0;color:var(--muted)}
 .dashboard-run-card .dashboard-team-state{color:var(--parchment)}
@@ -97,7 +106,9 @@
   .dashboard-heading,
   .dashboard-summary-head,
   .dashboard-card-head,
-  .dashboard-action-row{
+  .dashboard-action-row,
+  .dashboard-section[data-card="roster"],
+  .dashboard-section[data-card="best-slot"]{
     align-items:stretch;
     flex-direction:column
   }
@@ -105,6 +116,8 @@
   .dashboard-progress{grid-template-columns:1fr}
   .dashboard-run-grid{grid-template-columns:1fr}
   .dashboard-action-row .btn,
+  .dashboard-section[data-card="roster"] .btn,
+  .dashboard-section[data-card="best-slot"] .btn,
   .dashboard-run-card .btn{
     width:100%;
     min-height:44px

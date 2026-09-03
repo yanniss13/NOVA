@@ -35,7 +35,7 @@
   outline:2px solid var(--gold-bright);outline-offset:2px}
 .analyse-panel>.an-title:first-child{margin-top:0}
 .analyse-panel-intro{margin:0 0 6px;color:var(--muted);font-size:13px}
-.analyse-summary{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.analyse-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
 .analyse-summary-card{min-width:0;padding:16px;background:var(--panel);
   border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;
   gap:4px}
@@ -199,7 +199,6 @@
 .db-porteur{font-size:12px;color:var(--gold-bright);white-space:nowrap}
 .db-personne{font-size:12px;color:var(--muted-2)}
 @media(max-width:1180px){
-  .analyse-summary{grid-template-columns:repeat(2,minmax(0,1fr))}
   .cov-row{grid-template-columns:repeat(4,minmax(0,1fr))}
   .debuff-row{grid-template-columns:130px 112px minmax(0,1fr) 96px 124px;
     gap:8px;padding:8px 10px}
@@ -267,6 +266,7 @@
     padding:6px 3px;font-size:10px;line-height:1.15;white-space:normal;
     text-align:center}
   .analyse-summary{grid-template-columns:1fr 1fr}
+  .analyse-summary-card:last-child{grid-column:1 / -1}
   .analyse-summary-card{padding:13px 12px}
   .analyse-summary-value{font-size:22px}
 }

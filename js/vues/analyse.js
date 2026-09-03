@@ -836,8 +836,6 @@ import { toast } from "./toast.js";
     );
     const totalDps = players.reduce((n, joueur) =>
       n + (joueur.dps || []).length, 0);
-    const dpsFoudre = players.reduce((n, joueur) => n + (joueur.dps || [])
-      .filter(personnage => dpsElem(personnage) === "THUNDER").length, 0);
 
     overview.appendChild(el("h2",{class:"an-title", text:"En un coup d'œil"}));
     overview.appendChild(el("div",{class:"analyse-summary"},[
@@ -850,11 +848,6 @@ import { toast } from "./toast.js";
         lectureRostersReussie ? totalDps : "—",
         "DPS recensés",
         "tous éléments"
-      ),
-      carteResume(
-        lectureRostersReussie ? dpsFoudre : "—",
-        "DPS Foudre",
-        "prêts pour une composition Foudre"
       ),
       carteResume(
         supports ? supports.portes + " / " + supports.total : "—",
