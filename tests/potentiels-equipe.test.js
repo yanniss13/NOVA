@@ -28,9 +28,19 @@ function catalogueDe(fichier, cle){
 
 const TABLE = catalogueDe("potentiels-equipe.js", "SEVEN_DS_POTENTIELS_EQUIPE");
 const SOURCE = catalogueDe("potentiels.js", "SEVEN_DS_POTENTIELS");
-const LIBELLES = JSON.parse(fs.readFileSync(
-  path.join(racine, "7ds-stats", "libelles-stats.json"), "utf8"
-));
+/* Le depot nomme ses statistiques dans DEUX fichiers, et l'application lit les
+   deux : `libelles-stats.json` vient du jeu, `stat-labels-supplement.json`
+   comble les codes que le jeu porte sans les nommer — `AllElement_Rate` en est
+   un. Ne lire que le premier ferait refuser un code parfaitement connu du
+   catalogue. */
+const LIBELLES = Object.assign(
+  JSON.parse(fs.readFileSync(
+    path.join(racine, "7ds-stats", "libelles-stats.json"), "utf8"
+  )),
+  Object.fromEntries(Object.entries(JSON.parse(fs.readFileSync(
+    path.join(racine, "7ds-stats", "stat-labels-supplement.json"), "utf8"
+  ))).map(([code, fr]) => [code, { fr }]))
+);
 
 const { EFFETS_SUR_LA_CIBLE,
   CATEGORIES_DE_COMPETENCE } = require("./helpers/effets-cible");
@@ -352,6 +362,28 @@ assert.equal(lignes, 19, "19 lignes attendues, recu " + lignes);
   assert.equal(entrees.bonusCategorie, 0,
     "elle ne doit PAS passer par le seau commun, qui vaut pour toutes les "
       + "competences a la fois");
+}
+
+/* LE PALIER 7 DU LIVRE D'ELIZABETH porte un TAUX, pas des points.
+
+   La table du jeu tranche : `grade_7_elizabeth_book_skill_r` pose le buff
+   302171046, dont l'unique ligne est `AllElement_Rate = 3000`, ApplyType Team.
+   `AllElement_Add` — « Attaque de tous les elements » — est le code voisin, en
+   POINTS, et le confondre range un taux dans un seau de valeurs plates. */
+{
+  const { entreesDuCalcul } = loadApp().hooks;
+  const ligne = TABLE.elizabeth.Livre["7"][0];
+  assert.equal(ligne.stat, "AllElement_Rate",
+    "le palier 7 du Livre est un taux d'attaque elementaire, pas des points");
+  const entrees = entreesDuCalcul({
+    statsDuBuild:{
+      atk:1000, def:0, maxHp:0, critRate:0, critDamage:0,
+      attaqueElementaire:1000, bonusElementaire:0, bonusGlobal:0
+    },
+    buffsCoches:[ligne]
+  });
+  assert.equal(entrees.attaqueElementaire, 1300,
+    "ce palier doit atteindre le seau de l'attaque elementaire");
 }
 
 console.log("potentiels-equipe.test.js OK (" + lignes + " lignes)");
