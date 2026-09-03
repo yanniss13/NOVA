@@ -42,7 +42,13 @@ import { degatsAttendus } from "./degats-calcul.js";
       D_Protect_Cur_Rate:"percementDefense",
       /* « Attaque de tous les elements » : le moteur l'ajoute a l'ATK pour
          toute composante de base `atk`, voir baseDeComposante(). */
-      AllElement_Add:"attaqueElementaire"
+      AllElement_Add:"attaqueElementaire",
+      /* Son voisin en TAUX, « Augmentation de toutes les attaques
+         elementaires ». Meme seau, mais il se pose avec
+         `operation:"multiply"` — c'est le palier 7 du Livre d'Elizabeth.
+         Sans cette ligne, le buff etait accepte par la table de donnees
+         puis SILENCIEUSEMENT ecarte ici, faute de destination. */
+      AllElement_Rate:"attaqueElementaire"
     },
     /* Wind_Add… : l'attaque elementaire, plate. */
     Object.fromEntries(ELEMENTS_BUFF.map(e => [e + "_Add", "attaqueElementaire"])),

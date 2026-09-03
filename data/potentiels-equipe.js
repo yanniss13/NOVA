@@ -198,10 +198,15 @@ window.SEVEN_DS_POTENTIELS_EQUIPE = {
       ],
       "7": [
         {
+          /* UN TAUX, PAS DES POINTS. La table du jeu tranche :
+             `grade_7_elizabeth_book_skill_r` pose le buff 302171046, dont
+             l'unique ligne est `AllElement_Rate = 3000`, ApplyType Team.
+             `AllElement_Add` — « Attaque de tous les elements » — est le code
+             voisin, en POINTS ; la ligne le portait a tort. */
           id:"elizabeth-livre-t7-attaques-elementaires",
           libelle:"Ultime : toutes les attaques élémentaires des alliés +30 %",
           cible:"allies",
-          stat:"AllElement_Add",
+          stat:"AllElement_Rate",
           operation:"multiply",
           valeur:3000,
           unite:"ten-thousandths",
