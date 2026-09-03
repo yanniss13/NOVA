@@ -1,8 +1,10 @@
 # Ban en soutien : ce qu'il apporte vraiment à l'équipe
 
-**Pourquoi on demande ça** — le calculateur du site ignore complètement ce que
-Ban donne à ses alliés. Joué en soutien aux Gantelets, son apport n'apparaît
-nulle part. On a le texte du jeu, mais le texte ne dit pas tout.
+**Pourquoi on demande encore ça** — depuis le 3 septembre 2026, le calculateur
+compte Détournement (défense des Ténèbres −20 %, attaque des Ténèbres +30 %)
+et Brèche (dégâts subis +25 %). Le cumul plat d'« Instinct de voleur » reste
+volontairement absent : sa valeur est connue, mais le texte ne dit pas s'il
+reste réellement actif pendant tout un combat de boss.
 
 **Qui peut répondre** — n'importe qui a Ban et ses Gantelets. Pas besoin de
 l'avoir poussé à fond.
@@ -38,8 +40,8 @@ proche de l'inutile pour la moitié du groupe.
 **Le plafond du passif, c'est 3000 points d'attaque**, pas 30 %. Un montant
 fixe, ajouté tel quel.
 
-Ces deux réponses suffisent à écrire l'entrée de Ban dans le catalogue des
-buffs de soutien. Il ne reste que la question ci-dessous.
+Ces deux réponses ont permis de chiffrer l'effet. Il reste la question
+ci-dessous avant de pouvoir l'appliquer au maximum sans surestimer Ban.
 
 ---
 
@@ -68,6 +70,6 @@ message.
 
 ---
 
-**Ce que ça débloquera** — Ban entrera dans le catalogue des buffs de soutien
-du site, comme Daisy, Elizabeth ou King. Son apport en équipe sera enfin
-compté quand tu compares deux compositions.
+**Ce que ça débloquera** — le dernier effet de soutien de Ban, le cumul plat
+d'« Instinct de voleur », pourra rejoindre les trois effets déjà calculés sans
+supposer à tort qu'il reste actif pendant toute la simulation.

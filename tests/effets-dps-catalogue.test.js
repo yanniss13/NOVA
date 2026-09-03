@@ -30,6 +30,22 @@ assert.ok(catalogue.audit.total > 700, "Le catalogue doit couvrir toutes les sou
 assert.ok(catalogue.heroes.merlin.Wand.potentials["10"]);
 assert.ok(catalogue.skills.merlin_wand_divine_judgment);
 
+/* Les descriptions longues des fiches publiques vivent dans des morceaux du
+   flux RSC et `descriptionFr` ne contient souvent qu'un renvoi (« $1a3 »).
+   Une regeneration qui oublie de resoudre ces renvois conserve les bons
+   chiffres, mais affiche l'identifiant brut dans la liste des effets non
+   inclus. Les deux competences synthetiques n'ont, elles, aucune fiche
+   publique dont tirer un texte. */
+const competencesSansTexteFr = Object.values(catalogue.skills)
+  .filter(source => !source.synthetic && !String(source.texteFr || "").trim())
+  .map(source => source.id);
+assert.deepEqual(
+  competencesSansTexteFr,
+  [],
+  "Ces competences publiques ont perdu leur description francaise :\n  "
+    + competencesSansTexteFr.join("\n  ")
+);
+
 const classifications = new Set([
   "modelise",
   "sans-impact-dps",

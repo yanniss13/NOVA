@@ -1202,8 +1202,9 @@ sert aux conditions de déclenchement de quêtes.
    effets restent hors du comparateur, désormais pour des raisons de
    **structure** et non d'ignorance :
    * Brèche et Détournement sont des débuffs posés sur la **cible**. Le
-     comparateur compare des builds à cible constante ; ils profitent à toute
-     l'équipe et sortent de son périmètre, comme les `effet-equipe`.
+     comparateur de la fiche compare des builds à cible constante ; ils
+     sortent donc de son périmètre. Le calculateur de composition les applique
+     désormais depuis `data/buffs-supports.js` aux builds Ténèbres concernés.
    * Le passif des gantelets majore les dégâts critiques de la **seule
      attaque normale**. `bonus-critique` ne porte pas de champ de portée —
      `cible` n'existe que pour les règles de recharge — et une règle
@@ -1224,8 +1225,10 @@ sert aux conditions de déclenchement de quêtes.
    l'équipe (43) ou frappent la cible (5) : hors périmètre, comme les autres
    `effet-equipe`. Elles auraient leur place dans
    `data/buffs-supports.js` le jour où les buffs d'équipe seront traités.
-4. **Les buffs d'équipe de Ban** — `data/buffs-supports.js` est écrit à la
-   main et ne le contient pas : joué en soutien, son apport est ignoré.
+4. **Le dernier buff d'équipe de Ban** — Détournement et Brèche sont entrés
+   dans `data/buffs-supports.js` le 3 septembre 2026. Le cumul plat d'« Instinct
+   de voleur » reste volontairement absent : sa valeur est connue, mais pas sa
+   permanence en combat (`docs/mesures-en-jeu/1-ban-en-soutien.md`).
 5. **Khala** le jour où elle sortira : elle demandera une passe complète, de
    l'image au catalogue.
 6. **`CoolTimeGroup`** (315 compétences) et l'économie de jauges, jamais
