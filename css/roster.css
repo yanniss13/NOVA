@@ -13,6 +13,14 @@
   letter-spacing:.04em
 }
 .roster-count b{color:var(--gold-bright);font-family:var(--display)}
+/* LE SELECTEUR DE JOUEUR tient sur UNE ligne, libelle compris.
+
+   `.wiki-field` empile son libelle au-dessus du champ, ce qui convient a une
+   grille de filtres mais pas a une barre d outils : le bloc faisait 64 px de
+   haut la ou le decompte en fait 20, et ce dernier se centrait 10 px trop
+   haut. En ligne, tout retombe sur la meme hauteur que le select. */
+.roster-toolbar #rosterOwnerField{flex-direction:row;align-items:center;gap:8px}
+.roster-toolbar #rosterOwnerField>span{white-space:nowrap}
 .roster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
 
 .team{

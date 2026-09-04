@@ -283,15 +283,19 @@
     <p class="section-lead">Toutes les équipes proposées par les membres. Modifie ou retire les tiennes à tout moment.</p>
 
     <div class="roster-toolbar">
-      <span class="roster-count" id="rosterCount"></span>
-      <!-- Masque tant qu'un seul joueur a propose une equipe : un selecteur a
-           une seule option est une promesse non tenue. -->
+      <!-- Le selecteur d'abord : c'est lui qui commande, et le decompte qui
+           en rend compte. Il reste masque tant qu'un seul joueur a propose une
+           equipe — un controle a une seule option est une promesse non tenue. -->
       <label class="wiki-field" id="rosterOwnerField" hidden>
         <span>Joueur</span>
         <select id="rosterOwner"></select>
       </label>
-      <button class="btn" id="btnExport">Exporter (JSON)</button>
-      <button class="btn" id="btnImport">Importer (JSON)</button>
+      <span class="roster-count" id="rosterCount"></span>
+      <!-- EXPORT ET IMPORT JSON DESACTIVES. Le balisage et les gestionnaires
+           restent en place : c'est une mise en sommeil, pas une suppression.
+           Les reafficher tient dans le retrait de ces deux `hidden`. -->
+      <button class="btn" id="btnExport" hidden>Exporter (JSON)</button>
+      <button class="btn" id="btnImport" hidden>Importer (JSON)</button>
       <input type="file" id="importFile" accept="application/json,.json" hidden>
     </div>
 
