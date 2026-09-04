@@ -161,6 +161,32 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
      a ligne contre BuffTable 303419204-206. */
   "7ds-armures-ssr/Armure liee/Cuisinier remplaçant.webp":[
     {
+      /* L'EFFET PRINCIPAL, et il n'est pas une ligne de stat ordinaire :
+         c'est une CONVERSION. `niveaux` porte un TAUX applique a la somme
+         des degats elementaires non physiques, jamais un apport a plat.
+         `depuis` le dit au moteur, qui refuse alors le chemin ordinaire.
+
+         BuffTable 303419201-203 : sept `<Element>_Element_Rate` ->
+         `Default_Element_Rate`, type `Per`, 6000/8000/10000.
+
+         Il ne vaut que pour un Ban PHYSIQUE : le seau vise est celui des
+         degats physiques. Sur un Ban Tenebres, le moteur lit un autre seau
+         et la conversion ne verse nulle part — ce que le test verifie. */
+      id:"ban-cuisinier-conversion-physique",
+      libelle:"Dégâts physiques : +100 % des dégâts élémentaires non physiques",
+      cible:"soi",
+      stat:"Default_Element_Rate",
+      depuis:"degats-elementaires-hors-physique",
+      operation:"add",
+      unite:"ten-thousandths",
+      /* `default` et non `null` : le passif verse dans le seau des degats
+         PHYSIQUES. Le proposer a un Ban Tenebres afficherait une case
+         qui ne change rien — le defaut meme que le garde-fou traque. */
+      element:"default",
+      niveaux:[6000, 8000, 10000],
+      provenance:{ phrase:"à hauteur de " }
+    },
+    {
       id:"ban-cuisinier-attaques-elementaires",
       libelle:"Compétence normale sur cible sous Chaîne : attaques élémentaires +20 %",
       cible:"soi",

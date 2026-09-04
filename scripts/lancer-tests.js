@@ -92,6 +92,7 @@ const SUITES = {
     "node tests/essai-enchantements.test.js",
     "node tests/equipe-buffs.test.js",
     "node tests/passifs-graves.test.js",
+    "node tests/conversion-degats-elementaires.test.js",
     "node tests/passifs-armes.test.js",
     "node tests/passifs-ensembles.test.js",
     "node tests/passifs-ensembles-metier.test.js",
