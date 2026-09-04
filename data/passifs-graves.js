@@ -142,6 +142,47 @@
 // une deuxieme ligne derivera sa valeur d'ailleurs, ce n'est plus une exception
 // mais un motif : il faudra un champ, pas une liste d'identifiants.
 window.SEVEN_DS_PASSIFS_GRAVES = {
+  /* CUISINIER REMPLACANT (Ban). Deux effets, un seul modelisable ici.
+
+     L'effet principal — « les degats physiques a hauteur de 60/80/100 % de
+     l'augmentation de degats de tous les elements, sauf Physique » — n'est
+     PAS une ligne de stat : c'est une CONVERSION. La table le dit
+     (BuffTable 303419201-203) : sept entrees `<Element>_Element_Rate` ->
+     `Default_Element_Rate`, de type `Per`. Le moteur du site ne sait pas
+     encore exprimer « un pourcentage de la somme d'autres stats », et un
+     faux terme a plat serait pire que rien. Il reste donc a faire.
+
+     Au passage : le texte du catalogue dit encore « de l'attaque de tous
+     les elements ». Le jeu a corrige en « de l'augmentation de degats », et
+     la table confirme le seau des DEGATS (`_Element_Rate`). Ne pas se fier
+     a cette phrase le jour ou l'effet sera modelise.
+
+     Le second effet, lui, est une paire de stats ordinaires — verifie ligne
+     a ligne contre BuffTable 303419204-206. */
+  "7ds-armures-ssr/Armure liee/Cuisinier remplaçant.webp":[
+    {
+      id:"ban-cuisinier-attaques-elementaires",
+      libelle:"Compétence normale sur cible sous Chaîne : attaques élémentaires +20 %",
+      cible:"soi",
+      stat:"AllElement_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[1200, 1600, 2000],
+      provenance:{ phrase:"augmente toutes les attaques élémentaires de " }
+    },
+    {
+      id:"ban-cuisinier-percement",
+      libelle:"Compétence normale sur cible sous Chaîne : percement de défense +10 %",
+      cible:"soi",
+      stat:"D_Protect_Cur_Rate",
+      operation:"add",
+      unite:"ten-thousandths",
+      element:null,
+      niveaux:[600, 800, 1000],
+      provenance:{ phrase:"le percement de défense de " }
+    }
+  ],
   "7ds-armures-ssr/Armure liee/Aventure du prince.webp":[
     {
       id:"tristan-aventure-du-prince-ultime",
@@ -179,7 +220,10 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       id:"merlin-chercheuse-attaque-feu",
       libelle:"Déluge activé : attaque de Feu des alliés +20 %",
       cible:"allies",
-      stat:"Fire_Add",
+      /* Le texte dit « augmente l'attaque de Feu de 12 % » : un POURCENTAGE.
+         `Fire_Add` est une valeur plate (« Attaque de Feu »), pas un taux.
+         BuffTable 303407404-406 tranche : `Fire_Rate` 1200/1600/2000. */
+      stat:"Fire_Rate",
       operation:"multiply",
       unite:"ten-thousandths",
       element:"fire",
@@ -565,8 +609,16 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       id:"elaine-lumiere-attaque-vent",
       libelle:"Boosts de dégâts crit. cumulés : attaque de Vent +72 %",
       cible:"soi",
-      stat:"Wind_Add",
-      operation:"multiply",
+      /* DOUBLE erreur. Le texte du jeu dit « augmente l'attaque de Vent », mais
+         BuffTable 303408204-206 dit `Wind_Element_Rate` — le seau des DEGATS.
+         1600/2000/2400 par cumul, MaxStack 3, soit 48/60/72 % : les valeurs du
+         depot etaient justes, seul le seau etait faux. Meme piege que le passif
+         « Hate » de Meliodas, deja corrige dans effets-dps-regles.py. */
+      stat:"Wind_Element_Rate",
+      /* `add` et non `multiply` : le seau des degats elementaires est
+         ADDITIF (S = 1 + somme des taux), et `multiply` n y produisait
+         aucun effet — le passif etait cochable sans rien faire. */
+      operation:"add",
       unite:"ten-thousandths",
       element:"wind",
       niveaux:[4800, 6000, 7200],
@@ -785,7 +837,10 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       id:"gowther-tenue-de-soiree-attaque-foudre",
       libelle:"Déluge de Foudre activé : attaque de Foudre des alliés +30 %",
       cible:"allies",
-      stat:"Thunder_Add",
+      /* Meme confusion plat/pourcentage que chez Merlin : « augmente l'attaque
+         de Foudre de 18 % » est un taux.
+         BuffTable 303425207-209 : `Thunder_Rate` 1800/2400/3000. */
+      stat:"Thunder_Rate",
       operation:"multiply",
       unite:"ten-thousandths",
       element:"thunder",

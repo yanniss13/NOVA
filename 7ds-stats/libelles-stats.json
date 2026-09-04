@@ -23,6 +23,11 @@
   "en": "All Element Attack",
   "taux": false
  },
+ "AllElement_Rate": {
+  "fr": "Augmentation de toutes les attaques élémentaires",
+  "en": "All Elemental Attack Increase",
+  "taux": true
+ },
  "AllElement_Res": {
   "fr": "Défense de tous les éléments",
   "en": "All Element Defense",

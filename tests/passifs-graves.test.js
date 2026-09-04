@@ -195,9 +195,11 @@ Object.keys(TABLE).forEach(fichier => {
    retours - un effet de vulnerabilite deja branche, une ancre « %, » qui
    designe le second de deux plafonds, et deux tenues simplement oubliees -, et
    38 avec la ligne DERIVEE d'Escanor (« Soleil brûlant », dispensee de la regle
-   de phrase). */
-assert.equal(Object.keys(TABLE).length, 38,
-  "38 tenues attendues, recu " + Object.keys(TABLE).length);
+   de phrase), et 39 avec le « Cuisinier remplaçant » de Ban — dont SEUL le
+   second effet entre ici, le premier etant une conversion que le moteur ne
+   sait pas encore dire. */
+assert.equal(Object.keys(TABLE).length, 39,
+  "39 tenues attendues, recu " + Object.keys(TABLE).length);
 
 /* Les deux cibles doivent etre REPRESENTEES. Le lot « allies » est arrive
    apres coup : sans ce controle, un fichier ou toutes les lignes seraient
