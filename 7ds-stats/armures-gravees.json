@@ -123119,17 +123119,17 @@
      {
       "level": 1,
       "descEn": "Increases the hero's [#0F5CD8]Physical damage[-] by [#1A7331]60%[-] of the Attack of all elements except Physical.\nLanding the Normal Skill on an enemy affected by [#0F5CD8]Chain[-] increases [#0F5CD8]All Elemental Attack[-] by [#1A7331]12%[-] and [#0F5CD8]Defense Shatter[-] by [#1A7331]6%[-] for [#1A7331]30 sec[-].",
-      "descFr": "Augmente les [#0F5CD8]dégâts physiques[-] du héros à hauteur de [#1A7331]60%[-] de l'attaque de tous les éléments, sauf Physique.\nUn coup porté avec la compétence normale sur un ennemi affecté par [#0F5CD8]Chaîne[-] augmente [#0F5CD8]toutes les attaques élémentaires[-] de [#1A7331]12%[-] et le [#0F5CD8]percement de défense[-] de [#1A7331]6%[-] pendant [#1A7331]30 s[-]."
+      "descFr": "Augmente les [#0F5CD8]dégâts physiques[-] du héros à hauteur de [#1A7331]60%[-] de l'augmentation de dégâts de tous les éléments, sauf Physique. (Sauf [#0F5CD8]tous les dégâts élémentaires[-])\nUn coup porté avec la compétence normale sur un ennemi affecté par [#0F5CD8]Chaîne[-] augmente [#0F5CD8]toutes les attaques élémentaires[-] de [#1A7331]12%[-] et le [#0F5CD8]percement de défense[-] de [#1A7331]6%[-] pendant [#1A7331]30 s[-]."
      },
      {
       "level": 2,
       "descEn": "Increases the hero's [#0F5CD8]Physical damage[-] by [#1A7331]80%[-] of the Attack of all elements except Physical.\nLanding the Normal Skill on an enemy affected by [#0F5CD8]Chain[-] increases [#0F5CD8]All Elemental Attack[-] by [#1A7331]16%[-] and [#0F5CD8]Defense Shatter[-] by [#1A7331]8%[-] for [#1A7331]30 sec[-].",
-      "descFr": "Augmente les [#0F5CD8]dégâts physiques[-] du héros à hauteur de [#1A7331]80%[-] de l'attaque de tous les éléments, sauf Physique.\nUn coup porté avec la compétence normale sur un ennemi affecté par [#0F5CD8]Chaîne[-] augmente [#0F5CD8]toutes les attaques élémentaires[-] de [#1A7331]16%[-] et le [#0F5CD8]percement de défense[-] de [#1A7331]8%[-] pendant [#1A7331]30 s[-]."
+      "descFr": "Augmente les [#0F5CD8]dégâts physiques[-] du héros à hauteur de [#1A7331]80%[-] de l'augmentation de dégâts de tous les éléments, sauf Physique. (Sauf [#0F5CD8]tous les dégâts élémentaires[-])\nUn coup porté avec la compétence normale sur un ennemi affecté par [#0F5CD8]Chaîne[-] augmente [#0F5CD8]toutes les attaques élémentaires[-] de [#1A7331]16%[-] et le [#0F5CD8]percement de défense[-] de [#1A7331]8%[-] pendant [#1A7331]30 s[-]."
      },
      {
       "level": 3,
       "descEn": "Increases the hero's [#0F5CD8]Physical damage[-] by [#1A7331]100%[-] of the Attack of all elements except Physical.\nLanding the Normal Skill on an enemy affected by [#0F5CD8]Chain[-] increases [#0F5CD8]All Elemental Attack[-] by [#1A7331]20%[-] and [#0F5CD8]Defense Shatter[-] by [#1A7331]10%[-] for [#1A7331]30 sec[-].",
-      "descFr": "Augmente les [#0F5CD8]dégâts physiques[-] du héros à hauteur de [#1A7331]100%[-] de l'attaque de tous les éléments, sauf Physique.\nUn coup porté avec la compétence normale sur un ennemi affecté par [#0F5CD8]Chaîne[-] augmente [#0F5CD8]toutes les attaques élémentaires[-] de [#1A7331]20%[-] et le [#0F5CD8]percement de défense[-] de [#1A7331]10%[-] pendant [#1A7331]30 s[-]."
+      "descFr": "Augmente les [#0F5CD8]dégâts physiques[-] du héros à hauteur de [#1A7331]100%[-] de l'augmentation de dégâts de tous les éléments, sauf Physique. (Sauf [#0F5CD8]tous les dégâts élémentaires[-])\nUn coup porté avec la compétence normale sur un ennemi affecté par [#0F5CD8]Chaîne[-] augmente [#0F5CD8]toutes les attaques élémentaires[-] de [#1A7331]20%[-] et le [#0F5CD8]percement de défense[-] de [#1A7331]10%[-] pendant [#1A7331]30 s[-]."
      }
     ],
     "nameEn": "Plunderer of All Things",
