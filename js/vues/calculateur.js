@@ -1135,6 +1135,21 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
         apports[seau] += Number(passif.valeur) || 0;
         return apports;
       }, { propre:0, tous:0 });
+    /* LA CONVERSION du passif d'armure gravee de Ban rejoint les apports, et
+       elle doit etre connue ICI comme eux : statsElementairesDuBuild est le
+       seul endroit qui lise les degats element par element, et il tourne
+       dans basesDuBuild juste en dessous.
+
+       Les passifs graves sont autrement resolus plus bas, une fois les bases
+       connues — ordre sans consequence pour une ligne ordinaire, qui n'entre
+       au calcul qu'ensuite. Une conversion, elle, alimente les bases. */
+    apportsElementaires.conversionHorsPhysique = passifsGravesApplicables({
+      element, porteurs:porteursDeTenues(hero)
+    })
+      .filter(passif => passif.depuis === "degats-elementaires-hors-physique")
+      .map(ligneActive)
+      .filter(Boolean)
+      .reduce((total, passif) => total + (Number(passif.valeur) || 0), 0);
     /* Place AVANT le garde-fou de completude : c'est precisement quand il
        manque des pieces qu'on veut essayer un preset pour les combler. */
     vue.appendChild(sectionPresetEssai(dessiner));

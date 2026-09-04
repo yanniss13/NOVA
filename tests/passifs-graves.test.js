@@ -216,7 +216,7 @@ assert.equal(Object.keys(TABLE).length, 39,
 {
   const { loadApp } = require("./helpers/load-app");
   const hooks = loadApp().hooks;
-  const { passifsGravesApplicables, entreesDuCalcul,
+  const { passifsGravesApplicables, entreesDuCalcul, statsElementairesDuBuild,
     bonusCategorieDesBuffs } = hooks;
   assert.equal(typeof passifsGravesApplicables, "function",
     "passifsGravesApplicables doit etre expose par le chargeur de tests");
@@ -307,7 +307,24 @@ assert.equal(Object.keys(TABLE).length, 39,
     atk:1000, attaqueElementaire:500, def:400, maxHp:20000,
     critRate:3000, critDamage:12000, percementDefense:500
   };
+  /* UNE LIGNE `depuis` NE PASSE PAS PAR entreesDuCalcul : sa valeur est un
+     taux applique a la somme d'autres statistiques, et cette somme ne vit
+     qu'en amont. Le filet vaut quand meme pour elle — il change juste de
+     porte : c'est statsElementairesDuBuild qui doit bouger. */
+  const conversionAgit = passif => {
+    const lire = code => code === "Dark_Element_Rate" ? 3000 : 0;
+    const sans = statsElementairesDuBuild(lire, "DEFAULT");
+    const avec = statsElementairesDuBuild(lire, "DEFAULT",
+      { conversionHorsPhysique:passif.niveaux[2] });
+    return sans.bonusElementaire !== avec.bonusElementaire;
+  };
+
   Object.keys(TABLE).forEach(fichier => TABLE[fichier].forEach(passif => {
+    if(passif.depuis){
+      assert.ok(conversionAgit(passif),
+        passif.id + " : conversion sans effet sur le seau elementaire");
+      return;
+    }
     const ligne = Object.assign({}, passif, { valeur:passif.niveaux[2] });
     const nuEntrees = entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:[] });
     const avec = entreesDuCalcul({ statsDuBuild:NEUTRE, buffsCoches:[ligne] });

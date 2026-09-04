@@ -186,11 +186,32 @@ import { degatsAttendus } from "./degats-calcul.js";
       + (Number(apports.propre) || 0);
     const tauxTous = valeur("AllElement_Rate")
       + (Number(apports.tous) || 0);
+    /* LA CONVERSION du passif d'armure gravee de Ban : « les degats
+       physiques a hauteur de 60/80/100 % de l'augmentation de degats de tous
+       les elements, sauf Physique ». BuffTable 303419201-203 : sept entrees
+       `<Element>_Element_Rate` -> `Default_Element_Rate`, de type `Per`.
+
+       Deux exclusions, et les deux comptent :
+       - « sauf Physique » : le seau physique ne se convertit pas lui-meme,
+         sinon il se compterait deux fois ;
+       - le passif verse dans `Default_Element_Rate`, donc il ne vaut que
+         pour un heros PHYSIQUE. Sur un heros Tenebres, le moteur lit
+         `Dark_Element_Rate` et la conversion n'a nulle part ou aller. */
+    function conversionPhysique(){
+      const taux = Number(apports.conversionHorsPhysique) || 0;
+      if(!taux || prefixe !== "Default") return 0;
+      const somme = ELEMENTS_BUFF
+        .filter(nom => nom !== "Default")
+        .reduce((total, nom) => total + valeur(nom + "_Element_Rate"), 0);
+      return somme * taux / DIX_MILLIEMES;
+    }
     return {
       attaqueElementaire:
         propre * (1 + (tauxPropre + tauxTous) / DIX_MILLIEMES)
         + tous * (1 + tauxTous / DIX_MILLIEMES),
-      bonusElementaire:prefixe ? valeur(prefixe + "_Element_Rate") : 0
+      bonusElementaire:prefixe
+        ? valeur(prefixe + "_Element_Rate") + conversionPhysique()
+        : 0
     };
   }
 
@@ -261,6 +282,15 @@ import { degatsAttendus } from "./degats-calcul.js";
     };
 
     coches.forEach(buff => {
+      /* UNE LIGNE `depuis` NE PASSE PAS PAR ICI. Sa valeur n'est pas un
+         apport, c'est un TAUX applique a la somme d'autres statistiques, et
+         cette somme n'existe qu'en amont — dans statsElementairesDuBuild,
+         seul endroit qui lit les stats element par element.
+
+         L'ajouter a plat donnerait +100 % de degats (niveaux[2] vaut 10000)
+         a un build qui n'a aucun bonus elementaire a convertir : un chiffre
+         faux, credible, et silencieux. */
+      if(buff && buff.depuis) return;
       const cle = buff && buff.effet
         ? EFFET_SUR_LA_CIBLE[buff.effet]
         : buff && buff.porteur === "hero"
