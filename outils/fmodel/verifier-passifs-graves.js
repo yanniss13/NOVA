@@ -44,13 +44,18 @@ const graves = bac.window.SEVEN_DS_PASSIFS_GRAVES;
 
 /* Le nom francais de la tenue est la seule cle commune aux deux mondes : le
    depot nomme ses fichiers d'apres lui, le jeu le publie sous Local_Key. */
+/* Le jeu encadre certains noms de CHEVRONS — « <Le Grizzly de la Paresse> »
+   pour les quatre tenues des Peches capitaux — la ou le depot nomme son
+   fichier sans eux. Quatre tenues passaient ainsi pour introuvables. */
+const clefNom = nom => String(nom).replace(/[<>]/g, '').trim();
+
 const parNom = new Map();
 for (const [id, v] of Object.entries(items)) {
   if (v.Local_ItemDivisionTag !== 'itemdivision_bindarmor') continue;
   const nom = loc[String(v.Local_Key || '').toLowerCase()];
   const passifs = [...new Set((v.Equip_Passive || [])
     .map(p => p.EquipPassiveID).filter(x => x && x !== 'None'))];
-  if (nom && passifs.length) parNom.set(nom.trim(), { id, passifs });
+  if (nom && passifs.length) parNom.set(clefNom(nom), { id, passifs });
 }
 
 /* Les stats qu'un EpEq pose vraiment, quand la ligne les porte en ligne. */
@@ -97,7 +102,7 @@ const ecarts = [], aConfirmer = [], horsPortee = [], sansTenue = [], parEffet = 
 
 for (const [cle, lignes] of Object.entries(graves)) {
   const nom = nomDeFichier(cle);
-  const info = parNom.get(nom);
+  const info = parNom.get(clefNom(nom));
   if (!info) { sansTenue.push(nom); continue; }
   const attendues = new Set();
   info.passifs.forEach(p => (statsParPassif.get(p) || []).forEach(s => attendues.add(s)));
