@@ -15,6 +15,7 @@ import { canManageTeam, sessionCourante } from "../etat/session.js";
 import { charOf, nameOfFile } from "../metier/catalogue.js";
 import {
   equipesDeLaConfrerie,
+  joueursAvecEquipe,
   normalizeTeam,
   normalizeTeamName
 } from "../metier/equipe-modele.js";
@@ -41,6 +42,45 @@ import { toast } from "./toast.js";
      retrouvaient eparpillees entre celles des autres, alors qu'on l'ouvre
      justement pour regarder ce que quelqu'un joue. La date reste, mais en
      second rang. */
+  /* Le joueur choisi dans le selecteur. "" = tout le monde. Il vit ici, et
+     non dans l'URL : c'est un confort de lecture, pas un etat a partager. */
+  let joueurChoisi = "";
+  let joueursPoses = "";
+
+  /* Le selecteur reste MASQUE tant qu'un seul joueur a propose une equipe :
+     un controle a une seule option est une promesse non tenue. On ne le
+     reconstruit que si la liste a change, sinon le champ perdrait le focus a
+     chaque rendu. */
+  function poserLeSelecteurDeJoueur(equipes){
+    const joueurs = joueursAvecEquipe(equipes);
+    $("#rosterOwnerField").hidden = joueurs.length < 2;
+    const signature = joueurs
+      .map(joueur => joueur.id + ":" + joueur.pseudo + ":" + joueur.equipes)
+      .join(",");
+    /* Un joueur dont la derniere equipe vient de disparaitre ne doit pas
+       laisser la grille vide sans explication : on revient a « tous ». */
+    if(joueurChoisi && !joueurs.some(joueur => joueur.id === joueurChoisi)){
+      joueurChoisi = "";
+    }
+    if(joueursPoses === signature){
+      $("#rosterOwner").value = joueurChoisi;
+      return joueurs;
+    }
+    joueursPoses = signature;
+    const champ = $("#rosterOwner");
+    champ.innerHTML = "";
+    champ.appendChild(el("option",{
+      value:"",
+      text:"Tous les joueurs (" + equipes.length + ")"
+    }));
+    joueurs.forEach(joueur => champ.appendChild(el("option",{
+      value:joueur.id,
+      text:joueur.pseudo + " (" + joueur.equipes + ")"
+    })));
+    champ.value = joueurChoisi;
+    return joueurs;
+  }
+
   function triDesEquipesParJoueur(a, b){
     const parJoueur = String(a.pseudo || "").localeCompare(
       String(b.pseudo || ""), "fr", { sensitivity:"base" }
@@ -73,8 +113,21 @@ import { toast } from "./toast.js";
       (membres || []).map(profil => profil.id),
       sessionCourante.user && sessionCourante.user.id
     ).slice().sort(triDesEquipesParJoueur);
+
+    const joueurs = poserLeSelecteurDeJoueur(teams);
+    const total = teams.length;
+    if(joueurChoisi) teams = teams.filter(team => team.owner === joueurChoisi);
+    const nom = joueurChoisi
+      ? (joueurs.find(joueur => joueur.id === joueurChoisi) || {}).pseudo
+      : "";
     const c = $("#rosterCount");
-    c.innerHTML = "<b>"+teams.length+"</b> équipe"+(teams.length>1?"s":"")+" enregistrée"+(teams.length>1?"s":"");
+    /* Filtre pose, le decompte dit DEUX choses : ce qu'on regarde, et sur
+       combien. Sans le total, on ne sait plus si la grille est courte parce
+       qu'on filtre ou parce que le registre est vide. */
+    c.innerHTML = "<b>"+teams.length+"</b> équipe"+(teams.length>1?"s":"")
+      + (joueurChoisi
+        ? " de " + (nom || "ce joueur") + " sur " + total
+        : " enregistrée" + (teams.length>1?"s":""));
 
     rosterGrid.className = teams.length ? "roster-grid" : "";
     rosterGrid.innerHTML = "";
@@ -242,6 +295,11 @@ import { toast } from "./toast.js";
   /* Exporter et importer un fichier JSON d'equipes. Les deux boutons
      vivent dans l'onglet Roster, dans index.html : c'est ce qui a decide
      de leur place ici plutot que dans un module « export/import ». */
+  $("#rosterOwner").addEventListener("change", evenement => {
+    joueurChoisi = evenement.target.value;
+    void renderRoster();
+  });
+
   $("#btnExport").addEventListener("click", ()=>{
     const data = Store.all();
     if(!data.length){ toast("Rien à exporter.", true); return; }

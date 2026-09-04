@@ -284,6 +284,12 @@
 
     <div class="roster-toolbar">
       <span class="roster-count" id="rosterCount"></span>
+      <!-- Masque tant qu'un seul joueur a propose une equipe : un selecteur a
+           une seule option est une promesse non tenue. -->
+      <label class="wiki-field" id="rosterOwnerField" hidden>
+        <span>Joueur</span>
+        <select id="rosterOwner"></select>
+      </label>
       <button class="btn" id="btnExport">Exporter (JSON)</button>
       <button class="btn" id="btnImport">Importer (JSON)</button>
       <input type="file" id="importFile" accept="application/json,.json" hidden>

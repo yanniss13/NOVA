@@ -319,8 +319,47 @@ import { buildWeaponGrade } from "./build-config.js";
       && (membres.has(equipe.owner) || (!!monId && equipe.owner === monId)));
   }
 
+  /* LES JOUEURS QUI ONT PROPOSE UNE EQUIPE, avec leur compte.
+
+     C'est la matiere du selecteur du registre. Il ne liste pas la confrerie
+     entiere : un membre sans equipe serait un choix qui mene a une grille
+     vide. A douze equipes on parcourt la grille des yeux, a cinq cents on ne
+     peut plus — d'ou le filtre, et d'ou le compte affiche a cote de chaque
+     nom.
+
+     Le pseudo se lit sur l'equipe et non sur les profils : une equipe le
+     porte deja, et le registre doit rester lisible meme quand la liste des
+     profils n'est pas encore revenue. */
+  function joueursAvecEquipe(equipes){
+    const parJoueur = new Map();
+    (equipes || []).forEach(equipe => {
+      if(!equipe || !equipe.owner) return;
+      const connu = parJoueur.get(equipe.owner);
+      if(connu){
+        connu.equipes += 1;
+        if(!connu.pseudo && equipe.pseudo) connu.pseudo = equipe.pseudo;
+        return;
+      }
+      parJoueur.set(equipe.owner, {
+        id:equipe.owner,
+        pseudo:equipe.pseudo || "",
+        equipes:1
+      });
+    });
+    return [...parJoueur.values()]
+      .map(joueur => ({
+        id:joueur.id,
+        pseudo:joueur.pseudo || "Sans pseudo",
+        equipes:joueur.equipes
+      }))
+      .sort((a, b) => a.pseudo.localeCompare(
+        b.pseudo, "fr", { sensitivity:"base" }
+      ));
+  }
+
 export {
   compatibleWeaponGroups,
+  joueursAvecEquipe,
   equipesDeLaConfrerie,
   favoriteRosterWeaponType,
   normalizeBuildFields,
