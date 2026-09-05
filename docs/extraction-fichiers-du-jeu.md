@@ -1,4 +1,4 @@
-# Extraction des fichiers du jeu (FModel) — état au 27 août 2026
+# Extraction des fichiers du jeu (FModel) — état au 5 septembre 2026
 
 Point d'arrêt d'une session interrompue. Ce qui est écrit ici a été **vérifié en
 exécutant**, pas planifié. Ce qui reste à faire est signalé comme tel.
@@ -8,9 +8,9 @@ exécutant**, pas planifié. Ce qui reste à faire est signalé comme tel.
 | Élément | Valeur |
 |---|---|
 | Installation | `C:\Program Files (x86)\Steam\steamapps\common\The Seven Deadly Sins Origin` |
-| Socle Steam | `SevenDeadlySins\Content\Paks` — 6 paks, 912 Mo |
-| Contenu live | `SevenDeadlySins\Saved\PersistentDownloadDir\PakCache` — 483 paks, 23 Go |
-| Build installé | `1.8.1.2`, hash `ba6915377ce_274921` (lu dans `PakCache\CachedBuildManifest.txt`) |
+| Socle Steam | `SevenDeadlySins\Content\Paks` — 6 paks, 940 Mo |
+| Contenu live | `SevenDeadlySins\Saved\PersistentDownloadDir\PakCache` — 495 paks, 24 Go, **dont 33 illisibles** (voir plus bas) |
+| Build installé | `2.0.4.2`, hash `8d01ff91db8_287759` (lu dans `PakCache\CachedBuildManifest.txt`) |
 | Format | pak version 11, UE 5.5, index chiffré AES-256 (GUID de clé nul = clé principale) |
 | Anticheat | XignCode3 (`Binaries\Win64\Nmssw\`) — ne jamais scanner la mémoire du jeu |
 
@@ -26,12 +26,16 @@ FModel 4.4.4 dans `C:\Users\yanni\Downloads\FModel\FModel.exe`.
 
 - **UE Version : `GAME_UE5_5`** — avec `GAME_UE4_28` (le défaut), tout échoue en
   `OverflowException` et un seul pak se charge.
-- Mapping file : `C:\Users\yanni\Downloads\mappings.usmap` — case *Overwrite*
-  cochée. C'est toujours ce nom-là que FModel lit ; chaque version reçoit en
-  plus une copie nommée (`mappings-1.7.usmap`, `mappings-1.8.usmap`) pour
-  qu'on sache laquelle est chargée.
-- Désactiver `Preview New Explorer System` : sa barre de recherche ne trouve rien,
-  pas même des noms de fichiers présents.
+- Mapping : `Settings` → `General` → **`Local Mapping File (drag & drop)`
+  activé**, et `Mapping File Path` = `C:\Users\yanni\Downloads\mappings.usmap`.
+  C'est toujours ce nom-là que FModel lit ; chaque version reçoit en plus une
+  copie nommée (`mappings-2.0.4.2.usmap`) pour qu'on sache laquelle est chargée.
+  **Ne jamais pointer FModel sur `C:\Dumper-7\...`** : le prochain dump écrase
+  ce fichier, et un plantage le laisse à 0 octet.
+- Le journal dit lequel est chargé : `Mappings pulled from '<nom>'`.
+- `Preview New Explorer System` peut rester activé — sa recherche fonctionne
+  depuis la mise à jour de FModel (build `56369c3`, 28 juillet 2026). C'est la
+  version d'août qui ne trouvait rien.
 - Output Directory : `C:\Users\yanni\Downloads\FModel\Output` — voir la règle
   de rangement des extractions plus bas.
 
@@ -49,22 +53,30 @@ Tables utiles repérées :
 | Table du jeu | Correspondance dans `7ds-stats/personnages.json` |
 |---|---|
 | `Actor/HeroStatGroupTable` | 86 groupes `stat_####` : `B_Atk`, `B_Def`, `B_MaxHp`, `Move_Spd`, `A_Accuracy`, `A_Block`, `C_Critical_*`… |
-| `Actor/HeroActorTable` | rattachement héros → groupe de stats — **illisible**, voir plus bas |
+| `Actor/HeroActorTable` | rattachement héros → groupe de stats |
 | `HeroMastery/HeroMastery` | 27 héros, clé = id (1001 = Tristan), donne `Common_Mastery_Tid` et les 3 `Weapon_Mastery_Tid` |
 | `HeroMastery/HeroCommonMastery` | `commonMasteryTid`, `commonMasteryStats` |
 | `HeroMastery/HeroWeaponMastery` + `…Group` + `…GroupExp` | `weaponMasteries` |
 | `Skill/HeroPotentialRewardTable` | `potentials` — 1 seule ligne lue, à revoir |
-| `Buff/BuffTable` | `data/buffs-supports.js` — **illisible** |
-| `Item/ItemTable_Equip_*`, `Item/EquipSetOptionTable` | `armes.json`, `armures.json`, `sets.json` — **illisibles** |
+| `Buff/BuffTable` | `data/buffs-supports.js` |
+| `Item/ItemTable_Equip_*`, `Item/EquipSetOptionTable` | `armes.json`, `armures.json`, `sets.json` |
+
+Les mentions « illisible » de ce tableau ont disparu le 25 août : elles
+signaient un usmap décalé, pas une donnée absente. Les trois sont ouvertes.
 
 ## Résultats de comparaison déjà obtenus
 
-Export de `Content/Table` : **1 517 tables, dont 420 lisibles et 1 097 vides.**
+Export de `Content/Table` au 5 septembre 2026 : **1 578 fichiers, 1 575
+exploitables.** Les trois exceptions sont détaillées en fin de document, aucune
+n'est un problème de usmap.
 
-Les tables vides ne le sont pas dans le jeu : FModel échoue à les décoder avec
-`FName could not be read, requested index <aberrant>, name map size <n>`, ce qui
-signe un `.usmap` décalé par rapport au build `1.8.1.2`. Le usmap actuel annonce
-`5.5.4-0`, qui est la version du **moteur**, pas celle du jeu.
+Historique, pour comprendre les sections qui suivent : le premier export d'août
+ne donnait que **420 tables lisibles sur 1 517**, avec des
+`FName could not be read, requested index <aberrant>, name map size <n>` — la
+signature d'un usmap décalé par rapport au build. C'est ce qui a motivé toute la
+chasse au usmap racontée plus bas. Le nom `5.5.4-0` que porte un usmap est la
+version du **moteur**, jamais celle du jeu : deux builds différents produisent
+le même nom.
 
 Sur ce qui est lisible, les données du site sont **exactes**. Quatre lots
 comparés, **aucun écart** :
@@ -1195,6 +1207,174 @@ débloquer un travail, en nommant ce qui n'avait pas de nom.**
 sortent identiques, donc le pak est sain. Sans effet sur le site : cette table
 sert aux conditions de déclenchement de quêtes.
 
+## Le usmap se fabrique maintenant sur place — 5 septembre 2026
+
+Fini d'attendre qu'un usmap circule. Il se produit en local avec **Dumper-7**
+(`Downloads/Dumper-7.dll`, injecté avec System Informer), qui écrit dans
+`C:\Dumper-7\<version moteur>-<jeu>\`. Le résultat vaut mieux que ce qui
+circulait.
+
+### Le protocole, et pourquoi chaque étape existe
+
+1. **Injecter à l'écran de connexion, et dumper là.** Aller plus loin **fait
+   planter le jeu** — essayé le 5 septembre, le usmap est ressorti à 0 octet.
+2. **Sauvegarder le `.usmap` avant chaque dump.** Quand l'archivage en `_OLD`
+   échoue, Dumper-7 écrit **par-dessus** le dossier existant sans s'arrêter :
+   son message `Could not create required folders!` n'empêche pas l'écrasement.
+3. **Fermer FModel et tout onglet d'explorateur sur `Mappings`.** Un seul
+   handle sur le dossier suffit à faire échouer le renommage en `_OLD`. Écrire
+   dans le dossier reste possible : « écriture oui, renommage non » est la
+   signature du problème.
+4. **Retarder le dump ne sert à rien.** `C:/Dumper-7/Dumper-7.ini` (chemin en
+   dur dans la DLL) accepte `[Settings]` / `SleepTimeout`, **en secondes** — la
+   console affiche `Sleep Timeout: 90000ms` pour une valeur de `90`. Attendre
+   90 s en jeu a rapporté **415 structs, dont 410 classes Blueprint**, et
+   **zéro différence** sur l'export des tables. FModel n'a pas besoin des
+   Blueprints : le schéma d'une `BlueprintGeneratedClass` est dans le `.uasset`.
+
+Piège du fichier ini : Windows masque les extensions, un `Dumper-7.ini` créé
+au bloc-notes s'appelle en réalité `Dumper-7.ini.txt` et n'est jamais lu. La
+DLL est muette dans ce cas ; quand elle lit bien le fichier, elle affiche
+`Sleep Timeout:` puis `Sleep Timeout exceeded, proceeding with dump...`.
+
+À surveiller : `Off::FField::Flags` a été détecté à `0x28` puis `0x24` puis
+`0x28` sur trois dumps du même jeu. La détection n'est pas déterministe —
+chaque dump se vérifie, il ne se croit pas.
+
+### Vérifier un usmap sans ouvrir FModel
+
+Le format se lit en Python. Deux pièges de la **version 4** :
+
+- chaque entrée d'énumération porte une **valeur `int64` avant** son index de
+  nom ;
+- le nombre de propriétés sérialisées compte des **entrées**, pas des cases de
+  tableau (une propriété `ArrayDim = 4` occupe 4 index de schéma mais une seule
+  entrée).
+
+Un usmap sain se relit **jusqu'au dernier octet**. Les usmap passés par FModel
+portent en plus un bloc final `CEXT`/`PPTH` (~700 Ko de chemins de packages)
+que Dumper-7 n'écrit pas — sans conséquence pour le décodage, mais le lecteur
+doit le reconnaître pour ne pas crier à la corruption.
+
+Tout ça est dans `outils/fmodel/verifier-usmap.js` :
+
+```
+node outils/fmodel/verifier-usmap.js <nouveau.usmap> [ancien.usmap]
+```
+
+Ce qu'il faut regarder dans la comparaison, c'est **`enums EN RETRAIT`** et
+**`structs avec MOINS de propriétés`**. Une table perdue se voit ; une
+énumération amputée ne se voit pas — elle produit une étiquette fausse.
+
+Comparaison des structs `UE*` (les tables du jeu) entre deux usmap : c'est la
+seule mesure qui compte. Le reste — nombre de noms, taille du fichier — ne dit
+rien.
+
+### Ce que le usmap du 5 septembre corrige
+
+Réexport complet de `Content/Table` : **1 576 des 1 578 tables identiques au bit
+près** à celles obtenues avec l'ancien usmap. Les deux écarts sont des gains :
+
+| Table | Avant | Après |
+|---|---|---|
+| `Merchant/MerchantGoods` | 444 o, **0 ligne** | 1,34 Mo, **671 lignes** |
+| `Message/MsgData` | `EMsgPopupWidgetType::Max` | `…::CenterDown_Unlimit` |
+
+`MerchantGoods` s'ouvre parce que `UEMerchantGoodsTable` gagne deux colonnes,
+`Goods_Active_Achievement` et `..._Local_Key`.
+
+Le second écart est le plus instructif : ce n'est pas une table qui échouait,
+c'est une table qui **mentait**. L'ancien usmap ignorait la valeur
+`CenterDown_Unlimit`, l'index tombait au-delà de la fin de l'énumération et
+FModel écrivait `Max`. **Douze énumérations gagnent des valeurs** (`EGlobalFlag`
+77 → 82, `EUIModeType` 164 → 165, `EMainPanelType` 235 → 236, `EConditionType`
+36 → 37…). Partout où une valeur récente apparaissait, l'ancien usmap posait la
+mauvaise étiquette, sans rien signaler.
+
+C'est la forme la plus dangereuse d'un usmap périmé : pas une table vide qui se
+voit, une étiquette fausse qui ne se voit pas.
+
+Détail cosmétique : Dumper-7 suffixe en `_0` les noms qui heurtent une macro C++
+(`PF_MAX_0`, `TRANSPARENT_0`).
+
+## Le jeu tient son propre catalogue — 5 septembre 2026
+
+Deux fichiers de `Content/TextDatas` répondent à « est-ce qu'on passe à côté
+d'une table ? » sans avoir à le deviner. Ce sont des **index XML**, malgré
+l'extension `.json` que FModel leur donne — ni le usmap ni les structures ne
+s'y appliquent, ils se lisent quel que soit l'état du reste.
+
+| Fichier | Contenu |
+|---|---|
+| `TextDatas/ACLayout.json` | les **522 tables que le jeu déclare**, avec leur `SubDir` et le nom de leur struct de ligne (`<Structure>FUESwimTable</Structure>`) |
+| `TextDatas/AssetFolderPath.json` | 26 Mo — l'index des **233 687 assets**, avec leur `Class` et leur dossier |
+
+Croisés avec l'export du 5 septembre (1 578 fichiers) :
+
+| | |
+|---|---:|
+| Tables retrouvées au nom exact | 467 |
+| Retrouvées sous un autre nom | 12 |
+| **Absentes du client — côté serveur** | **35** |
+| **Manquantes pour de vrai** | **3** |
+
+Les trois manquantes : `Table/CharacterExtentions/SwimTable`,
+`.../ParkourTable`, `Table/GameModeSelect/GameModeSettingTable`. Elles existent
+dans l'index du jeu mais aucun pak lisible ne les contient. Rien qui touche aux
+héros.
+
+Les 35 absentes du client incluent `SkillObjTable`, `SkillPositioning`,
+`ActorPartsTable`, `AdventureSkillData` et onze `SkillBehaviorDetail_*`. Leurs
+structs sont dans le usmap, les tables non : le serveur les garde.
+
+**Ne pas surinterpréter** : `SkillBehaviorDetail_CoolTime` est une table
+d'**effets** de compétence, pas la source des recharges. Les recharges de base
+sont bien dans le client — colonne `Cooltime` de `Skill/PC_SkillTable`
+(2 268 lignes), que `outils/fmodel/extraire-recharges.js` lit déjà.
+
+### 33 paks resteront fermés
+
+Les `pakchunk10000_*.pak` du `PakCache` — **33 fichiers, 9,4 Go** — ne sont pas
+des paks Unreal. Ils commencent par `KB2n`, sans le pied `5A6F12E1` qu'attend
+`FPakInfo.ReadFPakInfo`, d'où les avertissements `has an unknown format` au
+chargement. Conteneur propriétaire : **aucun réglage FModel n'y changera rien**,
+et c'est probablement là que dorment les trois tables manquantes.
+
+### Les deux seuls échecs de décodage de tout l'export
+
+Sur **65 364 fichiers** exportés, trois JSON sortent à 0 octet :
+`Table/Scene/Sector/50403004_sectortable`, `52003002_sectortable`, et
+`TextDatas/DataVerifier/error.json` (vide dans le jeu). Une seule table à
+0 ligne, `Quest/QuestAreaPreview`, vide elle aussi.
+
+Les deux `sectortable` **ne sont pas un problème de usmap** : leur `.uasset`
+déclare `Class DataTable` et `ScriptStruct'UESectorTable'`, exactement comme les
+45 tables du même dossier qui se décodent parfaitement. Leur `.uexp` contient
+deux valeurs sur 64 bits en `0x00007F…` — la forme d'une adresse mémoire
+d'exécution, qui n'a rien à faire dans un asset cuisiné. Deux assets mal
+cuisinés côté éditeur, du décor de donjon. Ne pas y revenir.
+
+Enfin, les 3 158 fichiers de `TextDatas` qu'un parseur JSON rejette **ne sont
+pas des échecs** : ce sont des XML nommés `.json`.
+
+## État du disque de sortie — 5 septembre 2026
+
+| Dossier | Taille | Contenu |
+|---|---:|---|
+| `Output/Exports/` | 3,2 Go | **l'extraction courante** — 65 368 fichiers : `Table`, `Cha`, `TextDatas`, `Localization`, usmap 2.0.4.2 |
+| `Output/Exports-2.0-build-24909433/` | 4,2 Go | 27 août |
+| `Output/Exports-2.0-build-24929381/` | 4,3 Go | 28 août |
+
+La règle du 25 août a été appliquée le jour même — *une archive se garde le
+temps d'une comparaison, pas plus*. `Exports-2026-09-05-avant-attente90s/`
+(3,3 Go) et `Reference-Table-usmap-ban-update/` (0,4 Go) ont servi à établir les
+deux gains du nouveau usmap ; la comparaison faite, ils ont été supprimés.
+
+Sauvegardes de usmap dans `Downloads/` : `mappings.usmap` (celui que FModel
+lit), `mappings-2.0.4.2.usmap` (l'archive nommée) et `ban-update.usmap` (le
+témoin de la génération précédente). Les autres ont été supprimés le
+5 septembre : ils décrivaient les builds 1.7 et 1.8.
+
 ## Ce qui reste à faire
 
 1. **Ce qui reste dehors chez Ban** — les trois mécaniques sont résolues
@@ -1265,6 +1445,7 @@ Dans `outils/fmodel/`, à lancer avec `node` :
 | `comparer-armes.js` | les 375 entrées de maîtrises d'arme |
 | `extraire-recharges.js` | les recharges de `PC_SkillTable`, au millième |
 | `extraire-transcendances.js` | les 78 passifs de Limit Break → `data/transcendances.js` |
+| `verifier-usmap.js` | lit un `.usmap` sans FModel et le compare à un autre — voir la section du 5 septembre |
 
 Appel type :
 
