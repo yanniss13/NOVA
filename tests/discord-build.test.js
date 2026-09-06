@@ -301,7 +301,13 @@ const ATLAS_CARTE = require(path.join(
 
 const LIBELLES = {
   personnages:{
-    ban:{ nom:"Ban", element:"DARK", fichier:"7ds-personnages/ban.webp" },
+    ban:{
+      nom:"Ban", element:"DARK", fichier:"7ds-personnages/ban.webp",
+      armes:{
+        Cudgel3c:{ element:"DEFAULT", role:"Attacker" },
+        Axe:{ element:"EARTH", role:"Buster" }
+      }
+    },
     merlin:{ nom:"Merlin", element:"ICE", fichier:"7ds-personnages/merlin.webp" }
   },
   bornes:{
@@ -438,7 +444,14 @@ assert.match(armeSansBuild.erreur, /Nunchaku/,
 const carte = uneArme.cartes[0];
 assert.equal(carte.joueur, "YanniSs13");
 assert.equal(carte.personnage, "Ban");
-assert.equal(carte.element, "Ténèbres");
+assert.equal(carte.element, "Physique",
+  "l'element suit l'arme equipee, pas l'element historique du heros");
+assert.equal(carte.role, "Attaquant",
+  "le role fin du slot d'arme rejoint la fiche");
+assert.equal(carte.iconeArme, "7ds-ui/mastery/cudgel3c.webp");
+assert.equal(carte.iconeRoleElement,
+  "7ds-ui/role-elements/default_attacker.webp",
+  "la fiche pointe vers les vraies icones du slot d'arme");
 assert.equal(carte.potentiel, 7);
 assert.equal(carte.note, "Build de raid");
 assert.equal(carte.fichier, "build-yanniss13-ban-nunchaku.png",
@@ -549,6 +562,11 @@ assert.equal(bijouxSection.lignes[0].nom, "Anneau du loup");
    sans jamais ouvrir l'editeur. */
 const carteNue = tousLesBuilds.cartes[0];
 assert.equal(carteNue.arme, "Hache");
+assert.equal(carteNue.element, "Terre");
+assert.equal(carteNue.role, "Briseur");
+assert.equal(carteNue.iconeArme, "7ds-ui/mastery/axe.webp");
+assert.equal(carteNue.iconeRoleElement,
+  "7ds-ui/role-elements/earth_buster.webp");
 assert.equal(carteNue.sections[0].lignes[0].nom, "Hache de guerre");
 assert.deepEqual(carteNue.sections[0].lignes[0].details, []);
 assert.equal(carteNue.note, "");
@@ -598,6 +616,9 @@ assert.equal(libelles.personnages.merlin.element, "ICE");
 /* Ban n'a pas d'element dans les donnees du jeu : `DEFAULT` est une valeur
    normale, pas un trou. Le module la traduit en « Physique ». */
 assert.equal(libelles.personnages.ban.element, "DEFAULT");
+assert.deepEqual(libelles.personnages.ban.armes.Cudgel3c,
+  { element:"DEFAULT", role:"Attacker" },
+  "le catalogue Discord conserve l'element et le role de chaque slot d'arme");
 const ELEMENTS_CONNUS = new Set([
   "FIRE", "WIND", "DARK", "EARTH", "HOLY", "ICE", "THUNDER", "DEFAULT"
 ]);
@@ -605,6 +626,8 @@ Object.entries(libelles.personnages).forEach(([id, fiche]) => {
   assert.ok(ELEMENTS_CONNUS.has(fiche.element),
     "element inconnu pour " + id + " : " + fiche.element);
   assert.ok(fiche.nom, "nom manquant pour " + id);
+  assert.equal(Object.keys(fiche.armes || {}).length, 3,
+    "les trois slots d'arme manquent pour " + id);
 });
 assert.equal(libelles.personnages.ban.fichier, "7ds-personnages/ban.webp",
   "le portrait vient du catalogue publie, pas d une convention devinee");

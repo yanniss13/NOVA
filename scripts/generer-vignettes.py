@@ -6,8 +6,9 @@ Elle sait en revanche inflater un flux deflate, donc lire un PNG. Les images
 du jeu sont donc converties une fois, a la taille ou la carte les affiche.
 
 POURQUOI ELLES NE SONT PAS DANS LE DEPOT. Le dossier complet pese environ
-2,4 Mo, soit un second exemplaire de chaque image du site. Le workflow Pages
-construit `_site` a partir du depot : cette conversion s'y greffe, et les
+6,3 Mo, soit un second exemplaire compact des images utiles a la carte. Le
+workflow Pages construit `_site` a partir du depot : cette conversion s'y
+greffe, et les
 vignettes sont publiees sans jamais etre versionnees.
 
 Usage :
@@ -30,7 +31,8 @@ DOSSIER = "7ds-vignettes"
 # plus proche voisin, qui crenelerait les icones. Ces deux nombres doivent
 # rester d accord avec ICONE et PORTRAIT de _shared/discord-build-png.js.
 TAILLE_OBJET = 80
-TAILLE_PORTRAIT = 288
+TAILLE_PORTRAIT = 336
+TAILLE_IDENTITE = 64
 
 
 def lire_data():
@@ -53,6 +55,14 @@ def images_a_convertir(data):
             for objet in liste:
                 if objet.get("file"):
                     entrees.append((objet["file"], TAILLE_OBJET))
+    for dossier in ("mastery", "role-elements"):
+        source = os.path.join(RACINE, "7ds-ui", dossier)
+        if not os.path.isdir(source):
+            continue
+        for nom in sorted(os.listdir(source)):
+            if nom.lower().endswith(".webp"):
+                entrees.append(("7ds-ui/%s/%s" % (dossier, nom),
+                                TAILLE_IDENTITE))
     return entrees
 
 

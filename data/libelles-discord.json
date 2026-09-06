@@ -4,132 +4,496 @@
   "ban": {
    "nom": "Ban",
    "fichier": "7ds-personnages/ban.webp",
-   "element": "DEFAULT"
+   "element": "DEFAULT",
+   "armes": {
+    "Cudgel3c": {
+     "element": "DEFAULT",
+     "role": "Attacker"
+    },
+    "Sword2h": {
+     "element": "EARTH",
+     "role": "Attacker"
+    },
+    "Gauntlets": {
+     "element": "DARK",
+     "role": "Buster"
+    }
+   }
   },
   "bug": {
    "nom": "Bug",
    "fichier": "7ds-personnages/bug.webp",
-   "element": "DARK"
+   "element": "DARK",
+   "armes": {
+    "Axe": {
+     "element": "DARK",
+     "role": "Attacker"
+    },
+    "SwordDual": {
+     "element": "DARK",
+     "role": "Attacker"
+    },
+    "Book": {
+     "element": "DARK",
+     "role": "Supporter"
+    }
+   }
   },
   "daisy": {
    "nom": "Daisy",
    "fichier": "7ds-personnages/daisy.webp",
-   "element": "EARTH"
+   "element": "EARTH",
+   "armes": {
+    "Shield": {
+     "element": "EARTH",
+     "role": "Attacker"
+    },
+    "Book": {
+     "element": "THUNDER",
+     "role": "Supporter"
+    },
+    "Wand": {
+     "element": "WIND",
+     "role": "Supporter"
+    }
+   }
   },
   "derieri": {
    "nom": "Derieri",
    "fichier": "7ds-personnages/derieri.webp",
-   "element": "DARK"
+   "element": "DARK",
+   "armes": {
+    "Gauntlets": {
+     "element": "DARK",
+     "role": "Attacker"
+    },
+    "Sword2h": {
+     "element": "FIRE",
+     "role": "Supporter"
+    },
+    "Axe": {
+     "element": "DARK",
+     "role": "Supporter"
+    }
+   }
   },
   "diane": {
    "nom": "Diane",
    "fichier": "7ds-personnages/diane.webp",
-   "element": "EARTH"
+   "element": "EARTH",
+   "armes": {
+    "Axe": {
+     "element": "EARTH",
+     "role": "Attacker"
+    },
+    "Gauntlets": {
+     "element": "EARTH",
+     "role": "Buster"
+    },
+    "Cudgel3c": {
+     "element": "EARTH",
+     "role": "Warden"
+    }
+   }
   },
   "drake": {
    "nom": "Drake",
    "fichier": "7ds-personnages/drake.webp",
-   "element": "THUNDER"
+   "element": "THUNDER",
+   "armes": {
+    "Sword2h": {
+     "element": "THUNDER",
+     "role": "Attacker"
+    },
+    "Staff": {
+     "element": "THUNDER",
+     "role": "Supporter"
+    },
+    "Sword1h": {
+     "element": "THUNDER",
+     "role": "Buster"
+    }
+   }
   },
   "dreydrin": {
    "nom": "Dreydrin",
    "fichier": "7ds-personnages/dreydrin.webp",
-   "element": "EARTH"
+   "element": "EARTH",
+   "armes": {
+    "Shield": {
+     "element": "EARTH",
+     "role": "Warden"
+    },
+    "Axe": {
+     "element": "DEFAULT",
+     "role": "Supporter"
+    },
+    "Rapier": {
+     "element": "HOLY",
+     "role": "Supporter"
+    }
+   }
   },
   "dreyfus": {
    "nom": "Dreyfus",
    "fichier": "7ds-personnages/dreyfus.webp",
-   "element": "DEFAULT"
+   "element": "DEFAULT",
+   "armes": {
+    "Rapier": {
+     "element": "DEFAULT",
+     "role": "Supporter"
+    },
+    "Sword1h": {
+     "element": "EARTH",
+     "role": "Attacker"
+    },
+    "Lance": {
+     "element": "HOLY",
+     "role": "Attacker"
+    }
+   }
   },
   "elaine": {
    "nom": "Elaine",
    "fichier": "7ds-personnages/elaine.webp",
-   "element": "WIND"
+   "element": "WIND",
+   "armes": {
+    "Wand": {
+     "element": "WIND",
+     "role": "Attacker"
+    },
+    "Staff": {
+     "element": "HOLY",
+     "role": "Buster"
+    },
+    "Book": {
+     "element": "EARTH",
+     "role": "Warden"
+    }
+   }
   },
   "elizabeth": {
    "nom": "Elizabeth",
    "fichier": "7ds-personnages/elizabeth.webp",
-   "element": "HOLY"
+   "element": "HOLY",
+   "armes": {
+    "Book": {
+     "element": "HOLY",
+     "role": "Warden"
+    },
+    "Staff": {
+     "element": "WIND",
+     "role": "Supporter"
+    },
+    "Wand": {
+     "element": "EARTH",
+     "role": "Buster"
+    }
+   }
   },
   "escanor": {
    "nom": "Escanor",
    "fichier": "7ds-personnages/escanor.webp",
-   "element": "FIRE"
+   "element": "FIRE",
+   "armes": {
+    "Axe": {
+     "element": "FIRE",
+     "role": "Attacker"
+    },
+    "Sword2h": {
+     "element": "HOLY",
+     "role": "Attacker"
+    },
+    "Shield": {
+     "element": "FIRE",
+     "role": "Warden"
+    }
+   }
   },
   "gil-thunder": {
    "nom": "Gil Thunder",
    "fichier": "7ds-personnages/gil-thunder.webp",
-   "element": "THUNDER"
+   "element": "THUNDER",
+   "armes": {
+    "Sword1h": {
+     "element": "THUNDER",
+     "role": "Buster"
+    },
+    "Shield": {
+     "element": "THUNDER",
+     "role": "Warden"
+    },
+    "Lance": {
+     "element": "THUNDER",
+     "role": "Attacker"
+    }
+   }
   },
   "gowther": {
    "nom": "Gowther",
    "fichier": "7ds-personnages/gowther.webp",
-   "element": "THUNDER"
+   "element": "THUNDER",
+   "armes": {
+    "Wand": {
+     "element": "THUNDER",
+     "role": "Buster"
+    },
+    "Book": {
+     "element": "DEFAULT",
+     "role": "Supporter"
+    },
+    "Staff": {
+     "element": "THUNDER",
+     "role": "Supporter"
+    }
+   }
   },
   "griamore": {
    "nom": "Griamore",
    "fichier": "7ds-personnages/griamore.webp",
-   "element": "DEFAULT"
+   "element": "DEFAULT",
+   "armes": {
+    "Shield": {
+     "element": "DEFAULT",
+     "role": "Warden"
+    },
+    "Cudgel3c": {
+     "element": "DEFAULT",
+     "role": "Attacker"
+    },
+    "Gauntlets": {
+     "element": "DEFAULT",
+     "role": "Supporter"
+    }
+   }
   },
   "guila": {
    "nom": "Guila",
    "fichier": "7ds-personnages/guila.webp",
-   "element": "FIRE"
+   "element": "FIRE",
+   "armes": {
+    "Lance": {
+     "element": "FIRE",
+     "role": "Attacker"
+    },
+    "Shield": {
+     "element": "FIRE",
+     "role": "Warden"
+    },
+    "Rapier": {
+     "element": "FIRE",
+     "role": "Buster"
+    }
+   }
   },
   "hendrickson": {
    "nom": "Hendrickson",
    "fichier": "7ds-personnages/hendrickson.webp",
-   "element": "HOLY"
+   "element": "HOLY",
+   "armes": {
+    "Sword1h": {
+     "element": "HOLY",
+     "role": "Warden"
+    },
+    "SwordDual": {
+     "element": "DEFAULT",
+     "role": "Attacker"
+    },
+    "Lance": {
+     "element": "DARK",
+     "role": "Attacker"
+    }
+   }
   },
   "howzer": {
    "nom": "Howzer",
    "fichier": "7ds-personnages/howzer.webp",
-   "element": "WIND"
+   "element": "WIND",
+   "armes": {
+    "Lance": {
+     "element": "WIND",
+     "role": "Attacker"
+    },
+    "Gauntlets": {
+     "element": "WIND",
+     "role": "Supporter"
+    },
+    "Cudgel3c": {
+     "element": "WIND",
+     "role": "Warden"
+    }
+   }
   },
   "jericho": {
    "nom": "Jericho",
    "fichier": "7ds-personnages/jericho.webp",
-   "element": "ICE"
+   "element": "ICE",
+   "armes": {
+    "SwordDual": {
+     "element": "ICE",
+     "role": "Buster"
+    },
+    "Lance": {
+     "element": "ICE",
+     "role": "Warden"
+    },
+    "Rapier": {
+     "element": "ICE",
+     "role": "Attacker"
+    }
+   }
   },
   "king": {
    "nom": "King",
    "fichier": "7ds-personnages/king.webp",
-   "element": "HOLY"
+   "element": "HOLY",
+   "armes": {
+    "Staff": {
+     "element": "HOLY",
+     "role": "Attacker"
+    },
+    "Book": {
+     "element": "DEFAULT",
+     "role": "Warden"
+    },
+    "Wand": {
+     "element": "EARTH",
+     "role": "Supporter"
+    }
+   }
   },
   "klotho": {
    "nom": "Klotho",
    "fichier": "7ds-personnages/klotho.webp",
-   "element": "WIND"
+   "element": "WIND",
+   "armes": {
+    "Rapier": {
+     "element": "WIND",
+     "role": "Buster"
+    },
+    "Book": {
+     "element": "ICE",
+     "role": "Warden"
+    },
+    "Staff": {
+     "element": "WIND",
+     "role": "Attacker"
+    }
+   }
   },
   "manny": {
    "nom": "Manny",
    "fichier": "7ds-personnages/manny.webp",
-   "element": "HOLY"
+   "element": "HOLY",
+   "armes": {
+    "Staff": {
+     "element": "HOLY",
+     "role": "Supporter"
+    },
+    "SwordDual": {
+     "element": "ICE",
+     "role": "Supporter"
+    },
+    "Sword1h": {
+     "element": "ICE",
+     "role": "Attacker"
+    }
+   }
   },
   "meliodas": {
    "nom": "Meliodas",
    "fichier": "7ds-personnages/meliodas.webp",
-   "element": "DARK"
+   "element": "DARK",
+   "armes": {
+    "Sword1h": {
+     "element": "DARK",
+     "role": "Attacker"
+    },
+    "Axe": {
+     "element": "DARK",
+     "role": "Attacker"
+    },
+    "SwordDual": {
+     "element": "DARK",
+     "role": "Attacker"
+    }
+   }
   },
   "merlin": {
    "nom": "Merlin",
    "fichier": "7ds-personnages/merlin.webp",
-   "element": "ICE"
+   "element": "ICE",
+   "armes": {
+    "Book": {
+     "element": "ICE",
+     "role": "Attacker"
+    },
+    "Wand": {
+     "element": "THUNDER",
+     "role": "Attacker"
+    },
+    "Staff": {
+     "element": "FIRE",
+     "role": "Buster"
+    }
+   }
   },
   "slader": {
    "nom": "Slader",
    "fichier": "7ds-personnages/slader.webp",
-   "element": "FIRE"
+   "element": "FIRE",
+   "armes": {
+    "Sword2h": {
+     "element": "FIRE",
+     "role": "Attacker"
+    },
+    "Axe": {
+     "element": "DEFAULT",
+     "role": "Supporter"
+    },
+    "Cudgel3c": {
+     "element": "DEFAULT",
+     "role": "Buster"
+    }
+   }
   },
   "tioreh": {
    "nom": "Tioreh",
    "fichier": "7ds-personnages/tioreh.webp",
-   "element": "FIRE"
+   "element": "FIRE",
+   "armes": {
+    "Book": {
+     "element": "FIRE",
+     "role": "Supporter"
+    },
+    "Wand": {
+     "element": "FIRE",
+     "role": "Warden"
+    },
+    "Staff": {
+     "element": "EARTH",
+     "role": "Supporter"
+    }
+   }
   },
   "tristan": {
    "nom": "Tristan",
    "fichier": "7ds-personnages/tristan.webp",
-   "element": "FIRE"
+   "element": "FIRE",
+   "armes": {
+    "SwordDual": {
+     "element": "FIRE",
+     "role": "Buster"
+    },
+    "Sword2h": {
+     "element": "FIRE",
+     "role": "Attacker"
+    },
+    "Sword1h": {
+     "element": "WIND",
+     "role": "Buster"
+    }
+   }
   }
  },
  "armes": {

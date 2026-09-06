@@ -49,6 +49,25 @@ const ELEMENT_LABELS = {
   FIRE:"Feu", WIND:"Vent", DARK:"Ténèbres", EARTH:"Terre",
   HOLY:"Sacré", ICE:"Glace", THUNDER:"Foudre", DEFAULT:"Physique"
 };
+const SLOT_ROLE_LABELS = {
+  Attacker:"Attaquant", Defender:"Défenseur", Supporter:"Soutien",
+  Warden:"Gardien", Buster:"Briseur"
+};
+/* Le roster conserve le nom de la categorie du catalogue local ; les slots
+   de personnages emploient l'enum du jeu. Cette table est le meme pont que
+   FOLDER_TO_ENUM dans le site, applique ici aux libelles des categories. */
+const BUILD_TYPE_TO_ENUM = {
+  "Baguette":"Wand", "Baton":"Staff", "Epee & bouclier":"Shield",
+  "Epee a une main":"Sword1h", "Epee a deux mains":"Sword2h",
+  "Epees doubles":"SwordDual", "Gantelets":"Gauntlets", "Hache":"Axe",
+  "Lance":"Lance", "Grimoire":"Book", "Nunchaku":"Cudgel3c",
+  "Rapiere":"Rapier"
+};
+const WEAPON_ENUM_ICONS = {
+  Axe:"axe", Book:"book", SwordDual:"sworddual", Rapier:"rapier",
+  Shield:"shield", Lance:"lance", Sword1h:"sword1h", Cudgel3c:"cudgel3c",
+  Gauntlets:"gauntlets", Sword2h:"sword2h", Staff:"staff", Wand:"wand"
+};
 /* Table du jeu, rapportee par le proprietaire — la meme que js/metier/perles.js.
    Le palier d'une perle est commun a tous ses emplacements : on le lit sur la
    premiere entree renseignee. */
@@ -539,10 +558,22 @@ function lignesEmplacements(slots, etiquettes, equipement, configs, libellesStat
 function carteDeBuild(contexte, typeArme, build) {
   const libellesStats = (contexte.libelles && contexte.libelles.stats) || {};
   const donnees = build && typeof build === "object" ? build : {};
+  const enumArme = BUILD_TYPE_TO_ENUM[typeArme];
+  const slots = contexte.meta && contexte.meta.armes;
+  const slot = enumArme && slots && slots[enumArme] || {};
+  const elementCode = slot.element || "";
+  const roleCode = slot.role || "";
+  const iconeArme = WEAPON_ENUM_ICONS[enumArme];
   return {
     joueur:contexte.pseudo,
     personnage:contexte.personnage,
-    element:contexte.element,
+    element:ELEMENT_LABELS[slot.element] || contexte.element,
+    role:SLOT_ROLE_LABELS[slot.role] || "",
+    iconeArme:iconeArme ? "7ds-ui/mastery/" + iconeArme + ".webp" : "",
+    iconeRoleElement:elementCode && roleCode
+      ? "7ds-ui/role-elements/" + elementCode.toLowerCase() + "_"
+        + roleCode.toLowerCase() + ".webp"
+      : "",
     potentiel:contexte.potentiel,
     portrait:contexte.portrait,
     arme:libelleArme(typeArme),
@@ -662,6 +693,7 @@ function resoudreDemandeBuild(entree) {
     element:ELEMENT_LABELS[meta.element] || "",
     portrait:meta.fichier || "",
     potentiel:Number(ligne.potential_tier) || 0,
+    meta,
     libelles
   };
   return { cartes:retenus.map(type => carteDeBuild(contexte, type, builds[type])) };

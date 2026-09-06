@@ -46,6 +46,9 @@ const CARTE = {
   joueur:"YanniSs13",
   personnage:"Méliodas",
   element:"Ténèbres",
+  role:"Attaquant",
+  iconeArme:"7ds-ui/mastery/sword1h.webp",
+  iconeRoleElement:"7ds-ui/role-elements/dark_attacker.webp",
   potentiel:10,
   arme:"Épée à une main",
   portrait:"7ds-personnages/meliodas.webp",
@@ -66,12 +69,18 @@ const CARTE = {
           enchantements:[
             { libelle:"Attaque de l'équipement", texte:"95", part:0.35 },
             { libelle:"Augmentation des dégâts d'attaque spéciale",
-              texte:"20.84 %", part:0.8 }
+              texte:"20.84 %", part:0.8 },
+            { libelle:"Dégâts élémentaires", texte:"14.2 %", part:0.6 }
           ]
         }),
         ligne("Armure gravée", "Ami loyal", {
           image:"7ds-armures-ssr/Armure liee/Ami loyal.webp",
-          details:["Passif niveau 3"]
+          details:["Passif niveau 3"],
+          enchantements:[
+            { libelle:"Dégâts critiques", texte:"18.4 %", part:0.72 },
+            { libelle:"Attaque", texte:"12.1 %", part:0.55 },
+            { libelle:"Compétence normale", texte:"23.8 %", part:0.85 }
+          ]
         })
       ]
     },
@@ -92,7 +101,10 @@ const CARTE = {
       lignes:[
         ligne("Anneau", "Anneau de la mélodie d'Arachnée", {
           image:"7ds-bijoux/Anneau/Anneau.webp",
-          enchantements:[{ libelle:"Dégâts crit.", texte:"12.05 %", part:0.6 }]
+          enchantements:[{
+            libelle:"Augmentation des dégâts de tous les éléments",
+            texte:"12.05 %", part:0.6
+          }]
         }),
         ligne("Collier", ""),
         ligne("Boucle d'oreille", "Boucles d'oreilles de la mélodie d'Arachnée")
@@ -123,7 +135,8 @@ function chargeurFactice(demandes) {
   return async chemin => {
     demandes.push(chemin);
     return imageUnie(chemin.startsWith("7ds-personnages/")
-      ? MESURES.PORTRAIT : MESURES.ICONE);
+      ? MESURES.PORTRAIT
+      : chemin.startsWith("7ds-ui/") ? MESURES.IDENTITE : MESURES.ICONE);
   };
 }
 
@@ -142,6 +155,8 @@ function comptePixels(png, couleur) {
 
 (async () => {
   const fonts = await chargerAtlasCarte();
+  assert.equal(MESURES.IDENTITE, 64,
+    "les icones d'identite gardent leur finesse a leur taille native");
 
   /* LA CARTE ECRIT EN MINUSCULES ACCENTUEES. C'est la raison d'etre de son
      atlas separe : sans lui, « Dégâts crit. » redeviendrait « DEGATS CRIT. ».
@@ -159,9 +174,23 @@ function comptePixels(png, couleur) {
   const png = await generateBuildCardPng(CARTE, SANS_IMAGES);
   const taille = dimensions(png);
   assert.equal(taille.largeur, MESURES.LARGEUR);
+  assert.equal(taille.hauteur, 974,
+    "un build complet garde le format de la maquette");
   assert.ok(taille.hauteur < taille.largeur,
     "la carte doit rester plus large que haute : " + taille.largeur + " x "
     + taille.hauteur);
+
+  const sansRole = await generateBuildCardPng(
+    Object.assign({}, CARTE, { role:"" }), SANS_IMAGES);
+  assert.notDeepEqual(png, sansRole,
+    "le role du slot d'arme doit etre visible dans la fiche");
+
+  const autreValeurBijou = JSON.parse(JSON.stringify(CARTE));
+  autreValeurBijou.sections.find(section => section.titre === "Bijoux")
+    .lignes[0].enchantements[0].texte = "99.99 %";
+  assert.notDeepEqual(png,
+    await generateBuildCardPng(autreValeurBijou, SANS_IMAGES),
+    "la valeur d'une stat de bijou reste visible meme si son libelle est long");
 
   /* La rangee du libelle d'une jauge doit contenir la police, sinon le texte
      descend sur la barre dessinee juste dessous. */
@@ -173,6 +202,11 @@ function comptePixels(png, couleur) {
   /* Rien ne doit deborder de sa colonne. Le jour ou un nom deborde, il se
      dessine par-dessus la colonne voisine sans que rien n'echoue. */
   const plan = mesurer(CARTE, fonts);
+  const sansJaugeBijou = JSON.parse(JSON.stringify(CARTE));
+  sansJaugeBijou.sections.find(section => section.titre === "Bijoux")
+    .lignes.forEach(entree => { entree.enchantements = []; });
+  assert.equal(plan.hauteurBijoux, mesurer(sansJaugeBijou, fonts).hauteurBijoux,
+    "une stat de bijou tient dans sa ligne sans allonger toute la carte");
   const largeurBloc = MESURES.COLONNE_MILIEU - 2 * MESURES.PADDING
     - MESURES.ICONE - 20;
   plan.milieu.forEach(bloc => {
@@ -261,8 +295,10 @@ function comptePixels(png, couleur) {
   });
   assert.ok(demandes.includes("7ds-personnages/meliodas.webp"),
     "le portrait du personnage doit etre demande");
-  assert.equal(demandes.length, 5,
-    "un portrait, une arme, une gravee, une piece d'armure, un bijou");
+  assert.ok(demandes.includes("7ds-ui/mastery/sword1h.webp"));
+  assert.ok(demandes.includes("7ds-ui/role-elements/dark_attacker.webp"));
+  assert.equal(demandes.length, 7,
+    "portrait, deux icones d'identite et quatre objets illustres");
   const rouges = await comptePixels(illustree, ROUGE);
   /* Le filet de chaque cadre recouvre le bord de son image : le seuil laisse
      passer ces bordures, pas une image manquante — la plus petite pese 6 400

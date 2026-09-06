@@ -57,8 +57,8 @@ const {
   const vignette = path.join(ROOT, "7ds-vignettes", "7ds-personnages", "ban.png");
   if(fs.existsSync(vignette)){
     const portrait = await decodePng(fs.readFileSync(vignette));
-    assert.equal(portrait.width, 288, "la taille d'affichage du portrait");
-    assert.equal(portrait.height, 288);
+    assert.equal(portrait.width, 336, "la taille d'affichage du portrait");
+    assert.equal(portrait.height, 336);
     const opaques = [];
     for(let index = 3; index < portrait.pixels.length; index += 4){
       if(portrait.pixels[index] > 200) opaques.push(index);
