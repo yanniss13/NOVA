@@ -151,8 +151,8 @@ function couperEnLignes(valeur, atlas, largeurMaximale) {
 
    Le jeu les montre, il ne les écrit pas — une rangée d'étoiles sous le nom de
    l'arme, un niveau dans sa pastille. La carte fait de même : une barre pour
-   le niveau, des étoiles pour la promotion, des losanges pour
-   l'outrepassement, et le compte chiffré à droite pour lever toute ambiguïté.
+   le niveau, des étoiles pour l'outrepassement, et le compte chiffré à droite
+   pour lever toute ambiguïté.
 
    Aucun de ces symboles n'existe dans l'atlas de polices : ils sont tracés au
    polygone, comme le « % ». */
@@ -192,15 +192,6 @@ function sommetsEtoile(centreX, centreY, rayon) {
   return sommets;
 }
 
-function sommetsLosange(centreX, centreY, rayon) {
-  return [
-    [centreX, centreY - rayon],
-    [centreX + rayon * 0.72, centreY],
-    [centreX, centreY + rayon],
-    [centreX - rayon * 0.72, centreY]
-  ];
-}
-
 /* Les marques acquises en or, les restantes dans le violet du panneau : le
    lecteur voit d'un coup ce qui est fait et ce qui reste. */
 function dessinerMarques(canvas, x, y, mesure, largeurMaximale) {
@@ -209,11 +200,10 @@ function dessinerMarques(canvas, x, y, mesure, largeurMaximale) {
   const rayon = Math.min(11, Math.max(5,
     Math.floor(largeurMaximale / total / 2.4)));
   const pas = rayon * 2.4;
-  const sommets = mesure.forme === "etoile" ? sommetsEtoile : sommetsLosange;
   for(let index = 0; index < total; index += 1){
     remplirPolygone(
       canvas,
-      sommets(x + rayon + index * pas, y, rayon),
+      sommetsEtoile(x + rayon + index * pas, y, rayon),
       index < mesure.valeur ? COULEURS.or : COULEURS.cadreIcone
     );
   }

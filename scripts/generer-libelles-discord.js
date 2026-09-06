@@ -70,11 +70,15 @@ function construireLibelles() {
   });
 
   /* LES BORNES DE CHAQUE ARME, par grade.
-     La carte ecrit « promotion 2 sur 4 » et non « promotion 2 » : un nombre
-     seul n'apprend rien a qui ne connait pas le plafond de l'arme. Ces
-     plafonds dependent de l'arme ET de son grade, ils ne se devinent pas.
-     Vingt-sept kilo-octets pour 276 grades — le catalogue complet en pese
-     2 500, et l'Edge Function ne peut pas le charger. */
+     La carte ecrit « outrepassement 4 sur 6 » et non « outrepassement 4 » :
+     un nombre seul n'apprend rien a qui ne connait pas le plafond de l'arme.
+     Ces plafonds dependent de l'arme ET de son grade, ils ne se devinent pas.
+     Le catalogue complet pese 2,5 Mo et l'Edge Function ne peut pas le
+     charger ; cet extrait tient en quelques dizaines de kilo-octets.
+
+     Le plafond de PROMOTION n'y est pas : la carte ne montre plus la
+     promotion, qui se deduit du niveau. Publier une donnee que rien ne lit
+     serait une source de plus a garder d'accord. */
   const armes = {};
   Object.keys(stats.weaponsByFile || {}).sort().forEach(fichier => {
     const grades = stats.weaponsByFile[fichier].gradesByGameId || {};
@@ -89,7 +93,6 @@ function construireLibelles() {
         : [];
       armes[fichier] = armes[fichier] || {};
       armes[fichier][identifiant] = {
-        promotionMax:paliers.length,
         outrepassementMax:niveaux.length ? Math.max.apply(null, niveaux) : 0,
         /* Le plafond de niveau est celui de la DERNIERE promotion : c'est le
            niveau maximal que l'arme peut atteindre, tous paliers faits. */

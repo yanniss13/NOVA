@@ -452,8 +452,7 @@ assert.deepEqual(armeSection.lignes[0].details, [
    le dit. Le maximum vient du catalogue publie, jamais d'une supposition. */
 assert.deepEqual(armeSection.lignes[0].mesures, [
   { libelle:"Niveau", valeur:50, maximum:50, forme:"barre" },
-  { libelle:"Promotion", valeur:4, maximum:4, forme:"etoile" },
-  { libelle:"Outrepassement", valeur:2, maximum:6, forme:"marque" }
+  { libelle:"Outrepassement", valeur:2, maximum:6, forme:"etoile" }
 ], "« outrepassement » est le mot du jeu, « dépassement » n'en est pas un");
 
 /* Sans maximum connu — une arme absente du catalogue, ou un build enregistre
@@ -473,9 +472,8 @@ const sansGrade = resoudreDemandeBuild({
   options:{ joueur:"YanniSs13", personnage:"Ban", arme:"" }
 }).cartes[0];
 assert.deepEqual(sansGrade.sections[0].lignes[0].mesures, [
-  { libelle:"Niveau", valeur:30, maximum:0, forme:"barre" },
-  { libelle:"Promotion", valeur:2, maximum:0, forme:"etoile" }
-], "un outrepassement a zero ne se montre pas : l'arme n'en a peut-etre pas");
+  { libelle:"Niveau", valeur:30, maximum:0, forme:"barre" }
+], "la promotion se deduit du niveau : deux lignes pour une seule information");
 
 assert.equal(armureSection.lignes.length, 5,
   "les cinq emplacements d'armure, meme vides");
