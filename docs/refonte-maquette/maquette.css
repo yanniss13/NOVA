@@ -45,6 +45,24 @@ button{color:inherit}
 .brand{display:inline-flex;align-items:center;gap:14px;color:var(--parchment);font-family:var(--display);font-size:18px;letter-spacing:.055em;text-decoration:none;white-space:nowrap}
 .brand-mark{display:grid;place-items:center;width:46px;height:46px;border:1px solid var(--gold-light);border-radius:50%;color:var(--gold-light);font-size:26px;box-shadow:inset 0 0 0 5px rgba(185,133,44,.08)}
 .prototype-label{margin-left:auto;color:var(--mist);font-size:14px}
+.desktop-nav{align-self:stretch;display:flex;align-items:center;gap:8px;margin-left:20px}
+.desktop-nav button,.account-button,.menu-button,.mobile-nav button,.mobile-drawer button{
+  appearance:none;border:0;cursor:pointer;color:var(--parchment);background:transparent;
+}
+.desktop-nav>button,.tools-menu>button{height:100%;padding:0 18px;border-bottom:2px solid transparent}
+.desktop-nav>button:hover,.tools-menu>button:hover,.desktop-nav [aria-current="page"]{color:var(--gold-light);border-bottom-color:var(--gold-light)}
+.tools-menu{position:relative;height:100%;display:flex;align-items:center}
+.tools-popover{
+  position:absolute;z-index:40;top:calc(100% - 2px);right:0;width:190px;padding:7px;
+  border:1px solid var(--line);background:#061823;box-shadow:0 18px 38px rgba(0,0,0,.46);
+}
+.tools-popover[hidden],.mobile-drawer[hidden]{display:none}
+.tools-popover button{display:block;width:100%;padding:8px 12px;text-align:left;border-bottom:1px solid var(--line-soft)}
+.tools-popover button:last-child{border-bottom:0}
+.tools-popover button:hover{color:var(--gold-light);background:rgba(185,133,44,.08)}
+.account-button{display:flex;align-items:center;gap:8px;margin-left:auto;padding:0 8px;white-space:nowrap}
+.account-button:hover{color:var(--gold-light)}
+.menu-button,.mobile-drawer{display:none}
 
 main{width:var(--shell);margin:0 auto;padding:0;background:rgba(7,26,38,.72);border-inline:1px solid var(--line)}
 .view{min-height:560px}
@@ -111,5 +129,17 @@ main{width:var(--shell);margin:0 auto;padding:0;background:rgba(7,26,38,.72);bor
 .site-footer a{display:inline-flex;align-items:center;color:var(--mist);text-decoration:none}
 .site-footer a:hover{color:var(--gold-light)}
 .mobile-nav{display:none}
+
+.modal-layer{position:fixed;z-index:80;inset:0;display:grid;place-items:center;padding:20px}
+.modal-backdrop{position:absolute;inset:0;width:100%;height:100%;border:0;background:rgba(1,6,10,.78);cursor:pointer}
+.modal-card{position:relative;width:min(500px,100%);border-color:var(--gold);border-radius:8px;box-shadow:0 28px 90px rgba(0,0,0,.6)}
+.modal-head{display:flex;align-items:center;gap:18px;padding:18px 20px;border-bottom:1px solid var(--line)}
+.modal-head h2{margin:0 auto 0 0;font-family:var(--display);font-size:21px;font-weight:500}
+.modal-head button{appearance:none;border:1px solid var(--line);width:44px;background:transparent;color:var(--mist);font-size:24px;cursor:pointer}
+.modal-body{display:grid;gap:8px;padding:22px}
+.modal-copy{margin:0 0 12px;color:#d6cbbb;line-height:1.5}
+.modal-choice{appearance:none;min-height:48px;border:1px solid var(--line-soft);padding:10px 14px;text-align:left;color:var(--parchment);background:rgba(255,255,255,.025);cursor:pointer}
+.modal-choice:hover{border-color:var(--gold);color:var(--gold-light)}
+.modal-primary{width:100%}
 
 button:focus-visible,a:focus-visible{outline:2px solid var(--gold-light);outline-offset:3px}
