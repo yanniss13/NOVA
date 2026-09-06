@@ -20,6 +20,13 @@ await import("../_shared/availability-font.js");
 await import("../_shared/availability-pdf.js");
 await import("../_shared/discord-planning.js");
 await import("../_shared/boss-reminder.js");
+/* CHAQUE module partage est importé ici, même ceux dont seul un autre module
+   partagé se sert. Ces fichiers sont universels : entre eux, ils se chargent
+   par `require` côté Node et se lisent sur `globalThis` côté Deno. La CLI
+   Supabase, elle, construit la liste des fichiers à téléverser en suivant les
+   `import` — un module qui n'apparaît qu'en `require` n'est jamais déployé, et
+   la fonction tombe à son premier appel. */
+await import("../_shared/png-decode.js");
 await import("../_shared/discord-build.js");
 await import("../_shared/discord-build-png.js");
 const availabilityPdfModule = edgeSharedGlobal.NOVA_AVAILABILITY_PDF;
