@@ -481,15 +481,15 @@ assert.deepEqual(sections.map(section => section.titre),
 /* Chaque section dit COMMENT elle se dessine. L'armure gravee rejoint la
    colonne de l'arme : comme elle, elle porte des enchantements et un passif,
    la ou les quatre pieces ordinaires n'ont qu'un nom. Les mettre ensemble
-   obligerait la grille a la hauteur de la plus bavarde. */
+   obligerait la liste a la hauteur de la plus bavarde. */
 assert.deepEqual(sections.map(section => section.disposition),
-  ["colonne", "grille", "liste"]);
+  ["colonne", "liste", "liste"]);
 assert.deepEqual(sections[0].lignes.map(entree => entree.emplacement),
   ["Nunchaku", "Armure gravée"],
   "la section Arme porte l'arme, puis l'armure gravee");
 assert.deepEqual(sections[1].lignes.map(entree => entree.emplacement),
   ["Haut", "Bas", "Bottes", "Ceinture"],
-  "la grille ne recoit que les quatre pieces ordinaires");
+  "la liste d'armure ne recoit que les quatre pieces ordinaires");
 
 const [armeSection, armureSection, bijouxSection] = sections;
 assert.equal(armeSection.lignes[0].nom, "Nunchaku du renard",
@@ -527,7 +527,7 @@ assert.deepEqual(sansGrade.sections[0].lignes[0].mesures, [
 ], "la promotion se deduit du niveau : deux lignes pour une seule information");
 
 assert.equal(armureSection.lignes.length, 4,
-  "les quatre emplacements de la grille, meme vides ; la gravée est ailleurs");
+  "les quatre emplacements d'armure, meme vides ; la gravée est ailleurs");
 /* LES ENCHANTEMENTS QUITTENT LES DETAILS.
    Le jeu les montre avec une barre remplie selon la position de la valeur
    entre son minimum et son maximum possibles. La carte fait pareil : chaque

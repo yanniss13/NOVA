@@ -59,6 +59,9 @@ const IDENTITE = 64;
 const HAUTEUR_ENTETE = 178;
 const HAUTEUR_PIED = 76;
 const PADDING = 18;
+/* Le cartouche sous le portrait est encadre de deux filets et de deux
+   losanges : ce qui lui reste est la largeur de la colonne moins ce decor. */
+const LARGEUR_CARTOUCHE = COLONNE_GAUCHE - 2 * PADDING - 2 * 46;
 const HAUTEUR_TITRE_SECTION = 52;
 const HAUTEUR_LIGNE = 30;
 const HAUTEUR_NOM = 34;
@@ -70,7 +73,7 @@ const HAUTEUR_JAUGE_TRAIT = 14;
 const HAUTEUR_JAUGE = HAUTEUR_JAUGE_TITRE + HAUTEUR_JAUGE_TRAIT;
 const ESPACE_BLOC = 16;
 const DEBUT_CONTENU_SECTION = 60;
-const ESPACE_LIGNE_BIJOU = 4;
+const ESPACE_LIGNE_LISTE = 4;
 const MARGE_BASSE_SECTION = 16;
 const MARGE_AVANT_SEPARATEUR = 18;
 
@@ -142,6 +145,19 @@ function tronquer(valeur, atlas, largeurMaximale) {
     coupe = coupe.slice(0, -1);
   }
   return coupe.replace(/[ .]+$/, "") + suite;
+}
+
+/* Couper en lignes puis jeter le reste ferait passer « Bottes de combat de la
+   mélodie d'Arachnée » pour « Bottes de combat de la » : un nom plausible, et
+   faux — il designe un autre ensemble. La derniere ligne autorisee porte donc
+   tout ce qui reste, raccourci avec sa marque de coupe. Ce qui distingue deux
+   pieces d'un meme ensemble se trouve a la fin du nom, jamais au debut. */
+function couperEnLignesLimite(valeur, atlas, largeurMaximale, nombreLignes) {
+  const lignes = couperEnLignes(valeur, atlas, largeurMaximale);
+  if(lignes.length <= nombreLignes) return lignes;
+  return lignes.slice(0, nombreLignes - 1).concat(
+    tronquer(lignes.slice(nombreLignes - 1).join(" "), atlas, largeurMaximale)
+  );
 }
 
 /* ------------------------------------------------------------------ */
@@ -409,21 +425,24 @@ function mesurer(carte, fonts) {
   const milieu = lignesDe(sectionParTitre(carte, "Arme"))
     .map(ligne => mesurerBloc(ligne, fonts, largeurBloc));
 
-  /* La grille d'armure : deux colonnes de deux cases, chacune une icone et
-     deux lignes de texte. Elle ne porte pas de jauge — c'est ce qui lui permet
-     de rester compacte. */
-  const largeurCase = (COLONNE_DROITE - 2 * PADDING - 12) / 2;
-  const armure = lignesDe(sectionParTitre(carte, "Armure")).map(ligne => ({
-    ...ligne,
-    /* Deux lignes de nom, pas une : « Bottes de combat de la mélodie
-       d'Arachnée » ne tient sur aucune demi-colonne, et le tronquer perdait
-       justement ce qui distingue deux pieces d'un meme ensemble. */
-    nom:couperEnLignes(ligne.nom, fonts.corps, largeurCase - ICONE - 16)
-      .slice(0, 2)
-  }));
-  const hauteurCase = Math.max(ICONE, 40 + 2 * HAUTEUR_NOM) + 2 * 12;
-  const hauteurArmureNaturelle = HAUTEUR_TITRE_SECTION
-    + Math.ceil(armure.length / 2) * (hauteurCase + 12) + PADDING;
+  /* L'armure est une LISTE, et non une grille de deux cases. En grille,
+     l'icone prenait 80 des 268 px d'une demi-colonne : il restait 172 px, soit
+     une trentaine de caracteres, quand les noms du jeu en font quarante — 35
+     pieces sur 62 sortaient amputees. Sur la colonne entiere, les 62 tiennent
+     sur une seule ligne. La liste coute une trentaine de pixels de hauteur ;
+     un nom faux coute a un membre la mauvaise piece equipee. */
+  const largeurArmure = COLONNE_DROITE - 2 * PADDING - ICONE - 18;
+  const armure = lignesDe(sectionParTitre(carte, "Armure")).map(ligne => {
+    const nom = couperEnLignesLimite(ligne.nom, fonts.corps, largeurArmure, 2);
+    return Object.assign({}, ligne, {
+      nom,
+      hauteur:Math.max(ICONE,
+        HAUTEUR_LIGNE + Math.max(1, nom.length) * HAUTEUR_NOM)
+    });
+  });
+  const hauteurArmureNaturelle = DEBUT_CONTENU_SECTION
+    + armure.reduce((total, entree) => total + entree.hauteur
+      + ESPACE_LIGNE_LISTE, 0) + MARGE_BASSE_SECTION;
 
   /* Le filet qui ouvre l'armure gravee et le bord haut des bijoux sont une
      seule ligne visuelle. Leur coordonnee vient donc d'un repere commun, et
@@ -458,7 +477,7 @@ function mesurer(carte, fonts) {
   });
   const hauteurBijoux = DEBUT_CONTENU_SECTION
     + bijoux.reduce((total, ligne) => total + ligne.hauteur
-      + ESPACE_LIGNE_BIJOU, 0) + MARGE_BASSE_SECTION;
+      + ESPACE_LIGNE_LISTE, 0) + MARGE_BASSE_SECTION;
 
   const gauche = PORTRAIT + 2 * PADDING + 120;
   const corps = Math.max(
@@ -525,6 +544,15 @@ function dessinerEntete(canvas, carte, fonts, images) {
   void images;
 }
 
+/* Le cartouche sous le portrait nomme le joueur. La commande s'appelle
+   `/build <joueur>` : savoir de qui est le build fait partie de la reponse,
+   et « Portrait » ne nommait que l'evidence. Sans joueur — une carte de test,
+   un roster sans profil — il ne reste que le filet : rien n'est invente. */
+function cartoucheJoueur(carte, fonts) {
+  const joueur = carte && carte.joueur ? String(carte.joueur) : "";
+  return joueur ? tronquer(joueur, fonts.petit, LARGEUR_CARTOUCHE) : "";
+}
+
 function dessinerColonneGauche(canvas, carte, x, y, hauteur, fonts, images) {
   cadre(canvas, x, y, COLONNE_GAUCHE, hauteur);
   const centre = x + COLONNE_GAUCHE / 2;
@@ -538,18 +566,24 @@ function dessinerColonneGauche(canvas, carte, x, y, hauteur, fonts, images) {
   canvas.outline(portraitX, portraitY, PORTRAIT, PORTRAIT, 1, COULEURS.filet);
 
   const basPortrait = portraitY + PORTRAIT + 28;
-  const largeurPortraitLabel = largeurTexte("Portrait", fonts.petit);
-  const debutLabel = centre - largeurPortraitLabel / 2;
-  canvas.rectangle(x + PADDING, basPortrait,
-    debutLabel - 14 - (x + PADDING), 1, COULEURS.filet);
-  canvas.rectangle(debutLabel + largeurPortraitLabel + 14, basPortrait,
-    x + COLONNE_GAUCHE - PADDING
-      - (debutLabel + largeurPortraitLabel + 14), 1, COULEURS.filet);
-  losange(canvas, debutLabel - 7, basPortrait, 4, COULEURS.or);
-  losange(canvas, debutLabel + largeurPortraitLabel + 7, basPortrait, 4,
-    COULEURS.or);
-  ecrireCentre(canvas, centre, basPortrait - 14, "Portrait", fonts.petit,
-    COULEURS.parchemin);
+  const cartouche = cartoucheJoueur(carte, fonts);
+  if(cartouche){
+    const largeurCartouche = largeurTexte(cartouche, fonts.petit);
+    const debutLabel = centre - largeurCartouche / 2;
+    canvas.rectangle(x + PADDING, basPortrait,
+      debutLabel - 14 - (x + PADDING), 1, COULEURS.filet);
+    canvas.rectangle(debutLabel + largeurCartouche + 14, basPortrait,
+      x + COLONNE_GAUCHE - PADDING
+        - (debutLabel + largeurCartouche + 14), 1, COULEURS.filet);
+    losange(canvas, debutLabel - 7, basPortrait, 4, COULEURS.or);
+    losange(canvas, debutLabel + largeurCartouche + 7, basPortrait, 4,
+      COULEURS.or);
+    ecrireCentre(canvas, centre, basPortrait - 14, cartouche, fonts.petit,
+      COULEURS.parchemin);
+  }else{
+    filetOrne(canvas, x + PADDING, basPortrait, COLONNE_GAUCHE - 2 * PADDING,
+      COULEURS.filet);
+  }
 
   /* Trois cases sous le portrait, comme la maquette : ce qui identifie le
      personnage avant meme son equipement. */
@@ -626,29 +660,31 @@ function dessinerBloc(canvas, bloc, x, y, largeur, fonts, images) {
   });
 }
 
-function dessinerGrilleArmure(canvas, lignes, x, y, hauteur, fonts, images) {
+/* L'armure se lit comme les bijoux : une ligne par piece, sur la colonne
+   entiere. La grille de deux cases etait plus compacte, mais elle amputait la
+   majorite des noms du jeu — voir `mesurer`. */
+function dessinerListeArmure(canvas, lignes, x, y, hauteur, fonts, images) {
   cadre(canvas, x, y, COLONNE_DROITE, hauteur);
   titreSection(canvas, "02", "Armure", x + PADDING, y + PADDING,
     COLONNE_DROITE - 2 * PADDING, fonts);
-  const largeurCase = (COLONNE_DROITE - 2 * PADDING - 12) / 2;
-  const hauteurCase = Math.max(ICONE, 40 + 2 * HAUTEUR_NOM) + 24;
-  lignes.forEach((ligne, rang) => {
-    const gauche = x + PADDING + (rang % 2) * (largeurCase + 12);
-    const haut = y + PADDING + HAUTEUR_TITRE_SECTION
-      + Math.floor(rang / 2) * (hauteurCase + 12);
-    dessinerIcone(canvas, images.get(ligne.image), gauche, haut + 12);
-    const texteX = gauche + ICONE + 16;
-    ecrire(canvas, texteX, haut + 12, ligne.emplacement, fonts.petit,
+  let curseur = y + DEBUT_CONTENU_SECTION;
+  lignes.forEach(ligne => {
+    const gauche = x + PADDING;
+    dessinerIcone(canvas, images.get(ligne.image), gauche, curseur);
+    const texteX = gauche + ICONE + 18;
+    ecrire(canvas, texteX, curseur, ligne.emplacement, fonts.petit,
       COULEURS.faible);
-    let curseur = haut + 44;
+    let ligneY = curseur + HAUTEUR_LIGNE;
     if(!ligne.nom.length){
-      ecrire(canvas, texteX, curseur, "Aucun", fonts.corps, COULEURS.faible);
-      return;
+      ecrire(canvas, texteX, ligneY, "Aucun", fonts.corps, COULEURS.faible);
+    }else{
+      ligne.nom.forEach(morceau => {
+        ecrire(canvas, texteX, ligneY, morceau, fonts.corps,
+          COULEURS.parchemin);
+        ligneY += HAUTEUR_NOM;
+      });
     }
-    ligne.nom.forEach(morceau => {
-      ecrire(canvas, texteX, curseur, morceau, fonts.corps, COULEURS.parchemin);
-      curseur += HAUTEUR_NOM;
-    });
+    curseur += ligne.hauteur + ESPACE_LIGNE_LISTE;
   });
 }
 
@@ -692,7 +728,7 @@ function dessinerBijoux(canvas, lignes, x, y, hauteur, fonts, images) {
           curseur + ICONE + rang * HAUTEUR_JAUGE, largeurTexteBloc, fonts);
       });
     }
-    curseur += ligne.hauteur + ESPACE_LIGNE_BIJOU;
+    curseur += ligne.hauteur + ESPACE_LIGNE_LISTE;
   });
 }
 
@@ -786,7 +822,7 @@ async function generateBuildCardPng(carte, options) {
   });
 
   const droiteX = milieuX + COLONNE_MILIEU + GOUTTIERE;
-  dessinerGrilleArmure(canvas, plan.armure, droiteX, hautCorps,
+  dessinerListeArmure(canvas, plan.armure, droiteX, hautCorps,
     plan.hauteurArmure, fonts, images);
   dessinerBijoux(canvas, plan.bijoux, droiteX,
     hautCorps + plan.separateurSections, plan.hauteurBijoux,
@@ -797,8 +833,9 @@ async function generateBuildCardPng(carte, options) {
   const pied = plan.hauteur - HAUTEUR_PIED + 10;
   filetOrne(canvas, MARGE + 14, pied - 12, LARGEUR - 2 * MARGE - 28,
     COULEURS.filet);
-  const signature = "NOVA · " + ((carte && carte.joueur) || "Confrérie 7DS");
-  ecrire(canvas, MARGE + 22, pied, signature, fonts.petit,
+  /* Le pied signe la confrerie, pas le joueur : son pseudo est desormais au
+     cartouche, sous son portrait, ou on le cherche. */
+  ecrire(canvas, MARGE + 22, pied, "Confrérie NOVA", fonts.petit,
     COULEURS.faible);
   const note = carte && carte.note
     ? tronquer(carte.note, fonts.petit, COLONNE_MILIEU + 200) : "";
@@ -814,6 +851,7 @@ const discordBuildPngApi = {
   largeurTexte,
   tronquer,
   mesurer,
+  cartoucheJoueur,
   urlVignette,
   MESURES:{
     LARGEUR,
@@ -826,11 +864,12 @@ const discordBuildPngApi = {
     PORTRAIT,
     IDENTITE,
     PADDING,
+    LARGEUR_CARTOUCHE,
     HAUTEUR_JAUGE,
     HAUTEUR_JAUGE_TITRE,
     ESPACE_BLOC,
     DEBUT_CONTENU_SECTION,
-    ESPACE_LIGNE_BIJOU,
+    ESPACE_LIGNE_LISTE,
     HAUTEUR_ENTETE,
     HAUTEUR_PIED,
     /* Deux nuances : l'or vif des etoiles acquises, l'or sourd des barres

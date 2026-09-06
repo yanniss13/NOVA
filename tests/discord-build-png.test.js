@@ -19,7 +19,8 @@ const {
   RasterCanvas, encodePng, chargerAtlasCarte, atlasStringWidthExact
 } = require(partage("availability-pdf.js"));
 const {
-  generateBuildCardPng, MESURES, largeurTexte, tronquer, mesurer
+  generateBuildCardPng, MESURES, largeurTexte, tronquer, mesurer,
+  cartoucheJoueur
 } = require(partage("discord-build-png.js"));
 const { decodePng } = require(partage("png-decode.js"));
 const { texteCarte } = require(partage("discord-build.js"));
@@ -34,6 +35,24 @@ function dimensions(png) {
   assert.ok(png.subarray(0, 8).equals(SIGNATURE), "signature PNG absente");
   assert.equal(png.subarray(12, 16).toString("ascii"), "IHDR");
   return { largeur:png.readUInt32BE(16), hauteur:png.readUInt32BE(20) };
+}
+
+/* Le catalogue reel, et non une poignee de noms choisis : c'est la piece la
+   plus longue du jeu qui decide si la colonne est assez large. */
+function catalogueArmures() {
+  const source = require("node:fs")
+    .readFileSync(path.join(ROOT, "data", "data.js"), "utf8");
+  const data = JSON.parse(
+    source.replace(/^[\s\S]*?=\s*/, "").trim().replace(/;$/, "")
+  );
+  const noms = [];
+  ["Haut", "Bas", "Bottes", "Ceinture"].forEach(emplacement => {
+    (data.armures[emplacement] || []).forEach(objet => {
+      const nom = objet.name || objet.nom || "";
+      if(nom) noms.push(nom);
+    });
+  });
+  return noms;
 }
 
 function ligne(emplacement, nom, extra) {
@@ -174,7 +193,7 @@ function comptePixels(png, couleur) {
   const png = await generateBuildCardPng(CARTE, SANS_IMAGES);
   const taille = dimensions(png);
   assert.equal(taille.largeur, MESURES.LARGEUR);
-  assert.equal(taille.hauteur, 974,
+  assert.equal(taille.hauteur, 1010,
     "un build complet garde le format de la maquette");
   assert.ok(taille.hauteur < taille.largeur,
     "la carte doit rester plus large que haute : " + taille.largeur + " x "
@@ -213,7 +232,7 @@ function comptePixels(png, couleur) {
     "la derniere jauge de l'arme doit respirer avant le separateur");
   const finBijoux = MESURES.DEBUT_CONTENU_SECTION
     + plan.bijoux.reduce((total, ligne) => total + ligne.hauteur
-      + MESURES.ESPACE_LIGNE_BIJOU, 0);
+      + MESURES.ESPACE_LIGNE_LISTE, 0);
   assert.ok(plan.hauteurBijoux - finBijoux >= 16,
     "la derniere jauge des bijoux doit respirer avant le cadre");
   const sansJaugeBijou = JSON.parse(JSON.stringify(CARTE));
@@ -229,16 +248,69 @@ function comptePixels(png, couleur) {
         "hors de la colonne du milieu : " + morceau);
     });
   });
-  const largeurCase = (MESURES.COLONNE_DROITE - 2 * MESURES.PADDING - 12) / 2
-    - MESURES.ICONE - 16;
+  const largeurArmure = MESURES.COLONNE_DROITE - 2 * MESURES.PADDING
+    - MESURES.ICONE - 18;
   plan.armure.forEach(entree => {
     assert.ok(entree.nom.length <= 2,
-      "une case de la grille ne tient que deux lignes : " + entree.nom.length);
+      "une ligne d'armure ne s'etale pas sans fin : " + entree.nom.length);
     entree.nom.forEach(morceau => {
-      assert.ok(atlasStringWidthExact(morceau, fonts.corps) <= largeurCase,
-        "hors de sa case : " + morceau);
+      assert.ok(atlasStringWidthExact(morceau, fonts.corps) <= largeurArmure,
+        "hors de sa colonne : " + morceau);
     });
   });
+
+  /* LE CATALOGUE ENTIER DOIT S'AFFICHER EN ENTIER. En grille de deux cases,
+     l'icone prenait 80 des 268 px d'une demi-colonne : il restait une
+     trentaine de caracteres pour des noms qui en font quarante, et le reste
+     etait jete en silence. « Bottes de combat de la mélodie d'Arachnée »
+     devenait « Bottes de combat de la », qui ressemble a un vrai nom sans en
+     etre un — le membre lit une piece et en equipe une autre. Ce qui
+     distingue deux pieces d'un meme ensemble est toujours a la FIN du nom. */
+  const armures = catalogueArmures();
+  assert.ok(armures.length > 40,
+    "le catalogue doit etre lu, sinon ce test ne prouve rien : "
+    + armures.length);
+  const carteCatalogue = JSON.parse(JSON.stringify(CARTE));
+  carteCatalogue.sections.find(section => section.titre === "Armure").lignes =
+    armures.map(nom => ligne("Haut", nom));
+  const planCatalogue = mesurer(carteCatalogue, fonts);
+  planCatalogue.armure.forEach((entree, rang) => {
+    assert.equal(entree.nom.join(" "), texteCarte(armures[rang]),
+      "nom d'armure ampute : « " + entree.nom.join(" ") + " » au lieu de « "
+      + armures[rang] + " »");
+  });
+
+  /* Le garde-fou reste : un nom qu'aucune largeur ne peut porter se raccourcit
+     avec sa marque, jamais en silence. */
+  const NOM_IMPOSSIBLE = "Bottes de combat de la mélodie d'Arachnée "
+    + "du cauchemar ressuscité du souverain cupide";
+  const carteImpossible = JSON.parse(JSON.stringify(CARTE));
+  carteImpossible.sections.find(section => section.titre === "Armure")
+    .lignes = [ligne("Bottes", NOM_IMPOSSIBLE)];
+  const caseImpossible = mesurer(carteImpossible, fonts).armure[0];
+  assert.ok(caseImpossible.nom.length <= 2,
+    "une ligne d'armure ne s'etale pas sans fin : " + caseImpossible.nom.length);
+  const nomRendu = caseImpossible.nom.join(" ");
+  assert.ok(nomRendu.endsWith("…"),
+    "un nom raccourci doit porter sa marque de coupe : « " + nomRendu + " »");
+  assert.ok(texteCarte(NOM_IMPOSSIBLE).startsWith(nomRendu.slice(0, -1)),
+    "un nom raccourci reste un debut du vrai nom : « " + nomRendu + " »");
+
+  /* Le cartouche sous le portrait nomme le joueur : la commande s'appelle
+     `/build <joueur>`, et « Portrait » ne nommait que l'evidence. */
+  assert.equal(typeof cartoucheJoueur, "function",
+    "le texte du cartouche est une decision, pas un litteral du dessin");
+  assert.equal(cartoucheJoueur(CARTE, fonts), "YanniSs13");
+  assert.equal(cartoucheJoueur({}, fonts), "",
+    "sans joueur, le cartouche n'invente rien");
+  /* Un pseudo Discord monte a 32 caracteres : sans garde-fou il passe
+     par-dessus les filets qui l'encadrent. */
+  const pseudoLong = cartoucheJoueur({ joueur:"M".repeat(32) }, fonts);
+  assert.ok(atlasStringWidthExact(pseudoLong, fonts.petit)
+    <= MESURES.LARGEUR_CARTOUCHE,
+    "un pseudo long doit tenir entre ses filets : " + pseudoLong);
+  assert.ok(pseudoLong.endsWith("…"),
+    "un pseudo raccourci doit porter sa marque de coupe : " + pseudoLong);
 
   /* Un libelle trop long se raccourcit au lieu de se dessiner par-dessus sa
      valeur — il partage sa rangee avec elle. */
