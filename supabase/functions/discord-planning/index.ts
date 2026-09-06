@@ -28,12 +28,18 @@ await import("../_shared/boss-reminder.js");
    la fonction tombe à son premier appel. */
 await import("../_shared/png-decode.js");
 await import("../_shared/discord-build.js");
+/* L'ordre compte autant que la presence : `carte-ornements.js` lit `texteCarte`,
+   et les deux modules de dessin lisent ses ornements. Un module chargé trop tôt
+   ne trouve qu'un `undefined` et fait tomber la fonction au démarrage. */
+await import("../_shared/carte-ornements.js");
 await import("../_shared/discord-build-png.js");
+await import("../_shared/planning-png.js");
 const availabilityPdfModule = edgeSharedGlobal.NOVA_AVAILABILITY_PDF;
 const planningHelpersModule = edgeSharedGlobal.NOVA_DISCORD_PLANNING;
 const bossReminderModule = edgeSharedGlobal.NOVA_BOSS_REMINDER;
 const buildModule = edgeSharedGlobal.NOVA_DISCORD_BUILD;
 const buildPngModule = edgeSharedGlobal.NOVA_DISCORD_BUILD_PNG;
+const planningPngModule = edgeSharedGlobal.NOVA_PLANNING_PNG;
 
 declare const EdgeRuntime: {
   waitUntil(promise: Promise<unknown>): void;
@@ -80,9 +86,7 @@ const NOVA_BUILD_LABELS_URL =
 
 const {
   currentAvailabilityWeekStart,
-  buildAvailabilityReport,
-  generateAvailabilityTablePng,
-  generateAvailabilityDetailsPng
+  buildAvailabilityReport
 } = availabilityPdfModule as {
   currentAvailabilityWeekStart(now?: Date): string;
   buildAvailabilityReport(
@@ -92,9 +96,16 @@ const {
     declaredCount: number;
     members: unknown[];
   };
-  generateAvailabilityTablePng(report: unknown): Promise<Uint8Array>;
-  generateAvailabilityDetailsPng(report: unknown): Promise<Uint8Array>;
 };
+
+/* Les deux images du planning sont dessinées à la charte des cartes Discord,
+   dans leur propre module : `availability-pdf.js` garde la surface de dessin et
+   le rapport, jamais la mise en page. */
+const { generatePlanningTablePng, generatePlanningMembersPng } =
+  planningPngModule as {
+    generatePlanningTablePng(report: unknown): Promise<Uint8Array>;
+    generatePlanningMembersPng(report: unknown): Promise<Uint8Array>;
+  };
 
 const {
   PLANNING_PROFILES_QUERY,
@@ -449,8 +460,8 @@ async function generateAndPublishPlanning(
     ]);
     const report = buildAvailabilityReport(profiles, availabilityRows, weekStart);
     const [table, details] = await Promise.all([
-      generateAvailabilityTablePng(report),
-      generateAvailabilityDetailsPng(report)
+      generatePlanningTablePng(report),
+      generatePlanningMembersPng(report)
     ]);
     const tableFilename = "tableau-disponibilites-" + weekStart + ".png";
     const detailsFilename = "creneaux-par-membre-" + weekStart + ".png";
