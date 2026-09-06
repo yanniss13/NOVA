@@ -82,12 +82,21 @@ function texteDeSortie() {
   return JSON.stringify(construireLibelles(), null, 1) + "\n";
 }
 
+/* Le controle de fraicheur ignore les fins de ligne. Le depot est en CRLF
+   dans une copie de travail Windows et en LF sur le runner Linux : comparer
+   le texte brut declarait le fichier perime d'un cote et a jour de l'autre,
+   pour un contenu strictement identique. */
+function estAJour(texteActuel) {
+  const sansFins = texte => String(texte || "").replace(/\r\n/g, "\n");
+  return sansFins(texteActuel) === sansFins(texteDeSortie());
+}
+
 function principal() {
   const attendu = texteDeSortie();
   if(process.argv.includes("--verifier")){
     const actuel = fs.existsSync(SORTIE)
       ? fs.readFileSync(SORTIE, "utf8") : "";
-    if(actuel !== attendu){
+    if(!estAJour(actuel)){
       console.error(
         "data/libelles-discord.json est perime : relance"
         + " `node scripts/generer-libelles-discord.js`."
@@ -109,4 +118,4 @@ function principal() {
 
 if(require.main === module) principal();
 
-module.exports = { construireLibelles, texteDeSortie };
+module.exports = { construireLibelles, texteDeSortie, estAJour };

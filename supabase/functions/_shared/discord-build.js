@@ -56,22 +56,149 @@ function buildCommandDefinition() {
         type:3,
         name:"joueur",
         description:"Le pseudo du membre dont on veut voir le roster",
+        autocomplete:true,
         required:true
       },
       {
         type:3,
         name:"personnage",
         description:"Le personnage dont on veut voir le build",
+        autocomplete:true,
         required:true
       },
       {
         type:3,
         name:"arme",
         description:"Facultatif : une seule arme au lieu de tous les builds",
+        autocomplete:true,
         required:false
       }
     ]
   };
+}
+
+/* L'AUTOCOMPLETION.
+
+   Discord envoie une interaction de type 4 a chaque frappe, et n'accorde que
+   trois secondes pour y repondre : aucune reponse differee n'est possible,
+   contrairement a la commande elle-meme. Ces fonctions sont donc pures et
+   immediates ; l'Edge Function ne garde que les lectures et leur cache.
+
+   Elle envoie TOUTES les options avec la frappe, pas seulement celle qui est
+   focalisee. C'est ce qui permet de ne proposer, dans « personnage », que les
+   personnages du joueur deja choisi. */
+const CHOIX_MAXIMUM = 25;
+
+function lireOptionFocalisee(interaction) {
+  const options = (interaction && interaction.data && interaction.data.options)
+    || [];
+  const lues = lireOptionsBuild(interaction);
+  const focalisee = (Array.isArray(options) ? options : [])
+    .find(option => option && option.focused);
+  return {
+    nom:focalisee && Object.prototype.hasOwnProperty.call(lues, focalisee.name)
+      ? focalisee.name : "",
+    valeur:focalisee ? lues[focalisee.name] || "" : "",
+    options:lues
+  };
+}
+
+/* Ce qui COMMENCE par la saisie passe avant ce qui la contient : taper « an »
+   doit remonter « Anne » avant « Yannick ». A rang egal, l'ordre alphabetique,
+   pour que deux frappes identiques donnent le meme menu. */
+function classerPropositions(candidats, saisie) {
+  const cherchee = normaliserRecherche(saisie);
+  const vus = new Set();
+  return (Array.isArray(candidats) ? candidats : [])
+    .filter(candidat => {
+      if(typeof candidat !== "string" || !candidat) return false;
+      if(vus.has(candidat)) return false;
+      vus.add(candidat);
+      return true;
+    })
+    .map(candidat => {
+      const normalise = normaliserRecherche(candidat);
+      if(!cherchee) return { candidat, rang:1 };
+      if(normalise.startsWith(cherchee)) return { candidat, rang:0 };
+      return normalise.includes(cherchee) ? { candidat, rang:1 } : null;
+    })
+    .filter(Boolean)
+    .sort((gauche, droite) => gauche.rang !== droite.rang
+      ? gauche.rang - droite.rang
+      : gauche.candidat.localeCompare(droite.candidat, "fr"))
+    /* Discord refuse plus de vingt-cinq propositions, et rejette la liste
+       entiere quand elle deborde : c'est a nous de la tailler. */
+    .slice(0, CHOIX_MAXIMUM)
+    .map(entree => ({ name:entree.candidat, value:entree.candidat }));
+}
+
+/* Le nom lisible d'une ligne de roster : celui du catalogue, ou l'identifiant
+   brut quand le catalogue ne le connait pas. Mieux vaut un slug affiche qu'un
+   personnage qui disparait du menu. */
+function nomDeLigne(ligne, libelles) {
+  const identifiant = ligne && ligne.char_id;
+  if(!identifiant) return "";
+  const fiche = ((libelles && libelles.personnages) || {})[identifiant];
+  return (fiche && fiche.nom) || identifiant;
+}
+
+/* L'identifiant derriere un nom saisi. La commande et le menu des armes s'en
+   servent tous les deux : une seule regle de correspondance, pas deux qui
+   divergeraient au premier accent. */
+function trouverCharId(lignes, libelles, saisie) {
+  const cherche = normaliserRecherche(saisie);
+  if(!cherche) return "";
+  const ligne = (Array.isArray(lignes) ? lignes : []).find(entree =>
+    normaliserRecherche(nomDeLigne(entree, libelles)) === cherche
+    || normaliserRecherche(entree && entree.char_id) === cherche);
+  return ligne ? ligne.char_id : "";
+}
+
+/* L'enchainement des trois menus, avec ses lectures INJECTEES.
+
+   Le choix de la lecture depend du champ en cours de frappe : c'est
+   exactement ce qu'il fallait pouvoir eprouver sans Discord ni base. L'Edge
+   Function n'apporte que `lireProfils`, `lireRoster` et `lireBuilds`, avec
+   leur cache — la decision, elle, est ici.
+
+   Aucune lecture inutile : le menu des joueurs ne touche pas au roster, et le
+   menu des personnages ne demande jamais la colonne `builds`. */
+async function propositionsBuild(entree) {
+  const source = entree || {};
+  const { nom, valeur, options } = lireOptionFocalisee(source.interaction);
+  if(!nom) return [];
+
+  const profils = await source.lireProfils();
+  if(nom === "joueur"){
+    return classerPropositions(
+      (profils || []).map(profil => profil && profil.pseudo), valeur
+    );
+  }
+
+  /* Tant que le champ « joueur » ne designe personne, les deux autres se
+     taisent : lister les vingt-six personnages du jeu quand le membre n'en
+     possede que six serait pire que le silence. */
+  const profil = trouverProfil(profils, options.joueur);
+  if(!profil) return [];
+
+  const lignes = await source.lireRoster(profil.id);
+  if(nom === "personnage"){
+    return classerPropositions(
+      nomsDePersonnages(lignes, source.libelles), valeur
+    );
+  }
+
+  const charId = trouverCharId(lignes, source.libelles, options.personnage);
+  if(!charId) return [];
+  const builds = await source.lireBuilds(profil.id, charId);
+  return classerPropositions(Object.keys(builds || {}), valeur);
+}
+
+function nomsDePersonnages(lignes, libelles) {
+  return (Array.isArray(lignes) ? lignes : [])
+    .map(ligne => nomDeLigne(ligne, libelles))
+    .filter(Boolean)
+    .sort((gauche, droite) => gauche.localeCompare(droite, "fr"));
 }
 
 function lireOptionsBuild(interaction) {
@@ -330,14 +457,13 @@ function resoudreDemandeBuild(entree) {
       + "** n'a encore aucun personnage dans son roster." };
   }
 
-  const nomDuPersonnage = ligne => {
-    const meta = personnages[ligne.char_id];
-    return (meta && meta.nom) || ligne.char_id;
-  };
-  const cherche = normaliserRecherche(options.personnage);
-  const ligne = siennes.find(entree2 =>
-    normaliserRecherche(nomDuPersonnage(entree2)) === cherche
-    || normaliserRecherche(entree2.char_id) === cherche);
+  const nomDuPersonnage = ligne => nomDeLigne(ligne, libelles);
+  /* La MEME regle de correspondance que le menu d'autocompletion : deux
+     lectures differentes du meme nom saisi finiraient par se contredire. */
+  const charId = trouverCharId(siennes, libelles, options.personnage);
+  const ligne = charId
+    ? siennes.find(entree => entree.char_id === charId)
+    : null;
   if(!ligne){
     return { erreur:"**" + profil.pseudo + "** n'a pas **"
       + options.personnage + "** dans son roster."
@@ -400,6 +526,11 @@ const discordBuildApi = {
   JEWEL_SLOTS,
   buildCommandDefinition,
   lireOptionsBuild,
+  lireOptionFocalisee,
+  classerPropositions,
+  nomsDePersonnages,
+  trouverCharId,
+  propositionsBuild,
   normaliserRecherche,
   trouverProfil,
   texteCarte,

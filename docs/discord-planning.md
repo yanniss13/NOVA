@@ -94,6 +94,35 @@ arme introuvable répond dans le salon, avec les noms proches. La réponse
 n'est pas éphémère : Discord veut une première réponse en moins de trois
 secondes et l'ephémérité se décide à cet instant, avant d'avoir rien lu.
 
+### L'autocomplétion des trois champs
+
+Les trois champs se complètent en tapant. `joueur` propose les pseudos des
+membres. `personnage` ne propose que les personnages présents dans le roster
+**du joueur déjà saisi** — Discord envoie la valeur des autres options avec
+chaque frappe, on sait donc de qui on parle. `arme` ne propose que les armes
+sur lesquelles ce joueur a réellement un build pour ce personnage. Tant que le
+champ `joueur` est vide ou ne désigne personne, les deux autres ne proposent
+**rien** : lister les vingt-six personnages du jeu quand le membre n'en possède
+que six serait pire que le silence.
+
+Discord n'accorde que **trois secondes** à une interaction d'autocomplétion, et
+aucune réponse différée n'y est possible — contrairement à la commande. Comme
+il en envoie une à presque chaque frappe, les profils sont gardés en mémoire
+une minute et le roster d'un joueur trente secondes. Sans ces caches, taper
+« Elizabeth » lancerait neuf lectures Supabase, et la neuvième arriverait trop
+tard. Le menu des personnages ne demande que la colonne `char_id` ; seul le
+menu des armes lit `builds`, et pour une seule ligne.
+
+L'autocomplétion passe par le même contrôle de serveur, de salon et de rôle
+que la commande : proposer la liste des pseudos de la confrérie dans un salon
+non autorisé serait une fuite. Un refus, comme une panne de lecture, répond
+une **liste vide** — un menu de suggestions ne sait pas afficher d'erreur, et
+un champ qui ne propose rien se comprend mieux qu'un menu figé.
+
+Le choix des propositions vit dans `_shared/discord-build.js`, avec ses
+lectures injectées : quel menu déclenche quelle lecture, et laquelle ne se
+fait pas, se vérifie en Node sans Discord ni base.
+
 ## Architecture et sécurité
 
 1. Discord envoie l'interaction signée à l'Edge Function `discord-planning`.
