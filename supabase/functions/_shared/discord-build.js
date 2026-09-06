@@ -17,7 +17,7 @@
 
 /* LES QUATRE PIECES ORDINAIRES, puis l'armure gravee a part.
    La gravee porte un passif et des enchantements, comme une arme ; les quatre
-   autres n'ont qu'un nom. Les melanger obligerait la grille de la carte a
+   autres n'ont qu'un nom. Les melanger obligerait la liste de la carte a
    prendre la hauteur de la plus bavarde. */
 const ARMOR_SLOTS = ["Haut", "Bas", "Bottes", "Ceinture"];
 const LINKED_ARMOR_SLOT = "Armure liee";
@@ -606,7 +606,7 @@ function carteDeBuild(contexte, typeArme, build) {
       },
       {
         titre:"Armure",
-        disposition:"grille",
+        disposition:"liste",
         lignes:lignesEmplacements(
           ARMOR_SLOTS, ARMOR_LABELS, donnees.armor, donnees.armorConfig,
           libellesStats, contexte.libelles
