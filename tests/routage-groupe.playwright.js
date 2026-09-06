@@ -343,7 +343,7 @@ async function openHistoryFragment(page, fragment){
       });
     }, analyseFixture.group.id);
     await allerA(protectedPage, "wiki");
-    await protectedPage.locator("#view-home.active").waitFor();
+    await protectedPage.locator("#view-wiki.active").waitFor();
     await openAppFragment(
       protectedPage,
       "#analyse/groupe/" + analyseFixture.group.id

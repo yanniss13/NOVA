@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const { CIBLE_TACTILE_PX } = require("./helpers/cible-tactile");
 const { chromium } = require("playwright");
 const { serveRepo } = require("./helpers/serve");
+const { allerA } = require("./helpers/naviguer");
 
 async function installConnectedSupabase(page, connected = true){
   await page.addInitScript(hasSession => {
@@ -62,6 +63,23 @@ async function installConnectedSupabase(page, connected = true){
   );
 }
 
+/* LA NAVIGATION AU POUCE, apres la bascule sur la charte de la maquette.
+
+   Ce que la refonte a retire, et qu'on ne teste donc plus :
+
+   - l'arriere-plan sombre derriere « Plus ». Le tiroir est desormais un petit
+     panneau ancre en haut a droite, pas un panneau plein ecran ;
+   - le verrou de defilement qui figeait la page dessous. Il servait a ce
+     panneau plein ecran ;
+   - l'en-tete retractable. La barre du haut est compacte a toutes les largeurs,
+     elle n'a plus rien a replier ;
+   - le dock des sous-vues du Boss. Les onglets locaux d'une rubrique le
+     remplacent, en haut de la vue et non au-dessus de la barre.
+
+   Tout le reste — cinq destinations, ouverture et fermeture de « Plus »,
+   restitution du focus, cibles de 44 px, absence de debordement, portee du
+   visiteur — est verifie ici comme avant. */
+
 (async()=>{
   const server = await serveRepo();
   const browser = await chromium.launch({ headless:true });
@@ -78,228 +96,195 @@ async function installConnectedSupabase(page, connected = true){
     await installConnectedSupabase(page);
     await page.goto(server.url + "/index.html");
 
-    const nav = page.getByRole("navigation", {
-      name:"Navigation principale mobile"
-    });
+    const nav = page.getByRole("navigation", { name:"Navigation mobile" });
     await nav.waitFor({ state:"visible" });
     const destinations = nav.locator("button:not([hidden])");
     assert.equal(await destinations.count(), 5,
       "un membre connecte doit garder cinq destinations principales au pouce");
     assert.deepEqual(
-      await destinations.allTextContents().then(items => items.map(item => item.trim())),
-      ["Accueil","Créer","Boss","Roster","Plus"]
+      await destinations.allTextContents()
+        .then(items => items.map(item => item.trim())),
+      ["Accueil", "Équipes", "Boss", "Roster", "Plus"]
     );
 
-    assert.equal(await page.locator(".tabs-rail").isHidden(), true,
-      "le rail horizontal ne doit plus doubler la navigation mobile");
+    assert.equal(await page.locator("#desktopNav").isHidden(), true,
+      "la barre de bureau ne doit pas doubler la navigation mobile");
 
-    const plus = page.getByRole("button", { name:"Plus" });
+    /* ---- « Plus » : ce qu'il contient, et comment il se ferme. ---- */
+    const plus = page.locator("#mobileMoreButton");
+    const tiroir = page.getByRole("navigation", { name:"Explorer" });
     await plus.click();
     assert.equal(await plus.getAttribute("aria-expanded"), "true");
-    const panel = page.getByRole("navigation", { name:"Plus" });
-    await panel.waitFor({ state:"visible" });
-    assert.equal(await panel.getByRole("button", { name:"Analyse" }).isVisible(), true);
-    assert.equal(await panel.getByRole("button", { name:"Wiki" }).isVisible(), true);
-    assert.equal(await panel.getByRole("button", { name:"Collection" }).isVisible(), true);
-    assert.equal(await panel.getByRole("button", { name:"Calculateur" }).isVisible(), true);
-    assert.match(await panel.textContent(), /Yannis/,
-      "le compte courant doit etre identifiable dans Plus");
-
-    await panel.getByRole("button", { name:"Wiki" }).click();
-    await page.locator("#view-wiki").waitFor({ state:"visible" });
-    assert.equal(await panel.isHidden(), true,
-      "choisir une rubrique doit refermer Plus");
-    assert.equal(await plus.getAttribute("aria-current"), "page",
-      "Plus doit porter le contexte des rubriques secondaires");
-    assert.equal(await page.evaluate(() => document.activeElement.id), "mobileNavMore",
-      "une rubrique de Plus doit rendre le focus a son declencheur visible");
-
-    await plus.click();
-    await page.keyboard.press("Escape");
-    assert.equal(await panel.isHidden(), true);
-    assert.equal(await page.evaluate(() => document.activeElement.id), "mobileNavMore",
-      "Echap doit refermer Plus et restituer le focus");
-
-    await plus.click();
-    assert.equal(await page.evaluate(() => getComputedStyle(document.body).overflow), "hidden",
-      "Plus doit bloquer le defilement de la page sous son panneau");
-    await page.locator("#mobileMoreBackdrop").click({ position:{x:2,y:2} });
-    assert.equal(await panel.isHidden(), true);
-    assert.equal(await page.evaluate(() => document.activeElement.id), "mobileNavMore",
-      "fermer Plus par son arriere-plan doit restituer le focus");
-
-    await nav.getByRole("button", { name:"Créer" }).click();
-    await page.locator("#view-builder").waitFor({ state:"visible" });
-    await page.evaluate(() => window.scrollTo({ top:420 }));
-    const readingPosition = await page.evaluate(() => Math.round(window.scrollY));
-    assert.ok(readingPosition > 100, "le Builder doit etre defile avant le verrou");
-    await plus.click();
-    const lockedReading = await page.evaluate(() => ({
-      position:getComputedStyle(document.body).position,
-      top:parseFloat(document.body.style.top),
-      scrollY:Math.round(window.scrollY)
-    }));
-    assert.equal(lockedReading.position, "fixed",
-      "Plus doit figer le corps pour Safari iOS");
-    assert.equal(Math.round(-lockedReading.top), readingPosition,
-      "le verrou doit memoriser la position de lecture");
-    await page.mouse.wheel(0, 500);
+    await tiroir.waitFor({ state:"visible" });
+    for(const outil of ["Wiki", "Collection", "Calculateur", "Analyse"]){
+      assert.equal(
+        await tiroir.getByRole("button", { name:outil, exact:true }).isVisible(),
+        true,
+        outil + " doit rester a un geste dans « Plus »");
+    }
     assert.equal(
-      await page.evaluate(() => parseFloat(document.body.style.top)),
-      lockedReading.top,
-      "la lecture sous Plus ne doit pas bouger"
-    );
-    await page.keyboard.press("Escape");
-    assert.equal(await page.evaluate(() => Math.round(window.scrollY)), readingPosition,
-      "fermer Plus doit restituer la position de lecture");
+      await tiroir.getByRole("button", { name:"Mon compte", exact:true }).isVisible(),
+      true,
+      "le compte doit rester atteignable depuis « Plus »");
+
+    await tiroir.getByRole("button", { name:"Wiki", exact:true }).click();
+    await page.locator("#view-wiki").waitFor({ state:"visible" });
+    assert.equal(await tiroir.isHidden(), true,
+      "choisir une destination doit refermer « Plus »");
+    assert.equal(await plus.getAttribute("aria-current"), "page",
+      "« Plus » doit porter le contexte des rubriques secondaires");
 
     await plus.click();
-    await page.setViewportSize({ width:700, height:780 });
-    assert.equal(await panel.isHidden(), true,
-      "quitter le breakpoint mobile doit normaliser le panneau Plus");
-    /* Le CSS masque le panneau des le redimensionnement, mais aria-expanded
-       est remis a jour par un ecouteur matchMedia, dans une tache ulterieure.
-       Verifier aussitot gagnait la course en local et la perdait sur le
-       runner. Attendre l'attribut ne masque rien : s'il ne changeait jamais,
-       l'attente expirerait et le test echouerait tout autant. */
-    await page.waitForFunction(() =>
-      document.querySelector("#mobileNavMore").getAttribute("aria-expanded") === "false");
-    assert.equal(await page.locator("#mobileNavMore").getAttribute("aria-expanded"), "false");
-    await page.setViewportSize({ width:390, height:780 });
-    assert.equal(await panel.isHidden(), true,
-      "revenir en portrait ne doit pas rouvrir un ancien panneau");
+    await tiroir.waitFor({ state:"visible" });
+    await page.keyboard.press("Escape");
+    assert.equal(await tiroir.isHidden(), true);
+    assert.equal(await page.evaluate(() => document.activeElement.id),
+      "mobileMoreButton",
+      "Echap doit refermer « Plus » et rendre le focus au bouton qui l'a ouvert");
 
+    /* Le tiroir a DEUX declencheurs. Le focus revient a celui qui a servi : le
+       rendre toujours au premier renverrait le doigt en haut de l'ecran apres
+       un geste au pouce. */
+    await page.locator("#mobileMenuButton").click();
+    await tiroir.waitFor({ state:"visible" });
+    await page.keyboard.press("Escape");
+    assert.equal(await page.evaluate(() => document.activeElement.id),
+      "mobileMenuButton",
+      "ouvert par le menu du haut, « Plus » doit rendre le focus au menu du haut");
+
+    /* Quitter le format mobile fait disparaitre les deux declencheurs : un
+       tiroir laisse ouvert n'aurait plus aucun moyen d'etre ferme. */
+    await plus.click();
+    await tiroir.waitFor({ state:"visible" });
+    await page.setViewportSize({ width:1024, height:780 });
+    await page.waitForFunction(() =>
+      document.querySelector("#mobileDrawer").hidden === true);
+    assert.equal(await page.locator("#mobileMoreButton")
+      .getAttribute("aria-expanded"), "false");
+    await page.setViewportSize({ width:390, height:780 });
+    assert.equal(await tiroir.isHidden(), true,
+      "revenir en portrait ne doit pas rouvrir un ancien tiroir");
+
+    /* ---- Le centre Boss et ses onglets locaux. ---- */
     await nav.getByRole("button", { name:"Boss" }).click();
-    await page.locator("#view-roster").waitFor({ state:"visible" });
+    await page.locator("#view-boss").waitFor({ state:"visible" });
     assert.equal(await nav.getByRole("button", { name:"Boss" })
       .getAttribute("aria-current"), "page");
-    assert.equal(await page.locator("#mobileBossSubtabs").isVisible(), true,
-      "les sous-vues du Boss restent disponibles dans leur vue");
-    const bossDock = await page.locator("#mobileBossSubtabs").evaluate(node => {
-      const rect = node.getBoundingClientRect();
-      const nav = document.querySelector(".mobile-nav").getBoundingClientRect();
-      return {
-        top:rect.top,
-        bottom:rect.bottom,
-        navTop:nav.top,
-        viewportHeight:innerHeight,
-        targets:[...node.querySelectorAll("button")].map(button =>
-          button.getBoundingClientRect().height
-        )
-      };
-    });
-    assert.ok(bossDock.top >= 0 && bossDock.bottom <= bossDock.navTop + 1,
-      "le dock Boss doit rester entierement visible au-dessus de la barre");
-    bossDock.targets.forEach(height => assert.ok(height >= CIBLE_TACTILE_PX,
-      "chaque sous-vue Boss doit conserver une cible de 44 px"));
+    const ongletsLocaux = page.locator("#localTabs button");
+    assert.deepEqual(
+      await ongletsLocaux.allTextContents()
+        .then(items => items.map(item => item.trim())),
+      ["Disponibilités", "Groupes et rapports"],
+      "le centre Boss doit exposer ses deux sections");
+    const cibles = await ongletsLocaux.evaluateAll(boutons =>
+      boutons.map(bouton => bouton.getBoundingClientRect().height));
+    cibles.forEach(hauteur => assert.ok(hauteur >= CIBLE_TACTILE_PX,
+      "chaque onglet local doit conserver une cible de 44 px"));
 
-    /* Le sous-onglet « Équipes » porte la MEME vue que le bouton « Boss » de la
-       barre du bas : `roster`. La regle qui garde le chef du groupe allume
-       partout dans le groupe ne doit pas deborder sur lui — sinon deux
-       sous-onglets brillent en meme temps et la barre ment sur l'endroit ou
-       l'on se trouve. */
-    await page.locator('#mobileBossSubtabs [data-mobile-view="boss"]').click();
-    await page.locator("#view-boss").waitFor({ state:"visible" });
-    const sousOngletsActifs = await page.locator("#mobileBossSubtabs")
+    /* UN SEUL onglet local actif a la fois : la barre ne doit pas mentir sur
+       l'endroit ou l'on se trouve. */
+    await page.locator("#localTabs [data-view=\"availability\"]").click();
+    await page.locator("#view-availability").waitFor({ state:"visible" });
+    const actifs = await page.locator("#localTabs")
       .evaluate(node => [...node.querySelectorAll("button")]
-        .filter(button => button.classList.contains("active"))
-        .map(button => button.textContent.trim()));
-    assert.deepEqual(sousOngletsActifs, ["Sessions"],
-      "un seul sous-onglet Boss doit etre actif a la fois");
+        .filter(bouton => bouton.getAttribute("aria-selected") === "true")
+        .map(bouton => bouton.textContent.trim()));
+    assert.deepEqual(actifs, ["Disponibilités"],
+      "un seul onglet local doit etre actif a la fois");
     assert.equal(
       await nav.getByRole("button", { name:"Boss" }).getAttribute("aria-current"),
       "page",
-      "le bouton du GROUPE, lui, reste surligne dans toute sa famille de vues"
+      "la RUBRIQUE, elle, reste surlignee dans toutes ses vues"
     );
 
-    await nav.getByRole("button", { name:"Créer" }).click();
-    await page.locator("#view-builder").waitFor({ state:"visible" });
-    const headerBeforeScroll = await page.locator(".topbar").evaluate(node => ({
-      height:Math.round(node.getBoundingClientRect().height),
+    /* ---- L'en-tete mobile : compacte, et immobile au defilement. ---- */
+    await allerA(page, "builder");
+    const enteteAvant = await page.locator(".app-header").evaluate(node => ({
+      hauteur:Math.round(node.getBoundingClientRect().height),
       position:getComputedStyle(node).position
     }));
     await page.evaluate(() => window.scrollTo({ top:500 }));
     await page.evaluate(() => new Promise(resolve =>
       requestAnimationFrame(() => requestAnimationFrame(resolve))
     ));
-    const headerAfterScroll = await page.locator(".topbar").evaluate(node => ({
-      height:Math.round(node.getBoundingClientRect().height),
-      retracted:node.classList.contains("is-retracted")
-    }));
-    assert.equal(headerBeforeScroll.position, "relative",
+    const enteteApres = await page.locator(".app-header").evaluate(node =>
+      Math.round(node.getBoundingClientRect().height));
+    assert.equal(enteteAvant.position, "relative",
       "l'identite mobile doit defiler avec la page, la navigation restant en bas");
-    assert.equal(headerAfterScroll.retracted, false,
-      "le controleur de l'ancien header retractable doit etre inactif en portrait");
-    assert.equal(headerAfterScroll.height, headerBeforeScroll.height,
-      "le header mobile compact ne doit plus changer de hauteur au defilement");
+    assert.equal(enteteApres, enteteAvant.hauteur,
+      "l'en-tete mobile compacte ne doit pas changer de hauteur au defilement");
 
-    for(const width of [320,360,390]){
+    /* ---- Dimensions, a trois largeurs. ---- */
+    for(const width of [320, 360, 390]){
       await page.setViewportSize({ width, height:780 });
-      const metrics = await page.evaluate(() => {
-        const mobileNav = document.querySelector(".mobile-nav");
-        const main = document.querySelector("main");
-        const root = document.scrollingElement;
-        const buttons = [...mobileNav.querySelectorAll("button:not([hidden])")];
+      const mesures = await page.evaluate(() => {
+        const barre = document.querySelector(".mobile-nav");
+        const zone = document.querySelector("main");
+        const racine = document.scrollingElement;
+        const boutons = [...barre.querySelectorAll("button:not([hidden])")];
         return {
-          navHeight:mobileNav.getBoundingClientRect().height,
-          bottomPadding:parseFloat(getComputedStyle(main).paddingBottom),
-          scrollPaddingBottom:parseFloat(getComputedStyle(document.documentElement)
+          hauteurBarre:barre.getBoundingClientRect().height,
+          margeBasse:parseFloat(getComputedStyle(zone).paddingBottom),
+          ancrageBas:parseFloat(getComputedStyle(document.documentElement)
             .scrollPaddingBottom),
-          overflow:root.scrollWidth-root.clientWidth,
-          targets:buttons.map(button => {
-            const rect = button.getBoundingClientRect();
+          debordement:racine.scrollWidth - racine.clientWidth,
+          cibles:boutons.map(bouton => {
+            const rect = bouton.getBoundingClientRect();
             return { width:rect.width, height:rect.height };
           })
         };
       });
-      assert.ok(metrics.overflow <= 1,
+      assert.ok(mesures.debordement <= 1,
         `la navigation ne doit pas elargir le document a ${width}px`);
-      assert.ok(metrics.bottomPadding >= metrics.navHeight,
+      assert.ok(mesures.margeBasse >= mesures.hauteurBarre,
         `le contenu doit rester au-dessus de la barre a ${width}px`);
-      assert.ok(metrics.scrollPaddingBottom >= metrics.navHeight,
+      assert.ok(mesures.ancrageBas >= mesures.hauteurBarre,
         `le focus ne doit pas etre masque par la barre a ${width}px`);
-      metrics.targets.forEach(target => {
-        assert.ok(target.width >= CIBLE_TACTILE_PX && target.height >= CIBLE_TACTILE_PX,
+      mesures.cibles.forEach(cible => {
+        assert.ok(cible.width >= CIBLE_TACTILE_PX && cible.height >= CIBLE_TACTILE_PX,
           `chaque destination doit mesurer au moins 44 px a ${width}px`);
       });
     }
 
-    const anonymousContext = await browser.newContext({
+    /* ---- Le visiteur : ce qu'il voit, et ce qu'on lui refuse. ---- */
+    const contexteAnonyme = await browser.newContext({
       viewport:{ width:320, height:780 },
       isMobile:true,
       hasTouch:true,
       reducedMotion:"reduce"
     });
-    const anonymousPage = await anonymousContext.newPage();
-    const anonymousErrors = [];
-    anonymousPage.on("pageerror", error => anonymousErrors.push(error.message));
-    await installConnectedSupabase(anonymousPage, false);
-    await anonymousPage.goto(server.url + "/index.html");
-    await anonymousPage.locator("#mobileNavDashboard").waitFor({ state:"hidden" });
-    await anonymousPage.getByRole("button", {
-      name:"Continuer hors connexion",
-      exact:true
+    const pageAnonyme = await contexteAnonyme.newPage();
+    const erreursAnonymes = [];
+    pageAnonyme.on("pageerror", error => erreursAnonymes.push(error.message));
+    await installConnectedSupabase(pageAnonyme, false);
+    await pageAnonyme.goto(server.url + "/index.html");
+    await pageAnonyme.locator(".mobile-nav [data-rubrique=\"mon-roster\"]")
+      .waitFor({ state:"hidden" });
+    await pageAnonyme.getByRole("button", {
+      name:"Continuer hors connexion", exact:true
     }).click();
     assert.deepEqual(
-      await anonymousPage.locator(".mobile-nav button:not([hidden])")
+      await pageAnonyme.locator(".mobile-nav button:not([hidden])")
         .allTextContents().then(items => items.map(item => item.trim())),
-      ["Créer","Plus"],
+      ["Accueil", "Équipes", "Plus"],
       "un visiteur ne doit voir que les destinations utilisables sans compte"
     );
-    assert.equal(await anonymousPage.locator("#view-wiki").isVisible(), true,
-      "une vue privee initiale doit se replier sur le Wiki pour un visiteur");
-    await anonymousPage.locator("#mobileNavMore").click();
+    assert.equal(await pageAnonyme.locator("#view-home").isVisible(), true,
+      "un visiteur doit atterrir sur l'accueil public");
+    await pageAnonyme.locator("#mobileMoreButton").click();
     assert.equal(
-      await anonymousPage.locator('[data-mobile-view="analyse"]').isHidden(),
+      await pageAnonyme.locator("#mobileDrawer [data-view=\"analyse\"]").isHidden(),
       true,
       "Analyse ne doit pas etre proposee sans compte"
     );
-    assert.equal(await anonymousPage.locator("#mobileAccountLogin").isVisible(), true);
-    assert.deepEqual(anonymousErrors, []);
-    await anonymousContext.close();
+    await pageAnonyme.locator("#mobileDrawer [data-action=\"compte\"]").click();
+    assert.equal(await pageAnonyme.locator("#authOverlay").isVisible(), true,
+      "« Mon compte » doit proposer la connexion a un visiteur");
+    assert.deepEqual(erreursAnonymes, []);
+    await contexteAnonyme.close();
 
     assert.deepEqual(errors, []);
-    console.log("navigation mobile : barre inferieure, Plus, focus et dimensions OK");
+    console.log("navigation mobile : barre au pouce, tiroir, focus et dimensions OK");
   }finally{
     await context.close();
     await browser.close();

@@ -117,6 +117,7 @@ const SUITES = {
     "python -m unittest tests/test_lister_chronometrage.py",
     "python scripts/lister-chronometrage.py --check",
     "node tests/routage.test.js",
+    "node tests/charte.test.js",
     "node tests/rubriques.test.js",
     "node tests/coquille.test.js",
     "node tests/analyse-elements.test.js",

@@ -56,6 +56,15 @@
 
   /* La largeur de la page, et la seule ombre du site. */
   --shell:min(1440px, calc(100% - 48px));
+  /* La hauteur de la barre du pouce. Tout ce qui se pose en bas de l'ecran
+     sur un telephone — le contenu, le bandeau de mise a jour, les toasts —
+     doit passer AU-DESSUS d'elle. Un jeton, parce que trois feuilles en
+     dependent : la recopier laissait l'ordre de chargement decider. */
+  --barre-pouce:68px;
+  /* La respiration d'une vue. `main` n'en porte aucune : une banniere pleine
+     largeur doit pouvoir s'en affranchir. */
+  --respiration:40px 48px 54px;
+  --respiration-mobile:26px 14px 34px;
   --radius:7px;
   --shadow:0 18px 50px rgba(0,0,0,.45);
 }

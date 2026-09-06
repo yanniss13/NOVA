@@ -49,16 +49,21 @@ propre section quand il commencera.
 
 ### Les jetons
 
-`css/base.css` recoit la palette de la maquette, mot pour mot, sous les noms de
-la maquette. Les noms de jetons de l'ancienne charte sont CONSERVES et
-redefinis comme alias des nouveaux.
+**Decision revue en cours de lot.** La premiere version de ce document gardait
+les anciens noms de jetons comme ALIAS des nouveaux : 676 usages repeints sans
+effort. Le proprietaire a refuse ce raccourci — « je veux que les fichiers
+soient propres et decoupes des le debut, pas envie de faire une refactorisation
+plus tard » — et il a eu raison : deux vocabulaires de couleur dans le meme
+projet, c'est une dette qu'il faut bien payer un jour.
 
-Cet alias est le coeur du lot : les feuilles du site comptent 676 usages de
-`var(--...)` contre une cinquantaine de couleurs ecrites en dur. Redefinir les
-jetons repeint donc l'essentiel du site sans toucher aux vues, et les alias
-disparaitront ecran par ecran au fil des lots 1 a 6.
+Les anciens noms sont donc RENOMMES partout, en une passe, et
+`tests/charte.test.js` refuse leur retour. `css/base.css`, qui melangeait
+jetons, remise a zero, ancienne barre et boutons, est decoupe en cinq feuilles :
+`charte.css` (les jetons, et rien d'autre), `socle.css` (la page),
+`composants.css` (ce que plusieurs vues partagent), `coquille.css` (ce qui
+entoure la vue) et `accueil.css`.
 
-Correspondance :
+Correspondance appliquee :
 
 | Ancien | Nouveau |
 | --- | --- |
@@ -70,6 +75,15 @@ Correspondance :
 | `--muted` | `--mist` |
 | `--ink` | `--abyss` |
 | `--ui` | `--body` |
+
+Deux jetons etendent la palette de la maquette, parce que le site reel a plus
+de profondeur que le prototype : `--slate-deep` pour les surfaces qui se
+detachent du fond sans devenir un panneau (menus, tiroir), et `--mist-deep`
+pour le texte de second plan. Un troisieme est apparu a l'usage,
+`--gold-deep` : le calculateur distingue cinq sources de buffs par un degrade
+d'or, et la fusion des jetons en avait ecrase une marche. Un quatrieme,
+`--barre-pouce`, nomme la hauteur de la barre mobile — trois feuilles en
+dependent, et sans jeton c'est l'ordre de chargement qui tranchait.
 
 `--line` et `--line-soft` existent des deux cotes avec la meme opposition
 franc / discret : ils prennent directement les valeurs de la maquette, deux
@@ -84,9 +98,19 @@ livraison du lot.
 ### La coquille
 
 `index.html` remplace son en-tete, sa barre d'onglets, son menu mobile et son
-pied de page par ceux de la maquette. Le balisage est ecrit dans le fichier, il
-n'est pas genere en JavaScript : l'accueil public doit rester lisible sans JS,
-pour l'apercu de lien et pour le premier affichage hors ligne.
+pied de page par ceux de la maquette.
+
+**Decision revue en cours de lot.** Les ENTREES de navigation ne sont pas
+ecrites dans le fichier : elles sont construites par `js/vues/coquille.js`
+depuis la table des rubriques. Trois barres affichent la meme navigation — le
+bureau, le tiroir mobile, la barre du pouce — et les ecrire a la main, c'etait
+trois listes a tenir d'accord. Le CONTENU de l'accueil, lui, reste ecrit dans
+le fichier : c'est la page qui doit rester lisible sans JavaScript, pour
+l'apercu de lien et le premier affichage hors ligne.
+
+Le compte, qui existait en double — une version bureau et une version mobile,
+six elements jumeaux — n'existe plus qu'en un exemplaire : le tiroir mobile
+ouvre le meme menu que le bouton de bureau.
 
 La coquille comprend le lien d'evitement, l'en-tete a sceau et marque, la
 navigation de bureau, le menu Outils, le bouton de compte, le bouton et le
@@ -133,14 +157,19 @@ vues enregistrees dans `js/app.js` ne changent pas d'une ligne.
 
 ### L'accueil public
 
-Une douzieme vue, `home`, est ajoutee : `js/vues/accueil.js`, section
-`#view-home` dans `index.html`, feuille `css/accueil.css`. Elle reprend
+Une douzieme vue, `home`, est ajoutee : section `#view-home` dans `index.html`
+et feuille `css/accueil.css`. Elle n'a PAS de module de rendu — son balisage
+est statique, et ses boutons portent `data-rubrique` ou `data-view`, que la
+delegation de la coquille branche. Elle reprend
 exactement l'accueil de la maquette — banniere, trois cartes essentielles,
 bande d'outils, appel a la connexion.
 
 Elle est publique et devient la vue de repli du visiteur sans compte, a la
 place du Wiki. Un membre connecte qui ouvre « Notre guilde » arrive sur
-`dashboard`, comme le prevoit le document de conception.
+`dashboard`, comme le prevoit le document de conception. Cette bascule est une
+DONNEE de la table — le champ `chefConnecte` — et non un cas particulier dans
+la coquille : sans elle, un membre qui se connectait restait sur la page qui
+l'invite a creer un compte.
 
 `js/metier/routage.js` gagne la route `home` ; `js/app.js` enregistre la vue.
 
@@ -164,29 +193,51 @@ onglets actuels. Deux regles :
   coquille, et JAMAIS assouplis. Un test qui verifiait qu'un onglet mene
   quelque part doit continuer a le verifier.
 
-Ancres stables offertes par la coquille, sur lesquelles les tests s'appuient :
-`[data-view]` pour une vue, `[data-rubrique]` pour une rubrique, `#view-<nom>`
-pour la section, `.view.active` pour la vue ouverte.
+Ancres stables offertes par la coquille : `[data-view]` pour une vue,
+`[data-rubrique]` pour une rubrique, `#rubrique-<id>` pour une entree de la
+barre de bureau, `#onglet-<vue>` pour un onglet local, `#view-<nom>` pour la
+section, `.view.active` pour la vue ouverte.
+
+Mais les tests ne visent pas ces ancres directement. Dix-neuf d'entre eux
+cassaient d'un coup parce qu'ils connaissaient la FORME de la barre alors
+qu'ils voulaient dire une DESTINATION. `tests/helpers/naviguer.js` sait comment
+la coquille est faite ; les tests disent ou aller. Il ne triche pas : il clique
+ce qu'un membre cliquerait, ouvre le menu Outils ou le tiroir quand il le faut,
+et lit la table des rubriques de production plutot que d'en recopier une
+seconde.
 
 Tests nouveaux :
 
 - `tests/rubriques.test.js` : la table des rubriques couvre les douze vues,
   chaque vue appartient a une seule rubrique, aucun identifiant de rubrique
   n'entre en collision avec un nom de vue.
-- `tests/coquille.test.js` : `index.html` porte les elements de la coquille,
-  le lien LootBar garde son `rel="sponsored"`, chaque rubrique de la table a
-  son entree de navigation.
-- `tests/refonte-coquille.playwright.js` : navigation de bureau et mobile,
-  onglets locaux, menu Outils, tiroir mobile, focus au clavier, et absence de
-  debordement horizontal a 1440, 1024, 390 et 320 px.
+- `tests/coquille.test.js` : `index.html` porte les accroches de la coquille,
+  le lien LootBar garde son `rel="sponsored"`, l'ancienne coquille a disparu en
+  entier, chaque vue de la table a sa section et se nomme par un titre qui
+  existe, et aucun `data-view` ou `data-rubrique` n'est inconnu de la table.
+- `tests/navigation-mobile.playwright.js`, reecrit : barre du pouce, tiroir,
+  restitution du focus au declencheur employe, onglets locaux, cibles de 44 px,
+  absence de debordement a 320, 360 et 390 px, et portee du visiteur.
 
 ### Validation
 
 1. `npm test` complet, unitaires et navigateur.
 2. Captures a 1440, 1024, 390 et 320 px des douze vues.
 3. Lecture des captures : contrastes, debordements, lisibilite du texte
-   courant en Georgia sur les tableaux denses.
+   courant en Georgia sur les tableaux denses. `scripts/apercu-refonte.js`
+   les produit.
 4. Comparaison de l'accueil reel avec l'accueil de la maquette.
+
+### Ce que la bascule a retire
+
+Trois mecaniques de l'ancienne coquille disparaissent avec elle, et leurs
+tests avec :
+
+- l'en-tete retractable au defilement. La barre du haut est compacte a toutes
+  les largeurs, elle n'a plus rien a replier ;
+- les reperes de defilement du rail d'onglets. Il n'y a plus de rail ;
+- l'arriere-plan et le verrou de defilement du panneau « Plus ». Le tiroir est
+  un petit panneau ancre, plus un panneau plein ecran.
 
 ## Hors perimetre du lot 0
 

@@ -194,6 +194,7 @@ function remplirOngletsLocaux(rubriqueActive, vue){
   liste.textContent = "";
   onglets.forEach(onglet => {
     const bouton = boutonDeCoquille(onglet.libelle, {
+      id:"onglet-" + onglet.vue,
       role:"tab",
       "data-view":onglet.vue,
       "aria-selected":String(onglet.vue === vue),
@@ -272,8 +273,14 @@ function ongletDeLaVue(nom){
 const SURGISSANTS = [
   { panneau:"#toolsMenu", declencheur:"#toolsMenuButton" },
   { panneau:"#accountMenu", declencheur:"#accountMenuButton" },
-  { panneau:"#mobileDrawer", declencheur:"#mobileMenuButton" }
+  /* Le tiroir a DEUX declencheurs : le bouton du menu en haut, et « Plus » en
+     bas. Le focus doit revenir a celui qui l'a ouvert — le rendre toujours au
+     premier renverrait le doigt en haut de l'ecran apres un geste au pouce. */
+  { panneau:"#mobileDrawer", declencheur:"#mobileMenuButton,#mobileMoreButton" }
 ];
+
+/* Le declencheur reellement employe, pour lui rendre le focus. */
+let dernierDeclencheur = null;
 
 function surgissantOuvert(){
   return SURGISSANTS.find(entree => {
@@ -290,18 +297,19 @@ function fermerLesSurgissants(rendreLeFocus){
     document.querySelectorAll(entree.declencheur).forEach(bouton =>
       bouton.setAttribute("aria-expanded", "false"));
   });
-  if(rendreLeFocus && ouvert){
-    const declencheur = $(ouvert.declencheur);
-    if(declencheur) declencheur.focus();
+  if(rendreLeFocus && ouvert && dernierDeclencheur){
+    dernierDeclencheur.focus();
   }
+  dernierDeclencheur = null;
 }
 
-function basculerSurgissant(selecteurPanneau){
+function basculerSurgissant(selecteurPanneau, declencheur){
   const panneau = $(selecteurPanneau);
   if(!panneau) return;
   const etaitOuvert = !panneau.hidden;
   fermerLesSurgissants(false);
   if(etaitOuvert) return;
+  dernierDeclencheur = declencheur || null;
   panneau.hidden = false;
   SURGISSANTS
     .filter(entree => entree.panneau === selecteurPanneau)
@@ -338,20 +346,20 @@ function brancherCoquille(){
     if(cible.dataset.action === "compte"){
       event.preventDefault();
       const connecte = $("#accountConnected");
-      if(connecte && !connecte.hidden) basculerSurgissant("#accountMenu");
+      if(connecte && !connecte.hidden) basculerSurgissant("#accountMenu", cible);
       else openAuth();
       return;
     }
     if(cible === $("#toolsMenuButton")){
-      basculerSurgissant("#toolsMenu");
+      basculerSurgissant("#toolsMenu", cible);
       return;
     }
     if(cible === $("#accountMenuButton")){
-      basculerSurgissant("#accountMenu");
+      basculerSurgissant("#accountMenu", cible);
       return;
     }
     if(cible.id === "mobileMenuButton" || cible.id === "mobileMoreButton"){
-      basculerSurgissant("#mobileDrawer");
+      basculerSurgissant("#mobileDrawer", cible);
       return;
     }
     /* La marque est un lien : le laisser suivre son href rechargerait la page. */
@@ -404,11 +412,26 @@ function brancherCoquille(){
   });
 }
 
+/* Le tiroir n'existe qu'en dessous de 768 px. Passe cette largeur, son
+   declencheur disparait : le laisser ouvert le rendrait impossible a fermer. */
+function surveillerLaLargeur(){
+  if(!window.matchMedia) return;
+  const mobile = window.matchMedia("(max-width:767px)");
+  const normaliser = evenement => {
+    if(evenement.matches) return;
+    const tiroir = $("#mobileDrawer");
+    if(tiroir && !tiroir.hidden) fermerLesSurgissants(false);
+  };
+  if(mobile.addEventListener) mobile.addEventListener("change", normaliser);
+  else if(mobile.addListener) mobile.addListener(normaliser);
+}
+
 function initialiserCoquille(){
   construireNavigationDeBureau();
   construireTiroirMobile();
   construireBarreAuPouce();
   brancherCoquille();
+  surveillerLaLargeur();
   surChangementDeVue(rangerCoquille);
   rangerCoquille(vueCourante());
 }
