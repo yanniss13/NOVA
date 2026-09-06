@@ -1550,6 +1550,1189 @@
    }
   }
  },
+ "bornes": {
+  "objets": {
+   "tables": [
+    {
+     "Aerialattack_Damadd_Rate": [
+      1381,
+      2765
+     ]
+    },
+    {
+     "Normalskill_Damadd_Rate": [
+      806,
+      1612
+     ]
+    },
+    {
+     "Debuff_Time_Rate": [
+      1109,
+      2219
+     ]
+    },
+    {
+     "Normalskillchangetag_Damadd_Rate": [
+      1417,
+      2836
+     ]
+    },
+    {
+     "C_Critical_Rate": [
+      375,
+      752
+     ]
+    },
+    {
+     "Normalattack_Damadd_Rate": [
+      1150,
+      2303
+     ]
+    },
+    {
+     "AllElement_Add": [
+      208,
+      415
+     ],
+     "C_Critical_Dam_Rate": [
+      669,
+      1339
+     ],
+     "C_Critical_Rate": [
+      379,
+      758
+     ],
+     "D_Protect_Cur_Rate": [
+      91,
+      182
+     ],
+     "Dark_Add": [
+      296,
+      592
+     ],
+     "Default_Add": [
+      296,
+      592
+     ],
+     "Earth_Add": [
+      296,
+      592
+     ],
+     "Fire_Add": [
+      296,
+      592
+     ],
+     "Holy_Add": [
+      296,
+      592
+     ],
+     "I_AtkAdd_Rate": [
+      265,
+      530
+     ],
+     "Ice_Add": [
+      296,
+      592
+     ],
+     "Thunder_Add": [
+      296,
+      592
+     ],
+     "TickDam_Rate": [
+      759,
+      1518
+     ],
+     "Wind_Add": [
+      296,
+      592
+     ]
+    },
+    {
+     "I_AtkAdd_Rate": [
+      398,
+      398
+     ]
+    },
+    {
+     "TickDam_Rate": [
+      1084,
+      2170
+     ]
+    },
+    {
+     "Buff_Time_Rate": [
+      785,
+      1570
+     ],
+     "Burst_Gauge_Rate": [
+      421,
+      842
+     ],
+     "Debuff_Time_Rate": [
+      785,
+      1570
+     ],
+     "Earth_Burst_Gauge_Rate": [
+      701,
+      1402
+     ],
+     "Fire_Burst_Gauge_Rate": [
+      701,
+      1402
+     ],
+     "H_HealPower_Rate": [
+      519,
+      1039
+     ],
+     "I_MaxHpAdd_Rate": [
+      156,
+      313
+     ],
+     "Ice_Burst_Gauge_Rate": [
+      701,
+      1402
+     ],
+     "P_Shield_Rate": [
+      649,
+      1297
+     ],
+     "Thunder_Burst_Gauge_Rate": [
+      701,
+      1402
+     ],
+     "Wind_Burst_Gauge_Rate": [
+      701,
+      1402
+     ]
+    },
+    {
+     "C_Critical_Rate": [
+      379,
+      760
+     ]
+    },
+    {
+     "I_MaxHpAdd_Rate": [
+      235,
+      235
+     ]
+    },
+    {
+     "P_Shield_Rate": [
+      649,
+      1297
+     ]
+    },
+    {
+     "A_Block": [
+      8,
+      20
+     ]
+    },
+    {
+     "AllElement_Res": [
+      166,
+      332
+     ],
+     "C_Critical_DamRes_Rate": [
+      669,
+      1339
+     ],
+     "C_Critical_ResRate": [
+      379,
+      758
+     ],
+     "D_Protect_CurRes_Rate": [
+      130,
+      260
+     ],
+     "Dark_Res": [
+      239,
+      479
+     ],
+     "Default_Res": [
+      239,
+      479
+     ],
+     "Earth_Res": [
+      239,
+      479
+     ],
+     "Fire_Res": [
+      239,
+      479
+     ],
+     "Holy_Res": [
+      239,
+      479
+     ],
+     "I_DefAdd_Rate": [
+      213,
+      426
+     ],
+     "Ice_Res": [
+      239,
+      479
+     ],
+     "MF_ChargeEffic_Rate": [
+      561,
+      1121
+     ],
+     "Thunder_Res": [
+      239,
+      479
+     ],
+     "Wind_Res": [
+      239,
+      479
+     ]
+    },
+    {
+     "I_DefAdd_Rate": [
+      320,
+      320
+     ]
+    },
+    {
+     "Activethird_Damadd_Rate": [
+      629,
+      1258
+     ],
+     "Buff_Time_Rate": [
+      666,
+      1332
+     ],
+     "Burst_Gauge_Rate": [
+      250,
+      501
+     ],
+     "C_Critical_DamRes_Rate": [
+      398,
+      795
+     ],
+     "C_Critical_Dam_Rate": [
+      398,
+      795
+     ],
+     "C_Critical_Rate": [
+      225,
+      451
+     ],
+     "C_Critical_ResRate": [
+      225,
+      451
+     ],
+     "Debuff_Time_Rate": [
+      666,
+      1332
+     ],
+     "H_HealPower_Rate": [
+      309,
+      617
+     ],
+     "I_AtkAdd_Rate": [
+      158,
+      315
+     ],
+     "I_DefAdd_Rate": [
+      127,
+      253
+     ],
+     "I_MaxHpAdd_Rate": [
+      93,
+      187
+     ],
+     "MF_ChargeEffic_Rate": [
+      333,
+      667
+     ],
+     "Normalattack_Damadd_Rate": [
+      690,
+      1380
+     ],
+     "Normalskill_Damadd_Rate": [
+      484,
+      968
+     ],
+     "Normalskillchangetag_Damadd_Rate": [
+      851,
+      1702
+     ],
+     "P_Shield_Rate": [
+      386,
+      772
+     ],
+     "TickDam_Rate": [
+      644,
+      1288
+     ],
+     "Ultimateskill_Damadd_Rate": [
+      379,
+      758
+     ]
+    },
+    {
+     "Activethird_Damadd_Rate": [
+      1257,
+      3142
+     ],
+     "Buff_Time_Rate": [
+      1331,
+      3328
+     ],
+     "Burst_Gauge_Rate": [
+      500,
+      1249
+     ],
+     "C_Critical_DamRes_Rate": [
+      795,
+      1988
+     ],
+     "C_Critical_Dam_Rate": [
+      795,
+      1988
+     ],
+     "C_Critical_Rate": [
+      450,
+      1126
+     ],
+     "C_Critical_ResRate": [
+      450,
+      1126
+     ],
+     "Debuff_Time_Rate": [
+      1331,
+      3328
+     ],
+     "H_HealPower_Rate": [
+      617,
+      1541
+     ],
+     "I_AtkAdd_Rate": [
+      315,
+      787
+     ],
+     "I_DefAdd_Rate": [
+      253,
+      632
+     ],
+     "I_MaxHpAdd_Rate": [
+      186,
+      464
+     ],
+     "MF_ChargeEffic_Rate": [
+      666,
+      1665
+     ],
+     "Normalattack_Damadd_Rate": [
+      1380,
+      3451
+     ],
+     "Normalskill_Damadd_Rate": [
+      968,
+      2418
+     ],
+     "Normalskillchangetag_Damadd_Rate": [
+      1701,
+      4252
+     ],
+     "P_Shield_Rate": [
+      771,
+      1927
+     ],
+     "TickDam_Rate": [
+      1288,
+      3219
+     ],
+     "Ultimateskill_Damadd_Rate": [
+      758,
+      1895
+     ]
+    }
+   ],
+   "index": {
+    "7ds-armures-ssr/Bas/Bas de la puissance retorse.webp": 0,
+    "7ds-armures-ssr/Bas/Bas du vigile silencieux.webp": 1,
+    "7ds-armures-ssr/Bottes/Bottes de combat du venin tissé.webp": 2,
+    "7ds-armures-ssr/Ceinture/Ceinture d'écailles ensanglantées.webp": 3,
+    "7ds-armures-ssr/Haut/Haut de l'œil de l'étoile sinistre.webp": 4,
+    "7ds-armures-ssr/Haut/Haut du cœur noir de dragon tyran.webp": 5,
+    "7ds-bijoux/Anneau/Anneau de l'araignée de l'ombre.webp": 6,
+    "7ds-bijoux/Anneau/Anneau de l'hymne régénérateur.webp": 6,
+    "7ds-bijoux/Anneau/Anneau de l'éclat spectral.webp": 6,
+    "7ds-bijoux/Anneau/Anneau de la mélodie d'Arachnée.webp": 6,
+    "7ds-bijoux/Anneau/Anneau de la pensée pervertie.webp": 6,
+    "7ds-bijoux/Anneau/Anneau de pulsion maudite.webp": 6,
+    "7ds-bijoux/Anneau/Anneau des 100 jours (jamais porté).webp": 6,
+    "7ds-bijoux/Anneau/Anneau du cristal de vie.webp": 6,
+    "7ds-bijoux/Anneau/Anneau du murmure de l'oasis.webp": 7,
+    "7ds-bijoux/Anneau/Anneau du serment de la flamme cramoisie.webp": 8,
+    "7ds-bijoux/Anneau/Anneau du souverain cupide.webp": 6,
+    "7ds-bijoux/Anneau/Anneau du vigile corrompu.webp": 6,
+    "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de l'araignée de l'ombre.webp": 9,
+    "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de l'hymne régénérateur.webp": 9,
+    "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de l'éclat spectral.webp": 9,
+    "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de la mélodie d'Arachnée.webp": 9,
+    "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de la pensée pervertie.webp": 9,
+    "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles de pulsion maudite.webp": 9,
+    "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles des 100 jours (jamais portées).webp": 9,
+    "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles du chaos ténébreux.webp": 10,
+    "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles du cristal de vie.webp": 9,
+    "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles du murmure de l'oasis.webp": 11,
+    "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles du souverain cupide.webp": 9,
+    "7ds-bijoux/Boucle d'oreille/Boucles d'oreilles du vigile corrompu.webp": 9,
+    "7ds-bijoux/Collier/Collier au talisman du serment.webp": 12,
+    "7ds-bijoux/Collier/Collier d'artisanat de la tempête des ombres.webp": 13,
+    "7ds-bijoux/Collier/Collier de l'araignée de l'ombre.webp": 14,
+    "7ds-bijoux/Collier/Collier de l'hymne régénérateur.webp": 14,
+    "7ds-bijoux/Collier/Collier de l'éclat spectral.webp": 14,
+    "7ds-bijoux/Collier/Collier de la mélodie d'Arachnée.webp": 14,
+    "7ds-bijoux/Collier/Collier de la pensée pervertie.webp": 14,
+    "7ds-bijoux/Collier/Collier de pulsion maudite.webp": 14,
+    "7ds-bijoux/Collier/Collier des 100 jours (jamais porté).webp": 14,
+    "7ds-bijoux/Collier/Collier du cristal de vie.webp": 14,
+    "7ds-bijoux/Collier/Collier du murmure de l'oasis.webp": 15,
+    "7ds-bijoux/Collier/Collier du souverain cupide.webp": 14,
+    "7ds-bijoux/Collier/Collier du vigile corrompu.webp": 14,
+    "7ds-armures-ssr/Armure liee/Ami loyal.webp": 16,
+    "7ds-armures-ssr/Armure liee/Arrogance adéquate.webp": 17,
+    "7ds-armures-ssr/Armure liee/Ascendance royale.webp": 17,
+    "7ds-armures-ssr/Armure liee/Aventure du prince.webp": 17,
+    "7ds-armures-ssr/Armure liee/Aventure en toute sécurité.webp": 17,
+    "7ds-armures-ssr/Armure liee/Aventure exemplaire.webp": 17,
+    "7ds-armures-ssr/Armure liee/Barricade de fortune.webp": 17,
+    "7ds-armures-ssr/Armure liee/Chercheuse de savoir.webp": 17,
+    "7ds-armures-ssr/Armure liee/Chevalier honorable.webp": 17,
+    "7ds-armures-ssr/Armure liee/Chevalier impérial.webp": 17,
+    "7ds-armures-ssr/Armure liee/Chevalier sacré de la foudre.webp": 17,
+    "7ds-armures-ssr/Armure liee/Chevalier sacré de la tempête.webp": 17,
+    "7ds-armures-ssr/Armure liee/Chevalier sacré des explosions.webp": 17,
+    "7ds-armures-ssr/Armure liee/Chevalier sacré du mur de fer.webp": 17,
+    "7ds-armures-ssr/Armure liee/Chevalier sacré exemplaire.webp": 16,
+    "7ds-armures-ssr/Armure liee/Chevalier sacré prometteur.webp": 17,
+    "7ds-armures-ssr/Armure liee/Chevalier sacré à la visière en étoile.webp": 17,
+    "7ds-armures-ssr/Armure liee/Choppe de bière de la fin des temps.webp": 16,
+    "7ds-armures-ssr/Armure liee/Courtoisie minimale.webp": 17,
+    "7ds-armures-ssr/Armure liee/Cuisinier remplaçant.webp": 17,
+    "7ds-armures-ssr/Armure liee/Cœur de prière.webp": 16,
+    "7ds-armures-ssr/Armure liee/Dignité de la sainte.webp": 17,
+    "7ds-armures-ssr/Armure liee/Dignité dorée.webp": 17,
+    "7ds-armures-ssr/Armure liee/Dignité du capitaine.webp": 17,
+    "7ds-armures-ssr/Armure liee/Dignité royale.webp": 17,
+    "7ds-armures-ssr/Armure liee/Début de l'aventure.webp": 17,
+    "7ds-armures-ssr/Armure liee/Défense minimale.webp": 17,
+    "7ds-armures-ssr/Armure liee/Défense simple.webp": 17,
+    "7ds-armures-ssr/Armure liee/Défense solide.webp": 17,
+    "7ds-armures-ssr/Armure liee/Employé saisonnier.webp": 16,
+    "7ds-armures-ssr/Armure liee/Exploration de l'inconnu.webp": 17,
+    "7ds-armures-ssr/Armure liee/Fille de la forêt et de la terre.webp": 17,
+    "7ds-armures-ssr/Armure liee/Fille enjouée.webp": 17,
+    "7ds-armures-ssr/Armure liee/Formalité de l'érudite en chef.webp": 17,
+    "7ds-armures-ssr/Armure liee/Forteresse de fer impénétrable.webp": 17,
+    "7ds-armures-ssr/Armure liee/Furtivité du démon.webp": 17,
+    "7ds-armures-ssr/Armure liee/Gloire du passé.webp": 17,
+    "7ds-armures-ssr/Armure liee/Gris romantique.webp": 16,
+    "7ds-armures-ssr/Armure liee/Honneur au vieux soldat.webp": 17,
+    "7ds-armures-ssr/Armure liee/Héros de Liones.webp": 17,
+    "7ds-armures-ssr/Armure liee/Instinct incisif.webp": 17,
+    "7ds-armures-ssr/Armure liee/L'ombre de la forêt profonde.webp": 17,
+    "7ds-armures-ssr/Armure liee/Le Bélier de la Luxure.webp": 17,
+    "7ds-armures-ssr/Armure liee/Le Grizzly de la Paresse.webp": 17,
+    "7ds-armures-ssr/Armure liee/Le Renard de l'Avarice.webp": 17,
+    "7ds-armures-ssr/Armure liee/Le Sanglier de la Gourmandise.webp": 17,
+    "7ds-armures-ssr/Armure liee/Le Serpent de l'Envie.webp": 17,
+    "7ds-armures-ssr/Armure liee/Lumière de Liones.webp": 17,
+    "7ds-armures-ssr/Armure liee/Lumière de guidance.webp": 17,
+    "7ds-armures-ssr/Armure liee/Majesté bien malveillante.webp": 17,
+    "7ds-armures-ssr/Armure liee/Majordome royal.webp": 16,
+    "7ds-armures-ssr/Armure liee/Maraudeur décontracté.webp": 17,
+    "7ds-armures-ssr/Armure liee/Marche des ombres.webp": 17,
+    "7ds-armures-ssr/Armure liee/Mission secrète.webp": 17,
+    "7ds-armures-ssr/Armure liee/Moment de détente.webp": 16,
+    "7ds-armures-ssr/Armure liee/Moment en famille.webp": 16,
+    "7ds-armures-ssr/Armure liee/Mouvement rebelle.webp": 17,
+    "7ds-armures-ssr/Armure liee/Ombre du roi des fées.webp": 17,
+    "7ds-armures-ssr/Armure liee/Pas légers.webp": 17,
+    "7ds-armures-ssr/Armure liee/Petite exploratrice.webp": 17,
+    "7ds-armures-ssr/Armure liee/Piste de la flamme cramoisie.webp": 17,
+    "7ds-armures-ssr/Armure liee/Prestige de l'archiprêtresse.webp": 17,
+    "7ds-armures-ssr/Armure liee/Protection de la fée.webp": 17,
+    "7ds-armures-ssr/Armure liee/Préparation minutieuse.webp": 17,
+    "7ds-armures-ssr/Armure liee/Préparation totale.webp": 17,
+    "7ds-armures-ssr/Armure liee/Retour du Chevalier Sacré.webp": 17,
+    "7ds-armures-ssr/Armure liee/Rituel sacré.webp": 17,
+    "7ds-armures-ssr/Armure liee/Robe de printemps.webp": 17,
+    "7ds-armures-ssr/Armure liee/Résistance et révolution.webp": 17,
+    "7ds-armures-ssr/Armure liee/Seigneur des ombres.webp": 17,
+    "7ds-armures-ssr/Armure liee/Serment du trône.webp": 16,
+    "7ds-armures-ssr/Armure liee/Serveuse de la taverne.webp": 16,
+    "7ds-armures-ssr/Armure liee/Sortie du démon.webp": 16,
+    "7ds-armures-ssr/Armure liee/Sortie joyeuse.webp": 17,
+    "7ds-armures-ssr/Armure liee/Souffle d'exploration.webp": 17,
+    "7ds-armures-ssr/Armure liee/Tenue d'exercice d'exploratrice.webp": 17,
+    "7ds-armures-ssr/Armure liee/Tenue de combat cloutée.webp": 17,
+    "7ds-armures-ssr/Armure liee/Tenue de cérémonie.webp": 16,
+    "7ds-armures-ssr/Armure liee/Tenue de fête légère.webp": 17,
+    "7ds-armures-ssr/Armure liee/Tenue de soirée pour un rendez-vous secret.webp": 17,
+    "7ds-armures-ssr/Armure liee/Tenue modeste.webp": 17,
+    "7ds-armures-ssr/Armure liee/Traces de la forêt.webp": 16,
+    "7ds-armures-ssr/Armure liee/Traces de souvenirs.webp": 17,
+    "7ds-armures-ssr/Armure liee/Une belle journée de repos.webp": 16,
+    "7ds-armures-ssr/Armure liee/Une nouvelle aventure.webp": 17,
+    "7ds-armures-ssr/Armure liee/Une tenue de jeunesse.webp": 17,
+    "7ds-armures-ssr/Armure liee/Vedette de la taverne.webp": 17,
+    "7ds-armures-ssr/Armure liee/Violence nordique.webp": 17,
+    "7ds-armures-ssr/Armure liee/Voyageuse cachottière.webp": 17,
+    "7ds-armures-ssr/Armure liee/Vêtements de travail de l'apothicaire.webp": 17,
+    "7ds-armures-ssr/Armure liee/Vêtements formels légers.webp": 17,
+    "7ds-armures-ssr/Armure liee/Vœu du prince.webp": 17,
+    "7ds-armures-ssr/Armure liee/Épée du vieux roi.webp": 17
+   }
+  },
+  "armes": {
+   "tables": [
+    {
+     "slots": [
+      5000
+     ],
+     "stats": {
+      "0|C_Critical_Dam_Rate": [
+       900,
+       1100
+      ],
+      "0|C_Critical_Rate": [
+       450,
+       550
+      ],
+      "0|D_Protect_Cur_Rate": [
+       810,
+       990
+      ],
+      "0|I_AtkAdd_Rate": [
+       270,
+       330
+      ],
+      "0|I_DefAdd_Rate": [
+       180,
+       220
+      ],
+      "0|I_MaxHpAdd_Rate": [
+       180,
+       220
+      ]
+     }
+    },
+    {
+     "slots": [
+      10000,
+      5000
+     ],
+     "stats": {
+      "0|C_Critical_Dam_Rate": [
+       1800,
+       2200
+      ],
+      "0|C_Critical_Rate": [
+       900,
+       1100
+      ],
+      "0|D_Protect_Cur_Rate": [
+       1620,
+       1980
+      ],
+      "0|I_AtkAdd_Rate": [
+       450,
+       550
+      ],
+      "0|I_DefAdd_Rate": [
+       360,
+       440
+      ],
+      "0|I_MaxHpAdd_Rate": [
+       540,
+       660
+      ]
+     }
+    },
+    {
+     "slots": [],
+     "stats": {
+      "0|C_Critical_Dam_Rate": [
+       2700,
+       3300
+      ],
+      "0|C_Critical_Rate": [
+       1350,
+       1650
+      ],
+      "0|D_Protect_Cur_Rate": [
+       2430,
+       2970
+      ],
+      "0|I_AtkAdd_Rate": [
+       720,
+       880
+      ],
+      "0|I_DefAdd_Rate": [
+       540,
+       660
+      ],
+      "0|I_MaxHpAdd_Rate": [
+       900,
+       1100
+      ]
+     }
+    },
+    {
+     "slots": [],
+     "stats": {
+      "1|B_Atk_Equip": [
+       70,
+       140
+      ],
+      "1|B_Def_Equip": [
+       56,
+       112
+      ],
+      "1|B_MaxHp_Equip": [
+       139,
+       277
+      ],
+      "2|B_Atk_Equip": [
+       139,
+       279
+      ],
+      "2|B_Def_Equip": [
+       111,
+       223
+      ],
+      "2|B_MaxHp_Equip": [
+       277,
+       553
+      ],
+      "2|C_Critical_DamRes_Rate": [
+       179,
+       359
+      ],
+      "2|C_Critical_Dam_Rate": [
+       179,
+       359
+      ],
+      "2|C_Critical_Rate": [
+       101,
+       205
+      ],
+      "2|C_Critical_ResRate": [
+       101,
+       205
+      ],
+      "3|B_Atk_Equip": [
+       277,
+       485
+      ],
+      "3|B_Def_Equip": [
+       221,
+       389
+      ],
+      "3|B_MaxHp_Equip": [
+       553,
+       969
+      ],
+      "3|C_Critical_DamRes_Rate": [
+       357,
+       625
+      ],
+      "3|C_Critical_Dam_Rate": [
+       357,
+       625
+      ],
+      "3|C_Critical_Rate": [
+       202,
+       354
+      ],
+      "3|C_Critical_ResRate": [
+       202,
+       354
+      ],
+      "3|MF_ChargeEffic_Rate": [
+       299,
+       523
+      ],
+      "4|Activethird_Damadd_Rate": [
+       986,
+       1694
+      ],
+      "4|B_Atk_Equip": [
+       484,
+       832
+      ],
+      "4|B_Def_Equip": [
+       387,
+       663
+      ],
+      "4|B_MaxHp_Equip": [
+       967,
+       1657
+      ],
+      "4|C_Critical_DamRes_Rate": [
+       624,
+       1074
+      ],
+      "4|C_Critical_Dam_Rate": [
+       624,
+       1074
+      ],
+      "4|C_Critical_Rate": [
+       353,
+       605
+      ],
+      "4|C_Critical_ResRate": [
+       353,
+       605
+      ],
+      "4|MF_ChargeEffic_Rate": [
+       522,
+       900
+      ],
+      "4|Normalattack_Damadd_Rate": [
+       1083,
+       1857
+      ],
+      "4|Normalskill_Damadd_Rate": [
+       759,
+       1305
+      ],
+      "4|Normalskillchangetag_Damadd_Rate": [
+       1334,
+       2288
+      ],
+      "4|Ultimateskill_Damadd_Rate": [
+       595,
+       1021
+      ],
+      "5|Activethird_Damadd_Rate": [
+       1690,
+       2817
+      ],
+      "5|C_Critical_DamRes_Rate": [
+       1069,
+       1783
+      ],
+      "5|C_Critical_Dam_Rate": [
+       1069,
+       1783
+      ],
+      "5|C_Critical_Rate": [
+       605,
+       1011
+      ],
+      "5|C_Critical_ResRate": [
+       605,
+       1011
+      ],
+      "5|I_AtkAdd_Rate": [
+       423,
+       710
+      ],
+      "5|I_DefAdd_Rate": [
+       340,
+       571
+      ],
+      "5|I_MaxHpAdd_Rate": [
+       249,
+       417
+      ],
+      "5|MF_ChargeEffic_Rate": [
+       895,
+       1497
+      ],
+      "5|Normalattack_Damadd_Rate": [
+       1856,
+       3095
+      ],
+      "5|Normalskill_Damadd_Rate": [
+       1301,
+       2169
+      ],
+      "5|Normalskillchangetag_Damadd_Rate": [
+       2286,
+       3812
+      ],
+      "5|Ultimateskill_Damadd_Rate": [
+       1019,
+       1698
+      ],
+      "5|Default_Element_Rate": [
+       1135,
+       1898
+      ],
+      "5|Default_Rate": [
+       2626,
+       4376
+      ],
+      "5|S_SkillRecycle_Rate": [
+       671,
+       1119
+      ],
+      "5|Dark_Element_Rate": [
+       1135,
+       1898
+      ],
+      "5|Dark_Rate": [
+       2626,
+       4376
+      ],
+      "5|Earth_Burst_Gauge_Rate": [
+       1119,
+       1868
+      ],
+      "5|Earth_Element_Rate": [
+       1135,
+       1898
+      ],
+      "5|Earth_Rate": [
+       2626,
+       4376
+      ],
+      "5|Fire_Burst_Gauge_Rate": [
+       1119,
+       1868
+      ],
+      "5|Fire_Element_Rate": [
+       1135,
+       1898
+      ],
+      "5|Fire_Rate": [
+       2626,
+       4376
+      ],
+      "5|Holy_Element_Rate": [
+       1135,
+       1898
+      ],
+      "5|Holy_Rate": [
+       2626,
+       4376
+      ],
+      "5|Ice_Burst_Gauge_Rate": [
+       1119,
+       1868
+      ],
+      "5|Ice_Element_Rate": [
+       1135,
+       1898
+      ],
+      "5|Ice_Rate": [
+       2626,
+       4376
+      ],
+      "5|Thunder_Burst_Gauge_Rate": [
+       1119,
+       1868
+      ],
+      "5|Thunder_Element_Rate": [
+       1135,
+       1898
+      ],
+      "5|Thunder_Rate": [
+       2626,
+       4376
+      ],
+      "5|Wind_Burst_Gauge_Rate": [
+       1119,
+       1868
+      ],
+      "5|Wind_Element_Rate": [
+       1135,
+       1898
+      ],
+      "5|Wind_Rate": [
+       2626,
+       4376
+      ]
+     }
+    }
+   ],
+   "index": {
+    "130100098": 0,
+    "131011001": 0,
+    "131011003": 0,
+    "131011005": 0,
+    "131011008": 0,
+    "131011010": 0,
+    "131012001": 1,
+    "131012003": 1,
+    "131012005": 1,
+    "131012008": 1,
+    "131012010": 1,
+    "131013001": 2,
+    "131013003": 2,
+    "131013005": 2,
+    "131013008": 2,
+    "131013010": 2,
+    "131014001": 3,
+    "131014004": 3,
+    "131014011": 3,
+    "131014012": 3,
+    "131014014": 3,
+    "131015004": 3,
+    "131015005": 3,
+    "131021001": 0,
+    "131021003": 0,
+    "131021005": 0,
+    "131021008": 0,
+    "131021010": 0,
+    "131022001": 1,
+    "131022003": 1,
+    "131022005": 1,
+    "131022008": 1,
+    "131022010": 1,
+    "131023001": 2,
+    "131023003": 2,
+    "131023005": 2,
+    "131023008": 2,
+    "131023010": 2,
+    "131024001": 3,
+    "131024004": 3,
+    "131024011": 3,
+    "131024012": 3,
+    "131024015": 3,
+    "131025004": 3,
+    "131025005": 3,
+    "131025010": 3,
+    "131025011": 3,
+    "131031001": 0,
+    "131031003": 0,
+    "131031005": 0,
+    "131031008": 0,
+    "131031010": 0,
+    "131032001": 1,
+    "131032003": 1,
+    "131032005": 1,
+    "131032008": 1,
+    "131032010": 1,
+    "131033001": 2,
+    "131033003": 2,
+    "131033005": 2,
+    "131033008": 2,
+    "131033010": 2,
+    "131034001": 3,
+    "131034003": 3,
+    "131034004": 3,
+    "131034011": 3,
+    "131034012": 3,
+    "131035004": 3,
+    "131035005": 3,
+    "131041001": 0,
+    "131041003": 0,
+    "131041005": 0,
+    "131041008": 0,
+    "131041010": 0,
+    "131042001": 1,
+    "131042003": 1,
+    "131042005": 1,
+    "131042008": 1,
+    "131042010": 1,
+    "131043001": 2,
+    "131043003": 2,
+    "131043005": 2,
+    "131043008": 2,
+    "131043010": 2,
+    "131044001": 3,
+    "131044004": 3,
+    "131044011": 3,
+    "131044012": 3,
+    "131044013": 3,
+    "131045004": 3,
+    "131045005": 3,
+    "131045010": 3,
+    "131051001": 0,
+    "131051003": 0,
+    "131051005": 0,
+    "131051008": 0,
+    "131051010": 0,
+    "131052001": 1,
+    "131052003": 1,
+    "131052005": 1,
+    "131052008": 1,
+    "131052010": 1,
+    "131053001": 2,
+    "131053003": 2,
+    "131053005": 2,
+    "131053008": 2,
+    "131053010": 2,
+    "131054001": 3,
+    "131054004": 3,
+    "131054009": 3,
+    "131054011": 3,
+    "131054012": 3,
+    "131055004": 3,
+    "131055005": 3,
+    "131055010": 3,
+    "131061001": 0,
+    "131061003": 0,
+    "131061005": 0,
+    "131061008": 0,
+    "131061010": 0,
+    "131062001": 1,
+    "131062003": 1,
+    "131062005": 1,
+    "131062008": 1,
+    "131062010": 1,
+    "131063001": 2,
+    "131063003": 2,
+    "131063005": 2,
+    "131063008": 2,
+    "131063010": 2,
+    "131064001": 3,
+    "131064004": 3,
+    "131064011": 3,
+    "131064012": 3,
+    "131064017": 3,
+    "131065004": 3,
+    "131065005": 3,
+    "131065010": 3,
+    "131071001": 0,
+    "131071003": 0,
+    "131071005": 0,
+    "131071008": 0,
+    "131071010": 0,
+    "131072001": 1,
+    "131072003": 1,
+    "131072005": 1,
+    "131072008": 1,
+    "131072010": 1,
+    "131073001": 2,
+    "131073003": 2,
+    "131073005": 2,
+    "131073008": 2,
+    "131073010": 2,
+    "131074001": 3,
+    "131074004": 3,
+    "131074008": 3,
+    "131074011": 3,
+    "131074012": 3,
+    "131075004": 3,
+    "131075005": 3,
+    "131075010": 3,
+    "131081001": 0,
+    "131081003": 0,
+    "131081005": 0,
+    "131081008": 0,
+    "131081010": 0,
+    "131082001": 1,
+    "131082003": 1,
+    "131082005": 1,
+    "131082008": 1,
+    "131082010": 1,
+    "131083001": 2,
+    "131083003": 2,
+    "131083005": 2,
+    "131083008": 2,
+    "131083010": 2,
+    "131084001": 3,
+    "131084004": 3,
+    "131084011": 3,
+    "131084012": 3,
+    "131084018": 3,
+    "131085004": 3,
+    "131085005": 3,
+    "131085010": 3,
+    "131091001": 0,
+    "131091003": 0,
+    "131091005": 0,
+    "131091008": 0,
+    "131091010": 0,
+    "131092001": 1,
+    "131092003": 1,
+    "131092005": 1,
+    "131092008": 1,
+    "131092010": 1,
+    "131093001": 2,
+    "131093003": 2,
+    "131093005": 2,
+    "131093008": 2,
+    "131093010": 2,
+    "131094001": 3,
+    "131094004": 3,
+    "131094010": 3,
+    "131094011": 3,
+    "131094012": 3,
+    "131095004": 3,
+    "131095005": 3,
+    "131101001": 0,
+    "131101003": 0,
+    "131101005": 0,
+    "131101008": 0,
+    "131101010": 0,
+    "131102001": 1,
+    "131102003": 1,
+    "131102005": 1,
+    "131102008": 1,
+    "131102010": 1,
+    "131103001": 2,
+    "131103003": 2,
+    "131103005": 2,
+    "131103008": 2,
+    "131103010": 2,
+    "131104001": 3,
+    "131104004": 3,
+    "131104006": 3,
+    "131104011": 3,
+    "131104012": 3,
+    "131105001": 3,
+    "131105004": 3,
+    "131105005": 3,
+    "131105010": 3,
+    "131105011": 3,
+    "131111001": 0,
+    "131111003": 0,
+    "131111005": 0,
+    "131111008": 0,
+    "131111010": 0,
+    "131112001": 1,
+    "131112003": 1,
+    "131112005": 1,
+    "131112008": 1,
+    "131112010": 1,
+    "131113001": 2,
+    "131113003": 2,
+    "131113005": 2,
+    "131113008": 2,
+    "131113010": 2,
+    "131114001": 3,
+    "131114004": 3,
+    "131114005": 3,
+    "131114011": 3,
+    "131114012": 3,
+    "131115004": 3,
+    "131115005": 3,
+    "131121001": 0,
+    "131121003": 0,
+    "131121005": 0,
+    "131121008": 0,
+    "131121010": 0,
+    "131122001": 1,
+    "131122003": 1,
+    "131122005": 1,
+    "131122008": 1,
+    "131122010": 1,
+    "131123001": 2,
+    "131123003": 2,
+    "131123005": 2,
+    "131123008": 2,
+    "131123010": 2,
+    "131124001": 3,
+    "131124002": 3,
+    "131124004": 3,
+    "131124011": 3,
+    "131124012": 3,
+    "131125004": 3,
+    "131125005": 3,
+    "131125010": 3
+   }
+  }
+ },
  "stats": {
   "A_Accuracy": {
    "fr": "Perforation",

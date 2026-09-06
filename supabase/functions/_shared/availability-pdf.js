@@ -517,10 +517,19 @@ function bitmapText(value) {
 }
 
 function atlasStringWidth(value, atlas) {
+  return atlasStringWidthExact(bitmapText(value), atlas);
+}
+
+/* La MEME mesure, mais sur le texte tel qu'on le donne. Le planning ecrit en
+   capitales sans accents, faute d'atlas qui en contienne d'autres ; la carte
+   /build a le sien, avec minuscules et accents, et doit donc pouvoir mesurer
+   « Dégâts » sans le transformer d'abord. */
+function atlasStringWidthExact(value, atlas) {
   let width = 0;
-  for(const character of bitmapText(value)){
+  for(const character of String(value)){
     let index = atlas.characters.indexOf(character);
     if(index < 0) index = atlas.characters.indexOf("?");
+    if(index < 0) continue;
     width += atlas.advances[index];
   }
   return width;
@@ -633,11 +642,22 @@ class RasterCanvas {
   }
 
   atlasText(x, y, value, atlas, color) {
+    return this.atlasTextExact(x, y, bitmapText(value), atlas, color);
+  }
+
+  /* Le trace du texte TEL QU'IL EST DONNE. `atlasText` met en capitales et
+     retire les accents parce que l'atlas du planning n'en contient pas
+     d'autres ; celui de la carte /build, si. Les deux partagent donc la boucle
+     de glyphes, et se distinguent par ce qu'ils lui transmettent. */
+  atlasTextExact(x, y, value, atlas, color) {
     let cursor = Math.round(x);
     const atlasWidth = atlas.cellWidth * atlas.characters.length;
-    for(const character of bitmapText(value)){
+    for(const character of String(value)){
       let characterIndex = atlas.characters.indexOf(character);
       if(characterIndex < 0) characterIndex = atlas.characters.indexOf("?");
+      /* Un atlas sans « ? » ne doit pas dessiner le glyphe qui precede : on
+         saute le caractere inconnu plutot que d'en inventer un. */
+      if(characterIndex < 0) continue;
       const sourceLeft = characterIndex * atlas.cellWidth;
       for(let row = 0; row < atlas.cellHeight; row += 1){
         const targetY = Math.round(y) + row;
@@ -664,28 +684,33 @@ class RasterCanvas {
   }
 }
 
+/* Une face d'atlas : la bande d'alpha deflatee, plus ses metriques. Le
+   planning et la carte /build s'en servent tous les deux — un seul decodeur,
+   pas deux qui divergeraient au premier changement de format. */
+async function decodeAtlasFace(characters, encoded) {
+  if(typeof DecompressionStream !== "function"){
+    throw new Error("Décompression des polices indisponible dans ce runtime");
+  }
+  const compressed = Buffer.from(encoded.data, "base64");
+  const stream = new Blob([compressed]).stream()
+    .pipeThrough(new DecompressionStream("deflate"));
+  return {
+    characters,
+    cellWidth:encoded.cellWidth,
+    cellHeight:encoded.cellHeight,
+    inset:encoded.inset,
+    advances:encoded.advances,
+    alpha:new Uint8Array(await new Response(stream).arrayBuffer())
+  };
+}
+
 let availabilityFontsPromise;
 async function availabilityFonts() {
   if(!availabilityFontsPromise){
     availabilityFontsPromise = (async () => {
       const source = globalThis.NOVA_AVAILABILITY_FONT;
       if(!source) throw new Error("Polices NOVA indisponibles pour l'aperçu PNG");
-      const decode = async encoded => {
-        if(typeof DecompressionStream !== "function"){
-          throw new Error("Décompression des polices indisponible dans ce runtime");
-        }
-        const compressed = Buffer.from(encoded.data, "base64");
-        const stream = new Blob([compressed]).stream()
-          .pipeThrough(new DecompressionStream("deflate"));
-        return {
-          characters:source.characters,
-          cellWidth:encoded.cellWidth,
-          cellHeight:encoded.cellHeight,
-          inset:encoded.inset,
-          advances:encoded.advances,
-          alpha:new Uint8Array(await new Response(stream).arrayBuffer())
-        };
-      };
+      const decode = encoded => decodeAtlasFace(source.characters, encoded);
       const [display, brand, body] = await Promise.all([
         decode(source.display), decode(source.brand), decode(source.body)
       ]);
@@ -693,6 +718,32 @@ async function availabilityFonts() {
     })();
   }
   return availabilityFontsPromise;
+}
+
+/* L'ATLAS DE LA CARTE /build, decode une fois.
+
+   Il vit dans son propre fichier — `carte-font.js`, fabrique par
+   scripts/generer-police-carte.py — et porte 119 caracteres, minuscules et
+   accents compris, la ou celui du planning n'en connait que 45 en capitales.
+   Les deux restent separes : une refonte de la carte ne peut pas abimer le
+   planning, et le planning ne paie pas les 94 Ko de la carte. */
+let carteFontsPromise;
+async function chargerAtlasCarte() {
+  if(!carteFontsPromise){
+    carteFontsPromise = (async () => {
+      const source = globalThis.NOVA_CARTE_FONT;
+      if(!source) throw new Error("Atlas de la carte indisponible");
+      const noms = Object.keys(source).filter(nom => nom !== "characters");
+      const faces = await Promise.all(
+        noms.map(nom => decodeAtlasFace(source.characters, source[nom]))
+      );
+      return noms.reduce((total, nom, rang) => {
+        total[nom] = faces[rang];
+        return total;
+      }, {});
+    })();
+  }
+  return carteFontsPromise;
 }
 
 function mixedColor(from, to, ratio) {
@@ -987,6 +1038,8 @@ const availabilityPdfApi = {
   encodePng,
   availabilityFonts,
   atlasStringWidth,
+  atlasStringWidthExact,
+  chargerAtlasCarte,
   bitmapText,
   currentAvailabilityWeekStart,
   weekLabel,

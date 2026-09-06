@@ -15,7 +15,12 @@
    de personnages, libelles de statistiques) vient du catalogue publie, jamais
    d'une copie. */
 
-const ARMOR_SLOTS = ["Haut", "Bas", "Bottes", "Ceinture", "Armure liee"];
+/* LES QUATRE PIECES ORDINAIRES, puis l'armure gravee a part.
+   La gravee porte un passif et des enchantements, comme une arme ; les quatre
+   autres n'ont qu'un nom. Les melanger obligerait la grille de la carte a
+   prendre la hauteur de la plus bavarde. */
+const ARMOR_SLOTS = ["Haut", "Bas", "Bottes", "Ceinture"];
+const LINKED_ARMOR_SLOT = "Armure liee";
 const ARMOR_LABELS = {
   "Haut":"Haut",
   "Bas":"Bas",
@@ -26,6 +31,20 @@ const ARMOR_LABELS = {
   "Armure liee":"Armure gravée"
 };
 const JEWEL_SLOTS = ["Anneau", "Collier", "Boucle d'oreille"];
+/* LE NOM AFFICHE D'UN TYPE D'ARME. La CLE vient des dossiers d'images, qui
+   n'ont jamais porte d'accent — « Epee a une main » — et elle est ecrite dans
+   Supabase : la renommer demanderait de migrer tous les builds enregistres.
+   Seul l'affichage change, et l'atlas de la carte sait desormais dessiner ces
+   accents. Un type absent de cette table s'affiche tel quel : le jeu peut en
+   ajouter un sans que la carte tombe. */
+const WEAPON_LABELS = {
+  "Baton":"Bâton",
+  "Epee & bouclier":"Épée & bouclier",
+  "Epee a une main":"Épée à une main",
+  "Epee a deux mains":"Épée à deux mains",
+  "Epees doubles":"Épées doubles",
+  "Rapiere":"Rapière"
+};
 const ELEMENT_LABELS = {
   FIRE:"Feu", WIND:"Vent", DARK:"Ténèbres", EARTH:"Terre",
   HOLY:"Sacré", ICE:"Glace", THUNDER:"Foudre", DEFAULT:"Physique"
@@ -37,14 +56,27 @@ const PEARL_LABELS = {
   1:"commune", 2:"remarquable", 3:"rare", 4:"héroïque", 5:"légendaire"
 };
 
-/* Les caracteres que l'atlas de polices sait dessiner. Le « % » n'en fait pas
-   partie : le rendu PNG le trace a la main, ce module se contente de le
-   laisser passer. */
-const CARACTERES_DESSINABLES = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-/:.()|=?%";
-/* Deux caracteres tres frequents dans les noms d'objets du jeu, et qu'il vaut
-   mieux traduire que reduire a une espace : « Épée & bouclier » doit rester
-   lisible, et « Niveau 50, promotion 4 » garder sa ponctuation. */
-const REMPLACEMENTS = { "&":"ET", ",":"." };
+/* LES CARACTERES QUE L'ATLAS DE LA CARTE SAIT DESSINER — minuscules, lettres
+   accentuees et ligatures comprises. La liste doit rester d'accord avec
+   CARACTERES de scripts/generer-police-carte.py : ce qui n'y figure pas n'a
+   aucun glyphe, et serait dessine de travers ou pas du tout.
+
+   Le texte garde donc sa casse et ses accents : « Dégâts crit. » s'ecrit comme
+   il se lit, la ou l'atlas du planning imposait « DEGATS CRIT. ». */
+const CARACTERES_DESSINABLES = " ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+  + "abcdefghijklmnopqrstuvwxyz"
+  + "0123456789"
+  + "ÀÂÄÇÈÉÊËÎÏÔÖÙÛÜŸŒÆ"
+  + "àâäçèéêëîïôöùûüÿœæ"
+  + "!\"'()+,-./:;?%&«»×·…—";
+/* Ce qui se traduit plutot que de se perdre. Les crochets japonais ouvrent le
+   nom d'une arme du jeu — aucune police latine ne les porte, et des
+   guillemets disent la meme chose. L'apostrophe courbe rejoint la droite,
+   seule presente dans l'atlas. */
+const REMPLACEMENTS = {
+  "『":"«", "』":"»", "《":"«", "》":"»",
+  "’":"'", "‘":"'"
+};
 
 function buildCommandDefinition() {
   return {
@@ -225,10 +257,10 @@ function normaliserRecherche(valeur) {
 }
 
 function texteCarte(valeur) {
+  /* NFC et non NFD : on recompose « e + accent » en « é », qui a son glyphe,
+     la ou la forme decomposee n'en a pas. */
   const source = String(valeur === null || valeur === undefined ? "" : valeur)
-    .normalize("NFD")
-    .replace(/\p{Diacritic}/gu, "")
-    .toUpperCase();
+    .normalize("NFC");
   let sortie = "";
   for(const caractere of source){
     if(Object.prototype.hasOwnProperty.call(REMPLACEMENTS, caractere)){
@@ -245,6 +277,12 @@ function texteCarte(valeur) {
 /* Le nom lisible d'un objet EST le nom de fichier de son image : les 348
    entrees du catalogue le verifient. Rien a charger, donc, pour ecrire
    « Hache de guerre » a partir de « 7ds-armes/Hache/Hache de guerre.webp ». */
+function libelleArme(type) {
+  const cle = String(type === null || type === undefined ? "" : type);
+  return Object.prototype.hasOwnProperty.call(WEAPON_LABELS, cle)
+    ? WEAPON_LABELS[cle] : cle;
+}
+
 function nomDeFichier(chemin) {
   if(typeof chemin !== "string" || !chemin) return "";
   return chemin.split("/").pop().replace(/\.webp$/i, "");
@@ -310,17 +348,80 @@ function valeurLisible(valeur, unite) {
   return String(Number(pourcentage.toFixed(4))) + " %";
 }
 
-function ligneEnchantement(choix, libellesStats) {
-  if(!choix || typeof choix !== "object" || Array.isArray(choix)) return "";
+/* LES BORNES D'UN ENCHANTEMENT.
+
+   Le jeu remplit une barre selon la position de la valeur tiree entre le
+   minimum et le maximum possibles de cette statistique. Ces bornes vivent dans
+   le catalogue publie, dedoublonnees : quatre tables suffisent aux 276 grades
+   d'arme, dix-huit aux 136 pieces enchantables.
+
+   Une piece porte ses bornes telles quelles. Une arme les met a l'echelle du
+   taux de l'emplacement — c'est la regle du jeu, reprise de
+   js/metier/build-config.js. */
+function tableDeBornes(section, cle) {
+  if(!section || !Array.isArray(section.tables)) return null;
+  const index = (section.index || {})[cle];
+  return Number.isInteger(index) ? section.tables[index] || null : null;
+}
+
+function bornesDePiece(fichier, code, libelles) {
+  const table = tableDeBornes(
+    ((libelles && libelles.bornes) || {}).objets, fichier
+  );
+  const bornes = table && table[code];
+  return Array.isArray(bornes) ? { min:bornes[0], max:bornes[1] } : null;
+}
+
+function bornesDArme(config, choix, libelles) {
+  const table = tableDeBornes(
+    ((libelles && libelles.bornes) || {}).armes,
+    config && config.gradeGameId
+  );
+  if(!table) return null;
+  /* Le palier zero est celui des enchantements sans perle : c'est sous cette
+     cle que le catalogue range les armes de type « basic ». */
+  const palier = Number.isInteger(choix.tier) ? choix.tier : 0;
+  const bornes = (table.stats || {})[palier + "|" + choix.stat];
+  if(!Array.isArray(bornes)) return null;
+  /* Seules les armes SANS perle portent un taux par emplacement, et leurs
+     bornes s'y mettent a l'echelle. Une perle emploie les siennes telles
+     quelles — c'est ce que fait l'editeur du site, et `slots` est vide pour
+     ces grades-la. */
+  const taux = Number((table.slots || [])[choix.slot]);
+  if(!Number.isFinite(taux) || taux <= 0){
+    return { min:bornes[0], max:bornes[1] };
+  }
+  return {
+    min:Math.ceil(bornes[0] * taux / 10000),
+    max:Math.floor(bornes[1] * taux / 10000)
+  };
+}
+
+/* La part remplie, entre 0 et 1. `null` quand les bornes sont inconnues : une
+   barre remplie au hasard mentirait, mieux vaut n'en dessiner aucune. */
+function partDeBornes(valeur, bornes) {
+  if(!bornes) return null;
+  const nombre = Number(valeur);
+  if(!Number.isFinite(nombre)) return null;
+  const { min, max } = bornes;
+  if(!Number.isFinite(min) || !Number.isFinite(max)) return null;
+  if(max <= min) return 1;
+  return Math.max(0, Math.min(1, (nombre - min) / (max - min)));
+}
+
+function ligneEnchantement(choix, libellesStats, bornes) {
+  if(!choix || typeof choix !== "object" || Array.isArray(choix)) return null;
   const code = choix.stat;
-  if(typeof code !== "string" || !code) return "";
+  if(typeof code !== "string" || !code) return null;
   /* Un code absent du catalogue s'affiche brut : une ligne disparue laisserait
      croire que l'emplacement est vide. */
   const metadonnees = Object.prototype.hasOwnProperty.call(libellesStats, code)
     ? libellesStats[code] : null;
-  const libelle = (metadonnees && metadonnees.fr) || code;
-  const valeur = valeurLisible(choix.value, metadonnees && metadonnees.unit);
-  return valeur ? libelle + " : " + valeur : libelle;
+  return {
+    libelle:(metadonnees && metadonnees.fr) || code,
+    texte:valeurLisible(choix.value, metadonnees && metadonnees.unit),
+    part:partDeBornes(choix.value, bornes)
+  };
 }
 
 function paliersPerle(enchantements) {
@@ -385,35 +486,38 @@ function maximumsArme(fichier, config, libelles) {
   return grades[gradeId];
 }
 
-function detailsArme(config, libellesStats) {
+function detailsArme(config) {
   if(!config || typeof config !== "object") return [];
-  const details = [];
   const perle = paliersPerle(config.enchantments);
-  if(perle) details.push(perle);
-  (Array.isArray(config.enchantments) ? config.enchantments : [])
-    .forEach(choix => {
-      const ligne = ligneEnchantement(choix, libellesStats);
-      if(ligne) details.push(ligne);
-    });
-  return details;
+  return perle ? [perle] : [];
 }
 
-function detailsPiece(config, libellesStats) {
+function enchantementsArme(config, libellesStats, libelles) {
   if(!config || typeof config !== "object") return [];
-  const details = [];
-  const passif = Number(config.passiveLevel);
-  if(Number.isFinite(passif) && passif > 0){
-    details.push("Passif niveau " + passif);
-  }
-  (Array.isArray(config.enchantments) ? config.enchantments : [])
-    .forEach(choix => {
-      const ligne = ligneEnchantement(choix, libellesStats);
-      if(ligne) details.push(ligne);
-    });
-  return details;
+  return (Array.isArray(config.enchantments) ? config.enchantments : [])
+    .map(choix => ligneEnchantement(choix, libellesStats,
+      choix ? bornesDArme(config, choix, libelles) : null))
+    .filter(Boolean);
 }
 
-function lignesEmplacements(slots, etiquettes, equipement, configs, libellesStats) {
+function detailsPiece(config) {
+  if(!config || typeof config !== "object") return [];
+  const passif = Number(config.passiveLevel);
+  return Number.isFinite(passif) && passif > 0
+    ? ["Passif niveau " + passif]
+    : [];
+}
+
+function enchantementsPiece(fichier, config, libellesStats, libelles) {
+  if(!config || typeof config !== "object") return [];
+  return (Array.isArray(config.enchantments) ? config.enchantments : [])
+    .map(choix => ligneEnchantement(choix, libellesStats,
+      choix ? bornesDePiece(fichier, choix.stat, libelles) : null))
+    .filter(Boolean);
+}
+
+function lignesEmplacements(slots, etiquettes, equipement, configs, libellesStats,
+  libelles) {
   const pieces = equipement && typeof equipement === "object" ? equipement : {};
   const configurations = configs && typeof configs === "object" ? configs : {};
   return slots.map(slot => {
@@ -423,8 +527,10 @@ function lignesEmplacements(slots, etiquettes, equipement, configs, libellesStat
       nom:nomDeFichier(fichier),
       mesures:[],
       image:typeof fichier === "string" ? fichier : "",
-      details:fichier
-        ? detailsPiece(configurations[slot], libellesStats)
+      details:fichier ? detailsPiece(configurations[slot]) : [],
+      enchantements:fichier
+        ? enchantementsPiece(fichier, configurations[slot], libellesStats,
+          libelles)
         : []
     };
   });
@@ -439,7 +545,7 @@ function carteDeBuild(contexte, typeArme, build) {
     element:contexte.element,
     potentiel:contexte.potentiel,
     portrait:contexte.portrait,
-    arme:typeArme,
+    arme:libelleArme(typeArme),
     note:typeof donnees.note === "string" ? donnees.note : "",
     fichier:"build-" + identifiantDeFichier(contexte.pseudo)
       + "-" + identifiantDeFichier(contexte.charId)
@@ -447,8 +553,9 @@ function carteDeBuild(contexte, typeArme, build) {
     sections:[
       {
         titre:"Arme",
+        disposition:"colonne",
         lignes:[{
-          emplacement:typeArme,
+          emplacement:libelleArme(typeArme),
           nom:nomDeFichier(donnees.weapon),
           image:typeof donnees.weapon === "string" ? donnees.weapon : "",
           mesures:donnees.weapon && donnees.weaponConfig
@@ -456,25 +563,32 @@ function carteDeBuild(contexte, typeArme, build) {
               donnees.weapon, donnees.weaponConfig, contexte.libelles
             ))
             : [],
-          details:donnees.weapon
-            ? detailsArme(donnees.weaponConfig, libellesStats)
+          details:donnees.weapon ? detailsArme(donnees.weaponConfig) : [],
+          enchantements:donnees.weapon
+            ? enchantementsArme(donnees.weaponConfig, libellesStats,
+              contexte.libelles)
             : []
-        }]
+        }].concat(lignesEmplacements(
+          [LINKED_ARMOR_SLOT], ARMOR_LABELS, donnees.armor, donnees.armorConfig,
+          libellesStats, contexte.libelles
+        ))
       },
       {
         titre:"Armure",
+        disposition:"grille",
         lignes:lignesEmplacements(
           ARMOR_SLOTS, ARMOR_LABELS, donnees.armor, donnees.armorConfig,
-          libellesStats
+          libellesStats, contexte.libelles
         )
       },
       {
         titre:"Bijoux",
+        disposition:"liste",
         lignes:lignesEmplacements(
           JEWEL_SLOTS,
           { Anneau:"Anneau", Collier:"Collier",
             "Boucle d'oreille":"Boucle d'oreille" },
-          donnees.jewel, donnees.jewelConfig, libellesStats
+          donnees.jewel, donnees.jewelConfig, libellesStats, contexte.libelles
         )
       }
     ]
@@ -582,6 +696,7 @@ const discordBuildApi = {
   normaliserRecherche,
   trouverProfil,
   texteCarte,
+  libelleArme,
   nomDeFichier,
   resoudreDemandeBuild,
   contenuMessageBuild
