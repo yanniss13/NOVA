@@ -63,6 +63,71 @@ async function openRoute(page, route){
       await page.locator(`[data-tool-panel="${id}"]:not([hidden])`).waitFor();
     }
 
+    for(const viewport of [
+      { width:1440, height:1000 }, { width:1024, height:900 },
+      { width:390, height:844 }, { width:320, height:700 }
+    ]){
+      await page.setViewportSize(viewport);
+      await page.goto(server.url + "/docs/refonte-maquette/index.html#home");
+      const overflow = await page.evaluate(() =>
+        document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      assert.ok(overflow <= 1,
+        `débordement ${viewport.width}px : ${overflow}px`);
+    }
+
+    await page.setViewportSize({ width:320, height:700 });
+    for(const route of ["dashboard", "teams", "boss", "roster", "tools", "admin"]){
+      await openRoute(page, route);
+      const overflow = await page.evaluate(() =>
+        document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      assert.ok(overflow <= 1, `débordement mobile de ${route} : ${overflow}px`);
+    }
+
+    await openRoute(page, "home");
+    await page.locator("#mobileMenuButton").focus();
+    await page.keyboard.press("Enter");
+    assert.equal(await page.locator("#mobileMenuButton").getAttribute("aria-expanded"), "true");
+    await page.keyboard.press("Escape");
+    assert.equal(await page.locator("#mobileMenuButton").getAttribute("aria-expanded"), "false");
+
+    const petitesCibles = await page.locator("button:visible").evaluateAll(buttons =>
+      buttons.map(button => {
+        const box = button.getBoundingClientRect();
+        return { name:button.textContent.trim(), width:box.width, height:box.height };
+      }).filter(box => box.width < 44 || box.height < 44));
+    assert.deepEqual(petitesCibles, [],
+      "cibles tactiles trop petites : " + JSON.stringify(petitesCibles));
+
+    await page.setViewportSize({ width:1440, height:1000 });
+    await page.goto(server.url + "/docs/refonte-maquette/index.html#home");
+    const loginButton = page.locator(".account-button");
+    await loginButton.focus();
+    await loginButton.click();
+    await page.getByRole("button", { name:"Fermer", exact:true }).last().click();
+    assert.equal(await loginButton.evaluate(element => element === document.activeElement), true,
+      "la modale doit rendre le focus au bouton Connexion");
+    const imagesBrisees = await page.locator("img").evaluateAll(images =>
+      images.filter(image => !image.complete || image.naturalWidth === 0)
+        .map(image => image.getAttribute("src")));
+    assert.deepEqual(imagesBrisees, [],
+      "images introuvables : " + imagesBrisees.join(", "));
+
+    if(process.env.NOVA_CAPTURE === "1"){
+      if((await loginButton.textContent()).includes("YanniSs13")){
+        await loginButton.click();
+        await page.getByRole("button", { name:"Se déconnecter" }).click();
+      }
+      await page.locator("body").click({ position:{ x:1, y:1 } });
+      await page.screenshot({ path:"apercu-refonte-desktop.png", fullPage:true });
+      await page.setViewportSize({ width:390, height:844 });
+      await page.reload();
+      await page.screenshot({ path:"apercu-refonte-mobile.png", fullPage:true });
+      await page.setViewportSize({ width:1440, height:1000 });
+      await page.goto(server.url + "/docs/refonte-maquette/index.html#boss");
+      await page.locator("body").click({ position:{ x:1, y:1 } });
+      await page.screenshot({ path:"apercu-refonte-boss.png", fullPage:true });
+    }
+
     assert.deepEqual(errors, [], "erreurs navigateur : " + errors.join(" | "));
     console.log("refonte-maquette.playwright.js navigation OK");
   }finally{
