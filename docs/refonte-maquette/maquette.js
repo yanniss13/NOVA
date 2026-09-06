@@ -17,6 +17,7 @@
     bossTab:"overview",
     teamMode:"builder",
     rosterMode:"mine",
+    heroIndex:0,
     lastFocus:null
   };
 
@@ -134,6 +135,92 @@
     </div>`;
   }
 
+  function heroPortrait(hero, className=""){
+    return `<img class="${className}" src="../../7ds-personnages/${hero.slug}.webp" alt="Portrait de ${hero.name}">`;
+  }
+
+  function builderPanel(){
+    const hero = DATA.heroes[state.heroIndex] || DATA.heroes[0];
+    return `<div class="builder-layout">
+      <section class="team-composition ornate-panel">
+        <div class="team-meta"><label>Nom de l'équipe<input value="Akumu — Foudre stable"></label><button type="button" data-action="new-team">Nouvelle équipe</button><button class="gold-action" type="button" data-action="save-team">Enregistrer</button></div>
+        <div class="hero-strip" role="list" aria-label="Composition de l'équipe">${DATA.heroes.slice(0,4).map((item,index) => `<button type="button" role="listitem" data-hero-index="${index}" aria-pressed="${index === state.heroIndex}">${heroPortrait(item)}<span><b>${item.name}</b><small>${item.element} · P${item.potential}</small></span></button>`).join("")}</div>
+      </section>
+      <section class="builder-workspace ornate-panel">
+        <aside class="active-hero">${heroPortrait(hero)}<p class="context-label">Héros actif</p><h2>${hero.name}</h2><p>${hero.element} · ${hero.role}</p><div class="potential-line"><span>Potentiel</span><strong>P${hero.potential}</strong></div><div class="weapon-switch" role="group" aria-label="Build d'arme"><button aria-pressed="true">Épée 1 main</button><button aria-pressed="false">Épée 2 mains</button><button aria-pressed="false">Rapière</button></div></aside>
+        <div class="equipment-editor"><div class="builder-section-head"><div><p class="context-label">Équipement</p><h2>Build principal</h2></div><div><button type="button" data-action="preset">Presets</button><button type="button" data-action="capture-import">Importer des captures</button></div></div><div class="equipment-grid">${DATA.equipment.map(item => `<button class="equipment-slot" type="button" data-action="gear" data-modal-title="${item.slot} · ${item.name}"><img src="${item.image}" alt=""><span><small>${item.slot}</small><b>${item.name}</b><em>${item.value}</em></span></button>`).join("")}<button class="equipment-slot is-empty" type="button" data-action="gear" data-modal-title="Équipement à choisir"><span class="empty-plus">+</span><span><small>Anneau</small><b>À équiper</b><em>Configuration manquante</em></span></button><button class="equipment-slot is-empty" type="button" data-action="gear" data-modal-title="Équipement à choisir"><span class="empty-plus">+</span><span><small>Boucles d'oreilles</small><b>À équiper</b><em>Configuration manquante</em></span></button></div></div>
+        <aside class="build-stats"><p class="context-label">Borne inférieure</p><h2>Statistiques</h2>${[["PV","12 842",.82],["ATK","3 946",.68],["DEF","2 118",.54]].map(stat => `<div class="stat-line"><span>${stat[0]}</span><strong>${stat[1]}</strong><i style="--value:${stat[2]}"></i></div>`).join("")}<div class="coverage-note"><b>Calcul partiel</b><span>2 équipements restent à configurer.</span></div><label class="team-note">Note<textarea rows="4">Garder l'ultime pour la phase de rupture.</textarea></label></aside>
+      </section>
+    </div>`;
+  }
+
+  function sharedTeamsPanel(){
+    return `<div class="teams-toolbar"><label>Membre<select><option>Toute la confrérie</option><option>YanniSs13</option><option>Elaine</option></select></label><span>3 équipes disponibles</span></div>${bossTeams()}`;
+  }
+
+  function renderTeams(mode=state.teamMode){
+    state.teamMode = mode;
+    $('[data-view="teams"]').innerHTML = `<div class="page-shell">
+      ${pageHeading("Forge de la guilde", mode === "builder" ? "Composer une équipe" : "Équipes partagées", "Quatre héros, leurs builds et une stratégie prête pour le Boss de Guilde.")}
+      <div class="local-tabs" role="tablist" aria-label="Équipes"><button type="button" role="tab" data-team-mode="builder" aria-selected="${mode === "builder"}">Créer une équipe</button><button type="button" role="tab" data-team-mode="shared" aria-selected="${mode === "shared"}">Équipes partagées</button></div>
+      <div data-team-panel="${mode}">${mode === "builder" ? builderPanel() : sharedTeamsPanel()}</div>
+    </div>`;
+  }
+
+  function rosterCards(readonly=false){
+    return `<div class="hero-card-grid">${DATA.heroes.map(hero => `<article class="hero-card ornate-panel">
+      <button class="hero-card-main" type="button" data-action="open-roster" data-modal-title="${hero.name} · ${hero.weapon}">${heroPortrait(hero)}<span class="hero-card-copy"><small>${hero.element} · ${hero.role}</small><b>${hero.name}</b><em>${hero.weapon}</em></span><strong>P${hero.potential}</strong></button>
+      <footer><span class="completion ${hero.complete ? "is-complete" : ""}">${hero.complete ? "Build complet" : "À compléter"}</span>${readonly ? `<span>Consultation</span>` : `<button type="button" data-action="favorite">☆ Favori</button>`}</footer>
+    </article>`).join("")}</div>`;
+  }
+
+  function renderRoster(mode=state.rosterMode){
+    state.rosterMode = mode;
+    const readonly = mode === "others";
+    $('[data-view="roster"]').innerHTML = `<div class="page-shell">
+      ${pageHeading("Registre de la guilde", readonly ? "Roster des membres" : "Mon roster", "Enregistre les personnages une fois, puis réutilise leurs builds partout.", readonly ? `<label class="owner-select">Membre<select><option>Merlin</option><option>Elaine</option><option>Ban</option></select></label>` : `<button class="gold-action" type="button" data-action="add-hero">Ajouter un personnage</button>`)}
+      <div class="local-tabs" role="tablist" aria-label="Roster affiché"><button type="button" role="tab" data-roster-mode="mine" aria-selected="${mode === "mine"}">Mon roster</button><button type="button" role="tab" data-roster-mode="others" aria-selected="${mode === "others"}">Roster des membres</button></div>
+      <div class="filter-bar"><label>Recherche<input type="search" placeholder="Nom d'un héros"></label><label>Élément<select><option>Tous</option><option>Foudre</option><option>Ténèbres</option></select></label><label>Rôle<select><option>Tous</option><option>Attaquant</option><option>Soutien</option></select></label><span><b>${DATA.heroes.length}</b> personnages</span></div>
+      ${rosterCards(readonly)}
+    </div>`;
+  }
+
+  function wikiPanel(){
+    return `<div class="tool-filter"><div class="category-pills"><button class="is-selected">Héros</button><button>Armes</button><button>Armures</button><button>Bijoux</button><button>Gravures</button></div><label>Recherche<input type="search" placeholder="Nom d'un héros"></label></div><div class="wiki-grid">${DATA.heroes.map(hero => `<button type="button" data-action="open-info" data-modal-title="Fiche de ${hero.name}">${heroPortrait(hero)}<span><b>${hero.name}</b><small>${hero.element} · ${hero.weapon}</small></span></button>`).join("")}</div>`;
+  }
+
+  function collectionPanel(){
+    return `<section class="collection-head ornate-panel"><div><p class="context-label">Collection de YanniSs13</p><h2>47 objets sur 86</h2><p>Encore 39 objets à trouver pour compléter les builds de la guilde.</p></div><div class="progress-ring"><strong>55<small>%</small></strong></div></section><div class="filter-bar"><label>Recherche<input type="search" placeholder="Nom d'un objet"></label><button>Tout</button><button>Possédés</button><button>Manquants</button></div><div class="collection-grid">${DATA.collection.map(item => `<button type="button" class="collection-item ${item.owned ? "is-owned" : ""}" data-action="collection-toggle"><img src="${item.image}" alt=""><span><small>${item.kind}</small><b>${item.name}</b><em>${item.owned ? "Possédé" : "À trouver"}</em></span></button>`).join("")}</div>`;
+  }
+
+  function calculatorPanel(){
+    return `<div class="calculator-layout"><aside class="calculator-controls ornate-panel"><p class="context-label">Boss de confrérie</p><h2>Comparer deux builds</h2><label>Personnage<select><option>Méliodas</option><option>Merlin</option></select></label><label>Build A<select><option>Épée 1 main · favori</option></select></label><label>Build B<select><option>Rapière · critique</option></select></label><button class="gold-action" type="button" data-action="calculate">Calculer sur 60 s</button></aside><section class="calculator-results"><div class="calculation-summary ornate-panel"><span>Meilleur résultat</span><strong>Build A · +5,5 %</strong><small>Conditions et cumuls personnels maximisés</small></div><div class="damage-table" role="table"><div class="damage-head"><b>Compétence</b><b>Build A</b><b>Build B</b><b>Écart</b></div>${DATA.calculator.map(row => `<div><span>${row.skill}</span><strong>${row.a}</strong><strong>${row.b}</strong><em>${row.gain}</em></div>`).join("")}</div><details open><summary>Hypothèses et chronologie</summary><p>Ressources illimitées, ouverture optimale et animations non mesurées comptées à zéro. Les attaques normales restent hors calcul.</p></details></section></div>`;
+  }
+
+  function analysisPanel(){
+    return `<div class="analysis-switch"><button class="is-selected">Vue d'ensemble</button><button>DPS par élément</button><button>Supports Foudre</button></div><div class="analysis-grid"><section class="coverage-wheel ornate-panel"><div class="wheel"><strong>6<small>/8</small></strong></div><h2>Éléments couverts</h2><p>La guilde dispose d'au moins un build complet pour six éléments.</p></section><section class="element-ranking ornate-panel"><p class="context-label">DPS de la confrérie</p><h2>Meilleurs builds</h2>${[["Foudre","2,48 M",92],["Ténèbres","2,31 M",85],["Feu","1,94 M",70],["Vent","1,62 M",58]].map(row => `<div><span>${row[0]}</span><i style="--rank:${row[2]}%"></i><strong>${row[1]}</strong></div>`).join("")}</section><section class="support-list ornate-panel"><p class="context-label">Supports Foudre</p><h2>Affaiblissements disponibles</h2><ul><li><b>Réduction de défense</b><span>Escanor · P10</span></li><li><b>Vulnérabilité générale</b><span>Merlin · P8</span></li><li><b>Résistance critique</b><span>King · P7</span></li></ul></section></div>`;
+  }
+
+  function renderTools(tool=state.tool){
+    state.tool = ["wiki","collection","calculator","analysis"].includes(tool) ? tool : "wiki";
+    const labels = { wiki:"Wiki", collection:"Collection", calculator:"Calculateur", analysis:"Analyse" };
+    const panels = { wiki:wikiPanel, collection:collectionPanel, calculator:calculatorPanel, analysis:analysisPanel };
+    $('[data-view="tools"]').innerHTML = `<div class="page-shell">
+      ${pageHeading("Archives et laboratoire", "Les outils de la confrérie", "Consulte les données du jeu, suis ta collection et compare les performances.")}
+      <div class="local-tabs" role="tablist" aria-label="Outils">${Object.entries(labels).map(([id,label]) => `<button type="button" role="tab" data-tool-tab="${id}" aria-selected="${id === state.tool}">${label}</button>`).join("")}</div>
+      <div data-tool-panel="${state.tool}">${panels[state.tool]()}</div>
+    </div>`;
+  }
+
+  function renderAdmin(){
+    $('[data-view="admin"]').innerHTML = `<div class="page-shell">
+      ${pageHeading("Administration", "Membres", "Accès à la confrérie, comptes invités et rôles.", `<span class="admin-badge">Mode démonstration</span>`)}
+      <div class="admin-summary"><article><span>Membres</span><strong>24</strong></article><article><span>Comptes invités</span><strong>2</strong></article><article><span>Actifs cette semaine</span><strong>19</strong></article></div>
+      <div class="section-title-row"><h2>Comptes invités</h2><span>Validation manuelle</span></div>
+      <div class="member-table">${DATA.members.map(member => `<article><span class="member-seal">${member.name.slice(0,1)}</span><div><b>${member.name}</b><small>${member.roster}</small></div><span>${member.role}</span><em>${member.status}</em><button type="button" data-action="member-action">${member.status === "Invité" ? "Accueillir" : "Gérer"}</button></article>`).join("")}</div>
+    </div>`;
+  }
+
   function icon(name){
     const paths = {
       home:'<path d="M6 27 20 15l14 12v12H24v-9h-8v9H6z"/>',
@@ -198,6 +285,10 @@
   function showView(viewId, options={}){
     const route = Object.hasOwn(ROUTES, viewId) ? viewId : "home";
     if(route === "boss") renderBoss();
+    if(route === "teams") renderTeams();
+    if(route === "roster") renderRoster();
+    if(route === "tools") renderTools();
+    if(route === "admin") renderAdmin();
     $$("[data-view]").forEach(view => {
       const active = view.dataset.view === route;
       view.hidden = !active;
@@ -312,7 +403,19 @@
     const route = event.target.closest("[data-route]");
     const action = event.target.closest("[data-action]");
     const bossTab = event.target.closest("[data-boss-tab]");
+    const teamMode = event.target.closest("[data-team-mode]");
+    const rosterMode = event.target.closest("[data-roster-mode]");
+    const toolTab = event.target.closest("[data-tool-tab]");
+    const heroButton = event.target.closest("[data-hero-index]");
     const demoState = event.target.closest("[data-demo-state]");
+    if(teamMode){ renderTeams(teamMode.dataset.teamMode); return; }
+    if(rosterMode){ renderRoster(rosterMode.dataset.rosterMode); return; }
+    if(toolTab){ renderTools(toolTab.dataset.toolTab); return; }
+    if(heroButton){
+      state.heroIndex = Number(heroButton.dataset.heroIndex) || 0;
+      renderTeams("builder");
+      return;
+    }
     if(bossTab){
       renderBoss(bossTab.dataset.bossTab);
       return;
@@ -340,17 +443,32 @@
     if(name === "logout") setDemoSession("public");
     if(name === "close-modal") closeDemoModal();
     if(name === "mobile-menu") toggleMobileMenu();
+    if(name === "collection-toggle"){
+      action.classList.toggle("is-owned");
+      const status = action.querySelector("em");
+      if(status) status.textContent = action.classList.contains("is-owned") ? "Possédé" : "À trouver";
+    }
     if(name === "open-group"){
       state.bossTab = "groups";
       showView("boss");
     }
-    if(["open-info", "choose-team", "join-group", "finish-run", "correct-report", "offline"].includes(name)){
+    if(["open-info", "choose-team", "join-group", "finish-run", "correct-report", "offline", "new-team", "save-team", "preset", "capture-import", "gear", "open-roster", "favorite", "add-hero", "calculate", "member-action"].includes(name)){
       const titles = {
         "choose-team":"Choisir mon équipe",
         "join-group":"Rejoindre le groupe",
         "finish-run":"Terminer la run",
         "correct-report":"Corriger le rapport",
-        offline:"Mode hors ligne"
+        offline:"Mode hors ligne",
+        "new-team":"Nouvelle équipe",
+        "save-team":"Équipe enregistrée",
+        preset:"Presets d'équipement",
+        "capture-import":"Importer des captures",
+        gear:"Configurer l'équipement",
+        "open-roster":"Fiche du roster",
+        favorite:"Build favori",
+        "add-hero":"Ajouter un personnage",
+        calculate:"Comparaison calculée",
+        "member-action":"Gérer le membre"
       };
       openDemoModal("info", {
         title:action.dataset.modalTitle || titles[name] || "Détail",
@@ -383,6 +501,10 @@
   window.addEventListener("popstate", () => showView(routeFromHash(), { push:false }));
   renderDashboard();
   renderBoss();
+  renderTeams();
+  renderRoster();
+  renderTools();
+  renderAdmin();
   renderHeader();
   showView(routeFromHash(), { push:false, focus:false });
 })();

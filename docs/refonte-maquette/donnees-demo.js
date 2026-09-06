@@ -41,6 +41,38 @@ window.NOVA_MAQUETTE = Object.freeze({
       { group:"Groupe 5", score:"986 200", date:"30 août · 19 h 12", note:"Deux équipements restaient incomplets." }
     ]
   },
+  heroes:[
+    { name:"Méliodas", slug:"meliodas", element:"Ténèbres", role:"Attaquant", weapon:"Épée à une main", potential:10, complete:true },
+    { name:"Merlin", slug:"merlin", element:"Foudre", role:"Soutien", weapon:"Grimoire", potential:8, complete:false },
+    { name:"Diane", slug:"diane", element:"Terre", role:"Gardien", weapon:"Marteau", potential:9, complete:true },
+    { name:"King", slug:"king", element:"Vent", role:"Soutien", weapon:"Lance", potential:7, complete:true },
+    { name:"Escanor", slug:"escanor", element:"Feu", role:"Attaquant", weapon:"Épée à deux mains", potential:10, complete:true },
+    { name:"Elizabeth", slug:"elizabeth", element:"Lumière", role:"Guérisseur", weapon:"Bâton", potential:6, complete:false }
+  ],
+  equipment:[
+    { slot:"Arme", name:"En plein cœur !", image:"../../7ds-armes/Epee 1 main/En plein coeur.webp", value:"Niv. 50 · +6" },
+    { slot:"Haut", name:"Œil de l'étoile sinistre", image:"../../7ds-armures-ssr/Haut/Haut de l'œil de l'étoile sinistre.webp", value:"SSR · +5" },
+    { slot:"Bas", name:"Mélodie d'Arachnée", image:"../../7ds-armures-ssr/Bas/Bas de la mélodie d'Arachnée.webp", value:"SSR · +5" },
+    { slot:"Collier", name:"Talisman du serment", image:"../../7ds-bijoux/Collier/Collier au talisman du serment.webp", value:"SSR · 9,34 %" }
+  ],
+  collection:[
+    { name:"Rapière à l'aura triomphale", kind:"Rapière", owned:true, image:"../../7ds-armes/Rapiere/Rapière à l'aura triomphale.webp" },
+    { name:"Rapière noir de jais", kind:"Rapière", owned:false, image:"../../7ds-armes/Rapiere/Rapière noir de jais.webp" },
+    { name:"Collier du souverain cupide", kind:"Collier", owned:true, image:"../../7ds-bijoux/Collier/Collier du souverain cupide.webp" },
+    { name:"Boucles du chaos ténébreux", kind:"Boucles", owned:false, image:"../../7ds-bijoux/Boucle d'oreille/Boucles d'oreilles du chaos ténébreux.webp" }
+  ],
+  calculator:[
+    { skill:"Compétence normale", a:"128 450", b:"119 820", gain:"+7,2 %" },
+    { skill:"Attaque spéciale", a:"344 910", b:"371 200", gain:"−7,1 %" },
+    { skill:"Ultime", a:"892 600", b:"821 440", gain:"+8,7 %" },
+    { skill:"Cycle de 60 s", a:"2,48 M", b:"2,35 M", gain:"+5,5 %" }
+  ],
+  members:[
+    { name:"YanniSs13", role:"Administrateur", roster:"18 personnages", status:"Membre" },
+    { name:"Merlin", role:"Membre", roster:"14 personnages", status:"Membre" },
+    { name:"Elaine", role:"Membre", roster:"11 personnages", status:"Membre" },
+    { name:"Nouveau joueur", role:"Accès limité", roster:"1 personnage", status:"Invité" }
+  ],
   coverage:[
     "Mon suivi", "Créer une équipe", "Équipes partagées", "Disponibilités",
     "Groupes", "Rapports", "Mon roster", "Roster des membres", "Wiki",
