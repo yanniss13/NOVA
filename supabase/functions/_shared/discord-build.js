@@ -174,7 +174,14 @@ function lireOptionFocalisee(interaction) {
 /* Ce qui COMMENCE par la saisie passe avant ce qui la contient : taper « an »
    doit remonter « Anne » avant « Yannick ». A rang egal, l'ordre alphabetique,
    pour que deux frappes identiques donnent le meme menu. */
-function classerPropositions(candidats, saisie) {
+/* `etiqueter` traduit une valeur en ce que le membre LIT. Discord distingue
+   l'etiquette de la valeur : la premiere s'affiche et se cherche, la seconde
+   revient a la commande. Les armes en ont besoin — le roster les range sous
+   « Epee 1 main », que personne n'ecrit ni ne reconnait. Sans lui, l'etiquette
+   et la valeur sont la meme chaine. */
+function classerPropositions(candidats, saisie, etiqueter) {
+  const libelle = typeof etiqueter === "function"
+    ? etiqueter : valeur => valeur;
   const cherchee = normaliserRecherche(saisie);
   const vus = new Set();
   return (Array.isArray(candidats) ? candidats : [])
@@ -185,19 +192,23 @@ function classerPropositions(candidats, saisie) {
       return true;
     })
     .map(candidat => {
-      const normalise = normaliserRecherche(candidat);
-      if(!cherchee) return { candidat, rang:1 };
-      if(normalise.startsWith(cherchee)) return { candidat, rang:0 };
-      return normalise.includes(cherchee) ? { candidat, rang:1 } : null;
+      /* La recherche porte sur l'etiquette : un membre qui tape « longue »
+         cherche l'epee longue, pas un dossier dont il ignore le nom. */
+      const affiche = libelle(candidat);
+      const normalise = normaliserRecherche(affiche);
+      if(!cherchee) return { candidat, affiche, rang:1 };
+      if(normalise.startsWith(cherchee)) return { candidat, affiche, rang:0 };
+      return normalise.includes(cherchee)
+        ? { candidat, affiche, rang:1 } : null;
     })
     .filter(Boolean)
     .sort((gauche, droite) => gauche.rang !== droite.rang
       ? gauche.rang - droite.rang
-      : gauche.candidat.localeCompare(droite.candidat, "fr"))
+      : gauche.affiche.localeCompare(droite.affiche, "fr"))
     /* Discord refuse plus de vingt-cinq propositions, et rejette la liste
        entiere quand elle deborde : c'est a nous de la tailler. */
     .slice(0, CHOIX_MAXIMUM)
-    .map(entree => ({ name:entree.candidat, value:entree.candidat }));
+    .map(entree => ({ name:entree.affiche, value:entree.candidat }));
 }
 
 /* Le nom lisible d'une ligne de roster : celui du catalogue, ou l'identifiant
@@ -259,7 +270,7 @@ async function propositionsBuild(entree) {
   const charId = trouverCharId(lignes, source.libelles, options.personnage);
   if(!charId) return [];
   const builds = await source.lireBuilds(profil.id, charId);
-  return classerPropositions(Object.keys(builds || {}), valeur);
+  return classerPropositions(Object.keys(builds || {}), valeur, libelleArme);
 }
 
 function nomsDePersonnages(lignes, libelles) {
@@ -693,12 +704,16 @@ function resoudreDemandeBuild(entree) {
 
   let retenus = types;
   if(options.arme){
+    /* LE NOM DE DOSSIER OU LE NOM DU JEU. Le menu renvoie le premier, mais un
+       membre qui ecrit a la main ecrit ce qu'il LIT — « espadon », jamais
+       « Epee 2 mains ». Les deux menent au meme build. */
     const armeCherchee = normaliserRecherche(options.arme);
-    retenus = types.filter(type => normaliserRecherche(type) === armeCherchee);
+    retenus = types.filter(type => normaliserRecherche(type) === armeCherchee
+      || normaliserRecherche(libelleArme(type)) === armeCherchee);
     if(!retenus.length){
       return { erreur:"Aucun build **" + options.arme + "** sur **"
         + nomDuPersonnage(ligne) + "**."
-        + phraseProposition(types, options.arme) };
+        + phraseProposition(types.map(libelleArme), options.arme) };
     }
   }
 
