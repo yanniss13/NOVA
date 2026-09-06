@@ -61,6 +61,7 @@ type PlanningConfig = {
   publicKey: string;
   guildId: string;
   channelIds: string[];
+  channelIdsByCommand: Record<string, string[]>;
   allowedRoleIds: string[];
   supabaseUrl: string;
   serviceRoleKey: string;
@@ -111,7 +112,12 @@ const {
   parseIdList(value?: string): string[];
   planningAuthorizationError(
     interaction: DiscordInteraction,
-    config: { guildId: string; channelIds: string[]; allowedRoleIds: string[] },
+    config: {
+      guildId: string;
+      channelIds: string[];
+      channelIdsByCommand?: Record<string, string[]>;
+      allowedRoleIds: string[];
+    },
     commandName?: string
   ): string;
   formatChronoMessage(avancement: unknown, recues: number | null): string;
@@ -198,6 +204,14 @@ function environment(): PlanningConfig {
     publicKey:Deno.env.get("DISCORD_PUBLIC_KEY") || "",
     guildId:Deno.env.get("DISCORD_GUILD_ID") || "",
     channelIds:parseIdList(Deno.env.get("DISCORD_PLANNING_CHANNEL_ID")),
+    /* Une liste par commande, DÉCLARÉE EN CLAIR et jamais construite depuis le
+       nom reçu du réseau : un `Deno.env.get("DISCORD_" + nom + "_CHANNEL_ID")`
+       laisserait une chaîne venue de Discord choisir la variable lue.
+       Renseignée, elle remplace la liste générale pour cette commande ; vide,
+       la commande retombe sur la liste générale. */
+    channelIdsByCommand:{
+      build:parseIdList(Deno.env.get("DISCORD_BUILD_CHANNEL_ID"))
+    },
     allowedRoleIds:parseIdList(Deno.env.get("DISCORD_PLANNING_ROLE_IDS")),
     supabaseUrl:Deno.env.get("SUPABASE_URL") || "",
     serviceRoleKey:Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || ""
