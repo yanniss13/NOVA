@@ -68,6 +68,21 @@ const { chromium } = require("playwright");
     assert.ok(sombres > 0 && sombres < total,
       "le filtre élément doit restreindre la grille, reçu "+sombres+"/"+total);
 
+    /* L'ÉLÉMENT SUIT L'ARME ÉQUIPÉE, pas la fiche du héros. Tristan est de
+       Feu à l'épée double et à l'espadon, mais de Vent à l'épée longue — sa
+       fiche le dit déjà. Le filtre ne lisait que l'élément figé du héros et
+       le rendait introuvable sous Vent, comme 16 autres. */
+    await page.locator("#wikiFilterElement").selectOption("WIND");
+    await page.waitForFunction(
+      () => document.querySelectorAll("#wikiGrid .wiki-tile").length > 0
+    );
+    const ventTitres = await page.locator("#wikiGrid .wiki-tile")
+      .evaluateAll(tuiles => tuiles.map(tuile => tuile.getAttribute("title")));
+    assert.ok(ventTitres.includes("Tristan"),
+      "Tristan est de Vent à l'épée longue, reçu : " + ventTitres.join(", "));
+    assert.ok(ventTitres.length < total,
+      "le filtre doit toujours restreindre la grille");
+
     /* Le rôle « Soutien » est le piège : les métadonnées du héros disent
        SUPPORT là où le vocabulaire des slots d'arme dit Supporter. Un filtre
        bâti sur le mauvais dictionnaire perdrait cette option. */

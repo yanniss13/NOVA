@@ -34,6 +34,17 @@ import { libelleDeRarete } from "./wiki-blocs.js";
     ATTACKER:"Attaquant", DEFENDER:"Défenseur", SUPPORT:"Soutien"
   };
 
+  /* Tous les elements sous lesquels un heros peut se presenter : ceux de ses
+     slots d'arme, et le sien a defaut. Les slots ecrivent « Wind », la fiche
+     « WIND » : une seule casse, sinon le filtre compare deux vocabulaires. */
+  function elementsPortes(meta) {
+    const codes = (meta && Array.isArray(meta.weapons) ? meta.weapons : [])
+      .map(slot => String(slot && slot.element || "").toUpperCase())
+      .filter(Boolean);
+    const tous = codes.length ? codes : [meta && meta.element].filter(Boolean);
+    return [...new Set(tous.map(code => String(code).toUpperCase()))];
+  }
+
   /* Points d'extension : les fiches s'y branchent au chargement de leur
      module. Tant qu'ils valent null, une tuile reste inerte plutot que de
      lever. */
@@ -123,10 +134,16 @@ import { libelleDeRarete } from "./wiki-blocs.js";
          entrees listees, parce que les armes d'un heros y sont imbriquees. */
       filtres:[
         {
+          /* L'ELEMENT SUIT L'ARME EQUIPEE, comme le dit deja la fiche du
+             heros : Tristan est de Feu a l'epee double et de Vent a l'epee
+             longue. Le filtre ne lisait que l'element fige de la fiche, ce qui
+             rendait 17 heros sur 26 introuvables sous l'un des leurs. Un heros
+             sans slot connu garde le sien, pour ne jamais disparaitre. */
           id:"wikiFilterElement", libelle:"Élément", vide:"Tous les éléments",
           valeurs:() => valeursPortees(
-            Object.values(META), meta => [meta.element], libelleElement),
-          garde:(entree, valeur) => (metaOf(entree.id) || {}).element === valeur
+            Object.values(META), elementsPortes, libelleElement),
+          garde:(entree, valeur) =>
+            elementsPortes(metaOf(entree.id) || {}).includes(valeur)
         },
         {
           id:"wikiFilterWeapon", libelle:"Arme", vide:"Toutes les armes",
