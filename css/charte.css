@@ -54,8 +54,12 @@
   --display:"Cinzel", Georgia, serif;
   --body:Georgia, "Times New Roman", serif;
 
-  /* La largeur de la page, et la seule ombre du site. */
-  --shell:min(1440px, calc(100% - 48px));
+  /* La largeur de la page, et la seule ombre du site. Le cadre suit la
+     fenetre : la maquette le plafonnait a 1440px, ce qui laissait deux larges
+     bandes noires sur un ecran de bureau. Les vues denses du site — roster,
+     planning, wiki — gagnent a prendre la largeur disponible ; le texte
+     courant, lui, reste borne a 62ch par les composants qui le portent. */
+  --shell:calc(100% - 48px);
   /* La hauteur de la barre du pouce. Tout ce qui se pose en bas de l'ecran
      sur un telephone — le contenu, le bandeau de mise a jour, les toasts —
      doit passer AU-DESSUS d'elle. Un jeton, parce que trois feuilles en
