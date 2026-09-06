@@ -94,7 +94,11 @@ const CARACTERES_DESSINABLES = " ABCDEFGHIJKLMNOPQRSTUVWXYZ"
    seule presente dans l'atlas. */
 const REMPLACEMENTS = {
   "『":"«", "』":"»", "《":"«", "》":"»",
-  "’":"'", "‘":"'"
+  "’":"'", "‘":"'",
+  /* Le tiret demi-cadratin s'ecrit naturellement dans une plage d'heures
+     (« 14h–15h ») mais ne figure pas dans l'atlas : sans cette ligne il
+     disparaissait, et la plage se lisait « 14h 15h ». */
+  "–":"-", "−":"-"
 };
 
 function buildCommandDefinition() {

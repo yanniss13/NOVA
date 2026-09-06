@@ -62,6 +62,7 @@ const SUITES = {
     "node tests/png-decode.test.js",
     "node tests/discord-build.test.js",
     "node tests/discord-build-png.test.js",
+    "node tests/planning-png.test.js",
     "node tests/recommandation-groupes.test.js",
     "node tests/boss-reports-schema.test.js",
     "node tests/boss-admin-schema.test.js",

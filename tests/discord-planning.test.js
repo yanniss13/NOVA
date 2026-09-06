@@ -312,8 +312,9 @@ const edgeSource = fs.readFileSync(path.join(
   /config\.guildId \+ ":" \+ \(interaction\.channel_id/,
   /availability-font\.js/,
   /member_availability\?week_start=eq\./,
-  /generateAvailabilityTablePng\(report\)/,
-  /generateAvailabilityDetailsPng\(report\)/,
+  /generatePlanningTablePng\(report\)/,
+  /generatePlanningMembersPng\(report\)/,
+  /planning-png\.js/,
   /form\.append\("payload_json"/,
   /form\.append\("files\[0\]"/,
   /form\.append\("files\[1\]"/,
@@ -378,19 +379,33 @@ async function testRegistrationCreatesWithoutReplacing() {
 function assertPng(png, expectedHeight) {
   assert.deepStrictEqual([...png.subarray(0, 8)], [137, 80, 78, 71, 13, 10, 26, 10]);
   assert.equal(png.subarray(12, 16).toString("ascii"), "IHDR");
-  assert.equal(png.readUInt32BE(16), 1600);
+  /* Les images du planning ont pris la largeur des cartes Discord : 1660 px,
+     comme la fiche /build. Les deux arrivent dans le meme fil. */
+  assert.equal(png.readUInt32BE(16), 1660);
   if(expectedHeight) assert.equal(png.readUInt32BE(20), expectedHeight);
-  else assert.ok(png.readUInt32BE(20) >= 680);
+  /* La hauteur suit le nombre de membres : sa geometrie exacte est eprouvee
+     dans planning-png.test.js. Ici on verifie seulement qu'une image est bien
+     sortie, et qu'elle reste en paysage — Discord reduit sur la hauteur. */
+  else{
+    assert.ok(png.readUInt32BE(20) >= 400, "image degeneree : "
+      + png.readUInt32BE(20) + " px de haut");
+    assert.ok(png.readUInt32BE(20) < png.readUInt32BE(16),
+      "l'image du planning doit rester plus large que haute");
+  }
   assert.equal(png.subarray(-8, -4).toString("ascii"), "IEND");
   assert.ok(png.length < 2_000_000, "l'aperçu PNG reste léger pour Discord");
 }
 
 async function testAvailabilityImages() {
+  /* Le dessin du planning vit dans son propre module ; ce fichier ne garde
+     que le rapport et la surface. */
+  const planningShared =
+    require("../supabase/functions/_shared/planning-png.js");
   const [table, details] = await Promise.all([
-    pdfShared.generateAvailabilityTablePng(sampleAvailabilityReport),
-    pdfShared.generateAvailabilityDetailsPng(sampleAvailabilityReport)
+    planningShared.generatePlanningTablePng(sampleAvailabilityReport),
+    planningShared.generatePlanningMembersPng(sampleAvailabilityReport)
   ]);
-  assertPng(table, 1000);
+  assertPng(table);
   assertPng(details);
   assert.notDeepStrictEqual(table, details);
 }

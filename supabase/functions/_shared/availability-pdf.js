@@ -818,216 +818,10 @@ async function encodePng(canvas) {
   ]);
 }
 
-async function generateAvailabilityPreviewPng(report) {
-  const width = 1600;
-  const height = 1000;
-  const fonts = await availabilityFonts();
-  const colors = {
-    background:[12, 9, 18, 255],
-    header:[22, 14, 31, 255],
-    panel:[27, 20, 36, 255],
-    panelLight:[39, 29, 50, 255],
-    border:[91, 70, 101, 255],
-    gold:[239, 190, 67, 255],
-    goldDark:[145, 91, 29, 255],
-    parchment:[248, 241, 222, 255],
-    muted:[184, 169, 191, 255],
-    heatLow:[82, 47, 105, 255],
-    heatHigh:[205, 128, 35, 255]
-  };
-  const canvas = new RasterCanvas(width, height, colors.background);
-
-  canvas.rectangle(0, 0, width, 202, colors.header);
-  canvas.rectangle(0, 0, width, 8, colors.gold);
-  canvas.rectangle(0, 198, width, 2, colors.goldDark);
-
-  /* Emblème et typographies reprennent la direction artistique de NOVA :
-     violet obsidienne, filets or et titres Cinzel. */
-  canvas.circle(72, 72, 43, colors.gold);
-  canvas.circle(72, 72, 38, colors.header);
-  canvas.circle(72, 72, 31, colors.panelLight);
-  canvas.centeredAtlasText(72, 41, "7", fonts.display, colors.gold);
-  canvas.atlasText(130, 29, "CONFRERIE 7DS", fonts.brand, colors.gold);
-  canvas.atlasText(132, 68, "TEAM BUILDER - BOSS DE GUILDE", fonts.body, colors.muted);
-
-  canvas.atlasText(48, 112, "PLANNING HEBDOMADAIRE", fonts.display, colors.parchment);
-  canvas.centeredAtlasText(1280, 35, report.label + " - PARIS", fonts.body, colors.parchment);
-  const declared = report.declaredCount + " / " + report.members.length
-    + " MEMBRES - CRENEAUX RENSEIGNES";
-  canvas.centeredAtlasText(1280, 78, declared, fonts.body, colors.muted);
-
-  const bestText = report.best.length
-    ? "MEILLEURS CRENEAUX : " + report.best.map(slot =>
-      slotLabel(slot.index) + " (" + slot.count + ")"
-    ).join(" | ")
-    : "AUCUN CRENEAU DISPONIBLE DECLARE";
-  canvas.rectangle(42, 218, width - 84, 48, colors.panel);
-  canvas.outline(42, 218, width - 84, 48, 1, colors.goldDark);
-  canvas.atlasText(60, 222, bestText, fonts.body, colors.parchment);
-
-  const left = 42;
-  const top = 282;
-  const timeWidth = 100;
-  const gridWidth = width - left * 2;
-  const dayWidth = (gridWidth - timeWidth) / 7;
-  const headerHeight = 46;
-  const rowHeight = 26;
-
-  canvas.rectangle(left, top, timeWidth, headerHeight, colors.panelLight);
-  canvas.centeredAtlasText(left + timeWidth / 2, top + 3, "HEURE", fonts.body, colors.parchment);
-  for(let day = 0; day < 7; day += 1){
-    const date = dayDate(report.weekStart, day);
-    const label = SHORT_DAYS[day] + " " + String(date.getUTCDate()).padStart(2, "0")
-      + "/" + String(date.getUTCMonth() + 1).padStart(2, "0");
-    const x = left + timeWidth + day * dayWidth;
-    canvas.rectangle(x + 1, top, dayWidth - 2, headerHeight, colors.panelLight);
-    canvas.centeredAtlasText(x + dayWidth / 2, top + 3, label, fonts.body, colors.parchment);
-  }
-
-  for(let hour = 0; hour < 24; hour += 1){
-    const y = top + headerHeight + hour * rowHeight;
-    canvas.rectangle(left, y + 1, timeWidth, rowHeight - 2,
-      hour % 2 ? colors.panel : colors.panelLight);
-    canvas.centeredAtlasText(left + timeWidth / 2, y - 3, hourLabel(hour), fonts.body, colors.muted);
-    for(let day = 0; day < 7; day += 1){
-      const count = report.counts[day * 24 + hour];
-      const ratio = report.max ? count / report.max : 0;
-      const fill = count
-        ? mixedColor(colors.heatLow, colors.heatHigh, ratio)
-        : (hour % 2 ? colors.panel : colors.panelLight);
-      const x = left + timeWidth + day * dayWidth;
-      canvas.rectangle(x + 1, y + 1, dayWidth - 2, rowHeight - 2, fill);
-      canvas.centeredAtlasText(
-        x + dayWidth / 2,
-        y - 3,
-        count ? String(count) : "-",
-        fonts.body,
-        count ? colors.parchment : colors.muted
-      );
-    }
-  }
-
-  canvas.outline(left, top, gridWidth, headerHeight + 24 * rowHeight, 2, colors.goldDark);
-  canvas.rectangle(42, 964, width - 84, 1, colors.border);
-  canvas.atlasText(48, 963,
-    "CHAQUE NOMBRE INDIQUE LES MEMBRES DISPONIBLES PENDANT CETTE HEURE",
-    fonts.body, colors.muted);
-  return await encodePng(canvas);
-}
-
-function packedDetailLines(member, font, maximumWidth) {
-  const entries = [];
-  for(let day = 0; day < 7; day += 1){
-    const intervals = memberDayIntervals(member.mask, day);
-    if(!intervals.length) continue;
-    entries.push(SHORT_DAYS[day] + " : " + intervals.map(intervalLabel).join(" ET "));
-  }
-  if(!entries.length){
-    return [member.declared ? "AUCUN CRENEAU SELECTIONNE" : "DISPONIBILITES NON RENSEIGNEES"];
-  }
-
-  const lines = [];
-  let current = "";
-  entries.forEach(entry => {
-    const candidate = current ? current + "  /  " + entry : entry;
-    if(current && atlasStringWidth(candidate, font) > maximumWidth){
-      lines.push(current);
-      current = entry;
-    }else{
-      current = candidate;
-    }
-  });
-  if(current) lines.push(current);
-  return lines;
-}
-
-async function generateAvailabilityDetailsPng(report) {
-  const width = 1600;
-  const fonts = await availabilityFonts();
-  const colors = {
-    background:[12, 9, 18, 255],
-    header:[22, 14, 31, 255],
-    panel:[27, 20, 36, 255],
-    panelLight:[39, 29, 50, 255],
-    border:[91, 70, 101, 255],
-    gold:[239, 190, 67, 255],
-    goldDark:[145, 91, 29, 255],
-    parchment:[248, 241, 222, 255],
-    muted:[184, 169, 191, 255]
-  };
-  const columnWidth = 738;
-  const columnLeft = [42, 820];
-  const maximumLineWidth = columnWidth - 36;
-  const cards = report.members.map(member => {
-    const lines = packedDetailLines(member, fonts.body, maximumLineWidth);
-    return { member, lines, height:68 + lines.length * 34 };
-  });
-  const split = Math.ceil(cards.length / 2);
-  const columns = [cards.slice(0, split), cards.slice(split)];
-  const columnHeight = column => column.reduce((total, card) => total + card.height + 12, 0);
-  const height = Math.max(680, 230 + Math.max(...columns.map(columnHeight), 0) + 42);
-  const canvas = new RasterCanvas(width, height, colors.background);
-
-  canvas.rectangle(0, 0, width, 202, colors.header);
-  canvas.rectangle(0, 0, width, 8, colors.gold);
-  canvas.rectangle(0, 198, width, 2, colors.goldDark);
-  canvas.circle(72, 72, 43, colors.gold);
-  canvas.circle(72, 72, 38, colors.header);
-  canvas.circle(72, 72, 31, colors.panelLight);
-  canvas.centeredAtlasText(72, 41, "7", fonts.display, colors.gold);
-  canvas.atlasText(130, 29, "CONFRERIE 7DS", fonts.brand, colors.gold);
-  canvas.atlasText(132, 68, "TEAM BUILDER - BOSS DE GUILDE", fonts.body, colors.muted);
-  canvas.atlasText(48, 112, "CRENEAUX PAR MEMBRE", fonts.display, colors.parchment);
-  canvas.centeredAtlasText(1280, 35, report.label + " - PARIS", fonts.body, colors.parchment);
-  canvas.centeredAtlasText(
-    1280,
-    78,
-    report.declaredCount + " / " + report.members.length + " MEMBRES - CRENEAUX RENSEIGNES",
-    fonts.body,
-    colors.muted
-  );
-
-  if(!cards.length){
-    canvas.rectangle(42, 230, width - 84, 90, colors.panel);
-    canvas.outline(42, 230, width - 84, 90, 1, colors.goldDark);
-    canvas.atlasText(68, 251, "AUCUN MEMBRE ENREGISTRE DANS LA CONFRERIE", fonts.body,
-      colors.parchment);
-  }else{
-    columns.forEach((column, columnIndex) => {
-      let y = 218;
-      column.forEach((card, cardIndex) => {
-        const x = columnLeft[columnIndex];
-        const fill = cardIndex % 2 ? colors.panel : colors.panelLight;
-        canvas.rectangle(x, y, columnWidth, card.height, fill);
-        canvas.outline(x, y, columnWidth, card.height, 1, colors.goldDark);
-        canvas.atlasText(
-          x + 18,
-          y + 10,
-          card.member.pseudo + " - " + card.member.hours + " H DISPONIBLES",
-          fonts.brand,
-          colors.gold
-        );
-        card.lines.forEach((line, lineIndex) => {
-          canvas.atlasText(
-            x + 18,
-            y + 54 + lineIndex * 34,
-            line,
-            fonts.body,
-            line.includes("NON RENSEIGNEES") ? colors.muted : colors.parchment
-          );
-        });
-        y += card.height + 12;
-      });
-    });
-  }
-
-  canvas.rectangle(42, height - 22, width - 84, 1, colors.border);
-  return await encodePng(canvas);
-}
-
-async function generateAvailabilityTablePng(report) {
-  return await generateAvailabilityPreviewPng(report);
-}
+/* LE DESSIN DU PLANNING N'EST PLUS ICI. Les deux images vivent dans
+   `planning-png.js`, a la charte des cartes Discord : cadre file d'or, embleme
+   et atlas accentue. Ce module garde ce qui ne depend d'aucune mise en page —
+   la surface de dessin, l'encodeur PNG, les polices et le rapport. */
 
 /* La surface de dessin, les polices et l'encodeur sortent pour la carte de
    /build : elle partage la charte du planning, il n'y a aucune raison d'en
@@ -1043,13 +837,16 @@ const availabilityPdfApi = {
   bitmapText,
   currentAvailabilityWeekStart,
   weekLabel,
+  /* Le rendu du planning vit dans `planning-png.js` : il lui faut le calendrier
+     de cette semaine, pas une seconde copie de son arithmetique. */
+  jourDeLaSemaine:dayDate,
+  libelleHeure:hourLabel,
+  libelleIntervalle:intervalLabel,
+  JOURS_COURTS:SHORT_DAYS,
   normalizedMask,
   buildAvailabilityReport,
   memberDayIntervals,
-  generateAvailabilityPdf,
-  generateAvailabilityPreviewPng,
-  generateAvailabilityTablePng,
-  generateAvailabilityDetailsPng
+  generateAvailabilityPdf
 };
 
 /* `.js` est accepté par le paquetage Supabase, contrairement à `.cjs`. Cette
