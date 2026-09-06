@@ -83,27 +83,20 @@ function hasManagementPermission(value) {
   }
 }
 
-/* LES SALONS D'UNE COMMANDE.
-
-   Une commande peut avoir sa propre liste, et elle REMPLACE alors la liste
-   generale : un salon dedie a /build n'ouvre pas /planning, /chrono et /run
-   avec lui, et /build cesse de repondre ailleurs. « Seulement ici » ne
-   voudrait rien dire si les deux listes s'additionnaient.
-
-   Une liste propre vide veut dire « pas de reglage » : la commande retombe sur
-   la liste generale, et le comportement historique tient. */
-function channelsForCommand(config, commandName) {
-  const parCommande = (config.channelIdsByCommand || {})[commandName] || [];
-  return parCommande.length ? parCommande : (config.channelIds || []);
-}
-
 /* Renvoie un message utilisateur, ou une chaîne vide quand l'interaction est
    autorisée. Le serveur et au moins un salon sont obligatoires : ces commandes
    publient des données nominatives — les créneaux de toute la confrérie, ou
-   l'équipement d'un membre. */
+   l'équipement d'un membre.
+
+   UNE SEULE LISTE DE SALONS pour les quatre commandes, volontairement. Limiter
+   une commande à un salon précis se règle dans Discord même — Paramètres du
+   serveur, Intégrations, la commande, ses salons — et ce réglage-là fait
+   mieux : il la retire du menu « / » du salon, ce qu'un refus côté serveur ne
+   saura jamais faire. Doubler ce réglage ici donnerait deux endroits à tenir
+   d'accord pour un résultat moins bon. */
 function planningAuthorizationError(interaction, config, commandName) {
   const commande = "/" + (commandName || "planning");
-  const allowedChannels = channelsForCommand(config, commandName);
+  const allowedChannels = config.channelIds || [];
   if(!config.guildId || !allowedChannels.length){
     return "La commande " + commande
       + " n'est pas encore configurée par l'administrateur.";
@@ -236,7 +229,6 @@ const discordPlanningApi = {
   chronoInteractionComponents,
   parseIdList,
   hasManagementPermission,
-  channelsForCommand,
   planningAuthorizationError,
   isFreshDiscordTimestamp,
   hexToUint8Array,
