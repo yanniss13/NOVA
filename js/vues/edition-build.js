@@ -41,6 +41,11 @@ import {
   jewelSetsFrom
 } from "../metier/equipement.js";
 import { ARMOR_SLOTS, DATA, JEWEL_SLOTS, LINKED_ARMOR_SLOT } from "../noyau/constantes.js";
+
+/* L'anneau represente un set de bijoux dans le sélecteur. Ce choix etait lu
+   sur `JEWEL_SLOTS[0]`, si bien que reordonner l'affichage changeait la
+   vignette sans qu'on l'ait demande. */
+const BIJOU_VIGNETTE_SET = "Anneau";
 import { buildStatsReady, ensureBuildStats } from "../noyau/catalogue-build.js";
 import { el } from "../noyau/dom.js";
 import { jsonCopy } from "../noyau/outils.js";
@@ -353,7 +358,7 @@ import { toast } from "./toast.js";
       onclick:()=>openEquipmentSetPicker({
         title:armor ? "Équiper un set d’armure" : "Équiper un set de bijoux",
         sets:armor ? armorSetsFrom(DATA.armures) : jewelSetsFrom(DATA.bijoux),
-        thumbSlot:armor ? ARMOR_SET_SLOTS[0] : JEWEL_SLOTS[0],
+        thumbSlot:armor ? ARMOR_SET_SLOTS[0] : BIJOU_VIGNETTE_SET,
         onApply
       })
     });
