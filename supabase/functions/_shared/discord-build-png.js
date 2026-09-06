@@ -53,7 +53,8 @@ const COLONNE_DROITE = LARGEUR - 2 * MARGE - COLONNE_GAUCHE - COLONNE_MILIEU
    TAILLE_PORTRAIT de scripts/generer-vignettes.py : les vignettes sont posees
    pixel pour pixel, sans redimensionnement. */
 const ICONE = 80;
-const PORTRAIT = 288;
+const PORTRAIT = 336;
+const IDENTITE = 64;
 
 const HAUTEUR_ENTETE = 178;
 const HAUTEUR_PIED = 76;
@@ -64,8 +65,8 @@ const HAUTEUR_NOM = 34;
 /* Une jauge tient sur deux rangees : le libelle et sa valeur en vis-a-vis,
    puis le trait dessous. Sur une seule il faudrait partager la largeur entre
    trois choses, et aucune colonne n'en a assez. */
-const HAUTEUR_JAUGE_TITRE = 38;
-const HAUTEUR_JAUGE_TRAIT = 20;
+const HAUTEUR_JAUGE_TITRE = 36;
+const HAUTEUR_JAUGE_TRAIT = 14;
 const HAUTEUR_JAUGE = HAUTEUR_JAUGE_TITRE + HAUTEUR_JAUGE_TRAIT;
 const ESPACE_BLOC = 16;
 
@@ -187,6 +188,77 @@ function etoile(canvas, centreX, centreY, rayon, couleur) {
   remplirPolygone(canvas, sommets, couleur);
 }
 
+function anneau(canvas, centreX, centreY, rayon, epaisseur, couleur, fond) {
+  canvas.circle(centreX, centreY, rayon, couleur);
+  canvas.circle(centreX, centreY, Math.max(1, rayon - epaisseur), fond);
+}
+
+function symboleIdentite(canvas, type, centreX, centreY) {
+  if(type === "element"){
+    anneau(canvas, centreX, centreY, 27, 2, COULEURS.or, COULEURS.panneau);
+    etoile(canvas, centreX, centreY, 18, COULEURS.orVif);
+    etoile(canvas, centreX, centreY, 8, COULEURS.panneau);
+    return;
+  }
+  if(type === "arme"){
+    /* Une lame verticale, volontairement héraldique plutôt que réaliste. */
+    remplirPolygone(canvas, [
+      [centreX, centreY - 30], [centreX + 5, centreY - 22],
+      [centreX + 3, centreY + 16], [centreX - 3, centreY + 16],
+      [centreX - 5, centreY - 22]
+    ], COULEURS.or);
+    canvas.rectangle(centreX - 15, centreY + 14, 30, 3, COULEURS.orVif);
+    canvas.rectangle(centreX - 2, centreY + 17, 4, 16, COULEURS.or);
+    losange(canvas, centreX, centreY + 34, 5, COULEURS.orVif);
+    return;
+  }
+  /* Un écu simple pour le rôle. Le panneau intérieur creuse son filet. */
+  remplirPolygone(canvas, [
+    [centreX - 24, centreY - 27], [centreX + 24, centreY - 27],
+    [centreX + 20, centreY + 11], [centreX, centreY + 30],
+    [centreX - 20, centreY + 11]
+  ], COULEURS.or);
+  remplirPolygone(canvas, [
+    [centreX - 20, centreY - 22], [centreX + 20, centreY - 22],
+    [centreX + 16, centreY + 8], [centreX, centreY + 24],
+    [centreX - 16, centreY + 8]
+  ], COULEURS.panneau);
+  etoile(canvas, centreX, centreY - 1, 13, COULEURS.orVif);
+}
+
+/* Les icônes de maîtrise sont blanches sur fond transparent ; les badges de
+   rôle ont un fond élémentaire coloré et un glyphe clair. Cette copie teintée
+   conserve les vrais contours du jeu tout en les accordant au filet d'or. */
+function dessinerImageTeintee(canvas, image, x, y, couleur, seuil) {
+  if(!image || !image.pixels) return false;
+  let dessines = 0;
+  const gauche = Math.round(x);
+  const haut = Math.round(y);
+  for(let ligne = 0; ligne < image.height; ligne += 1){
+    for(let colonne = 0; colonne < image.width; colonne += 1){
+      const source = (ligne * image.width + colonne) * 4;
+      const alphaSource = image.pixels[source + 3];
+      const lumiere = Math.min(image.pixels[source], image.pixels[source + 1],
+        image.pixels[source + 2]);
+      if(!alphaSource || lumiere < seuil) continue;
+      const cibleX = gauche + colonne;
+      const cibleY = haut + ligne;
+      if(cibleX < 0 || cibleX >= canvas.width
+        || cibleY < 0 || cibleY >= canvas.height) continue;
+      const cible = (cibleY * canvas.width + cibleX) * 4;
+      const ratio = alphaSource / 255 * lumiere / 255;
+      for(let canal = 0; canal < 3; canal += 1){
+        canvas.pixels[cible + canal] = Math.round(
+          couleur[canal] * ratio + canvas.pixels[cible + canal] * (1 - ratio)
+        );
+      }
+      canvas.pixels[cible + 3] = 255;
+      dessines += 1;
+    }
+  }
+  return dessines > 0;
+}
+
 /* Les equerres de coin de la maquette. Deux traits et un losange suffisent a
    en donner l'idee ; les entrelacs fins de l'image d'origine demanderaient un
    dessin vectoriel que ce rendu n'a pas. */
@@ -303,6 +375,8 @@ function sectionParTitre(carte, titre) {
 function cheminsImages(carte) {
   const chemins = new Set();
   if(carte && carte.portrait) chemins.add(carte.portrait);
+  if(carte && carte.iconeArme) chemins.add(carte.iconeArme);
+  if(carte && carte.iconeRoleElement) chemins.add(carte.iconeRoleElement);
   ["Arme", "Armure", "Bijoux"].forEach(titre => {
     lignesDe(sectionParTitre(carte, titre)).forEach(ligne => {
       if(ligne.image) chemins.add(ligne.image);
@@ -352,10 +426,13 @@ function mesurer(carte, fonts) {
 
   const largeurBijou = COLONNE_DROITE - 2 * PADDING - ICONE - 18;
   const bijoux = lignesDe(sectionParTitre(carte, "Bijoux")).map(ligne => {
-    const nom = couperEnLignes(ligne.nom, fonts.corps, largeurBijou);
+    /* Le jeu place la stat du bijou dans la même ligne que son identité.
+       La première jauge exploite donc les 80 px déjà ouverts par l'icône ;
+       seules d'éventuelles jauges supplémentaires agrandissent la ligne. */
+    const nom = tronquer(ligne.nom, fonts.corps, largeurBijou);
     const hauteur = Math.max(ICONE,
-      HAUTEUR_LIGNE + Math.max(1, nom.length) * HAUTEUR_NOM
-      + ligne.jauges.length * HAUTEUR_JAUGE);
+      HAUTEUR_LIGNE + HAUTEUR_NOM + (ligne.jauges.length ? 16 : 0))
+      + Math.max(0, ligne.jauges.length - 1) * HAUTEUR_JAUGE;
     return Object.assign({}, ligne, { nom, hauteur });
   });
   const hauteurBijoux = HAUTEUR_TITRE_SECTION
@@ -381,15 +458,24 @@ function mesurer(carte, fonts) {
 /* Le dessin                                                           */
 
 function titreSection(canvas, numero, titre, x, y, largeur, fonts) {
-  const avance = ecrire(canvas, x, y, numero, fonts.section, COULEURS.or);
-  const apres = x + avance + 16;
-  ecrire(canvas, apres, y, titre, fonts.section, COULEURS.parchemin);
-  const gaucheFilet = apres + largeurTexte(titre, fonts.section) + 18;
-  const droite = x + largeur;
-  if(droite - gaucheFilet > 24){
-    canvas.rectangle(gaucheFilet, y + 20, droite - gaucheFilet, 1,
+  const ecart = 16;
+  const largeurNumero = largeurTexte(numero, fonts.section);
+  const largeurTitre = largeurTexte(titre, fonts.section);
+  const largeurGroupe = largeurNumero + ecart + largeurTitre;
+  const debut = x + (largeur - largeurGroupe) / 2;
+  const margeFilet = 18;
+  const gaucheFin = debut - margeFilet;
+  const droiteDebut = debut + largeurGroupe + margeFilet;
+  if(gaucheFin - x > 18) canvas.rectangle(x, y + 20, gaucheFin - x, 1,
+    COULEURS.filet);
+  if(x + largeur - droiteDebut > 18){
+    canvas.rectangle(droiteDebut, y + 20, x + largeur - droiteDebut, 1,
       COULEURS.filet);
   }
+  ecrire(canvas, debut, y, numero, fonts.section, COULEURS.or);
+  ecrire(canvas, debut + largeurNumero + ecart, y, titre, fonts.section,
+    COULEURS.parchemin);
+  losange(canvas, x + largeur / 2, y + 43, 4, COULEURS.or);
 }
 
 function dessinerEntete(canvas, carte, fonts, images) {
@@ -409,8 +495,8 @@ function dessinerEntete(canvas, carte, fonts, images) {
 
   const details = [
     carte && carte.element,
-    carte && carte.potentiel ? "Potentiel " + carte.potentiel : "",
-    carte && carte.joueur ? "Roster de " + carte.joueur : ""
+    carte && carte.role,
+    carte && carte.potentiel ? "Potentiel " + carte.potentiel : ""
   ].filter(Boolean).join("  ·  ");
   ecrireCentre(canvas, centre, 138, details, fonts.petit, COULEURS.attenue);
   void images;
@@ -420,35 +506,67 @@ function dessinerColonneGauche(canvas, carte, x, y, hauteur, fonts, images) {
   cadre(canvas, x, y, COLONNE_GAUCHE, hauteur);
   const centre = x + COLONNE_GAUCHE / 2;
   const portraitX = Math.round(centre - PORTRAIT / 2);
-  const portraitY = y + PADDING;
+  const portraitY = y + 30;
+  canvas.outline(portraitX - 7, portraitY - 7, PORTRAIT + 14, PORTRAIT + 14,
+    1, COULEURS.filet);
   canvas.rectangle(portraitX, portraitY, PORTRAIT, PORTRAIT, COULEURS.creux);
   const portrait = carte && images.get(carte.portrait);
   if(portrait) canvas.drawImage(portrait, portraitX, portraitY);
   canvas.outline(portraitX, portraitY, PORTRAIT, PORTRAIT, 1, COULEURS.filet);
 
-  const basPortrait = portraitY + PORTRAIT + 22;
-  filetOrne(canvas, x + PADDING, basPortrait, COLONNE_GAUCHE - 2 * PADDING,
-    COULEURS.filet);
+  const basPortrait = portraitY + PORTRAIT + 28;
+  const largeurPortraitLabel = largeurTexte("Portrait", fonts.petit);
+  const debutLabel = centre - largeurPortraitLabel / 2;
+  canvas.rectangle(x + PADDING, basPortrait,
+    debutLabel - 14 - (x + PADDING), 1, COULEURS.filet);
+  canvas.rectangle(debutLabel + largeurPortraitLabel + 14, basPortrait,
+    x + COLONNE_GAUCHE - PADDING
+      - (debutLabel + largeurPortraitLabel + 14), 1, COULEURS.filet);
+  losange(canvas, debutLabel - 7, basPortrait, 4, COULEURS.or);
+  losange(canvas, debutLabel + largeurPortraitLabel + 7, basPortrait, 4,
+    COULEURS.or);
+  ecrireCentre(canvas, centre, basPortrait - 14, "Portrait", fonts.petit,
+    COULEURS.parchemin);
 
   /* Trois cases sous le portrait, comme la maquette : ce qui identifie le
      personnage avant meme son equipement. */
-  /* Deux cases, pas trois : le roster est deja nomme dans l'en-tete, et sa
-     troisieme case volait la largeur aux deux autres — « Epee a... ». */
   const cases = [
-    ["Élément", (carte && carte.element) || "—"],
-    ["Arme", (carte && carte.arme) || "—"]
+    ["element", "Élément", (carte && carte.element) || "—"],
+    ["arme", "Arme", (carte && carte.arme) || "—"],
+    ["role", "Rôle", (carte && carte.role) || "—"]
   ];
   const largeurCase = (COLONNE_GAUCHE - 2 * PADDING) / cases.length;
   cases.forEach((entree, rang) => {
     const gauche = x + PADDING + rang * largeurCase;
     if(rang){
-      canvas.rectangle(gauche, basPortrait + 24, 1, 66, COULEURS.filet);
+      canvas.rectangle(gauche, basPortrait + 30, 1, 126, COULEURS.filet);
     }
     const milieu = gauche + largeurCase / 2;
-    ecrireCentre(canvas, milieu, basPortrait + 30,
-      tronquer(entree[1], fonts.corps, largeurCase - 16), fonts.corps,
-      COULEURS.parchemin);
-    ecrireCentre(canvas, milieu, basPortrait + 64, entree[0], fonts.petit,
+    const hautIcone = basPortrait + 66 - IDENTITE / 2;
+    let iconeDessinee = false;
+    if(entree[0] === "element" && carte && carte.iconeRoleElement){
+      const icone = images.get(carte.iconeRoleElement);
+      if(icone){
+        canvas.drawImage(icone, milieu - IDENTITE / 2, hautIcone);
+        iconeDessinee = true;
+      }
+    }else if(entree[0] === "arme" && carte && carte.iconeArme){
+      iconeDessinee = dessinerImageTeintee(canvas, images.get(carte.iconeArme),
+        milieu - IDENTITE / 2, hautIcone, COULEURS.orVif, 1);
+    }else if(entree[0] === "role" && carte && carte.iconeRoleElement){
+      iconeDessinee = dessinerImageTeintee(canvas,
+        images.get(carte.iconeRoleElement), milieu - IDENTITE / 2, hautIcone,
+        COULEURS.orVif, 170);
+    }
+    if(!iconeDessinee) symboleIdentite(canvas, entree[0], milieu,
+      basPortrait + 66);
+    const morceaux = couperEnLignes(entree[2], fonts.petit, largeurCase - 14)
+      .slice(0, 2);
+    morceaux.forEach((morceau, ligne) => {
+      ecrireCentre(canvas, milieu, basPortrait + 103 + ligne * 26, morceau,
+        fonts.petit, COULEURS.parchemin);
+    });
+    ecrireCentre(canvas, milieu, basPortrait + 158, entree[1], fonts.petit,
       COULEURS.faible);
   });
 }
@@ -518,8 +636,39 @@ function dessinerBijoux(canvas, lignes, x, y, hauteur, fonts, images) {
   let curseur = y + PADDING + HAUTEUR_TITRE_SECTION;
   const largeur = COLONNE_DROITE - 2 * PADDING;
   lignes.forEach(ligne => {
-    dessinerBloc(canvas, Object.assign({}, ligne, { details:[] }),
-      x + PADDING, curseur, largeur, fonts, images);
+    const gauche = x + PADDING;
+    dessinerIcone(canvas, images.get(ligne.image), gauche, curseur);
+    const texteX = gauche + ICONE + 18;
+    const droite = gauche + largeur;
+    const largeurTexteBloc = droite - texteX;
+    ecrire(canvas, texteX, curseur, ligne.emplacement, fonts.petit,
+      COULEURS.faible);
+    if(ligne.jauges.length){
+      const premiere = ligne.jauges[0];
+      const valeur = texteCarte(premiere.texte);
+      const largeurValeur = largeurTexte(valeur, fonts.petit);
+      const largeurResume = largeurTexteBloc * 0.58;
+      const libelle = tronquer(premiere.libelle, fonts.petit,
+        largeurResume - largeurValeur - 12);
+      ecrireADroite(canvas, droite, curseur, valeur, fonts.petit,
+        COULEURS.parchemin);
+      ecrireADroite(canvas, droite - largeurValeur - 12, curseur, libelle,
+        fonts.petit, COULEURS.attenue);
+    }
+    ecrire(canvas, texteX, curseur + HAUTEUR_LIGNE,
+      ligne.nom || "Aucun", fonts.corps,
+      ligne.nom ? COULEURS.parchemin : COULEURS.faible);
+    if(ligne.jauges.length){
+      const premiere = ligne.jauges[0];
+      if(premiere.part !== null && premiere.part !== undefined){
+        dessinerBarre(canvas, texteX, curseur + 68, premiere.part,
+          largeurTexteBloc);
+      }
+      ligne.jauges.slice(1).forEach((jauge, rang) => {
+        dessinerJauge(canvas, jauge, texteX,
+          curseur + ICONE + rang * HAUTEUR_JAUGE, largeurTexteBloc, fonts);
+      });
+    }
     curseur += ligne.hauteur + 12;
   });
 }
@@ -582,6 +731,8 @@ async function generateBuildCardPng(carte, options) {
      maquette. */
   canvas.outline(14, 14, LARGEUR - 28, plan.hauteur - 28, 1, COULEURS.filet);
   canvas.outline(20, 20, LARGEUR - 40, plan.hauteur - 40, 1, COULEURS.filet);
+  losange(canvas, LARGEUR / 2, 20, 9, COULEURS.or);
+  losange(canvas, LARGEUR / 2, 20, 4, COULEURS.fond);
   equerre(canvas, 30, 30, 1, 1, 34, COULEURS.or);
   equerre(canvas, LARGEUR - 30, 30, -1, 1, 34, COULEURS.or);
   equerre(canvas, 30, plan.hauteur - 30, 1, -1, 34, COULEURS.or);
@@ -620,7 +771,8 @@ async function generateBuildCardPng(carte, options) {
   const pied = plan.hauteur - HAUTEUR_PIED + 10;
   filetOrne(canvas, MARGE + 14, pied - 12, LARGEUR - 2 * MARGE - 28,
     COULEURS.filet);
-  ecrire(canvas, MARGE + 22, pied, "NOVA · Confrérie 7DS", fonts.petit,
+  const signature = "NOVA · " + ((carte && carte.joueur) || "Confrérie 7DS");
+  ecrire(canvas, MARGE + 22, pied, signature, fonts.petit,
     COULEURS.faible);
   const note = carte && carte.note
     ? tronquer(carte.note, fonts.petit, COLONNE_MILIEU + 200) : "";
@@ -646,6 +798,7 @@ const discordBuildPngApi = {
     COLONNE_DROITE,
     ICONE,
     PORTRAIT,
+    IDENTITE,
     PADDING,
     HAUTEUR_JAUGE,
     HAUTEUR_JAUGE_TITRE,

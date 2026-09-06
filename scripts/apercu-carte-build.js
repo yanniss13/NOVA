@@ -45,6 +45,26 @@ function premierAvecBornes(liste) {
     || liste[0];
 }
 
+function enchantementsObjet(objet, quantite, parts, preferes) {
+  if(!objet) return [];
+  const index = libelles.bornes.objets.index[objet.file];
+  const table = index === undefined ? null : libelles.bornes.objets.tables[index];
+  if(!table) return [];
+  const disponibles = Object.keys(table);
+  const stats = (preferes || []).filter(stat => disponibles.includes(stat))
+    .concat(disponibles.filter(stat => !(preferes || []).includes(stat)))
+    .slice(0, quantite);
+  return stats.map((stat, rang) => {
+    const [minimum, maximum] = table[stat];
+    const part = parts[rang] === undefined ? 0.5 : parts[rang];
+    return {
+      slot:rang,
+      stat,
+      value:Math.round(minimum + (maximum - minimum) * part)
+    };
+  });
+}
+
 function construireBuild() {
   const data = catalogue();
   const typeArme = "Epee a une main";
@@ -75,7 +95,10 @@ function construireBuild() {
     libelles.bornes.objets.index[haut.file]
   ];
   const statHaut = bornesHaut ? Object.keys(bornesHaut)[0] : null;
-  const gravee = (data.armures["Armure liee"] || [])[0];
+  const gravee = premierAvecBornes(data.armures["Armure liee"] || []);
+  const anneau = premierAvecBornes(data.bijoux.Anneau || []);
+  const collier = premierAvecBornes(data.bijoux.Collier || []);
+  const boucle = premierAvecBornes(data.bijoux["Boucle d'oreille"] || []);
 
   return {
     owner:"apercu",
@@ -98,20 +121,28 @@ function construireBuild() {
         armorConfig:{
           Haut:{
             passiveLevel:3,
-            enchantments:statHaut ? [{
-              slot:0,
-              stat:statHaut,
-              value:Math.round((bornesHaut[statHaut][0] + bornesHaut[statHaut][1]) / 2)
-            }] : []
+            enchantments:enchantementsObjet(haut, 1, [0.5], [statHaut])
           },
-          "Armure liee":{ passiveLevel:3, enchantments:[] }
+          "Armure liee":{
+            passiveLevel:3,
+            enchantments:enchantementsObjet(gravee, 3, [0.72, 0.55, 0.85], [
+              "C_Critical_Dam_Rate", "I_AtkAdd_Rate",
+              "Normalskill_Damadd_Rate"
+            ])
+          }
         },
         jewel:{
-          Anneau:data.bijoux.Anneau[0].file,
-          Collier:data.bijoux.Collier[0].file,
-          "Boucle d'oreille":data.bijoux["Boucle d'oreille"][0].file
+          Anneau:anneau && anneau.file,
+          Collier:collier && collier.file,
+          "Boucle d'oreille":boucle && boucle.file
         },
-        jewelConfig:{},
+        jewelConfig:{
+          Anneau:{ enchantments:enchantementsObjet(anneau, 1, [0.68]) },
+          Collier:{ enchantments:enchantementsObjet(collier, 1, [0.44]) },
+          "Boucle d'oreille":{
+            enchantments:enchantementsObjet(boucle, 1, [0.81])
+          }
+        },
         note:"Build de raid : garder la perle légendaire sur le taux critique."
       }
     }

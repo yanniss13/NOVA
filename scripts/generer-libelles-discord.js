@@ -6,9 +6,9 @@
    POURQUOI UN FICHIER DE PLUS. L'Edge Function ne peut pas importer les
    modules du site : ils lisent `window` et tirent `data/stats-build.js`
    derriere eux, soit 2,5 Mo a charger a chaque appel. Or /build n'a besoin
-   que de deux tables minuscules — le nom et l'element de chaque personnage,
-   le libelle et l'unite de chaque statistique. Extraites, elles tiennent en
-   une dizaine de kilo-octets, publies sur GitHub Pages comme
+   que de deux tables minuscules — l'identite et les trois slots d'arme de
+   chaque personnage, le libelle et l'unite de chaque statistique. Extraites,
+   elles tiennent en quelques dizaines de kilo-octets, publies sur GitHub Pages comme
    `data/chronometrage-avancement.json` l'est deja pour /chrono.
 
    Le nom d'un objet, lui, n'est PAS dans ce fichier : le nom lisible d'une
@@ -156,7 +156,18 @@ function construireLibelles() {
       fichier:personnage.file || "",
       /* `DEFAULT` est l'element des personnages sans element : il est ecrit
          tel quel, c'est le module partage qui le traduit en « Physique ». */
-      element:fiche.element || "DEFAULT"
+      element:fiche.element || "DEFAULT",
+      /* L'element ET le role changent avec l'arme equipee. Le type d'arme
+         reste l'enum stable du jeu ; discord-build.js fait le pont avec le
+         nom de dossier enregistre dans le roster. */
+      armes:Object.fromEntries((Array.isArray(fiche.weapons)
+        ? fiche.weapons : []).filter(slot => slot && slot.weapon).map(slot => [
+        slot.weapon,
+        {
+          element:String(slot.element || "Default").toUpperCase(),
+          role:slot.role || ""
+        }
+      ]))
     };
   });
 

@@ -51,29 +51,30 @@ personnage tel qu'il est équipé dans le roster d'un membre : une image par
 build, jusqu'à trois — c'est le nombre d'armes qu'un personnage peut porter.
 Préciser l'arme n'en publie qu'une.
 
-La carte est illustrée : le portrait du personnage, l'icône de l'arme, des
-quatre pièces d'armure, de l'armure gravée et des trois bijoux, avec pour
-chacune son niveau de passif, ses enchantements et le palier de sa perle. La
-note écrite par le joueur ferme la carte. Un emplacement vide s'affiche vide
-plutôt que d'être tu : « ce joueur n'a pas de collier » et « je n'ai pas lu le
-collier » ne sont pas la même information.
+La carte reprend une fiche de jeu en obsidienne et or : portrait à gauche,
+arme et armure gravée au centre, armures et bijoux à droite. Les vraies icônes
+de maîtrise et de rôle/élément viennent de `7ds-ui/`. L'élément et le rôle
+affichés sont ceux du **slot de l'arme équipée** ; ils peuvent donc changer d'un
+build à l'autre pour un même personnage. Le niveau, l'outrepassement et chaque
+enchantement se lisent sur une jauge. La note du joueur ferme la carte.
+Un emplacement vide s'affiche vide plutôt que d'être tu : « ce joueur n'a pas
+de collier » et « je n'ai pas lu le collier » ne sont pas la même information.
 
 ### Deux contraintes qui se voient sur l'image
 
 **Les images du jeu sont en webp, et rien dans une Edge Function Deno ne
 décode ce format.** `scripts/generer-vignettes.py` en publie donc une version
-PNG, à la taille exacte où la carte les pose. Ces vignettes pèsent près de
-trois mégaoctets : elles ne sont **pas versionnées**, le job `package` du
+PNG, à la taille exacte où la carte les pose. Ces vignettes pèsent environ
+six mégaoctets : elles ne sont **pas versionnées**, le job `package` du
 workflow Pages les fabrique dans `_site` au déploiement. Une vignette
 introuvable ne prive personne de sa carte — l'emplacement se dessine sans
 image.
 
-**Les polices de la carte sont des atlas**, hérités du rendu de `/planning`,
-et ils ne connaissent que `A-Z 0-9 - / : . ( ) | = ?`. Tout le texte de la
-carte est donc en capitales sans accents. Trois traductions comblent les
-manques : l'apostrophe devient une espace, `&` devient « ET », et le `%` est
-tracé à la main, au rectangle et au disque. Sans lui, chaque pourcentage
-s'afficherait « ? ».
+**La carte possède son propre atlas de polices**, produit par
+`scripts/generer-police-carte.py` depuis Cinzel et EB Garamond. Il conserve les
+minuscules, les accents, les ligatures et le signe `%`. L'atlas historique de
+`/planning` reste séparé : modifier la fiche `/build` ne peut donc pas changer
+le planning.
 
 ### Ce que la commande lit
 
@@ -82,9 +83,10 @@ Le pseudo est retrouvé dans `profiles` **avant** de lire le roster :
 tous ses builds. Lire la table entière pour n'en garder qu'un joueur ferait
 transiter plusieurs mégaoctets à chaque commande.
 
-Les noms des personnages et les libellés des statistiques viennent de
+Les noms des personnages, les trois couples élément/rôle liés à leurs armes et
+les libellés des statistiques viennent de
 `data/libelles-discord.json`, publié sur Pages par
-`scripts/generer-libelles-discord.js` — l'extrait de dix kilo-octets qui
+`scripts/generer-libelles-discord.js` — un extrait léger qui
 suffit à la carte, là où le catalogue complet du site en pèse 2 500. Le nom
 d'un objet, lui, ne vient d'aucun fichier : il **est** le nom de fichier de
 son image.
