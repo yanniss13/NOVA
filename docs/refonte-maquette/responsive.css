@@ -14,6 +14,11 @@
   .stat-grid{grid-template-columns:repeat(2,1fr)}
   .stat-grid article:nth-child(2){border-right:0}.stat-grid article:nth-child(-n+2){border-bottom:1px solid var(--line-soft)}
   .reports-layout{grid-template-columns:1fr}
+  .builder-workspace{grid-template-columns:190px 1fr}.build-stats{grid-column:1/-1;border-left:0;border-top:1px solid var(--line-soft);display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.build-stats>.context-label,.build-stats>h2,.coverage-note,.team-note{grid-column:1/-1}
+  .hero-card-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .wiki-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .collection-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .analysis-grid{grid-template-columns:1fr 1fr}.support-list{grid-column:1/-1}
 }
 
 @media (max-width:767px){
@@ -53,6 +58,18 @@
   .boss-grid{grid-template-columns:1fr}
   .participant-list>span{width:40px;height:40px}
   .reports-layout{grid-template-columns:1fr}.report-card{grid-template-columns:1fr}.report-card strong,.report-card button{grid-column:1}.report-card button{width:max-content}
+  .team-meta{grid-template-columns:1fr 1fr}.team-meta label{grid-column:1/-1}.team-meta .gold-action{width:100%}
+  .hero-strip{display:flex;overflow-x:auto}.hero-strip button{flex:0 0 185px;grid-template-columns:52px 1fr}.hero-strip img{width:52px;height:60px}
+  .builder-workspace{grid-template-columns:1fr}.active-hero{display:grid;grid-template-columns:90px 1fr;gap:0 14px;border-right:0;border-bottom:1px solid var(--line-soft)}.active-hero>img{grid-row:1/6;width:90px;height:112px}.active-hero .context-label{margin:0}.potential-line,.weapon-switch{grid-column:1/-1}.weapon-switch{grid-template-columns:repeat(3,1fr)}.weapon-switch button{min-width:0;border-bottom:1px solid var(--line-soft);font-size:11px;text-align:center}
+  .equipment-editor{padding:14px}.builder-section-head{display:grid}.builder-section-head>div:last-child{overflow-x:auto}.builder-section-head button{white-space:nowrap}.equipment-grid{grid-template-columns:1fr}.build-stats{grid-column:auto;display:block;border-top:1px solid var(--line-soft)}
+  .teams-toolbar{align-items:flex-start;gap:12px}.teams-toolbar select{max-width:210px}
+  .filter-bar{position:static;display:grid;grid-template-columns:1fr 1fr}.filter-bar label:first-child,.filter-bar>span{grid-column:1/-1}.filter-bar label{min-width:0}.filter-bar>span{margin-left:0;padding:4px}
+  .hero-card-grid{grid-template-columns:1fr}.hero-card-main{grid-template-columns:70px 1fr auto}.hero-card-main>img{width:70px;height:84px}.owner-select{min-width:0}
+  .tool-filter{display:grid}.tool-filter>label{min-width:0}.category-pills{display:flex;overflow-x:auto;flex-wrap:nowrap}.category-pills button{flex:none}
+  .wiki-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.collection-head{padding:16px}.collection-head h2{font-size:21px}.progress-ring{width:74px;height:74px}.collection-grid{grid-template-columns:1fr}
+  .calculator-layout{grid-template-columns:1fr}.damage-table{overflow-x:auto}.damage-table>div{min-width:550px}
+  .analysis-switch{overflow-x:auto}.analysis-switch button{flex:none}.analysis-grid{grid-template-columns:1fr}.support-list{grid-column:auto}
+  .admin-summary{grid-template-columns:1fr}.admin-summary article{border-right:0;border-bottom:1px solid var(--line-soft)}.member-table article{grid-template-columns:44px 1fr auto}.member-table>article>span:not(.member-seal),.member-table em{display:none}.member-table button{grid-column:3}
   .guild-hero{display:grid;grid-template-columns:1fr;grid-template-areas:"visual" "copy";min-height:0;border-inline:0}
   .guild-hero__visual{grid-area:visual;height:214px}
   .guild-hero__visual::after{background:linear-gradient(0deg,var(--slate) 0,rgba(7,26,38,.76) 16%,transparent 54%)}
