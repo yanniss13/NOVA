@@ -65,10 +65,14 @@ const HAUTEUR_NOM = 34;
 /* Une jauge tient sur deux rangees : le libelle et sa valeur en vis-a-vis,
    puis le trait dessous. Sur une seule il faudrait partager la largeur entre
    trois choses, et aucune colonne n'en a assez. */
-const HAUTEUR_JAUGE_TITRE = 36;
+const HAUTEUR_JAUGE_TITRE = 30;
 const HAUTEUR_JAUGE_TRAIT = 14;
 const HAUTEUR_JAUGE = HAUTEUR_JAUGE_TITRE + HAUTEUR_JAUGE_TRAIT;
 const ESPACE_BLOC = 16;
+const DEBUT_CONTENU_SECTION = 60;
+const ESPACE_LIGNE_BIJOU = 4;
+const MARGE_BASSE_SECTION = 16;
+const MARGE_AVANT_SEPARATEUR = 18;
 
 const COULEURS = {
   fond:[13, 12, 28, 255],
@@ -308,12 +312,12 @@ function dessinerEtoiles(canvas, x, y, valeur, total, largeurMaximale) {
 function dessinerJauge(canvas, jauge, x, y, largeur, fonts) {
   const valeur = texteCarte(jauge.texte);
   const largeurValeur = valeur
-    ? atlasStringWidthExact(valeur, fonts.corps) : 0;
+    ? atlasStringWidthExact(valeur, fonts.petit) : 0;
   ecrire(canvas, x, y,
-    tronquer(jauge.libelle, fonts.corps, largeur - largeurValeur - 18),
-    fonts.corps, COULEURS.attenue);
+    tronquer(jauge.libelle, fonts.petit, largeur - largeurValeur - 18),
+    fonts.petit, COULEURS.attenue);
   if(valeur){
-    ecrireADroite(canvas, x + largeur, y, valeur, fonts.corps,
+    ecrireADroite(canvas, x + largeur, y, valeur, fonts.petit,
       COULEURS.parchemin);
   }
   const bas = y + HAUTEUR_JAUGE_TITRE;
@@ -404,9 +408,6 @@ function mesurer(carte, fonts) {
   const largeurBloc = COLONNE_MILIEU - 2 * PADDING;
   const milieu = lignesDe(sectionParTitre(carte, "Arme"))
     .map(ligne => mesurerBloc(ligne, fonts, largeurBloc));
-  const hauteurMilieu = HAUTEUR_TITRE_SECTION
-    + milieu.reduce((total, bloc) => total + bloc.hauteur + ESPACE_BLOC, 0)
-    + PADDING;
 
   /* La grille d'armure : deux colonnes de deux cases, chacune une icone et
      deux lignes de texte. Elle ne porte pas de jauge — c'est ce qui lui permet
@@ -421,8 +422,28 @@ function mesurer(carte, fonts) {
       .slice(0, 2)
   }));
   const hauteurCase = Math.max(ICONE, 40 + 2 * HAUTEUR_NOM) + 2 * 12;
-  const hauteurArmure = HAUTEUR_TITRE_SECTION
+  const hauteurArmureNaturelle = HAUTEUR_TITRE_SECTION
     + Math.ceil(armure.length / 2) * (hauteurCase + 12) + PADDING;
+
+  /* Le filet qui ouvre l'armure gravee et le bord haut des bijoux sont une
+     seule ligne visuelle. Leur coordonnee vient donc d'un repere commun, et
+     non de deux additions independantes qui divergeaient selon les jauges. */
+  const separateurMilieu = milieu.length > 1
+    ? DEBUT_CONTENU_SECTION + milieu[0].hauteur + MARGE_AVANT_SEPARATEUR
+    : 0;
+  const separateurSections = Math.max(
+    hauteurArmureNaturelle + ESPACE_BLOC, separateurMilieu
+  );
+  const hauteurArmure = separateurSections - ESPACE_BLOC;
+  let hauteurMilieu = DEBUT_CONTENU_SECTION;
+  milieu.forEach((bloc, rang) => {
+    if(rang){
+      const ligneY = rang === 1 ? separateurSections : hauteurMilieu - 8;
+      hauteurMilieu = ligneY + 16;
+    }
+    hauteurMilieu += bloc.hauteur + ESPACE_BLOC;
+  });
+  hauteurMilieu += PADDING;
 
   const largeurBijou = COLONNE_DROITE - 2 * PADDING - ICONE - 18;
   const bijoux = lignesDe(sectionParTitre(carte, "Bijoux")).map(ligne => {
@@ -435,8 +456,9 @@ function mesurer(carte, fonts) {
       + Math.max(0, ligne.jauges.length - 1) * HAUTEUR_JAUGE;
     return Object.assign({}, ligne, { nom, hauteur });
   });
-  const hauteurBijoux = HAUTEUR_TITRE_SECTION
-    + bijoux.reduce((total, ligne) => total + ligne.hauteur + 12, 0) + PADDING;
+  const hauteurBijoux = DEBUT_CONTENU_SECTION
+    + bijoux.reduce((total, ligne) => total + ligne.hauteur
+      + ESPACE_LIGNE_BIJOU, 0) + MARGE_BASSE_SECTION;
 
   const gauche = PORTRAIT + 2 * PADDING + 120;
   const corps = Math.max(
@@ -449,6 +471,7 @@ function mesurer(carte, fonts) {
     hauteurMilieu,
     hauteurArmure,
     hauteurBijoux,
+    separateurSections,
     hauteurGauche:corps,
     hauteur:Math.round(HAUTEUR_ENTETE + corps + HAUTEUR_PIED)
   };
@@ -633,7 +656,7 @@ function dessinerBijoux(canvas, lignes, x, y, hauteur, fonts, images) {
   cadre(canvas, x, y, COLONNE_DROITE, hauteur);
   titreSection(canvas, "03", "Bijoux", x + PADDING, y + PADDING,
     COLONNE_DROITE - 2 * PADDING, fonts);
-  let curseur = y + PADDING + HAUTEUR_TITRE_SECTION;
+  let curseur = y + DEBUT_CONTENU_SECTION;
   const largeur = COLONNE_DROITE - 2 * PADDING;
   lignes.forEach(ligne => {
     const gauche = x + PADDING;
@@ -669,7 +692,7 @@ function dessinerBijoux(canvas, lignes, x, y, hauteur, fonts, images) {
           curseur + ICONE + rang * HAUTEUR_JAUGE, largeurTexteBloc, fonts);
       });
     }
-    curseur += ligne.hauteur + 12;
+    curseur += ligne.hauteur + ESPACE_LIGNE_BIJOU;
   });
 }
 
@@ -747,12 +770,15 @@ async function generateBuildCardPng(carte, options) {
   cadre(canvas, milieuX, hautCorps, COLONNE_MILIEU, plan.hauteurGauche);
   titreSection(canvas, "01", "Arme", milieuX + PADDING, hautCorps + PADDING,
     COLONNE_MILIEU - 2 * PADDING, fonts);
-  let curseur = hautCorps + PADDING + HAUTEUR_TITRE_SECTION;
+  let curseur = hautCorps + DEBUT_CONTENU_SECTION;
   plan.milieu.forEach((bloc, rang) => {
     if(rang){
-      filetOrne(canvas, milieuX + PADDING, curseur - 8,
+      const ligneY = rang === 1
+        ? hautCorps + plan.separateurSections
+        : curseur - 8;
+      filetOrne(canvas, milieuX + PADDING, ligneY,
         COLONNE_MILIEU - 2 * PADDING, COULEURS.filet);
-      curseur += 8;
+      curseur = ligneY + 16;
     }
     dessinerBloc(canvas, bloc, milieuX + PADDING, curseur,
       COLONNE_MILIEU - 2 * PADDING, fonts, images);
@@ -763,7 +789,7 @@ async function generateBuildCardPng(carte, options) {
   dessinerGrilleArmure(canvas, plan.armure, droiteX, hautCorps,
     plan.hauteurArmure, fonts, images);
   dessinerBijoux(canvas, plan.bijoux, droiteX,
-    hautCorps + plan.hauteurArmure + ESPACE_BLOC, plan.hauteurBijoux,
+    hautCorps + plan.separateurSections, plan.hauteurBijoux,
     fonts, images);
 
   /* Le pied vit A L'INTERIEUR du double filet, et non dessus : dessine a la
@@ -802,6 +828,9 @@ const discordBuildPngApi = {
     PADDING,
     HAUTEUR_JAUGE,
     HAUTEUR_JAUGE_TITRE,
+    ESPACE_BLOC,
+    DEBUT_CONTENU_SECTION,
+    ESPACE_LIGNE_BIJOU,
     HAUTEUR_ENTETE,
     HAUTEUR_PIED,
     /* Deux nuances : l'or vif des etoiles acquises, l'or sourd des barres
