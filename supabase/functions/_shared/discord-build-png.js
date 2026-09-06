@@ -610,6 +610,18 @@ function urlVignette(chemin) {
     .join("/");
 }
 
+/* Une carte pose la meme icone plusieurs fois, et trois cartes d'un meme
+   personnage partagent son portrait : le cache evite de retelecharger. Il
+   VIVAIT SANS ETRE DECLARE — chaque chargement levait une ReferenceError,
+   avalee par le `try` qui protege les vignettes manquantes, et toutes les
+   cartes sortaient avec des cadres vides pendant que les URL repondaient 200.
+   Aucun test ne l'avait vu : tous injectent leur propre chargeur. */
+const cacheVignettes = new Map();
+
+function viderCacheVignettes() {
+  cacheVignettes.clear();
+}
+
 async function chargerVignette(chemin) {
   if(cacheVignettes.has(chemin)) return cacheVignettes.get(chemin);
   let image = null;
@@ -739,6 +751,38 @@ async function generateBuildCardPng(carte, options) {
   return await encodePng(canvas);
 }
 
+/* UNE RAFALE, comme la carte en lance une. La sonde a une image passait, et la
+   carte sortait pourtant vide : le sondage ne prouvait que le cas facile. Une
+   carte demande dix vignettes D'UN COUP, et c'est ce que ceci rejoue. */
+async function diagnostiquerRafale(chemins, recuperer) {
+  const chercher = recuperer || fetch;
+  return await Promise.all(chemins.map(async chemin => {
+    const depart = Date.now();
+    try {
+      const reponse = await chercher(urlVignette(chemin));
+      return { chemin, statut:reponse.status, ms:Date.now() - depart };
+    } catch (echec) {
+      return { chemin, erreur:String((echec && echec.message) || echec),
+        ms:Date.now() - depart };
+    }
+  }));
+}
+
+/* LE CHEMIN EXACT DE LA CARTE, et non plus un fetch isole. Le sondage a une
+   image passait, la rafale aussi, et la carte sortait pourtant vide : ce qui
+   restait a eprouver, c'est `chargerImages` lui-meme — la collecte des chemins
+   depuis la carte, puis le chargeur avec son cache. */
+async function diagnostiquerChargement(carte) {
+  const demandes = cheminsImages(carte);
+  const images = await chargerImages(carte, chargerVignette);
+  return {
+    demandes,
+    chargees:[...images.keys()],
+    tailles:[...images.entries()].map(([chemin, image]) =>
+      chemin + " " + image.width + "x" + image.height)
+  };
+}
+
 const discordBuildPngApi = {
   generateBuildCardPng,
   largeurTexte,
@@ -747,6 +791,10 @@ const discordBuildPngApi = {
   cartoucheJoueur,
   urlVignette,
   diagnostiquerVignette,
+  diagnostiquerRafale,
+  diagnostiquerChargement,
+  chargerVignette,
+  viderCacheVignettes,
   MESURES:{
     LARGEUR,
     MARGE,

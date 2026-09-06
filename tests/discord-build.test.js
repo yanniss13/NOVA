@@ -478,8 +478,10 @@ assert.equal(libelleArme("Nunchaku"), "Nunchaku", "sans accent, rien ne bouge");
    portent le meme nom des deux cotes, ce qui a longtemps cache la divergence :
    les quatre autres sortaient bruts sur la carte, sans role ni icone de
    maitrise. C'est le dossier qui fait foi, comme `FOLDER_TO_ENUM` du site. */
-assert.equal(libelleArme("Epee 1 main"), "Épée à une main");
-assert.equal(libelleArme("Epee 2 mains"), "Épée à deux mains");
+/* Les noms du jeu, rapportes par le proprietaire : « épée longue » et
+   « espadon », et non la description de leur prise en main. */
+assert.equal(libelleArme("Epee 1 main"), "Épée longue");
+assert.equal(libelleArme("Epee 2 mains"), "Espadon");
 assert.equal(libelleArme("Bouclier"), "Épée & bouclier");
 assert.equal(libelleArme("Livre"), "Grimoire");
 
