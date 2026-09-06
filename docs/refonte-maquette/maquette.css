@@ -15,9 +15,9 @@
 }
 
 *{box-sizing:border-box}
-html{min-height:100%;background:var(--abyss);color:var(--parchment);scroll-behavior:smooth}
+html{min-height:100%;overflow-x:clip;background:var(--abyss);color:var(--parchment);scroll-behavior:smooth}
 body{
-  min-height:100vh;margin:0;color:var(--parchment);font-family:var(--body);
+  min-height:100vh;margin:0;overflow-x:clip;color:var(--parchment);font-family:var(--body);
   background:
     radial-gradient(circle at 50% -10%, rgba(29,57,68,.38), transparent 42%),
     linear-gradient(115deg, rgba(255,255,255,.018) 0 1px, transparent 1px 16px),
