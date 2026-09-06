@@ -10,6 +10,7 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
+const { allerA } = require("./helpers/naviguer");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
@@ -35,7 +36,7 @@ const ARME_EPEE = "En plein cœur !";
     await page.locator("#authPassword").fill("mot-de-passe-test");
     await page.getByRole("button", { name:"Se connecter", exact:true }).click();
 
-    await page.locator('.tab[data-view="member-roster"]').click();
+    await allerA(page, "member-roster");
     await page.locator("#memberRosterGrid .member-roster-card")
       .filter({ hasText:"Meliodas" })
       .locator(".member-roster-edit")
@@ -104,7 +105,7 @@ const ARME_EPEE = "En plein cœur !";
     /* Le preset enregistre plus haut doit etre disponible ici sans rien
        refaire : c'est tout l'interet d'un preset. */
     await page.locator("#memberRosterClose").click();
-    await page.locator('.tab[data-view="builder"]').click();
+    await allerA(page, "builder");
 
     const premierHeros = page.locator("#heroGrid .hero").first();
     await premierHeros.locator(".gear-slot").first().waitFor();
@@ -127,8 +128,7 @@ const ARME_EPEE = "En plein cœur !";
       "seul l'emplacement vise doit changer");
 
     // ---------- Le calculateur : essayer sans rien ecrire ----------
-    await page.locator('.tab[data-view="calculateur"]').click();
-    await page.locator("#view-calculateur").waitFor({ state:"visible" });
+    await allerA(page, "calculateur");
     /* On n'attend pas le tableau de degats : le build par defaut est
        incomplet, et c'est justement le cas ou l'on veut essayer un preset. */
     await page.locator("#calculateurBody .calc-preset-essai").waitFor();

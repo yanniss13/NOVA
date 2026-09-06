@@ -14,6 +14,7 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
+const { ouvrirLeCompte } = require("./helpers/naviguer");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
@@ -155,6 +156,8 @@ async function connecter(page, email){
     assert.equal(restants, 0, "le retrait doit atteindre la base");
 
     /* ---- 4. Un membre ordinaire ne voit rien de tout cela. ---- */
+
+    await ouvrirLeCompte(page);
 
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await page.locator("#accountLogin").waitFor({ state:"visible" });

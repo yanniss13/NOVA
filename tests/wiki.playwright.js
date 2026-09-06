@@ -4,6 +4,7 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
+const { allerA } = require("./helpers/naviguer");
 const { chromium } = require("playwright");
 
 (async()=>{
@@ -35,8 +36,7 @@ const { chromium } = require("playwright");
       "le catalogue ne doit pas être chargé avant l'ouverture de l'onglet"
     );
 
-    await page.locator("#tab-wiki").click();
-    await page.locator("#view-wiki").waitFor({ state:"visible" });
+    await allerA(page, "wiki");
     await page.locator("#wikiGrid .wiki-tile").first().waitFor();
 
     assert.equal(
@@ -307,11 +307,11 @@ const { chromium } = require("playwright");
        qui fait passer le catalogue par `networkFirst` et le met en cache. Au
        tout premier chargement la page n'est pas encore contrôlée, la requête
        échappe donc au worker et rien n'est gardé. */
-    await page.locator("#tab-wiki").click();
+    await allerA(page, "wiki");
     await page.locator("#wikiGrid .wiki-tile").first().waitFor();
     await page.context().setOffline(true);
     await page.reload();
-    await page.locator("#tab-wiki").click();
+    await allerA(page, "wiki");
     await page.locator('#wikiGrid .wiki-tile[data-char="derieri"]').click();
     await page.locator("#wikiHeroOverlay.on").waitFor();
     assert.ok(

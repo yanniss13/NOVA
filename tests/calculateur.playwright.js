@@ -14,6 +14,7 @@
 const assert = require("node:assert/strict");
 const { CIBLE_TACTILE_PX } = require("./helpers/cible-tactile");
 const { serveRepo } = require("./helpers/serve");
+const { allerA } = require("./helpers/naviguer");
 const { chromium } = require("playwright");
 
 const STORAGE_KEY = "confrerie7ds.teams";
@@ -41,7 +42,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
 
     /* Le catalogue chiffre est lui aussi charge a la demande. Le Builder est
        la premiere vue de ce parcours qui en a besoin. */
-    await page.locator("#tab-builder").click();
+    await allerA(page, "builder");
     await page.waitForFunction(() =>
       Object.keys(window.SEVEN_DS_BUILD_STATS?.weaponsByFile || {}).length > 0
     );
@@ -132,7 +133,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await page.reload();
 
     /* Depuis la fiche de heros d'une equipe locale. */
-    await page.locator('.tabs .tab[data-view="roster"]').click();
+    await allerA(page, "roster");
     await page.getByRole("button", { name:/Voir l.équipement/ }).first().click();
     const lien = page.getByRole("button", { name:"Calculer les dégâts" }).first();
     await lien.waitFor({ state:"visible" });

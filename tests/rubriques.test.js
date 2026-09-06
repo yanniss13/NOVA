@@ -18,6 +18,7 @@ const { loadApp, plain } = require("./helpers/load-app");
 const { hooks } = loadApp();
 const {
   RUBRIQUES,
+  vuePreferee,
   rubriqueDeVue,
   rubriqueParId,
   ongletsDeRubrique,
@@ -119,5 +120,22 @@ assert.equal(vueChefDeRubrique("rubrique-qui-n-existe-pas"), null);
 assert.deepEqual(
   plain(ongletsDeRubrique(rubriqueDeVue("wiki"))).map(onglet => onglet.vue),
   ["wiki", "collection", "calculateur", "analyse"]);
+
+/* LA VUE QUI PREND LA PLACE quand un compte s'ouvre. Elle ne vaut que depuis
+   la vue chef PUBLIQUE : ailleurs, elle deplacerait un membre sans raison. */
+assert.equal(typeof vuePreferee, "function",
+  "l'ouverture d'un compte doit pouvoir remplacer la vue publique");
+assert.equal(vuePreferee("home", () => true), "dashboard",
+  "un compte ouvert sur l'accueil public doit mener au suivi");
+assert.equal(vuePreferee("home", () => false), null,
+  "sans droit sur le suivi, le visiteur reste sur l'accueil");
+assert.equal(vuePreferee("home"), null,
+  "sans portier, rien ne remplace la vue courante");
+assert.equal(vuePreferee("dashboard", () => true), null,
+  "un membre deja sur son suivi n'est pas redirige vers lui-meme");
+assert.equal(vuePreferee("roster", () => true), null,
+  "un membre sur les equipes partagees ne doit pas etre renvoye au Builder");
+assert.equal(vuePreferee("wiki", () => true), null,
+  "une rubrique sans vue de membre ne redirige jamais");
 
 console.log("rubriques.test.js OK");

@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const { chromium } = require("playwright");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { serveRepo } = require("./helpers/serve");
+const { allerA } = require("./helpers/naviguer");
 
 async function activeView(page){
   return page.locator(".view.active").getAttribute("id");
@@ -75,10 +76,10 @@ async function openHistoryFragment(page, fragment){
        de poursuivre, sinon elle intercepte les clics suivants. */
     await publicPage.locator("#authOffline").click();
 
-    await publicPage.locator('.tab[data-view="builder"]').click();
+    await allerA(publicPage, "builder");
     await publicPage.locator("#view-builder.active").waitFor();
     assert.equal(await publicPage.evaluate(() => location.hash), "#builder");
-    await publicPage.locator('.tab[data-view="wiki"]').click();
+    await allerA(publicPage, "wiki");
     await publicPage.locator("#view-wiki.active").waitFor();
     assert.equal(await publicPage.evaluate(() => location.hash), "#wiki");
 
@@ -341,8 +342,8 @@ async function openHistoryFragment(page, fragment){
         pseudo:"Escanor extérieur"
       });
     }, analyseFixture.group.id);
-    await protectedPage.locator('.tab[data-view="wiki"]').click();
-    await protectedPage.locator("#view-wiki.active").waitFor();
+    await allerA(protectedPage, "wiki");
+    await protectedPage.locator("#view-home.active").waitFor();
     await openAppFragment(
       protectedPage,
       "#analyse/groupe/" + analyseFixture.group.id
@@ -540,7 +541,7 @@ async function openHistoryFragment(page, fragment){
       protectedPage,
       "#analyse/groupe/" + analyseFixture.group.id
     );
-    await protectedPage.locator('.tab[data-view="wiki"]').click();
+    await allerA(protectedPage, "wiki");
     await protectedPage.goBack();
     await protectedPage.locator("#view-analyse.active .analyse-group-context").waitFor();
     assert.equal(await protectedPage.evaluate(() => location.hash),
@@ -558,11 +559,11 @@ async function openHistoryFragment(page, fragment){
     anonymousInvalidPage.on("pageerror", error => errors.push(error.message));
     await installFakeSupabase(anonymousInvalidPage);
     await anonymousInvalidPage.goto(server.url + "/index.html#boss/groupe/%2F");
-    await anonymousInvalidPage.locator("#view-wiki.active").waitFor();
+    await anonymousInvalidPage.locator("#view-home.active").waitFor();
     assert.equal(
       await anonymousInvalidPage.evaluate(() => location.hash),
-      "#wiki",
-      "une route invalide anonyme doit se replier localement sur le Wiki"
+      "#home",
+      "une route invalide anonyme doit se replier localement sur l'accueil"
     );
     assert.equal(
       await anonymousInvalidPage.evaluate(() =>
