@@ -23,7 +23,12 @@
   window.SEVEN_DS_BUILD_STATS = BUILD_STATS;
   const STORAGE_KEY = "confrerie7ds.teams";
   const TEAM_SIZE = 4;
-  const ARMOR_SLOTS = ["Haut","Bas","Bottes","Ceinture","Armure liee"];
+  /* L'ORDRE EST CELUI DE L'ECRAN D'EQUIPEMENT DU JEU : haut, bas, ceinture,
+     bottes, puis la tenue gravée. Un membre passe du jeu au site et du site a
+     la fiche Discord ; trois ordres differents l'obligent a relire chaque
+     ligne pour retrouver sa piece. Cet ordre ne sert qu'a l'AFFICHAGE : tout
+     le code indexe ces emplacements par nom, jamais par position. */
+  const ARMOR_SLOTS = ["Haut","Bas","Ceinture","Bottes","Armure liee"];
   const LINKED_ARMOR_SLOT = "Armure liee";
   const LINKED_ARMORS = window.SEVEN_DS_ARMURES_LIEES || {};
   const ARMOR_LABELS = {
@@ -34,7 +39,7 @@
        demanderait une migration de toutes les configurations enregistrees. */
     "Ceinture":"Ceinture","Armure liee":"Armure gravée"
   };
-  const JEWEL_SLOTS = ["Anneau","Collier","Boucle d'oreille"];
+  const JEWEL_SLOTS = ["Boucle d'oreille","Collier","Anneau"];
   const JEWEL_LABELS = {
     "Anneau":"Anneau","Collier":"Collier","Boucle d'oreille":"B. oreille"
   };

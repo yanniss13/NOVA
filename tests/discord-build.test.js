@@ -548,6 +548,23 @@ assert.equal(Object.keys(referenceSite).length, 12,
   "la table du site doit etre lue, sinon ce test ne prouve rien");
 assert.deepEqual(BUILD_TYPE_TO_ENUM, referenceSite,
   "la copie de FOLDER_TO_ENUM a diverge de celle du site");
+
+/* LE SITE ET LA CARTE MONTRENT LE MEME ORDRE. Un membre passe de l'un a
+   l'autre : deux ordres differents l'obligent a relire chaque ligne. Cet ordre
+   est celui de l'ecran d'equipement du jeu, et il ne sert qu'a l'affichage —
+   tout le code, des deux cotes, indexe ces emplacements PAR NOM. */
+function listeDuSite(nom) {
+  const debut = constantes.indexOf("const " + nom + " = [");
+  assert.notEqual(debut, -1, nom + " introuvable dans constantes.js");
+  const bloc = constantes.slice(debut, constantes.indexOf("]", debut));
+  return [...bloc.matchAll(/"([^"]+)"/g)].map(trouve => trouve[1]);
+}
+assert.deepEqual(listeDuSite("ARMOR_SLOTS"),
+  ["Haut", "Bas", "Ceinture", "Bottes", "Armure liee"],
+  "l'ordre du jeu : haut, bas, ceinture, bottes, puis la tenue gravée");
+assert.deepEqual(listeDuSite("JEWEL_SLOTS"),
+  ["Boucle d'oreille", "Collier", "Anneau"],
+  "l'ordre du jeu : boucle d'oreille, collier, anneau");
 Object.keys(WEAPON_LABELS).forEach(cle => {
   assert.ok(Object.prototype.hasOwnProperty.call(referenceSite, cle),
     "« " + cle + " » n'est pas un dossier d'arme : aucun build ne sera range"
