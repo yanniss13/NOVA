@@ -1,0 +1,191 @@
+/* LA COQUILLE. En-tete, navigation, menus, pied de page.
+
+   Tout ce qui entoure la vue ouverte, et rien de ce qu'elle contient.
+
+   La coquille porte SES PROPRES media queries, en bas de ce fichier. Elle ne
+   depend pas de `responsive.css`, qui ne sert plus qu'aux vues pas encore
+   refaites. Une regle de coquille et son adaptation mobile se lisent donc au
+   meme endroit.
+
+   Le compte n'existe qu'en UN exemplaire. L'ancienne barre en avait deux, un
+   pour le bureau et un pour le telephone, soit six elements jumeaux a tenir
+   synchronises : le tiroir mobile ouvre desormais le meme menu que le bouton
+   de bureau. */
+
+/* ---------- En-tete ---------- */
+
+.app-header{
+  position:relative;z-index:20;width:var(--shell);min-height:72px;margin:26px auto 0;
+  display:flex;align-items:center;gap:34px;padding:10px 26px;
+  border:1px solid var(--line);border-bottom-color:var(--gold);
+  border-radius:10px 10px 0 0;background:rgba(5,22,32,.94);
+  box-shadow:0 18px 50px rgba(0,0,0,.2);
+}
+.brand{
+  display:inline-flex;align-items:center;gap:14px;white-space:nowrap;
+  color:var(--parchment);text-decoration:none;
+  font-family:var(--display);font-size:18px;letter-spacing:.055em;
+}
+.brand-mark{
+  display:grid;place-items:center;width:46px;height:46px;flex:none;
+  border:1px solid var(--gold-light);border-radius:50%;
+  color:var(--gold-light);font-size:26px;
+  box-shadow:inset 0 0 0 5px rgba(185,133,44,.08);
+}
+
+/* ---------- Navigation de bureau ---------- */
+
+.desktop-nav{align-self:stretch;display:flex;align-items:center;gap:8px;margin-left:20px}
+.desktop-nav button,.account-button,.menu-button,.mobile-nav button,.mobile-drawer button{
+  appearance:none;border:0;cursor:pointer;color:var(--parchment);background:transparent;
+}
+.desktop-nav>button,.tools-menu>button{height:100%;padding:0 18px;border-bottom:2px solid transparent}
+.desktop-nav>button:hover,.tools-menu>button:hover,
+.desktop-nav [aria-current="page"]{color:var(--gold-light);border-bottom-color:var(--gold-light)}
+.desktop-nav>button[hidden]{display:none}
+
+.tools-menu{position:relative;height:100%;display:flex;align-items:center}
+.tools-popover,.account-popover{
+  position:absolute;z-index:40;top:calc(100% - 2px);right:0;width:230px;padding:7px;
+  border:1px solid var(--line);background:var(--slate-deep);
+  box-shadow:0 18px 38px rgba(0,0,0,.46);
+}
+.tools-popover[hidden],.account-popover[hidden],.mobile-drawer[hidden]{display:none}
+.tools-popover button,.account-popover button{
+  display:block;width:100%;padding:8px 12px;text-align:left;
+  border:0;border-bottom:1px solid var(--line-soft);border-radius:0;
+  color:var(--parchment);background:transparent;cursor:pointer;
+}
+.tools-popover button:last-child,.account-popover button:last-child{border-bottom:0}
+.tools-popover button:hover,.account-popover button:hover{
+  color:var(--gold-light);background:rgba(185,133,44,.08)
+}
+.tools-popover [aria-current="page"]{color:var(--gold-light)}
+
+/* ---------- Compte ---------- */
+
+.account{position:relative;display:flex;align-items:center;margin-left:auto}
+.account-button{display:flex;align-items:center;gap:8px;padding:0 8px;white-space:nowrap}
+.account-button:hover{color:var(--gold-light)}
+.account-seal{
+  width:8px;height:8px;flex:none;border-radius:50%;background:var(--ok);
+  box-shadow:0 0 9px rgba(106,168,121,.75)
+}
+.account-pseudo{
+  overflow:hidden;text-overflow:ellipsis;max-width:14ch;
+  color:var(--gold-light);font-family:var(--display);font-size:14px;letter-spacing:.04em
+}
+.account-popover{width:260px}
+.live-status{display:block;padding:8px 12px;color:var(--mist);font-size:11px}
+.live-status[data-state="online"]{color:var(--ok)}
+.live-status[data-state="offline"]{color:var(--alert)}
+
+/* ---------- Bouton et tiroir mobiles ---------- */
+
+.menu-button,.mobile-drawer,.mobile-nav{display:none}
+.mobile-drawer p{margin:4px 8px 8px;color:var(--gold-light);font-family:var(--display);font-size:13px}
+
+/* ---------- Onglets locaux ---------- */
+
+/* La barre des onglets d'une rubrique vit ICI, dans la coquille, pas dans
+   chaque vue : une seule barre, remplie depuis la table des rubriques. */
+.local-tabs-bar{padding:0 48px}
+.local-tabs-bar[hidden]{display:none}
+
+/* ---------- Pied de page ---------- */
+
+.site-footer{
+  width:var(--shell);min-height:56px;margin:0 auto 28px;
+  display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:28px;
+  padding:10px 26px;color:var(--mist);font-size:13px;
+  border:1px solid var(--line);border-top-color:var(--gold);
+  border-radius:0 0 10px 10px;background:rgba(5,22,32,.94);
+}
+.site-footer>span:first-child{color:var(--gold-light);font-family:var(--display);letter-spacing:.04em}
+.site-footer a{display:inline-flex;align-items:center;color:var(--mist);text-decoration:none}
+.site-footer a:hover{color:var(--gold-light)}
+/* Le lien affilie LootBar. Il descend de l'en-tete au pied de page : la
+   maquette garde la barre du haut a la navigation seule. Son statut de lien
+   remunere est porte par `rel="sponsored"` dans le balisage. */
+.lootbar{padding:4px 8px;border-radius:8px;opacity:.85;transition:.14s}
+.lootbar:hover{opacity:1;background:rgba(185,133,44,.08)}
+/* La hauteur commande, la largeur suit le ratio du fichier (467 x 100). */
+.lootbar img{display:block;height:24px;width:auto}
+
+/* ---------- Intermediaire ---------- */
+
+@media (max-width:1179px){
+  :root{--shell:min(100% - 28px, 1060px)}
+  .app-header{gap:20px;padding-inline:18px}
+  .local-tabs-bar{padding-inline:30px}
+}
+
+/* ---------- Telephone ---------- */
+
+@media (max-width:767px){
+  :root{--shell:100%}
+  body{background:var(--abyss)}
+  .app-header{
+    width:100%;min-height:60px;margin:0;gap:4px;padding:7px 14px;
+    border-width:0 0 1px;border-radius:0;
+  }
+  .brand{font-size:14px;gap:10px}
+  .brand-mark{width:40px;height:40px;font-size:22px}
+  .desktop-nav{display:none}
+  .account{margin-left:auto}
+  .account-button{padding-inline:4px;font-size:12px}
+  .account-popover{right:-46px}
+
+  .menu-button{display:grid;width:44px;height:44px;margin-left:2px;padding:10px;place-content:center;gap:5px}
+  .menu-button span{display:block;width:24px;height:1px;background:var(--gold-light)}
+  .mobile-drawer{
+    display:grid;position:absolute;z-index:50;right:10px;top:56px;
+    width:min(320px,calc(100vw - 20px));padding:12px;
+    border:1px solid var(--line);background:var(--slate-deep);
+    box-shadow:0 20px 45px rgba(0,0,0,.55);
+  }
+  .mobile-drawer button{
+    display:flex;align-items:center;width:100%;padding:7px 10px;
+    border:0;border-top:1px solid var(--line-soft);border-radius:0;
+    text-align:left;color:var(--parchment);background:transparent;
+  }
+  .mobile-drawer button[hidden]{display:none}
+  .mobile-drawer [aria-current="page"]{color:var(--gold-light)}
+
+  /* Tout ce qui est fixe en bas de l'ecran se pose AU-DESSUS de la barre du
+     pouce : la zone de contenu, l'ancrage du defilement, le bandeau de mise a
+     jour et les toasts. Ces quatre reglages dependent de la meme hauteur de
+     barre, ils vivent donc ensemble. */
+  html{scroll-padding-bottom:calc(82px + env(safe-area-inset-bottom));scroll-padding-top:12px}
+  main{width:100%;border:0;padding-bottom:calc(78px + env(safe-area-inset-bottom))}
+  .pwa-update{bottom:calc(82px + env(safe-area-inset-bottom))}
+  body.pwa-update-on .toast{
+    bottom:calc(var(--pwa-banner-h,124px) + 94px + env(safe-area-inset-bottom))
+  }
+  .view{min-width:0;min-height:calc(100vh - 132px)}
+  .local-tabs-bar{padding-inline:14px}
+  .local-tabs{margin:18px -14px 16px;padding-inline:14px;overflow-x:auto}
+  .local-tabs button{flex:none;padding:0 14px}
+
+  .site-footer{
+    width:100%;min-height:76px;margin:0;padding:12px 16px 90px;
+    grid-template-columns:1fr;gap:3px;text-align:center;font-size:11px;
+    border-width:1px 0 0;border-radius:0;
+  }
+  .site-footer a{justify-content:center;min-height:28px}
+
+  /* La barre du pouce. Cinq entrees, dont « Plus » qui ouvre le tiroir. */
+  .mobile-nav{
+    display:grid;grid-template-columns:repeat(5,1fr);
+    position:fixed;z-index:30;left:0;right:0;bottom:0;min-height:68px;
+    padding-bottom:env(safe-area-inset-bottom);
+    background:rgba(5,22,32,.98);border-top:1px solid var(--gold);
+  }
+  .mobile-nav button{display:grid;place-content:center;gap:0;padding:2px;color:var(--mist);font-size:10px}
+  .mobile-nav button[hidden]{display:none}
+  .mobile-nav svg{
+    width:26px;height:28px;margin:auto;fill:none;stroke:currentColor;
+    stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round
+  }
+  .mobile-nav button[aria-current="page"]{color:var(--gold-light);background:rgba(185,133,44,.08)}
+}

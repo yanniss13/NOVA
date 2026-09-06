@@ -25,7 +25,7 @@ import { renderAnalyse } from "./analyse.js";
 import { ensureBossViewOwner, renderBossView } from "./boss-sessions.js";
 import { pseudoInput, renderBuilder, resetBuilderRosterBaselines } from "./builder.js";
 import { closeAuth, openAuth, setAuthBusy, setAuthStatus } from "./modale-auth.js";
-import { appliquerVisibiliteOnglets, showView } from "./navigation.js";
+import { appliquerAutorisations, showView } from "./navigation.js";
 import { renderRoster } from "./roster-equipes.js";
 import { renderMemberRoster } from "./roster-membres.js";
 import {
@@ -53,17 +53,14 @@ import { Store } from "../donnees/equipes-store.js";
   function updateAccountUi(){
     $("#accountLogin").hidden = !!sessionCourante.user;
     $("#accountConnected").hidden = !sessionCourante.user;
-    $("#mobileAccountLogin").hidden = !!sessionCourante.user;
-    $("#mobileAccountConnected").hidden = !sessionCourante.user;
     const accountName = sessionCourante.pseudo
       || (sessionCourante.user && sessionCourante.user.email) || "";
     $("#accountPseudo").textContent = accountName;
-    $("#mobileAccountPseudo").textContent = accountName;
     /* Bouton à usage unique : il n'apparaît que s'il reste vraiment quelque
        chose à importer depuis CE navigateur. Une fois la migration faite — ou
        s'il n'y a aucune donnée locale — il disparaît au lieu de rester
-       désactivé, car il occupait une ligne entière du header mobile. */
-    const migrationButtons = [$("#btnMigrateLocal"), $("#mobileBtnMigrateLocal")];
+       désactivé, car il occupait une ligne entière du menu de compte. */
+    const migrationButtons = [$("#btnMigrateLocal")];
     const migrated = !!sessionCourante.user &&
       localStorage.getItem(MIGRATION_KEY_PREFIX+sessionCourante.user.id) === "1";
     let hasLocalData = false;
@@ -170,7 +167,7 @@ import { Store } from "../donnees/equipes-store.js";
 
        Il peut replier la navigation sur le Wiki : c'est voulu, la vue quittee
        n'existe plus pour ce visiteur. */
-    appliquerVisibiliteOnglets({
+    appliquerAutorisations({
       historyMode:!sessionCourante.user && !previousUserId ? "none" : "replace"
     });
   }
@@ -243,18 +240,15 @@ import { Store } from "../donnees/equipes-store.js";
     }
   }
 
-  [$("#accountLogin"), $("#mobileAccountLogin")].forEach(button =>
-    button.addEventListener("click", () =>
-      openAuth(sb ? "" : "Connexion indisponible hors ligne.", !sb)
-    )
-  );
+  $("#accountLogin").addEventListener("click", () =>
+    openAuth(sb ? "" : "Connexion indisponible hors ligne.", !sb));
   $("#authOffline").addEventListener("click", closeAuth);
   $("#authSignIn").addEventListener("click", ()=>void signIn());
   $("#authSignUp").addEventListener("click", ()=>void signUp());
   $("#authPassword").addEventListener("keydown", event => {
     if(event.key === "Enter") void signIn();
   });
-  [$("#authLogout"), $("#mobileAuthLogout")].forEach(button =>
+  [$("#authLogout")].forEach(button =>
     button.addEventListener("click", async()=>{
       if(!sb) return;
       const { error } = await sb.auth.signOut();
@@ -272,7 +266,7 @@ import { Store } from "../donnees/equipes-store.js";
     }
     const migrationKey = MIGRATION_KEY_PREFIX+sessionCourante.user.id;
     if(localStorage.getItem(migrationKey) === "1") return;
-    const buttons = [$("#btnMigrateLocal"), $("#mobileBtnMigrateLocal")];
+    const buttons = [$("#btnMigrateLocal")];
     const oldTexts = buttons.map(button => button.textContent);
     buttons.forEach(button => {
       button.disabled = true;
@@ -313,7 +307,6 @@ import { Store } from "../donnees/equipes-store.js";
     }
   }
   $("#btnMigrateLocal").addEventListener("click", ()=>void migrateLocalData());
-  $("#mobileBtnMigrateLocal").addEventListener("click", ()=>void migrateLocalData());
 
 /* updateAccountUi est redevenue privee quand la migration des donnees
    locales l a rejointe : c etait son dernier appelant du dehors. */

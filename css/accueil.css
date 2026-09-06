@@ -1,0 +1,150 @@
+/* L'ACCUEIL PUBLIC. La seule page qu'un visiteur sans compte voit en premier.
+
+   Une grande image, trois acces essentiels, une bande d'outils, un appel a la
+   connexion. Rien d'autre : c'est une porte d'entree, pas un tableau de bord.
+
+   Cette feuille porte ses propres media queries. */
+
+/* ---------- La banniere ---------- */
+
+.guild-hero{
+  display:grid;grid-template-columns:minmax(430px,.96fr) minmax(520px,1.04fr);
+  min-height:410px;overflow:hidden;border-width:0 0 1px;border-radius:0;
+}
+.guild-hero__copy{
+  position:relative;z-index:2;display:flex;flex-direction:column;
+  justify-content:center;padding:48px 56px 44px
+}
+.guild-hero h1{
+  max-width:620px;margin:0;font-family:var(--display);font-weight:500;
+  font-size:clamp(38px,3.7vw,52px);line-height:1.12;letter-spacing:.012em
+}
+.hero-lead{max-width:58ch;margin:20px 0 0;color:#d9d1c2;font-size:17px;line-height:1.55}
+.hero-actions{display:flex;align-items:center;gap:22px;margin-top:30px}
+
+.guild-hero__visual{position:relative;min-width:0;margin:0;overflow:hidden;background:#0b1115}
+/* Le voile n'est pose que la ou du texte doit rester lisible. Il ne decore
+   pas l'image. */
+.guild-hero__visual::after{
+  content:"";position:absolute;inset:0;
+  background:
+    linear-gradient(90deg,rgba(4,19,28,.58),transparent 26%),
+    linear-gradient(0deg,rgba(3,12,18,.32),transparent 38%);
+}
+.guild-hero__visual img{
+  display:block;width:100%;height:100%;object-fit:cover;object-position:52% 48%;
+  filter:saturate(.86) contrast(1.02)
+}
+
+/* ---------- Les trois acces essentiels ---------- */
+
+.home-section{padding:30px 50px 16px}
+.essential-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
+.essential-card{
+  min-width:0;min-height:218px;display:grid;grid-template-rows:68px 1fr auto;
+  padding:20px 26px 18px;border:1px solid var(--line);border-radius:7px;
+  background:rgba(5,22,32,.7);box-shadow:inset 0 0 32px rgba(0,0,0,.14);
+}
+.line-icon{
+  width:58px;height:58px;fill:none;stroke:var(--gold-light);
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round
+}
+.essential-card h3{margin:4px 0 6px;font-family:var(--display);font-size:20px;font-weight:500}
+.essential-card p{max-width:27ch;margin:0;color:#d2c8b8;line-height:1.42}
+.essential-card .btn-ghost{justify-content:flex-start;width:max-content;margin-top:14px}
+
+/* ---------- Outils et appel a la connexion ---------- */
+
+.home-lower{
+  display:grid;grid-template-columns:1.2fr .8fr;margin:0 24px 22px;
+  border-radius:8px;overflow:hidden
+}
+.tools-band,.member-callout{padding:22px 28px}
+.tools-band{border-right:1px solid var(--line)}
+.tools-band h2,.member-callout h2{
+  margin:0;font-family:var(--display);font-weight:500;font-size:22px;text-align:center
+}
+.tools-band h2::after,.member-callout h2::after{
+  content:"";display:block;width:min(100%,510px);height:1px;margin:10px auto 14px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent)
+}
+.tool-shortcuts{display:grid;grid-template-columns:repeat(4,1fr)}
+.tool-shortcuts button{
+  appearance:none;display:grid;place-items:center;gap:6px;padding:8px 12px;
+  border:0;border-right:1px solid var(--line-soft);border-radius:0;
+  color:var(--parchment);background:transparent;cursor:pointer;font-size:17px;
+}
+.tool-shortcuts button:last-child{border-right:0}
+.tool-shortcuts button:hover{color:var(--gold-light);background:rgba(185,133,44,.06)}
+.tool-glyph{color:var(--gold-light);font-family:var(--display);font-size:32px;line-height:1}
+.member-callout{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center
+}
+.member-callout p{max-width:36ch;margin:10px auto 8px;color:#d4cbbb;line-height:1.45}
+
+/* ---------- Intermediaire ---------- */
+
+@media (max-width:1179px){
+  .guild-hero{grid-template-columns:minmax(310px,.82fr) minmax(440px,1.18fr);min-height:410px}
+  .guild-hero__copy{padding:38px 34px}
+  .guild-hero h1{font-size:clamp(35px,4.5vw,50px)}
+  .home-section{padding-inline:30px}
+  .essential-card{padding-inline:20px}
+  .home-lower{grid-template-columns:1fr}
+  .tools-band{border-right:0;border-bottom:1px solid var(--line)}
+}
+
+/* ---------- Telephone ---------- */
+
+/* L'image passe AVANT le texte, comme dans la reference : sur un telephone
+   c'est elle qui dit ou l'on est. */
+@media (max-width:767px){
+  .guild-hero{
+    display:grid;grid-template-columns:1fr;grid-template-areas:"visual" "copy";
+    min-height:0;border-inline:0
+  }
+  .guild-hero__visual{grid-area:visual;height:214px}
+  .guild-hero__visual::after{
+    background:linear-gradient(0deg,var(--slate) 0,rgba(7,26,38,.76) 16%,transparent 54%)
+  }
+  .guild-hero__visual img{object-position:50% 47%}
+  .guild-hero__copy{grid-area:copy;margin-top:-22px;padding:18px 20px 28px}
+  .guild-hero h1{font-size:clamp(29px,9vw,38px);line-height:1.08}
+  .hero-lead{margin-top:13px;font-size:14px;line-height:1.42}
+  .hero-actions{display:grid;gap:4px;margin-top:18px}
+  .hero-actions .btn{width:100%;justify-content:center}
+
+  .home-section{padding:22px 16px 8px}
+  .ornate-heading{grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;margin-bottom:15px}
+  .ornate-heading h2{font-size:20px;white-space:nowrap}
+  .essential-grid{grid-template-columns:1fr;gap:6px}
+  .essential-card{
+    min-height:0;padding:10px 12px;gap:10px;align-items:center;
+    grid-template-columns:48px 1fr 44px;grid-template-rows:auto
+  }
+  .line-icon{width:42px;height:42px}
+  .essential-card h3{margin:0 0 3px;font-size:16px}
+  .essential-card p{font-size:12px}
+  /* La fleche seule : le libelle de l'action tiendrait mal sur une ligne. */
+  .essential-card .btn-ghost{width:44px;height:44px;margin:0;padding:0;font-size:0}
+  .essential-card .btn-ghost>.arrow{font-size:24px}
+
+  .home-lower{grid-template-columns:1fr;margin:12px 16px 18px}
+  .tools-band,.member-callout{padding:15px 16px}
+  .tools-band h2,.member-callout h2{font-size:17px}
+  .tool-shortcuts{grid-template-columns:1fr}
+  .tool-shortcuts button{
+    display:flex;justify-content:flex-start;min-height:44px;padding:4px 8px;
+    border-right:0;border-bottom:1px solid var(--line-soft);font-size:15px
+  }
+  .tool-shortcuts button:last-child{border-bottom:0}
+  .tool-glyph{width:30px;font-size:22px;text-align:center}
+  .member-callout p{font-size:13px}
+}
+
+@media (max-width:359px){
+  .guild-hero__copy{padding-inline:16px}
+  .home-section{padding-inline:10px}
+  .home-lower{margin-inline:10px}
+  .ornate-heading h2{font-size:18px}
+}

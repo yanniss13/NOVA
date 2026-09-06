@@ -7,9 +7,9 @@
   display:flex;gap:16px;align-items:flex-end;flex-wrap:wrap;margin:0 0 14px
 }
 .collection-progress{
-  margin:0;color:var(--muted);font-variant-numeric:tabular-nums
+  margin:0;color:var(--mist);font-variant-numeric:tabular-nums
 }
-.collection-progress b{color:var(--gold-bright)}
+.collection-progress b{color:var(--gold-light)}
 .collection-section-title{
   margin:18px 0 10px;font-size:11.5px;letter-spacing:.14em;
   text-transform:uppercase;color:var(--gold)
@@ -19,7 +19,7 @@
 .wiki-tile.collection-owned{opacity:.42}
 .wiki-tile.collection-owned::after{
   content:"✓";position:absolute;top:6px;right:8px;
-  color:var(--gold-bright);font-size:15px;font-weight:700
+  color:var(--gold-light);font-size:15px;font-weight:700
 }
 /* Equipe : possede et non decochable. Le cadenas dit pourquoi. */
 .wiki-tile.collection-locked{cursor:default}

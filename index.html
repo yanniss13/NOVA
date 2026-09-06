@@ -37,8 +37,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
 <!-- Les feuilles se chargent DANS CET ORDRE : la cascade en depend.
-     tests/css-ordre.test.js le verifie. -->
-<link rel="stylesheet" href="./css/base.css">
+     tests/css-ordre.test.js le verifie.
+
+     Les quatre premieres forment le socle commun : la charte nomme les
+     couleurs, le socle pose la page, les composants ce que plusieurs vues
+     partagent, la coquille ce qui entoure la vue ouverte. Viennent ensuite
+     les feuilles d'ecran, chacune pour une vue. -->
+<link rel="stylesheet" href="./css/charte.css">
+<link rel="stylesheet" href="./css/socle.css">
+<link rel="stylesheet" href="./css/composants.css">
+<link rel="stylesheet" href="./css/coquille.css">
+<link rel="stylesheet" href="./css/accueil.css">
 <link rel="stylesheet" href="./css/builder.css">
 <link rel="stylesheet" href="./css/roster.css">
 <link rel="stylesheet" href="./css/analyse.css">
@@ -55,186 +64,131 @@
 </head>
 <body>
 
-<header class="topbar">
-  <div class="brand">
-    <div class="crest">7</div>
-    <div class="brand-txt">
-      <span class="brand-title">Confrérie 7DS</span>
-      <span class="brand-sub">Team Builder · Boss de Guilde</span>
-    </div>
-  </div>
-  <!-- Lien affilié : il rapporte au propriétaire du site quand un membre
-       achète après l'avoir suivi. `rel="sponsored"` déclare cette rémunération
-       aux moteurs, comme le veut la convention pour un lien rémunéré ;
-       `noopener` empêche la page ouverte d'accéder à celle-ci.
-       Les dimensions sont celles du fichier (467 × 100) : les écrire évite que
-       la header ne sursaute au moment où l'image arrive. -->
-  <a class="lootbar" id="lootbarLink"
-     href="https://www.lootbar.com/a/raTV3p"
-     target="_blank" rel="sponsored noopener noreferrer">
-    <img src="./lootbar-logo.webp" alt="LootBar"
-         width="467" height="100" decoding="async">
+<a class="skip-link" href="#main">Aller au contenu</a>
+
+<header class="app-header">
+  <a class="brand" href="#home" data-rubrique="guilde" aria-label="NOVA, accueil">
+    <span class="brand-mark" aria-hidden="true">7</span>
+    <span>Confrérie 7DS</span>
   </a>
-  <!-- Le rail porte les repères de défilement : ils doivent rester immobiles
-       pendant que les onglets défilent, donc hors du conteneur défilant. -->
-  <div class="tabs-rail">
-  <nav class="tabs" role="tablist">
-    <button class="tab active" id="tab-dashboard" data-view="dashboard"
-            role="tab" aria-controls="view-dashboard"
-            aria-selected="true" tabindex="0">Accueil</button>
-    <button class="tab" id="tab-builder" data-view="builder"
-            role="tab" aria-controls="view-builder"
-            aria-selected="false" tabindex="-1">Créer une équipe</button>
-    <!-- Chef du groupe « Boss de Guilde » : il ouvre les Équipes ET fait
-         apparaître la seconde ligne, qui porte les trois vues du groupe.
-         Il reste surligné tant qu'on est dans l'une d'elles. -->
-    <button class="tab" id="tab-roster" data-view="roster"
-            role="tab" aria-controls="view-roster"
-            aria-selected="false" tabindex="-1">Boss de Guilde</button>
-    <button class="tab" id="tab-member-roster" data-view="member-roster"
-            role="tab" aria-controls="view-member-roster"
-            aria-selected="false" tabindex="-1">Roster</button>
-    <button class="tab" id="tab-analyse" data-view="analyse"
-            role="tab" aria-controls="view-analyse"
-            aria-selected="false" tabindex="-1">Analyse</button>
-    <button class="tab" id="tab-wiki" data-view="wiki"
-            role="tab" aria-controls="view-wiki"
-            aria-selected="false" tabindex="-1">Wiki</button>
-    <button class="tab" id="tab-collection" data-view="collection"
-            role="tab" aria-controls="view-collection"
-            aria-selected="false" tabindex="-1">Collection</button>
-    <button class="tab" id="tab-calculateur" data-view="calculateur"
-            role="tab" aria-controls="view-calculateur"
-            aria-selected="false" tabindex="-1">Calculateur</button>
-    <!-- Il NAIT masqué, seul de la barre à l'être. Les autres onglets se
-         font ranger par `appliquerVisibiliteOnglets` à l'ouverture de
-         session ; celle-ci n'est jamais appelée hors ligne, et l'onglet
-         serait alors resté visible sans qu'aucune administration existe.
-         `hidden` le sort aussi de l'arbre d'accessibilité. -->
-    <button class="tab" id="tab-admin" data-view="admin" hidden
-            role="tab" aria-controls="view-admin"
-            aria-selected="false" tabindex="-1">Membres</button>
-  </nav>
-    <span class="tabs-cue tabs-cue-left" aria-hidden="true">‹</span>
-    <span class="tabs-cue tabs-cue-right" aria-hidden="true">›</span>
-  </div>
-  <!-- La seconde ligne du groupe « Boss de Guilde ». Elle n'existe que
-       lorsqu'on est dans l'une de ses trois vues : ailleurs elle porte
-       `hidden`, donc elle sort aussi de l'arbre d'accessibilité et de l'ordre
-       de tabulation. C'est son propre `tablist` — deux barres de niveaux
-       différents ne se parcourent pas d'une seule flèche. -->
-  <nav class="subtabs" id="bossSubtabs" role="tablist"
-       aria-label="Boss de Guilde" hidden>
-    <button class="tab subtab" id="tab-roster-equipes" data-view="roster"
-            role="tab" aria-controls="view-roster"
-            aria-selected="false" tabindex="-1">Équipes</button>
-    <button class="tab subtab" id="tab-availability" data-view="availability"
-            role="tab" aria-controls="view-availability"
-            aria-selected="false" tabindex="-1">Dispos</button>
-    <button class="tab subtab" id="tab-boss" data-view="boss"
-            role="tab" aria-controls="view-boss"
-            aria-selected="false" tabindex="-1">Sessions de boss</button>
-  </nav>
+
+  <!-- LA NAVIGATION EST VIDE ICI, ET REMPLIE PAR js/vues/coquille.js depuis
+       js/metier/rubriques.js. Trois barres l'affichent — celle du bureau, le
+       tiroir mobile et la barre du pouce — et les ecrire toutes les trois a la
+       main, c'etait trois listes a tenir d'accord. La table est la seule
+       source ; tests/coquille.test.js verifie que rien ne diverge.
+
+       Le contenu de l'accueil, lui, reste ecrit dans ce fichier : c'est la
+       page qu'un moteur ou un lecteur hors ligne doit voir sans JavaScript. -->
+  <nav class="desktop-nav" id="desktopNav" aria-label="Navigation principale"></nav>
+
+  <!-- LE COMPTE, en un seul exemplaire. Le tiroir mobile ouvre ce meme menu :
+       l'ancienne barre en tenait deux copies synchronisees a la main. -->
   <div class="account">
-    <button class="btn btn-ghost" id="accountLogin" type="button">Connexion</button>
+    <button class="account-button" id="accountLogin" type="button">Connexion</button>
     <div class="account-connected" id="accountConnected" hidden>
-      <span class="account-seal" aria-hidden="true"></span>
-      <span class="account-pseudo" id="accountPseudo"></span>
-      <span class="live-status" id="liveStatus" role="status"
-            aria-live="polite" aria-atomic="true">Connexion…</span>
-      <button class="btn btn-ghost" id="btnMigrateLocal" type="button">Importer mes données locales</button>
-      <button class="btn btn-ghost" id="authLogout" type="button">Déconnexion</button>
+      <button class="account-button" id="accountMenuButton" type="button"
+              aria-haspopup="true" aria-expanded="false" aria-controls="accountMenu">
+        <span class="account-seal" aria-hidden="true"></span>
+        <span class="account-pseudo" id="accountPseudo"></span>
+      </button>
+      <div class="account-popover" id="accountMenu" hidden>
+        <span class="live-status" id="liveStatus" role="status"
+              aria-live="polite" aria-atomic="true">Connexion…</span>
+        <button id="btnMigrateLocal" type="button">Importer mes données locales</button>
+        <button id="authLogout" type="button">Déconnexion</button>
+      </div>
     </div>
   </div>
+
+  <button class="menu-button" id="mobileMenuButton" type="button"
+          aria-label="Ouvrir le menu" aria-haspopup="true"
+          aria-expanded="false" aria-controls="mobileDrawer">
+    <span></span><span></span><span></span>
+  </button>
+  <aside class="mobile-drawer" id="mobileDrawer" aria-label="Explorer" hidden></aside>
 </header>
 
-<!-- Navigation au pouce. Les huit destinations du rail desktop deviennent
-     cinq reperes stables sur petit ecran ; les rubriques moins frequentes et
-     le compte restent a un geste dans « Plus ». Les SVG sont decoratifs : le
-     libelle visible est aussi le nom accessible de chaque destination. -->
-<nav class="mobile-boss-subnav" id="mobileBossSubtabs"
-     aria-label="Boss de Guilde mobile" hidden>
-  <button class="mobile-boss-subnav-item" type="button" data-mobile-view="roster"
-          aria-controls="view-roster">
-    Équipes
-  </button>
-  <button class="mobile-boss-subnav-item" type="button"
-          data-mobile-view="availability" aria-controls="view-availability">
-    Dispos
-  </button>
-  <button class="mobile-boss-subnav-item" type="button" data-mobile-view="boss"
-          aria-controls="view-boss">
-    Sessions
-  </button>
-</nav>
-<div class="mobile-more-backdrop" id="mobileMoreBackdrop" hidden></div>
-<nav class="mobile-more-panel" id="mobileMorePanel" aria-label="Plus" hidden>
-  <p class="mobile-more-title">Explorer</p>
-  <div class="mobile-more-links">
-    <button class="mobile-more-link" type="button" data-mobile-view="analyse">
-      <span>Analyse</span><span aria-hidden="true">›</span>
-    </button>
-    <button class="mobile-more-link" type="button" data-mobile-view="wiki">
-      <span>Wiki</span><span aria-hidden="true">›</span>
-    </button>
-    <button class="mobile-more-link" type="button" data-mobile-view="collection">
-      <span>Collection</span><span aria-hidden="true">›</span>
-    </button>
-    <button class="mobile-more-link" type="button" data-mobile-view="calculateur">
-      <span>Calculateur</span><span aria-hidden="true">›</span>
-    </button>
-    <button class="mobile-more-link" type="button" data-mobile-view="admin" hidden>
-      <span>Membres</span><span aria-hidden="true">›</span>
-    </button>
-  </div>
-  <div class="mobile-account-card">
-    <button class="btn btn-ghost" id="mobileAccountLogin" type="button">Connexion</button>
-    <div class="mobile-account-connected" id="mobileAccountConnected" hidden>
-      <div class="mobile-account-identity">
-        <span class="account-seal" aria-hidden="true"></span>
-        <span class="account-pseudo" id="mobileAccountPseudo"></span>
-        <span class="live-status" id="mobileLiveStatus" role="status"
-              aria-live="polite" aria-atomic="true">Connexion…</span>
-      </div>
-      <button class="btn btn-ghost" id="mobileBtnMigrateLocal" type="button">
-        Importer mes données locales
-      </button>
-      <button class="btn btn-ghost" id="mobileAuthLogout" type="button">Déconnexion</button>
-    </div>
-  </div>
-</nav>
-<nav class="mobile-nav" aria-label="Navigation principale mobile">
-  <button class="mobile-nav-item active" id="mobileNavDashboard" type="button"
-          data-mobile-view="dashboard" aria-current="page">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11.2 12 4l9 7.2v8.3a.5.5 0 0 1-.5.5H15v-6H9v6H3.5a.5.5 0 0 1-.5-.5z"/></svg>
-    <span>Accueil</span>
-  </button>
-  <button class="mobile-nav-item" id="mobileNavBuilder" type="button"
-          data-mobile-view="builder">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v18M3 12h18"/></svg>
-    <span>Créer</span>
-  </button>
-  <button class="mobile-nav-item" id="mobileNavBoss" type="button"
-          data-mobile-view="roster">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8 20 6v5.8c0 4.8-3.3 8.1-8 9.4-4.7-1.3-8-4.6-8-9.4V6zM8.5 12l2.2 2.2 4.8-5"/></svg>
-    <span>Boss</span>
-  </button>
-  <button class="mobile-nav-item" id="mobileNavRoster" type="button"
-          data-mobile-view="member-roster">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8.3 11.2a3.4 3.4 0 1 0 0-6.8 3.4 3.4 0 0 0 0 6.8ZM2.8 20v-2.2c0-2.6 2.3-4.5 5.5-4.5s5.5 1.9 5.5 4.5V20zM15.8 11a2.8 2.8 0 1 0 0-5.6M16 13.5c3 0 5.2 1.7 5.2 4.2V20h-4.8"/></svg>
-    <span>Roster</span>
-  </button>
-  <button class="mobile-nav-item" id="mobileNavMore" type="button"
-          aria-controls="mobileMorePanel" aria-expanded="false">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h.01M12 12h.01M19 12h.01"/></svg>
-    <span>Plus</span>
-  </button>
-</nav>
+<main id="main" tabindex="-1">
+  <!-- LES ONGLETS D'UNE RUBRIQUE. Une seule barre pour tout le site, remplie
+       par js/vues/coquille.js depuis la table des rubriques, et masquee pour
+       une rubrique qui n'en a pas. La poser dans la coquille plutot que dans
+       chaque vue evite six copies de la meme barre. -->
+  <nav class="local-tabs-bar" id="localTabsBar" hidden>
+    <div class="local-tabs" id="localTabs" role="tablist"
+         aria-label="Sections de la rubrique"></div>
+  </nav>
 
-<main>
+  <!-- ============ ACCUEIL PUBLIC ============ -->
+  <!-- La seule vue ecrite en dur : c'est la porte d'entree du site, elle doit
+       s'afficher sans JavaScript. Ses boutons portent `data-rubrique` ou
+       `data-view` ; c'est la delegation de js/vues/coquille.js qui les branche. -->
+  <section id="view-home" class="view active" role="tabpanel"
+           aria-labelledby="homeTitle">
+    <div class="guild-hero ornate-panel">
+      <div class="guild-hero__copy">
+        <p class="context-label">L'espace de notre guilde</p>
+        <h1 id="homeTitle" tabindex="-1">On prépare la suite,<br>ensemble.</h1>
+        <p class="hero-lead">Retrouve les équipes du Boss de Guilde, partage ton
+          roster et organise les prochaines sessions.</p>
+        <div class="hero-actions">
+          <button class="btn btn-primary" type="button" data-action="auth">Créer mon compte</button>
+          <button class="btn btn-ghost" type="button" data-rubrique="outils">Explorer les outils
+            <span class="arrow" aria-hidden="true">&#8594;</span></button>
+        </div>
+      </div>
+      <figure class="guild-hero__visual">
+        <img src="./nova-banniere-etendue.png" width="1920" height="1080"
+             alt="Les héros de NOVA réunis devant la forteresse">
+      </figure>
+    </div>
+
+    <section class="home-section" aria-labelledby="homeEssentialsTitle">
+      <div class="ornate-heading"><span></span>
+        <h2 id="homeEssentialsTitle">L'essentiel pour jouer ensemble</h2><span></span></div>
+      <div class="essential-grid">
+        <article class="essential-card">
+          <svg class="line-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="m14 12 36 39M50 12 14 51M21 20l-7-7m29 7 7-7M10 48l6 6m32-6-6 6M25 25l-9 9m23-9 9 9"/></svg>
+          <div><h3>Boss de guilde</h3><p>Prépare une équipe avec les membres.</p></div>
+          <button class="btn btn-ghost" type="button" data-rubrique="centre-boss">Organiser une session
+            <span class="arrow" aria-hidden="true">&#8594;</span></button>
+        </article>
+        <article class="essential-card">
+          <svg class="line-icon" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="22" r="9"/><circle cx="14" cy="27" r="7"/><circle cx="50" cy="27" r="7"/><path d="M17 52v-7c0-8 6-13 15-13s15 5 15 13v7M3 52v-5c0-7 5-11 12-11m46 16v-5c0-7-5-11-12-11"/></svg>
+          <div><h3>Roster de la guilde</h3><p>Partage tes personnages pour composer les équipes.</p></div>
+          <button class="btn btn-ghost" type="button" data-rubrique="mon-roster">Renseigner mon roster
+            <span class="arrow" aria-hidden="true">&#8594;</span></button>
+        </article>
+        <article class="essential-card">
+          <svg class="line-icon" viewBox="0 0 64 64" aria-hidden="true"><rect x="9" y="14" width="46" height="41" rx="3"/><path d="M9 25h46M20 8v12M44 8v12M20 34h4m8 0h4m8 0h4m-28 9h4m8 0h4m8 0h4"/></svg>
+          <div><h3>Nos disponibilités</h3><p>Trouvons un créneau pour jouer ensemble.</p></div>
+          <button class="btn btn-ghost" type="button" data-view="availability">Voir le planning
+            <span class="arrow" aria-hidden="true">&#8594;</span></button>
+        </article>
+      </div>
+    </section>
+
+    <section class="home-lower ornate-panel" aria-label="Outils et compte">
+      <div class="tools-band">
+        <h2>Les outils de la confrérie</h2>
+        <div class="tool-shortcuts">
+          <button type="button" data-view="wiki"><span class="tool-glyph" aria-hidden="true">&#9636;</span>Wiki</button>
+          <button type="button" data-view="collection"><span class="tool-glyph" aria-hidden="true">&#9826;</span>Collection</button>
+          <button type="button" data-view="calculateur"><span class="tool-glyph" aria-hidden="true">&#9638;</span>Calculateur</button>
+          <button type="button" data-view="analyse"><span class="tool-glyph" aria-hidden="true">&#9637;</span>Analyse</button>
+        </div>
+      </div>
+      <div class="member-callout">
+        <h2>Déjà membre de la guilde ?</h2>
+        <p>Connecte-toi pour partager tes équipes et ton roster.</p>
+        <button class="btn btn-ghost" type="button" data-action="auth">Créer mon compte
+          <span class="arrow" aria-hidden="true">&#8594;</span></button>
+      </div>
+    </section>
+  </section>
   <!-- ============ MON SUIVI ============ -->
-  <section id="view-dashboard" class="view active" role="tabpanel"
-           aria-labelledby="tab-dashboard">
+  <section id="view-dashboard" class="view" role="tabpanel"
+           aria-labelledby="dashboardTitle">
     <div class="dashboard-heading">
       <div>
         <p class="section-eyebrow">Confrérie 7DS</p>
@@ -250,7 +204,7 @@
 
   <!-- ============ BUILDER ============ -->
   <section id="view-builder" class="view" role="tabpanel"
-           aria-labelledby="tab-builder">
+           aria-labelledby="builderTitle">
     <p class="section-eyebrow">Forge des équipes</p>
     <h1 class="section-title" id="builderTitle" tabindex="-1">Composer une équipe</h1>
     <p class="section-lead">Assigne 4 héros, leur arme et leurs armures, puis enregistre l'équipe pour la rendre disponible face au Boss de Guilde.</p>
@@ -277,7 +231,7 @@
 
   <!-- ============ ROSTER ============ -->
   <section id="view-roster" class="view" role="tabpanel"
-           aria-labelledby="tab-roster">
+           aria-labelledby="rosterTitle">
     <p class="section-eyebrow">Registre de la confrérie</p>
     <h1 class="section-title" id="rosterTitle" tabindex="-1">Équipes dispo pour le Boss de Guilde</h1>
     <p class="section-lead">Toutes les équipes proposées par les membres. Modifie ou retire les tiennes à tout moment.</p>
@@ -304,7 +258,7 @@
 
   <!-- ============ ROSTER DES MEMBRES ============ -->
   <section id="view-member-roster" class="view" role="tabpanel"
-           aria-labelledby="tab-member-roster">
+           aria-labelledby="memberRosterViewTitle">
     <p class="section-eyebrow">Collection de la confrérie</p>
     <h1 class="section-title" id="memberRosterViewTitle" tabindex="-1">Roster des membres</h1>
     <p class="section-lead">Enregistre tes personnages une fois, puis réutilise leurs équipements dans tes équipes.</p>
@@ -330,18 +284,18 @@
 
   <!-- ============ ANALYSE ============ -->
   <section id="view-analyse" class="view" role="tabpanel"
-           aria-labelledby="tab-analyse">
+           aria-labelledby="analyseTitle">
     <p class="section-eyebrow">Confrérie</p>
-    <h1 class="section-title">Analyse par élément</h1>
+    <h1 class="section-title" id="analyseTitle" tabindex="-1">Analyse par élément</h1>
     <p class="section-lead">Vue d'ensemble, DPS par élément et soutiens de tous les éléments, calculés directement depuis les rosters.</p>
     <div id="analyseBody"></div>
   </section>
 
   <!-- ============ SESSIONS DE BOSS ============ -->
   <section id="view-boss" class="view" role="tabpanel"
-           aria-labelledby="tab-boss">
+           aria-labelledby="bossTitle">
     <p class="section-eyebrow">Confrérie</p>
-    <h1 class="section-title">Groupes de boss</h1>
+    <h1 class="section-title" id="bossTitle" tabindex="-1">Groupes de boss</h1>
     <p class="section-lead">6 groupes sont créés automatiquement chaque semaine (reset lundi 9h). Rejoins un ou plusieurs groupes pour organiser l'attaque du Boss de Guilde.</p>
     <div class="roster-toolbar">
       <span class="roster-count" id="bossCount"></span>
@@ -351,9 +305,9 @@
 
   <!-- ============ WIKI ============ -->
   <section id="view-wiki" class="view" role="tabpanel"
-           aria-labelledby="tab-wiki">
+           aria-labelledby="wikiTitle">
     <p class="section-eyebrow">Référence</p>
-    <h1 class="section-title">Wiki</h1>
+    <h1 class="section-title" id="wikiTitle" tabindex="-1">Wiki</h1>
     <p class="section-lead">Les compétences, les passifs et les statistiques du jeu, en français.</p>
     <!-- Un groupe, pas un `tablist` : ces boutons ne contrôlent aucun
          `tabpanel`, et un `role="tab"` ici mentirait aux lecteurs d'écran en
@@ -387,9 +341,9 @@
 
   <!-- ============ COLLECTION ============ -->
   <section id="view-collection" class="view" role="tabpanel"
-           aria-labelledby="tab-collection">
+           aria-labelledby="collectionTitle">
     <p class="section-eyebrow">Chasse</p>
-    <h1 class="section-title">Collection</h1>
+    <h1 class="section-title" id="collectionTitle" tabindex="-1">Collection</h1>
     <p class="section-lead">Ce qu'il te reste à trouver, arme par arme et gravure par gravure.</p>
     <div class="collection-toolbar">
       <label class="wiki-field" id="collectionOwnerField">
@@ -414,25 +368,25 @@
 
   <!-- ============ CALCULATEUR ============ -->
   <section id="view-calculateur" class="view" role="tabpanel"
-           aria-labelledby="tab-calculateur">
+           aria-labelledby="calculateurTitle">
     <p class="section-eyebrow">Boss de confrérie</p>
-    <h1 class="section-title">Calculateur de dégâts</h1>
+    <h1 class="section-title" id="calculateurTitle" tabindex="-1">Calculateur de dégâts</h1>
     <p class="section-lead">Les dégâts de chaque compétence de tes builds contre Akumu. Un chiffre par compétence, jamais un dégât par seconde : les temps d'animation ne sont mesurés nulle part.</p>
     <div id="calculateurBody"></div>
   </section>
 
   <!-- ============ MEMBRES ============ -->
   <section id="view-admin" class="view" role="tabpanel"
-           aria-labelledby="tab-admin">
+           aria-labelledby="adminTitle">
     <p class="section-eyebrow">Confrérie</p>
-    <h1 class="section-title">Membres</h1>
+    <h1 class="section-title" id="adminTitle" tabindex="-1">Membres</h1>
     <p class="section-lead">Qui a accès aux données de la confrérie. Un compte fraîchement créé est invité : il ne voit que son propre roster tant qu'il n'est pas accueilli ici.</p>
     <div id="adminBody"></div>
   </section>
 
   <!-- ============ DISPOS ============ -->
   <section id="view-availability" class="view" role="tabpanel"
-           aria-labelledby="tab-availability">
+           aria-labelledby="availTitle">
     <p class="section-eyebrow">Confrérie</p>
     <h1 class="section-title" id="availTitle" tabindex="-1">Dispos de la semaine</h1>
     <p class="section-lead">Indique les heures où tu peux jouer. La vue « La confrérie » montre les créneaux où le plus de monde est disponible pour lancer une run.</p>
@@ -471,6 +425,26 @@
 
   <p class="databar" id="databar"></p>
 </main>
+
+<footer class="site-footer">
+  <span>NOVA · Confrérie 7DS</span>
+  <span>Site de guilde · Communauté 7DS Origin</span>
+  <!-- Lien affilié : il rapporte au propriétaire du site quand un membre
+       achète après l'avoir suivi. `rel="sponsored"` déclare cette rémunération
+       aux moteurs, comme le veut la convention pour un lien rémunéré ;
+       `noopener` empêche la page ouverte d'accéder à celle-ci.
+       Les dimensions sont celles du fichier (467 × 100) : les écrire évite que
+       le pied de page ne sursaute au moment où l'image arrive. -->
+  <a class="lootbar" id="lootbarLink"
+     href="https://www.lootbar.com/a/raTV3p"
+     target="_blank" rel="sponsored noopener noreferrer">
+    <img src="./lootbar-logo.webp" alt="Partenaire LootBar"
+         width="467" height="100" decoding="async">
+  </a>
+</footer>
+
+<!-- La navigation au pouce, remplie depuis la table des rubriques. -->
+<nav class="mobile-nav" id="mobileNav" aria-label="Navigation mobile"></nav>
 
 <!-- Picker modal -->
 <div class="overlay" id="overlay" role="dialog" aria-modal="true"
@@ -930,141 +904,6 @@
       // Hors ligne ou `file://` : l'appli reste pleinement utilisable.
     });
   });
-})();
-</script>
-<script>
-/* Header rétractable sur mobile. Bloc séparé du script principal : le bac à
-   sable `vm` des tests unitaires ne fournit ni `window.addEventListener`, ni
-   `matchMedia`, ni `requestAnimationFrame`.
-   Contrat : on ne replie jamais en haut de page, jamais en desktop, et jamais
-   un contrôle qui détient le focus. */
-(function () {
-  var bar = document.querySelector(".topbar");
-  if (!bar || !window.matchMedia || !window.requestAnimationFrame) return;
-  /* En portrait étroit, la navigation vit désormais en bas et l'identité
-     compacte défile avec la page : aucun repli n'est nécessaire. Il reste utile
-     sur un téléphone couché, large mais très court, où le rail desktop occupe
-     encore l'en-tête. La condition suit celle de css/responsive.css. */
-  var compact = window.matchMedia(
-    "(min-width:561px) and (max-height:500px) and (orientation:landscape)"
-  );
-  var RETRACT_FROM = 140;
-  /* Le header ne se redéploie qu'en haut de page, pas au moindre scroll vers le
-     haut : remonter pour relire un paragraphe ne doit pas recouvrir la page.
-     Le seuil reste bas exprès — se replier raccourcit le document et le
-     navigateur recale `scrollY` d'environ 140 px, donc un seuil large ferait
-     rebondir le header entre les deux états pendant l'animation. */
-  var EXPAND_AT = 4;
-  var lastY = 0;
-  var queued = false;
-
-  // Seules ces trois zones passent en display:none quand le header se replie.
-  // Le lien LootBar en fait partie : c'est un lien, donc focusable, et un
-  // focus resté sur un élément masqué bloquerait le repli pour de bon.
-  function focusInsideHidden() {
-    var active = document.activeElement;
-    if (!active) return false;
-    var zones = bar.querySelectorAll(".brand, .lootbar, .account");
-    for (var i = 0; i < zones.length; i++) {
-      if (zones[i].contains(active)) return true;
-    }
-    return false;
-  }
-
-  function setRetracted(next) {
-    if (bar.classList.contains("is-retracted") === next) return;
-    bar.classList.toggle("is-retracted", next);
-  }
-
-  function currentY() {
-    return window.scrollY > 0 ? window.scrollY : 0;
-  }
-
-  function apply() {
-    queued = false;
-    var y = currentY();
-    if (!compact.matches) {
-      setRetracted(false);
-      lastY = y;
-      return;
-    }
-    /* Garde limité aux zones qui disparaissent réellement. Les onglets vivent
-       aussi dans le header mais restent visibles replié : tester tout `.topbar`
-       laissait le focus posé sur l'onglet cliqué bloquer le repli pour de bon,
-       donc plus aucun repli après la moindre navigation. */
-    /* Modale ouverte : le corps de page est figé, `scrollY` vaut 0 sans que
-       l'utilisateur ait bougé. On ne touche pas non plus à `lastY` — le garder
-       à sa valeur d'avant le verrou fait que le header retrouve son état exact
-       quand la modale se ferme, au lieu de se déployer sans raison. */
-    if (document.body.classList.contains("modal-locked")) return;
-    if (focusInsideHidden()) {
-      lastY = y;
-      return;
-    }
-    var delta = y - lastY;
-    if (y <= EXPAND_AT) setRetracted(false);
-    else if (y > RETRACT_FROM && delta > 2) setRetracted(true);
-    /* Le header est dans le flux : le replier raccourcit le document, et le
-       navigateur recale aussitôt `scrollY`. On relit donc la position APRÈS le
-       basculement, sinon ce saut auto-infligé serait pris au coup suivant pour
-       un scroll vers le haut et l'oscillation deviendrait infinie.
-       Un amortisseur en nombre de frames marchait aussi, mais il avalait un
-       scroll réel arrivant juste après une navigation — le header restait alors
-       déployé pour de bon. */
-    lastY = currentY();
-  }
-
-  function schedule() {
-    if (queued) return;
-    queued = true;
-    window.requestAnimationFrame(apply);
-  }
-
-  window.addEventListener("scroll", schedule, { passive: true });
-  window.addEventListener("resize", schedule, { passive: true });
-  /* `display:none` retire les contrôles du compte de l'ordre de tabulation :
-     sans cette règle, un membre au clavier ne pourrait plus les atteindre du
-     tout une fois le header replié. La moindre tabulation le redéploie donc. */
-  window.addEventListener("keydown", function (event) {
-    if (event.key === "Tab") setRetracted(false);
-  });
-})();
-
-/* Repères de défilement de la barre d'onglets. Le CSS ne sait pas dire « il
-   reste du contenu de ce côté » : on pose donc les classes ici, et c'est le CSS
-   qui décide de les rendre visibles ou non (jamais en desktop, où les onglets
-   ne défilent pas). Même bloc que le header : le bac à sable `vm` des tests
-   unitaires ne fournit pas `addEventListener`. */
-(function () {
-  var rail = document.querySelector(".tabs-rail");
-  var tabs = rail && rail.querySelector(".tabs");
-  if (!rail || !tabs || !window.requestAnimationFrame) return;
-  var TOLERANCE = 2;
-  var queued = false;
-
-  function apply() {
-    queued = false;
-    var max = tabs.scrollWidth - tabs.clientWidth;
-    var left = tabs.scrollLeft;
-    rail.classList.toggle("can-scroll-left", left > TOLERANCE);
-    rail.classList.toggle("can-scroll-right", max - left > TOLERANCE);
-  }
-
-  function schedule() {
-    if (queued) return;
-    queued = true;
-    window.requestAnimationFrame(apply);
-  }
-
-  tabs.addEventListener("scroll", schedule, { passive: true });
-  window.addEventListener("resize", schedule, { passive: true });
-  /* Changer d'onglet peut déplacer le défilement (mise au point du navigateur
-     sur l'onglet cliqué), et le texte des onglets ne bouge pas mais leur
-     largeur dépend des polices : on recalcule aussi après chargement. */
-  tabs.addEventListener("click", schedule);
-  window.addEventListener("load", schedule);
-  if (document.fonts && document.fonts.ready) document.fonts.ready.then(schedule);
-  apply();
 })();
 </script>
 </body>
