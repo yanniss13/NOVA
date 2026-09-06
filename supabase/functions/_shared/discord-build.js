@@ -42,12 +42,16 @@ const JEWEL_SLOTS = ["Anneau", "Collier", "Boucle d'oreille"];
    pareil, voir `FOLDER_TO_ENUM` dans js/noyau/constantes.js. Huit dossiers sur
    douze portent le nom de leur categorie, ce qui a longtemps cache l'ecart ;
    les quatre autres ne s'ecrivent pas du tout pareil, et sortaient bruts sur
-   la carte : « Epee 1 main » au lieu de « Épée à une main ». */
+   la carte : « Epee 1 main » au lieu de « Épée longue ».
+
+   LES LIBELLES SONT CEUX DU JEU, rapportes par le proprietaire : une epee a
+   une main s'appelle une « épée longue », une epee a deux mains un
+   « espadon ». Ni le dossier ni la categorie du catalogue ne les donnent. */
 const WEAPON_LABELS = {
   "Baton":"Bâton",
   "Bouclier":"Épée & bouclier",
-  "Epee 1 main":"Épée à une main",
-  "Epee 2 mains":"Épée à deux mains",
+  "Epee 1 main":"Épée longue",
+  "Epee 2 mains":"Espadon",
   "Epees doubles":"Épées doubles",
   "Livre":"Grimoire",
   "Rapiere":"Rapière"

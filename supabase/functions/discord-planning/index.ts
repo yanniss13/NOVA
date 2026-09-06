@@ -197,9 +197,14 @@ const {
   }): { erreur?: string; cartes?: BuildCard[] };
   contenuMessageBuild(cartes: BuildCard[]): string;
 };
-const { generateBuildCardPng, diagnostiquerVignette } = buildPngModule as {
+const {
+  generateBuildCardPng, diagnostiquerVignette, diagnostiquerRafale,
+  diagnostiquerChargement
+} = buildPngModule as {
   generateBuildCardPng(carte: BuildCard): Promise<Uint8Array>;
   diagnostiquerVignette(chemin: string): Promise<Record<string, unknown>>;
+  diagnostiquerRafale(chemins: string[]): Promise<Record<string, unknown>[]>;
+  diagnostiquerChargement(carte: unknown): Promise<Record<string, unknown>>;
 };
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -725,6 +730,18 @@ async function propositionsDeBuild(
 /* Le chemin d'une vignette connue, servie par GitHub Pages. Il ne vient PAS de
    la requête : la sonde ne doit rien pouvoir aller chercher d'autre. */
 const VIGNETTE_TEMOIN = "7ds-personnages/meliodas.webp";
+/* Une rafale de la taille de celle qu'une carte lance vraiment. */
+const RAFALE_TEMOIN = [
+  "7ds-personnages/meliodas.webp",
+  "7ds-ui/mastery/sword1h.webp",
+  "7ds-ui/role-elements/dark_attacker.webp",
+  "7ds-armures-ssr/Haut/Haut du souverain cupide.webp",
+  "7ds-armures-ssr/Bas/Bas du souverain cupide.webp",
+  "7ds-armures-ssr/Bottes/Bottes de combat du souverain cupide.webp",
+  "7ds-armures-ssr/Ceinture/Ceinture du souverain cupide.webp",
+  "7ds-bijoux/Anneau/Anneau du souverain cupide.webp",
+  "7ds-bijoux/Collier/Collier du souverain cupide.webp"
+];
 
 Deno.serve(async request => {
   /* UNE SONDE, ET RIEN D'AUTRE, EN GET. Quand une carte sort avec des cadres
@@ -734,7 +751,23 @@ Deno.serve(async request => {
      reçus, décodage. Il ne lit aucun secret et ne prend aucun paramètre. */
   if(request.method === "GET"
     && new URL(request.url).searchParams.has("diagnostic")){
-    return jsonResponse({ vignette:await diagnostiquerVignette(VIGNETTE_TEMOIN) });
+    /* Une carte temoin, batie comme celles de /build : c'est `chargerImages`
+       qui est en cause ou hors de cause, pas un fetch isole. */
+    const carteTemoin = {
+      portrait:VIGNETTE_TEMOIN,
+      iconeArme:"7ds-ui/mastery/sword1h.webp",
+      iconeRoleElement:"7ds-ui/role-elements/dark_attacker.webp",
+      sections:[{ titre:"Armure", disposition:"liste", lignes:[
+        { emplacement:"Haut", nom:"Haut du souverain cupide",
+          image:"7ds-armures-ssr/Haut/Haut du souverain cupide.webp",
+          mesures:[], details:[], enchantements:[] }
+      ] }]
+    };
+    return jsonResponse({
+      vignette:await diagnostiquerVignette(VIGNETTE_TEMOIN),
+      rafale:await diagnostiquerRafale(RAFALE_TEMOIN),
+      carte:await diagnostiquerChargement(carteTemoin)
+    });
   }
   if(request.method !== "POST"){
     return jsonResponse({ error:"Méthode non autorisée" }, 405);

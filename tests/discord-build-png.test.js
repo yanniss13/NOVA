@@ -20,7 +20,8 @@ const {
 } = require(partage("availability-pdf.js"));
 const {
   generateBuildCardPng, MESURES, largeurTexte, tronquer, mesurer,
-  cartoucheJoueur, urlVignette, diagnostiquerVignette
+  cartoucheJoueur, urlVignette, diagnostiquerVignette,
+  chargerVignette, viderCacheVignettes
 } = require(partage("discord-build-png.js"));
 const { decodePng } = require(partage("png-decode.js"));
 const { texteCarte } = require(partage("discord-build.js"));
@@ -450,6 +451,48 @@ function comptePixels(png, couleur) {
     async () => ({ ok:false, status:404 }));
   assert.equal(sonde404.statut, 404);
   assert.equal(sonde404.decode, false);
+
+  /* LE CHARGEUR REEL, celui que la production emploie. Tous les autres tests
+     lui substituent le leur — c'est ce qui rend le rendu verifiable sans
+     reseau, et c'est aussi ce qui a laisse passer une variable de cache jamais
+     declaree : chaque chargement levait une ReferenceError, avalee par le
+     `try` qui protege les vignettes manquantes. Les cartes sortaient avec tous
+     leurs cadres vides, en silence, pendant que les URL repondaient 200. */
+  const vraiFetch = globalThis.fetch;
+  let appels = 0;
+  globalThis.fetch = async () => {
+    appels += 1;
+    return { ok:true, status:200,
+      arrayBuffer:async () => png.buffer.slice(png.byteOffset,
+        png.byteOffset + png.byteLength) };
+  };
+  try {
+    viderCacheVignettes();
+    const chargee = await chargerVignette("7ds-personnages/meliodas.webp");
+    assert.ok(chargee && chargee.width > 0,
+      "le chargeur de production doit rendre une image");
+    assert.equal(appels, 1);
+
+    /* Le cache evite de retelecharger la meme vignette sur une seconde carte. */
+    await chargerVignette("7ds-personnages/meliodas.webp");
+    assert.equal(appels, 1, "la seconde demande doit venir du cache");
+
+    /* Mais un echec ne se grave pas : l'isolat survit d'un appel a l'autre, et
+       un 404 passager condamnait toutes les cartes suivantes. */
+    globalThis.fetch = async () => ({ ok:false, status:404 });
+    assert.equal(await chargerVignette("7ds-personnages/absent.webp"), null);
+    globalThis.fetch = async () => {
+      appels += 1;
+      return { ok:true, status:200,
+        arrayBuffer:async () => png.buffer.slice(png.byteOffset,
+          png.byteOffset + png.byteLength) };
+    };
+    assert.ok(await chargerVignette("7ds-personnages/absent.webp"),
+      "apres un echec, la vignette doit etre redemandee");
+  } finally {
+    globalThis.fetch = vraiFetch;
+    viderCacheVignettes();
+  }
 
   /* Les images sont bien demandees, et bien posees. */
   const demandes = [];
