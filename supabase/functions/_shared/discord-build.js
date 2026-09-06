@@ -19,7 +19,11 @@
    La gravee porte un passif et des enchantements, comme une arme ; les quatre
    autres n'ont qu'un nom. Les melanger obligerait la liste de la carte a
    prendre la hauteur de la plus bavarde. */
-const ARMOR_SLOTS = ["Haut", "Bas", "Bottes", "Ceinture"];
+/* L'ORDRE DES EMPLACEMENTS EST CELUI DU JEU, et non celui du site. Un membre
+   compare la fiche a son ecran d'equipement : deux ordres differents lui font
+   relire chaque ligne pour retrouver la piece. Le site garde le sien, qui sert
+   au calcul et que rien n'oblige a bouger. */
+const ARMOR_SLOTS = ["Haut", "Bas", "Ceinture", "Bottes"];
 const LINKED_ARMOR_SLOT = "Armure liee";
 const ARMOR_LABELS = {
   "Haut":"Haut",
@@ -30,7 +34,7 @@ const ARMOR_LABELS = {
      qui est ecrite dans Supabase et dans les chemins des images. */
   "Armure liee":"Armure gravée"
 };
-const JEWEL_SLOTS = ["Anneau", "Collier", "Boucle d'oreille"];
+const JEWEL_SLOTS = ["Boucle d'oreille", "Collier", "Anneau"];
 /* LE NOM AFFICHE D'UN TYPE D'ARME. La CLE vient des dossiers d'images, qui
    n'ont jamais porte d'accent — « Epee a une main » — et elle est ecrite dans
    Supabase : la renommer demanderait de migrer tous les builds enregistres.

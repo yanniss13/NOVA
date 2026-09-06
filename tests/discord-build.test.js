@@ -568,8 +568,12 @@ assert.deepEqual(sections.map(section => section.disposition),
 assert.deepEqual(sections[0].lignes.map(entree => entree.emplacement),
   ["Nunchaku", "Armure gravée"],
   "la section Arme porte l'arme, puis l'armure gravee");
+/* L'ORDRE EST CELUI DU JEU, rapporte par le proprietaire : haut, bas,
+   ceinture, bottes — puis, pour les bijoux, boucle d'oreille, collier, anneau.
+   Un membre compare sa fiche a son ecran de jeu ; deux ordres differents lui
+   font relire chaque ligne. Le site garde le sien, qui sert au calcul. */
 assert.deepEqual(sections[1].lignes.map(entree => entree.emplacement),
-  ["Haut", "Bas", "Bottes", "Ceinture"],
+  ["Haut", "Bas", "Ceinture", "Bottes"],
   "la liste d'armure ne recoit que les quatre pieces ordinaires");
 
 const [armeSection, armureSection, bijouxSection] = sections;
@@ -636,8 +640,8 @@ assert.equal(armureSection.lignes[1].image, "",
   "un emplacement vide ne porte aucune image");
 
 assert.deepEqual(bijouxSection.lignes.map(ligne => ligne.emplacement),
-  ["Anneau", "Collier", "Boucle d'oreille"]);
-assert.equal(bijouxSection.lignes[0].nom, "Anneau du loup");
+  ["Boucle d'oreille", "Collier", "Anneau"]);
+assert.equal(bijouxSection.lignes[2].nom, "Anneau du loup");
 
 /* Une arme sans configuration reste affichable : le joueur a equipe l'objet
    sans jamais ouvrir l'editeur. */
