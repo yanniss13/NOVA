@@ -9,11 +9,12 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
+const { allerA } = require("./helpers/naviguer");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
 async function ouvrirAnalyse(page, section = "supports"){
-  await page.locator('.tab[data-view="analyse"]').click();
+  await allerA(page, "analyse");
   const bouton = page.locator(
     `.analyse-subnav-button[data-analyse-section="${section}"]`
   );
@@ -433,7 +434,7 @@ async function ouvrirAnalyse(page, section = "supports"){
       "le bouton active doit garder le focus apres le filtrage"
     );
 
-    await page.locator('.tab[data-view="builder"]').click();
+    await allerA(page, "builder");
     await ouvrirAnalyse(page);
     assert.equal(await filtreFeu.getAttribute("aria-pressed"), "true",
       "le filtre Feu doit survivre a un nouveau rendu de l'Analyse");
@@ -505,7 +506,7 @@ async function ouvrirAnalyse(page, section = "supports"){
 
     /* Une erreur ne dit rien de la possession : elle ne doit pas ressembler
        au roster vide ci-dessus. */
-    await page.locator('.tab[data-view="builder"]').click();
+    await allerA(page, "builder");
     await page.evaluate(() => {
       window.__fakeSupabaseState.bossReadFailureOnce = {
         table:"roster_characters",
@@ -533,7 +534,7 @@ async function ouvrirAnalyse(page, section = "supports"){
     );
 
     /* P0 est un potentiel renseigne, pas une valeur manquante. */
-    await page.locator('.tab[data-view="builder"]').click();
+    await allerA(page, "builder");
     await page.evaluate(() => {
       window.__fakeSupabaseState.roster_characters = [{
         owner:"user-1",
@@ -562,7 +563,7 @@ async function ouvrirAnalyse(page, section = "supports"){
        que la vue passe bien la liste NON filtree au recensement - et la
        regression serait passee inapercue, le test P0 ci-dessus utilisant
        Escanor, qui est un DPS. */
-    await page.locator('.tab[data-view="builder"]').click();
+    await allerA(page, "builder");
     await page.evaluate(() => {
       window.__fakeSupabaseState.roster_characters = [{
         owner:"user-1",
@@ -595,7 +596,7 @@ async function ouvrirAnalyse(page, section = "supports"){
     );
 
     /* Aucun roster du tout : la consigne revient, et le recensement reste. */
-    await page.locator('.tab[data-view="builder"]').click();
+    await allerA(page, "builder");
     await page.evaluate(() => {
       window.__fakeSupabaseState.roster_characters = [];
     });
@@ -614,7 +615,7 @@ async function ouvrirAnalyse(page, section = "supports"){
        ce n'est pas le couple personnage + arme qui compte, mais le fichier
        d'armure REELLEMENT equipe dans un build - et le niveau de son passif,
        parce que la valeur en depend du simple au tiers pres. */
-    await page.locator('.tab[data-view="builder"]').click();
+    await allerA(page, "builder");
     await page.evaluate(() => {
       window.__fakeSupabaseState.roster_characters = [{
         owner:"user-1",
@@ -667,7 +668,7 @@ async function ouvrirAnalyse(page, section = "supports"){
       "une ligne de tenue doit signaler que son libelle vaut au niveau 3");
 
     /* Niveau non renseigne : dit, jamais suppose. */
-    await page.locator('.tab[data-view="builder"]').click();
+    await allerA(page, "builder");
     await page.evaluate(() => {
       window.__fakeSupabaseState.roster_characters[0].builds.Baton.armorConfig = {};
       window.__fakeSupabaseEmit("roster_characters", "UPDATE");
@@ -691,7 +692,7 @@ async function ouvrirAnalyse(page, section = "supports"){
 
        Le tri alphabetique d'origine l'aurait laisse entre Escanor et Gowther,
        ses trois lignes melees a vingt-cinq que personne ne porte. */
-    await page.locator('.tab[data-view="builder"]').click();
+    await allerA(page, "builder");
     await page.evaluate(() => {
       window.__fakeSupabaseState.roster_characters = [{
         owner:"user-1",

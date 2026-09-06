@@ -2,6 +2,7 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
+const { allerA } = require("./helpers/naviguer");
 const { chromium } = require("playwright");
 
 /* Renseignée au démarrage du serveur local : les modules ES ne se chargent
@@ -140,8 +141,7 @@ async function openPage(browser, options){
 async function configureWeaponAndReadContribution(page){
   /* L'arrivee se fait sur l'accueil : le Builder demande un clic explicite.
      Ce test verifie le calcul d'arme hors ligne, pas la vue de depart. */
-  await page.locator("#tab-builder").click();
-  await page.locator("#view-builder").waitFor({ state:"visible" });
+  await allerA(page, "builder");
   const hero = page.locator(".hero").first();
   await hero.locator(".portrait").click();
   await page.locator("#pickerGrid").getByTitle("Meliodas").click();

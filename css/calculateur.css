@@ -82,12 +82,13 @@
    déjà prises, et le badge d'élément du build s'affiche sur cette même page :
    un liseré violet s'y lirait comme un indice de Ténèbres.
 
-   Cinq sources, cinq jetons déjà définis dans base.css. La cinquième s'est
-   glissée entre les potentiels et les suppléments sans casser la progression :
-   `--mist` est la marche qui manquait entre `--gold` et `--mist-deep`. */
+   Cinq sources, cinq jetons déjà définis dans css/charte.css, du clair à
+   l'éteint : `--gold-light`, `--gold`, `--gold-deep`, `--mist`, `--mist-deep`.
+   Ces cinq marches doivent rester DISTINCTES — tests/calculateur.playwright.js
+   lit les couleurs calculées et refuse deux liserés identiques. */
 .calc-soutiens{--ec:var(--gold-light)}
 .calc-tenues{--ec:var(--gold)}
-.calc-potentiels{--ec:var(--gold)}
+.calc-potentiels{--ec:var(--gold-deep)}
 .calc-passifs-armes{--ec:var(--mist)}
 .calc-supplements{--ec:var(--mist-deep)}
 

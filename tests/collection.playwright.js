@@ -11,6 +11,7 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
+const { allerA } = require("./helpers/naviguer");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
@@ -57,7 +58,7 @@ const EQUIPEES = [
     await page.locator("#authOverlay").waitFor({ state:"visible" });
     await page.getByRole("button",
       { name:"Continuer hors connexion", exact:true }).click();
-    await page.locator("#tab-collection").click();
+    await allerA(page, "collection");
     await tuiles().first().waitFor();
     const total = await tuiles().count();
     /* 238 avant la version 2.0 : le Nunchaku de l'âme vorace porte les armes
@@ -77,8 +78,7 @@ const EQUIPEES = [
     await page.locator("#accountPseudo")
       .getByText("Yannis", { exact:true }).waitFor();
 
-    await page.locator("#tab-collection").click();
-    await page.locator("#view-collection").waitFor({ state:"visible" });
+    await allerA(page, "collection");
     /* Le roster se relit à l'ouverture de l'onglet : les trois armes portées
        quittent « À trouver » sans qu'on ait rien coché. */
     await attendreTuiles(total - EQUIPEES.length);

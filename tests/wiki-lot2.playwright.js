@@ -8,6 +8,7 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
+const { allerA } = require("./helpers/naviguer");
 const { chromium } = require("playwright");
 
 /* Relevé sur la version 2.0 du jeu, le 26 août 2026 : le Nunchaku de l'âme
@@ -44,8 +45,7 @@ const EFFECTIFS = {
       route.fulfill({ status:200, contentType:"application/javascript", body:"" })
     );
     await page.goto(server.url + "/index.html");
-    await page.locator("#tab-wiki").click();
-    await page.locator("#view-wiki").waitFor({ state:"visible" });
+    await allerA(page, "wiki");
     await tuiles().first().waitFor();
 
     /* Chaque catégorie liste ce que le dépôt contient. Ces nombres sont le

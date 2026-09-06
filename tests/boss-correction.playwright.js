@@ -18,6 +18,7 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
+const { ouvrirLeCompte } = require("./helpers/naviguer");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
@@ -229,6 +230,8 @@ async function ouvrirArchive(page){
     });
 
     /* ---- 6. Un membre ordinaire ne repare rien. ---- */
+
+    await ouvrirLeCompte(page);
 
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await page.locator("#accountLogin").waitFor({ state:"visible" });

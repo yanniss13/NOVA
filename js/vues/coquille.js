@@ -85,7 +85,12 @@ function construireNavigationDeBureau(){
   barre.textContent = "";
   RUBRIQUES.forEach(rubrique => {
     if(rubrique.id !== RUBRIQUE_EN_MENU){
+      /* Un identifiant stable, sur cette barre seulement : le tiroir et la
+         barre du pouce portent les memes entrees, et trois copies d'un meme
+         identifiant n'en font plus un. Il sert a rendre le focus apres une
+         modale, et aux tests. */
       barre.appendChild(boutonDeCoquille(rubrique.libelle, {
+        id:"rubrique-" + rubrique.id,
         "data-rubrique":rubrique.id
       }));
       return;
@@ -246,7 +251,6 @@ function rangerCoquille(vue){
   }
 
   remplirOngletsLocaux(rubriqueActive, active);
-  fermerLesSurgissants();
 }
 
 /* L'entree qui ouvre une vue, quelle que soit la barre ou elle vit. Les vues
@@ -317,8 +321,13 @@ function brancherCoquille(){
      individuellement demanderait de tout rebrancher a chaque fois, et un
      ecouteur oublie est un bouton mort et silencieux. */
   document.addEventListener("click", event => {
+    /* Les declencheurs de menu n'ouvrent pas une vue : ils n'ont donc ni
+       `data-view` ni `data-rubrique`, et doivent etre nommes ici. Les
+       oublier faisait sortir la delegation avant de les voir, et le menu
+       Outils ne s'ouvrait pas — sans la moindre erreur en console. */
     const cible = event.target.closest(
-      "[data-rubrique],[data-view],[data-action]");
+      "[data-rubrique],[data-view],[data-action],"
+      + "#toolsMenuButton,#accountMenuButton,#mobileMenuButton,#mobileMoreButton");
     if(!cible) return;
 
     if(cible.dataset.action === "auth"){
@@ -349,6 +358,11 @@ function brancherCoquille(){
     if(cible.tagName === "A") event.preventDefault();
     if(cible.dataset.view) void showView(cible.dataset.view);
     else if(cible.dataset.rubrique) ouvrirRubrique(cible.dataset.rubrique);
+    else return;
+    /* Le menu se referme parce qu'une DESTINATION a ete choisie. Le refermer
+       depuis `rangerCoquille` le fermait aussi a chaque verification de droits
+       — un rafraichissement de session escamotait le menu sous le doigt. */
+    fermerLesSurgissants(false);
   });
 
   /* Les fleches parcourent les onglets locaux, comme le veut un `tablist`. */

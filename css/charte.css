@@ -28,6 +28,11 @@
      actions et l'etat actif. */
   --gold:#b9852c;
   --gold-light:#ddb45f;
+  /* La marche sombre. Le calculateur distingue cinq sources de buffs par un
+     degrade d'or, et les sept couleurs d'element lui sont interdites : le
+     badge d'element du build s'affiche sur la meme page. Cinq marches, donc :
+     gold-light, gold, gold-deep, mist, mist-deep. */
+  --gold-deep:#8f6620;
 
   /* Les textes. `--ink` est le texte POSE SUR l'or, pas une couleur de fond. */
   --parchment:#efe2c9;

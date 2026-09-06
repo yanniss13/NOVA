@@ -4,6 +4,7 @@ const assert = require("node:assert/strict");
 const { CIBLE_TACTILE_PX } = require("./helpers/cible-tactile");
 const path = require("node:path");
 const { serveRepo } = require("./helpers/serve");
+const { allerA } = require("./helpers/naviguer");
 const { chromium } = require("playwright");
 
 /* Mesure un element en REESSAYANT jusqu'a obtenir un encadre.
@@ -294,7 +295,7 @@ async function installRosterFocusFakeSupabase(page){
 
     /* « Mon suivi » déconnecté propose la connexion, et fermer la modale par
        Échap rend le focus au bouton qui l'a ouverte. */
-    await page.locator('.tab[data-view="dashboard"]').click();
+    await allerA(page, "dashboard");
     const dashboardConnect = page.locator("#dashboardBody").getByRole("button", {
       name:"Connexion",
       exact:true
@@ -313,7 +314,7 @@ async function installRosterFocusFakeSupabase(page){
         "#dashboardBody button"
       )
     );
-    await page.locator('.tab[data-view="builder"]').click();
+    await allerA(page, "builder");
 
     const login = page.locator("#accountLogin");
     await login.focus();
@@ -395,7 +396,7 @@ async function installRosterFocusFakeSupabase(page){
     );
     await rosterFocusPage.locator("#accountPseudo")
       .getByText("Focus", { exact:true }).waitFor();
-    await rosterFocusPage.locator('.tab[data-view="member-roster"]').click();
+    await allerA(rosterFocusPage, "member-roster");
     await rosterFocusPage.locator(
       "#memberRosterGrid .member-roster-edit"
     ).first().click();
@@ -468,7 +469,7 @@ async function installRosterFocusFakeSupabase(page){
     await rosterFocusPage.keyboard.press("Escape");
     await rosterFocusPage.locator("#memberRosterOverlay")
       .waitFor({ state:"hidden" });
-    await rosterFocusPage.locator('.tab[data-view="analyse"]').click();
+    await allerA(rosterFocusPage, "analyse");
     await rosterFocusPage.locator(
       '.analyse-subnav-button[data-analyse-section="dps"]'
     ).click();
@@ -1630,8 +1631,7 @@ async function installRosterFocusFakeSupabase(page){
         })
       );
       await paysagePage.goto(server.url + "/index.html");
-      await paysagePage.locator("#tab-builder").click();
-      await paysagePage.locator("#view-builder").waitFor({ state:"visible" });
+      await allerA(paysagePage, "builder");
       const brandHeight = () => paysagePage.evaluate(() =>
         document.querySelector(".brand").getBoundingClientRect().height
       );
@@ -1682,8 +1682,7 @@ async function installRosterFocusFakeSupabase(page){
     );
     /* Meme raison qu'au-dessus : le repli s'observe en defilant, et l'accueil
        deconnecte tient dans un ecran. Le Builder fournit la hauteur. */
-    await motionPage.locator("#tab-builder").click();
-    await motionPage.locator("#view-builder").waitFor({ state:"visible" });
+    await allerA(motionPage, "builder");
     await motionPage.evaluate(() => {
       document.querySelector("#accountLogin").hidden = true;
       document.querySelector("#accountConnected").hidden = false;

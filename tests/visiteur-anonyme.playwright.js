@@ -21,29 +21,31 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
+const {
+  allerA, destinationsVisibles, ongletsLocauxVisibles, ouvrirLeCompte
+} = require("./helpers/naviguer");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
-/* Dans l'ordre du DOM : c'est celui que rend `ongletsVisibles`.
+/* CE QUE LA BARRE PROPOSE, selon qui regarde.
 
-   « Dispos » et « Sessions de boss » n'y figurent plus : ils vivent dans le
-   sous-menu de « Boss de Guilde », replie tant qu'on n'est pas dans le groupe.
-   Leur portee reste verifiee plus bas, la ou le sous-menu est ouvert. */
-const ONGLETS_PUBLICS = ["builder", "wiki", "collection", "calculateur"];
-const ONGLETS_TOUS = [
-  "dashboard", "builder", "roster", "member-roster",
-  "analyse", "wiki", "collection", "calculateur"
-];
-const SOUS_ONGLETS_BOSS = ["roster", "availability", "boss"];
+   La barre a change de forme : dix onglets a plat sont devenus des rubriques,
+   et les quatre outils vivent dans un menu. La question testee n'a pas bouge —
+   ou ce compte peut-il aller ? — seule sa lecture a change.
 
-/* `getClientRects()` et non l'attribut `hidden` : on veut savoir ce que l'oeil
-   voit, pas ce que le code a ecrit. Une regle CSS oubliee passerait le second
-   controle et raterait le premier. */
-const ongletsVisibles = page => page.evaluate(() =>
-  [...document.querySelectorAll(".tab[data-view]")]
-    .filter(onglet => onglet.getClientRects().length > 0)
-    .map(onglet => onglet.dataset.view)
-);
+   `outils` reste separe des rubriques : ce sont deux etages de navigation, et
+   les confondre masquerait qu'une rubrique entiere a disparu de la barre. */
+const PORTEE_VISITEUR = {
+  rubriques:["guilde", "equipes"],
+  outils:["wiki", "collection", "calculateur"]
+};
+const PORTEE_MEMBRE = {
+  rubriques:["guilde", "equipes", "centre-boss", "mon-roster"],
+  outils:["wiki", "collection", "calculateur", "analyse"]
+};
+/* Les onglets du centre Boss, second etage de la rubrique. Ils remplacent le
+   sous-menu du groupe « Boss de Guilde ». */
+const ONGLETS_DU_CENTRE_BOSS = ["availability", "boss"];
 
 const vueActive = page => page.evaluate(() => {
   const vue = document.querySelector(".view.active");
@@ -64,13 +66,14 @@ const vueActive = page => page.evaluate(() => {
     /* La modale s'ouvre AVANT que la barre ne soit rangee — `applySession`
        propose la connexion, puis rafraichit les vues, puis referme les portes.
        Sans cette attente, le test lirait la barre au milieu du geste. */
-    await page.locator("#tab-dashboard").waitFor({ state:"hidden" });
+    await page.locator('#desktopNav [data-rubrique="mon-roster"]')
+      .waitFor({ state:"hidden" });
 
-    /* ---- Le visiteur : quatre onglets, et le Wiki pour l'accueillir. ---- */
-    assert.deepEqual(await ongletsVisibles(page), ONGLETS_PUBLICS,
+    /* ---- Le visiteur : deux rubriques, trois outils, l'accueil public. ---- */
+    assert.deepEqual(await destinationsVisibles(page), PORTEE_VISITEUR,
       "sans compte, seules les pages utilisables doivent rester dans la barre");
-    assert.equal(await vueActive(page), "wiki",
-      "l'Accueil etant masque, le visiteur doit atterrir sur le Wiki");
+    assert.equal(await vueActive(page), "home",
+      "le visiteur doit atterrir sur l'accueil public");
 
     /* La modale reste la porte d'entree : elle s'ouvre au chargement et se
        ferme sur « Continuer hors connexion », comportement inchange. */
@@ -83,8 +86,7 @@ const vueActive = page => page.evaluate(() => {
        Il partait du roster, donc d'un compte : son onglet repondait
        « Connecte-toi », en renvoyant vers une fiche de heros qu'un visiteur ne
        peut pas ouvrir. Il doit maintenant montrer la sortie qui existe. */
-    await page.locator('.tab[data-view="calculateur"]').click();
-    await page.locator("#view-calculateur").waitFor({ state:"visible" });
+    await allerA(page, "calculateur");
     assert.equal(await page.evaluate(() => location.hash), "#calculateur",
       "l'onglet Calculateur doit nommer sa vue dans l'URL");
     assert.equal(
@@ -97,7 +99,7 @@ const vueActive = page => page.evaluate(() => {
       .waitFor({ state:"visible" });
 
     /* ---- Le Calculateur, ouvert par son onglet, equipe composee. ---- */
-    await page.locator('.tab[data-view="builder"]').click();
+    await allerA(page, "builder");
     const premierHeros = page.locator(".hero").first();
 
     /* Le bouton n'a de sens qu'une fois le build identifiable : le
@@ -118,8 +120,7 @@ const vueActive = page => page.evaluate(() => {
 
     /* L'onglet seul suffit desormais : l'equipe en cours d'edition est une
        source de builds au meme titre que le roster d'un membre. */
-    await page.locator('.tab[data-view="calculateur"]').click();
-    await page.locator("#view-calculateur").waitFor({ state:"visible" });
+    await allerA(page, "calculateur");
     await page.locator("#calculateurBody")
       .getByRole("button", { name:"Meliodas — Hache", exact:true })
       .click();
@@ -127,7 +128,7 @@ const vueActive = page => page.evaluate(() => {
       .waitFor({ state:"visible" });
 
     /* Et le bouton du Builder mene au meme endroit, sans passer par ce choix. */
-    await page.locator('.tab[data-view="builder"]').click();
+    await allerA(page, "builder");
     const lien = premierHeros.getByRole("button",
       { name:"Calculer les dégâts", exact:true });
     await lien.waitFor({ state:"visible" });
@@ -155,41 +156,44 @@ const vueActive = page => page.evaluate(() => {
     await page.locator("#accountPseudo")
       .getByText("Yannis", { exact:true }).waitFor();
 
-    assert.deepEqual(await ongletsVisibles(page), ONGLETS_TOUS,
+    assert.deepEqual(await destinationsVisibles(page), PORTEE_MEMBRE,
       "un membre connecte retrouve la barre entiere");
     assert.equal(await vueActive(page), "dashboard",
       "la connexion mene au suivi, comme avant");
 
-    /* LE SOUS-MENU, ouvert : c'est la seule facon d'atteindre les Dispos et les
-       Sessions, donc la seule facon de prouver qu'un membre y a droit. */
-    await page.locator('.tabs .tab[data-view="roster"]').click();
-    assert.deepEqual(
-      await page.evaluate(() =>
-        [...document.querySelectorAll(".subtabs .tab[data-view]")]
-          .filter(onglet => onglet.getClientRects().length > 0)
-          .map(onglet => onglet.dataset.view)
-      ),
-      SOUS_ONGLETS_BOSS,
-      "le groupe ouvert doit rendre ses trois entrees atteignables"
-    );
-    await page.locator('.subtabs .tab[data-view="availability"]').click();
+    /* LES ONGLETS LOCAUX, ouverts : c'est la seule facon d'atteindre les Dispos,
+       donc la seule facon de prouver qu'un membre y a droit. */
+    await allerA(page, "boss");
+    assert.deepEqual(await ongletsLocauxVisibles(page), ONGLETS_DU_CENTRE_BOSS,
+      "le centre Boss ouvert doit rendre ses deux entrees atteignables");
+    await page.locator('#localTabs [data-view="availability"]').click();
     assert.equal(await vueActive(page), "availability",
-      "un membre connecte atteint les Dispos par le sous-menu");
-    await page.locator('.tab[data-view="wiki"]').click();
+      "un membre connecte atteint les Dispos par les onglets locaux");
+    /* Le Wiki appartient a Outils, qui a QUATRE onglets : changer de rubrique
+       doit changer le second etage, pas l'effacer. */
+    await allerA(page, "wiki");
+    assert.deepEqual(await ongletsLocauxVisibles(page),
+      ["wiki", "collection", "calculateur", "analyse"],
+      "changer de rubrique doit remplacer les onglets du second etage");
+    /* Mon roster n'a qu'une vue : un onglet unique n'est plus un choix, la
+       barre se tait. */
+    await allerA(page, "member-roster");
     assert.equal(
-      await page.locator(".subtabs").evaluate(el => el.hidden),
+      await page.locator("#localTabsBar").evaluate(el => el.hidden),
       true,
-      "quitter le groupe doit replier sa seconde ligne"
+      "une rubrique sans choix doit replier la barre du second etage"
     );
 
     /* ---- Deconnexion : la barre se referme, et la vue avec elle. ---- */
+    await ouvrirLeCompte(page);
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await page.locator("#accountLogin").waitFor({ state:"visible" });
 
-    assert.deepEqual(await ongletsVisibles(page), ONGLETS_PUBLICS,
-      "se deconnecter doit refermer les onglets reserves");
-    assert.equal(await vueActive(page), "wiki",
-      "la vue quittee etant reservee, la navigation doit replier sur le Wiki");
+    assert.deepEqual(await destinationsVisibles(page), PORTEE_VISITEUR,
+      "se deconnecter doit refermer les rubriques reservees");
+    assert.equal(await vueActive(page), "home",
+      "la vue quittee restant publique, la navigation garde le Wiki ouvert "
+        + "ou replie sur l'accueil");
 
     /* ---- Hors ligne : aucun compte possible, donc aucun onglet masque. ---- */
     const horsLigne = await browser.newPage({
@@ -207,12 +211,13 @@ const vueActive = page => page.evaluate(() => {
        avant de l'ouvrir. C'est justement pourquoi masquer des onglets dans ce
        mode serait sans recours — il n'y a aucune fenetre de connexion a
        proposer. */
-    await horsLigne.locator("#tab-dashboard").waitFor({ state:"visible" });
+    await horsLigne.locator('#desktopNav [data-rubrique="mon-roster"]')
+      .waitFor({ state:"visible" });
 
-    assert.deepEqual(await ongletsVisibles(horsLigne), ONGLETS_TOUS,
+    assert.deepEqual(await destinationsVisibles(horsLigne), PORTEE_MEMBRE,
       "sans Supabase le site est un bac a sable local : tout reste ouvert");
-    assert.equal(await vueActive(horsLigne), "dashboard",
-      "et la navigation ne bouge pas");
+    assert.equal(await vueActive(horsLigne), "home",
+      "et la navigation ne bouge pas : l'accueil reste la porte d'entree");
     await horsLigne.close();
 
     assert.deepEqual(errors, [], "aucune erreur de page");

@@ -113,10 +113,28 @@ function vueChefDeRubrique(id, autorisee){
   return rubrique.chef;
 }
 
+/* LA VUE QUI DOIT PRENDRE LA PLACE DE CELLE-CI quand un compte s'ouvre.
+
+   Un visiteur atterrit sur l'accueil public. S'il se connecte, il ne doit pas
+   y rester : sa rubrique a une vue de membre, et c'est elle qu'il attend.
+
+   La regle est etroite a dessein. Elle ne vaut QUE si l'on se trouve sur la
+   vue chef publique de la rubrique : un membre pose sur les equipes partagees
+   ne doit pas etre renvoye vers « Creer une equipe » a la premiere
+   verification de droits. */
+function vuePreferee(vue, autorisee){
+  const rubrique = rubriqueParId(rubriqueDeVue(vue));
+  if(!rubrique || !rubrique.chefConnecte) return null;
+  if(vue !== rubrique.chef) return null;
+  if(typeof autorisee !== "function" || !autorisee(rubrique.chefConnecte)) return null;
+  return rubrique.chefConnecte;
+}
+
 export {
   RUBRIQUES,
   ongletsDeRubrique,
   rubriqueDeVue,
   rubriqueParId,
-  vueChefDeRubrique
+  vueChefDeRubrique,
+  vuePreferee
 };
