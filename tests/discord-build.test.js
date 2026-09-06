@@ -338,6 +338,42 @@ assert.ok(Object.keys(libelles.stats).length > 50,
 const source = fs.readFileSync(path.join(
   ROOT, "supabase", "functions", "discord-planning", "index.ts"
 ), "utf8");
+
+/* CHAQUE module partage doit etre importe EXPLICITEMENT par index.ts.
+   Les modules de `_shared/` sont universels : ils se chargent mutuellement
+   par `require` cote Node, et se lisent sur `globalThis` cote Deno. Or la CLI
+   Supabase construit la liste des fichiers a televerser en suivant les
+   `import` — elle ne voit aucun `require`. Un module absent de cette liste
+   n'est pas deploye, et la fonction tombe a son premier appel.
+   C'est arrive a png-decode.js : sept fichiers televerses, celui-la oublie. */
+const MODULES_PARTAGES = [
+  "availability-font.js",
+  "availability-pdf.js",
+  "discord-planning.js",
+  "boss-reminder.js",
+  "png-decode.js",
+  "discord-build.js",
+  "discord-build-png.js"
+];
+const positions = MODULES_PARTAGES.map(fichier => {
+  const position = source.indexOf('import("../_shared/' + fichier + '")');
+  assert.notEqual(position, -1,
+    fichier + " n'est pas importé par index.ts : la CLI Supabase ne le"
+    + " téléversera pas");
+  return { fichier, position };
+});
+/* L'ordre compte autant que la presence : un module lit l'API du precedent
+   sur `globalThis` des son chargement. */
+assert.ok(
+  positions.find(entree => entree.fichier === "png-decode.js").position
+    < positions.find(entree => entree.fichier === "discord-build-png.js").position,
+  "png-decode.js doit être importé avant discord-build-png.js, qui lit son API"
+);
+assert.ok(
+  positions.find(entree => entree.fichier === "availability-pdf.js").position
+    < positions.find(entree => entree.fichier === "discord-build-png.js").position,
+  "availability-pdf.js doit être importé avant discord-build-png.js"
+);
 [
   /_shared\/discord-build\.js/,
   /build:publishCharacterBuild/,
