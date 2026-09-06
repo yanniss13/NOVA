@@ -40,11 +40,11 @@ button,input,select,textarea{font:inherit}
 button,a{min-height:44px}
 button{color:inherit}
 
-/* La zone de contenu est encadree comme dans la maquette : deux filets
-   lateraux qui prolongent l'en-tete jusqu'au pied de page. */
+/* La zone de contenu occupe l'ecran. Elle n'a pas de filets lateraux : ils
+   n'auraient de sens qu'autour d'un cadre flottant, et le site n'en a plus. */
 main{
   width:var(--shell);margin:0 auto;padding:0;
-  background:rgba(7,26,38,.72);border-inline:1px solid var(--line);
+  background:rgba(7,26,38,.72);
 }
 
 .view{display:none;min-height:560px;padding:var(--respiration);animation:fade .25s ease}
