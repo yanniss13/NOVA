@@ -12,6 +12,7 @@ const html = read("index.html");
 const data = read("donnees-demo.js");
 const js = read("maquette.js");
 const css = read("maquette.css") + read("responsive.css");
+const readme = read("README.md");
 
 ["home", "dashboard", "teams", "boss", "roster", "tools", "admin"]
   .forEach(view => assert.match(html,
@@ -35,4 +36,6 @@ assert.match(html, /data-route="tools"/);
 assert.match(css, /--abyss:\s*#050d14/i);
 assert.match(css, /--gold-light:\s*#ddb45f/i);
 assert.match(css, /min-height:\s*44px/);
+assert.match(readme, /python -m http\.server/);
+assert.match(readme, /aucune action n'est enregistrée/);
 console.log("refonte-maquette.test.js OK");

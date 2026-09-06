@@ -50,7 +50,7 @@ window.NOVA_MAQUETTE = Object.freeze({
     { name:"Elizabeth", slug:"elizabeth", element:"Lumière", role:"Guérisseur", weapon:"Bâton", potential:6, complete:false }
   ],
   equipment:[
-    { slot:"Arme", name:"En plein cœur !", image:"../../7ds-armes/Epee 1 main/En plein coeur.webp", value:"Niv. 50 · +6" },
+    { slot:"Arme", name:"En plein cœur !", image:"../../7ds-armes/Epee 1 main/En plein cœur !.webp", value:"Niv. 50 · +6" },
     { slot:"Haut", name:"Œil de l'étoile sinistre", image:"../../7ds-armures-ssr/Haut/Haut de l'œil de l'étoile sinistre.webp", value:"SSR · +5" },
     { slot:"Bas", name:"Mélodie d'Arachnée", image:"../../7ds-armures-ssr/Bas/Bas de la mélodie d'Arachnée.webp", value:"SSR · +5" },
     { slot:"Collier", name:"Talisman du serment", image:"../../7ds-bijoux/Collier/Collier au talisman du serment.webp", value:"SSR · 9,34 %" }

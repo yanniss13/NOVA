@@ -192,12 +192,12 @@ main{width:var(--shell);margin:0 auto;padding:0;background:rgba(7,26,38,.72);bor
 
 .ornate-panel{border:1px solid var(--line);background:linear-gradient(145deg,rgba(10,36,50,.96),rgba(5,20,30,.98))}
 .guild-hero{
-  display:grid;grid-template-columns:minmax(360px,.9fr) minmax(520px,1.1fr);
-  min-height:445px;border-width:0 0 1px;border-radius:0;overflow:hidden;
+  display:grid;grid-template-columns:minmax(430px,.96fr) minmax(520px,1.04fr);
+  min-height:410px;border-width:0 0 1px;border-radius:0;overflow:hidden;
 }
 .guild-hero__copy{display:flex;flex-direction:column;justify-content:center;padding:48px 56px 44px;position:relative;z-index:2}
 .context-label{margin:0 0 14px;color:var(--gold-light);font-size:12px;letter-spacing:.09em;text-transform:uppercase}
-.guild-hero h1{max-width:620px;margin:0;font-family:var(--display);font-size:clamp(38px,4.25vw,64px);font-weight:500;line-height:1.12;letter-spacing:.012em}
+.guild-hero h1{max-width:620px;margin:0;font-family:var(--display);font-size:clamp(38px,3.7vw,52px);font-weight:500;line-height:1.12;letter-spacing:.012em}
 .hero-lead{max-width:58ch;margin:20px 0 0;color:#d9d1c2;font-size:17px;line-height:1.55}
 .hero-actions{display:flex;align-items:center;gap:22px;margin-top:30px}
 .gold-action,.text-action,.card-link{
@@ -220,7 +220,7 @@ main{width:var(--shell);margin:0 auto;padding:0;background:rgba(7,26,38,.72);bor
 .ornate-heading h2,.home-lower h2{margin:0;font-family:var(--display);font-size:clamp(22px,2.3vw,32px);font-weight:500}
 .essential-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:22px}
 .essential-card{
-  min-width:0;min-height:238px;border:1px solid var(--line);border-radius:7px;padding:24px 26px 20px;
+  min-width:0;min-height:218px;border:1px solid var(--line);border-radius:7px;padding:20px 26px 18px;
   display:grid;grid-template-rows:68px 1fr auto;background:rgba(5,22,32,.7);box-shadow:inset 0 0 32px rgba(0,0,0,.14);
 }
 .line-icon{width:58px;height:58px;fill:none;stroke:var(--gold-light);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
