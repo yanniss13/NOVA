@@ -297,6 +297,11 @@ const LIBELLES = {
     ban:{ nom:"Ban", element:"DARK", fichier:"7ds-personnages/ban.webp" },
     merlin:{ nom:"Merlin", element:"ICE", fichier:"7ds-personnages/merlin.webp" }
   },
+  armes:{
+    "7ds-armes/Nunchaku/Nunchaku du renard.webp":{
+      g1:{ promotionMax:4, outrepassementMax:6, niveauMax:50 }
+    }
+  },
   stats:{
     B_Atk:{ fr:"ATK", unit:"flat" },
     C_Critical_Rate:{ fr:"Taux critique", unit:"ten-thousandths" }
@@ -317,6 +322,7 @@ const LIGNES_ROSTER = [{
       weapon:"7ds-armes/Nunchaku/Nunchaku du renard.webp",
       weaponConfig:{
         version:1,
+        gradeGameId:"g1",
         level:50,
         promotion:4,
         overlimit:2,
@@ -436,10 +442,40 @@ assert.equal(armeSection.lignes[0].nom, "Nunchaku du renard",
 assert.equal(armeSection.lignes[0].image,
   "7ds-armes/Nunchaku/Nunchaku du renard.webp");
 assert.deepEqual(armeSection.lignes[0].details, [
-  "Niveau 50 · promotion 4 · dépassement 2",
   "Perle légendaire",
   "Taux critique : 12.5 %"
 ], "la valeur en dix-millièmes redevient un pourcentage");
+
+/* Le niveau, la promotion et l'outrepassement quittent la phrase de details :
+   ce sont des MESURES, chacune avec son maximum, que le rendu dessine.
+   « Promotion 4 » ne disait pas si c'etait la moitie ou le bout ; « 4 sur 4 »
+   le dit. Le maximum vient du catalogue publie, jamais d'une supposition. */
+assert.deepEqual(armeSection.lignes[0].mesures, [
+  { libelle:"Niveau", valeur:50, maximum:50, forme:"barre" },
+  { libelle:"Promotion", valeur:4, maximum:4, forme:"etoile" },
+  { libelle:"Outrepassement", valeur:2, maximum:6, forme:"marque" }
+], "« outrepassement » est le mot du jeu, « dépassement » n'en est pas un");
+
+/* Sans maximum connu — une arme absente du catalogue, ou un build enregistre
+   avant que le grade soit note — la mesure garde sa valeur et perd sa jauge.
+   Un maximum invente serait pire qu'un maximum absent. */
+const sansGrade = resoudreDemandeBuild({
+  profils:PROFILS,
+  lignes:[{
+    owner:"u-1", char_id:"ban", potential_tier:0,
+    builds:{ Hache:{
+      weapon:"7ds-armes/Hache/Hache de guerre.webp",
+      weaponConfig:{ level:30, promotion:2, overlimit:0 },
+      armor:{}, armorConfig:{}, jewel:{}, jewelConfig:{}, note:""
+    } }
+  }],
+  libelles:LIBELLES,
+  options:{ joueur:"YanniSs13", personnage:"Ban", arme:"" }
+}).cartes[0];
+assert.deepEqual(sansGrade.sections[0].lignes[0].mesures, [
+  { libelle:"Niveau", valeur:30, maximum:0, forme:"barre" },
+  { libelle:"Promotion", valeur:2, maximum:0, forme:"etoile" }
+], "un outrepassement a zero ne se montre pas : l'arme n'en a peut-etre pas");
 
 assert.equal(armureSection.lignes.length, 5,
   "les cinq emplacements d'armure, meme vides");

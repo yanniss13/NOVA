@@ -56,6 +56,8 @@ const HAUTEUR_DETAIL = 28;
 const ESPACE_PANNEAU = 8;
 const ESPACE_SECTION = 24;
 const INDENT_DETAIL = 16;
+const HAUTEUR_MESURE = 30;
+const COLONNE_MESURE = 288;
 const HAUTEUR_PIED = 62;
 
 const COULEURS = {
@@ -145,6 +147,109 @@ function couperEnLignes(valeur, atlas, largeurMaximale) {
   return lignes;
 }
 
+/* LES MESURES D'UNE ARME : niveau, promotion, outrepassement.
+
+   Le jeu les montre, il ne les écrit pas — une rangée d'étoiles sous le nom de
+   l'arme, un niveau dans sa pastille. La carte fait de même : une barre pour
+   le niveau, des étoiles pour la promotion, des losanges pour
+   l'outrepassement, et le compte chiffré à droite pour lever toute ambiguïté.
+
+   Aucun de ces symboles n'existe dans l'atlas de polices : ils sont tracés au
+   polygone, comme le « % ». */
+function remplirPolygone(canvas, sommets, couleur) {
+  const hauts = sommets.map(point => point[1]);
+  const debut = Math.floor(Math.min.apply(null, hauts));
+  const fin = Math.ceil(Math.max.apply(null, hauts));
+  for(let y = debut; y < fin; y += 1){
+    const milieu = y + 0.5;
+    const croisements = [];
+    for(let index = 0; index < sommets.length; index += 1){
+      const [x1, y1] = sommets[index];
+      const [x2, y2] = sommets[(index + 1) % sommets.length];
+      if((y1 <= milieu && y2 > milieu) || (y2 <= milieu && y1 > milieu)){
+        croisements.push(x1 + (milieu - y1) / (y2 - y1) * (x2 - x1));
+      }
+    }
+    croisements.sort((gauche, droite) => gauche - droite);
+    for(let paire = 0; paire + 1 < croisements.length; paire += 2){
+      canvas.rectangle(croisements[paire], y,
+        croisements[paire + 1] - croisements[paire], 1, couleur);
+    }
+  }
+}
+
+function sommetsEtoile(centreX, centreY, rayon) {
+  const sommets = [];
+  for(let branche = 0; branche < 10; branche += 1){
+    /* On part du sommet haut : une etoile posee de travers se remarque. */
+    const angle = -Math.PI / 2 + branche * Math.PI / 5;
+    const distance = branche % 2 === 0 ? rayon : rayon * 0.42;
+    sommets.push([
+      centreX + Math.cos(angle) * distance,
+      centreY + Math.sin(angle) * distance
+    ]);
+  }
+  return sommets;
+}
+
+function sommetsLosange(centreX, centreY, rayon) {
+  return [
+    [centreX, centreY - rayon],
+    [centreX + rayon * 0.72, centreY],
+    [centreX, centreY + rayon],
+    [centreX - rayon * 0.72, centreY]
+  ];
+}
+
+/* Les marques acquises en or, les restantes dans le violet du panneau : le
+   lecteur voit d'un coup ce qui est fait et ce qui reste. */
+function dessinerMarques(canvas, x, y, mesure, largeurMaximale) {
+  const total = Math.max(mesure.maximum, mesure.valeur);
+  if(!total) return;
+  const rayon = Math.min(11, Math.max(5,
+    Math.floor(largeurMaximale / total / 2.4)));
+  const pas = rayon * 2.4;
+  const sommets = mesure.forme === "etoile" ? sommetsEtoile : sommetsLosange;
+  for(let index = 0; index < total; index += 1){
+    remplirPolygone(
+      canvas,
+      sommets(x + rayon + index * pas, y, rayon),
+      index < mesure.valeur ? COULEURS.or : COULEURS.cadreIcone
+    );
+  }
+}
+
+function dessinerBarre(canvas, x, y, mesure, largeur) {
+  const hauteur = 12;
+  const haut = Math.round(y - hauteur / 2);
+  canvas.rectangle(x, haut, largeur, hauteur, COULEURS.cadreIcone);
+  if(mesure.maximum > 0){
+    const part = Math.max(0, Math.min(1, mesure.valeur / mesure.maximum));
+    canvas.rectangle(x, haut, Math.round(largeur * part), hauteur, COULEURS.or);
+  }
+  canvas.outline(x, haut, largeur, hauteur, 1, COULEURS.bordure);
+}
+
+function dessinerMesure(canvas, mesure, x, y, fonts) {
+  const milieu = y + Math.round(HAUTEUR_MESURE / 2) - 4;
+  dessinerTexte(canvas, x, y, texteCarte(mesure.libelle), fonts.body,
+    COULEURS.faible);
+  const gauche = x + COLONNE_MESURE;
+  const compte = mesure.maximum
+    ? mesure.valeur + " / " + mesure.maximum
+    : String(mesure.valeur);
+  const largeurCompte = largeurTexte(texteCarte(compte), fonts.body);
+  const largeurVisuelle = LARGEUR - MARGE - PADDING_PANNEAU - gauche
+    - largeurCompte - 20;
+  if(mesure.forme === "barre"){
+    dessinerBarre(canvas, gauche, milieu + 8, mesure, largeurVisuelle);
+  }else{
+    dessinerMarques(canvas, gauche, milieu + 8, mesure, largeurVisuelle);
+  }
+  dessinerTexte(canvas, gauche + largeurVisuelle + 20, y,
+    texteCarte(compte), fonts.body, COULEURS.parchemin);
+}
+
 function sectionsDe(carte) {
   const sections = carte && Array.isArray(carte.sections) ? carte.sections : [];
   return sections.map(section => ({
@@ -153,6 +258,8 @@ function sectionsDe(carte) {
       .map(ligne => ({
         emplacement:(ligne && ligne.emplacement) || "",
         nom:(ligne && ligne.nom) || "",
+        mesures:(ligne && Array.isArray(ligne.mesures) ? ligne.mesures : [])
+          .filter(mesure => mesure && typeof mesure === "object"),
         image:(ligne && ligne.image) || "",
         details:(ligne && Array.isArray(ligne.details) ? ligne.details : [])
           .filter(detail => typeof detail === "string" && detail)
@@ -185,7 +292,8 @@ function mesurer(carte, fonts) {
          sans que rien ne le signale. */
       const details = ligne.details.flatMap(detail =>
         couperEnLignes(detail, fonts.body, largeurTexteMaximale - INDENT_DETAIL));
-      const texte = HAUTEUR_ETIQUETTE
+      const texte = ligne.mesures.length * HAUTEUR_MESURE
+        + HAUTEUR_ETIQUETTE
         + Math.max(1, nom.length) * HAUTEUR_NOM
         + details.length * HAUTEUR_DETAIL;
       /* Jamais plus court que l'icone : elle deborderait sur le panneau
@@ -273,6 +381,11 @@ function dessinerLigne(canvas, ligne, y, fonts, images) {
     dessinerTexte(canvas, COLONNE_TEXTE, curseur + 2, morceau, fonts.body,
       COULEURS.parchemin);
     curseur += HAUTEUR_NOM;
+  });
+  ligne.mesures.forEach(mesure => {
+    dessinerMesure(canvas, mesure, COLONNE_TEXTE + INDENT_DETAIL, curseur,
+      fonts);
+    curseur += HAUTEUR_MESURE;
   });
   ligne.details.forEach(detail => {
     dessinerTexte(canvas, COLONNE_TEXTE + INDENT_DETAIL, curseur, detail,
@@ -382,6 +495,9 @@ const discordBuildPngApi = {
     COLONNE_TEXTE,
     PADDING_PANNEAU,
     INDENT_DETAIL,
+    HAUTEUR_MESURE,
+    COLONNE_MESURE,
+    OR:COULEURS.or.slice(0, 3),
     HAUTEUR_ENTETE,
     HAUTEUR_PIED
   }
