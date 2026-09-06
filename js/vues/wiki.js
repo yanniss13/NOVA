@@ -33,10 +33,33 @@ import { libelleDeRarete } from "./wiki-blocs.js";
   const ROLES_HEROS = {
     ATTACKER:"Attaquant", DEFENDER:"Défenseur", SUPPORT:"Soutien"
   };
+  /* LE VOCABULAIRE DES SLOTS, celui du jeu : cinq roles, Gardien et Briseur
+     compris. La fiche d'un heros n'en porte qu'un, fige, et il ne correspond a
+     rien — un heros marque ATTACKER porte des slots Briseur, Soutien et
+     Gardien. C'est le slot qui dit comment le heros se joue. */
+  const ROLES_PORTES = {
+    ATTACKER:"Attaquant", DEFENDER:"Défenseur", SUPPORTER:"Soutien",
+    WARDEN:"Gardien", BUSTER:"Briseur"
+  };
+  /* La fiche ecrit « SUPPORT », les slots « Supporter » : un seul code, sinon
+     le menu proposerait deux fois « Soutien ». */
+  const ROLE_FICHE_VERS_SLOT = { SUPPORT:"SUPPORTER" };
 
   /* Tous les elements sous lesquels un heros peut se presenter : ceux de ses
      slots d'arme, et le sien a defaut. Les slots ecrivent « Wind », la fiche
      « WIND » : une seule casse, sinon le filtre compare deux vocabulaires. */
+  /* Tous les roles sous lesquels un heros peut se presenter : ceux de ses
+     slots d'arme, et le sien a defaut. */
+  function rolesPortes(meta) {
+    const codes = (meta && Array.isArray(meta.weapons) ? meta.weapons : [])
+      .map(slot => String(slot && slot.role || "").toUpperCase())
+      .filter(Boolean);
+    if(codes.length) return [...new Set(codes)];
+    const fiche = String(meta && meta.role || "").toUpperCase();
+    if(!fiche) return [];
+    return [ROLE_FICHE_VERS_SLOT[fiche] || fiche];
+  }
+
   function elementsPortes(meta) {
     const codes = (meta && Array.isArray(meta.weapons) ? meta.weapons : [])
       .map(slot => String(slot && slot.element || "").toUpperCase())
@@ -156,11 +179,16 @@ import { libelleDeRarete } from "./wiki-blocs.js";
               .some(slot => slot.weapon === valeur)
         },
         {
+          /* LE ROLE SUIT L'ARME, comme l'element. Tristan est Briseur aux
+             epees doubles et Attaquant a l'espadon : il sort sous les deux.
+             Gardien et Briseur n'existaient nulle part dans ce menu, alors que
+             quatorze armes de la liste se jouent dans chacun. */
           id:"wikiFilterRole", libelle:"Rôle", vide:"Tous les rôles",
           valeurs:() => valeursPortees(
-            Object.values(META), meta => [meta.role],
-            code => ROLES_HEROS[code] || code),
-          garde:(entree, valeur) => (metaOf(entree.id) || {}).role === valeur
+            Object.values(META), rolesPortes,
+            code => ROLES_PORTES[code] || code),
+          garde:(entree, valeur) =>
+            rolesPortes(metaOf(entree.id) || {}).includes(valeur)
         },
         {
           id:"wikiFilterRarity", libelle:"Rareté", vide:"Toutes les raretés",

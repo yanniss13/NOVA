@@ -83,18 +83,35 @@ const { chromium } = require("playwright");
     assert.ok(ventTitres.length < total,
       "le filtre doit toujours restreindre la grille");
 
-    /* Le rôle « Soutien » est le piège : les métadonnées du héros disent
-       SUPPORT là où le vocabulaire des slots d'arme dit Supporter. Un filtre
-       bâti sur le mauvais dictionnaire perdrait cette option. */
+    /* LE RÔLE SUIT L'ARME, comme l'élément. La fiche d'un héros n'en porte
+       qu'un, figé ; le jeu lui en donne un par arme, et deux d'entre eux —
+       Gardien et Briseur — n'existaient nulle part dans ce menu alors que
+       quatorze armes de la liste se jouent dans chacun. */
     await page.locator("#wikiFilterElement").selectOption("");
     const roles = await page.locator("#wikiFilterRole option")
       .evaluateAll(nodes => nodes.map(node => node.value));
-    assert.ok(roles.includes("SUPPORT"),
-      "le filtre rôle doit proposer les soutiens, reçu "+JSON.stringify(roles));
-    await page.locator("#wikiFilterRole").selectOption("SUPPORT");
+    ["ATTACKER", "SUPPORTER", "WARDEN", "BUSTER"].forEach(code => {
+      assert.ok(roles.includes(code),
+        "le filtre rôle doit proposer « "+code+" », reçu "+JSON.stringify(roles));
+    });
+    await page.locator("#wikiFilterRole").selectOption("BUSTER");
     await page.waitForFunction(
       () => document.querySelectorAll("#wikiGrid .wiki-tile").length > 0
     );
+    /* Tristan est Briseur aux épées doubles et à l'épée longue, Attaquant à
+       l'espadon : il doit sortir sous les deux. */
+    const briseurs = await page.locator("#wikiGrid .wiki-tile")
+      .evaluateAll(tuiles => tuiles.map(tuile => tuile.getAttribute("title")));
+    assert.ok(briseurs.includes("Tristan"),
+      "Tristan est Briseur sur deux de ses armes, reçu : "+briseurs.join(", "));
+    await page.locator("#wikiFilterRole").selectOption("ATTACKER");
+    await page.waitForFunction(
+      () => document.querySelectorAll("#wikiGrid .wiki-tile").length > 0
+    );
+    const attaquants = await page.locator("#wikiGrid .wiki-tile")
+      .evaluateAll(tuiles => tuiles.map(tuile => tuile.getAttribute("title")));
+    assert.ok(attaquants.includes("Tristan"),
+      "Tristan est Attaquant à l'espadon, reçu : "+attaquants.join(", "));
 
     // Une recherche sans résultat annonce le vide plutôt que de le laisser nu.
     await page.locator("#wikiFilterRole").selectOption("");
