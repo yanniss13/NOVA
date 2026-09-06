@@ -332,20 +332,58 @@ function paliersPerle(enchantements) {
     : "";
 }
 
+/* LES TROIS MESURES D'UNE ARME, avec leur maximum.
+
+   « Promotion 2 » ne dit pas si c'est la moitie ou le bout : sans maximum, un
+   nombre seul n'informe personne. Les maximums viennent du catalogue publie —
+   ils dependent de l'arme ET de son grade, et rien ne permet de les deviner.
+   Absents, la mesure garde sa valeur et perd sa jauge : un maximum invente
+   serait pire qu'un maximum manquant.
+
+   « Outrepassement » est le mot du jeu, et celui de tout le site. */
+function mesuresArme(config, maximums) {
+  const bornes = maximums || {};
+  const nombre = valeur => {
+    const lu = Number(valeur);
+    return Number.isFinite(lu) && lu > 0 ? lu : 0;
+  };
+  return [
+    {
+      libelle:"Niveau",
+      valeur:nombre(config.level),
+      maximum:nombre(bornes.niveauMax),
+      forme:"barre"
+    },
+    {
+      libelle:"Promotion",
+      valeur:nombre(config.promotion),
+      maximum:nombre(bornes.promotionMax),
+      forme:"etoile"
+    },
+    {
+      libelle:"Outrepassement",
+      valeur:nombre(config.overlimit),
+      maximum:nombre(bornes.outrepassementMax),
+      forme:"marque"
+    }
+  ].filter(mesure => mesure.valeur > 0 || mesure.maximum > 0);
+}
+
+/* Les bornes de l'arme equipee, pour le grade enregistre dans le build. Un
+   build sauvegarde avant que le grade soit note n'en a pas : la carte se
+   dessine quand meme, sans jauge. */
+function maximumsArme(fichier, config, libelles) {
+  const armes = (libelles && libelles.armes) || {};
+  const grades = armes[fichier];
+  const gradeId = config && config.gradeGameId;
+  if(!grades || !gradeId
+    || !Object.prototype.hasOwnProperty.call(grades, gradeId)) return null;
+  return grades[gradeId];
+}
+
 function detailsArme(config, libellesStats) {
   if(!config || typeof config !== "object") return [];
   const details = [];
-  const niveau = [];
-  if(Number.isFinite(Number(config.level)) && Number(config.level) > 0){
-    niveau.push("Niveau " + Number(config.level));
-  }
-  if(Number.isFinite(Number(config.promotion)) && Number(config.promotion) > 0){
-    niveau.push("promotion " + Number(config.promotion));
-  }
-  if(Number.isFinite(Number(config.overlimit)) && Number(config.overlimit) > 0){
-    niveau.push("dépassement " + Number(config.overlimit));
-  }
-  if(niveau.length) details.push(niveau.join(" · "));
   const perle = paliersPerle(config.enchantments);
   if(perle) details.push(perle);
   (Array.isArray(config.enchantments) ? config.enchantments : [])
@@ -379,6 +417,7 @@ function lignesEmplacements(slots, etiquettes, equipement, configs, libellesStat
     return {
       emplacement:etiquettes[slot] || slot,
       nom:nomDeFichier(fichier),
+      mesures:[],
       image:typeof fichier === "string" ? fichier : "",
       details:fichier
         ? detailsPiece(configurations[slot], libellesStats)
@@ -408,6 +447,11 @@ function carteDeBuild(contexte, typeArme, build) {
           emplacement:typeArme,
           nom:nomDeFichier(donnees.weapon),
           image:typeof donnees.weapon === "string" ? donnees.weapon : "",
+          mesures:donnees.weapon && donnees.weaponConfig
+            ? mesuresArme(donnees.weaponConfig, maximumsArme(
+              donnees.weapon, donnees.weaponConfig, contexte.libelles
+            ))
+            : [],
           details:donnees.weapon
             ? detailsArme(donnees.weaponConfig, libellesStats)
             : []

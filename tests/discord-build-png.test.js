@@ -25,6 +25,11 @@ const {
 } = require(path.join(
   ROOT, "supabase", "functions", "_shared", "png-decode.js"
 ));
+const {
+  texteCarte
+} = require(path.join(
+  ROOT, "supabase", "functions", "_shared", "discord-build.js"
+));
 
 assert.equal(typeof RasterCanvas, "function",
   "le rendu de /build reutilise la surface de dessin du planning");
@@ -169,6 +174,55 @@ function comptePixels(png, couleur) {
       "detail hors du panneau (" + Math.round(droite) + " > "
       + droiteMaximale + ") : " + detail);
   });
+  /* Les mesures d'une arme — niveau, promotion, outrepassement — occupent
+     leurs propres rangees, dessinees et non ecrites. Le panneau doit grandir
+     d'autant, sinon elles se posent par-dessus la ligne suivante. */
+  /* Assez de details pour que le panneau depasse deja la hauteur de l'icone :
+     sinon son plancher absorberait une partie de la croissance, et l'ecart
+     mesure ne dirait plus rien des mesures. */
+  const ligneNue = { emplacement:"Nunchaku", nom:"Nunchaku du renard",
+    details:["Perle légendaire", "Taux critique : 12.5 %"], mesures:[] };
+  const ligneMesuree = Object.assign({}, ligneNue, { mesures:[
+    { libelle:"Niveau", valeur:50, maximum:50, forme:"barre" },
+    { libelle:"Promotion", valeur:4, maximum:4, forme:"etoile" },
+    { libelle:"Outrepassement", valeur:2, maximum:6, forme:"marque" }
+  ] });
+  const hauteurNue = mesurer(
+    { sections:[{ titre:"Arme", lignes:[ligneNue] }] }, fonts
+  ).sections[0].lignes[0].hauteur;
+  const hauteurMesuree = mesurer(
+    { sections:[{ titre:"Arme", lignes:[ligneMesuree] }] }, fonts
+  ).sections[0].lignes[0].hauteur;
+  assert.equal(hauteurMesuree - hauteurNue, 3 * MESURES.HAUTEUR_MESURE,
+    "le panneau grandit d'une rangee par mesure");
+
+  /* L'etiquette d'une mesure doit tenir dans sa colonne. « Outrepassement »
+     est le plus long des trois, et c'est le mot du jeu : le raccourcir n'est
+     pas une option, elargir la colonne si. Deborde, il se dessine par-dessus
+     les losanges sans que rien n'echoue. */
+  ["Niveau", "Promotion", "Outrepassement"].forEach(libelle => {
+    const largeur = largeurTexte(texteCarte(libelle), fonts.body);
+    assert.ok(largeur + 20 <= MESURES.COLONNE_MESURE,
+      "« " + libelle + " » déborde sur sa jauge : " + Math.round(largeur)
+      + " px pour " + MESURES.COLONNE_MESURE);
+  });
+
+  /* Les etoiles sont dessinees en or : sans un seul pixel dore, elles ne sont
+     pas la, et « promotion 4 sur 4 » n'est qu'une ligne de texte de plus. */
+  const avecEtoiles = await generateBuildCardPng({
+    personnage:"Ban", arme:"Nunchaku",
+    sections:[{ titre:"Arme", lignes:[ligneMesuree] }]
+  }, SANS_IMAGES);
+  const sansEtoiles = await generateBuildCardPng({
+    personnage:"Ban", arme:"Nunchaku",
+    sections:[{ titre:"Arme", lignes:[ligneNue] }]
+  }, SANS_IMAGES);
+  const orAvec = await comptePixels(avecEtoiles, MESURES.OR);
+  const orSans = await comptePixels(sansEtoiles, MESURES.OR);
+  assert.ok(orAvec - orSans > 400,
+    "les etoiles pleines doivent poser de l'or sur la carte : "
+    + orAvec + " contre " + orSans);
+
   /* Un panneau ne peut pas etre plus court que l'icone qu'il porte : elle
      deborderait sur le panneau suivant. */
   plan.sections[0].lignes.forEach(ligne => {
