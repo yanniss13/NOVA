@@ -194,14 +194,28 @@ function comptePixels(png, couleur) {
 
   /* La rangee du libelle d'une jauge doit contenir la police, sinon le texte
      descend sur la barre dessinee juste dessous. */
-  assert.ok(MESURES.HAUTEUR_JAUGE_TITRE >= fonts.corps.cellHeight,
+  assert.ok(MESURES.HAUTEUR_JAUGE_TITRE >= fonts.petit.cellHeight,
     "le libelle d'une jauge deborde sur son trait : "
     + MESURES.HAUTEUR_JAUGE_TITRE + " px pour une police de "
-    + fonts.corps.cellHeight);
+    + fonts.petit.cellHeight);
 
   /* Rien ne doit deborder de sa colonne. Le jour ou un nom deborde, il se
      dessine par-dessus la colonne voisine sans que rien n'echoue. */
   const plan = mesurer(CARTE, fonts);
+  assert.ok(Number.isFinite(plan.separateurSections),
+    "le plan doit fixer un repere commun aux deux colonnes");
+  assert.equal(plan.hauteurArmure + MESURES.ESPACE_BLOC,
+    plan.separateurSections,
+    "la separation centrale et le debut des bijoux doivent etre alignes");
+  const margeSousArme = plan.separateurSections
+    - MESURES.DEBUT_CONTENU_SECTION - plan.milieu[0].hauteur;
+  assert.ok(margeSousArme >= 16,
+    "la derniere jauge de l'arme doit respirer avant le separateur");
+  const finBijoux = MESURES.DEBUT_CONTENU_SECTION
+    + plan.bijoux.reduce((total, ligne) => total + ligne.hauteur
+      + MESURES.ESPACE_LIGNE_BIJOU, 0);
+  assert.ok(plan.hauteurBijoux - finBijoux >= 16,
+    "la derniere jauge des bijoux doit respirer avant le cadre");
   const sansJaugeBijou = JSON.parse(JSON.stringify(CARTE));
   sansJaugeBijou.sections.find(section => section.titre === "Bijoux")
     .lignes.forEach(entree => { entree.enchantements = []; });
