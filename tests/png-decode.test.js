@@ -22,7 +22,7 @@ const {
   decodePng
 } = require(path.join(ROOT, "supabase", "functions", "_shared", "png-decode.js"));
 const {
-  RasterCanvas, encodePng
+  RasterCanvas, encodePng, atlasStringWidthExact, chargerAtlasCarte
 } = require(path.join(
   ROOT, "supabase", "functions", "_shared", "availability-pdf.js"
 ));
@@ -57,8 +57,8 @@ const {
   const vignette = path.join(ROOT, "7ds-vignettes", "7ds-personnages", "ban.png");
   if(fs.existsSync(vignette)){
     const portrait = await decodePng(fs.readFileSync(vignette));
-    assert.equal(portrait.width, 144, "la taille d'affichage du portrait");
-    assert.equal(portrait.height, 144);
+    assert.equal(portrait.width, 288, "la taille d'affichage du portrait");
+    assert.equal(portrait.height, 288);
     const opaques = [];
     for(let index = 3; index < portrait.pixels.length; index += 4){
       if(portrait.pixels[index] > 200) opaques.push(index);
@@ -99,6 +99,34 @@ const {
      le rendu : elle se coupe. */
   fond.drawImage(icone, 3, 3);
   assert.deepEqual(surFond(3, 3), [255, 255, 255, 255]);
+
+  /* ECRIRE SANS TOUT METTRE EN CAPITALES.
+     `atlasText` met en capitales et retire les accents : c'est ce que veut le
+     planning, dont l'atlas ne connait que des capitales. La carte /build a le
+     sien, avec minuscules et accents — il lui faut donc un trace qui respecte
+     ce qu'on lui donne. Sans lui, « Dégâts » resterait « DEGATS ». */
+  require(path.join(ROOT, "supabase", "functions", "_shared", "carte-font.js"));
+  const atlas = await chargerAtlasCarte();
+  const dessiner = (methode, texte) => {
+    const surface = new RasterCanvas(240, 60, [0, 0, 0, 255]);
+    surface[methode](4, 4, texte, atlas.corps, [255, 255, 255, 255]);
+    return surface.pixels.toString("base64");
+  };
+  assert.notEqual(dessiner("atlasTextExact", "e"),
+    dessiner("atlasTextExact", "E"),
+    "une minuscule et sa capitale ne se dessinent pas pareil");
+  assert.equal(dessiner("atlasText", "e"), dessiner("atlasText", "E"),
+    "le trace du planning, lui, met bien tout en capitales");
+  assert.notEqual(dessiner("atlasTextExact", "Dégâts"),
+    dessiner("atlasTextExact", "Degats"),
+    "les accents doivent survivre");
+
+  /* La largeur mesuree doit suivre le meme chemin que le trace, sinon rien ne
+     s'aligne : une valeur calee a droite tomberait a cote. */
+  assert.notEqual(
+    atlasStringWidthExact("dégâts", atlas.corps),
+    atlasStringWidthExact("DEGATS", atlas.corps),
+    "la mesure doit distinguer casse et accents comme le trace");
 
   console.log("OK png-decode");
 })().catch(error => {

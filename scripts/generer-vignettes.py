@@ -29,8 +29,8 @@ DOSSIER = "7ds-vignettes"
 # pixels un pour un : toute autre taille l obligerait a reechantillonner au
 # plus proche voisin, qui crenelerait les icones. Ces deux nombres doivent
 # rester d accord avec ICONE et PORTRAIT de _shared/discord-build-png.js.
-TAILLE_OBJET = 72
-TAILLE_PORTRAIT = 144
+TAILLE_OBJET = 80
+TAILLE_PORTRAIT = 288
 
 
 def lire_data():

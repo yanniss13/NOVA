@@ -1,7 +1,8 @@
 "use strict";
 
-/* L'image de la carte /build. On ne compare pas des pixels : on verifie que le
-   PNG est un PNG, qu'il grandit avec ce qu'il contient, et qu'aucun build
+/* La carte PNG de /build. On ne compare pas des pixels un a un : on verifie
+   que le PNG est un PNG, qu'il tient dans les proportions voulues, que rien ne
+   deborde de sa colonne, que les images sont posees, et qu'aucun build
    incomplet ne fait tomber le rendu — un membre peut avoir equipe une arme
    sans jamais ouvrir l'editeur. */
 
@@ -9,32 +10,23 @@ const assert = require("node:assert/strict");
 const path = require("node:path");
 
 const ROOT = path.resolve(__dirname, "..");
-require(path.join(ROOT, "supabase", "functions", "_shared", "availability-font.js"));
+const partage = nom => path.join(
+  ROOT, "supabase", "functions", "_shared", nom
+);
+require(partage("availability-font.js"));
+require(partage("carte-font.js"));
 const {
-  RasterCanvas, encodePng, availabilityFonts
-} = require(path.join(
-  ROOT, "supabase", "functions", "_shared", "availability-pdf.js"
-));
+  RasterCanvas, encodePng, chargerAtlasCarte, atlasStringWidthExact
+} = require(partage("availability-pdf.js"));
 const {
-  generateBuildCardPng, MESURES, largeurTexte, mesurer
-} = require(path.join(
-  ROOT, "supabase", "functions", "_shared", "discord-build-png.js"
-));
-const {
-  decodePng
-} = require(path.join(
-  ROOT, "supabase", "functions", "_shared", "png-decode.js"
-));
-const {
-  texteCarte
-} = require(path.join(
-  ROOT, "supabase", "functions", "_shared", "discord-build.js"
-));
+  generateBuildCardPng, MESURES, largeurTexte, tronquer, mesurer
+} = require(partage("discord-build-png.js"));
+const { decodePng } = require(partage("png-decode.js"));
+const { texteCarte } = require(partage("discord-build.js"));
 
 assert.equal(typeof RasterCanvas, "function",
-  "le rendu de /build reutilise la surface de dessin du planning");
+  "le rendu de la carte reutilise la surface de dessin du planning");
 assert.equal(typeof encodePng, "function");
-assert.equal(typeof availabilityFonts, "function");
 
 const SIGNATURE = Buffer.from([137, 80, 78, 71, 13, 10, 26, 10]);
 
@@ -44,66 +36,68 @@ function dimensions(png) {
   return { largeur:png.readUInt32BE(16), hauteur:png.readUInt32BE(20) };
 }
 
-const CARTE_PLEINE = {
+function ligne(emplacement, nom, extra) {
+  return Object.assign({
+    emplacement, nom, image:"", mesures:[], details:[], enchantements:[]
+  }, extra || {});
+}
+
+const CARTE = {
   joueur:"YanniSs13",
-  personnage:"Ban",
+  personnage:"Méliodas",
   element:"Ténèbres",
-  potentiel:7,
-  arme:"Nunchaku",
-  portrait:"7ds-personnages/ban.webp",
-  note:"Build de raid, à garder pour le boss de la semaine",
-  fichier:"build-yanniss13-ban-nunchaku.png",
+  potentiel:10,
+  arme:"Épée à une main",
+  portrait:"7ds-personnages/meliodas.webp",
+  note:"Build de raid : garder la perle légendaire sur le taux critique.",
+  fichier:"build-yanniss13-meliodas-epee-a-une-main.png",
   sections:[
     {
       titre:"Arme",
-      lignes:[{
-        emplacement:"Nunchaku",
-        nom:"Baguette à l'aura triomphale",
-        image:"7ds-armes/Nunchaku/Nunchaku du renard.webp",
-        details:[
-          "Niveau 50 · promotion 4 · dépassement 2",
-          "Perle légendaire",
-          "Taux critique : 12.5 %"
-        ]
-      }]
+      disposition:"colonne",
+      lignes:[
+        ligne("Épée à une main", "En plein cœur !", {
+          image:"7ds-armes/Epee 1 main/En plein coeur.webp",
+          mesures:[
+            { libelle:"Niveau", valeur:50, maximum:50, forme:"barre" },
+            { libelle:"Outrepassement", valeur:6, maximum:6, forme:"etoile" }
+          ],
+          details:["Perle légendaire"],
+          enchantements:[
+            { libelle:"Attaque de l'équipement", texte:"95", part:0.35 },
+            { libelle:"Augmentation des dégâts d'attaque spéciale",
+              texte:"20.84 %", part:0.8 }
+          ]
+        }),
+        ligne("Armure gravée", "Ami loyal", {
+          image:"7ds-armures-ssr/Armure liee/Ami loyal.webp",
+          details:["Passif niveau 3"]
+        })
+      ]
     },
     {
       titre:"Armure",
+      disposition:"grille",
       lignes:[
-        { emplacement:"Haut", nom:"Haut du chasseur",
-          image:"7ds-armures-ssr/Haut/Haut du chasseur.webp",
-          details:["Passif niveau 3", "ATK : 120"] },
-        { emplacement:"Bas", nom:"", details:[] },
-        { emplacement:"Bottes", nom:"", details:[] },
-        { emplacement:"Ceinture", nom:"", details:[] },
-        { emplacement:"Armure gravée", nom:"Épée & bouclier gravé", details:[] }
+        ligne("Haut", "Haut de l'œil de l'étoile sinistre",
+          { image:"7ds-armures-ssr/Haut/Haut.webp" }),
+        ligne("Bas", "Bas de la mélodie d'Arachnée"),
+        ligne("Bottes", ""),
+        ligne("Ceinture", "Ceinture de la mélodie d'Arachnée")
       ]
     },
     {
       titre:"Bijoux",
+      disposition:"liste",
       lignes:[
-        { emplacement:"Anneau", nom:"Anneau du loup",
-          image:"7ds-bijoux/Anneau/Anneau du loup.webp", details:[] },
-        { emplacement:"Collier", nom:"", details:[] },
-        { emplacement:"Boucle d'oreille", nom:"", details:[] }
+        ligne("Anneau", "Anneau de la mélodie d'Arachnée", {
+          image:"7ds-bijoux/Anneau/Anneau.webp",
+          enchantements:[{ libelle:"Dégâts crit.", texte:"12.05 %", part:0.6 }]
+        }),
+        ligne("Collier", ""),
+        ligne("Boucle d'oreille", "Boucles d'oreilles de la mélodie d'Arachnée")
       ]
     }
-  ]
-};
-
-const CARTE_NUE = {
-  joueur:"Élodie",
-  personnage:"Merlin",
-  element:"",
-  potentiel:0,
-  arme:"Grimoire",
-  portrait:"",
-  note:"",
-  fichier:"build-elodie-merlin-grimoire.png",
-  sections:[
-    { titre:"Arme", lignes:[{ emplacement:"Grimoire", nom:"", details:[] }] },
-    { titre:"Armure", lignes:[] },
-    { titre:"Bijoux", lignes:[] }
   ]
 };
 
@@ -113,6 +107,7 @@ const CARTE_NUE = {
    images n'etaient pas posees, il n'y en aurait aucun. */
 const SANS_IMAGES = { chargerImage:async () => null };
 const ROUGE = [214, 40, 40];
+
 function imageUnie(taille) {
   const pixels = Buffer.alloc(taille * taille * 4);
   for(let index = 0; index < taille * taille; index += 1){
@@ -146,138 +141,143 @@ function comptePixels(png, couleur) {
 }
 
 (async () => {
-  const fonts = await availabilityFonts();
-  /* Le pied de page doit tenir dans la bande qui lui est reservee, sinon il
-     sort du PNG et se retrouve coupe. */
-  assert.ok(MESURES.HAUTEUR_PIED >= fonts.body.cellHeight + 20,
-    "la bande du pied de page est trop courte pour la police");
+  const fonts = await chargerAtlasCarte();
 
-  /* Les details sont dessines EN RETRAIT du nom de l'objet. S'ils sont
-     mesures sans ce retrait, une ligne longue deborde du panneau : elle est
-     coupee par le bord du PNG, et rien n'echoue pour le signaler. */
-  const plan = mesurer({
-    sections:[{ titre:"Arme", lignes:[{
-      emplacement:"Epee a deux mains",
-      nom:"Epee de la lune noire",
-      details:[
-        "Augmentation des dégâts d'attaque spéciale contre les boss : 12.5 %",
-        "Niveau 50 · promotion 4 · dépassement 2"
-      ]
-    }] }]
-  }, fonts);
-  const droiteMaximale = MESURES.LARGEUR - MESURES.MARGE
-    - MESURES.PADDING_PANNEAU;
-  plan.sections[0].lignes[0].details.forEach(detail => {
-    const droite = MESURES.COLONNE_TEXTE + MESURES.INDENT_DETAIL
-      + largeurTexte(detail, fonts.body);
-    assert.ok(droite <= droiteMaximale,
-      "detail hors du panneau (" + Math.round(droite) + " > "
-      + droiteMaximale + ") : " + detail);
-  });
-  /* Les mesures d'une arme — niveau, promotion, outrepassement — occupent
-     leurs propres rangees, dessinees et non ecrites. Le panneau doit grandir
-     d'autant, sinon elles se posent par-dessus la ligne suivante. */
-  /* Assez de details pour que le panneau depasse deja la hauteur de l'icone :
-     sinon son plancher absorberait une partie de la croissance, et l'ecart
-     mesure ne dirait plus rien des mesures. */
-  const ligneNue = { emplacement:"Nunchaku", nom:"Nunchaku du renard",
-    details:["Perle légendaire", "Taux critique : 12.5 %"], mesures:[] };
-  const ligneMesuree = Object.assign({}, ligneNue, { mesures:[
-    { libelle:"Niveau", valeur:50, maximum:50, forme:"barre" },
-    { libelle:"Outrepassement", valeur:4, maximum:6, forme:"etoile" }
-  ] });
-  const hauteurNue = mesurer(
-    { sections:[{ titre:"Arme", lignes:[ligneNue] }] }, fonts
-  ).sections[0].lignes[0].hauteur;
-  const hauteurMesuree = mesurer(
-    { sections:[{ titre:"Arme", lignes:[ligneMesuree] }] }, fonts
-  ).sections[0].lignes[0].hauteur;
-  assert.equal(hauteurMesuree - hauteurNue, 2 * MESURES.HAUTEUR_MESURE,
-    "le panneau grandit d'une rangee par mesure");
-
-  /* L'etiquette d'une mesure doit tenir dans sa colonne. « Outrepassement »
-     est le plus long des trois, et c'est le mot du jeu : le raccourcir n'est
-     pas une option, elargir la colonne si. Deborde, il se dessine par-dessus
-     les losanges sans que rien n'echoue. */
-  ["Niveau", "Outrepassement"].forEach(libelle => {
-    const largeur = largeurTexte(texteCarte(libelle), fonts.body);
-    assert.ok(largeur + 20 <= MESURES.COLONNE_MESURE,
-      "« " + libelle + " » déborde sur sa jauge : " + Math.round(largeur)
-      + " px pour " + MESURES.COLONNE_MESURE);
+  /* LA CARTE ECRIT EN MINUSCULES ACCENTUEES. C'est la raison d'etre de son
+     atlas separe : sans lui, « Dégâts crit. » redeviendrait « DEGATS CRIT. ».
+     Le test le verifie sur les glyphes, pas sur une intention. */
+  assert.equal(texteCarte("Dégâts crit."), "Dégâts crit.");
+  ["é", "è", "à", "ç", "œ", "É", "%", "&", "…"].forEach(caractere => {
+    assert.ok(fonts.corps.characters.includes(caractere),
+      "l'atlas de la carte doit porter « " + caractere + " »");
+    assert.ok(atlasStringWidthExact(caractere, fonts.corps) > 0,
+      "« " + caractere + " » doit avoir une avance non nulle");
   });
 
-  /* Les etoiles sont dessinees en or : sans un seul pixel dore, elles ne sont
-     pas la, et « promotion 4 sur 4 » n'est qu'une ligne de texte de plus. */
-  const avecEtoiles = await generateBuildCardPng({
-    personnage:"Ban", arme:"Nunchaku",
-    sections:[{ titre:"Arme", lignes:[ligneMesuree] }]
-  }, SANS_IMAGES);
-  const sansEtoiles = await generateBuildCardPng({
-    personnage:"Ban", arme:"Nunchaku",
-    sections:[{ titre:"Arme", lignes:[ligneNue] }]
-  }, SANS_IMAGES);
-  const orAvec = await comptePixels(avecEtoiles, MESURES.OR);
-  const orSans = await comptePixels(sansEtoiles, MESURES.OR);
+  /* LA CARTE EST EN PAYSAGE : Discord fait tenir l'image dans le message, et
+     une carte plus haute que large arrive minuscule. */
+  const png = await generateBuildCardPng(CARTE, SANS_IMAGES);
+  const taille = dimensions(png);
+  assert.equal(taille.largeur, MESURES.LARGEUR);
+  assert.ok(taille.hauteur < taille.largeur,
+    "la carte doit rester plus large que haute : " + taille.largeur + " x "
+    + taille.hauteur);
+
+  /* La rangee du libelle d'une jauge doit contenir la police, sinon le texte
+     descend sur la barre dessinee juste dessous. */
+  assert.ok(MESURES.HAUTEUR_JAUGE_TITRE >= fonts.corps.cellHeight,
+    "le libelle d'une jauge deborde sur son trait : "
+    + MESURES.HAUTEUR_JAUGE_TITRE + " px pour une police de "
+    + fonts.corps.cellHeight);
+
+  /* Rien ne doit deborder de sa colonne. Le jour ou un nom deborde, il se
+     dessine par-dessus la colonne voisine sans que rien n'echoue. */
+  const plan = mesurer(CARTE, fonts);
+  const largeurBloc = MESURES.COLONNE_MILIEU - 2 * MESURES.PADDING
+    - MESURES.ICONE - 20;
+  plan.milieu.forEach(bloc => {
+    bloc.nom.concat(bloc.details).forEach(morceau => {
+      assert.ok(atlasStringWidthExact(morceau, fonts.corps) <= largeurBloc,
+        "hors de la colonne du milieu : " + morceau);
+    });
+  });
+  const largeurCase = (MESURES.COLONNE_DROITE - 2 * MESURES.PADDING - 12) / 2
+    - MESURES.ICONE - 16;
+  plan.armure.forEach(entree => {
+    assert.ok(entree.nom.length <= 2,
+      "une case de la grille ne tient que deux lignes : " + entree.nom.length);
+    entree.nom.forEach(morceau => {
+      assert.ok(atlasStringWidthExact(morceau, fonts.corps) <= largeurCase,
+        "hors de sa case : " + morceau);
+    });
+  });
+
+  /* Un libelle trop long se raccourcit au lieu de se dessiner par-dessus sa
+     valeur — il partage sa rangee avec elle. */
+  const long = "Augmentation des dégâts d'attaque spéciale";
+  const place = 260;
+  assert.ok(largeurTexte(long, fonts.corps) > place,
+    "ce libelle doit bien etre trop long pour que le test ait un sens");
+  assert.ok(
+    atlasStringWidthExact(tronquer(long, fonts.corps, place), fonts.corps)
+      <= place, "le libelle doit tenir dans la place laissee par sa valeur");
+  assert.equal(tronquer("ATK", fonts.corps, place), "ATK",
+    "un libelle qui tient n'est pas touche");
+
+  /* L'or est la couleur de tout ce qui est acquis : etoiles pleines et
+     portions remplies. Sans un pixel dore, la carte n'est qu'une liste de
+     nombres. */
+  const carteNue = {
+    personnage:"Merlin",
+    sections:[{ titre:"Arme", disposition:"colonne",
+      lignes:[ligne("Grimoire", "Grimoire")] }]
+  };
+  const avecJauges = {
+    personnage:"Merlin",
+    sections:[{ titre:"Arme", disposition:"colonne", lignes:[
+      ligne("Grimoire", "Grimoire", {
+        mesures:[
+          { libelle:"Niveau", valeur:50, maximum:50, forme:"barre" },
+          { libelle:"Outrepassement", valeur:6, maximum:6, forme:"etoile" }
+        ]
+      })
+    ] }]
+  };
+  const orSans = await comptePixels(
+    await generateBuildCardPng(carteNue, SANS_IMAGES), MESURES.OR);
+  const orAvec = await comptePixels(
+    await generateBuildCardPng(avecJauges, SANS_IMAGES), MESURES.OR);
   assert.ok(orAvec - orSans > 400,
-    "les etoiles pleines doivent poser de l'or sur la carte : "
-    + orAvec + " contre " + orSans);
+    "jauges absentes de la carte : " + orAvec + " contre " + orSans);
 
-  /* Un panneau ne peut pas etre plus court que l'icone qu'il porte : elle
-     deborderait sur le panneau suivant. */
-  plan.sections[0].lignes.forEach(ligne => {
-    assert.ok(ligne.hauteur >= MESURES.ICONE + 2 * MESURES.PADDING_PANNEAU,
-      "panneau plus court que son icone : " + ligne.hauteur);
-  });
+  /* Une part inconnue ne dessine AUCUNE barre : une barre remplie au hasard
+     mentirait sur la qualite du tirage. */
+  const partConnue = {
+    personnage:"Merlin",
+    sections:[{ titre:"Arme", disposition:"colonne", lignes:[
+      ligne("Grimoire", "Grimoire",
+        { enchantements:[{ libelle:"ATK", texte:"340", part:1 }] })
+    ] }]
+  };
+  const partInconnue = {
+    personnage:"Merlin",
+    sections:[{ titre:"Arme", disposition:"colonne", lignes:[
+      ligne("Grimoire", "Grimoire",
+        { enchantements:[{ libelle:"ATK", texte:"340", part:null }] })
+    ] }]
+  };
+  const orPart = await comptePixels(
+    await generateBuildCardPng(partConnue, SANS_IMAGES), MESURES.OR_BARRE);
+  const orSansPart = await comptePixels(
+    await generateBuildCardPng(partInconnue, SANS_IMAGES), MESURES.OR_BARRE);
+  assert.ok(orPart - orSansPart > 2000,
+    "une part connue doit remplir sa barre : " + orPart + " contre "
+    + orSansPart);
 
   /* Les images sont bien demandees, et bien posees. */
   const demandes = [];
-  const illustree = await generateBuildCardPng(CARTE_PLEINE, {
+  const illustree = await generateBuildCardPng(CARTE, {
     chargerImage:chargeurFactice(demandes)
   });
-  assert.ok(demandes.includes("7ds-personnages/ban.webp"),
+  assert.ok(demandes.includes("7ds-personnages/meliodas.webp"),
     "le portrait du personnage doit etre demande");
-  assert.ok(demandes.includes("7ds-armes/Nunchaku/Nunchaku du renard.webp"),
-    "l'image de l'arme doit etre demandee");
-  assert.equal(demandes.filter(chemin => chemin).length, demandes.length,
-    "aucun chemin vide ne doit etre demande");
-  assert.equal(demandes.length, 4,
-    "un portrait, une arme, une piece d'armure, un bijou — pas les vides");
+  assert.equal(demandes.length, 5,
+    "un portrait, une arme, une gravee, une piece d'armure, un bijou");
   const rouges = await comptePixels(illustree, ROUGE);
-  /* Le compte exact serait la surface des quatre images ; le lisere dore du
-     portrait et le filet des icones en recouvrent le bord, soit environ deux
-     mille pixels. Le seuil laisse passer ces bordures, pas une image
-     manquante — la plus petite pese 5 184 pixels. */
+  /* Le filet de chaque cadre recouvre le bord de son image : le seuil laisse
+     passer ces bordures, pas une image manquante — la plus petite pese 6 400
+     pixels. */
   const attendus = MESURES.PORTRAIT * MESURES.PORTRAIT
-    + 3 * MESURES.ICONE * MESURES.ICONE;
+    + 4 * MESURES.ICONE * MESURES.ICONE;
   assert.ok(rouges >= attendus - 3000,
-    "images manquantes sur la carte : " + rouges + " pixels pour "
-    + attendus + " attendus");
-
-  /* Une vignette introuvable ne doit pas priver le salon de la carte : le
-     rendu continue, l'emplacement reste dessine sans image. */
-  const sansImages = await generateBuildCardPng(CARTE_PLEINE, {
-    chargerImage:async () => null
-  });
-  dimensions(sansImages);
-  assert.equal(await comptePixels(sansImages, ROUGE), 0);
-
-  const pleine = await generateBuildCardPng(CARTE_PLEINE, SANS_IMAGES);
-  const tailleP = dimensions(pleine);
-  assert.equal(tailleP.largeur, 1000, "une largeur fixe, lisible dans Discord");
-  assert.ok(tailleP.hauteur > 400 && tailleP.hauteur < 2000,
-    "hauteur hors de toute proportion : " + tailleP.hauteur);
-  assert.ok(pleine.length > 2000, "image suspecte de vide : " + pleine.length);
-
-  const nue = await generateBuildCardPng(CARTE_NUE, SANS_IMAGES);
-  const tailleN = dimensions(nue);
-  assert.equal(tailleN.largeur, 1000);
-  assert.ok(tailleN.hauteur < tailleP.hauteur,
-    "une carte sans equipement doit etre plus courte que la carte pleine");
+    "images manquantes : " + rouges + " pixels pour " + attendus + " attendus");
+  assert.equal(await comptePixels(png, ROUGE), 0,
+    "une vignette introuvable ne doit rien poser du tout");
 
   /* Une carte incomplete arrive quand le catalogue evolue plus vite que le
      roster : le rendu doit tenir, pas rendre l'image indisponible. */
-  const bancale = await generateBuildCardPng({ arme:"Hache" }, SANS_IMAGES);
-  dimensions(bancale);
+  dimensions(await generateBuildCardPng({ arme:"Hache" }, SANS_IMAGES));
+  dimensions(await generateBuildCardPng({}, SANS_IMAGES));
 
   console.log("OK discord-build-png");
 })().catch(error => {

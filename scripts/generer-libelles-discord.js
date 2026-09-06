@@ -43,6 +43,103 @@ function lireCatalogue(fichier, propriete) {
   return catalogue;
 }
 
+/* LES BORNES DES ENCHANTEMENTS, dedoublonnees.
+
+   Le jeu remplit une barre selon la position de la valeur tiree entre le
+   minimum et le maximum possibles de sa statistique. La carte Discord fait de
+   meme, il lui faut donc ces bornes.
+
+   Publiees telles quelles, elles pesent 590 Ko — la combinatoire palier x
+   element des perles. Deux constats les ramenent a 17 Ko :
+
+   1. L'element ne change PAS les bornes, seulement la liste des statistiques
+      proposees. Verifie sur les 17 141 paires palier|statistique du
+      catalogue : zero desaccord. On peut donc aplatir sur « palier|stat ».
+   2. Les tables se repetent enormement : quatre suffisent aux 276 grades
+      d'arme, dix-huit aux 136 pieces enchantables. On les partage, et chaque
+      objet ne garde qu'un index.
+
+   Les bornes d'une piece s'emploient telles quelles ; celles d'une arme se
+   mettent a l'echelle du taux de leur emplacement, d'ou `slots`. */
+function partagerTables() {
+  const tables = [];
+  const index = new Map();
+  return {
+    tables,
+    ajouter(valeur) {
+      const cle = JSON.stringify(valeur);
+      if(!index.has(cle)){
+        index.set(cle, tables.length);
+        tables.push(valeur);
+      }
+      return index.get(cle);
+    }
+  };
+}
+
+function bornesDesObjets(stats) {
+  const partage = partagerTables();
+  const index = {};
+  ["gearByFile", "engravedByFile"].forEach(source => {
+    const catalogue = stats[source] || {};
+    Object.keys(catalogue).sort().forEach(fichier => {
+      const options = catalogue[fichier].randomOptions;
+      if(!options || !Array.isArray(options.stats)) return;
+      const table = {};
+      options.stats.forEach(option => {
+        table[option.stat] = [option.min, option.max];
+      });
+      index[fichier] = partage.ajouter(table);
+    });
+  });
+  return { tables:partage.tables, index };
+}
+
+function bornesDesArmes(stats) {
+  const partage = partagerTables();
+  const index = {};
+  const catalogue = stats.weaponsByFile || {};
+  Object.keys(catalogue).sort().forEach(fichier => {
+    const grades = catalogue[fichier].gradesByGameId || {};
+    Object.keys(grades).sort().forEach(identifiant => {
+      const enchantements = grades[identifiant].enchantements
+        || grades[identifiant].enchantments;
+      if(!enchantements) return;
+      const table = {};
+      const poser = (palier, option) => {
+        table[palier + "|" + option.stat] = [option.min, option.max];
+      };
+      /* Le palier zero est celui des armes sans perle (type « basic ») : une
+         seule cle, la meme que celle que lit le module partage. */
+      if(enchantements.type === "basic"){
+        (enchantements.options || []).forEach(option => poser(0, option));
+      }else{
+        (enchantements.tiers || []).forEach(palier => {
+          if(palier.elements){
+            palier.elements.forEach(groupe =>
+              (groupe.options || []).forEach(option =>
+                poser(palier.tier, option)));
+          }else{
+            (palier.options || []).forEach(option => poser(palier.tier, option));
+          }
+        });
+      }
+      index[identifiant] = partage.ajouter({
+        slots:enchantements.slots || [],
+        stats:table
+      });
+    });
+  });
+  return { tables:partage.tables, index };
+}
+
+function construireBornes(stats) {
+  return {
+    objets:bornesDesObjets(stats),
+    armes:bornesDesArmes(stats)
+  };
+}
+
 function construireLibelles() {
   const data = lireCatalogue("data.js", "SEVEN_DS_DATA");
   const meta = lireCatalogue("personnages-meta.js", "SEVEN_DS_META");
@@ -109,6 +206,7 @@ function construireLibelles() {
     version:1,
     personnages,
     armes,
+    bornes:construireBornes(stats),
     stats:libellesStats
   };
 }

@@ -20,6 +20,7 @@ const {
   trouverCharId,
   propositionsBuild,
   texteCarte,
+  libelleArme,
   resoudreDemandeBuild,
   contenuMessageBuild
 } = require(path.join(
@@ -271,23 +272,29 @@ assert.deepEqual(
 /* ------------------------------------------------------------------ */
 /* Le texte que la police du PNG sait dessiner                         */
 
+/* LE TEXTE GARDE SA CASSE ET SES ACCENTS.
+   L'atlas de la carte porte 120 caracteres, minuscules et lettres accentuees
+   comprises : « Dégâts crit. » s'ecrit comme il se lit. Ne reste a traduire
+   que ce qu'aucune police n'a — les crochets japonais d'un nom d'arme — et a
+   remplacer ce qui n'est nulle part. */
 assert.equal(texteCarte("Baguette à l'aura triomphale"),
-  "BAGUETTE A L AURA TRIOMPHALE",
-  "l'apostrophe n'existe pas dans l'atlas : elle devient une espace");
-assert.equal(texteCarte("Epee & bouclier"), "EPEE ET BOUCLIER",
-  "l'esperluette se lit, elle ne se dessine pas");
-assert.equal(texteCarte("Ténèbres"), "TENEBRES");
-assert.equal(texteCarte("12.5 %"), "12.5 %",
-  "le pourcentage survit : le rendu le dessine a la main");
-assert.equal(texteCarte("Niveau 50, promotion 4"), "NIVEAU 50. PROMOTION 4",
-  "la virgule devient un point, que l'atlas connait");
-assert.equal(texteCarte("a  b"), "A B", "les espaces multiples sont ramenes a une");
+  "Baguette à l'aura triomphale");
+assert.equal(texteCarte("Épée & bouclier"), "Épée & bouclier");
+assert.equal(texteCarte("Haut de l'œil de l'étoile sinistre"),
+  "Haut de l'œil de l'étoile sinistre", "la ligature est dans l'atlas");
+assert.equal(texteCarte("Dégâts crit. : 12.5 %"), "Dégâts crit. : 12.5 %");
+assert.equal(texteCarte("『100 façons』"), "«100 façons»",
+  "les crochets japonais d'un nom d'arme deviennent des guillemets");
+assert.equal(texteCarte("a  b"), "a b", "les espaces multiples sont ramenes a une");
 assert.equal(texteCarte(null), "");
-const ATLAS = " ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-/:.()|=?%";
-[...texteCarte("Épée « Croc » +3 ~ 90 % / niv. 5, palier 2")].forEach(caractere => {
-  assert.ok(ATLAS.includes(caractere),
-    "caractere indessinable rendu par texteCarte : " + caractere);
-});
+const ATLAS_CARTE = require(path.join(
+  ROOT, "supabase", "functions", "_shared", "carte-font.js"
+)).characters;
+[...texteCarte("Épée « Croc » +3 ~ 90 % / niv. 5, palier 2 – œuf")]
+  .forEach(caractere => {
+    assert.ok(ATLAS_CARTE.includes(caractere),
+      "caractere indessinable rendu par texteCarte : " + caractere);
+  });
 
 /* ------------------------------------------------------------------ */
 /* Le jeu de donnees des cas suivants                                  */
@@ -296,6 +303,16 @@ const LIBELLES = {
   personnages:{
     ban:{ nom:"Ban", element:"DARK", fichier:"7ds-personnages/ban.webp" },
     merlin:{ nom:"Merlin", element:"ICE", fichier:"7ds-personnages/merlin.webp" }
+  },
+  bornes:{
+    objets:{
+      tables:[{ B_Atk:[80, 160] }],
+      index:{ "7ds-armures-ssr/Haut/Haut du chasseur.webp":0 }
+    },
+    armes:{
+      tables:[{ slots:[], stats:{ "5|C_Critical_Rate":[900, 1600] } }],
+      index:{ g1:0 }
+    }
   },
   armes:{
     "7ds-armes/Nunchaku/Nunchaku du renard.webp":{
@@ -432,19 +449,40 @@ assert.equal(carte.fichier, "build-yanniss13-ban-nunchaku.png",
    de la vignette publiee ; sans ces chemins, il n'aurait que du texte. */
 assert.equal(carte.portrait, "7ds-personnages/ban.webp");
 
+/* Le type d'arme vient des dossiers d'images, qui n'ont jamais porte d'accent :
+   « Epee a une main ». Le nom du jeu, lui, en porte — et l'atlas de la carte
+   sait desormais les dessiner. */
+assert.equal(carte.arme, "Nunchaku");
+assert.equal(libelleArme("Epee a une main"), "Épée à une main");
+assert.equal(libelleArme("Epee a deux mains"), "Épée à deux mains");
+assert.equal(libelleArme("Epee & bouclier"), "Épée & bouclier");
+assert.equal(libelleArme("Baton"), "Bâton");
+assert.equal(libelleArme("Rapiere"), "Rapière");
+assert.equal(libelleArme("Nunchaku"), "Nunchaku", "sans accent, rien ne bouge");
+assert.equal(libelleArme("Arbalete inconnue"), "Arbalete inconnue",
+  "une arme que le jeu ajouterait s'affiche telle quelle");
+
 const sections = carte.sections;
 assert.deepEqual(sections.map(section => section.titre),
   ["Arme", "Armure", "Bijoux"]);
+/* Chaque section dit COMMENT elle se dessine. L'armure gravee rejoint la
+   colonne de l'arme : comme elle, elle porte des enchantements et un passif,
+   la ou les quatre pieces ordinaires n'ont qu'un nom. Les mettre ensemble
+   obligerait la grille a la hauteur de la plus bavarde. */
+assert.deepEqual(sections.map(section => section.disposition),
+  ["colonne", "grille", "liste"]);
+assert.deepEqual(sections[0].lignes.map(entree => entree.emplacement),
+  ["Nunchaku", "Armure gravée"],
+  "la section Arme porte l'arme, puis l'armure gravee");
+assert.deepEqual(sections[1].lignes.map(entree => entree.emplacement),
+  ["Haut", "Bas", "Bottes", "Ceinture"],
+  "la grille ne recoit que les quatre pieces ordinaires");
 
 const [armeSection, armureSection, bijouxSection] = sections;
 assert.equal(armeSection.lignes[0].nom, "Nunchaku du renard",
   "le nom lisible se lit dans le chemin de l'image");
 assert.equal(armeSection.lignes[0].image,
   "7ds-armes/Nunchaku/Nunchaku du renard.webp");
-assert.deepEqual(armeSection.lignes[0].details, [
-  "Perle légendaire",
-  "Taux critique : 12.5 %"
-], "la valeur en dix-millièmes redevient un pourcentage");
 
 /* Le niveau, la promotion et l'outrepassement quittent la phrase de details :
    ce sont des MESURES, chacune avec son maximum, que le rendu dessine.
@@ -475,16 +513,28 @@ assert.deepEqual(sansGrade.sections[0].lignes[0].mesures, [
   { libelle:"Niveau", valeur:30, maximum:0, forme:"barre" }
 ], "la promotion se deduit du niveau : deux lignes pour une seule information");
 
-assert.equal(armureSection.lignes.length, 5,
-  "les cinq emplacements d'armure, meme vides");
-assert.deepEqual(armureSection.lignes.map(ligne => ligne.emplacement),
-  ["Haut", "Bas", "Bottes", "Ceinture", "Armure gravée"]);
+assert.equal(armureSection.lignes.length, 4,
+  "les quatre emplacements de la grille, meme vides ; la gravée est ailleurs");
+/* LES ENCHANTEMENTS QUITTENT LES DETAILS.
+   Le jeu les montre avec une barre remplie selon la position de la valeur
+   entre son minimum et son maximum possibles. La carte fait pareil : chaque
+   enchantement porte donc sa part, entre 0 et 1. Sans bornes connues, `part`
+   vaut null et la ligne garde son pourcentage sans barre — une barre remplie
+   au hasard mentirait. */
+assert.deepEqual(armeSection.lignes[0].details, ["Perle légendaire"],
+  "les details ne gardent que ce qui n'est pas mesurable");
+assert.deepEqual(armeSection.lignes[0].enchantements, [
+  { libelle:"Taux critique", texte:"12.5 %", part:0.5 }
+], "1250 entre 900 et 1600 : la moitie. Une perle emploie ses bornes brutes,"
+  + "  etant vide pour ces grades");
+
 assert.equal(armureSection.lignes[0].nom, "Haut du chasseur");
 assert.equal(armureSection.lignes[0].image,
   "7ds-armures-ssr/Haut/Haut du chasseur.webp");
-assert.deepEqual(armureSection.lignes[0].details,
-  ["Passif niveau 3", "ATK : 120"],
-  "une stat plate ne porte pas de pourcentage");
+assert.deepEqual(armureSection.lignes[0].details, ["Passif niveau 3"]);
+assert.deepEqual(armureSection.lignes[0].enchantements, [
+  { libelle:"ATK", texte:"120", part:0.5 }
+], "une stat plate ne porte pas de pourcentage, mais bien une barre");
 assert.equal(armureSection.lignes[1].nom, "",
   "un emplacement vide se dit vide, il ne se tait pas");
 assert.deepEqual(armureSection.lignes[1].details, []);
@@ -519,8 +569,11 @@ const inconnue = resoudreDemandeBuild({
 });
 assert.equal(inconnue.erreur, undefined, inconnue.erreur);
 assert.deepEqual(inconnue.cartes[0].sections[0].lignes[0].details,
-  ["Perle commune", "X_Inconnue : 7"],
-  "le code brut vaut mieux qu'une ligne disparue");
+  ["Perle commune"]);
+assert.deepEqual(inconnue.cartes[0].sections[0].lignes[0].enchantements,
+  [{ libelle:"X_Inconnue", texte:"7", part:null }],
+  "le code brut vaut mieux qu'une ligne disparue ; et sans bornes connues,"
+  + " aucune barre n'est dessinée");
 
 /* ------------------------------------------------------------------ */
 /* Le message qui accompagne les images                                */
