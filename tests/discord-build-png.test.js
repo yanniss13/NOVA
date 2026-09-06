@@ -107,8 +107,15 @@ const CARTE = {
       titre:"Armure",
       disposition:"grille",
       lignes:[
-        ligne("Haut", "Haut de l'œil de l'étoile sinistre",
-          { image:"7ds-armures-ssr/Haut/Haut.webp" }),
+        /* 43 des 99 pieces du jeu portent une sous-stat, et dix un passif :
+           « Haut de l'œil de l'étoile sinistre » a les deux. */
+        ligne("Haut", "Haut de l'œil de l'étoile sinistre", {
+          image:"7ds-armures-ssr/Haut/Haut.webp",
+          details:["Passif niveau 3"],
+          enchantements:[
+            { libelle:"Chances crit.", texte:"5.64 %", part:0.5 }
+          ]
+        }),
         ligne("Bas", "Bas de la mélodie d'Arachnée"),
         ligne("Bottes", ""),
         ligne("Ceinture", "Ceinture de la mélodie d'Arachnée")
@@ -279,6 +286,44 @@ function comptePixels(png, couleur) {
       "nom d'armure ampute : « " + entree.nom.join(" ") + " » au lieu de « "
       + armures[rang] + " »");
   });
+
+  /* UNE PIECE D'ARMURE PORTE UNE SOUS-STAT, et un passif. Le modele les
+     calcule depuis le roster ; la section les jetait, parce que la grille de
+     deux cases n'avait la place ni de l'une ni de l'autre. Le membre voyait
+     un nom d'objet la ou le jeu montre un taux critique. */
+  assert.equal(plan.armure[0].jauges.length, 1,
+    "la sous-stat d'une piece doit arriver jusqu'au dessin");
+  assert.deepEqual(plan.armure[0].details, ["Passif niveau 3"],
+    "le palier du passif grave doit arriver jusqu'au dessin");
+  /* L'entete d'une rangee est une MESURE, pas une decision du trace : la
+     sous-stat ne doit reserver que la place qu'elle occupe, sinon le passif
+     sort en « Passif nivea… » alors que la rangee est aux deux tiers vide. */
+  assert.equal(plan.armure[0].entete, "Haut · Passif niveau 3",
+    "le palier du passif se lit en entier a cote de l'emplacement");
+  assert.equal(plan.armure[1].entete, "Bas",
+    "sans passif, l'entete n'est que l'emplacement");
+  const armureNue = JSON.parse(JSON.stringify(CARTE));
+  armureNue.sections.find(section => section.titre === "Armure")
+    .lignes.forEach(entree => { entree.enchantements = []; });
+  const orAvecSousStat = await comptePixels(
+    await generateBuildCardPng(CARTE, SANS_IMAGES), MESURES.OR_BARRE);
+  const orSansSousStat = await comptePixels(
+    await generateBuildCardPng(armureNue, SANS_IMAGES), MESURES.OR_BARRE);
+  assert.ok(orAvecSousStat - orSansSousStat > 500,
+    "la barre de la sous-stat doit se dessiner : " + orAvecSousStat
+    + " contre " + orSansSousStat);
+
+  /* Un bijou trop long ne se raccourcit plus non plus : deux des 37 du jeu
+     depassent la colonne, ils passent a la ligne comme une armure. */
+  const bijouLong = JSON.parse(JSON.stringify(CARTE));
+  bijouLong.sections.find(section => section.titre === "Bijoux").lignes = [
+    ligne("Boucle d'oreille",
+      "Boucles d'oreilles des 100 jours (jamais portées)")
+  ];
+  const rangeeBijou = mesurer(bijouLong, fonts).bijoux[0];
+  assert.deepEqual(rangeeBijou.nom.join(" "),
+    texteCarte("Boucles d'oreilles des 100 jours (jamais portées)"),
+    "un nom de bijou passe a la ligne au lieu d'etre ampute");
 
   /* Le garde-fou reste : un nom qu'aucune largeur ne peut porter se raccourcit
      avec sa marque, jamais en silence. */

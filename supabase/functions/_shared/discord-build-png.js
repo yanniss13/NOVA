@@ -420,6 +420,52 @@ function mesurerBloc(ligne, fonts, largeur) {
   });
 }
 
+/* UNE RANGEE DE LISTE — une piece d'armure ou un bijou. Les deux ont la meme
+   forme : l'icone a gauche ; a droite l'emplacement et la premiere sous-stat
+   en vis-a-vis, puis le nom, puis la barre de cette sous-stat.
+
+   Le jeu montre la stat sur la meme ligne que l'identite de l'objet : la
+   premiere jauge occupe donc les 80 px que l'icone ouvre de toute facon, et
+   n'allonge rien. Seules d'eventuelles jauges supplementaires agrandissent la
+   rangee — 43 des 99 pieces du jeu portent une sous-stat, jamais deux. */
+function mesurerLigneListe(ligne, fonts, largeurColonne) {
+  const largeur = largeurColonne - ICONE - 18;
+  const nom = couperEnLignesLimite(ligne.nom, fonts.corps, largeur, 2);
+  const lignesNom = Math.max(1, nom.length);
+
+  /* La rangee d'entete se partage entre l'emplacement a gauche et la sous-stat
+     a droite. La sous-stat ne reserve que ce qu'elle occupe VRAIMENT : lui
+     donner d'office 58 % de la rangee sortait « Haut · Passif nivea… » sur une
+     ligne aux deux tiers vide. Le plafond reste, pour qu'un libelle bavard ne
+     mange pas l'emplacement a son tour. */
+  const premiere = ligne.jauges.length ? ligne.jauges[0] : null;
+  let libelleJauge = "";
+  let valeurJauge = "";
+  let largeurEntete = largeur;
+  if(premiere){
+    valeurJauge = texteCarte(premiere.texte);
+    const largeurValeur = atlasStringWidthExact(valeurJauge, fonts.petit);
+    libelleJauge = tronquer(premiere.libelle, fonts.petit,
+      largeur * 0.58 - largeurValeur - 12);
+    largeurEntete = largeur - largeurValeur - 12
+      - atlasStringWidthExact(libelleJauge, fonts.petit) - 16;
+  }
+  const entete = tronquer(ligne.details.length
+    ? ligne.emplacement + " · " + ligne.details.join(" · ")
+    : ligne.emplacement, fonts.petit, largeurEntete);
+
+  return Object.assign({}, ligne, {
+    nom,
+    lignesNom,
+    entete,
+    libelleJauge,
+    valeurJauge,
+    hauteur:Math.max(ICONE,
+      HAUTEUR_LIGNE + lignesNom * HAUTEUR_NOM + (ligne.jauges.length ? 16 : 0))
+      + Math.max(0, ligne.jauges.length - 1) * HAUTEUR_JAUGE
+  });
+}
+
 function mesurer(carte, fonts) {
   const largeurBloc = COLONNE_MILIEU - 2 * PADDING;
   const milieu = lignesDe(sectionParTitre(carte, "Arme"))
@@ -431,15 +477,9 @@ function mesurer(carte, fonts) {
      pieces sur 62 sortaient amputees. Sur la colonne entiere, les 62 tiennent
      sur une seule ligne. La liste coute une trentaine de pixels de hauteur ;
      un nom faux coute a un membre la mauvaise piece equipee. */
-  const largeurArmure = COLONNE_DROITE - 2 * PADDING - ICONE - 18;
-  const armure = lignesDe(sectionParTitre(carte, "Armure")).map(ligne => {
-    const nom = couperEnLignesLimite(ligne.nom, fonts.corps, largeurArmure, 2);
-    return Object.assign({}, ligne, {
-      nom,
-      hauteur:Math.max(ICONE,
-        HAUTEUR_LIGNE + Math.max(1, nom.length) * HAUTEUR_NOM)
-    });
-  });
+  const largeurListe = COLONNE_DROITE - 2 * PADDING;
+  const armure = lignesDe(sectionParTitre(carte, "Armure"))
+    .map(ligne => mesurerLigneListe(ligne, fonts, largeurListe));
   const hauteurArmureNaturelle = DEBUT_CONTENU_SECTION
     + armure.reduce((total, entree) => total + entree.hauteur
       + ESPACE_LIGNE_LISTE, 0) + MARGE_BASSE_SECTION;
@@ -464,17 +504,8 @@ function mesurer(carte, fonts) {
   });
   hauteurMilieu += PADDING;
 
-  const largeurBijou = COLONNE_DROITE - 2 * PADDING - ICONE - 18;
-  const bijoux = lignesDe(sectionParTitre(carte, "Bijoux")).map(ligne => {
-    /* Le jeu place la stat du bijou dans la même ligne que son identité.
-       La première jauge exploite donc les 80 px déjà ouverts par l'icône ;
-       seules d'éventuelles jauges supplémentaires agrandissent la ligne. */
-    const nom = tronquer(ligne.nom, fonts.corps, largeurBijou);
-    const hauteur = Math.max(ICONE,
-      HAUTEUR_LIGNE + HAUTEUR_NOM + (ligne.jauges.length ? 16 : 0))
-      + Math.max(0, ligne.jauges.length - 1) * HAUTEUR_JAUGE;
-    return Object.assign({}, ligne, { nom, hauteur });
-  });
+  const bijoux = lignesDe(sectionParTitre(carte, "Bijoux"))
+    .map(ligne => mesurerLigneListe(ligne, fonts, largeurListe));
   const hauteurBijoux = DEBUT_CONTENU_SECTION
     + bijoux.reduce((total, ligne) => total + ligne.hauteur
       + ESPACE_LIGNE_LISTE, 0) + MARGE_BASSE_SECTION;
@@ -660,82 +691,62 @@ function dessinerBloc(canvas, bloc, x, y, largeur, fonts, images) {
   });
 }
 
-/* L'armure se lit comme les bijoux : une ligne par piece, sur la colonne
-   entiere. La grille de deux cases etait plus compacte, mais elle amputait la
-   majorite des noms du jeu — voir `mesurer`. */
-function dessinerListeArmure(canvas, lignes, x, y, hauteur, fonts, images) {
-  cadre(canvas, x, y, COLONNE_DROITE, hauteur);
-  titreSection(canvas, "02", "Armure", x + PADDING, y + PADDING,
-    COLONNE_DROITE - 2 * PADDING, fonts);
-  let curseur = y + DEBUT_CONTENU_SECTION;
-  lignes.forEach(ligne => {
-    const gauche = x + PADDING;
-    dessinerIcone(canvas, images.get(ligne.image), gauche, curseur);
-    const texteX = gauche + ICONE + 18;
-    ecrire(canvas, texteX, curseur, ligne.emplacement, fonts.petit,
-      COULEURS.faible);
-    let ligneY = curseur + HAUTEUR_LIGNE;
-    if(!ligne.nom.length){
-      ecrire(canvas, texteX, ligneY, "Aucun", fonts.corps, COULEURS.faible);
-    }else{
-      ligne.nom.forEach(morceau => {
-        ecrire(canvas, texteX, ligneY, morceau, fonts.corps,
-          COULEURS.parchemin);
-        ligneY += HAUTEUR_NOM;
-      });
-    }
-    curseur += ligne.hauteur + ESPACE_LIGNE_LISTE;
+/* L'armure et les bijoux se dessinent de la meme facon : voir
+   `mesurerLigneListe`. L'armure tenait autrefois en grille de deux cases, plus
+   compacte, mais qui amputait la majorite des noms du jeu et n'avait la place
+   ni de la sous-stat ni du passif. */
+function dessinerLigneListe(canvas, ligne, x, y, largeurColonne, fonts, images) {
+  dessinerIcone(canvas, images.get(ligne.image), x, y);
+  const texteX = x + ICONE + 18;
+  const droite = x + largeurColonne;
+  const largeurTexteBloc = droite - texteX;
+  /* Le palier du passif se lit a cote de l'emplacement : il tient en trois
+     mots, et lui donner sa propre rangee couterait cette hauteur aux quatre
+     cinquiemes des pieces, qui n'en ont pas. Le partage de la rangee est
+     decide par `mesurerLigneListe` ; ici on ne fait que poser. */
+  const premiere = ligne.jauges.length ? ligne.jauges[0] : null;
+  if(premiere){
+    const largeurValeur = largeurTexte(ligne.valeurJauge, fonts.petit);
+    ecrireADroite(canvas, droite, y, ligne.valeurJauge, fonts.petit,
+      COULEURS.parchemin);
+    ecrireADroite(canvas, droite - largeurValeur - 12, y, ligne.libelleJauge,
+      fonts.petit, COULEURS.attenue);
+  }
+  ecrire(canvas, texteX, y, ligne.entete, fonts.petit, COULEURS.faible);
+
+  let ligneY = y + HAUTEUR_LIGNE;
+  if(!ligne.nom.length){
+    ecrire(canvas, texteX, ligneY, "Aucun", fonts.corps, COULEURS.faible);
+  }else{
+    ligne.nom.forEach(morceau => {
+      ecrire(canvas, texteX, ligneY, morceau, fonts.corps, COULEURS.parchemin);
+      ligneY += HAUTEUR_NOM;
+    });
+  }
+  if(!premiere) return;
+  if(premiere.part !== null && premiere.part !== undefined){
+    dessinerBarre(canvas, texteX, ligneY + 4, premiere.part, largeurTexteBloc);
+  }
+  const basRangee = y + Math.max(ICONE,
+    HAUTEUR_LIGNE + ligne.lignesNom * HAUTEUR_NOM + 16);
+  ligne.jauges.slice(1).forEach((jauge, rang) => {
+    dessinerJauge(canvas, jauge, texteX, basRangee + rang * HAUTEUR_JAUGE,
+      largeurTexteBloc, fonts);
   });
 }
 
-function dessinerBijoux(canvas, lignes, x, y, hauteur, fonts, images) {
+function dessinerSectionListe(canvas, numero, titre, lignes, x, y, hauteur,
+  fonts, images) {
   cadre(canvas, x, y, COLONNE_DROITE, hauteur);
-  titreSection(canvas, "03", "Bijoux", x + PADDING, y + PADDING,
-    COLONNE_DROITE - 2 * PADDING, fonts);
-  let curseur = y + DEBUT_CONTENU_SECTION;
   const largeur = COLONNE_DROITE - 2 * PADDING;
+  titreSection(canvas, numero, titre, x + PADDING, y + PADDING, largeur, fonts);
+  let curseur = y + DEBUT_CONTENU_SECTION;
   lignes.forEach(ligne => {
-    const gauche = x + PADDING;
-    dessinerIcone(canvas, images.get(ligne.image), gauche, curseur);
-    const texteX = gauche + ICONE + 18;
-    const droite = gauche + largeur;
-    const largeurTexteBloc = droite - texteX;
-    ecrire(canvas, texteX, curseur, ligne.emplacement, fonts.petit,
-      COULEURS.faible);
-    if(ligne.jauges.length){
-      const premiere = ligne.jauges[0];
-      const valeur = texteCarte(premiere.texte);
-      const largeurValeur = largeurTexte(valeur, fonts.petit);
-      const largeurResume = largeurTexteBloc * 0.58;
-      const libelle = tronquer(premiere.libelle, fonts.petit,
-        largeurResume - largeurValeur - 12);
-      ecrireADroite(canvas, droite, curseur, valeur, fonts.petit,
-        COULEURS.parchemin);
-      ecrireADroite(canvas, droite - largeurValeur - 12, curseur, libelle,
-        fonts.petit, COULEURS.attenue);
-    }
-    ecrire(canvas, texteX, curseur + HAUTEUR_LIGNE,
-      ligne.nom || "Aucun", fonts.corps,
-      ligne.nom ? COULEURS.parchemin : COULEURS.faible);
-    if(ligne.jauges.length){
-      const premiere = ligne.jauges[0];
-      if(premiere.part !== null && premiere.part !== undefined){
-        dessinerBarre(canvas, texteX, curseur + 68, premiere.part,
-          largeurTexteBloc);
-      }
-      ligne.jauges.slice(1).forEach((jauge, rang) => {
-        dessinerJauge(canvas, jauge, texteX,
-          curseur + ICONE + rang * HAUTEUR_JAUGE, largeurTexteBloc, fonts);
-      });
-    }
+    dessinerLigneListe(canvas, ligne, x + PADDING, curseur, largeur, fonts,
+      images);
     curseur += ligne.hauteur + ESPACE_LIGNE_LISTE;
   });
 }
-
-/* ------------------------------------------------------------------ */
-/* Les vignettes                                                       */
-
-const cacheVignettes = new Map();
 
 function urlVignette(chemin) {
   return BASE_VIGNETTES + String(chemin)
@@ -822,9 +833,9 @@ async function generateBuildCardPng(carte, options) {
   });
 
   const droiteX = milieuX + COLONNE_MILIEU + GOUTTIERE;
-  dessinerListeArmure(canvas, plan.armure, droiteX, hautCorps,
+  dessinerSectionListe(canvas, "02", "Armure", plan.armure, droiteX, hautCorps,
     plan.hauteurArmure, fonts, images);
-  dessinerBijoux(canvas, plan.bijoux, droiteX,
+  dessinerSectionListe(canvas, "03", "Bijoux", plan.bijoux, droiteX,
     hautCorps + plan.separateurSections, plan.hauteurBijoux,
     fonts, images);
 
