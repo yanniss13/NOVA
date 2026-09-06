@@ -623,8 +623,45 @@ async function chargerVignette(chemin) {
   } catch (erreur) {
     console.error("Vignette illisible : " + chemin, erreur);
   }
-  cacheVignettes.set(chemin, image);
+  /* ON NE MEMORISE QUE LES SUCCES. L'isolat survit d'un appel a l'autre : un
+     echec passager — le temps d'un deploiement du site, par exemple — restait
+     grave pour toute sa duree de vie, et toutes les cartes suivantes sortaient
+     avec des cadres vides sans qu'aucune ne reessaie. */
+  if(image) cacheVignettes.set(chemin, image);
   return image;
+}
+
+/* CE QUE LE RUNTIME VOIT VRAIMENT. Une carte aux cadres vides ne dit pas
+   pourquoi : le rendu prefere un cadre vide a une carte perdue, ce qui est
+   bien, mais laisse la cause invisible depuis Discord. Cette sonde rejoue le
+   meme chemin — meme URL, meme decodage — et rapporte l'etape qui a lache.
+   `recuperer` n'est injecte que par les tests ; en production c'est `fetch`. */
+async function diagnostiquerVignette(chemin, recuperer) {
+  const url = urlVignette(chemin);
+  const depart = Date.now();
+  const chercher = recuperer || fetch;
+  try {
+    const reponse = await chercher(url);
+    if(!reponse.ok){
+      return { url, statut:reponse.status, octets:0, decode:false,
+        ms:Date.now() - depart };
+    }
+    const octets = Buffer.from(await reponse.arrayBuffer());
+    let decode = false;
+    let erreur;
+    try {
+      const image = await decodePng(octets);
+      decode = Boolean(image && image.width);
+    } catch (echec) {
+      erreur = String((echec && echec.message) || echec);
+    }
+    return Object.assign({ url, statut:reponse.status,
+      octets:octets.length, decode, ms:Date.now() - depart },
+    erreur ? { erreur } : {});
+  } catch (echec) {
+    return { url, erreur:String((echec && echec.message) || echec),
+      ms:Date.now() - depart };
+  }
 }
 
 async function chargerImages(carte, charger) {
@@ -709,6 +746,7 @@ const discordBuildPngApi = {
   mesurer,
   cartoucheJoueur,
   urlVignette,
+  diagnostiquerVignette,
   MESURES:{
     LARGEUR,
     MARGE,
