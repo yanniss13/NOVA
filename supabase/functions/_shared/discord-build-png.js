@@ -282,6 +282,31 @@ function mesurerBloc(ligne, fonts, largeur) {
    premiere jauge occupe donc les 80 px que l'icone ouvre de toute facon, et
    n'allonge rien. Seules d'eventuelles jauges supplementaires agrandissent la
    rangee — 43 des 99 pieces du jeu portent une sous-stat, jamais deux. */
+/* Le premier mot, sans accent, sans casse et sans marque de pluriel : c'est
+   ce qui permet de reconnaitre « Boucles d'oreilles du souverain cupide »
+   comme portant l'emplacement « Boucle d'oreille ». */
+function premierMot(valeur) {
+  return String(valeur || "")
+    .normalize("NFD").replace(/\p{Diacritic}/gu, "")
+    .toLowerCase().split(/[ '’]/)[0].replace(/s$/, "");
+}
+
+/* L'EMPLACEMENT NE SE REPETE PAS. Les 99 pieces et bijoux du jeu commencent
+   par le nom de leur emplacement : « Anneau » au-dessus de « Anneau du
+   souverain cupide » n'apprend rien, et prend la place de la statistique.
+
+   Deux exceptions, et ce sont elles qui font la regle. Un emplacement VIDE
+   garde son nom — « Aucun » tout seul ne dirait pas de quel bijou il s'agit,
+   et c'est justement ce qu'un membre vient verifier. Un objet qui ne porterait
+   pas son emplacement le garderait aussi : la regle s'appuie sur le nom, pas
+   sur une promesse du catalogue. */
+function enteteDeLigne(ligne) {
+  const repete = ligne.nom
+    && premierMot(ligne.nom) === premierMot(ligne.emplacement);
+  const morceaux = (repete ? [] : [ligne.emplacement]).concat(ligne.details);
+  return morceaux.filter(Boolean).join(" · ");
+}
+
 function mesurerLigneListe(ligne, fonts, largeurColonne) {
   const largeur = largeurColonne - ICONE - 18;
   const nom = couperEnLignesLimite(ligne.nom, fonts.corps, largeur, 2);
@@ -293,20 +318,28 @@ function mesurerLigneListe(ligne, fonts, largeurColonne) {
      ligne aux deux tiers vide. Le plafond reste, pour qu'un libelle bavard ne
      mange pas l'emplacement a son tour. */
   const premiere = ligne.jauges.length ? ligne.jauges[0] : null;
+  const enteteVoulu = enteteDeLigne(ligne);
   let libelleJauge = "";
   let valeurJauge = "";
   let largeurEntete = largeur;
   if(premiere){
     valeurJauge = texteCarte(premiere.texte);
     const largeurValeur = atlasStringWidthExact(valeurJauge, fonts.petit);
+    /* CHACUN PREND CE QU'IL LUI FAUT, ET NON UNE PART FIXE. Le libelle etait
+       plafonne a 58 % de la rangee quoi qu'il arrive : « Résistance au
+       percement » sortait ampute a cote d'un « Anneau » de 69 px qui laissait
+       la moitie de la rangee vide. L'emplacement se sert le premier — c'est
+       l'identite de la ligne — mais jamais au-dela de sa part quand les deux
+       ne tiennent pas, sinon un passif bavard chasserait la statistique. */
+    const disponible = largeur - largeurValeur - 28;
+    const voulu = atlasStringWidthExact(enteteVoulu, fonts.petit);
+    const restant = disponible
+      - atlasStringWidthExact(texteCarte(premiere.libelle), fonts.petit);
+    largeurEntete = Math.min(voulu, Math.max(restant, disponible * 0.42));
     libelleJauge = tronquer(premiere.libelle, fonts.petit,
-      largeur * 0.58 - largeurValeur - 12);
-    largeurEntete = largeur - largeurValeur - 12
-      - atlasStringWidthExact(libelleJauge, fonts.petit) - 16;
+      disponible - largeurEntete);
   }
-  const entete = tronquer(ligne.details.length
-    ? ligne.emplacement + " · " + ligne.details.join(" · ")
-    : ligne.emplacement, fonts.petit, largeurEntete);
+  const entete = tronquer(enteteVoulu, fonts.petit, largeurEntete);
 
   return Object.assign({}, ligne, {
     nom,

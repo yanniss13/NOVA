@@ -299,10 +299,13 @@ function comptePixels(png, couleur) {
   /* L'entete d'une rangee est une MESURE, pas une decision du trace : la
      sous-stat ne doit reserver que la place qu'elle occupe, sinon le passif
      sort en « Passif nivea… » alors que la rangee est aux deux tiers vide. */
-  assert.equal(plan.armure[0].entete, "Haut · Passif niveau 3",
-    "le palier du passif se lit en entier a cote de l'emplacement");
-  assert.equal(plan.armure[1].entete, "Bas",
-    "sans passif, l'entete n'est que l'emplacement");
+  /* « Haut de l'œil de l'étoile sinistre » porte deja son emplacement : la
+     rangee ne le repete pas, mais le passif, lui, ne se lit nulle part
+     ailleurs. */
+  assert.equal(plan.armure[0].entete, "Passif niveau 3",
+    "le palier du passif se lit en entier, sans repeter l'emplacement");
+  assert.equal(plan.armure[1].entete, "",
+    "sans passif, un nom qui porte son emplacement n'a pas d'entete");
   const armureNue = JSON.parse(JSON.stringify(CARTE));
   armureNue.sections.find(section => section.titre === "Armure")
     .lignes.forEach(entree => { entree.enchantements = []; });
@@ -313,6 +316,63 @@ function comptePixels(png, couleur) {
   assert.ok(orAvecSousStat - orSansSousStat > 500,
     "la barre de la sous-stat doit se dessiner : " + orAvecSousStat
     + " contre " + orSansSousStat);
+
+  /* LE LIBELLE DE LA SOUS-STAT PREND LA PLACE LAISSEE LIBRE. Il etait plafonne
+     a 58 % de la rangee quoi qu'il arrive, si bien que « Résistance au
+     percement » sortait « Résistance au perce… » a cote d'un « Anneau » de
+     69 px qui laissait la moitie de la rangee vide. L'emplacement prend ce
+     qu'il lui faut, le libelle recupere le reste. */
+  const bijouLibelle = JSON.parse(JSON.stringify(CARTE));
+  bijouLibelle.sections.find(section => section.titre === "Bijoux").lignes = [
+    ligne("Anneau", "Anneau du souverain cupide", {
+      enchantements:[
+        { libelle:"Efficacité de la durée des bonus", texte:"11.78 %",
+          part:0.5 }
+      ]
+    })
+  ];
+  const rangeeLibelle = mesurer(bijouLibelle, fonts).bijoux[0];
+  assert.equal(rangeeLibelle.libelleJauge, "Efficacité de la durée des bonus",
+    "un libelle de 271 px doit tenir dans sa rangee");
+
+  /* L'EMPLACEMENT NE SE REPETE PAS. Les 99 pieces et bijoux du jeu commencent
+     par le nom de leur emplacement : « Anneau » au-dessus de « Anneau du
+     souverain cupide » n'apprend rien et prend la place de la statistique. */
+  assert.equal(rangeeLibelle.entete, "",
+    "un nom qui porte deja son emplacement rend la rangee a la statistique");
+
+  /* Mais un emplacement VIDE garde le sien : « Aucun » tout seul ne dirait pas
+     de quel bijou il s'agit — et c'est justement ce qu'un membre vient
+     verifier. */
+  const bijouVide = JSON.parse(JSON.stringify(bijouLibelle));
+  bijouVide.sections.find(section => section.titre === "Bijoux")
+    .lignes[0] = ligne("Collier", "");
+  assert.equal(mesurer(bijouVide, fonts).bijoux[0].entete, "Collier");
+
+  /* Et le passif reste, lui : il ne se lit nulle part ailleurs. */
+  const bijouPassif = JSON.parse(JSON.stringify(bijouLibelle));
+  bijouPassif.sections.find(section => section.titre === "Bijoux")
+    .lignes[0].details = ["Passif niveau 3"];
+  assert.equal(mesurer(bijouPassif, fonts).bijoux[0].entete, "Passif niveau 3");
+
+  /* Un objet qui ne porterait pas son emplacement le garderait : la regle
+     s'appuie sur le nom, pas sur une promesse du catalogue. */
+  const bijouAutre = JSON.parse(JSON.stringify(bijouLibelle));
+  bijouAutre.sections.find(section => section.titre === "Bijoux")
+    .lignes[0].nom = "Talisman du serment";
+  assert.equal(mesurer(bijouAutre, fonts).bijoux[0].entete, "Anneau");
+
+  /* Mais l'emplacement ne disparait pas pour autant : le plus bavard des
+     libelles du jeu — 425 px — ne peut pas lui prendre toute la rangee. */
+  const bijouBavard = JSON.parse(JSON.stringify(bijouLibelle));
+  bijouBavard.sections.find(section => section.titre === "Bijoux")
+    .lignes[0].enchantements[0].libelle =
+      "Augmentation de toutes les attaques élémentaires";
+  const rangeeBavarde = mesurer(bijouBavard, fonts).bijoux[0];
+  assert.equal(rangeeBavarde.entete, "",
+    "le nom portant deja l'emplacement, toute la rangee va au libelle");
+  assert.ok(rangeeBavarde.libelleJauge.endsWith("…"),
+    "ce libelle-la ne tient dans aucune largeur : il porte sa marque");
 
   /* Un bijou trop long ne se raccourcit plus non plus : deux des 37 du jeu
      depassent la colonne, ils passent a la ligne comme une armure. */
