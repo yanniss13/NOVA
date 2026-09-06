@@ -436,6 +436,34 @@ const uneArme = demande({
 assert.equal(uneArme.cartes.length, 1);
 assert.equal(uneArme.cartes[0].arme, "Nunchaku");
 
+/* ON PEUT AUSSI TAPER LE NOM AFFICHE. Le menu renvoie la cle du roster, mais
+   un membre qui ecrit a la main ecrit ce qu'il LIT — « espadon », jamais
+   « Epee 2 mains ». Les deux doivent mener au meme build. */
+const LIGNES_EPEE = [{
+  owner:"u-1", char_id:"ban", potential_tier:7,
+  builds:{ "Epee 2 mains":{ weapon:"", armor:{}, jewel:{} } }
+}];
+const parEtiquette = resoudreDemandeBuild({
+  profils:PROFILS, lignes:LIGNES_EPEE, libelles:LIBELLES,
+  options:{ joueur:"YanniSs13", personnage:"Ban", arme:"espadon" }
+});
+assert.ok(!parEtiquette.erreur, parEtiquette.erreur);
+assert.equal(parEtiquette.cartes[0].arme, "Espadon");
+const parDossier = resoudreDemandeBuild({
+  profils:PROFILS, lignes:LIGNES_EPEE, libelles:LIBELLES,
+  options:{ joueur:"YanniSs13", personnage:"Ban", arme:"Epee 2 mains" }
+});
+assert.equal(parDossier.cartes.length, 1,
+  "la valeur renvoyee par le menu doit continuer de fonctionner");
+
+/* Et quand l'arme n'existe pas, la proposition cite ce qui s'affiche. */
+const epeeAbsente = resoudreDemandeBuild({
+  profils:PROFILS, lignes:LIGNES_EPEE, libelles:LIBELLES,
+  options:{ joueur:"YanniSs13", personnage:"Ban", arme:"Rapiere" }
+});
+assert.match(epeeAbsente.erreur, /Espadon/,
+  "l'erreur doit proposer le nom lisible, pas le nom de dossier");
+
 const armeSansBuild = demande({
   joueur:"YanniSs13", personnage:"Ban", arme:"Rapiere"
 });
@@ -484,6 +512,27 @@ assert.equal(libelleArme("Epee 1 main"), "Épée longue");
 assert.equal(libelleArme("Epee 2 mains"), "Espadon");
 assert.equal(libelleArme("Bouclier"), "Épée & bouclier");
 assert.equal(libelleArme("Livre"), "Grimoire");
+
+/* LE MENU MONTRE LE NOM DU JEU, ET RENVOIE LA CLE DU ROSTER. Il proposait
+   « Epee 1 main » : le nom de dossier, que personne n'ecrit ni ne reconnait.
+   Discord distingue l'etiquette de la valeur — la premiere se lit, la seconde
+   revient a la commande — et c'est exactement ce qu'il faut ici. */
+const menuArmes = classerPropositions(
+  ["Epee 1 main", "Epees doubles", "Hache"], "", libelleArme);
+assert.deepEqual(menuArmes, [
+  { name:"Épée longue", value:"Epee 1 main" },
+  { name:"Épées doubles", value:"Epees doubles" },
+  { name:"Hache", value:"Hache" }
+], "l'etiquette se lit, la valeur revient a la commande");
+
+/* Et la saisie se compare a ce qui est AFFICHE : un membre qui tape « longue »
+   cherche l'epee longue, pas un dossier dont il ignore le nom. */
+assert.deepEqual(
+  classerPropositions(["Epee 1 main", "Hache"], "longue", libelleArme),
+  [{ name:"Épée longue", value:"Epee 1 main" }]);
+assert.deepEqual(
+  classerPropositions(["Epee 2 mains", "Hache"], "espadon", libelleArme),
+  [{ name:"Espadon", value:"Epee 2 mains" }]);
 
 /* ET ELLES DOIVENT LE RESTER. Le site porte la table de reference ; la
    fonction Edge ne peut pas l'importer — elle tire `window` derriere elle —
