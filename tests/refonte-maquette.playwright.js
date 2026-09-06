@@ -27,6 +27,15 @@ const { serveRepo } = require("./helpers/serve");
     assert.equal(await page.locator("body").getAttribute("data-session"), "member");
     await page.getByRole("button", { name:/YanniSs13/ }).waitFor();
 
+    await page.getByText("Équipe manquante", { exact:true }).waitFor();
+    await page.getByRole("button", { name:"Ouvrir le groupe" }).click();
+    await page.locator('[data-view="boss"]:not([hidden])').waitFor();
+    for(const label of ["Équipes", "Disponibilités", "Groupes", "Rapports"]){
+      await page.getByRole("tab", { name:label, exact:true }).click();
+      await page.locator('[data-boss-panel]:not([hidden])').waitFor();
+    }
+    await page.getByText("Score global", { exact:true }).waitFor();
+
     assert.deepEqual(errors, [], "erreurs navigateur : " + errors.join(" | "));
     console.log("refonte-maquette.playwright.js navigation OK");
   }finally{
