@@ -744,7 +744,7 @@ function loadApp(initialTeams){
         { id:"merlin", name:"Merlin", file:"7ds-personnages/merlin.webp" }
       ],
       armes:{
-        "Epee a une main":[
+        "Epee longue":[
           { name:"Épée", file:"7ds-armes/Epee 1 main/epee.webp" }
         ],
         "Epees doubles":[

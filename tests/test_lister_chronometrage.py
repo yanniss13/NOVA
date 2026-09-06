@@ -87,8 +87,8 @@ class ListerChronometrageTests(unittest.TestCase):
 
         for libelle in [
             "Hache", "Grimoire", "Épées doubles", "Rapière",
-            "Épée & bouclier", "Lance", "Épée à une main", "Nunchaku",
-            "Gantelets", "Épée à deux mains", "Bâton", "Baguette",
+            "Épée & bouclier", "Lance", "Épée longue", "Nunchaku",
+            "Gantelets", "Espadon", "Bâton", "Baguette",
         ]:
             self.assertIn("| %s |" % libelle, document)
 

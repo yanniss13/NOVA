@@ -34,7 +34,7 @@ const LIBELLES = JSON.parse(fs.readFileSync(
 
 /* LES PERSONNAGES DE LA TABLE, et non « les supports ».
 
-   Escanor porte son malus de defense avec une Epee a deux mains de role
+   Escanor porte son malus de defense avec une Espadon de role
    Attaquant, Meliodas n'est support de rien, et King debuffe avec un
    Grimoire de role Gardien. Ce qui rassemble ces lignes n'est pas un role -
    c'est un effet sur la cible, ou un bonus rendu a l'equipe.

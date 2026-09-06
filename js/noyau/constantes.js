@@ -91,8 +91,8 @@
     Axe:{label:"Hache",icon:"axe"}, Book:{label:"Grimoire",icon:"book"},
     SwordDual:{label:"Épées doubles",icon:"sworddual"}, Rapier:{label:"Rapière",icon:"rapier"},
     Shield:{label:"Épée & bouclier",icon:"shield"}, Lance:{label:"Lance",icon:"lance"},
-    Sword1h:{label:"Épée à une main",icon:"sword1h"}, Cudgel3c:{label:"Nunchaku",icon:"cudgel3c"},
-    Gauntlets:{label:"Gantelets",icon:"gauntlets"}, Sword2h:{label:"Épée à deux mains",icon:"sword2h"},
+    Sword1h:{label:"Épée longue",icon:"sword1h"}, Cudgel3c:{label:"Nunchaku",icon:"cudgel3c"},
+    Gauntlets:{label:"Gantelets",icon:"gauntlets"}, Sword2h:{label:"Espadon",icon:"sword2h"},
     Staff:{label:"Bâton",icon:"staff"}, Wand:{label:"Baguette",icon:"wand"}
   };
   const metaOf = id => (id && META[id]) || null;

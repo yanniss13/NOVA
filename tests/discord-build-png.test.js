@@ -70,7 +70,7 @@ const CARTE = {
   iconeArme:"7ds-ui/mastery/sword1h.webp",
   iconeRoleElement:"7ds-ui/role-elements/dark_attacker.webp",
   potentiel:10,
-  arme:"Épée à une main",
+  arme:"Épée longue",
   portrait:"7ds-personnages/meliodas.webp",
   note:"Build de raid : garder la perle légendaire sur le taux critique.",
   fichier:"build-yanniss13-meliodas-epee-a-une-main.png",
@@ -79,7 +79,7 @@ const CARTE = {
       titre:"Arme",
       disposition:"colonne",
       lignes:[
-        ligne("Épée à une main", "En plein cœur !", {
+        ligne("Épée longue", "En plein cœur !", {
           image:"7ds-armes/Epee 1 main/En plein coeur.webp",
           mesures:[
             { libelle:"Niveau", valeur:50, maximum:50, forme:"barre" },

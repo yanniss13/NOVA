@@ -73,7 +73,7 @@ const ARME_EPEE = "En plein cœur !";
     );
 
     // ---------- Le reposer sur un autre type d'arme ----------
-    await editeur.getByRole("button", { name:/Epee 1 main|Épée à une main/ }).click();
+    await editeur.getByRole("button", { name:/Epee 1 main|Épée longue/ }).click();
     await editeur.locator('.gear-slot[data-slot="Haut"]').waitFor();
 
     const avant = await editeur.locator('.gear-slot[data-slot="Haut"]').getAttribute("title");

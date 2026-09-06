@@ -187,7 +187,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
 
   const groups = plain(hooks.compatibleWeaponGroups("meliodas"));
   assert.deepStrictEqual(Object.keys(groups).sort(), [
-    "Epee a une main", "Epees doubles", "Hache"
+    "Epee longue", "Epees doubles", "Hache"
   ]);
   assert.ok(Object.values(groups).flat().every(item =>
     ["Hache", "Epee 1 main", "Epees doubles"].includes(item.file.split("/")[1])

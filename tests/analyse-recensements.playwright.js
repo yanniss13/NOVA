@@ -684,7 +684,7 @@ async function ouvrirAnalyse(page, section = "supports"){
     /* ===== LE GROUPEMENT PAR PERSONNAGE, ET L'ORDRE QU'IL PORTE. =====
 
        Gil Thunder tient trois lignes contre la cible, une par arme. Un membre
-       qui ne joue que son Epee a une main n'en apporte QU'UNE - c'est ce qui
+       qui ne joue que son Epee longue n'en apporte QU'UNE - c'est ce qui
        fait de lui le bon cas : le groupe doit remonter en tete de section, la
        ligne portee doit ouvrir le groupe, et les deux autres rester la, grises,
        sans repeter son nom.
@@ -725,7 +725,7 @@ async function ouvrirAnalyse(page, section = "supports"){
     const teteDuGroupe = gil.locator(".debuff-row").first();
     assert.equal(
       await teteDuGroupe.locator(".db-origine").textContent(),
-      "Épée à une main",
+      "Épée longue",
       "dans le groupe aussi, la ligne portee passe devant celles que personne n'a"
     );
     assert.equal(

@@ -79,10 +79,10 @@ LIBELLES_ARMES = {
     "Rapier": "Rapière",
     "Shield": "Épée & bouclier",
     "Lance": "Lance",
-    "Sword1h": "Épée à une main",
+    "Sword1h": "Épée longue",
     "Cudgel3c": "Nunchaku",
     "Gauntlets": "Gantelets",
-    "Sword2h": "Épée à deux mains",
+    "Sword2h": "Espadon",
     "Staff": "Bâton",
     "Wand": "Baguette",
 }

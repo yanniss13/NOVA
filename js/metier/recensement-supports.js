@@ -10,7 +10,7 @@
    rosters. La vue filtre sur `vise` ; le metier ne connait qu'une forme.
 
    LE CRITERE EST L'EFFET, JAMAIS LE ROLE. Escanor porte son malus de defense
-   avec une Epee a deux mains de role Attaquant, King avec un Grimoire de role
+   avec une Espadon de role Attaquant, King avec un Grimoire de role
    Gardien : un filtre par role les manquerait tous les deux, et ce sont eux
    qu'on veut voir.
 
@@ -244,7 +244,7 @@ import { armeDuGameId } from "./equipe-buffs.js";
 
   /* Les membres qui portent CETTE ligne.
 
-     Posseder Escanor ne suffit pas - son malus vit sur l'Epee a deux mains, et
+     Posseder Escanor ne suffit pas - son malus vit sur l'Espadon, et
      un membre qui ne joue que sa Hache ne l'apporte pas au groupe. Une ligne
      dont l'arme ou la tenue est illisible ne trouve PERSONNE plutot que tout
      le monde : une ligne grise a tort se corrige en la regardant, un membre
