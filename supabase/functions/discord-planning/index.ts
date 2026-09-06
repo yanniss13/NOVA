@@ -197,8 +197,9 @@ const {
   }): { erreur?: string; cartes?: BuildCard[] };
   contenuMessageBuild(cartes: BuildCard[]): string;
 };
-const { generateBuildCardPng } = buildPngModule as {
+const { generateBuildCardPng, diagnostiquerVignette } = buildPngModule as {
   generateBuildCardPng(carte: BuildCard): Promise<Uint8Array>;
+  diagnostiquerVignette(chemin: string): Promise<Record<string, unknown>>;
 };
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -721,7 +722,20 @@ async function propositionsDeBuild(
   });
 }
 
+/* Le chemin d'une vignette connue, servie par GitHub Pages. Il ne vient PAS de
+   la requête : la sonde ne doit rien pouvoir aller chercher d'autre. */
+const VIGNETTE_TEMOIN = "7ds-personnages/meliodas.webp";
+
 Deno.serve(async request => {
+  /* UNE SONDE, ET RIEN D'AUTRE, EN GET. Quand une carte sort avec des cadres
+     vides, l'image ne dit pas pourquoi et les journaux ne sont lisibles que
+     depuis le tableau de bord. Ce point d'entrée rejoue le chargement d'une
+     vignette témoin et rapporte ce que le runtime a vu — code HTTP, octets
+     reçus, décodage. Il ne lit aucun secret et ne prend aucun paramètre. */
+  if(request.method === "GET"
+    && new URL(request.url).searchParams.has("diagnostic")){
+    return jsonResponse({ vignette:await diagnostiquerVignette(VIGNETTE_TEMOIN) });
+  }
   if(request.method !== "POST"){
     return jsonResponse({ error:"Méthode non autorisée" }, 405);
   }

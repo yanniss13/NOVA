@@ -20,7 +20,7 @@ const {
 } = require(partage("availability-pdf.js"));
 const {
   generateBuildCardPng, MESURES, largeurTexte, tronquer, mesurer,
-  cartoucheJoueur
+  cartoucheJoueur, urlVignette, diagnostiquerVignette
 } = require(partage("discord-build-png.js"));
 const { decodePng } = require(partage("png-decode.js"));
 const { texteCarte } = require(partage("discord-build.js"));
@@ -418,6 +418,38 @@ function comptePixels(png, couleur) {
   assert.ok(orPart - orSansPart > 2000,
     "une part connue doit remplir sa barre : " + orPart + " contre "
     + orSansPart);
+
+  /* LE DIAGNOSTIC DES VIGNETTES. Quand une carte sort avec des cadres vides,
+     rien sur l'image ne dit pourquoi : le code s'en tient a un cadre plutot
+     qu'a une carte perdue, ce qui est bien, mais laisse la cause invisible.
+     Ce sondage rejoue le meme chemin — meme URL, meme decodage — et rapporte
+     ce que le runtime a REELLEMENT vu. */
+  assert.equal(typeof diagnostiquerVignette, "function");
+  const url = urlVignette("7ds-personnages/meliodas.webp");
+  assert.match(url, /^https:\/\/[^/]+\/NOVA\/7ds-vignettes\//,
+    "la vignette se lit sur le site publie : " + url);
+  assert.ok(url.endsWith("meliodas.png"),
+    "les vignettes sont des PNG : le webp ne se decode pas ici");
+
+  const png80 = await generateBuildCardPng(CARTE, SANS_IMAGES);
+  const sonde = await diagnostiquerVignette("7ds-personnages/meliodas.webp",
+    async () => ({ ok:true, status:200,
+      arrayBuffer:async () => png80.buffer.slice(png80.byteOffset,
+        png80.byteOffset + png80.byteLength) }));
+  assert.equal(sonde.statut, 200);
+  assert.equal(sonde.octets, png80.byteLength,
+    "le sondage doit rapporter la taille reellement recue");
+  assert.equal(sonde.decode, true, "un PNG valide doit se decoder");
+  assert.equal(sonde.url, url);
+
+  const sondeRatee = await diagnostiquerVignette("7ds-personnages/x.webp",
+    async () => { throw new Error("dns"); });
+  assert.match(sondeRatee.erreur, /dns/,
+    "une panne reseau doit etre rapportee telle quelle, pas avalee");
+  const sonde404 = await diagnostiquerVignette("7ds-personnages/x.webp",
+    async () => ({ ok:false, status:404 }));
+  assert.equal(sonde404.statut, 404);
+  assert.equal(sonde404.decode, false);
 
   /* Les images sont bien demandees, et bien posees. */
   const demandes = [];
