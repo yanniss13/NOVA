@@ -15,10 +15,9 @@
 /* ---------- En-tete ---------- */
 
 .app-header{
-  position:relative;z-index:20;width:var(--shell);min-height:72px;margin:26px auto 0;
+  position:relative;z-index:20;width:var(--shell);min-height:72px;margin:0 auto;
   display:flex;align-items:center;gap:34px;padding:10px 26px;
-  border:1px solid var(--line);border-bottom-color:var(--gold);
-  border-radius:10px 10px 0 0;background:rgba(5,22,32,.94);
+  border-bottom:1px solid var(--gold);background:rgba(5,22,32,.94);
   box-shadow:0 18px 50px rgba(0,0,0,.2);
 }
 .brand{
@@ -96,11 +95,10 @@
 /* ---------- Pied de page ---------- */
 
 .site-footer{
-  width:var(--shell);min-height:56px;margin:0 auto 28px;
+  width:var(--shell);min-height:56px;margin:0 auto;
   display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:28px;
   padding:10px 26px;color:var(--mist);font-size:13px;
-  border:1px solid var(--line);border-top-color:var(--gold);
-  border-radius:0 0 10px 10px;background:rgba(5,22,32,.94);
+  border-top:1px solid var(--gold);background:rgba(5,22,32,.94);
 }
 .site-footer>span:first-child{color:var(--gold-light);font-family:var(--display);letter-spacing:.04em}
 .site-footer a{display:inline-flex;align-items:center;color:var(--mist);text-decoration:none}
@@ -116,7 +114,6 @@
 /* ---------- Intermediaire ---------- */
 
 @media (max-width:1179px){
-  :root{--shell:calc(100% - 28px)}
   .app-header{gap:20px;padding-inline:18px}
   .local-tabs-bar{padding-inline:30px}
 }
@@ -124,12 +121,8 @@
 /* ---------- Telephone ---------- */
 
 @media (max-width:767px){
-  :root{--shell:100%}
   body{background:var(--abyss)}
-  .app-header{
-    width:100%;min-height:60px;margin:0;gap:4px;padding:7px 14px;
-    border-width:0 0 1px;border-radius:0;
-  }
+  .app-header{min-height:60px;gap:4px;padding:7px 14px}
   .brand{font-size:14px;gap:10px}
   .brand-mark{width:40px;height:40px;font-size:22px}
   .desktop-nav{display:none}
@@ -161,19 +154,15 @@
     scroll-padding-bottom:calc(var(--barre-pouce) + 14px + env(safe-area-inset-bottom));
     scroll-padding-top:12px
   }
-  main{
-    width:100%;border:0;
-    padding-bottom:calc(var(--barre-pouce) + 10px + env(safe-area-inset-bottom))
-  }
+  main{padding-bottom:calc(var(--barre-pouce) + 10px + env(safe-area-inset-bottom))}
   .view{min-width:0;min-height:calc(100vh - 132px)}
   .local-tabs-bar{padding-inline:14px}
   .local-tabs{margin:18px -14px 16px;padding-inline:14px;overflow-x:auto}
   .local-tabs button{flex:none;padding:0 14px}
 
   .site-footer{
-    width:100%;min-height:76px;margin:0;padding:12px 16px 90px;
+    min-height:76px;padding:12px 16px 90px;
     grid-template-columns:1fr;gap:3px;text-align:center;font-size:11px;
-    border-width:1px 0 0;border-radius:0;
   }
   .site-footer a{justify-content:center;min-height:28px}
 

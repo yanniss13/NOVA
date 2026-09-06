@@ -54,12 +54,16 @@
   --display:"Cinzel", Georgia, serif;
   --body:Georgia, "Times New Roman", serif;
 
-  /* La largeur de la page, et la seule ombre du site. Le cadre suit la
-     fenetre : la maquette le plafonnait a 1440px, ce qui laissait deux larges
-     bandes noires sur un ecran de bureau. Les vues denses du site — roster,
-     planning, wiki — gagnent a prendre la largeur disponible ; le texte
-     courant, lui, reste borne a 62ch par les composants qui le portent. */
-  --shell:calc(100% - 48px);
+  /* La largeur de la coquille, et la seule ombre du site. En-tete, contenu et
+     pied de page la partagent : c'est le seul endroit ou reinstaller un
+     plafond si la page devenait un jour trop large.
+
+     Elle vaut 100 % partout. La maquette encadrait la page a 1440px : sur un
+     ecran de bureau, ce cadre flottant laissait deux bandes noires sur les
+     cotes et une au-dessus de l'en-tete, alors que l'ancien site occupait
+     l'ecran. Le telephone, lui, etait deja en pleine largeur ; les trois
+     paliers se comportent desormais pareil. */
+  --shell:100%;
   /* La hauteur de la barre du pouce. Tout ce qui se pose en bas de l'ecran
      sur un telephone — le contenu, le bandeau de mise a jour, les toasts —
      doit passer AU-DESSUS d'elle. Un jeton, parce que trois feuilles en

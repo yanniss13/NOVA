@@ -16,6 +16,12 @@
 const BUILD_VERSION = "__BUILD_VERSION__";
 const CACHE_PREFIX = "conf7ds-";
 const CACHE = CACHE_PREFIX + BUILD_VERSION;
+/* Le marqueur n'est remplace que dans la copie publiee. Une copie servie
+   directement depuis le depot garde donc UN SEUL nom de cache pour toutes
+   les versions : « cache d'abord » y devient « la premiere version pour
+   toujours ». On teste le prefixe du marqueur plutot que le marqueur lui-meme,
+   que la substitution du deploiement remplacerait ici aussi. */
+const VERSION_INJECTEE = !BUILD_VERSION.startsWith("__");
 /* Seule la petite icône est préchargée. La 512 (350 Ko) ne sert qu'à
    l'installation sur l'écran d'accueil : la faire télécharger par chaque membre
    au premier chargement coûtait plus qu'elle ne rapportait. Le gestionnaire
@@ -190,7 +196,7 @@ self.addEventListener("fetch", event => {
   // un nouveau déploiement. Les fichiers versionnés, eux, sont servis depuis le
   // cache sans requête : mesuré à 2,3 Mo retéléchargés inutilement par visite.
   if(CORE_PATHS.has(url.pathname)){
-    event.respondWith(cacheFirst(request));
+    event.respondWith(VERSION_INJECTEE ? cacheFirst(request) : networkFirst(request));
     return;
   }
 

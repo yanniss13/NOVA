@@ -70,6 +70,7 @@ const SUITES = {
     "node tests/boss-correction-schema.test.js",
     "node --test tests/boss-account-retention.test.js",
     "node tests/pwa.test.js",
+    "node tests/sw-strategie.test.js",
     "node tests/reminder.test.js",
     "node tests/discord-planning.test.js",
     "python -m unittest tests/test_generate_armures_liees.py",
