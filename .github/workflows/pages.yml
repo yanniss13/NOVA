@@ -82,6 +82,18 @@ jobs:
           grep -q "__BUILD_VERSION__" _site/sw.js
           sed -i "s/__BUILD_VERSION__/${GITHUB_SHA}/g" _site/sw.js
           ! grep -q "__BUILD_VERSION__" _site/sw.js
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+      # Les vignettes PNG que la carte Discord /build affiche. Elles sont
+      # fabriquees ICI et non versionnees : ce serait un second exemplaire de
+      # chaque image du site, environ trois megaoctets. L'Edge Function ne sait
+      # decoder aucun webp, elle lit donc ces PNG.
+      - name: Fabriquer les vignettes de la carte /build
+        run: |
+          pip install "Pillow>=11"
+          python scripts/generer-vignettes.py --sortie _site
+          python scripts/generer-vignettes.py --sortie _site --verifier
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:

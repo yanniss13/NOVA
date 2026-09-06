@@ -1,10 +1,10 @@
 "use strict";
 
-/* Enregistre `/planning`, `/chrono` et `/run` dans UN serveur Discord sans remplacer
+/* Enregistre `/planning`, `/chrono`, `/run` et `/build` dans UN serveur Discord sans
    les autres commandes de l'application. Le token Bot ne sert qu'à cette
    opération administrative et ne doit jamais rejoindre le dépôt ni Supabase.
 
-   Les trois commandes s'enregistrent ensemble parce qu'elles partagent un seul
+   Les quatre commandes s'enregistrent ensemble parce qu'elles partagent un seul
    endpoint d'interactions : Discord n'en accepte qu'un par application. */
 
 const {

@@ -42,12 +42,26 @@ function runCommandDefinition() {
   };
 }
 
+/* La definition de `/build` vit dans son propre module : elle porte trois
+   options, et tout ce qui la sert (recherche du joueur, modele de carte) y est
+   deja. Elle est lue PARESSEUSEMENT — au premier appel, pas au chargement —
+   pour que l'ordre des imports de l'Edge Function n'ait pas d'importance. */
+function buildCommandDefinitionOrNull() {
+  if(typeof module !== "undefined" && module.exports
+    && !globalThis.NOVA_DISCORD_BUILD){
+    require("./discord-build.js");
+  }
+  const buildModule = globalThis.NOVA_DISCORD_BUILD;
+  return buildModule ? buildModule.buildCommandDefinition() : null;
+}
+
 function commandDefinitions() {
   return [
     planningCommandDefinition(),
     chronoCommandDefinition(),
-    runCommandDefinition()
-  ];
+    runCommandDefinition(),
+    buildCommandDefinitionOrNull()
+  ].filter(Boolean);
 }
 
 /* Les salons comme les rôles arrivent en une chaîne séparée par des

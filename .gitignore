@@ -28,3 +28,8 @@ AUDIT-*.md
 # toujours — l'historique ne s'allege pas apres coup.
 outils/fmodel/tous-les-chemins.txt
 outils/fmodel/animations-completes.json
+
+# Vignettes PNG de la carte Discord /build : fabriquees par
+# scripts/generer-vignettes.py, publiees par le workflow Pages, jamais
+# versionnees — ce serait un second exemplaire de chaque image du site.
+7ds-vignettes/

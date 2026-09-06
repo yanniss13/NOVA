@@ -1,0 +1,465 @@
+{
+ "version": 1,
+ "personnages": {
+  "ban": {
+   "nom": "Ban",
+   "fichier": "7ds-personnages/ban.webp",
+   "element": "DEFAULT"
+  },
+  "bug": {
+   "nom": "Bug",
+   "fichier": "7ds-personnages/bug.webp",
+   "element": "DARK"
+  },
+  "daisy": {
+   "nom": "Daisy",
+   "fichier": "7ds-personnages/daisy.webp",
+   "element": "EARTH"
+  },
+  "derieri": {
+   "nom": "Derieri",
+   "fichier": "7ds-personnages/derieri.webp",
+   "element": "DARK"
+  },
+  "diane": {
+   "nom": "Diane",
+   "fichier": "7ds-personnages/diane.webp",
+   "element": "EARTH"
+  },
+  "drake": {
+   "nom": "Drake",
+   "fichier": "7ds-personnages/drake.webp",
+   "element": "THUNDER"
+  },
+  "dreydrin": {
+   "nom": "Dreydrin",
+   "fichier": "7ds-personnages/dreydrin.webp",
+   "element": "EARTH"
+  },
+  "dreyfus": {
+   "nom": "Dreyfus",
+   "fichier": "7ds-personnages/dreyfus.webp",
+   "element": "DEFAULT"
+  },
+  "elaine": {
+   "nom": "Elaine",
+   "fichier": "7ds-personnages/elaine.webp",
+   "element": "WIND"
+  },
+  "elizabeth": {
+   "nom": "Elizabeth",
+   "fichier": "7ds-personnages/elizabeth.webp",
+   "element": "HOLY"
+  },
+  "escanor": {
+   "nom": "Escanor",
+   "fichier": "7ds-personnages/escanor.webp",
+   "element": "FIRE"
+  },
+  "gil-thunder": {
+   "nom": "Gil Thunder",
+   "fichier": "7ds-personnages/gil-thunder.webp",
+   "element": "THUNDER"
+  },
+  "gowther": {
+   "nom": "Gowther",
+   "fichier": "7ds-personnages/gowther.webp",
+   "element": "THUNDER"
+  },
+  "griamore": {
+   "nom": "Griamore",
+   "fichier": "7ds-personnages/griamore.webp",
+   "element": "DEFAULT"
+  },
+  "guila": {
+   "nom": "Guila",
+   "fichier": "7ds-personnages/guila.webp",
+   "element": "FIRE"
+  },
+  "hendrickson": {
+   "nom": "Hendrickson",
+   "fichier": "7ds-personnages/hendrickson.webp",
+   "element": "HOLY"
+  },
+  "howzer": {
+   "nom": "Howzer",
+   "fichier": "7ds-personnages/howzer.webp",
+   "element": "WIND"
+  },
+  "jericho": {
+   "nom": "Jericho",
+   "fichier": "7ds-personnages/jericho.webp",
+   "element": "ICE"
+  },
+  "king": {
+   "nom": "King",
+   "fichier": "7ds-personnages/king.webp",
+   "element": "HOLY"
+  },
+  "klotho": {
+   "nom": "Klotho",
+   "fichier": "7ds-personnages/klotho.webp",
+   "element": "WIND"
+  },
+  "manny": {
+   "nom": "Manny",
+   "fichier": "7ds-personnages/manny.webp",
+   "element": "HOLY"
+  },
+  "meliodas": {
+   "nom": "Meliodas",
+   "fichier": "7ds-personnages/meliodas.webp",
+   "element": "DARK"
+  },
+  "merlin": {
+   "nom": "Merlin",
+   "fichier": "7ds-personnages/merlin.webp",
+   "element": "ICE"
+  },
+  "slader": {
+   "nom": "Slader",
+   "fichier": "7ds-personnages/slader.webp",
+   "element": "FIRE"
+  },
+  "tioreh": {
+   "nom": "Tioreh",
+   "fichier": "7ds-personnages/tioreh.webp",
+   "element": "FIRE"
+  },
+  "tristan": {
+   "nom": "Tristan",
+   "fichier": "7ds-personnages/tristan.webp",
+   "element": "FIRE"
+  }
+ },
+ "stats": {
+  "A_Accuracy": {
+   "fr": "Perforation",
+   "unit": "flat"
+  },
+  "A_Block": {
+   "fr": "Persévérance",
+   "unit": "flat"
+  },
+  "A_Block_Rate": {
+   "fr": "Taux de parade",
+   "unit": "ten-thousandths"
+  },
+  "Activethird_Damadd_Rate": {
+   "fr": "Augmentation des dégâts d'attaque spéciale",
+   "unit": "ten-thousandths"
+  },
+  "Aerialattack_Damadd_Rate": {
+   "fr": "Augmentation des dégâts d'attaque plongée",
+   "unit": "ten-thousandths"
+  },
+  "AllElement_Add": {
+   "fr": "Attaque de tous les éléments",
+   "unit": "flat"
+  },
+  "AllElement_Rate": {
+   "fr": "Augmentation de toutes les attaques élémentaires",
+   "unit": "ten-thousandths"
+  },
+  "AllElement_Res": {
+   "fr": "Défense de tous les éléments",
+   "unit": "flat"
+  },
+  "All_Element_Res_Rate": {
+   "fr": "Résistance à tous les éléments",
+   "unit": "ten-thousandths"
+  },
+  "B_Atk": {
+   "fr": "ATK",
+   "unit": "flat"
+  },
+  "B_Atk_Equip": {
+   "fr": "Attaque de l'équipement",
+   "unit": "flat"
+  },
+  "B_Def": {
+   "fr": "DEF",
+   "unit": "flat"
+  },
+  "B_Def_Equip": {
+   "fr": "Défense de l'équipement",
+   "unit": "flat"
+  },
+  "B_MaxHp": {
+   "fr": "PV max",
+   "unit": "flat"
+  },
+  "B_MaxHp_Equip": {
+   "fr": "PV de l'équipement",
+   "unit": "flat"
+  },
+  "Buff_Time_Rate": {
+   "fr": "Efficacité de la durée des bonus",
+   "unit": "ten-thousandths"
+  },
+  "Burst_Gauge_Rate": {
+   "fr": "Efficacité de Déluge de tous les éléments",
+   "unit": "ten-thousandths"
+  },
+  "C_Critical_DamRes_Rate": {
+   "fr": "Défense crit.",
+   "unit": "ten-thousandths"
+  },
+  "C_Critical_Dam_Rate": {
+   "fr": "Dégâts crit.",
+   "unit": "ten-thousandths"
+  },
+  "C_Critical_Rate": {
+   "fr": "Chances crit.",
+   "unit": "ten-thousandths"
+  },
+  "C_Critical_ResRate": {
+   "fr": "Résistance crit.",
+   "unit": "ten-thousandths"
+  },
+  "D_Protect_CurRes_Rate": {
+   "fr": "Résistance au percement",
+   "unit": "ten-thousandths"
+  },
+  "D_Protect_Cur_Rate": {
+   "fr": "Percement de défense",
+   "unit": "ten-thousandths"
+  },
+  "Dark_Add": {
+   "fr": "Attaque des Ténèbres",
+   "unit": "flat"
+  },
+  "Dark_Element_Rate": {
+   "fr": "Augmentation des dégâts des Ténèbres",
+   "unit": "ten-thousandths"
+  },
+  "Dark_Element_Res_Rate": {
+   "fr": "Résistance aux Ténèbres (%)",
+   "unit": "ten-thousandths"
+  },
+  "Dark_Rate": {
+   "fr": "Augmentation de l'attaque des Ténèbres",
+   "unit": "ten-thousandths"
+  },
+  "Dark_Res": {
+   "fr": "Défense des Ténèbres",
+   "unit": "flat"
+  },
+  "Debuff_Time_Rate": {
+   "fr": "Efficacité de la durée des malus",
+   "unit": "ten-thousandths"
+  },
+  "Default_Add": {
+   "fr": "Attaque physique",
+   "unit": "flat"
+  },
+  "Default_Element_Rate": {
+   "fr": "Augmentation des dégâts physiques",
+   "unit": "ten-thousandths"
+  },
+  "Default_Rate": {
+   "fr": "Augmentation de l'attaque physique",
+   "unit": "ten-thousandths"
+  },
+  "Default_Res": {
+   "fr": "Défense physique",
+   "unit": "flat"
+  },
+  "Earth_Add": {
+   "fr": "Attaque de Terre",
+   "unit": "flat"
+  },
+  "Earth_Burst_Gauge_Rate": {
+   "fr": "Efficacité de Déluge de Terre",
+   "unit": "ten-thousandths"
+  },
+  "Earth_Element_Rate": {
+   "fr": "Augmentation des dégâts de Terre",
+   "unit": "ten-thousandths"
+  },
+  "Earth_Rate": {
+   "fr": "Augmentation de l'attaque de Terre",
+   "unit": "ten-thousandths"
+  },
+  "Earth_Res": {
+   "fr": "Défense de Terre",
+   "unit": "flat"
+  },
+  "Fire_Add": {
+   "fr": "Attaque de Feu",
+   "unit": "flat"
+  },
+  "Fire_Burst_Gauge_Rate": {
+   "fr": "Efficacité de Déluge de Feu",
+   "unit": "ten-thousandths"
+  },
+  "Fire_Element_Rate": {
+   "fr": "Augmentation des dégâts de Feu",
+   "unit": "ten-thousandths"
+  },
+  "Fire_Rate": {
+   "fr": "Augmentation de l'attaque de Feu",
+   "unit": "ten-thousandths"
+  },
+  "Fire_Res": {
+   "fr": "Défense de Feu",
+   "unit": "flat"
+  },
+  "H_HealPower_Rate": {
+   "fr": "Efficacité de guérison",
+   "unit": "ten-thousandths"
+  },
+  "H_HealReceive_Rate": {
+   "fr": "Augmentation des soins reçus",
+   "unit": "ten-thousandths"
+  },
+  "Holy_Add": {
+   "fr": "Attaque du Sacré",
+   "unit": "flat"
+  },
+  "Holy_Element_Rate": {
+   "fr": "Augmentation des dégâts du Sacré",
+   "unit": "ten-thousandths"
+  },
+  "Holy_Rate": {
+   "fr": "Augmentation de l'attaque du Sacré",
+   "unit": "ten-thousandths"
+  },
+  "Holy_Res": {
+   "fr": "Défense du Sacré",
+   "unit": "flat"
+  },
+  "I_All_DamAdd_Rate": {
+   "fr": "Augmentation de tous les dégâts",
+   "unit": "ten-thousandths"
+  },
+  "I_AtkAdd_Rate": {
+   "fr": "Augmentation de l'attaque",
+   "unit": "ten-thousandths"
+  },
+  "I_DefAdd_Rate": {
+   "fr": "Augmentation de la défense",
+   "unit": "ten-thousandths"
+  },
+  "I_MaxHpAdd_Rate": {
+   "fr": "Augmentation des PV",
+   "unit": "ten-thousandths"
+  },
+  "Ice_Add": {
+   "fr": "Attaque de Froid",
+   "unit": "flat"
+  },
+  "Ice_Burst_Gauge_Rate": {
+   "fr": "Efficacité de Déluge de Froid",
+   "unit": "ten-thousandths"
+  },
+  "Ice_Element_Rate": {
+   "fr": "Augmentation des dégâts de Froid",
+   "unit": "ten-thousandths"
+  },
+  "Ice_Rate": {
+   "fr": "Augmentation de l'attaque de Froid",
+   "unit": "ten-thousandths"
+  },
+  "Ice_Res": {
+   "fr": "Défense de Froid",
+   "unit": "flat"
+  },
+  "MF_ChargeEffic_Rate": {
+   "fr": "Efficacité de recharge de la magie",
+   "unit": "ten-thousandths"
+  },
+  "Normalattack_Damadd_Rate": {
+   "fr": "Augmentation des dégâts d'attaque normale",
+   "unit": "ten-thousandths"
+  },
+  "Normalskill_Damadd_Rate": {
+   "fr": "Augmentation des dégâts, compétence normale",
+   "unit": "ten-thousandths"
+  },
+  "Normalskillchangetag_Damadd_Rate": {
+   "fr": "Augmentation des dégâts, compétence de relève",
+   "unit": "ten-thousandths"
+  },
+  "P_Shield_Rate": {
+   "fr": "Efficacité des barrières",
+   "unit": "ten-thousandths"
+  },
+  "S_SkillRecycle_Rate": {
+   "fr": "Réduction de temps de recharge",
+   "unit": "ten-thousandths"
+  },
+  "Thunder_Add": {
+   "fr": "Attaque de Foudre",
+   "unit": "flat"
+  },
+  "Thunder_Burst_Gauge_Rate": {
+   "fr": "Efficacité de Déluge de Foudre",
+   "unit": "ten-thousandths"
+  },
+  "Thunder_Element_Rate": {
+   "fr": "Augmentation des dégâts de Foudre",
+   "unit": "ten-thousandths"
+  },
+  "Thunder_Rate": {
+   "fr": "Augmentation de l'attaque de Foudre",
+   "unit": "ten-thousandths"
+  },
+  "Thunder_Res": {
+   "fr": "Défense de Foudre",
+   "unit": "flat"
+  },
+  "TickDam_Rate": {
+   "fr": "Efficacité des dégâts sur la durée",
+   "unit": "ten-thousandths"
+  },
+  "Ultimateskill_Damadd_Rate": {
+   "fr": "Augmentation des dégâts d'attaque ultime",
+   "unit": "ten-thousandths"
+  },
+  "Wind_Add": {
+   "fr": "Attaque de Vent",
+   "unit": "flat"
+  },
+  "Wind_Burst_Gauge_Rate": {
+   "fr": "Efficacité de Déluge de Vent",
+   "unit": "ten-thousandths"
+  },
+  "Wind_Element_Rate": {
+   "fr": "Augmentation des dégâts de Vent",
+   "unit": "ten-thousandths"
+  },
+  "Wind_Rate": {
+   "fr": "Augmentation de l'attaque de Vent",
+   "unit": "ten-thousandths"
+  },
+  "Wind_Res": {
+   "fr": "Défense de Vent",
+   "unit": "flat"
+  },
+  "accuracy": {
+   "fr": "Perforation",
+   "unit": "ten-thousandths"
+  },
+  "baseSpd": {
+   "fr": "Vitesse",
+   "unit": "flat"
+  },
+  "block": {
+   "fr": "Blocage de base",
+   "unit": "ten-thousandths"
+  },
+  "blockDmgResist": {
+   "fr": "Réduction des dégâts bloqués",
+   "unit": "ten-thousandths"
+  },
+  "pvpDmgDown": {
+   "fr": "Dégâts JcJ subis",
+   "unit": "ten-thousandths"
+  },
+  "pvpDmgUp": {
+   "fr": "Dégâts JcJ infligés",
+   "unit": "ten-thousandths"
+  }
+ }
+}
