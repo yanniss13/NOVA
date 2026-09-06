@@ -184,8 +184,7 @@ function comptePixels(png, couleur) {
     details:["Perle légendaire", "Taux critique : 12.5 %"], mesures:[] };
   const ligneMesuree = Object.assign({}, ligneNue, { mesures:[
     { libelle:"Niveau", valeur:50, maximum:50, forme:"barre" },
-    { libelle:"Promotion", valeur:4, maximum:4, forme:"etoile" },
-    { libelle:"Outrepassement", valeur:2, maximum:6, forme:"marque" }
+    { libelle:"Outrepassement", valeur:4, maximum:6, forme:"etoile" }
   ] });
   const hauteurNue = mesurer(
     { sections:[{ titre:"Arme", lignes:[ligneNue] }] }, fonts
@@ -193,14 +192,14 @@ function comptePixels(png, couleur) {
   const hauteurMesuree = mesurer(
     { sections:[{ titre:"Arme", lignes:[ligneMesuree] }] }, fonts
   ).sections[0].lignes[0].hauteur;
-  assert.equal(hauteurMesuree - hauteurNue, 3 * MESURES.HAUTEUR_MESURE,
+  assert.equal(hauteurMesuree - hauteurNue, 2 * MESURES.HAUTEUR_MESURE,
     "le panneau grandit d'une rangee par mesure");
 
   /* L'etiquette d'une mesure doit tenir dans sa colonne. « Outrepassement »
      est le plus long des trois, et c'est le mot du jeu : le raccourcir n'est
      pas une option, elargir la colonne si. Deborde, il se dessine par-dessus
      les losanges sans que rien n'echoue. */
-  ["Niveau", "Promotion", "Outrepassement"].forEach(libelle => {
+  ["Niveau", "Outrepassement"].forEach(libelle => {
     const largeur = largeurTexte(texteCarte(libelle), fonts.body);
     assert.ok(largeur + 20 <= MESURES.COLONNE_MESURE,
       "« " + libelle + " » déborde sur sa jauge : " + Math.round(largeur)

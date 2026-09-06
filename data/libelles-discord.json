@@ -135,1692 +135,1416 @@
  "armes": {
   "7ds-armes/Baguette/Baguette bénie.webp": {
    "131061003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131062003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131063003": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Baguette/Baguette d'artisan délicat.webp": {
    "131061010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131062010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131063010": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Baguette/Baguette d'aventurier.webp": {
    "131061001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131062001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131063001": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Baguette/Baguette de l'âme vorace.webp": {
    "131065010": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Baguette/Baguette de la flamme cramoisie.webp": {
    "131064001": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Baguette/Baguette des ailes de la flamme noire.webp": {
    "131065005": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Baguette/Baguette des vents tranchants.webp": {
    "131064017": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Baguette/Baguette du gardien.webp": {
    "131061005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131062005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131063005": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Baguette/Baguette du poursuiveur.webp": {
    "131061008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131062008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131063008": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Baguette/Baguette du rugissement de la liche draconique.webp": {
    "131065004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Baguette/Baguette flamboyante.webp": {
    "131064011": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Baguette/Baguette noir de jais.webp": {
    "131064012": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Baguette/Baguette à l'aura triomphale.webp": {
    "131064004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Baton/Bâton béni.webp": {
    "131011003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131012003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131013003": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Baton/Bâton d'artisan délicat.webp": {
    "131011010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131012010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131013010": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Baton/Bâton d'aventurier.webp": {
    "131011001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131012001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131013001": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Baton/Bâton de la flamme cramoisie.webp": {
    "131014001": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Baton/Bâton de renforcement des nuages sombres.webp": {
    "131014014": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Baton/Bâton des ailes de la flamme noire.webp": {
    "131015005": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Baton/Bâton du gardien.webp": {
    "131011005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131012005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131013005": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Baton/Bâton du poursuiveur.webp": {
    "131011008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131012008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131013008": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Baton/Bâton du rugissement de la liche draconique.webp": {
    "131015004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Baton/Bâton flamboyant.webp": {
    "131014011": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Baton/Bâton noir de jais.webp": {
    "131014012": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Baton/Bâton à l'aura triomphale.webp": {
    "131014004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Bouclier/Épée et bouclier bénis.webp": {
    "131041003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131042003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131043003": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Bouclier/Épée et bouclier d'artisan délicat.webp": {
    "131041010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131042010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131043010": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Bouclier/Épée et bouclier d'aventurier.webp": {
    "131041001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131042001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131043001": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Bouclier/Épée et bouclier de l'esprit inébranlable.webp": {
    "131044013": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Bouclier/Épée et bouclier de l'âme vorace.webp": {
    "131045010": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Bouclier/Épée et bouclier de la flamme cramoisie.webp": {
    "131044001": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Bouclier/Épée et bouclier des ailes de la flamme noire.webp": {
    "131045005": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Bouclier/Épée et bouclier du gardien.webp": {
    "131041005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131042005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131043005": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Bouclier/Épée et bouclier du poursuiveur.webp": {
    "131041008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131042008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131043008": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Bouclier/Épée et bouclier du rugissement de la liche draconique.webp": {
    "131045004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Bouclier/Épée et bouclier flamboyants.webp": {
    "131044011": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Bouclier/Épée et bouclier noir de jais.webp": {
    "131044012": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Bouclier/Épée et bouclier à l'aura triomphale.webp": {
    "131044004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 1 main/En plein cœur !.webp": {
    "131025011": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 1 main/Épée longue bénie.webp": {
    "131021003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131022003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131023003": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Epee 1 main/Épée longue d'artisan délicat.webp": {
    "131021010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131022010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131023010": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Epee 1 main/Épée longue d'aventurier.webp": {
    "131021001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131022001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131023001": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Epee 1 main/Épée longue de l'âme vorace.webp": {
    "131025010": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 1 main/Épée longue de la conviction corrompue.webp": {
    "131024015": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 1 main/Épée longue de la flamme cramoisie.webp": {
    "131024001": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 1 main/Épée longue des ailes de la flamme noire.webp": {
    "131025005": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 1 main/Épée longue du gardien.webp": {
    "131021005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131022005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131023005": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Epee 1 main/Épée longue du poursuiveur.webp": {
    "131021008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131022008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131023008": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Epee 1 main/Épée longue du rugissement de la liche draconique.webp": {
    "131025004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 1 main/Épée longue flamboyante.webp": {
    "131024011": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 1 main/Épée longue noir de jais.webp": {
    "131024012": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 1 main/Épée longue usée.webp": {
    "130100098": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    }
   },
   "7ds-armes/Epee 1 main/Épée longue à l'aura triomphale.webp": {
    "131024004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 2 mains/Espadon béni.webp": {
    "131031003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131032003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131033003": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Epee 2 mains/Espadon d'artisan délicat.webp": {
    "131031010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131032010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131033010": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Epee 2 mains/Espadon d'aventurier.webp": {
    "131031001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131032001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131033001": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Epee 2 mains/Espadon de l'ombre noire.webp": {
    "131034003": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 2 mains/Espadon de la flamme cramoisie.webp": {
    "131034001": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 2 mains/Espadon des ailes de la flamme noire.webp": {
    "131035005": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 2 mains/Espadon du gardien.webp": {
    "131031005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131032005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131033005": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Epee 2 mains/Espadon du poursuiveur.webp": {
    "131031008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131032008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131033008": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Epee 2 mains/Espadon du rugissement de la liche draconique.webp": {
    "131035004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 2 mains/Espadon flamboyant.webp": {
    "131034011": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 2 mains/Espadon noir de jais.webp": {
    "131034012": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epee 2 mains/Espadon à l'aura triomphale.webp": {
    "131034004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epees doubles/Épées doubles bénies.webp": {
    "131111003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131112003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131113003": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Epees doubles/Épées doubles d'artisan délicat.webp": {
    "131111010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131112010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131113010": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Epees doubles/Épées doubles d'aventurier.webp": {
    "131111001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131112001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131113001": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Epees doubles/Épées doubles de la flamme cramoisie.webp": {
    "131114001": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epees doubles/Épées doubles de la rafale céleste.webp": {
    "131114005": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epees doubles/Épées doubles des ailes de la flamme noire.webp": {
    "131115005": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epees doubles/Épées doubles du gardien.webp": {
    "131111005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131112005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131113005": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Epees doubles/Épées doubles du poursuiveur.webp": {
    "131111008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131112008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131113008": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Epees doubles/Épées doubles du rugissement de la liche draconique.webp": {
    "131115004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epees doubles/Épées doubles flamboyantes.webp": {
    "131114011": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epees doubles/Épées doubles noir de jais.webp": {
    "131114012": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Epees doubles/Épées doubles à l'aura triomphale.webp": {
    "131114004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Gantelets/Gantelets bénis.webp": {
    "131071003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131072003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131073003": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Gantelets/Gantelets d'artisan délicat.webp": {
    "131071010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131072010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131073010": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Gantelets/Gantelets d'aventurier.webp": {
    "131071001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131072001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131073001": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Gantelets/Gantelets de l'âme vorace.webp": {
    "131075010": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Gantelets/Gantelets de la flamme cramoisie.webp": {
    "131074001": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Gantelets/Gantelets de la volonté corrompue.webp": {
    "131074008": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Gantelets/Gantelets des ailes de la flamme noire.webp": {
    "131075005": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Gantelets/Gantelets du gardien.webp": {
    "131071005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131072005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131073005": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Gantelets/Gantelets du poursuiveur.webp": {
    "131071008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131072008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131073008": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Gantelets/Gantelets du rugissement de la liche draconique.webp": {
    "131075004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Gantelets/Gantelets flamboyants.webp": {
    "131074011": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Gantelets/Gantelets noir de jais.webp": {
    "131074012": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Gantelets/Gantelets à l'aura triomphale.webp": {
    "131074004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Hache/Hache bénie.webp": {
    "131121003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131122003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131123003": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Hache/Hache d'artisan délicat.webp": {
    "131121010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131122010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131123010": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Hache/Hache d'aventurier.webp": {
    "131121001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131122001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131123001": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Hache/Hache de l'âme vorace.webp": {
    "131125010": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Hache/Hache de la flamme cramoisie.webp": {
    "131124001": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Hache/Hache de souverain de la forêt.webp": {
    "131124002": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Hache/Hache des ailes de la flamme noire.webp": {
    "131125005": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Hache/Hache du gardien.webp": {
    "131121005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131122005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131123005": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Hache/Hache du poursuiveur.webp": {
    "131121008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131122008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131123008": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Hache/Hache du rugissement de la liche draconique.webp": {
    "131125004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Hache/Hache flamboyante.webp": {
    "131124011": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Hache/Hache noir de jais.webp": {
    "131124012": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Hache/Hache à l'aura triomphale.webp": {
    "131124004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Lance/Lance bénie.webp": {
    "131091003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131092003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131093003": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Lance/Lance d'artisan délicat.webp": {
    "131091010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131092010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131093010": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Lance/Lance d'aventurier.webp": {
    "131091001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131092001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131093001": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Lance/Lance de l'épine de la cupidité.webp": {
    "131094010": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Lance/Lance de la flamme cramoisie.webp": {
    "131094001": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Lance/Lance des ailes de la flamme noire.webp": {
    "131095005": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Lance/Lance du gardien.webp": {
    "131091005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131092005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131093005": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Lance/Lance du poursuiveur.webp": {
    "131091008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131092008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131093008": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Lance/Lance du rugissement de la liche draconique.webp": {
    "131095004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Lance/Lance flamboyante.webp": {
    "131094011": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Lance/Lance noir de jais.webp": {
    "131094012": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Lance/Lance à l'aura triomphale.webp": {
    "131094004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Livre/Grimoire béni.webp": {
    "131101003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131102003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131103003": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Livre/Grimoire d'artisan délicat.webp": {
    "131101010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131102010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131103010": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Livre/Grimoire d'aventurier.webp": {
    "131101001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131102001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131103001": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Livre/Grimoire de l'ombre de la rupture.webp": {
    "131105001": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Livre/Grimoire de l'âme vorace.webp": {
    "131105010": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Livre/Grimoire de la flamme cramoisie.webp": {
    "131104001": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Livre/Grimoire de la mélodie de la tentation.webp": {
    "131104006": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Livre/Grimoire des ailes de la flamme noire.webp": {
    "131105005": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Livre/Grimoire du gardien.webp": {
    "131101005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131102005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131103005": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Livre/Grimoire du poursuiveur.webp": {
    "131101008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131102008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131103008": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Livre/Grimoire du rugissement de la liche draconique.webp": {
    "131105004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Livre/Grimoire flamboyant.webp": {
    "131104011": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Livre/Grimoire noir de jais.webp": {
    "131104012": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Livre/Grimoire à l'aura triomphale.webp": {
    "131104004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Livre/『100 façons de gagner en amour』.webp": {
    "131105011": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Nunchaku/Nunchaku béni.webp": {
    "131051003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131052003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131053003": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Nunchaku/Nunchaku d'artisan délicat.webp": {
    "131051010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131052010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131053010": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Nunchaku/Nunchaku d'aventurier.webp": {
    "131051001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131052001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131053001": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Nunchaku/Nunchaku de l'âme vorace.webp": {
    "131055010": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Nunchaku/Nunchaku de la flamme cramoisie.webp": {
    "131054001": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Nunchaku/Nunchaku des ailes de la flamme noire.webp": {
    "131055005": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Nunchaku/Nunchaku du gardien.webp": {
    "131051005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131052005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131053005": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Nunchaku/Nunchaku du poursuiveur.webp": {
    "131051008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131052008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131053008": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Nunchaku/Nunchaku du rugissement de la liche draconique.webp": {
    "131055004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Nunchaku/Nunchaku du souffle de l'esprit mort.webp": {
    "131054009": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Nunchaku/Nunchaku flamboyant.webp": {
    "131054011": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Nunchaku/Nunchaku noir de jais.webp": {
    "131054012": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Nunchaku/Nunchaku à l'aura triomphale.webp": {
    "131054004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Rapiere/Rapière bénie.webp": {
    "131081003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131082003": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131083003": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Rapiere/Rapière d'artisan délicat.webp": {
    "131081010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131082010": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131083010": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Rapiere/Rapière d'aventurier.webp": {
    "131081001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131082001": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131083001": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Rapiere/Rapière de l'âme vorace.webp": {
    "131085010": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Rapiere/Rapière de la flamme cramoisie.webp": {
    "131084001": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Rapiere/Rapière des ailes de la flamme noire.webp": {
    "131085005": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Rapiere/Rapière du chant du chaos.webp": {
    "131084018": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Rapiere/Rapière du gardien.webp": {
    "131081005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131082005": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131083005": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Rapiere/Rapière du poursuiveur.webp": {
    "131081008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131082008": {
-    "promotionMax": 2,
     "outrepassementMax": 0,
     "niveauMax": 30
    },
    "131083008": {
-    "promotionMax": 3,
     "outrepassementMax": 0,
     "niveauMax": 40
    }
   },
   "7ds-armes/Rapiere/Rapière du rugissement de la liche draconique.webp": {
    "131085004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Rapiere/Rapière flamboyante.webp": {
    "131084011": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Rapiere/Rapière noir de jais.webp": {
    "131084012": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }
   },
   "7ds-armes/Rapiere/Rapière à l'aura triomphale.webp": {
    "131084004": {
-    "promotionMax": 4,
     "outrepassementMax": 6,
     "niveauMax": 50
    }

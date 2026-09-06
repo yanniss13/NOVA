@@ -354,17 +354,21 @@ function mesuresArme(config, maximums) {
       maximum:nombre(bornes.niveauMax),
       forme:"barre"
     },
-    {
-      libelle:"Promotion",
-      valeur:nombre(config.promotion),
-      maximum:nombre(bornes.promotionMax),
-      forme:"etoile"
-    },
+    /* PAS DE LIGNE « PROMOTION ». Elle se deduit du niveau — le site la
+       recalcule d'ailleurs automatiquement a partir de lui — et faisait donc
+       deux lignes pour une seule information.
+
+       LES ETOILES SONT CELLES DE L'OUTREPASSEMENT.
+       La fiche d'arme du jeu porte une rangee de six etoiles sous le nom, et
+       l'outrepassement va justement de 0 a 6 — la promotion, elle, s'arrete a
+       2, 3 ou 4 selon l'arme. Verifie sur une capture du jeu apportee par le
+       proprietaire : Nunchaku de l'ame vorace, quatre etoiles pleines sur six
+       pour un outrepassement de 4. */
     {
       libelle:"Outrepassement",
       valeur:nombre(config.overlimit),
       maximum:nombre(bornes.outrepassementMax),
-      forme:"marque"
+      forme:"etoile"
     }
   ].filter(mesure => mesure.valeur > 0 || mesure.maximum > 0);
 }
