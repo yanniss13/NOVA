@@ -14,6 +14,11 @@ const {
   buildCommandDefinition,
   commandDefinitions,
   lireOptionsBuild,
+  lireOptionFocalisee,
+  classerPropositions,
+  nomsDePersonnages,
+  trouverCharId,
+  propositionsBuild,
   texteCarte,
   resoudreDemandeBuild,
   contenuMessageBuild
@@ -38,6 +43,195 @@ definition.options.forEach(option => {
   assert.equal(option.type, 3, "trois chaines de caracteres");
   assert.ok(option.description && option.description.length <= 100,
     "Discord refuse une description vide ou de plus de cent caracteres");
+  assert.equal(option.autocomplete, true,
+    "les trois champs se completent : personne ne connait par coeur"
+    + " l'orthographe d'un pseudo ni d'un personnage");
+});
+
+/* ------------------------------------------------------------------ */
+/* L'autocompletion : quel champ est en cours de frappe                */
+
+const focalisee = lireOptionFocalisee({
+  data:{
+    name:"build",
+    options:[
+      { name:"joueur", type:3, value:"yanni" },
+      { name:"personnage", type:3, value:"ba", focused:true }
+    ]
+  }
+});
+assert.equal(focalisee.nom, "personnage");
+assert.equal(focalisee.valeur, "ba");
+assert.deepEqual(focalisee.options,
+  { joueur:"yanni", personnage:"ba", arme:"" },
+  "les autres champs arrivent avec : c'est ce qui permet de ne proposer que"
+  + " les personnages du joueur deja choisi");
+assert.deepEqual(lireOptionFocalisee({}),
+  { nom:"", valeur:"", options:{ joueur:"", personnage:"", arme:"" } },
+  "une interaction sans options ne doit pas faire tomber la fonction");
+assert.equal(
+  lireOptionFocalisee({ data:{ options:[{ name:"joueur", value:"x" }] } }).nom,
+  "", "sans champ focalise, aucun champ n'est en cours de frappe");
+
+/* ------------------------------------------------------------------ */
+/* Le classement des propositions                                      */
+
+const MEMBRES = ["Yanniss13", "Yannick", "Élodie", "Bastien", "Zoe"];
+
+assert.deepEqual(classerPropositions(MEMBRES, "yan"),
+  [{ name:"Yannick", value:"Yannick" },
+    { name:"Yanniss13", value:"Yanniss13" }],
+  "les deux qui commencent par la saisie, par ordre alphabetique");
+assert.deepEqual(classerPropositions(MEMBRES, "elo"),
+  [{ name:"Élodie", value:"Élodie" }],
+  "la saisie sans accent doit trouver le pseudo accentue");
+assert.deepEqual(classerPropositions(MEMBRES, "STIE"),
+  [{ name:"Bastien", value:"Bastien" }],
+  "une correspondance au milieu du mot compte aussi, sans egard a la casse");
+assert.deepEqual(classerPropositions(MEMBRES, "zzz"), [],
+  "rien ne correspond : on ne propose rien plutot que n'importe quoi");
+assert.equal(classerPropositions(MEMBRES, "").length, 5,
+  "un champ vide propose tout le monde");
+
+/* Ce qui commence par la saisie passe avant ce qui la contient : taper « an »
+   doit remonter « Anne » avant « Yannick ». */
+assert.deepEqual(classerPropositions(["Yannick", "Anne"], "an"),
+  [{ name:"Anne", value:"Anne" }, { name:"Yannick", value:"Yannick" }]);
+
+/* Discord refuse plus de vingt-cinq propositions, et coupe la liste entiere
+   quand elle deborde : c'est a nous de la tailler. */
+const beaucoup = Array.from({ length:40 }, (_, index) =>
+  "Membre" + String(index).padStart(2, "0"));
+assert.equal(classerPropositions(beaucoup, "").length, 25);
+
+/* Un doublon ne doit pas occuper deux places : deux personnages du roster
+   peuvent porter le meme nom si le catalogue evolue. */
+assert.deepEqual(classerPropositions(["Ban", "Ban", "Bug"], "b"),
+  [{ name:"Ban", value:"Ban" }, { name:"Bug", value:"Bug" }]);
+assert.deepEqual(classerPropositions(["", null, "Ban"], ""),
+  [{ name:"Ban", value:"Ban" }], "ni vide ni nul dans la liste");
+
+/* Les personnages proposes sont ceux du roster, nommes par le catalogue. Un
+   identifiant absent du catalogue se propose brut : mieux vaut un slug qu'un
+   personnage qui disparait du menu. */
+assert.deepEqual(
+  nomsDePersonnages(
+    [{ char_id:"merlin" }, { char_id:"ban" }, { char_id:"inconnu" }],
+    { personnages:{ ban:{ nom:"Ban" }, merlin:{ nom:"Merlin" } } }
+  ),
+  ["Ban", "inconnu", "Merlin"],
+  "classes par nom sans egard a la casse, comme un lecteur les cherche,"
+  + " et non par code de caractere");
+assert.deepEqual(nomsDePersonnages(null, null), []);
+
+/* Retrouver l'identifiant derriere un nom saisi. Le menu des armes en a
+   besoin : il lit les builds d'UNE ligne, et doit donc savoir laquelle avant
+   de la demander. La commande s'en sert aussi — une seule regle de
+   correspondance, pas deux qui divergeraient. */
+const LIGNES_NOMMEES = [{ char_id:"ban" }, { char_id:"merlin" }];
+const CATALOGUE = { personnages:{ ban:{ nom:"Ban" }, merlin:{ nom:"Merlin" } } };
+assert.equal(trouverCharId(LIGNES_NOMMEES, CATALOGUE, "merlin"), "merlin");
+assert.equal(trouverCharId(LIGNES_NOMMEES, CATALOGUE, "MERLIN"), "merlin",
+  "la casse ne compte pas");
+assert.equal(trouverCharId(LIGNES_NOMMEES, CATALOGUE, "Bân"), "ban",
+  "ni les accents");
+assert.equal(trouverCharId(LIGNES_NOMMEES, CATALOGUE, "escanor"), "",
+  "un personnage absent du roster ne rend aucun identifiant");
+assert.equal(trouverCharId(null, null, "ban"), "");
+
+/* ------------------------------------------------------------------ */
+/* L'enchainement complet des trois menus                              */
+
+/* Les lectures Supabase sont INJECTEES : l'enchainement — quel menu declenche
+   quelle lecture, et laquelle ne se fait pas — se verifie ici, en Node, sans
+   Discord ni base. L'Edge Function n'apporte que les lecteurs et leur cache. */
+function interactionFocalisee(champ, valeurs){
+  const options = ["joueur", "personnage", "arme"]
+    .filter(nom => valeurs[nom] !== undefined)
+    .map(nom => ({
+      name:nom, type:3, value:valeurs[nom],
+      ...(nom === champ ? { focused:true } : {})
+    }));
+  return { type:4, data:{ name:"build", options } };
+}
+
+function lecteurs(journal){
+  return {
+    lireProfils:async () => {
+      journal.push("profils");
+      return [{ id:"u-1", pseudo:"YanniSs13" }, { id:"u-2", pseudo:"Élodie" }];
+    },
+    lireRoster:async ownerId => {
+      journal.push("roster:" + ownerId);
+      return ownerId === "u-1" ? [{ char_id:"ban" }, { char_id:"merlin" }] : [];
+    },
+    lireBuilds:async (ownerId, charId) => {
+      journal.push("builds:" + ownerId + ":" + charId);
+      return charId === "ban" ? { Nunchaku:{}, Hache:{} } : {};
+    }
+  };
+}
+
+const CATALOGUE_MENU = { personnages:{
+  ban:{ nom:"Ban" }, merlin:{ nom:"Merlin" }
+} };
+
+async function menu(champ, valeurs, journal){
+  return await propositionsBuild(Object.assign(
+    { interaction:interactionFocalisee(champ, valeurs), libelles:CATALOGUE_MENU },
+    lecteurs(journal)
+  ));
+}
+
+(async () => {
+  let journal = [];
+  assert.deepEqual(await menu("joueur", { joueur:"yan" }, journal),
+    [{ name:"YanniSs13", value:"YanniSs13" }]);
+  assert.deepEqual(journal, ["profils"],
+    "le menu des joueurs ne touche pas au roster");
+
+  journal = [];
+  assert.deepEqual(
+    await menu("personnage", { joueur:"YanniSs13", personnage:"" }, journal),
+    [{ name:"Ban", value:"Ban" }, { name:"Merlin", value:"Merlin" }]);
+  assert.deepEqual(journal, ["profils", "roster:u-1"],
+    "le roster du joueur choisi, et rien de plus : pas la colonne des builds");
+
+  journal = [];
+  assert.deepEqual(
+    await menu("personnage", { joueur:"inconnu", personnage:"b" }, journal),
+    [], "tant que le joueur ne designe personne, on ne propose rien");
+  assert.deepEqual(journal, ["profils"],
+    "et surtout on ne lit aucun roster");
+
+  journal = [];
+  assert.deepEqual(
+    await menu("arme", { joueur:"YanniSs13", personnage:"Ban", arme:"" }, journal),
+    [{ name:"Hache", value:"Hache" }, { name:"Nunchaku", value:"Nunchaku" }],
+    "seules les armes sur lesquelles ce joueur a vraiment un build");
+  assert.deepEqual(journal, ["profils", "roster:u-1", "builds:u-1:ban"],
+    "les builds d'UNE ligne, le personnage etant deja choisi");
+
+  journal = [];
+  assert.deepEqual(
+    await menu("arme",
+      { joueur:"YanniSs13", personnage:"Escanor", arme:"" }, journal),
+    [], "un personnage absent du roster ne propose aucune arme");
+  assert.deepEqual(journal, ["profils", "roster:u-1"],
+    "et ne declenche pas la lecture des builds");
+
+  journal = [];
+  assert.deepEqual(await propositionsBuild(Object.assign(
+    { interaction:{ type:4, data:{ name:"build", options:[] } },
+      libelles:CATALOGUE_MENU },
+    lecteurs(journal)
+  )), [], "sans champ focalise, aucune proposition");
+  assert.deepEqual(journal, [], "et aucune lecture");
+
+  console.log("OK discord-build : autocompletion");
+})().catch(error => {
+  console.error(error);
+  process.exitCode = 1;
 });
 
 /* Le script d'enregistrement ne connait que `commandDefinitions` : une
@@ -332,6 +526,17 @@ assert.equal(libelles.stats.B_Atk.unit, "flat");
 assert.ok(Object.keys(libelles.stats).length > 50,
   "les 82 statistiques du catalogue, pas un echantillon");
 
+/* Le controle de fraicheur ne doit pas dependre des fins de ligne. Le depot
+   est en CRLF sous Windows et en LF sur le runner Linux : une comparaison de
+   texte brut declarait le fichier perime d'un cote et a jour de l'autre. */
+const { estAJour, texteDeSortie } = require(path.join(
+  ROOT, "scripts", "generer-libelles-discord.js"
+));
+assert.equal(estAJour(texteDeSortie()), true);
+assert.equal(estAJour(texteDeSortie().replace(/\n/g, "\r\n")), true,
+  "le meme contenu en CRLF est a jour, pas perime");
+assert.equal(estAJour("{}"), false, "un contenu different reste perime");
+
 /* ------------------------------------------------------------------ */
 /* Le branchement dans l'Edge Function                                 */
 
@@ -380,8 +585,29 @@ assert.ok(
   /roster_characters\?owner=eq\./,
   /libelles-discord\.json/,
   /resoudreDemandeBuild/,
-  /generateBuildCardPng/
+  /generateBuildCardPng/,
+  /* L'autocompletion : interaction de type 4, reponse de type 8. Le choix des
+     propositions, lui, vit dans le module partage — l'Edge Function n'apporte
+     que les lectures et leur cache. */
+  /interaction\.type === 4/,
+  /type:8/,
+  /propositionsBuild\(/,
+  /lireProfils:/,
+  /lireRoster:/,
+  /lireBuilds:/,
+  /* Le roster lu pour l'autocompletion ne demande QUE `char_id` : la colonne
+     `builds` est la colonne lourde, et le menu des personnages n'en a pas
+     besoin. */
+  /select=char_id/
 ].forEach(motif => assert.match(source, motif,
   "l'Edge Function doit brancher /build : " + motif));
+
+/* L'autocompletion doit passer par le meme controle de serveur, de salon et de
+   role que la commande. Proposer la liste des pseudos de la confrerie dans un
+   salon non autorise serait une fuite — et Discord ne sait pas afficher
+   d'erreur dans un menu de suggestions : on repond une liste vide. */
+const blocAutocompletion = source.slice(source.indexOf("interaction.type === 4"));
+assert.match(blocAutocompletion.slice(0, 2000), /planningAuthorizationError/,
+  "l'autocomplétion doit vérifier les droits avant de proposer des pseudos");
 
 console.log("OK discord-build");

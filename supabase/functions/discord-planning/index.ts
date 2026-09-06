@@ -47,7 +47,12 @@ type DiscordInteraction = {
   channel_id?: string;
   data?: {
     name?: string;
-    options?: { name?: string; type?: number; value?: unknown }[];
+    options?: {
+      name?: string;
+      type?: number;
+      value?: unknown;
+      focused?: boolean;
+    }[];
   };
   member?: { roles?: string[]; permissions?: string };
 };
@@ -150,13 +155,24 @@ type RosterRow = {
   potential_tier: number;
   builds: unknown;
 };
+type BuildChoice = { name: string; value: string };
 const {
   lireOptionsBuild,
+  propositionsBuild,
   trouverProfil,
   resoudreDemandeBuild,
   contenuMessageBuild
 } = buildModule as {
   lireOptionsBuild(interaction: DiscordInteraction): BuildOptions;
+  propositionsBuild(entree: {
+    interaction: DiscordInteraction;
+    libelles: unknown;
+    lireProfils(): Promise<Profile[]>;
+    lireRoster(ownerId: string): Promise<{ char_id: string }[]>;
+    lireBuilds(
+      ownerId: string, charId: string
+    ): Promise<Record<string, unknown>>;
+  }): Promise<BuildChoice[]>;
   trouverProfil(profils: Profile[], saisie: string): Profile | null;
   resoudreDemandeBuild(entree: {
     profils: Profile[];
@@ -620,6 +636,72 @@ async function publishCharacterBuild(
   }
 }
 
+/* L'AUTOCOMPLETION DE /build.
+
+   Discord envoie une interaction de type 4 à chaque frappe et n'accorde que
+   trois secondes : aucune réponse différée n'est possible, contrairement à la
+   commande elle-même. D'où les caches — sans eux, taper « Elizabeth » lancerait
+   neuf lectures Supabase, et la neuvième arriverait trop tard.
+
+   Les durées sont courtes exprès : un membre accueilli ou un build enregistré
+   à l'instant doit apparaître dans la minute, pas au prochain redémarrage de
+   l'instance. */
+const CACHE_PROFILS_MS = 60_000;
+const CACHE_ROSTER_MS = 30_000;
+
+let profilsCache: { valeur: Profile[]; expire: number } | null = null;
+async function profilsEnCache(config: PlanningConfig): Promise<Profile[]> {
+  const maintenant = Date.now();
+  if(profilsCache && profilsCache.expire > maintenant) return profilsCache.valeur;
+  const valeur = await supabaseJson<Profile[]>(config, PLANNING_PROFILES_QUERY);
+  profilsCache = { valeur, expire:maintenant + CACHE_PROFILS_MS };
+  return valeur;
+}
+
+const rosterCache = new Map<string, { valeur: unknown; expire: number }>();
+async function rosterEnCache<T>(
+  config: PlanningConfig, cle: string, chemin: string
+): Promise<T> {
+  const maintenant = Date.now();
+  const garde = rosterCache.get(cle);
+  if(garde && garde.expire > maintenant) return garde.valeur as T;
+  const valeur = await supabaseJson<T>(config, chemin);
+  rosterCache.set(cle, { valeur, expire:maintenant + CACHE_ROSTER_MS });
+  return valeur;
+}
+
+/* L'enchaînement des trois menus vit dans le module partagé, éprouvé en Node
+   avec des lecteurs factices. Ne restent ici que les lectures réelles et leur
+   cache — et le fait, décidé là-bas, qu'aucune ne se fasse inutilement. */
+async function propositionsDeBuild(
+  interaction: DiscordInteraction,
+  config: PlanningConfig
+): Promise<BuildChoice[]> {
+  return await propositionsBuild({
+    interaction,
+    libelles:await readBuildLabels(),
+    lireProfils:() => profilsEnCache(config),
+    /* `select=char_id` et rien d'autre : `builds` est la colonne lourde, et le
+       menu des personnages n'en a aucun besoin. */
+    lireRoster:ownerId => rosterEnCache<{ char_id: string }[]>(
+      config,
+      "chars:" + ownerId,
+      "roster_characters?owner=eq." + encodeURIComponent(ownerId)
+        + "&select=char_id"
+    ),
+    /* Les builds d'UNE ligne : le personnage est déjà choisi. */
+    lireBuilds:async (ownerId, charId) => {
+      const lignes = await rosterEnCache<{ builds: Record<string, unknown> }[]>(
+        config,
+        "builds:" + ownerId + ":" + charId,
+        "roster_characters?owner=eq." + encodeURIComponent(ownerId)
+          + "&char_id=eq." + encodeURIComponent(charId) + "&select=builds"
+      );
+      return (lignes[0] && lignes[0].builds) || {};
+    }
+  });
+}
+
 Deno.serve(async request => {
   if(request.method !== "POST"){
     return jsonResponse({ error:"Méthode non autorisée" }, 405);
@@ -646,6 +728,29 @@ Deno.serve(async request => {
   /* Discord n'accepte qu'UN endpoint d'interactions par application : les quatre
      commandes arrivent forcément ici, et c'est le nom qui les sépare. */
   const commandName = interaction.data?.name || "";
+
+  /* L'autocomplétion, avant tout le reste : c'est le seul type qui répond
+     autre chose qu'un message, et il n'a que trois secondes.
+
+     Elle passe par le MÊME contrôle de serveur, de salon et de rôle que la
+     commande — proposer la liste des pseudos de la confrérie dans un salon
+     non autorisé serait une fuite. Mais un menu de suggestions ne sait pas
+     afficher d'erreur : un refus, comme une panne de lecture, répond une
+     liste vide. Un champ qui ne propose rien se comprend ; un menu figé sur
+     « Loading options failed » ne se comprend pas. */
+  if(interaction.type === 4){
+    if(commandName !== "build") return jsonResponse({ type:8, data:{ choices:[] } });
+    if(planningAuthorizationError(interaction, config, commandName)){
+      return jsonResponse({ type:8, data:{ choices:[] } });
+    }
+    let choices: BuildChoice[] = [];
+    try {
+      choices = await propositionsDeBuild(interaction, config);
+    } catch (error) {
+      console.error("Échec de l'autocomplétion de /build", error);
+    }
+    return jsonResponse({ type:8, data:{ choices } });
+  }
   const taches: Record<string, (
     interaction: DiscordInteraction, config: PlanningConfig
   ) => Promise<void>> = {
