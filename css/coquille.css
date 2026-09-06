@@ -116,7 +116,7 @@
 /* ---------- Intermediaire ---------- */
 
 @media (max-width:1179px){
-  :root{--shell:min(100% - 28px, 1060px)}
+  :root{--shell:calc(100% - 28px)}
   .app-header{gap:20px;padding-inline:18px}
   .local-tabs-bar{padding-inline:30px}
 }
