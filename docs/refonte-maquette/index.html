@@ -17,9 +17,59 @@
 
   <main id="main" tabindex="-1">
     <section class="view is-active" data-view="home">
-      <h1>NOVA — Confrérie 7DS</h1>
-      <img class="shell-banner" src="../../nova-banniere-etendue.png"
-           alt="Les héros de NOVA réunis devant la forteresse">
+      <div class="guild-hero ornate-panel">
+        <div class="guild-hero__copy">
+          <p class="context-label">L'espace de notre guilde</p>
+          <h1 tabindex="-1">On prépare la suite,<br>ensemble.</h1>
+          <p class="hero-lead">Retrouve les équipes du Boss de Guilde, partage ton roster et organise les prochaines sessions.</p>
+          <div class="hero-actions">
+            <button class="gold-action" type="button" data-action="create-account">Créer mon compte</button>
+            <button class="text-action" type="button" data-route="tools">Explorer les outils <span aria-hidden="true">→</span></button>
+          </div>
+        </div>
+        <figure class="guild-hero__visual">
+          <img src="../../nova-banniere-etendue.png"
+               alt="Les héros de NOVA réunis devant la forteresse">
+        </figure>
+      </div>
+
+      <section class="home-section essentials" aria-labelledby="essentialsTitle">
+        <div class="ornate-heading"><span></span><h2 id="essentialsTitle">L'essentiel pour jouer ensemble</h2><span></span></div>
+        <div class="essential-grid">
+          <article class="essential-card">
+            <svg class="line-icon" viewBox="0 0 64 64" aria-hidden="true"><path d="m14 12 36 39M50 12 14 51M21 20l-7-7m29 7 7-7M10 48l6 6m32-6-6 6M25 25l-9 9m23-9 9 9"/></svg>
+            <div><h3>Boss de guilde</h3><p>Prépare une équipe avec les membres.</p></div>
+            <button class="card-link" type="button" data-route="boss">Organiser une session <span aria-hidden="true">→</span></button>
+          </article>
+          <article class="essential-card">
+            <svg class="line-icon" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="22" r="9"/><circle cx="14" cy="27" r="7"/><circle cx="50" cy="27" r="7"/><path d="M17 52v-7c0-8 6-13 15-13s15 5 15 13v7M3 52v-5c0-7 5-11 12-11m46 16v-5c0-7-5-11-12-11"/></svg>
+            <div><h3>Roster de la guilde</h3><p>Partage tes personnages pour composer les équipes.</p></div>
+            <button class="card-link" type="button" data-route="roster">Renseigner mon roster <span aria-hidden="true">→</span></button>
+          </article>
+          <article class="essential-card">
+            <svg class="line-icon" viewBox="0 0 64 64" aria-hidden="true"><rect x="9" y="14" width="46" height="41" rx="3"/><path d="M9 25h46M20 8v12M44 8v12M20 34h4m8 0h4m8 0h4m-28 9h4m8 0h4m8 0h4"/></svg>
+            <div><h3>Nos disponibilités</h3><p>Trouvons un créneau pour jouer ensemble.</p></div>
+            <button class="card-link" type="button" data-route="boss" data-boss-target="availability">Voir le planning <span aria-hidden="true">→</span></button>
+          </article>
+        </div>
+      </section>
+
+      <section class="home-lower ornate-panel" aria-label="Outils et compte">
+        <div class="tools-band">
+          <h2>Les outils de la confrérie</h2>
+          <div class="tool-shortcuts">
+            <button type="button" data-route="tools" data-tool="wiki"><span class="tool-glyph" aria-hidden="true">▤</span>Wiki</button>
+            <button type="button" data-route="tools" data-tool="collection"><span class="tool-glyph" aria-hidden="true">♢</span>Collection</button>
+            <button type="button" data-route="tools" data-tool="calculator"><span class="tool-glyph" aria-hidden="true">▦</span>Calculateur</button>
+            <button type="button" data-route="tools" data-tool="analysis"><span class="tool-glyph" aria-hidden="true">▥</span>Analyse</button>
+          </div>
+        </div>
+        <div class="member-callout">
+          <h2>Déjà membre de la guilde ?</h2>
+          <p>Connecte-toi pour partager tes équipes et ton roster.</p>
+          <button class="card-link" type="button" data-action="create-account">Créer mon compte <span aria-hidden="true">→</span></button>
+        </div>
+      </section>
     </section>
     <section class="view" data-view="dashboard" hidden><h1>Mon suivi</h1></section>
     <section class="view" data-view="teams" hidden><h1>Créer une équipe</h1><p>Équipes partagées</p></section>
@@ -28,6 +78,13 @@
     <section class="view" data-view="tools" hidden><h1>Outils</h1><p>Wiki · Collection · Calculateur · Analyse</p></section>
     <section class="view" data-view="admin" hidden><h1>Membres</h1></section>
   </main>
+
+  <footer class="site-footer">
+    <span>NOVA · Confrérie 7DS</span>
+    <span>Site de guilde · Communauté 7DS Origin</span>
+    <a href="https://www.lootbar.com/a/raTV3p" target="_blank"
+       rel="sponsored noopener noreferrer">Partenaire LootBar</a>
+  </footer>
 
   <nav class="mobile-nav" aria-label="Navigation mobile"></nav>
   <div class="modal-layer" id="demoModal" hidden></div>
