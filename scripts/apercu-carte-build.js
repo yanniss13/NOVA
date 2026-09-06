@@ -67,8 +67,13 @@ function enchantementsObjet(objet, quantite, parts, preferes) {
 
 function construireBuild() {
   const data = catalogue();
-  const typeArme = "Epee a une main";
-  const arme = data.armes[typeArme][0];
+  /* Le CATALOGUE range ses armes par categorie (« Epee a une main ») ; le
+     ROSTER les range par dossier (« Epee 1 main »), et c'est cette cle-la que
+     la carte recoit. Batir l'apercu avec l'autre vocabulaire donnait une image
+     credible et fausse : ni role, ni icone de maitrise. */
+  const categorie = "Epee a une main";
+  const arme = data.armes[categorie][0];
+  const typeArme = arme.file.split("/")[1];
   const grade = Object.keys(libelles.armes[arme.file] || {})[0];
   const table = grade
     ? libelles.bornes.armes.tables[libelles.bornes.armes.index[grade]]
