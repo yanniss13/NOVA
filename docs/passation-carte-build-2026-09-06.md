@@ -9,9 +9,9 @@ Langue de travail avec le propriétaire : **français**.
 `1049790` : elle publie dans Discord une fiche illustrée du build d'un membre,
 avec autocomplétion sur les trois champs.
 
-Depuis, une refonte graphique complète est **en cours et NON commitée**. Le
-propriétaire a fourni une maquette (fiche de jeu à cadre filé d'or, trois
-zones) et a demandé de s'en inspirer. Cette refonte fonctionne : la carte
+Depuis, une refonte graphique complète a été faite, **commitée mais non
+poussée**. Le propriétaire a fourni une maquette (fiche de jeu à cadre filé
+d'or, trois zones) et a demandé de s'en inspirer. Elle fonctionne : la carte
 sort à `1660 × 974`, en minuscules accentuées, avec jauges et barres.
 
 **Aucun de ces changements n'est poussé.** Le propriétaire a explicitement
@@ -21,29 +21,19 @@ changement-là, pas pour les suivants.
 ## 2. État exact de git
 
 ```text
-HEAD / origin/main   1049790  fix(discord): les etoiles sont celles de
-                              l outrepassement, et la promotion s en va
+HEAD          8d009c1  feat(carte): la fiche /build reprend la maquette,
+                       en minuscules accentuees
+origin/main   1049790  fix(discord): les etoiles sont celles de
+                       l outrepassement, et la promotion s en va
 ```
 
-Modifié, non commité :
+**`8d009c1` est commité localement mais PAS poussé.** Le propriétaire décidera
+lui-même quand pousser ; ne pas le faire à sa place.
 
-```text
- M supabase/functions/_shared/availability-pdf.js
- M supabase/functions/_shared/discord-build.js
- M supabase/functions/_shared/discord-build-png.js
- M scripts/generer-libelles-discord.js
- M scripts/generer-vignettes.py
- M data/libelles-discord.json
- M tests/discord-build.test.js
- M tests/discord-build-png.test.js
- M tests/png-decode.test.js
-?? polices/                 (Cinzel + EB Garamond, OFL, + LISEZMOI.md)
-?? scripts/generer-police-carte.py
-?? supabase/functions/_shared/carte-font.js
-?? apercu-build.png         (jetable, ne pas commiter)
-```
+**`npm run test:unit` : 91/91 au vert** au moment de ce commit.
 
-**`npm run test:unit` : 91/91 au vert** au moment d'écrire ces lignes.
+`apercu-build.png` traîne à la racine, non suivi : c'est un rendu jetable, ne
+pas le commiter.
 
 Fichiers du propriétaire à ne jamais toucher ni commiter :
 `docs/passation-claude-2026-08-28.md`, `docs/stats-monstres-discord.txt`,
