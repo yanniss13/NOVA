@@ -199,28 +199,22 @@ son propre délai de trente secondes :
 supabase secrets set DISCORD_PLANNING_CHANNEL_ID=<id-salon-1>,<id-salon-2>
 ```
 
-### Donner à `/build` ses propres salons
+### Réserver une commande à un salon
 
-`DISCORD_BUILD_CHANNEL_ID` limite **`/build` seule** aux salons qu'il nomme :
+`DISCORD_PLANNING_CHANNEL_ID` vaut pour les **quatre** commandes : il dit où
+l'application accepte de répondre, pas quelle commande y est disponible.
 
-```powershell
-supabase secrets set DISCORD_BUILD_CHANNEL_ID=<id-du-salon-builds>
-```
+Réserver `/build` à un salon et y cacher les trois autres se règle **dans
+Discord**, pas ici : **Paramètres du serveur → Intégrations →** l'application
+**→** la liste des commandes. Chacune s'y restreint à des salons et à des
+rôles, et une commande interdite dans un salon **disparaît de son menu `/`**.
 
-Renseigné, il **remplace** `DISCORD_PLANNING_CHANNEL_ID` pour cette commande :
-`/build` ne répond plus que là, et le salon des builds n'ouvre ni `/planning`,
-ni `/chrono`, ni `/run`. « Seulement ici » ne voudrait rien dire si les deux
-listes s'additionnaient. Laissé vide, `/build` retombe sur la liste générale
-et rien ne change.
-
-**Ce réglage refuse, il ne masque pas.** Une commande refusée répond un message
-d'erreur, mais elle reste proposée dans le menu `/` du salon. Pour qu'elle
-disparaisse du menu, il faut le réglage de Discord lui-même : **Paramètres du
-serveur → Intégrations →** l'application **→** la liste des commandes, où
-chacune se restreint à des salons et des rôles. Les deux se complètent : le
-serveur masque, l'Edge Function refuse. Régler l'un sans l'autre laisse soit un
-message d'erreur là où la commande n'aurait pas dû apparaître, soit une
-commande visible qui ne répondra pas.
+C'est mieux que ce que l'Edge Function saurait faire : elle ne peut que
+refuser, jamais retirer la commande du menu. Doubler ce réglage côté serveur
+donnerait deux endroits à tenir d'accord pour un résultat moins bon. La seule
+règle à respecter est donc que tout salon ouvert dans Discord figure aussi
+dans `DISCORD_PLANNING_CHANNEL_ID` — sinon la commande apparaît dans le menu
+et répond une erreur.
 
 Facultatif, pour limiter les commandes à un ou plusieurs rôles (séparés par des
 virgules) — ce réglage-là reste commun aux quatre :

@@ -124,45 +124,14 @@ assert.match(refusDeSalon, /\/build/);
 assert.doesNotMatch(refusDeSalon, /disponibilités/,
   "le message de refus ne doit plus parler du planning");
 
-/* UNE COMMANDE PEUT AVOIR SES PROPRES SALONS.
-   Un salon dédié à /build ne doit pas ouvrir /planning, /chrono et /run avec
-   lui. Une liste par commande prime donc sur la liste générale — et quand elle
-   prime, elle REMPLACE : sans quoi « seulement ici » ne voudrait rien dire. */
-const configCloisonnee = {
-  guildId:"guild",
-  channelIds:["channel"],
-  allowedRoleIds:[],
-  channelIdsByCommand:{ build:["salon-builds"] }
-};
-assert.equal(helpers.planningAuthorizationError({
-  ...baseInteraction, channel_id:"salon-builds"
-}, configCloisonnee, "build"), "",
-"/build est autorisée dans le salon de sa propre liste");
-assert.match(helpers.planningAuthorizationError({
-  ...baseInteraction, channel_id:"salon-builds"
-}, configCloisonnee, "planning"), /salon/,
-"le salon de /build n'ouvre pas /planning");
-assert.match(helpers.planningAuthorizationError(baseInteraction,
-  configCloisonnee, "build"), /salon/,
-"une liste propre REMPLACE la generale : /build ne repond plus dans l'autre");
-assert.equal(helpers.planningAuthorizationError(baseInteraction,
-  configCloisonnee, "planning"), "",
-"les autres commandes gardent la liste generale");
-
-/* Sans liste propre, rien ne change : le comportement historique tient. */
+/* UNE SEULE LISTE DE SALONS, pour les quatre commandes. Restreindre une
+   commande à un salon précis se règle dans Discord même (Intégrations), qui
+   sait la retirer du menu « / » — ce qu'un refus côté serveur ne saura jamais
+   faire. Une liste par commande ici donnerait deux réglages à tenir d'accord
+   pour un résultat moins bon. */
 assert.equal(helpers.planningAuthorizationError(baseInteraction, {
-  guildId:"guild",
-  channelIds:["channel"],
-  allowedRoleIds:[],
-  channelIdsByCommand:{ build:[] }
-}, "build"), "", "une liste propre vide laisse la liste générale s'appliquer");
-assert.equal(helpers.planningAuthorizationError({
-  ...baseInteraction, channel_id:"salon-builds"
-}, {
-  guildId:"guild", channelIds:[], allowedRoleIds:[],
-  channelIdsByCommand:{ build:["salon-builds"] }
-}, "build"), "",
-"une liste propre suffit : /build n'a pas besoin de la liste générale");
+  guildId:"guild", channelIds:["channel"], allowedRoleIds:[]
+}, "build"), "", "les quatre commandes partagent la même liste de salons");
 
 const now = Date.UTC(2026, 7, 20, 12, 0, 0);
 assert.equal(helpers.isFreshDiscordTimestamp(String(now / 1000), now), true);
