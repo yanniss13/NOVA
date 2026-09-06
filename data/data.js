@@ -1,7 +1,7 @@
 // Genere automatiquement par generate-data.ps1 - NE PAS EDITER A LA MAIN.
 // Relance le script pour mettre a jour apres ajout/retrait d'images.
 window.SEVEN_DS_DATA = {
-    "generatedAt":  "2026-08-26 23:43:40",
+    "generatedAt":  "2026-09-06 20:15:13",
     "personnages":  [
                         {
                             "id":  "ban",
@@ -293,118 +293,118 @@ window.SEVEN_DS_DATA = {
                                                    "file":  "7ds-armes/Bouclier/Épée et bouclier noir de jais.webp"
                                                }
                                            ],
-                  "Epee a une main":  [
-                                          {
-                                              "name":  "En plein cœur !",
-                                              "file":  "7ds-armes/Epee 1 main/En plein cœur !.webp"
-                                          },
-                                          {
-                                              "name":  "Épée longue à l\u0027aura triomphale",
-                                              "file":  "7ds-armes/Epee 1 main/Épée longue à l\u0027aura triomphale.webp"
-                                          },
-                                          {
-                                              "name":  "Épée longue bénie",
-                                              "file":  "7ds-armes/Epee 1 main/Épée longue bénie.webp"
-                                          },
-                                          {
-                                              "name":  "Épée longue d\u0027artisan délicat",
-                                              "file":  "7ds-armes/Epee 1 main/Épée longue d\u0027artisan délicat.webp"
-                                          },
-                                          {
-                                              "name":  "Épée longue d\u0027aventurier",
-                                              "file":  "7ds-armes/Epee 1 main/Épée longue d\u0027aventurier.webp"
-                                          },
-                                          {
-                                              "name":  "Épée longue de la conviction corrompue",
-                                              "file":  "7ds-armes/Epee 1 main/Épée longue de la conviction corrompue.webp"
-                                          },
-                                          {
-                                              "name":  "Épée longue de la flamme cramoisie",
-                                              "file":  "7ds-armes/Epee 1 main/Épée longue de la flamme cramoisie.webp"
-                                          },
-                                          {
-                                              "name":  "Épée longue de l\u0027âme vorace",
-                                              "file":  "7ds-armes/Epee 1 main/Épée longue de l\u0027âme vorace.webp"
-                                          },
-                                          {
-                                              "name":  "Épée longue des ailes de la flamme noire",
-                                              "file":  "7ds-armes/Epee 1 main/Épée longue des ailes de la flamme noire.webp"
-                                          },
-                                          {
-                                              "name":  "Épée longue du gardien",
-                                              "file":  "7ds-armes/Epee 1 main/Épée longue du gardien.webp"
-                                          },
-                                          {
-                                              "name":  "Épée longue du poursuiveur",
-                                              "file":  "7ds-armes/Epee 1 main/Épée longue du poursuiveur.webp"
-                                          },
-                                          {
-                                              "name":  "Épée longue du rugissement de la liche draconique",
-                                              "file":  "7ds-armes/Epee 1 main/Épée longue du rugissement de la liche draconique.webp"
-                                          },
-                                          {
-                                              "name":  "Épée longue flamboyante",
-                                              "file":  "7ds-armes/Epee 1 main/Épée longue flamboyante.webp"
-                                          },
-                                          {
-                                              "name":  "Épée longue noir de jais",
-                                              "file":  "7ds-armes/Epee 1 main/Épée longue noir de jais.webp"
-                                          },
-                                          {
-                                              "name":  "Épée longue usée",
-                                              "file":  "7ds-armes/Epee 1 main/Épée longue usée.webp"
-                                          }
-                                      ],
-                  "Epee a deux mains":  [
-                                            {
-                                                "name":  "Espadon à l\u0027aura triomphale",
-                                                "file":  "7ds-armes/Epee 2 mains/Espadon à l\u0027aura triomphale.webp"
-                                            },
-                                            {
-                                                "name":  "Espadon béni",
-                                                "file":  "7ds-armes/Epee 2 mains/Espadon béni.webp"
-                                            },
-                                            {
-                                                "name":  "Espadon d\u0027artisan délicat",
-                                                "file":  "7ds-armes/Epee 2 mains/Espadon d\u0027artisan délicat.webp"
-                                            },
-                                            {
-                                                "name":  "Espadon d\u0027aventurier",
-                                                "file":  "7ds-armes/Epee 2 mains/Espadon d\u0027aventurier.webp"
-                                            },
-                                            {
-                                                "name":  "Espadon de la flamme cramoisie",
-                                                "file":  "7ds-armes/Epee 2 mains/Espadon de la flamme cramoisie.webp"
-                                            },
-                                            {
-                                                "name":  "Espadon de l\u0027ombre noire",
-                                                "file":  "7ds-armes/Epee 2 mains/Espadon de l\u0027ombre noire.webp"
-                                            },
-                                            {
-                                                "name":  "Espadon des ailes de la flamme noire",
-                                                "file":  "7ds-armes/Epee 2 mains/Espadon des ailes de la flamme noire.webp"
-                                            },
-                                            {
-                                                "name":  "Espadon du gardien",
-                                                "file":  "7ds-armes/Epee 2 mains/Espadon du gardien.webp"
-                                            },
-                                            {
-                                                "name":  "Espadon du poursuiveur",
-                                                "file":  "7ds-armes/Epee 2 mains/Espadon du poursuiveur.webp"
-                                            },
-                                            {
-                                                "name":  "Espadon du rugissement de la liche draconique",
-                                                "file":  "7ds-armes/Epee 2 mains/Espadon du rugissement de la liche draconique.webp"
-                                            },
-                                            {
-                                                "name":  "Espadon flamboyant",
-                                                "file":  "7ds-armes/Epee 2 mains/Espadon flamboyant.webp"
-                                            },
-                                            {
-                                                "name":  "Espadon noir de jais",
-                                                "file":  "7ds-armes/Epee 2 mains/Espadon noir de jais.webp"
-                                            }
-                                        ],
+                  "Epee longue":  [
+                                      {
+                                          "name":  "En plein cœur !",
+                                          "file":  "7ds-armes/Epee 1 main/En plein cœur !.webp"
+                                      },
+                                      {
+                                          "name":  "Épée longue à l\u0027aura triomphale",
+                                          "file":  "7ds-armes/Epee 1 main/Épée longue à l\u0027aura triomphale.webp"
+                                      },
+                                      {
+                                          "name":  "Épée longue bénie",
+                                          "file":  "7ds-armes/Epee 1 main/Épée longue bénie.webp"
+                                      },
+                                      {
+                                          "name":  "Épée longue d\u0027artisan délicat",
+                                          "file":  "7ds-armes/Epee 1 main/Épée longue d\u0027artisan délicat.webp"
+                                      },
+                                      {
+                                          "name":  "Épée longue d\u0027aventurier",
+                                          "file":  "7ds-armes/Epee 1 main/Épée longue d\u0027aventurier.webp"
+                                      },
+                                      {
+                                          "name":  "Épée longue de la conviction corrompue",
+                                          "file":  "7ds-armes/Epee 1 main/Épée longue de la conviction corrompue.webp"
+                                      },
+                                      {
+                                          "name":  "Épée longue de la flamme cramoisie",
+                                          "file":  "7ds-armes/Epee 1 main/Épée longue de la flamme cramoisie.webp"
+                                      },
+                                      {
+                                          "name":  "Épée longue de l\u0027âme vorace",
+                                          "file":  "7ds-armes/Epee 1 main/Épée longue de l\u0027âme vorace.webp"
+                                      },
+                                      {
+                                          "name":  "Épée longue des ailes de la flamme noire",
+                                          "file":  "7ds-armes/Epee 1 main/Épée longue des ailes de la flamme noire.webp"
+                                      },
+                                      {
+                                          "name":  "Épée longue du gardien",
+                                          "file":  "7ds-armes/Epee 1 main/Épée longue du gardien.webp"
+                                      },
+                                      {
+                                          "name":  "Épée longue du poursuiveur",
+                                          "file":  "7ds-armes/Epee 1 main/Épée longue du poursuiveur.webp"
+                                      },
+                                      {
+                                          "name":  "Épée longue du rugissement de la liche draconique",
+                                          "file":  "7ds-armes/Epee 1 main/Épée longue du rugissement de la liche draconique.webp"
+                                      },
+                                      {
+                                          "name":  "Épée longue flamboyante",
+                                          "file":  "7ds-armes/Epee 1 main/Épée longue flamboyante.webp"
+                                      },
+                                      {
+                                          "name":  "Épée longue noir de jais",
+                                          "file":  "7ds-armes/Epee 1 main/Épée longue noir de jais.webp"
+                                      },
+                                      {
+                                          "name":  "Épée longue usée",
+                                          "file":  "7ds-armes/Epee 1 main/Épée longue usée.webp"
+                                      }
+                                  ],
+                  "Espadon":  [
+                                  {
+                                      "name":  "Espadon à l\u0027aura triomphale",
+                                      "file":  "7ds-armes/Epee 2 mains/Espadon à l\u0027aura triomphale.webp"
+                                  },
+                                  {
+                                      "name":  "Espadon béni",
+                                      "file":  "7ds-armes/Epee 2 mains/Espadon béni.webp"
+                                  },
+                                  {
+                                      "name":  "Espadon d\u0027artisan délicat",
+                                      "file":  "7ds-armes/Epee 2 mains/Espadon d\u0027artisan délicat.webp"
+                                  },
+                                  {
+                                      "name":  "Espadon d\u0027aventurier",
+                                      "file":  "7ds-armes/Epee 2 mains/Espadon d\u0027aventurier.webp"
+                                  },
+                                  {
+                                      "name":  "Espadon de la flamme cramoisie",
+                                      "file":  "7ds-armes/Epee 2 mains/Espadon de la flamme cramoisie.webp"
+                                  },
+                                  {
+                                      "name":  "Espadon de l\u0027ombre noire",
+                                      "file":  "7ds-armes/Epee 2 mains/Espadon de l\u0027ombre noire.webp"
+                                  },
+                                  {
+                                      "name":  "Espadon des ailes de la flamme noire",
+                                      "file":  "7ds-armes/Epee 2 mains/Espadon des ailes de la flamme noire.webp"
+                                  },
+                                  {
+                                      "name":  "Espadon du gardien",
+                                      "file":  "7ds-armes/Epee 2 mains/Espadon du gardien.webp"
+                                  },
+                                  {
+                                      "name":  "Espadon du poursuiveur",
+                                      "file":  "7ds-armes/Epee 2 mains/Espadon du poursuiveur.webp"
+                                  },
+                                  {
+                                      "name":  "Espadon du rugissement de la liche draconique",
+                                      "file":  "7ds-armes/Epee 2 mains/Espadon du rugissement de la liche draconique.webp"
+                                  },
+                                  {
+                                      "name":  "Espadon flamboyant",
+                                      "file":  "7ds-armes/Epee 2 mains/Espadon flamboyant.webp"
+                                  },
+                                  {
+                                      "name":  "Espadon noir de jais",
+                                      "file":  "7ds-armes/Epee 2 mains/Espadon noir de jais.webp"
+                                  }
+                              ],
                   "Epees doubles":  [
                                         {
                                             "name":  "Épées doubles à l\u0027aura triomphale",

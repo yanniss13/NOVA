@@ -6,7 +6,7 @@
    Ce que ce fichier garde, et que rien d'autre ne garde :
 
    1. LE CRITERE EST L'EFFET TRANSCRIT, JAMAIS LE ROLE DE SLOT. Escanor porte
-      son malus de defense avec une Epee a deux mains de role Attaquant ; King
+      son malus de defense avec une Espadon de role Attaquant ; King
       avec un Grimoire de role Gardien. Un recensement fonde sur le role les
       manquerait tous les deux, et c'est ce qui a motive la premiere section.
 
@@ -43,7 +43,7 @@ assert.equal(contre("ennemi").length + contre("allies").length, lignes.length,
 /* ---- 1. Le critere est l'effet, pas le role ---- */
 const escanor = parId("escanor-inflammation-defense");
 assert.ok(escanor,
-  "Escanor doit figurer : son Epee a deux mains est de role Attaquant, et "
+  "Escanor doit figurer : son Espadon est de role Attaquant, et "
     + "c'est justement le cas qui interdit de filtrer par role");
 assert.equal(escanor.vise, "ennemi");
 assert.equal(escanor.source, "arme");

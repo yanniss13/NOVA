@@ -102,7 +102,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await firstHero.locator(".gear-slot.weapon").click();
     assert.deepEqual(
       (await page.locator("#pickerChips .chip").allTextContents()).sort(),
-      ["Epee a une main", "Epees doubles", "Hache", "Tous"].sort()
+      ["Epee longue", "Epees doubles", "Hache", "Tous"].sort()
     );
     await page.locator("#pickerClose").click();
 
@@ -124,7 +124,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await chooseWeapon(
       page,
       firstHero,
-      "Epee a une main",
+      "Epee longue",
       "Épée longue usée"
     );
     await assertVisibleText(
@@ -380,7 +380,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
       "Configuration à compléter"
     );
 
-    await chooseWeapon(page, firstHero, "Epee a une main");
+    await chooseWeapon(page, firstHero, "Epee longue");
     await firstHero.locator(".pot-btn").click();
     assert.equal(await page.locator("#potBody .pot-head-val").textContent(), "P5/10");
     assert.equal(await page.locator("#potBody .pot-item").count(), 10);

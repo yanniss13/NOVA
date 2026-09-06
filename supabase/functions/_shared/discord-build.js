@@ -36,7 +36,7 @@ const ARMOR_LABELS = {
 };
 const JEWEL_SLOTS = ["Boucle d'oreille", "Collier", "Anneau"];
 /* LE NOM AFFICHE D'UN TYPE D'ARME. La CLE vient des dossiers d'images, qui
-   n'ont jamais porte d'accent — « Epee a une main » — et elle est ecrite dans
+   n'ont jamais porte d'accent — « Epee 1 main » — et elle est ecrite dans
    Supabase : la renommer demanderait de migrer tous les builds enregistres.
    Seul l'affichage change, et l'atlas de la carte sait desormais dessiner ces
    accents. Un type absent de cette table s'affiche tel quel : le jeu peut en

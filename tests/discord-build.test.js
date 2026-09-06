@@ -493,8 +493,8 @@ assert.equal(carte.fichier, "build-yanniss13-ban-nunchaku.png",
 assert.equal(carte.portrait, "7ds-personnages/ban.webp");
 
 /* Le type d'arme vient des dossiers d'images, qui n'ont jamais porte d'accent :
-   « Epee a une main ». Le nom du jeu, lui, en porte — et l'atlas de la carte
-   sait desormais les dessiner. */
+   « Epee 1 main ». Le nom du jeu, lui, en porte — et l'atlas de la carte sait
+   desormais les dessiner. */
 assert.equal(carte.arme, "Nunchaku");
 assert.equal(libelleArme("Baton"), "Bâton");
 assert.equal(libelleArme("Rapiere"), "Rapière");
@@ -502,7 +502,7 @@ assert.equal(libelleArme("Nunchaku"), "Nunchaku", "sans accent, rien ne bouge");
 
 /* LE ROSTER NE PARLE PAS LE VOCABULAIRE DU CATALOGUE. Un build est range sous
    le NOM DE DOSSIER de son arme — « Epee 1 main », « Livre » — la ou `data.js`
-   nomme la categorie « Epee a une main », « Grimoire ». Huit types sur douze
+   nomme la categorie « Epee longue », « Grimoire ». Huit types sur douze
    portent le meme nom des deux cotes, ce qui a longtemps cache la divergence :
    les quatre autres sortaient bruts sur la carte, sans role ni icone de
    maitrise. C'est le dossier qui fait foi, comme `FOLDER_TO_ENUM` du site. */

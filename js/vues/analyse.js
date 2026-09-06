@@ -53,7 +53,7 @@ import { toast } from "./toast.js";
       && (entry.potentialTier||0) >= 7;
   }
   /* Préférence de jeu du propriétaire, propre à Meliodas : à défaut de favori,
-     ouvrir l'Épée à une main. Ce n'est pas une liste d'assets — c'est une
+     ouvrir l'Épée longue. Ce n'est pas une liste d'assets — c'est une
      règle produit nommée. La généraliser changerait le comportement de futurs
      personnages sans décision. */
   const DPS_PREFERRED_WEAPON_BY_CHAR = { meliodas:"Sword1h" };

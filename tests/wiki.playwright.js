@@ -223,9 +223,9 @@ const { chromium } = require("playwright");
     assert.equal(await puceRole.textContent(), "Soutien",
       "à la rapière, Dreyfus est Soutien");
 
-    await armeDite("Épée à une main").click();
+    await armeDite("Épée longue").click();
     await page.waitForFunction(() =>
-      document.querySelector('.wiki-hero-weapon[title="Épée à une main"]')
+      document.querySelector('.wiki-hero-weapon[title="Épée longue"]')
         .classList.contains("active"));
     assert.equal(await puceElement.textContent(), "Terre",
       "à l'épée à une main, Dreyfus est Terre");
