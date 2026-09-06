@@ -37,12 +37,19 @@ const JEWEL_SLOTS = ["Anneau", "Collier", "Boucle d'oreille"];
    Seul l'affichage change, et l'atlas de la carte sait desormais dessiner ces
    accents. Un type absent de cette table s'affiche tel quel : le jeu peut en
    ajouter un sans que la carte tombe. */
+/* LES CLES SONT DES NOMS DE DOSSIER, pas des categories du catalogue.
+   Un build est range dans le roster sous le dossier de son arme — le site fait
+   pareil, voir `FOLDER_TO_ENUM` dans js/noyau/constantes.js. Huit dossiers sur
+   douze portent le nom de leur categorie, ce qui a longtemps cache l'ecart ;
+   les quatre autres ne s'ecrivent pas du tout pareil, et sortaient bruts sur
+   la carte : « Epee 1 main » au lieu de « Épée à une main ». */
 const WEAPON_LABELS = {
   "Baton":"Bâton",
-  "Epee & bouclier":"Épée & bouclier",
-  "Epee a une main":"Épée à une main",
-  "Epee a deux mains":"Épée à deux mains",
+  "Bouclier":"Épée & bouclier",
+  "Epee 1 main":"Épée à une main",
+  "Epee 2 mains":"Épée à deux mains",
   "Epees doubles":"Épées doubles",
+  "Livre":"Grimoire",
   "Rapiere":"Rapière"
 };
 const ELEMENT_LABELS = {
@@ -53,14 +60,16 @@ const SLOT_ROLE_LABELS = {
   Attacker:"Attaquant", Defender:"Défenseur", Supporter:"Soutien",
   Warden:"Gardien", Buster:"Briseur"
 };
-/* Le roster conserve le nom de la categorie du catalogue local ; les slots
-   de personnages emploient l'enum du jeu. Cette table est le meme pont que
-   FOLDER_TO_ENUM dans le site, applique ici aux libelles des categories. */
+/* Le roster range ses builds par dossier d'arme ; les slots d'un personnage
+   emploient l'enum du jeu. Copie conforme de `FOLDER_TO_ENUM` du site : c'est
+   par elle que la carte retrouve l'element, le role et l'icone de maitrise de
+   l'arme equipee. Une cle ecrite en vocabulaire de catalogue n'y correspond a
+   rien, et la carte perd les trois d'un coup, sans rien signaler. */
 const BUILD_TYPE_TO_ENUM = {
-  "Baguette":"Wand", "Baton":"Staff", "Epee & bouclier":"Shield",
-  "Epee a une main":"Sword1h", "Epee a deux mains":"Sword2h",
+  "Baguette":"Wand", "Baton":"Staff", "Bouclier":"Shield",
+  "Epee 1 main":"Sword1h", "Epee 2 mains":"Sword2h",
   "Epees doubles":"SwordDual", "Gantelets":"Gauntlets", "Hache":"Axe",
-  "Lance":"Lance", "Grimoire":"Book", "Nunchaku":"Cudgel3c",
+  "Lance":"Lance", "Livre":"Book", "Nunchaku":"Cudgel3c",
   "Rapiere":"Rapier"
 };
 const WEAPON_ENUM_ICONS = {
@@ -733,6 +742,8 @@ const discordBuildApi = {
   trouverProfil,
   texteCarte,
   libelleArme,
+  BUILD_TYPE_TO_ENUM,
+  WEAPON_LABELS,
   nomDeFichier,
   resoudreDemandeBuild,
   contenuMessageBuild

@@ -21,6 +21,8 @@ const {
   propositionsBuild,
   texteCarte,
   libelleArme,
+  BUILD_TYPE_TO_ENUM,
+  WEAPON_LABELS,
   resoudreDemandeBuild,
   contenuMessageBuild
 } = require(path.join(
@@ -466,12 +468,40 @@ assert.equal(carte.portrait, "7ds-personnages/ban.webp");
    « Epee a une main ». Le nom du jeu, lui, en porte — et l'atlas de la carte
    sait desormais les dessiner. */
 assert.equal(carte.arme, "Nunchaku");
-assert.equal(libelleArme("Epee a une main"), "Épée à une main");
-assert.equal(libelleArme("Epee a deux mains"), "Épée à deux mains");
-assert.equal(libelleArme("Epee & bouclier"), "Épée & bouclier");
 assert.equal(libelleArme("Baton"), "Bâton");
 assert.equal(libelleArme("Rapiere"), "Rapière");
 assert.equal(libelleArme("Nunchaku"), "Nunchaku", "sans accent, rien ne bouge");
+
+/* LE ROSTER NE PARLE PAS LE VOCABULAIRE DU CATALOGUE. Un build est range sous
+   le NOM DE DOSSIER de son arme — « Epee 1 main », « Livre » — la ou `data.js`
+   nomme la categorie « Epee a une main », « Grimoire ». Huit types sur douze
+   portent le meme nom des deux cotes, ce qui a longtemps cache la divergence :
+   les quatre autres sortaient bruts sur la carte, sans role ni icone de
+   maitrise. C'est le dossier qui fait foi, comme `FOLDER_TO_ENUM` du site. */
+assert.equal(libelleArme("Epee 1 main"), "Épée à une main");
+assert.equal(libelleArme("Epee 2 mains"), "Épée à deux mains");
+assert.equal(libelleArme("Bouclier"), "Épée & bouclier");
+assert.equal(libelleArme("Livre"), "Grimoire");
+
+/* ET ELLES DOIVENT LE RESTER. Le site porte la table de reference ; la
+   fonction Edge ne peut pas l'importer — elle tire `window` derriere elle —
+   donc elle en garde une copie. Une copie ne se surveille pas toute seule :
+   ce test la compare a l'originale, cle pour cle. */
+const constantes = fs.readFileSync(
+  path.join(ROOT, "js", "noyau", "constantes.js"), "utf8");
+const bloc = constantes.slice(constantes.indexOf("const FOLDER_TO_ENUM = {"));
+const referenceSite = Object.fromEntries(
+  [...bloc.slice(0, bloc.indexOf("};"))
+    .matchAll(/"([^"]+)":"([^"]+)"/g)].map(trouve => [trouve[1], trouve[2]]));
+assert.equal(Object.keys(referenceSite).length, 12,
+  "la table du site doit etre lue, sinon ce test ne prouve rien");
+assert.deepEqual(BUILD_TYPE_TO_ENUM, referenceSite,
+  "la copie de FOLDER_TO_ENUM a diverge de celle du site");
+Object.keys(WEAPON_LABELS).forEach(cle => {
+  assert.ok(Object.prototype.hasOwnProperty.call(referenceSite, cle),
+    "« " + cle + " » n'est pas un dossier d'arme : aucun build ne sera range"
+    + " sous cette cle, et le libelle ne servira jamais");
+});
 assert.equal(libelleArme("Arbalete inconnue"), "Arbalete inconnue",
   "une arme que le jeu ajouterait s'affiche telle quelle");
 
