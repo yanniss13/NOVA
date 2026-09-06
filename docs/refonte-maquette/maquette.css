@@ -1,0 +1,29 @@
+:root{
+  --abyss:#050d14;
+  --slate:#071a26;
+  --slate-light:#0c2634;
+  --gold:#b9852c;
+  --gold-light:#ddb45f;
+  --parchment:#efe2c9;
+  --mist:#a9a39b;
+  --alert:#b95a4f;
+  --display:"Cinzel", Georgia, serif;
+  --body:Georgia, "Times New Roman", serif;
+}
+
+*{box-sizing:border-box}
+html{min-height:100%;background:var(--abyss);color:var(--parchment)}
+body{min-height:100vh;margin:0;background:var(--abyss);font-family:var(--body)}
+button,a{min-height:44px}
+.skip-link{position:fixed;left:12px;top:8px;z-index:100;transform:translateY(-160%)}
+.skip-link:focus{transform:none}
+.app-header{min-height:72px;border-bottom:1px solid var(--gold);display:flex;align-items:center;gap:20px;padding:12px 4vw;background:var(--slate)}
+.brand{display:inline-flex;align-items:center;gap:12px;color:var(--parchment);font-family:var(--display);text-decoration:none}
+.brand-mark{display:grid;place-items:center;width:44px;height:44px;border:1px solid var(--gold-light);border-radius:50%;color:var(--gold-light);font-size:24px}
+.prototype-label{margin-left:auto;color:var(--mist)}
+main{width:min(1440px, 100%);margin:0 auto;padding:30px}
+.view[hidden],.modal-layer[hidden]{display:none}
+.shell-banner{display:block;width:100%;max-height:520px;object-fit:cover;border:1px solid var(--gold)}
+.mobile-nav{display:none}
+
+button:focus-visible,a:focus-visible{outline:2px solid var(--gold-light);outline-offset:3px}
