@@ -38,6 +38,7 @@ import { elemBadge, elemColor, elemLabel } from "./badge-element.js";
 import { openRosterDetailFor, rosterDetail } from "./detail-roster.js";
 import { ModalStack } from "./modal-stack.js";
 import { openAuth } from "./modale-auth.js";
+import { ongletDeLaVue } from "./coquille.js";
 import { showView } from "./navigation.js";
 import { enregistrerGestionnaireRoute } from "./routage.js";
 import { toast } from "./toast.js";
@@ -722,7 +723,7 @@ import { toast } from "./toast.js";
        reconstruite remplacera ce repli dans `rendreLaCibleDuFocus()`. */
     const detailOverlay = $("#rosterDetailOverlay");
     if(detailOverlay.classList.contains("on") && rosterDetail.returnFocusKey){
-      ModalStack.setRestoreFocus(detailOverlay, $("#tab-analyse"));
+      ModalStack.setRestoreFocus(detailOverlay, ongletDeLaVue("analyse"));
     }
     box.innerHTML = "";
     box.appendChild(el("div",{class:"empty-state"},[

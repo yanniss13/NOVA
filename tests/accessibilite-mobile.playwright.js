@@ -256,42 +256,45 @@ async function installRosterFocusFakeSupabase(page){
       })
     );
     await page.goto(server.url + "/index.html");
-    const tabs = page.getByRole("tab");
-    /* 8 onglets depuis que « Dispos » et « Sessions de boss » sont passés dans
-       le sous-menu de « Boss de Guilde » — la barre principale s'en trouve
-       allégée d'autant. Le rail de categories du wiki n'en fait PAS partie :
-       c'est un `role="group"`, precisement pour ne pas se compter parmi les
-       onglets principaux.
+    /* LE SEUL `tablist` DU SITE : les onglets locaux d'une rubrique.
 
-       Les trois onglets du sous-menu ne comptent pas non plus tant qu'on n'est
-       pas dans le groupe : leur barre porte `hidden`, donc elle sort de l'arbre
-       d'accessibilite. C'est ce qui rend ce compte deterministe. */
-    assert.equal(await tabs.count(), 8);
-    assert.equal(await tabs.nth(3).getAttribute("id"), "tab-member-roster");
+       L'ancienne barre principale en etait un, avec ses huit onglets. La
+       navigation de bureau n'en est plus un — ses entrees mènent a des
+       rubriques, pas a des panneaux — et le second etage, lui, en est un
+       veritable : ses onglets designent les vues d'une meme rubrique.
+
+       Outils est la rubrique qui en compte le plus : quatre. Sans client
+       Supabase, aucune vue n'est fermee, donc les quatre sont la. */
+    await allerA(page, "wiki");
+    const tabs = page.locator("#localTabs button");
+    assert.equal(await tabs.count(), 4);
+    assert.deepEqual(
+      await tabs.evaluateAll(boutons =>
+        boutons.map(bouton => bouton.dataset.view)),
+      ["wiki", "collection", "calculateur", "analyse"]);
     assert.equal(await tabs.nth(0).getAttribute("aria-selected"), "true");
     assert.equal(await tabs.nth(0).getAttribute("tabindex"), "0");
     assert.equal(await tabs.nth(1).getAttribute("aria-selected"), "false");
     assert.equal(await tabs.nth(1).getAttribute("tabindex"), "-1");
 
-    /* Le premier onglet est « Accueil » : c'est la vue d'arrivee, et le Team
-       Builder l'a cede pour ne plus imposer un editeur d'equipe a l'ouverture. */
+    /* La fleche droite avance d'un onglet, et OUVRE sa vue : dans un `tablist`,
+       deplacer la selection montre le panneau correspondant. */
     await tabs.nth(0).focus();
     await page.keyboard.press("ArrowRight");
+    assert.equal(await page.locator("#view-collection").isVisible(), true);
     assert.equal(await tabs.nth(1).getAttribute("aria-selected"), "true");
-    assert.equal(await page.locator("#view-builder").isVisible(), true);
 
-    // Flèche gauche revient sur l'accueil, sans sauter d'onglet.
     await page.keyboard.press("ArrowLeft");
+    assert.equal(await page.locator("#view-wiki").isVisible(), true);
     assert.equal(await tabs.nth(0).getAttribute("aria-selected"), "true");
-    assert.equal(await page.locator("#view-dashboard").isVisible(), true);
 
     await page.keyboard.press("End");
-    assert.equal(await tabs.nth(7).getAttribute("aria-selected"), "true");
-    assert.equal(await page.locator("#view-calculateur").isVisible(), true);
+    assert.equal(await page.locator("#view-analyse").isVisible(), true);
+    assert.equal(await tabs.nth(3).getAttribute("aria-selected"), "true");
 
     await page.keyboard.press("Home");
+    assert.equal(await page.locator("#view-wiki").isVisible(), true);
     assert.equal(await tabs.nth(0).getAttribute("aria-selected"), "true");
-    assert.equal(await page.locator("#view-dashboard").isVisible(), true);
 
     /* « Mon suivi » déconnecté propose la connexion, et fermer la modale par
        Échap rend le focus au bouton qui l'a ouverte. */
@@ -635,7 +638,7 @@ async function installRosterFocusFakeSupabase(page){
     await rosterFocusPage.waitForTimeout(100);
     assert.equal(
       await rosterFocusPage.evaluate(() => document.activeElement.id),
-      "tab-analyse",
+      "onglet-analyse",
       "Une ligne disparue doit rendre le focus à l'onglet Analyse"
     );
     await rosterFocusContext.close();
@@ -737,8 +740,9 @@ async function installRosterFocusFakeSupabase(page){
       /* Écran court : c'est là que le bandeau et la modale se chevauchent
          réellement. Aucun bouton de la modale ne doit être intercepté. */
       await pickerPage.setViewportSize({width, height:640});
-      await pickerPage.locator("#mobileNavMore").click();
-      await pickerPage.locator("#mobileAccountLogin").click();
+      await pickerPage.locator("#mobileMoreButton").click();
+      /* « Mon compte » ouvre la connexion tant qu'aucun compte n'est ouvert. */
+      await pickerPage.locator('#mobileDrawer [data-action="compte"]').click();
       await pickerPage.locator("#authOverlay").waitFor({state:"visible"});
       const blocked = await pickerPage.evaluate(() => {
         const banner = document.querySelector("#pwaUpdateBanner")
@@ -773,7 +777,7 @@ async function installRosterFocusFakeSupabase(page){
          latéralement, et rien ne doit y dépasser sa largeur. Le symptôme
          n'apparaissait que sur Safari, qui ne rétrécit pas un `<select>` sous sa
          plus longue option — d'où un contrat CSS plutôt qu'une mesure. */
-      await pickerPage.locator("#mobileNavBuilder").click();
+      await allerA(pickerPage, "builder");
       /* Héroïque : 2 stats garanties sur 3. Légendaire : 3 sur 4. */
       for(const pearl of [{tier:"4", slots:3, requiredSlots:2, element:null},
                           {tier:"5", slots:4, requiredSlots:3, element:"generic"}]){
@@ -849,7 +853,7 @@ async function installRosterFocusFakeSupabase(page){
          dessous de se déplacer au doigt : on pouvait faire glisser le site
          latéralement derrière la modale. Le document doit donc être figé tant
          qu'une modale est ouverte, et sa position restituée ensuite. */
-      await pickerPage.locator("#mobileNavBuilder").click();
+      await allerA(pickerPage, "builder");
       await pickerPage.evaluate(() => window.scrollTo(0, 400));
       /* La position réelle est lue juste avant l'ouverture : changer de vue
          raccourcit le document, et le navigateur ramène le défilement à son
@@ -1430,19 +1434,20 @@ async function installRosterFocusFakeSupabase(page){
     assert.equal(await mobile.locator("#toast").getAttribute("role"), "status");
     assert.equal(await mobile.locator("#toast").getAttribute("aria-live"), "polite");
 
-    const mobileNavBox = await mobile.locator(".mobile-nav-item:visible")
+    const mobileNavBox = await mobile.locator(".mobile-nav button:visible")
       .first().boundingBox();
     assert.ok(mobileNavBox && mobileNavBox.height >= CIBLE_TACTILE_PX,
-      ".mobile-nav-item doit mesurer au moins 44 px");
-    await mobile.locator("#mobileNavMore").click();
-    const mobileLoginBox = await mobile.locator("#mobileAccountLogin").boundingBox();
+      "chaque destination au pouce doit mesurer au moins 44 px");
+    await mobile.locator("#mobileMoreButton").click();
+    const mobileLoginBox = await mobile
+      .locator('#mobileDrawer [data-action="compte"]').boundingBox();
     assert.ok(mobileLoginBox && mobileLoginBox.height >= CIBLE_TACTILE_PX,
-      "le bouton de connexion dans Plus doit mesurer au moins 44 px");
+      "l'acces au compte dans « Plus » doit mesurer au moins 44 px");
     await mobile.keyboard.press("Escape");
 
     /* L'arrivee se fait sur l'accueil : atteindre le Builder demande un clic.
        Ce bloc mesure des cibles tactiles, pas la vue de depart. */
-    await mobile.locator("#mobileNavBuilder").click();
+    await allerA(mobile, "builder");
     await mobile.locator("#view-builder").waitFor({ state:"visible" });
 
     await mobile.locator(".hero .portrait").first().click();
@@ -1486,21 +1491,9 @@ async function installRosterFocusFakeSupabase(page){
       "builder", "dashboard", "roster", "member-roster",
       "analyse", "boss"
     ]){
-      const direct = {
-        builder:"#mobileNavBuilder",
-        dashboard:"#mobileNavDashboard",
-        roster:"#mobileNavBoss",
-        "member-roster":"#mobileNavRoster"
-      };
-      if(direct[name]){
-        await mobile.locator(direct[name]).click();
-      }else if(name === "analyse"){
-        await mobile.locator("#mobileNavMore").click();
-        await mobile.locator('[data-mobile-view="analyse"]').click();
-      }else if(name === "boss"){
-        await mobile.locator("#mobileNavBoss").click();
-        await mobile.locator('#mobileBossSubtabs [data-mobile-view="boss"]').click();
-      }
+      /* `allerA` sait par ou passer : barre du pouce, tiroir « Plus », ou
+         onglets locaux. Ce bloc mesure un debordement, pas un chemin. */
+      await allerA(mobile, name);
       await mobile.waitForTimeout(50);
       const overflow = await mobile.evaluate(() =>
         document.scrollingElement.scrollWidth -
@@ -1537,297 +1530,18 @@ async function installRosterFocusFakeSupabase(page){
       "Les trois statistiques principales doivent s'empiler sous 560 px"
     );
     await mobileContext.close();
-    /* En portrait etroit, l'identite est compacte et defile avec la page.
-       La navigation persistante vit en bas : l'ancien rail horizontal et le
-       bloc compte du header ne doivent plus occuper la hauteur utile. */
-    for(const width of [320, 390]){
-      const headerContext = await browser.newContext({
-        viewport:{width,height:844},
-        isMobile:true,
-        hasTouch:true,
-        reducedMotion:"reduce"
-      });
-      const headerPage = await headerContext.newPage();
-      await headerPage.route(
-        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*",
-        route => route.fulfill({
-          status:200,
-          contentType:"application/javascript",
-          body:"window.supabase=undefined;"
-        })
-      );
-      await headerPage.goto(server.url + "/index.html");
-      await headerPage.locator("#mobileNavBuilder").click();
-      await headerPage.locator("#view-builder").waitFor({ state:"visible" });
+    /* L'en-tete retractable, les reperes de defilement du rail d'onglets et
+       la mise en page a deux etages de la barre etaient verifies ici. Les
+       trois mecaniques ont disparu avec la bascule sur la charte de la
+       maquette : l'en-tete est compacte a toutes les largeurs et ne se replie
+       plus, et la navigation n'a plus de rail defilant.
 
-      const metrics = () => headerPage.evaluate(() => {
-        const bar = document.querySelector(".topbar");
-        const root = document.scrollingElement;
-        const visible = selector => {
-          const node = document.querySelector(selector);
-          if(!node) return false;
-          const rect = node.getBoundingClientRect();
-          return rect.width > 0 && rect.height > 0
-            && getComputedStyle(node).visibility !== "hidden";
-        };
-        return {
-          height:Math.round(bar.getBoundingClientRect().height),
-          position:getComputedStyle(bar).position,
-          retracted:bar.classList.contains("is-retracted"),
-          brandVisible:visible(".brand"),
-          lootbarVisible:visible(".lootbar"),
-          accountVisible:visible(".account"),
-          tabsVisible:visible(".tabs-rail"),
-          mobileNavVisible:visible(".mobile-nav"),
-          overflow:root.scrollWidth-root.clientWidth
-        };
-      });
-
-      const before = await metrics();
-      assert.equal(before.position, "relative",
-        `Le header mobile doit defiler avec la page a ${width}px`);
-      assert.equal(before.retracted, false);
-      assert.equal(before.brandVisible, true);
-      assert.equal(before.lootbarVisible, true);
-      assert.equal(before.accountVisible, false);
-      assert.equal(before.tabsVisible, false);
-      assert.equal(before.mobileNavVisible, true);
-      assert.ok(before.height <= 64,
-        `Le header mobile doit rester compact a ${width}px (${before.height}px)`);
-      assert.ok(before.overflow <= 1,
-        `Le header compact ne doit pas deborder a ${width}px`);
-
-      await headerPage.evaluate(() => window.scrollTo({ top:600 }));
-      await headerPage.evaluate(() => new Promise(resolve =>
-        requestAnimationFrame(() => requestAnimationFrame(resolve))
-      ));
-      const after = await metrics();
-      assert.equal(after.retracted, false,
-        `L'ancien repli doit rester inactif en portrait a ${width}px`);
-      assert.equal(after.height, before.height,
-        `Le header compact ne doit pas changer de hauteur a ${width}px`);
-
-      await headerContext.close();
-    }
-
-    /* PAYSAGE sur téléphone : large mais court, il tombe hors de
-       `max-width:560px`. La hauteur d'écran y est pourtant la ressource rare,
-       et le header doit se replier comme en portrait étroit — ce que l'ancienne
-       condition en largeur seule ne faisait pas. */
-    {
-      const paysageContext = await browser.newContext({
-        viewport:{ width:812, height:375 },
-        isMobile:true,
-        hasTouch:true,
-        reducedMotion:"reduce"
-      });
-      const paysagePage = await paysageContext.newPage();
-      await paysagePage.route(
-        "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*",
-        route => route.fulfill({
-          status:200,
-          contentType:"application/javascript",
-          body:"window.supabase=undefined;"
-        })
-      );
-      await paysagePage.goto(server.url + "/index.html");
-      await allerA(paysagePage, "builder");
-      const brandHeight = () => paysagePage.evaluate(() =>
-        document.querySelector(".brand").getBoundingClientRect().height
-      );
-      assert.equal(
-        await paysagePage.evaluate(() =>
-          document.querySelector(".topbar").classList.contains("is-retracted")
-        ),
-        false,
-        "en paysage, le header part déployé en haut de page"
-      );
-      assert.ok(await brandHeight() > 0,
-        "en paysage déployé, la marque du header est peinte");
-      await paysagePage.evaluate(() => window.scrollTo({ top:600 }));
-      await paysagePage.waitForFunction(() =>
-        document.querySelector(".topbar").classList.contains("is-retracted"),
-        undefined,
-        { timeout:4000 }
-      );
-      /* On attend la fin du repli plutôt que de lire aussitôt : `max-height`
-         s'anime, et une lecture immédiate verrait une hauteur intermédiaire. */
-      await paysagePage.waitForFunction(() =>
-        document.querySelector(".brand").getBoundingClientRect().height < 1,
-        undefined,
-        { timeout:4000 }
-      );
-      assert.ok(await brandHeight() < 1,
-        "en paysage, défiler doit replier la marque du header");
-      await paysageContext.close();
-    }
-
-    /* En paysage court, où le rail supérieur reste le meilleur compromis, le
-       repli doit être animé plutôt qu'instantané. */
-    const motionContext = await browser.newContext({
-      viewport:{width:812,height:375},
-      isMobile:true,
-      hasTouch:true
-    });
-    const motionPage = await motionContext.newPage();
-    await motionPage.route("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*", route =>
-      route.fulfill({
-        status:200,
-        contentType:"application/javascript",
-        body:"window.supabase=undefined;"
-      })
-    );
-    await motionPage.goto(
-      server.url + "/index.html"
-    );
-    /* Meme raison qu'au-dessus : le repli s'observe en defilant, et l'accueil
-       deconnecte tient dans un ecran. Le Builder fournit la hauteur. */
-    await allerA(motionPage, "builder");
-    await motionPage.evaluate(() => {
-      document.querySelector("#accountLogin").hidden = true;
-      document.querySelector("#accountConnected").hidden = false;
-      document.querySelector("#accountPseudo").textContent = "Yannis";
-      document.querySelector("#liveStatus").textContent = "À jour";
-    });
-    const heights = await motionPage.evaluate(() => new Promise(resolve => {
-      const bar = document.querySelector(".topbar");
-      const samples = [];
-      const start = performance.now();
-      window.scrollTo({ top:600 });
-      (function tick(){
-        samples.push(Math.round(bar.getBoundingClientRect().height));
-        if(performance.now() - start < 400) requestAnimationFrame(tick);
-        else resolve(samples);
-      })();
-    }));
-    const tallest = Math.max(...heights);
-    const shortest = Math.min(...heights);
-    assert.ok(
-      tallest - shortest > 20,
-      "Le header doit visiblement se replier pendant l'échantillonnage "
-      +"("+tallest+" -> "+shortest+")"
-    );
-    /* Le milieu de la plage, pas ses bords : animer seulement les marges du
-       header produirait déjà des valeurs proches des extrêmes, sans que le
-       contenu replié bouge d'un pixel. */
-    const span = tallest - shortest;
-    assert.ok(
-      heights.some(value =>
-        value > shortest + span * 0.25 && value < tallest - span * 0.25
-      ),
-      "Le repli doit traverser le milieu de sa course, pas sauter d'un état à "
-      +"l'autre : "+JSON.stringify(heights)
-    );
-    assert.equal(
-      heights[heights.length - 1],
-      shortest,
-      "Le repli doit être terminé à la fin de l'échantillonnage"
-    );
-    await motionContext.close();
-
-    // En desktop, le header ne se replie jamais.
-    const deskHeader = await browser.newContext({ viewport:{width:1280,height:900} });
-    const deskPage = await deskHeader.newPage();
-    await deskPage.route("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*", route =>
-      route.fulfill({
-        status:200,
-        contentType:"application/javascript",
-        body:"window.supabase=undefined;"
-      })
-    );
-    await deskPage.goto(
-      server.url + "/index.html"
-    );
-    await deskPage.evaluate(() => window.scrollTo({ top:600 }));
-    await deskPage.waitForTimeout(120);
-    assert.equal(
-      await deskPage.evaluate(() =>
-        document.querySelector(".topbar").classList.contains("is-retracted")
-      ),
-      false,
-      "Le header ne doit jamais se replier en desktop"
-    );
-    assert.equal(
-      await deskPage.evaluate(() =>
-        document.querySelector(".brand").getClientRects().length > 0
-      ),
-      true
-    );
-    /* Les onglets ne défilent qu'en mobile : aucun repère ne doit apparaître
-       en desktop, même si le contrôleur pose ses classes. */
-    assert.deepEqual(
-      await deskPage.evaluate(() => [".tabs-cue-left", ".tabs-cue-right"].map(selector =>
-        Number(getComputedStyle(document.querySelector(selector)).opacity)
-      )),
-      [0, 0],
-      "Aucun repère de défilement des onglets en desktop"
-    );
-    await deskHeader.close();
-
-    /* L'en-tête ne doit jamais laisser le BLOC COMPTE seul sur une ligne sous
-       les onglets. C'est ce que `flex-wrap` produisait dès que les neuf onglets
-       ne tenaient plus à côté de la marque : le compte calé à gauche sous le
-       logo, un grand vide à sa droite — on lisait un défaut de mise en page.
-
-       Quand il faut deux étages, ce sont les ONGLETS qui prennent la seconde
-       ligne, sur toute la largeur : c'est le bloc qui grandit à chaque nouvel
-       onglet, et les neuf doivent rester visibles d'un coup d'œil. */
-    for(const largeur of [1903, 1536, 1280]){
-      const contexte = await browser.newContext({
-        viewport:{ width:largeur, height:900 }
-      });
-      const vue = await contexte.newPage();
-      await vue.route("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*",
-        route => route.fulfill({
-          status:200,
-          contentType:"application/javascript",
-          body:"window.supabase=undefined;"
-        })
-      );
-      await vue.goto(server.url + "/index.html");
-      const entete = await vue.evaluate(() => {
-        /* On compare les CENTRES, pas les bords : sur une même ligne le blason
-           (44 px) et un bouton (34 px) n'ont pas le même haut. */
-        const centre = selecteur => {
-          const boite = document.querySelector(selecteur).getBoundingClientRect();
-          return Math.round(boite.top + boite.height / 2);
-        };
-        const rail = document.querySelector(".tabs").getBoundingClientRect();
-        return {
-          marque:centre(".brand"),
-          onglets:centre(".tabs-rail"),
-          compte:centre(".account"),
-          /* Scope au rail PRINCIPAL : les onglets du sous-menu vivent dans une
-             autre barre, et masques ils rendent un rectangle a zero que ce
-             test lirait comme « hors cadre ».
-
-             Le meme piege vit desormais DANS la barre principale : « Membres »
-             y nait masque. On ecarte donc tout onglet sans surface, plutot que
-             de compter sur le seul decoupage par barre. */
-          horsCadre:[...document.querySelectorAll(".tabs .tab")].filter(onglet => {
-            const boite = onglet.getBoundingClientRect();
-            if(boite.width === 0 && boite.height === 0) return false;
-            return boite.left < rail.left - 1 || boite.right > rail.right + 1;
-          }).length,
-          deborde:document.documentElement.scrollWidth
-            > document.documentElement.clientWidth
-        };
-      });
-      assert.ok(Math.abs(entete.compte - entete.marque) <= 20,
-        largeur + "px : le bloc compte doit rester sur la ligne de la marque, "
-        + "jamais seul sous les onglets (écart "
-        + (entete.compte - entete.marque) + "px)");
-      assert.ok(entete.onglets >= entete.marque - 20,
-        largeur + "px : les onglets prennent la seconde ligne, pas le compte");
-      assert.equal(entete.horsCadre, 0,
-        largeur + "px : les huit onglets doivent être visibles sans défiler");
-      assert.equal(entete.deborde, false,
-        largeur + "px : l'en-tête ne doit pas élargir le document");
-      await contexte.close();
-    }
+       Ce qui les remplace est verifie par tests/navigation-mobile.playwright.js :
+       hauteur d'en-tete constante au defilement, barre du pouce a cinq
+       destinations, cibles de 44 px et absence de debordement. */
 
     assert.deepStrictEqual(errors, []);
-    console.log("PASS accessibilité : onglets, modales, header rétractable et mobile");
+    console.log("PASS accessibilité : onglets, modales et mobile");
   }finally{
     await browser.close();
     await server.close();

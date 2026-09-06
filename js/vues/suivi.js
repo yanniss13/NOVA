@@ -23,6 +23,7 @@ import { bossViewState, openBossReport, openBossTeamPicker } from "./boss-sessio
 import { resetTeamDraft } from "./builder.js";
 import { Availability } from "./dispos.js";
 import { openAuth } from "./modale-auth.js";
+import { ongletDeLaVue } from "./coquille.js";
 import { showView } from "./navigation.js";
 import { toast } from "./toast.js";
 
@@ -92,7 +93,10 @@ import { toast } from "./toast.js";
     }
 
     if(card) dashboardFocusCard(card);
-    else $("#tab-boss").focus();
+    else {
+      const entree = ongletDeLaVue("boss");
+      if(entree) entree.focus();
+    }
   }
 
   function dashboardFocusCard(card){
@@ -144,7 +148,8 @@ import { toast } from "./toast.js";
       const target = $("#bossBody").querySelector(
         '.boss-card:not(.mine) .boss-join:not([disabled])'
       );
-      (target || $("#tab-boss")).focus();
+      const repli = target || ongletDeLaVue("boss");
+      if(repli) repli.focus();
     }
   }
 

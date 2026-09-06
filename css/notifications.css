@@ -40,6 +40,21 @@ body.pwa-update-on .toast{
   .pwa-update p{flex-basis:calc(100% - 54px);align-self:center}
   .pwa-update #pwaUpdateApply{order:3;flex:1 0 100%}
 }
+/* SUR TELEPHONE, la barre du pouce occupe le bas de l'ecran : le bandeau et
+   les toasts se posent au-dessus d'elle, jamais dessus. Ces deux regles
+   vivent ICI et non dans coquille.css : `.pwa-update` appartient a cette
+   feuille, qui se charge apres — les y laisser aurait fait gagner la regle
+   de base, et le bandeau serait retombe SUR la barre, interceptant ses clics.
+   La hauteur vient du jeton, pour qu'un seul chiffre commande les deux. */
+@media(max-width:767px){
+  .pwa-update{
+    bottom:calc(var(--barre-pouce) + 14px + env(safe-area-inset-bottom))
+  }
+  body.pwa-update-on .toast{
+    bottom:calc(var(--pwa-banner-h,124px) + var(--barre-pouce) + 26px
+      + env(safe-area-inset-bottom))
+  }
+}
 .member-roster-card,.member-roster-build-tag,.boss-card,
 .team,.hero,.modal{overflow-wrap:anywhere}
 

@@ -19,11 +19,6 @@
   background:linear-gradient(145deg,rgba(10,36,50,.96),rgba(5,20,30,.98))
 }
 
-/* La respiration commune a toutes les vues. `main` ne porte aucun padding :
-   c'est ce gabarit qui l'apporte, pour qu'une banniere pleine largeur puisse
-   s'en affranchir. */
-.page-shell{padding:40px 48px 54px}
-
 .page-heading{
   display:flex;align-items:flex-end;justify-content:space-between;gap:36px;
   padding-bottom:24px;border-bottom:1px solid var(--line)

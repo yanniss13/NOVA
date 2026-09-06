@@ -90,6 +90,7 @@
 /* La barre des onglets d'une rubrique vit ICI, dans la coquille, pas dans
    chaque vue : une seule barre, remplie depuis la table des rubriques. */
 .local-tabs-bar{padding:0 48px}
+.local-tabs-bar .local-tabs{margin-bottom:0}
 .local-tabs-bar[hidden]{display:none}
 
 /* ---------- Pied de page ---------- */
@@ -152,15 +153,17 @@
   .mobile-drawer button[hidden]{display:none}
   .mobile-drawer [aria-current="page"]{color:var(--gold-light)}
 
-  /* Tout ce qui est fixe en bas de l'ecran se pose AU-DESSUS de la barre du
-     pouce : la zone de contenu, l'ancrage du defilement, le bandeau de mise a
-     jour et les toasts. Ces quatre reglages dependent de la meme hauteur de
-     barre, ils vivent donc ensemble. */
-  html{scroll-padding-bottom:calc(82px + env(safe-area-inset-bottom));scroll-padding-top:12px}
-  main{width:100%;border:0;padding-bottom:calc(78px + env(safe-area-inset-bottom))}
-  .pwa-update{bottom:calc(82px + env(safe-area-inset-bottom))}
-  body.pwa-update-on .toast{
-    bottom:calc(var(--pwa-banner-h,124px) + 94px + env(safe-area-inset-bottom))
+  /* La zone de contenu et l'ancrage du defilement passent au-dessus de la
+     barre du pouce. Le bandeau de mise a jour et les toasts en font autant,
+     mais depuis notifications.css : c'est cette feuille qui les possede, et
+     elle se charge apres celle-ci. */
+  html{
+    scroll-padding-bottom:calc(var(--barre-pouce) + 14px + env(safe-area-inset-bottom));
+    scroll-padding-top:12px
+  }
+  main{
+    width:100%;border:0;
+    padding-bottom:calc(var(--barre-pouce) + 10px + env(safe-area-inset-bottom))
   }
   .view{min-width:0;min-height:calc(100vh - 132px)}
   .local-tabs-bar{padding-inline:14px}
@@ -177,7 +180,8 @@
   /* La barre du pouce. Cinq entrees, dont « Plus » qui ouvre le tiroir. */
   .mobile-nav{
     display:grid;grid-template-columns:repeat(5,1fr);
-    position:fixed;z-index:30;left:0;right:0;bottom:0;min-height:68px;
+    position:fixed;z-index:30;left:0;right:0;bottom:0;
+    min-height:var(--barre-pouce);
     padding-bottom:env(safe-area-inset-bottom);
     background:rgba(5,22,32,.98);border-top:1px solid var(--gold);
   }
