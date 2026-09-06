@@ -1,6 +1,6 @@
-# Activer les commandes Discord `/planning`, `/chrono` et `/run`
+# Activer les commandes Discord `/planning`, `/chrono`, `/run` et `/build`
 
-Les trois commandes vivent dans la même Edge Function, parce que Discord envoie
+Les quatre commandes vivent dans la même Edge Function, parce que Discord envoie
 toutes les interactions d'une application vers une seule URL. Elles partagent
 donc le serveur, les salons et les rôles autorisés.
 
@@ -43,6 +43,56 @@ compter » ne sont pas la même information.
 Le délai anti-spam de trente secondes est indexé sur le salon **et** sur la
 commande : `/chrono` ne coûte qu'une lecture, il n'a aucune raison d'être
 retenu parce qu'un planning vient d'être publié dans le même salon.
+
+## La commande `/build`
+
+`/build <joueur> <personnage> [arme]` publie dans le salon la fiche d'un
+personnage tel qu'il est équipé dans le roster d'un membre : une image par
+build, jusqu'à trois — c'est le nombre d'armes qu'un personnage peut porter.
+Préciser l'arme n'en publie qu'une.
+
+La carte est illustrée : le portrait du personnage, l'icône de l'arme, des
+quatre pièces d'armure, de l'armure gravée et des trois bijoux, avec pour
+chacune son niveau de passif, ses enchantements et le palier de sa perle. La
+note écrite par le joueur ferme la carte. Un emplacement vide s'affiche vide
+plutôt que d'être tu : « ce joueur n'a pas de collier » et « je n'ai pas lu le
+collier » ne sont pas la même information.
+
+### Deux contraintes qui se voient sur l'image
+
+**Les images du jeu sont en webp, et rien dans une Edge Function Deno ne
+décode ce format.** `scripts/generer-vignettes.py` en publie donc une version
+PNG, à la taille exacte où la carte les pose. Ces vignettes pèsent près de
+trois mégaoctets : elles ne sont **pas versionnées**, le job `package` du
+workflow Pages les fabrique dans `_site` au déploiement. Une vignette
+introuvable ne prive personne de sa carte — l'emplacement se dessine sans
+image.
+
+**Les polices de la carte sont des atlas**, hérités du rendu de `/planning`,
+et ils ne connaissent que `A-Z 0-9 - / : . ( ) | = ?`. Tout le texte de la
+carte est donc en capitales sans accents. Trois traductions comblent les
+manques : l'apostrophe devient une espace, `&` devient « ET », et le `%` est
+tracé à la main, au rectangle et au disque. Sans lui, chaque pourcentage
+s'afficherait « ? ».
+
+### Ce que la commande lit
+
+Le pseudo est retrouvé dans `profiles` **avant** de lire le roster :
+`roster_characters` compte une ligne par personnage possédé, chacune portant
+tous ses builds. Lire la table entière pour n'en garder qu'un joueur ferait
+transiter plusieurs mégaoctets à chaque commande.
+
+Les noms des personnages et les libellés des statistiques viennent de
+`data/libelles-discord.json`, publié sur Pages par
+`scripts/generer-libelles-discord.js` — l'extrait de dix kilo-octets qui
+suffit à la carte, là où le catalogue complet du site en pèse 2 500. Le nom
+d'un objet, lui, ne vient d'aucun fichier : il **est** le nom de fichier de
+son image.
+
+La recherche ignore les accents et la casse. Un pseudo, un personnage ou une
+arme introuvable répond dans le salon, avec les noms proches. La réponse
+n'est pas éphémère : Discord veut une première réponse en moins de trois
+secondes et l'ephémérité se décide à cet instant, avant d'avoir rien lu.
 
 ## Architecture et sécurité
 
@@ -143,7 +193,7 @@ La mettre dans **General Information → Interactions Endpoint URL** de
 l'application Discord. Discord envoie un PING signé ; l'enregistrement réussit
 uniquement si la fonction et `DISCORD_PUBLIC_KEY` sont corrects.
 
-## 4. Enregistrer les trois commandes dans le serveur
+## 4. Enregistrer les quatre commandes dans le serveur
 
 Dans un terminal local, définir temporairement ces trois variables :
 
@@ -155,7 +205,7 @@ npm run discord:register-commands
 Remove-Item Env:DISCORD_BOT_TOKEN
 ```
 
-Le script traite les trois commandes : il crée celles qui manquent, met à jour
+Le script traite les quatre commandes : il crée celles qui manquent, met à jour
 celles qui existent déjà, et ne remplace jamais les autres commandes de
 l'application. Il affiche aussi le lien d'autorisation
 `applications.commands` à ouvrir pour installer l'application dans le serveur.
@@ -178,6 +228,12 @@ par l'avancement, la liste des prochaines mesures et le bouton
 Puis lancer `/run`. Le message d'attente doit être remplacé par la liste des
 membres sous 3/3 runs, ou par `✅ tout le monde est à 3/3` — exactement le texte
 que le salon reçoit le dimanche.
+
+Enfin `/build joueur:<un pseudo> personnage:<un personnage de son roster>`. Le
+message d'attente doit être remplacé par une image par build, portraits et
+icônes compris, et un bouton **NOVA - Voir les rosters**. Des icônes absentes
+au premier essai signifient que le déploiement Pages qui fabrique
+`7ds-vignettes/` n'est pas encore passé.
 
 En cas d'échec, la commande affiche un message neutre. Le détail technique est
 visible dans **Supabase → Edge Functions → discord-planning → Logs**.

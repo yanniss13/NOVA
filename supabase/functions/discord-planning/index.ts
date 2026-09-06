@@ -7,6 +7,8 @@ type EdgeSharedGlobal = typeof globalThis & {
   NOVA_AVAILABILITY_PDF?: unknown;
   NOVA_DISCORD_PLANNING?: unknown;
   NOVA_BOSS_REMINDER?: unknown;
+  NOVA_DISCORD_BUILD?: unknown;
+  NOVA_DISCORD_BUILD_PNG?: unknown;
 };
 
 /* Le déploiement Supabase refuse le media type `.cjs`. Les modules partagés
@@ -18,9 +20,13 @@ await import("../_shared/availability-font.js");
 await import("../_shared/availability-pdf.js");
 await import("../_shared/discord-planning.js");
 await import("../_shared/boss-reminder.js");
+await import("../_shared/discord-build.js");
+await import("../_shared/discord-build-png.js");
 const availabilityPdfModule = edgeSharedGlobal.NOVA_AVAILABILITY_PDF;
 const planningHelpersModule = edgeSharedGlobal.NOVA_DISCORD_PLANNING;
 const bossReminderModule = edgeSharedGlobal.NOVA_BOSS_REMINDER;
+const buildModule = edgeSharedGlobal.NOVA_DISCORD_BUILD;
+const buildPngModule = edgeSharedGlobal.NOVA_DISCORD_BUILD_PNG;
 
 declare const EdgeRuntime: {
   waitUntil(promise: Promise<unknown>): void;
@@ -32,7 +38,10 @@ type DiscordInteraction = {
   token?: string;
   guild_id?: string;
   channel_id?: string;
-  data?: { name?: string };
+  data?: {
+    name?: string;
+    options?: { name?: string; type?: number; value?: unknown }[];
+  };
   member?: { roles?: string[]; permissions?: string };
 };
 
@@ -50,6 +59,12 @@ type AvailabilityRow = { owner: string; slots: string };
 const NOVA_AVAILABILITY_URL = "https://yanniss13.github.io/NOVA/#availability";
 const NOVA_CHRONO_PROGRESS_URL =
   "https://yanniss13.github.io/NOVA/data/chronometrage-avancement.json";
+const NOVA_ROSTER_URL = "https://yanniss13.github.io/NOVA/#member-roster";
+/* Le nom et l'element des personnages, le libelle et l'unite des statistiques.
+   Le catalogue complet du site pese 2,5 Mo ; ce petit fichier en est l'extrait
+   qui suffit a /build, publie par `scripts/generer-libelles-discord.js`. */
+const NOVA_BUILD_LABELS_URL =
+  "https://yanniss13.github.io/NOVA/data/libelles-discord.json";
 
 const {
   currentAvailabilityWeekStart,
@@ -111,6 +126,41 @@ const {
     request: (pathname: string) => Promise<unknown>, weekStart: string
   ): Promise<{ missingMembers: MissingMember[] }>;
   reminderMessage(weekLabel: string, missingMembers: MissingMember[]): string;
+};
+
+/* La commande /build : tout ce qui se raisonne est dans le module partage,
+   l'Edge Function ne fait que lire Supabase, dessiner et publier. */
+type BuildOptions = { joueur: string; personnage: string; arme: string };
+type BuildCard = {
+  joueur: string;
+  personnage: string;
+  arme: string;
+  fichier: string;
+};
+type RosterRow = {
+  owner: string;
+  char_id: string;
+  potential_tier: number;
+  builds: unknown;
+};
+const {
+  lireOptionsBuild,
+  trouverProfil,
+  resoudreDemandeBuild,
+  contenuMessageBuild
+} = buildModule as {
+  lireOptionsBuild(interaction: DiscordInteraction): BuildOptions;
+  trouverProfil(profils: Profile[], saisie: string): Profile | null;
+  resoudreDemandeBuild(entree: {
+    profils: Profile[];
+    lignes: RosterRow[];
+    libelles: unknown;
+    options: BuildOptions;
+  }): { erreur?: string; cartes?: BuildCard[] };
+  contenuMessageBuild(cartes: BuildCard[]): string;
+};
+const { generateBuildCardPng } = buildPngModule as {
+  generateBuildCardPng(carte: BuildCard): Promise<Uint8Array>;
 };
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -434,6 +484,135 @@ async function publishBossRunReminder(
   }
 }
 
+/* Le catalogue de libelles ne change qu'a un deploiement du site : le garder
+   en memoire evite de le retelecharger a chaque commande. Une instance Edge
+   froide le lit une fois, les suivantes le retrouvent ici. */
+let buildLabelsCache: unknown = null;
+async function readBuildLabels(): Promise<unknown> {
+  if(buildLabelsCache) return buildLabelsCache;
+  const response = await fetch(
+    NOVA_BUILD_LABELS_URL, { headers:{ Accept:"application/json" } }
+  );
+  if(!response.ok){
+    throw new Error("Libellés -> " + response.status);
+  }
+  buildLabelsCache = await response.json();
+  return buildLabelsCache;
+}
+
+/* Une image par build, jusqu'a trois : c'est le nombre d'armes qu'un
+   personnage peut equiper. Discord en accepte dix par message, la limite ne
+   sera donc jamais atteinte par cette commande. */
+async function editOriginalWithCards(
+  interaction: DiscordInteraction,
+  content: string,
+  cartes: BuildCard[],
+  images: Uint8Array[]
+): Promise<void> {
+  const form = new FormData();
+  form.append("payload_json", JSON.stringify({
+    content,
+    allowed_mentions:{ parse:[] },
+    attachments:cartes.map((carte, index) => ({
+      id:index,
+      filename:carte.fichier,
+      description:"Build " + carte.arme + " de " + carte.personnage
+        + " dans le roster de " + carte.joueur
+    })),
+    embeds:cartes.map(carte => ({
+      image:{ url:"attachment://" + carte.fichier }
+    })),
+    components:[{
+      type:1,
+      components:[{
+        type:2,
+        style:5,
+        label:"NOVA - Voir les rosters",
+        url:NOVA_ROSTER_URL
+      }]
+    }]
+  }));
+  images.forEach((image, index) => {
+    form.append(
+      "files[" + index + "]",
+      new Blob([image], { type:"image/png" }),
+      cartes[index].fichier
+    );
+  });
+  const response = await fetch(originalInteractionUrl(
+    interaction.application_id || "", interaction.token || ""
+  ), { method:"PATCH", body:form });
+  if(!response.ok){
+    throw new Error("Discord PATCH build -> " + response.status
+      + " " + await response.text());
+  }
+}
+
+/* POURQUOI L'ERREUR EST PUBLIQUE. Discord veut une premiere reponse en moins
+   de trois secondes, et le caractere ephemere se decide a cet instant — avant
+   d'avoir lu quoi que ce soit. Verifier le pseudo AVANT de differer
+   demanderait deux lectures Supabase dans ce budget de trois secondes ; une
+   faute de frappe repond donc dans le salon, comme pour les trois autres
+   commandes. */
+async function publishCharacterBuild(
+  interaction: DiscordInteraction,
+  config: PlanningConfig
+): Promise<void> {
+  try {
+    if(!await claimGeneration(interaction, config, "build", 10)){
+      await editOriginalText(
+        interaction,
+        "⏳ Un build vient déjà d'être demandé. Réessaie dans quelques secondes."
+      );
+      return;
+    }
+
+    const options = lireOptionsBuild(interaction);
+    const [profiles, libelles] = await Promise.all([
+      supabaseJson<Profile[]>(config, PLANNING_PROFILES_QUERY),
+      readBuildLabels()
+    ]);
+    /* On retrouve le pseudo AVANT de lire le roster : `roster_characters`
+       compte une ligne par personnage possede, chacune portant tous ses
+       builds. Lire la table entiere pour n'en garder qu'un joueur ferait
+       transiter plusieurs mega-octets a chaque commande.
+
+       Un pseudo introuvable passe quand meme par `resoudreDemandeBuild`, avec
+       un roster vide : la phrase d'erreur et les pseudos proches restent
+       ecrits a un seul endroit. */
+    const profil = trouverProfil(profiles, options.joueur);
+    const lignes = profil
+      ? await supabaseJson<RosterRow[]>(config,
+        "roster_characters?owner=eq." + encodeURIComponent(profil.id)
+        + "&select=owner,char_id,potential_tier,builds")
+      : [];
+    const resultat = resoudreDemandeBuild({
+      profils:profiles, lignes, libelles, options
+    });
+    if(resultat.erreur || !resultat.cartes || !resultat.cartes.length){
+      await editOriginalText(interaction, "❌ " + (resultat.erreur
+        || "Aucun build à partager."));
+      return;
+    }
+
+    const cartes = resultat.cartes;
+    const images = await Promise.all(cartes.map(generateBuildCardPng));
+    await editOriginalWithCards(
+      interaction, contenuMessageBuild(cartes), cartes, images
+    );
+  } catch (error) {
+    console.error("Échec de /build", error);
+    try {
+      await editOriginalText(
+        interaction,
+        "❌ Le build n'a pas pu être partagé. Un administrateur peut consulter les logs Supabase."
+      );
+    } catch (editError) {
+      console.error("Impossible de publier l'erreur Discord", editError);
+    }
+  }
+}
+
 Deno.serve(async request => {
   if(request.method !== "POST"){
     return jsonResponse({ error:"Méthode non autorisée" }, 405);
@@ -457,7 +636,7 @@ Deno.serve(async request => {
   }
 
   if(interaction.type === 1) return jsonResponse({ type:1 });
-  /* Discord n'accepte qu'UN endpoint d'interactions par application : les trois
+  /* Discord n'accepte qu'UN endpoint d'interactions par application : les quatre
      commandes arrivent forcément ici, et c'est le nom qui les sépare. */
   const commandName = interaction.data?.name || "";
   const taches: Record<string, (
@@ -465,7 +644,8 @@ Deno.serve(async request => {
   ) => Promise<void>> = {
     planning:generateAndPublishPlanning,
     chrono:publishChronoProgress,
-    run:publishBossRunReminder
+    run:publishBossRunReminder,
+    build:publishCharacterBuild
   };
   /* `hasOwnProperty` et non un accès direct : sans lui, un nom comme
      « constructor » remonterait une fonction héritée d'Object.prototype et

@@ -568,6 +568,36 @@ class RasterCanvas {
     }
   }
 
+  /* Poser une image decodee, pixel pour pixel, en respectant sa transparence.
+     Aucun redimensionnement : les vignettes sont publiees a la taille exacte
+     ou la carte les dessine, et un plus proche voisin creneleraient des
+     icones detourees. Ce qui depasse la surface est simplement coupe. */
+  drawImage(image, x, y) {
+    if(!image || !image.pixels) return;
+    const gauche = Math.round(x);
+    const haut = Math.round(y);
+    for(let ligne = 0; ligne < image.height; ligne += 1){
+      const cibleY = haut + ligne;
+      if(cibleY < 0 || cibleY >= this.height) continue;
+      for(let colonne = 0; colonne < image.width; colonne += 1){
+        const cibleX = gauche + colonne;
+        if(cibleX < 0 || cibleX >= this.width) continue;
+        const source = (ligne * image.width + colonne) * 4;
+        const alpha = image.pixels[source + 3];
+        if(!alpha) continue;
+        const cible = (cibleY * this.width + cibleX) * 4;
+        const ratio = alpha / 255;
+        for(let canal = 0; canal < 3; canal += 1){
+          this.pixels[cible + canal] = Math.round(
+            image.pixels[source + canal] * ratio
+            + this.pixels[cible + canal] * (1 - ratio)
+          );
+        }
+        this.pixels[cible + 3] = 255;
+      }
+    }
+  }
+
   textWidth(value, scale) {
     const length = bitmapText(value).length;
     return length ? length * 6 * scale - scale : 0;
@@ -948,7 +978,16 @@ async function generateAvailabilityTablePng(report) {
   return await generateAvailabilityPreviewPng(report);
 }
 
+/* La surface de dessin, les polices et l'encodeur sortent pour la carte de
+   /build : elle partage la charte du planning, il n'y a aucune raison d'en
+   ecrire un second exemplaire. Ce qui reste prive, c'est la MISE EN PAGE du
+   planning — chaque commande dessine la sienne. */
 const availabilityPdfApi = {
+  RasterCanvas,
+  encodePng,
+  availabilityFonts,
+  atlasStringWidth,
+  bitmapText,
   currentAvailabilityWeekStart,
   weekLabel,
   normalizedMask,
