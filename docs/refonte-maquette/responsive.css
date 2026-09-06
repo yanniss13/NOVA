@@ -1,0 +1,10 @@
+@media (max-width:767px){
+  .app-header{min-height:60px;padding:8px 14px}
+  .prototype-label{display:none}
+  main{padding:16px 14px 88px}
+  .mobile-nav{display:grid;position:fixed;z-index:30;left:0;right:0;bottom:0;min-height:68px;background:var(--slate);border-top:1px solid var(--gold)}
+}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}

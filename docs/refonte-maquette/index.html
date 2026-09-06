@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NOVA — Maquette de refonte</title>
+  <meta name="description" content="Maquette interactive de la future interface de la Confrérie 7DS.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./maquette.css">
+  <link rel="stylesheet" href="./responsive.css">
+</head>
+<body data-session="public">
+  <a class="skip-link" href="#main">Aller au contenu</a>
+  <header class="app-header" id="appHeader"></header>
+
+  <main id="main" tabindex="-1">
+    <section class="view is-active" data-view="home">
+      <h1>NOVA — Confrérie 7DS</h1>
+      <img class="shell-banner" src="../../nova-banniere-etendue.png"
+           alt="Les héros de NOVA réunis devant la forteresse">
+    </section>
+    <section class="view" data-view="dashboard" hidden><h1>Mon suivi</h1></section>
+    <section class="view" data-view="teams" hidden><h1>Créer une équipe</h1><p>Équipes partagées</p></section>
+    <section class="view" data-view="boss" hidden><h1>Boss de Guilde</h1><p>Disponibilités · Groupes · Rapports</p></section>
+    <section class="view" data-view="roster" hidden><h1>Mon roster</h1><p>Roster des membres</p></section>
+    <section class="view" data-view="tools" hidden><h1>Outils</h1><p>Wiki · Collection · Calculateur · Analyse</p></section>
+    <section class="view" data-view="admin" hidden><h1>Membres</h1></section>
+  </main>
+
+  <nav class="mobile-nav" aria-label="Navigation mobile"></nav>
+  <div class="modal-layer" id="demoModal" hidden></div>
+  <script src="./donnees-demo.js" defer></script>
+  <script src="./maquette.js" defer></script>
+</body>
+</html>

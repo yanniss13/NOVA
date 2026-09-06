@@ -1,0 +1,30 @@
+"use strict";
+
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+
+const ROOT = path.resolve(__dirname, "..");
+const PROTO = path.join(ROOT, "docs", "refonte-maquette");
+const read = file => fs.readFileSync(path.join(PROTO, file), "utf8");
+
+const html = read("index.html");
+const data = read("donnees-demo.js");
+const js = read("maquette.js");
+const css = read("maquette.css") + read("responsive.css");
+
+["home", "dashboard", "teams", "boss", "roster", "tools", "admin"]
+  .forEach(view => assert.match(html,
+    new RegExp(`data-view=["']${view}["']`), `vue absente : ${view}`));
+
+[
+  "Mon suivi", "Créer une équipe", "Équipes partagées", "Disponibilités",
+  "Groupes", "Rapports", "Mon roster", "Roster des membres", "Wiki",
+  "Collection", "Calculateur", "Analyse", "Membres"
+].forEach(label => assert.ok((html + data).includes(label),
+  `fonction absente : ${label}`));
+
+assert.doesNotMatch(html + js, /supabase|localStorage|serviceWorker/i);
+assert.match(html, /nova-banniere-etendue\.png/);
+assert.match(css, /@media\s*\(max-width:\s*767px\)/);
+console.log("refonte-maquette.test.js OK");
