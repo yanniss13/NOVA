@@ -199,8 +199,31 @@ son propre délai de trente secondes :
 supabase secrets set DISCORD_PLANNING_CHANNEL_ID=<id-salon-1>,<id-salon-2>
 ```
 
-Facultatif, pour limiter la commande à un ou plusieurs rôles (séparés par des
-virgules) :
+### Donner à `/build` ses propres salons
+
+`DISCORD_BUILD_CHANNEL_ID` limite **`/build` seule** aux salons qu'il nomme :
+
+```powershell
+supabase secrets set DISCORD_BUILD_CHANNEL_ID=<id-du-salon-builds>
+```
+
+Renseigné, il **remplace** `DISCORD_PLANNING_CHANNEL_ID` pour cette commande :
+`/build` ne répond plus que là, et le salon des builds n'ouvre ni `/planning`,
+ni `/chrono`, ni `/run`. « Seulement ici » ne voudrait rien dire si les deux
+listes s'additionnaient. Laissé vide, `/build` retombe sur la liste générale
+et rien ne change.
+
+**Ce réglage refuse, il ne masque pas.** Une commande refusée répond un message
+d'erreur, mais elle reste proposée dans le menu `/` du salon. Pour qu'elle
+disparaisse du menu, il faut le réglage de Discord lui-même : **Paramètres du
+serveur → Intégrations →** l'application **→** la liste des commandes, où
+chacune se restreint à des salons et des rôles. Les deux se complètent : le
+serveur masque, l'Edge Function refuse. Régler l'un sans l'autre laisse soit un
+message d'erreur là où la commande n'aurait pas dû apparaître, soit une
+commande visible qui ne répondra pas.
+
+Facultatif, pour limiter les commandes à un ou plusieurs rôles (séparés par des
+virgules) — ce réglage-là reste commun aux quatre :
 
 ```powershell
 supabase secrets set DISCORD_PLANNING_ROLE_IDS=<role-1>,<role-2>

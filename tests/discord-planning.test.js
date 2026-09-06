@@ -114,6 +114,56 @@ assert.match(helpers.planningAuthorizationError(baseInteraction, {
   guildId:"guild", channelIds:[], allowedRoleIds:[]
 }), /configurée/, "aucun salon configuré bloque la commande");
 
+/* Le refus nomme la commande refusée, et ne parle plus « des disponibilités » :
+   quatre commandes passent par ce contrôle, et trois n'ont rien à voir avec le
+   planning. */
+const refusDeSalon = helpers.planningAuthorizationError({
+  ...baseInteraction, channel_id:"salon-3"
+}, { guildId:"guild", channelIds:["channel"], allowedRoleIds:[] }, "build");
+assert.match(refusDeSalon, /\/build/);
+assert.doesNotMatch(refusDeSalon, /disponibilités/,
+  "le message de refus ne doit plus parler du planning");
+
+/* UNE COMMANDE PEUT AVOIR SES PROPRES SALONS.
+   Un salon dédié à /build ne doit pas ouvrir /planning, /chrono et /run avec
+   lui. Une liste par commande prime donc sur la liste générale — et quand elle
+   prime, elle REMPLACE : sans quoi « seulement ici » ne voudrait rien dire. */
+const configCloisonnee = {
+  guildId:"guild",
+  channelIds:["channel"],
+  allowedRoleIds:[],
+  channelIdsByCommand:{ build:["salon-builds"] }
+};
+assert.equal(helpers.planningAuthorizationError({
+  ...baseInteraction, channel_id:"salon-builds"
+}, configCloisonnee, "build"), "",
+"/build est autorisée dans le salon de sa propre liste");
+assert.match(helpers.planningAuthorizationError({
+  ...baseInteraction, channel_id:"salon-builds"
+}, configCloisonnee, "planning"), /salon/,
+"le salon de /build n'ouvre pas /planning");
+assert.match(helpers.planningAuthorizationError(baseInteraction,
+  configCloisonnee, "build"), /salon/,
+"une liste propre REMPLACE la generale : /build ne repond plus dans l'autre");
+assert.equal(helpers.planningAuthorizationError(baseInteraction,
+  configCloisonnee, "planning"), "",
+"les autres commandes gardent la liste generale");
+
+/* Sans liste propre, rien ne change : le comportement historique tient. */
+assert.equal(helpers.planningAuthorizationError(baseInteraction, {
+  guildId:"guild",
+  channelIds:["channel"],
+  allowedRoleIds:[],
+  channelIdsByCommand:{ build:[] }
+}, "build"), "", "une liste propre vide laisse la liste générale s'appliquer");
+assert.equal(helpers.planningAuthorizationError({
+  ...baseInteraction, channel_id:"salon-builds"
+}, {
+  guildId:"guild", channelIds:[], allowedRoleIds:[],
+  channelIdsByCommand:{ build:["salon-builds"] }
+}, "build"), "",
+"une liste propre suffit : /build n'a pas besoin de la liste générale");
+
 const now = Date.UTC(2026, 7, 20, 12, 0, 0);
 assert.equal(helpers.isFreshDiscordTimestamp(String(now / 1000), now), true);
 assert.equal(helpers.isFreshDiscordTimestamp(String(now / 1000 - 301), now), false);
