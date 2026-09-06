@@ -1,0 +1,79 @@
+/* LE SOCLE. Remise a zero, page, zone de contenu, titres de section.
+
+   Ce que porte ce fichier tient en une phrase : ce qui s'applique a la page
+   entiere, quelle que soit la vue ouverte. La coquille — en-tete, navigation,
+   pied de page — vit dans `coquille.css` ; les composants reutilisables dans
+   `composants.css`.
+
+   Se charge apres `charte.css`, dont il consomme les jetons. */
+
+*{box-sizing:border-box}
+*{scrollbar-width:none}
+*::-webkit-scrollbar{width:0;height:0;display:none}
+[hidden]{display:none!important}
+html,body{margin:0}
+/* Empeche tout defilement lateral de la PAGE (bug Safari iOS : on pouvait
+   « sortir » du site sur le cote et le contenu restait decale). `clip` ne cree
+   pas de conteneur de scroll, donc n'affecte ni les zones a defilement interne
+   ni les elements colles. */
+html{overflow-x:clip;min-height:100%;background:var(--abyss);color:var(--parchment)}
+
+body{
+  min-height:100vh;overflow-x:clip;
+  font-family:var(--body);color:var(--parchment);
+  background:
+    radial-gradient(circle at 50% -10%, rgba(29,57,68,.38), transparent 42%),
+    linear-gradient(115deg, rgba(255,255,255,.018) 0 1px, transparent 1px 16px),
+    var(--abyss);
+}
+/* Le filet vertical central de la maquette. Il pose la symetrie de la page
+   sans ajouter une bordure de plus, et ne capte aucun clic. */
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.34;
+  background:linear-gradient(90deg,transparent 0 49.9%,rgba(221,180,95,.06) 50%,transparent 50.1%);
+}
+
+a{color:var(--gold-light)}
+button,input,select,textarea{font:inherit}
+/* Toute cible tactile atteint 44 px : la regle est posee ici une fois, plutot
+   que repetee dans chaque composant. */
+button,a{min-height:44px}
+button{color:inherit}
+
+/* La zone de contenu est encadree comme dans la maquette : deux filets
+   lateraux qui prolongent l'en-tete jusqu'au pied de page. */
+main{
+  width:var(--shell);margin:0 auto;padding:0;
+  background:rgba(7,26,38,.72);border-inline:1px solid var(--line);
+}
+
+.view{display:none;min-height:560px;animation:fade .25s ease}
+.view.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
+}
+
+/* Le lien d'evitement : premier element focalisable de la page, invisible
+   jusqu'a ce qu'il recoive le focus. */
+.skip-link{
+  position:fixed;left:18px;top:8px;z-index:100;padding:10px 14px;
+  color:var(--abyss);background:var(--gold-light);text-decoration:none;
+  transform:translateY(-160%);
+}
+.skip-link:focus{transform:none}
+
+.section-eyebrow{
+  margin:0 0 4px;color:var(--gold-light);
+  font-size:12px;letter-spacing:.09em;text-transform:uppercase
+}
+.section-title{
+  margin:0;color:var(--parchment);
+  font-family:var(--display);font-weight:500;line-height:1.08;
+  font-size:clamp(30px,4vw,50px)
+}
+.section-lead{max-width:62ch;margin:10px 0 0;color:var(--mist);font-size:16px}
+
+:where(button,[href],input,select,textarea,[tabindex]):focus-visible{
+  outline:2px solid var(--gold-light);outline-offset:3px
+}

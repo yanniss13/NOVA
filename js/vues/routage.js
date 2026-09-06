@@ -27,7 +27,7 @@ function enregistrerGestionnaireRoute(view, handler){
 
 async function replierRouteInvalide(){
   routeEnAttente = null;
-  const view = sessionCourante.user ? "dashboard" : "wiki";
+  const view = sessionCourante.user ? "dashboard" : "home";
   const fragment = fragmentDeRoute(routeDeVue(view));
   if(fragment && location.hash !== fragment){
     history.replaceState(null, "", fragment);
@@ -43,7 +43,7 @@ async function ouvrirRoute(route){
     && !!sb;
   if(attendConnexion){
     routeEnAttente = route;
-    await showView("wiki", { historyMode:"none" });
+    await showView("home", { historyMode:"none" });
     openAuth();
     return true;
   }

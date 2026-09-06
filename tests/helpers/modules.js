@@ -25,6 +25,8 @@ const MODULES = [
 
   /* metier — logique pure, testable sans navigateur. Ni DOM ni réseau. */
   "metier/routage.js",
+  /* Carte des rubriques de navigation. Pure : ni DOM ni session. */
+  "metier/rubriques.js",
   "metier/catalogue.js",
   "metier/armes.js",
   "metier/equipement.js",
@@ -89,6 +91,9 @@ const MODULES = [
   "vues/toast.js",
   "vues/modal-stack.js",
   "vues/modale-auth.js",
+  /* Apres `navigation.js`, dont elle ecoute les changements de vue, et
+     apres `modale-auth.js`, qu'elle ouvre depuis le bouton de compte. */
+  "vues/coquille.js",
   "vues/import-captures.js",
   "vues/routage.js",
   "vues/picker.js",

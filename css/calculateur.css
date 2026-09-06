@@ -11,7 +11,7 @@
    d'étiquette sur un même site se voient. */
 .calc-champ label{
   font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--muted-2)
+  color:var(--mist-deep)
 }
 
 /* LES CHAMPS. Rien ne les habillait : ni cette feuille, qui posait seulement
@@ -20,20 +20,20 @@
    sombre. Même habillage que `.member-roster-filter-field select`. */
 .calc-champ input,.calc-champ select{
   min-height:44px;width:100%;min-width:0;
-  font-family:var(--ui);font-size:13.5px;color:var(--parchment);
-  background:var(--obsidian-2);border:1px solid var(--line);
+  font-family:var(--body);font-size:13.5px;color:var(--parchment);
+  background:var(--slate-deep);border:1px solid var(--line);
   border-radius:8px;padding:9px 11px;transition:.16s
 }
 .calc-champ select{cursor:pointer;padding-right:30px}
-.calc-champ input:hover,.calc-champ select:hover{border-color:var(--gold-deep)}
+.calc-champ input:hover,.calc-champ select:hover{border-color:var(--gold)}
 
 .calc-armes{display:flex;flex-wrap:wrap;gap:6px}
 /* Le build affiché doit se voir : la classe `active` était posée par la vue
    depuis toujours, mais aucune feuille ne la dessinait — les trois armes se
    ressemblaient, et rien ne disait laquelle on regardait. */
 .calc-armes .btn.active{
-  border-color:var(--gold-bright);color:var(--gold-bright);
-  background:linear-gradient(180deg,rgba(217,164,65,.14),var(--obsidian-2))
+  border-color:var(--gold-light);color:var(--gold-light);
+  background:linear-gradient(180deg,rgba(217,164,65,.14),var(--slate-deep))
 }
 
 /* Les trois coéquipiers tiennent leur propre ligne. Sans règle, ce bloc était
@@ -49,9 +49,9 @@
 
 /* Une valeur retouchée doit se voir sans qu'on la cherche : c'est elle qui
    fait que le chiffre ne décrit plus le build enregistré. */
-.calc-retouche{color:var(--gold-bright)}
+.calc-retouche{color:var(--gold-light)}
 
-.calc-avertissement{font-size:12px;color:var(--muted);margin:8px 0 16px}
+.calc-avertissement{font-size:12px;color:var(--mist);margin:8px 0 16px}
 .calc-avertissement ul{margin:6px 0 0 18px}
 /* Une phrase glissée dans le formulaire prend sa propre ligne : en tant que
    simple élément flex, elle se posait à côté d'un champ et décalait tout
@@ -69,7 +69,7 @@
 .calc-carte{
   --ec:var(--gold);
   margin:12px 0;padding:12px 14px;
-  background:var(--panel);border:1px solid var(--line);
+  background:var(--slate);border:1px solid var(--line);
   border-top:2px solid var(--ec);border-radius:var(--radius)
 }
 .calc-carte-titre{
@@ -84,12 +84,12 @@
 
    Cinq sources, cinq jetons déjà définis dans base.css. La cinquième s'est
    glissée entre les potentiels et les suppléments sans casser la progression :
-   `--muted` est la marche qui manquait entre `--gold-deep` et `--muted-2`. */
-.calc-soutiens{--ec:var(--gold-bright)}
+   `--mist` est la marche qui manquait entre `--gold` et `--mist-deep`. */
+.calc-soutiens{--ec:var(--gold-light)}
 .calc-tenues{--ec:var(--gold)}
-.calc-potentiels{--ec:var(--gold-deep)}
-.calc-passifs-armes{--ec:var(--muted)}
-.calc-supplements{--ec:var(--muted-2)}
+.calc-potentiels{--ec:var(--gold)}
+.calc-passifs-armes{--ec:var(--mist)}
+.calc-supplements{--ec:var(--mist-deep)}
 
 /* La calibration et les avertissements prennent la coque, jamais le liseré :
    le dégradé signifie « source de buff », et ces deux blocs n'en sont pas. */
@@ -108,7 +108,7 @@
 /* Une ligne déjà comptée, sans case à cocher : elle doit se lire comme un
    constat, pas comme une option qu'on aurait oublié de cocher. */
 .calc-supplement-actif{
-  margin:4px 0;font-size:14px;line-height:1.35;color:var(--gold-bright)
+  margin:4px 0;font-size:14px;line-height:1.35;color:var(--gold-light)
 }
 /* En colonnes : vingt-quatre buffs en liste plate faisaient défiler la page
    entière avant d'atteindre le tableau, qui est pourtant l'objet de la page. */
@@ -118,14 +118,14 @@
 }
 .calc-soutien-nom{
   margin:0 0 2px;font-size:12px;font-weight:600;letter-spacing:.06em;
-  text-transform:uppercase;color:var(--gold-bright)
+  text-transform:uppercase;color:var(--gold-light)
 }
 .calc-buff{
   display:flex;gap:9px;align-items:flex-start;padding:3px 0;min-height:30px;
   line-height:1.35;font-size:14px;cursor:pointer
 }
 .calc-buff input{
-  flex:none;margin-top:2px;width:17px;height:17px;accent-color:var(--gold-bright)
+  flex:none;margin-top:2px;width:17px;height:17px;accent-color:var(--gold-light)
 }
 
 /* Un passif qui monte par cumuls se règle au lieu de se cocher. Le nom garde
@@ -137,37 +137,37 @@
 }
 .calc-cumul-reglage{display:flex;gap:9px;align-items:center}
 .calc-cumuls-choix{
-  flex:none;width:60px;padding:3px 6px;background:var(--panel-2);
-  color:inherit;border:1px solid var(--gold-deep);
+  flex:none;width:60px;padding:3px 6px;background:var(--slate-light);
+  color:inherit;border:1px solid var(--gold);
   border-radius:calc(var(--radius) / 2);font:inherit
 }
-.calc-cumuls-choix:focus-visible{outline:2px solid var(--gold-bright)}
+.calc-cumuls-choix:focus-visible{outline:2px solid var(--gold-light)}
 /* L'apport réel, jamais le plafond : c'est le seul chiffre de la ligne qui
    bouge avec le réglage, donc celui qui doit se voir. */
-.calc-cumul-apport{color:var(--gold-bright);font-size:13px}
+.calc-cumul-apport{color:var(--gold-light);font-size:13px}
 
 /* Le tableau cesse de flotter sur le fond : bandeau doré, bordure accentuée,
    coins arrondis. L'ordre reste celui du kit et aucune ligne n'est mise en
    avant — c'est un choix, pas un oubli. */
 .calc-resultat{
-  margin:16px 0;background:var(--panel-2);border:1px solid var(--gold-deep);
+  margin:16px 0;background:var(--slate-light);border:1px solid var(--gold);
   border-radius:var(--radius);overflow:hidden
 }
 .calc-resultat-titre{
   padding:9px 14px;background:rgba(217,164,65,.10);
-  border-bottom:1px solid var(--gold-deep);
+  border-bottom:1px solid var(--gold);
   font-family:var(--display);font-size:12px;font-weight:700;
-  letter-spacing:.10em;text-transform:uppercase;color:var(--gold-bright)
+  letter-spacing:.10em;text-transform:uppercase;color:var(--gold-light)
 }
 .calc-table{width:100%;border-collapse:collapse;margin-bottom:0}
 .calc-resultat .calc-table th,.calc-resultat .calc-table td{padding:8px 14px}
 /* L'allure de `.rank-head` d'analyse.css, RECOPIÉE et non empruntée :
    importer la classe coupleraient deux feuilles dont tests/css-ordre.test.js
-   vérifie l'ordre, et amènerait son fond `--panel`, qui jure avec le
-   `--panel-2` du panneau. */
+   vérifie l'ordre, et amènerait son fond `--slate`, qui jure avec le
+   `--slate-light` du panneau. */
 .calc-resultat .calc-table th{
   font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--muted)
+  color:var(--mist)
 }
 /* Le dernier filet tomberait sur la bordure du panneau. */
 .calc-resultat .calc-table tbody tr:last-child td{border-bottom:0}
@@ -177,14 +177,14 @@
 .calc-table th:first-child,.calc-table td:first-child{text-align:left}
 .calc-valeur{font-variant-numeric:tabular-nums}
 .calc-essai{
-  display:block;margin-top:3px;color:var(--gold-bright);font-size:12px;
+  display:block;margin-top:3px;color:var(--gold-light);font-size:12px;
   font-variant-numeric:tabular-nums;font-weight:500
 }
-.calc-essai-negatif{color:var(--muted)}
+.calc-essai-negatif{color:var(--mist)}
 
 /* Une compétence non chiffrable garde sa ligne : la masquer ferait croire
    qu'elle n'existe pas, la chiffrer à zéro qu'elle ne fait rien. */
-.calc-muette{color:var(--muted);font-style:italic}
+.calc-muette{color:var(--mist);font-style:italic}
 
 /* La calibration est un bloc à part, et doit le rester : c'est la seule
    section où le membre saisit une mesure venue du jeu plutôt qu'un chiffre
@@ -200,7 +200,7 @@
 /* Le retour de la calibration parle au membre — réussite comme refus — donc
    il ne se fond pas dans les avertissements permanents au-dessus. */
 .calc-calibration-message{
-  color:var(--gold-bright);border-left:2px solid var(--gold-bright);
+  color:var(--gold-light);border-left:2px solid var(--gold-light);
   padding-left:10px
 }
 

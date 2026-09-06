@@ -12,6 +12,7 @@ import { DATA, POT } from "./noyau/constantes.js";
 import { buildStatsReady, ensureBuildStats } from "./noyau/catalogue-build.js";
 import { $ } from "./noyau/dom.js";
 import { enregistrerVue } from "./vues/navigation.js";
+import { initialiserCoquille } from "./vues/coquille.js";
 import { renderAvailabilityView } from "./vues/dispos.js";
 import { renderBossView } from "./vues/boss-sessions.js";
 import { renderBuilder } from "./vues/builder.js";
@@ -54,6 +55,8 @@ import { toast } from "./vues/toast.js";
   /* Chaque vue s'annonce au registre de vues/navigation.js. L'enveloppe dit ce
      que `showView` doit renvoyer : les trois vues enveloppees ici renvoyaient
      deja `true` quel que soit leur resultat, seul le rendu comptait. */
+  /* `home` n'est pas enregistree : son balisage est ecrit dans index.html et
+     n'a rien a redessiner. `showView` sait ouvrir une vue sans rendu. */
   enregistrerVue("dashboard", renderDashboardView);
   enregistrerVue("builder", withBuildStats(renderBuilder));
   enregistrerVue("roster", withBuildStats(renderRoster));
@@ -75,6 +78,10 @@ import { toast } from "./vues/toast.js";
     Object.keys(POT).length + " persos avec potentiels" +
     (DATA.generatedAt ? "  ·  données du "+DATA.generatedAt : "");
 
+  /* La coquille se construit AVANT le routage : c'est elle qui pose les
+     entrees de navigation, et le routage ouvre aussitot une vue qu'elle doit
+     pouvoir surligner. */
+  initialiserCoquille();
   renderBuilder();
   void initialiserRoutage().finally(() => void initAuth());
 })();

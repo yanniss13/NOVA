@@ -8,57 +8,57 @@
   margin:28px 0 12px;letter-spacing:.03em}
 .analyse-group-context{display:flex;align-items:center;justify-content:space-between;
   gap:16px;margin:18px 0 0;padding:14px 16px;border:1px solid rgba(217,164,65,.42);
-  border-radius:12px;background:linear-gradient(145deg,rgba(217,164,65,.09),var(--obsidian-2));
+  border-radius:12px;background:linear-gradient(145deg,rgba(217,164,65,.09),var(--slate-deep));
   min-width:0}
 .analyse-group-main{display:flex;flex-direction:column;gap:6px;min-width:0}
 .analyse-group-title{margin:0;font-family:var(--display);font-size:18px;
-  color:var(--gold-bright);overflow-wrap:anywhere}
+  color:var(--gold-light);overflow-wrap:anywhere}
 .analyse-group-title:focus{outline:none}
 .analyse-group-title:focus-visible{outline:2px solid var(--gold);outline-offset:4px}
 .analyse-group-details{display:flex;flex-wrap:wrap;gap:6px 12px;min-width:0}
-.analyse-group-meta{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
+.analyse-group-meta{font-size:12px;color:var(--mist);overflow-wrap:anywhere}
 .analyse-group-warning{color:#e7bb70}
 .analyse-group-error{color:#e9a0a0}
 .analyse-group-all{min-height:44px;flex:none;justify-content:center}
 .analyse-route-state .btn{min-height:44px;margin-top:10px}
 .analyse-subnav{display:flex;gap:6px;margin:22px 0 18px;padding:5px;
-  overflow-x:auto;background:var(--panel);border:1px solid var(--line);
+  overflow-x:auto;background:var(--slate);border:1px solid var(--line);
   border-radius:12px;scrollbar-width:thin}
 .analyse-subnav-button{appearance:none;flex:1 0 150px;min-height:44px;padding:8px 14px;
   border:1px solid transparent;border-radius:8px;background:transparent;
-  color:var(--muted);font:600 12.5px var(--ui);cursor:pointer;
+  color:var(--mist);font:600 12.5px var(--body);cursor:pointer;
   transition:color .16s,border-color .16s,background-color .16s}
 .analyse-subnav-button:hover{color:var(--parchment);border-color:var(--line)}
-.analyse-subnav-button.active{color:var(--gold-bright);border-color:var(--gold-deep);
-  background:var(--panel-2)}
+.analyse-subnav-button.active{color:var(--gold-light);border-color:var(--gold);
+  background:var(--slate-light)}
 .analyse-subnav-button:focus-visible{
-  outline:2px solid var(--gold-bright);outline-offset:2px}
+  outline:2px solid var(--gold-light);outline-offset:2px}
 .analyse-panel>.an-title:first-child{margin-top:0}
-.analyse-panel-intro{margin:0 0 6px;color:var(--muted);font-size:13px}
+.analyse-panel-intro{margin:0 0 6px;color:var(--mist);font-size:13px}
 .analyse-summary{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
-.analyse-summary-card{min-width:0;padding:16px;background:var(--panel);
+.analyse-summary-card{min-width:0;padding:16px;background:var(--slate);
   border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;
   gap:4px}
-.analyse-summary-value{font:700 26px var(--display);color:var(--gold-bright);
+.analyse-summary-value{font:700 26px var(--display);color:var(--gold-light);
   font-variant-numeric:tabular-nums}
 .analyse-summary-label{color:var(--parchment);font-size:13px;font-weight:600}
-.analyse-summary-detail{color:var(--muted);font-size:11px;line-height:1.35}
+.analyse-summary-detail{color:var(--mist);font-size:11px;line-height:1.35}
 .analyse-empty{margin-top:18px}
 /* HUIT colonnes, pas sept : « Physique » est un element a part entiere depuis
    le 15 aout 2026, et il tombait seul sur une deuxieme ligne. */
 .cov-row{display:grid;grid-template-columns:repeat(8,1fr);gap:10px}
-.cov-card{--ec:var(--gold);background:var(--panel);border:1px solid var(--line);
+.cov-card{--ec:var(--gold);background:var(--slate);border:1px solid var(--line);
   border-top:2px solid var(--ec);border-radius:10px;padding:12px 10px;text-align:center;
   display:flex;flex-direction:column;align-items:center;gap:6px}
 .cov-nums{display:flex;align-items:baseline;gap:5px}
 .cov-big{font-family:var(--display);font-weight:700;font-size:26px;color:var(--parchment)}
-.cov-lbl{font-size:10px;color:var(--muted)}
-.cov-sub{font-size:11px;color:var(--gold-bright);font-weight:600}
+.cov-lbl{font-size:10px;color:var(--mist)}
+.cov-sub{font-size:11px;color:var(--gold-light);font-weight:600}
 /* Le portrait sert encore au recensement, qui l'emprunte au classement
    disparu. */
 .rk-portrait{display:block;width:28px;height:28px;flex:none;border-radius:6px;overflow:hidden;background:#0b0910 center/cover no-repeat;border:1px solid var(--line-soft)}
 .rk-portrait img{width:100%;height:100%;object-fit:cover}
-.rank-empty{padding:18px;text-align:center;color:var(--muted)}
+.rank-empty{padding:18px;text-align:center;color:var(--mist)}
 .matrix-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
 /* Filtre par membre : une rangee de puces au-dessus de la matrice pour comparer
    un sous-groupe. Meme grammaire que les autres controles de l'Analyse — pilule
@@ -67,28 +67,28 @@
    restant compact via le seul rembourrage. */
 .matrix-membres{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 12px}
 .matrix-membre{appearance:none;cursor:pointer;padding:6px 12px;
-  border:1px solid var(--line);border-radius:999px;background:var(--panel-2);
-  color:var(--muted);font:600 12px var(--ui);
+  border:1px solid var(--line);border-radius:999px;background:var(--slate-light);
+  color:var(--mist);font:600 12px var(--body);
   transition:color .14s,border-color .14s,background-color .14s}
-.matrix-membre:hover{color:var(--parchment);border-color:var(--gold-deep)}
-.matrix-membre.active{color:var(--gold-bright);border-color:var(--gold-bright);
-  background:var(--panel)}
-.matrix-membre:focus-visible{outline:2px solid var(--gold-bright);outline-offset:2px}
+.matrix-membre:hover{color:var(--parchment);border-color:var(--gold)}
+.matrix-membre.active{color:var(--gold-light);border-color:var(--gold-light);
+  background:var(--slate)}
+.matrix-membre:focus-visible{outline:2px solid var(--gold-light);outline-offset:2px}
 /* « Tous » est le retour au non-filtre : un filet tireté le detache des membres. */
 .matrix-membre-tous{border-style:dashed}
 .matrix-mobile-sort{display:none}
 .matrix{border-collapse:collapse;width:100%;min-width:760px;font-size:12px}
 .matrix th,.matrix td{padding:8px 10px;text-align:left;border-bottom:1px solid var(--line-soft);vertical-align:top}
-.matrix th{background:var(--panel);position:sticky;top:0}
+.matrix th{background:var(--slate);position:sticky;top:0}
 .matrix .mx-player{font-weight:600;color:var(--parchment);white-space:nowrap}
-.matrix .mx-total{font-family:var(--display);color:var(--gold-bright);text-align:center;font-weight:700}
+.matrix .mx-total{font-family:var(--display);color:var(--gold-light);text-align:center;font-weight:700}
 /* L'EN-TETE QUI CLASSE. Il remplace les pastilles de l'ancien classement :
    meme geste, meme reponse, mais sans une section a lui tout seul. */
 .mx-tri{appearance:none;cursor:pointer;background:transparent;border:1px solid transparent;
   border-radius:999px;padding:2px;font:inherit;color:inherit;transition:.14s}
-.mx-tri:hover{border-color:var(--gold-deep)}
-.mx-tri.active{border-color:var(--gold-bright);box-shadow:0 0 0 1px var(--gold-bright)}
-.mx-tri:focus-visible{outline:2px solid var(--gold-bright);outline-offset:2px}
+.mx-tri:hover{border-color:var(--gold)}
+.mx-tri.active{border-color:var(--gold-light);box-shadow:0 0 0 1px var(--gold-light)}
+.mx-tri:focus-visible{outline:2px solid var(--gold-light);outline-offset:2px}
 /* La colonne qui classe se distingue du reste, sinon rien ne dirait sur quoi
    le tableau est trie une fois l'en-tete sorti de l'ecran. */
 .matrix .mx-colonne-triee{background:rgba(218,165,56,.05)}
@@ -101,34 +101,34 @@
   border-radius:8px;background:transparent;font:inherit;text-align:left;
   cursor:pointer;padding:2px 6px;margin:-2px 0}
 .mx-action:hover{background:rgba(218,165,56,.08);border-color:var(--line)}
-.mx-action:focus-visible{outline:2px solid var(--gold-bright);outline-offset:-2px;
+.mx-action:focus-visible{outline:2px solid var(--gold-light);outline-offset:-2px;
   position:relative;z-index:1}
 .mx-nom{overflow:hidden;text-overflow:ellipsis}
-.mx-pot{font-family:var(--display);font-weight:700;color:var(--gold-bright);
+.mx-pot{font-family:var(--display);font-weight:700;color:var(--gold-light);
   font-variant-numeric:tabular-nums}
-.mx-empty{color:var(--muted-2);text-align:center}
+.mx-empty{color:var(--mist-deep);text-align:center}
 .mx-element-label{display:none}
 .mx-empty-mark{display:inline}
 
 /* ---------- Recensements : affaiblissement et renforcement ---------- */
-.an-note{margin:-6px 0 12px;color:var(--muted);font-size:12.5px;max-width:74ch}
+.an-note{margin:-6px 0 12px;color:var(--mist);font-size:12.5px;max-width:74ch}
 /* Le filtre reprend la roue elementaire de la matrice, mais sous forme de
    commandes : les boutons se replient sur plusieurs lignes et ne creent donc
    jamais de rail horizontal sur telephone. */
 .supports-element-filter{display:flex;align-items:center;flex-wrap:wrap;gap:6px;
   margin:10px 0 18px;padding:10px;border:1px solid var(--line);border-radius:10px;
-  background:var(--panel);min-width:0}
-.supports-element-filter-label{flex:1 0 100%;margin:0 0 2px;color:var(--muted);
+  background:var(--slate);min-width:0}
+.supports-element-filter-label{flex:1 0 100%;margin:0 0 2px;color:var(--mist);
   font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase}
 .support-element-button{appearance:none;display:inline-flex;align-items:center;
   justify-content:center;gap:6px;min-width:0;min-height:44px;padding:7px 11px;
-  border:1px solid var(--line);border-radius:999px;background:var(--panel-2);
-  color:var(--muted);font:600 12px var(--ui);cursor:pointer;
+  border:1px solid var(--line);border-radius:999px;background:var(--slate-light);
+  color:var(--mist);font:600 12px var(--body);cursor:pointer;
   transition:color .14s,border-color .14s,background-color .14s}
 .support-element-button:hover{color:var(--parchment);border-color:var(--ec)}
 .support-element-button.active{color:var(--parchment);border-color:var(--ec);
-  background:color-mix(in srgb,var(--ec) 16%,var(--panel-2))}
-.support-element-button:focus-visible{outline:2px solid var(--gold-bright);
+  background:color-mix(in srgb,var(--ec) 16%,var(--slate-light))}
+.support-element-button:focus-visible{outline:2px solid var(--gold-light);
   outline-offset:2px}
 .support-element-dot{width:7px;height:7px;flex:none;border-radius:50%;
   background:var(--ec);box-shadow:0 0 7px color-mix(in srgb,var(--ec) 70%,transparent)}
@@ -136,9 +136,9 @@
 .support-element-tous .support-element-dot{opacity:.58;box-shadow:none}
 /* Combien la confrerie en couvre, avant la liste : soixante lignes ne se
    comptent pas a l'oeil. */
-.db-compte{margin:0 0 10px;font-size:12px;color:var(--gold-bright);
+.db-compte{margin:0 0 10px;font-size:12px;color:var(--gold-light);
   font-weight:600;letter-spacing:.02em}
-.db-compte.db-aucun{color:var(--muted)}
+.db-compte.db-aucun{color:var(--mist)}
 .debuff-list{display:flex;flex-direction:column;border:1px solid var(--line);
   border-radius:10px;overflow:hidden}
 /* UN GROUPE = UN PERSONNAGE. Son trait de separation est plus marque que
@@ -165,39 +165,39 @@
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* D'ou vient l'effet. Les noms de tenues gravees sont longs — « Fille de la
    forêt et de la terre » — donc cette cellule s'enroule au lieu de couper. */
-.db-origine{font-size:11.5px;color:var(--muted);line-height:1.35;min-width:0}
+.db-origine{font-size:11.5px;color:var(--mist);line-height:1.35;min-width:0}
 .db-effet{display:flex;align-items:center;gap:8px;min-width:0}
 .db-libelle{font-size:12.5px;color:var(--parchment);min-width:0;line-height:1.4}
 /* LE TOTAL A CUMULS PLEINS. Contrairement aux deux mentions qui suivent, c'en
    est une donnee — et meme la seule comparable d'une ligne a l'autre — donc
    elle se lit, en or et non en gris. */
-.db-total{flex:none;font-size:12px;font-weight:700;color:var(--gold-bright);
+.db-total{flex:none;font-size:12px;font-weight:700;color:var(--gold-light);
   white-space:nowrap;font-variant-numeric:tabular-nums}
 /* Les deux mentions sont des notes de bas de page, pas des donnees : elles
    etaient aussi voyantes que les badges d'element, et sur des dizaines de
    lignes cela suffisait a brouiller la colonne. */
-.db-hors-calcul{flex:none;font-size:10.5px;color:var(--muted-2);
+.db-hors-calcul{flex:none;font-size:10.5px;color:var(--mist-deep);
   border:1px solid var(--line-soft);border-radius:999px;padding:1px 7px;
   white-space:nowrap}
 /* « au niv. 3 » : le libelle d'une tenue gravee annonce son MAXIMUM, et les
    trois niveaux ecartent parfois du simple au tiers. Sans cette mention la
    ligne promettrait a tout le monde ce que seul un passif plein rend. */
-.db-au-max{flex:none;font-size:10.5px;color:var(--muted-2);
+.db-au-max{flex:none;font-size:10.5px;color:var(--mist-deep);
   border:1px solid var(--line-soft);border-radius:999px;padding:1px 6px;
   white-space:nowrap}
 /* Un niveau non renseigne s'affiche en retrait : c'est un champ a remplir,
    pas un porteur de moins. */
-.db-porteur.db-niveau-inconnu{color:var(--muted)}
+.db-porteur.db-niveau-inconnu{color:var(--mist)}
 /* « Tous » emprunte la FORME d'un badge d'element — c'est ce qui aligne la
    colonne — mais pas son poids : il vaut « aucun element en particulier »,
    soit le cas par defaut de plus de la moitie des lignes. Vingt pastilles
    pleines feraient exactement le bruit qu'on retire. */
 .db-tous{border-color:var(--line-soft);background:transparent;
-  color:var(--muted-2);font-weight:500}
+  color:var(--mist-deep);font-weight:500}
 .db-tous .dot{box-shadow:none;opacity:.55}
 .db-porteurs{display:flex;flex-wrap:wrap;gap:4px 8px;justify-content:flex-end}
-.db-porteur{font-size:12px;color:var(--gold-bright);white-space:nowrap}
-.db-personne{font-size:12px;color:var(--muted-2)}
+.db-porteur{font-size:12px;color:var(--gold-light);white-space:nowrap}
+.db-personne{font-size:12px;color:var(--mist-deep)}
 @media(max-width:1180px){
   .cov-row{grid-template-columns:repeat(4,minmax(0,1fr))}
   .debuff-row{grid-template-columns:130px 112px minmax(0,1fr) 96px 124px;
@@ -225,17 +225,17 @@
   .analyse-group-all{width:100%}
   .matrix-wrap{overflow-x:visible;border:0;border-radius:0}
   .matrix-mobile-sort{display:grid;grid-template-columns:auto minmax(0,1fr);
-    align-items:center;gap:10px;margin:0 0 10px;color:var(--muted);
+    align-items:center;gap:10px;margin:0 0 10px;color:var(--mist);
     font-size:12px;font-weight:600}
   .matrix-mobile-sort-select{width:100%;min-width:0;min-height:44px;padding:8px 34px 8px 10px;
-    border:1px solid var(--line);border-radius:8px;background:var(--panel-2);
-    color:var(--parchment);font:600 12px var(--ui)}
-  .matrix-mobile-sort-select:focus-visible{outline:2px solid var(--gold-bright);
+    border:1px solid var(--line);border-radius:8px;background:var(--slate-light);
+    color:var(--parchment);font:600 12px var(--body)}
+  .matrix-mobile-sort-select:focus-visible{outline:2px solid var(--gold-light);
     outline-offset:2px}
   .matrix{display:block;width:100%;min-width:0;font-size:11px}
   .matrix .mx-header-row{display:none}
   .matrix .mx-player-card{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:6px;margin:0 0 10px;padding:10px;background:var(--panel);
+    gap:6px;margin:0 0 10px;padding:10px;background:var(--slate);
     border:1px solid var(--line);border-radius:10px}
   .matrix .mx-player-card:last-child{margin-bottom:0}
   .matrix .mx-player-card>td{min-width:0;padding:0;border-bottom:0}
@@ -244,13 +244,13 @@
   .matrix .mx-player-card>.mx-total{grid-column:4;display:flex;align-items:center;
     justify-content:flex-end;min-height:44px;white-space:nowrap}
   .matrix .mx-player-card>.mx-total::after{content:" DPS";margin-left:3px;
-    color:var(--muted);font:600 9px var(--ui)}
+    color:var(--mist);font:600 9px var(--body)}
   .matrix .mx-player-card>td[data-mx-element]{min-height:58px;padding:5px 3px;
-    border:1px solid var(--line-soft);border-radius:8px;background:var(--panel-2);
+    border:1px solid var(--line-soft);border-radius:8px;background:var(--slate-light);
     text-align:center;overflow:hidden}
   .matrix .mx-player-card>td.mx-colonne-triee{background:rgba(218,165,56,.08);
-    border-color:var(--gold-deep)}
-  .mx-element-label{display:block;margin-bottom:2px;color:var(--ec, var(--muted));
+    border-color:var(--gold)}
+  .mx-element-label{display:block;margin-bottom:2px;color:var(--ec, var(--mist));
     font-size:9px;font-weight:700;line-height:1.15;overflow:hidden;
     text-overflow:ellipsis;white-space:nowrap}
   .mx-action{display:flex;flex-direction:column;align-items:center;

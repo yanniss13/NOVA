@@ -19,7 +19,7 @@
 
 .import-captures-aide{
   margin:0;
-  color:var(--muted, #9aa);
+  color:var(--mist);
   font-size:.92rem;
   line-height:1.45;
 }
@@ -40,7 +40,7 @@
   border-radius:14px;
   background:
     linear-gradient(135deg, rgba(217,164,65,.08), transparent 42%),
-    var(--obsidian-2);
+    var(--slate-deep);
   text-align:center;
   box-shadow:inset 0 0 0 1px rgba(240,198,116,.04);
   transition:border-color .16s ease, box-shadow .16s ease,
@@ -69,14 +69,14 @@
 
 .import-captures-depot.is-dragging{
   transform:translateY(-1px);
-  border-color:var(--gold-bright);
+  border-color:var(--gold-light);
   background-color:rgba(217,164,65,.08);
   box-shadow:0 0 0 3px rgba(217,164,65,.12),
     inset 0 0 34px rgba(217,164,65,.08);
 }
 
 .import-captures-depot:focus-within{
-  outline:2px solid var(--gold-bright);
+  outline:2px solid var(--gold-light);
   outline-offset:2px;
 }
 
@@ -85,9 +85,9 @@
   place-items:center;
   width:42px;
   height:42px;
-  border:1px solid var(--gold-deep);
+  border:1px solid var(--gold);
   border-radius:50%;
-  color:var(--gold-bright);
+  color:var(--gold-light);
   font-family:var(--display);
   font-size:25px;
   line-height:1;
@@ -102,16 +102,16 @@
 }
 
 .import-captures-depot-raccourci{
-  color:var(--muted);
+  color:var(--mist);
   font-size:.88rem;
 }
 
 .import-captures-depot-bouton{
   margin-top:3px;
   padding:7px 13px;
-  border:1px solid var(--gold-deep);
+  border:1px solid var(--gold);
   border-radius:999px;
-  color:var(--gold-bright);
+  color:var(--gold-light);
   font-size:.82rem;
   font-weight:700;
 }
@@ -137,7 +137,7 @@
   margin:0;
   padding:14px 0;
   text-align:center;
-  color:var(--muted, #9aa);
+  color:var(--mist);
 }
 
 .import-captures-ligne{
@@ -146,7 +146,7 @@
   align-items:baseline;
   gap:6px 10px;
   padding:10px 12px;
-  border:1px solid var(--line, #2c2c38);
+  border:1px solid var(--line);
   border-radius:10px;
 }
 
@@ -175,7 +175,7 @@
 .import-captures-remplace{
   flex:1 1 100%;
   font-size:.88rem;
-  color:var(--muted, #9aa);
+  color:var(--mist);
 }
 
 /* Ce qui va être écrasé doit se voir sans être alarmant : le membre l'a voulu,

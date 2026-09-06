@@ -47,7 +47,8 @@ import { openTeamDetail } from "./detail-equipe.js";
 import { bossReportParticipant, bossTeamBanner } from "./equipe-boss.js";
 import { ModalStack, closeModalAfterAsyncRefresh } from "./modal-stack.js";
 import { openAuth } from "./modale-auth.js";
-import { ongletDeLaVue, showView } from "./navigation.js";
+import { ongletDeLaVue } from "./coquille.js";
+import { showView } from "./navigation.js";
 import { enregistrerGestionnaireRoute } from "./routage.js";
 import { toast } from "./toast.js";
 

@@ -53,6 +53,11 @@ class FakeElement {
   focus(){}
   remove(){}
   setAttribute(name, value){ this[name] = value; }
+  removeAttribute(name){ delete this[name]; }
+  getAttribute(name){
+    return Object.hasOwn(this, name) ? this[name] : null;
+  }
+  append(...children){ children.forEach(child => this.appendChild(child)); }
 }
 
 function makeDocument(){
@@ -125,6 +130,15 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
     ? fragmentDeRoute
     : undefined,
   routeDeVue:typeof routeDeVue === "function" ? routeDeVue : undefined,
+  RUBRIQUES:typeof RUBRIQUES !== "undefined" ? RUBRIQUES : undefined,
+  rubriqueDeVue:typeof rubriqueDeVue === "function" ? rubriqueDeVue : undefined,
+  rubriqueParId:typeof rubriqueParId === "function" ? rubriqueParId : undefined,
+  ongletsDeRubrique:typeof ongletsDeRubrique === "function"
+    ? ongletsDeRubrique
+    : undefined,
+  vueChefDeRubrique:typeof vueChefDeRubrique === "function"
+    ? vueChefDeRubrique
+    : undefined,
   urlAbsolueDeRoute:typeof urlAbsolueDeRoute === "function"
     ? urlAbsolueDeRoute
     : undefined,
