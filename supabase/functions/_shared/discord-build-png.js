@@ -341,15 +341,31 @@ function mesurerLigneListe(ligne, fonts, largeurColonne) {
   }
   const entete = tronquer(enteteVoulu, fonts.petit, largeurEntete);
 
+  /* L'ORDRE DE LA RANGEE EST UNE MESURE, et non une decision du trace : on
+     cherche un objet par son NOM, qui ouvre donc la rangee ; la statistique
+     vient le qualifier, et sa barre se pose juste dessous, contre ce qu'elle
+     mesure. Les decalages sortent d'ici pour pouvoir etre eprouves autrement
+     qu'en regardant l'image. */
+  const decalageStat = lignesNom * HAUTEUR_NOM;
+  const decalageBarre = decalageStat + HAUTEUR_LIGNE - 4;
+  const hauteur = Math.max(ICONE,
+    decalageBarre + (ligne.jauges.length ? 16 : 0))
+    + Math.max(0, ligne.jauges.length - 1) * HAUTEUR_JAUGE;
+  /* Une rangee SANS statistique n'a rien a empiler sous son nom : le coller en
+     haut d'une case de 80 px le laisserait flotter au-dessus de son icone.
+     Il se centre. */
+  const decalageNom = ligne.jauges.length
+    ? 0 : (hauteur - lignesNom * HAUTEUR_NOM) / 2;
   return Object.assign({}, ligne, {
     nom,
     lignesNom,
     entete,
     libelleJauge,
     valeurJauge,
-    hauteur:Math.max(ICONE,
-      HAUTEUR_LIGNE + lignesNom * HAUTEUR_NOM + (ligne.jauges.length ? 16 : 0))
-      + Math.max(0, ligne.jauges.length - 1) * HAUTEUR_JAUGE
+    decalageNom,
+    decalageStat,
+    decalageBarre,
+    hauteur
   });
 }
 
@@ -591,17 +607,7 @@ function dessinerLigneListe(canvas, ligne, x, y, largeurColonne, fonts, images) 
      mots, et lui donner sa propre rangee couterait cette hauteur aux quatre
      cinquiemes des pieces, qui n'en ont pas. Le partage de la rangee est
      decide par `mesurerLigneListe` ; ici on ne fait que poser. */
-  const premiere = ligne.jauges.length ? ligne.jauges[0] : null;
-  if(premiere){
-    const largeurValeur = largeurTexte(ligne.valeurJauge, fonts.petit);
-    ecrireADroite(canvas, droite, y, ligne.valeurJauge, fonts.petit,
-      COULEURS.parchemin);
-    ecrireADroite(canvas, droite - largeurValeur - 12, y, ligne.libelleJauge,
-      fonts.petit, COULEURS.attenue);
-  }
-  ecrire(canvas, texteX, y, ligne.entete, fonts.petit, COULEURS.faible);
-
-  let ligneY = y + HAUTEUR_LIGNE;
+  let ligneY = y + ligne.decalageNom;
   if(!ligne.nom.length){
     ecrire(canvas, texteX, ligneY, "Aucun", fonts.corps, COULEURS.faible);
   }else{
@@ -610,12 +616,25 @@ function dessinerLigneListe(canvas, ligne, x, y, largeurColonne, fonts, images) 
       ligneY += HAUTEUR_NOM;
     });
   }
+
+  const rangeeStat = y + ligne.decalageStat;
+  const premiere = ligne.jauges.length ? ligne.jauges[0] : null;
+  if(premiere){
+    const largeurValeur = largeurTexte(ligne.valeurJauge, fonts.petit);
+    ecrireADroite(canvas, droite, rangeeStat, ligne.valeurJauge, fonts.petit,
+      COULEURS.parchemin);
+    ecrireADroite(canvas, droite - largeurValeur - 12, rangeeStat,
+      ligne.libelleJauge, fonts.petit, COULEURS.attenue);
+  }
+  ecrire(canvas, texteX, rangeeStat, ligne.entete, fonts.petit,
+    COULEURS.faible);
+
   if(!premiere) return;
   if(premiere.part !== null && premiere.part !== undefined){
-    dessinerBarre(canvas, texteX, ligneY + 4, premiere.part, largeurTexteBloc);
+    dessinerBarre(canvas, texteX, y + ligne.decalageBarre, premiere.part,
+      largeurTexteBloc);
   }
-  const basRangee = y + Math.max(ICONE,
-    HAUTEUR_LIGNE + ligne.lignesNom * HAUTEUR_NOM + 16);
+  const basRangee = y + Math.max(ICONE, ligne.decalageBarre + 16);
   ligne.jauges.slice(1).forEach((jauge, rang) => {
     dessinerJauge(canvas, jauge, texteX, basRangee + rang * HAUTEUR_JAUGE,
       largeurTexteBloc, fonts);
@@ -840,6 +859,8 @@ const discordBuildPngApi = {
     IDENTITE,
     PADDING,
     LARGEUR_CARTOUCHE,
+    HAUTEUR_NOM,
+    HAUTEUR_LIGNE,
     HAUTEUR_JAUGE,
     HAUTEUR_JAUGE_TITRE,
     ESPACE_BLOC,

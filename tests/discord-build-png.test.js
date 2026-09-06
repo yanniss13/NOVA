@@ -335,6 +335,34 @@ function comptePixels(png, couleur) {
   assert.equal(rangeeLibelle.libelleJauge, "Efficacité de la durée des bonus",
     "un libelle de 271 px doit tenir dans sa rangee");
 
+  /* L'OBJET D'ABORD, SA STATISTIQUE ENSUITE. On cherche un objet par son nom :
+     c'est lui qui doit ouvrir la rangee, la statistique venant le qualifier —
+     et sa barre se posant juste dessous, contre ce qu'elle mesure. L'ordre est
+     une MESURE, pas une decision du trace : c'est ce qui permet de l'eprouver
+     autrement qu'en regardant l'image. */
+  assert.ok(rangeeLibelle.decalageNom < rangeeLibelle.decalageStat,
+    "le nom ouvre la rangee : " + rangeeLibelle.decalageNom + " puis "
+    + rangeeLibelle.decalageStat);
+  assert.ok(rangeeLibelle.decalageStat < rangeeLibelle.decalageBarre,
+    "la barre se pose sous la statistique qu'elle mesure");
+  assert.ok(rangeeLibelle.decalageBarre + 12 <= rangeeLibelle.hauteur,
+    "la barre ne doit pas deborder de sa rangee");
+
+  /* Une rangee SANS statistique n'a rien a empiler : son nom se centre sur
+     l'icone au lieu de se coller en haut d'une case de 80 px. */
+  const sansJauge = mesurer(bijouLibelle, fonts).bijoux[0];
+  assert.equal(sansJauge.decalageNom, 0,
+    "avec une statistique, le nom ouvre la rangee");
+  const bijouNu = JSON.parse(JSON.stringify(bijouLibelle));
+  bijouNu.sections.find(section => section.titre === "Bijoux")
+    .lignes[0].enchantements = [];
+  const rangeeNue = mesurer(bijouNu, fonts).bijoux[0];
+  assert.ok(rangeeNue.decalageNom > 0,
+    "sans statistique, le nom se centre : " + rangeeNue.decalageNom);
+  assert.equal(
+    rangeeNue.decalageNom * 2 + rangeeNue.lignesNom * MESURES.HAUTEUR_NOM,
+    rangeeNue.hauteur, "autant d'air au-dessus qu'en dessous");
+
   /* L'EMPLACEMENT NE SE REPETE PAS. Les 99 pieces et bijoux du jeu commencent
      par le nom de leur emplacement : « Anneau » au-dessus de « Anneau du
      souverain cupide » n'apprend rien et prend la place de la statistique. */
