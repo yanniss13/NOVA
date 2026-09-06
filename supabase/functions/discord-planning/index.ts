@@ -28,6 +28,10 @@ await import("../_shared/boss-reminder.js");
    la fonction tombe à son premier appel. */
 await import("../_shared/png-decode.js");
 await import("../_shared/discord-build.js");
+/* L'atlas accentué des cartes. Il n'est requis que par les modules de dessin,
+   et manquait donc à cette liste depuis sa création : les cartes seraient
+   sorties sur une exception, pas sur une police de secours. */
+await import("../_shared/carte-font.js");
 /* L'ordre compte autant que la presence : `carte-ornements.js` lit `texteCarte`,
    et les deux modules de dessin lisent ses ornements. Un module chargé trop tôt
    ne trouve qu'un `undefined` et fait tomber la fonction au démarrage. */
