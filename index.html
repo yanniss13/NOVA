@@ -233,9 +233,14 @@
   <!-- ============ BUILDER ============ -->
   <section id="view-builder" class="view" role="tabpanel"
            aria-labelledby="builderTitle">
-    <p class="section-eyebrow">Forge des équipes</p>
-    <h1 class="section-title" id="builderTitle" tabindex="-1">Composer une équipe</h1>
-    <p class="section-lead">Assigne 4 héros, leur arme et leurs armures, puis enregistre l'équipe pour la rendre disponible face au Boss de Guilde.</p>
+    <div class="page-heading">
+      <div>
+        <p class="context-label">Forge des équipes</p>
+        <h1 id="builderTitle" tabindex="-1">Composer une équipe</h1>
+        <p>Assigne 4 héros, leur arme et leurs armures, puis enregistre l'équipe pour la rendre disponible face au Boss de Guilde.</p>
+      </div>
+      <span class="edit-flag" id="editFlag">✎ Modification en cours</span>
+    </div>
 
     <div class="metabar">
       <div class="field">
@@ -247,7 +252,6 @@
         <label for="pseudo">Pseudo du membre</label>
         <input id="pseudo" type="text" placeholder="Ton pseudo en jeu" autocomplete="off" maxlength="40">
       </div>
-      <span class="edit-flag" id="editFlag">✎ Modification en cours</span>
       <div class="grow">
         <button class="btn btn-ghost" id="btnNew">Nouvelle équipe</button>
         <button class="btn btn-primary" id="btnSave">Enregistrer l'équipe</button>
@@ -260,9 +264,14 @@
   <!-- ============ ROSTER ============ -->
   <section id="view-roster" class="view" role="tabpanel"
            aria-labelledby="rosterTitle">
-    <p class="section-eyebrow">Registre de la confrérie</p>
-    <h1 class="section-title" id="rosterTitle" tabindex="-1">Équipes dispo pour le Boss de Guilde</h1>
-    <p class="section-lead">Toutes les équipes proposées par les membres. Modifie ou retire les tiennes à tout moment.</p>
+    <div class="page-heading">
+      <div>
+        <p class="context-label">Registre de la confrérie</p>
+        <h1 id="rosterTitle" tabindex="-1">Équipes dispo pour le Boss de Guilde</h1>
+        <p>Toutes les équipes proposées par les membres. Modifie ou retire les tiennes à tout moment.</p>
+      </div>
+      <span class="roster-count" id="rosterCount"></span>
+    </div>
 
     <div class="roster-toolbar">
       <!-- Le selecteur d'abord : c'est lui qui commande, et le decompte qui
@@ -272,7 +281,6 @@
         <span>Joueur</span>
         <select id="rosterOwner"></select>
       </label>
-      <span class="roster-count" id="rosterCount"></span>
       <!-- EXPORT ET IMPORT JSON DESACTIVES. Le balisage et les gestionnaires
            restent en place : c'est une mise en sommeil, pas une suppression.
            Les reafficher tient dans le retrait de ces deux `hidden`. -->

@@ -19,7 +19,7 @@
 .metabar .grow{margin-left:auto;display:flex;gap:10px}
 .edit-flag{
   display:none;align-items:center;gap:8px;font-size:13px;color:var(--gold-light);
-  background:rgba(217,164,65,.1);border:1px solid var(--gold);
+  background:rgba(var(--gold-rvb),.1);border:1px solid var(--gold);
   padding:6px 12px;border-radius:999px;
 }
 .edit-flag.on{display:inline-flex}
@@ -47,6 +47,13 @@
   display:grid;place-items:center;transition:.16s;
 }
 .portrait:hover{border-color:var(--gold)}
+/* UN EMPLACEMENT VIDE N'A PAS BESOIN D'UN CARRE. Le portrait est carre parce
+   qu'une image de heros l'est ; vide, ce carre faisait 320 px de haut par
+   colonne, et les quatre repoussaient armes, armures et bijoux sous la ligne
+   de flottaison. Il reprend sa forme des qu'une image l'occupe.
+   Si `:has` manque au navigateur, la regle tombe et l'emplacement reste
+   carre : l'ancien comportement, jamais une page cassee. */
+.portrait:has(.ph){aspect-ratio:auto;min-height:132px}
 .portrait img{width:100%;height:100%;object-fit:cover;display:block}
 .portrait .ph{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:12.5px}
 .portrait .ph .plus{font-size:30px;line-height:1;color:var(--gold)}
@@ -72,7 +79,7 @@
 }
 .wslot.active{
   border-color:var(--gold-light);
-  box-shadow:0 0 0 1px var(--gold-light), 0 0 9px rgba(240,198,116,.45)
+  box-shadow:0 0 0 1px var(--gold-light), 0 0 9px rgba(var(--gold-light-rvb),.45)
 }
 .wslot.dim{opacity:.38}
 .builder-weapon-switch{
@@ -87,7 +94,7 @@
 }
 .builder-weapon-switch:not(.active) .wslot{opacity:.48}
 .builder-weapon-switch:hover,
-.builder-weapon-switch:focus-visible{background:rgba(217,164,65,.1)}
+.builder-weapon-switch:focus-visible{background:rgba(var(--gold-rvb),.1)}
 .mini-badges{gap:5px;margin-top:2px;min-height:25px}
 .mini-badges .wslot{width:23px;height:23px}
 .mini-badges .wslot-w{width:15px;height:15px}
@@ -103,7 +110,7 @@
 .gear-slot.filled{border-color:var(--gold)}
 .gear-slot.weapon{grid-column:1 / -1;flex-direction:row;justify-content:center;padding:7px}
 .gear-thumb{
-  width:38px;height:38px;border-radius:7px;background:#0b0910 center/cover no-repeat;
+  width:38px;height:38px;border-radius:7px;background:var(--abyss) center/cover no-repeat;
   display:grid;place-items:center;font-size:18px;color:var(--mist-deep);flex:none;
   border:1px solid var(--line-soft)
 }
@@ -140,11 +147,11 @@
    (`.gear-config-open.is-valid`), sans changer ni de forme ni de taille. */
 .gear-maximum{
   border-color:var(--gold);color:var(--gold-light);
-  background:rgba(217,164,65,.07)
+  background:rgba(var(--gold-rvb),.07)
 }
-.gear-maximum:hover{background:rgba(217,164,65,.14)}
+.gear-maximum:hover{background:rgba(var(--gold-rvb),.14)}
 .gear-slot.jewel.filled{border-color:var(--alert)}
-.gear-slot.jewel .gear-thumb{border-color:rgba(161,44,44,.4)}
+.gear-slot.jewel .gear-thumb{border-color:rgba(var(--alert-rvb),.4)}
 .gear-configurable-slot{
   min-width:0;display:grid;grid-template-rows:minmax(0,1fr) auto;gap:5px
 }
@@ -152,13 +159,13 @@
 .gear-config-open{
   min-width:0;min-height:36px;padding:6px 7px;
   border:1px solid var(--line-soft);border-radius:8px;
-  background:rgba(11,9,16,.58);color:var(--mist);
+  background:rgba(var(--abyss-rvb),.58);color:var(--mist);
   font-size:10px;line-height:1.2;cursor:pointer
 }
 .gear-config-open:hover{border-color:var(--gold);color:var(--parchment)}
 .gear-config-open.is-valid{
   border-color:var(--gold);color:var(--gold-light);
-  background:rgba(217,164,65,.07)
+  background:rgba(var(--gold-rvb),.07)
 }
 .gear-config-open:disabled{cursor:not-allowed;opacity:.48}
 
