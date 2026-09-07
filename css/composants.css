@@ -81,6 +81,33 @@
 .local-tabs button:hover{color:var(--parchment)}
 .local-tabs button[aria-selected="true"]{color:var(--gold-light);border-bottom-color:var(--gold-light)}
 
+/* ---------- Bascule segmentee ---------- */
+
+/* DEUX ETATS EXCLUSIFS D'UNE MEME VUE : mes dispos ou celles de la confrerie,
+   mon roster ou celui des membres.
+
+   Ce n'est PAS une action, et elle ne prend donc pas l'aplat dore de
+   `.btn-primary` — le seul du site, reserve a l'action principale d'un ecran.
+   Le roster l'employait pourtant : « Mon roster » et « Ajouter un personnage »
+   portaient le meme aplat, l'un pour dire ou l'on est, l'autre pour agir.
+
+   Les deux ecrans avaient chacun leur version — `.avail-mode` d'un cote, des
+   `.btn` bascules de l'autre. Une seule ici, et l'etat vient de
+   `aria-pressed` : ce que le lecteur d'ecran annonce et ce que l'oeil voit ne
+   peuvent plus diverger. */
+.segmented{display:flex;flex-wrap:wrap}
+.segmented button{
+  appearance:none;cursor:pointer;min-height:44px;padding:0 16px;
+  border:1px solid var(--line-soft);color:var(--mist);background:transparent;
+  font-family:var(--body);font-size:13px;
+  transition:color .18s ease,background .18s ease,border-color .18s ease;
+}
+.segmented button+button{margin-left:-1px}
+.segmented button:hover{color:var(--parchment)}
+.segmented button[aria-pressed="true"]{
+  color:var(--abyss);background:var(--gold-light);border-color:var(--gold-light)
+}
+
 /* ---------- Actions ---------- */
 
 /* `text-decoration:none` compte : plusieurs actions du site sont des ANCRES

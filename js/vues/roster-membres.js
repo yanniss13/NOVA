@@ -229,8 +229,11 @@ import { toast } from "./toast.js";
     const mine = memberRosterMode === "mine";
     const mineButton = $("#memberRosterMine");
     const othersButton = $("#memberRosterOthers");
-    mineButton.classList.toggle("btn-primary", mine);
-    othersButton.classList.toggle("btn-primary", !mine);
+    /* Un seul porteur d'etat : `aria-pressed`. La classe `btn-primary`
+       basculait en parallele, ce qui donnait au mode courant l'aplat dore
+       reserve a l'action principale de l'ecran — ici « Ajouter un
+       personnage ». Deux aplats dores cote a cote, l'un disant ou l'on est et
+       l'autre proposant d'agir, ne se distinguaient plus. */
     mineButton.setAttribute("aria-pressed", String(mine));
     othersButton.setAttribute("aria-pressed", String(!mine));
     $(".member-roster-owner-field").hidden = mine;

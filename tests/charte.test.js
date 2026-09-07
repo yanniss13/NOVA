@@ -137,7 +137,7 @@ const CANAUX_ABANDONNES = {
    Une feuille absente d'ici et qui reintroduit un ancien canal echoue. */
 const PAS_ENCORE_REPRISES = new Set([
   "analyse.css", "builder.css", "calculateur.css", "import-captures.css",
-  "modales.css", "roster.css", "wiki.css"
+  "modales.css", "wiki.css"
 ]);
 
 const fautes = [];
