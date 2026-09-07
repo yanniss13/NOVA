@@ -75,7 +75,7 @@
   color:var(--parchment);background:transparent;cursor:pointer;font-size:17px;
 }
 .tool-shortcuts button:last-child{border-right:0}
-.tool-shortcuts button:hover{color:var(--gold-light);background:rgba(185,133,44,.06)}
+.tool-shortcuts button:hover{color:var(--gold-light);background:rgba(var(--gold-rvb),.06)}
 .tool-glyph{color:var(--gold-light);font-family:var(--display);font-size:32px;line-height:1}
 .member-callout{
   display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center

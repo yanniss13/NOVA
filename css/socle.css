@@ -30,7 +30,7 @@ body{
    sans ajouter une bordure de plus, et ne capte aucun clic. */
 body::before{
   content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;opacity:.34;
-  background:linear-gradient(90deg,transparent 0 49.9%,rgba(221,180,95,.06) 50%,transparent 50.1%);
+  background:linear-gradient(90deg,transparent 0 49.9%,rgba(var(--gold-light-rvb),.06) 50%,transparent 50.1%);
 }
 
 a{color:var(--gold-light)}

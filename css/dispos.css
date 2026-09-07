@@ -10,16 +10,22 @@
 .avail-toolbar{
   display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:20px 0 16px
 }
-.avail-modes{display:flex;gap:6px;border:1px solid var(--line);border-radius:10px;padding:4px}
+/* LA BASCULE SEGMENTEE DE LA MAQUETTE. C'etait une boite dans une boite : un
+   cadre arrondi, du rembourrage, et dedans un second bouton arrondi. Deux
+   boutons accoles suffisent, et l'actif prend l'aplat dore — le meme geste
+   visuel que l'action principale du site. */
+.avail-modes{display:flex}
 .avail-mode{
-  min-height:44px;padding:0 14px;border:0;border-radius:7px;background:transparent;
-  color:var(--mist);font:inherit;font-size:13px;cursor:pointer
+  min-height:44px;padding:0 16px;border:1px solid var(--line-soft);
+  background:transparent;color:var(--mist);font:inherit;font-size:13px;cursor:pointer
 }
-.avail-mode.active{background:var(--slate-light);color:var(--gold-light)}
+.avail-mode+.avail-mode{margin-left:-1px}
+.avail-mode:hover{color:var(--parchment)}
+.avail-mode.active{background:var(--gold-light);color:var(--abyss);border-color:var(--gold-light)}
 .avail-save{font-size:12px;color:var(--mist-deep);margin-left:auto}
 .avail-save[data-state="saving"]{color:var(--mist)}
 .avail-save[data-state="saved"]{color:var(--gold-light)}
-.avail-save[data-state="error"]{color:#e07a5f}
+.avail-save[data-state="error"]{color:var(--alert-light)}
 .avail-week{font-size:13px;color:var(--mist)}
 .avail-note{font-size:13px;color:var(--mist);margin:10px 0 0}
 
@@ -64,9 +70,16 @@
 .avail-cell.preview{outline:2px solid var(--gold-light);outline-offset:-2px}
 .avail-cell:disabled{cursor:default}
 .avail-cell.mine{box-shadow:inset 0 0 0 2px var(--gold-light)}
+/* LA RAMPE DE CHALEUR. Elle montait par deux gris violets — #2b2a3c puis
+   #3d3547 — qui n'appartenaient a aucune des deux chartes : un creneau a demi
+   rempli virait au mauve avant de redevenir dore. Elle monte desormais en or,
+   d'un voile a l'aplat : plus il y a de monde, plus la case est doree, et la
+   lecture se fait d'un coup d'oeil sans lire les chiffres.
+   Les chiffres s'alignent en colonnes, d'ou les chasses tabulaires. */
+.avail-cell{font-variant-numeric:tabular-nums}
 .avail-cell[data-tier="0"]{background:transparent;color:var(--mist-deep)}
-.avail-cell[data-tier="1"]{background:#2b2a3c;color:var(--mist)}
-.avail-cell[data-tier="2"]{background:#3d3547;color:#cfc4b4}
+.avail-cell[data-tier="1"]{background:rgba(var(--gold-rvb),.13);color:var(--mist)}
+.avail-cell[data-tier="2"]{background:rgba(var(--gold-rvb),.32);color:var(--parchment)}
 .avail-cell[data-tier="3"]{background:var(--gold);color:var(--ink)}
 .avail-cell[data-tier="4"]{background:var(--gold-light);color:var(--ink);font-weight:700}
 
@@ -105,7 +118,7 @@
 }
 .avail-slot-list li:last-child{border-bottom:0}
 /* Le compte connecte se repere d'un coup d'oeil, sans avoir a lire. */
-.avail-slot-list li.me{background:rgba(217,164,65,.06)}
+.avail-slot-list li.me{background:rgba(var(--gold-rvb),.06)}
 .avail-slot-list li.me b{color:var(--gold-light)}
 .avail-slot-tag{
   margin-left:auto;flex:none;font-size:10px;letter-spacing:.08em;

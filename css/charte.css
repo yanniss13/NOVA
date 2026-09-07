@@ -41,14 +41,27 @@
   --ink:#10100e;
 
   /* Les deux seuls signaux. `--alert` est reserve aux erreurs et aux
-     echeances urgentes ; il ne decore jamais. */
+     echeances urgentes ; il ne decore jamais. `--alert-light` est sa marche
+     claire, reservee au TEXTE : sur un fond sombre, l'alerte franche se lit
+     mal en petit corps. */
   --alert:#b95a4f;
+  --alert-light:#e0918a;
   --ok:#6aa879;
+
+  /* LES CANAUX, POUR LES TEINTES. Une couleur translucide ne peut pas passer
+     par `var()` a l'interieur de `rgba()` : c'est le triplet lui-meme qui doit
+     se nommer. Sans eux, chaque voile dore etait trois nombres ecrits en dur,
+     et la bascule en a laisse passer une soixantaine — tous de l'ANCIENNE
+     palette, donc d'un or plus jaune que celui de la charte. */
+  --gold-rvb:185,133,44;
+  --gold-light-rvb:221,180,95;
+  --abyss-rvb:5,13,20;
+  --alert-rvb:185,90,79;
 
   /* Deux filets dores, franc et discret. Le second trait n'est pose que sur
      les cadres majeurs. */
-  --line:rgba(185,133,44,.58);
-  --line-soft:rgba(185,133,44,.27);
+  --line:rgba(var(--gold-rvb),.58);
+  --line-soft:rgba(var(--gold-rvb),.27);
 
   /* Cinzel titre ; le texte courant est en serif, comme la maquette. */
   --display:"Cinzel", Georgia, serif;

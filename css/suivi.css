@@ -124,11 +124,14 @@
   }
 }
 .boss-stat-evolution{font-size:11px;color:var(--gold-light);text-align:right}
+/* La rangee cloisonnee de la maquette : un filet autour, un filet entre chaque
+   cellule, et rien d'autre. Le `gap` de 1 px sur fond de filet dessine les
+   cloisons sans qu'aucune cellule ne porte de bordure. */
 .boss-stats-grid{
   display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;
-  margin-top:10px;background:var(--line-soft)
+  margin-top:10px;border:1px solid var(--line-soft);background:var(--line-soft)
 }
-.boss-stat{min-width:0;padding:10px;background:var(--slate-deep)}
+.boss-stat{min-width:0;padding:18px;background:var(--slate-deep)}
 .boss-stat-label{
   display:block;margin-bottom:5px;font-size:10px;font-weight:700;
   letter-spacing:.08em;text-transform:uppercase;color:var(--mist)
