@@ -17,7 +17,9 @@
 import { LocalTeams } from "../donnees/equipes-store.js";
 import { DashboardStore } from "../donnees/suivi-store.js";
 import { brouillonEquipe } from "../etat/brouillon-equipe.js";
-import { sessionCourante } from "../etat/session.js";
+import {
+  inviteHorsConfrerie, sessionCourante, visiteurAnonyme
+} from "../etat/session.js";
 import { MIGRATION_KEY_PREFIX } from "../noyau/constantes.js";
 import { $ } from "../noyau/dom.js";
 import { authMessage, sb } from "../noyau/supabase-client.js";
@@ -50,9 +52,41 @@ import { Store } from "../donnees/equipes-store.js";
     return data || null;
   }
 
+  /* CE QUE L'ACCUEIL PROPOSE CHANGE AVEC LA SESSION, PAS LA PAGE ELLE-MEME.
+
+     Un membre connecte reste sur l'accueil — c'est la page d'arrivee de tout
+     le monde. Elle cesserait pourtant de lui servir si elle continuait a lui
+     proposer de creer un compte : ses appels a l'action deviennent « Ma
+     semaine » et « Groupes de boss ».
+
+     TROIS PUBLICS, PAS DEUX. Une premiere version n'opposait que le visiteur
+     au titulaire d'un compte, et servait donc a l'invite hors confrerie des
+     boutons qui ne menaient nulle part : il a un compte, mais aucun droit sur
+     les groupes de boss. Il a son propre public, et son propre bouton — son
+     roster, la seule page qui lui serve.
+
+     Le marqueur est general, pas propre a l'accueil : n'importe quel bloc du
+     site peut se declarer pour un public ou plusieurs, separes par une espace.
+     Un bloc SANS marqueur s'adresse a tout le monde et n'est jamais touche —
+     les outils du site, par exemple, servent les trois. */
+  function publicDeLaSession(){
+    if(visiteurAnonyme()) return "visiteur";
+    if(inviteHorsConfrerie()) return "invite";
+    return "membre";
+  }
+
+  function rangerLesBlocsDeSession(){
+    const courant = publicDeLaSession();
+    document.querySelectorAll("[data-quand]").forEach(bloc => {
+      const publics = bloc.dataset.quand.split(/\s+/).filter(Boolean);
+      bloc.hidden = !publics.includes(courant);
+    });
+  }
+
   function updateAccountUi(){
     $("#accountLogin").hidden = !!sessionCourante.user;
     $("#accountConnected").hidden = !sessionCourante.user;
+    rangerLesBlocsDeSession();
     const accountName = sessionCourante.pseudo
       || (sessionCourante.user && sessionCourante.user.email) || "";
     $("#accountPseudo").textContent = accountName;
@@ -142,16 +176,23 @@ import { Store } from "../donnees/equipes-store.js";
       void renderMemberRoster();
     }
     if($("#view-analyse").classList.contains("active")) void renderAnalyse();
-    /* « Mon suivi » devient la vue par défaut à la résolution initiale d'une
-       session et après une connexion réussie, c'est-à-dire au passage
-       « aucun compte -> un compte ». Un changement de compte piloté de
-       l'extérieur, comme un TOKEN_REFRESHED, ne déplace jamais la navigation :
-       il se contente de réafficher le suivi du bon compte s'il est visible. */
+    /* L'ACCUEIL RESTE LA PAGE D'ARRIVÉE, MÊME UNE FOIS CONNECTÉ.
+
+       Une connexion réussie envoyait le membre sur « Mon suivi ». C'est
+       l'accueil qu'il retrouve désormais : c'est la plus belle page du site,
+       et elle lui sert — ses deux appels à l'action deviennent « Ma semaine »
+       et « Groupes de boss ».
+
+       La règle ne vaut qu'au passage « aucun compte -> un compte ». Un
+       changement de compte piloté de l'extérieur, comme un TOKEN_REFRESHED,
+       ne déplace jamais la navigation : il se contente de réafficher le suivi
+       du bon compte s'il est visible. Et une route explicite — un lien vers un
+       groupe de boss — garde toujours la priorité. */
     if(sessionChanged && !previousUserId && sessionCourante.user){
       const routeReprise = await reprendreRouteCourante({ apresConnexion:true });
       if(!isCurrentApplication()) return;
       if(!routeReprise){
-        await showView("dashboard", { historyMode:"replace" });
+        await showView("home", { historyMode:"replace" });
       }
     }else if($("#view-dashboard").classList.contains("active")){
       void renderDashboardView();

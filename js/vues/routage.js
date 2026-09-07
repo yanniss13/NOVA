@@ -27,7 +27,10 @@ function enregistrerGestionnaireRoute(view, handler){
 
 async function replierRouteInvalide(){
   routeEnAttente = null;
-  const view = sessionCourante.user ? "dashboard" : "home";
+  /* L'accueil pour tout le monde. Un compte ouvert repliait sur Mon suivi ;
+     l'accueil est desormais la page d'arrivee de tous, membres compris, et
+     ce qu'elle propose s'adapte a la session. */
+  const view = "home";
   const fragment = fragmentDeRoute(routeDeVue(view));
   if(fragment && location.hash !== fragment){
     history.replaceState(null, "", fragment);

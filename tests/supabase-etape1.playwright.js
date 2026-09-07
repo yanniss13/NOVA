@@ -125,8 +125,13 @@ async function attendrePseudo(page, pseudo){
 
     await attendrePseudo(page, "Yannis");
 
-    // Après connexion, « Mon suivi » devient la vue par défaut.
-    await page.locator("#view-dashboard").waitFor({ state:"visible" });
+    /* Après connexion, le membre RESTE sur l'accueil : c'est la page
+       d'arrivée de tout le monde. Ce qu'elle lui propose change — « Ma
+       semaine » remplace « Créer mon compte » — et Mon suivi devient un
+       onglet local de la rubrique. */
+    await page.locator("#view-home.active").waitFor({ state:"visible" });
+    await page.locator('.hero-actions [data-view="dashboard"]')
+      .waitFor({ state:"visible" });
     assert.equal(
       await entreeDeLaRubrique(page, "guilde").getAttribute("aria-current"),
       "page",
@@ -142,8 +147,11 @@ async function attendrePseudo(page, pseudo){
     assert.equal(await entreeDeLaRubrique(page, "guilde").textContent(),
       "Notre guilde");
 
-    /* La carte de chronometrage arrive apres le rendu : elle lit un fichier
-       statique, et sans elle aucun membre ne peut trouver outils/. */
+    /* La carte de chronometrage vit dans Mon suivi, qui n'est plus la vue
+       d'arrivee : on l'ouvre par son onglet local, comme un membre le ferait.
+       Elle arrive apres le rendu — elle lit un fichier statique — et sans elle
+       aucun membre ne peut trouver outils/. */
+    await allerA(page, "dashboard");
     const carteChrono = page.locator('[data-card="chronometrage"]');
     await carteChrono.getByRole("link", { name:"Chronométrer une animation" })
       .waitFor();
@@ -3719,8 +3727,8 @@ async function attendrePseudo(page, pseudo){
     await page.locator("#authEmail").fill("yannis@example.test");
     await page.locator("#authPassword").fill("mot-de-passe-test");
     await page.getByRole("button", { name:"Se connecter", exact:true }).click();
-    // Une connexion réussie ouvre « Mon suivi » : ce scénario revient sur Boss.
-    await page.locator("#view-dashboard").waitFor({ state:"visible" });
+    // Une connexion réussie ouvre l'accueil : ce scénario revient sur Boss.
+    await page.locator("#view-home.active").waitFor({ state:"visible" });
     await allerA(page, "boss");
     await page.locator(".boss-card", { hasText:"Groupe 1 · Run 1" })
       .getByRole("button", { name:"Rejoindre", exact:true }).waitFor();
@@ -5629,6 +5637,9 @@ async function attendrePseudo(page, pseudo){
         email:"yannis@example.test"
       });
     });
+    /* Rouvrir un compte, c'est une connexion : elle repose le membre sur
+       l'accueil. On revient donc a Mon suivi pour lire son etat. */
+    await allerA(page, "dashboard");
     await page.getByText("Suivi indisponible hors ligne", { exact:true }).waitFor();
     assert.doesNotMatch(await dashboardText(), /0\/3/);
     assert.equal(await page.locator(".dashboard-progress").count(), 0);

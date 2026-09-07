@@ -479,8 +479,12 @@ async function openHistoryFragment(page, fragment){
         window.__fakeSupabaseState.calls.length
       );
       await openHistoryFragment(protectedPage, fragment);
-      await protectedPage.locator("#view-dashboard.active").waitFor();
-      assert.equal(await protectedPage.evaluate(() => location.hash), "#dashboard");
+      /* Le repli d'une route invalide vise l'accueil, pour un compte comme
+         pour un visiteur : c'est la page d'arrivee du site. Ce que ce test
+         protege est ailleurs — le repli ne doit declencher AUCUNE lecture
+         ciblee de boss_sessions. */
+      await protectedPage.locator("#view-home.active").waitFor();
+      assert.equal(await protectedPage.evaluate(() => location.hash), "#home");
       const targetedBossReads = await protectedPage.evaluate(start =>
         window.__fakeSupabaseState.calls.slice(start).filter(call =>
           call.table === "boss_sessions"
@@ -579,9 +583,9 @@ async function openHistoryFragment(page, fragment){
     await installFakeSupabase(defaultPage);
     await defaultPage.goto(server.url + "/index.html");
     await signIn(defaultPage);
-    await defaultPage.locator("#view-dashboard.active").waitFor();
-    assert.equal(await defaultPage.evaluate(() => location.hash), "#dashboard",
-      "sans fragment, la connexion doit garder Mon suivi par défaut");
+    await defaultPage.locator("#view-home.active").waitFor();
+    assert.equal(await defaultPage.evaluate(() => location.hash), "#home",
+      "sans fragment, la connexion doit rester sur l'accueil");
 
     assert.deepEqual(errors, [], "aucune erreur JavaScript pendant le routage");
     console.log("routage-groupe.playwright.js navigation OK");

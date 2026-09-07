@@ -73,7 +73,7 @@ function rubriqueAtteignable(rubrique){
 }
 
 function ouvrirRubrique(id){
-  const vue = vueChefDeRubrique(id, vueAutorisee);
+  const vue = vueChefDeRubrique(id);
   if(vue) void showView(vue);
 }
 
@@ -205,29 +205,41 @@ function remplirOngletsLocaux(rubriqueActive, vue){
   });
 }
 
+/* LES TROIS BARRES QUE LA COQUILLE CONSTRUIT, et rien d'autre.
+
+   `[data-rubrique]` visait tout le document. La coquille masquait donc aussi
+   les boutons de l'accueil, qui portent le meme marqueur pour dire ou ils
+   menent — et elle les REMONTRAIT juste apres que la session les avait
+   caches : « Explorer les outils » restait affiche a un membre alors que
+   « Creer mon compte », son voisin, disparaissait bien. Deux proprietaires
+   pour un meme `hidden`, et le dernier qui ecrit gagne.
+
+   La coquille ne range plus que ses propres barres. Ce qu'une VUE affiche lui
+   appartient : l'accueil montre ses trois cartes a tout le monde, et c'est la
+   modale de connexion qui accueille un visiteur au clic. */
+const BARRES = "#desktopNav, #mobileDrawer, #mobileNav";
+const dansLesBarres = selecteur => document.querySelectorAll(
+  BARRES.split(", ").map(barre => barre + " " + selecteur).join(", "));
+
 /* Range la coquille sur la vue ouverte : ce qui est hors de portee disparait,
    et l'entree de la rubrique courante s'allume. */
 function rangerCoquille(vue){
   const active = vue || vueCourante();
   const rubriqueActive = rubriqueDeVue(active);
 
-  document.querySelectorAll("[data-rubrique]").forEach(element => {
+  dansLesBarres("[data-rubrique]").forEach(element => {
     const rubrique = rubriqueParId(element.dataset.rubrique);
     if(!rubrique) return;
-    /* La marque du site n'est pas une entree de navigation : elle reste
-       toujours visible et ne s'allume jamais. */
-    if(element.classList.contains("brand")) return;
     element.hidden = !rubriqueAtteignable(rubrique);
     if(rubrique.id === rubriqueActive) element.setAttribute("aria-current", "page");
     else element.removeAttribute("aria-current");
   });
 
-  document.querySelectorAll("#desktopNav [data-view], #mobileDrawer [data-view]")
-    .forEach(element => {
-      element.hidden = !vueAutorisee(element.dataset.view);
-      if(element.dataset.view === active) element.setAttribute("aria-current", "page");
-      else element.removeAttribute("aria-current");
-    });
+  dansLesBarres("[data-view]").forEach(element => {
+    element.hidden = !vueAutorisee(element.dataset.view);
+    if(element.dataset.view === active) element.setAttribute("aria-current", "page");
+    else element.removeAttribute("aria-current");
+  });
 
   /* La rubrique en menu s'allume quand une de ses vues est ouverte : son
      declencheur ne porte pas `data-rubrique`, il vit dans le menu. */

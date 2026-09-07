@@ -158,8 +158,16 @@ const vueActive = page => page.evaluate(() => {
 
     assert.deepEqual(await destinationsVisibles(page), PORTEE_MEMBRE,
       "un membre connecte retrouve la barre entiere");
-    assert.equal(await vueActive(page), "dashboard",
-      "la connexion mene au suivi, comme avant");
+    /* LA CONNEXION NE DEPLACE PLUS PERSONNE. L'accueil est la page d'arrivee
+       de tous : ce sont ses appels a l'action qui changent, pas la vue. */
+    assert.equal(await vueActive(page), "home",
+      "la connexion laisse le membre sur l'accueil");
+    assert.deepEqual(
+      await page.locator(".hero-actions button:not([hidden])")
+        .evaluateAll(boutons => boutons.map(bouton =>
+          bouton.textContent.replace(/\s+/g, " ").trim())),
+      ["Ma semaine", "Groupes de boss →", "Explorer les outils →"],
+      "l'accueil d'un membre lui propose sa semaine, pas de creer un compte");
 
     /* LES ONGLETS LOCAUX, ouverts : c'est la seule facon d'atteindre les Dispos,
        donc la seule facon de prouver qu'un membre y a droit. */

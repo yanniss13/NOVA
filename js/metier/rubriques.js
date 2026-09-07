@@ -22,20 +22,23 @@
 
 /* `chef` est la vue qu'ouvre un clic sur la rubrique elle-meme.
 
-   `chefConnecte` est celle qu'elle ouvre a la place quand le visiteur y a
-   droit. Un seul cas aujourd'hui : « Notre guilde » montre l'accueil public a
-   un visiteur, et « Mon suivi » a un membre. C'est une DONNEE de la table,
-   pas un `if` dans la coquille : la table ne connait pas la session, mais
-   elle sait dire quelle vue prefererait un compte ouvert, et c'est le portier
-   de `navigation.js` qui tranche. */
+   L'ACCUEIL EST LE CHEF POUR TOUT LE MONDE. Une premiere version envoyait le
+   membre connecte droit sur Mon suivi : « Notre guilde » lui aurait montre
+   ses chiffres plutot que la page de presentation. Le proprietaire a tranche
+   dans l'autre sens — l'accueil est la plus belle page du site, un membre ne
+   doit pas en etre prive, elle doit lui SERVIR. Elle reste donc la page
+   d'arrivee de tous ; ce qu'elle propose change avec la session, et Mon suivi
+   devient un onglet local de la rubrique. */
 const RUBRIQUES = Object.freeze([
   {
     id:"guilde",
     libelle:"Notre guilde",
     chef:"home",
-    chefConnecte:"dashboard",
     vues:["home", "dashboard"],
-    onglets:[]
+    onglets:[
+      { vue:"home", libelle:"Accueil" },
+      { vue:"dashboard", libelle:"Mon suivi" }
+    ]
   },
   {
     id:"equipes",
@@ -101,33 +104,12 @@ function ongletsDeRubrique(id){
   return rubrique ? rubrique.onglets : [];
 }
 
-/* `autorisee` est le portier, passe par l'appelant : la table ne connait ni
-   la session ni les droits. Sans lui, la vue chef ordinaire est rendue. */
-function vueChefDeRubrique(id, autorisee){
+/* La vue qu'ouvre un clic sur la rubrique. Elle ne depend plus de la session :
+   un membre et un visiteur cliquent « Notre guilde » et arrivent tous deux sur
+   l'accueil. Ce que chacun y trouve, c'est la page qui le decide. */
+function vueChefDeRubrique(id){
   const rubrique = rubriqueParId(id);
-  if(!rubrique) return null;
-  const preferee = rubrique.chefConnecte;
-  if(preferee && typeof autorisee === "function" && autorisee(preferee)){
-    return preferee;
-  }
-  return rubrique.chef;
-}
-
-/* LA VUE QUI DOIT PRENDRE LA PLACE DE CELLE-CI quand un compte s'ouvre.
-
-   Un visiteur atterrit sur l'accueil public. S'il se connecte, il ne doit pas
-   y rester : sa rubrique a une vue de membre, et c'est elle qu'il attend.
-
-   La regle est etroite a dessein. Elle ne vaut QUE si l'on se trouve sur la
-   vue chef publique de la rubrique : un membre pose sur les equipes partagees
-   ne doit pas etre renvoye vers « Creer une equipe » a la premiere
-   verification de droits. */
-function vuePreferee(vue, autorisee){
-  const rubrique = rubriqueParId(rubriqueDeVue(vue));
-  if(!rubrique || !rubrique.chefConnecte) return null;
-  if(vue !== rubrique.chef) return null;
-  if(typeof autorisee !== "function" || !autorisee(rubrique.chefConnecte)) return null;
-  return rubrique.chefConnecte;
+  return rubrique ? rubrique.chef : null;
 }
 
 export {
@@ -135,6 +117,5 @@ export {
   ongletsDeRubrique,
   rubriqueDeVue,
   rubriqueParId,
-  vueChefDeRubrique,
-  vuePreferee
+  vueChefDeRubrique
 };

@@ -18,7 +18,6 @@ const { loadApp, plain } = require("./helpers/load-app");
 const { hooks } = loadApp();
 const {
   RUBRIQUES,
-  vuePreferee,
   rubriqueDeVue,
   rubriqueParId,
   ongletsDeRubrique,
@@ -94,19 +93,23 @@ assert.notEqual(rubriqueDeVue("roster"), rubriqueDeVue("member-roster"),
     `${vue} doit vivre dans Outils`);
 });
 
-/* LA VUE CHEF SUIT LES DROITS. « Notre guilde » montre l'accueil public a un
-   visiteur, et Mon suivi a un membre : c'est `chefConnecte` qui le dit, et le
-   portier passe par l'appelant qui tranche. */
+/* L'ACCUEIL EST LE CHEF POUR TOUT LE MONDE.
+
+   Une premiere version envoyait le membre connecte droit sur Mon suivi. Le
+   proprietaire a tranche dans l'autre sens : l'accueil est la page d'arrivee
+   de tous, et Mon suivi devient un onglet local de la rubrique.
+
+   Le test tient les deux moities de ce choix — la vue chef ne depend d'aucun
+   droit, et « Notre guilde » offre bien les deux onglets. */
 const guilde = rubriqueDeVue("home");
 assert.equal(vueChefDeRubrique(guilde), "home",
-  "sans portier, la vue chef ordinaire est rendue");
-assert.equal(vueChefDeRubrique(guilde, () => false), "home",
-  "un visiteur sans droit sur Mon suivi reste sur l'accueil");
-assert.equal(vueChefDeRubrique(guilde, vue => vue === "dashboard"), "dashboard",
-  "un membre qui a droit a Mon suivi y arrive directement");
-/* Une rubrique sans `chefConnecte` ne change jamais de vue chef, quoi que
-   reponde le portier. */
-assert.equal(vueChefDeRubrique(rubriqueDeVue("wiki"), () => true), "wiki");
+  "un clic sur « Notre guilde » ouvre l'accueil");
+assert.deepEqual(
+  plain(ongletsDeRubrique(guilde)).map(onglet => onglet.vue),
+  ["home", "dashboard"],
+  "l'accueil et Mon suivi sont deux onglets de la meme rubrique");
+assert.equal(rubriqueDeVue("dashboard"), guilde,
+  "Mon suivi reste dans « Notre guilde »");
 
 /* Une rubrique sans onglet local rend une liste vide, jamais `undefined` :
    la coquille boucle dessus sans avoir a se demander si elle existe. */
@@ -121,21 +124,15 @@ assert.deepEqual(
   plain(ongletsDeRubrique(rubriqueDeVue("wiki"))).map(onglet => onglet.vue),
   ["wiki", "collection", "calculateur", "analyse"]);
 
-/* LA VUE QUI PREND LA PLACE quand un compte s'ouvre. Elle ne vaut que depuis
-   la vue chef PUBLIQUE : ailleurs, elle deplacerait un membre sans raison. */
-assert.equal(typeof vuePreferee, "function",
-  "l'ouverture d'un compte doit pouvoir remplacer la vue publique");
-assert.equal(vuePreferee("home", () => true), "dashboard",
-  "un compte ouvert sur l'accueil public doit mener au suivi");
-assert.equal(vuePreferee("home", () => false), null,
-  "sans droit sur le suivi, le visiteur reste sur l'accueil");
-assert.equal(vuePreferee("home"), null,
-  "sans portier, rien ne remplace la vue courante");
-assert.equal(vuePreferee("dashboard", () => true), null,
-  "un membre deja sur son suivi n'est pas redirige vers lui-meme");
-assert.equal(vuePreferee("roster", () => true), null,
-  "un membre sur les equipes partagees ne doit pas etre renvoye au Builder");
-assert.equal(vuePreferee("wiki", () => true), null,
-  "une rubrique sans vue de membre ne redirige jamais");
+/* AUCUNE RUBRIQUE NE DEPLACE LE VISITEUR TOUTE SEULE. La vue chef ne prend
+   aucun portier : quel que soit l'appelant, une rubrique ouvre toujours la
+   meme vue. Sans cette garantie, une simple verification de droits pourrait
+   pousser un membre hors de la page qu'il regarde. */
+RUBRIQUES.forEach(rubrique => {
+  assert.equal(vueChefDeRubrique(rubrique.id), rubrique.chef,
+    `${rubrique.id} doit toujours ouvrir ${rubrique.chef}`);
+  assert.equal(vueChefDeRubrique.length, 1,
+    "la vue chef ne prend plus de portier : elle ne depend pas de la session");
+});
 
 console.log("rubriques.test.js OK");
