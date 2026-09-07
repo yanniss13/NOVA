@@ -139,7 +139,6 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   vueChefDeRubrique:typeof vueChefDeRubrique === "function"
     ? vueChefDeRubrique
     : undefined,
-  vuePreferee:typeof vuePreferee === "function" ? vuePreferee : undefined,
   urlAbsolueDeRoute:typeof urlAbsolueDeRoute === "function"
     ? urlAbsolueDeRoute
     : undefined,

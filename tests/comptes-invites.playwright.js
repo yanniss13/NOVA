@@ -66,8 +66,26 @@ async function connecter(page, email){
 
     assert.deepEqual(await destinationsVisibles(page), PORTEE_INVITE,
       "un invité garde son roster et les pages publiques, rien d'autre");
-    assert.equal(await vueActive(page), "member-roster",
-      "la connexion doit le poser sur son roster, pas sur un Wiki");
+
+    /* SON ROSTER RESTE À UN CLIC, MAIS DEPUIS L'ACCUEIL.
+
+       La connexion le posait directement sur son roster, parce que la vue par
+       défaut d'alors — Mon suivi — lui était interdite et que le repli devait
+       le rattraper. L'accueil est désormais la page d'arrivée de tous, et il
+       lui est autorisé : c'est donc là qu'il atterrit.
+
+       Ce que ce test protégeait tient toujours, à une adresse près : l'invité
+       ne doit pas se retrouver devant une page qui ne lui sert à rien. On
+       vérifie donc que l'accueil s'adresse À LUI — le bouton de son roster, et
+       aucun de ceux du membre, qui ne mèneraient nulle part. */
+    assert.equal(await vueActive(page), "home",
+      "la connexion pose l'invité sur l'accueil, comme tout le monde");
+    assert.deepEqual(
+      await page.locator(".hero-actions button:not([hidden])")
+        .evaluateAll(boutons => boutons.map(bouton =>
+          bouton.textContent.replace(/\s+/g, " ").trim())),
+      ["Mon roster", "Explorer les outils →"],
+      "l'accueil d'un invité mène à son roster, jamais aux groupes de boss");
 
     /* LA ROUTE, et pas seulement l'onglet : un onglet masqué ne protège que la
        souris.
@@ -115,8 +133,16 @@ async function connecter(page, email){
 
     assert.deepEqual(await destinationsVisibles(page), PORTEE_MEMBRE,
       "un membre retrouve la barre entière");
-    assert.equal(await vueActive(page), "dashboard",
-      "un membre atterrit sur le suivi, comme avant");
+    assert.equal(await vueActive(page), "home",
+      "un membre atterrit sur l'accueil, comme l'invité");
+    /* Le même accueil, un autre public : les deux jeux de boutons ne se
+       mélangent jamais. */
+    assert.deepEqual(
+      await page.locator(".hero-actions button:not([hidden])")
+        .evaluateAll(boutons => boutons.map(bouton =>
+          bouton.textContent.replace(/\s+/g, " ").trim())),
+      ["Ma semaine", "Groupes de boss →", "Explorer les outils →"],
+      "l'accueil d'un membre ne propose plus le roster de l'invité");
 
     /* ---- L'admin accueille l'invité, et la barre de l'invité s'élargit. ---- */
     await ouvrirLeCompte(page);

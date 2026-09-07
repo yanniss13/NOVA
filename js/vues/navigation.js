@@ -27,7 +27,6 @@ import {
   estAdministrateur, inviteHorsConfrerie, visiteurAnonyme
 } from "../etat/session.js";
 import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
-import { vuePreferee } from "../metier/rubriques.js";
 
 const rendus = new Map();
 const auditeursDeVue = new Set();
@@ -101,13 +100,6 @@ function appliquerAutorisations(options){
   annoncerVue(nomActif);
   if(nomActif && !vueAutorisee(nomActif)){
     void showView(vueDeRepli(), { historyMode:settings.historyMode });
-    return;
-  }
-  /* Un compte vient de s'ouvrir sur l'accueil public : le membre attend son
-     suivi, pas la page qui invite a creer un compte. */
-  const preferee = vuePreferee(nomActif, vueAutorisee);
-  if(preferee){
-    void showView(preferee, { historyMode:settings.historyMode });
   }
 }
 
