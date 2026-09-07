@@ -31,10 +31,12 @@
   .field input, .note, .picker-search{font-size:16px}
   .member-roster-card,.member-roster-toolbar,.member-roster-editor{min-width:0}
   .member-roster-toolbar{align-items:stretch}
-  .member-roster-modes,.member-roster-modes .btn,
+  /* `.member-roster-modes` a disparu avec la bascule commune : la barre
+     d'outils du roster emploie `.segmented`, comme les dispos et l'Analyse. */
+  .member-roster-toolbar .segmented,
   .member-roster-owner-field,.member-roster-owner-field select,
   .member-roster-toolbar #memberRosterAdd{width:100%;min-width:0}
-  .member-roster-modes .btn{justify-content:center}
+  .member-roster-toolbar .segmented button{flex:1 1 0;justify-content:center}
   .member-roster-build-panel{grid-template-columns:1fr}
   .member-roster-editor{padding:14px}
   .hero-source-actions{grid-template-columns:1fr}

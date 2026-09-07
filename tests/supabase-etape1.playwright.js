@@ -1537,7 +1537,7 @@ async function attendrePseudo(page, pseudo){
       "la vue d'ensemble doit accueillir le membre dans l'Analyse"
     );
     await page.locator(
-      '.analyse-subnav-button[data-analyse-section="dps"]'
+      '.analyse-subnav [data-analyse-section="dps"]'
     ).click();
     await page.locator("#analysePanel-dps .matrix").waitFor();
     const analyseDpsText = await page.locator("#analysePanel-dps .matrix")
@@ -1547,7 +1547,7 @@ async function attendrePseudo(page, pseudo){
     assert.match(analyseDpsText, /Meliodas/);
 
     await page.locator(
-      '.analyse-subnav-button[data-analyse-section="supports"]'
+      '.analyse-subnav [data-analyse-section="supports"]'
     ).click();
     const panneauSupports = page.locator("#analysePanel-supports");
     await panneauSupports.locator(".debuff-row").first().waitFor();
@@ -1629,7 +1629,7 @@ async function attendrePseudo(page, pseudo){
     );
 
     await page.locator(
-      '.analyse-subnav-button[data-analyse-section="dps"]'
+      '.analyse-subnav [data-analyse-section="dps"]'
     ).click();
     await page.locator("#analysePanel-dps .matrix").waitFor();
     await page.evaluate(() => {

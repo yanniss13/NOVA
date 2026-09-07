@@ -19,7 +19,7 @@
   max-width:620px;margin:0;font-family:var(--display);font-weight:500;
   font-size:clamp(38px,3.7vw,52px);line-height:1.12;letter-spacing:.012em
 }
-.hero-lead{max-width:58ch;margin:20px 0 0;color:#d9d1c2;font-size:17px;line-height:1.55}
+.hero-lead{max-width:58ch;margin:20px 0 0;color:var(--parchment);font-size:17px;line-height:1.55}
 .hero-actions{display:flex;align-items:center;gap:22px;margin-top:30px}
 
 .guild-hero__visual{position:relative;min-width:0;margin:0;overflow:hidden;background:#0b1115}
@@ -50,7 +50,7 @@
   stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round
 }
 .essential-card h3{margin:4px 0 6px;font-family:var(--display);font-size:20px;font-weight:500}
-.essential-card p{max-width:27ch;margin:0;color:#d2c8b8;line-height:1.42}
+.essential-card p{max-width:27ch;margin:0;color:var(--parchment);line-height:1.42}
 .essential-card .btn-ghost{justify-content:flex-start;width:max-content;margin-top:14px}
 
 /* ---------- Outils et appel a la connexion ---------- */
@@ -80,7 +80,7 @@
 .member-callout{
   display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center
 }
-.member-callout p{max-width:36ch;margin:10px auto 8px;color:#d4cbbb;line-height:1.45}
+.member-callout p{max-width:36ch;margin:10px auto 8px;color:var(--parchment);line-height:1.45}
 
 /* ---------- Intermediaire ---------- */
 

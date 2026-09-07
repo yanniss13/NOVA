@@ -36,13 +36,13 @@
   min-height:188px;
   padding:28px 22px 18px;
   overflow:hidden;
-  border:1px dashed rgba(217,164,65,.64);
+  border:1px dashed rgba(var(--gold-rvb),.64);
   border-radius:14px;
   background:
-    linear-gradient(135deg, rgba(217,164,65,.08), transparent 42%),
+    linear-gradient(135deg, rgba(var(--gold-rvb),.08), transparent 42%),
     var(--slate-deep);
   text-align:center;
-  box-shadow:inset 0 0 0 1px rgba(240,198,116,.04);
+  box-shadow:inset 0 0 0 1px rgba(var(--gold-light-rvb),.04);
   transition:border-color .16s ease, box-shadow .16s ease,
     transform .16s ease, background-color .16s ease;
 }
@@ -70,9 +70,9 @@
 .import-captures-depot.is-dragging{
   transform:translateY(-1px);
   border-color:var(--gold-light);
-  background-color:rgba(217,164,65,.08);
-  box-shadow:0 0 0 3px rgba(217,164,65,.12),
-    inset 0 0 34px rgba(217,164,65,.08);
+  background-color:rgba(var(--gold-rvb),.08);
+  box-shadow:0 0 0 3px rgba(var(--gold-rvb),.12),
+    inset 0 0 34px rgba(var(--gold-rvb),.08);
 }
 
 .import-captures-depot:focus-within{
@@ -118,7 +118,7 @@
 
 .import-captures-depot-message{
   min-height:1.25em;
-  color:#e4a1a1;
+  color:var(--alert-light);
   font-size:.82rem;
 }
 
@@ -161,9 +161,9 @@
   border-radius:999px;
   border:1px solid currentColor;
 }
-.import-captures-ligne[data-statut="unique"] .import-captures-etat{ color:#5fbf7f; }
-.import-captures-ligne[data-statut="ambigu"] .import-captures-etat{ color:#d8a748; }
-.import-captures-ligne[data-statut="echec"] .import-captures-etat{ color:#c96a6a; }
+.import-captures-ligne[data-statut="unique"] .import-captures-etat{ color:var(--ok); }
+.import-captures-ligne[data-statut="ambigu"] .import-captures-etat{ color:var(--gold-light); }
+.import-captures-ligne[data-statut="echec"] .import-captures-etat{ color:var(--alert-light); }
 
 .import-captures-piece{
   flex:1 1 200px;
@@ -185,7 +185,7 @@
 .import-captures-conflit{
   flex:1 1 100%;
   font-size:.88rem;
-  color:#d8a748;
+  color:var(--gold-light);
 }
 
 .import-captures-choix{
