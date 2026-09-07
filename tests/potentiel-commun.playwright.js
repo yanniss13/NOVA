@@ -2,7 +2,7 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
-const { allerA } = require("./helpers/naviguer");
+const { allerA, ouvrirHerosDuBuilder } = require("./helpers/naviguer");
 const { chromium } = require("playwright");
 
 const STORAGE_KEY = "confrerie7ds.teams";
@@ -388,7 +388,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     assert.notEqual(epeeT2, hacheT2, "Les descriptions doivent suivre l'arme équipée");
     await page.locator("#potClose").click();
 
-    const secondHero = page.locator(".hero").nth(1);
+    const secondHero = await ouvrirHerosDuBuilder(page, 1);
     await chooseHero(page, secondHero, "Meliodas");
     await chooseWeapon(page, secondHero, "Hache");
     assert.equal(await secondHero.locator(".gear-slot.weapon").evaluate(
@@ -577,7 +577,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     assert.equal(await armorSlot(page.locator(".hero").first(), "Armure gravée").evaluate(
       el => el.classList.contains("filled")
     ), false);
-    const futureHero = page.locator(".hero").nth(1);
+    const futureHero = await ouvrirHerosDuBuilder(page, 1);
     await assertVisibleText(
       futureHero.locator(".weapon-config-summary"),
       "Configuration à compléter"

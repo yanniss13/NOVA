@@ -154,10 +154,27 @@ function entreeDeLaRubrique(page, id){
   return page.locator(SELECTEUR_DE_RUBRIQUE(id)).first();
 }
 
+/* LE HEROS OUVERT DANS LE TEAM BUILDER.
+
+   L'ecran montrait quatre cartes de front, et un test visait la seconde par
+   `.hero` en position 1. Depuis la bande de composition, la zone de travail
+   ne porte qu'un heros a la fois : on choisit sa place, puis on agit sur la
+   carte — exactement ce qu'un membre fait.
+
+   Le helper rend la carte, pour que le test lise comme avant : une variable
+   qui designe LE heros sur lequel on travaille. */
+async function ouvrirHerosDuBuilder(page, index){
+  await page.locator(`.team-slot[data-hero-index="${index}"]`).click();
+  const carte = page.locator("#heroGrid .hero");
+  await carte.waitFor({ state:"visible" });
+  return carte;
+}
+
 module.exports = {
   allerA,
   destinationsVisibles,
   ongletsLocauxVisibles,
+  ouvrirHerosDuBuilder,
   ouvrirLeCompte,
   entreeDeLaRubrique,
   entreeDeLaVue,

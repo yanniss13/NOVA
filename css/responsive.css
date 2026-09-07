@@ -13,12 +13,20 @@
 /* ---------- Responsive ---------- */
 
 @media(max-width:900px){
-  .hero-grid{grid-template-columns:repeat(2,1fr)}
   .team-heroes{grid-template-columns:repeat(4,1fr)}
 }
 @media(max-width:560px){
   .hero-stats-primary{grid-template-columns:minmax(0,1fr)}
-  .hero-grid{grid-template-columns:1fr}
+  /* LA BANDE DEVIENT UN RAIL. Quatre places de 46 px de portrait plus leur
+     nom ne tiennent pas sur 360 px : elles defilent lateralement dans la
+     bande, sans jamais elargir la page. */
+  .team-band{
+    grid-auto-flow:column;grid-auto-columns:minmax(140px,1fr);
+    grid-template-columns:none;overflow-x:auto;
+    margin-inline:calc(var(--respiration-mobile-cote) * -1);
+    padding-inline:var(--respiration-mobile-cote)
+  }
+  .hero{padding:16px;gap:16px}
   .team-heroes{grid-template-columns:repeat(2,1fr)}
   .metabar .grow{margin-left:0;width:100%}
   .metabar .grow .btn{flex:1;justify-content:center}

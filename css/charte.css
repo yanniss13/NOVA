@@ -85,7 +85,11 @@
   /* La respiration d'une vue. `main` n'en porte aucune : une banniere pleine
      largeur doit pouvoir s'en affranchir. */
   --respiration:40px 48px 54px;
-  --respiration-mobile:26px 14px 34px;
+  /* Le cote se nomme a part : un rail qui doit deborder jusqu'au bord de
+     l'ecran a besoin de la valeur exacte, et la recopier en ferait un second
+     proprietaire de la meme mesure. */
+  --respiration-mobile-cote:14px;
+  --respiration-mobile:26px var(--respiration-mobile-cote) 34px;
   --radius:7px;
   --shadow:0 18px 50px rgba(0,0,0,.45);
 }

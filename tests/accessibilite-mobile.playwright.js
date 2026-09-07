@@ -1067,8 +1067,10 @@ async function installRosterFocusFakeSupabase(page){
       );
       await pickerPage.locator("#pickerGrid")
         .getByTitle("Hache de l'âme vorace").click();
+      /* La carte n'est plus le premier enfant de la grille : la bande de
+         composition la precede, et une seule carte existe a la fois. */
       const builderSwitches = pickerPage.locator(
-        "#heroGrid .hero:first-child .builder-weapon-switch"
+        "#heroGrid .hero .builder-weapon-switch"
       );
       assert.equal(await builderSwitches.count(), 3);
       for(let index = 0; index < 3; index += 1){
