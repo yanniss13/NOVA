@@ -10,7 +10,7 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
-const { allerA } = require("./helpers/naviguer");
+const { allerA, ouvrirHerosDuBuilder } = require("./helpers/naviguer");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
@@ -121,8 +121,9 @@ const ARME_EPEE = "En plein cœur !";
     }, HAUT);
 
     /* Le voisin ne bouge pas : appliquer sur un emplacement n'habille que
-       celui-la. */
-    const voisin = await page.locator("#heroGrid .hero").nth(1)
+       celui-la. On ouvre sa place dans la bande de composition — la zone de
+       travail ne porte qu'un heros a la fois. */
+    const voisin = await (await ouvrirHerosDuBuilder(page, 1))
       .locator('.gear-slot[data-slot="Haut"]').getAttribute("title");
     assert.equal(voisin.includes(HAUT), false,
       "seul l'emplacement vise doit changer");
