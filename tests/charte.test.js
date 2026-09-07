@@ -103,6 +103,67 @@ const reglesHorsRoot = charte
 assert.equal(reglesHorsRoot, "",
   "charte.css ne doit contenir que le bloc :root : elle nomme, elle ne dessine pas");
 
+/* ---------- 5. L'ancienne palette ne survit pas en canaux bruts ---------- */
+
+/* RENOMMER LES JETONS NE SUFFISAIT PAS.
+
+   Une couleur translucide ne peut pas passer par `var()` a l'interieur de
+   `rgba()`. Chaque voile dore etait donc trois nombres ecrits en dur, que le
+   renommage n'a pas vus : la bascule en a laisse une soixantaine, tous de
+   l'ANCIENNE palette. Un `rgba(217,164,65,.08)` est l'ancien or, plus jaune
+   que celui de la charte — invisible en lecture de code, visible a l'ecran.
+
+   La charte nomme desormais les canaux (`--gold-rvb` et ses voisins). Ce test
+   refuse le retour des anciens dans les feuilles deja reprises. */
+const CANAUX_ABANDONNES = {
+  "217,164,65":"--gold-rvb",
+  "218,165,56":"--gold-rvb",
+  "240,198,116":"--gold-light-rvb",
+  "199,167,91":"--gold-light-rvb",
+  "11,9,16":"--abyss-rvb",
+  "27,25,34":"--abyss-rvb",
+  "35,27,42":"--abyss-rvb",
+  "20,16,26":"--abyss-rvb",
+  "6,5,9":"--abyss-rvb",
+  "161,44,44":"--alert-rvb",
+  "190,74,85":"--alert-rvb",
+  "118,36,48":"--alert-rvb",
+  "233,141,141":"--alert-light"
+};
+
+/* Les feuilles qui n'ont pas encore ete reprises. Chacune passe avec le lot de
+   son ecran — Mon suivi, Roster, Equipes, Outils — et sort de cette liste a ce
+   moment-la. Quand la liste est vide, l'exception disparait avec elle.
+   Une feuille absente d'ici et qui reintroduit un ancien canal echoue. */
+const PAS_ENCORE_REPRISES = new Set([
+  "analyse.css", "builder.css", "calculateur.css", "import-captures.css",
+  "modales.css", "roster.css", "suivi.css", "wiki.css"
+]);
+
+const fautes = [];
+sources.forEach((source, nom) => {
+  if(PAS_ENCORE_REPRISES.has(nom)) return;
+  Object.entries(CANAUX_ABANDONNES).forEach(([canaux, jeton]) => {
+    if(source.includes(canaux)){
+      fautes.push(`css/${nom} : ${canaux} — employer ${jeton}`);
+    }
+  });
+});
+assert.deepEqual(fautes, [],
+  "des couleurs de l'ancienne palette sont ecrites en canaux bruts");
+
+/* La liste d'exceptions ne doit pas se perimer dans l'autre sens : une feuille
+   qui y figure alors qu'elle est propre laisserait croire qu'il reste du
+   travail la ou il n'y en a plus. */
+const dejaPropres = [...PAS_ENCORE_REPRISES].filter(nom => {
+  const source = sources.get(nom);
+  return source && !Object.keys(CANAUX_ABANDONNES).some(c => source.includes(c));
+}).sort();
+assert.deepEqual(dejaPropres, [],
+  "ces feuilles sont propres : les retirer de PAS_ENCORE_REPRISES");
+
 console.log("charte.test.js OK ("
   + declaresParLaCharte.length + " jetons, "
-  + employes.size + " employes, aucun ancien nom)");
+  + employes.size + " employes, aucun ancien nom, "
+  + (sources.size - PAS_ENCORE_REPRISES.size) + "/" + sources.size
+  + " feuilles sur la palette de la charte)");

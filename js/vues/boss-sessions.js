@@ -388,7 +388,8 @@ import { toast } from "./toast.js";
     $("#bossCount").innerHTML =
       "<b>"+myCount+"/3</b> runs réservés ou terminés";
 
-    body.appendChild(el("div",{class:"boss-weekhead"},[
+    body.appendChild(el("div",{class:"ornate-panel boss-weekhead"},[
+      el("p",{class:"context-label", text:"Boss de la semaine"}),
       el("div",{class:"boss-weekboss", text:BOSS_NAME}),
       el("div",{class:"boss-weeksub", text:"Semaine du "+frDate(week.startDate)+" au "+frDate(week.endDate)+" · reset lundi 9h"})
     ]));
@@ -1576,7 +1577,7 @@ import { toast } from "./toast.js";
     ]);
 
     return el("div",{
-      class:"boss-card"+(mine?" mine":""),
+      class:"ornate-panel boss-card"+(mine?" mine":""),
       dataset:{sessionId:g.id}
     },[
       el("div",{class:"boss-card-head"},[

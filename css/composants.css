@@ -28,6 +28,18 @@
   font-size:clamp(34px,4vw,54px)
 }
 .page-heading>div>p:last-child{max-width:62ch;margin:10px 0 0;color:var(--mist);font-size:16px}
+/* La seconde colonne de l'en-tete : le chiffre qui accompagne le titre — les
+   runs engagees, la semaine en cours. Il se cale a droite du titre, d'ou son
+   propre style : une classe de barre d'outils comme `.roster-count` porte un
+   `margin-right:auto` qui le ramenait au milieu de la ligne. */
+.page-heading>span{flex:none;color:var(--mist);font-size:13px;letter-spacing:.04em}
+.page-heading>span b{color:var(--gold-light);font-family:var(--display)}
+/* Sur un telephone, les deux colonnes deviennent deux lignes : le resume se
+   retrouvait dans un couloir de quelques mots, et le chiffre, `flex:none`,
+   debordait de l'ecran par la droite. */
+@media (max-width:767px){
+  .page-heading{flex-direction:column;align-items:flex-start;gap:12px}
+}
 
 /* Le petit repere de contexte, en capitales. Reserve aux VRAIS reperes —
    « Semaine du 7 septembre », « Boss de guilde » — jamais a un titre. */
@@ -71,10 +83,13 @@
 
 /* ---------- Actions ---------- */
 
+/* `text-decoration:none` compte : plusieurs actions du site sont des ANCRES
+   deguisees en boutons — « Analyser ce groupe » mene a une route. Sans cette
+   ligne, elles s'affichaient soulignees au milieu de vrais boutons. */
 .btn{
   appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:10px;
   border:1px solid var(--line-soft);border-radius:3px;padding:8px 15px;
-  color:var(--parchment);background:transparent;
+  color:var(--parchment);background:transparent;text-decoration:none;
   font-family:var(--body);font-size:14px;
   transition:color .18s ease,background .18s ease,border-color .18s ease;
 }

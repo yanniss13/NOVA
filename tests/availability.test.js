@@ -335,10 +335,15 @@ assert.match(
   /<section id="view-availability" class="view" role="tabpanel"[\s\S]{0,120}aria-labelledby="availTitle"/,
   "La vue Dispos doit exister et se nommer par son titre"
 );
+/* Le titre vit desormais dans le `page-heading` de la maquette : chapeau,
+   titre et resume forment un bloc, et la semaine en cours se cale a droite.
+   La classe `section-title` a disparu avec l'ancien gabarit ; ce que le test
+   protege n'a pas bouge — un vrai `h1`, porteur de l'identifiant que la
+   section cite dans son `aria-labelledby`. */
 assert.match(
   indexSource,
-  /<h1 class="section-title" id="availTitle"/,
-  "Le titre qui nomme la vue Dispos doit exister"
+  /<div class="page-heading">[\s\S]{0,400}<h1 id="availTitle"/,
+  "Le titre qui nomme la vue Dispos doit exister dans son en-tete de page"
 );
 /* Depuis le registre de vues/navigation.js, showView ne cite plus les vues :
    chacune s enregistre. L invariant teste est le meme — l onglet Dispos
