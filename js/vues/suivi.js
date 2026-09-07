@@ -333,7 +333,11 @@ import { toast } from "./toast.js";
     const body = $("#dashboardBody");
     const blocks = [];
 
-    const summary = el("section",{class:"dashboard-summary"},[
+    /* LE CADRE MAJEUR DE L'ECRAN, et le seul : les runs de la semaine. C'est
+       la donnee qui cadre tout le reste — combien il en reste avant le reset —
+       et elle s'affichait dans un panneau identique aux sept autres. */
+    const summary = el("section",{class:"ornate-panel dashboard-summary"},[
+      el("p",{class:"context-label",text:"Boss de guilde"}),
       el("div",{class:"dashboard-summary-head"},[
         el("strong",{text:"Runs engagées "+state.engaged+"/3"})
       ]),
@@ -344,6 +348,17 @@ import { toast } from "./toast.js";
       ])
     ]);
     blocks.push(summary);
+
+    /* L'ECHEANCE SUIT LE CADRE MAJEUR. Elle fermait la page : « 1 run
+       manquante avant le reset » se lisait apres huit panneaux, alors que
+       c'est precisement ce qui doit faire agir. Elle se place donc juste sous
+       le compte des runs, qu'elle commente. */
+    blocks.push(el("section",{
+      class:"dashboard-deadline",
+      dataset:{ level:state.deadlineStatus.level }
+    },[
+      el("strong",{text:state.deadlineStatus.label})
+    ]));
 
     if(state.reportsAvailable === false){
       blocks.push(el("section",{class:"dashboard-section"},[
@@ -367,7 +382,10 @@ import { toast } from "./toast.js";
 
     if(state.actions.length){
       blocks.push(el("section",{class:"dashboard-actions-panel"},[
-        el("strong",{text:"À faire maintenant"}),
+        el("div",{class:"section-title-row"},[
+          el("h2",{text:"À faire maintenant"}),
+          el("span",{text:state.actions.length + (state.actions.length > 1 ? " actions" : " action")})
+        ]),
         el("div",{class:"dashboard-action-list"},
           state.actions.map(action => el("div",{class:"dashboard-action-row"},[
             // Le libellé du groupe sert de contexte ; le bouton porte l'action.
@@ -469,13 +487,6 @@ import { toast } from "./toast.js";
       dataset:{ card:"chronometrage", chronometrage:"attente" }
     });
     blocks.push(hoteChrono);
-
-    blocks.push(el("section",{
-      class:"dashboard-deadline",
-      dataset:{ level:state.deadlineStatus.level }
-    },[
-      el("strong",{text:state.deadlineStatus.label})
-    ]));
 
     body.replaceChildren(...blocks);
     ajouterChronoCarte(hoteChrono);

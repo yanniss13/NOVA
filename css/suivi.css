@@ -4,7 +4,6 @@
    index.html et verifie par tests/css-ordre.test.js. */
 
 /* ---------- Mon suivi ---------- */
-.dashboard-heading,
 .dashboard-summary-head,
 .dashboard-card-head{
   display:flex;
@@ -12,7 +11,7 @@
   justify-content:space-between;
   gap:16px
 }
-.dashboard-sync-meta{color:var(--mist);font-size:13px;text-align:right}
+.dashboard-sync-meta{flex:none;color:var(--mist);font-size:13px;text-align:right}
 .dashboard-sync-meta span{display:block}
 /* Région live réservée aux lecteurs d'écran : chargement, succès, erreur. */
 .dashboard-status{
@@ -26,33 +25,63 @@
   white-space:nowrap;
   border:0
 }
-.dashboard-summary,
+/* LES PANNEAUX DU SUIVI. Ils portaient un degrade brun-violet — un fond de
+   l'ANCIENNE palette, ecrit en canaux bruts, que le renommage des jetons
+   n'avait pas vu. Sur un site bleu ardoise, huit panneaux violaces d'affilee
+   se voyaient de loin. Ils prennent le filet discret et le fond sombre des
+   autres ecrans ; le cadre majeur, lui, porte `.ornate-panel`. */
 .dashboard-actions-panel,
 .dashboard-section,
 .dashboard-deadline{
-  border:1px solid var(--line);
-  background:linear-gradient(145deg,rgba(35,27,42,.96),rgba(20,16,26,.96));
-  border-radius:14px;
+  border:1px solid var(--line-soft);
+  background:rgba(var(--abyss-rvb),.42);
+  border-radius:var(--radius);
   padding:18px;
-  margin-top:16px
+  margin-top:12px
 }
+
+/* LE CADRE MAJEUR DU SUIVI : les runs de la semaine. C'est la seule donnee
+   qui cadre tout le reste — combien il en reste avant le reset — et elle
+   s'affichait dans un panneau comme les sept autres.
+
+   Pas de disque ornemental ici, contrairement au cadre du centre Boss : la
+   rangee de chiffres va d'un bord a l'autre, et la courbe passait au travers
+   des cellules au lieu de meubler un cote vide. */
+.dashboard-summary{
+  margin-top:24px;padding:26px 30px;border-radius:var(--radius)
+}
+.dashboard-summary-head strong{
+  font-family:var(--display);font-size:25px;font-weight:500;color:var(--parchment)
+}
+/* La rangee cloisonnee, comme les statistiques du centre Boss : un filet
+   autour, un filet entre chaque cellule, et rien d'autre. */
 .dashboard-progress{
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:10px;
-  margin-top:14px
+  gap:1px;
+  margin-top:18px;
+  border:1px solid var(--line-soft);background:var(--line-soft)
 }
-.dashboard-progress-cell,
 .dashboard-action-row,
 .dashboard-run-card{
   min-width:0;
-  border:1px solid rgba(199,167,91,.22);
-  border-radius:12px;
-  background:rgba(255,255,255,.025)
+  border:1px solid var(--line-soft);
+  border-radius:2px;
+  background:rgba(var(--abyss-rvb),.46)
 }
-.dashboard-progress-cell{padding:14px;text-align:center}
-.dashboard-progress-cell strong{display:block;font-size:24px;color:var(--gold)}
-.dashboard-progress-cell span{display:block;color:var(--mist)}
+.dashboard-progress-cell{
+  padding:18px;text-align:center;background:var(--slate-deep);
+  font-variant-numeric:tabular-nums
+}
+.dashboard-progress-cell strong{
+  display:block;font-family:var(--display);font-size:22px;font-weight:500;
+  color:var(--gold-light)
+}
+.dashboard-progress-cell span{display:block;color:var(--mist);font-size:12px}
+/* Le titre de section ouvre le panneau : sa marge haute par defaut, prevue
+   pour separer deux sections dans le flux d'une vue, creusait un vide de 30 px
+   entre le bord du cadre et son propre titre. */
+.dashboard-actions-panel>.section-title-row{margin-top:0}
 .dashboard-action-list,
 .dashboard-run-list{display:grid;gap:10px;margin-top:12px}
 .dashboard-action-row,
@@ -75,9 +104,16 @@
   border:1px solid var(--gold);color:var(--gold-light);
   font-size:11px;font-weight:700;letter-spacing:.06em;text-transform:uppercase
 }
-.dashboard-deadline[data-level="complete"]{border-color:rgba(111,176,138,.6)}
-.dashboard-deadline[data-level="warning"]{border-color:rgba(199,167,91,.7)}
-.dashboard-deadline[data-level="urgent"]{border-color:rgba(190,74,85,.8)}
+/* L'ECHEANCE PORTE SA SEVERITE SUR LE FLANC. Elle la disait par la couleur de
+   son cadre entier : trois teintes de bordure a distinguer entre elles sur un
+   panneau de 18 px de haut, ce qui ne se lit pas d'un coup d'oeil. Un liseré
+   epais sur le bord gauche, comme les cartes de la maquette, se voit sans
+   qu'on ait a comparer. */
+.dashboard-deadline{border-left:3px solid var(--mist-deep)}
+.dashboard-deadline[data-level="complete"]{border-left-color:var(--ok)}
+.dashboard-deadline[data-level="warning"]{border-left-color:var(--gold)}
+.dashboard-deadline[data-level="urgent"]{border-left-color:var(--alert)}
+.dashboard-deadline strong{font-family:var(--display);font-weight:500;font-size:17px}
 /* Rien ne doit pouvoir élargir le document, même un score très long. */
 #view-dashboard,
 #dashboardBody,
@@ -103,7 +139,6 @@
   overflow-wrap:anywhere
 }
 @media(max-width:700px){
-  .dashboard-heading,
   .dashboard-summary-head,
   .dashboard-card-head,
   .dashboard-action-row,
@@ -113,6 +148,7 @@
     flex-direction:column
   }
   .dashboard-sync-meta{text-align:left}
+  .dashboard-summary{padding:20px}
   .dashboard-progress{grid-template-columns:1fr}
   .dashboard-run-grid{grid-template-columns:1fr}
   .dashboard-action-row .btn,
@@ -164,7 +200,7 @@
 .boss-report-date{flex:none;font-size:11px;color:var(--mist-deep)}
 .boss-report-score-block{
   margin:12px 0;padding:12px 14px;border-left:3px solid var(--gold);
-  background:linear-gradient(90deg,rgba(217,164,65,.09),transparent 72%)
+  background:linear-gradient(90deg,rgba(var(--gold-rvb),.09),transparent 72%)
 }
 .boss-report-score-label{
   display:block;font-size:10px;font-weight:700;letter-spacing:.16em;
@@ -189,7 +225,7 @@
 }
 .boss-report-participant{
   min-width:0;padding:9px;border:1px solid var(--line-soft);border-radius:9px;
-  background:rgba(11,9,16,.46)
+  background:rgba(var(--abyss-rvb),.46)
 }
 .boss-report-participant-name{
   display:block;min-width:0;margin-bottom:7px;font-size:12px;font-weight:700;
