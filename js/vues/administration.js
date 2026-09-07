@@ -21,8 +21,14 @@ import { toast } from "./toast.js";
 
   function ligneDeCompte(compte, redessiner){
     const moi = !!sessionCourante.user && compte.id === sessionCourante.user.id;
+    /* DEUX ACTIONS DE MEME NIVEAU, DEUX POIDS EGAUX. « Accueillir » portait
+       l aplat dore — le seul du site, reserve a l action principale d un ecran
+       — et il apparait une fois par invite : cinq invites, cinq aplats. En
+       face, « Retirer » n etait qu un lien dore, alors que c est le geste
+       destructeur. Les deux prennent le cadre discret ; seul le retrait porte
+       la teinte d alerte, au survol. */
     const bouton = el("button", {
-      class:"btn " + (compte.membre ? "btn-ghost" : "btn-primary"),
+      class:"btn" + (compte.membre ? " btn-danger" : ""),
       type:"button",
       text:compte.membre
         ? "Retirer de la confrérie"
@@ -74,15 +80,17 @@ import { toast } from "./toast.js";
       }));
       return true;
     }
-    corps.appendChild(el("table", { class:"admin-table" }, [
-      el("thead", null, [el("tr", null, [
-        el("th", { text:"Pseudo" }),
-        el("th", { text:"Accès" }),
-        el("th", { text:"Admin" }),
-        el("th", { text:"Action" })
-      ])]),
-      el("tbody", null,
-        comptes.map(compte => ligneDeCompte(compte, renderAdministration)))
+    corps.appendChild(el("div", { class:"admin-table-wrap" }, [
+      el("table", { class:"admin-table" }, [
+        el("thead", null, [el("tr", null, [
+          el("th", { text:"Pseudo" }),
+          el("th", { text:"Accès" }),
+          el("th", { text:"Admin" }),
+          el("th", { text:"Action" })
+        ])]),
+        el("tbody", null,
+          comptes.map(compte => ligneDeCompte(compte, renderAdministration)))
+      ])
     ]));
     return true;
   }

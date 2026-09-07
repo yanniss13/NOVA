@@ -389,13 +389,23 @@
 /* L'écran « Membres ». Il vit dans cette feuille et non dans la sienne : une
    feuille de plus imposerait une entrée dans FEUILLES (tests/css-ordre.test.js)
    et dans CORE_ASSETS, pour trois règles. */
-.admin-table{width:100%;border-collapse:collapse}
+/* LE TABLEAU EST ENCADRE, comme toutes les autres listes du site. Il flottait
+   nu sous le resume, ses en-tetes colles au paragraphe : la seule liste sans
+   contenant, sur un site ou tout le reste vit dans un cadre a filet.
+   Il defile dans son propre conteneur plutot que d'elargir la page. */
+.admin-table-wrap{
+  overflow-x:auto;margin-top:22px;
+  border:1px solid var(--line-soft);border-radius:var(--radius);
+  background:rgba(var(--abyss-rvb),.42)
+}
+.admin-table{width:100%;min-width:520px;border-collapse:collapse}
 .admin-table th{
   font-size:11px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--mist);text-align:left;padding:8px 10px
+  color:var(--gold-light);text-align:left;padding:14px 16px;
+  border-bottom:1px solid var(--line-soft)
 }
 .admin-table td{
-  padding:8px 10px;border-bottom:1px solid var(--line-soft);
+  padding:12px 16px;border-bottom:1px solid var(--line-soft);
   vertical-align:middle
 }
 .admin-table tbody tr:last-child td{border-bottom:0}
