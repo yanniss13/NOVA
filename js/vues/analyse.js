@@ -228,9 +228,11 @@ import { toast } from "./toast.js";
   function afficherSousVueAnalyse(box, sousVue, donnerLeFocus = false){
     if(!ANALYSE_SOUS_VUES.some(item => item.id === sousVue)) return;
     analyseSousVue = sousVue;
-    box.querySelectorAll(".analyse-subnav-button").forEach(button => {
+    /* `aria-pressed` seul commande l'apparence : c'est `.segmented` qui la
+       tient, depuis cet attribut. Une classe `.active` en second proprietaire
+       aurait pu diverger de ce que la bascule annonce. */
+    box.querySelectorAll(".analyse-subnav button").forEach(button => {
       const active = button.dataset.analyseSection === sousVue;
-      button.classList.toggle("active", active);
       button.setAttribute("aria-pressed", String(active));
       if(active && donnerLeFocus) button.focus();
     });
@@ -241,14 +243,13 @@ import { toast } from "./toast.js";
 
   function navigationAnalyse(box){
     const nav = el("div",{
-      class:"analyse-subnav",
+      class:"segmented analyse-subnav",
       role:"group",
       "aria-label":"Sections de l'analyse"
     });
     ANALYSE_SOUS_VUES.forEach(item => {
       nav.appendChild(el("button",{
         id:"analyseSubpage-" + item.id,
-        class:"analyse-subnav-button" + (analyseSousVue === item.id ? " active" : ""),
         type:"button",
         dataset:{ analyseSection:item.id },
         "aria-controls":"analysePanel-" + item.id,

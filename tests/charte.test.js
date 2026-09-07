@@ -115,6 +115,21 @@ assert.equal(reglesHorsRoot, "",
 
    La charte nomme desormais les canaux (`--gold-rvb` et ses voisins). Ce test
    refuse le retour des anciens dans les feuilles deja reprises. */
+/* Les memes couleurs ecrites en hexadecimal. La regle sur les canaux ne les
+   voyait pas : `#0b0910` est l'ancien fond, `#2b2534` et `#211d2b` ses violets,
+   et cinq saumons servaient d'alerte. */
+const HEX_ABANDONNES = {
+  "#0b0910":"--abyss", "#060509":"--abyss", "#14121b":"--abyss",
+  "#15121c":"--abyss", "#0d0b12":"--abyss",
+  "#2b2534":"--slate-light", "#211d2b":"--slate-light",
+  "#e9a0a0":"--alert-light", "#e98d8d":"--alert-light",
+  "#e4a1a1":"--alert-light", "#c96a6a":"--alert-light",
+  "#c87979":"--alert-light",
+  "#e7bb70":"--gold-light", "#d8a748":"--gold-light",
+  "#5fbf7f":"--ok",
+  "#d9d1c2":"--parchment", "#d2c8b8":"--parchment", "#d4cbbb":"--parchment"
+};
+
 const CANAUX_ABANDONNES = {
   "217,164,65":"--gold-rvb",
   "218,165,56":"--gold-rvb",
@@ -131,21 +146,29 @@ const CANAUX_ABANDONNES = {
   "233,141,141":"--alert-light"
 };
 
-/* Les feuilles qui n'ont pas encore ete reprises. Chacune passe avec le lot de
-   son ecran — Mon suivi, Roster, Equipes, Outils — et sort de cette liste a ce
-   moment-la. Quand la liste est vide, l'exception disparait avec elle.
-   Une feuille absente d'ici et qui reintroduit un ancien canal echoue. */
-const PAS_ENCORE_REPRISES = new Set([
-  "analyse.css", "calculateur.css", "import-captures.css",
-  "modales.css", "wiki.css"
-]);
+/* Plus une seule feuille en attente : les dix-huit sont sur la palette de la
+   charte. L'ensemble reste vide a dessein plutot que d'etre supprime — c'est
+   lui qui rend la regle lisible, et le bloc juste en dessous refuse qu'on y
+   remette une feuille propre. */
+const PAS_ENCORE_REPRISES = new Set([]);
+
+/* Une couleur citee dans un COMMENTAIRE n'est pas une couleur employee :
+   `dispos.css` nomme ses deux gris violets precisement pour dire qu'ils ont
+   disparu, comme `charte.css` nomme les anciens jetons. */
+const sansCommentaires = source => source.replace(/\/\*[\s\S]*?\*\//g, "");
 
 const fautes = [];
 sources.forEach((source, nom) => {
-  if(PAS_ENCORE_REPRISES.has(nom)) return;
+  if(PAS_ENCORE_REPRISES.has(nom) || nom === "charte.css") return;
+  const regles = sansCommentaires(source);
   Object.entries(CANAUX_ABANDONNES).forEach(([canaux, jeton]) => {
-    if(source.includes(canaux)){
+    if(regles.includes(canaux)){
       fautes.push(`css/${nom} : ${canaux} — employer ${jeton}`);
+    }
+  });
+  Object.entries(HEX_ABANDONNES).forEach(([hex, jeton]) => {
+    if(regles.toLowerCase().includes(hex)){
+      fautes.push(`css/${nom} : ${hex} — employer var(${jeton})`);
     }
   });
 });

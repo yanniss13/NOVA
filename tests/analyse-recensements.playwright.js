@@ -16,7 +16,7 @@ const { chromium } = require("playwright");
 async function ouvrirAnalyse(page, section = "supports"){
   await allerA(page, "analyse");
   const bouton = page.locator(
-    `.analyse-subnav-button[data-analyse-section="${section}"]`
+    `.analyse-subnav [data-analyse-section="${section}"]`
   );
   await bouton.waitFor();
   if(await bouton.getAttribute("aria-pressed") !== "true") await bouton.click();
@@ -57,7 +57,7 @@ async function ouvrirAnalyse(page, section = "supports"){
       await page.setViewportSize({ width, height:844 });
       const sousNavigation = await page.locator(".analyse-subnav").evaluate(nav => {
         const box = nav.getBoundingClientRect();
-        const buttons = [...nav.querySelectorAll(".analyse-subnav-button")];
+        const buttons = [...nav.querySelectorAll("button")];
         return {
           overflow:nav.scrollWidth - nav.clientWidth,
           documentOverflow:document.scrollingElement.scrollWidth
@@ -133,7 +133,7 @@ async function ouvrirAnalyse(page, section = "supports"){
       window.__fakeSupabaseState.calls.length = 0;
     });
     await page.locator(
-      '.analyse-subnav-button[data-analyse-section="dps"]'
+      '.analyse-subnav [data-analyse-section="dps"]'
     ).click();
     await page.locator("#analysePanel-dps .matrix").waitFor();
     assert.equal(
@@ -374,7 +374,7 @@ async function ouvrirAnalyse(page, section = "supports"){
       "le tri mobile ne doit pas doubler les en-tetes sur ordinateur");
 
     await page.locator(
-      '.analyse-subnav-button[data-analyse-section="supports"]'
+      '.analyse-subnav [data-analyse-section="supports"]'
     ).click();
     const elementsDuRecensement = await page.locator(
       "#analysePanel-supports .debuff-row .elem-badge"

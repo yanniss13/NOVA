@@ -69,7 +69,7 @@
 .wslot{
   position:relative;display:inline-flex;width:28px;height:28px;flex:none;
   border-radius:50%;align-items:center;justify-content:center;
-  background:radial-gradient(circle at 50% 32%, #2b2534, #14121b);
+  background:radial-gradient(circle at 50% 32%, var(--slate-light), var(--abyss));
   border:1px solid var(--line)
 }
 .wslot-w{width:19px;height:19px;object-fit:contain}
@@ -90,7 +90,7 @@
 }
 .builder-weapon-switch.dirty::after{
   content:"";position:absolute;right:2px;top:2px;width:7px;height:7px;
-  border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px #15121c
+  border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px var(--abyss)
 }
 .builder-weapon-switch:not(.active) .wslot{opacity:.48}
 .builder-weapon-switch:hover,
@@ -179,4 +179,4 @@
   align-self:flex-end;background:transparent;border:0;color:var(--mist-deep);
   font-size:12px;cursor:pointer;padding:2px 4px
 }
-.hero .clear:hover{color:#e98d8d}
+.hero .clear:hover{color:var(--alert-light)}
