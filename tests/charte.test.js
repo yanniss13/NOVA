@@ -136,7 +136,7 @@ const CANAUX_ABANDONNES = {
    moment-la. Quand la liste est vide, l'exception disparait avec elle.
    Une feuille absente d'ici et qui reintroduit un ancien canal echoue. */
 const PAS_ENCORE_REPRISES = new Set([
-  "analyse.css", "builder.css", "calculateur.css", "import-captures.css",
+  "analyse.css", "calculateur.css", "import-captures.css",
   "modales.css", "wiki.css"
 ]);
 

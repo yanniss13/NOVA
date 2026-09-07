@@ -402,9 +402,14 @@ import { toast } from "./toast.js";
   function heroCard(hero, i){
     const ch = charOf(hero.char);
     const sourceActions = el("div",{class:"hero-source-actions"});
+    /* PAS D'APLAT DORE ICI. « Depuis mon roster » le portait, et il y a quatre
+       colonnes : cinq aplats dores sur un ecran avec « Enregistrer l'équipe »,
+       alors que la charte n'en accorde qu'un, a l'action principale. Les deux
+       boutons ouvrent chacun un selecteur ; c'est leur ordre qui dit lequel
+       est le chemin ordinaire. */
     if(sessionCourante.user){
       sourceActions.appendChild(el("button",{
-        class:"btn btn-primary",
+        class:"btn",
         type:"button",
         text:"Depuis mon roster",
         onclick:()=>void pickRosterHero(i)
