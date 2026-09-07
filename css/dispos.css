@@ -10,18 +10,8 @@
 .avail-toolbar{
   display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin:20px 0 16px
 }
-/* LA BASCULE SEGMENTEE DE LA MAQUETTE. C'etait une boite dans une boite : un
-   cadre arrondi, du rembourrage, et dedans un second bouton arrondi. Deux
-   boutons accoles suffisent, et l'actif prend l'aplat dore — le meme geste
-   visuel que l'action principale du site. */
-.avail-modes{display:flex}
-.avail-mode{
-  min-height:44px;padding:0 16px;border:1px solid var(--line-soft);
-  background:transparent;color:var(--mist);font:inherit;font-size:13px;cursor:pointer
-}
-.avail-mode+.avail-mode{margin-left:-1px}
-.avail-mode:hover{color:var(--parchment)}
-.avail-mode.active{background:var(--gold-light);color:var(--abyss);border-color:var(--gold-light)}
+/* La bascule vit dans composants.css : les dispos et le roster avaient
+   chacun leur version de la meme chose. */
 .avail-save{font-size:12px;color:var(--mist-deep);margin-left:auto}
 .avail-save[data-state="saving"]{color:var(--mist)}
 .avail-save[data-state="saved"]{color:var(--gold-light)}

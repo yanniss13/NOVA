@@ -34,7 +34,7 @@
   display:flex;flex-direction:column;
 }
 .team::before{
-  content:"";position:absolute;inset:6px;border:1px solid rgba(217,164,65,.14);
+  content:"";position:absolute;inset:6px;border:1px solid rgba(var(--gold-rvb),.14);
   border-radius:9px;pointer-events:none
 }
 .team-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;position:relative}
@@ -43,7 +43,7 @@
   background:radial-gradient(circle at 50% 35%, #3a2c15, #17110a);
   border:1px solid var(--gold);color:var(--gold-light);
   font-family:var(--display);font-weight:700;font-size:16px;
-  box-shadow:inset 0 0 10px rgba(217,164,65,.3)
+  box-shadow:inset 0 0 10px rgba(var(--gold-rvb),.3)
 }
 .team-who{display:flex;flex-direction:column;line-height:1.2;min-width:0}
 .team-pseudo{
@@ -62,7 +62,7 @@
 .mini{display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center}
 .mini-portrait{
   width:100%;aspect-ratio:1/1;border-radius:9px;overflow:hidden;
-  background:#0b0910 center/cover no-repeat;border:1px solid var(--line);
+  background:var(--abyss) center/cover no-repeat;border:1px solid var(--line);
   display:grid;place-items:center;color:var(--mist-deep);font-size:20px
 }
 .mini-portrait img{width:100%;height:100%;object-fit:cover}
@@ -73,11 +73,11 @@
   align-items:flex-start;align-content:flex-start}
 .icn{
   flex:none;box-sizing:border-box;
-  width:22px;height:22px;border-radius:5px;background:#0b0910 center/contain no-repeat;
+  width:22px;height:22px;border-radius:5px;background:var(--abyss) center/contain no-repeat;
   border:1px solid var(--line-soft);
 }
 .icn.weapon{border-color:var(--gold)}
-.icn.jewel{border-color:rgba(161,44,44,.55)}
+.icn.jewel{border-color:rgba(var(--alert-rvb),.55)}
 .icn.empty{opacity:.28}
 .mini-note{
   font-size:10.5px;color:var(--mist);font-style:italic;line-height:1.25;
@@ -95,16 +95,18 @@
   width:calc(100% + 8px);appearance:none;border:0;background:none;
   font:inherit;color:inherit;text-align:inherit
 }
-.team-heroes.clickable:hover{background:rgba(217,164,65,.06)}
+.team-heroes.clickable:hover{background:rgba(var(--gold-rvb),.06)}
 
 /* Modal détail d'équipe */
 /* ---------- Roster des membres ---------- */
+/* LA BARRE D'OUTILS N'EST PAS UN PANNEAU. Elle portait un cadre plein, et la
+   recherche et les filtres juste dessous en portaient un second : deux boites
+   empilees pour une seule barre de commandes. Elle se pose desormais dans le
+   flux, separee de la grille par un simple filet. */
 .member-roster-toolbar{
-  display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:22px 0 14px;
-  padding:14px;background:linear-gradient(180deg,var(--slate),var(--slate-light));
-  border:1px solid var(--line);border-radius:var(--radius);min-width:0
+  display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;
+  margin:22px 0 14px;min-width:0
 }
-.member-roster-modes{display:flex;gap:8px;flex-wrap:wrap}
 .member-roster-owner-field{min-width:min(250px,100%)}
 .member-roster-owner-field span,
 .member-roster-field-label{
@@ -137,10 +139,12 @@
 .member-roster-filter-field select:hover{border-color:var(--gold)}
 .member-roster-filter-field select.on{
   border-color:var(--gold-light);color:var(--gold-light);
-  background:linear-gradient(180deg,rgba(217,164,65,.12),var(--slate-deep))
+  background:linear-gradient(180deg,rgba(var(--gold-rvb),.12),var(--slate-deep))
 }
 .member-roster-filter-actions{display:flex;justify-content:flex-end}
-.member-roster-count{font-size:12px;color:var(--mist);margin:3px 0 12px}
+/* Le decompte vit dans l'en-tete de page, a droite du titre : il y prend
+   sa place et non une ligne a lui, juste au-dessus de la grille. */
+.member-roster-count{flex:none;font-size:13px;color:var(--mist);letter-spacing:.04em}
 .member-roster-count b{font-family:var(--display);color:var(--gold-light)}
 .member-roster-grid{
   display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));
@@ -157,7 +161,7 @@
   width:100%;justify-content:center;margin-top:12px;font-size:12px;padding:8px
 }
 .member-roster-card::after{
-  content:"";position:absolute;inset:6px;border:1px solid rgba(217,164,65,.12);
+  content:"";position:absolute;inset:6px;border:1px solid rgba(var(--gold-rvb),.12);
   border-radius:9px;pointer-events:none
 }
 .member-roster-card-head{
@@ -165,7 +169,7 @@
   position:relative;z-index:1
 }
 .member-roster-portrait{
-  width:72px;height:72px;border-radius:10px;overflow:hidden;background:#0b0910;
+  width:72px;height:72px;border-radius:10px;overflow:hidden;background:var(--abyss);
   border:1px solid var(--gold)
 }
 .member-roster-portrait img{width:100%;height:100%;object-fit:cover}
@@ -188,12 +192,18 @@
 .member-roster-build-tag.saved{border-color:var(--gold);color:var(--parchment)}
 .member-roster-build-tag.favorite{
   border-color:var(--gold);color:var(--gold-light);
-  box-shadow:inset 0 0 0 1px rgba(217,164,65,.12)
+  box-shadow:inset 0 0 0 1px rgba(var(--gold-rvb),.12)
 }
+/* Meme regle que les cartes de groupe du centre Boss : une rangee qui passe a
+   la ligne, jamais un mot coupe en deux. `flex:1` forcait les trois actions a
+   des parts egales, et « Voir les builds » tombait seule sur sa ligne. */
 .member-roster-card-actions{
-  display:flex;gap:8px;margin-top:14px;position:relative;z-index:1
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;position:relative;z-index:1
 }
-.member-roster-card-actions .btn{flex:1;justify-content:center;padding:8px 10px;font-size:12px}
+.member-roster-card-actions .btn{
+  flex:1 1 auto;min-width:0;justify-content:center;white-space:nowrap;
+  padding:8px 10px;font-size:12px
+}
 .member-roster-modal{width:min(920px,100%);max-height:92vh}
 .member-roster-editor{padding:18px;overflow-y:auto;overflow-x:hidden;min-width:0}
 .member-roster-editor-hero{
@@ -230,7 +240,7 @@
 .member-roster-note-column .btn{width:100%;justify-content:center;margin-top:9px}
 .member-roster-favorite[aria-pressed="true"]{
   border-color:var(--gold);color:var(--gold-light);
-  background:rgba(217,164,65,.09)
+  background:rgba(var(--gold-rvb),.09)
 }
 
 .modal.teammodal{width:min(1240px,96vw)}
@@ -238,7 +248,7 @@
 .modal.teammodal{position:relative;max-height:96vh}
 .modal.teammodal .picker-head{
   position:absolute;top:0;left:0;right:0;z-index:3;border-bottom:0;padding:11px 18px;
-  background:linear-gradient(180deg, var(--slate) 62%, rgba(27,25,34,0))
+  background:linear-gradient(180deg, var(--slate) 62%, rgba(var(--abyss-rvb),0))
 }
 .team-detail{
   padding:60px 18px 20px;overflow-y:auto;overflow-x:hidden;display:grid;gap:14px;
@@ -253,7 +263,7 @@
 .hd-head{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
 .hd-portrait{
   width:72px;height:72px;border-radius:10px;overflow:hidden;border:1px solid var(--line);
-  background:#0b0910 center/cover no-repeat;display:grid;place-items:center;color:var(--mist-deep)
+  background:var(--abyss) center/cover no-repeat;display:grid;place-items:center;color:var(--mist-deep)
 }
 .hd-portrait img{width:100%;height:100%;object-fit:cover}
 .hd-name{font-family:var(--display);font-weight:600;font-size:14.5px;color:var(--parchment)}
@@ -270,10 +280,10 @@
 .eq-line{display:flex;align-items:center;gap:9px;padding:4px 0}
 .eq-thumb{
   width:32px;height:32px;flex:none;border-radius:6px;border:1px solid var(--line-soft);
-  background:#0b0910 center/contain no-repeat
+  background:var(--abyss) center/contain no-repeat
 }
 .eq-thumb.weapon{border-color:var(--gold)}
-.eq-thumb.jewel{border-color:rgba(161,44,44,.55)}
+.eq-thumb.jewel{border-color:rgba(var(--alert-rvb),.55)}
 .eq-thumb.empty{opacity:.3}
 /* La même vignette, en tête de la modale d'apport : plus grande, puisque
    c'est là qu'on identifie la pièce qu'on est en train de lire. */
@@ -331,7 +341,7 @@
 }
 .roster-detail-weapon:hover:not(:disabled){border-color:var(--gold)}
 .roster-detail-weapon[aria-pressed="true"]{
-  border-color:var(--gold-light);background:rgba(217,164,65,.12)
+  border-color:var(--gold-light);background:rgba(var(--gold-rvb),.12)
 }
 .roster-detail-weapon:disabled{cursor:default;opacity:.34}
 .roster-detail-hint{

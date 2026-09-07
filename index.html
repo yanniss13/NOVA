@@ -287,13 +287,18 @@
   <!-- ============ ROSTER DES MEMBRES ============ -->
   <section id="view-member-roster" class="view" role="tabpanel"
            aria-labelledby="memberRosterViewTitle">
-    <p class="section-eyebrow">Collection de la confrérie</p>
-    <h1 class="section-title" id="memberRosterViewTitle" tabindex="-1">Roster des membres</h1>
-    <p class="section-lead">Enregistre tes personnages une fois, puis réutilise leurs équipements dans tes équipes.</p>
+    <div class="page-heading">
+      <div>
+        <p class="context-label">Collection de la confrérie</p>
+        <h1 id="memberRosterViewTitle" tabindex="-1">Roster des membres</h1>
+        <p>Enregistre tes personnages une fois, puis réutilise leurs équipements dans tes équipes.</p>
+      </div>
+      <span class="member-roster-count" id="memberRosterCount"></span>
+    </div>
     <div class="member-roster-toolbar">
-      <div class="member-roster-modes" role="group" aria-label="Roster affiché">
-        <button class="btn btn-primary" id="memberRosterMine" type="button" aria-pressed="true">Mon roster</button>
-        <button class="btn" id="memberRosterOthers" type="button" aria-pressed="false">Roster des membres</button>
+      <div class="segmented" role="group" aria-label="Roster affiché">
+        <button id="memberRosterMine" type="button" aria-pressed="true">Mon roster</button>
+        <button id="memberRosterOthers" type="button" aria-pressed="false">Roster des membres</button>
       </div>
       <label class="field member-roster-owner-field" for="memberRosterOwner">
         <span>Membre</span>
@@ -306,7 +311,6 @@
              placeholder="Rechercher un personnage…" autocomplete="off">
       <div id="memberRosterFilters"></div>
     </div>
-    <div class="member-roster-count" id="memberRosterCount"></div>
     <div class="member-roster-grid" id="memberRosterGrid"></div>
   </section>
 
@@ -426,10 +430,10 @@
       <span class="avail-week" id="availWeek"></span>
     </div>
     <div class="avail-toolbar">
-      <div class="avail-modes" role="group" aria-label="Vue des disponibilités">
-        <button class="avail-mode active" id="availModeMine" type="button"
+      <div class="segmented" role="group" aria-label="Vue des disponibilités">
+        <button id="availModeMine" type="button"
                 aria-pressed="true">Mes dispos</button>
-        <button class="avail-mode" id="availModeGuild" type="button"
+        <button id="availModeGuild" type="button"
                 aria-pressed="false">La confrérie</button>
       </div>
       <span class="avail-save" id="availSaveStatus" role="status"
