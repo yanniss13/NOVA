@@ -42,8 +42,8 @@ visage du site.
 Roster, Equipes et Team Builder, Outils, Compte et administration. Chacun
 reconstruit un ecran avec les composants de la maquette.
 
-Le reste de ce document specifie le lot 0. Chaque lot suivant recevra sa
-propre section quand il commencera.
+Chaque lot recoit sa section quand il commence ; les sections des lots livres
+restent, revisees si une decision a change en cours de route.
 
 ## Lot 0
 
@@ -139,7 +139,7 @@ navigateur, sur le modele de `js/metier/routage.js`.
 
 | Rubrique | Onglets locaux | Vues existantes |
 | --- | --- | --- |
-| Notre guilde | — | `home`, `dashboard` |
+| Notre guilde | Accueil · Mon suivi | `home`, `dashboard` |
 | Equipes | Creer une equipe · Equipes partagees | `builder`, `roster` |
 | Boss de guilde | Disponibilites · Groupes et rapports | `availability`, `boss` |
 | Roster | — | `member-roster` |
@@ -155,7 +155,7 @@ Chaque vue appartient a exactement une rubrique. La rubrique reste surlignee
 tant qu'une de ses vues est ouverte. `showView` garde son contrat : les onze
 vues enregistrees dans `js/app.js` ne changent pas d'une ligne.
 
-### L'accueil public
+### L'accueil, pour tout le monde
 
 Une douzieme vue, `home`, est ajoutee : section `#view-home` dans `index.html`
 et feuille `css/accueil.css`. Elle n'a PAS de module de rendu — son balisage
@@ -164,12 +164,33 @@ delegation de la coquille branche. Elle reprend
 exactement l'accueil de la maquette — banniere, trois cartes essentielles,
 bande d'outils, appel a la connexion.
 
-Elle est publique et devient la vue de repli du visiteur sans compte, a la
-place du Wiki. Un membre connecte qui ouvre « Notre guilde » arrive sur
-`dashboard`, comme le prevoit le document de conception. Cette bascule est une
-DONNEE de la table — le champ `chefConnecte` — et non un cas particulier dans
-la coquille : sans elle, un membre qui se connectait restait sur la page qui
-l'invite a creer un compte.
+**Decision revue apres le lot 0.** La premiere version envoyait le membre
+connecte droit sur Mon suivi, par un champ `chefConnecte` de la table des
+rubriques. Le proprietaire a tranche dans l'autre sens : l'accueil est la plus
+belle page du site, un membre ne doit pas en etre prive, et elle doit lui
+SERVIR. Elle reste donc la page d'arrivee de tous — visiteur, invite, membre —
+et Mon suivi devient un onglet local de « Notre guilde ». `chefConnecte`
+disparait, et la vue chef d'une rubrique ne depend plus d'aucun droit.
+
+Ce qui change avec la session, c'est ce que la page PROPOSE. Le marqueur
+`data-quand` porte le public auquel un bloc s'adresse ; `session-auth.js` les
+bascule tous d'un coup. Trois publics, pas deux :
+
+| Public | Ce que l'accueil lui propose |
+| --- | --- |
+| Visiteur | Creer mon compte |
+| Invite hors confrerie | Mon roster |
+| Membre | Ma semaine, Groupes de boss |
+
+L'invite a un compte mais aucun droit sur les groupes : une version a deux
+publics lui aurait servi des boutons qui ne menent nulle part. Un bloc SANS
+marqueur s'adresse a tout le monde — les outils du site servent les trois.
+
+La coquille, elle, ne range QUE les trois barres qu'elle construit. Elle
+visait auparavant tous les `[data-rubrique]` du document : elle masquait les
+boutons de l'accueil, puis les remontrait juste apres que la session les avait
+caches. Deux proprietaires pour un meme `hidden`, et le dernier qui ecrit
+gagne.
 
 `js/metier/routage.js` gagne la route `home` ; `js/app.js` enregistre la vue.
 
@@ -244,3 +265,60 @@ tests avec :
 La composition interne des vues. Un ecran garde sa structure actuelle,
 repeinte a la nouvelle charte, jusqu'a ce que son lot le reconstruise avec les
 composants de la maquette.
+
+## Lot 1 — Boss de Guilde
+
+Deux vues : `boss` (Groupes et rapports) et `availability` (Disponibilités).
+
+Le lot 0 a repeint ces écrans ; il n'a pas touché à leur composition. La
+capture avant travaux montre ce qui reste à faire.
+
+### Ce que la capture montre
+
+**Un vrai défaut de mise en page.** Le bouton principal d'une carte de groupe
+s'écrit « Rejoindr / e » : `.boss-actions` impose deux colonnes égales à un
+bouton qui n'a pas la place, et `overflow-wrap:anywhere` coupe le mot au
+milieu. « Analyser ce groupe » se casse de la même façon.
+
+**Six groupes rangés cinq puis un.** `repeat(auto-fill, minmax(260px,1fr))`
+donne cinq colonnes sur un écran de bureau : la deuxième rangée porte une
+carte seule à côté de quatre trous. La maquette fixe trois colonnes ; six
+groupes y tiennent en deux rangées pleines.
+
+**Trois boîtes de même poids.** La semaine, l'assistant de composition et les
+statistiques s'empilent dans trois cadres identiques. Rien ne dit lequel
+regarder. La maquette n'accorde qu'une zone spectaculaire par écran.
+
+**Les dernières couleurs hors charte.** `boss.css` et `dispos.css` gardent des
+teintes de l'ANCIENNE palette écrites en dur : `rgba(217,164,65,…)` est
+l'ancien or, `rgba(11,9,16,…)` l'ancien fond, et la rampe de chaleur des
+disponibilités monte en `#2b2a3c` puis `#3d3547` — deux gris violets qui
+n'appartiennent à aucune des deux chartes.
+
+### Ce que le lot fait
+
+| Aujourd'hui | Après |
+| --- | --- |
+| Chapeau + titre + paragraphe | `page-heading`, avec la semaine de boss en carte à droite |
+| `.boss-weekhead`, cadre plat | `.boss-feature` : le cadre majeur de l'écran, boss et semaine à gauche, l'état du membre à droite |
+| `.boss-stats`, boîte bordée à fond dégradé | `.stat-grid` : une rangée cloisonnée, sans fond |
+| `.boss-grid` en `auto-fill` | trois colonnes ; deux sous 1180 px, une sous 768 px |
+| `.boss-actions` en deux colonnes égales | une rangée où l'action principale prend sa largeur |
+| Bascule « Mes dispos / La confrérie » en boîte dans une boîte | `.segmented` de la maquette : l'onglet actif est un aplat doré |
+| Rampe de chaleur gris violet | rampe dorée, tirée des jetons |
+
+### Ce que le lot ne touche pas
+
+La liste des membres d'un groupe. La maquette la réduit à des pastilles
+d'initiales ; le site y montre le pseudo, l'équipe choisie, son état de
+préparation et les gestes d'administration. Les pastilles perdraient tout
+cela. Elle garde donc sa forme, dans la nouvelle charte.
+
+Le défilement interne de la grille des disponibilités et son voile de bas de
+cadre : 24 heures ne tiennent pas dans un écran, et
+`tests/scrollbars-invisibles.playwright.js` tient ce voile.
+
+Restent hors périmètre, comme au lot 0, les blocs que la maquette invente et
+qu'aucun code ne calcule : la grille « places disponibles / meilleur créneau /
+score cumulé » de la vue d'ensemble, et la recommandation automatique de
+composition.
