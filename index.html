@@ -213,11 +213,15 @@
   <!-- ============ MON SUIVI ============ -->
   <section id="view-dashboard" class="view" role="tabpanel"
            aria-labelledby="dashboardTitle">
-    <div class="dashboard-heading">
+    <!-- Le titre disait « Accueil » : la vue était la page d'arrivée du
+         membre, et personne d'autre ne portait ce nom. Depuis qu'un vrai
+         accueil existe à côté, dans la même rubrique, deux pages
+         s'appelaient pareil et l'onglet « Mon suivi » ouvrait « Accueil ». -->
+    <div class="page-heading">
       <div>
-        <p class="section-eyebrow">Confrérie 7DS</p>
-        <h1 class="section-title" id="dashboardTitle" tabindex="-1">Accueil</h1>
-        <p class="section-lead">Ce qu'il te reste à faire cette semaine.</p>
+        <p class="context-label">Cette semaine</p>
+        <h1 id="dashboardTitle" tabindex="-1">Mon suivi</h1>
+        <p>Ce qu'il te reste à faire cette semaine.</p>
       </div>
       <div id="dashboardSyncMeta" class="dashboard-sync-meta"></div>
     </div>
