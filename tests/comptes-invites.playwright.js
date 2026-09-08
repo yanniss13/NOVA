@@ -160,7 +160,7 @@ async function connecter(page, email){
     await entreeAdmin.click();
     await page.locator("#view-admin").waitFor({ state:"visible" });
 
-    const ligneInvite = page.locator("#adminBody tr")
+    const ligneInvite = page.locator("#adminBody .member-table article")
       .filter({ hasText:"Invité" });
     await ligneInvite.getByRole("button",
       { name:"Accueillir dans la confrérie", exact:true }).click();
@@ -169,7 +169,7 @@ async function connecter(page, email){
 
     /* Un admin ne peut pas se retirer lui-même : le bouton refuse le geste
        avant que le SQL n'ait à le refuser. */
-    const ligneAdmin = page.locator("#adminBody tr")
+    const ligneAdmin = page.locator("#adminBody .member-table article")
       .filter({ hasText:"Yannis" });
     assert.equal(
       await ligneAdmin.getByRole("button",
