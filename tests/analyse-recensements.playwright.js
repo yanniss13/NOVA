@@ -23,7 +23,7 @@ async function ouvrirAnalyse(page, section = "supports"){
   const cible = section === "dps"
     ? "#analysePanel-dps .matrix"
     : section === "overview"
-      ? "#analysePanel-overview .analyse-summary"
+      ? "#analysePanel-overview .analysis-grid"
       : "#analysePanel-supports .debuff-row";
   await page.locator(cible).first().waitFor();
 }

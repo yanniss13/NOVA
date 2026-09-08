@@ -1541,7 +1541,7 @@ async function attendrePseudo(page, pseudo){
 
     // #5 : l'Analyse dérive ses trois sous-vues directement des rosters.
     await allerA(page, "analyse");
-    await page.locator("#analysePanel-overview .analyse-summary").waitFor();
+    await page.locator("#analysePanel-overview .analysis-grid").waitFor();
     assert.equal(
       await page.locator("#analysePanel-overview").isVisible(),
       true,

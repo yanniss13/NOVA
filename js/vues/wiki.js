@@ -151,6 +151,14 @@ import { libelleDeRarete } from "./wiki-blocs.js";
       source:() => DATA.personnages || [],
       nom:entree => entree.name,
       image:entree => entree.file,
+      /* Les elements que le heros PORTE, pas celui de sa fiche : Tristan est
+         de Feu a l'epee double et de Vent a l'epee longue. C'est la meme
+         lecture que le filtre juste en dessous. */
+      sousTitre:entree => {
+        const meta = metaOf(entree.id) || {};
+        const elements = elementsPortes(meta).map(libelleElement);
+        return elements.length ? elements.join(" · ") : "";
+      },
       marque:entree => ({ char:entree.id }),
       /* Les filtres du lot 1, inchanges — identifiants compris : les tests du
          parcours heros s'y appuient. Ils se derivent de META et non des
@@ -328,17 +336,27 @@ import { libelleDeRarete } from "./wiki-blocs.js";
     });
   }
 
+  /* LA TUILE DE LA MAQUETTE : l'image, le nom, et ce qu'est l'objet en une
+     ligne discrete. Le wiki n'affichait que le nom, ce qui obligeait a ouvrir
+     une fiche pour savoir de quel element ou de quel type il s'agit.
+
+     Une categorie qui n'a rien a dire de plus n'ecrit pas de seconde ligne. */
   function tuile(categorie, entree, liste){
+    const contenu = [
+      el("img",{ src:categorie.image(entree), alt:"", loading:"lazy" }),
+      el("span",{ class:"wiki-tile-name", text:categorie.nom(entree) })
+    ];
+    const sousTitre = categorie.sousTitre ? categorie.sousTitre(entree) : "";
+    if(sousTitre){
+      contenu.push(el("small",{ class:"wiki-tile-sub", text:sousTitre }));
+    }
     return el("button",{
       class:"wiki-tile",
       type:"button",
       title:categorie.nom(entree),
       dataset:categorie.marque(entree),
       onclick:()=>categorie.ouvrir(entree, liste)
-    },[
-      el("img",{ src:categorie.image(entree), alt:"", loading:"lazy" }),
-      el("span",{ class:"wiki-tile-name", text:categorie.nom(entree) })
-    ]);
+    }, contenu);
   }
 
   function renderGrid(){

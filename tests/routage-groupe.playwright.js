@@ -312,9 +312,11 @@ async function openHistoryFragment(page, fragment){
       ["Merlin", "Tous", "Yannis"]
     );
     assert.equal(
+      /* Le compte des membres analyses vit dans le panneau « ce qui a ete
+         lu » de la vue d ensemble, premiere ligne. */
       await protectedPage.locator(
-        "#analysePanel-overview .analyse-summary-card"
-      ).first().locator(".analyse-summary-value").textContent(),
+        "#analysePanel-overview .support-list li"
+      ).first().locator("b").textContent(),
       "2",
       "le résumé doit compter les rosters du groupe uniquement"
     );
@@ -335,9 +337,11 @@ async function openHistoryFragment(page, fragment){
       "le filtre manuel reste limité à la matrice"
     );
     assert.equal(
+      /* Le compte des membres analyses vit dans le panneau « ce qui a ete
+         lu » de la vue d ensemble, premiere ligne. */
       await protectedPage.locator(
-        "#analysePanel-overview .analyse-summary-card"
-      ).first().locator(".analyse-summary-value").textContent(),
+        "#analysePanel-overview .support-list li"
+      ).first().locator("b").textContent(),
       "2",
       "filtrer la matrice ne doit pas modifier le résumé"
     );
