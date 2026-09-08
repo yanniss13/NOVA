@@ -64,21 +64,54 @@
 }
 .team-slot-name.is-empty{font-family:var(--body);font-style:italic;color:var(--mist-deep)}
 
-/* L'EDITEUR DU HEROS CHOISI. Il prend la largeur entiere, et se lit en trois
-   temps : QUI, QUOI, COMBIEN. `auto-fit` replie les colonnes de lui-meme —
-   trois sur un ecran large, deux sur un portable, une sur un telephone — sans
-   qu'aucune requete de media n'ait a compter les colonnes. */
+/* L'ATELIER DU HEROS CHOISI, en trois compartiments d'un meme panneau.
+
+   QUI a gauche — le heros, son arme, son potentiel, ses notes. QUOI au
+   milieu — ce qu'il porte. COMBIEN a droite — ce que cela donne.
+
+   Ce sont des CLOISONS et non des espaces : trois blocs separes par du vide
+   se liraient comme trois panneaux sans rapport, alors qu'ils decrivent un
+   seul heros. Les colonnes laterales prennent un fond plus sombre, comme les
+   volets d'un etabli. */
 .hero{
   background:linear-gradient(180deg,var(--slate),var(--slate-light));
-  border:1px solid var(--line);border-radius:var(--radius);padding:22px;
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(min(310px,100%),1fr));
-  gap:24px;align-items:start;position:relative;
+  border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;
+  display:grid;
+  grid-template-columns:minmax(200px,230px) minmax(0,1fr) minmax(210px,260px);
+  align-items:stretch;position:relative;
 }
-.hero-colonne{min-width:0;display:flex;flex-direction:column;gap:12px}
-/* Le portrait est carre : dans une colonne large, il montait a 440 px de haut
-   et repoussait le potentiel et les notes hors de l'ecran. Il se borne, et se
-   centre dans sa colonne. */
-.hero-identite .portrait{width:100%;max-width:260px;align-self:center}
+.hero-colonne{min-width:0;display:flex;flex-direction:column;gap:12px;padding:18px}
+.hero-identite{
+  border-right:1px solid var(--line-soft);background:rgba(var(--abyss-rvb),.24)
+}
+.hero-mesures{
+  border-left:1px solid var(--line-soft);background:rgba(var(--abyss-rvb),.24)
+}
+/* Le titre d'un compartiment : il dit ce qu'on regarde, et la grille des
+   emplacements ne commence plus sans annonce. */
+.builder-section-head{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
+  padding-bottom:10px;border-bottom:1px solid var(--line-soft)
+}
+.builder-section-head h2{
+  margin:0;font-family:var(--display);font-size:19px;font-weight:500
+}
+/* Le portrait remplit son volet : c'est lui qui dit de quel heros il s'agit,
+   et la colonne de gauche est faite a sa mesure. */
+.hero-identite .portrait{width:100%;max-width:none;align-self:stretch}
+/* Sous 1180 px, l'atelier se replie : les mesures passent sous les deux
+   autres, puis chaque compartiment prend toute la largeur. */
+@media(max-width:1179px){
+  .hero{grid-template-columns:minmax(190px,220px) minmax(0,1fr)}
+  .hero-mesures{
+    grid-column:1/-1;border-left:0;border-top:1px solid var(--line-soft)
+  }
+}
+@media(max-width:767px){
+  .hero{grid-template-columns:1fr}
+  .hero-identite{border-right:0;border-bottom:1px solid var(--line-soft)}
+  .hero-colonne{padding:14px}
+}
 .hero-source-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .hero-source-actions .btn{
   min-width:0;justify-content:center;padding:7px 8px;font-size:11px;line-height:1.2;

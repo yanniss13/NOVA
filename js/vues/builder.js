@@ -702,10 +702,20 @@ import { toast } from "./toast.js";
     const identite = el("div",{class:"hero-colonne hero-identite"},[
       sourceActions, portrait, title, badges, pot, note, clear
     ]);
-    const equipement = el("div",{class:"hero-colonne hero-equipement"},[gear]);
+    /* Un titre ouvre la colonne du milieu : sans lui, la grille des
+       emplacements commencait sans qu on sache ce qu on regarde. */
+    const equipement = el("div",{class:"hero-colonne hero-equipement"},[
+      el("div",{class:"builder-section-head"},[
+        el("h2",{text:"Équipement"})
+      ]),
+      gear
+    ]);
     const colonnes = [identite, equipement];
     if(ch){
       colonnes.push(el("div",{class:"hero-colonne hero-mesures"},[
+        el("div",{class:"builder-section-head"},[
+          el("h2",{text:"Statistiques"})
+        ]),
         heroStatsSection(hero)
       ]));
     }
