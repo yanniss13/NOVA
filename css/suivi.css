@@ -11,8 +11,12 @@
   justify-content:space-between;
   gap:16px
 }
-.dashboard-sync-meta{flex:none;color:var(--mist);font-size:13px;text-align:right}
-.dashboard-sync-meta span{display:block}
+.dashboard-sync-meta{flex:none;color:var(--mist);font-size:13px}
+/* Hors ligne, la pastille cesse d'etre verte : elle dit l'etat, pas la forme. */
+.sync-card[data-offline="true"] .live-dot{
+  background:var(--mist-deep);box-shadow:0 0 0 4px rgba(255,255,255,.04)
+}
+.sync-card[data-offline="true"] b{color:var(--alert-light)}
 /* Région live réservée aux lecteurs d'écran : chargement, succès, erreur. */
 .dashboard-status{
   position:absolute;
