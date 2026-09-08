@@ -30,7 +30,9 @@
   .team-heroes{grid-template-columns:repeat(2,1fr)}
   .metabar .grow{margin-left:0;width:100%}
   .metabar .grow .btn{flex:1;justify-content:center}
-  .roster-grid{grid-template-columns:1fr}
+  /* En dessous de 560 px, la ligne se replie : identite, composition, gestes. */
+  .team{grid-template-columns:1fr;gap:14px}
+  .team-actions{grid-auto-flow:column}
   .auth-actions{grid-template-columns:1fr}
   /* iOS Safari zoome automatiquement (et reste zoomé) au focus d'un champ
      dont la police est < 16px — cause du décentrage + scroll latéral signalés
