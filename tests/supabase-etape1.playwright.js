@@ -10,6 +10,17 @@ const {
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
+/* LE COMPTEUR DE RUNS ENGAGEES. Il s'ecrivait « Runs engagées 2/3 » d'un
+   seul tenant ; la carte de la maquette separe le libelle de la valeur, et un
+   `getByText` exact ne les retrouve plus ensemble. On lit la valeur la ou
+   elle est, et on la compare exactement — ce que le test verifiait. */
+async function attendreRunsEngagees(page, valeur){
+  await page.waitForFunction(attendue => {
+    const cellule = document.querySelector(".boss-feature .feature-score strong");
+    return !!cellule && cellule.textContent.trim() === attendue;
+  }, valeur);
+}
+
 async function attendrePseudo(page, pseudo){
   /* Un seul pseudo depuis la refonte : le tiroir mobile ouvre le meme menu de
      compte que le bouton de bureau, il n'y a plus de jumeau a synchroniser. */
@@ -5526,11 +5537,15 @@ async function attendrePseudo(page, pseudo){
     });
     await allerA(page, "dashboard");
 
-    await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
+    /* LE COMPTEUR DE RUNS vit desormais dans le cadre majeur de l'ecran, ou
+       le libelle et la valeur sont deux elements distincts — c'est la carte
+       de la maquette. On lit donc la valeur seule, exactement. */
+    await attendreRunsEngagees(page, "2/3");
     const dashboardText = () => page.locator("#dashboardBody").textContent();
-    assert.match(await dashboardText(), /1\s*Terminées/);
-    assert.match(await dashboardText(), /1\s*En cours/);
-    assert.match(await dashboardText(), /1\s*Encore disponibles/);
+    /* La rangee cloisonnee annonce le libelle PUIS le chiffre. */
+    assert.match(await dashboardText(), /Runs terminées\s*1/);
+    assert.match(await dashboardText(), /Runs en cours\s*1/);
+    assert.match(await dashboardText(), /Encore disponibles\s*1/);
     // Le numéro de run dépend des scénarios Boss précédents : on ne le fige pas.
     assert.match(await dashboardText(), /Groupe 2 · Run \d+/);
     assert.match(await dashboardText(), /Équipe manquante/);
@@ -5605,7 +5620,7 @@ async function attendrePseudo(page, pseudo){
     });
     await allerA(page, "dashboard");
     await page.getByText("Hors ligne", { exact:true }).waitFor();
-    assert.match(await dashboardText(), /Runs engagées 2\/3/);
+    await attendreRunsEngagees(page, "2/3");
     assert.match(await dashboardText(), /Données potentiellement anciennes/);
     assert.equal(
       await page.locator(
@@ -5644,7 +5659,7 @@ async function attendrePseudo(page, pseudo){
     assert.doesNotMatch(await dashboardText(), /0\/3/);
     assert.equal(await page.locator(".dashboard-progress").count(), 0);
     await page.getByRole("button", { name:"Réessayer", exact:true }).click();
-    await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
+    await attendreRunsEngagees(page, "2/3");
 
     // ---- Realtime : vue active relue, vue inactive seulement marquée sale ----
     await page.evaluate(() => {
@@ -5734,13 +5749,13 @@ async function attendrePseudo(page, pseudo){
       email:"merlin@example.test"
     }));
     await attendrePseudo(page, "Merlin");
-    await page.getByText("Runs engagées 0/3", { exact:true }).waitFor();
+    await attendreRunsEngagees(page, "0/3");
     await page.evaluate(() =>
       window.__fakeSupabaseReleaseQueuedBossRead("dashboard-user-1")
     );
     await page.waitForTimeout(50);
     assert.equal(await page.locator("#accountPseudo").textContent(), "Merlin");
-    assert.match(await dashboardText(), /Runs engagées 0\/3/);
+    await attendreRunsEngagees(page, "0/3");
     assert.doesNotMatch(await dashboardText(), /Groupe actualisé/);
     await page.evaluate(() => window.__fakeSupabaseApplySession({
       id:"user-1",
@@ -5750,7 +5765,7 @@ async function attendrePseudo(page, pseudo){
 
     /* ---- Actions directes : chaque bouton ouvre la vraie interface ---- */
     await allerA(page, "dashboard");
-    await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
+    await attendreRunsEngagees(page, "2/3");
 
     // Choisir mon équipe -> sélecteur d'équipe de la bonne participation.
     await page.locator(
@@ -5803,9 +5818,11 @@ async function attendrePseudo(page, pseudo){
       document.querySelector("#view-boss").contains(document.activeElement)
     );
 
-    // Trouver un groupe -> onglet Boss, focus sur un Rejoindre disponible.
+    /* Trouver un groupe -> onglet Boss, focus sur un Rejoindre disponible.
+       Deux elements menent la : la carte de priorite et l action du cadre
+       majeur. C est la carte que ce parcours eprouve. */
     await allerA(page, "dashboard");
-    await page.locator('[data-dashboard-action="find-group"]').click();
+    await page.locator('.action-card [data-dashboard-action="find-group"]').click();
     await page.locator("#view-boss").waitFor({ state:"visible" });
     assert.equal(
       await page.evaluate(() =>
@@ -5859,7 +5876,7 @@ async function attendrePseudo(page, pseudo){
 
     // Une run devenue archivée entre le clic et le rendu ne doit rien ouvrir.
     await allerA(page, "dashboard");
-    await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
+    await attendreRunsEngagees(page, "2/3");
     await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       const run = state.boss_sessions.find(item =>
@@ -5899,7 +5916,7 @@ async function attendrePseudo(page, pseudo){
 
     /* ---- Mon suivi : mobile de 320 à 390 px ---- */
     await allerA(page, "dashboard");
-    await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
+    await attendreRunsEngagees(page, "2/3");
     for(const width of [320, 360, 375, 390]){
       await page.setViewportSize({ width, height:844 });
       await allerA(page, "dashboard");

@@ -16,7 +16,10 @@
 
 import { DashboardStore } from "../donnees/suivi-store.js";
 import { sessionCourante } from "../etat/session.js";
-import { formatBossScore, frDateTime } from "../metier/boss-logique.js";
+import { BOSS_NAME } from "../donnees/boss-store.js";
+import {
+  currentBossWeek, formatBossScore, frDate, frDateTime
+} from "../metier/boss-logique.js";
 import { AVAIL_DAY_FULL } from "../metier/dispos-logique.js";
 import { $, el } from "../noyau/dom.js";
 import { bossViewState, openBossReport, openBossTeamPicker } from "./boss-sessions.js";
@@ -165,10 +168,70 @@ import { toast } from "./toast.js";
       + " disponible" + (best.count > 1 ? "s" : "");
   }
 
-  function dashboardProgressCell(label, value, className){
-    return el("div",{class:"dashboard-progress-cell "+className},[
-      el("strong",{text:String(value)}),
-      el("span",{text:label})
+  /* UNE CELLULE DE LA RANGEE CLOISONNEE. */
+  function celluleDeStat(label, valeur, detail){
+    return el("article", null, [
+      el("span",{text:label}),
+      el("strong",{text:String(valeur)}),
+      el("small",{text:detail})
+    ]);
+  }
+
+  /* CE QU'UNE ACTION RACONTE. Le type dit le geste ; il ne dit pas encore ce
+     qu'un membre doit comprendre. Chaque type recoit donc son etat, sa phrase
+     et son degre d'urgence — c'est la carte d'action de la maquette. */
+  const RECIT_DES_ACTIONS = {
+    "choose-team":{
+      etat:"Équipe à choisir",
+      phrase:"Ta place est prise. Il reste à désigner l'équipe que tu engages.",
+      ton:"urgent"
+    },
+    "create-team":{
+      etat:"Aucune équipe",
+      phrase:"Compose une équipe avant de pouvoir l'engager sur cette run.",
+      ton:"urgent"
+    },
+    "view-group":{
+      etat:"Équipe engagée",
+      phrase:"Ton équipe est choisie. Il reste à jouer la run avec le groupe.",
+      ton:""
+    },
+    "find-group":{
+      etat:"Run disponible",
+      phrase:"Tu peux encore t'engager sur un groupe cette semaine.",
+      ton:""
+    },
+    "edit-report":{
+      etat:"Rapport à corriger",
+      phrase:"Le score de cette run peut encore être rectifié.",
+      ton:"done"
+    },
+    /* Les deux taches qui n'ont rien a voir avec une run, mais qui empechent
+       d'en mener une : sans dispos, personne ne peut compter sur toi ; sans
+       roster complet, tes heros ne sont pas proposables. */
+    "post-availability":{ etat:"Créneaux", phrase:"", ton:"urgent" },
+    "complete-roster":{ etat:"Roster", phrase:"", ton:"" }
+  };
+
+  /* Le rang n'est pas decoratif : `buildDashboardState` trie les actions par
+     priorite, de la plus bloquante a la plus tranquille. Le numero dit donc
+     quelque chose de vrai — par quoi commencer. */
+  function carteDAction(action, rang){
+    const recit = RECIT_DES_ACTIONS[action.type] || { etat:"À faire", phrase:"", ton:"" };
+    const titre = action.sessionId
+      ? "Groupe " + action.slot + " · Run " + action.runNo
+      : action.titre || "Une run reste disponible";
+    return el("article",{
+      class:"action-card",
+      dataset:{ tone:recit.ton }
+    },[
+      el("div",{class:"action-index",text:String(rang).padStart(2, "0")}),
+      el("div", null, [
+        el("span",{class:"action-state",text:recit.etat}),
+        el("h3",{text:titre}),
+        el("p",{text:action.phrase || recit.phrase})
+      ]),
+      dashboardActionButton(action)
     ]);
   }
 
@@ -181,7 +244,10 @@ import { toast } from "./toast.js";
 
   function dashboardActionButton(action){
     return el("button",{
-      class:"btn "+(action.priority === 1 ? "btn-primary" : ""),
+      /* Toutes les actions sont de meme nature — un lien vers l'endroit ou
+         le geste se fait. L'aplat dore reste a l'action principale de la vue,
+         dans le cadre majeur. */
+      class:"btn btn-ghost",
       type:"button",
       dataset:{
         dashboardAction:action.type,
@@ -333,31 +399,33 @@ import { toast } from "./toast.js";
     const body = $("#dashboardBody");
     const blocks = [];
 
-    /* LE CADRE MAJEUR DE L'ECRAN, et le seul : les runs de la semaine. C'est
-       la donnee qui cadre tout le reste — combien il en reste avant le reset —
-       et elle s'affichait dans un panneau identique aux sept autres. */
-    const summary = el("section",{class:"ornate-panel dashboard-summary"},[
-      el("p",{class:"context-label",text:"Boss de guilde"}),
-      el("div",{class:"dashboard-summary-head"},[
-        el("strong",{text:"Runs engagées "+state.engaged+"/3"})
+    /* LE CADRE MAJEUR DE L'ECRAN, et le seul. La maquette lui donne trois
+       parts : de quoi l'on parle, le chiffre qui compte, et l'action. Ici, le
+       boss de la semaine, les runs engagees avec leur echeance, et le chemin
+       vers le centre Boss. */
+    const semaine = currentBossWeek(new Date());
+    blocks.push(el("section",{class:"ornate-panel boss-feature"},[
+      el("div", null, [
+        el("p",{class:"context-label",text:"Boss de la semaine"}),
+        el("h2",{text:BOSS_NAME}),
+        el("p",{text:"Semaine du " + frDate(semaine.startDate)
+          + " au " + frDate(semaine.endDate) + " · reset lundi 9h"})
       ]),
-      el("div",{class:"dashboard-progress"},[
-        dashboardProgressCell("Terminées", state.completed, "is-done"),
-        dashboardProgressCell("En cours", state.open, "is-open"),
-        dashboardProgressCell("Encore disponibles", state.remaining, "is-left")
-      ])
-    ]);
-    blocks.push(summary);
-
-    /* L'ECHEANCE SUIT LE CADRE MAJEUR. Elle fermait la page : « 1 run
-       manquante avant le reset » se lisait apres huit panneaux, alors que
-       c'est precisement ce qui doit faire agir. Elle se place donc juste sous
-       le compte des runs, qu'elle commente. */
-    blocks.push(el("section",{
-      class:"dashboard-deadline",
-      dataset:{ level:state.deadlineStatus.level }
-    },[
-      el("strong",{text:state.deadlineStatus.label})
+      el("div",{class:"feature-score"},[
+        el("span",{text:"Runs engagées"}),
+        el("strong",{text:state.engaged + "/3"}),
+        el("small",{
+          dataset:{ level:state.deadlineStatus.level },
+          text:state.deadlineStatus.label
+        })
+      ]),
+      el("button",{
+        class:"btn btn-primary",
+        type:"button",
+        dataset:{ dashboardAction:"find-group", dashboardNetworkAction:"true" },
+        text:"Préparer ma run",
+        onclick:()=>void runDashboardAction({ type:"find-group" })
+      })
     ]));
 
     if(state.reportsAvailable === false){
@@ -372,7 +440,7 @@ import { toast } from "./toast.js";
         el("strong",{text:"Données potentiellement anciennes"}),
         el("p",{text:"Ces informations viennent du dernier suivi enregistré sur cet appareil."}),
         el("button",{
-          class:"btn btn-primary",
+          class:"btn btn-ghost",
           type:"button",
           text:"Réessayer",
           onclick:()=>void renderDashboardView({ force:true })
@@ -380,75 +448,75 @@ import { toast } from "./toast.js";
       ]));
     }
 
-    if(state.actions.length){
-      blocks.push(el("section",{class:"dashboard-actions-panel"},[
-        el("div",{class:"section-title-row"},[
-          el("h2",{text:"À faire maintenant"}),
-          el("span",{text:state.actions.length + (state.actions.length > 1 ? " actions" : " action")})
-        ]),
-        el("div",{class:"dashboard-action-list"},
-          state.actions.map(action => el("div",{class:"dashboard-action-row"},[
-            // Le libellé du groupe sert de contexte ; le bouton porte l'action.
-            action.sessionId
-              ? el("span",{text:"Groupe "+action.slot+" · Run "+action.runNo})
-              : el("span",{text:"Tu peux encore engager une run"}),
-            dashboardActionButton(action)
-          ]))
-        )
-      ]));
-    }
-
-    /* Les trois cartes d'accueil. Chacune disparait quand elle n'a rien a
-       dire : donnee absente (lecture en echec) ou rien a signaler. Une carte
-       qui affiche « 0 » est du bruit, et une carte qui affiche un faux « 0 »
-       est un mensonge. */
+    /* LES PRIORITES. Les runs a mener, mais aussi les deux choses qui les
+       empechent : des dispos jamais posees, un roster incomplet. Elles
+       vivaient dans des panneaux separes, en bas de page ; ce sont des taches
+       comme les autres, elles rejoignent la meme grille. */
+    const priorites = state.actions.slice();
     const availability = state.availability;
-    if(availability){
-      const posed = availability.mine.posed;
-      blocks.push(el("section",{
-        class:"dashboard-section",
-        dataset:{ card:"availability" }
-      },[
-        el("strong",{text:posed
-          ? slotsPosedLabel(availability.mine.count)
-          : "Tes dispos ne sont pas posées"}),
-        posed
-          ? null
-          : el("p",{text:"La confrérie ne peut pas te compter dans ses créneaux."}),
-        el("button",{
-          class:"btn "+(posed ? "" : "btn-primary"),
-          type:"button",
-          dataset:{ dashboardAction:"post-availability" },
-          text:posed ? "Modifier mes dispos" : "Poser mes dispos",
-          onclick:()=>void runDashboardAction({ type:"post-availability" })
-        })
-      ]));
+    if(availability && !availability.mine.posed){
+      priorites.push({
+        type:"post-availability",
+        titre:"Tes dispos ne sont pas posées",
+        phrase:"La confrérie ne peut pas te compter dans ses créneaux tant "
+          + "que tu n'as rien posé.",
+        label:"Poser mes dispos"
+      });
+    }
+    if(state.roster && state.roster.toComplete > 0){
+      priorites.push({
+        type:"complete-roster",
+        titre:state.roster.toComplete + " héros à compléter",
+        phrase:"Un héros sans équipement complet ne peut pas être proposé "
+          + "aux autres membres.",
+        label:"Compléter mon roster"
+      });
     }
 
-    if(state.roster && state.roster.toComplete > 0){
-      blocks.push(el("section",{
-        class:"dashboard-section",
-        dataset:{ card:"roster" }
-      },[
-        el("strong",{text:state.roster.toComplete+" héros à compléter"}),
-        el("button",{
-          class:"btn",
-          type:"button",
-          dataset:{ dashboardAction:"complete-roster" },
-          text:"Compléter mon roster",
-          onclick:()=>void runDashboardAction({ type:"complete-roster" })
-        })
+    if(priorites.length){
+      blocks.push(el("div",{class:"section-title-row"},[
+        el("div", null, [
+          el("p",{class:"context-label",text:"Priorités"}),
+          el("h2",{text:"À faire maintenant"})
+        ]),
+        el("span",{text:priorites.length
+          + (priorites.length > 1 ? " actions" : " action")})
       ]));
+      blocks.push(el("div",{class:"dashboard-grid"},
+        priorites.map((action, rang) => carteDAction(action, rang + 1))));
     }
+
+    /* CE QUE LA SEMAINE DONNE, en rangee cloisonnee. Ce sont des chiffres de
+       meme nature : ils se lisent ensemble, pas dans quatre panneaux. */
+    blocks.push(el("div",{class:"section-title-row"},[
+      el("div", null, [
+        el("p",{class:"context-label",text:"Cette semaine"}),
+        el("h2",{text:"Où tu en es"})
+      ])
+    ]));
+    blocks.push(el("div",{class:"stat-grid"},[
+      celluleDeStat("Runs terminées", state.completed, "sur 3 possibles"),
+      celluleDeStat("Runs en cours", state.open, "engagées, pas encore jouées"),
+      celluleDeStat("Encore disponibles", state.remaining, "avant le reset"),
+      celluleDeStat(
+        "Créneaux posés",
+        availability ? availability.mine.count : "—",
+        availability && availability.best
+          ? "meilleur : " + bestSlotLabel(availability.best)
+          : "pour la confrérie"
+      )
+    ]));
 
     if(availability && availability.best){
-      blocks.push(el("section",{
-        class:"dashboard-section",
-        dataset:{ card:"best-slot" }
-      },[
-        el("strong",{text:bestSlotLabel(availability.best)}),
+      blocks.push(el("section",{class:"ornate-panel recommendation-panel"},[
+        el("div", null, [
+          el("p",{class:"context-label",text:"Créneau de la confrérie"}),
+          el("h2",{text:bestSlotLabel(availability.best)}),
+          el("p",{text:"C'est l'heure ou le plus de membres sont disponibles "
+            + "cette semaine."})
+        ]),
         el("button",{
-          class:"btn",
+          class:"btn btn-ghost",
           type:"button",
           dataset:{ dashboardAction:"view-planning" },
           text:"Voir le planning",
@@ -463,18 +531,22 @@ import { toast } from "./toast.js";
         hasOwnTeams:state.hasOwnTeams
       }));
     if(openGroups.length){
-      blocks.push(el("section",{class:"dashboard-section"},[
-        el("strong",{text:"Runs en cours"}),
-        el("div",{class:"dashboard-run-grid"}, openGroups.map(dashboardRunCard))
+      blocks.push(el("div",{class:"section-title-row"},[
+        el("h2",{text:"Runs en cours"}),
+        el("span",{text:openGroups.length + " sur 3"})
       ]));
+      blocks.push(el("div",{class:"dashboard-run-grid"},
+        openGroups.map(dashboardRunCard)));
     }
 
     const doneGroups = state.groups.filter(group => group.status === "archived");
     if(doneGroups.length){
-      blocks.push(el("section",{class:"dashboard-section"},[
-        el("strong",{text:"Runs terminées cette semaine"}),
-        el("div",{class:"dashboard-run-grid"}, doneGroups.map(dashboardRunCard))
+      blocks.push(el("div",{class:"section-title-row"},[
+        el("h2",{text:"Runs terminées"}),
+        el("span",{text:"cette semaine"})
       ]));
+      blocks.push(el("div",{class:"dashboard-run-grid"},
+        doneGroups.map(dashboardRunCard)));
     }
 
     /* L'hôte de la carte de chronométrage : elle se remplace elle-même dès
@@ -499,25 +571,28 @@ import { toast } from "./toast.js";
     }
   }
 
+  /* LA CARTE DE SYNCHRONISATION de la maquette : une pastille verte, l'etat,
+     et l'heure. Elle remplace deux lignes de texte gris qui disaient la meme
+     chose sans qu'on les voie. Hors ligne, la pastille s'eteint. */
   function renderDashboardSyncMeta(state){
     const meta = $("#dashboardSyncMeta");
     if(!state){
       meta.replaceChildren();
+      meta.className = "dashboard-sync-meta";
       return;
     }
-    const stamp = state.lastSyncedAt
-      ? "Dernière synchronisation "+frDateTime(
-          new Date(state.lastSyncedAt).toISOString()
-        )
-      : "Dernière synchronisation inconnue";
-    if(state.offline){
-      meta.replaceChildren(
-        el("span",{class:"dashboard-offline-badge",text:"Hors ligne"}),
-        el("span",{text:stamp})
-      );
-      return;
-    }
-    meta.replaceChildren(el("span",{text:stamp}));
+    const heure = state.lastSyncedAt
+      ? frDateTime(new Date(state.lastSyncedAt).toISOString())
+      : "heure inconnue";
+    meta.className = "sync-card dashboard-sync-meta";
+    meta.dataset.offline = String(!!state.offline);
+    /* La pastille occupe les deux rangees, le titre et l'heure s'empilent a
+       cote : ce sont donc trois enfants directs, pas un bloc emboite. */
+    meta.replaceChildren(
+      el("span",{class:"live-dot"}),
+      el("b",{text:state.offline ? "Hors ligne" : "Données synchronisées"}),
+      el("small",{text:heure})
+    );
   }
 
   async function renderDashboardView(options){

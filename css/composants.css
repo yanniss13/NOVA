@@ -67,6 +67,116 @@
   font-size:clamp(22px,2.3vw,32px)
 }
 
+/* ---------- Les composants de la maquette ---------- */
+
+/* LA CARTE DE CONTEXTE de l'en-tete de page : etat de synchronisation a Mon
+   suivi, semaine de boss au centre Boss. Meme forme, deux contenus. */
+.sync-card,.week-card{
+  flex:none;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;
+  min-width:230px;padding:12px 15px;
+  border:1px solid var(--line-soft);background:rgba(255,255,255,.018)
+}
+.sync-card .live-dot{
+  grid-row:1/3;align-self:center;width:9px;height:9px;border-radius:50%;
+  background:var(--ok);box-shadow:0 0 0 4px rgba(106,168,121,.1)
+}
+.sync-card b,.week-card strong{font-family:var(--display);font-size:13px;font-weight:500}
+.sync-card small,.week-card small{color:var(--mist)}
+.week-card{display:flex;flex-direction:column;text-align:right}
+.week-card span{color:var(--gold-light);font-size:12px}
+
+/* LE CADRE MAJEUR D'UN ECRAN. Un seul par vue : le boss de la semaine a Mon
+   suivi, la prochaine attaque au centre Boss. Il porte a gauche ce dont on
+   parle, au milieu le chiffre qui compte, a droite l'action. */
+.boss-feature{
+  position:relative;overflow:hidden;
+  display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:34px;
+  margin-top:24px;padding:26px 30px;border-radius:8px
+}
+.boss-feature::after{
+  content:"";position:absolute;right:-45px;top:-70px;width:240px;height:240px;
+  border:1px solid var(--line-soft);border-radius:50%;pointer-events:none
+}
+.boss-feature h2,.recommendation-panel h2{
+  position:relative;margin:0;font-family:var(--display);font-size:25px;font-weight:500
+}
+.boss-feature p:not(.context-label),
+.recommendation-panel p:not(.context-label){position:relative;margin:7px 0 0;color:var(--mist)}
+.feature-score{
+  position:relative;display:grid;min-width:190px;padding-left:25px;
+  border-left:1px solid var(--line-soft)
+}
+.feature-score span{color:var(--mist);font-size:12px}
+.feature-score strong{
+  margin:4px 0;color:var(--gold-light);font-family:var(--display);
+  font-size:19px;font-weight:500;font-variant-numeric:tabular-nums
+}
+.feature-score small{color:var(--parchment)}
+/* Les trois degres d'echeance du suivi. Le seul endroit ou ce petit texte
+   change de couleur : il dit s'il reste du temps. */
+.feature-score small[data-level="urgent"]{color:var(--alert-light)}
+.feature-score small[data-level="warning"]{color:var(--gold-light)}
+.feature-score small[data-level="complete"]{color:var(--ok)}
+
+/* LA RANGEE CLOISONNEE. Des chiffres de meme nature, cote a cote : un filet
+   autour, un filet entre chaque. */
+.stat-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);margin-top:14px;
+  border:1px solid var(--line-soft)
+}
+.stat-grid article{
+  display:grid;gap:4px;padding:18px;border-right:1px solid var(--line-soft);
+  font-variant-numeric:tabular-nums
+}
+.stat-grid article:last-child{border-right:0}
+.stat-grid span{color:var(--mist);font-size:12px}
+.stat-grid strong{font-family:var(--display);font-size:22px;font-weight:500}
+.stat-grid small{color:var(--mist)}
+
+/* LA CARTE D'ACTION. Le rang, l'etat, ce dont il s'agit, et le geste. Le
+   liseré de gauche dit l'urgence sans qu'on ait a lire. */
+.dashboard-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.action-card{
+  display:grid;grid-template-columns:42px 1fr;gap:0 16px;padding:18px 20px;
+  border:1px solid var(--line-soft);background:rgba(var(--abyss-rvb),.68)
+}
+.action-card[data-tone="urgent"]{border-left:3px solid var(--alert)}
+.action-card[data-tone="done"]{border-left:3px solid var(--ok)}
+.action-index{
+  grid-row:1/3;color:var(--gold);font-family:var(--display);font-size:17px;
+  font-variant-numeric:tabular-nums
+}
+.action-state{color:var(--gold-light);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.action-card h3{margin:4px 0 5px;font-family:var(--display);font-size:18px;font-weight:500}
+.action-card p{margin:0;color:var(--mist);line-height:1.4}
+.action-card .btn{grid-column:2;justify-content:flex-start;width:max-content;margin-top:8px}
+
+/* LE PANNEAU DE SUGGESTION : un constat a gauche, un lien a droite. */
+.recommendation-panel{
+  display:flex;align-items:center;justify-content:space-between;gap:30px;
+  margin-top:14px;padding:22px 26px;border-radius:var(--radius)
+}
+
+@media (max-width:1179px){
+  .boss-feature{grid-template-columns:1fr auto}
+  .boss-feature .btn-primary{grid-column:1/-1;width:100%;justify-content:center}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .stat-grid article:nth-child(2){border-right:0}
+  .stat-grid article:nth-child(-n+2){border-bottom:1px solid var(--line-soft)}
+}
+@media (max-width:767px){
+  .sync-card,.week-card{min-width:0;width:100%;text-align:left}
+  .boss-feature{grid-template-columns:1fr;gap:18px;margin-top:16px;padding:20px}
+  .boss-feature h2{font-size:21px}
+  .feature-score{min-width:0;padding:14px 0 0;border-left:0;border-top:1px solid var(--line-soft)}
+  .dashboard-grid{grid-template-columns:1fr}
+  .action-card{grid-template-columns:30px 1fr;padding:15px 14px}
+  .action-card p{font-size:13px}
+  .stat-grid article{padding:14px}
+  .stat-grid strong{font-size:18px}
+  .recommendation-panel{display:grid;padding:18px}
+}
+
 /* ---------- Onglets locaux d'une rubrique ---------- */
 
 /* La sous-navigation d'une rubrique. Elle vit SOUS le titre de la rubrique,
