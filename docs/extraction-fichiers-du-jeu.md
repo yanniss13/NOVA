@@ -1266,6 +1266,23 @@ Ce qu'il faut regarder dans la comparaison, c'est **`enums EN RETRAIT`** et
 **`structs avec MOINS de propriétés`**. Une table perdue se voit ; une
 énumération amputée ne se voit pas — elle produit une étiquette fausse.
 
+Et **`structs ENRICHIS`**, ajouté le 8 septembre 2026, qui répond à la question
+inverse : ce dump apporte-t-il quelque chose ? Un struct qui gagne des
+propriétés est le seul gain capable de débloquer une table qui refusait de se
+décoder. Tant que l'outil ne montrait que les pertes, un dump qui débloquait une
+table se lisait exactement comme un dump qui n'apportait rien.
+
+Premier verdict rendu par cette ligne, sur le dump du **8 septembre 2026**
+(`Mappings/5.5.4-0+UE5-SevenDeadlySins-2026-09-08.usmap`, renommé par sa date
+parce que le client n'avait pas bougé — les `.pak` datent du 1er septembre) :
+732 tables du jeu et 3 413 énumérations identiques à celles du 5 septembre,
+0 enum enrichi, et **2 structs enrichis qui ne sont pas des tables** —
+`AnimBlueprintGeneratedConstantData` (271 → 308) et
+`AnimBlueprintGeneratedMutableData` (20 → 28), plus 73 classes Blueprint de
+widgets attrapées au passage. Rien à réextraire. Redumper le même client ne
+débloque rien : les 35 tables absentes sont côté serveur et les 3 manquantes ne
+sont pas dans les paks.
+
 Comparaison des structs `UE*` (les tables du jeu) entre deux usmap : c'est la
 seule mesure qui compte. Le reste — nombre de noms, taille du fichier — ne dit
 rien.

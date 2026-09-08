@@ -20,6 +20,11 @@
 // c est a dire les tables du jeu. Le nombre de noms et la taille du fichier ne
 // disent rien : Dumper-7 compresse en Zstd et n ecrit pas le bloc final
 // CEXT/PPTH que portent les usmap passes par FModel.
+//
+// La comparaison se lit DANS LES DEUX SENS. Ce qui est perdu est une
+// regression ; ce qui est gagne est la seule raison de refaire un export.
+// L outil n a longtemps montre que les pertes, et un dump qui debloquait une
+// table se lisait alors exactement comme un dump qui n apportait rien.
 
 const fs = require('fs');
 const zlib = require('zlib');
@@ -128,16 +133,27 @@ function comparer(a, b) {
   console.log('enums enrichis : %d %s', enrichis.length, enrichis.slice(0, 8).join(' | '));
   console.log('enums EN RETRAIT : %d %s', retrait.length, retrait.join(' | '));
 
-  const amputes = [];
+  const amputes = [], enrichisStructs = [];
   for (const [k, v] of a.structs) {
     const ancien = b.structs.get(k);
-    if (ancien && v.props.length < ancien.props.length) {
+    if (!ancien) continue;
+    if (v.props.length < ancien.props.length) {
       amputes.push(k + ' ' + ancien.props.length + ' -> ' + v.props.length);
+    } else if (v.props.length > ancien.props.length) {
+      enrichisStructs.push(k + ' ' + ancien.props.length + ' -> ' + v.props.length);
     }
   }
   console.log('structs avec MOINS de proprietes : %d %s', amputes.length, amputes.slice(0, 10).join(' | '));
+  // Les tables du jeu d abord : ce sont les seules dont l enrichissement se
+  // traduit par quelque chose a refaire. Le reste est du Blueprint attrape au
+  // passage, qui varie d un dump a l autre sans rien signifier.
+  const dAbordLesTables = enrichisStructs.slice().sort(
+    (x, y) => Number(y.startsWith('UE')) - Number(x.startsWith('UE')));
+  console.log('structs ENRICHIS : %d %s', enrichisStructs.length, dAbordLesTables.slice(0, 10).join(' | '));
   console.log('\nUn enum en retrait ou un struct ampute est une regression :');
   console.log('le usmap etiquettera faux en silence, sans jamais laisser une table vide.');
+  console.log('Un struct ENRICHI est le gain inverse, et le seul qui puisse debloquer');
+  console.log('une table qui refusait de se decoder.');
 }
 
 const args = process.argv.slice(2);
