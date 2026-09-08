@@ -649,7 +649,6 @@ async function attendrePseudo(page, pseudo){
     assert.match(await meliodasCard.textContent(), /★ favori/);
     assert.match(
       await meliodasCard.locator(".member-roster-build-tag")
-        .filter({ hasText:"favori" })
         .getAttribute("aria-label"),
       /build favori/i
     );
@@ -659,14 +658,15 @@ async function attendrePseudo(page, pseudo){
        la consultation : un membre pouvait lire la fiche complète des
        personnages de tout le monde sauf les siens, où il ne lui restait que
        l'éditeur — un formulaire de saisie, pas une lecture. */
+    /* Le corps de la carte EST le bouton depuis la refonte : il se clique et
+       se tabule. Un second lien « Voir les builds » doublait le chemin. */
     const detailOverlay = page.locator("#rosterDetailOverlay");
     assert.equal(
-      await meliodasCard.locator(".member-roster-detail-btn").count(),
+      await meliodasCard.locator(".hero-card-main").count(),
       1,
       "Sa propre carte doit offrir l'accès à la fiche"
     );
-    // Le clic sur le corps de la carte, pas sur le bouton : c'est le geste réel.
-    await meliodasCard.locator(".member-roster-name").click();
+    await meliodasCard.locator(".hero-card-main").click();
     await detailOverlay.waitFor({ state:"visible" });
     assert.match(await page.locator("#rosterDetailBody").textContent(), /Meliodas/);
     await page.locator("#rosterDetailClose").click();
@@ -749,9 +749,9 @@ async function attendrePseudo(page, pseudo){
        personnage à l'autre et change de build par les icônes d'arme.
        On sème un second personnage pour ce membre le temps du test. */
     assert.equal(
-      await page.locator("#memberRosterGrid .member-roster-detail-btn").count(),
+      await page.locator("#memberRosterGrid .hero-card-main").count(),
       1,
-      "Chaque fiche consultée doit offrir un bouton de détail"
+      "Chaque fiche consultée doit offrir un accès au détail"
     );
     await page.evaluate(() => {
       window.__fakeSupabaseState.roster_characters.push({
@@ -778,7 +778,7 @@ async function attendrePseudo(page, pseudo){
 
     const rosterDetailOverlay = page.locator("#rosterDetailOverlay");
     await page.locator("#memberRosterGrid .member-roster-card").nth(1)
-      .locator(".member-roster-detail-btn").click();
+      .locator(".hero-card-main").click();
     await rosterDetailOverlay.waitFor({ state:"visible" });
     assert.match(await page.locator("#rosterDetailBody").textContent(), /Merlin/);
     assert.match(

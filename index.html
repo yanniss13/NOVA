@@ -301,7 +301,9 @@
         <h1 id="memberRosterViewTitle" tabindex="-1">Roster des membres</h1>
         <p>Enregistre tes personnages une fois, puis réutilise leurs équipements dans tes équipes.</p>
       </div>
-      <span class="member-roster-count" id="memberRosterCount"></span>
+      <!-- L action principale de l ecran se place dans l en-tete, comme dans
+           la maquette : c est le seul aplat dore de la vue. -->
+      <button class="btn btn-primary" id="memberRosterAdd" type="button">Ajouter un personnage</button>
     </div>
     <div class="member-roster-toolbar">
       <div class="segmented" role="group" aria-label="Roster affiché">
@@ -312,12 +314,16 @@
         <span>Membre</span>
         <select id="memberRosterOwner"></select>
       </label>
-      <button class="btn btn-primary" id="memberRosterAdd" type="button">Ajouter un personnage</button>
     </div>
-    <div class="member-roster-filters">
-      <input class="picker-search" id="memberRosterSearch" type="search"
-             placeholder="Rechercher un personnage…" autocomplete="off">
+    <!-- LA BARRE DE FILTRES de la maquette : recherche, filtres et decompte
+         sur une seule ligne, collee en haut pendant qu on parcourt la grille. -->
+    <div class="filter-bar member-roster-filters">
+      <label>Recherche
+        <input class="picker-search" id="memberRosterSearch" type="search"
+               placeholder="Nom d un personnage…" autocomplete="off">
+      </label>
       <div id="memberRosterFilters"></div>
+      <span class="member-roster-count" id="memberRosterCount"></span>
     </div>
     <div class="member-roster-grid" id="memberRosterGrid"></div>
   </section>
