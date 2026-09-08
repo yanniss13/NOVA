@@ -43,9 +43,13 @@ const PORTEE_MEMBRE = {
   rubriques:["guilde", "equipes", "centre-boss", "mon-roster"],
   outils:["wiki", "collection", "calculateur", "analyse"]
 };
-/* Les onglets du centre Boss, second etage de la rubrique. Ils remplacent le
-   sous-menu du groupe « Boss de Guilde ». */
-const ONGLETS_DU_CENTRE_BOSS = ["availability", "boss"];
+/* Les onglets du centre Boss, second etage de la rubrique. Quatre depuis la
+   refonte, dont trois qui visent la vue `boss` et n'en changent que la
+   sous-vue. On les nomme par leur libelle, qui est ce qu'un membre lit — une
+   liste de noms de vue dirait trois fois « boss ». */
+const ONGLETS_DU_CENTRE_BOSS = [
+  "Vue d'ensemble", "Disponibilités", "Groupes", "Rapports"
+];
 
 const vueActive = page => page.evaluate(() => {
   const vue = document.querySelector(".view.active");
@@ -173,7 +177,7 @@ const vueActive = page => page.evaluate(() => {
        donc la seule facon de prouver qu'un membre y a droit. */
     await allerA(page, "boss");
     assert.deepEqual(await ongletsLocauxVisibles(page), ONGLETS_DU_CENTRE_BOSS,
-      "le centre Boss ouvert doit rendre ses deux entrees atteignables");
+      "le centre Boss ouvert doit rendre ses quatre entrees atteignables");
     await page.locator('#localTabs [data-view="availability"]').click();
     assert.equal(await vueActive(page), "availability",
       "un membre connecte atteint les Dispos par les onglets locaux");
@@ -181,7 +185,7 @@ const vueActive = page => page.evaluate(() => {
        doit changer le second etage, pas l'effacer. */
     await allerA(page, "wiki");
     assert.deepEqual(await ongletsLocauxVisibles(page),
-      ["wiki", "collection", "calculateur", "analyse"],
+      ["Wiki", "Collection", "Calculateur", "Analyse"],
       "changer de rubrique doit remplacer les onglets du second etage");
     /* Mon roster n'a qu'une vue : un onglet unique n'est plus un choix, la
        barre se tait. */

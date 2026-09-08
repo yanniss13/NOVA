@@ -117,12 +117,18 @@ async function destinationsVisibles(page){
 }
 
 /* Les onglets locaux affiches, dans l'ordre. C'est le second etage de la
-   navigation : il remplace le sous-menu du groupe « Boss de Guilde ». */
+   navigation : il remplace le sous-menu du groupe « Boss de Guilde ».
+
+   On rend les LIBELLES, pas les noms de vue. Depuis que le centre Boss compte
+   quatre onglets dont trois visent la vue `boss`, une liste de noms de vue
+   dirait « boss, availability, boss, boss » — trois fois le meme mot pour
+   trois destinations differentes. Le libelle est ce qu'un membre lit, et il
+   les distingue. */
 async function ongletsLocauxVisibles(page){
   return page.evaluate(() =>
     [...document.querySelectorAll("#localTabs [data-view]")]
       .filter(onglet => onglet.getClientRects().length > 0)
-      .map(onglet => onglet.dataset.view));
+      .map(onglet => onglet.textContent.trim()));
 }
 
 /* OUVRIR LE MENU DU COMPTE.
@@ -154,6 +160,33 @@ function entreeDeLaRubrique(page, id){
   return page.locator(SELECTEUR_DE_RUBRIQUE(id)).first();
 }
 
+/* L'ONGLET D'UNE SOUS-VUE.
+
+   Le centre Boss tient en un ecran a quatre onglets, dont trois visent la
+   meme vue et n'en changent que la sous-vue. Les cartes de groupe vivent sous
+   « Groupes », les rapports sous « Rapports ». Un parcours qui veut agir sur
+   un groupe ouvre donc son onglet, comme un membre le ferait.
+
+   Le helper rend la page, pour s'enchainer apres `allerA`. */
+async function ouvrirSousVue(page, vue, sousVue){
+  const onglet = page.locator("#onglet-" + vue + "-" + sousVue);
+  await onglet.waitFor({ state:"visible" });
+  if(await onglet.getAttribute("aria-selected") !== "true") await onglet.click();
+  return page;
+}
+
+/* Le raccourci le plus employe : aller au centre Boss et ouvrir ses groupes.
+
+   Il n attend PAS la grille. Plusieurs parcours eprouvent une lecture en
+   panne, en attente ou en maintenance : le centre Boss y affiche un message
+   au lieu de ses cartes, et exiger la grille ferait expirer le test avant son
+   assertion. Ce que le helper garantit, c est d avoir ouvert le bon onglet ;
+   Playwright attend deja l element que le test interroge ensuite. */
+async function allerAuxGroupesDeBoss(page){
+  await allerA(page, "boss");
+  await ouvrirSousVue(page, "boss", "groupes");
+}
+
 /* LE HEROS OUVERT DANS LE TEAM BUILDER.
 
    L'ecran montrait quatre cartes de front, et un test visait la seconde par
@@ -172,6 +205,8 @@ async function ouvrirHerosDuBuilder(page, index){
 
 module.exports = {
   allerA,
+  allerAuxGroupesDeBoss,
+  ouvrirSousVue,
   destinationsVisibles,
   ongletsLocauxVisibles,
   ouvrirHerosDuBuilder,

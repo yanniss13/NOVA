@@ -27,7 +27,7 @@ import { resetTeamDraft } from "./builder.js";
 import { Availability } from "./dispos.js";
 import { openAuth } from "./modale-auth.js";
 import { ongletDeLaVue } from "./coquille.js";
-import { showView } from "./navigation.js";
+import { ouvrirSousVue, showView } from "./navigation.js";
 import { toast } from "./toast.js";
 
   /* ---------- Mon suivi : cache hors ligne ----------
@@ -48,6 +48,10 @@ import { toast } from "./toast.js";
   }
 
   async function openDashboardBossTarget(sessionId, mode){
+    /* Le centre Boss compte quatre onglets : une carte de groupe vit sous
+       « Groupes », un rapport sous « Rapports ». Arriver sur la vue d'ensemble
+       montrerait des statistiques a qui vient de cliquer sur une run precise. */
+    ouvrirSousVue("boss", mode === "edit-report" ? "rapports" : "groupes");
     const loaded = await showView("boss");
     if(!loaded){
       toast("Le groupe n’a pas pu être chargé.", true);
@@ -146,6 +150,7 @@ import { toast } from "./toast.js";
       return;
     }
     if(action.type === "find-group"){
+      ouvrirSousVue("boss", "groupes");
       const loaded = await showView("boss");
       if(!loaded) return;
       const target = $("#bossBody").querySelector(

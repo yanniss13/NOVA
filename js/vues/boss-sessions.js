@@ -48,7 +48,9 @@ import { bossReportParticipant, bossTeamBanner } from "./equipe-boss.js";
 import { ModalStack, closeModalAfterAsyncRefresh } from "./modal-stack.js";
 import { openAuth } from "./modale-auth.js";
 import { ongletDeLaVue } from "./coquille.js";
-import { showView } from "./navigation.js";
+import {
+  enregistrerSousVues, ouvrirSousVue, showView
+} from "./navigation.js";
 import { enregistrerGestionnaireRoute } from "./routage.js";
 import { toast } from "./toast.js";
 
@@ -363,6 +365,128 @@ import { toast } from "./toast.js";
     if(target && target.getClientRects().length) target.focus();
   }
 
+  /* LES TROIS SOUS-VUES DU CENTRE BOSS.
+
+     La maquette tient tout le centre de commandement en un ecran a onglets.
+     Ce ne sont pas des vues : meme lecture de donnees, meme titre, meme
+     adresse — seul change ce qu'on regarde. L'ecran affichait les quatre
+     blocs a la suite, ce qui donnait une page de deux metres ou la carte d'un
+     groupe se lisait apres les statistiques de la semaine.
+
+     Les disponibilites restent une vue a part : elles ecrivent, elles ont leur
+     module et leurs tests. */
+  const BOSS_SOUS_VUES = ["apercu", "groupes", "rapports"];
+  let bossSousVue = "apercu";
+
+  enregistrerSousVues("boss", {
+    lire:() => bossSousVue,
+    poser(sousVue){
+      if(!BOSS_SOUS_VUES.includes(sousVue)) return;
+      if(sousVue === bossSousVue) return;
+      bossSousVue = sousVue;
+      /* Redessiner ne vaut que si l'ecran est deja la : sinon `showView`
+         s'en chargera, et rendre deux fois ferait clignoter la page. */
+      if($("#view-boss").classList.contains("active")) renderBossContent();
+    }
+  });
+
+  /* LA VUE D'ENSEMBLE : le cadre majeur, les chiffres de la semaine, et la
+     proposition de composition. C'est ce qu'on regarde avant d'agir. */
+  function bossApercu(body, contexte){
+    const { week, current, membership, allGroups, reports, myCount } = contexte;
+    const placesLibres = current.reduce((total, groupe) => {
+      const occupees = membership.filter(m => m.session_id === groupe.id).length;
+      return total + Math.max(0, 5 - occupees);
+    }, 0);
+    const stats = bossStatsForWeek(allGroups, reports, week.startDate);
+
+    body.appendChild(el("section",{class:"ornate-panel boss-feature"},[
+      el("div", null, [
+        el("p",{class:"context-label",text:"Boss de la semaine"}),
+        el("h2",{text:BOSS_NAME}),
+        el("p",{text:"Semaine du " + frDate(week.startDate)
+          + " au " + frDate(week.endDate) + " · reset lundi 9h"})
+      ]),
+      el("div",{class:"feature-score"},[
+        el("span",{text:"Tes runs"}),
+        el("strong",{text:myCount + "/3"}),
+        el("small",{text:placesLibres
+          ? placesLibres + " place" + (placesLibres > 1 ? "s" : "") + " libre"
+            + (placesLibres > 1 ? "s" : "") + " dans les groupes"
+          : "Tous les groupes sont complets"})
+      ]),
+      el("button",{
+        class:"btn btn-primary",
+        type:"button",
+        dataset:{ bossAction:"aller-aux-groupes" },
+        text:"Voir les groupes",
+        onclick:()=>void ouvrirSousVue("boss", "groupes")
+      })
+    ]));
+
+    /* LES CHIFFRES DE LA SEMAINE. Ils gardent leur contenu — rapports remis,
+       meilleur score, moyenne, dernier score, et l ecart avec la semaine
+       precedente — et prennent la rangee cloisonnee de la maquette. Les
+       remplacer par « groupes ouverts / places libres » aurait perdu
+       l evolution, que rien d autre ne calcule ; ces deux chiffres-la sont
+       deja dans le cadre majeur. */
+    body.appendChild(bossStatsBlock(allGroups, reports, week.startDate));
+
+    body.appendChild(bossRecommendationPanel(contexte.weekGroups, membership));
+  }
+
+  /* LES GROUPES : les six cartes de la semaine, et rien d'autre. */
+  function bossGroupes(body, contexte){
+    const { current, membership, myCount } = contexte;
+    if(!current.length){
+      body.appendChild(el("div",{class:"empty-state"},[
+        el("p",{class:"big",text:"Groupes en préparation…"}),
+        el("p",{text:"Recharge la page dans un instant."})
+      ]));
+      return;
+    }
+    body.appendChild(el("div",{class:"section-title-row"},[
+      el("div", null, [
+        el("p",{class:"context-label",text:"Cette semaine"}),
+        el("h2",{text:"Les groupes ouverts"})
+      ]),
+      el("span",{text:current.length + " sur 6"})
+    ]));
+    const grid = el("div",{class:"boss-grid"});
+    current.forEach(g => grid.appendChild(bossGroupCard(g, membership, myCount)));
+    body.appendChild(grid);
+  }
+
+  /* LES RAPPORTS : ce qui a ete joue cette semaine, puis les archives. */
+  function bossRapports(body, contexte){
+    const { completedCurrent, past, membership, reports } = contexte;
+    if(!completedCurrent.length && !past.length){
+      body.appendChild(el("div",{class:"state-panel"},[
+        el("b",{text:"Aucune run terminée"}),
+        el("span",{text:"Les rapports apparaissent ici dès qu'une run est jouée."})
+      ]));
+      return;
+    }
+    if(completedCurrent.length){
+      body.appendChild(el("div",{class:"section-title-row"},[
+        el("div", null, [
+          el("p",{class:"context-label",text:"Cette semaine"}),
+          el("h2",{text:"Runs terminées"})
+        ]),
+        el("span",{text:completedCurrent.length + " run"
+          + (completedCurrent.length > 1 ? "s" : "")})
+      ]));
+      body.appendChild(bossArchiveRows(completedCurrent, membership, reports));
+    }
+    if(past.length){
+      body.appendChild(el("div",{class:"section-title-row"},[
+        el("h2",{text:"Archives"}),
+        el("span",{text:"semaines précédentes"})
+      ]));
+      body.appendChild(bossArchive(past, membership, reports));
+    }
+  }
+
   function renderBossContent(){
     const focusedAction = focusedBossActionIdentity();
     const body = $("#bossBody");
@@ -388,39 +512,14 @@ import { toast } from "./toast.js";
     $("#bossCount").innerHTML =
       "<b>"+myCount+"/3</b> runs réservés ou terminés";
 
-    body.appendChild(el("div",{class:"ornate-panel boss-weekhead"},[
-      el("p",{class:"context-label", text:"Boss de la semaine"}),
-      el("div",{class:"boss-weekboss", text:BOSS_NAME}),
-      el("div",{class:"boss-weeksub", text:"Semaine du "+frDate(week.startDate)+" au "+frDate(week.endDate)+" · reset lundi 9h"})
-    ]));
-    body.appendChild(bossRecommendationPanel(weekGroups, membership));
-    body.appendChild(bossStatsBlock(allGroups, reports, week.startDate));
+    const contexte = {
+      week, allGroups, membership, reports,
+      weekGroups, current, completedCurrent, past, myCount
+    };
+    if(bossSousVue === "groupes") bossGroupes(body, contexte);
+    else if(bossSousVue === "rapports") bossRapports(body, contexte);
+    else bossApercu(body, contexte);
 
-    if(!current.length){
-      body.appendChild(el("div",{class:"empty-state"},[
-        el("p",{class:"big",text:"Groupes en préparation…"}),
-        el("p",{text:"Recharge la page dans un instant."})
-      ]));
-    }else{
-      const grid = el("div",{class:"boss-grid"});
-      current.forEach(g => grid.appendChild(bossGroupCard(g, membership, myCount)));
-      body.appendChild(grid);
-    }
-
-    if(completedCurrent.length){
-      const currentArchive = el("details",{
-        class:"boss-archive boss-archive-current",
-        open:true
-      });
-      currentArchive.appendChild(el("summary",{
-        text:"Runs terminées cette semaine ("+completedCurrent.length+")"
-      }));
-      currentArchive.appendChild(
-        bossArchiveRows(completedCurrent, membership, reports)
-      );
-      body.appendChild(currentArchive);
-    }
-    if(past.length) body.appendChild(bossArchive(past, membership, reports));
     restoreBossActionFocus(focusedAction);
   }
 
@@ -1580,11 +1679,23 @@ import { toast } from "./toast.js";
       class:"ornate-panel boss-card"+(mine?" mine":""),
       dataset:{sessionId:g.id}
     },[
+      /* L'EN-TETE DE CARTE DE LA MAQUETTE : l'etat du groupe en petites
+         capitales, son nom en dessous, et le remplissage a droite. On lisait
+         auparavant « Groupe 1 · Run 1 » et « 0/5 joueurs » sur la meme ligne,
+         de meme poids : rien ne disait ou en etait le groupe. */
       el("div",{class:"boss-card-head"},[
-        el("span",{
-          class:"boss-card-title",
-          text:g.title+" · Run "+(g.run_no||1)
-        }),
+        el("div", null, [
+          el("span",{
+            class:"boss-card-state",
+            text:members.length >= 5
+              ? "Complet"
+              : (members.length ? "En composition" : "Ouvert")
+          }),
+          el("h2",{
+            class:"boss-card-title",
+            text:g.title+" · Run "+(g.run_no||1)
+          })
+        ]),
         el("span",{
           class:"boss-membercount",
           text:members.length+"/5 joueurs"
@@ -1654,6 +1765,11 @@ import { toast } from "./toast.js";
 
   async function ouvrirRouteBossGroupe(route){
     bossRouteTargetId = route.sessionId;
+    /* UN LIEN VERS UN GROUPE OUVRE L'ONGLET QUI LE MONTRE. Les cartes vivent
+       sous « Groupes » depuis que le centre Boss en compte quatre : ouvrir la
+       vue sur « Vue d'ensemble » aurait affiche des statistiques a qui vient
+       de cliquer sur un groupe precis. On pose la sous-vue AVANT le rendu. */
+    ouvrirSousVue("boss", "groupes");
     const loaded = await showView("boss", {historyMode:"none"});
     if(!loaded) return false;
     ciblerGroupeBoss(bossRouteTargetId);

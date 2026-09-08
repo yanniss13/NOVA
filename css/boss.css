@@ -86,9 +86,16 @@
 /* Le titre et le compte sont separes du contenu par un filet, comme les
    cartes de la maquette : la carte se lit alors en trois temps — qui, avec
    qui, et quoi faire. */
-.boss-card-head{display:flex;align-items:center;gap:8px;justify-content:space-between;
+.boss-card-head{display:flex;align-items:flex-start;gap:14px;justify-content:space-between;
   padding-bottom:12px;border-bottom:1px solid var(--line-soft)}
-.boss-card-title{font-family:var(--display);font-weight:500;font-size:19px;color:var(--parchment);
+/* L'etat du groupe, en petites capitales dorees au-dessus de son nom : la
+   carte de la maquette dit d'abord OU EN EST le groupe, puis lequel c'est. */
+.boss-card-state{
+  display:block;color:var(--gold-light);font-size:11px;
+  letter-spacing:.055em;text-transform:uppercase
+}
+.boss-card-title{display:block;margin:4px 0 0;font-family:var(--display);font-weight:500;
+  font-size:19px;color:var(--parchment);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .boss-membercount{font-size:11px;font-weight:700;letter-spacing:.04em;color:var(--mist);flex:none;
   padding:2px 9px;border-radius:999px;border:1px solid var(--line-soft)}

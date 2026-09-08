@@ -174,8 +174,8 @@ async function installConnectedSupabase(page, connected = true){
     assert.deepEqual(
       await ongletsLocaux.allTextContents()
         .then(items => items.map(item => item.trim())),
-      ["Disponibilités", "Groupes et rapports"],
-      "le centre Boss doit exposer ses deux sections");
+      ["Vue d'ensemble", "Disponibilités", "Groupes", "Rapports"],
+      "le centre Boss doit exposer ses quatre sections");
     const cibles = await ongletsLocaux.evaluateAll(boutons =>
       boutons.map(bouton => bouton.getBoundingClientRect().height));
     cibles.forEach(hauteur => assert.ok(hauteur >= CIBLE_TACTILE_PX,

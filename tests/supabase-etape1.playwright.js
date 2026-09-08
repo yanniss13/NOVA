@@ -4,7 +4,7 @@ const assert = require("node:assert/strict");
 const { CIBLE_TACTILE_PX } = require("./helpers/cible-tactile");
 const { serveRepo } = require("./helpers/serve");
 const {
-  allerA, destinationsVisibles, entreeDeLaRubrique, entreeDeLaVue,
+  allerA, allerAuxGroupesDeBoss, ouvrirSousVue, destinationsVisibles, entreeDeLaRubrique, entreeDeLaVue,
   ouvrirLeCompte
 } = require("./helpers/naviguer");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
@@ -2318,6 +2318,9 @@ async function attendrePseudo(page, pseudo){
         });
       }
     });
+    /* Ce scenario veut l'ECHEC de lecture : la grille n'apparait pas, et
+       l'attendre ferait expirer le parcours avant l'assertion. On ouvre donc
+       la vue seule, et l'onglet des groupes une fois la lecture reparee. */
     await allerA(page, "boss");
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadFailureOnce === null
@@ -2325,6 +2328,7 @@ async function attendrePseudo(page, pseudo){
     assert.doesNotMatch(await page.locator("#bossBody").textContent(), /Chargement/);
     assert.match(await page.locator("#bossBody").textContent(), /Groupes indisponibles/);
     await page.getByRole("button", { name:"Réessayer", exact:true }).click();
+    await ouvrirSousVue(page, "boss", "groupes");
     await page.locator(".boss-grid .boss-card").nth(5).waitFor();
     assert.equal(await page.locator(".boss-grid .boss-card").count(), 6);
     const membershipBatchSizes = await page.evaluate(() =>
@@ -2348,6 +2352,8 @@ async function attendrePseudo(page, pseudo){
       211,
       "Tous les UUID historiques et courants doivent être interrogés"
     );
+    /* Les archives vivent sous l'onglet « Rapports » du centre Boss. */
+    await ouvrirSousVue(page, "boss", "rapports");
     assert.match(
       await page.locator(".boss-archive").textContent(),
       /Historique 205/,
@@ -2372,6 +2378,9 @@ async function attendrePseudo(page, pseudo){
       };
     });
     await allerA(page, "builder");
+    /* Encore un scenario d ECHEC : le centre Boss affiche son message de
+       maintenance au lieu de ses groupes. On ouvre la vue seule, puis
+       l onglet des groupes une fois la lecture reparee. */
     await allerA(page, "boss");
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadFailureOnce === null
@@ -2387,6 +2396,7 @@ async function attendrePseudo(page, pseudo){
       name:"Réessayer",
       exact:true
     }).click();
+    await ouvrirSousVue(page, "boss", "groupes");
     await page.locator(".boss-grid .boss-card").nth(5).waitFor();
 
     const alteredSeedResult = await page.evaluate(async () => {
@@ -2544,7 +2554,7 @@ async function attendrePseudo(page, pseudo){
       };
     });
     await allerA(page, "builder");
-    await allerA(page, "boss");
+    await allerAuxGroupesDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadFailureOnce === null
     );
@@ -3428,7 +3438,7 @@ async function attendrePseudo(page, pseudo){
     await page.evaluate(teams => {
       window.__fakeSupabaseState.teams.push(...teams);
     }, ownTeams);
-    await allerA(page, "boss");
+    await allerAuxGroupesDeBoss(page);
     await groupOne.getByRole("button", { name:"Changer", exact:true }).waitFor();
 
     const fullGroup = page.locator(".boss-card", {
@@ -3740,7 +3750,7 @@ async function attendrePseudo(page, pseudo){
     await page.getByRole("button", { name:"Se connecter", exact:true }).click();
     // Une connexion réussie ouvre l'accueil : ce scénario revient sur Boss.
     await page.locator("#view-home.active").waitFor({ state:"visible" });
-    await allerA(page, "boss");
+    await allerAuxGroupesDeBoss(page);
     await page.locator(".boss-card", { hasText:"Groupe 1 · Run 1" })
       .getByRole("button", { name:"Rejoindre", exact:true }).waitFor();
     assert.match(await page.locator("#bossCount").textContent(), /0\/3/);
@@ -4681,8 +4691,14 @@ async function attendrePseudo(page, pseudo){
     );
     assert.equal(await page.locator(".boss-grid .boss-card").count(), 6);
     assert.match(await page.locator("#bossCount").textContent(), /3\/3/);
-    assert.match(await page.locator(".boss-archive-current").textContent(), /Groupe 2 · Run 1/);
-    assert.match(await page.locator(".boss-archive-current").textContent(), /Yannis/);
+    /* Les runs terminees de la semaine vivent sous l onglet « Rapports »,
+       en liste de cartes plutot qu en bloc repliable : c est la disposition
+       de la maquette. */
+    await ouvrirSousVue(page, "boss", "rapports");
+    const rapportsDeLaSemaine = () => page.locator("#bossBody").textContent();
+    assert.match(await rapportsDeLaSemaine(), /Groupe 2 · Run 1/);
+    assert.match(await rapportsDeLaSemaine(), /Yannis/);
+    /* Tout ce qui suit travaille sur les rapports : on reste sur leur onglet. */
 
     const doubleCompleteError = await page.evaluate(async id => {
       const result = await window.__fakeSupabaseClient.rpc(
@@ -5039,6 +5055,7 @@ async function attendrePseudo(page, pseudo){
     }, archivedId);
     await allerA(page, "builder");
     await allerA(page, "boss");
+    await ouvrirSousVue(page, "boss", "rapports");
     await page.locator(".boss-report-card", {
       hasText:"Groupe 2 · Run 1"
     }).getByText("Rotation corrigée.", { exact:true }).waitFor();
@@ -5068,6 +5085,7 @@ async function attendrePseudo(page, pseudo){
     }, archivedId);
     await allerA(page, "builder");
     await allerA(page, "boss");
+    await ouvrirSousVue(page, "boss", "rapports");
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
         .some(item => item.token === "boss-old-success" && item.claimed)
@@ -5079,6 +5097,7 @@ async function attendrePseudo(page, pseudo){
     }, archivedId);
     await allerA(page, "builder");
     await allerA(page, "boss");
+    await ouvrirSousVue(page, "boss", "rapports");
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
         .some(item => item.token === "boss-new-success" && item.claimed)
@@ -5117,12 +5136,14 @@ async function attendrePseudo(page, pseudo){
     });
     await allerA(page, "builder");
     await allerA(page, "boss");
+    await ouvrirSousVue(page, "boss", "rapports");
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
         .some(item => item.token === "boss-old-error" && item.claimed)
     );
     await allerA(page, "builder");
     await allerA(page, "boss");
+    await ouvrirSousVue(page, "boss", "rapports");
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
         .some(item => item.token === "boss-new-after-error" && item.claimed)
@@ -5309,6 +5330,9 @@ async function attendrePseudo(page, pseudo){
       return { currentId, previousId, legacyId };
     }, archivedId);
 
+    /* Les chiffres de la semaine vivent dans la vue d ensemble du centre
+       Boss ; le parcours vient des rapports. */
+    await ouvrirSousVue(page, "boss", "apercu");
     const bossStats = page.locator(".boss-stats");
     await page.waitForFunction(() =>
       document.querySelector(".boss-stat-count")?.textContent === "2"
@@ -5398,6 +5422,7 @@ async function attendrePseudo(page, pseudo){
       "+4 503 599 627 370 495 (+100,00 %) par rapport à la semaine précédente",
       "Le delta et le pourcentage ne doivent perdre aucun bit via Number"
     );
+    await ouvrirSousVue(page, "boss", "rapports");
     await page.locator("details.boss-archive:not(.boss-archive-current)>summary")
       .click();
     await page.getByText(
@@ -5454,8 +5479,9 @@ async function attendrePseudo(page, pseudo){
       );
       membership.pseudo = pseudo;
     }, longBossPseudo);
+    /* Un pseudo interminable se lit sur la carte de son GROUPE. */
     await allerA(page, "builder");
-    await allerA(page, "boss");
+    await allerAuxGroupesDeBoss(page);
     await page.locator(".boss-member-name", { hasText:longBossPseudo }).waitFor();
 
     for(const width of [320, 360, 390]){
@@ -6006,7 +6032,7 @@ async function attendrePseudo(page, pseudo){
     assert.equal(await page.locator("#accountPseudo").textContent(), "Merlin");
 
     // La connexion précédente a ouvert « Mon suivi » : ce scénario vise Boss.
-    await allerA(page, "boss");
+    await allerAuxGroupesDeBoss(page);
     const merlinGroupOne = page.locator(".boss-card", {
       hasText:"Groupe 1 · Run 1"
     });
