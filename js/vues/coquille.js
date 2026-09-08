@@ -294,9 +294,8 @@ function ongletDeLaVue(nom){
 const SURGISSANTS = [
   { panneau:"#toolsMenu", declencheur:"#toolsMenuButton" },
   { panneau:"#accountMenu", declencheur:"#accountMenuButton" },
-  /* Le tiroir a DEUX declencheurs : le bouton du menu en haut, et « Plus » en
-     bas. Le focus doit revenir a celui qui l'a ouvert — le rendre toujours au
-     premier renverrait le doigt en haut de l'ecran apres un geste au pouce. */
+  /* Le tiroir n'a qu'UN declencheur : « Plus », dans la barre du pouce. Il en
+     avait un second dans l'en-tete, pour le meme panneau. */
   { panneau:"#mobileDrawer", declencheur:"#mobileMoreButton" }
 ];
 
