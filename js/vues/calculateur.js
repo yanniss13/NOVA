@@ -1027,6 +1027,35 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
     if(!vue) return;
     vue.textContent = "";
 
+    /* DEUX COLONNES, comme la maquette : ce qui ALIMENTE le calcul a gauche,
+       ce qui en SORT a droite.
+
+       L ecran empilait tout sur une colonne — selecteurs, preset, bases,
+       enchantements, puis huit panneaux de sources de buffs — et il fallait
+       les depasser tous pour atteindre le tableau des degats, qui est
+       pourtant la seule raison d ouvrir cette page.
+
+       La disposition se pose a la premiere ecriture : un build illisible
+       s arrete avant, et n a pas a montrer deux colonnes vides. */
+    const commandes = el("aside",{class:"ornate-panel calculator-controls"});
+    const resultats = el("section",{class:"calculator-results"});
+    let disposition = null;
+    function poserLaDisposition(){
+      if(disposition) return;
+      disposition = el("div",{class:"calculator-layout"},[commandes, resultats]);
+      vue.appendChild(disposition);
+    }
+    const enCommandes = noeud => {
+      if(!noeud) return;
+      poserLaDisposition();
+      commandes.appendChild(noeud);
+    };
+    const enResultats = noeud => {
+      if(!noeud) return;
+      poserLaDisposition();
+      resultats.appendChild(noeud);
+    };
+
     const entries = fichesDuMembre();
 
     /* Deux sources possibles, et c'est voulu : un build IMPOSE par le lien
@@ -1039,7 +1068,7 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
     let hero = null;
     if(etat.heroImpose){
       hero = etat.heroImpose;
-      vue.appendChild(el("div",{class:"calc-form"},[
+      enCommandes(el("div",{class:"calc-form"},[
         /* Trois portes menent ici — la fiche d'une equipe, la fiche d'un
            roster, et le Builder — donc la phrase ne peut en nommer aucune.
            Elle dit la seule chose qui compte pour lire les chiffres : ce
@@ -1070,6 +1099,8 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
       ]));
     } else {
       if(!entries.length){
+        /* Pleine largeur : aucune commande n a encore ete ecrite, et deux
+           colonnes dont une vide diraient qu il manque quelque chose. */
         vue.appendChild(blocSansRoster());
         return;
       }
@@ -1079,7 +1110,7 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
       if(!etat.typeArme || types.indexOf(etat.typeArme) === -1){
         etat.typeArme = types[0] || null;
       }
-      vue.appendChild(selecteurs(entries, dessiner));
+      enCommandes(selecteurs(entries, dessiner));
       if(!etat.typeArme){
         vue.appendChild(el("p",{class:"calc-muette",
           text:"Ce personnage ne porte aucun build enregistré."}));
@@ -1152,13 +1183,13 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
       .reduce((total, passif) => total + (Number(passif.valeur) || 0), 0);
     /* Place AVANT le garde-fou de completude : c'est precisement quand il
        manque des pieces qu'on veut essayer un preset pour les combler. */
-    vue.appendChild(sectionPresetEssai(dessiner));
+    enCommandes(sectionPresetEssai(dessiner));
 
     const bases = basesDuBuild(hero, element, apportsElementaires);
     if(!bases.stats){
       /* « Il manque » plutot que « Configuration a completer : » — la liste
          cite deja des configurations, et la phrase se repetait. */
-      vue.appendChild(el("p",{class:"calc-muette",
+      enResultats(el("p",{class:"calc-muette",
         text:bases.manques.length
           ? "Il manque " + libelleDesManques(bases.manques) + "."
           : "Configuration à compléter."}));
@@ -1172,8 +1203,8 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
       setId:"equip_t5_greed"
     });
 
-    vue.appendChild(champsDeBase(bases.stats, dessiner));
-    vue.appendChild(sectionEssaiEnchantements(
+    enCommandes(champsDeBase(bases.stats, dessiner));
+    enCommandes(sectionEssaiEnchantements(
       hero, etat.essaiEnchantements, dessiner
     ));
     /* Le taux RETOUCHE, pas celui du build : c'est lui qui entrera dans le
@@ -1182,9 +1213,9 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
       critRate:valeurRetouchee("critRate", bases.stats.critRate),
       cible:cibleCourante()
     });
-    if(sectionEnsemble) vue.appendChild(sectionEnsemble);
+    if(sectionEnsemble) enCommandes(sectionEnsemble);
     if(aRetouche()){
-      vue.appendChild(el("p",{class:"calc-avertissement calc-retouche",
+      enCommandes(el("p",{class:"calc-avertissement calc-retouche",
         text:"Valeurs retouchées — ne reflète plus ton build."}));
     }
 
@@ -1205,17 +1236,17 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
 
     /* TOUT COCHER d'abord, au-dessus des cinq sections qu'elle commande :
        le membre lit ce qu'elle fait avant de voir les cases, pas apres. */
-    vue.appendChild(sectionToutCocher(
+    enCommandes(sectionToutCocher(
       lignesCochables(
         soutiens, passifsGraves, potentiels, passifsArmes, supplements
       ),
       dessiner
     ));
-    vue.appendChild(sectionSoutiens(soutiens, dessiner, coequipiersChoisis()));
-    vue.appendChild(sectionTenuesGravees(passifsGraves, dessiner));
-    vue.appendChild(sectionPotentiels(potentiels, dessiner));
-    vue.appendChild(sectionPassifsArmes(passifsArmes, dessiner));
-    vue.appendChild(sectionSupplements(supplements, dessiner));
+    enCommandes(sectionSoutiens(soutiens, dessiner, coequipiersChoisis()));
+    enCommandes(sectionTenuesGravees(passifsGraves, dessiner));
+    enCommandes(sectionPotentiels(potentiels, dessiner));
+    enCommandes(sectionPassifsArmes(passifsArmes, dessiner));
+    enCommandes(sectionSupplements(supplements, dessiner));
 
     /* Les sources cochees portent une stat ou un effet lisible par le moteur.
        Le taux ELEMENTAIRE des passifs d'arme n'y entre pas : il a deja ete
@@ -1257,7 +1288,7 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
       + (scenarioEnsemble && scenarioEnsemble.etat > 0 ? 1 : 0);
     /* « ligne(s) active(s) » couvre aussi les passifs regles au cran, qui ne
        viennent pas forcement d'un coequipier et ne cochent aucune case. */
-    vue.appendChild(el("p",{class:"calc-avertissement",
+    enResultats(el("p",{class:"calc-avertissement",
       text:cochesVisibles
         ? "Avec " + cochesVisibles + " ligne(s) active(s)."
         : "Héros seul."}));
@@ -1298,7 +1329,7 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
         competence, supplementsRetenus(supplements)
       ));
     if(!competences.length){
-      vue.appendChild(el("p",{class:"calc-muette",
+      enResultats(el("p",{class:"calc-muette",
         text:"Aucune compétence connue pour ce type d'arme."}));
     } else {
       const lignesReference = resultatsParCompetence({
@@ -1311,15 +1342,15 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
         bonusPotentielParCategorie:basesEssai.bonusPotentielParCategorie,
         cible:cibleCourante()
       });
-      vue.appendChild(tableauDesCompetences(
+      enResultats(tableauDesCompetences(
         etat.charId, resultatsParCompetenceCompares(lignesReference, lignesEssai)
       ));
-      vue.appendChild(sectionCalibration(
+      enResultats(sectionCalibration(
         competences, entrees, bonusParCategorie, mesuree, dessiner,
         bases.bonusPotentielParCategorie
       ));
     }
-    vue.appendChild(avertissements());
+    enResultats(avertissements());
   }
 
   function renderCalculateur(){
@@ -1329,7 +1360,7 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
         const vue = $("#calculateurBody");
         if(vue){
           vue.textContent = "";
-          vue.appendChild(el("p",{class:"calc-muette",
+          enResultats(el("p",{class:"calc-muette",
             text:"Le catalogue de compétences n'a pas pu être chargé. "
               + "Réessaie en rouvrant l'onglet."}));
         }

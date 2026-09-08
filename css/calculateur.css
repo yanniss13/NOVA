@@ -220,3 +220,24 @@
   .calc-carte{padding:10px 11px}
   .calc-resultat .calc-table th,.calc-resultat .calc-table td{padding:8px 10px}
 }
+
+/* ---------- Les deux colonnes ---------- */
+
+/* Ce qui alimente le calcul a gauche, ce qui en sort a droite. L ecran
+   empilait tout sur une colonne, et il fallait depasser huit panneaux de
+   cases a cocher pour atteindre le tableau des degats. */
+.calculator-layout{
+  display:grid;grid-template-columns:minmax(300px,340px) minmax(0,1fr);
+  gap:14px;align-items:start;margin-top:22px
+}
+.calculator-controls{padding:20px;border-radius:var(--radius);min-width:0}
+.calculator-results{min-width:0;display:grid;gap:10px;align-content:start}
+/* La colonne des commandes est etroite : ses champs et ses listes s empilent
+   au lieu de se ranger en rangees, qui n y tiendraient pas. */
+.calculator-controls .calc-form{flex-direction:column;align-items:stretch}
+.calculator-controls .calc-champ{min-width:0}
+.calculator-controls .calc-coequipiers .calc-champ{flex:1 1 100%}
+@media(max-width:1179px){
+  .calculator-layout{grid-template-columns:1fr}
+  .calculator-controls .calc-form{flex-direction:row;flex-wrap:wrap}
+}
