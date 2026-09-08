@@ -59,14 +59,26 @@ main{
   *,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation:none!important}
 }
 
-/* Le lien d'evitement : premier element focalisable de la page, invisible
-   jusqu'a ce qu'il recoive le focus. */
+/* LE LIEN D'EVITEMENT. Premier element focalisable de la page, il permet a
+   qui navigue au clavier de sauter la barre de navigation. Il n'a de sens que
+   la : sur un telephone, il n'y a rien a sauter au clavier.
+
+   Il se revele sur `:focus-visible`, et non sur `:focus`. La difference n'est
+   pas theorique — le proprietaire l'a vu apparaitre en plein ecran sur son
+   telephone, aplat dore par-dessus la barre d'etat. `:focus` se declenche
+   aussi sur un appui du doigt ou une restitution de focus par le navigateur ;
+   `:focus-visible` ne repond qu'a une navigation au clavier, c'est-a-dire au
+   seul cas ou ce lien sert.
+
+   Il reste hors de l'ecran le reste du temps plutot que masque : un
+   `display:none` le sortirait de l'ordre de tabulation, et il ne servirait
+   plus a personne. */
 .skip-link{
   position:fixed;left:18px;top:8px;z-index:100;padding:10px 14px;
   color:var(--abyss);background:var(--gold-light);text-decoration:none;
   transform:translateY(-160%);
 }
-.skip-link:focus{transform:none}
+.skip-link:focus-visible{transform:none}
 
 .section-eyebrow{
   margin:0 0 4px;color:var(--gold-light);
