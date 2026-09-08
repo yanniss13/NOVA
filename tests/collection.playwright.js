@@ -11,7 +11,6 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
-const { allerA } = require("./helpers/naviguer");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
@@ -41,13 +40,7 @@ const EQUIPEES = [
       appel.table === "collection_items" && appel.operation !== "select"
     ).length
   );
-  /* L'EN-TETE DE COLLECTION dit le compte en deux temps, comme la maquette :
-     « 3 objets sur 249 » en titre, « Encore 246 objets a trouver » dessous.
-     Le test lit les deux d'un coup — c'est le meme fait, ecrit pour etre lu
-     plutot que compte. */
-  const progression = async () =>
-    (await page.locator("#collectionHeadline").textContent())
-    + " · " + (await page.locator("#collectionProgress").textContent());
+  const progression = () => page.locator("#collectionProgress").textContent();
   const attendreTuiles = nombre => page.waitForFunction(
     attendu =>
       document.querySelectorAll("#collectionBody .wiki-tile").length === attendu,
@@ -64,7 +57,7 @@ const EQUIPEES = [
     await page.locator("#authOverlay").waitFor({ state:"visible" });
     await page.getByRole("button",
       { name:"Continuer hors connexion", exact:true }).click();
-    await allerA(page, "collection");
+    await page.locator("#tab-collection").click();
     await tuiles().first().waitFor();
     const total = await tuiles().count();
     /* 238 avant la version 2.0 : le Nunchaku de l'âme vorace porte les armes
@@ -84,11 +77,12 @@ const EQUIPEES = [
     await page.locator("#accountPseudo")
       .getByText("Yannis", { exact:true }).waitFor();
 
-    await allerA(page, "collection");
+    await page.locator("#tab-collection").click();
+    await page.locator("#view-collection").waitFor({ state:"visible" });
     /* Le roster se relit à l'ouverture de l'onglet : les trois armes portées
        quittent « À trouver » sans qu'on ait rien coché. */
     await attendreTuiles(total - EQUIPEES.length);
-    assert.match(await progression(), /3 objets? sur 249 · Encore 246 objets? à trouver\./);
+    assert.match(await progression(), /3 \/ 249 possédés — 246 à trouver/);
 
     /* Une pièce équipée est possédée d'office, verrouillée, et résiste au
        clic : se dire non possédant de ce qu'on équipe serait se contredire. */
@@ -148,7 +142,7 @@ const EQUIPEES = [
     await tuiles().first().click();
     await page.getByText("marqué comme possédé", { exact:false }).waitFor();
     await attendreTuiles(total - EQUIPEES.length - 1);
-    assert.match(await progression(), /4 objets? sur 249 · Encore 245 objets? à trouver\./);
+    assert.match(await progression(), /4 \/ 249 possédés — 245 à trouver/);
     assert.deepEqual(await lignesEnBase(), ["user-1|" + cible],
       "le marquage doit être une ligne en base, pas un état local");
     assert.equal(await tuileDe(cible).count(), 0,
@@ -158,11 +152,9 @@ const EQUIPEES = [
     await page.waitForTimeout(800);
     assert.equal(await tuilesNeuves(), 0,
       "aucune tuile ne doit être recréée par un clic — c'est le clignotement");
-    /* UN nœud écrit par rendu depuis que la ligne est une phrase entière :
-       elle mêlait un nombre en gras et le texte qui suit, soit deux nœuds.
-       Ce que le test compte n'a pas changé — le nombre de RENDUS. */
+    /* Deux nœuds écrits par rendu : le nombre en gras et le texte qui suit. */
     assert.equal(
-      await page.evaluate(() => window.__reecrituresProgression), 1,
+      await page.evaluate(() => window.__reecrituresProgression), 2,
       "un clic ne doit produire qu'un seul rendu, pas trois");
 
     /* Et le filtrage non plus : réduire la grille puis la rétablir doit
@@ -187,7 +179,7 @@ const EQUIPEES = [
     await attendreTuiles(EQUIPEES.length);
     assert.deepEqual(await lignesEnBase(), [],
       "décocher doit supprimer la ligne, pas la marquer");
-    assert.match(await progression(), /3 objets? sur 249 · Encore 246 objets? à trouver\./);
+    assert.match(await progression(), /3 \/ 249 possédés — 246 à trouver/);
 
     /* ---- « Utile à mon roster » : les armes du type que manie un héros du
        roster, et les gravures de ces héros. Meliodas manie l'épée à une main,
@@ -243,7 +235,7 @@ const EQUIPEES = [
     await page.getByText("Collection de Merlin — lecture seule").waitFor();
     /* Merlin possède le Grimoire (marqué) et le porte (équipé) : la fusion des
        deux ensembles ne doit pas le compter deux fois. */
-    assert.match(await progression(), /1 objets? sur 249 · Encore 248 objets? à trouver\./);
+    assert.match(await progression(), /1 \/ 249 possédés — 248 à trouver/);
 
     /* Le Grimoire est à la fois MARQUÉ et ÉQUIPÉ par Merlin : la fusion des
        deux ensembles ne doit pas le compter deux fois — d'où le 1 ci-dessus. */
@@ -299,7 +291,7 @@ const EQUIPEES = [
       .waitFor({ state:"hidden" });
     await page.selectOption("#collectionFilterUtiles", "");
     await attendreTuiles(total);
-    assert.match(await progression(), /3 objets? sur 249 · Encore 246 objets? à trouver\./);
+    assert.match(await progression(), /3 \/ 249 possédés — 246 à trouver/);
 
     assert.deepEqual(errors, [], "aucune erreur de page");
     console.log("PASS Playwright: collection, marquage, verrou et filtres");

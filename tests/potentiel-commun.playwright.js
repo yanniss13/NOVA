@@ -2,7 +2,6 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
-const { allerA, ouvrirHerosDuBuilder } = require("./helpers/naviguer");
 const { chromium } = require("playwright");
 
 const STORAGE_KEY = "confrerie7ds.teams";
@@ -24,7 +23,8 @@ const STORAGE_KEY = "confrerie7ds.teams";
 
     /* L'arrivee se fait sur l'accueil : le Builder demande un clic explicite.
        Ce test parle du potentiel commun, pas de la vue de depart. */
-    await allerA(page, "builder");
+    await page.locator("#tab-builder").click();
+    await page.locator("#view-builder").waitFor({ state:"visible" });
 
     const firstHero = page.locator(".hero").first();
     assert.doesNotMatch(
@@ -388,7 +388,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     assert.notEqual(epeeT2, hacheT2, "Les descriptions doivent suivre l'arme équipée");
     await page.locator("#potClose").click();
 
-    const secondHero = await ouvrirHerosDuBuilder(page, 1);
+    const secondHero = page.locator(".hero").nth(1);
     await chooseHero(page, secondHero, "Meliodas");
     await chooseWeapon(page, secondHero, "Hache");
     assert.equal(await secondHero.locator(".gear-slot.weapon").evaluate(
@@ -524,7 +524,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
       }]));
     }, STORAGE_KEY);
     await page.reload();
-    await allerA(page, "roster");
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     const partialTeam = page.locator("#rosterGrid .team")
       .filter({ hasText:"Stats partielles" })
       .first();
@@ -568,7 +568,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
       }]));
     }, { key:STORAGE_KEY });
     await page.reload();
-    await allerA(page, "roster");
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     assert.match(await page.locator(".mini-pot").first().textContent(), /P8/);
     await page.getByRole("button", { name:"Modifier", exact:true }).click();
     assert.equal(await page.locator(".hero").first().locator(".gear-slot.weapon").evaluate(
@@ -577,7 +577,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     assert.equal(await armorSlot(page.locator(".hero").first(), "Armure gravée").evaluate(
       el => el.classList.contains("filled")
     ), false);
-    const futureHero = await ouvrirHerosDuBuilder(page, 1);
+    const futureHero = page.locator(".hero").nth(1);
     await assertVisibleText(
       futureHero.locator(".weapon-config-summary"),
       "Configuration à compléter"
@@ -598,7 +598,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
       true
     );
     await page.getByRole("button", { name:"Continuer hors connexion", exact:true }).click();
-    await allerA(page, "roster");
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     page.once("dialog", dialog => dialog.accept());
     await page.getByRole("button", { name:"Supprimer", exact:true }).click();
     await page.waitForFunction(key => {

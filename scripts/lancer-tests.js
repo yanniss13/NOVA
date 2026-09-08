@@ -118,12 +118,8 @@ const SUITES = {
     "python -m unittest tests/test_lister_chronometrage.py",
     "python scripts/lister-chronometrage.py --check",
     "node tests/routage.test.js",
-    "node tests/charte.test.js",
-    "node tests/rubriques.test.js",
-    "node tests/coquille.test.js",
     "node tests/analyse-elements.test.js",
-    "node tests/recensement-supports.test.js",
-    "node tests/refonte-maquette.test.js"
+    "node tests/recensement-supports.test.js"
   ],
   e2e: [
     "node tests/routage-groupe.playwright.js",
@@ -148,8 +144,7 @@ const SUITES = {
     "node tests/wiki-lot2.playwright.js",
     "node tests/akumu-page.playwright.js",
     "node tests/collection.playwright.js",
-    "node tests/calculateur.playwright.js",
-    "node tests/refonte-maquette.playwright.js"
+    "node tests/calculateur.playwright.js"
   ]
 };
 

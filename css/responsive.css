@@ -1,39 +1,221 @@
-/* Les requetes @media qui adaptent LES VUES aux petits ecrans.
+/* Les requetes @media qui adaptent tout ce qui precede aux petits ecrans.
 
-   La coquille et l'accueil n'y sont pas : `coquille.css` et `accueil.css`
-   portent chacun ses propres requetes, pour qu'une regle et son adaptation
-   mobile se lisent au meme endroit. Cette feuille ne garde que les vues pas
-   encore reconstruites ; elle maigrira a chaque lot de refonte d'ecran, et
-   disparaitra avec le dernier.
+   ATTENTION : cette feuille doit rester chargee APRES celles qu'elle surcharge,
+   et AVANT dispos.css, qui porte ses propres requetes @media. C'est l'ordre du
+   <style> d'origine ; le changer casserait la mise en page en silence.
 
-   ATTENTION : elle doit rester chargee APRES les feuilles qu'elle surcharge,
-   et AVANT dispos.css, qui porte ses propres requetes. L'ordre est fixe par
+   Sortie du <style> d'index.html. L'ordre de chargement est fixe par
    index.html et verifie par tests/css-ordre.test.js. */
 
 /* ---------- Responsive ---------- */
 
+/* En-tete sur deux etages tant que les onglets ne tiennent pas a cote de la
+   marque et du compte.
+
+   Mesure a l'origine de cette regle : avec neuf onglets, les trois blocs
+   demandent 1845 px. En dessous, `flex-wrap` renvoyait le BLOC COMPTE seul a
+   la ligne, cale a gauche sous le logo, avec un grand vide a sa droite — on
+   lisait un defaut de mise en page, et c'est ce que le membre a signale. Le
+   defaut precede l'onglet Collection : a 1536 px, huit onglets se repliaient
+   deja.
+
+   On choisit donc qui passe a la ligne. Ce sont les ONGLETS, sur toute la
+   largeur et centres : c'est le bloc qui grandit a chaque nouvel onglet, et
+   les neuf restent visibles d'un coup d'oeil. Un rail defilant les aurait
+   caches derriere un chevron — la hauteur gagnee ne vaut pas ca.
+
+   ⚠️ Flexbox ne permet pas de choisir librement : une ligne se remplit dans
+   l'ordre des elements, et seul le DERNIER peut passer a la ligne. C'est
+   `order:3` sur le rail qui le place en fin de file, donc en second etage.
+
+   La borne haute de 1860 px a saute le jour ou le logo LootBar est entre au
+   centre de la premiere ligne. Elle disait « au-dela, les trois blocs tiennent
+   ensemble » : ils sont quatre desormais, et surtout le logo ne serait plus au
+   centre de rien s'il partageait sa ligne avec dix onglets. Les onglets
+   prennent donc leur etage a TOUTES les largeurs, ce qu'ils faisaient deja
+   partout en dessous de 1860 px. */
+@media(min-width:561px){
+  .topbar{row-gap:12px}
+  .tabs-rail{order:3;flex-basis:100%;justify-content:center}
+  /* Entre 561 px et ~1060 px, dix onglets depassent meme une ligne entiere :
+     le rail defile alors, comme en mobile, plutot que d'elargir le document. */
+  .tabs{max-width:100%;overflow-x:auto;scrollbar-width:none}
+  .tabs::-webkit-scrollbar{height:0}
+  .tabs-rail.can-scroll-left .tabs-cue-left,
+  .tabs-rail.can-scroll-right .tabs-cue-right{opacity:1}
+  .tab{white-space:nowrap}
+}
+
+/* Au-dela de ~1060 px, la ligne entiere suffit aux dix onglets - mais de
+   justesse, et la marge depend du RENDU DES POLICES : les memes libelles
+   tiennent sur Windows et debordent sur le Linux de l'integration continue.
+
+   Plutot que de calibrer une largeur sur une police qu'on ne maitrise pas, on
+   retire la possibilite du debordement : les onglets passent a la ligne. Tant
+   qu'ils tiennent, rien ne change a l'ecran ; quand ils ne tiennent pas, ils
+   restent TOUS visibles d'un coup d'oeil - ce qui est precisement ce que le
+   rail defilant coutait, et la raison pour laquelle il a ete refuse ici.
+
+   Les reperes de defilement n'ont donc plus lieu d'etre a ces largeurs, et
+   sont eteints meme si le controleur pose ses classes. */
+@media(min-width:1061px){
+  .tabs{flex-wrap:wrap;overflow-x:visible;justify-content:center}
+  .tabs-rail.can-scroll-left .tabs-cue-left,
+  .tabs-rail.can-scroll-right .tabs-cue-right{opacity:0}
+}
+
 @media(max-width:900px){
+  .hero-grid{grid-template-columns:repeat(2,1fr)}
   .team-heroes{grid-template-columns:repeat(4,1fr)}
+  .topbar{gap:12px}
+  /* PARTAGER LA LIGNE EN DEUX MOITIES EGALES NE MARCHE QUE SI LA MARQUE Y
+     TIENT. En dessous de 900 px elle n'y tient plus : a 600 px, « Confrerie
+     7DS » se coupait en deux et son sous-titre aussi, pour laisser au logo une
+     moitie qu'il ne remplissait pas.
+
+     Le logo prend donc son propre etage, entre la marque et les onglets. Il y
+     est centre de la meme facon, sans rien ecraser. Mesure : au-dessus de
+     900 px la marque tient sur une ligne a toutes les largeurs testees. */
+  .brand{flex:0 1 auto}
+  .account{flex:0 1 auto;margin-left:auto}
+  .lootbar{order:2;flex-basis:100%;justify-content:center}
 }
 @media(max-width:560px){
-  .hero-stats-primary{grid-template-columns:minmax(0,1fr)}
-  /* LA BANDE DEVIENT UN RAIL. Quatre places de 46 px de portrait plus leur
-     nom ne tiennent pas sur 360 px : elles defilent lateralement dans la
-     bande, sans jamais elargir la page. */
-  .team-band{
-    grid-auto-flow:column;grid-auto-columns:minmax(140px,1fr);
-    grid-template-columns:none;overflow-x:auto;
-    margin-inline:calc(var(--respiration-mobile-cote) * -1);
-    padding-inline:var(--respiration-mobile-cote)
+  html{
+    scroll-padding-bottom:calc(82px + env(safe-area-inset-bottom));
+    scroll-padding-top:12px
   }
-  .hero{padding:16px;gap:16px}
+  main{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
+  html.has-mobile-subnav{
+    scroll-padding-bottom:calc(132px + env(safe-area-inset-bottom))
+  }
+  html.has-mobile-subnav main{
+    padding-bottom:calc(140px + env(safe-area-inset-bottom))
+  }
+  .topbar{
+    position:relative;z-index:1;display:flex;flex-wrap:nowrap;
+    padding:max(10px,env(safe-area-inset-top)) 14px 10px;gap:10px
+  }
+  .brand{min-width:0;flex:1 1 auto}
+  .crest{width:36px;height:36px;font-size:16px}
+  .brand-txt{min-width:0}
+  .brand-title{font-size:14px;white-space:nowrap}
+  .brand-sub{display:none}
+  .lootbar{order:initial;flex:0 0 auto;padding:3px 4px}
+  .lootbar img{height:17px}
+  .tabs-rail,.subtabs,.account{display:none!important}
+  .mobile-boss-subnav:not([hidden]){
+    position:fixed;z-index:57;left:8px;right:8px;
+    bottom:calc(70px + env(safe-area-inset-bottom));display:flex;
+    flex-wrap:nowrap;gap:4px;padding:4px;border:1px solid var(--line);
+    border-radius:13px;background:rgba(24,21,30,.98);
+    box-shadow:0 -6px 22px rgba(0,0,0,.32);backdrop-filter:blur(12px)
+  }
+  .mobile-boss-subnav-item{
+    appearance:none;border:1px solid var(--line-soft);border-radius:9px;
+    background:transparent;color:var(--muted);font-family:var(--ui);
+    min-width:0;min-height:44px;flex:1 1 0;padding:7px 5px;
+    font-size:11px;font-weight:600;white-space:normal;cursor:pointer
+  }
+  .mobile-boss-subnav-item.active{
+    color:var(--gold-bright);border-color:var(--gold-bright)
+  }
+  .mobile-boss-subnav-item:focus-visible{
+    outline:2px solid var(--gold-bright);outline-offset:2px
+  }
+
+  .mobile-nav{
+    position:fixed;z-index:58;left:0;right:0;bottom:0;
+    display:flex;align-items:stretch;
+    padding:5px max(4px,env(safe-area-inset-right))
+      max(5px,env(safe-area-inset-bottom)) max(4px,env(safe-area-inset-left));
+    background:linear-gradient(180deg,rgba(27,25,34,.97),rgba(14,13,18,.99));
+    border-top:1px solid var(--line);box-shadow:0 -10px 30px rgba(0,0,0,.3);
+    backdrop-filter:blur(14px)
+  }
+  .mobile-nav-item{
+    appearance:none;min-width:0;min-height:58px;flex:1 1 0;border:0;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:3px;padding:4px 2px;border-radius:10px;background:transparent;
+    color:var(--muted);font:600 10.5px/1 var(--ui);letter-spacing:.01em;
+    cursor:pointer
+  }
+  .mobile-nav-item svg{
+    width:23px;height:23px;padding:3px;box-sizing:content-box;border-radius:9px;
+    fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;
+    stroke-linejoin:round;transition:background .18s,color .18s,transform .18s
+  }
+  .mobile-nav-item.active{color:var(--gold-bright)}
+  .mobile-nav-item.active svg{
+    color:var(--ink);background:linear-gradient(180deg,var(--gold-bright),var(--gold));
+    box-shadow:0 4px 14px rgba(217,164,65,.28);transform:translateY(-1px)
+  }
+  .mobile-nav-item:focus-visible{outline:2px solid var(--gold-bright);outline-offset:-2px}
+  body.mobile-more-open{overflow:hidden;overscroll-behavior:none}
+
+  .mobile-more-backdrop:not([hidden]){
+    position:fixed;z-index:56;inset:0;display:block;background:rgba(5,4,8,.58);
+    backdrop-filter:blur(2px);touch-action:none
+  }
+  .mobile-more-panel:not([hidden]){
+    position:fixed;z-index:59;left:12px;right:12px;
+    bottom:calc(76px + env(safe-area-inset-bottom));display:block;
+    max-height:calc(100dvh - 112px - env(safe-area-inset-bottom));overflow-y:auto;
+    overscroll-behavior:contain;touch-action:pan-y;
+    padding:16px;border:1px solid var(--line);border-radius:18px;
+    background:linear-gradient(155deg,rgba(38,34,45,.99),rgba(18,16,23,.99));
+    box-shadow:0 20px 60px rgba(0,0,0,.55)
+  }
+  .mobile-more-title{
+    margin:0 0 10px;color:var(--gold);font:700 12px/1 var(--display);
+    letter-spacing:.18em;text-transform:uppercase
+  }
+  .mobile-more-links{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .mobile-more-link{
+    appearance:none;min-width:0;min-height:48px;border:1px solid var(--line-soft);
+    border-radius:11px;padding:10px 12px;display:flex;align-items:center;
+    justify-content:space-between;gap:8px;background:rgba(255,255,255,.025);
+    color:var(--parchment);font:600 13px/1.2 var(--ui);cursor:pointer;text-align:left
+  }
+  .mobile-more-link.active{border-color:var(--gold-deep);color:var(--gold-bright)}
+  .mobile-more-link:focus-visible{outline:2px solid var(--gold-bright);outline-offset:2px}
+  .mobile-account-card{
+    margin-top:12px;padding-top:12px;border-top:1px solid var(--line-soft)
+  }
+  .mobile-account-card>.btn{width:100%;justify-content:center}
+  .mobile-account-connected{display:grid;grid-template-columns:1fr auto;gap:8px}
+  .mobile-account-connected[hidden]{display:none}
+  .mobile-account-identity{
+    grid-column:1/-1;display:flex;align-items:center;gap:8px;min-width:0;
+    padding:2px 4px 6px
+  }
+  .mobile-account-identity .account-pseudo{
+    min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap
+  }
+  .mobile-account-identity .live-status{margin-left:auto}
+  .mobile-account-connected .btn{min-width:0;justify-content:center}
+  .mobile-account-connected #mobileBtnMigrateLocal{grid-column:1/-1}
+  .pwa-update{bottom:calc(82px + env(safe-area-inset-bottom))}
+  body.pwa-update-on .toast{
+    bottom:calc(var(--pwa-banner-h,124px) + 94px + env(safe-area-inset-bottom))
+  }
+  html.has-mobile-subnav .pwa-update{
+    bottom:calc(132px + env(safe-area-inset-bottom))
+  }
+  html.has-mobile-subnav body.pwa-update-on .toast{
+    bottom:calc(var(--pwa-banner-h,124px) + 144px + env(safe-area-inset-bottom))
+  }
+
+  .hero-stats-primary{grid-template-columns:minmax(0,1fr)}
+  .hero-grid{grid-template-columns:1fr}
   .team-heroes{grid-template-columns:repeat(2,1fr)}
   .metabar .grow{margin-left:0;width:100%}
   .metabar .grow .btn{flex:1;justify-content:center}
-  /* En dessous de 560 px, la ligne se replie : identite, composition, gestes. */
-  .team{grid-template-columns:1fr;gap:14px}
-  .team-actions{grid-auto-flow:column}
+  .roster-grid{grid-template-columns:1fr}
   .auth-actions{grid-template-columns:1fr}
+  /* Barre de compte : pleine largeur, replis autorisés — ne doit jamais
+     élargir le document (cause du scroll latéral iPhone). */
+  .topbar > *{min-width:0}
   /* iOS Safari zoome automatiquement (et reste zoomé) au focus d'un champ
      dont la police est < 16px — cause du décentrage + scroll latéral signalés
      sur iPhone. On force 16px sur tous les contrôles de saisie en mobile. */
@@ -41,19 +223,48 @@
   .field input, .note, .picker-search{font-size:16px}
   .member-roster-card,.member-roster-toolbar,.member-roster-editor{min-width:0}
   .member-roster-toolbar{align-items:stretch}
-  /* `.member-roster-modes` a disparu avec la bascule commune : la barre
-     d'outils du roster emploie `.segmented`, comme les dispos et l'Analyse. */
-  .member-roster-toolbar .segmented,
+  .member-roster-modes,.member-roster-modes .btn,
   .member-roster-owner-field,.member-roster-owner-field select,
   .member-roster-toolbar #memberRosterAdd{width:100%;min-width:0}
-  .member-roster-toolbar .segmented button{flex:1 1 0;justify-content:center}
+  .member-roster-modes .btn{justify-content:center}
   .member-roster-build-panel{grid-template-columns:1fr}
   .member-roster-editor{padding:14px}
   .hero-source-actions{grid-template-columns:1fr}
   .hero-source-actions .hero-roster-reload{grid-column:auto}
 }
+/* Header rétractable : sur mobile étroit ET sur téléphone en paysage (large
+   mais court). Ce bloc vit hors de `max-width:560px` pour couvrir ce second
+   cas — la hauteur d'écran, faible, y est la ressource rare, et cette faible
+   hauteur distingue le téléphone de l'ordinateur, qui reste déployé. La
+   condition suit celle du script inline d'index.html, sinon le JS replierait
+   sans que la CSS ne le montre.
+   On anime `max-height` + `opacity` (jamais `display`, qui ne se transitionne
+   pas) et on termine sur `visibility:hidden` : c'est ce qui retire ces
+   contrôles de l'ordre de tabulation, comme le faisait `display:none`.
+   `visibility` bascule sans délai à l'ouverture, mais seulement en fin de
+   course à la fermeture, sinon le bloc disparaîtrait avant d'avoir replié. */
+@media (max-height:500px) and (orientation:landscape) and (min-width:561px){
+  .topbar{transition:padding .26s ease, gap .26s ease}
+  .topbar .brand,
+  .topbar .lootbar,
+  .topbar .account{
+    overflow:hidden;max-height:320px;
+    transition:max-height .26s ease, opacity .17s ease .05s, visibility 0s
+  }
+  .topbar.is-retracted{padding-top:8px;padding-bottom:8px;gap:0}
+  /* Le logo se replie avec la marque : replie, le header ne doit rester que
+     les onglets, au plus court. C'est aussi un LIEN, donc focusable - le
+     laisser peint le garderait dans l'ordre de tabulation d'une zone censee
+     avoir disparu. */
+  .topbar.is-retracted .brand,
+  .topbar.is-retracted .lootbar,
+  .topbar.is-retracted .account{
+    max-height:0;opacity:0;visibility:hidden;
+    transition:max-height .26s ease, opacity .15s ease, visibility 0s linear .26s
+  }
+}
 @media (pointer:coarse), (max-width:560px){
-  button,.btn,.chip,.gear-slot,.pot-btn,
+  button,.btn,.tab,.chip,.gear-slot,.pot-btn,
   .member-roster-filter-field select{
     min-height:44px
   }

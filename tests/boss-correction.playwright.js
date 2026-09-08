@@ -18,7 +18,6 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
-const { ouvrirLeCompte, ouvrirSousVue } = require("./helpers/naviguer");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
@@ -35,9 +34,6 @@ async function ouvrirBoss(page){
     }));
     ancre.remove();
   });
-  /* La route mene au centre Boss, qui ouvre sur sa vue d ensemble. Les
-     cartes vivent sous « Groupes » : on ouvre l onglet, comme un membre. */
-  await ouvrirSousVue(page, "boss", "groupes");
   await page.locator("#view-boss .boss-grid").waitFor({ state:"visible" });
 }
 
@@ -50,10 +46,8 @@ async function connecter(page, email){
   await page.getByRole("button", { name:"Se connecter", exact:true }).click();
 }
 
-/* L'archive des semaines passees vit sous l'onglet « Rapports » du centre
-   Boss, et reste repliee a l'ouverture. */
+/* L'archive des semaines passees est repliee a l'ouverture. */
 async function ouvrirArchive(page){
-  await ouvrirSousVue(page, "boss", "rapports");
   const archive = page.locator("#bossBody .boss-archive:not(.boss-archive-current)");
   await archive.waitFor({ state:"visible" });
   if(!(await archive.evaluate(node => node.open))){
@@ -235,8 +229,6 @@ async function ouvrirArchive(page){
     });
 
     /* ---- 6. Un membre ordinaire ne repare rien. ---- */
-
-    await ouvrirLeCompte(page);
 
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await page.locator("#accountLogin").waitFor({ state:"visible" });

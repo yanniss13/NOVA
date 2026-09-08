@@ -28,14 +28,7 @@ const RACINE = path.join(__dirname, "..");
    porte ses propres `@media` et doit gagner sur `responsive` : il reste
    dernier. C'était déjà l'ordre du `<style>` d'origine. */
 const FEUILLES = [
-  /* Le socle commun, dans cet ordre : la charte nomme les couleurs, le
-     socle pose la page, les composants ce que plusieurs vues partagent, la
-     coquille ce qui entoure la vue ouverte, l'accueil la porte d'entree. */
-  "charte",
-  "socle",
-  "composants",
-  "coquille",
-  "accueil",
+  "base",
   "builder",
   "roster",
   "analyse",

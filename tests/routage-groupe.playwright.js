@@ -4,7 +4,6 @@ const assert = require("node:assert/strict");
 const { chromium } = require("playwright");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { serveRepo } = require("./helpers/serve");
-const { allerA, ouvrirSousVue } = require("./helpers/naviguer");
 
 async function activeView(page){
   return page.locator(".view.active").getAttribute("id");
@@ -76,10 +75,10 @@ async function openHistoryFragment(page, fragment){
        de poursuivre, sinon elle intercepte les clics suivants. */
     await publicPage.locator("#authOffline").click();
 
-    await allerA(publicPage, "builder");
+    await publicPage.locator('.tab[data-view="builder"]').click();
     await publicPage.locator("#view-builder.active").waitFor();
     assert.equal(await publicPage.evaluate(() => location.hash), "#builder");
-    await allerA(publicPage, "wiki");
+    await publicPage.locator('.tab[data-view="wiki"]').click();
     await publicPage.locator("#view-wiki.active").waitFor();
     assert.equal(await publicPage.evaluate(() => location.hash), "#wiki");
 
@@ -98,10 +97,7 @@ async function openHistoryFragment(page, fragment){
     try{
       await protectedPage.waitForFunction(() =>
         document.querySelector(".view.active")?.id === "view-boss"
-        /* La route de vue ouvre le centre Boss sur sa vue d ensemble ; les
-           cartes vivent sous l onglet Groupes. Ce qui compte ici est que la
-           route protegee ait ete reprise et la vue rendue. */
-        && !!document.querySelector("#view-boss .boss-feature"), null,
+        && !!document.querySelector("#view-boss .boss-grid"), null,
       { timeout:10000 });
     }catch(error){
       const state = await protectedPage.evaluate(() => ({
@@ -149,10 +145,6 @@ async function openHistoryFragment(page, fragment){
     });
     await openAppFragment(protectedPage, "#boss");
 
-    /* Les cartes des groupes ouverts vivent sous « Groupes », les archives
-       sous « Rapports » : ce sont deux onglets du centre Boss. */
-    await ouvrirSousVue(protectedPage, "boss", "groupes");
-
     const groupCard = protectedPage.locator(
       `.boss-card[data-session-id="${bossFixture.group.id}"]`
     );
@@ -168,7 +160,6 @@ async function openHistoryFragment(page, fragment){
       1
     );
 
-    await ouvrirSousVue(protectedPage, "boss", "rapports");
     const archivedCard = protectedPage.locator(
       `.boss-report-card[data-session-id="${bossFixture.archivedGroup.id}"]`
     );
@@ -178,9 +169,6 @@ async function openHistoryFragment(page, fragment){
     assert.equal(await archivedCard.getByText("Copier le lien").count(), 0,
       "une archive ne reçoit pas les actions des groupes ouverts");
 
-    /* Retour aux groupes ouverts : la suite du parcours agit sur leurs
-       cartes, qui ne sont pas rendues sous l onglet des rapports. */
-    await ouvrirSousVue(protectedPage, "boss", "groupes");
     const emptyCard = protectedPage.locator(
       `.boss-card[data-session-id="${bossFixture.emptyGroup.id}"]`
     );
@@ -312,11 +300,9 @@ async function openHistoryFragment(page, fragment){
       ["Merlin", "Tous", "Yannis"]
     );
     assert.equal(
-      /* Le compte des membres analyses vit dans le panneau « ce qui a ete
-         lu » de la vue d ensemble, premiere ligne. */
       await protectedPage.locator(
-        "#analysePanel-overview .support-list li"
-      ).first().locator("b").textContent(),
+        "#analysePanel-overview .analyse-summary-card"
+      ).first().locator(".analyse-summary-value").textContent(),
       "2",
       "le résumé doit compter les rosters du groupe uniquement"
     );
@@ -337,11 +323,9 @@ async function openHistoryFragment(page, fragment){
       "le filtre manuel reste limité à la matrice"
     );
     assert.equal(
-      /* Le compte des membres analyses vit dans le panneau « ce qui a ete
-         lu » de la vue d ensemble, premiere ligne. */
       await protectedPage.locator(
-        "#analysePanel-overview .support-list li"
-      ).first().locator("b").textContent(),
+        "#analysePanel-overview .analyse-summary-card"
+      ).first().locator(".analyse-summary-value").textContent(),
       "2",
       "filtrer la matrice ne doit pas modifier le résumé"
     );
@@ -357,7 +341,7 @@ async function openHistoryFragment(page, fragment){
         pseudo:"Escanor extérieur"
       });
     }, analyseFixture.group.id);
-    await allerA(protectedPage, "wiki");
+    await protectedPage.locator('.tab[data-view="wiki"]').click();
     await protectedPage.locator("#view-wiki.active").waitFor();
     await openAppFragment(
       protectedPage,
@@ -494,12 +478,8 @@ async function openHistoryFragment(page, fragment){
         window.__fakeSupabaseState.calls.length
       );
       await openHistoryFragment(protectedPage, fragment);
-      /* Le repli d'une route invalide vise l'accueil, pour un compte comme
-         pour un visiteur : c'est la page d'arrivee du site. Ce que ce test
-         protege est ailleurs — le repli ne doit declencher AUCUNE lecture
-         ciblee de boss_sessions. */
-      await protectedPage.locator("#view-home.active").waitFor();
-      assert.equal(await protectedPage.evaluate(() => location.hash), "#home");
+      await protectedPage.locator("#view-dashboard.active").waitFor();
+      assert.equal(await protectedPage.evaluate(() => location.hash), "#dashboard");
       const targetedBossReads = await protectedPage.evaluate(start =>
         window.__fakeSupabaseState.calls.slice(start).filter(call =>
           call.table === "boss_sessions"
@@ -560,7 +540,7 @@ async function openHistoryFragment(page, fragment){
       protectedPage,
       "#analyse/groupe/" + analyseFixture.group.id
     );
-    await allerA(protectedPage, "wiki");
+    await protectedPage.locator('.tab[data-view="wiki"]').click();
     await protectedPage.goBack();
     await protectedPage.locator("#view-analyse.active .analyse-group-context").waitFor();
     assert.equal(await protectedPage.evaluate(() => location.hash),
@@ -578,11 +558,11 @@ async function openHistoryFragment(page, fragment){
     anonymousInvalidPage.on("pageerror", error => errors.push(error.message));
     await installFakeSupabase(anonymousInvalidPage);
     await anonymousInvalidPage.goto(server.url + "/index.html#boss/groupe/%2F");
-    await anonymousInvalidPage.locator("#view-home.active").waitFor();
+    await anonymousInvalidPage.locator("#view-wiki.active").waitFor();
     assert.equal(
       await anonymousInvalidPage.evaluate(() => location.hash),
-      "#home",
-      "une route invalide anonyme doit se replier localement sur l'accueil"
+      "#wiki",
+      "une route invalide anonyme doit se replier localement sur le Wiki"
     );
     assert.equal(
       await anonymousInvalidPage.evaluate(() =>
@@ -598,9 +578,9 @@ async function openHistoryFragment(page, fragment){
     await installFakeSupabase(defaultPage);
     await defaultPage.goto(server.url + "/index.html");
     await signIn(defaultPage);
-    await defaultPage.locator("#view-home.active").waitFor();
-    assert.equal(await defaultPage.evaluate(() => location.hash), "#home",
-      "sans fragment, la connexion doit rester sur l'accueil");
+    await defaultPage.locator("#view-dashboard.active").waitFor();
+    assert.equal(await defaultPage.evaluate(() => location.hash), "#dashboard",
+      "sans fragment, la connexion doit garder Mon suivi par défaut");
 
     assert.deepEqual(errors, [], "aucune erreur JavaScript pendant le routage");
     console.log("routage-groupe.playwright.js navigation OK");

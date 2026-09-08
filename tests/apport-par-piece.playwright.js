@@ -12,7 +12,6 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
-const { allerA } = require("./helpers/naviguer");
 const { chromium } = require("playwright");
 
 const STORAGE_KEY = "confrerie7ds.teams";
@@ -189,7 +188,7 @@ const EQUIPE = {
     }, [STORAGE_KEY, [EQUIPE]]);
     await page.reload();
 
-    await allerA(page, "roster");
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     await page.getByRole("button", { name:/Voir l.équipement/ }).first().click();
 
     await page.getByText(/DPS des compétences sur 60 s/).first()

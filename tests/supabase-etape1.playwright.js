@@ -3,30 +3,57 @@
 const assert = require("node:assert/strict");
 const { CIBLE_TACTILE_PX } = require("./helpers/cible-tactile");
 const { serveRepo } = require("./helpers/serve");
-const {
-  allerA, allerAuxGroupesDeBoss, ouvrirSousVue, destinationsVisibles, entreeDeLaRubrique, entreeDeLaVue,
-  ouvrirLeCompte
-} = require("./helpers/naviguer");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
-/* LE COMPTEUR DE RUNS ENGAGEES. Il s'ecrivait « Runs engagées 2/3 » d'un
-   seul tenant ; la carte de la maquette separe le libelle de la valeur, et un
-   `getByText` exact ne les retrouve plus ensemble. On lit la valeur la ou
-   elle est, et on la compare exactement — ce que le test verifiait. */
-async function attendreRunsEngagees(page, valeur){
-  await page.waitForFunction(attendue => {
-    const cellule = document.querySelector(".boss-feature .feature-score strong");
-    return !!cellule && cellule.textContent.trim() === attendue;
-  }, valeur);
+async function ouvrirVue(page, name){
+  const mobile = {
+    dashboard:"#mobileNavDashboard",
+    builder:"#mobileNavBuilder",
+    roster:"#mobileNavBoss",
+    "member-roster":"#mobileNavRoster"
+  };
+  if(await page.locator("#mobileNavMore").isVisible()){
+    if(mobile[name]){
+      await page.locator(mobile[name]).click();
+      return;
+    }
+    if(["analyse","wiki","collection","calculateur"].includes(name)){
+      await page.locator("#mobileNavMore").click();
+      await page.locator(
+        `#mobileMorePanel [data-mobile-view="${name}"]`
+      ).click();
+      return;
+    }
+  }
+  await page.locator(`.tab[data-view="${name}"]`).click();
 }
 
 async function attendrePseudo(page, pseudo){
-  /* Un seul pseudo depuis la refonte : le tiroir mobile ouvre le meme menu de
-     compte que le bouton de bureau, il n'y a plus de jumeau a synchroniser. */
   await page.waitForFunction(value =>
-    document.querySelector("#accountPseudo")?.textContent === value,
+    ["#accountPseudo","#mobileAccountPseudo"].every(selector =>
+      document.querySelector(selector)?.textContent === value
+    ),
   pseudo);
+}
+
+/* Les Sessions de boss vivent desormais dans le sous-menu de « Boss de
+   Guilde » : on ouvre le groupe, puis l'entree. Deux clics au lieu d'un, et
+   c'est exactement le chemin qu'un membre suit a la souris.
+
+   Le second selecteur est SCOPE a `.subtabs` : sans cela il designerait aussi
+   bien un onglet principal, et le test passerait encore le jour ou le
+   sous-menu aurait disparu. */
+async function ouvrirSessionsDeBoss(page){
+  if(await page.locator("#mobileNavBoss").isVisible()){
+    await page.locator("#mobileNavBoss").click();
+    await page.locator(
+      '#mobileBossSubtabs [data-mobile-view="boss"]'
+    ).click();
+  }else{
+    await page.locator('.tabs .tab[data-view="roster"]').click();
+    await page.locator('.subtabs .tab[data-view="boss"]').click();
+  }
 }
 
 (async()=>{
@@ -115,20 +142,19 @@ async function attendrePseudo(page, pseudo){
       "Le fake doit appliquer l'authentification et la lecture RLS à toutes les ressources Boss"
     );
 
-    /* L'ARRIVEE, sans compte : l'accueil public, et rien qui reclame un compte.
+    /* L'ARRIVEE, sans compte : le Wiki, et rien qui reclame un compte.
 
-       Mon suivi est le point de chute du MEMBRE. Un visiteur n'y verrait qu'une
-       invitation a se connecter : aucune entree ne l'y mene, et la navigation
-       le pose sur l'accueil, entierement consultable sans compte.
+       L'accueil est le point de chute du MEMBRE. Un visiteur n'y verrait
+       qu'une invitation a se connecter, alors son onglet sort de la barre et
+       la navigation replie sur la seule page entierement consultable.
 
-       Le parcours complet du visiteur — les rubriques qui restent, le repli a
-       la deconnexion, le mode hors ligne ou tout redevient visible — vit dans
-       tests/visiteur-anonyme.playwright.js. Ici on ne verifie que le point de
-       depart que tout le reste de ce fichier suppose. */
-    assert.equal(await page.locator("#view-home").isVisible(), true);
+       Le parcours complet du visiteur — les quatre onglets qui restent, le
+       repli a la deconnexion, le mode hors ligne ou tout redevient visible —
+       vit dans tests/visiteur-anonyme.playwright.js. Ici on ne verifie que le
+       point de depart que tout le reste de ce fichier suppose. */
+    assert.equal(await page.locator("#view-wiki").isVisible(), true);
     assert.equal(await page.locator("#view-dashboard").isVisible(), false);
-    assert.equal(await entreeDeLaVue(page, "dashboard").count(), 0,
-      "aucune entree visible ne doit mener au suivi sans compte");
+    assert.equal(await page.locator("#tab-dashboard").isVisible(), false);
 
     await page.locator("#authEmail").fill("yannis@example.test");
     await page.locator("#authPassword").fill("mot-de-passe-test");
@@ -136,33 +162,23 @@ async function attendrePseudo(page, pseudo){
 
     await attendrePseudo(page, "Yannis");
 
-    /* Après connexion, le membre RESTE sur l'accueil : c'est la page
-       d'arrivée de tout le monde. Ce qu'elle lui propose change — « Ma
-       semaine » remplace « Créer mon compte » — et Mon suivi devient un
-       onglet local de la rubrique. */
-    await page.locator("#view-home.active").waitFor({ state:"visible" });
-    await page.locator('.hero-actions [data-view="dashboard"]')
-      .waitFor({ state:"visible" });
+    // Après connexion, « Mon suivi » devient la vue par défaut.
+    await page.locator("#view-dashboard").waitFor({ state:"visible" });
     assert.equal(
-      await entreeDeLaRubrique(page, "guilde").getAttribute("aria-current"),
-      "page",
-      "la rubrique du suivi doit etre surlignee"
+      await page.locator("#tab-dashboard").getAttribute("aria-selected"),
+      "true"
     );
     /* L'ordre de la barre se lit une fois le membre connecte : c'est le seul
        moment ou elle est entiere. */
-    assert.deepEqual(
-      (await destinationsVisibles(page)).rubriques[0],
-      "guilde",
-      "« Notre guilde » doit rester la premiere rubrique"
+    assert.equal(
+      await page.locator(".tabs .tab:not([hidden])").first().getAttribute("id"),
+      "tab-dashboard",
+      "L'accueil doit etre le premier onglet"
     );
-    assert.equal(await entreeDeLaRubrique(page, "guilde").textContent(),
-      "Notre guilde");
+    assert.equal(await page.locator("#tab-dashboard").textContent(), "Accueil");
 
-    /* La carte de chronometrage vit dans Mon suivi, qui n'est plus la vue
-       d'arrivee : on l'ouvre par son onglet local, comme un membre le ferait.
-       Elle arrive apres le rendu — elle lit un fichier statique — et sans elle
-       aucun membre ne peut trouver outils/. */
-    await allerA(page, "dashboard");
+    /* La carte de chronometrage arrive apres le rendu : elle lit un fichier
+       statique, et sans elle aucun membre ne peut trouver outils/. */
     const carteChrono = page.locator('[data-card="chronometrage"]');
     await carteChrono.getByRole("link", { name:"Chronométrer une animation" })
       .waitFor();
@@ -247,7 +263,7 @@ async function attendrePseudo(page, pseudo){
       document.querySelector("#liveStatus")?.textContent === "À jour"
     );
 
-    await allerA(page, "member-roster");
+    await ouvrirVue(page, "member-roster");
     await page.locator("#memberRosterGrid .member-roster-card").first().waitFor();
     assert.equal(await page.locator("#memberRosterGrid .member-roster-card").count(), 1);
     assert.match(await page.locator("#memberRosterGrid").textContent(), /Meliodas/);
@@ -260,11 +276,11 @@ async function attendrePseudo(page, pseudo){
        plutôt que "boss" : ce dernier n'a encore jamais été ouvert à ce stade
        du parcours, et le test plus loin sur "Groupes indisponibles" (~2107)
        suppose justement ce tout premier chargement. */
-    await allerA(page, "builder");
+    await ouvrirVue(page, "builder");
     await page.evaluate(() =>
       window.__fakeSupabaseHoldBossRead("roster_characters")
     );
-    await allerA(page, "member-roster");
+    await ouvrirVue(page, "member-roster");
     await page.locator("#memberRosterGrid .member-roster-card").first().waitFor();
     assert.doesNotMatch(
       await page.locator("#memberRosterGrid").textContent(),
@@ -304,15 +320,15 @@ async function attendrePseudo(page, pseudo){
       window.localStorage.removeItem("confrerie7ds.cloud.roster");
       return rows;
     });
-    await allerA(page, "builder");
-    await allerA(page, "member-roster");
+    await ouvrirVue(page, "builder");
+    await ouvrirVue(page, "member-roster");
     await page.getByText("Ton roster est vide").waitFor();
     /* Ce premier réaffichage vide aussi le cache mémoire côté client (encore
        chargé avec Meliodas jusque-là). La vraie collision d'empreintes —
        cache local ET serveur déjà vides tous les deux — ne se produit qu'à
        la réouverture suivante. */
-    await allerA(page, "builder");
-    await allerA(page, "member-roster");
+    await ouvrirVue(page, "builder");
+    await ouvrirVue(page, "member-roster");
     await page.getByText("Ton roster est vide").waitFor();
     assert.doesNotMatch(
       await page.locator("#memberRosterGrid").textContent(),
@@ -322,8 +338,8 @@ async function attendrePseudo(page, pseudo){
     await page.evaluate(rows => {
       window.__fakeSupabaseState.roster_characters = rows;
     }, rosterRowsSauvegardees);
-    await allerA(page, "builder");
-    await allerA(page, "member-roster");
+    await ouvrirVue(page, "builder");
+    await ouvrirVue(page, "member-roster");
     await page.locator("#memberRosterGrid .member-roster-card").first().waitFor();
 
     /* Filtres de catégorie : quatre listes déroulantes, plus aucun rail
@@ -649,6 +665,7 @@ async function attendrePseudo(page, pseudo){
     assert.match(await meliodasCard.textContent(), /★ favori/);
     assert.match(
       await meliodasCard.locator(".member-roster-build-tag")
+        .filter({ hasText:"favori" })
         .getAttribute("aria-label"),
       /build favori/i
     );
@@ -658,15 +675,14 @@ async function attendrePseudo(page, pseudo){
        la consultation : un membre pouvait lire la fiche complète des
        personnages de tout le monde sauf les siens, où il ne lui restait que
        l'éditeur — un formulaire de saisie, pas une lecture. */
-    /* Le corps de la carte EST le bouton depuis la refonte : il se clique et
-       se tabule. Un second lien « Voir les builds » doublait le chemin. */
     const detailOverlay = page.locator("#rosterDetailOverlay");
     assert.equal(
-      await meliodasCard.locator(".hero-card-main").count(),
+      await meliodasCard.locator(".member-roster-detail-btn").count(),
       1,
       "Sa propre carte doit offrir l'accès à la fiche"
     );
-    await meliodasCard.locator(".hero-card-main").click();
+    // Le clic sur le corps de la carte, pas sur le bouton : c'est le geste réel.
+    await meliodasCard.locator(".member-roster-name").click();
     await detailOverlay.waitFor({ state:"visible" });
     assert.match(await page.locator("#rosterDetailBody").textContent(), /Meliodas/);
     await page.locator("#rosterDetailClose").click();
@@ -749,9 +765,9 @@ async function attendrePseudo(page, pseudo){
        personnage à l'autre et change de build par les icônes d'arme.
        On sème un second personnage pour ce membre le temps du test. */
     assert.equal(
-      await page.locator("#memberRosterGrid .hero-card-main").count(),
+      await page.locator("#memberRosterGrid .member-roster-detail-btn").count(),
       1,
-      "Chaque fiche consultée doit offrir un accès au détail"
+      "Chaque fiche consultée doit offrir un bouton de détail"
     );
     await page.evaluate(() => {
       window.__fakeSupabaseState.roster_characters.push({
@@ -778,7 +794,7 @@ async function attendrePseudo(page, pseudo){
 
     const rosterDetailOverlay = page.locator("#rosterDetailOverlay");
     await page.locator("#memberRosterGrid .member-roster-card").nth(1)
-      .locator(".hero-card-main").click();
+      .locator(".member-roster-detail-btn").click();
     await rosterDetailOverlay.waitFor({ state:"visible" });
     assert.match(await page.locator("#rosterDetailBody").textContent(), /Merlin/);
     assert.match(
@@ -874,7 +890,7 @@ async function attendrePseudo(page, pseudo){
       document.querySelectorAll("#memberRosterGrid .member-roster-card").length === 1
     );
 
-    await allerA(page, "builder");
+    await ouvrirVue(page, "builder");
     const rosterHeroSlot = page.locator(".hero").first();
     await rosterHeroSlot
       .getByRole("button", { name:"Depuis mon roster", exact:true })
@@ -1160,7 +1176,7 @@ async function attendrePseudo(page, pseudo){
     );
     assert.equal(rosterNote, "Mon build");
 
-    await allerA(page, "roster");
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     await page.locator("#rosterGrid .team").first().waitFor();
     assert.equal(await page.locator("#rosterGrid .team").count(), 2);
     /* On compte les actions de gestion, pas le conteneur : « Dupliquer » est
@@ -1211,7 +1227,7 @@ async function attendrePseudo(page, pseudo){
       document.querySelectorAll("#rosterGrid .team").length === 2
     );
 
-    await allerA(page, "builder");
+    await ouvrirVue(page, "builder");
     const firstHero = page.locator(".hero").first();
     await firstHero.locator(".portrait").click();
     await page.locator('#pickerGrid .tile[title="Meliodas"]').click();
@@ -1228,7 +1244,7 @@ async function attendrePseudo(page, pseudo){
     );
     assert.equal(saved.data.heroes[0].armorConfig.Haut.reinforce, 5);
 
-    await allerA(page, "roster");
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       const roster = state.roster_characters.find(item =>
@@ -1380,7 +1396,7 @@ async function attendrePseudo(page, pseudo){
     /* Le panneau chiffré de l'éditeur roster doit recevoir les trois builds du
        brouillon. Sinon les deux armes secondaires configurées sont prises pour
        absentes et l'ATK reste faussement partielle. */
-    await allerA(page, "member-roster");
+    await ouvrirVue(page, "member-roster");
     await page.locator("#memberRosterMine").click();
     const importedMeliodas = page.locator(
       "#memberRosterGrid .member-roster-card"
@@ -1419,7 +1435,7 @@ async function attendrePseudo(page, pseudo){
       2
     );
     await page.locator("#memberRosterClose").click();
-    await allerA(page, "roster");
+    await page.locator('.tabs .tab[data-view="roster"]').click();
 
     const otherTeam = page.locator("#rosterGrid .team").filter({ hasText:"Merlin" });
     await otherTeam.getByRole("button", { name:/Voir l'équipement/ }).click();
@@ -1521,7 +1537,7 @@ async function attendrePseudo(page, pseudo){
       window.__fakeSupabaseState.teams.length === count + 1,
       teamsBeforeDuplicate
     );
-    await allerA(page, "roster");
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     await page.locator("#rosterGrid .team-name")
       .filter({ hasText:"Compo dupliquée" }).waitFor();
     /* On rend au jeu de test exactement l'état où on l'a trouvé : la source
@@ -1540,15 +1556,15 @@ async function attendrePseudo(page, pseudo){
     );
 
     // #5 : l'Analyse dérive ses trois sous-vues directement des rosters.
-    await allerA(page, "analyse");
-    await page.locator("#analysePanel-overview .analysis-grid").waitFor();
+    await ouvrirVue(page, "analyse");
+    await page.locator("#analysePanel-overview .analyse-summary").waitFor();
     assert.equal(
       await page.locator("#analysePanel-overview").isVisible(),
       true,
       "la vue d'ensemble doit accueillir le membre dans l'Analyse"
     );
     await page.locator(
-      '.analyse-subnav [data-analyse-section="dps"]'
+      '.analyse-subnav-button[data-analyse-section="dps"]'
     ).click();
     await page.locator("#analysePanel-dps .matrix").waitFor();
     const analyseDpsText = await page.locator("#analysePanel-dps .matrix")
@@ -1558,7 +1574,7 @@ async function attendrePseudo(page, pseudo){
     assert.match(analyseDpsText, /Meliodas/);
 
     await page.locator(
-      '.analyse-subnav [data-analyse-section="supports"]'
+      '.analyse-subnav-button[data-analyse-section="supports"]'
     ).click();
     const panneauSupports = page.locator("#analysePanel-supports");
     await panneauSupports.locator(".debuff-row").first().waitFor();
@@ -1640,7 +1656,7 @@ async function attendrePseudo(page, pseudo){
     );
 
     await page.locator(
-      '.analyse-subnav [data-analyse-section="dps"]'
+      '.analyse-subnav-button[data-analyse-section="dps"]'
     ).click();
     await page.locator("#analysePanel-dps .matrix").waitFor();
     await page.evaluate(() => {
@@ -1680,9 +1696,6 @@ async function attendrePseudo(page, pseudo){
     await page.setViewportSize({ width:1280, height:900 });
 
     // Migration one-shot des ÉQUIPES locales (le recensement n'est plus migré).
-    /* Le bouton vit dans le menu du compte depuis la refonte : on l'ouvre,
-       comme le ferait un membre. */
-    await ouvrirLeCompte(page);
     const migrateButton = page.locator("#btnMigrateLocal");
     // Visible seulement parce qu'il reste réellement des données locales.
     assert.equal(await migrateButton.isVisible(), true);
@@ -1697,11 +1710,11 @@ async function attendrePseudo(page, pseudo){
     assert.equal(migratedTeam.owner, "user-1");
     assert.equal(migratedTeam.pseudo, "Yannis");
     /* Une fois la migration faite, ce bouton à usage unique disparaît au lieu
-       de rester désactivé : il mangeait une ligne entière du menu du compte
+       de rester désactivé : il mangeait une ligne entière du header mobile
        pour toujours. */
     await migrateButton.waitFor({ state:"hidden" });
     assert.equal(await migrateButton.isVisible(), false);
-    await allerA(page, "member-roster");
+    await ouvrirVue(page, "member-roster");
     await page.locator("#memberRosterMine").click();
     await page.locator("#memberRosterGrid .member-roster-edit").click();
     const rosterEditorNote = page.locator("#memberRosterEditor textarea");
@@ -2059,7 +2072,7 @@ async function attendrePseudo(page, pseudo){
       });
       window.__fakeSupabaseEmit("teams", "INSERT");
     });
-    await allerA(page, "roster");
+    await page.locator('.tabs .tab[data-view="roster"]').click();
     const conflictTeamCard = page.locator("#rosterGrid .team")
       .filter({ hasText:"Conflit Team" });
     await conflictTeamCard.locator('[data-team-action="edit"]').click();
@@ -2235,7 +2248,7 @@ async function attendrePseudo(page, pseudo){
 
     /* Une nouvelle équipe n'a aucune source distante : elle ne doit jamais
        produire de faux conflit dans le panneau. */
-    await allerA(page, "builder");
+    await ouvrirVue(page, "builder");
     await page.locator("#btnNew").click();
     await page.locator(".hero").first()
       .getByRole("button", { name:"Depuis mon roster", exact:true }).click();
@@ -2255,7 +2268,7 @@ async function attendrePseudo(page, pseudo){
 
     for(const width of [320, 360, 390]){
       await page.setViewportSize({ width, height:844 });
-      await allerA(page, "member-roster");
+      await ouvrirVue(page, "member-roster");
       await page.waitForTimeout(100);
       const overflow = await page.evaluate(() => {
         const root = document.scrollingElement;
@@ -2318,17 +2331,13 @@ async function attendrePseudo(page, pseudo){
         });
       }
     });
-    /* Ce scenario veut l'ECHEC de lecture : la grille n'apparait pas, et
-       l'attendre ferait expirer le parcours avant l'assertion. On ouvre donc
-       la vue seule, et l'onglet des groupes une fois la lecture reparee. */
-    await allerA(page, "boss");
+    await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadFailureOnce === null
     );
     assert.doesNotMatch(await page.locator("#bossBody").textContent(), /Chargement/);
     assert.match(await page.locator("#bossBody").textContent(), /Groupes indisponibles/);
     await page.getByRole("button", { name:"Réessayer", exact:true }).click();
-    await ouvrirSousVue(page, "boss", "groupes");
     await page.locator(".boss-grid .boss-card").nth(5).waitFor();
     assert.equal(await page.locator(".boss-grid .boss-card").count(), 6);
     const membershipBatchSizes = await page.evaluate(() =>
@@ -2352,8 +2361,6 @@ async function attendrePseudo(page, pseudo){
       211,
       "Tous les UUID historiques et courants doivent être interrogés"
     );
-    /* Les archives vivent sous l'onglet « Rapports » du centre Boss. */
-    await ouvrirSousVue(page, "boss", "rapports");
     assert.match(
       await page.locator(".boss-archive").textContent(),
       /Historique 205/,
@@ -2377,11 +2384,8 @@ async function attendrePseudo(page, pseudo){
           "PGRST205: Could not find the table 'public.boss_run_reports' in the schema cache"
       };
     });
-    await allerA(page, "builder");
-    /* Encore un scenario d ECHEC : le centre Boss affiche son message de
-       maintenance au lieu de ses groupes. On ouvre la vue seule, puis
-       l onglet des groupes une fois la lecture reparee. */
-    await allerA(page, "boss");
+    await ouvrirVue(page, "builder");
+    await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadFailureOnce === null
     );
@@ -2396,7 +2400,6 @@ async function attendrePseudo(page, pseudo){
       name:"Réessayer",
       exact:true
     }).click();
-    await ouvrirSousVue(page, "boss", "groupes");
     await page.locator(".boss-grid .boss-card").nth(5).waitFor();
 
     const alteredSeedResult = await page.evaluate(async () => {
@@ -2553,8 +2556,8 @@ async function attendrePseudo(page, pseudo){
         message:"Échec plus récent simulé"
       };
     });
-    await allerA(page, "builder");
-    await allerAuxGroupesDeBoss(page);
+    await ouvrirVue(page, "builder");
+    await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadFailureOnce === null
     );
@@ -2963,10 +2966,6 @@ async function attendrePseudo(page, pseudo){
     );
     await page.keyboard.press("Escape");
     await bossTeamOverlay.waitFor({ state:"hidden" });
-    /* « Deconnexion » vit dans le menu du compte : on l'ouvre pour pouvoir y
-       poser le focus. Ce qui compte ici n'est pas ce bouton en particulier,
-       mais qu'il soit EXTERIEUR a la vue Boss. */
-    await ouvrirLeCompte(page);
     await page.locator("#authLogout").focus();
     await page.evaluate(() => window.__fakeSupabaseReleaseBossRead());
     await page.waitForFunction(() => !window.__fakeSupabaseState.bossReadHold);
@@ -3194,18 +3193,18 @@ async function attendrePseudo(page, pseudo){
       groupTwoActionBeforeExternalFocus,
       "L’action équipe doit exister avant l’écho Realtime"
     );
-    /* La cible du focus externe est une entree de navigation plutot que
-       `#authLogout`, qui vit desormais dans le menu du compte : la barre reste
-       visible quelle que soit la largeur. Elle est tout aussi exterieure a
-       `#bossBody`, donc l'intention est intacte. */
-    await entreeDeLaRubrique(page, "equipes").focus();
+    /* La cible du focus externe est un onglet plutôt que `#authLogout` : les
+       onglets restent visibles que le header soit replié ou non, ce qui rend ce
+       test indépendant de la largeur d'écran. Un onglet est tout aussi
+       extérieur à `#bossBody`, donc l'intention est intacte. */
+    await page.locator("#tab-builder").focus();
     await page.waitForFunction(
       action => !action.isConnected,
       groupTwoActionBeforeExternalFocus
     );
     assert.equal(
       await page.evaluate(() => document.activeElement.id),
-      "rubrique-equipes",
+      "tab-builder",
       "L’écho Realtime ne doit pas voler un focus déplacé hors de la vue Boss"
     );
 
@@ -3438,7 +3437,7 @@ async function attendrePseudo(page, pseudo){
     await page.evaluate(teams => {
       window.__fakeSupabaseState.teams.push(...teams);
     }, ownTeams);
-    await allerAuxGroupesDeBoss(page);
+    await ouvrirSessionsDeBoss(page);
     await groupOne.getByRole("button", { name:"Changer", exact:true }).waitFor();
 
     const fullGroup = page.locator(".boss-card", {
@@ -3721,15 +3720,13 @@ async function attendrePseudo(page, pseudo){
     await page.waitForFunction(() =>
       typeof window.__fakeSupabaseState.bossRpcHold.release === "function"
     );
-    await ouvrirLeCompte(page);
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await authOverlay.waitFor({ state:"visible" });
-    /* La vue Boss n'est plus VISIBLE apres une deconnexion — sa rubrique sort
-       de la barre et la navigation replie sur l'accueil. Elle doit malgre tout
+    /* La vue Boss n'est plus VISIBLE apres une deconnexion — son onglet sort
+       de la barre et la navigation replie sur le Wiki. Elle doit malgre tout
        avoir ete reecrite : c'est ce que ce scenario surveille, qu'aucune
        donnee du compte precedent ne survive dans le DOM, visible ou non. */
-    await page.locator('#desktopNav [data-rubrique="centre-boss"]')
-      .waitFor({ state:"hidden" });
+    await page.locator("#tab-boss").waitFor({ state:"hidden" });
     assert.match(
       await page.locator("#bossBody").textContent(),
       /^Connecte-toi pour les groupes de boss/
@@ -3748,9 +3745,9 @@ async function attendrePseudo(page, pseudo){
     await page.locator("#authEmail").fill("yannis@example.test");
     await page.locator("#authPassword").fill("mot-de-passe-test");
     await page.getByRole("button", { name:"Se connecter", exact:true }).click();
-    // Une connexion réussie ouvre l'accueil : ce scénario revient sur Boss.
-    await page.locator("#view-home.active").waitFor({ state:"visible" });
-    await allerAuxGroupesDeBoss(page);
+    // Une connexion réussie ouvre « Mon suivi » : ce scénario revient sur Boss.
+    await page.locator("#view-dashboard").waitFor({ state:"visible" });
+    await ouvrirSessionsDeBoss(page);
     await page.locator(".boss-card", { hasText:"Groupe 1 · Run 1" })
       .getByRole("button", { name:"Rejoindre", exact:true }).waitFor();
     assert.match(await page.locator("#bossCount").textContent(), /0\/3/);
@@ -4691,14 +4688,8 @@ async function attendrePseudo(page, pseudo){
     );
     assert.equal(await page.locator(".boss-grid .boss-card").count(), 6);
     assert.match(await page.locator("#bossCount").textContent(), /3\/3/);
-    /* Les runs terminees de la semaine vivent sous l onglet « Rapports »,
-       en liste de cartes plutot qu en bloc repliable : c est la disposition
-       de la maquette. */
-    await ouvrirSousVue(page, "boss", "rapports");
-    const rapportsDeLaSemaine = () => page.locator("#bossBody").textContent();
-    assert.match(await rapportsDeLaSemaine(), /Groupe 2 · Run 1/);
-    assert.match(await rapportsDeLaSemaine(), /Yannis/);
-    /* Tout ce qui suit travaille sur les rapports : on reste sur leur onglet. */
+    assert.match(await page.locator(".boss-archive-current").textContent(), /Groupe 2 · Run 1/);
+    assert.match(await page.locator(".boss-archive-current").textContent(), /Yannis/);
 
     const doubleCompleteError = await page.evaluate(async id => {
       const result = await window.__fakeSupabaseClient.rpc(
@@ -5053,9 +5044,8 @@ async function attendrePseudo(page, pseudo){
       window.__fakeSupabaseState.boss_run_reports
         .find(item => item.session_id === id).note = "Rotation corrigée.";
     }, archivedId);
-    await allerA(page, "builder");
-    await allerA(page, "boss");
-    await ouvrirSousVue(page, "boss", "rapports");
+    await ouvrirVue(page, "builder");
+    await ouvrirSessionsDeBoss(page);
     await page.locator(".boss-report-card", {
       hasText:"Groupe 2 · Run 1"
     }).getByText("Rotation corrigée.", { exact:true }).waitFor();
@@ -5083,9 +5073,8 @@ async function attendrePseudo(page, pseudo){
         "boss_run_reports"
       );
     }, archivedId);
-    await allerA(page, "builder");
-    await allerA(page, "boss");
-    await ouvrirSousVue(page, "boss", "rapports");
+    await ouvrirVue(page, "builder");
+    await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
         .some(item => item.token === "boss-old-success" && item.claimed)
@@ -5095,9 +5084,8 @@ async function attendrePseudo(page, pseudo){
         .find(item => item.session_id === id).note =
           "Succès récent encore en attente.";
     }, archivedId);
-    await allerA(page, "builder");
-    await allerA(page, "boss");
-    await ouvrirSousVue(page, "boss", "rapports");
+    await ouvrirVue(page, "builder");
+    await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
         .some(item => item.token === "boss-new-success" && item.claimed)
@@ -5134,16 +5122,14 @@ async function attendrePseudo(page, pseudo){
         "boss_run_reports"
       );
     });
-    await allerA(page, "builder");
-    await allerA(page, "boss");
-    await ouvrirSousVue(page, "boss", "rapports");
+    await ouvrirVue(page, "builder");
+    await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
         .some(item => item.token === "boss-old-error" && item.claimed)
     );
-    await allerA(page, "builder");
-    await allerA(page, "boss");
-    await ouvrirSousVue(page, "boss", "rapports");
+    await ouvrirVue(page, "builder");
+    await ouvrirSessionsDeBoss(page);
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue
         .some(item => item.token === "boss-new-after-error" && item.claimed)
@@ -5330,9 +5316,6 @@ async function attendrePseudo(page, pseudo){
       return { currentId, previousId, legacyId };
     }, archivedId);
 
-    /* Les chiffres de la semaine vivent dans la vue d ensemble du centre
-       Boss ; le parcours vient des rapports. */
-    await ouvrirSousVue(page, "boss", "apercu");
     const bossStats = page.locator(".boss-stats");
     await page.waitForFunction(() =>
       document.querySelector(".boss-stat-count")?.textContent === "2"
@@ -5422,7 +5405,6 @@ async function attendrePseudo(page, pseudo){
       "+4 503 599 627 370 495 (+100,00 %) par rapport à la semaine précédente",
       "Le delta et le pourcentage ne doivent perdre aucun bit via Number"
     );
-    await ouvrirSousVue(page, "boss", "rapports");
     await page.locator("details.boss-archive:not(.boss-archive-current)>summary")
       .click();
     await page.getByText(
@@ -5479,9 +5461,8 @@ async function attendrePseudo(page, pseudo){
       );
       membership.pseudo = pseudo;
     }, longBossPseudo);
-    /* Un pseudo interminable se lit sur la carte de son GROUPE. */
-    await allerA(page, "builder");
-    await allerAuxGroupesDeBoss(page);
+    await ouvrirVue(page, "builder");
+    await ouvrirSessionsDeBoss(page);
     await page.locator(".boss-member-name", { hasText:longBossPseudo }).waitFor();
 
     for(const width of [320, 360, 390]){
@@ -5561,17 +5542,13 @@ async function attendrePseudo(page, pseudo){
       });
       return week;
     });
-    await allerA(page, "dashboard");
+    await ouvrirVue(page, "dashboard");
 
-    /* LE COMPTEUR DE RUNS vit desormais dans le cadre majeur de l'ecran, ou
-       le libelle et la valeur sont deux elements distincts — c'est la carte
-       de la maquette. On lit donc la valeur seule, exactement. */
-    await attendreRunsEngagees(page, "2/3");
+    await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
     const dashboardText = () => page.locator("#dashboardBody").textContent();
-    /* La rangee cloisonnee annonce le libelle PUIS le chiffre. */
-    assert.match(await dashboardText(), /Runs terminées\s*1/);
-    assert.match(await dashboardText(), /Runs en cours\s*1/);
-    assert.match(await dashboardText(), /Encore disponibles\s*1/);
+    assert.match(await dashboardText(), /1\s*Terminées/);
+    assert.match(await dashboardText(), /1\s*En cours/);
+    assert.match(await dashboardText(), /1\s*Encore disponibles/);
     // Le numéro de run dépend des scénarios Boss précédents : on ne le fige pas.
     assert.match(await dashboardText(), /Groupe 2 · Run \d+/);
     assert.match(await dashboardText(), /Équipe manquante/);
@@ -5588,7 +5565,7 @@ async function attendrePseudo(page, pseudo){
     );
     await page.locator('[data-dashboard-action="post-availability"]').click();
     await page.locator("#view-availability").waitFor({ state:"visible" });
-    await allerA(page, "dashboard");
+    await ouvrirVue(page, "dashboard");
 
     /* LA REGLE QUI COMPTE : une lecture en echec MASQUE la carte.
 
@@ -5636,7 +5613,7 @@ async function attendrePseudo(page, pseudo){
     );
 
     // ---- Hors ligne avec cache : dernier état connu + badge ----
-    await allerA(page, "builder");
+    await ouvrirVue(page, "builder");
     await page.evaluate(() => {
       window.__fakeSupabaseState.bossReadFailureOnce = {
         table:"boss_sessions",
@@ -5644,9 +5621,9 @@ async function attendrePseudo(page, pseudo){
       };
       window.__fakeSupabaseEmit("boss_participation", "UPDATE");
     });
-    await allerA(page, "dashboard");
+    await ouvrirVue(page, "dashboard");
     await page.getByText("Hors ligne", { exact:true }).waitFor();
-    await attendreRunsEngagees(page, "2/3");
+    assert.match(await dashboardText(), /Runs engagées 2\/3/);
     assert.match(await dashboardText(), /Données potentiellement anciennes/);
     assert.equal(
       await page.locator(
@@ -5678,14 +5655,11 @@ async function attendrePseudo(page, pseudo){
         email:"yannis@example.test"
       });
     });
-    /* Rouvrir un compte, c'est une connexion : elle repose le membre sur
-       l'accueil. On revient donc a Mon suivi pour lire son etat. */
-    await allerA(page, "dashboard");
     await page.getByText("Suivi indisponible hors ligne", { exact:true }).waitFor();
     assert.doesNotMatch(await dashboardText(), /0\/3/);
     assert.equal(await page.locator(".dashboard-progress").count(), 0);
     await page.getByRole("button", { name:"Réessayer", exact:true }).click();
-    await attendreRunsEngagees(page, "2/3");
+    await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
 
     // ---- Realtime : vue active relue, vue inactive seulement marquée sale ----
     await page.evaluate(() => {
@@ -5698,7 +5672,7 @@ async function attendrePseudo(page, pseudo){
       )
     );
 
-    await allerA(page, "builder");
+    await ouvrirVue(page, "builder");
     await page.evaluate(() => {
       window.__fakeSupabaseState.calls.length = 0;
       window.__fakeSupabaseEmit("boss_participation", "UPDATE");
@@ -5713,7 +5687,7 @@ async function attendrePseudo(page, pseudo){
       false,
       "Realtime ne doit pas relire le dashboard inactif"
     );
-    await allerA(page, "dashboard");
+    await ouvrirVue(page, "dashboard");
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.calls.some(call =>
         call.table === "boss_sessions" && call.operation === "select"
@@ -5721,19 +5695,19 @@ async function attendrePseudo(page, pseudo){
     );
 
     // ---- Course : une lecture ancienne ne remplace pas un état plus récent ----
-    await allerA(page, "builder");
+    await ouvrirVue(page, "builder");
     await page.evaluate(() => {
       window.__fakeSupabaseQueueBossRead("dashboard-old", "boss_sessions");
       window.__fakeSupabaseEmit("boss_participation", "UPDATE");
     });
-    await allerA(page, "dashboard");
+    await ouvrirVue(page, "dashboard");
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue.some(item =>
         item.token === "dashboard-old" && item.claimed
       )
     );
 
-    await allerA(page, "builder");
+    await ouvrirVue(page, "builder");
     await page.evaluate(() => {
       const run = window.__fakeSupabaseState.boss_sessions.find(item =>
         item.slot === 2 && item.status === "open"
@@ -5741,7 +5715,7 @@ async function attendrePseudo(page, pseudo){
       run.title = "Groupe actualisé";
       window.__fakeSupabaseEmit("boss_sessions", "UPDATE");
     });
-    await allerA(page, "dashboard");
+    await ouvrirVue(page, "dashboard");
     await page.getByText(/Groupe actualisé · Run \d+/).first().waitFor();
     await page.evaluate(() =>
       window.__fakeSupabaseReleaseQueuedBossRead("dashboard-old")
@@ -5756,7 +5730,7 @@ async function attendrePseudo(page, pseudo){
     /* ---- Aucune fuite entre comptes ----
        Merlin est vidé de ses participations pour que son 0/3 soit déterministe
        et distinct des 2/3 de Yannis. */
-    await allerA(page, "builder");
+    await ouvrirVue(page, "builder");
     await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       state.boss_participation = state.boss_participation
@@ -5764,7 +5738,7 @@ async function attendrePseudo(page, pseudo){
       window.__fakeSupabaseQueueBossRead("dashboard-user-1", "boss_sessions");
       window.__fakeSupabaseEmit("boss_sessions", "UPDATE");
     });
-    await allerA(page, "dashboard");
+    await ouvrirVue(page, "dashboard");
     await page.waitForFunction(() =>
       window.__fakeSupabaseState.bossReadQueue.some(item =>
         item.token === "dashboard-user-1" && item.claimed
@@ -5775,13 +5749,13 @@ async function attendrePseudo(page, pseudo){
       email:"merlin@example.test"
     }));
     await attendrePseudo(page, "Merlin");
-    await attendreRunsEngagees(page, "0/3");
+    await page.getByText("Runs engagées 0/3", { exact:true }).waitFor();
     await page.evaluate(() =>
       window.__fakeSupabaseReleaseQueuedBossRead("dashboard-user-1")
     );
     await page.waitForTimeout(50);
     assert.equal(await page.locator("#accountPseudo").textContent(), "Merlin");
-    await attendreRunsEngagees(page, "0/3");
+    assert.match(await dashboardText(), /Runs engagées 0\/3/);
     assert.doesNotMatch(await dashboardText(), /Groupe actualisé/);
     await page.evaluate(() => window.__fakeSupabaseApplySession({
       id:"user-1",
@@ -5790,8 +5764,8 @@ async function attendrePseudo(page, pseudo){
     await attendrePseudo(page, "Yannis");
 
     /* ---- Actions directes : chaque bouton ouvre la vraie interface ---- */
-    await allerA(page, "dashboard");
-    await attendreRunsEngagees(page, "2/3");
+    await ouvrirVue(page, "dashboard");
+    await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
 
     // Choisir mon équipe -> sélecteur d'équipe de la bonne participation.
     await page.locator(
@@ -5808,7 +5782,7 @@ async function attendrePseudo(page, pseudo){
     );
 
     // Voir le groupe -> onglet Boss, focus sur la carte de la bonne session.
-    await allerA(page, "dashboard");
+    await ouvrirVue(page, "dashboard");
     await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       const membership = state.boss_participation.find(item =>
@@ -5832,7 +5806,7 @@ async function attendrePseudo(page, pseudo){
     );
 
     // Corriger le rapport -> modale de rapport en mode correction.
-    await allerA(page, "dashboard");
+    await ouvrirVue(page, "dashboard");
     await page.locator('[data-dashboard-action="edit-report"]').first().click();
     await page.locator("#bossReportOverlay").waitFor({ state:"visible" });
     assert.equal(
@@ -5844,11 +5818,9 @@ async function attendrePseudo(page, pseudo){
       document.querySelector("#view-boss").contains(document.activeElement)
     );
 
-    /* Trouver un groupe -> onglet Boss, focus sur un Rejoindre disponible.
-       Deux elements menent la : la carte de priorite et l action du cadre
-       majeur. C est la carte que ce parcours eprouve. */
-    await allerA(page, "dashboard");
-    await page.locator('.action-card [data-dashboard-action="find-group"]').click();
+    // Trouver un groupe -> onglet Boss, focus sur un Rejoindre disponible.
+    await ouvrirVue(page, "dashboard");
+    await page.locator('[data-dashboard-action="find-group"]').click();
     await page.locator("#view-boss").waitFor({ state:"visible" });
     assert.equal(
       await page.evaluate(() =>
@@ -5859,7 +5831,7 @@ async function attendrePseudo(page, pseudo){
     );
 
     // Voir mes équipes -> onglet des équipes, focus sur son titre.
-    await allerA(page, "dashboard");
+    await ouvrirVue(page, "dashboard");
     await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       const membership = state.boss_participation.find(item =>
@@ -5878,7 +5850,7 @@ async function attendrePseudo(page, pseudo){
     );
 
     // Créer une équipe -> builder vierge, hors mode édition.
-    await allerA(page, "dashboard");
+    await ouvrirVue(page, "dashboard");
     const ownTeamsForDashboard = await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       const removed = state.teams.filter(team => team.owner === "user-1");
@@ -5901,8 +5873,8 @@ async function attendrePseudo(page, pseudo){
     }, ownTeamsForDashboard);
 
     // Une run devenue archivée entre le clic et le rendu ne doit rien ouvrir.
-    await allerA(page, "dashboard");
-    await attendreRunsEngagees(page, "2/3");
+    await ouvrirVue(page, "dashboard");
+    await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
     await page.evaluate(() => {
       const state = window.__fakeSupabaseState;
       const run = state.boss_sessions.find(item =>
@@ -5941,11 +5913,11 @@ async function attendrePseudo(page, pseudo){
     });
 
     /* ---- Mon suivi : mobile de 320 à 390 px ---- */
-    await allerA(page, "dashboard");
-    await attendreRunsEngagees(page, "2/3");
+    await ouvrirVue(page, "dashboard");
+    await page.getByText("Runs engagées 2/3", { exact:true }).waitFor();
     for(const width of [320, 360, 375, 390]){
       await page.setViewportSize({ width, height:844 });
-      await allerA(page, "dashboard");
+      await ouvrirVue(page, "dashboard");
       await page.locator("#dashboardBody").waitFor();
       const metrics = await page.evaluate(() => {
         const root = document.scrollingElement;
@@ -5987,8 +5959,6 @@ async function attendrePseudo(page, pseudo){
       });
     }
     await page.setViewportSize({ width:1280, height:900 });
-
-    await ouvrirLeCompte(page);
 
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await authOverlay.waitFor({ state:"visible" });
@@ -6032,7 +6002,7 @@ async function attendrePseudo(page, pseudo){
     assert.equal(await page.locator("#accountPseudo").textContent(), "Merlin");
 
     // La connexion précédente a ouvert « Mon suivi » : ce scénario vise Boss.
-    await allerAuxGroupesDeBoss(page);
+    await ouvrirSessionsDeBoss(page);
     const merlinGroupOne = page.locator(".boss-card", {
       hasText:"Groupe 1 · Run 1"
     });

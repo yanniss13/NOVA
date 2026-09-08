@@ -12,7 +12,7 @@ const ROUTE_SESSION_ID_MAX_LENGTH = 128;
    calculateur PRECONFIGURE reste hors perimetre — il demanderait de serialiser
    un contexte que la route ne sait pas reconstruire. */
 const ROUTE_VIEWS = new Set([
-  "home", "dashboard", "builder", "roster", "member-roster", "availability",
+  "dashboard", "builder", "roster", "member-roster", "availability",
   "boss", "analyse", "wiki", "collection", "calculateur", "admin"
 ]);
 const GROUP_ROUTE_VIEWS = new Set(["boss", "analyse"]);

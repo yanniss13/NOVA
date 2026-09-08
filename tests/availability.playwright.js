@@ -9,7 +9,6 @@
 const assert = require("node:assert/strict");
 const { CIBLE_TACTILE_PX } = require("./helpers/cible-tactile");
 const { serveRepo } = require("./helpers/serve");
-const { allerA } = require("./helpers/naviguer");
 const { chromium } = require("playwright");
 
 /* Les Dispos vivent desormais dans le sous-menu de « Boss de Guilde » : on
@@ -21,8 +20,8 @@ async function ouvrirDispos(page){
       '#mobileBossSubtabs [data-mobile-view="availability"]'
     ).click();
   }else{
-    await allerA(page, "roster");
-    await allerA(page, "availability");
+    await page.locator("#tab-roster").click();
+    await page.locator("#tab-availability").click();
   }
 }
 

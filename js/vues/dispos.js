@@ -258,9 +258,11 @@ import {
 
     function render(){
       $("#availWeek").textContent = state ? state.weekLabel : "";
+      $("#availModeMine").classList.toggle("active", state.mode === "mine");
       $("#availModeMine").setAttribute(
         "aria-pressed", String(state.mode === "mine")
       );
+      $("#availModeGuild").classList.toggle("active", state.mode === "guild");
       $("#availModeGuild").setAttribute(
         "aria-pressed", String(state.mode === "guild")
       );
