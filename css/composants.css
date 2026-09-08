@@ -176,6 +176,61 @@
   .mini-portraits span{width:40px;height:40px}
 }
 
+/* LA CARTE DE HEROS. Portrait a gauche, identite au milieu, potentiel a
+   droite, et en pied l'etat de preparation. Le bloc du haut EST le bouton :
+   il se clique et se tabule, sans qu'un second lien double le chemin. */
+.hero-card{border-radius:6px;overflow:hidden}
+.hero-card-main{
+  appearance:none;cursor:pointer;width:100%;min-width:0;border:0;
+  display:grid;grid-template-columns:82px 1fr auto;align-items:center;gap:13px;
+  padding:11px;text-align:left;color:var(--parchment);background:transparent
+}
+.hero-card-main>img{
+  width:82px;height:96px;object-fit:cover;object-position:top;
+  background:var(--abyss)
+}
+.hero-card-copy{display:grid;min-width:0}
+.hero-card-copy b{margin:6px 0 3px;font-family:var(--display);font-size:19px;font-weight:500}
+.hero-card-copy em{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:var(--mist);font-style:normal;font-size:13px
+}
+.hero-card-main>strong{
+  align-self:start;color:var(--gold-light);font-family:var(--display);
+  font-size:18px;font-variant-numeric:tabular-nums
+}
+.hero-card:hover{border-color:var(--gold)}
+.hero-card footer{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;
+  min-height:44px;padding:5px 11px;border-top:1px solid var(--line-soft);
+  color:var(--mist);font-size:12px
+}
+/* LA PASTILLE DE COMPLETUDE. Un point rouge tant qu'il manque un build, vert
+   quand tous les types d'arme compatibles en ont un. Elle se lit sans lire. */
+.completion::before{
+  content:"";display:inline-block;width:7px;height:7px;margin-right:6px;
+  border-radius:50%;background:var(--alert)
+}
+.completion.is-complete::before{background:var(--ok)}
+
+/* LA BARRE DE FILTRES. Elle reste collee en haut pendant qu'on parcourt une
+   longue grille : on ne remonte pas pour changer un filtre. */
+.filter-bar{
+  position:sticky;top:0;z-index:8;display:flex;align-items:flex-end;gap:10px;
+  margin-bottom:14px;padding:12px;
+  border:1px solid var(--line-soft);background:rgba(5,22,32,.96)
+}
+.filter-bar label{display:grid;gap:5px;min-width:150px;color:var(--mist);font-size:12px}
+.filter-bar label:first-child{flex:1}
+.filter-bar>span{margin-left:auto;padding:12px 6px;color:var(--mist);white-space:nowrap}
+.filter-bar>span b{color:var(--gold-light);font-family:var(--display)}
+@media (max-width:767px){
+  .filter-bar{position:static;display:grid;grid-template-columns:1fr 1fr}
+  .filter-bar label:first-child,.filter-bar>span{grid-column:1/-1}
+  .filter-bar label{min-width:0}
+  .filter-bar>span{margin-left:0;padding:4px}
+}
+
 /* LE PANNEAU DE SUGGESTION : un constat a gauche, un lien a droite. */
 .recommendation-panel{
   display:flex;align-items:center;justify-content:space-between;gap:30px;

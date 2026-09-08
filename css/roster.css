@@ -118,9 +118,11 @@
   border-radius:8px;padding:10px 34px 10px 12px
 }
 .member-roster-toolbar #memberRosterAdd{margin-left:auto}
-.member-roster-filters{
-  display:flex;flex-direction:column;gap:10px;margin-bottom:14px;min-width:0
-}
+/* La barre vient de `.filter-bar`, dans composants.css. Ne reste ici que ce
+   qui lui est propre : les selecteurs de filtre, construits par le rendu,
+   occupent la place restante et se replient d'eux-memes. */
+.member-roster-filters{flex-wrap:wrap}
+.member-roster-filters #memberRosterFilters{flex:2 1 380px;min-width:0}
 .member-roster-filter-fields{
   display:grid;gap:10px;min-width:0;
   grid-template-columns:repeat(auto-fit,minmax(min(168px,100%),1fr))
@@ -146,15 +148,16 @@
    sa place et non une ligne a lui, juste au-dessus de la grille. */
 .member-roster-count{flex:none;font-size:13px;color:var(--mist);letter-spacing:.04em}
 .member-roster-count b{font-family:var(--display);color:var(--gold-light)}
+/* TROIS COLONNES, comme la maquette. `auto-fill` en donnait autant que la
+   place le permettait, et une carte seule restait large de 280 px au milieu
+   du vide. */
 .member-roster-grid{
-  display:grid;grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));
-  gap:16px
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:11px
 }
-.member-roster-card{
-  min-width:0;position:relative;overflow:hidden;padding:15px;
-  background:linear-gradient(165deg,var(--slate),var(--slate-deep));
-  border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow)
-}
+@media(max-width:1179px){.member-roster-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:767px){.member-roster-grid{grid-template-columns:minmax(0,1fr)}}
+/* Le cadre et le fond viennent de `.ornate-panel` et de `.hero-card`. */
+.member-roster-card{min-width:0;position:relative}
 .member-roster-card.clickable{cursor:pointer;transition:.16s}
 .member-roster-card.clickable:hover{border-color:var(--gold)}
 .member-roster-detail-btn{

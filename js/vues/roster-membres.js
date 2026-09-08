@@ -282,44 +282,65 @@ import { toast } from "./toast.js";
     const hero = firstType
       ? rosterHeroSnapshot(entry, firstType)
       : normalizeHero({char:entry.charId, potentiel:{tier:entry.potentialTier}});
-    const summary = el("div",{class:"member-roster-summary"},[
-      el("h2",{class:"member-roster-name",text:character.name}),
-      el("span",{class:"member-roster-potential",text:"P"+entry.potentialTier})
-    ]);
-    const badges = badgesRow(character, hero, false);
-    if(badges) summary.appendChild(badges);
+    /* LA CARTE DE HEROS DE LA MAQUETTE.
 
-    const card = el("article",{class:"member-roster-card"},[
-      el("div",{class:"member-roster-card-head"},[
-        el("div",{class:"member-roster-portrait"},[
-          el("img",{src:character.file,alt:character.name,loading:"lazy"})
-        ]),
-        summary
-      ])
+       Elle se lit d'un coup d'oeil : le portrait, ce qu'est le heros, son
+       potentiel a droite, et en pied son etat de preparation.
+
+       Avant, tout etait empile — nom, potentiel, badges, une pastille par type
+       d'arme compatible, puis deux ou trois boutons — et la carte disait aussi
+       fort « Epees doubles · configuré » que le nom du personnage. */
+    const typesCompatibles = weaponTypesOf(entry.charId);
+    const configures = typesCompatibles.filter(type => buildTypes.has(type));
+    const complet = configures.length > 0
+      && configures.length === typesCompatibles.length;
+
+    const copie = el("span",{class:"hero-card-copy"});
+    const badges = badgesRow(character, hero, false);
+    if(badges) copie.appendChild(badges);
+    copie.appendChild(el("b",{text:character.name}));
+    /* Le build favori porte l etoile ET son annonce : la carte ne montrait
+       plus qu une ligne de texte, et un lecteur d ecran n avait aucun moyen de
+       savoir lequel des builds est celui que le membre a choisi. */
+    const resume = el("em",{class:"member-roster-build-tag"});
+    if(favoriteType){
+      resume.textContent = rosterWeaponLabel(favoriteType) + " · ★ favori";
+      resume.setAttribute("aria-label",
+        rosterWeaponLabel(favoriteType) + " : build favori");
+    }else if(configures.length){
+      resume.textContent = configures.map(rosterWeaponLabel).join(" · ");
+      resume.setAttribute("aria-label",
+        configures.length + " build configuré" + (configures.length > 1 ? "s" : ""));
+    }else{
+      resume.textContent = "aucun build enregistré";
+    }
+    copie.appendChild(resume);
+
+    const principal = el("button",{
+      class:"hero-card-main",
+      type:"button",
+      "aria-label":"Voir la fiche de " + character.name,
+      onclick:()=>{ if(openDetail) openDetail(); }
+    },[
+      el("img",{src:character.file, alt:"", loading:"lazy"}),
+      copie,
+      el("strong",{text:"P" + entry.potentialTier})
     ]);
-    const builds = el("div",{class:"member-roster-builds"});
-    weaponTypesOf(entry.charId).forEach(type => {
-      const isSaved = buildTypes.has(type);
-      const isFavorite = isSaved && type === favoriteType;
-      builds.appendChild(el("span",{
-        class:"member-roster-build-tag"
-          +(isSaved ? " saved" : "")
-          +(isFavorite ? " favorite" : ""),
-        text:rosterWeaponLabel(type)
-          +(isFavorite ? " · ★ favori" : (isSaved ? " · configuré" : "")),
-        "aria-label":rosterWeaponLabel(type)+" : "
-          +(isFavorite ? "build favori" : (isSaved ? "build configuré" : "aucun build"))
-      }));
-    });
-    card.appendChild(builds);
+
+    const pied = el("footer", null, [
+      el("span",{
+        class:"completion" + (complet ? " is-complete" : ""),
+        text:configures.length + " build"
+          + (configures.length > 1 ? "s" : "")
+          + " sur " + typesCompatibles.length
+      })
+    ]);
     if(editable){
-      card.appendChild(el("div",{class:"member-roster-card-actions"},[
+      const actions = el("div",{class:"member-roster-card-actions"},[
         el("button",{
           class:"btn member-roster-edit",
           type:"button",
           text:"Modifier",
-          /* La carte entière ouvre la fiche : sans cet arrêt, « Modifier »
-             déclencherait les deux. */
           onclick:event=>{ event.stopPropagation(); openMemberRosterEditor(entry); }
         }),
         el("button",{
@@ -331,20 +352,20 @@ import { toast } from "./toast.js";
             void deleteMemberRosterCharacter(entry);
           }
         })
-      ]));
+      ]);
+      pied.appendChild(actions);
     }
-    /* La carte entière ouvre le détail, et le bouton donne le même accès au
-       clavier — une carte n'est pas focalisable. */
-    if(openDetail){
-      card.classList.add("clickable");
-      card.addEventListener("click", openDetail);
-      card.appendChild(el("button",{
-        class:"btn member-roster-detail-btn",
-        type:"button",
-        text:"Voir les builds",
-        onclick:event=>{ event.stopPropagation(); openDetail(); }
-      }));
-    }
+
+    const card = el("article",{
+      class:"ornate-panel hero-card member-roster-card"
+    },[principal, pied]);
+
+    /* LE PORTRAIT EST LE BOUTON. La carte entiere etait cliquable, ET portait
+       en plus un bouton « Voir les builds » pour donner le meme acces au
+       clavier : deux chemins vers la meme fiche, dont un invisible. Le bloc
+       principal est desormais un vrai bouton — il se clique, il se tabule, et
+       il ne double rien. */
+    if(openDetail) card.classList.add("clickable");
     return card;
   }
 
