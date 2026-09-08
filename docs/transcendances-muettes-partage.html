@@ -1,0 +1,672 @@
+<title>Les 30 passifs muets</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Spectral:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;700&display=swap">
+
+<style>
+/* ------------------------------------------------------------------
+   Palette reprise du site de la Confrerie (css/base.css) : obsidienne,
+   or, cramoisi, parchemin. Le theme sombre est le defaut, comme sur le
+   site ; le theme clair n'est pas une inversion mais un parchemin.
+   ------------------------------------------------------------------ */
+:root{
+  --ground:#0e0d12;
+  --surface:#17151f;
+  --surface-2:#1f1c29;
+  --line:#332e40;
+  --line-soft:#282334;
+  --text:#e8e0d0;
+  --muted:#9a9182;
+  --muted-2:#736c61;
+  --gold:#d9a441;
+  --gold-bright:#f0c674;
+  --crimson:#c0392b;
+  --crimson-soft:#e0685c;
+  --ok:#5aa96a;
+  --shadow:0 18px 44px rgba(0,0,0,.5);
+  --rule:1px solid var(--line);
+}
+@media (prefers-color-scheme: light){
+  :root:not([data-theme="dark"]){
+    --ground:#eee6d4;
+    --surface:#f6f0e2;
+    --surface-2:#e9e0cb;
+    --line:#cdbfa2;
+    --line-soft:#dcd0b6;
+    --text:#231c14;
+    --muted:#6d6252;
+    --muted-2:#8c8171;
+    --gold:#8a6111;
+    --gold-bright:#6d4c0b;
+    --crimson:#9d2b20;
+    --crimson-soft:#7d1f16;
+    --ok:#356b41;
+    --shadow:0 14px 34px rgba(90,72,40,.18);
+  }
+}
+:root[data-theme="light"]{
+  --ground:#eee6d4;
+  --surface:#f6f0e2;
+  --surface-2:#e9e0cb;
+  --line:#cdbfa2;
+  --line-soft:#dcd0b6;
+  --text:#231c14;
+  --muted:#6d6252;
+  --muted-2:#8c8171;
+  --gold:#8a6111;
+  --gold-bright:#6d4c0b;
+  --crimson:#9d2b20;
+  --crimson-soft:#7d1f16;
+  --ok:#356b41;
+  --shadow:0 14px 34px rgba(90,72,40,.18);
+}
+
+*{box-sizing:border-box}
+
+body{
+  background:var(--ground);
+  color:var(--text);
+  font-family:"Spectral",Georgia,"Times New Roman",serif;
+  font-size:17px;
+  line-height:1.62;
+  margin:0;
+  -webkit-font-smoothing:antialiased;
+}
+
+.page{
+  max-width:1080px;
+  margin:0 auto;
+  padding:0 24px 96px;
+}
+.col{max-width:66ch}
+
+/* ---------- en-tete ---------- */
+
+.masthead{
+  border-bottom:2px solid var(--gold);
+  padding:56px 0 26px;
+  display:flex;
+  flex-direction:column;
+  gap:18px;
+}
+.eyebrow{
+  font-family:"JetBrains Mono",ui-monospace,SFMono-Regular,Consolas,monospace;
+  font-size:11px;
+  letter-spacing:.20em;
+  text-transform:uppercase;
+  color:var(--gold);
+  margin:0;
+}
+h1{
+  font-family:"Cinzel",Constantia,"Palatino Linotype",Georgia,serif;
+  font-weight:600;
+  font-size:clamp(34px,6vw,58px);
+  line-height:1.06;
+  letter-spacing:.01em;
+  margin:0;
+  text-wrap:balance;
+}
+.standfirst{
+  font-size:20px;
+  line-height:1.55;
+  color:var(--text);
+  margin:0;
+  max-width:60ch;
+}
+.standfirst em{color:var(--gold-bright);font-style:italic}
+
+.provenance{
+  display:flex;
+  flex-wrap:wrap;
+  gap:0 34px;
+  padding:18px 0 0;
+  font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  font-size:12px;
+  color:var(--muted);
+}
+.provenance div{display:flex;flex-direction:column;gap:2px;padding:6px 0}
+.provenance b{
+  color:var(--muted-2);
+  font-weight:400;
+  font-size:10px;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+}
+.provenance span{color:var(--text)}
+
+/* ---------- sections ---------- */
+
+section{padding:44px 0 0}
+.tag{
+  font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  font-size:10px;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  color:var(--ground);
+  background:var(--gold);
+  padding:3px 8px;
+  border-radius:2px;
+  display:inline-block;
+  margin:0 0 14px;
+}
+.tag.limite{background:var(--crimson);color:#fff}
+:root[data-theme="light"] .tag.limite,
+:root:not([data-theme="dark"]) .tag.limite{color:#fdf6e8}
+
+h2{
+  font-family:"Cinzel",Constantia,Georgia,serif;
+  font-weight:600;
+  font-size:clamp(23px,3.2vw,30px);
+  line-height:1.2;
+  margin:0 0 16px;
+  text-wrap:balance;
+}
+h3{
+  font-family:"Cinzel",Constantia,Georgia,serif;
+  font-weight:500;
+  font-size:17px;
+  letter-spacing:.02em;
+  margin:30px 0 10px;
+  color:var(--gold-bright);
+}
+p{margin:0 0 16px}
+.col p:last-child{margin-bottom:0}
+
+code,.mono{
+  font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  font-size:.86em;
+}
+code{
+  background:var(--surface-2);
+  border:1px solid var(--line-soft);
+  border-radius:3px;
+  padding:1px 5px;
+  color:var(--gold-bright);
+  word-break:break-word;
+}
+
+pre{
+  font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  font-size:12.5px;
+  line-height:1.7;
+  background:var(--surface);
+  border-left:3px solid var(--crimson);
+  padding:16px 18px;
+  overflow-x:auto;
+  margin:0 0 20px;
+  color:var(--text);
+}
+pre .err{color:var(--crimson-soft)}
+
+/* ---------- tableaux ---------- */
+
+.tablewrap{overflow-x:auto;margin:0 0 8px}
+table{
+  border-collapse:collapse;
+  width:100%;
+  font-size:15px;
+  font-variant-numeric:tabular-nums;
+}
+caption{
+  text-align:left;
+  font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  font-size:11px;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  color:var(--muted);
+  padding:0 0 10px;
+}
+th{
+  text-align:left;
+  font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  font-weight:400;
+  font-size:10.5px;
+  letter-spacing:.15em;
+  text-transform:uppercase;
+  color:var(--muted);
+  border-bottom:1px solid var(--gold);
+  padding:0 16px 8px 0;
+  white-space:nowrap;
+}
+td{
+  padding:9px 16px 9px 0;
+  border-bottom:1px solid var(--line-soft);
+  vertical-align:baseline;
+}
+tbody tr:last-child td{border-bottom:none}
+td.num,th.num{text-align:right;padding-right:0;font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:13.5px}
+td.key{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;font-size:12.5px;color:var(--muted)}
+.hero{font-family:"Cinzel",Georgia,serif;font-weight:500;white-space:nowrap}
+tr.pivot td{color:var(--crimson-soft);font-weight:600}
+tr.pivot td.key{color:var(--crimson-soft)}
+
+/* ---------- la mesure : barres ---------- */
+
+.bars{
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+  border-top:1px solid var(--line);
+  padding:26px 0 4px;
+  margin:0 0 12px;
+}
+.bar{display:grid;grid-template-columns:1fr;gap:7px}
+.bar-head{
+  display:flex;
+  justify-content:space-between;
+  align-items:baseline;
+  gap:16px;
+  flex-wrap:wrap;
+}
+.bar-name{font-size:16px}
+.bar-name small{
+  display:block;
+  font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:.04em;
+}
+.bar-val{
+  font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  font-size:19px;
+  font-weight:700;
+  color:var(--gold-bright);
+  white-space:nowrap;
+}
+.bar-track{
+  position:relative;
+  height:12px;
+  background:var(--surface-2);
+  border:1px solid var(--line-soft);
+}
+.bar-fill{
+  position:absolute;
+  inset:0 auto 0 0;
+  background:var(--gold);
+}
+.bar.zero .bar-val{color:var(--crimson-soft)}
+.bar.zero .bar-fill{
+  width:3px;
+  background:var(--crimson);
+}
+.scale{
+  display:flex;
+  justify-content:space-between;
+  font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  font-size:10px;
+  color:var(--muted-2);
+  letter-spacing:.1em;
+  border-top:1px solid var(--line-soft);
+  padding-top:6px;
+}
+
+/* ---------- encarts ---------- */
+
+.verdict{
+  display:grid;
+  gap:0;
+  border:1px solid var(--line);
+  background:var(--surface);
+  margin:22px 0 0;
+}
+.verdict > div{padding:22px 24px}
+.verdict > div + div{border-top:1px solid var(--line)}
+.verdict h4{
+  font-family:"JetBrains Mono",ui-monospace,Consolas,monospace;
+  font-size:10.5px;
+  letter-spacing:.2em;
+  text-transform:uppercase;
+  margin:0 0 10px;
+  color:var(--gold);
+}
+.verdict.no h4{color:var(--crimson-soft)}
+.verdict p{margin:0 0 10px;font-size:16px}
+.verdict p:last-child{margin:0}
+.verdict ul{margin:0;padding-left:20px}
+.verdict li{margin:0 0 8px}
+.verdict li:last-child{margin:0}
+
+.pull{
+  border-left:3px solid var(--gold);
+  padding:4px 0 4px 22px;
+  margin:26px 0;
+  font-size:19px;
+  line-height:1.5;
+  font-style:italic;
+  color:var(--gold-bright);
+  max-width:56ch;
+}
+
+.footnote{
+  margin-top:60px;
+  padding-top:20px;
+  border-top:1px solid var(--line);
+  font-size:13px;
+  color:var(--muted);
+  max-width:70ch;
+}
+.footnote p{margin:0 0 10px}
+
+ol.protocole{margin:0;padding-left:22px}
+ol.protocole li{margin:0 0 12px}
+ol.protocole li:last-child{margin:0}
+
+@media (max-width:640px){
+  body{font-size:16px}
+  .page{padding:0 18px 64px}
+  .masthead{padding-top:38px}
+  .provenance{gap:0 22px}
+}
+</style>
+
+<div class="page">
+
+  <header class="masthead">
+    <p class="eyebrow">Enquête · The Seven Deadly Sins Origin · build 2.0.4.2</p>
+    <h1>Les 30 passifs muets</h1>
+    <p class="standfirst">Trente passifs de transcendance se débloquent normalement, affichent
+      leur <em>+50&nbsp;%</em>, et n'ont aucune implémentation dans les fichiers du client — là où
+      leurs 48 cousins à déclencheur en ont une complète.</p>
+    <div class="provenance">
+      <div><b>Client</b><span>2.0.4.2 · ba… 8d01ff91db8_287759</span></div>
+      <div><b>Extraction</b><span>FModel 4.4.4 · 5 sept. 2026</span></div>
+      <div><b>Mapping</b><span>mappings-2.0.4.2 · extrait du client</span></div>
+      <div><b>Tables lues</b><span>1 578 · 0 en échec</span></div>
+    </div>
+  </header>
+
+  <section class="col">
+    <span class="tag">Constat</span>
+    <h2>Le passif se débloque, les dégâts ne bougent pas</h2>
+    <p>Sur une tenue gravée transcendée jusqu'au dernier palier, le jeu annonce
+      « Transcendance terminée » et accorde son passif — pour Ban et la tenue
+      <em>Cuisinier remplaçant</em>&nbsp;: <strong>Transcendance de puissance&nbsp;: Frappe
+      mortelle, augmente les dégâts d'attaque ultime de 50&nbsp;%</strong>.</p>
+    <p>Le bonus ne se retrouve nulle part. Ni dans le panneau de statistiques, ni sur les
+      nombres affichés en combat. Cette page rassemble ce que les fichiers du client
+      permettent d'établir, et surtout ce qu'ils ne permettent pas.</p>
+  </section>
+
+  <section class="col">
+    <span class="tag">Vérification</span>
+    <h2>La condition de déblocage est bien remplie</h2>
+    <p>Le passif est accroché à la pièce par le champ <code>LimitBreak_Passive</code>, qui
+      porte une condition unique et identique sur <strong>les 78 pièces concernées du
+      jeu</strong>&nbsp;: <code>PromotionLevel: 3</code>. Ce palier est le dernier de l'échelle
+      de transcendance, et c'est lui qui porte le plafond de renforcement à +15.</p>
+  </section>
+
+  <div class="tablewrap">
+    <table>
+      <caption>ItemTable_Growth_Promotion — groupe limitbr_armor_t5_default</caption>
+      <thead>
+        <tr>
+          <th>Transcendance réussie</th>
+          <th class="num">Plafond de renforcement</th>
+          <th class="num">Coût</th>
+          <th class="num">Pierres de gravure</th>
+          <th class="num">Réussite</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Aucune (départ)</td><td class="num">+5</td><td class="num">—</td><td class="num">—</td><td class="num">—</td></tr>
+        <tr><td>Première</td><td class="num">+10</td><td class="num">1 000 000</td><td class="num">3</td><td class="num">80 %</td></tr>
+        <tr><td>Deuxième</td><td class="num">+14</td><td class="num">1 500 000</td><td class="num">7</td><td class="num">50 %</td></tr>
+        <tr class="pivot"><td>Troisième — donne le passif</td><td class="num">+15</td><td class="num">2 500 000</td><td class="num">15</td><td class="num">30 %</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <section class="col">
+    <p>Une pièce affichant <span class="mono">+14 / +15</span> a donc bien franchi le
+      troisième palier&nbsp;: le plafond serait resté à 14 sinon. La condition du passif
+      est remplie, indépendamment du renforcement restant à poser.</p>
+  </section>
+
+  <section class="col">
+    <span class="tag">Structure</span>
+    <h2>Le jeu a deux machineries, et ces trente-là ne sont dans aucune</h2>
+    <p>Un bonus permanent de dégâts sur une catégorie d'attaque s'écrit normalement
+      comme une <strong>option statique</strong>&nbsp;: une ligne d'<code>Option_StaticTable</code>
+      portant un <code>AbilityType</code>. Le jeu en compte <strong>22</strong> qui utilisent
+      <code>UltimateSkill_DamAdd_Rate</code>, sur des armes et des armures. Ce sont elles qui
+      remontent dans le panneau de statistiques sous « Augmentation des dégâts d'attaque
+      ultime ».</p>
+    <p>Un effet <strong>déclenché ou temporaire</strong>, lui, passe par le système des passifs&nbsp;:
+      <code>Passive_Base</code> → <code>Passive_Group</code> → <code>SkillTID</code>, puis une ligne
+      dans <code>BuffTable</code> ou <code>SkillBehaviorTable</code> qui porte le comportement réel.
+      C'est ainsi qu'est câblée la transcendance d'équipe de Ban&nbsp;: la ligne de buff
+      <code>303619401</code> déclenche <code>EpLb_Ban_D_Lv1</code> sur <code>EPackCondType::BurstAct</code>,
+      c'est-à-dire au Déluge.</p>
+    <p>Les trente passifs à multiplicateur permanent passent par le <strong>second</strong> système
+      pour exprimer ce que le <strong>premier</strong> sait faire — et n'ont d'entrée dans ni l'un
+      ni l'autre. Un balayage complet de l'export, 65 364 fichiers, ne trouve leurs
+      identifiants que dans les six tables qui les <em>déclarent</em>.</p>
+  </section>
+
+  <section>
+    <div class="col">
+      <span class="tag">Mesure</span>
+      <h2>Le taux de câblage, par nature d'effet</h2>
+      <p>Part des passifs qui possèdent une ligne dans <code>BuffTable</code> ou
+        <code>SkillBehaviorTable</code>. La lecture par famille ne dit rien&nbsp;; la lecture par
+        nature d'effet est sans ambiguïté.</p>
+    </div>
+
+    <div class="bars">
+      <div class="bar">
+        <div class="bar-head">
+          <div class="bar-name">Passifs d'équipement à déclencheur
+            <small>EpEq_ · 291 lignes</small></div>
+          <div class="bar-val">62 % · 180 sur 291</div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:61.9%"></div></div>
+      </div>
+
+      <div class="bar">
+        <div class="bar-head">
+          <div class="bar-name">Transcendances à déclencheur ou durée
+            <small>EpLb_ · 48 lignes</small></div>
+          <div class="bar-val">77 % · 37 sur 48</div>
+        </div>
+        <div class="bar-track"><div class="bar-fill" style="width:77.1%"></div></div>
+      </div>
+
+      <div class="bar zero">
+        <div class="bar-head">
+          <div class="bar-name">Transcendances à multiplicateur permanent
+            <small>EpLb_ · 30 lignes</small></div>
+          <div class="bar-val">0 % · 0 sur 30</div>
+        </div>
+        <div class="bar-track"><div class="bar-fill"></div></div>
+      </div>
+
+      <div class="scale"><span>0 %</span><span>50 %</span><span>100 %</span></div>
+    </div>
+
+    <div class="col">
+      <p>Le motif « multiplicateur permanent » n'existe <strong>nulle part ailleurs</strong> dans le
+        système des passifs&nbsp;: sur les 312 passifs d'équipement du jeu, pas un seul n'est
+        de cette nature. Il n'y a donc aucun groupe témoin qui montrerait que zéro
+        câblage est normal pour cette forme d'effet.</p>
+    </div>
+  </section>
+
+  <section class="col">
+    <span class="tag">Contrôle</span>
+    <h2>Trois fausses pistes, écartées</h2>
+
+    <h3>La ligne vide dans SkillTable</h3>
+    <p>Le <code>SkillTID</code> de ces passifs pointe vers une ligne quasi vide. Ce n'est pas un
+      indice&nbsp;: les 312 passifs d'équipement et les 78 de transcendance portent
+      <strong>tous exactement six champs</strong> porteurs d'information. C'est la forme normale
+      de tout passif dans ce jeu, y compris ceux qui fonctionnent.</p>
+
+    <h3>L'absence de BuffTable, prise seule</h3>
+    <p>Quatre passifs d'équipement sur dix n'ont aucun câblage client et fonctionnent
+      vraisemblablement très bien. L'absence ne prouve rien par elle-même — seule la
+      découpe par nature d'effet, plus haut, porte une information.</p>
+
+    <h3>Un mapping périmé qui masquerait des champs — écartée par l'expérience</h3>
+    <p>La première version de cette enquête raisonnait&nbsp;: le mapping du 3 septembre était
+      en retard sur le build, une table échouait, mais en UE5 les propriétés sont
+      sérialisées sans version — face à un champ inconnu le parseur <strong>échoue</strong>, il
+      ne l'avale pas en silence. Les tables des transcendances étant lues proprement,
+      elles étaient donc lues intégralement.</p>
+    <pre><span class="err">[ERR] Could not read DataTable correctly</span>
+UEMerchantGoodsTable: Unknown property with value 20.
+      Can't proceed with serialization (Serialized 20 properties until now)</pre>
+    <p>Le raisonnement prédisait qu'un mapping neuf ne révélerait aucun champ caché.
+      <strong>La prédiction a été mise à l'épreuve le 5 septembre</strong>&nbsp;: un mapping a été
+      extrait directement du client 2.0.4.2 en cours d'exécution, puis les 1&nbsp;578 tables
+      réexportées et comparées une à une.</p>
+    <p><strong>1&nbsp;576 sont identiques au bit près.</strong> Les huit tables sources de cette
+      page sont toutes dans le lot identique&nbsp;: aucun champ nouveau, aucune ligne
+      nouvelle, aucune valeur changée. Les deux seuls écarts sont
+      <code>MerchantGoods</code> — la table de l'erreur ci-dessus, qui passe de 0 à
+      671&nbsp;lignes et confirme que le mapping était bien périmé — et une étiquette
+      d'énumération dans une table de messages d'interface.</p>
+    <p>Cette seconde correction ferme la dernière porte, la plus sournoise. Un mapping en
+      retard ne laisse pas que des tables vides&nbsp;: quand une énumération gagne une
+      valeur qu'il ignore, l'index déborde et le lecteur écrit la dernière étiquette
+      connue, sans rien signaler. Douze énumérations ont gagné des valeurs entre les deux
+      mappings. Comme les huit tables sont identiques octet pour octet, aucune de ces
+      étiquettes n'était chez elles.</p>
+    <p>Le balayage refait sur l'extraction neuve donne le même résultat, avec son témoin&nbsp;:
+      <code>eplb_ban_b</code> n'apparaît que dans les tables qui le déclarent, tandis que
+      <code>EpLb_Ban_D</code> — la transcendance d'équipe, elle câblée — ressort en plus dans
+      <code>BuffTable</code> et <code>SkillBehaviorTable</code>. Même recherche, même export,
+      résultats opposés.</p>
+  </section>
+
+  <section class="col">
+    <span class="tag limite">Limite</span>
+    <h2>Ce qui est établi, et ce qui ne l'est pas</h2>
+
+    <div class="verdict">
+      <div>
+        <h4>Établi par les fichiers</h4>
+        <ul>
+          <li>La condition de déblocage de ces passifs est <code>PromotionLevel: 3</code>, sur les 78 pièces, sans exception.</li>
+          <li>Les 30 passifs à multiplicateur permanent n'ont aucune ligne dans <code>Option_StaticTable</code>, <code>BuffTable</code> ni <code>SkillBehaviorTable</code>.</li>
+          <li>43 des 48 transcendances à déclencheur en ont une. Les 5 restantes sont les « efficacité de Déluge », permanentes elles aussi.</li>
+          <li>Rien n'a changé sur ce point entre les extractions du 27 août et du 3 septembre&nbsp;: les 180 entrées concernées y sont identiques.</li>
+          <li>Un mapping extrait du client en cours d'exécution, le 5 septembre, ne change <strong>aucune</strong> des huit tables sources&nbsp;: 1 576 des 1 578 tables sont identiques au bit près.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="verdict no">
+      <div>
+        <h4>Non établi</h4>
+        <p>Le serveur détient ses propres données, qu'aucune extraction ne verra. L'absence
+          d'implémentation côté client <strong>ne démontre pas</strong> que le bonus n'est pas appliqué
+          en jeu&nbsp;; elle établit seulement qu'aucun mécanisme visible ne l'applique.</p>
+        <p>Ce que cette absence explique en revanche avec certitude&nbsp;: <strong>il n'y aura
+          jamais d'icône de buff ni de ligne de statistique</strong> pour ces trente passifs,
+          contrairement aux transcendances d'équipe. Aucun retour visuel n'est prévu.
+          « Je ne vois rien » est donc attendu dans tous les cas, et ne tranche pas.</p>
+      </div>
+    </div>
+
+    <p class="pull">Seul un relevé chiffré de dégâts tranche. Le reste est de la lecture de tables.</p>
+  </section>
+
+  <section class="col">
+    <span class="tag">Protocole</span>
+    <h2>Comment le vérifier soi-même</h2>
+    <ol class="protocole">
+      <li>Même cible, même niveau de héros, même arme, même équipement pour les deux
+        mesures. Un boss d'entraînement immobile vaut mieux qu'un combat réel.</li>
+      <li>Relever le nombre affiché sur <strong>le seul coup concerné</strong> — l'Attaque ultime pour
+        la Frappe mortelle. Ni l'auto-attaque, ni la compétence normale, ni le Déluge.</li>
+      <li>Désactiver les coups critiques du relevé en gardant plusieurs mesures et en
+        retenant la valeur non critique, la plus basse et la plus fréquente.</li>
+      <li>Retirer la tenue gravée transcendée, refaire exactement le même relevé.</li>
+      <li>Un écart proche de +50&nbsp;% confirme que le passif s'applique. Un écart nul, à
+        équipement identique par ailleurs, le contredit.</li>
+    </ol>
+  </section>
+
+  <section>
+    <div class="col">
+      <span class="tag">Inventaire</span>
+      <h2>Les trente passifs concernés</h2>
+      <p>Tous à +50&nbsp;%, sur 22 héros. Le passif n'agit que si sa tenue est portée, et
+        seulement une fois la pièce transcendée trois fois.</p>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <caption>Dégâts de compétence normale — 14 passifs</caption>
+        <thead><tr><th>Héros</th><th>Tenue gravée</th><th class="key">Identifiant</th></tr></thead>
+        <tbody>
+          <tr><td class="hero">Ban</td><td>Le Renard de l'Avarice</td><td class="key">eplb_ban_c</td></tr>
+          <tr><td class="hero">Drake</td><td>Gloire du passé</td><td class="key">eplb_drake_b</td></tr>
+          <tr><td class="hero">Dreyfus</td><td>Tenue modeste</td><td class="key">eplb_dreyfus_c</td></tr>
+          <tr><td class="hero">Elaine</td><td>Lumière de guidance</td><td class="key">eplb_elaine_b</td></tr>
+          <tr><td class="hero">Gil Thunder</td><td>Chevalier sacré prometteur</td><td class="key">eplb_gilthunder_d</td></tr>
+          <tr><td class="hero">Guila</td><td>Chevalier sacré des explosions</td><td class="key">eplb_guila_b</td></tr>
+          <tr><td class="hero">Hendrickson</td><td>Vêtements de travail de l'apothicaire</td><td class="key">eplb_hendrickson_c</td></tr>
+          <tr><td class="hero">Hendrickson</td><td>Retour du Chevalier Sacré</td><td class="key">eplb_hendrickson_d</td></tr>
+          <tr><td class="hero">Howzer</td><td>Chevalier sacré de la tempête</td><td class="key">eplb_howzer_b</td></tr>
+          <tr><td class="hero">Jericho</td><td>Traces de souvenirs</td><td class="key">eplb_jericho_d</td></tr>
+          <tr><td class="hero">Manny</td><td>Rituel sacré</td><td class="key">eplb_manny_d</td></tr>
+          <tr><td class="hero">Meliodas</td><td>Une nouvelle aventure</td><td class="key">eplb_meliodas_b</td></tr>
+          <tr><td class="hero">Meliodas</td><td>Défense simple</td><td class="key">eplb_meliodas_c</td></tr>
+          <tr><td class="hero">Merlin</td><td>Le Sanglier de la Gourmandise</td><td class="key">eplb_merlin_c</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <caption>Dégâts d'attaque ultime — 9 passifs</caption>
+        <thead><tr><th>Héros</th><th>Tenue gravée</th><th class="key">Identifiant</th></tr></thead>
+        <tbody>
+          <tr class="pivot"><td class="hero">Ban</td><td>Cuisinier remplaçant</td><td class="key">eplb_ban_b</td></tr>
+          <tr><td class="hero">Daisy</td><td>Petite exploratrice</td><td class="key">eplb_daisy_b</td></tr>
+          <tr><td class="hero">Derieri</td><td>Résistance et révolution</td><td class="key">eplb_derieri_b</td></tr>
+          <tr><td class="hero">Dreyfus</td><td>Chevalier honorable</td><td class="key">eplb_dreyfus_d</td></tr>
+          <tr><td class="hero">Escanor</td><td>Violence nordique</td><td class="key">eplb_escanor_b</td></tr>
+          <tr><td class="hero">Escanor</td><td>Arrogance adéquate</td><td class="key">eplb_escanor_c</td></tr>
+          <tr><td class="hero">King</td><td>Le Grizzly de la Paresse</td><td class="key">eplb_king_b</td></tr>
+          <tr><td class="hero">Meliodas</td><td>Majesté bien malveillante</td><td class="key">eplb_meliodas_d</td></tr>
+          <tr><td class="hero">Tristan</td><td>Aventure du prince</td><td class="key">eplb_tristan_c</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="tablewrap">
+      <table>
+        <caption>Dégâts d'attaque spéciale — 5 passifs · normale — 1 · relève — 1</caption>
+        <thead><tr><th>Héros</th><th>Tenue gravée</th><th>Catégorie touchée</th><th class="key">Identifiant</th></tr></thead>
+        <tbody>
+          <tr><td class="hero">Bug</td><td>Marche des ombres</td><td>Attaque spéciale</td><td class="key">eplb_bug_b</td></tr>
+          <tr><td class="hero">Bug</td><td>Furtivité du démon</td><td>Attaque spéciale</td><td class="key">eplb_bug_c</td></tr>
+          <tr><td class="hero">Diane</td><td>Le Serpent de l'Envie</td><td>Attaque spéciale</td><td class="key">eplb_diane_b</td></tr>
+          <tr><td class="hero">Griamore</td><td>Barricade de fortune</td><td>Attaque spéciale</td><td class="key">eplb_griamore_c</td></tr>
+          <tr><td class="hero">Slader</td><td>Épée du vieux roi</td><td>Attaque spéciale</td><td class="key">eplb_slader_b</td></tr>
+          <tr><td class="hero">Klotho</td><td>Tenue d'exercice d'exploratrice</td><td>Attaque normale</td><td class="key">eplb_klotho_d</td></tr>
+          <tr><td class="hero">Merlin</td><td>Vêtements formels légers</td><td>Compétence de relève</td><td class="key">eplb_merlin_b</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="footnote col">
+    <p>Sources&nbsp;: extraction locale du client via FModel 4.4.4, mapping
+      <span class="mono">mappings-2.0.4.2.usmap</span> extrait du client en cours
+      d'exécution avec Dumper-7, build <span class="mono">2.0.4.2</span>
+      (<span class="mono">8d01ff91db8_287759</span>), export du 5 septembre 2026 comparé à ceux
+      du 3 septembre et du 27 août. Tables&nbsp;: <span class="mono">ItemTable_Data_Equip</span>,
+      <span class="mono">ItemTable_Equip_Passive_Base</span> et <span class="mono">_Group</span>,
+      <span class="mono">ItemTable_Growth_Promotion</span>, <span class="mono">Option_StaticTable</span>,
+      <span class="mono">SkillTable</span>, <span class="mono">BuffTable</span>,
+      <span class="mono">SkillBehaviorTable</span>.</p>
+    <p>Les valeurs sont lues dans les tables, jamais dans la prose du jeu&nbsp;; les
+      descriptions françaises proviennent de <span class="mono">Localization/Game/fr/Game.json</span>,
+      valeurs substituées depuis <span class="mono">Local_Replace</span>.</p>
+  </div>
+
+</div>

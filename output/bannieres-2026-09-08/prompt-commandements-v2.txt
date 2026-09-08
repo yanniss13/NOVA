@@ -1,0 +1,23 @@
+Mode: édition avec outil intégré image_gen.
+Références visuelles:
+https://criticalhits.com.br/wp-content/uploads/2020/09/10-Mandamentos-de-Nanatsu-no-Taizai.jpg
+https://3.bp.blogspot.com/-JNOf5QTPz8k/Ww2qqlL6NvI/AAAAAAAAASE/5sD62uXxmgMo0sXYk2qMtNO-3eSODYo1gCLcBGAs/s1600/Dez-Mandamentos-Nanatsu-no-Taizai-1.png
+
+Correct the NOVA Ten Commandments banner to match the ACTUAL ANIME CHARACTER DESIGNS in the provided screenshots.
+IMAGE ROLES, in order:
+Image 1: existing NOVA banner, EDIT TARGET. Preserve its panoramic ten-panel layout, letterboxed 16:9 framing, black/purple/crimson backgrounds, gold NOVA lettering, chains, compass emblem and rocky foreground.
+Image 2: circular montage of actual anime screenshots, AUTHORITATIVE CHARACTER APPEARANCE REFERENCE.
+Image 3: anime group screenshot in cave, AUTHORITATIVE COSTUME AND BODY REFERENCE.
+The user rejected image 1 because faces/costumes were invented. REPLACE ALL TEN CHARACTERS with clean authentic 2D TV anime renderings that closely follow images 2 and 3. Do not copy mistakes from image 1. Simple cel shading, canonical face shapes, simple noses and eyes, exact hairstyles, precise costume colors, no semi-realistic fashion redesigns.
+Ten panels left to right:
+1 GRAYROAD: purple-black hovering cluster of small gray wrinkled demonic faces exactly as shown near the top of anime reference, amorphous dark haze.
+2 GALAND: match red armor from anime screenshot, huge smooth rounded SILVER shoulder plates, red narrow elongated helmet with two silver swept side horns, no invented jagged dragon helmet; circular black chest opening with silver scalloped rim, red segmented narrow torso, polearm.
+3 MELASCULA: very pale lavender-pink straight long hair with straight blunt fringe across forehead; narrow sleepy eyes; recognizable WHITE high neck blouse and large PINK bow at throat from montage, framed within purple darkness; do not draw a center-parted glamorous witch, no forehead tattoo.
+4 DERIERI: orange-blond shaggy hair with canonical spiky side tufts and longer back, one eye hidden by hair, bored stern expression, no giant central forehead symbol; canonical dark demonic covering as in reference, shoulders and face focus.
+5 ZELDRIS: EXACT face and hair silhouette from the right-hand wedge of montage: upright swept-back black hair, small angular anime face, stern black demon eyes, authentic spiral demon sigil on forehead, red high-collar outfit with silver edging and silver circular closures; not an invented child with rounded huge eyes or extra armor.
+6 ESTAROSSA: EXACT silver tousled hair, angular face, stubble, drooping cool eyes as left montage wedge; black open high collar with yellow edging, plain bare upper chest as reference; REMOVE the invented white fur coat.
+7 MONSPEET: EXACT narrow angular long face, swept short dark burgundy hair, thin straight mustache, quiet eyes, WHITE cape tied at throat covering shoulders, dark horizontal chest stripes visible beneath as top montage wedge; no ornate navy-and-gold cape.
+8 DROLE: enormous blue-skinned FOUR-ARMED giant, long brown hair covers part of face, stern visible eye and canonical face from lower montage wedge, gold arm bands, yellow trousers as group screenshot; NOT the normal two-armed handsome muscular man from image 1. Make both shoulder pairs visible.
+9 GLOXINIA: exact delicate round anime face and long smooth red hair from upper-left montage wedge, bare shoulders and small chest mark, iridescent butterfly wings and green plant form as screenshot; no angular elf face, no invented long pointed elf ears or green leaf shirt.
+10 FRAUDRIN IN DREYFUS'S BODY: match bottom-left wedge of anime montage: broad older human face, short slicked-back blond hair, distinctive blond sideburns and pointed blond chin beard, black demonic mark at eye, green armor with yellow/gold epaulettes and white high collar. This MUST replace the invented purple multi-face monster in existing banner.
+Every panel must contain the corresponding distinct member exactly once, all 10 recognizable heads visible above logo. Preserve NOVA exactly in ornate gold; only text NOVA. Character accuracy to reference screenshots is more important than decorative additions. No new characters, no watermarks.

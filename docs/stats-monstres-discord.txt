@@ -1,0 +1,96 @@
+**Stats defensives — 7DS Origin, build 1.8.1.2, export du 25/08/2026**
+Source : `Actor/NpcStatGroupTable`. **Tous les taux sont en dix-milliemes** (1000 = 10 %).
+
+⚠️ Chaque nom porte aussi un acteur `stat_poweroverwhelming` (9999999 PV, 99,99 % partout) : **groupe de test, a ignorer**.
+⚠️ `stat_common_echomonster` = les illusions de Cache-cache, 1 PV. Pas de vraies cibles.
+
+__**LAPIN MUTILATEUR RAPIDE**__  `local_mon_name_rabbit_0001`
+```
+                     50101117     50105113
+                 ------------ ------------
+PV                        980         8748
+Def                       162          456
+Atk                       149          526
+Vitesse                   500          500
+Precision                  54          154
+Percement res            1000         1000
+Red. tous dgts              0            0
+Red. dgts norm              0            0
+Absorption                  0            0
+Def+ (rate)                 0            0
+Res critique             1000         1000
+Def critique              300          610
+Blocage                     0            0
+Taux blocage                0            0
+Red. dgts bloq           9500         9500
+Taux crit                 500          725
+Dgts crit                1500         1925
+```
+
+__**CACHE-CACHE**__  `local_mon_name_hideandseek_0001`
+```
+                     50105102     50305101     50305176  50305165/66
+                 ------------ ------------ ------------ ------------
+PV                      10935        52693        52693            1
+Def                       480         1812         1812            0
+Atk                       585         2387         2387            1
+Vitesse                   500          500          500          500
+Precision                 154          362          362            0
+Percement res            1000         1500         1500            0
+Red. tous dgts              0            0            0            0
+Red. dgts norm              0            0            0            0
+Absorption                  0            0            0            0
+Def+ (rate)                 0            0            0            0
+Res critique             1000         1500         1500            0
+Def critique              610         1943         1943            0
+Blocage                     0            0            0            0
+Taux blocage                0            0            0            0
+Red. dgts bloq           9500         9500         9500            0
+Taux crit                 725         1693         1693            0
+Dgts crit                1925         3753         3753            0
+```
+
+__**POUSSE**__  `local_mon_name_sprout_0001`
+```
+                     50101122
+                 ------------
+PV                        980
+Def                       162
+Atk                       149
+Vitesse                   500
+Precision                  54
+Percement res            1000
+Red. tous dgts              0
+Red. dgts norm              0
+Absorption                  0
+Def+ (rate)                 0
+Res critique             1000
+Def critique              300
+Blocage                     0
+Taux blocage                0
+Red. dgts bloq           9500
+Taux crit                 500
+Dgts crit                1500
+```
+
+__**Elementaire**__
+```
+Lapin + Cache-cache : aucune resistance, aucune faiblesse (tout a 0)
+Pousse              : FAIBLE au Vent et au Feu, 1000 = 10 % chacun
+                      Wind_Weakness_Rate / Fire_Weakness_Rate
+
+Schema : Venom et Water ont _Res mais PAS de _Element_Res_Rate
+         ni de _Weakness_Rate. Default (physique) : l inverse,
+         pas de _Res mais _Element_Res_Rate et _Weakness_Rate.
+```
+
+__**Bornes du moteur, utiles pour la formule**__
+```
+battle_min_final_atk             1              plancher attaque finale
+battle_min_damres_rate           500 = 5 %      reduction minimale
+battle_max_damres_rate           10000 = 100 %  reduction maximale
+battle_max_sum_protect_cur_rate  9000 = 90 %    plafond percement cumule
+battle_min_elementdam_rate       500 = 5 %      plancher dgts elementaires
+battle_max_critical_rate         10000 = 100 %  plafond taux critique
+battle_min_critical_dam_rate     10000 = 100 %  plancher dgts critiques
+```
