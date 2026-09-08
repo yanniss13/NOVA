@@ -419,12 +419,23 @@ import { toast } from "./toast.js";
     if(empreinte === empreinteRendue) return Promise.resolve(true);
     empreinteRendue = empreinte;
 
+    /* L EN-TETE DE COLLECTION : le compte en toutes lettres, et la part en
+       anneau. Un rapport « 3 / 249 » se lit ; une part se voit. */
+    $("#collectionHeadline").textContent =
+      compte.possedes + " objet" + (compte.possedes > 1 ? "s" : "")
+      + " sur " + compte.total;
     const progression = $("#collectionProgress");
-    progression.innerHTML = "";
-    progression.appendChild(el("b",{ text:String(compte.possedes) }));
-    progression.appendChild(document.createTextNode(
-      " / " + compte.total + " possédés — " + compte.manquants + " à trouver"
-    ));
+    progression.textContent = compte.manquants
+      ? "Encore " + compte.manquants + " objet"
+        + (compte.manquants > 1 ? "s" : "") + " à trouver."
+      : "Collection complète.";
+    const part = compte.total
+      ? Math.round((compte.possedes / compte.total) * 100)
+      : 0;
+    $("#collectionRing").style.setProperty("--part", part + "%");
+    $("#collectionRingValue").innerHTML = "";
+    $("#collectionRingValue").appendChild(document.createTextNode(String(part)));
+    $("#collectionRingValue").appendChild(el("small",{ text:"%" }));
 
     poserLesSections();
     SECTIONS_COLLECTION.forEach(section => {
