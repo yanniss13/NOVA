@@ -85,6 +85,8 @@ import { toast } from "./toast.js";
   function ensureBossViewOwner(){
     const userId = sessionCourante.user ? sessionCourante.user.id : "";
     if(bossViewState.userId === userId) return;
+    /* Le compte change : les equipes lues appartenaient au precedent. */
+    equipesDemandees = false;
     bossViewOwnerVersion++;
     if(bossTeamPickerContext && bossTeamPickerContext.userId !== userId){
       closeBossTeamPicker();
@@ -375,7 +377,7 @@ import { toast } from "./toast.js";
 
      Les disponibilites restent une vue a part : elles ecrivent, elles ont leur
      module et leurs tests. */
-  const BOSS_SOUS_VUES = ["apercu", "groupes", "rapports"];
+  const BOSS_SOUS_VUES = ["apercu", "equipes", "groupes", "rapports"];
   let bossSousVue = "apercu";
 
   enregistrerSousVues("boss", {
@@ -433,6 +435,91 @@ import { toast } from "./toast.js";
     body.appendChild(bossStatsBlock(allGroups, reports, week.startDate));
 
     body.appendChild(bossRecommendationPanel(contexte.weekGroups, membership));
+  }
+
+  /* LES EQUIPES DISPONIBLES POUR LE BOSS.
+
+     La liste de la maquette : le pseudo du proprietaire en petites capitales,
+     le nom de l'equipe, les quatre portraits qui se chevauchent, et un lien
+     vers l'equipement.
+
+     Elle est en LECTURE SEULE. La rubrique Équipes garde la gestion — creer,
+     modifier, dupliquer, supprimer — et ce serait deux ecrans a tenir
+     d'accord si on la redoublait ici. Ce qu'on vient chercher au centre Boss,
+     c'est « avec quoi la confrerie peut-elle attaquer ». */
+  /* Les equipes ne sont pas chargees par le centre Boss : c'est la rubrique
+     Équipes qui les lit. Cet onglet demande donc sa propre lecture, une seule
+     fois, puis se redessine — sans quoi il annonce « aucune equipe partagee »
+     a qui vient d'en composer une. */
+  let equipesDemandees = false;
+  async function chargerEquipesDuBoss(){
+    if(equipesDemandees) return;
+    equipesDemandees = true;
+    try{
+      await Store.refresh();
+    }catch(error){
+      /* Une lecture en echec laisse la liste vide : l'onglet dira qu'il n'y a
+         rien, ce qui est aussi ce qu'il dirait sans equipe. Le centre Boss ne
+         se met pas en panne pour un onglet secondaire. */
+      equipesDemandees = false;
+      return;
+    }
+    if(bossSousVue === "equipes"
+      && $("#view-boss").classList.contains("active")){
+      renderBossContent();
+    }
+  }
+
+  function bossEquipes(body){
+    void chargerEquipesDuBoss();
+    const equipes = Store.all()
+      .slice()
+      .sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
+
+    if(!equipes.length){
+      body.appendChild(el("div",{class:"state-panel"},[
+        el("b",{text:"Aucune équipe partagée"}),
+        el("span",{text:"Les équipes composées par les membres apparaissent ici."})
+      ]));
+      return;
+    }
+
+    body.appendChild(el("div",{class:"section-title-row"},[
+      el("div", null, [
+        el("p",{class:"context-label",text:"Registre de la confrérie"}),
+        el("h2",{text:"Équipes disponibles"})
+      ]),
+      el("span",{text:equipes.length + " équipe"
+        + (equipes.length > 1 ? "s" : "")})
+    ]));
+
+    body.appendChild(el("div",{class:"shared-team-list"},
+      equipes.map(equipe => el("article",{class:"ornate-panel shared-team"},[
+        el("div", null, [
+          el("span",{class:"owner-tag",text:equipe.pseudo || "Sans pseudo"}),
+          el("h2",{text:equipe.name || "Équipe sans nom"})
+        ]),
+        el("div",{class:"mini-portraits"},
+          (equipe.heroes || []).map(heros => {
+            const personnage = heros && heros.char ? charOf(heros.char) : null;
+            const pastille = el("span",{
+              title:personnage ? personnage.name : "Emplacement libre"
+            });
+            if(personnage){
+              pastille.appendChild(el("img",{
+                src:personnage.file, alt:"", loading:"lazy"
+              }));
+            }
+            return pastille;
+          })),
+        el("button",{
+          class:"btn btn-ghost",
+          type:"button",
+          dataset:{ bossAction:"team-detail" },
+          text:"Voir l'équipement",
+          onclick:()=>openTeamDetail(equipe)
+        },[el("span",{class:"arrow","aria-hidden":"true",text:"\u2192"})])
+      ]))));
   }
 
   /* LES GROUPES : les six cartes de la semaine, et rien d'autre. */
@@ -516,7 +603,8 @@ import { toast } from "./toast.js";
       week, allGroups, membership, reports,
       weekGroups, current, completedCurrent, past, myCount
     };
-    if(bossSousVue === "groupes") bossGroupes(body, contexte);
+    if(bossSousVue === "equipes") bossEquipes(body);
+    else if(bossSousVue === "groupes") bossGroupes(body, contexte);
     else if(bossSousVue === "rapports") bossRapports(body, contexte);
     else bossApercu(body, contexte);
 

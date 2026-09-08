@@ -56,9 +56,11 @@ const RUBRIQUES = Object.freeze([
      adresse. Seules les disponibilites sont une vue a part, parce qu'elles
      ecrivent, et qu'elles ont leur propre module.
 
-     L'onglet « Équipes » de la maquette n'est pas repris ici : le site montre
-     deja les equipes partagees dans la rubrique Équipes, ou la maquette les
-     place aussi. Les redoubler ferait deux endroits a tenir d'accord. */
+     L'onglet « Équipes » montre les equipes disponibles pour le boss, en
+     LECTURE SEULE : leur gestion — creer, modifier, dupliquer, supprimer —
+     reste dans la rubrique Équipes, et la redoubler ferait deux ecrans a tenir
+     d'accord. Ce qu'on vient chercher ici, c'est avec quoi la confrerie peut
+     attaquer. */
   {
     id:"centre-boss",
     libelle:"Boss de guilde",
@@ -66,6 +68,7 @@ const RUBRIQUES = Object.freeze([
     vues:["availability", "boss"],
     onglets:[
       { vue:"boss", sousVue:"apercu", libelle:"Vue d'ensemble" },
+      { vue:"boss", sousVue:"equipes", libelle:"Équipes" },
       { vue:"availability", libelle:"Disponibilités" },
       { vue:"boss", sousVue:"groupes", libelle:"Groupes" },
       { vue:"boss", sousVue:"rapports", libelle:"Rapports" }
