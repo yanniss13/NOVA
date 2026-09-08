@@ -29,3 +29,35 @@
 @media (prefers-reduced-motion:reduce){
   .wiki-tile.collection-owned{transition:none}
 }
+
+/* L EN-TETE DE COLLECTION de la maquette : le compte a gauche, la part en
+   anneau a droite. L anneau est un degrade conique — la part doree, le reste
+   en creux — et un disque plein au centre en fait un anneau.
+
+   La part est posee par le rendu, dans la propriete personnalisee du meme
+   nom, et vaut zero tant que rien n'est lu. */
+.collection-head{
+  display:flex;align-items:center;justify-content:space-between;gap:24px;
+  margin:22px 0 16px;padding:20px 26px;border-radius:var(--radius)
+}
+.collection-head h2{margin:0;font-family:var(--display);font-size:25px;font-weight:500}
+.collection-head p:not(.context-label){margin:7px 0 0;color:var(--mist)}
+.progress-ring{
+  position:relative;display:grid;place-items:center;flex:none;
+  width:92px;height:92px;border-radius:50%;
+  background:conic-gradient(var(--gold-light) var(--part,0%), rgba(255,255,255,.07) 0)
+}
+.progress-ring::after{
+  content:"";position:absolute;inset:7px;border-radius:50%;background:var(--slate)
+}
+.progress-ring strong{
+  position:relative;z-index:1;font-family:var(--display);font-size:26px;
+  font-weight:500;font-variant-numeric:tabular-nums
+}
+.progress-ring small{font-size:12px}
+@media(max-width:767px){
+  .collection-head{padding:16px}
+  .collection-head h2{font-size:21px}
+  .progress-ring{width:74px;height:74px}
+  .progress-ring strong{font-size:20px}
+}

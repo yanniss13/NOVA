@@ -331,9 +331,13 @@
   <!-- ============ ANALYSE ============ -->
   <section id="view-analyse" class="view" role="tabpanel"
            aria-labelledby="analyseTitle">
-    <p class="section-eyebrow">Confrérie</p>
-    <h1 class="section-title" id="analyseTitle" tabindex="-1">Analyse par élément</h1>
-    <p class="section-lead">Vue d'ensemble, DPS par élément et soutiens de tous les éléments, calculés directement depuis les rosters.</p>
+    <div class="page-heading">
+      <div>
+        <p class="context-label">Confrérie</p>
+        <h1 id="analyseTitle" tabindex="-1">Analyse par élément</h1>
+        <p>Vue d'ensemble, DPS par élément et soutiens de tous les éléments, calculés directement depuis les rosters.</p>
+      </div>
+    </div>
     <div id="analyseBody"></div>
   </section>
 
@@ -354,9 +358,13 @@
   <!-- ============ WIKI ============ -->
   <section id="view-wiki" class="view" role="tabpanel"
            aria-labelledby="wikiTitle">
-    <p class="section-eyebrow">Référence</p>
-    <h1 class="section-title" id="wikiTitle" tabindex="-1">Wiki</h1>
-    <p class="section-lead">Les compétences, les passifs et les statistiques du jeu, en français.</p>
+    <div class="page-heading">
+      <div>
+        <p class="context-label">Référence</p>
+        <h1 id="wikiTitle" tabindex="-1">Wiki</h1>
+        <p>Les compétences, les passifs et les statistiques du jeu, en français.</p>
+      </div>
+    </div>
     <!-- Un groupe, pas un `tablist` : ces boutons ne contrôlent aucun
          `tabpanel`, et un `role="tab"` ici mentirait aux lecteurs d'écran en
          plus de polluer le décompte des onglets principaux. -->
@@ -390,17 +398,31 @@
   <!-- ============ COLLECTION ============ -->
   <section id="view-collection" class="view" role="tabpanel"
            aria-labelledby="collectionTitle">
-    <p class="section-eyebrow">Chasse</p>
-    <h1 class="section-title" id="collectionTitle" tabindex="-1">Collection</h1>
-    <p class="section-lead">Ce qu'il te reste à trouver, arme par arme et gravure par gravure.</p>
-    <div class="collection-toolbar">
+    <div class="page-heading">
+      <div>
+        <p class="context-label">Chasse</p>
+        <h1 id="collectionTitle" tabindex="-1">Collection</h1>
+        <p>Ce qu'il te reste à trouver, arme par arme et gravure par gravure.</p>
+      </div>
       <label class="wiki-field" id="collectionOwnerField">
         <span>Membre</span>
         <select id="collectionOwner"></select>
       </label>
-      <p class="collection-progress" id="collectionProgress"
-         role="status" aria-live="polite"></p>
     </div>
+    <!-- L EN-TETE DE COLLECTION de la maquette : le compte a gauche, l anneau
+         de progression a droite. Le rapport « 3 / 249 » se lisait en une ligne
+         de texte gris, la ou une part se voit. -->
+    <section class="ornate-panel collection-head">
+      <div>
+        <p class="context-label" id="collectionOwnerLabel">Ma collection</p>
+        <h2 id="collectionHeadline">—</h2>
+        <p class="collection-progress" id="collectionProgress"
+           role="status" aria-live="polite"></p>
+      </div>
+      <div class="progress-ring" id="collectionRing">
+        <strong id="collectionRingValue">0<small>%</small></strong>
+      </div>
+    </section>
     <!-- Mêmes listes déroulantes que le Wiki : construites en JS à partir des
          objets réellement listés, jamais figées ici. -->
     <div class="wiki-filters" id="collectionFilters">
@@ -417,9 +439,13 @@
   <!-- ============ CALCULATEUR ============ -->
   <section id="view-calculateur" class="view" role="tabpanel"
            aria-labelledby="calculateurTitle">
-    <p class="section-eyebrow">Boss de confrérie</p>
-    <h1 class="section-title" id="calculateurTitle" tabindex="-1">Calculateur de dégâts</h1>
-    <p class="section-lead">Les dégâts de chaque compétence de tes builds contre Akumu. Un chiffre par compétence, jamais un dégât par seconde : les temps d'animation ne sont mesurés nulle part.</p>
+    <div class="page-heading">
+      <div>
+        <p class="context-label">Boss de confrérie</p>
+        <h1 id="calculateurTitle" tabindex="-1">Calculateur de dégâts</h1>
+        <p>Les dégâts de chaque compétence de tes builds contre Akumu. Un chiffre par compétence, jamais un dégât par seconde : les temps d'animation ne sont mesurés nulle part.</p>
+      </div>
+    </div>
     <div id="calculateurBody"></div>
   </section>
 

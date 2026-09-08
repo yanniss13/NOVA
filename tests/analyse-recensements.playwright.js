@@ -49,7 +49,7 @@ async function ouvrirAnalyse(page, section = "supports"){
        rester visibles ensemble, sans demander un geste horizontal caché. */
     await ouvrirAnalyse(page, "overview");
     assert.match(
-      await page.locator("#view-analyse .section-lead").textContent(),
+      await page.locator("#view-analyse .page-heading p:not(.context-label)").textContent(),
       /soutiens de tous les éléments/,
       "le texte long doit annoncer le recensement complet"
     );
