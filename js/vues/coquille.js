@@ -297,7 +297,7 @@ const SURGISSANTS = [
   /* Le tiroir a DEUX declencheurs : le bouton du menu en haut, et « Plus » en
      bas. Le focus doit revenir a celui qui l'a ouvert — le rendre toujours au
      premier renverrait le doigt en haut de l'ecran apres un geste au pouce. */
-  { panneau:"#mobileDrawer", declencheur:"#mobileMenuButton,#mobileMoreButton" }
+  { panneau:"#mobileDrawer", declencheur:"#mobileMoreButton" }
 ];
 
 /* Le declencheur reellement employe, pour lui rendre le focus. */
@@ -356,7 +356,7 @@ function brancherCoquille(){
        Outils ne s'ouvrait pas — sans la moindre erreur en console. */
     const cible = event.target.closest(
       "[data-rubrique],[data-view],[data-action],"
-      + "#toolsMenuButton,#accountMenuButton,#mobileMenuButton,#mobileMoreButton");
+      + "#toolsMenuButton,#accountMenuButton,#mobileMoreButton");
     if(!cible) return;
 
     if(cible.dataset.action === "auth"){
@@ -379,7 +379,7 @@ function brancherCoquille(){
       basculerSurgissant("#accountMenu", cible);
       return;
     }
-    if(cible.id === "mobileMenuButton" || cible.id === "mobileMoreButton"){
+    if(cible.id === "mobileMoreButton"){
       basculerSurgissant("#mobileDrawer", cible);
       return;
     }

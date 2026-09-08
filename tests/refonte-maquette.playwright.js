@@ -84,6 +84,8 @@ async function openRoute(page, route){
     }
 
     await openRoute(page, "home");
+    /* CE FICHIER EPROUVE LA MAQUETTE, pas le site : elle garde son bouton
+       d'en-tete, que le site a retire au profit du seul « Plus ». */
     await page.locator("#mobileMenuButton").focus();
     await page.keyboard.press("Enter");
     assert.equal(await page.locator("#mobileMenuButton").getAttribute("aria-expanded"), "true");
