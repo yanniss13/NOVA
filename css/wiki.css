@@ -14,7 +14,12 @@
   transition:.14s
 }
 .wiki-category:hover{border-color:var(--gold)}
-.wiki-category.active{border-color:var(--gold-light);color:var(--gold-light)}
+/* La categorie choisie porte l'aplat clair, comme les pastilles de la
+   maquette : un simple changement de couleur de filet se lisait mal entre
+   cinq pastilles alignees. */
+.wiki-category.active{
+  border-color:var(--gold-light);color:var(--abyss);background:var(--gold-light)
+}
 
 .wiki-filters{
   display:grid;gap:12px;margin:0 0 16px;
@@ -32,6 +37,32 @@
 .wiki-grid{
   display:grid;gap:12px;
   grid-template-columns:repeat(auto-fill,minmax(104px,1fr))
+}
+/* SIX COLONNES DANS LE WIKI, et six seulement. `auto-fill` en donnait
+   quatorze sur un ecran de bureau : des vignettes de 104 px ou l'on ne
+   distinguait ni l'arme ni le heros, et un nom sur trois lignes.
+
+   La regle vise `#view-wiki` et non `.wiki-grid` : la Collection emploie les
+   memes tuiles pour 249 objets, ou la densite est un service — six colonnes y
+   feraient quarante-deux rangees. */
+#view-wiki .wiki-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
+@media(max-width:1179px){
+  #view-wiki .wiki-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
+}
+@media(max-width:767px){
+  #view-wiki .wiki-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+/* Dans le wiki, la tuile se lit comme une fiche : l'image en haut, le nom et
+   ce qu'est l'objet alignes a gauche dessous. */
+#view-wiki .wiki-tile{align-items:stretch;gap:0;padding:7px;text-align:left}
+#view-wiki .wiki-tile img{aspect-ratio:.9;border-radius:4px;object-position:top}
+#view-wiki .wiki-tile-name{
+  padding:8px 3px 0;font-family:var(--display);font-size:15px;font-weight:500;
+  text-align:left;word-break:normal;overflow-wrap:anywhere
+}
+.wiki-tile-sub{
+  padding:3px 3px 0;color:var(--mist);font-size:11px;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
 /* `position:relative` sert de repere au ::after de collection.css — la coche
    et le cadenas s'ancrent au coin de la tuile. */

@@ -262,3 +262,53 @@
   .analyse-summary-card{padding:13px 12px}
   .analyse-summary-value{font-size:22px}
 }
+
+/* ---------- La vue d ensemble, en trois panneaux ---------- */
+
+/* Trois lectures d un meme recensement : ce que la confrerie couvre, ce qu
+   elle a de plus fort, et ce sur quoi ces chiffres reposent. */
+.analysis-grid{display:grid;grid-template-columns:.65fr 1.2fr 1fr;gap:12px;margin-top:14px}
+.analysis-grid>section{padding:20px;border-radius:var(--radius)}
+.analysis-grid h2{margin:0;font-family:var(--display);font-size:19px;font-weight:500}
+.analysis-grid p:not(.context-label){margin:8px 0 0;color:var(--mist);line-height:1.4}
+
+/* LA ROUE. Un degre conique dit la part couverte, et un disque plein au
+   centre en fait un anneau. La part est posee par le rendu. */
+.coverage-wheel{text-align:center}
+.wheel{
+  display:grid;place-items:center;width:142px;height:142px;margin:3px auto 16px;
+  border-radius:50%;
+  background:radial-gradient(circle, var(--slate) 58%, transparent 59%),
+    conic-gradient(var(--gold-light) var(--part,0%), rgba(255,255,255,.06) 0)
+}
+.wheel strong{font-family:var(--display);font-size:34px;font-weight:500;font-variant-numeric:tabular-nums}
+.wheel small{color:var(--mist);font-size:15px}
+
+/* LE CLASSEMENT. Chaque element porte sa barre, longue a proportion du
+   meilleur : on voit lequel manque sans lire un seul chiffre. */
+.element-ranking>div{
+  display:grid;grid-template-columns:110px 1fr 62px;align-items:center;
+  gap:10px;margin-top:16px
+}
+.element-ranking i{
+  height:6px;border:1px solid var(--line-soft);
+  background:linear-gradient(90deg, var(--ec, var(--gold-light)) var(--rank,0%), transparent 0)
+}
+.element-ranking strong{text-align:right;font-variant-numeric:tabular-nums}
+
+/* CE SUR QUOI LES CHIFFRES REPOSENT. Trois lignes, un nombre et sa phrase. */
+.support-list ul{list-style:none;margin:14px 0 0;padding:0}
+.support-list li{display:grid;gap:4px;padding:11px 0;border-top:1px solid var(--line-soft)}
+.support-list li b{font-family:var(--display);font-size:20px;font-weight:500;color:var(--gold-light)}
+.support-list li span{color:var(--mist);font-size:12px}
+
+@media(max-width:1179px){
+  .analysis-grid{grid-template-columns:1fr 1fr}
+  .support-list{grid-column:1/-1}
+}
+@media(max-width:767px){
+  .analysis-grid{grid-template-columns:1fr}
+  .support-list{grid-column:auto}
+  .wheel{width:118px;height:118px}
+  .wheel strong{font-size:28px}
+}

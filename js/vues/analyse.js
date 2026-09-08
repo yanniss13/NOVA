@@ -839,39 +839,83 @@ import { toast } from "./toast.js";
     const totalDps = players.reduce((n, joueur) =>
       n + (joueur.dps || []).length, 0);
 
-    overview.appendChild(el("h2",{class:"an-title", text:"En un coup d'œil"}));
-    overview.appendChild(el("div",{class:"analyse-summary"},[
-      carteResume(
-        lectureRostersReussie ? membresAnalyses.length : "—",
-        "Membres analysés",
-        lectureRostersReussie ? "rosters lus" : "lecture indisponible"
-      ),
-      carteResume(
-        lectureRostersReussie ? totalDps : "—",
-        "DPS recensés",
-        "tous éléments"
-      ),
-      carteResume(
-        supports ? supports.portes + " / " + supports.total : "—",
-        "Supports couverts",
-        supports ? "tous éléments" : "donnée indisponible"
-      )
-    ]));
+    /* LA VUE D'ENSEMBLE DE LA MAQUETTE : trois panneaux cote a cote.
+
+       A gauche la roue — combien d'elements la confrerie couvre, sur huit. Au
+       milieu le classement, chaque element avec sa barre. A droite ce qui a ete
+       lu pour arriver la.
+
+       Avant : trois cartes de chiffres, puis huit cartes d'element de meme
+       taille et de meme poids. Rien ne disait quel element manque. */
     if(membresAnalyses.length){
-      overview.appendChild(el("h2",{class:"an-title", text:"Couverture par élément"}));
-      const covRow = el("div",{class:"cov-row"});
-      ELEM_ORDER.forEach(e=>{
-        const c = el("div",{class:"cov-card"});
-        c.style.setProperty("--ec", elemColor(e));
-        c.appendChild(elemBadge(e));
-        c.appendChild(el("div",{class:"cov-nums"},[
-          el("span",{class:"cov-big", text:String(cov[e].players)}),
-          el("span",{class:"cov-lbl", text:"membre"+(cov[e].players>1?"s":"")})
-        ]));
-        c.appendChild(el("div",{class:"cov-sub", text:cov[e].dps+" DPS"}));
-        covRow.appendChild(c);
+      const couverts = ELEM_ORDER.filter(e => cov[e].players > 0).length;
+      const part = Math.round((couverts / ELEM_ORDER.length) * 100);
+      const maximum = Math.max(1, ...ELEM_ORDER.map(e => cov[e].dps));
+      const classement = ELEM_ORDER.slice()
+        .sort((a, b) => cov[b].dps - cov[a].dps || cov[b].players - cov[a].players);
+
+      const roue = el("section",{class:"ornate-panel coverage-wheel"},[
+        el("div",{class:"wheel"},[
+          el("strong", null, [
+            document.createTextNode(String(couverts)),
+            el("small",{ text:"/" + ELEM_ORDER.length })
+          ])
+        ]),
+        el("h2",{text:"Éléments couverts"}),
+        el("p",{text:couverts === ELEM_ORDER.length
+          ? "La confrérie dispose d'au moins un build pour chaque élément."
+          : "Il manque " + (ELEM_ORDER.length - couverts) + " élément"
+            + (ELEM_ORDER.length - couverts > 1 ? "s" : "")
+            + " : personne n'y a de build enregistré."})
+      ]);
+      roue.querySelector(".wheel").style.setProperty("--part", part + "%");
+
+      const rangs = el("section",{class:"ornate-panel element-ranking"},[
+        el("p",{class:"context-label",text:"DPS de la confrérie"}),
+        el("h2",{text:"Builds par élément"})
+      ]);
+      classement.forEach(e => {
+        const ligne = el("div", null, [
+          elemBadge(e),
+          el("i"),
+          el("strong",{text:String(cov[e].dps)})
+        ]);
+        ligne.style.setProperty("--ec", elemColor(e));
+        ligne.querySelector("i").style.setProperty(
+          "--rank", Math.round((cov[e].dps / maximum) * 100) + "%"
+        );
+        rangs.appendChild(ligne);
       });
-      overview.appendChild(covRow);
+
+      const lectures = el("section",{class:"ornate-panel support-list"},[
+        el("p",{class:"context-label",text:"Ce qui a été lu"}),
+        el("h2",{text:"Le recensement"}),
+        el("ul", null, [
+          el("li", null, [
+            el("b",{text:lectureRostersReussie
+              ? String(membresAnalyses.length) : "—"}),
+            el("span",{text:lectureRostersReussie
+              ? "membre" + (membresAnalyses.length > 1 ? "s" : "") + " analysé"
+                + (membresAnalyses.length > 1 ? "s" : "")
+              : "rosters indisponibles"})
+          ]),
+          el("li", null, [
+            el("b",{text:lectureRostersReussie ? String(totalDps) : "—"}),
+            el("span",{text:"builds de DPS recensés, tous éléments"})
+          ]),
+          el("li", null, [
+            el("b",{text:supports
+              ? supports.portes + " / " + supports.total : "—"}),
+            el("span",{text:supports
+              ? "affaiblissements couverts par la confrérie"
+              : "donnée indisponible"})
+          ])
+        ])
+      ]);
+
+      overview.appendChild(el("div",{class:"analysis-grid"},[
+        roue, rangs, lectures
+      ]));
     }else{
       overview.appendChild(el("div",{class:"empty-state analyse-empty"},[
         el("p",{class:"big", text:lectureRostersReussie
