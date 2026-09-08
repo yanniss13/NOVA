@@ -21,23 +21,27 @@
    haut. En ligne, tout retombe sur la meme hauteur que le select. */
 .roster-toolbar #rosterOwnerField{flex-direction:row;align-items:center;gap:8px}
 .roster-toolbar #rosterOwnerField>span{white-space:nowrap}
-.roster-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:20px}
+/* LES EQUIPES PARTAGEES SE LISENT EN LISTE, comme dans la maquette : une
+   equipe par ligne, l identite a gauche, la composition au milieu, les
+   gestes a droite.
+
+   Elles etaient en grille de cartes, ou deux equipes cote a cote ne se
+   comparaient pas : leurs heros ne tombaient pas en face les uns des autres.
+   En lignes, les quatre emplacements sont alignes d une equipe a l autre. */
+.roster-grid{display:grid;gap:10px}
 
 .team{
-  position:relative;background:
-    linear-gradient(180deg,var(--slate),var(--slate-deep));
-  border:1px solid var(--line);border-radius:14px;padding:18px;
-  box-shadow:var(--shadow);
-  /* Colonne flex : le bas de carte est poussé vers le bas, si bien que les
-     actions tombent à la même hauteur d'une carte à l'autre — même quand des
-     héros portent une note et d'autres pas. */
-  display:flex;flex-direction:column;
+  position:relative;display:grid;
+  grid-template-columns:minmax(200px,.9fr) minmax(0,1.7fr) auto;
+  align-items:center;gap:24px;padding:16px 20px;
+  background:linear-gradient(145deg,rgba(10,36,50,.96),rgba(5,20,30,.98));
+  border:1px solid var(--line);border-radius:6px
 }
 .team::before{
   content:"";position:absolute;inset:6px;border:1px solid rgba(var(--gold-rvb),.14);
   border-radius:9px;pointer-events:none
 }
-.team-head{display:flex;align-items:center;gap:12px;margin-bottom:16px;position:relative}
+.team-head{display:flex;align-items:center;gap:12px;position:relative;min-width:0}
 .seal{
   width:46px;height:46px;flex:none;border-radius:50%;display:grid;place-items:center;
   background:radial-gradient(circle at 50% 35%, #3a2c15, #17110a);
@@ -58,7 +62,13 @@
 .team-name + .team-pseudo{font-size:12.5px;font-weight:500;color:var(--mist)}
 .team-date{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mist-deep)}
 
-.team-heroes{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+/* Quatre emplacements de largeur FIXE, alignes a gauche. En colonne etroite,
+    convenait ; sur une ligne pleine largeur, il donnait des portraits de
+   200 px de haut pour un emplacement vide. */
+.team-heroes{
+  display:grid;grid-template-columns:repeat(4,minmax(0,82px));
+  justify-content:start;gap:10px;min-width:0
+}
 .mini{display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center}
 .mini-portrait{
   width:100%;aspect-ratio:1/1;border-radius:9px;overflow:hidden;
@@ -83,11 +93,10 @@
   font-size:10.5px;color:var(--mist);font-style:italic;line-height:1.25;
   margin-top:2px;word-break:break-word
 }
-/* `margin-top:auto` porté ici depuis l'ancien bouton « Voir l'équipement » :
-   c'est lui qui poussait le bas de carte vers le bas. Sans ce report, les
-   actions remonteraient dès qu'un héros porte une note et pas son voisin. */
-.team-actions{display:flex;gap:8px;margin-top:auto;padding-top:16px;position:relative}
-.team-actions .btn{padding:8px 14px;font-size:13px;flex:1;justify-content:center}
+/* Les gestes tiennent en colonne a droite de la ligne : trois boutons
+   cote a cote y deborderaient. */
+.team-actions{display:grid;gap:6px;position:relative}
+.team-actions .btn{padding:7px 13px;font-size:12px;justify-content:center;white-space:nowrap}
 /* La bande de héros est un <button> : sans ces remises à zéro, le navigateur
    lui applique son propre fond, sa bordure et sa police. */
 .team-heroes.clickable{
