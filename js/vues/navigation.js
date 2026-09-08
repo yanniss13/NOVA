@@ -31,8 +31,43 @@ import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
 const rendus = new Map();
 const auditeursDeVue = new Set();
 
+/* LES SOUS-VUES D'UNE VUE.
+
+   Le centre Boss de la maquette tient en un seul ecran a plusieurs onglets :
+   vue d'ensemble, groupes, rapports. Ce ne sont pas des vues — elles partagent
+   la meme lecture de donnees, le meme titre, la meme adresse — mais elles
+   doivent apparaitre dans la barre d'onglets locaux au meme rang que les vraies
+   vues de la rubrique.
+
+   La vue qui en possede s'enregistre ici avec deux gestes : dire laquelle est
+   ouverte, et en ouvrir une autre. La coquille ne connait donc rien du contenu
+   d'un ecran ; elle sait seulement qu'un onglet peut viser une sous-vue. */
+const controleursDeSousVue = new Map();
+
 function enregistrerVue(nom, rendu){
   rendus.set(nom, rendu);
+}
+
+function enregistrerSousVues(vue, controleur){
+  controleursDeSousVue.set(vue, controleur);
+}
+
+function sousVueCourante(vue){
+  const controleur = controleursDeSousVue.get(vue);
+  return controleur ? controleur.lire() : null;
+}
+
+/* Pose la sous-vue AVANT d'ouvrir la vue : si celle-ci est deja affichee,
+   `showView` ne rendra rien, et c'est `poser` qui redessine. */
+function ouvrirSousVue(vue, sousVue){
+  const controleur = controleursDeSousVue.get(vue);
+  if(!controleur) return;
+  controleur.poser(sousVue);
+  /* Puis on annonce le changement, comme pour une vue. Sans cela la barre
+     d'onglets restait telle quelle : le contenu changeait sous les yeux du
+     membre, mais le surlignage demeurait sur l'onglet precedent — et le
+     suivant, se croyant deja ouvert, ne repondait plus au clic. */
+  annoncerVue(vueCourante());
 }
 
 /* Previens-moi quand la vue ouverte change. Rend de quoi se desabonner. */
@@ -137,8 +172,11 @@ function showView(name, options){
 
 export {
   appliquerAutorisations,
+  enregistrerSousVues,
   enregistrerVue,
+  ouvrirSousVue,
   showView,
+  sousVueCourante,
   surChangementDeVue,
   vueAutorisee,
   vueCourante,

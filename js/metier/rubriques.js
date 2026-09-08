@@ -50,14 +50,25 @@ const RUBRIQUES = Object.freeze([
       { vue:"roster", libelle:"Équipes partagées" }
     ]
   },
+  /* LE CENTRE BOSS DE LA MAQUETTE tient en un ecran a quatre onglets. Trois
+     d'entre eux visent la MEME vue — `boss` — et n'en changent que la
+     sous-vue : c'est la meme lecture de donnees, le meme titre, la meme
+     adresse. Seules les disponibilites sont une vue a part, parce qu'elles
+     ecrivent, et qu'elles ont leur propre module.
+
+     L'onglet « Équipes » de la maquette n'est pas repris ici : le site montre
+     deja les equipes partagees dans la rubrique Équipes, ou la maquette les
+     place aussi. Les redoubler ferait deux endroits a tenir d'accord. */
   {
     id:"centre-boss",
     libelle:"Boss de guilde",
     chef:"boss",
     vues:["availability", "boss"],
     onglets:[
+      { vue:"boss", sousVue:"apercu", libelle:"Vue d'ensemble" },
       { vue:"availability", libelle:"Disponibilités" },
-      { vue:"boss", libelle:"Groupes et rapports" }
+      { vue:"boss", sousVue:"groupes", libelle:"Groupes" },
+      { vue:"boss", sousVue:"rapports", libelle:"Rapports" }
     ]
   },
   {

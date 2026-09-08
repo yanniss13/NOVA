@@ -4,7 +4,7 @@ const assert = require("node:assert/strict");
 const { chromium } = require("playwright");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { serveRepo } = require("./helpers/serve");
-const { allerA } = require("./helpers/naviguer");
+const { allerA, ouvrirSousVue } = require("./helpers/naviguer");
 
 async function activeView(page){
   return page.locator(".view.active").getAttribute("id");
@@ -98,7 +98,10 @@ async function openHistoryFragment(page, fragment){
     try{
       await protectedPage.waitForFunction(() =>
         document.querySelector(".view.active")?.id === "view-boss"
-        && !!document.querySelector("#view-boss .boss-grid"), null,
+        /* La route de vue ouvre le centre Boss sur sa vue d ensemble ; les
+           cartes vivent sous l onglet Groupes. Ce qui compte ici est que la
+           route protegee ait ete reprise et la vue rendue. */
+        && !!document.querySelector("#view-boss .boss-feature"), null,
       { timeout:10000 });
     }catch(error){
       const state = await protectedPage.evaluate(() => ({
@@ -146,6 +149,10 @@ async function openHistoryFragment(page, fragment){
     });
     await openAppFragment(protectedPage, "#boss");
 
+    /* Les cartes des groupes ouverts vivent sous « Groupes », les archives
+       sous « Rapports » : ce sont deux onglets du centre Boss. */
+    await ouvrirSousVue(protectedPage, "boss", "groupes");
+
     const groupCard = protectedPage.locator(
       `.boss-card[data-session-id="${bossFixture.group.id}"]`
     );
@@ -161,6 +168,7 @@ async function openHistoryFragment(page, fragment){
       1
     );
 
+    await ouvrirSousVue(protectedPage, "boss", "rapports");
     const archivedCard = protectedPage.locator(
       `.boss-report-card[data-session-id="${bossFixture.archivedGroup.id}"]`
     );
@@ -170,6 +178,9 @@ async function openHistoryFragment(page, fragment){
     assert.equal(await archivedCard.getByText("Copier le lien").count(), 0,
       "une archive ne reçoit pas les actions des groupes ouverts");
 
+    /* Retour aux groupes ouverts : la suite du parcours agit sur leurs
+       cartes, qui ne sont pas rendues sous l onglet des rapports. */
+    await ouvrirSousVue(protectedPage, "boss", "groupes");
     const emptyCard = protectedPage.locator(
       `.boss-card[data-session-id="${bossFixture.emptyGroup.id}"]`
     );

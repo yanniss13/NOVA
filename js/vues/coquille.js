@@ -21,7 +21,8 @@ import {
 import { $ } from "../noyau/dom.js";
 import { openAuth } from "./modale-auth.js";
 import {
-  showView, surChangementDeVue, vueAutorisee, vueCourante
+  ouvrirSousVue, showView, sousVueCourante, surChangementDeVue,
+  vueAutorisee, vueCourante
 } from "./navigation.js";
 
 /* Les quatre rubriques de la barre du pouce, dans l'ordre. Le cinquieme
@@ -192,15 +193,23 @@ function remplirOngletsLocaux(rubriqueActive, vue){
   /* Un seul onglet atteignable, ce n'est plus un choix : la barre se tait. */
   barre.hidden = onglets.length < 2;
   liste.textContent = "";
+  /* Plusieurs onglets peuvent viser la meme vue et n'en changer que la
+     sous-vue : leur identifiant et leur etat actif doivent donc tenir compte
+     des deux, sinon trois onglets du centre Boss porteraient le meme `id` et
+     s'allumeraient ensemble. */
+  const sousVueActive = sousVueCourante(vue);
   onglets.forEach(onglet => {
+    const actif = onglet.vue === vue
+      && (!onglet.sousVue || onglet.sousVue === sousVueActive);
     const bouton = boutonDeCoquille(onglet.libelle, {
-      id:"onglet-" + onglet.vue,
+      id:"onglet-" + onglet.vue + (onglet.sousVue ? "-" + onglet.sousVue : ""),
       role:"tab",
       "data-view":onglet.vue,
-      "aria-selected":String(onglet.vue === vue),
+      "aria-selected":String(actif),
       "aria-controls":"view-" + onglet.vue
     });
-    bouton.tabIndex = onglet.vue === vue ? 0 : -1;
+    if(onglet.sousVue) bouton.dataset.sousVue = onglet.sousVue;
+    bouton.tabIndex = actif ? 0 : -1;
     liste.appendChild(bouton);
   });
 }
@@ -376,7 +385,24 @@ function brancherCoquille(){
     }
     /* La marque est un lien : le laisser suivre son href rechargerait la page. */
     if(cible.tagName === "A") event.preventDefault();
-    if(cible.dataset.view) void showView(cible.dataset.view);
+    if(cible.dataset.view){
+      /* Un onglet peut viser une sous-vue : on la pose AVANT d'ouvrir la vue,
+         sinon le rendu se ferait sur l'ancienne.
+
+         Et si la vue est DEJA ouverte, on s'arrete la : `ouvrirSousVue` vient
+         de redessiner, tandis que `showView` relancerait la lecture complete
+         des donnees. Mesure faite : changer d'onglet dans le centre Boss
+         relisait les 211 participations de la semaine pour rien. */
+      if(cible.dataset.sousVue){
+        ouvrirSousVue(cible.dataset.view, cible.dataset.sousVue);
+        /* SEULEMENT pour un onglet de sous-vue. Recliquer l'onglet d'une vue
+           ordinaire la redessine, et c'est voulu : c'est ainsi qu'on rafraichit
+           un ecran. */
+        if(cible.dataset.view !== vueCourante()) void showView(cible.dataset.view);
+      }else{
+        void showView(cible.dataset.view);
+      }
+    }
     else if(cible.dataset.rubrique) ouvrirRubrique(cible.dataset.rubrique);
     else return;
     /* Le menu se referme parce qu'une DESTINATION a ete choisie. Le refermer
@@ -405,7 +431,12 @@ function brancherCoquille(){
     if(suivant === null) return;
     event.preventDefault();
     const cible = onglets[suivant];
-    void showView(cible.dataset.view);
+    if(cible.dataset.sousVue){
+      ouvrirSousVue(cible.dataset.view, cible.dataset.sousVue);
+      if(cible.dataset.view !== vueCourante()) void showView(cible.dataset.view);
+    }else{
+      void showView(cible.dataset.view);
+    }
     const rendu = ongletDeLaVue(cible.dataset.view);
     if(rendu) rendu.focus();
   });
