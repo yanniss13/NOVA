@@ -33,7 +33,7 @@ function chargerServiceWorker(version){
   const journal = { reseau:[], cache:[] };
   /* Le cache contient deja la feuille : c'est le cas qui distingue les deux
      strategies, puisque cache d'abord s'arrete la et reseau d'abord non. */
-  const entrees = new Map([["/css/charte.css", { corps:"cache" }]]);
+  const entrees = new Map([["/css/base.css", { corps:"cache" }]]);
 
   const cacheFactice = {
     match(requete){
@@ -89,7 +89,7 @@ function chargerServiceWorker(version){
 (async () => {
   /* 1. Version injectee : le cache tranche seul, sans requete. */
   const deploye = chargerServiceWorker("a1b2c3d4e5f6");
-  const depuisLeCache = await deploye.demander("/css/charte.css");
+  const depuisLeCache = await deploye.demander("/css/base.css");
   assert.equal(depuisLeCache.corps, "cache",
     "une version deployee doit servir un fichier applicatif depuis son cache");
   assert.deepEqual(deploye.journal.reseau, [],
@@ -98,8 +98,8 @@ function chargerServiceWorker(version){
   /* 2. Marqueur non remplace : le reseau tranche, sinon la copie servie
         depuis le depot fige la premiere version pour toujours. */
   const local = chargerServiceWorker(null);
-  const depuisLeReseau = await local.demander("/css/charte.css");
-  assert.deepEqual(local.journal.reseau, ["/css/charte.css"],
+  const depuisLeReseau = await local.demander("/css/base.css");
+  assert.deepEqual(local.journal.reseau, ["/css/base.css"],
     "sans SHA dans le nom du cache, un fichier applicatif doit repasser par "
       + "le reseau : autrement une modification locale reste invisible");
   assert.equal(depuisLeReseau.corps, "reseau",

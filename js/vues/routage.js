@@ -27,10 +27,7 @@ function enregistrerGestionnaireRoute(view, handler){
 
 async function replierRouteInvalide(){
   routeEnAttente = null;
-  /* L'accueil pour tout le monde. Un compte ouvert repliait sur Mon suivi ;
-     l'accueil est desormais la page d'arrivee de tous, membres compris, et
-     ce qu'elle propose s'adapte a la session. */
-  const view = "home";
+  const view = sessionCourante.user ? "dashboard" : "wiki";
   const fragment = fragmentDeRoute(routeDeVue(view));
   if(fragment && location.hash !== fragment){
     history.replaceState(null, "", fragment);
@@ -46,7 +43,7 @@ async function ouvrirRoute(route){
     && !!sb;
   if(attendConnexion){
     routeEnAttente = route;
-    await showView("home", { historyMode:"none" });
+    await showView("wiki", { historyMode:"none" });
     openAuth();
     return true;
   }

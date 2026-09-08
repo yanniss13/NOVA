@@ -9,75 +9,44 @@
 }
 .wiki-category{
   appearance:none;cursor:pointer;font:inherit;min-height:44px;
-  background:var(--slate-deep);color:var(--parchment);
+  background:var(--obsidian-2);color:var(--parchment);
   border:1px solid var(--line);border-radius:999px;padding:6px 18px;
   transition:.14s
 }
-.wiki-category:hover{border-color:var(--gold)}
-/* La categorie choisie porte l'aplat clair, comme les pastilles de la
-   maquette : un simple changement de couleur de filet se lisait mal entre
-   cinq pastilles alignees. */
-.wiki-category.active{
-  border-color:var(--gold-light);color:var(--abyss);background:var(--gold-light)
-}
+.wiki-category:hover{border-color:var(--gold-deep)}
+.wiki-category.active{border-color:var(--gold-bright);color:var(--gold-bright)}
 
 .wiki-filters{
   display:grid;gap:12px;margin:0 0 16px;
   grid-template-columns:repeat(auto-fit,minmax(180px,1fr))
 }
 .wiki-field{display:flex;flex-direction:column;gap:4px}
-.wiki-field>span{font-size:12.5px;color:var(--mist)}
+.wiki-field>span{font-size:12.5px;color:var(--muted)}
 .wiki-field input,.wiki-field select{
-  min-height:44px;background:var(--slate-light);color:inherit;
+  min-height:44px;background:var(--panel-2);color:inherit;
   border:1px solid var(--line);border-radius:8px;padding:0 10px;font:inherit
 }
 
-.wiki-state,.wiki-empty{color:var(--mist);margin:0 0 16px}
+.wiki-state,.wiki-empty{color:var(--muted);margin:0 0 16px}
 
 .wiki-grid{
   display:grid;gap:12px;
   grid-template-columns:repeat(auto-fill,minmax(104px,1fr))
-}
-/* SIX COLONNES DANS LE WIKI, et six seulement. `auto-fill` en donnait
-   quatorze sur un ecran de bureau : des vignettes de 104 px ou l'on ne
-   distinguait ni l'arme ni le heros, et un nom sur trois lignes.
-
-   La regle vise `#view-wiki` et non `.wiki-grid` : la Collection emploie les
-   memes tuiles pour 249 objets, ou la densite est un service — six colonnes y
-   feraient quarante-deux rangees. */
-#view-wiki .wiki-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:9px}
-@media(max-width:1179px){
-  #view-wiki .wiki-grid{grid-template-columns:repeat(4,minmax(0,1fr))}
-}
-@media(max-width:767px){
-  #view-wiki .wiki-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-/* Dans le wiki, la tuile se lit comme une fiche : l'image en haut, le nom et
-   ce qu'est l'objet alignes a gauche dessous. */
-#view-wiki .wiki-tile{align-items:stretch;gap:0;padding:7px;text-align:left}
-#view-wiki .wiki-tile img{aspect-ratio:.9;border-radius:4px;object-position:top}
-#view-wiki .wiki-tile-name{
-  padding:8px 3px 0;font-family:var(--display);font-size:15px;font-weight:500;
-  text-align:left;word-break:normal;overflow-wrap:anywhere
-}
-.wiki-tile-sub{
-  padding:3px 3px 0;color:var(--mist);font-size:11px;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap
 }
 /* `position:relative` sert de repere au ::after de collection.css — la coche
    et le cadenas s'ancrent au coin de la tuile. */
 .wiki-tile{
   position:relative;
   appearance:none;cursor:pointer;font:inherit;
-  border:1px solid var(--line);background:var(--slate-deep);
+  border:1px solid var(--line);background:var(--obsidian-2);
   border-radius:9px;padding:8px 6px;
   display:flex;flex-direction:column;align-items:center;gap:6px;
   transition:.14s;color:var(--parchment)
 }
-.wiki-tile:hover{border-color:var(--gold);transform:translateY(-2px)}
+.wiki-tile:hover{border-color:var(--gold-deep);transform:translateY(-2px)}
 .wiki-tile img{
   width:100%;aspect-ratio:1/1;border-radius:6px;object-fit:cover;
-  background:var(--abyss)
+  background:#0b0910
 }
 .wiki-tile-name{
   font-size:11px;line-height:1.2;text-align:center;word-break:break-word
@@ -118,7 +87,7 @@
   position:relative;z-index:1;flex:none;
   width:82px;height:82px;overflow:hidden;
   transform:rotate(45deg);border-radius:14px;
-  border:2px solid var(--aura);background:var(--abyss);
+  border:2px solid var(--aura);background:#0b0910;
   box-shadow:0 0 26px -8px var(--aura)
 }
 /* Le portrait est contre-tourne et deborde : la diagonale d'un carre de 82
@@ -135,18 +104,18 @@
 }
 /* La rarete en gemme, comme le petit losange dore de la fiche de reference. */
 .wiki-hero-gem{
-  font-family:var(--body);font-size:11px;font-weight:700;letter-spacing:.08em;
-  color:var(--abyss);background:linear-gradient(160deg,var(--gold-light),var(--gold));
+  font-family:var(--ui);font-size:11px;font-weight:700;letter-spacing:.08em;
+  color:var(--obsidian);background:linear-gradient(160deg,var(--gold-bright),var(--gold-deep));
   padding:3px 9px;border-radius:4px;transform:skewX(-12deg)
 }
 .wiki-hero-chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0}
 .wiki-chip{
   font-size:11.5px;letter-spacing:.06em;text-transform:uppercase;
-  color:var(--mist);border:1px solid var(--line);border-radius:4px;
+  color:var(--muted);border:1px solid var(--line);border-radius:4px;
   padding:3px 9px
 }
 .wiki-chip-element{color:var(--aura);border-color:var(--aura)}
-.wiki-hero-hint{color:var(--mist)}
+.wiki-hero-hint{color:var(--muted)}
 
 /* Les armes en cartes a icone : c'est l'icone que le membre reconnait du jeu,
    pas le libelle. */
@@ -157,15 +126,15 @@
   appearance:none;cursor:pointer;font:inherit;
   display:flex;flex-direction:column;align-items:center;gap:6px;
   min-width:92px;min-height:44px;padding:10px 12px;
-  background:var(--slate-deep);color:var(--mist);
+  background:var(--obsidian-2);color:var(--muted);
   border:1px solid var(--line);border-radius:9px;transition:.14s
 }
-.wiki-hero-weapon:hover{border-color:var(--gold);color:var(--parchment)}
+.wiki-hero-weapon:hover{border-color:var(--gold-deep);color:var(--parchment)}
 .wiki-hero-weapon-icon{width:28px;height:28px;opacity:.65;transition:.14s}
 .wiki-hero-weapon-label{font-size:12px;letter-spacing:.02em}
 .wiki-hero-weapon.active{
-  border-color:var(--gold-light);color:var(--gold-light);
-  background:linear-gradient(180deg,rgba(var(--gold-rvb),.12),transparent)
+  border-color:var(--gold-bright);color:var(--gold-bright);
+  background:linear-gradient(180deg,rgba(217,164,65,.12),transparent)
 }
 .wiki-hero-weapon.active .wiki-hero-weapon-icon{opacity:1}
 
@@ -177,25 +146,25 @@
   font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase
 }
 .wiki-section-passif{color:var(--gold)}
-.wiki-section-ultime{color:var(--alert)}
-.wiki-section-normal{color:var(--mist)}
+.wiki-section-ultime{color:var(--crimson-bright)}
+.wiki-section-normal{color:var(--muted)}
 
 .wiki-skill{
   border:1px solid var(--line);border-radius:9px;padding:11px 13px;margin:0 0 8px;
-  background:var(--slate-deep)
+  background:var(--obsidian-2)
 }
 .wiki-skill-head{display:flex;gap:9px;align-items:center;flex-wrap:wrap}
 /* Le medaillon de competence, tel que le jeu l'affiche. Le fond sombre
    et le liseré evitent qu'une icone claire flotte sans attache. */
 .wiki-skill-icon{
   width:34px;height:34px;flex:none;border-radius:8px;
-  background:var(--abyss);border:1px solid var(--line);padding:2px
+  background:#0b0910;border:1px solid var(--line);padding:2px
 }
 /* La touche en pastille : Q, E, R se lisent d'un coup d'oeil, et « Passif »
    ou « Attaque sautee » gardent leur mot entier plutot qu'un pictogramme. */
 .wiki-skill-kind{
   font-size:10.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  color:var(--gold);border:1px solid var(--gold);border-radius:4px;
+  color:var(--gold);border:1px solid var(--gold-deep);border-radius:4px;
   padding:2px 7px;flex:none
 }
 .wiki-skill-name{
@@ -203,7 +172,7 @@
   color:var(--parchment)
 }
 .wiki-skill-cd{
-  margin-left:auto;font-size:11.5px;letter-spacing:.04em;color:var(--mist);
+  margin-left:auto;font-size:11.5px;letter-spacing:.04em;color:var(--muted);
   font-variant-numeric:tabular-nums
 }
 .wiki-skill-desc{margin:8px 0 0;line-height:1.55}
@@ -212,7 +181,7 @@
 .wiki-fold>summary{
   cursor:pointer;min-height:44px;display:flex;align-items:center;gap:8px;
   font-size:11.5px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--mist)
+  color:var(--muted)
 }
 .wiki-fold>summary:hover{color:var(--gold)}
 .wiki-fold[open]>summary{color:var(--gold)}
@@ -244,7 +213,7 @@
   border-bottom:1px solid var(--line-soft)
 }
 .wiki-stat:last-child{border-bottom:0}
-.wiki-stat-name{color:var(--mist);flex:1 1 auto;min-width:0}
+.wiki-stat-name{color:var(--muted);flex:1 1 auto;min-width:0}
 .wiki-stat-value{
   font-variant-numeric:tabular-nums;color:var(--parchment);
   flex:0 0 auto;margin-left:auto;white-space:nowrap
@@ -254,12 +223,12 @@
    la transcendance qu'elle donne a droite. La liste remplace la rangee
    d'images seules — un membre doit voir QUELLE piece porte quel bonus. */
 .wiki-gravees-note{
-  margin:6px 0 10px;color:var(--mist);font-size:.85rem;line-height:1.4
+  margin:6px 0 10px;color:var(--muted);font-size:.85rem;line-height:1.4
 }
 .wiki-gravees{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .wiki-gravee{display:flex;gap:12px;align-items:flex-start}
 .wiki-gravee img{
-  width:56px;height:56px;flex:0 0 56px;border-radius:8px;background:var(--abyss);
+  width:56px;height:56px;flex:0 0 56px;border-radius:8px;background:#0b0910;
   border:1px solid var(--line)
 }
 .wiki-gravee-corps{min-width:0;display:flex;flex-direction:column;gap:2px}
@@ -267,7 +236,7 @@
 .wiki-gravee-trans{display:block;font-size:.9rem;line-height:1.45}
 /* L'arme de la transcendance : un reperage, pas un titre. */
 .wiki-gravee-arme{
-  display:block;color:var(--mist);font-size:.8rem;margin-bottom:2px
+  display:block;color:var(--muted);font-size:.8rem;margin-bottom:2px
 }
 
 /* ---------- Fiche d'objet : arme, piece, armure gravee ---------- */
@@ -277,8 +246,8 @@
 .wiki-item-head{display:flex;gap:16px;align-items:center;margin:0 0 6px}
 .wiki-item-frame{
   width:78px;height:78px;flex:none;display:grid;place-items:center;
-  background:radial-gradient(circle at 50% 40%,var(--slate-light),var(--abyss));
-  border:1px solid var(--gold);border-radius:12px;
+  background:radial-gradient(circle at 50% 40%,#211d2b,#0d0b12);
+  border:1px solid var(--gold-deep);border-radius:12px;
   box-shadow:0 0 22px -10px var(--gold)
 }
 .wiki-item-image{width:64px;height:64px;object-fit:contain;display:block}
@@ -288,21 +257,21 @@
   color:var(--parchment)
 }
 .wiki-item-chips{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 0}
-.wiki-chip-fort{color:var(--gold-light);border-color:var(--gold)}
-.wiki-item-note{margin:8px 0 4px;color:var(--mist);font-size:12.5px}
+.wiki-chip-fort{color:var(--gold-bright);border-color:var(--gold-deep)}
+.wiki-item-note{margin:8px 0 4px;color:var(--muted);font-size:12.5px}
 
 /* Les pastilles de niveau : le chiffre porte l'information, rien d'autre. */
 .wiki-levels{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 10px}
 .wiki-level{
   min-width:34px;height:34px;padding:0 8px;
-  background:var(--slate-light);color:var(--mist);
+  background:var(--panel-2);color:var(--muted);
   border:1px solid var(--line);border-radius:9px;cursor:pointer;
   font-variant-numeric:tabular-nums;font-size:13px;transition:.14s
 }
-.wiki-level:hover{border-color:var(--gold);color:var(--parchment)}
+.wiki-level:hover{border-color:var(--gold-deep);color:var(--parchment)}
 .wiki-level.active{
-  border-color:var(--gold-light);color:var(--ink);
-  background:linear-gradient(180deg,var(--gold-light),var(--gold));
+  border-color:var(--gold-bright);color:var(--ink);
+  background:linear-gradient(180deg,var(--gold-bright),var(--gold));
   font-weight:700
 }
 
@@ -315,18 +284,18 @@
 
 /* L'ensemble : son nom, ses paliers, puis ses pieces. */
 .wiki-set{
-  background:var(--slate-light);border:1px solid var(--line-soft);
+  background:var(--panel-2);border:1px solid var(--line-soft);
   border-radius:12px;padding:12px 14px;margin:0 0 4px
 }
 .wiki-set-name{
-  font-family:var(--display);font-size:17px;color:var(--gold-light);
+  font-family:var(--display);font-size:17px;color:var(--gold-bright);
   margin:0 0 8px
 }
 .wiki-set-tier{margin:0 0 10px}
 .wiki-set-count{
   display:inline-block;padding:2px 9px;border-radius:999px;
-  background:rgba(var(--gold-rvb),.14);border:1px solid var(--gold);
-  color:var(--gold-light);font-size:11.5px;letter-spacing:.05em
+  background:rgba(217,164,65,.14);border:1px solid var(--gold-deep);
+  color:var(--gold-bright);font-size:11.5px;letter-spacing:.05em
 }
 .wiki-set-text{margin:6px 0 0;line-height:1.55}
 .wiki-set-pieces{
@@ -335,27 +304,27 @@
 }
 .wiki-set-piece{
   width:50px;height:50px;padding:0;cursor:pointer;
-  background:var(--abyss);border:1px solid var(--line);border-radius:8px;
+  background:#0b0910;border:1px solid var(--line);border-radius:8px;
   transition:.14s
 }
 .wiki-set-piece img{width:100%;height:100%;object-fit:contain;display:block}
-.wiki-set-piece:hover{border-color:var(--gold);transform:translateY(-2px)}
+.wiki-set-piece:hover{border-color:var(--gold-deep);transform:translateY(-2px)}
 /* La piece courante n'est pas cliquable : elle marque ou l'on est. */
-.wiki-set-piece.active{border-color:var(--gold-light);cursor:default}
+.wiki-set-piece.active{border-color:var(--gold-bright);cursor:default}
 .wiki-set-piece.active:hover{transform:none}
 
 /* Le heros d'une armure gravee : le seul chemin d'un objet vers un
    personnage, donc il doit se voir comme un lien. */
 .wiki-linked-hero{
   display:flex;align-items:center;gap:11px;width:100%;padding:8px 12px 8px 8px;
-  background:var(--slate-light);border:1px solid var(--line-soft);
+  background:var(--panel-2);border:1px solid var(--line-soft);
   border-radius:12px;cursor:pointer;color:var(--parchment);
   text-align:left;transition:.14s
 }
-.wiki-linked-hero:hover{border-color:var(--gold);color:var(--gold-light)}
+.wiki-linked-hero:hover{border-color:var(--gold-deep);color:var(--gold-bright)}
 .wiki-linked-hero img{
   width:44px;height:44px;border-radius:8px;object-fit:cover;
-  background:var(--abyss);flex:none
+  background:#0b0910;flex:none
 }
 
 @media (max-width:520px){

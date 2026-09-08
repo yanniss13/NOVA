@@ -14,7 +14,6 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
-const { ouvrirLeCompte, ouvrirSousVue } = require("./helpers/naviguer");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
@@ -31,9 +30,6 @@ async function ouvrirBoss(page){
     }));
     ancre.remove();
   });
-  /* La route mene au centre Boss, qui ouvre sur sa vue d ensemble. Les
-     cartes vivent sous « Groupes » : on ouvre l onglet, comme un membre. */
-  await ouvrirSousVue(page, "boss", "groupes");
   await page.locator("#view-boss .boss-grid").waitFor({ state:"visible" });
 }
 
@@ -159,8 +155,6 @@ async function connecter(page, email){
     assert.equal(restants, 0, "le retrait doit atteindre la base");
 
     /* ---- 4. Un membre ordinaire ne voit rien de tout cela. ---- */
-
-    await ouvrirLeCompte(page);
 
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await page.locator("#accountLogin").waitFor({ state:"visible" });

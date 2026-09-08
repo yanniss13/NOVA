@@ -308,42 +308,28 @@ const { availabilityViewState, availabilityWeekLabel } = hooks;
 const { appSource } = require("./helpers/app-source");
 const indexSource = appSource();
 
-/* L'ONGLET ET LA VUE DOIVENT SE REPONDRE.
+/* L'onglet et la vue doivent exister et se répondre par leurs attributs ARIA.
 
-   L'onglet n'est plus ecrit dans index.html : la coquille construit les
-   onglets locaux d'une rubrique depuis `js/metier/rubriques.js`. Ce qui doit
-   etre verifie n'a pas change — les Dispos sont atteignables par un onglet, et
-   cet onglet designe bien leur vue — mais cela se verifie desormais sur la
-   table, qui en est la source.
-
-   La vue, elle, reste ecrite dans index.html, et se nomme par son propre
-   titre : un `aria-labelledby` qui viserait l'onglet pointerait dans le vide
-   pour les rubriques qui n'en ont pas. */
-const { ongletsDeRubrique, rubriqueDeVue } = hooks;
-const rubriqueDesDispos = rubriqueDeVue("availability");
-assert.ok(rubriqueDesDispos,
-  "Les Dispos doivent appartenir a une rubrique, sinon aucune entree ne les ouvre");
-const ongletDesDispos = plain(ongletsDeRubrique(rubriqueDesDispos))
-  .find(onglet => onglet.vue === "availability");
-assert.ok(ongletDesDispos,
-  "Les Dispos doivent avoir un onglet local dans leur rubrique");
-assert.equal(ongletDesDispos.libelle, "Disponibilités",
-  "L'onglet des Dispos doit porter un libelle lisible");
-
+   L'onglet porte `subtab` depuis qu'il a rejoint le sous-menu de « Boss de
+   Guilde » : la classe compte, c'est elle qui le range dans la seconde barre
+   et lui donne son allure de second niveau. */
 assert.match(
   indexSource,
-  /<section id="view-availability" class="view" role="tabpanel"[\s\S]{0,120}aria-labelledby="availTitle"/,
-  "La vue Dispos doit exister et se nommer par son titre"
+  /<button class="tab subtab" id="tab-availability" data-view="availability"[\s\S]{0,160}aria-controls="view-availability"/,
+  "L'onglet Dispos doit exister dans le sous-menu et cibler sa vue"
 );
-/* Le titre vit desormais dans le `page-heading` de la maquette : chapeau,
-   titre et resume forment un bloc, et la semaine en cours se cale a droite.
-   La classe `section-title` a disparu avec l'ancien gabarit ; ce que le test
-   protege n'a pas bouge — un vrai `h1`, porteur de l'identifiant que la
-   section cite dans son `aria-labelledby`. */
+/* Le sous-menu lui-même : sa barre, son étiquette, et son état par défaut.
+   `hidden` au chargement n'est pas un détail — c'est ce qui le sort de l'ordre
+   de tabulation tant qu'on n'est pas dans le groupe. */
 assert.match(
   indexSource,
-  /<div class="page-heading">[\s\S]{0,400}<h1 id="availTitle"/,
-  "Le titre qui nomme la vue Dispos doit exister dans son en-tete de page"
+  /<nav class="subtabs" id="bossSubtabs" role="tablist"[\s\S]{0,80}aria-label="Boss de Guilde" hidden>/,
+  "La seconde barre doit exister, être un tablist nommé, et masquée au départ"
+);
+assert.match(
+  indexSource,
+  /<section id="view-availability" class="view" role="tabpanel"[\s\S]{0,120}aria-labelledby="tab-availability"/,
+  "La vue Dispos doit exister et pointer vers son onglet"
 );
 /* Depuis le registre de vues/navigation.js, showView ne cite plus les vues :
    chacune s enregistre. L invariant teste est le meme — l onglet Dispos

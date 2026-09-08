@@ -17,9 +17,7 @@
 import { LocalTeams } from "../donnees/equipes-store.js";
 import { DashboardStore } from "../donnees/suivi-store.js";
 import { brouillonEquipe } from "../etat/brouillon-equipe.js";
-import {
-  inviteHorsConfrerie, sessionCourante, visiteurAnonyme
-} from "../etat/session.js";
+import { sessionCourante } from "../etat/session.js";
 import { MIGRATION_KEY_PREFIX } from "../noyau/constantes.js";
 import { $ } from "../noyau/dom.js";
 import { authMessage, sb } from "../noyau/supabase-client.js";
@@ -27,7 +25,7 @@ import { renderAnalyse } from "./analyse.js";
 import { ensureBossViewOwner, renderBossView } from "./boss-sessions.js";
 import { pseudoInput, renderBuilder, resetBuilderRosterBaselines } from "./builder.js";
 import { closeAuth, openAuth, setAuthBusy, setAuthStatus } from "./modale-auth.js";
-import { appliquerAutorisations, showView } from "./navigation.js";
+import { appliquerVisibiliteOnglets, showView } from "./navigation.js";
 import { renderRoster } from "./roster-equipes.js";
 import { renderMemberRoster } from "./roster-membres.js";
 import {
@@ -52,49 +50,20 @@ import { Store } from "../donnees/equipes-store.js";
     return data || null;
   }
 
-  /* CE QUE L'ACCUEIL PROPOSE CHANGE AVEC LA SESSION, PAS LA PAGE ELLE-MEME.
-
-     Un membre connecte reste sur l'accueil — c'est la page d'arrivee de tout
-     le monde. Elle cesserait pourtant de lui servir si elle continuait a lui
-     proposer de creer un compte : ses appels a l'action deviennent « Ma
-     semaine » et « Groupes de boss ».
-
-     TROIS PUBLICS, PAS DEUX. Une premiere version n'opposait que le visiteur
-     au titulaire d'un compte, et servait donc a l'invite hors confrerie des
-     boutons qui ne menaient nulle part : il a un compte, mais aucun droit sur
-     les groupes de boss. Il a son propre public, et son propre bouton — son
-     roster, la seule page qui lui serve.
-
-     Le marqueur est general, pas propre a l'accueil : n'importe quel bloc du
-     site peut se declarer pour un public ou plusieurs, separes par une espace.
-     Un bloc SANS marqueur s'adresse a tout le monde et n'est jamais touche —
-     les outils du site, par exemple, servent les trois. */
-  function publicDeLaSession(){
-    if(visiteurAnonyme()) return "visiteur";
-    if(inviteHorsConfrerie()) return "invite";
-    return "membre";
-  }
-
-  function rangerLesBlocsDeSession(){
-    const courant = publicDeLaSession();
-    document.querySelectorAll("[data-quand]").forEach(bloc => {
-      const publics = bloc.dataset.quand.split(/\s+/).filter(Boolean);
-      bloc.hidden = !publics.includes(courant);
-    });
-  }
-
   function updateAccountUi(){
     $("#accountLogin").hidden = !!sessionCourante.user;
     $("#accountConnected").hidden = !sessionCourante.user;
-    rangerLesBlocsDeSession();
+    $("#mobileAccountLogin").hidden = !!sessionCourante.user;
+    $("#mobileAccountConnected").hidden = !sessionCourante.user;
     const accountName = sessionCourante.pseudo
       || (sessionCourante.user && sessionCourante.user.email) || "";
     $("#accountPseudo").textContent = accountName;
+    $("#mobileAccountPseudo").textContent = accountName;
     /* Bouton à usage unique : il n'apparaît que s'il reste vraiment quelque
        chose à importer depuis CE navigateur. Une fois la migration faite — ou
        s'il n'y a aucune donnée locale — il disparaît au lieu de rester
-       désactivé, car il occupait une ligne entière du menu de compte. */
-    const migrationButtons = [$("#btnMigrateLocal")];
+       désactivé, car il occupait une ligne entière du header mobile. */
+    const migrationButtons = [$("#btnMigrateLocal"), $("#mobileBtnMigrateLocal")];
     const migrated = !!sessionCourante.user &&
       localStorage.getItem(MIGRATION_KEY_PREFIX+sessionCourante.user.id) === "1";
     let hasLocalData = false;
@@ -176,23 +145,16 @@ import { Store } from "../donnees/equipes-store.js";
       void renderMemberRoster();
     }
     if($("#view-analyse").classList.contains("active")) void renderAnalyse();
-    /* L'ACCUEIL RESTE LA PAGE D'ARRIVÉE, MÊME UNE FOIS CONNECTÉ.
-
-       Une connexion réussie envoyait le membre sur « Mon suivi ». C'est
-       l'accueil qu'il retrouve désormais : c'est la plus belle page du site,
-       et elle lui sert — ses deux appels à l'action deviennent « Ma semaine »
-       et « Groupes de boss ».
-
-       La règle ne vaut qu'au passage « aucun compte -> un compte ». Un
-       changement de compte piloté de l'extérieur, comme un TOKEN_REFRESHED,
-       ne déplace jamais la navigation : il se contente de réafficher le suivi
-       du bon compte s'il est visible. Et une route explicite — un lien vers un
-       groupe de boss — garde toujours la priorité. */
+    /* « Mon suivi » devient la vue par défaut à la résolution initiale d'une
+       session et après une connexion réussie, c'est-à-dire au passage
+       « aucun compte -> un compte ». Un changement de compte piloté de
+       l'extérieur, comme un TOKEN_REFRESHED, ne déplace jamais la navigation :
+       il se contente de réafficher le suivi du bon compte s'il est visible. */
     if(sessionChanged && !previousUserId && sessionCourante.user){
       const routeReprise = await reprendreRouteCourante({ apresConnexion:true });
       if(!isCurrentApplication()) return;
       if(!routeReprise){
-        await showView("home", { historyMode:"replace" });
+        await showView("dashboard", { historyMode:"replace" });
       }
     }else if($("#view-dashboard").classList.contains("active")){
       void renderDashboardView();
@@ -208,7 +170,7 @@ import { Store } from "../donnees/equipes-store.js";
 
        Il peut replier la navigation sur le Wiki : c'est voulu, la vue quittee
        n'existe plus pour ce visiteur. */
-    appliquerAutorisations({
+    appliquerVisibiliteOnglets({
       historyMode:!sessionCourante.user && !previousUserId ? "none" : "replace"
     });
   }
@@ -281,15 +243,18 @@ import { Store } from "../donnees/equipes-store.js";
     }
   }
 
-  $("#accountLogin").addEventListener("click", () =>
-    openAuth(sb ? "" : "Connexion indisponible hors ligne.", !sb));
+  [$("#accountLogin"), $("#mobileAccountLogin")].forEach(button =>
+    button.addEventListener("click", () =>
+      openAuth(sb ? "" : "Connexion indisponible hors ligne.", !sb)
+    )
+  );
   $("#authOffline").addEventListener("click", closeAuth);
   $("#authSignIn").addEventListener("click", ()=>void signIn());
   $("#authSignUp").addEventListener("click", ()=>void signUp());
   $("#authPassword").addEventListener("keydown", event => {
     if(event.key === "Enter") void signIn();
   });
-  [$("#authLogout")].forEach(button =>
+  [$("#authLogout"), $("#mobileAuthLogout")].forEach(button =>
     button.addEventListener("click", async()=>{
       if(!sb) return;
       const { error } = await sb.auth.signOut();
@@ -307,7 +272,7 @@ import { Store } from "../donnees/equipes-store.js";
     }
     const migrationKey = MIGRATION_KEY_PREFIX+sessionCourante.user.id;
     if(localStorage.getItem(migrationKey) === "1") return;
-    const buttons = [$("#btnMigrateLocal")];
+    const buttons = [$("#btnMigrateLocal"), $("#mobileBtnMigrateLocal")];
     const oldTexts = buttons.map(button => button.textContent);
     buttons.forEach(button => {
       button.disabled = true;
@@ -348,6 +313,7 @@ import { Store } from "../donnees/equipes-store.js";
     }
   }
   $("#btnMigrateLocal").addEventListener("click", ()=>void migrateLocalData());
+  $("#mobileBtnMigrateLocal").addEventListener("click", ()=>void migrateLocalData());
 
 /* updateAccountUi est redevenue privee quand la migration des donnees
    locales l a rejointe : c etait son dernier appelant du dehors. */

@@ -14,10 +14,10 @@
 import { $ } from "../noyau/dom.js";
 
   function setSyncStatus(state, text){
-    const node = $("#liveStatus");
-    if(!node) return;
-    node.dataset.state = state;
-    node.textContent = text;
+    [$("#liveStatus"), $("#mobileLiveStatus")].filter(Boolean).forEach(node => {
+      node.dataset.state = state;
+      node.textContent = text;
+    });
   }
 
   /* Une lecture qui echoue alors que l'ecran affiche deja le cache local ne

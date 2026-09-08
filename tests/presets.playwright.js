@@ -10,7 +10,6 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
-const { allerA, ouvrirHerosDuBuilder } = require("./helpers/naviguer");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
@@ -36,7 +35,7 @@ const ARME_EPEE = "En plein cœur !";
     await page.locator("#authPassword").fill("mot-de-passe-test");
     await page.getByRole("button", { name:"Se connecter", exact:true }).click();
 
-    await allerA(page, "member-roster");
+    await page.locator('.tab[data-view="member-roster"]').click();
     await page.locator("#memberRosterGrid .member-roster-card")
       .filter({ hasText:"Meliodas" })
       .locator(".member-roster-edit")
@@ -105,7 +104,7 @@ const ARME_EPEE = "En plein cœur !";
     /* Le preset enregistre plus haut doit etre disponible ici sans rien
        refaire : c'est tout l'interet d'un preset. */
     await page.locator("#memberRosterClose").click();
-    await allerA(page, "builder");
+    await page.locator('.tab[data-view="builder"]').click();
 
     const premierHeros = page.locator("#heroGrid .hero").first();
     await premierHeros.locator(".gear-slot").first().waitFor();
@@ -121,15 +120,15 @@ const ARME_EPEE = "En plein cœur !";
     }, HAUT);
 
     /* Le voisin ne bouge pas : appliquer sur un emplacement n'habille que
-       celui-la. On ouvre sa place dans la bande de composition — la zone de
-       travail ne porte qu'un heros a la fois. */
-    const voisin = await (await ouvrirHerosDuBuilder(page, 1))
+       celui-la. */
+    const voisin = await page.locator("#heroGrid .hero").nth(1)
       .locator('.gear-slot[data-slot="Haut"]').getAttribute("title");
     assert.equal(voisin.includes(HAUT), false,
       "seul l'emplacement vise doit changer");
 
     // ---------- Le calculateur : essayer sans rien ecrire ----------
-    await allerA(page, "calculateur");
+    await page.locator('.tab[data-view="calculateur"]').click();
+    await page.locator("#view-calculateur").waitFor({ state:"visible" });
     /* On n'attend pas le tableau de degats : le build par defaut est
        incomplet, et c'est justement le cas ou l'on veut essayer un preset. */
     await page.locator("#calculateurBody .calc-preset-essai").waitFor();

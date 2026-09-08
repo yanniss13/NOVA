@@ -21,14 +21,8 @@ import { toast } from "./toast.js";
 
   function ligneDeCompte(compte, redessiner){
     const moi = !!sessionCourante.user && compte.id === sessionCourante.user.id;
-    /* DEUX ACTIONS DE MEME NIVEAU, DEUX POIDS EGAUX. « Accueillir » portait
-       l aplat dore — le seul du site, reserve a l action principale d un ecran
-       — et il apparait une fois par invite : cinq invites, cinq aplats. En
-       face, « Retirer » n etait qu un lien dore, alors que c est le geste
-       destructeur. Les deux prennent le cadre discret ; seul le retrait porte
-       la teinte d alerte, au survol. */
     const bouton = el("button", {
-      class:"btn" + (compte.membre ? " btn-danger" : ""),
+      class:"btn " + (compte.membre ? "btn-ghost" : "btn-primary"),
       type:"button",
       text:compte.membre
         ? "Retirer de la confrérie"
@@ -51,18 +45,11 @@ import { toast } from "./toast.js";
         toast("Changement impossible : " + authMessage(error), true);
       }
     });
-    return el("article", null, [
-      el("span", { class:"member-seal", "aria-hidden":"true",
-        text:(compte.pseudo || "?").slice(0, 1).toUpperCase() }),
-      el("div", null, [
-        el("b", { text:compte.pseudo }),
-        el("small", { text:compte.admin
-          ? "Administrateur de la confrérie"
-          : (compte.membre ? "Accès aux données de la confrérie" : "Ne voit que son propre roster") })
-      ]),
-      el("span", { text:compte.membre ? "Membre" : "Invité" }),
-      el("em", { text:compte.admin ? "Administrateur" : "—" }),
-      bouton
+    return el("tr", null, [
+      el("td", { text:compte.pseudo }),
+      el("td", { text:compte.membre ? "Membre" : "Invité" }),
+      el("td", { text:compte.admin ? "Oui" : "—" }),
+      el("td", null, [bouton])
     ]);
   }
 
@@ -87,42 +74,16 @@ import { toast } from "./toast.js";
       }));
       return true;
     }
-    /* LES TROIS COMPTEURS de la maquette. Ils repondent a la question qu'on
-       se pose en ouvrant cet ecran — combien sommes-nous, et qui attend — que
-       le tableau seul obligeait a compter des yeux. */
-    const membres = comptes.filter(compte => compte.membre);
-    const invites = comptes.filter(compte => !compte.membre);
-    const administrateurs = comptes.filter(compte => compte.admin);
-    corps.appendChild(el("div", { class:"stat-grid admin-summary" }, [
-      el("article", null, [
-        el("span", { text:"Membres" }),
-        el("strong", { text:String(membres.length) }),
-        el("small", { text:"accès aux données de la confrérie" })
-      ]),
-      el("article", null, [
-        el("span", { text:"Comptes invités" }),
-        el("strong", { text:String(invites.length) }),
-        el("small", { text:invites.length
-          ? "en attente d'être accueillis"
-          : "personne n'attend" })
-      ]),
-      el("article", null, [
-        el("span", { text:"Administrateurs" }),
-        el("strong", { text:String(administrateurs.length) }),
-        el("small", { text:"peuvent accueillir et retirer" })
-      ])
+    corps.appendChild(el("table", { class:"admin-table" }, [
+      el("thead", null, [el("tr", null, [
+        el("th", { text:"Pseudo" }),
+        el("th", { text:"Accès" }),
+        el("th", { text:"Admin" }),
+        el("th", { text:"Action" })
+      ])]),
+      el("tbody", null,
+        comptes.map(compte => ligneDeCompte(compte, renderAdministration)))
     ]));
-
-    /* LA LISTE DE LA MAQUETTE : un sceau rond a l'initiale, le pseudo et ce
-       que le compte peut voir, son acces, son role, et le geste. Un tableau
-       HTML demandait quatre en-tetes de colonne pour dire la meme chose, et
-       s'ecrasait sur un telephone. */
-    corps.appendChild(el("div", { class:"section-title-row" }, [
-      el("h2", { text:"Comptes" }),
-      el("span", { text:comptes.length + " au total" })
-    ]));
-    corps.appendChild(el("div", { class:"member-table" },
-      comptes.map(compte => ligneDeCompte(compte, renderAdministration))));
     return true;
   }
 

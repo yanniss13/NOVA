@@ -9,26 +9,24 @@
 
 const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
-const {
-  allerA, destinationsVisibles, ouvrirLeCompte
-} = require("./helpers/naviguer");
 const { installFakeSupabase } = require("./helpers/faux-supabase");
 const { chromium } = require("playwright");
 
-/* CE QUE LA BARRE PROPOSE, selon qui regarde.
+const ONGLETS_INVITE = [
+  "builder", "member-roster", "wiki", "collection", "calculateur"
+];
+const ONGLETS_MEMBRE = [
+  "dashboard", "builder", "roster", "member-roster",
+  "analyse", "wiki", "collection", "calculateur"
+];
 
-   L'invite garde son roster et les pages publiques. « Notre guilde » et
-   « Equipes » lui restent visibles parce que l'accueil public et le Builder le
-   sont : ce qui lui est ferme, c'est le centre Boss, l'Analyse, et le contenu
-   de confrerie a l'interieur de ces rubriques. */
-const PORTEE_INVITE = {
-  rubriques:["guilde", "equipes", "mon-roster"],
-  outils:["wiki", "collection", "calculateur"]
-};
-const PORTEE_MEMBRE = {
-  rubriques:["guilde", "equipes", "centre-boss", "mon-roster"],
-  outils:["wiki", "collection", "calculateur", "analyse"]
-};
+/* `getClientRects()` et non l'attribut `hidden` : on veut savoir ce que l'oeil
+   voit, pas ce que le code a ecrit. */
+const ongletsVisibles = page => page.evaluate(() =>
+  [...document.querySelectorAll(".tabs .tab[data-view]")]
+    .filter(onglet => onglet.getClientRects().length > 0)
+    .map(onglet => onglet.dataset.view)
+);
 
 const vueActive = page => page.evaluate(() => {
   const vue = document.querySelector(".view.active");
@@ -64,28 +62,10 @@ async function connecter(page, email){
     await page.locator("#accountPseudo")
       .getByText("Invité", { exact:true }).waitFor();
 
-    assert.deepEqual(await destinationsVisibles(page), PORTEE_INVITE,
+    assert.deepEqual(await ongletsVisibles(page), ONGLETS_INVITE,
       "un invité garde son roster et les pages publiques, rien d'autre");
-
-    /* SON ROSTER RESTE À UN CLIC, MAIS DEPUIS L'ACCUEIL.
-
-       La connexion le posait directement sur son roster, parce que la vue par
-       défaut d'alors — Mon suivi — lui était interdite et que le repli devait
-       le rattraper. L'accueil est désormais la page d'arrivée de tous, et il
-       lui est autorisé : c'est donc là qu'il atterrit.
-
-       Ce que ce test protégeait tient toujours, à une adresse près : l'invité
-       ne doit pas se retrouver devant une page qui ne lui sert à rien. On
-       vérifie donc que l'accueil s'adresse À LUI — le bouton de son roster, et
-       aucun de ceux du membre, qui ne mèneraient nulle part. */
-    assert.equal(await vueActive(page), "home",
-      "la connexion pose l'invité sur l'accueil, comme tout le monde");
-    assert.deepEqual(
-      await page.locator(".hero-actions button:not([hidden])")
-        .evaluateAll(boutons => boutons.map(bouton =>
-          bouton.textContent.replace(/\s+/g, " ").trim())),
-      ["Mon roster", "Explorer les outils →"],
-      "l'accueil d'un invité mène à son roster, jamais aux groupes de boss");
+    assert.equal(await vueActive(page), "member-roster",
+      "la connexion doit le poser sur son roster, pas sur un Wiki");
 
     /* LA ROUTE, et pas seulement l'onglet : un onglet masqué ne protège que la
        souris.
@@ -97,7 +77,8 @@ async function connecter(page, email){
 
        On part du Wiki pour que le repli soit une TRANSITION observable. Rester
        sur le roster prouverait la même chose que ne rien faire. */
-    await allerA(page, "wiki");
+    await page.locator('.tabs .tab[data-view="wiki"]').click();
+    await page.locator("#view-wiki").waitFor({ state:"visible" });
     await page.evaluate(() => {
       const lien = document.createElement("a");
       lien.id = "lienTestAnalyse";
@@ -124,28 +105,18 @@ async function connecter(page, email){
     });
 
     /* ---- Le membre : la barre entière revient. ---- */
-    await ouvrirLeCompte(page);
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await page.locator("#accountLogin").waitFor({ state:"visible" });
     await connecter(page, "yannis@example.test");
     await page.locator("#accountPseudo")
       .getByText("Yannis", { exact:true }).waitFor();
 
-    assert.deepEqual(await destinationsVisibles(page), PORTEE_MEMBRE,
+    assert.deepEqual(await ongletsVisibles(page), ONGLETS_MEMBRE,
       "un membre retrouve la barre entière");
-    assert.equal(await vueActive(page), "home",
-      "un membre atterrit sur l'accueil, comme l'invité");
-    /* Le même accueil, un autre public : les deux jeux de boutons ne se
-       mélangent jamais. */
-    assert.deepEqual(
-      await page.locator(".hero-actions button:not([hidden])")
-        .evaluateAll(boutons => boutons.map(bouton =>
-          bouton.textContent.replace(/\s+/g, " ").trim())),
-      ["Ma semaine", "Groupes de boss →", "Explorer les outils →"],
-      "l'accueil d'un membre ne propose plus le roster de l'invité");
+    assert.equal(await vueActive(page), "dashboard",
+      "un membre atterrit sur le suivi, comme avant");
 
     /* ---- L'admin accueille l'invité, et la barre de l'invité s'élargit. ---- */
-    await ouvrirLeCompte(page);
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await page.locator("#accountLogin").waitFor({ state:"visible" });
     await page.evaluate(() => {
@@ -155,12 +126,12 @@ async function connecter(page, email){
     await page.locator("#accountPseudo")
       .getByText("Yannis", { exact:true }).waitFor();
 
-    const entreeAdmin = page.locator('#desktopNav [data-rubrique="membres"]');
-    await entreeAdmin.waitFor({ state:"visible" });
-    await entreeAdmin.click();
+    const ongletAdmin = page.locator('.tabs .tab[data-view="admin"]');
+    await ongletAdmin.waitFor({ state:"visible" });
+    await ongletAdmin.click();
     await page.locator("#view-admin").waitFor({ state:"visible" });
 
-    const ligneInvite = page.locator("#adminBody .member-table article")
+    const ligneInvite = page.locator("#adminBody tr")
       .filter({ hasText:"Invité" });
     await ligneInvite.getByRole("button",
       { name:"Accueillir dans la confrérie", exact:true }).click();
@@ -169,7 +140,7 @@ async function connecter(page, email){
 
     /* Un admin ne peut pas se retirer lui-même : le bouton refuse le geste
        avant que le SQL n'ait à le refuser. */
-    const ligneAdmin = page.locator("#adminBody .member-table article")
+    const ligneAdmin = page.locator("#adminBody tr")
       .filter({ hasText:"Yannis" });
     assert.equal(
       await ligneAdmin.getByRole("button",
@@ -179,13 +150,12 @@ async function connecter(page, email){
     );
 
     /* Et la promotion se voit : l'ancien invité retrouve la barre entière. */
-    await ouvrirLeCompte(page);
     await page.getByRole("button", { name:"Déconnexion", exact:true }).click();
     await page.locator("#accountLogin").waitFor({ state:"visible" });
     await connecter(page, "invite@example.test");
     await page.locator("#accountPseudo")
       .getByText("Invité", { exact:true }).waitFor();
-    assert.deepEqual(await destinationsVisibles(page), PORTEE_MEMBRE,
+    assert.deepEqual(await ongletsVisibles(page), ONGLETS_MEMBRE,
       "accueilli dans la confrérie, l'invité voit ce qu'un membre voit");
 
     assert.deepEqual(errors, [], "aucune erreur de page");

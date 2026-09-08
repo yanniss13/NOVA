@@ -219,77 +219,11 @@ import { toast } from "./toast.js";
   }
 
   const heroGrid = $("#heroGrid");
-
-  /* LA BANDE DE COMPOSITION. L'ecran montrait les quatre heros cote a cote,
-     chacun avec sa colonne complete : quatre fois « Tout au maximum », quatre
-     fois « Appliquer un preset », quatre fois les deux sets. Une equipe se
-     compose pourtant un heros a la fois.
-
-     Les quatre portraits restent visibles en bande — c'est l'equipe qu'on
-     lit d'un coup d'oeil — et la zone de travail ne porte que le heros
-     choisi, en pleine largeur.
-
-     `heroSelectionne` survit aux rendus : chaque geste d'equipement redessine
-     l'ecran entier, et retomber sur le premier heros a chaque fois le rendrait
-     inutilisable. */
-  let heroSelectionne = 0;
-
-  /* La carte du heros demande, ou `null` s'il n'est pas celui qu'on edite.
-     Toute restitution de focus passe par ici : avant la bande, le code lisait
-     `heroGrid.children[i]`, ce qui n'a plus de sens quand une seule carte
-     existe a la fois. */
-  function carteDuHeros(index){
-    return index === heroSelectionne
-      ? heroGrid.querySelector(".hero")
-      : null;
-  }
   const pseudoInput = $("#pseudo");
   const teamNameInput = $("#teamName");
 
   pseudoInput.addEventListener("input", e => brouillonEquipe.equipe.pseudo = e.target.value);
   teamNameInput.addEventListener("input", e => brouillonEquipe.equipe.name = e.target.value);
-
-  /* Une place de la bande : le portrait, le nom, et l'etat de la composition.
-     Le meme bouton dit ou l'on est et ou l'on va — c'est un onglet, et il
-     s'annonce comme tel. */
-  function placeDeBande(hero, i){
-    const ch = charOf(hero.char);
-    const choisi = i === heroSelectionne;
-    const vignette = el("span",{class:"team-slot-portrait"});
-    if(ch){
-      vignette.appendChild(el("img",{
-        src:"7ds-personnages/" + nameOfFile(ch.id) + ".webp",
-        alt:"", loading:"lazy"
-      }));
-    }else{
-      vignette.appendChild(el("span",{class:"team-slot-plus", text:"+"}));
-    }
-    return el("button",{
-      class:"team-slot" + (choisi ? " is-selected" : "") + (ch ? " is-filled" : ""),
-      type:"button",
-      role:"tab",
-      id:"team-slot-" + i,
-      dataset:{ heroIndex:String(i) },
-      "aria-selected":String(choisi),
-      "aria-label":(ch ? ch.name : "Emplacement libre") + " — héros " + (i + 1),
-      tabIndex:choisi ? 0 : -1,
-      onclick:()=>selectionnerHeros(i)
-    },[
-      vignette,
-      el("span",{
-        class:"team-slot-name" + (ch ? "" : " is-empty"),
-        text:ch ? ch.name : "Libre"
-      })
-    ]);
-  }
-
-  function selectionnerHeros(i){
-    if(i === heroSelectionne) return;
-    heroSelectionne = i;
-    renderBuilder();
-    const place = heroGrid.querySelector('.team-slot[data-hero-index="' + i + '"]');
-    if(place) place.focus();
-  }
 
   function renderBuilder(){
     if(sessionCourante.user && sessionCourante.pseudo) brouillonEquipe.equipe.pseudo = sessionCourante.pseudo;
@@ -298,24 +232,15 @@ import { toast } from "./toast.js";
     pseudoInput.disabled = !!sessionCourante.user;
     $("#editFlag").classList.toggle("on", brouillonEquipe.edition);
     $("#btnSave").textContent = brouillonEquipe.edition ? "Mettre à jour l'équipe" : "Enregistrer l'équipe";
-    /* Une equipe compte toujours quatre places ; si l'index survit a un
-       chargement d'equipe plus courte, on revient a la premiere. */
-    const heroes = brouillonEquipe.equipe.heroes;
-    if(heroSelectionne >= heroes.length) heroSelectionne = 0;
     heroGrid.innerHTML = "";
-    heroGrid.appendChild(el("div",{
-      class:"team-band",
-      role:"tablist",
-      "aria-label":"Héros de l'équipe"
-    }, heroes.map(placeDeBande)));
-    heroGrid.appendChild(heroCard(heroes[heroSelectionne], heroSelectionne));
+    brouillonEquipe.equipe.heroes.forEach((hero, i) => heroGrid.appendChild(heroCard(hero, i)));
   }
   function switchBuilderHeroBuild(heroIndex, weaponType){
     const hero = brouillonEquipe.equipe.heroes[heroIndex];
     if(!hero || hero.activeWeaponType === weaponType) return;
     brouillonEquipe.equipe.heroes[heroIndex] = activateHeroBuild(hero, weaponType);
     renderBuilder();
-    const card = carteDuHeros(heroIndex);
+    const card = heroGrid.children[heroIndex];
     const active = card && [...card.querySelectorAll(
       ".builder-weapon-switch"
     )].find(button => button.dataset.weaponType === weaponType);
@@ -327,7 +252,7 @@ import { toast } from "./toast.js";
         || navigator.onLine !== false);
   }
   function focusBuilderWeaponSwitch(heroIndex, weaponType){
-    const card = carteDuHeros(heroIndex);
+    const card = heroGrid.children[heroIndex];
     const button = card && [...card.querySelectorAll(
       ".builder-weapon-switch"
     )].find(item => item.dataset.weaponType === weaponType);
@@ -477,14 +402,9 @@ import { toast } from "./toast.js";
   function heroCard(hero, i){
     const ch = charOf(hero.char);
     const sourceActions = el("div",{class:"hero-source-actions"});
-    /* PAS D'APLAT DORE ICI. « Depuis mon roster » le portait, et il y a quatre
-       colonnes : cinq aplats dores sur un ecran avec « Enregistrer l'équipe »,
-       alors que la charte n'en accorde qu'un, a l'action principale. Les deux
-       boutons ouvrent chacun un selecteur ; c'est leur ordre qui dit lequel
-       est le chemin ordinaire. */
     if(sessionCourante.user){
       sourceActions.appendChild(el("button",{
-        class:"btn",
+        class:"btn btn-primary",
         type:"button",
         text:"Depuis mon roster",
         onclick:()=>void pickRosterHero(i)
@@ -573,8 +493,8 @@ import { toast } from "./toast.js";
       commit(nextConfig){
         hero.weaponConfig = nextConfig;
         renderBuilder();
-        const carte = carteDuHeros(i);
-        const nextButton = carte && carte.querySelector(".weapon-config-open");
+        const nextButton = heroGrid.children[i]
+          && heroGrid.children[i].querySelector(".weapon-config-open");
         setWeaponConfigRestoreFocus(nextButton);
       },
       latestUpdatedAt(){
@@ -643,7 +563,7 @@ import { toast } from "./toast.js";
             if(nextConfig === null) delete hero.armorConfig[slot];
             else hero.armorConfig[slot] = nextConfig;
             renderBuilder();
-            const nextHero = carteDuHeros(i);
+            const nextHero = heroGrid.children[i];
             const nextButton = nextHero
               ? findGearConfigButton(nextHero, slot) : null;
             setGearConfigRestoreFocus(nextButton);
@@ -673,7 +593,7 @@ import { toast } from "./toast.js";
             if(nextConfig === null) delete hero.jewelConfig[slot];
             else hero.jewelConfig[slot] = nextConfig;
             renderBuilder();
-            const nextHero = carteDuHeros(i);
+            const nextHero = heroGrid.children[i];
             const nextButton = nextHero
               ? findGearConfigButton(nextHero, slot) : null;
             setGearConfigRestoreFocus(nextButton);
@@ -694,32 +614,12 @@ import { toast } from "./toast.js";
     const clear = el("button",{class:"clear", type:"button", text:"Vider ce héros",
       onclick:()=>{ brouillonEquipe.equipe.heroes[i] = emptyHero(); renderBuilder(); }});
 
-    /* TROIS COLONNES, PAS UNE PILE. La carte occupait un quart d'ecran et
-       empilait tout ; elle prend maintenant toute la largeur, et se lit en
-       trois temps : QUI — le heros, son arme, son potentiel —, QUOI — ce
-       qu'il porte — et COMBIEN — ce que cela donne. Les colonnes se replient
-       d'elles-memes quand la place manque. */
-    const identite = el("div",{class:"hero-colonne hero-identite"},[
-      sourceActions, portrait, title, badges, pot, note, clear
-    ]);
-    /* Un titre ouvre la colonne du milieu : sans lui, la grille des
-       emplacements commencait sans qu on sache ce qu on regarde. */
-    const equipement = el("div",{class:"hero-colonne hero-equipement"},[
-      el("div",{class:"builder-section-head"},[
-        el("h2",{text:"Équipement"})
-      ]),
-      gear
-    ]);
-    const colonnes = [identite, equipement];
-    if(ch){
-      colonnes.push(el("div",{class:"hero-colonne hero-mesures"},[
-        el("div",{class:"builder-section-head"},[
-          el("h2",{text:"Statistiques"})
-        ]),
-        heroStatsSection(hero)
-      ]));
-    }
-    return el("div",{class:"hero"},colonnes);
+    const content = [
+      sourceActions, portrait, title, badges, gear, pot, note
+    ];
+    if(ch) content.push(heroStatsSection(hero));
+    content.push(clear);
+    return el("div",{class:"hero"},content);
   }
 
   // Petit bloc "Potentiel" sur la carte héros -> ouvre la fenêtre de potentiel
