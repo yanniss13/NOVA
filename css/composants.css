@@ -151,6 +151,31 @@
 .action-card p{margin:0;color:var(--mist);line-height:1.4}
 .action-card .btn{grid-column:2;justify-content:flex-start;width:max-content;margin-top:8px}
 
+/* LA LISTE DES EQUIPES PARTAGEES. Le proprietaire en petites capitales, le
+   nom de l'equipe, les quatre portraits qui se chevauchent, et le lien vers
+   l'equipement. C'est une lecture : aucune action d'edition ici. */
+.shared-team-list{display:grid;gap:10px}
+.shared-team{
+  display:grid;grid-template-columns:minmax(220px,1fr) auto auto;
+  align-items:center;gap:24px;padding:16px 20px;border-radius:6px
+}
+.owner-tag{color:var(--gold-light);font-size:11px;letter-spacing:.055em;text-transform:uppercase}
+.shared-team h2{margin:4px 0 0;font-family:var(--display);font-size:19px;font-weight:500}
+/* Les portraits se chevauchent : le decalage negatif les fait se recouvrir,
+   et le rembourrage de gauche rend au premier la place que ce decalage lui
+   prend. */
+.mini-portraits{display:flex;padding-left:14px}
+.mini-portraits span{
+  width:48px;height:48px;margin-left:-14px;overflow:hidden;
+  border:2px solid var(--slate);border-radius:50%;background:var(--slate-light)
+}
+.mini-portraits img{width:100%;height:100%;object-fit:cover}
+@media (max-width:767px){
+  .shared-team{grid-template-columns:1fr auto;gap:12px}
+  .shared-team .btn{grid-column:1/-1;justify-content:flex-start}
+  .mini-portraits span{width:40px;height:40px}
+}
+
 /* LE PANNEAU DE SUGGESTION : un constat a gauche, un lien a droite. */
 .recommendation-panel{
   display:flex;align-items:center;justify-content:space-between;gap:30px;

@@ -43,12 +43,12 @@ const PORTEE_MEMBRE = {
   rubriques:["guilde", "equipes", "centre-boss", "mon-roster"],
   outils:["wiki", "collection", "calculateur", "analyse"]
 };
-/* Les onglets du centre Boss, second etage de la rubrique. Quatre depuis la
-   refonte, dont trois qui visent la vue `boss` et n'en changent que la
+/* Les onglets du centre Boss, second etage de la rubrique. Cinq depuis la
+   refonte, dont quatre qui visent la vue `boss` et n'en changent que la
    sous-vue. On les nomme par leur libelle, qui est ce qu'un membre lit — une
    liste de noms de vue dirait trois fois « boss ». */
 const ONGLETS_DU_CENTRE_BOSS = [
-  "Vue d'ensemble", "Disponibilités", "Groupes", "Rapports"
+  "Vue d'ensemble", "Équipes", "Disponibilités", "Groupes", "Rapports"
 ];
 
 const vueActive = page => page.evaluate(() => {
