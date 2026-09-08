@@ -73,6 +73,10 @@ import { toast } from "./toast.js";
      `renderCollection` s'appelle a chaque filtre, et une relecture qui re-rend
      qui relit serait une boucle sans fin. */
   let relulePour = "";
+  /* Et ce pour qui la lecture a REELLEMENT abouti. `relulePour` est pose AVANT
+     l'appel : il dit qu'une lecture est en cours, pas qu'on sait ce qui est
+     equipe. Tant qu'on ne le sait pas, on n'ecrit rien. */
+  let rosterConnuPour = "";
 
   /* Le ROSTER se relit avec la collection, et non seulement dans son onglet :
      c'est lui qui dit ce qui est equipe, donc possede d'office. Sans cela, un
@@ -85,6 +89,7 @@ import { toast } from "./toast.js";
       CollectionStore.refresh(ownerId),
       MemberRosterStore.refresh(ownerId)
     ]).then(()=>{
+      rosterConnuPour = ownerId;
       renderCollection();
     }).catch(()=>{
       /* Hors ligne, le cache local suffit a afficher. Pas de bandeau : le
@@ -98,6 +103,7 @@ import { toast } from "./toast.js";
      ne change jamais l'onglet actif. */
   function invaliderCollection(){
     relulePour = "";
+    rosterConnuPour = "";
   }
 
   /* La liste des membres, lue une fois. Elle sert au selecteur ET au libelle
@@ -455,14 +461,28 @@ import { toast } from "./toast.js";
   /* Un seul ecouteur pour toutes les tuiles, pose une fois pour toutes.
 
      Un ecouteur PAR tuile devrait etre repose a chaque rendu, ce qui obligeait
-     a recreer les noeuds — la cause meme du clignotement. Une tuile verrouillee
-     est `disabled` et n'emet aucun clic : le verrou tient toujours. */
+     a recreer les noeuds — la cause meme du clignotement.
+
+     LE VERROU SE VERIFIE ICI, PAS SEULEMENT SUR LA TUILE. Une piece equipee
+     est `disabled` et n'emet normalement aucun clic ; mais la tuile est
+     reutilisee d'un rendu a l'autre, et entre le moment ou elle est posee et
+     celui ou le roster est lu, elle est encore libre. Un clic tombe dans cet
+     intervalle ecrivait « non possede » sur une piece portee — et la CI, plus
+     lente que la machine de developpement, a fini par tomber dedans.
+
+     On relit donc l'etat depuis les DONNEES a chaque clic. C'est la source
+     qui tranche, jamais une classe posee au rendu precedent. */
   $("#collectionBody").addEventListener("click", evenement => {
     const bouton = evenement.target.closest(".wiki-tile");
     if(!bouton || !estMaCollection()) return;
     const objet = objetsDeLaCollection()
       .find(item => item.file === bouton.dataset.file);
     if(!objet) return;
+    /* Tant que le roster du membre n a pas ete lu, on ignore ce qu il porte :
+       ecrire « non possede » sur une piece peut-etre equipee serait ecrire au
+       hasard. La CI, plus lente, tombait precisement dans cet intervalle. */
+    if(rosterConnuPour !== ownerAffiche()) return;
+    if(equipesDuRoster(rosterAffiche()).has(objet.file)) return;
     void basculerPossession(objet, bouton.classList.contains("collection-owned"));
   });
 
