@@ -101,12 +101,6 @@
     </div>
   </div>
 
-  <button class="menu-button" id="mobileMenuButton" type="button"
-          aria-label="Ouvrir le menu" aria-haspopup="true"
-          aria-expanded="false" aria-controls="mobileDrawer">
-    <span></span><span></span><span></span>
-  </button>
-  <nav class="mobile-drawer" id="mobileDrawer" aria-label="Explorer" hidden></nav>
 </header>
 
 <main id="main" tabindex="-1">
@@ -527,6 +521,19 @@
 
 <!-- La navigation au pouce, remplie depuis la table des rubriques. -->
 <nav class="mobile-nav" id="mobileNav" aria-label="Navigation mobile"></nav>
+
+<!-- LE TIROIR VIT AVEC LA BARRE DU POUCE, pas dans l'en-tete.
+
+     UN SEUL CHEMIN Y MENE : « Plus », dans la barre du bas. Il en avait deux —
+     ce bouton-la et un second dans l'en-tete — qui ouvraient exactement le meme
+     panneau, cote a cote sur un telephone.
+
+     Sa place dans le document suit ce qu'il est devenu : il s'ouvre depuis le
+     bas de l'ecran, et l'en-tete porte `z-index:20` sur un element positionne,
+     donc un CONTEXTE D'EMPILEMENT. Un enfant de l'en-tete plafonne a 20, quelle
+     que soit sa propre valeur : le bandeau de mise a jour (55) passait devant le
+     tiroir ouvert et lui volait les clics de ses dernieres entrees. -->
+<nav class="mobile-drawer" id="mobileDrawer" aria-label="Explorer" hidden></nav>
 
 <!-- Picker modal -->
 <div class="overlay" id="overlay" role="dialog" aria-modal="true"

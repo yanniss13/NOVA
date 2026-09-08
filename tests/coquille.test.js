@@ -36,7 +36,6 @@ const ACCROCHES = [
   ['id="accountConnected"', "le bloc du compte ouvert"],
   ['id="accountMenu"', "le menu du compte"],
   ['id="liveStatus"', "le temoin de synchronisation"],
-  ['id="mobileMenuButton"', "le bouton du tiroir mobile"],
   ['id="mobileDrawer"', "le tiroir mobile"],
   ['id="localTabsBar"', "la barre des onglets locaux"],
   ['id="localTabs"', "la liste des onglets locaux"],

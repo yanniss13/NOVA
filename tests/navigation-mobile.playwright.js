@@ -142,18 +142,13 @@ async function installConnectedSupabase(page, connected = true){
       "mobileMoreButton",
       "Echap doit refermer « Plus » et rendre le focus au bouton qui l'a ouvert");
 
-    /* Le tiroir a DEUX declencheurs. Le focus revient a celui qui a servi : le
-       rendre toujours au premier renverrait le doigt en haut de l'ecran apres
-       un geste au pouce. */
-    await page.locator("#mobileMenuButton").click();
-    await tiroir.waitFor({ state:"visible" });
-    await page.keyboard.press("Escape");
-    assert.equal(await page.evaluate(() => document.activeElement.id),
-      "mobileMenuButton",
-      "ouvert par le menu du haut, « Plus » doit rendre le focus au menu du haut");
+    /* LE TIROIR N'A PLUS QU'UN DECLENCHEUR. Il en avait deux — « Plus » au
+       pouce et un bouton en en-tete — pour un seul et meme panneau. Un test
+       verifiait alors que le focus revenait a celui qui avait servi ; il n'y a
+       plus de choix a faire, et c'est bien ce que le cas ci-dessus prouve.
 
-    /* Quitter le format mobile fait disparaitre les deux declencheurs : un
-       tiroir laisse ouvert n'aurait plus aucun moyen d'etre ferme. */
+       Quitter le format mobile fait disparaitre le declencheur : un tiroir
+       laisse ouvert n'aurait plus aucun moyen d'etre ferme. */
     await plus.click();
     await tiroir.waitFor({ state:"visible" });
     await page.setViewportSize({ width:1024, height:780 });
