@@ -7,9 +7,11 @@
    leurs animations se mesurent donc separement.
 
    Les competences non chiffrables sont ecartees : sans pourcentage de degats,
-   leur animation n'entre dans aucun calcul de DPS. Restent 347 mesures, le
+   leur animation n'entre dans aucun calcul de DPS. Restent 350 mesures, le
    compte exact de docs/chronometrage-animations.md — 335 avant que Ban
-   n'arrive avec la version 2.0 du jeu, le 26 aout 2026.
+   n'arrive avec la version 2.0 du jeu, le 26 aout 2026, puis 347, et 350
+   depuis que la reprise par somme des coups chiffre trois competences que la
+   source anglaise laissait muettes.
 
    La cadence sert uniquement a afficher un numero d'image lisible et a fixer
    le pas des fleches. Le calcul de duree n'utilise que currentTime : il reste

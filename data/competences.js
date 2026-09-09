@@ -47,16 +47,26 @@ window.SEVEN_DS_COMPETENCES = {
   },
   {
    "categorie": "ACTIVE_THIRD",
-   "composantes": [],
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 404.0
+    }
+   ],
    "coups": null,
    "gameId": "ban_cudgel3c_skill_q_1",
-   "nature": "non-chiffree",
+   "nature": "direct",
    "nom": "Rapid Swing",
    "periodique": null,
    "portee": "Melee",
-   "pourcentage": null,
+   "pourcentage": 404.0,
+   "provenance": "somme-des-coups",
    "recharge": 15.6,
-   "repartition": [],
+   "repartition": [
+    69.0,
+    107.0,
+    228.0
+   ],
    "weaponType": "Cudgel3c"
   },
   {
@@ -446,16 +456,27 @@ window.SEVEN_DS_COMPETENCES = {
   },
   {
    "categorie": "ACTIVE_THIRD",
-   "composantes": [],
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 111.0
+    }
+   ],
    "coups": null,
    "gameId": "bug_book_skill_rmb",
-   "nature": "non-chiffree",
+   "nature": "direct",
    "nom": "Dark Burst Activation",
    "periodique": null,
    "portee": "Melee",
-   "pourcentage": null,
+   "pourcentage": 111.0,
+   "provenance": "somme-des-coups",
    "recharge": 15,
-   "repartition": [],
+   "repartition": [
+    17.0,
+    18.0,
+    28.0,
+    48.0
+   ],
    "weaponType": "Book"
   },
   {
@@ -7242,16 +7263,27 @@ window.SEVEN_DS_COMPETENCES = {
   },
   {
    "categorie": "ACTIVE_THIRD",
-   "composantes": [],
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 233.0
+    }
+   ],
    "coups": null,
    "gameId": "tioreh_book_skill_rmb",
-   "nature": "non-chiffree",
+   "nature": "direct",
    "nom": "Lion Beam",
    "periodique": null,
    "portee": "Range",
-   "pourcentage": null,
+   "pourcentage": 233.0,
+   "provenance": "somme-des-coups",
    "recharge": 15,
-   "repartition": [],
+   "repartition": [
+    34.0,
+    37.0,
+    61.0,
+    101.0
+   ],
    "weaponType": "Book"
   },
   {

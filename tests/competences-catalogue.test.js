@@ -207,6 +207,75 @@ assert.deepStrictEqual(
   "competences calculees mais annoncees non chiffrees, recu : " + muettes
 );
 
+/* LES COMPETENCES RECUPEREES PAR LA SOMME DE LEURS COUPS.
+
+   La source anglaise n'annonce un degat garanti que si la phrase COMMENCE par
+   « Inflicts ». Une competence qui ouvre sur autre chose - une immunite, une
+   canalisation - et poursuit par « and inflicts damage equal to X% » tombait
+   en « non-chiffree », alors que la fiche francaise publie a la fois le total
+   et le detail de ses coups.
+
+   La regle de reprise ne croit le total QUE si les coups publies l'egalent :
+   c'est une preuve arithmetique, pas une lecture de prose. Un tick periodique
+   n'a pas de detail par coup, un total conditionnel ne tombe pas juste, et
+   les deux restent donc ecartes. C'est la methode que le generateur emploie
+   deja pour Ruee sauvage, appliquee la ou la premiere phrase est muette.
+
+   Le Balayage rapide de Ban en est le cas d'ecole : 69 + 107 + 228 = 404, et
+   il portait jusqu'ici 25 a 46 % des degats du heros sans etre compte. */
+{
+  const bacWiki = { window:{} };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(racine, "data", "wiki-competences.js"), "utf8"),
+    bacWiki
+  );
+  const parId = new Map();
+  Object.values(bacWiki.window.SEVEN_DS_WIKI_COMPETENCES || {}).forEach(liste => {
+    (liste || []).forEach(competence => parId.set(competence.gameId, competence));
+  });
+
+  const recuperees = slugs.flatMap(slug => (catalogue[slug] || [])
+    .filter(competence => competence.provenance === "somme-des-coups")
+    .map(competence => slug + "/" + competence.gameId));
+  assert.ok(
+    recuperees.length >= 3,
+    "La reprise par somme des coups doit rendre au moins trois competences, "
+      + "recu : " + recuperees.length
+  );
+
+  /* Chaque reprise doit se REPROUVER ici, sur la fiche francaise, sans faire
+     confiance au generateur : le test refait l'addition. */
+  slugs.forEach(slug => (catalogue[slug] || [])
+    .filter(competence => competence.provenance === "somme-des-coups")
+    .forEach(competence => {
+      const fiche = parId.get(competence.gameId);
+      assert.ok(fiche, slug + " : reprise sans fiche wiki -> " + competence.gameId);
+      const nu = String(fiche.descriptionFr || "").replace(/\[[^\]]*\]/g, "");
+      const coups = [...nu.matchAll(
+        /\d+(?:er|e)\s+coup\s*:\s*(\d+(?:[.,]\d+)?)\s*%/g
+      )].map(trouve => parseFloat(trouve[1].replace(",", ".")));
+      assert.ok(
+        coups.length >= 2,
+        slug + " : une reprise exige le detail des coups -> " + competence.gameId
+      );
+      const somme = coups.reduce((total, coup) => total + coup, 0);
+      assert.ok(
+        Math.abs(somme - competence.pourcentage) < 0.01,
+        slug + " : " + competence.gameId + " annonce " + competence.pourcentage
+          + " % pour des coups qui totalisent " + somme
+      );
+      assert.strictEqual(
+        competence.nature, "direct",
+        slug + " : une reprise est un degat direct -> " + competence.gameId
+      );
+    }));
+
+  assert.ok(
+    recuperees.includes("ban/ban_cudgel3c_skill_q_1"),
+    "Le Balayage rapide de Ban doit etre chiffre, recu : " + recuperees.join(", ")
+  );
+}
+
 console.log(
   "competences : catalogue coherent (" + slugs.length + " personnages, "
   + total + " competences dont " + chiffrees + " chiffrees)"

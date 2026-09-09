@@ -4,10 +4,10 @@
   "docs/chronometrage-animations.md. Ne pas editer a la main.",
   "Les mesures se saisissent dans data/animations-mesurees.json."
  ],
- "total": 22,
+ "total": 23,
  "mesurees": 0,
  "debloquent": 0,
- "affinent": 19,
+ "affinent": 20,
  "releves": 3,
  "prochaines": [
   {
