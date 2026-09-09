@@ -182,6 +182,53 @@
 }
 .calc-essai-negatif{color:var(--muted)}
 
+/* LE BALAYAGE DES PALIERS.
+
+   Trente et une lignes : la couleur doit se lire d'un coup d'oeil, sans que
+   le membre ait a comparer des nombres deux a deux. Un gain et une perte ne
+   se distinguent donc PAS par la seule teinte — le signe est toujours ecrit
+   dans la cellule, pour que la lecture tienne aussi sans percevoir la
+   couleur. */
+.calc-balayage-paliers{
+  margin:16px 0;display:flex;flex-direction:column;gap:10px;
+  align-items:flex-start
+}
+.calc-balayage-resume{margin:0;font-weight:600}
+.calc-balayage{
+  width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums
+}
+.calc-balayage th,.calc-balayage td{
+  padding:5px 8px;text-align:right;border-bottom:1px solid var(--line-soft)
+}
+.calc-balayage thead th{
+  text-align:right;color:var(--muted);font-size:12px;font-weight:600
+}
+.calc-balayage th[scope="row"],.calc-balayage thead th:first-child{
+  text-align:left;font-weight:500
+}
+.calc-balayage-ecart{font-weight:600}
+
+/* Le depliant du detail complet. Ferme, il ne coute qu'une ligne : c'est
+   tout l'interet, puisque trente et un paliers d'affilee ne se lisent pas. */
+.calc-balayage-tout{width:100%}
+.calc-balayage-tout>summary{
+  cursor:pointer;padding:6px 0;color:var(--gold-bright);font-weight:600;
+  font-size:13px;list-style-position:inside
+}
+.calc-balayage-tout>summary:hover{color:var(--gold)}
+.calc-balayage-tout[open]>summary{margin-bottom:4px}
+
+/* Un palier EXTRAPOLE. La marque doit se voir sans crier : le chiffre reste
+   utilisable pour comparer, il n'est douteux qu'en valeur absolue. Elle ne
+   repose donc pas sur la seule couleur — l'asterisque est ecrit dans la
+   cellule, et l'infobulle porte la raison. */
+.calc-balayage-extrapole>th[scope="row"]{
+  color:var(--muted);font-style:italic;cursor:help
+}
+.calc-balayage-gain .calc-balayage-ecart{color:var(--gold-bright)}
+.calc-balayage-perte .calc-balayage-ecart{color:var(--crimson)}
+.calc-balayage-inconnu{color:var(--muted)}
+
 /* Une compétence non chiffrable garde sa ligne : la masquer ferait croire
    qu'elle n'existe pas, la chiffrer à zéro qu'elle ne fait rien. */
 .calc-muette{color:var(--muted);font-style:italic}

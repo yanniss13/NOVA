@@ -48,6 +48,12 @@ const MODULES = [
   "metier/degats-calcul.js",
   "metier/dps-effets.js",
   "metier/dps-simulation.js",
+  /* Apres les trois precedents et `stats-calcul.js` : il assemble un build du
+     roster en simulation. La vue de la fiche de heros et le comparateur du
+     calculateur y lisent la MEME definition du DPS d un build. */
+  "metier/dps-build.js",
+  /* Apres `dps-build.js`, dont il rejoue la simulation cible par cible. */
+  "metier/comparaison-enchantements.js",
   "metier/calculateur-entrees.js",
   "metier/equipe-buffs.js",
   /* Apres `equipe-buffs.js` et `build-config.js`, dont il importe la regle du
@@ -80,6 +86,9 @@ const MODULES = [
   "donnees/boss-store.js",
   "donnees/suivi-store.js",
   "donnees/calibration-store.js",
+  /* Charge a la demande les trois catalogues du simulateur DPS : la fiche de
+     heros et le comparateur du calculateur y passent tous les deux. */
+  "donnees/catalogues-dps.js",
 
   /* vues — tout ce qui touche au DOM. */
   "vues/navigation.js",

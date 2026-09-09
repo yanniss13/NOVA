@@ -27,14 +27,20 @@ import {
   activeGearSets, calculateHeroStats, groupBuildStatResults
 } from "../metier/stats-calcul.js";
 import {
-  CIBLES, CONSTANTE_PAR_DEFAUT, calibrerConstante
+  CIBLES, CONSTANTE_PAR_DEFAUT, DEF_MESUREE_MAX, calibrerConstante
 } from "../metier/degats-calcul.js";
+import {
+  comparerSurLesCibles
+} from "../metier/comparaison-enchantements.js";
 import { CalibrationStore } from "../donnees/calibration-store.js";
+import {
+  animationsDps, cataloguesDpsPrets, chargerCataloguesDps
+} from "../donnees/catalogues-dps.js";
 import {
   EMPLACEMENTS_COEQUIPIERS, CoequipiersStore
 } from "../donnees/coequipiers-store.js";
 import {
-  STAT_DE_LA_CATEGORIE, bonusCategorieDesBuffs,
+  STAT_DE_LA_CATEGORIE, apportsDesBuffs, bonusCategorieDesBuffs,
   entreesDeLaCompetence, entreesDuCalcul, resultatsParCompetence,
   resultatsParCompetenceCompares, seauElementaireDeLaStat,
   statsElementairesDuBuild
@@ -655,6 +661,269 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
     return el("section",{ class:"calc-preset-essai calc-carte" }, enfants);
   }
 
+  /* Le libelle court d'une cible dans le balayage. Le tableau porte trente et
+     une lignes : « Akumu — niveau 21 » y serait du bruit repete. */
+  function libelleCourtDeLaCible(cible){
+    return cible && cible.niveau ? "Palier " + cible.niveau : (cible && cible.nom) || "";
+  }
+
+  function tauxDeLEcart(ecart){
+    return ecart && ecart.relatif !== null ? ecart.relatif / 100 : null;
+  }
+
+  function texteDuTaux(taux){
+    if(taux === null) return "—";
+    const signe = taux > 0 ? "+" : taux < 0 ? "−" : "";
+    return signe + Math.abs(taux).toFixed(1).replace(".", ",") + " %";
+  }
+
+  /* Le resume, en une phrase que le membre peut lire sans le tableau.
+
+     Il nomme les BASCULES parce que c'est la seule information qu'un chiffre
+     unique ne peut pas porter : « +5 % » ne dit pas que l'essai devient
+     perdant a partir du palier 21, et c'est pourtant la que la confrerie
+     joue. */
+  function phraseDuResume(resume){
+    if(!resume) return "Aucun palier n'a pu être chiffré pour ce build.";
+    const borne = taux => texteDuTaux(taux / 100);
+    const etendue = resume.minimum === resume.maximum
+      ? "de " + borne(resume.minimum)
+      : "de " + borne(resume.minimum) + " à " + borne(resume.maximum);
+    /* On compte des CIBLES, pas des paliers : Akumu n'en a que trente, et le
+       mannequin d'entrainement est la trente et unieme cible sans etre un
+       palier. « Les 31 paliers » inventait un palier 31.
+
+       Et « sur LES 31 » ne se dit que si les 31 y sont : une cible a ecart
+       exactement nul n'est ni gagnee ni perdue. */
+    const toutes = "les " + resume.cibles + " cibles";
+    if(!resume.gagnants && !resume.perdants){
+      return "L'essai ne change rien, sur aucune des "
+        + resume.cibles + " cibles.";
+    }
+    if(!resume.perdants){
+      return resume.gagnants === resume.cibles
+        ? "L'essai gagne sur " + toutes + ", " + etendue + "."
+        : "L'essai gagne sur " + resume.gagnants + " cibles sur "
+          + resume.cibles + " et n'en perd aucune, " + etendue + ".";
+    }
+    if(!resume.gagnants){
+      return resume.perdants === resume.cibles
+        ? "L'essai perd sur " + toutes + ", " + etendue + "."
+        : "L'essai perd sur " + resume.perdants + " cibles sur "
+          + resume.cibles + " et n'en gagne aucune, " + etendue + ".";
+    }
+    return "L'essai gagne sur " + resume.gagnants + " cibles sur "
+      + resume.cibles + " et perd sur " + resume.perdants + ", " + etendue + ".";
+  }
+
+  /* LES JALONS : un palier sur cinq, plus le mannequin.
+
+     Trente et une lignes d'affilee, c'est un mur que personne ne lit — et le
+     verdict, lui, ne bouge pas d'un palier a l'autre : il bouge par PALIERS
+     DE PALIERS, aux deux ruptures du boss. Cinq en cinq suffit donc a voir
+     la pente, et le detail complet reste a un clic pour qui vise un palier
+     precis.
+
+     Le mannequin n'est pas un palier et n'a pas de multiple : il est retenu
+     a part, sans quoi la seule cible sans defense disparaitrait de la vue. */
+  function estUnJalon(ligne){
+    const niveau = Number(ligne.cible && ligne.cible.niveau);
+    return !Number.isFinite(niveau) || niveau === 0 || niveau % 5 === 0;
+  }
+
+  function lignesDuBalayage(lignes, classe){
+    const table = el("table",{class:"calc-balayage " + classe});
+    const entete = el("tr",{},[
+      el("th",{text:"Cible"}),
+      el("th",{text:"Build"}),
+      el("th",{text:"Essai"}),
+      el("th",{text:"Écart"})
+    ]);
+    table.appendChild(el("thead",{},[entete]));
+    const corps = el("tbody");
+    lignes.forEach(ligne => {
+      const taux = tauxDeLEcart(ligne.ecart);
+      const classe = taux === null ? " calc-balayage-inconnu"
+        : taux < 0 ? " calc-balayage-perte"
+        : taux > 0 ? " calc-balayage-gain" : "";
+      /* Le palier extrapole porte une marque DANS sa ligne, pas seulement une
+         note sous le tableau : trente lignes se lisent en diagonale, et une
+         reserve qu'on ne voit qu'en bas ne protege personne. */
+      const extrapole = ligne.cible && ligne.cible.horsPlageMesuree;
+      corps.appendChild(el("tr",{
+        class:"calc-balayage-ligne" + classe
+          + (extrapole ? " calc-balayage-extrapole" : "")
+      },[
+        el("th",{scope:"row",
+          title:extrapole
+            ? "Défense hors de la plage mesurée : valeur absolue extrapolée."
+            : "",
+          text:libelleCourtDeLaCible(ligne.cible) + (extrapole ? " *" : "")}),
+        el("td",{text:Number.isFinite(ligne.reference)
+          ? NOMBRE.format(Math.round(ligne.reference)) : "—"}),
+        el("td",{text:Number.isFinite(ligne.essai)
+          ? NOMBRE.format(Math.round(ligne.essai)) : "—"}),
+        el("td",{class:"calc-balayage-ecart", text:texteDuTaux(taux)})
+      ]));
+    });
+    table.appendChild(corps);
+    return table;
+  }
+
+  /* LE BALAYAGE DES PALIERS.
+
+     Le tableau du calculateur chiffre un COUP ; celui-ci chiffre une fenetre
+     de soixante secondes, donc il voit ce que l'autre ne peut pas voir : la
+     reduction de temps de recharge, et le nombre de lancers qu'elle rend.
+     C'est pour cela qu'il vit a cote de l'essai plutot qu'a l'interieur du
+     tableau, et qu'il porte ses propres reserves. */
+  /* La phrase qui dit ce que l'equipe apporte au balayage. Elle nomme un
+     COMPTE, pas une liste : trente et une lignes de tableau suffisent a lire,
+     et le detail des cases vit deja dans les sections du dessous. */
+  function phraseDeLEquipe(lignesActives){
+    return lignesActives
+      ? "Les " + lignesActives + " ligne(s) cochée(s) plus bas sont comptées, "
+        + "shred de résistance et de défense crit. compris."
+      : "Héros seul : aucune ligne cochée. Un shred de défense crit. "
+        + "redonnerait de la valeur aux dégâts crit.";
+  }
+
+  function sectionBalayagePaliers(hero, heroEssai, equipe, redessiner){
+    const apports = equipe && equipe.apports;
+    const section = el("section",{class:"calc-balayage-paliers calc-carte"},[
+      el("h3",{class:"calc-carte-titre",text:"L'essai palier par palier"}),
+      el("p",{class:"calc-muette",
+        text:"Le DPS d'une fenêtre de 60 s, contre chaque palier d'Akumu. "
+          + "Le classement change d'un palier à l'autre : la résistance crit. "
+          + "du boss dépasse le taux crit. d'un héros vers le palier 18, et sa "
+          + "défense crit. triple au palier 21."}),
+      /* Les lignes cochees comptent, et le membre doit le SAVOIR : ce sont
+         elles qui reduisent la resistance et la defense critiques du boss,
+         donc elles qui decident si une ligne de degats critiques vaut
+         quelque chose. Sans elles, ce tableau classerait a l'envers pour
+         tout membre qui joue accompagne. */
+      el("p",{class:"calc-muette",
+        text:phraseDeLEquipe(equipe && equipe.lignesActives)})
+    ]);
+
+    if(etat.messageComparaison){
+      section.appendChild(el("p",{class:"calc-avertissement",
+        text:etat.messageComparaison}));
+    }
+
+    /* Le resultat porte la SIGNATURE de l'essai qui l'a produit, et se
+       perime tout seul des qu'elle change. Huit endroits reecrivent
+       `essaiEnchantements` ; leur demander a chacun de vider le balayage
+       aurait tenu jusqu'au neuvieme. */
+    const signature = JSON.stringify([
+      etat.charId, etat.typeArme, etat.presetEssai,
+      hero.weaponConfig, hero.armorConfig,
+      heroEssai.weaponConfig, heroEssai.armorConfig,
+      /* Les lignes cochees entrent dans le calcul : cocher un shred APRES un
+         balayage doit le perimer, sans quoi le membre lirait un verdict
+         rendu pour une autre equipe. */
+      apports
+    ]);
+    if(etat.comparaisonPaliers && etat.comparaisonPaliers.signature !== signature){
+      etat.comparaisonPaliers = null;
+    }
+    const comparaison = etat.comparaisonPaliers && etat.comparaisonPaliers.resultat;
+    if(!comparaison){
+      section.appendChild(el("button",{
+        class:"btn", type:"button", text:"Comparer sur les 30 paliers",
+        onclick:()=>{
+          etat.messageComparaison = "Calcul en cours…";
+          redessiner();
+          chargerCataloguesDps().then(()=>{
+            etat.comparaisonPaliers = {
+              signature,
+              resultat:comparerSurLesCibles({
+                reference:hero,
+                essai:heroEssai,
+                dossierArme:etat.typeArme,
+                cibles:CIBLES,
+                duree:60,
+                animations:animationsDps(),
+                apports
+              })
+            };
+            etat.messageComparaison = null;
+            redessiner();
+          }).catch(()=>{
+            etat.messageComparaison =
+              "Les catalogues du simulateur n'ont pas pu être chargés.";
+            redessiner();
+          });
+        }
+      }));
+      if(!cataloguesDpsPrets()){
+        section.appendChild(el("p",{class:"calc-muette",
+          text:"Le premier calcul télécharge 1,5 Mo de catalogues."}));
+      }
+      return section;
+    }
+
+    section.appendChild(el("p",{class:"calc-balayage-resume",
+      text:phraseDuResume(comparaison.resume)}));
+
+    (comparaison.resume ? comparaison.resume.bascules : []).forEach(bascule => {
+      section.appendChild(el("p",{class:"calc-avertissement",
+        text:"Le verdict s'inverse entre le "
+          + libelleCourtDeLaCible(bascule.depuis).toLowerCase() + " et le "
+          + libelleCourtDeLaCible(bascule.vers).toLowerCase() + "."}));
+    });
+
+    const jalons = comparaison.lignes.filter(estUnJalon);
+    section.appendChild(lignesDuBalayage(jalons, "calc-balayage-jalons"));
+
+    /* Le detail complet vit dans un depliant natif : ferme, il ne coute pas
+       une ligne de hauteur ; ouvert, il rend les trente et un paliers. Le
+       meme constructeur sert les deux tableaux — deux fonctions de rendu
+       auraient fini par diverger sur une colonne. */
+    const reste = comparaison.lignes.length - jalons.length;
+    if(reste > 0){
+      const depliant = el("details",{class:"calc-balayage-tout"});
+      /* On annonce ce qui est CACHE, pas le total : le membre sait ce qu'il
+         gagne a ouvrir. Et ce sont des paliers, ici — le mannequin figure
+         deja parmi les jalons au-dessus. */
+      depliant.appendChild(el("summary",{
+        text:"Voir les " + reste + " paliers intermédiaires"
+      }));
+      depliant.appendChild(lignesDuBalayage(
+        comparaison.lignes, "calc-balayage-detail"
+      ));
+      section.appendChild(depliant);
+    }
+
+    /* La legende de l'asterisque. Elle vient APRES le tableau, parce qu'elle
+       explique une marque que le lecteur a deja rencontree. */
+    const premierExtrapole = comparaison.lignes.find(
+      ligne => ligne.cible && ligne.cible.horsPlageMesuree
+    );
+    if(premierExtrapole){
+      section.appendChild(el("p",{class:"calc-muette",
+        text:"* À partir du palier " + premierExtrapole.cible.niveau
+          + ", la défense du boss dépasse la plage où la formule a été mesurée "
+          + "(DEF " + NOMBRE.format(DEF_MESUREE_MAX) + "). Les DPS absolus y sont "
+          + "extrapolés ; l'écart entre les deux colonnes, lui, reste juste."}));
+    }
+
+    /* Les memes reserves que la fiche de heros, dites ici parce qu'un ecart
+       se lit autrement quand on sait qu'une compétence manque au compte. */
+    const premiere = comparaison.lignes.find(ligne => ligne.nonInclus.length);
+    if(premiere){
+      section.appendChild(el("p",{class:"calc-muette",
+        text:premiere.nonInclus.length
+          + " effet(s) hors du calcul : l'écart ne les compte pas."}));
+    }
+
+    section.appendChild(el("button",{
+      class:"btn btn-ghost", type:"button", text:"Recalculer",
+      onclick:()=>{ etat.comparaisonPaliers = null; redessiner(); }
+    }));
+    return section;
+  }
+
   function sectionEssaiEnchantements(hero, essai, redessiner){
     const heroEssai = herosAvecEssaiEnchantements(hero, essai);
     const section = el("section",{class:"calc-essai-enchantements calc-carte"},[
@@ -795,7 +1064,28 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
     ]);
   }
 
+  /* LA MISE EN GARDE D'EXTRAPOLATION.
+
+     La formule K/(K+DEF) n'a ete mesuree que jusqu'a DEF 26 727. Akumu sort de
+     cette plage des le palier 16 et la triple au palier 30 — c'est-a-dire que
+     TOUTE la zone ou la confrerie joue est extrapolee, chez la source comme
+     ici. Un chiffre extrapole qui ne se presente pas comme tel est plus
+     dangereux qu'un chiffre absent, donc la page le dit.
+
+     Elle ne le dit PAS comme une panne : le classement entre deux builds reste
+     juste, puisque la meme approximation porte les deux. C'est la valeur
+     absolue qui derive. */
+  function phraseHorsPlage(cible){
+    return cible && cible.horsPlageMesuree
+      ? "Palier " + cible.niveau + " : la défense du boss (" 
+        + NOMBRE.format(cible.def) + ") dépasse la plage où la formule a été "
+        + "mesurée (jusqu'à " + NOMBRE.format(DEF_MESUREE_MAX) + "). Les valeurs "
+        + "absolues sont extrapolées ; comparer deux builds entre eux reste juste."
+      : null;
+  }
+
   function avertissements(){
+    const horsPlage = phraseHorsPlage(cibleCourante());
     return el("section",{class:"calc-avertissement calc-carte"},[
       el("p",{text:cibleCourante().niveau
         ? "Sur Akumu, l'élément ne change rien : les huit résistances "
@@ -803,6 +1093,8 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
         : "Le mannequin n'a ni défense ni résistance : les dégâts affichés "
           + "valent exactement l'ATK multipliée par le coefficient de la "
           + "compétence. La constante C n'y change rien et ne s'y calibre pas."}),
+      ...(horsPlage
+        ? [el("p",{class:"calc-hors-plage", text:horsPlage})] : []),
       el("strong",{text:"Non inclus dans le calcul"}),
       el("ul",{},[
         el("li",{text:"les passifs conditionnels du héros et de son équipement"}),
@@ -1270,6 +1562,21 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
         base.cle, statsEssaiRetouchees[base.cle]
       );
     });
+
+    /* LE BALAYAGE DES PALIERS se rend ICI, et pas a cote des boutons d'essai
+       plus haut : il a besoin des lignes cochees, qui ne sont connues qu'une
+       fois toutes les sections dessinees. Le mettre plus haut revenait a le
+       calculer sans l'equipe — c'est-a-dire a repondre a cote, puisque le
+       shred de defense critique decide de la valeur des degats crit. */
+    if(essaiEnchantementsDiffere(etat.essaiEnchantements)){
+      vue.appendChild(sectionBalayagePaliers(hero, heroEssai, {
+        apports:{
+          stats:apportsDesBuffs(statsRetouchees, coches),
+          bonusParCategorie:bonusDesBuffs
+        },
+        lignesActives:cochesVisibles
+      }, dessiner));
+    }
 
     const entrees = entreesDuCalcul({
       statsDuBuild:statsRetouchees, buffsCoches:coches

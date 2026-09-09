@@ -97,6 +97,7 @@ const SUITES = {
     "node tests/chrono-calcul.test.js",
     "node tests/calculateur-entrees.test.js",
     "node tests/essai-enchantements.test.js",
+    "node tests/comparaison-enchantements.test.js",
     "node tests/equipe-buffs.test.js",
     "node tests/passifs-graves.test.js",
     "node tests/conversion-degats-elementaires.test.js",

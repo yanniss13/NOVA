@@ -109,6 +109,23 @@
     resistancePercement:0
   };
 
+  /* LA BORNE DE CE QUI A ETE MESURE.
+
+     7dsorigin borne explicitement sa propre formule : « the K/(K+DEF) form
+     remains an approximation outside the measured range (DEF 0 -> 26,727) ».
+
+     Akumu depasse cette borne des le palier 17 (DEF 30 029) et la TRIPLE au
+     palier 30 (DEF 80 264). Toute la zone ou la confrerie joue est donc en
+     extrapolation — y compris chez la source, et y compris si l'on remplacait
+     un jour C par le K publie.
+
+     Ce n'est pas un bug, c'est une limite. Elle est portee par la CIBLE plutot
+     que laissee en commentaire parce qu'un chiffre extrapole qui ne se
+     presente pas comme tel est plus dangereux qu'un chiffre absent : la vue
+     doit pouvoir le dire au membre, et elle ne le peut que si la donnee le
+     porte. */
+  const DEF_MESUREE_MAX = 26727;
+
   const CIBLES = AKUMU_PALIERS.map(([niveau, def, critResist, critDmgResist, hp]) =>
     Object.assign({
       id:"akumu-" + niveau,
@@ -117,7 +134,8 @@
       def,
       critResist,
       critDmgResist,
-      hp
+      hp,
+      horsPlageMesuree:def > DEF_MESUREE_MAX
     }, AKUMU_ELEMENTAIRE)
   ).concat([{
     /* Le mannequin d'entrainement. Tous ses facteurs valent 1, donc les degats
@@ -563,6 +581,6 @@
    chiffre, et un membre qui ne voit pas pourquoi croit la page cassee. Le
    reecrire dans la vue ferait deux plafonds a tenir d'accord. */
 export {
-  CIBLES, CONSTANTE_PAR_DEFAUT, PLAFOND_PROPRE, calibrerConstante,
-  degatsAttendus, degatsDuCycle
+  CIBLES, CONSTANTE_PAR_DEFAUT, DEF_MESUREE_MAX, PLAFOND_PROPRE,
+  calibrerConstante, degatsAttendus, degatsDuCycle
 };

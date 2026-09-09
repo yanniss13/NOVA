@@ -169,6 +169,18 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   simulerDpsCompetences:typeof simulerDpsCompetences === "function"
     ? simulerDpsCompetences
     : undefined,
+  simulationDuBuild:typeof simulationDuBuild === "function"
+    ? simulationDuBuild
+    : undefined,
+  statsAvecApports:typeof statsAvecApports === "function"
+    ? statsAvecApports
+    : undefined,
+  apportsDesBuffs:typeof apportsDesBuffs === "function"
+    ? apportsDesBuffs
+    : undefined,
+  comparerSurLesCibles:typeof comparerSurLesCibles === "function"
+    ? comparerSurLesCibles
+    : undefined,
   degatsDuCycle:typeof degatsDuCycle === "function"
     ? degatsDuCycle
     : undefined,
@@ -192,6 +204,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
     : undefined,
   CONSTANTE_PAR_DEFAUT:typeof CONSTANTE_PAR_DEFAUT === "number"
     ? CONSTANTE_PAR_DEFAUT
+    : undefined,
+  DEF_MESUREE_MAX:typeof DEF_MESUREE_MAX === "number"
+    ? DEF_MESUREE_MAX
     : undefined,
   buffsApplicables:typeof buffsApplicables === "function"
     ? buffsApplicables

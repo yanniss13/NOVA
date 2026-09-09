@@ -824,4 +824,130 @@ assert.ok(
   assert.equal(performance.status, 0, performance.stderr || performance.stdout);
 }
 
+/* LA REDUCTION DE TEMPS DE RECHARGE (`S_SkillRecycle_Rate`).
+
+   Le jeu la publie sur ses enchantements, et le moteur l'ignorait : un
+   enchantement qui n'apportait qu'elle comptait pour zero, donc le
+   comparateur classait devant un jet qui rendait moins. Elle raccourcit la
+   recharge de toute competence qui en a une - jamais l'attaque normale, qui
+   n'est bornee que par son animation. */
+{
+  const rechargeuse = taux => simulerDpsCompetences({
+    stats:Object.assign({}, SANS_CRITIQUE, { reductionRecharge:taux }),
+    competences:[{
+      gameId:"skill-10",
+      nom:"Toutes les dix secondes",
+      categorie:"NORMAL_SKILL",
+      recharge:10,
+      composantes:[{ base:"atk", pourcentage:100 }],
+      pourcentage:100,
+      repartition:[100]
+    }],
+    effets:[],
+    cible:CIBLE_NEUTRE,
+    duree:60
+  });
+
+  /* Sans reduction, six lancers : c'est le cas deja garde en tete de fichier. */
+  assert.equal(tempsActions(rechargeuse(0), "skill-10").length, 6);
+
+  /* 50 % : la recharge tombe a 5 s, donc douze lancers aux multiples de 5. */
+  assert.deepStrictEqual(
+    tempsActions(rechargeuse(5000), "skill-10"),
+    [0, 5, 10, 15, 20, 25, 30, 35, 40, 45, 50, 55]
+  );
+
+  /* Une valeur absente ou nulle ne doit RIEN deplacer : le seul moyen de
+     savoir que la stat est branchee sans danger pour les builds qui ne la
+     portent pas. */
+  assert.equal(
+    rechargeuse(0).total,
+    simulerDpsCompetences({
+      stats:SANS_CRITIQUE,
+      competences:[{
+        gameId:"skill-10", nom:"Toutes les dix secondes",
+        categorie:"NORMAL_SKILL", recharge:10,
+        composantes:[{ base:"atk", pourcentage:100 }],
+        pourcentage:100, repartition:[100]
+      }],
+      effets:[], cible:CIBLE_NEUTRE, duree:60
+    }).total
+  );
+}
+
+/* Elle s'AJOUTE au taux venu des paliers de potentiel au lieu de se
+   multiplier par-dessus : l'ecran du jeu n'affiche qu'un seul pourcentage de
+   reduction, et deux facteurs successifs rendraient un chiffre que rien
+   n'affiche. 25 % de stat + 25 % de palier = 50 %, donc 10 s -> 5 s. */
+{
+  const cumul = simulerDpsCompetences({
+    stats:Object.assign({}, SANS_CRITIQUE, { reductionRecharge:2500 }),
+    competences:[normal],
+    effets:[{
+      id:"palier",
+      regles:[{
+        type:"recharge-taux",
+        application:"base",
+        cible:"normal-skill",
+        valeur:2500,
+        sourceId:"palier"
+      }]
+    }],
+    cible:CIBLE_NEUTRE,
+    duree:20
+  });
+  assert.deepStrictEqual(
+    tempsActions(cumul, "normal"), [0, 5, 10, 15],
+    "les deux reductions partagent un seul seau additif"
+  );
+}
+
+
+/* LE PLAFOND DU JEU SUR LA REDUCTION DE RECHARGE.
+
+   `battle_max_skillrecycle_rate` = 9000, soit 90 %
+   (docs/constantes-combat-du-jeu.md). Le module bornait a 9999, un simple
+   garde-fou anti-division-par-zero, et docs/chantier-calculateur-codex.md
+   notait l'ecart comme « cosmetique, sans effet » : une seule regle de
+   recharge existait dans tout le catalogue, a 30 %.
+
+   Ce n'est plus vrai depuis que `S_SkillRecycle_Rate` alimente ce seau. La
+   stat se cumule sur l'arme, l'armure gravee et les paliers, donc le plafond
+   peut mordre — et le jour ou il mord, c'est celui du jeu qui doit s'appliquer,
+   pas notre garde-fou. */
+{
+  const bornee = simulerDpsCompetences({
+    stats:Object.assign({}, SANS_CRITIQUE, { reductionRecharge:9900 }),
+    competences:[{
+      gameId:"skill-10", nom:"Toutes les dix secondes",
+      categorie:"NORMAL_SKILL", recharge:10,
+      composantes:[{ base:"atk", pourcentage:100 }],
+      pourcentage:100, repartition:[100]
+    }],
+    effets:[], cible:CIBLE_NEUTRE, duree:10
+  });
+  /* 99 % rendrait une recharge de 0,1 s ; le plafond du jeu la tient a 1 s. */
+  assert.deepStrictEqual(
+    tempsActions(bornee, "skill-10"),
+    [0, 1, 2, 3, 4, 5, 6, 7, 8, 9],
+    "au-dela de 90 %, la recharge ne descend plus"
+  );
+
+  /* Et 90 % pile rend exactement la meme chose : la borne est bien a 9000. */
+  const pile = simulerDpsCompetences({
+    stats:Object.assign({}, SANS_CRITIQUE, { reductionRecharge:9000 }),
+    competences:[{
+      gameId:"skill-10", nom:"Toutes les dix secondes",
+      categorie:"NORMAL_SKILL", recharge:10,
+      composantes:[{ base:"atk", pourcentage:100 }],
+      pourcentage:100, repartition:[100]
+    }],
+    effets:[], cible:CIBLE_NEUTRE, duree:10
+  });
+  assert.deepStrictEqual(
+    tempsActions(pile, "skill-10"), tempsActions(bornee, "skill-10"),
+    "90 % est deja le maximum : au-dela, rien ne bouge"
+  );
+}
+
 console.log("dps-simulation.test.js OK");

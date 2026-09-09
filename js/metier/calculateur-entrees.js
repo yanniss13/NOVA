@@ -368,6 +368,31 @@ import { degatsAttendus } from "./degats-calcul.js";
 
      Une valeur illisible est ignoree plutot que propagee : un NaN dans le seau
      ferait disparaitre la ligne de degats entiere, sans rien dire. */
+  /* CE QUE LES LIGNES COCHEES AJOUTENT, et rien d'autre.
+
+     Le tableau du calculateur n'a pas besoin de cette difference : il part
+     des entrees completes. Le SIMULATEUR, si — il calcule deja les
+     statistiques du build de son cote, par effetsDuBuild(), et lui passer
+     les entrees completes compterait le build deux fois.
+
+     On mesure donc l'ecart entre les memes entrees AVEC et SANS les lignes
+     cochees. Deriver la difference plutot que de la reconstruire garantit
+     qu'elle suit toute nouvelle destination reconnue par CIBLE_DU_BUFF : une
+     seconde liste de statistiques a verser aurait oublie la prochaine.
+
+     Les seaux inchanges sont ABSENTS du resultat, pas a zero : le lecteur
+     doit pouvoir dire d'un coup d'oeil ce que l'equipe apporte. */
+  function apportsDesBuffs(statsDuBuild, buffsCoches){
+    const sans = entreesDuCalcul({ statsDuBuild, buffsCoches:[] });
+    const avec = entreesDuCalcul({ statsDuBuild, buffsCoches });
+    const apports = {};
+    Object.keys(avec).forEach(cle => {
+      const ecart = Number(avec[cle]) - Number(sans[cle]);
+      if(Number.isFinite(ecart) && ecart !== 0) apports[cle] = ecart;
+    });
+    return apports;
+  }
+
   function bonusCategorieDesBuffs(buffsCoches){
     const liste = Array.isArray(buffsCoches) ? buffsCoches : [];
     return liste.reduce((bonus, buff) => {
@@ -466,7 +491,7 @@ import { degatsAttendus } from "./degats-calcul.js";
 
 export {
   STAT_DE_LA_CATEGORIE,
-  bonusCategorieDesBuffs,
+  apportsDesBuffs, bonusCategorieDesBuffs,
   buffsApplicables, entreesDeLaCompetence, entreesDuCalcul,
   resultatsParCompetence, resultatsParCompetenceCompares,
   seauElementaireDeLaStat, statsElementairesDuBuild

@@ -20,7 +20,8 @@ assert.ok(PASSIF_DERIERI, "le passif mesure de Derieri doit etre dans la table."
 
 const { hooks } = loadApp();
 const {
-  degatsAttendus, CIBLE_REFERENCE, calibrerConstante, CONSTANTE_PAR_DEFAUT
+  degatsAttendus, CIBLE_REFERENCE, calibrerConstante, CONSTANTE_PAR_DEFAUT,
+  DEF_MESUREE_MAX
 } = hooks;
 
 /* Cible neutre et lisible : aucune resistance, aucune faiblesse, et une
@@ -939,6 +940,50 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   });
   assert.equal(Math.round(r.total), 350,
     "0,5 x 0,7 = 0,35, bien au-dessus du plancher");
+}
+
+
+/* LA PLAGE MESUREE DE LA FORMULE.
+
+   7dsorigin borne sa propre formule a DEF 0 -> 26 727. Au-dela, K/(K+DEF)
+   reste une approximation — chez la source comme ici. La cible porte donc le
+   drapeau, pour que la vue puisse le dire au membre.
+
+   Le palier 16 est le PREMIER a sortir, avec DEF 27 674. Le fichier de
+   chantier annoncait le 17 : il lisait la DEF du 17 (30 029) sans verifier
+   celle du 16. Un test vaut mieux qu'une note. */
+{
+  const catalogue = hooks.CIBLES;
+  const parNiveau = niveau => catalogue.find(cible => cible.niveau === niveau);
+
+  assert.equal(DEF_MESUREE_MAX, 26727, "la borne publiee par la source");
+
+  assert.equal(
+    parNiveau(15).horsPlageMesuree, false,
+    "le palier 15 (DEF 25 500) reste dans la plage mesuree"
+  );
+  assert.equal(
+    parNiveau(16).horsPlageMesuree, true,
+    "le palier 16 (DEF 27 674) en sort DEJA — pas le 17"
+  );
+
+  /* Une fois dehors, on n'y rentre plus : la defense d'Akumu ne fait que
+     croitre. Un drapeau qui clignoterait signalerait une table cassee. */
+  const dehors = catalogue.filter(cible => cible.niveau).map(c => c.horsPlageMesuree);
+  const premier = dehors.indexOf(true);
+  assert.ok(premier >= 0, "des paliers doivent sortir de la plage");
+  assert.ok(
+    dehors.slice(premier).every(Boolean),
+    "la sortie de plage est definitive, palier apres palier"
+  );
+
+  /* Le mannequin n'a aucune defense : il est toujours dans la plage. */
+  const mannequin = catalogue.find(cible => !cible.niveau);
+  assert.ok(mannequin, "le mannequin doit exister");
+  assert.notEqual(
+    mannequin.horsPlageMesuree, true,
+    "sans defense, le mannequin ne sort d'aucune plage"
+  );
 }
 
 console.log("degats-calcul.test.js OK");
