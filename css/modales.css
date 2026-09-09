@@ -411,6 +411,35 @@ body.modal-locked{
   .gear-config-open{min-height:44px}
 }
 
+/* LA RANGÉE qui mène à la rotation, dans la modale d'équipe. Elle traverse la
+   grille de fiches : c'est un en-tête, pas une cinquième colonne. */
+.rota-entree{grid-column:1/-1}
+.rota-lien{
+  width:100%;display:flex;align-items:center;gap:10px;min-height:48px;
+  padding:9px 14px;border:1px solid var(--line-soft);border-radius:11px;
+  background:var(--obsidian-2);color:inherit;font:inherit;text-align:left;
+  cursor:pointer
+}
+.rota-lien:hover{border-color:var(--gold)}
+.rota-lien:focus-visible{outline:2px solid var(--gold-bright);outline-offset:2px}
+.rota-lien-titre{font-weight:700;color:var(--gold)}
+.rota-lien-detail{flex:1 1 auto;min-width:0;color:var(--muted);font-size:12px}
+.rota-lien-chevron{color:var(--muted);font-size:18px;line-height:1}
+
+/* La modale propre à la rotation. Même armature que celle de l'équipe : titre
+   posé par-dessus un corps qui défile seul. */
+.modal.rotamodal{position:relative;width:min(900px,96vw);max-height:92vh}
+.modal.rotamodal .picker-head{
+  position:absolute;top:0;left:0;right:0;z-index:3;border-bottom:0;
+  padding:11px 18px;
+  background:linear-gradient(180deg, var(--panel) 62%, rgba(27,25,34,0))
+}
+.rota-modal-corps{
+  padding:56px 18px 20px;overflow-y:auto;overflow-x:hidden;
+  max-height:92vh;scrollbar-width:none
+}
+.rota-modal-corps::-webkit-scrollbar{width:0;height:0}
+
 /* LA ROTATION D'UNE ÉQUIPE.
 
    Les cases se lisent en ligne et repassent à la ligne : une rotation de
@@ -455,6 +484,21 @@ body.modal-locked{
 .rota-combine-portraits .rota-lanceur{width:34px;height:34px}
 .rota-combine-portraits .rota-partenaire{width:22px;height:22px}
 
+/* LA RELÈVE, déduite du changement de héros. Elle se lit comme une charnière
+   entre deux cases, pas comme une case : pas de cadre plein, pas de fond, et
+   une flèche qui dit le sens. Le membre ne l'a pas posée — rien dans son
+   apparence ne doit lui suggérer qu'il peut la déplacer. */
+.rota-releve{
+  display:flex;align-items:center;gap:3px;padding:4px 6px;
+  border:1px dashed var(--line-soft);border-radius:8px;background:transparent;
+  opacity:.85
+}
+/* L'icône de relève est la même pour tout le monde : elle marque, elle
+   n'informe pas. Le portrait de celui qui entre, lui, informe — il est donc le
+   plus grand des deux. */
+.rota-releve .rota-icone{width:20px;height:20px;opacity:.75}
+.rota-releve .rota-portrait{width:28px;height:28px}
+
 /* Une case ORPHELINE — le héros a quitté l'équipe ou changé d'arme. Elle reste
    affichée : la supprimer en silence ferait disparaître le travail du membre.
    La marque ne repose pas sur la seule couleur, le titre la porte aussi. */
@@ -469,9 +513,18 @@ body.modal-locked{
 /* Les commandes d'édition. Chaque cible fait au moins 24 px : la suite
    d'accessibilité mobile le vérifie. */
 .rota-plus{
-  position:absolute;top:-8px;right:-8px;width:22px;height:22px;
+  position:absolute;top:-8px;right:-8px;width:24px;height:24px;
   border-radius:50%;border:1px solid var(--line-soft);background:var(--panel);
   color:var(--gold-bright);font-weight:700;line-height:1;cursor:pointer
+}
+/* LE RETRAIT de la case entière, en face du « + » : le geste inverse du geste
+   le plus courant se lit à l'angle opposé. Il est rouge, seul de sa couleur
+   dans la case — c'est le seul bouton qui fasse perdre du travail. */
+.rota-retrait{
+  position:absolute;top:-8px;left:-8px;width:24px;height:24px;
+  border-radius:50%;border:1px solid var(--line-soft);background:var(--panel);
+  color:var(--crimson);font-weight:700;font-size:12px;line-height:1;
+  cursor:pointer
 }
 .rota-commandes{display:flex;gap:2px;margin-top:2px}
 .rota-cmd{
@@ -484,11 +537,18 @@ body.modal-locked{
    navigateur ferait défiler la modale au lieu de laisser passer le glisser. Il
    ne s'applique qu'en mode édition — en lecture, la case doit rester un
    morceau de page ordinaire qu'on fait défiler du doigt. */
+/* En édition, les cases s'écartent : chaque pastille d'angle déborde de 8 px,
+   et deux cases voisines à 8 px d'intervalle verraient le « ✕ » de l'une
+   recouvrir le « + » de l'autre. */
+.rota-suite-edition{gap:20px}
 .rota-suite-edition .rota-case{touch-action:none;cursor:grab}
 .rota-case-glissee{opacity:.6;cursor:grabbing}
 
+/* La bascule qui déplie la réserve d'icônes. Elle porte le chevron dans son
+   texte : une flèche dessinée en CSS ne se lit pas au lecteur d'écran. */
+.rota-bascule{display:block;margin-top:10px}
 .rota-palette{
-  margin-top:12px;display:flex;flex-direction:column;gap:6px;
+  margin-top:8px;display:flex;flex-direction:column;gap:6px;
   padding-top:10px;border-top:1px solid var(--line-soft)
 }
 .rota-palette-ligne{display:flex;flex-wrap:wrap;gap:4px;align-items:center}

@@ -102,7 +102,11 @@ import {
 
      Les fleches sont la voie SURE : clavier, lecteur d'ecran, navigateurs
      tactiles capricieux. Le glisser plus bas est la voie naturelle. Aucune ne
-     remplace l'autre. */
+     remplace l'autre.
+
+     Le RETRAIT n'est pas ici : il est en pastille d'angle, voir
+     `caseDeRotation`. Range dans cette rangee, il se lisait comme une
+     troisieme fleche entre deux fleches. */
   function commandesDeLaCase(item, rang, total, actions){
     const bouton = (texte, titre, actif, gerer) => {
       const b = el("button",{
@@ -112,21 +116,20 @@ import {
       if(!actif) b.disabled = true;
       return b;
     };
+    const commandes = [
+      bouton("◀", "Déplacer vers la gauche", rang > 0,
+        ()=>actions.deplacer(rang, rang - 1))
+    ];
     /* Une case ORPHELINE se retire ENTIERE : reduire d'une occurrence une
        etape que l'equipe ne porte plus n'a aucun sens — on ne « garde » pas
-       deux tiers d'une compétence absente. */
-    const retrait = item.orpheline
-      ? bouton("✕", "Retirer cette étape absente", true,
-          ()=>actions.retirerLaCase(rang))
-      : bouton("−", "Retirer une occurrence", true,
-          ()=>actions.retirerUne(rang));
-    return el("span",{ class:"rota-commandes" },[
-      bouton("◀", "Déplacer vers la gauche", rang > 0,
-        ()=>actions.deplacer(rang, rang - 1)),
-      retrait,
-      bouton("▶", "Déplacer vers la droite", rang < total - 1,
-        ()=>actions.deplacer(rang, rang + 1))
-    ]);
+       deux tiers d'une compétence absente. Elle n'a donc pas de « moins ». */
+    if(!item.orpheline){
+      commandes.push(bouton("−", "Une occurrence de moins", true,
+        ()=>actions.retirerUne(rang)));
+    }
+    commandes.push(bouton("▶", "Déplacer vers la droite",
+      rang < total - 1, ()=>actions.deplacer(rang, rang + 1)));
+    return el("span",{ class:"rota-commandes" }, commandes);
   }
 
   /* LE GLISSER, en Pointer Events.
@@ -187,7 +190,10 @@ import {
       const sous = document.elementFromPoint(event.clientX, event.clientY);
       const cible = sous && sous.closest(".rota-case");
       if(!cible || cible === li || !li.parentElement) return;
-      const rangs = Array.from(li.parentElement.children);
+      /* On ne compte QUE les vraies cases : les releves deduites s'intercalent
+         dans la liste a l'ecran, et un index pris sur tous les enfants
+         viserait la mauvaise etape des la premiere. */
+      const rangs = Array.from(li.parentElement.querySelectorAll(".rota-case"));
       actions.deplacer(rang, rangs.indexOf(cible));
     };
 
@@ -214,15 +220,64 @@ import {
         onclick:()=>actions.ajouter(item.etape)
       }));
     }
+    /* LE RETRAIT DE LA CASE ENTIERE, sur CHAQUE case et non plus sur les
+       seules orphelines.
+
+       Il manquait, et le membre l'a dit ainsi : « je peux pas supprimer les
+       competences que je mets pour ma rota ». Le « moins » repondait bien,
+       mais il ne retire QU'UNE occurrence : une serie « x11 » demandait onze
+       appuis, et rien a l'ecran ne disait qu'il en existait un douzieme.
+
+       En pastille d'angle, opposee au « + » : le geste inverse du geste le
+       plus courant se lit en face de lui, et il ne prend aucune largeur dans
+       une rangee de cases qui doit rester dense. */
+    li.appendChild(el("button",{
+      class:"rota-retrait", type:"button", text:"✕",
+      title:item.fois > 1
+        ? "Retirer cette case et ses " + item.fois + " appuis"
+        : "Retirer cette case",
+      onclick:()=>actions.retirerLaCase(rang)
+    }));
     li.appendChild(commandesDeLaCase(item, rang, total, actions));
     rendreDeplacable(li, rang, actions);
     return li;
   }
 
+  /* LA RELEVE, DEDUITE DU CHANGEMENT DE HEROS.
+
+     Elle ne fait pas partie de la rotation du membre : elle apparait parce
+     que la case suivante appartient a quelqu'un d'autre. Elle ne porte donc
+     AUCUNE commande — ni croix, ni fleches, ni glisser. On ne deplace pas une
+     consequence, on deplace la cause.
+
+     Elle ne porte pas non plus la classe `rota-case`, et ce n'est pas
+     cosmetique : c'est ce qui la tient hors des index de deplacement. */
+  function caseDeReleve(item){
+    return el("li",{
+      class:"rota-releve",
+      title:"Relève — " + nomDuHeros(item.sortant) + " laisse la place à "
+        + nomDuHeros(item.char)
+        + (item.competence ? " : " + item.competence.nomFr : "")
+    },[
+      /* L'icone de releve d'abord — mais elle est GENERIQUE : le jeu donne le
+         meme `Icon_TagSkill.webp` aux 78 competences de releve. Elle dit
+         « ici on releve », rien de plus. C'est le PORTRAIT qui apprend
+         quelque chose, donc c'est lui qui est grand ; le nom de la releve,
+         lui, est dans l'infobulle avec les deux heros. */
+      iconeDeCompetence(item.competence),
+      medaillon(item.char)
+    ]);
+  }
+
   function suiteDesCases(items, actions){
+    /* Le total sert aux fleches — « suis-je la derniere ? ». Il compte les
+       cases POSEES, pas les releves deduites. */
+    const posees = items.filter(item => !item.releve).length;
     return el("ol",{
       class:"rota-suite" + (actions ? " rota-suite-edition" : "")
-    }, items.map((item, rang) => caseDeRotation(item, rang, items.length, actions)));
+    }, items.map(item => item.releve
+      ? caseDeReleve(item)
+      : caseDeRotation(item, item.serie, posees, actions)));
   }
 
   /* LA PALETTE : les quatre heros avec les competences de leur arme EQUIPEE,
@@ -311,6 +366,11 @@ import {
 
     let enregistree = normaliserRotation((equipe && equipe.rotation) || []);
     let courante = enregistree.slice();
+    /* La palette est repliee des qu'il y a une rotation a lire : c'est elle
+       qui fait la hauteur du bloc — une ligne par heros, plus les
+       combinaisons. Ouverte tant que la rotation est vide, sans quoi le
+       membre ouvrirait un bloc qui ne propose rien. */
+    let paletteOuverte = enregistree.length === 0;
 
     const bloc = el("div",{ class:"rota-corps" });
 
@@ -338,12 +398,6 @@ import {
               : "Aucune rotation n'a encore été posée pour cette équipe." }));
       if(!modifiable) return;
 
-      bloc.appendChild(paletteDesCompetences(
-        paletteDeLEquipe(heroes, competences),
-        combinaisonsDeLEquipe(heroes, competences, catalogueCombinaisons),
-        actions
-      ));
-
       const differe = JSON.stringify(courante) !== JSON.stringify(enregistree);
       const barre = el("div",{ class:"rota-barre" });
       const enregistrer = el("button",{
@@ -363,9 +417,39 @@ import {
           onclick:()=>{ courante = enregistree.slice(); dessiner(); }
         }));
       }
+      /* TOUT EFFACER, pour reprendre une rotation de zero sans vider case par
+         case. Sans confirmation : tant que le membre n'a pas enregistre,
+         « Annuler » ramene la rotation telle qu'elle etait. */
+      if(courante.length){
+        barre.appendChild(el("button",{
+          class:"btn btn-ghost", type:"button", text:"Tout effacer",
+          title:"Retirer toutes les cases de la rotation",
+          onclick:()=>{ courante = []; dessiner(); }
+        }));
+      }
       barre.appendChild(el("span",{ class:"calc-muette",
         text:courante.length + " / " + PLAFOND_ROTATION + " appuis" }));
       bloc.appendChild(barre);
+
+      /* LA PALETTE EN DERNIER, ET REPLIABLE.
+
+         Elle occupait le haut du bloc et repoussait « Enregistrer » sous un
+         mur d'icones : sur un telephone, le bouton qui valide le travail
+         etait le plus loin du doigt. Les commandes viennent maintenant juste
+         apres la rotation, et la reserve d'icones apres elles. */
+      bloc.appendChild(el("button",{
+        class:"btn btn-ghost rota-bascule", type:"button",
+        text:(paletteOuverte ? "▾ " : "▸ ") + "Ajouter une compétence",
+        "aria-expanded":paletteOuverte ? "true" : "false",
+        onclick:()=>{ paletteOuverte = !paletteOuverte; dessiner(); }
+      }));
+      if(paletteOuverte){
+        bloc.appendChild(paletteDesCompetences(
+          paletteDeLEquipe(heroes, competences),
+          combinaisonsDeLEquipe(heroes, competences, catalogueCombinaisons),
+          actions
+        ));
+      }
     }
 
     dessiner();

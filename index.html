@@ -583,6 +583,23 @@
   </div>
 </div>
 
+<!-- La rotation d'une equipe, dans SA modale.
+
+     Elle vivait dans la modale d'equipe, qui porte deja quatre fiches de heros
+     avec leur arme, leurs cinq pieces d'armure et leurs trois bijoux. Sur un
+     telephone, l'ensemble etait illisible. La modale d'equipe n'en garde qu'un
+     lien ; le detail s'ouvre par-dessus, et se ferme sur elle. -->
+<div class="overlay" id="rotationOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="rotationTitle" aria-hidden="true">
+  <div class="modal rotamodal">
+    <div class="picker-head">
+      <span class="picker-title" id="rotationTitle">Rotation</span>
+      <button class="icon-btn" id="rotationClose" aria-label="Fermer">✕</button>
+    </div>
+    <div class="rota-modal-corps" id="rotationBody"></div>
+  </div>
+</div>
+
 <!-- Détail d'un personnage dans le roster d'un autre membre -->
 <div class="overlay" id="rosterDetailOverlay" role="dialog" aria-modal="true"
      aria-labelledby="rosterDetailTitle" aria-hidden="true">

@@ -281,3 +281,87 @@ build enregistré tant qu'on ne le lui demande pas.
 - **Nommer la paire d'une combinaison à la main.** La table la donne.
 - **Un aperçu sur la carte d'équipe dans la liste du Roster.** Une seule surface
   pour ce lot.
+
+## 9. Ce que l'usage a corrigé — 9 septembre 2026
+
+Quatre retours du membre, le jour même de la mise en ligne. Ils sont consignés
+ici parce que chacun corrige une décision prise plus haut dans ce document.
+
+### « Je peux pas supprimer les compétences que je mets »
+
+Diagnostic d'abord : le « − » répondait, mesuré à la souris, au doigt, sur un
+écran de téléphone, sur une case combinée, sur une case orpheline et après un
+enregistrement. Rien n'était cassé. **Ce qui manquait, c'était le bouton** : le
+« − » ne retire qu'une occurrence, une série « ×11 » demandait onze appuis, et
+seule une case orpheline pouvait partir d'un coup.
+
+Chaque case porte maintenant une croix en pastille d'angle, face au « + ». Et
+la barre a un « Tout effacer », rattrapable par « Annuler » tant que le membre
+n'a pas enregistré.
+
+### « La modale d'équipe est trop chargée, surtout sur tel »
+
+La section 4 posait la rotation dans la modale d'équipe. C'était une erreur :
+cette modale porte déjà quatre fiches, chacune avec une arme, cinq pièces
+d'armure et trois bijoux — et sa grille est à quatre colonnes.
+
+**La rotation a sa propre modale** (`#rotationOverlay`), empilée par-dessus.
+La modale d'équipe n'en garde qu'une rangée qui dit le nombre d'appuis et
+l'ouvre. Effet de bord gagné : cette rangée ne lit que `equipe.rotation`, donc
+**ouvrir une équipe ne charge plus les 230 Ko du catalogue** — seule
+l'ouverture de la rotation les paie.
+
+Dans la modale de rotation, la palette passe en dernier et se replie : elle
+faisait la hauteur du bloc et repoussait « Enregistrer » sous un mur d'icônes.
+
+### « Que la compétence de relève soit détectée automatiquement »
+
+Demande arrivée après une question sur les jauges. La réponse du membre a
+écarté d'un coup tout l'affichage chiffré envisagé : **aucune valeur à
+l'écran**. Changer de héros DANS le jeu, c'est relever — la compétence de
+relève du héros qui entre joue toute seule.
+
+Elle est donc **déduite, jamais rangée** : `casesDeLaRotation` intercale une
+étape de relève entre deux cases dont le héros diffère. Même statut que le
+repli « ×N » — une vue, pas un stockage. Conséquences :
+
+- aucune relève avant la première case : ce héros est déjà sur le terrain ;
+- une combinaison laisse son **lanceur** sur le terrain, pas ses partenaires ;
+- la palette ne propose plus la relève, mais l'index la connaît toujours : une
+  rotation composée avant ce changement garde sa case au lieu de devenir
+  orpheline, et n'en reçoit pas une seconde par-dessus ;
+- une relève ne porte **aucune commande** — on ne déplace pas une conséquence.
+
+Ce qui a rendu la chose possible sans piège : les mutations visent désormais
+`item.serie`, le rang dans la rotation, et non la place à l'écran. Les deux ne
+coïncident plus dès la première relève intercalée, et un index visuel aurait
+supprimé la mauvaise étape.
+
+**Mesures qui fondent tout ça**, lues dans le client (build `2.0.4.2`) :
+
+| Fait | Source |
+|---|---|
+| `tagpoint_gauge` = 1000, `tagpoint_maxstack` = 3 | `Misc/DefineTable` |
+| La jauge est **une seule barre d'équipe** | mesure du membre en jeu |
+| `UI_TagGauge` par compétence (Ban nunchaku : E = 151) | `Skill/PC_SkillTable` |
+| Les 78 relèves partagent **une seule icône** `Icon_TagSkill.webp` | `data/wiki-competences.js` |
+
+Les valeurs de jauge ne sont pas affichées — le membre n'en veut pas. Elles
+sont notées ici parce qu'elles ont servi à poser la question, et qu'elles
+serviront le jour où le simulateur voudra chiffrer une rotation.
+
+L'icône générique explique le rendu retenu : c'est le **portrait de celui qui
+entre** qui est grand, l'icône ne fait que marquer. Le nom de la relève est
+dans l'infobulle, avec les deux héros.
+
+### La lecture seule, enfin gardée
+
+La section 7 annonçait un parcours « ouvrir une équipe d'un autre membre :
+aucune palette, aucun bouton ». Il n'avait jamais été écrit — tous les
+parcours se jouaient hors compte, où `canManageTeam` rend vrai pour tout le
+monde. Il l'est maintenant, sur le faux Supabase : connecté en `user-1`, sur
+l'équipe de `user-2`, la rotation se lit en entier — relèves comprises — et
+`#rotationBody` ne contient **aucun bouton**, aucune palette, aucune barre, ni
+`rota-suite-edition` (donc pas de `touch-action:none` : la page défile sous le
+doigt quand on ne fait que lire).
+
