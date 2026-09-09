@@ -272,9 +272,15 @@ class ListerChronometrageTests(unittest.TestCase):
         # les neuf entrees ajoutees sont TOUTES celles de Ban, six qui
         # affinent et ses trois competences de releve — les premieres du
         # tableau, aucun autre heros n'en ayant.
-        self.assertEqual(publie["total"], 22)
+        #
+        # Puis de 22 a 23 : la reprise par somme des coups a chiffre le
+        # Balayage rapide de Ban, qui entre au simulateur et dont
+        # l'animation devient donc mesurable. Une competence chiffree de
+        # plus est une ligne de chronometrage de plus — la liste suit le
+        # catalogue, c'est sa raison d'etre.
+        self.assertEqual(publie["total"], 23)
         self.assertEqual(publie["debloquent"], 0)
-        self.assertEqual(publie["affinent"], 19)
+        self.assertEqual(publie["affinent"], 20)
         self.assertEqual(publie["releves"], 3)
         # Plus aucune mesure ne « debloque » : tout ce qui manquait au
         # modele de cadence est desormais lu dans les fichiers du jeu.

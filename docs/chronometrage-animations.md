@@ -9,7 +9,7 @@ déduit 291 verrous, et la liste ci-dessous ne retient plus que ce
 qu'aucun fichier ne renseigne. Elle dit quoi mesurer d'abord, et ce
 que chaque mesure rapporte.
 
-**Avancement : 0 / 22 mesurées.**
+**Avancement : 0 / 23 mesurées.**
 
 Les 291 verrous déduits ne sont pas pour autant acquis : ce sont des
 lectures de marqueurs, pas des chronomètres. Une mesure saisie dans
@@ -26,7 +26,7 @@ Ces attaques normales et spéciales débloquent maintenant le calcul du DPS.
 | héros | arme | compétence | catégorie | touche | dégâts % | mesure (s) |
 |---|---|---|---|---|---|---|
 
-## 2. Mesures qui affinent maintenant — 19 compétences
+## 2. Mesures qui affinent maintenant — 20 compétences
 
 Avec recharge : le simulateur calcule déjà la compétence et
 l'animation ajoute un retard. La colonne « erreur » donne ce qu'on
@@ -49,6 +49,7 @@ Classement par erreur décroissante.
 | diane | Gantelets | Ferveur martiale | Compétence normale | E | 15 s | 9 % |  |
 | escanor | Hache | Lignée orgueilleuse | Compétence normale | E | 15 s | 9 % |  |
 | hendrickson | Lance | Brise-lance abyssal | Attaque spéciale | Q | 15 s | 9 % |  |
+| ban | Nunchaku | Balayage rapide | Attaque spéciale | Q | 15.6 s | 9 % |  |
 | bug | Hache | Pulvérisation des abysses | Attaque spéciale | Q | 16.2 s | 8 % |  |
 | ban | Nunchaku | Ruée en spirale | Compétence normale | E | 18.6 s | 7 % |  |
 | ban | Gantelets | Uppercut abyssal | Attaque spéciale | Q | 19.6 s | 7 % |  |

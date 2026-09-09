@@ -561,9 +561,108 @@ def rendu(catalogue):
     )
 
 
+# --- Reprise par la somme des coups -----------------------------------------
+
+# La fiche francaise publie le detail d'une frappe sous la forme
+# « 1er coup : 69% ». Deux ecritures pour le premier : « 1er », puis « 2e ».
+COUP_PUBLIE = re.compile(r"\d+(?:er|e)\s+coup\s*:\s*(-?\d+(?:[.,]\d+)?)\s*%")
+# Le total annonce dans la prose, quel que soit ce qui le precede.
+TOTAL_PUBLIE = re.compile(r"dégâts égaux à (-?\d+(?:[.,]\d+)?)\s*%")
+CATEGORIES_DPS = ("NORMAL", "NORMAL_SKILL", "ACTIVE_THIRD", "ULTIMATE")
+
+
+def _nombre_fr(texte):
+    return float(texte.replace(",", "."))
+
+
+def catalogue_js(chemin, variable):
+    """Le JSON pose par un fichier `window.X = {...};` du dossier data/."""
+    texte = Path(chemin).read_text(encoding="utf-8")
+    debut = texte.index("window." + variable)
+    debut = texte.index("=", debut) + 1
+    return json.loads(texte[debut:texte.rindex(";")])
+
+
+def total_prouve_par_les_coups(description):
+    """Le total que le detail des coups DEMONTRE, sinon None.
+
+    La source anglaise n'annonce un degat garanti que si sa phrase commence
+    par « Inflicts ». Une competence qui ouvre sur une immunite ou une
+    canalisation - « Grants immunity ... and inflicts damage equal to 404% » -
+    tombait donc en « non-chiffree », alors que la fiche francaise publie le
+    total ET le detail de ses coups.
+
+    On ne CROIT pas la prose pour autant : le total n'est retenu que si les
+    coups publies l'egalent. Cette addition est la meme preuve que celle
+    invoquee par degat_de_repli() pour Ruee sauvage, appliquee la ou la
+    premiere phrase est muette.
+
+    Ce que la regle ecarte d'elle-meme, sans garde supplementaire :
+      - un tick periodique, qui n'a pas de detail par coup ;
+      - un total conditionnel, qui ne tombe pas juste ;
+      - une frappe dont un seul coup est publie, trop pauvre pour prouver.
+    """
+    nu = BALISE.sub("", description or "")
+    coups = [_nombre_fr(t) for t in COUP_PUBLIE.findall(nu)]
+    if len(coups) < 2:
+        return None
+    somme = sum(coups)
+    for brut in TOTAL_PUBLIE.findall(nu):
+        if abs(_nombre_fr(brut) - somme) < 0.01:
+            return somme, coups
+    return None
+
+
+def recuperer_par_somme_des_coups(catalogue, wiki):
+    """Chiffre les competences muettes que la fiche francaise demontre.
+
+    Ne touche QUE les entrees restees « non-chiffree » : une competence deja
+    lue par la source anglaise ne bouge pas, et le catalogue ne peut donc pas
+    regresser. Chaque reprise porte `provenance` pour que le test refasse
+    l'addition au lieu de faire confiance a ce module.
+    """
+    par_id = {}
+    for liste in wiki.values():
+        for fiche in liste or []:
+            par_id[fiche.get("gameId")] = fiche
+
+    reprises = 0
+    for competences in catalogue.values():
+        for competence in competences:
+            if competence.get("nature") != "non-chiffree":
+                continue
+            if competence.get("categorie") not in CATEGORIES_DPS:
+                continue
+            fiche = par_id.get(competence.get("gameId"))
+            if not fiche:
+                continue
+            preuve = total_prouve_par_les_coups(fiche.get("descriptionFr"))
+            if not preuve:
+                continue
+            total, coups = preuve
+            competence["pourcentage"] = total
+            competence["nature"] = "direct"
+            competence["composantes"] = [{"base": "atk", "pourcentage": total}]
+            competence["repartition"] = coups
+            competence["provenance"] = "somme-des-coups"
+            reprises += 1
+    return reprises
+
+
+def wiki_commite():
+    return catalogue_js(
+        RACINE / "data" / "wiki-competences.js", "SEVEN_DS_WIKI_COMPETENCES"
+    )
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
+    # La reprise ne demande AUCUN reseau : elle relit le catalogue commite et
+    # la fiche francaise, tous deux dans data/. Ce mode existe pour qu'on
+    # puisse la rejouer - ou la corriger - sans re-aspirer 7dsorigin, et il
+    # appelle exactement la meme fonction que la generation complete.
+    parser.add_argument("--recuperer", action="store_true")
     args = parser.parse_args()
     cible = RACINE / "data" / "competences.js"
 
@@ -573,12 +672,22 @@ def main():
         print("competences.js present")
         return
 
+    if args.recuperer:
+        if not cible.exists():
+            raise SystemExit("competences.js doit etre genere")
+        catalogue = catalogue_js(cible, "SEVEN_DS_COMPETENCES")
+        reprises = recuperer_par_somme_des_coups(catalogue, wiki_commite())
+        cible.write_text(rendu(catalogue), encoding="utf-8", newline="\n")
+        print("competences.js :", reprises, "competence(s) reprise(s)")
+        return
+
     catalogue = {}
     for slug in slugs():
         catalogue[slug] = competences_du(slug)
         print(slug, ":", len(catalogue[slug]), "competences")
+    reprises = recuperer_par_somme_des_coups(catalogue, wiki_commite())
     cible.write_text(rendu(catalogue), encoding="utf-8", newline="\n")
-    print("competences.js genere")
+    print("competences.js genere,", reprises, "competence(s) reprise(s)")
 
 
 if __name__ == "__main__":
