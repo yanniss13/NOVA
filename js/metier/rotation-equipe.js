@@ -80,24 +80,61 @@ import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
     return (dossier && FOLDER_TO_ENUM[dossier]) || null;
   }
 
-  /* La palette d'une equipe : chaque heros avec les competences de l'arme
-     qu'il PORTE, jamais tout son kit. Un heros sans arme ni personnage n'a
-     rien a proposer et sort de la liste plutot que d'y figurer vide.
+  /* La categorie que le catalogue donne a la competence de releve — celle qui
+     joue quand un heros ENTRE sur le terrain. Chaque couple (heros, arme) en a
+     exactement une. */
+  const CATEGORIE_RELEVE = "TAG_SKILL";
+
+  /* Ce que l'equipe PORTE reellement : chaque heros avec les competences de
+     l'arme qu'il a en main, jamais tout son kit. Un heros sans arme ni
+     personnage n'a rien a proposer et sort de la liste plutot que d'y figurer
+     vide.
 
      Les passifs sont exclus : on ne les lance pas. */
-  function paletteDeLEquipe(heroes, competences){
+  function competencesPortees(heroes, competences){
     const liste = Array.isArray(heroes) ? heroes : [];
     const catalogue = competences || {};
-    return liste.reduce((palette, hero) => {
+    return liste.reduce((portees, hero) => {
       const char = hero && hero.char;
       const arme = armeEquipee(hero);
-      if(!char || !arme) return palette;
+      if(!char || !arme) return portees;
       const retenues = (catalogue[char] || [])
         .filter(competence => competence.weaponType === arme
           && competence.categorie !== "PASSIVE");
-      if(retenues.length) palette.push({ char, arme, competences:retenues });
+      if(retenues.length) portees.push({ char, arme, competences:retenues });
+      return portees;
+    }, []);
+  }
+
+  /* La palette PROPOSEE au membre. Elle retire la releve de ce qu'on peut
+     poser a la main : elle se deduit maintenant du changement de heros, et
+     l'offrir en plus ferait poser deux fois la meme chose.
+
+     `competencesPortees` la garde, elle : une rotation composee avant ce
+     changement peut en contenir une, et elle doit continuer a se resoudre en
+     case normale plutot que de devenir orpheline. */
+  function paletteDeLEquipe(heroes, competences){
+    return competencesPortees(heroes, competences).reduce((palette, entree) => {
+      const retenues = entree.competences
+        .filter(competence => competence.categorie !== CATEGORIE_RELEVE);
+      if(retenues.length){
+        palette.push({ char:entree.char, arme:entree.arme, competences:retenues });
+      }
       return palette;
     }, []);
+  }
+
+  /* La competence de releve de chaque heros de l'equipe, avec l'arme qu'il
+     PORTE — au nunchaku et aux gantelets, Ban n'entre pas de la meme facon. */
+  function relevesDeLEquipe(heroes, competences){
+    const index = new Map();
+    competencesPortees(heroes, competences).forEach(entree => {
+      if(index.has(entree.char)) return;
+      const releve = entree.competences
+        .find(competence => competence.categorie === CATEGORIE_RELEVE);
+      if(releve) index.set(entree.char, releve);
+    });
+    return index;
   }
 
   /* Les combinaisons que CETTE equipe peut reellement executer.
@@ -112,7 +149,7 @@ import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
      lequel le membre aurait tape les portraits. */
   function combinaisonsDeLEquipe(heroes, competences, combinaisons){
     const disponibles = new Set();
-    paletteDeLEquipe(heroes, competences).forEach(entree => {
+    competencesPortees(heroes, competences).forEach(entree => {
       entree.competences.forEach(competence => disponibles.add(competence.gameId));
     });
     return (Array.isArray(combinaisons) ? combinaisons : [])
@@ -131,7 +168,7 @@ import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
      heros et sa fiche. C'est lui qui decide si une etape est orpheline. */
   function indexDeLEquipe(heroes, competences){
     const index = new Map();
-    paletteDeLEquipe(heroes, competences).forEach(entree => {
+    competencesPortees(heroes, competences).forEach(entree => {
       entree.competences.forEach(competence => {
         index.set(competence.gameId, { char:entree.char, competence });
       });
@@ -145,6 +182,16 @@ import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
      supprimer en silence ferait disparaitre le travail du membre sans qu'il
      comprenne pourquoi — c'est la meme regle que le catalogue de competences,
      ou une competence non chiffrable garde sa ligne au lieu d'etre tue. */
+  /* Le heros SUR LE TERRAIN apres une case. Pour une combinaison c'est le
+     LANCEUR : les partenaires enchainent depuis leur banc, ils ne prennent pas
+     la place. */
+  function heroDeLaCase(item){
+    if(item.participants && item.participants.length){
+      return item.participants[0].char;
+    }
+    return item.char;
+  }
+
   function casesDeLaRotation(rotation, heroes, competences){
     const index = indexDeLEquipe(heroes, competences);
     const nomme = gameId => {
@@ -155,12 +202,16 @@ import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
         competence:trouve ? trouve.competence : null
       };
     };
-    return seriesDeLaRotation(rotation).map(serie => {
+    /* `serie` porte le rang de la case dans la ROTATION, et il ne se confond
+       pas avec sa position a l'ecran : les releves deduites s'intercalent
+       entre elles. Toutes les mutations passent par ce rang-la. */
+    const posees = seriesDeLaRotation(rotation).map((serie, rang) => {
       const combinee = etapeCombinee(serie.etape);
       if(combinee){
         const participants = [combinee.lanceur]
           .concat(combinee.partenaires).map(nomme);
         return Object.assign({}, serie, {
+          serie:rang,
           competence:null,
           char:null,
           participants,
@@ -169,12 +220,51 @@ import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
       }
       const trouve = index.get(serie.etape) || null;
       return Object.assign({}, serie, {
+        serie:rang,
         competence:trouve ? trouve.competence : null,
         char:trouve ? trouve.char : null,
         participants:[],
         orpheline:!trouve
       });
     });
+
+    /* LA RELEVE SE DEDUIT, ELLE NE SE POSE PAS.
+
+       Changer de heros DANS le jeu, c'est relever : la competence de releve du
+       heros qui entre joue toute seule. Le membre n'a donc rien a placer, et
+       le site n'a rien a stocker — meme regle que le repli « xN », qui est une
+       vue et jamais un rangement.
+
+       Aucune releve avant la premiere case : c'est le heros par lequel on
+       commence, il est deja la. */
+    const releves = relevesDeLEquipe(heroes, competences);
+    const suite = [];
+    let surLeTerrain = null;
+    posees.forEach(item => {
+      const entrant = heroDeLaCase(item);
+      const releve = entrant ? releves.get(entrant) : null;
+      /* Si le membre a POSE la releve lui-meme — une rotation composee avant
+         que le site ne la deduise — on n'en ajoute pas une seconde. */
+      const dejaPosee = item.competence && releve
+        && item.competence.gameId === releve.gameId;
+      if(surLeTerrain && entrant && entrant !== surLeTerrain
+        && releve && !dejaPosee){
+        suite.push({
+          releve:true,
+          etape:null,
+          serie:null,
+          fois:1,
+          char:entrant,
+          sortant:surLeTerrain,
+          competence:releve,
+          participants:[],
+          orpheline:false
+        });
+      }
+      suite.push(item);
+      if(entrant) surLeTerrain = entrant;
+    });
+    return suite;
   }
 
   /* LES MUTATIONS portent sur un index de CASE, jamais d'appui : c'est ce que

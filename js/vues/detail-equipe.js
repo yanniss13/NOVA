@@ -21,6 +21,7 @@ import { MemberRosterStore } from "../donnees/roster-store.js";
 import { equippedEnumOf, weaponFolderOf } from "../metier/armes.js";
 import { calculateHeroStats } from "../metier/stats-calcul.js";
 import { termesDEquipe } from "../metier/potentiels-equipe.js";
+import { normaliserRotation } from "../metier/rotation-equipe.js";
 import { ModalStack } from "./modal-stack.js";
 import { heroDetail } from "./fiche-heros.js";
 import { blocRotation } from "./rotation-equipe.js";
@@ -81,38 +82,80 @@ import { toast } from "./toast.js";
      Le catalogue du wiki arrive a la demande — 230 Ko qu'un visiteur qui
      n'ouvre aucune equipe ne doit pas payer. Le bloc s'affiche donc d'abord en
      attente, puis se redessine une fois le catalogue la. */
-  function sectionRotation(equipe){
-    const rotation = (equipe && equipe.rotation) || [];
+  function phraseDeLaRotation(appuis, modifiable){
+    if(appuis) return appuis + (appuis > 1 ? " appuis" : " appui") + " posés";
+    return modifiable
+      ? "Aucune rotation — compose la tienne"
+      : "Aucune rotation posée";
+  }
+
+  /* LE LIEN vers la rotation, et rien de plus.
+
+     La modale d'equipe porte deja quatre fiches, chacune avec une arme, cinq
+     pieces d'armure et trois bijoux ; la rotation par-dessus la rendait
+     illisible au telephone. Elle sort donc dans sa propre modale, et il ne
+     reste ici qu'une rangee.
+
+     Cette rangee ne demande RIEN au reseau : le nombre d'appuis se lit sur la
+     rotation elle-meme. Les 230 Ko du catalogue ne partent qu'a l'ouverture de
+     la rotation — ouvrir une equipe pour voir son equipement ne les paie
+     plus. */
+  function lienRotation(equipe){
+    const appuis = normaliserRotation((equipe && equipe.rotation) || []).length;
     const modifiable = canManageTeam(equipe);
-    if(!rotation.length && !modifiable) return null;
-    const section = el("section",{ class:"rota" },[
-      el("h3",{ class:"rota-titre", text:"Rotation" })
+    if(!appuis && !modifiable) return null;
+    const bouton = el("button",{
+      class:"rota-lien", type:"button",
+      onclick:()=>ouvrirRotation(equipe, bouton)
+    },[
+      el("span",{ class:"rota-lien-titre", text:"Rotation" }),
+      el("span",{ class:"rota-lien-detail",
+        text:phraseDeLaRotation(appuis, modifiable) }),
+      el("span",{ class:"rota-lien-chevron", text:"›", "aria-hidden":"true" })
     ]);
-    const corps = el("div");
-    section.appendChild(corps);
+    return el("section",{ class:"rota-entree" },[bouton]);
+  }
+
+  /* L'OUVERTURE. Le catalogue du wiki arrive a la demande — la modale
+     s'affiche d'abord en attente, puis se remplit. */
+  function ouvrirRotation(equipe, declencheur){
+    const corps = $("#rotationBody");
+    const titre = $("#rotationTitle");
+    titre.textContent = equipe && equipe.name
+      ? "Rotation — " + equipe.name
+      : "Rotation";
 
     const dessiner = () => {
       corps.innerHTML = "";
-      if(!catalogueWikiPret()){
-        corps.appendChild(el("p",{ class:"calc-muette",
-          text:"Chargement des compétences…" }));
-        return;
-      }
       corps.appendChild(blocRotation(equipe, {
-        modifiable,
+        modifiable:canManageTeam(equipe),
         surEnregistrement:suite => enregistrerRotation(equipe, suite)
       }));
     };
 
-    dessiner();
-    if(!catalogueWikiPret()){
+    corps.innerHTML = "";
+    if(catalogueWikiPret()) dessiner();
+    else {
+      corps.appendChild(el("p",{ class:"calc-muette",
+        text:"Chargement des compétences…" }));
       chargerCatalogueWiki().then(dessiner).catch(() => {
         corps.innerHTML = "";
         corps.appendChild(el("p",{ class:"calc-avertissement",
           text:"Les compétences n'ont pas pu être chargées." }));
       });
     }
-    return section;
+
+    /* En refermant, la rangee de la modale d'equipe doit dire le nouveau
+       compte : on la remplace sur place plutot que de redessiner la modale
+       entiere, qui perdrait la position de lecture. */
+    ModalStack.open($("#rotationOverlay"), "#rotationClose",
+      fermerRotation, declencheur, ()=>{
+        const remplacante = lienRotation(equipe);
+        const ancienne = declencheur && declencheur.closest(".rota-entree");
+        if(remplacante && ancienne && ancienne.parentElement){
+          ancienne.parentElement.replaceChild(remplacante, ancienne);
+        }
+      });
   }
 
   /* L'ENREGISTREMENT. Une equipe de compte passe par Supabase, une equipe
@@ -157,14 +200,34 @@ import { toast } from "./toast.js";
       }
     };
     settings.termesEquipePour = apportsDEquipe(t.heroes || []);
-    (t.heroes||[]).forEach(h=>box.appendChild(heroDetail(h, settings)));
-    const rotation = sectionRotation(t);
+    /* LA ROTATION D'ABORD, l'equipement ensuite.
+
+       Elle etait en bas, apres quatre fiches de heros qui portent chacune une
+       arme, cinq pieces d'armure et trois bijoux : sur un telephone, elle
+       etait hors d'atteinte — le membre l'a signale ainsi, « la il est tout
+       en bas de la modal, sur tel c'est pas pratique ».
+
+       L'ordre est aussi le bon sur le fond : la rotation dit COMMENT l'equipe
+       se joue, l'equipement dit avec quoi. On lit le resume avant le detail. */
+    const rotation = lienRotation(t);
     if(rotation) box.appendChild(rotation);
+    (t.heroes||[]).forEach(h=>box.appendChild(heroDetail(h, settings)));
     ModalStack.open($("#teamOverlay"), "#teamClose", closeTeamDetail);
   }
   function closeTeamDetail(){
     ModalStack.close($("#teamOverlay"));
   }
+  /* La croix et le fond de la modale de rotation. `ModalStack` gere la pile et
+     la touche Echap ; le clic, lui, se cable ici comme pour toute autre
+     modale du site. */
+  function fermerRotation(){
+    ModalStack.close($("#rotationOverlay"));
+  }
+  $("#rotationClose").addEventListener("click", fermerRotation);
+  $("#rotationOverlay").addEventListener("click", event => {
+    if(event.target === $("#rotationOverlay")) fermerRotation();
+  });
+
   $("#teamClose").addEventListener("click", closeTeamDetail);
   $("#teamOverlay").addEventListener("click", event => {
     if(event.target === $("#teamOverlay")) closeTeamDetail();

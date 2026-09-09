@@ -287,4 +287,104 @@ assert.equal(PLAFOND_ROTATION, 60, "le plafond compte les appuis, pas les cases"
   assert.deepEqual(Array.from(retirerLaCase(base, 9)), Array.from(base));
 }
 
+/* LA RELÈVE, DÉDUITE DU CHANGEMENT DE HÉROS.
+
+   Changer de personnage dans le jeu, c'est relever : la compétence de relève
+   du héros qui ENTRE joue toute seule. Le membre n'a donc rien à poser, et le
+   site n'a rien à ranger — c'est une vue, exactement comme le repli « ×N ».
+
+   Le catalogue publie une relève par couple (héros, arme), catégorie
+   `TAG_SKILL`. C'est le vrai catalogue qui est lu ici, pas un faux. */
+{
+  const equipe = [BAN_NUNCHAKU, TRISTAN];
+  const releveDe = (char, arme) => COMPETENCES[char]
+    .find(c => c.weaponType === arme && c.categorie === "TAG_SKILL");
+  const releveTristan = releveDe("tristan", "SwordDual");
+  const releveBan = releveDe("ban", "Cudgel3c");
+  assert.ok(releveTristan && releveBan, "le catalogue publie une relève par arme");
+
+  /* Deux héros à la suite : une relève s'intercale, et elle porte la
+     compétence de celui qui ENTRE. */
+  const melange = casesDeLaRotation(
+    ["ban_cudgel3c_skill_e", "tristan_sworddual_skill_e"], equipe, COMPETENCES
+  );
+  assert.equal(melange.length, 3, "deux cases posées, une relève déduite");
+  assert.equal(melange[1].releve, true);
+  assert.equal(melange[1].char, "tristan", "la relève est celle du héros qui entre");
+  assert.equal(melange[1].sortant, "ban", "elle nomme aussi celui qui sort");
+  assert.equal(melange[1].competence.gameId, releveTristan.gameId);
+  assert.equal(melange[1].serie, null, "une relève ne vise aucune étape rangée");
+
+  /* Aucune relève avant la première case : ce héros est déjà sur le terrain. */
+  assert.equal(
+    casesDeLaRotation(["ban_cudgel3c_skill_e"], equipe, COMPETENCES).length, 1,
+    "on ne relève pas vers le héros par lequel on commence"
+  );
+
+  /* Deux compétences du MÊME héros ne relèvent pas, même séparées. */
+  const memeHeros = casesDeLaRotation(
+    ["ban_cudgel3c_skill_e", "ban_cudgel3c_jumpatk"], equipe, COMPETENCES
+  );
+  assert.equal(
+    memeHeros.filter(item => item.releve).length, 0,
+    "rester sur le même héros ne relève pas"
+  );
+
+  /* Un aller-retour relève DEUX fois. */
+  const allerRetour = casesDeLaRotation(
+    ["ban_cudgel3c_skill_e", "tristan_sworddual_skill_e", "ban_cudgel3c_jumpatk"],
+    equipe, COMPETENCES
+  );
+  assert.deepEqual(
+    Array.from(allerRetour.filter(item => item.releve).map(item => item.char)),
+    ["tristan", "ban"],
+    "chaque changement de héros relève"
+  );
+
+  /* LE RANG DES MUTATIONS ne se confond pas avec la place à l'écran. La
+     troisième case posée est en quatrième position une fois les relèves
+     intercalées — c'est `serie` qui fait autorité, jamais l'index visuel. */
+  assert.deepEqual(
+    Array.from(allerRetour.map(item => item.serie)), [0, null, 1, null, 2],
+    "les cases posées gardent leur rang de rotation"
+  );
+
+  /* UNE RELÈVE POSÉE À LA MAIN n'en fait pas apparaître une seconde. Une
+     rotation composée avant ce changement peut en contenir une. */
+  const posee = casesDeLaRotation(
+    ["ban_cudgel3c_skill_e", releveTristan.gameId], equipe, COMPETENCES
+  );
+  assert.equal(posee.length, 2, "la relève posée tient lieu de relève déduite");
+  assert.equal(posee[1].releve, undefined);
+  assert.equal(posee[1].orpheline, false,
+    "une relève posée reste une case normale, pas une orpheline");
+
+  /* LA PALETTE NE PROPOSE PLUS LA RELÈVE : elle se déduit, l'offrir ferait
+     poser deux fois la même chose. */
+  const palette = paletteDeLEquipe(equipe, COMPETENCES);
+  const offertes = palette.reduce(
+    (tout, entree) => tout.concat(entree.competences.map(c => c.categorie)), []
+  );
+  assert.equal(
+    offertes.filter(categorie => categorie === "TAG_SKILL").length, 0,
+    "la palette ne propose plus la compétence de relève"
+  );
+  assert.ok(offertes.length >= 8, "elle propose toujours le reste du kit");
+
+  /* Une COMBINAISON met son LANCEUR sur le terrain : les partenaires
+     enchaînent depuis leur banc, ils ne prennent pas la place. */
+  const combinee = casesDeLaRotation(
+    [
+      "ban_gauntlets_skill_e",
+      "@combine:ban_gauntlets_skill_r:tristan_sworddual_skill_q",
+      "ban_gauntlets_jumpatk"
+    ],
+    [BAN_GANTELETS, TRISTAN], COMPETENCES
+  );
+  assert.equal(
+    combinee.filter(item => item.releve).length, 0,
+    "une combinaison lancée par Ban laisse Ban sur le terrain"
+  );
+}
+
 console.log("rotation-equipe.test.js OK");
