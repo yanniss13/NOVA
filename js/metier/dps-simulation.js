@@ -25,6 +25,18 @@ import { effetsDuBuild } from "./dps-effets.js";
     "duree-periodique"
   ]);
 
+  /* `battle_max_skillrecycle_rate` du jeu : la somme des sources de reduction
+     de temps de recharge ne depasse jamais 90 %
+     (docs/constantes-combat-du-jeu.md, section des plafonds).
+
+     Le module bornait a 9999, un garde-fou anti-division-par-zero, et l'ecart
+     etait note « cosmetique » tant qu'une seule regle de recharge existait
+     dans tout le catalogue — a 30 %. Brancher `S_SkillRecycle_Rate` a rendu ce
+     seau atteignable : la stat se cumule sur l'arme, l'armure gravee et les
+     paliers. Le jour ou un plafond peut mordre, c'est celui du jeu qui
+     s'applique, pas notre garde-fou. */
+  const PLAFOND_RECHARGE = 9000;
+
   const enMs = secondes => Math.round(Number(secondes) * 1000);
   const enSecondes = ms => ms / 1000;
   const normaliserCibleDegats = cible => cible === "normal-attack" ? "normal" : cible;
@@ -707,13 +719,30 @@ import { effetsDuBuild } from "./dps-effets.js";
     return resultat.sort((a, b) => String(a.gameId).localeCompare(String(b.gameId)));
   }
 
+  /* La « Reduction de temps de recharge » du jeu (`S_SkillRecycle_Rate`), que
+     les enchantements d'arme et d'armure portent couramment.
+
+     Elle rejoint le SEAU DES TAUX, celui que remplissent deja les paliers de
+     potentiel : le jeu n'affiche qu'un seul pourcentage de reduction, somme
+     de ses sources, et le plafond a 99,99 % vaut donc pour l'ensemble. Lui
+     donner un facteur separe ferait deux reductions successives la ou l'ecran
+     n'en montre qu'une.
+
+     Elle ne touche PAS l'attaque normale : celle-ci n'a pas de recharge, son
+     rythme est celui de son animation, et la branche du dessus sort avant
+     d'arriver ici. */
   function dureeRecharge(competence, configuration){
     if(enMs(competence.recharge) === 0){
       return Math.max(1, competence.animationMs);
     }
     const categorie = CATEGORIE_DPS[competence.categorie];
     const plate = configuration.rechargesPlates[categorie] || 0;
-    const taux = Math.min(9999, configuration.rechargesTaux[categorie] || 0);
+    const propre = Math.max(
+      0, Number(configuration.stats && configuration.stats.reductionRecharge) || 0
+    );
+    const taux = Math.min(
+      PLAFOND_RECHARGE, (configuration.rechargesTaux[categorie] || 0) + propre
+    );
     return Math.max(
       1,
       Math.round((enMs(competence.recharge) - enMs(plate)) * (1 - taux / 10000))
@@ -1233,4 +1262,8 @@ import { effetsDuBuild } from "./dps-effets.js";
     };
   }
 
-export { simulerDpsCompetences };
+/* `CATEGORIE_DPS` sort parce que la traduction « categorie du catalogue ->
+   seau du simulateur » n'appartient qu'a ce module. La recopier ailleurs
+   ferait deux tables a tenir d'accord, et la seconde se tromperait le jour
+   ou le jeu ajouterait une categorie. */
+export { CATEGORIE_DPS, simulerDpsCompetences };

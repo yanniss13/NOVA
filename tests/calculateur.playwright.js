@@ -260,8 +260,83 @@ const STORAGE_KEY = "confrerie7ds.teams";
       "chaque valeur doit annoncer la reference, l'essai et son ecart");
     assert.equal(await page.evaluate(key => localStorage.getItem(key), STORAGE_KEY),
       teamsAvantEssai, "un essai ne doit jamais ecrire l'equipe locale");
+
+    /* LE BALAYAGE DES PALIERS, sur cet essai qui differe deja du build.
+
+       C'est le seul test qui prouve que les catalogues du simulateur se
+       chargent depuis le CALCULATEUR : la fiche de heros les chargeait deja,
+       mais par un autre chemin, et le comparateur est le premier a en avoir
+       besoin ici. */
+    const balayage = page.locator(".calc-balayage-paliers");
+    await balayage.waitFor();
+    await page.getByRole("button", { name:"Comparer sur les 30 paliers" }).click();
+    await page.locator(".calc-balayage tbody tr").first().waitFor({ timeout:120000 });
+
+    /* La vue par defaut montre les JALONS : un palier sur cinq, plus le
+       mannequin. Trente et une lignes d'affilee ne se lisent pas, et le
+       verdict ne bouge pas d'un palier a l'autre. */
+    const jalons = await page
+      .locator('.calc-balayage-jalons tbody th[scope="row"]').allTextContents();
+    /* L'asterisque marque les paliers dont la DEFENSE sort de la plage ou la
+       formule a ete mesuree (DEF 26 727). Akumu en sort des le palier 16, donc
+       le 15 est net et le 20 est marque : c'est la frontiere, et un test la
+       tient pour qu'elle ne glisse pas en silence. */
+    assert.deepEqual(
+      jalons,
+      ["Palier 5", "Palier 10", "Palier 15", "Palier 20 *", "Palier 25 *",
+        "Palier 30 *", "Mannequin d'entraînement"],
+      "les jalons vont de cinq en cinq, mannequin compris, recu : "
+        + jalons.join(" | ")
+    );
+    const legende = await balayage.innerText();
+    assert.match(
+      legende, /À partir du palier 16/,
+      "le balayage doit dire OU commence l'extrapolation"
+    );
+
+    /* Et le detail complet reste a un clic, dans un depliant ferme. */
+    const depliant = page.locator(".calc-balayage-tout");
+    assert.equal(
+      await depliant.evaluate(noeud => noeud.open), false,
+      "le detail complet doit demarrer ferme"
+    );
+    assert.equal(
+      await page.locator(".calc-balayage-detail tbody tr").count(), 31,
+      "le depliant porte les trente paliers plus le mannequin"
+    );
+    await depliant.locator("summary").click();
+    assert.equal(
+      await depliant.evaluate(noeud => noeud.open), true,
+      "le depliant doit s'ouvrir au clic"
+    );
+    const resume = await balayage.locator(".calc-balayage-resume").innerText();
+    assert.match(resume, /essai/i,
+      "le balayage doit resumer son verdict en une phrase");
+    /* Akumu a TRENTE paliers. Le mannequin d'entrainement est la trente et
+       unieme cible sans etre un palier : compter « 31 paliers » inventerait
+       un palier 31, et un membre l'a releve. */
+    assert.doesNotMatch(resume, /31 paliers/,
+      "le resume compte des cibles, jamais un palier 31 : " + resume);
+    assert.match(resume, /cibles/,
+      "le resume nomme des cibles, recu : " + resume);
+    /* Chaque ligne porte un ecart LISIBLE : un pourcentage signe, ou un tiret
+       cadratin quand le catalogue ne chiffre rien. Une cellule vide se
+       lirait « zero », ce qui serait faux. */
+    const ecarts = await page.locator(
+      ".calc-balayage-detail .calc-balayage-ecart").allTextContents();
+    assert.equal(ecarts.length, 31);
+    assert.ok(
+      ecarts.every(texte => /%/.test(texte) || texte.trim() === "\u2014"),
+      "chaque palier doit afficher un ecart ou dire qu'il l'ignore, recu : "
+        + ecarts.join(" | ")
+    );
+
     await page.getByRole("button", { name:"Réinitialiser l'essai" }).click();
     await page.waitForFunction(() => !document.querySelector(".calc-essai"));
+    assert.equal(
+      await page.locator(".calc-balayage-paliers").count(), 0,
+      "l'essai reinitialise doit retirer le balayage avec lui"
+    );
     const apresEssai = (await ligne.locator(".calc-valeur").allTextContents())
       .map(t => Number(t.replace(/[^0-9]/g, "")));
     assert.deepEqual(apresEssai, chiffres,

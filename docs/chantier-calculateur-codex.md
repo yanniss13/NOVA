@@ -196,9 +196,26 @@ critique. Égal = table confirmée ; inférieur = la table ne dit pas ce qu'on c
 **Le correctif Ban du patch 2.0.2 la rend faisable** : les valeurs de ses coups
 s'affichent enfin (voir `docs/extraction-fichiers-du-jeu.md`).
 
-## Chantier 3 — La formule sort de sa plage mesurée dès le palier 17
+## Chantier 3 — La formule sort de sa plage mesurée dès le palier ~~17~~ **16**
 
-**Libre. À documenter avant tout, corriger ensuite si besoin.**
+**FAIT le 9 septembre 2026. Documenté dans le code ET à l'écran.**
+
+⚠️ **Le palier annoncé était faux.** Ce chantier disait « dès le palier 17
+(DEF 30 029) » : il lisait la DEF du 17 sans vérifier celle du **16**, qui vaut
+**27 674** et dépasse déjà 26 727. La sortie de plage commence donc un palier
+plus tôt, et `tests/degats-calcul.test.js` tient désormais la frontière (15 net,
+16 marqué) pour qu'elle ne glisse plus en silence.
+
+Ce qui a été fait :
+
+- `js/metier/degats-calcul.js` porte `DEF_MESUREE_MAX = 26727`, et **chaque
+  cible** porte `horsPlageMesuree`. La limite voyage avec la donnée au lieu de
+  vivre en commentaire — c'est ce qui permet à la vue de la dire.
+- Le calculateur l'annonce sur le palier consulté (`phraseHorsPlage`).
+- Le balayage marque chaque ligne concernée d'un astérisque, avec sa légende
+  sous le tableau.
+- Les deux textes disent la même chose : **la valeur absolue est extrapolée,
+  l'écart entre deux builds reste juste.**
 
 7dsorigin borne explicitement sa propre formule :
 
@@ -292,15 +309,22 @@ Deux clés, deux mécaniques probablement distinctes (`protect_cur` = brèche
 d'armure, `pierceper` = autre chose). Le choix actuel reste le mieux nommé.
 **Ne rien changer sans savoir ce que `pierceper` désigne.**
 
-### Écart cosmétique, sans effet aujourd'hui
+### ~~Écart cosmétique, sans effet aujourd'hui~~ — ALIGNÉ le 9 septembre 2026
 
-`js/metier/dps-simulation.js:716` borne le taux de réduction de recharge à
+`js/metier/dps-simulation.js` bornait le taux de réduction de recharge à
 **9999**, garde-fou anti-division-par-zéro, là où le jeu porte
 `battle_max_skillrecycle_rate` = **9000** (90 %).
 
-**Inatteignable** : une seule règle `recharge-taux` en `application:"base"` existe
-dans tout `data/effets-dps.js` — drake/Sword2h, `all-skills`, **30 %**. Aucun
-chiffre affiché ne bouge. À aligner le jour où un héros dépassera 90 %.
+L'écart était noté « inatteignable » parce qu'une seule règle `recharge-taux`
+en `application:"base"` existait dans tout `data/effets-dps.js` — drake/Sword2h,
+`all-skills`, **30 %**.
+
+**La prémisse est tombée.** Brancher `S_SkillRecycle_Rate` dans la simulation
+(le même jour) verse la stat du BUILD dans ce seau : elle se cumule sur l'arme,
+l'armure gravée et les paliers, et 760 enchantements de pierre maîtresse la
+portent. La condition « le jour où un héros dépassera 90 % » est donc devenue
+atteignable, et le plafond est passé à `PLAFOND_RECHARGE = 9000`, nommé et
+gardé par un test (`tests/dps-simulation.test.js`).
 
 ### Non modélisé, déjà documenté
 

@@ -22,7 +22,6 @@ import {
   JEWEL_SLOTS,
   WEAPON_ENUM,
   WSLOT_ROLES,
-  FOLDER_TO_ENUM,
   metaOf
 } from "../noyau/constantes.js";
 import { authMessage } from "../noyau/supabase-client.js";
@@ -34,13 +33,18 @@ import {
   normalizeRosterBuild,
   normalizeRosterCharacter
 } from "../metier/equipe-modele.js";
-import {
-  calculateHeroStats,
-  orderedBuildEntries
-} from "../metier/stats-calcul.js";
+import { orderedBuildEntries } from "../metier/stats-calcul.js";
 import { CIBLES, degatsDuCycle } from "../metier/degats-calcul.js";
-import { effetsDuBuild } from "../metier/dps-effets.js";
-import { simulerDpsCompetences } from "../metier/dps-simulation.js";
+import {
+  competencesDuBuild,
+  resultatStatsDeFrappe,
+  simulationDuBuild
+} from "../metier/dps-build.js";
+import {
+  animationsDps,
+  cataloguesDpsPrets,
+  chargerCataloguesDps
+} from "../donnees/catalogues-dps.js";
 import { MemberRosterStore } from "../donnees/roster-store.js";
 import { ouvrirCalculateur } from "./calculateur.js";
 import { openPieceDetail } from "./detail-piece.js";
@@ -131,96 +135,6 @@ import { toast } from "./toast.js";
      deuxieme fichier du depot par la taille. Les charger au demarrage les
      ferait payer a chaque visiteur qui n'ouvre jamais une fiche de heros.
      Motif repris de js/vues/calculateur.js. */
-  let chargementDps = null;
-  let animationsMesurees = null;
-
-  function cataloguesDpsPrets(){
-    return Boolean(typeof window !== "undefined"
-      && window.SEVEN_DS_COMPETENCES && window.SEVEN_DS_EFFETS_DPS
-      && animationsMesurees);
-  }
-
-  function chargerCataloguesDps(){
-    if(cataloguesDpsPrets()) return Promise.resolve(true);
-    if(chargementDps) return chargementDps;
-    const injecter = src => new Promise((resolve, reject) => {
-      document.head.appendChild(el("script",{
-        src, onload:()=>resolve(true),
-        onerror:()=>reject(new Error("catalogue introuvable : "+src))
-      }));
-    });
-    chargementDps = Promise.all([
-      window.SEVEN_DS_COMPETENCES
-        ? Promise.resolve(true) : injecter("./data/competences.js"),
-      window.SEVEN_DS_EFFETS_DPS
-        ? Promise.resolve(true) : injecter("./data/effets-dps.js"),
-      /* Deux sources, dans cet ordre de confiance.
-
-         `animations-verrous.json` est DEDUIT des fichiers du jeu : le premier
-         instant ou le heros peut relancer une action offensive, lu dans les
-         marqueurs du montage. Il couvre 155 des 376 competences du catalogue,
-         et reste une deduction.
-
-         Les 221 autres ne sont pas des trous : 202 ont une fenetre offensive
-         ouverte des t=0, donc un verrou nul que le simulateur compte deja
-         comme tel, et 18 n'ont aucune fenetre connue. `ecrire-verrous.js`
-         omet les zeros plutot que de les ecrire — le resultat est le meme,
-         mais le fichier ne dit pas la difference entre « nul » et « inconnu ».
-
-         `animations-mesurees.json` s'ecrit a la main, chronometre en jeu. Il
-         fait FOI la ou il parle, et ecrase donc le precedent cle par cle.
-
-         L'absence des deux n'est pas une panne : le simulateur compte zero,
-         jamais une duree supposee. */
-      Promise.all([
-        fetch("./data/animations-verrous.json")
-          .then(reponse => reponse.ok ? reponse.json() : null)
-          .catch(() => null),
-        fetch("./data/animations-mesurees.json")
-          .then(reponse => reponse.ok ? reponse.json() : null)
-          .catch(() => null)
-      ]).then(([deduites, mesurees]) => {
-        animationsMesurees = Object.assign(
-          {},
-          (deduites && deduites.animations) || {},
-          (mesurees && mesurees.animations) || {}
-        );
-        return true;
-      })
-    ]).catch(erreur => {
-      /* Rejouable : un echec reseau ne doit pas condamner la fiche pour toute
-         la duree de la session. */
-      chargementDps = null;
-      throw erreur;
-    });
-    return chargementDps;
-  }
-
-  /* Les competences du catalogue rattachees a un build du roster. Le roster
-     range ses builds par DOSSIER d'image (« Hache »), la source les publie par
-     ENUM (« Axe ») : FOLDER_TO_ENUM fait le pont, et il existait deja. */
-  function competencesDuBuild(charId, dossierArme){
-    const catalogue = (typeof window !== "undefined"
-      && window.SEVEN_DS_COMPETENCES) || {};
-    const enumArme = FOLDER_TO_ENUM[dossierArme];
-    if(!enumArme) return [];
-    return (catalogue[charId] || [])
-      .filter(competence => competence.weaponType === enumArme);
-  }
-
-  /* Les entrees du moteur, lues par CODE dans le resultat groupe.
-     `calculateBuildStats` n'est pas exportee : `calculateHeroStats` est la
-     porte publique. Un statut autre que `valid` ou `partial` ne porte aucun
-     chiffre — la ligne est alors absente plutot que fausse. */
-  function resultatStatsDeFrappe(hero){
-    const result = calculateHeroStats(hero);
-    if(!result || (result.status !== "valid" && result.status !== "partial")){
-      return null;
-    }
-    const atk = result.totals.find(total => total.stat === "B_Atk");
-    return atk && typeof atk.value === "number" ? result : null;
-  }
-
   function statsDeCycleHistorique(statsResult){
     const totaux = statsResult && Array.isArray(statsResult.totals)
       ? statsResult.totals : [];
@@ -235,18 +149,6 @@ import { toast } from "./toast.js";
       critDamage:valeur("C_Critical_Dam_Rate"),
       bonusType:0
     } : null;
-  }
-
-  function competencesDpsDuBuild(charId, dossierArme){
-    const competences = competencesDuBuild(charId, dossierArme);
-    const catalogue = (typeof window !== "undefined"
-      && window.SEVEN_DS_EFFETS_DPS) || {};
-    const enumArme = FOLDER_TO_ENUM[dossierArme];
-    const synthetiques = Object.entries(catalogue.skills || {})
-      .filter(([, competence]) => competence.synthetic
-        && competence.weaponType === enumArme)
-      .map(([gameId, competence]) => Object.assign({ gameId }, competence));
-    return competences.concat(synthetiques);
   }
 
   /* Deux builds enregistres au minimum : avec un seul, un classement n'apprend
@@ -286,27 +188,19 @@ import { toast } from "./toast.js";
         });
         const statsResult = resultatStatsDeFrappe(actif);
         if(!statsResult) return null;
-        const catalogue = (typeof window !== "undefined"
-          && window.SEVEN_DS_EFFETS_DPS) || {};
-        const contexte = effetsDuBuild({
-          hero:actif,
-          dossierArme,
-          catalogue,
-          statsResult
-        });
         const cycle = degatsDuCycle({
           stats:statsDeCycleHistorique(statsResult),
           competences,
           cible:CIBLE_CLASSEMENT
         });
-        const simulation = simulerDpsCompetences({
-          stats:contexte.stats,
-          competences:competencesDpsDuBuild(hero.char, dossierArme),
-          effets:contexte.effets,
+        const simulation = simulationDuBuild({
+          hero:actif,
+          dossierArme,
           cible:CIBLE_CLASSEMENT,
           duree:60,
-          animations:animationsMesurees
+          animations:animationsDps()
         });
+        if(!cycle || !simulation) return null;
         const categoriesDps = new Set([
           "NORMAL_SKILL", "ACTIVE_THIRD", "ULTIMATE"
         ]);
@@ -316,19 +210,18 @@ import { toast } from "./toast.js";
             Number.isFinite(Number(composante.pourcentage))
           )
         ).length;
-        return cycle ? {
+        return {
           arme:dossierArme,
           cycle:cycle.total,
-          dps:Number.isFinite(simulation.dps) ? simulation.dps : null,
-          nonInclus:nonChiffrees + contexte.nonInclus.length
-            + simulation.nonInclus.length,
-          exclusions:contexte.nonInclus.concat(simulation.nonInclus),
+          dps:simulation.dps,
+          nonInclus:nonChiffrees + simulation.nonInclus.length,
+          exclusions:simulation.nonInclus,
           ouverture:simulation.ouverture.map(action => action.nom),
           priorites:simulation.priorites,
           rotation:simulation.rotation,
           hypotheses:simulation.hypotheses,
           animations:simulation.animations
-        } : null;
+        };
       })
       .filter(Boolean)
       .sort(parDpsPuisParCycle);

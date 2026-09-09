@@ -18,7 +18,12 @@ import {
     def:"B_Def",
     maxHp:"B_MaxHp",
     critRate:"C_Critical_Rate",
-    critDamage:"C_Critical_Dam_Rate"
+    critDamage:"C_Critical_Dam_Rate",
+    /* « Reduction de temps de recharge ». Elle ne pese sur aucun coup pris
+       isolement - c'est pourquoi le tableau du calculateur l'ignore - mais
+       elle change le NOMBRE de coups d'une fenetre, donc le simulateur la
+       lit comme une statistique a part entiere. Voir dureeRecharge(). */
+    reductionRecharge:"S_SkillRecycle_Rate"
   };
   const BONUS_CATEGORIE = {
     "normal-skill":"Normalskill_Damadd_Rate",

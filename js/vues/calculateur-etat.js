@@ -24,6 +24,13 @@ import { CoequipiersStore } from "../donnees/coequipiers-store.js";
     coequipiers:CoequipiersStore.get(),
     retouches:{},
     essaiEnchantements:null,
+    /* Le balayage des paliers, calcule A LA DEMANDE : trente et une
+       simulations de soixante secondes ne se lancent pas a chaque frappe au
+       clavier. `null` = jamais demande, et toute modification de l'essai le
+       remet a null pour qu'un resultat perime ne survive pas a son build. */
+    comparaisonPaliers:null,
+    /* Le message du balayage : catalogues en cours de chargement, ou echec. */
+    messageComparaison:null,
     /* Preset essaye dans la vue, jamais ecrit dans le roster. */
     presetEssai:null,
     etatsEnsembles:{},
