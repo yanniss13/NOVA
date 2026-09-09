@@ -65,6 +65,10 @@ const MODULES = [
   "metier/passifs-ensembles.js",
   "metier/potentiels-equipe.js",
   "metier/degats-supplementaires.js",
+  /* AVANT `equipe-modele.js`, qui l importe pour nettoyer la rotation d une
+     equipe. Il ne depend que du noyau : la rotation ne connait ni le DOM ni
+     les catalogues, qu elle recoit en argument. */
+  "metier/rotation-equipe.js",
   "metier/equipe-modele.js",
   "metier/dispos-logique.js",
   "metier/recommandation-groupes.js",
@@ -89,6 +93,9 @@ const MODULES = [
   /* Charge a la demande les trois catalogues du simulateur DPS : la fiche de
      heros et le comparateur du calculateur y passent tous les deux. */
   "donnees/catalogues-dps.js",
+  /* Charge a la demande le catalogue du wiki : l onglet Wiki et la rotation
+     d equipe y passent tous les deux. */
+  "donnees/catalogue-wiki.js",
 
   /* vues — tout ce qui touche au DOM. */
   "vues/navigation.js",
@@ -114,6 +121,8 @@ const MODULES = [
   "vues/calculateur-lignes.js",
   "vues/calculateur.js",
   "vues/fiche-heros.js",
+  /* Avant `detail-equipe.js`, qui l importe pour son bloc de rotation. */
+  "vues/rotation-equipe.js",
   "vues/detail-equipe.js",
   "vues/equipe-boss.js",
   "vues/detail-roster.js",

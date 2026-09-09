@@ -20,6 +20,7 @@ import {
   BUILD_STATS, DATA, ELEMENTS, META, WEAPON_ENUM, metaOf
 } from "../noyau/constantes.js";
 import { $, el, norm } from "../noyau/dom.js";
+import { chargerCatalogueWiki } from "../donnees/catalogue-wiki.js";
 import { charOf } from "../metier/catalogue.js";
 import {
   armesDuWiki, armuresDuWiki, bijouxDuWiki, graveesDuWiki
@@ -81,40 +82,6 @@ import { libelleDeRarete } from "./wiki-blocs.js";
      que le « precedent / suivant » de la fiche reste utilisable. */
   function ouvrirHerosDuWiki(slug){
     if(ouvrirFiche) ouvrirFiche(slug, DATA.personnages || []);
-  }
-
-  let chargement = null;
-
-  function scriptDeDonnees(src){
-    return new Promise((resolve, reject) => {
-      document.head.appendChild(el("script",{
-        src,
-        onload:()=>resolve(true),
-        onerror:()=>reject(new Error("catalogue introuvable : " + src))
-      }));
-    });
-  }
-
-  /* Les competences et les transcendances arrivent ensemble : la fiche d'un
-     heros affiche les deux, et charger la seconde plus tard ferait apparaitre
-     une section apres coup sous les yeux du membre.
-
-     Les transcendances sont volontairement NON bloquantes. Elles viennent
-     d'une extraction locale du jeu, pas de 7dsorigin : le jour ou le fichier
-     manque, la fiche doit perdre une section, pas l'onglet entier. */
-  function chargerCatalogue(){
-    if(window.SEVEN_DS_WIKI_COMPETENCES) return Promise.resolve(true);
-    if(chargement) return chargement;
-    chargement = Promise.all([
-      scriptDeDonnees("./data/wiki-competences.js"),
-      scriptDeDonnees("./data/transcendances.js").catch(()=>false)
-    ]).then(()=>true).catch(erreur => {
-      /* Rejouable : un echec reseau ne doit pas condamner l'onglet pour toute
-         la duree de la session. */
-      chargement = null;
-      throw erreur;
-    });
-    return chargement;
   }
 
   /* Les valeurs d'un filtre : celles que les entrees portent REELLEMENT,
@@ -385,7 +352,7 @@ import { libelleDeRarete } from "./wiki-blocs.js";
       return Promise.resolve(true);
     }
     etat.textContent = "Chargement du wiki…";
-    return chargerCatalogue().then(()=>{
+    return chargerCatalogueWiki().then(()=>{
       etat.textContent = "";
       afficher();
       return true;

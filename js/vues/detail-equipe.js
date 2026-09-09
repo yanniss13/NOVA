@@ -12,15 +12,19 @@
    comme dans editeur-arme.js et picker.js : le balisage vient d'index.html,
    il existe donc avant que le module ne s'execute. */
 
-import { $ } from "../noyau/dom.js";
+import { $, el } from "../noyau/dom.js";
 import { metaOf } from "../noyau/constantes.js";
 import { canManageTeam, sessionCourante } from "../etat/session.js";
+import { catalogueWikiPret, chargerCatalogueWiki } from "../donnees/catalogue-wiki.js";
+import { Store } from "../donnees/equipes-store.js";
 import { MemberRosterStore } from "../donnees/roster-store.js";
 import { equippedEnumOf, weaponFolderOf } from "../metier/armes.js";
 import { calculateHeroStats } from "../metier/stats-calcul.js";
 import { termesDEquipe } from "../metier/potentiels-equipe.js";
 import { ModalStack } from "./modal-stack.js";
 import { heroDetail } from "./fiche-heros.js";
+import { blocRotation } from "./rotation-equipe.js";
+import { toast } from "./toast.js";
 
   /* L'element vient de l'ARME equipee, jamais du personnage. Piege documente
      dans AGENTS.md, et la raison pour laquelle un potentiel restreint a un
@@ -68,6 +72,74 @@ import { heroDetail } from "./fiche-heros.js";
     });
   }
 
+  /* LE BLOC DE ROTATION.
+
+     Il ne s'affiche PAS quand l'equipe n'en a pas et que le visiteur ne peut
+     pas en poser : une section vide chez quelqu'un qui ne peut rien y faire
+     n'est que du bruit.
+
+     Le catalogue du wiki arrive a la demande — 230 Ko qu'un visiteur qui
+     n'ouvre aucune equipe ne doit pas payer. Le bloc s'affiche donc d'abord en
+     attente, puis se redessine une fois le catalogue la. */
+  function sectionRotation(equipe){
+    const rotation = (equipe && equipe.rotation) || [];
+    const modifiable = canManageTeam(equipe);
+    if(!rotation.length && !modifiable) return null;
+    const section = el("section",{ class:"rota" },[
+      el("h3",{ class:"rota-titre", text:"Rotation" })
+    ]);
+    const corps = el("div");
+    section.appendChild(corps);
+
+    const dessiner = () => {
+      corps.innerHTML = "";
+      if(!catalogueWikiPret()){
+        corps.appendChild(el("p",{ class:"calc-muette",
+          text:"Chargement des compétences…" }));
+        return;
+      }
+      corps.appendChild(blocRotation(equipe, {
+        modifiable,
+        surEnregistrement:suite => enregistrerRotation(equipe, suite)
+      }));
+    };
+
+    dessiner();
+    if(!catalogueWikiPret()){
+      chargerCatalogueWiki().then(dessiner).catch(() => {
+        corps.innerHTML = "";
+        corps.appendChild(el("p",{ class:"calc-avertissement",
+          text:"Les compétences n'ont pas pu être chargées." }));
+      });
+    }
+    return section;
+  }
+
+  /* L'ENREGISTREMENT. Une equipe de compte passe par Supabase, une equipe
+     locale par le stockage du navigateur — `Store` connait deja la
+     difference, cette vue n'a pas a la refaire.
+
+     En cas d'echec, l'etat edite RESTE a l'ecran : on ne perd pas le travail
+     du membre sur une coupure reseau. C'est pourquoi la promesse est rejetee
+     plutot qu'avalee — le bloc redessine sans avancer sa reference. */
+  function enregistrerRotation(equipe, rotation){
+    equipe.rotation = rotation;
+    if(sessionCourante.user){
+      return Store.upsert(equipe)
+        .then(()=>{ toast("Rotation enregistrée."); })
+        .catch(()=>{
+          toast("La rotation n'a pas pu être enregistrée.", true);
+          throw new Error("ROTATION_NON_ENREGISTREE");
+        });
+    }
+    const liste = Store.all();
+    const index = liste.findIndex(item => item.id === equipe.id);
+    if(index >= 0) liste[index] = equipe;
+    Store.save(liste);
+    toast("Rotation enregistrée.");
+    return Promise.resolve(true);
+  }
+
   function openTeamDetail(t){
     $("#teamTitle").textContent = t.name
       ? t.name + " — " + (t.pseudo || "Sans pseudo")
@@ -86,6 +158,8 @@ import { heroDetail } from "./fiche-heros.js";
     };
     settings.termesEquipePour = apportsDEquipe(t.heroes || []);
     (t.heroes||[]).forEach(h=>box.appendChild(heroDetail(h, settings)));
+    const rotation = sectionRotation(t);
+    if(rotation) box.appendChild(rotation);
     ModalStack.open($("#teamOverlay"), "#teamClose", closeTeamDetail);
   }
   function closeTeamDetail(){

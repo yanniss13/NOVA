@@ -22,6 +22,7 @@ import { isLinkedArmorCompatible, isWeaponCompatible, weaponFolderOf, weaponType
 import { emptyArmor, emptyJewel } from "./equipement.js";
 import { enchantmentExpectedLength, enchantmentRequiredLength } from "./perles.js";
 import { buildWeaponGrade } from "./build-config.js";
+import { normaliserRotation } from "./rotation-equipe.js";
 
   const normalizePotentiel = raw => {
     const tier = Number.isFinite(Number(raw && raw.tier)) ? Math.trunc(Number(raw.tier)) : 0;
@@ -171,7 +172,13 @@ import { buildWeaponGrade } from "./build-config.js";
     while(heroes.length < TEAM_SIZE) heroes.push({});
     return Object.assign({}, t, {
       name:normalizeTeamName(t.name),
-      heroes:heroes.map(normalizeHero)
+      heroes:heroes.map(normalizeHero),
+      /* La rotation voyage dans le MEME blob que le reste de l'equipe — c'est
+         ce qui a permis de l'ajouter sans migrer le schema. C'est aussi
+         pourquoi elle se nettoie ici : `normalizeTeam` est le seul passage
+         oblige entre le membre et la base, quelle que soit la porte
+         d'entree. */
+      rotation:normaliserRotation(t.rotation)
     });
   }
 

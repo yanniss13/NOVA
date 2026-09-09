@@ -86,6 +86,7 @@ const SUITES = {
     "node tests/wiki-competences.test.js",
     "node tests/wiki-equipement.test.js",
     "node tests/competences-catalogue.test.js",
+    "node tests/ultimes-combines-catalogue.test.js",
     "node tests/transcendances-catalogue.test.js",
     "node tests/badges-role-element.test.js",
     "node tests/degats-calcul.test.js",
@@ -97,6 +98,8 @@ const SUITES = {
     "node tests/chrono-calcul.test.js",
     "node tests/calculateur-entrees.test.js",
     "node tests/essai-enchantements.test.js",
+    "node tests/rotation-equipe.test.js",
+    "node tests/equipe-modele.test.js",
     "node tests/comparaison-enchantements.test.js",
     "node tests/equipe-buffs.test.js",
     "node tests/passifs-graves.test.js",
@@ -145,7 +148,8 @@ const SUITES = {
     "node tests/wiki-lot2.playwright.js",
     "node tests/akumu-page.playwright.js",
     "node tests/collection.playwright.js",
-    "node tests/calculateur.playwright.js"
+    "node tests/calculateur.playwright.js",
+    "node tests/rotation-equipe.playwright.js"
   ]
 };
 

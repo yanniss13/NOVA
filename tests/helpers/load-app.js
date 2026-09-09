@@ -169,6 +169,29 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   simulerDpsCompetences:typeof simulerDpsCompetences === "function"
     ? simulerDpsCompetences
     : undefined,
+  PLAFOND_ROTATION:typeof PLAFOND_ROTATION === "number"
+    ? PLAFOND_ROTATION
+    : undefined,
+  ajouterEtape:typeof ajouterEtape === "function" ? ajouterEtape : undefined,
+  casesDeLaRotation:typeof casesDeLaRotation === "function"
+    ? casesDeLaRotation
+    : undefined,
+  combinaisonsDeLEquipe:typeof combinaisonsDeLEquipe === "function"
+    ? combinaisonsDeLEquipe
+    : undefined,
+  deplacerCase:typeof deplacerCase === "function" ? deplacerCase : undefined,
+  etapeCombinee:typeof etapeCombinee === "function" ? etapeCombinee : undefined,
+  normaliserRotation:typeof normaliserRotation === "function"
+    ? normaliserRotation
+    : undefined,
+  paletteDeLEquipe:typeof paletteDeLEquipe === "function"
+    ? paletteDeLEquipe
+    : undefined,
+  retirerLaCase:typeof retirerLaCase === "function" ? retirerLaCase : undefined,
+  retirerUne:typeof retirerUne === "function" ? retirerUne : undefined,
+  seriesDeLaRotation:typeof seriesDeLaRotation === "function"
+    ? seriesDeLaRotation
+    : undefined,
   simulationDuBuild:typeof simulationDuBuild === "function"
     ? simulationDuBuild
     : undefined,
