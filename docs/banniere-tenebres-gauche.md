@@ -1,0 +1,7 @@
+# Variante Ténèbres — Meliodas à gauche
+
+Demandée par le propriétaire, le 10 septembre 2026. Édition via l’outil intégré image_gen de la bannière Ténèbres v2. Variante enregistrée dans `assets/ambiance/nova-tenebres-gauche.png` (2172 × 724). La variante est fournie séparément ; les références du site restent inchangées.
+
+## Prompt
+
+Precise localized edit of the provided dark panoramic banner. Move ONLY the foreground Meliodas character, together with his attached black demonic wings/aura, from the RIGHT to the LEFT of the image. Preserve his exact appearance, face, demon forehead mark, pose, costume, proportions, scale and vertical placement. Translate him horizontally: his face should now center around x=18% rather than x=82%. Do NOT mirror or flip the whole image or the character. Move all of his foreground silhouette to the leftmost third, keeping the main castle clearly visible at center. At his former position on the right, carefully reconstruct only the background that he occluded, continuing the existing city, distant hills and sky naturally. ABSOLUTELY LOCK all existing visible background outside the character's old/new silhouettes: SAME central castle, SAME tower positions, SAME city walls, SAME distant hills, SAME moon position upper left, SAME clouds, SAME lighting, SAME colors. Do not relocate the moon to the right or mirror any landscape. Do not invent new large structures. Keep the exact 3:1 canvas size. Everything except relocating the character and attached wings remains visually unchanged. No text, no logo, no UI, no frame.
