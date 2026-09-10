@@ -318,12 +318,32 @@ faisait la hauteur du bloc et repoussait « Enregistrer » sous un mur d'icônes
 
 Demande arrivée après une question sur les jauges. La réponse du membre a
 écarté d'un coup tout l'affichage chiffré envisagé : **aucune valeur à
-l'écran**. Changer de héros DANS le jeu, c'est relever — la compétence de
-relève du héros qui entre joue toute seule.
+l'écran**.
 
-Elle est donc **déduite, jamais rangée** : `casesDeLaRotation` intercale une
-étape de relève entre deux cases dont le héros diffère. Même statut que le
-repli « ×N » — une vue, pas un stockage. Conséquences :
+**Première version, fausse.** J'en ai tiré la règle « changer de héros, c'est
+relever ». Le membre l'a vue tomber sur sa propre rotation, le jour même :
+*« Tu es sûr que la première relève est sur Derieri ? En jeu j'ai pas assez,
+elle se déclenche après sur Elisabeth. »* Quatrième fois que je tire une
+mécanique des données au lieu de la demander.
+
+**La règle réelle, confirmée par le membre :** on permute quand on veut, le
+changement est libre ; c'est **l'attaque d'entrée** qui coûte un point de
+relève. Un changement de héros ne produit donc une relève que si un point est
+disponible.
+
+Le modèle suit maintenant le jeu : chaque case verse son `UI_TagGauge` dans
+une jauge d'**équipe** — une seule barre, peu importe qui frappe — chaque
+tranche de 1000 donne un point, trois au plus, et un changement de héros
+dépense un point s'il en reste. Tout ça sans afficher un seul chiffre.
+
+Ce que le modèle **ne tient pas** : la régénération passive
+(`tagpoint_recovery`, 70 toutes les 1500 ms), faute d'axe de temps dans une
+rotation. Il sous-estime donc, jamais l'inverse — une relève affichée est une
+relève qu'on a vraiment.
+
+La relève reste **déduite, jamais rangée** : `casesDeLaRotation` intercale
+l'étape. Même statut que le repli « ×N » — une vue, pas un stockage.
+Conséquences :
 
 - aucune relève avant la première case : ce héros est déjà sur le terrain ;
 - une combinaison laisse son **lanceur** sur le terrain, pas ses partenaires ;
@@ -342,13 +362,29 @@ supprimé la mauvaise étape.
 | Fait | Source |
 |---|---|
 | `tagpoint_gauge` = 1000, `tagpoint_maxstack` = 3 | `Misc/DefineTable` |
-| La jauge est **une seule barre d'équipe** | mesure du membre en jeu |
-| `UI_TagGauge` par compétence (Ban nunchaku : E = 151) | `Skill/PC_SkillTable` |
+| `tagpoint_use_all` = False, `tagpoint_resetbytag` = Off | `Misc/DefineTable` |
+| La jauge est **une seule barre d'équipe** | réponse du membre |
+| Le changement est libre, l'attaque d'entrée coûte un point | réponse du membre |
+| `UI_TagGauge` par compétence | `Skill/PC_SkillTable` |
 | Les 78 relèves partagent **une seule icône** `Icon_TagSkill.webp` | `data/wiki-competences.js` |
 
-Les valeurs de jauge ne sont pas affichées — le membre n'en veut pas. Elles
-sont notées ici parce qu'elles ont servi à poser la question, et qu'elles
-serviront le jour où le simulateur voudra chiffrer une rotation.
+Les valeurs vivent dans `data/jauges-releve.js`, écrit par
+`outils/fmodel/ecrire-jauges-releve.js` et gardé hors ligne par
+`tests/jauges-releve-catalogue.test.js`. **391 compétences, 235 remplissent la
+jauge.**
+
+Le piège de l'extraction, verrouillé par ce test : le wiki publie la chaîne
+d'auto-attaques sous l'identifiant `..._jumpatk`, qui dans la table du jeu
+désigne l'attaque **sautée** — une autre compétence, à zéro de jauge. Une
+jointure naïve sur le gameId aurait donné zéro à toutes les auto-attaques,
+c'est-à-dire à ce qu'on enchaîne le plus. La valeur retenue est la somme de la
+chaîne `normalatk_*`. Et le préfixe du porteur se **cherche** au lieu de se
+deviner : `gil_thunder_lance_jumpatk` a un héros en deux segments, et cinq
+héros publient leur auto sous une variante enchantée dont toutes les lignes
+valent zéro.
+
+Aucun de ces chiffres n'est affiché — le membre n'en veut pas. Ils décident
+seulement où la relève tombe.
 
 L'icône générique explique le rendu retenu : c'est le **portrait de celui qui
 entre** qui est grand, l'icône ne fait que marquer. Le nom de la relève est

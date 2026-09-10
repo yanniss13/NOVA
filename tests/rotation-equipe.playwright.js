@@ -327,20 +327,32 @@ const STORAGE_KEY = "confrerie7ds.teams";
       "« Annuler » ramene la rotation enregistree apres un effacement"
     );
 
-    /* LA RELEVE, DEDUITE DU CHANGEMENT DE HEROS.
+    /* LA RELEVE SE DEDUIT DE LA JAUGE, pas du changement de heros.
 
-       Le membre ne la pose pas : elle apparait parce que la case suivante
-       appartient a quelqu'un d'autre. La palette ne la propose donc plus. */
+       Le membre ne la pose pas — la palette ne la propose plus. Mais changer
+       de heros ne suffit pas : il faut un point de releve, et un point coute
+       1000 de jauge. */
     assert.equal(
       await rota.locator(".rota-releve").count(), 0,
       "une rotation d'un seul heros ne releve pas"
     );
     /* La deuxieme ligne de la palette est celle du second heros — Tristan. */
-    await rota.locator(".rota-palette-ligne").nth(1)
-      .locator(".rota-palette-bouton").first().click();
+    const versTristan = rota.locator(".rota-palette-ligne").nth(1)
+      .locator(".rota-palette-bouton").first();
+    await versTristan.click();
+    assert.equal(
+      await rota.locator(".rota-releve").count(), 0,
+      "sans point, le changement de heros se fait SANS attaque d'entree"
+    );
+    /* On remplit la jauge : le E de Ban aux gantelets vaut 181, six appuis
+       passent les 1000. */
+    const banE = rota.locator(".rota-palette-ligne").nth(0)
+      .locator(".rota-palette-bouton").nth(1);
+    for(let appui = 0; appui < 6; appui++) await banE.click();
+    await versTristan.click();
     assert.equal(
       await rota.locator(".rota-releve").count(), 1,
-      "passer a un autre heros insere une releve"
+      "la jauge remplie, le changement de heros releve"
     );
     /* Elle se tient JUSTE AVANT la case qui l'a provoquee. */
     assert.equal(
@@ -407,11 +419,11 @@ const STORAGE_KEY = "confrerie7ds.teams";
           { char:"ban", weapon:gantelets },
           { char:"tristan", weapon:epees }
         ];
-        equipe.data.rotation = [
-          "ban_gauntlets_skill_e", "ban_gauntlets_skill_e",
-          "tristan_sworddual_skill_e",
-          "ban_gauntlets_jumpatk"
-        ];
+        /* SIX E de Ban, et pas deux : a 181 de jauge chacun, il en faut six
+           pour payer la releve de 1000 qui suit. Une rotation plus courte
+           n'en montrerait aucune, et le test ne prouverait plus rien. */
+        equipe.data.rotation = new Array(6).fill("ban_gauntlets_skill_e")
+          .concat(["tristan_sworddual_skill_e", "ban_gauntlets_jumpatk"]);
         equipe.updated_at = new Date().toISOString();
       });
       await pageLecture.locator('.tabs .tab[data-view="roster"]').click();
@@ -434,7 +446,9 @@ const STORAGE_KEY = "confrerie7ds.teams";
 
       assert.equal(await lecture.locator(".rota-case").count(), 3,
         "la rotation de l'autre membre se lit en entier");
-      assert.equal(await lecture.locator(".rota-releve").count(), 2,
+      /* UNE seule releve : les six E payent un point, le passage a Tristan le
+         depense, et le retour vers Ban n'a plus rien a depenser. */
+      assert.equal(await lecture.locator(".rota-releve").count(), 1,
         "les releves se deduisent aussi chez les autres");
       /* LE POINT DUR : aucune prise. Ni croix, ni fleches, ni « + », ni
          palette, ni bouton d'enregistrement. */

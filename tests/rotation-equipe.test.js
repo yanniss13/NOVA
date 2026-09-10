@@ -32,6 +32,7 @@ const catalogueDe = fichier => {
 };
 const COMPETENCES = catalogueDe("wiki-competences.js").SEVEN_DS_WIKI_COMPETENCES;
 const COMBINAISONS = catalogueDe("ultimes-combines.js").SEVEN_DS_ULTIMES_COMBINES;
+const JAUGES = catalogueDe("jauges-releve.js").SEVEN_DS_JAUGES_RELEVE;
 
 const BAN_NUNCHAKU = {
   char:"ban", weapon:"7ds-armes/Nunchaku/Nunchaku de l'âme vorace.webp"
@@ -287,80 +288,147 @@ assert.equal(PLAFOND_ROTATION, 60, "le plafond compte les appuis, pas les cases"
   assert.deepEqual(Array.from(retirerLaCase(base, 9)), Array.from(base));
 }
 
-/* LA RELÈVE, DÉDUITE DU CHANGEMENT DE HÉROS.
+/* LA RELÈVE SE DÉDUIT DE LA JAUGE, PAS DU CHANGEMENT DE HÉROS.
 
-   Changer de personnage dans le jeu, c'est relever : la compétence de relève
-   du héros qui ENTRE joue toute seule. Le membre n'a donc rien à poser, et le
-   site n'a rien à ranger — c'est une vue, exactement comme le repli « ×N ».
+   Première version : « changer de héros, c'est relever ». Faux, et c'est le
+   membre qui l'a vu sur sa propre rotation — « en jeu j'ai pas assez, elle se
+   déclenche après sur Elisabeth ». On permute quand on veut ; c'est l'attaque
+   d'entrée qui coûte un point.
 
-   Le catalogue publie une relève par couple (héros, arme), catégorie
-   `TAG_SKILL`. C'est le vrai catalogue qui est lu ici, pas un faux. */
+   Les valeurs ci-dessous sont celles du jeu, lues dans `data/jauges-releve.js`
+   (champ `UI_TagGauge` de `Skill/PC_SkillTable`). Les écrire en clair est
+   volontaire : si le jeu les change, ces tests doivent tomber bruyamment.
+
+     Ban gantelets   — E 181 · Q 111 · auto 76 · ultime 0 · relève 0
+     Tristan épées   — E 140 · auto 142 · Q 0 · relève 0
+
+   Une relève coûte 1000 (`tagpoint_gauge`), on en cumule 3
+   (`tagpoint_maxstack`). */
 {
-  const equipe = [BAN_NUNCHAKU, TRISTAN];
+  const equipe = [BAN_GANTELETS, TRISTAN];
+  const cases = rotation => casesDeLaRotation(rotation, equipe, COMPETENCES, JAUGES);
   const releveDe = (char, arme) => COMPETENCES[char]
     .find(c => c.weaponType === arme && c.categorie === "TAG_SKILL");
   const releveTristan = releveDe("tristan", "SwordDual");
-  const releveBan = releveDe("ban", "Cudgel3c");
+  const releveBan = releveDe("ban", "Gauntlets");
   assert.ok(releveTristan && releveBan, "le catalogue publie une relève par arme");
 
-  /* Deux héros à la suite : une relève s'intercale, et elle porte la
-     compétence de celui qui ENTRE. */
-  const melange = casesDeLaRotation(
-    ["ban_cudgel3c_skill_e", "tristan_sworddual_skill_e"], equipe, COMPETENCES
+  assert.equal(JAUGES.ban_gauntlets_skill_e, 181,
+    "la jauge du E de Ban aux gantelets a changé, tout ce bloc est à relire");
+  assert.equal(JAUGES.tristan_sworddual_skill_e, 140);
+
+  /* PAS ASSEZ DE JAUGE : un seul E de Ban (181) ne paye pas une relève. Le
+     changement de héros se fait quand même — il est libre. */
+  const tropTot = cases(["ban_gauntlets_skill_e", "tristan_sworddual_skill_e"]);
+  assert.equal(tropTot.length, 2, "à 181 de jauge, aucune relève ne part");
+  assert.equal(tropTot.filter(item => item.releve).length, 0);
+
+  /* ASSEZ DE JAUGE : six E de Ban font 1086, donc un point. La relève part au
+     changement, et elle porte la compétence de celui qui ENTRE. */
+  const assez = cases(
+    new Array(6).fill("ban_gauntlets_skill_e").concat(["tristan_sworddual_skill_e"])
   );
-  assert.equal(melange.length, 3, "deux cases posées, une relève déduite");
-  assert.equal(melange[1].releve, true);
-  assert.equal(melange[1].char, "tristan", "la relève est celle du héros qui entre");
-  assert.equal(melange[1].sortant, "ban", "elle nomme aussi celui qui sort");
-  assert.equal(melange[1].competence.gameId, releveTristan.gameId);
-  assert.equal(melange[1].serie, null, "une relève ne vise aucune étape rangée");
+  assert.equal(assez.length, 3, "une case ×6, une relève, une case");
+  assert.equal(assez[1].releve, true);
+  assert.equal(assez[1].char, "tristan", "la relève est celle du héros qui entre");
+  assert.equal(assez[1].sortant, "ban", "elle nomme aussi celui qui sort");
+  assert.equal(assez[1].competence.gameId, releveTristan.gameId);
+  assert.equal(assez[1].serie, null, "une relève ne vise aucune étape rangée");
+
+  /* LE POINT SE DÉPENSE. Six E donnent UN point ; le premier changement le
+     consomme, le retour vers Ban n'a plus rien — même si Tristan a versé 140
+     entre-temps. */
+  const unSeulPoint = cases(
+    new Array(6).fill("ban_gauntlets_skill_e")
+      .concat(["tristan_sworddual_skill_e", "ban_gauntlets_jumpatk"])
+  );
+  assert.deepEqual(
+    Array.from(unSeulPoint.filter(item => item.releve).map(item => item.char)),
+    ["tristan"],
+    "un point payé une fois ne paye pas le retour"
+  );
+
+  /* DE QUOI FAIRE LES DEUX : douze E de Ban font 2172, soit deux points. */
+  const deuxPoints = cases(
+    new Array(12).fill("ban_gauntlets_skill_e")
+      .concat(["tristan_sworddual_skill_e", "ban_gauntlets_jumpatk"])
+  );
+  assert.deepEqual(
+    Array.from(deuxPoints.filter(item => item.releve).map(item => item.char)),
+    ["tristan", "ban"],
+    "deux points payent deux relèves"
+  );
+
+  /* LE PLAFOND. `tagpoint_maxstack` vaut 3 : quarante E de Ban font 7240, de
+     quoi payer sept relèves si la barre banquait sans limite. Elle n'en stocke
+     que trois, le reste est perdu.
+
+     Le test enchaîne donc QUATRE changements sur des compétences à zéro de
+     jauge — `tristan_sworddual_skill_q` et `ban_gauntlets_skill_r` valent 0.
+     Sans ce détail il ne prouverait rien : dépenser un point libère de la
+     place, la barre restée pleine à ras bord se recharge à la première
+     compétence qui verse, et un cinquième changement repartirait. C'est le
+     jeu, pas un défaut — mais ça ne teste alors plus le plafond. */
+  assert.equal(JAUGES.tristan_sworddual_skill_q, 0, "le Q de Tristan doit être à 0");
+  assert.equal(JAUGES.ban_gauntlets_skill_r, 0, "l'ultime de Ban doit être à 0");
+  const plafond = cases(
+    new Array(40).fill("ban_gauntlets_skill_e").concat([
+      "tristan_sworddual_skill_q", "ban_gauntlets_skill_r",
+      "tristan_sworddual_skill_q", "ban_gauntlets_skill_r"
+    ])
+  );
+  assert.equal(
+    plafond.filter(item => item.releve).length, 3,
+    "on ne stocke jamais plus de trois relèves"
+  );
 
   /* Aucune relève avant la première case : ce héros est déjà sur le terrain. */
   assert.equal(
-    casesDeLaRotation(["ban_cudgel3c_skill_e"], equipe, COMPETENCES).length, 1,
+    cases(new Array(6).fill("ban_gauntlets_skill_e")).length, 1,
     "on ne relève pas vers le héros par lequel on commence"
   );
 
-  /* Deux compétences du MÊME héros ne relèvent pas, même séparées. */
-  const memeHeros = casesDeLaRotation(
-    ["ban_cudgel3c_skill_e", "ban_cudgel3c_jumpatk"], equipe, COMPETENCES
-  );
+  /* Deux compétences du MÊME héros ne relèvent pas, même la jauge pleine. */
   assert.equal(
-    memeHeros.filter(item => item.releve).length, 0,
+    cases(new Array(6).fill("ban_gauntlets_skill_e")
+      .concat(["ban_gauntlets_jumpatk"]))
+      .filter(item => item.releve).length,
+    0,
     "rester sur le même héros ne relève pas"
   );
 
-  /* Un aller-retour relève DEUX fois. */
-  const allerRetour = casesDeLaRotation(
-    ["ban_cudgel3c_skill_e", "tristan_sworddual_skill_e", "ban_cudgel3c_jumpatk"],
-    equipe, COMPETENCES
-  );
+  /* LE RANG DES MUTATIONS ne se confond pas avec la place à l'écran. */
   assert.deepEqual(
-    Array.from(allerRetour.filter(item => item.releve).map(item => item.char)),
-    ["tristan", "ban"],
-    "chaque changement de héros relève"
-  );
-
-  /* LE RANG DES MUTATIONS ne se confond pas avec la place à l'écran. La
-     troisième case posée est en quatrième position une fois les relèves
-     intercalées — c'est `serie` qui fait autorité, jamais l'index visuel. */
-  assert.deepEqual(
-    Array.from(allerRetour.map(item => item.serie)), [0, null, 1, null, 2],
+    Array.from(deuxPoints.map(item => item.serie)), [0, null, 1, null, 2],
     "les cases posées gardent leur rang de rotation"
   );
 
-  /* UNE RELÈVE POSÉE À LA MAIN n'en fait pas apparaître une seconde. Une
-     rotation composée avant ce changement peut en contenir une. */
-  const posee = casesDeLaRotation(
-    ["ban_cudgel3c_skill_e", releveTristan.gameId], equipe, COMPETENCES
+  /* UNE RELÈVE POSÉE À LA MAIN tient lieu de relève et DÉPENSE son point : la
+     rotation composée avant ce modèle reste juste. */
+  const posee = cases(
+    new Array(12).fill("ban_gauntlets_skill_e").concat([
+      releveTristan.gameId, "tristan_sworddual_skill_e", "ban_gauntlets_jumpatk"
+    ])
   );
-  assert.equal(posee.length, 2, "la relève posée tient lieu de relève déduite");
-  assert.equal(posee[1].releve, undefined);
+  assert.equal(
+    posee.filter(item => item.releve).length, 1,
+    "la relève posée consomme un point, il n'en reste qu'un pour le retour"
+  );
+  assert.equal(posee[1].releve, undefined, "la case posée reste une case posée");
   assert.equal(posee[1].orpheline, false,
     "une relève posée reste une case normale, pas une orpheline");
 
-  /* LA PALETTE NE PROPOSE PLUS LA RELÈVE : elle se déduit, l'offrir ferait
-     poser deux fois la même chose. */
+  /* SANS CATALOGUE DE JAUGES, la rotation s'affiche entière et cesse seulement
+     de placer les relèves. Jamais une page en moins pour un catalogue en
+     moins. */
+  const sansJauges = casesDeLaRotation(
+    new Array(12).fill("ban_gauntlets_skill_e").concat(["tristan_sworddual_skill_e"]),
+    equipe, COMPETENCES, null
+  );
+  assert.equal(sansJauges.length, 2, "les cases restent");
+  assert.equal(sansJauges.filter(item => item.releve).length, 0);
+
+  /* LA PALETTE NE PROPOSE PLUS LA RELÈVE : elle se déduit. */
   const palette = paletteDeLEquipe(equipe, COMPETENCES);
   const offertes = palette.reduce(
     (tout, entree) => tout.concat(entree.competences.map(c => c.categorie)), []
@@ -373,13 +441,11 @@ assert.equal(PLAFOND_ROTATION, 60, "le plafond compte les appuis, pas les cases"
 
   /* Une COMBINAISON met son LANCEUR sur le terrain : les partenaires
      enchaînent depuis leur banc, ils ne prennent pas la place. */
-  const combinee = casesDeLaRotation(
-    [
-      "ban_gauntlets_skill_e",
+  const combinee = cases(
+    new Array(12).fill("ban_gauntlets_skill_e").concat([
       "@combine:ban_gauntlets_skill_r:tristan_sworddual_skill_q",
       "ban_gauntlets_jumpatk"
-    ],
-    [BAN_GANTELETS, TRISTAN], COMPETENCES
+    ])
   );
   assert.equal(
     combinee.filter(item => item.releve).length, 0,
