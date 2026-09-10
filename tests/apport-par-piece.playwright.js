@@ -175,6 +175,11 @@ const EQUIPE = {
   const server = await serveRepo();
   const browser = await chromium.launch({ headless:true });
   const page = await browser.newPage({ viewport:{ width:1440, height:1000 } });
+  /* « Puissance par arme » est masquée aux membres en attendant sa finition —
+     voir `puissanceParArmeVisible` dans `js/vues/fiche-heros.js`. L'essai la
+     rallume pour continuer de la couvrir : la cacher ne doit pas revenir à
+     cesser de la vérifier. */
+  await page.addInitScript(() => { window.NOVA_AFFICHER_PUISSANCE_PAR_ARME = true; });
   const errors = [];
   page.on("pageerror", error => errors.push(error.message));
 
