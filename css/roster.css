@@ -62,7 +62,7 @@
 .mini{display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center}
 .mini-portrait{
   width:100%;aspect-ratio:1/1;border-radius:9px;overflow:hidden;
-  background:#0b0910 center/cover no-repeat;border:1px solid var(--line);
+  background:var(--vignette-fond,#0b0910) center/cover no-repeat;border:1px solid var(--line);
   display:grid;place-items:center;color:var(--muted-2);font-size:20px
 }
 .mini-portrait img{width:100%;height:100%;object-fit:cover}
@@ -73,7 +73,7 @@
   align-items:flex-start;align-content:flex-start}
 .icn{
   flex:none;box-sizing:border-box;
-  width:22px;height:22px;border-radius:5px;background:#0b0910 center/contain no-repeat;
+  width:22px;height:22px;border-radius:5px;background:var(--vignette-fond,#0b0910) center/contain no-repeat;
   border:1px solid var(--line-soft);
 }
 .icn.weapon{border-color:var(--gold-deep)}
@@ -165,7 +165,7 @@
   position:relative;z-index:1
 }
 .member-roster-portrait{
-  width:72px;height:72px;border-radius:10px;overflow:hidden;background:#0b0910;
+  width:72px;height:72px;border-radius:10px;overflow:hidden;background:var(--vignette-fond,#0b0910);
   border:1px solid var(--gold-deep)
 }
 .member-roster-portrait img{width:100%;height:100%;object-fit:cover}
@@ -253,7 +253,7 @@
 .hd-head{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center}
 .hd-portrait{
   width:72px;height:72px;border-radius:10px;overflow:hidden;border:1px solid var(--line);
-  background:#0b0910 center/cover no-repeat;display:grid;place-items:center;color:var(--muted-2)
+  background:var(--vignette-fond,#0b0910) center/cover no-repeat;display:grid;place-items:center;color:var(--muted-2)
 }
 .hd-portrait img{width:100%;height:100%;object-fit:cover}
 .hd-name{font-family:var(--display);font-weight:600;font-size:14.5px;color:var(--parchment)}
@@ -270,7 +270,7 @@
 .eq-line{display:flex;align-items:center;gap:9px;padding:4px 0}
 .eq-thumb{
   width:32px;height:32px;flex:none;border-radius:6px;border:1px solid var(--line-soft);
-  background:#0b0910 center/contain no-repeat
+  background:var(--vignette-fond,#0b0910) center/contain no-repeat
 }
 .eq-thumb.weapon{border-color:var(--gold-deep)}
 .eq-thumb.jewel{border-color:rgba(161,44,44,.55)}

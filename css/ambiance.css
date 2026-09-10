@@ -21,6 +21,11 @@
   --header-glass:rgba(19,15,27,.72);
   --panel-wash:linear-gradient(145deg,#251d31,#18131f);
   --inset-bg:rgba(9,6,15,.32);
+  /* Le fond des vignettes. Toutes les illustrations du jeu — portraits, armes,
+     armures, bijoux — sont TRANSPARENTES : ce fond est le seul décor derrière
+     elles. Il était écrit en dur seize fois dans six feuilles, ce qui posait
+     des carrés noirs au milieu du thème clair. */
+  --vignette-fond:#0b0910;
   --banner-image:url("../assets/ambiance/nova-tenebres-v2.webp");
   --banner-veil:linear-gradient(90deg,rgba(16,13,24,.65),rgba(16,13,24,.12) 55%,transparent 80%);
   --banner-scrim:rgba(16,13,24,.52);
@@ -48,6 +53,10 @@
   --header-glass:rgba(250,246,236,.74);
   --panel-wash:linear-gradient(145deg,#fffaf2,#f0e6d6);
   --inset-bg:rgba(163,132,86,.08);
+  /* Un creux de parchemin, pas du blanc : les illustrations sont d'une
+     luminance médiane de 91 à 107 sur 255, elles se détachent nettement.
+     Les plus claires gardent leur cerne pour ne pas s'y dissoudre. */
+  --vignette-fond:#eadfcc;
   --banner-image:url("../assets/ambiance/nova-lumiere-v2.webp");
   --banner-veil:linear-gradient(90deg,rgba(255,246,227,.8),rgba(255,246,227,.23) 55%,transparent 80%);
   --banner-scrim:rgba(255,246,227,.6);
@@ -320,11 +329,9 @@ body:not(:has(.view.active)) .guild-banner-texte[data-vue="dashboard"]{display:b
 :root[data-theme="light"] .seal,
 :root[data-theme="light"] .auth-mark,
 :root[data-theme="light"] .import-captures-depot-icone{background:var(--panel-2)}
-:root[data-theme="light"] .wiki-tile img,
-:root[data-theme="light"] .tile-img,
-:root[data-theme="light"] .gear-thumb,
-:root[data-theme="light"] .boss-team-banner-portrait,
-:root[data-theme="light"] .boss-team-choice-portrait{background-color:var(--obsidian-2)}
+/* Ces cinq sélecteurs étaient éclaircis un par un. Ils passent désormais par
+   `--vignette-fond`, comme les onze autres : deux mécanismes pour une seule
+   chose, c'était la garantie d'en oublier un — et il en manquait bien onze. */
 :root[data-theme="light"] .avail-cell[data-tier="1"]{background:#e6dfd1;color:#5c5041}
 :root[data-theme="light"] .avail-cell[data-tier="2"]{background:#d5c49d;color:#433725}
 :root[data-theme="light"] .avail-cell[aria-pressed="true"],

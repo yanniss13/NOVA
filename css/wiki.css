@@ -46,7 +46,7 @@
 .wiki-tile:hover{border-color:var(--gold-deep);transform:translateY(-2px)}
 .wiki-tile img{
   width:100%;aspect-ratio:1/1;border-radius:6px;object-fit:cover;
-  background:#0b0910
+  background:var(--vignette-fond,#0b0910)
 }
 .wiki-tile-name{
   font-size:11px;line-height:1.2;text-align:center;word-break:break-word
@@ -87,7 +87,7 @@
   position:relative;z-index:1;flex:none;
   width:82px;height:82px;overflow:hidden;
   transform:rotate(45deg);border-radius:14px;
-  border:2px solid var(--aura);background:#0b0910;
+  border:2px solid var(--aura);background:var(--vignette-fond,#0b0910);
   box-shadow:0 0 26px -8px var(--aura)
 }
 /* Le portrait est contre-tourne et deborde : la diagonale d'un carre de 82
@@ -158,7 +158,7 @@
    et le liseré evitent qu'une icone claire flotte sans attache. */
 .wiki-skill-icon{
   width:34px;height:34px;flex:none;border-radius:8px;
-  background:#0b0910;border:1px solid var(--line);padding:2px
+  background:var(--vignette-fond,#0b0910);border:1px solid var(--line);padding:2px
 }
 /* La touche en pastille : Q, E, R se lisent d'un coup d'oeil, et « Passif »
    ou « Attaque sautee » gardent leur mot entier plutot qu'un pictogramme. */
@@ -228,7 +228,7 @@
 .wiki-gravees{list-style:none;margin:0;padding:0;display:grid;gap:10px}
 .wiki-gravee{display:flex;gap:12px;align-items:flex-start}
 .wiki-gravee img{
-  width:56px;height:56px;flex:0 0 56px;border-radius:8px;background:#0b0910;
+  width:56px;height:56px;flex:0 0 56px;border-radius:8px;background:var(--vignette-fond,#0b0910);
   border:1px solid var(--line)
 }
 .wiki-gravee-corps{min-width:0;display:flex;flex-direction:column;gap:2px}
@@ -304,7 +304,7 @@
 }
 .wiki-set-piece{
   width:50px;height:50px;padding:0;cursor:pointer;
-  background:#0b0910;border:1px solid var(--line);border-radius:8px;
+  background:var(--vignette-fond,#0b0910);border:1px solid var(--line);border-radius:8px;
   transition:.14s
 }
 .wiki-set-piece img{width:100%;height:100%;object-fit:contain;display:block}
@@ -324,7 +324,7 @@
 .wiki-linked-hero:hover{border-color:var(--gold-deep);color:var(--gold-bright)}
 .wiki-linked-hero img{
   width:44px;height:44px;border-radius:8px;object-fit:cover;
-  background:#0b0910;flex:none
+  background:var(--vignette-fond,#0b0910);flex:none
 }
 
 @media (max-width:520px){

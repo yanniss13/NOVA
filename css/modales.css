@@ -60,7 +60,7 @@ body.modal-locked{
 .tile:hover{border-color:var(--gold-deep);transform:translateY(-2px)}
 .tile.selected{border-color:var(--gold-bright);box-shadow:0 0 0 1px var(--gold-bright) inset}
 .tile-img{
-  width:100%;aspect-ratio:1/1;border-radius:6px;background:#0b0910 center/contain no-repeat;
+  width:100%;aspect-ratio:1/1;border-radius:6px;background:var(--vignette-fond,#0b0910) center/contain no-repeat;
   display:grid;place-items:center;font-size:22px;color:var(--muted-2)
 }
 .tile-img img{width:100%;height:100%;object-fit:contain}
