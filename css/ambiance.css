@@ -161,7 +161,15 @@ body{
 .guild-banner::before{
   content:"";position:absolute;inset:0;z-index:-2;pointer-events:none;
   background-image:var(--banner-image);
-  background-position:center;background-size:cover;
+  /* Ancre a DROITE, la ou se tient le personnage. Le panorama fait 3:1 ; des
+     que la banniere est plus etroite que ca, `cover` n'en montre qu'une
+     tranche. Centree, cette tranche s'arretait a 79 % de la largeur en mobile
+     et coupait Meliodas comme Elizabeth, qui occupent les 22 derniers pour
+     cent. Ancree a droite, elle va de 61 % a 100 % : le personnage entier, et
+     le chateau tient encore dans le cadre.
+     Au-dela de 3:1 l'image se cale sur la largeur et se recadre en hauteur :
+     cet ancrage n'y change rien. */
+  background-position:100% center;background-size:cover;
   -webkit-mask-image:var(--banner-fondu);
   mask-image:var(--banner-fondu);
 }
@@ -433,9 +441,12 @@ body:not(:has(.view.active)) .guild-banner-texte[data-vue="dashboard"]{display:b
 @media(max-width:560px){
   .brand-title{font-size:23px;letter-spacing:.16em}
   .crest{width:32px;height:32px}
-  /* Le recadrage porte sur l'image seule : le voile, lui, est une couche
-     indépendante qui reste alignée sur le texte. */
-  .guild-banner::before{background-position:66% center}
+  /* En mobile la tranche visible ne fait que 39 % de la largeur : le chateau
+     ET le personnage entier n'y tiennent pas ensemble. On vise donc sa TETE,
+     qui occupe 77 a 90 % de l'image. A 88 %, la fenetre va de 54 a 93 % : le
+     visage est dans le cadre, un pan de chateau reste derriere le texte, et
+     le titre ne lui passe plus dessus. */
+  .guild-banner::before{background-position:88% center}
   .guild-banner-inner{min-height:288px;padding:78px 22px 26px}
   .guild-banner-title{font-size:35px;line-height:1.1}
   .guild-banner-lead{max-width:250px;font-size:12px;margin:12px 0 8px}
