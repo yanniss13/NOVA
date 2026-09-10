@@ -56,7 +56,7 @@
 .cov-sub{font-size:11px;color:var(--gold-bright);font-weight:600}
 /* Le portrait sert encore au recensement, qui l'emprunte au classement
    disparu. */
-.rk-portrait{display:block;width:28px;height:28px;flex:none;border-radius:6px;overflow:hidden;background:#0b0910 center/cover no-repeat;border:1px solid var(--line-soft)}
+.rk-portrait{display:block;width:28px;height:28px;flex:none;border-radius:6px;overflow:hidden;background:var(--vignette-fond,#0b0910) center/cover no-repeat;border:1px solid var(--line-soft)}
 .rk-portrait img{width:100%;height:100%;object-fit:cover}
 .rank-empty{padding:18px;text-align:center;color:var(--muted)}
 .matrix-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
