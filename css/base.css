@@ -58,10 +58,12 @@ a{color:var(--gold-bright)}
   backdrop-filter:blur(8px);
 }
 /* `flex:1 1 0` plutot que `margin-right:auto` : la marque et le compte
-   occupent desormais deux moities EGALES, ce qui pose le logo LootBar au
-   centre reel du header. Une marge automatique l'aurait centre dans l'espace
-   libre, donc de travers - et le bloc compte change de largeur en se
-   connectant, si bien que le decalage aurait bouge sous les yeux du membre. */
+   occupent deux moities EGALES. Cette regle est nee pour centrer le logo
+   LootBar ; le logo est descendu en pied de page, mais elle garde tout son
+   sens - ce sont les ONGLETS qui occupent maintenant ce centre. Une marge
+   automatique les centrerait dans l'espace LIBRE, donc de travers, et le bloc
+   compte change de largeur en se connectant : le decalage aurait bouge sous
+   les yeux du membre. */
 .brand{display:flex;align-items:center;gap:14px;flex:1 1 0;min-width:0}
 .crest{
   width:44px;height:44px;flex:none;display:grid;place-items:center;
@@ -77,12 +79,10 @@ a{color:var(--gold-bright)}
   color:var(--parchment);
 }
 .brand-sub{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
-/* Le lien affilie LootBar, au centre de la premiere ligne du header.
-
-   Le vrai centrage vient de responsive.css, qui donne le meme `flex:1` a la
-   marque et au compte : sans cela le logo se poserait au milieu de l'espace
-   LIBRE, donc de travers des que les deux cotes n'ont pas la meme largeur -
-   et le compte change de largeur en se connectant. */
+/* Le lien affilie LootBar. Il a longtemps vecu au centre de la premiere ligne
+   du header ; il est descendu en pied de page, ou son jaune de marque trouve
+   le fond sombre qu'il lui faut dans les DEUX ambiances. Ces regles de base
+   le servent la-bas ; le pied de page les complete en fin de feuille. */
 .lootbar{
   flex:0 0 auto;display:flex;align-items:center;
   border-radius:8px;padding:4px 8px;opacity:.85;transition:.14s;
@@ -196,3 +196,81 @@ main{max-width:1180px;margin:0 auto;padding:clamp(20px,4vw,40px)}
 :where(button,[href],input,select,textarea,[tabindex]):focus-visible{
   outline:2px solid var(--gold-bright);outline-offset:2px
 }
+
+/* ---------- Pied de page ---------- */
+/* Il sert index.html ET akumu.html, qui ne charge que cette feuille : les
+   styles du pied vivent ici, et non dans la couche d'ambiance.
+
+   Le parti pris : la page s'OUVRE sur la citadelle en pleine lumiere et se
+   FERME sur sa silhouette. C'est le meme panorama, deja precache, assombri et
+   masque au point qu'on n'en devine que la ligne de crete. Il ne coute donc
+   pas un octet de plus, et il n'a de sens que sur ce site-la.
+
+   Le socle reste sombre dans les DEUX ambiances : il porte le logo LootBar,
+   dont le jaune de marque tombe a 1.6:1 sur l'ivoire du theme clair. */
+.site-footer{
+  position:relative;isolation:isolate;margin-top:72px;
+  background:#0a0710;
+}
+/* La silhouette. Toujours le panorama SOMBRE, meme en ambiance Lumiere : le
+   socle est sombre dans les deux cas, un panorama clair y jurerait. */
+.site-footer::before{
+  content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+  background:url("../assets/ambiance/nova-tenebres.webp") right bottom / cover no-repeat;
+  opacity:.16;filter:brightness(.7) saturate(.75);
+  -webkit-mask-image:linear-gradient(to top,#000 0,transparent 88%);
+  mask-image:linear-gradient(to top,#000 0,transparent 88%);
+}
+/* Le filet du haut s'eteint vers la droite, comme le voile de la banniere
+   s'eteint vers elle. Les deux extremites de la page se repondent. */
+.site-footer::after{
+  content:"";position:absolute;inset:0 0 auto;height:1px;z-index:-1;
+  background:linear-gradient(90deg,var(--gold-deep),rgba(217,164,65,.12) 46%,transparent 82%);
+}
+.site-footer-inner{
+  max-width:1180px;margin:auto;
+  padding:44px clamp(16px,4vw,40px) 30px;
+  display:grid;grid-template-columns:minmax(180px,auto) 1fr minmax(210px,280px);
+  gap:34px 48px;align-items:start;
+}
+.site-footer-marque{display:grid;grid-template-columns:auto 1fr;gap:0 12px;align-items:center}
+.site-footer-crest{width:34px;height:34px;grid-row:span 2;color:var(--gold-bright);stroke-width:1.1}
+.site-footer-titre{
+  align-self:end;
+  font-family:var(--display);font-weight:700;letter-spacing:.22em;
+  text-transform:uppercase;font-size:19px;color:var(--parchment);
+}
+.site-footer-sous{align-self:start;margin-top:5px;font-size:10px;letter-spacing:.17em;text-transform:uppercase;color:var(--muted)}
+/* Une colonne, pas une ligne : quatre destinations se lisent plus vite
+   empilees qu'alignees, et la trame reste stable quand un lien s'ajoute. */
+.site-footer-liens{display:flex;flex-direction:column;min-width:0;padding-top:2px}
+.site-footer-liens a{
+  display:inline-flex;align-items:center;align-self:flex-start;min-height:38px;
+  color:var(--muted);text-decoration:none;font-size:13.5px;
+  border-bottom:1px solid transparent;transition:color .14s,border-color .14s;
+}
+.site-footer-liens a:hover{color:var(--gold-bright);border-bottom-color:var(--gold-deep)}
+.site-footer-partenaire{display:flex;flex-direction:column;gap:9px;min-width:0}
+.site-footer-mention{
+  font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-2);
+}
+/* Le logo n'est plus centre dans une ligne d'en-tete : il s'aligne a gauche de
+   sa colonne, et n'a plus a etre attenue pour s'y faire oublier. */
+.site-footer .lootbar{align-self:flex-start;opacity:1;padding:2px 0}
+.site-footer .lootbar img{height:29px}
+.site-footer-note{margin:0;font-size:11.5px;line-height:1.6;color:var(--muted-2);max-width:34ch}
+/* La ligne de cloture : ce qui doit etre dit, sans peser. */
+.site-footer-bas{
+  position:relative;max-width:1180px;margin:auto;
+  padding:14px clamp(16px,4vw,40px) 26px;
+  border-top:1px solid rgba(217,164,65,.10);
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:10px 24px;
+}
+.site-footer-legal{margin:0;font-size:11px;color:var(--muted-2)}
+.site-footer-haut{
+  appearance:none;cursor:pointer;background:none;border:0;
+  display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0;
+  color:var(--muted);font-family:var(--ui);font-size:11.5px;transition:color .14s;
+}
+.site-footer-haut:hover{color:var(--gold-bright)}
+.site-footer-haut svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}

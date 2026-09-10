@@ -52,29 +52,45 @@
 <link rel="stylesheet" href="./css/wiki.css">
 <link rel="stylesheet" href="./css/collection.css">
 <link rel="stylesheet" href="./css/calculateur.css">
+<link rel="stylesheet" href="./css/ambiance.css">
+<script type="module" src="./js/vues/ambiance.js"></script>
 </head>
 <body>
 
 <header class="topbar">
   <div class="brand">
-    <div class="crest">7</div>
+    <div class="crest" aria-hidden="true">
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor">
+        <circle cx="24" cy="24" r="14"/>
+        <path d="m24 2 4 18 18 4-18 4-4 18-4-18L2 24l18-4Z"/>
+        <path d="m10 10 10 10m8 8 10 10M38 10 28 20M20 28 10 38"/>
+      </svg>
+    </div>
     <div class="brand-txt">
-      <span class="brand-title">Confrérie 7DS</span>
-      <span class="brand-sub">Team Builder · Boss de Guilde</span>
+      <span class="brand-title">NOVA</span>
+      <span class="brand-sub">Confrérie · 7DS Origin</span>
     </div>
   </div>
-  <!-- Lien affilié : il rapporte au propriétaire du site quand un membre
-       achète après l'avoir suivi. `rel="sponsored"` déclare cette rémunération
-       aux moteurs, comme le veut la convention pour un lien rémunéré ;
-       `noopener` empêche la page ouverte d'accéder à celle-ci.
-       Les dimensions sont celles du fichier (467 × 100) : les écrire évite que
-       la header ne sursaute au moment où l'image arrive. -->
-  <a class="lootbar" id="lootbarLink"
-     href="https://www.lootbar.com/a/raTV3p"
-     target="_blank" rel="sponsored noopener noreferrer">
-    <img src="./lootbar-logo.webp" alt="LootBar"
-         width="467" height="100" decoding="async">
-  </a>
+  <!-- Le lien affilié LootBar vivait ici. Il est descendu en pied de page :
+       son jaune de marque exige un fond sombre pour rester lisible, et cette
+       pastille sombre ne pouvait pas cohabiter avec l'en-tête ivoire du thème
+       Lumière. Voir le `<footer>` après `</main>`.
+
+       Le sélecteur d'ambiance prend sa place. C'est une PRÉFÉRENCE : elle
+       appartient à l'habillage du site, pas au décor. Posée sur la bannière,
+       elle occupait la meilleure surface de chaque page et venait sur
+       l'illustration. Ici elle est centrée par le même mécanisme qui centrait
+       le logo — les deux moitiés égales de la marque et du compte. -->
+  <div class="ambiance-switch" role="group" aria-label="Ambiance du site">
+    <button type="button" data-ambiance="dark" aria-pressed="true">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15A9 9 0 0 1 9 4a9 9 0 1 0 11 11Z"/></svg>
+      <span class="ambiance-nom">Ténèbres</span>
+    </button>
+    <button type="button" data-ambiance="light" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2"/></svg>
+      <span class="ambiance-nom">Lumière</span>
+    </button>
+  </div>
   <!-- Le rail porte les repères de défilement : ils doivent rester immobiles
        pendant que les onglets défilent, donc hors du conteneur défilant. -->
   <div class="tabs-rail">
@@ -187,6 +203,24 @@
       <span>Membres</span><span aria-hidden="true">›</span>
     </button>
   </div>
+  <!-- L'ambiance est une préférence, pas une destination. Sur petit écran
+       l'en-tête doit rester compact — `tests/accessibilite-mobile` lui impose
+       64 px — et le sélecteur ne peut pas y tenir. Il rejoint donc le compte,
+       ici, où vivent déjà les réglages. `ambiance.js` câble TOUS les
+       `[data-ambiance]` du document : ce second exemplaire fonctionne et
+       s'accorde au premier sans une ligne de plus. -->
+  <p class="mobile-more-title">Ambiance</p>
+  <div class="ambiance-switch ambiance-switch-mobile" role="group"
+       aria-label="Ambiance du site">
+    <button type="button" data-ambiance="dark" aria-pressed="true">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15A9 9 0 0 1 9 4a9 9 0 1 0 11 11Z"/></svg>
+      <span class="ambiance-nom">Ténèbres</span>
+    </button>
+    <button type="button" data-ambiance="light" aria-pressed="false">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l2 2m10 10 2 2M5 19l2-2M17 7l2-2"/></svg>
+      <span class="ambiance-nom">Lumière</span>
+    </button>
+  </div>
   <div class="mobile-account-card">
     <button class="btn btn-ghost" id="mobileAccountLogin" type="button">Connexion</button>
     <div class="mobile-account-connected" id="mobileAccountConnected" hidden>
@@ -230,6 +264,90 @@
     <span>Plus</span>
   </button>
 </nav>
+
+<section class="guild-banner" aria-label="Bienvenue dans la confrérie NOVA">
+  <div class="guild-banner-inner">
+    <!-- Une phrase par vue. La FORME de la bannière ne change pas d'une page à
+         l'autre — même taille, même place, même hauteur — seuls les mots
+         changent, parce qu'ils sont la seule chose qui dépende de l'endroit
+         où l'on est.
+
+         Le titre porte son `<br>` : il tient sur DEUX lignes partout, sinon la
+         bannière changerait de hauteur d'une vue à l'autre et le titre ne se
+         poserait plus au même endroit.
+
+         Tous les blocs sont dans le document et c'est le CSS qui montre celui
+         de la vue active. Aucun script n'est nécessaire : la phrase est juste
+         dès le premier rendu, avant même que l'application démarre. -->
+    <div class="guild-banner-copy">
+      <div class="guild-banner-texte" data-vue="dashboard">
+        <p class="guild-banner-title">Une confrérie.<br>Des légendes à écrire.</p>
+        <p class="guild-banner-lead">Rassemble tes héros. Prépare la prochaine victoire.</p>
+      </div>
+      <div class="guild-banner-texte" data-vue="builder">
+        <p class="guild-banner-title">Quatre héros,<br>une seule intention.</p>
+        <p class="guild-banner-lead">Compose, équipe, enregistre : l'équipe part au boss.</p>
+      </div>
+      <div class="guild-banner-texte" data-vue="roster">
+        <p class="guild-banner-title">Aucun boss<br>ne tombe seul.</p>
+        <p class="guild-banner-lead">Toutes les équipes que la confrérie peut aligner.</p>
+      </div>
+      <div class="guild-banner-texte" data-vue="boss">
+        <p class="guild-banner-title">Trois essais.<br>Pas un de perdu.</p>
+        <p class="guild-banner-lead">Qui frappe, quand, et avec quelle équipe.</p>
+      </div>
+      <div class="guild-banner-texte" data-vue="availability">
+        <p class="guild-banner-title">Le bon moment<br>vaut une équipe de plus.</p>
+        <p class="guild-banner-lead">Dis quand tu joues ; l'organisation suit.</p>
+      </div>
+      <div class="guild-banner-texte" data-vue="member-roster">
+        <p class="guild-banner-title">Tes héros,<br>une fois pour toutes.</p>
+        <p class="guild-banner-lead">Enregistre-les ici, réutilise-les partout.</p>
+      </div>
+      <div class="guild-banner-texte" data-vue="analyse">
+        <p class="guild-banner-title">Ce que la confrérie<br>peut vraiment aligner.</p>
+        <p class="guild-banner-lead">Les forces, les manques, et qui comble quoi.</p>
+      </div>
+      <div class="guild-banner-texte" data-vue="wiki">
+        <p class="guild-banner-title">Tout le jeu,<br>en français.</p>
+        <p class="guild-banner-lead">Compétences, passifs et statistiques, lus dans ses fichiers.</p>
+      </div>
+      <div class="guild-banner-texte" data-vue="collection">
+        <p class="guild-banner-title">Ce que tu possèdes<br>décide de ce que tu peux.</p>
+        <p class="guild-banner-lead">Marque tes héros et ton équipement une bonne fois.</p>
+      </div>
+      <div class="guild-banner-texte" data-vue="calculateur">
+        <p class="guild-banner-title">Les chiffres<br>avant les coups.</p>
+        <p class="guild-banner-lead">Compare deux builds sans dépenser une seule pierre.</p>
+      </div>
+      <div class="guild-banner-texte" data-vue="admin">
+        <p class="guild-banner-title">La confrérie<br>se tient à jour.</p>
+        <p class="guild-banner-lead">Les comptes, les rôles et les accès.</p>
+      </div>
+      <a class="guild-banner-link" href="#builder">Composer mon équipe <span aria-hidden="true">↗</span></a>
+    </div>
+    <!-- Le blason de la confrérie, posé sur son décor comme un sceau. L'écu
+         porte l'étoile de NOVA — la même que l'emblème de l'en-tête et du pied
+         de page, de sorte que la marque se répète aux trois bouts de la page.
+         Décoratif : le nom de la confrérie est déjà annoncé par l'en-tête. -->
+    <div class="guild-crest" aria-hidden="true">
+      <svg class="guild-crest-ecu" viewBox="0 0 64 78" fill="none"
+           stroke="currentColor" stroke-linejoin="round">
+        <path class="guild-crest-champ"
+              d="M32 4 58 12v26c0 16-12 28-26 34C18 66 6 54 6 38V12Z"
+              stroke-width="1.6"/>
+        <path d="M32 11 52 17v21c0 12-10 21-20 26-10-5-20-14-20-26V17Z"
+              stroke-width=".7" opacity=".5"/>
+        <g transform="translate(32 38) scale(.58) translate(-24 -24)">
+          <path d="m24 2 4 18 18 4-18 4-4 18-4-18L2 24l18-4Z"
+                fill="currentColor" stroke="none"/>
+          <circle cx="24" cy="24" r="13.5" stroke-width="1.6" opacity=".45"/>
+        </g>
+      </svg>
+      <span class="guild-crest-nom">NOVA</span>
+    </div>
+  </div>
+</section>
 
 <main>
   <!-- ============ MON SUIVI ============ -->
@@ -471,6 +589,75 @@
 
   <p class="databar" id="databar"></p>
 </main>
+
+<!-- Le pied de page n'existait pas : la page s'arrêtait net sur `</main>`.
+
+     Il accueille le lien affilié descendu de l'en-tête. Ce déplacement AMÉLIORE
+     la divulgation : la nature rémunérée du lien n'était portée que par
+     `rel="sponsored"`, que lisent les moteurs mais pas les membres. Elle est
+     désormais écrite en toutes lettres.
+
+     Les raccourcis ne pointent que vers des vues PUBLIQUES. `dashboard`,
+     `roster` et `analyse` lisent les données de toute la confrérie : la RLS les
+     rend vides pour un visiteur sans compte, et un lien qui mène à une page
+     vide se lit comme une panne. -->
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div class="site-footer-marque">
+      <!-- Le même emblème qu'en haut de page. La citadelle ouvre le site en
+           pleine lumière et le referme en silhouette ; l'emblème fait le même
+           aller-retour, en petit. -->
+      <svg class="site-footer-crest" viewBox="0 0 48 48" fill="none"
+           stroke="currentColor" aria-hidden="true">
+        <circle cx="24" cy="24" r="14"/>
+        <path d="m24 2 4 18 18 4-18 4-4 18-4-18L2 24l18-4Z"/>
+      </svg>
+      <span class="site-footer-titre">NOVA</span>
+      <span class="site-footer-sous">Confrérie · 7DS Origin</span>
+    </div>
+
+    <nav class="site-footer-liens" aria-label="Pied de page">
+      <a href="#builder">Créer une équipe</a>
+      <a href="#wiki">Wiki</a>
+      <a href="#collection">Collection</a>
+      <a href="#calculateur">Calculateur</a>
+      <!-- Discord de la confrérie : décommenter et coller l'invitation.
+      <a href="https://discord.gg/A-REMPLACER" target="_blank"
+         rel="noopener noreferrer">Discord</a>
+      -->
+    </nav>
+
+    <div class="site-footer-partenaire">
+      <span class="site-footer-mention">Lien partenaire</span>
+      <!-- `rel="sponsored"` déclare la rémunération aux moteurs, comme le veut
+           la convention ; `noopener` empêche la page ouverte d'accéder à
+           celle-ci. Les dimensions sont celles du fichier (467 × 100) : les
+           écrire évite que le pied de page ne sursaute à l'arrivée de l'image. -->
+      <a class="lootbar" id="lootbarLink"
+         href="https://www.lootbar.com/a/raTV3p"
+         target="_blank" rel="sponsored noopener noreferrer">
+        <img src="./lootbar-logo.webp" alt="LootBar"
+             width="467" height="100" decoding="async">
+      </a>
+      <p class="site-footer-note">
+        Acheter après avoir suivi ce lien soutient le site, sans rien te coûter
+        de plus.
+      </p>
+    </div>
+  </div>
+
+  <div class="site-footer-bas">
+    <p class="site-footer-legal">
+      Site de confrérie, sans affiliation avec l'éditeur du jeu.
+    </p>
+    <!-- Un BOUTON et non un lien : le site route sur le fragment d'URL, et un
+         `href="#..."` inconnu ferait replier la vue courante. -->
+    <button type="button" class="site-footer-haut" data-remonter>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></svg>
+      Haut de page
+    </button>
+  </div>
+</footer>
 
 <!-- Picker modal -->
 <div class="overlay" id="overlay" role="dialog" aria-modal="true"
@@ -975,13 +1162,16 @@
   var lastY = 0;
   var queued = false;
 
-  // Seules ces trois zones passent en display:none quand le header se replie.
-  // Le lien LootBar en fait partie : c'est un lien, donc focusable, et un
-  // focus resté sur un élément masqué bloquerait le repli pour de bon.
+  // Seules ces zones passent en display:none quand le header se replie.
+  // Un focus resté sur un élément masqué bloquerait le repli pour de bon.
+  // Le lien LootBar y figurait tant qu'il vivait dans l'en-tête ; descendu en
+  // pied de page, il n'est plus jamais masqué et sort donc de cette liste.
+  // Le sélecteur d'ambiance l'y remplace : ses deux boutons sont focusables,
+  // et un focus resté dessus bloquerait le repli pour de bon.
   function focusInsideHidden() {
     var active = document.activeElement;
     if (!active) return false;
-    var zones = bar.querySelectorAll(".brand, .lootbar, .account");
+    var zones = bar.querySelectorAll(".brand, .ambiance-switch, .account");
     for (var i = 0; i < zones.length; i++) {
       if (zones[i].contains(active)) return true;
     }

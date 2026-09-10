@@ -240,6 +240,21 @@ Trois pièges rencontrés pour de vrai :
 
 ## Ajouts transversaux récents
 
+- `css/ambiance.css` termine la cascade et porte les deux thèmes NOVA,
+  Ténèbres (par défaut) et Lumière. `vues/ambiance.js`, chargé seul dans le
+  head, applique la préférence locale sans reconstruire les vues. Les deux
+  panoramas WebP de `assets/ambiance/` sont précachés. Voir
+  [le détail visuel et les prompts](../docs/apparence-nova.md).
+- Le même module publie `--topbar-h`, la hauteur mesurée de l'en-tête, qu'un
+  `ResizeObserver` republie à chaque changement de disposition. La bannière
+  s'en sert pour remonter SOUS l'en-tête de verre : sans cette valeur, le
+  panorama se décalerait dès que les onglets passent à la ligne. C'est la
+  seule mesure de mise en page que la couche de présentation publie.
+- Le pied de page (`.site-footer`) est stylé dans `css/base.css`, et non dans
+  la couche d'ambiance : `akumu.html` ne charge que `base.css` et porte le même
+  pied. Il reste un socle sombre dans les deux thèmes, parce qu'il porte le
+  logo LootBar dont le jaune de marque exige un fond sombre.
+
 - `noyau/catalogue-build.js` charge le catalogue chiffré à la demande tout en
   conservant une référence `BUILD_STATS` stable.
 - `metier/recommandation-groupes.js` produit une proposition déterministe de

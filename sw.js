@@ -24,11 +24,14 @@ const VERSION_INJECTEE = !BUILD_VERSION.startsWith("__");
    au premier chargement coûtait plus qu'elle ne rapportait. Le gestionnaire
    `fetch` la met en cache le jour où elle est réellement demandée. */
 const CORE_ASSETS = [
+  "./css/ambiance.css", "./js/vues/ambiance.js",
+  "./assets/ambiance/nova-tenebres.webp", "./assets/ambiance/nova-lumiere.webp",
+  "./assets/ambiance/nova-tenebres-v2.webp", "./assets/ambiance/nova-lumiere-v2.webp",
   "./", "./index.html", "./css/base.css", "./css/builder.css", "./css/roster.css", "./css/analyse.css", "./css/boss.css", "./css/suivi.css", "./css/modales.css", "./css/import-captures.css", "./css/notifications.css", "./css/responsive.css", "./css/dispos.css", "./css/wiki.css", "./css/collection.css", "./css/calculateur.css",
   "./data/data.js", "./data/potentiels.js", "./data/armures-liees.js",
   "./data/personnages-meta.js", "./data/chronometrage-avancement.json", "./data/animations-mesurees.json", "./data/competences.js", "./data/buffs-supports.js", "./data/passifs-graves.js", "./data/potentiels-equipe.js", "./data/degats-supplementaires.js", "./data/passifs-armes.js", "./supabase-config.js",
-  /* Le logo LootBar est dans le header de CHAQUE page : sans lui ici, le mode
-     hors ligne afficherait une image cassee au premier chargement. 13 Ko. */
+  /* Le logo LootBar est dans le pied de page de CHAQUE page : sans lui ici, le
+     mode hors ligne afficherait une image cassee au premier chargement. 13 Ko. */
   "./lootbar-logo.webp",
   "./js/noyau/catalogue-build.js",
   "./js/metier/routage.js",

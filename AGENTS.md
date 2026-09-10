@@ -1748,7 +1748,31 @@ après lui.
 - Un module qui exporte un symbole que personne n'importe fait rougir
   `tests/modules-imports.test.js`, et un module absent de `CORE_ASSETS` de
   `sw.js` aussi. Les deux gardent le mode hors ligne, pas le style.
-- Thème : héraldique sombre (obsidienne + or vieilli + pourpre). Voir la spec.
+- Thèmes NOVA : Ténèbres par défaut (obsidienne, or patiné, améthyste),
+  et Lumière (ivoire et bronze). La préférence locale est indépendante du
+  compte. `css/ambiance.css` termine la cascade ; voir `docs/apparence-nova.md`.
+- Sur demande du propriétaire, les bannières `nova-*-v2.webp` sont désormais
+  des illustrations de **Liones avec Meliodas en Assault Mode et Elizabeth**.
+  La version sombre dérive de la claire pour conserver le même château et
+  la même enceinte. Respecter la vue du jeu : pas de montagne inventée sous
+  le château. Références et prompts : `docs/bannieres-nova-v2.md`.
+  Les anciens panoramas du jeu restent disponibles ; le sombre sert au pied.
+- La bannière est **identique dans toutes les vues** : même titre, même taille,
+  même accroche, même lien. Ne pas réintroduire de version courte par vue —
+  c'est ce qui la faisait changer d'aspect d'une page à l'autre. Un test
+  compare sa signature entre l'Accueil et trois catalogues.
+- La bannière n'a **aucun bord** : le panorama remonte sous l'en-tête et
+  s'éteint vers le bas par un masque. Ne pas lui rendre de filet ni de fondu
+  vers une couleur de fond — c'est exactement ce qui en refaisait une boîte.
+- L'en-tête est **transparent** tant qu'il survole la bannière, et reprend son
+  verre une fois défilé (`data-defile` sur la racine). Ne pas lui redonner un
+  fond permanent : la transparence est demandée. Ne pas non plus retirer le
+  voile haut `--banner-scrim`, sans lequel les derniers onglets deviennent
+  illisibles sur les zones claires du panorama.
+- Le lien affilié LootBar vit en **pied de page**, plus jamais dans l'en-tête :
+  son jaune de marque tombe à 1.6:1 sur l'ivoire du thème clair. Le pied de
+  page reste sombre dans les deux ambiances pour cette raison, et porte la
+  mention visible « Lien partenaire ».
 - Après modif des dossiers d'images : relancer `scripts/generate-data.ps1`.
 - Après une mise à jour du jeu : `python scripts/telecharger-images.py --liste`
   annonce les images d'armes et de bijoux qui manquent, sans rien écrire.

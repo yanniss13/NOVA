@@ -147,18 +147,10 @@
       <span class="brand-sub">Fiche de boss</span>
     </div>
   </div>
-  <!-- Lien affilie : il rapporte au proprietaire du site quand un membre
-       achete apres l'avoir suivi. Meme balisage que dans index.html —
-       `rel="sponsored"` declare la remuneration aux moteurs, `noopener`
-       empeche la page ouverte d'acceder a celle-ci, et les dimensions du
-       fichier (467 x 100) evitent que l'en-tete ne sursaute a l'arrivee
-       de l'image. -->
-  <a class="lootbar" id="lootbarLink"
-     href="https://www.lootbar.com/a/raTV3p"
-     target="_blank" rel="sponsored noopener noreferrer">
-    <img src="./lootbar-logo.webp" alt="LootBar"
-         width="467" height="100" decoding="async">
-  </a>
+  <!-- Le lien affilie LootBar vivait ici. Il est descendu en pied de page,
+       comme dans index.html : son jaune de marque exige un fond sombre, et
+       cette pastille sombre ne pouvait pas cohabiter avec l'en-tete ivoire du
+       theme Lumiere. Voir le `<footer>` apres `</main>`. -->
 </header>
 
 <main class="ak-wrap">
@@ -424,6 +416,53 @@
   </div>
 
 </main>
+
+<!-- Meme pied de page que index.html, reduit a ce que cette page isolee peut
+     offrir : elle n'a pas de routage par ancre, donc ses raccourcis sont de
+     vrais liens vers le site. La mention « Lien partenaire » rend visible aux
+     membres ce que `rel="sponsored"` ne dit qu'aux moteurs. -->
+<footer class="site-footer">
+  <div class="site-footer-inner">
+    <div class="site-footer-marque">
+      <svg class="site-footer-crest" viewBox="0 0 48 48" fill="none"
+           stroke="currentColor" aria-hidden="true">
+        <circle cx="24" cy="24" r="14"/>
+        <path d="m24 2 4 18 18 4-18 4-4 18-4-18L2 24l18-4Z"/>
+      </svg>
+      <span class="site-footer-titre">NOVA</span>
+      <span class="site-footer-sous">Confrerie · 7DS Origin</span>
+    </div>
+
+    <nav class="site-footer-liens" aria-label="Pied de page">
+      <a href="index.html">Retour au site</a>
+      <a href="index.html#wiki">Wiki</a>
+      <a href="index.html#calculateur">Calculateur</a>
+    </nav>
+
+    <div class="site-footer-partenaire">
+      <span class="site-footer-mention">Lien partenaire</span>
+      <a class="lootbar" id="lootbarLink"
+         href="https://www.lootbar.com/a/raTV3p"
+         target="_blank" rel="sponsored noopener noreferrer">
+        <img src="./lootbar-logo.webp" alt="LootBar"
+             width="467" height="100" decoding="async">
+      </a>
+      <p class="site-footer-note">
+        Acheter apres avoir suivi ce lien soutient le site, sans rien te couter
+        de plus.
+      </p>
+    </div>
+  </div>
+
+  <!-- Pas de bouton « Haut de page » ici : cette page ne charge pas
+       `js/vues/ambiance.js`, qui le rend vivant. Un bouton mort vaut moins
+       que pas de bouton. -->
+  <div class="site-footer-bas">
+    <p class="site-footer-legal">
+      Site de confrerie, sans affiliation avec l'editeur du jeu.
+    </p>
+  </div>
+</footer>
 
 <script>
 (function(){
