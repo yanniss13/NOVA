@@ -345,11 +345,32 @@ import { toast } from "./toast.js";
     return bloc;
   }
 
+  /* « Puissance par arme » est MASQUEE en attendant sa finition. Deux defauts
+     connus, tous deux visibles dans la modale d'equipe a quatre colonnes :
+
+     - La section ne parait que si le heros a au moins DEUX armes chiffrables
+       (`puissanceSection` rend `null` en dessous). C'est defendable — comparer
+       une seule arme n'a pas de sens — mais le membre voit une carte pleine a
+       cote d'une carte vide sans savoir pourquoi.
+     - `.hd-puissance-ligne` met les mesures en colonne `auto` : elles prennent
+       leur largeur maximale et ecrasent le nom de l'arme, qui se casse alors
+       lettre par lettre.
+
+     L'interrupteur est un GLOBAL et non une constante de module : les essais
+     le rallument pour continuer de couvrir la section, sans que les membres la
+     voient. Pour la rendre a tous, retourner le defaut ci-dessous.
+     Le nom est unique dans tout le projet : le chargeur de tests concatene les
+     modules dans une seule portee. */
+  function puissanceParArmeVisible(){
+    return window.NOVA_AFFICHER_PUISSANCE_PAR_ARME === true;
+  }
+
   /* La fiche s'ouvre sans attendre le reseau : tant que les catalogues ne sont
      pas la, la section annonce son attente puis se remplace elle-meme. Une
      fiche refermee entre-temps laisse un noeud detache, et `replaceWith` n'y
      fait rien — c'est la sortie voulue, pas un cas a rattraper. */
   function ajouterPuissance(col, hero){
+    if(!puissanceParArmeVisible()) return;
     if(!classementPossible(hero)) return;
     if(cataloguesDpsPrets()){
       const bloc = puissanceSection(classementPuissance(hero));
