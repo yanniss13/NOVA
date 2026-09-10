@@ -19,14 +19,16 @@ const CACHE = CACHE_PREFIX + BUILD_VERSION;
 /* Une copie locale garde le marqueur : son cache ne change pas de version.
    Le reseau y passe donc en premier pour rendre les modifications visibles. */
 const VERSION_INJECTEE = !BUILD_VERSION.startsWith("__");
-/* Seule la petite icône est préchargée. La 512 (350 Ko) ne sert qu'à
+/* Seule la petite icône est préchargée. La 512 (197 Ko) ne sert qu'à
    l'installation sur l'écran d'accueil : la faire télécharger par chaque membre
    au premier chargement coûtait plus qu'elle ne rapportait. Le gestionnaire
    `fetch` la met en cache le jour où elle est réellement demandée. */
 const CORE_ASSETS = [
   "./css/ambiance.css", "./js/vues/ambiance.js",
-  "./assets/ambiance/nova-tenebres.webp", "./assets/ambiance/nova-lumiere.webp",
-  "./assets/ambiance/nova-tenebres-v2.webp", "./assets/ambiance/nova-lumiere-v2.webp",
+  /* Les deux panoramas REELLEMENT affiches, et eux seuls. Quatre etaient
+     precaches auparavant, 721 Kio, dont deux que plus aucune feuille ne
+     demandait : chaque membre les telechargeait pour rien. */
+  "./assets/ambiance/nova-tenebres-v3.webp", "./assets/ambiance/nova-lumiere-v2.webp",
   "./", "./index.html", "./css/base.css", "./css/builder.css", "./css/roster.css", "./css/analyse.css", "./css/boss.css", "./css/suivi.css", "./css/modales.css", "./css/import-captures.css", "./css/notifications.css", "./css/responsive.css", "./css/dispos.css", "./css/wiki.css", "./css/collection.css", "./css/calculateur.css",
   "./data/data.js", "./data/potentiels.js", "./data/armures-liees.js",
   "./data/personnages-meta.js", "./data/chronometrage-avancement.json", "./data/animations-mesurees.json", "./data/competences.js", "./data/buffs-supports.js", "./data/passifs-graves.js", "./data/potentiels-equipe.js", "./data/degats-supplementaires.js", "./data/passifs-armes.js", "./supabase-config.js",
