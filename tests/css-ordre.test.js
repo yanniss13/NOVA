@@ -41,7 +41,8 @@ const FEUILLES = [
   "dispos",
   "wiki",
   "collection",
-  "calculateur"
+  "calculateur",
+  "ambiance"
 ];
 
 const html = fs.readFileSync(path.join(RACINE, "index.html"), "utf8");

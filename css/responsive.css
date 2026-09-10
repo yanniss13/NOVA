@@ -68,17 +68,21 @@
   .hero-grid{grid-template-columns:repeat(2,1fr)}
   .team-heroes{grid-template-columns:repeat(4,1fr)}
   .topbar{gap:12px}
-  /* PARTAGER LA LIGNE EN DEUX MOITIES EGALES NE MARCHE QUE SI LA MARQUE Y
-     TIENT. En dessous de 900 px elle n'y tient plus : a 600 px, « Confrerie
-     7DS » se coupait en deux et son sous-titre aussi, pour laisser au logo une
-     moitie qu'il ne remplissait pas.
-
-     Le logo prend donc son propre etage, entre la marque et les onglets. Il y
-     est centre de la meme facon, sans rien ecraser. Mesure : au-dessus de
-     900 px la marque tient sur une ligne a toutes les largeurs testees. */
-  .brand{flex:0 1 auto}
-  .account{flex:0 1 auto;margin-left:auto}
-  .lootbar{order:2;flex-basis:100%;justify-content:center}
+  /* Les deux moities egales servaient a centrer le logo LootBar entre la
+     marque et le compte. Le logo est descendu en pied de page : il n'y a plus
+     rien a centrer, et la marque reprend la place qu'il lui faut. La regle
+     garde son utilite en dessous de 900 px, ou « Confrerie 7DS » se coupait
+     en deux pour tenir dans une moitie imposee. */
+  /* Les deux moities egales sont RETABLIES : c'est elles qui centrent le
+     selecteur d'ambiance, comme elles centraient le logo LootBar. `min-width:0`
+     autorise la marque a se retrecir au lieu de se couper en deux, ce qui etait
+     le defaut d'origine de cette regle. */
+  .brand{flex:1 1 0;min-width:0}
+  .account{flex:1 1 0}
+  /* Le sous-titre se coupait en deux sous 620 px, l'ancien defaut de cette
+     regle. Il se tronque desormais plutot que de casser la hauteur du header. */
+  .brand-txt{min-width:0}
+  .brand-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 }
 @media(max-width:560px){
   html{
@@ -101,8 +105,6 @@
   .brand-txt{min-width:0}
   .brand-title{font-size:14px;white-space:nowrap}
   .brand-sub{display:none}
-  .lootbar{order:initial;flex:0 0 auto;padding:3px 4px}
-  .lootbar img{height:17px}
   .tabs-rail,.subtabs,.account{display:none!important}
   .mobile-boss-subnav:not([hidden]){
     position:fixed;z-index:57;left:8px;right:8px;
@@ -246,18 +248,17 @@
 @media (max-height:500px) and (orientation:landscape) and (min-width:561px){
   .topbar{transition:padding .26s ease, gap .26s ease}
   .topbar .brand,
-  .topbar .lootbar,
+  .topbar .ambiance-switch,
   .topbar .account{
     overflow:hidden;max-height:320px;
     transition:max-height .26s ease, opacity .17s ease .05s, visibility 0s
   }
   .topbar.is-retracted{padding-top:8px;padding-bottom:8px;gap:0}
-  /* Le logo se replie avec la marque : replie, le header ne doit rester que
-     les onglets, au plus court. C'est aussi un LIEN, donc focusable - le
-     laisser peint le garderait dans l'ordre de tabulation d'une zone censee
-     avoir disparu. */
+  /* Replie, le header ne garde que les onglets, au plus court. Ces zones
+     sont focusables : les laisser peintes les garderait dans l'ordre de
+     tabulation d'une zone censee avoir disparu. */
   .topbar.is-retracted .brand,
-  .topbar.is-retracted .lootbar,
+  .topbar.is-retracted .ambiance-switch,
   .topbar.is-retracted .account{
     max-height:0;opacity:0;visibility:hidden;
     transition:max-height .26s ease, opacity .15s ease, visibility 0s linear .26s

@@ -63,9 +63,25 @@ const { chromium } = require("playwright");
     /* Le lien affilie remunere le proprietaire : il doit survivre aux retouches
        de cette page, avec les attributs qui declarent la remuneration. Les
        reponses >= 400 sont deja refusees plus bas, donc une image cassee
-       ferait echouer ce parcours. */
-    const lootbar = page.locator("#lootbarLink");
-    assert.equal(await lootbar.count(), 1, "le lien LootBar doit rester dans l'en-tete");
+       ferait echouer ce parcours.
+
+       Il vit desormais dans le pied de page et non plus dans l'en-tete : son
+       jaune de marque exige un fond sombre, que l'en-tete ivoire du theme
+       Lumiere ne pouvait pas lui offrir. Le test vise donc le pied de page —
+       et verifie que l'en-tete ne le porte plus, faute de quoi un retour en
+       arriere passerait inapercu. */
+    const lootbar = page.locator("footer.site-footer #lootbarLink");
+    assert.equal(await lootbar.count(), 1,
+      "le lien LootBar doit vivre dans le pied de page");
+    assert.equal(await page.locator("header .lootbar").count(), 0,
+      "l'en-tete ne doit plus porter le lien LootBar");
+    /* `textContent` et non `innerText` : le CSS met la mention en capitales,
+       et innerText rend le texte tel qu'il est PEINT. */
+    assert.equal(
+      (await page.locator("footer.site-footer .site-footer-mention").textContent()).trim(),
+      "Lien partenaire",
+      "la nature remuneree du lien doit etre lisible par les membres, pas seulement par les moteurs"
+    );
     assert.equal(
       await lootbar.getAttribute("href"),
       "https://www.lootbar.com/a/raTV3p",

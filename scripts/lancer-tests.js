@@ -127,6 +127,7 @@ const SUITES = {
     "node tests/recensement-supports.test.js"
   ],
   e2e: [
+    "node tests/ambiance.playwright.js",
     "node tests/routage-groupe.playwright.js",
     "node tests/scrollbars-invisibles.playwright.js",
     "node tests/visiteur-anonyme.playwright.js",

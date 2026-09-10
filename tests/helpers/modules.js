@@ -147,6 +147,7 @@ const MODULES = [
   "vues/wiki-fiche-objet.js",
 
   /* le reste, pas encore découpé. */
+  "vues/ambiance.js",
   "app.js"
 ];
 

@@ -1574,7 +1574,10 @@ async function installRosterFocusFakeSupabase(page){
           position:getComputedStyle(bar).position,
           retracted:bar.classList.contains("is-retracted"),
           brandVisible:visible(".brand"),
-          lootbarVisible:visible(".lootbar"),
+          /* Chercher `.lootbar` dans le DOCUMENT ne prouverait plus rien : le
+             lien existe toujours, mais en pied de page, ou il est bien visible.
+             La question posee ici est celle de l'EN-TETE. */
+          lootbarDansHeader:!!bar.querySelector(".lootbar"),
           accountVisible:visible(".account"),
           tabsVisible:visible(".tabs-rail"),
           mobileNavVisible:visible(".mobile-nav"),
@@ -1587,7 +1590,8 @@ async function installRosterFocusFakeSupabase(page){
         `Le header mobile doit defiler avec la page a ${width}px`);
       assert.equal(before.retracted, false);
       assert.equal(before.brandVisible, true);
-      assert.equal(before.lootbarVisible, true);
+      assert.equal(before.lootbarDansHeader, false,
+        "le lien LootBar est descendu en pied de page : l'en-tete mobile ne le porte plus");
       assert.equal(before.accountVisible, false);
       assert.equal(before.tabsVisible, false);
       assert.equal(before.mobileNavVisible, true);

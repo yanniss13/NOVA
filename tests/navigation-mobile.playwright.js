@@ -237,12 +237,16 @@ async function installConnectedSupabase(page, connected = true){
       await page.setViewportSize({ width, height:780 });
       const metrics = await page.evaluate(() => {
         const mobileNav = document.querySelector(".mobile-nav");
-        const main = document.querySelector("main");
+        /* La garde basse appartient au DERNIER bloc de la page, seul endroit
+           où la barre fixe peut réellement masquer quelque chose. C'était
+           `main` ; c'est le pied de page depuis qu'il existe. Mesurer `main`
+           ne prouverait plus rien : le contenu qui le suit resterait caché. */
+        const dernierBloc = document.querySelector(".site-footer-bas");
         const root = document.scrollingElement;
         const buttons = [...mobileNav.querySelectorAll("button:not([hidden])")];
         return {
           navHeight:mobileNav.getBoundingClientRect().height,
-          bottomPadding:parseFloat(getComputedStyle(main).paddingBottom),
+          bottomPadding:parseFloat(getComputedStyle(dernierBloc).paddingBottom),
           scrollPaddingBottom:parseFloat(getComputedStyle(document.documentElement)
             .scrollPaddingBottom),
           overflow:root.scrollWidth-root.clientWidth,
