@@ -34,16 +34,19 @@ import { el } from "../noyau/dom.js";
   /* Les competences sont BLOQUANTES : sans elles, ni fiche de heros ni
      rotation d'equipe.
 
-     Les transcendances et les competences combinees ne le sont PAS. Elles
-     viennent d'une extraction locale du jeu, pas de 7dsorigin : le jour ou
-     l'une manque, la page doit perdre une section, jamais son onglet. */
+     Les transcendances, les competences combinees et les jauges de releve ne
+     le sont PAS. Elles viennent d'une extraction locale du jeu, pas de
+     7dsorigin : le jour ou l'une manque, la page doit perdre une section,
+     jamais son onglet. Sans les jauges, la rotation s'affiche entiere et
+     cesse seulement de placer les releves. */
   function chargerCatalogueWiki(){
     if(catalogueWikiPret()) return Promise.resolve(true);
     if(chargementCatalogueWiki) return chargementCatalogueWiki;
     chargementCatalogueWiki = Promise.all([
       scriptDeCatalogue("./data/wiki-competences.js"),
       scriptDeCatalogue("./data/transcendances.js").catch(()=>false),
-      scriptDeCatalogue("./data/ultimes-combines.js").catch(()=>false)
+      scriptDeCatalogue("./data/ultimes-combines.js").catch(()=>false),
+      scriptDeCatalogue("./data/jauges-releve.js").catch(()=>false)
     ]).then(()=>true).catch(erreur => {
       /* Rejouable : un echec reseau ne doit pas condamner la page pour toute
          la duree de la session. */

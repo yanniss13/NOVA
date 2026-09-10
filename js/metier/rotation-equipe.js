@@ -27,6 +27,11 @@ import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
      collision avec lui. */
   const IDENTIFIANT = /^[a-z0-9]+(_[a-z0-9]+)+$/;
 
+  /* LES CONSTANTES DE LA RELEVE, lues dans `Misc/DefineTable` du jeu et non
+     estimees : `tagpoint_gauge` et `tagpoint_maxstack`. */
+  const JAUGE_PAR_RELEVE = 1000;
+  const RELEVES_CUMULABLES = 3;
+
   /* Les participants d'une combinaison, LANCEUR EN TETE. Rend null plutot que
      de deviner : une etape mal formee n'est pas une combinaison approximative,
      c'est une etape a jeter. */
@@ -192,7 +197,17 @@ import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
     return item.char;
   }
 
-  function casesDeLaRotation(rotation, heroes, competences){
+  /* Ce qu'une CASE apporte a la jauge : la valeur de la competence, multipliee
+     par la serie. Une combinaison compte pour son lanceur — c'est sa
+     competence qui part. */
+  function jaugeDeLaCase(item, jauges){
+    const identifiant = item.participants && item.participants.length
+      ? item.participants[0].gameId
+      : item.etape;
+    return (Number(jauges[identifiant]) || 0) * (item.fois || 1);
+  }
+
+  function casesDeLaRotation(rotation, heroes, competences, jauges){
     const index = indexDeLEquipe(heroes, competences);
     const nomme = gameId => {
       const trouve = index.get(gameId);
@@ -228,27 +243,44 @@ import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
       });
     });
 
-    /* LA RELEVE SE DEDUIT, ELLE NE SE POSE PAS.
+    /* LA RELEVE SE DEDUIT DE LA JAUGE, PAS DU CHANGEMENT DE HEROS.
 
-       Changer de heros DANS le jeu, c'est relever : la competence de releve du
-       heros qui entre joue toute seule. Le membre n'a donc rien a placer, et
-       le site n'a rien a stocker — meme regle que le repli « xN », qui est une
-       vue et jamais un rangement.
+       Premiere version : « changer de heros, c'est relever ». Faux, et le
+       membre l'a vu sur sa propre rotation — « en jeu j'ai pas assez, elle se
+       declenche apres sur Elisabeth ». On PERMUTE quand on veut ; c'est
+       l'attaque d'entree qui coute un point de releve.
+
+       Le modele suit donc le jeu : chaque case verse `UI_TagGauge` dans une
+       jauge d'EQUIPE — une seule barre, peu importe qui frappe — et chaque
+       tranche de 1000 donne un point, trois au plus. Un changement de heros ne
+       produit une releve que s'il reste un point a depenser.
+
+       Ce que ce modele NE tient PAS, faute d'axe de temps dans une rotation :
+       la regeneration passive (`tagpoint_recovery`, 70 toutes les 1500 ms). Il
+       sous-estime donc legerement, jamais l'inverse — une releve affichee est
+       une releve qu'on a vraiment.
 
        Aucune releve avant la premiere case : c'est le heros par lequel on
        commence, il est deja la. */
     const releves = relevesDeLEquipe(heroes, competences);
+    const gains = jauges || {};
     const suite = [];
     let surLeTerrain = null;
+    let jauge = 0;
+    let points = 0;
     posees.forEach(item => {
       const entrant = heroDeLaCase(item);
       const releve = entrant ? releves.get(entrant) : null;
-      /* Si le membre a POSE la releve lui-meme — une rotation composee avant
-         que le site ne la deduise — on n'en ajoute pas une seconde. */
+      /* Une releve POSEE a la main — une rotation composee avant que le site
+         ne la deduise — tient lieu de releve et depense son point. On ne
+         discute pas le geste du membre : il etait devant son ecran. */
       const dejaPosee = item.competence && releve
         && item.competence.gameId === releve.gameId;
-      if(surLeTerrain && entrant && entrant !== surLeTerrain
-        && releve && !dejaPosee){
+      if(dejaPosee){
+        points = Math.max(0, points - 1);
+      } else if(surLeTerrain && entrant && entrant !== surLeTerrain
+        && releve && points >= 1){
+        points -= 1;
         suite.push({
           releve:true,
           etape:null,
@@ -263,6 +295,17 @@ import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
       }
       suite.push(item);
       if(entrant) surLeTerrain = entrant;
+
+      jauge += jaugeDeLaCase(item, gains);
+      while(jauge >= JAUGE_PAR_RELEVE && points < RELEVES_CUMULABLES){
+        jauge -= JAUGE_PAR_RELEVE;
+        points += 1;
+      }
+      /* A trois points, la barre ne banque plus : elle reste pleine a ras
+         bord et le surplus est perdu, comme en jeu. */
+      if(points >= RELEVES_CUMULABLES){
+        jauge = Math.min(jauge, JAUGE_PAR_RELEVE - 1);
+      }
     });
     return suite;
   }

@@ -363,6 +363,11 @@ import {
       && window.SEVEN_DS_WIKI_COMPETENCES) || {};
     const catalogueCombinaisons = (typeof window !== "undefined"
       && window.SEVEN_DS_ULTIMES_COMBINES) || [];
+    /* Ce que chaque competence verse dans la jauge de releve. Absent, la
+       rotation s'affiche entiere et cesse seulement de placer les releves —
+       jamais une page en moins pour un catalogue en moins. */
+    const jaugesReleve = (typeof window !== "undefined"
+      && window.SEVEN_DS_JAUGES_RELEVE) || {};
 
     let enregistree = normaliserRotation((equipe && equipe.rotation) || []);
     let courante = enregistree.slice();
@@ -389,7 +394,9 @@ import {
 
     function dessiner(){
       bloc.innerHTML = "";
-      const items = casesDeLaRotation(courante, heroes, competences);
+      const items = casesDeLaRotation(
+        courante, heroes, competences, jaugesReleve
+      );
       bloc.appendChild(items.length
         ? suiteDesCases(items, modifiable ? actions : null)
         : el("p",{ class:"calc-muette",
