@@ -11,7 +11,15 @@ const read = f => fs.readFileSync(path.join(ROOT, f), "utf8");
 const html = read("index.html");
 assert.match(html, /<link rel="manifest" href="manifest\.webmanifest">/, "lien manifest manquant");
 assert.match(html, /<meta name="theme-color" content="#0e0d12">/, "theme-color manquant");
-assert.match(html, /<link rel="apple-touch-icon" href="icons\/apple-touch-icon-180\.png">/, "apple-touch-icon manquant");
+/* On verifie que l'icone Apple EXISTE, pas comment elle s'appelle. Le nom
+   porte une version — `-v2` — parce que les caches de Chrome et de Windows
+   gardent une icone de PWA par son URL : sans changement d'adresse, un membre
+   deja installe conserve l'ancienne indefiniment. Figer le nom dans l'essai
+   ferait echouer le prochain renommage, qui est pourtant le correctif. */
+const iconeApple = html.match(/<link rel="apple-touch-icon" href="([^"]+)">/);
+assert.ok(iconeApple, "apple-touch-icon manquant");
+assert.ok(fs.existsSync(path.join(ROOT, iconeApple[1])),
+  "apple-touch-icon declaree mais absente du disque : " + iconeApple[1]);
 assert.match(html, /navigator\.serviceWorker\.register\("sw\.js"\)/, "enregistrement du SW manquant");
 assert.doesNotMatch(
   html,
@@ -35,7 +43,14 @@ assert.ok(manifest.icons.some(i => i.purpose === "maskable"), "icône maskable r
 manifest.icons.forEach(icon => {
   assert.ok(fs.existsSync(path.join(ROOT, icon.src)), "icône absente sur disque : " + icon.src);
 });
-assert.ok(fs.existsSync(path.join(ROOT, "icons/apple-touch-icon-180.png")), "apple-touch-icon absent");
+/* `akumu.html` porte la meme icone : une page oubliee lors d'un renommage
+   pointerait vers un fichier absent sans que rien ne le dise. */
+const iconeAkumu = read("akumu.html").match(/<link rel="apple-touch-icon" href="([^"]+)">/);
+assert.ok(iconeAkumu, "apple-touch-icon manquante dans akumu.html");
+assert.ok(fs.existsSync(path.join(ROOT, iconeAkumu[1])),
+  "apple-touch-icon d'akumu.html absente du disque : " + iconeAkumu[1]);
+assert.equal(iconeAkumu[1], iconeApple[1],
+  "les deux pages doivent porter la MEME icone");
 
 // 3) sw.js : cache versionné par le commit déployé, mise à jour explicite,
 //    et jamais de cache pour Supabase / le CDN (données live).

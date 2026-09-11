@@ -43,7 +43,7 @@ const CORE_ASSETS = [
   "./js/donnees/equipes-store.js", "./js/donnees/roster-store.js", "./js/donnees/collection-store.js", "./js/donnees/presets-store.js", "./js/donnees/administration-store.js", "./js/donnees/boss-store.js", "./js/donnees/suivi-store.js", "./js/donnees/calibration-store.js", "./js/donnees/catalogues-dps.js", "./js/donnees/catalogue-wiki.js", "./js/donnees/coequipiers-store.js", "./js/vues/editeur-equipement.js", "./js/vues/edition-build.js", "./js/vues/import-captures.js", "./js/vues/builder.js", "./js/vues/roster-membres.js", "./js/vues/analyse-recensement.js", "./js/vues/analyse.js", "./js/vues/roster-equipes.js", "./js/vues/synchro-temps-reel.js", "./js/vues/session-auth.js", "./js/vues/wiki-blocs.js", "./js/vues/wiki.js", "./js/vues/wiki-fiche-heros.js", "./js/vues/wiki-corps-arme.js", "./js/vues/wiki-corps-equipement.js", "./js/vues/wiki-fiche-objet.js", "./js/vues/collection.js", "./js/vues/calculateur-etat.js", "./js/vues/calculateur-lignes.js", "./js/vues/calculateur.js", "./js/vues/suivi.js", "./js/vues/administration.js", "./js/vues/dispos.js", "./js/vues/detail-piece.js", "./js/vues/fiche-heros.js", "./js/vues/rotation-equipe.js", "./js/vues/detail-equipe.js", "./js/vues/equipe-boss.js", "./js/vues/detail-roster.js", "./js/vues/boss-sessions.js", "./js/vues/stats-affichage.js", "./js/app.js",
   "./data/passifs-ensembles.js", "./js/metier/passifs-ensembles.js",
   "./manifest.webmanifest",
-  "./icons/icon-192.png"
+  "./icons/icon-192-v2.png"
 ];
 const CORE_PATHS = new Set(
   CORE_ASSETS.map(asset => new URL(asset, self.registration.scope).pathname)
