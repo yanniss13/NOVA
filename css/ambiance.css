@@ -26,14 +26,13 @@
      elles. Il était écrit en dur seize fois dans six feuilles, ce qui posait
      des carrés noirs au milieu du thème clair. */
   --vignette-fond:#0b0910;
-  --banner-image:url("../assets/ambiance/nova-tenebres-v3.webp");
-  /* Meliodas se tient a GAUCHE et regarde vers la droite, donc vers Elizabeth
-     qui occupe la droite de l'ambiance Lumiere. Les deux panoramas se
-     repondent. Le texte passe donc a droite, et l'ancrage suit.
-     Mesure : ses cheveux occupent les colonnes 10 a 16 % de l'image. */
-  --banner-ancre:0%;
-  --banner-ancre-petite:20%;
-  --banner-veil:linear-gradient(270deg,rgba(16,13,24,.65),rgba(16,13,24,.12) 55%,transparent 80%);
+  --banner-image:url("../assets/ambiance/nova-tenebres-v2.webp");
+  /* Meliodas se tient a DROITE, comme Elizabeth en Lumiere : les deux
+     ambiances partagent la meme composition, texte a gauche. L'ancrage vise
+     son visage, qui occupe 77 a 90 % de la largeur de l'image. */
+  --banner-ancre:100%;
+  --banner-ancre-petite:88%;
+  --banner-veil:linear-gradient(90deg,rgba(16,13,24,.65),rgba(16,13,24,.12) 55%,transparent 80%);
   --banner-scrim:rgba(16,13,24,.52);
   --shadow:0 16px 44px rgba(0,0,0,.32);
 }
@@ -64,7 +63,7 @@
      Les plus claires gardent leur cerne pour ne pas s'y dissoudre. */
   --vignette-fond:#eadfcc;
   --banner-image:url("../assets/ambiance/nova-lumiere-v2.webp");
-  /* Elizabeth reste a droite : l'ancrage et le texte sont l'exact miroir. */
+  /* Meme composition qu'en Tenebres : personnage a droite, texte a gauche. */
   --banner-ancre:100%;
   --banner-ancre-petite:88%;
   --banner-veil:linear-gradient(90deg,rgba(255,246,227,.8),rgba(255,246,227,.23) 55%,transparent 80%);
@@ -202,20 +201,6 @@ body{
 }
 .guild-banner-inner{position:relative;width:100%;max-width:1180px;margin:0 auto;padding:36px 40px 42px;min-height:280px}
 .guild-banner-copy{position:relative;max-width:610px}
-/* Miroir entre les deux ambiances : Ténèbres pose Meliodas à GAUCHE, tourné
-   vers la droite ; Lumière garde Elizabeth à droite. Les deux panoramas se
-   regardent, et le texte occupe le côté libre de chacun.
-
-   Il n'y a plus de retournement CSS. Une première version obtenait le miroir
-   par `scaleX(-1)`, ce qui inversait le personnage : la marque démoniaque de
-   Meliodas changeait de front. L'image de Ténèbres a été REDESSINÉE avec lui à
-   gauche, tourné vers la droite et sa marque du bon côté anatomique — voir
-   `docs/banniere-meliodas-regard-droite.md`.
-
-   Le miroir vaut donc à TOUTES les largeurs. La version retournée s'arrêtait
-   sous 900 px, faute de place ; ici l'ancrage mobile de chaque ambiance est
-   calculé pour dégager le visage d'un côté et le texte de l'autre. */
-:root:not([data-theme="light"]) .guild-banner-copy{margin-left:auto}
 /* Une seule phrase paraît : celle de la vue active. Le `:has()` lit l'état que
    la navigation pose déjà sur les sections — rien à câbler, et la bonne phrase
    est là avant même que l'application démarre.
@@ -476,11 +461,6 @@ body:not(:has(.view.active)) .guild-banner-texte[data-vue="dashboard"]{display:b
      protegeait la droite pendant que le texte s'appuyait a gauche — lisible
      par hasard, parce que le corps de Meliodas y est sombre, pas par
      construction. */
-  /* Le miroir vaut aussi sur petit ecran : Meliodas a gauche, texte a droite.
-     `margin-left:auto` ne suffit pas — le bloc occupe toute la largeur, la
-     marge n'a donc aucun espace a prendre. Il faut le brider pour degager la
-     colonne de gauche ou se tient le visage. */
-  :root:not([data-theme="light"]) .guild-banner-copy{max-width:62%}
   .guild-banner-inner{min-height:288px;padding:78px 22px 26px}
   .guild-banner-title{font-size:35px;line-height:1.1}
   .guild-banner-lead{max-width:250px;font-size:12px;margin:12px 0 8px}

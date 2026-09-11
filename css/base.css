@@ -216,7 +216,7 @@ main{max-width:1180px;margin:0 auto;padding:clamp(20px,4vw,40px)}
    socle est sombre dans les deux cas, un panorama clair y jurerait. */
 .site-footer::before{
   content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
-  background:url("../assets/ambiance/nova-tenebres-v3.webp") right bottom / cover no-repeat;
+  background:url("../assets/ambiance/nova-tenebres-v2.webp") right bottom / cover no-repeat;
   opacity:.16;filter:brightness(.7) saturate(.75);
   -webkit-mask-image:linear-gradient(to top,#000 0,transparent 88%);
   mask-image:linear-gradient(to top,#000 0,transparent 88%);
