@@ -28,7 +28,7 @@ const CORE_ASSETS = [
   /* Les deux panoramas REELLEMENT affiches, et eux seuls. Quatre etaient
      precaches auparavant, 721 Kio, dont deux que plus aucune feuille ne
      demandait : chaque membre les telechargeait pour rien. */
-  "./assets/ambiance/nova-tenebres-v3.webp", "./assets/ambiance/nova-lumiere-v2.webp",
+  "./assets/ambiance/nova-tenebres-v2.webp", "./assets/ambiance/nova-lumiere-v2.webp",
   "./", "./index.html", "./css/base.css", "./css/builder.css", "./css/roster.css", "./css/analyse.css", "./css/boss.css", "./css/suivi.css", "./css/modales.css", "./css/import-captures.css", "./css/notifications.css", "./css/responsive.css", "./css/dispos.css", "./css/wiki.css", "./css/collection.css", "./css/calculateur.css",
   "./data/data.js", "./data/potentiels.js", "./data/armures-liees.js",
   "./data/personnages-meta.js", "./data/chronometrage-avancement.json", "./data/animations-mesurees.json", "./data/competences.js", "./data/buffs-supports.js", "./data/passifs-graves.js", "./data/potentiels-equipe.js", "./data/degats-supplementaires.js", "./data/passifs-armes.js", "./supabase-config.js",
