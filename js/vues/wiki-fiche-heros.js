@@ -23,16 +23,25 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
 
   const fiche = { entries:[], index:0, arme:null };
 
-  /* Les competences d'une arme, rangees par ce qu'elles SONT. La couleur du
-     titre porte l'information : l'or pour ce que le heros est en permanence,
-     le pourpre pour l'ultime qu'on attend, le neutre pour le reste. La
-     derniere section ramasse tout le reste — une competence inedite doit
+  /* Les competences d'une arme, rangees par ce qu'elles SONT — leur categorie,
+     jamais la touche qui les declenche. Les heros n'ont pas les memes touches :
+     l'ultime est sur `skill_q` chez Meliodas et sur `skill_r` chez Ban.
+
+     Les gardes lisaient le `gameId`, et `skill_rmb` — le CLIC DROIT — contient
+     `skill_r`. L'attaque speciale de Meliodas paraissait donc sous « Ultime »,
+     et son ultime sous « Competences ». Ban y echappait par chance.
+
+     La couleur du titre porte l'information : l'or pour ce que le heros est en
+     permanence, le pourpre pour l'ultime qu'on attend, le neutre pour le
+     reste. La derniere section ramasse tout — une competence inedite doit
      apparaitre quelque part plutot que disparaitre. */
   const SECTIONS = [
     { titre:"Passif", ton:"passif", garde:c => c.categorie === "PASSIVE" },
-    { titre:"Compétences", ton:"normal",
-      garde:c => /skill_q|skill_e/.test(c.gameId) },
-    { titre:"Ultime", ton:"ultime", garde:c => /skill_r/.test(c.gameId) },
+    { titre:"Attaques normales", ton:"normal", garde:c => c.categorie === "NORMAL" },
+    { titre:"Compétences", ton:"normal", garde:c => c.categorie === "NORMAL_SKILL" },
+    { titre:"Attaque spéciale", ton:"normal", garde:c => c.categorie === "ACTIVE_THIRD" },
+    { titre:"Ultime", ton:"ultime", garde:c => c.categorie === "ULTIMATE" },
+    { titre:"Relève", ton:"normal", garde:c => c.categorie === "TAG_SKILL" },
     { titre:"Autres attaques", ton:"normal", garde:()=>true }
   ];
 
@@ -41,6 +50,11 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
      recherche en sous-chaine. L'ordre suit celui du module metier. */
   const TOUCHES = [
     ["passive", "Passif"],
+    /* `skill_rmb` AVANT `skill_r` : rmb est le clic droit, et la recherche en
+       sous-chaine le faisait passer pour la touche R. Deux entrees
+       differentes portaient alors la meme pastille — la touche R existe pour
+       de vrai, c'est l'ultime de Ban. */
+    ["skill_rmb", "Clic droit"],
     ["skill_q", "Q"],
     ["skill_e", "E"],
     ["skill_r", "R"],

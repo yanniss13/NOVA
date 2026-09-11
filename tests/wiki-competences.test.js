@@ -35,16 +35,22 @@ const competence = (gameId, weaponType, categorie) => ({
   nomFr:gameId, descriptionFr:"desc", recharge:null
 });
 
-/* L'ordre d'affichage : passif, Q, E, R, TAG, attaque sautée. La source les
-   publie dans un ordre quelconque — ici volontairement à l'envers. */
+/* L'ordre d'affichage suit la NATURE : passif, attaque normale, compétence
+   normale, spéciale, ultime, relève. Pas la touche — les héros n'ont pas les
+   mêmes : l'ultime est sur `skill_q` chez Meliodas et sur `skill_r` chez Ban.
+   Trier par touche donnait un ordre différent d'une fiche à l'autre.
+
+   Les touches du faux catalogue sont donc volontairement DÉPAREILLÉES par
+   rapport aux catégories : c'est la catégorie qui doit décider, et rien
+   d'autre. La source les publie dans un ordre quelconque. */
 {
   const { competencesParArme } = charger({
     derieri:[
+      competence("derieri_axe_skill_tag", "Axe", "TAG_SKILL"),
+      competence("derieri_axe_skill_q", "Axe", "ULTIMATE"),
       competence("derieri_axe_jumpatk", "Axe", "NORMAL"),
-      competence("derieri_axe_skill_tag", "Axe", "NORMAL"),
-      competence("derieri_axe_skill_r", "Axe", "ULTIMATE"),
-      competence("derieri_axe_skill_e", "Axe", "NORMAL"),
-      competence("derieri_axe_skill_q", "Axe", "NORMAL"),
+      competence("derieri_axe_skill_rmb", "Axe", "ACTIVE_THIRD"),
+      competence("derieri_axe_skill_e", "Axe", "NORMAL_SKILL"),
       competence("derieri_axe_passive", "Axe", "PASSIVE")
     ]
   });
@@ -52,22 +58,23 @@ const competence = (gameId, weaponType, categorie) => ({
     plain(competencesParArme("derieri").Axe.map(c => c.gameId)),
     [
       "derieri_axe_passive",
-      "derieri_axe_skill_q",
+      "derieri_axe_jumpatk",
       "derieri_axe_skill_e",
-      "derieri_axe_skill_r",
-      "derieri_axe_skill_tag",
-      "derieri_axe_jumpatk"
+      "derieri_axe_skill_rmb",
+      "derieri_axe_skill_q",
+      "derieri_axe_skill_tag"
     ]
   );
 }
 
-/* Les suffixes composés du jeu — `skill_q_1`, `skill_r_enchant` — désignent
-   bien la même touche et doivent se ranger au même endroit. */
+/* Les suffixes composés du jeu — `skill_q_1`, `skill_r_enchant` — ne changent
+   plus rien au rang : seule la catégorie compte. On le vérifie en leur donnant
+   des natures qui contredisent leur touche. */
 {
   const { competencesParArme } = charger({
     derieri:[
-      competence("derieri_gauntlets_skill_r_enchant", "Gauntlets", "ULTIMATE"),
-      competence("derieri_gauntlets_skill_q_1", "Gauntlets", "NORMAL"),
+      competence("derieri_gauntlets_skill_r_enchant", "Gauntlets", "NORMAL_SKILL"),
+      competence("derieri_gauntlets_skill_q_1", "Gauntlets", "ULTIMATE"),
       competence("derieri_gauntlets_passive", "Gauntlets", "PASSIVE")
     ]
   });
@@ -75,18 +82,18 @@ const competence = (gameId, weaponType, categorie) => ({
     plain(competencesParArme("derieri").Gauntlets.map(c => c.gameId)),
     [
       "derieri_gauntlets_passive",
-      "derieri_gauntlets_skill_q_1",
-      "derieri_gauntlets_skill_r_enchant"
+      "derieri_gauntlets_skill_r_enchant",
+      "derieri_gauntlets_skill_q_1"
     ]
   );
 }
 
-/* Un suffixe inconnu est rangé en fin, jamais perdu : le wiki doit montrer
-   une compétence inédite plutôt que la taire. */
+/* Une catégorie inconnue est rangée en fin, jamais perdue : le wiki doit
+   montrer une compétence inédite plutôt que la taire. */
 {
   const { competencesParArme } = charger({
     derieri:[
-      competence("derieri_axe_skill_inconnu", "Axe", "NORMAL"),
+      competence("derieri_axe_skill_inconnu", "Axe", "CATEGORIE_INEDITE"),
       competence("derieri_axe_passive", "Axe", "PASSIVE")
     ]
   });

@@ -145,6 +145,54 @@ const { chromium } = require("playwright");
         .textContent(),
       "Passif"
     );
+    /* CHAQUE TITRE DE SECTION DOIT COIFFER LA BONNE NATURE.
+
+       Les gardes lisaient la touche et non la categorie. `skill_rmb` — le CLIC
+       DROIT — contient `skill_r` : l'attaque speciale de Meliodas paraissait
+       donc sous « Ultime », et son ultime sous « Competences ». Derieri y
+       echappait, d'ou un essai qui ne mordait pas ; on ouvre Meliodas, le
+       heros que le defaut atteint.
+
+       La nature est lue sur l'ICONE du jeu, qui porte sa categorie dans son
+       nom de fichier — la source, pas le catalogue. */
+    await page.locator("#wikiHeroClose").click();
+    await page.locator('#wikiGrid .wiki-tile[data-char="meliodas"]').click();
+    await page.locator(".wiki-skill").first().waitFor();
+    const attendus = {
+      "Passif":"Passive", "Compétences":"NormalSkill",
+      "Attaque spéciale":"ActiveThird", "Ultime":"UltimateSkill",
+      "Relève":"TagSkill"
+    };
+    const sections = await page.evaluate(() => {
+      const out = [];
+      let titre = null;
+      document.querySelectorAll("#wikiHeroBody *").forEach(noeud => {
+        if(noeud.classList.contains("wiki-section")){
+          titre = noeud.textContent.trim();
+        }else if(noeud.classList.contains("wiki-skill") && titre){
+          const img = noeud.querySelector(".wiki-skill-icon");
+          out.push({ titre, src:img ? img.getAttribute("src") : "" });
+        }
+      });
+      return out;
+    });
+    assert.ok(sections.length >= 5,
+      "la fiche de Meliodas doit lister ses compétences par section");
+    sections.forEach(({ titre, src }) => {
+      const motif = attendus[titre];
+      if(!motif) return;
+      assert.ok(new RegExp(motif, "i").test(src),
+        `« ${titre} » coiffe une compétence qui n'en est pas une : ${src}`);
+    });
+    /* Et le fourre-tout doit rester VIDE. C'est la qu'une competence mal rangee
+       atterrit sans bruit : avec l'ancienne garde par touche, l'ultime de
+       Meliodas ne tombait pas sous un mauvais titre — il disparaissait ici. */
+    assert.deepEqual(
+      sections.filter(s => s.titre === "Autres attaques").map(s => s.src),
+      [],
+      "aucune compétence de Meliodas ne doit finir dans « Autres attaques »"
+    );
+
     const premiereArme = await page.locator(".wiki-skill-name").first().textContent();
 
     // Changer d'arme change les compétences affichées.

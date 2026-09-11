@@ -10,16 +10,23 @@
 
   const catalogue = () => window.SEVEN_DS_WIKI_COMPETENCES || {};
 
-  /* L'ordre d'affichage d'une arme, dans la logique du jeu : ce que le heros
-     est en permanence (le passif), puis ses touches, puis l'attaque sautee.
-     Les marques sont cherchees en SOUS-CHAINE : la source ecrit
-     `skill_q_1` et `skill_r_enchant` pour des variantes de la meme touche. */
-  const ORDRE = ["passive", "skill_q", "skill_e", "skill_r", "skill_tag", "jumpatk"];
+  /* L'ordre d'affichage suit la NATURE de la competence, pas la touche qui la
+     declenche. Les heros n'ont pas leurs competences sur les memes touches :
+     l'ultime est sur Q chez Meliodas et sur R chez Ban. Trier par touche
+     donnait donc un ordre different d'une fiche a l'autre, l'ultime tantot en
+     tete tantot en quatrieme position.
 
-  /* Un suffixe inconnu passe en fin plutot que d'etre perdu : le jour ou le
-     jeu ajoute une touche, le wiki doit la montrer, pas la taire. */
-  const rangDe = gameId => {
-    const rang = ORDRE.findIndex(marque => String(gameId || "").includes(marque));
+     L'ordre precedent lisait le `gameId` en SOUS-CHAINE, ce qui posait un
+     second probleme : `skill_rmb` — le CLIC DROIT — contient `skill_r`, et se
+     rangeait donc a la place de la touche R. */
+  const ORDRE = [
+    "PASSIVE", "NORMAL", "NORMAL_SKILL", "ACTIVE_THIRD", "ULTIMATE", "TAG_SKILL"
+  ];
+
+  /* Une categorie inconnue passe en fin plutot que d'etre perdue : le jour ou
+     le jeu en ajoute une, le wiki doit la montrer, pas la taire. */
+  const rangDe = competence => {
+    const rang = ORDRE.indexOf(String((competence || {}).categorie || ""));
     return rang === -1 ? ORDRE.length : rang;
   };
 
@@ -37,7 +44,7 @@
     });
     /* `sort` est stable : a rang egal, l'ordre de la source est conserve. */
     Object.values(parArme).forEach(liste => {
-      liste.sort((a, b) => rangDe(a.gameId) - rangDe(b.gameId));
+      liste.sort((a, b) => rangDe(a) - rangDe(b));
     });
     return parArme;
   }
