@@ -31,39 +31,50 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
      `skill_r`. L'attaque speciale de Meliodas paraissait donc sous « Ultime »,
      et son ultime sous « Competences ». Ban y echappait par chance.
 
+     Le decoupage reste VOLONTAIREMENT LARGE. Une section par categorie donnait
+     six titres pour six competences : un bandeau par ligne, qui repete ce que
+     la pastille dit deja. C'est l'ORDRE qui suit la nature, pas le nombre de
+     sections.
+
      La couleur du titre porte l'information : l'or pour ce que le heros est en
      permanence, le pourpre pour l'ultime qu'on attend, le neutre pour le
      reste. La derniere section ramasse tout — une competence inedite doit
      apparaitre quelque part plutot que disparaitre. */
   const SECTIONS = [
     { titre:"Passif", ton:"passif", garde:c => c.categorie === "PASSIVE" },
-    { titre:"Attaques normales", ton:"normal", garde:c => c.categorie === "NORMAL" },
-    { titre:"Compétences", ton:"normal", garde:c => c.categorie === "NORMAL_SKILL" },
-    { titre:"Attaque spéciale", ton:"normal", garde:c => c.categorie === "ACTIVE_THIRD" },
+    { titre:"Compétences", ton:"normal",
+      garde:c => ["NORMAL_SKILL", "ACTIVE_THIRD"].includes(c.categorie) },
     { titre:"Ultime", ton:"ultime", garde:c => c.categorie === "ULTIMATE" },
-    { titre:"Relève", ton:"normal", garde:c => c.categorie === "TAG_SKILL" },
     { titre:"Autres attaques", ton:"normal", garde:()=>true }
   ];
 
-  /* Le libelle de la touche, lu sur le gameId. Les suffixes composes du jeu
-     (`skill_q_1`, `skill_r_enchant`) designent la meme touche, d'ou la
-     recherche en sous-chaine. L'ordre suit celui du module metier. */
-  const TOUCHES = [
-    ["passive", "Passif"],
-    /* `skill_rmb` AVANT `skill_r` : rmb est le clic droit, et la recherche en
-       sous-chaine le faisait passer pour la touche R. Deux entrees
-       differentes portaient alors la meme pastille — la touche R existe pour
-       de vrai, c'est l'ultime de Ban. */
-    ["skill_rmb", "Clic droit"],
-    ["skill_q", "Q"],
-    ["skill_e", "E"],
-    ["skill_r", "R"],
-    ["skill_tag", "Tag"],
-    ["jumpatk", "Attaque sautée"]
-  ];
-  function toucheDe(gameId){
-    const trouve = TOUCHES.find(([marque]) => String(gameId || "").includes(marque));
-    return trouve ? trouve[1] : "Compétence";
+  /* La pastille est lue sur la CATEGORIE, jamais sur le `gameId`.
+
+     Les suffixes internes ne designent PAS les touches, contrairement a ce
+     qu'ils laissent croire. Deux pieges verifies :
+
+     - `jumpatk` porte l'icone `normalAttack` sur les 73 entrees du catalogue.
+       Ce n'est pas une attaque sautee, c'est l'attaque NORMALE — et sa touche
+       est le clic droit.
+     - `skill_rmb` n'est pas le clic droit : c'est l'attaque speciale, sur Q.
+
+     Pire : `skill_q` porte l'ultime chez 61 competences et la speciale chez
+     12. Le suffixe ne peut donc STRUCTURELLEMENT pas trancher, quelle que soit
+     l'ingeniosite qu'on y mette.
+
+     Les touches ci-dessous viennent du proprietaire, qui joue. Elles ne se
+     deduisent d'aucun fichier : ni le catalogue ni les tables extraites ne
+     publient les raccourcis. Ne pas les redeviner depuis le `gameId`. */
+  const PASTILLES = {
+    PASSIVE:"Passif",
+    NORMAL:"Clic droit",
+    NORMAL_SKILL:"E",
+    ACTIVE_THIRD:"Q",
+    ULTIMATE:"R",
+    TAG_SKILL:"Tag"
+  };
+  function pastilleDe(competence){
+    return PASTILLES[(competence || {}).categorie] || "Compétence";
   }
 
   function blocCompetence(competence){
@@ -76,7 +87,7 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
         src:"7ds-ui/skills/"+competence.icone,
         alt:"", loading:"lazy"
       }) : null,
-      el("span",{class:"wiki-skill-kind", text:toucheDe(competence.gameId)}),
+      el("span",{class:"wiki-skill-kind", text:pastilleDe(competence)}),
       el("span",{class:"wiki-skill-name", text:competence.nomFr})
     ]);
     /* Ni une recharge absente ni une recharge nulle ne s'annoncent : un
