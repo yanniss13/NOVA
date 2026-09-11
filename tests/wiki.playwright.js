@@ -159,9 +159,8 @@ const { chromium } = require("playwright");
     await page.locator('#wikiGrid .wiki-tile[data-char="meliodas"]').click();
     await page.locator(".wiki-skill").first().waitFor();
     const attendus = {
-      "Passif":"Passive", "Compétences":"NormalSkill",
-      "Attaque spéciale":"ActiveThird", "Ultime":"UltimateSkill",
-      "Relève":"TagSkill"
+      "Passif":"Passive", "Compétences":"NormalSkill|ActiveThird",
+      "Ultime":"UltimateSkill"
     };
     const sections = await page.evaluate(() => {
       const out = [];
@@ -184,14 +183,44 @@ const { chromium } = require("playwright");
       assert.ok(new RegExp(motif, "i").test(src),
         `« ${titre} » coiffe une compétence qui n'en est pas une : ${src}`);
     });
-    /* Et le fourre-tout doit rester VIDE. C'est la qu'une competence mal rangee
-       atterrit sans bruit : avec l'ancienne garde par touche, l'ultime de
-       Meliodas ne tombait pas sous un mauvais titre — il disparaissait ici. */
-    assert.deepEqual(
-      sections.filter(s => s.titre === "Autres attaques").map(s => s.src),
-      [],
-      "aucune compétence de Meliodas ne doit finir dans « Autres attaques »"
+    /* L'ultime ne doit apparaitre QUE sous « Ultime ». Avec l'ancienne garde
+       par touche, celui de Meliodas — sur `skill_q` — ne tombait pas sous un
+       mauvais titre : il glissait sans bruit dans le fourre-tout. */
+    assert.ok(
+      sections.some(s => s.titre === "Ultime" && /UltimateSkill/i.test(s.src)),
+      "la section « Ultime » doit coiffer l'ultime de Meliodas"
     );
+    assert.deepEqual(
+      sections.filter(s => s.titre === "Autres attaques"
+        && /UltimateSkill|ActiveThird|NormalSkill/i.test(s.src)).map(s => s.src),
+      [],
+      "aucune compétence nommée ne doit finir dans « Autres attaques »"
+    );
+
+    /* LA PASTILLE VIENT DE LA CATEGORIE, JAMAIS DU `gameId`.
+
+       Les suffixes internes ne designent pas les touches : `jumpatk` porte
+       l'icone `normalAttack` et se joue au clic droit, `skill_rmb` n'est pas
+       le clic droit mais la speciale, et `skill_q` porte l'ultime chez 61
+       competences et la speciale chez 12. L'ultime de Meliodas est justement
+       un `skill_q` : s'il affiche « Q », c'est que quelqu'un est retourne
+       lire le nom interne. */
+    const pastilles = await page.locator("#wikiHeroBody .wiki-skill")
+      .evaluateAll(blocs => blocs.map(b => ({
+        pastille:(b.querySelector(".wiki-skill-kind") || {}).textContent || "",
+        src:(b.querySelector(".wiki-skill-icon") || {}).getAttribute
+          ? b.querySelector(".wiki-skill-icon").getAttribute("src") : ""
+      })));
+    const parNature = {
+      UltimateSkill:"R", ActiveThird:"Q", NormalSkill:"E", normalAttack:"Clic droit"
+    };
+    pastilles.forEach(({ pastille, src }) => {
+      const attendu = Object.entries(parNature)
+        .find(([motif]) => new RegExp(motif, "i").test(src));
+      if(!attendu) return;
+      assert.equal(pastille, attendu[1],
+        `pastille erronée pour ${src} : « ${pastille} » au lieu de « ${attendu[1]} »`);
+    });
 
     const premiereArme = await page.locator(".wiki-skill-name").first().textContent();
 
