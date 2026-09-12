@@ -52,7 +52,10 @@
   const CLOUD_PRESETS_CACHE_KEY = "confrerie7ds.cloud.presets";
   /* Pas de prefixe `cloud.` : la constante C se mesure sur SON build et ne se
      partage pas, voir js/donnees/calibration-store.js. */
-  const CALIBRATION_KEY = "confrerie7ds.calibration";
+  /* V2 invalide sans detruire les constantes mesurees avec l'ancien modele
+     additif du percement : leur reutilisation avec une DEF multiplicative
+     produirait des predictions silencieusement fausses. */
+  const CALIBRATION_KEY = "confrerie7ds.calibration.v2";
   /* Les coequipiers que le calculateur prend en compte. Un reglage d'ecran,
      pas une donnee de confrerie : on ne retient que des couples personnage +
      arme designant des builds du roster, jamais les builds eux-memes.

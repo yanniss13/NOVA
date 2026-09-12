@@ -226,10 +226,11 @@ import { degatsAttendus } from "./degats-calcul.js";
      L'element attendu est celui de l'ARME equipee, jamais du personnage : un
      heros change d'element avec son arme.
 
-     Les lignes CONSIGNEES (`horsCalcul`) sortent avant tout filtre. Le moteur
-     n'a pas d'entree pour la resistance elementaire : les proposer donnerait
-     une case a cocher qui ne bouge aucun chiffre, et le membre croirait son
-     effet compte. Elles vivent dans le recensement de l'Analyse, pas ici. */
+     Les lignes CONSIGNEES (`horsCalcul`) sortent avant tout filtre. Le noyau
+     sait desormais retrancher une resistance elementaire, mais ces quatre
+     effets restent sans mesure en jeu : les proposer ferait passer leur
+     application pour acquise. Ils vivent dans le recensement de l'Analyse,
+     pas ici. */
   function buffsApplicables(elementDuBuild){
     const catalogue = tableDesBuffs();
     const vise = (elementDuBuild || "").toLowerCase();

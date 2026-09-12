@@ -15,7 +15,7 @@ assert.equal(
 );
 
 const CIBLE_NEUTRE = {
-  def:5600,
+  def:5220,
   critResist:0,
   critDmgResist:0,
   resistanceElementaire:0,

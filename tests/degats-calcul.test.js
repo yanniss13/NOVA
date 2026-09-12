@@ -25,10 +25,10 @@ const {
 } = hooks;
 
 /* Cible neutre et lisible : aucune resistance, aucune faiblesse, et une
-   defense choisie pour que K/(K+DEF) tombe juste. K vaut 5600, donc
-   DEF = 5600 donne exactement une reduction de moitie. */
+   defense choisie pour que K/(K+DEF) tombe juste. K vaut 5220, donc
+   DEF = 5220 donne exactement une reduction de moitie. */
 const CIBLE_NEUTRE = {
-  def:5600, critResist:0, critDmgResist:0,
+  def:5220, critResist:0, critDmgResist:0,
   resistanceElementaire:0, faiblesse:0
 };
 const SANS_CRITIQUE = { atk:1000, critRate:0, critDamage:0, bonusType:0 };
@@ -192,7 +192,7 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
 {
   const r = degatsAttendus({
     stats:SANS_CRITIQUE, competence:COUP_SIMPLE,
-    cible:Object.assign({}, CIBLE_NEUTRE, { def:11200 })
+    cible:Object.assign({}, CIBLE_NEUTRE, { def:10440 })
   });
   assert.ok(
     r.total > 250 && r.total < 500,
@@ -405,11 +405,9 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   assert.equal(CIBLE_REFERENCE.critResist, 2000);
   assert.equal(CIBLE_REFERENCE.critDmgResist, 5000);
   assert.equal(CIBLE_REFERENCE.resistanceElementaire, 3000);
+  assert.equal(CIBLE_REFERENCE.resistanceElementaireBase, 5000);
   assert.equal(CIBLE_REFERENCE.faiblesse, 0);
-  /* Celle-ci n'est PAS un releve : la source ne publie aucune resistance au
-     percement pour Akumu. Le zero est une hypothese, et ce test existe pour
-     qu'elle reste visible plutot que de se fondre dans les autres. */
-  assert.equal(CIBLE_REFERENCE.resistancePercement, 0);
+  assert.equal(CIBLE_REFERENCE.resistancePercement, 2000);
 }
 
 /* Les 31 cibles selectionnables : les 30 niveaux d'Akumu, puis le mannequin.
@@ -449,8 +447,15 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
      combinaison dans la formule elementaire n'est pas tranchee en jeu. */
   CIBLES.filter(c => c.niveau).forEach(cible => {
     assert.equal(cible.resistanceElementaire, 3000, cible.id);
+    assert.equal(cible.resistanceElementaireBase, 5000, cible.id);
     assert.equal(cible.faiblesse, 0, cible.id);
-    assert.equal(cible.resistancePercement, 0, cible.id);
+  });
+  CIBLES.filter(c => c.niveau && c.niveau <= 20).forEach(cible => {
+    assert.equal(cible.resistancePercement, 2000, cible.id);
+  });
+  CIBLES.filter(c => c.niveau && c.niveau >= 21).forEach(cible => {
+    assert.equal(cible.resistancePercement, 2000 + (cible.niveau - 20) * 20,
+      cible.id);
   });
 
   /* La DEF, la defense critique et les PV croissent a chaque palier : une
@@ -488,6 +493,7 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   assert.equal(mannequin.critResist, 0);
   assert.equal(mannequin.critDmgResist, 0);
   assert.equal(mannequin.resistanceElementaire, 0);
+  assert.equal(mannequin.resistanceElementaireBase, 0);
   assert.equal(mannequin.faiblesse, 0);
   assert.equal(mannequin.resistancePercement, 0);
   assert.equal(mannequin.niveau, null);
@@ -520,14 +526,8 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
     );
   });
 
-  /* Le JEU plafonne la somme des sources de percement : sa table de combat
-     porte `battle_max_sum_protect_cur_rate = 9000`, soit 90 %. Au-dela, tout
-     point supplementaire est perdu.
-
-     Ce plafond est celui du jeu, PAS celui de l'outil de reference, qui
-     accepte 150 % sans broncher. Les deux chiffres divergent donc au-dela de
-     90 % de percement, et c'est un choix assume : le calculateur dit ce qui
-     se passe en combat, pas ce qu'affiche 7dsorigin.app. */
+  /* Blue borne le percement net a 100 %. Au-dela, la DEF est deja nulle et
+     aucun point supplementaire ne peut rapporter. */
   {
     const avec = percement => degatsAttendus({
       stats:{ atk:1000, critRate:0, critDamage:0, percementDefense:percement },
@@ -535,30 +535,23 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
       cible:CIBLE_NEUTRE
     }).sansCritique;
 
-    assert.equal(avec(9000), avec(15000),
-      "au-dela de 90 %, un point de percement de plus ne doit rien rapporter");
-    assert.equal(avec(9000), avec(9001),
+    assert.equal(avec(10000), avec(15000),
+      "au-dela de 100 %, un point de percement de plus ne doit rien rapporter");
+    assert.equal(avec(10000), avec(10001),
       "le plafond doit mordre des le premier point au-dessus");
+    assert.ok(avec(9000) < avec(10000),
+      "le dixieme final doit rester actif");
     assert.ok(avec(5000) < avec(9000),
       "sous le plafond, le percement doit rester pleinement actif");
   }
 
-  /* Le percement reste PLEINEMENT actif des qu'il y a une armure : le
-     correctif ci-dessus ne doit pas l'avoir neutralise ailleurs. Sur
-     CIBLE_NEUTRE, C = DEF = 5600 donne une mitigation de 0,5, que 5000
-     dix-milliemes de percement portent a 1,0 — donc le double. */
-  assert.equal(
-    degatsAttendus({
-      stats:{ atk:1000, critRate:0, critDamage:0, percementDefense:5000 },
-      competence:COUP_SIMPLE,
-      cible:CIBLE_NEUTRE
-    }).sansCritique,
-    2 * degatsAttendus({
-      stats:{ atk:1000, critRate:0, critDamage:0 },
-      competence:COUP_SIMPLE,
-      cible:CIBLE_NEUTRE
-    }).sansCritique
-  );
+  /* Sur CIBLE_NEUTRE, C = DEF = 5220 donne 0,5. Percer 50 % ramene la DEF
+     a 2610 et la mitigation a 2/3. */
+  assert.equal(Math.round(degatsAttendus({
+    stats:{ atk:1000, critRate:0, critDamage:0, percementDefense:5000 },
+    competence:COUP_SIMPLE,
+    cible:CIBLE_NEUTRE
+  }).sansCritique), 667);
 
   /* Sans defense, aucun coup ne peut reveler la constante : le refus est le
      meme que celui de l'outil de reference sur son propre mannequin, et il est
@@ -575,19 +568,15 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   );
 }
 
-/* Le percement de defense (« Defense Shatter ») s'AJOUTE au rapport de
-   mitigation ; il ne divise pas la defense. Les cinq mesures de l'outil de
-   reference, transcrites telles quelles (RAPPORT-analyse-tapscreen.md,
-   session 3). Sa constante valait 5600, comme notre K : les chiffres se
-   comparent donc directement. Avec 1000 d'ATK et une competence a 100 %,
-   total = 1000 x mitigation. */
+/* Le percement de defense reduit la DEF avant la courbe hyperbolique. Ces
+   cas litteraux distinguent le modele de Blue de l'ancien terme additif. */
 {
   [
-    { def:5600, percement:0, total:500, note:"5600/11200 = 0,5" },
-    { def:5600, percement:5000, total:1000, note:"0,5 + 0,5, soit une defense NULLE" },
-    { def:2800, percement:0, total:667, note:"5600/8400" },
-    { def:10000, percement:3000, total:659, note:"5600/15600 + 0,30" },
-    { def:7000, percement:0, total:444, note:"5600/12600" }
+    { def:5220, percement:0, total:500, note:"5220/10440 = 0,5" },
+    { def:5220, percement:5000, total:667, note:"DEF effective = 2610" },
+    { def:2610, percement:0, total:667, note:"5220/7830" },
+    { def:10000, percement:3000, total:427, note:"DEF effective = 7000" },
+    { def:7000, percement:0, total:427, note:"5220/12220" }
   ].forEach(cas => {
     const r = degatsAttendus({
       stats:{ atk:1000, percementDefense:cas.percement },
@@ -599,9 +588,8 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   });
 }
 
-/* La preuve que ce n'est PAS une division de la defense : percer 50 % d'une
-   defense de 5600 ne rend pas le chiffre d'une defense de 2800. C'est
-   exactement la mesure qui a invalide la premiere version de ce module. */
+/* Percer 50 % d'une defense de 5220 rend exactement le chiffre d'une defense
+   de 2610 : c'est la forme mesuree chez Blue. */
 {
   const perce = degatsAttendus({
     stats:{ atk:1000, percementDefense:5000 },
@@ -609,11 +597,11 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   });
   const defenseMoitie = degatsAttendus({
     stats:{ atk:1000 }, competence:COUP_SIMPLE,
-    cible:Object.assign({}, CIBLE_NEUTRE, { def:2800 })
+    cible:Object.assign({}, CIBLE_NEUTRE, { def:2610 })
   });
-  assert.notEqual(Math.round(perce.total), Math.round(defenseMoitie.total),
-    "percer de moitie n'est pas diviser la defense de moitie");
-  assert.equal(Math.round(perce.total), 1000);
+  assert.equal(Math.round(perce.total), Math.round(defenseMoitie.total),
+    "percer de moitie revient a diviser la defense par deux");
+  assert.equal(Math.round(perce.total), 667);
   assert.equal(Math.round(defenseMoitie.total), 667);
 }
 
@@ -624,25 +612,18 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
     competence:COUP_SIMPLE,
     cible:Object.assign({}, CIBLE_NEUTRE, { resistancePercement:2000 })
   });
-  assert.equal(Math.round(r.total), 800, "0,5 + (50 % - 20 %)");
+  assert.equal(Math.round(r.total), 588,
+    "50 % - 20 % = 30 % net, donc DEF effective = 3654");
 }
 
-/* La mitigation peut depasser 1 — les degats depassent alors la valeur
-   pre-armure — mais le percement qui l'y pousse est PLAFONNE a 90 %.
-
-   Ce test disait l'inverse jusqu'au 23 aout 2026 : il gravait « AUCUN plafond
-   en haut », mesure jusqu'a 150 % chez l'outil de reference. Le jeu, lui,
-   porte `battle_max_sum_protect_cur_rate = 9000`. On a tranche pour le JEU :
-   la page dit ce qui se passe en combat.
-
-   Ne pas rendre ce test a son ancienne forme sans rouvrir cette decision :
-   0,5 + 1,5 = 2,0 est ce que calcule 7dsorigin.app, pas ce que fait le jeu. */
+/* Le plafond a 100 % annule la DEF sans jamais pousser la mitigation au-dessus
+   de 1. Le site de Blue rend le meme resultat a 100 % et a 150 %. */
 {
   const r = degatsAttendus({
     stats:{ atk:1000, percementDefense:15000 },
     competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
   });
-  assert.equal(Math.round(r.total), 1400, "0,5 + 0,9 plafonne = 1,4");
+  assert.equal(Math.round(r.total), 1000, "la DEF annulee rend la base, pas davantage");
 }
 
 /* Un plancher a zero en revanche : sur-resister ne RENFORCE pas la defense. */
@@ -664,10 +645,9 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   assert.equal(r.total, 500);
 }
 
-/* La reduction de defense infligee a l'ennemi MULTIPLIE sa defense, la ou le
-   percement s'ajoute au rapport. DEF 5600 reduite de 20 % tombe a 4480, donc
-   K/(K+DEF) vaut 5600/10080. Si ce malus s'ajoutait au rapport comme le
-   percement, on lirait 700 : les deux formes ne sont pas interchangeables. */
+/* La reduction de defense et le percement multiplient tous deux la DEF. Ils
+   restent deux facteurs successifs : DEF 5220 reduite de 20 % tombe a 4176,
+   donc K/(K+DEF) vaut 5220/9396. */
 {
   const r = degatsAttendus({
     stats:{ atk:1000, reductionDefense:2000 },
@@ -769,14 +749,14 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
     stats:{ atk:1000, constanteC:CONSTANTE_PAR_DEFAUT },
     competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
   });
-  assert.equal(CONSTANTE_PAR_DEFAUT, 5600);
+  assert.equal(CONSTANTE_PAR_DEFAUT, 5220);
   assert.equal(sans.total, avecLeDefaut.total);
 
   const autre = degatsAttendus({
     stats:{ atk:1000, constanteC:11200 },
     competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
   });
-  assert.equal(Math.round(autre.total), 667, "11200/(11200+5600)");
+  assert.equal(Math.round(autre.total), 682, "11200/(11200+5220)");
 }
 
 /* LE ROUND-TRIP : calculer avec une constante donnee, puis la retrouver
@@ -788,7 +768,7 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
    reussit sur ses propres entrees. */
 {
   [
-    { c:5600, stats:{ atk:1000 }, cible:CIBLE_NEUTRE },
+    { c:5220, stats:{ atk:1000 }, cible:CIBLE_NEUTRE },
     { c:3200, stats:{ atk:12345, critRate:5000, critDamage:14000 },
       cible:CIBLE_NEUTRE },
     { c:9000, stats:{ atk:8000, percementDefense:2500 }, cible:CIBLE_REFERENCE },
@@ -839,20 +819,20 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
     })).erreur,
     "defense-nulle"
   );
-  /* Trop faibles : le percement seul depasse deja la mitigation observee. */
-  assert.equal(
+  /* Meme un petit coup positif peut calibrer une constante positive : le
+     percement ne constitue plus un terme additif minimal a retrancher. */
+  assert.ok(
     calibrerConstante({
       stats:{ atk:1000, percementDefense:5000 },
       competence:COUP_SIMPLE, cible:CIBLE_NEUTRE, degatsObserves:400
-    }).erreur,
-    "degats-trop-faibles"
+    }).constante > 0
   );
 }
 
 /* Calibrer sur un coup CRITIQUE est l'erreur que le membre fera. Le garde-fou
    l'attrape au lieu de rendre une constante trop grande. */
 {
-  const stats = { atk:1000, critRate:10000, critDamage:14000, constanteC:5600 };
+  const stats = { atk:1000, critRate:10000, critDamage:14000, constanteC:5220 };
   const r = degatsAttendus({
     stats, competence:COUP_SIMPLE, cible:CIBLE_NEUTRE
   });
@@ -865,6 +845,23 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   );
 }
 
+/* Une cible au plancher de 5 % a perdu l'information sur C : plusieurs
+   constantes produisent le meme coup. Akumu 30 y arrive maintenant que sa
+   resistance elementaire de base de 50 % est prise en compte. */
+{
+  const cible = plain(hooks.CIBLES).find(item => item.id === "akumu-30");
+  const stats = { atk:1000, constanteC:5220 };
+  const calcule = degatsAttendus({ stats, competence:COUP_SIMPLE, cible });
+  assert.equal(calcule.sansCritique, 50, "Akumu 30 mord au plancher de 5 %");
+  assert.equal(
+    calibrerConstante({
+      stats, competence:COUP_SIMPLE, cible,
+      degatsObserves:calcule.sansCritique
+    }).erreur,
+    "degats-au-plancher"
+  );
+}
+
 /* ======================================================================
    LE TERME D'AVANTAGE ELEMENTAIRE, enfin exerce, et ses deux bornes.
 
@@ -873,6 +870,50 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
    publies par l'outil de reference pour Diane (Terre) contre une cible faible
    a la Terre le fixent (page formule-de-degats, exemple de validation).
    ====================================================================== */
+
+/* FORMULE DE BLUE — releves en boite noire le 12 septembre 2026 sur
+   linen-ostrich-258033.hostingersite.com/api/calc.php.
+
+   Ces valeurs litterales attrapent trois retours accidentels a l'ancien
+   modele : K = 5600, le percement ajoute a la mitigation, ou la resistance
+   strictement lineaire au-dessus de 50 %. */
+{
+  const contre = (stats, cible) => degatsAttendus({
+    stats:Object.assign({ atk:1000, critRate:0, critDamage:0 }, stats),
+    competence:COUP_SIMPLE,
+    cible:Object.assign({}, CIBLE_NEUTRE, cible)
+  }).sansCritique;
+
+  assert.ok(Math.abs(contre({}, { def:5128 }) - 504.4453) < 0.0001,
+    "Blue emploie K = 5220 dans K/(K+DEF)");
+  assert.ok(Math.abs(contre({ percementDefense:5000 }, { def:5128 }) - 670.6064) < 0.0001,
+    "50 % de percement reduisent la DEF de moitie");
+  assert.ok(Math.abs(contre({ percementDefense:5000 }, {
+    def:5128, resistancePercement:2000
+  }) - 592.5354) < 0.0001,
+  "20 % de resistance laissent 30 % de percement net");
+  assert.ok(Math.abs(contre({ percementDefense:11000 }, {
+    def:5128, resistancePercement:2000
+  }) - 910.5498) < 0.0001,
+  "Blue soustrait la resistance avant de borner le percement net");
+  assert.equal(contre({ percementDefense:12000 }, {
+    def:5128, resistancePercement:2000
+  }), 1000,
+  "120 % moins 20 % annulent exactement la DEF");
+  assert.ok(Math.abs(contre({
+    percementDefense:5000, reductionDefense:5000
+  }, { def:5128 }) - 802.8299) < 0.0001,
+  "malus de DEF et percement reduisent la DEF l'un apres l'autre");
+
+  assert.equal(Math.round(contre({}, {
+    def:0, resistanceElementaire:8000
+  })), 300,
+  "au-dessus de 50 %, trois points de resistance retirent deux points de degats");
+  assert.equal(Math.round(contre({ reductionResistanceElementaire:1000 }, {
+    def:0, resistanceElementaireBase:5000, resistanceElementaire:3000
+  })), 600,
+  "la resistance la plus haute est retenue, puis la reduction se retranche en points");
+}
 
 /* Faiblesse et resistance elementaire ensemble : resistance 15 % -> x0,85,
    faiblesse +2000 -> x1,2. Sans defense, le total isole ces deux termes. */
@@ -922,12 +963,12 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
   const r = degatsAttendus({
     stats:{ atk:1000 }, competence:COUP_SIMPLE,
     cible:Object.assign({}, CIBLE_NEUTRE, {
-      def:5600, resistanceElementaire:9900
+      def:5220, resistanceElementaire:12000
     })
   });
-  /* Sans plancher : 1000 x 0,5 x 0,01 = 5. Avec : 1000 x 0,05 = 50. */
+  /* Sans plancher : 1000 x 0,5 x 0,0333 = 16,7. Avec : 1000 x 0,05 = 50. */
   assert.equal(Math.round(r.total), 50,
-    "0,5 x 0,01 = 0,005 remonte au plancher 0,05");
+    "0,5 x 0,0333 remonte au plancher 0,05");
 }
 
 /* Et le plancher NE MORD PAS dans la plage reelle : Akumu, resistance 30 %,
