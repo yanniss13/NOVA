@@ -12,10 +12,11 @@ son catalogue d'effets.
    ton nom dedans, et laisse les autres tranquilles : deux agents sur le même
    fichier généré, c'est un conflit garanti.
 3. **Ne régénère jamais `data/effets-dps.js` sans lancer la suite ensuite.**
-   `node scripts/lancer-tests.js unit` doit rester à 83/83.
+   `node scripts/lancer-tests.js unit` doit rester à 99/99.
 4. **La règle de la maison** : le code de la stat tranche, jamais la prose du
-   jeu, et jamais un site tiers. Quand une source externe contredit une mesure
-   locale, c'est une **question ouverte**, pas une correction à appliquer.
+   jeu. Une source tierce ne devient prioritaire que sur arbitrage explicite du
+   propriétaire. Le 12 septembre 2026, il a choisi les mesures de Blue comme
+   référence empirique du noyau défense/percement/résistance (chantier 1).
 5. Ce qui est **écarté** est écrit ici aussi (section « fausses pistes »).
    Relis-la avant d'ouvrir une enquête : elle a déjà coûté du temps.
 
@@ -85,45 +86,48 @@ npm test
 
 ---
 
-## Chantier 1 — La constante C : 5600 local contre 5128 publié
+## Chantier 1 — FAIT : alignement sur la formule de Blue
 
-**Libre. Impact : précision absolue, nul sur un classement.**
+**Propriétaire : Codex. Décision du propriétaire du projet le 12 septembre
+2026 : Blue a davantage mesuré le jeu et devient la référence empirique.**
 
-`js/metier/degats-calcul.js:26` pose `CONSTANTE_PAR_DEFAUT = 5600`, documenté
-comme le « milieu de l'intervalle 5500-5700 publié » (spec du 4 août 2026).
+Le site `https://linen-ostrich-258033.hostingersite.com/` garde son calcul dans
+`api/calc.php`. Une passe en boîte noire avec des entrées synthétiques a isolé
+chaque terme. Avec 1 000 000 d'ATK, coefficient 100 %, aucun autre facteur :
 
-`https://7dsorigin.app/en/damage-formula` publie depuis une valeur **mesurée**,
-pas un intervalle :
+| DEF | Sortie Blue | Forme exacte |
+|---:|---:|---:|
+| 1 000 | 839 228,3 | `5220 / (5220 + 1000)` |
+| 5 128 | 504 445,3 | `5220 / (5220 + 5128)` |
+| 10 000 | 342 969,8 | `5220 / (5220 + 10000)` |
 
-> « Measured 2026-08-20: the Scorpybeast's stacked defense-buff plateaus
-> (junction, sector 10) give a unique solution K = 5,128, cross-validated on
-> four defense states (gaps < 0.1%). »
+Le noyau adopte donc `CONSTANTE_PAR_DEFAUT = 5220`. Le percement ne s'ajoute
+plus à la mitigation : après soustraction de la résistance au percement et
+borne à `[0, 100 %]`, il multiplie la DEF déjà réduite par les malus :
 
-Et elle la donne **universelle**, quand le dépôt modélise C comme propre au
-personnage, à son build et à ses potentiels.
+```text
+DEF_effective = DEF × (1 − malusDEF) × (1 − percementNet)
+mitigation    = K / (K + DEF_effective)
+```
 
-Écart sur la mitigation, aux paliers d'Akumu :
+Preuves discriminantes à DEF 5 128, base 1 000 : 50 % de percement donnent
+670,6 ; avec 20 % de résistance au percement, 592,5 ; avec en plus 50 % de
+malus DEF, 802,8. Ce sont exactement les résultats de DEF multipliée par 0,5,
+0,7 et 0,5 × 0,5.
 
-| Palier | DEF | C=5600 | K=5128 | écart |
-|---|---|---|---|---|
-| 1 | 3 454 | 0,6185 | 0,5975 | +3,5 % |
-| 10 | 14 453 | 0,2793 | 0,2619 | +6,6 % |
-| 20 | 38 544 | 0,1269 | 0,1174 | +8,0 % |
-| 30 | 80 264 | 0,0652 | 0,0601 | +8,6 % |
+Blue retient ensuite la plus haute valeur entre résistance élémentaire de base
+et résistance de l'élément frappé, puis retranche les réductions en points. Le
+facteur est linéaire jusqu'à 50 % ; au-dessus, trois points de résistance ne
+retirent plus que deux points de dégâts (80 % → facteur 0,30).
 
-**Ce qui n'est PAS en jeu** : le comparateur reste juste, l'écart se simplifie
-dans un rapport entre deux builds. C'est le mode prédictif — « combien je vais
-taper » — qui dérive.
-
-**Ce qui trancherait** : une calibration réelle. `calibrerConstante()` existe
-déjà ; si plusieurs membres calibrent et que leurs C se groupent autour de
-5128, la thèse « universelle » gagne et la machinerie par membre devient un
-absorbeur d'autre chose. S'ils divergent franchement, c'est le dépôt qui a
-raison et il faut l'écrire.
-
-**Ne pas remplacer 5600 par 5128 tant que ce n'est pas mesuré ici.** Changer un
-défaut sur la foi d'un site, c'est troquer une incertitude documentée contre
-une autre qui ne l'est pas.
+Le compromis validé conserve deux bornes issues directement du client : le
+plancher global de dégâts à 5 % et la faiblesse plafonnée à ×6. Il conserve
+aussi le taux critique, l'espérance, les buffs, potentiels et rotations, que
+l'interface de Blue ne calcule pas. Les calibrations V1 restent dans
+`localStorage` mais la clé V2 ne les relit pas : leur inverse appartenait à
+l'ancien percement additif. Une calibration est refusée quand le coup atteint
+le plancher global de 5 %, car cette saturation a perdu l'information sur C ;
+l'interface demande alors un palier moins défendu.
 
 ## Chantier 2 — Le critique contre Akumu
 
@@ -268,7 +272,7 @@ pas d'une méthode. La passe complète a été faite ensuite. Voici son état.
 |---|---:|---|
 | `ga_critical_rate_max` | 9000 | `PLAFOND_PROPRE` |
 | `battle_max_critical_rate` | 10000 | `PLAFOND_TOTAL` |
-| `battle_max_sum_protect_cur_rate` | 9000 | `PLAFOND_PERCEMENT` |
+| `battle_max_sum_protect_cur_rate` | 9000 | écart assumé : Blue borne le net à 10000 |
 | `battle_min_damres_rate` | 500 | `PLANCHER_DEGATS` (5 %) |
 | `battle_min_critical_dam_rate` | 10000 | plancher du multiplicateur, **chantier 2** |
 
@@ -277,28 +281,19 @@ multiplicateur critique : le relevé Derieri en jeu (dégâts critiques 126,46 %
 soit un multiplicateur de 2,2646) le dépasse et tombe juste à 1e-4 près. Ne pas
 le brancher.
 
-### Candidat A — la mitigation peut-elle dépasser 1 ?
+### Candidat A — TRANCHÉ le 12 septembre 2026 : la mitigation ne dépasse plus 1
 
 `battle_max_damres_rate` = **10000**, soit 100 %, dans la même section de bornes
 finales. Si `damres_rate` désigne le facteur de dégâts après mitigation, alors
 `mitigation × résistance` devrait être **plafonné à 1**, et le percement au-delà
 du point où `C/(C+DEF) + percement = 1` ne rendrait plus rien.
 
-Le module fait l'inverse et l'assume : « la mitigation peut dépasser 1, et les
-dégâts dépasser alors la valeur pré-armure », sur cinq mesures tapscreen
-prédites à l'avance (session 3).
+Le module suivait auparavant tapscreen et permettait à la mitigation de dépasser
+1. Le propriétaire a choisi les mesures plus nombreuses de Blue : le percement
+réduit désormais la DEF et s'arrête à sa disparition. À 100 % comme à 150 % de
+percement sa sortie vaut donc la base pré-armure, jamais davantage.
 
-**Non tranché, et à ne pas trancher au jugé.** Deux lectures possibles de
-`damres_rate` : facteur de dégâts final (→ plafond) ou statistique de résistance
-`D_All_DamRes_Rate` (→ rien à voir). Le poids de puissance de combat
-`battle_p_d_all_damres_rate` = 4500 existe sous ce nom de stat, ce qui plaide
-pour la seconde. Le module avertit déjà : « ne pas le borner par bon sens sans
-mesure à l'appui ».
-
-**Ce qui trancherait** : un coup en jeu avec plus de percement qu'il n'en faut
-pour annuler la défense de la cible, comparé au même coup sur mannequin nu.
-
-### Candidat B — le plafond de percement, 90 % ou 150 % ?
+### Candidat B — TRANCHÉ le 12 septembre 2026 : 100 % net dans le calculateur
 
 `PLAFOND_PERCEMENT` = 9000 vient de `battle_max_sum_protect_cur_rate`, dont le
 nom colle exactement à la stat `D_Protect_Cur_Rate`. Mais la table porte aussi
@@ -306,8 +301,10 @@ nom colle exactement à la stat `D_Protect_Cur_Rate`. Mais la table porte aussi
 et tapscreen accepte justement 150 % sans broncher.
 
 Deux clés, deux mécaniques probablement distinctes (`protect_cur` = brèche
-d'armure, `pierceper` = autre chose). Le choix actuel reste le mieux nommé.
-**Ne rien changer sans savoir ce que `pierceper` désigne.**
+d'armure, `pierceper` = autre chose). Le moteur borne néanmoins le percement
+**net** à 100 %, comme Blue : cette borne signifie simplement « aucune DEF ne
+reste ». La borne de somme à 90 % demeure consignée comme écart avec la table du
+client, sur arbitrage explicite du propriétaire.
 
 ### ~~Écart cosmétique, sans effet aujourd'hui~~ — ALIGNÉ le 9 septembre 2026
 
@@ -371,6 +368,7 @@ sans effet : Akumu n'a aucune faiblesse.
 | `docs/constantes-combat-du-jeu.md` | Les constantes, lues dans `DefineTable`. Donne les bornes, pas l'ordre des opérations. |
 | `7dsorigin.app/en/damage-formula` | Sérieux, daté, méthodologie citée. Mais c'est une **mesure externe**, pas le code. À croiser, jamais à recopier. |
 | `RAPPORT-analyse-tapscreen.md` | Rétro-ingénierie de l'outil de référence. Prouve ce que fait **l'outil**, pas ce que fait le jeu. |
+| Calculateur de Blue (`linen-ostrich-258033.hostingersite.com`) | **Référence empirique prioritaire sur décision du propriétaire le 12 septembre 2026.** Formule PHP fermée : chaque terme retenu doit rester couvert par une sonde littérale dans `tests/degats-calcul.test.js`. |
 | `7dscalc.com` | Modèle communautaire, qui s'annonce lui-même comme estimé (« DEF scaling, resistance stacking, debuff math remain community-derived »). Sa mitigation `DEF/(DEF+500+niveau×10)` contredit `K/(K+DEF)`. **Ne pas s'en servir comme référence.** |
 
 ## Commandes utiles

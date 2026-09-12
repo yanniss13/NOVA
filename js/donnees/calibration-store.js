@@ -1,5 +1,9 @@
 /* La constante C mesuree par un membre, rangee par personnage et type d'arme.
 
+   La cle de stockage est versionnee avec la forme de la formule. Les mesures
+   V1, inversees quand le percement s'ajoutait a la mitigation, restent dans
+   le navigateur mais ne sont jamais relues par le modele multiplicatif V2.
+
    LOCALE, et volontairement pas synchronisee vers Supabase. C n'est pas une
    donnee de confrerie : elle est propre au build d'un membre ET a ses
    potentiels debloques. Partager celle d'un autre reviendrait a lui proposer

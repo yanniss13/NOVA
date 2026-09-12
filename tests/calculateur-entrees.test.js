@@ -463,7 +463,7 @@ tousLesBuffs.forEach(buff => {
     ],
     entrees:{ atk:1000, attaqueElementaire:0, def:0, maxHp:0,
               critRate:0, critDamage:0 },
-    cible:{ def:5600, critResist:0, critDmgResist:0,
+    cible:{ def:5220, critResist:0, critDmgResist:0,
             resistanceElementaire:0, faiblesse:0 }
   });
   assert.equal(lignes.length, 2, "les deux lignes restent presentes");

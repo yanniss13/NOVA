@@ -80,9 +80,10 @@ collectif.
 
 **Enjeu : +21 % de dégâts sur une cible à 30 % de résistance**, par ligne.
 
-Quatre buffs sont transcrits, chiffrés, et **écartés du calcul** (`horsCalcul`)
-parce que rien dans le moteur ne réduit la résistance élémentaire de la cible.
-Le recensement de l'Analyse les affiche, le calculateur les ignore.
+Quatre buffs sont transcrits, chiffrés, et **écartés du calcul** (`horsCalcul`).
+Le noyau sait retrancher une résistance élémentaire depuis l'alignement sur la
+formule de Blue, mais l'application réelle de ces quatre effets n'est toujours
+pas mesurée. Le recensement de l'Analyse les affiche, le calculateur les ignore.
 
 | Support | Ligne | Valeur |
 | --- | --- | --- |

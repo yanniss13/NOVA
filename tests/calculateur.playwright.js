@@ -29,6 +29,13 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await page.route("https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2*", route =>
       route.fulfill({ status:200, contentType:"application/javascript", body:"" })
     );
+    /* Une mesure V1 a ete inversee avec l'ancien percement additif. Elle doit
+       rester stockee mais ne jamais contaminer le modele multiplicatif V2. */
+    await page.addInitScript(() => {
+      localStorage.setItem("confrerie7ds.calibration", JSON.stringify({
+        "meliodas|Hache":9999
+      }));
+    });
     await page.goto(server.url + "/index.html");
 
     /* Le catalogue est PARESSEUX : 7491 lignes que ne doit pas payer un
@@ -516,7 +523,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
 
     const message = await page.locator(".calc-calibration-message").textContent();
     const retrouvee = Number(message.replace(/[^0-9]/g, ""));
-    assert.ok(Math.abs(retrouvee - 5600) <= 20,
+    assert.ok(Math.abs(retrouvee - 5220) <= 20,
       "la constante retrouvee doit etre celle qui a produit le chiffre, recu : "
         + message);
     assert.match(await calibration.textContent(), /Mesurée sur ce build/,
@@ -571,8 +578,8 @@ const STORAGE_KEY = "confrerie7ds.teams";
     /* Les limites annoncees a l'ecran, pas releguees en commentaire. */
     const bas = await page.locator("#calculateurBody").textContent();
     assert.match(bas, /Non inclus dans le calcul/);
-    assert.match(bas, /résistance au percement du boss/,
-      "la page doit dire que la résistance au percement n'est pas appliquée");
+    assert.doesNotMatch(bas, /résistance au percement du boss/,
+      "la page ne doit plus annoncer comme exclue une résistance désormais appliquée");
 
     /* Le choix de la cible : trente paliers d'Akumu, puis le mannequin. */
     const cible = page.locator(".calc-cible");
@@ -591,6 +598,15 @@ const STORAGE_KEY = "confrerie7ds.teams";
       .locator(".calc-table tbody tr:not(.calc-muette)").first()
       .locator(".calc-valeur").allTextContents())
       .map(t => Number(t.replace(/[^0-9]/g, "")));
+    await mesure.fill(String(avant[0]));
+    await mesure.blur();
+    await calibration.getByRole("button", { name:"Calibrer" }).click();
+    await page.locator(".calc-calibration-message").waitFor();
+    assert.match(
+      await page.locator(".calc-calibration-message").textContent(),
+      /plancher de dégâts de 5 %.*palier moins défendu/,
+      "un coup sature au plancher doit demander une cible moins defendue"
+    );
     await cible.selectOption("mannequin");
     await page.locator(".calc-table tbody tr").first().waitFor();
     const surMannequin = (await page

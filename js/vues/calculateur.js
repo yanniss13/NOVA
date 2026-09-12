@@ -119,14 +119,16 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
   }
 
   /* Chaque refus de calibrerConstante() dit au membre QUOI corriger. Un
-     « impossible » sec le laisserait sans recours, alors que ces trois cas
-     ont chacun une cause concrete et frequente. */
+     « impossible » sec le laisserait sans recours, alors que chaque cas a
+     une cause concrete. */
   const MESSAGES_CALIBRATION = {
     "degats-manquants":
       "Entre les dégâts d'un coup non critique.",
     "degats-trop-faibles":
       "Ces dégâts sont trop faibles pour ce build : aucune constante ne les "
       + "produit. Le coup a-t-il été bloqué, ou la cible protégée ?",
+    "degats-au-plancher":
+      "Ce coup atteint le plancher de dégâts de 5 % : calibre C sur un palier moins défendu.",
     "degats-au-dela-de-la-pre-armure":
       "Ces dégâts dépassent ce que le build peut produire avant armure. "
       + "C'était probablement un coup critique — reprends un coup normal.",
@@ -1089,7 +1091,8 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
     return el("section",{class:"calc-avertissement calc-carte"},[
       el("p",{text:cibleCourante().niveau
         ? "Sur Akumu, l'élément ne change rien : les huit résistances "
-          + "élémentaires valent 30 % et aucune faiblesse n'est publiée."
+          + "élémentaires valent 30 %, sa résistance élémentaire de base de "
+          + "50 % est retenue, et aucune faiblesse n'est publiée."
         : "Le mannequin n'a ni défense ni résistance : les dégâts affichés "
           + "valent exactement l'ATK multipliée par le coefficient de la "
           + "compétence. La constante C n'y change rien et ne s'y calibre pas."}),
@@ -1102,12 +1105,7 @@ import { ouvrirSelecteurPreset } from "./edition-build.js";
         el("li",{text:"les debuffs appliqués à la cible"}),
         el("li",{text:"les temps d'animation, donc toute notion de dégâts par seconde"}),
         el("li",{text:"les attaques normales, les compétences de relève et les attaques combinées"}),
-        el("li",{text:"les mécaniques d'Akumu : pierres élémentaires, attaque dorsale, renforcement à chaque mort"}),
-        /* Publiee par la source (20 % aux niveaux 1 a 20, puis jusqu'a 22 % au
-           niveau 30) mais laissee a zero dans le calcul : voir le commentaire de
-           AKUMU_ELEMENTAIRE dans js/metier/degats-calcul.js. Le dire ici plutot
-           que de le taire, puisque cela gonfle le percement affiche. */
-        el("li",{text:"la résistance au percement du boss (20 à 22 % selon le niveau), qui réduirait le percement de défense"})
+        el("li",{text:"les mécaniques d'Akumu : pierres élémentaires, attaque dorsale, renforcement à chaque mort"})
       ])
     ]);
   }

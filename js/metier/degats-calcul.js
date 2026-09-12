@@ -1,7 +1,9 @@
-/* Les degats attendus d'une competence, selon la formule publiee par
-   7dsorigin.app/en/damage-formula et validee empiriquement par ses auteurs :
+/* Les degats attendus d'une competence. Le noyau defense/percement/resistance
+   suit les sorties mesurees du calculateur de Blue ; les bornes finales et les
+   couches absentes de son interface restent issues des tables et mesures du
+   projet :
 
-     Degats = ATK x Coef x Bonus-type x Critique x K/(K+DEF)
+     Degats = ATK x Coef x Bonus-type x Critique x K/(K+DEF effective)
               x (1 - Resistance) x (1 + Faiblesse)
 
    Module PUR : ni DOM ni reseau, toutes les entrees arrivent par argument.
@@ -14,16 +16,19 @@
    depot (voir js/vues/stats-affichage.js) : valeur / 10000 donne le rapport,
    valeur / 100 le pourcentage affiche. */
 
-  /* Milieu de l'intervalle 5500-5700 publie. Elle ne sert que TANT QU'UN
-     MEMBRE N'A PAS CALIBRE la sienne : C est propre au personnage, a son
-     build et a ses potentiels debloques. Elle ne se lit sur aucun ecran du
-     jeu et ne se deduit d'aucune table - elle se mesure sur un coup reel,
-     d'ou calibrerConstante() plus bas.
+  /* Valeur reproduisant exactement les sorties du calculateur de Blue,
+     relevees en boite noire le 12 septembre 2026 : avec 1 000 000 d'ATK,
+     100 % de coefficient et 1 000 / 5 128 / 10 000 de DEF, il rend
+     839 228,3 / 504 445,3 / 342 969,8, soit K = 5 220 dans K/(K+DEF).
+
+     Elle ne sert que TANT QU'UN MEMBRE N'A PAS CALIBRE la sienne. C ne se
+     lit sur aucun ecran du jeu et ne se deduit d'aucune table : elle se
+     mesure sur un coup reel, d'ou calibrerConstante() plus bas.
 
      L'incertitude qui en resulte se simplifie dans un RAPPORT entre deux
      builds : c'est pourquoi la page reste honnete comme comparateur meme
      sans calibration, et ne devient predictive qu'avec. */
-  const CONSTANTE_PAR_DEFAUT = 5600;
+  const CONSTANTE_PAR_DEFAUT = 5220;
 
   function constanteDe(stats){
     const valeur = Number(stats && stats.constanteC);
@@ -77,36 +82,13 @@
     [30, 80264,  2000, 54593, 214755600]
   ];
 
-  /* EN SUSPENS, et volontairement laisse en l'etat.
-
-     La source publie DEUX nombres elementaires, et on ne sait pas encore
-     lequel joue quel role : huit resistances par element a 30 %, et une
-     « resistance elementaire de base » a 50 % dont l'infobulle dit
-     « reduction de degats plate appliquee a tous les elements, EN PLUS des
-     faiblesses ».
-
-     Chez l'outil de reference, le facteur multiplicatif vient du champ
-     `eflatres` — flat resistance — et les valeurs par element tombent dans le
-     seau additif. Si la correspondance des deux vocabulaires se confirme, ces
-     deux lignes deviennent resistanceElementaire 5000 et faiblesse -3000, et
-     tous les chiffres contre Akumu baissent d'environ moitie.
-
-     Le test qui trancherait tient en une lecture : la fiche du Demon rouge sur
-     7dsorigin, au niveau de monde ou DEF = 3373, doit afficher une resistance
-     elementaire de base de 15 % pour correspondre au `eflatres = 15` mesure.
-     Tant que personne ne l'a lue, on ne change rien : se tromper ici fausserait
-     les trente paliers d'un facteur deux. */
+  /* Les deux valeurs publiees restent distinctes : 30 % pour chacun des huit
+     elements et 50 % de resistance elementaire de base. Le modele de Blue
+     tranche leur combinaison en retenant la plus haute avant les reductions. */
   const AKUMU_ELEMENTAIRE = {
     resistanceElementaire:3000,
+    resistanceElementaireBase:5000,
     faiblesse:0,
-    /* NON PUBLIEE, et sans equivalent actif dans l'outil de reference, dont
-       les champs de resistance au percement sont mesures inertes. La source
-       publie pourtant une « resistance au percement » de 20 % aux niveaux 1 a
-       20, puis de 20,2 a 22 % aux niveaux 21 a 30. La traduire dans le moteur
-       rapprocherait du jeu et eloignerait de la reference, et la facon dont le
-       jeu la retranche n'est pas mesuree.
-       Zero reproduit le calcul de la reference ; ce n'est pas un releve. */
-    resistancePercement:0
   };
 
   /* LA BORNE DE CE QUI A ETE MESURE.
@@ -135,6 +117,11 @@
       critResist,
       critDmgResist,
       hp,
+      /* Publiee a 20 % aux niveaux 1 a 20. La table du client poursuit par
+         pas de 0,2 point jusqu'a 22 % au niveau 30. */
+      resistancePercement:niveau <= 20
+        ? 2000
+        : 2000 + (niveau - 20) * 20,
       horsPlageMesuree:def > DEF_MESUREE_MAX
     }, AKUMU_ELEMENTAIRE)
   ).concat([{
@@ -154,6 +141,7 @@
     critDmgResist:0,
     hp:null,
     resistanceElementaire:0,
+    resistanceElementaireBase:0,
     faiblesse:0,
     resistancePercement:0
   }]);
@@ -195,9 +183,10 @@
      coup sous 5 % de sa valeur d'avant mitigation. */
   const PLAFOND_FAIBLESSE = 6;
 
-  /* `battle_max_sum_protect_cur_rate` du jeu : la somme des sources de
-     percement de defense ne depasse jamais 90 %. */
-  const PLAFOND_PERCEMENT = 9000;
+  /* Blue borne le percement net a 100 %. Le jeu publie aussi une borne de
+     somme a 90 %, mais le proprietaire a choisi le modele mesure par Blue
+     comme reference empirique du calculateur. */
+  const PLAFOND_PERCEMENT = 10000;
   const PLANCHER_DEGATS = 0.05;
 
   function nombreFini(valeur){
@@ -268,21 +257,16 @@
       * (1 + (Number(stats.bonusCategoriePotentiel) || 0) / RAPPORT);
 
     /* Le percement de defense (`D_Protect_Cur_Rate`, « Defense Shatter »)
-       s'AJOUTE au rapport de mitigation. Il ne divise PAS la defense :
+       reduit la DEF avant la courbe hyperbolique, selon le modele de Blue :
 
-         mitigation = C/(C+DEF) + percement
+         percementNet = clamp(percement - resistancePercement, 0, 100 %)
+         DEF effective = DEF apres malus x (1 - percementNet)
+         mitigation = C/(C + DEF effective)
 
-       Ce n'est pas une deduction. Cinq mesures predites a l'avance tombent
-       juste (RAPPORT-analyse-tapscreen.md, session 3) : a DEF 5600, percer
-       de 50 % rend exactement le chiffre d'une defense NULLE, quand diviser
-       la defense par deux en rendrait un tout autre. La premiere version de
-       ce module retenait la division, et se trompait de 50 %.
-
-       Consequence assumee : la mitigation peut depasser 1, et les degats
-       depasser alors la valeur pre-armure. C'est ce que fait l'outil de
-       reference, mesure sans aucun plafond jusqu'a 150 % de percement. Ce
-       terme est une linearisation, pas une mecanique physique - ne pas le
-       borner « par bon sens » sans mesure a l'appui.
+       Releve en boite noire le 12 septembre 2026 : a DEF 5 128, 50 % de
+       percement rendent 670,6 pour une base de 1 000 ; avec 20 % de
+       resistance au percement, 592,5. Ces nombres correspondent exactement
+       a une DEF multipliee par 0,5 puis 0,7.
 
        A ne pas confondre avec la « Perforation » (`A_Accuracy`), qui ne perce
        AUCUNE defense : elle s'oppose a la « Perseverance » de l'ennemi
@@ -293,34 +277,18 @@
        tant que cette couche n'aura pas sa propre formule - la brancher ici
        reviendrait a la faire passer pour de la penetration d'armure.
 
-       Le jeu porte une resistance au percement (`D_Protect_CurRes_Rate`) que
-       l'outil de reference ne modelise PAS : ses champs `epr` et `d-epr` ont
-       ete mesures inertes des deux cotes. Zero reproduit donc exactement son
-       calcul, et le terme reste ici pour le jour ou la valeur d'un boss sera
-       publiee. Seul le plancher a zero est conserve : sur-resister ne doit
-       pas RENFORCER la defense. */
-    /* Le JEU plafonne la SOMME des sources de percement : sa table de combat
-       porte `battle_max_sum_protect_cur_rate = 9000`, soit 90 %. Au-dela, tout
-       point supplementaire est perdu.
-
-       Ce plafond ecarte deliberement le calculateur de l'outil de reference,
-       qui n'en applique aucun et accepte 150 % sans broncher. C'est un choix :
-       la page dit ce qui se passe en COMBAT, pas ce qu'affiche 7dsorigin.app.
-       Les deux chiffres coincident partout ailleurs, et divergent seulement
-       au-dela de 90 % de percement — a 150 %, la reference surestime de 43 %.
-
-       Le plafond porte sur la somme du joueur AVANT la resistance de la
-       cible : c'est ce que dit le nom de la cle (`max_sum`). */
-    const percementNet = Math.max(
-      0, Math.min(PLAFOND_PERCEMENT, Number(stats.percementDefense) || 0)
+       La resistance au percement (`D_Protect_CurRes_Rate`) se retranche en
+       points. Le plancher a zero empeche une resistance superieure au
+       percement de renforcer la DEF ; le plafond a 100 % evite une DEF
+       negative. */
+    const percementNet = Math.min(PLAFOND_PERCEMENT, Math.max(
+      0, (Number(stats.percementDefense) || 0)
         - (Number(cible.resistancePercement) || 0)
-    );
+    ));
 
     /* La reduction de defense infligee a l'ennemi par une competence
-       MULTIPLIE sa defense, la ou le percement s'ajoute au rapport. Deux
-       formes distinctes pour deux mecaniques distinctes, et cette difference
-       est mesuree, pas supposee : chez la reference, `d-edef` multiplie
-       tandis que `ds` s'ajoute.
+       MULTIPLIE sa defense. Le percement multiplie ensuite cette DEF deja
+       reduite : a 50 % de chaque, il reste 25 % de la DEF initiale.
 
        Le plafond a 100 % est un GARDE-FOU, pas un releve : personne n'a
        verifie ce que fait la reference au-dela, et une defense negative
@@ -329,11 +297,36 @@
       0, Number(stats.reductionDefense) || 0
     ));
 
+    const defEffective = (Number(cible.def) || 0)
+      * (1 - reductionDef / RAPPORT)
+      * (1 - percementNet / RAPPORT);
+    /* Blue retient la plus haute resistance entre la base commune et celle de
+       l'element frappe, puis retranche les reductions d'equipe en POINTS.
+       L'ancien champ unique reste compatible : en l'absence d'une resistance
+       de base, il est simplement la valeur retenue.
+
+       Jusqu'a 50 %, un point retire un point de degats. Au-dessus, trois
+       points de resistance n'en retirent plus que deux : 80 % donnent donc
+       un facteur 0,30 et non 0,20. Le plancher global de 5 % reste applique
+       plus bas, conformement a la table du client. */
+    const resistanceBrute = Math.max(
+      0,
+      Number(cible.resistanceElementaire) || 0,
+      Number(cible.resistanceElementaireBase) || 0
+    );
+    const resistanceNette = Math.max(
+      0, resistanceBrute
+        - Math.max(0, Number(stats.reductionResistanceElementaire) || 0)
+    );
+    const resistance = resistanceNette <= 5000
+      ? 1 - resistanceNette / RAPPORT
+      : 0.5 - (resistanceNette - 5000) / 15000;
+
     return {
       bonusOffensif,
       percementNet,
-      defEffective:(Number(cible.def) || 0) * (1 - reductionDef / RAPPORT),
-      resistance:1 - (Number(cible.resistanceElementaire) || 0) / RAPPORT,
+      defEffective,
+      resistance,
       /* Cape a x6 : le terme signe peut monter (faiblesse) ou descendre
          (resistance), mais la somme des sources ne l'amplifie pas au-dela de
          +500 %. Le plafond ne mord que par le haut - frapper une resistance
@@ -417,21 +410,10 @@
     const multiplicateurCritique = Math.max(1, 1 + degatsCrit);
     const critique = 1 + taux * (multiplicateurCritique - 1);
     const constante = constanteDe(stats);
-    /* Sans armure, le percement n'a rien a percer.
-
-       La mitigation vaut deja 1 quand la defense est nulle ; y ajouter le
-       percement la pousserait au-dessus de 1, c'est-a-dire au-dessus des
-       degats d'avant armure — un coup qui frapperait plus fort que sa propre
-       puissance. C'est le comportement de l'outil de reference, mesure en
-       session 1 (« si DEF_eff = 0, le shatter est ignore ») puis reconfirme
-       en session 5, ou son percement laisse la sortie du mannequin
-       strictement inchangee alors que la notre montait de moitie.
-
-       Le garde ne porte QUE sur ce cas : des qu'une armure existe, le
-       percement s'ajoute en plein et sans plafond, comme mesure. */
+    /* Sans DEF effective — cible nue ou percement a 100 % — la mitigation
+       vaut 1 et la constante ne joue plus. */
     const mitigation = facteurs.defEffective > 0
       ? constante / (constante + facteurs.defEffective)
-        + facteurs.percementNet / RAPPORT
       : 1;
 
     /* Un SEUL calcul, lu trois fois : le facteur commun porte tout sauf le
@@ -442,11 +424,10 @@
        resistance elementaire — ne peut pas faire tomber le coup sous 5 % de sa
        valeur d'avant mitigation. Datamine 7dsorigin.
 
-       Il ne vit QU'ICI, en avant : calibrerConstante() ne l'inverse pas, parce
-       qu'aucune cible reelle ne l'atteint et qu'un coup deja plancher a perdu
-       l'information dont la calibration a besoin. Les termes `mitigation` et
-       `resistance` restent affiches bruts plus bas ; leur produit n'est floore
-       que dans ce cas extreme, ou le detail cede le pas a la justesse du total. */
+       Il ne vit QU'ICI, en avant : calibrerConstante() refuse explicitement
+       un coup qui l'atteint, car il a perdu l'information necessaire pour
+       retrouver C. Les termes `mitigation` et `resistance` restent affiches
+       bruts plus bas ; leur produit n'est floore que dans le total. */
     const reductionCible = Math.max(
       PLANCHER_DEGATS, mitigation * facteurs.resistance
     );
@@ -491,10 +472,9 @@
 
        D = base x bonusOffensif x mitigation x resistance x faiblesse
 
-     Le rapport de mitigation qu'il implique se lit donc directement, et la
-     part qui revient a la defense s'obtient en retirant le percement :
+     Le rapport de mitigation qu'il implique se lit donc directement :
 
-       m = D / (base x bonusOffensif x resistance x faiblesse) - percement
+       m = D / (base x bonusOffensif x resistance x faiblesse)
        C = m x DEF / (1 - m)
 
      Pourquoi un coup NON critique : ce module prend le critique en ESPERANCE,
@@ -525,11 +505,19 @@
        constante : aucun coup ne peut alors la reveler. */
     if(facteurs.defEffective <= 0) return { erreur:"defense-nulle" };
 
-    const denominateur = base * facteurs.bonusOffensif
-      * facteurs.resistance * facteurs.faiblesse;
+    const avantReductionCible = base * facteurs.bonusOffensif
+      * facteurs.faiblesse;
+    if(!(avantReductionCible > 0)) return { erreur:"build-incomplet" };
+    /* Au plancher final de 5 %, plusieurs constantes produisent le meme coup :
+       l'inversion n'a plus de solution unique. La petite marge absorbe
+       l'arrondi entier d'un releve en jeu. */
+    if(observes / avantReductionCible <= PLANCHER_DEGATS + 0.0001){
+      return { erreur:"degats-au-plancher" };
+    }
+    const denominateur = avantReductionCible * facteurs.resistance;
     if(!(denominateur > 0)) return { erreur:"build-incomplet" };
 
-    const m = observes / denominateur - facteurs.percementNet / RAPPORT;
+    const m = observes / denominateur;
     if(m <= 0) return { erreur:"degats-trop-faibles" };
     if(m >= 1) return { erreur:"degats-au-dela-de-la-pre-armure" };
 
