@@ -88,6 +88,7 @@ const SUITES = {
     "node tests/competences-catalogue.test.js",
     "node tests/ultimes-combines-catalogue.test.js",
     "node tests/jauges-releve-catalogue.test.js",
+    "node tests/magie-rotation-catalogue.test.js",
     "node tests/transcendances-catalogue.test.js",
     "node tests/badges-role-element.test.js",
     "node tests/degats-calcul.test.js",

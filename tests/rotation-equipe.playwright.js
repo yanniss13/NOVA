@@ -170,6 +170,31 @@ const STORAGE_KEY = "confrerie7ds.teams";
     const rota = page.locator("#rotationBody");
     await rota.locator(".rota-palette-bouton").first().waitFor();
 
+    /* LA MAGIE PART DE ZERO. L'ultime de Ban aux gantelets coute deux
+       boules : pose en ouverture, il reste visible mais la rotation dit
+       explicitement qu'il est impossible au lieu de le laisser passer. */
+    assert.match(
+      await rota.locator(".rota-magie-resume").innerText(),
+      /0(?:[,.]00)?\s*\/\s*7 boules/,
+      "la jauge de magie doit commencer vide"
+    );
+    assert.equal(
+      await page.evaluate(() => typeof window.SEVEN_DS_MAGIE_ROTATION),
+      "object",
+      "le catalogue de magie doit etre charge avec celui de la rotation"
+    );
+    const ultimeBan = rota.locator(".rota-palette-ligne").first()
+      .locator(".rota-palette-bouton").nth(3);
+    await ultimeBan.click();
+    assert.equal(await rota.locator(".rota-case-magie-impossible").count(), 1,
+      "l'ultime a deux boules est impossible en ouverture");
+    assert.match(
+      await rota.locator(".rota-magie-delta").innerText(),
+      /1 lancement impossible/,
+      "l'erreur est ecrite, pas portee par la seule couleur"
+    );
+    await page.getByRole("button", { name:"Tout effacer" }).click();
+
     /* Deux appuis sur la MEME competence font une case x2, pas deux cases.
        C'est la demande du membre : onze cases identiques ne se lisent pas. */
     const premiere = rota.locator(".rota-palette-bouton").first();

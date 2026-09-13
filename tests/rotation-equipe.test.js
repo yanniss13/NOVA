@@ -16,8 +16,9 @@ const { loadApp } = require("./helpers/load-app");
 const { hooks } = loadApp();
 const {
   PLAFOND_ROTATION, ajouterEtape, casesDeLaRotation, combinaisonsDeLEquipe,
-  deplacerCase, etapeCombinee, normaliserRotation, paletteDeLEquipe,
-  retirerLaCase, retirerUne, seriesDeLaRotation
+  deplacerCase, efficacitesRechargeMagie, etapeCombinee, normaliserRotation,
+  paletteDeLEquipe,
+  retirerLaCase, retirerUne, seriesDeLaRotation, simulerMagieDesCases
 } = hooks;
 
 /* Les vrais catalogues, lus une fois pour tout le fichier. */
@@ -47,6 +48,96 @@ const TRISTAN = {
 
 assert.equal(typeof normaliserRotation, "function");
 assert.equal(PLAFOND_ROTATION, 60, "le plafond compte les appuis, pas les cases");
+
+/* LA MAGIE EST UNE RESSOURCE D'EQUIPE, mais chaque gain emploie le bonus du
+   heros qui lance la competence. Ce test attrape quatre regressions reelles :
+   oublier le bonus, appliquer celui d'un autre heros, depasser sept boules ou
+   depenser un ultime qui n'est pas payable. Les valeurs attendues sont
+   calculees a la main, sans reutiliser les aides du moteur. */
+{
+  assert.equal(typeof simulerMagieDesCases, "function");
+  const simulees = simulerMagieDesCases([
+    {
+      etape:"ban_gauntlets_skill_e", fois:5, char:"ban",
+      competence:{ gameId:"ban_gauntlets_skill_e" }, participants:[]
+    },
+    {
+      etape:"ban_gauntlets_skill_r", fois:1, char:"ban",
+      competence:{ gameId:"ban_gauntlets_skill_r" }, participants:[]
+    },
+    {
+      etape:"tristan_sworddual_skill_e", fois:10, char:"tristan",
+      competence:{ gameId:"tristan_sworddual_skill_e" }, participants:[]
+    },
+    {
+      etape:"tristan_sworddual_skill_q", fois:3, char:"tristan",
+      competence:{ gameId:"tristan_sworddual_skill_q" }, participants:[]
+    }
+  ], {
+    ban_gauntlets_skill_e:{ recharge:200, cout:0 },
+    ban_gauntlets_skill_r:{ recharge:0, cout:2 },
+    tristan_sworddual_skill_e:{ recharge:600, cout:0 },
+    tristan_sworddual_skill_q:{ recharge:0, cout:3 }
+  }, {
+    ban:{ taux:2500, connu:true },
+    tristan:{ taux:0, connu:true }
+  });
+
+  assert.equal(simulees[0].magie.apres, 1250,
+    "5 x 200 avec +25 % donnent 1,25 boule");
+  assert.equal(simulees[1].magie.impossibles, 1,
+    "l'ultime a 2 boules est refuse a 1,25");
+  assert.equal(simulees[1].magie.coutParLancement, 2);
+  assert.equal(simulees[1].magie.manque, 750,
+    "il manque exactement 0,75 boule pour payer l'ultime");
+  assert.equal(simulees[1].magie.apres, 1250,
+    "un ultime refuse ne depense rien");
+  assert.equal(simulees[2].magie.apres, 7000,
+    "les dix gains de Tristan plafonnent la jauge a sept boules");
+  assert.equal(simulees[2].magie.gaspilles, 250,
+    "le surplus au-dessus de sept boules est mesure");
+  assert.equal(simulees[3].magie.valides, 2,
+    "la serie est rejouee appui par appui : seuls deux ultimes a 3 passent");
+  assert.equal(simulees[3].magie.impossibles, 1);
+  assert.equal(simulees[3].magie.apres, 1000);
+}
+
+/* LE BONUS VIENT DU BUILD DU LANCEUR. Une configuration inachevee ne produit
+   pas un faux +0 % certain : la recharge brute reste utilisable, mais la vue
+   doit pouvoir annoncer que le bonus personnel est inconnu. */
+{
+  assert.equal(typeof efficacitesRechargeMagie, "function");
+  const efficacites = efficacitesRechargeMagie(
+    [{ char:"ban" }, { char:"tristan" }],
+    hero => hero.char === "ban"
+      ? {
+          status:"valid",
+          totals:[{ stat:"MF_ChargeEffic_Rate", value:1875 }]
+        }
+      : { status:"incomplete", totals:[] }
+  );
+  assert.deepEqual(
+    JSON.parse(JSON.stringify(efficacites)),
+    {
+      ban:{ taux:1875, connu:true },
+      tristan:{ taux:0, connu:false }
+    }
+  );
+
+  const equipe = [BAN_GANTELETS, TRISTAN];
+  const annotees = casesDeLaRotation(
+    ["ban_gauntlets_skill_e", "tristan_sworddual_skill_e"],
+    equipe, COMPETENCES, {}, {
+      ban_gauntlets_skill_e:{ recharge:800, cout:0 },
+      tristan_sworddual_skill_e:{ recharge:300, cout:0 }
+    }, efficacites
+  );
+  assert.equal(annotees[0].magie.apres, 950,
+    "800 avec le bonus de Ban a +18,75 %");
+  assert.equal(annotees[1].magie.apres, 1250,
+    "Tristan emploie la recharge brute car son bonus est inconnu");
+  assert.equal(annotees[1].magie.bonusConnu, false);
+}
 
 /* NORMALISATION : ce qui entre dans Supabase doit être propre, quelle que soit
    la porte d'entrée. */

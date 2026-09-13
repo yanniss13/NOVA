@@ -453,11 +453,33 @@ body.modal-locked{
      premier repli. Le multiplicateur est donc une PASTILLE d'angle. */
   display:flex;flex-wrap:wrap;gap:8px;align-items:stretch
 }
+.rota-magie{
+  display:flex;align-items:center;gap:8px;min-height:30px;padding:5px 8px;
+  border:1px solid var(--line-soft);border-radius:9px;background:var(--inset-bg)
+}
+.rota-magie-nom{font-size:12px;font-weight:700;color:var(--accent)}
+.rota-magie-orbes{display:flex;gap:4px}
+.rota-magie-orbe{
+  width:15px;height:15px;border:1px solid var(--accent);border-radius:50%;
+  background:linear-gradient(to top,var(--accent) 0 var(--rota-remplissage),
+    transparent var(--rota-remplissage) 100%)
+}
+.rota-magie-resume{
+  color:var(--muted);font-size:12px;font-variant-numeric:tabular-nums
+}
 .rota-case{
   position:relative;display:flex;flex-direction:column;align-items:center;
   gap:2px;padding:4px;border:1px solid var(--line-soft);border-radius:8px;
   background:var(--panel)
 }
+.rota-magie-delta{
+  max-width:88px;color:var(--muted);font-size:10px;line-height:1.15;
+  text-align:center;font-variant-numeric:tabular-nums
+}
+.rota-case-magie-impossible{
+  border-color:var(--crimson-bright);box-shadow:0 0 0 1px var(--crimson)
+}
+.rota-case-magie-impossible .rota-magie-delta{color:var(--crimson-bright)}
 .rota-portrait{
   display:block;width:26px;height:26px;border-radius:50%;overflow:hidden;
   background:var(--line-soft);flex:none

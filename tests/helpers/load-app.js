@@ -484,6 +484,12 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   calculateHeroStats:typeof calculateHeroStats === "function"
     ? calculateHeroStats
     : undefined,
+  simulerMagieDesCases:typeof simulerMagieDesCases === "function"
+    ? simulerMagieDesCases
+    : undefined,
+  efficacitesRechargeMagie:typeof efficacitesRechargeMagie === "function"
+    ? efficacitesRechargeMagie
+    : undefined,
   heroTermOriginLabel:typeof heroTermOriginLabel === "function"
     ? heroTermOriginLabel
     : undefined,

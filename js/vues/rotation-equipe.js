@@ -12,8 +12,56 @@ import { el } from "../noyau/dom.js";
 import { charOf } from "../metier/catalogue.js";
 import {
   PLAFOND_ROTATION, ajouterEtape, casesDeLaRotation, combinaisonsDeLEquipe,
-  deplacerCase, normaliserRotation, paletteDeLEquipe, retirerLaCase, retirerUne
+  deplacerCase, efficacitesRechargeMagie, normaliserRotation,
+  paletteDeLEquipe, retirerLaCase, retirerUne
 } from "../metier/rotation-equipe.js";
+
+  function boulesDeMagie(points){
+    const valeur = Math.max(0, Number(points) || 0) / 1000;
+    return valeur.toFixed(2).replace(/\.00$/, "").replace(/(\,|\.)0$/, "")
+      .replace(".", ",");
+  }
+
+  function indicationMagie(item){
+    if(!item.magie) return null;
+    const magie = item.magie;
+    const morceaux = [];
+    if(magie.recharge > 0) morceaux.push("+" + boulesDeMagie(magie.recharge));
+    if(magie.cout > 0) morceaux.push("−" + boulesDeMagie(magie.cout * 1000));
+    else if(magie.impossibles && magie.coutParLancement > 0){
+      morceaux.push("coût " + boulesDeMagie(magie.coutParLancement * 1000));
+    }
+    if(!morceaux.length) morceaux.push("±0");
+    morceaux.push("→ " + boulesDeMagie(magie.apres) + " / 7");
+    if(magie.impossibles){
+      morceaux.push(magie.impossibles + " lancement"
+        + (magie.impossibles > 1 ? "s" : "") + " impossible"
+        + (magie.impossibles > 1 ? "s" : ""));
+      morceaux.push("manque " + boulesDeMagie(magie.manque));
+    }
+    if(!magie.bonusConnu && magie.recharge > 0){
+      morceaux.push("bonus personnel inconnu");
+    }
+    return el("span",{ class:"rota-magie-delta", text:morceaux.join(" · ") });
+  }
+
+  function jaugeMagie(items){
+    const derniere = [...items].reverse().find(item => item.magie);
+    const points = derniere ? derniere.magie.apres : 0;
+    const orbes = Array.from({ length:7 }, (_, rang) => {
+      const remplissage = Math.max(0, Math.min(1, (points - rang * 1000) / 1000));
+      return el("span",{
+        class:"rota-magie-orbe",
+        style:"--rota-remplissage:" + Math.round(remplissage * 100) + "%"
+      });
+    });
+    return el("div",{ class:"rota-magie", "aria-label":"Jauge de magie" },[
+      el("span",{ class:"rota-magie-nom", text:"Magie" }),
+      el("span",{ class:"rota-magie-orbes", "aria-hidden":"true" }, orbes),
+      el("span",{ class:"rota-magie-resume",
+        text:boulesDeMagie(points) + " / 7 boules" })
+    ]);
+  }
 
   /* `draggable="false"` SUR CHAQUE IMAGE, et ce n'est pas un detail de style.
 
@@ -60,6 +108,8 @@ import {
      Le multiplicateur est ECRIT, jamais porte par la seule couleur. */
   function contenuCompetence(item){
     const enfants = [medaillon(item.char), iconeDeCompetence(item.competence)];
+    const magie = indicationMagie(item);
+    if(magie) enfants.push(magie);
     if(item.fois > 1){
       enfants.push(el("span",{ class:"rota-fois", text:"×" + item.fois }));
     }
@@ -81,6 +131,8 @@ import {
       })
     );
     const enfants = [portraits];
+    const magie = indicationMagie(item);
+    if(magie) enfants.push(magie);
     if(item.fois > 1){
       enfants.push(el("span",{ class:"rota-fois", text:"×" + item.fois }));
     }
@@ -204,7 +256,8 @@ import {
   function caseDeRotation(item, rang, total, actions){
     const classe = "rota-case"
       + (item.participants.length ? " rota-case-combine" : "")
-      + (item.orpheline ? " rota-case-orpheline" : "");
+      + (item.orpheline ? " rota-case-orpheline" : "")
+      + (item.magie && item.magie.impossibles ? " rota-case-magie-impossible" : "");
     const li = el("li",{ class:classe, title:titreDeLaCase(item) },
       item.participants.length ? contenuCombine(item) : contenuCompetence(item));
     if(!actions) return li;
@@ -253,12 +306,7 @@ import {
      Elle ne porte pas non plus la classe `rota-case`, et ce n'est pas
      cosmetique : c'est ce qui la tient hors des index de deplacement. */
   function caseDeReleve(item){
-    return el("li",{
-      class:"rota-releve",
-      title:"Relève — " + nomDuHeros(item.sortant) + " laisse la place à "
-        + nomDuHeros(item.char)
-        + (item.competence ? " : " + item.competence.nomFr : "")
-    },[
+    const contenus = [
       /* L'icone de releve d'abord — mais elle est GENERIQUE : le jeu donne le
          meme `Icon_TagSkill.webp` aux 78 competences de releve. Elle dit
          « ici on releve », rien de plus. C'est le PORTRAIT qui apprend
@@ -266,7 +314,15 @@ import {
          lui, est dans l'infobulle avec les deux heros. */
       iconeDeCompetence(item.competence),
       medaillon(item.char)
-    ]);
+    ];
+    const magie = indicationMagie(item);
+    if(magie) contenus.push(magie);
+    return el("li",{
+      class:"rota-releve",
+      title:"Relève — " + nomDuHeros(item.sortant) + " laisse la place à "
+        + nomDuHeros(item.char)
+        + (item.competence ? " : " + item.competence.nomFr : "")
+    }, contenus);
   }
 
   function suiteDesCases(items, actions){
@@ -368,6 +424,10 @@ import {
        jamais une page en moins pour un catalogue en moins. */
     const jaugesReleve = (typeof window !== "undefined"
       && window.SEVEN_DS_JAUGES_RELEVE) || {};
+    const magieRotation = (typeof window !== "undefined"
+      && window.SEVEN_DS_MAGIE_ROTATION) || null;
+    const efficacitesMagie = magieRotation
+      ? efficacitesRechargeMagie(heroes) : {};
 
     let enregistree = normaliserRotation((equipe && equipe.rotation) || []);
     let courante = enregistree.slice();
@@ -395,8 +455,10 @@ import {
     function dessiner(){
       bloc.innerHTML = "";
       const items = casesDeLaRotation(
-        courante, heroes, competences, jaugesReleve
+        courante, heroes, competences, jaugesReleve,
+        magieRotation, efficacitesMagie
       );
+      if(magieRotation) bloc.appendChild(jaugeMagie(items));
       bloc.appendChild(items.length
         ? suiteDesCases(items, modifiable ? actions : null)
         : el("p",{ class:"calc-muette",

@@ -15,6 +15,7 @@
    silence. Une liste plate n'a aucun invariant, elle est toujours valide. */
 
 import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
+import { calculateHeroStats } from "./stats-calcul.js";
 
   /* Le plafond compte les APPUIS, pas les cases : « E x5 » en consomme cinq.
      Soixante identifiants pesent moins de 2 Ko dans le blob de l'equipe. */
@@ -31,6 +32,13 @@ import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
      estimees : `tagpoint_gauge` et `tagpoint_maxstack`. */
   const JAUGE_PAR_RELEVE = 1000;
   const RELEVES_CUMULABLES = 3;
+
+  /* LES CONSTANTES DE LA MAGIE, lues dans `Misc/DefineTable` : une boule
+     contient 1000 points (`ga_magicforce_gage`) et l'equipe en garde sept
+     (`magicforcemaxstack`). */
+  const POINTS_PAR_BOULE_MAGIE = 1000;
+  const BOULES_MAGIE_MAX = 7;
+  const MAGIE_MAX = POINTS_PAR_BOULE_MAGIE * BOULES_MAGIE_MAX;
 
   /* Les participants d'une combinaison, LANCEUR EN TETE. Rend null plutot que
      de deviner : une etape mal formee n'est pas une combinaison approximative,
@@ -207,7 +215,82 @@ import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
     return (Number(jauges[identifiant]) || 0) * (item.fois || 1);
   }
 
-  function casesDeLaRotation(rotation, heroes, competences, jauges){
+  /* Rejoue chaque APPUI d'une serie, meme si l'ecran la replie en `xN`.
+     C'est indispensable pour un ultime : dans une serie de trois, les deux
+     premiers peuvent partir et le troisieme manquer de magie. */
+  function simulerMagieDesCases(items, catalogue, efficacites){
+    let magie = 0;
+    return (Array.isArray(items) ? items : []).map(item => {
+      const identifiant = item.participants && item.participants.length
+        ? item.participants[0].gameId
+        : item.competence && item.competence.gameId || item.etape;
+      const regle = catalogue && catalogue[identifiant] || {};
+      const rechargeBrute = Math.max(0, Number(regle.recharge) || 0);
+      const cout = Math.max(0, Number(regle.cout) || 0);
+      const heros = heroDeLaCase(item);
+      const efficacite = efficacites && efficacites[heros] || {};
+      const taux = Number(efficacite.taux) || 0;
+      const recharge = rechargeBrute * (1 + taux / 10000);
+      const avant = magie;
+      let valides = 0;
+      let impossibles = 0;
+      let gaspilles = 0;
+      let manque = 0;
+      const fois = Math.max(1, Number(item.fois) || 1);
+
+      for(let appui = 0; appui < fois; appui++){
+        const prix = cout * POINTS_PAR_BOULE_MAGIE;
+        if(prix > magie){
+          impossibles += 1;
+          manque = Math.max(manque, prix - magie);
+          continue;
+        }
+        magie -= prix;
+        valides += 1;
+        const avantRecharge = magie;
+        magie = Math.min(MAGIE_MAX, magie + recharge);
+        gaspilles += Math.max(0, avantRecharge + recharge - MAGIE_MAX);
+      }
+
+      return Object.assign({}, item, {
+        magie:{
+          avant,
+          apres:magie,
+          recharge:recharge * valides,
+          cout:cout * valides,
+          coutParLancement:cout,
+          valides,
+          impossibles,
+          manque,
+          gaspilles,
+          bonusTaux:taux,
+          bonusConnu:efficacite.connu === true
+        }
+      });
+    });
+  }
+
+  function efficacitesRechargeMagie(heroes, calculerStats){
+    const calculer = typeof calculerStats === "function"
+      ? calculerStats : calculateHeroStats;
+    return (Array.isArray(heroes) ? heroes : []).reduce((index, hero) => {
+      if(!hero || typeof hero.char !== "string" || !hero.char) return index;
+      const resultat = calculer(hero) || {};
+      const connu = resultat.status === "valid" || resultat.status === "partial";
+      const total = connu && Array.isArray(resultat.totals)
+        ? resultat.totals.find(item => item.stat === "MF_ChargeEffic_Rate")
+        : null;
+      index[hero.char] = {
+        taux:total && Number.isFinite(total.value) ? total.value : 0,
+        connu
+      };
+      return index;
+    }, {});
+  }
+
+  function casesDeLaRotation(
+    rotation, heroes, competences, jauges, magie, efficacitesMagie
+  ){
     const index = indexDeLEquipe(heroes, competences);
     const nomme = gameId => {
       const trouve = index.get(gameId);
@@ -307,7 +390,9 @@ import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
         jauge = Math.min(jauge, JAUGE_PAR_RELEVE - 1);
       }
     });
-    return suite;
+    return magie && Object.keys(magie).length
+      ? simulerMagieDesCases(suite, magie, efficacitesMagie || {})
+      : suite;
   }
 
   /* LES MUTATIONS portent sur un index de CASE, jamais d'appui : c'est ce que
@@ -367,6 +452,7 @@ export {
   casesDeLaRotation,
   combinaisonsDeLEquipe,
   deplacerCase,
+  efficacitesRechargeMagie,
   normaliserRotation,
   paletteDeLEquipe,
   retirerLaCase,
