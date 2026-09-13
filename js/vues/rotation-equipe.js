@@ -12,8 +12,8 @@ import { el } from "../noyau/dom.js";
 import { charOf } from "../metier/catalogue.js";
 import {
   PLAFOND_ROTATION, ajouterEtape, casesDeLaRotation, combinaisonsDeLEquipe,
-  deplacerCase, efficacitesRechargeMagie, normaliserRotation,
-  paletteDeLEquipe, retirerLaCase, retirerUne
+  deplacerCase, efficacitesRechargeMagie, magieRendueParLesEnsembles,
+  normaliserRotation, paletteDeLEquipe, retirerLaCase, retirerUne
 } from "../metier/rotation-equipe.js";
 
   function boulesDeMagie(points){
@@ -27,6 +27,12 @@ import {
     const magie = item.magie;
     const morceaux = [];
     if(magie.recharge > 0) morceaux.push("+" + boulesDeMagie(magie.recharge));
+    /* L'ensemble est NOMME : sans lui, deux boules apparaissent sur la
+       premiere case sans que le membre sache d'ou elles sortent. */
+    if(magie.rendueParEnsemble > 0){
+      morceaux.push("+" + boulesDeMagie(magie.rendueParEnsemble)
+        + " Énergie revigorante");
+    }
     if(magie.cout > 0) morceaux.push("−" + boulesDeMagie(magie.cout * 1000));
     else if(magie.impossibles && magie.coutParLancement > 0){
       morceaux.push("coût " + boulesDeMagie(magie.coutParLancement * 1000));
@@ -426,8 +432,15 @@ import {
       && window.SEVEN_DS_JAUGES_RELEVE) || {};
     const magieRotation = (typeof window !== "undefined"
       && window.SEVEN_DS_MAGIE_ROTATION) || null;
-    const efficacitesMagie = magieRotation
-      ? efficacitesRechargeMagie(heroes) : {};
+    /* Tout ce qui touche a la jauge de magie voyage ENSEMBLE : le catalogue,
+       le bonus personnel de chaque heros et ce que les ensembles portes
+       rendent a l'equipe. Le module de metier reste pur — c'est ici qu'on lit
+       l'equipement. */
+    const magie = magieRotation ? {
+      catalogue:magieRotation,
+      efficacites:efficacitesRechargeMagie(heroes),
+      rendueParEnsemble:magieRendueParLesEnsembles(heroes)
+    } : null;
 
     let enregistree = normaliserRotation((equipe && equipe.rotation) || []);
     let courante = enregistree.slice();
@@ -455,10 +468,9 @@ import {
     function dessiner(){
       bloc.innerHTML = "";
       const items = casesDeLaRotation(
-        courante, heroes, competences, jaugesReleve,
-        magieRotation, efficacitesMagie
+        courante, heroes, competences, jaugesReleve, magie
       );
-      if(magieRotation) bloc.appendChild(jaugeMagie(items));
+      if(magie) bloc.appendChild(jaugeMagie(items));
       bloc.appendChild(items.length
         ? suiteDesCases(items, modifiable ? actions : null)
         : el("p",{ class:"calc-muette",

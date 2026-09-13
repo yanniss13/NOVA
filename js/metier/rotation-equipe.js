@@ -14,8 +14,8 @@
    chaque mutation devrait maintenir, et qu'une seule oubliee casserait en
    silence. Une liste plate n'a aucun invariant, elle est toujours valide. */
 
-import { FOLDER_TO_ENUM } from "../noyau/constantes.js";
-import { calculateHeroStats } from "./stats-calcul.js";
+import { ARMOR_SLOTS, FOLDER_TO_ENUM, JEWEL_SLOTS } from "../noyau/constantes.js";
+import { activeGearSets, calculateHeroStats } from "./stats-calcul.js";
 
   /* Le plafond compte les APPUIS, pas les cases : « E x5 » en consomme cinq.
      Soixante identifiants pesent moins de 2 Ko dans le blob de l'equipe. */
@@ -39,6 +39,21 @@ import { calculateHeroStats } from "./stats-calcul.js";
   const POINTS_PAR_BOULE_MAGIE = 1000;
   const BOULES_MAGIE_MAX = 7;
   const MAGIE_MAX = POINTS_PAR_BOULE_MAGIE * BOULES_MAGIE_MAX;
+
+  /* L'ENSEMBLE « Energie revigorante » — celui dont les pieces s'appellent
+     « de l'hymne regenerateur ». A trois pieces, la premiere attaque sur un
+     ennemi encore intact rend 2000 points a l'EQUIPE ENTIERE ; sa recharge de
+     300 s le limite a un seul declenchement dans une rotation.
+
+     Le palier a deux pieces (+10 % d'efficacite) n'est PAS ici : il arrive
+     deja par `calculateHeroStats`, qui agrege les bonus d'ensemble. L'ajouter
+     le compterait deux fois.
+
+     Le +15 % d'efficacite pendant 20 s qui accompagne le palier a trois n'est
+     pas modelise : une rotation n'a pas d'axe de temps. Comme pour la releve,
+     le calcul sous-estime plutot que l'inverse. */
+  const ENSEMBLE_ENERGIE_REVIGORANTE = "accessory_t5_hymn";
+  const MAGIE_RENDUE_ENERGIE_REVIGORANTE = 2000;
 
   /* Les participants d'une combinaison, LANCEUR EN TETE. Rend null plutot que
      de deviner : une etape mal formee n'est pas une combinaison approximative,
@@ -215,18 +230,45 @@ import { calculateHeroStats } from "./stats-calcul.js";
     return (Number(jauges[identifiant]) || 0) * (item.fois || 1);
   }
 
+  /* LE LANCEUR d'une case : la competence dont la recharge compte. Pour une
+     combinaison, c'est le premier participant — la table du jeu le dit. */
+  function lanceurDeLaCase(item){
+    return item.participants && item.participants.length
+      ? item.participants[0].gameId
+      : item.competence && item.competence.gameId || item.etape;
+  }
+
+  /* TOUS ceux qui paient. Une combinaison coute la magie de CHACUN de ses
+     participants, pas seulement celle du lanceur : chaque heros paie sa
+     propre competence. Les 672 lignes du catalogue ont un partenaire qui
+     coute des boules, et trente-six d'entre elles en somment huit pour une
+     jauge qui en garde sept — celles-la ne partent pas, et le site le dit
+     plutot que de les facturer au rabais. */
+  function participantsDeLaCase(item){
+    return item.participants && item.participants.length
+      ? item.participants.map(participant => participant.gameId)
+      : [lanceurDeLaCase(item)];
+  }
+
   /* Rejoue chaque APPUI d'une serie, meme si l'ecran la replie en `xN`.
      C'est indispensable pour un ultime : dans une serie de trois, les deux
      premiers peuvent partir et le troisieme manquer de magie. */
-  function simulerMagieDesCases(items, catalogue, efficacites){
+  function simulerMagieDesCases(items, reglages){
+    const options = reglages || {};
+    const catalogue = options.catalogue || {};
+    const efficacites = options.efficacites || {};
+    const rendueParEnsemble = Math.max(
+      0, Number(options.rendueParEnsemble) || 0
+    );
     let magie = 0;
+    let ensembleDejaRendu = false;
     return (Array.isArray(items) ? items : []).map(item => {
-      const identifiant = item.participants && item.participants.length
-        ? item.participants[0].gameId
-        : item.competence && item.competence.gameId || item.etape;
-      const regle = catalogue && catalogue[identifiant] || {};
+      const regle = catalogue[lanceurDeLaCase(item)] || {};
       const rechargeBrute = Math.max(0, Number(regle.recharge) || 0);
-      const cout = Math.max(0, Number(regle.cout) || 0);
+      const cout = participantsDeLaCase(item).reduce((total, identifiant) => {
+        const part = catalogue[identifiant] || {};
+        return total + Math.max(0, Number(part.cout) || 0);
+      }, 0);
       const heros = heroDeLaCase(item);
       const efficacite = efficacites && efficacites[heros] || {};
       const taux = Number(efficacite.taux) || 0;
@@ -252,10 +294,24 @@ import { calculateHeroStats } from "./stats-calcul.js";
         gaspilles += Math.max(0, avantRecharge + recharge - MAGIE_MAX);
       }
 
+      /* LES 2000 POINTS DE L'ENSEMBLE ARRIVENT APRES LA PREMIERE CASE : il
+         faut avoir frappe pour declencher l'effet. Une rotation qui ouvre sur
+         un ultime trop cher reste donc impossible, et c'est la case suivante
+         qui en profite. */
+      let rendueIci = 0;
+      if(rendueParEnsemble > 0 && !ensembleDejaRendu){
+        ensembleDejaRendu = true;
+        const avantRendu = magie;
+        magie = Math.min(MAGIE_MAX, magie + rendueParEnsemble);
+        rendueIci = magie - avantRendu;
+        gaspilles += Math.max(0, avantRendu + rendueParEnsemble - MAGIE_MAX);
+      }
+
       return Object.assign({}, item, {
         magie:{
           avant,
           apres:magie,
+          rendueParEnsemble:rendueIci,
           recharge:recharge * valides,
           cout:cout * valides,
           coutParLancement:cout,
@@ -288,9 +344,31 @@ import { calculateHeroStats } from "./stats-calcul.js";
     }, {});
   }
 
-  function casesDeLaRotation(
-    rotation, heroes, competences, jauges, magie, efficacitesMagie
-  ){
+  /* Ce que les ENSEMBLES PORTES rendent a la jauge d'equipe, une fois pour la
+     rotation entiere. Un seul porteur suffit : l'effet vise « tous les heros
+     allies », pas son seul porteur.
+
+     Le seuil de trois pieces n'est pas ecrit ici : il vient de `fourCount`
+     dans les donnees du jeu, par `activeGearSets`. Le recopier a la main en
+     ferait un second chiffre a maintenir, qui divergerait. */
+  function magieRendueParLesEnsembles(heroes){
+    const porte = (Array.isArray(heroes) ? heroes : []).some(hero => {
+      if(!hero || typeof hero !== "object") return false;
+      const pieces = [["armor", ARMOR_SLOTS], ["jewel", JEWEL_SLOTS]]
+        .reduce((fichiers, [rangement, emplacements]) => {
+          const range = hero[rangement] || {};
+          emplacements.forEach(emplacement => {
+            if(range[emplacement]) fichiers.push(range[emplacement]);
+          });
+          return fichiers;
+        }, []);
+      return activeGearSets(pieces).some(ensemble =>
+        ensemble.setId === ENSEMBLE_ENERGIE_REVIGORANTE && ensemble.fourActive);
+    });
+    return porte ? MAGIE_RENDUE_ENERGIE_REVIGORANTE : 0;
+  }
+
+  function casesDeLaRotation(rotation, heroes, competences, jauges, magie){
     const index = indexDeLEquipe(heroes, competences);
     const nomme = gameId => {
       const trouve = index.get(gameId);
@@ -390,8 +468,8 @@ import { calculateHeroStats } from "./stats-calcul.js";
         jauge = Math.min(jauge, JAUGE_PAR_RELEVE - 1);
       }
     });
-    return magie && Object.keys(magie).length
-      ? simulerMagieDesCases(suite, magie, efficacitesMagie || {})
+    return magie && magie.catalogue && Object.keys(magie.catalogue).length
+      ? simulerMagieDesCases(suite, magie)
       : suite;
   }
 
@@ -453,6 +531,7 @@ export {
   combinaisonsDeLEquipe,
   deplacerCase,
   efficacitesRechargeMagie,
+  magieRendueParLesEnsembles,
   normaliserRotation,
   paletteDeLEquipe,
   retirerLaCase,

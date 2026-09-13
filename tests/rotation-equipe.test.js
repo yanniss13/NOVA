@@ -16,7 +16,8 @@ const { loadApp } = require("./helpers/load-app");
 const { hooks } = loadApp();
 const {
   PLAFOND_ROTATION, ajouterEtape, casesDeLaRotation, combinaisonsDeLEquipe,
-  deplacerCase, efficacitesRechargeMagie, etapeCombinee, normaliserRotation,
+  deplacerCase, efficacitesRechargeMagie, etapeCombinee,
+  magieRendueParLesEnsembles, normaliserRotation,
   paletteDeLEquipe,
   retirerLaCase, retirerUne, seriesDeLaRotation, simulerMagieDesCases
 } = hooks;
@@ -34,6 +35,7 @@ const catalogueDe = fichier => {
 const COMPETENCES = catalogueDe("wiki-competences.js").SEVEN_DS_WIKI_COMPETENCES;
 const COMBINAISONS = catalogueDe("ultimes-combines.js").SEVEN_DS_ULTIMES_COMBINES;
 const JAUGES = catalogueDe("jauges-releve.js").SEVEN_DS_JAUGES_RELEVE;
+const MAGIE = catalogueDe("magie-rotation.js").SEVEN_DS_MAGIE_ROTATION;
 
 const BAN_NUNCHAKU = {
   char:"ban", weapon:"7ds-armes/Nunchaku/Nunchaku de l'âme vorace.webp"
@@ -74,13 +76,16 @@ assert.equal(PLAFOND_ROTATION, 60, "le plafond compte les appuis, pas les cases"
       competence:{ gameId:"tristan_sworddual_skill_q" }, participants:[]
     }
   ], {
-    ban_gauntlets_skill_e:{ recharge:200, cout:0 },
-    ban_gauntlets_skill_r:{ recharge:0, cout:2 },
-    tristan_sworddual_skill_e:{ recharge:600, cout:0 },
-    tristan_sworddual_skill_q:{ recharge:0, cout:3 }
-  }, {
-    ban:{ taux:2500, connu:true },
-    tristan:{ taux:0, connu:true }
+    catalogue:{
+      ban_gauntlets_skill_e:{ recharge:200, cout:0 },
+      ban_gauntlets_skill_r:{ recharge:0, cout:2 },
+      tristan_sworddual_skill_e:{ recharge:600, cout:0 },
+      tristan_sworddual_skill_q:{ recharge:0, cout:3 }
+    },
+    efficacites:{
+      ban:{ taux:2500, connu:true },
+      tristan:{ taux:0, connu:true }
+    }
   });
 
   assert.equal(simulees[0].magie.apres, 1250,
@@ -128,9 +133,12 @@ assert.equal(PLAFOND_ROTATION, 60, "le plafond compte les appuis, pas les cases"
   const annotees = casesDeLaRotation(
     ["ban_gauntlets_skill_e", "tristan_sworddual_skill_e"],
     equipe, COMPETENCES, {}, {
-      ban_gauntlets_skill_e:{ recharge:800, cout:0 },
-      tristan_sworddual_skill_e:{ recharge:300, cout:0 }
-    }, efficacites
+      catalogue:{
+        ban_gauntlets_skill_e:{ recharge:800, cout:0 },
+        tristan_sworddual_skill_e:{ recharge:300, cout:0 }
+      },
+      efficacites
+    }
   );
   assert.equal(annotees[0].magie.apres, 950,
     "800 avec le bonus de Ban a +18,75 %");
@@ -542,6 +550,145 @@ assert.equal(PLAFOND_ROTATION, 60, "le plafond compte les appuis, pas les cases"
     combinee.filter(item => item.releve).length, 0,
     "une combinaison lancée par Ban laisse Ban sur le terrain"
   );
+}
+
+/* UNE COMBINAISON COÛTE LA MAGIE DE TOUS SES PARTICIPANTS, pas seulement
+   celle du lanceur : chaque héros paie sa propre compétence. Le catalogue du
+   jeu le confirme — ses 672 lignes ont toutes un partenaire qui coûte des
+   boules, et aucune n'a de participant qui en recharge.
+
+   Le catalogue lu ici est le VRAI : c'est lui qui décide si une combinaison
+   passe, et une valeur inventée ferait passer un test sur une équipe
+   impossible. */
+{
+  assert.equal(MAGIE.tristan_sworddual_skill_e.recharge, 111,
+    "la recharge du E de Tristan a changé, tout ce bloc est à relire");
+  assert.equal(MAGIE.ban_gauntlets_skill_r.cout, 2);
+  assert.equal(MAGIE.tristan_sworddual_skill_q.cout, 2);
+
+  const chargeur = fois => ({
+    etape:"tristan_sworddual_skill_e", fois, char:"tristan",
+    competence:{ gameId:"tristan_sworddual_skill_e" }, participants:[]
+  });
+  const combinaison = (...ids) => ({
+    etape:"@combine:" + ids.join(":"), fois:1, char:null, competence:null,
+    participants:ids.map(gameId => ({ gameId, char:null, competence:{ gameId } }))
+  });
+
+  /* 40 x 111 = 4440 points, soit 4,44 boules : de quoi payer une combinaison
+     à quatre boules, et rien de plus. */
+  const aDeux = simulerMagieDesCases([
+    chargeur(40),
+    combinaison("ban_gauntlets_skill_r", "tristan_sworddual_skill_q")
+  ], { catalogue:MAGIE });
+  assert.equal(aDeux[0].magie.apres, 4440);
+  assert.equal(aDeux[1].magie.coutParLancement, 4,
+    "2 boules pour Ban et 2 pour Tristan, pas 2 en tout");
+  assert.equal(aDeux[1].magie.valides, 1);
+  assert.equal(aDeux[1].magie.apres, 440);
+
+  /* LA COMBINAISON À HUIT BOULES NE PART PAS. Daisy au livre (2), Elaine à la
+     baguette (3) et Merlin au bâton (3) demandent huit boules à une jauge
+     d'équipe qui en garde sept. Trente-six lignes du catalogue sont dans ce
+     cas ; le site le dit au lieu de les facturer au rabais. */
+  assert.equal(MAGIE.daisy_book_skill_q.cout, 2);
+  assert.equal(MAGIE.elaine_wand_skill_q.cout, 3);
+  assert.equal(MAGIE.merlin_staff_skill_r.cout, 3);
+
+  const aTrois = simulerMagieDesCases([
+    chargeur(70),
+    combinaison(
+      "daisy_book_skill_q", "elaine_wand_skill_q", "merlin_staff_skill_r"
+    )
+  ], { catalogue:MAGIE });
+  assert.equal(aTrois[0].magie.apres, 7000, "la jauge est pleine à ras bord");
+  assert.equal(aTrois[1].magie.coutParLancement, 8);
+  assert.equal(aTrois[1].magie.impossibles, 1);
+  assert.equal(aTrois[1].magie.manque, 1000,
+    "il manque une boule, et la jauge ne peut pas en contenir une huitième");
+  assert.equal(aTrois[1].magie.apres, 7000, "un lancement refusé ne dépense rien");
+}
+
+/* L'ENSEMBLE « Énergie revigorante » — celui dont les pièces s'appellent « de
+   l'hymne régénérateur ». À trois pièces, la première attaque sur un ennemi
+   encore intact rend 2000 points à l'équipe entière.
+
+   Les fichiers de bijoux lus ici sont les VRAIS : c'est `data/stats-build.js`
+   qui porte le seuil de trois pièces, pas ce test. */
+{
+  assert.equal(typeof magieRendueParLesEnsembles, "function");
+
+  const ANNEAU = "7ds-bijoux/Anneau/Anneau de l'hymne régénérateur.webp";
+  const COLLIER = "7ds-bijoux/Collier/Collier de l'hymne régénérateur.webp";
+  const BOUCLES = "7ds-bijoux/Boucle d'oreille/"
+    + "Boucles d'oreilles de l'hymne régénérateur.webp";
+  const AUTRE_ANNEAU = "7ds-bijoux/Anneau/Anneau de l'araignée de l'ombre.webp";
+
+  const porteur = bijoux => Object.assign({}, BAN_GANTELETS, { jewel:bijoux });
+
+  assert.equal(
+    magieRendueParLesEnsembles([
+      TRISTAN,
+      porteur({
+        "Anneau":ANNEAU, "Collier":COLLIER, "Boucle d'oreille":BOUCLES
+      })
+    ]),
+    2000,
+    "un seul porteur suffit : l'effet vise tous les héros alliés"
+  );
+
+  assert.equal(
+    magieRendueParLesEnsembles([
+      porteur({
+        "Anneau":AUTRE_ANNEAU, "Collier":COLLIER, "Boucle d'oreille":BOUCLES
+      })
+    ]),
+    0,
+    "deux pièces n'ouvrent que le palier à deux, déjà compté dans les stats"
+  );
+
+  assert.equal(magieRendueParLesEnsembles([]), 0);
+  assert.equal(magieRendueParLesEnsembles(null), 0);
+  assert.equal(magieRendueParLesEnsembles([{ char:"ban" }, null]), 0,
+    "un héros sans bijou ne fait pas planter le compte");
+
+  /* LES 2000 POINTS ARRIVENT APRÈS LA PREMIÈRE CASE : il faut avoir frappé
+     pour déclencher l'effet. Une rotation qui ouvre sur un ultime trop cher
+     reste donc impossible, et c'est la deuxième case qui en profite. */
+  const troisE = fois => ({
+    etape:"ban_gauntlets_skill_e", fois, char:"ban",
+    competence:{ gameId:"ban_gauntlets_skill_e" }, participants:[]
+  });
+  const rendue = simulerMagieDesCases(
+    [troisE(1), troisE(1), troisE(1)],
+    { catalogue:MAGIE, rendueParEnsemble:2000 }
+  );
+  assert.equal(MAGIE.ban_gauntlets_skill_e.recharge, 144,
+    "la recharge du E de Ban a changé, les trois chiffres suivants aussi");
+  assert.equal(rendue[0].magie.rendueParEnsemble, 2000);
+  assert.equal(rendue[0].magie.apres, 2144, "144 de recharge, puis les 2000");
+  assert.equal(rendue[1].magie.rendueParEnsemble, 0,
+    "la recharge de 300 s interdit un second déclenchement");
+  assert.equal(rendue[2].magie.apres, 2432);
+
+  /* Sans l'ensemble, rien ne change : c'est la rotation d'avant. */
+  const sansEnsemble = simulerMagieDesCases(
+    [troisE(1)], { catalogue:MAGIE }
+  );
+  assert.equal(sansEnsemble[0].magie.rendueParEnsemble, 0);
+  assert.equal(sansEnsemble[0].magie.apres, 144);
+
+  /* JAUGE DÉJÀ PLEINE : le surplus est perdu, et il est mesuré comme celui
+     d'une recharge ordinaire. */
+  const plafonnee = simulerMagieDesCases([{
+    etape:"tristan_sworddual_skill_e", fois:70, char:"tristan",
+    competence:{ gameId:"tristan_sworddual_skill_e" }, participants:[]
+  }], { catalogue:MAGIE, rendueParEnsemble:2000 });
+  assert.equal(plafonnee[0].magie.apres, 7000);
+  assert.equal(plafonnee[0].magie.rendueParEnsemble, 0,
+    "la jauge est pleine : les 2000 points ne rendent rien");
+  assert.equal(plafonnee[0].magie.gaspilles, 2770,
+    "770 de recharge en trop, plus les 2000 de l'ensemble");
 }
 
 console.log("rotation-equipe.test.js OK");

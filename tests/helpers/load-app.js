@@ -490,6 +490,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   efficacitesRechargeMagie:typeof efficacitesRechargeMagie === "function"
     ? efficacitesRechargeMagie
     : undefined,
+  magieRendueParLesEnsembles:typeof magieRendueParLesEnsembles === "function"
+    ? magieRendueParLesEnsembles
+    : undefined,
   heroTermOriginLabel:typeof heroTermOriginLabel === "function"
     ? heroTermOriginLabel
     : undefined,
