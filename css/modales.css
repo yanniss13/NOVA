@@ -472,8 +472,18 @@ body.modal-locked{
   gap:2px;padding:4px;border:1px solid var(--line-soft);border-radius:8px;
   background:var(--panel)
 }
+/* LARGEUR FIXE et non `max-width` : a 88 px pour tout le monde, les cases
+   simples s'alignent au lieu de prendre chacune la largeur de son texte. Une
+   combinaison reste plus large, et c'est juste — elle porte deux portraits.
+
+   La GOUTTIERE BASSE reserve la bande des pastilles d'angle — le « xN » a
+   droite, le bonus d'ensemble a gauche. Sans elle, le « xN » se posait sur la
+   derniere ligne du texte, ce qu'on voyait deja avant que l'ensemble
+   n'existe. Elle est sur TOUTES les cases : aucune ne grandit toute seule,
+   donc la ligne ne fait pas d'escalier. */
 .rota-magie-delta{
-  max-width:88px;color:var(--muted);font-size:10px;line-height:1.15;
+  width:88px;padding-bottom:17px;
+  color:var(--muted);font-size:10px;line-height:1.15;
   text-align:center;font-variant-numeric:tabular-nums
 }
 .rota-case-magie-impossible{
@@ -495,9 +505,21 @@ body.modal-locked{
   font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;
   line-height:15px
 }
-/* En edition, les commandes occupent le bas : la pastille remonte au-dessus
-   d'elles plutot que de les recouvrir. */
-.rota-suite-edition .rota-fois{bottom:28px}
+/* LE BONUS D'UN ENSEMBLE — les deux boules que l'Énergie revigorante rend à
+   la première attaque. En pastille comme le « xN », et à l'angle opposé : les
+   deux se lisent d'un coup d'œil sans se marcher dessus. Le cerclé d'or et
+   non le plein : c'est un gain exceptionnel, pas un compte d'appuis. */
+.rota-ensemble{
+  position:absolute;bottom:2px;left:2px;
+  padding:0 4px;border-radius:8px;
+  border:1px solid var(--gold);background:var(--panel);color:var(--gold);
+  font-size:11px;font-weight:700;font-variant-numeric:tabular-nums;
+  line-height:13px
+}
+/* En edition, les commandes occupent le bas : les pastilles remontent
+   au-dessus d'elles plutot que de les recouvrir. */
+.rota-suite-edition .rota-fois,
+.rota-suite-edition .rota-ensemble{bottom:28px}
 
 /* Une COMBINAISON est une action d'équipe, pas la compétence d'un héros : son
    cadre le dit, et le lanceur est plus grand que ses partenaires. */

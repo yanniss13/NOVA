@@ -54,6 +54,17 @@ const STORAGE_KEY = "confrerie7ds.teams";
         if(!match) throw new Error("FIXTURE_GREED_SLOT_MISSING:"+slot);
         return match[0];
       };
+      /* L'ENERGIE REVIGORANTE, les pieces « de l'hymne regenerateur ». Elle va
+         sur TRISTAN et non sur Ban : l'armure de Ban tient le Souverain
+         cupide, dont le reste de ce test depend. L'effet vise toute l'equipe,
+         le porteur n'a donc pas besoin d'etre celui qui frappe. */
+      const energieRevigorante = slot => {
+        const match = Object.entries(catalog.gearByFile)
+          .find(([, definition]) => definition.setId === "accessory_t5_hymn"
+            && definition.slot === slot);
+        if(!match) throw new Error("FIXTURE_HYMN_SLOT_MISSING:"+slot);
+        return match[0];
+      };
       let weapon = null;
       let grade = null;
       for(const item of window.SEVEN_DS_DATA.armes.Gantelets){
@@ -136,7 +147,12 @@ const STORAGE_KEY = "confrerie7ds.teams";
         {
           char:"tristan",
           weapon:Object.keys(catalog.weaponsByFile)
-            .find(file => file.indexOf("/Epees doubles/") >= 0)
+            .find(file => file.indexOf("/Epees doubles/") >= 0),
+          jewel:{
+            Anneau:energieRevigorante("Ring"),
+            Collier:energieRevigorante("Necklace"),
+            "Boucle d'oreille":energieRevigorante("Earring")
+          }
         }]
       }]));
     }, STORAGE_KEY);
@@ -212,6 +228,47 @@ const STORAGE_KEY = "confrerie7ds.teams";
     /* Une seconde competence ouvre une seconde case. */
     await rota.locator(".rota-palette-bouton").nth(1).click();
     assert.equal(await rota.locator(".rota-case").count(), 2);
+
+    /* LA PASTILLE D'ENSEMBLE. Tristan porte les trois pieces de l'Energie
+       revigorante, l'equipe entiere en profite : la premiere case gagne deux
+       boules. Elles se lisent en PASTILLE D'ANGLE et non en toutes lettres —
+       ecrit dans la ligne, le nom de l'ensemble la passait a trois lignes et
+       poussait la case au-dessus de ses voisines.
+
+       Aucune assertion de largeur ici : le runner Linux a des polices plus
+       larges qu'un poste Windows, et un chiffre en pixels casserait le
+       deploiement sans rien dire de vrai sur la mise en page. */
+    const ensemble = rota.locator(".rota-case .rota-ensemble");
+    assert.equal(await ensemble.count(), 1,
+      "une seule case porte la pastille : la recharge de 300 s interdit un"
+      + " second declenchement");
+    assert.match(
+      await ensemble.first().getAttribute("title") || "",
+      /Énergie revigorante/,
+      "la pastille nomme l'ensemble au survol"
+    );
+    assert.doesNotMatch(
+      await rota.locator(".rota-magie-delta").first().innerText(),
+      /Énergie revigorante/,
+      "le nom de l'ensemble a quitte la ligne de texte"
+    );
+    /* L'information ne tient pas au seul « +2 » : la pastille porte un NOM
+       ACCESSIBLE, sans quoi un lecteur d'ecran annoncerait un chiffre nu.
+
+       Elle ne va PAS dans le titre de la case : ce titre est l'identite qui
+       permet de suivre une case qu'on deplace, plus bas dans ce fichier. */
+    assert.match(
+      await ensemble.first().getAttribute("aria-label") || "",
+      /Énergie revigorante/,
+      "la pastille porte un nom accessible, pas un chiffre nu"
+    );
+    assert.equal(await ensemble.first().getAttribute("role"), "img",
+      "sans role, le nom accessible s'ajouterait au texte au lieu de le remplacer");
+    assert.doesNotMatch(
+      await rota.locator(".rota-case").first().getAttribute("title") || "",
+      /Énergie revigorante/,
+      "le titre de la case reste son identite, pas son etat"
+    );
 
     /* Les fleches reordonnent — la voie sure, celle qui marche au clavier. */
     const avant = await rota.locator(".rota-case").first().getAttribute("title");

@@ -27,12 +27,6 @@ import {
     const magie = item.magie;
     const morceaux = [];
     if(magie.recharge > 0) morceaux.push("+" + boulesDeMagie(magie.recharge));
-    /* L'ensemble est NOMME : sans lui, deux boules apparaissent sur la
-       premiere case sans que le membre sache d'ou elles sortent. */
-    if(magie.rendueParEnsemble > 0){
-      morceaux.push("+" + boulesDeMagie(magie.rendueParEnsemble)
-        + " Énergie revigorante");
-    }
     if(magie.cout > 0) morceaux.push("−" + boulesDeMagie(magie.cout * 1000));
     else if(magie.impossibles && magie.coutParLancement > 0){
       morceaux.push("coût " + boulesDeMagie(magie.coutParLancement * 1000));
@@ -143,6 +137,37 @@ import {
       enfants.push(el("span",{ class:"rota-fois", text:"×" + item.fois }));
     }
     return enfants;
+  }
+
+  /* CE QUE L'ENSEMBLE REND, en une phrase. Elle sert deux fois : au survol de
+     la pastille, et dans le titre de la case. Rendre null quand il n'y a rien
+     a dire evite a chaque appelant de reposer la meme question. */
+  function phraseEnsembleMagie(item){
+    const rendue = item.magie && item.magie.rendueParEnsemble;
+    if(!(rendue > 0)) return null;
+    return "Énergie revigorante — l'ensemble 3 pièces rend "
+      + boulesDeMagie(rendue) + " boules";
+  }
+
+  /* EN PASTILLE D'ANGLE, jamais dans la ligne de texte. Ecrit en toutes
+     lettres, le nom de l'ensemble passait la ligne a trois et poussait la
+     case au-dessus de ses voisines — le meme travers que le « xN », range en
+     pastille pour la meme raison. */
+  function pastilleEnsemble(item){
+    const phrase = phraseEnsembleMagie(item);
+    if(!phrase) return null;
+    /* `role="img"` + `aria-label` : sans eux, un lecteur d'ecran annonce le
+       seul « +2 » de la pastille, qui ne dit rien. Le nom accessible remplace
+       le texte au lieu de s'y ajouter.
+
+       La phrase ne va PAS dans le titre de la case : ce titre est l'IDENTITE
+       de la case, celle qui permet de la suivre quand on la deplace. Y meler
+       un etat qui change de case au moindre reordonnancement en ferait une
+       identite mouvante. */
+    return el("span",{
+      class:"rota-ensemble", role:"img", title:phrase, "aria-label":phrase,
+      text:"+" + boulesDeMagie(item.magie.rendueParEnsemble)
+    });
   }
 
   function titreDeLaCase(item){
@@ -266,6 +291,8 @@ import {
       + (item.magie && item.magie.impossibles ? " rota-case-magie-impossible" : "");
     const li = el("li",{ class:classe, title:titreDeLaCase(item) },
       item.participants.length ? contenuCombine(item) : contenuCompetence(item));
+    const ensemble = pastilleEnsemble(item);
+    if(ensemble) li.appendChild(ensemble);
     if(!actions) return li;
     /* Appui sur « + » = une occurrence de plus. Le geste le plus courant
        merite le bouton le plus direct.
