@@ -79,6 +79,11 @@ jobs:
         run: |
           mkdir -p _site
           git archive HEAD | tar -x -C _site
+          # `docs/` ne sert pas le site : aucune page n'y renvoie. Ce sont des
+          # notes de travail internes, dont l'extraction des fichiers du jeu.
+          # Les publier sur un site public n'apporte rien et expose tout.
+          rm -rf _site/docs _site/outils
+          test ! -d _site/docs
           grep -q "__BUILD_VERSION__" _site/sw.js
           sed -i "s/__BUILD_VERSION__/${GITHUB_SHA}/g" _site/sw.js
           ! grep -q "__BUILD_VERSION__" _site/sw.js
