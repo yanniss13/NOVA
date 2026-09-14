@@ -99,4 +99,22 @@ assert.doesNotMatch(
   "un échec de test ne doit jamais être ignoré"
 );
 
+/* Le site publié ne porte QUE ce qu'une page demande. `docs/` est un carnet de
+   travail, `outils/` la chaîne de fabrication des données et `7ds-stats/` ses
+   tables brutes : dix-huit mégaoctets qu'aucun navigateur ne réclame — un test
+   de parcours vérifie d'ailleurs que le builder ne les charge jamais.
+
+   Ce n'est pas une question de poids. Ce dépôt est public et le site demande à
+   l'éditeur du jeu l'autorisation d'utiliser ses données : ce qui n'a pas à
+   être servi ne doit pas l'être. Une ligne `rm` s'efface sans qu'on s'en
+   aperçoive ; ces trois contrats la tiennent. */
+const paquetage = jobs.package.join("\n");
+["docs", "outils", "7ds-stats"].forEach(dossier =>
+  assert.match(
+    paquetage,
+    new RegExp("rm -rf[^\\n]*_site/" + dossier + "(?:\\s|$)"),
+    "le site publié ne doit pas contenir " + dossier + "/"
+  )
+);
+
 console.log("PASS workflow Pages : tests obligatoires avant déploiement");

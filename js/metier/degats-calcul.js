@@ -157,7 +157,7 @@
   const RAPPORT = 10000;
 
   /* Le taux critique n'est pas un simple total. La regle, relevee sur l'outil
-     de reference et consignee dans RAPPORT-analyse-tapscreen.md :
+     de reference et consignee dans docs/RAPPORT-analyse-tapscreen.md :
 
        taux = min(100, min(90, max(0, critRate - critResist)) + critRateAllie)
 
@@ -354,7 +354,7 @@
 
        Ce n'est pas une pure deduction. L'outil de reference expose ce debuff
        sous le nom `d-ecr` et il ne figure PAS parmi ses champs mesures inertes
-       (RAPPORT-analyse-tapscreen.md, section 4, qui nomme `eai`, `d-edi`,
+       (docs/RAPPORT-analyse-tapscreen.md, section 4, qui nomme `eai`, `d-edi`,
        `d-nadmg` et `d-epr`). Son voisin `d-ecdr`, lui, a ete mesure en points
        - retrancher « 50 » a une defense critique de 50 donne 0, pas 25 - et
        rien ne suggere que les deux champs voisins se comportent autrement.
@@ -392,7 +392,7 @@
        pas.
 
        Ce module bornait a ZERO, et ce n'etait pas gratuit : tapscreen.app laisse
-       bien le multiplicateur tomber sous 1 (RAPPORT-analyse-tapscreen.md,
+       bien le multiplicateur tomber sous 1 (docs/RAPPORT-analyse-tapscreen.md,
        section 4 : a `cd` = 0 contre 42,93 % de defense critique, 36 329 contre
        63 658 en non-critique, mesure en boite noire non ambigue). Mais cette
        mesure prouve ce que fait L'OUTIL, pas ce que fait le jeu — et l'outil

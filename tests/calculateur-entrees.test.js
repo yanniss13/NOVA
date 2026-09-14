@@ -486,7 +486,7 @@ tousLesBuffs.forEach(buff => {
    L'outil de reference ne tranche pas la question : son champ unique est un
    multiplicateur GLOBAL applique sur les cinq onglets, et son texte d'aide
    demande au joueur de saisir a la main la valeur correspondant a l'onglet
-   affiche (RAPPORT-analyse-tapscreen.md, session 4). Chez lui une seule
+   affiche (docs/RAPPORT-analyse-tapscreen.md, session 4). Chez lui une seule
    competence est visible a la fois, donc l'approximation passe ; notre tableau
    les montre toutes ensemble, donc elle ne passerait pas. */
 {

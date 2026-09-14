@@ -20,7 +20,7 @@ le déplacement : elle est conservée pour dire pourquoi.
   tient les quatre codes élémentaires, le seau additif et le facteur
   multiplicatif du palier d'un bout à l'autre.
 - **Le percement de défense**, mesuré séparément sur mannequin — cinq
-  prédictions posées à l'avance et vérifiées (`RAPPORT-analyse-tapscreen.md`,
+  prédictions posées à l'avance et vérifiées (`docs/RAPPORT-analyse-tapscreen.md`,
   session 3).
 - **La transcription des 43 buffs** : phrase littérale, code de statistique
   existant, et produit `parCumul × cumuls = valeur` recalculé par un test.
@@ -236,6 +236,6 @@ le protocole général en notant l'ATK **et** l'attaque élémentaire du support
 - `js/metier/equipe-buffs.js` — l'hypothèse de la question 6, ligne 51.
 - `js/metier/calculateur-entrees.js` — les seaux du calcul, questions 3 et 4.
 - `tests/calculateur-entrees.test.js` — le relevé Merlin p10 à 70 563.
-- `RAPPORT-analyse-tapscreen.md` — la méthode des mesures au mannequin.
+- `docs/RAPPORT-analyse-tapscreen.md` — la méthode des mesures au mannequin.
 - `docs/competences-maintenues-a-tester.md` — le protocole jumeau, pour les
   compétences maintenues.

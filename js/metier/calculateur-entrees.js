@@ -344,7 +344,7 @@ import { degatsAttendus } from "./degats-calcul.js";
      et ce choix est une ANALOGIE, pas une mesure. Ce qui la fonde : la
      FAIBLESSE de l'ennemi, mesuree chez l'outil de reference, tombe elle
      aussi dans le seau additif des bonus au lieu de former un facteur separe
-     (RAPPORT-analyse-tapscreen.md, section 5). C'est le cas connu le plus
+     (docs/RAPPORT-analyse-tapscreen.md, section 5). C'est le cas connu le plus
      proche - une propriete de la cible qui amplifie les degats.
 
      Rien ne la mesure directement, et rien ne le pourra bientot : l'outil de

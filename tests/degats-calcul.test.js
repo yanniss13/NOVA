@@ -252,7 +252,7 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
 }
 
 /* Les quatre configurations relevees sur l'outil de reference, transcrites
-   telles quelles (RAPPORT-analyse-tapscreen.md). Avec 200 % de degats
+   telles quelles (docs/RAPPORT-analyse-tapscreen.md). Avec 200 % de degats
    critiques et aucune resistance, total = 500 x (1 + 2 x taux) : chaque ligne
    fixe donc le taux effectif attendu. */
 {
@@ -312,7 +312,7 @@ const COUP_SIMPLE = { pourcentage:100, repartition:[100] };
    client « bornes que le jeu applique en fin de calcul » — la voisine directe
    de `battle_min_damres_rate` = 500 que PLANCHER_DEGATS applique deja.
 
-   Ce module bornait a ZERO, sur la foi de RAPPORT-analyse-tapscreen.md
+   Ce module bornait a ZERO, sur la foi de docs/RAPPORT-analyse-tapscreen.md
    (section 4 : a `cd` = 0 contre 42,93 % de defense critique, tapscreen rend
    36 329 contre 63 658 en non-critique, soit 0,5707). Cette mesure est
    solide, mais elle prouve ce que fait L'OUTIL. 7dsorigin, l'autre outil,

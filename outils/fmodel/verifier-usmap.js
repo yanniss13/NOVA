@@ -1,8 +1,7 @@
 // Lit un .usmap et le compare a un autre, sans passer par FModel.
 //
-// Ecrit le 5 septembre 2026, quand le usmap a commence a se fabriquer en local
-// avec Dumper-7 : il fallait pouvoir dire "ce dump est bon" avant de le charger
-// et de reexporter 65 000 fichiers pour s en apercevoir.
+// Ecrit le 5 septembre 2026 : il fallait pouvoir dire "ce fichier est bon"
+// avant de le charger et de reexporter 65 000 fichiers pour s en apercevoir.
 //
 //   node outils/fmodel/verifier-usmap.js <fichier.usmap>
 //   node outils/fmodel/verifier-usmap.js <nouveau.usmap> <ancien.usmap>
@@ -18,8 +17,8 @@
 //
 // La seule mesure qui compte dans une comparaison, ce sont les structs UE*,
 // c est a dire les tables du jeu. Le nombre de noms et la taille du fichier ne
-// disent rien : Dumper-7 compresse en Zstd et n ecrit pas le bloc final
-// CEXT/PPTH que portent les usmap passes par FModel.
+// disent rien : selon sa provenance, un usmap est compresse en Zstd et n ecrit
+// pas le bloc final CEXT/PPTH que portent ceux passes par FModel.
 //
 // La comparaison se lit DANS LES DEUX SENS. Ce qui est perdu est une
 // regression ; ce qui est gagne est la seule raison de refaire un export.

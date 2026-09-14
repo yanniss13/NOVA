@@ -159,7 +159,7 @@ serait pas dans la table. Elle s'applique donc après.
 
 ### Ce qui plaidait pour l'ancien modèle, et pourquoi ça ne suffit pas
 
-`RAPPORT-analyse-tapscreen.md` section 4 : à `cd` = 0 contre 42,93 % de défense
+`docs/RAPPORT-analyse-tapscreen.md` section 4 : à `cd` = 0 contre 42,93 % de défense
 critique, tapscreen rend **36 329** en critique contre **63 658** en non-critique
 — ratio 0,5708, mesuré en boîte noire, non ambigu. La mesure est solide.
 
@@ -367,7 +367,7 @@ sans effet : Akumu n'a aucune faiblesse.
 | Tables du jeu (`Output/Exports/.../Table`) | **Autorité.** Le code de la stat tranche. |
 | `docs/constantes-combat-du-jeu.md` | Les constantes, lues dans `DefineTable`. Donne les bornes, pas l'ordre des opérations. |
 | `7dsorigin.app/en/damage-formula` | Sérieux, daté, méthodologie citée. Mais c'est une **mesure externe**, pas le code. À croiser, jamais à recopier. |
-| `RAPPORT-analyse-tapscreen.md` | Rétro-ingénierie de l'outil de référence. Prouve ce que fait **l'outil**, pas ce que fait le jeu. |
+| `docs/RAPPORT-analyse-tapscreen.md` | Rétro-ingénierie de l'outil de référence. Prouve ce que fait **l'outil**, pas ce que fait le jeu. |
 | Calculateur de Blue (`linen-ostrich-258033.hostingersite.com`) | **Référence empirique prioritaire sur décision du propriétaire le 12 septembre 2026.** Formule PHP fermée : chaque terme retenu doit rester couvert par une sonde littérale dans `tests/degats-calcul.test.js`. |
 | `7dscalc.com` | Modèle communautaire, qui s'annonce lui-même comme estimé (« DEF scaling, resistance stacking, debuff math remain community-derived »). Sa mitigation `DEF/(DEF+500+niveau×10)` contredit `K/(K+DEF)`. **Ne pas s'en servir comme référence.** |
 

@@ -1781,6 +1781,32 @@ après lui.
 - Après l'ajout d'un héros : relancer aussi `python scripts/generate-wiki.py`,
   sinon `tests/wiki-catalogue.test.js` passe au rouge.
 
+## Ce que ce dépôt public ne porte pas
+
+Ce dépôt est public, et le site demande à l'éditeur du jeu l'autorisation
+d'utiliser ses données. Trois choses en sont donc sorties, et ne doivent pas y
+revenir.
+
+**Aucun moyen de contourner une protection technique.** Ni la clé qui déchiffre
+l'index des archives, ni le code qui s'en sert, ni le mode d'emploi qui mène à
+l'une ou à l'autre. Diffuser un tel moyen est une infraction distincte du droit
+d'auteur : ce qui est reproché n'est plus la donnée, c'est l'outil. Les notes
+d'extraction et le déchiffreur `.pak` vivent hors du dépôt et sont nommés dans
+`.gitignore`. Les cinquante outils de `outils/fmodel/` qui restent ne lisent que
+des exports JSON déjà produits sur le disque du propriétaire — aucun ne touche
+une archive du jeu, aucun n'approche un processus.
+
+**Le site publié ne sert que ce qu'une page demande.** Le workflow retire
+`docs/`, `outils/` et `7ds-stats/` de l'artefact, et `tests/pages-workflow.test.js`
+tient ces trois contrats. Y ajouter un dossier plutôt que de l'y laisser entrer :
+ce qui n'a pas à être servi ne doit pas l'être.
+
+**Aucun lien affilié.** Voir la règle du pied de page plus haut.
+
+La provenance des données, elle, reste écrite en clair : les en-têtes de `data/`
+disent de quelle table du jeu chaque fichier sort. Demander une autorisation en
+effaçant les traces de ce qu'on demande serait l'exact contraire du but.
+
 ## Assistant de composition des groupes de boss
 
 Le panneau de l'onglet Boss est strictement **en lecture seule**. Il lit les

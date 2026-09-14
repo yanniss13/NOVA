@@ -278,7 +278,7 @@ multiplicateur est borné, et à zéro. Akumu résiste à 50 %, donc ce cas est
 courant, pas théorique.
 
 Ces trois règles viennent de mesures consignées dans
-`RAPPORT-analyse-tapscreen.md`, pas d'une déduction.
+`docs/RAPPORT-analyse-tapscreen.md`, pas d'une déduction.
 
 ### Percement de défense, et ce qu'il ne faut pas confondre
 
@@ -304,7 +304,7 @@ percementNet = max(0, percement − résistanceAuPercement)
 mitigation   = K / (K + DEF) + percementNet
 ```
 
-Cinq mesures prédites à l'avance le confirment (`RAPPORT-analyse-tapscreen.md`,
+Cinq mesures prédites à l'avance le confirment (`docs/RAPPORT-analyse-tapscreen.md`,
 session 3) : à DEF 5600, percer de 50 % rend **exactement** le chiffre d'une
 défense nulle, là où diviser la défense par deux en rendrait un tout autre. La
 première version de ce module retenait la division et se trompait de 50 % — les
@@ -526,7 +526,7 @@ fonctionne hors ligne. Un test unitaire neuf rejoint **les deux** scripts
   spec, revenait à décrire le bornage du moteur plutôt que le jeu.
 - Le taux critique effectif suit
   `min(100, min(90, max(0, critRate − critResist)) + critRateAllie)`, vérifié
-  sur les quatre configurations relevées dans `RAPPORT-analyse-tapscreen.md`.
+  sur les quatre configurations relevées dans `docs/RAPPORT-analyse-tapscreen.md`.
 
 ### Page
 

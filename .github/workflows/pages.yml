@@ -80,10 +80,13 @@ jobs:
           mkdir -p _site
           git archive HEAD | tar -x -C _site
           # `docs/` ne sert pas le site : aucune page n'y renvoie. Ce sont des
-          # notes de travail internes, dont l'extraction des fichiers du jeu.
-          # Les publier sur un site public n'apporte rien et expose tout.
-          rm -rf _site/docs _site/outils
+          # notes de travail internes. Les publier n'apporte rien et expose
+          # tout. `outils/` est la chaine de fabrication des donnees, et
+          # `7ds-stats/` ses tables brutes : 18 Mo qu'aucune page ne demande —
+          # le navigateur lit `data/`, jamais celles-la.
+          rm -rf _site/docs _site/outils _site/7ds-stats
           test ! -d _site/docs
+          test ! -d _site/7ds-stats
           grep -q "__BUILD_VERSION__" _site/sw.js
           sed -i "s/__BUILD_VERSION__/${GITHUB_SHA}/g" _site/sw.js
           ! grep -q "__BUILD_VERSION__" _site/sw.js

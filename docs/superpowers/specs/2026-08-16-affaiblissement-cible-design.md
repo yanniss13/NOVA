@@ -148,7 +148,7 @@ réduit** : il n'existe pas de `reductionResistanceElementaire`. Y brancher ces
 lignes modifierait la formule.
 
 Or `d-eew`, le champ correspondant chez l'outil de référence, **n'a jamais été
-mesuré** par `RAPPORT-analyse-tapscreen.md`. On ignore s'il se retranche en
+mesuré** par `docs/RAPPORT-analyse-tapscreen.md`. On ignore s'il se retranche en
 points ou en pourcentage, et comment il se compose. Ajouter un terme non mesuré
 à la formule est précisément ce que ce dépôt refuse.
 
