@@ -3,7 +3,7 @@
 /* Les verrous d'animation deduits des fichiers du jeu.
 
    Contrairement a `data/animations-mesurees.json`, ce fichier se REGENERE
-   (`node outils/fmodel/ecrire-verrous.js`). Il n'en est pas moins fragile :
+   (`node outils/fabrication/ecrire-verrous.js`). Il n'en est pas moins fragile :
    `data/competences.js` se regenere lui aussi, et un `gameId` qui change
    laisserait un verrou rattache a rien, ignore en silence par le simulateur.
 

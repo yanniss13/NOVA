@@ -1,5 +1,5 @@
-// Genere par outils/fmodel/ecrire-magie-rotation.js depuis la derniere
-// Skill/PC_SkillTable.json exportee par FModel.
+// Genere par outils/fabrication/ecrire-magie-rotation.js depuis les donnees
+// du jeu.
 // recharge = UI_MagicForceGauge en points bruts ; cout = UseMagicForceStack
 // en boules. Une boule vaut 1000 points, avec un plafond d'equipe de 7.
 // L'attaque normale somme sa chaine `normalatk_*`.

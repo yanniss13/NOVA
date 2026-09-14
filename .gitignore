@@ -22,12 +22,12 @@ image-ocr/
 NOTE-CLAUDE-WORKTREE.md
 AUDIT-*.md
 
-# Sorties JETABLES des outils d'extraction (outils/fmodel).
+# Sorties JETABLES des outils de fabrication (outils/fabrication).
 # `tous-les-chemins.txt` pese 99 Mo : c'est un index de paks qui se regenere
 # en une commande, et que rien ne lit. Le commiter alourdirait le depot pour
 # toujours — l'historique ne s'allege pas apres coup.
-outils/fmodel/tous-les-chemins.txt
-outils/fmodel/animations-completes.json
+outils/fabrication/tous-les-chemins.txt
+outils/fabrication/animations-completes.json
 
 # Notes d'extraction des fichiers du jeu. Elles decrivent comment ouvrir les
 # archives d'un client protege : ce depot est public, et le site demande a
@@ -40,7 +40,7 @@ docs/extraction-fichiers-du-jeu.md
 # MOYEN : du code qui ouvre une mesure technique de protection est plus
 # caracterise qu'une cle citee dans un texte. Rien dans le depot ne l'appelle
 # et sa sortie est deja jetable. Il vit dans Desktop/NOVA-notes-privees/.
-outils/fmodel/lister-paks.js
+outils/fabrication/lister-paks.js
 
 # Vignettes PNG de la carte Discord /build : fabriquees par
 # scripts/generer-vignettes.py, publiees par le workflow Pages, jamais

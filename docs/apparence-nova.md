@@ -173,13 +173,12 @@ lumières.
 
 | Ambiance | Fichier source du jeu |
 |---|---|
-| Ténèbres | `UIImg/origin/LoadingScreen/Texture/loading_bg_map_Liones_02.png` (2048 × 1024) |
-| Lumière | `UIImg/origin/LoadingScreen/Texture/loading_bg_map_Liones_03.png` (2048 × 1024) |
+| Ténèbres | `loading_bg_map_Liones_02.png` (2048 × 1024) |
+| Lumière | `loading_bg_map_Liones_03.png` (2048 × 1024) |
 
-Trouvés dans l'export FModel `Exports-2.0-build-24929381`, le seul des trois à
-contenir des PNG — celui du build courant n'a exporté que du JSON. Le dossier
-`UIImg/origin/LoadingScreen/Texture` contient une cinquantaine d'autres décors
-de Britannia : Forêt du Roi des Fées, Plaine de Vanya, Ravens, Ferzen.
+Ce sont deux des écrans de chargement du jeu. Le même ensemble contient une
+cinquantaine d'autres décors de Britannia : Forêt du Roi des Fées, Plaine de
+Vanya, Ravens, Ferzen.
 
 Traitement appliqué, sans aucune génération d'image :
 

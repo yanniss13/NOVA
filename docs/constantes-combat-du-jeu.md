@@ -1,6 +1,6 @@
 # Constantes de combat lues dans le client
 
-Extraites de `SevenDeadlySins/Content/Table/Misc/DefineTable` (934 constantes au
+Extraites de `DefineTable` (934 constantes au
 total), build `1.8.1.2`. Valeurs **brutes**, telles que le jeu les stocke.
 
 > **Echelle.** Pour les champs de taux, 10000 vaut 100 %. La colonne « en % »

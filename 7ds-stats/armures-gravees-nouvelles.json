@@ -186,9 +186,9 @@
     "quantity": 1
    }
   ],
-  "iconUrl": "UIImg/Icon_Item/BindArmor/Howzer_Plate_5003.png",
+  "iconUrl": "Icon_Item/BindArmor/Howzer_Plate_5003.png",
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -356,9 +356,9 @@
     "quantity": 1
    }
   ],
-  "iconUrl": "UIImg/Icon_Item/BindArmor/Bug_Plate_5003.png",
+  "iconUrl": "Icon_Item/BindArmor/Bug_Plate_5003.png",
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -526,9 +526,9 @@
     "quantity": 1
    }
   ],
-  "iconUrl": "UIImg/Icon_Item/BindArmor/Griamore_Plate_5003.png",
+  "iconUrl": "Icon_Item/BindArmor/Griamore_Plate_5003.png",
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -696,9 +696,9 @@
     "quantity": 1
    }
   ],
-  "iconUrl": "UIImg/Icon_Item/BindArmor/King_Plate_5003.png",
+  "iconUrl": "Icon_Item/BindArmor/King_Plate_5003.png",
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -817,9 +817,9 @@
     "quantity": 1
    }
   ],
-  "iconUrl": "UIImg/Icon_Item/BindArmor/Elizabeth_Leather_5002.png",
+  "iconUrl": "Icon_Item/BindArmor/Elizabeth_Leather_5002.png",
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -938,9 +938,9 @@
     "quantity": 1
    }
   ],
-  "iconUrl": "UIImg/Icon_Item/BindArmor/Elizabeth_Plate_5003.png",
+  "iconUrl": "Icon_Item/BindArmor/Elizabeth_Plate_5003.png",
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -1059,9 +1059,9 @@
     "quantity": 1
    }
   ],
-  "iconUrl": "UIImg/Icon_Item/BindArmor/Daisy_Cloth_5001.png",
+  "iconUrl": "Icon_Item/BindArmor/Daisy_Cloth_5001.png",
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -1180,9 +1180,9 @@
     "quantity": 1
    }
   ],
-  "iconUrl": "UIImg/Icon_Item/BindArmor/Klotho_Plate_5003.png",
+  "iconUrl": "Icon_Item/BindArmor/Klotho_Plate_5003.png",
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -1301,9 +1301,9 @@
     "quantity": 1
    }
   ],
-  "iconUrl": "UIImg/Icon_Item/BindArmor/Meliodas_Cloth_5001.png",
+  "iconUrl": "Icon_Item/BindArmor/Meliodas_Cloth_5001.png",
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -1422,9 +1422,9 @@
     "quantity": 1
    }
   ],
-  "iconUrl": "UIImg/Icon_Item/BindArmor/Escanor_Cloth_5001.png",
+  "iconUrl": "Icon_Item/BindArmor/Escanor_Cloth_5001.png",
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -1543,9 +1543,9 @@
     "quantity": 1
    }
   ],
-  "iconUrl": "UIImg/Icon_Item/BindArmor/Merlin_Plate_5003.png",
+  "iconUrl": "Icon_Item/BindArmor/Merlin_Plate_5003.png",
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -1664,9 +1664,9 @@
     "quantity": 1
    }
   ],
-  "iconUrl": "UIImg/Icon_Item/BindArmor/Gowther_Leather_5002.png",
+  "iconUrl": "Icon_Item/BindArmor/Gowther_Leather_5002.png",
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -1785,9 +1785,9 @@
     "quantity": 1
    }
   ],
-  "iconUrl": "UIImg/Icon_Item/BindArmor/Gowther_Plate_5003.png",
+  "iconUrl": "Icon_Item/BindArmor/Gowther_Plate_5003.png",
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -1904,7 +1904,7 @@
   ],
   "iconUrl": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -2026,7 +2026,7 @@
   ],
   "iconUrl": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -2148,7 +2148,7 @@
   ],
   "iconUrl": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -2270,7 +2270,7 @@
   ],
   "iconUrl": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -2390,9 +2390,9 @@
     "quantity": 1
    }
   ],
-  "iconUrl": "UIImg/Icon_Item/BindArmor/Derieri_Cloth_5001.png",
+  "iconUrl": "Icon_Item/BindArmor/Derieri_Cloth_5001.png",
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",
@@ -2511,9 +2511,9 @@
     "quantity": 1
    }
   ],
-  "iconUrl": "UIImg/Icon_Item/BindArmor/Derieri_Plate_5003.png",
+  "iconUrl": "Icon_Item/BindArmor/Derieri_Plate_5003.png",
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualityMin",

@@ -1,8 +1,7 @@
 # Statistiques défensives de trois monstres
 
-Extrait de `Actor/NpcStatGroupTable` (1 020 groupes, 101 colonnes), via
-`MonsterActorTable` / `NPCActorTable`, export FModel du 25 août 2026,
-usmap `mappings-1.8`, build de jeu `1.8.1.2`.
+Lu dans les données du client : 1 020 groupes de statistiques, 101 colonnes,
+relevé du 25 août 2026, build de jeu `1.8.1.2`.
 
 **Unité des taux** : dix-millièmes. `1000` vaut 10 %, `9500` vaut 95 %.
 

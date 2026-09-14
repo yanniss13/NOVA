@@ -58,7 +58,7 @@ NON_INCLUS_SPECIFIQUES = {
     # --- Version 2.0, 26 aout 2026 ---------------------------------------
     #
     # Les trois mecaniques de Ban sont desormais ETABLIES, lues dans
-    # Table/Buff/BuffTable le 27 aout 2026 (le hotfix du 26 au soir a livre
+    # BuffTable le 27 aout 2026 (le hotfix du 26 au soir a livre
     # les traductions francaises qui manquaient). Ce qui reste dehors ne
     # l'est plus par ignorance, mais parce que le schema ne sait pas
     # l'exprimer — chaque entree dit laquelle de ces deux raisons s'applique.
@@ -127,13 +127,13 @@ REGLES_SPECIFIQUES = {
     # `_regle_bonus` traduit « X Attack +n% » par un taux sur l'attaque
     # elementaire. Les quatre entrees ci-dessous corrigent des cas ou la
     # description du jeu dit « attaque » alors que le code de la statistique,
-    # lu dans Table/Buff/BuffTable, dit `_Element_Rate`. La table fait foi :
+    # lu dans BuffTable, dit `_Element_Rate`. La table fait foi :
     # pour Drake, la description de la COMPETENCE dit « attaque de Foudre »
     # et celle du BUFF dit « Degats de Foudre » — le jeu se contredit, seul le
     # code tranche.
     #
     # Les valeurs sont donnees au maximum de cumuls, ce que `passif-max`
-    # suppose. Verification : node outils/fmodel/verifier-buffs-officiels.js
+    # suppose. Verification : node outils/fabrication/verifier-buffs-officiels.js
     "skill:meliodas_sword1h_skill_rmb": [
         # buff 302051001 « Hate » : Dark_Element_Rate 1500, 2 cumuls, 7 s
         {

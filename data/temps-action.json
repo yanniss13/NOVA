@@ -1,6 +1,6 @@
 {
  "_lisezmoi": [
-  "Temps d action du jeu, extraits de TextDatas/CData/HitNotify (build 1.8.1.2).",
+  "Temps d action du jeu, extraits de CData/HitNotify (build 1.8.1.2).",
   "C est la table du jeu lui-meme, pas une mesure ni une deduction.",
   "Cle : identifiant d action, identique au gameId de data/competences.js",
   "      quand la competence y figure.",

@@ -1,6 +1,6 @@
 # Bornes des 223 statistiques du jeu
 
-Lues dans `Actor/StatInfoTable`, débloquée par le usmap 1.8. Build `1.8.1.2`,
+Lues dans `StatInfoTable`, débloquée par le usmap 1.8. Build `1.8.1.2`,
 export du 25 août 2026. Ce sont les bornes que **le moteur applique** à chaque
 statistique, indépendamment de la valeur calculée.
 

@@ -28,12 +28,12 @@ import { activeGearSets, calculateHeroStats } from "./stats-calcul.js";
      collision avec lui. */
   const IDENTIFIANT = /^[a-z0-9]+(_[a-z0-9]+)+$/;
 
-  /* LES CONSTANTES DE LA RELEVE, lues dans `Misc/DefineTable` du jeu et non
+  /* LES CONSTANTES DE LA RELEVE, lues dans `DefineTable` du jeu et non
      estimees : `tagpoint_gauge` et `tagpoint_maxstack`. */
   const JAUGE_PAR_RELEVE = 1000;
   const RELEVES_CUMULABLES = 3;
 
-  /* LES CONSTANTES DE LA MAGIE, lues dans `Misc/DefineTable` : une boule
+  /* LES CONSTANTES DE LA MAGIE, lues dans `DefineTable` : une boule
      contient 1000 points (`ga_magicforce_gage`) et l'equipe en garde sept
      (`magicforcemaxstack`). */
   const POINTS_PAR_BOULE_MAGIE = 1000;

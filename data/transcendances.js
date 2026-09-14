@@ -1,12 +1,11 @@
 // Les transcendances : les passifs de Limit Break de chaque heros.
 //
 // GENERE — ne pas editer a la main :
-//     node outils/fmodel/extraire-transcendances.js
+//     node outils/fabrication/extraire-transcendances.js
 //
-// La source n'est ni 7dsorigin.app ni SevenCodex, qui ne les publient pas,
-// mais l'extraction locale du client (FModel). La CI ne peut donc PAS
-// regenerer ce fichier : le commit fait foi, comme pour data/competences.js.
-// A refaire apres chaque nouvel export du jeu.
+// Ni 7dsorigin.app ni SevenCodex ne les publient : la source est locale, et
+// la CI ne peut donc PAS regenerer ce fichier. Le commit fait foi, comme pour
+// data/competences.js. A refaire apres chaque mise a jour du jeu.
 //
 // Cle = slug du personnage, celui de personnages-meta.js.
 // Trois transcendances par heros, dans l'ordre du jeu.

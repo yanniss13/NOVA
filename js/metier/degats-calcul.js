@@ -40,8 +40,8 @@
 
      Les niveaux 1 a 20 ont ete releves sur la page publique ; le detail et la
      methode vivent dans docs/akumu-20-niveaux.md. Les niveaux 21 a 30 viennent
-     directement du client, table Actor/NpcStatGroupTable, groupe
-     stat_50700109. Le palier 21 ouvre un nouveau regime : la resistance
+     directement des donnees du jeu. Le palier 21 ouvre un nouveau regime :
+     la resistance
      critique retombe a 20 %, tandis que DEF, defense critique et PV continuent
      de croitre. Un test garde cette rupture au lieu de la lisser.
 

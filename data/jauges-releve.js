@@ -1,5 +1,5 @@
-// Genere par outils/fmodel/ecrire-jauges-releve.js depuis la table
-// Skill/PC_SkillTable.json du jeu (champ UI_TagGauge).
+// Genere par outils/fabrication/ecrire-jauges-releve.js depuis les donnees
+// du jeu (champ UI_TagGauge).
 // Ce que chaque competence apporte a la jauge de releve, en points bruts.
 // Une releve en coute 1000 (constante tagpoint_gauge), on en cumule 3
 // (tagpoint_maxstack).

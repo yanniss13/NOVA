@@ -72,7 +72,7 @@ python scripts/generate-wiki.py
 python scripts/generate-effets-dps.py
 ```
 
-Les données viennent de deux endroits, et chaque fichier de `data/` nomme le sien dans son en-tête. La source publique est `7dsorigin.app`. Ce qu'aucun site public ne publie — transcendances, jauges, recharges de magie, ultimes combinés — est lu dans les tables du client du jeu, installé localement.
+Les données viennent de deux endroits, et chaque fichier de `data/` nomme le sien dans son en-tête. La source publique est `7dsorigin.app`. Ce qu'aucun site public ne publie — transcendances, jauges, recharges de magie, ultimes combinés — est lu dans les données du jeu, installé localement.
 
 NOVA est un projet communautaire indépendant, sans affiliation ni partenariat avec Netmarble ou les ayants droit de la licence.
 

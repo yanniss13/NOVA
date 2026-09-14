@@ -588,7 +588,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
       "le palier 1 reste le defaut, pour ne deplacer aucun chiffre affiche");
     await cible.selectOption("akumu-30");
     assert.equal(await cible.inputValue(), "akumu-30",
-      "le dernier palier FModel doit etre selectionnable");
+      "le dernier palier releve doit etre selectionnable");
 
     /* Le mannequin n'a ni defense ni resistance : les degats affiches valent
        exactement l'ATK multipliee par le coefficient, donc ils MONTENT quand

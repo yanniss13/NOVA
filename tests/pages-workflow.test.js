@@ -100,21 +100,35 @@ assert.doesNotMatch(
 );
 
 /* Le site publié ne porte QUE ce qu'une page demande. `docs/` est un carnet de
-   travail, `outils/` la chaîne de fabrication des données et `7ds-stats/` ses
-   tables brutes : dix-huit mégaoctets qu'aucun navigateur ne réclame — un test
-   de parcours vérifie d'ailleurs que le builder ne les charge jamais.
+   travail, `outils/fabrication/` la chaîne qui produit les données et
+   `7ds-stats/` ses tables brutes : dix-huit mégaoctets qu'aucun navigateur ne
+   réclame — un test de parcours vérifie d'ailleurs que le builder ne les
+   charge jamais.
 
    Ce n'est pas une question de poids. Ce dépôt est public et le site demande à
    l'éditeur du jeu l'autorisation d'utiliser ses données : ce qui n'a pas à
    être servi ne doit pas l'être. Une ligne `rm` s'efface sans qu'on s'en
-   aperçoive ; ces trois contrats la tiennent. */
+   aperçoive ; ces contrats la tiennent. */
 const paquetage = jobs.package.join("\n");
-["docs", "outils", "7ds-stats"].forEach(dossier =>
+["docs", "outils/fabrication", "7ds-stats"].forEach(dossier =>
   assert.match(
     paquetage,
     new RegExp("rm -rf[^\\n]*_site/" + dossier + "(?:\\s|$)"),
     "le site publié ne doit pas contenir " + dossier + "/"
   )
+);
+/* Mais PAS `outils/` en entier : le chronomètre d'animations y vit, et « Mon
+   suivi » est le seul endroit du site qui y mène. L'avoir emporté avec le
+   reste l'a déjà mis en 404 une fois. */
+assert.doesNotMatch(
+  paquetage,
+  /rm -rf[^\n]*_site\/outils(?:\s|$)/,
+  "retirer outils/ en entier casse le chronomètre lié depuis « Mon suivi »"
+);
+assert.match(
+  paquetage,
+  /test -f _site\/outils\/chrono-animation\.html/,
+  "le paquetage doit prouver que le chronomètre est toujours servi"
 );
 
 console.log("PASS workflow Pages : tests obligatoires avant déploiement");

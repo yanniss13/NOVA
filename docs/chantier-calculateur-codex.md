@@ -347,7 +347,7 @@ sans effet : Akumu n'a aucune faiblesse.
   leurs valeurs ne coïncident d'ailleurs pas avec la ligne de stat. Le garde a
   bien fonctionné pour eux.
 - **La table des potentiels dans les fichiers du jeu.** Elle n'est ni dans
-  `Skill/HeroPotentialRewardTable` (une seule ligne, des récompenses), ni dans
+  `HeroPotentialRewardTable` (une seule ligne, des récompenses), ni dans
   `HeroMastery/*` (c'est l'arbre de maîtrise d'arme, pas les paliers P0–P10).
   Non trouvée à ce jour ; `7ds-stats/personnages.json` reste la source.
 - **Le modèle « deux termes additionnés » d'un joueur** — attaque/défense d'un

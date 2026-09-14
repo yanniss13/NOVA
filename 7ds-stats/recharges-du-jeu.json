@@ -1,9 +1,9 @@
 {
  "_provenance": {
-  "source": "Table/Skill/PC_SkillTable, colonne Cooltime",
+  "source": "PC_SkillTable, colonne Cooltime",
   "unite": "le jeu stocke des millisecondes ; ce fichier publie des secondes",
   "build": "1.8.1.2, export du 25 aout 2026, usmap mappings-1.8",
-  "regenerer": "node outils/fmodel/extraire-recharges.js",
+  "regenerer": "node outils/fabrication/extraire-recharges.js",
   "note": "Prime sur SevenCodex, qui tronque a la seconde. Les competences absentes de ce fichier n'ont pas de recharge dans le jeu (valeur 0)."
  },
  "recharges": {

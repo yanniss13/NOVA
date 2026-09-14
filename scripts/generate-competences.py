@@ -432,10 +432,10 @@ def recharges_du(slug):
 def recharges_du_jeu():
     """Les recharges lues dans le client, qui priment sur toute autre source.
 
-    `Table/Skill/PC_SkillTable` les donne en millisecondes ; SevenCodex les
+    `PC_SkillTable` les donne en millisecondes ; SevenCodex les
     tronque a la seconde et se trompe sur quatre d'entre elles, dont Q et R
     d'Elizabeth qui sont inversees. Fichier produit par
-    `node outils/fmodel/extraire-recharges.js`, absent tant que personne n'a
+    `node outils/fabrication/extraire-recharges.js`, absent tant que personne n'a
     extrait le jeu : on se rabat alors silencieusement sur SevenCodex.
     """
     chemin = RACINE / "7ds-stats" / "recharges-du-jeu.json"

@@ -7,7 +7,7 @@ Ce document remplace `potentiels-divergents.md`, qui annoncait 31 divergences.
 **Ces 31 divergences n'existaient pas** : elles venaient d'une erreur de methode
 decrite plus bas, pas des donnees du depot.
 
-Regenerer : `node outils/fmodel/potentiels-officiels.js [--detail]`
+Regenerer : `node outils/fabrication/potentiels-officiels.js [--detail]`
 
 ## L'erreur qu'il fallait corriger
 
@@ -20,7 +20,7 @@ local_skill_<heros>_<arme>_potential_<n>_desc
 Cette cle existe bel et bien dans la localisation. Simplement, **le jeu ne s'en
 sert pas toujours**. La chaine reellement affichee est designee par le champ
 `Local_Key` de la ligne `<heros>_<arme>_grade_<n>` dans
-`Table/Skill/DefaultSkillWeaponTypeTable` — une table qui etait **illisible**
+`DefaultSkillWeaponTypeTable` — une table qui etait **illisible**
 jusqu'au usmap du 24 aout 2026.
 
 Beaucoup de paliers pointent vers un **gabarit commun** :

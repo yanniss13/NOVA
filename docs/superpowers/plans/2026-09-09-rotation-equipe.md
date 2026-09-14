@@ -27,7 +27,7 @@
 ### Task 1: Le catalogue des compétences combinées
 
 **Files:**
-- Create: `outils/fmodel/ecrire-ultimes-combines.js`
+- Create: `outils/fabrication/ecrire-ultimes-combines.js`
 - Create: `data/ultimes-combines.js` (produit par l'outil, commité)
 - Test: `tests/ultimes-combines-catalogue.test.js`
 - Modify: `scripts/lancer-tests.js`
@@ -38,12 +38,12 @@
 
 - [ ] **Step 1: Écrire l'outil d'extraction**
 
-Créer `outils/fmodel/ecrire-ultimes-combines.js` :
+Créer `outils/fabrication/ecrire-ultimes-combines.js` :
 
 ```js
 /* Ecrit data/ultimes-combines.js a partir de la table du jeu.
 
-   `Skill/CombineSkillTable.json` publie 672 lignes. Le champ
+   `CombineSkillTable.json` publie 672 lignes. Le champ
    `Owner_Skill_Tid` EST le lanceur — on ne le deduit pas, la table le dit.
    `Striker_A_Skill_Tid` et `Striker_B_Skill_Tid` portent les partenaires ; le
    second vaut `None` sur les combinaisons a deux heros.
@@ -55,15 +55,15 @@ Créer `outils/fmodel/ecrire-ultimes-combines.js` :
    `String_Tid` et `Local_Key` valent `None` : aucune combinaison n'a de nom
    publie. Le catalogue n'en invente pas.
 
-   Lancer : node outils/fmodel/ecrire-ultimes-combines.js
+   Lancer : node outils/fabrication/ecrire-ultimes-combines.js
 */
 const fs = require('fs');
 const path = require('path');
 
-const T = 'C:/Users/yanni/Downloads/FModel/Output/Exports/SevenDeadlySins/Content/Table/';
+const T = process.env.TABLES_DU_JEU;
 const racine = path.join(__dirname, '..', '..');
 
-const source = JSON.parse(fs.readFileSync(T + 'Skill/CombineSkillTable.json', 'utf8'));
+const source = JSON.parse(fs.readFileSync(T + 'CombineSkillTable.json', 'utf8'));
 const lignes = (source[0] && source[0].Rows) || source.Rows || source;
 
 const combinaisons = Object.values(lignes)
@@ -80,8 +80,8 @@ const cle = c => c.lanceur + '|' + c.partenaires.join('|');
 combinaisons.sort((a, b) => cle(a).localeCompare(cle(b)));
 
 const entete = [
-  '// Genere par outils/fmodel/ecrire-ultimes-combines.js depuis la table',
-  '// Skill/CombineSkillTable.json du jeu.',
+  '// Genere par outils/fabrication/ecrire-ultimes-combines.js depuis la table',
+  '// CombineSkillTable.json du jeu.',
   '// lanceur = Owner_Skill_Tid, le heros qui declenche. partenaires =',
   '// Striker_A puis Striker_B, un ou deux selon la combinaison.',
   '// Les identifiants portent l ARME : une combinaison n est possible que si',
@@ -103,7 +103,7 @@ console.log('  dont trois heros :', combinaisons.filter(c => c.partenaires.lengt
 
 - [ ] **Step 2: Lancer l'outil**
 
-Run: `node outils/fmodel/ecrire-ultimes-combines.js`
+Run: `node outils/fabrication/ecrire-ultimes-combines.js`
 Expected: `combinaisons ecrites : 672`, dont `lanceur a l ultime : 219`, dont `trois heros : 216`.
 
 Si le chemin `T` n'existe pas sur la machine, le fichier `data/ultimes-combines.js` est déjà commité : passer à l'étape suivante sans relancer l'outil.
@@ -207,7 +207,7 @@ Expected: `ultimes-combines : catalogue cohérent (672 combinaisons, dont 216 à
 - [ ] **Step 6: Commit**
 
 ```bash
-git add outils/fmodel/ecrire-ultimes-combines.js data/ultimes-combines.js tests/ultimes-combines-catalogue.test.js scripts/lancer-tests.js
+git add outils/fabrication/ecrire-ultimes-combines.js data/ultimes-combines.js tests/ultimes-combines-catalogue.test.js scripts/lancer-tests.js
 git commit -m "feat(rotation): extraire le catalogue des competences combinees"
 ```
 

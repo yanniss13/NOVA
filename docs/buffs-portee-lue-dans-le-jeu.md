@@ -4,11 +4,11 @@
 chacune une mesure en jeu. La table des buffs, **illisible jusqu'au usmap du
 24 aout 2026**, en tranche plusieurs sans mesure.
 
-Regenerer : `node outils/fmodel/portee-des-buffs.js [--tout]`
+Regenerer : `node outils/fabrication/portee-des-buffs.js [--tout]`
 
 ## Le champ qui decide
 
-Chaque ligne de `Table/Buff/BuffTable` porte un `ApplyType` :
+Chaque ligne de `BuffTable` porte un `ApplyType` :
 
 | Valeur | Sens |
 |---|---|
@@ -65,7 +65,7 @@ tristan 5, tioreh 5, puis une longue traine.
 
 ## Ce que le controle des 43 lignes existantes donne
 
-`node outils/fmodel/verifier-buffs-officiels.js --detail`
+`node outils/fabrication/verifier-buffs-officiels.js --detail`
 
 - 23 lignes visent une statistique **de l'ennemi** : hors de portee de ce
   controle, le depot ne publie pas de code d'abilite pour elles.

@@ -1,9 +1,8 @@
 # Akumu, bête démoniaque — 30 niveaux
 
-**Sources** : page publique pour les niveaux 1 à 20, puis export FModel du
-client pour les niveaux 21 à 30 (`Actor/NpcStatGroupTable`, groupe
-`stat_50700109`).
-**Dates** : relevé public du 2026-08-08 ; complément FModel du 2026-08-28.
+**Sources** : page publique pour les niveaux 1 à 20, puis les données du
+client pour les niveaux 21 à 30 (groupe `stat_50700109`).
+**Dates** : relevé public du 2026-08-08 ; complément local du 2026-08-28.
 **Nature** : relevé de données, pas d'analyse. Aucun chiffre n'est extrapolé.
 
 Bandeau de consentement : refusé (« Rejeter tout ») avant tout relevé.

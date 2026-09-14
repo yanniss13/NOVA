@@ -46,7 +46,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -107,7 +107,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -166,7 +166,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -225,7 +225,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -286,7 +286,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -347,7 +347,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -406,7 +406,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -465,7 +465,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -526,7 +526,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -587,7 +587,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -646,7 +646,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -705,7 +705,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -766,7 +766,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -825,7 +825,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -882,7 +882,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -941,7 +941,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1000,7 +1000,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1059,7 +1059,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1120,7 +1120,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1179,7 +1179,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1236,7 +1236,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1295,7 +1295,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1354,7 +1354,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1413,7 +1413,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1474,7 +1474,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1533,7 +1533,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1590,7 +1590,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1649,7 +1649,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1708,7 +1708,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1767,7 +1767,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1828,7 +1828,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1887,7 +1887,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -1944,7 +1944,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -2003,7 +2003,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -2062,7 +2062,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -2121,7 +2121,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -2325,7 +2325,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -2498,7 +2498,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -2671,7 +2671,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -2844,7 +2844,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -2955,7 +2955,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -3066,7 +3066,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -3177,7 +3177,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -3288,7 +3288,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -3399,7 +3399,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -3510,7 +3510,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -3621,7 +3621,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -3732,7 +3732,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -3843,7 +3843,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -3950,7 +3950,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -4061,7 +4061,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -4172,7 +4172,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -4283,7 +4283,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -4394,7 +4394,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -4505,7 +4505,7 @@
    }
   ],
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -4555,7 +4555,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -4620,7 +4620,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -4685,7 +4685,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -4750,7 +4750,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -4800,7 +4800,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -4850,7 +4850,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -4915,7 +4915,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -4980,7 +4980,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5045,7 +5045,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5095,7 +5095,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5160,7 +5160,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5225,7 +5225,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5290,7 +5290,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5340,7 +5340,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5390,7 +5390,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5455,7 +5455,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5520,7 +5520,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5585,7 +5585,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5635,7 +5635,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5700,7 +5700,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5765,7 +5765,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5830,7 +5830,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5880,7 +5880,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5930,7 +5930,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -5995,7 +5995,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6060,7 +6060,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6125,7 +6125,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6175,7 +6175,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6240,7 +6240,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6305,7 +6305,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6370,7 +6370,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6420,7 +6420,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6485,7 +6485,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6550,7 +6550,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6615,7 +6615,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6665,7 +6665,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6730,7 +6730,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6795,7 +6795,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6860,7 +6860,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6910,7 +6910,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -6960,7 +6960,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -7025,7 +7025,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -7090,7 +7090,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -7140,7 +7140,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -7205,7 +7205,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -7270,7 +7270,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -7335,7 +7335,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -7385,7 +7385,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -7435,7 +7435,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -7500,7 +7500,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -7565,7 +7565,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",
@@ -7630,7 +7630,7 @@
   },
   "bindingMaterials": null,
   "provenance": {
-   "source": "Option_StaticTable + Localization/Game/{fr,en} + MakingRecipe",
+   "source": "Option_StaticTable + Game/{fr,en} + MakingRecipe",
    "absentDe": "Item/ItemTable_Data_Equip",
    "champsInconnus": [
     "qualite",

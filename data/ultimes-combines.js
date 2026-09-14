@@ -1,5 +1,5 @@
-// Genere par outils/fmodel/ecrire-ultimes-combines.js depuis la table
-// Skill/CombineSkillTable.json du jeu.
+// Genere par outils/fabrication/ecrire-ultimes-combines.js depuis les
+// donnees du jeu.
 // lanceur = Owner_Skill_Tid, le heros qui declenche. partenaires =
 // Striker_A puis Striker_B, un ou deux selon la combinaison.
 // Les identifiants portent l ARME : une combinaison n est possible que si

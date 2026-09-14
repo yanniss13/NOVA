@@ -395,7 +395,7 @@ assert.equal(PLAFOND_ROTATION, 60, "le plafond compte les appuis, pas les cases"
    d'entrée qui coûte un point.
 
    Les valeurs ci-dessous sont celles du jeu, lues dans `data/jauges-releve.js`
-   (champ `UI_TagGauge` de `Skill/PC_SkillTable`). Les écrire en clair est
+   (champ `UI_TagGauge` de `PC_SkillTable`). Les écrire en clair est
    volontaire : si le jeu les change, ces tests doivent tomber bruyamment.
 
      Ban gantelets   — E 181 · Q 111 · auto 76 · ultime 0 · relève 0

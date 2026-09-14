@@ -1,9 +1,8 @@
 "use strict";
 
-/* Le catalogue livre au navigateur les deux colonnes de magie de
-   PC_SkillTable dont la rotation a besoin. L'export FModel reste hors depot :
-   ce test porte donc sur l'artefact commite, comme le test des jauges de
-   releve. */
+/* Le catalogue livre au navigateur les deux colonnes de magie dont la
+   rotation a besoin. Les donnees du client restent hors depot : ce test porte
+   donc sur l'artefact commite, comme le test des jauges de releve. */
 
 const assert = require("node:assert/strict");
 const fs = require("node:fs");

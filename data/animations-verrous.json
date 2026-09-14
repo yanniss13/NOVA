@@ -16,7 +16,7 @@
   "l'animation. Le simulateur compte zero dans les deux cas — mais",
   "l'absence signale desormais une vraie inconnue, a chronometrer.",
   "",
-  "Regenerer : node outils/fmodel/ecrire-verrous.js"
+  "Regenerer : node outils/fabrication/ecrire-verrous.js"
  ],
  "_unite": "secondes",
  "_build": "1.8.1.2",

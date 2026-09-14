@@ -64,7 +64,7 @@ en local comme dans le nuage.
 
 ### Ce que la table du jeu publie
 
-`Output/Exports/…/Content/Table/Skill/CombineSkillTable.json` — **672 lignes**.
+`Output/Exports/…/CombineSkillTable.json` — **672 lignes**.
 
 | Champ | Rôle |
 |---|---|
@@ -86,7 +86,7 @@ il n'y a pas d'« attaque spéciale combinée ».
 **LE SUFFIXE D'UN IDENTIFIANT NE DIT PAS SA CATÉGORIE.** C'est la racine des
 deux erreurs, et il a fallu trois corrections du membre pour la trouver.
 
-Vérification faite dans `Skill/PC_SkillTable.json`, champ `SkillCategory` :
+Vérification faite dans `PC_SkillTable.json`, champ `SkillCategory` :
 
 | Identifiant | Catégorie réelle |
 |---|---|
@@ -118,9 +118,9 @@ mécanique à quelqu'un qui joue.
 
 ### L'extraction
 
-`outils/fmodel/ecrire-ultimes-combines.js` lit l'export et écrit
+`outils/fabrication/ecrire-ultimes-combines.js` lit l'export et écrit
 `data/ultimes-combines.js`. Même procédé que `ecrire-verrous.js`, qui produit
-déjà `data/animations-verrous.json` : l'outil vit dans `outils/fmodel/` parce
+déjà `data/animations-verrous.json` : l'outil vit dans `outils/fabrication/` parce
 qu'il dépend d'un chemin local hors dépôt, le catalogue produit est commité, et
 le site ne fait aucun appel réseau au rendu.
 
@@ -361,15 +361,15 @@ supprimé la mauvaise étape.
 
 | Fait | Source |
 |---|---|
-| `tagpoint_gauge` = 1000, `tagpoint_maxstack` = 3 | `Misc/DefineTable` |
-| `tagpoint_use_all` = False, `tagpoint_resetbytag` = Off | `Misc/DefineTable` |
+| `tagpoint_gauge` = 1000, `tagpoint_maxstack` = 3 | `DefineTable` |
+| `tagpoint_use_all` = False, `tagpoint_resetbytag` = Off | `DefineTable` |
 | La jauge est **une seule barre d'équipe** | réponse du membre |
 | Le changement est libre, l'attaque d'entrée coûte un point | réponse du membre |
-| `UI_TagGauge` par compétence | `Skill/PC_SkillTable` |
+| `UI_TagGauge` par compétence | `PC_SkillTable` |
 | Les 78 relèves partagent **une seule icône** `Icon_TagSkill.webp` | `data/wiki-competences.js` |
 
 Les valeurs vivent dans `data/jauges-releve.js`, écrit par
-`outils/fmodel/ecrire-jauges-releve.js` et gardé hors ligne par
+`outils/fabrication/ecrire-jauges-releve.js` et gardé hors ligne par
 `tests/jauges-releve-catalogue.test.js`. **391 compétences, 235 remplissent la
 jauge.**
 

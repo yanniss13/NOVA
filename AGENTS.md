@@ -1792,7 +1792,7 @@ l'index des archives, ni le code qui s'en sert, ni le mode d'emploi qui mène à
 l'une ou à l'autre. Diffuser un tel moyen est une infraction distincte du droit
 d'auteur : ce qui est reproché n'est plus la donnée, c'est l'outil. Les notes
 d'extraction et le déchiffreur `.pak` vivent hors du dépôt et sont nommés dans
-`.gitignore`. Les cinquante outils de `outils/fmodel/` qui restent ne lisent que
+`.gitignore`. Les cinquante outils de `outils/fabrication/` qui restent ne lisent que
 des exports JSON déjà produits sur le disque du propriétaire — aucun ne touche
 une archive du jeu, aucun n'approche un processus.
 
