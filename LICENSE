@@ -1,0 +1,52 @@
+Copyright (c) 2026 Yanniss Bouzid. Tous droits réservés.
+
+NOVA — site de la confrérie 7DS Origin.
+
+
+## Ce que couvre cette licence
+
+Le code source, les feuilles de style, les scripts, les tests et la
+documentation écrits pour ce projet. En abrégé : tout ce que ce dépôt contient,
+à l'exception de ce que la section suivante retire.
+
+Aucune autorisation de reproduire, modifier, distribuer ou réutiliser ce code,
+en tout ou en partie, n'est accordée. Cela vaut aussi pour les parties du code
+que le navigateur d'un visiteur télécharge nécessairement pour faire
+fonctionner le site : les lire est indispensable à la consultation, les
+reprendre ne l'est pas.
+
+Consulter le site, en lire le source dans un navigateur, ou cloner ce dépôt
+public pour l'examiner, reste libre.
+
+Pour toute autre utilisation, demander : bouzidyanniss@gmail.com
+
+
+## Ce que cette licence ne couvre pas
+
+**Les composants tiers embarqués**, qui gardent leur propre licence et leurs
+propres conditions :
+
+- `vendor/tesseract/` — tesseract.js, tesseract.js-core et le modèle
+  `fra.traineddata`, sous licence Apache 2.0 ;
+- `polices/cinzel.ttf` et `polices/ebgaramond.ttf` — sous SIL Open Font
+  License 1.1, dont le texte voyage avec elles dans `polices/OFL-Cinzel.txt` et
+  `polices/OFL-EBGaramond.txt`. Ne pas séparer ces fichiers de licence des
+  polices qu'ils accompagnent.
+
+**Les données, images, noms et marques du jeu.** « The Seven Deadly Sins » et
+« 7DS Origin », leurs personnages, visuels, textes et marques appartiennent à
+leurs détenteurs respectifs. Ils figurent ici à titre informatif, réunis par
+des joueurs. Rien dans ce dépôt ne les cède, et rien de ce document ne prétend
+en disposer : ce n'est pas à l'auteur de ce site de les licencier.
+
+NOVA est un projet de fans indépendant, sans affiliation ni partenariat avec
+l'éditeur du jeu.
+
+
+## Sur le calcul des dégâts
+
+Les formules implémentées dans `js/metier/` décrivent le comportement du jeu.
+Elles ne sont pas une invention de l'auteur : elles ont été mesurées, déduites
+et vérifiées. Ce qui est protégé ici, c'est ce travail et son implémentation —
+le code, les mesures, leur documentation — et non le fait mathématique qu'elles
+décrivent.

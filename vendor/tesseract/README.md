@@ -12,6 +12,15 @@ français `fra.traineddata`.
 
 Environ 5 Mo au total.
 
+## Licence de ces fichiers
+
+Ils ne relèvent pas de la [licence du dépôt](../../LICENSE), qui les exclut
+expressément. `tesseract.js`, `tesseract.js-core` et les modèles `tessdata`
+sont publiés sous **licence Apache 2.0**, dont les termes continuent de
+s'appliquer ici : <https://www.apache.org/licenses/LICENSE-2.0>. Le correctif
+d'URL décrit plus bas est une modification au sens de cette licence — la
+section « Le correctif appliqué » en tient lieu de mention.
+
 ## Deux réglages sans lesquels rien ne démarre
 
 **Le cœur est épinglé.** `corePath` pointe directement sur

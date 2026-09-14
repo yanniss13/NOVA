@@ -72,7 +72,20 @@ python scripts/generate-wiki.py
 python scripts/generate-effets-dps.py
 ```
 
-La source publique utilisée est `7dsorigin.app`. NOVA est un projet communautaire indépendant, sans affiliation avec Netmarble ou les ayants droit de la licence.
+Les données viennent de deux endroits, et chaque fichier de `data/` nomme le sien dans son en-tête. La source publique est `7dsorigin.app`. Ce qu'aucun site public ne publie — transcendances, jauges, recharges de magie, ultimes combinés — est lu dans les tables du client du jeu, installé localement.
+
+NOVA est un projet communautaire indépendant, sans affiliation ni partenariat avec Netmarble ou les ayants droit de la licence.
+
+## Licence
+
+Le code de ce dépôt est sous droit d'auteur, **tous droits réservés** — voir
+[LICENSE](LICENSE). Le dépôt est public pour être lu, pas pour être repris :
+le cloner et l'examiner est libre, en reprendre le code ne l'est pas.
+
+Deux réserves y figurent, et elles comptent : les composants tiers embarqués
+(`vendor/tesseract/` sous Apache 2.0, les polices sous SIL OFL) gardent leur
+propre licence, et les données, images et marques du jeu appartiennent à leurs
+détenteurs — ce n'est pas à ce dépôt d'en disposer.
 
 ## Configuration Supabase
 

@@ -12,7 +12,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "UNLICENSED",
   "private": true,
   "devDependencies": {
     "playwright": "^1.61.1"

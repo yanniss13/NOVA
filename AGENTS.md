@@ -1804,8 +1804,18 @@ ce qui n'a pas à être servi ne doit pas l'être.
 **Aucun lien affilié.** Voir la règle du pied de page plus haut.
 
 La provenance des données, elle, reste écrite en clair : les en-têtes de `data/`
-disent de quelle table du jeu chaque fichier sort. Demander une autorisation en
-effaçant les traces de ce qu'on demande serait l'exact contraire du but.
+disent de quelle table du jeu chaque fichier sort, et le README dit la même
+chose. Demander une autorisation en effaçant les traces de ce qu'on demande
+serait l'exact contraire du but. Si un fichier change de source, corriger son
+en-tête ET le README.
+
+**Le code est sous droits réservés** — [`LICENSE`](LICENSE), et
+`"license": "UNLICENSED"` dans `package.json`. Le dépôt reste public pour être
+lu. Ne pas remettre une licence permissive : `ISC` y traînait par défaut et
+autorisait très exactement ce qu'on veut interdire. La licence exclut
+expressément les composants tiers embarqués et les données du jeu — si un
+composant tiers est ajouté, l'ajouter aussi à cette liste d'exclusions, sinon
+la licence devient fausse.
 
 ## Assistant de composition des groupes de boss
 
