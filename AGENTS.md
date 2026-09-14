@@ -1448,7 +1448,7 @@ Quatre garde-fous à ne pas retirer :
   59, puis les modales à partir de 60.
 
 Le header portrait devient compact, `position:relative`, et défile avec la
-page : marque courte, LootBar réduit, compte déplacé dans Plus. L'ancien
+page : marque courte, compte déplacé dans Plus. L'ancien
 contrôleur `is-retracted` ne fonctionne plus qu'en **paysage court**
 (`min-width:561px`, `max-height:500px`), où le rail desktop reste affiché et
 la hauteur est la ressource rare. Dans ce seul cas, ses règles historiques
@@ -1769,10 +1769,12 @@ après lui.
   fond permanent : la transparence est demandée. Ne pas non plus retirer le
   voile haut `--banner-scrim`, sans lequel les derniers onglets deviennent
   illisibles sur les zones claires du panorama.
-- Le lien affilié LootBar vit en **pied de page**, plus jamais dans l'en-tête :
-  son jaune de marque tombe à 1.6:1 sur l'ivoire du thème clair. Le pied de
-  page reste sombre dans les deux ambiances pour cette raison, et porte la
-  mention visible « Lien partenaire ».
+- Le site ne porte **aucun lien affilié ni bloc partenaire**. Le lien LootBar
+  et sa mention « Lien partenaire » ont été retirés du pied de page : demander
+  à l'éditeur l'autorisation d'utiliser ses données tout en monétisant leur
+  consultation était intenable. Ne pas en réintroduire. Le pied de page reste
+  un socle sombre dans les deux ambiances parce qu'il porte la silhouette du
+  panorama, et un test mesure sa luminance.
 - Après modif des dossiers d'images : relancer `scripts/generate-data.ps1`.
 - Après une mise à jour du jeu : `python scripts/telecharger-images.py --liste`
   annonce les images d'armes et de bijoux qui manquent, sans rien écrire.

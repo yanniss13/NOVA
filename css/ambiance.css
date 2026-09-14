@@ -252,8 +252,7 @@ body:not(:has(.view.active)) .guild-banner-texte[data-vue="dashboard"]{display:b
    qu'on règle une fois : elle n'a pas à occuper la meilleure surface de chaque
    page, ni à chercher un coin de l'illustration où ne masquer aucun visage.
    Il est simplement l'élément du milieu de la première ligne — les deux
-   moitiés égales de la marque et du compte le centrent, exactement comme elles
-   centraient le logo LootBar avant lui.
+   moitiés égales de la marque et du compte le centrent.
    Plus d'ombre portée : elle servait à le détacher d'un décor, il est
    maintenant dans le châssis du site. */
 .ambiance-switch-mobile{display:none}
@@ -372,16 +371,13 @@ body:not(:has(.view.active)) .guild-banner-texte[data-vue="dashboard"]{display:b
 :root[data-theme="light"] .import-captures-ligne[data-statut="unique"] .import-captures-etat{color:var(--ok)}
 :root[data-theme="light"] .gear-config-open.is-valid{background:rgba(137,97,39,.07)}
 /* Le pied de page reste un socle SOMBRE dans les deux ambiances. Ce n'est pas
-   un thème clair oublié : le jaune de marque de LootBar tombe à 1.6:1 sur
-   l'ivoire, donc illisible. Un socle sombre le porte sans pastille rapportée
-   — c'était elle, le rectangle noir qui jurait dans l'en-tête — et ferme la
-   page sur une assise nette. */
-/* Le socle change de matière, pas de nature : brun chaud en Lumière au lieu
-   d'obsidienne, mais sombre dans les deux cas. Le jaune de marque de LootBar
-   tombe à 1.6:1 sur l'ivoire — c'est lui qui impose ce fond, et c'est cette
-   contrainte qui a fait descendre le lien hors de l'en-tête.
-   Les ors du thème clair sont des bronzes, trop éteints sur un fond sombre :
-   le pied reprend donc les ors du thème Ténèbres pour ses accents. */
+   un thème clair oublié : il porte la silhouette de la citadelle, et une
+   silhouette n'existe pas sur un fond clair. La page s'ouvre sur le panorama
+   en pleine lumière et se ferme sur son contre-jour.
+   Le socle change donc de matière, pas de nature : brun chaud en Lumière au
+   lieu d'obsidienne, mais sombre dans les deux cas. Les ors du thème clair
+   sont des bronzes, trop éteints sur un fond sombre : le pied reprend donc
+   les ors du thème Ténèbres pour ses accents. */
 /* Les glyphes d'arme et de compétence sont des images du jeu : du BLANC PUR
    sur transparence, sans un seul pixel sombre — mesuré à luminance 255 et
    saturation 0 sur les 12 icônes de maîtrise comme sur les 325 de compétence.
@@ -423,8 +419,6 @@ body:not(:has(.view.active)) .guild-banner-texte[data-vue="dashboard"]{display:b
 :root[data-theme="light"] .site-footer-crest{color:#e0b56a}
 :root[data-theme="light"] .site-footer-titre{color:#f6efe3}
 :root[data-theme="light"] .site-footer-sous,
-:root[data-theme="light"] .site-footer-mention,
-:root[data-theme="light"] .site-footer-note,
 :root[data-theme="light"] .site-footer-legal{color:#b09c86}
 :root[data-theme="light"] .site-footer-liens a,
 :root[data-theme="light"] .site-footer-haut{color:#d2c4b2}
@@ -437,11 +431,8 @@ body:not(:has(.view.active)) .guild-banner-texte[data-vue="dashboard"]{display:b
   .topbar{padding-top:12px;padding-bottom:10px;row-gap:10px}
 }
 @media(max-width:820px){
-  /* Trois colonnes ne tiennent plus : la marque et les liens partagent la
-     première ligne, le bloc partenaire prend la seconde en entier. */
+  /* La marque se resserre pour laisser respirer la colonne des liens. */
   .site-footer-inner{grid-template-columns:minmax(170px,auto) 1fr;gap:30px 40px}
-  .site-footer-partenaire{grid-column:1 / -1}
-  .site-footer-note{max-width:52ch}
   .guild-banner-inner{padding:80px 28px 30px;min-height:290px}
   .guild-banner-title{font-size:40px}
   .guild-banner-copy{max-width:480px}
@@ -488,10 +479,9 @@ body:not(:has(.view.active)) .guild-banner-texte[data-vue="dashboard"]{display:b
   .site-footer-bas{padding-bottom:calc(90px + env(safe-area-inset-bottom))}
   html.has-mobile-subnav main{padding-bottom:22px}
   html.has-mobile-subnav .site-footer-bas{padding-bottom:calc(140px + env(safe-area-inset-bottom))}
-  /* Une seule colonne : les trois blocs s'empilent dans l'ordre de lecture. */
+  /* Une seule colonne : les deux blocs s'empilent dans l'ordre de lecture. */
   .site-footer{margin-top:48px}
   .site-footer-inner{grid-template-columns:1fr;gap:26px;padding-top:34px}
-  .site-footer-note{max-width:none}
   .hero{padding:14px}
   .metabar .field{width:100%}
   .metabar .grow{display:grid;grid-template-columns:1fr 1fr;width:100%;margin-left:0}

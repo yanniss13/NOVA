@@ -198,7 +198,7 @@ La mesure en jeu reste souhaitable, non plus pour trancher mais pour confirmer :
 frapper Akumu palier 25+ avec un build à critique garanti et comparer au coup non
 critique. Égal = table confirmée ; inférieur = la table ne dit pas ce qu'on croit.
 **Le correctif Ban du patch 2.0.2 la rend faisable** : les valeurs de ses coups
-s'affichent enfin (voir `docs/extraction-fichiers-du-jeu.md`).
+s'affichent enfin.
 
 ## Chantier 3 — La formule sort de sa plage mesurée dès le palier ~~17~~ **16**
 
@@ -237,8 +237,8 @@ est plus dangereux qu'un chiffre absent.
 
 ## Chantier 4 — Les chantiers déjà connus, inchangés
 
-Ils vivent dans `docs/extraction-fichiers-du-jeu.md`, section « Ce qui reste à
-faire ». Rien de ce que j'ai vu aujourd'hui ne les déplace :
+Ils sont rappelés ci-dessous. Rien de ce que j'ai vu aujourd'hui ne les
+déplace :
 
 1. Six effets de Ban hors du comparateur, pour des raisons de **structure**
    (Brèche et Détournement sont des débuffs de cible ; le passif des gantelets

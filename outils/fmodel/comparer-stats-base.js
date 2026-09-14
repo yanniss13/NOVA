@@ -36,7 +36,7 @@ for (const [id, r] of Object.entries(heroMastery)) {
   // Le nom du heros vit dans Weapon_Mastery_Reward. Sous le usmap 1.7 cette
   // colonne etait inconnue et sa valeur atterrissait dans String_Tid, decalant
   // toute la fin de la ligne ; le repli sur String_Tid garde la lecture des
-  // extractions archivees. Voir docs/extraction-fichiers-du-jeu.md.
+  // extractions archivees.
   const nomJeu = String(r.Weapon_Mastery_Reward || r.String_Tid || '').replace(/_SpecialMastery_Reward$/, '');
   const p = parNom.get(norm(ALIAS[nomJeu] || nomJeu));
   if (!p) continue;

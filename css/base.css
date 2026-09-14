@@ -58,12 +58,10 @@ a{color:var(--gold-bright)}
   backdrop-filter:blur(8px);
 }
 /* `flex:1 1 0` plutot que `margin-right:auto` : la marque et le compte
-   occupent deux moities EGALES. Cette regle est nee pour centrer le logo
-   LootBar ; le logo est descendu en pied de page, mais elle garde tout son
-   sens - ce sont les ONGLETS qui occupent maintenant ce centre. Une marge
-   automatique les centrerait dans l'espace LIBRE, donc de travers, et le bloc
-   compte change de largeur en se connectant : le decalage aurait bouge sous
-   les yeux du membre. */
+   occupent deux moities EGALES, et ce sont les ONGLETS qui occupent le centre
+   ainsi degage. Une marge automatique les centrerait dans l'espace LIBRE, donc
+   de travers, et le bloc compte change de largeur en se connectant : le
+   decalage aurait bouge sous les yeux du membre. */
 .brand{display:flex;align-items:center;gap:14px;flex:1 1 0;min-width:0}
 .crest{
   width:44px;height:44px;flex:none;display:grid;place-items:center;
@@ -79,18 +77,6 @@ a{color:var(--gold-bright)}
   color:var(--parchment);
 }
 .brand-sub{font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--muted)}
-/* Le lien affilie LootBar. Il a longtemps vecu au centre de la premiere ligne
-   du header ; il est descendu en pied de page, ou son jaune de marque trouve
-   le fond sombre qu'il lui faut dans les DEUX ambiances. Ces regles de base
-   le servent la-bas ; le pied de page les complete en fin de feuille. */
-.lootbar{
-  flex:0 0 auto;display:flex;align-items:center;
-  border-radius:8px;padding:4px 8px;opacity:.85;transition:.14s;
-}
-.lootbar:hover{opacity:1;background:rgba(218,165,56,.08)}
-.lootbar:focus-visible{outline:2px solid var(--gold-bright);outline-offset:2px}
-/* La hauteur commande, la largeur suit le ratio du fichier (467 x 100). */
-.lootbar img{display:block;height:26px;width:auto}
 
 .tabs-rail{position:relative;display:flex;min-width:0}
 .tabs{display:flex;gap:6px;background:var(--panel);border:1px solid var(--line);
@@ -206,8 +192,8 @@ main{max-width:1180px;margin:0 auto;padding:clamp(20px,4vw,40px)}
    masque au point qu'on n'en devine que la ligne de crete. Il ne coute donc
    pas un octet de plus, et il n'a de sens que sur ce site-la.
 
-   Le socle reste sombre dans les DEUX ambiances : il porte le logo LootBar,
-   dont le jaune de marque tombe a 1.6:1 sur l'ivoire du theme clair. */
+   Le socle reste sombre dans les DEUX ambiances : la silhouette est sa raison
+   d'etre, et une silhouette n'existe pas sur un fond clair. */
 .site-footer{
   position:relative;isolation:isolate;margin-top:72px;
   background:#0a0710;
@@ -230,7 +216,7 @@ main{max-width:1180px;margin:0 auto;padding:clamp(20px,4vw,40px)}
 .site-footer-inner{
   max-width:1180px;margin:auto;
   padding:44px clamp(16px,4vw,40px) 30px;
-  display:grid;grid-template-columns:minmax(180px,auto) 1fr minmax(210px,280px);
+  display:grid;grid-template-columns:minmax(180px,auto) 1fr;
   gap:34px 48px;align-items:start;
 }
 .site-footer-marque{display:grid;grid-template-columns:auto 1fr;gap:0 12px;align-items:center}
@@ -250,15 +236,6 @@ main{max-width:1180px;margin:0 auto;padding:clamp(20px,4vw,40px)}
   border-bottom:1px solid transparent;transition:color .14s,border-color .14s;
 }
 .site-footer-liens a:hover{color:var(--gold-bright);border-bottom-color:var(--gold-deep)}
-.site-footer-partenaire{display:flex;flex-direction:column;gap:9px;min-width:0}
-.site-footer-mention{
-  font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted-2);
-}
-/* Le logo n'est plus centre dans une ligne d'en-tete : il s'aligne a gauche de
-   sa colonne, et n'a plus a etre attenue pour s'y faire oublier. */
-.site-footer .lootbar{align-self:flex-start;opacity:1;padding:2px 0}
-.site-footer .lootbar img{height:29px}
-.site-footer-note{margin:0;font-size:11.5px;line-height:1.6;color:var(--muted-2);max-width:34ch}
 /* La ligne de cloture : ce qui doit etre dit, sans peser. */
 .site-footer-bas{
   position:relative;max-width:1180px;margin:auto;

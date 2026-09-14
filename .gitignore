@@ -29,6 +29,13 @@ AUDIT-*.md
 outils/fmodel/tous-les-chemins.txt
 outils/fmodel/animations-completes.json
 
+# Notes d'extraction des fichiers du jeu. Elles decrivent comment ouvrir les
+# archives d'un client protege : ce depot est public, et le site demande a
+# l'editeur l'autorisation d'utiliser ses donnees. Elles vivent hors du depot,
+# dans Desktop/NOVA-notes-privees/. La regle empeche qu'une copie de travail
+# les y ramene par inadvertance.
+docs/extraction-fichiers-du-jeu.md
+
 # Vignettes PNG de la carte Discord /build : fabriquees par
 # scripts/generer-vignettes.py, publiees par le workflow Pages, jamais
 # versionnees — ce serait un second exemplaire de chaque image du site.

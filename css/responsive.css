@@ -28,12 +28,11 @@
    l'ordre des elements, et seul le DERNIER peut passer a la ligne. C'est
    `order:3` sur le rail qui le place en fin de file, donc en second etage.
 
-   La borne haute de 1860 px a saute le jour ou le logo LootBar est entre au
-   centre de la premiere ligne. Elle disait « au-dela, les trois blocs tiennent
-   ensemble » : ils sont quatre desormais, et surtout le logo ne serait plus au
-   centre de rien s'il partageait sa ligne avec dix onglets. Les onglets
-   prennent donc leur etage a TOUTES les largeurs, ce qu'ils faisaient deja
-   partout en dessous de 1860 px. */
+   La borne haute de 1860 px a saute : elle disait « au-dela, les blocs de la
+   premiere ligne tiennent ensemble », mais dix onglets partageant cette ligne
+   avec la marque, le selecteur d'ambiance et le compte ne se lisent plus. Les
+   onglets prennent donc leur etage a TOUTES les largeurs, ce qu'ils faisaient
+   deja partout en dessous de 1860 px. */
 @media(min-width:561px){
   .topbar{row-gap:12px}
   .tabs-rail{order:3;flex-basis:100%;justify-content:center}
@@ -68,15 +67,10 @@
   .hero-grid{grid-template-columns:repeat(2,1fr)}
   .team-heroes{grid-template-columns:repeat(4,1fr)}
   .topbar{gap:12px}
-  /* Les deux moities egales servaient a centrer le logo LootBar entre la
-     marque et le compte. Le logo est descendu en pied de page : il n'y a plus
-     rien a centrer, et la marque reprend la place qu'il lui faut. La regle
-     garde son utilite en dessous de 900 px, ou « Confrerie 7DS » se coupait
-     en deux pour tenir dans une moitie imposee. */
-  /* Les deux moities egales sont RETABLIES : c'est elles qui centrent le
-     selecteur d'ambiance, comme elles centraient le logo LootBar. `min-width:0`
-     autorise la marque a se retrecir au lieu de se couper en deux, ce qui etait
-     le defaut d'origine de cette regle. */
+  /* Les deux moities egales centrent le selecteur d'ambiance entre la marque
+     et le compte. `min-width:0` autorise la marque a se retrecir au lieu de se
+     couper en deux — « Confrerie 7DS » cassait en deux sous 900 px, le defaut
+     d'origine de cette regle. */
   .brand{flex:1 1 0;min-width:0}
   .account{flex:1 1 0}
   /* Le sous-titre se coupait en deux sous 620 px, l'ancien defaut de cette

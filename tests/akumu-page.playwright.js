@@ -60,38 +60,14 @@ const { chromium } = require("playwright");
     assert.doesNotMatch(html, /serviceWorker\.register/,
       "la fiche ne doit pas enregistrer le service worker");
 
-    /* Le lien affilie remunere le proprietaire : il doit survivre aux retouches
-       de cette page, avec les attributs qui declarent la remuneration. Les
-       reponses >= 400 sont deja refusees plus bas, donc une image cassee
-       ferait echouer ce parcours.
-
-       Il vit desormais dans le pied de page et non plus dans l'en-tete : son
-       jaune de marque exige un fond sombre, que l'en-tete ivoire du theme
-       Lumiere ne pouvait pas lui offrir. Le test vise donc le pied de page —
-       et verifie que l'en-tete ne le porte plus, faute de quoi un retour en
-       arriere passerait inapercu. */
-    const lootbar = page.locator("footer.site-footer #lootbarLink");
-    assert.equal(await lootbar.count(), 1,
-      "le lien LootBar doit vivre dans le pied de page");
-    assert.equal(await page.locator("header .lootbar").count(), 0,
-      "l'en-tete ne doit plus porter le lien LootBar");
-    /* `textContent` et non `innerText` : le CSS met la mention en capitales,
-       et innerText rend le texte tel qu'il est PEINT. */
-    assert.equal(
-      (await page.locator("footer.site-footer .site-footer-mention").textContent()).trim(),
-      "Lien partenaire",
-      "la nature remuneree du lien doit etre lisible par les membres, pas seulement par les moteurs"
-    );
-    assert.equal(
-      await lootbar.getAttribute("href"),
-      "https://www.lootbar.com/a/raTV3p",
-      "le lien affilie doit porter le code du proprietaire"
-    );
-    assert.equal(
-      await lootbar.getAttribute("rel"),
-      "sponsored noopener noreferrer",
-      "un lien remunere se declare, et n'ouvre pas d'acces a cette page"
-    );
+    /* Le lien affilie a ete retire du site : cette fiche portait le meme bloc
+       partenaire qu'index.html, et il devait partir des deux pages a la fois.
+       Le test garde la trace du retrait pour qu'un retour en arriere ne passe
+       pas inapercu. */
+    assert.equal(await page.locator("a[href*='lootbar']").count(), 0,
+      "la fiche ne doit plus porter de lien affilie");
+    assert.equal(await page.locator(".site-footer-partenaire").count(), 0,
+      "le bloc partenaire a ete retire du pied de page");
 
     const retour = page.locator(".ak-back");
     assert.equal(await retour.getAttribute("href"), "index.html",

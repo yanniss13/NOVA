@@ -252,8 +252,8 @@ Trois pièges rencontrés pour de vrai :
   seule mesure de mise en page que la couche de présentation publie.
 - Le pied de page (`.site-footer`) est stylé dans `css/base.css`, et non dans
   la couche d'ambiance : `akumu.html` ne charge que `base.css` et porte le même
-  pied. Il reste un socle sombre dans les deux thèmes, parce qu'il porte le
-  logo LootBar dont le jaune de marque exige un fond sombre.
+  pied. Il reste un socle sombre dans les deux thèmes, parce qu'il porte la
+  silhouette du panorama, qui n'existe pas sur un fond clair.
 
 - `noyau/catalogue-build.js` charge le catalogue chiffré à la demande tout en
   conservant une référence `BUILD_STATS` stable.

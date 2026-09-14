@@ -86,17 +86,12 @@ Changer d'ambiance ne relit pas Supabase et ne reconstruit aucun formulaire.
 ## Le pied de page, et pourquoi il est sombre dans les deux ambiances
 
 Il n'existait aucun pied de page : la page s'arrêtait sur `</main>`. Il en
-existe un depuis que le lien affilié LootBar est descendu de l'en-tête.
+existe un depuis qu'il a fallu un endroit pour clore la page.
 
-Le déplacement répond à un fait mesurable : le logo est du `#FFCC00` pur sur
-transparence, sans un seul pixel sombre. Sur l'ivoire du thème Lumière, son
-contraste tombe à environ 1.6:1 — illisible. La première version compensait par
-une pastille `#211b29`, un rectangle noir violacé au milieu d'un en-tête crème.
-
-Le pied de page est donc un **socle sombre dans les deux ambiances** : `#261c14`
-en Lumière, `#0a0710` en Ténèbres. Le jaune de marque y tient sans pastille
-rapportée. Ce n'est pas un thème clair oublié — un test mesure la luminance du
-socle dans les deux ambiances.
+Le pied de page est un **socle sombre dans les deux ambiances** : `#261c14`
+en Lumière, `#0a0710` en Ténèbres. Ce n'est pas un thème clair oublié — un test
+mesure la luminance du socle dans les deux ambiances, parce que la silhouette
+qu'il porte n'existe pas sur un fond clair.
 
 Le parti pris du pied : la page **s'ouvre sur Liones en pleine lumière et se
 ferme sur sa silhouette**. C'est le même panorama, déjà précaché, assombri et
@@ -109,9 +104,11 @@ vers elle : les deux extrémités de la page se répondent. Le bouton « Haut de
 page » est un `<button>` et non un lien — le site route sur le fragment d'URL,
 et un `href` inconnu ferait replier la vue courante.
 
-Le pied porte aussi la mention « Lien partenaire ». Elle **améliore la
-divulgation** : jusque-là, la nature rémunérée du lien n'était portée que par
-`rel="sponsored"`, que lisent les moteurs et pas les membres.
+Le pied a porté un lien affilié et sa mention « Lien partenaire ». Les deux ont
+été **retirés** : un site de fans qui demande à l'éditeur l'autorisation
+d'utiliser ses données ne peut pas, dans le même temps, monétiser leur
+consultation. Le pied ne garde que la marque, les destinations et la mention
+légale.
 
 Ses styles vivent dans `css/base.css` et non dans la couche d'ambiance, parce
 qu'`akumu.html` ne charge que cette feuille-là et porte le même pied de page.

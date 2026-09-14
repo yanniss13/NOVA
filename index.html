@@ -71,16 +71,11 @@
       <span class="brand-sub">Confrérie · 7DS Origin</span>
     </div>
   </div>
-  <!-- Le lien affilié LootBar vivait ici. Il est descendu en pied de page :
-       son jaune de marque exige un fond sombre pour rester lisible, et cette
-       pastille sombre ne pouvait pas cohabiter avec l'en-tête ivoire du thème
-       Lumière. Voir le `<footer>` après `</main>`.
-
-       Le sélecteur d'ambiance prend sa place. C'est une PRÉFÉRENCE : elle
-       appartient à l'habillage du site, pas au décor. Posée sur la bannière,
-       elle occupait la meilleure surface de chaque page et venait sur
-       l'illustration. Ici elle est centrée par le même mécanisme qui centrait
-       le logo — les deux moitiés égales de la marque et du compte. -->
+  <!-- Le sélecteur d'ambiance est une PRÉFÉRENCE : elle appartient à
+       l'habillage du site, pas au décor. Posée sur la bannière, elle occupait
+       la meilleure surface de chaque page et venait sur l'illustration. Ici
+       elle est centrée par les deux moitiés égales de la marque et du
+       compte. -->
   <div class="ambiance-switch" role="group" aria-label="Ambiance du site">
     <button type="button" data-ambiance="dark" aria-pressed="true">
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 15A9 9 0 0 1 9 4a9 9 0 1 0 11 11Z"/></svg>
@@ -603,10 +598,9 @@
 
 <!-- Le pied de page n'existait pas : la page s'arrêtait net sur `</main>`.
 
-     Il accueille le lien affilié descendu de l'en-tête. Ce déplacement AMÉLIORE
-     la divulgation : la nature rémunérée du lien n'était portée que par
-     `rel="sponsored"`, que lisent les moteurs mais pas les membres. Elle est
-     désormais écrite en toutes lettres.
+     Il a porté un lien affilié et sa mention « Lien partenaire ». Les deux ont
+     été retirés : le site demande à l'éditeur l'autorisation d'utiliser ses
+     données, et ne peut pas dans le même temps monétiser leur consultation.
 
      Les raccourcis ne pointent que vers des vues PUBLIQUES. `dashboard`,
      `roster` et `analyse` lisent les données de toute la confrérie : la RLS les
@@ -637,24 +631,6 @@
          rel="noopener noreferrer">Discord</a>
       -->
     </nav>
-
-    <div class="site-footer-partenaire">
-      <span class="site-footer-mention">Lien partenaire</span>
-      <!-- `rel="sponsored"` déclare la rémunération aux moteurs, comme le veut
-           la convention ; `noopener` empêche la page ouverte d'accéder à
-           celle-ci. Les dimensions sont celles du fichier (467 × 100) : les
-           écrire évite que le pied de page ne sursaute à l'arrivée de l'image. -->
-      <a class="lootbar" id="lootbarLink"
-         href="https://www.lootbar.com/a/raTV3p"
-         target="_blank" rel="sponsored noopener noreferrer">
-        <img src="./lootbar-logo.webp" alt="LootBar"
-             width="467" height="100" decoding="async">
-      </a>
-      <p class="site-footer-note">
-        Acheter après avoir suivi ce lien soutient le site, sans rien te coûter
-        de plus.
-      </p>
-    </div>
   </div>
 
   <div class="site-footer-bas">
@@ -1183,10 +1159,8 @@
 
   // Seules ces zones passent en display:none quand le header se replie.
   // Un focus resté sur un élément masqué bloquerait le repli pour de bon.
-  // Le lien LootBar y figurait tant qu'il vivait dans l'en-tête ; descendu en
-  // pied de page, il n'est plus jamais masqué et sort donc de cette liste.
-  // Le sélecteur d'ambiance l'y remplace : ses deux boutons sont focusables,
-  // et un focus resté dessus bloquerait le repli pour de bon.
+  // Le sélecteur d'ambiance en fait partie : ses deux boutons sont
+  // focusables, et un focus resté dessus bloquerait le repli pour de bon.
   function focusInsideHidden() {
     var active = document.activeElement;
     if (!active) return false;

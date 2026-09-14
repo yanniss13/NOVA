@@ -18,7 +18,7 @@
 
    La transcendance (renforcement +6 a +15) n'est PAS extractible : dans tout
    Option_StaticTable, aucune entree `_reinforce` ne porte de valeur dans
-   Value_Add_6..10. Voir docs/extraction-fichiers-du-jeu.md.
+   Value_Add_6..10.
 
    Sortie : 7ds-stats/armures-gravees-nouvelles.json, au format de
    7ds-stats/armures-gravees.json. Fichier SEPARE : les entrees sont

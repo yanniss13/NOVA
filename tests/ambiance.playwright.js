@@ -308,26 +308,14 @@ const { serveRepo } = require("./helpers/serve");
     await page.goto(server.url + "/#builder");
     await page.locator("#view-builder.active").waitFor();
 
-    /* Le lien affilié a quitté l'en-tête : son jaune de marque y devenait
-       illisible dès qu'on passait en Lumière. On vérifie qu'il est bien en
-       pied de page, que sa rémunération y est écrite pour les membres et non
-       plus seulement déclarée aux moteurs, et qu'il garde son fond sombre
-       dans les DEUX ambiances — sans quoi il redeviendrait illisible. */
-    assert.equal(await page.locator(".topbar .lootbar").count(), 0,
-      "L'en-tête ne doit plus porter le lien LootBar");
-    assert.equal(await page.locator("footer.site-footer #lootbarLink").count(), 1,
-      "Le lien LootBar doit vivre en pied de page");
-    assert.equal(
-      await page.locator("footer.site-footer #lootbarLink").getAttribute("rel"),
-      "sponsored noopener noreferrer",
-      "Un lien rémunéré se déclare, et n'ouvre pas d'accès à cette page");
-    /* `textContent` et non `innerText` : le CSS met la mention en capitales,
-       et innerText rend le texte tel qu'il est PEINT. On teste ce que le
-       document dit, pas la casse décorative. */
-    assert.equal(
-      (await page.locator(".site-footer-mention").textContent()).trim(),
-      "Lien partenaire",
-      "La rémunération doit être lisible par les membres");
+    /* Le lien affilié a été retiré du site, avec son bloc partenaire. Un site
+       de fans qui demande à l'éditeur l'autorisation d'utiliser ses données ne
+       peut pas, dans le même temps, monétiser leur consultation. Le test garde
+       la trace du retrait : un retour en arrière ne doit pas passer inaperçu. */
+    assert.equal(await page.locator("a[href*='lootbar']").count(), 0,
+      "Le site ne doit plus porter de lien affilié");
+    assert.equal(await page.locator(".site-footer-partenaire").count(), 0,
+      "Le bloc partenaire a été retiré du pied de page");
     for(const theme of ["dark", "light"]){
       await bascule(theme).click();
       const socle = await page.evaluate(() => {
@@ -336,7 +324,7 @@ const { serveRepo } = require("./helpers/serve");
         return 0.2126 * r + 0.7152 * g + 0.0722 * b;
       });
       assert.ok(socle < 90,
-        `Le pied de page doit rester un socle sombre en ${theme} : le jaune LootBar en dépend`);
+        `Le pied de page doit rester un socle sombre en ${theme} : la silhouette du panorama en dépend`);
     }
 
     /* Les glyphes d'arme et de compétence sont du blanc pur sur transparence :
@@ -402,19 +390,19 @@ const { serveRepo } = require("./helpers/serve");
     await page.setViewportSize({ width:390, height:780 });
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
     await page.waitForFunction(() => {
-      const lien = document.querySelector("footer.site-footer #lootbarLink");
-      return lien && lien.getBoundingClientRect().height > 0;
+      const mention = document.querySelector("footer.site-footer .site-footer-legal");
+      return mention && mention.getBoundingClientRect().height > 0;
     });
     const bas = await page.evaluate(() => {
-      const lien = document.querySelector("footer.site-footer #lootbarLink");
+      const mention = document.querySelector("footer.site-footer .site-footer-legal");
       const barre = document.querySelector(".mobile-nav");
       return {
-        basDuLien:lien.getBoundingClientRect().bottom,
+        basDeLaMention:mention.getBoundingClientRect().bottom,
         hautDeLaBarre:barre ? barre.getBoundingClientRect().top : Infinity
       };
     });
-    assert.ok(bas.basDuLien <= bas.hautDeLaBarre + 1,
-      `La barre au pouce ne doit pas recouvrir le lien partenaire (${bas.basDuLien} > ${bas.hautDeLaBarre})`);
+    assert.ok(bas.basDeLaMention <= bas.hautDeLaBarre + 1,
+      `La barre au pouce ne doit pas recouvrir la mention légale (${bas.basDeLaMention} > ${bas.hautDeLaBarre})`);
 
     console.log("PASS ambiances : bascule sans perte de brouillon, mémoire, mobile, décor fondu et pied de page");
   } finally {
