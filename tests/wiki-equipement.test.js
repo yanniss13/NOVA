@@ -315,4 +315,85 @@ const STATS_TEST = {
   assert.ok(bijouterie.pieces.length >= 2);
 }
 
+/* ---- LE NOM AFFICHÉ N'EST PAS LE CHEMIN ----
+
+   Deux héros peuvent porter une tenue du même nom : le FICHIER de l'un
+   prend son nom en préfixe pour ne pas écraser l'autre. Ce préfixe est une
+   affaire de chemin. Affiché, il ferait lire « Khala — Citoyenne modèle »
+   dans un sélecteur déjà filtré sur Khala, et rangerait ses trois tenues
+   sous K au lieu de leur place alphabétique. */
+{
+  const bac = { window:{} };
+  ["data.js", "stats-build.js"].forEach(fichier => {
+    vm.runInNewContext(
+      fs.readFileSync(path.join(RACINE, "data", fichier), "utf8"), bac,
+      { filename:fichier }
+    );
+  });
+  const donnees = bac.window.SEVEN_DS_DATA;
+  const api = charger(donnees, bac.window.SEVEN_DS_BUILD_STATS);
+  const heros = (donnees.personnages || []).map(personnage => personnage.name);
+  const objets = []
+    .concat(...Object.values(donnees.armes || {}))
+    .concat(...Object.values(donnees.armures || {}))
+    .concat(...Object.values(donnees.bijoux || {}));
+  const stem = item => item.file.split("/").pop().replace(/\.webp$/, "");
+
+  assert.deepEqual(
+    plain(objets
+      .filter(item => heros.some(nom => item.name.startsWith(nom + " — ")))
+      .map(item => item.name)),
+    [],
+    "aucun nom affiché ne doit commencer par le nom d'un héros"
+  );
+
+  /* Le chemin, lui, garde son préfixe : c'est lui qui identifie la pièce
+     partout ailleurs — stats-build.js, armures-liees.js, les builds
+     enregistrés. */
+  const liees = donnees.armures["Armure liee"] || [];
+  const prefixees = liees.filter(item =>
+    heros.some(nom => stem(item).startsWith(nom + " — ")));
+  assert.ok(prefixees.length >= 3, "les fichiers préfixés restent préfixés");
+  prefixees.forEach(item => {
+    const nom = heros.find(candidat => stem(item).startsWith(candidat + " — "));
+    assert.equal(item.name, stem(item).slice((nom + " — ").length),
+      item.file + " : le nom affiché doit être celui de la tenue");
+  });
+
+  /* Deux pièces peuvent alors afficher le même nom : elles restent
+     distinctes par leur chemin, et le wiki les sépare par leur héros. */
+  const homonymes = liees.filter(item => item.name === "Préparation totale");
+  assert.equal(homonymes.length, 2, "deux tenues nommées « Préparation totale »");
+  assert.equal(new Set(homonymes.map(item => item.file)).size, 2,
+    "leurs chemins restent distincts");
+  const tenues = api.graveesDuWiki();
+  assert.equal(
+    new Set(tenues
+      .filter(piece => piece.nom === "Préparation totale")
+      .map(piece => piece.heros)).size,
+    2,
+    "le wiki les distingue par leur héros"
+  );
+
+  /* Un nom qui contient le séparateur sans nommer un héros n'est pas
+     tronqué : la règle vise le préfixe, pas le tiret. */
+  objets
+    .filter(item => item.name.includes(" — "))
+    .forEach(item => {
+      assert.equal(item.name, stem(item), item.file + " : nom tronqué à tort");
+    });
+
+  /* Le classement suit alors les voisins alphabétiques, pas la lettre du
+     héros : « Citoyenne modèle » se range entre ses voisins en C. */
+  const noms = tenues.map(piece => piece.nom);
+  const rang = noms.indexOf("Citoyenne modèle");
+  assert.ok(rang > 0 && rang < noms.length - 1, "la tenue doit être listée");
+  assert.ok(
+    noms[rang - 1].localeCompare("Citoyenne modèle", "fr") <= 0
+      && noms[rang + 1].localeCompare("Citoyenne modèle", "fr") >= 0,
+    "la tenue se range à sa place alphabétique, entre "
+      + noms[rang - 1] + " et " + noms[rang + 1]
+  );
+}
+
 console.log("PASS wiki : objets, ensembles et jointure aux statistiques");

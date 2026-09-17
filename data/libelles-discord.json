@@ -343,6 +343,25 @@
     }
    }
   },
+  "khala": {
+   "nom": "Khala",
+   "fichier": "7ds-personnages/khala.webp",
+   "element": "WIND",
+   "armes": {
+    "SwordDual": {
+     "element": "WIND",
+     "role": "Attacker"
+    },
+    "Cudgel3c": {
+     "element": "WIND",
+     "role": "Buster"
+    },
+    "Gauntlets": {
+     "element": "EARTH",
+     "role": "Buster"
+    }
+   }
+  },
   "king": {
    "nom": "King",
    "fichier": "7ds-personnages/king.webp",
@@ -2399,6 +2418,9 @@
     "7ds-armures-ssr/Armure liee/Honneur au vieux soldat.webp": 17,
     "7ds-armures-ssr/Armure liee/Héros de Liones.webp": 17,
     "7ds-armures-ssr/Armure liee/Instinct incisif.webp": 17,
+    "7ds-armures-ssr/Armure liee/Khala — Citoyenne modèle.webp": 17,
+    "7ds-armures-ssr/Armure liee/Khala — Préparation totale.webp": 17,
+    "7ds-armures-ssr/Armure liee/Khala — Tenue de travail ultralégère.webp": 17,
     "7ds-armures-ssr/Armure liee/L'ombre de la forêt profonde.webp": 17,
     "7ds-armures-ssr/Armure liee/Le Bélier de la Luxure.webp": 17,
     "7ds-armures-ssr/Armure liee/Le Grizzly de la Paresse.webp": 17,

@@ -209,6 +209,22 @@ def merged_characters(characters, snapshot=None, replace_client=False):
     )
 
 
+def merged_engraved(engraved, committed=None, snapshot=None):
+    """Tenues gravees publiques + celles des heros du snapshot.
+
+    La page publique ne connait pas ces heros : sans cette reprise, une
+    regeneration effacerait leurs tenues du catalogue.
+    """
+    if committed is None:
+        path = os.path.join(OUT_DIR, "armures-gravees.json")
+        with open(path, encoding="utf-8") as handle:
+            committed = json.load(handle)
+    return sorted(
+        client_content.merge_client_rows(engraved, committed, snapshot),
+        key=stable_item_key,
+    )
+
+
 def client_only():
     """Remplace les heros du snapshot dans la sortie commitee, sans reseau."""
     path = os.path.join(OUT_DIR, "personnages.json")
@@ -331,7 +347,7 @@ def main():
         ("personnages.json", write("personnages.json", merged_characters(data["characters"]))),
         ("armes.json", write("armes.json", data["weapons"])),
         ("armures.json", write("armures.json", data["equipItems"])),
-        ("armures-gravees.json", write("armures-gravees.json", engraved)),
+        ("armures-gravees.json", write("armures-gravees.json", merged_engraved(engraved))),
         ("sets.json", write("sets.json", data["gearSets"])),
         ("enchantements.json", write("enchantements.json", {
             "armesBasiques": basic,

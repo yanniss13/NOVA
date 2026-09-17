@@ -181,5 +181,48 @@ class ClientCharactersTests(unittest.TestCase):
             self.assertEqual(path.read_text(encoding="utf-8"), before)
 
 
+class ClientEngravedTests(unittest.TestCase):
+    """Les tenues gravees des heros du snapshot survivent a une
+    regeneration publique : la page ne les publie pas, le fichier commite
+    les porte, et une regeneration ne doit pas les effacer en silence."""
+
+    PUBLIQUE = [
+        {"gameId": "133105003", "nameFr": "Préparation totale", "personnage": "slader"},
+        {"gameId": "133014001", "nameFr": "Ami loyal", "personnage": "tristan"},
+    ]
+    CLIENTE = {"gameId": "133235002", "nameFr": "Préparation totale", "personnage": "khala"}
+
+    def test_snapshot_pieces_survive_a_public_refresh(self):
+        merged = module.merged_engraved(
+            list(self.PUBLIQUE), self.PUBLIQUE + [self.CLIENTE]
+        )
+
+        self.assertEqual(
+            [row["gameId"] for row in merged],
+            ["133014001", "133105003", "133235002"],
+        )
+        self.assertEqual(merged[2]["personnage"], "khala")
+
+    def test_a_public_payload_without_client_rows_is_left_alone(self):
+        merged = module.merged_engraved(list(self.PUBLIQUE), list(self.PUBLIQUE))
+
+        self.assertEqual([row["gameId"] for row in merged],
+                         ["133014001", "133105003"])
+
+    def test_a_hero_become_public_stops_the_merge(self):
+        publique = self.PUBLIQUE + [dict(self.CLIENTE)]
+
+        with self.assertRaisesRegex(ValueError, "khala"):
+            module.merged_engraved(publique, publique)
+
+    def test_a_game_id_already_published_stops_the_merge(self):
+        publique = self.PUBLIQUE + [
+            {"gameId": "133235002", "nameFr": "Autre", "personnage": "slader"}
+        ]
+
+        with self.assertRaisesRegex(ValueError, "133235002"):
+            module.merged_engraved(publique, self.PUBLIQUE + [self.CLIENTE])
+
+
 if __name__ == "__main__":
     unittest.main()

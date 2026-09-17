@@ -1,7 +1,7 @@
 // Genere automatiquement par generate-data.ps1 - NE PAS EDITER A LA MAIN.
 // Relance le script pour mettre a jour apres ajout/retrait d'images.
 window.SEVEN_DS_DATA = {
-    "generatedAt":  "2026-09-17 20:01:22",
+    "generatedAt":  "2026-09-17 20:23:32",
     "personnages":  [
                         {
                             "id":  "ban",
@@ -1216,15 +1216,15 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Instinct incisif.webp"
                                         },
                                         {
-                                            "name":  "Khala — Citoyenne modèle",
+                                            "name":  "Citoyenne modèle",
                                             "file":  "7ds-armures-ssr/Armure liee/Khala — Citoyenne modèle.webp"
                                         },
                                         {
-                                            "name":  "Khala — Préparation totale",
+                                            "name":  "Préparation totale",
                                             "file":  "7ds-armures-ssr/Armure liee/Khala — Préparation totale.webp"
                                         },
                                         {
-                                            "name":  "Khala — Tenue de travail ultralégère",
+                                            "name":  "Tenue de travail ultralégère",
                                             "file":  "7ds-armures-ssr/Armure liee/Khala — Tenue de travail ultralégère.webp"
                                         },
                                         {

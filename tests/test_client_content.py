@@ -330,6 +330,32 @@ class ClientContentTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "Armure liee"):
             module.merge_mapping({}, "linkedArmors", client)
 
+    def test_client_rows_are_carried_over_a_public_refresh(self):
+        publiques = [{"gameId": "1", "personnage": "ban"}]
+        commitees = publiques + [{"gameId": "2", "personnage": "khala"}]
+
+        fusion = module.merge_client_rows(
+            publiques, commitees, self.snapshot, key="personnage", identity="gameId"
+        )
+
+        self.assertEqual([row["gameId"] for row in fusion], ["1", "2"])
+        # Copie : la source commitee ne doit pas etre partagee avec la sortie.
+        fusion[1]["personnage"] = "autre"
+        self.assertEqual(commitees[1]["personnage"], "khala")
+
+    def test_a_client_row_published_upstream_stops_the_merge(self):
+        publiques = [{"gameId": "2", "personnage": "khala"}]
+
+        with self.assertRaisesRegex(ValueError, "khala"):
+            module.merge_client_rows(publiques, publiques, self.snapshot)
+
+    def test_a_client_identity_reused_upstream_stops_the_merge(self):
+        publiques = [{"gameId": "2", "personnage": "ban"}]
+        commitees = [{"gameId": "2", "personnage": "khala"}]
+
+        with self.assertRaisesRegex(ValueError, "2"):
+            module.merge_client_rows(publiques, commitees, self.snapshot)
+
     def test_potentials_section_uses_public_folders_in_enum_order(self):
         potentials = module.merge_mapping({}, "potentials", self.snapshot)["khala"]
 

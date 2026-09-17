@@ -70,13 +70,33 @@ foreach ($f in Get-Webp (Join-Path $root '7ds-personnages')) {
     }
 }
 
+# Le NOM AFFICHE n'est pas le chemin. Deux heros peuvent porter une tenue du
+# meme nom : le fichier de l'un prend son nom en prefixe pour ne pas ecraser
+# l'autre. Ce prefixe identifie un fichier, il n'a rien a dire au membre —
+# affiche, il ferait lire "Khala - Citoyenne modele" dans un selecteur deja
+# filtre sur Khala, et rangerait la piece sous K au lieu de sa place
+# alphabetique. On le retire donc du libelle, et seulement quand ce qui
+# precede le separateur est le nom d'un personnage du catalogue : un nom de
+# piece qui contient un cadratin reste intact.
+$separateur = [char]0x2014
+$nomsDePersonnage = $personnages | ForEach-Object { $_.name }
+function Format-ItemName($base) {
+    foreach ($nom in $nomsDePersonnage) {
+        $prefixe = "$nom $separateur "
+        if ($base.StartsWith($prefixe) -and $base.Length -gt $prefixe.Length) {
+            return $base.Substring($prefixe.Length)
+        }
+    }
+    return $base
+}
+
 # --- Armes, groupees par type ---
 $armes = [ordered]@{}
 foreach ($folder in $typeLabels.Keys) {
     $items = @()
     foreach ($f in Get-Webp (Join-Path $root "7ds-armes/$folder")) {
         $items += [ordered]@{
-            name = [System.IO.Path]::GetFileNameWithoutExtension($f.Name)
+            name = Format-ItemName ([System.IO.Path]::GetFileNameWithoutExtension($f.Name))
             file = "7ds-armes/$folder/$($f.Name)"
         }
     }
@@ -91,7 +111,7 @@ foreach ($folder in $armorSlots.Keys) {
     $items = @()
     foreach ($f in Get-Webp (Join-Path $root "7ds-armures-ssr/$folder")) {
         $items += [ordered]@{
-            name = [System.IO.Path]::GetFileNameWithoutExtension($f.Name)
+            name = Format-ItemName ([System.IO.Path]::GetFileNameWithoutExtension($f.Name))
             file = "7ds-armures-ssr/$folder/$($f.Name)"
         }
     }
@@ -106,7 +126,7 @@ foreach ($folder in $jewelSlots.Keys) {
     $items = @()
     foreach ($f in Get-Webp (Join-Path $root "7ds-bijoux/$folder")) {
         $items += [ordered]@{
-            name = [System.IO.Path]::GetFileNameWithoutExtension($f.Name)
+            name = Format-ItemName ([System.IO.Path]::GetFileNameWithoutExtension($f.Name))
             file = "7ds-bijoux/$folder/$($f.Name)"
         }
     }

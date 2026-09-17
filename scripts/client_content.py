@@ -467,6 +467,42 @@ def merge_characters(base, snapshot=None, replace_client=False):
     return result
 
 
+def merge_client_rows(public_rows, committed_rows, snapshot=None,
+                      key="personnage", identity="gameId"):
+    """Reinjecte dans une sortie publique les lignes des heros du snapshot.
+
+    Une source qui ignore ces heros ne cite pas leurs lignes : les reecrire
+    telles quelles les effacerait a chaque regeneration, et seul l'export
+    local permettrait de les retrouver. On reprend donc du fichier commite
+    les lignes dont `key` designe un slug du snapshot.
+
+    Si la source publie elle-meme une de ces lignes, c'est que le heros est
+    devenu public : la fusion s'arrete pour qu'on retire son import client
+    explicitement, plutot que de publier deux fois la meme piece.
+    """
+    slugs = set(client_slugs(snapshot))
+    client = [
+        row for row in committed_rows
+        if isinstance(row, dict) and row.get(key) in slugs
+    ]
+    for row in public_rows:
+        if not isinstance(row, dict):
+            continue
+        if row.get(key) in slugs:
+            raise ValueError(
+                f"{row.get(key)} est publié par la source : retirer son import client"
+            )
+    published = {
+        row.get(identity) for row in public_rows if isinstance(row, dict)
+    }
+    for row in client:
+        if row.get(identity) in published:
+            raise ValueError(
+                f"{identity} déjà publié par la source : {row.get(identity)}"
+            )
+    return list(public_rows) + copy.deepcopy(client)
+
+
 def without_slugs(payload, slugs):
     targets = set(slugs)
     if isinstance(payload, dict):
