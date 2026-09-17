@@ -161,6 +161,11 @@ const iconsPipeline = new Set([
   ...extraitPipeline.heroes.khala.assets.skills,
   ...extraitPipeline.heroes.khala.assets.commonSkills
 ].map(asset => path.basename(asset.target)));
+assert.ok(
+  extraitPipeline.heroes.khala.assets.linkedArmors.every(asset =>
+    path.basename(asset.target).startsWith("Khala — ")),
+  "les armures Khala ont des cibles propres"
+);
 assert.ok([...extraitPipeline.heroes.khala.wikiSkills, ...extraitPipeline.heroes.khala.calculatorSkills]
   .every(skill => iconsPipeline.has(skill.icone)),
 "chaque icône Wiki/calcul est soit exportée soit une cible commune reconnue");

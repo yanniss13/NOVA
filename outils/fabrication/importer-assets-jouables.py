@@ -8,6 +8,7 @@ le dossier d'export à la recherche d'images supplémentaires.
 
 from __future__ import annotations
 
+import io
 import json
 import os
 import pathlib
@@ -132,8 +133,13 @@ def _prepare(snapshot: Mapping[str, object], export_root: pathlib.Path | str,
         if target.exists():
             if not target.is_file():
                 raise ValueError(f"cible asset occupée par un dossier : {target_name}")
-            # Les assets communs sont déjà versionnés. Ne jamais les réencoder
-            # ni leur faire perdre une éventuelle différence de provenance.
+            try:
+                identical = _encoded_webp_identical(source, target)
+            except Exception as exc:
+                raise ValueError(f"cible existante différente : {target_name}") from exc
+            if not identical:
+                raise ValueError(f"cible existante différente : {target_name}")
+            # Une cible identique est déjà importée : elle reste intacte.
             continue
         prepared.append((source, target))
     return prepared
@@ -142,6 +148,17 @@ def _prepare(snapshot: Mapping[str, object], export_root: pathlib.Path | str,
 def _encode_webp(source: pathlib.Path, temporary: pathlib.Path) -> None:
     with Image.open(source) as image:
         image.convert("RGBA").save(temporary, format="WEBP", lossless=True)
+
+
+def _encoded_webp(source: pathlib.Path) -> bytes:
+    output = io.BytesIO()
+    with Image.open(source) as image:
+        image.convert("RGBA").save(output, format="WEBP", lossless=True)
+    return output.getvalue()
+
+
+def _encoded_webp_identical(source: pathlib.Path, target: pathlib.Path) -> bool:
+    return _encoded_webp(source) == target.read_bytes()
 
 
 def convert_png(source: pathlib.Path | str, target: pathlib.Path | str) -> None:

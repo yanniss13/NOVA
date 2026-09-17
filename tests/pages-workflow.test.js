@@ -9,6 +9,12 @@ const workflowPath = path.join(ROOT, ".github", "workflows", "pages.yml");
 assert.ok(fs.existsSync(workflowPath), "workflow Pages manquant");
 
 const yaml = fs.readFileSync(workflowPath, "utf8");
+const dependencies = fs.readFileSync(path.join(ROOT, "requirements-dev.txt"), "utf8");
+assert.match(
+  dependencies,
+  /^Pillow>=11,<13$/m,
+  "requirements-dev doit installer Pillow pour les tests Python d’assets"
+);
 const required = [
   /* Les tests tournent sur TOUTE branche poussee : une regression trouvee sur
      une branche coute une minute, la meme trouvee apres fusion coute une

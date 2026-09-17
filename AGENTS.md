@@ -212,8 +212,9 @@ pip install -r requirements-dev.txt
 npm test
 ```
 
-`requirements-dev.txt` n'apporte que `pglast`, le parseur de PostgreSQL utilisé
-par `tests/test_schema_sql.py` pour valider la **syntaxe** de `supabase/*.sql`,
+`requirements-dev.txt` apporte `pglast`, le parseur de PostgreSQL utilisé par
+`tests/test_schema_sql.py` pour valider la **syntaxe** de `supabase/*.sql`, et
+`Pillow`, requis par les tests et l'importeur d'assets. Les autres tests SQL
 corps PL/pgSQL compris. Les autres tests SQL vérifient le contenu par expressions
 régulières et ne détectent aucune faute de frappe : sans ce garde, une virgule
 oubliée n'apparaissait qu'au moment de coller le fichier dans Supabase. Le test

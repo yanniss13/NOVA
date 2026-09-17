@@ -22,7 +22,8 @@ const ASSET_TARGET_PREFIXES = [
 const COMMON_REPOSITORY_ICONS = {
   SwordDual:"7ds-ui/skills/common_SwordDual_normalAttack.webp",
   Cudgel3c:"7ds-ui/skills/common_Cudgel3c_normalAttack.webp",
-  Gauntlets:"7ds-ui/skills/common_Gauntlets_normalAttack.webp"
+  Gauntlets:"7ds-ui/skills/common_Gauntlets_normalAttack.webp",
+  TagSkill:"7ds-ui/skills/Icon_TagSkill.webp"
 };
 const COMMON_EXPORT_ICONS = new Map([
   [cleIcone("skill_icon_common_tagskill"), "Icon_Item/Skill/Icon_TagSkill.png"]
@@ -304,16 +305,18 @@ function linkedArmors(tables){
 
 function assets(tables, hero, skills, armors){
   const icons = skills.map(skill => resoudreIcone(tables.pcSkills[skill.gameId], skill.weaponType, tables));
-  const skillAssets = [...new Map(icons.filter(icon => icon.kind === "export")
+  const skillAssets = [...new Map(icons.filter(icon => icon.kind === "export"
+    && icon.target !== COMMON_REPOSITORY_ICONS.TagSkill)
     .map(icon => [icon.source, {source:icon.source, target:icon.target}])).values()];
-  const commonSkills = [...new Map(icons.filter(icon => icon.kind === "common")
+  const commonSkills = [...new Map(icons.filter(icon => icon.kind === "common"
+    || icon.target === COMMON_REPOSITORY_ICONS.TagSkill)
     .map(icon => [icon.target, {target:icon.target, provenance:"repository/7ds-ui/skills"}])).values()];
   return {
     portrait:{source:"Icon_Item/portrait_Hero/slot_Calla_001.png", target:"7ds-personnages/khala.webp"},
     skills:skillAssets, commonSkills,
     linkedArmors:armors.map(armor => ({
       source:"Icon_Item/BindArmor/" + armor.icon.replace(/^icon_bindarmor_/, "BindArmor_").replace(/_pc_/i, "_PC_").replace(/_calla_/i, "_Calla_") + ".png",
-      target:"7ds-armures-ssr/Armure liee/" + armor.nameFr + ".webp"
+      target:"7ds-armures-ssr/Armure liee/Khala — " + armor.nameFr + ".webp"
     }))
   };
 }

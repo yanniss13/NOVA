@@ -3616,10 +3616,6 @@
       "target": "7ds-ui/skills/Calla_SwordDual_NormalSkill.webp"
      },
      {
-      "source": "Icon_Item/Skill/Icon_TagSkill.png",
-      "target": "7ds-ui/skills/Icon_TagSkill.webp"
-     },
-     {
       "source": "Icon_Item/Skill/Calla_SwordDual_UltimateSkill.png",
       "target": "7ds-ui/skills/Calla_SwordDual_UltimateSkill.webp"
      },
@@ -3670,6 +3666,10 @@
       "provenance": "repository/7ds-ui/skills"
      },
      {
+      "target": "7ds-ui/skills/Icon_TagSkill.webp",
+      "provenance": "repository/7ds-ui/skills"
+     },
+     {
       "target": "7ds-ui/skills/common_Cudgel3c_normalAttack.webp",
       "provenance": "repository/7ds-ui/skills"
      },
@@ -3681,15 +3681,15 @@
     "linkedArmors": [
      {
       "source": "Icon_Item/BindArmor/BindArmor_PC_Calla_0002.png",
-      "target": "7ds-armures-ssr/Armure liee/Tenue de travail ultralégère.webp"
+      "target": "7ds-armures-ssr/Armure liee/Khala — Tenue de travail ultralégère.webp"
      },
      {
       "source": "Icon_Item/BindArmor/BindArmor_PC_Calla_0003.png",
-      "target": "7ds-armures-ssr/Armure liee/Préparation totale.webp"
+      "target": "7ds-armures-ssr/Armure liee/Khala — Préparation totale.webp"
      },
      {
       "source": "Icon_Item/BindArmor/BindArmor_PC_Calla_0004.png",
-      "target": "7ds-armures-ssr/Armure liee/Citoyenne modèle.webp"
+      "target": "7ds-armures-ssr/Armure liee/Khala — Citoyenne modèle.webp"
      }
     ]
    }

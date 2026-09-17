@@ -157,23 +157,42 @@ class JouableAssetsImporterTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "cible asset interdite"):
             module.import_assets(self.write_snapshot(assets), self.exports, self.repo)
 
-    def test_ne_reconvertit_pas_une_cible_deja_presente(self):
-        skill = "Icon_Item/Skill/Icon_TagSkill.png"
+    def test_refuse_collision_avec_une_cible_normale_differente(self):
+        skill = "Icon_Item/Skill/Calla_Test.png"
         self.source(skill)
-        target = self.repo / "7ds-ui/skills/Icon_TagSkill.webp"
+        target = self.repo / "7ds-ui/skills/Calla_Test.webp"
         target.parent.mkdir(parents=True)
-        target.write_bytes(b"asset commun deja present")
+        with Image.new("RGBA", (3, 2), (200, 100, 40, 255)) as image:
+            image.save(target, "WEBP", lossless=True)
         assets = {
             "portrait": None,
-            "skills": [{"source": skill, "target": "7ds-ui/skills/Icon_TagSkill.webp"}],
-            "commonSkills": [{"target": "7ds-ui/skills/Icon_TagSkill.webp"}],
+            "skills": [{"source": skill, "target": "7ds-ui/skills/Calla_Test.webp"}],
+            "commonSkills": [],
+            "linkedArmors": [],
+        }
+
+        with self.assertRaisesRegex(ValueError, "cible existante différente"):
+            module.import_assets(self.write_snapshot(assets), self.exports, self.repo)
+
+    def test_cible_normale_identique_est_idempotente(self):
+        skill = "Icon_Item/Skill/Calla_Test.png"
+        source = self.source(skill)
+        target = self.repo / "7ds-ui/skills/Calla_Test.webp"
+        target.parent.mkdir(parents=True)
+        with Image.open(source) as image:
+            image.convert("RGBA").save(target, "WEBP", lossless=True)
+        before = target.read_bytes()
+        assets = {
+            "portrait": None,
+            "skills": [{"source": skill, "target": "7ds-ui/skills/Calla_Test.webp"}],
+            "commonSkills": [],
             "linkedArmors": [],
         }
 
         produits = module.import_assets(self.write_snapshot(assets), self.exports, self.repo)
 
         self.assertEqual(produits, [])
-        self.assertEqual(target.read_bytes(), b"asset commun deja present")
+        self.assertEqual(target.read_bytes(), before)
 
     def test_echec_de_conversion_ne_remplace_pas_les_cibles_precedentes(self):
         good = "Icon_Item/Skill/Calla_Good.png"
@@ -195,6 +214,17 @@ class JouableAssetsImporterTests(unittest.TestCase):
             module.import_assets(self.write_snapshot(assets), self.exports, self.repo)
         self.assertFalse((self.repo / "7ds-ui/skills/Calla_Good.webp").exists())
         self.assertFalse((self.repo / "7ds-ui/skills/Calla_Bad.webp").exists())
+
+    def test_snapshot_et_assets_reels_portent_des_cibles_d_armures_propres(self):
+        snapshot = json.loads((ROOT / "7ds-stats/contenu-jeu.json").read_text(encoding="utf-8"))
+        armor_assets = snapshot["heroes"]["khala"]["assets"]["linkedArmors"]
+
+        self.assertEqual(len(armor_assets), 3)
+        self.assertTrue(
+            all(pathlib.PurePosixPath(asset["target"]).name.startswith("Khala — ") for asset in armor_assets)
+        )
+        self.assertTrue(all((ROOT / asset["target"]).is_file() for asset in armor_assets))
+        self.assertTrue((ROOT / "7ds-armures-ssr/Armure liee/Préparation totale.webp").is_file())
 
 
 if __name__ == "__main__":
