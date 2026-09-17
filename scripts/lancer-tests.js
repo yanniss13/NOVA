@@ -91,6 +91,7 @@ const SUITES = {
     "python scripts/generate-effets-dps.py --check",
     "node tests/wiki-catalogue.test.js",
     "node tests/wiki-competences.test.js",
+    "node tests/wiki-competence-non-traduite.test.js",
     "node tests/wiki-equipement.test.js",
     "node tests/competences-catalogue.test.js",
     "node tests/ultimes-combines-catalogue.test.js",

@@ -77,6 +77,23 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
     return PASTILLES[(competence || {}).categorie] || "Compétence";
   }
 
+  /* Ce que le catalogue DECLARE sur sa propre couverture, et rien d'autre :
+     aucune competence, aucun heros n'est nomme ici. Le jour ou le jeu publiera
+     le texte manquant, la regeneration effacera le statut et la note
+     disparaitra d'elle-meme. */
+  const COUVERTURES_DE_COMPETENCE = {
+    "missing-from-export":
+      "Le jeu ne publie pas la description de cette compétence."
+  };
+
+  function couvertureTexteCompetence(competence){
+    const localisation = competence && competence.localisation;
+    const statut = localisation && localisation.status;
+    if(!statut || statut === "resolved") return null;
+    return COUVERTURES_DE_COMPETENCE[statut]
+      || ("Description indisponible : " + (localisation.reason || statut) + ".");
+  }
+
   function blocCompetence(competence){
     const entete = el("div",{class:"wiki-skill-head"},[
       /* L'icone du jeu, en medaillon : c'est elle que le membre reconnait a
@@ -98,9 +115,15 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
         el("span",{class:"wiki-skill-cd", text:competence.recharge+" s"})
       );
     }
+    /* UNE DESCRIPTION ABSENTE SE DIT. Sans cela le membre lit un nom, une
+       recharge, puis un trou : rien ne distingue une donnee que le jeu ne
+       publie pas d'une panne du site. */
+    const couverture = couvertureTexteCompetence(competence);
     return el("div",{class:"wiki-skill"},[
       entete,
-      el("p",{class:"wiki-skill-desc", html:renderBonus(competence.descriptionFr)})
+      couverture
+        ? el("p",{class:"wiki-skill-desc wiki-skill-absente", text:couverture})
+        : el("p",{class:"wiki-skill-desc", html:renderBonus(competence.descriptionFr)})
     ]);
   }
 

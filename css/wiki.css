@@ -176,6 +176,9 @@
   font-variant-numeric:tabular-nums
 }
 .wiki-skill-desc{margin:8px 0 0;line-height:1.55}
+/* Une description que le jeu ne publie pas : la note se distingue du texte
+   d'une competence pour qu'on ne la lise pas comme une regle du jeu. */
+.wiki-skill-absente{color:var(--muted);font-style:italic}
 
 .wiki-fold{border-top:1px solid var(--line-soft);margin:12px 0 0;padding:4px 0 0}
 .wiki-fold>summary{
