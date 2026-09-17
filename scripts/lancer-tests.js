@@ -54,6 +54,7 @@ const SUITES = {
     "node tests/ocr-arme.test.js",
     "node tests/lecture-assistee.test.js",
     "node tests/import-captures-roster.test.js",
+    "node tests/contenu-jouable-source.test.js",
     "node tests/stats-build-catalog.test.js",
     "node tests/stats-build-schema.test.js",
     "node tests/availability-schema.test.js",

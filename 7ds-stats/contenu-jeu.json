@@ -1,0 +1,2929 @@
+{
+ "version": 1,
+ "heroes": {
+  "khala": {
+   "id": "1029",
+   "internalName": "Calla",
+   "nameFr": "Khala",
+   "nameEn": "Khala",
+   "meta": {
+    "role": "ATTACKER",
+    "rarity": "Grade5",
+    "weapons": [
+     {
+      "weapon": "SwordDual",
+      "role": "Attacker",
+      "element": "Wind"
+     },
+     {
+      "weapon": "Cudgel3c",
+      "role": "Buster",
+      "element": "Wind"
+     },
+     {
+      "weapon": "Gauntlets",
+      "role": "Buster",
+      "element": "Earth"
+     }
+    ]
+   },
+   "character": {
+    "id": "1029",
+    "slug": "khala",
+    "nameFr": "Khala",
+    "nameEn": "Khala",
+    "rarity": "Grade5",
+    "role": "ATTACKER",
+    "element": "WIND",
+    "portraitUrl": "/images/characters/khala.webp",
+    "weaponSlots": [
+     {
+      "weapon": "SwordDual",
+      "role": "Attacker",
+      "element": "Wind"
+     },
+     {
+      "weapon": "Cudgel3c",
+      "role": "Buster",
+      "element": "Wind"
+     },
+     {
+      "weapon": "Gauntlets",
+      "role": "Buster",
+      "element": "Earth"
+     }
+    ],
+    "commonMasteryTid": "11002",
+    "baseHp": 2000,
+    "baseAtk": 250,
+    "baseDef": 200,
+    "baseSpd": 500,
+    "accuracy": 80,
+    "block": 50,
+    "critRate": 1000,
+    "critDamage": 2500,
+    "critResist": 300,
+    "critDmgResist": 1000,
+    "blockDmgResist": 9500,
+    "pvpDmgUp": 150,
+    "pvpDmgDown": 125,
+    "weaponMasteries": [
+     {
+      "weaponType": "SwordDual",
+      "levels": [
+       {
+        "level": 1,
+        "nodes": [
+         {
+          "id": "210291000",
+          "level": 1,
+          "grade": 2,
+          "group": "21029100",
+          "abilities": [],
+          "values": [],
+          "descriptionKey": "local_weapon_mastery_desc_210291000"
+         }
+        ]
+       },
+       {
+        "level": 2,
+        "nodes": [
+         {
+          "id": "210291001",
+          "level": 2,
+          "grade": 1,
+          "group": "21029101",
+          "abilities": [
+           "B_Atk",
+           "A_Accuracy"
+          ],
+          "values": [
+           165,
+           37
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291001"
+         },
+         {
+          "id": "210291002",
+          "level": 2,
+          "grade": 1,
+          "group": "21029101",
+          "abilities": [
+           "B_Def",
+           "A_Block",
+           "B_MaxHp"
+          ],
+          "values": [
+           90,
+           21,
+           240
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291002"
+         },
+         {
+          "id": "210291003",
+          "level": 2,
+          "grade": 1,
+          "group": "21029101",
+          "abilities": [
+           "C_Critical_Rate",
+           "C_Critical_Dam_Rate"
+          ],
+          "values": [
+           338,
+           788
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291003"
+         },
+         {
+          "id": "210291004",
+          "level": 2,
+          "grade": 1,
+          "group": "21029101",
+          "abilities": [
+           "C_Critical_ResRate",
+           "C_Critical_DamRes_Rate"
+          ],
+          "values": [
+           90,
+           338
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291004"
+         },
+         {
+          "id": "210291005",
+          "level": 2,
+          "grade": 2,
+          "group": "21029101",
+          "abilities": [
+           "I_AtkAdd_Rate",
+           "I_DefAdd_Rate",
+           "I_MaxHPAdd_Rate",
+           "A_Accuracy",
+           "A_Block"
+          ],
+          "values": [
+           300,
+           300,
+           300,
+           13,
+           8
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291005"
+         }
+        ]
+       },
+       {
+        "level": 3,
+        "nodes": [
+         {
+          "id": "210291006",
+          "level": 3,
+          "grade": 1,
+          "group": "21029102",
+          "abilities": [
+           "B_Def",
+           "C_Critical_Rate"
+          ],
+          "values": [
+           136,
+           507
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291006"
+         },
+         {
+          "id": "210291007",
+          "level": 3,
+          "grade": 1,
+          "group": "21029102",
+          "abilities": [
+           "B_Atk",
+           "A_Block"
+          ],
+          "values": [
+           248,
+           27
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291007"
+         },
+         {
+          "id": "210291008",
+          "level": 3,
+          "grade": 1,
+          "group": "21029102",
+          "abilities": [
+           "A_Accuracy",
+           "C_Critical_DamRes_Rate"
+          ],
+          "values": [
+           48,
+           507
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291008"
+         },
+         {
+          "id": "210291009",
+          "level": 3,
+          "grade": 1,
+          "group": "21029102",
+          "abilities": [
+           "B_MaxHp",
+           "C_Critical_ResRate",
+           "C_Critical_Dam_Rate"
+          ],
+          "values": [
+           360,
+           135,
+           1182
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291009"
+         },
+         {
+          "id": "210291010",
+          "level": 3,
+          "grade": 2,
+          "group": "21029102",
+          "abilities": [
+           "I_AtkAdd_Rate",
+           "I_DefAdd_Rate",
+           "I_MaxHPAdd_Rate",
+           "A_Accuracy",
+           "A_Block"
+          ],
+          "values": [
+           300,
+           300,
+           300,
+           16,
+           11
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291010"
+         }
+        ]
+       },
+       {
+        "level": 4,
+        "nodes": [
+         {
+          "id": "210291011",
+          "level": 4,
+          "grade": 1,
+          "group": "21029103",
+          "abilities": [
+           "C_Critical_Dam_Rate",
+           "C_Critical_DamRes_Rate"
+          ],
+          "values": [
+           1575,
+           675
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291011"
+         },
+         {
+          "id": "210291012",
+          "level": 4,
+          "grade": 1,
+          "group": "21029103",
+          "abilities": [
+           "B_Atk",
+           "C_Critical_ResRate",
+           "A_Block"
+          ],
+          "values": [
+           330,
+           180,
+           34
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291012"
+         },
+         {
+          "id": "210291013",
+          "level": 4,
+          "grade": 1,
+          "group": "21029103",
+          "abilities": [
+           "B_MaxHp",
+           "C_Critical_Rate"
+          ],
+          "values": [
+           480,
+           675
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291013"
+         },
+         {
+          "id": "210291014",
+          "level": 4,
+          "grade": 1,
+          "group": "21029103",
+          "abilities": [
+           "B_Def",
+           "A_Accuracy"
+          ],
+          "values": [
+           180,
+           58
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291014"
+         },
+         {
+          "id": "210291015",
+          "level": 4,
+          "grade": 2,
+          "group": "21029103",
+          "abilities": [
+           "I_AtkAdd_Rate",
+           "I_DefAdd_Rate",
+           "I_MaxHPAdd_Rate",
+           "A_Accuracy",
+           "A_Block"
+          ],
+          "values": [
+           300,
+           300,
+           300,
+           26,
+           17
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291015"
+         }
+        ]
+       },
+       {
+        "level": 5,
+        "nodes": [
+         {
+          "id": "210291016",
+          "level": 5,
+          "grade": 1,
+          "group": "21029104",
+          "abilities": [
+           "B_MaxHp",
+           "C_Critical_Dam_Rate"
+          ],
+          "values": [
+           600,
+           1969
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291016"
+         },
+         {
+          "id": "210291017",
+          "level": 5,
+          "grade": 1,
+          "group": "21029104",
+          "abilities": [
+           "C_Critical_Rate",
+           "A_Accuracy"
+          ],
+          "values": [
+           844,
+           69
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291017"
+         },
+         {
+          "id": "210291018",
+          "level": 5,
+          "grade": 1,
+          "group": "21029104",
+          "abilities": [
+           "B_Def",
+           "C_Critical_ResRate",
+           "C_Critical_DamRes_Rate"
+          ],
+          "values": [
+           226,
+           225,
+           844
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291018"
+         },
+         {
+          "id": "210291019",
+          "level": 5,
+          "grade": 1,
+          "group": "21029104",
+          "abilities": [
+           "B_Atk",
+           "A_Block"
+          ],
+          "values": [
+           413,
+           40
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291019"
+         },
+         {
+          "id": "210291020",
+          "level": 5,
+          "grade": 2,
+          "group": "21029104",
+          "abilities": [
+           "I_AtkAdd_Rate",
+           "I_DefAdd_Rate",
+           "I_MaxHPAdd_Rate",
+           "A_Accuracy",
+           "A_Block"
+          ],
+          "values": [
+           300,
+           300,
+           300,
+           49,
+           33
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210291020"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "weaponType": "Cudgel3c",
+      "levels": [
+       {
+        "level": 1,
+        "nodes": [
+         {
+          "id": "210292000",
+          "level": 1,
+          "grade": 2,
+          "group": "21029200",
+          "abilities": [],
+          "values": [],
+          "descriptionKey": "local_weapon_mastery_desc_210292000"
+         }
+        ]
+       },
+       {
+        "level": 2,
+        "nodes": [
+         {
+          "id": "210292001",
+          "level": 2,
+          "grade": 1,
+          "group": "21029201",
+          "abilities": [
+           "B_Atk",
+           "A_Accuracy"
+          ],
+          "values": [
+           150,
+           35
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292001"
+         },
+         {
+          "id": "210292002",
+          "level": 2,
+          "grade": 1,
+          "group": "21029201",
+          "abilities": [
+           "B_Def",
+           "A_Block",
+           "B_MaxHp"
+          ],
+          "values": [
+           113,
+           23,
+           300
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292002"
+         },
+         {
+          "id": "210292003",
+          "level": 2,
+          "grade": 1,
+          "group": "21029201",
+          "abilities": [
+           "C_Critical_Rate",
+           "C_Critical_Dam_Rate"
+          ],
+          "values": [
+           225,
+           525
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292003"
+         },
+         {
+          "id": "210292004",
+          "level": 2,
+          "grade": 1,
+          "group": "21029201",
+          "abilities": [
+           "C_Critical_ResRate",
+           "C_Critical_DamRes_Rate"
+          ],
+          "values": [
+           150,
+           450
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292004"
+         },
+         {
+          "id": "210292005",
+          "level": 2,
+          "grade": 2,
+          "group": "21029201",
+          "abilities": [
+           "I_AtkAdd_Rate",
+           "I_DefAdd_Rate",
+           "I_MaxHPAdd_Rate",
+           "A_Accuracy",
+           "A_Block"
+          ],
+          "values": [
+           300,
+           300,
+           300,
+           12,
+           9
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292005"
+         }
+        ]
+       },
+       {
+        "level": 3,
+        "nodes": [
+         {
+          "id": "210292006",
+          "level": 3,
+          "grade": 1,
+          "group": "21029202",
+          "abilities": [
+           "B_Def",
+           "C_Critical_Rate"
+          ],
+          "values": [
+           170,
+           338
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292006"
+         },
+         {
+          "id": "210292007",
+          "level": 3,
+          "grade": 1,
+          "group": "21029202",
+          "abilities": [
+           "B_Atk",
+           "A_Block"
+          ],
+          "values": [
+           225,
+           30
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292007"
+         },
+         {
+          "id": "210292008",
+          "level": 3,
+          "grade": 1,
+          "group": "21029202",
+          "abilities": [
+           "A_Accuracy",
+           "C_Critical_DamRes_Rate"
+          ],
+          "values": [
+           45,
+           675
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292008"
+         },
+         {
+          "id": "210292009",
+          "level": 3,
+          "grade": 1,
+          "group": "21029202",
+          "abilities": [
+           "B_MaxHp",
+           "C_Critical_ResRate",
+           "C_Critical_Dam_Rate"
+          ],
+          "values": [
+           450,
+           225,
+           788
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292009"
+         },
+         {
+          "id": "210292010",
+          "level": 3,
+          "grade": 2,
+          "group": "21029202",
+          "abilities": [
+           "I_AtkAdd_Rate",
+           "I_DefAdd_Rate",
+           "I_MaxHPAdd_Rate",
+           "A_Accuracy",
+           "A_Block"
+          ],
+          "values": [
+           300,
+           300,
+           300,
+           15,
+           12
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292010"
+         }
+        ]
+       },
+       {
+        "level": 4,
+        "nodes": [
+         {
+          "id": "210292011",
+          "level": 4,
+          "grade": 1,
+          "group": "21029203",
+          "abilities": [
+           "C_Critical_Dam_Rate",
+           "C_Critical_DamRes_Rate"
+          ],
+          "values": [
+           1050,
+           900
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292011"
+         },
+         {
+          "id": "210292012",
+          "level": 4,
+          "grade": 1,
+          "group": "21029203",
+          "abilities": [
+           "B_Atk",
+           "C_Critical_ResRate",
+           "A_Block"
+          ],
+          "values": [
+           300,
+           300,
+           37
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292012"
+         },
+         {
+          "id": "210292013",
+          "level": 4,
+          "grade": 1,
+          "group": "21029203",
+          "abilities": [
+           "B_MaxHp",
+           "C_Critical_Rate"
+          ],
+          "values": [
+           600,
+           450
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292013"
+         },
+         {
+          "id": "210292014",
+          "level": 4,
+          "grade": 1,
+          "group": "21029203",
+          "abilities": [
+           "B_Def",
+           "A_Accuracy"
+          ],
+          "values": [
+           225,
+           56
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292014"
+         },
+         {
+          "id": "210292015",
+          "level": 4,
+          "grade": 2,
+          "group": "21029203",
+          "abilities": [
+           "I_AtkAdd_Rate",
+           "I_DefAdd_Rate",
+           "I_MaxHPAdd_Rate",
+           "A_Accuracy",
+           "A_Block"
+          ],
+          "values": [
+           300,
+           300,
+           300,
+           25,
+           19
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292015"
+         }
+        ]
+       },
+       {
+        "level": 5,
+        "nodes": [
+         {
+          "id": "210292016",
+          "level": 5,
+          "grade": 1,
+          "group": "21029204",
+          "abilities": [
+           "B_MaxHp",
+           "C_Critical_Dam_Rate"
+          ],
+          "values": [
+           750,
+           1313
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292016"
+         },
+         {
+          "id": "210292017",
+          "level": 5,
+          "grade": 1,
+          "group": "21029204",
+          "abilities": [
+           "C_Critical_Rate",
+           "A_Accuracy"
+          ],
+          "values": [
+           563,
+           66
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292017"
+         },
+         {
+          "id": "210292018",
+          "level": 5,
+          "grade": 1,
+          "group": "21029204",
+          "abilities": [
+           "B_Def",
+           "C_Critical_ResRate",
+           "C_Critical_DamRes_Rate"
+          ],
+          "values": [
+           282,
+           375,
+           1125
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292018"
+         },
+         {
+          "id": "210292019",
+          "level": 5,
+          "grade": 1,
+          "group": "21029204",
+          "abilities": [
+           "B_Atk",
+           "A_Block"
+          ],
+          "values": [
+           375,
+           44
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292019"
+         },
+         {
+          "id": "210292020",
+          "level": 5,
+          "grade": 2,
+          "group": "21029204",
+          "abilities": [
+           "I_AtkAdd_Rate",
+           "I_DefAdd_Rate",
+           "I_MaxHPAdd_Rate",
+           "A_Accuracy",
+           "A_Block"
+          ],
+          "values": [
+           300,
+           300,
+           300,
+           46,
+           36
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210292020"
+         }
+        ]
+       }
+      ]
+     },
+     {
+      "weaponType": "Gauntlets",
+      "levels": [
+       {
+        "level": 1,
+        "nodes": [
+         {
+          "id": "210293000",
+          "level": 1,
+          "grade": 2,
+          "group": "21029300",
+          "abilities": [],
+          "values": [],
+          "descriptionKey": "local_weapon_mastery_desc_210293000"
+         }
+        ]
+       },
+       {
+        "level": 2,
+        "nodes": [
+         {
+          "id": "210293001",
+          "level": 2,
+          "grade": 1,
+          "group": "21029301",
+          "abilities": [
+           "B_Atk",
+           "A_Accuracy"
+          ],
+          "values": [
+           150,
+           35
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293001"
+         },
+         {
+          "id": "210293002",
+          "level": 2,
+          "grade": 1,
+          "group": "21029301",
+          "abilities": [
+           "B_Def",
+           "A_Block",
+           "B_MaxHp"
+          ],
+          "values": [
+           113,
+           23,
+           300
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293002"
+         },
+         {
+          "id": "210293003",
+          "level": 2,
+          "grade": 1,
+          "group": "21029301",
+          "abilities": [
+           "C_Critical_Rate",
+           "C_Critical_Dam_Rate"
+          ],
+          "values": [
+           225,
+           525
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293003"
+         },
+         {
+          "id": "210293004",
+          "level": 2,
+          "grade": 1,
+          "group": "21029301",
+          "abilities": [
+           "C_Critical_ResRate",
+           "C_Critical_DamRes_Rate"
+          ],
+          "values": [
+           150,
+           450
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293004"
+         },
+         {
+          "id": "210293005",
+          "level": 2,
+          "grade": 2,
+          "group": "21029301",
+          "abilities": [
+           "I_AtkAdd_Rate",
+           "I_DefAdd_Rate",
+           "I_MaxHPAdd_Rate",
+           "A_Accuracy",
+           "A_Block"
+          ],
+          "values": [
+           300,
+           300,
+           300,
+           12,
+           9
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293005"
+         }
+        ]
+       },
+       {
+        "level": 3,
+        "nodes": [
+         {
+          "id": "210293006",
+          "level": 3,
+          "grade": 1,
+          "group": "21029302",
+          "abilities": [
+           "B_Def",
+           "C_Critical_Rate"
+          ],
+          "values": [
+           170,
+           338
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293006"
+         },
+         {
+          "id": "210293007",
+          "level": 3,
+          "grade": 1,
+          "group": "21029302",
+          "abilities": [
+           "B_Atk",
+           "A_Block"
+          ],
+          "values": [
+           225,
+           30
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293007"
+         },
+         {
+          "id": "210293008",
+          "level": 3,
+          "grade": 1,
+          "group": "21029302",
+          "abilities": [
+           "A_Accuracy",
+           "C_Critical_DamRes_Rate"
+          ],
+          "values": [
+           45,
+           675
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293008"
+         },
+         {
+          "id": "210293009",
+          "level": 3,
+          "grade": 1,
+          "group": "21029302",
+          "abilities": [
+           "B_MaxHp",
+           "C_Critical_ResRate",
+           "C_Critical_Dam_Rate"
+          ],
+          "values": [
+           450,
+           225,
+           788
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293009"
+         },
+         {
+          "id": "210293010",
+          "level": 3,
+          "grade": 2,
+          "group": "21029302",
+          "abilities": [
+           "I_AtkAdd_Rate",
+           "I_DefAdd_Rate",
+           "I_MaxHPAdd_Rate",
+           "A_Accuracy",
+           "A_Block"
+          ],
+          "values": [
+           300,
+           300,
+           300,
+           15,
+           12
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293010"
+         }
+        ]
+       },
+       {
+        "level": 4,
+        "nodes": [
+         {
+          "id": "210293011",
+          "level": 4,
+          "grade": 1,
+          "group": "21029303",
+          "abilities": [
+           "C_Critical_Dam_Rate",
+           "C_Critical_DamRes_Rate"
+          ],
+          "values": [
+           1050,
+           900
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293011"
+         },
+         {
+          "id": "210293012",
+          "level": 4,
+          "grade": 1,
+          "group": "21029303",
+          "abilities": [
+           "B_Atk",
+           "C_Critical_ResRate",
+           "A_Block"
+          ],
+          "values": [
+           300,
+           300,
+           37
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293012"
+         },
+         {
+          "id": "210293013",
+          "level": 4,
+          "grade": 1,
+          "group": "21029303",
+          "abilities": [
+           "B_MaxHp",
+           "C_Critical_Rate"
+          ],
+          "values": [
+           600,
+           450
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293013"
+         },
+         {
+          "id": "210293014",
+          "level": 4,
+          "grade": 1,
+          "group": "21029303",
+          "abilities": [
+           "B_Def",
+           "A_Accuracy"
+          ],
+          "values": [
+           225,
+           56
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293014"
+         },
+         {
+          "id": "210293015",
+          "level": 4,
+          "grade": 2,
+          "group": "21029303",
+          "abilities": [
+           "I_AtkAdd_Rate",
+           "I_DefAdd_Rate",
+           "I_MaxHPAdd_Rate",
+           "A_Accuracy",
+           "A_Block"
+          ],
+          "values": [
+           300,
+           300,
+           300,
+           25,
+           19
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293015"
+         }
+        ]
+       },
+       {
+        "level": 5,
+        "nodes": [
+         {
+          "id": "210293016",
+          "level": 5,
+          "grade": 1,
+          "group": "21029304",
+          "abilities": [
+           "B_MaxHp",
+           "C_Critical_Dam_Rate"
+          ],
+          "values": [
+           750,
+           1313
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293016"
+         },
+         {
+          "id": "210293017",
+          "level": 5,
+          "grade": 1,
+          "group": "21029304",
+          "abilities": [
+           "C_Critical_Rate",
+           "A_Accuracy"
+          ],
+          "values": [
+           563,
+           66
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293017"
+         },
+         {
+          "id": "210293018",
+          "level": 5,
+          "grade": 1,
+          "group": "21029304",
+          "abilities": [
+           "B_Def",
+           "C_Critical_ResRate",
+           "C_Critical_DamRes_Rate"
+          ],
+          "values": [
+           282,
+           375,
+           1125
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293018"
+         },
+         {
+          "id": "210293019",
+          "level": 5,
+          "grade": 1,
+          "group": "21029304",
+          "abilities": [
+           "B_Atk",
+           "A_Block"
+          ],
+          "values": [
+           375,
+           44
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293019"
+         },
+         {
+          "id": "210293020",
+          "level": 5,
+          "grade": 2,
+          "group": "21029304",
+          "abilities": [
+           "I_AtkAdd_Rate",
+           "I_DefAdd_Rate",
+           "I_MaxHPAdd_Rate",
+           "A_Accuracy",
+           "A_Block"
+          ],
+          "values": [
+           300,
+           300,
+           300,
+           46,
+           36
+          ],
+          "descriptionKey": "local_weapon_mastery_desc_210293020"
+         }
+        ]
+       }
+      ]
+     }
+    ]
+   },
+   "potentials": {
+    "SwordDual": [
+     {
+      "tier": 1,
+      "weaponType": "SwordDual",
+      "bonusFr": "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+      "bonusEn": "Increases Attack by [#1A7331]5%[-], Defense by [#1A7331]4%[-], and Max HP by [#1A7331]2%[-].",
+      "localKey": "Local_Skill_Common_Potential_Stat"
+     },
+     {
+      "tier": 2,
+      "weaponType": "SwordDual",
+      "bonusFr": "Renforce la puissance de l'attaque normale de [#1A7331]20%[-].",
+      "bonusEn": "Amplifies Normal Attack power by [#1A7331]20%[-].",
+      "localKey": "Local_Skill_Common_Potential_NormalAttack_Rate_03"
+     },
+     {
+      "tier": 3,
+      "weaponType": "SwordDual",
+      "bonusFr": "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+      "bonusEn": "Increases Attack by [#1A7331]10%[-], Defense by [#1A7331]8%[-], and Max HP by [#1A7331]3%[-].",
+      "localKey": "Local_Skill_Common_Potential_Stat"
+     },
+     {
+      "tier": 4,
+      "weaponType": "SwordDual",
+      "bonusFr": "Amplifie la puissance d'[#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] de [#1A7331]15%[-] et ses dégâts supplémentaires de [#1A7331]20%[-].",
+      "bonusEn": "Amplifies the [#3C22D6]Normal Attack: Shaper - Mirage Blade[-]'s power by [#1A7331]15%[-] and additional damage by [#1A7331]20%[-].",
+      "localKey": "Local_Skill_Calla_SwordDual_Potential_4_Desc"
+     },
+     {
+      "tier": 5,
+      "weaponType": "SwordDual",
+      "bonusFr": "La dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Déluge de lames[-] dure [#1A7331]3 s[-], inflige des dégâts égaux à [#1A7331]10%[-] de l'attaque aux ennemis à portée toutes les [#1A7331]0.2 s[-], et augmente les dégâts que leur inflige le héros de [#1A7331]30%[-] pendant [#1A7331]20 s[-].",
+      "bonusEn": "The final strike of [#3C22D6]Normal Attack: Shaper - Blade Volley[-] lasts [#1A7331]3 sec[-], inflicting damage equal to [#1A7331]10%[-] of Attack to enemies in range every [#1A7331]0.2 sec[-] and increasing their damage taken from the hero by [#1A7331]30%[-] for [#1A7331]20 sec[-]",
+      "localKey": "Local_Skill_Calla_SwordDual_Potential_5_Desc"
+     },
+     {
+      "tier": 6,
+      "weaponType": "SwordDual",
+      "bonusFr": "Immunise contre les réactions tant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif.\nRéduit les dégâts subis de [#1A7331]6%[-] par tranche de [#1A7331]1 cumul(s)[-] de [#0F5CD8]Mirage[-] sur le héros. (Max : [#1A7331]5 fois[-])",
+      "bonusEn": "Becomes immune to Reactions while [#0F5CD8]Mirror - Shaper[-] is active.\nDamage taken decreases by [#1A7331]6%[-] for every [#1A7331]1 stack(s)[-] of [#0F5CD8]Mirage[-] on the hero. (Max: [#1A7331]5 times[-])",
+      "localKey": "Local_Skill_Calla_SwordDual_Potential_6_Desc"
+     },
+     {
+      "tier": 7,
+      "weaponType": "SwordDual",
+      "bonusFr": "La dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Plongeon miroir[-] inflige [#1A7331]2 fois[-] des dégâts supplémentaires égaux à [#1A7331]65%[-] de l'attaque.\nCette attaque augmente les dégâts crit. de [#1A7331]10%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]6 fois[-])",
+      "bonusEn": "The final strike of [#3C22D6]Normal Attack: Shaper - Mirror Dive[-] inflicts additional damage equal to [#1A7331]65%[-] of Attack [#1A7331]2 time(s)[-].\nThis attack increases Crit Damage by [#1A7331]10%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]6 times[-])",
+      "localKey": "Local_Skill_Calla_SwordDual_Potential_7_Desc"
+     },
+     {
+      "tier": 8,
+      "weaponType": "SwordDual",
+      "bonusFr": "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+      "bonusEn": "Increases Attack by [#1A7331]15%[-], Defense by [#1A7331]12%[-], and Max HP by [#1A7331]5%[-].",
+      "localKey": "Local_Skill_Common_Potential_Stat"
+     },
+     {
+      "tier": 9,
+      "weaponType": "SwordDual",
+      "bonusFr": "Renforce la puissance de l'attaque normale de [#1A7331]30%[-].\nAmplifie la puissance d'[#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] de [#1A7331]35%[-] et ses dégâts supplémentaires de [#1A7331]40%[-].",
+      "bonusEn": "Amplifies Normal Attack power by [#1A7331]30%[-].\nAmplifies the [#3C22D6]Normal Attack: Shaper - Mirage Blade[-]'s power by [#1A7331]35%[-] and additional damage by [#1A7331]40%[-].",
+      "localKey": "Local_Skill_Calla_SwordDual_Potential_9_Desc"
+     },
+     {
+      "tier": 10,
+      "weaponType": "SwordDual",
+      "bonusFr": "Augmente le percement de défense de [#1A7331]15%[-] tant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif.\nLa dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] inflige [#1A7331]5 fois[-] des dégâts supplémentaires égaux à [#1A7331]90%[-] de l'attaque.\nCette attaque augmente les dégâts d'attaque normale de [#1A7331]5%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]20 fois[-])",
+      "bonusEn": "Increases Defense Shatter by [#1A7331]15%[-] while [#0F5CD8]Mirror - Shaper[-] is active.\nThe final strike of [#3C22D6]Normal Attack: Shaper - Mirage Blade[-] inflicts additional damage equal to [#1A7331]90%[-] of Attack [#1A7331]5 time(s)[-].\nThis attack increases Normal Attack damage by [#1A7331]5%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]20 times[-])",
+      "localKey": "Local_Skill_Calla_SwordDual_Potential_10_Desc"
+     }
+    ],
+    "Cudgel3c": [
+     {
+      "tier": 1,
+      "weaponType": "Cudgel3c",
+      "bonusFr": "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+      "bonusEn": "Increases Attack by [#1A7331]5%[-], Defense by [#1A7331]4%[-], and Max HP by [#1A7331]2%[-].",
+      "localKey": "Local_Skill_Common_Potential_Stat"
+     },
+     {
+      "tier": 2,
+      "weaponType": "Cudgel3c",
+      "bonusFr": "Renforce la puissance de la compétence normale de [#1A7331]30%[-].",
+      "bonusEn": "Amplifies Normal Skill power by [#1A7331]30%[-].",
+      "localKey": "Local_Skill_Common_Potential_NormalSkill_Rate"
+     },
+     {
+      "tier": 3,
+      "weaponType": "Cudgel3c",
+      "bonusFr": "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+      "bonusEn": "Increases Attack by [#1A7331]10%[-], Defense by [#1A7331]8%[-], and Max HP by [#1A7331]3%[-].",
+      "localKey": "Local_Skill_Common_Potential_Stat"
+     },
+     {
+      "tier": 4,
+      "weaponType": "Cudgel3c",
+      "bonusFr": "Renforce la puissance de l'attaque ultime de [#1A7331]30%[-] et ses dégâts supplémentaires de [#1A7331]40%[-].",
+      "bonusEn": "Amplifies Ultimate Move skill power by [#1A7331]30%[-] and additional damage by [#1A7331]40%[-].",
+      "localKey": "Local_Skill_Calla_Cudgel3c_Potential_4_Desc"
+     },
+     {
+      "tier": 5,
+      "weaponType": "Cudgel3c",
+      "bonusFr": "Ajoute [#1A7331]2[-] projectile(s) à l'attaque spéciale.",
+      "bonusEn": "Adds [#1A7331]2[-] projectile(s) to the Special Attack.",
+      "localKey": "Local_Skill_Calla_Cudgel3c_Potential_5_Desc"
+     },
+     {
+      "tier": 6,
+      "weaponType": "Cudgel3c",
+      "bonusFr": "Lorsqu'un héros allié active un [#0F5CD8]Déluge de Vent[-], amplifie le boost des dégâts crit. qui en découle de [#1A7331]30%[-].",
+      "bonusEn": "When an allied hero activates a [#0F5CD8]Wind Burst[-], the resulting Crit Damage boost further increases by [#1A7331]30%[-].",
+      "localKey": "Local_Skill_Calla_Cudgel3c_Potential_6_Desc"
+     },
+     {
+      "tier": 7,
+      "weaponType": "Cudgel3c",
+      "bonusFr": "Réduit les dégâts subis par le héros de [#1A7331]50%[-] et augmente l'efficacité de Déluge de Vent de [#1A7331]30%[-] pendant l'utilisation de la compétence normale.",
+      "bonusEn": "Decreases the hero's damage taken by [#1A7331]50%[-], and increases Wind Burst Efficiency by [#1A7331]30%[-] while using the Normal Skill.",
+      "localKey": "Local_Skill_Calla_Cudgel3c_Potential_7_Desc"
+     },
+     {
+      "tier": 8,
+      "weaponType": "Cudgel3c",
+      "bonusFr": "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+      "bonusEn": "Increases Attack by [#1A7331]15%[-], Defense by [#1A7331]12%[-], and Max HP by [#1A7331]5%[-].",
+      "localKey": "Local_Skill_Common_Potential_Stat"
+     },
+     {
+      "tier": 9,
+      "weaponType": "Cudgel3c",
+      "bonusFr": "Augmente les dégâts de Vent de tous les héros alliés de [#1A7331]65%[-] lorsque le passif de la barrière du héros est actif.",
+      "bonusEn": "Increases all allied heroes' Wind damage by [#1A7331]65%[-] while the hero's barrier passive is active.",
+      "localKey": "Local_Skill_Calla_Cudgel3c_Potential_9_Desc"
+     },
+     {
+      "tier": 10,
+      "weaponType": "Cudgel3c",
+      "bonusFr": "Lorsqu'un héros d'attribut Vent allié attaque un ennemi sous l'effet d'un [#0F5CD8]Déluge[-], augmente les dégâts crit. des héros d'attribut Vent de [#1A7331]4%[-] pendant [#1A7331]10 s[-]. (Max : [#1A7331]20 fois[-])\nLorsqu'un héros allié utilise une compétence de relève, celle-ci octroie [#0F5CD8]Vent glacial[-] à tous les héros alliés pendant [#1A7331]20 s[-].\n\n※[#0F5CD8]Vent glacial[-] : attaquer un ennemi avec un Déluge actif augmente l'attaque de Vent de [#1A7331]30%[-].",
+      "bonusEn": "When an allied Wind hero attacks an enemy with a [#0F5CD8]Burst[-] activated, it increases Wind heroes' Crit Damage by [#1A7331]4%[-] for [#1A7331]10 sec[-]. (Max: [#1A7331]20 times[-])\nWhen an allied hero uses a Tag Skill, it grants all allied heroes [#0F5CD8]Freezing Wind[-] for [#1A7331]20 sec[-].\n\n※[#0F5CD8]Freezing Wind[-]: Increases Wind Attack by [#1A7331]30%[-] when attacking an enemy with an active Burst.",
+      "localKey": "Local_Skill_Calla_Cudgel3c_Potential_10_Desc"
+     }
+    ],
+    "Gauntlets": [
+     {
+      "tier": 1,
+      "weaponType": "Gauntlets",
+      "bonusFr": "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+      "bonusEn": "Increases Attack by [#1A7331]5%[-], Defense by [#1A7331]4%[-], and Max HP by [#1A7331]2%[-].",
+      "localKey": "Local_Skill_Common_Potential_Stat"
+     },
+     {
+      "tier": 2,
+      "weaponType": "Gauntlets",
+      "bonusFr": "L'attaque normale augmente par ailleurs la jauge de Déluge de [#1A7331]10[-].",
+      "bonusEn": "The Normal Attack additionally increases the Burst Gauge by [#1A7331]10[-].",
+      "localKey": "Local_Skill_Calla_Gauntlets_Potential_2_Desc"
+     },
+     {
+      "tier": 3,
+      "weaponType": "Gauntlets",
+      "bonusFr": "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+      "bonusEn": "Increases Attack by [#1A7331]10%[-], Defense by [#1A7331]8%[-], and Max HP by [#1A7331]3%[-].",
+      "localKey": "Local_Skill_Common_Potential_Stat"
+     },
+     {
+      "tier": 4,
+      "weaponType": "Gauntlets",
+      "bonusFr": "Renforce la puissance de l'attaque ultime de [#1A7331]40%[-].",
+      "bonusEn": "Amplifies Ultimate Move skill power by [#1A7331]40%[-].",
+      "localKey": "Local_Skill_Common_Potential_UltimateSkill_Rate"
+     },
+     {
+      "tier": 5,
+      "weaponType": "Gauntlets",
+      "bonusFr": "L'utilisation de l'attaque spéciale génère [#1A7331]9[-] petite(s) bombe(s) autour du héros infligeant des dégâts égaux à [#1A7331]45%[-] de l'attaque.\nAugmente la jauge de Déluge des ennemis qui entrent en contact avec une petite bombe de [#1A7331]0.3%[-] de l'attaque. (Max : [#1A7331]50[-])\nLes petites bombes explosent automatiquement après [#1A7331]1.5 s[-] si aucun ennemi n'entre en contact avec.",
+      "bonusEn": "Using the Special Attack generates [#1A7331]9[-] small bomb(s) around the hero that inflict damage equal to [#1A7331]45%[-] of Attack.\nEnemies who make contact with a small bomb have their Burst Gauge increased by [#1A7331]0.3%[-] of Attack. (Max: [#1A7331]50[-])\nSmall bombs explode automatically after [#1A7331]1.5 sec[-], even if no enemy makes contact.",
+      "localKey": "Local_Skill_Calla_Gauntlets_Potential_5_Desc"
+     },
+     {
+      "tier": 6,
+      "weaponType": "Gauntlets",
+      "bonusFr": "Lorsqu'un héros allié active un [#0F5CD8]Déluge de Terre[-], augmente les chances crit. de tous les héros alliés d'attribut Terre de [#1A7331]20%[-] pendant [#1A7331]30 s[-].",
+      "bonusEn": "When an allied hero activates an [#0F5CD8]Earth Burst[-], it increases all allied Earth heroes' Crit Chance by [#1A7331]20%[-] for [#1A7331]30 sec[-].",
+      "localKey": "Local_Skill_Calla_Gauntlets_Potential_6_Desc"
+     },
+     {
+      "tier": 7,
+      "weaponType": "Gauntlets",
+      "bonusFr": "Ajoute [#1A7331]2[-] bombes toupies à la compétence normale.\nFaire mouche avec une bombe toupie augmente les dégâts de la compétence normale d'attribut Terre subis par l'ennemi de [#1A7331]20%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]3 fois[-])",
+      "bonusEn": "Adds [#1A7331]2[-] more spinning bomb tops to the Normal Skill.\nA successful spinning bomb top attack increases the enemy's Earth Normal Skill damage taken by [#1A7331]20%[-] for [#1A7331]30 sec[-]. (Max: [#1A7331]3 times[-])",
+      "localKey": "Local_Skill_Calla_Gauntlets_Potential_7_Desc"
+     },
+     {
+      "tier": 8,
+      "weaponType": "Gauntlets",
+      "bonusFr": "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+      "bonusEn": "Increases Attack by [#1A7331]15%[-], Defense by [#1A7331]12%[-], and Max HP by [#1A7331]5%[-].",
+      "localKey": "Local_Skill_Common_Potential_Stat"
+     },
+     {
+      "tier": 9,
+      "weaponType": "Gauntlets",
+      "bonusFr": "Chaque fois qu'un héros allié utilise une compétence normale, augmente les dégâts crit. de la compétence normale de tous les héros alliés d'attribut Terre de [#1A7331]7%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]10 fois[-])",
+      "bonusEn": "Each time an allied hero uses a Normal Skill, it increases all allied Earth heroes' Normal Skill Crit Damage by [#1A7331]7%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]10 times[-])",
+      "localKey": "Local_Skill_Calla_Gauntlets_Potential_9_Desc"
+     },
+     {
+      "tier": 10,
+      "weaponType": "Gauntlets",
+      "bonusFr": "L'utilisation de la compétence normale augmente le percement de défense de tous les héros alliés d'attribut Terre de [#1A7331]15%[-] pendant [#1A7331]30 s[-].\nLorsque les bombes toupies de l'attaque normale explosent, elles génèrent [#1A7331]3[-] petites bombes qui infligent des dégâts égaux à [#1A7331]80%[-] de l'attaque en explosant.",
+      "bonusEn": "Using the Normal Skill increases all allied Earth heroes' Defense Shatter by [#1A7331]15%[-] for [#1A7331]30 sec[-].\nWhen the Normal Skill's spinning bomb tops explode, they generate [#1A7331]3[-] small bombs that inflict damage equal to [#1A7331]80%[-] of Attack when exploding.",
+      "localKey": "Local_Skill_Calla_Gauntlets_Potential_10_Desc"
+     }
+    ]
+   },
+   "wikiSkills": [
+    {
+     "gameId": "calla_sworddual_normalatk_1",
+     "weaponType": "SwordDual",
+     "skillCategory": "NORMAL",
+     "categorie": "NORMAL",
+     "nomFr": "Double tranchant",
+     "nom": "Twin Edge",
+     "nameEn": "Twin Edge",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]232%[-] de l'attaque.\nSi le héros ne bénéficie pas de l'effet [#0F5CD8]Miroir - Contrefaçon[-], chaque coup porté à l'ennemi restaure la jauge de magie de [#1A7331]15[-].\nLa dernière frappe octroie l'effet [#0F5CD8]Contrefaçon - Épées doubles[-] au héros.\n1er coup : 26%\n2e coup : 29%\n3e coup : 46%\n4e coup : 58%\n5e coup : 73%\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]232%[-] of Attack.\nIf the hero doesn't have [#0F5CD8]Mirror - Shaper[-], each hit on the enemy restores the Magic Gauge by [#1A7331]15[-].\nThe final strike grants the hero [#0F5CD8]Shaper - Dual Swords[-].\n1st hit: 26%\n2nd hit: 29%\n3rd hit: 46%\n4th hit: 58%\n5th hit: 73%\n\n※[#0F5CD8]Shaper - Dual Swords[-]: Increases Wind damage by [#1A7331]30%[-]. The effect remains while the hero is in combat.",
+     "recharge": 0,
+     "cooldown": 0,
+     "icone": "Calla_Sworddual_Normalattack.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_sworddual_skill_e",
+     "weaponType": "SwordDual",
+     "skillCategory": "NORMAL_SKILL",
+     "categorie": "NORMAL_SKILL",
+     "nomFr": "Déluge de lames",
+     "nom": "Blade Volley",
+     "nameEn": "Blade Volley",
+     "descriptionFr": "Octroie [#0F5CD8]Contrefaçon - Épées doubles[-], puis inflige des dégâts égaux à [#1A7331]164%[-] de l'attaque.\nTant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif, [#3C22D6]Attaque normale : Contrefaçon - Déluge de lames[-] est utilisable.\n\n[#3C22D6]Contrefaçon - Déluge de lames[-]\nOctroie [#0F5CD8]Contrefaçon - Épée longue[-], puis inflige des dégâts égaux à [#1A7331]184%[-] de l'attaque.\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.\n※[#0F5CD8]Contrefaçon - Épée longue[-] : Augmente la défense crit. de [#1A7331]60%[-]. L'effet persiste tant que le héros est en combat.",
+     "descriptionEn": "Gains [#0F5CD8]Shaper - Dual Swords[-], then inflicts damage equal to [#1A7331]164%[-] of Attack.\nWhile [#0F5CD8]Mirror - Shaper[-] is active, [#3C22D6]Normal Attack: Shaper - Blade Volley[-] can be used.\n\n[#3C22D6]Shaper - Blade Volley[-]\nGains [#0F5CD8]Shaper - Longsword[-], then inflicts damage equal to [#1A7331]184%[-] of Attack.\n\n※[#0F5CD8]Shaper - Dual Swords[-]: Increases Wind damage by [#1A7331]30%[-]. The effect remains while the hero is in combat.\n※[#0F5CD8]Shaper - Longsword[-]: Increases Crit Defense by [#1A7331]60%[-]. The effect remains while the hero is in combat.",
+     "recharge": 19,
+     "cooldown": 19,
+     "icone": "Calla_SwordDual_NormalSkill.webp",
+     "sourceBehaviors": [
+      {
+       "id": "calla_sworddual_passive_buff_sworddual",
+       "buffs": [
+        {
+         "BuffTid": "302271003",
+         "FailBuffTid": "None",
+         "ConType": "EPackCondType::None",
+         "UseSyncConValue": false,
+         "BuffTime": -1,
+         "Rate": 0,
+         "BuffWithSkill": false,
+         "BuffCnt": 1,
+         "MyBuffTid": [],
+         "MyBuff_Delete": false,
+         "Calc_TargetAllBuff": false,
+         "TargetBuffTid": [],
+         "TargetBuff_Delete": false,
+         "TargetBuff_AddTimeRate": 0,
+         "Release_BuffTID": "None",
+         "String_Tid": "calla_sworddual_passive_buff_sworddual",
+         "Local_Key": "None"
+        }
+       ],
+       "attacks": []
+      }
+     ]
+    },
+    {
+     "gameId": "calla_sworddual_skill_tag",
+     "weaponType": "SwordDual",
+     "skillCategory": "TAG_SKILL",
+     "categorie": "TAG_SKILL",
+     "nomFr": "Crochet tranchant",
+     "nom": "Hook Slash",
+     "nameEn": "Hook Slash",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]131%[-] de l'attaque.",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]131%[-] of Attack.",
+     "recharge": 0,
+     "cooldown": 0,
+     "icone": "",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_sworddual_skill_r",
+     "weaponType": "SwordDual",
+     "skillCategory": "ULTIMATE",
+     "categorie": "ULTIMATE",
+     "nomFr": "Arsenal miroir",
+     "nom": "Mirror Arsenal",
+     "nameEn": "Mirror Arsenal",
+     "descriptionFr": "Octroie [#0F5CD8]Miroir - Contrefaçon[-] toutes les [#1A7331]1 s[-] pendant [#1A7331]10 s[-] en étant à portée. La zone dure [#1A7331]20 s[-].\nTant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif, [#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] est utilisable.\n\n[#3C22D6]Contrefaçon - Lame mirage[-]\nInflige des dégâts égaux à [#1A7331]294%[-] de l'attaque, puis octroie [#1A7331]1 cumul(s)[-] de [#0F5CD8]Mirage[-]. (Max : [#1A7331]5 fois[-])\nSi le héros bénéficie des effets [#0F5CD8]Contrefaçon - Épées doubles[-], [#0F5CD8]Contrefaçon - Épée longue[-] et [#0F5CD8]Contrefaçon - Hache[-], la compétence inflige des dégâts supplémentaires égaux à [#1A7331]310%[-] de l'attaque, puis retire l'effet.\n\n※[#0F5CD8]Mirage[-] : augmente les dégâts crit. des attaques normales de [#1A7331]15%[-]. L'effet persiste tant que le héros est en combat.",
+     "descriptionEn": "Gains [#0F5CD8]Mirror - Shaper[-] every [#1A7331]1 sec[-] for [#1A7331]10 sec[-] while in range, zone lasting [#1A7331]20 sec[-].\nWhile [#0F5CD8]Mirror - Shaper[-] is active, [#3C22D6]Normal Attack: Shaper - Mirage Blade[-] can be used.\n\n[#3C22D6]Shaper - Mirage Blade[-]\nInflicts damage equal to [#1A7331]294%[-] of Attack, then gains [#1A7331]1 stack(s)[-] of [#0F5CD8]Mirage[-]. (Max: [#1A7331]5 times[-])\nIf the hero has [#0F5CD8]Shaper - Dual Swords[-], [#0F5CD8]Shaper - Axe[-], and [#0F5CD8]Shaper - Longsword[-], the skill inflicts additional damage equal to [#1A7331]310%[-] of Attack, then removes the effect.\n\n※[#0F5CD8]Mirage[-]: Increases Normal Attack Crit Damage by [#1A7331]15%[-]. The effect remains while the hero is in combat.",
+     "recharge": 10,
+     "cooldown": 10,
+     "icone": "Calla_SwordDual_UltimateSkill.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_sworddual_skill_q",
+     "weaponType": "SwordDual",
+     "skillCategory": "ACTIVE_THIRD",
+     "categorie": "ACTIVE_THIRD",
+     "nomFr": "Plongeon miroir",
+     "nom": "Mirror Dive",
+     "nameEn": "Mirror Dive",
+     "descriptionFr": "Octroie [#0F5CD8]Contrefaçon - Épées doubles[-], puis inflige des dégâts égaux à [#1A7331]115%[-] de l'attaque.\nTant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif, [#3C22D6]Attaque normale : Contrefaçon - Plongeon miroir[-] est utilisable.\n\n[#3C22D6]Contrefaçon - Plongeon miroir[-]\nOctroie [#0F5CD8]Contrefaçon - Hache[-], puis inflige des dégâts égaux à [#1A7331]137%[-] de l'attaque.\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.\n※[#0F5CD8]Contrefaçon - Hache[-] : augmente la résistance crit. de [#1A7331]20%[-] L'effet persiste tant que le héros est en combat.",
+     "descriptionEn": "Gains [#0F5CD8]Shaper - Dual Swords[-], then inflicts damage equal to [#1A7331]115%[-] of Attack.\nWhile [#0F5CD8]Mirror - Shaper[-] is active, [#3C22D6]Normal Attack: Shaper - Mirror Dive[-] can be used.\n\n[#3C22D6]Shaper - Mirror Dive[-]\nGains [#0F5CD8]Shaper - Axe[-], then inflicts damage equal to [#1A7331]137%[-] of Attack.\n\n※[#0F5CD8]Shaper - Dual Swords[-]: Increases Wind damage by [#1A7331]30%[-]. The effect remains while the hero is in combat.\n※[#0F5CD8]Shaper - Axe[-]: Increases Crit Resistance by [#1A7331]20%[-]. The effect remains while the hero is in combat.",
+     "recharge": 13,
+     "cooldown": 13,
+     "icone": "Calla_SwordDual_ActiveThird.webp",
+     "sourceBehaviors": [
+      {
+       "id": "calla_sworddual_passive_buff_sworddual",
+       "buffs": [
+        {
+         "BuffTid": "302271003",
+         "FailBuffTid": "None",
+         "ConType": "EPackCondType::None",
+         "UseSyncConValue": false,
+         "BuffTime": -1,
+         "Rate": 0,
+         "BuffWithSkill": false,
+         "BuffCnt": 1,
+         "MyBuffTid": [],
+         "MyBuff_Delete": false,
+         "Calc_TargetAllBuff": false,
+         "TargetBuffTid": [],
+         "TargetBuff_Delete": false,
+         "TargetBuff_AddTimeRate": 0,
+         "Release_BuffTID": "None",
+         "String_Tid": "calla_sworddual_passive_buff_sworddual",
+         "Local_Key": "None"
+        }
+       ],
+       "attacks": []
+      }
+     ]
+    },
+    {
+     "gameId": "calla_sworddual_skillpassive",
+     "weaponType": "SwordDual",
+     "skillCategory": "NONE",
+     "categorie": "NONE",
+     "nomFr": "Copieuse",
+     "nom": "Copycat",
+     "nameEn": "Copycat",
+     "descriptionFr": "Attaquez un ennemi augmente les chances crit. du héros de [#1A7331]40%[-] de la résistance crit. (Max : [#1A7331]30%[-]) et ses dégâts crit. de [#1A7331]35%[-] de la défense crit. (Max : [#1A7331]70%[-]).\nSi le héros bénéficie des effets [#0F5CD8]Contrefaçon - Épées doubles[-], [#0F5CD8]Contrefaçon - Épée longue[-] et [#0F5CD8]Contrefaçon - Hache[-], les temps de recharge de toutes ses compétences sont réinitialisés.\nÀ chaque octroi de l'effet [#0F5CD8]Contrefaçon - Épées doubles[-], augmente les dégâts d'attaque normale du héros de [#1A7331]10%[-] et sa perforation de [#1A7331]6[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]10 fois[-])",
+     "descriptionEn": "Attacking an enemy increases the hero's Crit Chance by [#1A7331]40%[-] of Crit Resistance (Max: [#1A7331]30%[-]) and Crit Damage by [#1A7331]35%[-] of Crit Defense (Max: [#1A7331]70%[-]).\nIf the hero has [#0F5CD8]Shaper - Dual Swords[-], [#0F5CD8]Shaper - Axe[-] and [#0F5CD8]Shaper - Longsword[-], all of the hero's skill cooldowns are reset.\nEach time [#0F5CD8]Shaper - Dual Swords[-] is gained, the hero's Normal Attack damage increases by [#1A7331]10%[-] and Pierce increases by [#1A7331]6[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]10 times[-])",
+     "recharge": 0,
+     "cooldown": 0,
+     "icone": "Calla_SwordDual_Passive.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_cudgel3c_normalatk_1",
+     "weaponType": "Cudgel3c",
+     "skillCategory": "NORMAL",
+     "categorie": "NORMAL",
+     "nomFr": "Fauchage du vent",
+     "nom": "Gale Sweep",
+     "nameEn": "Gale Sweep",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]103%[-] de l'attaque.\n1er coup : 16%\n2e coup : 17%\n3e coup : 26%\n4e coup : 44%",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]103%[-] of Attack.\n1st hit: 16%\n2nd hit: 17%\n3rd hit: 26%\n4th hit: 44%",
+     "recharge": 0,
+     "cooldown": 0,
+     "icone": "Calla_Cudgel3c_Normalattack.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_cudgel3c_skill_e_start",
+     "weaponType": "Cudgel3c",
+     "skillCategory": "NORMAL_SKILL",
+     "categorie": "NORMAL_SKILL",
+     "nomFr": "Tourbillon",
+     "nom": "Whirlwind",
+     "nameEn": "Whirlwind",
+     "descriptionFr": "Immunise contre les réactions pendant l'utilisation de la compétence normale.\nInflige des dégâts égaux à [#1A7331]191%[-] de l'attaque. Chaque coup porté augmente la jauge de Déluge de [#1A7331]0.2%[-] de l'attaque. (Max : [#1A7331]40[-])",
+     "descriptionEn": "Becomes immune to Reactions while using the Normal Skill.\nInflicts damage equal to [#1A7331]191%[-] of Attack. Each hit increases the Burst Gauge by [#1A7331]0.2%[-] of Attack. (Max: [#1A7331]40[-])",
+     "recharge": 23,
+     "cooldown": 23,
+     "icone": "Calla_Cudgel3c_NormalSkill.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_cudgel3c_skill_tag",
+     "weaponType": "Cudgel3c",
+     "skillCategory": "TAG_SKILL",
+     "categorie": "TAG_SKILL",
+     "nomFr": "Piqué de l'hirondelle",
+     "nom": "Swallow Dive",
+     "nameEn": "Swallow Dive",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]87%[-] de l'attaque.",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]87%[-] of Attack.",
+     "recharge": 0,
+     "cooldown": 0,
+     "icone": "",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_cudgel3c_skill_r",
+     "weaponType": "Cudgel3c",
+     "skillCategory": "ULTIMATE",
+     "categorie": "ULTIMATE",
+     "nomFr": "Bourrasque entravante",
+     "nom": "Gale Snare",
+     "nameEn": "Gale Snare",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]290%[-] de l'attaque. Chaque coup porté augmente la jauge de Déluge de [#1A7331]0.5%[-] de l'attaque. (Max : [#1A7331]100[-])\nLa dernière frappe inflige des dégâts supplémentaires égaux à [#1A7331]350%[-] de l'attaque aux ennemis sous l'effet d'un [#0F5CD8]Déluge de Vent[-].",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]290%[-] of Attack. Each hit increases the Burst Gauge by [#1A7331]0.5%[-] of Attack. (Max: [#1A7331]100[-])\nThe final strike inflicts additional damage equal to [#1A7331]350%[-] of Attack against enemies with an active [#0F5CD8]Wind Burst[-].",
+     "recharge": 10,
+     "cooldown": 10,
+     "icone": "Calla_Cudgel3c_UltimateSkill.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_cudgel3c_skill_q",
+     "weaponType": "Cudgel3c",
+     "skillCategory": "ACTIVE_THIRD",
+     "categorie": "ACTIVE_THIRD",
+     "nomFr": "Moulinet",
+     "nom": "Windmill",
+     "nameEn": "Windmill",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]124%[-] de l'attaque. Chaque coup porté inflige [#1A7331]1 cumul(s)[-] de [#0F5CD8]Vent violent[-] pendant [#1A7331]40 s[-]. (Max : [#1A7331]50 fois[-])\n\n※[#0F5CD8]Vent violent[-] : augmente les dégâts de [#0F5CD8]Déluge de Vent[-] actif de [#1A7331]10%[-] par tranche de [#1A7331]1 cumul(s)[-].",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]124%[-] of Attack. Each hit inflicts [#1A7331]1 stack(s)[-] of [#0F5CD8]Bitter Wind[-] for [#1A7331]40 sec[-]. (Max: [#1A7331]50 times[-])\n\n※[#0F5CD8]Bitter Wind[-]: Increases active [#0F5CD8]Wind Burst[-] damage by [#1A7331]10%[-] for every [#1A7331]1 stack(s)[-].",
+     "recharge": 18,
+     "cooldown": 18,
+     "icone": "Calla_Cudgel3c_ActiveThird.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_cudgel3c_skillpassive",
+     "weaponType": "Cudgel3c",
+     "skillCategory": "NONE",
+     "categorie": "NONE",
+     "nomFr": "Acrobate aérienne",
+     "nom": "Wind Acrobat",
+     "nameEn": "Wind Acrobat",
+     "descriptionFr": "Lorsqu'un héros allié attaque un ennemi affecté par [#0F5CD8]Vent violent[-], augmente les chances crit. de tous les héros alliés de [#1A7331]15%[-].\nLorsqu'un héros allié active un [#0F5CD8]Déluge de Vent[-], augmente les dégâts crit. de tous les héros alliés d'attribut Vent de [#1A7331]50%[-] pendant [#1A7331]30 s[-], et octroie à tous les héros alliés des [#0F5CD8]barrières[-] égales à [#1A7331]250%[-] de l'attaque du héros pendant [#1A7331]20 s[-].",
+     "descriptionEn": "When an allied hero attacks an enemy affected by [#0F5CD8]Bitter Wind[-], all allied heroes' Crit Chance increases by [#1A7331]15%[-].\nWhen an allied hero activates a [#0F5CD8]Wind Burst[-], all allied Wind heroes' Crit Damage increases by [#1A7331]50%[-] for [#1A7331]30 sec[-], and all allied heroes receive [#0F5CD8]barriers[-] equal to [#1A7331]250%[-] of the hero's Attack for [#1A7331]20 sec[-].",
+     "recharge": 0,
+     "cooldown": 0,
+     "icone": "Calla_Cudgel3c_Passive.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_gauntlets_normalatk_1",
+     "weaponType": "Gauntlets",
+     "skillCategory": "NORMAL",
+     "categorie": "NORMAL",
+     "nomFr": "Rafale explosive",
+     "nom": "Combo Blast",
+     "nameEn": "Combo Blast",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]107%[-] de l'attaque.\n1er coup : 16%\n2e coup : 17%\n3e coup : 28%\n4e coup : 46%",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]107%[-] of Attack.\n1st hit: 16%\n2nd hit: 17%\n3rd hit: 28%\n4th hit: 46%",
+     "recharge": 0,
+     "cooldown": 0,
+     "icone": "Calla_Gauntlets_Normalattack.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_gauntlets_skill_e",
+     "weaponType": "Gauntlets",
+     "skillCategory": "NORMAL_SKILL",
+     "categorie": "NORMAL_SKILL",
+     "nomFr": "Crochet explosif",
+     "nom": "Hook Blast",
+     "nameEn": "Hook Blast",
+     "descriptionFr": "local_skill_calla_gauntlets_normalskill_desc",
+     "descriptionEn": "local_skill_calla_gauntlets_normalskill_desc",
+     "recharge": 26,
+     "cooldown": 26,
+     "icone": "Calla_Gauntlets_NormalSkill.webp",
+     "sourceBehaviors": [
+      {
+       "id": "calla_gauntlets_skill_e_buff",
+       "buffs": [
+        {
+         "BuffTid": "302273013",
+         "FailBuffTid": "None",
+         "ConType": "EPackCondType::None",
+         "UseSyncConValue": false,
+         "BuffTime": 40000,
+         "Rate": 0,
+         "BuffWithSkill": false,
+         "BuffCnt": 1,
+         "MyBuffTid": [],
+         "MyBuff_Delete": false,
+         "Calc_TargetAllBuff": false,
+         "TargetBuffTid": [],
+         "TargetBuff_Delete": false,
+         "TargetBuff_AddTimeRate": 0,
+         "Release_BuffTID": "None",
+         "String_Tid": "calla_gauntlets_skill_e_buff",
+         "Local_Key": "None"
+        }
+       ],
+       "attacks": []
+      }
+     ]
+    },
+    {
+     "gameId": "calla_gauntlets_skill_tag",
+     "weaponType": "Gauntlets",
+     "skillCategory": "TAG_SKILL",
+     "categorie": "TAG_SKILL",
+     "nomFr": "Bombardement",
+     "nom": "Bomb Drop",
+     "nameEn": "Bomb Drop",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]85%[-] de l'attaque.",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]85%[-] of Attack.",
+     "recharge": 0,
+     "cooldown": 0,
+     "icone": "",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_gauntlets_skill_r",
+     "weaponType": "Gauntlets",
+     "skillCategory": "ULTIMATE",
+     "categorie": "ULTIMATE",
+     "nomFr": "Explosion suprême",
+     "nom": "Blast Top",
+     "nameEn": "Blast Top",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]300%[-] de l'attaque. Chaque coup porté augmente la jauge de Déluge de [#1A7331]2%[-] de l'attaque. (Max : [#1A7331]300[-])\nChaque coup de l'attaque augmente les dégâts de la compétence normale d'attribut Terre subis de [#1A7331]50%[-] pendant [#1A7331]30 s[-].",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]300%[-] of Attack. Each hit increases the Burst Gauge by [#1A7331]2%[-] of Attack. (Max: [#1A7331]300[-])\nEach hit of the attack increases Earth Normal Skill damage taken by [#1A7331]50%[-] for [#1A7331]30 sec[-].",
+     "recharge": 10,
+     "cooldown": 10,
+     "icone": "Calla_Gauntlets_UltimateSkill.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_gauntlets_skill_q_1",
+     "weaponType": "Gauntlets",
+     "skillCategory": "ACTIVE_THIRD",
+     "categorie": "ACTIVE_THIRD",
+     "nomFr": "Mine à impact",
+     "nom": "Impact Mine",
+     "nameEn": "Impact Mine",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]150%[-] de l'attaque. La première frappe génère [#1A7331]5[-] bombe(s) autour du héros.\nAugmente la jauge de Déluge des ennemis qui entrent en contact avec une bombe de [#1A7331]1.5%[-] de l'attaque (max : [#1A7331]200[-]) et leur inflige des dégâts égaux à [#1A7331]30%[-] de l'attaque.\nLes bombes explosent automatiquement après [#1A7331]1.5 s[-] si aucun ennemi n'entre en contact avec.\n1er coup : 66%\n2e coup : 84%",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]150%[-] of Attack. The first strike generates [#1A7331]5[-] bomb(s) around the hero.\nEnemies who make contact with a bomb have their Burst Gauge increased by [#1A7331]1.5%[-] of Attack (Max: [#1A7331]200[-]), and take damage equal to [#1A7331]30%[-] of Attack.\nBombs explode automatically after [#1A7331]1.5 sec[-], even if no enemy makes contact.\n1st hit: 66%\n2nd hit: 84%",
+     "recharge": 20,
+     "cooldown": 20,
+     "icone": "Calla_Gauntlets_ActiveThird_1.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_gauntlets_skillpassive",
+     "weaponType": "Gauntlets",
+     "skillCategory": "NONE",
+     "categorie": "NONE",
+     "nomFr": "Roublarde",
+     "nom": "Trickster",
+     "nameEn": "Trickster",
+     "descriptionFr": "Augmente l'attaque de Terre à hauteur de [#1A7331]10%[-] de l'attaque du héros pendant [#1A7331]30 s[-] lorsqu'un héros allié active un [#0F5CD8]Déluge de Terre[-]. (Max : [#1A7331]3000[-])",
+     "descriptionEn": "Earth Attack increases by [#1A7331]10%[-] of the hero's Attack for [#1A7331]30 sec[-] when an allied hero activates an [#0F5CD8]Earth Burst[-]. (Max: [#1A7331]3000[-])",
+     "recharge": 0,
+     "cooldown": 0,
+     "icone": "Calla_Gauntlets_Passive.webp",
+     "sourceBehaviors": []
+    }
+   ],
+   "calculatorSkills": [
+    {
+     "gameId": "calla_sworddual_normalatk_1",
+     "weaponType": "SwordDual",
+     "skillCategory": "NORMAL",
+     "categorie": "NORMAL",
+     "nomFr": "Double tranchant",
+     "nom": "Twin Edge",
+     "nameEn": "Twin Edge",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]232%[-] de l'attaque.\nSi le héros ne bénéficie pas de l'effet [#0F5CD8]Miroir - Contrefaçon[-], chaque coup porté à l'ennemi restaure la jauge de magie de [#1A7331]15[-].\nLa dernière frappe octroie l'effet [#0F5CD8]Contrefaçon - Épées doubles[-] au héros.\n1er coup : 26%\n2e coup : 29%\n3e coup : 46%\n4e coup : 58%\n5e coup : 73%\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]232%[-] of Attack.\nIf the hero doesn't have [#0F5CD8]Mirror - Shaper[-], each hit on the enemy restores the Magic Gauge by [#1A7331]15[-].\nThe final strike grants the hero [#0F5CD8]Shaper - Dual Swords[-].\n1st hit: 26%\n2nd hit: 29%\n3rd hit: 46%\n4th hit: 58%\n5th hit: 73%\n\n※[#0F5CD8]Shaper - Dual Swords[-]: Increases Wind damage by [#1A7331]30%[-]. The effect remains while the hero is in combat.",
+     "recharge": 0,
+     "cooldown": 0,
+     "icone": "Calla_Sworddual_Normalattack.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_sworddual_skill_e",
+     "weaponType": "SwordDual",
+     "skillCategory": "NORMAL_SKILL",
+     "categorie": "NORMAL_SKILL",
+     "nomFr": "Déluge de lames",
+     "nom": "Blade Volley",
+     "nameEn": "Blade Volley",
+     "descriptionFr": "Octroie [#0F5CD8]Contrefaçon - Épées doubles[-], puis inflige des dégâts égaux à [#1A7331]164%[-] de l'attaque.\nTant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif, [#3C22D6]Attaque normale : Contrefaçon - Déluge de lames[-] est utilisable.\n\n[#3C22D6]Contrefaçon - Déluge de lames[-]\nOctroie [#0F5CD8]Contrefaçon - Épée longue[-], puis inflige des dégâts égaux à [#1A7331]184%[-] de l'attaque.\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.\n※[#0F5CD8]Contrefaçon - Épée longue[-] : Augmente la défense crit. de [#1A7331]60%[-]. L'effet persiste tant que le héros est en combat.",
+     "descriptionEn": "Gains [#0F5CD8]Shaper - Dual Swords[-], then inflicts damage equal to [#1A7331]164%[-] of Attack.\nWhile [#0F5CD8]Mirror - Shaper[-] is active, [#3C22D6]Normal Attack: Shaper - Blade Volley[-] can be used.\n\n[#3C22D6]Shaper - Blade Volley[-]\nGains [#0F5CD8]Shaper - Longsword[-], then inflicts damage equal to [#1A7331]184%[-] of Attack.\n\n※[#0F5CD8]Shaper - Dual Swords[-]: Increases Wind damage by [#1A7331]30%[-]. The effect remains while the hero is in combat.\n※[#0F5CD8]Shaper - Longsword[-]: Increases Crit Defense by [#1A7331]60%[-]. The effect remains while the hero is in combat.",
+     "recharge": 19,
+     "cooldown": 19,
+     "icone": "Calla_SwordDual_NormalSkill.webp",
+     "sourceBehaviors": [
+      {
+       "id": "calla_sworddual_passive_buff_sworddual",
+       "buffs": [
+        {
+         "BuffTid": "302271003",
+         "FailBuffTid": "None",
+         "ConType": "EPackCondType::None",
+         "UseSyncConValue": false,
+         "BuffTime": -1,
+         "Rate": 0,
+         "BuffWithSkill": false,
+         "BuffCnt": 1,
+         "MyBuffTid": [],
+         "MyBuff_Delete": false,
+         "Calc_TargetAllBuff": false,
+         "TargetBuffTid": [],
+         "TargetBuff_Delete": false,
+         "TargetBuff_AddTimeRate": 0,
+         "Release_BuffTID": "None",
+         "String_Tid": "calla_sworddual_passive_buff_sworddual",
+         "Local_Key": "None"
+        }
+       ],
+       "attacks": []
+      }
+     ]
+    },
+    {
+     "gameId": "calla_sworddual_skill_tag",
+     "weaponType": "SwordDual",
+     "skillCategory": "TAG_SKILL",
+     "categorie": "TAG_SKILL",
+     "nomFr": "Crochet tranchant",
+     "nom": "Hook Slash",
+     "nameEn": "Hook Slash",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]131%[-] de l'attaque.",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]131%[-] of Attack.",
+     "recharge": 0,
+     "cooldown": 0,
+     "icone": "",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_sworddual_skill_r",
+     "weaponType": "SwordDual",
+     "skillCategory": "ULTIMATE",
+     "categorie": "ULTIMATE",
+     "nomFr": "Arsenal miroir",
+     "nom": "Mirror Arsenal",
+     "nameEn": "Mirror Arsenal",
+     "descriptionFr": "Octroie [#0F5CD8]Miroir - Contrefaçon[-] toutes les [#1A7331]1 s[-] pendant [#1A7331]10 s[-] en étant à portée. La zone dure [#1A7331]20 s[-].\nTant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif, [#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] est utilisable.\n\n[#3C22D6]Contrefaçon - Lame mirage[-]\nInflige des dégâts égaux à [#1A7331]294%[-] de l'attaque, puis octroie [#1A7331]1 cumul(s)[-] de [#0F5CD8]Mirage[-]. (Max : [#1A7331]5 fois[-])\nSi le héros bénéficie des effets [#0F5CD8]Contrefaçon - Épées doubles[-], [#0F5CD8]Contrefaçon - Épée longue[-] et [#0F5CD8]Contrefaçon - Hache[-], la compétence inflige des dégâts supplémentaires égaux à [#1A7331]310%[-] de l'attaque, puis retire l'effet.\n\n※[#0F5CD8]Mirage[-] : augmente les dégâts crit. des attaques normales de [#1A7331]15%[-]. L'effet persiste tant que le héros est en combat.",
+     "descriptionEn": "Gains [#0F5CD8]Mirror - Shaper[-] every [#1A7331]1 sec[-] for [#1A7331]10 sec[-] while in range, zone lasting [#1A7331]20 sec[-].\nWhile [#0F5CD8]Mirror - Shaper[-] is active, [#3C22D6]Normal Attack: Shaper - Mirage Blade[-] can be used.\n\n[#3C22D6]Shaper - Mirage Blade[-]\nInflicts damage equal to [#1A7331]294%[-] of Attack, then gains [#1A7331]1 stack(s)[-] of [#0F5CD8]Mirage[-]. (Max: [#1A7331]5 times[-])\nIf the hero has [#0F5CD8]Shaper - Dual Swords[-], [#0F5CD8]Shaper - Axe[-], and [#0F5CD8]Shaper - Longsword[-], the skill inflicts additional damage equal to [#1A7331]310%[-] of Attack, then removes the effect.\n\n※[#0F5CD8]Mirage[-]: Increases Normal Attack Crit Damage by [#1A7331]15%[-]. The effect remains while the hero is in combat.",
+     "recharge": 10,
+     "cooldown": 10,
+     "icone": "Calla_SwordDual_UltimateSkill.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_sworddual_skill_q",
+     "weaponType": "SwordDual",
+     "skillCategory": "ACTIVE_THIRD",
+     "categorie": "ACTIVE_THIRD",
+     "nomFr": "Plongeon miroir",
+     "nom": "Mirror Dive",
+     "nameEn": "Mirror Dive",
+     "descriptionFr": "Octroie [#0F5CD8]Contrefaçon - Épées doubles[-], puis inflige des dégâts égaux à [#1A7331]115%[-] de l'attaque.\nTant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif, [#3C22D6]Attaque normale : Contrefaçon - Plongeon miroir[-] est utilisable.\n\n[#3C22D6]Contrefaçon - Plongeon miroir[-]\nOctroie [#0F5CD8]Contrefaçon - Hache[-], puis inflige des dégâts égaux à [#1A7331]137%[-] de l'attaque.\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.\n※[#0F5CD8]Contrefaçon - Hache[-] : augmente la résistance crit. de [#1A7331]20%[-] L'effet persiste tant que le héros est en combat.",
+     "descriptionEn": "Gains [#0F5CD8]Shaper - Dual Swords[-], then inflicts damage equal to [#1A7331]115%[-] of Attack.\nWhile [#0F5CD8]Mirror - Shaper[-] is active, [#3C22D6]Normal Attack: Shaper - Mirror Dive[-] can be used.\n\n[#3C22D6]Shaper - Mirror Dive[-]\nGains [#0F5CD8]Shaper - Axe[-], then inflicts damage equal to [#1A7331]137%[-] of Attack.\n\n※[#0F5CD8]Shaper - Dual Swords[-]: Increases Wind damage by [#1A7331]30%[-]. The effect remains while the hero is in combat.\n※[#0F5CD8]Shaper - Axe[-]: Increases Crit Resistance by [#1A7331]20%[-]. The effect remains while the hero is in combat.",
+     "recharge": 13,
+     "cooldown": 13,
+     "icone": "Calla_SwordDual_ActiveThird.webp",
+     "sourceBehaviors": [
+      {
+       "id": "calla_sworddual_passive_buff_sworddual",
+       "buffs": [
+        {
+         "BuffTid": "302271003",
+         "FailBuffTid": "None",
+         "ConType": "EPackCondType::None",
+         "UseSyncConValue": false,
+         "BuffTime": -1,
+         "Rate": 0,
+         "BuffWithSkill": false,
+         "BuffCnt": 1,
+         "MyBuffTid": [],
+         "MyBuff_Delete": false,
+         "Calc_TargetAllBuff": false,
+         "TargetBuffTid": [],
+         "TargetBuff_Delete": false,
+         "TargetBuff_AddTimeRate": 0,
+         "Release_BuffTID": "None",
+         "String_Tid": "calla_sworddual_passive_buff_sworddual",
+         "Local_Key": "None"
+        }
+       ],
+       "attacks": []
+      }
+     ]
+    },
+    {
+     "gameId": "calla_cudgel3c_normalatk_1",
+     "weaponType": "Cudgel3c",
+     "skillCategory": "NORMAL",
+     "categorie": "NORMAL",
+     "nomFr": "Fauchage du vent",
+     "nom": "Gale Sweep",
+     "nameEn": "Gale Sweep",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]103%[-] de l'attaque.\n1er coup : 16%\n2e coup : 17%\n3e coup : 26%\n4e coup : 44%",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]103%[-] of Attack.\n1st hit: 16%\n2nd hit: 17%\n3rd hit: 26%\n4th hit: 44%",
+     "recharge": 0,
+     "cooldown": 0,
+     "icone": "Calla_Cudgel3c_Normalattack.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_cudgel3c_skill_e_start",
+     "weaponType": "Cudgel3c",
+     "skillCategory": "NORMAL_SKILL",
+     "categorie": "NORMAL_SKILL",
+     "nomFr": "Tourbillon",
+     "nom": "Whirlwind",
+     "nameEn": "Whirlwind",
+     "descriptionFr": "Immunise contre les réactions pendant l'utilisation de la compétence normale.\nInflige des dégâts égaux à [#1A7331]191%[-] de l'attaque. Chaque coup porté augmente la jauge de Déluge de [#1A7331]0.2%[-] de l'attaque. (Max : [#1A7331]40[-])",
+     "descriptionEn": "Becomes immune to Reactions while using the Normal Skill.\nInflicts damage equal to [#1A7331]191%[-] of Attack. Each hit increases the Burst Gauge by [#1A7331]0.2%[-] of Attack. (Max: [#1A7331]40[-])",
+     "recharge": 23,
+     "cooldown": 23,
+     "icone": "Calla_Cudgel3c_NormalSkill.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_cudgel3c_skill_tag",
+     "weaponType": "Cudgel3c",
+     "skillCategory": "TAG_SKILL",
+     "categorie": "TAG_SKILL",
+     "nomFr": "Piqué de l'hirondelle",
+     "nom": "Swallow Dive",
+     "nameEn": "Swallow Dive",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]87%[-] de l'attaque.",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]87%[-] of Attack.",
+     "recharge": 0,
+     "cooldown": 0,
+     "icone": "",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_cudgel3c_skill_r",
+     "weaponType": "Cudgel3c",
+     "skillCategory": "ULTIMATE",
+     "categorie": "ULTIMATE",
+     "nomFr": "Bourrasque entravante",
+     "nom": "Gale Snare",
+     "nameEn": "Gale Snare",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]290%[-] de l'attaque. Chaque coup porté augmente la jauge de Déluge de [#1A7331]0.5%[-] de l'attaque. (Max : [#1A7331]100[-])\nLa dernière frappe inflige des dégâts supplémentaires égaux à [#1A7331]350%[-] de l'attaque aux ennemis sous l'effet d'un [#0F5CD8]Déluge de Vent[-].",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]290%[-] of Attack. Each hit increases the Burst Gauge by [#1A7331]0.5%[-] of Attack. (Max: [#1A7331]100[-])\nThe final strike inflicts additional damage equal to [#1A7331]350%[-] of Attack against enemies with an active [#0F5CD8]Wind Burst[-].",
+     "recharge": 10,
+     "cooldown": 10,
+     "icone": "Calla_Cudgel3c_UltimateSkill.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_cudgel3c_skill_q",
+     "weaponType": "Cudgel3c",
+     "skillCategory": "ACTIVE_THIRD",
+     "categorie": "ACTIVE_THIRD",
+     "nomFr": "Moulinet",
+     "nom": "Windmill",
+     "nameEn": "Windmill",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]124%[-] de l'attaque. Chaque coup porté inflige [#1A7331]1 cumul(s)[-] de [#0F5CD8]Vent violent[-] pendant [#1A7331]40 s[-]. (Max : [#1A7331]50 fois[-])\n\n※[#0F5CD8]Vent violent[-] : augmente les dégâts de [#0F5CD8]Déluge de Vent[-] actif de [#1A7331]10%[-] par tranche de [#1A7331]1 cumul(s)[-].",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]124%[-] of Attack. Each hit inflicts [#1A7331]1 stack(s)[-] of [#0F5CD8]Bitter Wind[-] for [#1A7331]40 sec[-]. (Max: [#1A7331]50 times[-])\n\n※[#0F5CD8]Bitter Wind[-]: Increases active [#0F5CD8]Wind Burst[-] damage by [#1A7331]10%[-] for every [#1A7331]1 stack(s)[-].",
+     "recharge": 18,
+     "cooldown": 18,
+     "icone": "Calla_Cudgel3c_ActiveThird.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_gauntlets_normalatk_1",
+     "weaponType": "Gauntlets",
+     "skillCategory": "NORMAL",
+     "categorie": "NORMAL",
+     "nomFr": "Rafale explosive",
+     "nom": "Combo Blast",
+     "nameEn": "Combo Blast",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]107%[-] de l'attaque.\n1er coup : 16%\n2e coup : 17%\n3e coup : 28%\n4e coup : 46%",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]107%[-] of Attack.\n1st hit: 16%\n2nd hit: 17%\n3rd hit: 28%\n4th hit: 46%",
+     "recharge": 0,
+     "cooldown": 0,
+     "icone": "Calla_Gauntlets_Normalattack.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_gauntlets_skill_e",
+     "weaponType": "Gauntlets",
+     "skillCategory": "NORMAL_SKILL",
+     "categorie": "NORMAL_SKILL",
+     "nomFr": "Crochet explosif",
+     "nom": "Hook Blast",
+     "nameEn": "Hook Blast",
+     "descriptionFr": "local_skill_calla_gauntlets_normalskill_desc",
+     "descriptionEn": "local_skill_calla_gauntlets_normalskill_desc",
+     "recharge": 26,
+     "cooldown": 26,
+     "icone": "Calla_Gauntlets_NormalSkill.webp",
+     "sourceBehaviors": [
+      {
+       "id": "calla_gauntlets_skill_e_buff",
+       "buffs": [
+        {
+         "BuffTid": "302273013",
+         "FailBuffTid": "None",
+         "ConType": "EPackCondType::None",
+         "UseSyncConValue": false,
+         "BuffTime": 40000,
+         "Rate": 0,
+         "BuffWithSkill": false,
+         "BuffCnt": 1,
+         "MyBuffTid": [],
+         "MyBuff_Delete": false,
+         "Calc_TargetAllBuff": false,
+         "TargetBuffTid": [],
+         "TargetBuff_Delete": false,
+         "TargetBuff_AddTimeRate": 0,
+         "Release_BuffTID": "None",
+         "String_Tid": "calla_gauntlets_skill_e_buff",
+         "Local_Key": "None"
+        }
+       ],
+       "attacks": []
+      }
+     ]
+    },
+    {
+     "gameId": "calla_gauntlets_skill_tag",
+     "weaponType": "Gauntlets",
+     "skillCategory": "TAG_SKILL",
+     "categorie": "TAG_SKILL",
+     "nomFr": "Bombardement",
+     "nom": "Bomb Drop",
+     "nameEn": "Bomb Drop",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]85%[-] de l'attaque.",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]85%[-] of Attack.",
+     "recharge": 0,
+     "cooldown": 0,
+     "icone": "",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_gauntlets_skill_r",
+     "weaponType": "Gauntlets",
+     "skillCategory": "ULTIMATE",
+     "categorie": "ULTIMATE",
+     "nomFr": "Explosion suprême",
+     "nom": "Blast Top",
+     "nameEn": "Blast Top",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]300%[-] de l'attaque. Chaque coup porté augmente la jauge de Déluge de [#1A7331]2%[-] de l'attaque. (Max : [#1A7331]300[-])\nChaque coup de l'attaque augmente les dégâts de la compétence normale d'attribut Terre subis de [#1A7331]50%[-] pendant [#1A7331]30 s[-].",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]300%[-] of Attack. Each hit increases the Burst Gauge by [#1A7331]2%[-] of Attack. (Max: [#1A7331]300[-])\nEach hit of the attack increases Earth Normal Skill damage taken by [#1A7331]50%[-] for [#1A7331]30 sec[-].",
+     "recharge": 10,
+     "cooldown": 10,
+     "icone": "Calla_Gauntlets_UltimateSkill.webp",
+     "sourceBehaviors": []
+    },
+    {
+     "gameId": "calla_gauntlets_skill_q_1",
+     "weaponType": "Gauntlets",
+     "skillCategory": "ACTIVE_THIRD",
+     "categorie": "ACTIVE_THIRD",
+     "nomFr": "Mine à impact",
+     "nom": "Impact Mine",
+     "nameEn": "Impact Mine",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]150%[-] de l'attaque. La première frappe génère [#1A7331]5[-] bombe(s) autour du héros.\nAugmente la jauge de Déluge des ennemis qui entrent en contact avec une bombe de [#1A7331]1.5%[-] de l'attaque (max : [#1A7331]200[-]) et leur inflige des dégâts égaux à [#1A7331]30%[-] de l'attaque.\nLes bombes explosent automatiquement après [#1A7331]1.5 s[-] si aucun ennemi n'entre en contact avec.\n1er coup : 66%\n2e coup : 84%",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]150%[-] of Attack. The first strike generates [#1A7331]5[-] bomb(s) around the hero.\nEnemies who make contact with a bomb have their Burst Gauge increased by [#1A7331]1.5%[-] of Attack (Max: [#1A7331]200[-]), and take damage equal to [#1A7331]30%[-] of Attack.\nBombs explode automatically after [#1A7331]1.5 sec[-], even if no enemy makes contact.\n1st hit: 66%\n2nd hit: 84%",
+     "recharge": 20,
+     "cooldown": 20,
+     "icone": "Calla_Gauntlets_ActiveThird_1.webp",
+     "sourceBehaviors": []
+    }
+   ],
+   "effectSources": {
+    "skills": [
+     {
+      "id": "skill:calla_sworddual_normalatk_1",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "gameId": "calla_sworddual_normalatk_1",
+      "textFr": "Inflige des dégâts égaux à [#1A7331]232%[-] de l'attaque.\nSi le héros ne bénéficie pas de l'effet [#0F5CD8]Miroir - Contrefaçon[-], chaque coup porté à l'ennemi restaure la jauge de magie de [#1A7331]15[-].\nLa dernière frappe octroie l'effet [#0F5CD8]Contrefaçon - Épées doubles[-] au héros.\n1er coup : 26%\n2e coup : 29%\n3e coup : 46%\n4e coup : 58%\n5e coup : 73%\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.",
+      "textEn": "Inflicts damage equal to [#1A7331]232%[-] of Attack.\nIf the hero doesn't have [#0F5CD8]Mirror - Shaper[-], each hit on the enemy restores the Magic Gauge by [#1A7331]15[-].\nThe final strike grants the hero [#0F5CD8]Shaper - Dual Swords[-].\n1st hit: 26%\n2nd hit: 29%\n3rd hit: 46%\n4th hit: 58%\n5th hit: 73%\n\n※[#0F5CD8]Shaper - Dual Swords[-]: Increases Wind damage by [#1A7331]30%[-]. The effect remains while the hero is in combat.",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": []
+     },
+     {
+      "id": "skill:calla_sworddual_skill_e",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "gameId": "calla_sworddual_skill_e",
+      "textFr": "Octroie [#0F5CD8]Contrefaçon - Épées doubles[-], puis inflige des dégâts égaux à [#1A7331]164%[-] de l'attaque.\nTant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif, [#3C22D6]Attaque normale : Contrefaçon - Déluge de lames[-] est utilisable.\n\n[#3C22D6]Contrefaçon - Déluge de lames[-]\nOctroie [#0F5CD8]Contrefaçon - Épée longue[-], puis inflige des dégâts égaux à [#1A7331]184%[-] de l'attaque.\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.\n※[#0F5CD8]Contrefaçon - Épée longue[-] : Augmente la défense crit. de [#1A7331]60%[-]. L'effet persiste tant que le héros est en combat.",
+      "textEn": "Gains [#0F5CD8]Shaper - Dual Swords[-], then inflicts damage equal to [#1A7331]164%[-] of Attack.\nWhile [#0F5CD8]Mirror - Shaper[-] is active, [#3C22D6]Normal Attack: Shaper - Blade Volley[-] can be used.\n\n[#3C22D6]Shaper - Blade Volley[-]\nGains [#0F5CD8]Shaper - Longsword[-], then inflicts damage equal to [#1A7331]184%[-] of Attack.\n\n※[#0F5CD8]Shaper - Dual Swords[-]: Increases Wind damage by [#1A7331]30%[-]. The effect remains while the hero is in combat.\n※[#0F5CD8]Shaper - Longsword[-]: Increases Crit Defense by [#1A7331]60%[-]. The effect remains while the hero is in combat.",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": [
+       {
+        "id": "calla_sworddual_passive_buff_sworddual",
+        "buffs": [
+         {
+          "BuffTid": "302271003",
+          "FailBuffTid": "None",
+          "ConType": "EPackCondType::None",
+          "UseSyncConValue": false,
+          "BuffTime": -1,
+          "Rate": 0,
+          "BuffWithSkill": false,
+          "BuffCnt": 1,
+          "MyBuffTid": [],
+          "MyBuff_Delete": false,
+          "Calc_TargetAllBuff": false,
+          "TargetBuffTid": [],
+          "TargetBuff_Delete": false,
+          "TargetBuff_AddTimeRate": 0,
+          "Release_BuffTID": "None",
+          "String_Tid": "calla_sworddual_passive_buff_sworddual",
+          "Local_Key": "None"
+         }
+        ],
+        "attacks": []
+       }
+      ]
+     },
+     {
+      "id": "skill:calla_sworddual_skill_tag",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "gameId": "calla_sworddual_skill_tag",
+      "textFr": "Inflige des dégâts égaux à [#1A7331]131%[-] de l'attaque.",
+      "textEn": "Inflicts damage equal to [#1A7331]131%[-] of Attack.",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": []
+     },
+     {
+      "id": "skill:calla_sworddual_skill_r",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "gameId": "calla_sworddual_skill_r",
+      "textFr": "Octroie [#0F5CD8]Miroir - Contrefaçon[-] toutes les [#1A7331]1 s[-] pendant [#1A7331]10 s[-] en étant à portée. La zone dure [#1A7331]20 s[-].\nTant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif, [#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] est utilisable.\n\n[#3C22D6]Contrefaçon - Lame mirage[-]\nInflige des dégâts égaux à [#1A7331]294%[-] de l'attaque, puis octroie [#1A7331]1 cumul(s)[-] de [#0F5CD8]Mirage[-]. (Max : [#1A7331]5 fois[-])\nSi le héros bénéficie des effets [#0F5CD8]Contrefaçon - Épées doubles[-], [#0F5CD8]Contrefaçon - Épée longue[-] et [#0F5CD8]Contrefaçon - Hache[-], la compétence inflige des dégâts supplémentaires égaux à [#1A7331]310%[-] de l'attaque, puis retire l'effet.\n\n※[#0F5CD8]Mirage[-] : augmente les dégâts crit. des attaques normales de [#1A7331]15%[-]. L'effet persiste tant que le héros est en combat.",
+      "textEn": "Gains [#0F5CD8]Mirror - Shaper[-] every [#1A7331]1 sec[-] for [#1A7331]10 sec[-] while in range, zone lasting [#1A7331]20 sec[-].\nWhile [#0F5CD8]Mirror - Shaper[-] is active, [#3C22D6]Normal Attack: Shaper - Mirage Blade[-] can be used.\n\n[#3C22D6]Shaper - Mirage Blade[-]\nInflicts damage equal to [#1A7331]294%[-] of Attack, then gains [#1A7331]1 stack(s)[-] of [#0F5CD8]Mirage[-]. (Max: [#1A7331]5 times[-])\nIf the hero has [#0F5CD8]Shaper - Dual Swords[-], [#0F5CD8]Shaper - Axe[-], and [#0F5CD8]Shaper - Longsword[-], the skill inflicts additional damage equal to [#1A7331]310%[-] of Attack, then removes the effect.\n\n※[#0F5CD8]Mirage[-]: Increases Normal Attack Crit Damage by [#1A7331]15%[-]. The effect remains while the hero is in combat.",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": []
+     },
+     {
+      "id": "skill:calla_sworddual_skill_q",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "gameId": "calla_sworddual_skill_q",
+      "textFr": "Octroie [#0F5CD8]Contrefaçon - Épées doubles[-], puis inflige des dégâts égaux à [#1A7331]115%[-] de l'attaque.\nTant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif, [#3C22D6]Attaque normale : Contrefaçon - Plongeon miroir[-] est utilisable.\n\n[#3C22D6]Contrefaçon - Plongeon miroir[-]\nOctroie [#0F5CD8]Contrefaçon - Hache[-], puis inflige des dégâts égaux à [#1A7331]137%[-] de l'attaque.\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.\n※[#0F5CD8]Contrefaçon - Hache[-] : augmente la résistance crit. de [#1A7331]20%[-] L'effet persiste tant que le héros est en combat.",
+      "textEn": "Gains [#0F5CD8]Shaper - Dual Swords[-], then inflicts damage equal to [#1A7331]115%[-] of Attack.\nWhile [#0F5CD8]Mirror - Shaper[-] is active, [#3C22D6]Normal Attack: Shaper - Mirror Dive[-] can be used.\n\n[#3C22D6]Shaper - Mirror Dive[-]\nGains [#0F5CD8]Shaper - Axe[-], then inflicts damage equal to [#1A7331]137%[-] of Attack.\n\n※[#0F5CD8]Shaper - Dual Swords[-]: Increases Wind damage by [#1A7331]30%[-]. The effect remains while the hero is in combat.\n※[#0F5CD8]Shaper - Axe[-]: Increases Crit Resistance by [#1A7331]20%[-]. The effect remains while the hero is in combat.",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": [
+       {
+        "id": "calla_sworddual_passive_buff_sworddual",
+        "buffs": [
+         {
+          "BuffTid": "302271003",
+          "FailBuffTid": "None",
+          "ConType": "EPackCondType::None",
+          "UseSyncConValue": false,
+          "BuffTime": -1,
+          "Rate": 0,
+          "BuffWithSkill": false,
+          "BuffCnt": 1,
+          "MyBuffTid": [],
+          "MyBuff_Delete": false,
+          "Calc_TargetAllBuff": false,
+          "TargetBuffTid": [],
+          "TargetBuff_Delete": false,
+          "TargetBuff_AddTimeRate": 0,
+          "Release_BuffTID": "None",
+          "String_Tid": "calla_sworddual_passive_buff_sworddual",
+          "Local_Key": "None"
+         }
+        ],
+        "attacks": []
+       }
+      ]
+     },
+     {
+      "id": "skill:calla_sworddual_skillpassive",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "gameId": "calla_sworddual_skillpassive",
+      "textFr": "Attaquez un ennemi augmente les chances crit. du héros de [#1A7331]40%[-] de la résistance crit. (Max : [#1A7331]30%[-]) et ses dégâts crit. de [#1A7331]35%[-] de la défense crit. (Max : [#1A7331]70%[-]).\nSi le héros bénéficie des effets [#0F5CD8]Contrefaçon - Épées doubles[-], [#0F5CD8]Contrefaçon - Épée longue[-] et [#0F5CD8]Contrefaçon - Hache[-], les temps de recharge de toutes ses compétences sont réinitialisés.\nÀ chaque octroi de l'effet [#0F5CD8]Contrefaçon - Épées doubles[-], augmente les dégâts d'attaque normale du héros de [#1A7331]10%[-] et sa perforation de [#1A7331]6[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]10 fois[-])",
+      "textEn": "Attacking an enemy increases the hero's Crit Chance by [#1A7331]40%[-] of Crit Resistance (Max: [#1A7331]30%[-]) and Crit Damage by [#1A7331]35%[-] of Crit Defense (Max: [#1A7331]70%[-]).\nIf the hero has [#0F5CD8]Shaper - Dual Swords[-], [#0F5CD8]Shaper - Axe[-] and [#0F5CD8]Shaper - Longsword[-], all of the hero's skill cooldowns are reset.\nEach time [#0F5CD8]Shaper - Dual Swords[-] is gained, the hero's Normal Attack damage increases by [#1A7331]10%[-] and Pierce increases by [#1A7331]6[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]10 times[-])",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": []
+     },
+     {
+      "id": "skill:calla_cudgel3c_normalatk_1",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "gameId": "calla_cudgel3c_normalatk_1",
+      "textFr": "Inflige des dégâts égaux à [#1A7331]103%[-] de l'attaque.\n1er coup : 16%\n2e coup : 17%\n3e coup : 26%\n4e coup : 44%",
+      "textEn": "Inflicts damage equal to [#1A7331]103%[-] of Attack.\n1st hit: 16%\n2nd hit: 17%\n3rd hit: 26%\n4th hit: 44%",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": []
+     },
+     {
+      "id": "skill:calla_cudgel3c_skill_e_start",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "gameId": "calla_cudgel3c_skill_e_start",
+      "textFr": "Immunise contre les réactions pendant l'utilisation de la compétence normale.\nInflige des dégâts égaux à [#1A7331]191%[-] de l'attaque. Chaque coup porté augmente la jauge de Déluge de [#1A7331]0.2%[-] de l'attaque. (Max : [#1A7331]40[-])",
+      "textEn": "Becomes immune to Reactions while using the Normal Skill.\nInflicts damage equal to [#1A7331]191%[-] of Attack. Each hit increases the Burst Gauge by [#1A7331]0.2%[-] of Attack. (Max: [#1A7331]40[-])",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": []
+     },
+     {
+      "id": "skill:calla_cudgel3c_skill_tag",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "gameId": "calla_cudgel3c_skill_tag",
+      "textFr": "Inflige des dégâts égaux à [#1A7331]87%[-] de l'attaque.",
+      "textEn": "Inflicts damage equal to [#1A7331]87%[-] of Attack.",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": []
+     },
+     {
+      "id": "skill:calla_cudgel3c_skill_r",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "gameId": "calla_cudgel3c_skill_r",
+      "textFr": "Inflige des dégâts égaux à [#1A7331]290%[-] de l'attaque. Chaque coup porté augmente la jauge de Déluge de [#1A7331]0.5%[-] de l'attaque. (Max : [#1A7331]100[-])\nLa dernière frappe inflige des dégâts supplémentaires égaux à [#1A7331]350%[-] de l'attaque aux ennemis sous l'effet d'un [#0F5CD8]Déluge de Vent[-].",
+      "textEn": "Inflicts damage equal to [#1A7331]290%[-] of Attack. Each hit increases the Burst Gauge by [#1A7331]0.5%[-] of Attack. (Max: [#1A7331]100[-])\nThe final strike inflicts additional damage equal to [#1A7331]350%[-] of Attack against enemies with an active [#0F5CD8]Wind Burst[-].",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": []
+     },
+     {
+      "id": "skill:calla_cudgel3c_skill_q",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "gameId": "calla_cudgel3c_skill_q",
+      "textFr": "Inflige des dégâts égaux à [#1A7331]124%[-] de l'attaque. Chaque coup porté inflige [#1A7331]1 cumul(s)[-] de [#0F5CD8]Vent violent[-] pendant [#1A7331]40 s[-]. (Max : [#1A7331]50 fois[-])\n\n※[#0F5CD8]Vent violent[-] : augmente les dégâts de [#0F5CD8]Déluge de Vent[-] actif de [#1A7331]10%[-] par tranche de [#1A7331]1 cumul(s)[-].",
+      "textEn": "Inflicts damage equal to [#1A7331]124%[-] of Attack. Each hit inflicts [#1A7331]1 stack(s)[-] of [#0F5CD8]Bitter Wind[-] for [#1A7331]40 sec[-]. (Max: [#1A7331]50 times[-])\n\n※[#0F5CD8]Bitter Wind[-]: Increases active [#0F5CD8]Wind Burst[-] damage by [#1A7331]10%[-] for every [#1A7331]1 stack(s)[-].",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": []
+     },
+     {
+      "id": "skill:calla_cudgel3c_skillpassive",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "gameId": "calla_cudgel3c_skillpassive",
+      "textFr": "Lorsqu'un héros allié attaque un ennemi affecté par [#0F5CD8]Vent violent[-], augmente les chances crit. de tous les héros alliés de [#1A7331]15%[-].\nLorsqu'un héros allié active un [#0F5CD8]Déluge de Vent[-], augmente les dégâts crit. de tous les héros alliés d'attribut Vent de [#1A7331]50%[-] pendant [#1A7331]30 s[-], et octroie à tous les héros alliés des [#0F5CD8]barrières[-] égales à [#1A7331]250%[-] de l'attaque du héros pendant [#1A7331]20 s[-].",
+      "textEn": "When an allied hero attacks an enemy affected by [#0F5CD8]Bitter Wind[-], all allied heroes' Crit Chance increases by [#1A7331]15%[-].\nWhen an allied hero activates a [#0F5CD8]Wind Burst[-], all allied Wind heroes' Crit Damage increases by [#1A7331]50%[-] for [#1A7331]30 sec[-], and all allied heroes receive [#0F5CD8]barriers[-] equal to [#1A7331]250%[-] of the hero's Attack for [#1A7331]20 sec[-].",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": []
+     },
+     {
+      "id": "skill:calla_gauntlets_normalatk_1",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "gameId": "calla_gauntlets_normalatk_1",
+      "textFr": "Inflige des dégâts égaux à [#1A7331]107%[-] de l'attaque.\n1er coup : 16%\n2e coup : 17%\n3e coup : 28%\n4e coup : 46%",
+      "textEn": "Inflicts damage equal to [#1A7331]107%[-] of Attack.\n1st hit: 16%\n2nd hit: 17%\n3rd hit: 28%\n4th hit: 46%",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": []
+     },
+     {
+      "id": "skill:calla_gauntlets_skill_e",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "gameId": "calla_gauntlets_skill_e",
+      "textFr": "local_skill_calla_gauntlets_normalskill_desc",
+      "textEn": "local_skill_calla_gauntlets_normalskill_desc",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": [
+       {
+        "id": "calla_gauntlets_skill_e_buff",
+        "buffs": [
+         {
+          "BuffTid": "302273013",
+          "FailBuffTid": "None",
+          "ConType": "EPackCondType::None",
+          "UseSyncConValue": false,
+          "BuffTime": 40000,
+          "Rate": 0,
+          "BuffWithSkill": false,
+          "BuffCnt": 1,
+          "MyBuffTid": [],
+          "MyBuff_Delete": false,
+          "Calc_TargetAllBuff": false,
+          "TargetBuffTid": [],
+          "TargetBuff_Delete": false,
+          "TargetBuff_AddTimeRate": 0,
+          "Release_BuffTID": "None",
+          "String_Tid": "calla_gauntlets_skill_e_buff",
+          "Local_Key": "None"
+         }
+        ],
+        "attacks": []
+       }
+      ]
+     },
+     {
+      "id": "skill:calla_gauntlets_skill_tag",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "gameId": "calla_gauntlets_skill_tag",
+      "textFr": "Inflige des dégâts égaux à [#1A7331]85%[-] de l'attaque.",
+      "textEn": "Inflicts damage equal to [#1A7331]85%[-] of Attack.",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": []
+     },
+     {
+      "id": "skill:calla_gauntlets_skill_r",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "gameId": "calla_gauntlets_skill_r",
+      "textFr": "Inflige des dégâts égaux à [#1A7331]300%[-] de l'attaque. Chaque coup porté augmente la jauge de Déluge de [#1A7331]2%[-] de l'attaque. (Max : [#1A7331]300[-])\nChaque coup de l'attaque augmente les dégâts de la compétence normale d'attribut Terre subis de [#1A7331]50%[-] pendant [#1A7331]30 s[-].",
+      "textEn": "Inflicts damage equal to [#1A7331]300%[-] of Attack. Each hit increases the Burst Gauge by [#1A7331]2%[-] of Attack. (Max: [#1A7331]300[-])\nEach hit of the attack increases Earth Normal Skill damage taken by [#1A7331]50%[-] for [#1A7331]30 sec[-].",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": []
+     },
+     {
+      "id": "skill:calla_gauntlets_skill_q_1",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "gameId": "calla_gauntlets_skill_q_1",
+      "textFr": "Inflige des dégâts égaux à [#1A7331]150%[-] de l'attaque. La première frappe génère [#1A7331]5[-] bombe(s) autour du héros.\nAugmente la jauge de Déluge des ennemis qui entrent en contact avec une bombe de [#1A7331]1.5%[-] de l'attaque (max : [#1A7331]200[-]) et leur inflige des dégâts égaux à [#1A7331]30%[-] de l'attaque.\nLes bombes explosent automatiquement après [#1A7331]1.5 s[-] si aucun ennemi n'entre en contact avec.\n1er coup : 66%\n2e coup : 84%",
+      "textEn": "Inflicts damage equal to [#1A7331]150%[-] of Attack. The first strike generates [#1A7331]5[-] bomb(s) around the hero.\nEnemies who make contact with a bomb have their Burst Gauge increased by [#1A7331]1.5%[-] of Attack (Max: [#1A7331]200[-]), and take damage equal to [#1A7331]30%[-] of Attack.\nBombs explode automatically after [#1A7331]1.5 sec[-], even if no enemy makes contact.\n1st hit: 66%\n2nd hit: 84%",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": []
+     },
+     {
+      "id": "skill:calla_gauntlets_skillpassive",
+      "kind": "skill",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "gameId": "calla_gauntlets_skillpassive",
+      "textFr": "Augmente l'attaque de Terre à hauteur de [#1A7331]10%[-] de l'attaque du héros pendant [#1A7331]30 s[-] lorsqu'un héros allié active un [#0F5CD8]Déluge de Terre[-]. (Max : [#1A7331]3000[-])",
+      "textEn": "Earth Attack increases by [#1A7331]10%[-] of the hero's Attack for [#1A7331]30 sec[-] when an allied hero activates an [#0F5CD8]Earth Burst[-]. (Max: [#1A7331]3000[-])",
+      "coefficientDejaCalcule": true,
+      "provenance": "Table/Skill/PC_SkillTable",
+      "buffs": []
+     }
+    ],
+    "potentials": [
+     {
+      "id": "potential:khala:SwordDual:1",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "tier": 1,
+      "textFr": "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+      "textEn": "Increases Attack by [#1A7331]5%[-], Defense by [#1A7331]4%[-], and Max HP by [#1A7331]2%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:SwordDual:2",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "tier": 2,
+      "textFr": "Renforce la puissance de l'attaque normale de [#1A7331]20%[-].",
+      "textEn": "Amplifies Normal Attack power by [#1A7331]20%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:SwordDual:3",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "tier": 3,
+      "textFr": "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+      "textEn": "Increases Attack by [#1A7331]10%[-], Defense by [#1A7331]8%[-], and Max HP by [#1A7331]3%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:SwordDual:4",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "tier": 4,
+      "textFr": "Amplifie la puissance d'[#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] de [#1A7331]15%[-] et ses dégâts supplémentaires de [#1A7331]20%[-].",
+      "textEn": "Amplifies the [#3C22D6]Normal Attack: Shaper - Mirage Blade[-]'s power by [#1A7331]15%[-] and additional damage by [#1A7331]20%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:SwordDual:5",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "tier": 5,
+      "textFr": "La dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Déluge de lames[-] dure [#1A7331]3 s[-], inflige des dégâts égaux à [#1A7331]10%[-] de l'attaque aux ennemis à portée toutes les [#1A7331]0.2 s[-], et augmente les dégâts que leur inflige le héros de [#1A7331]30%[-] pendant [#1A7331]20 s[-].",
+      "textEn": "The final strike of [#3C22D6]Normal Attack: Shaper - Blade Volley[-] lasts [#1A7331]3 sec[-], inflicting damage equal to [#1A7331]10%[-] of Attack to enemies in range every [#1A7331]0.2 sec[-] and increasing their damage taken from the hero by [#1A7331]30%[-] for [#1A7331]20 sec[-]",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:SwordDual:6",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "tier": 6,
+      "textFr": "Immunise contre les réactions tant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif.\nRéduit les dégâts subis de [#1A7331]6%[-] par tranche de [#1A7331]1 cumul(s)[-] de [#0F5CD8]Mirage[-] sur le héros. (Max : [#1A7331]5 fois[-])",
+      "textEn": "Becomes immune to Reactions while [#0F5CD8]Mirror - Shaper[-] is active.\nDamage taken decreases by [#1A7331]6%[-] for every [#1A7331]1 stack(s)[-] of [#0F5CD8]Mirage[-] on the hero. (Max: [#1A7331]5 times[-])",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:SwordDual:7",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "tier": 7,
+      "textFr": "La dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Plongeon miroir[-] inflige [#1A7331]2 fois[-] des dégâts supplémentaires égaux à [#1A7331]65%[-] de l'attaque.\nCette attaque augmente les dégâts crit. de [#1A7331]10%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]6 fois[-])",
+      "textEn": "The final strike of [#3C22D6]Normal Attack: Shaper - Mirror Dive[-] inflicts additional damage equal to [#1A7331]65%[-] of Attack [#1A7331]2 time(s)[-].\nThis attack increases Crit Damage by [#1A7331]10%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]6 times[-])",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:SwordDual:8",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "tier": 8,
+      "textFr": "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+      "textEn": "Increases Attack by [#1A7331]15%[-], Defense by [#1A7331]12%[-], and Max HP by [#1A7331]5%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:SwordDual:9",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "tier": 9,
+      "textFr": "Renforce la puissance de l'attaque normale de [#1A7331]30%[-].\nAmplifie la puissance d'[#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] de [#1A7331]35%[-] et ses dégâts supplémentaires de [#1A7331]40%[-].",
+      "textEn": "Amplifies Normal Attack power by [#1A7331]30%[-].\nAmplifies the [#3C22D6]Normal Attack: Shaper - Mirage Blade[-]'s power by [#1A7331]35%[-] and additional damage by [#1A7331]40%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:SwordDual:10",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "SwordDual",
+      "tier": 10,
+      "textFr": "Augmente le percement de défense de [#1A7331]15%[-] tant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif.\nLa dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] inflige [#1A7331]5 fois[-] des dégâts supplémentaires égaux à [#1A7331]90%[-] de l'attaque.\nCette attaque augmente les dégâts d'attaque normale de [#1A7331]5%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]20 fois[-])",
+      "textEn": "Increases Defense Shatter by [#1A7331]15%[-] while [#0F5CD8]Mirror - Shaper[-] is active.\nThe final strike of [#3C22D6]Normal Attack: Shaper - Mirage Blade[-] inflicts additional damage equal to [#1A7331]90%[-] of Attack [#1A7331]5 time(s)[-].\nThis attack increases Normal Attack damage by [#1A7331]5%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]20 times[-])",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Cudgel3c:1",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "tier": 1,
+      "textFr": "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+      "textEn": "Increases Attack by [#1A7331]5%[-], Defense by [#1A7331]4%[-], and Max HP by [#1A7331]2%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Cudgel3c:2",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "tier": 2,
+      "textFr": "Renforce la puissance de la compétence normale de [#1A7331]30%[-].",
+      "textEn": "Amplifies Normal Skill power by [#1A7331]30%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Cudgel3c:3",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "tier": 3,
+      "textFr": "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+      "textEn": "Increases Attack by [#1A7331]10%[-], Defense by [#1A7331]8%[-], and Max HP by [#1A7331]3%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Cudgel3c:4",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "tier": 4,
+      "textFr": "Renforce la puissance de l'attaque ultime de [#1A7331]30%[-] et ses dégâts supplémentaires de [#1A7331]40%[-].",
+      "textEn": "Amplifies Ultimate Move skill power by [#1A7331]30%[-] and additional damage by [#1A7331]40%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Cudgel3c:5",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "tier": 5,
+      "textFr": "Ajoute [#1A7331]2[-] projectile(s) à l'attaque spéciale.",
+      "textEn": "Adds [#1A7331]2[-] projectile(s) to the Special Attack.",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Cudgel3c:6",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "tier": 6,
+      "textFr": "Lorsqu'un héros allié active un [#0F5CD8]Déluge de Vent[-], amplifie le boost des dégâts crit. qui en découle de [#1A7331]30%[-].",
+      "textEn": "When an allied hero activates a [#0F5CD8]Wind Burst[-], the resulting Crit Damage boost further increases by [#1A7331]30%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Cudgel3c:7",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "tier": 7,
+      "textFr": "Réduit les dégâts subis par le héros de [#1A7331]50%[-] et augmente l'efficacité de Déluge de Vent de [#1A7331]30%[-] pendant l'utilisation de la compétence normale.",
+      "textEn": "Decreases the hero's damage taken by [#1A7331]50%[-], and increases Wind Burst Efficiency by [#1A7331]30%[-] while using the Normal Skill.",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Cudgel3c:8",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "tier": 8,
+      "textFr": "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+      "textEn": "Increases Attack by [#1A7331]15%[-], Defense by [#1A7331]12%[-], and Max HP by [#1A7331]5%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Cudgel3c:9",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "tier": 9,
+      "textFr": "Augmente les dégâts de Vent de tous les héros alliés de [#1A7331]65%[-] lorsque le passif de la barrière du héros est actif.",
+      "textEn": "Increases all allied heroes' Wind damage by [#1A7331]65%[-] while the hero's barrier passive is active.",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Cudgel3c:10",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Cudgel3c",
+      "tier": 10,
+      "textFr": "Lorsqu'un héros d'attribut Vent allié attaque un ennemi sous l'effet d'un [#0F5CD8]Déluge[-], augmente les dégâts crit. des héros d'attribut Vent de [#1A7331]4%[-] pendant [#1A7331]10 s[-]. (Max : [#1A7331]20 fois[-])\nLorsqu'un héros allié utilise une compétence de relève, celle-ci octroie [#0F5CD8]Vent glacial[-] à tous les héros alliés pendant [#1A7331]20 s[-].\n\n※[#0F5CD8]Vent glacial[-] : attaquer un ennemi avec un Déluge actif augmente l'attaque de Vent de [#1A7331]30%[-].",
+      "textEn": "When an allied Wind hero attacks an enemy with a [#0F5CD8]Burst[-] activated, it increases Wind heroes' Crit Damage by [#1A7331]4%[-] for [#1A7331]10 sec[-]. (Max: [#1A7331]20 times[-])\nWhen an allied hero uses a Tag Skill, it grants all allied heroes [#0F5CD8]Freezing Wind[-] for [#1A7331]20 sec[-].\n\n※[#0F5CD8]Freezing Wind[-]: Increases Wind Attack by [#1A7331]30%[-] when attacking an enemy with an active Burst.",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Gauntlets:1",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "tier": 1,
+      "textFr": "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+      "textEn": "Increases Attack by [#1A7331]5%[-], Defense by [#1A7331]4%[-], and Max HP by [#1A7331]2%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Gauntlets:2",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "tier": 2,
+      "textFr": "L'attaque normale augmente par ailleurs la jauge de Déluge de [#1A7331]10[-].",
+      "textEn": "The Normal Attack additionally increases the Burst Gauge by [#1A7331]10[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Gauntlets:3",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "tier": 3,
+      "textFr": "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+      "textEn": "Increases Attack by [#1A7331]10%[-], Defense by [#1A7331]8%[-], and Max HP by [#1A7331]3%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Gauntlets:4",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "tier": 4,
+      "textFr": "Renforce la puissance de l'attaque ultime de [#1A7331]40%[-].",
+      "textEn": "Amplifies Ultimate Move skill power by [#1A7331]40%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Gauntlets:5",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "tier": 5,
+      "textFr": "L'utilisation de l'attaque spéciale génère [#1A7331]9[-] petite(s) bombe(s) autour du héros infligeant des dégâts égaux à [#1A7331]45%[-] de l'attaque.\nAugmente la jauge de Déluge des ennemis qui entrent en contact avec une petite bombe de [#1A7331]0.3%[-] de l'attaque. (Max : [#1A7331]50[-])\nLes petites bombes explosent automatiquement après [#1A7331]1.5 s[-] si aucun ennemi n'entre en contact avec.",
+      "textEn": "Using the Special Attack generates [#1A7331]9[-] small bomb(s) around the hero that inflict damage equal to [#1A7331]45%[-] of Attack.\nEnemies who make contact with a small bomb have their Burst Gauge increased by [#1A7331]0.3%[-] of Attack. (Max: [#1A7331]50[-])\nSmall bombs explode automatically after [#1A7331]1.5 sec[-], even if no enemy makes contact.",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Gauntlets:6",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "tier": 6,
+      "textFr": "Lorsqu'un héros allié active un [#0F5CD8]Déluge de Terre[-], augmente les chances crit. de tous les héros alliés d'attribut Terre de [#1A7331]20%[-] pendant [#1A7331]30 s[-].",
+      "textEn": "When an allied hero activates an [#0F5CD8]Earth Burst[-], it increases all allied Earth heroes' Crit Chance by [#1A7331]20%[-] for [#1A7331]30 sec[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Gauntlets:7",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "tier": 7,
+      "textFr": "Ajoute [#1A7331]2[-] bombes toupies à la compétence normale.\nFaire mouche avec une bombe toupie augmente les dégâts de la compétence normale d'attribut Terre subis par l'ennemi de [#1A7331]20%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]3 fois[-])",
+      "textEn": "Adds [#1A7331]2[-] more spinning bomb tops to the Normal Skill.\nA successful spinning bomb top attack increases the enemy's Earth Normal Skill damage taken by [#1A7331]20%[-] for [#1A7331]30 sec[-]. (Max: [#1A7331]3 times[-])",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Gauntlets:8",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "tier": 8,
+      "textFr": "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+      "textEn": "Increases Attack by [#1A7331]15%[-], Defense by [#1A7331]12%[-], and Max HP by [#1A7331]5%[-].",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Gauntlets:9",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "tier": 9,
+      "textFr": "Chaque fois qu'un héros allié utilise une compétence normale, augmente les dégâts crit. de la compétence normale de tous les héros alliés d'attribut Terre de [#1A7331]7%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]10 fois[-])",
+      "textEn": "Each time an allied hero uses a Normal Skill, it increases all allied Earth heroes' Normal Skill Crit Damage by [#1A7331]7%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]10 times[-])",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     },
+     {
+      "id": "potential:khala:Gauntlets:10",
+      "kind": "potential",
+      "hero": "khala",
+      "weaponType": "Gauntlets",
+      "tier": 10,
+      "textFr": "L'utilisation de la compétence normale augmente le percement de défense de tous les héros alliés d'attribut Terre de [#1A7331]15%[-] pendant [#1A7331]30 s[-].\nLorsque les bombes toupies de l'attaque normale explosent, elles génèrent [#1A7331]3[-] petites bombes qui infligent des dégâts égaux à [#1A7331]80%[-] de l'attaque en explosant.",
+      "textEn": "Using the Normal Skill increases all allied Earth heroes' Defense Shatter by [#1A7331]15%[-] for [#1A7331]30 sec[-].\nWhen the Normal Skill's spinning bomb tops explode, they generate [#1A7331]3[-] small bombs that inflict damage equal to [#1A7331]80%[-] of Attack when exploding.",
+      "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
+      "buffs": []
+     }
+    ]
+   },
+   "linkedArmors": [
+    {
+     "gameId": "133235001",
+     "nameFr": "Tenue de travail ultralégère",
+     "nameEn": "Ultralight Work Clothes",
+     "weaponType": "sworddual",
+     "icon": "icon_bindarmor_pc_calla_0002",
+     "grade": "Grade5",
+     "reinforceMax": 15,
+     "quality": {
+      "min": 111,
+      "max": 130
+     },
+     "mainStats": [
+      "armor_main1_133235001",
+      "armor_main2_133235001"
+     ],
+     "subStats": [
+      "armor_sub1_133235001",
+      "armor_sub2_133235001"
+     ],
+     "options": [
+      "armor_t5_typea",
+      "armor_t5_typea",
+      "armor_t5_typea"
+     ],
+     "passives": [
+      {
+       "EquipPassiveID": "EpEq_Calla_B",
+       "PassiveLv": 1,
+       "GivePer": 60,
+       "String_Tid": "None",
+       "Local_Key": "None"
+      },
+      {
+       "EquipPassiveID": "EpEq_Calla_B",
+       "PassiveLv": 2,
+       "GivePer": 30,
+       "String_Tid": "None",
+       "Local_Key": "None"
+      },
+      {
+       "EquipPassiveID": "EpEq_Calla_B",
+       "PassiveLv": 3,
+       "GivePer": 10,
+       "String_Tid": "None",
+       "Local_Key": "None"
+      }
+     ],
+     "limitBreakPassives": [
+      {
+       "EquipPassiveID": "EpLb_Calla_B",
+       "PromotionLevel": 3
+      }
+     ]
+    },
+    {
+     "gameId": "133235002",
+     "nameFr": "Préparation totale",
+     "nameEn": "Full Preparation",
+     "weaponType": "cudgel3c",
+     "icon": "icon_bindarmor_pc_calla_0003",
+     "grade": "Grade5",
+     "reinforceMax": 15,
+     "quality": {
+      "min": 111,
+      "max": 130
+     },
+     "mainStats": [
+      "armor_main1_133235002",
+      "armor_main2_133235002"
+     ],
+     "subStats": [
+      "armor_sub1_133235002",
+      "armor_sub2_133235002",
+      "armor_sub3_133235002"
+     ],
+     "options": [
+      "armor_t5_typea",
+      "armor_t5_typea",
+      "armor_t5_typea"
+     ],
+     "passives": [
+      {
+       "EquipPassiveID": "EpEq_Calla_C",
+       "PassiveLv": 1,
+       "GivePer": 60,
+       "String_Tid": "None",
+       "Local_Key": "None"
+      },
+      {
+       "EquipPassiveID": "EpEq_Calla_C",
+       "PassiveLv": 2,
+       "GivePer": 30,
+       "String_Tid": "None",
+       "Local_Key": "None"
+      },
+      {
+       "EquipPassiveID": "EpEq_Calla_C",
+       "PassiveLv": 3,
+       "GivePer": 10,
+       "String_Tid": "None",
+       "Local_Key": "None"
+      }
+     ],
+     "limitBreakPassives": [
+      {
+       "EquipPassiveID": "EpLb_Calla_C",
+       "PromotionLevel": 3
+      }
+     ]
+    },
+    {
+     "gameId": "133235003",
+     "nameFr": "Citoyenne modèle",
+     "nameEn": "Model Citizen",
+     "weaponType": "gauntlets",
+     "icon": "icon_bindarmor_pc_calla_0004",
+     "grade": "Grade5",
+     "reinforceMax": 15,
+     "quality": {
+      "min": 111,
+      "max": 130
+     },
+     "mainStats": [
+      "armor_main1_133235003",
+      "armor_main2_133235003"
+     ],
+     "subStats": [
+      "armor_sub1_133235003",
+      "armor_sub2_133235003"
+     ],
+     "options": [
+      "armor_t5_typea",
+      "armor_t5_typea",
+      "armor_t5_typea"
+     ],
+     "passives": [
+      {
+       "EquipPassiveID": "EpEq_Calla_D",
+       "PassiveLv": 1,
+       "GivePer": 60,
+       "String_Tid": "None",
+       "Local_Key": "None"
+      },
+      {
+       "EquipPassiveID": "EpEq_Calla_D",
+       "PassiveLv": 2,
+       "GivePer": 30,
+       "String_Tid": "None",
+       "Local_Key": "None"
+      },
+      {
+       "EquipPassiveID": "EpEq_Calla_D",
+       "PassiveLv": 3,
+       "GivePer": 10,
+       "String_Tid": "None",
+       "Local_Key": "None"
+      }
+     ],
+     "limitBreakPassives": [
+      {
+       "EquipPassiveID": "EpLb_Calla_D",
+       "PromotionLevel": 3
+      }
+     ]
+    }
+   ],
+   "assets": {
+    "portrait": {
+     "source": "Icon_Item/portrait_Hero/slot_Calla_001.png",
+     "target": "7ds-personnages/khala.webp"
+    },
+    "skills": [
+     {
+      "source": "Icon_Item/Skill/Calla_SwordDual_NormalSkill.png",
+      "target": "7ds-ui/skills/Calla_SwordDual_NormalSkill.webp"
+     },
+     {
+      "source": "Icon_Item/Skill/Calla_SwordDual_UltimateSkill.png",
+      "target": "7ds-ui/skills/Calla_SwordDual_UltimateSkill.webp"
+     },
+     {
+      "source": "Icon_Item/Skill/Calla_SwordDual_ActiveThird.png",
+      "target": "7ds-ui/skills/Calla_SwordDual_ActiveThird.webp"
+     },
+     {
+      "source": "Icon_Item/Skill/Calla_SwordDual_Passive.png",
+      "target": "7ds-ui/skills/Calla_SwordDual_Passive.webp"
+     },
+     {
+      "source": "Icon_Item/Skill/Calla_Cudgel3c_NormalSkill.png",
+      "target": "7ds-ui/skills/Calla_Cudgel3c_NormalSkill.webp"
+     },
+     {
+      "source": "Icon_Item/Skill/Calla_Cudgel3c_UltimateSkill.png",
+      "target": "7ds-ui/skills/Calla_Cudgel3c_UltimateSkill.webp"
+     },
+     {
+      "source": "Icon_Item/Skill/Calla_Cudgel3c_ActiveThird.png",
+      "target": "7ds-ui/skills/Calla_Cudgel3c_ActiveThird.webp"
+     },
+     {
+      "source": "Icon_Item/Skill/Calla_Cudgel3c_Passive.png",
+      "target": "7ds-ui/skills/Calla_Cudgel3c_Passive.webp"
+     },
+     {
+      "source": "Icon_Item/Skill/Calla_Gauntlets_NormalSkill.png",
+      "target": "7ds-ui/skills/Calla_Gauntlets_NormalSkill.webp"
+     },
+     {
+      "source": "Icon_Item/Skill/Calla_Gauntlets_UltimateSkill.png",
+      "target": "7ds-ui/skills/Calla_Gauntlets_UltimateSkill.webp"
+     },
+     {
+      "source": "Icon_Item/Skill/Calla_Gauntlets_ActiveThird_1.png",
+      "target": "7ds-ui/skills/Calla_Gauntlets_ActiveThird_1.webp"
+     },
+     {
+      "source": "Icon_Item/Skill/Calla_Gauntlets_Passive.png",
+      "target": "7ds-ui/skills/Calla_Gauntlets_Passive.webp"
+     }
+    ],
+    "linkedArmors": [
+     {
+      "source": "Icon_Item/BindArmor/BindArmor_PC_Calla_0002.png",
+      "target": "7ds-armures-ssr/Armure liee/Tenue de travail ultralégère.webp"
+     },
+     {
+      "source": "Icon_Item/BindArmor/BindArmor_PC_Calla_0003.png",
+      "target": "7ds-armures-ssr/Armure liee/Préparation totale.webp"
+     },
+     {
+      "source": "Icon_Item/BindArmor/BindArmor_PC_Calla_0004.png",
+      "target": "7ds-armures-ssr/Armure liee/Citoyenne modèle.webp"
+     }
+    ]
+   }
+  }
+ }
+}
