@@ -11,7 +11,6 @@
 "use strict";
 
 const fs = require("node:fs");
-const os = require("node:os");
 const path = require("node:path");
 const vm = require("node:vm");
 
@@ -24,9 +23,8 @@ function sourceDirecte(env){
 }
 
 function sourcesDisponibles(env){
-  const base = env.DONNEES_JEU_SOURCES
-    || path.join(os.homedir(), "donnees-du-jeu");
-  if(!fs.existsSync(base)) return [];
+  const base = env.DONNEES_JEU_SOURCES;
+  if(!base || !fs.existsSync(base)) return [];
   return fs.readdirSync(base, { withFileTypes:true })
     .filter(entree => entree.isDirectory() && entree.name.startsWith("Exports"))
     .map(entree => path.join(

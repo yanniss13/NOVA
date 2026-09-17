@@ -41,7 +41,7 @@ assert.throws(
 const dossierSources = fs.mkdtempSync(path.join(os.tmpdir(), "magie-sources-"));
 try {
   const directe = path.join(dossierSources, "courant", "Table", "Skill", "PC_SkillTable.json");
-  const archives = path.join(dossierSources, "archives");
+  const archives = path.join(dossierSources, "donnees-du-jeu");
   const recente = path.join(archives, "Exports-a", "SevenDeadlySins", "Content", "Table", "Skill", "PC_SkillTable.json");
   const ancienne = path.join(archives, "Exports-z", "SevenDeadlySins", "Content", "Table", "Skill", "PC_SkillTable.json");
   for(const [fichier, date] of [[directe, 1000], [ancienne, 2000], [recente, 3000]]){
@@ -59,6 +59,16 @@ try {
     "sans export direct, choisir le fichier d'archive le plus recent");
   assert.equal(choisirSource({ ...env, DONNEES_JEU:path.join(dossierSources, "absent") }), recente,
     "un export direct absent permet le repli sur les archives");
+  // Le domicile contient une archive valide : sans variable explicite,
+  // la selection doit echouer plutot que la lire silencieusement.
+  const domicileOriginal = os.homedir;
+  try {
+    os.homedir = () => dossierSources;
+    assert.throws(() => choisirSource({}), /PC_SkillTable\.json introuvable/,
+      "sans variable de source, une archive personnelle ne doit pas etre selectionnee");
+  } finally {
+    os.homedir = domicileOriginal;
+  }
 } finally {
   fs.rmSync(dossierSources, { recursive:true, force:true });
 }
