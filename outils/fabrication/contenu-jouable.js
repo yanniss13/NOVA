@@ -234,20 +234,24 @@ function masteries(mastery, weapons, table, fr, en, groupExp){
   });
 }
 
-function competence(id, weaponType, tables){
+function competence(id, weaponType, tables, field){
   const raw = tables.pcSkills[id];
   if(!raw) throw new Error("Khala : compétence absente " + id);
   const category = sansEnum(raw.SkillCategory);
-  const normalizedCategory = CATEGORY[category] || category.toUpperCase();
+  const normalizedCategory = field === "SkillPassive" && category === "None"
+    ? "PASSIVE" : CATEGORY[category] || category.toUpperCase();
+  const gameId = normalizedCategory === "PASSIVE" ? "calla_" + weaponType.toLowerCase() + "_passive" : id;
   const name = resoudreLocalisation(tables.fr, tables.en, raw.Local_Key);
   const description = resoudreLocalisation(tables.fr, tables.en, raw.Local_Desc, raw.Local_Replace);
   const icon = resoudreIcone(raw, weaponType, tables);
-  const sourceId = (normalizedCategory === "PASSIVE" ? "hero-passive:" : "skill:") + id;
+  const sourceId = (normalizedCategory === "PASSIVE" ? "hero-passive:" : "skill:") + gameId;
+  const cooldown = Number(raw.Cooltime || 0) / 1000;
+  const recharge = cooldown === 0 && ["NORMAL", "TAG_SKILL"].includes(normalizedCategory) ? null : cooldown;
   return {
-    gameId:id, weaponType, skillCategory:normalizedCategory, categorie:normalizedCategory,
+    gameId, sourceGameId:id, weaponType, skillCategory:normalizedCategory, categorie:normalizedCategory,
     nomFr:name.fr, nom:name.en, nameEn:name.en, descriptionFr:description.fr,
     descriptionEn:description.en, localisation:{status:description.status, reason:description.reason},
-    recharge:Number(raw.Cooltime || 0) / 1000, cooldown:Number(raw.Cooltime || 0) / 1000,
+    recharge, cooldown:recharge, portee:sansEnum(raw.SkillDamType) || null,
     icone:path.basename(icon.target),
     effectSourceIds:[sourceId], sourceBehaviors:comportements(raw, tables.pcSkillBehaviors, tables.buffs)
   };
@@ -342,7 +346,7 @@ function linkedArmors(tables){
 }
 
 function assets(tables, hero, skills, armors){
-  const icons = skills.map(skill => resoudreIcone(tables.pcSkills[skill.gameId], skill.weaponType, tables));
+  const icons = skills.map(skill => resoudreIcone(tables.pcSkills[skill.sourceGameId], skill.weaponType, tables));
   const skillAssets = [...new Map(icons.filter(icon => icon.kind === "export"
     && icon.target !== COMMON_REPOSITORY_ICONS.TagSkill)
     .map(icon => [icon.source, {source:icon.source, target:icon.target}])).values()];
@@ -392,7 +396,7 @@ function extraireDepuisTables(tables){
     for(const field of WIKI_FIELDS) {
       const id = defaults[field];
       if(!id || id === "None") throw new Error("Khala/" + weapon + " : " + field + " absent");
-      const skill = competence(id, weapon, tables);
+      const skill = competence(id, weapon, tables, field);
       allSkills.push(skill);
       if(SKILL_FIELDS.includes(field)) calculatorSkills.push(skill);
     }
@@ -461,6 +465,11 @@ function validerSnapshot(snapshot){
   const sources = [...(hero.effectSources && hero.effectSources.skills || []), ...(hero.effectSources && hero.effectSources.potentials || [])];
   const ids = new Set(sources.map(source => source.id));
   if(ids.size !== sources.length) throw new Error("sources d'effet dupliquées pour khala");
+  for(const source of sources) {
+    if(!Object.hasOwn(source, "textFr") || !Object.hasOwn(source, "textEn") || Object.hasOwn(source, "texts")) {
+      throw new Error("textes d'effet requis sous textFr/textEn pour khala");
+    }
+  }
   for(const skill of hero.wikiSkills) {
     const expected = (skill.skillCategory === "PASSIVE" ? "hero-passive:" : "skill:") + skill.gameId;
     if(!Array.isArray(skill.effectSourceIds) || skill.effectSourceIds.length !== 1
@@ -472,12 +481,20 @@ function validerSnapshot(snapshot){
     const resolved = typeof skill.descriptionFr === "string" && typeof skill.descriptionEn === "string"
       && skill.localisation && skill.localisation.status === "resolved" && skill.localisation.reason === null;
     if(!missing && !resolved) throw new Error("localisation de compétence invalide pour khala");
+    const source = sources.find(item => item.id === expected);
+    if(source.textFr !== skill.descriptionFr || source.textEn !== skill.descriptionEn) {
+      throw new Error("textes d'effet incohérents pour khala");
+    }
   }
   for(const [weapon, potentials] of Object.entries(hero.potentials || {})) for(const potential of potentials) {
     const expected = "potential:" + HERO_SLUG + ":" + weapon + ":" + potential.tier;
     if(!Array.isArray(potential.effectSourceIds) || potential.effectSourceIds.length !== 1
       || potential.effectSourceIds[0] !== expected) throw new Error("source d'effet incohérente pour khala");
     if(!ids.has(expected)) throw new Error("source d'effet absente pour khala");
+    const source = sources.find(item => item.id === expected);
+    if(source.textFr !== potential.bonusFr || source.textEn !== potential.bonusEn) {
+      throw new Error("textes d'effet incohérents pour khala");
+    }
   }
 }
 

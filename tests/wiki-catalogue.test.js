@@ -20,6 +20,7 @@ vm.runInNewContext(
   { filename:"wiki-competences.js" }
 );
 const catalogue = contexte.window.SEVEN_DS_WIKI_COMPETENCES;
+assert.equal(catalogue.khala?.length, 18, "Khala : 18 compétences Wiki");
 
 const personnages = JSON.parse(
   fs.readFileSync(path.join(RACINE, "7ds-stats", "personnages.json"), "utf8")
@@ -96,7 +97,9 @@ slugs.forEach(slug => {
   competences.forEach(competence => {
     assert.ok(competence.nomFr, slug+" : nom absent ("+competence.gameId+")");
     assert.ok(
-      competence.descriptionFr,
+      competence.descriptionFr || (competence.descriptionFr === null
+        && competence.localisation?.status === "missing-from-export"
+        && competence.localisation.reason),
       slug+" : description absente ("+competence.gameId+")"
     );
     assert.ok(

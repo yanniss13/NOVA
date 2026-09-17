@@ -2288,6 +2288,7 @@
    "wikiSkills": [
     {
      "gameId": "calla_sworddual_normalatk_1",
+     "sourceGameId": "calla_sworddual_normalatk_1",
      "weaponType": "SwordDual",
      "skillCategory": "NORMAL",
      "categorie": "NORMAL",
@@ -2300,8 +2301,9 @@
       "status": "resolved",
       "reason": null
      },
-     "recharge": 0,
-     "cooldown": 0,
+     "recharge": null,
+     "cooldown": null,
+     "portee": "Melee",
      "icone": "common_SwordDual_normalAttack.webp",
      "effectSourceIds": [
       "skill:calla_sworddual_normalatk_1"
@@ -2310,6 +2312,7 @@
     },
     {
      "gameId": "calla_sworddual_skill_e",
+     "sourceGameId": "calla_sworddual_skill_e",
      "weaponType": "SwordDual",
      "skillCategory": "NORMAL_SKILL",
      "categorie": "NORMAL_SKILL",
@@ -2324,6 +2327,7 @@
      },
      "recharge": 19,
      "cooldown": 19,
+     "portee": "Melee",
      "icone": "Calla_SwordDual_NormalSkill.webp",
      "effectSourceIds": [
       "skill:calla_sworddual_skill_e"
@@ -2351,6 +2355,7 @@
     },
     {
      "gameId": "calla_sworddual_skill_tag",
+     "sourceGameId": "calla_sworddual_skill_tag",
      "weaponType": "SwordDual",
      "skillCategory": "TAG_SKILL",
      "categorie": "TAG_SKILL",
@@ -2363,8 +2368,9 @@
       "status": "resolved",
       "reason": null
      },
-     "recharge": 0,
-     "cooldown": 0,
+     "recharge": null,
+     "cooldown": null,
+     "portee": "Melee",
      "icone": "Icon_TagSkill.webp",
      "effectSourceIds": [
       "skill:calla_sworddual_skill_tag"
@@ -2373,6 +2379,7 @@
     },
     {
      "gameId": "calla_sworddual_skill_r",
+     "sourceGameId": "calla_sworddual_skill_r",
      "weaponType": "SwordDual",
      "skillCategory": "ULTIMATE",
      "categorie": "ULTIMATE",
@@ -2387,6 +2394,7 @@
      },
      "recharge": 10,
      "cooldown": 10,
+     "portee": "Melee",
      "icone": "Calla_SwordDual_UltimateSkill.webp",
      "effectSourceIds": [
       "skill:calla_sworddual_skill_r"
@@ -2395,6 +2403,7 @@
     },
     {
      "gameId": "calla_sworddual_skill_q",
+     "sourceGameId": "calla_sworddual_skill_q",
      "weaponType": "SwordDual",
      "skillCategory": "ACTIVE_THIRD",
      "categorie": "ACTIVE_THIRD",
@@ -2409,6 +2418,7 @@
      },
      "recharge": 13,
      "cooldown": 13,
+     "portee": "Melee",
      "icone": "Calla_SwordDual_ActiveThird.webp",
      "effectSourceIds": [
       "skill:calla_sworddual_skill_q"
@@ -2435,10 +2445,11 @@
      ]
     },
     {
-     "gameId": "calla_sworddual_skillpassive",
+     "gameId": "calla_sworddual_passive",
+     "sourceGameId": "calla_sworddual_skillpassive",
      "weaponType": "SwordDual",
-     "skillCategory": "NONE",
-     "categorie": "NONE",
+     "skillCategory": "PASSIVE",
+     "categorie": "PASSIVE",
      "nomFr": "Copieuse",
      "nom": "Copycat",
      "nameEn": "Copycat",
@@ -2450,14 +2461,16 @@
      },
      "recharge": 0,
      "cooldown": 0,
+     "portee": "None",
      "icone": "Calla_SwordDual_Passive.webp",
      "effectSourceIds": [
-      "skill:calla_sworddual_skillpassive"
+      "hero-passive:calla_sworddual_passive"
      ],
      "sourceBehaviors": []
     },
     {
      "gameId": "calla_cudgel3c_normalatk_1",
+     "sourceGameId": "calla_cudgel3c_normalatk_1",
      "weaponType": "Cudgel3c",
      "skillCategory": "NORMAL",
      "categorie": "NORMAL",
@@ -2470,8 +2483,9 @@
       "status": "resolved",
       "reason": null
      },
-     "recharge": 0,
-     "cooldown": 0,
+     "recharge": null,
+     "cooldown": null,
+     "portee": "Melee",
      "icone": "common_Cudgel3c_normalAttack.webp",
      "effectSourceIds": [
       "skill:calla_cudgel3c_normalatk_1"
@@ -2480,6 +2494,7 @@
     },
     {
      "gameId": "calla_cudgel3c_skill_e_start",
+     "sourceGameId": "calla_cudgel3c_skill_e_start",
      "weaponType": "Cudgel3c",
      "skillCategory": "NORMAL_SKILL",
      "categorie": "NORMAL_SKILL",
@@ -2494,6 +2509,7 @@
      },
      "recharge": 23,
      "cooldown": 23,
+     "portee": "Melee",
      "icone": "Calla_Cudgel3c_NormalSkill.webp",
      "effectSourceIds": [
       "skill:calla_cudgel3c_skill_e_start"
@@ -2502,6 +2518,7 @@
     },
     {
      "gameId": "calla_cudgel3c_skill_tag",
+     "sourceGameId": "calla_cudgel3c_skill_tag",
      "weaponType": "Cudgel3c",
      "skillCategory": "TAG_SKILL",
      "categorie": "TAG_SKILL",
@@ -2514,8 +2531,9 @@
       "status": "resolved",
       "reason": null
      },
-     "recharge": 0,
-     "cooldown": 0,
+     "recharge": null,
+     "cooldown": null,
+     "portee": "Melee",
      "icone": "Icon_TagSkill.webp",
      "effectSourceIds": [
       "skill:calla_cudgel3c_skill_tag"
@@ -2524,6 +2542,7 @@
     },
     {
      "gameId": "calla_cudgel3c_skill_r",
+     "sourceGameId": "calla_cudgel3c_skill_r",
      "weaponType": "Cudgel3c",
      "skillCategory": "ULTIMATE",
      "categorie": "ULTIMATE",
@@ -2538,6 +2557,7 @@
      },
      "recharge": 10,
      "cooldown": 10,
+     "portee": "Melee",
      "icone": "Calla_Cudgel3c_UltimateSkill.webp",
      "effectSourceIds": [
       "skill:calla_cudgel3c_skill_r"
@@ -2546,6 +2566,7 @@
     },
     {
      "gameId": "calla_cudgel3c_skill_q",
+     "sourceGameId": "calla_cudgel3c_skill_q",
      "weaponType": "Cudgel3c",
      "skillCategory": "ACTIVE_THIRD",
      "categorie": "ACTIVE_THIRD",
@@ -2560,6 +2581,7 @@
      },
      "recharge": 18,
      "cooldown": 18,
+     "portee": "Melee",
      "icone": "Calla_Cudgel3c_ActiveThird.webp",
      "effectSourceIds": [
       "skill:calla_cudgel3c_skill_q"
@@ -2567,10 +2589,11 @@
      "sourceBehaviors": []
     },
     {
-     "gameId": "calla_cudgel3c_skillpassive",
+     "gameId": "calla_cudgel3c_passive",
+     "sourceGameId": "calla_cudgel3c_skillpassive",
      "weaponType": "Cudgel3c",
-     "skillCategory": "NONE",
-     "categorie": "NONE",
+     "skillCategory": "PASSIVE",
+     "categorie": "PASSIVE",
      "nomFr": "Acrobate aérienne",
      "nom": "Wind Acrobat",
      "nameEn": "Wind Acrobat",
@@ -2582,14 +2605,16 @@
      },
      "recharge": 0,
      "cooldown": 0,
+     "portee": "None",
      "icone": "Calla_Cudgel3c_Passive.webp",
      "effectSourceIds": [
-      "skill:calla_cudgel3c_skillpassive"
+      "hero-passive:calla_cudgel3c_passive"
      ],
      "sourceBehaviors": []
     },
     {
      "gameId": "calla_gauntlets_normalatk_1",
+     "sourceGameId": "calla_gauntlets_normalatk_1",
      "weaponType": "Gauntlets",
      "skillCategory": "NORMAL",
      "categorie": "NORMAL",
@@ -2602,8 +2627,9 @@
       "status": "resolved",
       "reason": null
      },
-     "recharge": 0,
-     "cooldown": 0,
+     "recharge": null,
+     "cooldown": null,
+     "portee": "Melee",
      "icone": "common_Gauntlets_normalAttack.webp",
      "effectSourceIds": [
       "skill:calla_gauntlets_normalatk_1"
@@ -2612,6 +2638,7 @@
     },
     {
      "gameId": "calla_gauntlets_skill_e",
+     "sourceGameId": "calla_gauntlets_skill_e",
      "weaponType": "Gauntlets",
      "skillCategory": "NORMAL_SKILL",
      "categorie": "NORMAL_SKILL",
@@ -2626,6 +2653,7 @@
      },
      "recharge": 26,
      "cooldown": 26,
+     "portee": "Melee",
      "icone": "Calla_Gauntlets_NormalSkill.webp",
      "effectSourceIds": [
       "skill:calla_gauntlets_skill_e"
@@ -2653,6 +2681,7 @@
     },
     {
      "gameId": "calla_gauntlets_skill_tag",
+     "sourceGameId": "calla_gauntlets_skill_tag",
      "weaponType": "Gauntlets",
      "skillCategory": "TAG_SKILL",
      "categorie": "TAG_SKILL",
@@ -2665,8 +2694,9 @@
       "status": "resolved",
       "reason": null
      },
-     "recharge": 0,
-     "cooldown": 0,
+     "recharge": null,
+     "cooldown": null,
+     "portee": "Melee",
      "icone": "Icon_TagSkill.webp",
      "effectSourceIds": [
       "skill:calla_gauntlets_skill_tag"
@@ -2675,6 +2705,7 @@
     },
     {
      "gameId": "calla_gauntlets_skill_r",
+     "sourceGameId": "calla_gauntlets_skill_r",
      "weaponType": "Gauntlets",
      "skillCategory": "ULTIMATE",
      "categorie": "ULTIMATE",
@@ -2689,6 +2720,7 @@
      },
      "recharge": 10,
      "cooldown": 10,
+     "portee": "Melee",
      "icone": "Calla_Gauntlets_UltimateSkill.webp",
      "effectSourceIds": [
       "skill:calla_gauntlets_skill_r"
@@ -2697,6 +2729,7 @@
     },
     {
      "gameId": "calla_gauntlets_skill_q_1",
+     "sourceGameId": "calla_gauntlets_skill_q_1",
      "weaponType": "Gauntlets",
      "skillCategory": "ACTIVE_THIRD",
      "categorie": "ACTIVE_THIRD",
@@ -2711,6 +2744,7 @@
      },
      "recharge": 20,
      "cooldown": 20,
+     "portee": "Melee",
      "icone": "Calla_Gauntlets_ActiveThird_1.webp",
      "effectSourceIds": [
       "skill:calla_gauntlets_skill_q_1"
@@ -2718,10 +2752,11 @@
      "sourceBehaviors": []
     },
     {
-     "gameId": "calla_gauntlets_skillpassive",
+     "gameId": "calla_gauntlets_passive",
+     "sourceGameId": "calla_gauntlets_skillpassive",
      "weaponType": "Gauntlets",
-     "skillCategory": "NONE",
-     "categorie": "NONE",
+     "skillCategory": "PASSIVE",
+     "categorie": "PASSIVE",
      "nomFr": "Roublarde",
      "nom": "Trickster",
      "nameEn": "Trickster",
@@ -2733,9 +2768,10 @@
      },
      "recharge": 0,
      "cooldown": 0,
+     "portee": "None",
      "icone": "Calla_Gauntlets_Passive.webp",
      "effectSourceIds": [
-      "skill:calla_gauntlets_skillpassive"
+      "hero-passive:calla_gauntlets_passive"
      ],
      "sourceBehaviors": []
     }
@@ -2743,6 +2779,7 @@
    "calculatorSkills": [
     {
      "gameId": "calla_sworddual_normalatk_1",
+     "sourceGameId": "calla_sworddual_normalatk_1",
      "weaponType": "SwordDual",
      "skillCategory": "NORMAL",
      "categorie": "NORMAL",
@@ -2755,8 +2792,9 @@
       "status": "resolved",
       "reason": null
      },
-     "recharge": 0,
-     "cooldown": 0,
+     "recharge": null,
+     "cooldown": null,
+     "portee": "Melee",
      "icone": "common_SwordDual_normalAttack.webp",
      "effectSourceIds": [
       "skill:calla_sworddual_normalatk_1"
@@ -2765,6 +2803,7 @@
     },
     {
      "gameId": "calla_sworddual_skill_e",
+     "sourceGameId": "calla_sworddual_skill_e",
      "weaponType": "SwordDual",
      "skillCategory": "NORMAL_SKILL",
      "categorie": "NORMAL_SKILL",
@@ -2779,6 +2818,7 @@
      },
      "recharge": 19,
      "cooldown": 19,
+     "portee": "Melee",
      "icone": "Calla_SwordDual_NormalSkill.webp",
      "effectSourceIds": [
       "skill:calla_sworddual_skill_e"
@@ -2806,6 +2846,7 @@
     },
     {
      "gameId": "calla_sworddual_skill_tag",
+     "sourceGameId": "calla_sworddual_skill_tag",
      "weaponType": "SwordDual",
      "skillCategory": "TAG_SKILL",
      "categorie": "TAG_SKILL",
@@ -2818,8 +2859,9 @@
       "status": "resolved",
       "reason": null
      },
-     "recharge": 0,
-     "cooldown": 0,
+     "recharge": null,
+     "cooldown": null,
+     "portee": "Melee",
      "icone": "Icon_TagSkill.webp",
      "effectSourceIds": [
       "skill:calla_sworddual_skill_tag"
@@ -2828,6 +2870,7 @@
     },
     {
      "gameId": "calla_sworddual_skill_r",
+     "sourceGameId": "calla_sworddual_skill_r",
      "weaponType": "SwordDual",
      "skillCategory": "ULTIMATE",
      "categorie": "ULTIMATE",
@@ -2842,6 +2885,7 @@
      },
      "recharge": 10,
      "cooldown": 10,
+     "portee": "Melee",
      "icone": "Calla_SwordDual_UltimateSkill.webp",
      "effectSourceIds": [
       "skill:calla_sworddual_skill_r"
@@ -2850,6 +2894,7 @@
     },
     {
      "gameId": "calla_sworddual_skill_q",
+     "sourceGameId": "calla_sworddual_skill_q",
      "weaponType": "SwordDual",
      "skillCategory": "ACTIVE_THIRD",
      "categorie": "ACTIVE_THIRD",
@@ -2864,6 +2909,7 @@
      },
      "recharge": 13,
      "cooldown": 13,
+     "portee": "Melee",
      "icone": "Calla_SwordDual_ActiveThird.webp",
      "effectSourceIds": [
       "skill:calla_sworddual_skill_q"
@@ -2891,6 +2937,7 @@
     },
     {
      "gameId": "calla_cudgel3c_normalatk_1",
+     "sourceGameId": "calla_cudgel3c_normalatk_1",
      "weaponType": "Cudgel3c",
      "skillCategory": "NORMAL",
      "categorie": "NORMAL",
@@ -2903,8 +2950,9 @@
       "status": "resolved",
       "reason": null
      },
-     "recharge": 0,
-     "cooldown": 0,
+     "recharge": null,
+     "cooldown": null,
+     "portee": "Melee",
      "icone": "common_Cudgel3c_normalAttack.webp",
      "effectSourceIds": [
       "skill:calla_cudgel3c_normalatk_1"
@@ -2913,6 +2961,7 @@
     },
     {
      "gameId": "calla_cudgel3c_skill_e_start",
+     "sourceGameId": "calla_cudgel3c_skill_e_start",
      "weaponType": "Cudgel3c",
      "skillCategory": "NORMAL_SKILL",
      "categorie": "NORMAL_SKILL",
@@ -2927,6 +2976,7 @@
      },
      "recharge": 23,
      "cooldown": 23,
+     "portee": "Melee",
      "icone": "Calla_Cudgel3c_NormalSkill.webp",
      "effectSourceIds": [
       "skill:calla_cudgel3c_skill_e_start"
@@ -2935,6 +2985,7 @@
     },
     {
      "gameId": "calla_cudgel3c_skill_tag",
+     "sourceGameId": "calla_cudgel3c_skill_tag",
      "weaponType": "Cudgel3c",
      "skillCategory": "TAG_SKILL",
      "categorie": "TAG_SKILL",
@@ -2947,8 +2998,9 @@
       "status": "resolved",
       "reason": null
      },
-     "recharge": 0,
-     "cooldown": 0,
+     "recharge": null,
+     "cooldown": null,
+     "portee": "Melee",
      "icone": "Icon_TagSkill.webp",
      "effectSourceIds": [
       "skill:calla_cudgel3c_skill_tag"
@@ -2957,6 +3009,7 @@
     },
     {
      "gameId": "calla_cudgel3c_skill_r",
+     "sourceGameId": "calla_cudgel3c_skill_r",
      "weaponType": "Cudgel3c",
      "skillCategory": "ULTIMATE",
      "categorie": "ULTIMATE",
@@ -2971,6 +3024,7 @@
      },
      "recharge": 10,
      "cooldown": 10,
+     "portee": "Melee",
      "icone": "Calla_Cudgel3c_UltimateSkill.webp",
      "effectSourceIds": [
       "skill:calla_cudgel3c_skill_r"
@@ -2979,6 +3033,7 @@
     },
     {
      "gameId": "calla_cudgel3c_skill_q",
+     "sourceGameId": "calla_cudgel3c_skill_q",
      "weaponType": "Cudgel3c",
      "skillCategory": "ACTIVE_THIRD",
      "categorie": "ACTIVE_THIRD",
@@ -2993,6 +3048,7 @@
      },
      "recharge": 18,
      "cooldown": 18,
+     "portee": "Melee",
      "icone": "Calla_Cudgel3c_ActiveThird.webp",
      "effectSourceIds": [
       "skill:calla_cudgel3c_skill_q"
@@ -3001,6 +3057,7 @@
     },
     {
      "gameId": "calla_gauntlets_normalatk_1",
+     "sourceGameId": "calla_gauntlets_normalatk_1",
      "weaponType": "Gauntlets",
      "skillCategory": "NORMAL",
      "categorie": "NORMAL",
@@ -3013,8 +3070,9 @@
       "status": "resolved",
       "reason": null
      },
-     "recharge": 0,
-     "cooldown": 0,
+     "recharge": null,
+     "cooldown": null,
+     "portee": "Melee",
      "icone": "common_Gauntlets_normalAttack.webp",
      "effectSourceIds": [
       "skill:calla_gauntlets_normalatk_1"
@@ -3023,6 +3081,7 @@
     },
     {
      "gameId": "calla_gauntlets_skill_e",
+     "sourceGameId": "calla_gauntlets_skill_e",
      "weaponType": "Gauntlets",
      "skillCategory": "NORMAL_SKILL",
      "categorie": "NORMAL_SKILL",
@@ -3037,6 +3096,7 @@
      },
      "recharge": 26,
      "cooldown": 26,
+     "portee": "Melee",
      "icone": "Calla_Gauntlets_NormalSkill.webp",
      "effectSourceIds": [
       "skill:calla_gauntlets_skill_e"
@@ -3064,6 +3124,7 @@
     },
     {
      "gameId": "calla_gauntlets_skill_tag",
+     "sourceGameId": "calla_gauntlets_skill_tag",
      "weaponType": "Gauntlets",
      "skillCategory": "TAG_SKILL",
      "categorie": "TAG_SKILL",
@@ -3076,8 +3137,9 @@
       "status": "resolved",
       "reason": null
      },
-     "recharge": 0,
-     "cooldown": 0,
+     "recharge": null,
+     "cooldown": null,
+     "portee": "Melee",
      "icone": "Icon_TagSkill.webp",
      "effectSourceIds": [
       "skill:calla_gauntlets_skill_tag"
@@ -3086,6 +3148,7 @@
     },
     {
      "gameId": "calla_gauntlets_skill_r",
+     "sourceGameId": "calla_gauntlets_skill_r",
      "weaponType": "Gauntlets",
      "skillCategory": "ULTIMATE",
      "categorie": "ULTIMATE",
@@ -3100,6 +3163,7 @@
      },
      "recharge": 10,
      "cooldown": 10,
+     "portee": "Melee",
      "icone": "Calla_Gauntlets_UltimateSkill.webp",
      "effectSourceIds": [
       "skill:calla_gauntlets_skill_r"
@@ -3108,6 +3172,7 @@
     },
     {
      "gameId": "calla_gauntlets_skill_q_1",
+     "sourceGameId": "calla_gauntlets_skill_q_1",
      "weaponType": "Gauntlets",
      "skillCategory": "ACTIVE_THIRD",
      "categorie": "ACTIVE_THIRD",
@@ -3122,6 +3187,7 @@
      },
      "recharge": 20,
      "cooldown": 20,
+     "portee": "Melee",
      "icone": "Calla_Gauntlets_ActiveThird_1.webp",
      "effectSourceIds": [
       "skill:calla_gauntlets_skill_q_1"
@@ -3250,14 +3316,14 @@
       ]
      },
      {
-      "id": "skill:calla_sworddual_skillpassive",
-      "kind": "skill",
+      "id": "hero-passive:calla_sworddual_passive",
+      "kind": "hero-passive",
       "hero": "khala",
       "weaponType": "SwordDual",
-      "gameId": "calla_sworddual_skillpassive",
+      "gameId": "calla_sworddual_passive",
       "textFr": "Attaquez un ennemi augmente les chances crit. du héros de [#1A7331]40%[-] de la résistance crit. (Max : [#1A7331]30%[-]) et ses dégâts crit. de [#1A7331]35%[-] de la défense crit. (Max : [#1A7331]70%[-]).\nSi le héros bénéficie des effets [#0F5CD8]Contrefaçon - Épées doubles[-], [#0F5CD8]Contrefaçon - Épée longue[-] et [#0F5CD8]Contrefaçon - Hache[-], les temps de recharge de toutes ses compétences sont réinitialisés.\nÀ chaque octroi de l'effet [#0F5CD8]Contrefaçon - Épées doubles[-], augmente les dégâts d'attaque normale du héros de [#1A7331]10%[-] et sa perforation de [#1A7331]6[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]10 fois[-])",
       "textEn": "Attacking an enemy increases the hero's Crit Chance by [#1A7331]40%[-] of Crit Resistance (Max: [#1A7331]30%[-]) and Crit Damage by [#1A7331]35%[-] of Crit Defense (Max: [#1A7331]70%[-]).\nIf the hero has [#0F5CD8]Shaper - Dual Swords[-], [#0F5CD8]Shaper - Axe[-] and [#0F5CD8]Shaper - Longsword[-], all of the hero's skill cooldowns are reset.\nEach time [#0F5CD8]Shaper - Dual Swords[-] is gained, the hero's Normal Attack damage increases by [#1A7331]10%[-] and Pierce increases by [#1A7331]6[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]10 times[-])",
-      "coefficientDejaCalcule": true,
+      "coefficientDejaCalcule": false,
       "provenance": "Table/Skill/PC_SkillTable",
       "localisation": {
        "status": "resolved",
@@ -3346,14 +3412,14 @@
       "buffs": []
      },
      {
-      "id": "skill:calla_cudgel3c_skillpassive",
-      "kind": "skill",
+      "id": "hero-passive:calla_cudgel3c_passive",
+      "kind": "hero-passive",
       "hero": "khala",
       "weaponType": "Cudgel3c",
-      "gameId": "calla_cudgel3c_skillpassive",
+      "gameId": "calla_cudgel3c_passive",
       "textFr": "Lorsqu'un héros allié attaque un ennemi affecté par [#0F5CD8]Vent violent[-], augmente les chances crit. de tous les héros alliés de [#1A7331]15%[-].\nLorsqu'un héros allié active un [#0F5CD8]Déluge de Vent[-], augmente les dégâts crit. de tous les héros alliés d'attribut Vent de [#1A7331]50%[-] pendant [#1A7331]30 s[-], et octroie à tous les héros alliés des [#0F5CD8]barrières[-] égales à [#1A7331]250%[-] de l'attaque du héros pendant [#1A7331]20 s[-].",
       "textEn": "When an allied hero attacks an enemy affected by [#0F5CD8]Bitter Wind[-], all allied heroes' Crit Chance increases by [#1A7331]15%[-].\nWhen an allied hero activates a [#0F5CD8]Wind Burst[-], all allied Wind heroes' Crit Damage increases by [#1A7331]50%[-] for [#1A7331]30 sec[-], and all allied heroes receive [#0F5CD8]barriers[-] equal to [#1A7331]250%[-] of the hero's Attack for [#1A7331]20 sec[-].",
-      "coefficientDejaCalcule": true,
+      "coefficientDejaCalcule": false,
       "provenance": "Table/Skill/PC_SkillTable",
       "localisation": {
        "status": "resolved",
@@ -3461,14 +3527,14 @@
       "buffs": []
      },
      {
-      "id": "skill:calla_gauntlets_skillpassive",
-      "kind": "skill",
+      "id": "hero-passive:calla_gauntlets_passive",
+      "kind": "hero-passive",
       "hero": "khala",
       "weaponType": "Gauntlets",
-      "gameId": "calla_gauntlets_skillpassive",
+      "gameId": "calla_gauntlets_passive",
       "textFr": "Augmente l'attaque de Terre à hauteur de [#1A7331]10%[-] de l'attaque du héros pendant [#1A7331]30 s[-] lorsqu'un héros allié active un [#0F5CD8]Déluge de Terre[-]. (Max : [#1A7331]3000[-])",
       "textEn": "Earth Attack increases by [#1A7331]10%[-] of the hero's Attack for [#1A7331]30 sec[-] when an allied hero activates an [#0F5CD8]Earth Burst[-]. (Max: [#1A7331]3000[-])",
-      "coefficientDejaCalcule": true,
+      "coefficientDejaCalcule": false,
       "provenance": "Table/Skill/PC_SkillTable",
       "localisation": {
        "status": "resolved",

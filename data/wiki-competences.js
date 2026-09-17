@@ -1,4 +1,4 @@
-// Genere par generate-wiki.py depuis les pages FR de 7dsorigin.app.
+// Genere par generate-wiki.py : pages FR de 7dsorigin.app + contenu-jeu.json.
 // Catalogue de LECTURE du wiki : noms et descriptions francais,
 // PASSIFS INCLUS. Ne pas confondre avec data/competences.js, qui
 // est le catalogue de calcul du comparateur de degats.
@@ -2956,6 +2956,174 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "nomFr": "Givre tranchant",
    "recharge": 0.0,
    "weaponType": "SwordDual"
+  }
+ ],
+ "khala": [
+  {
+   "categorie": "NORMAL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]232%[-] de l'attaque.\nSi le héros ne bénéficie pas de l'effet [#0F5CD8]Miroir - Contrefaçon[-], chaque coup porté à l'ennemi restaure la jauge de magie de [#1A7331]15[-].\nLa dernière frappe octroie l'effet [#0F5CD8]Contrefaçon - Épées doubles[-] au héros.\n1er coup : 26%\n2e coup : 29%\n3e coup : 46%\n4e coup : 58%\n5e coup : 73%\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.",
+   "gameId": "calla_sworddual_normalatk_1",
+   "icone": "common_SwordDual_normalAttack.webp",
+   "nomFr": "Double tranchant",
+   "recharge": null,
+   "weaponType": "SwordDual"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "descriptionFr": "Octroie [#0F5CD8]Contrefaçon - Épées doubles[-], puis inflige des dégâts égaux à [#1A7331]164%[-] de l'attaque.\nTant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif, [#3C22D6]Attaque normale : Contrefaçon - Déluge de lames[-] est utilisable.\n\n[#3C22D6]Contrefaçon - Déluge de lames[-]\nOctroie [#0F5CD8]Contrefaçon - Épée longue[-], puis inflige des dégâts égaux à [#1A7331]184%[-] de l'attaque.\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.\n※[#0F5CD8]Contrefaçon - Épée longue[-] : Augmente la défense crit. de [#1A7331]60%[-]. L'effet persiste tant que le héros est en combat.",
+   "gameId": "calla_sworddual_skill_e",
+   "icone": "Calla_SwordDual_NormalSkill.webp",
+   "nomFr": "Déluge de lames",
+   "recharge": 19,
+   "weaponType": "SwordDual"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]131%[-] de l'attaque.",
+   "gameId": "calla_sworddual_skill_tag",
+   "icone": "Icon_TagSkill.webp",
+   "nomFr": "Crochet tranchant",
+   "recharge": null,
+   "weaponType": "SwordDual"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "descriptionFr": "Octroie [#0F5CD8]Miroir - Contrefaçon[-] toutes les [#1A7331]1 s[-] pendant [#1A7331]10 s[-] en étant à portée. La zone dure [#1A7331]20 s[-].\nTant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif, [#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] est utilisable.\n\n[#3C22D6]Contrefaçon - Lame mirage[-]\nInflige des dégâts égaux à [#1A7331]294%[-] de l'attaque, puis octroie [#1A7331]1 cumul(s)[-] de [#0F5CD8]Mirage[-]. (Max : [#1A7331]5 fois[-])\nSi le héros bénéficie des effets [#0F5CD8]Contrefaçon - Épées doubles[-], [#0F5CD8]Contrefaçon - Épée longue[-] et [#0F5CD8]Contrefaçon - Hache[-], la compétence inflige des dégâts supplémentaires égaux à [#1A7331]310%[-] de l'attaque, puis retire l'effet.\n\n※[#0F5CD8]Mirage[-] : augmente les dégâts crit. des attaques normales de [#1A7331]15%[-]. L'effet persiste tant que le héros est en combat.",
+   "gameId": "calla_sworddual_skill_r",
+   "icone": "Calla_SwordDual_UltimateSkill.webp",
+   "nomFr": "Arsenal miroir",
+   "recharge": 10,
+   "weaponType": "SwordDual"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "descriptionFr": "Octroie [#0F5CD8]Contrefaçon - Épées doubles[-], puis inflige des dégâts égaux à [#1A7331]115%[-] de l'attaque.\nTant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif, [#3C22D6]Attaque normale : Contrefaçon - Plongeon miroir[-] est utilisable.\n\n[#3C22D6]Contrefaçon - Plongeon miroir[-]\nOctroie [#0F5CD8]Contrefaçon - Hache[-], puis inflige des dégâts égaux à [#1A7331]137%[-] de l'attaque.\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.\n※[#0F5CD8]Contrefaçon - Hache[-] : augmente la résistance crit. de [#1A7331]20%[-] L'effet persiste tant que le héros est en combat.",
+   "gameId": "calla_sworddual_skill_q",
+   "icone": "Calla_SwordDual_ActiveThird.webp",
+   "nomFr": "Plongeon miroir",
+   "recharge": 13,
+   "weaponType": "SwordDual"
+  },
+  {
+   "categorie": "PASSIVE",
+   "descriptionFr": "Attaquez un ennemi augmente les chances crit. du héros de [#1A7331]40%[-] de la résistance crit. (Max : [#1A7331]30%[-]) et ses dégâts crit. de [#1A7331]35%[-] de la défense crit. (Max : [#1A7331]70%[-]).\nSi le héros bénéficie des effets [#0F5CD8]Contrefaçon - Épées doubles[-], [#0F5CD8]Contrefaçon - Épée longue[-] et [#0F5CD8]Contrefaçon - Hache[-], les temps de recharge de toutes ses compétences sont réinitialisés.\nÀ chaque octroi de l'effet [#0F5CD8]Contrefaçon - Épées doubles[-], augmente les dégâts d'attaque normale du héros de [#1A7331]10%[-] et sa perforation de [#1A7331]6[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]10 fois[-])",
+   "gameId": "calla_sworddual_passive",
+   "icone": "Calla_SwordDual_Passive.webp",
+   "nomFr": "Copieuse",
+   "recharge": 0,
+   "weaponType": "SwordDual"
+  },
+  {
+   "categorie": "NORMAL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]103%[-] de l'attaque.\n1er coup : 16%\n2e coup : 17%\n3e coup : 26%\n4e coup : 44%",
+   "gameId": "calla_cudgel3c_normalatk_1",
+   "icone": "common_Cudgel3c_normalAttack.webp",
+   "nomFr": "Fauchage du vent",
+   "recharge": null,
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "descriptionFr": "Immunise contre les réactions pendant l'utilisation de la compétence normale.\nInflige des dégâts égaux à [#1A7331]191%[-] de l'attaque. Chaque coup porté augmente la jauge de Déluge de [#1A7331]0.2%[-] de l'attaque. (Max : [#1A7331]40[-])",
+   "gameId": "calla_cudgel3c_skill_e_start",
+   "icone": "Calla_Cudgel3c_NormalSkill.webp",
+   "nomFr": "Tourbillon",
+   "recharge": 23,
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]87%[-] de l'attaque.",
+   "gameId": "calla_cudgel3c_skill_tag",
+   "icone": "Icon_TagSkill.webp",
+   "nomFr": "Piqué de l'hirondelle",
+   "recharge": null,
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]290%[-] de l'attaque. Chaque coup porté augmente la jauge de Déluge de [#1A7331]0.5%[-] de l'attaque. (Max : [#1A7331]100[-])\nLa dernière frappe inflige des dégâts supplémentaires égaux à [#1A7331]350%[-] de l'attaque aux ennemis sous l'effet d'un [#0F5CD8]Déluge de Vent[-].",
+   "gameId": "calla_cudgel3c_skill_r",
+   "icone": "Calla_Cudgel3c_UltimateSkill.webp",
+   "nomFr": "Bourrasque entravante",
+   "recharge": 10,
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]124%[-] de l'attaque. Chaque coup porté inflige [#1A7331]1 cumul(s)[-] de [#0F5CD8]Vent violent[-] pendant [#1A7331]40 s[-]. (Max : [#1A7331]50 fois[-])\n\n※[#0F5CD8]Vent violent[-] : augmente les dégâts de [#0F5CD8]Déluge de Vent[-] actif de [#1A7331]10%[-] par tranche de [#1A7331]1 cumul(s)[-].",
+   "gameId": "calla_cudgel3c_skill_q",
+   "icone": "Calla_Cudgel3c_ActiveThird.webp",
+   "nomFr": "Moulinet",
+   "recharge": 18,
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "PASSIVE",
+   "descriptionFr": "Lorsqu'un héros allié attaque un ennemi affecté par [#0F5CD8]Vent violent[-], augmente les chances crit. de tous les héros alliés de [#1A7331]15%[-].\nLorsqu'un héros allié active un [#0F5CD8]Déluge de Vent[-], augmente les dégâts crit. de tous les héros alliés d'attribut Vent de [#1A7331]50%[-] pendant [#1A7331]30 s[-], et octroie à tous les héros alliés des [#0F5CD8]barrières[-] égales à [#1A7331]250%[-] de l'attaque du héros pendant [#1A7331]20 s[-].",
+   "gameId": "calla_cudgel3c_passive",
+   "icone": "Calla_Cudgel3c_Passive.webp",
+   "nomFr": "Acrobate aérienne",
+   "recharge": 0,
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "NORMAL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]107%[-] de l'attaque.\n1er coup : 16%\n2e coup : 17%\n3e coup : 28%\n4e coup : 46%",
+   "gameId": "calla_gauntlets_normalatk_1",
+   "icone": "common_Gauntlets_normalAttack.webp",
+   "nomFr": "Rafale explosive",
+   "recharge": null,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "descriptionFr": null,
+   "gameId": "calla_gauntlets_skill_e",
+   "icone": "Calla_Gauntlets_NormalSkill.webp",
+   "localisation": {
+    "reason": "localisation non couverte par l'export",
+    "status": "missing-from-export"
+   },
+   "nomFr": "Crochet explosif",
+   "recharge": 26,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]85%[-] de l'attaque.",
+   "gameId": "calla_gauntlets_skill_tag",
+   "icone": "Icon_TagSkill.webp",
+   "nomFr": "Bombardement",
+   "recharge": null,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]300%[-] de l'attaque. Chaque coup porté augmente la jauge de Déluge de [#1A7331]2%[-] de l'attaque. (Max : [#1A7331]300[-])\nChaque coup de l'attaque augmente les dégâts de la compétence normale d'attribut Terre subis de [#1A7331]50%[-] pendant [#1A7331]30 s[-].",
+   "gameId": "calla_gauntlets_skill_r",
+   "icone": "Calla_Gauntlets_UltimateSkill.webp",
+   "nomFr": "Explosion suprême",
+   "recharge": 10,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]150%[-] de l'attaque. La première frappe génère [#1A7331]5[-] bombe(s) autour du héros.\nAugmente la jauge de Déluge des ennemis qui entrent en contact avec une bombe de [#1A7331]1.5%[-] de l'attaque (max : [#1A7331]200[-]) et leur inflige des dégâts égaux à [#1A7331]30%[-] de l'attaque.\nLes bombes explosent automatiquement après [#1A7331]1.5 s[-] si aucun ennemi n'entre en contact avec.\n1er coup : 66%\n2e coup : 84%",
+   "gameId": "calla_gauntlets_skill_q_1",
+   "icone": "Calla_Gauntlets_ActiveThird_1.webp",
+   "nomFr": "Mine à impact",
+   "recharge": 20,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "PASSIVE",
+   "descriptionFr": "Augmente l'attaque de Terre à hauteur de [#1A7331]10%[-] de l'attaque du héros pendant [#1A7331]30 s[-] lorsqu'un héros allié active un [#0F5CD8]Déluge de Terre[-]. (Max : [#1A7331]3000[-])",
+   "gameId": "calla_gauntlets_passive",
+   "icone": "Calla_Gauntlets_Passive.webp",
+   "nomFr": "Roublarde",
+   "recharge": 0,
+   "weaponType": "Gauntlets"
   }
  ],
  "king": [

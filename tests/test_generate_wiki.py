@@ -1,7 +1,9 @@
 import importlib.util
 import json
 import pathlib
+import tempfile
 import unittest
+from unittest import mock
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -36,6 +38,45 @@ PAYLOAD = "[" + ",".join([
 
 
 class ExtractionTests(unittest.TestCase):
+    def test_client_only_idempotent_check_refuse_une_fiche_perimee(self):
+        original = module.client_content.read_window_assignment(module.CIBLE, "SEVEN_DS_WIKI_COMPETENCES")
+        historic = {slug: skills for slug, skills in original.items() if slug != "khala"}
+        with tempfile.TemporaryDirectory() as folder, \
+             mock.patch.object(module._gen, "fetch", side_effect=AssertionError("réseau")):
+            target = pathlib.Path(folder) / "wiki-competences.js"
+            target.write_text(module.rendu(historic), encoding="utf-8")
+            with self.assertRaises(SystemExit):
+                module.main(["--check"], cible=target)
+            module.main(["--client-only"], cible=target)
+            first = target.read_bytes()
+            module.main(["--client-only"], cible=target)
+            self.assertEqual(target.read_bytes(), first)
+            module.main(["--check"], cible=target)
+            final = module.client_content.read_window_assignment(target, "SEVEN_DS_WIKI_COMPETENCES")
+            final.pop("khala")
+            self.assertEqual(json.dumps(final, ensure_ascii=False), json.dumps(historic, ensure_ascii=False))
+
+    def test_client_local_sans_reseau_et_couverture_declaree(self):
+        with mock.patch.object(module._gen, "fetch", side_effect=AssertionError("réseau")):
+            skills = module.competences_du("khala")
+        self.assertEqual(len(skills), 18)
+        self.assertEqual(sum(s["categorie"] == "PASSIVE" for s in skills), 3)
+        normal = next(s for s in skills if s["gameId"] == "calla_sworddual_normalatk_1")
+        self.assertIsNone(normal["recharge"])
+        self.assertEqual(set(normal), {"gameId", "weaponType", "categorie", "nomFr", "descriptionFr", "recharge", "icone"})
+        missing = next(s for s in skills if s["gameId"] == "calla_gauntlets_skill_e")
+        self.assertIsNone(missing["descriptionFr"])
+        self.assertEqual(missing["localisation"]["status"], "missing-from-export")
+        module.valide("khala", skills)
+        missing.pop("localisation")
+        with self.assertRaises(module.CatalogueIncomplet):
+            module.valide("khala", skills)
+
+    def test_heros_historique_garde_sa_source(self):
+        with mock.patch.object(module._gen, "fetch", return_value="page"), \
+             mock.patch.object(module._gen, "flight_payload", return_value=PAYLOAD):
+            self.assertEqual(module.competences_du("derieri"), module.competences_du_payload(PAYLOAD))
+
     def test_retient_les_champs_francais(self):
         self.assertEqual(
             module.competences_du_payload(PAYLOAD),

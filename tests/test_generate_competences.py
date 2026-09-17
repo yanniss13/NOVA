@@ -9,7 +9,10 @@ Aucun acces reseau : ces tests jugent les regles, pas la disponibilite du
 site tiers.
 """
 import importlib.util
+import json
+import tempfile
 import unittest
+from unittest import mock
 import urllib.error
 from pathlib import Path
 
@@ -44,6 +47,46 @@ def compet(gid, desc, **reste):
 
 
 class DegatsDirects(unittest.TestCase):
+    def test_client_only_idempotent_check_refuse_une_fiche_perimee(self):
+        original = _gen.client_content.read_window_assignment(RACINE / "data" / "competences.js", "SEVEN_DS_COMPETENCES")
+        historic = {slug: skills for slug, skills in original.items() if slug != "khala"}
+        with tempfile.TemporaryDirectory() as folder, \
+             mock.patch.object(_gen._gen, "fetch", side_effect=AssertionError("réseau")):
+            target = Path(folder) / "competences.js"
+            target.write_text(_gen.rendu(historic), encoding="utf-8")
+            with self.assertRaises(SystemExit):
+                _gen.main(["--check"], cible=target)
+            _gen.main(["--client-only"], cible=target)
+            first = target.read_bytes()
+            _gen.main(["--client-only"], cible=target)
+            self.assertEqual(target.read_bytes(), first)
+            _gen.main(["--check"], cible=target)
+            final = _gen.client_content.read_window_assignment(target, "SEVEN_DS_COMPETENCES")
+            final.pop("khala")
+            self.assertEqual(json.dumps(final, ensure_ascii=False), json.dumps(historic, ensure_ascii=False))
+
+    def test_client_local_sans_reseau_et_sans_attaque_sautee_inventee(self):
+        with mock.patch.object(_gen._gen, "fetch", side_effect=AssertionError("réseau")):
+            skills = _gen.competences_du("khala")
+        self.assertEqual(len(skills), 15)
+        self.assertNotIn("PASSIVE", {s["categorie"] for s in skills})
+        normal = next(s for s in skills if s["gameId"] == "calla_sworddual_normalatk_1")
+        self.assertEqual(normal["pourcentage"], 232)
+        self.assertIsNone(normal["recharge"])
+        self.assertEqual(normal["portee"], "Melee")
+        missing = next(s for s in skills if s["gameId"] == "calla_gauntlets_skill_e")
+        self.assertIsNone(missing["pourcentage"])
+        self.assertEqual(missing["nature"], "non-chiffree")
+
+    def test_zone_ne_devient_pas_les_degats_de_sa_normale_debloquee(self):
+        skills = _gen.competences_du("khala")
+        zone = next(s for s in skills if s["gameId"] == "calla_sworddual_skill_r")
+        self.assertIsNone(zone["pourcentage"])
+        self.assertEqual(zone["nature"], "non-chiffree")
+        self.assertEqual(zone["composantes"], [])
+        normale = next(s for s in skills if s["gameId"] == "calla_sworddual_skill_e")
+        self.assertEqual(normale["pourcentage"], 164)
+
     def test_phrase_simple(self):
         """La forme dominante : un coup, un pourcentage, rien d'autre."""
         c = compet(

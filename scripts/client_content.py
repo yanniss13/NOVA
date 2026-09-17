@@ -69,6 +69,26 @@ def client_slugs(snapshot=None):
     return tuple(sorted(payload["heroes"], key=str.casefold))
 
 
+def client_section(slug, section, snapshot=None):
+    """Section locale independante ; None reserve exclusivement au heros public."""
+    hero = snapshot_or_default(snapshot)["heroes"].get(slug)
+    if hero is None:
+        return None
+    if section not in hero:
+        raise ValueError(f"{slug}: section client absente: {section}")
+    return copy.deepcopy(hero[section])
+
+
+def replace_skill_entries(base, build, snapshot=None):
+    """Remplace les fiches locales via leur normaliseur, avec garde historique."""
+    def merge(catalog, payload, replace_client=False):
+        result = copy.deepcopy(catalog)
+        for slug in client_slugs(payload):
+            result[slug] = build(slug, payload)
+        return result
+    return replace_client_entries(base, merge, snapshot)
+
+
 def normalize_rarity(value, slug):
     if value not in RARITY_BY_GRADE:
         raise ValueError(f"rareté inconnue pour {slug}: {value}")

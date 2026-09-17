@@ -17,6 +17,50 @@ _spec.loader.exec_module(_gen)
 
 
 class EffetsNormalises(unittest.TestCase):
+    def test_buff_client_non_traduit_exige_ses_dimensions_explicites(self):
+        source = next(s for s in _gen.client_effect_skills("khala") if s["gameId"] == "calla_gauntlets_skill_e")
+        for key, value in [("stat", "Inconnue"), ("value", None), ("applyType", "None"),
+                           ("durationMs", 0), ("trigger", "CriticalHit"),
+                           ("stack", {"applicationCount": 1, "max": 5})]:
+            with self.subTest(key=key):
+                altered = json.loads(json.dumps(source))
+                altered["buffs"][0]["buffs"][0][key] = value
+                with self.assertRaisesRegex(ValueError, "effet DPS non classe"):
+                    _gen.normaliser_effet(altered)
+
+    def test_sources_client_sans_reseau_et_sans_potentiel_duplique(self):
+        characters = [h for h in _gen.charge_json("personnages.json") if h["slug"] == "khala"]
+        with mock.patch.object(_gen, "fetch", side_effect=AssertionError("réseau")):
+            skills = _gen.charger_hero_skills(characters)
+        sources = _gen.collecter_sources(characters, [], [], [], [], skills)
+        self.assertEqual(len(sources), 48)
+        self.assertEqual(len({s["id"] for s in sources}), 48)
+        catalogue = _gen.construire_catalogue(sources)
+        khala = catalogue["heroes"]["khala"]
+        self.assertEqual(khala["SwordDual"]["potentials"]["2"]["regles"][0]["valeur"], 2000)
+        self.assertEqual(khala["Cudgel3c"]["potentials"]["2"]["regles"][0]["valeur"], 3000)
+        self.assertEqual(khala["Cudgel3c"]["potentials"]["4"]["regles"][0]["valeur"], 3000)
+        self.assertEqual(khala["Gauntlets"]["potentials"]["4"]["regles"][0]["valeur"], 4000)
+        for weapon in khala.values():
+            for tier in ["1", "3", "8"]:
+                self.assertEqual(weapon["potentials"][tier]["regles"], [])
+        for source_id in ["hero-passive:calla_sworddual_passive", "hero-passive:calla_gauntlets_passive",
+                          "skill:calla_sworddual_normalatk_1", "skill:calla_sworddual_skill_e",
+                          "skill:calla_sworddual_skill_r", "skill:calla_cudgel3c_skill_r",
+                          "potential:khala:SwordDual:5", "potential:khala:SwordDual:7", "potential:khala:SwordDual:10"]:
+            effect = _gen.normaliser_effet(next(s for s in sources if s["id"] == source_id))
+            self.assertEqual(effect["classification"], "non-inclus", source_id)
+            self.assertEqual(effect["regles"], [])
+            self.assertTrue(effect["raison"])
+        buff = catalogue["skills"]["calla_gauntlets_skill_e"]
+        self.assertIsNone(buff["texteFr"])
+        self.assertEqual(buff["localisation"]["status"], "missing-from-export")
+        self.assertEqual(buff["classification"], "modelise")
+        self.assertEqual(buff["regles"][0]["valeur"], 5000)
+        self.assertEqual(buff["regles"][0]["cible"], "normal-skill")
+        self.assertEqual(buff["regles"][0]["duree"], 40)
+        self.assertEqual(buff["regles"][0]["portee"], "Team")
+
     def test_passif_degats_globaux_et_defense_cible(self):
         degats = _gen.normaliser_effet({
             "id": "hero-passive:bug_sworddual_passive",
@@ -1722,14 +1766,20 @@ class CatalogueLocal(unittest.TestCase):
     def test_check_ne_touche_jamais_au_reseau(self):
         with tempfile.TemporaryDirectory() as dossier:
             cible = Path(dossier) / "effets-dps.js"
-            cible.write_text(
-                "window.SEVEN_DS_EFFETS_DPS = {\"version\":1};\n",
-                encoding="utf-8",
-            )
+            cible.write_text((RACINE / "data" / "effets-dps.js").read_text(encoding="utf-8"), encoding="utf-8")
             with mock.patch.object(
                 _gen, "fetch", side_effect=AssertionError("reseau interdit")
             ):
+                _gen.main(["--client-only"], cible=cible)
+                first = cible.read_bytes()
+                _gen.main(["--client-only"], cible=cible)
+                self.assertEqual(cible.read_bytes(), first)
                 code = _gen.main(["--check"], cible=cible)
+                stale = _gen.client_content.read_window_assignment(cible, "SEVEN_DS_EFFETS_DPS")
+                stale["skills"]["calla_gauntlets_skill_e"]["regles"][0]["valeur"] = 99999
+                cible.write_text(_gen.rendu(stale), encoding="utf-8")
+                with self.assertRaises(SystemExit):
+                    _gen.main(["--check"], cible=cible)
 
         self.assertEqual(code, 0)
 

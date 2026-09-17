@@ -47,8 +47,8 @@ function snapshotNominal(){
     wikiSkills:skills,
     calculatorSkills:skills.slice(0, 15),
     effectSources:{
-      skills:skills.map(skill => ({id:skill.effectSourceIds[0], texts:{fr:skill.descriptionFr, en:skill.descriptionEn}, buffs:[]})),
-      potentials:Object.values(potentials).flat().map(potential => ({id:potential.effectSourceIds[0], texts:{fr:potential.descriptionFr, en:potential.descriptionEn}, buffs:[]}))
+      skills:skills.map(skill => ({id:skill.effectSourceIds[0], textFr:skill.descriptionFr, textEn:skill.descriptionEn, buffs:[]})),
+      potentials:Object.values(potentials).flat().map(potential => ({id:potential.effectSourceIds[0], textFr:potential.descriptionFr, textEn:potential.descriptionEn, buffs:[]}))
     },
     linkedArmors:[{id:"armor-1"}, {id:"armor-2"}, {id:"armor-3"}],
     assets:{portrait:{source:"slot_Calla_001.png", target:"7ds-personnages/khala.webp"}, skills:[], linkedArmors:[]}
@@ -168,6 +168,22 @@ assert.equal(preflight.jouables.length, 1, "le préflight CLI utilise le filtre 
 assert.deepEqual(preflight.ignored, ["409100119", "409100124"], "le compte des IDs anonymes est calculé");
 
 const extraitPipeline = extraireDepuisTables(tablesPipeline());
+const passiveTables = tablesPipeline();
+const passiveId = passiveTables.defaultWeaponSkills.calla_sworddual_default.SkillPassive;
+passiveTables.pcSkills[passiveId].SkillCategory = "ESkillCategory::None";
+const normalId = passiveTables.defaultWeaponSkills.calla_sworddual_default.SkillAttack;
+passiveTables.pcSkills[normalId].SkillCategory = "ESkillCategory::NormalAttack";
+passiveTables.pcSkills[normalId].SkillDamType = "ESkillDamType::Melee";
+const categoriesPipeline = extraireDepuisTables(passiveTables).heroes.khala;
+assert.equal(categoriesPipeline.wikiSkills.find(skill => skill.gameId === "calla_sworddual_passive").categorie, "PASSIVE");
+assert.equal(categoriesPipeline.calculatorSkills.find(skill => skill.gameId === normalId).recharge, null);
+assert.equal(categoriesPipeline.calculatorSkills.find(skill => skill.gameId === normalId).portee, "Melee");
+const wrongEffectShape = snapshotNominal();
+delete wrongEffectShape.heroes.khala.effectSources.skills[0].textEn;
+assert.throws(() => validerSnapshot(wrongEffectShape), /texte.*effet|effet.*texte/);
+const wrongEffectText = snapshotNominal();
+wrongEffectText.heroes.khala.effectSources.skills[0].textFr = "Autre compétence";
+assert.throws(() => validerSnapshot(wrongEffectText), /texte.*effet|effet.*texte/);
 const characterPipeline = extraitPipeline.heroes.khala.character;
 assert.equal(characterPipeline.pvpDmgUp, null);
 assert.equal(characterPipeline.pvpDmgDown, null);
@@ -269,6 +285,8 @@ const eighteenthSkill = missingKnownLocalization.heroes.khala.wikiSkills[17];
 eighteenthSkill.descriptionFr = null;
 eighteenthSkill.descriptionEn = null;
 eighteenthSkill.localisation = {status:"missing-from-export", reason:"localisation non couverte par l'export"};
+missingKnownLocalization.heroes.khala.effectSources.skills[17].textFr = null;
+missingKnownLocalization.heroes.khala.effectSources.skills[17].textEn = null;
 assert.doesNotThrow(() => validerSnapshot(missingKnownLocalization),
   "la localisation explicitement non couverte est publiée comme null, jamais comme clé brute");
 const missingUnannouncedLocalization = snapshotNominal();

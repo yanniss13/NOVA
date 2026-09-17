@@ -9,7 +9,8 @@
 #  garde le francais et surtout les passifs, et on ne chiffre rien.
 #
 #  Usage :   python scripts/generate-wiki.py           (connexion requise)
-#            python scripts/generate-wiki.py --check   (verifie la presence)
+#            python scripts/generate-wiki.py --client-only (snapshot local)
+#            python scripts/generate-wiki.py --check   (verifie le catalogue)
 #
 #  Le catalogue est fige et commite : le site est une PWA et ne doit aucun
 #  appel reseau au rendu. `--check` ne re-aspire pas, sous peine de rendre
@@ -31,6 +32,7 @@ _spec = importlib.util.spec_from_file_location(
 )
 _gen = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_gen)
+import client_content
 
 FICHE = "https://7dsorigin.app/fr/characters/{slug}"
 CIBLE = RACINE / "data" / "wiki-competences.js"
@@ -151,6 +153,29 @@ def competences_du_payload(payload):
     return retenues
 
 
+def client_wiki_skills(slug, snapshot=None):
+    raw = client_content.client_section(slug, "wikiSkills", snapshot)
+    if raw is None:
+        return None
+    keys = ("gameId", "weaponType", "categorie", "nomFr", "descriptionFr", "recharge", "icone")
+    skills = []
+    for skill in raw:
+        entry = {key: skill[key] for key in keys}
+        if skill.get("localisation", {}).get("status") == "missing-from-export":
+            entry["localisation"] = skill["localisation"]
+        skills.append(entry)
+    valide(slug, skills)
+    return skills
+
+
+def competences_du(slug):
+    local = client_wiki_skills(slug)
+    if local is not None:
+        return local
+    payload = _gen.flight_payload(_gen.fetch(FICHE.format(slug=slug)))
+    return competences_du_payload(payload)
+
+
 def valide(slug, competences):
     """Leve `CatalogueIncomplet` plutot que de publier une fiche trouee."""
     if not competences:
@@ -159,14 +184,18 @@ def valide(slug, competences):
         if not competence["nomFr"]:
             raise CatalogueIncomplet(
                 "%s : nom francais absent (%s)" % (slug, competence["gameId"]))
-        if not competence["descriptionFr"]:
+        coverage = competence.get("localisation") or {}
+        missing_declared = (competence["descriptionFr"] is None
+                            and coverage.get("status") == "missing-from-export"
+                            and bool(coverage.get("reason")))
+        if not competence["descriptionFr"] and not missing_declared:
             raise CatalogueIncomplet(
                 "%s : description francaise absente (%s)"
                 % (slug, competence["gameId"]))
         if not competence["icone"]:
             raise CatalogueIncomplet(
                 "%s : icone absente (%s)" % (slug, competence["gameId"]))
-        if RENVOI.match(competence["descriptionFr"]):
+        if RENVOI.match(competence["descriptionFr"] or ""):
             raise CatalogueIncomplet(
                 "%s : renvoi non resolu %s (%s)"
                 % (slug, competence["descriptionFr"], competence["gameId"]))
@@ -188,7 +217,7 @@ def slugs():
 def rendu(catalogue):
     corps = json.dumps(catalogue, ensure_ascii=False, indent=1, sort_keys=True)
     return (
-        "// Genere par generate-wiki.py depuis les pages FR de 7dsorigin.app.\n"
+        "// Genere par generate-wiki.py : pages FR de 7dsorigin.app + contenu-jeu.json.\n"
         "// Catalogue de LECTURE du wiki : noms et descriptions francais,\n"
         "// PASSIFS INCLUS. Ne pas confondre avec data/competences.js, qui\n"
         "// est le catalogue de calcul du comparateur de degats.\n"
@@ -199,21 +228,32 @@ def rendu(catalogue):
     )
 
 
-def main():
+def main(argv=None, cible=None):
     parseur = argparse.ArgumentParser()
     parseur.add_argument("--check", action="store_true")
-    options = parseur.parse_args()
+    parseur.add_argument("--client-only", action="store_true")
+    options = parseur.parse_args(argv)
+    cible = Path(cible) if cible else CIBLE
 
-    if options.check:
-        if not CIBLE.exists():
+    if options.check or options.client_only:
+        if not cible.exists():
             raise SystemExit("wiki-competences.js doit etre genere")
-        print("wiki-competences.js present")
+        base = client_content.read_window_assignment(cible, "SEVEN_DS_WIKI_COMPETENCES")
+        catalogue, digest = client_content.replace_skill_entries(base, client_wiki_skills)
+        if options.check:
+            if base != catalogue or set(base) != set(slugs()):
+                raise SystemExit("wiki-competences.js doit etre regenere")
+            for slug, skills in base.items():
+                valide(slug, skills)
+            print("wiki-competences.js verifie, entrees client a jour")
+        else:
+            client_content.write_text_atomic(cible, rendu(catalogue))
+            print("wiki-competences.js : historique intact SHA-256", digest)
         return
 
     catalogue = {}
     for slug in slugs():
-        payload = _gen.flight_payload(_gen.fetch(FICHE.format(slug=slug)))
-        competences = competences_du_payload(payload)
+        competences = competences_du(slug)
         valide(slug, competences)
         catalogue[slug] = competences
         print("%-16s %2d competences" % (slug, len(competences)))
@@ -223,12 +263,12 @@ def main():
             "seulement %d heros extraits : la page a change de forme"
             % len(catalogue))
 
-    CIBLE.write_text(rendu(catalogue), encoding="utf-8", newline="\n")
+    client_content.write_text_atomic(cible, rendu(catalogue))
     print()
     print("wiki-competences.js genere : %d heros, %d competences, %.1f Ko"
           % (len(catalogue),
              sum(len(v) for v in catalogue.values()),
-             CIBLE.stat().st_size / 1024))
+             cible.stat().st_size / 1024))
 
 
 if __name__ == "__main__":

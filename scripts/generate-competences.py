@@ -6,7 +6,7 @@ la description ne permet pas de chiffrer. SevenCodex precise leurs recharges
 combat : 7dsorigin les arrondit et omet celle de certaines variantes.
 
 Le catalogue est fige et commite : le site est une PWA et ne doit aucun appel
-reseau au rendu. `--check` verifie la presence du fichier commite - il ne
+reseau au rendu. `--check` verifie les entrees client du fichier commite - il ne
 re-aspire pas, sous peine de rendre `npm test` dependant d'un site tiers.
 La coherence du contenu est l'affaire de tests/competences-catalogue.test.js.
 """
@@ -27,6 +27,7 @@ _spec = importlib.util.spec_from_file_location(
 )
 _gen = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(_gen)
+import client_content
 
 FICHE = "https://7dsorigin.app/en/characters/{slug}"
 FICHE_SEVEN_CODEX = "https://sevencodex.com/characters/{slug}/"
@@ -520,7 +521,29 @@ def objets_portant(flight, cle):
     return trouves
 
 
+def client_calculator_skills(slug, snapshot=None):
+    raw = client_content.client_section(slug, "calculatorSkills", snapshot)
+    if raw is None:
+        return None
+    skills = []
+    for skill in raw:
+        if skill["categorie"] == "PASSIVE":
+            raise ValueError(f"{slug}: passif dans calculatorSkills")
+        # Une sous-section decrivant une attaque debloquee n'est pas l'action
+        # principale. Ex.: une zone d'ultime debloque une normale a 294 %, sans
+        # infliger elle-meme ce coefficient. Les variantes restent hors calcul.
+        description = (skill.get("descriptionEn") or "").split("\n\n", 1)[0]
+        entry = compacte_competence(dict(skill, damType=skill["portee"], descriptionEn=description))
+        # Le snapshot du client prime sur les anciennes tables de recharge.
+        entry["recharge"] = skill["recharge"]
+        skills.append(entry)
+    return sorted(skills, key=lambda skill: (skill["weaponType"], skill["gameId"]))
+
+
 def competences_du(slug):
+    local = client_calculator_skills(slug)
+    if local is not None:
+        return local
     flight = _gen.flight_payload(_gen.fetch(FICHE.format(slug=slug)))
     recharges_precises = recharges_du(slug)
     retenues = []
@@ -550,7 +573,7 @@ def competences_du(slug):
 def rendu(catalogue):
     corps = json.dumps(catalogue, ensure_ascii=False, indent=1, sort_keys=True)
     return (
-        "// Genere par generate-competences.py depuis 7dsorigin.app ;\n"
+        "// Genere par generate-competences.py : 7dsorigin.app + contenu-jeu.json ;\n"
         "// recharges combat precisees depuis SevenCodex.\n"
         "// Cle = slug personnage. Les passifs sont exclus ; toute autre\n"
         "// competence figure ici, meme celle qu'on ne sait pas chiffrer.\n"
@@ -655,21 +678,31 @@ def wiki_commite():
     )
 
 
-def main():
+def main(argv=None, cible=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--client-only", action="store_true")
     # La reprise ne demande AUCUN reseau : elle relit le catalogue commite et
     # la fiche francaise, tous deux dans data/. Ce mode existe pour qu'on
     # puisse la rejouer - ou la corriger - sans re-aspirer 7dsorigin, et il
     # appelle exactement la meme fonction que la generation complete.
     parser.add_argument("--recuperer", action="store_true")
-    args = parser.parse_args()
-    cible = RACINE / "data" / "competences.js"
+    args = parser.parse_args(argv)
+    cible = Path(cible) if cible else RACINE / "data" / "competences.js"
 
-    if args.check:
+    if args.check or args.client_only:
         if not cible.exists():
             raise SystemExit("competences.js doit etre genere")
-        print("competences.js present")
+        base = client_content.read_window_assignment(cible, "SEVEN_DS_COMPETENCES")
+        catalogue, digest = client_content.replace_skill_entries(base, client_calculator_skills)
+        if args.check:
+            characters = json.loads((RACINE / "7ds-stats" / "personnages.json").read_text(encoding="utf-8"))
+            if base != catalogue or set(base) != {hero["slug"] for hero in characters}:
+                raise SystemExit("competences.js doit etre regenere")
+            print("competences.js verifie, entrees client a jour")
+        else:
+            client_content.write_text_atomic(cible, rendu(catalogue))
+            print("competences.js : historique intact SHA-256", digest)
         return
 
     if args.recuperer:
@@ -682,7 +715,7 @@ def main():
         return
 
     catalogue = {}
-    for slug in slugs():
+    for slug in sorted(set(slugs()) | set(client_content.client_slugs())):
         catalogue[slug] = competences_du(slug)
         print(slug, ":", len(catalogue[slug]), "competences")
     reprises = recuperer_par_somme_des_coups(catalogue, wiki_commite())

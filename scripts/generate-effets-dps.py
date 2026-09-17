@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 """Génère le catalogue local des passifs et interactions du DPS 60 s."""
 import argparse
+import copy
+import hashlib
 import importlib.util
 import json
 import re
@@ -19,6 +21,7 @@ _spec_competences = importlib.util.spec_from_file_location(
 )
 _competences = importlib.util.module_from_spec(_spec_competences)
 _spec_competences.loader.exec_module(_competences)
+import client_content
 
 # La resolution des renvois de texte vit dans le generateur du wiki. La
 # reecrire ici ferait deux lectures du meme flux, libres de diverger.
@@ -997,6 +1000,35 @@ def extraire_utilisations(texte):
     return regles
 
 
+def regles_buff_client(source):
+    """Buff sans traduction : seules les cinq dimensions explicites font foi."""
+    behaviors = source.get("buffs") or []
+    rules = []
+    for behavior in behaviors:
+        if behavior.get("attacks"):
+            raise ValueError("effet DPS non classe (attaque sans texte): %s" % source["id"])
+        for buff in behavior.get("buffs") or []:
+            if (buff.get("stat") != "NormalSkill_DamAdd_Rate"
+                    or not isinstance(buff.get("value"), (int, float))
+                    or isinstance(buff.get("value"), bool)
+                    or buff.get("applyType") not in {"Team", "Hero"}
+                    or not isinstance(buff.get("durationMs"), (int, float))
+                    or buff["durationMs"] <= 0
+                    or buff.get("trigger") != "None"
+                    or buff.get("stack") != {"applicationCount": 1, "max": 1}
+                    or source.get("categorie") != "NORMAL_SKILL"):
+                raise ValueError("effet DPS non classe (buff incomplet): %s" % source["id"])
+            rules.append({
+                "type": "bonus-degats", "cible": "normal-skill",
+                "valeur": buff["value"], "duree": buff["durationMs"] / 1000,
+                "declencheur": "normal-skill", "portee": buff["applyType"],
+                "mode": "passif-max", "buffTid": buff["buffTid"],
+            })
+    if len(rules) != 1:
+        raise ValueError("effet DPS non classe (buff sans texte): %s" % source["id"])
+    return rules
+
+
 def normaliser_effet(source):
     """Transforme une prose source en règles fermées ou refuse son ambiguïté."""
     source_id = source["id"]
@@ -1007,6 +1039,11 @@ def normaliser_effet(source):
         "texteFr": source.get("textFr"),
         "provenance": source.get("provenance"),
     }
+    if source.get("localisation", {}).get("status") == "missing-from-export":
+        base["localisation"] = source["localisation"]
+        if not texte:
+            return dict(base, classification="modelise",
+                        regles=avec_source(regles_buff_client(source), source_id))
 
     if source_id in NON_INCLUS_SPECIFIQUES:
         return dict(
@@ -1217,6 +1254,11 @@ def collecter_sources(characters, weapons, armors, engraved, sets, hero_skills):
             })
 
     for skill in hero_skills:
+        # Le snapshot publie deja la forme canonique des sources (textFr/En).
+        # Les potentiels restent collectes UNE fois depuis personnages.json.
+        if skill.get("kind") in {"skill", "hero-passive"}:
+            sources.append(copy.deepcopy(skill))
+            continue
         game_id = skill.get("gameId") or skill.get("id")
         if not game_id:
             continue
@@ -1380,12 +1422,69 @@ def charger_hero_skills(characters):
     skills = []
     for hero in characters:
         slug = hero["slug"]
+        local = client_effect_skills(slug)
+        if local is not None:
+            skills.extend(local)
+            continue
         page = fetch(FICHE.format(slug=slug))
         payload = flight_payload(page)
         trouves = extraire_skills_payload(slug, payload)
         skills.extend(trouves)
         print(slug, ":", len(trouves), "competences et passifs")
     return skills
+
+
+def client_effect_skills(slug, snapshot=None):
+    local = client_content.client_section(slug, "effectSources", snapshot)
+    if local is None:
+        return None
+    wiki = client_content.client_section(slug, "wikiSkills", snapshot)
+    by_id = {skill["gameId"]: skill for skill in wiki}
+    for source in local["skills"]:
+        skill = by_id[source["gameId"]]
+        if (source.get("hero") != slug or "textFr" not in source or "textEn" not in source
+                or source["textFr"] != skill["descriptionFr"]
+                or source["textEn"] != skill["descriptionEn"]):
+            raise ValueError(f"{slug}: textes d'effet incoherents")
+        source["categorie"] = skill["categorie"]
+    return local["skills"]
+
+
+def sans_effets_client(catalogue, slugs):
+    """Projection historique, audit compris ; identites lues dans les fiches."""
+    result = copy.deepcopy(catalogue)
+    removed = set()
+    for slug in slugs:
+        for weapon in result["heroes"].pop(slug, {}).values():
+            for family in ("potentials", "passives"):
+                removed.update(effect["id"] for effect in weapon[family].values())
+    for game_id, effect in list(result["skills"].items()):
+        if effect.get("hero") in slugs:
+            removed.add(effect["id"])
+            del result["skills"][game_id]
+    result["audit"]["sources"] = [effect for effect in result["audit"]["sources"] if effect["id"] not in removed]
+    result["audit"]["total"] = len(result["audit"]["sources"])
+    return result
+
+
+def client_catalogue(base):
+    snapshot = client_content.load_snapshot()
+    slugs = set(client_content.client_slugs(snapshot))
+    historic = sans_effets_client(base, slugs)
+    characters = [hero for hero in charge_json("personnages.json") if hero["slug"] in slugs]
+    skills = [skill for slug in sorted(slugs) for skill in client_effect_skills(slug, snapshot)]
+    local = construire_catalogue(collecter_sources(characters, [], [], [], [], skills))
+    result = copy.deepcopy(historic)
+    for slug in sorted(slugs):
+        result["heroes"][slug] = local["heroes"][slug]
+    result["skills"].update({key: effect for key, effect in local["skills"].items() if effect.get("hero") in slugs})
+    result["audit"]["sources"].extend(local["audit"]["sources"])
+    result["audit"]["total"] = len(result["audit"]["sources"])
+    if sans_effets_client(result, slugs) != historic:
+        raise ValueError("effets historiques modifies")
+    digest = hashlib.sha256(json.dumps(historic, ensure_ascii=False, sort_keys=True,
+                                     separators=(",", ":")).encode("utf-8")).hexdigest()
+    return result, digest
 
 
 def charge_json(nom):
@@ -1446,7 +1545,7 @@ def rendu(catalogue):
     corps = json.dumps(catalogue, ensure_ascii=False, separators=(",", ":"))
     return (
         "// Genere par generate-effets-dps.py depuis les references locales\n"
-        "// et les fiches personnage publiques de 7dsorigin.app.\n"
+        "// et les fiches 7dsorigin.app + le snapshot client contenu-jeu.json.\n"
         "window.SEVEN_DS_EFFETS_DPS = " + corps + ";\n"
     )
 
@@ -1454,15 +1553,22 @@ def rendu(catalogue):
 def main(argv=None, cible=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
+    parser.add_argument("--client-only", action="store_true")
     args = parser.parse_args(argv)
     cible = Path(cible) if cible else RACINE / "data" / "effets-dps.js"
 
-    if args.check:
+    if args.check or args.client_only:
         if not cible.exists():
             raise SystemExit("effets-dps.js doit etre genere")
-        if "window.SEVEN_DS_EFFETS_DPS" not in cible.read_text(encoding="utf-8"):
-            raise SystemExit("effets-dps.js invalide")
-        print("effets-dps.js present")
+        base = client_content.read_window_assignment(cible, "SEVEN_DS_EFFETS_DPS")
+        catalogue, digest = client_catalogue(base)
+        if args.check:
+            if base != catalogue:
+                raise SystemExit("effets-dps.js doit etre regenere")
+            print("effets-dps.js verifie, entrees client a jour")
+        else:
+            client_content.write_text_atomic(cible, rendu(catalogue))
+            print("effets-dps.js : historique intact SHA-256", digest)
         return 0
 
     characters = charge_json("personnages.json")

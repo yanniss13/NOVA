@@ -21,6 +21,9 @@ vm.runInNewContext(
 const catalogue = bac.window.SEVEN_DS_COMPETENCES;
 
 assert.ok(catalogue, "Le catalogue doit s'exposer sur window");
+assert.equal(catalogue.khala?.length, 15, "Khala : 15 compétences calculables ou explicitement non chiffrées");
+assert.equal(catalogue.khala.find(skill => skill.gameId === "calla_sworddual_normalatk_1").pourcentage,
+  232, "la normale de Khala ne contient aucun supplément de saut supposé");
 const slugs = Object.keys(catalogue);
 assert.ok(
   slugs.length >= 20,

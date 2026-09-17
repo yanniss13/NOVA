@@ -25,6 +25,16 @@ vm.runInNewContext(
 );
 
 assert.equal(catalogue.version, 1);
+assert.ok(catalogue.heroes.khala, "Khala : effets de potentiel/passifs absents");
+assert.ok(catalogue.audit.sources.some(source => source.id === "hero-passive:calla_sworddual_passive"),
+  "le passif Épées doubles de Khala doit être audité");
+const bonusKhalaGantelets = catalogue.skills.calla_gauntlets_skill_e;
+assert.equal(bonusKhalaGantelets.classification, "modelise");
+assert.equal(bonusKhalaGantelets.regles[0].valeur, 5000);
+assert.equal(bonusKhalaGantelets.regles[0].duree, 40);
+assert.equal(bonusKhalaGantelets.regles[0].portee, "Team");
+assert.equal(catalogue.skills.calla_sworddual_normalatk_1.classification, "non-inclus");
+assert.match(catalogue.skills.calla_sworddual_normalatk_1.raison, /cumul-inconnu/);
 assert.equal(catalogue.audit.inconnus, 0);
 assert.ok(catalogue.audit.total > 700, "Le catalogue doit couvrir toutes les sources");
 assert.ok(catalogue.heroes.merlin.Wand.potentials["10"]);
@@ -37,7 +47,9 @@ assert.ok(catalogue.skills.merlin_wand_divine_judgment);
    inclus. Les deux competences synthetiques n'ont, elles, aucune fiche
    publique dont tirer un texte. */
 const competencesSansTexteFr = Object.values(catalogue.skills)
-  .filter(source => !source.synthetic && !String(source.texteFr || "").trim())
+  .filter(source => !source.synthetic && !String(source.texteFr || "").trim()
+    && !(source.texteFr === null && source.localisation?.status === "missing-from-export"
+      && source.localisation.reason))
   .map(source => source.id);
 assert.deepEqual(
   competencesSansTexteFr,

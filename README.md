@@ -74,6 +74,8 @@ python scripts/generate-effets-dps.py
 
 Les données viennent de deux endroits, et chaque fichier de `data/` nomme le sien dans son en-tête. La source publique est `7dsorigin.app`. Ce qu'aucun site public ne publie — transcendances, jauges, recharges de magie, ultimes combinés — est lu dans les données du jeu, installé localement.
 
+Pour Khala, les compétences, passifs et effets viennent du snapshot commité `7ds-stats/contenu-jeu.json`, extrait des tables du jeu. Les trois générateurs `generate-wiki.py`, `generate-competences.py` et `generate-effets-dps.py` acceptent `--client-only` : ils actualisent ces entrées hors ligne et vérifient que les données historiques restent identiques. Leur option `--check` contrôle aussi que les entrées locales sont à jour. Une description absente de l’export reste déclarée non couverte ; les mécanismes ambigus ne sont pas chiffrés.
+
 NOVA est un projet communautaire indépendant, sans affiliation ni partenariat avec Netmarble ou les ayants droit de la licence.
 
 ## Licence

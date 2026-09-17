@@ -1,4 +1,4 @@
-// Genere par generate-competences.py depuis 7dsorigin.app ;
+// Genere par generate-competences.py : 7dsorigin.app + contenu-jeu.json ;
 // recharges combat precisees depuis SevenCodex.
 // Cle = slug personnage. Les passifs sont exclus ; toute autre
 // competence figure ici, meme celle qu'on ne sait pas chiffrer.
@@ -5385,6 +5385,283 @@ window.SEVEN_DS_COMPETENCES = {
    "periodique": null,
    "portee": "Melee",
    "pourcentage": 87.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "SwordDual"
+  }
+ ],
+ "khala": [
+  {
+   "categorie": "NORMAL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 103.0
+    }
+   ],
+   "coups": null,
+   "gameId": "calla_cudgel3c_normalatk_1",
+   "nature": "direct",
+   "nom": "Gale Sweep",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 103.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 191.0
+    }
+   ],
+   "coups": null,
+   "gameId": "calla_cudgel3c_skill_e_start",
+   "nature": "direct",
+   "nom": "Whirlwind",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 191.0,
+   "recharge": 23,
+   "repartition": [],
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 124.0
+    }
+   ],
+   "coups": null,
+   "gameId": "calla_cudgel3c_skill_q",
+   "nature": "direct",
+   "nom": "Windmill",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 124.0,
+   "recharge": 18,
+   "repartition": [],
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 290.0
+    }
+   ],
+   "coups": null,
+   "gameId": "calla_cudgel3c_skill_r",
+   "nature": "direct",
+   "nom": "Gale Snare",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 290.0,
+   "recharge": 10,
+   "repartition": [],
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 87.0
+    }
+   ],
+   "coups": null,
+   "gameId": "calla_cudgel3c_skill_tag",
+   "nature": "direct",
+   "nom": "Swallow Dive",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 87.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Cudgel3c"
+  },
+  {
+   "categorie": "NORMAL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 107.0
+    }
+   ],
+   "coups": null,
+   "gameId": "calla_gauntlets_normalatk_1",
+   "nature": "direct",
+   "nom": "Combo Blast",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 107.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "composantes": [],
+   "coups": null,
+   "gameId": "calla_gauntlets_skill_e",
+   "nature": "non-chiffree",
+   "nom": "Hook Blast",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": null,
+   "recharge": 26,
+   "repartition": [],
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 150.0
+    }
+   ],
+   "coups": null,
+   "gameId": "calla_gauntlets_skill_q_1",
+   "nature": "direct",
+   "nom": "Impact Mine",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 150.0,
+   "recharge": 20,
+   "repartition": [],
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 300.0
+    }
+   ],
+   "coups": null,
+   "gameId": "calla_gauntlets_skill_r",
+   "nature": "direct",
+   "nom": "Blast Top",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 300.0,
+   "recharge": 10,
+   "repartition": [],
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 85.0
+    }
+   ],
+   "coups": null,
+   "gameId": "calla_gauntlets_skill_tag",
+   "nature": "direct",
+   "nom": "Bomb Drop",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 85.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "NORMAL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 232.0
+    }
+   ],
+   "coups": null,
+   "gameId": "calla_sworddual_normalatk_1",
+   "nature": "direct",
+   "nom": "Twin Edge",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 232.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "SwordDual"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 164.0
+    }
+   ],
+   "coups": null,
+   "gameId": "calla_sworddual_skill_e",
+   "nature": "direct",
+   "nom": "Blade Volley",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 164.0,
+   "recharge": 19,
+   "repartition": [],
+   "weaponType": "SwordDual"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 115.0
+    }
+   ],
+   "coups": null,
+   "gameId": "calla_sworddual_skill_q",
+   "nature": "direct",
+   "nom": "Mirror Dive",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 115.0,
+   "recharge": 13,
+   "repartition": [],
+   "weaponType": "SwordDual"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "composantes": [],
+   "coups": null,
+   "gameId": "calla_sworddual_skill_r",
+   "nature": "non-chiffree",
+   "nom": "Mirror Arsenal",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": null,
+   "recharge": 10,
+   "repartition": [],
+   "weaponType": "SwordDual"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 131.0
+    }
+   ],
+   "coups": null,
+   "gameId": "calla_sworddual_skill_tag",
+   "nature": "direct",
+   "nom": "Hook Slash",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 131.0,
    "recharge": null,
    "repartition": [],
    "weaponType": "SwordDual"
