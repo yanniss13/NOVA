@@ -40,7 +40,9 @@ code, les fichiers générés ou la documentation publique.
 
 L'extracteur lit uniquement les sources nécessaires :
 
-- `Localization/Game/fr/Game.json` pour les noms et descriptions françaises ;
+- `Localization/Game/{fr,en}/Game.json` pour les noms et descriptions
+  françaises affichées et les formulations anglaises déjà comprises par les
+  normaliseurs du calculateur ;
 - `Table/HeroMastery/*` pour les armes et la maîtrise ;
 - `Table/Actor/HeroStatGroupTable.json` et les tables héros associées pour les
   statistiques et métadonnées ;
