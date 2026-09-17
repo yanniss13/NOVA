@@ -20,7 +20,7 @@ l'effacerait.
 - Khala est l'identité française de l'entrée interne `Calla`, identifiant héros
   `1029`.
 - Ses trois armes sont `SwordDual`, `Cudgel3c` et `Gauntlets`, rendues dans
-  l'interface par les dossiers existants Épées doubles, Masse et Gantelets.
+  l'interface par les dossiers existants Épées doubles, Nunchaku et Gantelets.
 - Les deux entrées de `HeroMastery` sans nom jouable sont ignorées et un test
   verrouille cette exclusion.
 - Les tables du jeu priment lorsqu'elles donnent une valeur ou un code
