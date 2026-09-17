@@ -4,6 +4,44 @@
 // Striker_A puis Striker_B, un ou deux selon la combinaison.
 // Les identifiants portent l ARME : une combinaison n est possible que si
 // chaque participant porte l arme citee.
+// PROVENANCE : ce que la table contenait a l extraction. Le depot n a pas
+// l export ; sans ce releve, un catalogue tronque ou une table sans un
+// heros seraient indiscernables d une extraction jamais relancee.
+window.SEVEN_DS_ULTIMES_COMBINES_PROVENANCE = {
+ "source": "Table/Skill/CombineSkillTable",
+ "exporteLe": "2026-09-17",
+ "lignesLues": 672,
+ "lignesRetenues": 672,
+ "lanceurs": 24,
+ "competences": [
+  "ban_gauntlets_skill_r",
+  "bug_book_skill_q",
+  "daisy_book_skill_q",
+  "derieri_sword2h_skill_r",
+  "diane_axe_skill_q",
+  "drake_sword2h_skill_q",
+  "dreyfus_sword1h_skill_q",
+  "elaine_wand_skill_q",
+  "elizabeth_staff_skill_r",
+  "escanor_axe_skill_q",
+  "gil_thunder_sword1h_skill_q",
+  "gowther_staff_skill_r",
+  "howzer_lance_skill_q",
+  "king_staff_skill_q",
+  "manny_staff_skill_q",
+  "manny_sworddual_skill_q",
+  "meliodas_sword1h_skill_q",
+  "meliodas_sworddual_skill_q",
+  "merlin_book_skill_r",
+  "merlin_staff_skill_r",
+  "merlin_wand_skill_r",
+  "tioreh_book_skill_q",
+  "tristan_sword1h_skill_q",
+  "tristan_sworddual_skill_q"
+ ],
+ "regenerer": "node outils/fabrication/ecrire-ultimes-combines.js"
+};
+
 window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "ban_gauntlets_skill_r",
