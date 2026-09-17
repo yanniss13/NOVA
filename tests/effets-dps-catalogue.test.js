@@ -34,7 +34,28 @@ assert.equal(bonusKhalaGantelets.regles[0].valeur, 5000);
 assert.equal(bonusKhalaGantelets.regles[0].duree, 40);
 assert.equal(bonusKhalaGantelets.regles[0].portee, "Team");
 assert.equal(catalogue.skills.calla_sworddual_normalatk_1.classification, "non-inclus");
-assert.match(catalogue.skills.calla_sworddual_normalatk_1.raison, /cumul-inconnu/);
+assert.doesNotMatch(catalogue.skills.calla_sworddual_normalatk_1.raison, /cumul-inconnu/,
+  "le cumul de Contrefacon - Epees doubles est lu dans le snapshot, plus inconnu");
+
+/* « Contrefacon - Epees doubles » : le meme buff 302271003 est republie par
+   deux competences des epees doubles, plafonne a un cumul. Il vaut UNE fois,
+   chez le passif qui le definit, en bonus permanent de degats de Vent. */
+const contrefacon = catalogue.heroes.khala.SwordDual.passives.calla_sworddual_passive;
+assert.equal(contrefacon.classification, "modelise");
+assert.equal(contrefacon.regles.map(regle => regle.cible).join(","), "element:wind");
+assert.equal(contrefacon.regles[0].valeur, 3000);
+assert.equal(
+  catalogue.audit.sources
+    .flatMap(source => source.regles)
+    .filter(regle => regle.buffTid === "302271003").length,
+  1,
+  "le buff plafonne a un cumul ne doit etre compte qu'une fois"
+);
+assert.equal(
+  catalogue.heroes.khala.Cudgel3c.potentials["4"].raison,
+  "degats-supplementaires-d-ultime-hors-schema",
+  "un potentiel partiellement modelise doit declarer la clause non comptee"
+);
 assert.equal(catalogue.audit.inconnus, 0);
 assert.ok(catalogue.audit.total > 700, "Le catalogue doit couvrir toutes les sources");
 assert.ok(catalogue.heroes.merlin.Wand.potentials["10"]);

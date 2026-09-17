@@ -44,7 +44,7 @@ class EffetsNormalises(unittest.TestCase):
         for weapon in khala.values():
             for tier in ["1", "3", "8"]:
                 self.assertEqual(weapon["potentials"][tier]["regles"], [])
-        for source_id in ["hero-passive:calla_sworddual_passive", "hero-passive:calla_gauntlets_passive",
+        for source_id in ["hero-passive:calla_gauntlets_passive",
                           "skill:calla_sworddual_normalatk_1", "skill:calla_sworddual_skill_e",
                           "skill:calla_sworddual_skill_r", "skill:calla_cudgel3c_skill_r",
                           "potential:khala:SwordDual:5", "potential:khala:SwordDual:7", "potential:khala:SwordDual:10"]:
@@ -60,6 +60,70 @@ class EffetsNormalises(unittest.TestCase):
         self.assertEqual(buff["regles"][0]["cible"], "normal-skill")
         self.assertEqual(buff["regles"][0]["duree"], 40)
         self.assertEqual(buff["regles"][0]["portee"], "Team")
+
+    def _sources_khala(self):
+        characters = [h for h in _gen.charge_json("personnages.json") if h["slug"] == "khala"]
+        with mock.patch.object(_gen, "fetch", side_effect=AssertionError("réseau")):
+            skills = _gen.charger_hero_skills(characters)
+        return characters, skills
+
+    def test_contrefacon_epees_doubles_comptee_une_seule_fois(self):
+        """Le plafond de cumul du buff, pas une liste d'identifiants.
+
+        `302271003` est republie a l'identique par deux competences des epees
+        doubles. Le snapshot le plafonne a un cumul (`stack.max == 1`) : il
+        vaut donc UNE fois, et il vaut chez le passif qui le definit — sans
+        quoi un bonus permanent du heros serait accroche a une competence et
+        ne majorerait qu'elle.
+        """
+        characters, skills = self._sources_khala()
+        catalogue = _gen.construire_catalogue(
+            _gen.collecter_sources(characters, [], [], [], [], skills)
+        )
+        passif = catalogue["heroes"]["khala"]["SwordDual"]["passives"]["calla_sworddual_passive"]
+        self.assertEqual(passif["classification"], "modelise")
+        self.assertEqual(len(passif["regles"]), 1)
+        regle = passif["regles"][0]
+        self.assertEqual(regle["type"], "bonus-degats")
+        self.assertEqual(regle["cible"], "element:wind")
+        self.assertEqual(regle["valeur"], 3000)
+        self.assertEqual(regle["portee"], "Hero")
+        self.assertEqual(regle["buffTid"], "302271003")
+        self.assertNotIn("duree", regle)
+        self.assertNotIn("declencheur", regle)
+        self.assertTrue(passif["raison"])
+        porteuses = [source["id"] for source in catalogue["audit"]["sources"]
+                     for item in source["regles"] if item.get("buffTid") == "302271003"]
+        self.assertEqual(porteuses, ["hero-passive:calla_sworddual_passive"])
+        for game_id in ("calla_sworddual_skill_e", "calla_sworddual_skill_q"):
+            self.assertEqual(catalogue["skills"][game_id]["regles"], [])
+            self.assertNotIn("cumul-inconnu", catalogue["skills"][game_id]["raison"])
+
+    def test_un_second_porteur_du_meme_buff_n_ajoute_pas_de_regle(self):
+        characters, skills = self._sources_khala()
+        comportement = next(
+            behavior for skill in skills if skill["gameId"] == "calla_sworddual_skill_e"
+            for behavior in skill["buffs"]
+        )
+        autre = next(skill for skill in skills if skill["gameId"] == "calla_sworddual_skill_r")
+        autre["buffs"] = json.loads(json.dumps([comportement]))
+        catalogue = _gen.construire_catalogue(
+            _gen.collecter_sources(characters, [], [], [], [], skills)
+        )
+        regles = [item for source in catalogue["audit"]["sources"]
+                  for item in source["regles"] if item.get("buffTid") == "302271003"]
+        self.assertEqual(len(regles), 1)
+        self.assertEqual(catalogue["skills"]["calla_sworddual_skill_r"]["regles"], [])
+
+    def test_note_declaree_sur_un_potentiel_partiellement_modelise(self):
+        """Une clause laissee de cote se declare, elle ne disparait pas."""
+        characters, skills = self._sources_khala()
+        catalogue = _gen.construire_catalogue(
+            _gen.collecter_sources(characters, [], [], [], [], skills)
+        )
+        entree = catalogue["heroes"]["khala"]["Cudgel3c"]["potentials"]["4"]
+        self.assertEqual(entree["classification"], "modelise")
+        self.assertEqual(entree["raison"], "degats-supplementaires-d-ultime-hors-schema")
 
     def test_passif_degats_globaux_et_defense_cible(self):
         degats = _gen.normaliser_effet({

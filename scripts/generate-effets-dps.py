@@ -43,6 +43,7 @@ CLASSIFICATIONS = _regles.CLASSIFICATIONS
 REGLES_SPECIFIQUES = _regles.REGLES_SPECIFIQUES
 NON_INCLUS_SPECIFIQUES = _regles.NON_INCLUS_SPECIFIQUES
 SANS_IMPACT_SPECIFIQUES = _regles.SANS_IMPACT_SPECIFIQUES
+NOTES_MODELISE = _regles.NOTES_MODELISE
 
 CATEGORIES = {
     "normal skill": "normal-skill",
@@ -1000,36 +1001,150 @@ def extraire_utilisations(texte):
     return regles
 
 
+# Le plafond de cumul lu dans le snapshot : une seule application, une seule
+# fois. C'est LUI, et non une liste d'identifiants de competences, qui empeche
+# de compter deux fois un buff que plusieurs competences octroient.
+CUMUL_UNIQUE = {"applicationCount": 1, "max": 1}
+
+# Le code du jeu nomme un taux de degats elementaires `<Element>_Element_Rate`.
+# Les prefixes sont ceux du client ; ils coincident deja avec les codes que le
+# comparateur emploie dans `cible: element:<code>`.
+ELEMENTS_BUFF_CLIENT = frozenset(
+    ("physical", "dark", "fire", "ice", "thunder", "wind", "earth", "holy")
+)
+
+
+def _cible_buff_client(source, buff):
+    """La cible d'un buff client, ou rien si son code n'est pas au vocabulaire.
+
+    Le vocabulaire reste ferme : ce qui n'est pas reconnu ici fait echouer la
+    generation, jamais une regle approchee.
+    """
+    stat = buff.get("stat")
+    if stat == "NormalSkill_DamAdd_Rate":
+        # Un bonus de degats de competence normale ne se declenche qu'en
+        # sortant une competence normale : la source doit en etre une.
+        if source.get("categorie") != "NORMAL_SKILL":
+            return None
+        return "normal-skill"
+    if isinstance(stat, str) and stat.endswith("_Element_Rate"):
+        element = stat[: -len("_Element_Rate")].lower()
+        if element in ELEMENTS_BUFF_CLIENT:
+            return "element:" + element
+    return None
+
+
 def regles_buff_client(source):
-    """Buff sans traduction : seules les cinq dimensions explicites font foi."""
-    behaviors = source.get("buffs") or []
+    """Buff du client : seules ses dimensions explicites font foi.
+
+    Cinq dimensions doivent etre lisibles — le code de la statistique, sa
+    valeur, la portee, la duree et le declencheur — plus le plafond de cumul.
+    Une duree de -1 est la permanence declaree du jeu : la regle sort alors
+    sans `duree` ni `declencheur`, donc permanente pour le simulateur.
+    """
     rules = []
-    for behavior in behaviors:
+    for behavior in source.get("buffs") or []:
         if behavior.get("attacks"):
             raise ValueError("effet DPS non classe (attaque sans texte): %s" % source["id"])
         for buff in behavior.get("buffs") or []:
-            if (buff.get("stat") != "NormalSkill_DamAdd_Rate"
+            cible = _cible_buff_client(source, buff)
+            duree = buff.get("durationMs")
+            if (cible is None
                     or not isinstance(buff.get("value"), (int, float))
                     or isinstance(buff.get("value"), bool)
                     or buff.get("applyType") not in {"Team", "Hero"}
-                    or not isinstance(buff.get("durationMs"), (int, float))
-                    or buff["durationMs"] <= 0
+                    or not isinstance(duree, (int, float))
+                    or isinstance(duree, bool)
+                    or (duree <= 0 and duree != -1)
                     or buff.get("trigger") != "None"
-                    or buff.get("stack") != {"applicationCount": 1, "max": 1}
-                    or source.get("categorie") != "NORMAL_SKILL"):
+                    or buff.get("stack") != CUMUL_UNIQUE):
                 raise ValueError("effet DPS non classe (buff incomplet): %s" % source["id"])
-            rules.append({
-                "type": "bonus-degats", "cible": "normal-skill",
-                "valeur": buff["value"], "duree": buff["durationMs"] / 1000,
-                "declencheur": "normal-skill", "portee": buff["applyType"],
-                "mode": "passif-max", "buffTid": buff["buffTid"],
-            })
-    if len(rules) != 1:
-        raise ValueError("effet DPS non classe (buff sans texte): %s" % source["id"])
+            regle = {
+                "type": "bonus-degats", "cible": cible,
+                "valeur": buff["value"],
+            }
+            if duree != -1:
+                regle["duree"] = duree / 1000
+                regle["declencheur"] = "normal-skill"
+            regle["portee"] = buff["applyType"]
+            regle["mode"] = "passif-max"
+            regle["buffTid"] = buff["buffTid"]
+            rules.append(regle)
     return rules
 
 
+def _porteur_du_comportement(behavior, par_game_id):
+    """La source qui DEFINIT un comportement de buff, lue dans son identite.
+
+    Le client nomme un comportement d'apres la competence ou le passif qui le
+    definit, puis le republie tel quel sur chaque competence qui l'octroie :
+    `calla_sworddual_passive_buff_sworddual` appartient au passif
+    `calla_sworddual_passive`, meme quand deux competences le portent.
+    """
+    identite = behavior.get("id") or ""
+    candidats = [game_id for game_id in par_game_id if identite.startswith(game_id)]
+    if not candidats:
+        raise ValueError("comportement de buff sans porteur: %s" % identite)
+    return par_game_id[max(candidats, key=len)]
+
+
+def repartir_buffs_client(sources):
+    """Range chaque buff sous sa source, une seule fois.
+
+    UN BUFF PLAFONNE A UN CUMUL NE VAUT QU'UNE FOIS. Le rendre a la source qui
+    le definit fait deux choses d'un coup : il cesse d'etre compte autant de
+    fois qu'il y a de competences qui l'octroient, et il redevient un etat du
+    HEROS — une regle accrochee a une competence ne majorerait que celle-ci.
+    """
+    par_game_id = {
+        source["gameId"]: source for source in sources if source.get("gameId")
+    }
+    portes = {}
+    vus = {}
+    for source in sources:
+        for behavior in source.get("buffs") or []:
+            porteur = _porteur_du_comportement(behavior, par_game_id)
+            retenus = []
+            for buff in behavior.get("buffs") or []:
+                identite = buff.get("buffTid")
+                if identite in vus:
+                    precedent, ailleurs = vus[identite]
+                    if precedent != buff or ailleurs != porteur["id"]:
+                        raise ValueError(
+                            "buff %s publie sous deux formes" % identite
+                        )
+                    continue
+                if buff.get("stack") != CUMUL_UNIQUE:
+                    raise ValueError(
+                        "buff %s sans plafond de cumul lisible" % identite
+                    )
+                vus[identite] = (copy.deepcopy(buff), porteur["id"])
+                retenus.append(buff)
+            if retenus or behavior.get("attacks"):
+                portes.setdefault(porteur["id"], []).append(
+                    dict(behavior, buffs=retenus)
+                )
+    for source in sources:
+        if "buffs" in source:
+            source["buffs"] = portes.get(source["id"], [])
+
+
 def normaliser_effet(source):
+    """Classe une source, puis lui attache la note declaree qui la nuance.
+
+    Une entree `modelise` sans note se lit comme un modele COMPLET. Quand une
+    seule des phrases de la source est comptee, la note dit laquelle reste
+    dehors, dans le meme vocabulaire de raisons que `non-inclus`.
+    """
+    resultat = classer_effet(source)
+    if resultat["classification"] == "modelise" and "raison" not in resultat:
+        note = NOTES_MODELISE.get(source["id"])
+        if note:
+            resultat["raison"] = note
+    return resultat
+
+
+def classer_effet(source):
     """Transforme une prose source en règles fermées ou refuse son ambiguïté."""
     source_id = source["id"]
     texte = BALISE.sub("", source.get("textEn") or "").strip()
@@ -1039,11 +1154,33 @@ def normaliser_effet(source):
         "texteFr": source.get("textFr"),
         "provenance": source.get("provenance"),
     }
+    regles_portees = regles_buff_client(source) if source.get("buffs") else []
+
     if source.get("localisation", {}).get("status") == "missing-from-export":
         base["localisation"] = source["localisation"]
         if not texte:
+            if len(regles_portees) != 1:
+                raise ValueError(
+                    "effet DPS non classe (buff sans texte): %s" % source_id
+                )
             return dict(base, classification="modelise",
-                        regles=avec_source(regles_buff_client(source), source_id))
+                        regles=avec_source(regles_portees, source_id))
+
+    if regles_portees:
+        # LE BUFF PORTE FAIT FOI, MAIS IL NE DIT PAS TOUTE LA SOURCE. La prose
+        # de cette entree n'est plus auditee par les regles textuelles : sans
+        # note declaree, une clause offensive pourrait disparaitre en silence.
+        if source_id not in NOTES_MODELISE:
+            raise ValueError(
+                "effet DPS non classe (buff porte sans note declaree): %s"
+                % source_id
+            )
+        return dict(
+            base,
+            classification="modelise",
+            regles=avec_source(regles_portees, source_id),
+            raison=NOTES_MODELISE[source_id],
+        )
 
     if source_id in NON_INCLUS_SPECIFIQUES:
         return dict(
@@ -1327,6 +1464,7 @@ def construire_catalogue(sources):
         "sets": {},
         "audit": {"total": 0, "inconnus": 0, "sources": []},
     }
+    repartir_buffs_client(sources)
     vus = set()
     for source in sources:
         if source["id"] in vus:

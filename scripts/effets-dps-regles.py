@@ -41,12 +41,21 @@ SANS_IMPACT_SPECIFIQUES = {
 NON_INCLUS_SPECIFIQUES = {
     # Khala : audit strict du snapshot client. Aucun ratio d'une autre stat,
     # dernier coup, tic ou buff conditionnel n'est transforme en bonus global.
-    "hero-passive:calla_sworddual_passive": "critiques-indexes-sur-resistances-et-reinitialisation-conditionnelle",
     "hero-passive:calla_cudgel3c_passive": "bonus-equipe-conditionnels-duree-incomplete",
     "hero-passive:calla_gauntlets_passive": "attaque-elementaire-indexee-sur-l-attaque",
-    "skill:calla_sworddual_normalatk_1": "contrefacon-epees-doubles-cumul-inconnu",
-    "skill:calla_sworddual_skill_e": "contrefacon-epees-doubles-cumul-inconnu-et-variante-conditionnelle",
-    "skill:calla_sworddual_skill_q": "contrefacon-epees-doubles-cumul-inconnu-et-variante-conditionnelle",
+    # « Contrefacon - Epees doubles » n'est plus un cumul inconnu. Le snapshot
+    # publie le buff 302271003 sous la MEME forme sur les deux competences qui
+    # l'octroient : Wind_Element_Rate 3000, applyType Hero, durationMs -1,
+    # trigger None, stack {applicationCount: 1, max: 1}. Ce plafond d'un seul
+    # cumul dit qu'une seconde application n'ajoute rien : le buff vaut une
+    # fois, chez le comportement qui le definit
+    # (`calla_sworddual_passive_buff_sworddual`, donc le passif des epees
+    # doubles). Voir repartir_buffs_client() dans generate-effets-dps.py.
+    # Ce qui reste hors schema sur ces trois entrees, ce sont les variantes de
+    # « Miroir - Contrefacon », conditionnelles et sans identite propre.
+    "skill:calla_sworddual_normalatk_1": "contrefacon-epees-doubles-comptee-a-sa-source",
+    "skill:calla_sworddual_skill_e": "variante-conditionnelle-de-miroir-hors-schema",
+    "skill:calla_sworddual_skill_q": "variante-conditionnelle-de-miroir-hors-schema",
     "skill:calla_sworddual_skill_r": "ultime-conditionnel-et-critique-limite-a-l-attaque-normale",
     "skill:calla_cudgel3c_skill_r": "dernier-coup-conditionnel-sous-deluge-de-vent",
     "skill:calla_cudgel3c_skill_q": "degats-du-deluge-hors-schema",
@@ -140,6 +149,28 @@ NON_INCLUS_SPECIFIQUES = {
     "engraving:133065003:EpEq_Bug_D:1": "effet-equipe",
     "engraving:133065003:EpEq_Bug_D:2": "effet-equipe",
     "engraving:133065003:EpEq_Bug_D:3": "effet-equipe",
+}
+
+NOTES_MODELISE = {
+    # CE QUI EST MODELISE N'EST PAS TOUJOURS TOUT.
+    #
+    # Une entree `modelise` porte des regles, et le lecteur en deduit que la
+    # source est comptee en entier. Quand une seule de ses phrases l'est, le
+    # silence ment. Ces notes disent, sur l'entree elle-meme, quelle clause
+    # reste dehors — meme vocabulaire de raisons que `non-inclus`.
+    #
+    # Le passif des epees doubles de Khala porte le buff permanent
+    # « Contrefacon - Epees doubles » (+30 % de degats de Vent, compte ici et
+    # nulle part ailleurs). Sa prose, elle, indexe les chances et degats crit.
+    # sur les RESISTANCES de la cible et reinitialise les recharges sous
+    # condition : ni l'un ni l'autre ne se chiffre dans le schema.
+    "hero-passive:calla_sworddual_passive":
+        "critiques-indexes-sur-resistances-et-reinitialisation-conditionnelle",
+    # « Renforce la puissance de l'attaque ultime de 30 % ET ses degats
+    # supplementaires de 40 % » : seule la premiere clause est comptee. Les
+    # degats supplementaires d'un ultime sont un seau a part, que le
+    # comparateur ne separe pas — meme raison que potential:ban:Cudgel3c:9.
+    "potential:khala:Cudgel3c:4": "degats-supplementaires-d-ultime-hors-schema",
 }
 
 REGLES_SPECIFIQUES = {
