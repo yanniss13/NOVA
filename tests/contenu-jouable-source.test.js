@@ -6,7 +6,7 @@ const os = require("node:os");
 const path = require("node:path");
 const {
   substituer, filtrerHerosJouables, resoudreLocalisation, comportements,
-  listerImages, validerAssets, validerSnapshot
+  listerImages, validerAssets, preflightHeros, extraireDepuisTables, validerSnapshot
 } = require("../outils/fabrication/contenu-jouable.js");
 
 function snapshotNominal(){
@@ -55,6 +55,72 @@ function snapshotNominal(){
   }}};
 }
 
+function tablesPipeline(){
+  const weapons = ["SwordDual", "Cudgel3c", "Gauntlets"];
+  const fr = {};
+  const en = {};
+  const localise = (key, frText, enText) => {
+    fr[key] = frText || "FR " + key;
+    en[key] = enText || "EN " + key;
+  };
+  localise("khala_name", "Khala", "Calla");
+  const defaultWeaponSkills = {};
+  const pcSkills = {};
+  const skillFields = ["SkillAttack", "SkillActiveNormal", "SkillActiveNormalTag", "SkillActiveSpecial", "SkillActiveThird", "SkillPassive"];
+  for(const weapon of weapons) {
+    const defaults = {};
+    for(const field of skillFields) {
+      const id = "fixture_" + weapon + "_" + field;
+      defaults[field] = id;
+      localise("name_" + id);
+      localise("desc_" + id);
+      pcSkills[id] = {String_Tid:id, SkillCategory:"ESkillCategory::NormalSkill", Local_Key:"name_" + id,
+        Local_Desc:"desc_" + id, Local_Replace:[], Icon:"skill_icon_fixture", Cooltime:0,
+        ActionStart_Behavior_Tid:[], Action_Behavior_TidList:[], OnceAction_Behavior_TidList:[]};
+    }
+    defaultWeaponSkills["calla_" + weapon.toLowerCase() + "_default"] = defaults;
+    for(let tier = 1; tier <= 10; tier++) {
+      const key = "potential_" + weapon + "_" + tier;
+      localise(key);
+      defaultWeaponSkills["calla_" + weapon.toLowerCase() + "_grade_" + tier] = {
+        Potential_Level:tier, Local_Key:key, Local_Replace:[]
+      };
+    }
+  }
+  const weaponMastery = {};
+  for(const [index, weapon] of weapons.entries()) for(let level = 1; level <= 5; level++) {
+    const key = "mastery_" + weapon + "_" + level;
+    localise(key);
+    weaponMastery["fixture_mastery_" + (index + 1) + "_" + level] = {
+      Weapon_Mastery_Index:level, Weapon_Mastery_Grade:1, Weapon_Mastery_Group:"fixture",
+      Weapon_Mastery_AbilityType:[], Weapon_Mastery_AbilityValue:[], Skill_Weapon_Mastery_Desc:key
+    };
+  }
+  const equipments = {};
+  for(let index = 1; index <= 3; index++) {
+    const key = "armor_" + index;
+    localise(key);
+    equipments["armor_" + index] = {ItemDivision:"EItemDivision::BindArmor", OnlyUse:["1029"], Local_Key:key,
+      IconName:"icon_bindarmor_t" + index, grade:"EGrade::SSR", Reinforce_Max:20, Quality_Min:1, Quality_MAX:5};
+  }
+  const uiImages = new Set([
+    "Icon_Item/portrait_Hero/slot_Calla_001.png", "Icon_Item/Skill/Fixture.png",
+    "Icon_Item/BindArmor/BindArmor_t1.png", "Icon_Item/BindArmor/BindArmor_t2.png", "Icon_Item/BindArmor/BindArmor_t3.png"
+  ]);
+  return {
+    fr, en, heroMastery:{"1029":{Common_Mastery_Tid:"common", Weapon_1_Mastery_Tid:"fixture_mastery_1_",
+      Weapon_2_Mastery_Tid:"fixture_mastery_2_", Weapon_3_Mastery_Tid:"fixture_mastery_3_"}},
+    heroActors:{"1029":{StatGroupTid:"stats", Local_Key:"khala_name", grade:"EGrade::SSR"}},
+    heroStats:{stats:{B_MaxHp:1, B_Atk:2, B_Def:3, Move_Spd:4, A_Accuracy:5, A_Block:6,
+      C_Critical_Rate:7, C_Critical_Dam_Rate:8, C_Critical_ResRate:9, C_Critical_DamRes_Rate:10, D_Block_DamRes_Rate:11}},
+    defaultSkills:{"1029":{WeaponType01:"EItemDivision::SwordDual", WeaponType02:"EItemDivision::Cudgel3c", WeaponType03:"EItemDivision::Gauntlets",
+      WeaponType01_Roll:"ERole::Attacker", WeaponType02_Roll:"ERole::Attacker", WeaponType03_Roll:"ERole::Attacker",
+      WeaponType01_Element:"EElement::Wind", WeaponType02_Element:"EElement::Wind", WeaponType03_Element:"EElement::Wind"}},
+    defaultWeaponSkills, pcSkills, pcSkillBehaviors:{}, buffs:{}, weaponMastery, equipments, uiImages,
+    skillIcons:new Map([["fixture", "Icon_Item/Skill/Fixture.png"]])
+  };
+}
+
 assert.equal(
   substituer("Inflige {0} pendant {1}s.", ["{0}:{294%}", "{1}:{10}"]),
   "Inflige 294% pendant 10s."
@@ -70,6 +136,39 @@ assert.deepEqual(
   "seul le héros localisé qui possède exactement trois armes est jouable"
 );
 
+const preflight = preflightHeros([
+  {id:"1029", internalName:"Calla", nameFr:"Khala", weapons:["SwordDual", "Cudgel3c", "Gauntlets"]},
+  {id:"409100119", internalName:"UnknownOne", nameFr:"Inconnu", weapons:["Axe", "Cudgel3c", "Shield"]},
+  {id:"409100124", internalName:"UnknownTwo", nameFr:"Inconnu", weapons:["Rapier", "Book", "Staff"]}
+]);
+assert.equal(preflight.jouables.length, 1, "le préflight CLI utilise le filtre jouable");
+assert.deepEqual(preflight.ignored, ["409100119", "409100124"], "le compte des IDs anonymes est calculé");
+
+const extraitPipeline = extraireDepuisTables(tablesPipeline());
+const characterPipeline = extraitPipeline.heroes.khala.character;
+assert.equal(characterPipeline.pvpDmgUp, null);
+assert.equal(characterPipeline.pvpDmgDown, null);
+assert.deepEqual(characterPipeline.coverage.pvpDmgUp, {
+  status:"missing-from-export", provenance:"Table/Actor/HeroStatGroupTable"
+}, "le pipeline publie explicitement la couverture JcJ manquante");
+const serializedPipeline = JSON.stringify(extraitPipeline);
+assert.doesNotMatch(serializedPipeline, /\blocal_[a-z0-9_]+\b/i,
+  "le pipeline ne publie aucune clé de localisation brute");
+assert.ok(characterPipeline.weaponMasteries.every(branch => branch.levels.every(level => level.nodes.every(node =>
+  typeof node.descriptionFr === "string" && typeof node.descriptionEn === "string" && !Object.hasOwn(node, "descriptionKey")
+))), "les maîtrises conservent les textes résolus, pas leurs clés");
+const iconsPipeline = new Set([
+  ...extraitPipeline.heroes.khala.assets.skills,
+  ...extraitPipeline.heroes.khala.assets.commonSkills
+].map(asset => path.basename(asset.target)));
+assert.ok([...extraitPipeline.heroes.khala.wikiSkills, ...extraitPipeline.heroes.khala.calculatorSkills]
+  .every(skill => iconsPipeline.has(skill.icone)),
+"chaque icône Wiki/calcul est soit exportée soit une cible commune reconnue");
+const pipelineIconMissing = tablesPipeline();
+pipelineIconMissing.pcSkills.fixture_SwordDual_SkillAttack.Icon = "skill_icon_absente";
+assert.throws(() => extraireDepuisTables(pipelineIconMissing), /icône.*absente.*fixture_SwordDual_SkillAttack/i,
+  "une icône manquante fait échouer le pipeline complet");
+
 assert.doesNotThrow(() => validerSnapshot(snapshotNominal()),
   "le fixture nominal respecte toutes les cardinalités requises");
 
@@ -77,6 +176,11 @@ const placeholder = snapshotNominal();
 placeholder.heroes.khala.potentials.SwordDual[0].descriptionFr = "reste {0}";
 assert.throws(() => validerSnapshot(placeholder), /placeholder.*khala/i,
   "un placeholder résiduel doit refuser le snapshot");
+
+const rawMasteryKey = snapshotNominal();
+rawMasteryKey.heroes.khala.character.weaponMasteries[0].levels[0].descriptionKey = "local_weapon_mastery_desc_test";
+assert.throws(() => validerSnapshot(rawMasteryKey), /clé brute interdite.*khala/i,
+  "une clé locale de maîtrise est interdite dans le snapshot");
 
 const wrongCount = snapshotNominal();
 wrongCount.heroes.khala.wikiSkills.pop();
@@ -129,6 +233,16 @@ assert.deepEqual(
   resoudreLocalisation({}, {}, "local_skill_calla_gauntlets_normalskill_desc"),
   {fr:null, en:null, status:"missing-from-export", reason:"localisation non couverte par l'export"},
   "la seule localisation non couverte connue reste explicitement nulle"
+);
+assert.deepEqual(
+  resoudreLocalisation({}, {}, "local_weapon_mastery_desc_210291000"),
+  {fr:null, en:null, status:"missing-from-export", reason:"localisation non couverte par l'export"},
+  "la liste fermée des descriptions de maîtrise non exportées conserve une couverture explicite"
+);
+assert.throws(
+  () => resoudreLocalisation({}, {}, "local_weapon_mastery_desc_999999000"),
+  /localisation absente ou auto-référente/i,
+  "une clé de maîtrise hors allowlist ferme l'extraction"
 );
 
 const lignesBuff = comportements({ActionStart_Behavior_Tid:["behavior"]}, {

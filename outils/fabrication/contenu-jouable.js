@@ -12,11 +12,21 @@ const HERO_ID = "1029";
 const HERO_SLUG = "khala";
 const HERO_IDS_EXCLUS = new Set(["409100119", "409100124"]);
 const LOCALISATIONS_NON_COUVERTES = new Set([
-  "local_skill_calla_gauntlets_normalskill_desc"
+  "local_skill_calla_gauntlets_normalskill_desc",
+  ...["210291", "210292", "210293"].flatMap(prefix => Array.from({length:21},
+    (_, index) => "local_weapon_mastery_desc_" + prefix + String(index).padStart(3, "0")))
 ]);
 const ASSET_TARGET_PREFIXES = [
   "7ds-personnages/", "7ds-ui/skills/", "7ds-armures-ssr/Armure liee/"
 ];
+const COMMON_REPOSITORY_ICONS = {
+  SwordDual:"7ds-ui/skills/common_SwordDual_normalAttack.webp",
+  Cudgel3c:"7ds-ui/skills/common_Cudgel3c_normalAttack.webp",
+  Gauntlets:"7ds-ui/skills/common_Gauntlets_normalAttack.webp"
+};
+const COMMON_EXPORT_ICONS = new Map([
+  [cleIcone("skill_icon_common_tagskill"), "Icon_Item/Skill/Icon_TagSkill.png"]
+]);
 const WEAPON_FOLDERS = {
   SwordDual:"Epees doubles", Cudgel3c:"Nunchaku", Gauntlets:"Gantelets"
 };
@@ -110,7 +120,17 @@ function cleIcone(icon){
 
 function cheminImageIcone(icon, tables){
   if(tables && tables.skillIcons && tables.skillIcons.has(cleIcone(icon))) return tables.skillIcons.get(cleIcone(icon));
+  const common = COMMON_EXPORT_ICONS.get(cleIcone(icon));
+  if(common && tables && tables.uiImages && tables.uiImages.has(common)) return common;
   return null;
+}
+
+function resoudreIcone(skill, weaponType, tables){
+  const source = cheminImageIcone(skill.Icon, tables);
+  if(source) return {source, target:"7ds-ui/skills/" + path.basename(source).replace(/\.png$/i, ".webp"), kind:"export"};
+  const target = skill.SkillCategory === "ESkillCategory::NormalAttack" && COMMON_REPOSITORY_ICONS[weaponType];
+  if(target && fs.existsSync(path.join(ROOT, target))) return {source:null, target, kind:"common"};
+  throw new Error("icône absente pour " + skill.String_Tid);
 }
 
 function heroDepuisTables(tables){
@@ -147,20 +167,27 @@ function heroDepuisTables(tables){
       pvpDmgUp:{status:"missing-from-export", provenance:"Table/Actor/HeroStatGroupTable"},
       pvpDmgDown:{status:"missing-from-export", provenance:"Table/Actor/HeroStatGroupTable"}
     },
-    weaponMasteries:masteries(mastery, weapons, tables.weaponMastery)
+    weaponMasteries:masteries(mastery, weapons, tables.weaponMastery, tables.fr, tables.en)
   };
   return { actor, mastery, weapons, slots, character };
 }
 
-function masteries(mastery, weapons, table){
+function masteries(mastery, weapons, table, fr, en){
   return weapons.map((weapon, index) => {
     const tid = String(mastery["Weapon_" + (index + 1) + "_Mastery_Tid"] || "");
     const nodes = Object.entries(table)
       .filter(([id]) => id.startsWith(tid))
-      .map(([id, node]) => ({ id, level:node.Weapon_Mastery_Index,
-        grade:node.Weapon_Mastery_Grade, group:node.Weapon_Mastery_Group,
-        abilities:(node.Weapon_Mastery_AbilityType || []).map(sansEnum),
-        values:node.Weapon_Mastery_AbilityValue || [], descriptionKey:node.Skill_Weapon_Mastery_Desc }))
+      .map(([id, node]) => {
+        const description = resoudreLocalisation(fr, en, node.Skill_Weapon_Mastery_Desc);
+        const coverage = description.status === "missing-from-export" ? {
+          status:"missing-from-export", provenance:"Localization/Game/fr+en", reason:description.reason
+        } : null;
+        return { id, level:node.Weapon_Mastery_Index, grade:node.Weapon_Mastery_Grade,
+          group:node.Weapon_Mastery_Group, abilities:(node.Weapon_Mastery_AbilityType || []).map(sansEnum),
+          values:node.Weapon_Mastery_AbilityValue || [], descriptionFr:description.fr,
+          descriptionEn:description.en, provenance:"Table/HeroMastery/HeroWeaponMastery",
+          coverage };
+      })
       .sort((a, b) => a.id.localeCompare(b.id));
     const levels = [...new Set(nodes.map(node => node.level))];
     if(levels.length !== 5) throw new Error("Khala/" + weapon + " : maîtrise sans cinq niveaux");
@@ -175,13 +202,14 @@ function competence(id, weaponType, tables){
   const normalizedCategory = CATEGORY[category] || category.toUpperCase();
   const name = resoudreLocalisation(tables.fr, tables.en, raw.Local_Key);
   const description = resoudreLocalisation(tables.fr, tables.en, raw.Local_Desc, raw.Local_Replace);
+  const icon = resoudreIcone(raw, weaponType, tables);
   const sourceId = (normalizedCategory === "PASSIVE" ? "hero-passive:" : "skill:") + id;
   return {
     gameId:id, weaponType, skillCategory:normalizedCategory, categorie:normalizedCategory,
     nomFr:name.fr, nom:name.en, nameEn:name.en, descriptionFr:description.fr,
     descriptionEn:description.en, localisation:{status:description.status, reason:description.reason},
     recharge:Number(raw.Cooltime || 0) / 1000, cooldown:Number(raw.Cooltime || 0) / 1000,
-    icone:cheminImageIcone(raw.Icon, tables) ? path.basename(cheminImageIcone(raw.Icon, tables)).replace(/\.png$/i, ".webp") : "",
+    icone:path.basename(icon.target),
     effectSourceIds:[sourceId], sourceBehaviors:comportements(raw, tables.pcSkillBehaviors, tables.buffs)
   };
 }
@@ -275,12 +303,14 @@ function linkedArmors(tables){
 }
 
 function assets(tables, hero, skills, armors){
-  const skillAssets = [...new Set(skills.map(skill => cheminImageIcone(tables.pcSkills[skill.gameId].Icon, tables))
-    .filter(Boolean))]
-    .map(source => ({source, target:"7ds-ui/skills/" + path.basename(source).replace(/\.png$/i, ".webp")}));
+  const icons = skills.map(skill => resoudreIcone(tables.pcSkills[skill.gameId], skill.weaponType, tables));
+  const skillAssets = [...new Map(icons.filter(icon => icon.kind === "export")
+    .map(icon => [icon.source, {source:icon.source, target:icon.target}])).values()];
+  const commonSkills = [...new Map(icons.filter(icon => icon.kind === "common")
+    .map(icon => [icon.target, {target:icon.target, provenance:"repository/7ds-ui/skills"}])).values()];
   return {
     portrait:{source:"Icon_Item/portrait_Hero/slot_Calla_001.png", target:"7ds-personnages/khala.webp"},
-    skills:skillAssets,
+    skills:skillAssets, commonSkills,
     linkedArmors:armors.map(armor => ({
       source:"Icon_Item/BindArmor/" + armor.icon.replace(/^icon_bindarmor_/, "BindArmor_").replace(/_pc_/i, "_PC_").replace(/_calla_/i, "_Calla_") + ".png",
       target:"7ds-armures-ssr/Armure liee/" + armor.nameFr + ".webp"
@@ -296,6 +326,15 @@ function validerAssets(descriptors, uiImages){
     const target = String(asset.target || "").split("\\").join("/");
     if(path.isAbsolute(target) || target.includes("../") || !ASSET_TARGET_PREFIXES.some(prefix => target.startsWith(prefix))) {
       throw new Error("asset cible hors racines autorisées : " + target);
+    }
+    if(targets.has(target)) throw new Error("asset cible dupliquée : " + target);
+    targets.add(target);
+  }
+  for(const asset of descriptors.commonSkills || []){
+    const target = String(asset.target || "").split("\\").join("/");
+    if(!COMMON_REPOSITORY_ICONS || !Object.values(COMMON_REPOSITORY_ICONS).includes(target)
+      || asset.provenance !== "repository/7ds-ui/skills" || !fs.existsSync(path.join(ROOT, target))) {
+      throw new Error("icône commune absente : " + target);
     }
     if(targets.has(target)) throw new Error("asset cible dupliquée : " + target);
     targets.add(target);
@@ -343,7 +382,7 @@ function validerSnapshot(snapshot){
   if(!hero || Object.keys(snapshot.heroes).length !== 1) throw new Error("snapshot Khala absent ou version incompatible");
   walk(hero, text => {
     if(/\{\d+\}/.test(text)) throw new Error("placeholder résiduel dans khala");
-    if(/^local_(skill|buff|hero)_/i.test(text)) throw new Error("clé brute interdite dans khala");
+    if(/^local_[a-z0-9_]+$/i.test(text)) throw new Error("clé brute interdite dans khala");
   });
   const weapons = hero.meta && hero.meta.weapons || [];
   if(weapons.length !== 3 || new Set(weapons.map(item => item.weapon)).size !== 3) throw new Error("trois armes uniques requises pour khala");
@@ -364,6 +403,13 @@ function validerSnapshot(snapshot){
   const masteries = hero.character.weaponMasteries || hero.character.masteries || [];
   const branches = Array.isArray(masteries) ? masteries : Object.values(masteries);
   if(branches.length !== 3 || branches.some(branch => !Array.isArray(branch.levels || branch) || (branch.levels || branch).length !== 5)) throw new Error("trois branches de maîtrise à cinq niveaux requises pour khala");
+  const masteryNodes = branches.flatMap(branch => (branch.levels || branch).flatMap(level => level.nodes || []));
+  if(masteryNodes.some(node => {
+    const resolved = typeof node.descriptionFr === "string" && typeof node.descriptionEn === "string" && node.coverage === null;
+    const missing = node.descriptionFr === null && node.descriptionEn === null && node.coverage
+      && node.coverage.status === "missing-from-export" && node.coverage.provenance === "Localization/Game/fr+en";
+    return !resolved && !missing;
+  })) throw new Error("localisation de maîtrise invalide pour khala");
   if(!Array.isArray(hero.linkedArmors) || hero.linkedArmors.length !== 3) throw new Error("trois armures liées requises pour khala");
   const sources = [...(hero.effectSources && hero.effectSources.skills || []), ...(hero.effectSources && hero.effectSources.potentials || [])];
   const ids = new Set(sources.map(source => source.id));
@@ -421,6 +467,13 @@ function candidatsHeros(tables){
   });
 }
 
+function preflightHeros(heroes){
+  return {
+    jouables:filtrerHerosJouables(heroes),
+    ignored:heroes.filter(hero => HERO_IDS_EXCLUS.has(String(hero.id))).map(hero => String(hero.id))
+  };
+}
+
 function listerImages(directory, racine, found = []){
   for(const entry of fs.readdirSync(directory, {withFileTypes:true})){
     const absolute = path.join(directory, entry.name);
@@ -437,8 +490,7 @@ function main(){
   if(!racine) throw new Error("DONNEES_JEU doit désigner le dossier Content exporté");
   const tables = chargerTables(racine);
   const candidats = candidatsHeros(tables);
-  const jouables = filtrerHerosJouables(candidats);
-  const ignored = candidats.filter(hero => HERO_IDS_EXCLUS.has(String(hero.id))).map(hero => String(hero.id));
+  const {jouables, ignored} = preflightHeros(candidats);
   if(!jouables.some(hero => hero.id === HERO_ID)) throw new Error("Khala absente de la liste des héros jouables");
   const snapshot = extraireDepuisTables(tables);
   const sortie = path.join(ROOT, "7ds-stats", "contenu-jeu.json");
@@ -453,4 +505,4 @@ function main(){
 if(require.main === module) main();
 
 module.exports = {substituer, filtrerHerosJouables, lireTable, resoudreLocalisation,
-  comportements, listerImages, validerAssets, extraireDepuisTables, extraireContenu, validerSnapshot};
+  comportements, listerImages, validerAssets, preflightHeros, extraireDepuisTables, extraireContenu, validerSnapshot};

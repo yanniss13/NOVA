@@ -91,7 +91,14 @@
           "group": "21029100",
           "abilities": [],
           "values": [],
-          "descriptionKey": "local_weapon_mastery_desc_210291000"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          }
         ]
        },
@@ -111,7 +118,14 @@
            165,
            37
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291001"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291002",
@@ -128,7 +142,14 @@
            21,
            240
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291002"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291003",
@@ -143,7 +164,14 @@
            338,
            788
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291003"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291004",
@@ -158,7 +186,14 @@
            90,
            338
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291004"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291005",
@@ -179,7 +214,14 @@
            13,
            8
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291005"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          }
         ]
        },
@@ -199,7 +241,14 @@
            136,
            507
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291006"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291007",
@@ -214,7 +263,14 @@
            248,
            27
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291007"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291008",
@@ -229,7 +285,14 @@
            48,
            507
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291008"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291009",
@@ -246,7 +309,14 @@
            135,
            1182
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291009"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291010",
@@ -267,7 +337,14 @@
            16,
            11
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291010"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          }
         ]
        },
@@ -287,7 +364,14 @@
            1575,
            675
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291011"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291012",
@@ -304,7 +388,14 @@
            180,
            34
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291012"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291013",
@@ -319,7 +410,14 @@
            480,
            675
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291013"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291014",
@@ -334,7 +432,14 @@
            180,
            58
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291014"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291015",
@@ -355,7 +460,14 @@
            26,
            17
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291015"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          }
         ]
        },
@@ -375,7 +487,14 @@
            600,
            1969
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291016"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291017",
@@ -390,7 +509,14 @@
            844,
            69
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291017"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291018",
@@ -407,7 +533,14 @@
            225,
            844
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291018"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291019",
@@ -422,7 +555,14 @@
            413,
            40
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291019"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210291020",
@@ -443,7 +583,14 @@
            49,
            33
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210291020"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          }
         ]
        }
@@ -462,7 +609,14 @@
           "group": "21029200",
           "abilities": [],
           "values": [],
-          "descriptionKey": "local_weapon_mastery_desc_210292000"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          }
         ]
        },
@@ -482,7 +636,14 @@
            150,
            35
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292001"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292002",
@@ -499,7 +660,14 @@
            23,
            300
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292002"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292003",
@@ -514,7 +682,14 @@
            225,
            525
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292003"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292004",
@@ -529,7 +704,14 @@
            150,
            450
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292004"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292005",
@@ -550,7 +732,14 @@
            12,
            9
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292005"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          }
         ]
        },
@@ -570,7 +759,14 @@
            170,
            338
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292006"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292007",
@@ -585,7 +781,14 @@
            225,
            30
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292007"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292008",
@@ -600,7 +803,14 @@
            45,
            675
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292008"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292009",
@@ -617,7 +827,14 @@
            225,
            788
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292009"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292010",
@@ -638,7 +855,14 @@
            15,
            12
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292010"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          }
         ]
        },
@@ -658,7 +882,14 @@
            1050,
            900
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292011"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292012",
@@ -675,7 +906,14 @@
            300,
            37
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292012"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292013",
@@ -690,7 +928,14 @@
            600,
            450
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292013"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292014",
@@ -705,7 +950,14 @@
            225,
            56
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292014"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292015",
@@ -726,7 +978,14 @@
            25,
            19
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292015"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          }
         ]
        },
@@ -746,7 +1005,14 @@
            750,
            1313
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292016"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292017",
@@ -761,7 +1027,14 @@
            563,
            66
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292017"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292018",
@@ -778,7 +1051,14 @@
            375,
            1125
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292018"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292019",
@@ -793,7 +1073,14 @@
            375,
            44
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292019"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210292020",
@@ -814,7 +1101,14 @@
            46,
            36
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210292020"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          }
         ]
        }
@@ -833,7 +1127,14 @@
           "group": "21029300",
           "abilities": [],
           "values": [],
-          "descriptionKey": "local_weapon_mastery_desc_210293000"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          }
         ]
        },
@@ -853,7 +1154,14 @@
            150,
            35
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293001"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293002",
@@ -870,7 +1178,14 @@
            23,
            300
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293002"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293003",
@@ -885,7 +1200,14 @@
            225,
            525
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293003"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293004",
@@ -900,7 +1222,14 @@
            150,
            450
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293004"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293005",
@@ -921,7 +1250,14 @@
            12,
            9
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293005"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          }
         ]
        },
@@ -941,7 +1277,14 @@
            170,
            338
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293006"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293007",
@@ -956,7 +1299,14 @@
            225,
            30
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293007"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293008",
@@ -971,7 +1321,14 @@
            45,
            675
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293008"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293009",
@@ -988,7 +1345,14 @@
            225,
            788
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293009"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293010",
@@ -1009,7 +1373,14 @@
            15,
            12
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293010"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          }
         ]
        },
@@ -1029,7 +1400,14 @@
            1050,
            900
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293011"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293012",
@@ -1046,7 +1424,14 @@
            300,
            37
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293012"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293013",
@@ -1061,7 +1446,14 @@
            600,
            450
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293013"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293014",
@@ -1076,7 +1468,14 @@
            225,
            56
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293014"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293015",
@@ -1097,7 +1496,14 @@
            25,
            19
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293015"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          }
         ]
        },
@@ -1117,7 +1523,14 @@
            750,
            1313
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293016"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293017",
@@ -1132,7 +1545,14 @@
            563,
            66
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293017"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293018",
@@ -1149,7 +1569,14 @@
            375,
            1125
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293018"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293019",
@@ -1164,7 +1591,14 @@
            375,
            44
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293019"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          },
          {
           "id": "210293020",
@@ -1185,7 +1619,14 @@
            46,
            36
           ],
-          "descriptionKey": "local_weapon_mastery_desc_210293020"
+          "descriptionFr": null,
+          "descriptionEn": null,
+          "provenance": "Table/HeroMastery/HeroWeaponMastery",
+          "coverage": {
+           "status": "missing-from-export",
+           "provenance": "Localization/Game/fr+en",
+           "reason": "localisation non couverte par l'export"
+          }
          }
         ]
        }
@@ -1488,7 +1929,7 @@
      },
      "recharge": 0,
      "cooldown": 0,
-     "icone": "",
+     "icone": "common_SwordDual_normalAttack.webp",
      "effectSourceIds": [
       "skill:calla_sworddual_normalatk_1"
      ],
@@ -1551,7 +1992,7 @@
      },
      "recharge": 0,
      "cooldown": 0,
-     "icone": "",
+     "icone": "Icon_TagSkill.webp",
      "effectSourceIds": [
       "skill:calla_sworddual_skill_tag"
      ],
@@ -1658,7 +2099,7 @@
      },
      "recharge": 0,
      "cooldown": 0,
-     "icone": "",
+     "icone": "common_Cudgel3c_normalAttack.webp",
      "effectSourceIds": [
       "skill:calla_cudgel3c_normalatk_1"
      ],
@@ -1702,7 +2143,7 @@
      },
      "recharge": 0,
      "cooldown": 0,
-     "icone": "",
+     "icone": "Icon_TagSkill.webp",
      "effectSourceIds": [
       "skill:calla_cudgel3c_skill_tag"
      ],
@@ -1790,7 +2231,7 @@
      },
      "recharge": 0,
      "cooldown": 0,
-     "icone": "",
+     "icone": "common_Gauntlets_normalAttack.webp",
      "effectSourceIds": [
       "skill:calla_gauntlets_normalatk_1"
      ],
@@ -1853,7 +2294,7 @@
      },
      "recharge": 0,
      "cooldown": 0,
-     "icone": "",
+     "icone": "Icon_TagSkill.webp",
      "effectSourceIds": [
       "skill:calla_gauntlets_skill_tag"
      ],
@@ -1943,7 +2384,7 @@
      },
      "recharge": 0,
      "cooldown": 0,
-     "icone": "",
+     "icone": "common_SwordDual_normalAttack.webp",
      "effectSourceIds": [
       "skill:calla_sworddual_normalatk_1"
      ],
@@ -2006,7 +2447,7 @@
      },
      "recharge": 0,
      "cooldown": 0,
-     "icone": "",
+     "icone": "Icon_TagSkill.webp",
      "effectSourceIds": [
       "skill:calla_sworddual_skill_tag"
      ],
@@ -2091,7 +2532,7 @@
      },
      "recharge": 0,
      "cooldown": 0,
-     "icone": "",
+     "icone": "common_Cudgel3c_normalAttack.webp",
      "effectSourceIds": [
       "skill:calla_cudgel3c_normalatk_1"
      ],
@@ -2135,7 +2576,7 @@
      },
      "recharge": 0,
      "cooldown": 0,
-     "icone": "",
+     "icone": "Icon_TagSkill.webp",
      "effectSourceIds": [
       "skill:calla_cudgel3c_skill_tag"
      ],
@@ -2201,7 +2642,7 @@
      },
      "recharge": 0,
      "cooldown": 0,
-     "icone": "",
+     "icone": "common_Gauntlets_normalAttack.webp",
      "effectSourceIds": [
       "skill:calla_gauntlets_normalatk_1"
      ],
@@ -2264,7 +2705,7 @@
      },
      "recharge": 0,
      "cooldown": 0,
-     "icone": "",
+     "icone": "Icon_TagSkill.webp",
      "effectSourceIds": [
       "skill:calla_gauntlets_skill_tag"
      ],
@@ -3175,6 +3616,10 @@
       "target": "7ds-ui/skills/Calla_SwordDual_NormalSkill.webp"
      },
      {
+      "source": "Icon_Item/Skill/Icon_TagSkill.png",
+      "target": "7ds-ui/skills/Icon_TagSkill.webp"
+     },
+     {
       "source": "Icon_Item/Skill/Calla_SwordDual_UltimateSkill.png",
       "target": "7ds-ui/skills/Calla_SwordDual_UltimateSkill.webp"
      },
@@ -3217,6 +3662,20 @@
      {
       "source": "Icon_Item/Skill/Calla_Gauntlets_Passive.png",
       "target": "7ds-ui/skills/Calla_Gauntlets_Passive.webp"
+     }
+    ],
+    "commonSkills": [
+     {
+      "target": "7ds-ui/skills/common_SwordDual_normalAttack.webp",
+      "provenance": "repository/7ds-ui/skills"
+     },
+     {
+      "target": "7ds-ui/skills/common_Cudgel3c_normalAttack.webp",
+      "provenance": "repository/7ds-ui/skills"
+     },
+     {
+      "target": "7ds-ui/skills/common_Gauntlets_normalAttack.webp",
+      "provenance": "repository/7ds-ui/skills"
      }
     ],
     "linkedArmors": [
