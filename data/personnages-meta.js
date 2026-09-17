@@ -1,4 +1,5 @@
 // Genere par generate-meta.py depuis 7dsorigin.app (team-builder).
+// Heros absents du site : tables du jeu, via 7ds-stats/contenu-jeu.json.
 // Cle = id/slug personnage. element (FIRE/WIND/DARK/EARTH/HOLY/ICE/THUNDER),
 // role (ATTACKER/DEFENDER/SUPPORT), rarity (SR/SSR),
 // weapons = 3 slots {weapon, role, element} = armes equipables du perso.
@@ -572,6 +573,28 @@ window.SEVEN_DS_META = {
     "role": "Buster",
     "weapon": "Staff",
     "element": "Fire"
+   }
+  ]
+ },
+ "khala": {
+  "element": "WIND",
+  "rarity": "SSR",
+  "role": "ATTACKER",
+  "weapons": [
+   {
+    "role": "Attacker",
+    "weapon": "SwordDual",
+    "element": "Wind"
+   },
+   {
+    "role": "Buster",
+    "weapon": "Cudgel3c",
+    "element": "Wind"
+   },
+   {
+    "role": "Buster",
+    "weapon": "Gauntlets",
+    "element": "Earth"
    }
   ]
  }

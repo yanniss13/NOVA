@@ -5,27 +5,39 @@
 #  7dsorigin.app, puis regénère potentiels.js (consommé par index.html).
 #  Le palier choisi dans l'appli est commun au personnage.
 #
+#  Les héros absents du site sont lus dans le snapshot local des tables du jeu
+#  (7ds-stats/contenu-jeu.json) et fusionnés par client_content.py.
+#
 #  Usage :   python generate-potentiels.py
 #  (nécessite une connexion internet ; aucune dépendance tierce)
+#            python generate-potentiels.py --client-only   (sans réseau :
+#                   remplace seulement les héros du snapshot dans la sortie)
+#            python generate-potentiels.py --check
 #
 #  A relancer quand le jeu ajoute des personnages / modifie les potentiels.
 #  Données 100% texte (descriptions FR) — aucune image téléchargée ici.
 # =============================================================================
-import os, re, json, sys, urllib.request
+import argparse, os, re, json, sys, urllib.request
 
 sys.stdout.reconfigure(encoding='utf-8')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import client_content  # noqa: E402
 # Ce script vit dans scripts/ ; les donnees qu'il lit et ecrit sont a la
 # racine du depot, d'ou le second .parent.
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 URL = 'https://7dsorigin.app/fr/team-builder/create'
 OUT = os.path.join(HERE, 'data', 'potentiels.js')
+NAME = 'SEVEN_DS_POTENTIELS'
+HEADER = [
+    "// Genere par generate-potentiels.py depuis 7dsorigin.app (team-builder).",
+    "// Heros absents du site : tables du jeu, via 7ds-stats/contenu-jeu.json.",
+    "// Chaque personnage a 3 cles d'armes compatibles, avec leurs bonus T1..T10.",
+    "// Le palier choisi est commun au heros et reste stocke dans les equipes.",
+    "// Le balisage [#RRGGBB]texte[-] est un span de couleur (rendu par l'appli).",
+]
 
 # enum weaponType du site  ->  nom de dossier d'arme local (segment de chemin)
-WT_FOLDER = {
-    'Axe': 'Hache', 'Book': 'Livre', 'SwordDual': 'Epees doubles', 'Rapier': 'Rapiere',
-    'Shield': 'Bouclier', 'Lance': 'Lance', 'Sword1h': 'Epee 1 main', 'Cudgel3c': 'Nunchaku',
-    'Gauntlets': 'Gantelets', 'Sword2h': 'Epee 2 mains', 'Staff': 'Baton', 'Wand': 'Baguette',
-}
+WT_FOLDER = client_content.WEAPON_FOLDERS
 
 def fetch():
     req = urllib.request.Request(URL, headers={'User-Agent': 'Mozilla/5.0'})
@@ -43,6 +55,19 @@ def match_array(u, b):
     return None
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--client-only', action='store_true')
+    parser.add_argument('--check', action='store_true')
+    args = parser.parse_args()
+    if args.check:
+        client_content.check_mapping_catalog(OUT, NAME, 'potentials', HEADER)
+        print('potentiels.js à jour')
+        return
+    if args.client_only:
+        count, digest = client_content.client_only_mapping_catalog(OUT, NAME, 'potentials', HEADER)
+        print('OK -> potentiels.js : %d personnages' % count)
+        print('  Empreinte des héros historiques inchangée :', digest)
+        return
     raw = fetch()
     u = raw.replace('\\"', '"').replace('\\/', '/')
     heads = [(m.start(), m.group(1)) for m in
@@ -71,12 +96,9 @@ def main():
               'peut-être changé.' % len(data))
         sys.exit(1)
 
-    content = ("// Genere par generate-potentiels.py depuis 7dsorigin.app (team-builder).\n"
-               "// Chaque personnage a 3 cles d'armes compatibles, avec leurs bonus T1..T10.\n"
-               "// Le palier choisi est commun au heros et reste stocke dans les equipes.\n"
-               "// Le balisage [#RRGGBB]texte[-] est un span de couleur (rendu par l'appli).\n"
-               "window.SEVEN_DS_POTENTIELS = " + json.dumps(data, ensure_ascii=False, indent=1) + ";\n")
-    open(OUT, 'w', encoding='utf-8').write(content)
+    data = client_content.merge_mapping(data, 'potentials')
+    client_content.write_text_atomic(
+        OUT, client_content.render_window_assignment(HEADER, NAME, data))
     print('OK -> potentiels.js généré')
     print('  Personnages :', len(data))
     combos = sum(len(v) for v in data.values())

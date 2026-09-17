@@ -42,6 +42,11 @@ CHARACTER_BASE_FIELDS = {
     "pvpDmgUp": ("pvpDmgUp", "ten-thousandths"),
     "pvpDmgDown": ("pvpDmgDown", "ten-thousandths"),
 }
+# Les tables du jeu ne portent pas les coefficients JcJ d'un héros : un héros
+# importé depuis le snapshot local les publie à null avec une couverture
+# « missing-from-export ». Seuls ces deux champs peuvent manquer ainsi ; le
+# catalogue les omet au lieu d'inventer une valeur.
+MISSABLE_BASE_FIELDS = {"pvpDmgUp", "pvpDmgDown"}
 WEAPON_PASSIVE_MAX_LEVEL = 7
 GEAR_PASSIVE_MAX_LEVEL = 3
 
@@ -825,6 +830,10 @@ def compact_character(character, known):
     base_stats = []
     for field, (stat, expected_unit) in CHARACTER_BASE_FIELDS.items():
         value = character.get(field)
+        coverage = (character.get("coverage") or {}).get(field) or {}
+        if (value is None and field in MISSABLE_BASE_FIELDS
+                and coverage.get("status") == "missing-from-export"):
+            continue
         if not isinstance(value, (int, float)) or isinstance(value, bool):
             raise ValueError(f"{slug} : statistique de base absente ({field})")
         details = known.get(stat)

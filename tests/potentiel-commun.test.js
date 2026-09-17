@@ -154,7 +154,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
   );
 }
 
-// Donnée générée réelle : 26 héros, exactement 3 types d'armes chacun.
+// Donnée générée réelle : 27 héros, exactement 3 types d'armes chacun.
 {
   const actual = { window:{} };
   vm.runInNewContext(
@@ -163,10 +163,18 @@ const STORAGE_KEY = "confrerie7ds.teams";
     { filename:"potentiels.js" }
   );
   const actualPot = actual.window.SEVEN_DS_POTENTIELS;
-  assert.strictEqual(Object.keys(actualPot).length, 26);
+  assert.strictEqual(Object.keys(actualPot).length, 27);
   assert.ok(Object.values(actualPot).every(
     byWeapon => Object.keys(byWeapon).length === 3
   ));
+  // Khala vient des tables du jeu : ses dossiers suivent la convention des
+  // 26 autres héros, l'ordre alphabétique des enums (Cudgel3c, Gauntlets,
+  // SwordDual), et non l'ordre de ses emplacements.
+  assert.deepStrictEqual(
+    Object.keys(actualPot.khala),
+    ["Nunchaku", "Gantelets", "Epees doubles"]
+  );
+  assert.ok(Object.values(actualPot.khala).every(tiers => tiers.length === 10));
 }
 
 // Régression ciblée : seuls les trois dossiers autorisés alimentent le picker.

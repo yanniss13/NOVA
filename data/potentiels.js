@@ -1,4 +1,5 @@
 // Genere par generate-potentiels.py depuis 7dsorigin.app (team-builder).
+// Heros absents du site : tables du jeu, via 7ds-stats/contenu-jeu.json.
 // Chaque personnage a 3 cles d'armes compatibles, avec leurs bonus T1..T10.
 // Le palier choisi est commun au heros et reste stocke dans les equipes.
 // Le balisage [#RRGGBB]texte[-] est un span de couleur (rendu par l'appli).
@@ -989,6 +990,44 @@ window.SEVEN_DS_POTENTIELS = {
    "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
    "Renforce la puissance de [#3C22D6]Compétence normale : Jugement divin[-] de [#1A7331]70%[-].",
    "Utiliser l'attaque ultime, ou une attaque combinée avec l'attaque ultime du héros en tant que base, remplace l'attaque spéciale par [#3C22D6]Compétence normale : Surrégime[-] pendant [#1A7331]15s[-].\n\n[#3C22D6]Surrégime[-]\nInflige des dégâts égaux à [#1A7331]26%[-] de l'attaque, jusqu'à [#1A7331]416%[-]. Chaque coup porté sur un ennemi sous l'effet de [#0F5CD8]Déluge de Foudre[-] réduit le temps de recharge de la compétence normale de [#1A7331]1s[-]."
+  ]
+ },
+ "khala": {
+  "Nunchaku": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Renforce la puissance de la compétence normale de [#1A7331]30%[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de l'attaque ultime de [#1A7331]30%[-] et ses dégâts supplémentaires de [#1A7331]40%[-].",
+   "Ajoute [#1A7331]2[-] projectile(s) à l'attaque spéciale.",
+   "Lorsqu'un héros allié active un [#0F5CD8]Déluge de Vent[-], amplifie le boost des dégâts crit. qui en découle de [#1A7331]30%[-].",
+   "Réduit les dégâts subis par le héros de [#1A7331]50%[-] et augmente l'efficacité de Déluge de Vent de [#1A7331]30%[-] pendant l'utilisation de la compétence normale.",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Augmente les dégâts de Vent de tous les héros alliés de [#1A7331]65%[-] lorsque le passif de la barrière du héros est actif.",
+   "Lorsqu'un héros d'attribut Vent allié attaque un ennemi sous l'effet d'un [#0F5CD8]Déluge[-], augmente les dégâts crit. des héros d'attribut Vent de [#1A7331]4%[-] pendant [#1A7331]10 s[-]. (Max : [#1A7331]20 fois[-])\nLorsqu'un héros allié utilise une compétence de relève, celle-ci octroie [#0F5CD8]Vent glacial[-] à tous les héros alliés pendant [#1A7331]20 s[-].\n\n※[#0F5CD8]Vent glacial[-] : attaquer un ennemi avec un Déluge actif augmente l'attaque de Vent de [#1A7331]30%[-]."
+  ],
+  "Gantelets": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "L'attaque normale augmente par ailleurs la jauge de Déluge de [#1A7331]10[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de l'attaque ultime de [#1A7331]40%[-].",
+   "L'utilisation de l'attaque spéciale génère [#1A7331]9[-] petite(s) bombe(s) autour du héros infligeant des dégâts égaux à [#1A7331]45%[-] de l'attaque.\nAugmente la jauge de Déluge des ennemis qui entrent en contact avec une petite bombe de [#1A7331]0.3%[-] de l'attaque. (Max : [#1A7331]50[-])\nLes petites bombes explosent automatiquement après [#1A7331]1.5 s[-] si aucun ennemi n'entre en contact avec.",
+   "Lorsqu'un héros allié active un [#0F5CD8]Déluge de Terre[-], augmente les chances crit. de tous les héros alliés d'attribut Terre de [#1A7331]20%[-] pendant [#1A7331]30 s[-].",
+   "Ajoute [#1A7331]2[-] bombes toupies à la compétence normale.\nFaire mouche avec une bombe toupie augmente les dégâts de la compétence normale d'attribut Terre subis par l'ennemi de [#1A7331]20%[-] pendant [#1A7331]30 s[-]. (Max : [#1A7331]3 fois[-])",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Chaque fois qu'un héros allié utilise une compétence normale, augmente les dégâts crit. de la compétence normale de tous les héros alliés d'attribut Terre de [#1A7331]7%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]10 fois[-])",
+   "L'utilisation de la compétence normale augmente le percement de défense de tous les héros alliés d'attribut Terre de [#1A7331]15%[-] pendant [#1A7331]30 s[-].\nLorsque les bombes toupies de l'attaque normale explosent, elles génèrent [#1A7331]3[-] petites bombes qui infligent des dégâts égaux à [#1A7331]80%[-] de l'attaque en explosant."
+  ],
+  "Epees doubles": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Renforce la puissance de l'attaque normale de [#1A7331]20%[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Amplifie la puissance d'[#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] de [#1A7331]15%[-] et ses dégâts supplémentaires de [#1A7331]20%[-].",
+   "La dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Déluge de lames[-] dure [#1A7331]3 s[-], inflige des dégâts égaux à [#1A7331]10%[-] de l'attaque aux ennemis à portée toutes les [#1A7331]0.2 s[-], et augmente les dégâts que leur inflige le héros de [#1A7331]30%[-] pendant [#1A7331]20 s[-].",
+   "Immunise contre les réactions tant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif.\nRéduit les dégâts subis de [#1A7331]6%[-] par tranche de [#1A7331]1 cumul(s)[-] de [#0F5CD8]Mirage[-] sur le héros. (Max : [#1A7331]5 fois[-])",
+   "La dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Plongeon miroir[-] inflige [#1A7331]2 fois[-] des dégâts supplémentaires égaux à [#1A7331]65%[-] de l'attaque.\nCette attaque augmente les dégâts crit. de [#1A7331]10%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]6 fois[-])",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Renforce la puissance de l'attaque normale de [#1A7331]30%[-].\nAmplifie la puissance d'[#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] de [#1A7331]35%[-] et ses dégâts supplémentaires de [#1A7331]40%[-].",
+   "Augmente le percement de défense de [#1A7331]15%[-] tant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif.\nLa dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] inflige [#1A7331]5 fois[-] des dégâts supplémentaires égaux à [#1A7331]90%[-] de l'attaque.\nCette attaque augmente les dégâts d'attaque normale de [#1A7331]5%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]20 fois[-])"
   ]
  }
 };

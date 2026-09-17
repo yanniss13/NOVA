@@ -799,6 +799,40 @@ class GenerateStatsBuildTests(unittest.TestCase):
             {"level": 1, "textFr": "Passif arme 1"},
         )
 
+    def test_pvp_stats_declared_missing_from_export_are_left_out(self):
+        # Les tables du jeu ne portent pas les deux coefficients JcJ d'un héros
+        # importé depuis le snapshot local : sa couverture le déclare, et le
+        # catalogue publie onze statistiques de base plutôt qu'une valeur
+        # inventée.
+        hero = self.characters[0]
+        hero["pvpDmgUp"] = None
+        hero["pvpDmgDown"] = None
+        hero["coverage"] = {
+            field: {"status": "missing-from-export", "provenance": "Table/Actor/HeroStatGroupTable"}
+            for field in ("pvpDmgUp", "pvpDmgDown")
+        }
+        self.write_characters()
+
+        catalog = module.build_catalog(self.stats_root, self.weapons_root, self.metadata)
+
+        stats = [item["stat"] for item in catalog["charactersBySlug"]["hero"]["baseStats"]]
+        self.assertEqual(len(stats), 11)
+        self.assertNotIn("pvpDmgUp", stats)
+        self.assertNotIn("pvpDmgDown", stats)
+
+    def test_an_undeclared_or_non_pvp_missing_base_stat_still_fails(self):
+        self.characters[0]["pvpDmgUp"] = None
+        self.write_characters()
+        with self.assertRaisesRegex(ValueError, r"statistique de base absente \(pvpDmgUp\)"):
+            module.build_catalog(self.stats_root, self.weapons_root, self.metadata)
+
+        self.characters[0]["pvpDmgUp"] = 150
+        self.characters[0]["baseAtk"] = None
+        self.characters[0]["coverage"] = {"baseAtk": {"status": "missing-from-export"}}
+        self.write_characters()
+        with self.assertRaisesRegex(ValueError, r"statistique de base absente \(baseAtk\)"):
+            module.build_catalog(self.stats_root, self.weapons_root, self.metadata)
+
     def test_duplicate_character_slug_fails(self):
         self.characters.append(copy.deepcopy(self.characters[0]))
         self.write_characters()

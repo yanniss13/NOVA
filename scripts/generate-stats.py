@@ -6,11 +6,22 @@ rendu par le serveur). Un simple GET suffit donc : pas de navigateur, et on ne
 touche jamais /api/, que leur robots.txt interdit a tous les agents.
 
 Usage : python generate-stats.py
+        python generate-stats.py --client-only
+
+Les heros absents du site mais lus dans les tables du jeu viennent du
+snapshot local `7ds-stats/contenu-jeu.json` et sont fusionnes dans
+`personnages.json`. `--client-only` ne remplace qu'eux, sans reseau, dans la
+sortie commitee, et refuse d'ecrire si un autre heros changerait.
 """
 
+import argparse
 import json
 import os
+import sys
 import urllib.request
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import client_content  # noqa: E402
 
 PAGE = "https://7dsorigin.app/fr/team-builder/create"
 # Racine du depot, et non le dossier courant : ce script vit dans scripts/
@@ -190,7 +201,33 @@ def write(name, payload):
     return os.path.getsize(path)
 
 
+def merged_characters(characters, snapshot=None, replace_client=False):
+    """Heros du site + heros du snapshot local, tries comme `collect`."""
+    return sorted(
+        client_content.merge_characters(characters, snapshot, replace_client=replace_client),
+        key=stable_item_key,
+    )
+
+
+def client_only():
+    """Remplace les heros du snapshot dans la sortie commitee, sans reseau."""
+    path = os.path.join(OUT_DIR, "personnages.json")
+    with open(path, encoding="utf-8") as handle:
+        base = json.load(handle)
+    result, digest = client_content.replace_client_entries(base, merged_characters)
+    client_content.write_text_atomic(
+        path, json.dumps(result, ensure_ascii=False, indent=1) + "\n"
+    )
+    print("personnages.json : %d personnages" % len(result))
+    print("empreinte des heros historiques inchangee : %s" % digest)
+
+
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--client-only", action="store_true")
+    if parser.parse_args().client_only:
+        client_only()
+        return
     html = fetch(PAGE)
     flight = flight_payload(html)
     if len(flight) < 1_000_000:
@@ -291,7 +328,7 @@ def main():
         })
 
     sizes = [
-        ("personnages.json", write("personnages.json", data["characters"])),
+        ("personnages.json", write("personnages.json", merged_characters(data["characters"]))),
         ("armes.json", write("armes.json", data["weapons"])),
         ("armures.json", write("armures.json", data["equipItems"])),
         ("armures-gravees.json", write("armures-gravees.json", engraved)),

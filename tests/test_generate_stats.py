@@ -1,6 +1,9 @@
+import contextlib
 import importlib.util
+import io
 import json
 import pathlib
+import tempfile
 import unittest
 
 
@@ -131,6 +134,51 @@ class StatLabelsTests(unittest.TestCase):
         labels = {}
         module.stat_labels({"stat": "B_Atk", "value": 138}, labels)
         self.assertEqual(labels, {})
+
+
+class ClientCharactersTests(unittest.TestCase):
+    """Les heros du snapshot local rejoignent personnages.json a leur rang."""
+
+    def test_snapshot_heroes_are_sorted_among_site_heroes(self):
+        merged = module.merged_characters([{"slug": "ban"}, {"slug": "tristan"}])
+
+        self.assertEqual([row["slug"] for row in merged], ["ban", "khala", "tristan"])
+
+    def test_client_only_replaces_the_snapshot_hero_without_touching_others(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = pathlib.Path(directory) / "personnages.json"
+            path.write_text(json.dumps([
+                {"slug": "ban", "nameFr": "Ban"},
+                {"slug": "khala", "nameFr": "Ancienne Khala"},
+            ]), encoding="utf-8")
+            original = module.OUT_DIR
+            module.OUT_DIR = directory
+            try:
+                with contextlib.redirect_stdout(io.StringIO()):
+                    module.client_only()
+            finally:
+                module.OUT_DIR = original
+
+            written = json.loads(path.read_text(encoding="utf-8"))
+
+        self.assertEqual(written[0], {"slug": "ban", "nameFr": "Ban"})
+        self.assertEqual(written[1]["nameFr"], "Khala")
+        self.assertEqual(written[1]["rarity"], "SSR")
+
+    def test_client_only_refuses_a_base_whose_order_would_change(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = pathlib.Path(directory) / "personnages.json"
+            before = json.dumps([{"slug": "tristan"}, {"slug": "ban"}])
+            path.write_text(before, encoding="utf-8")
+            original = module.OUT_DIR
+            module.OUT_DIR = directory
+            try:
+                with self.assertRaisesRegex(ValueError, "héros historiques modifiés"):
+                    module.client_only()
+            finally:
+                module.OUT_DIR = original
+
+            self.assertEqual(path.read_text(encoding="utf-8"), before)
 
 
 if __name__ == "__main__":

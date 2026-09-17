@@ -31,6 +31,14 @@ vm.runInNewContext(
 const meta = bac.window.SEVEN_DS_META;
 assert.ok(meta, "personnages-meta.js doit s'exposer sur window");
 
+/* Khala vient des tables du jeu : ses emplacements gardent l'ordre du jeu,
+   comme ceux des 26 autres héros, et ses trois badges doivent exister.
+   Array.from ramène le tableau du bac vm dans ce contexte-ci. */
+assert.deepEqual(
+  Array.from(meta.khala.weapons, slot => slot.weapon),
+  ["SwordDual", "Cudgel3c", "Gauntlets"]
+);
+
 const portees = new Map();
 Object.entries(meta).forEach(([slug, personnage]) => {
   (personnage.weapons || []).forEach(arme => {
