@@ -49,9 +49,16 @@ for (const cle of Object.keys(localisation)) {
 }
 const traduire = cle => index[String(cle || '').toLowerCase()];
 
-/* Le seul heros dont l'identifiant du jeu differe du slug du site. Une entree
-   ici plutot qu'une regle : le jour ou un deuxieme cas apparait, il se voit. */
+/* Les heros dont l'identifiant du jeu differe du slug du site. Le premier
+   cas etait seul et ecrit ici a la main ; les heros lus dans les tables du
+   jeu apportent le leur, puisque le snapshot dit les deux noms. Un slug
+   devine serait publie sans jamais s'afficher. */
 const ALIAS = { gilthunder: 'gil-thunder' };
+const snapshot = JSON.parse(fs.readFileSync(
+  DEPOT + '/7ds-stats/contenu-jeu.json', 'utf8'));
+for (const [slug, heros] of Object.entries(snapshot.heroes || {})) {
+  ALIAS[String(heros.internalName || '').toLowerCase()] = slug;
+}
 
 /* Les slugs que le site connait. Une transcendance qui ne s'y rattache pas est
    une erreur, pas un detail : elle serait publiee sans jamais s'afficher. */
@@ -227,10 +234,9 @@ const entete = `// Les transcendances : les passifs de Limit Break de chaque her
 // GENERE — ne pas editer a la main :
 //     node outils/fabrication/extraire-transcendances.js
 //
-// La source n'est ni 7dsorigin.app ni SevenCodex, qui ne les publient pas,
-// mais les donnees locales du client. La CI ne peut donc PAS
-// regenerer ce fichier : le commit fait foi, comme pour data/competences.js.
-// A refaire apres chaque nouvel export du jeu.
+// Ni 7dsorigin.app ni SevenCodex ne les publient : la source est locale, et
+// la CI ne peut donc PAS regenerer ce fichier. Le commit fait foi, comme pour
+// data/competences.js. A refaire apres chaque mise a jour du jeu.
 //
 // Cle = slug du personnage, celui de personnages-meta.js.
 // Trois transcendances par heros, dans l'ordre du jeu.

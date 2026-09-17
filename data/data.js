@@ -1,7 +1,7 @@
 // Genere automatiquement par generate-data.ps1 - NE PAS EDITER A LA MAIN.
 // Relance le script pour mettre a jour apres ajout/retrait d'images.
 window.SEVEN_DS_DATA = {
-    "generatedAt":  "2026-09-06 20:15:13",
+    "generatedAt":  "2026-09-17 20:01:22",
     "personnages":  [
                         {
                             "id":  "ban",
@@ -92,6 +92,11 @@ window.SEVEN_DS_DATA = {
                             "id":  "jericho",
                             "name":  "Jericho",
                             "file":  "7ds-personnages/jericho.webp"
+                        },
+                        {
+                            "id":  "khala",
+                            "name":  "Khala",
+                            "file":  "7ds-personnages/khala.webp"
                         },
                         {
                             "id":  "king",
@@ -1209,6 +1214,18 @@ window.SEVEN_DS_DATA = {
                                         {
                                             "name":  "Instinct incisif",
                                             "file":  "7ds-armures-ssr/Armure liee/Instinct incisif.webp"
+                                        },
+                                        {
+                                            "name":  "Khala — Citoyenne modèle",
+                                            "file":  "7ds-armures-ssr/Armure liee/Khala — Citoyenne modèle.webp"
+                                        },
+                                        {
+                                            "name":  "Khala — Préparation totale",
+                                            "file":  "7ds-armures-ssr/Armure liee/Khala — Préparation totale.webp"
+                                        },
+                                        {
+                                            "name":  "Khala — Tenue de travail ultralégère",
+                                            "file":  "7ds-armures-ssr/Armure liee/Khala — Tenue de travail ultralégère.webp"
                                         },
                                         {
                                             "name":  "Le Bélier de la Luxure",

@@ -183,6 +183,15 @@ window.SEVEN_DS_TRANSCENDANCES = {
       tenue:"7ds-armures-ssr/Armure liee/Traces de souvenirs.webp", promotion:3, arme:"Rapier",
       regle:{ cible:"normal-skill", valeur:5000, phrase:"Augmente les dégâts de compétence normale de " } }
   ],
+  "khala":[
+    { id:"eplb_calla_b", nom:"Transcendance de puissance : Frappe rapide", texte:"Augmente les dégâts d'attaque normale de 50%.",
+      tenue:"7ds-armures-ssr/Armure liee/Khala — Tenue de travail ultralégère.webp", promotion:3, arme:"SwordDual",
+      regle:{ cible:"normal", valeur:5000, phrase:"Augmente les dégâts d'attaque normale de " } },
+    { id:"eplb_calla_c", nom:"Transcendance explosive : Amplification", texte:"Augmente l'efficacité de Déluge de Vent de tous les héros alliés de 15%.",
+      tenue:"7ds-armures-ssr/Armure liee/Khala — Préparation totale.webp", promotion:3, arme:"Cudgel3c" },
+    { id:"eplb_calla_d", nom:"Transcendance explosive : Amélioration", texte:"Augmente les dégâts de Terre de tous les héros alliés de 30% pendant 30 s lorsqu'un Déluge est déclenché.",
+      tenue:"7ds-armures-ssr/Armure liee/Khala — Citoyenne modèle.webp", promotion:3, arme:"Gauntlets" }
+  ],
   "king":[
     { id:"eplb_king_b", nom:"Transcendance de puissance : Frappe mortelle", texte:"Augmente les dégâts d'attaque ultime de 50%.",
       tenue:"7ds-armures-ssr/Armure liee/Le Grizzly de la Paresse.webp", promotion:3, arme:"Staff",

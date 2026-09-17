@@ -452,6 +452,90 @@ class GearCatalogTests(unittest.TestCase):
         self.assertEqual(entry["fourStats"][0]["stat"], "Ultimateskill_Damadd_Rate")
 
 
+class EngravedImageMatchingTests(unittest.TestCase):
+    """Deux héros peuvent porter une tenue du même nom. L'image qui lève
+    l'ambiguïté écrit « <Héros> — <nom> » ; celle qui ne la lève pas garde le
+    seul nom de la tenue, et ne doit jamais se rattacher à l'autre héros."""
+
+    def piece(self, game_id, name, hero, hero_name):
+        return {
+            "gameId": game_id,
+            "nameFr": name,
+            "personnage": hero,
+            "personnageNomFr": hero_name,
+            "mainStat": "B_Def_Equip",
+            "subStat": None,
+            "qualityMin": 111,
+            "qualityMax": 130,
+            "tierBoundaries": [110, 130],
+            "rarity": "SSR",
+            "costumeSlug": hero + "-costume-" + game_id,
+            "growth": {
+                "promotion": [{"tier": 0, "maxReinforce": 5}],
+                "mainStatValues": {"base": 0, "progression": [10]},
+                "mainEquiplvAdd": {"base": 0, "progression": [1]},
+            },
+        }
+
+    def build(self, images, pieces):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            stats_root = root / "7ds-stats"
+            stats_root.mkdir()
+            (stats_root / "armures.json").write_text("[]", encoding="utf-8")
+            (stats_root / "armures-gravees.json").write_text(
+                json.dumps(pieces, ensure_ascii=False), encoding="utf-8"
+            )
+            engraved_dir = root / "7ds-armures-ssr" / "Armure liee"
+            engraved_dir.mkdir(parents=True)
+            for name in images:
+                (engraved_dir / (name + ".webp")).write_bytes(b"webp")
+            _, engraved, _ = module.build_gear_catalogs(
+                stats_root, [root / "7ds-armures-ssr"], {"B_Def_Equip"}, root
+            )
+            return engraved
+
+    def test_the_hero_prefix_picks_the_piece_of_that_hero(self):
+        pieces = [
+            self.piece("133105003", "Préparation totale", "slader", "Slader"),
+            self.piece("133235002", "Préparation totale", "khala", "Khala"),
+        ]
+        engraved = self.build(
+            ["Préparation totale", "Khala — Préparation totale"], pieces
+        )
+        self.assertEqual(
+            engraved["7ds-armures-ssr/Armure liee/Préparation totale.webp"]["character"],
+            "slader",
+        )
+        self.assertEqual(
+            engraved[
+                "7ds-armures-ssr/Armure liee/Khala — Préparation totale.webp"
+            ]["character"],
+            "khala",
+        )
+
+    def test_a_name_that_contains_a_dash_still_matches_itself(self):
+        pieces = [self.piece("133105004", "Tenue — de gala", "slader", "Slader")]
+        engraved = self.build(["Tenue — de gala"], pieces)
+        self.assertEqual(
+            engraved["7ds-armures-ssr/Armure liee/Tenue — de gala.webp"]["character"],
+            "slader",
+        )
+
+    def test_an_unknown_hero_prefix_is_refused(self):
+        pieces = [self.piece("133105003", "Préparation totale", "slader", "Slader")]
+        with self.assertRaisesRegex(ValueError, "Préparation totale"):
+            self.build(["Khala — Préparation totale"], pieces)
+
+    def test_two_pieces_of_the_same_name_without_prefix_stay_ambiguous(self):
+        pieces = [
+            self.piece("133105003", "Préparation totale", "slader", "Slader"),
+            self.piece("133235002", "Préparation totale", "khala", "Khala"),
+        ]
+        with self.assertRaisesRegex(ValueError, "ambigue"):
+            self.build(["Préparation totale"], pieces)
+
+
 class GenerateStatsBuildTests(unittest.TestCase):
     def setUp(self):
         self.tempdir = tempfile.TemporaryDirectory()

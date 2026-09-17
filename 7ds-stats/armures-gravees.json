@@ -113411,6 +113411,4137 @@
   "iconUrl": "/images/costumes/icon_Escanor_005.webp"
  },
  {
+  "gameId": "133235001",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": "Wind_Add",
+  "qualityMin": 111,
+  "qualityMax": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": [
+   110,
+   130
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": false,
+     "items": null,
+     "maxReinforce": 5
+    },
+    {
+     "gold": 1000000,
+     "rate": 8000,
+     "tier": 1,
+     "isMax": false,
+     "items": [
+      {
+       "count": 3,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 10
+    },
+    {
+     "gold": 1500000,
+     "rate": 5000,
+     "tier": 2,
+     "isMax": false,
+     "items": [
+      {
+       "count": 7,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 14
+    },
+    {
+     "gold": 2500000,
+     "rate": 3000,
+     "tier": 3,
+     "isMax": true,
+     "items": [
+      {
+       "count": 15,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 15
+    }
+   ],
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500,
+       12750,
+       13000,
+       13250,
+       13500,
+       13750,
+       14000,
+       14250,
+       14500,
+       14750,
+       15000
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    },
+    {
+     "key": "C_Critical_DamRes_Rate",
+     "slot": "sub",
+     "isRate": true,
+     "nameEn": "Crit Defense",
+     "nameFr": "Défense crit.",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "C_Critical_DamRes_Rate",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500,
+       12750,
+       13000,
+       13250,
+       13500,
+       13750,
+       14000,
+       14250,
+       14500,
+       14750,
+       15000
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "C_Critical_DamRes_Rate",
+      "progression": [
+       10
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "C_Critical_DamRes_Rate",
+      "progression": [
+       1045
+      ]
+     }
+    }
+   ],
+   "limitBreak": {
+    "options": [
+     {
+      "tier": 1,
+      "value": 1590,
+      "abilityType": "C_Critical_Dam_Rate"
+     },
+     {
+      "tier": 2,
+      "value": 3906,
+      "abilityType": "Wind_Rate"
+     }
+    ],
+    "passive": {
+     "id": "EpLb_Calla_B",
+     "tier": 3,
+     "descEn": "Increases [#0F5CD8]Normal Attack damage[-] by [#1A7331]50%[-].",
+     "descFr": "Augmente les [#0F5CD8]dégâts d'attaque normale[-] de [#1A7331]50%[-].",
+     "nameEn": "Power Transcendence: Swift Strike",
+     "nameFr": "Transcendance de puissance : Frappe rapide"
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "Wind_Add",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500,
+     12750,
+     13000,
+     13250,
+     13500,
+     13750,
+     14000,
+     14250,
+     14500,
+     14750,
+     15000
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Wind Attack",
+    "nameFr": "Attaque de Vent"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500,
+     12750,
+     13000,
+     13250,
+     13500,
+     13750,
+     14000,
+     14250,
+     14500,
+     14750,
+     15000
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 3,
+    "stats": [
+     {
+      "key": "Normalskillchangetag_Damadd_Rate",
+      "max": 4252,
+      "min": 1701,
+      "tiers": [
+       {
+        "max": 4252,
+        "min": 4124,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3997,
+        "min": 3741,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 3614,
+        "min": 3104,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2976,
+        "min": 2466,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 2339,
+        "min": 1701,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Tag Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence de relève"
+     },
+     {
+      "key": "Normalattack_Damadd_Rate",
+      "max": 3451,
+      "min": 1380,
+      "tiers": [
+       {
+        "max": 3451,
+        "min": 3347,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3244,
+        "min": 3036,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2933,
+        "min": 2519,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2415,
+        "min": 2001,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1898,
+        "min": 1380,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque normale"
+     },
+     {
+      "key": "Debuff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "tiers": [
+       {
+        "max": 3328,
+        "min": 3228,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3128,
+        "min": 2928,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2829,
+        "min": 2429,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2330,
+        "min": 1930,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1831,
+        "min": 1331,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Debuff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des malus"
+     },
+     {
+      "key": "Buff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "tiers": [
+       {
+        "max": 3328,
+        "min": 3228,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3128,
+        "min": 2928,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2829,
+        "min": 2429,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2330,
+        "min": 1930,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1831,
+        "min": 1331,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Buff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des bonus"
+     },
+     {
+      "key": "TickDam_Rate",
+      "max": 3219,
+      "min": 1288,
+      "tiers": [
+       {
+        "max": 3219,
+        "min": 3123,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3027,
+        "min": 2833,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2738,
+        "min": 2350,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2254,
+        "min": 1868,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1772,
+        "min": 1288,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "DoT Efficiency",
+      "nameFr": "Efficacité des dégâts sur la durée"
+     },
+     {
+      "key": "Activethird_Damadd_Rate",
+      "max": 3142,
+      "min": 1257,
+      "tiers": [
+       {
+        "max": 3142,
+        "min": 3048,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 2955,
+        "min": 2765,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2672,
+        "min": 2294,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2201,
+        "min": 1823,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1729,
+        "min": 1257,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Special Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque spéciale"
+     },
+     {
+      "key": "Normalskill_Damadd_Rate",
+      "max": 2418,
+      "min": 968,
+      "tiers": [
+       {
+        "max": 2418,
+        "min": 2346,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 2274,
+        "min": 2128,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2056,
+        "min": 1766,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1693,
+        "min": 1403,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1330,
+        "min": 968,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence normale"
+     },
+     {
+      "key": "C_Critical_Dam_Rate",
+      "max": 1988,
+      "min": 795,
+      "tiers": [
+       {
+        "max": 1988,
+        "min": 1928,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1869,
+        "min": 1749,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1689,
+        "min": 1451,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1391,
+        "min": 1153,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1093,
+        "min": 795,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Damage",
+      "nameFr": "Dégâts crit."
+     },
+     {
+      "key": "C_Critical_DamRes_Rate",
+      "max": 1988,
+      "min": 795,
+      "tiers": [
+       {
+        "max": 1988,
+        "min": 1928,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1869,
+        "min": 1749,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1689,
+        "min": 1451,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1391,
+        "min": 1153,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1093,
+        "min": 795,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Defense",
+      "nameFr": "Défense crit."
+     },
+     {
+      "key": "P_Shield_Rate",
+      "max": 1927,
+      "min": 771,
+      "tiers": [
+       {
+        "max": 1927,
+        "min": 1869,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1811,
+        "min": 1695,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1638,
+        "min": 1406,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1350,
+        "min": 1118,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1061,
+        "min": 771,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Barrier Efficiency",
+      "nameFr": "Efficacité des barrières"
+     },
+     {
+      "key": "Ultimateskill_Damadd_Rate",
+      "max": 1895,
+      "min": 758,
+      "tiers": [
+       {
+        "max": 1895,
+        "min": 1839,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1782,
+        "min": 1668,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1612,
+        "min": 1384,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1328,
+        "min": 1100,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1044,
+        "min": 758,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Ultimate Move Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque ultime"
+     },
+     {
+      "key": "MF_ChargeEffic_Rate",
+      "max": 1665,
+      "min": 666,
+      "tiers": [
+       {
+        "max": 1665,
+        "min": 1615,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1565,
+        "min": 1465,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1415,
+        "min": 1215,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1166,
+        "min": 966,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 916,
+        "min": 666,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Magic Charging Efficiency",
+      "nameFr": "Efficacité de recharge de la magie"
+     },
+     {
+      "key": "H_HealPower_Rate",
+      "max": 1541,
+      "min": 617,
+      "tiers": [
+       {
+        "max": 1541,
+        "min": 1495,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1449,
+        "min": 1357,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1311,
+        "min": 1125,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1080,
+        "min": 894,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 849,
+        "min": 617,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Healing Efficiency",
+      "nameFr": "Efficacité de guérison"
+     },
+     {
+      "key": "Burst_Gauge_Rate",
+      "max": 1249,
+      "min": 500,
+      "tiers": [
+       {
+        "max": 1249,
+        "min": 1211,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1175,
+        "min": 1099,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1062,
+        "min": 912,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 874,
+        "min": 724,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 688,
+        "min": 500,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "All Elemental Burst Efficiency",
+      "nameFr": "Efficacité de Déluge de tous les éléments"
+     },
+     {
+      "key": "C_Critical_Rate",
+      "max": 1126,
+      "min": 450,
+      "tiers": [
+       {
+        "max": 1126,
+        "min": 1092,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1058,
+        "min": 990,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 958,
+        "min": 822,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 789,
+        "min": 653,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 620,
+        "min": 450,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Chance",
+      "nameFr": "Chances crit."
+     },
+     {
+      "key": "C_Critical_ResRate",
+      "max": 1126,
+      "min": 450,
+      "tiers": [
+       {
+        "max": 1126,
+        "min": 1092,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1058,
+        "min": 990,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 958,
+        "min": 822,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 789,
+        "min": 653,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 620,
+        "min": 450,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Resistance",
+      "nameFr": "Résistance crit."
+     },
+     {
+      "key": "I_AtkAdd_Rate",
+      "max": 787,
+      "min": 315,
+      "tiers": [
+       {
+        "max": 787,
+        "min": 763,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 740,
+        "min": 692,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 670,
+        "min": 574,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 552,
+        "min": 456,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 433,
+        "min": 315,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Attack Increase",
+      "nameFr": "Augmentation de l'attaque"
+     },
+     {
+      "key": "I_DefAdd_Rate",
+      "max": 632,
+      "min": 253,
+      "tiers": [
+       {
+        "max": 632,
+        "min": 614,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 595,
+        "min": 557,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 538,
+        "min": 462,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 443,
+        "min": 367,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 349,
+        "min": 253,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Defense Increase",
+      "nameFr": "Augmentation de la défense"
+     },
+     {
+      "key": "I_MaxHpAdd_Rate",
+      "max": 464,
+      "min": 186,
+      "tiers": [
+       {
+        "max": 464,
+        "min": 450,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 436,
+        "min": 408,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 394,
+        "min": 338,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 325,
+        "min": 269,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 256,
+        "min": 186,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "HP Increase",
+      "nameFr": "Augmentation des PV"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 156,
+     "gold": 572,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 728,
+     "gold": 2964,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 2288,
+     "gold": 9724,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 4992,
+     "gold": 21112,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 7280,
+     "gold": 30680,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 364,
+     "gold": 780,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1820,
+     "gold": 4056,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 5876,
+     "gold": 13312,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 12740,
+     "gold": 28912,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 18564,
+     "gold": 42016,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 728,
+     "gold": 1144,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 3692,
+     "gold": 6292,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 11960,
+     "gold": 20540,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 26000,
+     "gold": 44512,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 37804,
+     "gold": 64636,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 1352,
+     "gold": 1976,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 7124,
+     "gold": 10660,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 23140,
+     "gold": 34892,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 50232,
+     "gold": 75660,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 73008,
+     "gold": 109876,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 2548,
+     "gold": 3588,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 13624,
+     "gold": 19448,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 44408,
+     "gold": 63596,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 96408,
+     "gold": 138008,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 140088,
+     "gold": 200408,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 210132,
+     "gold": 285582,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 315198,
+     "gold": 406955,
+     "tier": 4,
+     "items": null,
+     "level": 6
+    },
+    {
+     "exp": 457038,
+     "gold": 560581,
+     "tier": 4,
+     "items": null,
+     "level": 7
+    },
+    {
+     "exp": 639854,
+     "gold": 745573,
+     "tier": 4,
+     "items": null,
+     "level": 8
+    },
+    {
+     "exp": 831811,
+     "gold": 920783,
+     "tier": 4,
+     "items": null,
+     "level": 9
+    },
+    {
+     "exp": 1247717,
+     "gold": 1312116,
+     "tier": 4,
+     "items": null,
+     "level": 10
+    },
+    {
+     "exp": 1871576,
+     "gold": 1869766,
+     "tier": 4,
+     "items": null,
+     "level": 11
+    },
+    {
+     "exp": 2713786,
+     "gold": 2575603,
+     "tier": 4,
+     "items": null,
+     "level": 12
+    },
+    {
+     "exp": 3799301,
+     "gold": 3425552,
+     "tier": 4,
+     "items": null,
+     "level": 13
+    },
+    {
+     "exp": 7598602,
+     "gold": 8563880,
+     "tier": 4,
+     "items": null,
+     "level": 14
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 15
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "Wind_Add",
+    "progression": [
+     11
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "Wind_Add",
+    "progression": [
+     1131
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     137
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     14739
+    ]
+   }
+  },
+  "personnage": "khala",
+  "personnageNomFr": "Khala",
+  "costumeSlug": "khala-costume-134102902",
+  "nameFr": "Tenue de travail ultralégère",
+  "nameEn": "Ultralight Work Clothes",
+  "rarity": "SSR",
+  "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé",
+  "engravingPassives": [
+   {
+    "id": "EpEq_Calla_B",
+    "icon": "equippassive_equip_calla_b_ssr",
+    "levels": [
+     {
+      "level": 1,
+      "descEn": "Hitting the same enemy [#1A7331]10 time(s)[-] while [#0F5CD8]Shaper - Dual Swords[-] is active grants [#0F5CD8]Shaper - Dual Swords[-]. Gaining [#0F5CD8]Mirage[-] increases [#0F5CD8]Crit Damage[-] by [#1A7331]24%[-].\nEach hit on an enemy with a Normal Attack increases [#0F5CD8]Crit Resistance[-] by [#1A7331]2.4%[-] (Max: [#1A7331]14.4%[-]), and [#0F5CD8]Crit Defense[-] by [#1A7331]4.8%[-] (Max: [#1A7331]28.8%[-]).\nThe effect remains while the hero is in combat.",
+      "descFr": "Toucher le même ennemi [#1A7331]10 fois[-] pendant que l'effet [#0F5CD8]Contrefaçon - Épées doubles[-] est actif octroie l'effet [#0F5CD8]Contrefaçon - Épées doubles[-]. L'octroi de [#0F5CD8]Mirage[-] augmente les [#0F5CD8]dégâts crit.[-] de [#1A7331]24%[-].\nChaque coup porté sur un ennemi avec une attaque normale augmente la [#0F5CD8]résistance crit.[-] de [#1A7331]2.4%[-] (max : [#1A7331]14.4%[-]) et la [#0F5CD8]défense crit.[-] de [#1A7331]4.8%[-] (max : [#1A7331]28.8%[-]).\nL'effet persiste tant que le héros est en combat."
+     },
+     {
+      "level": 2,
+      "descEn": "Hitting the same enemy [#1A7331]10 time(s)[-] while [#0F5CD8]Shaper - Dual Swords[-] is active grants [#0F5CD8]Shaper - Dual Swords[-]. Gaining [#0F5CD8]Mirage[-] increases [#0F5CD8]Crit Damage[-] by [#1A7331]32%[-].\nEach hit on an enemy with a Normal Attack increases [#0F5CD8]Crit Resistance[-] by [#1A7331]2.4%[-] (Max: [#1A7331]19.2%[-]), and [#0F5CD8]Crit Defense[-] by [#1A7331]4.8%[-] (Max: [#1A7331]38.4%[-]).\nThe effect remains while the hero is in combat.",
+      "descFr": "Toucher le même ennemi [#1A7331]10 fois[-] pendant que l'effet [#0F5CD8]Contrefaçon - Épées doubles[-] est actif octroie l'effet [#0F5CD8]Contrefaçon - Épées doubles[-]. L'octroi de [#0F5CD8]Mirage[-] augmente les [#0F5CD8]dégâts crit.[-] de [#1A7331]32%[-].\nChaque coup porté sur un ennemi avec une attaque normale augmente la [#0F5CD8]résistance crit.[-] de [#1A7331]2.4%[-] (max : [#1A7331]19.2%[-]) et la [#0F5CD8]défense crit.[-] de [#1A7331]4.8%[-] (max : [#1A7331]38.4%[-]).\nL'effet persiste tant que le héros est en combat."
+     },
+     {
+      "level": 3,
+      "descEn": "Hitting the same enemy [#1A7331]10 time(s)[-] while [#0F5CD8]Shaper - Dual Swords[-] is active grants [#0F5CD8]Shaper - Dual Swords[-]. Gaining [#0F5CD8]Mirage[-] increases [#0F5CD8]Crit Damage[-] by [#1A7331]40%[-].\nEach hit on an enemy with a Normal Attack increases [#0F5CD8]Crit Resistance[-] by [#1A7331]2.4%[-] (Max: [#1A7331]24%[-]), and [#0F5CD8]Crit Defense[-] by [#1A7331]4.8%[-] (Max: [#1A7331]48%[-]).\nThe effect remains while the hero is in combat.",
+      "descFr": "Toucher le même ennemi [#1A7331]10 fois[-] pendant que l'effet [#0F5CD8]Contrefaçon - Épées doubles[-] est actif octroie l'effet [#0F5CD8]Contrefaçon - Épées doubles[-]. L'octroi de [#0F5CD8]Mirage[-] augmente les [#0F5CD8]dégâts crit.[-] de [#1A7331]40%[-].\nChaque coup porté sur un ennemi avec une attaque normale augmente la [#0F5CD8]résistance crit.[-] de [#1A7331]2.4%[-] (max : [#1A7331]24%[-]) et la [#0F5CD8]défense crit.[-] de [#1A7331]4.8%[-] (max : [#1A7331]48%[-]).\nL'effet persiste tant que le héros est en combat."
+     }
+    ],
+    "nameEn": "Weapon of Heaven and Earth",
+    "nameFr": "Arme du ciel et de la terre"
+   }
+  ],
+  "bindingMaterials": null,
+  "iconUrl": null
+ },
+ {
+  "gameId": "133235002",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": "Wind_Add",
+  "qualityMin": 111,
+  "qualityMax": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": [
+   110,
+   130
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": false,
+     "items": null,
+     "maxReinforce": 5
+    },
+    {
+     "gold": 1000000,
+     "rate": 8000,
+     "tier": 1,
+     "isMax": false,
+     "items": [
+      {
+       "count": 3,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 10
+    },
+    {
+     "gold": 1500000,
+     "rate": 5000,
+     "tier": 2,
+     "isMax": false,
+     "items": [
+      {
+       "count": 7,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 14
+    },
+    {
+     "gold": 2500000,
+     "rate": 3000,
+     "tier": 3,
+     "isMax": true,
+     "items": [
+      {
+       "count": 15,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 15
+    }
+   ],
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500,
+       12750,
+       13000,
+       13250,
+       13500,
+       13750,
+       14000,
+       14250,
+       14500,
+       14750,
+       15000
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    },
+    {
+     "key": "Wind_Burst_Gauge_Rate",
+     "slot": "sub",
+     "isRate": true,
+     "nameEn": "Wind Burst Efficiency",
+     "nameFr": "Efficacité de Déluge de Vent",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "Wind_Burst_Gauge_Rate",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500,
+       12750,
+       13000,
+       13250,
+       13500,
+       13750,
+       14000,
+       14250,
+       14500,
+       14750,
+       15000
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "Wind_Burst_Gauge_Rate",
+      "progression": [
+       12
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "Wind_Burst_Gauge_Rate",
+      "progression": [
+       1194
+      ]
+     }
+    },
+    {
+     "key": "Buff_Time_Rate",
+     "slot": "sub",
+     "isRate": true,
+     "nameEn": "Buff Duration Efficiency",
+     "nameFr": "Efficacité de la durée des bonus",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "Buff_Time_Rate",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500,
+       12750,
+       13000,
+       13250,
+       13500,
+       13750,
+       14000,
+       14250,
+       14500,
+       14750,
+       15000
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "Buff_Time_Rate",
+      "progression": [
+       16
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "Buff_Time_Rate",
+      "progression": [
+       1710
+      ]
+     }
+    }
+   ],
+   "limitBreak": {
+    "options": [
+     {
+      "tier": 1,
+      "value": 1048,
+      "abilityType": "I_AtkAdd_Rate"
+     },
+     {
+      "tier": 2,
+      "value": 3327,
+      "abilityType": "Wind_Burst_Gauge_Rate"
+     }
+    ],
+    "passive": {
+     "id": "EpLb_Calla_C",
+     "tier": 3,
+     "descEn": "Increases all allied heroes' [#0F5CD8]Wind Burst Efficiency[-] by [#1A7331]15%[-].",
+     "descFr": "Augmente l'[#0F5CD8]efficacité de Déluge de Vent[-] de tous les héros alliés de [#1A7331]15%[-].",
+     "nameEn": "Explosive Transcendence: Amplification",
+     "nameFr": "Transcendance explosive : Amplification"
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "Wind_Add",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500,
+     12750,
+     13000,
+     13250,
+     13500,
+     13750,
+     14000,
+     14250,
+     14500,
+     14750,
+     15000
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Wind Attack",
+    "nameFr": "Attaque de Vent"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500,
+     12750,
+     13000,
+     13250,
+     13500,
+     13750,
+     14000,
+     14250,
+     14500,
+     14750,
+     15000
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 3,
+    "stats": [
+     {
+      "key": "Normalskillchangetag_Damadd_Rate",
+      "max": 4252,
+      "min": 1701,
+      "tiers": [
+       {
+        "max": 4252,
+        "min": 4124,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3997,
+        "min": 3741,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 3614,
+        "min": 3104,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2976,
+        "min": 2466,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 2339,
+        "min": 1701,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Tag Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence de relève"
+     },
+     {
+      "key": "Normalattack_Damadd_Rate",
+      "max": 3451,
+      "min": 1380,
+      "tiers": [
+       {
+        "max": 3451,
+        "min": 3347,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3244,
+        "min": 3036,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2933,
+        "min": 2519,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2415,
+        "min": 2001,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1898,
+        "min": 1380,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque normale"
+     },
+     {
+      "key": "Debuff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "tiers": [
+       {
+        "max": 3328,
+        "min": 3228,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3128,
+        "min": 2928,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2829,
+        "min": 2429,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2330,
+        "min": 1930,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1831,
+        "min": 1331,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Debuff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des malus"
+     },
+     {
+      "key": "Buff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "tiers": [
+       {
+        "max": 3328,
+        "min": 3228,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3128,
+        "min": 2928,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2829,
+        "min": 2429,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2330,
+        "min": 1930,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1831,
+        "min": 1331,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Buff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des bonus"
+     },
+     {
+      "key": "TickDam_Rate",
+      "max": 3219,
+      "min": 1288,
+      "tiers": [
+       {
+        "max": 3219,
+        "min": 3123,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3027,
+        "min": 2833,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2738,
+        "min": 2350,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2254,
+        "min": 1868,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1772,
+        "min": 1288,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "DoT Efficiency",
+      "nameFr": "Efficacité des dégâts sur la durée"
+     },
+     {
+      "key": "Activethird_Damadd_Rate",
+      "max": 3142,
+      "min": 1257,
+      "tiers": [
+       {
+        "max": 3142,
+        "min": 3048,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 2955,
+        "min": 2765,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2672,
+        "min": 2294,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2201,
+        "min": 1823,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1729,
+        "min": 1257,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Special Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque spéciale"
+     },
+     {
+      "key": "Normalskill_Damadd_Rate",
+      "max": 2418,
+      "min": 968,
+      "tiers": [
+       {
+        "max": 2418,
+        "min": 2346,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 2274,
+        "min": 2128,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2056,
+        "min": 1766,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1693,
+        "min": 1403,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1330,
+        "min": 968,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence normale"
+     },
+     {
+      "key": "C_Critical_Dam_Rate",
+      "max": 1988,
+      "min": 795,
+      "tiers": [
+       {
+        "max": 1988,
+        "min": 1928,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1869,
+        "min": 1749,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1689,
+        "min": 1451,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1391,
+        "min": 1153,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1093,
+        "min": 795,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Damage",
+      "nameFr": "Dégâts crit."
+     },
+     {
+      "key": "C_Critical_DamRes_Rate",
+      "max": 1988,
+      "min": 795,
+      "tiers": [
+       {
+        "max": 1988,
+        "min": 1928,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1869,
+        "min": 1749,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1689,
+        "min": 1451,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1391,
+        "min": 1153,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1093,
+        "min": 795,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Defense",
+      "nameFr": "Défense crit."
+     },
+     {
+      "key": "P_Shield_Rate",
+      "max": 1927,
+      "min": 771,
+      "tiers": [
+       {
+        "max": 1927,
+        "min": 1869,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1811,
+        "min": 1695,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1638,
+        "min": 1406,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1350,
+        "min": 1118,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1061,
+        "min": 771,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Barrier Efficiency",
+      "nameFr": "Efficacité des barrières"
+     },
+     {
+      "key": "Ultimateskill_Damadd_Rate",
+      "max": 1895,
+      "min": 758,
+      "tiers": [
+       {
+        "max": 1895,
+        "min": 1839,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1782,
+        "min": 1668,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1612,
+        "min": 1384,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1328,
+        "min": 1100,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1044,
+        "min": 758,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Ultimate Move Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque ultime"
+     },
+     {
+      "key": "MF_ChargeEffic_Rate",
+      "max": 1665,
+      "min": 666,
+      "tiers": [
+       {
+        "max": 1665,
+        "min": 1615,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1565,
+        "min": 1465,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1415,
+        "min": 1215,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1166,
+        "min": 966,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 916,
+        "min": 666,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Magic Charging Efficiency",
+      "nameFr": "Efficacité de recharge de la magie"
+     },
+     {
+      "key": "H_HealPower_Rate",
+      "max": 1541,
+      "min": 617,
+      "tiers": [
+       {
+        "max": 1541,
+        "min": 1495,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1449,
+        "min": 1357,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1311,
+        "min": 1125,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1080,
+        "min": 894,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 849,
+        "min": 617,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Healing Efficiency",
+      "nameFr": "Efficacité de guérison"
+     },
+     {
+      "key": "Burst_Gauge_Rate",
+      "max": 1249,
+      "min": 500,
+      "tiers": [
+       {
+        "max": 1249,
+        "min": 1211,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1175,
+        "min": 1099,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1062,
+        "min": 912,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 874,
+        "min": 724,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 688,
+        "min": 500,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "All Elemental Burst Efficiency",
+      "nameFr": "Efficacité de Déluge de tous les éléments"
+     },
+     {
+      "key": "C_Critical_Rate",
+      "max": 1126,
+      "min": 450,
+      "tiers": [
+       {
+        "max": 1126,
+        "min": 1092,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1058,
+        "min": 990,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 958,
+        "min": 822,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 789,
+        "min": 653,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 620,
+        "min": 450,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Chance",
+      "nameFr": "Chances crit."
+     },
+     {
+      "key": "C_Critical_ResRate",
+      "max": 1126,
+      "min": 450,
+      "tiers": [
+       {
+        "max": 1126,
+        "min": 1092,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1058,
+        "min": 990,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 958,
+        "min": 822,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 789,
+        "min": 653,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 620,
+        "min": 450,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Resistance",
+      "nameFr": "Résistance crit."
+     },
+     {
+      "key": "I_AtkAdd_Rate",
+      "max": 787,
+      "min": 315,
+      "tiers": [
+       {
+        "max": 787,
+        "min": 763,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 740,
+        "min": 692,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 670,
+        "min": 574,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 552,
+        "min": 456,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 433,
+        "min": 315,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Attack Increase",
+      "nameFr": "Augmentation de l'attaque"
+     },
+     {
+      "key": "I_DefAdd_Rate",
+      "max": 632,
+      "min": 253,
+      "tiers": [
+       {
+        "max": 632,
+        "min": 614,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 595,
+        "min": 557,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 538,
+        "min": 462,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 443,
+        "min": 367,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 349,
+        "min": 253,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Defense Increase",
+      "nameFr": "Augmentation de la défense"
+     },
+     {
+      "key": "I_MaxHpAdd_Rate",
+      "max": 464,
+      "min": 186,
+      "tiers": [
+       {
+        "max": 464,
+        "min": 450,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 436,
+        "min": 408,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 394,
+        "min": 338,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 325,
+        "min": 269,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 256,
+        "min": 186,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "HP Increase",
+      "nameFr": "Augmentation des PV"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 156,
+     "gold": 572,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 728,
+     "gold": 2964,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 2288,
+     "gold": 9724,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 4992,
+     "gold": 21112,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 7280,
+     "gold": 30680,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 364,
+     "gold": 780,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1820,
+     "gold": 4056,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 5876,
+     "gold": 13312,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 12740,
+     "gold": 28912,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 18564,
+     "gold": 42016,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 728,
+     "gold": 1144,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 3692,
+     "gold": 6292,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 11960,
+     "gold": 20540,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 26000,
+     "gold": 44512,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 37804,
+     "gold": 64636,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 1352,
+     "gold": 1976,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 7124,
+     "gold": 10660,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 23140,
+     "gold": 34892,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 50232,
+     "gold": 75660,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 73008,
+     "gold": 109876,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 2548,
+     "gold": 3588,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 13624,
+     "gold": 19448,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 44408,
+     "gold": 63596,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 96408,
+     "gold": 138008,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 140088,
+     "gold": 200408,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 210132,
+     "gold": 285582,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 315198,
+     "gold": 406955,
+     "tier": 4,
+     "items": null,
+     "level": 6
+    },
+    {
+     "exp": 457038,
+     "gold": 560581,
+     "tier": 4,
+     "items": null,
+     "level": 7
+    },
+    {
+     "exp": 639854,
+     "gold": 745573,
+     "tier": 4,
+     "items": null,
+     "level": 8
+    },
+    {
+     "exp": 831811,
+     "gold": 920783,
+     "tier": 4,
+     "items": null,
+     "level": 9
+    },
+    {
+     "exp": 1247717,
+     "gold": 1312116,
+     "tier": 4,
+     "items": null,
+     "level": 10
+    },
+    {
+     "exp": 1871576,
+     "gold": 1869766,
+     "tier": 4,
+     "items": null,
+     "level": 11
+    },
+    {
+     "exp": 2713786,
+     "gold": 2575603,
+     "tier": 4,
+     "items": null,
+     "level": 12
+    },
+    {
+     "exp": 3799301,
+     "gold": 3425552,
+     "tier": 4,
+     "items": null,
+     "level": 13
+    },
+    {
+     "exp": 7598602,
+     "gold": 8563880,
+     "tier": 4,
+     "items": null,
+     "level": 14
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 15
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "Wind_Add",
+    "progression": [
+     6
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "Wind_Add",
+    "progression": [
+     637
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     137
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     14739
+    ]
+   }
+  },
+  "personnage": "khala",
+  "personnageNomFr": "Khala",
+  "costumeSlug": "khala-costume-134102903",
+  "nameFr": "Préparation totale",
+  "nameEn": "Full Preparation",
+  "rarity": "SSR",
+  "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé",
+  "engravingPassives": [
+   {
+    "id": "EpEq_Calla_C",
+    "icon": "equippassive_equip_calla_c_ssr",
+    "levels": [
+     {
+      "level": 1,
+      "descEn": "Each time an allied hero hits an enemy affected by [#0F5CD8]Bitter Wind[-], it increases all allied heroes' [#0F5CD8]Wind Attack[-] by [#1A7331]3%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]30%[-]).\nActivating a [#0F5CD8]Wind Burst[-] while the effect is active on an allied hero increases all allied heroes' [#0F5CD8]Crit Damage[-] by [#1A7331]20%[-] for [#1A7331]30 sec[-].",
+      "descFr": "Chaque fois qu'un héros allié frappe un ennemi affecté par [#0F5CD8]Vent violent[-], augmente l'[#0F5CD8]attaque de Vent[-] de tous les héros alliés de [#1A7331]3%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]30%[-]).\nActiver un [#0F5CD8]Déluge de Vent[-] pendant que l'effet est actif sur un héros allié augmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés de [#1A7331]20%[-] pendant [#1A7331]30 s[-]."
+     },
+     {
+      "level": 2,
+      "descEn": "Each time an allied hero hits an enemy affected by [#0F5CD8]Bitter Wind[-], it increases all allied heroes' [#0F5CD8]Wind Attack[-] by [#1A7331]4%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]40%[-]).\nActivating a [#0F5CD8]Wind Burst[-] while the effect is active on an allied hero increases all allied heroes' [#0F5CD8]Crit Damage[-] by [#1A7331]25%[-] for [#1A7331]30 sec[-].",
+      "descFr": "Chaque fois qu'un héros allié frappe un ennemi affecté par [#0F5CD8]Vent violent[-], augmente l'[#0F5CD8]attaque de Vent[-] de tous les héros alliés de [#1A7331]4%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]40%[-]).\nActiver un [#0F5CD8]Déluge de Vent[-] pendant que l'effet est actif sur un héros allié augmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés de [#1A7331]25%[-] pendant [#1A7331]30 s[-]."
+     },
+     {
+      "level": 3,
+      "descEn": "Each time an allied hero hits an enemy affected by [#0F5CD8]Bitter Wind[-], it increases all allied heroes' [#0F5CD8]Wind Attack[-] by [#1A7331]5%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]50%[-]).\nActivating a [#0F5CD8]Wind Burst[-] while the effect is active on an allied hero increases all allied heroes' [#0F5CD8]Crit Damage[-] by [#1A7331]30%[-] for [#1A7331]30 sec[-].",
+      "descFr": "Chaque fois qu'un héros allié frappe un ennemi affecté par [#0F5CD8]Vent violent[-], augmente l'[#0F5CD8]attaque de Vent[-] de tous les héros alliés de [#1A7331]5%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]50%[-]).\nActiver un [#0F5CD8]Déluge de Vent[-] pendant que l'effet est actif sur un héros allié augmente les [#0F5CD8]dégâts crit.[-] de tous les héros alliés de [#1A7331]30%[-] pendant [#1A7331]30 s[-]."
+     }
+    ],
+    "nameEn": "Swift Pinwheel",
+    "nameFr": "Moulinet rapide"
+   }
+  ],
+  "bindingMaterials": null,
+  "iconUrl": null
+ },
+ {
+  "gameId": "133235003",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": "Earth_Add",
+  "qualityMin": 111,
+  "qualityMax": 130,
+  "qualityMinLive": null,
+  "qualityMaxLive": null,
+  "tierBoundaries": [
+   110,
+   130
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": false,
+     "items": null,
+     "maxReinforce": 5
+    },
+    {
+     "gold": 1000000,
+     "rate": 8000,
+     "tier": 1,
+     "isMax": false,
+     "items": [
+      {
+       "count": 3,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 10
+    },
+    {
+     "gold": 1500000,
+     "rate": 5000,
+     "tier": 2,
+     "isMax": false,
+     "items": [
+      {
+       "count": 7,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 14
+    },
+    {
+     "gold": 2500000,
+     "rate": 3000,
+     "tier": 3,
+     "isMax": true,
+     "items": [
+      {
+       "count": 15,
+       "itemId": "101060200"
+      }
+     ],
+     "maxReinforce": 15
+    }
+   ],
+   "extraStats": [
+    {
+     "key": "B_Def_Equip",
+     "slot": "main",
+     "isRate": false,
+     "nameEn": "Equipment Defense",
+     "nameFr": "Défense de l'équipement",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500,
+       12750,
+       13000,
+       13250,
+       13500,
+       13750,
+       14000,
+       14250,
+       14500,
+       14750,
+       15000
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       49
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "B_Def_Equip",
+      "progression": [
+       5276
+      ]
+     }
+    },
+    {
+     "key": "Earth_Burst_Gauge_Rate",
+     "slot": "sub",
+     "isRate": true,
+     "nameEn": "Earth Burst Efficiency",
+     "nameFr": "Efficacité de Déluge de Terre",
+     "reinforce": {
+      "base": 0,
+      "growthType": "reinforce",
+      "abilityType": "Earth_Burst_Gauge_Rate",
+      "progression": [
+       10300,
+       10700,
+       11200,
+       11800,
+       12500,
+       12750,
+       13000,
+       13250,
+       13500,
+       13750,
+       14000,
+       14250,
+       14500,
+       14750,
+       15000
+      ]
+     },
+     "equiplvAdd": {
+      "base": 0,
+      "growthType": "equiplv_add_15",
+      "abilityType": "Earth_Burst_Gauge_Rate",
+      "progression": [
+       18
+      ]
+     },
+     "statValues": {
+      "base": 0,
+      "growthType": "equiplv_15",
+      "abilityType": "Earth_Burst_Gauge_Rate",
+      "progression": [
+       1886
+      ]
+     }
+    }
+   ],
+   "limitBreak": {
+    "options": [
+     {
+      "tier": 1,
+      "value": 1590,
+      "abilityType": "C_Critical_Dam_Rate"
+     },
+     {
+      "tier": 2,
+      "value": 3327,
+      "abilityType": "Earth_Burst_Gauge_Rate"
+     }
+    ],
+    "passive": {
+     "id": "EpLb_Calla_D",
+     "tier": 3,
+     "descEn": "Increases all allied heroes' [#0F5CD8]Earth damage[-] by [#1A7331]30%[-] for [#1A7331]30 sec[-] when a [#0F5CD8]Burst[-] is activated.",
+     "descFr": "Augmente les [#0F5CD8]dégâts de Terre[-] de tous les héros alliés de [#1A7331]30%[-] pendant [#1A7331]30 s[-] lorsqu'un [#0F5CD8]Déluge[-] est déclenché.",
+     "nameEn": "Explosive Transcendence: Enhancement",
+     "nameFr": "Transcendance explosive : Amélioration"
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "Earth_Add",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500,
+     12750,
+     13000,
+     13250,
+     13500,
+     13750,
+     14000,
+     14250,
+     14500,
+     14750,
+     15000
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Earth Attack",
+    "nameFr": "Attaque de Terre"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500,
+     12750,
+     13000,
+     13250,
+     13500,
+     13750,
+     14000,
+     14250,
+     14500,
+     14750,
+     15000
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 3,
+    "stats": [
+     {
+      "key": "Normalskillchangetag_Damadd_Rate",
+      "max": 4252,
+      "min": 1701,
+      "tiers": [
+       {
+        "max": 4252,
+        "min": 4124,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3997,
+        "min": 3741,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 3614,
+        "min": 3104,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2976,
+        "min": 2466,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 2339,
+        "min": 1701,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Tag Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence de relève"
+     },
+     {
+      "key": "Normalattack_Damadd_Rate",
+      "max": 3451,
+      "min": 1380,
+      "tiers": [
+       {
+        "max": 3451,
+        "min": 3347,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3244,
+        "min": 3036,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2933,
+        "min": 2519,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2415,
+        "min": 2001,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1898,
+        "min": 1380,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque normale"
+     },
+     {
+      "key": "Debuff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "tiers": [
+       {
+        "max": 3328,
+        "min": 3228,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3128,
+        "min": 2928,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2829,
+        "min": 2429,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2330,
+        "min": 1930,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1831,
+        "min": 1331,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Debuff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des malus"
+     },
+     {
+      "key": "Buff_Time_Rate",
+      "max": 3328,
+      "min": 1331,
+      "tiers": [
+       {
+        "max": 3328,
+        "min": 3228,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3128,
+        "min": 2928,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2829,
+        "min": 2429,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2330,
+        "min": 1930,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1831,
+        "min": 1331,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Buff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des bonus"
+     },
+     {
+      "key": "TickDam_Rate",
+      "max": 3219,
+      "min": 1288,
+      "tiers": [
+       {
+        "max": 3219,
+        "min": 3123,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 3027,
+        "min": 2833,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2738,
+        "min": 2350,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2254,
+        "min": 1868,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1772,
+        "min": 1288,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "DoT Efficiency",
+      "nameFr": "Efficacité des dégâts sur la durée"
+     },
+     {
+      "key": "Activethird_Damadd_Rate",
+      "max": 3142,
+      "min": 1257,
+      "tiers": [
+       {
+        "max": 3142,
+        "min": 3048,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 2955,
+        "min": 2765,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2672,
+        "min": 2294,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 2201,
+        "min": 1823,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1729,
+        "min": 1257,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Special Attack Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque spéciale"
+     },
+     {
+      "key": "Normalskill_Damadd_Rate",
+      "max": 2418,
+      "min": 968,
+      "tiers": [
+       {
+        "max": 2418,
+        "min": 2346,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 2274,
+        "min": 2128,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 2056,
+        "min": 1766,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1693,
+        "min": 1403,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1330,
+        "min": 968,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Normal Skill Damage Increase",
+      "nameFr": "Augmentation des dégâts, compétence normale"
+     },
+     {
+      "key": "C_Critical_Dam_Rate",
+      "max": 1988,
+      "min": 795,
+      "tiers": [
+       {
+        "max": 1988,
+        "min": 1928,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1869,
+        "min": 1749,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1689,
+        "min": 1451,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1391,
+        "min": 1153,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1093,
+        "min": 795,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Damage",
+      "nameFr": "Dégâts crit."
+     },
+     {
+      "key": "C_Critical_DamRes_Rate",
+      "max": 1988,
+      "min": 795,
+      "tiers": [
+       {
+        "max": 1988,
+        "min": 1928,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1869,
+        "min": 1749,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1689,
+        "min": 1451,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1391,
+        "min": 1153,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1093,
+        "min": 795,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Defense",
+      "nameFr": "Défense crit."
+     },
+     {
+      "key": "P_Shield_Rate",
+      "max": 1927,
+      "min": 771,
+      "tiers": [
+       {
+        "max": 1927,
+        "min": 1869,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1811,
+        "min": 1695,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1638,
+        "min": 1406,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1350,
+        "min": 1118,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1061,
+        "min": 771,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Barrier Efficiency",
+      "nameFr": "Efficacité des barrières"
+     },
+     {
+      "key": "Ultimateskill_Damadd_Rate",
+      "max": 1895,
+      "min": 758,
+      "tiers": [
+       {
+        "max": 1895,
+        "min": 1839,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1782,
+        "min": 1668,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1612,
+        "min": 1384,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1328,
+        "min": 1100,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 1044,
+        "min": 758,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Ultimate Move Damage Increase",
+      "nameFr": "Augmentation des dégâts d'attaque ultime"
+     },
+     {
+      "key": "MF_ChargeEffic_Rate",
+      "max": 1665,
+      "min": 666,
+      "tiers": [
+       {
+        "max": 1665,
+        "min": 1615,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1565,
+        "min": 1465,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1415,
+        "min": 1215,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1166,
+        "min": 966,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 916,
+        "min": 666,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Magic Charging Efficiency",
+      "nameFr": "Efficacité de recharge de la magie"
+     },
+     {
+      "key": "H_HealPower_Rate",
+      "max": 1541,
+      "min": 617,
+      "tiers": [
+       {
+        "max": 1541,
+        "min": 1495,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1449,
+        "min": 1357,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1311,
+        "min": 1125,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 1080,
+        "min": 894,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 849,
+        "min": 617,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Healing Efficiency",
+      "nameFr": "Efficacité de guérison"
+     },
+     {
+      "key": "Burst_Gauge_Rate",
+      "max": 1249,
+      "min": 500,
+      "tiers": [
+       {
+        "max": 1249,
+        "min": 1211,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1175,
+        "min": 1099,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 1062,
+        "min": 912,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 874,
+        "min": 724,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 688,
+        "min": 500,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "All Elemental Burst Efficiency",
+      "nameFr": "Efficacité de Déluge de tous les éléments"
+     },
+     {
+      "key": "C_Critical_Rate",
+      "max": 1126,
+      "min": 450,
+      "tiers": [
+       {
+        "max": 1126,
+        "min": 1092,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1058,
+        "min": 990,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 958,
+        "min": 822,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 789,
+        "min": 653,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 620,
+        "min": 450,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Chance",
+      "nameFr": "Chances crit."
+     },
+     {
+      "key": "C_Critical_ResRate",
+      "max": 1126,
+      "min": 450,
+      "tiers": [
+       {
+        "max": 1126,
+        "min": 1092,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 1058,
+        "min": 990,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 958,
+        "min": 822,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 789,
+        "min": 653,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 620,
+        "min": 450,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Crit Resistance",
+      "nameFr": "Résistance crit."
+     },
+     {
+      "key": "I_AtkAdd_Rate",
+      "max": 787,
+      "min": 315,
+      "tiers": [
+       {
+        "max": 787,
+        "min": 763,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 740,
+        "min": 692,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 670,
+        "min": 574,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 552,
+        "min": 456,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 433,
+        "min": 315,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Attack Increase",
+      "nameFr": "Augmentation de l'attaque"
+     },
+     {
+      "key": "I_DefAdd_Rate",
+      "max": 632,
+      "min": 253,
+      "tiers": [
+       {
+        "max": 632,
+        "min": 614,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 595,
+        "min": 557,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 538,
+        "min": 462,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 443,
+        "min": 367,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 349,
+        "min": 253,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "Defense Increase",
+      "nameFr": "Augmentation de la défense"
+     },
+     {
+      "key": "I_MaxHpAdd_Rate",
+      "max": 464,
+      "min": 186,
+      "tiers": [
+       {
+        "max": 464,
+        "min": 450,
+        "tier": 1,
+        "chance": 605
+       },
+       {
+        "max": 436,
+        "min": 408,
+        "tier": 2,
+        "chance": 1210
+       },
+       {
+        "max": 394,
+        "min": 338,
+        "tier": 3,
+        "chance": 2495
+       },
+       {
+        "max": 325,
+        "min": 269,
+        "tier": 4,
+        "chance": 2495
+       },
+       {
+        "max": 256,
+        "min": 186,
+        "tier": 5,
+        "chance": 3195
+       }
+      ],
+      "chance": 526,
+      "isRate": true,
+      "nameEn": "HP Increase",
+      "nameFr": "Augmentation des PV"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 156,
+     "gold": 572,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 728,
+     "gold": 2964,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 2288,
+     "gold": 9724,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 4992,
+     "gold": 21112,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 7280,
+     "gold": 30680,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 364,
+     "gold": 780,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1820,
+     "gold": 4056,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 5876,
+     "gold": 13312,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 12740,
+     "gold": 28912,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 18564,
+     "gold": 42016,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 728,
+     "gold": 1144,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 3692,
+     "gold": 6292,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 11960,
+     "gold": 20540,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 26000,
+     "gold": 44512,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 37804,
+     "gold": 64636,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 1352,
+     "gold": 1976,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 7124,
+     "gold": 10660,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 23140,
+     "gold": 34892,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 50232,
+     "gold": 75660,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 73008,
+     "gold": 109876,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 2548,
+     "gold": 3588,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 13624,
+     "gold": 19448,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 44408,
+     "gold": 63596,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 96408,
+     "gold": 138008,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 140088,
+     "gold": 200408,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 210132,
+     "gold": 285582,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 315198,
+     "gold": 406955,
+     "tier": 4,
+     "items": null,
+     "level": 6
+    },
+    {
+     "exp": 457038,
+     "gold": 560581,
+     "tier": 4,
+     "items": null,
+     "level": 7
+    },
+    {
+     "exp": 639854,
+     "gold": 745573,
+     "tier": 4,
+     "items": null,
+     "level": 8
+    },
+    {
+     "exp": 831811,
+     "gold": 920783,
+     "tier": 4,
+     "items": null,
+     "level": 9
+    },
+    {
+     "exp": 1247717,
+     "gold": 1312116,
+     "tier": 4,
+     "items": null,
+     "level": 10
+    },
+    {
+     "exp": 1871576,
+     "gold": 1869766,
+     "tier": 4,
+     "items": null,
+     "level": 11
+    },
+    {
+     "exp": 2713786,
+     "gold": 2575603,
+     "tier": 4,
+     "items": null,
+     "level": 12
+    },
+    {
+     "exp": 3799301,
+     "gold": 3425552,
+     "tier": 4,
+     "items": null,
+     "level": 13
+    },
+    {
+     "exp": 7598602,
+     "gold": 8563880,
+     "tier": 4,
+     "items": null,
+     "level": 14
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 15
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "Earth_Add",
+    "progression": [
+     8
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "Earth_Add",
+    "progression": [
+     796
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_15",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     137
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_15",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     14739
+    ]
+   }
+  },
+  "personnage": "khala",
+  "personnageNomFr": "Khala",
+  "costumeSlug": "khala-costume-134102904",
+  "nameFr": "Citoyenne modèle",
+  "nameEn": "Model Citizen",
+  "rarity": "SSR",
+  "effectNameFr": "Débloqué lors de l'obtention de l'équipement gravé",
+  "engravingPassives": [
+   {
+    "id": "EpEq_Calla_D",
+    "icon": "equippassive_equip_calla_d_ssr",
+    "levels": [
+     {
+      "level": 1,
+      "descEn": "Using the Special Attack increases all allied heroes' [#0F5CD8]Earth Burst Efficiency[-] by [#1A7331]18%[-] for [#1A7331]20 sec[-].\nIf an allied hero uses the Ultimate Move while this effect is active, all allied Earth heroes' [#0F5CD8]Crit Damage[-] increases by [#1A7331]30%[-] for [#1A7331]30 sec[-] against enemies with a [#0F5CD8]Burst[-] activated.",
+      "descFr": "L'utilisation de l'attaque spéciale augmente l'[#0F5CD8]efficacité de Déluge de Terre[-] de tous les héros alliés de [#1A7331]18%[-] pendant [#1A7331]20 s[-].\nSi un héros allié utilise l'attaque ultime pendant que cet effet est actif, augmente les [#0F5CD8]dégâts crit.[-] des attaques de tous les héros alliés d'attribut Terre de [#1A7331]30%[-] pendant [#1A7331]30 s[-] contre les ennemis sous l'effet d'un [#0F5CD8]Déluge[-]."
+     },
+     {
+      "level": 2,
+      "descEn": "Using the Special Attack increases all allied heroes' [#0F5CD8]Earth Burst Efficiency[-] by [#1A7331]24%[-] for [#1A7331]20 sec[-].\nIf an allied hero uses the Ultimate Move while this effect is active, all allied Earth heroes' [#0F5CD8]Crit Damage[-] increases by [#1A7331]40%[-] for [#1A7331]30 sec[-] against enemies with a [#0F5CD8]Burst[-] activated.",
+      "descFr": "L'utilisation de l'attaque spéciale augmente l'[#0F5CD8]efficacité de Déluge de Terre[-] de tous les héros alliés de [#1A7331]24%[-] pendant [#1A7331]20 s[-].\nSi un héros allié utilise l'attaque ultime pendant que cet effet est actif, augmente les [#0F5CD8]dégâts crit.[-] des attaques de tous les héros alliés d'attribut Terre de [#1A7331]40%[-] pendant [#1A7331]30 s[-] contre les ennemis sous l'effet d'un [#0F5CD8]Déluge[-]."
+     },
+     {
+      "level": 3,
+      "descEn": "Using the Special Attack increases all allied heroes' [#0F5CD8]Earth Burst Efficiency[-] by [#1A7331]30%[-] for [#1A7331]20 sec[-].\nIf an allied hero uses the Ultimate Move while this effect is active, all allied Earth heroes' [#0F5CD8]Crit Damage[-] increases by [#1A7331]50%[-] for [#1A7331]30 sec[-] against enemies with a [#0F5CD8]Burst[-] activated.",
+      "descFr": "L'utilisation de l'attaque spéciale augmente l'[#0F5CD8]efficacité de Déluge de Terre[-] de tous les héros alliés de [#1A7331]30%[-] pendant [#1A7331]20 s[-].\nSi un héros allié utilise l'attaque ultime pendant que cet effet est actif, augmente les [#0F5CD8]dégâts crit.[-] des attaques de tous les héros alliés d'attribut Terre de [#1A7331]50%[-] pendant [#1A7331]30 s[-] contre les ennemis sous l'effet d'un [#0F5CD8]Déluge[-]."
+     }
+    ],
+    "nameEn": "Special Bomb",
+    "nameFr": "Bombe spéciale"
+   }
+  ],
+  "bindingMaterials": null,
+  "iconUrl": null
+ },
+ {
   "gameId": "133244001",
   "mainStat": "B_MaxHp_Equip",
   "subStat": "Ice_Add",

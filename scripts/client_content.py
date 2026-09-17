@@ -17,7 +17,10 @@ import tempfile
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 DEFAULT_SNAPSHOT = ROOT / "7ds-stats" / "contenu-jeu.json"
-MAPPING_SECTIONS = {"meta", "potentials"}
+MAPPING_SECTIONS = {"meta", "potentials", "linkedArmors"}
+LINKED_ARMOR_FOLDER = "7ds-armures-ssr/Armure liee/"
+# Prefixe de nom de fichier quand deux heros portent une tenue du meme nom.
+HERO_NAME_SEPARATOR = " — "
 
 # enum weaponType du jeu -> nom de dossier d'arme public (segment de chemin).
 WEAPON_FOLDERS = {
@@ -167,7 +170,72 @@ def normalize_potentials_catalog(hero, slug):
     }
 
 
-SECTION_NORMALIZERS = {"meta": normalize_meta, "potentials": normalize_potentials_catalog}
+def linked_armor_files(hero, slug):
+    """Images locales des tenues liees d'un heros, une par tenue du snapshot.
+
+    Le catalogue public identifie une tenue par le NOM DE SON FICHIER. Deux
+    heros peuvent porter une tenue du meme nom : le fichier prend alors le nom
+    du heros en prefixe. Les deux formes sont admises, aucune autre : un
+    fichier qui ne nomme pas sa tenue rattacherait l'image a la mauvaise piece.
+    """
+    armors = hero.get("linkedArmors")
+    assets = (hero.get("assets") or {}).get("linkedArmors")
+    if not isinstance(armors, list) or not armors:
+        raise ValueError(f"{slug}: aucune tenue liée dans le snapshot")
+    if not isinstance(assets, list) or len(assets) != len(armors):
+        raise ValueError(f"{slug}: autant d'images que de tenues liées attendues")
+    targets = [str(asset.get("target") or "") for asset in assets]
+    for target in targets:
+        if not target.startswith(LINKED_ARMOR_FOLDER) or not target.endswith(".webp"):
+            raise ValueError(f"{slug}: image hors de {LINKED_ARMOR_FOLDER} : {target}")
+    files = {}
+    for armor in armors:
+        name = armor.get("nameFr")
+        prefixe = f"{hero.get('nameFr')}{HERO_NAME_SEPARATOR}{name}"
+        stems = {name, prefixe}
+        found = [
+            target for target in targets
+            if target[len(LINKED_ARMOR_FOLDER):-len(".webp")] in stems
+        ]
+        if len(found) != 1:
+            raise ValueError(
+                f"{slug}: {len(found)} image(s) nommée(s) « {name} »"
+            )
+        files[armor.get("gameId")] = found[0]
+    if len(set(files.values())) != len(targets):
+        raise ValueError(f"{slug}: une image sert deux tenues liées")
+    return files
+
+
+def normalize_linked_armors(hero, slug):
+    """Forme d'armures-liees.js : slug -> chemins d'images, triés."""
+    return sorted(linked_armor_files(hero, slug).values())
+
+
+def linked_armor_rows(snapshot=None):
+    """Lignes de tenues liees pour le rapprochement du generateur public.
+
+    Meme forme que les lignes lues sur la page publique — `char`, `name`,
+    `game_id` —, `name` etant le nom du FICHIER, seule cle du rapprochement.
+    """
+    payload = snapshot_or_default(snapshot)
+    rows = []
+    for slug in client_slugs(payload):
+        files = linked_armor_files(payload["heroes"][slug], slug)
+        for game_id, target in files.items():
+            rows.append({
+                "char": slug,
+                "name": target[len(LINKED_ARMOR_FOLDER):-len(".webp")],
+                "game_id": game_id,
+            })
+    return sorted(rows, key=lambda row: (row["char"], row["name"]))
+
+
+SECTION_NORMALIZERS = {
+    "meta": normalize_meta,
+    "potentials": normalize_potentials_catalog,
+    "linkedArmors": normalize_linked_armors,
+}
 
 
 def merge_mapping(base, section, snapshot=None, replace_client=False):

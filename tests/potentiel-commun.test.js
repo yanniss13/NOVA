@@ -138,15 +138,16 @@ const STORAGE_KEY = "confrerie7ds.teams";
   const localArmorFiles = dataContext.window.SEVEN_DS_DATA.armures["Armure liee"]
     .map(item => item.file);
 
-  assert.strictEqual(Object.keys(linked).length, 26);
+  assert.strictEqual(Object.keys(linked).length, 27);
   /* 83 depuis l'ajout des gravees SR : le catalogue ne contenait que les SSR,
      faute d'icones locales. Puis 93 avec la version 2.0, le 26 aout 2026 :
-     les trois pieces de Ban et les sept costumes de la fournee.
+     les trois pieces de Ban et les sept costumes de la fournee. Puis 96 avec
+     les trois tenues de Khala, dont les images portent son nom en prefixe.
      Deux pieces restent dehors, toutes deux nommees « Sortie decontractee » —
      un meme nom pour deux pieces differentes, et le catalogue identifie une
      piece par le nom de son fichier image. */
-  assert.strictEqual(files.length, 93);
-  assert.strictEqual(new Set(files).size, 93);
+  assert.strictEqual(files.length, 96);
+  assert.strictEqual(new Set(files).size, 96);
   assert.ok(Object.values(linked).every(items => items.length >= 2 && items.length <= 4));
   assert.deepStrictEqual(
     plain([...files].sort()),

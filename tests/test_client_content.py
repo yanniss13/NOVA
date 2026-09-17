@@ -93,6 +93,19 @@ def client_hero(slug="khala", name="Khala"):
             "weaponMasteries": [mastery_branch(weapon) for weapon in WEAPONS],
         },
         "potentials": {weapon: potential_tiers(weapon) for weapon in WEAPONS},
+        "linkedArmors": [
+            {"gameId": "133235001", "nameFr": "Tenue de travail", "weaponType": "sworddual"},
+            {"gameId": "133235002", "nameFr": "Préparation totale", "weaponType": "cudgel3c"},
+        ],
+        "assets": {
+            "portrait": {"source": "portrait.png", "target": f"7ds-personnages/{slug}.webp"},
+            "linkedArmors": [
+                {"source": "a.png",
+                 "target": "7ds-armures-ssr/Armure liee/Tenue de travail.webp"},
+                {"source": "b.png",
+                 "target": f"7ds-armures-ssr/Armure liee/{name} — Préparation totale.webp"},
+            ],
+        },
     }
 
 
@@ -277,6 +290,45 @@ class ClientContentTests(unittest.TestCase):
             {"role": "Buster", "weapon": "Gauntlets", "element": "Earth"},
         ])
         self.assertEqual([list(slot) for slot in meta["weapons"]], [["role", "weapon", "element"]] * 3)
+
+    def test_linked_armors_section_lists_the_local_images(self):
+        armures = module.merge_mapping({}, "linkedArmors", self.snapshot)["khala"]
+
+        # Triées comme le générateur public les écrit, et préfixées du nom du
+        # héros quand deux tenues portent le même nom.
+        self.assertEqual(armures, [
+            "7ds-armures-ssr/Armure liee/Khala — Préparation totale.webp",
+            "7ds-armures-ssr/Armure liee/Tenue de travail.webp",
+        ])
+
+    def test_linked_armors_rows_carry_the_file_name(self):
+        rows = module.linked_armor_rows(self.snapshot)
+
+        # Le rapprochement du générateur se fait sur le nom de fichier : une
+        # ligne cliente qui ne dirait que « Préparation totale » volerait
+        # l'image d'un héros public du même nom.
+        self.assertEqual(rows, [
+            {"char": "khala", "name": "Khala — Préparation totale", "game_id": "133235002"},
+            {"char": "khala", "name": "Tenue de travail", "game_id": "133235001"},
+        ])
+
+    def test_linked_armors_reject_an_image_that_names_no_tenue(self):
+        client = snapshot()
+        client["heroes"]["khala"]["assets"]["linkedArmors"][0]["target"] = (
+            "7ds-armures-ssr/Armure liee/Autre chose.webp"
+        )
+
+        with self.assertRaisesRegex(ValueError, "Tenue de travail"):
+            module.merge_mapping({}, "linkedArmors", client)
+
+    def test_linked_armors_reject_an_image_outside_the_linked_armor_folder(self):
+        client = snapshot()
+        client["heroes"]["khala"]["assets"]["linkedArmors"][0]["target"] = (
+            "7ds-armures-ssr/Haut/Tenue de travail.webp"
+        )
+
+        with self.assertRaisesRegex(ValueError, "Armure liee"):
+            module.merge_mapping({}, "linkedArmors", client)
 
     def test_potentials_section_uses_public_folders_in_enum_order(self):
         potentials = module.merge_mapping({}, "potentials", self.snapshot)["khala"]

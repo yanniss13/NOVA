@@ -243,11 +243,12 @@ const STATS_TEST = {
   assert.equal(armes.length, 156, "156 armes attendues");
   assert.equal(armures.length, 62, "62 armures attendues");
   assert.equal(bijoux.length, 37, "37 bijoux attendus");
-  assert.equal(gravees.length, 93,
+  assert.equal(gravees.length, 96,
   /* 83 depuis l'ajout des gravees SR au catalogue ; il n'y avait que les
      SSR, faute d'icones locales. Puis 93 avec la version 2.0, le 26 aout
-     2026 : les trois pieces de Ban et les sept costumes de la fournee. */
-  "93 armures gravées attendues");
+     2026 : les trois pieces de Ban et les sept costumes de la fournee.
+     Puis 96 avec les trois tenues de Khala, lues dans les tables du jeu. */
+  "96 armures gravées attendues");
 
   assert.equal(
     armes.filter(arme => arme.aPassif).length, 95,

@@ -1,5 +1,6 @@
 // Généré manuellement depuis la page publique du team builder 7dsorigin.app.
-// Date de génération : 2026-08-26T23:37:28+02:00
+// Héros absents de cette page : tables du jeu, via 7ds-stats/contenu-jeu.json.
+// Date de génération : 2026-09-17T19:56:29+02:00
 // Instantané local : aucun appel réseau n'est effectué par index.html.
 window.SEVEN_DS_ARMURES_LIEES = {
   "ban": [
@@ -146,5 +147,10 @@ window.SEVEN_DS_ARMURES_LIEES = {
     "7ds-armures-ssr/Armure liee/Dignité royale.webp",
     "7ds-armures-ssr/Armure liee/Tenue de cérémonie.webp",
     "7ds-armures-ssr/Armure liee/Vœu du prince.webp"
+  ],
+  "khala": [
+    "7ds-armures-ssr/Armure liee/Khala — Citoyenne modèle.webp",
+    "7ds-armures-ssr/Armure liee/Khala — Préparation totale.webp",
+    "7ds-armures-ssr/Armure liee/Khala — Tenue de travail ultralégère.webp"
   ]
 };

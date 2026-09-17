@@ -371,7 +371,7 @@ précache pas.
 | `personnages.json` | 25 personnages : `baseHp/baseAtk/baseDef/baseSpd`, précision, blocage, crit (taux, dégâts, résistances), PvP, `weaponSlots`, 15 niveaux de maîtrise, 30 paliers de potentiel, costumes |
 | `armes.json` | 155 armes, 275 variantes de grade : `mainStat`, `subStats` (`base`, `max`, `progression`), enchantements, passifs |
 | `armures.json` | 232 pièces sur 7 emplacements × 5 grades : `mainStat`, `subStat`, `setId`, `reinforceMax`, qualité, `growth` |
-| `armures-gravees.json` | 85 équipements gravés, rapprochés de leur costume et de leur personnage, avec passifs de gravure et matériaux |
+| `armures-gravees.json` | 98 équipements gravés, rapprochés de leur costume et de leur personnage, avec passifs de gravure et matériaux |
 | `enchantements.json` | 181 tables basiques, 94 tables de pierre maîtresse, 70 armures, 85 armures gravées |
 | `sets.json` | 22 ensembles avec bonus 2 et 4 pièces |
 | `libelles-stats.json` | 72 codes de stat → libellés FR/EN, `taux`, libellé court |
@@ -929,6 +929,14 @@ lancé manuellement avec `python scripts/generate-armures-liees.py`. Il lit la p
 publique de référence en une requête, sans télécharger aucune image. Il ne
 s’exécute jamais dans le navigateur : `index.html` ne charge que
 `armures-liees.js` local et ne contacte donc jamais cette source.
+
+`--client-only` ne touche qu’aux héros lus dans les tables du jeu
+(`7ds-stats/contenu-jeu.json`) : sans réseau, il remplace leurs seules entrées
+et prouve par empreinte que les autres n’ont pas bougé. `--check` refuse un
+catalogue périmé, une image locale non citée ou une entrée sans image.
+Deux héros peuvent porter une tenue du même nom : le fichier de l’un prend
+alors son nom en préfixe — « Khala — Préparation totale.webp » — et le nom
+officiel de la tenue reste dans les catalogues, jamais dans le chemin seul.
 
 `normalizeHero()` refuse une valeur de `armor["Armure liee"]` si son fichier
 n’appartient pas au tableau du héros. Les quatre emplacements universels

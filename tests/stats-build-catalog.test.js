@@ -156,9 +156,30 @@ weaponsWithPassive.forEach(([file, entry]) => {
 });
 
 const characters = Object.entries(catalog.charactersBySlug);
-assert.equal(characters.length, 26, "les 26 personnages doivent être rapprochés");
+assert.equal(characters.length, 27, "les 27 personnages doivent être rapprochés");
+/* Les tables du jeu ne portent pas les deux coefficients JcJ. Un héros lu
+   dans le snapshot local les publie à null, avec une couverture
+   « missing-from-export » : le catalogue omet ces deux lignes plutôt que
+   d'inventer une valeur. Khala a donc onze statistiques de base, les 26
+   autres treize. */
+const PVP_FIELDS = ["pvpDmgUp", "pvpDmgDown"];
+const declaredMissing = Object.fromEntries(JSON.parse(
+  fs.readFileSync(path.join(ROOT, "7ds-stats", "personnages.json"), "utf8")
+).map(reference => [
+  reference.slug,
+  PVP_FIELDS.filter(field => reference[field] === null
+    && ((reference.coverage || {})[field] || {}).status === "missing-from-export").length
+]));
+assert.equal(catalog.charactersBySlug.khala.baseStats.length, 11,
+  "khala : sans les deux coefficients JcJ absents des tables du jeu");
+assert.ok(catalog.charactersBySlug.khala.baseStats
+  .every(item => !PVP_FIELDS.includes(item.stat)));
 characters.forEach(([slug, character]) => {
-  assert.equal(character.baseStats.length, 13, slug + " : base incomplète");
+  assert.equal(
+    character.baseStats.length,
+    13 - declaredMissing[slug],
+    slug + " : base incomplète"
+  );
   assert.ok(character.commonMasteryStats.length, slug + " : maîtrise commune absente");
   assert.equal(
     Object.keys(character.masteriesByWeapon).length,
@@ -359,8 +380,8 @@ assert.deepStrictEqual(
 const gravees = Object.entries(catalog.engravedByFile);
 const avecOptions = gravees.filter(([, piece]) => piece.limitBreakOptions);
 assert.equal(
-  avecOptions.length, 78,
-  "78 tenues gravées donnent une transcendance : "
+  avecOptions.length, 81,
+  "81 tenues gravées donnent une transcendance : "
     + avecOptions.length + " en portent les options"
 );
 

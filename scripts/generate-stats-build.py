@@ -27,6 +27,9 @@ SLOT_FOLDERS = {
     "Anneau": "Ring", "Collier": "Necklace", "Boucle d'oreille": "Earring",
 }
 ENGRAVED_FOLDER = "Armure liee"
+# Le nom de fichier d'une tenue gravee se prefixe du nom du heros quand deux
+# heros portent une tenue du meme nom : « Khala — Preparation totale.webp ».
+HERO_NAME_SEPARATOR = " — "
 CHARACTER_BASE_FIELDS = {
     "baseHp": ("B_MaxHp", "flat"),
     "baseAtk": ("B_Atk", "flat"),
@@ -612,47 +615,83 @@ def build_gear_catalogs(stats_root: Path, gear_roots, known, repo_root=None):
             (piece["slot"], normalize_name(piece["nameFr"])), []
         ).append(piece)
     by_engraved = {}
+    by_engraved_hero = {}
     for piece in engraved_pieces:
         if not piece.get("nameFr"):
             continue
         by_engraved.setdefault(normalize_name(piece["nameFr"]), []).append(piece)
+        hero = piece.get("personnageNomFr")
+        if hero:
+            by_engraved_hero.setdefault(
+                (normalize_name(hero), normalize_name(piece["nameFr"])), []
+            ).append(piece)
 
     fallback = {}
     for piece in pieces + engraved_pieces:
         merge_localized_labels(fallback, gear_stat_labels(piece))
 
-    gear_by_file = {}
-    engraved_by_file = {}
+    images = []
     for root in gear_roots:
         for image_path in sorted(Path(root).rglob("*.webp")):
             relative = image_path.relative_to(root)
             if len(relative.parts) < 2:
                 raise ValueError(f"Image hors emplacement : {image_path}")
-            folder = relative.parts[0]
             base = repo_root or Path(root).parent
-            catalog_file = image_path.relative_to(base).as_posix()
-            if folder == ENGRAVED_FOLDER:
-                candidates = by_engraved.get(normalize_name(image_path.stem), [])
-                target = engraved_by_file
+            images.append(
+                (image_path, relative.parts[0], image_path.relative_to(base).as_posix())
+            )
+
+    # Deux heros peuvent porter une tenue du meme nom. L'image qui leve
+    # l'ambiguite prefixe le nom du heros ; elle est rapprochee d'abord, et la
+    # piece qu'elle prend n'est plus offerte aux images sans prefixe. Un nom de
+    # tenue qui contient lui-meme le separateur ne trouve pas de heros et
+    # retombe donc sur le rapprochement par nom entier.
+    reserved = {}
+    for image_path, folder, catalog_file in images:
+        if folder != ENGRAVED_FOLDER:
+            continue
+        hero, separator, name = image_path.stem.partition(HERO_NAME_SEPARATOR)
+        if not separator:
+            continue
+        candidates = by_engraved_hero.get(
+            (normalize_name(hero), normalize_name(name)), []
+        )
+        if len(candidates) == 1:
+            reserved[catalog_file] = candidates[0]
+    claimed = {id(piece) for piece in reserved.values()}
+
+    gear_by_file = {}
+    engraved_by_file = {}
+    for image_path, folder, catalog_file in images:
+        if folder == ENGRAVED_FOLDER:
+            if catalog_file in reserved:
+                candidates = [reserved[catalog_file]]
             else:
-                slot = SLOT_FOLDERS.get(folder)
-                if not slot:
-                    raise ValueError(f"Emplacement local inconnu : {folder}")
-                candidates = by_slot.get(
-                    (slot, normalize_name(image_path.stem)), []
-                )
-                target = gear_by_file
-            if len(candidates) != 1:
-                if not candidates:
-                    raise ValueError(f"Aucune piece officielle pour {image_path.name}")
-                raise ValueError(f"Piece ambigue pour {image_path.name}")
-            if catalog_file in target:
-                raise ValueError(f"Cle d'image locale dupliquee : {catalog_file}")
-            entry = gear_entry(candidates[0], known)
-            if folder == ENGRAVED_FOLDER:
-                entry["character"] = candidates[0].get("personnage")
-                entry["slot"] = ENGRAVED_FOLDER
-            target[catalog_file] = entry
+                candidates = [
+                    piece
+                    for piece in by_engraved.get(normalize_name(image_path.stem), [])
+                    if id(piece) not in claimed
+                ]
+            target = engraved_by_file
+        else:
+            slot = SLOT_FOLDERS.get(folder)
+            if not slot:
+                raise ValueError(f"Emplacement local inconnu : {folder}")
+            candidates = by_slot.get(
+                (slot, normalize_name(image_path.stem)), []
+            )
+            target = gear_by_file
+        if len(candidates) != 1:
+            if not candidates:
+                raise ValueError(f"Aucune piece officielle pour {image_path.name}")
+            raise ValueError(f"Piece ambigue pour {image_path.name}")
+        if catalog_file in target:
+            raise ValueError(f"Cle d'image locale dupliquee : {catalog_file}")
+        entry = gear_entry(candidates[0], known)
+        if folder == ENGRAVED_FOLDER:
+            entry["character"] = candidates[0].get("personnage")
+            entry["slot"] = ENGRAVED_FOLDER
+        target[catalog_file] = entry
     return gear_by_file, engraved_by_file, fallback
 
 
