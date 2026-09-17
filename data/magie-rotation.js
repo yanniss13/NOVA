@@ -124,6 +124,66 @@ window.SEVEN_DS_MAGIE_ROTATION = {
   "recharge": 225,
   "cout": 0
  },
+ "calla_cudgel3c_normalatk_1": {
+  "recharge": 23,
+  "cout": 0
+ },
+ "calla_cudgel3c_skill_e_start": {
+  "recharge": 123,
+  "cout": 0
+ },
+ "calla_cudgel3c_skill_q": {
+  "recharge": 40,
+  "cout": 0
+ },
+ "calla_cudgel3c_skill_r": {
+  "recharge": 0,
+  "cout": 2
+ },
+ "calla_cudgel3c_skill_tag": {
+  "recharge": 175,
+  "cout": 0
+ },
+ "calla_gauntlets_normalatk_1": {
+  "recharge": 26,
+  "cout": 0
+ },
+ "calla_gauntlets_skill_e": {
+  "recharge": 138,
+  "cout": 0
+ },
+ "calla_gauntlets_skill_q_1": {
+  "recharge": 44,
+  "cout": 0
+ },
+ "calla_gauntlets_skill_r": {
+  "recharge": 0,
+  "cout": 2
+ },
+ "calla_gauntlets_skill_tag": {
+  "recharge": 175,
+  "cout": 0
+ },
+ "calla_sworddual_normalatk_1": {
+  "recharge": 45,
+  "cout": 0
+ },
+ "calla_sworddual_skill_e": {
+  "recharge": 85,
+  "cout": 0
+ },
+ "calla_sworddual_skill_q": {
+  "recharge": 28,
+  "cout": 0
+ },
+ "calla_sworddual_skill_r": {
+  "recharge": 0,
+  "cout": 1
+ },
+ "calla_sworddual_skill_tag": {
+  "recharge": 225,
+  "cout": 0
+ },
  "daisy_book_jumpatk": {
   "recharge": 62,
   "cout": 0

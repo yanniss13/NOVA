@@ -1,6 +1,6 @@
 {
  "_provenance": {
-  "source": "PC_SkillTable, colonne Cooltime",
+  "source": "Table/Skill/PC_SkillTable, colonne Cooltime",
   "unite": "le jeu stocke des millisecondes ; ce fichier publie des secondes",
   "build": "1.8.1.2, export du 25 aout 2026, usmap mappings-1.8",
   "regenerer": "node outils/fabrication/extraire-recharges.js",
@@ -169,6 +169,15 @@
   "jericho_sworddual_skill_e": 30,
   "jericho_sworddual_skill_q": 10,
   "jericho_sworddual_skill_rmb": 13.6,
+  "calla_cudgel3c_skill_e_start": 23,
+  "calla_cudgel3c_skill_q": 18,
+  "calla_cudgel3c_skill_r": 10,
+  "calla_gauntlets_skill_e": 26,
+  "calla_gauntlets_skill_q_1": 20,
+  "calla_gauntlets_skill_r": 10,
+  "calla_sworddual_skill_e": 19,
+  "calla_sworddual_skill_q": 13,
+  "calla_sworddual_skill_r": 10,
   "king_book_skill_e": 16,
   "king_book_skill_q": 10,
   "king_book_skill_rmb_ready": 12,

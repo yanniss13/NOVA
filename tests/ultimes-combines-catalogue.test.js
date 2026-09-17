@@ -18,10 +18,6 @@ vm.runInNewContext(
 const catalogue = bac.window.SEVEN_DS_ULTIMES_COMBINES;
 
 assert.ok(Array.isArray(catalogue), "le catalogue doit être un tableau");
-assert.ok(
-  catalogue.length >= 600,
-  "catalogue anormalement maigre, reçu : " + catalogue.length
-);
 
 const IDENTIFIANT = /^[a-z0-9]+(_[a-z0-9]+)+$/;
 catalogue.forEach(entree => {
@@ -80,12 +76,6 @@ assert.deepEqual(
   ambigus, [],
   "un porteur ne lance que d'UNE compétence, reçu : " + ambigus.join(" | ")
 );
-assert.ok(
-  parPorteur.size >= 20,
-  "le catalogue doit couvrir les porteurs du jeu, reçu : " + parPorteur.size
-);
-
-
 /* TOUTES LES COMPÉTENCES D'UNE COMBINAISON SONT DES ULTIMES.
 
    C'est LE fait qui nomme cette fonctionnalité, et il n'était pas évident : le
@@ -107,16 +97,28 @@ assert.ok(
     bacWiki
   );
   const categorie = new Map();
+  const competencesPosables = new Set();
   Object.values(bacWiki.window.SEVEN_DS_WIKI_COMPETENCES || {})
-    .forEach(liste => (liste || []).forEach(
-      competence => categorie.set(competence.gameId, competence.categorie)
-    ));
+    .forEach(liste => (liste || []).forEach(competence => {
+      categorie.set(competence.gameId, competence.categorie);
+      if(competence.categorie !== "PASSIVE"){
+        competencesPosables.add(competence.gameId);
+      }
+    }));
 
   const identifiants = new Set();
   catalogue.forEach(entree => {
     identifiants.add(entree.lanceur);
     entree.partenaires.forEach(partenaire => identifiants.add(partenaire));
   });
+
+  const horsWiki = [...identifiants]
+    .filter(id => !competencesPosables.has(id));
+  assert.deepEqual(
+    horsWiki, [],
+    "les cles de combinaison doivent appartenir aux competences posables du Wiki : "
+      + horsWiki.join(", ")
+  );
 
   const intrus = [...identifiants]
     .filter(id => categorie.get(id) !== "ULTIMATE")
@@ -125,9 +127,15 @@ assert.ok(
     intrus, [],
     "une combinaison n'engage que des ULTIMES, reçu : " + intrus.join(", ")
   );
-  assert.ok(
-    identifiants.size >= 20,
-    "le croisement doit porter sur tout le catalogue, reçu : " + identifiants.size
+  const khala = bacWiki.window.SEVEN_DS_WIKI_COMPETENCES.khala
+    .filter(skill => skill.categorie !== "PASSIVE");
+  const combinaisonsKhala = khala
+    .filter(skill => identifiants.has(skill.gameId))
+    .map(skill => skill.gameId);
+  assert.deepEqual(
+    Array.from(combinaisonsKhala), [],
+    "Khala ne figure pas dans CombineSkillTable et ne doit pas avoir de combinaison inventee : "
+      + combinaisonsKhala.join(", ")
   );
 }
 

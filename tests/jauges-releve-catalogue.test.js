@@ -24,10 +24,6 @@ const wiki = lire("wiki-competences.js").SEVEN_DS_WIKI_COMPETENCES;
 assert.ok(jauges && typeof jauges === "object", "le catalogue doit être un objet");
 
 const entrees = Object.entries(jauges);
-assert.ok(
-  entrees.length >= 380,
-  "catalogue anormalement maigre, reçu : " + entrees.length
-);
 
 const IDENTIFIANT = /^[a-z0-9]+(_[a-z0-9]+)+$/;
 entrees.forEach(([id, valeur]) => {
@@ -47,14 +43,20 @@ Object.values(wiki).forEach(liste => (liste || []).forEach(competence => {
   parCategorie.set(competence.gameId, competence.categorie);
 }));
 
-const manquantes = [...parCategorie]
-  .filter(([id, categorie]) => categorie !== "PASSIVE"
-    && !Object.prototype.hasOwnProperty.call(jauges, id))
-  .map(([id]) => id);
+const competencesPosables = [...parCategorie]
+  .filter(([, categorie]) => categorie !== "PASSIVE")
+  .map(([id]) => id)
+  .sort();
 assert.deepEqual(
-  manquantes, [],
-  "des compétences posables n'ont pas de jauge : " + manquantes.join(", ")
+  Object.keys(jauges).sort(), competencesPosables,
+  "les clés de jauge doivent etre exactement les compétences posables du Wiki"
 );
+
+const khala = wiki.khala.filter(skill => skill.categorie !== "PASSIVE");
+khala.forEach(skill => assert.ok(
+  Object.prototype.hasOwnProperty.call(jauges, skill.gameId),
+  "jauge absente pour " + skill.gameId
+));
 
 const passifs = Object.keys(jauges).filter(id => parCategorie.get(id) === "PASSIVE");
 assert.deepEqual(passifs, [], "un passif n'a rien à faire ici : " + passifs.join(", "));

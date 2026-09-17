@@ -278,14 +278,16 @@ class ListerChronometrageTests(unittest.TestCase):
         # l'animation devient donc mesurable. Une competence chiffree de
         # plus est une ligne de chronometrage de plus — la liste suit le
         # catalogue, c'est sa raison d'etre.
-        self.assertEqual(publie["total"], 23)
-        self.assertEqual(publie["debloquent"], 0)
-        self.assertEqual(publie["affinent"], 20)
-        self.assertEqual(publie["releves"], 3)
-        # Plus aucune mesure ne « debloque » : tout ce qui manquait au
-        # modele de cadence est desormais lu dans les fichiers du jeu.
-        # On verifie donc la propriete, pas un instantane : les prochaines
-        # sortent dans l'ordre de priorite, sans role inconnu.
+        debloquent, affinent, releves = MODULE.lignes()
+        self.assertEqual(
+            publie["total"],
+            sum(len(groupe) for groupe in (debloquent, affinent, releves)),
+        )
+        self.assertEqual(publie["debloquent"], len(debloquent))
+        self.assertEqual(publie["affinent"], len(affinent))
+        self.assertEqual(publie["releves"], len(releves))
+        # Les nouveaux heros peuvent ramener des mesures qui debloquent.
+        # Les prochaines sortent dans l'ordre de priorite, sans role inconnu.
         roles = [ligne["role"] for ligne in publie["prochaines"]]
         rang = {"debloque": 0, "affine": 1, "releve": 2}
         self.assertTrue(set(roles) <= set(rang), roles)
@@ -327,6 +329,27 @@ class ListerChronometrageTests(unittest.TestCase):
             [],
             "ces competences sortiraient en anglais dans le document",
         )
+
+    def test_khala_a_chronometrer_sans_inventer_de_verrou(self):
+        khala = MODULE.catalogue()["khala"]
+        self.assertTrue(khala, "Khala doit figurer dans le catalogue de calcul")
+        identifiants = {skill["gameId"] for skill in khala}
+        deduits = MODULE.verrous_deduits()
+        self.assertFalse(
+            identifiants & set(deduits),
+            "les temps d'action exportes ne renseignent pas encore Khala",
+        )
+        attendues = {
+            skill["gameId"] for skill in khala
+            if (skill.get("pourcentage") or 0) > 0
+            and "jumpatk" not in skill["gameId"].lower()
+        }
+        listees = {
+            ligne["gameId"] for groupe in MODULE.lignes() for ligne in groupe
+            if ligne["gameId"] in identifiants
+        }
+        self.assertTrue(attendues)
+        self.assertEqual(listees, attendues)
 
 
 if __name__ == "__main__":
