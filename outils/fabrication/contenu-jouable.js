@@ -10,6 +10,13 @@ const path = require("node:path");
 const ROOT = path.resolve(__dirname, "..", "..");
 const HERO_ID = "1029";
 const HERO_SLUG = "khala";
+const HERO_IDS_EXCLUS = new Set(["409100119", "409100124"]);
+const LOCALISATIONS_NON_COUVERTES = new Set([
+  "local_skill_calla_gauntlets_normalskill_desc"
+]);
+const ASSET_TARGET_PREFIXES = [
+  "7ds-personnages/", "7ds-ui/skills/", "7ds-armures-ssr/Armure liee/"
+];
 const WEAPON_FOLDERS = {
   SwordDual:"Epees doubles", Cudgel3c:"Nunchaku", Gauntlets:"Gantelets"
 };
@@ -30,9 +37,6 @@ const BASE_STATS = {
   C_Critical_DamRes_Rate:"critDmgResist", D_Block_DamRes_Rate:"blockDmgResist",
   Pvp_DamAdd_Rate:"pvpDmgUp", Pvp_DamRes_Rate:"pvpDmgDown"
 };
-/* Les deux coefficients JcJ ne figurent pas dans HeroStatGroupTable : le
-   client applique ces constantes communes aux 26 héros déjà catalogués. */
-const PVP_DEFAULTS = {pvpDmgUp:150, pvpDmgDown:125};
 
 function substituer(texte, remplacements){
   let sortie = String(texte || "");
@@ -44,7 +48,8 @@ function substituer(texte, remplacements){
 }
 
 function filtrerHerosJouables(heroes){
-  return heroes.filter(hero => hero.nameFr && hero.internalName
+  return heroes.filter(hero => !HERO_IDS_EXCLUS.has(String(hero.id))
+    && hero.nameFr && hero.internalName
     && Array.isArray(hero.weapons) && hero.weapons.length === 3);
 }
 
@@ -62,10 +67,36 @@ function lireLocalisation(racine, langue){
   return table;
 }
 
-function localisation(table, cle){
-  if(!cle || cle === "None") return "";
+function valeurLocalisee(table, cle){
+  if(!cle || cle === "None") return undefined;
   const value = table[cle] === undefined ? table.__lower && table.__lower.get(String(cle).toLowerCase()) : table[cle];
-  return value === undefined ? "" : String(value);
+  return value === undefined ? undefined : String(value);
+}
+
+function localisation(table, cle){
+  return valeurLocalisee(table, cle) || "";
+}
+
+function estLocalisationInvalide(value, cle){
+  return value === undefined || value === null || !String(value).trim()
+    || String(value).trim().toLowerCase() === String(cle).trim().toLowerCase();
+}
+
+function resoudreLocalisation(fr, en, cle, remplacements){
+  const frBrut = valeurLocalisee(fr, cle);
+  const enBrut = valeurLocalisee(en, cle);
+  if(estLocalisationInvalide(frBrut, cle) || estLocalisationInvalide(enBrut, cle)) {
+    if(LOCALISATIONS_NON_COUVERTES.has(String(cle).toLowerCase())
+      && estLocalisationInvalide(frBrut, cle) && estLocalisationInvalide(enBrut, cle)) {
+      return {fr:null, en:null, status:"missing-from-export", reason:"localisation non couverte par l'export"};
+    }
+    throw new Error("localisation absente ou auto-référente : " + cle);
+  }
+  const result = {fr:substituer(frBrut, remplacements), en:substituer(enBrut, remplacements), status:"resolved", reason:null};
+  if(/\{\d+\}/.test(result.fr) || /\{\d+\}/.test(result.en)) {
+    throw new Error("placeholder résiduel dans la localisation : " + cle);
+  }
+  return result;
 }
 
 function sansEnum(value){
@@ -79,10 +110,7 @@ function cleIcone(icon){
 
 function cheminImageIcone(icon, tables){
   if(tables && tables.skillIcons && tables.skillIcons.has(cleIcone(icon))) return tables.skillIcons.get(cleIcone(icon));
-  const nom = String(icon || "").replace(/^skill_icon_/, "");
-  if(!/^calla_/i.test(nom)) return null;
-  const pieces = nom.split("_").map(part => part.charAt(0).toUpperCase() + part.slice(1));
-  return "Icon_Item/Skill/" + pieces.join("_") + ".png";
+  return null;
 }
 
 function heroDepuisTables(tables){
@@ -104,16 +132,21 @@ function heroDepuisTables(tables){
   const baseStats = {};
   for(const [source, target] of Object.entries(BASE_STATS)) {
     if(typeof stat[source] === "number") baseStats[target] = stat[source];
-    else if(Object.hasOwn(PVP_DEFAULTS, target)) baseStats[target] = PVP_DEFAULTS[target];
+    else if(target === "pvpDmgUp" || target === "pvpDmgDown") baseStats[target] = null;
     else throw new Error("Khala : statistique absente " + source);
   }
 
+  const name = resoudreLocalisation(tables.fr, tables.en, actor.Local_Key);
   const character = {
-    id:HERO_ID, slug:HERO_SLUG, nameFr:localisation(tables.fr, actor.Local_Key),
-    nameEn:localisation(tables.en, actor.Local_Key), rarity:sansEnum(actor.grade),
+    id:HERO_ID, slug:HERO_SLUG, nameFr:name.fr,
+    nameEn:name.en, rarity:sansEnum(actor.grade),
     role:slots[0].role.toUpperCase(), element:slots[0].element.toUpperCase(),
     portraitUrl:"/images/characters/khala.webp", weaponSlots:slots,
     commonMasteryTid:mastery.Common_Mastery_Tid, ...baseStats,
+    coverage:{
+      pvpDmgUp:{status:"missing-from-export", provenance:"Table/Actor/HeroStatGroupTable"},
+      pvpDmgDown:{status:"missing-from-export", provenance:"Table/Actor/HeroStatGroupTable"}
+    },
     weaponMasteries:masteries(mastery, weapons, tables.weaponMastery)
   };
   return { actor, mastery, weapons, slots, character };
@@ -139,19 +172,37 @@ function competence(id, weaponType, tables){
   const raw = tables.pcSkills[id];
   if(!raw) throw new Error("Khala : compétence absente " + id);
   const category = sansEnum(raw.SkillCategory);
+  const normalizedCategory = CATEGORY[category] || category.toUpperCase();
+  const name = resoudreLocalisation(tables.fr, tables.en, raw.Local_Key);
+  const description = resoudreLocalisation(tables.fr, tables.en, raw.Local_Desc, raw.Local_Replace);
+  const sourceId = (normalizedCategory === "PASSIVE" ? "hero-passive:" : "skill:") + id;
   return {
-    gameId:id, weaponType, skillCategory:CATEGORY[category] || category.toUpperCase(),
-    categorie:CATEGORY[category] || category.toUpperCase(),
-    nomFr:localisation(tables.fr, raw.Local_Key), nom:localisation(tables.en, raw.Local_Key),
-    nameEn:localisation(tables.en, raw.Local_Key), descriptionFr:substituer(localisation(tables.fr, raw.Local_Desc), raw.Local_Replace),
-    descriptionEn:substituer(localisation(tables.en, raw.Local_Desc), raw.Local_Replace),
+    gameId:id, weaponType, skillCategory:normalizedCategory, categorie:normalizedCategory,
+    nomFr:name.fr, nom:name.en, nameEn:name.en, descriptionFr:description.fr,
+    descriptionEn:description.en, localisation:{status:description.status, reason:description.reason},
     recharge:Number(raw.Cooltime || 0) / 1000, cooldown:Number(raw.Cooltime || 0) / 1000,
     icone:cheminImageIcone(raw.Icon, tables) ? path.basename(cheminImageIcone(raw.Icon, tables)).replace(/\.png$/i, ".webp") : "",
-    sourceBehaviors:comportements(raw, tables.pcSkillBehaviors)
+    effectSourceIds:[sourceId], sourceBehaviors:comportements(raw, tables.pcSkillBehaviors, tables.buffs)
   };
 }
 
-function comportements(skill, table){
+function lignesBuff(behaviorId, setBuffs, buffTable){
+  return (setBuffs || []).map(setBuff => {
+    const buffTid = setBuff && setBuff.BuffTid;
+    const buff = buffTable && buffTable[buffTid];
+    if(!buffTid || buffTid === "None" || !buff) throw new Error("BuffTid absent pour " + behaviorId + " : " + buffTid);
+    const stats = (buff.AddAbil_List || []).filter(row => row && sansEnum(row.TargetAbil) !== "None");
+    const common = {
+      buffTid, applyType:sansEnum(buff.ApplyType),
+      stack:{applicationCount:Number(setBuff.BuffCnt || 0), max:Number(buff.StackType && buff.StackType.MaxStack || 0)},
+      durationMs:Number(setBuff.BuffTime), trigger:sansEnum(setBuff.ConType)
+    };
+    return stats.length ? stats.map(row => ({...common, stat:sansEnum(row.TargetAbil), value:row.Value}))
+      : [{...common, stat:null, value:null}];
+  }).flat();
+}
+
+function comportements(skill, table, buffTable = {}){
   const ids = [];
   for(const field of ["ActionStart_Behavior_Tid", "Action_Behavior_TidList", "OnceAction_Behavior_TidList"]) {
     for(const value of skill[field] || []) {
@@ -161,7 +212,7 @@ function comportements(skill, table){
   }
   return [...new Set(ids)].map(id => {
     const behavior = table[id] || {};
-    const buffs = behavior.BehaviorDetail_SetBuffTid || [];
+    const buffs = lignesBuff(id, behavior.BehaviorDetail_SetBuffTid, buffTable);
     const attacks = behavior.BehaviorDetail_AttackTid || [];
     return buffs.length || attacks.length ? {id, buffs, attacks} : null;
   }).filter(Boolean);
@@ -173,11 +224,17 @@ function potentiels(weapons, tables){
     const prefix = "calla_" + weapon.toLowerCase() + "_grade_";
     const list = Object.entries(tables.defaultWeaponSkills)
       .filter(([id]) => id.startsWith(prefix))
-      .map(([id, row]) => ({ tier:Number(row.Potential_Level), weaponType:weapon,
-        bonusFr:substituer(localisation(tables.fr, row.Local_Key), row.Local_Replace),
-        bonusEn:substituer(localisation(tables.en, row.Local_Key), row.Local_Replace),
-        localKey:row.Local_Key }))
+      .map(([id, row]) => {
+        const text = resoudreLocalisation(tables.fr, tables.en, row.Local_Key, row.Local_Replace);
+        const tier = Number(row.Potential_Level);
+        return {tier, weaponType:weapon, bonusFr:text.fr, bonusEn:text.en,
+          effectSourceIds:["potential:" + HERO_SLUG + ":" + weapon + ":" + tier]};
+      })
       .sort((a, b) => a.tier - b.tier);
+    const tiers = list.map(potential => potential.tier);
+    if(tiers.length !== 10 || tiers.some((tier, index) => tier !== index + 1)) {
+      throw new Error("Khala/" + weapon + " : paliers de potentiel requis de 1 à 10");
+    }
     result[weapon] = list;
   }
   return result;
@@ -185,16 +242,16 @@ function potentiels(weapons, tables){
 
 function effectSources(skills, potentials){
   const sourceForSkill = skill => ({
-    id:(skill.skillCategory === "PASSIVE" ? "hero-passive:" : "skill:") + skill.gameId,
+    id:skill.effectSourceIds[0],
     kind:skill.skillCategory === "PASSIVE" ? "hero-passive" : "skill", hero:HERO_SLUG,
     weaponType:skill.weaponType, gameId:skill.gameId, textFr:skill.descriptionFr,
     textEn:skill.descriptionEn, coefficientDejaCalcule:skill.skillCategory !== "PASSIVE",
-    provenance:"Table/Skill/PC_SkillTable", buffs:skill.sourceBehaviors
+    provenance:"Table/Skill/PC_SkillTable", localisation:skill.localisation, buffs:skill.sourceBehaviors
   });
   return {
     skills:skills.map(sourceForSkill),
     potentials:Object.values(potentials).flat().map(potential => ({
-      id:"potential:" + HERO_SLUG + ":" + potential.weaponType + ":" + potential.tier,
+      id:potential.effectSourceIds[0],
       kind:"potential", hero:HERO_SLUG, weaponType:potential.weaponType, tier:potential.tier,
       textFr:potential.bonusFr, textEn:potential.bonusEn,
       provenance:"Table/Skill/DefaultSkillWeaponTypeTable", buffs:[]
@@ -206,18 +263,20 @@ function linkedArmors(tables){
   return Object.entries(tables.equipments)
     .filter(([, item]) => item.ItemDivision === "EItemDivision::BindArmor"
       && (item.OnlyUse || []).map(String).includes(HERO_ID))
-    .map(([gameId, item]) => ({ gameId, nameFr:localisation(tables.fr, item.Local_Key),
-      nameEn:localisation(tables.en, item.Local_Key), weaponType:(item.BindArmor_RecommendEquip_WeaponType || [])[0] || null,
+    .map(([gameId, item]) => {
+      const name = resoudreLocalisation(tables.fr, tables.en, item.Local_Key);
+      return { gameId, nameFr:name.fr, nameEn:name.en, weaponType:(item.BindArmor_RecommendEquip_WeaponType || [])[0] || null,
       icon:item.IconName, grade:sansEnum(item.grade), reinforceMax:item.Reinforce_Max,
       quality:{min:item.Quality_Min, max:item.Quality_MAX}, mainStats:item.Growth_Ability_Main || [],
       subStats:item.Growth_Ability_Sub || [], options:item.Equip_Option || [],
-      passives:item.Equip_Passive || [], limitBreakPassives:item.LimitBreak_Passive || [] }))
+      passives:item.Equip_Passive || [], limitBreakPassives:item.LimitBreak_Passive || [] };
+    })
     .sort((a, b) => a.gameId.localeCompare(b.gameId));
 }
 
 function assets(tables, hero, skills, armors){
   const skillAssets = [...new Set(skills.map(skill => cheminImageIcone(tables.pcSkills[skill.gameId].Icon, tables))
-    .filter(source => source && (!tables.uiImages || tables.uiImages.has(source))))]
+    .filter(Boolean))]
     .map(source => ({source, target:"7ds-ui/skills/" + path.basename(source).replace(/\.png$/i, ".webp")}));
   return {
     portrait:{source:"Icon_Item/portrait_Hero/slot_Calla_001.png", target:"7ds-personnages/khala.webp"},
@@ -227,6 +286,20 @@ function assets(tables, hero, skills, armors){
       target:"7ds-armures-ssr/Armure liee/" + armor.nameFr + ".webp"
     }))
   };
+}
+
+function validerAssets(descriptors, uiImages){
+  const all = [descriptors.portrait, ...(descriptors.skills || []), ...(descriptors.linkedArmors || [])];
+  const targets = new Set();
+  for(const asset of all){
+    if(!asset || !uiImages || !uiImages.has(asset.source)) throw new Error("asset source absente : " + (asset && asset.source));
+    const target = String(asset.target || "").split("\\").join("/");
+    if(path.isAbsolute(target) || target.includes("../") || !ASSET_TARGET_PREFIXES.some(prefix => target.startsWith(prefix))) {
+      throw new Error("asset cible hors racines autorisées : " + target);
+    }
+    if(targets.has(target)) throw new Error("asset cible dupliquée : " + target);
+    targets.add(target);
+  }
 }
 
 function extraireDepuisTables(tables){
@@ -246,12 +319,14 @@ function extraireDepuisTables(tables){
   }
   const allPotentials = potentiels(hero.weapons, tables);
   const armors = linkedArmors(tables);
+  const assetDescriptors = assets(tables, hero, allSkills, armors);
+  if(tables.uiImages) validerAssets(assetDescriptors, tables.uiImages);
   const snapshot = {version:1, heroes:{khala:{
     id:HERO_ID, internalName:"Calla", nameFr:hero.character.nameFr, nameEn:hero.character.nameEn,
     meta:{role:hero.character.role, rarity:hero.character.rarity, weapons:hero.slots},
     character:hero.character, potentials:allPotentials, wikiSkills:allSkills,
     calculatorSkills, effectSources:effectSources(allSkills, allPotentials), linkedArmors:armors,
-    assets:assets(tables, hero, allSkills, armors)
+    assets:assetDescriptors
   }}};
   validerSnapshot(snapshot);
   return snapshot;
@@ -265,39 +340,85 @@ function walk(value, visitor){
 
 function validerSnapshot(snapshot){
   const hero = snapshot && snapshot.version === 1 && snapshot.heroes && snapshot.heroes.khala;
-  if(!hero) throw new Error("snapshot Khala absent ou version incompatible");
-  walk(hero, text => { if(/\{\d+\}/.test(text)) throw new Error("placeholder résiduel dans khala"); });
+  if(!hero || Object.keys(snapshot.heroes).length !== 1) throw new Error("snapshot Khala absent ou version incompatible");
+  walk(hero, text => {
+    if(/\{\d+\}/.test(text)) throw new Error("placeholder résiduel dans khala");
+    if(/^local_(skill|buff|hero)_/i.test(text)) throw new Error("clé brute interdite dans khala");
+  });
   const weapons = hero.meta && hero.meta.weapons || [];
   if(weapons.length !== 3 || new Set(weapons.map(item => item.weapon)).size !== 3) throw new Error("trois armes uniques requises pour khala");
-  for(const weapon of weapons.map(item => item.weapon)) if(!hero.potentials || !Array.isArray(hero.potentials[weapon]) || hero.potentials[weapon].length !== 10) throw new Error("dix potentiels requis pour khala/" + weapon);
+  for(const weapon of weapons.map(item => item.weapon)) {
+    const potentials = hero.potentials && hero.potentials[weapon];
+    if(!Array.isArray(potentials) || potentials.length !== 10) throw new Error("dix potentiels requis pour khala/" + weapon);
+    if(potentials.some((potential, index) => potential.tier !== index + 1)) throw new Error("paliers 1 à 10 requis pour khala/" + weapon);
+    if(potentials.some(potential => typeof potential.bonusFr !== "string" || typeof potential.bonusEn !== "string")) throw new Error("textes de potentiels requis pour khala/" + weapon);
+  }
   if(!Array.isArray(hero.wikiSkills) || hero.wikiSkills.length !== 18) throw new Error("18 compétences Wiki requises pour khala");
   if(!Array.isArray(hero.calculatorSkills) || hero.calculatorSkills.length !== 15) throw new Error("15 compétences de calcul requises pour khala");
-  const stats = hero.character && ["baseHp", "baseAtk", "baseDef", "baseSpd", "accuracy", "block", "critRate", "critDamage", "critResist", "critDmgResist", "blockDmgResist", "pvpDmgUp", "pvpDmgDown"];
-  if(!stats || stats.some(stat => typeof hero.character[stat] !== "number")) throw new Error("13 statistiques de base requises pour khala");
+  const stats = hero.character && ["baseHp", "baseAtk", "baseDef", "baseSpd", "accuracy", "block", "critRate", "critDamage", "critResist", "critDmgResist", "blockDmgResist"];
+  if(!stats || stats.some(stat => typeof hero.character[stat] !== "number")
+    || hero.character.pvpDmgUp !== null || hero.character.pvpDmgDown !== null
+    || ["pvpDmgUp", "pvpDmgDown"].some(stat => !hero.character.coverage
+      || hero.character.coverage[stat].status !== "missing-from-export"
+      || !hero.character.coverage[stat].provenance)) throw new Error("statistiques de base ou couverture JcJ invalides pour khala");
   const masteries = hero.character.weaponMasteries || hero.character.masteries || [];
   const branches = Array.isArray(masteries) ? masteries : Object.values(masteries);
   if(branches.length !== 3 || branches.some(branch => !Array.isArray(branch.levels || branch) || (branch.levels || branch).length !== 5)) throw new Error("trois branches de maîtrise à cinq niveaux requises pour khala");
   if(!Array.isArray(hero.linkedArmors) || hero.linkedArmors.length !== 3) throw new Error("trois armures liées requises pour khala");
   const sources = [...(hero.effectSources && hero.effectSources.skills || []), ...(hero.effectSources && hero.effectSources.potentials || [])];
   const ids = new Set(sources.map(source => source.id));
-  for(const skill of hero.wikiSkills) if(skill.effectSourceId && !ids.has(skill.effectSourceId)) throw new Error("source d'effet absente pour khala");
-  for(const potential of Object.values(hero.potentials).flat()) if(potential.effectSourceId && !ids.has(potential.effectSourceId)) throw new Error("source d'effet absente pour khala");
+  if(ids.size !== sources.length) throw new Error("sources d'effet dupliquées pour khala");
+  for(const skill of hero.wikiSkills) {
+    const expected = (skill.skillCategory === "PASSIVE" ? "hero-passive:" : "skill:") + skill.gameId;
+    if(!Array.isArray(skill.effectSourceIds) || skill.effectSourceIds.length !== 1
+      || skill.effectSourceIds[0] !== expected) throw new Error("source d'effet incohérente pour khala");
+    if(!ids.has(expected)) throw new Error("source d'effet absente pour khala");
+    const missing = skill.descriptionFr === null && skill.descriptionEn === null
+      && skill.localisation && skill.localisation.status === "missing-from-export"
+      && skill.localisation.reason === "localisation non couverte par l'export";
+    const resolved = typeof skill.descriptionFr === "string" && typeof skill.descriptionEn === "string"
+      && skill.localisation && skill.localisation.status === "resolved" && skill.localisation.reason === null;
+    if(!missing && !resolved) throw new Error("localisation de compétence invalide pour khala");
+  }
+  for(const [weapon, potentials] of Object.entries(hero.potentials || {})) for(const potential of potentials) {
+    const expected = "potential:" + HERO_SLUG + ":" + weapon + ":" + potential.tier;
+    if(!Array.isArray(potential.effectSourceIds) || potential.effectSourceIds.length !== 1
+      || potential.effectSourceIds[0] !== expected) throw new Error("source d'effet incohérente pour khala");
+    if(!ids.has(expected)) throw new Error("source d'effet absente pour khala");
+  }
 }
 
 function extraireContenu(racine){
+  return extraireDepuisTables(chargerTables(racine));
+}
+
+function chargerTables(racine){
   const tables = {
     fr:lireLocalisation(racine, "fr"), en:lireLocalisation(racine, "en"),
     heroMastery:lireTable(racine, "HeroMastery/HeroMastery.json"),
     heroActors:lireTable(racine, "Actor/HeroActorTable.json"), heroStats:lireTable(racine, "Actor/HeroStatGroupTable.json"),
     defaultSkills:lireTable(racine, "Skill/DefaultSkillTable.json"), defaultWeaponSkills:lireTable(racine, "Skill/DefaultSkillWeaponTypeTable.json"),
     pcSkills:lireTable(racine, "Skill/PC_SkillTable.json"), pcSkillBehaviors:lireTable(racine, "Skill/PC_SkillBehaviorTable.json"),
+    buffs:lireTable(racine, "Buff/BuffTable.json"),
     weaponMastery:lireTable(racine, "HeroMastery/HeroWeaponMastery.json"), equipments:lireTable(racine, "Item/ItemTable_Data_Equip.json")
   };
   tables.uiImages = new Set(listerImages(path.join(racine, "UIImg"), racine));
   tables.skillIcons = new Map([...tables.uiImages]
     .filter(image => image.startsWith("Icon_Item/Skill/"))
     .map(image => [cleIcone(path.basename(image, ".png")), image]));
-  return extraireDepuisTables(tables);
+  return tables;
+}
+
+function candidatsHeros(tables){
+  return Object.keys(tables.heroMastery).map(id => {
+    const actor = tables.heroActors[id] || {};
+    const defaults = tables.defaultSkills[id] || {};
+    return {
+      id, internalName:actor.String_Tid || actor.InternalName || id,
+      nameFr:localisation(tables.fr, actor.Local_Key),
+      weapons:[1, 2, 3].map(index => sansEnum(defaults["WeaponType0" + index])).filter(Boolean)
+    };
+  });
 }
 
 function listerImages(directory, racine, found = []){
@@ -314,16 +435,22 @@ function listerImages(directory, racine, found = []){
 function main(){
   const racine = process.env.DONNEES_JEU;
   if(!racine) throw new Error("DONNEES_JEU doit désigner le dossier Content exporté");
-  const snapshot = extraireContenu(racine);
+  const tables = chargerTables(racine);
+  const candidats = candidatsHeros(tables);
+  const jouables = filtrerHerosJouables(candidats);
+  const ignored = candidats.filter(hero => HERO_IDS_EXCLUS.has(String(hero.id))).map(hero => String(hero.id));
+  if(!jouables.some(hero => hero.id === HERO_ID)) throw new Error("Khala absente de la liste des héros jouables");
+  const snapshot = extraireDepuisTables(tables);
   const sortie = path.join(ROOT, "7ds-stats", "contenu-jeu.json");
   const temporaire = sortie + ".tmp";
   fs.writeFileSync(temporaire, JSON.stringify(snapshot, null, 1) + "\n", "utf8");
   fs.renameSync(temporaire, sortie);
-  console.log("1 héros jouable extrait : khala");
-  console.log("2 entrées anonymes ignorées : 409100119, 409100124");
+  console.log(Object.keys(snapshot.heroes).length + " héros jouable extrait : khala");
+  console.log(ignored.length + " entrées anonymes ignorées : " + ignored.join(", "));
   console.log("écrit : 7ds-stats/contenu-jeu.json");
 }
 
 if(require.main === module) main();
 
-module.exports = {substituer, filtrerHerosJouables, lireTable, extraireDepuisTables, extraireContenu, validerSnapshot};
+module.exports = {substituer, filtrerHerosJouables, lireTable, resoudreLocalisation,
+  comportements, listerImages, validerAssets, extraireDepuisTables, extraireContenu, validerSnapshot};
