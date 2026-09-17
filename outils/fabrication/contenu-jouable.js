@@ -1,6 +1,6 @@
 "use strict";
 
-/* Normalise le sous-ensemble jouable d'un export FModel deja produit.
+/* Normalise le sous-ensemble jouable d'un export local deja produit.
    Cet outil ne lit jamais une archive du jeu et ne conserve aucun chemin local
    dans sa sortie. */
 
@@ -163,17 +163,50 @@ function heroDepuisTables(tables){
     nameEn:name.en, rarity:sansEnum(actor.grade),
     role:slots[0].role.toUpperCase(), element:slots[0].element.toUpperCase(),
     portraitUrl:"/images/characters/khala.webp", weaponSlots:slots,
-    commonMasteryTid:mastery.Common_Mastery_Tid, ...baseStats,
+    commonMasteryTid:mastery.Common_Mastery_Tid,
+    commonMasteryStats:maitriseCommune(tables.commonMastery, mastery.Common_Mastery_Tid), ...baseStats,
     coverage:{
       pvpDmgUp:{status:"missing-from-export", provenance:"Table/Actor/HeroStatGroupTable"},
       pvpDmgDown:{status:"missing-from-export", provenance:"Table/Actor/HeroStatGroupTable"}
     },
-    weaponMasteries:masteries(mastery, weapons, tables.weaponMastery, tables.fr, tables.en)
+    weaponMasteries:masteries(mastery, weapons, tables.weaponMastery, tables.fr, tables.en, tables.weaponMasteryGroupExp)
   };
   return { actor, mastery, weapons, slots, character };
 }
 
-function masteries(mastery, weapons, table, fr, en){
+function gains(types, values, contexte){
+  if(!Array.isArray(types) || !Array.isArray(values) || types.length !== values.length
+    || values.some(value => typeof value !== "number")) throw new Error(contexte);
+  return types.map((type, index) => ({stat:sansEnum(type), value:values[index]}));
+}
+
+/* Maîtrise commune : la somme de tous les paliers de l'identifiant du héros,
+   par code et dans l'ordre où le jeu les nomme. */
+function maitriseCommune(table, tid){
+  const rows = Object.values(table || {})
+    .filter(row => String(row.Common_Mastery_Tid) === String(tid))
+    .sort((a, b) => a.Common_Mastery_Index - b.Common_Mastery_Index);
+  if(!rows.length) throw new Error("maîtrise commune absente pour " + tid);
+  const totals = new Map();
+  for(const row of rows) for(const {stat, value} of gains(row.Mastery_AbilityType, row.Mastery_AbilityValue,
+    "palier de maîtrise commune incohérent : " + tid)) totals.set(stat, (totals.get(stat) || 0) + value);
+  return [...totals].map(([stat, value]) => ({stat, value}));
+}
+
+/* Sous-paliers d'un niveau de maîtrise d'arme : les lignes d'expérience de
+   son groupe, triées par index. Un niveau sans ligne en publie zéro. */
+function sousPaliers(table, group){
+  return Object.values(table || {})
+    .filter(row => String(row.WeaponGroupTid) === String(group))
+    .sort((a, b) => a.WeaponGroupEXP_Index - b.WeaponGroupEXP_Index)
+    .map(row => {
+      if(typeof row.Mastery_Exp_Value !== "number") throw new Error("sous-palier incohérent : " + group);
+      return {exp:row.Mastery_Exp_Value, abilities:gains(row.Mastery_AbilityType, row.Mastery_AbilityValue,
+        "sous-palier incohérent : " + group)};
+    });
+}
+
+function masteries(mastery, weapons, table, fr, en, groupExp){
   return weapons.map((weapon, index) => {
     const tid = String(mastery["Weapon_" + (index + 1) + "_Mastery_Tid"] || "");
     const nodes = Object.entries(table)
@@ -192,7 +225,12 @@ function masteries(mastery, weapons, table, fr, en){
       .sort((a, b) => a.id.localeCompare(b.id));
     const levels = [...new Set(nodes.map(node => node.level))];
     if(levels.length !== 5) throw new Error("Khala/" + weapon + " : maîtrise sans cinq niveaux");
-    return { weaponType:weapon, levels:levels.map(level => ({ level, nodes:nodes.filter(node => node.level === level) })) };
+    const groupes = levels.map(level => [...new Set(nodes.filter(node => node.level === level).map(node => String(node.group)))]);
+    if(groupes.some(groupe => groupe.length !== 1) || new Set(groupes.flat()).size !== levels.length) {
+      throw new Error("Khala/" + weapon + " : groupe de maîtrise ambigu");
+    }
+    return { weaponType:weapon, levels:levels.map((level, rang) => ({ level,
+      subLevels:sousPaliers(groupExp, groupes[rang][0]), nodes:nodes.filter(node => node.level === level) })) };
   });
 }
 
@@ -406,6 +444,12 @@ function validerSnapshot(snapshot){
   const masteries = hero.character.weaponMasteries || hero.character.masteries || [];
   const branches = Array.isArray(masteries) ? masteries : Object.values(masteries);
   if(branches.length !== 3 || branches.some(branch => !Array.isArray(branch.levels || branch) || (branch.levels || branch).length !== 5)) throw new Error("trois branches de maîtrise à cinq niveaux requises pour khala");
+  if(branches.some(branch => (branch.levels || branch).some(level => !Array.isArray(level.subLevels)))) {
+    throw new Error("sous-paliers de maîtrise requis pour khala");
+  }
+  if(!Array.isArray(hero.character.commonMasteryStats) || !hero.character.commonMasteryStats.length) {
+    throw new Error("maîtrise commune requise pour khala");
+  }
   const masteryNodes = branches.flatMap(branch => (branch.levels || branch).flatMap(level => level.nodes || []));
   if(masteryNodes.some(node => {
     const resolved = typeof node.descriptionFr === "string" && typeof node.descriptionEn === "string" && node.coverage === null;
@@ -449,7 +493,9 @@ function chargerTables(racine){
     defaultSkills:lireTable(racine, "Skill/DefaultSkillTable.json"), defaultWeaponSkills:lireTable(racine, "Skill/DefaultSkillWeaponTypeTable.json"),
     pcSkills:lireTable(racine, "Skill/PC_SkillTable.json"), pcSkillBehaviors:lireTable(racine, "Skill/PC_SkillBehaviorTable.json"),
     buffs:lireTable(racine, "Buff/BuffTable.json"),
-    weaponMastery:lireTable(racine, "HeroMastery/HeroWeaponMastery.json"), equipments:lireTable(racine, "Item/ItemTable_Data_Equip.json")
+    weaponMastery:lireTable(racine, "HeroMastery/HeroWeaponMastery.json"),
+    weaponMasteryGroupExp:lireTable(racine, "HeroMastery/HeroWeaponMasteryGroupExp.json"),
+    commonMastery:lireTable(racine, "HeroMastery/HeroCommonMastery.json"), equipments:lireTable(racine, "Item/ItemTable_Data_Equip.json")
   };
   tables.uiImages = new Set(listerImages(path.join(racine, "UIImg"), racine));
   tables.skillIcons = new Map([...tables.uiImages]
@@ -508,4 +554,5 @@ function main(){
 if(require.main === module) main();
 
 module.exports = {substituer, filtrerHerosJouables, lireTable, resoudreLocalisation,
-  comportements, listerImages, validerAssets, preflightHeros, extraireDepuisTables, extraireContenu, validerSnapshot};
+  comportements, listerImages, validerAssets, preflightHeros, extraireDepuisTables, extraireContenu, validerSnapshot,
+  maitriseCommune, sousPaliers, chargerTables};
