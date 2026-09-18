@@ -1714,18 +1714,9 @@ class CatalogueLocal(unittest.TestCase):
         catalogue, _ = _gen.client_catalogue(base)
         gravees = catalogue["gear"]["engravings"]
 
-        for niveau, valeur in ((1, 2400), (2, 3200), (3, 4000)):
-            effet = gravees["133235001"]["passives"]["EpEq_Calla_B"][str(niveau)]
-            self.assertEqual(effet["classification"], "modelise")
-            self.assertEqual(effet["regles"], [{
-                "type": "bonus-critique",
-                "stat": "critDamage",
-                "valeur": valeur,
-                "mode": "passif-max",
-                "sourceId": "engraving:133235001:EpEq_Calla_B:%d" % niveau,
-            }])
-
         for game_id, passif, raison in (
+            ("133235001", "EpEq_Calla_B",
+             "critique-conditionnel-au-mirage-cumul-et-duree-inconnus"),
             ("133235002", "EpEq_Calla_C",
              "buff-equipe-conditionnel-au-vent-violent"),
             ("133235003", "EpEq_Calla_D",

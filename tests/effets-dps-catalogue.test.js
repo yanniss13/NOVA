@@ -94,17 +94,21 @@ sourcesGraveesKhala.forEach(source => {
     source.id + " doit etre raccorde au catalogue"
   );
 });
-for(const [niveau, valeur] of [["1", 2400], ["2", 3200], ["3", 4000]]){
+for(const niveau of ["1", "2", "3"]){
   const effet = catalogue.gear.engravings["133235001"]
     .passives.EpEq_Calla_B[niveau];
-  assert.equal(effet.classification, "modelise");
+  assert.equal(effet.classification, "non-inclus");
+  assert.equal(
+    effet.raison, "critique-conditionnel-au-mirage-cumul-et-duree-inconnus"
+  );
   assert.deepEqual(
-    plain(effet.regles.map(regle => [regle.type, regle.stat, regle.valeur])),
-    [["bonus-critique", "critDamage", valeur]],
-    "EpEq_Calla_B niveau " + niveau + " doit compter le bonus de Mirage"
+    plain(effet.regles), [],
+    "EpEq_Calla_B niveau " + niveau + " ne doit plus compter le bonus de Mirage"
   );
 }
 for(const [gameId, passif, raison] of [
+  ["133235001", "EpEq_Calla_B",
+    "critique-conditionnel-au-mirage-cumul-et-duree-inconnus"],
   ["133235002", "EpEq_Calla_C", "buff-equipe-conditionnel-au-vent-violent"],
   ["133235003", "EpEq_Calla_D", "critique-equipe-conditionnel-au-deluge-de-terre"]
 ]){

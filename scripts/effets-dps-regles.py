@@ -75,11 +75,22 @@ NON_INCLUS_SPECIFIQUES = {
     "potential:khala:Gauntlets:7": "projectiles-et-debuff-cible-hors-schema",
     "potential:khala:Gauntlets:9": "critique-limite-aux-competences-normales-de-terre",
     "potential:khala:Gauntlets:10": "buff-equipe-et-bombes-differees-hors-schema",
-    # Gravures de Khala : les trois niveaux de la tenue B donnent un bonus
-    # personnel de degats critiques sous Mirage, que le comparateur maximise
-    # comme les autres conditions personnelles. Les tenues C et D agissent
-    # sur toute l'equipe et enchainent des conditions de cible/Deluge que le
-    # schema individuel ne sait pas representer sans les transformer.
+    # Gravures de Khala : aucune des trois tenues n'a de ligne dans BuffTable.
+    # La tenue B dit ses degats crit. en prose (24 / 32 / 40 %), mais rien
+    # dans le snapshot ne dit si le bonus se cumule a chaque octroi de Mirage
+    # (qui empile jusqu'a 5 fois) ou dure au-dela du coup qui le declenche —
+    # l'octroi n'est meme pas un buff publie. Le classifieur generique de
+    # prose la comptait comme un bonus permanent unique, ce que rien ne
+    # prouve : sans cumul ni duree connus, la ligne resterait aussi fausse
+    # qu'absente. Les tenues C et D agissent sur toute l'equipe et enchainent
+    # des conditions de cible/Deluge que le schema individuel ne sait pas
+    # representer sans les transformer.
+    "engraving:133235001:EpEq_Calla_B:1":
+        "critique-conditionnel-au-mirage-cumul-et-duree-inconnus",
+    "engraving:133235001:EpEq_Calla_B:2":
+        "critique-conditionnel-au-mirage-cumul-et-duree-inconnus",
+    "engraving:133235001:EpEq_Calla_B:3":
+        "critique-conditionnel-au-mirage-cumul-et-duree-inconnus",
     "engraving:133235002:EpEq_Calla_C:1":
         "buff-equipe-conditionnel-au-vent-violent",
     "engraving:133235002:EpEq_Calla_C:2":
