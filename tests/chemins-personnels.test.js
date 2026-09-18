@@ -29,10 +29,12 @@ const RACINE = path.resolve(__dirname, "..");
 const EXCLUS = [/^vendor\//];
 const BINAIRES = /\.(png|webp|jpe?g|gif|ico|wasm|ttf|otf|woff2?|pdf|zip|gz|mp3|mp4|webm|traineddata)$/i;
 
-/* Separateur : une ou deux barres, obliques ou inverses (echappees en JSON).
+/* Separateur : toute suite de barres, obliques ou inverses. Un chemin peut
+   etre echappe une fois (JSON), deux fois (JSON dans une chaine JS) ou plus :
+   borner la suite laisserait un angle mort.
    Le segment qui suit « Users » / « home » est le nom d'un compte ; un gabarit
    commence par <, {, %, $ ou ~ et ne compte pas. */
-const SEP = "[\\\\/]{1,2}";
+const SEP = "[\\\\/]+";
 const COMPTE = "(?![<{%$~])[^\\\\/\\s'\"`<>{}]+";
 const MOTIFS = [
   new RegExp("\\b[A-Za-z]:" + SEP + "(?:Users|Documents and Settings)" + SEP + COMPTE, "i"),
@@ -61,11 +63,19 @@ function trouver(texte){
    chemin reel n'est ecrit dans ce fichier. */
 const lecteur = "C:" + "/Us" + "ers/quelqu" + "un/Desktop/depot";
 assert.equal(trouver("const RACINE = '" + lecteur + "';").length, 1, "chemin Windows a barres obliques");
-assert.equal(trouver("\"" + lecteur.replace(/\//g, "\\\\") + "\"").length, 1, "chemin Windows echappe en JSON");
+/* Un, deux ou quatre antislashs bruts : chemin Windows, chemin echappe en
+   JSON, et JSON loge dans une chaine JS (echappe deux fois). */
+for(const n of [1, 2, 4]){
+  const separe = lecteur.replace(/\//g, "\\".repeat(n));
+  assert.equal(trouver("\"" + separe + "\"").length, 1,
+    "chemin Windows a " + n + " antislash(s) : " + separe);
+}
+assert.equal(trouver("\"" + lecteur.replace(/\//g, "//") + "\"").length, 1, "barres obliques doublees");
 assert.equal(trouver("cd " + "/ho" + "me/quelqu" + "un/depot").length, 1, "chemin Linux");
 assert.equal(trouver("open '" + "/Us" + "ers/quelqu" + "un/depot'").length, 1, "chemin macOS");
 for(const permis of [
   "C:" + "\\Us" + "ers\\<nom>\\Downloads",
+  "C:" + "\\\\\\\\Us" + "ers\\\\\\\\<nom>\\\\\\\\Downloads",
   "C:" + "/Us" + "ers/{utilisateur}/depot",
   "%USERPROFILE%\\Desktop",
   "$HOME/depot",
