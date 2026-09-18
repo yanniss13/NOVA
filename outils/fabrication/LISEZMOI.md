@@ -29,6 +29,29 @@ Sans elles, les outils lisent une chaîne vide et échouent tout de suite sur un
 fichier introuvable. C'est voulu : mieux vaut une erreur nette qu'un chemin
 deviné.
 
+## Importer un héros absent du site public
+
+Un héros que 7dsorigin.app ne publie pas — aujourd'hui Khala — se lit dans les
+tables du jeu. Deux outils, lancés à la main dans cet ordre :
+
+```powershell
+$env:DONNEES_JEU = (Resolve-Path (Read-Host 'Dossier Content exporté')).Path
+node outils/fabrication/contenu-jouable.js
+python outils/fabrication/importer-assets-jouables.py
+```
+
+`Read-Host` demande le dossier à chaque fois : aucun chemin n'est écrit, ni
+dans ce fichier, ni dans l'historique du dépôt. Le premier outil écrit
+l'instantané normalisé `7ds-stats/contenu-jeu.json` et ignore les deux entrées
+internes sans nom ; le second en tire portrait, icônes de compétences et
+images d'armures liées, sans jamais écraser un fichier identique. Relancés sur
+le même export, ils ne changent aucun octet.
+
+Viennent ensuite, sans réseau, les modes `--client-only` des générateurs de
+`scripts/` (voir « Héros lus dans les tables du jeu » dans `AGENTS.md`) : ils
+ne remplacent que les héros de l'instantané, prouvent que les autres n'ont pas
+bougé, et leur `--check` le vérifie.
+
 ## Ce qui n'est pas ici
 
 Le déchiffreur d'archives et les notes d'extraction ont été retirés du dépôt.

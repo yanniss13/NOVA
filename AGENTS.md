@@ -17,7 +17,7 @@ et son propriétaire. Il porte aussi la liste des **fausses pistes déjà
 
 - [x] Assets rangés dans des dossiers (fournis par l'utilisateur, ne pas renommer).
 - [x] `scripts/generate-data.ps1` — scanne les dossiers et génère `data.js`.
-- [x] `data.js` — données d'assets générées (25 persos, 12 types d'armes, 5 armures).
+- [x] `data.js` — données d'assets générées (27 persos, 12 types d'armes, 5 armures).
 - [x] `index.html` — appli complète (builder + page d'affichage), autonome.
 - [x] Bijoux **SSR uniquement** (grade5) : 37 images intégrées
       (12 anneaux, 13 colliers, 12 boucles d'oreilles) — correspond aux badges
@@ -31,14 +31,14 @@ et son propriétaire. Il porte aussi la liste des **fausses pistes déjà
       `scripts/telecharger-images.py` complète armes et bijoux : il ne
       télécharge que ce qui manque et ne remplace jamais un fichier existant.
 - [x] Potentiels : palier P0→P10 par héros, façon page team-builder du site.
-      Données FR (25 persos × ~3 types d'arme × 10 paliers) dans `potentiels.js`,
+      Données FR (27 persos × ~3 types d'arme × 10 paliers) dans `potentiels.js`,
       régénérable via `scripts/generate-potentiels.py`. Le palier est **commun au héros** ;
       les 3 clés d'armes par héros déterminent les armes compatibles et l'arme
       équipée choisit les descriptions de bonus affichées.
 - [x] Compatibilité des armes : le picker ne propose que les 3 types autorisés
       du héros. Toute arme incompatible est automatiquement retirée.
-- [x] Compatibilité des armures liées : 68 images locales associées aux 25 héros
-      (2 ou 3 par héros). Le picker filtre selon le personnage et retire les
+- [x] Compatibilité des armures liées : 96 images locales associées aux 27 héros
+      (3 ou 4 par héros). Le picker filtre selon le personnage et retire les
       anciennes valeurs incompatibles.
 - [x] Badges **élément + armes** par personnage. `personnages-meta.js`
       (`scripts/generate-meta.py`) : role/rarity + `weapons` = 3 slots
@@ -55,6 +55,10 @@ et son propriétaire. Il porte aussi la liste des **fausses pistes déjà
       … ») → modal `#teamOverlay`
       (`openTeamDetail`/`heroDetail`/`equipLine`) avec l'équipement complet
       (arme + 5 armures + 3 bijoux, noms) par héros.
+- [x] **Khala, 27ᵉ héros, lue dans les tables du jeu.** Ses fiches viennent de
+      l'instantané local normalisé `7ds-stats/contenu-jeu.json`, jamais de
+      7dsorigin.app ; les 26 autres héros gardent leurs sources historiques.
+      Voir « Héros lus dans les tables du jeu » sous « Stats de référence ».
 - [x] **Partage réseau (Supabase) — Étape 1 implémentée**. Comptes + équipes +
       rosters et Analyse partagés. Auth email/mot de passe, ownership par RLS,
       caches hors ligne séparés et migration one-shot des anciennes équipes locales.
@@ -212,14 +216,14 @@ pip install -r requirements-dev.txt
 npm test
 ```
 
-`requirements-dev.txt` apporte `pglast`, le parseur de PostgreSQL utilisé par
-`tests/test_schema_sql.py` pour valider la **syntaxe** de `supabase/*.sql`, et
-`Pillow`, requis par les tests et l'importeur d'assets. Les autres tests SQL
-corps PL/pgSQL compris. Les autres tests SQL vérifient le contenu par expressions
-régulières et ne détectent aucune faute de frappe : sans ce garde, une virgule
-oubliée n'apparaissait qu'au moment de coller le fichier dans Supabase. Le test
-prouve ses propres dents — il vérifie qu'un corps volontairement cassé est bien
-refusé.
+`requirements-dev.txt` apporte deux paquets. `pglast`, le parseur de
+PostgreSQL, sert à `tests/test_schema_sql.py` pour valider la **syntaxe** de
+`supabase/*.sql`, corps PL/pgSQL compris ; `Pillow` est requis par les tests et
+par l'importeur d'assets. Les autres tests SQL vérifient le contenu par
+expressions régulières et ne détectent aucune faute de frappe : sans ce garde,
+une virgule oubliée n'apparaissait qu'au moment de coller le fichier dans
+Supabase. Le test prouve ses propres dents — il vérifie qu'un corps
+volontairement cassé est bien refusé.
 
 Playwright et Chromium sont des outils de vérification ; l'application livrée
 reste autonome et ne dépend pas de npm.
@@ -300,7 +304,7 @@ Site Confrérie 7ds/
 ├─ outils/                 # Pages hors PWA, en Disallow. chrono-animation.html mesure
 │                          # les temps d'animation image par image.
 ├─ 7ds-ui/                 # Icônes d'UI : mastery/<arme>.webp, role-elements/<el>_<role>.webp,
-│                          # skills/<Nom>.webp (313 icônes de compétences, wiki)
+│                          # skills/<Nom>.webp (337 icônes de compétences, wiki)
 ├─ AGENTS.md               # Ce fichier.
 ├─ docs/import-captures.md # Remplir un build depuis des captures d'écran (OCR).
 ├─ docs/superpowers/specs/ # Spec de design détaillée.
@@ -368,7 +372,7 @@ précache pas.
 
 | Fichier | Contenu |
 | --- | --- |
-| `personnages.json` | 25 personnages : `baseHp/baseAtk/baseDef/baseSpd`, précision, blocage, crit (taux, dégâts, résistances), PvP, `weaponSlots`, 15 niveaux de maîtrise, 30 paliers de potentiel, costumes |
+| `personnages.json` | 27 personnages : `baseHp/baseAtk/baseDef/baseSpd`, précision, blocage, crit (taux, dégâts, résistances), PvP, `weaponSlots`, 15 niveaux de maîtrise, 30 paliers de potentiel, costumes |
 | `armes.json` | 155 armes, 275 variantes de grade : `mainStat`, `subStats` (`base`, `max`, `progression`), enchantements, passifs |
 | `armures.json` | 232 pièces sur 7 emplacements × 5 grades : `mainStat`, `subStat`, `setId`, `reinforceMax`, qualité, `growth` |
 | `armures-gravees.json` | 98 équipements gravés, rapprochés de leur costume et de leur personnage, avec passifs de gravure et matériaux |
@@ -376,6 +380,33 @@ précache pas.
 | `sets.json` | 22 ensembles avec bonus 2 et 4 pièces |
 | `libelles-stats.json` | 72 codes de stat → libellés FR/EN, `taux`, libellé court |
 | `stat-metadata.json` | Métadonnées explicites `{family, unit}` des codes émis |
+
+### Héros lus dans les tables du jeu
+
+Un héros que 7dsorigin.app ne publie pas — aujourd'hui Khala seule — vient de
+l'instantané local normalisé `7ds-stats/contenu-jeu.json`, produit hors CI par
+`outils/fabrication/contenu-jouable.js` (voir `outils/fabrication/LISEZMOI.md`).
+Les générateurs concernés (`generate-meta.py`, `generate-potentiels.py`,
+`generate-stats.py`, `generate-armures-liees.py`, `generate-wiki.py`,
+`generate-competences.py`, `generate-effets-dps.py`) acceptent
+`--client-only` : sans réseau, ils remplacent les seules entrées des héros de
+l'instantané et **prouvent** que les autres n'ont pas bougé — empreinte ou
+comparaison profonde, erreur au moindre écart. Leur `--check`, quand ils en
+ont un (tous sauf `generate-stats.py`), refuse une entrée locale périmée.
+
+Une seule exception à l'historique intouchable : `generate-effets-dps.py
+--client-only` pose une note de `NOTES_MODELISE` (`scripts/effets-dps-regles.py`)
+sur une entrée historique `modelise` qui n'en a pas encore — Daisy/Bouclier
+palier 9, dont le +60 % conditionnel reste hors calcul. Tout autre écart
+historique lève, et une note sur un identifiant absent ou non `modelise` casse
+la génération.
+
+Les tables du jeu ne donnent pas les coefficients JcJ de Khala : `pvpDmgUp` et
+`pvpDmgDown` restent `null`, déclarés `missing-from-export` dans `coverage`, et
+`generate-stats-build.py` les omet. Un héros peut donc n'avoir que **11**
+`baseStats` au lieu de 13 ; ne jamais combler un coefficient absent par zéro
+ou par celui d'un autre héros. Toute autre statistique de base absente reste
+une erreur.
 
 Quatre points à ne pas réapprendre à la dure :
 
@@ -388,7 +419,9 @@ Quatre points à ne pas réapprendre à la dure :
   les 152 occurrences de ce mot dans le payload sont surtout des libellés
   d'interface ;
 - seules **70 des 232** armures ont des options aléatoires (les hauts grades),
-  contre **85 sur 85** pour les gravées. Un compte partiel n'est pas un bug ;
+  contre toutes les gravées que le site publie. Les trois gravées de Khala,
+  venues des tables du jeu, n'ont pas d'entrée dans `enchantements.json`
+  (95 sur 98). Un compte partiel n'est pas un bug ;
 - les codes de stat ont deux sources de libellés : les objets `{stat, nameFr}`
   répartis dans l'arbre, et un dictionnaire court `statLabels`
   (« ATK », « Perforation ») qui couvre 8 codes absents des premiers. Il faut
@@ -937,6 +970,9 @@ catalogue périmé, une image locale non citée ou une entrée sans image.
 Deux héros peuvent porter une tenue du même nom : le fichier de l’un prend
 alors son nom en préfixe — « Khala — Préparation totale.webp » — et le nom
 officiel de la tenue reste dans les catalogues, jamais dans le chemin seul.
+Un nom affiché se lit **toujours** dans le catalogue — `nameOfFile()` de
+`js/metier/catalogue.js` — et jamais dans le chemin : « Khala — » n'est qu'un
+préfixe de fichier, un membre ne doit jamais le voir.
 
 `normalizeHero()` refuse une valeur de `armor["Armure liee"]` si son fichier
 n’appartient pas au tableau du héros. Les quatre emplacements universels
@@ -1653,8 +1689,9 @@ une seule règle, un seul endroit où elle peut avoir tort.
 `data/wiki-competences.js` pose `window.SEVEN_DS_WIKI_COMPETENCES` :
 `{ [slug]: [{ gameId, weaponType, categorie, nomFr, descriptionFr, recharge }] }`.
 Régénérable par `python scripts/generate-wiki.py`, qui lit les pages
-**françaises** `7dsorigin.app/fr/characters/<slug>`. 18 compétences par héros,
-six par type d'arme, **passifs compris** (451 au total, 190 Ko).
+**françaises** `7dsorigin.app/fr/characters/<slug>` ; celles de Khala viennent
+de l'instantané local par `--client-only`. 18 compétences par héros, six par
+type d'arme, **passifs compris** (487 au total, 19 pour Merlin, 232 Ko).
 
 Ne pas le confondre avec `data/competences.js` (comparateur de dégâts) : celui-là
 est un catalogue de **calcul**, en anglais, dont les passifs sont exclus par
@@ -1663,20 +1700,20 @@ atterri sur `main` ; leur fusion est un chantier à ouvrir après.
 
 Chaque compétence porte le nom de fichier de son icône, servie localement
 depuis `7ds-ui/skills/`. `python scripts/telecharger-images.py` complète le
-dossier : il lit les noms dans le catalogue commité, sans revisiter les 25
+dossier : il lit les noms dans le catalogue commité, sans revisiter les
 fiches. `tests/wiki-catalogue.test.js` refuse une icône citée mais absente.
 
 **Deux pièges de la source, relevés à la mesure et pas supposés :**
 
 - une description peut n'être qu'un **renvoi** — `"$38"` — vers un texte rangé
-  ailleurs dans le flux React. Deux cas sur 451 (le passif d'Escanor, une
+  ailleurs dans le flux React. Deux cas sur les 469 des fiches (le passif d'Escanor, une
   compétence de Merlin). Le générateur les suit, et refuse d'écrire s'il reste
   un renvoi non résolu ;
 - la longueur annoncée par un morceau `<id>:T<hex>,` est en **octets**, pas en
   caractères : 0x41d = 1053 octets pour 1034 caractères sur le passif
   d'Escanor. Couper au caractère déborde sur le morceau suivant.
 
-**Ce fichier n'est pas précaché.** 190 Ko de prose pour un onglet qu'on ouvre
+**Ce fichier n'est pas précaché.** 232 Ko de prose pour un onglet qu'on ouvre
 délibérément : `js/vues/wiki.js` l'injecte par une balise `<script>` à la
 première ouverture, et `networkFirst` de `sw.js` le met en cache au passage.
 
@@ -1801,7 +1838,7 @@ l'index des archives, ni le code qui s'en sert, ni le mode d'emploi qui mène à
 l'une ou à l'autre. Diffuser un tel moyen est une infraction distincte du droit
 d'auteur : ce qui est reproché n'est plus la donnée, c'est l'outil. Les notes
 d'extraction et le déchiffreur `.pak` vivent hors du dépôt et sont nommés dans
-`.gitignore`. Les cinquante outils de `outils/fabrication/` qui restent ne lisent que
+`.gitignore`. Les cinquante et un outils de `outils/fabrication/` qui restent ne lisent que
 des exports JSON déjà produits sur le disque du propriétaire — aucun ne touche
 une archive du jeu, aucun n'approche un processus.
 
@@ -1912,12 +1949,14 @@ La carte `[data-card="chronometrage"]` de « Mon suivi » est **le seul chemin**
 du site vers l'outil. Sans elle, un membre n'a aucun moyen de le trouver, et le
 compteur reste à zéro quoi qu'il arrive. Elle disparaît quand tout est mesuré.
 
-Le générateur sépare trois groupes — actuellement **76 → 184 → 75**. Les 76
-attaques normales (`NORMAL`) et spéciales (`ACTIVE_THIRD`) sans recharge
+Le générateur ne liste que ce qui reste à mesurer : une compétence dont
+`data/animations-verrous.json` donne déjà le verrou, ou une attaque sautée, en
+sort. Il sépare trois groupes — actuellement **3 → 27 → 6**, 36 compétences.
+Les 3 attaques normales (`NORMAL`) et spéciales (`ACTIVE_THIRD`) sans recharge
 deviennent calculables quand leur animation est mesurée : le simulateur les
 garde hors rotation tant que ce garde-fou ne fournit pas une durée strictement
-positive, plutôt que d'inventer une cadence. Les 184 compétences avec recharge
-sont déjà calculées ; leur durée mesurée affine leur DPS. Les 75 compétences de
+positive, plutôt que d'inventer une cadence. Les 27 compétences avec recharge
+sont déjà calculées ; leur durée mesurée affine leur DPS. Les 6 compétences de
 relève (`TAG_SKILL`) restent hors du comparateur individuel et attendent une
 simulation d'équipe, même si leur animation est mesurée.
 
