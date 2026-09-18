@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """Normalisation des passifs et interactions utilisés par le DPS 60 s."""
+import copy
 import importlib.util
 import json
 import tempfile
@@ -1846,6 +1847,106 @@ class CatalogueLocal(unittest.TestCase):
                     _gen.main(["--check"], cible=cible)
 
         self.assertEqual(code, 0)
+
+
+class NotesDeclareesHistoriques(unittest.TestCase):
+    """Une note declaree vaut aussi pour un heros historique, sans reseau.
+
+    `--client-only` recopie l'historique tel quel depuis `data/effets-dps.js` :
+    une note ajoutee a `NOTES_MODELISE` pour Daisy n'y serait jamais posee, et
+    `--check` ne verrait pas qu'elle manque. Le seul ecart historique tolere
+    est l'apparition de cette note ; tout autre reste une erreur.
+    """
+
+    DAISY = "potential:daisy:Shield:9"
+    NOTE = "degats-supplementaires-d-ultime-hors-schema"
+
+    def base_sans_note(self):
+        base = _gen.client_content.read_window_assignment(
+            RACINE / "data" / "effets-dps.js", "SEVEN_DS_EFFETS_DPS"
+        )
+        base["heroes"]["daisy"]["Shield"]["potentials"]["9"].pop("raison", None)
+        return base
+
+    def test_la_note_de_daisy_est_posee_sans_reseau_et_exigee_par_check(self):
+        self.assertEqual(_gen.NOTES_MODELISE.get(self.DAISY), self.NOTE)
+        base = self.base_sans_note()
+        with tempfile.TemporaryDirectory() as dossier:
+            cible = Path(dossier) / "effets-dps.js"
+            cible.write_text(_gen.rendu(base), encoding="utf-8")
+            with mock.patch.object(
+                _gen, "fetch", side_effect=AssertionError("reseau interdit")
+            ):
+                with self.assertRaises(SystemExit):
+                    _gen.main(["--check"], cible=cible)
+                _gen.main(["--client-only"], cible=cible)
+                self.assertEqual(_gen.main(["--check"], cible=cible), 0)
+            apres = _gen.client_content.read_window_assignment(
+                cible, "SEVEN_DS_EFFETS_DPS"
+            )
+        daisy = apres["heroes"]["daisy"]["Shield"]["potentials"]["9"]
+        self.assertEqual(daisy["classification"], "modelise")
+        self.assertEqual(daisy["raison"], self.NOTE)
+        self.assertEqual(
+            [(r["type"], r["cible"], r["valeur"]) for r in daisy["regles"]],
+            [("bonus-degats", "ultimate", 4000)],
+            "le +60 % conditionnel reste hors du calcul",
+        )
+        attendu = copy.deepcopy(base)
+        attendu["heroes"]["daisy"]["Shield"]["potentials"]["9"]["raison"] = self.NOTE
+        self.assertEqual(apres, attendu)
+
+    def test_tout_autre_ecart_historique_reste_interdit(self):
+        base = self.base_sans_note()
+        autorise = copy.deepcopy(base)
+        autorise["heroes"]["daisy"]["Shield"]["potentials"]["9"]["raison"] = self.NOTE
+        _gen.controler_ecarts_historiques(base, autorise, _gen.NOTES_MODELISE)
+
+        def valeur(c):
+            c["heroes"]["daisy"]["Shield"]["potentials"]["9"]["regles"][0]["valeur"] = 6000
+
+        def regle(c):
+            regles = c["heroes"]["daisy"]["Shield"]["potentials"]["9"]["regles"]
+            regles.append(copy.deepcopy(regles[0]))
+
+        def ordre(c):
+            potentiels = c["heroes"]["daisy"]["Shield"]["potentials"]
+            c["heroes"]["daisy"]["Shield"]["potentials"] = dict(
+                reversed(list(potentiels.items()))
+            )
+
+        def autre_raison(c):
+            c["heroes"]["daisy"]["Shield"]["potentials"]["9"]["raison"] = "autre"
+
+        def note_non_declaree(c):
+            entree = c["heroes"]["daisy"]["Shield"]["potentials"]["1"]
+            entree["raison"] = self.NOTE
+
+        for nom, alteration in [("valeur", valeur), ("regle", regle),
+                                ("ordre", ordre), ("autre-raison", autre_raison),
+                                ("note-non-declaree", note_non_declaree)]:
+            with self.subTest(nom):
+                modifie = copy.deepcopy(base)
+                alteration(modifie)
+                with self.assertRaisesRegex(ValueError, "effets historiques modifies"):
+                    _gen.controler_ecarts_historiques(
+                        base, modifie, _gen.NOTES_MODELISE
+                    )
+
+    def test_une_raison_historique_differente_de_la_note_casse(self):
+        base = self.base_sans_note()
+        base["heroes"]["daisy"]["Shield"]["potentials"]["9"]["raison"] = "autre"
+        with self.assertRaisesRegex(ValueError, self.DAISY):
+            _gen.client_catalogue(base)
+
+    def test_une_note_perimee_casse_la_generation(self):
+        base = self.base_sans_note()
+        for identite in ["potential:personne:Axe:1", "potential:ban:Cudgel3c:9"]:
+            with self.subTest(identite):
+                notes = dict(_gen.NOTES_MODELISE, **{identite: self.NOTE})
+                with mock.patch.object(_gen, "NOTES_MODELISE", notes):
+                    with self.assertRaisesRegex(ValueError, identite):
+                        _gen.client_catalogue(base)
 
 
 class DescriptionFrancaiseTests(unittest.TestCase):

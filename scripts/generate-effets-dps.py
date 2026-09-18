@@ -1605,10 +1605,76 @@ def sans_effets_client(catalogue, slugs):
     return result
 
 
+def _entrees_classees(catalogue):
+    """Toutes les entrees rangees (hors audit) qui portent une classification."""
+    pile = [valeur for cle, valeur in catalogue.items() if cle != "audit"]
+    while pile:
+        noeud = pile.pop()
+        if isinstance(noeud, dict):
+            if "id" in noeud and "classification" in noeud:
+                yield noeud
+            pile.extend(noeud.values())
+        elif isinstance(noeud, list):
+            pile.extend(noeud)
+
+
+def poser_notes_historiques(historic, notes):
+    """Pose une note declaree sur une entree historique `modelise` qui n'en a pas.
+
+    `--client-only` recopie l'historique depuis le fichier genere : sans ce
+    passage, une note ajoutee pour un heros historique n'y apparaitrait qu'a
+    la prochaine regeneration reseau complete.
+    """
+    result = copy.deepcopy(historic)
+    for entree in _entrees_classees(result):
+        note = notes.get(entree["id"])
+        if note and entree["classification"] == "modelise" and "raison" not in entree:
+            entree["raison"] = note
+    return result
+
+
+def controler_ecarts_historiques(avant, apres, notes):
+    """Seul ecart tolere : l'apparition, en fin d'entree, de sa note declaree."""
+    def compare(a, b, chemin):
+        if isinstance(a, dict) and isinstance(b, dict):
+            cles_a, cles_b = list(a), list(b)
+            if cles_b == cles_a + ["raison"]:
+                if a.get("classification") != "modelise" or notes.get(a.get("id")) != b["raison"]:
+                    raise ValueError("effets historiques modifies: %s" % chemin)
+            elif cles_b != cles_a:
+                raise ValueError("effets historiques modifies: %s" % chemin)
+            for cle in cles_a:
+                compare(a[cle], b[cle], "%s/%s" % (chemin, cle))
+        elif isinstance(a, list) and isinstance(b, list):
+            if len(a) != len(b):
+                raise ValueError("effets historiques modifies: %s" % chemin)
+            for rang, (x, y) in enumerate(zip(a, b)):
+                compare(x, y, "%s/%d" % (chemin, rang))
+        elif type(a) is not type(b) or a != b:
+            raise ValueError("effets historiques modifies: %s" % chemin)
+    compare(avant, apres, "")
+
+
+def verifier_notes_declarees(catalogue, notes):
+    """Une note perimee ne passe pas en silence : chaque identifiant de
+    `NOTES_MODELISE` doit exister, etre `modelise` et porter sa note."""
+    index = {entree["id"]: entree for entree in _entrees_classees(catalogue)}
+    for identite, note in sorted(notes.items()):
+        entree = index.get(identite)
+        if entree is None:
+            raise ValueError("note declaree sans entree: %s" % identite)
+        if entree["classification"] != "modelise":
+            raise ValueError("note declaree sur une entree %s: %s"
+                             % (entree["classification"], identite))
+        if entree.get("raison") != note:
+            raise ValueError("note declaree non portee: %s" % identite)
+
+
 def client_catalogue(base):
     snapshot = client_content.load_snapshot()
     slugs = set(client_content.client_slugs(snapshot))
-    historic = sans_effets_client(base, slugs)
+    brut = sans_effets_client(base, slugs)
+    historic = poser_notes_historiques(brut, NOTES_MODELISE)
     characters = [hero for hero in charge_json("personnages.json") if hero["slug"] in slugs]
     skills = [skill for slug in sorted(slugs) for skill in client_effect_skills(slug, snapshot)]
     local = construire_catalogue(collecter_sources(characters, [], [], [], [], skills))
@@ -1620,6 +1686,8 @@ def client_catalogue(base):
     result["audit"]["total"] = len(result["audit"]["sources"])
     if sans_effets_client(result, slugs) != historic:
         raise ValueError("effets historiques modifies")
+    controler_ecarts_historiques(brut, sans_effets_client(result, slugs), NOTES_MODELISE)
+    verifier_notes_declarees(result, NOTES_MODELISE)
     digest = hashlib.sha256(json.dumps(historic, ensure_ascii=False, sort_keys=True,
                                      separators=(",", ":")).encode("utf-8")).hexdigest()
     return result, digest
@@ -1720,6 +1788,7 @@ def main(argv=None, cible=None):
         hero_skills,
     )
     catalogue = construire_catalogue(sources)
+    verifier_notes_declarees(catalogue, NOTES_MODELISE)
     cible.write_text(rendu(catalogue), encoding="utf-8", newline="\n")
     print("effets-dps.js genere :", catalogue["audit"]["total"], "sources")
     return 0

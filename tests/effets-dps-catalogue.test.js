@@ -56,6 +56,14 @@ assert.equal(
   "degats-supplementaires-d-ultime-hors-schema",
   "un potentiel partiellement modelise doit declarer la clause non comptee"
 );
+/* Daisy/Bouclier palier 9 : les 40 % d'ultime sont comptes, le +60 % de
+   degats supplementaires sous [Daisy et Domby] reste dehors, et le dit. */
+const daisyBouclier9 = catalogue.heroes.daisy.Shield.potentials["9"];
+assert.equal(daisyBouclier9.classification, "modelise");
+assert.equal(daisyBouclier9.raison, "degats-supplementaires-d-ultime-hors-schema",
+  "le +60 % conditionnel de Daisy doit etre declare hors calcul");
+assert.equal(JSON.stringify(daisyBouclier9.regles.map(regle => [regle.type, regle.cible, regle.valeur])),
+  JSON.stringify([["bonus-degats", "ultimate", 4000]]), "le +60 % reste hors du calcul");
 assert.equal(catalogue.audit.inconnus, 0);
 assert.ok(catalogue.audit.total > 700, "Le catalogue doit couvrir toutes les sources");
 assert.ok(catalogue.heroes.merlin.Wand.potentials["10"]);

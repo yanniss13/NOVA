@@ -171,6 +171,12 @@ NOTES_MODELISE = {
     # degats supplementaires d'un ultime sont un seau a part, que le
     # comparateur ne separe pas — meme raison que potential:ban:Cudgel3c:9.
     "potential:khala:Cudgel3c:4": "degats-supplementaires-d-ultime-hors-schema",
+    # « Renforce la puissance de l'attaque ultime de 40 %, et lorsque l'effet
+    # [Daisy et Domby] est actif, augmente les degats supplementaires de
+    # 60 % » : le 40 % est compte, le +60 % reste dehors (decision du
+    # proprietaire) — meme seau a part que ci-dessus. Heros historique :
+    # `--client-only` pose la note sans toucher au reste de son entree.
+    "potential:daisy:Shield:9": "degats-supplementaires-d-ultime-hors-schema",
 }
 
 REGLES_SPECIFIQUES = {
