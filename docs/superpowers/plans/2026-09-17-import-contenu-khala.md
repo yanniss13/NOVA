@@ -20,7 +20,7 @@
 - Ne jamais modifier `data/animations-mesurees.json` : ce fichier reste exclusivement manuel.
 - Toute description générée contenant encore `/{\d+}/` fait échouer la génération.
 - Les tables donnent des faits ; la prose seule ne doit jamais créer une règle numérique ambiguë.
-- Préserver les fichiers non suivis existants sous `assets/ambiance/` et `outils/fmodel/`.
+- Préserver les fichiers non suivis existants sous `assets/ambiance/` et dans le dossier d'outils local de l'utilisateur.
 - Ne créer aucune migration Supabase : tous les nouveaux champs restent dans les catalogues statiques existants.
 
 ---
@@ -785,7 +785,7 @@ git diff --check
 git status --short
 ```
 
-Vérifier explicitement : aucun chemin absolu vers l'export, aucune modification de `data/animations-mesurees.json`, aucune suppression d'un héros existant, aucun ajout des IDs anonymes, aucun fichier sous `outils/fmodel/` indexé.
+Vérifier explicitement : aucun chemin absolu vers l'export, aucune modification de `data/animations-mesurees.json`, aucune suppression d'un héros existant, aucun ajout des IDs anonymes, aucun fichier du dossier d'outils local de l'utilisateur indexé.
 
 - [ ] **Step 4: Lancer toute la suite**
 
@@ -806,4 +806,4 @@ git commit -m "docs(donnees): documenter l import reproductible de Khala"
 - [ ] **Step 7: Vérifier l'état final**
 
 Run: `git status --short`  
-Expected: seuls les fichiers non suivis préexistants sous `assets/ambiance/` et `outils/fmodel/` restent visibles ; aucun fichier du chantier ne demeure non commité.
+Expected: seuls les fichiers non suivis préexistants sous `assets/ambiance/` et dans le dossier d'outils local de l'utilisateur restent visibles ; aucun fichier du chantier ne demeure non commité.

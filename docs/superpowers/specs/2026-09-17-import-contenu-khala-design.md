@@ -157,7 +157,7 @@ exportés. Le workflow GitHub Pages continue d'exclure
 `outils/fabrication/` et `7ds-stats/` de l'artefact publié.
 
 Les fichiers non suivis existants, notamment les images d'ambiance et
-`outils/fmodel/`, ne font pas partie du chantier et ne sont ni modifiés ni
+le dossier d'outils local, ne font pas partie du chantier et ne sont ni modifiés ni
 supprimés.
 
 ## Vérifications

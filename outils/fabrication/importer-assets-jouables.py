@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Convertit les images PNG déclarées par le snapshot de contenu jouable.
 
-L'export FModel reste une entrée locale, jamais une dépendance du site. Le
+L'export du jeu reste une entrée locale, jamais une dépendance du site. Le
 snapshot est la seule liste de fichiers importés : le script ne parcourt pas
 le dossier d'export à la recherche d'images supplémentaires.
 """

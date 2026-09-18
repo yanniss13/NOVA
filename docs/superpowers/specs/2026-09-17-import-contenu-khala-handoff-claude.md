@@ -143,12 +143,12 @@ $env:DONNEES_JEU = (Resolve-Path (Read-Host 'Dossier Content exporté')).Path
 - Ne jamais modifier `data/animations-mesurees.json`.
 - Aucun cas spécial `if (slug === "khala")` dans les vues.
 - Aucune migration Supabase.
-- Ne pas ajouter le dossier d'export, `outils/fmodel/` ou un chemin personnel à
+- Ne pas ajouter le dossier d'export, le dossier d'outils local ou un chemin personnel à
   Git.
 - `requirements-dev.txt` contient maintenant `pglast` et `Pillow`; cette
   dépendance est nécessaire avant `npm test` dans la CI.
 - Les fichiers non suivis du checkout principal sous `assets/ambiance/` et
-  `outils/fmodel/` appartiennent à l'utilisateur et restent hors chantier.
+  le dossier d'outils local appartiennent à l'utilisateur et restent hors chantier.
 
 ## Vérifications déjà acquises
 
