@@ -185,6 +185,26 @@ assert.ok(passifArmeManquant.nonInclus.some(exclusion =>
   exclusion.id === "weapon:passive:weapon"
 ));
 
+const catalogueSansGravure = JSON.parse(JSON.stringify(catalogue));
+catalogueSansGravure.gear.engravings = {};
+const passifGravureAbsent = plain(effetsDuBuild({
+  hero,
+  dossierArme:"Baguette",
+  catalogue:catalogueSansGravure,
+  statsResult
+}));
+assert.ok(
+  passifGravureAbsent.nonInclus.some(exclusion =>
+    exclusion.id === "engraving:passive:Armure liee"
+      && exclusion.raison === "passif-absent-du-catalogue-d-effets"
+  ),
+  "une gravure equipee absente du catalogue doit etre annoncee, jamais ignoree"
+);
+assert.ok(
+  !passifGravureAbsent.effets.some(effet => effet.slot === "Armure liee"),
+  "une gravure absente ne doit pas produire d'effet fantome"
+);
+
 /* LA TRANSCENDANCE SUIT LE RENFORCEMENT DE SA TENUE.
 
    Le jeu plafonne une armure gravee a +5, puis +10, +14 et +15, un palier par

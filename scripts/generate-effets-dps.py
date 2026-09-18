@@ -1588,7 +1588,7 @@ def client_effect_skills(slug, snapshot=None):
     return local["skills"]
 
 
-def sans_effets_client(catalogue, slugs):
+def sans_effets_client(catalogue, slugs, engraved_ids=()):
     """Projection historique, audit compris ; identites lues dans les fiches."""
     result = copy.deepcopy(catalogue)
     removed = set()
@@ -1600,9 +1600,59 @@ def sans_effets_client(catalogue, slugs):
         if effect.get("hero") in slugs:
             removed.add(effect["id"])
             del result["skills"][game_id]
+    for game_id in engraved_ids:
+        entree = result["gear"]["engravings"].pop(str(game_id), None)
+        for niveaux in (entree or {}).get("passives", {}).values():
+            removed.update(effect["id"] for effect in niveaux.values())
     result["audit"]["sources"] = [effect for effect in result["audit"]["sources"] if effect["id"] not in removed]
     result["audit"]["total"] = len(result["audit"]["sources"])
     return result
+
+
+def gravures_client(snapshot):
+    """Gravures appartenant aux seuls heros du snapshot, par gameId declare.
+
+    Le lien d'autorite est `linkedArmors` dans le snapshot : un prefixe de slug
+    ou de nom serait une convention de chemin, pas une preuve d'appartenance.
+    Toute reference absente ou dupliquee casse avant la generation.
+    """
+    attendues = {}
+    for slug in client_content.client_slugs(snapshot):
+        for piece in client_content.client_section(slug, "linkedArmors", snapshot):
+            game_id = str(piece.get("gameId") or "")
+            if not game_id or game_id in attendues:
+                raise ValueError("gravure client invalide ou dupliquee: %s" % game_id)
+            attendues[game_id] = slug
+    trouvees = {}
+    for piece in charge_json("armures-gravees.json"):
+        game_id = str(piece.get("gameId") or "")
+        if game_id not in attendues:
+            continue
+        if game_id in trouvees:
+            raise ValueError("gravure client dupliquee: %s" % game_id)
+        trouvees[game_id] = piece
+    manquantes = sorted(set(attendues) - set(trouvees))
+    if manquantes:
+        raise ValueError("gravures client absentes: %s" % ", ".join(manquantes))
+    return [copy.deepcopy(trouvees[game_id]) for game_id in attendues]
+
+
+def verifier_sources_gravees(sources, catalogue):
+    """Prouve le raccord source -> entree rangee -> audit pour chaque niveau."""
+    audit = [source["id"] for source in catalogue["audit"]["sources"]]
+    for source in sources:
+        try:
+            entree = catalogue["gear"]["engravings"][str(source["gear"])][
+                "passives"
+            ][source["passive"]][str(source["level"])]
+        except KeyError as exc:
+            raise ValueError(
+                "gravure client absente du catalogue: %s" % source["id"]
+            ) from exc
+        if entree.get("id") != source["id"] or audit.count(source["id"]) != 1:
+            raise ValueError(
+                "gravure client non auditee exactement une fois: %s" % source["id"]
+            )
 
 
 def _entrees_classees(catalogue):
@@ -1673,20 +1723,31 @@ def verifier_notes_declarees(catalogue, notes):
 def client_catalogue(base):
     snapshot = client_content.load_snapshot()
     slugs = set(client_content.client_slugs(snapshot))
-    brut = sans_effets_client(base, slugs)
+    engraved = gravures_client(snapshot)
+    engraved_ids = {str(piece["gameId"]) for piece in engraved}
+    brut = sans_effets_client(base, slugs, engraved_ids)
     historic = poser_notes_historiques(brut, NOTES_MODELISE)
     characters = [hero for hero in charge_json("personnages.json") if hero["slug"] in slugs]
     skills = [skill for slug in sorted(slugs) for skill in client_effect_skills(slug, snapshot)]
-    local = construire_catalogue(collecter_sources(characters, [], [], [], [], skills))
+    sources = collecter_sources(characters, [], [], engraved, [], skills)
+    local = construire_catalogue(sources)
+    verifier_sources_gravees(
+        [source for source in sources if source["kind"] == "engraving"],
+        local,
+    )
     result = copy.deepcopy(historic)
     for slug in sorted(slugs):
         result["heroes"][slug] = local["heroes"][slug]
     result["skills"].update({key: effect for key, effect in local["skills"].items() if effect.get("hero") in slugs})
+    for game_id in sorted(engraved_ids):
+        result["gear"]["engravings"][game_id] = local["gear"]["engravings"][game_id]
     result["audit"]["sources"].extend(local["audit"]["sources"])
     result["audit"]["total"] = len(result["audit"]["sources"])
-    if sans_effets_client(result, slugs) != historic:
+    if sans_effets_client(result, slugs, engraved_ids) != historic:
         raise ValueError("effets historiques modifies")
-    controler_ecarts_historiques(brut, sans_effets_client(result, slugs), NOTES_MODELISE)
+    controler_ecarts_historiques(
+        brut, sans_effets_client(result, slugs, engraved_ids), NOTES_MODELISE
+    )
     verifier_notes_declarees(result, NOTES_MODELISE)
     digest = hashlib.sha256(json.dumps(historic, ensure_ascii=False, sort_keys=True,
                                      separators=(",", ":")).encode("utf-8")).hexdigest()

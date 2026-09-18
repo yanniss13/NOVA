@@ -242,8 +242,21 @@ import {
         const gearEntry = definition && sourceCatalogue.gear
           ? entreeParSlug(sourceCatalogue.gear[famille], definition.slug)
           : null;
-        Object.values(gearEntry && gearEntry.passives || {}).forEach(niveaux => {
-          retenir(niveaux[String(fact.level)], {
+        const effetsDuNiveau = Object.values(gearEntry && gearEntry.passives || {})
+          .map(niveaux => niveaux[String(fact.level)])
+          .filter(Boolean);
+        if(!effetsDuNiveau.length){
+          nonInclus.push({
+            id:fact.source + ":" + fact.slot,
+            origine:"gear",
+            slot:fact.slot,
+            level:fact.level,
+            raison:"passif-absent-du-catalogue-d-effets"
+          });
+          return;
+        }
+        effetsDuNiveau.forEach(effet => {
+          retenir(effet, {
             origine:"gear", slot:fact.slot, level:fact.level
           });
         });

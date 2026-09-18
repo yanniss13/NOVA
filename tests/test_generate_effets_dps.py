@@ -1672,6 +1672,92 @@ class CatalogueLocal(unittest.TestCase):
             "hero-costume-1",
         )
 
+    def test_client_catalogue_couvre_tous_les_niveaux_de_gravure_client(self):
+        """Chaque passif grave du snapshot doit rejoindre le catalogue et l'audit.
+
+        Une gravure absente de `collecter_sources` est autrement invisible : le
+        consommateur possede bien son fait `engraving:passive`, mais ne trouve
+        aucune entree a appliquer ni a annoncer.
+        """
+        base = _gen.client_content.read_window_assignment(
+            RACINE / "data" / "effets-dps.js", "SEVEN_DS_EFFETS_DPS"
+        )
+        catalogue, _ = _gen.client_catalogue(base)
+        snapshot = _gen.client_content.load_snapshot()
+        ids_pieces = {
+            piece["gameId"]
+            for hero in snapshot["heroes"].values()
+            for piece in hero["linkedArmors"]
+        }
+        pieces = [row for row in self.engraved if row["gameId"] in ids_pieces]
+        sources = _gen.collecter_sources([], [], [], pieces, [], [])
+        attendus = {source["id"] for source in sources}
+        audites = {
+            source["id"] for source in catalogue["audit"]["sources"]
+            if source["id"].startswith("engraving:")
+            and source["id"].split(":", 2)[1] in ids_pieces
+        }
+
+        self.assertEqual(len(pieces), 3)
+        self.assertEqual(len(attendus), 9)
+        self.assertEqual(audites, attendus)
+        for source in sources:
+            niveau = catalogue["gear"]["engravings"][source["gear"]]["passives"][
+                source["passive"]
+            ][str(source["level"])]
+            self.assertEqual(niveau["id"], source["id"])
+
+    def test_gravures_de_khala_suivent_la_politique_stricte(self):
+        base = _gen.client_content.read_window_assignment(
+            RACINE / "data" / "effets-dps.js", "SEVEN_DS_EFFETS_DPS"
+        )
+        catalogue, _ = _gen.client_catalogue(base)
+        gravees = catalogue["gear"]["engravings"]
+
+        for niveau, valeur in ((1, 2400), (2, 3200), (3, 4000)):
+            effet = gravees["133235001"]["passives"]["EpEq_Calla_B"][str(niveau)]
+            self.assertEqual(effet["classification"], "modelise")
+            self.assertEqual(effet["regles"], [{
+                "type": "bonus-critique",
+                "stat": "critDamage",
+                "valeur": valeur,
+                "mode": "passif-max",
+                "sourceId": "engraving:133235001:EpEq_Calla_B:%d" % niveau,
+            }])
+
+        for game_id, passif, raison in (
+            ("133235002", "EpEq_Calla_C",
+             "buff-equipe-conditionnel-au-vent-violent"),
+            ("133235003", "EpEq_Calla_D",
+             "critique-equipe-conditionnel-au-deluge-de-terre"),
+        ):
+            for niveau in (1, 2, 3):
+                effet = gravees[game_id]["passives"][passif][str(niveau)]
+                self.assertEqual(effet["classification"], "non-inclus")
+                self.assertEqual(effet["regles"], [])
+                self.assertEqual(effet["raison"], raison)
+
+    def test_client_catalogue_preserve_les_gravures_historiques(self):
+        base = _gen.client_content.read_window_assignment(
+            RACINE / "data" / "effets-dps.js", "SEVEN_DS_EFFETS_DPS"
+        )
+        snapshot = _gen.client_content.load_snapshot()
+        slugs = set(_gen.client_content.client_slugs(snapshot))
+        ids_pieces = {
+            piece["gameId"]
+            for hero in snapshot["heroes"].values()
+            for piece in hero["linkedArmors"]
+        }
+        catalogue, _ = _gen.client_catalogue(base)
+
+        self.assertEqual(
+            _gen.sans_effets_client(catalogue, slugs, ids_pieces),
+            _gen.poser_notes_historiques(
+                _gen.sans_effets_client(base, slugs, ids_pieces),
+                _gen.NOTES_MODELISE,
+            ),
+        )
+
     def test_payload_personnage_conserve_passif_et_interaction_active(self):
         passif = {
             "gameId": "merlin_wand_passive",
@@ -1894,7 +1980,18 @@ class NotesDeclareesHistoriques(unittest.TestCase):
         )
         attendu = copy.deepcopy(base)
         attendu["heroes"]["daisy"]["Shield"]["potentials"]["9"]["raison"] = self.NOTE
-        self.assertEqual(apres, attendu)
+        snapshot = _gen.client_content.load_snapshot()
+        slugs = set(_gen.client_content.client_slugs(snapshot))
+        ids_gravures = {
+            piece["gameId"]
+            for hero in snapshot["heroes"].values()
+            for piece in hero["linkedArmors"]
+        }
+        self.assertEqual(
+            _gen.sans_effets_client(apres, slugs, ids_gravures),
+            _gen.sans_effets_client(attendu, slugs, ids_gravures),
+            "hors contenu client, seule la note historique de Daisy peut changer",
+        )
 
     def test_tout_autre_ecart_historique_reste_interdit(self):
         base = self.base_sans_note()

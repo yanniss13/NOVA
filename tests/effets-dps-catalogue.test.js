@@ -56,6 +56,64 @@ assert.equal(
   "degats-supplementaires-d-ultime-hors-schema",
   "un potentiel partiellement modelise doit declarer la clause non comptee"
 );
+
+/* Les trois gravures de Khala viennent de la reference locale, pas de la
+   source publique. Chaque niveau source doit donc avoir une entree rangee ET
+   une ligne d'audit : comparer les ensembles interdit une perte silencieuse. */
+const graveesReference = JSON.parse(
+  fs.readFileSync(path.join(racine, "7ds-stats", "armures-gravees.json"), "utf8")
+);
+const graveesKhala = graveesReference.filter(item =>
+  String(item.costumeSlug || "").startsWith("khala-")
+);
+const sourcesGraveesKhala = graveesKhala.flatMap(item =>
+  (item.engravingPassives || []).flatMap(passif =>
+    (passif.levels || []).map(niveau => ({
+      gameId:String(item.gameId),
+      passif:passif.id,
+      level:String(niveau.level),
+      id:"engraving:" + item.gameId + ":" + passif.id + ":" + niveau.level
+    }))
+  )
+);
+assert.equal(graveesKhala.length, 3, "Khala doit garder ses trois gravures");
+assert.equal(sourcesGraveesKhala.length, 9, "Khala doit garder neuf niveaux de passif grave");
+assert.deepEqual(
+  plain(catalogue.audit.sources
+    .map(source => source.id)
+    .filter(id => sourcesGraveesKhala.some(source => source.id === id))
+    .sort()),
+  sourcesGraveesKhala.map(source => source.id).sort(),
+  "chaque niveau de gravure Khala doit etre audite"
+);
+sourcesGraveesKhala.forEach(source => {
+  assert.equal(
+    catalogue.gear.engravings[source.gameId]
+      ?.passives[source.passif]?.[source.level]?.id,
+    source.id,
+    source.id + " doit etre raccorde au catalogue"
+  );
+});
+for(const [niveau, valeur] of [["1", 2400], ["2", 3200], ["3", 4000]]){
+  const effet = catalogue.gear.engravings["133235001"]
+    .passives.EpEq_Calla_B[niveau];
+  assert.equal(effet.classification, "modelise");
+  assert.deepEqual(
+    plain(effet.regles.map(regle => [regle.type, regle.stat, regle.valeur])),
+    [["bonus-critique", "critDamage", valeur]],
+    "EpEq_Calla_B niveau " + niveau + " doit compter le bonus de Mirage"
+  );
+}
+for(const [gameId, passif, raison] of [
+  ["133235002", "EpEq_Calla_C", "buff-equipe-conditionnel-au-vent-violent"],
+  ["133235003", "EpEq_Calla_D", "critique-equipe-conditionnel-au-deluge-de-terre"]
+]){
+  for(const niveau of ["1", "2", "3"]){
+    const effet = catalogue.gear.engravings[gameId].passives[passif][niveau];
+    assert.equal(effet.classification, "non-inclus");
+    assert.equal(effet.raison, raison);
+  }
+}
 /* Daisy/Bouclier palier 9 : les 40 % d'ultime sont comptes, le +60 % de
    degats supplementaires sous [Daisy et Domby] reste dehors, et le dit. */
 const daisyBouclier9 = catalogue.heroes.daisy.Shield.potentials["9"];

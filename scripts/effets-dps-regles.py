@@ -75,6 +75,23 @@ NON_INCLUS_SPECIFIQUES = {
     "potential:khala:Gauntlets:7": "projectiles-et-debuff-cible-hors-schema",
     "potential:khala:Gauntlets:9": "critique-limite-aux-competences-normales-de-terre",
     "potential:khala:Gauntlets:10": "buff-equipe-et-bombes-differees-hors-schema",
+    # Gravures de Khala : les trois niveaux de la tenue B donnent un bonus
+    # personnel de degats critiques sous Mirage, que le comparateur maximise
+    # comme les autres conditions personnelles. Les tenues C et D agissent
+    # sur toute l'equipe et enchainent des conditions de cible/Deluge que le
+    # schema individuel ne sait pas representer sans les transformer.
+    "engraving:133235002:EpEq_Calla_C:1":
+        "buff-equipe-conditionnel-au-vent-violent",
+    "engraving:133235002:EpEq_Calla_C:2":
+        "buff-equipe-conditionnel-au-vent-violent",
+    "engraving:133235002:EpEq_Calla_C:3":
+        "buff-equipe-conditionnel-au-vent-violent",
+    "engraving:133235003:EpEq_Calla_D:1":
+        "critique-equipe-conditionnel-au-deluge-de-terre",
+    "engraving:133235003:EpEq_Calla_D:2":
+        "critique-equipe-conditionnel-au-deluge-de-terre",
+    "engraving:133235003:EpEq_Calla_D:3":
+        "critique-equipe-conditionnel-au-deluge-de-terre",
     "skill:gowther_book_skill_e": "effet-equipe",
     "set:armor_t5_fortrees:two": "effet-equipe",
     "skill:elaine_wand_skill_rmb_ready": "maintien-non-borne",
