@@ -157,6 +157,10 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
     ? extraireStats
     : undefined,
   deduirePiece:typeof deduirePiece === "function" ? deduirePiece : undefined,
+  restreindreParLeNom:typeof restreindreParLeNom === "function"
+    ? restreindreParLeNom
+    : undefined,
+  nameOfFile:typeof nameOfFile === "function" ? nameOfFile : undefined,
   configsDePiece:typeof configsDePiece === "function"
     ? configsDePiece
     : undefined,
@@ -1027,6 +1031,21 @@ function loadApp(initialTeams){
   );
   sandbox.SEVEN_DS_ARMURES_LIEES =
     armuresLieesSandbox.window.SEVEN_DS_ARMURES_LIEES;
+  /* Et leurs LIBELLES, lus dans le vrai data.js. La fixture laissait
+     l'emplacement « Armure liee » vide : `nameOfFile` retombait alors sur le
+     nom de fichier, qui porte le prefixe du heros quand deux tenues ont le
+     meme nom (« Khala — Citoyenne modele »). Un test sur les libelles aurait
+     vu un defaut qui n'existe pas dans le site — ou n'aurait jamais vu celui
+     qui existe. Seul cet emplacement est remplace : les autres restent ceux
+     de la fixture, dont dependent des tests existants. */
+  const dataSandbox = { window:{} };
+  vm.runInNewContext(
+    fs.readFileSync(path.join(ROOT, "data", "data.js"), "utf8"),
+    dataSandbox,
+    { filename:"data.js" }
+  );
+  sandbox.SEVEN_DS_DATA.armures["Armure liee"] =
+    dataSandbox.window.SEVEN_DS_DATA.armures["Armure liee"];
   /* Les transcendances : le catalogue REEL, comme les armures liees juste
      au-dessus. `dps-effets.js` y cherche la tenue gravee portee, et un
      catalogue absent ferait simplement disparaitre le bonus — donc un test

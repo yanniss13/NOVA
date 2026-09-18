@@ -52,6 +52,7 @@ import {
   LINKED_ARMORS
 } from "../noyau/constantes.js";
 import { owns } from "../noyau/outils.js";
+import { nameOfFile } from "./catalogue.js";
 import { armeDuGameId } from "./equipe-buffs.js";
 
   /* Chargees A LA DEMANDE par la vue, comme les competences et les potentiels
@@ -75,12 +76,6 @@ import { armeDuGameId } from "./equipe-buffs.js";
     return Object.keys(LINKED_ARMORS).find(
       charId => (LINKED_ARMORS[charId] || []).includes(fichier)
     ) || null;
-  }
-
-  /* Le nom lisible d'une tenue : son fichier, sans dossier ni extension. */
-  function nomDeLaTenue(fichier){
-    const feuille = String(fichier || "").split("/").pop() || "";
-    return feuille.replace(/\.webp$/i, "");
   }
 
   /* LE SENS DE L'EFFET, lu dans le libelle.
@@ -170,7 +165,7 @@ import { armeDuGameId } from "./equipe-buffs.js";
           arme:null,
           armeDossier:null,
           tenue,
-          tenueNom:nomDeLaTenue(tenue),
+          tenueNom:nameOfFile(tenue),
           sens:sensDuLibelle(passif.libelle),
           totalCumule:null,
           /* Les trois valeurs du passif, du niveau 1 au niveau 3, DEJA

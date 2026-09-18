@@ -219,8 +219,20 @@ async function openKhalaDetail(page){
       (window.SEVEN_DS_DATA.personnages || []).length);
     assert.equal(avantFiltre, heros,
       "le picker doit proposer les " + heros + " personnages du catalogue");
-    assert.equal(heros, 27,
-      "l'inventaire régénéré doit compter vingt-sept personnages");
+    /* Aucun effectif écrit en dur : un 28e héros rendrait ce parcours rouge
+       et bloquerait le déploiement sans que rien ne soit cassé. Ce qui compte
+       ici, c'est que Khala FASSE PARTIE de l'inventaire régénéré et que le
+       picker la propose parmi les autres. */
+    assert.ok(
+      await page.evaluate(() => (window.SEVEN_DS_DATA.personnages || [])
+        .some(perso => perso.id === "khala"
+          && perso.file === "7ds-personnages/khala.webp")),
+      "l'inventaire régénéré doit porter Khala et son portrait local"
+    );
+    assert.equal(
+      await page.locator('#pickerGrid .tile:not(.none)[title="Khala"]').count(), 1,
+      "le picker doit proposer Khala parmi les " + heros + " personnages"
+    );
     await page.locator("#pickerSearch").fill("khala");
     await page.waitForFunction(() =>
       document.querySelectorAll("#pickerGrid .tile:not(.none)").length === 1);

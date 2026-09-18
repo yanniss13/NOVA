@@ -26,6 +26,7 @@
    y passerait inapercue. */
 
 import { $, el } from "../noyau/dom.js";
+import { nameOfFile } from "../metier/catalogue.js";
 import { ensureBuildStats } from "../noyau/catalogue-build.js";
 import { gearConfigStatus, weaponConfigStatus } from "../metier/build-config.js";
 import {
@@ -438,10 +439,6 @@ import { ModalStack } from "./modal-stack.js";
 
   let etatCourant = null;
 
-  function nomDePiece(fichier){
-    return String(fichier).split("/").pop().replace(/\.webp$/, "");
-  }
-
   function configDeLigne(choix){
     if(choix.slot === "Arme"){
       return {
@@ -525,7 +522,7 @@ import { ModalStack } from "./modal-stack.js";
     ligne.candidats.forEach((candidat, rang) => {
       choix.appendChild(el("option", {
         value:String(rang),
-        text:nomDePiece(candidat.fichier) + " · " + detailDuChoix(candidat),
+        text:nameOfFile(candidat.fichier) + " · " + detailDuChoix(candidat),
         selected:ligne.choix === candidat
       }));
     });
@@ -562,7 +559,7 @@ import { ModalStack } from "./modal-stack.js";
     }
     if(ligne.choix){
       cellules.push(el("span", {
-        class:"import-captures-piece", text:nomDePiece(ligne.choix.fichier)
+        class:"import-captures-piece", text:nameOfFile(ligne.choix.fichier)
       }));
       cellules.push(el("span", {
         class:"import-captures-detail",
@@ -572,7 +569,7 @@ import { ModalStack } from "./modal-stack.js";
       if(existant){
         cellules.push(el("span", {
           class:"import-captures-remplace",
-          text:"remplace « " + nomDePiece(existant) + " »"
+          text:"remplace « " + nameOfFile(existant) + " »"
         }));
       }
       if(conflits.has(ligne.choix.slot)){

@@ -51,6 +51,7 @@ const SUITES = {
     "node tests/ocr-enchantements.test.js",
     "node tests/ocr-deduction.test.js",
     "node tests/ocr-deduction-piece.test.js",
+    "node tests/libelles-par-fichier.test.js",
     "node tests/ocr-arme.test.js",
     "node tests/lecture-assistee.test.js",
     "node tests/import-captures-roster.test.js",

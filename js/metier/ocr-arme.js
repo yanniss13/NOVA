@@ -7,6 +7,7 @@
 
 import { BUILD_STATS } from "../noyau/constantes.js";
 import { weaponTypesOf } from "./armes.js";
+import { nameOfFile } from "./catalogue.js";
 import { buildWeaponDefinition, weaponConfigStatus, weaponLevelCap } from "./build-config.js";
 import { enchantementsDArme, nueDArme } from "./ocr-enchantements.js";
 import { normaliserLibelle, rapprocher, recalerLibelle, valeurNumerique } from "./ocr-libelles.js";
@@ -21,10 +22,6 @@ import { calculateWeaponStats } from "./stats-calcul.js";
         ...Object.values((weapon && weapon.gradesByGameId) || {})
           .flatMap(grade => (grade && grade.subStats) || [])
           .map(sub => sub && sub.stat)]).filter(Boolean));
-  }
-
-  function nomDuFichier(fichier){
-    return String(fichier).split("/").pop().replace(/\.webp$/i, "");
   }
 
   function armesRapprochables(herosSlug){
@@ -81,7 +78,7 @@ import { calculateWeaponStats } from "./stats-calcul.js";
     const fichiers = armesRapprochables(source.herosSlug);
     const rapprochement = rapprocher(nom, fichiers.flatMap(fichier => {
       const weapon = BUILD_STATS.weaponsByFile[fichier] || {};
-      return [nomDuFichier(fichier), weapon.nameEn]
+      return [nameOfFile(fichier), weapon.nameEn]
         .map(normaliserLibelle)
         .filter(Boolean)
         .map(cle => ({ code:fichier, cle }));

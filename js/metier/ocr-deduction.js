@@ -10,6 +10,7 @@
    piece, son niveau et son renforcement. */
 
 import { BUILD_STATS } from "../noyau/constantes.js";
+import { nameOfFile } from "./catalogue.js";
 import { buildGearDefinition, gearEnchantmentLength } from "./build-config.js";
 import { enchantementsDePiece } from "./ocr-enchantements.js";
 import {
@@ -113,10 +114,6 @@ import { calculateGearStats } from "./stats-calcul.js";
      porter — et aucune ne le peut, donc rien ne sortirait. */
   function estNative(ligne){ return !ligne.section; }
 
-  function nomDePieceDuFichier(fichier){
-    return String(fichier).split("/").pop().replace(/\.webp$/i, "");
-  }
-
   /* LE NOM LU TRANCHE ENTRE DES PIECES INDISCERNABLES.
 
      Trois armures liees partagent les memes courbes de statistiques : leurs
@@ -140,7 +137,7 @@ import { calculateGearStats } from "./stats-calcul.js";
     const fichiers = [...new Set(candidats.map(item => item.fichier))];
     if(fichiers.length < 2) return candidats;
     const trouve = rapprocher(cible, fichiers.map(fichier => ({
-      code:fichier, cle:normaliserLibelle(nomDePieceDuFichier(fichier))
+      code:fichier, cle:normaliserLibelle(nameOfFile(fichier))
     })));
     if(trouve.statut !== "exact") return candidats;
     const retenus = candidats.filter(item => item.fichier === trouve.code);

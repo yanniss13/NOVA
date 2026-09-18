@@ -7,7 +7,7 @@
    section recoit deja son `redessiner` en parametre, donc aucune ne rappelle
    son ancien parent. */
 
-import { charOf } from "../metier/catalogue.js";
+import { charOf, nameOfFile } from "../metier/catalogue.js";
 import { PLAFOND_PROPRE } from "../metier/degats-calcul.js";
 import {
   degatsSupplementairesApplicables
@@ -240,8 +240,8 @@ import { etat } from "./calculateur-etat.js";
     const grille = el("div",{class:"calc-soutiens-grille"});
     parPorteur.forEach(lignes => {
       const bloc = el("div",{class:"calc-soutien"});
-      const nomTenue = String(lignes[0].tenue).split("/").pop()
-        .replace(/\.webp$/, "");
+      /* `nameOfFile` : le chemin peut porter le prefixe du heros. */
+      const nomTenue = nameOfFile(lignes[0].tenue);
       bloc.appendChild(el("h4",{class:"calc-soutien-nom",
         text:nomDuPersonnage(lignes[0].support) + " · " + nomTenue}));
       lignes.forEach(passif => {
