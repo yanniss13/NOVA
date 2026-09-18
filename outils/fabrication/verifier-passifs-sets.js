@@ -2,10 +2,10 @@ const fs = require('fs');
 const T = (process.env.DONNEES_JEU || '') + '/Table/';
 const valeurs = JSON.parse(fs.readFileSync(T + 'Item/EquipSetOptionValueTable.json', 'utf8'))[0].Rows;
 const textes = JSON.parse(fs.readFileSync((process.env.DONNEES_JEU || '') + '/Localization/Game/fr/Game.json', 'utf8')).client_language_table;
-const site = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/7ds-stats/sets.json');
+const site = require(require('path').resolve(__dirname, '..', '..', '7ds-stats/sets.json'));
 
 global.window = {};
-require('c:/Users/yanni/Desktop/Site Confrérie 7ds/data/passifs-ensembles.js');
+require(require('path').resolve(__dirname, '..', '..', 'data/passifs-ensembles.js'));
 const cle = Object.keys(global.window)[0];
 const passifsDepot = global.window[cle];
 console.log('data/passifs-ensembles.js expose :', cle);

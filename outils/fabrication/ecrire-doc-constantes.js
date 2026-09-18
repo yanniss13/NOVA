@@ -51,5 +51,5 @@ for (const [titre, motif, note] of GROUPES) {
 }
 md += `---\n\n${vus.size} constantes de combat retenues sur les 934 de la table.\n`;
 
-fs.writeFileSync('c:/Users/yanni/Desktop/Site Confrérie 7ds/docs/constantes-combat-du-jeu.md', md);
+fs.writeFileSync(require('path').resolve(__dirname, '..', '..', 'docs/constantes-combat-du-jeu.md'), md);
 console.log('ecrit :', vus.size, 'constantes');

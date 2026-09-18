@@ -4,7 +4,7 @@ const table = (r) => JSON.parse(fs.readFileSync(T + r, 'utf8'))[0].Rows;
 
 const heroMastery = table('HeroMastery/HeroMastery.json');
 const statGroup = table('Actor/HeroStatGroupTable.json');
-const site = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/7ds-stats/personnages.json');
+const site = require(require('path').resolve(__dirname, '..', '..', '7ds-stats/personnages.json'));
 
 const ALIAS = { Dreydrin: 'Dredrin', Klotho: 'Clotho', Manny: 'Mannie', Slader: 'Slater' };
 const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');

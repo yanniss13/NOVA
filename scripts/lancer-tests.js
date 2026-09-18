@@ -35,6 +35,7 @@ const SUITES = {
     "python -m unittest tests/test_generate_stats_build.py",
     "python scripts/generate-stats-build.py --check",
     "node tests/pages-workflow.test.js",
+    "node tests/chemins-personnels.test.js",
     "node tests/mon-suivi.test.js",
     "node tests/accueil.test.js",
     "node tests/roster-schema.test.js",

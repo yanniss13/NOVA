@@ -2,7 +2,7 @@ const fs = require('fs');
 const T = (process.env.DONNEES_JEU || '') + '/Table/';
 const table = (r) => JSON.parse(fs.readFileSync(T + r, 'utf8'))[0].Rows;
 const textes = JSON.parse(fs.readFileSync((process.env.DONNEES_JEU || '') + '/Localization/Game/fr/Game.json', 'utf8')).client_language_table;
-const site = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/7ds-stats/sets.json');
+const site = require(require('path').resolve(__dirname, '..', '..', '7ds-stats/sets.json'));
 
 const valeurs = table('Item/EquipSetOptionValueTable.json');
 const BALISE = /\[#?[-0-9A-Fa-f]*\]/g;

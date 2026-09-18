@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const D = (process.env.DONNEES_JEU || '') + '/TextDatas/CData/HitNotify';
-const DEPOT = 'c:/Users/yanni/Desktop/Site Confrérie 7ds';
+const DEPOT = require('path').resolve(__dirname, '..', '..');
 
 const table = {};
 for (const f of fs.readdirSync(D).filter(x => x.endsWith('.json'))) {

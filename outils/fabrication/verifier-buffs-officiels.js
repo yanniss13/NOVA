@@ -25,7 +25,7 @@ const fs = require('fs');
 const vm = require('vm');
 
 const EXPORTS = (process.env.DONNEES_JEU || '');
-const RACINE = 'c:/Users/yanni/Desktop/Site Confrérie 7ds';
+const RACINE = require('path').resolve(__dirname, '..', '..');
 
 const comportements = JSON.parse(fs.readFileSync(EXPORTS + '/Table/Skill/PC_SkillBehaviorTable.json', 'utf8'))[0].Rows;
 const buffs = JSON.parse(fs.readFileSync(EXPORTS + '/Table/Buff/BuffTable.json', 'utf8'))[0].Rows;

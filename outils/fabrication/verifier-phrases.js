@@ -1,6 +1,6 @@
 // Confronte les phrases citees par un fichier de data/ au texte francais du jeu.
 const fs = require('fs');
-const DEPOT = 'c:/Users/yanni/Desktop/Site Confrérie 7ds';
+const DEPOT = require('path').resolve(__dirname, '..', '..');
 const textes = JSON.parse(fs.readFileSync((process.env.DONNEES_JEU || '') + '/Localization/Game/fr/Game.json', 'utf8')).client_language_table;
 
 const BALISE = /\[#?[-0-9A-Fa-f]*\]/g;

@@ -1,8 +1,8 @@
 const fs = require('fs');
 const textes = JSON.parse(fs.readFileSync((process.env.DONNEES_JEU || '') + '/Localization/Game/fr/Game.json', 'utf8')).client_language_table;
-const site = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/7ds-stats/personnages.json');
+const site = require(require('path').resolve(__dirname, '..', '..', '7ds-stats/personnages.json'));
 global.window = {};
-require('c:/Users/yanni/Desktop/Site Confrérie 7ds/data/effets-dps.js');
+require(require('path').resolve(__dirname, '..', '..', 'data/effets-dps.js'));
 const effets = global.window.SEVEN_DS_EFFETS_DPS;
 
 const BALISE = /\[#?[-0-9A-Fa-f]*\]/g;
@@ -69,7 +69,7 @@ function tableau(titre, liste) {
 md += tableau('Aucun mot commun — divergence de fond', certains);
 md += tableau('Recouvrement partiel — a trancher a la main', aVerifier);
 
-fs.writeFileSync('c:/Users/yanni/Desktop/Site Confrérie 7ds/docs/potentiels-divergents.md', md);
+fs.writeFileSync(require('path').resolve(__dirname, '..', '..', 'docs/potentiels-divergents.md'), md);
 console.log('paliers divergents :', lignes.length);
 console.log('  aucun mot commun :', certains.length, '| dont modelises :', certains.filter(l => l.modelise).length);
 console.log('  recouvrement partiel :', aVerifier.length, '| dont modelises :', aVerifier.filter(l => l.modelise).length);

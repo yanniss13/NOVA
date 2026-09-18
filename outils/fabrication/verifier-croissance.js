@@ -1,7 +1,7 @@
 const fs = require('fs');
 const T = (process.env.DONNEES_JEU || '') + '/Table/';
 const lire = (f) => JSON.parse(fs.readFileSync(T + f, 'utf8'))[0].Rows;
-const armes = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/7ds-stats/armes.json');
+const armes = require(require('path').resolve(__dirname, '..', '..', '7ds-stats/armes.json'));
 
 // --- depassement de limite ---
 const over = lire('Item/ItemTable_Growth_Overlimit.json');

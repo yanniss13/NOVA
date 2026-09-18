@@ -1,5 +1,5 @@
 const fs = require('fs');
-const DEPOT = 'c:/Users/yanni/Desktop/Site Confrérie 7ds';
+const DEPOT = require('path').resolve(__dirname, '..', '..');
 const LOC = (process.env.DONNEES_JEU || '') + '/Localization/Game/fr/Game.json';
 
 const textes = JSON.parse(fs.readFileSync(LOC, 'utf8')).client_language_table;

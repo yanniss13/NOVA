@@ -1,6 +1,6 @@
 const fs = require('fs');
 const path = require('path');
-const actions = JSON.parse(fs.readFileSync('c:/Users/yanni/Desktop/Site Confrérie 7ds/data/temps-action.json', 'utf8')).actions;
+const actions = JSON.parse(fs.readFileSync(require('path').resolve(__dirname, '..', '..', 'data/temps-action.json'), 'utf8')).actions;
 
 const arrondi = (n) => Math.round(Number(n) * 1000) / 1000;
 

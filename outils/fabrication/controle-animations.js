@@ -1,6 +1,6 @@
 const fs = require('fs');
 const extrait = JSON.parse(fs.readFileSync(__dirname + '/animations-extraites.json', 'utf8')).animations;
-const src = fs.readFileSync('c:/Users/yanni/Desktop/Site Confrérie 7ds/data/competences.js', 'utf8');
+const src = fs.readFileSync(require('path').resolve(__dirname, '..', '..', 'data/competences.js'), 'utf8');
 const parSlug = JSON.parse(src.replace(/^[\s\S]*?window\.SEVEN_DS_COMPETENCES = /, '').replace(/;\s*$/, ''));
 const competences = [];
 for (const [slug, l] of Object.entries(parSlug)) for (const c of l) competences.push({ slug, ...c });

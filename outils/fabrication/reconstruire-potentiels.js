@@ -1,4 +1,4 @@
-const site = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/7ds-stats/personnages.json');
+const site = require(require('path').resolve(__dirname, '..', '..', '7ds-stats/personnages.json'));
 
 // Certains paliers annoncent un gain ternaire attaque / defense / PV max.
 // On les repere sur le texte anglais, plus stable que le francais.

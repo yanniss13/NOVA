@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const R = (process.env.DONNEES_JEU || '') + '/Cha/PC';
-const DEPOT = 'c:/Users/yanni/Desktop/Site Confrérie 7ds';
+const DEPOT = require('path').resolve(__dirname, '..', '..');
 const SORTIE = path.join(__dirname, 'animations-completes.json');
 
 const ARMES = /^(sword1h|sword2h|sworddual|axe|book|wand|staff|lance|shield|rapier|gauntlets|cudgel3c)$/i;

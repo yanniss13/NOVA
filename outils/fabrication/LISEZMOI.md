@@ -9,7 +9,7 @@ Rien dans le site ne les appelle. Le workflow de publication les retire de
 l'artefact — voir `.github/workflows/pages.yml`, dont un test tient le
 contrat.
 
-## Les deux variables à poser
+## Les variables à poser
 
 Les chemins d'accès aux données ne sont plus écrits dans le code. Ce dépôt est
 public, et il n'a pas à dire où vivent les fichiers du jeu ni avec quoi ils ont
@@ -19,13 +19,18 @@ public, et il n'a pas à dire où vivent les fichiers du jeu ni avec quoi ils on
 | --- | --- |
 | `DONNEES_JEU` | Le dossier `Content` de l'export courant. La plupart des outils y cherchent `Table/`, `Actor/`, `Cha/PC/`. |
 | `DONNEES_JEU_SOURCES` | Le dossier qui **contient plusieurs exports** ; seul `ecrire-magie-rotation.js` s'en sert, pour retenir le plus récent. |
+| `LISTE_CHEMINS_JEU` | Le fichier `tous-les-chemins.txt`, index des chemins de l'export ; seul `apparier-animations.js` s'en sert, et s'arrête avec un message s'il manque. |
 
 ```powershell
 $env:DONNEES_JEU = "<...>/Content"
 node outils/fabrication/ecrire-jauges-releve.js
 ```
 
-Sans elles, les outils lisent une chaîne vide et échouent tout de suite sur un
+Les outils trouvent la racine du dépôt par leur propre emplacement
+(`__dirname`), jamais par un chemin écrit : `tests/chemins-personnels.test.js`
+refuse tout chemin de dossier utilisateur dans un fichier suivi.
+
+Sans ces variables, les outils lisent une chaîne vide et échouent tout de suite sur un
 fichier introuvable. C'est voulu : mieux vaut une erreur nette qu'un chemin
 deviné.
 

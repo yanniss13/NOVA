@@ -1,5 +1,5 @@
-const actions = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/data/temps-action.json').actions;
-const site = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/7ds-stats/personnages.json');
+const actions = require(require('path').resolve(__dirname, '..', '..', 'data/temps-action.json')).actions;
+const site = require(require('path').resolve(__dirname, '..', '..', '7ds-stats/personnages.json'));
 
 // texte du potentiel par heros, arme et palier
 const MOTIF_TRIPLET = /Increases Attack by .*Defense by .*Max HP by/i;

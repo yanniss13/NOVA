@@ -6,7 +6,7 @@ const heroMastery = table('HeroMastery/HeroMastery.json');
 const wm = table('HeroMastery/HeroWeaponMastery.json');
 const groupes = table('HeroMastery/HeroWeaponMasteryGroup.json');
 const groupExp = table('HeroMastery/HeroWeaponMasteryGroupExp.json');
-const site = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/7ds-stats/personnages.json');
+const site = require(require('path').resolve(__dirname, '..', '..', '7ds-stats/personnages.json'));
 
 const ALIAS = { Dreydrin: 'Dredrin', Klotho: 'Clotho', Manny: 'Mannie', Slader: 'Slater' };
 const norm = (s) => String(s || '').toLowerCase().replace(/[^a-z0-9]/g, '');

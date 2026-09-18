@@ -1,8 +1,9 @@
 const fs = require('fs');
-const CHEMINS = 'C:/Users/yanni/AppData/Local/Temp/claude/c--Users-yanni-Desktop-Site-Confr-rie-7ds/45d35359-c14e-46d1-b295-2f02368f85d3/scratchpad/tous-les-chemins.txt';
+const CHEMINS = process.env.LISTE_CHEMINS_JEU;
+if (!CHEMINS) throw new Error("LISTE_CHEMINS_JEU doit désigner le fichier tous-les-chemins.txt (index des chemins de l'export)");
 
 // gameIds du depot
-const src = fs.readFileSync('c:/Users/yanni/Desktop/Site Confrérie 7ds/data/competences.js', 'utf8');
+const src = fs.readFileSync(require('path').resolve(__dirname, '..', '..', 'data/competences.js'), 'utf8');
 const obj = JSON.parse(src.replace(/^[\s\S]*?window\.SEVEN_DS_COMPETENCES = /, '').replace(/;\s*$/, ''));
 const competences = [];
 for (const [slug, liste] of Object.entries(obj)) for (const c of liste) competences.push({ slug, ...c });

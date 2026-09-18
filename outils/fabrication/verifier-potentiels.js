@@ -1,6 +1,6 @@
 const fs = require('fs');
 const textes = JSON.parse(fs.readFileSync((process.env.DONNEES_JEU || '') + '/Localization/Game/fr/Game.json', 'utf8')).client_language_table;
-const site = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/7ds-stats/personnages.json');
+const site = require(require('path').resolve(__dirname, '..', '..', '7ds-stats/personnages.json'));
 
 const BALISE = /\[#?[-0-9A-Fa-f]*\]/g;
 function squelette(s) {

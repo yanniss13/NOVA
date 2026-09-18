@@ -1,7 +1,7 @@
 const fs = require('fs');
 const T = (process.env.DONNEES_JEU || '') + '/Table/';
 const stat = JSON.parse(fs.readFileSync(T + 'Item/Option_StaticTable.json', 'utf8'))[0].Rows;
-const armures = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/7ds-stats/armures.json');
+const armures = require(require('path').resolve(__dirname, '..', '..', '7ds-stats/armures.json'));
 
 const norm = (s) => String(s || '').toLowerCase();
 const paliers = (r) => {

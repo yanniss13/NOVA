@@ -14,7 +14,7 @@
 const fs = require('fs');
 
 const EXPORTS = (process.env.DONNEES_JEU || '');
-const RACINE = 'c:/Users/yanni/Desktop/Site Confrérie 7ds';
+const RACINE = require('path').resolve(__dirname, '..', '..');
 
 const textes = JSON.parse(fs.readFileSync(EXPORTS + '/Localization/Game/fr/Game.json', 'utf8')).client_language_table;
 const parCleBasse = new Map();

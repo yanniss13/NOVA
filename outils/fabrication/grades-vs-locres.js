@@ -1,6 +1,6 @@
 const fs = require('fs');
 const textes = JSON.parse(fs.readFileSync((process.env.DONNEES_JEU || '') + '/Localization/Game/fr/Game.json', 'utf8')).client_language_table;
-const actions = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/data/temps-action.json').actions;
+const actions = require(require('path').resolve(__dirname, '..', '..', 'data/temps-action.json')).actions;
 
 // 1. quels paliers de potentiel portent une description de competence ?
 const potentiels = new Set();

@@ -1,7 +1,7 @@
 const fs = require('fs');
 const T = (process.env.DONNEES_JEU || '') + '/Table/';
 const promo = JSON.parse(fs.readFileSync(T + 'Item/ItemTable_Growth_Promotion.json', 'utf8'))[0].Rows;
-const armes = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/7ds-stats/armes.json');
+const armes = require(require('path').resolve(__dirname, '..', '..', '7ds-stats/armes.json'));
 
 const premier = Object.values(promo)[0];
 console.log('colonnes de la table :', Object.keys(premier).join(', '));

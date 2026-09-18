@@ -4,7 +4,7 @@ const table = (r) => JSON.parse(fs.readFileSync(T + r, 'utf8'))[0].Rows;
 
 const heroMastery = table('HeroMastery/HeroMastery.json');
 const commonMastery = table('HeroMastery/HeroCommonMastery.json');
-const site = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/7ds-stats/personnages.json');
+const site = require(require('path').resolve(__dirname, '..', '..', '7ds-stats/personnages.json'));
 
 // Le nom interne du jeu differe parfois de la translitteration du site.
 const ALIAS = { Dreydrin: 'Dredrin', Klotho: 'Clotho', Manny: 'Mannie', Slader: 'Slater' };

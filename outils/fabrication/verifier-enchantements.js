@@ -1,7 +1,7 @@
 const fs = require('fs');
 const T = (process.env.DONNEES_JEU || '') + '/Table/';
 const rnd = JSON.parse(fs.readFileSync(T + 'Item/Option_RandomTable.json', 'utf8'))[0].Rows;
-const ench = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/7ds-stats/enchantements.json');
+const ench = require(require('path').resolve(__dirname, '..', '..', '7ds-stats/enchantements.json'));
 
 // triplets publies par le jeu
 const duJeu = new Set();

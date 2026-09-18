@@ -1,4 +1,4 @@
-const actions = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/data/temps-action.json').actions;
+const actions = require(require('path').resolve(__dirname, '..', '..', 'data/temps-action.json')).actions;
 
 // regroupe les variantes par action de base
 const familles = {};

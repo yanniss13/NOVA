@@ -3,7 +3,7 @@ const T = (process.env.DONNEES_JEU || '') + '/Table/';
 const table = (r) => JSON.parse(fs.readFileSync(T + r, 'utf8'))[0].Rows;
 
 const heroMastery = table('HeroMastery/HeroMastery.json');
-const site = require('c:/Users/yanni/Desktop/Site Confrérie 7ds/7ds-stats/personnages.json');
+const site = require(require('path').resolve(__dirname, '..', '..', '7ds-stats/personnages.json'));
 
 console.log('heros dans le jeu :', Object.keys(heroMastery).length, '| heros sur le site :', site.length);
 console.log();
