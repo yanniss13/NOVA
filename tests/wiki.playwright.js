@@ -369,6 +369,103 @@ const { chromium } = require("playwright");
     await page.locator("#wikiHeroClose").click();
     await page.locator("#wikiHeroOverlay.on").waitFor({ state:"detached" });
 
+    /* KHALA, LE 27e HEROS, par le chemin générique et lui seul.
+
+       Rien ici ne la vise nommément côté application : la fiche lit les mêmes
+       tables que pour les vingt-six autres. Ce qu'on éprouve, c'est que ces
+       tables la portent — un héros ajouté par les données seules doit
+       traverser la grille, ses trois armes, et les puces qui suivent l'arme.
+
+       Les attentes sont DERIVEES de `SEVEN_DS_META`, jamais écrites à la
+       main : un catalogue qui changerait l'élément d'un slot doit faire
+       bouger le test avec la vue, pas contre elle. */
+    const traduction = { WIND:"Vent", EARTH:"Terre", FIRE:"Feu", ICE:"Glace",
+      DARK:"Ténèbres", HOLY:"Lumière", THUNDER:"Foudre", DEFAULT:"Physique" };
+    const rolesFr = { ATTACKER:"Attaquant", BUSTER:"Briseur",
+      WARDEN:"Gardien", SUPPORTER:"Soutien" };
+    const slotsKhala = await page.evaluate(() =>
+      window.SEVEN_DS_META.khala.weapons.map(slot => ({
+        arme:window.SEVEN_DS_DATA && slot.weapon,
+        element:String(slot.element).toUpperCase(),
+        role:String(slot.role).toUpperCase()
+      }))
+    );
+    assert.equal(slotsKhala.length, 3,
+      "le catalogue doit donner trois slots d'arme à Khala");
+
+    await page.locator("#wikiSearch").fill("Khala");
+    await page.waitForFunction(() =>
+      document.querySelectorAll("#wikiGrid .wiki-tile").length === 1);
+    await page.locator('#wikiGrid .wiki-tile[data-char="khala"]').click();
+    await page.locator("#wikiHeroOverlay.on").waitFor();
+    assert.equal(await page.locator("#wikiHeroTitle").textContent(), "Khala");
+    const armesKhala = await page.locator(".wiki-hero-weapon")
+      .evaluateAll(nodes => nodes.map(node => node.getAttribute("title")));
+    assert.equal(armesKhala.length, slotsKhala.length,
+      "la fiche doit montrer une entrée par slot d'arme, reçu "
+        + armesKhala.join(", "));
+
+    /* Chaque arme dans l'ORDRE du catalogue : les puces doivent suivre le
+       slot, pas le héros. Khala est Vent Attaquante aux épées doubles, Vent
+       Briseuse au nunchaku et TERRE Briseuse aux gantelets — c'est ce dernier
+       slot qui discrimine, puisqu'il dément à la fois l'élément et le rôle
+       affichés sur sa fiche de personnage. */
+    for(let index = 0; index < armesKhala.length; index++){
+      const nom = armesKhala[index];
+      await page.locator('.wiki-hero-weapon[title="' + nom + '"]').click();
+      await page.waitForFunction(titre =>
+        document.querySelector('.wiki-hero-weapon[title="' + titre + '"]')
+          .classList.contains("active"), nom);
+      assert.equal(await puceElement.textContent(),
+        traduction[slotsKhala[index].element],
+        "à « " + nom + " », Khala doit porter l'élément de son slot");
+      assert.equal(await puceRole.textContent(),
+        rolesFr[slotsKhala[index].role],
+        "à « " + nom + " », Khala doit porter le rôle de son slot");
+      assert.ok(await page.locator(".wiki-skill").count() > 0,
+        "« " + nom + " » doit lister des compétences");
+      assert.equal(
+        await page.locator(".wiki-skill-icon").count(),
+        await page.locator(".wiki-skill").count(),
+        "chaque compétence de « " + nom + " » doit porter son icône");
+    }
+
+    /* SES TROIS TENUES SE NOMMENT COMME LE CATALOGUE LES NOMME.
+
+       Le fichier d'une tenue prend le nom de son héros en préfixe quand deux
+       héros portent une tenue de même nom ; ce préfixe identifie une IMAGE,
+       pas une tenue. La fiche le déduisait du chemin et faisait donc lire
+       « Khala — Citoyenne modèle » sur une fiche déjà coiffée « Khala ».
+       Le libellé se lit dans `SEVEN_DS_DATA`, seule source des noms
+       affichables — c'est la règle déjà tenue par la Collection. */
+    await page.locator('.wiki-fold > summary:text-is("Armures gravées")').click();
+    await page.locator(".wiki-gravee").first().waitFor();
+    const libellesAttendus = await page.evaluate(() => {
+      const parFichier = new Map();
+      Object.values(window.SEVEN_DS_DATA.armures || {}).forEach(liste =>
+        liste.forEach(piece => parFichier.set(piece.file, piece.name)));
+      return (window.SEVEN_DS_ARMURES_LIEES.khala || [])
+        .map(fichier => parFichier.get(fichier) || fichier);
+    });
+    assert.equal(libellesAttendus.length, 3,
+      "Khala a trois tenues liées au catalogue");
+    assert.deepEqual(
+      await page.locator(".wiki-gravee .wiki-gravee-nom").allTextContents(),
+      libellesAttendus,
+      "la fiche doit nommer les tenues comme le catalogue, sans le préfixe"
+        + " qui n'identifie qu'un fichier"
+    );
+    assert.deepEqual(
+      (await page.locator(".wiki-gravee img").evaluateAll(nodes =>
+        nodes.map(node => node.getAttribute("title")))),
+      libellesAttendus,
+      "le survol de l'image doit dire la même chose que la ligne"
+    );
+
+    await page.locator("#wikiHeroClose").click();
+    await page.locator("#wikiHeroOverlay.on").waitFor({ state:"detached" });
+    await page.locator("#wikiSearch").fill("");
+
     /* Hors ligne : le catalogue a été mis en cache par le service worker au
        premier passage, la fiche doit donc rester consultable.
 

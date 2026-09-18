@@ -153,6 +153,20 @@ const STORAGE_KEY = "confrerie7ds.teams";
             Collier:energieRevigorante("Necklace"),
             "Boucle d'oreille":energieRevigorante("Earring")
           }
+        },
+        /* UN TROISIEME HEROS, arrive par les seules DONNEES. Khala n'existe
+           dans aucune ligne de code de la rotation : sa palette doit se
+           remplir parce que le catalogue de competences la porte, et pour
+           aucune autre raison. Elle est montee AUX GANTELETS, l'arme qui
+           dement a la fois l'element et le role de sa fiche de personnage.
+
+           Elle ne participe a aucun ultime combine — le catalogue n'en
+           declare aucun pour elle — donc les assertions de combinaison
+           au-dessus gardent exactement le meme decor. */
+        {
+          char:"khala",
+          weapon:Object.keys(catalog.weaponsByFile)
+            .find(file => file.indexOf("/Gantelets/") >= 0)
         }]
       }]));
     }, STORAGE_KEY);
@@ -185,6 +199,58 @@ const STORAGE_KEY = "confrerie7ds.teams";
     await ouvrirRota();
     const rota = page.locator("#rotationBody");
     await rota.locator(".rota-palette-bouton").first().waitFor();
+
+    /* LA PALETTE DE KHALA, mesuree sur le catalogue plutot qu'ecrite.
+
+       Le catalogue lui donne quinze competences non passives — cinq par arme,
+       ses trois armes confondues. Une palette n'en montre que celles de
+       l'arme EQUIPEE, et elle deduit la releve au lieu de l'offrir : c'est
+       une consequence du passage a un autre heros, pas un bouton. Restent
+       donc les quatre actions manuelles de ses gantelets.
+
+       Chaque nombre se derive de `SEVEN_DS_WIKI_COMPETENCES`. Ecrire « 4 » en
+       dur ferait passer ce test le jour ou le catalogue perdrait une ligne. */
+    const competencesKhala = await page.evaluate(() => {
+      const toutes = window.SEVEN_DS_WIKI_COMPETENCES.khala || [];
+      const armeDe = competence => String(competence.gameId).split("_")[1];
+      const nonPassives = toutes.filter(c => c.categorie !== "PASSIVE");
+      const gantelets = nonPassives.filter(c => armeDe(c) === "gauntlets");
+      return {
+        nonPassives:nonPassives.length,
+        armes:[...new Set(toutes.map(armeDe))].length,
+        manuellesGantelets:gantelets
+          .filter(c => c.categorie !== "TAG_SKILL")
+          .map(c => c.nomFr || c.gameId),
+        relevesGantelets:gantelets.filter(c => c.categorie === "TAG_SKILL").length
+      };
+    });
+    assert.equal(competencesKhala.armes, 3,
+      "le catalogue doit porter les trois armes de Khala");
+    assert.equal(competencesKhala.nonPassives, 15,
+      "les quinze competences non passives de Khala doivent etre au catalogue");
+    assert.equal(competencesKhala.relevesGantelets, 1,
+      "les gantelets portent une releve, qui se deduit au lieu de s'offrir");
+
+    const ligneKhala = rota.locator(".rota-palette-ligne").filter({
+      has:page.locator('.rota-palette-nom:text-is("Khala")')
+    });
+    assert.equal(await ligneKhala.count(), 1,
+      "Khala doit avoir sa ligne de palette, comme les deux autres");
+    assert.deepEqual(
+      (await ligneKhala.locator(".rota-palette-bouton")
+        .evaluateAll(boutons => boutons.map(bouton =>
+          (bouton.getAttribute("title") || "").split(" — ").pop()))),
+      competencesKhala.manuellesGantelets,
+      "la palette doit proposer les actions manuelles de l'arme equipee, dans"
+        + " l'ordre du catalogue"
+    );
+    /* Et chaque bouton porte le medaillon du jeu : une palette d'icones vides
+       ne se joue pas. */
+    assert.equal(
+      await ligneKhala.locator(".rota-palette-bouton img").count(),
+      competencesKhala.manuellesGantelets.length,
+      "chaque action de Khala doit porter son icone"
+    );
 
     /* LA MAGIE PART DE ZERO. L'ultime de Ban aux gantelets coute deux
        boules : pose en ouverture, il reste visible mais la rotation dit

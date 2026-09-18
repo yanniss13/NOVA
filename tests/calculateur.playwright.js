@@ -831,6 +831,112 @@ const STORAGE_KEY = "confrerie7ds.teams";
 
     await page.setViewportSize({ width:1280, height:720 });
 
+    /* ---- KHALA : LE CATALOGUE SUIT, ET UN BUILD NU NE MENT PAS.
+
+       Elle arrive dans l'equipe locale avec son arme et RIEN d'autre. C'est
+       le cas que le site doit tenir sans broncher : le calculateur part d'un
+       build, il n'invente aucune valeur, donc il annonce ce qui manque et ne
+       dessine aucun tableau. Un total affiche sur un build nu serait pire
+       qu'une page vide — il aurait l'air juste.
+
+       Aucun `if (slug === "khala")` nulle part : elle emprunte le chemin de
+       Meliodas, ci-dessus, avec les memes selecteurs. */
+    await page.evaluate(key => {
+      const catalog = window.SEVEN_DS_BUILD_STATS;
+      const gantelets = Object.keys(catalog.weaponsByFile)
+        .find(file => file.indexOf("/Gantelets/") >= 0);
+      if(!gantelets) throw new Error("FIXTURE_KHALA_ARME_MANQUANTE");
+      const equipes = JSON.parse(localStorage.getItem(key) || "[]");
+      equipes[0].heroes.push({
+        char:"khala",
+        weapon:gantelets,
+        potentiel:{ tier:0 }
+      });
+      localStorage.setItem(key, JSON.stringify(equipes));
+    }, STORAGE_KEY);
+    await page.reload();
+
+    await page.locator('.tabs .tab[data-view="roster"]').click();
+    await page.getByRole("button", { name:/Voir l.équipement/ }).first().click();
+    const ficheKhala = page.locator(".hdetail").filter({
+      has:page.locator('.hd-name:text-is("Khala")')
+    });
+    await ficheKhala.waitFor();
+    await ficheKhala.getByRole("button", { name:"Calculer les dégâts" }).click();
+    await page.locator("#view-calculateur").waitFor({ state:"visible" });
+
+    /* LE CATALOGUE DU CALCULATEUR LA PORTE, sur ses TROIS armes.
+
+       Il ne retient que le chiffrable : aucun passif n'y entre, et les armes
+       couvertes doivent etre exactement celles que `SEVEN_DS_META` declare.
+       C'est ce rapprochement qui vaut quelque chose — comparer le catalogue a
+       lui-meme ne prouverait rien. Quinze est ecrit une fois, comme le
+       plancher attendu de la fiche, jamais comme la definition. */
+    await page.waitForFunction(() =>
+      window.SEVEN_DS_COMPETENCES && window.SEVEN_DS_COMPETENCES.khala);
+    const catalogueKhala = await page.evaluate(() => {
+      const liste = window.SEVEN_DS_COMPETENCES.khala || [];
+      return {
+        total:liste.length,
+        passives:liste.filter(c => c.categorie === "PASSIVE").length,
+        armes:[...new Set(liste.map(c => c.weaponType))].sort(),
+        armesMeta:window.SEVEN_DS_META.khala.weapons
+          .map(slot => slot.weapon).sort()
+      };
+    });
+    assert.deepEqual(catalogueKhala.armes, catalogueKhala.armesMeta,
+      "le calculateur doit couvrir exactement les armes declarees par META");
+    assert.equal(catalogueKhala.passives, 0,
+      "un passif ne se chiffre pas : il n'a rien a faire dans ce catalogue");
+    assert.equal(catalogueKhala.total, 15,
+      "les quinze competences non passives de Khala doivent etre chargees");
+    /* Le catalogue CHIFFRE des effets DPS, lui, reste a la porte : le build
+       est incomplet, le calculateur s'arrete avant d'en avoir besoin et n'a
+       donc aucune raison de payer 1,4 Mo. C'est tests/khala.playwright.js qui
+       l'eprouve, sur un build complet. */
+    assert.equal(
+      await page.evaluate(() => typeof window.SEVEN_DS_EFFETS_DPS),
+      "undefined",
+      "un build incomplet ne doit pas telecharger le catalogue des effets DPS"
+    );
+
+    /* LE DIAGNOSTIC, ecrit et complet. Chaque emplacement vide est NOMME :
+       « Configuration a completer » tout court laisserait le membre chercher
+       lequel. */
+    const manques = page.locator("#view-calculateur .calc-muette")
+      .filter({ hasText:"Il manque" });
+    await manques.first().waitFor();
+    const texteManques = await manques.first().textContent();
+    for(const piece of ["l'arme", "haut d'armure", "bas d'armure", "ceinture",
+      "bottes", "armure gravée", "boucle d'oreille", "collier", "anneau"]){
+      assert.ok(texteManques.includes(piece),
+        "le diagnostic doit nommer « " + piece + " », recu : " + texteManques);
+    }
+    /* ET AUCUN TOTAL. C'est la moitie qui compte : un build nu ne doit pas
+       produire une seule ligne chiffree. */
+    assert.equal(await page.locator("#view-calculateur .calc-table").count(), 0,
+      "un build incomplet ne doit afficher aucun tableau de degats");
+    assert.equal(
+      await page.locator("#view-calculateur .calc-valeur").count(), 0,
+      "un build incomplet ne doit afficher aucune valeur de degats"
+    );
+
+    /* LA TROISIEME SOURCE DE BUILD, celle du Builder. Khala n'est dans aucun
+       roster ici : elle n'a pu arriver que par `heroImpose`, et la page le dit
+       au membre au lieu de laisser croire a un build enregistre. */
+    assert.equal(
+      await page.locator("#view-calculateur .calc-avertissement").first()
+        .textContent(),
+      "Ce build ne vient pas de ton roster.",
+      "un heros de l'equipe en cours d'edition doit s'annoncer comme tel"
+    );
+    /* Et le reste de la page tient : la cible reste choisissable, donc le
+       diagnostic n'a pas emporte la vue avec lui. */
+    assert.ok(
+      await page.locator("#view-calculateur select").count() > 0,
+      "le diagnostic ne doit pas vider la page de ses reglages"
+    );
+
     assert.deepEqual(errors, [], "aucune erreur de page attendue");
   } finally {
     await browser.close();

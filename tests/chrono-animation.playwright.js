@@ -206,8 +206,28 @@ const { chromium } = require("playwright");
     await page.waitForFunction(
       () => /\d+ \/ \d+/.test(document.getElementById("avancement").textContent)
     );
+    /* Le total se DERIVE du catalogue chargé par la page : il a valu 335,
+       347, 350, puis 363 avec les treize compétences chiffrables de Khala,
+       et chaque héros laissait ce test rouge jusqu'à une recopie à la main.
+       La règle est celle que la page annonce : toute compétence identifiée
+       qui n'est pas « non-chiffree ». On exige aussi que Khala y contribue,
+       pour qu'un catalogue qui l'oublierait ne passe pas sans bruit. */
+    const mesurables = await page.evaluate(() => {
+      let total = 0;
+      let khala = 0;
+      Object.entries(window.SEVEN_DS_COMPETENCES || {}).forEach(([heros, liste]) =>
+        (liste || []).forEach(competence => {
+          if(!competence.gameId || competence.nature === "non-chiffree") return;
+          total += 1;
+          if(heros === "khala") khala += 1;
+        }));
+      return { total, khala };
+    });
+    assert.ok(mesurables.khala > 0,
+      "les compétences chiffrables de Khala doivent entrer au chronométrage");
     const avancement = await page.locator("#avancement").textContent();
-    assert.match(avancement, /\d+ \/ 350 animations mesurées/);
+    assert.match(avancement,
+      new RegExp("\\d+ \\/ " + mesurables.total + " animations mesurées"));
 
     /* Une ACTIVE_THIRD sans recharge existe dans le catalogue, donc l'aide
        commune ne doit plus attribuer une recharge a toute mesure unique. */

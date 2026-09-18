@@ -13,7 +13,7 @@ import {
   WSLOT_ROLES, metaOf
 } from "../noyau/constantes.js";
 import { $, el } from "../noyau/dom.js";
-import { charOf } from "../metier/catalogue.js";
+import { charOf, nameOfFile } from "../metier/catalogue.js";
 import { linkedArmorsOf } from "../metier/armes.js";
 import { armesDuHeros, competencesParArme } from "../metier/wiki-competences.js";
 import { renderBonus } from "./elements.js";
@@ -244,7 +244,14 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
 
     const liste = el("ul",{class:"wiki-gravees"});
     fichiers.forEach(fichier => {
-      const nom = fichier.split("/").pop().replace(/\.webp$/i, "");
+      /* LE NOM VIENT DU CATALOGUE, pas du chemin. Le fichier d'une tenue
+         prend le nom de son heros en prefixe quand deux heros en portent une
+         de meme nom ; ce prefixe identifie une IMAGE et n'a rien a dire au
+         membre. Deduit du chemin, il faisait lire « Khala — Citoyenne
+         modele » sur une fiche deja coiffee « Khala ». `nameOfFile` est le
+         seul vocabulaire des libelles du site, et il retombe de lui-meme sur
+         le nom de fichier si la piece manque au catalogue. */
+      const nom = nameOfFile(fichier);
       const transcendance = parTenue.get(fichier);
       const corps = el("div",{class:"wiki-gravee-corps"},[
         el("b",{class:"wiki-gravee-nom", text:nom})

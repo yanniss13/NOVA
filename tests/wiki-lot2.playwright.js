@@ -10,15 +10,14 @@ const assert = require("node:assert/strict");
 const { serveRepo } = require("./helpers/serve");
 const { chromium } = require("playwright");
 
-/* Relevé sur la version 2.0 du jeu, le 26 août 2026 : le Nunchaku de l'âme
-   vorace porte les armes de 155 à 156, et la fournée de costumes les gravées
-   de 83 à 93. Armures et bijoux ne bougent pas. */
-const EFFECTIFS = {
-  wikiCategoryArmes:156,
-  wikiCategoryArmures:62,
-  wikiCategoryBijoux:37,
-  wikiCategoryGravees:93
-};
+/* LES EFFECTIFS SE DERIVENT de `SEVEN_DS_DATA`, ils ne s'écrivent plus.
+   Ils ont valu 155 puis 156 armes, 83 puis 93 puis 96 gravées — la dernière
+   marche venant des trois tenues liées de Khala — et chaque fournée laissait
+   ce test rouge jusqu'à ce qu'on vienne recopier le nouveau nombre. Le filet
+   reste le même : une catégorie qui n'affiche pas tout ce que le catalogue
+   porte se voit toujours. Les armures excluent l'emplacement « Armure liee »,
+   qui a sa propre catégorie. */
+let EFFECTIFS = null;
 
 (async()=>{
   const server = await serveRepo();
@@ -44,6 +43,24 @@ const EFFECTIFS = {
       route.fulfill({ status:200, contentType:"application/javascript", body:"" })
     );
     await page.goto(server.url + "/index.html");
+    EFFECTIFS = await page.evaluate(() => {
+      const data = window.SEVEN_DS_DATA || {};
+      const somme = groupes => Object.values(groupes || {})
+        .reduce((total, liste) => total + (liste || []).length, 0);
+      const armures = Object.assign({}, data.armures || {});
+      const gravees = (armures["Armure liee"] || []).length;
+      delete armures["Armure liee"];
+      return {
+        wikiCategoryArmes:somme(data.armes),
+        wikiCategoryArmures:somme(armures),
+        wikiCategoryBijoux:somme(data.bijoux),
+        wikiCategoryGravees:gravees
+      };
+    });
+    Object.entries(EFFECTIFS).forEach(([categorie, nombre]) =>
+      assert.ok(nombre > 0, categorie + " doit compter au moins une pièce"));
+    const ARMES = EFFECTIFS.wikiCategoryArmes;
+    const GRAVEES = EFFECTIFS.wikiCategoryGravees;
     await page.locator("#tab-wiki").click();
     await page.locator("#view-wiki").waitFor({ state:"visible" });
     await tuiles().first().waitFor();
@@ -62,7 +79,7 @@ const EFFECTIFS = {
     /* Les filtres appartiennent à la catégorie : ceux du héros n'ont rien à
        faire sur la grille des armes. */
     await page.locator("#wikiCategoryArmes").click();
-    await attendreTuiles(156);
+    await attendreTuiles(ARMES);
     assert.equal(
       await page.locator("#wikiFilterElement").count(), 0,
       "le filtre élément est propre aux personnages"
@@ -101,7 +118,7 @@ const EFFECTIFS = {
     await page.locator("#wikiFilterWeaponGrade").selectOption({ label:"Grade 2" });
     await attendreTuiles(60);
     await page.locator("#wikiFilterWeaponGrade").selectOption("");
-    await attendreTuiles(156);
+    await attendreTuiles(ARMES);
 
     /* Le filtre passif : 95 armes sur 156 en portent un. Les 61 autres sont
        listées quand même — leur fiche ne doit simplement rien inventer. */
@@ -110,7 +127,7 @@ const EFFECTIFS = {
     await page.locator("#wikiFilterWeaponPassive").selectOption("non");
     await attendreTuiles(61);
     await page.locator("#wikiFilterWeaponPassive").selectOption("");
-    await attendreTuiles(156);
+    await attendreTuiles(ARMES);
 
     // La recherche par nom, et l'état vide annoncé plutôt que laissé nu.
     await page.locator("#wikiSearch").fill("zzzzz");
@@ -158,21 +175,22 @@ const EFFECTIFS = {
     /* Les armures gravées se filtrent par héros : c'est leur seul axe, chacune
        étant liée à un personnage et un seul. */
     await page.locator("#wikiCategoryGravees").click();
-    await attendreTuiles(93);
+    await attendreTuiles(GRAVEES);
     await page.locator("#wikiFilterEngravedHero")
       .selectOption({ label:"Derieri" });
     await page.waitForFunction(
-      () => {
+      plafond => {
         const compte = document.querySelectorAll("#wikiGrid .wiki-tile").length;
-        return compte > 0 && compte < 93;
-      }
+        return compte > 0 && compte < plafond;
+      },
+      GRAVEES
     );
 
     /* ====================== Les fiches d'objet ====================== */
 
     // Une arme à passif : sept pastilles, ouvertes sur le niveau maximum.
     await page.locator("#wikiCategoryArmes").click();
-    await attendreTuiles(156);
+    await attendreTuiles(ARMES);
     await page.locator("#wikiFilterWeaponPassive").selectOption("oui");
     await attendreTuiles(95);
     await tuiles().first().click();
@@ -252,7 +270,7 @@ const EFFECTIFS = {
        arme sans passif juste au-dessus : une rubrique creuse ferait croire à
        une donnée manquante. */
     await page.locator("#wikiCategoryGravees").click();
-    await attendreTuiles(93);
+    await attendreTuiles(GRAVEES);
 
     /* Le plafond des tenues gravées est +15. Les cinq premiers paliers
        utilisent la même progression que les armures ordinaires, puis les dix
@@ -312,10 +330,10 @@ const EFFECTIFS = {
     await page.locator("#wikiSearch").fill("");
 
     await page.locator("#wikiFilterEngravedHero").selectOption({ label:"Tristan" });
-    await page.waitForFunction(() => {
+    await page.waitForFunction(plafond => {
       const compte = document.querySelectorAll("#wikiGrid .wiki-tile").length;
-      return compte > 0 && compte < 93;
-    });
+      return compte > 0 && compte < plafond;
+    }, GRAVEES);
     assert.equal(await tuiles().count(), 4, "Tristan a quatre tenues gravées");
 
     const transcendancesVues = [];
@@ -389,7 +407,7 @@ const EFFECTIFS = {
     /* Une armure gravée : son héros, et le seul chemin qui mène d'un objet à
        un personnage. */
     await page.locator("#wikiCategoryGravees").click();
-    await attendreTuiles(93);
+    await attendreTuiles(GRAVEES);
     await page.locator("#wikiFilterEngravedHero").selectOption({ label:"Derieri" });
     await page.waitForFunction(
       () => document.querySelectorAll("#wikiGrid .wiki-tile").length > 0
@@ -420,7 +438,9 @@ const EFFECTIFS = {
     /* Revenir aux personnages restaure les quatre filtres du lot 1, avec leurs
        identifiants d'origine. */
     await page.locator("#wikiCategoryHeros").click();
-    await attendreTuiles(26);
+    /* Autant de héros que le catalogue en porte : 26, puis 27 avec Khala. */
+    await attendreTuiles(await page.evaluate(() =>
+      (window.SEVEN_DS_DATA.personnages || []).length));
     for(const id of ["wikiFilterElement", "wikiFilterWeapon",
                      "wikiFilterRole", "wikiFilterRarity"]){
       assert.equal(await page.locator("#" + id).count(), 1,

@@ -594,6 +594,65 @@ async function ouvrirAnalyse(page, section = "supports"){
       "un roster non vide ne doit pas afficher l'etat vide"
     );
 
+    /* KHALA, ET LE SLOT QUI TRANCHE.
+
+       L'Analyse ne range pas un héros, elle range un COUPLE personnage + arme.
+       Khala le prouve mieux que quiconque : sa fiche la dit Vent Attaquante,
+       mais elle n'est Attaquante qu'aux épées doubles. Au nunchaku elle est
+       Briseuse — donc hors matrice bien qu'elle y reste de Vent — et aux
+       gantelets elle est Briseuse ET de Terre. Une vue qui lirait l'élément
+       du personnage lui donnerait trois cases au lieu d'une, et la rangerait
+       sous Terre en prime.
+
+       L'attendu se DERIVE de `SEVEN_DS_META` : si le catalogue change un
+       slot, c'est le test qui doit suivre la vue, pas l'inverse. */
+    await page.locator('.tab[data-view="builder"]').click();
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.roster_characters = [{
+        owner:"user-1",
+        char_id:"khala",
+        potential_tier:7,
+        builds:{ "Epees doubles":{}, Nunchaku:{}, Gantelets:{} },
+        updated_at:"2026-09-17T08:00:00.000Z"
+      }];
+    });
+    await ouvrirAnalyse(page, "dps");
+    const attenduKhala = await page.evaluate(() =>
+      window.SEVEN_DS_META.khala.weapons
+        .filter(slot => String(slot.role).toUpperCase() === "ATTACKER")
+        .map(slot => String(slot.element).toUpperCase())
+    );
+    assert.deepEqual(attenduKhala, ["WIND"],
+      "le catalogue ne doit donner qu'un seul slot Attaquant à Khala");
+    const casesKhala = page.locator(
+      '#analysePanel-dps .mx-action[data-char="khala"]'
+    );
+    await casesKhala.first().waitFor();
+    assert.deepEqual(
+      await casesKhala.evaluateAll(nodes => nodes.map(node => node.dataset.elem)),
+      attenduKhala,
+      "seul le slot Attaquant de Khala entre dans la matrice, sous SON élément"
+    );
+    assert.equal(
+      await casesKhala.first().locator(".mx-nom").textContent(),
+      "Khala",
+      "la case doit nommer le héros, pas son identifiant"
+    );
+    assert.equal(
+      await casesKhala.first().locator(".mx-pot").textContent(),
+      "P7",
+      "le potentiel enregistré doit être repris tel quel"
+    );
+    /* Et elle reste un PORTEUR au recensement des soutiens, où le rôle ne
+       filtre rien : un membre dont le seul héros est Briseur sur deux armes
+       ne doit pas disparaître de l'onglet. */
+    await ouvrirAnalyse(page, "supports");
+    assert.equal(
+      await page.getByText("Rien à analyser", { exact:true }).count(),
+      0,
+      "un roster réduit à Khala reste un roster"
+    );
+
     /* Aucun roster du tout : la consigne revient, et le recensement reste. */
     await page.locator('.tab[data-view="builder"]').click();
     await page.evaluate(() => {

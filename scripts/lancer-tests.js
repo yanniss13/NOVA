@@ -157,6 +157,11 @@ const SUITES = {
     "node tests/apport-par-piece.playwright.js",
     "node tests/wiki.playwright.js",
     "node tests/wiki-lot2.playwright.js",
+    /* Le parcours complet d'UN heros, de bout en bout : Builder, roster,
+       fiche, Wiki, Analyse, Collection, calculateur, rotation, puis mobile.
+       Il vit a cote des parcours Wiki et calculateur, dont il reprend les
+       surfaces, et non au milieu des tests de navigation. */
+    "node tests/khala.playwright.js",
     "node tests/akumu-page.playwright.js",
     "node tests/collection.playwright.js",
     "node tests/calculateur.playwright.js",

@@ -1,7 +1,7 @@
 // Genere automatiquement par generate-data.ps1 - NE PAS EDITER A LA MAIN.
 // Relance le script pour mettre a jour apres ajout/retrait d'images.
 window.SEVEN_DS_DATA = {
-    "generatedAt":  "2026-09-17 20:23:32",
+    "generatedAt":  "2026-09-18 00:12:04",
     "personnages":  [
                         {
                             "id":  "ban",
