@@ -119260,5 +119260,5561 @@
    }
   },
   "equipPassive": null
+ },
+ {
+  "id": "cmu5k4r4y04ub2lqjzo52gxy3",
+  "gameId": "132314013",
+  "slug": "abyssal-predator-belt",
+  "slugFr": "ceinture-de-predateur-abyssal",
+  "nameFr": "Ceinture de prédateur abyssal",
+  "nameEn": "「Abyssal」 Predator Belt",
+  "grade": "grade5",
+  "slot": "Belt",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": "P_Shield_Rate",
+  "setId": "equip_t5_predator",
+  "reinforceMax": 5,
+  "qualityMin": 120,
+  "qualityMax": 160,
+  "qualityMinLive": 120,
+  "qualityMaxLive": 160,
+  "tierBoundaries": [
+   119
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101120268",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "P_Shield_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Barrier Efficiency",
+    "nameFr": "Efficacité des barrières"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 110,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 140,
+     "gold": 570,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 440,
+     "gold": 1870,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 960,
+     "gold": 4060,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1400,
+     "gold": 5900,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 70,
+     "gold": 150,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 350,
+     "gold": 780,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1130,
+     "gold": 2560,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 2450,
+     "gold": 5560,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3570,
+     "gold": 8080,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 140,
+     "gold": 220,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 710,
+     "gold": 1210,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2300,
+     "gold": 3950,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 5000,
+     "gold": 8560,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 7270,
+     "gold": 12430,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 260,
+     "gold": 380,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1370,
+     "gold": 2050,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 4450,
+     "gold": 6710,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 9660,
+     "gold": 14550,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 14040,
+     "gold": 21130,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 490,
+     "gold": 690,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 2620,
+     "gold": 3740,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 8540,
+     "gold": 12230,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 18540,
+     "gold": 26540,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 26940,
+     "gold": 38540,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_17",
+    "abilityType": "P_Shield_Rate",
+    "progression": [
+     8
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_17",
+    "abilityType": "P_Shield_Rate",
+    "progression": [
+     677
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_17",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     68
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_17",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     6104
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmu5k4r4y04ua2lqj00blw2ew",
+  "gameId": "132214013",
+  "slug": "abyssal-predator-bottoms",
+  "slugFr": "bas-de-predateur-abyssal",
+  "nameFr": "Bas de prédateur 「abyssal」",
+  "nameEn": "「Abyssal」 Predator Bottoms",
+  "grade": "grade5",
+  "slot": "Bottom",
+  "mainStat": "B_MaxHp_Equip",
+  "subStat": "MF_ChargeEffic_Rate",
+  "setId": "equip_t5_predator",
+  "reinforceMax": 5,
+  "qualityMin": 120,
+  "qualityMax": 160,
+  "qualityMinLive": 120,
+  "qualityMaxLive": 160,
+  "tierBoundaries": [
+   119
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101120268",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "MF_ChargeEffic_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Magic Charging Efficiency",
+    "nameFr": "Efficacité de recharge de la magie"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 110,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 140,
+     "gold": 570,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 440,
+     "gold": 1870,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 960,
+     "gold": 4060,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1400,
+     "gold": 5900,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 70,
+     "gold": 150,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 350,
+     "gold": 780,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1130,
+     "gold": 2560,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 2450,
+     "gold": 5560,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3570,
+     "gold": 8080,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 140,
+     "gold": 220,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 710,
+     "gold": 1210,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2300,
+     "gold": 3950,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 5000,
+     "gold": 8560,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 7270,
+     "gold": 12430,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 260,
+     "gold": 380,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1370,
+     "gold": 2050,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 4450,
+     "gold": 6710,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 9660,
+     "gold": 14550,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 14040,
+     "gold": 21130,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 490,
+     "gold": 690,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 2620,
+     "gold": 3740,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 8540,
+     "gold": 12230,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 18540,
+     "gold": 26540,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 26940,
+     "gold": 38540,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_17",
+    "abilityType": "MF_ChargeEffic_Rate",
+    "progression": [
+     5
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_17",
+    "abilityType": "MF_ChargeEffic_Rate",
+    "progression": [
+     389
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_17",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     105
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_17",
+    "abilityType": "B_MaxHp_Equip",
+    "progression": [
+     9450
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmu5k4r4y04uc2lqjg1eaxdmk",
+  "gameId": "132414013",
+  "slug": "abyssal-predator-combat-boots",
+  "slugFr": "bottes-de-combat-de-predateur-abyssal",
+  "nameFr": "Bottes de combat de prédateur 「abyssal」",
+  "nameEn": "「Abyssal」 Predator Combat Boots",
+  "grade": "grade5",
+  "slot": "Shoes",
+  "mainStat": "B_Def_Equip",
+  "subStat": "S_SkillRecycle_Rate",
+  "setId": "equip_t5_predator",
+  "reinforceMax": 5,
+  "qualityMin": 120,
+  "qualityMax": 160,
+  "qualityMinLive": 120,
+  "qualityMaxLive": 160,
+  "tierBoundaries": [
+   119
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101120268",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "S_SkillRecycle_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Cooldown Reduction",
+    "nameFr": "Réduction de temps de recharge"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment Defense",
+    "nameFr": "Défense de l'équipement"
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 110,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 140,
+     "gold": 570,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 440,
+     "gold": 1870,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 960,
+     "gold": 4060,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1400,
+     "gold": 5900,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 70,
+     "gold": 150,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 350,
+     "gold": 780,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1130,
+     "gold": 2560,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 2450,
+     "gold": 5560,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3570,
+     "gold": 8080,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 140,
+     "gold": 220,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 710,
+     "gold": 1210,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2300,
+     "gold": 3950,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 5000,
+     "gold": 8560,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 7270,
+     "gold": 12430,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 260,
+     "gold": 380,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1370,
+     "gold": 2050,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 4450,
+     "gold": 6710,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 9660,
+     "gold": 14550,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 14040,
+     "gold": 21130,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 490,
+     "gold": 690,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 2620,
+     "gold": 3740,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 8540,
+     "gold": 12230,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 18540,
+     "gold": 26540,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 26940,
+     "gold": 38540,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_17",
+    "abilityType": "S_SkillRecycle_Rate",
+    "progression": [
+     4
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_17",
+    "abilityType": "S_SkillRecycle_Rate",
+    "progression": [
+     284
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_17",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     31
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_17",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     2756
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmu5k4r4y04wd2lqjc67dcxpy",
+  "gameId": "132705013",
+  "slug": "abyssal-predator-earrings",
+  "slugFr": "boucles-d-oreilles-de-predateur-abyssal",
+  "nameFr": "Boucles d'oreilles de prédateur 「abyssal」",
+  "nameEn": "「Abyssal」 Predator Earrings",
+  "grade": "grade5",
+  "slot": "Earring",
+  "mainStat": "B_MaxHP_Equip",
+  "subStat": "Debuff_Time_Rate",
+  "setId": "equip_t5_predator",
+  "reinforceMax": 5,
+  "qualityMin": 120,
+  "qualityMax": 160,
+  "qualityMinLive": 120,
+  "qualityMaxLive": 160,
+  "tierBoundaries": [
+   119
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101062020",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "Debuff_Time_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Debuff Duration Efficiency",
+    "nameFr": "Efficacité de la durée des malus"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 1,
+    "stats": [
+     {
+      "key": "Debuff_Time_Rate",
+      "max": 1570,
+      "min": 785,
+      "tiers": [
+       {
+        "max": 1570,
+        "min": 1530,
+        "tier": 1,
+        "chance": 603
+       },
+       {
+        "max": 1492,
+        "min": 1412,
+        "tier": 2,
+        "chance": 1206
+       },
+       {
+        "max": 1374,
+        "min": 1216,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 1178,
+        "min": 1020,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 981,
+        "min": 785,
+        "tier": 5,
+        "chance": 3191
+       }
+      ],
+      "chance": 909,
+      "isRate": true,
+      "nameEn": "Debuff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des malus"
+     },
+     {
+      "key": "Buff_Time_Rate",
+      "max": 1570,
+      "min": 785,
+      "tiers": [
+       {
+        "max": 1570,
+        "min": 1530,
+        "tier": 1,
+        "chance": 603
+       },
+       {
+        "max": 1492,
+        "min": 1412,
+        "tier": 2,
+        "chance": 1206
+       },
+       {
+        "max": 1374,
+        "min": 1216,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 1178,
+        "min": 1020,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 981,
+        "min": 785,
+        "tier": 5,
+        "chance": 3191
+       }
+      ],
+      "chance": 909,
+      "isRate": true,
+      "nameEn": "Buff Duration Efficiency",
+      "nameFr": "Efficacité de la durée des bonus"
+     },
+     {
+      "key": "Thunder_Burst_Gauge_Rate",
+      "max": 1402,
+      "min": 701,
+      "tiers": [
+       {
+        "max": 1402,
+        "min": 1366,
+        "tier": 1,
+        "chance": 603
+       },
+       {
+        "max": 1331,
+        "min": 1261,
+        "tier": 2,
+        "chance": 1206
+       },
+       {
+        "max": 1226,
+        "min": 1086,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 1051,
+        "min": 911,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 877,
+        "min": 701,
+        "tier": 5,
+        "chance": 3191
+       }
+      ],
+      "chance": 909,
+      "isRate": true,
+      "nameEn": "Lightning Burst Efficiency",
+      "nameFr": "Efficacité de Déluge de Foudre"
+     },
+     {
+      "key": "Wind_Burst_Gauge_Rate",
+      "max": 1402,
+      "min": 701,
+      "tiers": [
+       {
+        "max": 1402,
+        "min": 1366,
+        "tier": 1,
+        "chance": 603
+       },
+       {
+        "max": 1331,
+        "min": 1261,
+        "tier": 2,
+        "chance": 1206
+       },
+       {
+        "max": 1226,
+        "min": 1086,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 1051,
+        "min": 911,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 877,
+        "min": 701,
+        "tier": 5,
+        "chance": 3191
+       }
+      ],
+      "chance": 909,
+      "isRate": true,
+      "nameEn": "Wind Burst Efficiency",
+      "nameFr": "Efficacité de Déluge de Vent"
+     },
+     {
+      "key": "Fire_Burst_Gauge_Rate",
+      "max": 1402,
+      "min": 701,
+      "tiers": [
+       {
+        "max": 1402,
+        "min": 1366,
+        "tier": 1,
+        "chance": 603
+       },
+       {
+        "max": 1331,
+        "min": 1261,
+        "tier": 2,
+        "chance": 1206
+       },
+       {
+        "max": 1226,
+        "min": 1086,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 1051,
+        "min": 911,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 877,
+        "min": 701,
+        "tier": 5,
+        "chance": 3191
+       }
+      ],
+      "chance": 909,
+      "isRate": true,
+      "nameEn": "Fire Burst Efficiency",
+      "nameFr": "Efficacité de Déluge de Feu"
+     },
+     {
+      "key": "Ice_Burst_Gauge_Rate",
+      "max": 1402,
+      "min": 701,
+      "tiers": [
+       {
+        "max": 1402,
+        "min": 1366,
+        "tier": 1,
+        "chance": 603
+       },
+       {
+        "max": 1331,
+        "min": 1261,
+        "tier": 2,
+        "chance": 1206
+       },
+       {
+        "max": 1226,
+        "min": 1086,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 1051,
+        "min": 911,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 877,
+        "min": 701,
+        "tier": 5,
+        "chance": 3191
+       }
+      ],
+      "chance": 909,
+      "isRate": true,
+      "nameEn": "Cold Burst Efficiency",
+      "nameFr": "Efficacité de Déluge de Froid"
+     },
+     {
+      "key": "Earth_Burst_Gauge_Rate",
+      "max": 1402,
+      "min": 701,
+      "tiers": [
+       {
+        "max": 1402,
+        "min": 1366,
+        "tier": 1,
+        "chance": 603
+       },
+       {
+        "max": 1331,
+        "min": 1261,
+        "tier": 2,
+        "chance": 1206
+       },
+       {
+        "max": 1226,
+        "min": 1086,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 1051,
+        "min": 911,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 877,
+        "min": 701,
+        "tier": 5,
+        "chance": 3191
+       }
+      ],
+      "chance": 909,
+      "isRate": true,
+      "nameEn": "Earth Burst Efficiency",
+      "nameFr": "Efficacité de Déluge de Terre"
+     },
+     {
+      "key": "P_Shield_Rate",
+      "max": 1297,
+      "min": 649,
+      "tiers": [
+       {
+        "max": 1297,
+        "min": 1265,
+        "tier": 1,
+        "chance": 603
+       },
+       {
+        "max": 1234,
+        "min": 1168,
+        "tier": 2,
+        "chance": 1206
+       },
+       {
+        "max": 1136,
+        "min": 1006,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 974,
+        "min": 844,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 811,
+        "min": 649,
+        "tier": 5,
+        "chance": 3191
+       }
+      ],
+      "chance": 909,
+      "isRate": true,
+      "nameEn": "Barrier Efficiency",
+      "nameFr": "Efficacité des barrières"
+     },
+     {
+      "key": "H_HealPower_Rate",
+      "max": 1039,
+      "min": 519,
+      "tiers": [
+       {
+        "max": 1039,
+        "min": 1013,
+        "tier": 1,
+        "chance": 603
+       },
+       {
+        "max": 987,
+        "min": 935,
+        "tier": 2,
+        "chance": 1206
+       },
+       {
+        "max": 909,
+        "min": 805,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 779,
+        "min": 675,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 649,
+        "min": 519,
+        "tier": 5,
+        "chance": 3191
+       }
+      ],
+      "chance": 909,
+      "isRate": true,
+      "nameEn": "Healing Efficiency",
+      "nameFr": "Efficacité de guérison"
+     },
+     {
+      "key": "Burst_Gauge_Rate",
+      "max": 842,
+      "min": 421,
+      "tiers": [
+       {
+        "max": 842,
+        "min": 820,
+        "tier": 1,
+        "chance": 603
+       },
+       {
+        "max": 799,
+        "min": 757,
+        "tier": 2,
+        "chance": 1206
+       },
+       {
+        "max": 736,
+        "min": 652,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 631,
+        "min": 547,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 527,
+        "min": 421,
+        "tier": 5,
+        "chance": 3191
+       }
+      ],
+      "chance": 909,
+      "isRate": true,
+      "nameEn": "All Elemental Burst Efficiency",
+      "nameFr": "Efficacité de Déluge de tous les éléments"
+     },
+     {
+      "key": "I_MaxHpAdd_Rate",
+      "max": 313,
+      "min": 156,
+      "tiers": [
+       {
+        "max": 313,
+        "min": 305,
+        "tier": 1,
+        "chance": 603
+       },
+       {
+        "max": 297,
+        "min": 281,
+        "tier": 2,
+        "chance": 1206
+       },
+       {
+        "max": 274,
+        "min": 242,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 235,
+        "min": 203,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 196,
+        "min": 156,
+        "tier": 5,
+        "chance": 3191
+       }
+      ],
+      "chance": 909,
+      "isRate": true,
+      "nameEn": "HP Increase",
+      "nameFr": "Augmentation des PV"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 130,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 170,
+     "gold": 710,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 560,
+     "gold": 2340,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1210,
+     "gold": 5070,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1750,
+     "gold": 7370,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 80,
+     "gold": 180,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 430,
+     "gold": 980,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1420,
+     "gold": 3200,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3080,
+     "gold": 6950,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 4460,
+     "gold": 10090,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 160,
+     "gold": 280,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 880,
+     "gold": 1510,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2890,
+     "gold": 4930,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 6270,
+     "gold": 10700,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 9090,
+     "gold": 15540,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 310,
+     "gold": 480,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1700,
+     "gold": 2560,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 5580,
+     "gold": 8390,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 12100,
+     "gold": 18190,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 17550,
+     "gold": 26420,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 600,
+     "gold": 870,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 3260,
+     "gold": 4670,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 10700,
+     "gold": 15290,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 23210,
+     "gold": 33170,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 33680,
+     "gold": 48170,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_17",
+    "abilityType": "Debuff_Time_Rate",
+    "progression": [
+     8
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_17",
+    "abilityType": "Debuff_Time_Rate",
+    "progression": [
+     646
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_17",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     71
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_17",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     6373
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmu5k4r4y04we2lqjqoouxbka",
+  "gameId": "132605013",
+  "slug": "abyssal-predator-necklace",
+  "slugFr": "collier-de-predateur-abyssal",
+  "nameFr": "Collier de prédateur 「abyssal」",
+  "nameEn": "「Abyssal」 Predator Necklace",
+  "grade": "grade5",
+  "slot": "Necklace",
+  "mainStat": "B_Def_Equip",
+  "subStat": "Holy_Res",
+  "setId": "equip_t5_predator",
+  "reinforceMax": 5,
+  "qualityMin": 120,
+  "qualityMax": 160,
+  "qualityMinLive": 120,
+  "qualityMaxLive": 160,
+  "tierBoundaries": [
+   119
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101062020",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "Holy_Res",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Holy Defense",
+    "nameFr": "Défense du Sacré"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment Defense",
+    "nameFr": "Défense de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 1,
+    "stats": [
+     {
+      "key": "C_Critical_DamRes_Rate",
+      "max": 1339,
+      "min": 669,
+      "tiers": [
+       {
+        "max": 1339,
+        "min": 1305,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 1273,
+        "min": 1205,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 1171,
+        "min": 1037,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 1004,
+        "min": 870,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 837,
+        "min": 669,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": true,
+      "nameEn": "Crit Defense",
+      "nameFr": "Défense crit."
+     },
+     {
+      "key": "MF_ChargeEffic_Rate",
+      "max": 1121,
+      "min": 561,
+      "tiers": [
+       {
+        "max": 1121,
+        "min": 1093,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 1065,
+        "min": 1009,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 981,
+        "min": 869,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 841,
+        "min": 729,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 701,
+        "min": 561,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": true,
+      "nameEn": "Magic Charging Efficiency",
+      "nameFr": "Efficacité de recharge de la magie"
+     },
+     {
+      "key": "C_Critical_ResRate",
+      "max": 758,
+      "min": 379,
+      "tiers": [
+       {
+        "max": 758,
+        "min": 740,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 721,
+        "min": 683,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 664,
+        "min": 588,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 569,
+        "min": 493,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 475,
+        "min": 379,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": true,
+      "nameEn": "Crit Resistance",
+      "nameFr": "Résistance crit."
+     },
+     {
+      "key": "Default_Res",
+      "max": 479,
+      "min": 239,
+      "tiers": [
+       {
+        "max": 479,
+        "min": 467,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 455,
+        "min": 431,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 419,
+        "min": 371,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 359,
+        "min": 311,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 299,
+        "min": 239,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Physical Defense",
+      "nameFr": "Défense physique"
+     },
+     {
+      "key": "Thunder_Res",
+      "max": 479,
+      "min": 239,
+      "tiers": [
+       {
+        "max": 479,
+        "min": 467,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 455,
+        "min": 431,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 419,
+        "min": 371,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 359,
+        "min": 311,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 299,
+        "min": 239,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Lightning Defense",
+      "nameFr": "Défense de Foudre"
+     },
+     {
+      "key": "Wind_Res",
+      "max": 479,
+      "min": 239,
+      "tiers": [
+       {
+        "max": 479,
+        "min": 467,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 455,
+        "min": 431,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 419,
+        "min": 371,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 359,
+        "min": 311,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 299,
+        "min": 239,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Wind Defense",
+      "nameFr": "Défense de Vent"
+     },
+     {
+      "key": "Fire_Res",
+      "max": 479,
+      "min": 239,
+      "tiers": [
+       {
+        "max": 479,
+        "min": 467,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 455,
+        "min": 431,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 419,
+        "min": 371,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 359,
+        "min": 311,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 299,
+        "min": 239,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Fire Defense",
+      "nameFr": "Défense de Feu"
+     },
+     {
+      "key": "Ice_Res",
+      "max": 479,
+      "min": 239,
+      "tiers": [
+       {
+        "max": 479,
+        "min": 467,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 455,
+        "min": 431,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 419,
+        "min": 371,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 359,
+        "min": 311,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 299,
+        "min": 239,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Cold Defense",
+      "nameFr": "Défense de Froid"
+     },
+     {
+      "key": "Earth_Res",
+      "max": 479,
+      "min": 239,
+      "tiers": [
+       {
+        "max": 479,
+        "min": 467,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 455,
+        "min": 431,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 419,
+        "min": 371,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 359,
+        "min": 311,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 299,
+        "min": 239,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Earth Defense",
+      "nameFr": "Défense de Terre"
+     },
+     {
+      "key": "Dark_Res",
+      "max": 479,
+      "min": 239,
+      "tiers": [
+       {
+        "max": 479,
+        "min": 467,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 455,
+        "min": 431,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 419,
+        "min": 371,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 359,
+        "min": 311,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 299,
+        "min": 239,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Darkness Defense",
+      "nameFr": "Défense des Ténèbres"
+     },
+     {
+      "key": "Holy_Res",
+      "max": 479,
+      "min": 239,
+      "tiers": [
+       {
+        "max": 479,
+        "min": 467,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 455,
+        "min": 431,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 419,
+        "min": 371,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 359,
+        "min": 311,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 299,
+        "min": 239,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Holy Defense",
+      "nameFr": "Défense du Sacré"
+     },
+     {
+      "key": "I_DefAdd_Rate",
+      "max": 426,
+      "min": 213,
+      "tiers": [
+       {
+        "max": 426,
+        "min": 416,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 406,
+        "min": 384,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 373,
+        "min": 331,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 321,
+        "min": 277,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 267,
+        "min": 213,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": true,
+      "nameEn": "Defense Increase",
+      "nameFr": "Augmentation de la défense"
+     },
+     {
+      "key": "AllElement_Res",
+      "max": 332,
+      "min": 166,
+      "tiers": [
+       {
+        "max": 332,
+        "min": 324,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 317,
+        "min": 299,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 292,
+        "min": 258,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 250,
+        "min": 216,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 208,
+        "min": 166,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "All Element Defense",
+      "nameFr": "Défense de tous les éléments"
+     },
+     {
+      "key": "D_Protect_CurRes_Rate",
+      "max": 260,
+      "min": 130,
+      "tiers": [
+       {
+        "max": 260,
+        "min": 254,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 248,
+        "min": 234,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 228,
+        "min": 202,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 195,
+        "min": 169,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 164,
+        "min": 130,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": true,
+      "nameEn": "Shatter Resistance",
+      "nameFr": "Résistance au percement"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 130,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 170,
+     "gold": 710,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 560,
+     "gold": 2340,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1210,
+     "gold": 5070,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1750,
+     "gold": 7370,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 80,
+     "gold": 180,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 430,
+     "gold": 980,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1420,
+     "gold": 3200,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3080,
+     "gold": 6950,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 4460,
+     "gold": 10090,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 160,
+     "gold": 280,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 880,
+     "gold": 1510,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2890,
+     "gold": 4930,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 6270,
+     "gold": 10700,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 9090,
+     "gold": 15540,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 310,
+     "gold": 480,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1700,
+     "gold": 2560,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 5580,
+     "gold": 8390,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 12100,
+     "gold": 18190,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 17550,
+     "gold": 26420,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 600,
+     "gold": 870,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 3260,
+     "gold": 4670,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 10700,
+     "gold": 15290,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 23210,
+     "gold": 33170,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 33680,
+     "gold": 48170,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_17",
+    "abilityType": "Holy_Res",
+    "progression": [
+     6
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_17",
+    "abilityType": "Holy_Res",
+    "progression": [
+     468
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_17",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     26
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_17",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     2303
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmu5k4r4y04wf2lqjbxn23bvj",
+  "gameId": "132805013",
+  "slug": "abyssal-predator-ring",
+  "slugFr": "anneau-de-predateur-abyssal",
+  "nameFr": "Anneau de prédateur 「abyssal」",
+  "nameEn": "「Abyssal」 Predator Ring",
+  "grade": "grade5",
+  "slot": "Ring",
+  "mainStat": "B_Atk_Equip",
+  "subStat": "MF_ChargeEffic_Rate",
+  "setId": "equip_t5_predator",
+  "reinforceMax": 5,
+  "qualityMin": 120,
+  "qualityMax": 160,
+  "qualityMinLive": 120,
+  "qualityMaxLive": 160,
+  "tierBoundaries": [
+   119
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101062020",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "MF_ChargeEffic_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Magic Charging Efficiency",
+    "nameFr": "Efficacité de recharge de la magie"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_Atk_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment Attack",
+    "nameFr": "Attaque de l'équipement"
+   },
+   "randomOptions": {
+    "slots": 1,
+    "stats": [
+     {
+      "key": "TickDam_Rate",
+      "max": 1518,
+      "min": 759,
+      "tiers": [
+       {
+        "max": 1518,
+        "min": 1480,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 1442,
+        "min": 1366,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 1329,
+        "min": 1177,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 1139,
+        "min": 987,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 949,
+        "min": 759,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": true,
+      "nameEn": "DoT Efficiency",
+      "nameFr": "Efficacité des dégâts sur la durée"
+     },
+     {
+      "key": "C_Critical_Dam_Rate",
+      "max": 1339,
+      "min": 669,
+      "tiers": [
+       {
+        "max": 1339,
+        "min": 1305,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 1273,
+        "min": 1205,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 1171,
+        "min": 1037,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 1004,
+        "min": 870,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 837,
+        "min": 669,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": true,
+      "nameEn": "Crit Damage",
+      "nameFr": "Dégâts crit."
+     },
+     {
+      "key": "C_Critical_Rate",
+      "max": 758,
+      "min": 379,
+      "tiers": [
+       {
+        "max": 758,
+        "min": 740,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 721,
+        "min": 683,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 664,
+        "min": 588,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 569,
+        "min": 493,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 475,
+        "min": 379,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": true,
+      "nameEn": "Crit Chance",
+      "nameFr": "Chances crit."
+     },
+     {
+      "key": "Default_Add",
+      "max": 592,
+      "min": 296,
+      "tiers": [
+       {
+        "max": 592,
+        "min": 578,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 563,
+        "min": 533,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 519,
+        "min": 459,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 445,
+        "min": 385,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 370,
+        "min": 296,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Physical Attack",
+      "nameFr": "Attaque physique"
+     },
+     {
+      "key": "Thunder_Add",
+      "max": 592,
+      "min": 296,
+      "tiers": [
+       {
+        "max": 592,
+        "min": 578,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 563,
+        "min": 533,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 519,
+        "min": 459,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 445,
+        "min": 385,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 370,
+        "min": 296,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Lightning Attack",
+      "nameFr": "Attaque de Foudre"
+     },
+     {
+      "key": "Wind_Add",
+      "max": 592,
+      "min": 296,
+      "tiers": [
+       {
+        "max": 592,
+        "min": 578,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 563,
+        "min": 533,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 519,
+        "min": 459,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 445,
+        "min": 385,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 370,
+        "min": 296,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Wind Attack",
+      "nameFr": "Attaque de Vent"
+     },
+     {
+      "key": "Fire_Add",
+      "max": 592,
+      "min": 296,
+      "tiers": [
+       {
+        "max": 592,
+        "min": 578,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 563,
+        "min": 533,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 519,
+        "min": 459,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 445,
+        "min": 385,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 370,
+        "min": 296,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Fire Attack",
+      "nameFr": "Attaque de Feu"
+     },
+     {
+      "key": "Ice_Add",
+      "max": 592,
+      "min": 296,
+      "tiers": [
+       {
+        "max": 592,
+        "min": 578,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 563,
+        "min": 533,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 519,
+        "min": 459,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 445,
+        "min": 385,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 370,
+        "min": 296,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Cold Attack",
+      "nameFr": "Attaque de Froid"
+     },
+     {
+      "key": "Earth_Add",
+      "max": 592,
+      "min": 296,
+      "tiers": [
+       {
+        "max": 592,
+        "min": 578,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 563,
+        "min": 533,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 519,
+        "min": 459,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 445,
+        "min": 385,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 370,
+        "min": 296,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Earth Attack",
+      "nameFr": "Attaque de Terre"
+     },
+     {
+      "key": "Dark_Add",
+      "max": 592,
+      "min": 296,
+      "tiers": [
+       {
+        "max": 592,
+        "min": 578,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 563,
+        "min": 533,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 519,
+        "min": 459,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 445,
+        "min": 385,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 370,
+        "min": 296,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Darkness Attack",
+      "nameFr": "Attaque des Ténèbres"
+     },
+     {
+      "key": "Holy_Add",
+      "max": 592,
+      "min": 296,
+      "tiers": [
+       {
+        "max": 592,
+        "min": 578,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 563,
+        "min": 533,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 519,
+        "min": 459,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 445,
+        "min": 385,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 370,
+        "min": 296,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "Holy Attack",
+      "nameFr": "Attaque du Sacré"
+     },
+     {
+      "key": "I_AtkAdd_Rate",
+      "max": 530,
+      "min": 265,
+      "tiers": [
+       {
+        "max": 530,
+        "min": 516,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 503,
+        "min": 477,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 464,
+        "min": 410,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 398,
+        "min": 344,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 331,
+        "min": 265,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": true,
+      "nameEn": "Attack Increase",
+      "nameFr": "Augmentation de l'attaque"
+     },
+     {
+      "key": "AllElement_Add",
+      "max": 415,
+      "min": 208,
+      "tiers": [
+       {
+        "max": 415,
+        "min": 405,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 396,
+        "min": 374,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 364,
+        "min": 322,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 312,
+        "min": 270,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 260,
+        "min": 208,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": false,
+      "nameEn": "All Element Attack",
+      "nameFr": "Attaque de tous les éléments"
+     },
+     {
+      "key": "D_Protect_Cur_Rate",
+      "max": 182,
+      "min": 91,
+      "tiers": [
+       {
+        "max": 182,
+        "min": 178,
+        "tier": 1,
+        "chance": 601
+       },
+       {
+        "max": 174,
+        "min": 164,
+        "tier": 2,
+        "chance": 1201
+       },
+       {
+        "max": 160,
+        "min": 142,
+        "tier": 3,
+        "chance": 2500
+       },
+       {
+        "max": 137,
+        "min": 119,
+        "tier": 4,
+        "chance": 2500
+       },
+       {
+        "max": 115,
+        "min": 91,
+        "tier": 5,
+        "chance": 3198
+       }
+      ],
+      "chance": 714,
+      "isRate": true,
+      "nameEn": "Defense Shatter",
+      "nameFr": "Percement de défense"
+     }
+    ]
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 130,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 170,
+     "gold": 710,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 560,
+     "gold": 2340,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1210,
+     "gold": 5070,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1750,
+     "gold": 7370,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 80,
+     "gold": 180,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 430,
+     "gold": 980,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1420,
+     "gold": 3200,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3080,
+     "gold": 6950,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 4460,
+     "gold": 10090,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 160,
+     "gold": 280,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 880,
+     "gold": 1510,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2890,
+     "gold": 4930,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 6270,
+     "gold": 10700,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 9090,
+     "gold": 15540,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 310,
+     "gold": 480,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1700,
+     "gold": 2560,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 5580,
+     "gold": 8390,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 12100,
+     "gold": 18190,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 17550,
+     "gold": 26420,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 600,
+     "gold": 870,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 3260,
+     "gold": 4670,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 10700,
+     "gold": 15290,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 23210,
+     "gold": 33170,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 33680,
+     "gold": 48170,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_17",
+    "abilityType": "MF_ChargeEffic_Rate",
+    "progression": [
+     12
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_17",
+    "abilityType": "MF_ChargeEffic_Rate",
+    "progression": [
+     1077
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_17",
+    "abilityType": "B_Atk_Equip",
+    "progression": [
+     16
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_17",
+    "abilityType": "B_Atk_Equip",
+    "progression": [
+     1407
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmu5k4r4y04u92lqj0iq1tzlv",
+  "gameId": "132114013",
+  "slug": "abyssal-predator-top",
+  "slugFr": "haut-de-predateur-abyssal",
+  "nameFr": "Haut de prédateur 「abyssal」",
+  "nameEn": "「Abyssal」 Predator Top",
+  "grade": "grade5",
+  "slot": "Top",
+  "mainStat": "B_Def_Equip",
+  "subStat": "C_Critical_DamRes_Rate",
+  "setId": "equip_t5_predator",
+  "reinforceMax": 5,
+  "qualityMin": 120,
+  "qualityMax": 160,
+  "qualityMinLive": 120,
+  "qualityMaxLive": 160,
+  "tierBoundaries": [
+   119
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101120268",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "C_Critical_DamRes_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Crit Defense",
+    "nameFr": "Défense crit."
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment Defense",
+    "nameFr": "Défense de l'équipement"
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 110,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 140,
+     "gold": 570,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 440,
+     "gold": 1870,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 960,
+     "gold": 4060,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1400,
+     "gold": 5900,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 70,
+     "gold": 150,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 350,
+     "gold": 780,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1130,
+     "gold": 2560,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 2450,
+     "gold": 5560,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3570,
+     "gold": 8080,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 140,
+     "gold": 220,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 710,
+     "gold": 1210,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2300,
+     "gold": 3950,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 5000,
+     "gold": 8560,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 7270,
+     "gold": 12430,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 260,
+     "gold": 380,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1370,
+     "gold": 2050,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 4450,
+     "gold": 6710,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 9660,
+     "gold": 14550,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 14040,
+     "gold": 21130,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 490,
+     "gold": 690,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 2620,
+     "gold": 3740,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 8540,
+     "gold": 12230,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 18540,
+     "gold": 26540,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 26940,
+     "gold": 38540,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_17",
+    "abilityType": "C_Critical_DamRes_Rate",
+    "progression": [
+     8
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_17",
+    "abilityType": "C_Critical_DamRes_Rate",
+    "progression": [
+     676
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_17",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     32
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_17",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     2855
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmu5k4r4y04uq2lqj3zncoq53",
+  "gameId": "132355003",
+  "slug": "sea-wanderer-belt",
+  "slugFr": "ceinture-de-vagabond-des-mers",
+  "nameFr": "Ceinture de vagabond des mers",
+  "nameEn": "Sea Wanderer Belt",
+  "grade": "grade5",
+  "slot": "Belt",
+  "mainStat": "B_MaxHP_Equip",
+  "subStat": "H_HealReceive_Rate",
+  "setId": "equip_t5_pirate",
+  "reinforceMax": 5,
+  "qualityMin": 96,
+  "qualityMax": 110,
+  "qualityMinLive": 110,
+  "qualityMaxLive": 110,
+  "tierBoundaries": [
+   95,
+   110
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101120268",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "H_HealReceive_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Healing Received Increase",
+    "nameFr": "Augmentation des soins reçus"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 110,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 140,
+     "gold": 570,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 440,
+     "gold": 1870,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 960,
+     "gold": 4060,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1400,
+     "gold": 5900,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 70,
+     "gold": 150,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 350,
+     "gold": 780,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1130,
+     "gold": 2560,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 2450,
+     "gold": 5560,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3570,
+     "gold": 8080,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 140,
+     "gold": 220,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 710,
+     "gold": 1210,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2300,
+     "gold": 3950,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 5000,
+     "gold": 8560,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 7270,
+     "gold": 12430,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 260,
+     "gold": 380,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1370,
+     "gold": 2050,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 4450,
+     "gold": 6710,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 9660,
+     "gold": 14550,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 14040,
+     "gold": 21130,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 490,
+     "gold": 690,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 2620,
+     "gold": 3740,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 8540,
+     "gold": 12230,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 18540,
+     "gold": 26540,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 26940,
+     "gold": 38540,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_12",
+    "abilityType": "H_HealReceive_Rate",
+    "progression": [
+     3
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_12",
+    "abilityType": "H_HealReceive_Rate",
+    "progression": [
+     192
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_12",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     73
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_12",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     4998
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmu5k4r4y04up2lqjfmxmo11x",
+  "gameId": "132255003",
+  "slug": "sea-wanderer-bottoms",
+  "slugFr": "bas-de-vagabond-des-mers",
+  "nameFr": "Bas de vagabond des mers",
+  "nameEn": "Sea Wanderer Bottoms",
+  "grade": "grade5",
+  "slot": "Bottom",
+  "mainStat": "B_MaxHP_Equip",
+  "subStat": "P_Shield_Rate",
+  "setId": "equip_t5_pirate",
+  "reinforceMax": 5,
+  "qualityMin": 96,
+  "qualityMax": 110,
+  "qualityMinLive": 110,
+  "qualityMaxLive": 110,
+  "tierBoundaries": [
+   95,
+   110
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101120268",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "P_Shield_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Barrier Efficiency",
+    "nameFr": "Efficacité des barrières"
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment HP",
+    "nameFr": "PV de l'équipement"
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 110,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 140,
+     "gold": 570,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 440,
+     "gold": 1870,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 960,
+     "gold": 4060,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1400,
+     "gold": 5900,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 70,
+     "gold": 150,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 350,
+     "gold": 780,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1130,
+     "gold": 2560,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 2450,
+     "gold": 5560,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3570,
+     "gold": 8080,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 140,
+     "gold": 220,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 710,
+     "gold": 1210,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2300,
+     "gold": 3950,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 5000,
+     "gold": 8560,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 7270,
+     "gold": 12430,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 260,
+     "gold": 380,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1370,
+     "gold": 2050,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 4450,
+     "gold": 6710,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 9660,
+     "gold": 14550,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 14040,
+     "gold": 21130,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 490,
+     "gold": 690,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 2620,
+     "gold": 3740,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 8540,
+     "gold": 12230,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 18540,
+     "gold": 26540,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 26940,
+     "gold": 38540,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_12",
+    "abilityType": "P_Shield_Rate",
+    "progression": [
+     6
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_12",
+    "abilityType": "P_Shield_Rate",
+    "progression": [
+     381
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_12",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     88
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_12",
+    "abilityType": "B_MaxHP_Equip",
+    "progression": [
+     6068
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmu5k4r4y04ur2lqj3mlc2cpb",
+  "gameId": "132455003",
+  "slug": "sea-wanderer-combat-boots",
+  "slugFr": "bottes-de-combat-de-vagabond-des-mers",
+  "nameFr": "Bottes de combat de vagabond des mers",
+  "nameEn": "Sea Wanderer Combat Boots",
+  "grade": "grade5",
+  "slot": "Shoes",
+  "mainStat": "B_Def_Equip",
+  "subStat": "C_Critical_DamRes_Rate",
+  "setId": "equip_t5_pirate",
+  "reinforceMax": 5,
+  "qualityMin": 96,
+  "qualityMax": 110,
+  "qualityMinLive": 110,
+  "qualityMaxLive": 110,
+  "tierBoundaries": [
+   95,
+   110
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101120268",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "C_Critical_DamRes_Rate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Crit Defense",
+    "nameFr": "Défense crit."
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment Defense",
+    "nameFr": "Défense de l'équipement"
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 110,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 140,
+     "gold": 570,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 440,
+     "gold": 1870,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 960,
+     "gold": 4060,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1400,
+     "gold": 5900,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 70,
+     "gold": 150,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 350,
+     "gold": 780,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1130,
+     "gold": 2560,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 2450,
+     "gold": 5560,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3570,
+     "gold": 8080,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 140,
+     "gold": 220,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 710,
+     "gold": 1210,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2300,
+     "gold": 3950,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 5000,
+     "gold": 8560,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 7270,
+     "gold": 12430,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 260,
+     "gold": 380,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1370,
+     "gold": 2050,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 4450,
+     "gold": 6710,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 9660,
+     "gold": 14550,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 14040,
+     "gold": 21130,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 490,
+     "gold": 690,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 2620,
+     "gold": 3740,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 8540,
+     "gold": 12230,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 18540,
+     "gold": 26540,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 26940,
+     "gold": 38540,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_12",
+    "abilityType": "C_Critical_DamRes_Rate",
+    "progression": [
+     6
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_12",
+    "abilityType": "C_Critical_DamRes_Rate",
+    "progression": [
+     405
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_12",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     25
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_12",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     1686
+    ]
+   }
+  },
+  "equipPassive": null
+ },
+ {
+  "id": "cmu5k4r4y04uo2lqjsjk8n4ej",
+  "gameId": "132155003",
+  "slug": "sea-wanderer-top",
+  "slugFr": "haut-de-vagabond-des-mers",
+  "nameFr": "Haut de vagabond des mers",
+  "nameEn": "Sea Wanderer Top",
+  "grade": "grade5",
+  "slot": "Top",
+  "mainStat": "B_Def_Equip",
+  "subStat": "C_Critical_ResRate",
+  "setId": "equip_t5_pirate",
+  "reinforceMax": 5,
+  "qualityMin": 96,
+  "qualityMax": 110,
+  "qualityMinLive": 110,
+  "qualityMaxLive": 110,
+  "tierBoundaries": [
+   95,
+   110
+  ],
+  "growth": {
+   "promotion": [
+    {
+     "gold": 0,
+     "rate": 0,
+     "tier": 0,
+     "isMax": true,
+     "items": null,
+     "maxReinforce": 5
+    }
+   ],
+   "disassemble": [
+    {
+     "max": 50,
+     "min": 30,
+     "rate": 10000,
+     "itemId": "101120268",
+     "levelRate": "rate_02"
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    },
+    {
+     "max": 0,
+     "min": 0,
+     "rate": 0,
+     "itemId": ""
+    }
+   ],
+   "levelCurves": {
+    "rate_02": {
+     "0": 1,
+     "5": 1.2,
+     "10": 1.4,
+     "15": 1.6,
+     "20": 1.8,
+     "25": 2,
+     "30": 2.2,
+     "35": 2.4,
+     "40": 2.6,
+     "45": 2.8,
+     "50": 3
+    }
+   },
+   "subReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "C_Critical_ResRate",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "subStatLabel": {
+    "nameEn": "Crit Resistance",
+    "nameFr": "Résistance crit."
+   },
+   "mainReinforce": {
+    "base": 0,
+    "growthType": "reinforce",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     10300,
+     10700,
+     11200,
+     11800,
+     12500
+    ]
+   },
+   "mainStatLabel": {
+    "nameEn": "Equipment Defense",
+    "nameFr": "Défense de l'équipement"
+   },
+   "reinforcement": [
+    {
+     "exp": 30,
+     "gold": 110,
+     "tier": 0,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 140,
+     "gold": 570,
+     "tier": 1,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 440,
+     "gold": 1870,
+     "tier": 2,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 960,
+     "gold": 4060,
+     "tier": 3,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 1400,
+     "gold": 5900,
+     "tier": 4,
+     "items": null,
+     "level": 0
+    },
+    {
+     "exp": 70,
+     "gold": 150,
+     "tier": 0,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 350,
+     "gold": 780,
+     "tier": 1,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 1130,
+     "gold": 2560,
+     "tier": 2,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 2450,
+     "gold": 5560,
+     "tier": 3,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 3570,
+     "gold": 8080,
+     "tier": 4,
+     "items": null,
+     "level": 1
+    },
+    {
+     "exp": 140,
+     "gold": 220,
+     "tier": 0,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 710,
+     "gold": 1210,
+     "tier": 1,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 2300,
+     "gold": 3950,
+     "tier": 2,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 5000,
+     "gold": 8560,
+     "tier": 3,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 7270,
+     "gold": 12430,
+     "tier": 4,
+     "items": null,
+     "level": 2
+    },
+    {
+     "exp": 260,
+     "gold": 380,
+     "tier": 0,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 1370,
+     "gold": 2050,
+     "tier": 1,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 4450,
+     "gold": 6710,
+     "tier": 2,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 9660,
+     "gold": 14550,
+     "tier": 3,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 14040,
+     "gold": 21130,
+     "tier": 4,
+     "items": null,
+     "level": 3
+    },
+    {
+     "exp": 490,
+     "gold": 690,
+     "tier": 0,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 2620,
+     "gold": 3740,
+     "tier": 1,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 8540,
+     "gold": 12230,
+     "tier": 2,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 18540,
+     "gold": 26540,
+     "tier": 3,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 26940,
+     "gold": 38540,
+     "tier": 4,
+     "items": null,
+     "level": 4
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 0,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 1,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 2,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 3,
+     "items": null,
+     "level": 5
+    },
+    {
+     "exp": 0,
+     "gold": 0,
+     "tier": 4,
+     "items": null,
+     "level": 5
+    }
+   ],
+   "subEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_12",
+    "abilityType": "C_Critical_ResRate",
+    "progression": [
+     4
+    ]
+   },
+   "subStatValues": {
+    "base": 0,
+    "growthType": "equiplv_12",
+    "abilityType": "C_Critical_ResRate",
+    "progression": [
+     232
+    ]
+   },
+   "mainEquiplvAdd": {
+    "base": 0,
+    "growthType": "equiplv_add_12",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     31
+    ]
+   },
+   "mainStatValues": {
+    "base": 0,
+    "growthType": "equiplv_12",
+    "abilityType": "B_Def_Equip",
+    "progression": [
+     2086
+    ]
+   }
+  },
+  "equipPassive": null
  }
 ]

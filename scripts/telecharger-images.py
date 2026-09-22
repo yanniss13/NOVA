@@ -13,6 +13,8 @@
 #  octet pour octet :
 #    armes   ->  /images/weapons/<gameId>.webp   (iconUrl publie par /fr/armes)
 #    bijoux  ->  /images/items/<gameId>.webp     (grade5 seulement)
+#    armures ->  /images/items/<gameId>.webp     (grade5, Haut/Bas/Bottes/
+#                                                 Ceinture ; publie par /fr/armures)
 #  Le nom de fichier est le `displayName` FR, comme pour l'existant.
 # =============================================================================
 import argparse
@@ -35,6 +37,7 @@ _spec.loader.exec_module(_gen)
 BASE = "https://7dsorigin.app"
 PAGE_ARMES = BASE + "/fr/armes"
 PAGE_BIJOUX = BASE + "/fr/bijoux"
+PAGE_ARMURES = BASE + "/fr/armures"
 
 # enum weaponType du site -> dossier local
 DOSSIER_ARME = {
@@ -45,8 +48,13 @@ DOSSIER_ARME = {
 }
 DOSSIER_BIJOU = {"Ring": "Anneau", "Necklace": "Collier",
                  "Earring": "Boucle d'oreille"}
+# Les quatre emplacements universels. L'armure liee (`BindArmor`) n'en fait
+# pas partie : elle depend du personnage, voir generate-armures-liees.py.
+DOSSIER_ARMURE = {"Top": "Haut", "Bottom": "Bas", "Shoes": "Bottes",
+                  "Belt": "Ceinture"}
 # Le seul grade que le depot embarque, comme les badges « SSR » du site.
 GRADE_BIJOU = "grade5"
+GRADE_ARMURE = "grade5"
 
 
 def telecharge(url):
@@ -74,6 +82,18 @@ def attendus():
             continue
         yield (os.path.join("7ds-bijoux", dossier), bijou["displayName"],
                "%s/images/items/%s.webp" % (BASE, bijou["gameId"]))
+
+    # Les armures non encore sorties (`released` faux) n'ont pas d'image
+    # stable : on les laisse a la prochaine passe.
+    armures = _gen.collect(_gen.flight_payload(_gen.fetch(PAGE_ARMURES)), "items")
+    for armure in armures:
+        dossier = DOSSIER_ARMURE.get(armure.get("slot"))
+        if not (dossier and armure.get("grade") == GRADE_ARMURE
+                and armure.get("gameId") and armure.get("displayName")
+                and str(armure.get("released")) == "True"):
+            continue
+        yield (os.path.join("7ds-armures-ssr", dossier), armure["displayName"],
+               "%s/images/items/%s.webp" % (BASE, armure["gameId"]))
 
     # Icones de competences : la liste vient du catalogue DEJA COMMITE, pas
     # d'une nouvelle visite des 25 fiches. Regenerer le catalogue est le

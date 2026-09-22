@@ -1582,16 +1582,22 @@ seule celle-là ne trouvera pas de set, les autres tiennent. Un regroupement par
 préfixe commun aurait au contraire cassé tout un emplacement d'un seul coup.
 
 Seuls les sets **complets sur tous les emplacements de leur famille** sont
-proposés. Avec les données actuelles : **14 sets d'armure** (56 des 62 pièces) et
-**10 sets de bijoux** (30 des 34) ; le reste n'existe que dans un emplacement.
+proposés. Avec les données actuelles : **17 sets d'armure** (68 des 75 pièces) et
+**12 sets de bijoux** (36 des 40) ; le reste n'existe que dans un emplacement.
 `armorSetLabel` retire l'article français de liaison pour l'affichage
-(« du cristal de vie » → « Cristal de vie »).
+(« du cristal de vie » → « Cristal de vie »), y compris un « de » sans article
+(« de pulsion maudite » → « Pulsion maudite »).
 
 `stripSetNote` retire une note finale entre parenthèses avant la comparaison.
 Sans elle, « Anneau des 100 jours (jamais porté) » et « Boucles d'oreilles des
 100 jours (jamais port**ées**) » ne partagent que « ) » : l'accord du participe
 casse le suffixe commun et ce 10ᵉ set disparaît. Les noms d'armure ne comportent
 aucune parenthèse, donc ce nettoyage ne change rien pour eux.
+
+Il retire aussi les crochets `「」`. Le jeu les pose sur six des sept pièces
+du prédateur abyssal — « Haut de prédateur 「abyssal」 » — mais pas sur sa
+ceinture, « Ceinture de prédateur abyssal ». Laissés en place, « 」 » et « l »
+n'ont aucune fin commune et le set d'armure disparaît en entier.
 
 `equipmentSetsFrom(source, slots)` porte la logique ; `armorSetsFrom` et
 `jewelSetsFrom` ne sont que des enveloppes sur la liste d'emplacements.
@@ -1829,7 +1835,8 @@ après lui.
   panorama, et un test mesure sa luminance.
 - Après modif des dossiers d'images : relancer `scripts/generate-data.ps1`.
 - Après une mise à jour du jeu : `python scripts/telecharger-images.py --liste`
-  annonce les images d'armes et de bijoux qui manquent, sans rien écrire.
+  annonce les images d'armes, d'armures (grade 5, sorties en jeu) et de bijoux
+  qui manquent, sans rien écrire.
 - Après l'ajout d'un héros : relancer aussi `python scripts/generate-wiki.py`,
   sinon `tests/wiki-catalogue.test.js` passe au rouge.
 

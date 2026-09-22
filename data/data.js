@@ -1,7 +1,7 @@
 // Genere automatiquement par generate-data.ps1 - NE PAS EDITER A LA MAIN.
 // Relance le script pour mettre a jour apres ajout/retrait d'images.
 window.SEVEN_DS_DATA = {
-    "generatedAt":  "2026-09-18 00:12:04",
+    "generatedAt":  "2026-09-22 14:18:04",
     "personnages":  [
                         {
                             "id":  "ban",
@@ -436,6 +436,10 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armes/Epees doubles/Épées doubles de la rafale céleste.webp"
                                         },
                                         {
+                                            "name":  "Épées doubles de l\u0027âme vorace",
+                                            "file":  "7ds-armes/Epees doubles/Épées doubles de l\u0027âme vorace.webp"
+                                        },
+                                        {
                                             "name":  "Épées doubles des ailes de la flamme noire",
                                             "file":  "7ds-armes/Epees doubles/Épées doubles des ailes de la flamme noire.webp"
                                         },
@@ -808,8 +812,20 @@ window.SEVEN_DS_DATA = {
                                      "file":  "7ds-armures-ssr/Haut/Haut de l\u0027éclat spectral.webp"
                                  },
                                  {
+                                     "name":  "Haut de l\u0027obsession du destructeur",
+                                     "file":  "7ds-armures-ssr/Haut/Haut de l\u0027obsession du destructeur.webp"
+                                 },
+                                 {
                                      "name":  "Haut de l\u0027œil de l\u0027étoile sinistre",
                                      "file":  "7ds-armures-ssr/Haut/Haut de l\u0027œil de l\u0027étoile sinistre.webp"
+                                 },
+                                 {
+                                     "name":  "Haut de prédateur 「abyssal」",
+                                     "file":  "7ds-armures-ssr/Haut/Haut de prédateur 「abyssal」.webp"
+                                 },
+                                 {
+                                     "name":  "Haut de vagabond des mers",
+                                     "file":  "7ds-armures-ssr/Haut/Haut de vagabond des mers.webp"
                                  },
                                  {
                                      "name":  "Haut du cauchemar ressuscité",
@@ -878,6 +894,18 @@ window.SEVEN_DS_DATA = {
                                     "file":  "7ds-armures-ssr/Bas/Bas de l\u0027éclat spectral.webp"
                                 },
                                 {
+                                    "name":  "Bas de l\u0027obsession du destructeur",
+                                    "file":  "7ds-armures-ssr/Bas/Bas de l\u0027obsession du destructeur.webp"
+                                },
+                                {
+                                    "name":  "Bas de prédateur 「abyssal」",
+                                    "file":  "7ds-armures-ssr/Bas/Bas de prédateur 「abyssal」.webp"
+                                },
+                                {
+                                    "name":  "Bas de vagabond des mers",
+                                    "file":  "7ds-armures-ssr/Bas/Bas de vagabond des mers.webp"
+                                },
+                                {
                                     "name":  "Bas du cauchemar ressuscité",
                                     "file":  "7ds-armures-ssr/Bas/Bas du cauchemar ressuscité.webp"
                                 },
@@ -924,6 +952,10 @@ window.SEVEN_DS_DATA = {
                             ],
                     "Bottes":  [
                                    {
+                                       "name":  "Bottes de combat de la flamme infernale corrompue",
+                                       "file":  "7ds-armures-ssr/Bottes/Bottes de combat de la flamme infernale corrompue.webp"
+                                   },
+                                   {
                                        "name":  "Bottes de combat de la mélodie d\u0027Arachnée",
                                        "file":  "7ds-armures-ssr/Bottes/Bottes de combat de la mélodie d\u0027Arachnée.webp"
                                    },
@@ -938,6 +970,18 @@ window.SEVEN_DS_DATA = {
                                    {
                                        "name":  "Bottes de combat de l\u0027éclat spectral",
                                        "file":  "7ds-armures-ssr/Bottes/Bottes de combat de l\u0027éclat spectral.webp"
+                                   },
+                                   {
+                                       "name":  "Bottes de combat de l\u0027obsession du destructeur",
+                                       "file":  "7ds-armures-ssr/Bottes/Bottes de combat de l\u0027obsession du destructeur.webp"
+                                   },
+                                   {
+                                       "name":  "Bottes de combat de prédateur 「abyssal」",
+                                       "file":  "7ds-armures-ssr/Bottes/Bottes de combat de prédateur 「abyssal」.webp"
+                                   },
+                                   {
+                                       "name":  "Bottes de combat de vagabond des mers",
+                                       "file":  "7ds-armures-ssr/Bottes/Bottes de combat de vagabond des mers.webp"
                                    },
                                    {
                                        "name":  "Bottes de combat du cauchemar ressuscité",
@@ -1000,6 +1044,18 @@ window.SEVEN_DS_DATA = {
                                      {
                                          "name":  "Ceinture de l\u0027éclat spectral",
                                          "file":  "7ds-armures-ssr/Ceinture/Ceinture de l\u0027éclat spectral.webp"
+                                     },
+                                     {
+                                         "name":  "Ceinture de l\u0027obsession du destructeur",
+                                         "file":  "7ds-armures-ssr/Ceinture/Ceinture de l\u0027obsession du destructeur.webp"
+                                     },
+                                     {
+                                         "name":  "Ceinture de prédateur abyssal",
+                                         "file":  "7ds-armures-ssr/Ceinture/Ceinture de prédateur abyssal.webp"
+                                     },
+                                     {
+                                         "name":  "Ceinture de vagabond des mers",
+                                         "file":  "7ds-armures-ssr/Ceinture/Ceinture de vagabond des mers.webp"
                                      },
                                      {
                                          "name":  "Ceinture d\u0027écailles ensanglantées",
@@ -1456,6 +1512,10 @@ window.SEVEN_DS_DATA = {
                                       "file":  "7ds-bijoux/Anneau/Anneau de l\u0027hymne régénérateur.webp"
                                   },
                                   {
+                                      "name":  "Anneau de prédateur 「abyssal」",
+                                      "file":  "7ds-bijoux/Anneau/Anneau de prédateur 「abyssal」.webp"
+                                  },
+                                  {
                                       "name":  "Anneau de pulsion maudite",
                                       "file":  "7ds-bijoux/Anneau/Anneau de pulsion maudite.webp"
                                   },
@@ -1514,6 +1574,10 @@ window.SEVEN_DS_DATA = {
                                        "file":  "7ds-bijoux/Collier/Collier de l\u0027hymne régénérateur.webp"
                                    },
                                    {
+                                       "name":  "Collier de prédateur 「abyssal」",
+                                       "file":  "7ds-bijoux/Collier/Collier de prédateur 「abyssal」.webp"
+                                   },
+                                   {
                                        "name":  "Collier de pulsion maudite",
                                        "file":  "7ds-bijoux/Collier/Collier de pulsion maudite.webp"
                                    },
@@ -1558,6 +1622,10 @@ window.SEVEN_DS_DATA = {
                                                  {
                                                      "name":  "Boucles d\u0027oreilles de l\u0027hymne régénérateur",
                                                      "file":  "7ds-bijoux/Boucle d\u0027oreille/Boucles d\u0027oreilles de l\u0027hymne régénérateur.webp"
+                                                 },
+                                                 {
+                                                     "name":  "Boucles d\u0027oreilles de prédateur 「abyssal」",
+                                                     "file":  "7ds-bijoux/Boucle d\u0027oreille/Boucles d\u0027oreilles de prédateur 「abyssal」.webp"
                                                  },
                                                  {
                                                      "name":  "Boucles d\u0027oreilles de pulsion maudite",

@@ -27,9 +27,16 @@ import { ARMOR_SLOTS, JEWEL_SLOTS } from "../noyau/constantes.js";
   /* Une note entre parenthèses en fin de nom n'appartient pas à l'identité du
      set. Sans ce nettoyage, « Anneau des 100 jours (jamais porté) » et
      « Boucles d'oreilles des 100 jours (jamais portées) » ne se rejoignent pas,
-     l'accord du participe cassant le suffixe commun. */
+     l'accord du participe cassant le suffixe commun.
+
+     Les crochets 「」 non plus : le jeu les pose sur six des sept pièces du
+     prédateur abyssal, mais pas sur sa ceinture. Laissés en place, « 」 et
+     « l » n'ont aucune fin commune et le set entier disparaît. */
   function stripSetNote(name){
-    return String(name || "").replace(/\s*\([^)]*\)\s*$/, "").trim();
+    return String(name || "")
+      .replace(/\s*\([^)]*\)\s*$/, "")
+      .replace(/[「」]/g, "")
+      .trim();
   }
 
   function commonSuffix(a, b){
@@ -46,7 +53,7 @@ import { ARMOR_SLOTS, JEWEL_SLOTS } from "../noyau/constantes.js";
     const raw = String(stem).trim();
     // Retire l'article français de liaison pour un libellé lisible en liste.
     const cleaned = raw
-      .replace(/^(?:de\s+(?:la|les|le|l['’])|du|des|d['’])\s*/i, "")
+      .replace(/^(?:de\s+(?:la|les|le|l['’])|du|des|d['’]|de(?=\s))\s*/i, "")
       .trim();
     const label = cleaned || raw;
     return label ? label[0].toLocaleUpperCase("fr-FR")+label.slice(1) : "";

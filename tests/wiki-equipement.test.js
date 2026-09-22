@@ -240,9 +240,9 @@ const STATS_TEST = {
   const bijoux = api.bijouxDuWiki();
   const gravees = api.graveesDuWiki();
 
-  assert.equal(armes.length, 156, "156 armes attendues");
-  assert.equal(armures.length, 62, "62 armures attendues");
-  assert.equal(bijoux.length, 37, "37 bijoux attendus");
+  assert.equal(armes.length, 157, "157 armes attendues");
+  assert.equal(armures.length, 75, "75 armures attendues");
+  assert.equal(bijoux.length, 40, "40 bijoux attendus");
   assert.equal(gravees.length, 96,
   /* 83 depuis l'ajout des gravees SR au catalogue ; il n'y avait que les
      SSR, faute d'icones locales. Puis 93 avec la version 2.0, le 26 aout
@@ -251,8 +251,8 @@ const STATS_TEST = {
   "96 armures gravées attendues");
 
   assert.equal(
-    armes.filter(arme => arme.aPassif).length, 95,
-    "95 armes portent un passif ; les 61 autres n'en ont pas, "
+    armes.filter(arme => arme.aPassif).length, 96,
+    "96 armes portent un passif ; les 61 autres n'en ont pas, "
       + "et leur fiche ne doit pas inventer de section"
   );
 
@@ -264,19 +264,19 @@ const STATS_TEST = {
     "toute pièce d'équipement doit retrouver ses statistiques"
   );
 
-  /* ⚠️ Une pièce n'appartient PAS forcément à un ensemble : 30 sur 99 sont
-     autonomes. Vingt d'entre elles sont le palier bas (qualité 86-100) et ne
-     portent rien de plus que leurs statistiques ; les dix autres (101-130)
+  /* ⚠️ Une pièce n'appartient PAS forcément à un ensemble : 35 sur 115 sont
+     autonomes. Vingt-quatre d’entre elles sont le palier bas (qualité 86-100) et ne
+     portent rien de plus que leurs statistiques ; les onze autres (101-130)
      portent un passif à trois niveaux À LA PLACE de l'ensemble — aucune pièce
      d'ensemble n'a de passif. La fiche doit donc afficher l'un OU l'autre,
      et savoir n'afficher ni l'un ni l'autre. */
   assert.equal(
-    armures.concat(bijoux).filter(piece => piece.setId).length, 69,
-    "69 pièces appartiennent à un ensemble"
+    armures.concat(bijoux).filter(piece => piece.setId).length, 80,
+    "80 pièces appartiennent à un ensemble"
   );
   assert.equal(
-    armures.concat(bijoux).filter(piece => !piece.setId).length, 30,
-    "30 pièces sont autonomes"
+    armures.concat(bijoux).filter(piece => !piece.setId).length, 35,
+    "35 pièces sont autonomes"
   );
 
   assert.deepEqual(
@@ -292,7 +292,7 @@ const STATS_TEST = {
   const cites = [...new Set(
     armures.concat(bijoux).map(piece => piece.setId).filter(Boolean)
   )];
-  assert.equal(cites.length, 15, "15 ensembles attendus");
+  assert.equal(cites.length, 17, "17 ensembles attendus");
   cites.forEach(setId => {
     const ensemble = api.ensembleDe(setId);
     assert.ok(ensemble, setId + " : ensemble introuvable");

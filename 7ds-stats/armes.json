@@ -186304,5 +186304,1732 @@
    }
   ],
   "passiveLevels": null
+ },
+ {
+  "id": "cmu5k4fsu00642lqj4rgfv8vx",
+  "slug": "gluttonous-soul-dual-swords",
+  "nameFr": "Épées doubles de l'âme vorace",
+  "nameEn": "Gluttonous Soul Dual Swords",
+  "weaponType": "SwordDual",
+  "mainStat": "attack",
+  "grades": [
+   {
+    "gameId": "131115010",
+    "rarity": "grade5",
+    "subStat": "windDamage",
+    "subStats": [
+     {
+      "stat": "windDamage",
+      "values": {
+       "max": 3453,
+       "base": 683,
+       "progression": [
+        14,
+        33,
+        52,
+        75,
+        103
+       ]
+      },
+      "statLabel": {
+       "nameEn": "Wind Attack",
+       "nameFr": "Attaque de Vent"
+      }
+     },
+     {
+      "stat": "normalAtkDamage",
+      "values": {
+       "max": 7131,
+       "base": 1421,
+       "progression": [
+        29,
+        67,
+        108,
+        155,
+        212
+       ]
+      },
+      "statLabel": {
+       "nameEn": "Normal Attack Damage Increase",
+       "nameFr": "Augmentation des dégâts d'attaque normale"
+      }
+     }
+    ],
+    "overlimit": {
+     "levels": [
+      {
+       "exp": 300,
+       "gold": 20000,
+       "level": 0,
+       "statRate": 0,
+       "passiveLevel": 1
+      },
+      {
+       "exp": 740,
+       "gold": 36000,
+       "level": 1,
+       "statRate": 500,
+       "passiveLevel": 2
+      },
+      {
+       "exp": 1370,
+       "gold": 61000,
+       "level": 2,
+       "statRate": 1000,
+       "passiveLevel": 3
+      },
+      {
+       "exp": 2250,
+       "gold": 101000,
+       "level": 3,
+       "statRate": 1750,
+       "passiveLevel": 4
+      },
+      {
+       "exp": 3440,
+       "gold": 158000,
+       "level": 4,
+       "statRate": 2500,
+       "passiveLevel": 5
+      },
+      {
+       "exp": 5000,
+       "gold": 238000,
+       "level": 5,
+       "statRate": 3750,
+       "passiveLevel": 6
+      },
+      {
+       "exp": 0,
+       "gold": 0,
+       "level": 6,
+       "statRate": 5000,
+       "passiveLevel": 7
+      }
+     ],
+     "passive": {
+      "icon": "equippassive_weapon_calla_b",
+      "levels": [
+       {
+        "level": 1,
+        "descEn": "Each hit on an enemy with a Normal Attack increases [#0F5CD8]Wind Attack[-] by [#1A7331]1%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]25%[-])",
+        "descFr": "Chaque coup porté sur un ennemi avec une attaque normale augmente l'[#0F5CD8]attaque de Vent[-] de [#1A7331]1%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]25%[-])"
+       },
+       {
+        "level": 2,
+        "descEn": "Each hit on an enemy with a Normal Attack increases [#0F5CD8]Wind Attack[-] by [#1A7331]1.2%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]36%[-])",
+        "descFr": "Chaque coup porté sur un ennemi avec une attaque normale augmente l'[#0F5CD8]attaque de Vent[-] de [#1A7331]1.2%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]36%[-])"
+       },
+       {
+        "level": 3,
+        "descEn": "Each hit on an enemy with a Normal Attack increases [#0F5CD8]Wind Attack[-] by [#1A7331]1.4%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]42%[-])",
+        "descFr": "Chaque coup porté sur un ennemi avec une attaque normale augmente l'[#0F5CD8]attaque de Vent[-] de [#1A7331]1.4%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]42%[-])"
+       },
+       {
+        "level": 4,
+        "descEn": "Each hit on an enemy with a Normal Attack increases [#0F5CD8]Wind Attack[-] by [#1A7331]1.6%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]48%[-])\nGaining a [#0F5CD8]Crit Defense[-] boost increases [#0F5CD8]Crit Damage[-] by the amount [#0F5CD8]Crit Defense[-] exceeds [#1A7331]50%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]20%[-])",
+        "descFr": "Chaque coup porté sur un ennemi avec une attaque normale augmente l'[#0F5CD8]attaque de Vent[-] de [#1A7331]1.6%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]48%[-])\nL'obtention d'un boost de [#0F5CD8]défense crit.[-] augmente les [#0F5CD8]dégâts crit.[-] de la quantité de [#0F5CD8]défense crit.[-] qui dépasse [#1A7331]50%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]20%[-])"
+       },
+       {
+        "level": 5,
+        "descEn": "Each hit on an enemy with a Normal Attack increases [#0F5CD8]Wind Attack[-] by [#1A7331]1.8%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]54%[-])\nGaining a [#0F5CD8]Crit Defense[-] boost increases [#0F5CD8]Crit Damage[-] by the amount [#0F5CD8]Crit Defense[-] exceeds [#1A7331]50%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]30%[-])",
+        "descFr": "Chaque coup porté sur un ennemi avec une attaque normale augmente l'[#0F5CD8]attaque de Vent[-] de [#1A7331]1.8%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]54%[-])\nL'obtention d'un boost de [#0F5CD8]défense crit.[-] augmente les [#0F5CD8]dégâts crit.[-] de la quantité de [#0F5CD8]défense crit.[-] qui dépasse [#1A7331]50%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]30%[-])"
+       },
+       {
+        "level": 6,
+        "descEn": "Each hit on an enemy with a Normal Attack increases [#0F5CD8]Wind Attack[-] by [#1A7331]2%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]60%[-])\nGaining a [#0F5CD8]Crit Defense[-] boost increases [#0F5CD8]Crit Damage[-] by the amount [#0F5CD8]Crit Defense[-] exceeds [#1A7331]50%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]40%[-])",
+        "descFr": "Chaque coup porté sur un ennemi avec une attaque normale augmente l'[#0F5CD8]attaque de Vent[-] de [#1A7331]2%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]60%[-])\nL'obtention d'un boost de [#0F5CD8]défense crit.[-] augmente les [#0F5CD8]dégâts crit.[-] de la quantité de [#0F5CD8]défense crit.[-] qui dépasse [#1A7331]50%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]40%[-])"
+       },
+       {
+        "level": 7,
+        "descEn": "Each hit on an enemy with a Normal Attack increases [#0F5CD8]Wind Attack[-] by [#1A7331]2.4%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]72%[-])\nGaining a [#0F5CD8]Crit Defense[-] boost increases [#0F5CD8]Crit Damage[-] by the amount [#0F5CD8]Crit Defense[-] exceeds [#1A7331]50%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]60%[-])",
+        "descFr": "Chaque coup porté sur un ennemi avec une attaque normale augmente l'[#0F5CD8]attaque de Vent[-] de [#1A7331]2.4%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]72%[-])\nL'obtention d'un boost de [#0F5CD8]défense crit.[-] augmente les [#0F5CD8]dégâts crit.[-] de la quantité de [#0F5CD8]défense crit.[-] qui dépasse [#1A7331]50%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]60%[-])"
+       }
+      ],
+      "nameEn": "Blade of Reversal",
+      "nameFr": "Lame de renversement"
+     },
+     "maxLevel": 6,
+     "fragmentId": "101061322",
+     "fragmentExp": 100
+    },
+    "enchantments": {
+     "type": "masterstone",
+     "tiers": [
+      {
+       "tier": 1,
+       "options": [
+        {
+         "max": 140,
+         "min": 70,
+         "stat": "B_Atk_Equip",
+         "chance": 3334,
+         "nameEn": "Equipment Attack",
+         "nameFr": "Attaque de l'équipement"
+        },
+        {
+         "max": 112,
+         "min": 56,
+         "stat": "B_Def_Equip",
+         "chance": 3334,
+         "nameEn": "Equipment Defense",
+         "nameFr": "Défense de l'équipement"
+        },
+        {
+         "max": 277,
+         "min": 139,
+         "stat": "B_MaxHp_Equip",
+         "chance": 3334,
+         "nameEn": "Equipment HP",
+         "nameFr": "PV de l'équipement"
+        }
+       ]
+      },
+      {
+       "tier": 2,
+       "options": [
+        {
+         "max": 279,
+         "min": 139,
+         "stat": "B_Atk_Equip",
+         "chance": 1429,
+         "nameEn": "Equipment Attack",
+         "nameFr": "Attaque de l'équipement"
+        },
+        {
+         "max": 223,
+         "min": 111,
+         "stat": "B_Def_Equip",
+         "chance": 1429,
+         "nameEn": "Equipment Defense",
+         "nameFr": "Défense de l'équipement"
+        },
+        {
+         "max": 553,
+         "min": 277,
+         "stat": "B_MaxHp_Equip",
+         "chance": 1429,
+         "nameEn": "Equipment HP",
+         "nameFr": "PV de l'équipement"
+        },
+        {
+         "max": 205,
+         "min": 101,
+         "stat": "C_Critical_Rate",
+         "chance": 1429,
+         "nameEn": "Crit Chance",
+         "nameFr": "Chances crit."
+        },
+        {
+         "max": 359,
+         "min": 179,
+         "stat": "C_Critical_Dam_Rate",
+         "chance": 1429,
+         "nameEn": "Crit Damage",
+         "nameFr": "Dégâts crit."
+        },
+        {
+         "max": 205,
+         "min": 101,
+         "stat": "C_Critical_ResRate",
+         "chance": 1429,
+         "nameEn": "Crit Resistance",
+         "nameFr": "Résistance crit."
+        },
+        {
+         "max": 359,
+         "min": 179,
+         "stat": "C_Critical_DamRes_Rate",
+         "chance": 1429,
+         "nameEn": "Crit Defense",
+         "nameFr": "Défense crit."
+        }
+       ]
+      },
+      {
+       "tier": 3,
+       "options": [
+        {
+         "max": 485,
+         "min": 277,
+         "stat": "B_Atk_Equip",
+         "chance": 1250,
+         "nameEn": "Equipment Attack",
+         "nameFr": "Attaque de l'équipement"
+        },
+        {
+         "max": 389,
+         "min": 221,
+         "stat": "B_Def_Equip",
+         "chance": 1250,
+         "nameEn": "Equipment Defense",
+         "nameFr": "Défense de l'équipement"
+        },
+        {
+         "max": 969,
+         "min": 553,
+         "stat": "B_MaxHp_Equip",
+         "chance": 1250,
+         "nameEn": "Equipment HP",
+         "nameFr": "PV de l'équipement"
+        },
+        {
+         "max": 354,
+         "min": 202,
+         "stat": "C_Critical_Rate",
+         "chance": 1250,
+         "nameEn": "Crit Chance",
+         "nameFr": "Chances crit."
+        },
+        {
+         "max": 625,
+         "min": 357,
+         "stat": "C_Critical_Dam_Rate",
+         "chance": 1250,
+         "nameEn": "Crit Damage",
+         "nameFr": "Dégâts crit."
+        },
+        {
+         "max": 354,
+         "min": 202,
+         "stat": "C_Critical_ResRate",
+         "chance": 1250,
+         "nameEn": "Crit Resistance",
+         "nameFr": "Résistance crit."
+        },
+        {
+         "max": 625,
+         "min": 357,
+         "stat": "C_Critical_DamRes_Rate",
+         "chance": 1250,
+         "nameEn": "Crit Defense",
+         "nameFr": "Défense crit."
+        },
+        {
+         "max": 523,
+         "min": 299,
+         "stat": "MF_ChargeEffic_Rate",
+         "chance": 1250,
+         "nameEn": "Magic Charging Efficiency",
+         "nameFr": "Efficacité de recharge de la magie"
+        }
+       ]
+      },
+      {
+       "tier": 4,
+       "options": [
+        {
+         "max": 832,
+         "min": 484,
+         "stat": "B_Atk_Equip",
+         "chance": 770,
+         "nameEn": "Equipment Attack",
+         "nameFr": "Attaque de l'équipement"
+        },
+        {
+         "max": 663,
+         "min": 387,
+         "stat": "B_Def_Equip",
+         "chance": 770,
+         "nameEn": "Equipment Defense",
+         "nameFr": "Défense de l'équipement"
+        },
+        {
+         "max": 1657,
+         "min": 967,
+         "stat": "B_MaxHp_Equip",
+         "chance": 770,
+         "nameEn": "Equipment HP",
+         "nameFr": "PV de l'équipement"
+        },
+        {
+         "max": 605,
+         "min": 353,
+         "stat": "C_Critical_Rate",
+         "chance": 770,
+         "nameEn": "Crit Chance",
+         "nameFr": "Chances crit."
+        },
+        {
+         "max": 1074,
+         "min": 624,
+         "stat": "C_Critical_Dam_Rate",
+         "chance": 770,
+         "nameEn": "Crit Damage",
+         "nameFr": "Dégâts crit."
+        },
+        {
+         "max": 605,
+         "min": 353,
+         "stat": "C_Critical_ResRate",
+         "chance": 770,
+         "nameEn": "Crit Resistance",
+         "nameFr": "Résistance crit."
+        },
+        {
+         "max": 1074,
+         "min": 624,
+         "stat": "C_Critical_DamRes_Rate",
+         "chance": 770,
+         "nameEn": "Crit Defense",
+         "nameFr": "Défense crit."
+        },
+        {
+         "max": 900,
+         "min": 522,
+         "stat": "MF_ChargeEffic_Rate",
+         "chance": 770,
+         "nameEn": "Magic Charging Efficiency",
+         "nameFr": "Efficacité de recharge de la magie"
+        },
+        {
+         "max": 1857,
+         "min": 1083,
+         "stat": "Normalattack_Damadd_Rate",
+         "chance": 770,
+         "nameEn": "Normal Attack Damage Increase",
+         "nameFr": "Augmentation des dégâts d'attaque normale"
+        },
+        {
+         "max": 1694,
+         "min": 986,
+         "stat": "Activethird_Damadd_Rate",
+         "chance": 770,
+         "nameEn": "Special Attack Damage Increase",
+         "nameFr": "Augmentation des dégâts d'attaque spéciale"
+        },
+        {
+         "max": 1305,
+         "min": 759,
+         "stat": "Normalskill_Damadd_Rate",
+         "chance": 770,
+         "nameEn": "Normal Skill Damage Increase",
+         "nameFr": "Augmentation des dégâts, compétence normale"
+        },
+        {
+         "max": 2288,
+         "min": 1334,
+         "stat": "Normalskillchangetag_Damadd_Rate",
+         "chance": 770,
+         "nameEn": "Tag Skill Damage Increase",
+         "nameFr": "Augmentation des dégâts, compétence de relève"
+        },
+        {
+         "max": 1021,
+         "min": 595,
+         "stat": "Ultimateskill_Damadd_Rate",
+         "chance": 770,
+         "nameEn": "Ultimate Move Damage Increase",
+         "nameFr": "Augmentation des dégâts d'attaque ultime"
+        }
+       ]
+      },
+      {
+       "tier": 5,
+       "elements": [
+        {
+         "element": "generic",
+         "options": [
+          {
+           "max": 710,
+           "min": 423,
+           "stat": "I_AtkAdd_Rate",
+           "chance": 770,
+           "nameEn": "Attack Increase",
+           "nameFr": "Augmentation de l'attaque"
+          },
+          {
+           "max": 571,
+           "min": 340,
+           "stat": "I_DefAdd_Rate",
+           "chance": 770,
+           "nameEn": "Defense Increase",
+           "nameFr": "Augmentation de la défense"
+          },
+          {
+           "max": 417,
+           "min": 249,
+           "stat": "I_MaxHpAdd_Rate",
+           "chance": 770,
+           "nameEn": "HP Increase",
+           "nameFr": "Augmentation des PV"
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_Rate",
+           "chance": 770,
+           "nameEn": "Crit Chance",
+           "nameFr": "Chances crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_Dam_Rate",
+           "chance": 770,
+           "nameEn": "Crit Damage",
+           "nameFr": "Dégâts crit."
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_ResRate",
+           "chance": 770,
+           "nameEn": "Crit Resistance",
+           "nameFr": "Résistance crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_DamRes_Rate",
+           "chance": 770,
+           "nameEn": "Crit Defense",
+           "nameFr": "Défense crit."
+          },
+          {
+           "max": 1497,
+           "min": 895,
+           "stat": "MF_ChargeEffic_Rate",
+           "chance": 770,
+           "nameEn": "Magic Charging Efficiency",
+           "nameFr": "Efficacité de recharge de la magie"
+          },
+          {
+           "max": 3095,
+           "min": 1856,
+           "stat": "Normalattack_Damadd_Rate",
+           "chance": 770,
+           "nameEn": "Normal Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque normale"
+          },
+          {
+           "max": 2817,
+           "min": 1690,
+           "stat": "Activethird_Damadd_Rate",
+           "chance": 770,
+           "nameEn": "Special Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque spéciale"
+          },
+          {
+           "max": 2169,
+           "min": 1301,
+           "stat": "Normalskill_Damadd_Rate",
+           "chance": 770,
+           "nameEn": "Normal Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence normale"
+          },
+          {
+           "max": 3812,
+           "min": 2286,
+           "stat": "Normalskillchangetag_Damadd_Rate",
+           "chance": 770,
+           "nameEn": "Tag Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence de relève"
+          },
+          {
+           "max": 1698,
+           "min": 1019,
+           "stat": "Ultimateskill_Damadd_Rate",
+           "chance": 770,
+           "nameEn": "Ultimate Move Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque ultime"
+          }
+         ]
+        },
+        {
+         "element": "default",
+         "options": [
+          {
+           "max": 4376,
+           "min": 2626,
+           "stat": "Default_Rate",
+           "chance": 834,
+           "nameEn": "Physical Attack Increase",
+           "nameFr": "Augmentation de l'attaque physique"
+          },
+          {
+           "max": 1898,
+           "min": 1135,
+           "stat": "Default_Element_Rate",
+           "chance": 834,
+           "nameEn": "Physical Damage Increase",
+           "nameFr": "Augmentation des dégâts physiques"
+          },
+          {
+           "max": 571,
+           "min": 340,
+           "stat": "I_DefAdd_Rate",
+           "chance": 642,
+           "nameEn": "Defense Increase",
+           "nameFr": "Augmentation de la défense"
+          },
+          {
+           "max": 417,
+           "min": 249,
+           "stat": "I_MaxHpAdd_Rate",
+           "chance": 642,
+           "nameEn": "HP Increase",
+           "nameFr": "Augmentation des PV"
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_Rate",
+           "chance": 642,
+           "nameEn": "Crit Chance",
+           "nameFr": "Chances crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_Dam_Rate",
+           "chance": 642,
+           "nameEn": "Crit Damage",
+           "nameFr": "Dégâts crit."
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_ResRate",
+           "chance": 642,
+           "nameEn": "Crit Resistance",
+           "nameFr": "Résistance crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_DamRes_Rate",
+           "chance": 642,
+           "nameEn": "Crit Defense",
+           "nameFr": "Défense crit."
+          },
+          {
+           "max": 1497,
+           "min": 895,
+           "stat": "MF_ChargeEffic_Rate",
+           "chance": 642,
+           "nameEn": "Magic Charging Efficiency",
+           "nameFr": "Efficacité de recharge de la magie"
+          },
+          {
+           "max": 3095,
+           "min": 1856,
+           "stat": "Normalattack_Damadd_Rate",
+           "chance": 642,
+           "nameEn": "Normal Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque normale"
+          },
+          {
+           "max": 2817,
+           "min": 1690,
+           "stat": "Activethird_Damadd_Rate",
+           "chance": 642,
+           "nameEn": "Special Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque spéciale"
+          },
+          {
+           "max": 2169,
+           "min": 1301,
+           "stat": "Normalskill_Damadd_Rate",
+           "chance": 642,
+           "nameEn": "Normal Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence normale"
+          },
+          {
+           "max": 3812,
+           "min": 2286,
+           "stat": "Normalskillchangetag_Damadd_Rate",
+           "chance": 642,
+           "nameEn": "Tag Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence de relève"
+          },
+          {
+           "max": 1698,
+           "min": 1019,
+           "stat": "Ultimateskill_Damadd_Rate",
+           "chance": 642,
+           "nameEn": "Ultimate Move Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque ultime"
+          },
+          {
+           "max": 1119,
+           "min": 671,
+           "stat": "S_SkillRecycle_Rate",
+           "chance": 642,
+           "nameEn": "Cooldown Reduction",
+           "nameFr": "Réduction de temps de recharge"
+          }
+         ]
+        },
+        {
+         "element": "fire",
+         "options": [
+          {
+           "max": 4376,
+           "min": 2626,
+           "stat": "Fire_Rate",
+           "chance": 770,
+           "nameEn": "Fire Attack Increase",
+           "nameFr": "Augmentation de l'attaque de Feu"
+          },
+          {
+           "max": 1898,
+           "min": 1135,
+           "stat": "Fire_Element_Rate",
+           "chance": 770,
+           "nameEn": "Fire Damage Increase",
+           "nameFr": "Augmentation des dégâts de Feu"
+          },
+          {
+           "max": 1868,
+           "min": 1119,
+           "stat": "Fire_Burst_Gauge_Rate",
+           "chance": 770,
+           "nameEn": "Fire Burst Efficiency",
+           "nameFr": "Efficacité de Déluge de Feu"
+          },
+          {
+           "max": 571,
+           "min": 340,
+           "stat": "I_DefAdd_Rate",
+           "chance": 592,
+           "nameEn": "Defense Increase",
+           "nameFr": "Augmentation de la défense"
+          },
+          {
+           "max": 417,
+           "min": 249,
+           "stat": "I_MaxHpAdd_Rate",
+           "chance": 592,
+           "nameEn": "HP Increase",
+           "nameFr": "Augmentation des PV"
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_Rate",
+           "chance": 592,
+           "nameEn": "Crit Chance",
+           "nameFr": "Chances crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_Dam_Rate",
+           "chance": 592,
+           "nameEn": "Crit Damage",
+           "nameFr": "Dégâts crit."
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_ResRate",
+           "chance": 592,
+           "nameEn": "Crit Resistance",
+           "nameFr": "Résistance crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_DamRes_Rate",
+           "chance": 592,
+           "nameEn": "Crit Defense",
+           "nameFr": "Défense crit."
+          },
+          {
+           "max": 1497,
+           "min": 895,
+           "stat": "MF_ChargeEffic_Rate",
+           "chance": 592,
+           "nameEn": "Magic Charging Efficiency",
+           "nameFr": "Efficacité de recharge de la magie"
+          },
+          {
+           "max": 3095,
+           "min": 1856,
+           "stat": "Normalattack_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Normal Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque normale"
+          },
+          {
+           "max": 2817,
+           "min": 1690,
+           "stat": "Activethird_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Special Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque spéciale"
+          },
+          {
+           "max": 2169,
+           "min": 1301,
+           "stat": "Normalskill_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Normal Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence normale"
+          },
+          {
+           "max": 3812,
+           "min": 2286,
+           "stat": "Normalskillchangetag_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Tag Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence de relève"
+          },
+          {
+           "max": 1698,
+           "min": 1019,
+           "stat": "Ultimateskill_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Ultimate Move Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque ultime"
+          },
+          {
+           "max": 1119,
+           "min": 671,
+           "stat": "S_SkillRecycle_Rate",
+           "chance": 592,
+           "nameEn": "Cooldown Reduction",
+           "nameFr": "Réduction de temps de recharge"
+          }
+         ]
+        },
+        {
+         "element": "thunder",
+         "options": [
+          {
+           "max": 4376,
+           "min": 2626,
+           "stat": "Thunder_Rate",
+           "chance": 770,
+           "nameEn": "Lightning Attack Increase",
+           "nameFr": "Augmentation de l'attaque de Foudre"
+          },
+          {
+           "max": 1898,
+           "min": 1135,
+           "stat": "Thunder_Element_Rate",
+           "chance": 770,
+           "nameEn": "Lightning Damage Increase",
+           "nameFr": "Augmentation des dégâts de Foudre"
+          },
+          {
+           "max": 1868,
+           "min": 1119,
+           "stat": "Thunder_Burst_Gauge_Rate",
+           "chance": 770,
+           "nameEn": "Lightning Burst Efficiency",
+           "nameFr": "Efficacité de Déluge de Foudre"
+          },
+          {
+           "max": 571,
+           "min": 340,
+           "stat": "I_DefAdd_Rate",
+           "chance": 592,
+           "nameEn": "Defense Increase",
+           "nameFr": "Augmentation de la défense"
+          },
+          {
+           "max": 417,
+           "min": 249,
+           "stat": "I_MaxHpAdd_Rate",
+           "chance": 592,
+           "nameEn": "HP Increase",
+           "nameFr": "Augmentation des PV"
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_Rate",
+           "chance": 592,
+           "nameEn": "Crit Chance",
+           "nameFr": "Chances crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_Dam_Rate",
+           "chance": 592,
+           "nameEn": "Crit Damage",
+           "nameFr": "Dégâts crit."
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_ResRate",
+           "chance": 592,
+           "nameEn": "Crit Resistance",
+           "nameFr": "Résistance crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_DamRes_Rate",
+           "chance": 592,
+           "nameEn": "Crit Defense",
+           "nameFr": "Défense crit."
+          },
+          {
+           "max": 1497,
+           "min": 895,
+           "stat": "MF_ChargeEffic_Rate",
+           "chance": 592,
+           "nameEn": "Magic Charging Efficiency",
+           "nameFr": "Efficacité de recharge de la magie"
+          },
+          {
+           "max": 3095,
+           "min": 1856,
+           "stat": "Normalattack_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Normal Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque normale"
+          },
+          {
+           "max": 2817,
+           "min": 1690,
+           "stat": "Activethird_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Special Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque spéciale"
+          },
+          {
+           "max": 2169,
+           "min": 1301,
+           "stat": "Normalskill_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Normal Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence normale"
+          },
+          {
+           "max": 3812,
+           "min": 2286,
+           "stat": "Normalskillchangetag_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Tag Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence de relève"
+          },
+          {
+           "max": 1698,
+           "min": 1019,
+           "stat": "Ultimateskill_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Ultimate Move Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque ultime"
+          },
+          {
+           "max": 1119,
+           "min": 671,
+           "stat": "S_SkillRecycle_Rate",
+           "chance": 592,
+           "nameEn": "Cooldown Reduction",
+           "nameFr": "Réduction de temps de recharge"
+          }
+         ]
+        },
+        {
+         "element": "wind",
+         "options": [
+          {
+           "max": 4376,
+           "min": 2626,
+           "stat": "Wind_Rate",
+           "chance": 770,
+           "nameEn": "Wind Attack Increase",
+           "nameFr": "Augmentation de l'attaque de Vent"
+          },
+          {
+           "max": 1898,
+           "min": 1135,
+           "stat": "Wind_Element_Rate",
+           "chance": 770,
+           "nameEn": "Wind Damage Increase",
+           "nameFr": "Augmentation des dégâts de Vent"
+          },
+          {
+           "max": 1868,
+           "min": 1119,
+           "stat": "Wind_Burst_Gauge_Rate",
+           "chance": 770,
+           "nameEn": "Wind Burst Efficiency",
+           "nameFr": "Efficacité de Déluge de Vent"
+          },
+          {
+           "max": 571,
+           "min": 340,
+           "stat": "I_DefAdd_Rate",
+           "chance": 592,
+           "nameEn": "Defense Increase",
+           "nameFr": "Augmentation de la défense"
+          },
+          {
+           "max": 417,
+           "min": 249,
+           "stat": "I_MaxHpAdd_Rate",
+           "chance": 592,
+           "nameEn": "HP Increase",
+           "nameFr": "Augmentation des PV"
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_Rate",
+           "chance": 592,
+           "nameEn": "Crit Chance",
+           "nameFr": "Chances crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_Dam_Rate",
+           "chance": 592,
+           "nameEn": "Crit Damage",
+           "nameFr": "Dégâts crit."
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_ResRate",
+           "chance": 592,
+           "nameEn": "Crit Resistance",
+           "nameFr": "Résistance crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_DamRes_Rate",
+           "chance": 592,
+           "nameEn": "Crit Defense",
+           "nameFr": "Défense crit."
+          },
+          {
+           "max": 1497,
+           "min": 895,
+           "stat": "MF_ChargeEffic_Rate",
+           "chance": 592,
+           "nameEn": "Magic Charging Efficiency",
+           "nameFr": "Efficacité de recharge de la magie"
+          },
+          {
+           "max": 3095,
+           "min": 1856,
+           "stat": "Normalattack_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Normal Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque normale"
+          },
+          {
+           "max": 2817,
+           "min": 1690,
+           "stat": "Activethird_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Special Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque spéciale"
+          },
+          {
+           "max": 2169,
+           "min": 1301,
+           "stat": "Normalskill_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Normal Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence normale"
+          },
+          {
+           "max": 3812,
+           "min": 2286,
+           "stat": "Normalskillchangetag_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Tag Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence de relève"
+          },
+          {
+           "max": 1698,
+           "min": 1019,
+           "stat": "Ultimateskill_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Ultimate Move Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque ultime"
+          },
+          {
+           "max": 1119,
+           "min": 671,
+           "stat": "S_SkillRecycle_Rate",
+           "chance": 592,
+           "nameEn": "Cooldown Reduction",
+           "nameFr": "Réduction de temps de recharge"
+          }
+         ]
+        },
+        {
+         "element": "ice",
+         "options": [
+          {
+           "max": 4376,
+           "min": 2626,
+           "stat": "Ice_Rate",
+           "chance": 770,
+           "nameEn": "Cold Attack Increase",
+           "nameFr": "Augmentation de l'attaque de Froid"
+          },
+          {
+           "max": 1898,
+           "min": 1135,
+           "stat": "Ice_Element_Rate",
+           "chance": 770,
+           "nameEn": "Cold Damage Increase",
+           "nameFr": "Augmentation des dégâts de Froid"
+          },
+          {
+           "max": 1868,
+           "min": 1119,
+           "stat": "Ice_Burst_Gauge_Rate",
+           "chance": 770,
+           "nameEn": "Cold Burst Efficiency",
+           "nameFr": "Efficacité de Déluge de Froid"
+          },
+          {
+           "max": 571,
+           "min": 340,
+           "stat": "I_DefAdd_Rate",
+           "chance": 592,
+           "nameEn": "Defense Increase",
+           "nameFr": "Augmentation de la défense"
+          },
+          {
+           "max": 417,
+           "min": 249,
+           "stat": "I_MaxHpAdd_Rate",
+           "chance": 592,
+           "nameEn": "HP Increase",
+           "nameFr": "Augmentation des PV"
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_Rate",
+           "chance": 592,
+           "nameEn": "Crit Chance",
+           "nameFr": "Chances crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_Dam_Rate",
+           "chance": 592,
+           "nameEn": "Crit Damage",
+           "nameFr": "Dégâts crit."
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_ResRate",
+           "chance": 592,
+           "nameEn": "Crit Resistance",
+           "nameFr": "Résistance crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_DamRes_Rate",
+           "chance": 592,
+           "nameEn": "Crit Defense",
+           "nameFr": "Défense crit."
+          },
+          {
+           "max": 1497,
+           "min": 895,
+           "stat": "MF_ChargeEffic_Rate",
+           "chance": 592,
+           "nameEn": "Magic Charging Efficiency",
+           "nameFr": "Efficacité de recharge de la magie"
+          },
+          {
+           "max": 3095,
+           "min": 1856,
+           "stat": "Normalattack_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Normal Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque normale"
+          },
+          {
+           "max": 2817,
+           "min": 1690,
+           "stat": "Activethird_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Special Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque spéciale"
+          },
+          {
+           "max": 2169,
+           "min": 1301,
+           "stat": "Normalskill_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Normal Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence normale"
+          },
+          {
+           "max": 3812,
+           "min": 2286,
+           "stat": "Normalskillchangetag_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Tag Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence de relève"
+          },
+          {
+           "max": 1698,
+           "min": 1019,
+           "stat": "Ultimateskill_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Ultimate Move Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque ultime"
+          },
+          {
+           "max": 1119,
+           "min": 671,
+           "stat": "S_SkillRecycle_Rate",
+           "chance": 592,
+           "nameEn": "Cooldown Reduction",
+           "nameFr": "Réduction de temps de recharge"
+          }
+         ]
+        },
+        {
+         "element": "earth",
+         "options": [
+          {
+           "max": 4376,
+           "min": 2626,
+           "stat": "Earth_Rate",
+           "chance": 770,
+           "nameEn": "Earth Attack Increase",
+           "nameFr": "Augmentation de l'attaque de Terre"
+          },
+          {
+           "max": 1898,
+           "min": 1135,
+           "stat": "Earth_Element_Rate",
+           "chance": 770,
+           "nameEn": "Earth Damage Increase",
+           "nameFr": "Augmentation des dégâts de Terre"
+          },
+          {
+           "max": 1868,
+           "min": 1119,
+           "stat": "Earth_Burst_Gauge_Rate",
+           "chance": 770,
+           "nameEn": "Earth Burst Efficiency",
+           "nameFr": "Efficacité de Déluge de Terre"
+          },
+          {
+           "max": 571,
+           "min": 340,
+           "stat": "I_DefAdd_Rate",
+           "chance": 592,
+           "nameEn": "Defense Increase",
+           "nameFr": "Augmentation de la défense"
+          },
+          {
+           "max": 417,
+           "min": 249,
+           "stat": "I_MaxHpAdd_Rate",
+           "chance": 592,
+           "nameEn": "HP Increase",
+           "nameFr": "Augmentation des PV"
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_Rate",
+           "chance": 592,
+           "nameEn": "Crit Chance",
+           "nameFr": "Chances crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_Dam_Rate",
+           "chance": 592,
+           "nameEn": "Crit Damage",
+           "nameFr": "Dégâts crit."
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_ResRate",
+           "chance": 592,
+           "nameEn": "Crit Resistance",
+           "nameFr": "Résistance crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_DamRes_Rate",
+           "chance": 592,
+           "nameEn": "Crit Defense",
+           "nameFr": "Défense crit."
+          },
+          {
+           "max": 1497,
+           "min": 895,
+           "stat": "MF_ChargeEffic_Rate",
+           "chance": 592,
+           "nameEn": "Magic Charging Efficiency",
+           "nameFr": "Efficacité de recharge de la magie"
+          },
+          {
+           "max": 3095,
+           "min": 1856,
+           "stat": "Normalattack_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Normal Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque normale"
+          },
+          {
+           "max": 2817,
+           "min": 1690,
+           "stat": "Activethird_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Special Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque spéciale"
+          },
+          {
+           "max": 2169,
+           "min": 1301,
+           "stat": "Normalskill_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Normal Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence normale"
+          },
+          {
+           "max": 3812,
+           "min": 2286,
+           "stat": "Normalskillchangetag_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Tag Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence de relève"
+          },
+          {
+           "max": 1698,
+           "min": 1019,
+           "stat": "Ultimateskill_Damadd_Rate",
+           "chance": 592,
+           "nameEn": "Ultimate Move Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque ultime"
+          },
+          {
+           "max": 1119,
+           "min": 671,
+           "stat": "S_SkillRecycle_Rate",
+           "chance": 592,
+           "nameEn": "Cooldown Reduction",
+           "nameFr": "Réduction de temps de recharge"
+          }
+         ]
+        },
+        {
+         "element": "dark",
+         "options": [
+          {
+           "max": 4376,
+           "min": 2626,
+           "stat": "Dark_Rate",
+           "chance": 834,
+           "nameEn": "Darkness Attack Increase",
+           "nameFr": "Augmentation de l'attaque des Ténèbres"
+          },
+          {
+           "max": 1898,
+           "min": 1135,
+           "stat": "Dark_Element_Rate",
+           "chance": 834,
+           "nameEn": "Darkness Damage Increase",
+           "nameFr": "Augmentation des dégâts des Ténèbres"
+          },
+          {
+           "max": 571,
+           "min": 340,
+           "stat": "I_DefAdd_Rate",
+           "chance": 642,
+           "nameEn": "Defense Increase",
+           "nameFr": "Augmentation de la défense"
+          },
+          {
+           "max": 417,
+           "min": 249,
+           "stat": "I_MaxHpAdd_Rate",
+           "chance": 642,
+           "nameEn": "HP Increase",
+           "nameFr": "Augmentation des PV"
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_Rate",
+           "chance": 642,
+           "nameEn": "Crit Chance",
+           "nameFr": "Chances crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_Dam_Rate",
+           "chance": 642,
+           "nameEn": "Crit Damage",
+           "nameFr": "Dégâts crit."
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_ResRate",
+           "chance": 642,
+           "nameEn": "Crit Resistance",
+           "nameFr": "Résistance crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_DamRes_Rate",
+           "chance": 642,
+           "nameEn": "Crit Defense",
+           "nameFr": "Défense crit."
+          },
+          {
+           "max": 1497,
+           "min": 895,
+           "stat": "MF_ChargeEffic_Rate",
+           "chance": 642,
+           "nameEn": "Magic Charging Efficiency",
+           "nameFr": "Efficacité de recharge de la magie"
+          },
+          {
+           "max": 3095,
+           "min": 1856,
+           "stat": "Normalattack_Damadd_Rate",
+           "chance": 642,
+           "nameEn": "Normal Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque normale"
+          },
+          {
+           "max": 2817,
+           "min": 1690,
+           "stat": "Activethird_Damadd_Rate",
+           "chance": 642,
+           "nameEn": "Special Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque spéciale"
+          },
+          {
+           "max": 2169,
+           "min": 1301,
+           "stat": "Normalskill_Damadd_Rate",
+           "chance": 642,
+           "nameEn": "Normal Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence normale"
+          },
+          {
+           "max": 3812,
+           "min": 2286,
+           "stat": "Normalskillchangetag_Damadd_Rate",
+           "chance": 642,
+           "nameEn": "Tag Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence de relève"
+          },
+          {
+           "max": 1698,
+           "min": 1019,
+           "stat": "Ultimateskill_Damadd_Rate",
+           "chance": 642,
+           "nameEn": "Ultimate Move Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque ultime"
+          },
+          {
+           "max": 1119,
+           "min": 671,
+           "stat": "S_SkillRecycle_Rate",
+           "chance": 642,
+           "nameEn": "Cooldown Reduction",
+           "nameFr": "Réduction de temps de recharge"
+          }
+         ]
+        },
+        {
+         "element": "holy",
+         "options": [
+          {
+           "max": 4376,
+           "min": 2626,
+           "stat": "Holy_Rate",
+           "chance": 834,
+           "nameEn": "Holy Attack Increase",
+           "nameFr": "Augmentation de l'attaque du Sacré"
+          },
+          {
+           "max": 1898,
+           "min": 1135,
+           "stat": "Holy_Element_Rate",
+           "chance": 834,
+           "nameEn": "Holy Damage Increase",
+           "nameFr": "Augmentation des dégâts du Sacré"
+          },
+          {
+           "max": 571,
+           "min": 340,
+           "stat": "I_DefAdd_Rate",
+           "chance": 642,
+           "nameEn": "Defense Increase",
+           "nameFr": "Augmentation de la défense"
+          },
+          {
+           "max": 417,
+           "min": 249,
+           "stat": "I_MaxHpAdd_Rate",
+           "chance": 642,
+           "nameEn": "HP Increase",
+           "nameFr": "Augmentation des PV"
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_Rate",
+           "chance": 642,
+           "nameEn": "Crit Chance",
+           "nameFr": "Chances crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_Dam_Rate",
+           "chance": 642,
+           "nameEn": "Crit Damage",
+           "nameFr": "Dégâts crit."
+          },
+          {
+           "max": 1011,
+           "min": 605,
+           "stat": "C_Critical_ResRate",
+           "chance": 642,
+           "nameEn": "Crit Resistance",
+           "nameFr": "Résistance crit."
+          },
+          {
+           "max": 1783,
+           "min": 1069,
+           "stat": "C_Critical_DamRes_Rate",
+           "chance": 642,
+           "nameEn": "Crit Defense",
+           "nameFr": "Défense crit."
+          },
+          {
+           "max": 1497,
+           "min": 895,
+           "stat": "MF_ChargeEffic_Rate",
+           "chance": 642,
+           "nameEn": "Magic Charging Efficiency",
+           "nameFr": "Efficacité de recharge de la magie"
+          },
+          {
+           "max": 3095,
+           "min": 1856,
+           "stat": "Normalattack_Damadd_Rate",
+           "chance": 642,
+           "nameEn": "Normal Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque normale"
+          },
+          {
+           "max": 2817,
+           "min": 1690,
+           "stat": "Activethird_Damadd_Rate",
+           "chance": 642,
+           "nameEn": "Special Attack Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque spéciale"
+          },
+          {
+           "max": 2169,
+           "min": 1301,
+           "stat": "Normalskill_Damadd_Rate",
+           "chance": 642,
+           "nameEn": "Normal Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence normale"
+          },
+          {
+           "max": 3812,
+           "min": 2286,
+           "stat": "Normalskillchangetag_Damadd_Rate",
+           "chance": 642,
+           "nameEn": "Tag Skill Damage Increase",
+           "nameFr": "Augmentation des dégâts, compétence de relève"
+          },
+          {
+           "max": 1698,
+           "min": 1019,
+           "stat": "Ultimateskill_Damadd_Rate",
+           "chance": 642,
+           "nameEn": "Ultimate Move Damage Increase",
+           "nameFr": "Augmentation des dégâts d'attaque ultime"
+          },
+          {
+           "max": 1119,
+           "min": 671,
+           "stat": "S_SkillRecycle_Rate",
+           "chance": 642,
+           "nameEn": "Cooldown Reduction",
+           "nameFr": "Réduction de temps de recharge"
+          }
+         ]
+        }
+       ]
+      }
+     ]
+    },
+    "reinforceMax": 50,
+    "subStatLabel": {
+     "nameEn": "Wind Attack",
+     "nameFr": "Attaque de Vent"
+    },
+    "sellCostValue": 50,
+    "subStatValues": {
+     "max": 3453,
+     "base": 683,
+     "progression": [
+      14,
+      33,
+      52,
+      75,
+      103
+     ]
+    },
+    "mainStatValues": {
+     "max": 2147,
+     "base": 637,
+     "progression": [
+      15,
+      20,
+      27,
+      37,
+      52
+     ]
+    },
+    "promotionSteps": [
+     {
+      "isMax": false,
+      "level": 1,
+      "goldCost": 25600,
+      "materials": [
+       {
+        "itemId": "101061202",
+        "quantity": 12
+       },
+       {
+        "itemId": "101010012",
+        "quantity": 5
+       }
+      ],
+      "reinforceMax": 20
+     },
+     {
+      "isMax": false,
+      "level": 2,
+      "goldCost": 42600,
+      "materials": [
+       {
+        "itemId": "101061203",
+        "quantity": 9
+       },
+       {
+        "itemId": "101010022",
+        "quantity": 4
+       }
+      ],
+      "reinforceMax": 30
+     },
+     {
+      "isMax": false,
+      "level": 3,
+      "goldCost": 74800,
+      "materials": [
+       {
+        "itemId": "101061204",
+        "quantity": 8
+       },
+       {
+        "itemId": "101040511",
+        "quantity": 6
+       },
+       {
+        "itemId": "101010032",
+        "quantity": 3
+       }
+      ],
+      "reinforceMax": 40
+     },
+     {
+      "isMax": true,
+      "level": 4,
+      "goldCost": 158700,
+      "materials": [
+       {
+        "itemId": "101061205",
+        "quantity": 7
+       },
+       {
+        "itemId": "101040511",
+        "quantity": 16
+       },
+       {
+        "itemId": "101010143",
+        "quantity": 3
+       }
+      ],
+      "reinforceMax": 50
+     }
+    ],
+    "promotionValues": {
+     "max": 1144,
+     "base": 0,
+     "progression": [
+      115,
+      229,
+      343,
+      457
+     ]
+    }
+   }
+  ],
+  "passiveLevels": [
+   {
+    "level": 1,
+    "descEn": "Each hit on an enemy with a Normal Attack increases [#0F5CD8]Wind Attack[-] by [#1A7331]1%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]25%[-])",
+    "descFr": "Chaque coup porté sur un ennemi avec une attaque normale augmente l'[#0F5CD8]attaque de Vent[-] de [#1A7331]1%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]25%[-])"
+   },
+   {
+    "level": 2,
+    "descEn": "Each hit on an enemy with a Normal Attack increases [#0F5CD8]Wind Attack[-] by [#1A7331]1.2%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]36%[-])",
+    "descFr": "Chaque coup porté sur un ennemi avec une attaque normale augmente l'[#0F5CD8]attaque de Vent[-] de [#1A7331]1.2%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]36%[-])"
+   },
+   {
+    "level": 3,
+    "descEn": "Each hit on an enemy with a Normal Attack increases [#0F5CD8]Wind Attack[-] by [#1A7331]1.4%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]42%[-])",
+    "descFr": "Chaque coup porté sur un ennemi avec une attaque normale augmente l'[#0F5CD8]attaque de Vent[-] de [#1A7331]1.4%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]42%[-])"
+   },
+   {
+    "level": 4,
+    "descEn": "Each hit on an enemy with a Normal Attack increases [#0F5CD8]Wind Attack[-] by [#1A7331]1.6%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]48%[-])\nGaining a [#0F5CD8]Crit Defense[-] boost increases [#0F5CD8]Crit Damage[-] by the amount [#0F5CD8]Crit Defense[-] exceeds [#1A7331]50%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]20%[-])",
+    "descFr": "Chaque coup porté sur un ennemi avec une attaque normale augmente l'[#0F5CD8]attaque de Vent[-] de [#1A7331]1.6%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]48%[-])\nL'obtention d'un boost de [#0F5CD8]défense crit.[-] augmente les [#0F5CD8]dégâts crit.[-] de la quantité de [#0F5CD8]défense crit.[-] qui dépasse [#1A7331]50%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]20%[-])"
+   },
+   {
+    "level": 5,
+    "descEn": "Each hit on an enemy with a Normal Attack increases [#0F5CD8]Wind Attack[-] by [#1A7331]1.8%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]54%[-])\nGaining a [#0F5CD8]Crit Defense[-] boost increases [#0F5CD8]Crit Damage[-] by the amount [#0F5CD8]Crit Defense[-] exceeds [#1A7331]50%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]30%[-])",
+    "descFr": "Chaque coup porté sur un ennemi avec une attaque normale augmente l'[#0F5CD8]attaque de Vent[-] de [#1A7331]1.8%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]54%[-])\nL'obtention d'un boost de [#0F5CD8]défense crit.[-] augmente les [#0F5CD8]dégâts crit.[-] de la quantité de [#0F5CD8]défense crit.[-] qui dépasse [#1A7331]50%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]30%[-])"
+   },
+   {
+    "level": 6,
+    "descEn": "Each hit on an enemy with a Normal Attack increases [#0F5CD8]Wind Attack[-] by [#1A7331]2%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]60%[-])\nGaining a [#0F5CD8]Crit Defense[-] boost increases [#0F5CD8]Crit Damage[-] by the amount [#0F5CD8]Crit Defense[-] exceeds [#1A7331]50%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]40%[-])",
+    "descFr": "Chaque coup porté sur un ennemi avec une attaque normale augmente l'[#0F5CD8]attaque de Vent[-] de [#1A7331]2%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]60%[-])\nL'obtention d'un boost de [#0F5CD8]défense crit.[-] augmente les [#0F5CD8]dégâts crit.[-] de la quantité de [#0F5CD8]défense crit.[-] qui dépasse [#1A7331]50%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]40%[-])"
+   },
+   {
+    "level": 7,
+    "descEn": "Each hit on an enemy with a Normal Attack increases [#0F5CD8]Wind Attack[-] by [#1A7331]2.4%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]72%[-])\nGaining a [#0F5CD8]Crit Defense[-] boost increases [#0F5CD8]Crit Damage[-] by the amount [#0F5CD8]Crit Defense[-] exceeds [#1A7331]50%[-] for [#1A7331]20 sec[-]. (Max: [#1A7331]60%[-])",
+    "descFr": "Chaque coup porté sur un ennemi avec une attaque normale augmente l'[#0F5CD8]attaque de Vent[-] de [#1A7331]2.4%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]72%[-])\nL'obtention d'un boost de [#0F5CD8]défense crit.[-] augmente les [#0F5CD8]dégâts crit.[-] de la quantité de [#0F5CD8]défense crit.[-] qui dépasse [#1A7331]50%[-] pendant [#1A7331]20s[-]. (Max : [#1A7331]60%[-])"
+   }
+  ]
  }
 ]

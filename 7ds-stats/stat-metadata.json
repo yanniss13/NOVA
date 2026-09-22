@@ -103,6 +103,10 @@
   "family": "elemental",
   "unit": "ten-thousandths"
  },
+ "Fire_Element_Res_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
  "Dark_Rate": {
   "family": "elemental",
   "unit": "ten-thousandths"

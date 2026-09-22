@@ -123,8 +123,8 @@ gear.forEach(([file, entry]) => {
 });
 assert.equal(
   gear.filter(([, entry]) => entry.hasEquipPassive).length,
-  10,
-  "les dix armures portant un talent unique doivent être signalées"
+  11,
+  "les onze armures portant un talent unique doivent être signalées"
 );
 
 const engraved = Object.entries(catalog.engravedByFile);
@@ -148,8 +148,8 @@ const weaponsWithPassive = Object.entries(catalog.weaponsByFile)
   .filter(([, entry]) => (entry.passiveLevels || []).length);
 assert.equal(
   weaponsWithPassive.length,
-  95,
-  "les 95 armes concernées doivent conserver leurs sept niveaux de passif"
+  96,
+  "les 96 armes concernées doivent conserver leurs sept niveaux de passif"
 );
 weaponsWithPassive.forEach(([file, entry]) => {
   assert.equal(entry.passiveLevels.length, 7, file + " : passif d'arme incomplet");

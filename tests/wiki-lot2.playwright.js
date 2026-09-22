@@ -120,10 +120,10 @@ let EFFECTIFS = null;
     await page.locator("#wikiFilterWeaponGrade").selectOption("");
     await attendreTuiles(ARMES);
 
-    /* Le filtre passif : 95 armes sur 156 en portent un. Les 61 autres sont
+    /* Le filtre passif : 96 armes sur 157 en portent un. Les 61 autres sont
        listées quand même — leur fiche ne doit simplement rien inventer. */
     await page.locator("#wikiFilterWeaponPassive").selectOption("oui");
-    await attendreTuiles(95);
+    await attendreTuiles(96);
     await page.locator("#wikiFilterWeaponPassive").selectOption("non");
     await attendreTuiles(61);
     await page.locator("#wikiFilterWeaponPassive").selectOption("");
@@ -141,7 +141,7 @@ let EFFECTIFS = null;
        désigne rien nulle part, et une grille vide sans cause visible est le
        pire des accueils. */
     await page.locator("#wikiCategoryArmures").click();
-    await attendreTuiles(62);
+    await attendreTuiles(EFFECTIFS.wikiCategoryArmures);
     assert.equal(await page.locator("#wikiSearch").inputValue(), "");
 
     // Un ensemble d'armures, nommé en français par le catalogue.
@@ -164,7 +164,7 @@ let EFFECTIFS = null;
 
     // Les bijoux ont leurs propres emplacements.
     await page.locator("#wikiCategoryBijoux").click();
-    await attendreTuiles(37);
+    await attendreTuiles(EFFECTIFS.wikiCategoryBijoux);
     const emplacements = await page.locator("#wikiFilterJewelSlot option")
       .evaluateAll(nodes => nodes.map(node => node.textContent));
     assert.ok(
@@ -192,7 +192,7 @@ let EFFECTIFS = null;
     await page.locator("#wikiCategoryArmes").click();
     await attendreTuiles(ARMES);
     await page.locator("#wikiFilterWeaponPassive").selectOption("oui");
-    await attendreTuiles(95);
+    await attendreTuiles(96);
     await tuiles().first().click();
     await page.locator("#wikiItemOverlay.on").waitFor();
 
@@ -359,7 +359,7 @@ let EFFECTIFS = null;
     /* Une pièce d'ensemble : le nom de l'ensemble, sa prose, et ses pièces
        sœurs — y compris celles de l'autre grille. */
     await page.locator("#wikiCategoryArmures").click();
-    await attendreTuiles(62);
+    await attendreTuiles(EFFECTIFS.wikiCategoryArmures);
     await page.locator("#wikiFilterArmorSet").selectOption({ index:1 });
     await page.waitForFunction(
       () => document.querySelectorAll("#wikiGrid .wiki-tile").length > 0
@@ -396,7 +396,7 @@ let EFFECTIFS = null;
 
     // Cliquer une sœur ouvre sa fiche, sans quitter la modale.
     const titreAvant = await page.locator("#wikiItemTitle").textContent();
-    await soeurs.locator(":not(.active)").first().click();
+    await page.locator("#wikiItemBody .wiki-set-piece:not(.active)").first().click();
     await page.waitForFunction(
       avant => document.querySelector("#wikiItemTitle").textContent !== avant,
       titreAvant

@@ -702,7 +702,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
   );
   const armures = dataContext.window.SEVEN_DS_DATA.armures;
   const realSets = plain(armorSetsFrom(armures));
-  assert.strictEqual(realSets.length, 14, "14 sets complets attendus");
+  assert.strictEqual(realSets.length, 17, "17 sets complets attendus");
   const slots = ["Haut", "Bas", "Bottes", "Ceinture"];
   const filesBySlot = {};
   slots.forEach(slot => {
@@ -718,7 +718,12 @@ const STORAGE_KEY = "confrerie7ds.teams";
     });
   });
   // Aucun doublon de nom, et un tri français stable.
-  assert.strictEqual(new Set(realSets.map(s => s.name)).size, 14);
+  assert.strictEqual(new Set(realSets.map(s => s.name)).size, 17);
+  /* Le jeu pose des crochets 「」 sur six pièces du prédateur abyssal sur
+     sept, pas sur sa ceinture : ils ne doivent pas casser le set, ni garder
+     leur « de » de liaison dans le libellé. */
+  assert.ok(realSets.some(set => set.name === "Prédateur abyssal"),
+    "le set du prédateur abyssal doit être complet malgré ses crochets");
   assert.deepStrictEqual(
     realSets.map(s => s.name),
     [...realSets.map(s => s.name)].sort((a, b) => a.localeCompare(b, "fr-FR"))
@@ -750,7 +755,10 @@ const STORAGE_KEY = "confrerie7ds.teams";
   });
 
   const realJewelSets = plain(jewelSetsFrom(dataContext.window.SEVEN_DS_DATA.bijoux));
-  assert.strictEqual(realJewelSets.length, 11, "11 sets de bijoux attendus");
+  assert.strictEqual(realJewelSets.length, 12, "12 sets de bijoux attendus");
+  assert.ok(realJewelSets.some(set => set.name === "Prédateur abyssal"));
+  assert.ok(realJewelSets.some(set => set.name === "Pulsion maudite"),
+    "un « de » sans article ne reste pas en tête du libellé");
   const jewelSlots = ["Anneau", "Collier", "Boucle d'oreille"];
   const jewelFiles = {};
   jewelSlots.forEach(slot => {
@@ -770,7 +778,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     realJewelSets.some(set => set.name === "100 jours"),
     "Le set « 100 jours » ne doit pas être perdu à cause de l'accord au pluriel"
   );
-  assert.strictEqual(new Set(realJewelSets.map(s => s.name)).size, 11);
+  assert.strictEqual(new Set(realJewelSets.map(s => s.name)).size, 12);
 }
 
 console.log("PASS potentiel commun");

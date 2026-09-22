@@ -633,5 +633,56 @@
    }
   ],
   "partsCount": 6
+ },
+ {
+  "id": "cmu5k4gjr00712lqjcu3fy5og",
+  "gameId": "equip_t5_pirate",
+  "slug": "equip-t5-pirate",
+  "nameFr": "À la recherche du trésor",
+  "nameEn": "In Search of Treasure",
+  "bonusTwoFr": "Augmentation des soins reçus de [#D67314]10%[-]\nL'utilisation d'une compétence de relève sans que l'effet [#0F5CD8]Recherche de trésor[-] soit actif octroie [#0F5CD8]Chasse au trésor[-] pendant [#1A7331]20s[-].\nChaque ruée effectuée tandis que cet effet est actif octroie [#1A7331]1 cumul[-] de [#0F5CD8]Chasse au trésor[-] (max : [#1A7331]5 cumuls[-]). Lorsque l'effet atteint le max, il est remplacé par l'un des effets de [#0F5CD8]Recherche de trésor[-] suivants :\n\n※[#0F5CD8]Recherche de trésor : réussite[-] : augmente [#0F5CD8]tous les dégâts élémentaires[-] de tous les héros alliés de [#1A7331]20%[-] pendant [#1A7331]20s[-].\n※[#0F5CD8]Recherche de trésor : échec[-] : réduit la [#0F5CD8]défense[-] de tous les héros alliés de [#1A7331]20%[-] pendant [#1A7331]20s[-].",
+  "bonusTwoEn": "Healing Received Increase [#D67314]+10%[-]\nUsing a Tag Skill without [#0F5CD8]Treasure Scan[-] active grants [#0F5CD8]Treasure Hunt[-] for [#1A7331]20 sec[-].\nEach dash while this effect is active grants [#1A7331]1 stack[-] of [#0F5CD8]Treasure Hunt[-] (Max: [#1A7331]5 stacks[-]). When this effect reaches its max, it is replaced with 1 of the following [#0F5CD8]Treasure Scan[-] effects:\n\n※[#0F5CD8]Treasure Scan: Success[-]: Increases all allied heroes' [#0F5CD8]All Elemental Damage[-] by [#1A7331]20%[-] for [#1A7331]20 sec[-].\n※[#0F5CD8]Treasure Scan: Fail[-]: Decreases all allied heroes' [#0F5CD8]Defense[-] by [#1A7331]20%[-] for [#1A7331]20 sec[-].",
+  "bonusFourFr": "",
+  "bonusFourEn": "",
+  "bonusTwoCount": 4,
+  "bonusTwoStats": [
+   {
+    "stat": "H_HealReceive_Rate",
+    "value": 1000
+   }
+  ],
+  "bonusFourCount": null,
+  "bonusFourStats": null,
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 4
+ },
+ {
+  "id": "cmu5k4gjr00702lqja2qsi2dv",
+  "gameId": "equip_t5_predator",
+  "slug": "equip-t5-predator",
+  "nameFr": "Une lueur dans les cendres",
+  "nameEn": "Gleam Amid the Ashes",
+  "bonusTwoFr": "Dégâts crit. [#D67314]+9%[-]",
+  "bonusTwoEn": "Crit Damage [#D67314]+9%[-]",
+  "bonusFourFr": "Efficacité de durée des malus [#D67314]+13%[-]\nL'utilisation de l'attaque spéciale augmente l'[#0F5CD8]efficacité de durée des malus[-] de [#1A7331]20%[-] pendant [#1A7331]20s[-].\nPasser à un autre héros alors que l'effet est actif retire l'effet et augmente l'[#0F5CD8]attaque élémentaire[-] de tous les héros alliés qui correspond à l'attribut du héros de [#1A7331]20%[-] pendant [#1A7331]40s[-].",
+  "bonusFourEn": "Debuff Duration Efficiency [#D67314]+13%[-]\nUsing the Special Attack increases [#0F5CD8]Debuff Duration Efficiency[-] by [#1A7331]20%[-] for [#1A7331]20 sec[-].\nSwitching to another hero while the effect is active removes the effect and increases all allied heroes' [#0F5CD8]Elemental Attack[-] matching the hero's Element by [#1A7331]20%[-] for [#1A7331]40 sec[-].",
+  "bonusTwoCount": 4,
+  "bonusTwoStats": [
+   {
+    "stat": "C_Critical_Dam_Rate",
+    "value": 900
+   }
+  ],
+  "bonusFourCount": 7,
+  "bonusFourStats": [
+   {
+    "stat": "Debuff_Time_Rate",
+    "value": 1300
+   }
+  ],
+  "bonusSevenCount": null,
+  "bonusSevenStats": null,
+  "partsCount": 7
  }
 ]
