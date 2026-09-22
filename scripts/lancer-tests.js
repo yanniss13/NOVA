@@ -31,6 +31,7 @@ const SUITES = {
     "node tests/modules-imports.test.js",
     "node tests/imports-resolus.test.js",
     "node tests/css-ordre.test.js",
+    "node tests/banniere-par-vue.test.js",
     "python -m unittest tests/test_schema_sql.py",
     "python -m unittest tests/test_generate_stats_build.py",
     "python scripts/generate-stats-build.py --check",
