@@ -73,6 +73,7 @@ const MODULES = [
   "metier/dispos-logique.js",
   "metier/recommandation-groupes.js",
   "metier/boss-logique.js",
+  "metier/entrainement-boss.js",
   "metier/accueil-logique.js",
   "metier/wiki-competences.js",
   "metier/wiki-equipement.js",

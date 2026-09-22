@@ -1,0 +1,103 @@
+"use strict";
+
+/* Les règles de l'entraînement du boss, lues sur le module isolé : il n'a
+   aucun import, on le charge seul dans un contexte `vm`. */
+
+const assert = require("node:assert/strict");
+const fs = require("node:fs");
+const path = require("node:path");
+const vm = require("node:vm");
+const { plain } = require("./helpers/load-app");
+
+const source = fs
+  .readFileSync(path.join(__dirname, "..", "js", "metier", "entrainement-boss.js"), "utf8")
+  .replace(/export\s*\{[^}]*\};?/, "");
+const contexte = {};
+vm.runInNewContext(source + `
+this.__api = { ENTRAINEMENT_MAX_PARTICIPANTS, ENTRAINEMENT_NOTE_MAX,
+  dateParisEntrainement, validerSaisieEntrainement, cleCompositionEntrainement,
+  trierRunsEntrainement, serieProgressionEntrainement,
+  resumeProgressionEntrainement, topRunsEntrainement,
+  comparaisonEquipesEntrainement };`, contexte, { filename:"entrainement-boss.js" });
+const api = contexte.__api;
+
+/* ---------- date de Paris ---------- */
+/* 23h30 UTC le 21 septembre = 1h30 le 22 à Paris (heure d'été). */
+assert.equal(api.dateParisEntrainement(new Date("2026-09-21T23:30:00Z")), "2026-09-22");
+
+/* ---------- validation ---------- */
+const base = { auteurId:"a", participants:["a","b"], score:"1500000",
+  note:"", playedOn:"2026-09-20", aujourdhui:"2026-09-22" };
+const erreur = changes => api.validerSaisieEntrainement(Object.assign({}, base, changes)).erreur;
+assert.equal(api.validerSaisieEntrainement(base).ok, true);
+assert.deepEqual(plain(api.validerSaisieEntrainement(base).valeur),
+  { participants:["a","b"], score:"1500000", note:"", playedOn:"2026-09-20" });
+assert.equal(erreur({ participants:[] }), "PARTICIPANTS_VIDES");
+assert.equal(erreur({ participants:["a","b","c","d","e","f"] }), "TROP_DE_PARTICIPANTS");
+assert.equal(erreur({ participants:["b","c"] }), "AUTEUR_ABSENT");
+assert.equal(erreur({ participants:["a","b","b"] }), "PARTICIPANT_EN_DOUBLE");
+assert.equal(erreur({ score:"0" }), "SCORE_INVALIDE");
+assert.equal(erreur({ score:"-3" }), "SCORE_INVALIDE");
+assert.equal(erreur({ score:"12,5" }), "SCORE_INVALIDE");
+assert.equal(erreur({ score:"" }), "SCORE_INVALIDE");
+assert.equal(erreur({ note:"x".repeat(1001) }), "NOTE_TROP_LONGUE");
+assert.equal(erreur({ playedOn:"20/09/2026" }), "DATE_INVALIDE");
+assert.equal(erreur({ playedOn:"2026-09-23" }), "DATE_FUTURE");
+/* Les espaces et séparateurs de milliers saisis sont tolérés et retirés. */
+assert.equal(api.validerSaisieEntrainement(Object.assign({}, base,
+  { score:" 1 500 000 " })).valeur.score, "1500000");
+/* La note est rognée. */
+assert.equal(api.validerSaisieEntrainement(Object.assign({}, base,
+  { note:"  bien  " })).valeur.note, "bien");
+
+/* ---------- composition ---------- */
+const snap = chars => ({ data:{ heroes:chars.map(char => ({ char })) } });
+assert.equal(api.cleCompositionEntrainement(snap(["merlin","ban",null,"diane"])), "ban|diane|merlin");
+assert.equal(api.cleCompositionEntrainement(snap(["diane","merlin","ban"])), "ban|diane|merlin");
+assert.equal(api.cleCompositionEntrainement(null), null);
+assert.equal(api.cleCompositionEntrainement(snap([null,null])), null);
+
+/* ---------- jeu de runs ---------- */
+const run = (id, playedOn, score, equipes, createdAt) => ({
+  id, playedOn, score, note:"", participants:Object.keys(equipes),
+  equipes, createdAt:createdAt || playedOn+"T20:00:00Z", updatedAt:"t"
+});
+const eq = chars => ({ pseudo:"x", teamId:"t", snapshot:snap(chars) });
+const runs = [
+  run("r1", "2026-09-10", "9007199254740993", { a:eq(["ban","diane"]), b:eq(["merlin"]) }),
+  run("r2", "2026-09-12", "9007199254740992", { a:eq(["diane","ban"]) }),
+  run("r3", "2026-09-12", "100", { b:eq(["merlin"]) }, "2026-09-12T21:00:00Z"),
+  run("r4", "2026-09-15", "300", { a:{ pseudo:"x", teamId:null, snapshot:null } }),
+  run("r5", "2026-09-16", "200", { a:eq(["king"]) })
+];
+
+assert.deepEqual(plain(api.trierRunsEntrainement(runs).map(r => r.id)),
+  ["r5","r4","r3","r2","r1"]);
+
+/* Progression : chronologique ; filtrée sur un membre. */
+assert.deepEqual(plain(api.serieProgressionEntrainement(runs, null).map(p => p.id)),
+  ["r1","r2","r3","r4","r5"]);
+assert.deepEqual(plain(api.serieProgressionEntrainement(runs, "b").map(p => p.id)),
+  ["r1","r3"]);
+assert.deepEqual(plain(api.resumeProgressionEntrainement(
+  api.serieProgressionEntrainement(runs, "a"))),
+  { meilleur:"9007199254740993", dernier:"200", ecart:"-9007199254740793" });
+assert.equal(api.resumeProgressionEntrainement([]), null);
+
+/* Top : au-delà de 2^53 sans perte, égalité → la plus ancienne d'abord. */
+const top = api.topRunsEntrainement(runs, 3);
+assert.deepEqual(plain(top.map(t => [t.rang, t.run.id])),
+  [[1,"r1"],[2,"r2"],[3,"r4"]]);
+assert.equal(api.topRunsEntrainement(runs).length, 5);
+
+/* Comparaison : par composition du membre, équipe manquante exclue,
+   médiane sur un nombre pair = moyenne entière des deux centrales. */
+const comparaison = plain(api.comparaisonEquipesEntrainement(runs, "a"));
+assert.deepEqual(comparaison, [
+  { cle:"ban|diane", heros:["ban","diane"], runs:2,
+    meilleur:"9007199254740993", mediane:"9007199254740992" },
+  { cle:"king", heros:["king"], runs:1, meilleur:"200", mediane:"200" }
+]);
+assert.deepEqual(plain(api.comparaisonEquipesEntrainement(runs, "inconnu")), []);
+
+console.log("entrainement-boss : ok");
