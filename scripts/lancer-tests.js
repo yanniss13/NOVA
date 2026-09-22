@@ -149,6 +149,7 @@ const SUITES = {
     "node tests/boss-admin.playwright.js",
     "node tests/boss-correction.playwright.js",
     "node tests/boss-meilleures-runs.playwright.js",
+    "node tests/entrainement.playwright.js",
     "node tests/potentiel-commun.playwright.js",
     "node tests/supabase-etape1.playwright.js",
     "node tests/analyse-recensements.playwright.js",

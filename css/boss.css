@@ -194,3 +194,16 @@
   margin:0;font-family:var(--display);font-size:14px;font-weight:600;
   letter-spacing:.05em;color:var(--parchment)
 }
+
+/* ============ Entraînement du boss ============ */
+.training-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.training-subviews{display:flex;flex-wrap:wrap;gap:6px}
+.training-subviews [aria-pressed="true"]{color:var(--gold-bright);border-color:var(--gold-bright)}
+.training-subviews .btn,#trainingAdd{min-height:44px}
+.training-runs{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:12px}
+.training-run{border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
+.training-run-head{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.training-run-score{font-size:1.25rem;color:var(--gold-bright)}
+.training-run-meta{color:var(--muted);font-size:.85rem;flex:1 1 12rem;min-width:0}
+.training-edit{min-height:44px;margin-left:auto}
+.training-run-note{margin:8px 0 0;overflow-wrap:anywhere}

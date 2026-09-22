@@ -53,7 +53,7 @@ import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
      mais c'est cette constante qui decide de l'appartenance. Les deux ne
      peuvent pas diverger sans qu'un test le voie. */
   const GROUPE_BOSS = "roster";
-  const VUES_DU_GROUPE = new Set(["roster", "availability", "boss"]);
+  const VUES_DU_GROUPE = new Set(["roster", "availability", "boss", "training"]);
   const VUES_DANS_PLUS = new Set([
     "analyse", "wiki", "collection", "calculateur", "admin"
   ]);
@@ -103,7 +103,7 @@ import { fragmentDeRoute, routeDeVue } from "../metier/routage.js";
      compte. `builder`, `wiki`, `collection` et `calculateur` non plus : ils
      tiennent debout sans aucun compte. */
   const VUES_DE_CONFRERIE = new Set([
-    "dashboard", "roster", "analyse", "availability", "boss"
+    "dashboard", "roster", "analyse", "availability", "boss", "training"
   ]);
   const VUE_ADMIN = "admin";
 

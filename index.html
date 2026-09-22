@@ -145,6 +145,9 @@
     <button class="tab subtab" id="tab-boss" data-view="boss"
             role="tab" aria-controls="view-boss"
             aria-selected="false" tabindex="-1">Sessions de boss</button>
+    <button class="tab subtab" id="tab-training" data-view="training"
+            role="tab" aria-controls="view-training"
+            aria-selected="false" tabindex="-1">Entraînement</button>
   </nav>
   <div class="account">
     <button class="btn btn-ghost" id="accountLogin" type="button">Connexion</button>
@@ -176,6 +179,10 @@
   <button class="mobile-boss-subnav-item" type="button" data-mobile-view="boss"
           aria-controls="view-boss">
     Sessions
+  </button>
+  <button class="mobile-boss-subnav-item" type="button"
+          data-mobile-view="training" aria-controls="view-training">
+    Entraînement
   </button>
 </nav>
 <div class="mobile-more-backdrop" id="mobileMoreBackdrop" hidden></div>
@@ -471,6 +478,24 @@
       <span class="roster-count" id="bossCount"></span>
     </div>
     <div id="bossBody"></div>
+  </section>
+
+  <!-- ============ ENTRAINEMENT DU BOSS ============ -->
+  <section id="view-training" class="view" role="tabpanel"
+           aria-labelledby="tab-training">
+    <p class="section-eyebrow">Confrérie</p>
+    <h1 class="section-title">Entraînement du boss</h1>
+    <p class="section-lead">Consigne vos runs du mode entraînement : qui était là, avec quelles équipes, et le score du groupe.</p>
+    <div class="roster-toolbar training-toolbar">
+      <button class="btn btn-primary" id="trainingAdd" type="button">Enregistrer une run</button>
+      <div class="training-subviews" id="trainingSubviews" role="group" aria-label="Vue de l’entraînement">
+        <button type="button" class="btn btn-ghost" data-training-vue="historique" aria-pressed="true">Historique</button>
+        <button type="button" class="btn btn-ghost" data-training-vue="progression" aria-pressed="false">Progression</button>
+        <button type="button" class="btn btn-ghost" data-training-vue="classement" aria-pressed="false">Classement</button>
+      </div>
+      <span class="roster-count" id="trainingStatus"></span>
+    </div>
+    <div id="trainingBody"></div>
   </section>
 
   <!-- ============ WIKI ============ -->
