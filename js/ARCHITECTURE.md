@@ -60,6 +60,7 @@ ne pouvait sortir de `app.js`.
 | `equipe-modele.js` | Normalisation de toute équipe venue du dehors |
 | `dispos-logique.js` | Masques de disponibilité, semaines, agrégation |
 | `boss-logique.js` | Semaine de boss, projection « Mon suivi », scores |
+| `entrainement-boss.js` | Entraînement du boss : validation, progression, classement, comparaison |
 
 `stats-calcul.js` mérite un mot : il produit des **termes** — « +120 ATK, venant
 du passif de l'arme » — et non des totaux opaques. C'est ce qui permet à
@@ -77,13 +78,14 @@ version plus ancienne du site reste ouvrable.
 | `equipes-store.js` | Les équipes : `LocalTeams` (localStorage) et `Store` (arbitre local/nuage) |
 | `roster-store.js` | Le roster des membres, cache indexé par propriétaire |
 | `boss-store.js` | Sessions de boss : groupes, inscriptions, rapports |
+| `entrainement-store.js` | Runs d'entraînement : lecture, écritures, conflit, cache |
 | `suivi-store.js` | « Mon suivi » : assemblage et cache hors ligne |
 
 ### `vues/` — l'écran
 
 | Fichier | Contenu |
 |---|---|
-| `navigation.js` | Les onglets, **le registre des vues**, et le portier qui ferme les six onglets réservés à un visiteur sans compte |
+| `navigation.js` | Les onglets, **le registre des vues**, et le portier qui ferme les sept onglets réservés à un visiteur sans compte |
 | `elements.js` | Briques de rendu partagées : `gearSlot`, `renderBonus`, `rosterWeaponLabel` |
 | `toast.js` | Le bandeau de notification |
 | `modal-stack.js` | La pile de modales : ouverture, fermeture, restitution du focus |
@@ -101,6 +103,8 @@ version plus ancienne du site reste ouvrable.
 | `boss-meilleures-runs.js` | Le palmarès « Meilleures runs » sous les statistiques de la semaine |
 | `detail-roster.js` | La modale de détail d'un personnage d'un autre membre |
 | `boss-sessions.js` | L'onglet Sessions de boss : groupes, rapports, archive |
+| `modale-entrainement.js` | La saisie d'une run d'entraînement |
+| `boss-entrainement.js` | L'onglet Entraînement : historique, progression, classement |
 | `builder.js` | L'onglet Builder : composer et équiper une équipe |
 | `roster-membres.js` | L'onglet Roster **des personnages** d'un membre |
 | `analyse.js` | L'onglet Analyse : les DPS de la confrérie par élément |

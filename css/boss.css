@@ -194,3 +194,41 @@
   margin:0;font-family:var(--display);font-size:14px;font-weight:600;
   letter-spacing:.05em;color:var(--parchment)
 }
+
+/* ============ Entraînement du boss ============ */
+.training-toolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.training-subviews{display:flex;flex-wrap:wrap;gap:6px}
+.training-subviews [aria-pressed="true"]{color:var(--gold-bright);border-color:var(--gold-bright)}
+.training-subviews .btn,#trainingAdd{min-height:44px}
+.training-runs{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:12px}
+.training-run{border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
+.training-run-head{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
+.training-run-score{font-size:1.25rem;color:var(--gold-bright)}
+.training-run-meta{color:var(--muted);font-size:.85rem;flex:1 1 12rem;min-width:0}
+.training-edit{min-height:44px;margin-left:auto}
+.training-run-note{margin:8px 0 0;overflow-wrap:anywhere}
+.modal.training-modal{width:min(620px,100%)}
+.training-form{display:grid;gap:8px;min-width:0;min-height:0;flex:1 1 auto;padding:18px;overflow-y:auto;overflow-x:hidden}
+.training-members{border:1px solid var(--line-soft);border-radius:10px;padding:8px;min-width:0}
+#trainingMembers{display:grid;grid-template-columns:repeat(auto-fill,minmax(9rem,1fr));gap:4px}
+.training-member{display:flex;gap:8px;align-items:center;min-height:44px;cursor:pointer}
+.training-member input{width:20px;height:20px}
+.training-teams{display:grid;gap:8px}
+.training-team-field{display:grid;gap:4px}
+.training-team-field select,#trainingDate,#trainingScore{min-height:44px}
+.training-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.training-actions .btn{min-height:44px}
+.training-filter{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
+.training-filter select{min-height:44px;max-width:100%}
+.training-chart{width:100%;height:auto;max-height:260px;display:block}
+.training-axis{stroke:var(--line);stroke-width:1}
+.training-line{fill:none;stroke:var(--gold-bright);stroke-width:2}
+.training-dot{fill:var(--gold-bright)}
+.training-points{columns:2 14rem;color:var(--muted);font-size:.9rem}
+.training-subtitle{margin:20px 0 8px;font-size:1.1rem}
+.training-top{list-style:none;padding:0;margin:0;display:grid;gap:12px}
+.training-rank{font-weight:700;color:var(--gold-bright);margin-right:8px}
+.training-compare-caveat{color:var(--muted);font-size:.85rem}
+.training-compare-wrap{overflow-x:auto;max-width:100%}
+.training-compare{border-collapse:collapse;width:100%;min-width:0}
+.training-compare th,.training-compare td{padding:8px;border-bottom:1px solid var(--line-soft);text-align:left;overflow-wrap:anywhere}

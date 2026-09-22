@@ -83,6 +83,10 @@ et son propriétaire. Il porte aussi la liste des **fausses pistes déjà
       sans modifier la composition; `boss_run_reports` et les RPC associées sont
       synchronisés par Realtime. Les anciennes archives sans rapport restent
       lisibles.
+- [x] **Entraînement du boss de confrérie**. Sous-onglet du groupe Boss :
+      saisie d'une run de groupe (1 à 5), équipes figées côté serveur,
+      historique, progression en SVG, classement et comparaison d'équipes.
+      Voir « Entraînement du boss de confrérie ».
 - [x] **Mobile et accessibilité**. Onglets au clavier, pile de modales avec
       piège/restitution du focus, cibles tactiles de 44 px et vues sans
       débordement horizontal entre 320 et 390 px.
@@ -1136,7 +1140,7 @@ d'éléments ou d'armes n'est écrite en dur.
 
 Une chaîne `confrerie-live-<userId>` écoute `profiles`, `teams`,
 `roster_characters`, `boss_sessions`, `boss_participation`,
-`member_availability` et `collection_items`. Les événements sont regroupés puis
+`member_availability`, `collection_items` et `boss_training_runs`. Les événements sont regroupés puis
 seule la vue active concernée est relue. L'Analyse réagit au roster et aux
 profils, dont elle est entièrement dérivée.
 
@@ -1186,7 +1190,7 @@ le SQL Editor afin d'ajouter les tables à la publication
   ancrage : le test ne vérifie que le nombre qui suit la phrase, donc un ancrage
   posé au mauvais endroit ferait lire une autre valeur sans protester.
 - **Un visiteur sans compte ne voit que quatre onglets** : « Créer une équipe »,
-  Wiki, Collection et Calculateur. Les six autres lisent des données liées à un
+  Wiki, Collection et Calculateur. Les sept autres lisent des données liées à un
   compte, et il atterrit sur le Wiki. Le portier est `vues/navigation.js`
   (`VUES_PUBLIQUES`, `appliquerVisibiliteOnglets`), la question posée à la
   session est `visiteurAnonyme()`, et `applySession` l'appelle **en dernier**
@@ -1324,6 +1328,31 @@ Ce script de rollback est rejouable et non destructif : il restaure les RPC et
 leurs privilèges, mais ne supprime aucune table, colonne, participation,
 session, instantané ni rapport. Les objets ajoutés restent disponibles pour une
 réactivation ultérieure.
+
+## Entraînement du boss de confrérie (sous-onglet « Entraînement »)
+
+Le mode entraînement (2.1) se consigne dans `boss_training_runs`, **table
+distincte** de `boss_sessions` : aucun quota, aucun groupe, aucun rappel, rien
+dans « Mon suivi » ni dans « Meilleures runs ». Spec :
+`docs/superpowers/specs/2026-09-22-entrainement-boss-design.md`.
+
+- Une ligne par run : date, score global (le jeu ne donne pas de dégâts par
+  membre), note ≤ 1000, 1 à 5 `participants`, et `equipes` par participant.
+- Le client n'envoie que `teamId`. Le trigger
+  `private.boss_training_runs_prepare` vérifie que l'équipe appartient au
+  participant, **reconstruit** l'instantané depuis `teams` et le fige ; il pose
+  aussi l'auteur, les pseudos et `updated_at`. Ne jamais faire confiance à un
+  instantané venu du client.
+- RLS : lecture par les membres ; écriture seulement par un participant,
+  qui ne peut pas se retirer lui-même.
+- Correction en comparaison-et-échange sur `updated_at` (chaîne opaque) :
+  zéro ligne modifiée → `TRAINING_CONFLICT`.
+- Scores lus en `global_score::text`, jamais en `number`.
+- Trois sous-vues locales (Historique, Progression, Classement) : en changer
+  ne fait **aucune** requête.
+
+Après ce déploiement, rejouer `supabase/schema.sql` dans le SQL Editor
+**avant** de pousser le frontend.
 
 ## Publication GitHub Pages
 
@@ -1482,7 +1511,7 @@ visiteur : elle garde l'accès aux caches locaux du membre, conformément à
 `visiteurAnonyme()`.
 
 Dans le groupe Boss, `#mobileBossSubtabs` ajoute un dock contextuel
-**Équipes / Dispos / Sessions** juste au-dessus de la barre principale. C'est
+**Équipes / Dispos / Sessions / Entraînement** juste au-dessus de la barre principale. C'est
 un élément frère du header, jamais un descendant : `backdrop-filter` sur
 `.topbar` créerait sinon le bloc de référence de son `position:fixed` et
 placerait le dock hors du viewport. `html.has-mobile-subnav` augmente à la

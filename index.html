@@ -145,6 +145,9 @@
     <button class="tab subtab" id="tab-boss" data-view="boss"
             role="tab" aria-controls="view-boss"
             aria-selected="false" tabindex="-1">Sessions de boss</button>
+    <button class="tab subtab" id="tab-training" data-view="training"
+            role="tab" aria-controls="view-training"
+            aria-selected="false" tabindex="-1">Entraînement</button>
   </nav>
   <div class="account">
     <button class="btn btn-ghost" id="accountLogin" type="button">Connexion</button>
@@ -176,6 +179,10 @@
   <button class="mobile-boss-subnav-item" type="button" data-mobile-view="boss"
           aria-controls="view-boss">
     Sessions
+  </button>
+  <button class="mobile-boss-subnav-item" type="button"
+          data-mobile-view="training" aria-controls="view-training">
+    Entraînement
   </button>
 </nav>
 <div class="mobile-more-backdrop" id="mobileMoreBackdrop" hidden></div>
@@ -471,6 +478,24 @@
       <span class="roster-count" id="bossCount"></span>
     </div>
     <div id="bossBody"></div>
+  </section>
+
+  <!-- ============ ENTRAINEMENT DU BOSS ============ -->
+  <section id="view-training" class="view" role="tabpanel"
+           aria-labelledby="tab-training">
+    <p class="section-eyebrow">Confrérie</p>
+    <h1 class="section-title">Entraînement du boss</h1>
+    <p class="section-lead">Consigne vos runs du mode entraînement : qui était là, avec quelles équipes, et le score du groupe.</p>
+    <div class="roster-toolbar training-toolbar">
+      <button class="btn btn-primary" id="trainingAdd" type="button">Enregistrer une run</button>
+      <div class="training-subviews" id="trainingSubviews" role="group" aria-label="Vue de l’entraînement">
+        <button type="button" class="btn btn-ghost" data-training-vue="historique" aria-pressed="true">Historique</button>
+        <button type="button" class="btn btn-ghost" data-training-vue="progression" aria-pressed="false">Progression</button>
+        <button type="button" class="btn btn-ghost" data-training-vue="classement" aria-pressed="false">Classement</button>
+      </div>
+      <span class="roster-count" id="trainingStatus"></span>
+    </div>
+    <div id="trainingBody"></div>
   </section>
 
   <!-- ============ WIKI ============ -->
@@ -980,6 +1005,38 @@
       <button class="btn btn-primary" id="bossReportSubmit" type="button">
         Enregistrer et terminer la run
       </button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="trainingOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="trainingTitle" aria-hidden="true">
+  <div class="modal training-modal">
+    <div class="modal-head">
+      <h2 id="trainingTitle">Enregistrer une run d’entraînement</h2>
+      <button class="icon-btn" id="trainingClose" type="button"
+              aria-label="Fermer">×</button>
+    </div>
+    <div class="training-form">
+      <label for="trainingDate">Date de la run</label>
+      <input id="trainingDate" type="date">
+      <fieldset class="training-members">
+        <legend>Participants (5 au maximum)</legend>
+        <div id="trainingMembers"></div>
+      </fieldset>
+      <div id="trainingTeams" class="training-teams"></div>
+      <label for="trainingScore">Score global</label>
+      <input id="trainingScore" type="text" inputmode="numeric"
+             autocomplete="off" aria-describedby="trainingError">
+      <label for="trainingNote">Note (facultative)</label>
+      <textarea id="trainingNote" maxlength="1000"
+                aria-describedby="trainingCount trainingError"></textarea>
+      <div id="trainingCount">0/1000</div>
+      <p id="trainingError" role="alert"></p>
+      <div class="training-actions">
+        <button class="btn btn-ghost" id="trainingDelete" type="button" hidden>Supprimer</button>
+        <button class="btn btn-primary" id="trainingSubmit" type="button">Enregistrer</button>
+      </div>
     </div>
   </div>
 </div>

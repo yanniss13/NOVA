@@ -127,13 +127,17 @@ async function installFakeSupabase(page){
          client filtre deja sur `owner`. */
       gear_presets:[],
       calls:[],
+      boss_training_runs:[],
+      trainingClock:0,
       rpcCalls:[],
       bossRpcFailureOnce:null,
       bossRpcHold:null,
       bossReadHold:null,
       bossReadQueue:[],
       bossReadFailureOnce:null,
-      profileReadHold:null
+      profileReadHold:null,
+      profileReadQueue:[],
+      profileReadNextId:0
     };
 
     function clone(value){
@@ -158,7 +162,8 @@ async function installFakeSupabase(page){
         "boss_participation",
         "boss_run_reports",
         "collection_items",
-        "gear_presets"
+        "gear_presets",
+        "boss_training_runs"
       ]),
       rpcOnlyWriteTables:new Set([
         "boss_participation",
@@ -172,7 +177,8 @@ async function installFakeSupabase(page){
         "boss_sessions",
         "boss_participation",
         "boss_run_reports",
-        "animation_measures"
+        "animation_measures",
+        "boss_training_runs"
       ]),
       /* Les tables possedees : un invite n'y voit que les siennes. */
       partageEntreMembres:new Set([
@@ -538,6 +544,7 @@ async function installFakeSupabase(page){
       let operation = "select";
       let payload = null;
       let upsertOptions = null;
+      let returning = false;
       const filters = [];
       const sorts = [];
       const matchRow = row => filters.every(([key, value]) => {
@@ -545,7 +552,13 @@ async function installFakeSupabase(page){
         return row[key] === value;
       });
       const builder = {
-        select(){ operation = "select"; return builder; },
+        /* `update(...).select()` renvoie les lignes modifiees, comme
+           PostgREST : c'est ainsi que le client detecte un conflit. */
+        select(){
+          if(operation === "update" || operation === "delete") returning = true;
+          else operation = "select";
+          return builder;
+        },
         order(column, options){ sorts.push([column, options && options.ascending === false ? -1 : 1]); return builder; },
         eq(column, value){ filters.push([column, value]); return builder; },
         in(column, values){ filters.push(["__in:" + column, values || []]); return builder; },
@@ -582,6 +595,133 @@ async function installFakeSupabase(page){
           return operation === "select"
             ? { data:[], error:null }
             : { data:null, error:{ message:"MEMBRE_REQUIS" } };
+        }
+
+        if(table === "boss_training_runs" && operation !== "select"){
+          const moi = bossAcl.owner();
+          const refus = { data:null, error:{ code:"42501",
+            message:"new row violates row-level security policy" } };
+          const horloge = () => {
+            state.trainingClock += 1;
+            return "2026-09-22T10:00:" + String(state.trainingClock).padStart(2, "0") + ".123456+00:00";
+          };
+          const pseudoDe = id => (state.profiles.find(p => p.id === id) || {}).pseudo || "Membre";
+          /* Jour civil a Paris, comme `(now() at time zone 'Europe/Paris')::date`
+             dans le trigger SQL. Ne pas importer le module applicatif ici : le
+             faux doit rester lisible sans dependre de js/. */
+          const jourParisEntrainement = () => {
+            const parts = new Intl.DateTimeFormat("en-CA", {
+              timeZone:"Europe/Paris", year:"numeric", month:"2-digit", day:"2-digit"
+            }).formatToParts(new Date());
+            const get = t => (parts.find(p => p.type === t) || {}).value;
+            return get("year") + "-" + get("month") + "-" + get("day");
+          };
+          const preparer = (ligne, ancienne) => {
+            const participants = ligne.participants || [];
+            /* Les trois contraintes de table (`check`), pas le trigger : un
+               harnais plus permissif que la production laisserait passer
+               exactement les fautes qu'on cherche. */
+            if(participants.some(id => id === null || id === undefined)){
+              return { error:{ code:"23514",
+                message:"boss_training_runs_participants_check" } };
+            }
+            const scoreEcrit = String(ligne.global_score == null ? "" : ligne.global_score);
+            if(!/^\d+$/.test(scoreEcrit) || BigInt(scoreEcrit) <= 0n){
+              return { error:{ code:"23514",
+                message:"boss_training_runs_global_score_check" } };
+            }
+            if(typeof ligne.note === "string" && ligne.note.length > 1000){
+              return { error:{ code:"23514",
+                message:"boss_training_runs_note_check" } };
+            }
+            if(participants.length < 1 || participants.length > 5
+              || new Set(participants).size !== participants.length){
+              return { error:{ code:"P0001", message:"TRAINING_DUPLICATE_PARTICIPANT" } };
+            }
+            if(ligne.played_on > jourParisEntrainement()){
+              return { error:{ code:"P0001", message:"TRAINING_FUTURE_DATE" } };
+            }
+            const equipesEntree = ligne.equipes || {};
+            if(Object.keys(equipesEntree).some(id => !participants.includes(id))){
+              return { error:{ code:"P0001", message:"TRAINING_TEAM_OUTSIDE_RUN" } };
+            }
+            const equipes = {};
+            for(const id of participants){
+              const demande = equipesEntree[id] || {};
+              const avant = ancienne && ancienne.equipes && ancienne.equipes[id];
+              /* Un nouveau venu doit etre membre ; un participant deja present
+                 garde sa place meme si son compte a disparu depuis. */
+              if(!avant){
+                const profil = state.profiles.find(p => p.id === id);
+                if(!profil || profil.membre !== true){
+                  return { error:{ code:"P0001", message:"TRAINING_NOT_A_MEMBER" } };
+                }
+              }
+              const teamId = demande.teamId || null;
+              /* null avant/apres compte comme inchange : ni le snapshot ni le
+                 pseudo ne sont retouches, comme `is not distinct from` en SQL. */
+              const memeTeamId = !!avant && avant.teamId === teamId;
+              let snapshot = null;
+              if(teamId && memeTeamId) snapshot = avant.snapshot;
+              else if(teamId){
+                const equipe = state.teams.find(t => t.id === teamId && t.owner === id);
+                if(!equipe) return { error:{ code:"P0001", message:"TRAINING_TEAM_NOT_OWNED" } };
+                snapshot = { id:equipe.id, owner:equipe.owner, pseudo:equipe.pseudo,
+                  data:clone(equipe.data), createdAt:equipe.created_at,
+                  updatedAt:equipe.updated_at, capturedAt:"2026-09-22T10:00:00Z" };
+              }
+              equipes[id] = { pseudo:memeTeamId ? avant.pseudo : pseudoDe(id), teamId, snapshot };
+            }
+            return { ligne:Object.assign({}, ligne, { equipes }) };
+          };
+
+          if(operation === "insert"){
+            const valeur = Array.isArray(payload) ? payload[0] : payload;
+            if(!moi || valeur.created_by !== moi || !(valeur.participants || []).includes(moi)){
+              return refus;
+            }
+            const pret = preparer(valeur, null);
+            if(pret.error) return { data:null, error:pret.error };
+            /* created_at et updated_at partagent le meme instant a la creation,
+               comme en production (`default now()` lu une seule fois par la
+               meme ligne). Deux appels a horloge() les aurait desynchronises. */
+            const horodatage = horloge();
+            rows.push(Object.assign({}, pret.ligne, {
+              id:"training-" + (rows.length + 1) + "-" + state.trainingClock,
+              global_score:String(valeur.global_score),
+              created_by:moi, created_by_pseudo:pseudoDe(moi),
+              created_at:horodatage, updated_by_pseudo:null, updated_at:horodatage
+            }));
+            emitDatabase(table, "INSERT");
+            return { data:null, error:null };
+          }
+          if(operation === "update"){
+            const cibles = rows.filter(row => matchRow(row) && row.participants.includes(moi));
+            if(payload.participants && !payload.participants.includes(moi)) return refus;
+            for(const row of cibles){
+              const pret = preparer(Object.assign({}, row, payload), row);
+              if(pret.error) return { data:null, error:pret.error };
+              /* Comme le trigger SQL : created_by, created_by_pseudo et
+                 created_at ne changent JAMAIS apres l'insertion, meme si un
+                 payload en contient. Les capter avant l'assign qui suit
+                 garantit qu'un payload malveillant ne les ecrase pas. */
+              const { created_by, created_by_pseudo, created_at } = row;
+              Object.assign(row, pret.ligne, {
+                global_score:String(pret.ligne.global_score),
+                created_by, created_by_pseudo, created_at,
+                updated_by_pseudo:pseudoDe(moi), updated_at:horloge()
+              });
+            }
+            if(cibles.length) emitDatabase(table, "UPDATE");
+            return { data:returning ? cibles.map(row => ({ id:row.id })) : null, error:null };
+          }
+          if(operation === "delete"){
+            for(let index = rows.length - 1; index >= 0; index--){
+              if(matchRow(rows[index]) && rows[index].participants.includes(moi)) rows.splice(index, 1);
+            }
+            emitDatabase(table, "DELETE");
+            return { data:null, error:null };
+          }
         }
 
         if(operation === "select"){
@@ -632,6 +772,12 @@ async function installFakeSupabase(page){
             hold.claimed = true;
             await new Promise(resolve => { hold.release = resolve; });
             if(state.bossReadHold === hold) state.bossReadHold = null;
+          }
+          const queuedProfileRead = table === "profiles"
+            && state.profileReadQueue.find(item => !item.claimed);
+          if(queuedProfileRead){
+            queuedProfileRead.claimed = true;
+            await new Promise(resolve => { queuedProfileRead.release = resolve; });
           }
           const profileHold = state.profileReadHold;
           const profileId = filters.find(([key]) => key === "id");
@@ -831,6 +977,21 @@ async function installFakeSupabase(page){
     };
     window.__fakeSupabaseHoldProfileRead = userId => {
       state.profileReadHold = { userId, release:null };
+    };
+    window.__fakeSupabaseQueueProfileRead = () => {
+      const hold = { id:"profile-read-" + (++state.profileReadNextId), claimed:false, release:null };
+      state.profileReadQueue.push(hold);
+      return hold.id;
+    };
+    window.__fakeSupabaseProfileReadClaimed = id => {
+      const hold = state.profileReadQueue.find(item => item.id === id);
+      return !!hold && hold.claimed;
+    };
+    window.__fakeSupabaseReleaseQueuedProfileRead = id => {
+      const hold = state.profileReadQueue.find(item => item.id === id);
+      if(!hold || typeof hold.release !== "function") return false;
+      hold.release();
+      return true;
     };
     window.__fakeSupabaseReleaseProfileRead = () => {
       const hold = state.profileReadHold;

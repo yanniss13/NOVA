@@ -1628,6 +1628,176 @@ revoke all on function public.claim_discord_planning_request(text, integer)
 grant execute on function public.claim_discord_planning_request(text, integer)
   to service_role;
 
+-- =============================================================================
+--  Entraînement du boss de confrérie (mode arrivé en 2.1).
+--
+--  Une ligne par run. Le score est celui du groupe : le jeu ne donne pas les
+--  dégâts par membre. Aucun lien avec les runs de la semaine (quotas, groupes,
+--  rapports) : c'est pourquoi la table est distincte de boss_sessions.
+--
+--  Le client n'envoie que l'identifiant d'équipe de chaque participant. Le
+--  trigger reconstruit l'instantané depuis `teams`, vérifie que l'équipe
+--  appartient bien au participant, puis le fige : une équipe modifiée ou
+--  supprimée ensuite ne change jamais la run.
+-- =============================================================================
+create table if not exists public.boss_training_runs (
+  id                uuid primary key default gen_random_uuid(),
+  played_on         date not null,
+  global_score      bigint not null check (global_score > 0),
+  note              text not null default '' check (char_length(note) <= 1000),
+  participants      uuid[] not null
+                    check (cardinality(participants) between 1 and 5
+                           and array_position(participants, null) is null),
+  equipes           jsonb not null default '{}'::jsonb
+                    check (jsonb_typeof(equipes) = 'object'),
+  created_by        uuid references auth.users(id) on delete set null,
+  created_by_pseudo text not null default '',
+  created_at        timestamptz not null default now(),
+  updated_by_pseudo text,
+  updated_at        timestamptz not null default now()
+);
+create index if not exists boss_training_runs_played_idx
+  on public.boss_training_runs(played_on desc, created_at desc);
+
+create or replace function private.boss_training_runs_prepare()
+returns trigger
+language plpgsql
+security definer
+set search_path = pg_catalog, public
+as $$
+declare
+  v_participant uuid;
+  v_entree      jsonb;
+  v_ancienne    jsonb;
+  v_team_id     uuid;
+  v_snapshot    jsonb;
+  v_pseudo      text;
+  v_equipes     jsonb := '{}'::jsonb;
+  v_auteur      text := coalesce(
+    (select pseudo from public.profiles where id = auth.uid()), 'Membre');
+begin
+  if (select count(distinct p) from unnest(new.participants) as p)
+     <> cardinality(new.participants) then
+    raise exception 'TRAINING_DUPLICATE_PARTICIPANT' using errcode = 'P0001';
+  end if;
+  if new.played_on > (now() at time zone 'Europe/Paris')::date then
+    raise exception 'TRAINING_FUTURE_DATE' using errcode = 'P0001';
+  end if;
+  if exists (
+    select 1 from jsonb_object_keys(new.equipes) as k
+     where not (k = any(array(select unnest(new.participants)::text)))
+  ) then
+    raise exception 'TRAINING_TEAM_OUTSIDE_RUN' using errcode = 'P0001';
+  end if;
+
+  foreach v_participant in array new.participants loop
+    v_entree   := new.equipes -> v_participant::text;
+    v_team_id  := nullif(coalesce(v_entree ->> 'teamId', ''), '')::uuid;
+    v_ancienne := case when tg_op = 'UPDATE'
+                       then old.equipes -> v_participant::text end;
+
+    -- Un nouveau venu doit être membre ; un participant déjà présent garde
+    -- sa place même si son compte a disparu depuis.
+    if v_ancienne is null and not private.est_membre(v_participant) then
+      raise exception 'TRAINING_NOT_A_MEMBER' using errcode = 'P0001';
+    end if;
+
+    if v_team_id is null then
+      v_snapshot := null;
+    elsif v_ancienne is not null
+      and v_ancienne ->> 'teamId' = v_team_id::text then
+      v_snapshot := v_ancienne -> 'snapshot';
+    else
+      select jsonb_build_object(
+               'id', t.id,
+               'owner', t.owner,
+               'pseudo', t.pseudo,
+               'data', t.data,
+               'createdAt', t.created_at,
+               'updatedAt', t.updated_at,
+               'capturedAt', now()
+             )
+        into v_snapshot
+        from public.teams t
+       where t.id = v_team_id
+         and t.owner = v_participant;
+      if v_snapshot is null then
+        raise exception 'TRAINING_TEAM_NOT_OWNED' using errcode = 'P0001';
+      end if;
+    end if;
+
+    if v_ancienne is not null and (v_ancienne ->> 'teamId') is not distinct from v_team_id::text then
+      v_pseudo := v_ancienne ->> 'pseudo';
+    else
+      v_pseudo := coalesce(
+        (select pseudo from public.profiles where id = v_participant),
+        v_ancienne ->> 'pseudo',
+        'Membre');
+    end if;
+    v_equipes := v_equipes || jsonb_build_object(
+      v_participant::text,
+      jsonb_build_object('pseudo', v_pseudo,
+                         'teamId', v_team_id,
+                         'snapshot', v_snapshot));
+  end loop;
+  new.equipes := v_equipes;
+
+  if tg_op = 'INSERT' then
+    new.created_by := auth.uid();
+    new.created_by_pseudo := v_auteur;
+    new.created_at := now();
+    new.updated_by_pseudo := null;
+  else
+    new.created_by := old.created_by;
+    new.created_by_pseudo := old.created_by_pseudo;
+    new.created_at := old.created_at;
+    new.updated_by_pseudo := v_auteur;
+  end if;
+  new.updated_at := now();
+  return new;
+end;
+$$;
+revoke all on function private.boss_training_runs_prepare() from public;
+
+drop trigger if exists boss_training_runs_prepare on public.boss_training_runs;
+create trigger boss_training_runs_prepare
+  before insert or update on public.boss_training_runs
+  for each row execute function private.boss_training_runs_prepare();
+
+alter table public.boss_training_runs enable row level security;
+drop policy if exists training_read   on public.boss_training_runs;
+drop policy if exists training_insert on public.boss_training_runs;
+drop policy if exists training_update on public.boss_training_runs;
+drop policy if exists training_delete on public.boss_training_runs;
+create policy training_read on public.boss_training_runs
+  for select to authenticated
+  using (private.est_membre(auth.uid()));
+-- On n'enregistre pas une run à laquelle on n'a pas participé.
+create policy training_insert on public.boss_training_runs
+  for insert to authenticated
+  with check (
+    created_by = auth.uid()
+    and auth.uid() = any(participants)
+    and private.est_membre(auth.uid())
+  );
+-- Participant AVANT (using) et APRÈS (with check) : on peut changer les
+-- autres participants, jamais se retirer soi-même.
+create policy training_update on public.boss_training_runs
+  for update to authenticated
+  using (
+    auth.uid() = any(participants)
+    and private.est_membre(auth.uid())
+  )
+  with check (
+    auth.uid() = any(participants)
+  );
+create policy training_delete on public.boss_training_runs
+  for delete to authenticated
+  using (
+    auth.uid() = any(participants)
+    and private.est_membre(auth.uid())
+  );
+
 -- ============================ Realtime ============================
 -- Chaque table est vérifiée séparément pour que le schéma complet reste rejouable.
 do $$
@@ -1642,7 +1812,8 @@ begin
     'boss_participation',
     'boss_run_reports',
     'member_availability',
-    'collection_items'
+    'collection_items',
+    'boss_training_runs'
   ]
   loop
     if not exists (
