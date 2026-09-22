@@ -47,11 +47,26 @@ import { toast } from "./toast.js";
       .map(caseACocher => caseACocher.dataset.memberId);
   }
 
+  function profilsAffichesEntrainement(){
+    const profils = modaleEntrainement.profils.slice();
+    const participants = modaleEntrainement.run && modaleEntrainement.run.participants || [];
+    participants.forEach(id => {
+      if(profils.some(profil => profil.id === id)) return;
+      const entree = modaleEntrainement.run.equipes[id] || {};
+      profils.push({ id, pseudo:entree.pseudo || "Ancien membre" });
+    });
+    return profils;
+  }
+
+  function profilEntrainement(id){
+    return profilsAffichesEntrainement().find(profil => profil.id === id) || { pseudo:"Membre" };
+  }
+
   function dessinerEquipesEntrainement(){
     const boite = $("#trainingTeams");
     boite.replaceChildren();
     participantsCochesEntrainement().forEach(id => {
-      const profil = modaleEntrainement.profils.find(p => p.id === id) || { pseudo:"Membre" };
+      const profil = profilEntrainement(id);
       const select = el("select",{ id:"trainingTeam-"+id, dataset:{teamFor:id} },[
         el("option",{ value:"", text:"Équipe non renseignée" })
       ]);
@@ -59,6 +74,7 @@ import { toast } from "./toast.js";
         select.appendChild(el("option",{ value:t.id, text:t.name || "Équipe sans nom" }));
       });
       select.value = modaleEntrainement.choix[id] || "";
+      modaleEntrainement.choix[id] = select.value;
       select.addEventListener("change", () => { modaleEntrainement.choix[id] = select.value; });
       boite.appendChild(el("div",{class:"training-team-field"},[
         el("label",{ for:"trainingTeam-"+id, text:"Équipe de "+profil.pseudo }),
@@ -73,7 +89,7 @@ import { toast } from "./toast.js";
     coches.add(moi);
     const boite = $("#trainingMembers");
     boite.replaceChildren();
-    modaleEntrainement.profils.forEach(profil => {
+    profilsAffichesEntrainement().forEach(profil => {
       const caseACocher = el("input",{ type:"checkbox", id:"trainingMember-"+profil.id,
         dataset:{memberId:profil.id} });
       caseACocher.checked = coches.has(profil.id);
@@ -148,6 +164,7 @@ import { toast } from "./toast.js";
   }
 
   let modaleEntrainementBranchee = false;
+  let demandeEntrainement = 0;
   function brancherModaleEntrainement(){
     if(modaleEntrainementBranchee) return;
     modaleEntrainementBranchee = true;
@@ -159,13 +176,16 @@ import { toast } from "./toast.js";
 
   async function ouvrirSaisieEntrainement(run, options){
     brancherModaleEntrainement();
-    modaleEntrainement.run = run || null;
-    modaleEntrainement.apres = (options && options.apres) || (async () => {});
+    const demande = ++demandeEntrainement;
     try{
       const [profils] = await Promise.all([refreshRosterProfiles(), Store.refresh()]);
+      if(demande !== demandeEntrainement) return;
+      modaleEntrainement.run = run || null;
+      modaleEntrainement.apres = (options && options.apres) || (async () => {});
       modaleEntrainement.profils = profils;
       modaleEntrainement.equipes = Store.all();
     }catch(erreur){
+      if(demande !== demandeEntrainement) return;
       toast("Membres ou équipes indisponibles hors ligne.", true);
       return;
     }

@@ -138,7 +138,9 @@ async function installFakeSupabase(page){
       bossReadHold:null,
       bossReadQueue:[],
       bossReadFailureOnce:null,
-      profileReadHold:null
+      profileReadHold:null,
+      profileReadQueue:[],
+      profileReadNextId:0
     };
 
     function clone(value){
@@ -752,6 +754,12 @@ async function installFakeSupabase(page){
             await new Promise(resolve => { hold.release = resolve; });
             if(state.bossReadHold === hold) state.bossReadHold = null;
           }
+          const queuedProfileRead = table === "profiles"
+            && state.profileReadQueue.find(item => !item.claimed);
+          if(queuedProfileRead){
+            queuedProfileRead.claimed = true;
+            await new Promise(resolve => { queuedProfileRead.release = resolve; });
+          }
           const profileHold = state.profileReadHold;
           const profileId = filters.find(([key]) => key === "id");
           if(table === "profiles" && profileHold &&
@@ -950,6 +958,21 @@ async function installFakeSupabase(page){
     };
     window.__fakeSupabaseHoldProfileRead = userId => {
       state.profileReadHold = { userId, release:null };
+    };
+    window.__fakeSupabaseQueueProfileRead = () => {
+      const hold = { id:"profile-read-" + (++state.profileReadNextId), claimed:false, release:null };
+      state.profileReadQueue.push(hold);
+      return hold.id;
+    };
+    window.__fakeSupabaseProfileReadClaimed = id => {
+      const hold = state.profileReadQueue.find(item => item.id === id);
+      return !!hold && hold.claimed;
+    };
+    window.__fakeSupabaseReleaseQueuedProfileRead = id => {
+      const hold = state.profileReadQueue.find(item => item.id === id);
+      if(!hold || typeof hold.release !== "function") return false;
+      hold.release();
+      return true;
     };
     window.__fakeSupabaseReleaseProfileRead = () => {
       const hold = state.profileReadHold;

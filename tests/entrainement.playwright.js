@@ -88,12 +88,50 @@ async function poserDesRuns(page){
     assert.equal(await page.locator('.training-edit[data-training-run-id="tr-1"]').count(), 1);
     assert.equal(await page.locator('.training-edit[data-training-run-id="tr-2"]').count(), 0);
 
-    /* Aucun débordement horizontal à 320 px. */
-    await page.setViewportSize({ width:320, height:800 });
+    /* La modale garde ses actions atteignables à 320 px, même pour une grande
+       confrérie : seul son corps défile, jamais la page verrouillée. */
+    await page.evaluate(() => {
+      const s = window.__fakeSupabaseState;
+      for(let n = 4; n <= 10; n++) s.profiles.push({
+        id:"user-"+n, pseudo:"Membre "+n, membre:true, admin:false
+      });
+    });
+    await page.setViewportSize({ width:320, height:480 });
+    await page.locator("#trainingAdd").click();
+    await page.locator("#trainingOverlay").waitFor({ state:"visible" });
+    await page.locator("#trainingSubmit").scrollIntoViewIfNeeded();
+    assert.equal(await page.evaluate(() => {
+      const action = document.querySelector("#trainingSubmit").getBoundingClientRect();
+      const overlay = document.querySelector("#trainingOverlay").getBoundingClientRect();
+      return action.top >= overlay.top && action.bottom <= overlay.bottom;
+    }), true, "les actions restent atteignables dans la modale");
     assert.equal(await page.evaluate(() =>
       document.documentElement.scrollWidth <= innerWidth), true);
+    await page.locator("#trainingClose").click();
 
     await page.setViewportSize({ width:1280, height:900 });
+
+    /* Deux ouvertures concurrentes : la plus ancienne ne peut pas repeindre
+       la correction qui vient d'être demandée après elle. */
+    const demandes = await page.evaluate(() => ({
+      ajout:window.__fakeSupabaseQueueProfileRead(),
+      correction:window.__fakeSupabaseQueueProfileRead()
+    }));
+    await page.locator("#trainingAdd").click();
+    await page.waitForFunction(id => window.__fakeSupabaseProfileReadClaimed(id), demandes.ajout);
+    await page.locator('.training-edit[data-training-run-id="tr-1"]').click();
+    await page.waitForFunction(id => window.__fakeSupabaseProfileReadClaimed(id), demandes.correction);
+    assert.equal(await page.evaluate(id => window.__fakeSupabaseReleaseQueuedProfileRead(id),
+      demandes.correction), true);
+    await page.locator("#trainingOverlay").waitFor({ state:"visible" });
+    assert.equal(await page.locator("#trainingScore").inputValue(), "9007199254740993");
+    assert.equal(await page.evaluate(id => window.__fakeSupabaseReleaseQueuedProfileRead(id),
+      demandes.ajout), true);
+    await page.waitForTimeout(50);
+    assert.match(await page.locator("#trainingTitle").textContent(), /Corriger/,
+      "une ouverture périmée ne remplace pas la cible courante");
+    assert.equal(await page.locator("#trainingScore").inputValue(), "9007199254740993");
+    await page.locator("#trainingClose").click();
 
     /* --- Saisie : Yannis (coché d'office) + Merlin, équipes et score. --- */
     await page.locator("#trainingAdd").click();
@@ -133,12 +171,40 @@ async function poserDesRuns(page){
     assert.match(await page.locator(`li.training-run[data-training-run-id="${nouvelle.id}"]`)
       .textContent(), /2\s?000\s?000/);
 
+    /* Une équipe supprimée n'est plus proposée : l'absence affichée est aussi
+       la valeur sauvegardée, afin de pouvoir réellement l'effacer. */
+    await page.evaluate(() => {
+      const s = window.__fakeSupabaseState;
+      s.teams = s.teams.filter(team => team.id !== "team-other");
+    });
+    await page.locator(`.training-edit[data-training-run-id="${nouvelle.id}"]`).click();
+    assert.equal(await page.locator('#trainingTeams select[data-team-for="user-2"]').inputValue(), "");
+    await page.locator("#trainingSubmit").click();
+    await page.locator("#trainingOverlay").waitFor({ state:"hidden" });
+    assert.equal(await page.evaluate(id =>
+      window.__fakeSupabaseState.boss_training_runs.find(run => run.id === id).equipes["user-2"].teamId,
+      nouvelle.id), null, "une équipe archivée est bien retirée de la correction");
+
     /* --- Suppression, avec confirmation. --- */
     page.once("dialog", dialogue => dialogue.accept());
     await page.locator(`.training-edit[data-training-run-id="${nouvelle.id}"]`).click();
     await page.locator("#trainingDelete").click();
     await page.locator(`li.training-run[data-training-run-id="${nouvelle.id}"]`)
       .waitFor({ state:"detached" });
+
+    /* Un ancien participant reste coché et son instantané est conservé même
+       s'il ne remonte plus dans le registre actuel des membres. */
+    await page.evaluate(() => {
+      window.__fakeSupabaseState.profiles.find(profile => profile.id === "user-2").membre = false;
+    });
+    await page.locator('.training-edit[data-training-run-id="tr-1"]').click();
+    const ancien = page.locator('#trainingMembers input[data-member-id="user-2"]');
+    assert.equal(await ancien.isChecked(), true);
+    await page.locator("#trainingSubmit").click();
+    await page.locator("#trainingOverlay").waitFor({ state:"hidden" });
+    assert.equal(await page.evaluate(() =>
+      window.__fakeSupabaseState.boss_training_runs.find(run => run.id === "tr-1").participants.includes("user-2")),
+    true, "un participant historique n'est jamais retiré silencieusement");
 
     console.log("PASS entrainement : navigation et historique");
   } finally {
