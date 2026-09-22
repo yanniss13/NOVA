@@ -34,7 +34,7 @@ const ONGLETS_TOUS = [
   "dashboard", "builder", "roster", "member-roster",
   "analyse", "wiki", "collection", "calculateur"
 ];
-const SOUS_ONGLETS_BOSS = ["roster", "availability", "boss"];
+const SOUS_ONGLETS_BOSS = ["roster", "availability", "boss", "training"];
 
 /* `getClientRects()` et non l'attribut `hidden` : on veut savoir ce que l'oeil
    voit, pas ce que le code a ecrit. Une regle CSS oubliee passerait le second
