@@ -31,7 +31,12 @@
     if(participants.length > ENTRAINEMENT_MAX_PARTICIPANTS) return echec("TROP_DE_PARTICIPANTS");
     if(new Set(participants).size !== participants.length) return echec("PARTICIPANT_EN_DOUBLE");
     if(!participants.includes(s.auteurId)) return echec("AUTEUR_ABSENT");
-    const score = String(s.score == null ? "" : s.score).replace(/[\s  .]/g, "");
+    const scoreBrut = String(s.score == null ? "" : s.score);
+    /* Un point ou une virgule n'est JAMAIS un separateur de milliers ici : le
+       jeu n'affiche pas de decimales de score. Les retirer comme un espace
+       ferait passer "12.5" pour "125", en silence. */
+    if(/[.,]/.test(scoreBrut)) return echec("SCORE_INVALIDE");
+    const score = scoreBrut.replace(/\s/g, "");
     if(!/^[0-9]+$/.test(score) || BigInt(score) <= 0n) return echec("SCORE_INVALIDE");
     const note = String(s.note || "").trim();
     if(note.length > ENTRAINEMENT_NOTE_MAX) return echec("NOTE_TROP_LONGUE");

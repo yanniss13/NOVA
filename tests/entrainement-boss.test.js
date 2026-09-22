@@ -39,6 +39,9 @@ assert.equal(erreur({ participants:["a","b","b"] }), "PARTICIPANT_EN_DOUBLE");
 assert.equal(erreur({ score:"0" }), "SCORE_INVALIDE");
 assert.equal(erreur({ score:"-3" }), "SCORE_INVALIDE");
 assert.equal(erreur({ score:"12,5" }), "SCORE_INVALIDE");
+/* Un point n'est pas un separateur de milliers : ".5" ne doit pas etre
+   silencieusement avale et "12.5" ne doit pas devenir "125". */
+assert.equal(erreur({ score:"12.5" }), "SCORE_INVALIDE");
 assert.equal(erreur({ score:"" }), "SCORE_INVALIDE");
 assert.equal(erreur({ note:"x".repeat(1001) }), "NOTE_TROP_LONGUE");
 assert.equal(erreur({ playedOn:"20/09/2026" }), "DATE_INVALIDE");
@@ -89,6 +92,21 @@ const top = api.topRunsEntrainement(runs, 3);
 assert.deepEqual(plain(top.map(t => [t.rang, t.run.id])),
   [[1,"r1"],[2,"r2"],[3,"r4"]]);
 assert.equal(api.topRunsEntrainement(runs).length, 5);
+
+/* Ce cas précis n'a de dents que si le tri passe par BigInt : les deux
+   scores DIFFÈRENT au-delà de 2^53 mais s'ÉCRASENT sur le même Number, et
+   la date la plus ancienne porte volontairement le score le plus FAIBLE.
+   Une comparaison en Number verrait les deux scores égaux et retomberait
+   sur le départage par date, qui rendrait alors l'ordre INVERSE de celui
+   qu'impose le vrai score. */
+const grandPresque2_53 = run("grand-2-53", "2026-09-10", "9007199254740997", { a:eq(["ban"]) });
+const petitPresque2_53 = run("petit-2-53", "2026-09-05", "9007199254740995", { a:eq(["diane"]) });
+assert.equal(Number(grandPresque2_53.score), Number(petitPresque2_53.score),
+  "le fixture doit écraser les deux scores sur le même Number pour avoir des dents");
+assert.deepEqual(
+  plain(api.topRunsEntrainement([grandPresque2_53, petitPresque2_53], 2).map(t => t.run.id)),
+  ["grand-2-53", "petit-2-53"],
+  "le tri doit départager par BigInt, pas par Number ni par la date");
 
 /* Comparaison : par composition du membre, équipe manquante exclue,
    médiane sur un nombre pair = moyenne entière des deux centrales. */
