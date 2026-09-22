@@ -127,7 +127,7 @@ async function poserDesRuns(page){
     assert.equal(await page.locator("#trainingScore").inputValue(), "9007199254740993");
     assert.equal(await page.evaluate(id => window.__fakeSupabaseReleaseQueuedProfileRead(id),
       demandes.ajout), true);
-    await page.waitForTimeout(50);
+    await page.waitForTimeout(250);
     assert.match(await page.locator("#trainingTitle").textContent(), /Corriger/,
       "une ouverture périmée ne remplace pas la cible courante");
     assert.equal(await page.locator("#trainingScore").inputValue(), "9007199254740993");
@@ -205,6 +205,34 @@ async function poserDesRuns(page){
     assert.equal(await page.evaluate(() =>
       window.__fakeSupabaseState.boss_training_runs.find(run => run.id === "tr-1").participants.includes("user-2")),
     true, "un participant historique n'est jamais retiré silencieusement");
+
+    /* --- Progression : trois points (tr-1, tr-2, tr-3), valeurs
+       lisibles hors de la courbe. Aucune requête en changeant de sous-vue. --- */
+    await page.waitForTimeout(800);
+    const appelsAvant = await page.evaluate(() => window.__fakeSupabaseState.calls.length);
+    await page.locator('[data-training-vue="progression"]').click();
+    await page.locator("svg.training-chart").waitFor();
+    assert.equal(await page.locator("ol.training-points li").count(), 3);
+    await page.locator("#trainingProgressionMember").selectOption("user-1");
+    assert.equal(await page.locator("ol.training-points li").count(), 1);
+    assert.match(await page.locator(".training-summary").textContent(), /Meilleur/);
+
+    /* --- Classement : tr-1 en tête ; comparaison d'équipes de Yannis. --- */
+    await page.locator('[data-training-vue="classement"]').click();
+    assert.equal(await page.locator("ol.training-top li").first()
+      .getAttribute("data-training-run-id"), "tr-1");
+    await page.locator("#trainingCompareMember").selectOption("user-1");
+    assert.equal(await page.locator("table.training-compare tbody tr").count(), 1);
+    assert.match(await page.locator(".training-compare-caveat").textContent(),
+      /score est celui du groupe/);
+    assert.equal(await page.evaluate(() => window.__fakeSupabaseState.calls.length),
+      appelsAvant, "changer de sous-vue ne doit faire aucune requête");
+
+    /* Au clavier : Tab jusqu'à « Historique », Entrée. */
+    await page.locator('[data-training-vue="historique"]').focus();
+    await page.keyboard.press("Enter");
+    assert.equal(await page.locator('[data-training-vue="historique"]')
+      .getAttribute("aria-pressed"), "true");
 
     console.log("PASS entrainement : navigation et historique");
   } finally {

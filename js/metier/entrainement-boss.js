@@ -137,7 +137,6 @@
 export {
   ENTRAINEMENT_MAX_PARTICIPANTS,
   ENTRAINEMENT_NOTE_MAX,
-  cleCompositionEntrainement,
   comparaisonEquipesEntrainement,
   dateParisEntrainement,
   resumeProgressionEntrainement,
