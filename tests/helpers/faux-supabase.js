@@ -127,6 +127,11 @@ async function installFakeSupabase(page){
          client filtre deja sur `owner`. */
       gear_presets:[],
       calls:[],
+      boss_training_runs:[],
+      /* Fait echouer la prochaine correction comme si un autre membre
+         l'avait devancee : zero ligne modifiee. */
+      trainingConflictOnce:false,
+      trainingClock:0,
       rpcCalls:[],
       bossRpcFailureOnce:null,
       bossRpcHold:null,
@@ -158,7 +163,8 @@ async function installFakeSupabase(page){
         "boss_participation",
         "boss_run_reports",
         "collection_items",
-        "gear_presets"
+        "gear_presets",
+        "boss_training_runs"
       ]),
       rpcOnlyWriteTables:new Set([
         "boss_participation",
@@ -172,7 +178,8 @@ async function installFakeSupabase(page){
         "boss_sessions",
         "boss_participation",
         "boss_run_reports",
-        "animation_measures"
+        "animation_measures",
+        "boss_training_runs"
       ]),
       /* Les tables possedees : un invite n'y voit que les siennes. */
       partageEntreMembres:new Set([
@@ -538,6 +545,7 @@ async function installFakeSupabase(page){
       let operation = "select";
       let payload = null;
       let upsertOptions = null;
+      let returning = false;
       const filters = [];
       const sorts = [];
       const matchRow = row => filters.every(([key, value]) => {
@@ -545,7 +553,13 @@ async function installFakeSupabase(page){
         return row[key] === value;
       });
       const builder = {
-        select(){ operation = "select"; return builder; },
+        /* `update(...).select()` renvoie les lignes modifiees, comme
+           PostgREST : c'est ainsi que le client detecte un conflit. */
+        select(){
+          if(operation === "update" || operation === "delete") returning = true;
+          else operation = "select";
+          return builder;
+        },
         order(column, options){ sorts.push([column, options && options.ascending === false ? -1 : 1]); return builder; },
         eq(column, value){ filters.push([column, value]); return builder; },
         in(column, values){ filters.push(["__in:" + column, values || []]); return builder; },
@@ -582,6 +596,111 @@ async function installFakeSupabase(page){
           return operation === "select"
             ? { data:[], error:null }
             : { data:null, error:{ message:"MEMBRE_REQUIS" } };
+        }
+
+        if(table === "boss_training_runs" && operation !== "select"){
+          const moi = bossAcl.owner();
+          const refus = { data:null, error:{ code:"42501",
+            message:"new row violates row-level security policy" } };
+          const horloge = () => {
+            state.trainingClock += 1;
+            return "2026-09-22T10:00:" + String(state.trainingClock).padStart(2, "0") + ".123456+00:00";
+          };
+          const pseudoDe = id => (state.profiles.find(p => p.id === id) || {}).pseudo || "Membre";
+          /* Jour civil a Paris, comme `(now() at time zone 'Europe/Paris')::date`
+             dans le trigger SQL. Ne pas importer le module applicatif ici : le
+             faux doit rester lisible sans dependre de js/. */
+          const jourParisEntrainement = () => {
+            const parts = new Intl.DateTimeFormat("en-CA", {
+              timeZone:"Europe/Paris", year:"numeric", month:"2-digit", day:"2-digit"
+            }).formatToParts(new Date());
+            const get = t => (parts.find(p => p.type === t) || {}).value;
+            return get("year") + "-" + get("month") + "-" + get("day");
+          };
+          const preparer = (ligne, ancienne) => {
+            const participants = ligne.participants || [];
+            if(participants.length < 1 || participants.length > 5
+              || new Set(participants).size !== participants.length){
+              return { error:{ code:"P0001", message:"TRAINING_DUPLICATE_PARTICIPANT" } };
+            }
+            if(ligne.played_on > jourParisEntrainement()){
+              return { error:{ code:"P0001", message:"TRAINING_FUTURE_DATE" } };
+            }
+            const equipesEntree = ligne.equipes || {};
+            if(Object.keys(equipesEntree).some(id => !participants.includes(id))){
+              return { error:{ code:"P0001", message:"TRAINING_TEAM_OUTSIDE_RUN" } };
+            }
+            const equipes = {};
+            for(const id of participants){
+              const demande = equipesEntree[id] || {};
+              const avant = ancienne && ancienne.equipes && ancienne.equipes[id];
+              /* Un nouveau venu doit etre membre ; un participant deja present
+                 garde sa place meme si son compte a disparu depuis. */
+              if(!avant){
+                const profil = state.profiles.find(p => p.id === id);
+                if(!profil || profil.membre !== true){
+                  return { error:{ code:"P0001", message:"TRAINING_NOT_A_MEMBER" } };
+                }
+              }
+              const teamId = demande.teamId || null;
+              /* null avant/apres compte comme inchange : ni le snapshot ni le
+                 pseudo ne sont retouches, comme `is not distinct from` en SQL. */
+              const memeTeamId = !!avant && avant.teamId === teamId;
+              let snapshot = null;
+              if(teamId && memeTeamId) snapshot = avant.snapshot;
+              else if(teamId){
+                const equipe = state.teams.find(t => t.id === teamId && t.owner === id);
+                if(!equipe) return { error:{ code:"P0001", message:"TRAINING_TEAM_NOT_OWNED" } };
+                snapshot = { id:equipe.id, owner:equipe.owner, pseudo:equipe.pseudo,
+                  data:clone(equipe.data), createdAt:equipe.created_at,
+                  updatedAt:equipe.updated_at, capturedAt:"2026-09-22T10:00:00Z" };
+              }
+              equipes[id] = { pseudo:memeTeamId ? avant.pseudo : pseudoDe(id), teamId, snapshot };
+            }
+            return { ligne:Object.assign({}, ligne, { equipes }) };
+          };
+
+          if(operation === "insert"){
+            const valeur = Array.isArray(payload) ? payload[0] : payload;
+            if(!moi || valeur.created_by !== moi || !(valeur.participants || []).includes(moi)){
+              return refus;
+            }
+            const pret = preparer(valeur, null);
+            if(pret.error) return { data:null, error:pret.error };
+            rows.push(Object.assign({}, pret.ligne, {
+              id:"training-" + (rows.length + 1) + "-" + state.trainingClock,
+              global_score:String(valeur.global_score),
+              created_by:moi, created_by_pseudo:pseudoDe(moi),
+              created_at:horloge(), updated_by_pseudo:null, updated_at:horloge()
+            }));
+            emitDatabase(table, "INSERT");
+            return { data:null, error:null };
+          }
+          if(operation === "update"){
+            if(state.trainingConflictOnce){
+              state.trainingConflictOnce = false;
+              return { data:[], error:null };
+            }
+            const cibles = rows.filter(row => matchRow(row) && row.participants.includes(moi));
+            if(payload.participants && !payload.participants.includes(moi)) return refus;
+            for(const row of cibles){
+              const pret = preparer(Object.assign({}, row, payload), row);
+              if(pret.error) return { data:null, error:pret.error };
+              Object.assign(row, pret.ligne, {
+                global_score:String(pret.ligne.global_score),
+                updated_by_pseudo:pseudoDe(moi), updated_at:horloge()
+              });
+            }
+            if(cibles.length) emitDatabase(table, "UPDATE");
+            return { data:returning ? cibles.map(row => ({ id:row.id })) : null, error:null };
+          }
+          if(operation === "delete"){
+            for(let index = rows.length - 1; index >= 0; index--){
+              if(matchRow(rows[index]) && rows[index].participants.includes(moi)) rows.splice(index, 1);
+            }
+            emitDatabase(table, "DELETE");
+            return { data:null, error:null };
+          }
         }
 
         if(operation === "select"){

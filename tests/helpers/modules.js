@@ -89,6 +89,7 @@ const MODULES = [
   "donnees/presets-store.js",
   "donnees/administration-store.js",
   "donnees/boss-store.js",
+  "donnees/entrainement-store.js",
   "donnees/suivi-store.js",
   "donnees/calibration-store.js",
   /* Charge a la demande les trois catalogues du simulateur DPS : la fiche de
