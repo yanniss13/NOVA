@@ -269,6 +269,42 @@ async function poserDesRuns(page){
     assert.equal(await page.evaluate(() => document.activeElement && document.activeElement.id),
       "trainingProgressionMember", "le focus reste sur le filtre après le changement");
 
+    /* La courbe est chiffrée. Sans graduations, une échelle cadrée sur les
+       données exagère visuellement l'écart sans que rien ne le dise ; elles
+       sont le garde-fou de ce cadrage, pas une décoration. */
+    await page.locator("#trainingProgressionMember").selectOption("");
+    await page.locator("svg.training-chart").waitFor();
+    assert.ok(await page.locator(".training-axis-label").count() >= 3,
+      "la courbe porte ses graduations et ses dates");
+
+    /* Le viewBox épouse la largeur du cadre : une unité vaut un pixel, sinon
+       les libellés seraient étirés sur grand écran et illisibles sur mobile. */
+    const cadrage = await page.evaluate(() => {
+      const svg = document.querySelector("svg.training-chart");
+      return { vue:Number(svg.getAttribute("viewBox").split(" ")[2]),
+               reelle:svg.getBoundingClientRect().width };
+    });
+    assert.ok(Math.abs(cadrage.vue - cadrage.reelle) < 24,
+      "le viewBox suit la largeur réelle (" + cadrage.vue + " vs "
+      + Math.round(cadrage.reelle) + ")");
+
+    /* Survol. On vise DANS LE VIDE au-dessus de la courbe, jamais sur son
+       aplat : une forme SVG n'est visée que là où elle est peinte, donc un
+       survol posé sur le remplissage marcherait même sans le
+       `pointer-events:all` de `.training-chart` et ne prouverait rien. */
+    await page.locator("svg.training-chart").scrollIntoViewIfNeeded();
+    const cadreCourbe = await page.locator("svg.training-chart").boundingBox();
+    await page.mouse.move(cadreCourbe.x + cadreCourbe.width * 0.82,
+      cadreCourbe.y + cadreCourbe.height * 0.12);
+    await page.locator(".training-tip.on").waitFor();
+    assert.match(await page.locator(".training-tip").textContent(), /[0-9]/,
+      "l’infobulle donne le score du point visé");
+    await page.mouse.move(cadreCourbe.x - 80, cadreCourbe.y - 80);
+    await page.locator(".training-tip.on").waitFor({ state:"detached" })
+      .catch(() => {});
+    assert.equal(await page.locator(".training-tip.on").count(), 0,
+      "l’infobulle disparaît quand le pointeur quitte la courbe");
+
     /* --- Classement : tr-1 en tête ; comparaison d'équipes de Yannis. --- */
     await page.locator('[data-training-vue="classement"]').click();
     assert.equal(await page.locator("ol.boss-run-cards li").first()

@@ -1350,6 +1350,25 @@ dans « Mon suivi » ni dans « Meilleures runs ». Spec :
 - Scores lus en `global_score::text`, jamais en `number`.
 - Trois sous-vues locales (Historique, Progression, Classement) : en changer
   ne fait **aucune** requête.
+- **La courbe de progression ne part pas de zéro, et c'est voulu.** Une
+  confrérie progresse par paliers de quelques pour cent : cadrée sur zéro,
+  une série 212 000 → 255 500 s'écrase en un filet plat et la progression
+  qu'on vient consulter devient invisible.
+  `echelleProgressionEntrainement()` cadre donc sur les données, avec 18 % de
+  marge, et place les graduations sur des nombres ronds **à l'intérieur** du
+  cadre — arrondir les bornes elles-mêmes rouvrirait le vide. Le prix est
+  connu : une échelle qui ne part pas de zéro exagère l'écart, et les
+  graduations chiffrées sont le garde-fou contre cette illusion ; ne pas les
+  retirer. Les graduations sont des **entiers**, sinon `formatBossScore()`
+  les relit en BigInt et rend « — ».
+  Le `viewBox` épouse la largeur réelle du cadre (une unité = un pixel), si
+  bien que le texte garde son corps de 320 px à 1400 px ; un `ResizeObserver`
+  le redessine au-delà de 24 px d'écart. La courbe est une **spline cubique
+  monotone** : une Bézier naïve dépasserait ses propres points et afficherait
+  des scores que personne n'a joués. Aucune bibliothèque de graphiques : par
+  CDN elle disparaîtrait hors ligne (`sw.js` ne met jamais jsDelivr en
+  cache), et versée dans le dépôt elle pèserait 200 Ko, demanderait une ligne
+  d'exclusion dans `LICENSE` et rendrait dans un `<canvas>` muet.
 - **L'habillage est celui des runs de boss, pas un deuxième.** Une run
   d'entraînement s'affiche avec `bossRunCarte()` (`js/vues/equipe-boss.js`) et
   les classes `.boss-run-card*`, exactement comme « Meilleures runs » ; les
