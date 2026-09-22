@@ -85,7 +85,7 @@ version plus ancienne du site reste ouvrable.
 
 | Fichier | Contenu |
 |---|---|
-| `navigation.js` | Les onglets, **le registre des vues**, et le portier qui ferme les six onglets réservés à un visiteur sans compte |
+| `navigation.js` | Les onglets, **le registre des vues**, et le portier qui ferme les sept onglets réservés à un visiteur sans compte |
 | `elements.js` | Briques de rendu partagées : `gearSlot`, `renderBonus`, `rosterWeaponLabel` |
 | `toast.js` | Le bandeau de notification |
 | `modal-stack.js` | La pile de modales : ouverture, fermeture, restitution du focus |

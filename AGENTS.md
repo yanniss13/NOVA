@@ -1140,7 +1140,7 @@ d'éléments ou d'armes n'est écrite en dur.
 
 Une chaîne `confrerie-live-<userId>` écoute `profiles`, `teams`,
 `roster_characters`, `boss_sessions`, `boss_participation`,
-`member_availability` et `collection_items`. Les événements sont regroupés puis
+`member_availability`, `collection_items` et `boss_training_runs`. Les événements sont regroupés puis
 seule la vue active concernée est relue. L'Analyse réagit au roster et aux
 profils, dont elle est entièrement dérivée.
 
@@ -1190,7 +1190,7 @@ le SQL Editor afin d'ajouter les tables à la publication
   ancrage : le test ne vérifie que le nombre qui suit la phrase, donc un ancrage
   posé au mauvais endroit ferait lire une autre valeur sans protester.
 - **Un visiteur sans compte ne voit que quatre onglets** : « Créer une équipe »,
-  Wiki, Collection et Calculateur. Les six autres lisent des données liées à un
+  Wiki, Collection et Calculateur. Les sept autres lisent des données liées à un
   compte, et il atterrit sur le Wiki. Le portier est `vues/navigation.js`
   (`VUES_PUBLIQUES`, `appliquerVisibiliteOnglets`), la question posée à la
   session est `visiteurAnonyme()`, et `applySession` l'appelle **en dernier**
@@ -1511,7 +1511,7 @@ visiteur : elle garde l'accès aux caches locaux du membre, conformément à
 `visiteurAnonyme()`.
 
 Dans le groupe Boss, `#mobileBossSubtabs` ajoute un dock contextuel
-**Équipes / Dispos / Sessions** juste au-dessus de la barre principale. C'est
+**Équipes / Dispos / Sessions / Entraînement** juste au-dessus de la barre principale. C'est
 un élément frère du header, jamais un descendant : `backdrop-filter` sur
 `.topbar` créerait sinon le bloc de référence de son `position:fixed` et
 placerait le dock hors du viewport. `html.has-mobile-subnav` augmente à la
