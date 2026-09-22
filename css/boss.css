@@ -207,3 +207,13 @@
 .training-run-meta{color:var(--muted);font-size:.85rem;flex:1 1 12rem;min-width:0}
 .training-edit{min-height:44px;margin-left:auto}
 .training-run-note{margin:8px 0 0;overflow-wrap:anywhere}
+.training-form{display:grid;gap:8px}
+.training-members{border:1px solid var(--line-soft);border-radius:10px;padding:8px;min-width:0}
+#trainingMembers{display:grid;grid-template-columns:repeat(auto-fill,minmax(9rem,1fr));gap:4px}
+.training-member{display:flex;gap:8px;align-items:center;min-height:44px;cursor:pointer}
+.training-member input{width:20px;height:20px}
+.training-teams{display:grid;gap:8px}
+.training-team-field{display:grid;gap:4px}
+.training-team-field select,#trainingDate,#trainingScore{min-height:44px}
+.training-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.training-actions .btn{min-height:44px}

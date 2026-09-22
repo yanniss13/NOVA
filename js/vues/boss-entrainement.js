@@ -13,6 +13,7 @@ import { teamFromBossSnapshot } from "../metier/equipe-modele.js";
 import { $, el } from "../noyau/dom.js";
 import { openTeamDetail } from "./detail-equipe.js";
 import { bossTeamBanner } from "./equipe-boss.js";
+import { ouvrirSaisieEntrainement } from "./modale-entrainement.js";
 
   const etatEntrainement = { vue:"historique", horsLigne:false, perime:true };
 
@@ -50,7 +51,9 @@ import { bossTeamBanner } from "./equipe-boss.js";
       tete.appendChild(el("button",{
         class:"btn btn-ghost training-edit", type:"button",
         dataset:{trainingRunId:run.id},
-        "aria-label":"Corriger la run du "+frDate(run.playedOn)
+        "aria-label":"Corriger la run du "+frDate(run.playedOn),
+        onclick:()=>void ouvrirSaisieEntrainement(run,
+          { apres:()=>renderTrainingView({ silencieux:true }) })
       },["Corriger"]));
     }
     const carte = el("li",{class:"training-run",dataset:{trainingRunId:run.id}},[tete]);
@@ -101,6 +104,9 @@ import { bossTeamBanner } from "./equipe-boss.js";
   function brancherSousVuesEntrainement(){
     if(sousVuesBranchees) return;
     sousVuesBranchees = true;
+    $("#trainingAdd").addEventListener("click", () =>
+      void ouvrirSaisieEntrainement(null,
+        { apres:()=>renderTrainingView({ silencieux:true }) }));
     document.querySelectorAll("#trainingSubviews [data-training-vue]").forEach(bouton => {
       bouton.addEventListener("click", () => {
         etatEntrainement.vue = bouton.dataset.trainingVue;

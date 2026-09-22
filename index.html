@@ -1009,6 +1009,38 @@
   </div>
 </div>
 
+<div class="overlay" id="trainingOverlay" role="dialog" aria-modal="true"
+     aria-labelledby="trainingTitle" aria-hidden="true">
+  <div class="modal training-modal">
+    <div class="modal-head">
+      <h2 id="trainingTitle">Enregistrer une run d’entraînement</h2>
+      <button class="icon-btn" id="trainingClose" type="button"
+              aria-label="Fermer">×</button>
+    </div>
+    <div class="training-form">
+      <label for="trainingDate">Date de la run</label>
+      <input id="trainingDate" type="date">
+      <fieldset class="training-members">
+        <legend>Participants (5 au maximum)</legend>
+        <div id="trainingMembers"></div>
+      </fieldset>
+      <div id="trainingTeams" class="training-teams"></div>
+      <label for="trainingScore">Score global</label>
+      <input id="trainingScore" type="text" inputmode="numeric"
+             autocomplete="off" aria-describedby="trainingError">
+      <label for="trainingNote">Note (facultative)</label>
+      <textarea id="trainingNote" maxlength="1000"
+                aria-describedby="trainingCount trainingError"></textarea>
+      <div id="trainingCount">0/1000</div>
+      <p id="trainingError" role="alert"></p>
+      <div class="training-actions">
+        <button class="btn btn-ghost" id="trainingDelete" type="button" hidden>Supprimer</button>
+        <button class="btn btn-primary" id="trainingSubmit" type="button">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast" role="status"
      aria-live="polite" aria-atomic="true"></div>
 

@@ -130,6 +130,7 @@ const MODULES = [
   "vues/boss-meilleures-runs.js",
   "vues/detail-roster.js",
   "vues/boss-sessions.js",
+  "vues/modale-entrainement.js",
   "vues/boss-entrainement.js",
   "vues/builder.js",
   "vues/roster-membres.js",

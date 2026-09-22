@@ -93,6 +93,53 @@ async function poserDesRuns(page){
     assert.equal(await page.evaluate(() =>
       document.documentElement.scrollWidth <= innerWidth), true);
 
+    await page.setViewportSize({ width:1280, height:900 });
+
+    /* --- Saisie : Yannis (coché d'office) + Merlin, équipes et score. --- */
+    await page.locator("#trainingAdd").click();
+    await page.locator("#trainingOverlay").waitFor({ state:"visible" });
+    const moi = page.locator('#trainingMembers input[data-member-id="user-1"]');
+    assert.equal(await moi.isChecked(), true);
+    assert.equal(await moi.isDisabled(), true, "on ne se retire pas de sa propre saisie");
+    await page.locator('#trainingMembers input[data-member-id="user-2"]').check();
+    await page.locator('#trainingTeams select[data-team-for="user-1"]').selectOption("team-own");
+    await page.locator('#trainingTeams select[data-team-for="user-2"]').selectOption("team-other");
+    await page.locator("#trainingScore").fill("abc");
+    await page.locator("#trainingSubmit").click();
+    assert.match(await page.locator("#trainingError").textContent(), /score/i);
+    await page.locator("#trainingScore").fill("1 234 567");
+    await page.locator("#trainingNote").fill("Avec Merlin");
+    await page.locator("#trainingSubmit").click();
+    await page.locator("#trainingOverlay").waitFor({ state:"hidden" });
+
+    const nouvelle = await page.evaluate(() =>
+      window.__fakeSupabaseState.boss_training_runs.find(r => r.note === "Avec Merlin"));
+    assert.equal(nouvelle.global_score, "1234567");
+    assert.equal(nouvelle.equipes["user-2"].snapshot.id, "team-other",
+      "l'instantané est construit côté serveur depuis l'équipe choisie");
+    await page.locator(`li.training-run[data-training-run-id="${nouvelle.id}"]`).waitFor();
+
+    /* --- Correction : conflit d'abord, puis succès. --- */
+    await page.evaluate(() => { window.__fakeSupabaseState.trainingConflictOnce = true; });
+    await page.locator(`.training-edit[data-training-run-id="${nouvelle.id}"]`).click();
+    await page.locator("#trainingScore").fill("2000000");
+    await page.locator("#trainingSubmit").click();
+    assert.match(await page.locator("#trainingError").textContent(), /modifiée/i);
+    await page.locator("#trainingClose").click();
+    await page.locator(`.training-edit[data-training-run-id="${nouvelle.id}"]`).click();
+    await page.locator("#trainingScore").fill("2000000");
+    await page.locator("#trainingSubmit").click();
+    await page.locator("#trainingOverlay").waitFor({ state:"hidden" });
+    assert.match(await page.locator(`li.training-run[data-training-run-id="${nouvelle.id}"]`)
+      .textContent(), /2\s?000\s?000/);
+
+    /* --- Suppression, avec confirmation. --- */
+    page.once("dialog", dialogue => dialogue.accept());
+    await page.locator(`.training-edit[data-training-run-id="${nouvelle.id}"]`).click();
+    await page.locator("#trainingDelete").click();
+    await page.locator(`li.training-run[data-training-run-id="${nouvelle.id}"]`)
+      .waitFor({ state:"detached" });
+
     console.log("PASS entrainement : navigation et historique");
   } finally {
     await browser.close();
