@@ -63,6 +63,23 @@ import { sessionCourante } from "../etat/session.js";
     if(!sessionCourante.user || !sb) throw new Error("AUTH_REQUIRED");
   }
 
+  /* Qui a sauvegardé en dernier, pour le message de conflit. Le dernier
+     correcteur d'abord, l'auteur original à défaut ; une lecture qui échoue
+     (hors ligne, ligne supprimée depuis) rend `null` sans casser le
+     TRAINING_CONFLICT déjà détecté. */
+  async function pseudoDernierEnregistrementEntrainement(id){
+    try{
+      const { data, error } = await sb.from(TABLE_ENTRAINEMENT)
+        .select("updated_by_pseudo,created_by_pseudo")
+        .eq("id", id)
+        .maybeSingle();
+      if(error || !data) return null;
+      return data.updated_by_pseudo || data.created_by_pseudo || null;
+    }catch(erreur){
+      return null;
+    }
+  }
+
   const EntrainementStore = {
     all(){
       return cacheEntrainement ? cacheEntrainement.runs.slice() : [];
@@ -104,7 +121,13 @@ import { sessionCourante } from "../etat/session.js";
         .eq("updated_at", jeton)
         .select("id");
       if(error) throw error;
-      if(!data || !data.length) throw new Error("TRAINING_CONFLICT");
+      if(!data || !data.length){
+        /* Aucune ligne modifiee : quelqu'un est passe entre-temps. Le message
+           nomme ce membre quand on le connait ; une lecture qui echoue a son
+           tour retombe sur un message neutre, jamais une erreur masquee. */
+        const pseudo = await pseudoDernierEnregistrementEntrainement(id);
+        throw Object.assign(new Error("TRAINING_CONFLICT"), { pseudo });
+      }
     },
     async remove(id){
       exigerSessionEntrainement();

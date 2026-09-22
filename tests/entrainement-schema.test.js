@@ -47,6 +47,24 @@ assert.equal(politiques.length, 4, "exactement quatre politiques training_*");
 politiques.filter(p => !/training_read/i.test(p))
   .forEach(p => assert.match(p, /auth\.uid\(\) = any\(participants\)/i, p));
 
+/* Les quatre politiques sont réservées aux membres authentifiés : un `anon`
+   ne doit avoir aucun droit, pas même la lecture. */
+politiques.forEach(p => assert.match(p, /to authenticated/i, p));
+
+/* Le tableau participants refuse un élément `null`, pas seulement un
+   doublon ou un mauvais cardinal : c'est une contrainte de TABLE (`check`),
+   distincte de TRAINING_DUPLICATE_PARTICIPANT que pose le trigger. */
+assert.match(sql,
+  /cardinality\(participants\) between 1 and 5\s+and array_position\(participants,\s*null\)\s+is\s+null/i,
+  "le tableau participants doit refuser un élément null");
+
+/* TRAINING_TEAM_OUTSIDE_RUN : toute clé de `equipes` doit appartenir à
+   `participants`, pas seulement l'inverse. Vérifie la branche elle-même,
+   pas seulement la présence du message d'erreur ailleurs dans le trigger. */
+assert.match(trigger,
+  /if\s+exists\s*\(\s*select 1 from jsonb_object_keys\(new\.equipes\) as k\s+where not\s*\(k = any\(array\(select unnest\(new\.participants\)::text\)\)\)\s*\)\s+then\s+raise exception 'TRAINING_TEAM_OUTSIDE_RUN'/i,
+  "TRAINING_TEAM_OUTSIDE_RUN doit refuser une clé de equipes hors des participants");
+
 assert.ok(
   /foreach realtime_table in array array\[[^\]]*'boss_training_runs'[^\]]*\]/i.test(sql),
   "boss_training_runs manque au tableau des tables publiées en Realtime"

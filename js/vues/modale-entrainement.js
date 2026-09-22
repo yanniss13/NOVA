@@ -30,14 +30,19 @@ import { toast } from "./toast.js";
     DATE_FUTURE:"La date ne peut pas être dans le futur.",
     TRAINING_FUTURE_DATE:"La date ne peut pas être dans le futur.",
     TRAINING_TEAM_NOT_OWNED:"Une des équipes n’appartient plus à son membre : recharge la page.",
-    TRAINING_NOT_A_MEMBER:"Un des participants n’est pas membre de la confrérie.",
-    TRAINING_CONFLICT:"Cette run a été modifiée entre-temps : ferme cette fenêtre, la liste vient d’être rechargée."
+    TRAINING_NOT_A_MEMBER:"Un des participants n’est pas membre de la confrérie."
   };
 
   const modaleEntrainement = { run:null, apres:null, profils:[], equipes:[], choix:{} };
 
   function messageEntrainement(erreur){
     const code = String(erreur && (erreur.message || erreur) || "");
+    if(code.includes("TRAINING_CONFLICT")){
+      const pseudo = erreur && erreur.pseudo;
+      return pseudo
+        ? "Cette run a été modifiée par "+pseudo+" entre-temps : recharge-la."
+        : "Cette run a été modifiée entre-temps : recharge-la.";
+    }
     const connu = Object.keys(MESSAGES_ENTRAINEMENT).find(cle => code.includes(cle));
     return connu ? MESSAGES_ENTRAINEMENT[connu] : "Enregistrement impossible. Réessaie.";
   }
