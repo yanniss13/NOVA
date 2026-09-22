@@ -205,6 +205,24 @@ NOTES_MODELISE = {
     # proprietaire) — meme seau a part que ci-dessus. Heros historique :
     # `--client-only` pose la note sans toucher au reste de son entree.
     "potential:daisy:Shield:9": "degats-supplementaires-d-ultime-hors-schema",
+    # Crochet explosif (Khala, gantelets). Texte publie par le patch du
+    # 22/09/2026 : « augmente les degats de competence normale de tous les
+    # heros allies de 50 % des degats crit. du heros (max : 60 %) ». Le bonus
+    # est compte a son plafond (voir PLAFONDS_BUFF_RETENUS) ; la bombe toupie
+    # de la phrase suivante reste hors du catalogue des competences.
+    "skill:calla_gauntlets_skill_e":
+        "bonus-indexe-sur-degats-crit-compte-au-plafond-bombe-toupie-hors-schema",
+}
+
+PLAFONDS_BUFF_RETENUS = {
+    # buffTid -> valeur retenue, quand la valeur de BuffTable n'est PAS le
+    # bonus mais un coefficient que la prose indexe sur une statistique.
+    #
+    # 302273013, Crochet explosif de Khala : BuffTable dit
+    # NormalSkill_DamAdd_Rate 5000, la prose « 50 % des degats crit. du heros
+    # (max : 60 %) ». Des 120 % de degats crit. le plafond est atteint ; le
+    # proprietaire, qui joue, confirme que c'est le cas courant. Retenir 6000.
+    "302273013": 6000,
 }
 
 REGLES_SPECIFIQUES = {

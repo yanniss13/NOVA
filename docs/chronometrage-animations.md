@@ -9,7 +9,7 @@ déduit 291 verrous, et la liste ci-dessous ne retient plus que ce
 qu'aucun fichier ne renseigne. Elle dit quoi mesurer d'abord, et ce
 que chaque mesure rapporte.
 
-**Avancement : 0 / 36 mesurées.**
+**Avancement : 0 / 37 mesurées.**
 
 Les 291 verrous déduits ne sont pas pour autant acquis : ce sont des
 lectures de marqueurs, pas des chronomètres. Une mesure saisie dans
@@ -29,7 +29,7 @@ Ces attaques normales et spéciales débloquent maintenant le calcul du DPS.
 | khala | Gantelets | Rafale explosive | Attaque normale | clic gauche | 107 |  |
 | khala | Nunchaku | Fauchage du vent | Attaque normale | clic gauche | 103 |  |
 
-## 2. Mesures qui affinent maintenant — 27 compétences
+## 2. Mesures qui affinent maintenant — 28 compétences
 
 Avec recharge : le simulateur calcule déjà la compétence et
 l'animation ajoute un retard. La colonne « erreur » donne ce qu'on
@@ -65,6 +65,7 @@ Classement par erreur décroissante.
 | ban | Espadon | Fracassement | Compétence normale | E | 20.4 s | 7 % |  |
 | bug | Épées doubles | Extermination | Compétence normale | E | 20.9 s | 7 % |  |
 | khala | Nunchaku | Tourbillon | Compétence normale | E | 23 s | 6 % |  |
+| khala | Gantelets | Crochet explosif | Compétence normale | E | 26 s | 5 % |  |
 
 ## 3. Relèves — simulation d’équipe future — 6 compétences
 

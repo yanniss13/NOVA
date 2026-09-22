@@ -44002,8 +44002,8 @@
    {
     "weaponType": "SwordDual",
     "tier": 5,
-    "bonusFr": "La dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Déluge de lames[-] dure [#1A7331]3 s[-], inflige des dégâts égaux à [#1A7331]10%[-] de l'attaque aux ennemis à portée toutes les [#1A7331]0.2 s[-], et augmente les dégâts que leur inflige le héros de [#1A7331]30%[-] pendant [#1A7331]20 s[-].",
-    "bonusEn": "The final strike of [#3C22D6]Normal Attack: Shaper - Blade Volley[-] lasts [#1A7331]3 sec[-], inflicting damage equal to [#1A7331]10%[-] of Attack to enemies in range every [#1A7331]0.2 sec[-] and increasing their damage taken from the hero by [#1A7331]30%[-] for [#1A7331]20 sec[-]",
+    "bonusFr": "La dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Déluge de lames[-] inflige des dégâts égaux à [#1A7331]40%[-] de l'attaque et dure [#1A7331]3 s[-], inflige des dégâts égaux à [#1A7331]10%[-] de l'attaque aux ennemis à portée toutes les [#1A7331]0.2 s[-], et augmente les dégâts que leur inflige le héros de [#1A7331]30%[-] pendant [#1A7331]20 s[-].",
+    "bonusEn": "The final strike of [#3C22D6]Normal Attack: Shaper - Blade Volley[-] inflicts damage equal to [#1A7331]40%[-] of Attack and lasts [#1A7331]3 sec[-], inflicting damage equal to [#1A7331]10%[-] of Attack to enemies in range every [#1A7331]0.2 sec[-] and increasing their damage taken from the hero by [#1A7331]30%[-] for [#1A7331]20 sec[-].",
     "stats": []
    },
    {

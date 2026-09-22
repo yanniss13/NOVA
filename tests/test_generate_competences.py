@@ -74,9 +74,11 @@ class DegatsDirects(unittest.TestCase):
         self.assertEqual(normal["pourcentage"], 232)
         self.assertIsNone(normal["recharge"])
         self.assertEqual(normal["portee"], "Melee")
-        missing = next(s for s in skills if s["gameId"] == "calla_gauntlets_skill_e")
-        self.assertIsNone(missing["pourcentage"])
-        self.assertEqual(missing["nature"], "non-chiffree")
+        # Texte publie par le patch du 22/09/2026 : seule la frappe garantie
+        # (110 %) est comptee, la bombe toupie reste une phrase suivante.
+        crochet = next(s for s in skills if s["gameId"] == "calla_gauntlets_skill_e")
+        self.assertEqual(crochet["pourcentage"], 110)
+        self.assertEqual(crochet["nature"], "direct")
 
     def test_zone_ne_devient_pas_les_degats_de_sa_normale_debloquee(self):
         skills = _gen.competences_du("khala")

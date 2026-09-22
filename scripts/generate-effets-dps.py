@@ -44,6 +44,7 @@ REGLES_SPECIFIQUES = _regles.REGLES_SPECIFIQUES
 NON_INCLUS_SPECIFIQUES = _regles.NON_INCLUS_SPECIFIQUES
 SANS_IMPACT_SPECIFIQUES = _regles.SANS_IMPACT_SPECIFIQUES
 NOTES_MODELISE = _regles.NOTES_MODELISE
+PLAFONDS_BUFF_RETENUS = _regles.PLAFONDS_BUFF_RETENUS
 
 CATEGORIES = {
     "normal skill": "normal-skill",
@@ -1061,7 +1062,7 @@ def regles_buff_client(source):
                 raise ValueError("effet DPS non classe (buff incomplet): %s" % source["id"])
             regle = {
                 "type": "bonus-degats", "cible": cible,
-                "valeur": buff["value"],
+                "valeur": PLAFONDS_BUFF_RETENUS.get(buff["buffTid"], buff["value"]),
             }
             if duree != -1:
                 regle["duree"] = duree / 1000
@@ -1705,6 +1706,17 @@ def controler_ecarts_historiques(avant, apres, notes):
     compare(avant, apres, "")
 
 
+def verifier_plafonds_declares(catalogue, plafonds):
+    """Un plafond declare doit encore designer un buff du catalogue, et y
+    valoir ce qu'il declare : sinon il survivrait a la disparition du buff."""
+    regles = [regle for entree in _entrees_classees(catalogue)
+              for regle in entree.get("regles") or []]
+    for buff_tid, valeur in sorted(plafonds.items()):
+        portees = [r for r in regles if r.get("buffTid") == buff_tid]
+        if not portees or any(r.get("valeur") != valeur for r in portees):
+            raise ValueError("plafond de buff perime: %s" % buff_tid)
+
+
 def verifier_notes_declarees(catalogue, notes):
     """Une note perimee ne passe pas en silence : chaque identifiant de
     `NOTES_MODELISE` doit exister, etre `modelise` et porter sa note."""
@@ -1749,6 +1761,7 @@ def client_catalogue(base):
         brut, sans_effets_client(result, slugs, engraved_ids), NOTES_MODELISE
     )
     verifier_notes_declarees(result, NOTES_MODELISE)
+    verifier_plafonds_declares(result, PLAFONDS_BUFF_RETENUS)
     digest = hashlib.sha256(json.dumps(historic, ensure_ascii=False, sort_keys=True,
                                      separators=(",", ":")).encode("utf-8")).hexdigest()
     return result, digest
@@ -1850,6 +1863,7 @@ def main(argv=None, cible=None):
     )
     catalogue = construire_catalogue(sources)
     verifier_notes_declarees(catalogue, NOTES_MODELISE)
+    verifier_plafonds_declares(catalogue, PLAFONDS_BUFF_RETENUS)
     cible.write_text(rendu(catalogue), encoding="utf-8", newline="\n")
     print("effets-dps.js genere :", catalogue["audit"]["total"], "sources")
     return 0

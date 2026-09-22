@@ -5507,14 +5507,19 @@ window.SEVEN_DS_COMPETENCES = {
   },
   {
    "categorie": "NORMAL_SKILL",
-   "composantes": [],
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 110.0
+    }
+   ],
    "coups": null,
    "gameId": "calla_gauntlets_skill_e",
-   "nature": "non-chiffree",
+   "nature": "direct",
    "nom": "Hook Blast",
    "periodique": null,
    "portee": "Melee",
-   "pourcentage": null,
+   "pourcentage": 110.0,
    "recharge": 26,
    "repartition": [],
    "weaponType": "Gauntlets"

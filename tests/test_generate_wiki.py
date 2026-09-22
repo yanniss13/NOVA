@@ -64,11 +64,14 @@ class ExtractionTests(unittest.TestCase):
         normal = next(s for s in skills if s["gameId"] == "calla_sworddual_normalatk_1")
         self.assertIsNone(normal["recharge"])
         self.assertEqual(set(normal), {"gameId", "weaponType", "categorie", "nomFr", "descriptionFr", "recharge", "icone"})
-        missing = next(s for s in skills if s["gameId"] == "calla_gauntlets_skill_e")
-        self.assertIsNone(missing["descriptionFr"])
-        self.assertEqual(missing["localisation"]["status"], "missing-from-export")
+        # Traduit depuis le patch du 22/09/2026 : plus aucune note de couverture.
+        crochet = next(s for s in skills if s["gameId"] == "calla_gauntlets_skill_e")
+        self.assertIn("dégâts crit.", crochet["descriptionFr"])
+        self.assertNotIn("localisation", crochet)
         module.valide("khala", skills)
-        missing.pop("localisation")
+        # Une description absente reste refusee tant qu'aucune couverture ne
+        # la declare : le garde survit a la disparition du cas reel.
+        crochet["descriptionFr"] = None
         with self.assertRaises(module.CatalogueIncomplet):
             module.valide("khala", skills)
 

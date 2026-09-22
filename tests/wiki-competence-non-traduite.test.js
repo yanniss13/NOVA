@@ -49,8 +49,9 @@ assert.ok(note.length > 10, "la note doit etre une phrase, pas un code");
 assert.doesNotMatch(note, /calla|khala|gauntlets/i,
   "la note se decide sur la couverture, jamais sur le heros ni le slug");
 
-/* Le catalogue commite doit rester la seule source de cette situation : si
-   une autre competence perdait sa traduction, elle recevrait la meme note. */
+/* Si une competence du catalogue commite perdait sa traduction, elle devrait
+   recevoir la meme note. Le cas d'origine, Crochet explosif, est traduit
+   depuis le patch du 22/09/2026 : le catalogue peut donc n'en compter aucun. */
 const contexte = { window:{} };
 vm.runInNewContext(
   fs.readFileSync(
@@ -63,7 +64,6 @@ const catalogue = contexte.window.SEVEN_DS_WIKI_COMPETENCES;
 const sansTexte = Object.values(catalogue)
   .flat()
   .filter(competence => !competence.descriptionFr);
-assert.ok(sansTexte.length > 0, "le cas doit exister dans le catalogue reel");
 sansTexte.forEach(competence => {
   assert.ok(
     couvertureTexteCompetence(competence),

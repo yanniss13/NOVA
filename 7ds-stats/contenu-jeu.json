@@ -2048,8 +2048,8 @@
      {
       "tier": 5,
       "weaponType": "SwordDual",
-      "bonusFr": "La dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Déluge de lames[-] dure [#1A7331]3 s[-], inflige des dégâts égaux à [#1A7331]10%[-] de l'attaque aux ennemis à portée toutes les [#1A7331]0.2 s[-], et augmente les dégâts que leur inflige le héros de [#1A7331]30%[-] pendant [#1A7331]20 s[-].",
-      "bonusEn": "The final strike of [#3C22D6]Normal Attack: Shaper - Blade Volley[-] lasts [#1A7331]3 sec[-], inflicting damage equal to [#1A7331]10%[-] of Attack to enemies in range every [#1A7331]0.2 sec[-] and increasing their damage taken from the hero by [#1A7331]30%[-] for [#1A7331]20 sec[-]",
+      "bonusFr": "La dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Déluge de lames[-] inflige des dégâts égaux à [#1A7331]40%[-] de l'attaque et dure [#1A7331]3 s[-], inflige des dégâts égaux à [#1A7331]10%[-] de l'attaque aux ennemis à portée toutes les [#1A7331]0.2 s[-], et augmente les dégâts que leur inflige le héros de [#1A7331]30%[-] pendant [#1A7331]20 s[-].",
+      "bonusEn": "The final strike of [#3C22D6]Normal Attack: Shaper - Blade Volley[-] inflicts damage equal to [#1A7331]40%[-] of Attack and lasts [#1A7331]3 sec[-], inflicting damage equal to [#1A7331]10%[-] of Attack to enemies in range every [#1A7331]0.2 sec[-] and increasing their damage taken from the hero by [#1A7331]30%[-] for [#1A7331]20 sec[-].",
       "effectSourceIds": [
        "potential:khala:SwordDual:5"
       ]
@@ -2295,8 +2295,8 @@
      "nomFr": "Double tranchant",
      "nom": "Twin Edge",
      "nameEn": "Twin Edge",
-     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]232%[-] de l'attaque.\nSi le héros ne bénéficie pas de l'effet [#0F5CD8]Miroir - Contrefaçon[-], chaque coup porté à l'ennemi restaure la jauge de magie de [#1A7331]15[-].\nLa dernière frappe octroie l'effet [#0F5CD8]Contrefaçon - Épées doubles[-] au héros.\n1er coup : 26%\n2e coup : 29%\n3e coup : 46%\n4e coup : 58%\n5e coup : 73%\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.",
-     "descriptionEn": "Inflicts damage equal to [#1A7331]232%[-] of Attack.\nIf the hero doesn't have [#0F5CD8]Mirror - Shaper[-], each hit on the enemy restores the Magic Gauge by [#1A7331]15[-].\nThe final strike grants the hero [#0F5CD8]Shaper - Dual Swords[-].\n1st hit: 26%\n2nd hit: 29%\n3rd hit: 46%\n4th hit: 58%\n5th hit: 73%\n\n※[#0F5CD8]Shaper - Dual Swords[-]: Increases Wind damage by [#1A7331]30%[-]. The effect remains while the hero is in combat.",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]232%[-] de l'attaque.\nToucher l'ennemi [#1A7331]10 fois[-] octroie l'effet [#0F5CD8]Contrefaçon - Épées doubles[-] au héros.\nSi le héros ne bénéficie pas de l'effet [#0F5CD8]Miroir - Contrefaçon[-], chaque coup porté à l'ennemi restaure la jauge de magie de [#1A7331]15[-].\n1er coup : 26%\n2e coup : 29%\n3e coup : 46%\n4e coup : 58%\n5e coup : 73%\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]232%[-] of Attack.\nHitting the enemy [#1A7331]10 times[-] grants the hero [#0F5CD8]Shaper - Dual Swords[-].\nIf the hero doesn't have [#0F5CD8]Mirror - Shaper[-], each hit on the enemy restores the Magic Gauge by [#1A7331]15[-].\n1st hit: 26%\n2nd hit: 29%\n3rd hit: 46%\n4th hit: 58%\n5th hit: 73%\n\n※[#0F5CD8]Shaper - Dual Swords[-]: Increases Wind damage by [#1A7331]30%[-]. The effect remains while the hero is in combat.",
      "localisation": {
       "status": "resolved",
       "reason": null
@@ -2645,11 +2645,11 @@
      "nomFr": "Crochet explosif",
      "nom": "Hook Blast",
      "nameEn": "Hook Blast",
-     "descriptionFr": null,
-     "descriptionEn": null,
+     "descriptionFr": "Immunise contre les réactions pendant l'utilisation de la compétence normale.\nAugmente les dégâts de compétence normale de tous les héros alliés de [#1A7331]50%[-] des dégâts crit. du héros pendant [#1A7331]40 s[-] (max : [#1A7331]60%[-]), puis inflige des dégâts égaux à [#1A7331]110%[-] de l'attaque.\nLance une bombe toupie qui inflige des dégâts égaux à [#1A7331]140%[-] de l'attaque.",
+     "descriptionEn": "Becomes immune to Reactions while using the Normal Skill.\nIncreases all allied heroes' Normal Skill damage by [#1A7331]50%[-] of the hero's Crit Damage for [#1A7331]40 sec[-] (Max: [#1A7331]60%[-]), then inflicts damage equal to [#1A7331]110%[-] of Attack.\nLaunches a spinning bomb top that inflicts damage equal to [#1A7331]140%[-] of Attack.",
      "localisation": {
-      "status": "missing-from-export",
-      "reason": "localisation non couverte par l'export"
+      "status": "resolved",
+      "reason": null
      },
      "recharge": 26,
      "cooldown": 26,
@@ -2786,8 +2786,8 @@
      "nomFr": "Double tranchant",
      "nom": "Twin Edge",
      "nameEn": "Twin Edge",
-     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]232%[-] de l'attaque.\nSi le héros ne bénéficie pas de l'effet [#0F5CD8]Miroir - Contrefaçon[-], chaque coup porté à l'ennemi restaure la jauge de magie de [#1A7331]15[-].\nLa dernière frappe octroie l'effet [#0F5CD8]Contrefaçon - Épées doubles[-] au héros.\n1er coup : 26%\n2e coup : 29%\n3e coup : 46%\n4e coup : 58%\n5e coup : 73%\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.",
-     "descriptionEn": "Inflicts damage equal to [#1A7331]232%[-] of Attack.\nIf the hero doesn't have [#0F5CD8]Mirror - Shaper[-], each hit on the enemy restores the Magic Gauge by [#1A7331]15[-].\nThe final strike grants the hero [#0F5CD8]Shaper - Dual Swords[-].\n1st hit: 26%\n2nd hit: 29%\n3rd hit: 46%\n4th hit: 58%\n5th hit: 73%\n\n※[#0F5CD8]Shaper - Dual Swords[-]: Increases Wind damage by [#1A7331]30%[-]. The effect remains while the hero is in combat.",
+     "descriptionFr": "Inflige des dégâts égaux à [#1A7331]232%[-] de l'attaque.\nToucher l'ennemi [#1A7331]10 fois[-] octroie l'effet [#0F5CD8]Contrefaçon - Épées doubles[-] au héros.\nSi le héros ne bénéficie pas de l'effet [#0F5CD8]Miroir - Contrefaçon[-], chaque coup porté à l'ennemi restaure la jauge de magie de [#1A7331]15[-].\n1er coup : 26%\n2e coup : 29%\n3e coup : 46%\n4e coup : 58%\n5e coup : 73%\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.",
+     "descriptionEn": "Inflicts damage equal to [#1A7331]232%[-] of Attack.\nHitting the enemy [#1A7331]10 times[-] grants the hero [#0F5CD8]Shaper - Dual Swords[-].\nIf the hero doesn't have [#0F5CD8]Mirror - Shaper[-], each hit on the enemy restores the Magic Gauge by [#1A7331]15[-].\n1st hit: 26%\n2nd hit: 29%\n3rd hit: 46%\n4th hit: 58%\n5th hit: 73%\n\n※[#0F5CD8]Shaper - Dual Swords[-]: Increases Wind damage by [#1A7331]30%[-]. The effect remains while the hero is in combat.",
      "localisation": {
       "status": "resolved",
       "reason": null
@@ -3088,11 +3088,11 @@
      "nomFr": "Crochet explosif",
      "nom": "Hook Blast",
      "nameEn": "Hook Blast",
-     "descriptionFr": null,
-     "descriptionEn": null,
+     "descriptionFr": "Immunise contre les réactions pendant l'utilisation de la compétence normale.\nAugmente les dégâts de compétence normale de tous les héros alliés de [#1A7331]50%[-] des dégâts crit. du héros pendant [#1A7331]40 s[-] (max : [#1A7331]60%[-]), puis inflige des dégâts égaux à [#1A7331]110%[-] de l'attaque.\nLance une bombe toupie qui inflige des dégâts égaux à [#1A7331]140%[-] de l'attaque.",
+     "descriptionEn": "Becomes immune to Reactions while using the Normal Skill.\nIncreases all allied heroes' Normal Skill damage by [#1A7331]50%[-] of the hero's Crit Damage for [#1A7331]40 sec[-] (Max: [#1A7331]60%[-]), then inflicts damage equal to [#1A7331]110%[-] of Attack.\nLaunches a spinning bomb top that inflicts damage equal to [#1A7331]140%[-] of Attack.",
      "localisation": {
-      "status": "missing-from-export",
-      "reason": "localisation non couverte par l'export"
+      "status": "resolved",
+      "reason": null
      },
      "recharge": 26,
      "cooldown": 26,
@@ -3203,8 +3203,8 @@
       "hero": "khala",
       "weaponType": "SwordDual",
       "gameId": "calla_sworddual_normalatk_1",
-      "textFr": "Inflige des dégâts égaux à [#1A7331]232%[-] de l'attaque.\nSi le héros ne bénéficie pas de l'effet [#0F5CD8]Miroir - Contrefaçon[-], chaque coup porté à l'ennemi restaure la jauge de magie de [#1A7331]15[-].\nLa dernière frappe octroie l'effet [#0F5CD8]Contrefaçon - Épées doubles[-] au héros.\n1er coup : 26%\n2e coup : 29%\n3e coup : 46%\n4e coup : 58%\n5e coup : 73%\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.",
-      "textEn": "Inflicts damage equal to [#1A7331]232%[-] of Attack.\nIf the hero doesn't have [#0F5CD8]Mirror - Shaper[-], each hit on the enemy restores the Magic Gauge by [#1A7331]15[-].\nThe final strike grants the hero [#0F5CD8]Shaper - Dual Swords[-].\n1st hit: 26%\n2nd hit: 29%\n3rd hit: 46%\n4th hit: 58%\n5th hit: 73%\n\n※[#0F5CD8]Shaper - Dual Swords[-]: Increases Wind damage by [#1A7331]30%[-]. The effect remains while the hero is in combat.",
+      "textFr": "Inflige des dégâts égaux à [#1A7331]232%[-] de l'attaque.\nToucher l'ennemi [#1A7331]10 fois[-] octroie l'effet [#0F5CD8]Contrefaçon - Épées doubles[-] au héros.\nSi le héros ne bénéficie pas de l'effet [#0F5CD8]Miroir - Contrefaçon[-], chaque coup porté à l'ennemi restaure la jauge de magie de [#1A7331]15[-].\n1er coup : 26%\n2e coup : 29%\n3e coup : 46%\n4e coup : 58%\n5e coup : 73%\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.",
+      "textEn": "Inflicts damage equal to [#1A7331]232%[-] of Attack.\nHitting the enemy [#1A7331]10 times[-] grants the hero [#0F5CD8]Shaper - Dual Swords[-].\nIf the hero doesn't have [#0F5CD8]Mirror - Shaper[-], each hit on the enemy restores the Magic Gauge by [#1A7331]15[-].\n1st hit: 26%\n2nd hit: 29%\n3rd hit: 46%\n4th hit: 58%\n5th hit: 73%\n\n※[#0F5CD8]Shaper - Dual Swords[-]: Increases Wind damage by [#1A7331]30%[-]. The effect remains while the hero is in combat.",
       "coefficientDejaCalcule": true,
       "provenance": "Table/Skill/PC_SkillTable",
       "localisation": {
@@ -3449,13 +3449,13 @@
       "hero": "khala",
       "weaponType": "Gauntlets",
       "gameId": "calla_gauntlets_skill_e",
-      "textFr": null,
-      "textEn": null,
+      "textFr": "Immunise contre les réactions pendant l'utilisation de la compétence normale.\nAugmente les dégâts de compétence normale de tous les héros alliés de [#1A7331]50%[-] des dégâts crit. du héros pendant [#1A7331]40 s[-] (max : [#1A7331]60%[-]), puis inflige des dégâts égaux à [#1A7331]110%[-] de l'attaque.\nLance une bombe toupie qui inflige des dégâts égaux à [#1A7331]140%[-] de l'attaque.",
+      "textEn": "Becomes immune to Reactions while using the Normal Skill.\nIncreases all allied heroes' Normal Skill damage by [#1A7331]50%[-] of the hero's Crit Damage for [#1A7331]40 sec[-] (Max: [#1A7331]60%[-]), then inflicts damage equal to [#1A7331]110%[-] of Attack.\nLaunches a spinning bomb top that inflicts damage equal to [#1A7331]140%[-] of Attack.",
       "coefficientDejaCalcule": true,
       "provenance": "Table/Skill/PC_SkillTable",
       "localisation": {
-       "status": "missing-from-export",
-       "reason": "localisation non couverte par l'export"
+       "status": "resolved",
+       "reason": null
       },
       "buffs": [
        {
@@ -3594,8 +3594,8 @@
       "hero": "khala",
       "weaponType": "SwordDual",
       "tier": 5,
-      "textFr": "La dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Déluge de lames[-] dure [#1A7331]3 s[-], inflige des dégâts égaux à [#1A7331]10%[-] de l'attaque aux ennemis à portée toutes les [#1A7331]0.2 s[-], et augmente les dégâts que leur inflige le héros de [#1A7331]30%[-] pendant [#1A7331]20 s[-].",
-      "textEn": "The final strike of [#3C22D6]Normal Attack: Shaper - Blade Volley[-] lasts [#1A7331]3 sec[-], inflicting damage equal to [#1A7331]10%[-] of Attack to enemies in range every [#1A7331]0.2 sec[-] and increasing their damage taken from the hero by [#1A7331]30%[-] for [#1A7331]20 sec[-]",
+      "textFr": "La dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Déluge de lames[-] inflige des dégâts égaux à [#1A7331]40%[-] de l'attaque et dure [#1A7331]3 s[-], inflige des dégâts égaux à [#1A7331]10%[-] de l'attaque aux ennemis à portée toutes les [#1A7331]0.2 s[-], et augmente les dégâts que leur inflige le héros de [#1A7331]30%[-] pendant [#1A7331]20 s[-].",
+      "textEn": "The final strike of [#3C22D6]Normal Attack: Shaper - Blade Volley[-] inflicts damage equal to [#1A7331]40%[-] of Attack and lasts [#1A7331]3 sec[-], inflicting damage equal to [#1A7331]10%[-] of Attack to enemies in range every [#1A7331]0.2 sec[-] and increasing their damage taken from the hero by [#1A7331]30%[-] for [#1A7331]20 sec[-].",
       "provenance": "Table/Skill/DefaultSkillWeaponTypeTable",
       "buffs": []
      },

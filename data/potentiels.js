@@ -1022,7 +1022,7 @@ window.SEVEN_DS_POTENTIELS = {
    "Renforce la puissance de l'attaque normale de [#1A7331]20%[-].",
    "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
    "Amplifie la puissance d'[#3C22D6]Attaque normale : Contrefaçon - Lame mirage[-] de [#1A7331]15%[-] et ses dégâts supplémentaires de [#1A7331]20%[-].",
-   "La dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Déluge de lames[-] dure [#1A7331]3 s[-], inflige des dégâts égaux à [#1A7331]10%[-] de l'attaque aux ennemis à portée toutes les [#1A7331]0.2 s[-], et augmente les dégâts que leur inflige le héros de [#1A7331]30%[-] pendant [#1A7331]20 s[-].",
+   "La dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Déluge de lames[-] inflige des dégâts égaux à [#1A7331]40%[-] de l'attaque et dure [#1A7331]3 s[-], inflige des dégâts égaux à [#1A7331]10%[-] de l'attaque aux ennemis à portée toutes les [#1A7331]0.2 s[-], et augmente les dégâts que leur inflige le héros de [#1A7331]30%[-] pendant [#1A7331]20 s[-].",
    "Immunise contre les réactions tant que l'effet [#0F5CD8]Miroir - Contrefaçon[-] est actif.\nRéduit les dégâts subis de [#1A7331]6%[-] par tranche de [#1A7331]1 cumul(s)[-] de [#0F5CD8]Mirage[-] sur le héros. (Max : [#1A7331]5 fois[-])",
    "La dernière frappe d'[#3C22D6]Attaque normale : Contrefaçon - Plongeon miroir[-] inflige [#1A7331]2 fois[-] des dégâts supplémentaires égaux à [#1A7331]65%[-] de l'attaque.\nCette attaque augmente les dégâts crit. de [#1A7331]10%[-] pendant [#1A7331]20 s[-]. (Max : [#1A7331]6 fois[-])",
    "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",

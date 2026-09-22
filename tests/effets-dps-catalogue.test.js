@@ -30,7 +30,8 @@ assert.ok(catalogue.audit.sources.some(source => source.id === "hero-passive:cal
   "le passif Épées doubles de Khala doit être audité");
 const bonusKhalaGantelets = catalogue.skills.calla_gauntlets_skill_e;
 assert.equal(bonusKhalaGantelets.classification, "modelise");
-assert.equal(bonusKhalaGantelets.regles[0].valeur, 5000);
+assert.equal(bonusKhalaGantelets.regles[0].valeur, 6000);
+assert.ok(bonusKhalaGantelets.raison, "le plafond retenu doit etre annonce par une note");
 assert.equal(bonusKhalaGantelets.regles[0].duree, 40);
 assert.equal(bonusKhalaGantelets.regles[0].portee, "Team");
 assert.equal(catalogue.skills.calla_sworddual_normalatk_1.classification, "non-inclus");

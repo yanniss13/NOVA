@@ -54,10 +54,15 @@ class EffetsNormalises(unittest.TestCase):
             self.assertEqual(effect["regles"], [])
             self.assertTrue(effect["raison"])
         buff = catalogue["skills"]["calla_gauntlets_skill_e"]
-        self.assertIsNone(buff["texteFr"])
-        self.assertEqual(buff["localisation"]["status"], "missing-from-export")
+        # Le patch du 22/09/2026 publie enfin son texte : « 50 % des degats
+        # crit. du heros (max : 60 %) ». Le 5000 de BuffTable est donc un
+        # coefficient, et c'est le plafond qui est retenu (decision du
+        # proprietaire), note a l'appui.
+        self.assertIn("dégâts crit.", buff["texteFr"])
+        self.assertNotIn("localisation", buff)
         self.assertEqual(buff["classification"], "modelise")
-        self.assertEqual(buff["regles"][0]["valeur"], 5000)
+        self.assertTrue(buff["raison"])
+        self.assertEqual(buff["regles"][0]["valeur"], 6000)
         self.assertEqual(buff["regles"][0]["cible"], "normal-skill")
         self.assertEqual(buff["regles"][0]["duree"], 40)
         self.assertEqual(buff["regles"][0]["portee"], "Team")

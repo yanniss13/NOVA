@@ -2961,7 +2961,7 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
  "khala": [
   {
    "categorie": "NORMAL",
-   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]232%[-] de l'attaque.\nSi le héros ne bénéficie pas de l'effet [#0F5CD8]Miroir - Contrefaçon[-], chaque coup porté à l'ennemi restaure la jauge de magie de [#1A7331]15[-].\nLa dernière frappe octroie l'effet [#0F5CD8]Contrefaçon - Épées doubles[-] au héros.\n1er coup : 26%\n2e coup : 29%\n3e coup : 46%\n4e coup : 58%\n5e coup : 73%\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]232%[-] de l'attaque.\nToucher l'ennemi [#1A7331]10 fois[-] octroie l'effet [#0F5CD8]Contrefaçon - Épées doubles[-] au héros.\nSi le héros ne bénéficie pas de l'effet [#0F5CD8]Miroir - Contrefaçon[-], chaque coup porté à l'ennemi restaure la jauge de magie de [#1A7331]15[-].\n1er coup : 26%\n2e coup : 29%\n3e coup : 46%\n4e coup : 58%\n5e coup : 73%\n\n※[#0F5CD8]Contrefaçon - Épées doubles[-] : augmente les dégâts de Vent de [#1A7331]30%[-]. L'effet persiste tant que le héros est en combat.",
    "gameId": "calla_sworddual_normalatk_1",
    "icone": "common_SwordDual_normalAttack.webp",
    "nomFr": "Double tranchant",
@@ -3078,13 +3078,9 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
   },
   {
    "categorie": "NORMAL_SKILL",
-   "descriptionFr": null,
+   "descriptionFr": "Immunise contre les réactions pendant l'utilisation de la compétence normale.\nAugmente les dégâts de compétence normale de tous les héros alliés de [#1A7331]50%[-] des dégâts crit. du héros pendant [#1A7331]40 s[-] (max : [#1A7331]60%[-]), puis inflige des dégâts égaux à [#1A7331]110%[-] de l'attaque.\nLance une bombe toupie qui inflige des dégâts égaux à [#1A7331]140%[-] de l'attaque.",
    "gameId": "calla_gauntlets_skill_e",
    "icone": "Calla_Gauntlets_NormalSkill.webp",
-   "localisation": {
-    "reason": "localisation non couverte par l'export",
-    "status": "missing-from-export"
-   },
    "nomFr": "Crochet explosif",
    "recharge": 26,
    "weaponType": "Gauntlets"
