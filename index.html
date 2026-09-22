@@ -998,14 +998,15 @@
     </div>
     <div class="boss-report-body">
       <div class="boss-report-members" id="bossReportMembers"></div>
-      <label for="bossScore">Score global</label>
-      <input id="bossScore" type="text" inputmode="numeric" pattern="[0-9]*"
+      <label class="modal-field-label" for="bossScore">Score global</label>
+      <input id="bossScore" class="modal-score-field" type="text"
+             inputmode="numeric" pattern="[0-9]*"
              autocomplete="off" aria-describedby="bossReportError">
-      <label for="bossReportNote">Note de run</label>
-      <textarea id="bossReportNote" maxlength="1000"
+      <label class="modal-field-label" for="bossReportNote">Note de run</label>
+      <textarea id="bossReportNote" class="modal-note-field" maxlength="1000"
                 aria-describedby="bossReportCount bossReportError"></textarea>
-      <div id="bossReportCount">0/1000</div>
-      <p id="bossReportError" role="alert"></p>
+      <div id="bossReportCount" class="modal-note-count">0/1000</div>
+      <p id="bossReportError" class="modal-form-error" role="alert"></p>
       <button class="btn btn-primary" id="bossReportSubmit" type="button">
         Enregistrer et terminer la run
       </button>
@@ -1022,21 +1023,22 @@
               aria-label="Fermer">×</button>
     </div>
     <div class="training-form">
-      <label for="trainingDate">Date de la run</label>
-      <input id="trainingDate" type="date">
+      <label class="modal-field-label" for="trainingDate">Date de la run</label>
+      <input id="trainingDate" class="modal-date-field" type="date">
       <fieldset class="training-members">
         <legend>Participants (5 au maximum)</legend>
         <div id="trainingMembers"></div>
       </fieldset>
       <div id="trainingTeams" class="training-teams"></div>
-      <label for="trainingScore">Score global</label>
-      <input id="trainingScore" type="text" inputmode="numeric"
+      <label class="modal-field-label" for="trainingScore">Score global</label>
+      <input id="trainingScore" class="modal-score-field" type="text"
+             inputmode="numeric"
              autocomplete="off" aria-describedby="trainingError">
-      <label for="trainingNote">Note (facultative)</label>
-      <textarea id="trainingNote" maxlength="1000"
+      <label class="modal-field-label" for="trainingNote">Note (facultative)</label>
+      <textarea id="trainingNote" class="modal-note-field" maxlength="1000"
                 aria-describedby="trainingCount trainingError"></textarea>
-      <div id="trainingCount">0/1000</div>
-      <p id="trainingError" role="alert"></p>
+      <div id="trainingCount" class="modal-note-count">0/1000</div>
+      <p id="trainingError" class="modal-form-error" role="alert"></p>
       <div class="training-actions">
         <button class="btn btn-ghost" id="trainingDelete" type="button" hidden>Supprimer</button>
         <button class="btn btn-primary" id="trainingSubmit" type="button">Enregistrer</button>

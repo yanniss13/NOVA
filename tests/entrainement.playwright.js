@@ -75,7 +75,7 @@ async function poserDesRuns(page){
     /* Historique : la plus récente d'abord ; à égalité de date jouée
        (tr-2/tr-3), la plus récemment créée d'abord ; score exact au-delà de
        2^53. */
-    const cartes = page.locator("#trainingBody li.training-run");
+    const cartes = page.locator("#trainingBody li.boss-run-card");
     await cartes.first().waitFor();
     assert.deepEqual(
       await cartes.evaluateAll(n => n.map(x => x.dataset.trainingRunId)),
@@ -105,6 +105,18 @@ async function poserDesRuns(page){
       const overlay = document.querySelector("#trainingOverlay").getBoundingClientRect();
       return action.top >= overlay.top && action.bottom <= overlay.bottom;
     }), true, "les actions restent atteignables dans la modale");
+    /* La note facultative est partie en ligne écrasée sur deux pixels : son
+       `<textarea>` n'héritait d'aucune hauteur, faute de reprendre la classe
+       du rapport de boss. Personne ne pouvait y écrire, et aucun test ne le
+       voyait — le CSS était muet, pas cassé. On mesure donc les deux notes
+       du site à l'écran, et on exige qu'elles se ressemblent. */
+    const noteEntrainement = await page.locator("#trainingNote").boundingBox();
+    assert.ok(noteEntrainement.height >= 80,
+      "la note d’entraînement doit être une vraie zone de saisie ("
+      + Math.round(noteEntrainement.height) + " px)");
+    assert.ok(noteEntrainement.width >= 240,
+      "la note d’entraînement doit occuper la largeur du formulaire");
+
     await page.locator("#trainingClose").click();
     await page.locator("#trainingOverlay").waitFor({ state:"hidden" });
 
@@ -175,7 +187,7 @@ async function poserDesRuns(page){
     assert.equal(nouvelle.global_score, "1234567");
     assert.equal(nouvelle.equipes["user-2"].snapshot.id, "team-other",
       "l'instantané est construit côté serveur depuis l'équipe choisie");
-    await page.locator(`li.training-run[data-training-run-id="${nouvelle.id}"]`).waitFor();
+    await page.locator(`li.boss-run-card[data-training-run-id="${nouvelle.id}"]`).waitFor();
 
     /* --- Correction : conflit RÉEL sur le jeton `updated_at`, pas le
        raccourci synthétique `trainingConflictOnce` (retiré du faux : il
@@ -203,7 +215,7 @@ async function poserDesRuns(page){
     await page.locator("#trainingScore").fill("2000000");
     await page.locator("#trainingSubmit").click();
     await page.locator("#trainingOverlay").waitFor({ state:"hidden" });
-    assert.match(await page.locator(`li.training-run[data-training-run-id="${nouvelle.id}"]`)
+    assert.match(await page.locator(`li.boss-run-card[data-training-run-id="${nouvelle.id}"]`)
       .textContent(), /2\s?000\s?000/);
 
     /* Une équipe supprimée n'est plus proposée : l'absence affichée est aussi
@@ -224,7 +236,7 @@ async function poserDesRuns(page){
     page.once("dialog", dialogue => dialogue.accept());
     await page.locator(`.training-edit[data-training-run-id="${nouvelle.id}"]`).click();
     await page.locator("#trainingDelete").click();
-    await page.locator(`li.training-run[data-training-run-id="${nouvelle.id}"]`)
+    await page.locator(`li.boss-run-card[data-training-run-id="${nouvelle.id}"]`)
       .waitFor({ state:"detached" });
 
     /* Un ancien participant reste coché et son instantané est conservé même
@@ -259,7 +271,7 @@ async function poserDesRuns(page){
 
     /* --- Classement : tr-1 en tête ; comparaison d'équipes de Yannis. --- */
     await page.locator('[data-training-vue="classement"]').click();
-    assert.equal(await page.locator("ol.training-top li").first()
+    assert.equal(await page.locator("ol.boss-run-cards li").first()
       .getAttribute("data-training-run-id"), "tr-1");
     await page.locator("#trainingCompareMember").selectOption("user-1");
     assert.equal(await page.evaluate(() => document.activeElement && document.activeElement.id),

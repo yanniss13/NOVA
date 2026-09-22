@@ -1350,6 +1350,17 @@ dans « Mon suivi » ni dans « Meilleures runs ». Spec :
 - Scores lus en `global_score::text`, jamais en `number`.
 - Trois sous-vues locales (Historique, Progression, Classement) : en changer
   ne fait **aucune** requête.
+- **L'habillage est celui des runs de boss, pas un deuxième.** Une run
+  d'entraînement s'affiche avec `bossRunCarte()` (`js/vues/equipe-boss.js`) et
+  les classes `.boss-run-card*`, exactement comme « Meilleures runs » ; les
+  trois sous-vues vivent dans le même cadre `.boss-stats`. La saisie réutilise
+  `.modal-field-label`, `.modal-score-field`, `.modal-note-field`,
+  `.modal-note-count` et `.modal-form-error`, partagées avec la modale de
+  rapport de boss. Le premier jet s'était écrit ses propres `.training-run*` :
+  bordure plus dure, portraits pleine taille, score en police courante — et un
+  `<textarea>` sans hauteur, donc une note facultative invisible, que rien ne
+  voyait puisque le CSS était muet et non cassé. `tests/entrainement.playwright.js`
+  **mesure** désormais cette zone de saisie à l'écran.
 
 Après ce déploiement, rejouer `supabase/schema.sql` dans le SQL Editor
 **avant** de pousser le frontend.

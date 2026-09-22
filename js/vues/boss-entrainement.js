@@ -14,10 +14,8 @@ import {
   comparaisonEquipesEntrainement, resumeProgressionEntrainement,
   serieProgressionEntrainement, topRunsEntrainement, trierRunsEntrainement
 } from "../metier/entrainement-boss.js";
-import { teamFromBossSnapshot } from "../metier/equipe-modele.js";
 import { $, el } from "../noyau/dom.js";
-import { openTeamDetail } from "./detail-equipe.js";
-import { bossTeamBanner } from "./equipe-boss.js";
+import { bossReportParticipant, bossRunCarte } from "./equipe-boss.js";
 import { ouvrirSaisieEntrainement } from "./modale-entrainement.js";
 
   const etatEntrainement = {
@@ -34,34 +32,22 @@ import { ouvrirSaisieEntrainement } from "./modale-entrainement.js";
       { day:"numeric", month:"short", year:"numeric" }) : "";
   }
 
+  /* Un participant de run d'entrainement est la meme ligne qu'un participant
+     de rapport de boss : pseudo, bandeau de portraits, detail a un clic. Seul
+     le chemin de l'instantane change — `snapshot` ici, `team_snapshot` la. */
   function participantEntrainement(run, membreId){
     const entree = run.equipes[membreId] || {};
-    const pseudo = entree.pseudo || "Membre";
-    const equipe = teamFromBossSnapshot(entree.snapshot);
-    const ligne = el("div",{class:"boss-report-participant training-participant"},[
-      el("span",{class:"boss-report-participant-name",text:pseudo})
-    ]);
-    if(equipe){
-      ligne.appendChild(el("button",{
-        class:"boss-report-team", type:"button",
-        "aria-label":"Voir l’équipe de "+pseudo,
-        onclick:()=>openTeamDetail(equipe)
-      },[bossTeamBanner(equipe), el("span",{class:"boss-report-team-label",text:"Voir l’équipe"})]));
-    }else{
-      ligne.appendChild(el("span",{class:"boss-report-team-missing",text:"Équipe non renseignée"}));
-    }
-    return ligne;
+    return bossReportParticipant(
+      { pseudo:entree.pseudo, team_snapshot:entree.snapshot },
+      { absent:"Équipe non renseignée" }
+    );
   }
 
-  function carteRunEntrainement(run){
+  function carteRunEntrainement(run, rang){
     const moi = sessionCourante.user && sessionCourante.user.id;
-    const tete = el("div",{class:"training-run-head"},[
-      el("strong",{class:"training-run-score",text:formatBossScore(run.score)}),
-      el("span",{class:"training-run-meta",text:frDateEntrainement(run.playedOn)+" · saisie par "+run.createdByPseudo
-        +(run.updatedByPseudo ? " · corrigée par "+run.updatedByPseudo : "")})
-    ]);
+    const actions = [];
     if(moi && run.participants.includes(moi)){
-      tete.appendChild(el("button",{
+      actions.push(el("button",{
         class:"btn btn-ghost training-edit", type:"button",
         dataset:{trainingRunId:run.id},
         "aria-label":"Corriger la run du "+frDateEntrainement(run.playedOn),
@@ -69,11 +55,18 @@ import { ouvrirSaisieEntrainement } from "./modale-entrainement.js";
           { apres:()=>renderTrainingView({ silencieux:true }) })
       },["Corriger"]));
     }
-    const carte = el("li",{class:"training-run",dataset:{trainingRunId:run.id}},[tete]);
-    if(run.note) carte.appendChild(el("p",{class:"training-run-note",text:run.note}));
-    carte.appendChild(el("div",{class:"boss-report-participants"},
-      run.participants.map(id => participantEntrainement(run, id))));
-    return carte;
+    return bossRunCarte({
+      rang:rang == null ? null : rang,
+      premier:rang === 1,
+      score:run.score,
+      meta:frDateEntrainement(run.playedOn)+" · saisie par "+run.createdByPseudo
+        +(run.updatedByPseudo ? " · corrigée par "+run.updatedByPseudo : ""),
+      note:run.note,
+      equipes:run.participants.map(id => participantEntrainement(run, id)),
+      vide:"Aucun participant renseigné pour cette run.",
+      actions,
+      dataset:{trainingRunId:run.id}
+    });
   }
 
   function vueHistoriqueEntrainement(runs){
@@ -83,7 +76,8 @@ import { ouvrirSaisieEntrainement } from "./modale-entrainement.js";
         el("p",{text:"Enregistre la première avec le bouton ci-dessus."})
       ]);
     }
-    return el("ol",{class:"training-runs"}, trierRunsEntrainement(runs).map(carteRunEntrainement));
+    return el("ol",{class:"boss-run-cards"},
+      trierRunsEntrainement(runs).map(run => carteRunEntrainement(run)));
   }
 
   const SVG_NS_ENTRAINEMENT = "http://www.w3.org/2000/svg";
@@ -164,12 +158,8 @@ import { ouvrirSaisieEntrainement } from "./modale-entrainement.js";
     const top = topRunsEntrainement(runs, 10);
     bloc.appendChild(el("h2",{class:"training-subtitle",text:"Meilleures runs"}));
     bloc.appendChild(top.length
-      ? el("ol",{class:"training-top"}, top.map(({ rang, run }) => {
-          const carte = carteRunEntrainement(run);
-          carte.insertBefore(el("span",{class:"training-rank","aria-label":"Rang "+rang,text:String(rang)}),
-            carte.firstChild);
-          return carte;
-        }))
+      ? el("ol",{class:"boss-run-cards"},
+          top.map(({ rang, run }) => carteRunEntrainement(run, rang)))
       : el("p",{class:"empty-state",text:"Aucune run à classer."}));
 
     const moi = sessionCourante.user ? sessionCourante.user.id : "";
@@ -211,7 +201,10 @@ import { ouvrirSaisieEntrainement } from "./modale-entrainement.js";
         el("p",{class:"big",text:"L’entraînement est indisponible hors ligne"})
       ]));
     }else{
-      corps.appendChild(SOUS_VUES_ENTRAINEMENT[etatEntrainement.vue](runs));
+      /* Meme cadre que « Meilleures runs » dans la vue Boss : les cartes se
+         detachent sur le panneau, et les deux pages se ressemblent. */
+      corps.appendChild(el("section",{class:"boss-stats training-panel"},
+        [SOUS_VUES_ENTRAINEMENT[etatEntrainement.vue](runs)]));
     }
     $("#trainingStatus").textContent = etatEntrainement.horsLigne
       ? "Hors ligne" : runs.length+" run"+(runs.length > 1 ? "s" : "");

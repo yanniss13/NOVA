@@ -96,7 +96,7 @@ async function poserDesRuns(page){
 }
 
 const identifiantsAffiches = page => page.$$eval(
-  ".boss-best-runs .boss-best-run",
+  ".boss-best-runs .boss-run-card",
   cartes => cartes.map(carte => carte.dataset.bestRunId)
 );
 
@@ -120,7 +120,7 @@ const identifiantsAffiches = page => page.$$eval(
       "sans aucun rapport, le bloc annonce ce qu'il montrera");
 
     await poserDesRuns(page);
-    await page.locator(".boss-best-run").first().waitFor();
+    await page.locator(".boss-run-card").first().waitFor();
 
     /* La semaine a des rapports : c'est elle qui s'affiche d'abord. */
     assert.equal(
@@ -129,8 +129,8 @@ const identifiantsAffiches = page => page.$$eval(
     );
     assert.deepEqual(await identifiantsAffiches(page),
       ["run-semaine-1", "run-semaine-2"]);
-    const premiere = bloc.locator(".boss-best-run").first();
-    assert.match(await premiere.locator(".boss-best-run-score").textContent(),
+    const premiere = bloc.locator(".boss-run-card").first();
+    assert.match(await premiere.locator(".boss-run-card-score").textContent(),
       /184\s250\s000/);
     assert.equal(await premiere.locator(".boss-report-participant").count(), 2,
       "chaque participant de la run apparaît avec son équipe");
@@ -151,7 +151,7 @@ const identifiantsAffiches = page => page.$$eval(
       "all",
       "changer de période ne doit pas faire perdre le focus"
     );
-    assert.match(await bloc.locator(".boss-best-run").first().textContent(),
+    assert.match(await bloc.locator(".boss-run-card").first().textContent(),
       /Semaine du/, "sur tout l'historique, chaque run dit sa semaine");
 
     /* Le choix survit a une relecture Realtime. */
@@ -164,7 +164,7 @@ const identifiantsAffiches = page => page.$$eval(
     );
 
     /* Ouvrir une equipe depuis le palmares. */
-    await page.locator(".boss-best-run").first()
+    await page.locator(".boss-run-card").first()
       .locator(".boss-report-team").first().click();
     await page.locator("#teamOverlay").waitFor({ state:"visible" });
     await page.keyboard.press("Escape");

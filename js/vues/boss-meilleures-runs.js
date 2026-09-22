@@ -10,9 +10,9 @@
    vue Boss a deja charges. Changer de periode ne fait aucune requete et ne
    reconstruit que la liste, pour que le focus reste sur le bouton presse. */
 
-import { bossTopRuns, formatBossScore, frDate, frDateTime } from "../metier/boss-logique.js";
+import { bossTopRuns, frDate, frDateTime } from "../metier/boss-logique.js";
 import { el } from "../noyau/dom.js";
-import { bossReportParticipant } from "./equipe-boss.js";
+import { bossReportParticipant, bossRunCarte } from "./equipe-boss.js";
 
   const MEILLEURES_RUNS_LIMITE = 5;
 
@@ -27,53 +27,27 @@ import { bossReportParticipant } from "./equipe-boss.js";
     const quand = periode === "all"
       ? "Semaine du "+frDate(group.week_start)
       : (group.completed_at ? "Terminée le "+frDateTime(group.completed_at) : "");
-    const carte = el("li",{
-      class:"boss-best-run"+(row.rank === 1 ? " is-first" : ""),
+    return bossRunCarte({
+      rang:row.rank,
+      premier:row.rank === 1,
+      score:row.score,
+      meta:group.title+" · Run "+(group.run_no || 1)+(quand ? " · "+quand : ""),
+      note:report.note,
+      equipes:members.map(member => bossReportParticipant(member)),
+      vide:"Participants non disponibles pour cette run.",
       /* Jamais `sessionId` : dans la vue Boss, `data-session-id` designe la
          carte d'un groupe ou d'un rapport, et « Mon suivi » y cherche la
          premiere qui porte l'identifiant. Place au-dessus, le palmares la
          lui volerait. */
       dataset:{bestRunId:group.id}
-    },[
-      el("div",{class:"boss-best-run-head"},[
-        el("span",{
-          class:"boss-best-run-rank",
-          "aria-label":"Rang "+row.rank,
-          text:String(row.rank)
-        }),
-        el("div",{class:"boss-best-run-score-wrap"},[
-          el("strong",{
-            class:"boss-best-run-score",
-            text:formatBossScore(row.score)
-          }),
-          el("span",{
-            class:"boss-best-run-meta",
-            text:group.title+" · Run "+(group.run_no || 1)+(quand ? " · "+quand : "")
-          })
-        ])
-      ])
-    ]);
-    if(report.note){
-      carte.appendChild(el("p",{class:"boss-best-run-note",text:report.note}));
-    }
-    const equipes = el("div",{class:"boss-report-participants boss-best-run-teams"});
-    if(members.length){
-      members.forEach(member => equipes.appendChild(bossReportParticipant(member)));
-    }else{
-      equipes.appendChild(el("p",{
-        class:"boss-best-run-empty",
-        text:"Participants non disponibles pour cette run."
-      }));
-    }
-    carte.appendChild(equipes);
-    return carte;
+    });
   }
 
   function remplirMeilleuresRuns(liste, lignes, periode){
     liste.innerHTML = "";
     if(!lignes.length){
       liste.appendChild(el("li",{
-        class:"boss-best-runs-empty",
+        class:"boss-run-cards-empty",
         text:periode === "week"
           ? "Aucune run rapportée cette semaine pour l’instant."
           : "Les meilleures runs apparaîtront ici dès le premier rapport de score."
@@ -91,7 +65,7 @@ import { bossReportParticipant } from "./equipe-boss.js";
     let periode = meilleuresRunsPeriode;
     if(!periode) periode = lignesDe("week").length ? "week" : "all";
 
-    const liste = el("ol",{class:"boss-best-runs-list"});
+    const liste = el("ol",{class:"boss-run-cards"});
     const boutons = [
       ["week", "Cette semaine"],
       ["all", "Toutes les semaines"]

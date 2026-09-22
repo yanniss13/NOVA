@@ -164,23 +164,29 @@
 .boss-report-member-name{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:700}
 .boss-report-member-state{flex:none;color:var(--gold-bright);font-size:11px}
 .boss-report-member-state.missing{color:#e98d8d}
-.boss-report-body>label{
+/* Les champs d'une modale de run — rapport de boss ou entrainement. Ils
+   etaient attaches aux identifiants du seul rapport de boss ; l'entrainement
+   s'est donc ouvert avec des libelles en texte courant et, surtout, un
+   `<textarea>` sans hauteur : la note facultative tenait sur un filet de
+   deux pixels. Des classes partagees, une seule mise en page. */
+.modal-field-label{
   font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)
 }
-#bossScore,#bossReportNote{
+.modal-score-field,.modal-note-field,.modal-date-field{
   width:100%;min-width:0;font-family:var(--ui);color:var(--parchment);
   background:var(--obsidian-2);border:1px solid var(--line);border-radius:9px
 }
-#bossScore{
+.modal-date-field{min-height:44px;padding:8px 12px}
+.modal-score-field{
   min-height:52px;padding:8px 12px;text-align:center;
   font-family:var(--display);font-size:clamp(24px,7vw,34px);font-weight:700;
   letter-spacing:.04em;color:var(--gold-bright);border-color:var(--gold-deep);
   box-shadow:inset 0 0 22px rgba(217,164,65,.06)
 }
-#bossScore[aria-invalid="true"]{border-color:var(--crimson)}
-#bossReportNote{min-height:104px;padding:11px 12px;resize:vertical;line-height:1.45}
-#bossReportCount{margin-top:-7px;text-align:right;color:var(--muted-2);font-size:11px}
-#bossReportError{min-height:20px;margin:0;color:#e98d8d;font-size:12.5px;line-height:1.45}
+.modal-score-field[aria-invalid="true"]{border-color:var(--crimson)}
+.modal-note-field{min-height:104px;padding:11px 12px;resize:vertical;line-height:1.45}
+.modal-note-count{margin-top:-7px;text-align:right;color:var(--muted-2);font-size:11px}
+.modal-form-error{min-height:20px;margin:0;color:#e98d8d;font-size:12.5px;line-height:1.45}
 #bossReportSubmit{min-height:44px;justify-content:center}
 .boss-stats{
   margin-top:14px;padding:14px;border:1px solid var(--line);border-radius:12px;
@@ -200,22 +206,31 @@
 .training-subviews{display:flex;flex-wrap:wrap;gap:6px}
 .training-subviews [aria-pressed="true"]{color:var(--gold-bright);border-color:var(--gold-bright)}
 .training-subviews .btn,#trainingAdd{min-height:44px}
-.training-runs{list-style:none;margin:16px 0 0;padding:0;display:grid;gap:12px}
-.training-run{border:1px solid var(--line);border-radius:12px;padding:12px;min-width:0}
-.training-run-head{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline}
-.training-run-score{font-size:1.25rem;color:var(--gold-bright)}
-.training-run-meta{color:var(--muted);font-size:.85rem;flex:1 1 12rem;min-width:0}
-.training-edit{min-height:44px;margin-left:auto}
-.training-run-note{margin:8px 0 0;overflow-wrap:anywhere}
+/* Les cartes de run viennent de `.boss-run-card` (css/suivi.css) : voir le
+   commentaire qui s'y trouve. Il ne reste ici que ce qui appartient en
+   propre a l'entrainement. */
+.training-panel{margin-top:16px}
+.training-edit{flex:none;min-height:44px;margin-left:auto}
 .modal.training-modal{width:min(620px,100%)}
 .training-form{display:grid;gap:8px;min-width:0;min-height:0;flex:1 1 auto;padding:18px;overflow-y:auto;overflow-x:hidden}
-.training-members{border:1px solid var(--line-soft);border-radius:10px;padding:8px;min-width:0}
+.training-members{border:1px solid var(--line-soft);border-radius:10px;padding:8px 10px 10px;min-width:0}
+.training-members>legend{
+  padding:0 6px;font-size:11px;font-weight:700;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--muted)
+}
 #trainingMembers{display:grid;grid-template-columns:repeat(auto-fill,minmax(9rem,1fr));gap:4px}
 .training-member{display:flex;gap:8px;align-items:center;min-height:44px;cursor:pointer}
 .training-member input{width:20px;height:20px}
+.training-member span{font-size:13px;color:var(--parchment)}
 .training-teams{display:grid;gap:8px}
 .training-team-field{display:grid;gap:4px}
-.training-team-field select,#trainingDate,#trainingScore{min-height:44px}
+.training-team-field>label{
+  font-size:11px;font-weight:700;letter-spacing:.15em;text-transform:uppercase;color:var(--muted)
+}
+.training-team-field select{
+  min-height:44px;padding:8px 12px;font-family:var(--ui);color:var(--parchment);
+  background:var(--obsidian-2);border:1px solid var(--line);border-radius:9px
+}
 .training-actions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 .training-actions .btn{min-height:44px}
 .training-filter{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
@@ -225,9 +240,11 @@
 .training-line{fill:none;stroke:var(--gold-bright);stroke-width:2}
 .training-dot{fill:var(--gold-bright)}
 .training-points{columns:2 14rem;color:var(--muted);font-size:.9rem}
-.training-subtitle{margin:20px 0 8px;font-size:1.1rem}
-.training-top{list-style:none;padding:0;margin:0;display:grid;gap:12px}
-.training-rank{font-weight:700;color:var(--gold-bright);margin-right:8px}
+.training-subtitle{
+  margin:18px 0 8px;font-family:var(--display);font-size:14px;font-weight:600;
+  letter-spacing:.05em;color:var(--parchment)
+}
+.training-subtitle:first-child{margin-top:0}
 .training-compare-caveat{color:var(--muted);font-size:.85rem}
 .training-compare-wrap{overflow-x:auto;max-width:100%}
 .training-compare{border-collapse:collapse;width:100%;min-width:0}
