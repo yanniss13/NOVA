@@ -5,31 +5,28 @@
 > jamais ici : cette page est réécrite à chaque exécution.
 
 Les montages du jeu portent ces temps : `animations-verrous.json` en
-déduit 291 verrous, et la liste ci-dessous ne retient plus que ce
+déduit 304 verrous, et la liste ci-dessous ne retient plus que ce
 qu'aucun fichier ne renseigne. Elle dit quoi mesurer d'abord, et ce
 que chaque mesure rapporte.
 
-**Avancement : 0 / 37 mesurées.**
+**Avancement : 0 / 25 mesurées.**
 
-Les 291 verrous déduits ne sont pas pour autant acquis : ce sont des
+Les 304 verrous déduits ne sont pas pour autant acquis : ce sont des
 lectures de marqueurs, pas des chronomètres. Une mesure saisie dans
 `animations-mesurees.json` **écrase** la déduction pour cette
 compétence. Là où les deux concordent, la déduction est confirmée ;
 là où elles divergent, c'est qu'une mécanique s'intercale — et c'est
 précisément ce qui vaut la peine d'être trouvé.
 
-## 1. Mesures qui débloquent maintenant — 3 compétences
+## 1. Mesures qui débloquent maintenant — 0 compétences
 
 Sans recharge : l'animation sert de dénominateur au modèle de cadence.
 Ces attaques normales et spéciales débloquent maintenant le calcul du DPS.
 
 | héros | arme | compétence | catégorie | touche | dégâts % | mesure (s) |
 |---|---|---|---|---|---|---|
-| khala | Épées doubles | Double tranchant | Attaque normale | clic gauche | 232 |  |
-| khala | Gantelets | Rafale explosive | Attaque normale | clic gauche | 107 |  |
-| khala | Nunchaku | Fauchage du vent | Attaque normale | clic gauche | 103 |  |
 
-## 2. Mesures qui affinent maintenant — 28 compétences
+## 2. Mesures qui affinent maintenant — 22 compétences
 
 Avec recharge : le simulateur calcule déjà la compétence et
 l'animation ajoute un retard. La colonne « erreur » donne ce qu'on
@@ -43,12 +40,9 @@ Classement par erreur décroissante.
 | ban | Nunchaku | Chasse du Renard | Attaque ultime | R | 10 s | 13 % |  |
 | ban | Gantelets | Explosion obscure | Attaque ultime | R | 10 s | 13 % |  |
 | guila | Épée & bouclier | Explosion resplendissante | Attaque ultime | R | 10 s | 13 % |  |
-| khala | Nunchaku | Bourrasque entravante | Attaque ultime | R | 10 s | 13 % |  |
-| khala | Gantelets | Explosion suprême | Attaque ultime | R | 10 s | 13 % |  |
 | tristan | Espadon | Entaille d'amputation | Attaque ultime | R | 10 s | 13 % |  |
 | ban | Espadon | Broyage brutal | Attaque spéciale | Q | 11.6 s | 11 % |  |
 | king | Grimoire | Bouclier gardien | Attaque spéciale | Q | 12 s | 11 % |  |
-| khala | Épées doubles | Plongeon miroir | Attaque spéciale | Q | 13 s | 10 % |  |
 | escanor | Hache | Soleil condensé | Attaque spéciale | Q | 13.5 s | 10 % |  |
 | bug | Hache | Rossée des ténèbres | Compétence normale | E | 14 s | 10 % |  |
 | bug | Épées doubles | Double taillade des abysses | Attaque spéciale | Q | 14 s | 10 % |  |
@@ -57,17 +51,14 @@ Classement par erreur décroissante.
 | hendrickson | Lance | Brise-lance abyssal | Attaque spéciale | Q | 15 s | 9 % |  |
 | ban | Nunchaku | Balayage rapide | Attaque spéciale | Q | 15.6 s | 9 % |  |
 | bug | Hache | Pulvérisation des abysses | Attaque spéciale | Q | 16.2 s | 8 % |  |
-| khala | Nunchaku | Moulinet | Attaque spéciale | Q | 18 s | 8 % |  |
 | ban | Nunchaku | Ruée en spirale | Compétence normale | E | 18.6 s | 7 % |  |
-| khala | Épées doubles | Déluge de lames | Compétence normale | E | 19 s | 7 % |  |
 | ban | Gantelets | Uppercut abyssal | Attaque spéciale | Q | 19.6 s | 7 % |  |
 | khala | Gantelets | Mine à impact | Attaque spéciale | Q | 20 s | 7 % |  |
 | ban | Espadon | Fracassement | Compétence normale | E | 20.4 s | 7 % |  |
 | bug | Épées doubles | Extermination | Compétence normale | E | 20.9 s | 7 % |  |
 | khala | Nunchaku | Tourbillon | Compétence normale | E | 23 s | 6 % |  |
-| khala | Gantelets | Crochet explosif | Compétence normale | E | 26 s | 5 % |  |
 
-## 3. Relèves — simulation d’équipe future — 6 compétences
+## 3. Relèves — simulation d’équipe future — 3 compétences
 
 Les compétences de relève seront calculées avec une future simulation
 d'équipe. Leur mesure est utile pour préparer ce modèle, sans modifier
@@ -76,8 +67,5 @@ encore le DPS affiché.
 | héros | arme | compétence | catégorie | touche | dégâts % | mesure (s) |
 |---|---|---|---|---|---|---|
 | ban | Espadon | Impact percutant | Compétence de relève | 1 à 4 | 134 |  |
-| khala | Épées doubles | Crochet tranchant | Compétence de relève | 1 à 4 | 131 |  |
 | ban | Nunchaku | Frappe en chaîne | Compétence de relève | 1 à 4 | 125 |  |
 | ban | Gantelets | Frappe en embuscade | Compétence de relève | 1 à 4 | 87 |  |
-| khala | Nunchaku | Piqué de l'hirondelle | Compétence de relève | 1 à 4 | 87 |  |
-| khala | Gantelets | Bombardement | Compétence de relève | 1 à 4 | 85 |  |

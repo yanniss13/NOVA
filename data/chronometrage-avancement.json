@@ -4,39 +4,12 @@
   "docs/chronometrage-animations.md. Ne pas editer a la main.",
   "Les mesures se saisissent dans data/animations-mesurees.json."
  ],
- "total": 37,
+ "total": 25,
  "mesurees": 0,
- "debloquent": 3,
- "affinent": 28,
- "releves": 6,
+ "debloquent": 0,
+ "affinent": 22,
+ "releves": 3,
  "prochaines": [
-  {
-   "gameId": "calla_sworddual_normalatk_1",
-   "heros": "khala",
-   "arme": "Épées doubles",
-   "nom": "Double tranchant",
-   "categorie": "Attaque normale",
-   "touche": "clic gauche",
-   "role": "debloque"
-  },
-  {
-   "gameId": "calla_gauntlets_normalatk_1",
-   "heros": "khala",
-   "arme": "Gantelets",
-   "nom": "Rafale explosive",
-   "categorie": "Attaque normale",
-   "touche": "clic gauche",
-   "role": "debloque"
-  },
-  {
-   "gameId": "calla_cudgel3c_normalatk_1",
-   "heros": "khala",
-   "arme": "Nunchaku",
-   "nom": "Fauchage du vent",
-   "categorie": "Attaque normale",
-   "touche": "clic gauche",
-   "role": "debloque"
-  },
   {
    "gameId": "diane_gauntlets_skill_rmb_1",
    "heros": "diane",
@@ -53,6 +26,33 @@
    "nom": "Perforation divine",
    "categorie": "Attaque spéciale",
    "touche": "Q",
+   "role": "affine"
+  },
+  {
+   "gameId": "ban_cudgel3c_skill_r",
+   "heros": "ban",
+   "arme": "Nunchaku",
+   "nom": "Chasse du Renard",
+   "categorie": "Attaque ultime",
+   "touche": "R",
+   "role": "affine"
+  },
+  {
+   "gameId": "ban_gauntlets_skill_r",
+   "heros": "ban",
+   "arme": "Gantelets",
+   "nom": "Explosion obscure",
+   "categorie": "Attaque ultime",
+   "touche": "R",
+   "role": "affine"
+  },
+  {
+   "gameId": "guila_shield_skill_q",
+   "heros": "guila",
+   "arme": "Épée & bouclier",
+   "nom": "Explosion resplendissante",
+   "categorie": "Attaque ultime",
+   "touche": "R",
    "role": "affine"
   }
  ]

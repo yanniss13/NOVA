@@ -12,7 +12,8 @@
   "tirs     : FireList — instants de lancement de projectile.",
   "fenetres : instants d ouverture des fenetres d annulation, lus dans les",
   "           marqueurs du montage. Absent de la table officielle.",
-  "La table couvre aussi les monstres et les PNJ, pas seulement les heros."
+  "La table couvre aussi les monstres et les PNJ, pas seulement les heros.",
+  "Actions `calla_*` : build 25436067, ecrites par fusionner.js --seulement=calla."
  ],
  "_unite": "secondes",
  "_build": "1.8.1.2",
@@ -121877,6 +121878,3676 @@
    },
    "nom": "Burning Blow",
    "coupsDepot": 2
+  },
+  "calla_common_avoidanceskill": {
+   "montage": "Calla_Moving_Dash_MTG",
+   "duree": 1.733,
+   "action": 1.733,
+   "impacts": [],
+   "superArmor": [
+    [
+     0,
+     1,
+     true,
+     0,
+     false
+    ]
+   ]
+  },
+  "calla_common_justavoidanceskill": {
+   "montage": "Calla_Moving_JustDash_MTG",
+   "duree": 1.733,
+   "action": 1.733,
+   "impacts": []
+  },
+  "calla_cudgel3c_jumpatk": {
+   "montage": "Calla_Cudgel3c_JumpAtk_MTG",
+   "duree": 1.3,
+   "action": 1.3,
+   "impacts": [
+    0
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.3
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.3
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 1.3
+    },
+    "normalAttack": {
+     "debut": 0.035,
+     "fin": 1.3
+    },
+    "tagOut": {
+     "debut": 0.036,
+     "fin": 1.3
+    },
+    "movement": {
+     "debut": 0.037,
+     "fin": 1.3
+    }
+   }
+  },
+  "calla_cudgel3c_normalatk_1": {
+   "montage": "Calla_Cudgel3c_NormalAtk_1_MTG",
+   "duree": 2.2,
+   "action": 2.2,
+   "impacts": [
+    0.1,
+    0.281
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.2
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.2
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.2
+    },
+    "normalAttack": {
+     "debut": 0.1,
+     "fin": 2.2
+    },
+    "tagOut": {
+     "debut": 0.279,
+     "fin": 2.2
+    },
+    "movement": {
+     "debut": 0.279,
+     "fin": 2.2
+    }
+   },
+   "nom": "Gale Sweep",
+   "coupsDepot": null
+  },
+  "calla_cudgel3c_normalatk_2": {
+   "montage": "Calla_Cudgel3c_NormalAtk_2_MTG",
+   "duree": 1.567,
+   "action": 1.567,
+   "impacts": [
+    0.061,
+    0.135,
+    0.206
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.567
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.567
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 1.567
+    },
+    "normalAttack": {
+     "debut": 0.133,
+     "fin": 1.567
+    },
+    "movement": {
+     "debut": 0.39,
+     "fin": 1.567
+    },
+    "tagOut": {
+     "debut": 0.39,
+     "fin": 1.567
+    }
+   }
+  },
+  "calla_cudgel3c_normalatk_3": {
+   "montage": "Calla_Cudgel3c_NormalAtk_3_MTG",
+   "duree": 2.633,
+   "action": 2.633,
+   "impacts": [
+    0.287,
+    0.345,
+    0.417,
+    0.489,
+    0.58,
+    0.71
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.633
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.633
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.633
+    },
+    "normalAttack": {
+     "debut": 0.834,
+     "fin": 2.633
+    },
+    "movement": {
+     "debut": 0.854,
+     "fin": 2.633
+    },
+    "tagOut": {
+     "debut": 0.857,
+     "fin": 2.633
+    }
+   }
+  },
+  "calla_cudgel3c_normalatk_4": {
+   "montage": "Calla_Cudgel3c_NormalAtk_4_MTG",
+   "duree": 2.667,
+   "action": 2.667,
+   "impacts": [
+    0.073,
+    0.19,
+    0.356,
+    0.461,
+    0.578
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.673
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.667
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.667
+    },
+    "normalAttack": {
+     "debut": 0.674,
+     "fin": 2.667
+    },
+    "movement": {
+     "debut": 0.676,
+     "fin": 2.667
+    },
+    "tagOut": {
+     "debut": 0.681,
+     "fin": 2.667
+    }
+   }
+  },
+  "calla_cudgel3c_skill_e_end": {
+   "montage": "Calla_Cudgel3c_Skill_E_End_MTG",
+   "duree": 2.799,
+   "action": 2.799,
+   "impacts": [
+    0.332
+   ],
+   "superArmor": [
+    [
+     0,
+     2.79882,
+     false,
+     0,
+     true,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "montageNonConfirme": 2.733
+  },
+  "calla_cudgel3c_skill_e_start": {
+   "montage": "Calla_Cudgel3c_Skill_E_Start_MTG",
+   "duree": 2.838,
+   "action": 2.838,
+   "impacts": [
+    0.144,
+    0.489,
+    0.601,
+    0.759,
+    0.89,
+    1.004,
+    1.108,
+    1.208,
+    1.308,
+    1.408,
+    1.508,
+    1.608,
+    1.708,
+    1.808,
+    1.908,
+    2.008,
+    2.108,
+    2.208,
+    2.308,
+    2.408,
+    2.508,
+    2.608,
+    2.708,
+    2.808
+   ],
+   "superArmor": [
+    [
+     0,
+     2.83796,
+     false,
+     0,
+     true,
+     false
+    ],
+    [
+     -1.10462,
+     2.83796,
+     false,
+     0,
+     true,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "montageNonConfirme": 3,
+   "nom": "Whirlwind",
+   "coupsDepot": null
+  },
+  "calla_cudgel3c_skill_q": {
+   "montage": "Calla_Cudgel3c_Skill_Q_MTG",
+   "duree": 2.6,
+   "action": 2.6,
+   "impacts": [],
+   "tirs": [
+    0.599
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.6
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.6
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.6
+    },
+    "normalAttack": {
+     "debut": 0.601,
+     "fin": 2.6
+    },
+    "movement": {
+     "debut": 0.601,
+     "fin": 2.6
+    },
+    "tagOut": {
+     "debut": 0.602,
+     "fin": 2.6
+    }
+   },
+   "nom": "Windmill",
+   "coupsDepot": null
+  },
+  "calla_cudgel3c_skill_r": {
+   "montage": "Calla_Cudgel3c_Skill_R_MTG",
+   "duree": 5.367,
+   "action": 5.367,
+   "impacts": [
+    1.82,
+    1.985,
+    2.081,
+    2.188,
+    2.28,
+    2.34,
+    2.41,
+    2.52,
+    2.61,
+    2.72,
+    2.79,
+    2.85,
+    2.95,
+    3.05,
+    3.15,
+    3.22,
+    3.734
+   ],
+   "superArmor": [
+    [
+     0,
+     5.36667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 4.034,
+     "fin": 5.367
+    },
+    "jump": {
+     "debut": 4.035,
+     "fin": 5.367
+    },
+    "avoidance": {
+     "debut": 4.035,
+     "fin": 5.367
+    },
+    "normalAttack": {
+     "debut": 4.036,
+     "fin": 5.367
+    },
+    "movement": {
+     "debut": 4.037,
+     "fin": 5.367
+    },
+    "tagOut": {
+     "debut": 4.037,
+     "fin": 5.367
+    }
+   },
+   "nom": "Gale Snare",
+   "coupsDepot": null
+  },
+  "calla_cudgel3c_skill_tag": {
+   "montage": "Calla_Cudgel3c_Skill_Tag_MTG",
+   "duree": 2.267,
+   "action": 2.267,
+   "impacts": [
+    0.347,
+    0.402
+   ],
+   "superArmor": [
+    [
+     0,
+     0.4,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0.4,
+     "fin": 2.267
+    },
+    "avoidance": {
+     "debut": 0.4,
+     "fin": 2.267
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 2.267
+    },
+    "movement": {
+     "debut": 0.45,
+     "fin": 2.267
+    },
+    "normalAttack": {
+     "debut": 0.45,
+     "fin": 2.267
+    },
+    "tagOut": {
+     "debut": 0.45,
+     "fin": 2.267
+    }
+   },
+   "nom": "Swallow Dive",
+   "coupsDepot": null
+  },
+  "calla_gauntlets_jumpatk": {
+   "montage": "Calla_Gauntlets_JumpAtk_MTG",
+   "duree": 1.367,
+   "action": 1.367,
+   "impacts": [
+    0.07
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0.002,
+     "fin": 1.367
+    },
+    "avoidance": {
+     "debut": 0.002,
+     "fin": 1.367
+    },
+    "jump": {
+     "debut": 0.25,
+     "fin": 1.367
+    },
+    "movement": {
+     "debut": 0.3,
+     "fin": 1.367
+    },
+    "normalAttack": {
+     "debut": 0.3,
+     "fin": 1.367
+    },
+    "tagOut": {
+     "debut": 0.3,
+     "fin": 1.367
+    }
+   }
+  },
+  "calla_gauntlets_normalatk_1": {
+   "montage": "Calla_Gauntlets_NormalAtk_1_MTG",
+   "duree": 2.5,
+   "action": 2.5,
+   "impacts": [
+    0.27
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "normalAttack": {
+     "debut": 0.2,
+     "fin": 2.5
+    },
+    "movement": {
+     "debut": 0.433,
+     "fin": 2.5
+    },
+    "tagOut": {
+     "debut": 0.433,
+     "fin": 2.5
+    }
+   },
+   "nom": "Combo Blast",
+   "coupsDepot": null
+  },
+  "calla_gauntlets_normalatk_2": {
+   "montage": "Calla_Gauntlets_NormalAtk_2_MTG",
+   "duree": 2.067,
+   "action": 2.067,
+   "impacts": [],
+   "tirs": [
+    0.25,
+    0.282,
+    0.324,
+    0.363,
+    0.4
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.067
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.067
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.067
+    },
+    "normalAttack": {
+     "debut": 0.271,
+     "fin": 2.067
+    },
+    "movement": {
+     "debut": 0.567,
+     "fin": 2.067
+    },
+    "tagOut": {
+     "debut": 0.567,
+     "fin": 2.067
+    }
+   }
+  },
+  "calla_gauntlets_normalatk_3": {
+   "montage": "Calla_Gauntlets_NormalAtk_3_MTG",
+   "duree": 1.7,
+   "action": 1.7,
+   "impacts": [
+    0.211,
+    0.523,
+    0.571,
+    0.611,
+    0.674
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.7
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.7
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 1.7
+    },
+    "normalAttack": {
+     "debut": 0.6,
+     "fin": 1.7
+    },
+    "movement": {
+     "debut": 1,
+     "fin": 1.7
+    },
+    "tagOut": {
+     "debut": 1,
+     "fin": 1.7
+    }
+   }
+  },
+  "calla_gauntlets_normalatk_4": {
+   "montage": "Calla_Gauntlets_NormalAtk_4_MTG",
+   "duree": 1.867,
+   "action": 1.867,
+   "impacts": [
+    0.7
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.867
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.867
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 1.867
+    },
+    "normalAttack": {
+     "debut": 1.31,
+     "fin": 1.867
+    },
+    "movement": {
+     "debut": 1.333,
+     "fin": 1.867
+    },
+    "tagOut": {
+     "debut": 1.333,
+     "fin": 1.867
+    }
+   }
+  },
+  "calla_gauntlets_skill_e": {
+   "montage": "Calla_Gauntlets_Skill_E_MTG",
+   "duree": 2.1,
+   "action": 2.1,
+   "impacts": [
+    0.046,
+    0.3,
+    0.4,
+    0.57,
+    0.968
+   ],
+   "superArmor": [
+    [
+     0,
+     2.1,
+     false,
+     0,
+     true,
+     false
+    ]
+   ],
+   "tirs": [
+    1.44
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.1
+    },
+    "normalAttack": {
+     "debut": 1.44,
+     "fin": 2.1
+    },
+    "movement": {
+     "debut": 1.44,
+     "fin": 2.1
+    },
+    "tagOut": {
+     "debut": 1.44,
+     "fin": 2.1
+    }
+   },
+   "nom": "Hook Blast",
+   "coupsDepot": null
+  },
+  "calla_gauntlets_skill_q_1": {
+   "montage": "Calla_Gauntlets_Skill_Q_1_MTG",
+   "duree": 2.658,
+   "action": 2.658,
+   "impacts": [
+    0.605,
+    0.605
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "montageNonConfirme": 3.033,
+   "nom": "Impact Mine",
+   "coupsDepot": null
+  },
+  "calla_gauntlets_skill_q_2": {
+   "montage": "Calla_Gauntlets_Skill_Q_2_MTG",
+   "duree": 2.233,
+   "action": 2.233,
+   "impacts": [
+    0.298,
+    0.52
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.233
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.233
+    },
+    "activeSkill": {
+     "debut": 0.546,
+     "fin": 2.233
+    },
+    "normalAttack": {
+     "debut": 0.8,
+     "fin": 2.233
+    },
+    "movement": {
+     "debut": 0.8,
+     "fin": 2.233
+    },
+    "tagOut": {
+     "debut": 0.8,
+     "fin": 2.233
+    }
+   }
+  },
+  "calla_gauntlets_skill_r": {
+   "montage": "Calla_Gauntlets_Skill_R_MTG",
+   "duree": 5.2,
+   "action": 5.2,
+   "impacts": [
+    2.04
+   ],
+   "superArmor": [
+    [
+     0,
+     5.2,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2.023,
+     "fin": 5.2
+    },
+    "avoidance": {
+     "debut": 2.023,
+     "fin": 5.2
+    },
+    "jump": {
+     "debut": 2.023,
+     "fin": 5.2
+    },
+    "movement": {
+     "debut": 3.79,
+     "fin": 5.2
+    },
+    "normalAttack": {
+     "debut": 3.79,
+     "fin": 5.2
+    },
+    "tagOut": {
+     "debut": 3.79,
+     "fin": 5.2
+    }
+   },
+   "nom": "Blast Top",
+   "coupsDepot": null
+  },
+  "calla_gauntlets_skill_tag": {
+   "montage": "Calla_Gauntlets_Skill_Tag_MTG",
+   "duree": 2,
+   "action": 2,
+   "impacts": [
+    0.673
+   ],
+   "superArmor": [
+    [
+     0,
+     0.766276,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0.673,
+     "fin": 2
+    },
+    "avoidance": {
+     "debut": 0.673,
+     "fin": 2.006
+    },
+    "jump": {
+     "debut": 0.673,
+     "fin": 2.006
+    },
+    "tagOut": {
+     "debut": 0.706,
+     "fin": 2.006
+    },
+    "normalAttack": {
+     "debut": 0.708,
+     "fin": 2.006
+    },
+    "movement": {
+     "debut": 0.708,
+     "fin": 2.006
+    }
+   },
+   "nom": "Bomb Drop",
+   "coupsDepot": null
+  },
+  "calla_sworddual_jumpatk": {
+   "montage": "Calla_SwordDual_JumpAtk_MTG",
+   "duree": 1.2,
+   "action": 1.2,
+   "impacts": [
+    0.033
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.2
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.2
+    },
+    "normalAttack": {
+     "debut": 0.268,
+     "fin": 1.2
+    },
+    "movement": {
+     "debut": 0.268,
+     "fin": 1.2
+    },
+    "jump": {
+     "debut": 0.533,
+     "fin": 1.2
+    },
+    "tagOut": {
+     "debut": 0.533,
+     "fin": 1.2
+    }
+   }
+  },
+  "calla_sworddual_normalatk_1": {
+   "montage": "Calla_SwordDual_NormalAtk_1_MTG",
+   "duree": 2.767,
+   "action": 2.767,
+   "impacts": [
+    0.11,
+    0.3
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "normalAttack": {
+     "debut": 0.138,
+     "fin": 2.767
+    },
+    "movement": {
+     "debut": 0.33,
+     "fin": 2.767
+    },
+    "tagOut": {
+     "debut": 0.33,
+     "fin": 2.767
+    }
+   },
+   "nom": "Twin Edge",
+   "coupsDepot": null
+  },
+  "calla_sworddual_normalatk_1_enchant": {
+   "montage": "Calla_SwordDual_NormalAtk_1_MTG",
+   "duree": 2.767,
+   "action": 2.767,
+   "impacts": [
+    0.11,
+    0.3
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "normalAttack": {
+     "debut": 0.138,
+     "fin": 2.767
+    },
+    "movement": {
+     "debut": 0.33,
+     "fin": 2.767
+    },
+    "tagOut": {
+     "debut": 0.33,
+     "fin": 2.767
+    }
+   }
+  },
+  "calla_sworddual_normalatk_2": {
+   "montage": "Calla_SwordDual_NormalAtk_2_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0.07,
+    0.14,
+    0.333,
+    0.367,
+    0.4,
+    0.71,
+    0.75
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.5,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.75,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.75,
+     "fin": 3.1
+    }
+   }
+  },
+  "calla_sworddual_normalatk_2_enchant": {
+   "montage": "Calla_SwordDual_NormalAtk_2_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0.07,
+    0.14,
+    0.333,
+    0.367,
+    0.4,
+    0.71,
+    0.75
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.5,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.75,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.75,
+     "fin": 3.1
+    }
+   }
+  },
+  "calla_sworddual_normalatk_3": {
+   "montage": "Calla_SwordDual_NormalAtk_3_MTG",
+   "duree": 3,
+   "action": 3,
+   "impacts": [
+    0.033,
+    0.2,
+    0.333,
+    0.44
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3
+    },
+    "normalAttack": {
+     "debut": 0.2,
+     "fin": 3
+    },
+    "movement": {
+     "debut": 0.45,
+     "fin": 3
+    },
+    "tagOut": {
+     "debut": 0.45,
+     "fin": 3
+    }
+   }
+  },
+  "calla_sworddual_normalatk_3_enchant": {
+   "montage": "Calla_SwordDual_NormalAtk_3_MTG",
+   "duree": 3,
+   "action": 3,
+   "impacts": [
+    0.033,
+    0.2,
+    0.333,
+    0.44
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3
+    },
+    "normalAttack": {
+     "debut": 0.2,
+     "fin": 3
+    },
+    "movement": {
+     "debut": 0.45,
+     "fin": 3
+    },
+    "tagOut": {
+     "debut": 0.45,
+     "fin": 3
+    }
+   }
+  },
+  "calla_sworddual_normalatk_4": {
+   "montage": "Calla_SwordDual_NormalAtk_4_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0.033,
+    0.133,
+    0.233,
+    0.333,
+    0.433
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.333,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.44,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.44,
+     "fin": 3.1
+    }
+   }
+  },
+  "calla_sworddual_normalatk_4_enchant": {
+   "montage": "Calla_SwordDual_NormalAtk_4_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0.033,
+    0.133,
+    0.233,
+    0.333,
+    0.433
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.333,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.44,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.44,
+     "fin": 3.1
+    }
+   }
+  },
+  "calla_sworddual_normalatk_5": {
+   "montage": "Calla_SwordDual_NormalAtk_5_MTG",
+   "duree": 3.7,
+   "action": 3.7,
+   "impacts": [],
+   "tirs": [
+    0.43
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "normalAttack": {
+     "debut": 0.497,
+     "fin": 3.7
+    },
+    "movement": {
+     "debut": 0.533,
+     "fin": 3.7
+    },
+    "tagOut": {
+     "debut": 0.533,
+     "fin": 3.7
+    }
+   }
+  },
+  "calla_sworddual_normalatk_5_enchant": {
+   "montage": "Calla_SwordDual_NormalAtk_5_MTG",
+   "duree": 3.7,
+   "action": 3.7,
+   "impacts": [],
+   "tirs": [
+    0.43
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "normalAttack": {
+     "debut": 0.497,
+     "fin": 3.7
+    },
+    "movement": {
+     "debut": 0.533,
+     "fin": 3.7
+    },
+    "tagOut": {
+     "debut": 0.533,
+     "fin": 3.7
+    }
+   }
+  },
+  "calla_sworddual_skill_e": {
+   "montage": "Calla_SwordDual_Skill_E_MTG",
+   "duree": 3.833,
+   "action": 3.833,
+   "impacts": [],
+   "tirs": [
+    0.15,
+    0.15,
+    0.15,
+    0.287,
+    0.287,
+    0.287,
+    0.421,
+    0.421,
+    0.421,
+    0.702,
+    0.702,
+    0.702
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.833
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.833
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.833
+    },
+    "normalAttack": {
+     "debut": 1.401,
+     "fin": 3.833
+    },
+    "movement": {
+     "debut": 1.401,
+     "fin": 3.833
+    },
+    "tagOut": {
+     "debut": 1.401,
+     "fin": 3.833
+    }
+   },
+   "nom": "Blade Volley",
+   "coupsDepot": null
+  },
+  "calla_sworddual_skill_e_enchant": {
+   "montage": "Calla_SwordDual_Skill_E_Enchant_MTG",
+   "duree": 3.3,
+   "action": 3.3,
+   "impacts": [
+    0.2,
+    0.48,
+    0.64,
+    1,
+    1.167,
+    1.287,
+    1.433
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.3
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.305
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.31
+    },
+    "movement": {
+     "debut": 1.481,
+     "fin": 3.3
+    },
+    "normalAttack": {
+     "debut": 1.491,
+     "fin": 3.305
+    },
+    "tagOut": {
+     "debut": 1.494,
+     "fin": 3.3
+    }
+   }
+  },
+  "calla_sworddual_skill_q": {
+   "montage": "Calla_SwordDual_Skill_Q_MTG",
+   "duree": 3.367,
+   "action": 3.367,
+   "impacts": [
+    0.22,
+    0.28
+   ],
+   "tirs": [
+    0.86
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.372
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "movement": {
+     "debut": 1.05,
+     "fin": 3.367
+    },
+    "normalAttack": {
+     "debut": 1.05,
+     "fin": 3.367
+    },
+    "tagOut": {
+     "debut": 1.05,
+     "fin": 3.367
+    }
+   },
+   "nom": "Mirror Dive",
+   "coupsDepot": null
+  },
+  "calla_sworddual_skill_q_enchant": {
+   "montage": "Calla_SwordDual_Skill_Q_Enchant_MTG",
+   "duree": 2.8,
+   "action": 2.8,
+   "impacts": [],
+   "tirs": [
+    0.6
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.8
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.8
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.8
+    },
+    "movement": {
+     "debut": 1.33,
+     "fin": 2.8
+    },
+    "normalAttack": {
+     "debut": 1.33,
+     "fin": 2.8
+    },
+    "tagOut": {
+     "debut": 1.33,
+     "fin": 2.8
+    }
+   }
+  },
+  "calla_sworddual_skill_q_enchant_hitchange": {
+   "montage": "Calla_SwordDual_Skill_Q_Enchant_HitChange_MTG",
+   "duree": 3.333,
+   "action": 3.333,
+   "impacts": [
+    0.433
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "jump": {
+     "debut": 0.5,
+     "fin": 3.333
+    },
+    "movement": {
+     "debut": 0.533,
+     "fin": 3.333
+    },
+    "normalAttack": {
+     "debut": 0.537,
+     "fin": 3.337
+    },
+    "tagOut": {
+     "debut": 0.67,
+     "fin": 3.337
+    }
+   }
+  },
+  "calla_sworddual_skill_r": {
+   "montage": "Calla_SwordDual_Skill_R_MTG",
+   "duree": 3.433,
+   "action": 3.433,
+   "impacts": [
+    0.001
+   ],
+   "superArmor": [
+    [
+     0,
+     3.43333,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2,
+     "fin": 3.433
+    },
+    "avoidance": {
+     "debut": 2,
+     "fin": 3.433
+    },
+    "jump": {
+     "debut": 2,
+     "fin": 3.433
+    },
+    "movement": {
+     "debut": 2.05,
+     "fin": 3.433
+    },
+    "normalAttack": {
+     "debut": 2.05,
+     "fin": 3.433
+    },
+    "tagOut": {
+     "debut": 2.05,
+     "fin": 3.433
+    }
+   },
+   "nom": "Mirror Arsenal",
+   "coupsDepot": null
+  },
+  "calla_sworddual_skill_r_enchant": {
+   "montage": "Calla_SwordDual_Skill_R_Enchant_MTG",
+   "duree": 4.867,
+   "action": 4.867,
+   "impacts": [
+    1.86
+   ],
+   "superArmor": [
+    [
+     0,
+     4.86667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2,
+     "fin": 4.867
+    },
+    "avoidance": {
+     "debut": 2.009,
+     "fin": 4.876
+    },
+    "jump": {
+     "debut": 2.009,
+     "fin": 4.876
+    },
+    "movement": {
+     "debut": 2.05,
+     "fin": 4.867
+    },
+    "normalAttack": {
+     "debut": 2.05,
+     "fin": 4.867
+    },
+    "tagOut": {
+     "debut": 2.05,
+     "fin": 4.867
+    }
+   }
+  },
+  "calla_sworddual_skill_tag": {
+   "montage": "Calla_SwordDual_Skill_Tag_MTG",
+   "duree": 3.667,
+   "action": 3.667,
+   "impacts": [
+    0.033,
+    0.133,
+    0.235,
+    0.3,
+    0.334,
+    1
+   ],
+   "superArmor": [
+    [
+     0,
+     1,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0.7,
+     "fin": 3.667
+    },
+    "avoidance": {
+     "debut": 0.7,
+     "fin": 3.667
+    },
+    "jump": {
+     "debut": 0.7,
+     "fin": 3.667
+    },
+    "movement": {
+     "debut": 1,
+     "fin": 3.667
+    },
+    "normalAttack": {
+     "debut": 1,
+     "fin": 3.667
+    },
+    "tagOut": {
+     "debut": 1,
+     "fin": 3.667
+    }
+   },
+   "nom": "Hook Slash",
+   "coupsDepot": null
+  },
+  "grade_10_calla_cudgel3c_skill_e_end": {
+   "montage": "Calla_Cudgel3c_Skill_E_End_MTG",
+   "duree": 2.799,
+   "action": 2.799,
+   "impacts": [
+    0.332
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "montageNonConfirme": 2.733
+  },
+  "grade_10_calla_cudgel3c_skill_e_start": {
+   "montage": "Calla_Cudgel3c_Skill_E_Start_G7_MTG",
+   "duree": 2.838,
+   "action": 2.838,
+   "impacts": [
+    0.144,
+    0.489,
+    0.601,
+    0.759,
+    0.89,
+    1.004,
+    1.108,
+    1.208,
+    1.308,
+    1.408,
+    1.508,
+    1.608,
+    1.708,
+    1.808,
+    1.908,
+    2.008,
+    2.108,
+    2.208,
+    2.308,
+    2.408,
+    2.508,
+    2.608,
+    2.708,
+    2.808
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "montageNonConfirme": 3
+  },
+  "grade_10_calla_cudgel3c_skill_tag": {
+   "montage": "Calla_Cudgel3c_Skill_Tag_MTG",
+   "duree": 2.267,
+   "action": 2.267,
+   "impacts": [
+    0.347,
+    0.402
+   ],
+   "superArmor": [
+    [
+     0,
+     0.4,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0.4,
+     "fin": 2.267
+    },
+    "avoidance": {
+     "debut": 0.4,
+     "fin": 2.267
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 2.267
+    },
+    "movement": {
+     "debut": 0.45,
+     "fin": 2.267
+    },
+    "normalAttack": {
+     "debut": 0.45,
+     "fin": 2.267
+    },
+    "tagOut": {
+     "debut": 0.45,
+     "fin": 2.267
+    }
+   }
+  },
+  "grade_10_calla_gauntlets_skill_e": {
+   "montage": "Calla_Gauntlets_Skill_E_G7_MTG",
+   "duree": 2.1,
+   "action": 2.1,
+   "impacts": [
+    0.046,
+    0.3,
+    0.4,
+    0.57,
+    0.968
+   ],
+   "superArmor": [
+    [
+     0,
+     2.1,
+     false,
+     0,
+     true,
+     false
+    ]
+   ],
+   "tirs": [
+    1.44,
+    1.44,
+    1.44
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.1
+    },
+    "normalAttack": {
+     "debut": 1.44,
+     "fin": 2.1
+    },
+    "movement": {
+     "debut": 1.44,
+     "fin": 2.1
+    },
+    "tagOut": {
+     "debut": 1.44,
+     "fin": 2.1
+    }
+   }
+  },
+  "grade_10_calla_sworddual_skill_r": {
+   "montage": "Calla_SwordDual_Skill_R_MTG",
+   "duree": 3.433,
+   "action": 3.433,
+   "impacts": [
+    0.001
+   ],
+   "superArmor": [
+    [
+     0,
+     3.43333,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2,
+     "fin": 3.433
+    },
+    "avoidance": {
+     "debut": 2,
+     "fin": 3.433
+    },
+    "jump": {
+     "debut": 2,
+     "fin": 3.433
+    },
+    "movement": {
+     "debut": 2.05,
+     "fin": 3.433
+    },
+    "normalAttack": {
+     "debut": 2.05,
+     "fin": 3.433
+    },
+    "tagOut": {
+     "debut": 2.05,
+     "fin": 3.433
+    }
+   }
+  },
+  "grade_10_calla_sworddual_skill_r_enchant": {
+   "montage": "Calla_SwordDual_Skill_R_Enchant_MTG",
+   "duree": 4.867,
+   "action": 4.867,
+   "impacts": [
+    1.86
+   ],
+   "superArmor": [
+    [
+     0,
+     4.86667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2,
+     "fin": 4.867
+    },
+    "avoidance": {
+     "debut": 2.009,
+     "fin": 4.876
+    },
+    "jump": {
+     "debut": 2.009,
+     "fin": 4.876
+    },
+    "movement": {
+     "debut": 2.05,
+     "fin": 4.867
+    },
+    "normalAttack": {
+     "debut": 2.05,
+     "fin": 4.867
+    },
+    "tagOut": {
+     "debut": 2.05,
+     "fin": 4.867
+    }
+   }
+  },
+  "grade_2_calla_cudgel3c_skill_e_end": {
+   "montage": "Calla_Cudgel3c_Skill_E_End_MTG",
+   "duree": 2.799,
+   "action": 2.799,
+   "impacts": [
+    0.332
+   ],
+   "superArmor": [
+    [
+     0,
+     2.79882,
+     false,
+     0,
+     true,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "montageNonConfirme": 2.733
+  },
+  "grade_2_calla_cudgel3c_skill_e_start": {
+   "montage": "Calla_Cudgel3c_Skill_E_Start_MTG",
+   "duree": 2.838,
+   "action": 2.838,
+   "impacts": [
+    0.144,
+    0.489,
+    0.601,
+    0.759,
+    0.89,
+    1.004,
+    1.108,
+    1.208,
+    1.308,
+    1.408,
+    1.508,
+    1.608,
+    1.708,
+    1.808,
+    1.908,
+    2.008,
+    2.108,
+    2.208,
+    2.308,
+    2.408,
+    2.508,
+    2.608,
+    2.708,
+    2.808
+   ],
+   "superArmor": [
+    [
+     0,
+     2.83796,
+     false,
+     0,
+     true,
+     false
+    ],
+    [
+     -1.10462,
+     2.83796,
+     false,
+     0,
+     true,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "montageNonConfirme": 3
+  },
+  "grade_2_calla_gauntlets_normalatk_1": {
+   "montage": "Calla_Gauntlets_NormalAtk_1_MTG",
+   "duree": 2.5,
+   "action": 2.5,
+   "impacts": [
+    0.27
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "normalAttack": {
+     "debut": 0.2,
+     "fin": 2.5
+    },
+    "movement": {
+     "debut": 0.433,
+     "fin": 2.5
+    },
+    "tagOut": {
+     "debut": 0.433,
+     "fin": 2.5
+    }
+   }
+  },
+  "grade_2_calla_gauntlets_normalatk_2": {
+   "montage": "Calla_Gauntlets_NormalAtk_2_MTG",
+   "duree": 2.067,
+   "action": 2.067,
+   "impacts": [],
+   "tirs": [
+    0.25,
+    0.282,
+    0.324,
+    0.363,
+    0.4
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.067
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.067
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.067
+    },
+    "normalAttack": {
+     "debut": 0.271,
+     "fin": 2.067
+    },
+    "movement": {
+     "debut": 0.567,
+     "fin": 2.067
+    },
+    "tagOut": {
+     "debut": 0.567,
+     "fin": 2.067
+    }
+   }
+  },
+  "grade_2_calla_gauntlets_normalatk_3": {
+   "montage": "Calla_Gauntlets_NormalAtk_3_MTG",
+   "duree": 1.7,
+   "action": 1.7,
+   "impacts": [
+    0.211,
+    0.523,
+    0.571,
+    0.611,
+    0.674
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.7
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.7
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 1.7
+    },
+    "normalAttack": {
+     "debut": 0.6,
+     "fin": 1.7
+    },
+    "movement": {
+     "debut": 1,
+     "fin": 1.7
+    },
+    "tagOut": {
+     "debut": 1,
+     "fin": 1.7
+    }
+   }
+  },
+  "grade_2_calla_gauntlets_normalatk_4": {
+   "montage": "Calla_Gauntlets_NormalAtk_4_MTG",
+   "duree": 1.867,
+   "action": 1.867,
+   "impacts": [
+    0.7
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.867
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.867
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 1.867
+    },
+    "normalAttack": {
+     "debut": 1.31,
+     "fin": 1.867
+    },
+    "movement": {
+     "debut": 1.333,
+     "fin": 1.867
+    },
+    "tagOut": {
+     "debut": 1.333,
+     "fin": 1.867
+    }
+   }
+  },
+  "grade_2_calla_sworddual_normalatk_1": {
+   "montage": "Calla_SwordDual_NormalAtk_1_MTG",
+   "duree": 2.767,
+   "action": 2.767,
+   "impacts": [
+    0.11,
+    0.3
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "normalAttack": {
+     "debut": 0.138,
+     "fin": 2.767
+    },
+    "movement": {
+     "debut": 0.33,
+     "fin": 2.767
+    },
+    "tagOut": {
+     "debut": 0.33,
+     "fin": 2.767
+    }
+   }
+  },
+  "grade_2_calla_sworddual_normalatk_1_enchant": {
+   "montage": "Calla_SwordDual_NormalAtk_1_MTG",
+   "duree": 2.767,
+   "action": 2.767,
+   "impacts": [
+    0.11,
+    0.3
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "normalAttack": {
+     "debut": 0.138,
+     "fin": 2.767
+    },
+    "movement": {
+     "debut": 0.33,
+     "fin": 2.767
+    },
+    "tagOut": {
+     "debut": 0.33,
+     "fin": 2.767
+    }
+   }
+  },
+  "grade_2_calla_sworddual_normalatk_2": {
+   "montage": "Calla_SwordDual_NormalAtk_2_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0.07,
+    0.14,
+    0.333,
+    0.367,
+    0.4,
+    0.71,
+    0.75
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.5,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.75,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.75,
+     "fin": 3.1
+    }
+   }
+  },
+  "grade_2_calla_sworddual_normalatk_2_enchant": {
+   "montage": "Calla_SwordDual_NormalAtk_2_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0.07,
+    0.14,
+    0.333,
+    0.367,
+    0.4,
+    0.71,
+    0.75
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.5,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.75,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.75,
+     "fin": 3.1
+    }
+   }
+  },
+  "grade_2_calla_sworddual_normalatk_3": {
+   "montage": "Calla_SwordDual_NormalAtk_3_MTG",
+   "duree": 3,
+   "action": 3,
+   "impacts": [
+    0.033,
+    0.2,
+    0.333,
+    0.44
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3
+    },
+    "normalAttack": {
+     "debut": 0.2,
+     "fin": 3
+    },
+    "movement": {
+     "debut": 0.45,
+     "fin": 3
+    },
+    "tagOut": {
+     "debut": 0.45,
+     "fin": 3
+    }
+   }
+  },
+  "grade_2_calla_sworddual_normalatk_3_enchant": {
+   "montage": "Calla_SwordDual_NormalAtk_3_MTG",
+   "duree": 3,
+   "action": 3,
+   "impacts": [
+    0.033,
+    0.2,
+    0.333,
+    0.44
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3
+    },
+    "normalAttack": {
+     "debut": 0.2,
+     "fin": 3
+    },
+    "movement": {
+     "debut": 0.45,
+     "fin": 3
+    },
+    "tagOut": {
+     "debut": 0.45,
+     "fin": 3
+    }
+   }
+  },
+  "grade_2_calla_sworddual_normalatk_4": {
+   "montage": "Calla_SwordDual_NormalAtk_4_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0.033,
+    0.133,
+    0.233,
+    0.333,
+    0.433
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.333,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.44,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.44,
+     "fin": 3.1
+    }
+   }
+  },
+  "grade_2_calla_sworddual_normalatk_4_enchant": {
+   "montage": "Calla_SwordDual_NormalAtk_4_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0.033,
+    0.133,
+    0.233,
+    0.333,
+    0.433
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.333,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.44,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.44,
+     "fin": 3.1
+    }
+   }
+  },
+  "grade_2_calla_sworddual_normalatk_5": {
+   "montage": "Calla_SwordDual_NormalAtk_5_MTG",
+   "duree": 3.7,
+   "action": 3.7,
+   "impacts": [],
+   "tirs": [
+    0.43
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "normalAttack": {
+     "debut": 0.497,
+     "fin": 3.7
+    },
+    "movement": {
+     "debut": 0.533,
+     "fin": 3.7
+    },
+    "tagOut": {
+     "debut": 0.533,
+     "fin": 3.7
+    }
+   }
+  },
+  "grade_2_calla_sworddual_normalatk_5_enchant": {
+   "montage": "Calla_SwordDual_NormalAtk_5_MTG",
+   "duree": 3.7,
+   "action": 3.7,
+   "impacts": [],
+   "tirs": [
+    0.43
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "normalAttack": {
+     "debut": 0.497,
+     "fin": 3.7
+    },
+    "movement": {
+     "debut": 0.533,
+     "fin": 3.7
+    },
+    "tagOut": {
+     "debut": 0.533,
+     "fin": 3.7
+    }
+   }
+  },
+  "grade_4_calla_cudgel3c_skill_r": {
+   "montage": "Calla_Cudgel3c_Skill_R_MTG",
+   "duree": 5.367,
+   "action": 5.367,
+   "impacts": [
+    1.82,
+    1.985,
+    2.081,
+    2.188,
+    2.28,
+    2.34,
+    2.41,
+    2.52,
+    2.61,
+    2.72,
+    2.79,
+    2.85,
+    2.95,
+    3.05,
+    3.15,
+    3.22,
+    3.734
+   ],
+   "superArmor": [
+    [
+     0,
+     5.36667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 4.034,
+     "fin": 5.367
+    },
+    "jump": {
+     "debut": 4.035,
+     "fin": 5.367
+    },
+    "avoidance": {
+     "debut": 4.035,
+     "fin": 5.367
+    },
+    "normalAttack": {
+     "debut": 4.036,
+     "fin": 5.367
+    },
+    "movement": {
+     "debut": 4.037,
+     "fin": 5.367
+    },
+    "tagOut": {
+     "debut": 4.037,
+     "fin": 5.367
+    }
+   }
+  },
+  "grade_4_calla_gauntlets_skill_r": {
+   "montage": "Calla_Gauntlets_Skill_R_MTG",
+   "duree": 5.2,
+   "action": 5.2,
+   "impacts": [
+    2.04
+   ],
+   "superArmor": [
+    [
+     0,
+     5.2,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2.023,
+     "fin": 5.2
+    },
+    "avoidance": {
+     "debut": 2.023,
+     "fin": 5.2
+    },
+    "jump": {
+     "debut": 2.023,
+     "fin": 5.2
+    },
+    "movement": {
+     "debut": 3.79,
+     "fin": 5.2
+    },
+    "normalAttack": {
+     "debut": 3.79,
+     "fin": 5.2
+    },
+    "tagOut": {
+     "debut": 3.79,
+     "fin": 5.2
+    }
+   }
+  },
+  "grade_4_calla_sworddual_skill_r": {
+   "montage": "Calla_SwordDual_Skill_R_MTG",
+   "duree": 3.433,
+   "action": 3.433,
+   "impacts": [
+    0.001
+   ],
+   "superArmor": [
+    [
+     0,
+     3.43333,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2,
+     "fin": 3.433
+    },
+    "avoidance": {
+     "debut": 2,
+     "fin": 3.433
+    },
+    "jump": {
+     "debut": 2,
+     "fin": 3.433
+    },
+    "movement": {
+     "debut": 2.05,
+     "fin": 3.433
+    },
+    "normalAttack": {
+     "debut": 2.05,
+     "fin": 3.433
+    },
+    "tagOut": {
+     "debut": 2.05,
+     "fin": 3.433
+    }
+   }
+  },
+  "grade_4_calla_sworddual_skill_r_enchant": {
+   "montage": "Calla_SwordDual_Skill_R_Enchant_MTG",
+   "duree": 4.867,
+   "action": 4.867,
+   "impacts": [
+    1.86
+   ],
+   "superArmor": [
+    [
+     0,
+     4.86667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2,
+     "fin": 4.867
+    },
+    "avoidance": {
+     "debut": 2.009,
+     "fin": 4.876
+    },
+    "jump": {
+     "debut": 2.009,
+     "fin": 4.876
+    },
+    "movement": {
+     "debut": 2.05,
+     "fin": 4.867
+    },
+    "normalAttack": {
+     "debut": 2.05,
+     "fin": 4.867
+    },
+    "tagOut": {
+     "debut": 2.05,
+     "fin": 4.867
+    }
+   }
+  },
+  "grade_5_calla_cudgel3c_skill_q": {
+   "montage": "Calla_Cudgel3c_Skill_Q_G5_MTG",
+   "duree": 2.6,
+   "action": 2.6,
+   "impacts": [],
+   "tirs": [
+    0.599,
+    0.6,
+    0.61
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.6
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.6
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.6
+    },
+    "normalAttack": {
+     "debut": 0.601,
+     "fin": 2.6
+    },
+    "movement": {
+     "debut": 0.601,
+     "fin": 2.6
+    },
+    "tagOut": {
+     "debut": 0.602,
+     "fin": 2.6
+    }
+   }
+  },
+  "grade_5_calla_gauntlets_skill_q_1": {
+   "montage": "Calla_Gauntlets_Skill_Q_1_MTG",
+   "duree": 2.658,
+   "action": 2.658,
+   "impacts": [
+    0.605,
+    0.605
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "montageNonConfirme": 3.033
+  },
+  "grade_5_calla_gauntlets_skill_q_2": {
+   "montage": "Calla_Gauntlets_Skill_Q_2_MTG",
+   "duree": 2.233,
+   "action": 2.233,
+   "impacts": [
+    0.298,
+    0.52
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.233
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.233
+    },
+    "activeSkill": {
+     "debut": 0.546,
+     "fin": 2.233
+    },
+    "normalAttack": {
+     "debut": 0.8,
+     "fin": 2.233
+    },
+    "movement": {
+     "debut": 0.8,
+     "fin": 2.233
+    },
+    "tagOut": {
+     "debut": 0.8,
+     "fin": 2.233
+    }
+   }
+  },
+  "grade_5_calla_sworddual_skill_e": {
+   "montage": "Calla_SwordDual_Skill_E_MTG",
+   "duree": 3.833,
+   "action": 3.833,
+   "impacts": [],
+   "tirs": [
+    0.15,
+    0.15,
+    0.15,
+    0.287,
+    0.287,
+    0.287,
+    0.421,
+    0.421,
+    0.421,
+    0.702,
+    0.702,
+    0.702
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.833
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.833
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.833
+    },
+    "normalAttack": {
+     "debut": 1.401,
+     "fin": 3.833
+    },
+    "movement": {
+     "debut": 1.401,
+     "fin": 3.833
+    },
+    "tagOut": {
+     "debut": 1.401,
+     "fin": 3.833
+    }
+   }
+  },
+  "grade_5_calla_sworddual_skill_e_enchant": {
+   "montage": "Calla_SwordDual_Skill_E_Enchant_G5_MTG",
+   "duree": 3.3,
+   "action": 3.3,
+   "impacts": [
+    0.2,
+    0.48,
+    0.64,
+    1,
+    1.167,
+    1.287,
+    1.433
+   ],
+   "tirs": [
+    1.071
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.3
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.305
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.31
+    },
+    "movement": {
+     "debut": 1.481,
+     "fin": 3.3
+    },
+    "normalAttack": {
+     "debut": 1.491,
+     "fin": 3.305
+    },
+    "tagOut": {
+     "debut": 1.494,
+     "fin": 3.3
+    }
+   }
+  },
+  "grade_6_calla_sworddual_skill_r": {
+   "montage": "Calla_SwordDual_Skill_R_MTG",
+   "duree": 3.433,
+   "action": 3.433,
+   "impacts": [
+    0.001
+   ],
+   "superArmor": [
+    [
+     0,
+     3.43333,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2,
+     "fin": 3.433
+    },
+    "avoidance": {
+     "debut": 2,
+     "fin": 3.433
+    },
+    "jump": {
+     "debut": 2,
+     "fin": 3.433
+    },
+    "movement": {
+     "debut": 2.05,
+     "fin": 3.433
+    },
+    "normalAttack": {
+     "debut": 2.05,
+     "fin": 3.433
+    },
+    "tagOut": {
+     "debut": 2.05,
+     "fin": 3.433
+    }
+   }
+  },
+  "grade_6_calla_sworddual_skill_r_enchant": {
+   "montage": "Calla_SwordDual_Skill_R_Enchant_MTG",
+   "duree": 4.867,
+   "action": 4.867,
+   "impacts": [
+    1.86
+   ],
+   "superArmor": [
+    [
+     0,
+     4.86667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2,
+     "fin": 4.867
+    },
+    "avoidance": {
+     "debut": 2.009,
+     "fin": 4.876
+    },
+    "jump": {
+     "debut": 2.009,
+     "fin": 4.876
+    },
+    "movement": {
+     "debut": 2.05,
+     "fin": 4.867
+    },
+    "normalAttack": {
+     "debut": 2.05,
+     "fin": 4.867
+    },
+    "tagOut": {
+     "debut": 2.05,
+     "fin": 4.867
+    }
+   }
+  },
+  "grade_7_calla_cudgel3c_skill_e_end": {
+   "montage": "Calla_Cudgel3c_Skill_E_End_MTG",
+   "duree": 2.799,
+   "action": 2.799,
+   "impacts": [
+    0.332
+   ],
+   "superArmor": [
+    [
+     0,
+     2.79882,
+     false,
+     0,
+     true,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "montageNonConfirme": 2.733
+  },
+  "grade_7_calla_cudgel3c_skill_e_start": {
+   "montage": "Calla_Cudgel3c_Skill_E_Start_G7_MTG",
+   "duree": 2.838,
+   "action": 2.838,
+   "impacts": [
+    0.144,
+    0.489,
+    0.601,
+    0.759,
+    0.89,
+    1.004,
+    1.108,
+    1.208,
+    1.308,
+    1.408,
+    1.508,
+    1.608,
+    1.708,
+    1.808,
+    1.908,
+    2.008,
+    2.108,
+    2.208,
+    2.308,
+    2.408,
+    2.508,
+    2.608,
+    2.708,
+    2.808
+   ],
+   "superArmor": [
+    [
+     0,
+     2.83796,
+     false,
+     0,
+     true,
+     false
+    ],
+    [
+     -1.10462,
+     2.83796,
+     false,
+     0,
+     true,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "montageNonConfirme": 3
+  },
+  "grade_7_calla_gauntlets_skill_e": {
+   "montage": "Calla_Gauntlets_Skill_E_G7_MTG",
+   "duree": 2.1,
+   "action": 2.1,
+   "impacts": [
+    0.046,
+    0.3,
+    0.4,
+    0.57,
+    0.968
+   ],
+   "superArmor": [
+    [
+     0,
+     2.1,
+     false,
+     0,
+     true,
+     false
+    ]
+   ],
+   "tirs": [
+    1.44,
+    1.44,
+    1.44
+   ],
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.1
+    },
+    "normalAttack": {
+     "debut": 1.44,
+     "fin": 2.1
+    },
+    "movement": {
+     "debut": 1.44,
+     "fin": 2.1
+    },
+    "tagOut": {
+     "debut": 1.44,
+     "fin": 2.1
+    }
+   }
+  },
+  "grade_7_calla_sworddual_skill_q": {
+   "montage": "Calla_SwordDual_Skill_Q_MTG",
+   "duree": 3.367,
+   "action": 3.367,
+   "impacts": [
+    0.22,
+    0.28
+   ],
+   "tirs": [
+    0.86
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.372
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "movement": {
+     "debut": 1.05,
+     "fin": 3.367
+    },
+    "normalAttack": {
+     "debut": 1.05,
+     "fin": 3.367
+    },
+    "tagOut": {
+     "debut": 1.05,
+     "fin": 3.367
+    }
+   }
+  },
+  "grade_7_calla_sworddual_skill_q_enchant": {
+   "montage": "Calla_SwordDual_Skill_Q_Enchant_G7_MTG",
+   "duree": 2.8,
+   "action": 2.8,
+   "impacts": [],
+   "tirs": [
+    0.6
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.8
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.8
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.8
+    },
+    "movement": {
+     "debut": 1.33,
+     "fin": 2.8
+    },
+    "normalAttack": {
+     "debut": 1.33,
+     "fin": 2.8
+    },
+    "tagOut": {
+     "debut": 1.33,
+     "fin": 2.8
+    }
+   }
+  },
+  "grade_7_calla_sworddual_skill_q_enchant_hitchange": {
+   "montage": "Calla_SwordDual_Skill_Q_Enchant_HitChange_G7_MTG",
+   "duree": 3.333,
+   "action": 3.333,
+   "impacts": [
+    0.433,
+    0.433,
+    0.433
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "jump": {
+     "debut": 0.5,
+     "fin": 3.333
+    },
+    "movement": {
+     "debut": 0.533,
+     "fin": 3.333
+    },
+    "normalAttack": {
+     "debut": 0.537,
+     "fin": 3.337
+    },
+    "tagOut": {
+     "debut": 0.67,
+     "fin": 3.337
+    }
+   }
+  },
+  "grade_9_calla_sworddual_normalatk_1": {
+   "montage": "Calla_SwordDual_NormalAtk_1_MTG",
+   "duree": 2.767,
+   "action": 2.767,
+   "impacts": [
+    0.11,
+    0.3
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "normalAttack": {
+     "debut": 0.138,
+     "fin": 2.767
+    },
+    "movement": {
+     "debut": 0.33,
+     "fin": 2.767
+    },
+    "tagOut": {
+     "debut": 0.33,
+     "fin": 2.767
+    }
+   }
+  },
+  "grade_9_calla_sworddual_normalatk_1_enchant": {
+   "montage": "Calla_SwordDual_NormalAtk_1_MTG",
+   "duree": 2.767,
+   "action": 2.767,
+   "impacts": [
+    0.11,
+    0.3
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "normalAttack": {
+     "debut": 0.138,
+     "fin": 2.767
+    },
+    "movement": {
+     "debut": 0.33,
+     "fin": 2.767
+    },
+    "tagOut": {
+     "debut": 0.33,
+     "fin": 2.767
+    }
+   }
+  },
+  "grade_9_calla_sworddual_normalatk_2": {
+   "montage": "Calla_SwordDual_NormalAtk_2_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0.07,
+    0.14,
+    0.333,
+    0.367,
+    0.4,
+    0.71,
+    0.75
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.5,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.75,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.75,
+     "fin": 3.1
+    }
+   }
+  },
+  "grade_9_calla_sworddual_normalatk_2_enchant": {
+   "montage": "Calla_SwordDual_NormalAtk_2_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0.07,
+    0.14,
+    0.333,
+    0.367,
+    0.4,
+    0.71,
+    0.75
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.5,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.75,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.75,
+     "fin": 3.1
+    }
+   }
+  },
+  "grade_9_calla_sworddual_normalatk_3": {
+   "montage": "Calla_SwordDual_NormalAtk_3_MTG",
+   "duree": 3,
+   "action": 3,
+   "impacts": [
+    0.033,
+    0.2,
+    0.333,
+    0.44
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3
+    },
+    "normalAttack": {
+     "debut": 0.2,
+     "fin": 3
+    },
+    "movement": {
+     "debut": 0.45,
+     "fin": 3
+    },
+    "tagOut": {
+     "debut": 0.45,
+     "fin": 3
+    }
+   }
+  },
+  "grade_9_calla_sworddual_normalatk_3_enchant": {
+   "montage": "Calla_SwordDual_NormalAtk_3_MTG",
+   "duree": 3,
+   "action": 3,
+   "impacts": [
+    0.033,
+    0.2,
+    0.333,
+    0.44
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3
+    },
+    "normalAttack": {
+     "debut": 0.2,
+     "fin": 3
+    },
+    "movement": {
+     "debut": 0.45,
+     "fin": 3
+    },
+    "tagOut": {
+     "debut": 0.45,
+     "fin": 3
+    }
+   }
+  },
+  "grade_9_calla_sworddual_normalatk_4": {
+   "montage": "Calla_SwordDual_NormalAtk_4_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0.033,
+    0.133,
+    0.233,
+    0.333,
+    0.433
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.333,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.44,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.44,
+     "fin": 3.1
+    }
+   }
+  },
+  "grade_9_calla_sworddual_normalatk_4_enchant": {
+   "montage": "Calla_SwordDual_NormalAtk_4_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0.033,
+    0.133,
+    0.233,
+    0.333,
+    0.433
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.333,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.44,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.44,
+     "fin": 3.1
+    }
+   }
+  },
+  "grade_9_calla_sworddual_normalatk_5": {
+   "montage": "Calla_SwordDual_NormalAtk_5_MTG",
+   "duree": 3.7,
+   "action": 3.7,
+   "impacts": [],
+   "tirs": [
+    0.43
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "normalAttack": {
+     "debut": 0.497,
+     "fin": 3.7
+    },
+    "movement": {
+     "debut": 0.533,
+     "fin": 3.7
+    },
+    "tagOut": {
+     "debut": 0.533,
+     "fin": 3.7
+    }
+   }
+  },
+  "grade_9_calla_sworddual_normalatk_5_enchant": {
+   "montage": "Calla_SwordDual_NormalAtk_5_MTG",
+   "duree": 3.7,
+   "action": 3.7,
+   "impacts": [],
+   "tirs": [
+    0.43
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.7
+    },
+    "normalAttack": {
+     "debut": 0.497,
+     "fin": 3.7
+    },
+    "movement": {
+     "debut": 0.533,
+     "fin": 3.7
+    },
+    "tagOut": {
+     "debut": 0.533,
+     "fin": 3.7
+    }
+   }
+  },
+  "grade_9_calla_sworddual_skill_r": {
+   "montage": "Calla_SwordDual_Skill_R_MTG",
+   "duree": 3.433,
+   "action": 3.433,
+   "impacts": [
+    0.001
+   ],
+   "superArmor": [
+    [
+     0,
+     3.43333,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2,
+     "fin": 3.433
+    },
+    "avoidance": {
+     "debut": 2,
+     "fin": 3.433
+    },
+    "jump": {
+     "debut": 2,
+     "fin": 3.433
+    },
+    "movement": {
+     "debut": 2.05,
+     "fin": 3.433
+    },
+    "normalAttack": {
+     "debut": 2.05,
+     "fin": 3.433
+    },
+    "tagOut": {
+     "debut": 2.05,
+     "fin": 3.433
+    }
+   }
+  },
+  "grade_9_calla_sworddual_skill_r_enchant": {
+   "montage": "Calla_SwordDual_Skill_R_Enchant_MTG",
+   "duree": 4.867,
+   "action": 4.867,
+   "impacts": [
+    1.86
+   ],
+   "superArmor": [
+    [
+     0,
+     4.86667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "calla",
+   "arme": "SwordDual",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2,
+     "fin": 4.867
+    },
+    "avoidance": {
+     "debut": 2.009,
+     "fin": 4.876
+    },
+    "jump": {
+     "debut": 2.009,
+     "fin": 4.876
+    },
+    "movement": {
+     "debut": 2.05,
+     "fin": 4.867
+    },
+    "normalAttack": {
+     "debut": 2.05,
+     "fin": 4.867
+    },
+    "tagOut": {
+     "debut": 2.05,
+     "fin": 4.867
+    }
+   }
   }
  }
 }

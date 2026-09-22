@@ -335,15 +335,20 @@ class ListerChronometrageTests(unittest.TestCase):
         self.assertTrue(khala, "Khala doit figurer dans le catalogue de calcul")
         identifiants = {skill["gameId"] for skill in khala}
         deduits = MODULE.verrous_deduits()
-        self.assertFalse(
-            identifiants & set(deduits),
-            "les temps d'action exportes ne renseignent pas encore Khala",
-        )
+        # Depuis le build 25436067, les temps d'action et montages de Khala
+        # sont exportes. Un verrou n'est deduit que si la duree du montage
+        # confirme celle de la table : ces deux-la divergent, et doivent donc
+        # rester a chronometrer plutot que recevoir un verrou invente.
+        non_confirmees = {"calla_cudgel3c_skill_e_start", "calla_gauntlets_skill_q_1"}
+        self.assertTrue(identifiants & set(deduits), "Khala doit avoir ses verrous du jeu")
+        self.assertFalse(non_confirmees & set(deduits))
         attendues = {
             skill["gameId"] for skill in khala
             if (skill.get("pourcentage") or 0) > 0
             and "jumpatk" not in skill["gameId"].lower()
+            and skill["gameId"] not in deduits
         }
+        self.assertTrue(non_confirmees <= attendues)
         listees = {
             ligne["gameId"] for groupe in MODULE.lignes() for ligne in groupe
             if ligne["gameId"] in identifiants

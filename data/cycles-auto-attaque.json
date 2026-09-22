@@ -1,7 +1,7 @@
 {
  "_lisezmoi": [
   "Cycle d auto-attaque par heros et par arme, build 1.8.1.2.",
-  "Durees issues de la table du jeu (CData/HitNotify).",
+  "Durees issues de la table du jeu (TextDatas/CData/HitNotify).",
   "Fenetres d annulation issues des marqueurs des montages.",
   "brut     : somme des durees d animation.",
   "enchaine : somme des instants d ouverture de la fenetre `normalAttack`,",
@@ -184,6 +184,16 @@
    "fiable": true
   },
   {
+   "heros": "calla",
+   "arme": "SwordDual",
+   "coups": 5,
+   "brut": 15.667,
+   "enchaine": 1.668,
+   "sansFenetre": 0,
+   "gain": 89,
+   "fiable": true
+  },
+  {
    "heros": "diane",
    "arme": "Cudgel3c",
    "coups": 4,
@@ -221,6 +231,16 @@
    "enchaine": 1.713,
    "sansFenetre": 0,
    "gain": 60,
+   "fiable": true
+  },
+  {
+   "heros": "calla",
+   "arme": "Cudgel3c",
+   "coups": 4,
+   "brut": 9.067,
+   "enchaine": 1.741,
+   "sansFenetre": 0,
+   "gain": 81,
    "fiable": true
   },
   {
@@ -461,6 +481,16 @@
    "enchaine": 2.35,
    "sansFenetre": 0,
    "gain": 76,
+   "fiable": true
+  },
+  {
+   "heros": "calla",
+   "arme": "Gauntlets",
+   "coups": 4,
+   "brut": 8.134,
+   "enchaine": 2.381,
+   "sansFenetre": 0,
+   "gain": 71,
    "fiable": true
   },
   {

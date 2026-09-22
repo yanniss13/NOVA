@@ -12,7 +12,11 @@ for (const f of fs.readdirSync(D).filter(x => x.endsWith('.json'))) {
 }
 
 // --- mes montages, indexes par nom de montage ---
-const mesAnims = JSON.parse(fs.readFileSync(__dirname + '/animations-extraites.json', 'utf8')).animations;
+// Les montages viennent par defaut de l instantane commite. MONTAGES_JEU permet
+// d en lire un plus recent, typiquement `animations-completes.json` ecrit par
+// extraire-tout.js sur l export courant.
+const MONTAGES = process.env.MONTAGES_JEU || path.join(__dirname, 'animations-extraites.json');
+const mesAnims = JSON.parse(fs.readFileSync(MONTAGES, 'utf8')).animations;
 const parMontage = new Map();
 for (const v of Object.values(mesAnims)) {
   const nom = String(v.source || '').split('/').pop().replace(/\.json$/, '').toLowerCase();
@@ -78,6 +82,29 @@ console.log('avec fenetres d annulation     :', avecFenetres);
 console.log('rattachees a une competence    :', avecCompetence);
 console.log('duree confirmee par le montage :', dureeConfirmee, '| divergente :', dureeDivergente);
 divergences.forEach(d => console.log('   ', d));
+
+// --seulement=<prefixe> : ne remplacer, dans data/temps-action.json, que les
+// actions d UN heros (identifiant `<prefixe>_...` ou `grade_N_<prefixe>_...`).
+// Les autres entrees restent octet pour octet celles du build d origine : un
+// heros arrive apres coup ne doit pas faire deriver tout le fichier.
+const seulement = (process.argv.find(a => a.startsWith('--seulement=')) || '').split('=')[1];
+if (seulement) {
+  if (!process.env.BUILD_JEU) throw new Error('BUILD_JEU doit nommer le build de l export lu');
+  const cible = path.join(DEPOT, 'data', 'temps-action.json');
+  const depot = JSON.parse(fs.readFileSync(cible, 'utf8'));
+  const duHeros = new RegExp('^(grade_[0-9]+_)?' + seulement + '_', 'i');
+  const avant = Object.keys(depot.actions).filter(id => duHeros.test(id)).length;
+  for (const id of Object.keys(depot.actions)) if (duHeros.test(id)) delete depot.actions[id];
+  const ajoutees = Object.keys(sortie).filter(id => duHeros.test(id));
+  for (const id of ajoutees) depot.actions[id] = sortie[id];
+  const note = 'Actions `' + seulement + '_*` : build ' + process.env.BUILD_JEU
+    + ', ecrites par fusionner.js --seulement=' + seulement + '.';
+  depot._lisezmoi = depot._lisezmoi.filter(l => !l.startsWith('Actions `' + seulement + '_*`')).concat(note);
+  fs.writeFileSync(cible, JSON.stringify(depot, null, 1));
+  console.log('data/temps-action.json : ' + seulement + ' ' + avant + ' -> ' + ajoutees.length
+    + ' actions, dont ' + ajoutees.filter(id => sortie[id].fenetres).length + ' avec fenetres');
+  process.exit(0);
+}
 
 fs.writeFileSync(path.join(__dirname, 'temps-action.json'), JSON.stringify({
   _lisezmoi: [
