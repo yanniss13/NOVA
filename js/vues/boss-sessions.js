@@ -44,6 +44,7 @@ import { ELEMENTS } from "../noyau/constantes.js";
 import { $, el } from "../noyau/dom.js";
 import { authMessage } from "../noyau/supabase-client.js";
 import { openTeamDetail } from "./detail-equipe.js";
+import { bossMeilleuresRunsBlock } from "./boss-meilleures-runs.js";
 import { bossReportParticipant, bossTeamBanner } from "./equipe-boss.js";
 import { ModalStack, closeModalAfterAsyncRefresh } from "./modal-stack.js";
 import { openAuth } from "./modale-auth.js";
@@ -393,6 +394,9 @@ import { toast } from "./toast.js";
     ]));
     body.appendChild(bossRecommendationPanel(weekGroups, membership));
     body.appendChild(bossStatsBlock(allGroups, reports, week.startDate));
+    body.appendChild(
+      bossMeilleuresRunsBlock(allGroups, reports, membership, week.startDate)
+    );
 
     if(!current.length){
       body.appendChild(el("div",{class:"empty-state"},[

@@ -5106,7 +5106,9 @@ async function ouvrirSessionsDeBoss(page){
     await page.evaluate(() =>
       window.__fakeSupabaseReleaseQueuedBossRead("boss-new-success")
     );
-    await page.getByText("Succès récent encore en attente.", {
+    /* Dans la carte du rapport : le palmarès « Meilleures runs » répète
+       la même note juste au-dessus. */
+    await page.locator(".boss-report-card").getByText("Succès récent encore en attente.", {
       exact:true
     }).waitFor();
 
@@ -5155,7 +5157,7 @@ async function ouvrirSessionsDeBoss(page){
     await page.evaluate(() =>
       window.__fakeSupabaseReleaseQueuedBossRead("boss-new-after-error")
     );
-    await page.getByText("Succès récent encore en attente.", {
+    await page.locator(".boss-report-card").getByText("Succès récent encore en attente.", {
       exact:true
     }).waitFor();
     await page.evaluate(() => window.__fakeSupabaseClearBossReadQueue());

@@ -278,10 +278,51 @@
     return sign+integer.toString()+","+decimals+" %";
   }
 
+  /* LES MEILLEURES RUNS, et non les meilleures equipes.
+
+     Le score est celui du GROUPE : jusqu'a cinq membres, chacun avec son
+     equipe. Attribuer ce score a une seule equipe serait inventer une
+     repartition que le jeu ne donne pas. On classe donc des runs, et chacune
+     montre toutes les equipes qui l'ont faite — c'est la question que se pose
+     un membre : « qu'ont joue ceux qui ont fait le plus ? ».
+
+     Une run sans rapport, ou au score illisible, n'entre pas : un classement
+     qui la placerait a zero mentirait. A egalite, la plus ancienne passe
+     devant — elle a atteint ce score la premiere — puis l'identifiant tranche,
+     pour que deux rendus donnent toujours le meme ordre. */
+  function bossTopRuns(groups, reports, membership, options){
+    const settings = options || {};
+    const limit = settings.limit || 5;
+    const sessions = new Map((groups || [])
+      .filter(group => !settings.weekStart || group.week_start === settings.weekStart)
+      .map(group => [group.id, group]));
+    const rows = [];
+    (reports || []).forEach(report => {
+      const group = sessions.get(report.session_id);
+      const score = bossScoreBigInt(report.global_score);
+      if(!group || score === null) return;
+      const members = (membership || [])
+        .filter(member => member.session_id === group.id)
+        .sort((a, b) => String(a.pseudo || "").localeCompare(
+          String(b.pseudo || ""), "fr", { sensitivity:"base" }
+        ));
+      rows.push({ group, report, score, members });
+    });
+    rows.sort((a, b) =>
+      (a.score > b.score ? -1 : (a.score < b.score ? 1 : 0)) ||
+      String(a.group.completed_at || "").localeCompare(String(b.group.completed_at || "")) ||
+      String(a.group.id).localeCompare(String(b.group.id))
+    );
+    return rows.slice(0, limit).map((row, index) =>
+      Object.assign(row, { rank:index + 1 })
+    );
+  }
+
 export {
   bossEvolutionPercentage,
   bossScoreBigInt,
   bossStatsForWeek,
+  bossTopRuns,
   buildDashboardState,
   currentBossWeek,
   formatBossScore,

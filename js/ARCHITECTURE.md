@@ -98,6 +98,7 @@ version plus ancienne du site reste ouvrable.
 | `fiche-heros.js` | La fiche d'un héros — **le noyau commun aux modales** |
 | `detail-equipe.js` | La modale de détail d'une équipe |
 | `equipe-boss.js` | L'équipe d'un membre dans une session de boss |
+| `boss-meilleures-runs.js` | Le palmarès « Meilleures runs » sous les statistiques de la semaine |
 | `detail-roster.js` | La modale de détail d'un personnage d'un autre membre |
 | `boss-sessions.js` | L'onglet Sessions de boss : groupes, rapports, archive |
 | `builder.js` | L'onglet Builder : composer et équiper une équipe |

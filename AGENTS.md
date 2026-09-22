@@ -1253,6 +1253,12 @@ le SQL Editor afin d'ajouter les tables à la publication
 - Le bilan de confrérie ne calcule aucune statistique individuelle : il utilise
   uniquement les rapports disponibles pour les runs renseignées, meilleur score,
   score moyen, dernier score et variation hebdomadaire.
+- **« Meilleures runs »** (`vues/boss-meilleures-runs.js`, `bossTopRuns()`) :
+  les cinq meilleurs scores, de la semaine ou de tout l'historique, chacun avec
+  les équipes de **tous** ses participants. On classe des runs, jamais des
+  équipes : le score est celui du groupe, et le jeu ne dit pas qui l'a fait.
+  Une run sans rapport n'est jamais classée à zéro. La période choisie tient
+  entre deux relectures Realtime ; changer de période ne fait aucune requête.
 - Semaine courante = `currentBossWeek()` (lundi 9h Paris le plus récent ≤ maintenant).
 - **Rappel Discord** : dimanche midi Paris (`scripts/discord-reminder.js` + GitHub Actions),
   liste les membres sous `3/3` et le nombre de runs manquantes. Il reste un
