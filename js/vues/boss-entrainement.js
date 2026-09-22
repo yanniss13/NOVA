@@ -8,7 +8,7 @@
 import { EntrainementStore } from "../donnees/entrainement-store.js";
 import { refreshRosterProfiles } from "../donnees/roster-profils.js";
 import { sessionCourante } from "../etat/session.js";
-import { frDate, formatBossScore } from "../metier/boss-logique.js";
+import { formatBossScore } from "../metier/boss-logique.js";
 import { charOf } from "../metier/catalogue.js";
 import {
   comparaisonEquipesEntrainement, resumeProgressionEntrainement,
@@ -21,12 +21,17 @@ import { bossTeamBanner } from "./equipe-boss.js";
 import { ouvrirSaisieEntrainement } from "./modale-entrainement.js";
 
   const etatEntrainement = {
-    vue:"historique", horsLigne:false, perime:true,
+    vue:"historique", horsLigne:false,
     membreProgression:"", membreComparaison:""
   };
 
-  function invaliderEntrainement(){
-    etatEntrainement.perime = true;
+  /* frDate() n'affiche jamais l'année : les autres vues qui l'utilisent
+     n'en ont pas besoin. L'historique d'entraînement, lui, n'a aucune borne
+     dans le temps et affichera un jour plusieurs années : une formule locale
+     l'ajoute, sans toucher à frDate() dont dépendent les autres vues. */
+  function frDateEntrainement(iso){
+    return iso ? new Date(iso+"T00:00:00").toLocaleDateString("fr-FR",
+      { day:"numeric", month:"short", year:"numeric" }) : "";
   }
 
   function participantEntrainement(run, membreId){
@@ -52,14 +57,14 @@ import { ouvrirSaisieEntrainement } from "./modale-entrainement.js";
     const moi = sessionCourante.user && sessionCourante.user.id;
     const tete = el("div",{class:"training-run-head"},[
       el("strong",{class:"training-run-score",text:formatBossScore(run.score)}),
-      el("span",{class:"training-run-meta",text:frDate(run.playedOn)+" · saisie par "+run.createdByPseudo
+      el("span",{class:"training-run-meta",text:frDateEntrainement(run.playedOn)+" · saisie par "+run.createdByPseudo
         +(run.updatedByPseudo ? " · corrigée par "+run.updatedByPseudo : "")})
     ]);
     if(moi && run.participants.includes(moi)){
       tete.appendChild(el("button",{
         class:"btn btn-ghost training-edit", type:"button",
         dataset:{trainingRunId:run.id},
-        "aria-label":"Corriger la run du "+frDate(run.playedOn),
+        "aria-label":"Corriger la run du "+frDateEntrainement(run.playedOn),
         onclick:()=>void ouvrirSaisieEntrainement(run,
           { apres:()=>renderTrainingView({ silencieux:true }) })
       },["Corriger"]));
@@ -95,7 +100,16 @@ import { ouvrirSaisieEntrainement } from "./modale-entrainement.js";
       (avecTous ? [el("option",{ value:"", text:"Toute la confrérie" })] : [])
         .concat(profils.map(p => el("option",{ value:p.id, text:p.pseudo }))));
     select.value = valeur;
-    select.addEventListener("change", () => onChange(select.value));
+    /* onChange() repeint via dessinerEntrainement(), qui fait
+       corps.replaceChildren() et reconstruit ce <select> : le focus tombe
+       alors sur body (piège déjà connu des filtres du roster, voir
+       AGENTS.md). Le nouveau <select> porte le même id : on le retrouve et
+       on lui rend le focus après coup. */
+    select.addEventListener("change", () => {
+      onChange(select.value);
+      const reconstruit = document.getElementById(id);
+      if(reconstruit) reconstruit.focus();
+    });
     return el("div",{class:"training-filter"},[el("label",{ for:id, text:libelle }), select]);
   }
 
@@ -137,7 +151,7 @@ import { ouvrirSaisieEntrainement } from "./modale-entrainement.js";
       +" · Dernier : "+formatBossScore(resume.dernier)
       +" · Écart au meilleur : "+formatBossScore(resume.ecart)}));
     bloc.appendChild(el("ol",{class:"training-points"}, serie.map(point =>
-      el("li",{ text:frDate(point.playedOn)+" : "+formatBossScore(point.score) }))));
+      el("li",{ text:frDateEntrainement(point.playedOn)+" : "+formatBossScore(point.score) }))));
     return bloc;
   }
 
@@ -223,22 +237,31 @@ import { ouvrirSaisieEntrainement } from "./modale-entrainement.js";
     });
   }
 
+  /* Une sauvegarde appelle apres() puis, ~120 ms plus tard, l'écho Realtime
+     de sa propre écriture rappelle aussi ce rendu : deux refresh() peuvent
+     donc se recouper. Comme DashboardStore.refresh() (js/donnees/suivi-store.js),
+     un compteur de génération protège contre une réponse lente qui
+     repeindrait par-dessus un rendu plus récent déjà affiché. */
+  let generationEntrainement = 0;
+
   async function renderTrainingView(options){
     const reglages = Object.assign({ silencieux:false }, options || {});
     brancherSousVuesEntrainement();
+    const demande = ++generationEntrainement;
     if(!reglages.silencieux && !EntrainementStore.aUnCache()){
       $("#trainingStatus").textContent = "Chargement…";
     }
+    let horsLigne = false;
     try{
       await refreshRosterProfiles();
       await EntrainementStore.refresh();
-      etatEntrainement.horsLigne = false;
-      etatEntrainement.perime = false;
     }catch(erreur){
-      etatEntrainement.horsLigne = true;
+      horsLigne = true;
     }
+    if(demande !== generationEntrainement) return !horsLigne;
+    etatEntrainement.horsLigne = horsLigne;
     dessinerEntrainement();
     return !etatEntrainement.horsLigne;
   }
 
-export { invaliderEntrainement, renderTrainingView };
+export { renderTrainingView };

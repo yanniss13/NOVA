@@ -15,7 +15,7 @@ import { shouldIgnoreAvailabilityEcho } from "../metier/dispos-logique.js";
 import { sb } from "../noyau/supabase-client.js";
 import { renderAnalyse } from "./analyse.js";
 import { renderBossView } from "./boss-sessions.js";
-import { invaliderEntrainement, renderTrainingView } from "./boss-entrainement.js";
+import { renderTrainingView } from "./boss-entrainement.js";
 import { invaliderCollection, renderCollection } from "./collection.js";
 import { setSyncStatus } from "./etat-synchro.js";
 import { Availability, renderAvailabilityView } from "./dispos.js";
@@ -94,14 +94,13 @@ import { renderDashboardView } from "./suivi.js";
           invaliderCollection();
           if(view === "collection") await renderCollection();
         }
-        /* Comme la collection : marquee a relire meme cachee, relue si
-           affichee. Realtime ne change jamais l'onglet actif. */
-        if(changed.has("training")){
-          invaliderEntrainement();
-          if(view === "training"){
-            const refreshed = await renderTrainingView({ silencieux:true });
-            if(!refreshed) throw new Error("TRAINING_SYNC_FAILED");
-          }
+        /* Contrairement a la collection, l'entrainement n'a pas besoin d'etre
+           marque a relire : renderTrainingView() relit systematiquement le
+           reseau a chaque activation du sous-onglet, cachee ou non. Rien a
+           faire tant que la vue n'est pas affichee. */
+        if(changed.has("training") && view === "training"){
+          const refreshed = await renderTrainingView({ silencieux:true });
+          if(!refreshed) throw new Error("TRAINING_SYNC_FAILED");
         }
         if(dashboardChanged){
           if(dashboardActive){
