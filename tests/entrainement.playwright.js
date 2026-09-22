@@ -105,9 +105,29 @@ async function poserDesRuns(page){
       const overlay = document.querySelector("#trainingOverlay").getBoundingClientRect();
       return action.top >= overlay.top && action.bottom <= overlay.bottom;
     }), true, "les actions restent atteignables dans la modale");
-    assert.equal(await page.evaluate(() =>
-      document.documentElement.scrollWidth <= innerWidth), true);
     await page.locator("#trainingClose").click();
+    await page.locator("#trainingOverlay").waitFor({ state:"hidden" });
+
+    /* La modale ouverte fige la page (`body.modal-locked`, position:fixed +
+       overflow:hidden) : une assertion de débordement prise pendant qu'elle
+       est ouverte passerait quoi qu'il arrive. Elle porte donc sur les trois
+       sous-vues, modale FERMÉE, y compris le corps qui défile réellement. */
+    for(const vue of ["historique", "progression", "classement"]){
+      await page.locator(`[data-training-vue="${vue}"]`).click();
+      await page.locator(`[data-training-vue="${vue}"][aria-pressed="true"]`).waitFor();
+      const debordement = await page.evaluate(() => {
+        const corps = document.querySelector("#trainingBody");
+        return {
+          page:document.documentElement.scrollWidth <= innerWidth,
+          corps:corps.scrollWidth <= corps.clientWidth
+        };
+      });
+      assert.equal(debordement.page, true,
+        "pas de débordement horizontal à 320 px (" + vue + ", modale fermée)");
+      assert.equal(debordement.corps, true,
+        "#trainingBody ne déborde pas à 320 px (" + vue + ")");
+    }
+    await page.locator('[data-training-vue="historique"]').click();
 
     await page.setViewportSize({ width:1280, height:900 });
 
@@ -157,13 +177,28 @@ async function poserDesRuns(page){
       "l'instantané est construit côté serveur depuis l'équipe choisie");
     await page.locator(`li.training-run[data-training-run-id="${nouvelle.id}"]`).waitFor();
 
-    /* --- Correction : conflit d'abord, puis succès. --- */
-    await page.evaluate(() => { window.__fakeSupabaseState.trainingConflictOnce = true; });
+    /* --- Correction : conflit RÉEL sur le jeton `updated_at`, pas le
+       raccourci synthétique `trainingConflictOnce` (retiré du faux : il
+       court-circuitait avant que matchRow() ne lise `updated_at`, et un
+       `.eq("updated_at", jeton)` oublié dans le store aurait laissé ce test
+       vert). On ouvre la modale — elle capture le jeton courant — puis on
+       modifie la ligne dans le faux Supabase comme si Merlin venait de
+       sauvegarder, et on soumet depuis la modale déjà ouverte. */
     await page.locator(`.training-edit[data-training-run-id="${nouvelle.id}"]`).click();
+    await page.locator("#trainingOverlay").waitFor({ state:"visible" });
+    await page.evaluate(id => {
+      const s = window.__fakeSupabaseState;
+      const ligne = s.boss_training_runs.find(r => r.id === id);
+      ligne.updated_at = "2026-09-22T10:59:59.999999+00:00";
+      ligne.updated_by_pseudo = "Merlin";
+    }, nouvelle.id);
     await page.locator("#trainingScore").fill("2000000");
     await page.locator("#trainingSubmit").click();
     assert.match(await page.locator("#trainingError").textContent(), /modifiée/i);
+    assert.match(await page.locator("#trainingError").textContent(), /Merlin/,
+      "le message de conflit nomme qui a sauvegardé en dernier");
     await page.locator("#trainingClose").click();
+    /* --- Succès : la même correction, rejouée avec le jeton à jour. --- */
     await page.locator(`.training-edit[data-training-run-id="${nouvelle.id}"]`).click();
     await page.locator("#trainingScore").fill("2000000");
     await page.locator("#trainingSubmit").click();
@@ -216,12 +251,19 @@ async function poserDesRuns(page){
     await page.locator("#trainingProgressionMember").selectOption("user-1");
     assert.equal(await page.locator("ol.training-points li").count(), 1);
     assert.match(await page.locator(".training-summary").textContent(), /Meilleur/);
+    /* dessinerEntrainement() vide #trainingBody et reconstruit ce <select> :
+       sans re-focus explicite, le focus tombe sur body (même piège que les
+       filtres du roster, voir AGENTS.md). */
+    assert.equal(await page.evaluate(() => document.activeElement && document.activeElement.id),
+      "trainingProgressionMember", "le focus reste sur le filtre après le changement");
 
     /* --- Classement : tr-1 en tête ; comparaison d'équipes de Yannis. --- */
     await page.locator('[data-training-vue="classement"]').click();
     assert.equal(await page.locator("ol.training-top li").first()
       .getAttribute("data-training-run-id"), "tr-1");
     await page.locator("#trainingCompareMember").selectOption("user-1");
+    assert.equal(await page.evaluate(() => document.activeElement && document.activeElement.id),
+      "trainingCompareMember", "le focus reste sur le filtre après le changement");
     assert.equal(await page.locator("table.training-compare tbody tr").count(), 1);
     assert.match(await page.locator(".training-compare-caveat").textContent(),
       /score est celui du groupe/);

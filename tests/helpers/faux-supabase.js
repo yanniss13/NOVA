@@ -128,9 +128,6 @@ async function installFakeSupabase(page){
       gear_presets:[],
       calls:[],
       boss_training_runs:[],
-      /* Fait echouer la prochaine correction comme si un autre membre
-         l'avait devancee : zero ligne modifiee. */
-      trainingConflictOnce:false,
       trainingClock:0,
       rpcCalls:[],
       bossRpcFailureOnce:null,
@@ -621,6 +618,22 @@ async function installFakeSupabase(page){
           };
           const preparer = (ligne, ancienne) => {
             const participants = ligne.participants || [];
+            /* Les trois contraintes de table (`check`), pas le trigger : un
+               harnais plus permissif que la production laisserait passer
+               exactement les fautes qu'on cherche. */
+            if(participants.some(id => id === null || id === undefined)){
+              return { error:{ code:"23514",
+                message:"boss_training_runs_participants_check" } };
+            }
+            const scoreEcrit = String(ligne.global_score == null ? "" : ligne.global_score);
+            if(!/^\d+$/.test(scoreEcrit) || BigInt(scoreEcrit) <= 0n){
+              return { error:{ code:"23514",
+                message:"boss_training_runs_global_score_check" } };
+            }
+            if(typeof ligne.note === "string" && ligne.note.length > 1000){
+              return { error:{ code:"23514",
+                message:"boss_training_runs_note_check" } };
+            }
             if(participants.length < 1 || participants.length > 5
               || new Set(participants).size !== participants.length){
               return { error:{ code:"P0001", message:"TRAINING_DUPLICATE_PARTICIPANT" } };
@@ -669,27 +682,33 @@ async function installFakeSupabase(page){
             }
             const pret = preparer(valeur, null);
             if(pret.error) return { data:null, error:pret.error };
+            /* created_at et updated_at partagent le meme instant a la creation,
+               comme en production (`default now()` lu une seule fois par la
+               meme ligne). Deux appels a horloge() les aurait desynchronises. */
+            const horodatage = horloge();
             rows.push(Object.assign({}, pret.ligne, {
               id:"training-" + (rows.length + 1) + "-" + state.trainingClock,
               global_score:String(valeur.global_score),
               created_by:moi, created_by_pseudo:pseudoDe(moi),
-              created_at:horloge(), updated_by_pseudo:null, updated_at:horloge()
+              created_at:horodatage, updated_by_pseudo:null, updated_at:horodatage
             }));
             emitDatabase(table, "INSERT");
             return { data:null, error:null };
           }
           if(operation === "update"){
-            if(state.trainingConflictOnce){
-              state.trainingConflictOnce = false;
-              return { data:[], error:null };
-            }
             const cibles = rows.filter(row => matchRow(row) && row.participants.includes(moi));
             if(payload.participants && !payload.participants.includes(moi)) return refus;
             for(const row of cibles){
               const pret = preparer(Object.assign({}, row, payload), row);
               if(pret.error) return { data:null, error:pret.error };
+              /* Comme le trigger SQL : created_by, created_by_pseudo et
+                 created_at ne changent JAMAIS apres l'insertion, meme si un
+                 payload en contient. Les capter avant l'assign qui suit
+                 garantit qu'un payload malveillant ne les ecrase pas. */
+              const { created_by, created_by_pseudo, created_at } = row;
               Object.assign(row, pret.ligne, {
                 global_score:String(pret.ligne.global_score),
+                created_by, created_by_pseudo, created_at,
                 updated_by_pseudo:pseudoDe(moi), updated_at:horloge()
               });
             }
