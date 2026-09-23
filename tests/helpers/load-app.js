@@ -333,6 +333,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   aggregateAvailability:typeof aggregateAvailability === "function"
     ? aggregateAvailability
     : undefined,
+  bossSerieHebdo:typeof bossSerieHebdo === "function"
+    ? bossSerieHebdo
+    : undefined,
   bossTopRuns:typeof bossTopRuns === "function"
     ? bossTopRuns
     : undefined,

@@ -258,11 +258,11 @@ async function poserDesRuns(page){
     await page.waitForTimeout(800);
     const appelsAvant = await page.evaluate(() => window.__fakeSupabaseState.calls.length);
     await page.locator('[data-training-vue="progression"]').click();
-    await page.locator("svg.training-chart").waitFor();
-    assert.equal(await page.locator("ol.training-points li").count(), 3);
+    await page.locator("svg.score-chart").waitFor();
+    assert.equal(await page.locator("ol.score-chart-points li").count(), 3);
     await page.locator("#trainingProgressionMember").selectOption("user-1");
-    assert.equal(await page.locator("ol.training-points li").count(), 1);
-    assert.match(await page.locator(".training-summary").textContent(), /Meilleur/);
+    assert.equal(await page.locator("ol.score-chart-points li").count(), 1);
+    assert.match(await page.locator(".score-chart-summary").textContent(), /Meilleur/);
     /* dessinerEntrainement() vide #trainingBody et reconstruit ce <select> :
        sans re-focus explicite, le focus tombe sur body (même piège que les
        filtres du roster, voir AGENTS.md). */
@@ -273,14 +273,14 @@ async function poserDesRuns(page){
        données exagère visuellement l'écart sans que rien ne le dise ; elles
        sont le garde-fou de ce cadrage, pas une décoration. */
     await page.locator("#trainingProgressionMember").selectOption("");
-    await page.locator("svg.training-chart").waitFor();
-    assert.ok(await page.locator(".training-axis-label").count() >= 3,
+    await page.locator("svg.score-chart").waitFor();
+    assert.ok(await page.locator(".score-chart-axis-label").count() >= 3,
       "la courbe porte ses graduations et ses dates");
 
     /* Le viewBox épouse la largeur du cadre : une unité vaut un pixel, sinon
        les libellés seraient étirés sur grand écran et illisibles sur mobile. */
     const cadrage = await page.evaluate(() => {
-      const svg = document.querySelector("svg.training-chart");
+      const svg = document.querySelector("svg.score-chart");
       return { vue:Number(svg.getAttribute("viewBox").split(" ")[2]),
                reelle:svg.getBoundingClientRect().width };
     });
@@ -291,18 +291,18 @@ async function poserDesRuns(page){
     /* Survol. On vise DANS LE VIDE au-dessus de la courbe, jamais sur son
        aplat : une forme SVG n'est visée que là où elle est peinte, donc un
        survol posé sur le remplissage marcherait même sans le
-       `pointer-events:all` de `.training-chart` et ne prouverait rien. */
-    await page.locator("svg.training-chart").scrollIntoViewIfNeeded();
-    const cadreCourbe = await page.locator("svg.training-chart").boundingBox();
+       `pointer-events:all` de `.score-chart` et ne prouverait rien. */
+    await page.locator("svg.score-chart").scrollIntoViewIfNeeded();
+    const cadreCourbe = await page.locator("svg.score-chart").boundingBox();
     await page.mouse.move(cadreCourbe.x + cadreCourbe.width * 0.82,
       cadreCourbe.y + cadreCourbe.height * 0.12);
-    await page.locator(".training-tip.on").waitFor();
-    assert.match(await page.locator(".training-tip").textContent(), /[0-9]/,
+    await page.locator(".score-chart-tip.on").waitFor();
+    assert.match(await page.locator(".score-chart-tip").textContent(), /[0-9]/,
       "l’infobulle donne le score du point visé");
     await page.mouse.move(cadreCourbe.x - 80, cadreCourbe.y - 80);
-    await page.locator(".training-tip.on").waitFor({ state:"detached" })
+    await page.locator(".score-chart-tip.on").waitFor({ state:"detached" })
       .catch(() => {});
-    assert.equal(await page.locator(".training-tip.on").count(), 0,
+    assert.equal(await page.locator(".score-chart-tip.on").count(), 0,
       "l’infobulle disparaît quand le pointeur quitte la courbe");
 
     /* --- Classement : tr-1 en tête ; comparaison d'équipes de Yannis. --- */

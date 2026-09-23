@@ -61,6 +61,7 @@ ne pouvait sortir de `app.js`.
 | `dispos-logique.js` | Masques de disponibilité, semaines, agrégation |
 | `boss-logique.js` | Semaine de boss, projection « Mon suivi », scores |
 | `entrainement-boss.js` | Entraînement du boss : validation, progression, classement, comparaison |
+| `courbe-scores.js` | L’échelle et le résumé d’une courbe de scores, partagés Boss / Entraînement |
 
 `stats-calcul.js` mérite un mot : il produit des **termes** — « +120 ATK, venant
 du passif de l'arme » — et non des totaux opaques. C'est ce qui permet à
@@ -100,6 +101,7 @@ version plus ancienne du site reste ouvrable.
 | `fiche-heros.js` | La fiche d'un héros — **le noyau commun aux modales** |
 | `detail-equipe.js` | La modale de détail d'une équipe |
 | `equipe-boss.js` | L'équipe d'un membre dans une session de boss |
+| `courbe-scores.js` | Le graphique de scores : SVG, spline monotone, viseur — **partagé** par la vue Boss et l’Entraînement |
 | `boss-meilleures-runs.js` | Le palmarès « Meilleures runs » sous les statistiques de la semaine |
 | `detail-roster.js` | La modale de détail d'un personnage d'un autre membre |
 | `boss-sessions.js` | L'onglet Sessions de boss : groupes, rapports, archive |

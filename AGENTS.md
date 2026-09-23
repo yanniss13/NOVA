@@ -254,7 +254,8 @@ Site Confrérie 7ds/
 │                            # presets (capture/applique 7 emplacements d'équipement).
 ├─ js/donnees/             # Accès Supabase, sans aucun rendu : boss-store, roster-profils,
 │                            # presets-store (presets privés d'un membre).
-├─ js/vues/                # Tout ce qui touche au DOM : dispos, picker, modales, éditeur d'arme.
+├─ js/vues/                # Tout ce qui touche au DOM : dispos, picker, modales, éditeur d'arme,
+│                          # courbe-scores (le graphique partagé Boss / Entraînement).
 ├─ vendor/tesseract/       # Moteur OCR versé dans le dépôt (~5 Mo), pour l'import de
 │                          # captures. Hors CORE_ASSETS : mis en cache à la demande.
 ├─ sw.js                   # Service worker. Cache versionné par __BUILD_VERSION__, mise à jour explicite.
@@ -1263,6 +1264,42 @@ le SQL Editor afin d'ajouter les tables à la publication
   équipes : le score est celui du groupe, et le jeu ne dit pas qui l'a fait.
   Une run sans rapport n'est jamais classée à zéro. La période choisie tient
   entre deux relectures Realtime ; changer de période ne fait aucune requête.
+- **« Progression de la confrérie »** (`bossSerieHebdo()` +
+  `vues/courbe-scores.js`) : un point par **semaine** de boss, valeur = le
+  meilleur score rapporté cette semaine-là. Un point par run donnerait une
+  dent de scie — six groupes rapportent chaque semaine, du plus fort au plus
+  faible. Une semaine sans rapport lisible n'a **pas** de point : la tracer à
+  zéro dessinerait un effondrement que personne n'a joué. Le bloc n'apparaît
+  qu'à partir de **deux** semaines : sur une seule, il répéterait la case
+  « Meilleur score » juste au-dessus. Aucune requête : `allGroups` et
+  `reports` portent déjà tout l'historique.
+- **La courbe de scores est partagée**, entre la vue Boss et l'Entraînement :
+  `js/vues/courbe-scores.js` pour le tracé, `js/metier/courbe-scores.js` pour
+  l'échelle et le résumé. Elle ne connaît ni run ni semaine — l'appelant lui
+  passe des points `{ id, score, libelle, libelleCourt }` et rédige les
+  libellés. Ses classes CSS sont `score-chart-*` ; ne pas les renommer en
+  `training-*`, ce serait deux noms pour une même chose.
+  **Elle ne part pas de zéro, et c'est voulu.** Une confrérie progresse par
+  paliers de quelques pour cent : cadrée sur zéro, une série
+  212 000 → 255 500 s'écrase en un filet plat et la progression qu'on vient
+  consulter devient invisible. `echelleCourbeScores()` cadre donc sur les
+  données, avec 18 % de marge, et place les graduations sur des nombres ronds
+  **à l'intérieur** du cadre — arrondir les bornes elles-mêmes rouvrirait le
+  vide. Le prix est connu : une échelle qui ne part pas de zéro exagère
+  l'écart, et les graduations chiffrées sont le garde-fou contre cette
+  illusion ; ne pas les retirer. Les graduations sont des **entiers**, sinon
+  `formatBossScore()` les relit en BigInt et rend « — ».
+  Le `viewBox` épouse la largeur réelle du cadre (une unité = un pixel), si
+  bien que le texte garde son corps de 320 px à 1400 px ; un `ResizeObserver`
+  le redessine au-delà de 24 px d'écart. La courbe est une **spline cubique
+  monotone** : une Bézier naïve dépasserait ses propres points et afficherait
+  des scores que personne n'a joués. Aucune bibliothèque de graphiques : par
+  CDN elle disparaîtrait hors ligne (`sw.js` ne met jamais jsDelivr en
+  cache), et versée dans le dépôt elle pèserait 200 Ko, demanderait une ligne
+  d'exclusion dans `LICENSE` et rendrait dans un `<canvas>` muet.
+  La liste chiffrée sous la courbe est l'**équivalent textuel** que promet
+  son `aria-label` : elle vit dans le module partagé pour qu'un appelant ne
+  puisse pas l'oublier.
 - Semaine courante = `currentBossWeek()` (lundi 9h Paris le plus récent ≤ maintenant).
 - **Rappel Discord** : dimanche midi Paris (`scripts/discord-reminder.js` + GitHub Actions),
   liste les membres sous `3/3` et le nombre de runs manquantes. Il reste un
@@ -1350,25 +1387,8 @@ dans « Mon suivi » ni dans « Meilleures runs ». Spec :
 - Scores lus en `global_score::text`, jamais en `number`.
 - Trois sous-vues locales (Historique, Progression, Classement) : en changer
   ne fait **aucune** requête.
-- **La courbe de progression ne part pas de zéro, et c'est voulu.** Une
-  confrérie progresse par paliers de quelques pour cent : cadrée sur zéro,
-  une série 212 000 → 255 500 s'écrase en un filet plat et la progression
-  qu'on vient consulter devient invisible.
-  `echelleProgressionEntrainement()` cadre donc sur les données, avec 18 % de
-  marge, et place les graduations sur des nombres ronds **à l'intérieur** du
-  cadre — arrondir les bornes elles-mêmes rouvrirait le vide. Le prix est
-  connu : une échelle qui ne part pas de zéro exagère l'écart, et les
-  graduations chiffrées sont le garde-fou contre cette illusion ; ne pas les
-  retirer. Les graduations sont des **entiers**, sinon `formatBossScore()`
-  les relit en BigInt et rend « — ».
-  Le `viewBox` épouse la largeur réelle du cadre (une unité = un pixel), si
-  bien que le texte garde son corps de 320 px à 1400 px ; un `ResizeObserver`
-  le redessine au-delà de 24 px d'écart. La courbe est une **spline cubique
-  monotone** : une Bézier naïve dépasserait ses propres points et afficherait
-  des scores que personne n'a joués. Aucune bibliothèque de graphiques : par
-  CDN elle disparaîtrait hors ligne (`sw.js` ne met jamais jsDelivr en
-  cache), et versée dans le dépôt elle pèserait 200 Ko, demanderait une ligne
-  d'exclusion dans `LICENSE` et rendrait dans un `<canvas>` muet.
+- La progression réutilise **la courbe partagée** décrite sous « Groupes de
+  Boss de Guilde » : un point par run ici, un point par semaine là-bas.
 - **L'habillage est celui des runs de boss, pas un deuxième.** Une run
   d'entraînement s'affiche avec `bossRunCarte()` (`js/vues/equipe-boss.js`) et
   les classes `.boss-run-card*`, exactement comme « Meilleures runs » ; les

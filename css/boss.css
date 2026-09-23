@@ -196,6 +196,7 @@
   display:flex;align-items:baseline;justify-content:space-between;gap:12px;
   padding-bottom:10px;border-bottom:1px solid var(--line-soft)
 }
+.boss-stats-hint{font-size:11px;color:var(--muted-2);text-align:right}
 .boss-stats-title{
   margin:0;font-family:var(--display);font-size:14px;font-weight:600;
   letter-spacing:.05em;color:var(--parchment)
@@ -235,10 +236,12 @@
 .training-actions .btn{min-height:44px}
 .training-filter{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:12px 0}
 .training-filter select{min-height:44px;max-width:100%}
-/* La courbe de progression. Son viewBox epouse la largeur du cadre (voir
-   courbeEntrainement dans js/vues/boss-entrainement.js) : une unite vaut un
-   pixel, donc le texte garde son corps a toutes les tailles d'ecran. */
-.training-chart-wrap{position:relative;margin:4px 0 14px;min-height:200px}
+/* La courbe de scores, partagee par l'entrainement et par la progression
+   hebdomadaire du boss de guilde (voir traceCourbeScores dans
+   js/vues/courbe-scores.js). Son viewBox epouse la largeur du cadre : une
+   unite vaut un pixel, donc le texte garde son corps a toutes les tailles
+   d'ecran. */
+.score-chart-wrap{position:relative;margin:4px 0 14px;min-height:200px}
 /* `pointer-events:all` est une precaution, pas un correctif : la valeur
    initiale `visiblePainted` ne vise une forme que la ou elle est peinte, si
    bien qu'un moteur strict ignorerait le vide au-dessus de la courbe et
@@ -246,39 +249,40 @@
    la boite de l'element racine — le parcours Playwright ne peut donc PAS
    prouver que cette ligne sert. Ne pas la retirer sur la foi d'un test vert :
    il faudrait d'abord verifier Safari et Firefox a la main. */
-.training-chart{width:100%;height:auto;display:block;overflow:visible;
+.score-chart{width:100%;height:auto;display:block;overflow:visible;
   pointer-events:all}
-.training-grid{stroke:var(--line-soft);stroke-width:1}
-.training-axis-label{
+.score-chart-grid{stroke:var(--line-soft);stroke-width:1}
+.score-chart-axis-label{
   fill:var(--muted-2);font-family:var(--ui);font-size:11px;letter-spacing:.02em
 }
-.training-area-haut{stop-color:var(--gold);stop-opacity:.30}
-.training-area-bas{stop-color:var(--gold);stop-opacity:0}
-.training-area{stroke:none}
-.training-line{
+.score-chart-area-haut{stop-color:var(--gold);stop-opacity:.30}
+.score-chart-area-bas{stop-color:var(--gold);stop-opacity:0}
+.score-chart-area{stroke:none}
+.score-chart-line{
   fill:none;stroke:var(--gold-bright);stroke-width:2.5;
   stroke-linecap:round;stroke-linejoin:round;
   filter:drop-shadow(0 0 6px rgba(217,164,65,.35))
 }
-.training-dot{fill:var(--obsidian-2);stroke:var(--gold-bright);stroke-width:2}
-.training-dot.is-best{fill:var(--gold-bright)}
-.training-dot.is-active{fill:var(--gold-bright);stroke-width:2.5}
-.training-guide{stroke:var(--gold-deep);stroke-width:1;stroke-dasharray:3 3}
+.score-chart-dot{fill:var(--obsidian-2);stroke:var(--gold-bright);stroke-width:2}
+.score-chart-dot.is-best{fill:var(--gold-bright)}
+.score-chart-dot.is-active{fill:var(--gold-bright);stroke-width:2.5}
+.score-chart-guide{stroke:var(--gold-deep);stroke-width:1;stroke-dasharray:3 3}
 /* L'etiquette de survol est en HTML : un <text> SVG ne revient pas a la
    ligne et ne porterait ni fond arrondi ni police du site. */
-.training-tip{
+.score-chart-tip{
   position:absolute;z-index:2;transform:translate(-50%,-140%);
   padding:6px 10px;border:1px solid var(--gold-deep);border-radius:8px;
   background:var(--obsidian);box-shadow:0 6px 18px rgba(0,0,0,.45);
   pointer-events:none;opacity:0;transition:opacity .12s;
   display:flex;flex-direction:column;align-items:center;gap:1px;white-space:nowrap
 }
-.training-tip.on{opacity:1}
-.training-tip strong{
+.score-chart-tip.on{opacity:1}
+.score-chart-tip strong{
   font-family:var(--display);font-size:15px;font-weight:700;color:var(--gold-bright)
 }
-.training-tip span{font-size:10.5px;color:var(--muted)}
-.training-points{columns:2 14rem;color:var(--muted);font-size:.9rem}
+.score-chart-tip span{font-size:10.5px;color:var(--muted)}
+.score-chart-summary{margin:0 0 8px;color:var(--parchment);font-size:.92rem}
+.score-chart-points{columns:2 14rem;color:var(--muted);font-size:.9rem}
 .training-subtitle{
   margin:18px 0 8px;font-family:var(--display);font-size:14px;font-weight:600;
   letter-spacing:.05em;color:var(--parchment)

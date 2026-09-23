@@ -260,6 +260,34 @@
     };
   }
 
+  /* LA SERIE HEBDOMADAIRE DE LA CONFRERIE, pour la courbe de progression.
+
+     Un point par SEMAINE de boss — le rythme du jeu, qui repart le lundi a
+     9h — et non un point par run : six groupes rapportent chaque semaine, du
+     plus fort au plus faible, et les enchainer donnerait une dent de scie ou
+     personne ne lirait de progression.
+
+     La valeur est le MEILLEUR score de la semaine : le plafond que la
+     confrerie repousse. Une semaine sans rapport lisible n'a pas de point —
+     la tracer a zero dessinerait un effondrement que personne n'a joue.
+
+     Les scores restent des chaines : seul le trace les convertit en pixels. */
+  function bossSerieHebdo(groups, reports){
+    const semaines = new Map((groups || [])
+      .map(group => [group.id, group.week_start]));
+    const meilleurs = new Map();
+    (reports || []).forEach(report => {
+      const semaine = semaines.get(report.session_id);
+      const score = bossScoreBigInt(report.global_score);
+      if(!semaine || score === null) return;
+      const connu = meilleurs.get(semaine);
+      if(connu === undefined || score > connu) meilleurs.set(semaine, score);
+    });
+    return [...meilleurs.entries()]
+      .sort((a, b) => String(a[0]).localeCompare(String(b[0])))
+      .map(([weekStart, score]) => ({ weekStart, score:score.toString() }));
+  }
+
   function previousBossWeekStart(weekStart){
     const date = new Date(weekStart+"T00:00:00.000Z");
     date.setUTCDate(date.getUTCDate() - 7);
@@ -321,6 +349,7 @@
 export {
   bossEvolutionPercentage,
   bossScoreBigInt,
+  bossSerieHebdo,
   bossStatsForWeek,
   bossTopRuns,
   buildDashboardState,

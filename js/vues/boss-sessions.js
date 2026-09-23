@@ -25,6 +25,7 @@ import { bestBossSlots, recommendBossGroups } from "../metier/recommandation-gro
 import {
   bossEvolutionPercentage,
   bossScoreBigInt,
+  bossSerieHebdo,
   bossStatsForWeek,
   currentBossWeek,
   formatBossScore,
@@ -34,6 +35,7 @@ import {
   previousBossWeekStart
 } from "../metier/boss-logique.js";
 import { charOf } from "../metier/catalogue.js";
+import { resumeCourbeScores } from "../metier/courbe-scores.js";
 import { teamFromBossSnapshot } from "../metier/equipe-modele.js";
 import {
   fragmentDeRoute,
@@ -45,6 +47,7 @@ import { $, el } from "../noyau/dom.js";
 import { authMessage } from "../noyau/supabase-client.js";
 import { openTeamDetail } from "./detail-equipe.js";
 import { bossMeilleuresRunsBlock } from "./boss-meilleures-runs.js";
+import { dessinerCourbesEnAttente, preparerCourbeScores } from "./courbe-scores.js";
 import { bossReportParticipant, bossTeamBanner } from "./equipe-boss.js";
 import { ModalStack, closeModalAfterAsyncRefresh } from "./modal-stack.js";
 import { openAuth } from "./modale-auth.js";
@@ -190,6 +193,57 @@ import { toast } from "./toast.js";
           latestScore === null ? "—" : formatBossScore(latestScore)
         )
       ])
+    ]);
+  }
+
+  /* Une semaine de boss en toutes lettres pour l'infobulle et la liste, et
+     en abrégé pour l'abscisse — où l'année ferait se chevaucher les
+     libellés, alors qu'elle est déjà dans la liste juste dessous. */
+  function libelleSemaineBoss(weekStart){
+    return "Semaine du " + new Date(weekStart+"T00:00:00")
+      .toLocaleDateString("fr-FR", { day:"numeric", month:"long", year:"numeric" });
+  }
+
+  /* LA PROGRESSION DE LA CONFRÉRIE, un point par semaine.
+
+     Elle n'apparaît qu'à partir de DEUX semaines rapportées : sur une seule,
+     un point isolé ne dirait rien de plus que la case « Meilleur score »
+     juste au-dessus, et l'écran porterait deux fois le même chiffre.
+
+     Rien n'est lu ici : `allGroups` et `reports` sont ceux que la vue Boss a
+     déjà chargés, tout l'historique compris. */
+  function bossProgressionBlock(allGroups, reports){
+    const serie = bossSerieHebdo(allGroups, reports).map(point => ({
+      id:point.weekStart,
+      score:point.score,
+      libelle:libelleSemaineBoss(point.weekStart),
+      libelleCourt:frDate(point.weekStart)
+    }));
+    if(serie.length < 2) return null;
+    const resume = resumeCourbeScores(serie);
+    return el("section",{
+      class:"boss-stats boss-progression",
+      "aria-labelledby":"bossProgressionTitle"
+    },[
+      el("div",{class:"boss-stats-head"},[
+        el("h2",{
+          class:"boss-stats-title",
+          id:"bossProgressionTitle",
+          text:"Progression de la confrérie"
+        }),
+        /* `boss-stat-evolution` dit l'ecart avec la semaine precedente : ce
+           sous-titre n'est pas un ecart, il ne prend donc pas son nom. */
+        el("span",{
+          class:"boss-stats-hint",
+          text:"meilleur score de chaque semaine"
+        })
+      ]),
+      preparerCourbeScores(serie, {
+        description:"Courbe des meilleurs scores hebdomadaires du boss de guilde",
+        resume:"Record : "+formatBossScore(resume.meilleur)
+          +" · Dernière semaine : "+formatBossScore(resume.dernier)
+          +" · Écart au record : "+formatBossScore(resume.ecart)
+      })
     ]);
   }
 
@@ -394,6 +448,8 @@ import { toast } from "./toast.js";
     ]));
     body.appendChild(bossRecommendationPanel(weekGroups, membership));
     body.appendChild(bossStatsBlock(allGroups, reports, week.startDate));
+    const progression = bossProgressionBlock(allGroups, reports);
+    if(progression) body.appendChild(progression);
     body.appendChild(
       bossMeilleuresRunsBlock(allGroups, reports, membership, week.startDate)
     );
@@ -423,6 +479,7 @@ import { toast } from "./toast.js";
       body.appendChild(currentArchive);
     }
     if(past.length) body.appendChild(bossArchive(past, membership, reports));
+    dessinerCourbesEnAttente();
     restoreBossActionFocus(focusedAction);
   }
 

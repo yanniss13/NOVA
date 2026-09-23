@@ -73,6 +73,7 @@ const MODULES = [
   "metier/dispos-logique.js",
   "metier/recommandation-groupes.js",
   "metier/boss-logique.js",
+  "metier/courbe-scores.js",
   "metier/entrainement-boss.js",
   "metier/accueil-logique.js",
   "metier/wiki-competences.js",
@@ -126,6 +127,7 @@ const MODULES = [
   /* Avant `detail-equipe.js`, qui l importe pour son bloc de rotation. */
   "vues/rotation-equipe.js",
   "vues/detail-equipe.js",
+  "vues/courbe-scores.js",
   "vues/equipe-boss.js",
   "vues/boss-meilleures-runs.js",
   "vues/detail-roster.js",
