@@ -232,7 +232,8 @@ const {
   validerQuestion,
   porteeJarvis,
   erreurJarvis,
-  appelerGeminiAvecReprises,
+  listeModelesJarvis,
+  creerAppelGeminiJarvis,
   repondreQuestion,
   messageJarvis,
   messageErreurJarvis
@@ -242,13 +243,14 @@ const {
   validerQuestion(texte: string): string;
   porteeJarvis(interaction: DiscordInteraction, guildId: string): string;
   erreurJarvis(code: string): Error;
-  appelerGeminiAvecReprises(options: {
-    corps: unknown;
+  listeModelesJarvis(texte: string | undefined): string[];
+  creerAppelGeminiJarvis(options: {
     cle: string;
-    modele: string;
+    modeles: string[];
     fetch: typeof fetch;
     attendre(ms: number): Promise<unknown>;
-  }): Promise<unknown>;
+    journal?: unknown[];
+  }): (corps: unknown) => Promise<unknown>;
   repondreQuestion(options: {
     question: string;
     outils: JarvisOutils;
@@ -832,21 +834,13 @@ const RAFALE_TEMOIN = [
    captures. Le projet Google ne doit avoir AUCUN compte de facturation : un
    depassement rend alors un 429, jamais une facture. */
 const GEMINI_JARVIS_CLE = Deno.env.get("GEMINI_JARVIS_API_KEY") || "";
-/* Un alias et non un nom fige : `gemini-2.5-flash` a disparu pour les cles
-   recentes le 25 aout 2026, et un nom fige refera cette panne. */
-const GEMINI_JARVIS_MODELE = Deno.env.get("GEMINI_JARVIS_MODEL")
-  || "gemini-flash-lite-latest";
-/* L'appel HTTP et sa politique de reprise vivent dans le module partage, ou
-   des tests les eprouvent sans reseau ; ici, seulement le vrai fetch. */
-async function appelerGeminiJarvis(corps: unknown): Promise<unknown> {
-  return await appelerGeminiAvecReprises({
-    corps,
-    cle:GEMINI_JARVIS_CLE,
-    modele:GEMINI_JARVIS_MODELE,
-    fetch,
-    attendre:(ms: number) => new Promise(suite => setTimeout(suite, ms))
-  });
-}
+/* Une LISTE de modeles, separes par des virgules : le premier sature, a court
+   de quota ou muet, on passe au suivant. Le 24/09/2026, Flash-Lite et Flash
+   etaient satures pendant que gemini-3.6-flash repondait en 1,6 s. Finir la
+   liste par un alias (`gemini-flash-lite-latest`) la fait survivre aux
+   retraits de noms figes par Google. */
+const GEMINI_JARVIS_MODELES = listeModelesJarvis(Deno.env.get("GEMINI_JARVIS_MODEL"));
+const attendreJarvis = (ms: number) => new Promise(suite => setTimeout(suite, ms));
 
 /* Le catalogue ne change qu'a un deploiement du site : lu une fois par
    instance, comme `libelles-discord.json` pour /build. */
@@ -906,19 +900,22 @@ async function publishJarvis(
       lireMonstres:() => lireMonstresJarvis(config)
     });
     const resultat = await repondreQuestion({
-      question:texte, outils, appelerGemini:appelerGeminiJarvis, journal
+      question:texte, outils, journal,
+      appelerGemini:creerAppelGeminiJarvis({
+        cle:GEMINI_JARVIS_CLE, modeles:GEMINI_JARVIS_MODELES, fetch, attendre:attendreJarvis, journal
+      })
     });
     /* Ce qu'il faut pour surveiller le quota et la lenteur ; jamais le texte
        de la reponse. */
     console.log(JSON.stringify({
-      jarvis:{ code:"ok", modele:GEMINI_JARVIS_MODELE, tours:resultat.tours, outils:resultat.outils,
+      jarvis:{ code:"ok", modeles:GEMINI_JARVIS_MODELES, tours:resultat.tours, outils:resultat.outils,
         usage:resultat.usage, journal }
     }));
     await editOriginalText(interaction, messageJarvis(texte, resultat));
   } catch (error) {
     const code = error && typeof error === "object" && "code" in error
       ? String((error as { code: unknown }).code) : "autre";
-    console.log(JSON.stringify({ jarvis:{ code, modele:GEMINI_JARVIS_MODELE, journal } }));
+    console.log(JSON.stringify({ jarvis:{ code, modeles:GEMINI_JARVIS_MODELES, journal } }));
     if(code === "autre") console.error("Échec de /jarvis", error);
     try {
       await editOriginalText(interaction, messageErreurJarvis(code));

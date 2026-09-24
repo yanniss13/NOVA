@@ -318,18 +318,26 @@ les points dans un nom de commande.
 npx -y supabase@latest secrets set GEMINI_JARVIS_API_KEY=<la-cle>
 ```
 
-Le modèle vaut par défaut `gemini-flash-lite-latest`. Pour vérifier que cet
-alias existe pour la clé :
+`GEMINI_JARVIS_MODEL` est une **liste de modèles séparés par des virgules**,
+essayés dans l'ordre. Si l'un est saturé (503), à court de quota (429) ou muet
+plus de 20 s, le bot passe au suivant ; un modèle qui a répondu reste le
+premier choix pour le reste de la question. Une requête refusée ou une clé
+invalide, elles, s'arrêtent tout de suite : changer de modèle n'y changerait
+rien. Sans secret, la liste par défaut est
+`gemini-3.6-flash,gemini-3-flash-preview,gemini-flash-lite-latest`.
+
+Le 24/09/2026, Flash-Lite et Flash étaient saturés chez Google pendant que
+`gemini-3.6-flash` répondait en 1,6 s. Les noms figés finissent retirés (les
+2.5 répondaient déjà 404) : garder un alias `-latest` en fin de liste.
 
 ```powershell
-curl.exe -s -H "x-goog-api-key: <la-cle>" "https://generativelanguage.googleapis.com/v1beta/models?pageSize=200" | Select-String "flash-lite"
+npx -y supabase@latest secrets set "GEMINI_JARVIS_MODEL=gemini-3.6-flash,gemini-3-flash-preview,gemini-flash-lite-latest" --project-ref uxouhbgdlolidjmxwgae
 ```
 
-Pour en changer sans toucher au code :
-
-```powershell
-npx -y supabase@latest secrets set GEMINI_JARVIS_MODEL=<nom-du-modele>
-```
+Un secret n'est relu qu'au démarrage de la fonction : **redéployer** après
+l'avoir changé. Les journaux de `discord-planning` portent une ligne
+`{"jarvis":…}` par question, avec la liste `modeles` configurée et, dans
+`journal`, le modèle qui a réellement répondu et la durée de chaque étape.
 
 Ne **pas** employer `GEMINI_API_KEY` ni `GEMINI_MODEL` : ils règlent
 `lecture-panneau`, et les secrets Supabase sont communs à tout le projet.

@@ -306,6 +306,67 @@ async function main() {
     erreur => sansCode(erreur) === "autre");
   assert.equal(refuse.appels.length, 1, "un 400 n'est pas rejoue");
 
+  /* 10 ter. Le modele de secours. Le 24/09/2026, Flash-Lite et Flash etaient
+     satures chez Google pendant que gemini-3.6-flash repondait en 1,6 s : une
+     liste de modeles evite qu'une saturation rende /jarvis muet. */
+  assert.deepEqual(Q.listeModelesJarvis(" gemini-3.6-flash , gemini-3-flash-preview,,gemini-3.6-flash "),
+    ["gemini-3.6-flash", "gemini-3-flash-preview"], "virgules, espaces et doublons");
+  assert.deepEqual(Q.listeModelesJarvis(""), Q.listeModelesJarvis(undefined));
+  assert.ok(Q.listeModelesJarvis(undefined).length >= 2, "un defaut avec au moins un secours");
+
+  /* Un faux fetch qui repond selon le modele vise par l'URL. */
+  function fetchParModele(reponsesParModele) {
+    const appels = [];
+    return { appels, fetch:async url => {
+      const modele = decodeURIComponent(/models\/([^:]+):generateContent/.exec(url)[1]);
+      appels.push(modele);
+      const suite = reponsesParModele[modele];
+      const prochain = Array.isArray(suite) ? suite.shift() : suite;
+      if(prochain instanceof Error) throw prochain;
+      return prochain;
+    } };
+  }
+  const attendreRien = async () => {};
+
+  const journalSecours = [];
+  const saturation = fetchParModele({
+    "a":[reponseHttp(503), reponseHttp(503), reponseHttp(503)],
+    "b":reponseHttp(200, { ok:"b" })
+  });
+  const appelerSecours = Q.creerAppelGeminiJarvis({ cle:"k", modeles:["a", "b"],
+    fetch:saturation.fetch, attendre:attendreRien, journal:journalSecours });
+  assert.deepEqual(await appelerSecours({ contents:[1] }), { ok:"b" });
+  assert.deepEqual(saturation.appels, ["a", "a", "a", "b"], "reprises sur a, puis bascule sur b");
+  assert.deepEqual(journalSecours, [
+    { etape:"modele", modele:"a", issue:"sature" },
+    { etape:"modele", modele:"b", issue:"ok" }
+  ]);
+  /* Un modele qui a repondu reste le premier choix pour la suite de la question. */
+  saturation.appels.length = 0;
+  assert.deepEqual(await appelerSecours({ contents:[2] }), { ok:"b" });
+  assert.deepEqual(saturation.appels, ["b"]);
+
+  const quotaA = fetchParModele({ "a":reponseHttp(429), "b":reponseHttp(200, { ok:"b" }) });
+  assert.deepEqual(await Q.creerAppelGeminiJarvis({ cle:"k", modeles:["a", "b"],
+    fetch:quotaA.fetch, attendre:attendreRien })({}), { ok:"b" }, "quota épuisé : on bascule");
+
+  const muetA = fetchParModele({ "a":delaiDepasse(), "b":reponseHttp(200, { ok:"b" }) });
+  assert.deepEqual(await Q.creerAppelGeminiJarvis({ cle:"k", modeles:["a", "b"],
+    fetch:muetA.fetch, attendre:attendreRien })({}), { ok:"b" }, "modèle muet : on bascule");
+
+  const refusA = fetchParModele({ "a":reponseHttp(400), "b":reponseHttp(200, { ok:"b" }) });
+  await assert.rejects(Q.creerAppelGeminiJarvis({ cle:"k", modeles:["a", "b"],
+    fetch:refusA.fetch, attendre:attendreRien })({}), erreur => erreur.code === "autre");
+  assert.deepEqual(refusA.appels, ["a"], "une requête refusée ne s'arrange pas en changeant de modèle");
+
+  const tousSatures = fetchParModele({ "a":reponseHttp(429), "b":reponseHttp(429) });
+  await assert.rejects(Q.creerAppelGeminiJarvis({ cle:"k", modeles:["a", "b"],
+    fetch:tousSatures.fetch, attendre:attendreRien })({}), erreur => erreur.code === "quota");
+
+  await assert.rejects(Q.creerAppelGeminiJarvis({ cle:"", modeles:["a"],
+    fetch:async () => { throw new Error("jamais"); }, attendre:attendreRien })({}),
+    erreur => erreur.code === "config");
+
   /* 11. Le cablage de l'Edge Function, lu dans son source (Deno n'est pas
          executable ici). */
   const index = fs.readFileSync(path.join(ROOT, "supabase", "functions", "discord-planning", "index.ts"), "utf8");
@@ -317,9 +378,12 @@ async function main() {
     "la cle de lecture-panneau n'est jamais lue par le bot");
   assert.doesNotMatch(index, /Deno\.env\.get\("GEMINI_MODEL"\)/,
     "le modele de lecture-panneau n'est jamais lu par le bot");
-  /* L'appel HTTP et ses reprises vivent dans le module partage, eprouves au
-     bloc 10 bis ; l'Edge Function ne fait que lui passer fetch et la cle. */
-  assert.match(index, /appelerGeminiAvecReprises\(\{/);
+  /* L'appel HTTP, ses reprises et ses modeles de secours vivent dans le module
+     partage, eprouves aux blocs 10 bis et 10 ter ; l'Edge Function ne fait que
+     lui passer fetch, la cle et la liste lue dans le secret. */
+  assert.match(index, /listeModelesJarvis\(Deno\.env\.get\("GEMINI_JARVIS_MODEL"\)\)/);
+  assert.match(index, /appelerGemini:creerAppelGeminiJarvis\(\{[\s\S]*?modeles:GEMINI_JARVIS_MODELES[\s\S]*?journal[\s\S]*?\}\)/,
+    "un appel par question : l'ordre des modeles et le journal lui appartiennent");
   assert.doesNotMatch(index, /generativelanguage\.googleapis\.com/,
     "une seule implementation de l'appel HTTP");
 
@@ -329,9 +393,9 @@ async function main() {
   assert.match(index, /lireMonstres:/);
   /* Le journal des etapes part dans les logs, en cas de succes comme d'echec. */
   assert.match(index, /repondreQuestion\(\{[\s\S]*?journal[\s\S]*?\}\)/);
-  assert.match(index, /catch \(error\) \{[\s\S]*?console\.log\(JSON\.stringify\(\{\s*jarvis:\{ code, modele:GEMINI_JARVIS_MODELE, journal \}/,
-    "le modele reellement utilise figure dans la ligne : un secret pas encore relu ne se voit pas autrement");
-  assert.match(index, /jarvis:\{ code:"ok", modele:GEMINI_JARVIS_MODELE,/);
+  assert.match(index, /catch \(error\) \{[\s\S]*?console\.log\(JSON\.stringify\(\{\s*jarvis:\{ code, modeles:GEMINI_JARVIS_MODELES, journal \}/,
+    "les modeles configures figurent dans la ligne : un secret pas encore relu ne se voit pas autrement");
+  assert.match(index, /jarvis:\{ code:"ok", modeles:GEMINI_JARVIS_MODELES,/);
   assert.match(Q.CONSIGNE_JARVIS, /valeurs de base/);
   assert.match(Q.CONSIGNE_JARVIS, /monstres/);
   /* Un nom vague : Gemini dit quel monstre il a retenu et cite les autres. */

@@ -121,7 +121,18 @@ const GEMINI_RACINE_JARVIS = "https://generativelanguage.googleapis.com/v1beta/m
    certain, et rejouer un delai depasse doublerait l'attente du membre. */
 const SATURATION_GEMINI_JARVIS = [500, 502, 503, 504];
 const REPRISES_GEMINI_JARVIS = [700, 1800];
-const DELAI_APPEL_GEMINI_JARVIS_MS = 30_000;
+/* 20 s par appel : au-dela, un modele sature ne repondra plus, et il vaut
+   mieux passer au modele de secours que de laisser le membre attendre. */
+const DELAI_APPEL_GEMINI_JARVIS_MS = 20_000;
+/* Le 24/09/2026, Flash-Lite et Flash etaient satures chez Google pendant que
+   gemini-3.6-flash repondait en 1,6 s. Un defaut a plusieurs modeles, du plus
+   rapide constate a l'alias qui survit aux retraits de Google. Le secret
+   GEMINI_JARVIS_MODEL le remplace. */
+const MODELES_JARVIS_PAR_DEFAUT = ["gemini-3.6-flash", "gemini-3-flash-preview", "gemini-flash-lite-latest"];
+/* Seules ces pannes passent au modele suivant : un autre modele a son propre
+   quota et sa propre charge. Une requete refusee ou une cle invalide, elles,
+   ne s'arrangent pas en changeant de modele. */
+const CODES_SECOURS_GEMINI_JARVIS = ["sature", "quota", "delai"];
 
 function estDelaiDepasseJarvis(erreur) {
   return Boolean(erreur) && typeof erreur === "object" && erreur.name === "TimeoutError";
@@ -175,6 +186,45 @@ async function appelerGeminiAvecReprises(options) {
     throw erreurJarvis("autre");
   }
   throw erreurJarvis("sature");
+}
+
+/* « a, b ,a » -> ["a", "b"] ; vide -> le defaut. */
+function listeModelesJarvis(texte) {
+  const modeles = [...new Set(String(texte || "").split(",")
+    .map(modele => modele.trim()).filter(Boolean))];
+  return modeles.length ? modeles : MODELES_JARVIS_PAR_DEFAUT.slice();
+}
+
+/* L'appel a Gemini d'UNE question, avec ses modeles de secours. Chaque modele
+   garde ses reprises sur saturation ; s'il reste sature, a court de quota ou
+   muet, on passe au suivant. Un modele qui a repondu devient le premier choix
+   pour la suite de la question : ses signatures de pensee lui appartiennent. */
+function creerAppelGeminiJarvis(options) {
+  const ordre = options.modeles.slice();
+  const journal = Array.isArray(options.journal) ? options.journal : [];
+  return async function appelerGeminiDeLaQuestion(corps) {
+    if(!options.cle) throw erreurJarvis("config");
+    let derniere = null;
+    for(const modele of ordre.slice()){
+      try {
+        const reponse = await appelerGeminiAvecReprises({
+          corps, cle:options.cle, modele, fetch:options.fetch, attendre:options.attendre
+        });
+        journal.push({ etape:"modele", modele, issue:"ok" });
+        if(ordre[0] !== modele){
+          ordre.splice(ordre.indexOf(modele), 1);
+          ordre.unshift(modele);
+        }
+        return reponse;
+      } catch (erreur) {
+        const code = (erreur && erreur.code) || "exception";
+        journal.push({ etape:"modele", modele, issue:code });
+        if(!CODES_SECOURS_GEMINI_JARVIS.includes(code)) throw erreur;
+        derniere = erreur;
+      }
+    }
+    throw derniere || erreurJarvis("config");
+  };
 }
 
 async function repondreQuestion(options) {
@@ -319,6 +369,8 @@ const discordJarvisApi = {
   contexteTemporel,
   erreurJarvis,
   appelerGeminiAvecReprises,
+  listeModelesJarvis,
+  creerAppelGeminiJarvis,
   repondreQuestion,
   messageJarvis,
   messageErreurJarvis
