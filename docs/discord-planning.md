@@ -361,3 +361,33 @@ Pseudos seulement : aucun UUID ni email. Aucun outil n'écrit.
 Après une régénération du wiki ou des catalogues, lancer
 `node scripts/generer-connaissances-discord.js`. Sinon, le test `--verifier`
 échoue.
+
+### Monstres et boss (lot 2a)
+
+Deux outils de plus : `fiche_monstre` (faiblesses, résistances, résistances
+critiques et valeurs de base, version par version avec leur contexte) et
+`chercher_monstres` (monstres faibles à un élément).
+
+Les données viennent des fichiers du jeu, extraits sur le poste du
+propriétaire et déposés dans le bucket Supabase **privé** `jarvis-prive`.
+Elles ne sont ni dans le dépôt ni sur Pages.
+
+**Première mise en service**
+
+1. Rejouer `supabase/schema.sql` dans le SQL Editor. Il crée le bucket privé.
+2. Extraire :
+
+```powershell
+$env:DONNEES_JEU = (Resolve-Path (Read-Host 'Dossier Content')).Path
+node outils/fabrication/extraire-monstres.js
+```
+
+3. Déposer `output/jarvis/monstres.json` dans Storage → `jarvis-prive`.
+4. Redéployer `discord-planning`. Pas de commande à réenregistrer.
+
+**Après une mise à jour du jeu** : étapes 2 et 3. Le bot prend le nouveau
+fichier en compte au plus tard une heure après, sans redéploiement.
+
+Les PV, la défense et l'attaque sont des **valeurs de base** : le niveau de
+monde les ajuste côté serveur, et aucune table exportée ne dit comment. Les
+faiblesses et résistances, elles, concordent avec les mesures en jeu.

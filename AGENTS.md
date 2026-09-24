@@ -1344,8 +1344,17 @@ le SQL Editor afin d'ajouter les tables à la publication
   d'UUID, d'email ni de note de build. Les données du jeu viennent de
   `data/connaissances-discord.json`, généré par
   `scripts/generer-connaissances-discord.js`. Procédure :
-  `docs/discord-planning.md`. Un lot 2 est prévu : les exports FModel iront
-  dans un stockage Supabase **privé**, jamais dans le dépôt ni sur Pages.
+  `docs/discord-planning.md`.
+  **Lot 2a (monstres et boss)** : `outils/fabrication/extraire-monstres.js` lit
+  l'export local (`DONNEES_JEU`) et écrit `output/jarvis/monstres.json`,
+  ignoré par git, que le propriétaire dépose dans le bucket **privé**
+  `jarvis-prive` (aucune politique : seule la clé `service_role` le lit). Les
+  outils `fiche_monstre` et `chercher_monstres` vivent dans
+  `_shared/discord-jarvis-monstres.js`. Faiblesse > 0, résistance < 0,
+  confirmé en jeu. L'acteur d'Akumu pointe sur le groupe de test
+  `stat_poweroverwhelming` : ses vraies statistiques sont ses 30 paliers de
+  `BossStatGroupTable`. Lots suivants prévus : 2b (buffs), 2c (boutiques et
+  butins), 2d (contenu non sorti), sur la même chaîne.
 - Après une modification de ce schéma, réexécuter le contenu complet de
   `supabase/schema.sql` dans le SQL Editor Supabase.
 

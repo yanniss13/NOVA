@@ -57,6 +57,14 @@ Viennent ensuite, sans réseau, les modes `--client-only` des générateurs de
 ne remplacent que les héros de l'instantané, prouvent que les autres n'ont pas
 bougé, et leur `--check` le vérifie.
 
+## Les monstres de /jarvis
+
+`extraire-monstres.js` fabrique `output/jarvis/monstres.json` pour la
+commande Discord `/jarvis`. Ce fichier est ignoré par git et va dans le
+bucket Supabase **privé** `jarvis-prive` : il n'entre jamais dans ce dépôt
+public. La logique vit dans `monstres-jarvis.js`, testée en CI sans l'export.
+Procédure : `docs/discord-planning.md`.
+
 ## Ce qui n'est pas ici
 
 Le déchiffreur d'archives et les notes d'extraction ont été retirés du dépôt.
