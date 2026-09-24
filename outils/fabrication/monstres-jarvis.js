@@ -267,4 +267,4 @@ function construireCatalogueMonstres(entree) {
   };
 }
 
-module.exports = { construireCatalogueMonstres };
+module.exports = { construireCatalogueMonstres, lecteurDeTextes, enListe };
