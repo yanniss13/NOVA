@@ -77,6 +77,7 @@ const SUITES = {
     "node tests/monstres-jarvis.test.js",
     "node tests/mecaniques-jarvis.test.js",
     "node tests/jarvis-stockage.test.js",
+    "node tests/jarvis-memoire-schema.test.js",
     "node tests/discord-jarvis-monstres.test.js",
     "node tests/discord-jarvis-stockage.test.js",
     "node tests/discord-jarvis-mecaniques.test.js",

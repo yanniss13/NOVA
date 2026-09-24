@@ -1363,8 +1363,14 @@ le SQL Editor afin d'ajouter les tables à la publication
   relie à ses effets par le **nom** de ses comportements (identifiant du
   wiki, ou identifiant suivi de `_`). Les règles viennent de
   `TutorialLogGroupTable`/`TutorialLogTable` et `GuidePopupGroupTable`/
-  `GuidePopupTable`, jamais des noms de clés. Lots suivants prévus : effets
-  posés par les boss (recherche), 2c (boutiques et butins), 2d (contenu
+  `GuidePopupTable`, jamais des noms de clés. `fiche_monstre` rend aussi les
+  stratégies officielles des boss (`local_boss_strategy_…`).
+  **Mémoire courte** : 3 échanges par membre, 30 minutes, dans
+  `private.jarvis_memoire` (sans politique, `service_role` seul, via
+  `jarvis_memoire_lire`/`jarvis_memoire_noter`) ; une panne ne bloque jamais
+  la réponse. Lots suivants prévus : effets posés par les boss (la cible ne
+  se déduit jamais de la nature buff/malus : Akumu reçoit ses propres
+  « Réduction »), 2c (boutiques et butins), 2d (contenu
   non sorti).
 - Après une modification de ce schéma, réexécuter le contenu complet de
   `supabase/schema.sql` dans le SQL Editor Supabase.

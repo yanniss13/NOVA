@@ -407,6 +407,21 @@ la clé du nom du monstre ; quand il en couvre plusieurs (« baba_boss » :
 Durak, Durak 「corrompu」, Jorn le Costaud), seuls ceux du rang le plus élevé
 les reçoivent.
 
+### Mémoire courte
+
+J.A.R.V.I.S. se souvient des **3 derniers échanges** de chaque membre pendant
+**30 minutes** : « et pour Drake ? » se comprend après une question sur
+Akumu. Les questions et réponses (coupées à 600 caractères, sans les données
+des outils) vivent dans `private.jarvis_memoire`, sans politique : seule la
+fonction, en `service_role`, y passe par `jarvis_memoire_lire` et
+`jarvis_memoire_noter`. Chaque écriture efface les mémoires périmées de tout
+le monde. Une panne de la mémoire ne bloque jamais la réponse (3 s au plus,
+ligne `{"etape":"memoire","issue":"erreur"}` dans le journal).
+
+**Mise en service** : rejouer `supabase/schema.sql` dans le SQL Editor, puis
+redéployer `discord-planning`. Sans le schéma, la lecture échoue en silence
+et J.A.R.V.I.S. répond sans mémoire.
+
 ### Effets, porteurs et règles (lot 2b)
 
 Trois outils de plus : `fiche_effet` (un effet du jeu, ses valeurs, sa

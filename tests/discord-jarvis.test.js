@@ -209,6 +209,36 @@ async function main() {
   await assert.rejects(Q.repondreQuestion({ question:"?", outils:fauxOutils(),
     appelerGemini:rattrapageRefuse.appeler, maintenant:MAINTENANT }), erreur => erreur.code === "bloque");
 
+  /* 4 ter. Memoire courte : les 3 derniers echanges du membre, relus par la
+     fonction, precedent la question comme une vraie conversation. */
+  assert.deepEqual(Q.historiqueJarvis(null), []);
+  assert.deepEqual(Q.historiqueJarvis({ q:"x" }), []);
+  const brut = [
+    { q:"Une", r:"1" }, { q:"Deux", r:"2" }, { q:"", r:"vide" }, { q:"Trois", r:3 },
+    { q:"Quatre", r:"4" }, { q:"Cinq", r:"x".repeat(900) }
+  ];
+  const historique = Q.historiqueJarvis(brut);
+  assert.deepEqual(historique.map(e => e.q), ["Deux", "Quatre", "Cinq"],
+    "entrées invalides écartées, les 3 plus récentes gardées dans l'ordre");
+  assert.equal(Array.from(historique[2].r).length, 600, "réponse bornée à 600 caractères");
+  const avecMemoire = fauxGemini([texte("Drake résiste au Feu.")]);
+  await Q.repondreQuestion({ question:"Et pour Drake ?", outils:fauxOutils(), maintenant:MAINTENANT,
+    appelerGemini:avecMemoire.appeler, historique:[{ q:"Faiblesse d'Akumu ?", r:"Akumu résiste à tout." }] });
+  const conversation = avecMemoire.corps[0].contents;
+  assert.deepEqual(conversation.slice(0, 2), [
+    { role:"user", parts:[{ text:"Question : Faiblesse d'Akumu ?" }] },
+    { role:"model", parts:[{ text:"Akumu résiste à tout." }] }
+  ]);
+  assert.match(conversation[2].parts[0].text, /heure de Paris[\s\S]*Question : Et pour Drake \?$/);
+  /* Le rattrapage autonome garde le contexte : sans lui, « et pour Drake ? »
+     ne voudrait plus rien dire. */
+  const rattrapeMemoire = fauxGemini([1, 2, 3, 4].map(() => appel("fiche_personnage", {}))
+    .concat([appel("fiche_personnage", {}), texte("Réponse.")]));
+  await Q.repondreQuestion({ question:"Et pour Drake ?", outils:fauxOutils(), maintenant:MAINTENANT,
+    appelerGemini:rattrapeMemoire.appeler, historique:[{ q:"Faiblesse d'Akumu ?", r:"Akumu résiste à tout." }] });
+  assert.match(rattrapeMemoire.corps[5].contents[0].parts[0].text,
+    /Échanges précédents[\s\S]*Faiblesse d'Akumu \?[\s\S]*Akumu résiste à tout\.[\s\S]*Question : Et pour Drake \?/);
+
   /* 5. Reponse vide ou bloquee, et pensees ignorees */
   const bloque = fauxGemini([{ candidates:[{ finishReason:"SAFETY" }] }]);
   await assert.rejects(Q.repondreQuestion({ question:"?", outils:fauxOutils(),
@@ -474,6 +504,14 @@ async function main() {
     "un appel par question : l'ordre des modeles et le journal lui appartiennent");
   assert.doesNotMatch(index, /generativelanguage\.googleapis\.com/,
     "une seule implementation de l'appel HTTP");
+
+  /* Memoire courte : relue avant Gemini avec un delai, notee apres l'envoi
+     de la reponse, jamais bloquante. */
+  assert.match(index, /rpc\/jarvis_memoire_lire[\s\S]{0,300}?AbortSignal\.timeout\(3_000\)/);
+  assert.match(index, /repondreQuestion\(\{[\s\S]*?historique[\s\S]*?\}\)/);
+  assert.match(index, /await editOriginalText\(interaction, messageJarvis\(texte, resultat\)\);\s*await noterMemoireJarvis\(/,
+    "l'échange n'est noté qu'après une réponse envoyée");
+  assert.match(Q.CONSIGNE_JARVIS, /échanges précédents/i);
 
   /* Lot 2a : le bucket prive des monstres, lu par la cle service_role. */
   assert.match(index, /creerLecteurStockageJarvis\(\{[\s\S]{0,200}?nom:"monstres",\s*valider:validerCatalogueMonstres/,

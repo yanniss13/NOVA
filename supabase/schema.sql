@@ -841,7 +841,7 @@ language plpgsql
 security definer
 set search_path = public, pg_temp
 as $$
-declare
+declare
   v_week date;
   v_status text;
   v_member_count integer;
@@ -983,7 +983,7 @@ language plpgsql
 security definer
 set search_path = public, pg_temp
 as $$
-declare
+declare
   v_week date;
   v_status text;
 begin
@@ -1088,7 +1088,7 @@ language plpgsql
 security definer
 set search_path = public, pg_temp
 as $$
-declare
+declare
   v_week date;
   v_status text;
   v_snapshot jsonb;
@@ -1659,6 +1659,94 @@ $$;
 revoke all on function public.claim_discord_planning_request(text, integer)
   from public;
 grant execute on function public.claim_discord_planning_request(text, integer)
+  to service_role;
+
+-- 8ter) Memoire courte de `/jarvis` : les 3 derniers echanges d'un membre,
+-- gardes 30 minutes, pour qu'il comprenne « et pour Drake ? ». Meme portee
+-- que l'anti-spam (serveur:jarvis:membre). Table privee, sans politique :
+-- seule l'Edge Function, en service_role, passe par les deux fonctions.
+-- Chaque ecriture efface les memoires perimees de tout le monde.
+create table if not exists private.jarvis_memoire (
+  portee     text primary key check (char_length(portee) between 1 and 200),
+  echanges   jsonb not null default '[]'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+revoke all on table private.jarvis_memoire from public;
+
+create or replace function public.jarvis_memoire_lire(p_portee text)
+returns jsonb
+language sql
+stable
+security definer
+set search_path = pg_catalog, public, private
+as $$
+  select coalesce((
+    select jsonb_agg(echange order by (echange->>'a')::timestamptz)
+    from private.jarvis_memoire memoire,
+      jsonb_array_elements(memoire.echanges) echange
+    where memoire.portee = p_portee
+      and (echange->>'a')::timestamptz >= now() - interval '30 minutes'
+  ), '[]'::jsonb);
+$$;
+
+revoke all on function public.jarvis_memoire_lire(text)
+  from public;
+grant execute on function public.jarvis_memoire_lire(text)
+  to service_role;
+
+create or replace function public.jarvis_memoire_noter(
+  p_portee text,
+  p_question text,
+  p_reponse text
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = pg_catalog, public, private
+as $$
+declare
+  v_echanges jsonb;
+begin
+  if nullif(trim(p_portee), '') is null or char_length(p_portee) > 200 then
+    return false;
+  end if;
+
+  delete from private.jarvis_memoire where updated_at < now() - interval '30 minutes';
+
+  select coalesce(jsonb_agg(recents.echange order by (recents.echange->>'a')::timestamptz), '[]'::jsonb)
+    into v_echanges
+  from (
+    select tous.echange
+    from (
+      select echange
+      from private.jarvis_memoire memoire,
+        jsonb_array_elements(memoire.echanges) echange
+      where memoire.portee = p_portee
+        and (echange->>'a')::timestamptz >= now() - interval '30 minutes'
+      union all
+      select jsonb_build_object(
+        'q', left(coalesce(p_question, ''), 500),
+        'r', left(coalesce(p_reponse, ''), 600),
+        'a', now()
+      )
+    ) tous(echange)
+    order by (tous.echange->>'a')::timestamptz desc
+    limit 3
+  ) recents;
+
+  insert into private.jarvis_memoire (portee, echanges, updated_at)
+  values (p_portee, v_echanges, now())
+  on conflict (portee) do update
+    set echanges = excluded.echanges,
+        updated_at = excluded.updated_at;
+  return true;
+end;
+$$;
+
+revoke all on function public.jarvis_memoire_noter(text, text, text)
+  from public;
+grant execute on function public.jarvis_memoire_noter(text, text, text)
   to service_role;
 
 -- =============================================================================

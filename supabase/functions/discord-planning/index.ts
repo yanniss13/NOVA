@@ -261,6 +261,7 @@ const {
     outils: JarvisOutils;
     appelerGemini(corps: unknown): Promise<unknown>;
     journal?: unknown[];
+    historique?: unknown;
   }): Promise<JarvisResultat>;
   messageJarvis(question: string, resultat: JarvisResultat): string;
   messageErreurJarvis(code: string): string;
@@ -908,6 +909,48 @@ function lireMecaniquesJarvis(config: PlanningConfig): Promise<unknown> {
   return lecteurMecaniquesJarvis();
 }
 
+/* Memoire courte de /jarvis (supabase/schema.sql, 8ter) : les 3 derniers
+   echanges du membre, 30 minutes. Une panne ne bloque jamais la reponse :
+   3 s au plus, puis J.A.R.V.I.S. repond sans contexte. */
+async function lireMemoireJarvis(
+  config: PlanningConfig,
+  portee: string,
+  journal: unknown[]
+): Promise<unknown> {
+  const debut = Date.now();
+  try {
+    const echanges = await supabaseJson<unknown>(config, "rpc/jarvis_memoire_lire", {
+      method:"POST",
+      body:JSON.stringify({ p_portee:portee }),
+      signal:AbortSignal.timeout(3_000)
+    });
+    journal.push({ etape:"memoire", ms:Date.now() - debut,
+      echanges:Array.isArray(echanges) ? echanges.length : 0 });
+    return echanges;
+  } catch (error) {
+    journal.push({ etape:"memoire", ms:Date.now() - debut, issue:"erreur" });
+    console.error("Mémoire /jarvis illisible", error);
+    return [];
+  }
+}
+
+async function noterMemoireJarvis(
+  config: PlanningConfig,
+  portee: string,
+  question: string,
+  reponse: string
+): Promise<void> {
+  try {
+    await supabaseJson<boolean>(config, "rpc/jarvis_memoire_noter", {
+      method:"POST",
+      body:JSON.stringify({ p_portee:portee, p_question:question, p_reponse:reponse }),
+      signal:AbortSignal.timeout(3_000)
+    });
+  } catch (error) {
+    console.error("Mémoire /jarvis non notée", error);
+  }
+}
+
 async function publishJarvis(
   interaction: DiscordInteraction,
   config: PlanningConfig
@@ -938,8 +981,9 @@ async function publishJarvis(
       lireMonstres:() => lireMonstresJarvis(config),
       lireMecaniques:() => lireMecaniquesJarvis(config)
     });
+    const historique = await lireMemoireJarvis(config, portee, journal);
     const resultat = await repondreQuestion({
-      question:texte, outils, journal,
+      question:texte, outils, journal, historique,
       appelerGemini:creerAppelGeminiJarvis({
         cle:GEMINI_JARVIS_CLE, modeles:GEMINI_JARVIS_MODELES, fetch, attendre:attendreJarvis, journal
       })
@@ -951,6 +995,7 @@ async function publishJarvis(
         usage:resultat.usage, journal }
     }));
     await editOriginalText(interaction, messageJarvis(texte, resultat));
+    await noterMemoireJarvis(config, portee, texte, resultat.texte);
   } catch (error) {
     const code = error && typeof error === "object" && "code" in error
       ? String((error as { code: unknown }).code) : "autre";
