@@ -45,8 +45,8 @@ await import("../_shared/discord-build-png.js");
 await import("../_shared/planning-png.js");
 /* /jarvis : les outils d'abord, dont la boucle ne depend pas au chargement,
    mais qui lisent eux-memes quatre modules deja importes ci-dessus. */
-/* Lots 2a et 2b : le lecteur du bucket prive, puis les monstres, lus par
-   les outils de /jarvis. */
+/* Lots 2a et 2b : le lecteur du bucket prive, puis les monstres et les
+   mecaniques, lus par les outils de /jarvis. */
 await import("../_shared/discord-jarvis-stockage.js");
 await import("../_shared/discord-jarvis-monstres.js");
 await import("../_shared/discord-jarvis-mecaniques.js");

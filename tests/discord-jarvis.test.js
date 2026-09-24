@@ -459,6 +459,8 @@ async function main() {
   /* Quatre outils appelés un par un ont coûté 5 appels à une question : le
      palier gratuit de gemini-3.6-flash n'en accorde que 20. */
   assert.match(Q.CONSIGNE_JARVIS, /dans le même tour/);
+  /* fiche_effet rend lui aussi « autresCorrespondances ». */
+  assert.match(Q.CONSIGNE_JARVIS, /quel monstre ou quel effet tu as retenu/);
   /* La date de l'export survit dans la ligne Sources, meme pour Akumu. */
   const sourceAkumu = "fiche monstre Akumu, bête démoniaque · données du jeu du 22/09/2026";
   assert.match(Q.messageJarvis("?", { texte:"ok", sources:[sourceAkumu] }),
