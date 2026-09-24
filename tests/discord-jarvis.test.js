@@ -133,9 +133,42 @@ async function main() {
     appelerGemini:bavard.appeler, maintenant:MAINTENANT });
   assert.equal(r4.tours, 5);
   assert.equal(bavard.corps[4].toolConfig.functionCallingConfig.mode, "NONE");
-  const tetu = fauxGemini([1, 2, 3, 4, 5].map(() => appel("fiche_personnage", {})));
+  /* Le dernier tour le dit aussi en toutes lettres : le mode NONE seul n'a
+     pas suffi a gemini-3-flash-preview le 24/09/2026. */
+  assert.match(bavard.corps[4].systemInstruction.parts[0].text, /Dernier tour/);
+  assert.doesNotMatch(bavard.corps[0].systemInstruction.parts[0].text, /Dernier tour/);
+
+  /* Sequence reelle du 24/09/2026 : au 5e tour, malgre NONE, le modele rend
+     un appel d'outil (functionCall+thoughtSignature, fin STOP) et aucun
+     texte. Un appel de rattrapage part alors SANS aucun outil declare. */
+  const ignoreNone = { candidates:[{ finishReason:"STOP", content:{ role:"model", parts:[
+    { functionCall:{ name:"chercher_effets", args:{ texte:"défense" } }, thoughtSignature:"sig" }
+  ] } }] };
+  const rattrape = fauxGemini([
+    appel("fiche_personnage", {}), appel("fiche_personnage", {}), appel("fiche_personnage", {}),
+    appel("fiche_personnage", {}), ignoreNone, texte("Trois héros, d'après les fichiers.")
+  ]);
+  const journalRattrape = [];
+  const r4b = await Q.repondreQuestion({ question:"?", outils:fauxOutils(), journal:journalRattrape,
+    appelerGemini:rattrape.appeler, maintenant:MAINTENANT, horloge:() => 0 });
+  assert.equal(r4b.texte, "Trois héros, d'après les fichiers.");
+  assert.equal(rattrape.corps.length, 6);
+  assert.equal(rattrape.corps[5].tools, undefined, "le rattrapage ne déclare aucun outil");
+  assert.equal(rattrape.corps[5].toolConfig, undefined);
+  assert.match(rattrape.corps[5].systemInstruction.parts[0].text, /Dernier tour/);
+  assert.equal(rattrape.corps[5].contents.length, rattrape.corps[4].contents.length,
+    "l'appel d'outil ignoré n'est pas renvoyé : il n'aurait pas de réponse");
+  assert.deepEqual(journalRattrape.slice(-2).map(ligne => [ligne.tour, ligne.issue]),
+    [[5, "vide"], ["rattrapage", "texte"]]);
+
+  const tetu = fauxGemini([1, 2, 3, 4, 5, 6].map(() => appel("fiche_personnage", {})));
   await assert.rejects(Q.repondreQuestion({ question:"?", outils:fauxOutils(),
     appelerGemini:tetu.appeler, maintenant:MAINTENANT }), erreur => erreur.code === "bloque");
+  /* Un rattrapage refusé par Google ne fait pas pire que le message actuel. */
+  const rattrapageRefuse = fauxGemini([1, 2, 3, 4, 5].map(() => appel("fiche_personnage", {}))
+    .concat([Object.assign(new Error("400"), { code:"autre" })]));
+  await assert.rejects(Q.repondreQuestion({ question:"?", outils:fauxOutils(),
+    appelerGemini:rattrapageRefuse.appeler, maintenant:MAINTENANT }), erreur => erreur.code === "bloque");
 
   /* 5. Reponse vide ou bloquee, et pensees ignorees */
   const bloque = fauxGemini([{ candidates:[{ finishReason:"SAFETY" }] }]);
@@ -423,6 +456,9 @@ async function main() {
   assert.match(Q.CONSIGNE_JARVIS, /la description de la compétence prime/);
   assert.match(Q.CONSIGNE_JARVIS, /nom absent de la description/);
   assert.match(Q.CONSIGNE_JARVIS, /effets et règles du jeu/);
+  /* Quatre outils appelés un par un ont coûté 5 appels à une question : le
+     palier gratuit de gemini-3.6-flash n'en accorde que 20. */
+  assert.match(Q.CONSIGNE_JARVIS, /dans le même tour/);
   /* La date de l'export survit dans la ligne Sources, meme pour Akumu. */
   const sourceAkumu = "fiche monstre Akumu, bête démoniaque · données du jeu du 22/09/2026";
   assert.match(Q.messageJarvis("?", { texte:"ok", sources:[sourceAkumu] }),
