@@ -159,9 +159,14 @@ function trouverTypeArmeJarvis(personnage, saisie) {
   if(saisie === undefined || saisie === null || String(saisie).trim() === "") return null;
   const cherche = normaliserRecherche(saisie);
   const armes = personnage.armes || [];
-  const trouvee = armes.find(arme =>
-    normaliserRecherche(arme.arme) === cherche || normaliserRecherche(arme.type) === cherche)
-    || armes.find(arme => normaliserRecherche(arme.arme).startsWith(cherche));
+  /* Trois vocabulaires pour une meme arme : le libelle du jeu (« Grimoire »),
+     l'enum (« Book ») et le dossier du site (« Livre »). Un membre emploie
+     celui qu'il a sous les yeux ; chaque refus coutait a Gemini un tour. */
+  const noms = arme => [arme.arme, arme.type, TYPE_ARME_VERS_DOSSIER[arme.type]]
+    .filter(Boolean).map(normaliserRecherche);
+  const trouvee = armes.find(arme => noms(arme).includes(cherche))
+    || armes.find(arme => noms(arme).some(nom => nom.startsWith(cherche)))
+    || (cherche.length >= 3 && armes.find(arme => noms(arme).some(nom => nom.includes(cherche))));
   return trouvee ? trouvee.type : undefined;
 }
 
@@ -351,8 +356,14 @@ async function outilQuiPossede(contexte, args) {
     };
   }
   const dossier = type ? TYPE_ARME_VERS_DOSSIER[type] : null;
-  const minimumLu = entierJarvis(args.potentiel_min);
-  const minimum = Number.isFinite(minimumLu) ? minimumLu : 0;
+  /* « P8 », tel que le site l'affiche, vaut 8. Une valeur illisible ou hors
+     bornes est signalee : l'ignorer ferait croire a Gemini qu'il a filtre. */
+  const minimumLu = entierJarvis(typeof args.potentiel_min === "string"
+    ? args.potentiel_min.trim().replace(/^p\s*/i, "") : args.potentiel_min);
+  if(minimumLu !== null && !(minimumLu >= 0 && minimumLu <= 10)){
+    return { erreur:"potentiel invalide : de 0 à 10" };
+  }
+  const minimum = minimumLu === null ? 0 : minimumLu;
   const [profils, lignes] = await Promise.all([
     membresJarvis(contexte.requete),
     contexte.requete("roster_characters?char_id=eq." + encodeURIComponent(id)

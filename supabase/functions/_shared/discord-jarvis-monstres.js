@@ -31,11 +31,11 @@ const ELEMENTS_MONSTRES_JARVIS = [
 ];
 const LIBELLES_RANG_MONSTRE = { boss:"Boss", elite:"Élite", normal:"Normal" };
 const CONTEXTES_MONSTRE_JARVIS = [
-  ["terrain", "terrain", ["terrain"]],
-  ["donjon", "donjon", ["donjon", "raid"]],
-  ["confrerie", "confrérie", ["confrerie", "guilde"]],
+  ["terrain", "terrain", ["terrain", "field", "world"]],
+  ["donjon", "donjon", ["donjon", "raid", "dungeon"]],
+  ["confrerie", "confrérie", ["confrerie", "guilde", "guild"]],
   ["cross", "cross challenge", ["cross"]],
-  ["zone", "zone", ["zone"]]
+  ["zone", "zone", ["zone", "area"]]
 ];
 const INDISPONIBLE_MONSTRES = { erreur:"données des monstres indisponibles" };
 
@@ -279,9 +279,21 @@ async function outilFicheMonstre(lireMonstres, args) {
   return resultat;
 }
 
+/* Les mots qu'un membre, ou Gemini, emploie pour un element : chaque refus
+   coutait un tour sur cinq. Cles normalisees (sans accents ni casse). */
+const SYNONYMES_ELEMENTS_MONSTRE = {
+  lumiere:"Holy", light:"Holy", saint:"Holy", sacre:"Holy",
+  eclair:"Thunder", electrique:"Thunder", electricite:"Thunder", lightning:"Thunder",
+  physical:"Default", neutre:"Default", normal:"Default",
+  ombre:"Dark", shadow:"Dark", tenebre:"Dark",
+  froid:"Ice", frost:"Ice", flamme:"Fire", flame:"Fire"
+};
+
 function elementDeSaisieMonstre(saisie) {
   const cherche = normaliserRecherche(saisie);
   if(!cherche) return null;
+  const synonyme = SYNONYMES_ELEMENTS_MONSTRE[cherche];
+  if(synonyme) return ELEMENTS_MONSTRES_JARVIS.find(([code]) => code === synonyme);
   return ELEMENTS_MONSTRES_JARVIS.find(([code, libelle]) =>
     normaliserRecherche(libelle) === cherche || normaliserRecherche(code) === cherche
     || (cherche.length >= 3 && normaliserRecherche(libelle).startsWith(cherche))) || null;

@@ -119,6 +119,12 @@ async function main() {
   /* ... filtree sur une arme */
   const ficheHache = await outils().executer("fiche_personnage", { nom:"meliodas", arme:"hache" });
   assert.deepEqual(ficheHache.donnees.armes.map(a => a.arme), ["Hache"]);
+  /* Les armes dites comme le site les range (« livre », « épée 1 main ») sont
+     reconnues : chaque refus coutait a Gemini un aller-retour sur cinq. */
+  const ficheLivre = await outils().executer("fiche_personnage", { nom:"meliodas", arme:"livre" });
+  assert.deepEqual(ficheLivre.donnees.armes.map(a => a.arme), ["Grimoire"]);
+  const ficheEpee = await outils().executer("fiche_personnage", { nom:"meliodas", arme:"épée 1 main" });
+  assert.deepEqual(ficheEpee.donnees.armes.map(a => a.arme), ["Épée longue"]);
   const ficheArmeInconnue = await outils().executer("fiche_personnage", { nom:"meliodas", arme:"lance" });
   assert.equal(ficheArmeInconnue.donnees.armeInconnue, "lance");
   assert.deepEqual(ficheArmeInconnue.donnees.armes, ["Épée longue", "Hache", "Grimoire"]);
@@ -190,6 +196,16 @@ async function main() {
     { personnage:"meliodas", arme:"hache", potentiel_min:"8" });
   assert.deepEqual(filtres.donnees.membres.map(m => m.pseudo), ["Kiro"]);
   assert.deepEqual(filtres.donnees.filtre, { arme:"Hache", potentielMin:8 });
+  /* « P8 » : le potentiel tel que le site l'affiche. Une valeur illisible
+     est signalee au lieu d'etre ignoree en silence. */
+  const enP = await possession.executer("qui_possede",
+    { personnage:"meliodas", potentiel_min:"P8" });
+  assert.deepEqual(enP.donnees.filtre, { arme:null, potentielMin:8 });
+  const illisible = await possession.executer("qui_possede",
+    { personnage:"meliodas", potentiel_min:"huit" });
+  assert.equal(illisible.donnees.erreur, "potentiel invalide : de 0 à 10");
+  assert.equal((await possession.executer("qui_possede",
+    { personnage:"meliodas", potentiel_min:11 })).donnees.erreur, "potentiel invalide : de 0 à 10");
   assert.doesNotMatch(JSON.stringify(tous), UUID);
   assert.doesNotMatch(JSON.stringify(tous), /ignore tes consignes/,
     "les notes de build ne partent jamais chez Gemini");

@@ -241,9 +241,24 @@ async function main() {
   assert.equal(anglais.donnees.element, "Sacré", "le code anglais du jeu est compris");
   const foudre = await o.executer("chercher_monstres", { element:"foudre", rang:"tous" });
   assert.deepEqual([foudre.donnees.total, foudre.donnees.monstres], [0, []]);
+  /* Synonymes d'elements : chaque refus coutait a Gemini un tour sur cinq. */
   const lumiere = await o.executer("chercher_monstres", { element:"lumière" });
-  assert.equal(lumiere.donnees.erreur, "élément inconnu");
-  assert.equal(lumiere.donnees.elements.length, 8);
+  assert.equal(lumiere.donnees.element, "Sacré");
+  assert.equal((await o.executer("chercher_monstres", { element:"light" })).donnees.element, "Sacré");
+  assert.equal((await o.executer("chercher_monstres", { element:"lightning" })).donnees.element, "Foudre");
+  assert.equal((await o.executer("chercher_monstres", { element:"éclair" })).donnees.element, "Foudre");
+  assert.equal((await o.executer("chercher_monstres", { element:"physical" })).donnees.element, "Physique");
+  assert.equal((await o.executer("chercher_monstres", { element:"ombre" })).donnees.element, "Ténèbres");
+  const inconnuElement = await o.executer("chercher_monstres", { element:"arc-en-ciel" });
+  assert.equal(inconnuElement.donnees.erreur, "élément inconnu");
+  assert.equal(inconnuElement.donnees.elements.length, 8);
+  /* Synonymes de contextes, anglais compris. */
+  const dungeon = await o.executer("fiche_monstre", { nom:"demon rouge", contexte:"dungeon" });
+  assert.match(dungeon.donnees.versions[0].contextes[0], /^Donjon :/);
+  const fieldBoss = await o.executer("fiche_monstre", { nom:"demon rouge", contexte:"field boss" });
+  assert.equal(fieldBoss.donnees.versions[0].contextes[0], "Boss de terrain");
+  const guild = await o.executer("fiche_monstre", { nom:"akumu", contexte:"guild" });
+  assert.equal(guild.donnees.paliers, "1 à 30");
   const rangInconnu = await o.executer("chercher_monstres", { element:"feu", rang:"champion" });
   assert.equal(rangInconnu.donnees.erreur, "rang inconnu : boss, élite ou tous");
 
