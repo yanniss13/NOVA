@@ -70,6 +70,18 @@ async function main() {
   const lireReseau = M.creerLecteurMonstresJarvis({ url:"u", cle:"c", horloge:() => 0,
     fetch:async () => { throw new TypeError("réseau"); } });
   assert.equal(await lireReseau(), null, "stockage injoignable : null, pas d'exception");
+  /* Chaque lecture reelle du stockage est journalisee avec sa duree et son
+     issue : c'est elle qu'on soupconne quand /jarvis depasse son delai. */
+  let horlogeStockage = 0;
+  const lignes = [];
+  const lireJournalise = M.creerLecteurMonstresJarvis({ url:"u", cle:"c",
+    horloge:() => horlogeStockage, journaliser:ligne => lignes.push(ligne),
+    fetch:async () => { horlogeStockage += 820; return reponse(404, {}); } });
+  await lireJournalise();
+  await lireJournalise();
+  assert.deepEqual(lignes, [{ etape:"stockage-monstres", ms:820, issue:"stockage -> 404" }],
+    "une seule ligne : la seconde lecture sort du cache, sans appel");
+
   const sansConfig = M.creerLecteurMonstresJarvis({ url:"", cle:"", horloge:() => 0,
     fetch:async () => { throw new Error("ne doit pas être appelé"); } });
   assert.equal(await sansConfig(), null);

@@ -253,6 +253,7 @@ const {
     question: string;
     outils: JarvisOutils;
     appelerGemini(corps: unknown): Promise<unknown>;
+    journal?: unknown[];
   }): Promise<JarvisResultat>;
   messageJarvis(question: string, resultat: JarvisResultat): string;
   messageErreurJarvis(code: string): string;
@@ -879,6 +880,9 @@ async function publishJarvis(
   interaction: DiscordInteraction,
   config: PlanningConfig
 ): Promise<void> {
+  /* Le journal des etapes et leur duree, ecrit dans les logs en cas de succes
+     comme d'echec : un « delai depasse » doit dire QUELLE attente a bloque. */
+  const journal: unknown[] = [];
   try {
     const { texte } = lireOptionsJarvis(interaction);
     const invalide = validerQuestion(texte);
@@ -893,22 +897,28 @@ async function publishJarvis(
       await editOriginalText(interaction, messageErreurJarvis("delaiMembre"));
       return;
     }
+    const debutCatalogue = Date.now();
+    const catalogue = await lireConnaissances();
+    journal.push({ etape:"catalogue", ms:Date.now() - debutCatalogue });
     const outils = creerOutilsJarvis({
-      catalogue:await lireConnaissances(),
+      catalogue,
       requete:chemin => supabaseJson<unknown>(config, chemin),
       lireMonstres:() => lireMonstresJarvis(config)
     });
     const resultat = await repondreQuestion({
-      question:texte, outils, appelerGemini:appelerGeminiJarvis
+      question:texte, outils, appelerGemini:appelerGeminiJarvis, journal
     });
-    /* Ce qu'il faut pour surveiller le quota ; jamais le texte de la reponse. */
+    /* Ce qu'il faut pour surveiller le quota et la lenteur ; jamais le texte
+       de la reponse. */
     console.log(JSON.stringify({
-      question:{ tours:resultat.tours, outils:resultat.outils, usage:resultat.usage }
+      jarvis:{ code:"ok", tours:resultat.tours, outils:resultat.outils,
+        usage:resultat.usage, journal }
     }));
     await editOriginalText(interaction, messageJarvis(texte, resultat));
   } catch (error) {
     const code = error && typeof error === "object" && "code" in error
       ? String((error as { code: unknown }).code) : "autre";
+    console.log(JSON.stringify({ jarvis:{ code, journal } }));
     if(code === "autre") console.error("Échec de /jarvis", error);
     try {
       await editOriginalText(interaction, messageErreurJarvis(code));

@@ -47,10 +47,15 @@ const INDISPONIBLE_MONSTRES = { erreur:"données des monstres indisponibles" };
    marteler le stockage. Elle ne leve jamais : elle rend le catalogue ou null. */
 function creerLecteurMonstresJarvis(options) {
   let memoire = null;
+  /* Chaque lecture reelle (hors cache) laisse une ligne : sa duree et son
+     issue. C'est la premiere suspecte quand /jarvis depasse son delai. */
+  const journaliser = options.journaliser
+    || (ligne => console.log(JSON.stringify({ jarvis:ligne })));
   return async function lireMonstresJarvis() {
     const maintenant = options.horloge();
     if(memoire && memoire.expire > maintenant) return memoire.valeur;
     let valeur = null;
+    let issue = "ok";
     try {
       if(!options.url || !options.cle) throw new Error("configuration du stockage absente");
       const reponse = await options.fetch(options.url, {
@@ -63,9 +68,10 @@ function creerLecteurMonstresJarvis(options) {
       }
       valeur = brut;
     } catch (erreur) {
-      console.error("Monstres /jarvis indisponibles :",
-        erreur instanceof Error ? erreur.message : erreur);
+      issue = erreur instanceof Error ? erreur.message : String(erreur);
+      console.error("Monstres /jarvis indisponibles :", issue);
     }
+    journaliser({ etape:"stockage-monstres", ms:options.horloge() - maintenant, issue });
     memoire = {
       valeur,
       expire:maintenant + (valeur ? CACHE_MONSTRES_SUCCES_MS : CACHE_MONSTRES_ECHEC_MS)

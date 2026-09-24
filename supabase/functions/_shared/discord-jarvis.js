@@ -192,24 +192,38 @@ async function repondreQuestion(options) {
   const sources = [];
   const outilsAppeles = [];
   let usage = null;
+  /* Le journal des etapes, injecte par l'Edge Function qui l'ecrit dans les
+     logs, succes ou echec : sans lui, un « delai depasse » ne dit pas QUELLE
+     attente a bloque. */
+  const journal = Array.isArray(options.journal) ? options.journal : [];
 
   for(let tour = 1; tour <= toursMax; tour += 1){
     if(horloge() - debut > delaiTotal) throw erreurJarvis("delai");
     const dernier = tour === toursMax;
-    const reponse = await appelerGemini({
-      systemInstruction:{ parts:[{ text:CONSIGNE_JARVIS }] },
-      contents,
-      tools:[{ functionDeclarations:outils.declarations }],
-      /* Au dernier tour, les outils restent declares mais interdits : Gemini
-         doit repondre avec ce qu'il a deja lu. */
-      toolConfig:{ functionCallingConfig:{ mode:dernier ? "NONE" : "AUTO" } },
-      generationConfig:{ temperature:0.3, maxOutputTokens:8192 }
-    });
+    const debutAppel = horloge();
+    let reponse;
+    try {
+      reponse = await appelerGemini({
+        systemInstruction:{ parts:[{ text:CONSIGNE_JARVIS }] },
+        contents,
+        tools:[{ functionDeclarations:outils.declarations }],
+        /* Au dernier tour, les outils restent declares mais interdits : Gemini
+           doit repondre avec ce qu'il a deja lu. */
+        toolConfig:{ functionCallingConfig:{ mode:dernier ? "NONE" : "AUTO" } },
+        generationConfig:{ temperature:0.3, maxOutputTokens:8192 }
+      });
+    } catch (erreur) {
+      journal.push({ etape:"gemini", tour, ms:horloge() - debutAppel,
+        issue:(erreur && erreur.code) || "exception" });
+      throw erreur;
+    }
     usage = (reponse && reponse.usageMetadata) || usage;
     const candidat = reponse && Array.isArray(reponse.candidates) ? reponse.candidates[0] : null;
     const contenu = candidat && candidat.content;
     const parts = contenu && Array.isArray(contenu.parts) ? contenu.parts : [];
     const appels = parts.filter(part => part && part.functionCall);
+    journal.push({ etape:"gemini", tour, ms:horloge() - debutAppel,
+      issue:appels.length && !dernier ? "outils" : "texte" });
 
     if(appels.length && !dernier){
       /* Le contenu du modele repart TEL QUEL : il peut porter une signature
@@ -218,7 +232,10 @@ async function repondreQuestion(options) {
       const reponses = await Promise.all(appels.map(async part => {
         const { name, args, id } = part.functionCall;
         outilsAppeles.push(name);
+        const debutOutil = horloge();
         const resultat = await outils.executer(name, args || {});
+        journal.push({ etape:"outil", nom:name, ms:horloge() - debutOutil,
+          issue:resultat.donnees && resultat.donnees.erreur ? "erreur" : "ok" });
         if(resultat.source && !sources.includes(resultat.source)) sources.push(resultat.source);
         const functionResponse = { name, response:{ resultat:resultat.donnees } };
         if(id) functionResponse.id = id;

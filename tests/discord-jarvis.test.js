@@ -160,6 +160,28 @@ async function main() {
     erreur => erreur.code === "delai");
   assert.equal(lent.corps.length, 1);
 
+  /* 7 bis. Le journal des etapes : la duree de chaque appel a Gemini et de
+     chaque outil, meme quand la question echoue. Sans lui, un « delai
+     depasse » ne dit pas QUELLE attente a bloque. */
+  let horlogeJournal = 0;
+  const journal = [];
+  const lentOutil = fauxGemini([appel("fiche_personnage", {}), texte("fini")]);
+  await Q.repondreQuestion({ question:"?", maintenant:MAINTENANT, journal,
+    horloge:() => horlogeJournal,
+    appelerGemini:async corps => { horlogeJournal += 1200; return lentOutil.appeler(corps); },
+    outils:{ ...fauxOutils(), async executer() {
+      horlogeJournal += 45_000; return { donnees:{ erreur:"lecture impossible" }, source:null }; } } });
+  assert.deepEqual(journal, [
+    { etape:"gemini", tour:1, ms:1200, issue:"outils" },
+    { etape:"outil", nom:"fiche_personnage", ms:45_000, issue:"erreur" },
+    { etape:"gemini", tour:2, ms:1200, issue:"texte" }
+  ]);
+  const journalEchec = [];
+  await assert.rejects(Q.repondreQuestion({ question:"?", maintenant:MAINTENANT, journal:journalEchec,
+    horloge:() => 0, outils:fauxOutils(),
+    appelerGemini:async () => { throw Q.erreurJarvis("delai"); } }), erreur => erreur.code === "delai");
+  assert.deepEqual(journalEchec, [{ etape:"gemini", tour:1, ms:0, issue:"delai" }]);
+
   /* 8. Le message publie */
   const message = Q.messageJarvis("Qui a\nEscanor ? @everyone",
     { texte:"**Kiro** l'a en P9.", sources:["possesseurs de Escanor", "fiche Escanor"] });
@@ -305,6 +327,9 @@ async function main() {
   assert.match(index, /creerLecteurMonstresJarvis\(\{/);
   assert.match(index, /"\/storage\/v1\/object\/" \+ CHEMIN_MONSTRES_JARVIS/);
   assert.match(index, /lireMonstres:/);
+  /* Le journal des etapes part dans les logs, en cas de succes comme d'echec. */
+  assert.match(index, /repondreQuestion\(\{[\s\S]*?journal[\s\S]*?\}\)/);
+  assert.match(index, /catch \(error\) \{[\s\S]*?console\.log\(JSON\.stringify\(\{\s*jarvis:\{ code, journal \}/);
   assert.match(Q.CONSIGNE_JARVIS, /valeurs de base/);
   assert.match(Q.CONSIGNE_JARVIS, /monstres/);
   /* Un nom vague : Gemini dit quel monstre il a retenu et cite les autres. */
