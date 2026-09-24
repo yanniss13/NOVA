@@ -45,6 +45,22 @@ const INDISPONIBLE_MONSTRES = { erreur:"données des monstres indisponibles" };
    fichier redepose est pris en compte au plus tard une heure apres, sans
    redeploiement. Un echec est garde une minute, pour reessayer vite sans
    marteler le stockage. Elle ne leve jamais : elle rend le catalogue ou null. */
+function estObjetMonstre(valeur) {
+  return Boolean(valeur) && typeof valeur === "object" && !Array.isArray(valeur);
+}
+
+/* La forme que les outils supposent, verifiee une fois a la lecture. */
+function catalogueMonstreValide(monstre) {
+  return estObjetMonstre(monstre)
+    && typeof monstre.nom === "string" && monstre.nom.trim() !== ""
+    && Array.isArray(monstre.versions) && monstre.versions.length > 0
+    && monstre.versions.every(version => estObjetMonstre(version)
+      && Array.isArray(version.contextes) && Array.isArray(version.acteurs)
+      && estObjetMonstre(version.stats)
+      && estObjetMonstre(version.stats.faiblesses)
+      && estObjetMonstre(version.stats.resistances));
+}
+
 function creerLecteurMonstresJarvis(options) {
   let memoire = null;
   /* Chaque lecture reelle (hors cache) laisse une ligne : sa duree et son
@@ -65,6 +81,13 @@ function creerLecteurMonstresJarvis(options) {
       const brut = await reponse.json();
       if(!brut || brut.version !== 1 || !Array.isArray(brut.monstres)){
         throw new Error("format de monstres.json inconnu : " + (brut && brut.version));
+      }
+      /* Toutes les entrees, pas seulement l'en-tete : une seule entree mal
+         formee ferait lever l'outil a chaque question pendant une heure. */
+      const malFormee = brut.monstres.find(monstre => !catalogueMonstreValide(monstre));
+      if(malFormee !== undefined){
+        throw new Error("entrée mal formée dans monstres.json : "
+          + String((malFormee && malFormee.nom) || "?").slice(0, 40));
       }
       valeur = brut;
     } catch (erreur) {
@@ -243,7 +266,9 @@ async function outilFicheMonstre(lireMonstres, args) {
   if(niveaux.length){
     const minimum = Math.min(...niveaux);
     const maximum = Math.max(...niveaux);
-    const bornes = minimum === 1 ? { bas:1, haut:Math.max(maximum, 30) } : { bas:minimum, haut:maximum };
+    /* Les bornes viennent des donnees : un boss a 20 paliers annoncait
+       « 1 à 30 » quand elles etaient forcees sur Akumu. */
+    const bornes = { bas:minimum, haut:maximum };
     const niveau = entierMonstre(args.niveau);
     if(niveau !== null){
       if(!(niveau >= bornes.bas && niveau <= bornes.haut)){
@@ -268,6 +293,9 @@ async function outilFicheMonstre(lireMonstres, args) {
         versions = [paliers[0], paliers[paliers.length - 1]].concat(horsPaliers);
       }
     }
+  }else if(entierMonstre(args.niveau) !== null){
+    /* L'ignorer en silence ferait croire a Gemini qu'il a filtre. */
+    resultat.niveauIgnore = "ce monstre n'a pas de paliers : niveau ignoré";
   }
 
   resultat.total = versions.length;

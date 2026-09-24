@@ -60,6 +60,10 @@ async function main() {
   assert.equal(await lire(), null, "l'échec est gardé une minute");
   assert.equal(appels.length, 2);
   instant += 2;
+  suite = [reponse(200, { version:1, monstres:[{ nom:"Esprit", versions:[{}] }] })];
+  assert.equal(await lire(), null,
+    "version 1 mais entrees mal formees : refuse en entier, jamais une exception dans l'outil");
+  instant += 60_001;
   suite = [reponse(200, { version:2, monstres:[] })];
   assert.equal(await lire(), null, "format inconnu refusé");
   instant += 60_001;
@@ -153,6 +157,20 @@ async function main() {
   const mixte30 = await akumuMixte.executer("fiche_monstre", { nom:"akumu", niveau:30 });
   assert.deepEqual(mixte30.donnees.versions.map(v => v.niveau), [30],
     "un niveau demande ne garde que ce palier");
+
+  /* Les bornes des paliers se lisent dans les donnees : un boss a 20 paliers
+     ne doit pas annoncer « 1 à 30 ». */
+  const vingt = outils({ version:1, dateExport:"2026-09-24", monstres:[{
+    nom:"Gardien des vingt", rang:"boss",
+    versions:[Object.assign({}, CATALOGUE.monstres[0].versions[0], { niveau:1 }),
+      Object.assign({}, CATALOGUE.monstres[0].versions[1], { niveau:20 })] }] });
+  assert.equal((await vingt.executer("fiche_monstre", { nom:"gardien" })).donnees.paliers, "1 à 20");
+  assert.equal((await vingt.executer("fiche_monstre", { nom:"gardien", niveau:25 })).donnees.erreur,
+    "niveau hors bornes : de 1 à 20");
+  /* Un niveau demande pour un monstre sans paliers est signale, pas ignore. */
+  const rougeNiveau = await o.executer("fiche_monstre", { nom:"demon rouge", niveau:3 });
+  assert.equal(rougeNiveau.donnees.total, 3);
+  assert.equal(rougeNiveau.donnees.niveauIgnore, "ce monstre n'a pas de paliers : niveau ignoré");
 
   const lapin = await o.executer("fiche_monstre", { nom:"lapin" });
   assert.equal(lapin.donnees.versions[0].nonConfirme, true);
