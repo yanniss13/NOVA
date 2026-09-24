@@ -404,7 +404,8 @@ async function main() {
     "une seule implementation de l'appel HTTP");
 
   /* Lot 2a : le bucket prive des monstres, lu par la cle service_role. */
-  assert.match(index, /creerLecteurMonstresJarvis\(\{/);
+  assert.match(index, /creerLecteurStockageJarvis\(\{[\s\S]{0,200}?nom:"monstres",\s*valider:validerCatalogueMonstres/,
+    "les monstres passent par le lecteur commun et son validateur");
   assert.match(index, /"\/storage\/v1\/object\/" \+ CHEMIN_MONSTRES_JARVIS/);
   assert.match(index, /lireMonstres:/);
   /* La lecture du catalogue sur Pages porte un delai, comme celle du stockage. */

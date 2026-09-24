@@ -1,7 +1,6 @@
 "use strict";
 
-/* Les monstres de /jarvis : le lecteur du bucket prive (faux fetch, fausse
-   horloge) et les deux outils, sur un catalogue fabrique par la VRAIE
+/* Les monstres de /jarvis : les deux outils, sur un catalogue fabrique par la VRAIE
    extraction a partir du mini-export de tests/monstres-jarvis.test.js. Les
    formes ne peuvent donc pas diverger entre l'extracteur et le bot. */
 
@@ -26,89 +25,11 @@ function outils(catalogue) {
   };
 }
 
-function reponse(status, corps) {
-  return { ok:status >= 200 && status < 300, status,
-    json:async () => { if(corps instanceof Error) throw corps; return corps; } };
-}
-
 async function main() {
   /* ---------------- Declarations ---------------- */
   assert.deepEqual(M.DECLARATIONS_OUTILS_MONSTRES.map(d => d.name), ["fiche_monstre", "chercher_monstres"]);
   M.DECLARATIONS_OUTILS_MONSTRES.forEach(d => assert.equal(d.parameters.type, "OBJECT"));
   assert.equal(M.CHEMIN_MONSTRES_JARVIS, "jarvis-prive/monstres.json");
-
-  /* ---------------- Lecteur du bucket ---------------- */
-  let instant = 0;
-  const appels = [];
-  let suite = [reponse(200, CATALOGUE)];
-  const lire = M.creerLecteurMonstresJarvis({
-    url:"https://x.supabase.co/storage/v1/object/jarvis-prive/monstres.json",
-    cle:"service-role", horloge:() => instant,
-    fetch:async (url, init) => { appels.push({ url, init }); return suite.shift(); }
-  });
-  assert.equal(await lire(), CATALOGUE);
-  assert.equal(appels[0].init.headers.Authorization, "Bearer service-role");
-  assert.equal(appels[0].init.headers.apikey, "service-role");
-  instant = 3_599_999;
-  assert.equal(await lire(), CATALOGUE, "gardé une heure");
-  assert.equal(appels.length, 1);
-  instant = 3_600_001;
-  suite = [reponse(404, {})];
-  assert.equal(await lire(), null, "après l'heure, relu ; un 404 rend null");
-  assert.equal(appels.length, 2);
-  instant += 59_999;
-  assert.equal(await lire(), null, "l'échec est gardé une minute");
-  assert.equal(appels.length, 2);
-  instant += 2;
-  suite = [reponse(200, { version:1, monstres:[{ nom:"Esprit", versions:[{}] }] })];
-  assert.equal(await lire(), null,
-    "version 1 mais entrees mal formees : refuse en entier, jamais une exception dans l'outil");
-  instant += 60_001;
-  suite = [reponse(200, { version:2, monstres:[] })];
-  assert.equal(await lire(), null, "format inconnu refusé");
-  instant += 60_001;
-  suite = [reponse(200, new SyntaxError("JSON tronqué"))];
-  assert.equal(await lire(), null, "JSON illisible refusé");
-  instant += 60_001;
-  suite = [new TypeError("réseau")];
-  const lireReseau = M.creerLecteurMonstresJarvis({ url:"u", cle:"c", horloge:() => 0,
-    fetch:async () => { throw new TypeError("réseau"); } });
-  assert.equal(await lireReseau(), null, "stockage injoignable : null, pas d'exception");
-  /* Chaque lecture reelle du stockage est journalisee avec sa duree et son
-     issue : c'est elle qu'on soupconne quand /jarvis depasse son delai. */
-  let horlogeStockage = 0;
-  const lignes = [];
-  const lireJournalise = M.creerLecteurMonstresJarvis({ url:"u", cle:"c",
-    horloge:() => horlogeStockage, journaliser:ligne => lignes.push(ligne),
-    fetch:async () => { horlogeStockage += 820; return reponse(404, {}); } });
-  await lireJournalise();
-  await lireJournalise();
-  assert.deepEqual(lignes, [{ etape:"stockage-monstres", ms:820, issue:"stockage -> 404" }],
-    "une seule ligne : la seconde lecture sort du cache, sans appel");
-
-  /* Un delai sur la lecture : un stockage lent ne bloque plus la question. */
-  let initRecu = null;
-  const lireAvecDelai = M.creerLecteurMonstresJarvis({ url:"u", cle:"c", horloge:() => 0,
-    journaliser:() => {},
-    fetch:async (url, init) => { initRecu = init; throw new DOMException("trop long", "TimeoutError"); } });
-  assert.equal(await lireAvecDelai(), null, "délai dépassé : null, pas d'exception");
-  assert.ok(initRecu.signal, "la lecture du stockage porte un délai");
-
-  /* Deux questions simultanees a froid : une seule lecture du fichier. */
-  let lectures = 0;
-  let libererLecture;
-  const lectureEnCours = new Promise(resoudre => { libererLecture = resoudre; });
-  const lirePartage = M.creerLecteurMonstresJarvis({ url:"u", cle:"c", horloge:() => 0,
-    journaliser:() => {},
-    fetch:async () => { lectures += 1; await lectureEnCours; return reponse(200, CATALOGUE); } });
-  const [premiere, seconde] = [lirePartage(), lirePartage()];
-  libererLecture();
-  assert.deepEqual([await premiere, await seconde], [CATALOGUE, CATALOGUE]);
-  assert.equal(lectures, 1, "une lecture partagée, pas deux");
-
-  const sansConfig = M.creerLecteurMonstresJarvis({ url:"", cle:"", horloge:() => 0,
-    fetch:async () => { throw new Error("ne doit pas être appelé"); } });
-  assert.equal(await sansConfig(), null);
 
   /* ---------------- fiche_monstre ---------------- */
   const o = outils(CATALOGUE);

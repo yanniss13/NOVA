@@ -1,6 +1,6 @@
 "use strict";
 
-/* Les monstres et boss de /jarvis : lecture du bucket prive et deux outils.
+/* Les monstres et boss de /jarvis : validation du fichier du bucket prive et deux outils.
 
    Le catalogue est fabrique sur le poste du proprietaire
    (outils/fabrication/extraire-monstres.js) et depose dans le bucket PRIVE
@@ -19,11 +19,6 @@ if(typeof module !== "undefined" && module.exports){
 const { normaliserRecherche, propositions } = globalThis.NOVA_DISCORD_BUILD;
 
 const CHEMIN_MONSTRES_JARVIS = "jarvis-prive/monstres.json";
-const CACHE_MONSTRES_SUCCES_MS = 3_600_000;
-const CACHE_MONSTRES_ECHEC_MS = 60_000;
-/* La lecture reussie la plus lente observee a pris 646 ms : 5 s laissent de
-   la marge sans laisser un stockage muet bloquer la question. */
-const DELAI_LECTURE_MONSTRES_MS = 5_000;
 const MONSTRES_VERSIONS_MAX = 5;
 const MONSTRES_RESULTATS_MAX = 15;
 const NOTE_VALEURS_DE_BASE = "valeurs de base, avant ajustement du niveau de monde";
@@ -42,12 +37,8 @@ const CONTEXTES_MONSTRE_JARVIS = [
 ];
 const INDISPONIBLE_MONSTRES = { erreur:"données des monstres indisponibles" };
 
-/* ---------------- Lecteur du bucket ---------------- */
+/* ---------------- Validation du fichier ---------------- */
 
-/* Rend une fonction qui lit le catalogue. Un succes est garde une heure : un
-   fichier redepose est pris en compte au plus tard une heure apres, sans
-   redeploiement. Un echec est garde une minute, pour reessayer vite sans
-   marteler le stockage. Elle ne leve jamais : elle rend le catalogue ou null. */
 function estObjetMonstre(valeur) {
   return Boolean(valeur) && typeof valeur === "object" && !Array.isArray(valeur);
 }
@@ -64,58 +55,18 @@ function catalogueMonstreValide(monstre) {
       && estObjetMonstre(version.stats.resistances));
 }
 
-function creerLecteurMonstresJarvis(options) {
-  let memoire = null;
-  /* Chaque lecture reelle (hors cache) laisse une ligne : sa duree et son
-     issue. C'est la premiere suspecte quand /jarvis depasse son delai. */
-  const journaliser = options.journaliser
-    || (ligne => console.log(JSON.stringify({ jarvis:ligne })));
-  /* Une seule lecture a la fois : deux questions simultanees sur une
-     instance froide partagent la meme, au lieu de telecharger deux fois. */
-  let enCours = null;
-  return function lireMonstresJarvis() {
-    const maintenant = options.horloge();
-    if(memoire && memoire.expire > maintenant) return Promise.resolve(memoire.valeur);
-    if(!enCours){
-      enCours = lireDepuisLeStockage(maintenant).finally(() => { enCours = null; });
-    }
-    return enCours;
-  };
-
-  async function lireDepuisLeStockage(maintenant) {
-    let valeur = null;
-    let issue = "ok";
-    try {
-      if(!options.url || !options.cle) throw new Error("configuration du stockage absente");
-      const reponse = await options.fetch(options.url, {
-        headers:{ Authorization:"Bearer " + options.cle, apikey:options.cle },
-        /* Un stockage lent ne doit pas bloquer toute la reponse /jarvis. */
-        signal:AbortSignal.timeout(DELAI_LECTURE_MONSTRES_MS)
-      });
-      if(!reponse.ok) throw new Error("stockage -> " + reponse.status);
-      const brut = await reponse.json();
-      if(!brut || brut.version !== 1 || !Array.isArray(brut.monstres)){
-        throw new Error("format de monstres.json inconnu : " + (brut && brut.version));
-      }
-      /* Toutes les entrees, pas seulement l'en-tete : une seule entree mal
-         formee ferait lever l'outil a chaque question pendant une heure. */
-      const malFormee = brut.monstres.find(monstre => !catalogueMonstreValide(monstre));
-      if(malFormee !== undefined){
-        throw new Error("entrée mal formée dans monstres.json : "
-          + String((malFormee && malFormee.nom) || "?").slice(0, 40));
-      }
-      valeur = brut;
-    } catch (erreur) {
-      issue = erreur instanceof Error ? erreur.message : String(erreur);
-      console.error("Monstres /jarvis indisponibles :", issue);
-    }
-    journaliser({ etape:"stockage-monstres", ms:options.horloge() - maintenant, issue });
-    memoire = {
-      valeur,
-      expire:maintenant + (valeur ? CACHE_MONSTRES_SUCCES_MS : CACHE_MONSTRES_ECHEC_MS)
-    };
-    return valeur;
+/* Rend null si le fichier est bon, sinon le motif du refus : le lecteur de
+   stockage commun le journalise et garde l'echec une minute. */
+function validerCatalogueMonstres(brut) {
+  if(!brut || brut.version !== 1 || !Array.isArray(brut.monstres)){
+    return "format de monstres.json inconnu : " + (brut && brut.version);
   }
+  const malFormee = brut.monstres.find(monstre => !catalogueMonstreValide(monstre));
+  if(malFormee !== undefined){
+    return "entrée mal formée dans monstres.json : "
+      + String((malFormee && malFormee.nom) || "?").slice(0, 40);
+  }
+  return null;
 }
 
 /* ---------------- Mise en mots ---------------- */
@@ -450,7 +401,7 @@ function ajouterOutilsMonstresJarvis(table, lireMonstres) {
 const discordJarvisMonstresApi = {
   CHEMIN_MONSTRES_JARVIS,
   DECLARATIONS_OUTILS_MONSTRES,
-  creerLecteurMonstresJarvis,
+  validerCatalogueMonstres,
   ajouterOutilsMonstresJarvis
 };
 

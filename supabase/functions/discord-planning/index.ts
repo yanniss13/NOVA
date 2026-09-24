@@ -12,6 +12,7 @@ type EdgeSharedGlobal = typeof globalThis & {
   NOVA_DISCORD_JARVIS?: unknown;
   NOVA_DISCORD_JARVIS_OUTILS?: unknown;
   NOVA_DISCORD_JARVIS_MONSTRES?: unknown;
+  NOVA_DISCORD_JARVIS_STOCKAGE?: unknown;
 };
 
 /* Le déploiement Supabase refuse le media type `.cjs`. Les modules partagés
@@ -43,7 +44,9 @@ await import("../_shared/discord-build-png.js");
 await import("../_shared/planning-png.js");
 /* /jarvis : les outils d'abord, dont la boucle ne depend pas au chargement,
    mais qui lisent eux-memes quatre modules deja importes ci-dessus. */
-/* Lot 2a : les monstres, lus par les outils de /jarvis. */
+/* Lots 2a et 2b : le lecteur du bucket prive, puis les monstres, lus par
+   les outils de /jarvis. */
+await import("../_shared/discord-jarvis-stockage.js");
 await import("../_shared/discord-jarvis-monstres.js");
 await import("../_shared/discord-jarvis-outils.js");
 await import("../_shared/discord-jarvis.js");
@@ -269,15 +272,21 @@ const { NOVA_CONNAISSANCES_URL, creerOutilsJarvis } =
       lireMonstres?(): Promise<unknown>;
     }): JarvisOutils;
   };
-const { CHEMIN_MONSTRES_JARVIS, creerLecteurMonstresJarvis } =
-  edgeSharedGlobal.NOVA_DISCORD_JARVIS_MONSTRES as {
-    CHEMIN_MONSTRES_JARVIS: string;
-    creerLecteurMonstresJarvis(options: {
+const { creerLecteurStockageJarvis } =
+  edgeSharedGlobal.NOVA_DISCORD_JARVIS_STOCKAGE as {
+    creerLecteurStockageJarvis(options: {
       fetch: typeof fetch;
       url: string;
       cle: string;
+      nom: string;
+      valider(brut: unknown): string | null;
       horloge(): number;
     }): () => Promise<unknown>;
+  };
+const { CHEMIN_MONSTRES_JARVIS, validerCatalogueMonstres } =
+  edgeSharedGlobal.NOVA_DISCORD_JARVIS_MONSTRES as {
+    CHEMIN_MONSTRES_JARVIS: string;
+    validerCatalogueMonstres(brut: unknown): string | null;
   };
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -863,10 +872,12 @@ async function lireConnaissances(): Promise<unknown> {
 let lecteurMonstresJarvis: (() => Promise<unknown>) | null = null;
 function lireMonstresJarvis(config: PlanningConfig): Promise<unknown> {
   if(!lecteurMonstresJarvis){
-    lecteurMonstresJarvis = creerLecteurMonstresJarvis({
+    lecteurMonstresJarvis = creerLecteurStockageJarvis({
       fetch,
       url:config.supabaseUrl + "/storage/v1/object/" + CHEMIN_MONSTRES_JARVIS,
       cle:config.serviceRoleKey,
+      nom:"monstres",
+      valider:validerCatalogueMonstres,
       horloge:() => Date.now()
     });
   }
