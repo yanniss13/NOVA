@@ -284,6 +284,7 @@ Site Confrérie 7ds/
 │  ├─ competences.js             # Coefficients et recharges figés, socle du calcul de dégâts.
 │  ├─ effets-dps.js              # 1,3 Mo. Effets offensifs normalisés. Chargé à la demande.
 │  ├─ chronometrage-avancement.json # Compte et cinq prochaines mesures, pour « Mon suivi ».
+│  ├─ connaissances-discord.json # Catalogue de lecture de /jarvis (généré).
 │  └─ animations-mesurees.json   # ⚠ ÉCRIT À LA MAIN. Le seul de data/ à ne pas être généré.
 │  # Ne PAS les éditer à la main : ils sont réécrits par scripts/. La seule
 │  # exception est animations-mesurees.json, qu'aucune source ne peut générer.
@@ -1331,6 +1332,20 @@ le SQL Editor afin d'ajouter les tables à la publication
   enregistrer les commandes avec `npm run discord:register-commands` et ne doit jamais être
   stocké dans Supabase ou le dépôt. Procédure : `docs/discord-planning.md`.
   Voir `docs/superpowers/specs/2026-07-25-boss-trois-runs-design.md`.
+- **Commande Discord `/jarvis`** : l'assistant IA de la confrérie, qui se
+  présente comme J.A.R.V.I.S. (Discord refuse `/J.A.R.V.I.S.` : ni majuscules
+  ni points dans un nom de commande). Il vit dans la même Edge Function.
+  Gemini est sur le **palier gratuit uniquement** : ne jamais proposer de clé
+  payante. La clé `GEMINI_JARVIS_API_KEY` vient d'un **projet Google
+  distinct** de celui de `lecture-panneau`, pour que les deux ne partagent pas
+  le même quota. Gemini n'a accès qu'à sept outils **en lecture seule**
+  (`_shared/discord-jarvis-outils.js`) ; la boucle et les messages vivent dans
+  `_shared/discord-jarvis.js`. Les résultats d'outils ne contiennent jamais
+  d'UUID, d'email ni de note de build. Les données du jeu viennent de
+  `data/connaissances-discord.json`, généré par
+  `scripts/generer-connaissances-discord.js`. Procédure :
+  `docs/discord-planning.md`. Un lot 2 est prévu : les exports FModel iront
+  dans un stockage Supabase **privé**, jamais dans le dépôt ni sur Pages.
 - Après une modification de ce schéma, réexécuter le contenu complet de
   `supabase/schema.sql` dans le SQL Editor Supabase.
 

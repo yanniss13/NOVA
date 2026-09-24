@@ -294,3 +294,70 @@ continue de partir : il passe par GitHub Actions et le webhook, sans jamais
 toucher à l'Edge Function. La fonction peut ensuite être supprimée
 avec `supabase functions delete discord-planning`. La petite table privée de
 délai est sans effet sur le site et peut rester en place.
+
+## `/jarvis` — l'assistant IA J.A.R.V.I.S.
+
+`/jarvis texte:<ta question> [prive:oui]` : Gemini répond en français à
+partir des données de NOVA, sous le nom de J.A.R.V.I.S. Même serveur, mêmes
+salons et mêmes rôles que les autres commandes. Un membre ne peut poser qu'une
+question toutes les 20 s.
+
+Le nom est `/jarvis` et non `/J.A.R.V.I.S.` : Discord refuse les majuscules et
+les points dans un nom de commande.
+
+### Palier gratuit uniquement : aucune facturation
+
+1. Sur **aistudio.google.com**, créer un **nouveau projet**, distinct de celui
+   de `lecture-panneau`, puis une clé API dans ce projet.
+2. Vérifier que le projet affiche le palier **Free** et **qu'aucun compte de
+   facturation n'y est relié**. C'est la garantie : un dépassement renvoie
+   alors un refus (le bot répond « quota épuisé »), jamais une facture.
+3. Poser la clé :
+
+```powershell
+npx -y supabase@latest secrets set GEMINI_JARVIS_API_KEY=<la-cle>
+```
+
+Le modèle vaut par défaut `gemini-flash-lite-latest`. Pour vérifier que cet
+alias existe pour la clé :
+
+```powershell
+curl.exe -s -H "x-goog-api-key: <la-cle>" "https://generativelanguage.googleapis.com/v1beta/models?pageSize=200" | Select-String "flash-lite"
+```
+
+Pour en changer sans toucher au code :
+
+```powershell
+npx -y supabase@latest secrets set GEMINI_JARVIS_MODEL=<nom-du-modele>
+```
+
+Ne **pas** employer `GEMINI_API_KEY` ni `GEMINI_MODEL` : ils règlent
+`lecture-panneau`, et les secrets Supabase sont communs à tout le projet.
+
+### Ce que Gemini voit
+
+Il ne lit jamais la base : il appelle des outils, et seul le résultat de ces
+outils lui est transmis. Sur le palier gratuit, Google peut réutiliser ce
+contenu : la description de la commande prévient les membres.
+
+| Outil | Données |
+| --- | --- |
+| `lister_personnages`, `fiche_personnage`, `chercher_equipement` | `data/connaissances-discord.json`, publié par Pages |
+| `qui_possede`, `roster_de` | `roster_characters` : noms d'objets, **jamais les notes** |
+| `dispos` | `member_availability`, semaine ISO de Paris |
+| `scores_boss` | `boss_sessions`, `boss_run_reports`, `boss_participation` |
+
+Pseudos seulement : aucun UUID ni email. Aucun outil n'écrit.
+
+### Mise en service
+
+1. Poser le secret (voir ci-dessus).
+2. Fusionner et pousser vers `main`, puis attendre le déploiement Pages, qui
+   publie `data/connaissances-discord.json`.
+3. `npx -y supabase@latest functions deploy discord-planning --project-ref uxouhbgdlolidjmxwgae`
+4. `npm run discord:register-commands` avec le token du bot.
+5. Essayer dans un salon autorisé : une question publique, puis `prive:oui`.
+
+Après une régénération du wiki ou des catalogues, lancer
+`node scripts/generer-connaissances-discord.js`. Sinon, le test `--verifier`
+échoue.
