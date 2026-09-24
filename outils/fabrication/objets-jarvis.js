@@ -199,6 +199,16 @@ function construireCatalogueObjets(entree) {
     });
   });
 
+  const butins = butinsDuJeu(entree, lire, objetsParId, actif);
+  butins.forEach(butin => {
+    butin.objets.forEach(objet => {
+      if(!index.has(objet.nom)) index.set(objet.nom, { nom:objet.nom, type:objet.type, sources:[] });
+      const source = { type:butin.type, origine:butin.nom };
+      if(butin.detail) source.detail = butin.detail;
+      index.get(objet.nom).sources.push(source);
+    });
+  });
+
   return {
     version:1,
     genereLe:entree.genereLe || null,
@@ -215,8 +225,92 @@ function construireCatalogueObjets(entree) {
       sortie.articles = boutique.articles;
       return sortie;
     }),
+    butins:butins.map(butin => Object.assign(
+      { nom:butin.nom, type:butin.type }, butin.detail ? { detail:butin.detail } : {},
+      { objets:butin.objets.map(objet => objet.nom) })),
     articlesEcartes
   };
+}
+
+/* Ce que chaque source PEUT donner. Aucune probabilite : DropPackTable
+   repete un objet avec un taux par niveau de monde (Standard_Level) et
+   DropGroupTable pondere ses paquets, sans que la lecture de ces taux soit
+   confirmee. Un groupe -> ses paquets -> leurs lignes -> un objet (Item) ou
+   une monnaie (le suffixe de DropType : Seal_Liones -> seal_liones). */
+function butinsDuJeu(entree, lire, objetsParId, actif) {
+  const lignesParPaquet = new Map();
+  Object.values(entree.paquetsButin || {}).forEach(ligne => {
+    if(ligne) ajouterDans(lignesParPaquet, String(ligne.DropPack_Key), ligne);
+  });
+  function objetsDuGroupe(groupe) {
+    const brut = (entree.groupesButin || {})[String(groupe)];
+    if(!brut) return [];
+    const vus = new Map();
+    [].concat(brut.DropPack_Key || []).forEach(paquet => {
+      (lignesParPaquet.get(String(paquet)) || []).forEach(ligne => {
+        const genre = String(ligne.DropType || "").replace(/^.*::/, "");
+        const objet = genre === "Item"
+          ? objetsParId.get(String(ligne.Item_Tid)) || null
+          : actif("::Currency", genre.toLowerCase());
+        if(objet && !vus.has(objet.nom)) vus.set(objet.nom, objet);
+      });
+    });
+    return [...vus.values()];
+  }
+
+  const butins = [];
+  const parCle = new Map();
+  function ajouter(nom, type, detail, groupe) {
+    if(!nom || !groupe || groupe === "None") return;
+    const objets = objetsDuGroupe(groupe);
+    if(!objets.length) return;
+    const cle = type + "|" + nom + "|" + (detail || "");
+    if(!parCle.has(cle)){
+      parCle.set(cle, { nom, type, detail, objets:[] });
+      butins.push(parCle.get(cle));
+    }
+    const butin = parCle.get(cle);
+    objets.forEach(objet => {
+      if(!butin.objets.some(deja => deja.nom === objet.nom)) butin.objets.push(objet);
+    });
+  }
+
+  const monstres = entree.monstres || {};
+  Object.keys(monstres).sort(ordreNumeriqueObjets).forEach(id => {
+    const acteur = monstres[id];
+    const nom = acteur && lire(acteur.Local_Key);
+    ajouter(nom, "monstre", null, acteur && acteur.DropGroupTid);
+    ajouter(nom, "capture", null, acteur && acteur.CatchDropGroupTid);
+  });
+  const minage = entree.minage || {};
+  Object.keys(minage).sort(ordreNumeriqueObjets).forEach(id => {
+    const point = minage[id];
+    ajouter(point && lire(point.Local_Key), "minage", null, point && point.DropGroupTid);
+  });
+  const donjons = entree.donjons || {};
+  Object.keys(donjons).sort(ordreNumeriqueObjets).forEach(id => {
+    const donjon = donjons[id] || {};
+    const groupe = (entree.groupesDonjon || {})[String(donjon.Dungeon_Group)] || {};
+    const nom = lire(groupe.Local_Main_Name);
+    if(!nom) return;
+    const sous = lire(groupe.Local_Main_Sub_Name);
+    const difficulte = lire(donjon.Local_Sub_Name);
+    const libelle = nom + (sous ? " — " + sous : "") + (difficulte ? " (" + difficulte + ")" : "");
+    ajouter(libelle, "donjon", null, donjon.Reward_Tid);
+    ajouter(libelle, "donjon", "première victoire", donjon.First_Reward_Tid);
+  });
+  const confrerie = entree.recompensesConfrerie || {};
+  Object.keys(confrerie).sort(ordreNumeriqueObjets).forEach(id => {
+    const ligne = confrerie[id] || {};
+    for(let palier = 1; palier <= 10; palier++){
+      const suffixe = String(palier).padStart(2, "0");
+      const seuil = Number(ligne["Reward_Check_" + suffixe]) || 0;
+      if(seuil > 0){
+        ajouter("Boss de confrérie", "confrerie", "palier de participation " + seuil, ligne["Reward_Drop_" + suffixe]);
+      }
+    }
+  });
+  return butins;
 }
 
 module.exports = { construireCatalogueObjets };

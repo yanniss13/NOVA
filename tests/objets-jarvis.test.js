@@ -53,13 +53,61 @@ const ENTREE_OBJETS_TEST = {
     use:{ "102000001":{ Local_Key:"Local_Item_Potion" } },
     quest:{},
     pet:{},
-    dropType:{ "100000101":{ Local_Key:"Local_Item_Gold" }, "100000905":{ Local_Key:"Local_Item_Coin_005" } }
+    dropType:{
+      "100000101":{ Local_Key:"Local_Item_Gold" }, "100000905":{ Local_Key:"Local_Item_Coin_005" },
+      "100000201":{ Local_Key:"Local_Item_Seal_Liones" }
+    }
   },
   /* La ligne de monnaie n'a pas de nom : il passe par LinkItemTid. */
   monnaies:{
     gold:{ LinkItemTid:100000101 },
     campaign_coin_005:{ LinkItemTid:100000905 },
+    seal_liones:{ LinkItemTid:100000201 },
     coin_perdu:{ LinkItemTid:999 }
+  },
+  /* ---------------- Butins ---------------- */
+  groupesButin:{
+    /* Un paquet absent de DropPackTable ne fait pas planter. */
+    g_banakro:{ DropPack_Key:["p_banakro", "p_absent"] },
+    g_capture:{ DropPack_Key:["p_capture"] },
+    g_minage:{ DropPack_Key:["p_minage"] },
+    g_donjon:{ DropPack_Key:["p_donjon"] },
+    g_premiere:{ DropPack_Key:["p_premiere"] },
+    g_confrerie:{ DropPack_Key:["p_confrerie"] }
+  },
+  paquetsButin:{
+    /* Le meme objet, un taux par niveau de monde : une seule fois. */
+    p_banakro_1:{ DropPack_Key:"p_banakro", DropType:"EDropType::Item", Item_Tid:"101000001", Standard_Level:"level_01" },
+    p_banakro_2:{ DropPack_Key:"p_banakro", DropType:"EDropType::Item", Item_Tid:"101000001", Standard_Level:"level_02" },
+    /* Une monnaie par le suffixe de DropType. */
+    p_banakro_3:{ DropPack_Key:"p_banakro", DropType:"EDropType::Seal_Liones", Item_Tid:"None" },
+    /* Sans monnaie (Exp) ou sans nom : ignores. */
+    p_banakro_4:{ DropPack_Key:"p_banakro", DropType:"EDropType::Exp", Item_Tid:"None" },
+    p_banakro_5:{ DropPack_Key:"p_banakro", DropType:"EDropType::Item", Item_Tid:"101000002" },
+    p_capture_1:{ DropPack_Key:"p_capture", DropType:"EDropType::Item", Item_Tid:"102000001" },
+    p_minage_1:{ DropPack_Key:"p_minage", DropType:"EDropType::Item", Item_Tid:"101000001" },
+    p_donjon_1:{ DropPack_Key:"p_donjon", DropType:"EDropType::Gold", Item_Tid:"None" },
+    p_premiere_1:{ DropPack_Key:"p_premiere", DropType:"EDropType::Item", Item_Tid:"131000001" },
+    p_confrerie_1:{ DropPack_Key:"p_confrerie", DropType:"EDropType::Item", Item_Tid:"102000001" }
+  },
+  monstres:{
+    /* Deux versions de Banakro, meme nom, meme butin : une seule source. */
+    "51300003":{ Local_Key:"Local_Mon_Banakro", DropGroupTid:"g_banakro", CatchDropGroupTid:"None" },
+    "50600211":{ Local_Key:"Local_Mon_Banakro", DropGroupTid:"g_banakro", CatchDropGroupTid:"None" },
+    "50100005":{ Local_Key:"Local_Mon_Mouette", DropGroupTid:"None", CatchDropGroupTid:"g_capture" },
+    "70000001":{ Local_Key:"local_mon_sans_nom", DropGroupTid:"g_banakro", CatchDropGroupTid:"None" }
+  },
+  minage:{
+    "84000002":{ Local_Key:"Local_Mining_Fer", DropGroupTid:"g_minage" },
+    "84000001":{ Local_Key:"local_mining_sans_nom", DropGroupTid:"g_minage" }
+  },
+  donjons:{
+    "1201":{ Dungeon_Group:81001200, Local_Sub_Name:"local_dungeon_sub_name_2802",
+      Reward_Tid:"g_donjon", First_Reward_Tid:"g_premiere" }
+  },
+  groupesDonjon:{ "81001200":{ Local_Main_Name:"local_dungeon_main_name_ferzen", Local_Main_Sub_Name:"None" } },
+  recompensesConfrerie:{
+    "1":{ Reward_Check_01:5, Reward_Drop_01:"g_confrerie", Reward_Check_02:0, Reward_Drop_02:"None" }
   },
   articles:{
     "250110001":article(EQUIPEMENT_LIONES, EPEE, ["Currency", "gold", 1800],
@@ -130,7 +178,14 @@ const ENTREE_OBJETS_TEST = {
     local_npc_quete:"Donneur de quête",
     ch01_sector_main_liones:"Liones",
     ch01_sector_sub_liones_plain:"Plaines de Liones",
-    ch05_sector_main_vanya:"Vanya"
+    ch05_sector_main_vanya:"Vanya",
+    local_item_seal_liones:"Sceau de Liones",
+    local_mon_banakro:"Banakro",
+    local_mon_mouette:"Mouette",
+    local_mon_sans_nom:"local_mon_sans_nom",
+    local_mining_fer:"Minerai de fer",
+    local_dungeon_main_name_ferzen:"Mine de Ferzen",
+    local_dungeon_sub_name_2802:"Normal"
   },
   genereLe:"2026-09-25T00:00:00.000Z",
   dateExport:"2026-09-22"
@@ -173,25 +228,46 @@ assert.deepEqual(catalogue.boutiques, [
     articles:[{ objet:"Potion", prix:"7 Jeton Magi★Pop" }] }
 ]);
 
+const FERZEN = "Mine de Ferzen (Normal)";
+
+/* Les boutiques d'abord, puis les butins : monstres et captures par
+   acteur croissant, minage, donjons, confrerie. */
 assert.deepEqual(catalogue.objets, [
   { nom:"Épée longue", type:"Équipement", sources:[
     { type:"boutique", boutique:LIONES, prix:"1 800 Or", limite:"3 par jour" },
-    { type:"boutique", boutique:GERARD, prix:"2 000 Or" }
+    { type:"boutique", boutique:GERARD, prix:"2 000 Or" },
+    { type:"donjon", origine:FERZEN, detail:"première victoire" }
   ] },
   { nom:"Minerai", type:"Divers", sources:[
     { type:"boutique", boutique:LIONES, quantite:5, prix:"2 Potion", limite:"10 par semaine" },
-    { type:"boutique", boutique:ITINERANTE_LIONES, prix:"500 Or", aleatoire:true }
+    { type:"boutique", boutique:ITINERANTE_LIONES, prix:"500 Or", aleatoire:true },
+    { type:"monstre", origine:"Banakro" },
+    { type:"minage", origine:"Minerai de fer" }
   ] },
   { nom:"Or", type:"Monnaie", sources:[
-    { type:"boutique", boutique:MAGI, quantite:1000, prix:"1 Potion" }
+    { type:"boutique", boutique:MAGI, quantite:1000, prix:"1 Potion" },
+    { type:"donjon", origine:FERZEN }
   ] },
   { nom:"Potion", type:"Consommable", sources:[
     { type:"boutique", boutique:LIONES, prix:"100 Or", limite:"1 au total",
       condition:"à partir du niveau de monde 3" },
     { type:"boutique", boutique:"Boutique d'équipement", prix:"50 Or", limite:"2 au total" },
     { type:"boutique", boutique:MAGI, prix:"5 Jeton Magi★Pop" },
-    { type:"boutique", boutique:MAGI + " (2)", prix:"7 Jeton Magi★Pop" }
-  ] }
+    { type:"boutique", boutique:MAGI + " (2)", prix:"7 Jeton Magi★Pop" },
+    { type:"capture", origine:"Mouette" },
+    { type:"confrerie", origine:"Boss de confrérie", detail:"palier de participation 5" }
+  ] },
+  /* Un objet que seul un butin donne entre aussi dans l'index. */
+  { nom:"Sceau de Liones", type:"Monnaie", sources:[{ type:"monstre", origine:"Banakro" }] }
+]);
+
+assert.deepEqual(catalogue.butins, [
+  { nom:"Mouette", type:"capture", objets:["Potion"] },
+  { nom:"Banakro", type:"monstre", objets:["Minerai", "Sceau de Liones"] },
+  { nom:"Minerai de fer", type:"minage", objets:["Minerai"] },
+  { nom:FERZEN, type:"donjon", objets:["Or"] },
+  { nom:FERZEN, type:"donjon", detail:"première victoire", objets:["Épée longue"] },
+  { nom:"Boss de confrérie", type:"confrerie", detail:"palier de participation 5", objets:["Potion"] }
 ]);
 
 module.exports = { ENTREE_OBJETS_TEST };

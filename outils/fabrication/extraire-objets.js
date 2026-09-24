@@ -78,6 +78,13 @@ function main() {
     interactions:lignesDeTable("Interaction/InteractionTable.json"),
     pnj,
     apparitions:apparitionsDesPnj(pnj),
+    groupesButin:lignesDeTable("Drop/DropGroupTable.json"),
+    paquetsButin:lignesDeTable("Drop/DropPackTable.json"),
+    monstres:lignesDeTable("Actor/MonsterActorTable.json"),
+    minage:lignesDeTable("Actor/MiningObjectTable.json"),
+    donjons:lignesDeTable("Dungeon/DungeonTable.json"),
+    groupesDonjon:lignesDeTable("Dungeon/DungeonGroupTable.json"),
+    recompensesConfrerie:lignesDeTable("Guild/GuildContentRewardTable.json"),
     textes:JSON.parse(fs.readFileSync(
       path.join(CONTENU, "Localization", "Game", "fr", "Game.json"), "utf8"
     )).client_language_table,
@@ -88,7 +95,8 @@ function main() {
   const texte = JSON.stringify(catalogue);
   fs.writeFileSync(SORTIE, texte);
   console.log("Écrit " + path.relative(RACINE, SORTIE) + " : " + catalogue.objets.length
-    + " objets, " + catalogue.boutiques.length + " boutiques, " + catalogue.articlesEcartes
+    + " objets, " + catalogue.boutiques.length + " boutiques, " + catalogue.butins.length
+    + " sources de butin, " + catalogue.articlesEcartes
     + " articles écartés, " + Math.round(Buffer.byteLength(texte) / 1024) + " Ko.");
   console.log("À déposer dans le bucket privé « jarvis-prive » (Supabase → Storage).");
 }
