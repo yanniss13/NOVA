@@ -31,7 +31,7 @@ const {
 } = globalThis.NOVA_AVAILABILITY_PDF;
 const { currentBossWeekStart } = globalThis.NOVA_BOSS_REMINDER;
 const {
-  DECLARATIONS_OUTILS_MONSTRES, ajouterOutilsMonstresJarvis
+  DECLARATIONS_OUTILS_MONSTRES, ajouterOutilsMonstresJarvis, rangCorrespondanceJarvis
 } = globalThis.NOVA_DISCORD_JARVIS_MONSTRES;
 
 const NOVA_CONNAISSANCES_URL =
@@ -119,18 +119,6 @@ const DECLARATIONS_OUTILS_JARVIS = [
     }
   }
 ].concat(DECLARATIONS_OUTILS_MONSTRES);
-
-/* 4 : egal, 3 : commence par, 2 : contient, 1 : contient tous les mots. */
-function rangCorrespondanceJarvis(candidat, cherche) {
-  const normalise = normaliserRecherche(candidat);
-  if(!cherche || !normalise) return 0;
-  if(normalise === cherche) return 4;
-  if(normalise.startsWith(cherche)) return 3;
-  if(normalise.includes(cherche)) return 2;
-  const mots = cherche.split(/\s+/).filter(Boolean);
-  if(mots.length > 1 && mots.every(mot => normalise.includes(mot))) return 1;
-  return 0;
-}
 
 function nomsDesPersonnagesJarvis(catalogue) {
   return Object.values(catalogue.personnages || {}).map(personnage => personnage.nom);

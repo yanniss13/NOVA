@@ -131,14 +131,15 @@ function versionLisibleMonstre(version) {
   return lisible;
 }
 
-function dateLisibleMonstre(catalogue) {
+function dateLisibleJarvis(catalogue) {
   const date = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(catalogue.dateExport || ""));
   return date ? date[3] + "/" + date[2] + "/" + date[1] : null;
 }
 
 /* ---------------- Recherche par nom ---------------- */
 
-function rangNomMonstre(candidat, cherche) {
+/* 4 : egal, 3 : commence par, 2 : contient, 1 : contient tous les mots. */
+function rangCorrespondanceJarvis(candidat, cherche) {
   const normalise = normaliserRecherche(candidat);
   if(!cherche || !normalise) return 0;
   if(normalise === cherche) return 4;
@@ -154,7 +155,7 @@ function trouverMonstresJarvis(catalogue, saisie) {
   let meilleurRang = 0;
   let trouves = [];
   catalogue.monstres.forEach(monstre => {
-    const rang = rangNomMonstre(monstre.nom, cherche);
+    const rang = rangCorrespondanceJarvis(monstre.nom, cherche);
     if(rang > meilleurRang){
       meilleurRang = rang;
       trouves = [monstre];
@@ -200,7 +201,7 @@ async function outilFicheMonstre(lireMonstres, args) {
   const resultat = {
     nom:monstre.nom,
     rang:LIBELLES_RANG_MONSTRE[monstre.rang] || monstre.rang,
-    donneesDu:dateLisibleMonstre(catalogue)
+    donneesDu:dateLisibleJarvis(catalogue)
   };
   if(trouves.length > 1){
     resultat.correspondances = trouves.length;
@@ -335,7 +336,7 @@ async function outilChercherMonstres(lireMonstres, args) {
   return {
     element:element[1],
     rang,
-    donneesDu:dateLisibleMonstre(catalogue),
+    donneesDu:dateLisibleJarvis(catalogue),
     total:trouves.length,
     monstres:trouves.slice(0, MONSTRES_RESULTATS_MAX)
       .map(({ nom, faiblesse, contextes }) => ({ nom, faiblesse, contextes }))
@@ -380,7 +381,7 @@ function nomBorneMonstre(nom) {
   return lettres.length > 40 ? lettres.slice(0, 39).join("").trimEnd() + "…" : lettres.join("");
 }
 
-function sourceDateeMonstre(debut, nom, donnees) {
+function sourceDateeJarvis(debut, nom, donnees) {
   return debut + nomBorneMonstre(nom)
     + (donnees.donneesDu ? " · données du jeu du " + donnees.donneesDu : "");
 }
@@ -389,12 +390,12 @@ function ajouterOutilsMonstresJarvis(table, lireMonstres) {
   table.fiche_monstre = {
     executer:args => outilFicheMonstre(lireMonstres, args),
     source:(args, donnees) =>
-      sourceDateeMonstre("fiche monstre ", donnees.nom || args.nom || "?", donnees)
+      sourceDateeJarvis("fiche monstre ", donnees.nom || args.nom || "?", donnees)
   };
   table.chercher_monstres = {
     executer:args => outilChercherMonstres(lireMonstres, args),
     source:(args, donnees) =>
-      sourceDateeMonstre("monstres faibles à ", donnees.element || args.element || "?", donnees)
+      sourceDateeJarvis("monstres faibles à ", donnees.element || args.element || "?", donnees)
   };
 }
 
@@ -402,7 +403,11 @@ const discordJarvisMonstresApi = {
   CHEMIN_MONSTRES_JARVIS,
   DECLARATIONS_OUTILS_MONSTRES,
   validerCatalogueMonstres,
-  ajouterOutilsMonstresJarvis
+  ajouterOutilsMonstresJarvis,
+  rangCorrespondanceJarvis,
+  dateLisibleJarvis,
+  sourceDateeJarvis,
+  elementDeSaisieMonstre
 };
 
 if(typeof module !== "undefined" && module.exports){
