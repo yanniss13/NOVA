@@ -107,6 +107,24 @@ assert.equal(verrouBranche(sansVerrou), false,
 assert.equal(verrouBranche(sql), true,
   "le verrou doit être branché");
 
+/* La création aussi : `profiles_insert` n'exige que `id = auth.uid()`, donc
+   un compte neuf naissait membre et admin s'il le demandait. */
+const verrouCreation = sql.match(
+  /create or replace function private\.verrouiller_drapeaux_a_la_creation[\s\S]*?\$\$;/i
+);
+assert.ok(verrouCreation, "le verrou de création des drapeaux doit exister");
+assert.match(verrouCreation[0], /auth\.uid\(\) is null/i,
+  "le SQL Editor garde la main sur la création d'un profil");
+assert.match(verrouCreation[0], /new\.membre[\s\S]*new\.admin[\s\S]*ADMIN_REQUIS/i,
+  "un profil créé depuis une session naît invité");
+const creationBranchee = source =>
+  /create trigger verrouiller_drapeaux_a_la_creation\s+before insert on public\.profiles/i.test(source);
+assert.equal(
+  creationBranchee(sql.replace(/create trigger verrouiller_drapeaux_a_la_creation[^;]*;/i, "")),
+  false, "le détecteur doit voir un verrou de création débranché");
+assert.equal(creationBranchee(sql), true,
+  "le verrou de création doit être branché avant INSERT");
+
 /* ---- Famille « à moi ou membre » : l'invité lit ses lignes, rien d'autre. ---- */
 
 const AMOI_OU_MEMBRE = [

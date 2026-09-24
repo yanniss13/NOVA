@@ -175,6 +175,39 @@ create trigger verrouiller_drapeaux_de_profil
 before update of membre, admin on public.profiles
 for each row execute function private.verrouiller_drapeaux_de_profil();
 
+-- Le même verrou, à la création du profil.
+--
+-- `profiles_insert` n'exige que `id = auth.uid()` : sans ce trigger, un compte
+-- tout neuf créait sa propre ligne avec `membre = true` et `admin = true` en
+-- une requête, avant même que le site pose son pseudo. Le verrou ci-dessus ne
+-- le voyait pas : il ne surveille que les UPDATE. Faille constatée par le jeu
+-- d'essai du dossier jury (cas 15), exécuté sur ce fichier.
+--
+-- Depuis une session (`auth.uid()` renseigné), un profil naît invité. Le SQL
+-- Editor et `service_role` (`auth.uid()` null) gardent la main, comme pour
+-- l'UPDATE.
+create or replace function private.verrouiller_drapeaux_a_la_creation()
+returns trigger
+language plpgsql
+security definer
+set search_path = pg_catalog, public
+as $$
+begin
+  if auth.uid() is null then
+    return new;
+  end if;
+  if coalesce(new.membre, false) or coalesce(new.admin, false) then
+    raise exception 'ADMIN_REQUIS' using errcode = 'P0001';
+  end if;
+  return new;
+end;
+$$;
+
+drop trigger if exists verrouiller_drapeaux_a_la_creation on public.profiles;
+create trigger verrouiller_drapeaux_a_la_creation
+before insert on public.profiles
+for each row execute function private.verrouiller_drapeaux_a_la_creation();
+
 -- Préservation des configs d'équipement indexées par emplacement (armorConfig,
 -- jewelConfig). Une ancienne PWA omet la clé entière ; on ne restaure alors que
 -- les emplacements dont la pièce équipée n'a pas changé. Restaurer l'objet
