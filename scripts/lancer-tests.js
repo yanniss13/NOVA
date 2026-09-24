@@ -68,6 +68,7 @@ const SUITES = {
     "node tests/availability-schema.test.js",
     "node tests/availability.test.js",
     "node scripts/generer-libelles-discord.js --verifier",
+    "node scripts/generer-connaissances-discord.js --verifier",
     "node tests/png-decode.test.js",
     "node tests/discord-build.test.js",
     "node tests/discord-build-png.test.js",

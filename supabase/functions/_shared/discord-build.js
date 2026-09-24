@@ -767,6 +767,11 @@ const discordBuildApi = {
   libelleArme,
   BUILD_TYPE_TO_ENUM,
   WEAPON_LABELS,
+  /* Lus par /jarvis : le catalogue de connaissances et les outils parlent le
+     meme vocabulaire que les cartes de /build, sans en recopier les tables. */
+  ELEMENT_LABELS,
+  SLOT_ROLE_LABELS,
+  propositions,
   nomDeFichier,
   resoudreDemandeBuild,
   contenuMessageBuild
