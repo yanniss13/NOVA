@@ -30,6 +30,13 @@ const BOUTIQUES_LISTE_MAX = 30;
 const LIGNE_OBJET_MAX = 200;
 const INDISPONIBLE_OBJETS = { erreur:"données des objets indisponibles" };
 const NOTE_ALEATOIRE = "articles tirés au hasard : la boutique peut les proposer, pas toujours";
+const OBJETS_MAX_BUTIN = 40;
+const NOTE_PROBABILITES = "la table ne donne pas de probabilité lisible : ne cite aucun taux";
+/* Les sources de butin (lot 2c, etape 2) et leur nom affiche. */
+const TYPES_BUTIN = {
+  monstre:"Butin de monstre", capture:"Capture", minage:"Minage",
+  donjon:"Donjon", confrerie:"Boss de confrérie"
+};
 
 /* ---------------- Validation du fichier ---------------- */
 
@@ -47,6 +54,9 @@ function quantiteValideObjets(valeur) {
 }
 
 function sourceObjetValide(source) {
+  if(estObjetObjets(source) && Object.prototype.hasOwnProperty.call(TYPES_BUTIN, source.type)){
+    return texteObjets(source.origine) && texteOuAbsentObjets(source.detail);
+  }
   return estObjetObjets(source) && source.type === "boutique"
     && texteObjets(source.boutique) && texteObjets(source.prix)
     && quantiteValideObjets(source.quantite)
@@ -74,6 +84,13 @@ function boutiqueValide(boutique) {
     && Array.isArray(boutique.articles) && boutique.articles.every(articleValide);
 }
 
+function butinValide(butin) {
+  return estObjetObjets(butin) && texteObjets(butin.nom)
+    && Object.prototype.hasOwnProperty.call(TYPES_BUTIN, butin.type)
+    && texteOuAbsentObjets(butin.detail)
+    && Array.isArray(butin.objets) && butin.objets.length > 0 && butin.objets.every(texteObjets);
+}
+
 /* Rend null si le fichier est bon, sinon le motif du refus : le lecteur de
    stockage commun le journalise et garde l'echec une minute. */
 function validerCatalogueObjets(brut) {
@@ -84,6 +101,12 @@ function validerCatalogueObjets(brut) {
   if(objet >= 0) return "objets.json : objet mal formé (indice " + objet + ")";
   const boutique = brut.boutiques.findIndex(entree => !boutiqueValide(entree));
   if(boutique >= 0) return "objets.json : boutique mal formée (indice " + boutique + ")";
+  /* Facultatif : un fichier d'avant les butins reste lisible. */
+  if(brut.butins !== undefined){
+    if(!Array.isArray(brut.butins)) return "objets.json : butins mal formés";
+    const butin = brut.butins.findIndex(entree => !butinValide(entree));
+    if(butin >= 0) return "objets.json : butin mal formé (indice " + butin + ")";
+  }
   return null;
 }
 
@@ -105,6 +128,13 @@ function texteBorneObjets(texte) {
    Liones)) : 1 800 Or, 3 par jour ». Le PNJ deja dans le nom n'est pas
    repete. */
 function ligneSourceObjet(source, boutiquesParNom) {
+  /* « Butin de monstre : Banakro », « Donjon : Mines de Ferzen (Normal),
+     premiere victoire », « Boss de confrerie, palier de participation 5 ». */
+  if(Object.prototype.hasOwnProperty.call(TYPES_BUTIN, source.type)){
+    const libelle = TYPES_BUTIN[source.type];
+    return texteBorneObjets(libelle + (source.origine !== libelle ? " : " + source.origine : "")
+      + (source.detail ? ", " + source.detail : ""));
+  }
   const boutique = boutiquesParNom.get(source.boutique);
   const precisions = [];
   if(boutique && boutique.acces === "menu"){
@@ -225,12 +255,45 @@ async function outilBoutique(lireObjets, args) {
   return resultat;
 }
 
+async function outilButin(lireObjets, args) {
+  const catalogue = await lireObjets();
+  if(!catalogue) return Object.assign({}, INDISPONIBLE_OBJETS);
+  const cherche = normaliserRecherche(args.nom);
+  if(!cherche) return { erreur:"nom de source manquant" };
+  const butins = catalogue.butins || [];
+  const noms = [...new Set(butins.map(butin => butin.nom))];
+  const classes = noms.map(nom => ({ nom, rang:rangCorrespondanceJarvis(nom, cherche) }))
+    .filter(entree => entree.rang > 0);
+  if(!classes.length){
+    return { introuvable:String(args.nom), proches:propositions(noms, args.nom) };
+  }
+  const meilleur = Math.max(...classes.map(entree => entree.rang));
+  const trouves = classes.filter(entree => entree.rang === meilleur).map(entree => entree.nom)
+    .sort((a, b) => a.length - b.length || a.localeCompare(b, "fr"));
+  if(trouves.length > 1){
+    return { recherche:String(args.nom), correspondances:trouves.length, candidats:trouves.slice(0, CANDIDATS_MAX_OBJET) };
+  }
+  /* Toutes les facons d'obtenir aupres de cette source : recompense et
+     premiere victoire d'un donjon, butin et capture d'un monstre. */
+  return {
+    nom:trouves[0], donneesDu:dateLisibleJarvis(catalogue), noteProbabilites:NOTE_PROBABILITES,
+    butins:butins.filter(butin => butin.nom === trouves[0]).map(butin => {
+      const sortie = { type:TYPES_BUTIN[butin.type] };
+      if(butin.detail) sortie.detail = butin.detail;
+      sortie.objets = butin.objets.slice(0, OBJETS_MAX_BUTIN);
+      if(butin.objets.length > OBJETS_MAX_BUTIN) sortie.autresObjets = butin.objets.length - OBJETS_MAX_BUTIN;
+      return sortie;
+    })
+  };
+}
+
 const DECLARATIONS_OUTILS_OBJETS = [
   {
     name:"ou_trouver",
     description:"Où obtenir un objet du jeu (équipement, matériau, consommable, monnaie) :"
-      + " boutiques qui le vendent, prix, limites d'achat. Les butins de monstres et les"
-      + " recettes ne sont pas encore couverts. Données lues dans les fichiers du jeu.",
+      + " boutiques (prix, limites d'achat), butins de monstres, captures, minage, donjons"
+      + " et boss de confrérie. Les recettes ne sont pas encore couvertes. Données lues"
+      + " dans les fichiers du jeu.",
     parameters:{
       type:"OBJECT",
       properties:{
@@ -252,6 +315,19 @@ const DECLARATIONS_OUTILS_OBJETS = [
       },
       required:["nom"]
     }
+  },
+  {
+    name:"butin",
+    description:"Ce que peut donner une source du jeu : monstre (butin et capture), point de"
+      + " minage, donjon (récompense et première victoire), boss de confrérie (paliers de"
+      + " participation). Sans probabilités.",
+    parameters:{
+      type:"OBJECT",
+      properties:{
+        nom:{ type:"STRING", description:"Nom du monstre, du donjon ou du point de minage (ex. « Banakro », « Mines de Ferzen »)." }
+      },
+      required:["nom"]
+    }
   }
 ];
 
@@ -267,6 +343,11 @@ function ajouterOutilsObjetsJarvis(table, lireObjets) {
   table.boutique = {
     executer:args => outilBoutique(lireObjets, args),
     source:(args, donnees) => sourceObjetsJarvis(donnees)
+  };
+  table.butin = {
+    executer:args => outilButin(lireObjets, args),
+    source:(args, donnees) => "butins"
+      + (donnees && donnees.donneesDu ? " · données du jeu du " + donnees.donneesDu : "")
   };
 }
 

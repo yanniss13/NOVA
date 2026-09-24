@@ -30,7 +30,7 @@ function outils(catalogue) {
 
 async function main() {
   /* ---------------- Declarations et fichier ---------------- */
-  assert.deepEqual(O.DECLARATIONS_OUTILS_OBJETS.map(d => d.name), ["ou_trouver", "boutique"]);
+  assert.deepEqual(O.DECLARATIONS_OUTILS_OBJETS.map(d => d.name), ["ou_trouver", "boutique", "butin"]);
   O.DECLARATIONS_OUTILS_OBJETS.forEach(d => assert.equal(d.parameters.type, "OBJECT"));
   assert.equal(O.CHEMIN_OBJETS_JARVIS, "jarvis-prive/objets.json");
   assert.equal(O.validerCatalogueObjets(CATALOGUE), null);
@@ -51,7 +51,8 @@ async function main() {
     sources:[
       LIONES + " (Alexander, Karim ; Liones (Plaines de Liones), Vanya) : 1 800 Or, 3 par jour",
       /* Le PNJ est deja dans le nom : pas de redite. */
-      "Boutique d'équipement (Gérard) : 2 000 Or"
+      "Boutique d'équipement (Gérard) : 2 000 Or",
+      "Donjon : Mine de Ferzen (Normal), première victoire"
     ]
   });
   assert.equal(epee.source, "boutiques · données du jeu du 22/09/2026");
@@ -59,13 +60,19 @@ async function main() {
   const minerai = await o.executer("ou_trouver", { objet:"Minerai" });
   assert.deepEqual(minerai.donnees.sources, [
     LIONES + " (Alexander, Karim ; Liones (Plaines de Liones), Vanya) : x5 pour 2 Potion, 10 par semaine",
-    "Boutique itinérante — Liones (Nyandin et Mou ; Liones (Plaines de Liones)) : 500 Or, article tiré au hasard"
+    "Boutique itinérante — Liones (Nyandin et Mou ; Liones (Plaines de Liones)) : 500 Or, article tiré au hasard",
+    "Butin de monstre : Banakro",
+    "Minage : Minerai de fer"
   ]);
   const potion = await o.executer("ou_trouver", { objet:"potion" });
   assert.equal(potion.donnees.sources[1], "Boutique d'équipement (depuis un menu) : 50 Or, 2 au total");
   assert.equal(potion.donnees.sources[0],
     LIONES + " (Alexander, Karim ; Liones (Plaines de Liones), Vanya) : 100 Or, 1 au total,"
     + " à partir du niveau de monde 3");
+  assert.deepEqual(potion.donnees.sources.slice(4), [
+    "Capture : Mouette",
+    "Boss de confrérie, palier de participation 5"
+  ]);
 
   /* Un nom court et exact gagne. */
   const or = await o.executer("ou_trouver", { objet:"or" });
@@ -76,7 +83,9 @@ async function main() {
 
   /* Un nom partiel qui designe plusieurs objets : la liste, sans choisir. */
   const partiel = await o.executer("ou_trouver", { objet:"on" });
-  assert.deepEqual(partiel.donnees, { recherche:"on", correspondances:2, candidats:["Potion", "Épée longue"] });
+  assert.deepEqual(partiel.donnees, {
+    recherche:"on", correspondances:3, candidats:["Potion", "Épée longue", "Sceau de Liones"]
+  });
 
   /* Une faute proche : l'objet, avec l'aveu. */
   const faute = await o.executer("ou_trouver", { objet:"minerais" });
@@ -128,6 +137,43 @@ async function main() {
   assert.equal(forge.donnees.boutiques.length, CATALOGUE.boutiques.length);
   assert.deepEqual((await o.executer("boutique", {})).donnees, { erreur:"nom de boutique manquant" });
 
+  /* ---------------- butin ---------------- */
+  const NOTE = "la table ne donne pas de probabilité lisible : ne cite aucun taux";
+  const banakro = await o.executer("butin", { nom:"banakro" });
+  assert.deepEqual(banakro.donnees, {
+    nom:"Banakro", donneesDu:"22/09/2026", noteProbabilites:NOTE,
+    butins:[{ type:"Butin de monstre", objets:["Minerai", "Sceau de Liones"] }]
+  });
+  assert.equal(banakro.source, "butins · données du jeu du 22/09/2026");
+  /* Un meme nom, plusieurs facons d'obtenir : toutes, dans une reponse. */
+  assert.deepEqual((await o.executer("butin", { nom:"Mine de Ferzen" })).donnees.butins, [
+    { type:"Donjon", objets:["Or"] },
+    { type:"Donjon", detail:"première victoire", objets:["Épée longue"] }
+  ]);
+  assert.deepEqual((await o.executer("butin", { nom:"mouette" })).donnees.butins,
+    [{ type:"Capture", objets:["Potion"] }]);
+  /* Des noms differents de meme rang : la liste, sans choisir. */
+  assert.deepEqual((await o.executer("butin", { nom:"de" })).donnees, {
+    recherche:"de", correspondances:3,
+    candidats:["Minerai de fer", "Boss de confrérie", "Mine de Ferzen (Normal)"]
+  });
+  const sansButin = await o.executer("butin", { nom:"dragon" });
+  assert.equal(sansButin.donnees.introuvable, "dragon");
+  assert.ok(Array.isArray(sansButin.donnees.proches));
+  assert.deepEqual((await o.executer("butin", {})).donnees, { erreur:"nom de source manquant" });
+
+  /* Un fichier d'avant les butins reste lisible. */
+  const ancien = JSON.parse(JSON.stringify(CATALOGUE));
+  delete ancien.butins;
+  assert.equal(O.validerCatalogueObjets(ancien), null);
+  assert.equal((await outils(ancien).executer("butin", { nom:"banakro" })).donnees.introuvable, "banakro");
+  const typeInconnu = JSON.parse(JSON.stringify(CATALOGUE));
+  typeInconnu.objets[0].sources.push({ type:"coffre", origine:"Coffre" });
+  assert.match(O.validerCatalogueObjets(typeInconnu), /objet mal formé/);
+  const butinAbime = JSON.parse(JSON.stringify(CATALOGUE));
+  butinAbime.butins[0].objets = "Potion";
+  assert.match(O.validerCatalogueObjets(butinAbime), /butin mal formé/);
+
   /* ---------------- Bornes ---------------- */
   const gros = JSON.parse(JSON.stringify(CATALOGUE));
   gros.objets[0].sources = Array.from({ length:20 }, (_, i) =>
@@ -140,6 +186,10 @@ async function main() {
   const articles = (await borne.executer("boutique", { nom:LIONES })).donnees;
   assert.equal(articles.articles.length, 40);
   assert.equal(articles.autresArticles, 10);
+  gros.butins[1].objets = Array.from({ length:50 }, (_, i) => "Objet " + i);
+  const butinBorne = (await borne.executer("butin", { nom:"Banakro" })).donnees.butins[0];
+  assert.equal(butinBorne.objets.length, 40);
+  assert.equal(butinBorne.autresObjets, 10);
 
   /* ---------------- Fichier absent ---------------- */
   const absent = outils(null);
