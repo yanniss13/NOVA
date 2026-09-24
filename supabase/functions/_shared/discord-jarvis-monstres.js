@@ -21,6 +21,8 @@ const { normaliserRecherche, propositions } = globalThis.NOVA_DISCORD_BUILD;
 const CHEMIN_MONSTRES_JARVIS = "jarvis-prive/monstres.json";
 const MONSTRES_VERSIONS_MAX = 5;
 const MONSTRES_RESULTATS_MAX = 15;
+const STRATEGIES_MAX_MONSTRE = 8;
+const STRATEGIE_TEXTE_MAX = 400;
 const NOTE_VALEURS_DE_BASE = "valeurs de base, avant ajustement du niveau de monde";
 const LIBELLE_SANS_CONTEXTE = "présent dans les fichiers, contexte non retrouvé";
 const ELEMENTS_MONSTRES_JARVIS = [
@@ -52,7 +54,10 @@ function catalogueMonstreValide(monstre) {
       && Array.isArray(version.contextes) && Array.isArray(version.acteurs)
       && estObjetMonstre(version.stats)
       && estObjetMonstre(version.stats.faiblesses)
-      && estObjetMonstre(version.stats.resistances));
+      && estObjetMonstre(version.stats.resistances))
+    && (monstre.strategies === undefined || (Array.isArray(monstre.strategies)
+      && monstre.strategies.every(strategie => estObjetMonstre(strategie)
+        && typeof strategie.titre === "string" && typeof strategie.texte === "string")));
 }
 
 /* Rend null si le fichier est bon, sinon le motif du refus : le lecteur de
@@ -206,6 +211,12 @@ async function outilFicheMonstre(lireMonstres, args) {
   if(trouves.length > 1){
     resultat.correspondances = trouves.length;
     resultat.autresCorrespondances = trouves.slice(1, 6).map(autre => autre.nom);
+  }
+  /* Les strategies officielles du jeu (« Union : chaque fois qu'un joueur
+     meurt, Akumu gagne en puissance »), bornees : elles coutent du quota. */
+  if(monstre.strategies && monstre.strategies.length){
+    resultat.strategies = monstre.strategies.slice(0, STRATEGIES_MAX_MONSTRE)
+      .map(strategie => texteBorneMonstre(strategie.titre + " : " + strategie.texte, STRATEGIE_TEXTE_MAX));
   }
 
   if(args.contexte !== undefined && args.contexte !== null && String(args.contexte).trim()){
@@ -376,9 +387,13 @@ const DECLARATIONS_OUTILS_MONSTRES = [
 /* Le NOM est borne, jamais la date : c'est elle qui dit de quel export
    viennent les chiffres. 40 caracteres de nom tiennent, avec la date, sous
    la limite d'une source dans la ligne « Sources ». */
+function texteBorneMonstre(texte, maximum) {
+  const lettres = Array.from(String(texte));
+  return lettres.length > maximum ? lettres.slice(0, maximum - 1).join("").trimEnd() + "…" : lettres.join("");
+}
+
 function nomBorneMonstre(nom) {
-  const lettres = Array.from(String(nom));
-  return lettres.length > 40 ? lettres.slice(0, 39).join("").trimEnd() + "…" : lettres.join("");
+  return texteBorneMonstre(nom, 40);
 }
 
 function sourceDateeJarvis(debut, nom, donnees) {

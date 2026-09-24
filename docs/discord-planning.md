@@ -400,6 +400,13 @@ Les PV, la défense et l'attaque sont des **valeurs de base** : le niveau de
 monde les ajuste côté serveur, et aucune table exportée ne dit comment. Les
 faiblesses et résistances, elles, concordent avec les mesures en jeu.
 
+`fiche_monstre` rend aussi les **stratégies officielles** du boss, textes du
+jeu (`local_boss_strategy_<code>_title_N` / `_desc_N`) : « Union : chaque
+fois qu'un joueur meurt, Akumu gagne en puissance ». Le code se retrouve dans
+la clé du nom du monstre ; quand il en couvre plusieurs (« baba_boss » :
+Durak, Durak 「corrompu」, Jorn le Costaud), seuls ceux du rang le plus élevé
+les reçoivent.
+
 ### Effets, porteurs et règles (lot 2b)
 
 Trois outils de plus : `fiche_effet` (un effet du jeu, ses valeurs, sa

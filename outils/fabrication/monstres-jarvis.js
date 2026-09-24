@@ -212,8 +212,61 @@ function fusionnerVersions(versions) {
     || a.acteurs[0].localeCompare(b.acteurs[0]));
 }
 
+/* Les strategies officielles des boss : local_boss_strategy_<code>_title_N
+   et _desc_N, dans l'ordre de N. Le code se retrouve dans la cle du nom du
+   monstre (mon_acumu -> Local_Mon_Name_Acumu_Demon_0001) ; une variante
+   d'evenement (_event, _event_0001) rejoint son boss de base, apres lui. */
+function strategiesParCode(textes, texte) {
+  const parCode = new Map();
+  Object.keys(textes || {}).forEach(cle => {
+    const titreCle = /^local_boss_strategy_(.+)_title_(\d+)$/i.exec(cle);
+    if(!titreCle) return;
+    const titre = texte(cle);
+    const description = texte(cle.replace(/_title_(\d+)$/i, "_desc_$1"));
+    if(!titre || !description) return;
+    const evenement = /_event(_\d+)?$/i.test(titreCle[1]);
+    const code = titreCle[1].toLowerCase().replace(/^mon_/, "").replace(/_event(_\d+)?$/, "");
+    if(!parCode.has(code)) parCode.set(code, []);
+    parCode.get(code).push({ ordre:(evenement ? 100000 : 0) + Number(titreCle[2]), titre, texte:description });
+  });
+  return parCode;
+}
+
+/* Un code peut correspondre a plusieurs monstres : « baba_boss » couvre
+   Durak (elite), Durak 「corrompu」 (boss) et Jorn le Costaud (elite). Seuls
+   ceux du rang le plus eleve recoivent les strategies — celles de Durak
+   parlent de corruption. Seule une vraie cle de nom compte : les pierres du
+   combat d'Akumu portent une cle de strategie en guise de nom. */
+function rattacherStrategies(monstres, clesParNom, parCode) {
+  const parMonstre = new Map();
+  parCode.forEach((strategies, code) => {
+    const candidats = monstres.filter(monstre => [...clesParNom.get(monstre.nom)]
+      .some(cle => cle.startsWith("local_mon_name_") && cle.includes(code)));
+    const rangMax = Math.max(...candidats.map(monstre => ORDRE_RANGS.indexOf(monstre.rang)));
+    candidats.filter(monstre => ORDRE_RANGS.indexOf(monstre.rang) === rangMax).forEach(monstre => {
+      if(!parMonstre.has(monstre)) parMonstre.set(monstre, []);
+      parMonstre.get(monstre).push(...strategies);
+    });
+  });
+  parMonstre.forEach((trouvees, monstre) => { monstre.strategies = strategiesTriees(trouvees); });
+}
+
+function strategiesTriees(trouvees) {
+  const vues = new Set();
+  return trouvees.sort((a, b) => a.ordre - b.ordre)
+    .filter(strategie => {
+      const cle = strategie.titre + "|" + strategie.texte;
+      if(vues.has(cle)) return false;
+      vues.add(cle);
+      return true;
+    })
+    .map(({ titre, texte }) => ({ titre, texte }));
+}
+
 function construireCatalogueMonstres(entree) {
   const texte = lecteurDeTextes(entree.textes);
+  const strategies = strategiesParCode(entree.textes, texte);
+  const clesParNom = new Map();
   const groupes = entree.groupes || {};
   const contextes = contextesParActeur(entree, texte);
   const paliersParBoss = new Map();
@@ -250,6 +303,8 @@ function construireCatalogueMonstres(entree) {
     if(!versions.length) return;
     if(!parNom.has(nom)) parNom.set(nom, []);
     parNom.get(nom).push(...versions);
+    if(!clesParNom.has(nom)) clesParNom.set(nom, new Set());
+    clesParNom.get(nom).add(String(acteur.Local_Key).toLowerCase());
   });
 
   const monstres = [...parNom].map(([nom, versions]) => ({
@@ -258,6 +313,7 @@ function construireCatalogueMonstres(entree) {
       ORDRE_RANGS.indexOf(version.rang) > ORDRE_RANGS.indexOf(meilleur) ? version.rang : meilleur, "normal"),
     versions:fusionnerVersions(versions)
   })).sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
+  rattacherStrategies(monstres, clesParNom, strategies);
 
   return {
     version:1,

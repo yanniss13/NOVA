@@ -504,6 +504,8 @@ async function main() {
      Gemini doit donner les deux, jamais choisir en silence. */
   assert.match(Q.CONSIGNE_JARVIS, /texteDuJeu/);
   assert.match(Q.CONSIGNE_JARVIS, /donne les deux/);
+  /* Les strategies de boss sont des textes du jeu, comme les regles. */
+  assert.match(Q.CONSIGNE_JARVIS, /« strategies » d'un monstre sont des textes du jeu/);
   /* La date de l'export survit dans la ligne Sources, meme pour Akumu. */
   const sourceAkumu = "fiche monstre Akumu, bête démoniaque · données du jeu du 22/09/2026";
   assert.match(Q.messageJarvis("?", { texte:"ok", sources:[sourceAkumu] }),

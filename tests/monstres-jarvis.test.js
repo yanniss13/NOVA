@@ -41,7 +41,25 @@ const ENTREE_MONSTRES_TEST = {
     local_dungeon_main_sub_name_2806:"Réveil après un long sommeil",
     local_dungeon_sub_name_2801:"Facile",
     local_dungeon_sub_name_2804:"Cauchemar",
-    area_sector_1m:"Britannia"
+    area_sector_1m:"Britannia",
+    /* Les strategies officielles : titre et description numerotes, le code
+       du boss (« akumu ») se retrouve dans la cle de son nom. */
+    local_boss_strategy_mon_akumu_title_2:"Assaut sournois",
+    local_boss_strategy_mon_akumu_desc_2:"Les attaques dans le dos infligent des dégâts bien plus importants.",
+    local_boss_strategy_mon_akumu_title_1:"Pierres d'élément",
+    local_boss_strategy_mon_akumu_desc_1:"Détruisez les cinq pierres d'élément à temps.",
+    local_boss_strategy_mon_akumu_title_10:"Union",
+    local_boss_strategy_mon_akumu_desc_10:"Chaque fois qu'un joueur meurt, Akumu gagne en puissance.",
+    local_boss_strategy_mon_akumu_title_4:"Sans description",
+    local_boss_strategy_mon_akumu_event_0001_title_1:"Pierres d'élément",
+    local_boss_strategy_mon_akumu_event_0001_desc_1:"Détruisez les cinq pierres d'élément à temps.",
+    local_boss_strategy_mon_akumu_event_0001_title_2:"Rage",
+    local_boss_strategy_mon_akumu_event_0001_desc_2:"Pendant l'événement, Akumu enrage.",
+    local_boss_strategy_mon_inconnu_title_1:"Fantôme",
+    local_boss_strategy_mon_inconnu_desc_1:"Aucun monstre ne porte ce code.",
+    local_mon_name_boss_demon_red_0201:"Jorn le Costaud",
+    local_boss_strategy_demon_red_title_1:"Coup de queue",
+    local_boss_strategy_demon_red_desc_1:"Esquivez vers l'avant."
   },
   monstres:{
     "50103301":{ Local_Key:NOM_ROUGE, grade:"EActorGrade::Boss", StatGroupTid:"stat_50103301", Recommend_BattlePower:PUISSANCE },
@@ -52,7 +70,13 @@ const ENTREE_MONSTRES_TEST = {
     "50700109":{ Local_Key:"local_mon_name_akumu", grade:"EActorGrade::Boss", StatGroupTid:"stat_poweroverwhelming", Recommend_BattlePower:[] },
     "60000001":{ Local_Key:"local_mon_name_rabbit", grade:"EActorGrade::Normal", StatGroupTid:"stat_rabbit", Recommend_BattlePower:[] },
     "60000002":{ Local_Key:"local_mon_name_sans_texte", grade:"EActorGrade::Elite", StatGroupTid:"stat_rabbit", Recommend_BattlePower:[] },
-    "60000003":{ Local_Key:"local_mon_name_rabbit", grade:"EActorGrade::Normal", StatGroupTid:"stat_absent", Recommend_BattlePower:[] }
+    "60000003":{ Local_Key:"local_mon_name_rabbit", grade:"EActorGrade::Normal", StatGroupTid:"stat_absent", Recommend_BattlePower:[] },
+    /* Jorn partage le code du Demon rouge (comme Jorn et Durak partagent
+       « baba_boss ») mais n'est qu'une elite : les strategies vont au boss. */
+    "60000004":{ Local_Key:"local_mon_name_boss_demon_red_0201", grade:"EActorGrade::Elite", StatGroupTid:"stat_rabbit", Recommend_BattlePower:[] },
+    /* Les pierres du combat d'Akumu : leur « nom » est une cle de strategie,
+       pas une cle de nom de monstre. */
+    "60000005":{ Local_Key:"Local_Boss_Strategy_MON_Akumu_Title_1", grade:"EActorGrade::Boss", StatGroupTid:"stat_rabbit", Recommend_BattlePower:[] }
   },
   groupes:{
     stat_50103301:groupe({ Fire:-3000, Earth:2000, Holy:2000 }),
@@ -98,7 +122,7 @@ function main() {
   assert.equal(catalogue.dateExport, "2026-09-24");
   assert.equal(catalogue.genereLe, "2026-09-24T12:00:00.000Z");
   assert.deepEqual(catalogue.monstres.map(m => m.nom),
-    ["Akumu, bête démoniaque", "Démon rouge", "Lapin"],
+    ["Akumu, bête démoniaque", "Démon rouge", "Jorn le Costaud", "Lapin", "Pierres d'élément"],
     "tri par nom ; l'acteur sans texte et le groupe absent sont ecartes");
 
   const rouge = catalogue.monstres.find(m => m.nom === "Démon rouge");
@@ -135,7 +159,23 @@ function main() {
   assert.equal(akumu.versions[1].stats.pv, 9000000);
   assert.equal(akumu.versions[0].stats.faiblesses.Holy, -3000);
 
+  /* Ordre numerique (1, 2, 10), description obligatoire, variante
+     d'evenement rattachee au boss de base sans doublon, code orphelin ignore. */
+  assert.deepEqual(akumu.strategies, [
+    { titre:"Pierres d'élément", texte:"Détruisez les cinq pierres d'élément à temps." },
+    { titre:"Assaut sournois", texte:"Les attaques dans le dos infligent des dégâts bien plus importants." },
+    { titre:"Union", texte:"Chaque fois qu'un joueur meurt, Akumu gagne en puissance." },
+    { titre:"Rage", texte:"Pendant l'événement, Akumu enrage." }
+  ]);
+  assert.deepEqual(rouge.strategies, [{ titre:"Coup de queue", texte:"Esquivez vers l'avant." }]);
+  assert.ok(!JSON.stringify(catalogue).includes("Fantôme"), "un code sans monstre n'est rattaché à rien");
+  assert.equal(catalogue.monstres.find(m => m.nom === "Jorn le Costaud").strategies, undefined,
+    "même code, rang inférieur : les stratégies restent au boss");
+  assert.equal(catalogue.monstres.find(m => m.nom === "Pierres d'élément").strategies, undefined,
+    "une clé de stratégie n'est pas un nom de monstre");
+
   const lapin = catalogue.monstres.find(m => m.nom === "Lapin");
+  assert.equal(lapin.strategies, undefined, "pas de stratégie : pas de champ");
   assert.equal(lapin.rang, "normal");
   assert.deepEqual(lapin.versions[0].contextes, [], "aucun contexte retrouve : liste vide");
   assert.equal(lapin.versions[0].stats.resistances.Fire, 0);

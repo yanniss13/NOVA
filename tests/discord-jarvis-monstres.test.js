@@ -68,6 +68,19 @@ async function main() {
 
   const akumu = await o.executer("fiche_monstre", { nom:"akumu" });
   assert.equal(akumu.donnees.paliers, "1 à 30");
+  /* Les strategies officielles du jeu, telles qu'ecrites, dans l'ordre. */
+  assert.deepEqual(akumu.donnees.strategies, [
+    "Pierres d'élément : Détruisez les cinq pierres d'élément à temps.",
+    "Assaut sournois : Les attaques dans le dos infligent des dégâts bien plus importants.",
+    "Union : Chaque fois qu'un joueur meurt, Akumu gagne en puissance.",
+    "Rage : Pendant l'événement, Akumu enrage."
+  ]);
+  assert.equal((await o.executer("fiche_monstre", { nom:"lapin" })).donnees.strategies, undefined);
+  /* Un fichier dont une strategie est abimee est refuse en entier. */
+  assert.equal(M.validerCatalogueMonstres(CATALOGUE), null);
+  const abime = JSON.parse(JSON.stringify(CATALOGUE));
+  abime.monstres.find(m => m.strategies).strategies.push({ titre:"x", texte:3 });
+  assert.match(M.validerCatalogueMonstres(abime), /entrée mal formée/);
   assert.deepEqual(akumu.donnees.versions.map(v => v.niveau), [1, 30],
     "sans niveau : premier et dernier palier");
   assert.deepEqual(akumu.donnees.versions[0].contextes, ["Boss de confrérie, niveau 1"]);
