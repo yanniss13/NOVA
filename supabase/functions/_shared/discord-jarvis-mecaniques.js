@@ -389,7 +389,8 @@ const discordJarvisMecaniquesApi = {
   CHEMIN_MECANIQUES_JARVIS,
   DECLARATIONS_OUTILS_MECANIQUES,
   validerCatalogueMecaniques,
-  ajouterOutilsMecaniquesJarvis
+  ajouterOutilsMecaniquesJarvis,
+  motsProchesMecanique
 };
 
 if(typeof module !== "undefined" && module.exports){
