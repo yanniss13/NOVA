@@ -140,6 +140,28 @@ function main() {
   assert.deepEqual(lapin.versions[0].contextes, [], "aucun contexte retrouve : liste vide");
   assert.equal(lapin.versions[0].stats.resistances.Fire, 0);
 
+  /* Une zone partagee par des donjons de noms differents : l'export reel en a
+     sept sur quarante-deux. Une apparition y prenait le nom du PREMIER donjon
+     trouve, faux une fois sur deux. Deux groupes de meme nom ne comptent
+     qu'une fois ; le boss garde son etiquette exacte, sans l'etiquette
+     generique de la zone en plus. */
+  const partage = JSON.parse(JSON.stringify(ENTREE_MONSTRES_TEST));
+  partage.textes.local_dungeon_main_name_9001 = "Berceau des étoiles";
+  partage.donjons["1701"] = { Dungeon_Zone:50801003, Dungeon_Type:"EDungeonType::Normal",
+    Dungeon_Group:9001, Local_Sub_Name:"None", Dungeon_Clear_Value:"None" };
+  partage.donjons["1801"] = { Dungeon_Zone:50801003, Dungeon_Type:"EDungeonType::Boss_Replay",
+    Dungeon_Group:9002, Local_Sub_Name:"None", Dungeon_Clear_Value:"None" };
+  partage.groupesDonjon["9001"] = { Local_Main_Name:"local_dungeon_main_name_9001" };
+  partage.groupesDonjon["9002"] = { Local_Main_Name:"local_dungeon_main_name_2806" };
+  partage.apparitions.push({ fichier:"Berceau_spawntable", zone:"50801003", acteurs:["60000001"] });
+  const catalogueDePartage = construireCatalogueMonstres(partage);
+  const lapinPartage = catalogueDePartage.monstres.find(m => m.nom === "Lapin");
+  assert.deepEqual(lapinPartage.versions[0].contextes, [{ type:"donjon",
+    libelle:"Donjons partageant la zone : Berceau des étoiles, Démon rouge" }]);
+  const rougePartage = catalogueDePartage.monstres.find(m => m.nom === "Démon rouge");
+  assert.deepEqual(rougePartage.versions[1].contextes, [{ type:"donjon", libelle:LIBELLE_DONJON }],
+    "le boss garde son étiquette exacte, sans l'étiquette générique de la zone");
+
   console.log("OK monstres-jarvis");
 }
 

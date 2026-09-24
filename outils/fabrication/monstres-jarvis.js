@@ -107,7 +107,7 @@ function contextesParActeur(entree, texte) {
     const difficulte = texte(donjon.Local_Sub_Name);
     if(difficulte && !groupe.difficultes.includes(difficulte)) groupe.difficultes.push(difficulte);
   });
-  const libelleParZoneDeDonjon = new Map();
+  const libellesParZoneDeDonjon = new Map();
   parGroupe.forEach((groupe, cle) => {
     const ligne = (entree.groupesDonjon || {})[cle] || {};
     enListe(ligne.Dungeon_Core_Monster).forEach(id => groupe.acteurs.add(id));
@@ -119,23 +119,44 @@ function contextesParActeur(entree, texte) {
       + " (" + (TYPES_DONJON[brut] || brut || "donjon") + ")"
       + (groupe.difficultes.length ? " — " + groupe.difficultes.join(", ") : "");
     groupe.acteurs.forEach(id => ajouter(id, { type:"donjon", libelle }));
+    /* Par zone, un libelle par NOM de donjon : deux groupes de meme nom
+       (les deux « Nid d'araignée profond ») n'en font qu'un. */
     groupe.zones.forEach(zone => {
-      if(!libelleParZoneDeDonjon.has(zone)) libelleParZoneDeDonjon.set(zone, libelle);
+      if(!libellesParZoneDeDonjon.has(zone)) libellesParZoneDeDonjon.set(zone, new Map());
+      const parNom = libellesParZoneDeDonjon.get(zone);
+      if(!parNom.has(nom)) parNom.set(nom, libelle);
     });
   });
+
+  /* Une zone partagee par des donjons de noms differents (sept sur
+     quarante-deux dans l'export du 22/09/2026) ne peut pas prendre le nom du
+     premier : elle les nomme tous, trois au plus. */
+  const libelleDeZoneDeDonjon = zone => {
+    const parNom = libellesParZoneDeDonjon.get(zone);
+    if(parNom.size === 1) return [...parNom.values()][0];
+    const noms = [...parNom.keys()].sort((a, b) => a.localeCompare(b, "fr"));
+    return "Donjons partageant la zone : " + noms.slice(0, 3).join(", ")
+      + (noms.length > 3 ? " et " + (noms.length - 3) + " autres" : "");
+  };
 
   (entree.apparitions || []).forEach(apparition => {
     let contexte;
     if(/^crosschallenge_/i.test(apparition.fichier)){
       contexte = { type:"cross", libelle:"Cross Challenge" };
-    }else if(libelleParZoneDeDonjon.has(String(apparition.zone))){
-      contexte = { type:"donjon", libelle:libelleParZoneDeDonjon.get(String(apparition.zone)) };
+    }else if(libellesParZoneDeDonjon.has(String(apparition.zone))){
+      contexte = { type:"donjon", libelle:libelleDeZoneDeDonjon(String(apparition.zone)) };
     }else{
       const zone = (entree.zones || {})[apparition.zone];
       const nom = zone && texte(zone.Local_ZoneName);
       contexte = { type:"zone", libelle:"Zone : " + (nom || String(apparition.zone)) };
     }
-    (apparition.acteurs || []).forEach(id => ajouter(id, contexte));
+    (apparition.acteurs || []).forEach(id => {
+      /* Le boss d'un donjon a deja son etiquette exacte, tiree de la table du
+         donjon : l'etiquette generique de sa zone n'y ajouterait que du bruit. */
+      const dejaDansUnDonjon = contexte.type === "donjon"
+        && (parActeur.get(String(id)) || []).some(present => present.type === "donjon");
+      if(!dejaDansUnDonjon) ajouter(id, contexte);
+    });
   });
 
   parActeur.forEach(trierContextes);
