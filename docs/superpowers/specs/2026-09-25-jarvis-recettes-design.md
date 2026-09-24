@@ -47,7 +47,13 @@ Quatre tables de `Table/Making/`, même forme : `Material_TID_1..7` et
 - Nouvelle source d'objet `{ type: "recette", origine: <type affiché> }`,
   après les boutiques et les butins. Un produit obtenu par deux recettes du
   même type n'a qu'une source.
-- Recettes dédoublonnées (même produit, type, ingrédients).
+- Recettes dédoublonnées (même produit, type, ingrédients). Une même
+  recette en cuisine manuelle et automatique n'en fait qu'une, de type
+  « Cuisine » (170 cas).
+- Fabrication : `Recipe_Type` liste les établis où la recette apparaît ;
+  le type affiché est le plus modeste, suivi de « ou supérieur » quand la
+  liste en compte plusieurs (« Fabrication — Établi raffiné ou
+  supérieur »).
 
 ## Outils
 

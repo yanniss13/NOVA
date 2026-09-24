@@ -209,6 +209,14 @@ function construireCatalogueObjets(entree) {
     });
   });
 
+  const recettes = recettesDuJeu(entree, lire, objetsParId);
+  recettes.forEach(recette => {
+    if(!index.has(recette.produit)){
+      index.set(recette.produit, { nom:recette.produit, type:recette.typeObjet, sources:[] });
+    }
+    index.get(recette.produit).sources.push({ type:"recette", origine:recette.type });
+  });
+
   return {
     version:1,
     genereLe:entree.genereLe || null,
@@ -228,8 +236,106 @@ function construireCatalogueObjets(entree) {
     butins:butins.map(butin => Object.assign(
       { nom:butin.nom, type:butin.type }, butin.detail ? { detail:butin.detail } : {},
       { objets:butin.objets.map(objet => objet.nom) })),
+    recettes:recettes.map(({ typeObjet, ...recette }) => recette),
     articlesEcartes
   };
+}
+
+/* Les recettes : quatre tables de Table/Making de meme forme
+   (Material_TID_1..7 / Material_Cnt_1..7 -> Reward_Item_Tid_1). MakingRecipe
+   n'est PAS lue : table perimee, 361 de ses 563 produits de fabrication n'ont
+   pas de nom et ses ingredients different de ProductionRecipeTable pour un
+   meme produit. En cuisine, Material_Group_n liste des ingredients
+   interchangeables (MakingList). */
+const ALTERNATIVES_MAX_RECETTE = 4;
+
+function recettesDuJeu(entree, lire, objetsParId) {
+  const nomObjet = id => (objetsParId.get(String(id)) || {}).nom || null;
+  const groupes = new Map();
+  const liste = entree.listeIngredients || {};
+  Object.keys(liste).sort(ordreNumeriqueObjets).forEach(id => {
+    const nom = nomObjet(id);
+    const groupe = Number(liste[id] && liste[id].Material_Group) || 0;
+    if(nom && groupe > 0) ajouterDans(groupes, String(groupe), nom);
+  });
+  const categories = entree.categoriesFabrication || {};
+  const libelleParFonction = new Map();
+  Object.keys(categories).sort().forEach(cle => {
+    const categorie = categories[cle];
+    const libelle = categorie && lire(categorie.Local_Key);
+    if(libelle && !libelleParFonction.has(categorie.Function_Type)) libelleParFonction.set(categorie.Function_Type, libelle);
+  });
+  const types = {
+    cuisine:ligne => "Cuisine" + (libelleParFonction.has(ligne.Function_Type)
+      ? " — " + libelleParFonction.get(ligne.Function_Type) : ""),
+    /* Recipe_Type liste les etablis ou la recette apparait : le plus
+       modeste suffit, les suivants la reprennent. */
+    fabrication:ligne => {
+      const rangs = [].concat(ligne.Recipe_Type || [])
+        .map(type => Number((/^productiontable_(\d+)$/.exec(String(type)) || [])[1]))
+        .filter(rang => rang > 0).sort((a, b) => a - b);
+      const etabli = rangs.length && lire((categories["making_productiontable_" + rangs[0]] || {}).Local_Key);
+      return "Fabrication" + (etabli ? " — " + etabli + (rangs.length > 1 ? " ou supérieur" : "") : "");
+    },
+    gravure:() => "Gravure",
+    combinaison:() => "Combinaison"
+  };
+
+  function recette(ligne, famille) {
+    const produit = objetsParId.get(String(ligne.Reward_Item_Tid_1));
+    if(!produit) return null;
+    const ingredients = [];
+    for(let rang = 1; rang <= 7; rang++){
+      const id = ligne["Material_TID_" + rang];
+      const nombre = Number(ligne["Material_Cnt_" + rang]) || 0;
+      if(!id || id === "None" || nombre <= 0) continue;
+      const nom = nomObjet(id);
+      /* Un ingredient sans nom : la recette ne se lirait pas. */
+      if(!nom) return null;
+      const autres = (groupes.get(String(Number(ligne["Material_Group_" + rang]) || 0)) || [])
+        .filter(autre => autre !== nom);
+      const reste = autres.length - ALTERNATIVES_MAX_RECETTE;
+      ingredients.push(nom + " x" + nombre + (autres.length
+        ? " (ou : " + autres.slice(0, ALTERNATIVES_MAX_RECETTE).join(", ")
+          + (reste > 0 ? " et " + reste + " autre" + (reste > 1 ? "s" : "") : "") + ")"
+        : ""));
+    }
+    if(!ingredients.length) return null;
+    const sortie = { produit:produit.nom };
+    if(Number(ligne.Reward_Item_Cnt_1) > 1) sortie.quantite = Number(ligne.Reward_Item_Cnt_1);
+    sortie.type = types[famille](ligne);
+    sortie.ingredients = ingredients;
+    return sortie;
+  }
+
+  const sortie = [];
+  const vues = new Set();
+  /* Cuisine manuelle et automatique d'une meme recette : une seule,
+     « Cuisine ». */
+  const cuisines = new Map();
+  [["recettesCuisine", "cuisine"], ["recettesFabrication", "fabrication"],
+    ["recettesGravure", "gravure"], ["recettesCombinaison", "combinaison"]].forEach(([table, famille]) => {
+    const lignes = entree[table] || {};
+    Object.keys(lignes).sort(ordreNumeriqueObjets).forEach(id => {
+      const trouvee = lignes[id] && recette(lignes[id], famille);
+      if(!trouvee) return;
+      const cle = JSON.stringify(trouvee);
+      if(vues.has(cle)) return;
+      vues.add(cle);
+      if(famille === "cuisine"){
+        const { type, ...sansType } = trouvee;
+        const cleCuisine = JSON.stringify(sansType);
+        if(cuisines.has(cleCuisine)){
+          cuisines.get(cleCuisine).type = "Cuisine";
+          return;
+        }
+        cuisines.set(cleCuisine, trouvee);
+      }
+      trouvee.typeObjet = objetsParId.get(String(lignes[id].Reward_Item_Tid_1)).type;
+      sortie.push(trouvee);
+    });
+  });
+  return sortie;
 }
 
 /* Ce que chaque source PEUT donner. Aucune probabilite : DropPackTable

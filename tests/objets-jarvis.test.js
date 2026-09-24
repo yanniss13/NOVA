@@ -35,6 +35,20 @@ function article(boutique, vente, paiement, autres) {
     LimitLevelType:"ELimitLevelType::None", LimitLevel:0, Order:numero
   }, autres || {});
 }
+/* Forme commune des quatre tables de recettes : 7 ingredients, un produit. */
+function recette(fonction, ingredients, produit, quantite, types) {
+  const ligne = { Function_Type:"EFunctionType::" + fonction, Recipe_Type:types || [] };
+  for(let i = 1; i <= 7; i++){
+    const [id, nombre, groupe] = ingredients[i - 1] || ["None", 0, 0];
+    ligne["Material_TID_" + i] = id;
+    ligne["Material_Cnt_" + i] = nombre;
+    if(fonction.endsWith("Cook")) ligne["Material_Group_" + i] = groupe || 0;
+  }
+  return Object.assign(ligne, {
+    Reward_Item_Tid_1:produit, Reward_Item_Cnt_1:quantite, Reward_Type_1:"ERewardType::Success",
+    Reward_Item_Tid_2:"None", Reward_Type_2:"ERewardType::None"
+  });
+}
 const EPEE = ["Item", "131000001"];
 const EPEE_BIS = ["Item", "131000002"];
 const MINERAI = ["Item", "101000001"];
@@ -44,13 +58,22 @@ const POTION = ["Item", "102000001"];
 const ENTREE_OBJETS_TEST = {
   objets:{
     etc:{
+      "101000010":{ Local_Key:"Local_Item_Riz" }, "101000011":{ Local_Key:"Local_Item_Orge" },
+      "101000012":{ Local_Key:"Local_Item_Ble" }, "101000013":{ Local_Key:"Local_Item_Mais" },
+      "101000014":{ Local_Key:"Local_Item_Seigle" }, "101000015":{ Local_Key:"Local_Item_Avoine" },
       "101000001":{ Local_Key:"Local_Item_Ore" },
       /* Traduction absente : le jeu rend la cle elle-meme. */
       "101000002":{ Local_Key:"local_item_sans_nom" }
     },
     /* Deux epees homonymes : une seule entree dans l'index. */
-    equip:{ "131000001":{ Local_Key:"Local_Item_Sword" }, "131000002":{ Local_Key:"Local_Item_Sword" } },
-    use:{ "102000001":{ Local_Key:"Local_Item_Potion" } },
+    equip:{
+      "131000001":{ Local_Key:"Local_Item_Sword" }, "131000002":{ Local_Key:"Local_Item_Sword" },
+      "131000010":{ Local_Key:"Local_Item_Tenue" }
+    },
+    use:{
+      "102000001":{ Local_Key:"Local_Item_Potion" },
+      "102000010":{ Local_Key:"Local_Item_Beignets" }, "102000011":{ Local_Key:"Local_Item_Filet" }
+    },
     quest:{},
     pet:{},
     dropType:{
@@ -108,6 +131,39 @@ const ENTREE_OBJETS_TEST = {
   groupesDonjon:{ "81001200":{ Local_Main_Name:"local_dungeon_main_name_ferzen", Local_Main_Sub_Name:"None" } },
   recompensesConfrerie:{
     "1":{ Reward_Check_01:5, Reward_Drop_01:"g_confrerie", Reward_Check_02:0, Reward_Drop_02:"None" }
+  },
+  /* ---------------- Recettes ---------------- */
+  recettesCuisine:{
+    /* Un groupe inconnu : l'ingredient reste, sans alternatives. */
+    "1001101":recette("ManualCook", [["101000010", 2, 999]], "102000011", 2),
+    /* Un ingredient sans nom : la recette est ecartee. */
+    "1001102":recette("ManualCook", [["101000002", 1]], "102000011", 1),
+    /* Meme recette en cuisine manuelle et automatique : une, « Cuisine ». */
+    "1001103":recette("ManualCook", [["101000001", 1], ["101000010", 1, 130]], "102000010", 1),
+    "2000422":recette("AutoCook", [["101000001", 1], ["101000010", 1, 130]], "102000010", 1),
+    /* La meme recette une seconde fois : une seule. */
+    "2000423":recette("AutoCook", [["101000001", 1], ["101000010", 1, 130]], "102000010", 1)
+  },
+  recettesFabrication:{
+    /* Visible a plusieurs etablis : le plus modeste « ou superieur ». */
+    "5":recette("Production", [["101000001", 8], ["100000101", 500]], "102000001", 1,
+      ["productiontable_2", "productiontable_1"]),
+    "7":recette("Production", [["101000001", 9]], "102000010", 1, ["productiontable_2"]),
+    "6":recette("Production", [["101000001", 3]], "102000001", 1, ["productiontable_1"])
+  },
+  recettesGravure:{ "130100092":recette("AutoBind", [["131000001", 1], ["102000001", 1]], "131000010", 1) },
+  recettesCombinaison:{ "170400026":recette("Combine", [["101000001", 5]], "101000011", 1) },
+  categoriesFabrication:{
+    cooking_manualcook_1:{ Function_Type:"EFunctionType::ManualCook", Local_Key:"UI_Making_title_SelfCooking" },
+    cooking_autocook_1:{ Function_Type:"EFunctionType::AutoCook", Local_Key:"UI_Making_title_AutoCooking" },
+    making_npc:{ Function_Type:"EFunctionType::Production", Local_Key:"Local_Making_NPC" },
+    making_productiontable_1:{ Function_Type:"EFunctionType::Production", Local_Key:"Local_Item_Install_Name_102061001" },
+    making_productiontable_2:{ Function_Type:"EFunctionType::Production", Local_Key:"Local_Item_Install_Name_102061002" }
+  },
+  /* Les ingredients interchangeables : un groupe de cereales. */
+  listeIngredients:{
+    "101000010":{ Material_Group:130 }, "101000011":{ Material_Group:130 }, "101000012":{ Material_Group:130 },
+    "101000013":{ Material_Group:130 }, "101000014":{ Material_Group:130 }, "101000015":{ Material_Group:130 }
   },
   articles:{
     "250110001":article(EQUIPEMENT_LIONES, EPEE, ["Currency", "gold", 1800],
@@ -185,7 +241,15 @@ const ENTREE_OBJETS_TEST = {
     local_mon_sans_nom:"local_mon_sans_nom",
     local_mining_fer:"Minerai de fer",
     local_dungeon_main_name_ferzen:"Mine de Ferzen",
-    local_dungeon_sub_name_2802:"Normal"
+    local_dungeon_sub_name_2802:"Normal",
+    local_item_riz:"Riz", local_item_orge:"Orge", local_item_ble:"Blé", local_item_mais:"Maïs",
+    local_item_seigle:"Seigle", local_item_avoine:"Avoine",
+    local_item_tenue:"Tenue de prince", local_item_beignets:"Beignets", local_item_filet:"Filet",
+    ui_making_title_selfcooking:"Élaborer des recettes",
+    ui_making_title_autocooking:"Cuisiner la recette",
+    local_making_npc:"local_making_npc",
+    local_item_install_name_102061001:"Établi de fortune",
+    local_item_install_name_102061002:"Établi robuste"
   },
   genereLe:"2026-09-25T00:00:00.000Z",
   dateExport:"2026-09-22"
@@ -230,14 +294,22 @@ assert.deepEqual(catalogue.boutiques, [
 
 const FERZEN = "Mine de Ferzen (Normal)";
 
-/* Les boutiques d'abord, puis les butins : monstres et captures par
-   acteur croissant, minage, donjons, confrerie. */
+const ELABORER = "Cuisine — Élaborer des recettes";
+const FORTUNE = "Fabrication — Établi de fortune";
+
+/* Les boutiques d'abord, puis les butins (monstres et captures par acteur
+   croissant, minage, donjons, confrerie), puis les recettes. */
 assert.deepEqual(catalogue.objets, [
+  { nom:"Beignets", type:"Consommable", sources:[
+    { type:"recette", origine:"Cuisine" },
+    { type:"recette", origine:"Fabrication — Établi robuste" }
+  ] },
   { nom:"Épée longue", type:"Équipement", sources:[
     { type:"boutique", boutique:LIONES, prix:"1 800 Or", limite:"3 par jour" },
     { type:"boutique", boutique:GERARD, prix:"2 000 Or" },
     { type:"donjon", origine:FERZEN, detail:"première victoire" }
   ] },
+  { nom:"Filet", type:"Consommable", sources:[{ type:"recette", origine:ELABORER }] },
   { nom:"Minerai", type:"Divers", sources:[
     { type:"boutique", boutique:LIONES, quantite:5, prix:"2 Potion", limite:"10 par semaine" },
     { type:"boutique", boutique:ITINERANTE_LIONES, prix:"500 Or", aleatoire:true },
@@ -248,6 +320,7 @@ assert.deepEqual(catalogue.objets, [
     { type:"boutique", boutique:MAGI, quantite:1000, prix:"1 Potion" },
     { type:"donjon", origine:FERZEN }
   ] },
+  { nom:"Orge", type:"Divers", sources:[{ type:"recette", origine:"Combinaison" }] },
   { nom:"Potion", type:"Consommable", sources:[
     { type:"boutique", boutique:LIONES, prix:"100 Or", limite:"1 au total",
       condition:"à partir du niveau de monde 3" },
@@ -255,10 +328,25 @@ assert.deepEqual(catalogue.objets, [
     { type:"boutique", boutique:MAGI, prix:"5 Jeton Magi★Pop" },
     { type:"boutique", boutique:MAGI + " (2)", prix:"7 Jeton Magi★Pop" },
     { type:"capture", origine:"Mouette" },
-    { type:"confrerie", origine:"Boss de confrérie", detail:"palier de participation 5" }
+    { type:"confrerie", origine:"Boss de confrérie", detail:"palier de participation 5" },
+    { type:"recette", origine:FORTUNE + " ou supérieur" },
+    { type:"recette", origine:FORTUNE }
   ] },
   /* Un objet que seul un butin donne entre aussi dans l'index. */
-  { nom:"Sceau de Liones", type:"Monnaie", sources:[{ type:"monstre", origine:"Banakro" }] }
+  { nom:"Sceau de Liones", type:"Monnaie", sources:[{ type:"monstre", origine:"Banakro" }] },
+  { nom:"Tenue de prince", type:"Équipement", sources:[{ type:"recette", origine:"Gravure" }] }
+]);
+
+/* Cuisine, fabrication, gravure, combinaison, chacune par identifiant. */
+assert.deepEqual(catalogue.recettes, [
+  { produit:"Filet", quantite:2, type:ELABORER, ingredients:["Riz x2"] },
+  { produit:"Beignets", type:"Cuisine",
+    ingredients:["Minerai x1", "Riz x1 (ou : Orge, Blé, Maïs, Seigle et 1 autre)"] },
+  { produit:"Potion", type:FORTUNE + " ou supérieur", ingredients:["Minerai x8", "Or x500"] },
+  { produit:"Potion", type:FORTUNE, ingredients:["Minerai x3"] },
+  { produit:"Beignets", type:"Fabrication — Établi robuste", ingredients:["Minerai x9"] },
+  { produit:"Tenue de prince", type:"Gravure", ingredients:["Épée longue x1", "Potion x1"] },
+  { produit:"Orge", type:"Combinaison", ingredients:["Minerai x5"] }
 ]);
 
 assert.deepEqual(catalogue.butins, [
