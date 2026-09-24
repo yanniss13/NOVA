@@ -243,6 +243,26 @@ async function main() {
   const mauvaiseHeure = await dispos.executer("dispos", { jour:"lundi", heure:25 });
   assert.match(mauvaiseHeure.donnees.erreur, /heure invalide/);
 
+  /* Sans jour demande, les meilleurs creneaux sont ceux qui restent a jouer :
+     un jeudi a 22h, le lundi soir est passe. Le creneau en cours compte. Un
+     jour demande explicitement reste servi tel quel. */
+  const LUNDI_21H = 21;
+  const JEUDI_22H = JEUDI_21H + 1;
+  const VENDREDI_20H = 4 * 24 + 20;
+  const jeudiSoir = outils([
+    ["profiles?select=id,pseudo&membre=eq.true", PROFILS],
+    ["member_availability?week_start=eq.2026-09-21", [
+      { owner:ID_KIRO, slots:masque([LUNDI_21H, JEUDI_21H, VENDREDI_20H]) },
+      { owner:ID_ALBA, slots:masque([LUNDI_21H, JEUDI_22H, VENDREDI_20H]) }
+    ]]
+  ], new Date("2026-09-24T20:00:00Z"));
+  const aVenir = await jeudiSoir.executer("dispos", {});
+  assert.deepEqual(aVenir.donnees.meilleursCreneaux.map(c => c.creneau),
+    ["Vendredi 20h-21h", "Jeudi 22h-23h"]);
+  const lundiDemande = await jeudiSoir.executer("dispos", { jour:"lundi" });
+  assert.deepEqual(lundiDemande.donnees.meilleursCreneaux.map(c => c.creneau),
+    ["Lundi 21h-22h"]);
+
   /* Lundi 28/09/2026 a 5h Paris (3h UTC) : les dispos sont DEJA sur la semaine
      du 28, le boss ENCORE sur celle du 21. Les deux calendriers ne se joignent
      jamais. */
@@ -273,7 +293,11 @@ async function main() {
       { session_id:S1, global_score:"9007199254740993", created_at:"2026-09-22T10:00:00Z" },
       { session_id:S2, global_score:"255500", created_at:"2026-09-23T10:00:00Z" }
     ]],
-    ["boss_participation?session_id=in.(" + [S1, S2].join(",") + ")", [
+    /* Le chemin complet est exige : select_boss_team fige {id, owner, pseudo,
+       data:{heroes}, …}. Un prefixe plus court avait laisse passer
+       team_snapshot->heroes, toujours NULL en production. */
+    ["boss_participation?session_id=in.(" + [S1, S2].join(",")
+      + ")&select=session_id,pseudo,heros:team_snapshot->data->heroes", [
       { session_id:S1, pseudo:"Kiro", heros:[{ char:"meliodas" }, { char:null }, { char:"merlin" }] },
       { session_id:S2, pseudo:"Alba", heros:null }
     ]]
@@ -281,8 +305,9 @@ async function main() {
   const scores = await boss.executer("scores_boss", { periode:"semaine" });
   assert.equal(scores.donnees.runs, 2);
   assert.equal(scores.donnees.meilleur, "9 007 199 254 740 993");
-  assert.equal(scores.donnees.moyenne, "4 503 599 627 498 246",
-    "(9007199254740993 + 255500) / 2 tronque vers le bas");
+  assert.equal(scores.donnees.moyenne, "4 503 599 627 498 247",
+    "(9007199254740993 + 255500) / 2 arrondi au plus proche, demi vers le haut,"
+    + " comme le bilan du site (js/metier/boss-logique.js)");
   assert.equal(scores.donnees.dernier, "255 500");
   assert.deepEqual(scores.donnees.meilleuresRuns[0], {
     score:"9 007 199 254 740 993", semaine:"2026-09-21", groupe:1, run:1,
@@ -302,7 +327,8 @@ async function main() {
       { session_id:S2, global_score:"not-a-number", created_at:"2026-09-02T10:00:00Z" }
     ]],
     ["boss_sessions?id=in.(" + S1 + ")", [{ id:S1, week_start:"2026-08-31", slot:4, run_no:2 }]],
-    ["boss_participation?session_id=in.(" + S1 + ")", []]
+    ["boss_participation?session_id=in.(" + S1
+      + ")&select=session_id,pseudo,heros:team_snapshot->data->heroes", []]
   ]);
   const toutHistorique = await historique.executer("scores_boss", { periode:"historique" });
   assert.equal(toutHistorique.donnees.runs, 1, "un score illisible n'est pas une run a zero");

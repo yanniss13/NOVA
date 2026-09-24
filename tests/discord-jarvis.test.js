@@ -90,6 +90,9 @@ async function main() {
   assert.match(premier.contents[0].parts[0].text, /heure de Paris[\s\S]*Question : Salut$/);
   assert.equal(premier.toolConfig.functionCallingConfig.mode, "AUTO");
   assert.equal(premier.generationConfig.temperature, 0.3);
+  /* Sur un modele qui reflechit, les tokens de pensee comptent dans ce plafond :
+     trop bas, la reponse sortirait vide. Le texte reste tronque a 2000 caracteres. */
+  assert.equal(premier.generationConfig.maxOutputTokens, 8192);
   assert.deepEqual(premier.tools[0].functionDeclarations.map(d => d.name), ["fiche_personnage"]);
 
   /* 2. Un outil, puis la reponse : le contenu du modele est renvoye TEL QUEL
@@ -170,6 +173,26 @@ async function main() {
   assert.match(long, /… \(réponse tronquée\)\n-# Sources : s/);
   assert.match(long, /^> \*\*Question :\*\* x{199}…\n/, "question citee sur 200 caracteres au plus");
 
+  /* 8 bis. Les sources viennent d'arguments choisis par Gemini : bornees,
+     sur une ligne, sans markdown actif. Sinon le message depasse la limite de
+     Discord (400, donc erreur generique) ou affiche un lien dans une ligne
+     presentee comme ecrite par le code. */
+  const deborde = Q.messageJarvis("?", { texte:"Réponse.", sources:[
+    "recherche « " + "x".repeat(3000) + " »",
+    "roster de Ki\nro [clic](https://exemple.invalid) *gras*",
+    ...Array.from({ length:40 }, (_, i) => "fiche Héros numéro " + i)
+  ] });
+  assert.ok(Array.from(deborde).length <= 2000, "limite Discord malgre les sources");
+  const piedDeborde = deborde.slice(deborde.lastIndexOf("\n-# ") + 1);
+  assert.doesNotMatch(piedDeborde, /\n/, "le pied tient sur une ligne");
+  assert.ok(Array.from(piedDeborde).length <= 400, "pied borne");
+  assert.doesNotMatch(piedDeborde, /[^\\]\[clic\]\(/, "lien neutralise");
+  assert.match(piedDeborde, /roster de Ki ro \\\[clic\\\]/);
+  assert.match(piedDeborde, /…/, "les sources en trop sont elidees");
+  assert.match(deborde, /\nRéponse\.\n/, "la reponse n'est pas sacrifiee aux sources");
+  assert.match(Q.messageJarvis("?", { texte:"ok", sources:["scores de boss (semaine)"] }),
+    /Sources : scores de boss \(semaine\) ·/, "les parentheses ordinaires restent");
+
   /* 9. Messages d'erreur : un par code, repli sur « autre » */
   ["config", "quota", "sature", "delai", "bloque", "delaiMembre", "autre"].forEach(code =>
     assert.ok(Q.messageErreurJarvis(code).length > 10, code));
@@ -185,6 +208,82 @@ async function main() {
   const renvoye = bout.corps[1].contents[2].parts[0].functionResponse.response.resultat;
   assert.deepEqual(renvoye.armes.map(a => a.arme), ["Hache"]);
 
+  /* 10 bis. L'appel HTTP a Gemini et sa politique de reprise, avec un faux
+     fetch : seules la saturation et l'injoignabilite se rejouent, jamais un
+     429 ; un delai depasse n'est pas rejoue ; la cle ne passe jamais dans
+     l'URL. */
+  function reponseHttp(status, corps) {
+    return { ok:status >= 200 && status < 300, status,
+      json:async () => { if(corps instanceof Error) throw corps; return corps; },
+      text:async () => JSON.stringify(corps || {}) };
+  }
+  function fauxFetch(suite) {
+    const appels = [];
+    const attentes = [];
+    return {
+      appels, attentes,
+      options:{
+        corps:{ contents:[1] }, cle:"cle-secrete", modele:"gemini-flash-lite-latest",
+        attendre:async ms => { attentes.push(ms); },
+        fetch:async (url, init) => {
+          appels.push({ url, init });
+          const prochain = suite.shift();
+          if(prochain instanceof Error) throw prochain;
+          return prochain;
+        }
+      }
+    };
+  }
+  const delaiDepasse = () => new DOMException("trop long", "TimeoutError");
+  const sansCode = erreur => erreur.code;
+
+  const reprise = fauxFetch([reponseHttp(503), reponseHttp(503), reponseHttp(200, { ok:1 })]);
+  assert.deepEqual(await Q.appelerGeminiAvecReprises(reprise.options), { ok:1 });
+  assert.equal(reprise.appels.length, 3);
+  assert.deepEqual(reprise.attentes, [700, 1800]);
+  const premierAppel = reprise.appels[0];
+  assert.equal(premierAppel.url,
+    "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-lite-latest:generateContent");
+  assert.doesNotMatch(premierAppel.url, /cle-secrete|key=/, "la cle ne passe jamais dans l'URL");
+  assert.equal(premierAppel.init.headers["x-goog-api-key"], "cle-secrete");
+  assert.equal(premierAppel.init.method, "POST");
+  assert.deepEqual(JSON.parse(premierAppel.init.body), { contents:[1] });
+  assert.ok(premierAppel.init.signal, "chaque appel porte son delai");
+
+  const sansCle = fauxFetch([]);
+  await assert.rejects(Q.appelerGeminiAvecReprises({ ...sansCle.options, cle:"" }),
+    erreur => sansCode(erreur) === "config");
+  assert.equal(sansCle.appels.length, 0);
+
+  const quotaHttp = fauxFetch([reponseHttp(429), reponseHttp(200, {})]);
+  await assert.rejects(Q.appelerGeminiAvecReprises(quotaHttp.options),
+    erreur => sansCode(erreur) === "quota");
+  assert.equal(quotaHttp.appels.length, 1, "un 429 n'est jamais rejoue");
+
+  const lentHttp = fauxFetch([delaiDepasse(), reponseHttp(200, {})]);
+  await assert.rejects(Q.appelerGeminiAvecReprises(lentHttp.options),
+    erreur => sansCode(erreur) === "delai");
+  assert.equal(lentHttp.appels.length, 1, "un delai depasse n'est pas rejoue");
+
+  const corpsLent = fauxFetch([reponseHttp(200, delaiDepasse())]);
+  await assert.rejects(Q.appelerGeminiAvecReprises(corpsLent.options),
+    erreur => sansCode(erreur) === "delai", "le delai court aussi pendant la lecture du corps");
+
+  const sature = fauxFetch([reponseHttp(503), reponseHttp(502), reponseHttp(500)]);
+  await assert.rejects(Q.appelerGeminiAvecReprises(sature.options),
+    erreur => sansCode(erreur) === "sature");
+  assert.equal(sature.appels.length, 3);
+
+  const injoignable = fauxFetch([new TypeError("réseau"), new TypeError("réseau"), new TypeError("réseau")]);
+  await assert.rejects(Q.appelerGeminiAvecReprises(injoignable.options),
+    erreur => sansCode(erreur) === "sature");
+  assert.equal(injoignable.appels.length, 3);
+
+  const refuse = fauxFetch([reponseHttp(400), reponseHttp(200, {})]);
+  await assert.rejects(Q.appelerGeminiAvecReprises(refuse.options),
+    erreur => sansCode(erreur) === "autre");
+  assert.equal(refuse.appels.length, 1, "un 400 n'est pas rejoue");
+
   /* 11. Le cablage de l'Edge Function, lu dans son source (Deno n'est pas
          executable ici). */
   const index = fs.readFileSync(path.join(ROOT, "supabase", "functions", "discord-planning", "index.ts"), "utf8");
@@ -194,8 +293,13 @@ async function main() {
   assert.match(index, /Deno\.env\.get\("GEMINI_JARVIS_MODEL"\)/);
   assert.doesNotMatch(index, /Deno\.env\.get\("GEMINI_API_KEY"\)/,
     "la cle de lecture-panneau n'est jamais lue par le bot");
-  assert.match(index, /"x-goog-api-key"/);
-  assert.doesNotMatch(index, /generateContent\?key=/, "la cle ne passe jamais dans l'URL");
+  assert.doesNotMatch(index, /Deno\.env\.get\("GEMINI_MODEL"\)/,
+    "le modele de lecture-panneau n'est jamais lu par le bot");
+  /* L'appel HTTP et ses reprises vivent dans le module partage, eprouves au
+     bloc 10 bis ; l'Edge Function ne fait que lui passer fetch et la cle. */
+  assert.match(index, /appelerGeminiAvecReprises\(\{/);
+  assert.doesNotMatch(index, /generativelanguage\.googleapis\.com/,
+    "une seule implementation de l'appel HTTP");
 
   console.log("OK discord-jarvis");
 }

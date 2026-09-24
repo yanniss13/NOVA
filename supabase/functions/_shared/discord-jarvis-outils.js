@@ -420,6 +420,16 @@ function libelleCreneauJarvis(index) {
   return JOURS_AFFICHES_JARVIS[Math.floor(index / 24)] + " " + heure + "h-" + (heure + 1) + "h";
 }
 
+/* L'heure de la semaine ISO en cours, a Paris : 0 = lundi 0h, 167 = dimanche 23h. */
+function indexCreneauActuelJarvis(date) {
+  const parties = new Intl.DateTimeFormat("en-GB", {
+    timeZone:"Europe/Paris", weekday:"short", hour:"2-digit", hourCycle:"h23"
+  }).formatToParts(date);
+  const lire = type => (parties.find(partie => partie.type === type) || {}).value;
+  const jour = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"].indexOf(lire("weekday"));
+  return jour * 24 + Number(lire("hour"));
+}
+
 async function outilDispos(contexte, args) {
   const jour = indexDuJourJarvis(args.jour);
   if(jour === -1) return { erreur:"jour inconnu : utiliser lundi à dimanche", jour:args.jour };
@@ -441,9 +451,12 @@ async function outilDispos(contexte, args) {
     const index = jour * 24 + heure;
     return { ...base, creneau:libelleCreneauJarvis(index), disponibles:pseudosSur(index) };
   }
+  /* Sans jour demande, un membre cherche un creneau encore jouable : les heures
+     deja passees cette semaine sont ecartees, le creneau en cours compte. */
+  const premierCreneau = jour === null ? indexCreneauActuelJarvis(contexte.maintenant()) : 0;
   const creneaux = rapport.counts
     .map((nombre, index) => ({ nombre, index }))
-    .filter(creneau => creneau.nombre > 0
+    .filter(creneau => creneau.nombre > 0 && creneau.index >= premierCreneau
       && (jour === null || Math.floor(creneau.index / 24) === jour)
       && (heure === null || creneau.index % 24 === heure))
     .sort((a, b) => b.nombre - a.nombre || a.index - b.index)
@@ -510,15 +523,21 @@ async function outilScoresBoss(contexte, args) {
     sessions = await requete("boss_sessions?id=in.(" + idsMeilleurs.join(",")
       + ")&select=id,week_start,slot,run_no");
   }
+  /* select_boss_team fige {id, owner, pseudo, data:{heroes}, …} : les heros
+     sont sous `data`, comme le lit teamFromBossSnapshot cote site. */
   const participations = await requete("boss_participation?session_id=in.("
-    + idsMeilleurs.join(",") + ")&select=session_id,pseudo,heros:team_snapshot->heroes");
+    + idsMeilleurs.join(",") + ")&select=session_id,pseudo,heros:team_snapshot->data->heroes");
   const sessionParId = new Map((Array.isArray(sessions) ? sessions : [])
     .map(session => [session.id, session]));
   return {
     periode,
     runs:lisibles.length,
     meilleur:formaterScoreJarvis(classes[0].global_score),
-    moyenne:formaterScoreJarvis((somme / BigInt(lisibles.length)).toString()),
+    /* Meme arrondi que le bilan du site (js/metier/boss-logique.js) : au plus
+       proche, demi vers le haut. Deux chiffres differents pour une meme
+       moyenne passeraient pour une erreur. */
+    moyenne:formaterScoreJarvis(((somme + BigInt(Math.floor(lisibles.length / 2)))
+      / BigInt(lisibles.length)).toString()),
     dernier:formaterScoreJarvis(dernier.global_score),
     meilleuresRuns:meilleurs.map(rapport => {
       const session = sessionParId.get(rapport.session_id) || {};

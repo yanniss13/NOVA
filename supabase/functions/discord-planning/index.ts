@@ -229,6 +229,7 @@ const {
   validerQuestion,
   porteeJarvis,
   erreurJarvis,
+  appelerGeminiAvecReprises,
   repondreQuestion,
   messageJarvis,
   messageErreurJarvis
@@ -238,6 +239,13 @@ const {
   validerQuestion(texte: string): string;
   porteeJarvis(interaction: DiscordInteraction, guildId: string): string;
   erreurJarvis(code: string): Error;
+  appelerGeminiAvecReprises(options: {
+    corps: unknown;
+    cle: string;
+    modele: string;
+    fetch: typeof fetch;
+    attendre(ms: number): Promise<unknown>;
+  }): Promise<unknown>;
   repondreQuestion(options: {
     question: string;
     outils: JarvisOutils;
@@ -813,53 +821,16 @@ const GEMINI_JARVIS_CLE = Deno.env.get("GEMINI_JARVIS_API_KEY") || "";
    recentes le 25 aout 2026, et un nom fige refera cette panne. */
 const GEMINI_JARVIS_MODELE = Deno.env.get("GEMINI_JARVIS_MODEL")
   || "gemini-flash-lite-latest";
-const GEMINI_JARVIS_RACINE = "https://generativelanguage.googleapis.com/v1beta/models/";
-/* Seules la saturation et l'injoignabilite se rejouent. Rejouer un 429
-   aggraverait un quota deja depasse. */
-const GEMINI_JARVIS_SATURATION = new Set([500, 502, 503, 504]);
-const GEMINI_JARVIS_REPRISES = [700, 1800];
-
+/* L'appel HTTP et sa politique de reprise vivent dans le module partage, ou
+   des tests les eprouvent sans reseau ; ici, seulement le vrai fetch. */
 async function appelerGeminiJarvis(corps: unknown): Promise<unknown> {
-  if(!GEMINI_JARVIS_CLE) throw erreurJarvis("config");
-  const texte = JSON.stringify(corps);
-  for(let essai = 0; essai <= GEMINI_JARVIS_REPRISES.length; essai++){
-    if(essai > 0){
-      await new Promise(suite => setTimeout(suite, GEMINI_JARVIS_REPRISES[essai - 1]));
-    }
-    let reponse: Response;
-    try {
-      reponse = await fetch(
-        GEMINI_JARVIS_RACINE + encodeURIComponent(GEMINI_JARVIS_MODELE) + ":generateContent",
-        {
-          method:"POST",
-          /* La cle en en-tete, jamais dans l'URL : une URL finit dans les
-             journaux. */
-          headers:{ "Content-Type":"application/json", "x-goog-api-key":GEMINI_JARVIS_CLE },
-          body:texte,
-          signal:AbortSignal.timeout(30_000)
-        }
-      );
-    } catch (erreur) {
-      if(erreur instanceof DOMException && erreur.name === "TimeoutError"){
-        throw erreurJarvis("delai");
-      }
-      if(essai < GEMINI_JARVIS_REPRISES.length) continue;
-      throw erreurJarvis("sature");
-    }
-    if(reponse.ok) return await reponse.json();
-    const detail = (await reponse.text()).slice(0, 500);
-    if(reponse.status === 429){
-      console.warn("Gemini /jarvis : quota gratuit atteint", detail);
-      throw erreurJarvis("quota");
-    }
-    if(GEMINI_JARVIS_SATURATION.has(reponse.status)){
-      if(essai < GEMINI_JARVIS_REPRISES.length) continue;
-      throw erreurJarvis("sature");
-    }
-    console.error("Gemini /jarvis -> " + reponse.status, detail);
-    throw erreurJarvis("autre");
-  }
-  throw erreurJarvis("sature");
+  return await appelerGeminiAvecReprises({
+    corps,
+    cle:GEMINI_JARVIS_CLE,
+    modele:GEMINI_JARVIS_MODELE,
+    fetch,
+    attendre:(ms: number) => new Promise(suite => setTimeout(suite, ms))
+  });
 }
 
 /* Le catalogue ne change qu'a un deploiement du site : lu une fois par

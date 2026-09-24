@@ -15,6 +15,8 @@ const TOURS_MAX_JARVIS = 5;
 const DELAI_TOTAL_JARVIS_MS = 90_000;
 const MARQUE_TRONQUEE_JARVIS = "… (réponse tronquée)";
 const CITATION_MAX_JARVIS = 200;
+const SOURCE_MAX_JARVIS = 60;
+const SOURCES_MAX_JARVIS = 300;
 
 const CONSIGNE_JARVIS = `Tu es J.A.R.V.I.S., l'assistant d'une confrérie du jeu « Seven Deadly Sins: Origin » (7DS Origin).
 Tu réponds en français, brièvement : quelques phrases ou une courte liste. Mise en forme Discord autorisée (gras, listes) ; pas de titres ni de tableaux.
@@ -107,6 +109,68 @@ function erreurJarvis(code) {
   return erreur;
 }
 
+const GEMINI_RACINE_JARVIS = "https://generativelanguage.googleapis.com/v1beta/models/";
+/* Seules la saturation et l'injoignabilite se rejouent. Rejouer un 429
+   aggraverait un quota deja depasse, rejouer un 400 retarderait un echec
+   certain, et rejouer un delai depasse doublerait l'attente du membre. */
+const SATURATION_GEMINI_JARVIS = [500, 502, 503, 504];
+const REPRISES_GEMINI_JARVIS = [700, 1800];
+const DELAI_APPEL_GEMINI_JARVIS_MS = 30_000;
+
+function estDelaiDepasseJarvis(erreur) {
+  return Boolean(erreur) && typeof erreur === "object" && erreur.name === "TimeoutError";
+}
+
+/* L'appel HTTP a Gemini. `fetch` et `attendre` sont injectes : l'Edge
+   Function passe les vrais, les tests des faux qui deroulent 503, 429 et
+   delais sans reseau. La cle part en en-tete, jamais dans l'URL : une URL
+   finit dans les journaux. */
+async function appelerGeminiAvecReprises(options) {
+  if(!options.cle) throw erreurJarvis("config");
+  const url = GEMINI_RACINE_JARVIS + encodeURIComponent(options.modele) + ":generateContent";
+  const corps = JSON.stringify(options.corps);
+  for(let essai = 0; essai <= REPRISES_GEMINI_JARVIS.length; essai += 1){
+    if(essai > 0) await options.attendre(REPRISES_GEMINI_JARVIS[essai - 1]);
+    const dernierEssai = essai === REPRISES_GEMINI_JARVIS.length;
+    let reponse;
+    try {
+      reponse = await options.fetch(url, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json", "x-goog-api-key":options.cle },
+        body:corps,
+        signal:AbortSignal.timeout(DELAI_APPEL_GEMINI_JARVIS_MS)
+      });
+    } catch (erreur) {
+      if(estDelaiDepasseJarvis(erreur)) throw erreurJarvis("delai");
+      if(!dernierEssai) continue;
+      throw erreurJarvis("sature");
+    }
+    if(reponse.ok){
+      /* Le delai court aussi pendant la lecture du corps. */
+      try {
+        return await reponse.json();
+      } catch (erreur) {
+        throw erreurJarvis(estDelaiDepasseJarvis(erreur) ? "delai" : "autre");
+      }
+    }
+    let detail = "";
+    try {
+      detail = String(await reponse.text()).slice(0, 500);
+    } catch (_) { /* Le corps d'une erreur est facultatif. */ }
+    if(reponse.status === 429){
+      console.warn("Gemini /jarvis : quota gratuit atteint", detail);
+      throw erreurJarvis("quota");
+    }
+    if(SATURATION_GEMINI_JARVIS.includes(reponse.status)){
+      if(!dernierEssai) continue;
+      throw erreurJarvis("sature");
+    }
+    console.error("Gemini /jarvis -> " + reponse.status, detail);
+    throw erreurJarvis("autre");
+  }
+  throw erreurJarvis("sature");
+}
+
 async function repondreQuestion(options) {
   const outils = options.outils;
   const appelerGemini = options.appelerGemini;
@@ -133,7 +197,7 @@ async function repondreQuestion(options) {
       /* Au dernier tour, les outils restent declares mais interdits : Gemini
          doit repondre avec ce qu'il a deja lu. */
       toolConfig:{ functionCallingConfig:{ mode:dernier ? "NONE" : "AUTO" } },
-      generationConfig:{ temperature:0.3, maxOutputTokens:2048 }
+      generationConfig:{ temperature:0.3, maxOutputTokens:8192 }
     });
     usage = (reponse && reponse.usageMetadata) || usage;
     const candidat = reponse && Array.isArray(reponse.candidates) ? reponse.candidates[0] : null;
@@ -169,20 +233,42 @@ async function repondreQuestion(options) {
   throw erreurJarvis("bloque");
 }
 
-function citerQuestion(question) {
-  const ligne = Array.from(String(question).replace(/\s+/g, " ").trim());
-  return ligne.length > CITATION_MAX_JARVIS
-    ? ligne.slice(0, CITATION_MAX_JARVIS - 1).join("") + "…"
+function ligneBorneeJarvis(texte, maximum) {
+  const ligne = Array.from(String(texte).replace(/\s+/g, " ").trim());
+  return ligne.length > maximum
+    ? ligne.slice(0, maximum - 1).join("") + "…"
     : ligne.join("");
 }
 
+function citerQuestion(question) {
+  return ligneBorneeJarvis(question, CITATION_MAX_JARVIS);
+}
+
+/* Une source recopie un argument choisi par Gemini (« recherche « … » »,
+   « roster de … ») : sur une ligne, bornee, et son markdown echappe, pour
+   qu'aucun lien ne s'affiche dans une ligne presentee comme ecrite par le
+   code. Les parentheses restent : « scores de boss (semaine) ». */
+function sourceLisibleJarvis(source) {
+  return ligneBorneeJarvis(source, SOURCE_MAX_JARVIS).replace(/[\\*_~`|[\]<>]/g, "\\$&");
+}
+
+function piedSourcesJarvis(sources) {
+  if(!sources.length) return "Aucune donnée de NOVA consultée";
+  let pied = "Sources : ";
+  for(let rang = 0; rang < sources.length; rang += 1){
+    const suivante = (rang ? " · " : "") + sourceLisibleJarvis(sources[rang]);
+    if(Array.from(pied + suivante).length > SOURCES_MAX_JARVIS) return pied + " · …";
+    pied += suivante;
+  }
+  return pied;
+}
+
 /* La ligne « Sources » est ecrite par le CODE, a partir des outils reellement
-   appeles : Gemini ne peut ni l'inventer ni l'omettre. */
+   appeles : Gemini ne peut ni l'inventer ni l'omettre. Elle est bornee, pour
+   que la reponse garde toujours sa place sous la limite de Discord. */
 function messageJarvis(question, resultat) {
   const entete = "> **Question :** " + citerQuestion(question) + "\n";
-  const pied = "\n-# " + (resultat.sources.length
-    ? "Sources : " + resultat.sources.join(" · ")
-    : "Aucune donnée de NOVA consultée") + " · réponse générée par IA";
+  const pied = "\n-# " + piedSourcesJarvis(resultat.sources) + " · réponse générée par IA";
   const place = DISCORD_LONGUEUR_MAX_JARVIS - Array.from(entete).length - Array.from(pied).length;
   let corps = Array.from(String(resultat.texte).trim());
   if(corps.length > place){
@@ -209,6 +295,7 @@ const discordJarvisApi = {
   validerQuestion,
   contexteTemporel,
   erreurJarvis,
+  appelerGeminiAvecReprises,
   repondreQuestion,
   messageJarvis,
   messageErreurJarvis
