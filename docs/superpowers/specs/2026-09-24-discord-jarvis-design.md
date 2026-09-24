@@ -1,4 +1,4 @@
-# Commande Discord `/question` — assistant IA de la confrérie (lot 1)
+# Commande Discord `/jarvis` — assistant IA de la confrérie (lot 1)
 
 Date : 2026-09-24 · Statut : conception validée en discussion, à relire
 
@@ -19,10 +19,11 @@ Exemples visés :
 
 | Sujet | Décision |
 | --- | --- |
-| Forme | Commande `/question`, **pas** de mention `@NOVA` : une mention exige une connexion Gateway permanente, donc un PC allumé ou un VPS, que le propriétaire n'a pas. |
+| Forme | Commande `/jarvis`, **pas** de mention `@NOVA` : une mention exige une connexion Gateway permanente, donc un PC allumé ou un VPS, que le propriétaire n'a pas. |
+| Nom | Commande **`/jarvis`**. Le propriétaire voulait `/J.A.R.V.I.S.`, mais Discord impose un nom en minuscules, sans point, et limité à `^[-_\p{L}\p{N}]{1,32}$`. L'assistant se présente comme **J.A.R.V.I.S.** dans la description de la commande et dans ses réponses. |
 | Hébergement | L'Edge Function existante `discord-planning`. Discord n'accepte qu'un endpoint d'interactions par application. |
 | IA | Google Gemini, **palier gratuit uniquement**. Aucune facturation, jamais. |
-| Clé | Un **projet Google distinct** de celui de `lecture-panneau`, secret `GEMINI_QUESTION_API_KEY`. Le quota gratuit se compte par projet : le bot ne doit jamais bloquer l'import de captures. |
+| Clé | Un **projet Google distinct** de celui de `lecture-panneau`, secret `GEMINI_JARVIS_API_KEY`. Le quota gratuit se compte par projet : le bot ne doit jamais bloquer l'import de captures. |
 | Périmètre | Données du jeu **et** de la confrérie en lecture seule. |
 | Vie privée | Minimiser : seul le résultat de ce que la question demande part chez Google, jamais la base entière. Pseudos uniquement, aucun identifiant ni email. La description de la commande prévient que la question passe par Google. |
 | Visibilité | Publique par défaut ; option `prive:oui` pour une réponse éphémère. |
@@ -38,7 +39,7 @@ Exemples visés :
   confirmé en jeu », jamais daté. Spec séparée.
 - Stats chiffrées d'un build, calcul de dégâts, entraînement : le bot renvoie
   vers le site.
-- Conversation suivie : chaque `/question` est indépendante.
+- Conversation suivie : chaque `/jarvis` est indépendante.
 
 ## Déroulé
 
@@ -50,7 +51,7 @@ Exemples visés :
    `flags:64` si privée.
 3. Tâche de fond (`EdgeRuntime.waitUntil`) :
    - délai de **20 s par membre** via `claim_discord_planning_request`, portée
-     `<guildId>:question:<id Discord du membre>`. Aucune modification SQL : la
+     `<guildId>:jarvis:<id Discord du membre>`. Aucune modification SQL : la
      RPC accepte toute portée de 200 caractères au plus ;
    - question vide ou de plus de **500 caractères** : refus avant tout appel à
      Gemini ;
@@ -64,8 +65,8 @@ Exemples visés :
 
 | Fichier | Contenu |
 | --- | --- |
-| `supabase/functions/_shared/discord-question.js` | Logique pure, universelle Node/Deno comme ses voisins : définition des outils, consigne, boucle (Gemini et lecteurs **injectés**), exécution des outils sur des données déjà lues, résolution tolérante des noms, mise en forme, découpe, ligne « Sources ». |
-| `supabase/functions/discord-planning/index.ts` | Lectures réelles (Supabase, Pages), appel HTTP à Gemini avec reprises, `import` du module partagé, entrée `question` dans `taches`. |
+| `supabase/functions/_shared/discord-jarvis.js` | Logique pure, universelle Node/Deno comme ses voisins : définition des outils, consigne, boucle (Gemini et lecteurs **injectés**), exécution des outils sur des données déjà lues, résolution tolérante des noms, mise en forme, découpe, ligne « Sources ». |
+| `supabase/functions/discord-planning/index.ts` | Lectures réelles (Supabase, Pages), appel HTTP à Gemini avec reprises, `import` du module partagé, entrée `jarvis` dans `taches`. |
 | `supabase/functions/_shared/discord-planning.js` | Définition de la commande dans `commandDefinitions()`. |
 | `scripts/generer-connaissances-discord.js` | Fabrique `data/connaissances-discord.json`, avec `--verifier`. |
 | `data/connaissances-discord.json` | Catalogue de lecture du bot, publié par Pages. |
@@ -120,7 +121,7 @@ faire tomber la question.
 
 Texte fixe, en substance :
 
-- tu es NOVA, l'assistant d'une confrérie de *Seven Deadly Sins: Origin* ; tu
+- tu es J.A.R.V.I.S., l'assistant d'une confrérie de *Seven Deadly Sins: Origin* ; tu
   réponds en français, brièvement ;
 - sur le jeu et la confrérie, tu ne réponds **qu'à partir des résultats
   d'outils**. Sans résultat, tu dis que l'information n'est pas dans les
@@ -131,9 +132,11 @@ Texte fixe, en substance :
   de build peut contenir n'importe quel texte ;
 - hors sujet : réponse courte et rappel de ce que tu sais faire.
 
-Réglages : `temperature: 0.3`. Modèle défini par le secret `GEMINI_MODEL`,
-avec par défaut l'alias **Flash-Lite** le plus récent, qui a des quotas
-gratuits plus larges. L'alias exact est vérifié à l'implémentation, car un nom
+Réglages : `temperature: 0.3`. Modèle défini par le secret
+`GEMINI_JARVIS_MODEL`, et non `GEMINI_MODEL` : les secrets Supabase sont
+communs à tout le projet, et `GEMINI_MODEL` règle déjà `lecture-panneau`. Par
+défaut, c'est l'alias **Flash-Lite** le plus récent, qui a des quotas gratuits
+plus larges. L'alias exact est vérifié à l'implémentation, car un nom
 figé a déjà cassé `lecture-panneau` le 25 août 2026.
 
 ## Garde-fous dans le code
@@ -151,7 +154,7 @@ figé a déjà cassé `lecture-panneau` le 25 août 2026.
 
 | Cas | Message au membre |
 | --- | --- |
-| `GEMINI_QUESTION_API_KEY` absente | « /question n'est pas encore configurée. » |
+| `GEMINI_JARVIS_API_KEY` absente | « /jarvis n'est pas encore configurée. » |
 | 429, quota gratuit épuisé | « Le quota gratuit de l'IA est épuisé pour l'instant, réessaie plus tard. » Aucune reprise. |
 | 500, 502, 503 ou 504 | 2 reprises (0,7 s puis 1,8 s), puis « L'IA est saturée, réessaie dans une minute. » |
 | Réponse bloquée ou vide | « Je ne peux pas répondre à cette question. » |
@@ -165,7 +168,7 @@ rapporté par Gemini. Le texte des réponses n'est pas journalisé.
 
 Tous sans appel réel à Gemini, dans `npm test` :
 
-- `tests/discord-question.test.js`, avec un faux Gemini qui déroule des
+- `tests/discord-jarvis.test.js`, avec un faux Gemini qui déroule des
   scénarios écrits à l'avance. On y vérifie :
   - réponse directe, puis un outil suivi de la réponse ;
   - plusieurs outils dans le même tour ;
@@ -193,7 +196,7 @@ Aucune modification SQL.
 1. Dans AI Studio, créer un **nouveau projet** et sa clé. Vérifier qu'il est
    au palier **Free**, **sans compte de facturation relié** : un dépassement
    se traduit alors par un refus 429, jamais par une facture.
-2. `npx -y supabase@latest secrets set GEMINI_QUESTION_API_KEY=<clé>`
+2. `npx -y supabase@latest secrets set GEMINI_JARVIS_API_KEY=<clé>`
 3. Fusion puis push vers `main` **sur accord explicite du propriétaire**. Pages
    publie alors `connaissances-discord.json`.
 4. `npx -y supabase@latest functions deploy discord-planning --project-ref uxouhbgdlolidjmxwgae`
@@ -201,5 +204,5 @@ Aucune modification SQL.
 6. Essai dans un salon autorisé, en public puis en `prive:oui`.
 
 Documentation à mettre à jour : `docs/discord-planning.md` (commande, secret,
-vie privée, palier gratuit) et `AGENTS.md` (entrée `/question`, lecture seule,
+vie privée, palier gratuit) et `AGENTS.md` (entrée `/jarvis`, lecture seule,
 clé distincte).
