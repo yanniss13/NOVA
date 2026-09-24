@@ -2021,3 +2021,17 @@ $$;
 
 revoke all on function public.definir_membre(uuid, boolean) from public;
 grant execute on function public.definir_membre(uuid, boolean) to authenticated;
+
+-- =============================================================================
+--  Donnees du jeu lues par /jarvis (lot 2a : monstres et boss).
+--
+--  Un bucket PRIVE. L'extraction se fait sur le poste du proprietaire
+--  (outils/fabrication/extraire-monstres.js) et le fichier est depose a la main
+--  dans Storage : il n'entre jamais dans le depot public ni sur Pages.
+--  AUCUNE politique sur storage.objects ne le cite : seule la cle service_role
+--  de l'Edge Function discord-planning le lit. Rejouer ce bloc remet le bucket
+--  en prive s'il avait ete ouvert a la main.
+-- =============================================================================
+insert into storage.buckets (id, name, public)
+values ('jarvis-prive', 'jarvis-prive', false)
+on conflict (id) do update set public = false;

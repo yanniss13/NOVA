@@ -29,6 +29,10 @@ AUDIT-*.md
 outils/fabrication/tous-les-chemins.txt
 outils/fabrication/animations-completes.json
 
+# Donnees du jeu extraites pour /jarvis. Elles vont dans le bucket PRIVE
+# jarvis-prive de Supabase, jamais dans ce depot public.
+output/jarvis/
+
 # Notes d'extraction des fichiers du jeu. Elles decrivent comment ouvrir les
 # archives d'un client protege : ce depot est public, et le site demande a
 # l'editeur l'autorisation d'utiliser ses donnees. Elles vivent hors du depot,
