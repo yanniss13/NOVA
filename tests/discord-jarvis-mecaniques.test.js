@@ -47,6 +47,12 @@ async function main() {
   const avecVariante = variante => ({ version:1, regles:[],
     effets:[{ nom:"Abîmé", nature:"malus", description:"", variantes:[variante] }] });
   assert.equal(M.validerCatalogueMecaniques(avecVariante(varianteSaine)), null);
+  assert.equal(M.validerCatalogueMecaniques(Object.assign(avecVariante(varianteSaine), {
+    controleValeurs:{ prouvees:1, brutes:0, desaccords:0 }
+  })), null, "les contrôles d'extraction valides sont acceptés");
+  assert.match(M.validerCatalogueMecaniques(Object.assign(avecVariante(varianteSaine), {
+    controleValeurs:{ prouvees:"1", brutes:0, desaccords:0 }
+  })), /contrôle des valeurs mal formé/);
   assert.match(M.validerCatalogueMecaniques(avecVariante(Object.assign({}, varianteSaine, { posePar:[null] }))),
     /entrée mal formée dans mecaniques\.json : Abîmé/);
   assert.match(M.validerCatalogueMecaniques(avecVariante(Object.assign({}, varianteSaine,
@@ -54,6 +60,8 @@ async function main() {
   /entrée mal formée/);
   assert.match(M.validerCatalogueMecaniques(avecVariante(Object.assign({}, varianteSaine,
     { valeurs:[{ stat:1, valeur:"-20 %" }] }))), /entrée mal formée/);
+  assert.match(M.validerCatalogueMecaniques(avecVariante(Object.assign({}, varianteSaine,
+    { texteJeu:15 }))), /entrée mal formée/);
 
   const o = outils(CATALOGUE);
 
@@ -66,6 +74,12 @@ async function main() {
       cumulMax:1, posePar:["Elizabeth (Grimoire) — Canon à eau"] }]
   });
   assert.equal(eclaboussures.source, "effet Éclaboussures · données du jeu du 24/09/2026");
+
+  const desaccord = await o.executer("fiche_effet", { nom:"effet en désaccord" });
+  assert.deepEqual(desaccord.donnees.variantes[0].valeurs,
+    ["Réception des soins : -6 %"], "la phrase des valeurs reste issue de la table");
+  assert.match(desaccord.donnees.variantes[0].texteDuJeu, /15\s*%/,
+    "Gemini reçoit séparément le texte contradictoire affiché par le jeu");
 
   const attaque = await o.executer("fiche_effet", { nom:"augmentation" });
   assert.equal(attaque.donnees.nom, "Augmentation de l'attaque", "à égalité : le nom le plus court");
@@ -113,9 +127,11 @@ async function main() {
   /* ---------------- chercher_effets ---------------- */
   const defense = await o.executer("chercher_effets", { texte:"défense", nature:"malus" });
   assert.deepEqual(defense.donnees, {
-    texte:"défense", donneesDu:"24/09/2026", total:1,
+    texte:"défense", donneesDu:"24/09/2026", total:2,
     effets:[{ nom:"Éclaboussures", nature:"Malus", description:"Réduit la défense de X",
-      cibles:["l'ennemi"], porteurs:["Elizabeth (Grimoire) — Canon à eau"] }]
+      cibles:["l'ennemi"], porteurs:["Elizabeth (Grimoire) — Canon à eau"] },
+    { nom:"Petite valeur", nature:"Malus", description:"Défense -X.",
+      cibles:["l'ennemi"], porteurs:[] }]
   });
   assert.equal(defense.source, "recherche d'effets défense · données du jeu du 24/09/2026");
 

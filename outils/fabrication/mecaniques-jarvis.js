@@ -53,8 +53,19 @@ function cibleDuBuff(buff, nature) {
   return String(buff.ApplyType) === "EApplyType::Team" ? "equipe" : "porteur";
 }
 
+function cleCanoniqueMecanique(code) {
+  return String(code || "").toLocaleLowerCase("fr").replace(/[^a-z0-9]/g, "");
+}
+
+function entreeParCodeMecanique(table, code) {
+  if(table[code]) return table[code];
+  const canonique = cleCanoniqueMecanique(code);
+  const cle = Object.keys(table).find(candidate => cleCanoniqueMecanique(candidate) === canonique);
+  return cle ? table[cle] : null;
+}
+
 function libelleStatMecanique(code, libelles) {
-  const connu = libelles[code];
+  const connu = entreeParCodeMecanique(libelles, code);
   if(connu && (connu.court || connu.fr)) return connu.court || connu.fr;
   const famille = FAMILLE_ELEMENTAIRE.exec(code);
   if(famille){
@@ -64,11 +75,40 @@ function libelleStatMecanique(code, libelles) {
   return code;
 }
 
-/* L'unite ne se devine jamais d'apres le nom du code : stat-metadata.json,
-   ou la famille elementaire etablie, sinon la valeur brute annoncee. */
-function valeurLisibleMecanique(code, valeur, unites) {
-  const unite = (unites[code] && unites[code].unit)
+function remplacementsDuBuff(buff) {
+  return (buff.Local_Replace || []).map(remplacement => {
+    const trouve = /^\{(\d+)\}:\{([+-]?\d+(?:[.,]\d+)?)(%)?\}$/.exec(String(remplacement).trim());
+    if(!trouve) return null;
+    return {
+      index:Number(trouve[1]),
+      nombre:Number(trouve[2].replace(",", ".")),
+      unite:trouve[3] ? "ten-thousandths" : "flat",
+      affichage:trouve[2].replace(".", ",") + (trouve[3] ? " %" : "")
+    };
+  }).filter(Boolean);
+}
+
+function uniteProuveePourAjout(ajout, remplacements, unites) {
+  const code = String(ajout && ajout.TargetAbil || "").replace("EAbilityType::", "");
+  const valeur = Number(ajout && ajout.Value) || 0;
+  const correspondances = remplacements.filter(remplacement =>
+    remplacement.unite === "ten-thousandths"
+      ? Math.abs(remplacement.nombre * 100 - Math.abs(valeur)) < 1e-9
+      : Math.abs(remplacement.nombre - Math.abs(valeur)) < 1e-9);
+  const unitesLocales = [...new Set(correspondances.map(remplacement => remplacement.unite))];
+  if(unitesLocales.length === 1) return { unite:unitesLocales[0], rapprochee:true };
+  if(String(ajout && ajout.Type) === "EAbilityStatValueType::Per"){
+    return { unite:"ten-thousandths", rapprochee:correspondances.length > 0 };
+  }
+  const metadata = entreeParCodeMecanique(unites, code);
+  const unite = (metadata && metadata.unit)
     || (FAMILLE_ELEMENTAIRE.test(code) ? "ten-thousandths" : null);
+  return { unite, rapprochee:correspondances.length > 0 };
+}
+
+/* L'unite ne se devine jamais d'apres le nom du code : remplacement local,
+   operation Per, stat-metadata.json ou famille elementaire etablie. */
+function valeurLisibleMecanique(valeur, unite) {
   const signe = valeur > 0 ? "+" : "";
   if(unite === "ten-thousandths"){
     return signe + String(Number((valeur / 100).toFixed(2))).replace(".", ",") + " %";
@@ -78,12 +118,30 @@ function valeurLisibleMecanique(code, valeur, unites) {
 }
 
 function valeursDuBuff(buff, libelles, unites) {
-  return (buff.AddAbil_List || []).map(ajout => {
+  const remplacements = remplacementsDuBuff(buff);
+  const resultat = { valeurs:[], prouvees:0, brutes:0, desaccords:0 };
+  (buff.AddAbil_List || []).forEach(ajout => {
     const code = String(ajout && ajout.TargetAbil || "").replace("EAbilityType::", "");
     const valeur = Number(ajout && ajout.Value) || 0;
-    if(!code || code === "None" || !valeur) return null;
-    return { stat:libelleStatMecanique(code, libelles), valeur:valeurLisibleMecanique(code, valeur, unites) };
-  }).filter(Boolean);
+    if(!code || code === "None" || !valeur) return;
+    const preuve = uniteProuveePourAjout(ajout, remplacements, unites);
+    resultat.valeurs.push({
+      stat:libelleStatMecanique(code, libelles),
+      valeur:valeurLisibleMecanique(valeur, preuve.unite)
+    });
+    if(preuve.unite) resultat.prouvees += 1;
+    else resultat.brutes += 1;
+    if(remplacements.length && !preuve.rapprochee) resultat.desaccords += 1;
+  });
+  return resultat;
+}
+
+function texteAfficheDuBuff(buff, lire) {
+  let texte = String(lire(buff.Local_Desc) || "");
+  remplacementsDuBuff(buff).forEach(remplacement => {
+    texte = texte.replace(new RegExp("\\{" + remplacement.index + "\\}", "g"), remplacement.affichage);
+  });
+  return nettoyerMecanique(texte);
 }
 
 /* Nom de comportement -> competence. Le plus long identifiant gagne : si un
@@ -179,13 +237,19 @@ function construireCatalogueMecaniques(entree) {
     if(!nom) return;
     const nature = natureDuBuff(brut);
     const cumul = Number(brut.StackType && brut.StackType.MaxStack) || 0;
+    const valeurs = valeursDuBuff(brut, libelles, unites);
     const info = {
       nom, nature, rang:Number(id),
       description:nettoyerMecanique(lire(brut.Local_Desc)),
-      valeurs:valeursDuBuff(brut, libelles, unites),
+      valeurs:valeurs.valeurs,
+      controleValeurs:{ prouvees:valeurs.prouvees, brutes:valeurs.brutes, desaccords:valeurs.desaccords },
       cumulMax:cumul > 0 ? cumul : undefined,
       cible:cibleDuBuff(brut, nature)
     };
+    if(valeurs.desaccords){
+      const texteJeu = texteAfficheDuBuff(brut, lire);
+      if(texteJeu) info.texteJeu = texteJeu;
+    }
     nommes.set(id, info);
   });
 
@@ -196,7 +260,8 @@ function construireCatalogueMecaniques(entree) {
     const variantes = variantesParNom.get(info.nom);
     const duree = dureeMs > 0 ? Number((dureeMs / 1000).toFixed(2)) : undefined;
     const cle = JSON.stringify([info.valeurs, duree === undefined ? null : duree,
-      info.cumulMax === undefined ? null : info.cumulMax, info.cible, info.nature, info.description]);
+      info.cumulMax === undefined ? null : info.cumulMax, info.cible, info.nature, info.description,
+      info.texteJeu || null]);
     let courante = variantes.get(cle);
     if(!courante){
       courante = { valeurs:info.valeurs };
@@ -205,8 +270,10 @@ function construireCatalogueMecaniques(entree) {
       courante.cible = info.cible;
       courante.nature = info.nature;
       courante.description = info.description;
+      if(info.texteJeu) courante.texteJeu = info.texteJeu;
       courante.posePar = [];
       courante.rang = info.rang;
+      courante.controleValeurs = info.controleValeurs;
       variantes.set(cle, courante);
     }
     courante.rang = Math.min(courante.rang, info.rang);
@@ -233,13 +300,17 @@ function construireCatalogueMecaniques(entree) {
      il repond a « c'est quoi Gel ? ». */
   nommes.forEach((info, id) => { if(!appliques.has(id)) variante(id, -1); });
 
+  const controleValeurs = { prouvees:0, brutes:0, desaccords:0 };
   const effets = [...variantesParNom].map(([nom, variantes]) => {
     const triees = [...variantes.values()]
       .sort((a, b) => Number(b.posePar.length > 0) - Number(a.posePar.length > 0) || a.rang - b.rang)
-      .map(({ rang, ...reste }) => Object.assign(reste, {
-        posePar:reste.posePar.sort((a, b) =>
-          a.heros.localeCompare(b.heros, "fr") || a.competence.localeCompare(b.competence, "fr"))
-      }));
+      .map(({ rang, controleValeurs:controle, ...reste }) => {
+        Object.keys(controleValeurs).forEach(cle => { controleValeurs[cle] += controle[cle]; });
+        return Object.assign(reste, {
+          posePar:reste.posePar.sort((a, b) =>
+            a.heros.localeCompare(b.heros, "fr") || a.competence.localeCompare(b.competence, "fr"))
+        });
+      });
     /* L'effet prend la nature et la description de sa premiere variante,
        celle qu'un heros pose d'abord : c'est d'elle qu'un membre parle. */
     return { nom, nature:triees[0].nature, description:triees[0].description, variantes:triees };
@@ -249,6 +320,7 @@ function construireCatalogueMecaniques(entree) {
     version:1,
     genereLe:entree.genereLe,
     dateExport:entree.dateExport,
+    controleValeurs,
     effets,
     regles:reglesDuJeu(entree, lire)
   };

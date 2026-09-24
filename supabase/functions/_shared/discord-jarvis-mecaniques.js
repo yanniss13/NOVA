@@ -56,6 +56,7 @@ function effetValide(effet) {
       && typeof variante.cible === "string"
       && NATURES_MECANIQUES.includes(variante.nature)
       && typeof variante.description === "string"
+      && (variante.texteJeu === undefined || typeof variante.texteJeu === "string")
       && variante.valeurs.every(valeur => estObjetMecanique(valeur)
         && typeof valeur.stat === "string" && typeof valeur.valeur === "string")
       && variante.posePar.every(porteur => estObjetMecanique(porteur)
@@ -73,6 +74,11 @@ function sujetValide(regle) {
 function validerCatalogueMecaniques(brut) {
   if(!brut || brut.version !== 1 || !Array.isArray(brut.effets) || !Array.isArray(brut.regles)){
     return "format de mecaniques.json inconnu : " + (brut && brut.version);
+  }
+  if(brut.controleValeurs !== undefined && (!estObjetMecanique(brut.controleValeurs)
+    || !["prouvees", "brutes", "desaccords"].every(cle =>
+      Number.isInteger(brut.controleValeurs[cle]) && brut.controleValeurs[cle] >= 0))){
+    return "contrôle des valeurs mal formé dans mecaniques.json";
   }
   const effet = brut.effets.find(entree => !effetValide(entree));
   if(effet !== undefined){
@@ -98,6 +104,7 @@ function varianteLisible(variante, effet) {
   if(variante.nature !== effet.nature) lisible.nature = LIBELLES_NATURE[variante.nature];
   if(variante.description !== effet.description) lisible.description = variante.description;
   lisible.valeurs = variante.valeurs.map(valeur => valeur.stat + " : " + valeur.valeur);
+  if(variante.texteJeu !== undefined) lisible.texteDuJeu = variante.texteJeu;
   if(variante.duree !== undefined) lisible.duree = String(variante.duree).replace(".", ",") + " s";
   if(variante.cumulMax !== undefined) lisible.cumulMax = variante.cumulMax;
   if(variante.posePar.length){

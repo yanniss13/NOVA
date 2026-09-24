@@ -14,12 +14,16 @@ const { construireCatalogueMecaniques } = require(path.resolve(
   __dirname, "..", "outils", "fabrication", "mecaniques-jarvis.js"
 ));
 
-const ajout = (code, valeur) => ({ TargetAbil:"EAbilityType::" + code, Value:valeur });
-function buff(type, application, cle, ajouts, cumul, detail) {
+const ajout = (code, valeur, type = "None") => ({
+  TargetAbil:"EAbilityType::" + code,
+  Type:"EAbilityStatValueType::" + type,
+  Value:valeur
+});
+function buff(type, application, cle, ajouts, cumul, detail, remplacements) {
   return { Type:"EBuffDivision::" + type, DetailType:"EBuffType::" + (detail || "None"),
     ApplyType:"EApplyType::" + application, Local_Key:cle,
     Local_Desc:cle === "None" ? "None" : cle.replace(/_Name$/, "_Desc"),
-    AddAbil_List:ajouts, StackType:{ MaxStack:cumul } };
+    Local_Replace:remplacements || [], AddAbil_List:ajouts, StackType:{ MaxStack:cumul } };
 }
 const pose = (id, ms) => ({ BuffTid:id, BuffTime:ms });
 
@@ -41,7 +45,19 @@ const ENTREE_MECANIQUES_TEST = {
     /* Un nom qui COMMENCE par « attaque », qu'aucun heros ne pose. */
     "301000005":buff("Buff", "Hero", "Local_Buff_Ultime_Name", [ajout("Buff_Time_Rate", 300)], 1),
     /* Traduction absente, le jeu rend la cle elle-meme : ce n'est pas un nom. */
-    "301000006":buff("Buff", "Hero", "local_buff_atk_increase02_name", [ajout("I_AtkAdd_Rate", 500)], 1)
+    "301000006":buff("Buff", "Hero", "local_buff_atk_increase02_name", [ajout("I_AtkAdd_Rate", 500)], 1),
+    /* Les remplacements de texte ne suivent pas l'ordre d'AddAbil_List. */
+    "302000001":buff("DeBuff", "Team", "Local_Buff_NonPos_Name",
+      [ajout("H_HealReceive_Rate", -2000)], 1, "None",
+      ["{0}:{1}", "{1}:{10%}", "{2}:{20%}"]),
+    /* La table applique 6 %, tandis que le texte localise annonce 15 %. */
+    "302000002":buff("DeBuff", "Team", "Local_Buff_Conflict_Name",
+      [ajout("H_HealReceive_Rate", -600)], 1, "None",
+      ["{0}:{1}", "{1}:{10%}", "{2}:{15%}"]),
+    "302000102":buff("DeBuff", "Team", "Local_Buff_Tiny_Name",
+      [ajout("I_DefAdd_Rate", -15)], 1, "None", ["{1}:{0.15%}"]),
+    "302000501":buff("DeBuff", "Team", "Local_Buff_Move_Name",
+      [ajout("Move_Spd", -500, "Per")], 1, "None", ["{0}:{5%}"])
   },
   comportements:{
     elizabeth_book_skill_q_a:{ BehaviorDetail_SetBuffTid:[pose("302171011", 40000), pose("302171012", 20000)] },
@@ -75,11 +91,13 @@ const ENTREE_MECANIQUES_TEST = {
   },
   libelles:{
     I_DefAdd_Rate:{ fr:"Augmentation de la défense", taux:true },
-    I_AtkAdd_Rate:{ fr:"Augmentation de l'attaque", taux:true }
+    I_AtkAdd_Rate:{ fr:"Augmentation de l'attaque", taux:true },
+    H_HealReceive_Rate:{ fr:"Réception des soins", taux:true }
   },
   unites:{
     I_DefAdd_Rate:{ family:"additional", unit:"ten-thousandths" },
-    I_AtkAdd_Rate:{ family:"additional", unit:"ten-thousandths" }
+    I_AtkAdd_Rate:{ family:"additional", unit:"ten-thousandths" },
+    H_HealReceive_Rate:{ family:"recovery", unit:"ten-thousandths" }
   },
   journal:{
     combat_1:{ Local_Key:"Local_Tutorial_Log_SubTitle_Burst_Fire" },
@@ -112,6 +130,14 @@ const ENTREE_MECANIQUES_TEST = {
     Local_Buff_Ultime_Name:"Attaque totale ultime",
     local_buff_atk_increase02_name:"local_buff_atk_increase02_name",
     Local_Buff_Mystery_Name:"Mystère",
+    Local_Buff_NonPos_Name:"Effet non positionnel",
+    Local_Buff_NonPos_Desc:"Toutes les {0} s : {1} dégâts, guérison reçue -{2}.",
+    Local_Buff_Conflict_Name:"Effet en désaccord",
+    Local_Buff_Conflict_Desc:"Toutes les {0} s : {1} dégâts, guérison reçue -{2}.",
+    Local_Buff_Tiny_Name:"Petite valeur",
+    Local_Buff_Tiny_Desc:"Défense -{1}.",
+    Local_Buff_Move_Name:"Vitesse en pourcentage",
+    Local_Buff_Move_Desc:"Vitesse -{0}.",
     Local_Buff_Petrify_Name:"Pétrification",
     Local_Buff_Petrify_Desc:"Immobilisation. Dégâts de Terre subis +{0}",
     local_tutorial_log_subtitle_burst_fire:"Déluge élémentaire - Feu",
@@ -138,7 +164,8 @@ function main() {
   assert.equal(catalogue.genereLe, "2026-09-24T12:00:00.000Z");
   assert.deepEqual(catalogue.effets.map(effet => effet.nom), [
     "Attaque totale ultime", "Augmentation de l'attaque", "Augmentation des dégâts de faiblesse",
-    "Éclaboussures", "Mystère", "Pétrification"
+    "Éclaboussures", "Effet en désaccord", "Effet non positionnel", "Mystère", "Petite valeur",
+    "Pétrification", "Vitesse en pourcentage"
   ], "tri par nom ; l'effet sans nom et celui dont le texte manque sont écartés");
 
   const effet = nom => catalogue.effets.find(entree => entree.nom === nom);
@@ -197,6 +224,20 @@ function main() {
     variantes:[{ valeurs:[{ stat:"Dégâts de faiblesse Terre", valeur:"+15 %" }], cumulMax:1,
       cible:"ennemi", nature:"controle", description:"Immobilisation. Dégâts de Terre subis +X", posePar:[] }]
   }, "StateCC passe avant DeBuff ; sans porteur, gardé dans le glossaire");
+
+  assert.equal(effet("Effet non positionnel").variantes[0].valeurs[0].valeur, "-20 %",
+    "la valeur est rapprochée par son nombre, jamais par la position du remplacement");
+  assert.equal(effet("Effet en désaccord").variantes[0].valeurs[0].valeur, "-6 %",
+    "un désaccord conserve la valeur de la table");
+  assert.match(effet("Effet en désaccord").variantes[0].texteJeu, /15\s*%/,
+    "le texte contradictoire du jeu reste visible séparément");
+  assert.equal(effet("Petite valeur").variantes[0].valeurs[0].valeur, "-0,15 %",
+    "une petite valeur en dix-millièmes garde ses décimales");
+  assert.equal(effet("Vitesse en pourcentage").variantes[0].valeurs[0].valeur, "-5 %",
+    "Type=Per prouve le pourcentage même sur une statistique habituellement plate");
+  assert.equal(effet("Mystère").variantes[0].valeurs[0].valeur, "42 (valeur brute)",
+    "une valeur sans preuve reste explicitement brute");
+  assert.deepEqual(catalogue.controleValeurs, { prouvees:11, brutes:2, desaccords:1 });
 
   assert.deepEqual(catalogue.regles, [
     { sujet:"Astuces de chargement", pages:["Astuce deux.", "Astuce huit."] },
