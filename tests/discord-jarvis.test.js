@@ -181,6 +181,16 @@ async function main() {
     horloge:() => 0, outils:fauxOutils(),
     appelerGemini:async () => { throw Q.erreurJarvis("delai"); } }), erreur => erreur.code === "delai");
   assert.deepEqual(journalEchec, [{ etape:"gemini", tour:1, ms:0, issue:"delai" }]);
+  /* Une reponse sans texte : le journal dit POURQUOI (raison de fin donnee par
+     Google, nature des morceaux recus), sinon « je ne peux pas repondre » reste
+     une boite noire. */
+  const journalVide = [];
+  const vide = fauxGemini([{ candidates:[{ finishReason:"STOP", content:{ role:"model",
+    parts:[{ thoughtSignature:"sig" }, { text:"pensée", thought:true }, { text:"" }] } }] }]);
+  await assert.rejects(Q.repondreQuestion({ question:"?", maintenant:MAINTENANT, journal:journalVide,
+    horloge:() => 0, outils:fauxOutils(), appelerGemini:vide.appeler }), erreur => erreur.code === "bloque");
+  assert.deepEqual(journalVide, [{ etape:"gemini", tour:1, ms:0, issue:"vide",
+    fin:"STOP", parties:["thoughtSignature", "pensee", "texte(0)"] }]);
 
   /* 8. Le message publie */
   const message = Q.messageJarvis("Qui a\nEscanor ? @everyone",

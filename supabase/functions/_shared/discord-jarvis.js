@@ -300,7 +300,21 @@ async function repondreQuestion(options) {
       .map(part => part.text)
       .join("")
       .trim();
-    if(!texte) throw erreurJarvis("bloque");
+    if(!texte){
+      /* « Je ne peux pas repondre » ne doit pas rester une boite noire : la
+         raison de fin donnee par Google et la nature des morceaux recus
+         distinguent un blocage, une pensee sans texte et un morceau de forme
+         inattendue. */
+      const derniere = journal[journal.length - 1];
+      if(derniere && derniere.etape === "gemini" && derniere.tour === tour){
+        derniere.issue = "vide";
+        derniere.fin = (candidat && candidat.finishReason) || null;
+        derniere.parties = parts.map(part => part.thought ? "pensee"
+          : typeof part.text === "string" ? "texte(" + part.text.length + ")"
+          : Object.keys(part || {}).join("+") || "?");
+      }
+      throw erreurJarvis("bloque");
+    }
     return { texte, sources, tours:tour, outils:outilsAppeles, usage };
   }
   throw erreurJarvis("bloque");
