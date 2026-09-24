@@ -402,7 +402,7 @@ async function main() {
   assert.match(index, /"\/storage\/v1\/object\/" \+ CHEMIN_MONSTRES_JARVIS/);
   assert.match(index, /lireMonstres:/);
   /* La lecture du catalogue sur Pages porte un delai, comme celle du stockage. */
-  assert.match(index, /fetch\(NOVA_CONNAISSANCES_URL, \{[^}]*signal:AbortSignal\.timeout\(5_000\)/,
+  assert.match(index, /fetch\(NOVA_CONNAISSANCES_URL, \{[\s\S]{0,120}?signal:AbortSignal\.timeout\(5_000\)/,
     "un Pages lent ne doit pas bloquer toute la reponse /jarvis");
   /* Le journal des etapes part dans les logs, en cas de succes comme d'echec. */
   assert.match(index, /repondreQuestion\(\{[\s\S]*?journal[\s\S]*?\}\)/);
