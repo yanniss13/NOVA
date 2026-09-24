@@ -39,7 +39,9 @@ const ENTREE_MECANIQUES_TEST = {
     "301000004":Object.assign(buff("DeBuff", "Team", "Local_Buff_AtkUp_Name", [ajout("I_AtkAdd_Rate", -1000)], 1),
       { Local_Desc:"Local_Buff_AtkUpFeu_Desc" }),
     /* Un nom qui COMMENCE par « attaque », qu'aucun heros ne pose. */
-    "301000005":buff("Buff", "Hero", "Local_Buff_Ultime_Name", [ajout("Buff_Time_Rate", 300)], 1)
+    "301000005":buff("Buff", "Hero", "Local_Buff_Ultime_Name", [ajout("Buff_Time_Rate", 300)], 1),
+    /* Traduction absente, le jeu rend la cle elle-meme : ce n'est pas un nom. */
+    "301000006":buff("Buff", "Hero", "local_buff_atk_increase02_name", [ajout("I_AtkAdd_Rate", 500)], 1)
   },
   comportements:{
     elizabeth_book_skill_q_a:{ BehaviorDetail_SetBuffTid:[pose("302171011", 40000), pose("302171012", 20000)] },
@@ -108,6 +110,7 @@ const ENTREE_MECANIQUES_TEST = {
     Local_Buff_AtkUp_Desc:"Attaque +{0}",
     Local_Buff_AtkUpFeu_Desc:"Attaque des héros d'attribut Feu +{0}",
     Local_Buff_Ultime_Name:"Attaque totale ultime",
+    local_buff_atk_increase02_name:"local_buff_atk_increase02_name",
     Local_Buff_Mystery_Name:"Mystère",
     Local_Buff_Petrify_Name:"Pétrification",
     Local_Buff_Petrify_Desc:"Immobilisation. Dégâts de Terre subis +{0}",
@@ -120,7 +123,7 @@ const ENTREE_MECANIQUES_TEST = {
     ui_tutorial_burst_fire_title:"Déluge élémentaire - Feu",
     ui_tutorial_burst_fire_desc_03:"Page du guide.",
     ui_guide_meliodas_sword_title:"Meliodas (épée longue)",
-    ui_guide_meliodas_sword_desc:"Enchaînez les coups.",
+    ui_guide_meliodas_sword_desc:"Enchaînez les coups jusqu'à {time}.",
     ui_loadingtip_desc_08:"Astuce huit.",
     ui_loadingtip_desc_02:"Astuce deux."
   },
@@ -200,7 +203,7 @@ function main() {
     { sujet:"Déluge élémentaire - Feu", pages:[
       "Remplissez la jauge avec (touche).", "Deuxième page.", "Dixième page.", "Page du guide."
     ] },
-    { sujet:"Meliodas (épée longue)", pages:["Enchaînez les coups."] }
+    { sujet:"Meliodas (épée longue)", pages:["Enchaînez les coups jusqu'à X."] }
   ], "journal trié par List_Sort ; guide de même titre fusionné sans doublon ;"
     + " sujets sans page ou sans titre écartés");
 

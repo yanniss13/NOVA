@@ -29,7 +29,9 @@ function nettoyerMecanique(texte) {
   return String(texte || "")
     .replace(BALISES_MECANIQUES, "")
     .replace(/\{Inputkey_[^}]*\}/gi, "(touche)")
-    .replace(/\{\d+\}/g, "X")
+    /* {0}, {1}, et aussi {time} (« Expédition de familier ») : une valeur
+       que le jeu remplit a l'affichage. */
+    .replace(/\{\w+\}/g, "X")
     .trim();
 }
 
@@ -155,7 +157,13 @@ function reglesDuJeu(entree, lire) {
 }
 
 function construireCatalogueMecaniques(entree) {
-  const lire = lecteurDeTextes(entree.textes);
+  const lireBrut = lecteurDeTextes(entree.textes);
+  /* Une traduction absente rend parfois la cle elle-meme
+     (« local_buff_atk_increase02_name ») : ce n'est pas un texte. */
+  const lire = cle => {
+    const texte = lireBrut(cle);
+    return texte && texte.toLowerCase() === String(cle).toLowerCase() ? null : texte;
+  };
   const libelles = entree.libelles || {};
   const unites = entree.unites || {};
   const buffs = entree.buffs || {};
