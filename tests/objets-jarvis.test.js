@@ -21,6 +21,8 @@ const ITINERANTE = marchand("240110004", "UI_Common_RandomShop", "ESellType::Ran
 const EQUIPEMENT_SANS_REGION = marchand("240120001", "UI_Common_EquipShop");
 const EQUIPEMENT_MENU = marchand("240130001", "UI_Common_EquipShop");
 const ECHANGE = marchand("242100100", "UI_Common_ExchangeEvent", "ESellType::Exchange");
+const ECHANGE_BIS = marchand("242200100", "UI_Common_ExchangeEvent", "ESellType::Exchange");
+const ECHANGE_VIDE = marchand("242300100", "UI_Common_ExchangeEvent2", "ESellType::Exchange");
 
 let numero = 0;
 function article(boutique, vente, paiement, autres) {
@@ -78,7 +80,11 @@ const ENTREE_OBJETS_TEST = {
     /* Une limite sans periode de renouvellement : « au total ». */
     "250130001":article(EQUIPEMENT_MENU, POTION, ["Currency", "gold", 50], { LimitCount:2 }),
     "252100101":article(ECHANGE, POTION, ["Currency", "campaign_coin_005", 5]),
-    "252100102":article(ECHANGE, ["Currency", "gold"], ["Item", "102000001", 1], { GetCount:1000 })
+    "252100102":article(ECHANGE, ["Currency", "gold"], ["Item", "102000001", 1], { GetCount:1000 }),
+    /* Meme nom, sans PNJ ni region : un numero les distingue. */
+    "252200101":article(ECHANGE_BIS, POTION, ["Currency", "campaign_coin_005", 7]),
+    /* Tous ses articles sont ecartes : la boutique disparait. */
+    "252300101":article(ECHANGE_VIDE, POTION, ["Currency", "coin_perdu", 1])
   },
   boutons:{
     btn_ch1_merchant_equip_01:{ ButtonDetailType:"merchant", ButtonDetailValue01:"240110001" },
@@ -116,6 +122,7 @@ const ENTREE_OBJETS_TEST = {
     ui_common_equipshop:"Boutique d'équipement",
     ui_common_randomshop:"Boutique itinérante",
     ui_common_exchangeevent:"Boutique d'échange de jeton Magi★Pop",
+    ui_common_exchangeevent2:"Son retour : boutique d'échange",
     local_npc_karim:"Karim",
     local_npc_alexander:"Alexander",
     local_npc_nyandin:"Nyandin et Mou",
@@ -129,14 +136,15 @@ const ENTREE_OBJETS_TEST = {
   dateExport:"2026-09-22"
 };
 
-const LIONES = "Boutique d'équipement de Liones";
-const ITINERANTE_LIONES = "Boutique itinérante de Liones";
+const LIONES = "Boutique d'équipement — Liones";
+const ITINERANTE_LIONES = "Boutique itinérante — Liones";
+const GERARD = "Boutique d'équipement (Gérard)";
 const MAGI = "Boutique d'échange de jeton Magi★Pop";
 
 const catalogue = construireCatalogueObjets(ENTREE_OBJETS_TEST);
 assert.equal(catalogue.version, 1);
 assert.equal(catalogue.dateExport, "2026-09-22");
-assert.equal(catalogue.articlesEcartes, 2);
+assert.equal(catalogue.articlesEcartes, 3);
 
 assert.deepEqual(catalogue.boutiques, [
   { nom:LIONES, genre:"Boutique d'équipement", acces:"pnj",
@@ -150,22 +158,25 @@ assert.deepEqual(catalogue.boutiques, [
   { nom:ITINERANTE_LIONES, genre:"Boutique itinérante", acces:"pnj",
     pnj:["Nyandin et Mou"], regions:["Liones (Plaines de Liones)"], aleatoire:true,
     articles:[{ objet:"Minerai", prix:"500 Or" }] },
-  /* Deux boutiques homonymes sans region : la plus ancienne garde le nom. */
-  { nom:"Boutique d'équipement", genre:"Boutique d'équipement", acces:"pnj",
+  /* Sans region : le nom du PNJ la distingue, rien n'est invente. */
+  { nom:GERARD, genre:"Boutique d'équipement", acces:"pnj",
     pnj:["Gérard"], regions:[], articles:[{ objet:"Épée longue", prix:"2 000 Or" }] },
-  { nom:"Boutique d'équipement (2)", genre:"Boutique d'équipement", acces:"menu",
+  { nom:"Boutique d'équipement", genre:"Boutique d'équipement", acces:"menu",
     pnj:[], regions:[], articles:[{ objet:"Potion", prix:"50 Or", limite:"2 au total" }] },
   { nom:MAGI, genre:MAGI, acces:"menu", pnj:[], regions:[],
     articles:[
       { objet:"Potion", prix:"5 Jeton Magi★Pop" },
       { objet:"Or", quantite:1000, prix:"1 Potion" }
-    ] }
+    ] },
+  /* Deux boutiques homonymes : la plus ancienne garde le nom nu. */
+  { nom:MAGI + " (2)", genre:MAGI, acces:"menu", pnj:[], regions:[],
+    articles:[{ objet:"Potion", prix:"7 Jeton Magi★Pop" }] }
 ]);
 
 assert.deepEqual(catalogue.objets, [
   { nom:"Épée longue", type:"Équipement", sources:[
     { type:"boutique", boutique:LIONES, prix:"1 800 Or", limite:"3 par jour" },
-    { type:"boutique", boutique:"Boutique d'équipement", prix:"2 000 Or" }
+    { type:"boutique", boutique:GERARD, prix:"2 000 Or" }
   ] },
   { nom:"Minerai", type:"Divers", sources:[
     { type:"boutique", boutique:LIONES, quantite:5, prix:"2 Potion", limite:"10 par semaine" },
@@ -177,8 +188,9 @@ assert.deepEqual(catalogue.objets, [
   { nom:"Potion", type:"Consommable", sources:[
     { type:"boutique", boutique:LIONES, prix:"100 Or", limite:"1 au total",
       condition:"à partir du niveau de monde 3" },
-    { type:"boutique", boutique:"Boutique d'équipement (2)", prix:"50 Or", limite:"2 au total" },
-    { type:"boutique", boutique:MAGI, prix:"5 Jeton Magi★Pop" }
+    { type:"boutique", boutique:"Boutique d'équipement", prix:"50 Or", limite:"2 au total" },
+    { type:"boutique", boutique:MAGI, prix:"5 Jeton Magi★Pop" },
+    { type:"boutique", boutique:MAGI + " (2)", prix:"7 Jeton Magi★Pop" }
   ] }
 ]);
 

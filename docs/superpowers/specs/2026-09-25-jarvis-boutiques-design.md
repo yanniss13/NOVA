@@ -72,11 +72,15 @@ index d'objets. Butins, recettes et probabilités sont hors périmètre ici.
 ```
 
 - `genre` : le nom du jeu (« Boutique d'équipement »).
-- `nom` : unique dans le fichier. Boutique à PNJ : `genre` + « de » +
-  première région principale de ses PNJ (« Boutique d'équipement de
-  Liones »). Sans région : `genre` seul ; si deux boutiques restent
-  homonymes, celle au plus petit identifiant porte le nom nu et les autres un suffixe
-  numéroté (« … (2) »). Aucune région n'est inventée.
+- `nom` : unique dans le fichier. Région connue : `genre` + « — » +
+  première région principale de ses PNJ (« Boutique d'équipement —
+  Liones »). Sans région mais avec PNJ : `genre` + « (PNJ) »
+  (« Boutique d'équipement (Nigel) » : les apparitions des chapitres 3 et 7
+  ne portent pas de région). Sinon `genre` seul. Si deux boutiques restent
+  homonymes, celle au plus petit identifiant porte le nom nu et les autres
+  un suffixe numéroté (« … (2) »). Aucune région n'est inventée.
+- Une boutique dont tous les articles sont écartés est omise (« Son
+  retour » : sa monnaie n'a pas de nom français).
 - `regions` : « Région principale (sous-région) », sans doublon, dans
   l'ordre de l'identifiant du PNJ.
 - `prix` : « 1 800 Or », « 5 Jeton Magi★Pop » — quantité puis nom de la

@@ -59,12 +59,12 @@ bougé, et leur `--check` le vérifie.
 
 ## Les fichiers de /jarvis
 
-`extraire-monstres.js` et `extraire-mecaniques.js` fabriquent
-`output/jarvis/monstres.json` et `output/jarvis/mecaniques.json` pour la
+`extraire-monstres.js`, `extraire-mecaniques.js` et `extraire-objets.js`
+fabriquent `output/jarvis/monstres.json`, `mecaniques.json` et `objets.json` pour la
 commande Discord `/jarvis`. Ces fichiers sont ignorés par git et vont dans le
 bucket Supabase **privé** `jarvis-prive` : ils n'entrent jamais dans ce dépôt
-public. La logique vit dans `monstres-jarvis.js`, `effets-monstres-jarvis.js`
-et `mecaniques-jarvis.js`, testée en CI sans l'export. Procédure : `docs/discord-planning.md`.
+public. La logique vit dans `monstres-jarvis.js`, `effets-monstres-jarvis.js`,
+`mecaniques-jarvis.js` et `objets-jarvis.js`, testée en CI sans l'export. Procédure : `docs/discord-planning.md`.
 
 ## Ce qui n'est pas ici
 

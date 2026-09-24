@@ -38,7 +38,7 @@ function ordreNumeriqueObjets(a, b) {
 
 /* « 1 800 » : l'espace fine insecable de toLocaleString devient ordinaire. */
 function nombreObjets(valeur) {
-  return Number(valeur).toLocaleString("fr-FR").replace(/[  ]/g, " ");
+  return Number(valeur).toLocaleString("fr-FR").replace(/[\u202f\u00a0]/g, " ");
 }
 
 function ajouterDans(table, cle, valeur) {
@@ -160,11 +160,19 @@ function construireCatalogueObjets(entree) {
       articles.push(ligne);
       vendus.push({ ligne, type:vendu.type });
     });
+    /* Une boutique dont tous les articles sont ecartes n'a rien a dire. */
+    if(!articles.length) return;
+    const nomsPnj = [...new Set(identifiantsPnj.map(pnj => lire((entree.pnj[pnj] || {}).Local_Key)).filter(Boolean))];
+    /* Region connue : « Boutique d'equipement — Liones ». Sinon le PNJ la
+       distingue (chapitres 3 et 7 : apparitions sans region). Rien n'est
+       invente. */
+    let nomDeBase = genre;
+    if(regions.length) nomDeBase = genre + " — " + regions[0].principal;
+    else if(nomsPnj.length) nomDeBase = genre + " (" + nomsPnj.join(", ") + ")";
     boutiques.push({
-      id, genre,
-      nomDeBase:regions.length ? genre + " de " + regions[0].principal : genre,
+      id, genre, nomDeBase,
       acces:identifiantsPnj.length ? "pnj" : "menu",
-      pnj:[...new Set(identifiantsPnj.map(pnj => lire((entree.pnj[pnj] || {}).Local_Key)).filter(Boolean))],
+      pnj:nomsPnj,
       regions:regions.map(region => region.libelle),
       aleatoire:marchand.SellType === "ESellType::Random",
       articles:sansDoublonsObjets(articles),
