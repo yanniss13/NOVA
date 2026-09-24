@@ -83,8 +83,13 @@ async function main() {
   /* Les declarations : sept outils, noms stables, schemas au format Gemini. */
   assert.deepEqual(DECLARATIONS_OUTILS_JARVIS.map(d => d.name), [
     "lister_personnages", "fiche_personnage", "chercher_equipement",
-    "qui_possede", "roster_de", "dispos", "scores_boss"
+    "qui_possede", "roster_de", "dispos", "scores_boss",
+    "fiche_monstre", "chercher_monstres"
   ]);
+  /* Sans lecteur de monstres fourni, les deux outils le disent au lieu de
+     planter : le reste de /jarvis ne depend pas du bucket prive. */
+  assert.deepEqual((await outils().executer("fiche_monstre", { nom:"démon" })).donnees,
+    { erreur:"données des monstres indisponibles" });
   DECLARATIONS_OUTILS_JARVIS.forEach(declaration => {
     assert.ok(declaration.description.length > 20, declaration.name + " doit être décrit");
     if(declaration.parameters){

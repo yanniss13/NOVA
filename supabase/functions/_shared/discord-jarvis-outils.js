@@ -18,6 +18,7 @@ if(typeof module !== "undefined" && module.exports){
   if(!globalThis.NOVA_DISCORD_BUILD) require("./discord-build.js");
   if(!globalThis.NOVA_AVAILABILITY_PDF) require("./availability-pdf.js");
   if(!globalThis.NOVA_BOSS_REMINDER) require("./boss-reminder.js");
+  if(!globalThis.NOVA_DISCORD_JARVIS_MONSTRES) require("./discord-jarvis-monstres.js");
 }
 
 const { PLANNING_PROFILES_QUERY } = globalThis.NOVA_DISCORD_PLANNING;
@@ -29,6 +30,9 @@ const {
   currentAvailabilityWeekStart, buildAvailabilityReport
 } = globalThis.NOVA_AVAILABILITY_PDF;
 const { currentBossWeekStart } = globalThis.NOVA_BOSS_REMINDER;
+const {
+  DECLARATIONS_OUTILS_MONSTRES, ajouterOutilsMonstresJarvis
+} = globalThis.NOVA_DISCORD_JARVIS_MONSTRES;
 
 const NOVA_CONNAISSANCES_URL =
   "https://yanniss13.github.io/NOVA/data/connaissances-discord.json";
@@ -114,7 +118,7 @@ const DECLARATIONS_OUTILS_JARVIS = [
       required:["periode"]
     }
   }
-];
+].concat(DECLARATIONS_OUTILS_MONSTRES);
 
 /* 4 : egal, 3 : commence par, 2 : contient, 1 : contient tous les mots. */
 function rangCorrespondanceJarvis(candidat, cherche) {
@@ -270,6 +274,9 @@ function creerOutilsJarvis(options) {
     }
   };
   ajouterOutilsConfrerie(table, contexte);
+  /* Lot 2a : les monstres, lus dans le bucket prive. Sans lecteur fourni, ils
+     repondent « indisponibles » : le reste de /jarvis n'en depend pas. */
+  ajouterOutilsMonstresJarvis(table, options.lireMonstres || (async () => null));
   return {
     declarations:DECLARATIONS_OUTILS_JARVIS,
     async executer(nom, args) {

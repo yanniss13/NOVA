@@ -301,6 +301,13 @@ async function main() {
   assert.doesNotMatch(index, /generativelanguage\.googleapis\.com/,
     "une seule implementation de l'appel HTTP");
 
+  /* Lot 2a : le bucket prive des monstres, lu par la cle service_role. */
+  assert.match(index, /creerLecteurMonstresJarvis\(\{/);
+  assert.match(index, /"\/storage\/v1\/object\/" \+ CHEMIN_MONSTRES_JARVIS/);
+  assert.match(index, /lireMonstres:/);
+  assert.match(Q.CONSIGNE_JARVIS, /valeurs de base/);
+  assert.match(Q.CONSIGNE_JARVIS, /monstres/);
+
   console.log("OK discord-jarvis");
 }
 

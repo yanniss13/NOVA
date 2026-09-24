@@ -11,6 +11,7 @@ type EdgeSharedGlobal = typeof globalThis & {
   NOVA_DISCORD_BUILD_PNG?: unknown;
   NOVA_DISCORD_JARVIS?: unknown;
   NOVA_DISCORD_JARVIS_OUTILS?: unknown;
+  NOVA_DISCORD_JARVIS_MONSTRES?: unknown;
 };
 
 /* Le déploiement Supabase refuse le media type `.cjs`. Les modules partagés
@@ -42,6 +43,8 @@ await import("../_shared/discord-build-png.js");
 await import("../_shared/planning-png.js");
 /* /jarvis : les outils d'abord, dont la boucle ne depend pas au chargement,
    mais qui lisent eux-memes quatre modules deja importes ci-dessus. */
+/* Lot 2a : les monstres, lus par les outils de /jarvis. */
+await import("../_shared/discord-jarvis-monstres.js");
 await import("../_shared/discord-jarvis-outils.js");
 await import("../_shared/discord-jarvis.js");
 const availabilityPdfModule = edgeSharedGlobal.NOVA_AVAILABILITY_PDF;
@@ -260,7 +263,18 @@ const { NOVA_CONNAISSANCES_URL, creerOutilsJarvis } =
     creerOutilsJarvis(options: {
       catalogue: unknown;
       requete(chemin: string): Promise<unknown>;
+      lireMonstres?(): Promise<unknown>;
     }): JarvisOutils;
+  };
+const { CHEMIN_MONSTRES_JARVIS, creerLecteurMonstresJarvis } =
+  edgeSharedGlobal.NOVA_DISCORD_JARVIS_MONSTRES as {
+    CHEMIN_MONSTRES_JARVIS: string;
+    creerLecteurMonstresJarvis(options: {
+      fetch: typeof fetch;
+      url: string;
+      cle: string;
+      horloge(): number;
+    }): () => Promise<unknown>;
   };
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -844,6 +858,23 @@ async function lireConnaissances(): Promise<unknown> {
   return connaissancesCache;
 }
 
+/* Le catalogue des monstres vit dans le bucket PRIVE jarvis-prive, lu avec la
+   cle service_role. Le lecteur est cree une fois par instance : son cache
+   (1 h en cas de succes, 1 min en cas d'echec) survit d'une question a
+   l'autre. */
+let lecteurMonstresJarvis: (() => Promise<unknown>) | null = null;
+function lireMonstresJarvis(config: PlanningConfig): Promise<unknown> {
+  if(!lecteurMonstresJarvis){
+    lecteurMonstresJarvis = creerLecteurMonstresJarvis({
+      fetch,
+      url:config.supabaseUrl + "/storage/v1/object/" + CHEMIN_MONSTRES_JARVIS,
+      cle:config.serviceRoleKey,
+      horloge:() => Date.now()
+    });
+  }
+  return lecteurMonstresJarvis();
+}
+
 async function publishJarvis(
   interaction: DiscordInteraction,
   config: PlanningConfig
@@ -864,7 +895,8 @@ async function publishJarvis(
     }
     const outils = creerOutilsJarvis({
       catalogue:await lireConnaissances(),
-      requete:chemin => supabaseJson<unknown>(config, chemin)
+      requete:chemin => supabaseJson<unknown>(config, chemin),
+      lireMonstres:() => lireMonstresJarvis(config)
     });
     const resultat = await repondreQuestion({
       question:texte, outils, appelerGemini:appelerGeminiJarvis
