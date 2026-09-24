@@ -847,7 +847,10 @@ const attendreJarvis = (ms: number) => new Promise(suite => setTimeout(suite, ms
 let connaissancesCache: unknown = null;
 async function lireConnaissances(): Promise<unknown> {
   if(connaissancesCache) return connaissancesCache;
-  const reponse = await fetch(NOVA_CONNAISSANCES_URL, { headers:{ Accept:"application/json" } });
+  /* 5 s au plus : un Pages lent ne doit pas bloquer toute la reponse. */
+  const reponse = await fetch(NOVA_CONNAISSANCES_URL, {
+    headers:{ Accept:"application/json" }, signal:AbortSignal.timeout(5_000)
+  });
   if(!reponse.ok) throw new Error("Connaissances -> " + reponse.status);
   connaissancesCache = await reponse.json();
   return connaissancesCache;

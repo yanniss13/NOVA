@@ -86,6 +86,26 @@ async function main() {
   assert.deepEqual(lignes, [{ etape:"stockage-monstres", ms:820, issue:"stockage -> 404" }],
     "une seule ligne : la seconde lecture sort du cache, sans appel");
 
+  /* Un delai sur la lecture : un stockage lent ne bloque plus la question. */
+  let initRecu = null;
+  const lireAvecDelai = M.creerLecteurMonstresJarvis({ url:"u", cle:"c", horloge:() => 0,
+    journaliser:() => {},
+    fetch:async (url, init) => { initRecu = init; throw new DOMException("trop long", "TimeoutError"); } });
+  assert.equal(await lireAvecDelai(), null, "délai dépassé : null, pas d'exception");
+  assert.ok(initRecu.signal, "la lecture du stockage porte un délai");
+
+  /* Deux questions simultanees a froid : une seule lecture du fichier. */
+  let lectures = 0;
+  let libererLecture;
+  const lectureEnCours = new Promise(resoudre => { libererLecture = resoudre; });
+  const lirePartage = M.creerLecteurMonstresJarvis({ url:"u", cle:"c", horloge:() => 0,
+    journaliser:() => {},
+    fetch:async () => { lectures += 1; await lectureEnCours; return reponse(200, CATALOGUE); } });
+  const [premiere, seconde] = [lirePartage(), lirePartage()];
+  libererLecture();
+  assert.deepEqual([await premiere, await seconde], [CATALOGUE, CATALOGUE]);
+  assert.equal(lectures, 1, "une lecture partagée, pas deux");
+
   const sansConfig = M.creerLecteurMonstresJarvis({ url:"", cle:"", horloge:() => 0,
     fetch:async () => { throw new Error("ne doit pas être appelé"); } });
   assert.equal(await sansConfig(), null);

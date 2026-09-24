@@ -21,6 +21,9 @@ const { normaliserRecherche, propositions } = globalThis.NOVA_DISCORD_BUILD;
 const CHEMIN_MONSTRES_JARVIS = "jarvis-prive/monstres.json";
 const CACHE_MONSTRES_SUCCES_MS = 3_600_000;
 const CACHE_MONSTRES_ECHEC_MS = 60_000;
+/* La lecture reussie la plus lente observee a pris 646 ms : 5 s laissent de
+   la marge sans laisser un stockage muet bloquer la question. */
+const DELAI_LECTURE_MONSTRES_MS = 5_000;
 const MONSTRES_VERSIONS_MAX = 5;
 const MONSTRES_RESULTATS_MAX = 15;
 const NOTE_VALEURS_DE_BASE = "valeurs de base, avant ajustement du niveau de monde";
@@ -67,15 +70,27 @@ function creerLecteurMonstresJarvis(options) {
      issue. C'est la premiere suspecte quand /jarvis depasse son delai. */
   const journaliser = options.journaliser
     || (ligne => console.log(JSON.stringify({ jarvis:ligne })));
-  return async function lireMonstresJarvis() {
+  /* Une seule lecture a la fois : deux questions simultanees sur une
+     instance froide partagent la meme, au lieu de telecharger deux fois. */
+  let enCours = null;
+  return function lireMonstresJarvis() {
     const maintenant = options.horloge();
-    if(memoire && memoire.expire > maintenant) return memoire.valeur;
+    if(memoire && memoire.expire > maintenant) return Promise.resolve(memoire.valeur);
+    if(!enCours){
+      enCours = lireDepuisLeStockage(maintenant).finally(() => { enCours = null; });
+    }
+    return enCours;
+  };
+
+  async function lireDepuisLeStockage(maintenant) {
     let valeur = null;
     let issue = "ok";
     try {
       if(!options.url || !options.cle) throw new Error("configuration du stockage absente");
       const reponse = await options.fetch(options.url, {
-        headers:{ Authorization:"Bearer " + options.cle, apikey:options.cle }
+        headers:{ Authorization:"Bearer " + options.cle, apikey:options.cle },
+        /* Un stockage lent ne doit pas bloquer toute la reponse /jarvis. */
+        signal:AbortSignal.timeout(DELAI_LECTURE_MONSTRES_MS)
       });
       if(!reponse.ok) throw new Error("stockage -> " + reponse.status);
       const brut = await reponse.json();
@@ -100,7 +115,7 @@ function creerLecteurMonstresJarvis(options) {
       expire:maintenant + (valeur ? CACHE_MONSTRES_SUCCES_MS : CACHE_MONSTRES_ECHEC_MS)
     };
     return valeur;
-  };
+  }
 }
 
 /* ---------------- Mise en mots ---------------- */
