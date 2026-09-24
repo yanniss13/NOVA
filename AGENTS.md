@@ -1338,7 +1338,7 @@ le SQL Editor afin d'ajouter les tables à la publication
   Gemini est sur le **palier gratuit uniquement** : ne jamais proposer de clé
   payante. La clé `GEMINI_JARVIS_API_KEY` vient d'un **projet Google
   distinct** de celui de `lecture-panneau`, pour que les deux ne partagent pas
-  le même quota. Gemini n'a accès qu'à sept outils **en lecture seule**
+  le même quota. Gemini n'a accès qu'à des outils **en lecture seule**
   (`_shared/discord-jarvis-outils.js`) ; la boucle et les messages vivent dans
   `_shared/discord-jarvis.js`. Les résultats d'outils ne contiennent jamais
   d'UUID, d'email ni de note de build. Les données du jeu viennent de
@@ -1353,8 +1353,19 @@ le SQL Editor afin d'ajouter les tables à la publication
   `_shared/discord-jarvis-monstres.js`. Faiblesse > 0, résistance < 0,
   confirmé en jeu. L'acteur d'Akumu pointe sur le groupe de test
   `stat_poweroverwhelming` : ses vraies statistiques sont ses 30 paliers de
-  `BossStatGroupTable`. Lots suivants prévus : 2b (buffs), 2c (boutiques et
-  butins), 2d (contenu non sorti), sur la même chaîne.
+  `BossStatGroupTable`.
+  **Lot 2b (effets, porteurs et règles)** :
+  `outils/fabrication/extraire-mecaniques.js` écrit
+  `output/jarvis/mecaniques.json`, déposé dans le même bucket privé. Les
+  outils `fiche_effet`, `chercher_effets` et `regle` vivent dans
+  `_shared/discord-jarvis-mecaniques.js` ; les deux fichiers passent par
+  un seul lecteur, `_shared/discord-jarvis-stockage.js`. Une compétence se
+  relie à ses effets par le **nom** de ses comportements (identifiant du
+  wiki, ou identifiant suivi de `_`). Les règles viennent de
+  `TutorialLogGroupTable`/`TutorialLogTable` et `GuidePopupGroupTable`/
+  `GuidePopupTable`, jamais des noms de clés. Lots suivants prévus : effets
+  posés par les boss (recherche), 2c (boutiques et butins), 2d (contenu
+  non sorti).
 - Après une modification de ce schéma, réexécuter le contenu complet de
   `supabase/schema.sql` dans le SQL Editor Supabase.
 
@@ -1954,7 +1965,7 @@ l'index des archives, ni le code qui s'en sert, ni le mode d'emploi qui mène à
 l'une ou à l'autre. Diffuser un tel moyen est une infraction distincte du droit
 d'auteur : ce qui est reproché n'est plus la donnée, c'est l'outil. Les notes
 d'extraction et le déchiffreur `.pak` vivent hors du dépôt et sont nommés dans
-`.gitignore`. Les cinquante et un outils de `outils/fabrication/` qui restent ne lisent que
+`.gitignore`. Les outils de `outils/fabrication/` qui restent ne lisent que
 des exports JSON déjà produits sur le disque du propriétaire — aucun ne touche
 une archive du jeu, aucun n'approche un processus.
 

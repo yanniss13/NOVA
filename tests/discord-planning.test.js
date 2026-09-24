@@ -289,6 +289,11 @@ assert.match(
 const edgeSource = fs.readFileSync(path.join(
   ROOT, "supabase", "functions", "discord-planning", "index.ts"
 ), "utf8");
+/* Lot 2b : les mecaniques passent par le lecteur commun et arrivent aux
+   outils de /jarvis. */
+assert.match(edgeSource, /await import\("\.\.\/_shared\/discord-jarvis-mecaniques\.js"\)/);
+assert.match(edgeSource, /nom:"mecaniques",\s*valider:validerCatalogueMecaniques/);
+assert.match(edgeSource, /lireMecaniques:\(\) => lireMecaniquesJarvis\(config\)/);
 [
   /X-Signature-Ed25519/,
   /X-Signature-Timestamp/,

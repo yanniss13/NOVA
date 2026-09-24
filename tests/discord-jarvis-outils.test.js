@@ -84,12 +84,15 @@ async function main() {
   assert.deepEqual(DECLARATIONS_OUTILS_JARVIS.map(d => d.name), [
     "lister_personnages", "fiche_personnage", "chercher_equipement",
     "qui_possede", "roster_de", "dispos", "scores_boss",
-    "fiche_monstre", "chercher_monstres"
+    "fiche_monstre", "chercher_monstres",
+    "fiche_effet", "chercher_effets", "regle"
   ]);
   /* Sans lecteur de monstres fourni, les deux outils le disent au lieu de
      planter : le reste de /jarvis ne depend pas du bucket prive. */
   assert.deepEqual((await outils().executer("fiche_monstre", { nom:"démon" })).donnees,
     { erreur:"données des monstres indisponibles" });
+  assert.deepEqual((await outils().executer("regle", { sujet:"déluge" })).donnees,
+    { erreur:"données des mécaniques indisponibles" });
   DECLARATIONS_OUTILS_JARVIS.forEach(declaration => {
     assert.ok(declaration.description.length > 20, declaration.name + " doit être décrit");
     if(declaration.parameters){

@@ -19,6 +19,7 @@ if(typeof module !== "undefined" && module.exports){
   if(!globalThis.NOVA_AVAILABILITY_PDF) require("./availability-pdf.js");
   if(!globalThis.NOVA_BOSS_REMINDER) require("./boss-reminder.js");
   if(!globalThis.NOVA_DISCORD_JARVIS_MONSTRES) require("./discord-jarvis-monstres.js");
+  if(!globalThis.NOVA_DISCORD_JARVIS_MECANIQUES) require("./discord-jarvis-mecaniques.js");
 }
 
 const { PLANNING_PROFILES_QUERY } = globalThis.NOVA_DISCORD_PLANNING;
@@ -33,6 +34,9 @@ const { currentBossWeekStart } = globalThis.NOVA_BOSS_REMINDER;
 const {
   DECLARATIONS_OUTILS_MONSTRES, ajouterOutilsMonstresJarvis, rangCorrespondanceJarvis
 } = globalThis.NOVA_DISCORD_JARVIS_MONSTRES;
+const {
+  DECLARATIONS_OUTILS_MECANIQUES, ajouterOutilsMecaniquesJarvis
+} = globalThis.NOVA_DISCORD_JARVIS_MECANIQUES;
 
 const NOVA_CONNAISSANCES_URL =
   "https://yanniss13.github.io/NOVA/data/connaissances-discord.json";
@@ -118,7 +122,7 @@ const DECLARATIONS_OUTILS_JARVIS = [
       required:["periode"]
     }
   }
-].concat(DECLARATIONS_OUTILS_MONSTRES);
+].concat(DECLARATIONS_OUTILS_MONSTRES, DECLARATIONS_OUTILS_MECANIQUES);
 
 function nomsDesPersonnagesJarvis(catalogue) {
   return Object.values(catalogue.personnages || {}).map(personnage => personnage.nom);
@@ -270,6 +274,8 @@ function creerOutilsJarvis(options) {
   /* Lot 2a : les monstres, lus dans le bucket prive. Sans lecteur fourni, ils
      repondent « indisponibles » : le reste de /jarvis n'en depend pas. */
   ajouterOutilsMonstresJarvis(table, options.lireMonstres || (async () => null));
+  /* Lot 2b : les effets et les regles du jeu, meme bucket, meme repli. */
+  ajouterOutilsMecaniquesJarvis(table, options.lireMecaniques || (async () => null));
   return {
     declarations:DECLARATIONS_OUTILS_JARVIS,
     async executer(nom, args) {

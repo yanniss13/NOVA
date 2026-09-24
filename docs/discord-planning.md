@@ -399,3 +399,27 @@ fichier en compte au plus tard une heure après, sans redéploiement.
 Les PV, la défense et l'attaque sont des **valeurs de base** : le niveau de
 monde les ajuste côté serveur, et aucune table exportée ne dit comment. Les
 faiblesses et résistances, elles, concordent avec les mesures en jeu.
+
+### Effets, porteurs et règles (lot 2b)
+
+Trois outils de plus : `fiche_effet` (un effet du jeu, ses valeurs, sa
+durée, son cumul, sa cible et les compétences de héros qui le posent),
+`chercher_effets` (« qui réduit la défense ? ») et `regle` (les textes
+officiels du journal des tutoriels, des fenêtres d'aide et des astuces).
+
+Même chaîne que les monstres, même bucket privé :
+
+```powershell
+$env:DONNEES_JEU = (Resolve-Path (Read-Host 'Dossier Content')).Path
+node outils/fabrication/extraire-mecaniques.js
+```
+
+Puis déposer `output/jarvis/mecaniques.json` dans Storage → `jarvis-prive`,
+et redéployer `discord-planning` la première fois. Ensuite, un nouveau
+dépôt est pris en compte au plus tard une heure après.
+
+Les porteurs viennent des compétences publiques du wiki
+(`data/wiki-competences.js`) : relancer l'extraction après une
+régénération du wiki. Un porteur marqué « nom absent de la description »
+n'est pas un effet caché : la description de la compétence le décrit
+souvent avec d'autres mots.

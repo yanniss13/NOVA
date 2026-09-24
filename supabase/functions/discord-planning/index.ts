@@ -13,6 +13,7 @@ type EdgeSharedGlobal = typeof globalThis & {
   NOVA_DISCORD_JARVIS_OUTILS?: unknown;
   NOVA_DISCORD_JARVIS_MONSTRES?: unknown;
   NOVA_DISCORD_JARVIS_STOCKAGE?: unknown;
+  NOVA_DISCORD_JARVIS_MECANIQUES?: unknown;
 };
 
 /* Le déploiement Supabase refuse le media type `.cjs`. Les modules partagés
@@ -48,6 +49,7 @@ await import("../_shared/planning-png.js");
    les outils de /jarvis. */
 await import("../_shared/discord-jarvis-stockage.js");
 await import("../_shared/discord-jarvis-monstres.js");
+await import("../_shared/discord-jarvis-mecaniques.js");
 await import("../_shared/discord-jarvis-outils.js");
 await import("../_shared/discord-jarvis.js");
 const availabilityPdfModule = edgeSharedGlobal.NOVA_AVAILABILITY_PDF;
@@ -270,6 +272,7 @@ const { NOVA_CONNAISSANCES_URL, creerOutilsJarvis } =
       catalogue: unknown;
       requete(chemin: string): Promise<unknown>;
       lireMonstres?(): Promise<unknown>;
+      lireMecaniques?(): Promise<unknown>;
     }): JarvisOutils;
   };
 const { creerLecteurStockageJarvis } =
@@ -287,6 +290,11 @@ const { CHEMIN_MONSTRES_JARVIS, validerCatalogueMonstres } =
   edgeSharedGlobal.NOVA_DISCORD_JARVIS_MONSTRES as {
     CHEMIN_MONSTRES_JARVIS: string;
     validerCatalogueMonstres(brut: unknown): string | null;
+  };
+const { CHEMIN_MECANIQUES_JARVIS, validerCatalogueMecaniques } =
+  edgeSharedGlobal.NOVA_DISCORD_JARVIS_MECANIQUES as {
+    CHEMIN_MECANIQUES_JARVIS: string;
+    validerCatalogueMecaniques(brut: unknown): string | null;
   };
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -884,6 +892,22 @@ function lireMonstresJarvis(config: PlanningConfig): Promise<unknown> {
   return lecteurMonstresJarvis();
 }
 
+/* Lot 2b : les effets et les regles, meme bucket prive, meme lecteur. */
+let lecteurMecaniquesJarvis: (() => Promise<unknown>) | null = null;
+function lireMecaniquesJarvis(config: PlanningConfig): Promise<unknown> {
+  if(!lecteurMecaniquesJarvis){
+    lecteurMecaniquesJarvis = creerLecteurStockageJarvis({
+      fetch,
+      url:config.supabaseUrl + "/storage/v1/object/" + CHEMIN_MECANIQUES_JARVIS,
+      cle:config.serviceRoleKey,
+      nom:"mecaniques",
+      valider:validerCatalogueMecaniques,
+      horloge:() => Date.now()
+    });
+  }
+  return lecteurMecaniquesJarvis();
+}
+
 async function publishJarvis(
   interaction: DiscordInteraction,
   config: PlanningConfig
@@ -911,7 +935,8 @@ async function publishJarvis(
     const outils = creerOutilsJarvis({
       catalogue,
       requete:chemin => supabaseJson<unknown>(config, chemin),
-      lireMonstres:() => lireMonstresJarvis(config)
+      lireMonstres:() => lireMonstresJarvis(config),
+      lireMecaniques:() => lireMecaniquesJarvis(config)
     });
     const resultat = await repondreQuestion({
       question:texte, outils, journal,
