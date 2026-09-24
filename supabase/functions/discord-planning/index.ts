@@ -14,6 +14,7 @@ type EdgeSharedGlobal = typeof globalThis & {
   NOVA_DISCORD_JARVIS_MONSTRES?: unknown;
   NOVA_DISCORD_JARVIS_STOCKAGE?: unknown;
   NOVA_DISCORD_JARVIS_MECANIQUES?: unknown;
+  NOVA_DISCORD_JARVIS_OBJETS?: unknown;
 };
 
 /* Le déploiement Supabase refuse le media type `.cjs`. Les modules partagés
@@ -50,6 +51,7 @@ await import("../_shared/planning-png.js");
 await import("../_shared/discord-jarvis-stockage.js");
 await import("../_shared/discord-jarvis-monstres.js");
 await import("../_shared/discord-jarvis-mecaniques.js");
+await import("../_shared/discord-jarvis-objets.js");
 await import("../_shared/discord-jarvis-outils.js");
 await import("../_shared/discord-jarvis.js");
 const availabilityPdfModule = edgeSharedGlobal.NOVA_AVAILABILITY_PDF;
@@ -274,6 +276,7 @@ const { NOVA_CONNAISSANCES_URL, creerOutilsJarvis } =
       requete(chemin: string): Promise<unknown>;
       lireMonstres?(): Promise<unknown>;
       lireMecaniques?(): Promise<unknown>;
+      lireObjets?(): Promise<unknown>;
     }): JarvisOutils;
   };
 const { creerLecteurStockageJarvis } =
@@ -296,6 +299,11 @@ const { CHEMIN_MECANIQUES_JARVIS, validerCatalogueMecaniques } =
   edgeSharedGlobal.NOVA_DISCORD_JARVIS_MECANIQUES as {
     CHEMIN_MECANIQUES_JARVIS: string;
     validerCatalogueMecaniques(brut: unknown): string | null;
+  };
+const { CHEMIN_OBJETS_JARVIS, validerCatalogueObjets } =
+  edgeSharedGlobal.NOVA_DISCORD_JARVIS_OBJETS as {
+    CHEMIN_OBJETS_JARVIS: string;
+    validerCatalogueObjets(brut: unknown): string | null;
   };
 
 function jsonResponse(body: unknown, status = 200): Response {
@@ -909,6 +917,22 @@ function lireMecaniquesJarvis(config: PlanningConfig): Promise<unknown> {
   return lecteurMecaniquesJarvis();
 }
 
+/* Lot 2c : les objets et les boutiques, meme bucket prive, meme lecteur. */
+let lecteurObjetsJarvis: (() => Promise<unknown>) | null = null;
+function lireObjetsJarvis(config: PlanningConfig): Promise<unknown> {
+  if(!lecteurObjetsJarvis){
+    lecteurObjetsJarvis = creerLecteurStockageJarvis({
+      fetch,
+      url:config.supabaseUrl + "/storage/v1/object/" + CHEMIN_OBJETS_JARVIS,
+      cle:config.serviceRoleKey,
+      nom:"objets",
+      valider:validerCatalogueObjets,
+      horloge:() => Date.now()
+    });
+  }
+  return lecteurObjetsJarvis();
+}
+
 /* Memoire courte de /jarvis (supabase/schema.sql, 8ter) : les 3 derniers
    echanges du membre, 30 minutes. Une panne ne bloque jamais la reponse :
    3 s au plus, puis J.A.R.V.I.S. repond sans contexte. */
@@ -979,7 +1003,8 @@ async function publishJarvis(
       catalogue,
       requete:chemin => supabaseJson<unknown>(config, chemin),
       lireMonstres:() => lireMonstresJarvis(config),
-      lireMecaniques:() => lireMecaniquesJarvis(config)
+      lireMecaniques:() => lireMecaniquesJarvis(config),
+      lireObjets:() => lireObjetsJarvis(config)
     });
     const historique = await lireMemoireJarvis(config, portee, journal);
     const resultat = await repondreQuestion({

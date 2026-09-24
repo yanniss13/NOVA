@@ -1367,10 +1367,15 @@ le SQL Editor afin d'ajouter les tables à la publication
   stratégies officielles des boss (`local_boss_strategy_…`) et les effets
   que posent leurs attaques (`outils/fabrication/effets-monstres-jarvis.js`),
   **sans cible** : la table ne dit pas qui les reçoit.
+  **Lot 2c (objets)** : `outils/fabrication/extraire-objets.js` écrit
+  `output/jarvis/objets.json` (bucket privé) ; outils `ou_trouver` et
+  `boutique` dans `_shared/discord-jarvis-objets.js`. Étape 1 : les
+  boutiques. Les butins puis les recettes ajoutent d'autres `type` de
+  source au même index d'objets.
   **Mémoire courte** : 3 échanges par membre, 30 minutes, dans
   `private.jarvis_memoire` (sans politique, `service_role` seul, via
   `jarvis_memoire_lire`/`jarvis_memoire_noter`) ; une panne ne bloque jamais
-  la réponse. Lots suivants prévus : 2c (boutiques et butins), 2d (contenu
+  la réponse. Lots suivants prévus : 2c (butins, recettes), 2d (contenu
   non sorti).
 - Après une modification de ce schéma, réexécuter le contenu complet de
   `supabase/schema.sql` dans le SQL Editor Supabase.

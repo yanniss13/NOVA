@@ -457,3 +457,29 @@ Les porteurs viennent des compétences publiques du wiki
 régénération du wiki. Un porteur marqué « nom absent de la description »
 n'est pas un effet caché : la description de la compétence le décrit
 souvent avec d'autres mots.
+
+### Objets et boutiques (lot 2c)
+
+Deux outils de plus : `ou_trouver` (« où trouver X ? » : les boutiques qui
+vendent un objet, son prix, ses limites d'achat) et `boutique` (les articles
+d'une boutique, son PNJ et sa région). Les butins et les recettes viendront
+s'ajouter au même index d'objets ; d'ici là, une source absente ne prouve
+pas qu'un objet est introuvable, et la consigne le dit au bot.
+
+```powershell
+$env:DONNEES_JEU = (Resolve-Path (Read-Host 'Dossier Content')).Path
+node outils/fabrication/extraire-objets.js
+```
+
+Puis déposer `output/jarvis/objets.json` dans Storage → `jarvis-prive` et
+redéployer `discord-planning` la première fois.
+
+La chaîne : `MerchantGoods` (articles) → boutique → `InteractionButtonTable`
+→ `InteractionTable` → `NPCActorTable` (PNJ) → tables d'apparition
+(`TagMainSector`, `TagSubSector`) pour la région. Une boutique prend le nom
+de sa région (« Boutique d'équipement — Liones ») ; sans région connue — les
+apparitions des chapitres 3 et 7 n'en portent pas — le nom de son PNJ
+(« Boutique d'équipement (Nigel) »). Les boutiques d'événement et celle de
+la confrérie s'ouvrent depuis un menu. La boutique itinérante tire ses
+articles au hasard. Un article dont l'objet ou la monnaie n'a pas de nom
+français est écarté, et une boutique vide est omise.

@@ -294,6 +294,10 @@ const edgeSource = fs.readFileSync(path.join(
 assert.match(edgeSource, /await import\("\.\.\/_shared\/discord-jarvis-mecaniques\.js"\)/);
 assert.match(edgeSource, /nom:"mecaniques",\s*valider:validerCatalogueMecaniques/);
 assert.match(edgeSource, /lireMecaniques:\(\) => lireMecaniquesJarvis\(config\)/);
+/* Lot 2c : les objets et boutiques, meme lecteur, meme bucket. */
+assert.match(edgeSource, /await import\("\.\.\/_shared\/discord-jarvis-objets\.js"\)/);
+assert.match(edgeSource, /nom:"objets",\s*valider:validerCatalogueObjets/);
+assert.match(edgeSource, /lireObjets:\(\) => lireObjetsJarvis\(config\)/);
 [
   /X-Signature-Ed25519/,
   /X-Signature-Timestamp/,

@@ -548,6 +548,11 @@ async function main() {
      se devine ni de son nom ni de sa nature. */
   assert.match(Q.CONSIGNE_JARVIS, /« effets » d'un monstre/);
   assert.match(Q.CONSIGNE_JARVIS, /ne dis jamais qui les reçoit/);
+  /* Les effets d'un boss se donnent avec leurs chiffres, pas en resume. */
+  assert.match(Q.CONSIGNE_JARVIS, /donne leurs valeurs, durées et conditions/);
+  /* Boutiques : le hasard de l'itinerante, et l'absence n'est pas une preuve. */
+  assert.match(Q.CONSIGNE_JARVIS, /boutique itinérante/);
+  assert.match(Q.CONSIGNE_JARVIS, /les butins ne sont pas encore couverts/);
   /* La date de l'export survit dans la ligne Sources, meme pour Akumu. */
   const sourceAkumu = "fiche monstre Akumu, bête démoniaque · données du jeu du 22/09/2026";
   assert.match(Q.messageJarvis("?", { texte:"ok", sources:[sourceAkumu] }),
