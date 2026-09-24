@@ -161,17 +161,19 @@ Règles d'extraction :
 ### Lecture — lecteur de stockage commun
 
 `creerLecteurMonstresJarvis` devient `creerLecteurStockageJarvis({ fetch,
-url, cle, chemin, valider, horloge, journaliser })`, dans son propre module
-`_shared/discord-jarvis-stockage.js`. Il garde tout le comportement du lot
+url, cle, nom, valider, horloge, journaliser })`, dans son propre module
+`_shared/discord-jarvis-stockage.js`. `url` est l'adresse complète du
+fichier ; `nom` (`"monstres"`, `"mecaniques"`) sert au journal ;
+`valider(brut)` rend `null` si le fichier est bon, sinon le motif du refus. Il garde tout le comportement du lot
 2a : cache 1 h après un succès, 1 min après un échec, délai de 5 s, lecture
 partagée entre questions simultanées, fichier refusé en entier si
-`valider` échoue, journal `stockage-<fichier>`. Les monstres l'appellent
-avec `CHEMIN_MONSTRES_JARVIS` et `catalogueMonstreValide` ; les mécaniques
+`valider` refuse, journal `stockage-<nom>`. Les monstres l'appellent
+avec `CHEMIN_MONSTRES_JARVIS` et `validerCatalogueMonstres` ; les mécaniques
 avec `CHEMIN_MECANIQUES_JARVIS = "jarvis-prive/mecaniques.json"` et
-`catalogueMecaniquesValide`. Un seul nom pour ce lecteur : l'ancien
+`validerCatalogueMecaniques`. Un seul nom pour ce lecteur : l'ancien
 disparaît partout, sans alias.
 
-`catalogueMecaniquesValide` exige `version === 1`, deux tableaux, et pour
+`validerCatalogueMecaniques` exige `version === 1`, deux tableaux, et pour
 chaque effet un `nom` non vide, une `nature` connue, des `variantes` en
 tableau ; pour chaque sujet un `sujet` non vide et des `pages` en tableau
 de chaînes.
@@ -179,23 +181,29 @@ de chaînes.
 ### Outils — `_shared/discord-jarvis-mecaniques.js`
 
 Déclarations ajoutées à celles de Gemini, comme `DECLARATIONS_OUTILS_MONSTRES`.
-Recherche sans casse ni accents, départage exact → début → contient.
+Recherche sans casse ni accents, départage exact → début → contient, par
+les fonctions du lot 2a rendues communes sous des noms neutres :
+`rangDeNomJarvis`, `dateLisibleJarvis`, `sourceDateeJarvis`, et
+`elementDeSaisieMonstre` pour les synonymes d'éléments.
 
 - `fiche_effet({ nom })` : l'effet trouvé, ses variantes (au plus 6) et leurs
   porteurs (au plus 10 par variante), plus `autresCorrespondances` (au plus
-  5 noms). Aucun résultat : `{ erreur: "aucun effet de ce nom" }`.
+  5 noms). Aucun résultat : `{ introuvable, proches }`, comme
+  `fiche_monstre`.
 - `chercher_effets({ texte, nature?, heros? })` : cherche `texte` dans le
   nom, la description et les libellés de stat, avec les synonymes
-  d'éléments du lot 2a (`SYNONYMES_ELEMENTS_MONSTRE`, exporté pour
-  l'occasion). `nature` filtre ; `heros` ne garde que les variantes posées
+  d'éléments du lot 2a (`elementDeSaisieMonstre`, exporté pour
+  l'occasion). Un texte vide est une erreur, jamais « tout ». `nature` filtre ; `heros` ne garde que les variantes posées
   par ce héros. Rend au plus 12 effets, chacun avec sa nature, sa
   description et ses porteurs résumés. Les effets qui ont un porteur
   passent devant.
-- `regle({ sujet })` : les sujets trouvés (au plus 3), pages bornées à
-  1 500 caractères par sujet. Aucun résultat : la liste de 20 sujets
-  proches par mot commun, sinon une erreur.
+- `regle({ sujet })` : les sujets trouvés, du plus proche au moins proche
+  (au plus 3, les suivants nommés dans `autresSujets`), pages bornées à
+  1 500 caractères par sujet. Aucun résultat : `{ introuvable, proches }`
+  avec au plus 20 sujets qui partagent un mot, sinon une erreur.
 
-Chaque réponse porte `source: "export du jeu du <dateExport>"`. Fichier
+Chaque réponse porte `donneesDu` (date de l'export), et sa ligne
+« Sources » la date, comme les monstres. Fichier
 indisponible : `{ erreur: "données des mécaniques indisponibles" }`, sans
 faire échouer la question.
 
@@ -231,8 +239,10 @@ Documentation : `docs/discord-planning.md` (section `/jarvis`), `AGENTS.md`
   l'ordre, un sujet sans page écarté.
 - `tests/discord-jarvis-mecaniques.test.js` : les trois outils, les bornes,
   les synonymes, le filtre `heros`, le fichier indisponible.
-- `tests/jarvis-stockage.test.js` : le lecteur commun, pour les deux
-  fichiers (cache, échec, délai, lecture partagée, validation).
+- `tests/discord-jarvis-stockage.test.js` : le lecteur commun (cache,
+  échec, délai, lecture partagée, journal, refus de `valider`), repris des
+  tests du lot 2a. `tests/jarvis-stockage.test.js` garde son rôle : le
+  bucket privé et le `.gitignore`.
 - `tests/discord-planning.test.js` et `tests/edge-modules.test.js` : le
   branchement.
 
