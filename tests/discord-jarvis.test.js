@@ -140,7 +140,10 @@ async function main() {
 
   /* Sequence reelle du 24/09/2026 : au 5e tour, malgre NONE, le modele rend
      un appel d'outil (functionCall+thoughtSignature, fin STOP) et aucun
-     texte. Un appel de rattrapage part alors SANS aucun outil declare. */
+     texte. Rejouer le meme historique sans outils a encore rendu une reponse
+     vide en production : le rattrapage doit repartir d'une demande autonome
+     qui contient la question et les donnees deja obtenues, sans l'historique
+     des appels de fonctions. */
   const ignoreNone = { candidates:[{ finishReason:"STOP", content:{ role:"model", parts:[
     { functionCall:{ name:"chercher_effets", args:{ texte:"défense" } }, thoughtSignature:"sig" }
   ] } }] };
@@ -156,14 +159,50 @@ async function main() {
   assert.equal(rattrape.corps[5].tools, undefined, "le rattrapage ne déclare aucun outil");
   assert.equal(rattrape.corps[5].toolConfig, undefined);
   assert.match(rattrape.corps[5].systemInstruction.parts[0].text, /Dernier tour/);
-  assert.equal(rattrape.corps[5].contents.length, rattrape.corps[4].contents.length,
-    "l'appel d'outil ignoré n'est pas renvoyé : il n'aurait pas de réponse");
+  assert.equal(rattrape.corps[5].contents.length, 1,
+    "le rattrapage ne rejoue pas l'historique des appels de fonctions");
+  assert.equal(rattrape.corps[5].contents[0].role, "user");
+  assert.equal(rattrape.corps[5].contents[0].parts.length, 1);
+  const demandeRattrapage = rattrape.corps[5].contents[0].parts[0].text;
+  assert.match(demandeRattrapage, /Question : \?/);
+  assert.match(demandeRattrapage, /personnage[^\n]*Meliodas/,
+    "les resultats deja rendus restent disponibles pour la synthese");
+  assert.equal(JSON.stringify(rattrape.corps[5].contents).includes("functionCall"), false);
+  assert.equal(JSON.stringify(rattrape.corps[5].contents).includes("functionResponse"), false);
   assert.deepEqual(journalRattrape.slice(-2).map(ligne => [ligne.tour, ligne.issue]),
     [[5, "vide"], ["rattrapage", "texte"]]);
 
-  const tetu = fauxGemini([1, 2, 3, 4, 5, 6].map(() => appel("fiche_personnage", {})));
+  /* Le secours vaut pour tout dernier tour vide, pas seulement pour l'appel
+     d'outil observe le 24/09 : un modele peut aussi depenser sa sortie en
+     pensee sans produire de texte. */
+  const penseeSansTexte = { candidates:[{ finishReason:"STOP", content:{ role:"model", parts:[
+    { text:"analyse interne", thought:true, thoughtSignature:"sig-pensee" }
+  ] } }] };
+  const rattrapePensee = fauxGemini([
+    appel("fiche_personnage", {}), appel("fiche_personnage", {}),
+    appel("fiche_personnage", {}), appel("fiche_personnage", {}),
+    penseeSansTexte, texte("Réponse synthétisée après la pensée.")
+  ]);
+  const r4c = await Q.repondreQuestion({ question:"?", outils:fauxOutils(),
+    appelerGemini:rattrapePensee.appeler, maintenant:MAINTENANT });
+  assert.equal(r4c.texte, "Réponse synthétisée après la pensée.");
+  assert.equal(rattrapePensee.corps.length, 6);
+  assert.equal(rattrapePensee.corps[5].contents.length, 1);
+  assert.equal(rattrapePensee.corps[5].tools, undefined);
+
+  const videAuRattrapage = { candidates:[{ finishReason:"STOP", content:{ role:"model", parts:[
+    { functionCall:{ name:"fiche_personnage", args:{} }, thoughtSignature:"sig-secours" }
+  ] } }] };
+  const tetu = fauxGemini([1, 2, 3, 4, 5].map(() => appel("fiche_personnage", {}))
+    .concat([videAuRattrapage]));
+  const journalTetu = [];
   await assert.rejects(Q.repondreQuestion({ question:"?", outils:fauxOutils(),
-    appelerGemini:tetu.appeler, maintenant:MAINTENANT }), erreur => erreur.code === "bloque");
+    appelerGemini:tetu.appeler, maintenant:MAINTENANT, journal:journalTetu, horloge:() => 0 }),
+    erreur => erreur.code === "bloque");
+  assert.deepEqual(journalTetu[journalTetu.length - 1], {
+    etape:"gemini", tour:"rattrapage", ms:0, issue:"vide", fin:"STOP",
+    parties:["functionCall+thoughtSignature"]
+  }, "un nouveau rattrapage vide garde assez de preuves pour le diagnostiquer");
   /* Un rattrapage refusé par Google ne fait pas pire que le message actuel. */
   const rattrapageRefuse = fauxGemini([1, 2, 3, 4, 5].map(() => appel("fiche_personnage", {}))
     .concat([Object.assign(new Error("400"), { code:"autre" })]));
