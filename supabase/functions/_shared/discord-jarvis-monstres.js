@@ -92,14 +92,20 @@ function elementsTriesMonstre(parElement, garder, sens) {
     .map(entree => entree.libelle + " " + signeMonstre(entree.valeur));
 }
 
+/* Une resistance de base negative garde son signe : l'Esprit du feu a
+   Feu −100 %, qu'un « Feu 100 % » ferait lire comme une immunite. */
+function resistanceSigneeMonstre(valeur) {
+  return (valeur < 0 ? "−" : "") + pourcentMonstre(valeur);
+}
+
 function resistanceDeBaseMonstre(resistances) {
   const valeurs = ELEMENTS_MONSTRES_JARVIS.map(([code]) => Number(resistances[code]) || 0);
   if(valeurs.every(valeur => valeur === valeurs[0])){
-    return valeurs[0] === 0 ? "aucune" : pourcentMonstre(valeurs[0]) + " sur tous les éléments";
+    return valeurs[0] === 0 ? "aucune" : resistanceSigneeMonstre(valeurs[0]) + " sur tous les éléments";
   }
   return ELEMENTS_MONSTRES_JARVIS
     .filter(([code]) => Number(resistances[code]))
-    .map(([code, libelle]) => libelle + " " + pourcentMonstre(resistances[code]))
+    .map(([code, libelle]) => libelle + " " + resistanceSigneeMonstre(Number(resistances[code])))
     .join(", ");
 }
 
@@ -161,7 +167,12 @@ function trouverMonstresJarvis(catalogue, saisie) {
       trouves.push(monstre);
     }
   });
-  return trouves;
+  /* A correspondance egale, l'ordre alphabetique rendait « Démon champignon »
+     pour « démon ». Un membre qui tape un nom vague pense d'abord aux boss :
+     boss, puis elite, puis normal, puis le nom le plus court. */
+  const poids = rang => ["normal", "elite", "boss"].indexOf(rang);
+  return trouves.sort((a, b) => poids(b.rang) - poids(a.rang)
+    || a.nom.length - b.nom.length || a.nom.localeCompare(b.nom, "fr"));
 }
 
 function typeDeContexteMonstre(saisie) {
@@ -197,6 +208,7 @@ async function outilFicheMonstre(lireMonstres, args) {
     donneesDu:dateLisibleMonstre(catalogue)
   };
   if(trouves.length > 1){
+    resultat.correspondances = trouves.length;
     resultat.autresCorrespondances = trouves.slice(1, 6).map(autre => autre.nom);
   }
 
@@ -245,7 +257,9 @@ async function outilFicheMonstre(lireMonstres, args) {
         .sort((a, b) => a.niveau - b.niveau);
       if(paliers.length > 1){
         resultat.paliers = bornes.bas + " à " + bornes.haut;
-        versions = horsPaliers.concat([paliers[0], paliers[paliers.length - 1]]);
+        /* Les paliers d'abord : Gemini lit la vraie version avant la version
+           non confirmee. */
+        versions = [paliers[0], paliers[paliers.length - 1]].concat(horsPaliers);
       }
     }
   }
@@ -283,6 +297,9 @@ async function outilChercherMonstres(lireMonstres, args) {
   const vus = new Set();
   const trouves = [];
   catalogue.monstres.forEach(monstre => {
+    /* « ??? » est un nom provisoire du jeu, sans une lettre : il reste
+       consultable par fiche_monstre, jamais recommande dans une liste. */
+    if(!/\p{L}/u.test(monstre.nom)) return;
     monstre.versions.forEach(version => {
       if(rang !== "tous" && version.rang !== rang) return;
       const valeur = Number(version.stats.faiblesses[element[0]]) || 0;
@@ -293,10 +310,16 @@ async function outilChercherMonstres(lireMonstres, args) {
       const cle = monstre.nom + "|" + valeur + "|" + contextes.join("|");
       if(vus.has(cle)) return;
       vus.add(cle);
-      trouves.push({ nom:monstre.nom, valeur, faiblesse:signeMonstre(valeur), contextes });
+      trouves.push({
+        nom:monstre.nom, valeur, faiblesse:signeMonstre(valeur), contextes,
+        confirme:version.contextes.length > 0
+      });
     });
   });
-  trouves.sort((a, b) => b.valeur - a.valeur || a.nom.localeCompare(b.nom, "fr"));
+  /* Les versions confirmees en jeu d'abord, meme moins faibles : un membre
+     cherche un monstre qu'il peut affronter. */
+  trouves.sort((a, b) => Number(b.confirme) - Number(a.confirme)
+    || b.valeur - a.valeur || a.nom.localeCompare(b.nom, "fr"));
   return {
     element:element[1],
     rang,
@@ -337,20 +360,29 @@ const DECLARATIONS_OUTILS_MONSTRES = [
   }
 ];
 
-function sourceDateeMonstre(debut, donnees) {
-  return debut + (donnees.donneesDu ? " · données du jeu du " + donnees.donneesDu : "");
+/* Le NOM est borne, jamais la date : c'est elle qui dit de quel export
+   viennent les chiffres. 40 caracteres de nom tiennent, avec la date, sous
+   la limite d'une source dans la ligne « Sources ». */
+function nomBorneMonstre(nom) {
+  const lettres = Array.from(String(nom));
+  return lettres.length > 40 ? lettres.slice(0, 39).join("").trimEnd() + "…" : lettres.join("");
+}
+
+function sourceDateeMonstre(debut, nom, donnees) {
+  return debut + nomBorneMonstre(nom)
+    + (donnees.donneesDu ? " · données du jeu du " + donnees.donneesDu : "");
 }
 
 function ajouterOutilsMonstresJarvis(table, lireMonstres) {
   table.fiche_monstre = {
     executer:args => outilFicheMonstre(lireMonstres, args),
     source:(args, donnees) =>
-      sourceDateeMonstre("fiche monstre " + (donnees.nom || args.nom || "?"), donnees)
+      sourceDateeMonstre("fiche monstre ", donnees.nom || args.nom || "?", donnees)
   };
   table.chercher_monstres = {
     executer:args => outilChercherMonstres(lireMonstres, args),
     source:(args, donnees) =>
-      sourceDateeMonstre("monstres faibles à " + (donnees.element || args.element || "?"), donnees)
+      sourceDateeMonstre("monstres faibles à ", donnees.element || args.element || "?", donnees)
   };
 }
 

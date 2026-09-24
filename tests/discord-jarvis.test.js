@@ -307,6 +307,12 @@ async function main() {
   assert.match(index, /lireMonstres:/);
   assert.match(Q.CONSIGNE_JARVIS, /valeurs de base/);
   assert.match(Q.CONSIGNE_JARVIS, /monstres/);
+  /* Un nom vague : Gemini dit quel monstre il a retenu et cite les autres. */
+  assert.match(Q.CONSIGNE_JARVIS, /autresCorrespondances/);
+  /* La date de l'export survit dans la ligne Sources, meme pour Akumu. */
+  const sourceAkumu = "fiche monstre Akumu, bête démoniaque · données du jeu du 22/09/2026";
+  assert.match(Q.messageJarvis("?", { texte:"ok", sources:[sourceAkumu] }),
+    /Sources : fiche monstre Akumu, bête démoniaque · données du jeu du 22\/09\/2026 ·/);
 
   console.log("OK discord-jarvis");
 }

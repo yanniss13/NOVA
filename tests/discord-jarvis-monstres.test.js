@@ -125,16 +125,18 @@ async function main() {
   assert.deepEqual(akumu12.donnees.niveauxDisponibles, [1, 30]);
 
   /* L'export reel a un second acteur « Akumu » hors paliers, sans contexte.
-     Sans niveau demande, on garde les versions hors paliers ET le premier
-     et le dernier palier : jamais la version hors paliers a la place du 1. */
+     Sans niveau demande, on garde le premier et le dernier palier ET les
+     versions hors paliers : jamais une version hors paliers a la place du 1. */
   const akumuMixte = outils({ version:1, dateExport:"2026-09-24", monstres:[{
     nom:"Akumu, bête démoniaque", rang:"boss",
     versions:[Object.assign({}, CATALOGUE.monstres[2].versions[0], { rang:"boss", acteurs:["51300084"] }),
       ...CATALOGUE.monstres[0].versions]
   }] });
   const mixte = await akumuMixte.executer("fiche_monstre", { nom:"akumu" });
-  assert.deepEqual(mixte.donnees.versions.map(v => v.niveau), [undefined, 1, 30]);
-  assert.equal(mixte.donnees.versions[0].nonConfirme, true);
+  /* Les paliers d'abord : Gemini lit la vraie version avant la version non
+     confirmee (relecture finale, point 6). */
+  assert.deepEqual(mixte.donnees.versions.map(v => v.niveau), [1, 30, undefined]);
+  assert.equal(mixte.donnees.versions[2].nonConfirme, true);
   assert.equal(mixte.donnees.paliers, "1 à 30");
   const mixte30 = await akumuMixte.executer("fiche_monstre", { nom:"akumu", niveau:30 });
   assert.deepEqual(mixte30.donnees.versions.map(v => v.niveau), [30],
@@ -150,14 +152,42 @@ async function main() {
   assert.equal(inconnu.donnees.introuvable, "Démon roux");
   assert.ok(inconnu.donnees.proches.includes("Démon rouge"));
 
-  /* Nom trop vague : la meilleure correspondance, et les autres nommées. */
+  /* Nom trop vague : a correspondance egale, le boss passe devant le monstre
+     normal (l'ordre alphabetique rendait « Démon champignon »), puis le nom
+     le plus court. Les autres sont nommes ET comptes. */
   const vague = outils({ version:1, dateExport:"2026-09-24", monstres:[
+    { nom:"Démon champignon", rang:"normal", versions:CATALOGUE.monstres[2].versions },
     { nom:"Démon gris", rang:"boss", versions:CATALOGUE.monstres[1].versions.slice(0, 1) },
     CATALOGUE.monstres[1]
   ] });
   const demon = await vague.executer("fiche_monstre", { nom:"démon" });
   assert.equal(demon.donnees.nom, "Démon gris");
-  assert.deepEqual(demon.donnees.autresCorrespondances, ["Démon rouge"]);
+  assert.deepEqual(demon.donnees.autresCorrespondances, ["Démon rouge", "Démon champignon"]);
+  assert.equal(demon.donnees.correspondances, 3);
+
+  /* La source garde toujours sa date : « Akumu, bête démoniaque » la coupait. */
+  assert.equal(akumu.source, "fiche monstre Akumu, bête démoniaque · données du jeu du 24/09/2026");
+  const nomTresLong = "Shakeera, la reine araignée arrogante et démesurément longue";
+  const longue = outils({ version:1, dateExport:"2026-09-24", monstres:[
+    { nom:nomTresLong, rang:"boss", versions:CATALOGUE.monstres[1].versions.slice(0, 1) }] });
+  const sourceLongue = (await longue.executer("fiche_monstre", { nom:"shakeera" })).source;
+  assert.match(sourceLongue, /^fiche monstre Shakeera.*… · données du jeu du 24\/09\/2026$/,
+    "le nom est coupé, la date jamais");
+  assert.ok(Array.from(sourceLongue).length <= 90, "une source tient dans la ligne Sources");
+
+  /* Une resistance de base negative garde son signe : l'Esprit du feu a
+     Feu −100 %, pas « Feu 100 % », qu'un membre lirait comme une immunite. */
+  const base = CATALOGUE.monstres[1].versions[0];
+  const avecResistances = (nom, resistances) => outils({ version:1, dateExport:"2026-09-24",
+    monstres:[{ nom, rang:"normal", versions:[Object.assign({}, base, {
+      stats:Object.assign({}, base.stats, { resistances }) })] }] });
+  const esprit = await avecResistances("Esprit du feu", { Default:1000, Thunder:1000, Wind:1000,
+    Fire:-10000, Ice:1000, Earth:1000, Dark:1000, Holy:1000 }).executer("fiche_monstre", { nom:"esprit" });
+  assert.equal(esprit.donnees.versions[0].resistanceElementaireBase,
+    "Physique 10 %, Foudre 10 %, Vent 10 %, Feu −100 %, Glace 10 %, Terre 10 %, Ténèbres 10 %, Sacré 10 %");
+  const affaibli = await avecResistances("Golem affaibli", { Default:-1000, Thunder:-1000, Wind:-1000,
+    Fire:-1000, Ice:-1000, Earth:-1000, Dark:-1000, Holy:-1000 }).executer("fiche_monstre", { nom:"golem" });
+  assert.equal(affaibli.donnees.versions[0].resistanceElementaireBase, "−10 % sur tous les éléments");
 
   /* Plafond : 5 versions, le total, et le rappel du filtre. */
   const nombreuses = outils({ version:1, dateExport:"2026-09-24", monstres:[{
@@ -181,6 +211,20 @@ async function main() {
   ]);
   assert.match(sacre.donnees.monstres[2].contextes[0], /^Donjon :/);
   assert.equal(sacre.source, "monstres faibles à Sacré · données du jeu du 24/09/2026");
+  /* Les versions confirmees en jeu passent devant celles sans contexte, meme
+     plus faibles ; un nom sans aucune lettre (« ??? », nom provisoire du jeu)
+     n'est jamais recommande — il reste consultable par fiche_monstre. */
+  const sansContexte = (nom, faiblesse) => ({ nom, rang:"boss", versions:[Object.assign({},
+    CATALOGUE.monstres[2].versions[0], { rang:"boss", stats:Object.assign({},
+      CATALOGUE.monstres[2].versions[0].stats, { faiblesses:Object.assign({},
+        CATALOGUE.monstres[2].versions[0].stats.faiblesses, { Holy:faiblesse }) }) })] });
+  const bruit = outils({ version:1, dateExport:"2026-09-24", monstres:[
+    sansContexte("???", 5000), sansContexte("Bête inconnue", 4000), CATALOGUE.monstres[1]] });
+  const tri = await bruit.executer("chercher_monstres", { element:"sacré" });
+  assert.deepEqual(tri.donnees.monstres.map(m => m.nom + " " + m.faiblesse),
+    ["Démon rouge +30 %", "Démon rouge +20 %", "Démon rouge +20 %", "Bête inconnue +40 %"]);
+  assert.equal(tri.donnees.total, 4);
+
   const anglais = await o.executer("chercher_monstres", { element:"Holy" });
   assert.equal(anglais.donnees.element, "Sacré", "le code anglais du jeu est compris");
   const foudre = await o.executer("chercher_monstres", { element:"foudre", rang:"tous" });
