@@ -20,7 +20,8 @@ Critères de réussite :
 - `chercher_effets("défense", nature:"malus")` liste Éclaboussures parmi les
   réductions de défense, avec leurs porteurs ;
 - `regle("Déluge")` rend les pages officielles du journal des tutoriels sur
-  le Déluge, dont « Déluge élémentaire - Feu ».
+  le Déluge, dont « Déluge élémentaire - Feu » ;
+- `regle("Meliodas")` trouve les fiches d'aide de Meliodas par arme.
 
 Hors lot : les effets posés **par les boss** (aucune table ne relie un
 monstre à ses compétences — voir « Suite ») et les passifs d'armes,
@@ -65,11 +66,18 @@ Tous vérifiés en lisant l'export, aucun supposé :
   libellé (`court`, sinon `fr`). 27 codes posés par des effets n'ont pas de
   libellé, dont les familles `<Élément>_Weakness_Rate` et
   `<Élément>_Element_Res_Rate`, en dix-millièmes (établi au lot 2a).
-- Règles : le journal des tutoriels compte **141 sujets**
-  (`local_tutorial_log_subtitle_<sujet>`), chacun avec ses pages
-  `local_tutorial_log_pagedesc_<sujet>NN`. S'y ajoutent les fenêtres
-  `local_ui_popuptutorial_*` (titre `…_title`, textes) et les astuces
-  `ui_loadingtip_desc_*`.
+- Règles : deux tables les structurent ; inutile de deviner d'après les
+  noms de clés (141 clés de sous-titre, dont 68 sans page à leur nom).
+  `Table/TutorialLogGroupTable.json` : **128 sujets** du journal des
+  tutoriels (`Local_Key` = titre), tous avec des pages.
+  `Table/TutorialLogTable.json` : **211 pages** (`Group_Tid`, `List_Sort`,
+  texte `Pc_Desc_Local` ; `Pad_…` et `Mobile_…` sont les mêmes pages pour
+  d'autres commandes). `Table/GuidePopup/GuidePopupGroupTable.json` :
+  **107 fenêtres d'aide** (`Title_Local`, `Group_Value` →
+  `GuidePopupTable.json`, textes `Pc_Desc_Local[]`), dont une par héros et
+  par arme (« Meliodas (épée longue) »). Les textes contiennent des
+  marqueurs de touche `{Inputkey_…}`. S'y ajoutent les astuces
+  `ui_loadingtip_desc_NN`.
 
 ## Architecture
 
@@ -89,7 +97,8 @@ Edge Function ──► lecteur de stockage commun (cache, délai, validation)
 `construireCatalogueMecaniques(entree)` est pur : `entree` porte les tables
 déjà lues (`buffs`, `comportements`, `textes`, `competences` du wiki,
 `personnages` de `data/connaissances-discord.json`, `libelles`, `unites`,
-`genereLe`, `dateExport`).
+`journal` et `pagesJournal`, `guides` et `pagesGuides`, `genereLe`,
+`dateExport`).
 `extraire-mecaniques.js` lit `DONNEES_JEU` et les fichiers du dépôt, puis
 écrit le JSON. Aucun chemin personnel dans le dépôt.
 
@@ -151,11 +160,13 @@ Règles d'extraction :
   compétence, comparé sans casse ni accents.
 - Un effet nommé sans aucun porteur reste dans le glossaire : il répond à
   « c'est quoi Gel ? ».
-- **Règles** : un sujet par `local_tutorial_log_subtitle_<s>`, pages
-  `local_tutorial_log_pagedesc_<s>NN` dans l'ordre numérique, balises
-  retirées ; un sujet sans page est écarté. Les fenêtres
-  `local_ui_popuptutorial_*` forment des sujets à part (titre + textes), et
-  les astuces de chargement un sujet « Astuces de chargement ».
+- **Règles** : un sujet par groupe de `TutorialLogGroupTable` (pages de
+  `TutorialLogTable` du même `Group_Tid`, triées par `List_Sort`, texte PC)
+  et par groupe de `GuidePopupGroupTable` (pages dans l'ordre de
+  `Group_Value`). Deux sujets de même titre fusionnent, une page identique
+  gardée une fois. Balises retirées, `{Inputkey_…}` remplacé par
+  « (touche) ». Un sujet sans titre ou sans page est écarté. Les astuces
+  `ui_loadingtip_desc_NN` forment le sujet « Astuces de chargement ».
 - Tri : effets et sujets par nom, `localeCompare("fr")`.
 
 ### Lecture — lecteur de stockage commun
