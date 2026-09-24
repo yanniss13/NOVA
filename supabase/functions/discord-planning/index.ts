@@ -9,6 +9,8 @@ type EdgeSharedGlobal = typeof globalThis & {
   NOVA_BOSS_REMINDER?: unknown;
   NOVA_DISCORD_BUILD?: unknown;
   NOVA_DISCORD_BUILD_PNG?: unknown;
+  NOVA_DISCORD_JARVIS?: unknown;
+  NOVA_DISCORD_JARVIS_OUTILS?: unknown;
 };
 
 /* Le déploiement Supabase refuse le media type `.cjs`. Les modules partagés
@@ -38,6 +40,10 @@ await import("../_shared/carte-font.js");
 await import("../_shared/carte-ornements.js");
 await import("../_shared/discord-build-png.js");
 await import("../_shared/planning-png.js");
+/* /jarvis : les outils d'abord, dont la boucle ne depend pas au chargement,
+   mais qui lisent eux-memes quatre modules deja importes ci-dessus. */
+await import("../_shared/discord-jarvis-outils.js");
+await import("../_shared/discord-jarvis.js");
 const availabilityPdfModule = edgeSharedGlobal.NOVA_AVAILABILITY_PDF;
 const planningHelpersModule = edgeSharedGlobal.NOVA_DISCORD_PLANNING;
 const bossReminderModule = edgeSharedGlobal.NOVA_BOSS_REMINDER;
@@ -64,7 +70,8 @@ type DiscordInteraction = {
       focused?: boolean;
     }[];
   };
-  member?: { roles?: string[]; permissions?: string };
+  member?: { roles?: string[]; permissions?: string; user?: { id?: string } };
+  user?: { id?: string };
 };
 
 type PlanningConfig = {
@@ -207,6 +214,47 @@ const {
   diagnostiquerChargement(carte: unknown): Promise<Record<string, unknown>>;
 };
 
+/* /jarvis : la boucle, les messages et les outils vivent dans les modules
+   partages ; l'Edge Function ne fait que lire, appeler Gemini et publier. */
+type JarvisOutils = {
+  declarations: unknown[];
+  executer(nom: string, args: unknown): Promise<{ donnees: unknown; source: string | null }>;
+};
+type JarvisResultat = {
+  texte: string; sources: string[]; tours: number; outils: string[]; usage: unknown;
+};
+const {
+  reponseDiffereeJarvis,
+  lireOptionsJarvis,
+  validerQuestion,
+  porteeJarvis,
+  erreurJarvis,
+  repondreQuestion,
+  messageJarvis,
+  messageErreurJarvis
+} = edgeSharedGlobal.NOVA_DISCORD_JARVIS as {
+  reponseDiffereeJarvis(interaction: DiscordInteraction): unknown;
+  lireOptionsJarvis(interaction: DiscordInteraction): { texte: string; prive: boolean };
+  validerQuestion(texte: string): string;
+  porteeJarvis(interaction: DiscordInteraction, guildId: string): string;
+  erreurJarvis(code: string): Error;
+  repondreQuestion(options: {
+    question: string;
+    outils: JarvisOutils;
+    appelerGemini(corps: unknown): Promise<unknown>;
+  }): Promise<JarvisResultat>;
+  messageJarvis(question: string, resultat: JarvisResultat): string;
+  messageErreurJarvis(code: string): string;
+};
+const { NOVA_CONNAISSANCES_URL, creerOutilsJarvis } =
+  edgeSharedGlobal.NOVA_DISCORD_JARVIS_OUTILS as {
+    NOVA_CONNAISSANCES_URL: string;
+    creerOutilsJarvis(options: {
+      catalogue: unknown;
+      requete(chemin: string): Promise<unknown>;
+    }): JarvisOutils;
+  };
+
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), {
     status,
@@ -218,7 +266,7 @@ function environment(): PlanningConfig {
   return {
     publicKey:Deno.env.get("DISCORD_PUBLIC_KEY") || "",
     guildId:Deno.env.get("DISCORD_GUILD_ID") || "",
-    /* UNE SEULE LISTE pour les quatre commandes. Limiter une commande à un
+    /* UNE SEULE LISTE pour les cinq commandes. Limiter une commande à un
        salon précis se règle dans Discord même (Paramètres du serveur →
        Intégrations), et ce réglage-là la retire du menu « / » du salon — ce
        qu'un refus côté serveur ne saura jamais faire. */
@@ -280,6 +328,20 @@ async function supabaseJson<T>(
   return await response.json() as T;
 }
 
+async function claimScope(
+  config: PlanningConfig,
+  scope: string,
+  cooldownSeconds: number
+): Promise<boolean> {
+  return await supabaseJson<boolean>(config, "rpc/claim_discord_planning_request", {
+    method:"POST",
+    body:JSON.stringify({
+      p_scope:scope,
+      p_cooldown_seconds:cooldownSeconds
+    })
+  });
+}
+
 /* Chaque salon garde son propre délai, et chaque commande le sien : une demande
    dans un salon n'empêche ni les autres salons de répondre, ni `/run` de
    s'exécuter pendant qu'un planning se génère. */
@@ -294,13 +356,7 @@ async function claimGeneration(
      d'être publié dans le même salon. */
   const scope = config.guildId + ":" + (interaction.channel_id || "")
     + (commandName === "planning" ? "" : ":" + commandName);
-  return await supabaseJson<boolean>(config, "rpc/claim_discord_planning_request", {
-    method:"POST",
-    body:JSON.stringify({
-      p_scope:scope,
-      p_cooldown_seconds:cooldownSeconds
-    })
-  });
+  return await claimScope(config, scope, cooldownSeconds);
 }
 
 async function editOriginalText(
@@ -743,6 +799,122 @@ const RAFALE_TEMOIN = [
   "7ds-bijoux/Collier/Collier du souverain cupide.webp"
 ];
 
+/* ------------------------------------------------------------------ */
+/* /jarvis — Gemini, palier gratuit uniquement                       */
+
+/* Une cle et un modele PROPRES au bot. Les secrets Supabase sont communs a
+   tout le projet : `GEMINI_API_KEY` et `GEMINI_MODEL` reglent deja
+   `lecture-panneau`, et le quota gratuit se compte par projet Google. Une cle
+   issue d'un second projet evite qu'un soir de questions bloque l'import de
+   captures. Le projet Google ne doit avoir AUCUN compte de facturation : un
+   depassement rend alors un 429, jamais une facture. */
+const GEMINI_JARVIS_CLE = Deno.env.get("GEMINI_JARVIS_API_KEY") || "";
+/* Un alias et non un nom fige : `gemini-2.5-flash` a disparu pour les cles
+   recentes le 25 aout 2026, et un nom fige refera cette panne. */
+const GEMINI_JARVIS_MODELE = Deno.env.get("GEMINI_JARVIS_MODEL")
+  || "gemini-flash-lite-latest";
+const GEMINI_JARVIS_RACINE = "https://generativelanguage.googleapis.com/v1beta/models/";
+/* Seules la saturation et l'injoignabilite se rejouent. Rejouer un 429
+   aggraverait un quota deja depasse. */
+const GEMINI_JARVIS_SATURATION = new Set([500, 502, 503, 504]);
+const GEMINI_JARVIS_REPRISES = [700, 1800];
+
+async function appelerGeminiJarvis(corps: unknown): Promise<unknown> {
+  if(!GEMINI_JARVIS_CLE) throw erreurJarvis("config");
+  const texte = JSON.stringify(corps);
+  for(let essai = 0; essai <= GEMINI_JARVIS_REPRISES.length; essai++){
+    if(essai > 0){
+      await new Promise(suite => setTimeout(suite, GEMINI_JARVIS_REPRISES[essai - 1]));
+    }
+    let reponse: Response;
+    try {
+      reponse = await fetch(
+        GEMINI_JARVIS_RACINE + encodeURIComponent(GEMINI_JARVIS_MODELE) + ":generateContent",
+        {
+          method:"POST",
+          /* La cle en en-tete, jamais dans l'URL : une URL finit dans les
+             journaux. */
+          headers:{ "Content-Type":"application/json", "x-goog-api-key":GEMINI_JARVIS_CLE },
+          body:texte,
+          signal:AbortSignal.timeout(30_000)
+        }
+      );
+    } catch (erreur) {
+      if(erreur instanceof DOMException && erreur.name === "TimeoutError"){
+        throw erreurJarvis("delai");
+      }
+      if(essai < GEMINI_JARVIS_REPRISES.length) continue;
+      throw erreurJarvis("sature");
+    }
+    if(reponse.ok) return await reponse.json();
+    const detail = (await reponse.text()).slice(0, 500);
+    if(reponse.status === 429){
+      console.warn("Gemini /jarvis : quota gratuit atteint", detail);
+      throw erreurJarvis("quota");
+    }
+    if(GEMINI_JARVIS_SATURATION.has(reponse.status)){
+      if(essai < GEMINI_JARVIS_REPRISES.length) continue;
+      throw erreurJarvis("sature");
+    }
+    console.error("Gemini /jarvis -> " + reponse.status, detail);
+    throw erreurJarvis("autre");
+  }
+  throw erreurJarvis("sature");
+}
+
+/* Le catalogue ne change qu'a un deploiement du site : lu une fois par
+   instance, comme `libelles-discord.json` pour /build. */
+let connaissancesCache: unknown = null;
+async function lireConnaissances(): Promise<unknown> {
+  if(connaissancesCache) return connaissancesCache;
+  const reponse = await fetch(NOVA_CONNAISSANCES_URL, { headers:{ Accept:"application/json" } });
+  if(!reponse.ok) throw new Error("Connaissances -> " + reponse.status);
+  connaissancesCache = await reponse.json();
+  return connaissancesCache;
+}
+
+async function publishJarvis(
+  interaction: DiscordInteraction,
+  config: PlanningConfig
+): Promise<void> {
+  try {
+    const { texte } = lireOptionsJarvis(interaction);
+    const invalide = validerQuestion(texte);
+    if(invalide){
+      await editOriginalText(interaction, "❌ " + invalide);
+      return;
+    }
+    if(!GEMINI_JARVIS_CLE) throw erreurJarvis("config");
+    const portee = porteeJarvis(interaction, config.guildId);
+    if(!portee) throw erreurJarvis("autre");
+    if(!await claimScope(config, portee, 20)){
+      await editOriginalText(interaction, messageErreurJarvis("delaiMembre"));
+      return;
+    }
+    const outils = creerOutilsJarvis({
+      catalogue:await lireConnaissances(),
+      requete:chemin => supabaseJson<unknown>(config, chemin)
+    });
+    const resultat = await repondreQuestion({
+      question:texte, outils, appelerGemini:appelerGeminiJarvis
+    });
+    /* Ce qu'il faut pour surveiller le quota ; jamais le texte de la reponse. */
+    console.log(JSON.stringify({
+      question:{ tours:resultat.tours, outils:resultat.outils, usage:resultat.usage }
+    }));
+    await editOriginalText(interaction, messageJarvis(texte, resultat));
+  } catch (error) {
+    const code = error && typeof error === "object" && "code" in error
+      ? String((error as { code: unknown }).code) : "autre";
+    if(code === "autre") console.error("Échec de /jarvis", error);
+    try {
+      await editOriginalText(interaction, messageErreurJarvis(code));
+    } catch (editError) {
+      console.error("Impossible de publier l'erreur Discord", editError);
+    }
+  }
+}
+
 Deno.serve(async request => {
   /* UNE SONDE, ET RIEN D'AUTRE, EN GET. Quand une carte sort avec des cadres
      vides, l'image ne dit pas pourquoi et les journaux ne sont lisibles que
@@ -791,7 +963,7 @@ Deno.serve(async request => {
   }
 
   if(interaction.type === 1) return jsonResponse({ type:1 });
-  /* Discord n'accepte qu'UN endpoint d'interactions par application : les quatre
+  /* Discord n'accepte qu'UN endpoint d'interactions par application : les cinq
      commandes arrivent forcément ici, et c'est le nom qui les sépare. */
   const commandName = interaction.data?.name || "";
 
@@ -823,7 +995,8 @@ Deno.serve(async request => {
     planning:generateAndPublishPlanning,
     chrono:publishChronoProgress,
     run:publishBossRunReminder,
-    build:publishCharacterBuild
+    build:publishCharacterBuild,
+    jarvis:publishJarvis
   };
   /* `hasOwnProperty` et non un accès direct : sans lui, un nom comme
      « constructor » remonterait une fonction héritée d'Object.prototype et
@@ -852,5 +1025,9 @@ Deno.serve(async request => {
      différée (type 5) crée le message d'attente ; le contenu remplace ensuite ce
      message dans la tâche de fond gardée en vie par Supabase. */
   EdgeRuntime.waitUntil(tache(interaction, config));
-  return jsonResponse({ type:5 });
+  /* /jarvis peut etre privee : le caractere ephemere se fixe ICI, a la
+     premiere reponse, et la reponse finale en herite. */
+  return jsonResponse(commandName === "jarvis"
+    ? reponseDiffereeJarvis(interaction)
+    : { type:5 });
 });

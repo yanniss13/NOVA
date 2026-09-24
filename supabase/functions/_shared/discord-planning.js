@@ -55,12 +55,24 @@ function buildCommandDefinitionOrNull() {
   return buildModule ? buildModule.buildCommandDefinition() : null;
 }
 
+/* Meme lecture paresseuse que /build : l'ordre des imports de l'Edge
+   Function n'a pas d'importance. */
+function jarvisCommandDefinitionOrNull() {
+  if(typeof module !== "undefined" && module.exports
+    && !globalThis.NOVA_DISCORD_JARVIS){
+    require("./discord-jarvis.js");
+  }
+  const jarvisModule = globalThis.NOVA_DISCORD_JARVIS;
+  return jarvisModule ? jarvisModule.jarvisCommandDefinition() : null;
+}
+
 function commandDefinitions() {
   return [
     planningCommandDefinition(),
     chronoCommandDefinition(),
     runCommandDefinition(),
-    buildCommandDefinitionOrNull()
+    buildCommandDefinitionOrNull(),
+    jarvisCommandDefinitionOrNull()
   ].filter(Boolean);
 }
 

@@ -157,7 +157,7 @@ assert.deepStrictEqual(helpers.chronoCommandDefinition(), {
 assert.ok(helpers.chronoCommandDefinition().description.length <= 100);
 assert.deepStrictEqual(
   helpers.commandDefinitions().map(commande => commande.name),
-  ["planning", "chrono", "run", "build"]
+  ["planning", "chrono", "run", "build", "jarvis"]
 );
 
 const avancementExemple = {
@@ -306,7 +306,9 @@ const edgeSource = fs.readFileSync(path.join(
   /chronoInteractionComponents\(\)/,
   /boss-reminder\.js/,
   /reminderMessage\(bossWeekLabel\(weekStart\), missingMembers\)/,
-  /return jsonResponse\(\{ type:5 \}\)/,
+  /* Reponse differee pour toutes les commandes ; seule /jarvis peut la rendre
+     privee, et ce choix se fait a cet instant. */
+  /return jsonResponse\(commandName === "jarvis"\s*\? reponseDiffereeJarvis\(interaction\)\s*: \{ type:5 \}\)/,
   /rpc\/claim_discord_planning_request/,
   /parseIdList\(Deno\.env\.get\("DISCORD_PLANNING_CHANNEL_ID"\)\)/,
   /config\.guildId \+ ":" \+ \(interaction\.channel_id/,
@@ -361,13 +363,13 @@ async function testRegistrationCreatesWithoutReplacing() {
     request, applicationId:"app", guildId:"guild", token:"secret"
   });
   assert.equal(result.action, "created");
-  /* Une seule lecture, puis un POST par commande : les quatre commandes
+  /* Une seule lecture, puis un POST par commande : les cinq commandes
      partagent l'unique endpoint d'interactions de l'application. */
   assert.deepStrictEqual(
-    calls.map(call => call.init.method), ["GET", "POST", "POST", "POST", "POST"]
+    calls.map(call => call.init.method), ["GET", "POST", "POST", "POST", "POST", "POST"]
   );
   assert.deepStrictEqual(
-    result.commands.map(commande => commande.name), ["planning", "chrono", "run", "build"]
+    result.commands.map(commande => commande.name), ["planning", "chrono", "run", "build", "jarvis"]
   );
   assert.doesNotMatch(calls[1].url, /\/commands\//);
   assert.equal(calls[1].init.headers.Authorization, "Bot secret");
@@ -424,17 +426,17 @@ async function testRegistrationUpdatesExisting() {
   const result = await registerPlanningCommand({
     request, applicationId:"app", guildId:"guild", token:"secret"
   });
-  /* /planning existe déjà, /chrono, /run et /build non : la première est corrigée sur
-     place, les trois autres sont créées, et la commande « autre » d'une autre
+  /* /planning existe déjà, /chrono, /run, /build et /jarvis non : la première est corrigée sur
+     place, les quatre autres sont créées, et la commande « autre » d'une autre
      application du serveur n'est jamais touchée. */
   assert.equal(result.action, "updated");
   assert.deepStrictEqual(
-    calls.map(call => call.init.method), ["GET", "PATCH", "POST", "POST", "POST"]
+    calls.map(call => call.init.method), ["GET", "PATCH", "POST", "POST", "POST", "POST"]
   );
   assert.match(calls[1].url, /\/commands\/planning-id$/);
   assert.doesNotMatch(calls[2].url, /\/commands\//);
   assert.deepStrictEqual(
-    result.commands.map(commande => commande.action), ["updated", "created", "created", "created"]
+    result.commands.map(commande => commande.action), ["updated", "created", "created", "created", "created"]
   );
   assert.equal(calls.some(call => call.init.method === "PUT"), false,
     "PUT remplacerait toutes les commandes de l'application");
