@@ -332,4 +332,4 @@ function resumeControleValeurs(catalogue) {
     + " ; désaccords texte/table : " + controle.desaccords + ".";
 }
 
-module.exports = { construireCatalogueMecaniques, resumeControleValeurs };
+module.exports = { construireCatalogueMecaniques, resumeControleValeurs, texteAfficheDuBuff, nettoyerMecanique };

@@ -407,6 +407,18 @@ la clé du nom du monstre ; quand il en couvre plusieurs (« baba_boss » :
 Durak, Durak 「corrompu」, Jorn le Costaud), seuls ceux du rang le plus élevé
 les reçoivent.
 
+Elle rend enfin les **effets que posent ses attaques** (« Augmentation de
+l'attaque : Attaque +20 % (600 s, jusqu'à 5 cumuls, à la mort d'un
+joueur) »), lus dans `Mon_SkillTable` → `Mon_SkillBehaviorTable` →
+`BuffTable`, plus ses effets d'apparition (`Spawning_Buff_List`). Un
+acteur sans compétence à son numéro emprunte celles de l'**unique** autre
+acteur de son groupe d'animations : le boss de confrérie Akumu (`50700109`)
+utilise celles de `51300084`. S'il y a plusieurs candidats, rien n'est
+rattaché. **Aucune cible n'est donnée** : la table dit « ennemi » sur une
+« Réduction de l'attaque » qu'Akumu reçoit lui-même, et la consigne interdit
+au bot de dire qui reçoit l'effet. Une condition inconnue (autre que « à la
+mort d'un joueur ») ou un nombre de cumuls négatif écarte l'effet.
+
 ### Mémoire courte
 
 J.A.R.V.I.S. se souvient des **3 derniers échanges** de chaque membre pendant

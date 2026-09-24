@@ -7,7 +7,8 @@
    Supabase (Storage). Ce fichier n'entre jamais dans le depot : .gitignore
    l'en empeche.
 
-   La logique vit dans monstres-jarvis.js, testee en CI sans l'export.
+   La logique vit dans monstres-jarvis.js et effets-monstres-jarvis.js,
+   testees en CI sans l'export.
 
      $env:DONNEES_JEU = (Resolve-Path (Read-Host 'Dossier Content')).Path
      node outils/fabrication/extraire-monstres.js
@@ -16,6 +17,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const { construireCatalogueMonstres } = require("./monstres-jarvis.js");
+const { effetsParActeur, rattacherEffets } = require("./effets-monstres-jarvis.js");
 
 const CONTENU = process.env.DONNEES_JEU || "";
 const RACINE = path.resolve(__dirname, "..", "..");
@@ -68,8 +70,12 @@ function main() {
     process.exit(1);
   }
   const tableMonstres = path.join(CONTENU, "Table", "Actor", "MonsterActorTable.json");
+  const monstres = lignesDeTable("Actor/MonsterActorTable.json");
+  const textes = JSON.parse(fs.readFileSync(
+    path.join(CONTENU, "Localization", "Game", "fr", "Game.json"), "utf8"
+  )).client_language_table;
   const catalogue = construireCatalogueMonstres({
-    monstres:lignesDeTable("Actor/MonsterActorTable.json"),
+    monstres,
     groupes:lignesDeTable("Actor/NpcStatGroupTable.json"),
     paliersBoss:lignesDeTable("Dungeon/BossStatGroupTable.json"),
     bossTerrain:lignesDeTable("FieldBoss/FieldBossTable.json"),
@@ -77,18 +83,24 @@ function main() {
     groupesDonjon:lignesDeTable("Dungeon/DungeonGroupTable.json"),
     zones:lignesDeTable("Scene/ZoneTable.json"),
     apparitions:apparitionsDesZones(),
-    textes:JSON.parse(fs.readFileSync(
-      path.join(CONTENU, "Localization", "Game", "fr", "Game.json"), "utf8"
-    )).client_language_table,
+    textes,
     genereLe:new Date().toISOString(),
     dateExport:fs.statSync(tableMonstres).mtime.toISOString().slice(0, 10)
   });
+  rattacherEffets(catalogue.monstres, effetsParActeur({
+    monstres,
+    competences:lignesDeTable("Skill/Mon_SkillTable.json"),
+    comportements:lignesDeTable("Skill/Mon_SkillBehaviorTable.json"),
+    buffs:lignesDeTable("Buff/BuffTable.json"),
+    textes
+  }));
   fs.mkdirSync(path.dirname(SORTIE), { recursive:true });
   const texte = JSON.stringify(catalogue);
   fs.writeFileSync(SORTIE, texte);
   const versions = catalogue.monstres.reduce((total, monstre) => total + monstre.versions.length, 0);
   console.log("Écrit " + path.relative(RACINE, SORTIE) + " : " + catalogue.monstres.length
-    + " monstres, " + versions + " versions, " + Math.round(Buffer.byteLength(texte) / 1024) + " Ko.");
+    + " monstres, " + versions + " versions, "
+    + catalogue.monstres.filter(monstre => monstre.effets).length + " avec effets, " + Math.round(Buffer.byteLength(texte) / 1024) + " Ko.");
   console.log("À déposer dans le bucket privé « jarvis-prive » (Supabase → Storage).");
 }
 

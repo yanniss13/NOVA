@@ -63,8 +63,8 @@ bougé, et leur `--check` le vérifie.
 `output/jarvis/monstres.json` et `output/jarvis/mecaniques.json` pour la
 commande Discord `/jarvis`. Ces fichiers sont ignorés par git et vont dans le
 bucket Supabase **privé** `jarvis-prive` : ils n'entrent jamais dans ce dépôt
-public. La logique vit dans `monstres-jarvis.js` et `mecaniques-jarvis.js`,
-testée en CI sans l'export. Procédure : `docs/discord-planning.md`.
+public. La logique vit dans `monstres-jarvis.js`, `effets-monstres-jarvis.js`
+et `mecaniques-jarvis.js`, testée en CI sans l'export. Procédure : `docs/discord-planning.md`.
 
 ## Ce qui n'est pas ici
 

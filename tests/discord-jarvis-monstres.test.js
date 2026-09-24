@@ -11,8 +11,16 @@ const ROOT = path.resolve(__dirname, "..");
 const M = require(path.join(ROOT, "supabase", "functions", "_shared", "discord-jarvis-monstres.js"));
 const { construireCatalogueMonstres } = require(path.join(ROOT, "outils", "fabrication", "monstres-jarvis.js"));
 const { ENTREE_MONSTRES_TEST } = require("./monstres-jarvis.test.js");
+const { effetsParActeur, rattacherEffets } = require(path.join(ROOT, "outils", "fabrication", "effets-monstres-jarvis.js"));
+const { ENTREE_EFFETS_TEST } = require("./effets-monstres-jarvis.test.js");
 
+/* Les effets d'Akumu viennent du mini-export des effets, rattaches a
+   l'acteur d'Akumu de ce catalogue-ci : la meme chaine qu'extraire-monstres. */
 const CATALOGUE = construireCatalogueMonstres(ENTREE_MONSTRES_TEST);
+rattacherEffets(CATALOGUE.monstres, new Map([[
+  CATALOGUE.monstres.find(m => m.nom === "Akumu, bête démoniaque").versions[0].acteurs[0],
+  effetsParActeur(ENTREE_EFFETS_TEST).get("50700109")
+]]));
 
 function outils(catalogue) {
   const table = {};
@@ -76,6 +84,28 @@ async function main() {
     "Rage : Pendant l'événement, Akumu enrage."
   ]);
   assert.equal((await o.executer("fiche_monstre", { nom:"lapin" })).donnees.strategies, undefined);
+  /* Les effets poses par le boss, sans cible : la note le rappelle au modele. */
+  assert.deepEqual(akumu.donnees.effets, [
+    "Bouclier (dès son apparition)",
+    "Réduction de l'attaque : Attaque -10 % (30 s)",
+    "Augmentation de l'attaque : Attaque +20 % (600 s, jusqu'à 5 cumuls, à la mort d'un joueur)",
+    "Augmentation des dégâts subis : Dégâts subis +50 %"
+  ]);
+  assert.equal(akumu.donnees.noteEffets,
+    "Le jeu ne dit pas qui reçoit ces effets (le boss ou les joueurs) : ne l'affirme pas.");
+  assert.equal((await o.executer("fiche_monstre", { nom:"lapin" })).donnees.effets, undefined);
+  assert.equal((await o.executer("fiche_monstre", { nom:"lapin" })).donnees.noteEffets, undefined);
+  /* Bornes : au plus 12 effets, chacun sous 200 caracteres. */
+  const bavard = JSON.parse(JSON.stringify(CATALOGUE));
+  bavard.monstres.find(m => m.effets).effets = Array.from({ length:20 }, (_, i) =>
+    ({ nom:"Effet " + i, texte:"x".repeat(400) }));
+  const bornes = (await outils(bavard).executer("fiche_monstre", { nom:"akumu" })).donnees.effets;
+  assert.equal(bornes.length, 12);
+  assert.ok(bornes.every(ligne => Array.from(ligne).length <= 200));
+  /* Un effet abime fait refuser le fichier, comme une strategie. */
+  const effetAbime = JSON.parse(JSON.stringify(CATALOGUE));
+  effetAbime.monstres.find(m => m.effets).effets.push({ nom:"x", dureeS:"30" });
+  assert.match(M.validerCatalogueMonstres(effetAbime), /entrée mal formée/);
   /* Un fichier dont une strategie est abimee est refuse en entier. */
   assert.equal(M.validerCatalogueMonstres(CATALOGUE), null);
   const abime = JSON.parse(JSON.stringify(CATALOGUE));

@@ -23,6 +23,9 @@ const MONSTRES_VERSIONS_MAX = 5;
 const MONSTRES_RESULTATS_MAX = 15;
 const STRATEGIES_MAX_MONSTRE = 8;
 const STRATEGIE_TEXTE_MAX = 400;
+const EFFETS_MAX_MONSTRE = 12;
+const EFFET_TEXTE_MAX = 200;
+const NOTE_EFFETS_MONSTRE = "Le jeu ne dit pas qui reçoit ces effets (le boss ou les joueurs) : ne l'affirme pas.";
 const NOTE_VALEURS_DE_BASE = "valeurs de base, avant ajustement du niveau de monde";
 const LIBELLE_SANS_CONTEXTE = "présent dans les fichiers, contexte non retrouvé";
 const ELEMENTS_MONSTRES_JARVIS = [
@@ -57,7 +60,28 @@ function catalogueMonstreValide(monstre) {
       && estObjetMonstre(version.stats.resistances))
     && (monstre.strategies === undefined || (Array.isArray(monstre.strategies)
       && monstre.strategies.every(strategie => estObjetMonstre(strategie)
-        && typeof strategie.titre === "string" && typeof strategie.texte === "string")));
+        && typeof strategie.titre === "string" && typeof strategie.texte === "string")))
+    && (monstre.effets === undefined || (Array.isArray(monstre.effets)
+      && monstre.effets.every(effetMonstreValide)));
+}
+
+function effetMonstreValide(effet) {
+  const nombreOuAbsent = valeur => valeur === undefined || (typeof valeur === "number" && valeur > 0);
+  const texteOuAbsent = valeur => valeur === undefined || typeof valeur === "string";
+  return estObjetMonstre(effet) && typeof effet.nom === "string" && effet.nom.trim() !== ""
+    && texteOuAbsent(effet.texte) && texteOuAbsent(effet.condition)
+    && nombreOuAbsent(effet.dureeS) && nombreOuAbsent(effet.cumulMax);
+}
+
+/* « Augmentation de l'attaque : Attaque +20 % (600 s, jusqu'à 5 cumuls, à la
+   mort d'un joueur) ». Aucune cible : la table ne la donne pas. */
+function ligneEffetMonstre(effet) {
+  const precisions = [];
+  if(effet.dureeS !== undefined) precisions.push(String(effet.dureeS).replace(".", ",") + " s");
+  if(effet.cumulMax !== undefined) precisions.push("jusqu'à " + effet.cumulMax + " cumuls");
+  if(effet.condition) precisions.push(effet.condition);
+  return texteBorneMonstre(effet.nom + (effet.texte ? " : " + effet.texte : "")
+    + (precisions.length ? " (" + precisions.join(", ") + ")" : ""), EFFET_TEXTE_MAX);
 }
 
 /* Rend null si le fichier est bon, sinon le motif du refus : le lecteur de
@@ -218,6 +242,11 @@ async function outilFicheMonstre(lireMonstres, args) {
     resultat.strategies = monstre.strategies.slice(0, STRATEGIES_MAX_MONSTRE)
       .map(strategie => texteBorneMonstre(strategie.titre + " : " + strategie.texte, STRATEGIE_TEXTE_MAX));
   }
+  /* Les effets que pose le boss, lus dans ses competences. */
+  if(monstre.effets && monstre.effets.length){
+    resultat.effets = monstre.effets.slice(0, EFFETS_MAX_MONSTRE).map(ligneEffetMonstre);
+    resultat.noteEffets = NOTE_EFFETS_MONSTRE;
+  }
 
   if(args.contexte !== undefined && args.contexte !== null && String(args.contexte).trim()){
     const type = typeDeContexteMonstre(args.contexte);
@@ -359,7 +388,8 @@ const DECLARATIONS_OUTILS_MONSTRES = [
     name:"fiche_monstre",
     description:"Faiblesses et résistances élémentaires, résistances critiques et valeurs de base"
       + " d'un monstre ou d'un boss du jeu, version par version (boss de terrain, donjon,"
-      + " boss de confrérie, Cross Challenge, zone). Données lues dans les fichiers du jeu.",
+      + " boss de confrérie, Cross Challenge, zone), stratégies officielles d'un boss et effets"
+      + " que posent ses attaques. Données lues dans les fichiers du jeu.",
     parameters:{
       type:"OBJECT",
       properties:{

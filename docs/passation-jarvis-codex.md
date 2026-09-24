@@ -114,6 +114,10 @@ exacte avec l'extraction réelle, chercher une preuve par code, compléter
 
 ## Tâche 2 — Recherche : effets posés par les boss
 
+> **Faite le 25/09/2026** : le lien passe par le groupe d'animations
+> (`ActorTid.ActorAniKeyGroup`). Voir `outils/fabrication/effets-monstres-jarvis.js`
+> et `docs/discord-planning.md`. Le texte ci-dessous est l'état d'avant.
+
 Question : peut-on relier un boss (Akumu, Démon rouge…) aux effets qu'il
 inflige ? C'est une **recherche**, pas un lot : rapporter faisable / pas
 faisable / à quel coût, sans garder de code.
