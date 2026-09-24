@@ -67,6 +67,10 @@
   "family": "special",
   "unit": "ten-thousandths"
  },
+ "Burst_Gauge_Res_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
  "C_Critical_DamRes_Rate": {
   "family": "additional",
   "unit": "ten-thousandths"
@@ -81,6 +85,10 @@
  },
  "C_Critical_ResRate": {
   "family": "additional",
+  "unit": "ten-thousandths"
+ },
+ "D_All_DamRes_Rate": {
+  "family": "damage",
   "unit": "ten-thousandths"
  },
  "D_Protect_CurRes_Rate": {
@@ -115,6 +123,10 @@
   "family": "elemental",
   "unit": "flat"
  },
+ "Dark_Res_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
  "Debuff_Time_Rate": {
   "family": "additional",
   "unit": "ten-thousandths"
@@ -143,6 +155,10 @@
   "family": "elemental",
   "unit": "ten-thousandths"
  },
+ "Earth_Burst_Gauge_Res_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
  "Earth_Element_Rate": {
   "family": "elemental",
   "unit": "ten-thousandths"
@@ -155,11 +171,23 @@
   "family": "elemental",
   "unit": "flat"
  },
+ "Earth_Res_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Final_All_Dam_Rate": {
+  "family": "damage",
+  "unit": "ten-thousandths"
+ },
  "Fire_Add": {
   "family": "elemental",
   "unit": "flat"
  },
  "Fire_Burst_Gauge_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Fire_Burst_Gauge_Res_Rate": {
   "family": "elemental",
   "unit": "ten-thousandths"
  },
@@ -174,6 +202,10 @@
  "Fire_Res": {
   "family": "elemental",
   "unit": "flat"
+ },
+ "Fire_Res_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
  },
  "H_HealPower_Rate": {
   "family": "special",
@@ -199,6 +231,10 @@
   "family": "elemental",
   "unit": "flat"
  },
+ "Holy_Res_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
  "I_All_DamAdd_Rate": {
   "family": "damage",
   "unit": "ten-thousandths"
@@ -223,6 +259,10 @@
   "family": "elemental",
   "unit": "ten-thousandths"
  },
+ "Ice_Burst_Gauge_Res_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
  "Ice_Element_Rate": {
   "family": "elemental",
   "unit": "ten-thousandths"
@@ -235,7 +275,19 @@
   "family": "elemental",
   "unit": "flat"
  },
+ "Ice_Res_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "MaxSP_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
  "MF_ChargeEffic_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "MF_CostReduce_Rate_UltimateSkill": {
   "family": "special",
   "unit": "ten-thousandths"
  },
@@ -255,15 +307,71 @@
   "family": "special",
   "unit": "ten-thousandths"
  },
+ "RecoverySP_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "S_GlidingSpdAdd_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "S_GlidingStamina_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "S_MoveSpdAdd_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "S_PetFlyingSpdAdd_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "S_PetFlyingStamina_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
  "S_SkillRecycle_Rate": {
   "family": "special",
   "unit": "ten-thousandths"
+ },
+ "S_SwimSpdAdd_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "S_SwimStamina_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "S_UnderWaterSpdAdd_Rate": {
+  "family": "special",
+  "unit": "ten-thousandths"
+ },
+ "T_Atk": {
+  "family": "main",
+  "unit": "flat"
+ },
+ "T_Def": {
+  "family": "main",
+  "unit": "flat"
+ },
+ "Temp_Cold_Res": {
+  "family": "special",
+  "unit": "flat"
+ },
+ "Temp_Hot_Res": {
+  "family": "special",
+  "unit": "flat"
  },
  "Thunder_Add": {
   "family": "elemental",
   "unit": "flat"
  },
  "Thunder_Burst_Gauge_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "Thunder_Burst_Gauge_Res_Rate": {
   "family": "elemental",
   "unit": "ten-thousandths"
  },
@@ -278,6 +386,14 @@
  "Thunder_Res": {
   "family": "elemental",
   "unit": "flat"
+ },
+ "Thunder_Res_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
+ "TickDam_Period_Rate": {
+  "family": "damage",
+  "unit": "ten-thousandths"
  },
  "TickDam_Rate": {
   "family": "damage",
@@ -295,6 +411,10 @@
   "family": "elemental",
   "unit": "ten-thousandths"
  },
+ "Wind_Burst_Gauge_Res_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
+ },
  "Wind_Element_Rate": {
   "family": "elemental",
   "unit": "ten-thousandths"
@@ -306,6 +426,10 @@
  "Wind_Res": {
   "family": "elemental",
   "unit": "flat"
+ },
+ "Wind_Res_Rate": {
+  "family": "elemental",
+  "unit": "ten-thousandths"
  },
  "accuracy": {
   "family": "additional",

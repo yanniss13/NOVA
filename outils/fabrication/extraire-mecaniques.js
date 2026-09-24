@@ -17,7 +17,7 @@
 const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
-const { construireCatalogueMecaniques } = require("./mecaniques-jarvis.js");
+const { construireCatalogueMecaniques, resumeControleValeurs } = require("./mecaniques-jarvis.js");
 
 const CONTENU = process.env.DONNEES_JEU || "";
 const RACINE = path.resolve(__dirname, "..", "..");
@@ -78,6 +78,7 @@ function main() {
   console.log("Écrit " + path.relative(RACINE, SORTIE) + " : " + catalogue.effets.length
     + " effets (" + avecPorteur + " posés par un héros), " + catalogue.regles.length
     + " sujets de règles, " + Math.round(Buffer.byteLength(texte) / 1024) + " Ko.");
+  console.log(resumeControleValeurs(catalogue));
   console.log("À déposer dans le bucket privé « jarvis-prive » (Supabase → Storage).");
 }
 

@@ -93,8 +93,8 @@ function uniteProuveePourAjout(ajout, remplacements, unites) {
   const valeur = Number(ajout && ajout.Value) || 0;
   const correspondances = remplacements.filter(remplacement =>
     remplacement.unite === "ten-thousandths"
-      ? Math.abs(remplacement.nombre * 100 - Math.abs(valeur)) < 1e-9
-      : Math.abs(remplacement.nombre - Math.abs(valeur)) < 1e-9);
+      ? Math.abs(Math.abs(remplacement.nombre) * 100 - Math.abs(valeur)) < 1e-9
+      : Math.abs(Math.abs(remplacement.nombre) - Math.abs(valeur)) < 1e-9);
   const unitesLocales = [...new Set(correspondances.map(remplacement => remplacement.unite))];
   if(unitesLocales.length === 1) return { unite:unitesLocales[0], rapprochee:true };
   if(String(ajout && ajout.Type) === "EAbilityStatValueType::Per"){
@@ -326,4 +326,10 @@ function construireCatalogueMecaniques(entree) {
   };
 }
 
-module.exports = { construireCatalogueMecaniques };
+function resumeControleValeurs(catalogue) {
+  const controle = catalogue.controleValeurs;
+  return "Valeurs prouvées : " + controle.prouvees + " ; valeurs brutes : " + controle.brutes
+    + " ; désaccords texte/table : " + controle.desaccords + ".";
+}
+
+module.exports = { construireCatalogueMecaniques, resumeControleValeurs };

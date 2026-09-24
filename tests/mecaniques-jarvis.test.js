@@ -10,9 +10,10 @@
 const assert = require("node:assert/strict");
 const path = require("node:path");
 
-const { construireCatalogueMecaniques } = require(path.resolve(
+const { construireCatalogueMecaniques, resumeControleValeurs } = require(path.resolve(
   __dirname, "..", "outils", "fabrication", "mecaniques-jarvis.js"
 ));
+const UNITES_REELLES = require(path.resolve(__dirname, "..", "7ds-stats", "stat-metadata.json"));
 
 const ajout = (code, valeur, type = "None") => ({
   TargetAbil:"EAbilityType::" + code,
@@ -57,7 +58,9 @@ const ENTREE_MECANIQUES_TEST = {
     "302000102":buff("DeBuff", "Team", "Local_Buff_Tiny_Name",
       [ajout("I_DefAdd_Rate", -15)], 1, "None", ["{1}:{0.15%}"]),
     "302000501":buff("DeBuff", "Team", "Local_Buff_Move_Name",
-      [ajout("Move_Spd", -500, "Per")], 1, "None", ["{0}:{5%}"])
+      [ajout("Move_Spd", -500, "Per")], 1, "None", ["{0}:{5%}"]),
+    "302000502":buff("DeBuff", "Team", "Local_Buff_Signed_Name",
+      [ajout("Signed_Value", -500)], 1, "None", ["{0}:{-5%}"])
   },
   comportements:{
     elizabeth_book_skill_q_a:{ BehaviorDetail_SetBuffTid:[pose("302171011", 40000), pose("302171012", 20000)] },
@@ -138,6 +141,8 @@ const ENTREE_MECANIQUES_TEST = {
     Local_Buff_Tiny_Desc:"Défense -{1}.",
     Local_Buff_Move_Name:"Vitesse en pourcentage",
     Local_Buff_Move_Desc:"Vitesse -{0}.",
+    Local_Buff_Signed_Name:"Preuve signée",
+    Local_Buff_Signed_Desc:"Valeur {0}.",
     Local_Buff_Petrify_Name:"Pétrification",
     Local_Buff_Petrify_Desc:"Immobilisation. Dégâts de Terre subis +{0}",
     local_tutorial_log_subtitle_burst_fire:"Déluge élémentaire - Feu",
@@ -165,7 +170,7 @@ function main() {
   assert.deepEqual(catalogue.effets.map(effet => effet.nom), [
     "Attaque totale ultime", "Augmentation de l'attaque", "Augmentation des dégâts de faiblesse",
     "Éclaboussures", "Effet en désaccord", "Effet non positionnel", "Mystère", "Petite valeur",
-    "Pétrification", "Vitesse en pourcentage"
+    "Pétrification", "Preuve signée", "Vitesse en pourcentage"
   ], "tri par nom ; l'effet sans nom et celui dont le texte manque sont écartés");
 
   const effet = nom => catalogue.effets.find(entree => entree.nom === nom);
@@ -235,9 +240,42 @@ function main() {
     "une petite valeur en dix-millièmes garde ses décimales");
   assert.equal(effet("Vitesse en pourcentage").variantes[0].valeurs[0].valeur, "-5 %",
     "Type=Per prouve le pourcentage même sur une statistique habituellement plate");
+  assert.equal(effet("Preuve signée").variantes[0].valeurs[0].valeur, "-5 %",
+    "le rapprochement compare les valeurs absolues des deux sources");
   assert.equal(effet("Mystère").variantes[0].valeurs[0].valeur, "42 (valeur brute)",
     "une valeur sans preuve reste explicitement brute");
-  assert.deepEqual(catalogue.controleValeurs, { prouvees:11, brutes:2, desaccords:1 });
+  assert.deepEqual(catalogue.controleValeurs, { prouvees:12, brutes:2, desaccords:1 });
+  assert.equal(resumeControleValeurs(catalogue),
+    "Valeurs prouvées : 12 ; valeurs brutes : 2 ; désaccords texte/table : 1.");
+
+  const catalogueMetadata = construireCatalogueMecaniques({
+    buffs:{
+      "410000001":buff("DeBuff", "Team", "Local_Meta_Tick_Name",
+        [ajout("TickDam_Period_Rate", -2000)], 1),
+      "410000002":buff("Buff", "Hero", "Local_Meta_Def_Name", [ajout("T_Def", 46)], 1),
+      "410000003":buff("Buff", "Hero", "Local_Meta_Normal_Name",
+        [ajout("NormalAttack_DamAdd_Rate", 1000)], 1)
+    },
+    comportements:{}, competences:{}, personnages:{}, libelles:{}, unites:UNITES_REELLES,
+    journal:{}, pagesJournal:{}, guides:{}, pagesGuides:{},
+    textes:{
+      Local_Meta_Tick_Name:"Période des dégâts",
+      Local_Meta_Tick_Desc:"Période.",
+      Local_Meta_Def_Name:"Défense plate",
+      Local_Meta_Def_Desc:"Défense.",
+      Local_Meta_Normal_Name:"Dégâts normaux",
+      Local_Meta_Normal_Desc:"Dégâts."
+    },
+    genereLe:"2026-09-24T12:00:00.000Z", dateExport:"2026-09-24"
+  });
+  const valeurMetadata = nom => catalogueMetadata.effets.find(effet => effet.nom === nom)
+    .variantes[0].valeurs[0].valeur;
+  assert.equal(valeurMetadata("Période des dégâts"), "-20 %",
+    "une unité stable prouvée sert de repli sans Local_Replace");
+  assert.equal(valeurMetadata("Défense plate"), "+46",
+    "une statistique plate prouvée n'est pas divisée par cent");
+  assert.equal(valeurMetadata("Dégâts normaux"), "+10 %",
+    "la casse historique des codes de métadonnées n'empêche pas le repli");
 
   assert.deepEqual(catalogue.regles, [
     { sujet:"Astuces de chargement", pages:["Astuce deux.", "Astuce huit."] },
