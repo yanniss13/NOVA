@@ -329,7 +329,9 @@ async function main() {
   assert.match(index, /lireMonstres:/);
   /* Le journal des etapes part dans les logs, en cas de succes comme d'echec. */
   assert.match(index, /repondreQuestion\(\{[\s\S]*?journal[\s\S]*?\}\)/);
-  assert.match(index, /catch \(error\) \{[\s\S]*?console\.log\(JSON\.stringify\(\{\s*jarvis:\{ code, journal \}/);
+  assert.match(index, /catch \(error\) \{[\s\S]*?console\.log\(JSON\.stringify\(\{\s*jarvis:\{ code, modele:GEMINI_JARVIS_MODELE, journal \}/,
+    "le modele reellement utilise figure dans la ligne : un secret pas encore relu ne se voit pas autrement");
+  assert.match(index, /jarvis:\{ code:"ok", modele:GEMINI_JARVIS_MODELE,/);
   assert.match(Q.CONSIGNE_JARVIS, /valeurs de base/);
   assert.match(Q.CONSIGNE_JARVIS, /monstres/);
   /* Un nom vague : Gemini dit quel monstre il a retenu et cite les autres. */

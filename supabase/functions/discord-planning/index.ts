@@ -911,14 +911,14 @@ async function publishJarvis(
     /* Ce qu'il faut pour surveiller le quota et la lenteur ; jamais le texte
        de la reponse. */
     console.log(JSON.stringify({
-      jarvis:{ code:"ok", tours:resultat.tours, outils:resultat.outils,
+      jarvis:{ code:"ok", modele:GEMINI_JARVIS_MODELE, tours:resultat.tours, outils:resultat.outils,
         usage:resultat.usage, journal }
     }));
     await editOriginalText(interaction, messageJarvis(texte, resultat));
   } catch (error) {
     const code = error && typeof error === "object" && "code" in error
       ? String((error as { code: unknown }).code) : "autre";
-    console.log(JSON.stringify({ jarvis:{ code, journal } }));
+    console.log(JSON.stringify({ jarvis:{ code, modele:GEMINI_JARVIS_MODELE, journal } }));
     if(code === "autre") console.error("Échec de /jarvis", error);
     try {
       await editOriginalText(interaction, messageErreurJarvis(code));
