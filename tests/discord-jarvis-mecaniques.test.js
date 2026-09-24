@@ -39,6 +39,21 @@ async function main() {
   /entrée mal formée dans mecaniques\.json : Bizarre/);
   assert.match(M.validerCatalogueMecaniques({ version:1, effets:[], regles:[{ sujet:"Vide", pages:[3] }] }),
     /sujet mal formé dans mecaniques\.json : Vide/);
+  /* Un porteur ou une valeur abimes feraient lever l'outil a chaque question
+     pendant une heure : le fichier est refuse en entier. */
+  const varianteSaine = { valeurs:[{ stat:"Défense", valeur:"-20 %" }], cible:"ennemi", nature:"malus",
+    description:"", posePar:[{ heros:"Ban", arme:"Nunchaku", competence:"Chaîne",
+      categorie:"ACTIVE_THIRD", citeParDescription:true }] };
+  const avecVariante = variante => ({ version:1, regles:[],
+    effets:[{ nom:"Abîmé", nature:"malus", description:"", variantes:[variante] }] });
+  assert.equal(M.validerCatalogueMecaniques(avecVariante(varianteSaine)), null);
+  assert.match(M.validerCatalogueMecaniques(avecVariante(Object.assign({}, varianteSaine, { posePar:[null] }))),
+    /entrée mal formée dans mecaniques\.json : Abîmé/);
+  assert.match(M.validerCatalogueMecaniques(avecVariante(Object.assign({}, varianteSaine,
+    { posePar:[{ heros:"Ban", arme:"Nunchaku", competence:7, citeParDescription:true }] }))),
+  /entrée mal formée/);
+  assert.match(M.validerCatalogueMecaniques(avecVariante(Object.assign({}, varianteSaine,
+    { valeurs:[{ stat:1, valeur:"-20 %" }] }))), /entrée mal formée/);
 
   const o = outils(CATALOGUE);
 
@@ -92,13 +107,15 @@ async function main() {
   const introuvable = await o.executer("fiche_effet", { nom:"zzzz" });
   assert.equal(introuvable.donnees.introuvable, "zzzz");
   assert.ok(Array.isArray(introuvable.donnees.proches));
+  assert.deepEqual((await o.executer("fiche_effet", { nom:"  " })).donnees,
+    { erreur:"nom d'effet manquant" }, "comme les deux autres outils");
 
   /* ---------------- chercher_effets ---------------- */
   const defense = await o.executer("chercher_effets", { texte:"défense", nature:"malus" });
   assert.deepEqual(defense.donnees, {
     texte:"défense", donneesDu:"24/09/2026", total:1,
     effets:[{ nom:"Éclaboussures", nature:"Malus", description:"Réduit la défense de X",
-      cibles:["l'ennemi"], porteurs:["Elizabeth — Canon à eau"] }]
+      cibles:["l'ennemi"], porteurs:["Elizabeth (Grimoire) — Canon à eau"] }]
   });
   assert.equal(defense.source, "recherche d'effets défense · données du jeu du 24/09/2026");
 
@@ -108,15 +125,21 @@ async function main() {
 
   const deBan = await o.executer("chercher_effets", { texte:"attaque", heros:"BAN" });
   assert.deepEqual(deBan.donnees.effets.map(e => e.nom), ["Augmentation de l'attaque"]);
-  assert.deepEqual(deBan.donnees.effets[0].porteurs, ["Ban — Ruée en spirale", "Ban — Chaîne"]);
-  assert.equal((await o.executer("chercher_effets", { texte:"attaque", heros:"merlin" })).donnees.total, 0);
+  assert.deepEqual(deBan.donnees.effets[0].porteurs, ["Ban (Nunchaku) — Ruée en spirale", "Ban (Nunchaku) — Chaîne"]);
+  /* Un heros que le fichier ne connait pas le dit : « total 0 » ferait
+     conclure a Gemini que Merlin ne pose rien. */
+  const inconnu = (await o.executer("chercher_effets", { texte:"attaque", heros:"merlin" })).donnees;
+  assert.equal(inconnu.erreur, "héros inconnu");
+  assert.ok(Array.isArray(inconnu.proches));
+  assert.equal((await o.executer("chercher_effets", { texte:"pétrification", heros:"ban" })).donnees.total, 0,
+    "un héros connu qui ne pose pas l'effet : total 0, sans erreur");
 
   /* Le filtre de nature porte sur chaque variante : le malus rangé sous un
      nom de buff est trouvé, avec sa propre description. */
   const malusAttaque = await o.executer("chercher_effets", { texte:"attaque", nature:"malus", heros:"élizabeth" });
   assert.deepEqual(malusAttaque.donnees.effets, [{ nom:"Augmentation de l'attaque", nature:"Malus",
     description:"Attaque des héros d'attribut Feu +X", cibles:["l'ennemi"],
-    porteurs:["Elizabeth — Bouchée rafraîchissante"] }]);
+    porteurs:["Elizabeth (Grimoire) — Bouchée rafraîchissante"] }]);
 
   const controle = await o.executer("chercher_effets", { texte:"immobilisation", nature:"contrôle" });
   assert.deepEqual(controle.donnees.effets.map(e => e.nom), ["Pétrification"]);
@@ -146,6 +169,19 @@ async function main() {
   assert.ok(classes.suite, "une liste coupée le dit");
   const etourdit = (await nombreux.executer("chercher_effets", { texte:"étourdissement" })).donnees;
   assert.equal(etourdit.effets[0].porteurs.length, 6);
+  /* Un mot du nom suffit : « Thunder » trouve Gil Thunder. */
+  const gil = outils({ version:1, dateExport:"2026-09-24", regles:[], effets:[
+    effetTest("Choc", [varianteTest("Gil Thunder", "Éclair")])] });
+  assert.equal((await gil.executer("chercher_effets", { texte:"choc", heros:"thunder" })).donnees.total, 1);
+
+  /* fiche_effet ne montre que 6 variantes : les heros des suivantes sont
+     nommes, pour qu'un porteur ne disparaisse pas sans le dire. */
+  const masques = outils({ version:1, dateExport:"2026-09-24", regles:[], effets:[
+    effetTest("Coupe", ["A", "B", "C", "D", "E", "A", "Daisy", "Khala"].map((h, i) =>
+      Object.assign(varianteTest(h, "Coup"), { duree:i + 1 })))] });
+  const coupe = (await masques.executer("fiche_effet", { nom:"coupe" })).donnees;
+  assert.equal(coupe.variantes.length, 6);
+  assert.deepEqual(coupe.porteursMasques, ["Daisy", "Khala"]);
   assert.equal(etourdit.effets[0].autresPorteurs, 2);
 
   /* ---------------- regle ---------------- */

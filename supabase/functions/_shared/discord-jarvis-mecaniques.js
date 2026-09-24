@@ -55,7 +55,12 @@ function effetValide(effet) {
       && Array.isArray(variante.valeurs) && Array.isArray(variante.posePar)
       && typeof variante.cible === "string"
       && NATURES_MECANIQUES.includes(variante.nature)
-      && typeof variante.description === "string");
+      && typeof variante.description === "string"
+      && variante.valeurs.every(valeur => estObjetMecanique(valeur)
+        && typeof valeur.stat === "string" && typeof valeur.valeur === "string")
+      && variante.posePar.every(porteur => estObjetMecanique(porteur)
+        && typeof porteur.heros === "string" && typeof porteur.arme === "string"
+        && typeof porteur.competence === "string" && typeof porteur.citeParDescription === "boolean"));
 }
 
 function sujetValide(regle) {
@@ -141,6 +146,7 @@ async function outilFicheEffet(lireMecaniques, args) {
   const catalogue = await lireMecaniques();
   if(!catalogue) return Object.assign({}, INDISPONIBLE_MECANIQUES);
   const cherche = normaliserRecherche(args.nom);
+  if(!cherche) return { erreur:"nom d'effet manquant" };
   const classes = catalogue.effets
     .map(effet => ({ effet, rang:rangCorrespondanceJarvis(effet.nom, cherche) }))
     .filter(entree => entree.rang > 0);
@@ -180,6 +186,13 @@ async function outilFicheEffet(lireMecaniques, args) {
     .map(variante => varianteLisible(variante, effet));
   if(effet.variantes.length > EFFET_VARIANTES_MAX){
     resultat.suite = "seules les " + EFFET_VARIANTES_MAX + " premières variantes sont listées";
+    /* Les heros des variantes coupees, absents des variantes montrees : un
+       porteur ne disparait pas sans le dire. */
+    const herosDe = variantes => variantes.flatMap(variante => variante.posePar.map(porteur => porteur.heros));
+    const montres = new Set(herosDe(effet.variantes.slice(0, EFFET_VARIANTES_MAX)));
+    const masques = [...new Set(herosDe(effet.variantes.slice(EFFET_VARIANTES_MAX)))]
+      .filter(heros => !montres.has(heros));
+    if(masques.length) resultat.porteursMasques = masques.slice(0, EFFET_PORTEURS_MAX);
   }
   return resultat;
 }
@@ -195,7 +208,21 @@ async function outilChercherEffets(lireMecaniques, args) {
     if(!nature) return { erreur:"nature inconnue : buff, malus ou contrôle" };
   }
   const heros = normaliserRecherche(args.heros);
-  const deCeHeros = porteur => !heros || normaliserRecherche(porteur.heros).startsWith(heros);
+  /* Le debut du nom ou d'un de ses mots : « Thunder » trouve Gil Thunder. */
+  const correspondAuHeros = nom => {
+    const normalise = normaliserRecherche(nom);
+    return normalise.startsWith(heros) || normalise.split(/\s+/).some(mot => mot.startsWith(heros));
+  };
+  const deCeHeros = porteur => !heros || correspondAuHeros(porteur.heros);
+  if(heros){
+    /* Un heros inconnu du fichier le dit : « total 0 » ferait conclure a
+       Gemini que ce heros ne pose rien. */
+    const tousLesHeros = [...new Set(catalogue.effets.flatMap(effet => effet.variantes
+      .flatMap(variante => variante.posePar.map(porteur => porteur.heros))))];
+    if(!tousLesHeros.some(correspondAuHeros)){
+      return { erreur:"héros inconnu", proches:propositions(tousLesHeros, args.heros) };
+    }
+  }
   /* « lumière » cherche aussi « Sacré » : le libelle des stats est en
      francais du jeu, pas dans les mots du membre. */
   const termes = [cherche];
@@ -217,7 +244,8 @@ async function outilChercherEffets(lireMecaniques, args) {
     const porteurs = [];
     variantes.forEach(variante => variante.posePar.forEach(porteur => {
       if(!deCeHeros(porteur)) return;
-      const ligne = porteur.heros + " — " + porteur.competence;
+      /* L'arme dit laquelle equiper : un heros en a trois. */
+      const ligne = porteur.heros + " (" + porteur.arme + ") — " + porteur.competence;
       if(!porteurs.includes(ligne)) porteurs.push(ligne);
     }));
     const trouve = {
