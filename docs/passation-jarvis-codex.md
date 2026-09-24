@@ -141,6 +141,12 @@ trouvé, les effets rejoignent les fiches de `fiche_monstre` (lot 2a).
 
 ## Tâche 3 — Lot 2c : boutiques et butins
 
+> **Fait le 25/09/2026** en trois étapes : boutiques, butins, recettes
+> (`outils/fabrication/objets-jarvis.js`, `_shared/discord-jarvis-objets.js`,
+> outils `ou_trouver`, `boutique`, `butin`, `recette`). Specs :
+> `docs/superpowers/specs/2026-09-25-jarvis-{boutiques,butins,recettes}-design.md`.
+> Reste ouvert : la lecture des taux de butin (voir la spec des butins).
+
 Questions visées : « où trouver tel matériau ? », « que vend tel marchand ? ».
 Tables pressenties : `MerchantGoods` (671 lignes depuis le usmap Dumper-7),
 `DropPackTable`, `DropGroupTable`. Même chaîne que 2a et 2b : extraction pure
@@ -151,6 +157,16 @@ Passer par le processus complet : conception validée par le propriétaire,
 spec, plan, puis exécution.
 
 ## Tâche 4 — Lot 2d : contenu non sorti
+
+> **Recherche du 25/09/2026, sans conclusion.** Aucun signal de sortie dans
+> les tables : `HeroActorTable.Open_Start_Date` vaut `44378.4583333333`
+> (1er juillet 2021, une valeur de remplissage) pour **toutes** ses 89
+> lignes, et `HideHeroList` ne masque que l'avatar par défaut (`8001`).
+> Sept héros des tables ne sont pas sur le site : Tioré, Hauser,
+> Gilthunder, Griamor, Derrierie, Mannie, Clotho. Rien ne dit s'ils sont
+> sortis. Question au propriétaire avant tout code : quel critère fait foi
+> (la liste des héros du site ? une autre table ?), et que doit dire le bot
+> d'un contenu non sorti — le taire, ou le signaler comme tel ?
 
 Distinguer dans les réponses ce qui est sorti en jeu de ce qui ne l'est pas
 encore. Attention (mémoire du projet) : un identifiant neuf entre deux

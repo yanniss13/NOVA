@@ -55,7 +55,8 @@ async function main() {
       "Donjon : Mine de Ferzen (Normal), première victoire"
     ]
   });
-  assert.equal(epee.source, "boutiques · données du jeu du 22/09/2026");
+  /* ou_trouver cite boutiques, butins et recettes : la source le dit. */
+  assert.equal(epee.source, "où trouver Épée longue · données du jeu du 22/09/2026");
 
   const minerai = await o.executer("ou_trouver", { objet:"Minerai" });
   assert.deepEqual(minerai.donnees.sources, [

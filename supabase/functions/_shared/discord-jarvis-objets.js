@@ -18,7 +18,7 @@ if(typeof module !== "undefined" && module.exports){
 }
 
 const { normaliserRecherche, propositions } = globalThis.NOVA_DISCORD_BUILD;
-const { rangCorrespondanceJarvis, dateLisibleJarvis } = globalThis.NOVA_DISCORD_JARVIS_MONSTRES;
+const { rangCorrespondanceJarvis, dateLisibleJarvis, sourceDateeJarvis } = globalThis.NOVA_DISCORD_JARVIS_MONSTRES;
 const { motsProchesMecanique } = globalThis.NOVA_DISCORD_JARVIS_MECANIQUES;
 
 const CHEMIN_OBJETS_JARVIS = "jarvis-prive/objets.json";
@@ -394,9 +394,12 @@ function sourceObjetsJarvis(donnees) {
 }
 
 function ajouterOutilsObjetsJarvis(table, lireObjets) {
+  /* Boutiques, butins et recettes : la source nomme l'objet, pas un seul
+     type d'origine. */
   table.ou_trouver = {
     executer:args => outilOuTrouver(lireObjets, args),
-    source:(args, donnees) => sourceObjetsJarvis(donnees)
+    source:(args, donnees) =>
+      sourceDateeJarvis("où trouver ", (donnees && donnees.nom) || args.objet || "?", donnees || {})
   };
   table.boutique = {
     executer:args => outilBoutique(lireObjets, args),
