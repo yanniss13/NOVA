@@ -84,13 +84,14 @@ index d'objets. Butins, recettes et probabilités sont hors périmètre ici.
   écarte l'article (et le compte en sortie de l'extracteur).
 - `quantite` : `GetCount` quand il dépasse 1.
 - `limite` : « 3 par jour » / « par semaine » / « par mois » selon
-  `GoodsResetTime`, « 3 au total » pour `Permanent`, absente si
-  `LimitCount` vaut 0.
+  `GoodsResetTime`, « 3 au total » pour `Permanent` ou sans période
+  (`None`), absente si `LimitCount` vaut 0.
 - `condition` : « à partir du niveau de monde N » pour `World_Level`.
 - `aleatoire: true` sur la boutique itinérante et sur ses sources.
-- `type` d'objet : famille de la table source (Matériau, Équipement,
-  Consommable, Quête, Familier, Autre) ; un nom partagé par plusieurs
-  familles prend la première rencontrée.
+- `type` d'objet : famille de la table source — `Etc` Divers, `Equip`
+  Équipement, `Use` Consommable, `Quest` Quête, `Pet` Familier, `DropType`
+  Monnaie ; un nom partagé par plusieurs familles prend la première, dans
+  cet ordre.
 - Un nom partagé par plusieurs identifiants forme **une** entrée dont les
   sources sont l'union, sans doublon.
 - Seuls les objets cités par au moins une source entrent dans l'index.
