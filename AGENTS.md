@@ -1372,13 +1372,13 @@ le SQL Editor afin d'ajouter les tables à la publication
   `boutique` dans `_shared/discord-jarvis-objets.js`. Étape 1 : les
   boutiques. Étape 2 : les butins (monstres, captures, minage, donjons,
   boss de confrérie) et l'outil `butin`, **sans aucune probabilité** —
-  les taux par niveau de monde ne sont pas confirmés. Les recettes
-  ajouteront un autre `type` de source au même index.
+  les taux par niveau de monde ne sont pas confirmés. Étape 3 : les
+  recettes (cuisine, établis, gravure, combinaison) et l'outil `recette` ;
+  `MakingRecipe` n'est jamais lue, table périmée.
   **Mémoire courte** : 3 échanges par membre, 30 minutes, dans
   `private.jarvis_memoire` (sans politique, `service_role` seul, via
   `jarvis_memoire_lire`/`jarvis_memoire_noter`) ; une panne ne bloque jamais
-  la réponse. Lots suivants prévus : 2c (recettes), 2d (contenu
-  non sorti).
+  la réponse. Lot suivant prévu : 2d (contenu non sorti).
 - Après une modification de ce schéma, réexécuter le contenu complet de
   `supabase/schema.sql` dans le SQL Editor Supabase.
 

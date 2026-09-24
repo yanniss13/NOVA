@@ -552,7 +552,7 @@ async function main() {
   assert.match(Q.CONSIGNE_JARVIS, /donne leurs valeurs, durées et conditions/);
   /* Boutiques : le hasard de l'itinerante, et l'absence n'est pas une preuve. */
   assert.match(Q.CONSIGNE_JARVIS, /boutique itinérante/);
-  assert.match(Q.CONSIGNE_JARVIS, /les recettes ne sont pas encore couvertes/);
+  assert.match(Q.CONSIGNE_JARVIS, /les quêtes, succès, événements et coffres ne sont pas couverts/);
   /* Les taux de butin ne sont pas lus : le bot n'en invente pas. */
   assert.match(Q.CONSIGNE_JARVIS, /ne donne aucun pourcentage de butin/);
   /* La date de l'export survit dans la ligne Sources, meme pour Akumu. */

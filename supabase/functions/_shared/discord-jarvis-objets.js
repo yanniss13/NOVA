@@ -32,6 +32,7 @@ const INDISPONIBLE_OBJETS = { erreur:"données des objets indisponibles" };
 const NOTE_ALEATOIRE = "articles tirés au hasard : la boutique peut les proposer, pas toujours";
 const OBJETS_MAX_BUTIN = 40;
 const NOTE_PROBABILITES = "la table ne donne pas de probabilité lisible : ne cite aucun taux";
+const RECETTES_MAX_OBJET = 5;
 /* Les sources de butin (lot 2c, etape 2) et leur nom affiche. */
 const TYPES_BUTIN = {
   monstre:"Butin de monstre", capture:"Capture", minage:"Minage",
@@ -57,6 +58,7 @@ function sourceObjetValide(source) {
   if(estObjetObjets(source) && Object.prototype.hasOwnProperty.call(TYPES_BUTIN, source.type)){
     return texteObjets(source.origine) && texteOuAbsentObjets(source.detail);
   }
+  if(estObjetObjets(source) && source.type === "recette") return texteObjets(source.origine);
   return estObjetObjets(source) && source.type === "boutique"
     && texteObjets(source.boutique) && texteObjets(source.prix)
     && quantiteValideObjets(source.quantite)
@@ -91,6 +93,13 @@ function butinValide(butin) {
     && Array.isArray(butin.objets) && butin.objets.length > 0 && butin.objets.every(texteObjets);
 }
 
+function recetteValide(recette) {
+  return estObjetObjets(recette) && texteObjets(recette.produit) && texteObjets(recette.type)
+    && quantiteValideObjets(recette.quantite)
+    && Array.isArray(recette.ingredients) && recette.ingredients.length > 0
+    && recette.ingredients.every(texteObjets);
+}
+
 /* Rend null si le fichier est bon, sinon le motif du refus : le lecteur de
    stockage commun le journalise et garde l'echec une minute. */
 function validerCatalogueObjets(brut) {
@@ -106,6 +115,11 @@ function validerCatalogueObjets(brut) {
     if(!Array.isArray(brut.butins)) return "objets.json : butins mal formés";
     const butin = brut.butins.findIndex(entree => !butinValide(entree));
     if(butin >= 0) return "objets.json : butin mal formé (indice " + butin + ")";
+  }
+  if(brut.recettes !== undefined){
+    if(!Array.isArray(brut.recettes)) return "objets.json : recettes mal formées";
+    const recette = brut.recettes.findIndex(entree => !recetteValide(entree));
+    if(recette >= 0) return "objets.json : recette mal formée (indice " + recette + ")";
   }
   return null;
 }
@@ -130,6 +144,7 @@ function texteBorneObjets(texte) {
 function ligneSourceObjet(source, boutiquesParNom) {
   /* « Butin de monstre : Banakro », « Donjon : Mines de Ferzen (Normal),
      premiere victoire », « Boss de confrerie, palier de participation 5 ». */
+  if(source.type === "recette") return texteBorneObjets("Recette : " + source.origine);
   if(Object.prototype.hasOwnProperty.call(TYPES_BUTIN, source.type)){
     const libelle = TYPES_BUTIN[source.type];
     return texteBorneObjets(libelle + (source.origine !== libelle ? " : " + source.origine : "")
@@ -287,13 +302,44 @@ async function outilButin(lireObjets, args) {
   };
 }
 
+async function outilRecette(lireObjets, args) {
+  const catalogue = await lireObjets();
+  if(!catalogue) return Object.assign({}, INDISPONIBLE_OBJETS);
+  const cherche = normaliserRecherche(args.objet);
+  if(!cherche) return { erreur:"nom d'objet manquant" };
+  const recettes = catalogue.recettes || [];
+  const produits = [...new Set(recettes.map(recette => recette.produit))];
+  const classes = produits.map(nom => ({ nom, rang:rangCorrespondanceJarvis(nom, cherche) }))
+    .filter(entree => entree.rang > 0);
+  if(!classes.length){
+    return { introuvable:String(args.objet), proches:propositions(produits, args.objet) };
+  }
+  const meilleur = Math.max(...classes.map(entree => entree.rang));
+  const trouves = classes.filter(entree => entree.rang === meilleur).map(entree => entree.nom)
+    .sort((a, b) => a.length - b.length || a.localeCompare(b, "fr"));
+  if(trouves.length > 1){
+    return { recherche:String(args.objet), correspondances:trouves.length, candidats:trouves.slice(0, CANDIDATS_MAX_OBJET) };
+  }
+  const siennes = recettes.filter(recette => recette.produit === trouves[0]);
+  const resultat = {
+    produit:trouves[0], donneesDu:dateLisibleJarvis(catalogue),
+    recettes:siennes.slice(0, RECETTES_MAX_OBJET).map(recette => {
+      const sortie = { type:recette.type };
+      if(recette.quantite) sortie.quantite = recette.quantite;
+      sortie.ingredients = recette.ingredients;
+      return sortie;
+    })
+  };
+  if(siennes.length > RECETTES_MAX_OBJET) resultat.autresRecettes = siennes.length - RECETTES_MAX_OBJET;
+  return resultat;
+}
+
 const DECLARATIONS_OUTILS_OBJETS = [
   {
     name:"ou_trouver",
     description:"Où obtenir un objet du jeu (équipement, matériau, consommable, monnaie) :"
       + " boutiques (prix, limites d'achat), butins de monstres, captures, minage, donjons"
-      + " et boss de confrérie. Les recettes ne sont pas encore couvertes. Données lues"
-      + " dans les fichiers du jeu.",
+      + ", boss de confrérie et recettes. Données lues dans les fichiers du jeu.",
     parameters:{
       type:"OBJECT",
       properties:{
@@ -328,6 +374,18 @@ const DECLARATIONS_OUTILS_OBJETS = [
       },
       required:["nom"]
     }
+  },
+  {
+    name:"recette",
+    description:"Comment fabriquer, cuisiner ou graver un objet : type de recette (cuisine,"
+      + " établi, gravure, combinaison) et ingrédients, avec leurs alternatives.",
+    parameters:{
+      type:"OBJECT",
+      properties:{
+        objet:{ type:"STRING", description:"Nom de l'objet à produire (ex. « beignets protéinés », « établi robuste »)." }
+      },
+      required:["objet"]
+    }
   }
 ];
 
@@ -343,6 +401,11 @@ function ajouterOutilsObjetsJarvis(table, lireObjets) {
   table.boutique = {
     executer:args => outilBoutique(lireObjets, args),
     source:(args, donnees) => sourceObjetsJarvis(donnees)
+  };
+  table.recette = {
+    executer:args => outilRecette(lireObjets, args),
+    source:(args, donnees) => "recettes"
+      + (donnees && donnees.donneesDu ? " · données du jeu du " + donnees.donneesDu : "")
   };
   table.butin = {
     executer:args => outilButin(lireObjets, args),

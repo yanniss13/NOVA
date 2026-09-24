@@ -86,7 +86,7 @@ async function main() {
     "qui_possede", "roster_de", "dispos", "scores_boss",
     "fiche_monstre", "chercher_monstres",
     "fiche_effet", "chercher_effets", "regle",
-    "ou_trouver", "boutique", "butin"
+    "ou_trouver", "boutique", "butin", "recette"
   ]);
   /* Sans lecteur de monstres fourni, les deux outils le disent au lieu de
      planter : le reste de /jarvis ne depend pas du bucket prive. */

@@ -460,12 +460,21 @@ souvent avec d'autres mots.
 
 ### Objets et boutiques (lot 2c)
 
-Trois outils de plus : `ou_trouver` (« où trouver X ? » : boutiques, prix et
-limites d'achat, butins de monstres, captures, minage, donjons et paliers du
-boss de confrérie), `boutique` (les articles d'une boutique, son PNJ et sa
-région) et `butin` (« que lâche Banakro ? »). Les recettes viendront
-s'ajouter au même index d'objets ; d'ici là, une source absente ne prouve
-pas qu'un objet est introuvable, et la consigne le dit au bot.
+Quatre outils de plus : `ou_trouver` (« où trouver X ? » : boutiques, prix
+et limites d'achat, butins de monstres, captures, minage, donjons, paliers
+du boss de confrérie et recettes), `boutique` (les articles d'une boutique,
+son PNJ et sa région), `butin` (« que lâche Banakro ? ») et `recette`
+(« comment cuisiner des beignets protéinés ? »). Quêtes, succès, événements
+et coffres ne sont pas couverts : une source absente ne prouve pas qu'un
+objet est introuvable, et la consigne le dit au bot.
+
+**Recettes.** `CookingRecipeTable` (cuisine), `ProductionRecipeTable`
+(établis), `BindingRecipeTable` (gravure) et `CombineRecipeTable`. En
+cuisine, `Material_Group_n` donne des ingrédients interchangeables
+(`MakingList`). `MakingRecipe` n'est **pas** lue : table périmée, dont la
+plupart des produits n'ont pas de nom et dont les ingrédients diffèrent
+pour un même produit. Une recette visible à plusieurs établis prend le plus
+modeste, « ou supérieur ».
 
 **Aucune probabilité de butin.** `DropPackTable` donne un taux par niveau
 de monde (`Standard_Level`) et `DropGroupTable` pondère ses paquets, mais

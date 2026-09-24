@@ -30,13 +30,13 @@ function outils(catalogue) {
 
 async function main() {
   /* ---------------- Declarations et fichier ---------------- */
-  assert.deepEqual(O.DECLARATIONS_OUTILS_OBJETS.map(d => d.name), ["ou_trouver", "boutique", "butin"]);
+  assert.deepEqual(O.DECLARATIONS_OUTILS_OBJETS.map(d => d.name), ["ou_trouver", "boutique", "butin", "recette"]);
   O.DECLARATIONS_OUTILS_OBJETS.forEach(d => assert.equal(d.parameters.type, "OBJECT"));
   assert.equal(O.CHEMIN_OBJETS_JARVIS, "jarvis-prive/objets.json");
   assert.equal(O.validerCatalogueObjets(CATALOGUE), null);
   assert.match(O.validerCatalogueObjets({ version:2 }), /format de objets\.json inconnu/);
   const abime = JSON.parse(JSON.stringify(CATALOGUE));
-  abime.objets[0].sources[0].prix = 1800;
+  abime.objets.find(objet => objet.nom === "Épée longue").sources[0].prix = 1800;
   assert.match(O.validerCatalogueObjets(abime), /mal formé/);
   const boutiqueAbimee = JSON.parse(JSON.stringify(CATALOGUE));
   boutiqueAbimee.boutiques[0].acces = "porte";
@@ -71,7 +71,9 @@ async function main() {
     + " à partir du niveau de monde 3");
   assert.deepEqual(potion.donnees.sources.slice(4), [
     "Capture : Mouette",
-    "Boss de confrérie, palier de participation 5"
+    "Boss de confrérie, palier de participation 5",
+    "Recette : Fabrication — Établi de fortune ou supérieur",
+    "Recette : Fabrication — Établi de fortune"
   ]);
 
   /* Un nom court et exact gagne. */
@@ -174,9 +176,36 @@ async function main() {
   butinAbime.butins[0].objets = "Potion";
   assert.match(O.validerCatalogueObjets(butinAbime), /butin mal formé/);
 
+  /* ---------------- recette ---------------- */
+  const beignets = await o.executer("recette", { objet:"beignets" });
+  assert.deepEqual(beignets.donnees, {
+    produit:"Beignets", donneesDu:"22/09/2026",
+    recettes:[
+      { type:"Cuisine", ingredients:["Minerai x1", "Riz x1 (ou : Orge, Blé, Maïs, Seigle et 1 autre)"] },
+      { type:"Fabrication — Établi robuste", ingredients:["Minerai x9"] }
+    ]
+  });
+  assert.equal(beignets.source, "recettes · données du jeu du 22/09/2026");
+  assert.deepEqual((await o.executer("ou_trouver", { objet:"beignets" })).donnees.sources,
+    ["Recette : Cuisine", "Recette : Fabrication — Établi robuste"]);
+  assert.equal((await o.executer("recette", { objet:"filet" })).donnees.recettes[0].quantite, 2);
+  assert.deepEqual((await o.executer("recette", { objet:"et" })).donnees,
+    { recherche:"et", correspondances:2, candidats:["Filet", "Beignets"] });
+  const sansRecette = await o.executer("recette", { objet:"dragon" });
+  assert.equal(sansRecette.donnees.introuvable, "dragon");
+  assert.ok(Array.isArray(sansRecette.donnees.proches));
+  assert.deepEqual((await o.executer("recette", {})).donnees, { erreur:"nom d'objet manquant" });
+  const avantRecettes = JSON.parse(JSON.stringify(CATALOGUE));
+  delete avantRecettes.recettes;
+  assert.equal(O.validerCatalogueObjets(avantRecettes), null);
+  assert.equal((await outils(avantRecettes).executer("recette", { objet:"filet" })).donnees.introuvable, "filet");
+  const recetteAbimee = JSON.parse(JSON.stringify(CATALOGUE));
+  recetteAbimee.recettes[0].ingredients = [];
+  assert.match(O.validerCatalogueObjets(recetteAbimee), /recette mal formée/);
+
   /* ---------------- Bornes ---------------- */
   const gros = JSON.parse(JSON.stringify(CATALOGUE));
-  gros.objets[0].sources = Array.from({ length:20 }, (_, i) =>
+  gros.objets.find(objet => objet.nom === "Épée longue").sources = Array.from({ length:20 }, (_, i) =>
     ({ type:"boutique", boutique:"Boutique " + i, prix:i + " Or" }));
   gros.boutiques[0].articles = Array.from({ length:50 }, (_, i) => ({ objet:"Objet " + i, prix:i + " Or" }));
   const borne = outils(gros);
@@ -190,6 +219,10 @@ async function main() {
   const butinBorne = (await borne.executer("butin", { nom:"Banakro" })).donnees.butins[0];
   assert.equal(butinBorne.objets.length, 40);
   assert.equal(butinBorne.autresObjets, 10);
+  gros.recettes = Array.from({ length:8 }, (_, i) => ({ produit:"Filet", type:"Cuisine", ingredients:["Riz x" + (i + 1)] }));
+  const recettesBornees = (await borne.executer("recette", { objet:"Filet" })).donnees;
+  assert.equal(recettesBornees.recettes.length, 5);
+  assert.equal(recettesBornees.autresRecettes, 3);
 
   /* ---------------- Fichier absent ---------------- */
   const absent = outils(null);
