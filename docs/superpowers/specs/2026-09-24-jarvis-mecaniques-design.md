@@ -194,7 +194,7 @@ de chaînes.
 Déclarations ajoutées à celles de Gemini, comme `DECLARATIONS_OUTILS_MONSTRES`.
 Recherche sans casse ni accents, départage exact → début → contient, par
 les fonctions du lot 2a rendues communes sous des noms neutres :
-`rangDeNomJarvis`, `dateLisibleJarvis`, `sourceDateeJarvis`, et
+`rangCorrespondanceJarvis` (déjà le nom de la copie de `discord-jarvis-outils.js`, qui disparaît), `dateLisibleJarvis`, `sourceDateeJarvis`, et
 `elementDeSaisieMonstre` pour les synonymes d'éléments.
 
 - `fiche_effet({ nom })` : l'effet trouvé, ses variantes (au plus 6) et leurs
