@@ -288,10 +288,273 @@ function creerOutilsJarvis(options) {
   };
 }
 
-/* Rempli a la tache suivante : les outils qui lisent la confrerie. */
+const JOURS_JARVIS = ["lundi", "mardi", "mercredi", "jeudi", "vendredi", "samedi", "dimanche"];
+const JOURS_AFFICHES_JARVIS = ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"];
+const SCORE_LISIBLE = /^\d+$/;
+const TYPE_ARME_VERS_DOSSIER = Object.fromEntries(
+  Object.entries(BUILD_TYPE_TO_ENUM).map(([dossier, type]) => [type, dossier])
+);
+
+function pseudoAfficheJarvis(profil) {
+  return String((profil && profil.pseudo) || "Membre").trim() || "Membre";
+}
+
+async function membresJarvis(requete) {
+  const profils = await requete(PLANNING_PROFILES_QUERY);
+  return (Array.isArray(profils) ? profils : []).filter(profil => profil && profil.id);
+}
+
+/* Gemini envoie parfois « 8 » ou 21.0 la ou le schema dit INTEGER. */
+function entierJarvis(valeur) {
+  if(valeur === undefined || valeur === null || valeur === "") return null;
+  const nombre = Number(valeur);
+  return Number.isFinite(nombre) ? Math.trunc(nombre) : NaN;
+}
+
+function nomObjetJarvis(contexte, fichier) {
+  if(!fichier) return null;
+  return contexte.nomsParFichier.get(fichier) || nomDeFichier(fichier) || null;
+}
+
+/* Le nom de l'arme et des pieces, jamais la note : elle est ecrite par un
+   membre, peut contenir n'importe quoi, et n'a rien a faire chez Google. */
+function resumeBuildsJarvis(contexte, builds) {
+  return Object.entries(builds || {})
+    .filter(([, build]) => build && typeof build === "object" && build.weapon)
+    .map(([dossier, build]) => {
+      const pieces = [...Object.values(build.armor || {}), ...Object.values(build.jewel || {})]
+        .filter(Boolean)
+        .map(fichier => nomObjetJarvis(contexte, fichier));
+      const resume = { arme:libelleArme(dossier), equipee:nomObjetJarvis(contexte, build.weapon), pieces };
+      if(build.favorite) resume.favori = true;
+      return resume;
+    });
+}
+
+async function outilQuiPossede(contexte, args) {
+  const catalogue = contexte.catalogue;
+  const id = trouverPersonnageJarvis(catalogue, args.personnage);
+  if(!id) return introuvableJarvis(args.personnage, nomsDesPersonnagesJarvis(catalogue));
+  const personnage = catalogue.personnages[id];
+  const type = trouverTypeArmeJarvis(personnage, args.arme);
+  if(type === undefined){
+    return {
+      personnage:personnage.nom, armeInconnue:args.arme,
+      armes:personnage.armes.map(arme => arme.arme)
+    };
+  }
+  const dossier = type ? TYPE_ARME_VERS_DOSSIER[type] : null;
+  const minimumLu = entierJarvis(args.potentiel_min);
+  const minimum = Number.isFinite(minimumLu) ? minimumLu : 0;
+  const [profils, lignes] = await Promise.all([
+    membresJarvis(contexte.requete),
+    contexte.requete("roster_characters?char_id=eq." + encodeURIComponent(id)
+      + "&select=owner,potential_tier,builds")
+  ]);
+  const pseudos = new Map(profils.map(profil => [profil.id, pseudoAfficheJarvis(profil)]));
+  const possesseurs = (Array.isArray(lignes) ? lignes : [])
+    .filter(ligne => ligne && pseudos.has(ligne.owner))
+    .map(ligne => {
+      const armes = Object.entries(ligne.builds || {})
+        .filter(([, build]) => build && typeof build === "object" && build.weapon);
+      const favori = armes.find(([, build]) => build.favorite);
+      return {
+        pseudo:pseudos.get(ligne.owner),
+        palier:Number(ligne.potential_tier) || 0,
+        dossiers:armes.map(([cle]) => cle),
+        favori:favori ? favori[0] : null
+      };
+    })
+    .filter(possesseur => possesseur.palier >= minimum
+      && (!dossier || possesseur.dossiers.includes(dossier)))
+    .sort((a, b) => b.palier - a.palier || a.pseudo.localeCompare(b.pseudo, "fr"));
+  return {
+    personnage:personnage.nom,
+    filtre:{
+      arme:type ? personnage.armes.find(arme => arme.type === type).arme : null,
+      potentielMin:minimum
+    },
+    total:possesseurs.length,
+    membres:possesseurs.slice(0, JARVIS_LIGNES_MAX).map(possesseur => {
+      const membre = {
+        pseudo:possesseur.pseudo,
+        potentiel:"P" + possesseur.palier,
+        builds:possesseur.dossiers.map(libelleArme)
+      };
+      if(possesseur.favori) membre.favori = libelleArme(possesseur.favori);
+      return membre;
+    })
+  };
+}
+
+async function outilRosterDe(contexte, args) {
+  const profils = await membresJarvis(contexte.requete);
+  const profil = trouverProfil(profils, args.pseudo);
+  if(!profil) return introuvableJarvis(args.pseudo, profils.map(pseudoAfficheJarvis));
+  const lignes = await contexte.requete("roster_characters?owner=eq."
+    + encodeURIComponent(profil.id) + "&select=char_id,potential_tier,builds");
+  const personnages = (Array.isArray(lignes) ? lignes : [])
+    .map(ligne => ({
+      nom:((contexte.catalogue.personnages || {})[ligne.char_id] || {}).nom || ligne.char_id,
+      potentiel:"P" + (Number(ligne.potential_tier) || 0),
+      builds:resumeBuildsJarvis(contexte, ligne.builds)
+    }))
+    .sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
+  return {
+    pseudo:pseudoAfficheJarvis(profil),
+    total:personnages.length,
+    personnages:personnages.slice(0, JARVIS_LIGNES_MAX)
+  };
+}
+
+/* `null` : pas de jour demande. -1 : un jour illisible. */
+function indexDuJourJarvis(saisie) {
+  if(saisie === undefined || saisie === null || String(saisie).trim() === "") return null;
+  const cherche = normaliserRecherche(saisie);
+  return JOURS_JARVIS.findIndex(jour =>
+    jour === cherche || (cherche.length >= 3 && jour.startsWith(cherche)));
+}
+
+function libelleCreneauJarvis(index) {
+  const heure = index % 24;
+  return JOURS_AFFICHES_JARVIS[Math.floor(index / 24)] + " " + heure + "h-" + (heure + 1) + "h";
+}
+
+async function outilDispos(contexte, args) {
+  const jour = indexDuJourJarvis(args.jour);
+  if(jour === -1) return { erreur:"jour inconnu : utiliser lundi à dimanche", jour:args.jour };
+  const heure = entierJarvis(args.heure);
+  if(heure !== null && !(heure >= 0 && heure <= 23)) return { erreur:"heure invalide : de 0 à 23" };
+  const semaine = currentAvailabilityWeekStart(contexte.maintenant());
+  const [profils, lignes] = await Promise.all([
+    membresJarvis(contexte.requete),
+    contexte.requete("member_availability?week_start=eq." + semaine + "&select=owner,slots")
+  ]);
+  const rapport = buildAvailabilityReport(profils, Array.isArray(lignes) ? lignes : [], semaine);
+  const base = {
+    semaine:rapport.label, fuseau:"Europe/Paris",
+    membres:rapport.members.length, membresAyantRenseigne:rapport.declaredCount
+  };
+  const pseudosSur = index => rapport.members
+    .filter(membre => membre.mask[index] === "1").map(membre => membre.pseudo);
+  if(jour !== null && heure !== null){
+    const index = jour * 24 + heure;
+    return { ...base, creneau:libelleCreneauJarvis(index), disponibles:pseudosSur(index) };
+  }
+  const creneaux = rapport.counts
+    .map((nombre, index) => ({ nombre, index }))
+    .filter(creneau => creneau.nombre > 0
+      && (jour === null || Math.floor(creneau.index / 24) === jour)
+      && (heure === null || creneau.index % 24 === heure))
+    .sort((a, b) => b.nombre - a.nombre || a.index - b.index)
+    .slice(0, JARVIS_OBJETS_MAX);
+  return {
+    ...base,
+    meilleursCreneaux:creneaux.map(creneau => ({
+      creneau:libelleCreneauJarvis(creneau.index),
+      disponibles:creneau.nombre,
+      pseudos:pseudosSur(creneau.index)
+    }))
+  };
+}
+
+function comparerScoresJarvis(gauche, droite) {
+  const a = BigInt(gauche);
+  const b = BigInt(droite);
+  return a < b ? -1 : a > b ? 1 : 0;
+}
+
+function formaterScoreJarvis(score) {
+  return String(score).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+
+function herosDeLInstantane(catalogue, heros) {
+  return (Array.isArray(heros) ? heros : [])
+    .map(hero => hero && hero.char)
+    .filter(Boolean)
+    .map(id => ((catalogue.personnages || {})[id] || {}).nom || id);
+}
+
+/* Les scores restent des chaines lues en `::text` : un `Number` perdrait des
+   chiffres au-dela de 2^53. Une run sans rapport n'est jamais classee a zero. */
+async function outilScoresBoss(contexte, args) {
+  const periode = args.periode === "historique" ? "historique" : "semaine";
+  const requete = contexte.requete;
+  let sessions = null;
+  let rapports;
+  if(periode === "semaine"){
+    const semaine = currentBossWeekStart(contexte.maintenant());
+    sessions = await requete("boss_sessions?week_start=eq." + semaine
+      + "&select=id,week_start,slot,run_no");
+    const ids = (Array.isArray(sessions) ? sessions : []).map(session => session.id);
+    rapports = ids.length
+      ? await requete("boss_run_reports?session_id=in.(" + ids.join(",")
+        + ")&select=session_id,global_score::text,created_at")
+      : [];
+  }else{
+    rapports = await requete("boss_run_reports?select=session_id,global_score::text,created_at");
+  }
+  const lisibles = (Array.isArray(rapports) ? rapports : [])
+    .filter(rapport => rapport && SCORE_LISIBLE.test(String(rapport.global_score)));
+  if(!lisibles.length) return { periode, runs:0, message:"aucun rapport de run" };
+
+  const classes = lisibles.slice().sort((a, b) =>
+    comparerScoresJarvis(b.global_score, a.global_score)
+    || String(a.created_at).localeCompare(String(b.created_at)));
+  const dernier = lisibles.slice().sort((a, b) =>
+    String(b.created_at).localeCompare(String(a.created_at)))[0];
+  const somme = lisibles.reduce((total, rapport) => total + BigInt(rapport.global_score), 0n);
+  const meilleurs = classes.slice(0, JARVIS_OBJETS_MAX);
+  const idsMeilleurs = meilleurs.map(rapport => rapport.session_id);
+  if(!sessions){
+    sessions = await requete("boss_sessions?id=in.(" + idsMeilleurs.join(",")
+      + ")&select=id,week_start,slot,run_no");
+  }
+  const participations = await requete("boss_participation?session_id=in.("
+    + idsMeilleurs.join(",") + ")&select=session_id,pseudo,heros:team_snapshot->heroes");
+  const sessionParId = new Map((Array.isArray(sessions) ? sessions : [])
+    .map(session => [session.id, session]));
+  return {
+    periode,
+    runs:lisibles.length,
+    meilleur:formaterScoreJarvis(classes[0].global_score),
+    moyenne:formaterScoreJarvis((somme / BigInt(lisibles.length)).toString()),
+    dernier:formaterScoreJarvis(dernier.global_score),
+    meilleuresRuns:meilleurs.map(rapport => {
+      const session = sessionParId.get(rapport.session_id) || {};
+      return {
+        score:formaterScoreJarvis(rapport.global_score),
+        semaine:session.week_start || null,
+        groupe:session.slot || null,
+        run:session.run_no || null,
+        participants:(Array.isArray(participations) ? participations : [])
+          .filter(participation => participation.session_id === rapport.session_id)
+          .map(participation => ({
+            pseudo:String(participation.pseudo || "Membre"),
+            heros:herosDeLInstantane(contexte.catalogue, participation.heros)
+          }))
+      };
+    })
+  };
+}
+
 function ajouterOutilsConfrerie(table, contexte) {
-  void table;
-  void contexte;
+  table.qui_possede = {
+    executer:args => outilQuiPossede(contexte, args),
+    source:(args, donnees) => "possesseurs de " + (donnees.personnage || args.personnage || "?")
+  };
+  table.roster_de = {
+    executer:args => outilRosterDe(contexte, args),
+    source:(args, donnees) => "roster de " + (donnees.pseudo || args.pseudo || "?")
+  };
+  table.dispos = {
+    executer:args => outilDispos(contexte, args),
+    source:() => "dispos de la semaine"
+  };
+  table.scores_boss = {
+    executer:args => outilScoresBoss(contexte, args),
+    source:(args, donnees) => "scores de boss (" + (donnees.periode || "semaine") + ")"
+  };
 }
 
 const discordJarvisOutilsApi = {
