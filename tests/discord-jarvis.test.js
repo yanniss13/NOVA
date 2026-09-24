@@ -500,6 +500,10 @@ async function main() {
   assert.match(Q.CONSIGNE_JARVIS, /dans le même tour/);
   /* fiche_effet rend lui aussi « autresCorrespondances ». */
   assert.match(Q.CONSIGNE_JARVIS, /quel monstre ou quel effet tu as retenu/);
+  /* 302000002 : la table applique -6 %, le texte du jeu affiche 15 %.
+     Gemini doit donner les deux, jamais choisir en silence. */
+  assert.match(Q.CONSIGNE_JARVIS, /texteDuJeu/);
+  assert.match(Q.CONSIGNE_JARVIS, /donne les deux/);
   /* La date de l'export survit dans la ligne Sources, meme pour Akumu. */
   const sourceAkumu = "fiche monstre Akumu, bête démoniaque · données du jeu du 22/09/2026";
   assert.match(Q.messageJarvis("?", { texte:"ok", sources:[sourceAkumu] }),
