@@ -460,11 +460,19 @@ souvent avec d'autres mots.
 
 ### Objets et boutiques (lot 2c)
 
-Deux outils de plus : `ou_trouver` (« où trouver X ? » : les boutiques qui
-vendent un objet, son prix, ses limites d'achat) et `boutique` (les articles
-d'une boutique, son PNJ et sa région). Les butins et les recettes viendront
+Trois outils de plus : `ou_trouver` (« où trouver X ? » : boutiques, prix et
+limites d'achat, butins de monstres, captures, minage, donjons et paliers du
+boss de confrérie), `boutique` (les articles d'une boutique, son PNJ et sa
+région) et `butin` (« que lâche Banakro ? »). Les recettes viendront
 s'ajouter au même index d'objets ; d'ici là, une source absente ne prouve
 pas qu'un objet est introuvable, et la consigne le dit au bot.
+
+**Aucune probabilité de butin.** `DropPackTable` donne un taux par niveau
+de monde (`Standard_Level`) et `DropGroupTable` pondère ses paquets, mais
+la lecture de ces taux n'est pas confirmée : le bot dit ce qu'une source
+peut donner, jamais avec quelle chance. Les coffres et points de récolte
+(`InteractionTable`) ne sont pas couverts, faute de chaîne sûre jusqu'à
+leur nom.
 
 ```powershell
 $env:DONNEES_JEU = (Resolve-Path (Read-Host 'Dossier Content')).Path

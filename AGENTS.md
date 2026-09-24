@@ -1370,12 +1370,14 @@ le SQL Editor afin d'ajouter les tables à la publication
   **Lot 2c (objets)** : `outils/fabrication/extraire-objets.js` écrit
   `output/jarvis/objets.json` (bucket privé) ; outils `ou_trouver` et
   `boutique` dans `_shared/discord-jarvis-objets.js`. Étape 1 : les
-  boutiques. Les butins puis les recettes ajoutent d'autres `type` de
-  source au même index d'objets.
+  boutiques. Étape 2 : les butins (monstres, captures, minage, donjons,
+  boss de confrérie) et l'outil `butin`, **sans aucune probabilité** —
+  les taux par niveau de monde ne sont pas confirmés. Les recettes
+  ajouteront un autre `type` de source au même index.
   **Mémoire courte** : 3 échanges par membre, 30 minutes, dans
   `private.jarvis_memoire` (sans politique, `service_role` seul, via
   `jarvis_memoire_lire`/`jarvis_memoire_noter`) ; une panne ne bloque jamais
-  la réponse. Lots suivants prévus : 2c (butins, recettes), 2d (contenu
+  la réponse. Lots suivants prévus : 2c (recettes), 2d (contenu
   non sorti).
 - Après une modification de ce schéma, réexécuter le contenu complet de
   `supabase/schema.sql` dans le SQL Editor Supabase.
