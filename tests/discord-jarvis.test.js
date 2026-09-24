@@ -192,6 +192,12 @@ async function main() {
   assert.deepEqual(journalVide, [{ etape:"gemini", tour:1, ms:0, issue:"vide",
     fin:"STOP", parties:["thoughtSignature", "pensee", "texte(0)"] }]);
 
+  /* 7 ter. La question citee ne peut pas casser la mise en forme : un ```
+     ou un || tape par le membre ouvrait un bloc de code ou un spoiler qui
+     avalait la reponse. */
+  const citee = Q.messageJarvis("```js alert ||spoil||", { texte:"ok", sources:[] });
+  assert.match(citee, /^> \*\*Question :\*\* \\`\\`\\`js alert \\\|\\\|spoil\\\|\\\|\n/);
+
   /* 8. Le message publie */
   const message = Q.messageJarvis("Qui a\nEscanor ? @everyone",
     { texte:"**Kiro** l'a en P9.", sources:["possesseurs de Escanor", "fiche Escanor"] });

@@ -327,8 +327,11 @@ function ligneBorneeJarvis(texte, maximum) {
     : ligne.join("");
 }
 
+/* Un ``` ou un || tape par le membre ouvrait un bloc de code ou un spoiler qui
+   avalait la reponse. L'echappement vient APRES la coupure, pour ne jamais
+   couper un « \` » en deux. */
 function citerQuestion(question) {
-  return ligneBorneeJarvis(question, CITATION_MAX_JARVIS);
+  return ligneBorneeJarvis(question, CITATION_MAX_JARVIS).replace(/[`|]/g, "\\$&");
 }
 
 /* Une source recopie un argument choisi par Gemini (« recherche « … » »,
