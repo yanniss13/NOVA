@@ -53,7 +53,9 @@ function effetValide(effet) {
     && Array.isArray(effet.variantes)
     && effet.variantes.every(variante => estObjetMecanique(variante)
       && Array.isArray(variante.valeurs) && Array.isArray(variante.posePar)
-      && typeof variante.cible === "string");
+      && typeof variante.cible === "string"
+      && NATURES_MECANIQUES.includes(variante.nature)
+      && typeof variante.description === "string");
 }
 
 function sujetValide(regle) {
@@ -84,11 +86,13 @@ function aUnPorteur(effet) {
   return effet.variantes.some(variante => variante.posePar.length > 0);
 }
 
-function varianteLisible(variante) {
-  const lisible = {
-    cible:LIBELLES_CIBLE[variante.cible] || variante.cible,
-    valeurs:variante.valeurs.map(valeur => valeur.stat + " : " + valeur.valeur)
-  };
+/* Le jeu reutilise un nom pour des buffs de natures ou de descriptions
+   differentes : une variante qui s'ecarte de l'effet le dit. */
+function varianteLisible(variante, effet) {
+  const lisible = { cible:LIBELLES_CIBLE[variante.cible] || variante.cible };
+  if(variante.nature !== effet.nature) lisible.nature = LIBELLES_NATURE[variante.nature];
+  if(variante.description !== effet.description) lisible.description = variante.description;
+  lisible.valeurs = variante.valeurs.map(valeur => valeur.stat + " : " + valeur.valeur);
   if(variante.duree !== undefined) lisible.duree = String(variante.duree).replace(".", ",") + " s";
   if(variante.cumulMax !== undefined) lisible.cumulMax = variante.cumulMax;
   if(variante.posePar.length){
@@ -100,6 +104,28 @@ function varianteLisible(variante) {
     }
   }
   return lisible;
+}
+
+function distanceMecanique(a, b) {
+  let precedente = Array.from({ length:b.length + 1 }, (_, j) => j);
+  for(let i = 1; i <= a.length; i++){
+    const courante = [i];
+    for(let j = 1; j <= b.length; j++){
+      courante[j] = Math.min(precedente[j] + 1, courante[j - 1] + 1,
+        precedente[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+    }
+    precedente = courante;
+  }
+  return precedente[b.length];
+}
+
+/* Le jeu ecrit « Clotho » et « Derrierie » la ou le wiki dit « Klotho » et
+   « Derieri ». Un mot d'au moins 5 lettres admet une faute, 2 a partir de 7 :
+   assez pour ces noms, trop peu pour confondre deux mots courts. */
+function motsProchesMecanique(cherche, sujet) {
+  const motsSujet = normaliserRecherche(sujet).split(/[^\p{L}\p{N}]+/u).filter(Boolean);
+  return cherche.split(/\s+/).filter(mot => mot.length >= 5).some(mot =>
+    motsSujet.some(autre => distanceMecanique(mot, autre) <= (mot.length >= 7 ? 2 : 1)));
 }
 
 function texteBorneRegle(texte) {
@@ -115,27 +141,25 @@ async function outilFicheEffet(lireMecaniques, args) {
   const catalogue = await lireMecaniques();
   if(!catalogue) return Object.assign({}, INDISPONIBLE_MECANIQUES);
   const cherche = normaliserRecherche(args.nom);
-  let meilleurRang = 0;
-  let trouves = [];
-  catalogue.effets.forEach(effet => {
-    const rang = rangCorrespondanceJarvis(effet.nom, cherche);
-    if(rang > meilleurRang){
-      meilleurRang = rang;
-      trouves = [effet];
-    }else if(rang && rang === meilleurRang){
-      trouves.push(effet);
-    }
-  });
-  if(!trouves.length){
+  const classes = catalogue.effets
+    .map(effet => ({ effet, rang:rangCorrespondanceJarvis(effet.nom, cherche) }))
+    .filter(entree => entree.rang > 0);
+  if(!classes.length){
     return {
       introuvable:String(args.nom === undefined ? "" : args.nom),
       proches:propositions(catalogue.effets.map(effet => effet.nom), args.nom)
     };
   }
-  /* A correspondance egale : un effet qu'un heros pose, puis le nom le plus
-     court. */
-  trouves.sort((a, b) => Number(aUnPorteur(b)) - Number(aUnPorteur(a))
-    || a.nom.length - b.nom.length || a.nom.localeCompare(b.nom, "fr"));
+  /* Un nom exact gagne toujours. Sinon le mot est partiel (« attaque ») :
+     l'effet qu'un heros pose passe avant celui dont le nom commence
+     seulement par le mot — sans quoi « attaque » rendait « Attaque totale
+     ultime », un bonus de duree, et cachait « Augmentation de l'attaque ». */
+  const exact = classes.some(entree => entree.rang === 4);
+  const trouves = (exact ? classes.filter(entree => entree.rang === 4) : classes)
+    .sort((a, b) => Number(aUnPorteur(b.effet)) - Number(aUnPorteur(a.effet))
+      || b.rang - a.rang || a.effet.nom.length - b.effet.nom.length
+      || a.effet.nom.localeCompare(b.effet.nom, "fr"))
+    .map(entree => entree.effet);
   const effet = trouves[0];
   const resultat = {
     nom:effet.nom,
@@ -147,8 +171,13 @@ async function outilFicheEffet(lireMecaniques, args) {
     resultat.correspondances = trouves.length;
     resultat.autresCorrespondances = trouves.slice(1, 6).map(autre => autre.nom);
   }
+  if(!exact){
+    resultat.nomPartiel = "nom partiel : si ce n'est pas l'effet voulu, cite les autres"
+      + " correspondances ou utilise chercher_effets";
+  }
   resultat.totalVariantes = effet.variantes.length;
-  resultat.variantes = effet.variantes.slice(0, EFFET_VARIANTES_MAX).map(varianteLisible);
+  resultat.variantes = effet.variantes.slice(0, EFFET_VARIANTES_MAX)
+    .map(variante => varianteLisible(variante, effet));
   if(effet.variantes.length > EFFET_VARIANTES_MAX){
     resultat.suite = "seules les " + EFFET_VARIANTES_MAX + " premières variantes sont listées";
   }
@@ -175,13 +204,14 @@ async function outilChercherEffets(lireMecaniques, args) {
 
   const trouves = [];
   catalogue.effets.forEach(effet => {
-    if(nature && effet.nature !== nature) return;
-    const variantes = heros
-      ? effet.variantes.filter(variante => variante.posePar.some(deCeHeros))
-      : effet.variantes;
+    /* Nature et heros filtrent les VARIANTES : un malus range sous un nom
+       de buff reste trouvable comme malus. */
+    const variantes = effet.variantes.filter(variante =>
+      (!nature || variante.nature === nature) && (!heros || variante.posePar.some(deCeHeros)));
     if(!variantes.length) return;
-    const foin = [effet.nom, effet.description]
-      .concat(effet.variantes.flatMap(variante => variante.valeurs.map(valeur => valeur.stat)))
+    const foin = [effet.nom]
+      .concat(variantes.map(variante => variante.description))
+      .concat(variantes.flatMap(variante => variante.valeurs.map(valeur => valeur.stat)))
       .map(normaliserRecherche).join(" | ");
     if(!termes.some(terme => terme.split(/\s+/).every(mot => foin.includes(mot)))) return;
     const porteurs = [];
@@ -190,23 +220,33 @@ async function outilChercherEffets(lireMecaniques, args) {
       const ligne = porteur.heros + " — " + porteur.competence;
       if(!porteurs.includes(ligne)) porteurs.push(ligne);
     }));
-    trouves.push({
+    const trouve = {
       nom:effet.nom,
-      nature:LIBELLES_NATURE[effet.nature],
-      description:effet.description,
+      nature:LIBELLES_NATURE[variantes[0].nature],
+      description:variantes[0].description,
       cibles:[...new Set(variantes.map(variante => LIBELLES_CIBLE[variante.cible] || variante.cible))],
       porteurs:porteurs.slice(0, EFFETS_PORTEURS_RESUME_MAX)
-    });
+    };
+    if(porteurs.length > EFFETS_PORTEURS_RESUME_MAX){
+      trouve.autresPorteurs = porteurs.length - EFFETS_PORTEURS_RESUME_MAX;
+    }
+    trouves.push({ trouve, rang:rangCorrespondanceJarvis(effet.nom, cherche) });
   });
-  /* Un membre cherche d'abord qui POSE l'effet. */
-  trouves.sort((a, b) => Number(b.porteurs.length > 0) - Number(a.porteurs.length > 0)
-    || a.nom.localeCompare(b.nom, "fr"));
-  return {
+  /* Un membre cherche d'abord qui POSE l'effet, puis l'effet dont le NOM
+     porte le mot : « attaque » ne commence plus par « Altération ». */
+  trouves.sort((a, b) => Number(b.trouve.porteurs.length > 0) - Number(a.trouve.porteurs.length > 0)
+    || b.rang - a.rang || a.trouve.nom.localeCompare(b.trouve.nom, "fr"));
+  const resultat = {
     texte:String(args.texte),
     donneesDu:dateLisibleJarvis(catalogue),
     total:trouves.length,
-    effets:trouves.slice(0, EFFETS_RESULTATS_MAX)
+    effets:trouves.slice(0, EFFETS_RESULTATS_MAX).map(entree => entree.trouve)
   };
+  if(trouves.length > EFFETS_RESULTATS_MAX){
+    resultat.suite = "seuls les " + EFFETS_RESULTATS_MAX + " premiers effets sont listés :"
+      + " préciser le mot, la nature ou le héros pour affiner";
+  }
+  return resultat;
 }
 
 async function outilRegle(lireMecaniques, args) {
@@ -219,6 +259,16 @@ async function outilRegle(lireMecaniques, args) {
     .filter(entree => entree.rang > 0)
     .sort((a, b) => b.rang - a.rang || a.regle.sujet.localeCompare(b.regle.sujet, "fr"));
   if(!classes.length){
+    const approchees = catalogue.regles.filter(regle => motsProchesMecanique(cherche, regle.sujet));
+    if(approchees.length){
+      return {
+        donneesDu:dateLisibleJarvis(catalogue),
+        orthographeProche:true,
+        sujets:approchees.slice(0, REGLES_SUJETS_MAX).map(regle => ({
+          sujet:regle.sujet, texte:texteBorneRegle(regle.pages.join("\n\n"))
+        }))
+      };
+    }
     const mots = cherche.split(/\s+/).filter(mot => mot.length >= 3);
     const proches = catalogue.regles.map(regle => regle.sujet)
       .filter(sujet => mots.some(mot => normaliserRecherche(sujet).includes(mot)))

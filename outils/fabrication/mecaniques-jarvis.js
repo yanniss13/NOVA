@@ -160,10 +160,11 @@ function construireCatalogueMecaniques(entree) {
   const unites = entree.unites || {};
   const buffs = entree.buffs || {};
 
-  /* Les buffs nommes, du plus petit identifiant au plus grand : le premier
-     d'un nom donne la nature et la description de l'effet. */
+  /* Les buffs nommes. Le jeu reutilise un nom pour des buffs de natures et
+     de descriptions differentes (« Augmentation des degats crit. » dit
+     « heros Vent » sur l'un, rien sur l'autre) : chaque variante garde les
+     siennes. */
   const nommes = new Map();
-  const premierParNom = new Map();
   Object.keys(buffs).sort((a, b) => Number(a) - Number(b)).forEach(id => {
     const brut = buffs[id];
     const nom = brut && nettoyerMecanique(lire(brut.Local_Key));
@@ -178,7 +179,6 @@ function construireCatalogueMecaniques(entree) {
       cible:cibleDuBuff(brut, nature)
     };
     nommes.set(id, info);
-    if(!premierParNom.has(nom)) premierParNom.set(nom, info);
   });
 
   const variantesParNom = new Map();
@@ -188,13 +188,15 @@ function construireCatalogueMecaniques(entree) {
     const variantes = variantesParNom.get(info.nom);
     const duree = dureeMs > 0 ? Number((dureeMs / 1000).toFixed(2)) : undefined;
     const cle = JSON.stringify([info.valeurs, duree === undefined ? null : duree,
-      info.cumulMax === undefined ? null : info.cumulMax, info.cible]);
+      info.cumulMax === undefined ? null : info.cumulMax, info.cible, info.nature, info.description]);
     let courante = variantes.get(cle);
     if(!courante){
       courante = { valeurs:info.valeurs };
       if(duree !== undefined) courante.duree = duree;
       if(info.cumulMax !== undefined) courante.cumulMax = info.cumulMax;
       courante.cible = info.cible;
+      courante.nature = info.nature;
+      courante.description = info.description;
       courante.posePar = [];
       courante.rang = info.rang;
       variantes.set(cle, courante);
@@ -224,18 +226,15 @@ function construireCatalogueMecaniques(entree) {
   nommes.forEach((info, id) => { if(!appliques.has(id)) variante(id, -1); });
 
   const effets = [...variantesParNom].map(([nom, variantes]) => {
-    const premier = premierParNom.get(nom);
-    return {
-      nom,
-      nature:premier.nature,
-      description:premier.description,
-      variantes:[...variantes.values()]
-        .sort((a, b) => Number(b.posePar.length > 0) - Number(a.posePar.length > 0) || a.rang - b.rang)
-        .map(({ rang, ...reste }) => Object.assign(reste, {
-          posePar:reste.posePar.sort((a, b) =>
-            a.heros.localeCompare(b.heros, "fr") || a.competence.localeCompare(b.competence, "fr"))
-        }))
-    };
+    const triees = [...variantes.values()]
+      .sort((a, b) => Number(b.posePar.length > 0) - Number(a.posePar.length > 0) || a.rang - b.rang)
+      .map(({ rang, ...reste }) => Object.assign(reste, {
+        posePar:reste.posePar.sort((a, b) =>
+          a.heros.localeCompare(b.heros, "fr") || a.competence.localeCompare(b.competence, "fr"))
+      }));
+    /* L'effet prend la nature et la description de sa premiere variante,
+       celle qu'un heros pose d'abord : c'est d'elle qu'un membre parle. */
+    return { nom, nature:triees[0].nature, description:triees[0].description, variantes:triees };
   }).sort((a, b) => a.nom.localeCompare(b.nom, "fr"));
 
   return {

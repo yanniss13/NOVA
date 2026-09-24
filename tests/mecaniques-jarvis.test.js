@@ -33,12 +33,18 @@ const ENTREE_MECANIQUES_TEST = {
     "301000002":buff("Buff", "Hero", "Local_Buff_AtkUp_Name", [ajout("I_AtkAdd_Rate", 3000), ajout("None", 5)], 5),
     "301000003":buff("Buff", "Hero", "Local_Buff_Mystery_Name", [ajout("Mystery_Stat", 42)], 0),
     "309000001":buff("DeBuff", "Team", "Local_Buff_Petrify_Name", [ajout("Earth_Weakness_Rate", 1500)], 1, "StateCC"),
-    "309000002":buff("DeBuff", "Team", "Local_Debuff_Fear_Name", [], 1)
+    "309000002":buff("DeBuff", "Team", "Local_Debuff_Fear_Name", [], 1),
+    /* Le jeu reutilise un nom pour un malus, avec sa propre description :
+       « Augmentation de l'attaque » existe aussi en malus d'attribut Feu. */
+    "301000004":Object.assign(buff("DeBuff", "Team", "Local_Buff_AtkUp_Name", [ajout("I_AtkAdd_Rate", -1000)], 1),
+      { Local_Desc:"Local_Buff_AtkUpFeu_Desc" }),
+    /* Un nom qui COMMENCE par « attaque », qu'aucun heros ne pose. */
+    "301000005":buff("Buff", "Hero", "Local_Buff_Ultime_Name", [ajout("Buff_Time_Rate", 300)], 1)
   },
   comportements:{
     elizabeth_book_skill_q_a:{ BehaviorDetail_SetBuffTid:[pose("302171011", 40000), pose("302171012", 20000)] },
     elizabeth_book_skill_q_b:{ BehaviorDetail_SetBuffTid:[pose("302171011", 40000), pose("302171012", 20000)] },
-    elizabeth_book_skill_e:{ BehaviorDetail_SetBuffTid:[pose("302171017", 20000)] },
+    elizabeth_book_skill_e:{ BehaviorDetail_SetBuffTid:[pose("302171017", 20000), pose("301000004", 15000)] },
     ban_cudgel3c_skill_e:{ BehaviorDetail_SetBuffTid:[pose("301000001", 30000)] },
     ban_cudgel3c_skill_q:{ BehaviorDetail_SetBuffTid:[pose("301000002", -1)] },
     ban_cudgel3c_skill_q_ex_a:{ BehaviorDetail_SetBuffTid:[pose("301000003", 10000)] },
@@ -100,6 +106,8 @@ const ENTREE_MECANIQUES_TEST = {
     Local_Buff_WeakUp_Desc:"Dégâts de faiblesse +{0}",
     Local_Buff_AtkUp_Name:"Augmentation de l'attaque",
     Local_Buff_AtkUp_Desc:"Attaque +{0}",
+    Local_Buff_AtkUpFeu_Desc:"Attaque des héros d'attribut Feu +{0}",
+    Local_Buff_Ultime_Name:"Attaque totale ultime",
     Local_Buff_Mystery_Name:"Mystère",
     Local_Buff_Petrify_Name:"Pétrification",
     Local_Buff_Petrify_Desc:"Immobilisation. Dégâts de Terre subis +{0}",
@@ -126,7 +134,7 @@ function main() {
   assert.equal(catalogue.dateExport, "2026-09-24");
   assert.equal(catalogue.genereLe, "2026-09-24T12:00:00.000Z");
   assert.deepEqual(catalogue.effets.map(effet => effet.nom), [
-    "Augmentation de l'attaque", "Augmentation des dégâts de faiblesse",
+    "Attaque totale ultime", "Augmentation de l'attaque", "Augmentation des dégâts de faiblesse",
     "Éclaboussures", "Mystère", "Pétrification"
   ], "tri par nom ; l'effet sans nom et celui dont le texte manque sont écartés");
 
@@ -135,7 +143,7 @@ function main() {
     nom:"Éclaboussures", nature:"malus", description:"Réduit la défense de X",
     variantes:[{
       valeurs:[{ stat:"Augmentation de la défense", valeur:"-20 %" }],
-      duree:40, cumulMax:1, cible:"ennemi",
+      duree:40, cumulMax:1, cible:"ennemi", nature:"malus", description:"Réduit la défense de X",
       posePar:[{ heros:"Elizabeth", arme:"Grimoire", competence:"Canon à eau",
         categorie:"ACTIVE_THIRD", citeParDescription:true }]
     }]
@@ -146,24 +154,37 @@ function main() {
       { stat:"Dégâts de faiblesse Foudre", valeur:"+10 %" },
       { stat:"Dégâts de faiblesse Sacré", valeur:"+10 %" }
     ],
-    duree:20, cumulMax:1, cible:"ennemi",
+    duree:20, cumulMax:1, cible:"ennemi", nature:"malus", description:"Dégâts de faiblesse +X",
     posePar:[{ heros:"Elizabeth", arme:"Grimoire", competence:"Canon à eau",
       categorie:"ACTIVE_THIRD", citeParDescription:false }]
   }], "familles élémentaires libellées et en dix-millièmes ; nom absent de la description");
 
-  assert.deepEqual(effet("Augmentation de l'attaque").variantes, [
+  /* Un nom partagé par un buff et un malus : chaque variante garde SA nature
+     et SA description, sinon la fiche dit « Buff… cible l'ennemi » ou
+     prête à un héros un bonus d'attribut Feu qu'il ne donne pas. */
+  const attaque = effet("Augmentation de l'attaque");
+  assert.equal(attaque.nature, "buff");
+  assert.equal(attaque.description, "Attaque +X");
+  assert.deepEqual(attaque.variantes, [
     { valeurs:[{ stat:"Augmentation de l'attaque", valeur:"+15 %" }], duree:30, cumulMax:1, cible:"equipe",
+      nature:"buff", description:"Attaque +X",
       posePar:[{ heros:"Ban", arme:"Nunchaku", competence:"Ruée en spirale",
         categorie:"NORMAL_SKILL", citeParDescription:false }] },
     { valeurs:[{ stat:"Augmentation de l'attaque", valeur:"+30 %" }], cumulMax:5, cible:"porteur",
+      nature:"buff", description:"Attaque +X",
       posePar:[{ heros:"Ban", arme:"Nunchaku", competence:"Chaîne",
-        categorie:"ACTIVE_THIRD", citeParDescription:true }] }
+        categorie:"ACTIVE_THIRD", citeParDescription:true }] },
+    { valeurs:[{ stat:"Augmentation de l'attaque", valeur:"-10 %" }], duree:15, cumulMax:1, cible:"ennemi",
+      nature:"malus", description:"Attaque des héros d'attribut Feu +X",
+      posePar:[{ heros:"Elizabeth", arme:"Grimoire", competence:"Bouchée rafraîchissante",
+        categorie:"NORMAL_SKILL", citeParDescription:false }] }
   ], "Team → équipe, Hero → porteur ; -1 ms → sans durée ; la stat None est ignorée ;"
     + " le comportement commun sans compétence est ignoré ; citation sans casse");
 
   assert.deepEqual(effet("Mystère"), {
     nom:"Mystère", nature:"buff", description:"",
     variantes:[{ valeurs:[{ stat:"Mystery_Stat", valeur:"42 (valeur brute)" }], duree:10, cible:"porteur",
+      nature:"buff", description:"",
       posePar:[{ heros:"Ban", arme:"Lance", competence:"Chaîne renforcée",
         categorie:"ACTIVE_THIRD", citeParDescription:false }] }]
   }, "le plus long identifiant gagne ; type d'arme inconnu gardé brut ; cumul 0 omis ; sans description");
@@ -171,7 +192,7 @@ function main() {
   assert.deepEqual(effet("Pétrification"), {
     nom:"Pétrification", nature:"controle", description:"Immobilisation. Dégâts de Terre subis +X",
     variantes:[{ valeurs:[{ stat:"Dégâts de faiblesse Terre", valeur:"+15 %" }], cumulMax:1,
-      cible:"ennemi", posePar:[] }]
+      cible:"ennemi", nature:"controle", description:"Immobilisation. Dégâts de Terre subis +X", posePar:[] }]
   }, "StateCC passe avant DeBuff ; sans porteur, gardé dans le glossaire");
 
   assert.deepEqual(catalogue.regles, [

@@ -116,6 +116,8 @@ Sortie :
       duree: 40,                // secondes ; absente si sans durée
       cumulMax: 1,
       cible: "ennemi",          // "equipe" | "porteur" | "ennemi"
+      nature: "malus",          // celle de CE buff
+      description: "Réduit la défense de X",   // celle de CE buff
       posePar: [{ heros: "Elizabeth", arme: "Grimoire",
                   competence: "Canon à eau", categorie: "ACTIVE_THIRD",
                   citeParDescription: true }]
@@ -144,8 +146,14 @@ Règles d'extraction :
   signée telle quelle ; unité inconnue → valeur brute suivie de
   « (valeur brute) ».
 - **Variantes** : deux buffs de même nom forment une seule variante si leurs
-  valeurs, durée, cumul et cible sont identiques ; leurs `posePar` sont
-  fusionnés sans doublon. Une même compétence qui pose deux fois le même
+  valeurs, durée, cumul, cible, nature et description sont identiques ; leurs
+  `posePar` sont fusionnés sans doublon. Le jeu réutilise un nom pour des
+  buffs de natures et de descriptions différentes (« Augmentation des dégâts
+  crit. » dit « héros d'attribut Vent » sur l'un, rien sur l'autre) : chaque
+  variante garde les siennes, et l'effet prend celles de sa première
+  variante (posée d'abord). `chercher_effets` filtre la nature sur les
+  variantes. Décision de la relecture finale ; elle remplace « le premier
+  buff d'un nom donne la nature et la description ». Une même compétence qui pose deux fois le même
   buff (comportements `_a` et `_b`) n'apparaît qu'une fois.
 - **Porteurs** : pour chaque compétence du wiki, ses comportements sont ceux
   dont le nom vaut l'identifiant ou commence par l'identifiant suivi de `_`.
