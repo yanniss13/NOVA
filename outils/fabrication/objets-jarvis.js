@@ -93,13 +93,17 @@ function secteurParPosition(apparition, secteurs) {
   return chapitre && Number(chapitre[1]) === apparition.chapitre ? cles[0] : null;
 }
 
-/* La Boutique d'echange du menu Boutique : PackageStoreTable (le bouton),
-   PackageStoreSubTabTable (ses onglets), PackageStoreGoodsTable (les
-   articles, Sell_Goods_DropTid -> DropGroupTable). Seuls ses onglets
-   d'echange (« store_tradein ») et les monnaies du jeu : jamais un article
-   paye en argent reel. */
-const MAGASIN_ECHANGE = "store_tradein_data";
-const PAIEMENTS_REELS = new Set(["Cash", "Cash_Paid", "Coupon"]);
+/* Le menu Boutique : PackageStoreTable (ses boutons : Boutique d'echange,
+   Lots, Memoire des etoiles, Boutique de renforcement...),
+   PackageStoreSubTabTable (leurs onglets), PackageStoreGoodsTable (les
+   articles, Sell_Goods_DropTid -> DropGroupTable pour le contenu).
+   Choix du proprietaire du 25/09/2026 : un paquet paye en argent reel est
+   une source comme une autre, SANS chiffre (la valeur des fichiers n'est
+   pas un prix : « 120 memoires des etoiles » y vaut 120). Une monnaie du
+   jeu (Memoire des etoiles payee comprise) garde son prix exact. Les
+   coupons, internes, ne sont jamais lus. */
+const PRIX_ARGENT_REEL = "argent réel (prix selon ta boutique d'applications)";
+const CONTENU_MAX_LOT = 12;
 const PERIODES_MAGASIN = {
   packageshop_daily:"par jour", packageshop_weekly:"par semaine",
   packageshop_monthly:"par mois", packageshop_account:"par compte",
@@ -124,24 +128,39 @@ function limiteMagasin(brut, fin) {
 }
 
 function boutiquesDuMagasin(entree, lire, objetsParId, actif) {
-  const magasin = (entree.magasins || {})[MAGASIN_ECHANGE];
-  const genre = magasin && lire(magasin.Store_Button_Name);
-  if(!genre) return [];
   const exportLe = entree.dateExport ? new Date(entree.dateExport + "T00:00:00Z") : null;
   const lignesParPaquet = new Map();
   Object.values(entree.paquetsButin || {}).forEach(ligne => {
     if(ligne) ajouterDans(lignesParPaquet, String(ligne.DropPack_Key), ligne);
   });
-  const typeDuPaquet = groupe => {
+  const lignesDuGroupe = groupe => {
     const brut = (entree.groupesButin || {})[String(groupe)];
-    const lignes = [].concat(brut && brut.DropPack_Key || []).flatMap(paquet => lignesParPaquet.get(String(paquet)) || []);
-    const objet = lignes.length === 1 && objetsParId.get(String(lignes[0].Item_Tid));
-    return objet ? objet.type : "Divers";
+    return [].concat(brut && brut.DropPack_Key || []).flatMap(paquet => lignesParPaquet.get(String(paquet)) || []);
   };
+  /* Le contenu d'un lot : un objet (Item) ou une monnaie (suffixe de
+     DropType), sa quantite quand elle est fixe. Un abonnement sans nom
+     n'y figure pas. */
+  const contenuDuGroupe = groupe => {
+    const contenu = [];
+    lignesDuGroupe(groupe).forEach(ligne => {
+      const genre = String(ligne.DropType || "").replace(/^.*::/, "");
+      const objet = genre === "Item" ? objetsParId.get(String(ligne.Item_Tid)) : actif("::Currency", genre.toLowerCase());
+      if(!objet || contenu.some(present => present.nom === objet.nom)) return;
+      const min = Number(ligne.Min_Cnt), max = Number(ligne.Max_Cnt);
+      contenu.push({ nom:objet.nom, type:objet.type, quantite:min === max && min > 1 ? min : null });
+    });
+    return contenu;
+  };
+  const magasins = new Map(Object.entries(entree.magasins || {})
+    .map(([id, magasin]) => [id, magasin && lire(magasin.Store_Button_Name)])
+    .filter(([, genre]) => genre));
+  const rangMagasin = new Map([...magasins.keys()].map((id, rang) => [id, rang]));
   const onglets = Object.entries(entree.ongletsMagasin || {})
-    .filter(([, onglet]) => onglet && onglet.Store_Tid === MAGASIN_ECHANGE)
-    .sort((a, b) => (Number(a[1].Store_Show_Order) || 0) - (Number(b[1].Store_Show_Order) || 0));
+    .filter(([, onglet]) => onglet && magasins.has(String(onglet.Store_Tid)))
+    .sort((a, b) => rangMagasin.get(String(a[1].Store_Tid)) - rangMagasin.get(String(b[1].Store_Tid))
+      || (Number(a[1].Store_Show_Order) || 0) - (Number(b[1].Store_Show_Order) || 0));
   return onglets.map(([id, onglet]) => {
+    const genre = magasins.get(String(onglet.Store_Tid));
     const nomOnglet = lire(onglet.Shop_SubTab_Name);
     const articles = [];
     const vendus = [];
@@ -150,20 +169,31 @@ function boutiquesDuMagasin(entree, lire, objetsParId, actif) {
       .sort((a, b) => (Number(a.Store_Show_Order) || 0) - (Number(b.Store_Show_Order) || 0))
       .forEach(brut => {
         const paiement = String(brut.Goods_Payment_Type || "").replace(/^.*::/, "");
-        if(brut.Cash_Product_Check || PAIEMENTS_REELS.has(paiement)) return;
+        if(paiement === "Coupon") return;
         const fin = finDOffreMagasin(brut.Limit_Goods_Time_End);
         if(fin && (!exportLe || fin.instant < exportLe)) return;
         const nom = lire(brut.Goods_Name);
+        if(!nom) return;
+        const valeur = Number([].concat(brut.Goods_Payment_Value || [])[0]);
         const monnaie = actif("::Currency", paiement.toLowerCase());
-        const prix = [].concat(brut.Goods_Payment_Value || [])[0];
-        if(!nom || !monnaie || !(Number(prix) > 0)) return;
-        const ligne = { objet:nom, prix:nombreObjets(prix) + " " + monnaie.nom };
+        const prix = brut.Cash_Product_Check || paiement === "Cash" ? PRIX_ARGENT_REEL
+          : valeur === 0 ? "gratuit"
+          : monnaie && valeur > 0 ? nombreObjets(valeur) + " " + monnaie.nom : null;
+        if(!prix) return;
+        const ligne = { objet:nom, prix };
         const limite = limiteMagasin(brut, fin);
         if(limite) ligne.limite = limite;
+        const contenu = contenuDuGroupe(brut.Sell_Goods_DropTid);
+        /* « Bois » qui ne contient que du Bois : pas de contenu a dire. */
+        const inutile = contenu.length === 1 && contenu[0].nom === nom && !contenu[0].quantite;
+        if(contenu.length && !inutile){
+          ligne.contenu = contenu.slice(0, CONTENU_MAX_LOT)
+            .map(element => element.nom + (element.quantite ? " x" + nombreObjets(element.quantite) : ""));
+        }
         articles.push(ligne);
-        vendus.push({ ligne, type:typeDuPaquet(brut.Sell_Goods_DropTid) });
+        vendus.push({ ligne, type:contenu.length === 1 ? contenu[0].type : "Divers", contenu:inutile ? [] : contenu });
       });
-    return { id, genre, nomDeBase:genre + (nomOnglet ? " — " + nomOnglet : ""), acces:"menu",
+    return { id, genre, nomDeBase:genre + (nomOnglet && nomOnglet !== genre ? " — " + nomOnglet : ""), acces:"menu",
       pnj:[], regions:[], aleatoire:false, articles:sansDoublonsObjets(articles), vendus };
   }).filter(boutique => boutique.articles.length);
 }
@@ -303,12 +333,21 @@ function construireCatalogueObjets(entree) {
 
   const index = new Map();
   boutiques.forEach(boutique => {
-    boutique.vendus.forEach(({ ligne, type }) => {
+    boutique.vendus.forEach(({ ligne, type, contenu }) => {
       if(!index.has(ligne.objet)) index.set(ligne.objet, { nom:ligne.objet, type, sources:[] });
       const source = { type:"boutique", boutique:boutique.nom };
-      Object.entries(ligne).forEach(([cle, valeur]) => { if(cle !== "objet") source[cle] = valeur; });
+      Object.entries(ligne).forEach(([cle, valeur]) => { if(cle !== "objet" && cle !== "contenu") source[cle] = valeur; });
       if(boutique.aleatoire) source.aleatoire = true;
       index.get(ligne.objet).sources.push(source);
+      /* Chaque objet d'un lot renvoie au lot, avec son prix et sa limite. */
+      (contenu || []).filter(element => element.nom !== ligne.objet).forEach(element => {
+        if(!index.has(element.nom)) index.set(element.nom, { nom:element.nom, type:element.type, sources:[] });
+        const dansLot = { type:"boutique", boutique:boutique.nom, paquet:ligne.objet };
+        if(element.quantite) dansLot.quantite = element.quantite;
+        dansLot.prix = ligne.prix;
+        if(ligne.limite) dansLot.limite = ligne.limite;
+        index.get(element.nom).sources.push(dansLot);
+      });
     });
   });
 

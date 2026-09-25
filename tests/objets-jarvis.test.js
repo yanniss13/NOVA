@@ -463,8 +463,8 @@ assert.deepEqual(butinsAvecFilons([]), {
 });
 
 /* La Boutique d'echange du menu Boutique (PackageStore*) : ses onglets
-   d'echange contre une monnaie du jeu. Un article paye en argent reel ou
-   expire a la date de l'export n'y figure pas. La periode de
+   d'echange contre une monnaie du jeu. Un article expire a la date de
+   l'export n'y figure pas ; un article en argent reel y figure sans prix. La periode de
    « packageshop_update_3 » n'est pas dans les fichiers : le proprietaire
    l'a relevee en jeu (35 a 36 jours). */
 function magasin(onglet, nom, paiement, prix, limite, reset, typeLimite, fin, paquet, autres) {
@@ -503,7 +503,7 @@ function entreeAvecMagasin() {
       /* Offre terminee avant l'export du 22/09/2026. */
       m_perime:magasin("store_tradein_subtab_03", "local_item_ore", "Core_Ether", 30, 25,
         "None", "Limit", "+09:00 2026-04-10 15:59:59", "g_minerai_magasin"),
-      /* Argent reel : jamais. */
+      /* Argent reel : sans chiffre. */
       m_payant:magasin("store_tradein_subtab_03", "local_item_ore", "Cash", 1, 1,
         "None", "None", "None", "g_minerai_magasin", { Cash_Product_Check:true }),
       /* Un paquet d'un autre magasin (onglet inconnu) : ignore. */
@@ -522,10 +522,14 @@ const ECHANGE_ETHER = "Boutique d'échange — Fragment de traînée stellaire";
 assert.deepEqual(AVEC_MAGASIN.boutiques.find(boutique => boutique.nom === ECHANGE_ETHER), {
   nom:ECHANGE_ETHER, genre:"Boutique d'échange", acces:"menu", pnj:[], regions:[],
   articles:[
-    { objet:"Potion", prix:"120 Fragment de traînée stellaire", limite:"8 par semaine" },
+    /* Le paquet de la potion contient du minerai : il le dit. */
+    { objet:"Potion", prix:"120 Fragment de traînée stellaire", limite:"8 par semaine", contenu:["Minerai"] },
+    { objet:"Minerai", prix:"argent réel (prix selon ta boutique d'applications)", limite:"1 au total" },
     { objet:"Minerai", prix:"5 Fragment de traînée stellaire", limite:"100 tous les 35 à 36 jours environ" },
-    { objet:"Épée longue", prix:"180 Fragment de traînée stellaire", limite:"2 au total, jusqu'au 08/10/2026" },
-    { objet:"Épée longue", prix:"50 Fragment de traînée stellaire", limite:"7 par période (durée inconnue)" }
+    { objet:"Épée longue", prix:"180 Fragment de traînée stellaire", limite:"2 au total, jusqu'au 08/10/2026",
+      contenu:["Minerai"] },
+    { objet:"Épée longue", prix:"50 Fragment de traînée stellaire", limite:"7 par période (durée inconnue)",
+      contenu:["Minerai"] }
   ]
 });
 assert.deepEqual(AVEC_MAGASIN.objets.find(objet => objet.nom === "Minerai").sources[0],
@@ -605,7 +609,74 @@ assert.ok(AVEC_CUBE.objets.find(objet => objet.nom === "Épée longue").sources
   .some(source => source.type === "cube" && source.origine === "Démon rouge"
     && source.detail === "à ouvrir avec 10 Clé de cube"));
 
+/* Les autres onglets de la Boutique (Lots, Mémoire des étoiles, Boutique de
+   renforcement). Choix du proprietaire du 25/09/2026 : un paquet paye en
+   argent reel est une source comme une autre, mais sans chiffre (la valeur
+   des fichiers n'est pas un prix : « 120 memoires des etoiles » y vaut 120).
+   Le contenu du lot vient de son groupe de butin ; chaque objet du lot
+   renvoie au lot. Les coupons (internes) ne sont jamais lus. */
+const PRIX_REEL = "argent réel (prix selon ta boutique d'applications)";
+function entreeAvecLots() {
+  const base = entreeAvecMagasin();
+  return Object.assign({}, base, {
+    monnaies:Object.assign({ rewardkey:{ LinkItemTid:100000150 }, cash_paid:{ LinkItemTid:100000151 } }, base.monnaies),
+    objets:Object.assign({}, base.objets, {
+      dropType:Object.assign({
+        "100000150":{ Local_Key:"Local_Item_Cle" }, "100000151":{ Local_Key:"Local_Item_Memoire" }
+      }, base.objets.dropType)
+    }),
+    groupesButin:Object.assign({ g_lot:{ DropPack_Key:["p_lot"], DropPack_Rate:[10000], DropPack_Type:[false] } },
+      base.groupesButin),
+    paquetsButin:Object.assign({
+      p_lot_1:{ DropPack_Key:"p_lot", DropType:"EDropType::RewardKey", Item_Tid:"None", Standard_Level:"None",
+        Rate:10000, Min_Cnt:120, Max_Cnt:120 },
+      p_lot_2:{ DropPack_Key:"p_lot", DropType:"EDropType::Item", Item_Tid:"101000001", Standard_Level:"None",
+        Rate:10000, Min_Cnt:1, Max_Cnt:1 },
+      /* Sans nom (abonnement) : absent du contenu. */
+      p_lot_3:{ DropPack_Key:"p_lot", DropType:"EDropType::Subscription", Item_Tid:"None", Standard_Level:"None",
+        Rate:10000, Min_Cnt:1, Max_Cnt:1 }
+    }, base.paquetsButin),
+    magasins:Object.assign({ store_lots:{ Store_Button_Name:"ui_lots" }, store_coupon_data:{ Store_Button_Name:"None" } },
+      base.magasins),
+    ongletsMagasin:Object.assign({
+      lots_cle:{ Store_Tid:"store_lots", Store_Show_Order:4, Shop_SubTab_Name:"ui_lots_cle" },
+      coupons:{ Store_Tid:"store_coupon_data", Store_Show_Order:1, Shop_SubTab_Name:"None" }
+    }, base.ongletsMagasin),
+    articlesMagasin:Object.assign({
+      l_cle:magasin("lots_cle", "local_lot_cle", "Cash", 5900, 5, "packageshop_update_3", "ContentsReset",
+        "None", "g_lot", { Cash_Product_Check:true, Store_Show_Order:1 }),
+      l_renfo:magasin("lots_cle", "local_lot_renfo", "Cash_Paid", 990, 0, "None", "None",
+        "None", "g_minerai_magasin", { Store_Show_Order:2 }),
+      l_gratuit:magasin("lots_cle", "local_lot_gratuit", "Cash_Paid", 0, 1, "packageshop_daily", "ContentsReset",
+        "None", "g_minerai_magasin", { Store_Show_Order:3 }),
+      l_coupon:magasin("coupons", "local_lot_cle", "Coupon", 0, 0, "None", "None", "None", "g_lot",
+        { Cash_Product_Check:true })
+    }, base.articlesMagasin),
+    textes:Object.assign({
+      local_item_cle:"Clé de cube", local_item_memoire:"Mémoire des étoiles (payée)",
+      ui_lots:"Lots", ui_lots_cle:"Clé de cube",
+      local_lot_cle:"Lot Clé de cube", local_lot_renfo:"Renforcement niv. 1", local_lot_gratuit:"Une fois par jour"
+    }, base.textes)
+  });
+}
+const AVEC_LOTS = construireCatalogueObjets(entreeAvecLots());
+assert.deepEqual(AVEC_LOTS.boutiques.find(boutique => boutique.nom === "Lots — Clé de cube"), {
+  nom:"Lots — Clé de cube", genre:"Lots", acces:"menu", pnj:[], regions:[],
+  articles:[
+    { objet:"Lot Clé de cube", prix:PRIX_REEL, limite:"5 tous les 35 à 36 jours environ",
+      contenu:["Clé de cube x120", "Minerai"] },
+    { objet:"Renforcement niv. 1", prix:"990 Mémoire des étoiles (payée)", contenu:["Minerai"] },
+    { objet:"Une fois par jour", prix:"gratuit", limite:"1 par jour", contenu:["Minerai"] }
+  ]
+});
+assert.equal(AVEC_LOTS.boutiques.filter(boutique => boutique.genre === "Lots").length, 1, "les coupons ne sont pas lus");
+const sourcesCle = AVEC_LOTS.objets.find(objet => objet.nom === "Clé de cube").sources;
+assert.deepEqual(sourcesCle, [{ type:"boutique", boutique:"Lots — Clé de cube", paquet:"Lot Clé de cube",
+  quantite:120, prix:PRIX_REEL, limite:"5 tous les 35 à 36 jours environ" }]);
+assert.deepEqual(AVEC_LOTS.objets.find(objet => objet.nom === "Lot Clé de cube").sources,
+  [{ type:"boutique", boutique:"Lots — Clé de cube", prix:PRIX_REEL, limite:"5 tous les 35 à 36 jours environ" }]);
+
 module.exports = { ENTREE_OBJETS_TEST, ENTREE_FILONS_TEST:entreeAvecFilons(APPARITIONS_PLATINE_TEST),
-  ENTREE_CUBE_TEST:entreeAvecCube() };
+  ENTREE_CUBE_TEST:entreeAvecCube(), ENTREE_LOTS_TEST:entreeAvecLots() };
 
 if(require.main === module) console.log("OK objets-jarvis");

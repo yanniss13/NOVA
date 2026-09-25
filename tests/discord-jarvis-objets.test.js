@@ -11,7 +11,7 @@ const path = require("node:path");
 const ROOT = path.resolve(__dirname, "..");
 const O = require(path.join(ROOT, "supabase", "functions", "_shared", "discord-jarvis-objets.js"));
 const { construireCatalogueObjets } = require(path.join(ROOT, "outils", "fabrication", "objets-jarvis.js"));
-const { ENTREE_OBJETS_TEST, ENTREE_FILONS_TEST, ENTREE_CUBE_TEST } = require("./objets-jarvis.test.js");
+const { ENTREE_OBJETS_TEST, ENTREE_FILONS_TEST, ENTREE_CUBE_TEST, ENTREE_LOTS_TEST } = require("./objets-jarvis.test.js");
 
 const CATALOGUE = construireCatalogueObjets(ENTREE_OBJETS_TEST);
 const LIONES = "Boutique d'équipement — Liones";
@@ -202,6 +202,23 @@ async function main() {
   assert.ok((await cube.executer("ou_trouver", { objet:"épée longue" })).donnees.sources.includes(
     "Cube de récompense : Démon rouge, à ouvrir avec 10 Clé de cube, chance 10 %"));
   assert.equal(O.validerCatalogueObjets(construireCatalogueObjets(ENTREE_CUBE_TEST)), null);
+
+  /* Les lots de la Boutique : l'objet renvoie au lot ; le lot dit son contenu. */
+  const lots = outils(construireCatalogueObjets(ENTREE_LOTS_TEST));
+  const PRIX_REEL = "argent réel (prix selon ta boutique d'applications)";
+  assert.deepEqual((await lots.executer("ou_trouver", { objet:"clé de cube" })).donnees.sources, [
+    "Lots — Clé de cube (depuis un menu) : dans « Lot Clé de cube », x120 pour " + PRIX_REEL
+      + ", 5 tous les 35 à 36 jours environ"
+  ]);
+  assert.deepEqual((await lots.executer("boutique", { nom:"lots" })).donnees.articles, [
+    "Lot Clé de cube : " + PRIX_REEL + ", 5 tous les 35 à 36 jours environ (contient : Clé de cube x120, Minerai)",
+    "Renforcement niv. 1 : 990 Mémoire des étoiles (payée) (contient : Minerai)",
+    "Une fois par jour : gratuit, 1 par jour (contient : Minerai)"
+  ]);
+  const lotsCatalogue = construireCatalogueObjets(ENTREE_LOTS_TEST);
+  assert.equal(O.validerCatalogueObjets(lotsCatalogue), null);
+  lotsCatalogue.boutiques.find(boutique => boutique.genre === "Lots").articles[0].contenu = "Clé de cube";
+  assert.match(O.validerCatalogueObjets(lotsCatalogue), /mal formée/);
 
   /* Un fichier d'avant les butins reste lisible. */
   const ancien = JSON.parse(JSON.stringify(CATALOGUE));

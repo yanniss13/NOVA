@@ -561,6 +561,8 @@ async function main() {
   assert.match(Q.CONSIGNE_JARVIS, /bûches[^.]*n'ont pas de limite/);
   /* La periode de 35 a 36 jours de la Boutique d'echange : relevee en jeu. */
   assert.match(Q.CONSIGNE_JARVIS, /« tous les 35 à 36 jours environ »[^.]*relevée en jeu/);
+  /* Paquet en argent reel : aucun montant (celui des fichiers n'en est pas un). */
+  assert.match(Q.CONSIGNE_JARVIS, /« argent réel »[^.]*aucun montant/);
   /* La date de l'export survit dans la ligne Sources, meme pour Akumu. */
   const sourceAkumu = "fiche monstre Akumu, bête démoniaque · données du jeu du 22/09/2026";
   assert.match(Q.messageJarvis("?", { texte:"ok", sources:[sourceAkumu] }),

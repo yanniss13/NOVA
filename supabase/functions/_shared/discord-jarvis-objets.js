@@ -65,7 +65,7 @@ function sourceObjetValide(source) {
   if(estObjetObjets(source) && source.type === "recette") return texteObjets(source.origine);
   return estObjetObjets(source) && source.type === "boutique"
     && texteObjets(source.boutique) && texteObjets(source.prix)
-    && quantiteValideObjets(source.quantite)
+    && texteOuAbsentObjets(source.paquet) && quantiteValideObjets(source.quantite)
     && texteOuAbsentObjets(source.limite) && texteOuAbsentObjets(source.condition)
     && (source.aleatoire === undefined || source.aleatoire === true);
 }
@@ -73,7 +73,8 @@ function sourceObjetValide(source) {
 function articleValide(article) {
   return estObjetObjets(article) && texteObjets(article.objet) && texteObjets(article.prix)
     && quantiteValideObjets(article.quantite)
-    && texteOuAbsentObjets(article.limite) && texteOuAbsentObjets(article.condition);
+    && texteOuAbsentObjets(article.limite) && texteOuAbsentObjets(article.condition)
+    && (article.contenu === undefined || (Array.isArray(article.contenu) && article.contenu.every(texteObjets)));
 }
 
 function objetValide(objet) {
@@ -181,14 +182,16 @@ function ligneSourceObjet(source, boutiquesParNom, butin) {
   const suite = [source.limite, source.condition, source.aleatoire ? "article tiré au hasard" : null].filter(Boolean);
   return texteBorneObjets(source.boutique
     + (precisions.length ? " (" + precisions.join(" ; ") + ")" : "")
-    + " : " + (source.quantite ? "x" + quantiteLisibleObjets(source.quantite) + " pour " : "") + source.prix
+    + " : " + (source.paquet ? "dans « " + source.paquet + " », " : "")
+    + (source.quantite ? "x" + quantiteLisibleObjets(source.quantite) + " pour " : "") + source.prix
     + (suite.length ? ", " + suite.join(", ") : ""));
 }
 
 function ligneArticle(article) {
   const suite = [article.limite, article.condition].filter(Boolean);
   return texteBorneObjets(article.objet + (article.quantite ? " x" + quantiteLisibleObjets(article.quantite) : "")
-    + " : " + article.prix + (suite.length ? ", " + suite.join(", ") : ""));
+    + " : " + article.prix + (suite.length ? ", " + suite.join(", ") : "")
+    + (article.contenu ? " (contient : " + article.contenu.join(", ") + ")" : ""));
 }
 
 /* ---------------- Outils ---------------- */
