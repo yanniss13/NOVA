@@ -22,6 +22,7 @@
    memes objets. */
 
 const { lecteurDeTextes } = require("./monstres-jarvis.js");
+const { nettoyerMecanique } = require("./mecaniques-jarvis.js");
 
 /* L'ordre compte : un nom porte par deux familles prend la premiere. */
 const FAMILLES_OBJETS = [
@@ -412,6 +413,7 @@ function construireCatalogueObjets(entree) {
       return sortie;
     }),
     recettes:recettes.map(({ typeObjet, ...recette }) => recette),
+    familiers:familiersDuJeu(entree, lire, objetsParId),
     articlesEcartes
   };
 }
@@ -714,6 +716,91 @@ function butinsDuJeu(entree, lire, objetsParId, actif, regionDApparition) {
     }
   });
   return butins;
+}
+
+/* Les familiers. Item/PetDataInfo : nom, type (ui_pet_type_*), objet et
+   deblocage ; Pet/PetSkillTable -> Skill/SkillTable : competences nommees
+   par le jeu ; rarete de l'objet (ui_gradeN) ; capture : le monstre dont le
+   groupe de capture donne l'objet, et Actor/CatchDataTable (difficulte,
+   taux de base en dix-milliemes : 2700 = 27 %, 47 % sous potion +20 % sur
+   7dsorigin.app). Aucune vitesse : l'unite de MoveSpd n'est pas ecrite. */
+function familiersDuJeu(entree, lire, objetsParId) {
+  const lignesParPaquet = new Map();
+  Object.values(entree.paquetsButin || {}).forEach(ligne => {
+    if(ligne) ajouterDans(lignesParPaquet, String(ligne.DropPack_Key), ligne);
+  });
+  const objetsDuGroupe = groupe => {
+    const brut = (entree.groupesButin || {})[String(groupe)];
+    return new Set([].concat(brut && brut.DropPack_Key || [])
+      .flatMap(paquet => lignesParPaquet.get(String(paquet)) || []).map(ligne => String(ligne.Item_Tid)));
+  };
+  /* Objet -> monstre -> ses reglages de capture. Le taux avec potion n'est
+     pas calcule : « base + potion - resistance » tient pour trois monstres
+     sur quatre sur 7dsorigin.app, pas pour le Porc des bois (memes reglages
+     que le Lapin mutilateur, 20 % au lieu de 47 %). */
+  const capturesParObjet = new Map();
+  const monstres = entree.monstres || {};
+  Object.keys(monstres).sort(ordreNumeriqueObjets).forEach(id => {
+    const monstre = monstres[id];
+    const nom = monstre && lire(monstre.Local_Key);
+    if(!nom || !monstre.CatchDropGroupTid || monstre.CatchDropGroupTid === "None") return;
+    const reglage = (entree.captures || {})[String(monstre.MonCatchTid)];
+    let texte = null;
+    if(reglage && Number(reglage.CatchDifficulty) > 0 && Number.isFinite(Number(reglage.CatchRateAdd))){
+      texte = "difficulté " + Number(reglage.CatchDifficulty) + ", taux de base " + pourcentButin(Number(reglage.CatchRateAdd))
+        + (Number(reglage.CatchRateRes) > 0 ? ", résistance " + pourcentButin(Number(reglage.CatchRateRes)) : "");
+    }
+    objetsDuGroupe(monstre.CatchDropGroupTid).forEach(objet => {
+      if(!capturesParObjet.has(objet)) capturesParObjet.set(objet, new Map());
+      const parMonstre = capturesParObjet.get(objet);
+      if(!parMonstre.has(nom)) parMonstre.set(nom, []);
+      if(texte && !parMonstre.get(nom).includes(texte)) parMonstre.get(nom).push(texte);
+    });
+  });
+  const lignesDeCapture = objet => [...(capturesParObjet.get(objet) || new Map())].map(([nom, reglages]) =>
+    "capture : " + nom + (reglages.length === 1 ? " (" + reglages[0] + ")"
+      : reglages.length > 1 ? " (" + reglages.join(" ; ou ") + ", selon la version du monstre)" : ""));
+  const competences = entree.competences || {};
+  const nomCompetence = id => {
+    const brut = competences[String(id)];
+    const nom = brut && nettoyerMecanique(lire(brut.Local_Key));
+    if(!nom) return null;
+    const description = nettoyerMecanique(lire(brut.Local_Desc));
+    return description ? nom + " : " + description : nom;
+  };
+  const familiers = [];
+  const vus = new Set();
+  Object.keys(entree.familiers || {}).sort(ordreNumeriqueObjets).forEach(id => {
+    const brut = entree.familiers[id];
+    const nom = brut && lire(brut.Local_Key);
+    if(!nom || vus.has(nom)) return;
+    vus.add(nom);
+    const sortie = { nom };
+    const type = lire("ui_pet_type_" + String(brut.Type).replace(/^.*::/, "").toLowerCase());
+    if(type) sortie.type = type;
+    const objet = (entree.objets && entree.objets.pet || {})[String(brut.ItemId)];
+    const rang = objet && /Grade(\d)$/.exec(String(objet.grade));
+    const rarete = rang && lire("ui_grade" + rang[1]);
+    if(rarete) sortie.rarete = rarete;
+    const description = nettoyerMecanique(lire(brut.Desc_Key));
+    if(description) sortie.description = description;
+    const lien = (entree.competencesFamiliers || {})[id] || {};
+    const noms = [...new Set([lien.PetPassive_SkillTid].concat(lien.PetActive_SkillTid_01 || [], lien.PetActive_SkillTid_02 || [])
+      .filter(competence => competence && competence !== "None").map(nomCompetence).filter(Boolean))];
+    if(noms.length) sortie.competences = noms;
+    const expedition = [...new Set((brut.Array_ExpeditionSkill || [])
+      .map(genre => lire("ui_pet_expedition_expeditionitemtype_" + String(genre).replace(/^.*::/, "").toLowerCase()))
+      .filter(Boolean))];
+    if(expedition.length) sortie.expedition = expedition;
+    const obtention = lignesDeCapture(String(brut.ItemId));
+    if(String(brut.Open_Condition).endsWith("::SkillUse_Eatting_Item")){
+      const aliments = (brut.Open_Condition_Value || []).map(valeur => (objetsParId.get(String(valeur)) || {}).nom).filter(Boolean);
+      if(aliments.length) obtention.push("en faisant manger : " + aliments.join(", "));
+    }
+    if(obtention.length) sortie.obtention = obtention;
+    familiers.push(sortie);
+  });
+  return familiers;
 }
 
 module.exports = { construireCatalogueObjets };

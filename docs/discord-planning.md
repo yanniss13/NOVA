@@ -500,6 +500,19 @@ l'y relit pour `ou_trouver`. Les coffres et points de récolte
 (`InteractionTable`) ne sont pas couverts, faute de chaîne sûre jusqu'à
 leur nom.
 
+**Familiers** (outils `familier` et `chercher_familiers`). `Item/PetDataInfo`
+donne le nom, le type (`ui_pet_type_*` : Invocation, Monture, Vol plané,
+Vol), l'objet et le déblocage (capture, ou « en faisant manger » pour les
+Hawk) ; `Pet/PetSkillTable` → `Skill/SkillTable` nomme les compétences ;
+la rareté vient de l'objet (`ui_gradeN`). La capture : le monstre dont le
+groupe de capture donne l'objet, puis `Actor/CatchDataTable` (difficulté,
+taux de base, résistance). **Le taux avec potion n'est pas calculé** :
+« base + potion − résistance » colle à 7dsorigin.app pour le Lapin, l'Oisillon
+et le Golem, pas pour le Porc des bois (mêmes réglages que le Lapin, 20 % au
+lieu de 47 %). Aucune vitesse : l'unité de `MoveSpd` n'est pas écrite. Les
+autres sources d'un familier (Loyauté, lots, recettes, cubes) sont reprises
+de l'index des objets.
+
 **Cubes de récompense.** Un boss de zone ou une élite laisse un cube :
 `MonsterActorTable.DropActorObjectTid` → `ObjectActorTable.InteractionTid` →
 `InteractionTable.DropGroupTid`, sans aucun lien par le nom. Son bouton

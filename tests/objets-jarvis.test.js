@@ -676,7 +676,91 @@ assert.deepEqual(sourcesCle, [{ type:"boutique", boutique:"Lots — Clé de cube
 assert.deepEqual(AVEC_LOTS.objets.find(objet => objet.nom === "Lot Clé de cube").sources,
   [{ type:"boutique", boutique:"Lots — Clé de cube", prix:PRIX_REEL, limite:"5 tous les 35 à 36 jours environ" }]);
 
+/* Les familiers : Item/PetDataInfo (nom, type, objet, deblocage),
+   Pet/PetSkillTable -> Skill/SkillTable (competences nommees par le jeu),
+   la rarete de leur objet (ui_gradeN), la capture (groupe de capture d'un
+   monstre qui donne l'objet -> Actor/CatchDataTable : difficulte, taux de
+   base en dix-milliemes, verifie contre 7dsorigin.app : 27 % + potion 20 %
+   = 47 %). Pas de vitesse : l'unite de MoveSpd n'est pas ecrite. */
+function entreeAvecFamiliers() {
+  const base = ENTREE_OBJETS_TEST;
+  return Object.assign({}, base, {
+    objets:Object.assign({}, base.objets, {
+      pet:{ "140100006":{ Local_Key:"Local_Pet_Lapin", grade:"EGrade::Grade1" },
+        "140200001":{ Local_Key:"Local_Pet_Cheval", grade:"EGrade::Grade4" } },
+      etc:Object.assign({ "101150001":{ Local_Key:"Local_Item_Viande" } }, base.objets.etc)
+    }),
+    familiers:{
+      "26070006":{ Type:"EPetType::Summon", ItemId:"140100006", Open_Condition:"EPetOpenCondition::Get_Item",
+        Open_Condition_Value:["140100006"], Desc_Key:"local_pet_desc_lapin", Array_ExpeditionSkill:[],
+        Local_Key:"Local_Pet_Lapin" },
+      "26070101":{ Type:"EPetType::Riding", ItemId:"140200001", Open_Condition:"EPetOpenCondition::Get_Item",
+        Open_Condition_Value:["140200001"], Desc_Key:"None",
+        Array_ExpeditionSkill:["EPetExpeditionSkillType::Mining", "EPetExpeditionSkillType::Grade5"],
+        Local_Key:"Local_Pet_Cheval" },
+      "26070201":{ Type:"EPetType::Flying", ItemId:"140300001", Open_Condition:"EPetOpenCondition::SkillUse_Eatting_Item",
+        Open_Condition_Value:["101150001"], Desc_Key:"None", Array_ExpeditionSkill:[], Local_Key:"Local_Pet_Hawk" },
+      /* Sans nom : ecarte. */
+      "26070999":{ Type:"EPetType::Summon", ItemId:"None", Open_Condition:"EPetOpenCondition::Get_Item",
+        Open_Condition_Value:[], Desc_Key:"None", Array_ExpeditionSkill:[], Local_Key:"local_pet_name_sansnom" }
+    },
+    competencesFamiliers:{
+      "26070006":{ PetPassive_SkillTid:"None", PetActive_SkillTid_01:[], PetActive_SkillTid_02:["pet_skill_autodrop"] },
+      "26070101":{ PetPassive_SkillTid:"pet_horse_passive", PetActive_SkillTid_01:["pet_sans_nom"], PetActive_SkillTid_02:[] }
+    },
+    competences:{
+      pet_skill_autodrop:{ Local_Key:"petskill_autodrop_name", Local_Desc:"petskill_autodrop_desc" },
+      pet_horse_passive:{ Local_Key:"petskill_horse_name", Local_Desc:"None" },
+      pet_sans_nom:{ Local_Key:"None", Local_Desc:"None" }
+    },
+    captures:{
+      default_set_01:{ CatchDifficulty:1, CatchRateAdd:2700, CatchRateRes:0 },
+      quest_01:{ CatchDifficulty:1, CatchRateAdd:10000, CatchRateRes:0 },
+      default_set_07:{ CatchDifficulty:4, CatchRateAdd:700, CatchRateRes:5500 }
+    },
+    monstres:Object.assign({}, base.monstres, {
+      "50101118":{ Local_Key:"Local_Mon_Lapin", DropGroupTid:"None", CatchDropGroupTid:"g_capture_lapin",
+        MonCatchTid:"default_set_01" },
+      /* Le meme monstre, version de quete : les deux reglages, jamais un seul. */
+      "50301118":{ Local_Key:"Local_Mon_Lapin", DropGroupTid:"None", CatchDropGroupTid:"g_capture_lapin",
+        MonCatchTid:"quest_01" },
+      "50101133":{ Local_Key:"Local_Mon_Golem", DropGroupTid:"None", CatchDropGroupTid:"g_capture_cheval",
+        MonCatchTid:"default_set_07" }
+    }),
+    groupesButin:Object.assign({
+      g_capture_lapin:{ DropPack_Key:["p_capture_lapin"], DropPack_Rate:[10000], DropPack_Type:[false] },
+      g_capture_cheval:{ DropPack_Key:["p_capture_cheval"], DropPack_Rate:[10000], DropPack_Type:[false] }
+    }, base.groupesButin),
+    paquetsButin:Object.assign({
+      p_capture_lapin_1:{ DropPack_Key:"p_capture_lapin", DropType:"EDropType::Item", Item_Tid:"140100006",
+        Standard_Level:"None", Rate:10000, Min_Cnt:1, Max_Cnt:1 },
+      p_capture_cheval_1:{ DropPack_Key:"p_capture_cheval", DropType:"EDropType::Item", Item_Tid:"140200001",
+        Standard_Level:"None", Rate:10000, Min_Cnt:1, Max_Cnt:1 }
+    }, base.paquetsButin),
+    textes:Object.assign({
+      local_pet_lapin:"Fainéant tacheté", local_pet_desc_lapin:"Un lapin [#1A7331]tacheté[-].",
+      local_pet_cheval:"Cheval fougueux", local_pet_hawk:"Hawk (Démon rouge)", local_item_viande:"Viande de démon rouge",
+      local_mon_lapin:"Lapin mutilateur", local_mon_golem:"Golem de la forêt",
+      petskill_autodrop_name:"Récupération auto.", petskill_autodrop_desc:"Ramasse automatiquement les objets normaux.",
+      petskill_horse_name:"Galop",
+      ui_pet_type_summon:"Invocation", ui_pet_type_riding:"Monture", ui_pet_type_flying:"Vol",
+      ui_pet_expedition_expeditionitemtype_mining:"Extraction minière",
+      ui_grade1:"Général", ui_grade4:"Héros"
+    }, base.textes)
+  });
+}
+assert.deepEqual(construireCatalogueObjets(entreeAvecFamiliers()).familiers, [
+  { nom:"Fainéant tacheté", type:"Invocation", rarete:"Général", description:"Un lapin tacheté.",
+    competences:["Récupération auto. : Ramasse automatiquement les objets normaux."],
+    obtention:["capture : Lapin mutilateur (difficulté 1, taux de base 27 % ; ou difficulté 1, taux de base 100 %,"
+      + " selon la version du monstre)"] },
+  /* Expedition « Grade5 » sans libelle dans le jeu : non dite. */
+  { nom:"Cheval fougueux", type:"Monture", rarete:"Héros", competences:["Galop"], expedition:["Extraction minière"],
+    obtention:["capture : Golem de la forêt (difficulté 4, taux de base 7 %, résistance 55 %)"] },
+  { nom:"Hawk (Démon rouge)", type:"Vol", obtention:["en faisant manger : Viande de démon rouge"] }
+]);
+
 module.exports = { ENTREE_OBJETS_TEST, ENTREE_FILONS_TEST:entreeAvecFilons(APPARITIONS_PLATINE_TEST),
-  ENTREE_CUBE_TEST:entreeAvecCube(), ENTREE_LOTS_TEST:entreeAvecLots() };
+  ENTREE_CUBE_TEST:entreeAvecCube(), ENTREE_LOTS_TEST:entreeAvecLots(), ENTREE_FAMILIERS_TEST:entreeAvecFamiliers() };
 
 if(require.main === module) console.log("OK objets-jarvis");

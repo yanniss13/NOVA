@@ -34,6 +34,11 @@ const OBJETS_MAX_BUTIN = 40;
 const NOTE_PROBABILITES = "chance à chaque victoire ou récolte, lue dans les tables et selon le niveau de monde ;"
   + " un objet sans chance indiquée : ne cite aucun chiffre";
 const RECETTES_MAX_OBJET = 5;
+const NOTE_CAPTURE = "taux de base et résistance lus dans les tables de capture ; l'effet des potions"
+  + " n'est pas calculé : n'en donne aucun chiffre";
+const NOTE_OBTENTION_FAMILIER = "obtention absente des fichiers lus : quêtes, succès, événements et récompenses"
+  + " ne sont pas couverts ; ne l'invente pas";
+const FAMILIERS_LISTE_MAX = 20;
 const NOTE_FILONS = "filons comptés dans les tables d'apparition du monde ouvert ; maximum par jour :"
   + " chaque filon récolté une fois";
 /* Les sources de butin (lot 2c, etape 2) et leur nom affiche. */
@@ -107,6 +112,18 @@ function butinValide(butin) {
       && Array.isArray(butin.filons.regions) && butin.filons.regions.every(texteObjets)));
 }
 
+function textesOuAbsents(valeur) {
+  return valeur === undefined || (Array.isArray(valeur) && valeur.every(texteObjets));
+}
+
+function familierValide(familier) {
+  return estObjetObjets(familier) && texteObjets(familier.nom)
+    && texteOuAbsentObjets(familier.type) && texteOuAbsentObjets(familier.rarete)
+    && texteOuAbsentObjets(familier.description)
+    && textesOuAbsents(familier.competences) && textesOuAbsents(familier.expedition)
+    && textesOuAbsents(familier.obtention);
+}
+
 function recetteValide(recette) {
   return estObjetObjets(recette) && texteObjets(recette.produit) && texteObjets(recette.type)
     && quantiteValideObjets(recette.quantite)
@@ -129,6 +146,11 @@ function validerCatalogueObjets(brut) {
     if(!Array.isArray(brut.butins)) return "objets.json : butins mal formés";
     const butin = brut.butins.findIndex(entree => !butinValide(entree));
     if(butin >= 0) return "objets.json : butin mal formé (indice " + butin + ")";
+  }
+  if(brut.familiers !== undefined){
+    if(!Array.isArray(brut.familiers)) return "objets.json : familiers mal formés";
+    const familier = brut.familiers.findIndex(entree => !familierValide(entree));
+    if(familier >= 0) return "objets.json : familier mal formé (indice " + familier + ")";
   }
   if(brut.recettes !== undefined){
     if(!Array.isArray(brut.recettes)) return "objets.json : recettes mal formées";
@@ -382,6 +404,57 @@ async function outilRecette(lireObjets, args) {
   return resultat;
 }
 
+/* La fiche d'un familier ; ses autres sources (boutiques, lots, recettes)
+   viennent de l'index des objets, la capture etant deja dans sa fiche. */
+async function outilFamilier(lireObjets, args) {
+  const catalogue = await lireObjets();
+  if(!catalogue) return Object.assign({}, INDISPONIBLE_OBJETS);
+  const cherche = normaliserRecherche(args.nom);
+  if(!cherche) return { erreur:"nom de familier manquant" };
+  const familiers = catalogue.familiers || [];
+  const noms = familiers.map(familier => familier.nom);
+  const classes = noms.map(nom => ({ nom, rang:rangCorrespondanceJarvis(nom, cherche) })).filter(entree => entree.rang > 0);
+  if(!classes.length) return { introuvable:String(args.nom), proches:propositions(noms, args.nom) };
+  const meilleur = Math.max(...classes.map(entree => entree.rang));
+  const trouves = classes.filter(entree => entree.rang === meilleur).map(entree => entree.nom)
+    .sort((a, b) => a.length - b.length || a.localeCompare(b, "fr"));
+  if(trouves.length > 1){
+    return { recherche:String(args.nom), correspondances:trouves.length, candidats:trouves.slice(0, CANDIDATS_MAX_OBJET) };
+  }
+  const familier = familiers.find(entree => entree.nom === trouves[0]);
+  const resultat = { nom:familier.nom };
+  ["type", "rarete", "description"].forEach(cle => { if(familier[cle]) resultat[cle] = familier[cle]; });
+  resultat.donneesDu = dateLisibleJarvis(catalogue);
+  ["competences", "expedition", "obtention"].forEach(cle => { if(familier[cle]) resultat[cle] = familier[cle]; });
+  if((familier.obtention || []).some(ligne => ligne.startsWith("capture"))) resultat.noteCapture = NOTE_CAPTURE;
+  const objet = (catalogue.objets || []).find(entree => entree.nom === familier.nom);
+  const boutiquesParNom = new Map((catalogue.boutiques || []).map(boutique => [boutique.nom, boutique]));
+  const autres = objet ? objet.sources.filter(source => source.type !== "capture")
+    .slice(0, SOURCES_MAX_OBJET).map(source => ligneSourceObjet(source, boutiquesParNom, null)) : [];
+  if(autres.length) resultat.autresSources = autres;
+  if(!familier.obtention && !autres.length) resultat.noteObtention = NOTE_OBTENTION_FAMILIER;
+  return resultat;
+}
+
+/* Les familiers dont le nom, le type, la rarete, une competence ou une
+   expedition contient le texte cherche. */
+async function outilChercherFamiliers(lireObjets, args) {
+  const catalogue = await lireObjets();
+  if(!catalogue) return Object.assign({}, INDISPONIBLE_OBJETS);
+  const cherche = normaliserRecherche(args.texte);
+  if(!cherche) return { erreur:"texte à chercher manquant" };
+  const familiers = catalogue.familiers || [];
+  const retenus = familiers.filter(familier => normaliserRecherche([familier.nom, familier.type, familier.rarete]
+    .concat(familier.competences || [], familier.expedition || []).filter(Boolean).join(" ")).includes(cherche));
+  const resultat = {
+    recherche:String(args.texte),
+    familiers:retenus.slice(0, FAMILIERS_LISTE_MAX).map(familier => familier.nom + (familier.type ? " (" + familier.type + ")" : ""))
+  };
+  if(retenus.length > FAMILIERS_LISTE_MAX) resultat.autresFamiliers = retenus.length - FAMILIERS_LISTE_MAX;
+  if(!retenus.length) resultat.typesPossibles = [...new Set(familiers.map(familier => familier.type).filter(Boolean))];
+  return resultat;
+}
+
 const DECLARATIONS_OUTILS_OBJETS = [
   {
     name:"ou_trouver",
@@ -436,6 +509,30 @@ const DECLARATIONS_OUTILS_OBJETS = [
       },
       required:["objet"]
     }
+  },
+  {
+    name:"familier",
+    description:"Fiche d'un familier : type (invocation, monture, vol plané, vol), rareté, description,"
+      + " compétences, expédition et obtention (capture avec difficulté et taux de base, boutiques, recettes).",
+    parameters:{
+      type:"OBJECT",
+      properties:{
+        nom:{ type:"STRING", description:"Nom du familier (ex. « Fainéant tacheté », « Golem de la forêt calme »)." }
+      },
+      required:["nom"]
+    }
+  },
+  {
+    name:"chercher_familiers",
+    description:"Liste les familiers dont le nom, le type, la rareté, une compétence ou l'expédition"
+      + " contient un texte (ex. « extraction minière », « monture », « récupération »).",
+    parameters:{
+      type:"OBJECT",
+      properties:{
+        texte:{ type:"STRING", description:"Texte à chercher dans les fiches de familiers." }
+      },
+      required:["texte"]
+    }
   }
 ];
 
@@ -444,6 +541,13 @@ function sourceObjetsJarvis(donnees) {
 }
 
 function ajouterOutilsObjetsJarvis(table, lireObjets) {
+  const sourceFamiliers = (args, donnees) => "familiers"
+    + (donnees && donnees.donneesDu ? " · données du jeu du " + donnees.donneesDu : "");
+  table.familier = { executer:args => outilFamilier(lireObjets, args), source:sourceFamiliers };
+  table.chercher_familiers = {
+    executer:args => outilChercherFamiliers(lireObjets, args),
+    source:() => "familiers"
+  };
   /* Boutiques, butins et recettes : la source nomme l'objet, pas un seul
      type d'origine. */
   table.ou_trouver = {

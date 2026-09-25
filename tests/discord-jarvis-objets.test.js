@@ -11,7 +11,8 @@ const path = require("node:path");
 const ROOT = path.resolve(__dirname, "..");
 const O = require(path.join(ROOT, "supabase", "functions", "_shared", "discord-jarvis-objets.js"));
 const { construireCatalogueObjets } = require(path.join(ROOT, "outils", "fabrication", "objets-jarvis.js"));
-const { ENTREE_OBJETS_TEST, ENTREE_FILONS_TEST, ENTREE_CUBE_TEST, ENTREE_LOTS_TEST } = require("./objets-jarvis.test.js");
+const { ENTREE_OBJETS_TEST, ENTREE_FILONS_TEST, ENTREE_CUBE_TEST, ENTREE_LOTS_TEST, ENTREE_FAMILIERS_TEST }
+  = require("./objets-jarvis.test.js");
 
 const CATALOGUE = construireCatalogueObjets(ENTREE_OBJETS_TEST);
 const LIONES = "Boutique d'équipement — Liones";
@@ -30,7 +31,8 @@ function outils(catalogue) {
 
 async function main() {
   /* ---------------- Declarations et fichier ---------------- */
-  assert.deepEqual(O.DECLARATIONS_OUTILS_OBJETS.map(d => d.name), ["ou_trouver", "boutique", "butin", "recette"]);
+  assert.deepEqual(O.DECLARATIONS_OUTILS_OBJETS.map(d => d.name),
+    ["ou_trouver", "boutique", "butin", "recette", "familier", "chercher_familiers"]);
   O.DECLARATIONS_OUTILS_OBJETS.forEach(d => assert.equal(d.parameters.type, "OBJECT"));
   assert.equal(O.CHEMIN_OBJETS_JARVIS, "jarvis-prive/objets.json");
   assert.equal(O.validerCatalogueObjets(CATALOGUE), null);
@@ -219,6 +221,48 @@ async function main() {
   assert.equal(O.validerCatalogueObjets(lotsCatalogue), null);
   lotsCatalogue.boutiques.find(boutique => boutique.genre === "Lots").articles[0].contenu = "Clé de cube";
   assert.match(O.validerCatalogueObjets(lotsCatalogue), /mal formée/);
+
+  /* ---------------- familiers ---------------- */
+  const NOTE_CAPTURE = "taux de base et résistance lus dans les tables de capture ; l'effet des potions"
+    + " n'est pas calculé : n'en donne aucun chiffre";
+  const catalogueFamiliers = construireCatalogueObjets(ENTREE_FAMILIERS_TEST);
+  assert.equal(O.validerCatalogueObjets(catalogueFamiliers), null);
+  const fam = outils(catalogueFamiliers);
+  const faineant = await fam.executer("familier", { nom:"faineant" });
+  assert.deepEqual(faineant.donnees, {
+    nom:"Fainéant tacheté", type:"Invocation", rarete:"Général", description:"Un lapin tacheté.",
+    donneesDu:"22/09/2026",
+    competences:["Récupération auto. : Ramasse automatiquement les objets normaux."],
+    obtention:["capture : Lapin mutilateur (difficulté 1, taux de base 27 % ; ou difficulté 1, taux de base 100 %,"
+      + " selon la version du monstre)"],
+    noteCapture:NOTE_CAPTURE
+  });
+  assert.equal(faineant.source, "familiers · données du jeu du 22/09/2026");
+  /* Une boutique qui vend le familier : reprise de l'index des objets. */
+  const avecBoutique = JSON.parse(JSON.stringify(catalogueFamiliers));
+  avecBoutique.objets.find(objet => objet.nom === "Cheval fougueux").sources.push(
+    { type:"boutique", boutique:"Boutique d'échange — Loyauté", prix:"8 000 Loyauté", limite:"1 par compte" });
+  assert.deepEqual((await outils(avecBoutique).executer("familier", { nom:"cheval" })).donnees.autresSources,
+    ["Boutique d'échange — Loyauté : 8 000 Loyauté, 1 par compte"]);
+  assert.deepEqual((await fam.executer("familier", { nom:"hawk" })).donnees.obtention,
+    ["en faisant manger : Viande de démon rouge"]);
+  const sansObtention = JSON.parse(JSON.stringify(catalogueFamiliers));
+  delete sansObtention.familiers.find(familier => familier.nom.startsWith("Hawk")).obtention;
+  assert.match((await outils(sansObtention).executer("familier", { nom:"hawk" })).donnees.noteObtention,
+    /quêtes, succès, événements/);
+  assert.equal((await fam.executer("familier", { nom:"dragon" })).donnees.introuvable, "dragon");
+  assert.deepEqual((await fam.executer("familier", {})).donnees, { erreur:"nom de familier manquant" });
+
+  assert.deepEqual((await fam.executer("chercher_familiers", { texte:"extraction minière" })).donnees,
+    { recherche:"extraction minière", familiers:["Cheval fougueux (Monture)"] });
+  assert.deepEqual((await fam.executer("chercher_familiers", { texte:"récupération" })).donnees.familiers,
+    ["Fainéant tacheté (Invocation)"]);
+  assert.deepEqual((await fam.executer("chercher_familiers", { texte:"licorne" })).donnees,
+    { recherche:"licorne", familiers:[], typesPossibles:["Invocation", "Monture", "Vol"] });
+  const familiersAbimes = JSON.parse(JSON.stringify(catalogueFamiliers));
+  familiersAbimes.familiers[0].competences = "Galop";
+  assert.match(O.validerCatalogueObjets(familiersAbimes), /familier mal formé/);
+  assert.deepEqual((await outils(CATALOGUE).executer("familier", { nom:"lapin" })).donnees.introuvable, "lapin");
 
   /* Un fichier d'avant les butins reste lisible. */
   const ancien = JSON.parse(JSON.stringify(CATALOGUE));
