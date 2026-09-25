@@ -500,6 +500,22 @@ l'y relit pour `ou_trouver`. Les coffres et points de récolte
 (`InteractionTable`) ne sont pas couverts, faute de chaîne sûre jusqu'à
 leur nom.
 
+**Quantité et filons.** Une ligne de butin donne `Min_Cnt` à `Max_Cnt`
+objets (platine : 2 à 3, confirmé en jeu) ; un objet sur deux lignes n'a pas
+de quantité. Les filons d'un point de minage se comptent dans les tables
+d'apparition, par région principale (étiquette, sinon contour comme les
+PNJ) ; ceux sans région (carte JcJ, donjons) ne sont pas comptés. Le
+maximum par jour vaut filons × quantité, seulement pour une chance de
+100 %. 7dsorigin.app annonce 66 filons de platine et « 99 – 132 / jour »,
+des chiffres incohérents entre eux ; les tables en placent 32.
+
+**Limites de récolte : absentes des fichiers.** Le jeu déclare
+`DropGroupLimitTable` (`Drop/DropGroupLimit.xlsx`), mais elle reste côté
+serveur ; les 248 interactions de récolte ont `ActiveCount = -1`. Deux
+règles viennent donc du propriétaire, relevées en jeu, et vivent dans la
+consigne de `/jarvis` : les filons et points de récolte réapparaissent à
+**9 h (heure de Paris)**, et les **bûches** (arbres) n'ont pas de limite.
+
 ```powershell
 $env:DONNEES_JEU = (Resolve-Path (Read-Host 'Dossier Content')).Path
 node outils/fabrication/extraire-objets.js

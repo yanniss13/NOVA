@@ -131,12 +131,18 @@ function construireCatalogueObjets(entree) {
   Object.entries(entree.pnj || {}).forEach(([id, pnj]) => {
     [].concat(pnj && pnj.InteractionTid || []).forEach(interaction => ajouterDans(pnjParInteraction, String(interaction), String(id)));
   });
-  const regionsParActeur = new Map();
-  (entree.apparitions || []).forEach(apparition => {
+  /* Region d'une apparition : son etiquette, sinon son contour (sans
+     sous-secteur). Partagee par les PNJ et les filons. */
+  function regionDApparition(apparition) {
     const place = !lire(apparition.secteur) && secteurParPosition(apparition, entree.secteurs);
     const principal = place ? lire(place) : lire(apparition.secteur);
-    if(!principal) return;
-    const sous = place ? null : lire(apparition.sousSecteur);
+    return principal ? { principal, sous:place ? null : lire(apparition.sousSecteur) } : null;
+  }
+  const regionsParActeur = new Map();
+  (entree.apparitions || []).forEach(apparition => {
+    const region = regionDApparition(apparition);
+    if(!region) return;
+    const { principal, sous } = region;
     const libelle = principal + (sous && sous !== principal ? " (" + sous + ")" : "");
     const deja = regionsParActeur.get(String(apparition.acteur)) || [];
     if(!deja.some(region => region.libelle === libelle)) deja.push({ principal, libelle });
@@ -229,7 +235,7 @@ function construireCatalogueObjets(entree) {
     });
   });
 
-  const butins = butinsDuJeu(entree, lire, objetsParId, actif);
+  const butins = butinsDuJeu(entree, lire, objetsParId, actif, regionDApparition);
   butins.forEach(butin => {
     butin.objets.forEach(objet => {
       if(!index.has(objet.nom)) index.set(objet.nom, { nom:objet.nom, type:objet.type, sources:[] });
@@ -271,6 +277,22 @@ function construireCatalogueObjets(entree) {
         { objets:butin.objets.map(objet => objet.nom) });
       const taux = butin.objets.filter(objet => objet.taux);
       if(taux.length) sortie.taux = Object.fromEntries(taux.map(objet => [objet.nom, objet.taux]));
+      /* Une quantite de 1 va sans dire. */
+      const quantites = butin.objets.filter(objet => objet.quantite && objet.quantite.max > 1);
+      if(quantites.length){
+        sortie.quantites = Object.fromEntries(quantites.map(objet =>
+          [objet.nom, texteQuantiteButin(objet.quantite.min, objet.quantite.max)]));
+      }
+      if(butin.filons && butin.filons.size){
+        const total = [...butin.filons.values()].reduce((somme, nombre) => somme + nombre, 0);
+        sortie.filons = { total, regions:[...butin.filons].map(([region, nombre]) => region + " : " + nombre) };
+        /* Le maximum par jour : chaque filon une fois, chance certaine. */
+        const certains = butin.objets.filter(objet => objet.taux === "100 %" && objet.quantite);
+        if(certains.length){
+          sortie.parJour = Object.fromEntries(certains.map(objet =>
+            [objet.nom, texteQuantiteButin(total * objet.quantite.min, total * objet.quantite.max)]));
+        }
+      }
       return sortie;
     }),
     recettes:recettes.map(({ typeObjet, ...recette }) => recette),
@@ -380,6 +402,18 @@ function pourcentButin(dixMilliemes) {
   return Number((dixMilliemes / 100).toFixed(2)).toLocaleString("fr-FR") + " %";
 }
 
+/* La quantite d'un objet par tirage, ou null : jamais lue sur deux lignes
+   (leur cumul n'est pas confirme), ni sans Min_Cnt/Max_Cnt lisibles. */
+function quantiteButin(quantites) {
+  if(quantites.length !== 1) return null;
+  const { min, max } = quantites[0];
+  return Number.isInteger(min) && Number.isInteger(max) && min >= 1 && max >= min ? { min, max } : null;
+}
+
+function texteQuantiteButin(min, max) {
+  return min === max ? nombreObjets(min) : nombreObjets(min) + " à " + nombreObjets(max);
+}
+
 /* Les taux d'un objet par niveau de monde, ou null quand ils ne se lisent
    pas sans hypothese : taux de groupe absent, deux lignes au meme niveau
    (leur cumul n'est pas confirme), niveaux melanges avec « None ». */
@@ -412,7 +446,7 @@ function tauxLisibleButin(suivi) {
    - paquet non aleatoire : chaque objet a sa chance, DropPack_Rate x Rate.
      Banakro : 1,5 %, 3,5 %, 6 % puis 10 % selon le niveau de monde
      (Standard_Level ; une ligne « None » vaut a tous les niveaux). */
-function butinsDuJeu(entree, lire, objetsParId, actif) {
+function butinsDuJeu(entree, lire, objetsParId, actif, regionDApparition) {
   const lignesParPaquet = new Map();
   Object.values(entree.paquetsButin || {}).forEach(ligne => {
     if(ligne) ajouterDans(lignesParPaquet, String(ligne.DropPack_Key), ligne);
@@ -429,7 +463,9 @@ function butinsDuJeu(entree, lire, objetsParId, actif) {
         const objet = genre === "Item"
           ? objetsParId.get(String(ligne.Item_Tid)) || null
           : actif("::Currency", genre.toLowerCase());
-        if(objet && !vus.has(objet.nom)) vus.set(objet.nom, { objet, niveaux:new Map(), connu:true, ambigu:false });
+        if(objet && !vus.has(objet.nom)) vus.set(objet.nom, { objet, niveaux:new Map(), connu:true, ambigu:false, quantites:[] });
+        /* Quantite par tirage : Min_Cnt a Max_Cnt, sur une seule ligne. */
+        if(objet) vus.get(objet.nom).quantites.push({ min:Number(ligne.Min_Cnt), max:Number(ligne.Max_Cnt) });
         return { objet, niveau:String(ligne.Standard_Level || "None"), taux:Number(ligne.Rate) };
       });
       /* Une ligne sans niveau vaut a tous les niveaux du paquet : les poids
@@ -451,28 +487,47 @@ function butinsDuJeu(entree, lire, objetsParId, actif) {
         });
       });
     });
-    return [...vus.values()].map(suivi => Object.assign({}, suivi.objet, { taux:tauxLisibleButin(suivi) }));
+    return [...vus.values()].map(suivi => Object.assign({}, suivi.objet,
+      { taux:tauxLisibleButin(suivi), quantite:quantiteButin(suivi.quantites) }));
   }
 
   const butins = [];
   const parCle = new Map();
   function ajouter(nom, type, detail, groupe) {
-    if(!nom || !groupe || groupe === "None") return;
+    if(!nom || !groupe || groupe === "None") return null;
     const objets = objetsDuGroupe(groupe);
-    if(!objets.length) return;
+    if(!objets.length) return null;
     const cle = type + "|" + nom + "|" + (detail || "");
     if(!parCle.has(cle)){
       parCle.set(cle, { nom, type, detail, objets:[] });
       butins.push(parCle.get(cle));
     }
     const butin = parCle.get(cle);
-    /* Deux versions d'un monstre aux taux differents : pas de taux. */
+    /* Deux versions d'un monstre aux taux (ou quantites) differents : ni
+       l'un ni l'autre. */
     objets.forEach(objet => {
       const deja = butin.objets.find(present => present.nom === objet.nom);
       if(!deja) butin.objets.push(objet);
-      else if(deja.taux !== objet.taux) deja.taux = null;
+      else {
+        if(deja.taux !== objet.taux) deja.taux = null;
+        if(JSON.stringify(deja.quantite) !== JSON.stringify(objet.quantite)) deja.quantite = null;
+      }
     });
+    return butin;
   }
+
+  /* Les filons de chaque point de minage, par region principale (etiquette
+     ou contour, comme les PNJ). Une apparition sans region (carte JcJ,
+     donjon) n'est pas comptee. */
+  const filonsParActeur = new Map();
+  (entree.apparitionsMinage || []).forEach(apparition => {
+    const region = regionDApparition(apparition);
+    if(!region) return;
+    const acteur = String(apparition.acteur);
+    if(!filonsParActeur.has(acteur)) filonsParActeur.set(acteur, new Map());
+    const parRegion = filonsParActeur.get(acteur);
+    parRegion.set(region.principal, (parRegion.get(region.principal) || 0) + 1);
+  });
 
   const monstres = entree.monstres || {};
   Object.keys(monstres).sort(ordreNumeriqueObjets).forEach(id => {
@@ -484,7 +539,11 @@ function butinsDuJeu(entree, lire, objetsParId, actif) {
   const minage = entree.minage || {};
   Object.keys(minage).sort(ordreNumeriqueObjets).forEach(id => {
     const point = minage[id];
-    ajouter(point && lire(point.Local_Key), "minage", null, point && point.DropGroupTid);
+    const butin = ajouter(point && lire(point.Local_Key), "minage", null, point && point.DropGroupTid);
+    if(!butin || !filonsParActeur.has(String(id))) return;
+    if(!butin.filons) butin.filons = new Map();
+    filonsParActeur.get(String(id)).forEach((nombre, region) =>
+      butin.filons.set(region, (butin.filons.get(region) || 0) + nombre));
   });
   const donjons = entree.donjons || {};
   Object.keys(donjons).sort(ordreNumeriqueObjets).forEach(id => {

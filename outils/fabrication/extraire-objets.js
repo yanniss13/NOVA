@@ -31,12 +31,12 @@ function lignesDeTable(relatif) {
   return lignes;
 }
 
-/* Les lignes d'apparition des seuls PNJ : leur region principale et leur
-   sous-region, et, pour placer celles qui n'en ont pas, leur position, leur
-   zone et le chapitre de leur table. Les tables vivent sous
-   Table/Scene/Zone/<zone>/, a plusieurs niveaux selon la zone. */
-function apparitionsDesPnj(pnj) {
-  const sortie = [];
+/* Les lignes d'apparition des PNJ et des points de minage : leur region
+   principale et leur sous-region, et, pour placer celles qui n'en ont pas,
+   leur position, leur zone et le chapitre de leur table. Les tables vivent
+   sous Table/Scene/Zone/<zone>/, a plusieurs niveaux selon la zone. */
+function apparitionsDes(pnj, minage) {
+  const sortie = { pnj:[], minage:[] };
   const racine = path.join(CONTENU, "Table", "Scene", "Zone");
   (function parcourir(dossier) {
     fs.readdirSync(dossier, { withFileTypes:true }).forEach(entree => {
@@ -51,13 +51,17 @@ function apparitionsDesPnj(pnj) {
       const zone = path.relative(racine, chemin).split(path.sep)[0];
       const chapitre = /^Chapter_0*(\d+)/i.exec(entree.name);
       Object.values(lignes).forEach(ligne => {
-        if(!ligne || !Object.prototype.hasOwnProperty.call(pnj, String(ligne.ActorID))) return;
-        const apparition = { acteur:String(ligne.ActorID), secteur:ligne.TagMainSector, sousSecteur:ligne.TagSubSector };
+        const acteur = ligne && String(ligne.ActorID);
+        const famille = !ligne ? null
+          : Object.prototype.hasOwnProperty.call(pnj, acteur) ? "pnj"
+          : Object.prototype.hasOwnProperty.call(minage, acteur) ? "minage" : null;
+        if(!famille) return;
+        const apparition = { acteur, secteur:ligne.TagMainSector, sousSecteur:ligne.TagSubSector };
         const position = ligne.position_xyz;
         if(position && Number.isFinite(position.X) && Number.isFinite(position.Y) && chapitre){
           Object.assign(apparition, { position:{ X:position.X, Y:position.Y }, zone, chapitre:Number(chapitre[1]) });
         }
-        sortie.push(apparition);
+        sortie[famille].push(apparition);
       });
     });
   })(racine);
@@ -90,7 +94,8 @@ function main() {
   }
   const tableArticles = path.join(CONTENU, "Table", "Merchant", "MerchantGoods.json");
   const pnj = lignesDeTable("Actor/NPCActorTable.json");
-  const apparitions = apparitionsDesPnj(pnj);
+  const minage = lignesDeTable("Actor/MiningObjectTable.json");
+  const apparitions = apparitionsDes(pnj, minage);
   const catalogue = construireCatalogueObjets({
     objets:{
       etc:lignesDeTable("Item/ItemTable_Data_Etc.json"),
@@ -105,12 +110,13 @@ function main() {
     boutons:lignesDeTable("Interaction/InteractionButtonTable.json"),
     interactions:lignesDeTable("Interaction/InteractionTable.json"),
     pnj,
-    apparitions,
-    secteurs:contoursDesSecteurs(apparitions),
+    apparitions:apparitions.pnj,
+    apparitionsMinage:apparitions.minage,
+    secteurs:contoursDesSecteurs(apparitions.pnj.concat(apparitions.minage)),
     groupesButin:lignesDeTable("Drop/DropGroupTable.json"),
     paquetsButin:lignesDeTable("Drop/DropPackTable.json"),
     monstres:lignesDeTable("Actor/MonsterActorTable.json"),
-    minage:lignesDeTable("Actor/MiningObjectTable.json"),
+    minage,
     donjons:lignesDeTable("Dungeon/DungeonTable.json"),
     groupesDonjon:lignesDeTable("Dungeon/DungeonGroupTable.json"),
     recompensesConfrerie:lignesDeTable("Guild/GuildContentRewardTable.json"),

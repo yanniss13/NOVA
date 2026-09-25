@@ -407,6 +407,61 @@ assert.deepEqual(regionsDeGerard({ position:{ X:500, Y:500 }, chapitre:2 }, [FOR
 assert.deepEqual(regionsDeGerard({ position:{ X:20, Y:20 } }, [FORET]),
   { nom:GERARD, regions:[] });
 
-module.exports = { ENTREE_OBJETS_TEST };
+/* Les filons : quantite par filon (Min_Cnt/Max_Cnt), nombre de filons par
+   region (tables d'apparition, placees comme les PNJ), maximum par jour
+   quand la chance vaut 100 %. Le filon de la carte JcJ (table sans
+   chapitre) n'est pas compte. Pierre a feu : deux lignes, ni chance ni
+   quantite. */
+function entreeAvecFilons(apparitionsMinage) {
+  const base = ENTREE_OBJETS_TEST;
+  return Object.assign({}, base, {
+    objets:Object.assign({}, base.objets, { etc:Object.assign({
+      "101010041":{ Local_Key:"Local_Item_Platine" }, "101010000":{ Local_Key:"Local_Item_Pierre" }
+    }, base.objets.etc) }),
+    groupesButin:Object.assign({
+      g_platine:{ DropPack_Key:["p_platine"], DropPack_Rate:[10000], DropPack_Type:[false] }
+    }, base.groupesButin),
+    paquetsButin:Object.assign({
+      p_platine_1:{ DropPack_Key:"p_platine", DropType:"EDropType::Item", Item_Tid:"101010041",
+        Standard_Level:"None", Rate:10000, Min_Cnt:2, Max_Cnt:3 },
+      p_platine_2:{ DropPack_Key:"p_platine", DropType:"EDropType::Item", Item_Tid:"101010000",
+        Standard_Level:"None", Rate:10000, Min_Cnt:4, Max_Cnt:4 },
+      p_platine_3:{ DropPack_Key:"p_platine", DropType:"EDropType::Item", Item_Tid:"101010000",
+        Standard_Level:"None", Rate:10000, Min_Cnt:2, Max_Cnt:4 }
+    }, base.paquetsButin),
+    minage:{ "84000017":{ Local_Key:"Local_Mining_Platine", DropGroupTid:"g_platine" } },
+    apparitionsMinage,
+    secteurs:[FORET],
+    textes:Object.assign({
+      local_item_platine:"Minerai de platine", local_item_pierre:"Pierre à feu",
+      local_mining_platine:"Minerai de platine", ch02_sector_main_fairyforest:"Forêt du roi des fées"
+    }, base.textes)
+  });
+}
+const APPARITIONS_PLATINE_TEST = [
+  { acteur:"84000017", secteur:"CH01_Sector_Main_Liones", sousSecteur:"None" },
+  { acteur:"84000017", secteur:"CH01_Sector_Main_Liones", sousSecteur:"CH01_Sector_Sub_Liones_Plain" },
+  { acteur:"84000017", secteur:"None", sousSecteur:"None", position:{ X:20, Y:20 }, chapitre:2 },
+  { acteur:"84000017", secteur:"None", sousSecteur:"None", position:{ X:20, Y:20 } }
+];
+function butinsAvecFilons(apparitionsMinage) {
+  return construireCatalogueObjets(entreeAvecFilons(apparitionsMinage)).butins.find(butin => butin.type === "minage");
+}
+
+assert.deepEqual(butinsAvecFilons(APPARITIONS_PLATINE_TEST), {
+  nom:"Minerai de platine", type:"minage", objets:["Minerai de platine", "Pierre à feu"],
+  taux:{ "Minerai de platine":"100 %" },
+  quantites:{ "Minerai de platine":"2 à 3" },
+  filons:{ total:3, regions:["Liones : 2", "Forêt du roi des fées : 1"] },
+  parJour:{ "Minerai de platine":"6 à 9" }
+});
+/* Sans filon place : ni total ni maximum par jour, la quantite reste. */
+assert.deepEqual(butinsAvecFilons([]), {
+  nom:"Minerai de platine", type:"minage", objets:["Minerai de platine", "Pierre à feu"],
+  taux:{ "Minerai de platine":"100 %" },
+  quantites:{ "Minerai de platine":"2 à 3" }
+});
+
+module.exports = { ENTREE_OBJETS_TEST, ENTREE_FILONS_TEST:entreeAvecFilons(APPARITIONS_PLATINE_TEST) };
 
 if(require.main === module) console.log("OK objets-jarvis");

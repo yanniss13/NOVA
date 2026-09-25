@@ -555,6 +555,10 @@ async function main() {
   assert.match(Q.CONSIGNE_JARVIS, /les quêtes, succès, événements et coffres ne sont pas couverts/);
   /* Une chance de butin vient de l'outil, jamais d'une estimation. */
   assert.match(Q.CONSIGNE_JARVIS, /ne cite une chance de butin que si l'outil la donne/);
+  /* Recolte : remise a zero et buches, relevees en jeu par le proprietaire
+     (la table des limites reste sur le serveur). */
+  assert.match(Q.CONSIGNE_JARVIS, /réapparaissent chaque jour à 9 h \(heure de Paris\)/);
+  assert.match(Q.CONSIGNE_JARVIS, /bûches[^.]*n'ont pas de limite/);
   /* La date de l'export survit dans la ligne Sources, meme pour Akumu. */
   const sourceAkumu = "fiche monstre Akumu, bête démoniaque · données du jeu du 22/09/2026";
   assert.match(Q.messageJarvis("?", { texte:"ok", sources:[sourceAkumu] }),

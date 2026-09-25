@@ -11,7 +11,7 @@ const path = require("node:path");
 const ROOT = path.resolve(__dirname, "..");
 const O = require(path.join(ROOT, "supabase", "functions", "_shared", "discord-jarvis-objets.js"));
 const { construireCatalogueObjets } = require(path.join(ROOT, "outils", "fabrication", "objets-jarvis.js"));
-const { ENTREE_OBJETS_TEST } = require("./objets-jarvis.test.js");
+const { ENTREE_OBJETS_TEST, ENTREE_FILONS_TEST } = require("./objets-jarvis.test.js");
 
 const CATALOGUE = construireCatalogueObjets(ENTREE_OBJETS_TEST);
 const LIONES = "Boutique d'équipement — Liones";
@@ -168,6 +168,29 @@ async function main() {
   assert.equal(sansButin.donnees.introuvable, "dragon");
   assert.ok(Array.isArray(sansButin.donnees.proches));
   assert.deepEqual((await o.executer("butin", {})).donnees, { erreur:"nom de source manquant" });
+
+  /* Les filons : quantite par recolte, filons par region, maximum par jour. */
+  const filons = outils(construireCatalogueObjets(ENTREE_FILONS_TEST));
+  assert.deepEqual((await filons.executer("butin", { nom:"platine" })).donnees, {
+    nom:"Minerai de platine", donneesDu:"22/09/2026", noteProbabilites:NOTE,
+    noteFilons:"filons comptés dans les tables d'apparition du monde ouvert ; maximum par jour :"
+      + " chaque filon récolté une fois",
+    butins:[{ type:"Minage",
+      objets:["Minerai de platine — 100 %, quantité 2 à 3", "Pierre à feu"],
+      filons:"3 filons (Liones : 2 ; Forêt du roi des fées : 1)",
+      maximumParJour:["Minerai de platine : 6 à 9"] }]
+  });
+  assert.deepEqual((await filons.executer("ou_trouver", { objet:"minerai de platine" })).donnees.sources,
+    ["Minage : Minerai de platine, chance 100 %, quantité 2 à 3, 3 filons, au plus 6 à 9 par jour"]);
+  /* Sans filons (Banakro) : pas de note sur les filons. */
+  assert.equal((await filons.executer("butin", { nom:"banakro" })).donnees.noteFilons, undefined);
+  const filonsAbimes = construireCatalogueObjets(ENTREE_FILONS_TEST);
+  filonsAbimes.butins.find(butin => butin.filons).filons.total = "3";
+  assert.match(O.validerCatalogueObjets(filonsAbimes), /butin mal formé/);
+  const quantitesAbimees = construireCatalogueObjets(ENTREE_FILONS_TEST);
+  quantitesAbimees.butins.find(butin => butin.quantites).quantites = "2 à 3";
+  assert.match(O.validerCatalogueObjets(quantitesAbimees), /butin mal formé/);
+  assert.equal(O.validerCatalogueObjets(construireCatalogueObjets(ENTREE_FILONS_TEST)), null);
 
   /* Un fichier d'avant les butins reste lisible. */
   const ancien = JSON.parse(JSON.stringify(CATALOGUE));
