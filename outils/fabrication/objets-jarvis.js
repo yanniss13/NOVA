@@ -93,6 +93,81 @@ function secteurParPosition(apparition, secteurs) {
   return chapitre && Number(chapitre[1]) === apparition.chapitre ? cles[0] : null;
 }
 
+/* La Boutique d'echange du menu Boutique : PackageStoreTable (le bouton),
+   PackageStoreSubTabTable (ses onglets), PackageStoreGoodsTable (les
+   articles, Sell_Goods_DropTid -> DropGroupTable). Seuls ses onglets
+   d'echange (« store_tradein ») et les monnaies du jeu : jamais un article
+   paye en argent reel. */
+const MAGASIN_ECHANGE = "store_tradein_data";
+const PAIEMENTS_REELS = new Set(["Cash", "Cash_Paid", "Coupon"]);
+const PERIODES_MAGASIN = {
+  packageshop_daily:"par jour", packageshop_weekly:"par semaine",
+  packageshop_monthly:"par mois", packageshop_account:"par compte",
+  /* Absente des fichiers (le jeu n'affiche qu'un compte a rebours) :
+     relevee en jeu par le proprietaire le 25/09/2026. */
+  packageshop_update_3:"tous les 35 à 36 jours environ"
+};
+
+/* « +09:00 2026-10-08 15:59:59 » -> l'instant et le jour ecrit, ou null. */
+function finDOffreMagasin(texte) {
+  const trouve = /^([+-]\d{2}:\d{2}) (\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}:\d{2})$/.exec(String(texte || "").trim());
+  return trouve ? { instant:new Date(trouve[2] + "T" + trouve[3] + trouve[1]), jour:trouve[2] } : null;
+}
+
+function limiteMagasin(brut, fin) {
+  const nombre = Number(brut.Goods_Buy_Limit) || 0;
+  if(nombre <= 0) return null;
+  if(brut.Goods_Buy_Limit_Type === "EGoodsBuyLimitType::ContentsReset"){
+    return nombre + " " + (PERIODES_MAGASIN[brut.Buy_Limit_Contents_Reset] || "par période (durée inconnue)");
+  }
+  return nombre + " au total" + (fin ? ", jusqu'au " + fin.jour.split("-").reverse().join("/") : "");
+}
+
+function boutiquesDuMagasin(entree, lire, objetsParId, actif) {
+  const magasin = (entree.magasins || {})[MAGASIN_ECHANGE];
+  const genre = magasin && lire(magasin.Store_Button_Name);
+  if(!genre) return [];
+  const exportLe = entree.dateExport ? new Date(entree.dateExport + "T00:00:00Z") : null;
+  const lignesParPaquet = new Map();
+  Object.values(entree.paquetsButin || {}).forEach(ligne => {
+    if(ligne) ajouterDans(lignesParPaquet, String(ligne.DropPack_Key), ligne);
+  });
+  const typeDuPaquet = groupe => {
+    const brut = (entree.groupesButin || {})[String(groupe)];
+    const lignes = [].concat(brut && brut.DropPack_Key || []).flatMap(paquet => lignesParPaquet.get(String(paquet)) || []);
+    const objet = lignes.length === 1 && objetsParId.get(String(lignes[0].Item_Tid));
+    return objet ? objet.type : "Divers";
+  };
+  const onglets = Object.entries(entree.ongletsMagasin || {})
+    .filter(([, onglet]) => onglet && onglet.Store_Tid === MAGASIN_ECHANGE)
+    .sort((a, b) => (Number(a[1].Store_Show_Order) || 0) - (Number(b[1].Store_Show_Order) || 0));
+  return onglets.map(([id, onglet]) => {
+    const nomOnglet = lire(onglet.Shop_SubTab_Name);
+    const articles = [];
+    const vendus = [];
+    Object.values(entree.articlesMagasin || {})
+      .filter(brut => brut && brut.Store_Show_Group === id)
+      .sort((a, b) => (Number(a.Store_Show_Order) || 0) - (Number(b.Store_Show_Order) || 0))
+      .forEach(brut => {
+        const paiement = String(brut.Goods_Payment_Type || "").replace(/^.*::/, "");
+        if(brut.Cash_Product_Check || PAIEMENTS_REELS.has(paiement)) return;
+        const fin = finDOffreMagasin(brut.Limit_Goods_Time_End);
+        if(fin && (!exportLe || fin.instant < exportLe)) return;
+        const nom = lire(brut.Goods_Name);
+        const monnaie = actif("::Currency", paiement.toLowerCase());
+        const prix = [].concat(brut.Goods_Payment_Value || [])[0];
+        if(!nom || !monnaie || !(Number(prix) > 0)) return;
+        const ligne = { objet:nom, prix:nombreObjets(prix) + " " + monnaie.nom };
+        const limite = limiteMagasin(brut, fin);
+        if(limite) ligne.limite = limite;
+        articles.push(ligne);
+        vendus.push({ ligne, type:typeDuPaquet(brut.Sell_Goods_DropTid) });
+      });
+    return { id, genre, nomDeBase:genre + (nomOnglet ? " — " + nomOnglet : ""), acces:"menu",
+      pnj:[], regions:[], aleatoire:false, articles:sansDoublonsObjets(articles), vendus };
+  }).filter(boutique => boutique.articles.length);
+}
+
 function construireCatalogueObjets(entree) {
   const lireBrut = lecteurDeTextes(entree.textes);
   /* Une traduction absente rend parfois la cle elle-meme : pas un texte. */
@@ -215,6 +290,8 @@ function construireCatalogueObjets(entree) {
       vendus
     });
   });
+
+  boutiquesDuMagasin(entree, lire, objetsParId, actif).forEach(boutique => boutiques.push(boutique));
 
   /* Noms uniques : la boutique au plus petit identifiant garde le nom nu. */
   const vus = new Map();

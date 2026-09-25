@@ -462,6 +462,78 @@ assert.deepEqual(butinsAvecFilons([]), {
   quantites:{ "Minerai de platine":"2 à 3" }
 });
 
+/* La Boutique d'echange du menu Boutique (PackageStore*) : ses onglets
+   d'echange contre une monnaie du jeu. Un article paye en argent reel ou
+   expire a la date de l'export n'y figure pas. La periode de
+   « packageshop_update_3 » n'est pas dans les fichiers : le proprietaire
+   l'a relevee en jeu (35 a 36 jours). */
+function magasin(onglet, nom, paiement, prix, limite, reset, typeLimite, fin, paquet, autres) {
+  return Object.assign({
+    Store_Show_Group:onglet, Store_Show_Order:1, Goods_Payment_Type:"ECurrencyType::" + paiement,
+    Cash_Product_Check:false, Goods_Payment_Value:[prix], Goods_Name:nom, Goods_Buy_Limit:limite,
+    Goods_Buy_Limit_Type:"EGoodsBuyLimitType::" + typeLimite, Buy_Limit_Contents_Reset:reset,
+    Limit_Goods_Time_End:fin, Sell_Goods_DropTid:paquet
+  }, autres || {});
+}
+function entreeAvecMagasin() {
+  const base = ENTREE_OBJETS_TEST;
+  return Object.assign({}, base, {
+    monnaies:Object.assign({ core_ether:{ LinkItemTid:100000119 } }, base.monnaies),
+    objets:Object.assign({}, base.objets, {
+      dropType:Object.assign({ "100000119":{ Local_Key:"Local_Item_Ether" } }, base.objets.dropType)
+    }),
+    groupesButin:Object.assign({ g_minerai_magasin:{ DropPack_Key:["p_minerai_magasin"] } }, base.groupesButin),
+    paquetsButin:Object.assign({
+      p_minerai_magasin_1:{ DropPack_Key:"p_minerai_magasin", DropType:"EDropType::Item", Item_Tid:"101000001" }
+    }, base.paquetsButin),
+    magasins:{ store_tradein_data:{ Store_Button_Name:"ui_store02_tap_name_04" } },
+    ongletsMagasin:{
+      store_tradein_subtab_03:{ Store_Tid:"store_tradein_data", Store_Show_Order:3, Shop_SubTab_Name:"ui_store03_tap_name_03" }
+    },
+    articlesMagasin:{
+      m_minerai:magasin("store_tradein_subtab_03", "local_item_ore", "Core_Ether", 5, 100,
+        "packageshop_update_3", "ContentsReset", "None", "g_minerai_magasin", { Store_Show_Order:2 }),
+      m_potion:magasin("store_tradein_subtab_03", "local_item_potion", "Core_Ether", 120, 8,
+        "packageshop_weekly", "ContentsReset", "None", "g_minerai_magasin", { Store_Show_Order:1 }),
+      m_epee:magasin("store_tradein_subtab_03", "local_item_sword", "Core_Ether", 180, 2,
+        "None", "Limit", "+09:00 2026-10-08 15:59:59", "g_minerai_magasin", { Store_Show_Order:3 }),
+      /* Periode inconnue des fichiers et non relevee : dite telle quelle. */
+      m_ticket:magasin("store_tradein_subtab_03", "local_item_sword", "Core_Ether", 50, 7,
+        "packageshop_update_6", "ContentsReset", "None", "g_minerai_magasin", { Store_Show_Order:4 }),
+      /* Offre terminee avant l'export du 22/09/2026. */
+      m_perime:magasin("store_tradein_subtab_03", "local_item_ore", "Core_Ether", 30, 25,
+        "None", "Limit", "+09:00 2026-04-10 15:59:59", "g_minerai_magasin"),
+      /* Argent reel : jamais. */
+      m_payant:magasin("store_tradein_subtab_03", "local_item_ore", "Cash", 1, 1,
+        "None", "None", "None", "g_minerai_magasin", { Cash_Product_Check:true }),
+      /* Un paquet d'un autre magasin (onglet inconnu) : ignore. */
+      m_ailleurs:magasin("store_package_subtab_01", "local_item_ore", "Core_Ether", 1, 1,
+        "None", "None", "None", "g_minerai_magasin")
+    },
+    textes:Object.assign({
+      local_item_ether:"Fragment de traînée stellaire",
+      ui_store02_tap_name_04:"Boutique d'échange",
+      ui_store03_tap_name_03:"Fragment de traînée stellaire"
+    }, base.textes)
+  });
+}
+const AVEC_MAGASIN = construireCatalogueObjets(entreeAvecMagasin());
+const ECHANGE_ETHER = "Boutique d'échange — Fragment de traînée stellaire";
+assert.deepEqual(AVEC_MAGASIN.boutiques.find(boutique => boutique.nom === ECHANGE_ETHER), {
+  nom:ECHANGE_ETHER, genre:"Boutique d'échange", acces:"menu", pnj:[], regions:[],
+  articles:[
+    { objet:"Potion", prix:"120 Fragment de traînée stellaire", limite:"8 par semaine" },
+    { objet:"Minerai", prix:"5 Fragment de traînée stellaire", limite:"100 tous les 35 à 36 jours environ" },
+    { objet:"Épée longue", prix:"180 Fragment de traînée stellaire", limite:"2 au total, jusqu'au 08/10/2026" },
+    { objet:"Épée longue", prix:"50 Fragment de traînée stellaire", limite:"7 par période (durée inconnue)" }
+  ]
+});
+assert.deepEqual(AVEC_MAGASIN.objets.find(objet => objet.nom === "Minerai").sources[0],
+  { type:"boutique", boutique:LIONES, quantite:5, prix:"2 Potion", limite:"10 par semaine" });
+assert.ok(AVEC_MAGASIN.objets.find(objet => objet.nom === "Minerai").sources.some(source =>
+  source.boutique === ECHANGE_ETHER && source.limite === "100 tous les 35 à 36 jours environ"));
+assert.equal(AVEC_MAGASIN.boutiques.length, catalogue.boutiques.length + 1);
+
 module.exports = { ENTREE_OBJETS_TEST, ENTREE_FILONS_TEST:entreeAvecFilons(APPARITIONS_PLATINE_TEST) };
 
 if(require.main === module) console.log("OK objets-jarvis");

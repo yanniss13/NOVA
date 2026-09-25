@@ -509,6 +509,16 @@ maximum par jour vaut filons × quantité, seulement pour une chance de
 100 %. 7dsorigin.app annonce 66 filons de platine et « 99 – 132 / jour »,
 des chiffres incohérents entre eux ; les tables en placent 32.
 
+**Boutique d'échange du menu Boutique.** Ses quatre onglets (Loyauté,
+Traînée stellaire cristallisée, Fragment de traînée stellaire, Fragment
+stellaire) viennent de `PackageStoreTable`, `PackageStoreSubTabTable` et
+`PackageStoreGoodsTable` (bois : 5 Fragments de traînée stellaire, 100 par
+période). Jamais un article payé en argent réel ; une offre dont
+`Limit_Goods_Time_End` précède l'export est écartée. La période de
+`packageshop_update_3` n'est pas dans les fichiers : « 35 à 36 jours
+environ », relevé du propriétaire ; les autres périodes inconnues
+(`packageshop_update_6`) restent « durée inconnue ».
+
 **Limites de récolte : absentes des fichiers.** Le jeu déclare
 `DropGroupLimitTable` (`Drop/DropGroupLimit.xlsx`), mais elle reste côté
 serveur ; les 248 interactions de récolte ont `ActiveCount = -1`. Deux
