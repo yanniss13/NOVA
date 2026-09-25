@@ -14,6 +14,8 @@
        -> Actor/NPCActorTable (InteractionTid[]).
      PNJ -> region : lignes des tables d'apparition (TagMainSector,
        TagSubSector), traduites par la localisation.
+       Sans etiquette : Scene/Sector/<zone>_sectortable (AreaPoint des
+       secteurs principaux) et la position de l'apparition.
      Monnaie : Item/CurrencyTable n'a pas de nom ; il passe par LinkItemTid.
 
    Les butins et les recettes ajouteront d'autres `type` de source aux
@@ -63,6 +65,34 @@ function limiteArticle(brut) {
   return nombre + " " + (PERIODES_BOUTIQUE[brut.GoodsResetTime] || "au total");
 }
 
+function dansContourObjets(point, contour) {
+  let dedans = false;
+  for(let i = 0, j = contour.length - 1; i < contour.length; j = i++){
+    const a = contour[i], b = contour[j];
+    if((a.Y > point.Y) !== (b.Y > point.Y)
+      && point.X < (b.X - a.X) * (point.Y - a.Y) / (b.Y - a.Y) + a.X) dedans = !dedans;
+  }
+  return dedans;
+}
+
+/* Une apparition sans etiquette de region (98 PNJ sur 142 au chapitre 7,
+   dont Velia) : le contour du secteur principal de sa zone qui contient
+   sa position (les donjons ont leurs propres coordonnees).
+   Un seul contour, du chapitre de sa table, sinon rien. Mesure sur les PNJ
+   etiquetes du 25/09/2026 : 983 accords, 18 ecarts en bordure. Les
+   sous-secteurs ne se deduisent pas ainsi (un accord sur deux). */
+function secteurParPosition(apparition, secteurs) {
+  const position = apparition && apparition.position;
+  if(!position || !Number.isFinite(apparition.chapitre)) return null;
+  const cles = [...new Set((secteurs || [])
+    .filter(secteur => secteur.zone === apparition.zone
+      && dansContourObjets(position, secteur.points || []))
+    .map(secteur => secteur.cle))];
+  if(cles.length !== 1) return null;
+  const chapitre = /^CH0*(\d+)_/i.exec(cles[0]);
+  return chapitre && Number(chapitre[1]) === apparition.chapitre ? cles[0] : null;
+}
+
 function construireCatalogueObjets(entree) {
   const lireBrut = lecteurDeTextes(entree.textes);
   /* Une traduction absente rend parfois la cle elle-meme : pas un texte. */
@@ -103,9 +133,10 @@ function construireCatalogueObjets(entree) {
   });
   const regionsParActeur = new Map();
   (entree.apparitions || []).forEach(apparition => {
-    const principal = lire(apparition.secteur);
+    const place = !lire(apparition.secteur) && secteurParPosition(apparition, entree.secteurs);
+    const principal = place ? lire(place) : lire(apparition.secteur);
     if(!principal) return;
-    const sous = lire(apparition.sousSecteur);
+    const sous = place ? null : lire(apparition.sousSecteur);
     const libelle = principal + (sous && sous !== principal ? " (" + sous + ")" : "");
     const deja = regionsParActeur.get(String(apparition.acteur)) || [];
     if(!deja.some(region => region.libelle === libelle)) deja.push({ principal, libelle });
@@ -164,8 +195,7 @@ function construireCatalogueObjets(entree) {
     if(!articles.length) return;
     const nomsPnj = [...new Set(identifiantsPnj.map(pnj => lire((entree.pnj[pnj] || {}).Local_Key)).filter(Boolean))];
     /* Region connue : « Boutique d'equipement — Liones ». Sinon le PNJ la
-       distingue (chapitres 3 et 7 : apparitions sans region). Rien n'est
-       invente. */
+       distingue. Rien n'est invente. */
     let nomDeBase = genre;
     if(regions.length) nomDeBase = genre + " — " + regions[0].principal;
     else if(nomsPnj.length) nomDeBase = genre + " (" + nomsPnj.join(", ") + ")";

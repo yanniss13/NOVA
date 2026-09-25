@@ -374,6 +374,39 @@ assert.deepEqual(catalogue.butins, [
     taux:{ Potion:"100 %" } }
 ]);
 
+/* Une apparition sans region (chapitre 7 : Velia) se place par sa position
+   dans le contour d'un secteur principal (Scene/Sector). Seulement si un
+   seul contour la contient ET qu'il est du chapitre de sa table ; jamais de
+   sous-secteur, que les contours ne tranchent pas. */
+function regionsDeGerard(apparition, secteurs) {
+  const entree = Object.assign({}, ENTREE_OBJETS_TEST, {
+    apparitions:ENTREE_OBJETS_TEST.apparitions.concat([Object.assign(
+      { acteur:"60200001", secteur:"None", sousSecteur:"None" }, apparition)]),
+    secteurs,
+    textes:Object.assign({ ch02_sector_main_fairyforest:"Forêt du roi des fées",
+      ch03_sector_main_ferzen:"Ferzen" }, ENTREE_OBJETS_TEST.textes)
+  });
+  const boutique = construireCatalogueObjets(entree).boutiques.find(b => b.pnj.includes("Gérard"));
+  return { nom:boutique.nom, regions:boutique.regions };
+}
+const CARRE = (x, y) => [{ X:x, Y:y }, { X:x + 100, Y:y }, { X:x + 100, Y:y + 100 }, { X:x, Y:y + 100 }];
+const FORET = { cle:"CH02_Sector_Main_FairyForest", points:CARRE(0, 0) };
+const FERZEN_CONTOUR = { cle:"CH03_Sector_Main_Ferzen", points:CARRE(50, 50) };
+
+assert.deepEqual(regionsDeGerard({ position:{ X:20, Y:20 }, chapitre:2 }, [FORET, FERZEN_CONTOUR]),
+  { nom:"Boutique d'équipement — Forêt du roi des fées", regions:["Forêt du roi des fées"] });
+/* Deux contours : a la frontiere, on ne tranche pas. */
+assert.deepEqual(regionsDeGerard({ position:{ X:70, Y:70 }, chapitre:2 }, [FORET, FERZEN_CONTOUR]),
+  { nom:GERARD, regions:[] });
+/* Un seul contour, mais d'un autre chapitre que la table d'apparition. */
+assert.deepEqual(regionsDeGerard({ position:{ X:120, Y:120 }, chapitre:2 }, [FORET, FERZEN_CONTOUR]),
+  { nom:GERARD, regions:[] });
+/* Hors de tout contour, ou sans chapitre connu. */
+assert.deepEqual(regionsDeGerard({ position:{ X:500, Y:500 }, chapitre:2 }, [FORET]),
+  { nom:GERARD, regions:[] });
+assert.deepEqual(regionsDeGerard({ position:{ X:20, Y:20 } }, [FORET]),
+  { nom:GERARD, regions:[] });
+
 module.exports = { ENTREE_OBJETS_TEST };
 
 if(require.main === module) console.log("OK objets-jarvis");

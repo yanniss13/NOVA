@@ -32,10 +32,12 @@ function lignesDeTable(relatif) {
 }
 
 /* Les lignes d'apparition des seuls PNJ : leur region principale et leur
-   sous-region. Les tables vivent sous Table/Scene/Zone/<zone>/, a plusieurs
-   niveaux selon la zone. */
+   sous-region, et, pour placer celles qui n'en ont pas, leur position, leur
+   zone et le chapitre de leur table. Les tables vivent sous
+   Table/Scene/Zone/<zone>/, a plusieurs niveaux selon la zone. */
 function apparitionsDesPnj(pnj) {
   const sortie = [];
+  const racine = path.join(CONTENU, "Table", "Scene", "Zone");
   (function parcourir(dossier) {
     fs.readdirSync(dossier, { withFileTypes:true }).forEach(entree => {
       const chemin = path.join(dossier, entree.name);
@@ -46,13 +48,38 @@ function apparitionsDesPnj(pnj) {
       if(!/_spawntable\.json$/i.test(entree.name)) return;
       const brut = JSON.parse(fs.readFileSync(chemin, "utf8"));
       const lignes = (Array.isArray(brut) && brut[0] && brut[0].Rows) || {};
+      const zone = path.relative(racine, chemin).split(path.sep)[0];
+      const chapitre = /^Chapter_0*(\d+)/i.exec(entree.name);
       Object.values(lignes).forEach(ligne => {
         if(!ligne || !Object.prototype.hasOwnProperty.call(pnj, String(ligne.ActorID))) return;
-        sortie.push({ acteur:String(ligne.ActorID), secteur:ligne.TagMainSector, sousSecteur:ligne.TagSubSector });
+        const apparition = { acteur:String(ligne.ActorID), secteur:ligne.TagMainSector, sousSecteur:ligne.TagSubSector };
+        const position = ligne.position_xyz;
+        if(position && Number.isFinite(position.X) && Number.isFinite(position.Y) && chapitre){
+          Object.assign(apparition, { position:{ X:position.X, Y:position.Y }, zone, chapitre:Number(chapitre[1]) });
+        }
+        sortie.push(apparition);
       });
     });
-  })(path.join(CONTENU, "Table", "Scene", "Zone"));
+  })(racine);
   return sortie;
+}
+
+/* Les contours des secteurs principaux (AreaPoint) des seules zones ou une
+   apparition attend d'etre placee. Deux tables de secteurs de zones
+   instanciees sont vides dans l'export du 25/09/2026 : on ne les lit pas. */
+function contoursDesSecteurs(apparitions) {
+  const zones = new Set(apparitions.filter(apparition => apparition.zone).map(apparition => apparition.zone));
+  return [...zones].flatMap(zone => {
+    const fichier = path.join(CONTENU, "Table", "Scene", "Sector", zone + "_sectortable.json");
+    if(!fs.existsSync(fichier)) return [];
+    const brut = JSON.parse(fs.readFileSync(fichier, "utf8"));
+    const lignes = (Array.isArray(brut) && brut[0] && brut[0].Rows) || {};
+    return Object.values(lignes)
+      .filter(ligne => ligne && ligne.AreaSectorType === "EAreaSectorType::MainSector"
+        && Array.isArray(ligne.AreaPoint) && ligne.AreaPoint.length >= 3)
+      .map(ligne => ({ zone, cle:ligne.Local_SectorNameMsg,
+        points:ligne.AreaPoint.map(point => ({ X:point.X, Y:point.Y })) }));
+  });
 }
 
 function main() {
@@ -63,6 +90,7 @@ function main() {
   }
   const tableArticles = path.join(CONTENU, "Table", "Merchant", "MerchantGoods.json");
   const pnj = lignesDeTable("Actor/NPCActorTable.json");
+  const apparitions = apparitionsDesPnj(pnj);
   const catalogue = construireCatalogueObjets({
     objets:{
       etc:lignesDeTable("Item/ItemTable_Data_Etc.json"),
@@ -77,7 +105,8 @@ function main() {
     boutons:lignesDeTable("Interaction/InteractionButtonTable.json"),
     interactions:lignesDeTable("Interaction/InteractionTable.json"),
     pnj,
-    apparitions:apparitionsDesPnj(pnj),
+    apparitions,
+    secteurs:contoursDesSecteurs(apparitions),
     groupesButin:lignesDeTable("Drop/DropGroupTable.json"),
     paquetsButin:lignesDeTable("Drop/DropPackTable.json"),
     monstres:lignesDeTable("Actor/MonsterActorTable.json"),

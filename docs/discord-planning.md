@@ -511,9 +511,14 @@ redéployer `discord-planning` la première fois.
 La chaîne : `MerchantGoods` (articles) → boutique → `InteractionButtonTable`
 → `InteractionTable` → `NPCActorTable` (PNJ) → tables d'apparition
 (`TagMainSector`, `TagSubSector`) pour la région. Une boutique prend le nom
-de sa région (« Boutique d'équipement — Liones ») ; sans région connue — les
-apparitions des chapitres 3 et 7 n'en portent pas — le nom de son PNJ
-(« Boutique d'équipement (Nigel) »). Les boutiques d'événement et celle de
+de sa région (« Boutique d'équipement — Liones »). Une apparition sans
+étiquette de région (la plupart des PNJ des chapitres 3 et 7, dont Velia) se
+place par sa position dans le contour d'un secteur principal
+(`Scene/Sector/<zone>_sectortable`, `AreaPoint`) : un seul contour, du
+chapitre de sa table, sinon rien. Mesuré sur les PNJ étiquetés : 983 accords,
+18 écarts en bordure ; les sous-secteurs ne se déduisent pas ainsi. Sans
+région du tout, le nom du PNJ distingue la boutique
+(« Boutique d'équipement (Gérard) »). Les boutiques d'événement et celle de
 la confrérie s'ouvrent depuis un menu. La boutique itinérante tire ses
 articles au hasard. Un article dont l'objet ou la monnaie n'a pas de nom
 français est écarté, et une boutique vide est omise.
