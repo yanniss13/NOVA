@@ -64,7 +64,11 @@ function entreeParCodeMecanique(table, code) {
   return cle ? table[cle] : null;
 }
 
-function libelleStatMecanique(code, libelles) {
+/* Dans l'ordre : libelles-stats.json, la famille elementaire etablie, puis
+   le nom que l'ecran de statistiques du jeu donne au code (« ui_<code> »,
+   ex. ui_s_movespdadd_rate = Vitesse de deplacement). Sans aucun des
+   trois, le code reste : rien ne se devine d'apres lui. */
+function libelleStatMecanique(code, libelles, lire) {
   const connu = entreeParCodeMecanique(libelles, code);
   if(connu && (connu.court || connu.fr)) return connu.court || connu.fr;
   const famille = FAMILLE_ELEMENTAIRE.exec(code);
@@ -72,7 +76,8 @@ function libelleStatMecanique(code, libelles) {
     return (famille[2] === "Weakness_Rate" ? "Dégâts de faiblesse " : "Résistance élémentaire ")
       + ELEMENTS_MECANIQUES[famille[1]];
   }
-  return code;
+  const duJeu = lire && lire("ui_" + code.toLowerCase());
+  return duJeu ? String(duJeu).trim() : code;
 }
 
 function remplacementsDuBuff(buff) {
@@ -117,7 +122,7 @@ function valeurLisibleMecanique(valeur, unite) {
   return valeur + " (valeur brute)";
 }
 
-function valeursDuBuff(buff, libelles, unites) {
+function valeursDuBuff(buff, libelles, unites, lire) {
   const remplacements = remplacementsDuBuff(buff);
   const resultat = { valeurs:[], prouvees:0, brutes:0, desaccords:0 };
   (buff.AddAbil_List || []).forEach(ajout => {
@@ -126,7 +131,7 @@ function valeursDuBuff(buff, libelles, unites) {
     if(!code || code === "None" || !valeur) return;
     const preuve = uniteProuveePourAjout(ajout, remplacements, unites);
     resultat.valeurs.push({
-      stat:libelleStatMecanique(code, libelles),
+      stat:libelleStatMecanique(code, libelles, lire),
       valeur:valeurLisibleMecanique(valeur, preuve.unite)
     });
     if(preuve.unite) resultat.prouvees += 1;
@@ -237,7 +242,7 @@ function construireCatalogueMecaniques(entree) {
     if(!nom) return;
     const nature = natureDuBuff(brut);
     const cumul = Number(brut.StackType && brut.StackType.MaxStack) || 0;
-    const valeurs = valeursDuBuff(brut, libelles, unites);
+    const valeurs = valeursDuBuff(brut, libelles, unites, lire);
     const info = {
       nom, nature, rang:Number(id),
       description:nettoyerMecanique(lire(brut.Local_Desc)),

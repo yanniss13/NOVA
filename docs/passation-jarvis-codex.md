@@ -100,6 +100,17 @@ bucket Supabase privé `jarvis-prive`.
 
 ## Tâche 1 — Valeurs brutes des effets (M-6, reporté)
 
+> **Close le 25/09/2026.** Les unités étaient déjà toutes prouvées
+> (1 533 / 1 533, aucune valeur brute). Restaient 283 valeurs dont la
+> statistique s'affichait par son code : le jeu les nomme dans ses clés
+> `ui_<code>` (`ui_s_movespdadd_rate` = « Vitesse de déplacement »), dernier
+> recours de `libelleStatMecanique`. 198 sont nommées ; les 85 autres
+> (`T_Atk`, `T_Def`, `T_MaxHP`, endurance et vitesse de nage, de vol plané,
+> de familier volant, `MaxSP_Rate`, `RecoverySP_Rate`, `Move_Spd`) n'ont
+> aucun nom dans les fichiers et gardent leur code : ce sont des plats, des
+> effets de climat et d'aventure, que leur propre nom d'effet décrit déjà.
+> Le texte ci-dessous est l'état d'avant.
+
 26 % des valeurs de `mecaniques.json` s'affichent « 5000 (valeur brute) » :
 27 codes de stat posés par des effets n'ont ni libellé dans
 `7ds-stats/libelles-stats.json` ni unité dans `7ds-stats/stat-metadata.json`

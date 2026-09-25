@@ -264,7 +264,9 @@ function main() {
       Local_Meta_Def_Name:"Défense plate",
       Local_Meta_Def_Desc:"Défense.",
       Local_Meta_Normal_Name:"Dégâts normaux",
-      Local_Meta_Normal_Desc:"Dégâts."
+      Local_Meta_Normal_Desc:"Dégâts.",
+      /* Le nom que l'ecran de statistiques du jeu donne au code. */
+      ui_tickdam_period_rate:"Délai d'infliction des dégâts sur la durée "
     },
     genereLe:"2026-09-24T12:00:00.000Z", dateExport:"2026-09-24"
   });
@@ -276,6 +278,12 @@ function main() {
     "une statistique plate prouvée n'est pas divisée par cent");
   assert.equal(valeurMetadata("Dégâts normaux"), "+10 %",
     "la casse historique des codes de métadonnées n'empêche pas le repli");
+  const statMetadata = nom => catalogueMetadata.effets.find(effet => effet.nom === nom)
+    .variantes[0].valeurs[0].stat;
+  assert.equal(statMetadata("Période des dégâts"), "Délai d'infliction des dégâts sur la durée",
+    "sans libellé de libelles-stats, le nom « ui_<code> » du jeu, sans espace final");
+  assert.equal(statMetadata("Défense plate"), "T_Def",
+    "sans aucun nom dans le jeu, le code reste : rien n'est deviné d'après lui");
 
   assert.deepEqual(catalogue.regles, [
     { sujet:"Astuces de chargement", pages:["Astuce deux.", "Astuce huit."] },
