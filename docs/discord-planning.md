@@ -476,10 +476,17 @@ plupart des produits n'ont pas de nom et dont les ingrédients diffèrent
 pour un même produit. Une recette visible à plusieurs établis prend le plus
 modeste, « ou supérieur ».
 
-**Aucune probabilité de butin.** `DropPackTable` donne un taux par niveau
-de monde (`Standard_Level`) et `DropGroupTable` pondère ses paquets, mais
-la lecture de ces taux n'est pas confirmée : le bot dit ce qu'une source
-peut donner, jamais avec quelle chance. Les coffres et points de récolte
+**Chance de butin.** Taux du paquet dans le groupe (`DropGroupTable`,
+`DropPack_Rate`) × taux de la ligne (`DropPackTable`, `Rate`), en
+dix-millièmes, à chaque victoire ou récolte — confirmé par le propriétaire
+sur la Belette (8000 × 2500 = 20 %). `Rate` varie avec le niveau de monde
+(`Standard_Level`) : « niveaux de monde 1 à 4 : 1,5 % ; 3,5 % ; 6 % ;
+10 % » pour Banakro. Aucune chance n'est affichée quand le groupe n'a pas
+de taux, quand deux lignes du même objet tombent au même niveau (leur
+cumul n'est pas confirmé) ou quand deux versions d'un monstre se
+contredisent ; `DropPack_Type` n'entre pas dans le calcul, son sens n'est
+pas établi. La chance n'est écrite qu'une fois, dans `butins` : le bot
+l'y relit pour `ou_trouver`. Les coffres et points de récolte
 (`InteractionTable`) ne sont pas couverts, faute de chaîne sûre jusqu'à
 leur nom.
 

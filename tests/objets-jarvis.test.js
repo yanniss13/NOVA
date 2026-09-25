@@ -91,27 +91,32 @@ const ENTREE_OBJETS_TEST = {
   /* ---------------- Butins ---------------- */
   groupesButin:{
     /* Un paquet absent de DropPackTable ne fait pas planter. */
-    g_banakro:{ DropPack_Key:["p_banakro", "p_absent"] },
-    g_capture:{ DropPack_Key:["p_capture"] },
+    g_banakro:{ DropPack_Key:["p_banakro", "p_absent"], DropPack_Rate:[10000, 10000], DropPack_Type:[false, false] },
+    /* Chance = taux du groupe x taux de l'objet : 80 % x 25 % = 20 %
+       (confirme par le proprietaire sur la Belette). */
+    g_capture:{ DropPack_Key:["p_capture"], DropPack_Rate:[8000], DropPack_Type:[true] },
+    /* Sans taux de groupe : aucune chance affichee. */
     g_minage:{ DropPack_Key:["p_minage"] },
-    g_donjon:{ DropPack_Key:["p_donjon"] },
-    g_premiere:{ DropPack_Key:["p_premiere"] },
-    g_confrerie:{ DropPack_Key:["p_confrerie"] }
+    g_donjon:{ DropPack_Key:["p_donjon"], DropPack_Rate:[10000], DropPack_Type:[false] },
+    g_premiere:{ DropPack_Key:["p_premiere"], DropPack_Rate:[10000], DropPack_Type:[false] },
+    g_confrerie:{ DropPack_Key:["p_confrerie"], DropPack_Rate:[10000], DropPack_Type:[false] }
   },
   paquetsButin:{
     /* Le meme objet, un taux par niveau de monde : une seule fois. */
-    p_banakro_1:{ DropPack_Key:"p_banakro", DropType:"EDropType::Item", Item_Tid:"101000001", Standard_Level:"level_01" },
-    p_banakro_2:{ DropPack_Key:"p_banakro", DropType:"EDropType::Item", Item_Tid:"101000001", Standard_Level:"level_02" },
+    p_banakro_1:{ DropPack_Key:"p_banakro", DropType:"EDropType::Item", Item_Tid:"101000001", Standard_Level:"level_01", Rate:150 },
+    p_banakro_2:{ DropPack_Key:"p_banakro", DropType:"EDropType::Item", Item_Tid:"101000001", Standard_Level:"level_02", Rate:350 },
     /* Une monnaie par le suffixe de DropType. */
-    p_banakro_3:{ DropPack_Key:"p_banakro", DropType:"EDropType::Seal_Liones", Item_Tid:"None" },
+    p_banakro_3:{ DropPack_Key:"p_banakro", DropType:"EDropType::Seal_Liones", Item_Tid:"None", Standard_Level:"None", Rate:10000 },
     /* Sans monnaie (Exp) ou sans nom : ignores. */
     p_banakro_4:{ DropPack_Key:"p_banakro", DropType:"EDropType::Exp", Item_Tid:"None" },
     p_banakro_5:{ DropPack_Key:"p_banakro", DropType:"EDropType::Item", Item_Tid:"101000002" },
-    p_capture_1:{ DropPack_Key:"p_capture", DropType:"EDropType::Item", Item_Tid:"102000001" },
+    p_capture_1:{ DropPack_Key:"p_capture", DropType:"EDropType::Item", Item_Tid:"102000001", Standard_Level:"None", Rate:2500 },
     p_minage_1:{ DropPack_Key:"p_minage", DropType:"EDropType::Item", Item_Tid:"101000001" },
-    p_donjon_1:{ DropPack_Key:"p_donjon", DropType:"EDropType::Gold", Item_Tid:"None" },
-    p_premiere_1:{ DropPack_Key:"p_premiere", DropType:"EDropType::Item", Item_Tid:"131000001" },
-    p_confrerie_1:{ DropPack_Key:"p_confrerie", DropType:"EDropType::Item", Item_Tid:"102000001" }
+    p_donjon_1:{ DropPack_Key:"p_donjon", DropType:"EDropType::Gold", Item_Tid:"None", Standard_Level:"None", Rate:10000 },
+    /* Deux lignes du meme objet au meme niveau : cumul non confirme, pas de taux. */
+    p_premiere_1:{ DropPack_Key:"p_premiere", DropType:"EDropType::Item", Item_Tid:"131000001", Standard_Level:"None", Rate:10000 },
+    p_premiere_2:{ DropPack_Key:"p_premiere", DropType:"EDropType::Item", Item_Tid:"131000001", Standard_Level:"None", Rate:5000 },
+    p_confrerie_1:{ DropPack_Key:"p_confrerie", DropType:"EDropType::Item", Item_Tid:"102000001", Standard_Level:"None", Rate:10000 }
   },
   monstres:{
     /* Deux versions de Banakro, meme nom, meme butin : une seule source. */
@@ -350,12 +355,15 @@ assert.deepEqual(catalogue.recettes, [
 ]);
 
 assert.deepEqual(catalogue.butins, [
-  { nom:"Mouette", type:"capture", objets:["Potion"] },
-  { nom:"Banakro", type:"monstre", objets:["Minerai", "Sceau de Liones"] },
+  { nom:"Mouette", type:"capture", objets:["Potion"], taux:{ Potion:"20 %" } },
+  { nom:"Banakro", type:"monstre", objets:["Minerai", "Sceau de Liones"],
+    /* Des niveaux qui se suivent : la forme courte. */
+    taux:{ Minerai:"niveaux de monde 1 à 2 : 1,5 % ; 3,5 %", "Sceau de Liones":"100 %" } },
   { nom:"Minerai de fer", type:"minage", objets:["Minerai"] },
-  { nom:FERZEN, type:"donjon", objets:["Or"] },
+  { nom:FERZEN, type:"donjon", objets:["Or"], taux:{ Or:"100 %" } },
   { nom:FERZEN, type:"donjon", detail:"première victoire", objets:["Épée longue"] },
-  { nom:"Boss de confrérie", type:"confrerie", detail:"palier de participation 5", objets:["Potion"] }
+  { nom:"Boss de confrérie", type:"confrerie", detail:"palier de participation 5", objets:["Potion"],
+    taux:{ Potion:"100 %" } }
 ]);
 
 module.exports = { ENTREE_OBJETS_TEST };

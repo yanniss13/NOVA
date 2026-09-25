@@ -204,6 +204,8 @@ function construireCatalogueObjets(entree) {
     butin.objets.forEach(objet => {
       if(!index.has(objet.nom)) index.set(objet.nom, { nom:objet.nom, type:objet.type, sources:[] });
       const source = { type:butin.type, origine:butin.nom };
+      /* La chance reste dans `butins` seulement : le bot l'y relit, le
+         fichier ne la porte pas deux fois. */
       if(butin.detail) source.detail = butin.detail;
       index.get(objet.nom).sources.push(source);
     });
@@ -233,9 +235,14 @@ function construireCatalogueObjets(entree) {
       sortie.articles = boutique.articles;
       return sortie;
     }),
-    butins:butins.map(butin => Object.assign(
-      { nom:butin.nom, type:butin.type }, butin.detail ? { detail:butin.detail } : {},
-      { objets:butin.objets.map(objet => objet.nom) })),
+    butins:butins.map(butin => {
+      const sortie = Object.assign(
+        { nom:butin.nom, type:butin.type }, butin.detail ? { detail:butin.detail } : {},
+        { objets:butin.objets.map(objet => objet.nom) });
+      const taux = butin.objets.filter(objet => objet.taux);
+      if(taux.length) sortie.taux = Object.fromEntries(taux.map(objet => [objet.nom, objet.taux]));
+      return sortie;
+    }),
     recettes:recettes.map(({ typeObjet, ...recette }) => recette),
     articlesEcartes
   };
@@ -338,11 +345,39 @@ function recettesDuJeu(entree, lire, objetsParId) {
   return sortie;
 }
 
-/* Ce que chaque source PEUT donner. Aucune probabilite : DropPackTable
-   repete un objet avec un taux par niveau de monde (Standard_Level) et
-   DropGroupTable pondere ses paquets, sans que la lecture de ces taux soit
-   confirmee. Un groupe -> ses paquets -> leurs lignes -> un objet (Item) ou
-   une monnaie (le suffixe de DropType : Seal_Liones -> seal_liones). */
+/* « 1,5 % » a partir de dix-milliemes (150). */
+function pourcentButin(dixMilliemes) {
+  return Number((dixMilliemes / 100).toFixed(2)).toLocaleString("fr-FR") + " %";
+}
+
+/* Les taux d'un objet par niveau de monde, ou null quand ils ne se lisent
+   pas sans hypothese : taux de groupe absent, deux lignes au meme niveau
+   (leur cumul n'est pas confirme), niveaux melanges avec « None ». */
+function tauxLisibleButin(suivi) {
+  if(!suivi.connu || suivi.ambigu || !suivi.niveaux.size) return null;
+  const niveaux = [...suivi.niveaux.entries()];
+  if(suivi.niveaux.has("None")) return niveaux.length === 1 ? pourcentButin(niveaux[0][1]) : null;
+  const numeros = niveaux.map(([niveau, taux]) => [Number((/^level_(\d+)$/.exec(niveau) || [])[1]), taux]);
+  if(numeros.some(([numero]) => !(numero > 0))) return null;
+  numeros.sort((a, b) => a[0] - b[0]);
+  if(numeros.every(([, taux]) => taux === numeros[0][1])) return pourcentButin(numeros[0][1]);
+  /* Des niveaux qui se suivent : « niveaux de monde 1 a 4 : 1,5 % ; 3,5 % ;
+     6 % ; 10 % ». Sinon, chaque niveau nomme. */
+  if(numeros.every(([numero], rang) => numero === numeros[0][0] + rang)){
+    return "niveaux de monde " + numeros[0][0] + " à " + numeros[numeros.length - 1][0] + " : "
+      + numeros.map(([, taux]) => pourcentButin(taux)).join(" ; ");
+  }
+  return numeros.map(([numero, taux]) => pourcentButin(taux) + " (niveau de monde " + numero + ")").join(" ; ");
+}
+
+/* Ce que chaque source peut donner, et avec quelle chance. Un groupe -> ses
+   paquets -> leurs lignes -> un objet (Item) ou une monnaie (le suffixe de
+   DropType : Seal_Liones -> seal_liones).
+   LA CHANCE, confirmee par le proprietaire le 25/09/2026 sur la Belette :
+   taux du paquet dans le groupe (DropPack_Rate, 8000) x taux de la ligne
+   (Rate, 2500) = 20 % a chaque victoire. Rate varie avec le niveau de monde
+   (Standard_Level) : Banakro donne 1,5 %, 3,5 %, 6 % puis 10 %. Le sens de
+   DropPack_Type n'est pas etabli et n'entre pas dans le calcul. */
 function butinsDuJeu(entree, lire, objetsParId, actif) {
   const lignesParPaquet = new Map();
   Object.values(entree.paquetsButin || {}).forEach(ligne => {
@@ -352,16 +387,27 @@ function butinsDuJeu(entree, lire, objetsParId, actif) {
     const brut = (entree.groupesButin || {})[String(groupe)];
     if(!brut) return [];
     const vus = new Map();
-    [].concat(brut.DropPack_Key || []).forEach(paquet => {
+    [].concat(brut.DropPack_Key || []).forEach((paquet, rang) => {
+      const tauxGroupe = Array.isArray(brut.DropPack_Rate) ? Number(brut.DropPack_Rate[rang]) : NaN;
       (lignesParPaquet.get(String(paquet)) || []).forEach(ligne => {
         const genre = String(ligne.DropType || "").replace(/^.*::/, "");
         const objet = genre === "Item"
           ? objetsParId.get(String(ligne.Item_Tid)) || null
           : actif("::Currency", genre.toLowerCase());
-        if(objet && !vus.has(objet.nom)) vus.set(objet.nom, objet);
+        if(!objet) return;
+        if(!vus.has(objet.nom)) vus.set(objet.nom, { objet, niveaux:new Map(), connu:true, ambigu:false });
+        const suivi = vus.get(objet.nom);
+        const tauxLigne = Number(ligne.Rate);
+        if(!Number.isFinite(tauxGroupe) || !Number.isFinite(tauxLigne)){
+          suivi.connu = false;
+          return;
+        }
+        const niveau = String(ligne.Standard_Level || "None");
+        if(suivi.niveaux.has(niveau)) suivi.ambigu = true;
+        else suivi.niveaux.set(niveau, tauxGroupe * tauxLigne / 10000);
       });
     });
-    return [...vus.values()];
+    return [...vus.values()].map(suivi => Object.assign({}, suivi.objet, { taux:tauxLisibleButin(suivi) }));
   }
 
   const butins = [];
@@ -376,8 +422,11 @@ function butinsDuJeu(entree, lire, objetsParId, actif) {
       butins.push(parCle.get(cle));
     }
     const butin = parCle.get(cle);
+    /* Deux versions d'un monstre aux taux differents : pas de taux. */
     objets.forEach(objet => {
-      if(!butin.objets.some(deja => deja.nom === objet.nom)) butin.objets.push(objet);
+      const deja = butin.objets.find(present => present.nom === objet.nom);
+      if(!deja) butin.objets.push(objet);
+      else if(deja.taux !== objet.taux) deja.taux = null;
     });
   }
 

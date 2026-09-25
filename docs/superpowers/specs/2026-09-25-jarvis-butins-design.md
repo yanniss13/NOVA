@@ -11,6 +11,11 @@ récapitulés à son réveil.
 - « Que lâche Banakro ? », « que rapporte tel donjon ? » : un nouvel outil
   `butin`.
 
+> **Révisé le 25/09/2026** : le propriétaire a confirmé la lecture des taux
+> (Banakro : 1,5 %, 3,5 %, 6 %, 10 % par victoire ; Belette : 8000 × 2500
+> = 20 %). Les chances sont affichées ; voir `docs/discord-planning.md`,
+> « Chance de butin ». La décision ci-dessous est l'état d'avant.
+
 ## Décision : aucune probabilité
 
 `DropPackTable` répète un même objet avec un taux par niveau de monde

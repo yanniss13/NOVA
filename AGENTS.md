@@ -1371,8 +1371,10 @@ le SQL Editor afin d'ajouter les tables à la publication
   `output/jarvis/objets.json` (bucket privé) ; outils `ou_trouver` et
   `boutique` dans `_shared/discord-jarvis-objets.js`. Étape 1 : les
   boutiques. Étape 2 : les butins (monstres, captures, minage, donjons,
-  boss de confrérie) et l'outil `butin`, **sans aucune probabilité** —
-  les taux par niveau de monde ne sont pas confirmés. Étape 3 : les
+  boss de confrérie) et l'outil `butin`. **Chance = taux du paquet dans
+  le groupe × taux de la ligne** (Belette : 80 % × 25 % = 20 %), confirmé
+  par le propriétaire ; aucune chance quand deux lignes du même objet
+  tombent au même niveau de monde. Étape 3 : les
   recettes (cuisine, établis, gravure, combinaison) et l'outil `recette` ;
   `MakingRecipe` n'est jamais lue, table périmée.
   **Mémoire courte** : 3 échanges par membre, 30 minutes, dans

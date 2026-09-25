@@ -553,8 +553,8 @@ async function main() {
   /* Boutiques : le hasard de l'itinerante, et l'absence n'est pas une preuve. */
   assert.match(Q.CONSIGNE_JARVIS, /boutique itinérante/);
   assert.match(Q.CONSIGNE_JARVIS, /les quêtes, succès, événements et coffres ne sont pas couverts/);
-  /* Les taux de butin ne sont pas lus : le bot n'en invente pas. */
-  assert.match(Q.CONSIGNE_JARVIS, /ne donne aucun pourcentage de butin/);
+  /* Une chance de butin vient de l'outil, jamais d'une estimation. */
+  assert.match(Q.CONSIGNE_JARVIS, /ne cite une chance de butin que si l'outil la donne/);
   /* La date de l'export survit dans la ligne Sources, meme pour Akumu. */
   const sourceAkumu = "fiche monstre Akumu, bête démoniaque · données du jeu du 22/09/2026";
   assert.match(Q.messageJarvis("?", { texte:"ok", sources:[sourceAkumu] }),

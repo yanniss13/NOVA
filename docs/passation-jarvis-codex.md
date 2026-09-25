@@ -145,7 +145,8 @@ trouvé, les effets rejoignent les fiches de `fiche_monstre` (lot 2a).
 > (`outils/fabrication/objets-jarvis.js`, `_shared/discord-jarvis-objets.js`,
 > outils `ou_trouver`, `boutique`, `butin`, `recette`). Specs :
 > `docs/superpowers/specs/2026-09-25-jarvis-{boutiques,butins,recettes}-design.md`.
-> Reste ouvert : la lecture des taux de butin (voir la spec des butins).
+> Taux de butin confirmés par le propriétaire et affichés
+> (`docs/discord-planning.md`, « Chance de butin »).
 
 Questions visées : « où trouver tel matériau ? », « que vend tel marchand ? ».
 Tables pressenties : `MerchantGoods` (671 lignes depuis le usmap Dumper-7),
@@ -164,9 +165,15 @@ spec, plan, puis exécution.
 > lignes, et `HideHeroList` ne masque que l'avatar par défaut (`8001`).
 > Sept héros des tables ne sont pas sur le site : Tioré, Hauser,
 > Gilthunder, Griamor, Derrierie, Mannie, Clotho. Rien ne dit s'ils sont
-> sortis. Question au propriétaire avant tout code : quel critère fait foi
-> (la liste des héros du site ? une autre table ?), et que doit dire le bot
-> d'un contenu non sorti — le taire, ou le signaler comme tel ?
+> sortis.
+>
+> **Réponse du propriétaire (25/09/2026)** : les sept sont sur le site, sous
+> d'autres noms (Tioreh, Howzer, Griamore, Derieri, Manny, Klotho…). La liste
+> des héros du site fait foi, et un contenu non sorti se **signale** (« pas
+> encore sorti en jeu, présent dans les fichiers »), il ne se tait pas.
+> Aujourd'hui aucun héros des tables n'est absent du site : rien à signaler,
+> pas de code. À reprendre quand un nouveau héros apparaît dans
+> `HeroActorTable` avant le site — comparer par identifiant, jamais par nom.
 
 Distinguer dans les réponses ce qui est sorti en jeu de ce qui ne l'est pas
 encore. Attention (mémoire du projet) : un identifiant neuf entre deux

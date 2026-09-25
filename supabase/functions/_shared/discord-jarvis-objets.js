@@ -31,7 +31,8 @@ const LIGNE_OBJET_MAX = 200;
 const INDISPONIBLE_OBJETS = { erreur:"données des objets indisponibles" };
 const NOTE_ALEATOIRE = "articles tirés au hasard : la boutique peut les proposer, pas toujours";
 const OBJETS_MAX_BUTIN = 40;
-const NOTE_PROBABILITES = "la table ne donne pas de probabilité lisible : ne cite aucun taux";
+const NOTE_PROBABILITES = "chance à chaque victoire ou récolte, lue dans les tables et selon le niveau de monde ;"
+  + " un objet sans chance indiquée : ne cite aucun chiffre";
 const RECETTES_MAX_OBJET = 5;
 /* Les sources de butin (lot 2c, etape 2) et leur nom affiche. */
 const TYPES_BUTIN = {
@@ -56,7 +57,8 @@ function quantiteValideObjets(valeur) {
 
 function sourceObjetValide(source) {
   if(estObjetObjets(source) && Object.prototype.hasOwnProperty.call(TYPES_BUTIN, source.type)){
-    return texteObjets(source.origine) && texteOuAbsentObjets(source.detail);
+    return texteObjets(source.origine) && texteOuAbsentObjets(source.detail)
+      && texteOuAbsentObjets(source.taux);
   }
   if(estObjetObjets(source) && source.type === "recette") return texteObjets(source.origine);
   return estObjetObjets(source) && source.type === "boutique"
@@ -90,7 +92,8 @@ function butinValide(butin) {
   return estObjetObjets(butin) && texteObjets(butin.nom)
     && Object.prototype.hasOwnProperty.call(TYPES_BUTIN, butin.type)
     && texteOuAbsentObjets(butin.detail)
-    && Array.isArray(butin.objets) && butin.objets.length > 0 && butin.objets.every(texteObjets);
+    && Array.isArray(butin.objets) && butin.objets.length > 0 && butin.objets.every(texteObjets)
+    && (butin.taux === undefined || (estObjetObjets(butin.taux) && Object.values(butin.taux).every(texteObjets)));
 }
 
 function recetteValide(recette) {
@@ -141,14 +144,14 @@ function texteBorneObjets(texte) {
 /* « Boutique d'equipement — Liones (Alexander, Karim ; Liones (Plaines de
    Liones)) : 1 800 Or, 3 par jour ». Le PNJ deja dans le nom n'est pas
    repete. */
-function ligneSourceObjet(source, boutiquesParNom) {
+function ligneSourceObjet(source, boutiquesParNom, taux) {
   /* « Butin de monstre : Banakro », « Donjon : Mines de Ferzen (Normal),
      premiere victoire », « Boss de confrerie, palier de participation 5 ». */
   if(source.type === "recette") return texteBorneObjets("Recette : " + source.origine);
   if(Object.prototype.hasOwnProperty.call(TYPES_BUTIN, source.type)){
     const libelle = TYPES_BUTIN[source.type];
     return texteBorneObjets(libelle + (source.origine !== libelle ? " : " + source.origine : "")
-      + (source.detail ? ", " + source.detail : ""));
+      + (source.detail ? ", " + source.detail : "") + (taux ? ", chance " + taux : ""));
   }
   const boutique = boutiquesParNom.get(source.boutique);
   const precisions = [];
@@ -209,10 +212,17 @@ async function outilOuTrouver(lireObjets, args) {
   }
   const objet = trouves[0];
   const boutiquesParNom = new Map(catalogue.boutiques.map(boutique => [boutique.nom, boutique]));
+  /* La chance d'un butin vit dans `butins` : une seule copie dans le fichier. */
+  const tauxParButin = new Map((catalogue.butins || []).map(butin =>
+    [butin.type + "|" + butin.nom + "|" + (butin.detail || ""), butin.taux || {}]));
+  const tauxDe = source => {
+    const taux = tauxParButin.get(source.type + "|" + source.origine + "|" + (source.detail || ""));
+    return taux && Object.prototype.hasOwnProperty.call(taux, objet.nom) ? taux[objet.nom] : null;
+  };
   const resultat = { nom:objet.nom, type:objet.type, donneesDu:dateLisibleJarvis(catalogue) };
   if(approche) resultat.nomApproche = "nom le plus proche de « " + String(args.objet) + " »";
   resultat.sources = objet.sources.slice(0, SOURCES_MAX_OBJET)
-    .map(source => ligneSourceObjet(source, boutiquesParNom));
+    .map(source => ligneSourceObjet(source, boutiquesParNom, tauxDe(source)));
   if(objet.sources.length > SOURCES_MAX_OBJET) resultat.autresSources = objet.sources.length - SOURCES_MAX_OBJET;
   return resultat;
 }
@@ -295,7 +305,9 @@ async function outilButin(lireObjets, args) {
     butins:butins.filter(butin => butin.nom === trouves[0]).map(butin => {
       const sortie = { type:TYPES_BUTIN[butin.type] };
       if(butin.detail) sortie.detail = butin.detail;
-      sortie.objets = butin.objets.slice(0, OBJETS_MAX_BUTIN);
+      const taux = butin.taux || {};
+      sortie.objets = butin.objets.slice(0, OBJETS_MAX_BUTIN)
+        .map(objet => Object.prototype.hasOwnProperty.call(taux, objet) ? objet + " — " + taux[objet] : objet);
       if(butin.objets.length > OBJETS_MAX_BUTIN) sortie.autresObjets = butin.objets.length - OBJETS_MAX_BUTIN;
       return sortie;
     })
@@ -366,7 +378,7 @@ const DECLARATIONS_OUTILS_OBJETS = [
     name:"butin",
     description:"Ce que peut donner une source du jeu : monstre (butin et capture), point de"
       + " minage, donjon (récompense et première victoire), boss de confrérie (paliers de"
-      + " participation). Sans probabilités.",
+      + " participation), avec la chance d'obtention quand les tables la donnent.",
     parameters:{
       type:"OBJECT",
       properties:{

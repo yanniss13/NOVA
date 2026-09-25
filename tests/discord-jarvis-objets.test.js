@@ -62,7 +62,8 @@ async function main() {
   assert.deepEqual(minerai.donnees.sources, [
     LIONES + " (Alexander, Karim ; Liones (Plaines de Liones), Vanya) : x5 pour 2 Potion, 10 par semaine",
     "Boutique itinérante — Liones (Nyandin et Mou ; Liones (Plaines de Liones)) : 500 Or, article tiré au hasard",
-    "Butin de monstre : Banakro",
+    "Butin de monstre : Banakro, chance niveaux de monde 1 à 2 : 1,5 % ; 3,5 %",
+    /* Sans taux de groupe : aucune chance. */
     "Minage : Minerai de fer"
   ]);
   const potion = await o.executer("ou_trouver", { objet:"potion" });
@@ -71,8 +72,8 @@ async function main() {
     LIONES + " (Alexander, Karim ; Liones (Plaines de Liones), Vanya) : 100 Or, 1 au total,"
     + " à partir du niveau de monde 3");
   assert.deepEqual(potion.donnees.sources.slice(4), [
-    "Capture : Mouette",
-    "Boss de confrérie, palier de participation 5",
+    "Capture : Mouette, chance 20 %",
+    "Boss de confrérie, palier de participation 5, chance 100 %",
     "Recette : Fabrication — Établi de fortune ou supérieur",
     "Recette : Fabrication — Établi de fortune"
   ]);
@@ -141,20 +142,21 @@ async function main() {
   assert.deepEqual((await o.executer("boutique", {})).donnees, { erreur:"nom de boutique manquant" });
 
   /* ---------------- butin ---------------- */
-  const NOTE = "la table ne donne pas de probabilité lisible : ne cite aucun taux";
+  const NOTE = "chance à chaque victoire ou récolte, lue dans les tables et selon le niveau de monde ;"
+    + " un objet sans chance indiquée : ne cite aucun chiffre";
   const banakro = await o.executer("butin", { nom:"banakro" });
   assert.deepEqual(banakro.donnees, {
     nom:"Banakro", donneesDu:"22/09/2026", noteProbabilites:NOTE,
-    butins:[{ type:"Butin de monstre", objets:["Minerai", "Sceau de Liones"] }]
+    butins:[{ type:"Butin de monstre", objets:["Minerai — niveaux de monde 1 à 2 : 1,5 % ; 3,5 %", "Sceau de Liones — 100 %"] }]
   });
   assert.equal(banakro.source, "butins · données du jeu du 22/09/2026");
   /* Un meme nom, plusieurs facons d'obtenir : toutes, dans une reponse. */
   assert.deepEqual((await o.executer("butin", { nom:"Mine de Ferzen" })).donnees.butins, [
-    { type:"Donjon", objets:["Or"] },
+    { type:"Donjon", objets:["Or — 100 %"] },
     { type:"Donjon", detail:"première victoire", objets:["Épée longue"] }
   ]);
   assert.deepEqual((await o.executer("butin", { nom:"mouette" })).donnees.butins,
-    [{ type:"Capture", objets:["Potion"] }]);
+    [{ type:"Capture", objets:["Potion — 20 %"] }]);
   /* Des noms differents de meme rang : la liste, sans choisir. */
   assert.deepEqual((await o.executer("butin", { nom:"de" })).donnees, {
     recherche:"de", correspondances:3,
@@ -176,6 +178,12 @@ async function main() {
   const butinAbime = JSON.parse(JSON.stringify(CATALOGUE));
   butinAbime.butins[0].objets = "Potion";
   assert.match(O.validerCatalogueObjets(butinAbime), /butin mal formé/);
+  const tauxAbime = JSON.parse(JSON.stringify(CATALOGUE));
+  tauxAbime.butins.find(butin => butin.taux).taux = "20 %";
+  assert.match(O.validerCatalogueObjets(tauxAbime), /butin mal formé/);
+  const sourceTauxAbimee = JSON.parse(JSON.stringify(CATALOGUE));
+  sourceTauxAbimee.objets.find(objet => objet.nom === "Or").sources[1].taux = 100;
+  assert.match(O.validerCatalogueObjets(sourceTauxAbimee), /objet mal formé/);
 
   /* ---------------- recette ---------------- */
   const beignets = await o.executer("recette", { objet:"beignets" });
