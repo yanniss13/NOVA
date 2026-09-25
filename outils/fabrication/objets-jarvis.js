@@ -373,11 +373,15 @@ function tauxLisibleButin(suivi) {
 /* Ce que chaque source peut donner, et avec quelle chance. Un groupe -> ses
    paquets -> leurs lignes -> un objet (Item) ou une monnaie (le suffixe de
    DropType : Seal_Liones -> seal_liones).
-   LA CHANCE, confirmee par le proprietaire le 25/09/2026 sur la Belette :
-   taux du paquet dans le groupe (DropPack_Rate, 8000) x taux de la ligne
-   (Rate, 2500) = 20 % a chaque victoire. Rate varie avec le niveau de monde
-   (Standard_Level) : Banakro donne 1,5 %, 3,5 %, 6 % puis 10 %. Le sens de
-   DropPack_Type n'est pas etabli et n'entre pas dans le calcul. */
+   LA CHANCE, a chaque victoire ou recolte, verifiee le 25/09/2026 contre
+   7dsorigin.app (Belette, Chaman ours-garou, Banakro) :
+   - le groupe ouvre chaque paquet avec DropPack_Rate (dix-milliemes) ;
+   - paquet ALEATOIRE (DropPack_Type vrai) : il donne UN objet de sa liste,
+     les Rate sont des poids. Belette : 8000 x 2500/2500 = 80 %. Chaman :
+     2000 x 22500/25000 = 18 %, 2000 x 2500/25000 = 2 % ;
+   - paquet non aleatoire : chaque objet a sa chance, DropPack_Rate x Rate.
+     Banakro : 1,5 %, 3,5 %, 6 % puis 10 % selon le niveau de monde
+     (Standard_Level ; une ligne « None » vaut a tous les niveaux). */
 function butinsDuJeu(entree, lire, objetsParId, actif) {
   const lignesParPaquet = new Map();
   Object.values(entree.paquetsButin || {}).forEach(ligne => {
@@ -388,23 +392,33 @@ function butinsDuJeu(entree, lire, objetsParId, actif) {
     if(!brut) return [];
     const vus = new Map();
     [].concat(brut.DropPack_Key || []).forEach((paquet, rang) => {
-      const tauxGroupe = Array.isArray(brut.DropPack_Rate) ? Number(brut.DropPack_Rate[rang]) : NaN;
-      (lignesParPaquet.get(String(paquet)) || []).forEach(ligne => {
+      const tauxPaquet = Array.isArray(brut.DropPack_Rate) ? Number(brut.DropPack_Rate[rang]) : NaN;
+      const aleatoire = Array.isArray(brut.DropPack_Type) && brut.DropPack_Type[rang] === true;
+      const lignes = (lignesParPaquet.get(String(paquet)) || []).map(ligne => {
         const genre = String(ligne.DropType || "").replace(/^.*::/, "");
         const objet = genre === "Item"
           ? objetsParId.get(String(ligne.Item_Tid)) || null
           : actif("::Currency", genre.toLowerCase());
-        if(!objet) return;
-        if(!vus.has(objet.nom)) vus.set(objet.nom, { objet, niveaux:new Map(), connu:true, ambigu:false });
-        const suivi = vus.get(objet.nom);
-        const tauxLigne = Number(ligne.Rate);
-        if(!Number.isFinite(tauxGroupe) || !Number.isFinite(tauxLigne)){
-          suivi.connu = false;
-          return;
-        }
-        const niveau = String(ligne.Standard_Level || "None");
-        if(suivi.niveaux.has(niveau)) suivi.ambigu = true;
-        else suivi.niveaux.set(niveau, tauxGroupe * tauxLigne / 10000);
+        if(objet && !vus.has(objet.nom)) vus.set(objet.nom, { objet, niveaux:new Map(), connu:true, ambigu:false });
+        return { objet, niveau:String(ligne.Standard_Level || "None"), taux:Number(ligne.Rate) };
+      });
+      /* Une ligne sans niveau vaut a tous les niveaux du paquet : les poids
+         d'un paquet aleatoire se ramenent a leur somme, niveau par niveau. */
+      const niveaux = [...new Set(lignes.map(ligne => ligne.niveau).filter(niveau => niveau !== "None"))];
+      (niveaux.length ? niveaux : ["None"]).forEach(niveau => {
+        const actives = lignes.filter(ligne => ligne.niveau === niveau || ligne.niveau === "None");
+        const total = actives.reduce((somme, ligne) => somme + (Number.isFinite(ligne.taux) ? ligne.taux : 0), 0);
+        actives.forEach(ligne => {
+          if(!ligne.objet) return;
+          const suivi = vus.get(ligne.objet.nom);
+          if(!Number.isFinite(tauxPaquet) || !Number.isFinite(ligne.taux) || (aleatoire && !(total > 0))){
+            suivi.connu = false;
+            return;
+          }
+          const chance = tauxPaquet * (aleatoire ? ligne.taux / total : ligne.taux / 10000);
+          if(suivi.niveaux.has(niveau)) suivi.ambigu = true;
+          else suivi.niveaux.set(niveau, chance);
+        });
       });
     });
     return [...vus.values()].map(suivi => Object.assign({}, suivi.objet, { taux:tauxLisibleButin(suivi) }));

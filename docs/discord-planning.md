@@ -476,16 +476,26 @@ plupart des produits n'ont pas de nom et dont les ingrédients diffèrent
 pour un même produit. Une recette visible à plusieurs établis prend le plus
 modeste, « ou supérieur ».
 
-**Chance de butin.** Taux du paquet dans le groupe (`DropGroupTable`,
-`DropPack_Rate`) × taux de la ligne (`DropPackTable`, `Rate`), en
-dix-millièmes, à chaque victoire ou récolte — confirmé par le propriétaire
-sur la Belette (8000 × 2500 = 20 %). `Rate` varie avec le niveau de monde
-(`Standard_Level`) : « niveaux de monde 1 à 4 : 1,5 % ; 3,5 % ; 6 % ;
-10 % » pour Banakro. Aucune chance n'est affichée quand le groupe n'a pas
-de taux, quand deux lignes du même objet tombent au même niveau (leur
-cumul n'est pas confirmé) ou quand deux versions d'un monstre se
-contredisent ; `DropPack_Type` n'entre pas dans le calcul, son sens n'est
-pas établi. La chance n'est écrite qu'une fois, dans `butins` : le bot
+**Chance de butin**, à chaque victoire ou récolte, vérifiée contre
+7dsorigin.app sur la Belette, le Chaman ours-garou et Banakro :
+
+- le groupe (`DropGroupTable`) ouvre chaque paquet avec `DropPack_Rate`,
+  en dix-millièmes ;
+- **paquet aléatoire** (`DropPack_Type` vrai) : il donne un seul objet de
+  sa liste, et les `Rate` de `DropPackTable` sont des **poids** ramenés à
+  leur somme. Belette : 8000 × 2500/2500 = 80 % ; Chaman ours-garou :
+  2000 × 22500/25000 = 18 % et 2000 × 2500/25000 = 2 % ;
+- **paquet non aléatoire** : chaque objet a sa propre chance,
+  `DropPack_Rate` × `Rate`/10000. Banakro : « niveaux de monde 1 à 4 :
+  1,5 % ; 3,5 % ; 6 % ; 10 % » ;
+- `Rate` dépend du niveau de monde (`Standard_Level`) ; une ligne
+  « None » vaut à tous les niveaux, et les poids se somment niveau par
+  niveau.
+
+Aucune chance n'est affichée quand le groupe n'a pas de taux, quand un nom
+couvre deux lignes au même niveau (les deux « Épée longue d'aventurier »,
+0,22 % et 0,06 %) ou quand deux versions d'un monstre se contredisent.
+Les récompenses de boss de terrain (`FieldBossTable`) ne sont pas lues. La chance n'est écrite qu'une fois, dans `butins` : le bot
 l'y relit pour `ou_trouver`. Les coffres et points de récolte
 (`InteractionTable`) ne sont pas couverts, faute de chaîne sûre jusqu'à
 leur nom.

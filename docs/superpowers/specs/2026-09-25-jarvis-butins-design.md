@@ -11,9 +11,9 @@ récapitulés à son réveil.
 - « Que lâche Banakro ? », « que rapporte tel donjon ? » : un nouvel outil
   `butin`.
 
-> **Révisé le 25/09/2026** : le propriétaire a confirmé la lecture des taux
-> (Banakro : 1,5 %, 3,5 %, 6 %, 10 % par victoire ; Belette : 8000 × 2500
-> = 20 %). Les chances sont affichées ; voir `docs/discord-planning.md`,
+> **Révisé le 25/09/2026** : les chances sont affichées, avec la règle
+> vérifiée contre 7dsorigin.app (paquet aléatoire = poids ; Belette 80 %,
+> et non les 20 % d'un premier calcul) ; voir `docs/discord-planning.md`,
 > « Chance de butin ». La décision ci-dessous est l'état d'avant.
 
 ## Décision : aucune probabilité

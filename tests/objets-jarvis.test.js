@@ -92,12 +92,15 @@ const ENTREE_OBJETS_TEST = {
   groupesButin:{
     /* Un paquet absent de DropPackTable ne fait pas planter. */
     g_banakro:{ DropPack_Key:["p_banakro", "p_absent"], DropPack_Rate:[10000, 10000], DropPack_Type:[false, false] },
-    /* Chance = taux du groupe x taux de l'objet : 80 % x 25 % = 20 %
-       (confirme par le proprietaire sur la Belette). */
+    /* Paquet ALEATOIRE (DropPack_Type vrai) : il donne un objet de sa liste,
+       les taux des lignes sont des poids. Un seul objet : 80 % x 100 %
+       (la Belette, verifiee sur 7dsorigin.app : 80 %). */
     g_capture:{ DropPack_Key:["p_capture"], DropPack_Rate:[8000], DropPack_Type:[true] },
     /* Sans taux de groupe : aucune chance affichee. */
     g_minage:{ DropPack_Key:["p_minage"] },
-    g_donjon:{ DropPack_Key:["p_donjon"], DropPack_Rate:[10000], DropPack_Type:[false] },
+    /* Poids 22500 et 2500 dans un paquet aleatoire a 20 % : 18 % et 2 %
+       (le Chaman ours-garou sur 7dsorigin.app). */
+    g_donjon:{ DropPack_Key:["p_donjon", "p_hasard"], DropPack_Rate:[10000, 2000], DropPack_Type:[false, true] },
     g_premiere:{ DropPack_Key:["p_premiere"], DropPack_Rate:[10000], DropPack_Type:[false] },
     g_confrerie:{ DropPack_Key:["p_confrerie"], DropPack_Rate:[10000], DropPack_Type:[false] }
   },
@@ -113,6 +116,8 @@ const ENTREE_OBJETS_TEST = {
     p_capture_1:{ DropPack_Key:"p_capture", DropType:"EDropType::Item", Item_Tid:"102000001", Standard_Level:"None", Rate:2500 },
     p_minage_1:{ DropPack_Key:"p_minage", DropType:"EDropType::Item", Item_Tid:"101000001" },
     p_donjon_1:{ DropPack_Key:"p_donjon", DropType:"EDropType::Gold", Item_Tid:"None", Standard_Level:"None", Rate:10000 },
+    p_hasard_1:{ DropPack_Key:"p_hasard", DropType:"EDropType::Item", Item_Tid:"102000001", Standard_Level:"None", Rate:22500 },
+    p_hasard_2:{ DropPack_Key:"p_hasard", DropType:"EDropType::Item", Item_Tid:"101000001", Standard_Level:"None", Rate:2500 },
     /* Deux lignes du meme objet au meme niveau : cumul non confirme, pas de taux. */
     p_premiere_1:{ DropPack_Key:"p_premiere", DropType:"EDropType::Item", Item_Tid:"131000001", Standard_Level:"None", Rate:10000 },
     p_premiere_2:{ DropPack_Key:"p_premiere", DropType:"EDropType::Item", Item_Tid:"131000001", Standard_Level:"None", Rate:5000 },
@@ -319,7 +324,8 @@ assert.deepEqual(catalogue.objets, [
     { type:"boutique", boutique:LIONES, quantite:5, prix:"2 Potion", limite:"10 par semaine" },
     { type:"boutique", boutique:ITINERANTE_LIONES, prix:"500 Or", aleatoire:true },
     { type:"monstre", origine:"Banakro" },
-    { type:"minage", origine:"Minerai de fer" }
+    { type:"minage", origine:"Minerai de fer" },
+    { type:"donjon", origine:FERZEN }
   ] },
   { nom:"Or", type:"Monnaie", sources:[
     { type:"boutique", boutique:MAGI, quantite:1000, prix:"1 Potion" },
@@ -333,6 +339,7 @@ assert.deepEqual(catalogue.objets, [
     { type:"boutique", boutique:MAGI, prix:"5 Jeton Magi★Pop" },
     { type:"boutique", boutique:MAGI + " (2)", prix:"7 Jeton Magi★Pop" },
     { type:"capture", origine:"Mouette" },
+    { type:"donjon", origine:FERZEN },
     { type:"confrerie", origine:"Boss de confrérie", detail:"palier de participation 5" },
     { type:"recette", origine:FORTUNE + " ou supérieur" },
     { type:"recette", origine:FORTUNE }
@@ -355,12 +362,13 @@ assert.deepEqual(catalogue.recettes, [
 ]);
 
 assert.deepEqual(catalogue.butins, [
-  { nom:"Mouette", type:"capture", objets:["Potion"], taux:{ Potion:"20 %" } },
+  { nom:"Mouette", type:"capture", objets:["Potion"], taux:{ Potion:"80 %" } },
   { nom:"Banakro", type:"monstre", objets:["Minerai", "Sceau de Liones"],
     /* Des niveaux qui se suivent : la forme courte. */
     taux:{ Minerai:"niveaux de monde 1 à 2 : 1,5 % ; 3,5 %", "Sceau de Liones":"100 %" } },
   { nom:"Minerai de fer", type:"minage", objets:["Minerai"] },
-  { nom:FERZEN, type:"donjon", objets:["Or"], taux:{ Or:"100 %" } },
+  { nom:FERZEN, type:"donjon", objets:["Or", "Potion", "Minerai"],
+    taux:{ Or:"100 %", Potion:"18 %", Minerai:"2 %" } },
   { nom:FERZEN, type:"donjon", detail:"première victoire", objets:["Épée longue"] },
   { nom:"Boss de confrérie", type:"confrerie", detail:"palier de participation 5", objets:["Potion"],
     taux:{ Potion:"100 %" } }

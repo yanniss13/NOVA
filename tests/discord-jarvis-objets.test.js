@@ -64,7 +64,8 @@ async function main() {
     "Boutique itinérante — Liones (Nyandin et Mou ; Liones (Plaines de Liones)) : 500 Or, article tiré au hasard",
     "Butin de monstre : Banakro, chance niveaux de monde 1 à 2 : 1,5 % ; 3,5 %",
     /* Sans taux de groupe : aucune chance. */
-    "Minage : Minerai de fer"
+    "Minage : Minerai de fer",
+    "Donjon : Mine de Ferzen (Normal), chance 2 %"
   ]);
   const potion = await o.executer("ou_trouver", { objet:"potion" });
   assert.equal(potion.donnees.sources[1], "Boutique d'équipement (depuis un menu) : 50 Or, 2 au total");
@@ -72,7 +73,8 @@ async function main() {
     LIONES + " (Alexander, Karim ; Liones (Plaines de Liones), Vanya) : 100 Or, 1 au total,"
     + " à partir du niveau de monde 3");
   assert.deepEqual(potion.donnees.sources.slice(4), [
-    "Capture : Mouette, chance 20 %",
+    "Capture : Mouette, chance 80 %",
+    "Donjon : Mine de Ferzen (Normal), chance 18 %",
     "Boss de confrérie, palier de participation 5, chance 100 %",
     "Recette : Fabrication — Établi de fortune ou supérieur",
     "Recette : Fabrication — Établi de fortune"
@@ -152,11 +154,11 @@ async function main() {
   assert.equal(banakro.source, "butins · données du jeu du 22/09/2026");
   /* Un meme nom, plusieurs facons d'obtenir : toutes, dans une reponse. */
   assert.deepEqual((await o.executer("butin", { nom:"Mine de Ferzen" })).donnees.butins, [
-    { type:"Donjon", objets:["Or — 100 %"] },
+    { type:"Donjon", objets:["Or — 100 %", "Potion — 18 %", "Minerai — 2 %"] },
     { type:"Donjon", detail:"première victoire", objets:["Épée longue"] }
   ]);
   assert.deepEqual((await o.executer("butin", { nom:"mouette" })).donnees.butins,
-    [{ type:"Capture", objets:["Potion — 20 %"] }]);
+    [{ type:"Capture", objets:["Potion — 80 %"] }]);
   /* Des noms differents de meme rang : la liste, sans choisir. */
   assert.deepEqual((await o.executer("butin", { nom:"de" })).donnees, {
     recherche:"de", correspondances:3,
