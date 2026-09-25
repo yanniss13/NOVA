@@ -95,6 +95,20 @@ async function main() {
     "Le jeu ne dit pas qui reçoit ces effets (le boss ou les joueurs) : ne l'affirme pas.");
   assert.equal((await o.executer("fiche_monstre", { nom:"lapin" })).donnees.effets, undefined);
   assert.equal((await o.executer("fiche_monstre", { nom:"lapin" })).donnees.noteEffets, undefined);
+  /* Un texte qui commence par le nom de l'effet ne le repete pas. */
+  const redondant = JSON.parse(JSON.stringify(CATALOGUE));
+  redondant.monstres.find(m => m.effets).effets = [
+    { nom:"Barrière", texte:"Barrière égale à 50 % des PV max" },
+    { nom:"Améliore les attaques normales", texte:"Améliore les attaques normales", dureeS:10 },
+    { nom:"« Fureur »", texte:"Fureur : attaque +10 %" },
+    { nom:"Fureur", texte:"Attaque +10 %" }
+  ];
+  assert.deepEqual((await outils(redondant).executer("fiche_monstre", { nom:"akumu" })).donnees.effets, [
+    "Barrière égale à 50 % des PV max",
+    "Améliore les attaques normales (10 s)",
+    "Fureur : attaque +10 %",
+    "Fureur : Attaque +10 %"
+  ]);
   /* Bornes : au plus 12 effets, chacun sous 200 caracteres. */
   const bavard = JSON.parse(JSON.stringify(CATALOGUE));
   bavard.monstres.find(m => m.effets).effets = Array.from({ length:20 }, (_, i) =>

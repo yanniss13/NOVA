@@ -166,7 +166,21 @@ async function main() {
     recherche:"de", correspondances:3,
     candidats:["Minerai de fer", "Boss de confrérie", "Mine de Ferzen (Normal)"]
   });
-  const sansButin = await o.executer("butin", { nom:"dragon" });
+  /* Un donjon en plusieurs difficultes : ses difficultes, pas cinq candidats. */
+  const difficultes = JSON.parse(JSON.stringify(CATALOGUE));
+  difficultes.butins.push(Object.assign({}, difficultes.butins.find(b => b.nom === "Mine de Ferzen (Normal)" && !b.detail),
+    { nom:"Mine de Ferzen (Difficile)" }));
+  const dif = outils(difficultes);
+  assert.deepEqual((await dif.executer("butin", { nom:"mine de ferzen" })).donnees, {
+    recherche:"mine de ferzen", nom:"Mine de Ferzen", difficultesPossibles:["Normal", "Difficile"],
+    noteDifficulte:"précise la difficulté avec le paramètre « difficulte »"
+  });
+  assert.equal((await dif.executer("butin", { nom:"mine de ferzen", difficulte:"difficile" })).donnees.nom,
+    "Mine de Ferzen (Difficile)");
+  assert.deepEqual((await dif.executer("butin", { nom:"mine de ferzen", difficulte:"abysse" })).donnees, {
+    erreur:"difficulté inconnue pour Mine de Ferzen", difficultesPossibles:["Normal", "Difficile"]
+  });
+    const sansButin = await o.executer("butin", { nom:"dragon" });
   assert.equal(sansButin.donnees.introuvable, "dragon");
   assert.ok(Array.isArray(sansButin.donnees.proches));
   assert.deepEqual((await o.executer("butin", {})).donnees, { erreur:"nom de source manquant" });

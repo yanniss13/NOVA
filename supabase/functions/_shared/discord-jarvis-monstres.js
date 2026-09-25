@@ -80,7 +80,11 @@ function ligneEffetMonstre(effet) {
   if(effet.dureeS !== undefined) precisions.push(String(effet.dureeS).replace(".", ",") + " s");
   if(effet.cumulMax !== undefined) precisions.push("jusqu'à " + effet.cumulMax + " cumuls");
   if(effet.condition) precisions.push(effet.condition);
-  return texteBorneMonstre(effet.nom + (effet.texte ? " : " + effet.texte : "")
+  /* « Barriere : Barriere egale a 50 % » : un texte qui commence par le nom
+     de l'effet (guillemets et casse mis a part) se suffit a lui-meme. */
+  const nu = texte => String(texte || "").replace(/[«»「」"]/g, "").trim().toLocaleLowerCase("fr");
+  const redondant = effet.texte && nu(effet.nom) && nu(effet.texte).startsWith(nu(effet.nom));
+  return texteBorneMonstre((redondant ? effet.texte : effet.nom + (effet.texte ? " : " + effet.texte : ""))
     + (precisions.length ? " (" + precisions.join(", ") + ")" : ""), EFFET_TEXTE_MAX);
 }
 

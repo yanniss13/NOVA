@@ -340,8 +340,23 @@ async function outilButin(lireObjets, args) {
     return { introuvable:String(args.nom), proches:propositions(noms, args.nom) };
   }
   const meilleur = Math.max(...classes.map(entree => entree.rang));
-  const trouves = classes.filter(entree => entree.rang === meilleur).map(entree => entree.nom)
+  let trouves = classes.filter(entree => entree.rang === meilleur).map(entree => entree.nom)
     .sort((a, b) => a.length - b.length || a.localeCompare(b, "fr"));
+  /* Un donjon en plusieurs difficultes (« Mines de Ferzen (Normal) »,
+     « (Difficile) »...) : ses difficultes, dans l'ordre du jeu, et le
+     parametre pour choisir, plutot que cinq candidats a relancer. */
+  const versions = trouves.map(nom => /^(.*) \(([^()]+)\)$/.exec(nom));
+  if(trouves.length > 1 && versions.every(version => version && version[1] === versions[0][1])){
+    const base = versions[0][1];
+    const possibles = noms.filter(nom => trouves.includes(nom)).map(nom => /\(([^()]+)\)$/.exec(nom)[1]);
+    if(!normaliserRecherche(args.difficulte)){
+      return { recherche:String(args.nom), nom:base, difficultesPossibles:possibles,
+        noteDifficulte:"précise la difficulté avec le paramètre « difficulte »" };
+    }
+    const choisie = possibles.find(difficulte => normaliserRecherche(difficulte) === normaliserRecherche(args.difficulte));
+    if(!choisie) return { erreur:"difficulté inconnue pour " + base, difficultesPossibles:possibles };
+    trouves = [base + " (" + choisie + ")"];
+  }
   if(trouves.length > 1){
     return { recherche:String(args.nom), correspondances:trouves.length, candidats:trouves.slice(0, CANDIDATS_MAX_OBJET) };
   }
@@ -493,7 +508,8 @@ const DECLARATIONS_OUTILS_OBJETS = [
     parameters:{
       type:"OBJECT",
       properties:{
-        nom:{ type:"STRING", description:"Nom du monstre, du donjon ou du point de minage (ex. « Banakro », « Mines de Ferzen »)." }
+        nom:{ type:"STRING", description:"Nom du monstre, du donjon ou du point de minage (ex. « Banakro », « Mines de Ferzen »)." },
+        difficulte:{ type:"STRING", description:"Facultatif : difficulté du donjon (ex. « Normal », « Difficile », « Abysse »)." }
       },
       required:["nom"]
     }
