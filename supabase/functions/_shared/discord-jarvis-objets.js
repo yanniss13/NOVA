@@ -39,7 +39,7 @@ const NOTE_FILONS = "filons comptés dans les tables d'apparition du monde ouver
 /* Les sources de butin (lot 2c, etape 2) et leur nom affiche. */
 const TYPES_BUTIN = {
   monstre:"Butin de monstre", capture:"Capture", minage:"Minage",
-  donjon:"Donjon", confrerie:"Boss de confrérie"
+  donjon:"Donjon", confrerie:"Boss de confrérie", cube:"Cube de récompense"
 };
 
 /* ---------------- Validation du fichier ---------------- */
@@ -409,7 +409,8 @@ const DECLARATIONS_OUTILS_OBJETS = [
   },
   {
     name:"butin",
-    description:"Ce que peut donner une source du jeu : monstre (butin et capture), point de"
+    description:"Ce que peut donner une source du jeu : monstre (butin, capture, et cube de"
+      + " récompense des boss de zone et des élites, avec les clés pour l'ouvrir), point de"
       + " minage, donjon (récompense et première victoire), boss de confrérie (paliers de"
       + " participation), avec la chance d'obtention et la quantité quand les tables les donnent ;"
       + " pour un minerai : nombre de filons par région et maximum par jour.",

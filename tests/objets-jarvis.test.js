@@ -534,6 +534,78 @@ assert.ok(AVEC_MAGASIN.objets.find(objet => objet.nom === "Minerai").sources.som
   source.boutique === ECHANGE_ETHER && source.limite === "100 tous les 35 à 36 jours environ"));
 assert.equal(AVEC_MAGASIN.boutiques.length, catalogue.boutiques.length + 1);
 
-module.exports = { ENTREE_OBJETS_TEST, ENTREE_FILONS_TEST:entreeAvecFilons(APPARITIONS_PLATINE_TEST) };
+/* Le cube de recompense d'un boss ou d'une elite : MonsterActorTable
+   (DropActorObjectTid) -> ObjectActorTable (InteractionTid) ->
+   InteractionTable (DropGroupTid), ouvert avec des cles (bouton RewardKey :
+   monnaie et nombre). Aucun lien par le nom. Un cout de 0 n'est pas dit. */
+function entreeAvecCube() {
+  const base = ENTREE_OBJETS_TEST;
+  return Object.assign({}, base, {
+    monnaies:Object.assign({ rewardkey:{ LinkItemTid:100000150 } }, base.monnaies),
+    objets:Object.assign({}, base.objets, {
+      dropType:Object.assign({ "100000150":{ Local_Key:"Local_Item_Cle" } }, base.objets.dropType)
+    }),
+    monstres:Object.assign({}, base.monstres, {
+      "50103301":{ Local_Key:"Local_Mon_Demon", DropGroupTid:"None", CatchDropGroupTid:"None",
+        DropActorObjectTid:"77220301" },
+      "50200001":{ Local_Key:"Local_Mon_Elite", DropGroupTid:"None", CatchDropGroupTid:"None",
+        DropActorObjectTid:"77230001" },
+      /* Objet absent d'ObjectActorTable : rien. */
+      "50200002":{ Local_Key:"Local_Mon_Perdu", DropGroupTid:"None", CatchDropGroupTid:"None",
+        DropActorObjectTid:"77999999" }
+    }),
+    objetsActeurs:{
+      "77220301":{ InteractionTid:["intertid_cube_boss"] },
+      "77230001":{ InteractionTid:["intertid_cube_elite"] }
+    },
+    interactions:Object.assign({
+      intertid_cube_boss:{ ButtonTid:"btn_cube_boss", DropGroupTid:"g_cube" },
+      intertid_cube_elite:{ ButtonTid:"btn_cube_elite", DropGroupTid:"g_cube" }
+    }, base.interactions),
+    boutons:Object.assign({
+      btn_cube_boss:{ ButtonType:"EInteractionButtonType::RewardKey", ButtonDetailValue01:"rewardkey", ButtonDetailValue02:"10" },
+      btn_cube_elite:{ ButtonType:"EInteractionButtonType::RewardKey", ButtonDetailValue01:"rewardkey", ButtonDetailValue02:"0" }
+    }, base.boutons),
+    groupesButin:Object.assign({
+      g_cube:{ DropPack_Key:["p_cube_or", "p_cube_hasard", "p_cube_pierre"], DropPack_Rate:[10000, 10000, 10000],
+        DropPack_Type:[false, true, false] }
+    }, base.groupesButin),
+    paquetsButin:Object.assign({
+      p_cube_or_1:{ DropPack_Key:"p_cube_or", DropType:"EDropType::Gold", Item_Tid:"None",
+        Standard_Level:"None", Rate:10000, Min_Cnt:16000, Max_Cnt:19000 },
+      p_cube_hasard_1:{ DropPack_Key:"p_cube_hasard", DropType:"EDropType::Item", Item_Tid:"131000001",
+        Standard_Level:"None", Rate:1000, Min_Cnt:1, Max_Cnt:1 },
+      p_cube_hasard_2:{ DropPack_Key:"p_cube_hasard", DropType:"EDropType::Item", Item_Tid:"102000001",
+        Standard_Level:"None", Rate:9000, Min_Cnt:1, Max_Cnt:1 },
+      /* Chaque objet a UN niveau de monde : jamais « 100 % » tout court. */
+      p_cube_pierre_1:{ DropPack_Key:"p_cube_pierre", DropType:"EDropType::Item", Item_Tid:"101000001",
+        Standard_Level:"level_01", Rate:10000, Min_Cnt:13, Max_Cnt:17 },
+      p_cube_pierre_2:{ DropPack_Key:"p_cube_pierre", DropType:"EDropType::Item", Item_Tid:"101000010",
+        Standard_Level:"level_02", Rate:10000, Min_Cnt:9, Max_Cnt:12 }
+    }, base.paquetsButin),
+    textes:Object.assign({
+      local_item_cle:"Clé de cube", local_mon_demon:"Démon rouge", local_mon_elite:"Chef des ours-garous",
+      local_mon_perdu:"Monstre perdu"
+    }, base.textes)
+  });
+}
+const AVEC_CUBE = construireCatalogueObjets(entreeAvecCube());
+assert.deepEqual(AVEC_CUBE.butins.filter(butin => butin.type === "cube"), [
+  { nom:"Démon rouge", type:"cube", detail:"à ouvrir avec 10 Clé de cube",
+    objets:["Or", "Épée longue", "Potion", "Minerai", "Riz"],
+    taux:{ Or:"100 %", "Épée longue":"10 %", Potion:"90 %",
+      Minerai:"niveau de monde 1 : 100 %", Riz:"niveau de monde 2 : 100 %" },
+    quantites:{ Or:"16 000 à 19 000", Minerai:"13 à 17", Riz:"9 à 12" } },
+  { nom:"Chef des ours-garous", type:"cube", objets:["Or", "Épée longue", "Potion", "Minerai", "Riz"],
+    taux:{ Or:"100 %", "Épée longue":"10 %", Potion:"90 %",
+      Minerai:"niveau de monde 1 : 100 %", Riz:"niveau de monde 2 : 100 %" },
+    quantites:{ Or:"16 000 à 19 000", Minerai:"13 à 17", Riz:"9 à 12" } }
+]);
+assert.ok(AVEC_CUBE.objets.find(objet => objet.nom === "Épée longue").sources
+  .some(source => source.type === "cube" && source.origine === "Démon rouge"
+    && source.detail === "à ouvrir avec 10 Clé de cube"));
+
+module.exports = { ENTREE_OBJETS_TEST, ENTREE_FILONS_TEST:entreeAvecFilons(APPARITIONS_PLATINE_TEST),
+  ENTREE_CUBE_TEST:entreeAvecCube() };
 
 if(require.main === module) console.log("OK objets-jarvis");

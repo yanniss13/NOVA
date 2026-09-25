@@ -119,6 +119,7 @@ function main() {
     groupesButin:lignesDeTable("Drop/DropGroupTable.json"),
     paquetsButin:lignesDeTable("Drop/DropPackTable.json"),
     monstres:lignesDeTable("Actor/MonsterActorTable.json"),
+    objetsActeurs:lignesDeTable("Actor/ObjectActorTable.json"),
     minage,
     donjons:lignesDeTable("Dungeon/DungeonTable.json"),
     groupesDonjon:lignesDeTable("Dungeon/DungeonGroupTable.json"),

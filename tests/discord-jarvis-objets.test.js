@@ -11,7 +11,7 @@ const path = require("node:path");
 const ROOT = path.resolve(__dirname, "..");
 const O = require(path.join(ROOT, "supabase", "functions", "_shared", "discord-jarvis-objets.js"));
 const { construireCatalogueObjets } = require(path.join(ROOT, "outils", "fabrication", "objets-jarvis.js"));
-const { ENTREE_OBJETS_TEST, ENTREE_FILONS_TEST } = require("./objets-jarvis.test.js");
+const { ENTREE_OBJETS_TEST, ENTREE_FILONS_TEST, ENTREE_CUBE_TEST } = require("./objets-jarvis.test.js");
 
 const CATALOGUE = construireCatalogueObjets(ENTREE_OBJETS_TEST);
 const LIONES = "Boutique d'équipement — Liones";
@@ -191,6 +191,17 @@ async function main() {
   quantitesAbimees.butins.find(butin => butin.quantites).quantites = "2 à 3";
   assert.match(O.validerCatalogueObjets(quantitesAbimees), /butin mal formé/);
   assert.equal(O.validerCatalogueObjets(construireCatalogueObjets(ENTREE_FILONS_TEST)), null);
+
+  /* Le cube de recompense d'un boss : une source a part, avec son cout. */
+  const cube = outils(construireCatalogueObjets(ENTREE_CUBE_TEST));
+  assert.deepEqual((await cube.executer("butin", { nom:"démon rouge" })).donnees.butins, [{
+    type:"Cube de récompense", detail:"à ouvrir avec 10 Clé de cube",
+    objets:["Or — 100 %, quantité 16 000 à 19 000", "Épée longue — 10 %", "Potion — 90 %",
+      "Minerai — niveau de monde 1 : 100 %, quantité 13 à 17", "Riz — niveau de monde 2 : 100 %, quantité 9 à 12"]
+  }]);
+  assert.ok((await cube.executer("ou_trouver", { objet:"épée longue" })).donnees.sources.includes(
+    "Cube de récompense : Démon rouge, à ouvrir avec 10 Clé de cube, chance 10 %"));
+  assert.equal(O.validerCatalogueObjets(construireCatalogueObjets(ENTREE_CUBE_TEST)), null);
 
   /* Un fichier d'avant les butins reste lisible. */
   const ancien = JSON.parse(JSON.stringify(CATALOGUE));

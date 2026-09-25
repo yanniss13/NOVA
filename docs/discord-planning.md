@@ -500,6 +500,14 @@ l'y relit pour `ou_trouver`. Les coffres et points de récolte
 (`InteractionTable`) ne sont pas couverts, faute de chaîne sûre jusqu'à
 leur nom.
 
+**Cubes de récompense.** Un boss de zone ou une élite laisse un cube :
+`MonsterActorTable.DropActorObjectTid` → `ObjectActorTable.InteractionTid` →
+`InteractionTable.DropGroupTid`, sans aucun lien par le nom. Son bouton
+`RewardKey` dit la monnaie et le nombre de clés (boss : 10 Clés de cube ;
+un coût de 0 n'est pas dit). 25 sources, vérifiées contre 7dsorigin.app sur
+le Démon rouge. Un objet qui n'existe qu'à certains niveaux de monde garde
+son niveau (« niveau de monde 1 : 100 % »), jamais « 100 % » tout court.
+
 **Quantité et filons.** Une ligne de butin donne `Min_Cnt` à `Max_Cnt`
 objets (platine : 2 à 3, confirmé en jeu) ; un objet sur deux lignes n'a pas
 de quantité. Les filons d'un point de minage se comptent dans les tables

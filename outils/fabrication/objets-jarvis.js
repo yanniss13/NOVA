@@ -501,7 +501,9 @@ function tauxLisibleButin(suivi) {
   const numeros = niveaux.map(([niveau, taux]) => [Number((/^level_(\d+)$/.exec(niveau) || [])[1]), taux]);
   if(numeros.some(([numero]) => !(numero > 0))) return null;
   numeros.sort((a, b) => a[0] - b[0]);
-  if(numeros.every(([, taux]) => taux === numeros[0][1])) return pourcentButin(numeros[0][1]);
+  const partout = [...suivi.niveauxPaquet].every(niveau => suivi.niveaux.has(niveau));
+  if(partout && numeros.every(([, taux]) => taux === numeros[0][1])) return pourcentButin(numeros[0][1]);
+  if(numeros.length === 1) return "niveau de monde " + numeros[0][0] + " : " + pourcentButin(numeros[0][1]);
   /* Des niveaux qui se suivent : « niveaux de monde 1 a 4 : 1,5 % ; 3,5 % ;
      6 % ; 10 % ». Sinon, chaque niveau nomme. */
   if(numeros.every(([numero], rang) => numero === numeros[0][0] + rang)){
@@ -540,7 +542,9 @@ function butinsDuJeu(entree, lire, objetsParId, actif, regionDApparition) {
         const objet = genre === "Item"
           ? objetsParId.get(String(ligne.Item_Tid)) || null
           : actif("::Currency", genre.toLowerCase());
-        if(objet && !vus.has(objet.nom)) vus.set(objet.nom, { objet, niveaux:new Map(), connu:true, ambigu:false, quantites:[] });
+        if(objet && !vus.has(objet.nom)){
+          vus.set(objet.nom, { objet, niveaux:new Map(), niveauxPaquet:new Set(), connu:true, ambigu:false, quantites:[] });
+        }
         /* Quantite par tirage : Min_Cnt a Max_Cnt, sur une seule ligne. */
         if(objet) vus.get(objet.nom).quantites.push({ min:Number(ligne.Min_Cnt), max:Number(ligne.Max_Cnt) });
         return { objet, niveau:String(ligne.Standard_Level || "None"), taux:Number(ligne.Rate) };
@@ -548,6 +552,11 @@ function butinsDuJeu(entree, lire, objetsParId, actif, regionDApparition) {
       /* Une ligne sans niveau vaut a tous les niveaux du paquet : les poids
          d'un paquet aleatoire se ramenent a leur somme, niveau par niveau. */
       const niveaux = [...new Set(lignes.map(ligne => ligne.niveau).filter(niveau => niveau !== "None"))];
+      /* Les niveaux ou le paquet donne quelque chose : un objet absent de
+         certains d'entre eux ne vaut pas « 100 % » tout court. */
+      lignes.forEach(ligne => {
+        if(ligne.objet) niveaux.forEach(niveau => vus.get(ligne.objet.nom).niveauxPaquet.add(niveau));
+      });
       (niveaux.length ? niveaux : ["None"]).forEach(niveau => {
         const actives = lignes.filter(ligne => ligne.niveau === niveau || ligne.niveau === "None");
         const total = actives.reduce((somme, ligne) => somme + (Number.isFinite(ligne.taux) ? ligne.taux : 0), 0);
@@ -612,6 +621,26 @@ function butinsDuJeu(entree, lire, objetsParId, actif, regionDApparition) {
     const nom = acteur && lire(acteur.Local_Key);
     ajouter(nom, "monstre", null, acteur && acteur.DropGroupTid);
     ajouter(nom, "capture", null, acteur && acteur.CatchDropGroupTid);
+  });
+  /* Le cube de recompense que laisse un boss ou une elite :
+     DropActorObjectTid -> ObjectActorTable (InteractionTid) ->
+     InteractionTable (DropGroupTid). Son bouton RewardKey dit la monnaie
+     (ButtonDetailValue01) et le nombre de cles (ButtonDetailValue02) ; un
+     cout de 0 n'est pas dit. Verifie le 25/09/2026 contre 7dsorigin.app
+     (Demon rouge : or 16 000 a 19 000, cristal garanti, equipements). */
+  Object.keys(monstres).sort(ordreNumeriqueObjets).forEach(id => {
+    const acteur = monstres[id];
+    const nom = acteur && lire(acteur.Local_Key);
+    const objet = acteur && (entree.objetsActeurs || {})[String(acteur.DropActorObjectTid)];
+    [].concat(objet && objet.InteractionTid || []).forEach(cle => {
+      const interaction = (entree.interactions || {})[String(cle)];
+      if(!interaction) return;
+      const bouton = (entree.boutons || {})[String(interaction.ButtonTid)] || {};
+      const cles = Number(bouton.ButtonDetailValue02) || 0;
+      const monnaie = cles > 0 && actif("::Currency", String(bouton.ButtonDetailValue01));
+      const detail = monnaie ? "à ouvrir avec " + nombreObjets(cles) + " " + monnaie.nom : null;
+      ajouter(nom, "cube", detail, interaction.DropGroupTid);
+    });
   });
   const minage = entree.minage || {};
   Object.keys(minage).sort(ordreNumeriqueObjets).forEach(id => {
