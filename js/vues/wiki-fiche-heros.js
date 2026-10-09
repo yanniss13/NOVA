@@ -19,7 +19,7 @@ import { armesDuHeros, competencesParArme } from "../metier/wiki-competences.js"
 import { renderBonus } from "./elements.js";
 import { ModalStack } from "./modal-stack.js";
 import { listeDeStats, repliable, titreSection } from "./wiki-blocs.js";
-import { ROLES_HEROS, brancherFiche } from "./wiki.js";
+import { ROLES_HEROS, brancherFiche, ouvrirObjetDuWiki } from "./wiki.js";
 
   const fiche = { entries:[], index:0, arme:null };
 
@@ -253,8 +253,14 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
          le nom de fichier si la piece manque au catalogue. */
       const nom = nameOfFile(fichier);
       const transcendance = parTenue.get(fichier);
+      /* Le nom est le BOUTON : il porte le clavier et le lecteur d'ecran.
+         Le reste de la ligne s'ouvre aussi, par la delegation posee sur
+         #wikiHeroBody — une cible de la taille d'un mot est trop petite. */
       const corps = el("div",{class:"wiki-gravee-corps"},[
-        el("b",{class:"wiki-gravee-nom", text:nom})
+        el("button",{
+          type:"button", class:"wiki-gravee-nom",
+          "aria-label":"Voir la fiche de " + nom, text:nom
+        })
       ]);
       if(transcendance && transcendance.texte){
         /* L'arme est un REPERE, pas une condition : le passif suit la tenue,
@@ -270,7 +276,7 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
           el("span",{html:renderBonus(transcendance.texte)})
         ].filter(Boolean)));
       }
-      liste.appendChild(el("li",{class:"wiki-gravee"},[
+      liste.appendChild(el("li",{class:"wiki-gravee", dataset:{fichier}},[
         el("img",{src:fichier, alt:"", loading:"lazy", title:nom}),
         corps
       ]));
@@ -413,6 +419,18 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
     const liste = Array.isArray(entries) && entries.length ? entries : [];
     const index = liste.findIndex(item => item.id === charId);
     if(index === -1) return;
+    /* Arrive ici depuis une tenue ouverte PAR-DESSUS cette fiche : la fiche
+       de heros est deja dans la pile, sous elle. On ferme la tenue pour la
+       laisser reapparaitre, plutot que de la redessiner hors de vue. */
+    const objetAuDessus = $("#wikiItemOverlay.au-dessus");
+    if(objetAuDessus && $("#wikiHeroOverlay").classList.contains("on")){
+      fiche.entries = liste;
+      fiche.index = index;
+      fiche.arme = null;
+      renderFiche();
+      ModalStack.close(objetAuDessus);
+      return;
+    }
     const declencheur = document.activeElement;
     fiche.entries = liste;
     fiche.index = index;
@@ -424,6 +442,15 @@ import { ROLES_HEROS, brancherFiche } from "./wiki.js";
   }
 
   $("#wikiHeroClose").addEventListener("click", fermer);
+  /* Une seule ecoute pour toutes les tenues : le corps est reconstruit a
+     chaque heros, et l'attribut `data-fichier` suffit a dire laquelle. */
+  $("#wikiHeroBody").addEventListener("click", event => {
+    const tenue = event.target.closest(".wiki-gravee[data-fichier]");
+    if(!tenue) return;
+    const voisins = [...$("#wikiHeroBody").querySelectorAll(".wiki-gravee[data-fichier]")]
+      .map(noeud => noeud.dataset.fichier);
+    ouvrirObjetDuWiki(tenue.dataset.fichier, voisins);
+  });
   $("#wikiHeroPrev").addEventListener("click", ()=>deplacer(-1));
   $("#wikiHeroNext").addEventListener("click", ()=>deplacer(1));
   $("#wikiHeroOverlay").addEventListener("click", event => {

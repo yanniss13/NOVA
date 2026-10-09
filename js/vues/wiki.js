@@ -23,7 +23,7 @@ import { $, el, norm } from "../noyau/dom.js";
 import { chargerCatalogueWiki } from "../donnees/catalogue-wiki.js";
 import { charOf } from "../metier/catalogue.js";
 import {
-  armesDuWiki, armuresDuWiki, bijouxDuWiki, graveesDuWiki
+  armesDuWiki, armuresDuWiki, bijouxDuWiki, graveesDuWiki, objetDuWiki
 } from "../metier/wiki-equipement.js";
 import { libelleDeRarete } from "./wiki-blocs.js";
 
@@ -82,6 +82,19 @@ import { libelleDeRarete } from "./wiki-blocs.js";
      que le « precedent / suivant » de la fiche reste utilisable. */
   function ouvrirHerosDuWiki(slug){
     if(ouvrirFiche) ouvrirFiche(slug, DATA.personnages || []);
+  }
+
+  /* Ouvrir la fiche d'un objet depuis ailleurs que sa grille — une armure
+     gravee de la fiche de heros. `voisins` borne « precedent / suivant » aux
+     pieces qu'on regardait : les tenues de CE heros, pas les cent du jeu. */
+  function ouvrirObjetDuWiki(file, voisins){
+    const trouve = objetDuWiki(file);
+    if(!trouve || !ouvrirObjet) return;
+    const liste = Array.isArray(voisins) && voisins.length
+      ? voisins.map(voisin => trouve.liste.find(item => item.file === voisin))
+        .filter(Boolean)
+      : trouve.liste;
+    ouvrirObjet(trouve.entree, liste.includes(trouve.entree) ? liste : trouve.liste);
   }
 
   /* Les valeurs d'un filtre : celles que les entrees portent REELLEMENT,
@@ -376,5 +389,6 @@ export {
   brancherFiche,
   brancherFicheObjet,
   ouvrirHerosDuWiki,
+  ouvrirObjetDuWiki,
   renderWiki
 };

@@ -112,8 +112,14 @@ import { brancherFicheObjet, ouvrirHerosDuWiki } from "./wiki.js";
     objet.index = index;
     objet.niveau = null;
     renderObjet();
+    /* L'ordre du document place cette fiche SOUS celle des heros (voir
+       index.html). Ouverte depuis une fiche de heros, elle doit passer
+       devant : `au-dessus` la releve le temps de son ouverture. */
+    const overlay = $("#wikiItemOverlay");
+    if($("#wikiHeroOverlay").classList.contains("on")) overlay.classList.add("au-dessus");
     ModalStack.open(
-      $("#wikiItemOverlay"), "#wikiItemClose", fermerObjet, declencheur
+      overlay, "#wikiItemClose", fermerObjet, declencheur,
+      () => overlay.classList.remove("au-dessus")
     );
   }
 

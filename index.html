@@ -836,7 +836,8 @@
      gravée ouvre la fiche de son héros PAR-DESSUS celle-ci, or tous les
      overlays partagent le même z-index (css/modales.css) et c'est l'ordre
      du document qui tranche. Même raison que #pieceDetailOverlay, placé
-     après #rosterDetailOverlay. -->
+     après #rosterDetailOverlay. Dans l'autre sens — une tenue ouverte depuis
+     la fiche d'un héros — la classe `au-dessus` la fait passer devant. -->
 <div class="overlay" id="wikiItemOverlay" role="dialog" aria-modal="true"
      aria-labelledby="wikiItemTitle" aria-hidden="true">
   <div class="modal rostermodal">

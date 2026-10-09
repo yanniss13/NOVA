@@ -19,6 +19,9 @@ body.modal-locked{
 /* Le picker est une sous-modale : il s'ouvre DEPUIS d'autres modales (éditeur
    de roster, builder) et doit donc toujours passer au-dessus d'elles. */
 #overlay{z-index:70}
+/* La fiche d'objet du wiki, ouverte depuis une fiche de heros : elle passe
+   devant elle, sans monter jusqu'au picker. */
+#wikiItemOverlay.au-dessus{z-index:61}
 .modal{
   width:min(760px,100%);
   max-height:min(88vh,calc(100dvh - 24px));

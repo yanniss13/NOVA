@@ -366,6 +366,42 @@ const { chromium } = require("playwright");
     assert.deepEqual(sansBonus, ["Tenue de cérémonie"],
       "c'est la Tenue de ceremonie qui n'est pas transcendable");
 
+    /* CHAQUE TENUE OUVRE SA FICHE, PAR-DESSUS CELLE DU HEROS.
+
+       La fiche d'objet est declaree AVANT celle des heros, et l'ordre du
+       document decide qui passe devant : sans la classe `au-dessus`, elle
+       s'ouvrirait derriere, invisible. On le mesure au point le plus haut de
+       l'ecran au centre, pas a une classe CSS. */
+    await page.locator(".wiki-gravee").nth(1).locator("button.wiki-gravee-nom").click();
+    await page.locator("#wikiItemOverlay.on").waitFor();
+    const nomClique = (await page.locator(".wiki-gravee .wiki-gravee-nom").nth(1).textContent()).trim();
+    assert.equal((await page.locator("#wikiItemTitle").textContent()).trim(), nomClique,
+      "la fiche ouverte doit etre celle de la tenue cliquee");
+    assert.equal(await page.evaluate(() => {
+      const point = document.elementFromPoint(innerWidth / 2, innerHeight / 2);
+      return !!(point && point.closest("#wikiItemOverlay"));
+    }), true, "la fiche de la tenue doit passer devant la fiche du heros");
+    assert.equal((await page.locator("#wikiItemPosition").textContent()).trim(), "2 / 4",
+      "precedent / suivant parcourt les tenues de CE heros, pas toutes celles du jeu");
+
+    /* Le retour au heros referme la tenue : pas de seconde fiche empilee. */
+    await page.locator("#wikiItemClose").click();
+    await page.locator("#wikiItemOverlay.on").waitFor({ state:"detached" });
+    assert.equal(await page.locator("#wikiHeroOverlay.on").count(), 1,
+      "la fiche du heros doit rester ouverte sous la tenue");
+    assert.equal(await page.locator("#wikiItemOverlay.au-dessus").count(), 0,
+      "la tenue refermee ne doit pas garder sa surelevation");
+
+    /* Toute la ligne s'ouvre, pas seulement le nom. Et le lien « Héros lié »
+       de la tenue ramene a la fiche ouverte dessous au lieu d'en redessiner
+       une hors de vue. */
+    await page.locator(".wiki-gravee").first().locator("img").click();
+    await page.locator("#wikiItemOverlay.on").waitFor();
+    await page.locator('#wikiItemBody .wiki-linked-hero[data-char="tristan"]').click();
+    await page.locator("#wikiItemOverlay.on").waitFor({ state:"detached" });
+    assert.match(await page.locator("#wikiHeroTitle").textContent(), /Tristan/i,
+      "le lien vers le heros doit ramener a sa fiche, toujours ouverte");
+
     await page.locator("#wikiHeroClose").click();
     await page.locator("#wikiHeroOverlay.on").waitFor({ state:"detached" });
 

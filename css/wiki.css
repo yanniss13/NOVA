@@ -236,6 +236,17 @@
 }
 .wiki-gravee-corps{min-width:0;display:flex;flex-direction:column;gap:2px}
 .wiki-gravee-nom{color:var(--parchment)}
+/* Chaque tenue ouvre sa fiche. Le bouton garde l'allure du nom, souligne au
+   survol et au focus pour dire qu'il mene quelque part. */
+.wiki-gravee[data-fichier]{cursor:pointer}
+button.wiki-gravee-nom{
+  all:unset;cursor:pointer;font-weight:700;color:var(--parchment);
+  min-height:24px;text-decoration:underline;text-decoration-color:transparent;
+  text-underline-offset:3px;transition:text-decoration-color .15s
+}
+.wiki-gravee[data-fichier]:hover button.wiki-gravee-nom,
+button.wiki-gravee-nom:focus-visible{text-decoration-color:var(--gold,currentColor)}
+button.wiki-gravee-nom:focus-visible{outline:2px solid var(--gold,currentColor);outline-offset:2px}
 .wiki-gravee-trans{display:block;font-size:.9rem;line-height:1.45}
 /* L'arme de la transcendance : un reperage, pas un titre. */
 .wiki-gravee-arme{
