@@ -1,7 +1,7 @@
 // Genere automatiquement par generate-data.ps1 - NE PAS EDITER A LA MAIN.
 // Relance le script pour mettre a jour apres ajout/retrait d'images.
 window.SEVEN_DS_DATA = {
-    "generatedAt":  "2026-10-09 22:24:12",
+    "generatedAt":  "2026-10-09 23:51:43",
     "personnages":  [
                         {
                             "id":  "ban",
@@ -1333,6 +1333,10 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Gloire du passé.webp"
                                         },
                                         {
+                                            "name":  "Griamor — Sortie décontractée",
+                                            "file":  "7ds-armures-ssr/Armure liee/Griamor — Sortie décontractée.webp"
+                                        },
+                                        {
                                             "name":  "Gris romantique",
                                             "file":  "7ds-armures-ssr/Armure liee/Gris romantique.webp"
                                         },
@@ -1527,6 +1531,10 @@ window.SEVEN_DS_DATA = {
                                         {
                                             "name":  "Tenue modeste",
                                             "file":  "7ds-armures-ssr/Armure liee/Tenue modeste.webp"
+                                        },
+                                        {
+                                            "name":  "Tioré — Sortie décontractée",
+                                            "file":  "7ds-armures-ssr/Armure liee/Tioré — Sortie décontractée.webp"
                                         },
                                         {
                                             "name":  "Traces de la forêt",

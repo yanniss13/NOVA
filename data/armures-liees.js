@@ -1,6 +1,6 @@
 // Généré manuellement depuis la page publique du team builder 7dsorigin.app.
 // Héros absents de cette page : tables du jeu, via 7ds-stats/contenu-jeu.json.
-// Date de génération : 2026-10-09T22:23:43+02:00
+// Date de génération : 2026-10-09T23:51:42+02:00
 // Instantané local : aucun appel réseau n'est effectué par index.html.
 window.SEVEN_DS_ARMURES_LIEES = {
   "ban": [
@@ -78,7 +78,8 @@ window.SEVEN_DS_ARMURES_LIEES = {
   "griamore": [
     "7ds-armures-ssr/Armure liee/Barricade de fortune.webp",
     "7ds-armures-ssr/Armure liee/Chevalier sacré du mur de fer.webp",
-    "7ds-armures-ssr/Armure liee/Forteresse de fer impénétrable.webp"
+    "7ds-armures-ssr/Armure liee/Forteresse de fer impénétrable.webp",
+    "7ds-armures-ssr/Armure liee/Griamor — Sortie décontractée.webp"
   ],
   "guila": [
     "7ds-armures-ssr/Armure liee/Chevalier sacré des explosions.webp",
@@ -150,7 +151,8 @@ window.SEVEN_DS_ARMURES_LIEES = {
   "tioreh": [
     "7ds-armures-ssr/Armure liee/Début de l'aventure.webp",
     "7ds-armures-ssr/Armure liee/Fille de la forêt et de la terre.webp",
-    "7ds-armures-ssr/Armure liee/Protection de la fée.webp"
+    "7ds-armures-ssr/Armure liee/Protection de la fée.webp",
+    "7ds-armures-ssr/Armure liee/Tioré — Sortie décontractée.webp"
   ],
   "tristan": [
     "7ds-armures-ssr/Armure liee/Aventure du prince.webp",

@@ -143,12 +143,12 @@ const STORAGE_KEY = "confrerie7ds.teams";
      faute d'icones locales. Puis 93 avec la version 2.0, le 26 aout 2026 :
      les trois pieces de Ban et les sept costumes de la fournee. Puis 96 avec
      les trois tenues de Khala, dont les images portent son nom en prefixe.
-     Puis 99 avec les trois tenues de Lancelot, en octobre 2026.
-     Deux pieces restent dehors, toutes deux nommees « Sortie decontractee » —
-     un meme nom pour deux pieces differentes, et le catalogue identifie une
-     piece par le nom de son fichier image. */
-  assert.strictEqual(files.length, 99);
-  assert.strictEqual(new Set(files).size, 99);
+     Puis 99 avec les trois tenues de Lancelot, en octobre 2026, et 101
+     avec les deux « Sortie decontractee » de Tioreh et Griamore : un meme nom
+     pour deux pieces, que leurs fichiers distinguent en prefixant le nom
+     francais du heros (« Tioré — Sortie décontractée »). */
+  assert.strictEqual(files.length, 101);
+  assert.strictEqual(new Set(files).size, 101);
   assert.ok(Object.values(linked).every(items => items.length >= 2 && items.length <= 4));
   assert.deepStrictEqual(
     plain([...files].sort()),

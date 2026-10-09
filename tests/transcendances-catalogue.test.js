@@ -173,14 +173,14 @@ assert.equal(new Set(armesVues).size, 84,
 assert.equal(regles, 33,
   "33 transcendances doivent porter une regle DPS, recu : " + regles);
 
-/* 99 tenues gravees, 84 transcendables : les 15 restantes sont les quatriemes
+/* 101 tenues gravees, 84 transcendables : les 17 restantes sont les quatriemes
    tenues des heros qui en ont quatre. Le compte se ferme, donc aucune n'a ete
    perdue en route. */
 assert.equal(tenuesVues.size, 84,
   "84 tenues distinctes attendues, recu : " + tenuesVues.size);
 const sansTranscendance = Object.keys(gravees).length - tenuesVues.size;
-assert.equal(sansTranscendance, 15,
-  "15 tenues gravees sans transcendance attendues, recu : " + sansTranscendance);
+assert.equal(sansTranscendance, 17,
+  "17 tenues gravees sans transcendance attendues, recu : " + sansTranscendance);
 
 /* Khala vient des tables du jeu, pas de la page publique : son nom interne
    (« calla ») ne doit jamais sortir dans le catalogue, et ses trois tenues

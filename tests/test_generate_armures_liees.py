@@ -78,6 +78,42 @@ class LinkedArmorGeneratorTests(unittest.TestCase):
                 },
             )
 
+    def test_prefixed_file_matches_a_public_hero_by_its_french_name(self):
+        """Deux héros publics portent « Sortie décontractée ». Chaque image
+        préfixe le nom FRANÇAIS du héros, celui que la page publie."""
+        html = (
+            r'\"slug\":\"tioreh\",\"nameFr\":\"Tioré\",'
+            r'\"slug\":\"tioreh-costume-134100202\",'
+            r'\"nameFr\":\"Sortie décontractée\",\"itemGameId\":\"133024001\",'
+            r'\"slug\":\"griamore\",\"nameFr\":\"Griamor\",'
+            r'\"slug\":\"griamore-costume-134101202\",'
+            r'\"nameFr\":\"Sortie décontractée\",\"itemGameId\":\"133124001\"'
+        )
+        with tempfile.TemporaryDirectory() as tmp:
+            root = pathlib.Path(tmp)
+            armor_dir = root / "Armure liee"
+            character_dir = root / "personnages"
+            armor_dir.mkdir()
+            character_dir.mkdir()
+            for hero in ("Tioré", "Griamor"):
+                (armor_dir / (hero + HERO_SEPARATOR + "Sortie décontractée.webp")).touch()
+            (character_dir / "tioreh.webp").touch()
+            (character_dir / "griamore.webp").touch()
+
+            self.assertEqual(
+                module.build_mapping(html, armor_dir, character_dir),
+                {
+                    "griamore": [
+                        "7ds-armures-ssr/Armure liee/Griamor"
+                        + HERO_SEPARATOR + "Sortie décontractée.webp"
+                    ],
+                    "tioreh": [
+                        "7ds-armures-ssr/Armure liee/Tioré"
+                        + HERO_SEPARATOR + "Sortie décontractée.webp"
+                    ],
+                },
+            )
+
     def test_unmatched_local_file_is_rejected(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = pathlib.Path(tmp)

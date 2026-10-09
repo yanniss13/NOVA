@@ -37,7 +37,7 @@ et son propriétaire. Il porte aussi la liste des **fausses pistes déjà
       équipée choisit les descriptions de bonus affichées.
 - [x] Compatibilité des armes : le picker ne propose que les 3 types autorisés
       du héros. Toute arme incompatible est automatiquement retirée.
-- [x] Compatibilité des armures liées : 99 images locales associées aux 28 héros
+- [x] Compatibilité des armures liées : 101 images locales associées aux 28 héros
       (3 ou 4 par héros). Le picker filtre selon le personnage et retire les
       anciennes valeurs incompatibles.
 - [x] Badges **élément + armes** par personnage. `personnages-meta.js`
@@ -989,6 +989,9 @@ catalogue périmé, une image locale non citée ou une entrée sans image.
 Deux héros peuvent porter une tenue du même nom : le fichier de l’un prend
 alors son nom en préfixe — « Khala — Préparation totale.webp » — et le nom
 officiel de la tenue reste dans les catalogues, jamais dans le chemin seul.
+Le préfixe est le nom **français publié** du héros (`personnageNomFr`), et
+vaut aussi pour les héros publics : « Tioré — Sortie décontractée.webp » et
+« Griamor — Sortie décontractée.webp » distinguent les deux tenues de ce nom.
 Un nom affiché se lit **toujours** dans le catalogue — `nameOfFile()` de
 `js/metier/catalogue.js` — et jamais dans le chemin : « Khala — » n'est qu'un
 préfixe de fichier, un membre ne doit jamais le voir.

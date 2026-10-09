@@ -42,17 +42,34 @@ COSTUME_RE = re.compile(
 )
 
 
+# Un heros de la page : son slug, puis son nom francais.
+HERO_RE = re.compile(
+    r'"slug":"(?P<char>[a-z0-9-]+)","nameFr":"(?P<name>(?:[^"\\]|\\.)*)"'
+)
+
+
 def extract_candidates(html):
     decoded = html.replace(r'\"', '"').replace(r'\/', '/')
+    heroes = {
+        match.group("char"): json.loads(f'"{match.group("name")}"')
+        for match in HERO_RE.finditer(decoded)
+        if "-costume-" not in match.group("char")
+    }
     rows = []
     for match in COSTUME_RE.finditer(decoded):
-        rows.append(
-            {
-                "char": match.group("char"),
-                "name": json.loads(f'"{match.group("name")}"'),
-                "game_id": match.group("game_id"),
-            }
-        )
+        row = {
+            "char": match.group("char"),
+            "name": json.loads(f'"{match.group("name")}"'),
+            "game_id": match.group("game_id"),
+        }
+        rows.append(row)
+        # Deux heros peuvent porter une tenue du meme nom : l'image prefixe
+        # alors le nom francais du heros, « Tioré — Sortie décontractée ».
+        if row["char"] in heroes:
+            rows.append(dict(
+                row,
+                name=heroes[row["char"]] + client_content.HERO_NAME_SEPARATOR + row["name"],
+            ))
     return client_content.without_public_aliases(rows, key="char")
 
 

@@ -7330,6 +7330,17 @@
    }
   },
   {
+   "nom": "Griamor — Sortie décontractée",
+   "fichier": "7ds-armures-ssr/Armure liee/Griamor — Sortie décontractée.webp",
+   "categorie": "gravee",
+   "type": "Armure gravée",
+   "heros": "griamore",
+   "passif": {
+    "niveau": 3,
+    "texte": "Augmente la défense de 20% et l'efficacité des barrières de 30%."
+   }
+  },
+  {
    "nom": "Grimoire à l'aura triomphale",
    "fichier": "7ds-armes/Livre/Grimoire à l'aura triomphale.webp",
    "categorie": "arme",
@@ -8594,6 +8605,17 @@
    "passif": {
     "niveau": 3,
     "texte": "Attaquer un ennemi pétrifié augmente la durée de Pétrification de 10 s et restaure la jauge de relève de 1000. (Temps de recharge : 20 s)\nAugmente les dégâts de Terre de l'attaque ultime de 20%."
+   }
+  },
+  {
+   "nom": "Tioré — Sortie décontractée",
+   "fichier": "7ds-armures-ssr/Armure liee/Tioré — Sortie décontractée.webp",
+   "categorie": "gravee",
+   "type": "Armure gravée",
+   "heros": "tioreh",
+   "passif": {
+    "niveau": 3,
+    "texte": "Augmente la durée des bonus de 25% et la durée des malus de 25%."
    }
   },
   {

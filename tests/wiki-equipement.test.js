@@ -243,13 +243,14 @@ const STATS_TEST = {
   assert.equal(armes.length, 170, "170 armes attendues");
   assert.equal(armures.length, 79, "79 armures attendues");
   assert.equal(bijoux.length, 40, "40 bijoux attendus");
-  assert.equal(gravees.length, 99,
+  assert.equal(gravees.length, 101,
   /* 83 depuis l'ajout des gravees SR au catalogue ; il n'y avait que les
      SSR, faute d'icones locales. Puis 93 avec la version 2.0, le 26 aout
      2026 : les trois pieces de Ban et les sept costumes de la fournee.
      Puis 96 avec les trois tenues de Khala, lues dans les tables du jeu.
-     Puis 99 avec les trois tenues de Lancelot, en octobre 2026. */
-  "99 armures gravées attendues");
+     Puis 99 avec les trois tenues de Lancelot, en octobre 2026, et 101
+     avec les deux « Sortie décontractée », prefixees de leur heros. */
+  "101 armures gravées attendues");
 
   assert.equal(
     armes.filter(arme => arme.aPassif).length, 109,
