@@ -1264,6 +1264,66 @@ window.SEVEN_DS_MAGIE_ROTATION = {
   "recharge": 225,
   "cout": 0
  },
+ "lancelot_gauntlets_jumpatk": {
+  "recharge": 57,
+  "cout": 0
+ },
+ "lancelot_gauntlets_skill_e_ready": {
+  "recharge": 251,
+  "cout": 0
+ },
+ "lancelot_gauntlets_skill_q": {
+  "recharge": 88,
+  "cout": 0
+ },
+ "lancelot_gauntlets_skill_r": {
+  "recharge": 0,
+  "cout": 2
+ },
+ "lancelot_gauntlets_skill_tag": {
+  "recharge": 350,
+  "cout": 0
+ },
+ "lancelot_staff_jumpatk": {
+  "recharge": 38,
+  "cout": 0
+ },
+ "lancelot_staff_skill_e": {
+  "recharge": 67,
+  "cout": 0
+ },
+ "lancelot_staff_skill_q": {
+  "recharge": 14,
+  "cout": 0
+ },
+ "lancelot_staff_skill_r_enchant": {
+  "recharge": 0,
+  "cout": 0
+ },
+ "lancelot_staff_skill_tag": {
+  "recharge": 225,
+  "cout": 0
+ },
+ "lancelot_sword1h_jumpatk": {
+  "recharge": 22,
+  "cout": 0
+ },
+ "lancelot_sword1h_skill_e_atk1": {
+  "recharge": 3,
+  "cout": 0
+ },
+ "lancelot_sword1h_skill_q": {
+  "recharge": 22,
+  "cout": 0
+ },
+ "lancelot_sword1h_skill_r": {
+  "recharge": 0,
+  "cout": 2
+ },
+ "lancelot_sword1h_skill_tag": {
+  "recharge": 225,
+  "cout": 0
+ },
  "manny_staff_jumpatk": {
   "recharge": 80,
   "cout": 0

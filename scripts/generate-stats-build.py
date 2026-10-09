@@ -98,6 +98,7 @@ STAT_SYNONYMS = {
     "defense": "D_Protect_Cur_Rate",
     "healPower": "H_HealPower_Rate",
     "normalAtkDamage": "Normalattack_Damadd_Rate",
+    "normalSkillDmg": "Normalskill_Damadd_Rate",
     "thunderBurstGauge": "Thunder_Burst_Gauge_Rate",
     "ultimateDmg": "Ultimateskill_Damadd_Rate",
     "windBurstGauge": "Wind_Burst_Gauge_Rate",

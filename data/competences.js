@@ -6240,6 +6240,288 @@ window.SEVEN_DS_COMPETENCES = {
    "weaponType": "Staff"
   }
  ],
+ "lancelot": [
+  {
+   "categorie": "NORMAL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 100.0
+    }
+   ],
+   "coups": null,
+   "gameId": "lancelot_gauntlets_jumpatk",
+   "nature": "direct",
+   "nom": "Step Shot",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 100.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "composantes": [],
+   "coups": null,
+   "gameId": "lancelot_gauntlets_skill_e_ready",
+   "nature": "non-chiffree",
+   "nom": "Arrow Rain",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": null,
+   "recharge": 23.0,
+   "repartition": [],
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 72.0
+    }
+   ],
+   "coups": null,
+   "gameId": "lancelot_gauntlets_skill_q",
+   "nature": "direct",
+   "nom": "Anchor Shot",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 72.0,
+   "recharge": 20.0,
+   "repartition": [],
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 250.0
+    }
+   ],
+   "coups": null,
+   "gameId": "lancelot_gauntlets_skill_r",
+   "nature": "direct",
+   "nom": "Grand Rift",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 250.0,
+   "recharge": 10.0,
+   "repartition": [],
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 59.0
+    }
+   ],
+   "coups": null,
+   "gameId": "lancelot_gauntlets_skill_tag",
+   "nature": "direct",
+   "nom": "Burst Arrow",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 59.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "NORMAL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 185.0
+    }
+   ],
+   "coups": null,
+   "gameId": "lancelot_staff_jumpatk",
+   "nature": "direct",
+   "nom": "Chain Spear",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 185.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Staff"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 140.0
+    }
+   ],
+   "coups": null,
+   "gameId": "lancelot_staff_skill_e",
+   "nature": "direct",
+   "nom": "Holy Spear",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 140.0,
+   "recharge": 17.0,
+   "repartition": [],
+   "weaponType": "Staff"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 73.0
+    }
+   ],
+   "coups": null,
+   "gameId": "lancelot_staff_skill_q",
+   "nature": "direct",
+   "nom": "Light Rush",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 73.0,
+   "recharge": 10.0,
+   "repartition": [],
+   "weaponType": "Staff"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 353.0
+    }
+   ],
+   "coups": null,
+   "gameId": "lancelot_staff_skill_r_enchant",
+   "nature": "direct",
+   "nom": "Shining Road",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 353.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Staff"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 138.0
+    }
+   ],
+   "coups": null,
+   "gameId": "lancelot_staff_skill_tag",
+   "nature": "direct",
+   "nom": "Lightfall",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 138.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Staff"
+  },
+  {
+   "categorie": "NORMAL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 190.0
+    }
+   ],
+   "coups": null,
+   "gameId": "lancelot_sword1h_jumpatk",
+   "nature": "direct",
+   "nom": "Chain Flash",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 190.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Sword1h"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 179.0
+    }
+   ],
+   "coups": null,
+   "gameId": "lancelot_sword1h_skill_e_atk1",
+   "nature": "direct",
+   "nom": "Skycleave",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 179.0,
+   "recharge": 21.0,
+   "repartition": [],
+   "weaponType": "Sword1h"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 85.0
+    }
+   ],
+   "coups": null,
+   "gameId": "lancelot_sword1h_skill_q",
+   "nature": "direct",
+   "nom": "Iai Stance",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 85.0,
+   "recharge": 8.0,
+   "repartition": [],
+   "weaponType": "Sword1h"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 435.0
+    }
+   ],
+   "coups": null,
+   "gameId": "lancelot_sword1h_skill_r",
+   "nature": "direct",
+   "nom": "Instant Flash",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 435.0,
+   "recharge": 10.0,
+   "repartition": [],
+   "weaponType": "Sword1h"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "composantes": [
+    {
+     "base": "atk",
+     "pourcentage": 133.0
+    }
+   ],
+   "coups": null,
+   "gameId": "lancelot_sword1h_skill_tag",
+   "nature": "direct",
+   "nom": "Stormblade",
+   "periodique": null,
+   "portee": "Melee",
+   "pourcentage": 133.0,
+   "recharge": null,
+   "repartition": [],
+   "weaponType": "Sword1h"
+  }
+ ],
  "manny": [
   {
    "categorie": "NORMAL",

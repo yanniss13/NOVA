@@ -148,15 +148,15 @@ const weaponsWithPassive = Object.entries(catalog.weaponsByFile)
   .filter(([, entry]) => (entry.passiveLevels || []).length);
 assert.equal(
   weaponsWithPassive.length,
-  96,
-  "les 96 armes concernées doivent conserver leurs sept niveaux de passif"
+  109,
+  "les 109 armes concernées doivent conserver leurs sept niveaux de passif"
 );
 weaponsWithPassive.forEach(([file, entry]) => {
   assert.equal(entry.passiveLevels.length, 7, file + " : passif d'arme incomplet");
 });
 
 const characters = Object.entries(catalog.charactersBySlug);
-assert.equal(characters.length, 27, "les 27 personnages doivent être rapprochés");
+assert.equal(characters.length, 28, "les 28 personnages doivent être rapprochés");
 /* Les tables du jeu ne portent pas les deux coefficients JcJ. Un héros lu
    dans le snapshot local les publie à null, avec une couverture
    « missing-from-export » : le catalogue omet ces deux lignes plutôt que
@@ -380,8 +380,8 @@ assert.deepStrictEqual(
 const gravees = Object.entries(catalog.engravedByFile);
 const avecOptions = gravees.filter(([, piece]) => piece.limitBreakOptions);
 assert.equal(
-  avecOptions.length, 81,
-  "81 tenues gravées donnent une transcendance : "
+  avecOptions.length, 84,
+  "84 tenues gravées donnent une transcendance : "
     + avecOptions.length + " en portent les options"
 );
 

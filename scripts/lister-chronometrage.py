@@ -53,6 +53,16 @@ ORDRE_CATEGORIES = ["NORMAL", "NORMAL_SKILL", "ACTIVE_THIRD", "ULTIMATE", "TAG_S
 CATEGORIES_SIMULEES = {"NORMAL", "NORMAL_SKILL", "ACTIVE_THIRD", "ULTIMATE"}
 CATEGORIES_DEBLOQUEES = {"NORMAL", "ACTIVE_THIRD"}
 
+# Competences que la source publie sans recharge et que le simulateur ecarte
+# donc (« recharge non modelisee ») : chronometrer leur animation ne
+# changerait aucun chiffre tant que la recharge reste inconnue. Les nommer
+# une a une garde le refus ci-dessous pour tout cas nouveau.
+RECHARGE_INCONNUE = frozenset({
+    # Ultime du baton de Lancelot ; ni 7dsorigin.app ni SevenCodex ne
+    # publient sa recharge (octobre 2026).
+    "lancelot_staff_skill_r_enchant",
+})
+
 LIBELLES_CATEGORIES = {
     "NORMAL": "Attaque normale",
     "NORMAL_SKILL": "Compétence normale",
@@ -169,6 +179,8 @@ def lignes():
         # animation, et aucun simulateur ici ne modelise le saut. Les
         # chronometrer ne changerait aucun chiffre.
         if "jumpatk" in game_id:
+            continue
+        if game_id in RECHARGE_INCONNUE:
             continue
         ligne = {
             "heros": heros,

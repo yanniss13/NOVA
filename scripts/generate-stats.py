@@ -253,6 +253,19 @@ def main():
         )
 
     data = {key: collect(flight, key) for key in EXPECTED}
+    # Un heros deja importe des tables du jeu sort de la collecte publique,
+    # tenues gravees comprises : il ne doit pas paraitre deux fois.
+    alias_costumes = {
+        costume.get("itemGameId")
+        for character in data["characters"]
+        if character.get("slug") in client_content.PUBLIC_ALIASES
+        for costume in character.get("costumes") or []
+    }
+    data["characters"] = client_content.without_public_aliases(data["characters"])
+    data["costumeArmors"] = [
+        armor for armor in data["costumeArmors"]
+        if armor.get("gameId") not in alias_costumes
+    ]
     for key, expected in EXPECTED.items():
         found = len(data[key])
         flag = "" if found == expected else "  (attendu %d)" % expected
@@ -269,6 +282,15 @@ def main():
     for code, short in (find_object(flight, "statLabels") or {}).items():
         if isinstance(short, str) and short:
             labels.setdefault(code, {})["court"] = short
+    # Un code que la source ne cite plus garde son libelle : un nom de stat ne
+    # devient pas faux parce qu'aucun objet publie ne le porte. Les tables
+    # ecrites a la main en emploient (AllElement_Rate, absent du site depuis
+    # octobre 2026, reste lu par data/passifs-graves.js).
+    committed_labels = os.path.join(OUT_DIR, "libelles-stats.json")
+    if os.path.exists(committed_labels):
+        with open(committed_labels, encoding="utf-8") as handle:
+            for code, entry in json.load(handle).items():
+                labels.setdefault(code, entry)
 
     # Armures gravees : les stats sont indexees par gameId, l'identite du costume
     # vit chez le personnage. On rapproche les deux.

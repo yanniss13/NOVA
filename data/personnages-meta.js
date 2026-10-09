@@ -510,6 +510,28 @@ window.SEVEN_DS_META = {
    }
   ]
  },
+ "lancelot": {
+  "element": "HOLY",
+  "rarity": "SSR",
+  "role": "ATTACKER",
+  "weapons": [
+   {
+    "role": "Attacker",
+    "weapon": "Staff",
+    "element": "Holy"
+   },
+   {
+    "role": "Attacker",
+    "weapon": "Sword1h",
+    "element": "Default"
+   },
+   {
+    "role": "Supporter",
+    "weapon": "Gauntlets",
+    "element": "Earth"
+   }
+  ]
+ },
  "manny": {
   "element": "HOLY",
   "rarity": "SSR",

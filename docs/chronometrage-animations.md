@@ -9,7 +9,7 @@ déduit 304 verrous, et la liste ci-dessous ne retient plus que ce
 qu'aucun fichier ne renseigne. Elle dit quoi mesurer d'abord, et ce
 que chaque mesure rapporte.
 
-**Avancement : 0 / 25 mesurées.**
+**Avancement : 0 / 35 mesurées.**
 
 Les 304 verrous déduits ne sont pas pour autant acquis : ce sont des
 lectures de marqueurs, pas des chronomètres. Une mesure saisie dans
@@ -26,7 +26,7 @@ Ces attaques normales et spéciales débloquent maintenant le calcul du DPS.
 | héros | arme | compétence | catégorie | touche | dégâts % | mesure (s) |
 |---|---|---|---|---|---|---|
 
-## 2. Mesures qui affinent maintenant — 22 compétences
+## 2. Mesures qui affinent maintenant — 29 compétences
 
 Avec recharge : le simulateur calcule déjà la compétence et
 l'animation ajoute un retard. La colonne « erreur » donne ce qu'on
@@ -37,9 +37,13 @@ Classement par erreur décroissante.
 |---|---|---|---|---|---|---|---|
 | diane | Gantelets | Combinaison de coups de pied | Attaque spéciale | Q | 5 s | 23 % |  |
 | hendrickson | Épée longue | Perforation divine | Attaque spéciale | Q | 7.5 s | 17 % |  |
+| lancelot | Épée longue | Posture Iai | Attaque spéciale | Q | 8 s | 16 % |  |
 | ban | Nunchaku | Chasse du Renard | Attaque ultime | R | 10 s | 13 % |  |
 | ban | Gantelets | Explosion obscure | Attaque ultime | R | 10 s | 13 % |  |
 | guila | Épée & bouclier | Explosion resplendissante | Attaque ultime | R | 10 s | 13 % |  |
+| lancelot | Gantelets | Faille colossale | Attaque ultime | R | 10 s | 13 % |  |
+| lancelot | Bâton | Ruée lumineuse | Attaque spéciale | Q | 10 s | 13 % |  |
+| lancelot | Épée longue | Éclair instantané | Attaque ultime | R | 10 s | 13 % |  |
 | tristan | Espadon | Entaille d'amputation | Attaque ultime | R | 10 s | 13 % |  |
 | ban | Espadon | Broyage brutal | Attaque spéciale | Q | 11.6 s | 11 % |  |
 | king | Grimoire | Bouclier gardien | Attaque spéciale | Q | 12 s | 11 % |  |
@@ -51,14 +55,17 @@ Classement par erreur décroissante.
 | hendrickson | Lance | Brise-lance abyssal | Attaque spéciale | Q | 15 s | 9 % |  |
 | ban | Nunchaku | Balayage rapide | Attaque spéciale | Q | 15.6 s | 9 % |  |
 | bug | Hache | Pulvérisation des abysses | Attaque spéciale | Q | 16.2 s | 8 % |  |
+| lancelot | Bâton | Lance sacrée | Compétence normale | E | 17 s | 8 % |  |
 | ban | Nunchaku | Ruée en spirale | Compétence normale | E | 18.6 s | 7 % |  |
 | ban | Gantelets | Uppercut abyssal | Attaque spéciale | Q | 19.6 s | 7 % |  |
 | khala | Gantelets | Mine à impact | Attaque spéciale | Q | 20 s | 7 % |  |
+| lancelot | Gantelets | Tir d'ancrage | Attaque spéciale | Q | 20 s | 7 % |  |
 | ban | Espadon | Fracassement | Compétence normale | E | 20.4 s | 7 % |  |
 | bug | Épées doubles | Extermination | Compétence normale | E | 20.9 s | 7 % |  |
+| lancelot | Épée longue | Fendoir des cieux | Compétence normale | E | 21 s | 7 % |  |
 | khala | Nunchaku | Tourbillon | Compétence normale | E | 23 s | 6 % |  |
 
-## 3. Relèves — simulation d’équipe future — 3 compétences
+## 3. Relèves — simulation d’équipe future — 6 compétences
 
 Les compétences de relève seront calculées avec une future simulation
 d'équipe. Leur mesure est utile pour préparer ce modèle, sans modifier
@@ -66,6 +73,9 @@ encore le DPS affiché.
 
 | héros | arme | compétence | catégorie | touche | dégâts % | mesure (s) |
 |---|---|---|---|---|---|---|
+| lancelot | Bâton | Chute de lumière | Compétence de relève | 1 à 4 | 138 |  |
 | ban | Espadon | Impact percutant | Compétence de relève | 1 à 4 | 134 |  |
+| lancelot | Épée longue | Tempête de lames | Compétence de relève | 1 à 4 | 133 |  |
 | ban | Nunchaku | Frappe en chaîne | Compétence de relève | 1 à 4 | 125 |  |
 | ban | Gantelets | Frappe en embuscade | Compétence de relève | 1 à 4 | 87 |  |
+| lancelot | Gantelets | Flèche explosive | Compétence de relève | 1 à 4 | 59 |  |

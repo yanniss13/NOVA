@@ -1,7 +1,7 @@
 // Genere automatiquement par generate-data.ps1 - NE PAS EDITER A LA MAIN.
 // Relance le script pour mettre a jour apres ajout/retrait d'images.
 window.SEVEN_DS_DATA = {
-    "generatedAt":  "2026-09-22 14:18:04",
+    "generatedAt":  "2026-10-09 22:24:12",
     "personnages":  [
                         {
                             "id":  "ban",
@@ -109,6 +109,11 @@ window.SEVEN_DS_DATA = {
                             "file":  "7ds-personnages/klotho.webp"
                         },
                         {
+                            "id":  "lancelot",
+                            "name":  "Lancelot",
+                            "file":  "7ds-personnages/lancelot.webp"
+                        },
+                        {
                             "id":  "manny",
                             "name":  "Manny",
                             "file":  "7ds-personnages/manny.webp"
@@ -156,6 +161,10 @@ window.SEVEN_DS_DATA = {
                                    {
                                        "name":  "Baguette d\u0027aventurier",
                                        "file":  "7ds-armes/Baguette/Baguette d\u0027aventurier.webp"
+                                   },
+                                   {
+                                       "name":  "Baguette de garde indomptable",
+                                       "file":  "7ds-armes/Baguette/Baguette de garde indomptable.webp"
                                    },
                                    {
                                        "name":  "Baguette de la flamme cramoisie",
@@ -212,8 +221,16 @@ window.SEVEN_DS_DATA = {
                                     "file":  "7ds-armes/Baton/Bâton d\u0027aventurier.webp"
                                 },
                                 {
+                                    "name":  "Bâton de garde indomptable",
+                                    "file":  "7ds-armes/Baton/Bâton de garde indomptable.webp"
+                                },
+                                {
                                     "name":  "Bâton de la flamme cramoisie",
                                     "file":  "7ds-armes/Baton/Bâton de la flamme cramoisie.webp"
+                                },
+                                {
+                                    "name":  "Bâton de l\u0027âme vorace",
+                                    "file":  "7ds-armes/Baton/Bâton de l\u0027âme vorace.webp"
                                 },
                                 {
                                     "name":  "Bâton de renforcement des nuages sombres",
@@ -260,6 +277,10 @@ window.SEVEN_DS_DATA = {
                                                {
                                                    "name":  "Épée et bouclier d\u0027aventurier",
                                                    "file":  "7ds-armes/Bouclier/Épée et bouclier d\u0027aventurier.webp"
+                                               },
+                                               {
+                                                   "name":  "Épée et bouclier de garde indomptable",
+                                                   "file":  "7ds-armes/Bouclier/Épée et bouclier de garde indomptable.webp"
                                                },
                                                {
                                                    "name":  "Épée et bouclier de la flamme cramoisie",
@@ -320,6 +341,10 @@ window.SEVEN_DS_DATA = {
                                           "file":  "7ds-armes/Epee 1 main/Épée longue d\u0027aventurier.webp"
                                       },
                                       {
+                                          "name":  "Épée longue de garde indomptable",
+                                          "file":  "7ds-armes/Epee 1 main/Épée longue de garde indomptable.webp"
+                                      },
+                                      {
                                           "name":  "Épée longue de la conviction corrompue",
                                           "file":  "7ds-armes/Epee 1 main/Épée longue de la conviction corrompue.webp"
                                       },
@@ -378,6 +403,10 @@ window.SEVEN_DS_DATA = {
                                       "file":  "7ds-armes/Epee 2 mains/Espadon d\u0027aventurier.webp"
                                   },
                                   {
+                                      "name":  "Espadon de garde indomptable",
+                                      "file":  "7ds-armes/Epee 2 mains/Espadon de garde indomptable.webp"
+                                  },
+                                  {
                                       "name":  "Espadon de la flamme cramoisie",
                                       "file":  "7ds-armes/Epee 2 mains/Espadon de la flamme cramoisie.webp"
                                   },
@@ -426,6 +455,10 @@ window.SEVEN_DS_DATA = {
                                         {
                                             "name":  "Épées doubles d\u0027aventurier",
                                             "file":  "7ds-armes/Epees doubles/Épées doubles d\u0027aventurier.webp"
+                                        },
+                                        {
+                                            "name":  "Épées doubles de garde indomptable",
+                                            "file":  "7ds-armes/Epees doubles/Épées doubles de garde indomptable.webp"
                                         },
                                         {
                                             "name":  "Épées doubles de la flamme cramoisie",
@@ -482,6 +515,10 @@ window.SEVEN_DS_DATA = {
                                         "file":  "7ds-armes/Gantelets/Gantelets d\u0027aventurier.webp"
                                     },
                                     {
+                                        "name":  "Gantelets de garde indomptable",
+                                        "file":  "7ds-armes/Gantelets/Gantelets de garde indomptable.webp"
+                                    },
+                                    {
                                         "name":  "Gantelets de la flamme cramoisie",
                                         "file":  "7ds-armes/Gantelets/Gantelets de la flamme cramoisie.webp"
                                     },
@@ -534,6 +571,10 @@ window.SEVEN_DS_DATA = {
                                 {
                                     "name":  "Hache d\u0027aventurier",
                                     "file":  "7ds-armes/Hache/Hache d\u0027aventurier.webp"
+                                },
+                                {
+                                    "name":  "Hache de garde indomptable",
+                                    "file":  "7ds-armes/Hache/Hache de garde indomptable.webp"
                                 },
                                 {
                                     "name":  "Hache de la flamme cramoisie",
@@ -590,6 +631,10 @@ window.SEVEN_DS_DATA = {
                                     "file":  "7ds-armes/Lance/Lance d\u0027aventurier.webp"
                                 },
                                 {
+                                    "name":  "Lance de garde indomptable",
+                                    "file":  "7ds-armes/Lance/Lance de garde indomptable.webp"
+                                },
+                                {
                                     "name":  "Lance de la flamme cramoisie",
                                     "file":  "7ds-armes/Lance/Lance de la flamme cramoisie.webp"
                                 },
@@ -642,6 +687,10 @@ window.SEVEN_DS_DATA = {
                                    {
                                        "name":  "Grimoire d\u0027aventurier",
                                        "file":  "7ds-armes/Livre/Grimoire d\u0027aventurier.webp"
+                                   },
+                                   {
+                                       "name":  "Grimoire de garde indomptable",
+                                       "file":  "7ds-armes/Livre/Grimoire de garde indomptable.webp"
                                    },
                                    {
                                        "name":  "Grimoire de la flamme cramoisie",
@@ -702,6 +751,10 @@ window.SEVEN_DS_DATA = {
                                        "file":  "7ds-armes/Nunchaku/Nunchaku d\u0027aventurier.webp"
                                    },
                                    {
+                                       "name":  "Nunchaku de garde indomptable",
+                                       "file":  "7ds-armes/Nunchaku/Nunchaku de garde indomptable.webp"
+                                   },
+                                   {
                                        "name":  "Nunchaku de la flamme cramoisie",
                                        "file":  "7ds-armes/Nunchaku/Nunchaku de la flamme cramoisie.webp"
                                    },
@@ -754,6 +807,10 @@ window.SEVEN_DS_DATA = {
                                   {
                                       "name":  "Rapière d\u0027aventurier",
                                       "file":  "7ds-armes/Rapiere/Rapière d\u0027aventurier.webp"
+                                  },
+                                  {
+                                      "name":  "Rapière de garde indomptable",
+                                      "file":  "7ds-armes/Rapiere/Rapière de garde indomptable.webp"
                                   },
                                   {
                                       "name":  "Rapière de la flamme cramoisie",
@@ -810,6 +867,10 @@ window.SEVEN_DS_DATA = {
                                  {
                                      "name":  "Haut de l\u0027éclat spectral",
                                      "file":  "7ds-armures-ssr/Haut/Haut de l\u0027éclat spectral.webp"
+                                 },
+                                 {
+                                     "name":  "Haut de l\u0027observateur de la 「Vérité」",
+                                     "file":  "7ds-armures-ssr/Haut/Haut de l\u0027observateur de la 「Vérité」.webp"
                                  },
                                  {
                                      "name":  "Haut de l\u0027obsession du destructeur",
@@ -894,6 +955,10 @@ window.SEVEN_DS_DATA = {
                                     "file":  "7ds-armures-ssr/Bas/Bas de l\u0027éclat spectral.webp"
                                 },
                                 {
+                                    "name":  "Bas de l\u0027observateur de la 「Vérité」",
+                                    "file":  "7ds-armures-ssr/Bas/Bas de l\u0027observateur de la 「Vérité」.webp"
+                                },
+                                {
                                     "name":  "Bas de l\u0027obsession du destructeur",
                                     "file":  "7ds-armures-ssr/Bas/Bas de l\u0027obsession du destructeur.webp"
                                 },
@@ -972,6 +1037,10 @@ window.SEVEN_DS_DATA = {
                                        "file":  "7ds-armures-ssr/Bottes/Bottes de combat de l\u0027éclat spectral.webp"
                                    },
                                    {
+                                       "name":  "Bottes de combat de l\u0027observateur de la 「Vérité」",
+                                       "file":  "7ds-armures-ssr/Bottes/Bottes de combat de l\u0027observateur de la 「Vérité」.webp"
+                                   },
+                                   {
                                        "name":  "Bottes de combat de l\u0027obsession du destructeur",
                                        "file":  "7ds-armures-ssr/Bottes/Bottes de combat de l\u0027obsession du destructeur.webp"
                                    },
@@ -1044,6 +1113,10 @@ window.SEVEN_DS_DATA = {
                                      {
                                          "name":  "Ceinture de l\u0027éclat spectral",
                                          "file":  "7ds-armures-ssr/Ceinture/Ceinture de l\u0027éclat spectral.webp"
+                                     },
+                                     {
+                                         "name":  "Ceinture de l\u0027observateur de la 「Vérité」",
+                                         "file":  "7ds-armures-ssr/Ceinture/Ceinture de l\u0027observateur de la 「Vérité」.webp"
                                      },
                                      {
                                          "name":  "Ceinture de l\u0027obsession du destructeur",
@@ -1130,6 +1203,10 @@ window.SEVEN_DS_DATA = {
                                         {
                                             "name":  "Barricade de fortune",
                                             "file":  "7ds-armures-ssr/Armure liee/Barricade de fortune.webp"
+                                        },
+                                        {
+                                            "name":  "Bénédiction de Benwick",
+                                            "file":  "7ds-armures-ssr/Armure liee/Bénédiction de Benwick.webp"
                                         },
                                         {
                                             "name":  "Chercheuse de savoir",
@@ -1420,6 +1497,10 @@ window.SEVEN_DS_DATA = {
                                             "file":  "7ds-armures-ssr/Armure liee/Souffle d\u0027exploration.webp"
                                         },
                                         {
+                                            "name":  "Tenue d\u0027aventurier",
+                                            "file":  "7ds-armures-ssr/Armure liee/Tenue d\u0027aventurier.webp"
+                                        },
+                                        {
                                             "name":  "Tenue de cérémonie",
                                             "file":  "7ds-armures-ssr/Armure liee/Tenue de cérémonie.webp"
                                         },
@@ -1434,6 +1515,10 @@ window.SEVEN_DS_DATA = {
                                         {
                                             "name":  "Tenue de soirée pour un rendez-vous secret",
                                             "file":  "7ds-armures-ssr/Armure liee/Tenue de soirée pour un rendez-vous secret.webp"
+                                        },
+                                        {
+                                            "name":  "Tenue d\u0027exercice confortable",
+                                            "file":  "7ds-armures-ssr/Armure liee/Tenue d\u0027exercice confortable.webp"
                                         },
                                         {
                                             "name":  "Tenue d\u0027exercice d\u0027exploratrice",

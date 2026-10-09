@@ -966,12 +966,13 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       niveaux:[1600, 2400, 3200],
       parCumul:[200, 300, 400],
       cumuls:8,
-      /* DEUX plafonds dans une seule parenthese - « (Max : 16 %, 32 %) » - un
-         pour la defense, un pour les degats. L'ancre « (Max » designerait le
-         premier. « %, » designe le second, et n'apparait qu'une fois dans tout
-         le texte : c'est precisement cette virgule qui separe les deux. */
+      /* DEUX plafonds, un pour la defense et un pour les degats. Depuis
+         octobre 2026, chacun suit son effet : « defense de 2 % (Max : 16 %)
+         et les degats de Terre de 4 % (Max : 32 %) ». « (Max : » apparait
+         donc deux fois ; `apres` ne le cherche qu'apres « degats de Terre de ». */
       provenance:{
-        phrase:"%, ",
+        apres:"dégâts de Terre de ",
+        phrase:"(Max\u00a0: ",
         phraseCumul:"et les dégâts de Terre de "
       }
     }
@@ -1001,11 +1002,12 @@ window.SEVEN_DS_PASSIFS_GRAVES = {
       niveaux:[2400, 2800, 3200],
       parCumul:[600, 700, 800],
       cumuls:4,
-      /* Meme forme a deux plafonds que la Dignite de la sainte, sous un autre
-         libelle : « (Nombre maximal de cumuls pour chaque effet : 80 %, 32 %) ».
-         La virgule reste le seul separateur fiable. */
+      /* Meme forme a deux plafonds que la Dignite de la sainte : depuis
+         octobre 2026, « recharge de 20 % (Max : 80 %) et augmente les degats
+         de Terre de 8 % (Max : 32 %) ». `apres` vise le second plafond. */
       provenance:{
-        phrase:"%, ",
+        apres:"dégâts de Terre de ",
+        phrase:"(Max\u00a0: ",
         phraseCumul:"augmente les dégâts de Terre de "
       }
     }

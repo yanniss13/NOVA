@@ -395,7 +395,7 @@ window.SEVEN_DS_POTENTIELS = {
    "Réduit les dégâts subis lors de l'utilisation de l'attaque spéciale de [#1A7331]30%[-].\nAugmente légèrement la portée de la dernière frappe de l'attaque spéciale et renforce sa puissance de [#1A7331]100%[-].",
    "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
    "Renforce la puissance des dégâts supplémentaires fournis par l'attaque ultime de [#1A7331]120%[-].",
-   "Augmente le nombre de coups des dégâts supplémentaires fournis par l'attaque ultime de [#1A7331]3[-] contre les ennemis qui ont atteint le nombre maximal de cumuls de [#0F5CD8]Chaîne[-].\nToucher un [#0F5CD8][-]tel ennemi avec la première frappe de l'attaque ultime réinitialise le temps de recharge de l'attaque spéciale du héros, le réduit de [#1A7331]80%[-] pendant [#1A7331]10s[-] et augmente le percement de défense du héros de [#1A7331]15%[-] pendant [#1A7331]20s[-]."
+   "Augmente le nombre de coups des dégâts supplémentaires fournis par l'attaque ultime de [#1A7331]3[-] contre les ennemis qui ont atteint le nombre maximal de cumuls de [#0F5CD8]Chaîne[-].\nToucher un tel ennemi avec la première frappe de l'attaque ultime réinitialise le temps de recharge de l'attaque spéciale du héros, le réduit de [#1A7331]80%[-] pendant [#1A7331]10s[-] et augmente le percement de défense du héros de [#1A7331]15%[-] pendant [#1A7331]20s[-]."
   ],
   "Gantelets": [
    "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
@@ -876,6 +876,44 @@ window.SEVEN_DS_POTENTIELS = {
    "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
    "Renforce la puissance de l'attaque ultime de [#1A7331]30%[-].",
    "Augmente les dégâts de Terre de tous les héros alliés de [#1A7331]30%[-] pendant [#1A7331]40s[-] en maintenant la posture de l'attaque spéciale pendant [#1A7331]5s[-]."
+  ]
+ },
+ "lancelot": {
+  "Gantelets": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Renforce la puissance de l'attaque spéciale de [#1A7331]30%[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de l'attaque ultime de [#1A7331]20%[-].",
+   "Réussir l'attaque spéciale augmente l'efficacité de durée des bonus de tous les héros alliés d'attribut Terre de [#1A7331]25%[-] et leurs dégâts de Terre de [#1A7331]40%[-] pendant [#1A7331]40s[-].",
+   "Réussir l'attaque ultime sur un ennemi affecté par [#0F5CD8]Tir d'ancrage[-] augmente les dégâts crit. de [#1A7331]200%[-].\nImmunise contre les réactions pendant l'utilisation de la compétence normale. L'utilisation de la compétence normale augmente la perforation de tous les héros alliés d'attribut Terre à hauteur de [#1A7331]0.3%[-] de l'attaque du héros pendant [#1A7331]30s[-]. (Max : [#1A7331]80[-])",
+   "Augmente le boost de dégâts crit. issu du passif de [#1A7331]10%[-] supplémentaires.",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Renforce la puissance de l'attaque ultime de [#1A7331]250%[-].",
+   "L'utilisation de l'attaque spéciale restaure [#1A7331]1[-] point(s) de magie et renforce les dégâts supplémentaires de [#0F5CD8]Tir d'ancrage[-] de [#1A7331]100%[-]."
+  ],
+  "Baton": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Renforce la puissance de la compétence de relève de [#1A7331]40%[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de l'attaque normale de [#1A7331]40%[-].",
+   "Augmente la vitesse d'attaque d'[#3C22D6]Attaque ultime : Lumière prodigieuse[-] de [#1A7331]30%[-] et immunise contre les réactions pendant l'utilisation de la compétence.\nFaire mouche [#1A7331]10 fois[-] avec des attaques normales sur un ennemi sous l'effet d'un [#0F5CD8]Déluge[-] inflige des dégâts supplémentaires égaux à [#1A7331]250%[-] de l'attaque et retire le [#0F5CD8]Déluge[-].\nLes dégâts supplémentaires comptent comme des dégâts d'attaque ultime.",
+   "Renforce la puissance des compétences [#3C22D6]Attaque ultime : Ruée divine[-], [#3C22D6]Attaque ultime : Lance explosive[-] et [#3C22D6]Attaque ultime : Lumière prodigieuse[-] de [#1A7331]30%[-].",
+   "Utiliser une attaque combinée avec l'attaque ultime du héros en tant que base augmente l'attaque du Sacré de [#1A7331]25%[-] pendant [#1A7331]30s[-] et octroie les compétences [#3C22D6]Attaque ultime : Ruée divine[-] et [#3C22D6]Attaque ultime : Lance explosive[-].\nL'effet persiste tant que le héros est en combat.",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Renforce la puissance des compétences [#3C22D6]Attaque ultime : Ruée divine[-], [#3C22D6]Attaque ultime : Lance explosive[-] et [#3C22D6]Attaque ultime : Lumière prodigieuse[-] de [#1A7331]70%[-].",
+   "Augmente le percement de défense du héros de [#1A7331]15%[-] contre les ennemis sous l'effet d'un [#0F5CD8]Déluge[-].\nAugmente légèrement la portée d'[#3C22D6]Attaque ultime : Lumière prodigieuse[-] et le nombre de ses coups de [#1A7331]10[-], infligeant des dégâts égaux à [#1A7331]65%[-] de l'attaque."
+  ],
+  "Epee 1 main": [
+   "Augmente l'attaque de [#1A7331]5%[-], la défense de [#1A7331]4%[-] et les PV max de [#1A7331]2%[-].",
+   "Renforce la puissance de la compétence de relève de [#1A7331]40%[-].",
+   "Augmente l'attaque de [#1A7331]10%[-], la défense de [#1A7331]8%[-] et les PV max de [#1A7331]3%[-].",
+   "Renforce la puissance de [#3C22D6]Compétence normale : Flash résiduel[-], [#3C22D6]Compétence normale : Croc plongeant[-] et [#3C22D6]Compétence normale : Entaille croisée[-] de [#1A7331]10%[-].",
+   "Réduit les dégâts subis de [#1A7331]50%[-] pendant l'utilisation d'[#3C22D6]Attaque spéciale : Posture Iai[-]. Réussir une charge parfaite augmente l'attaque physique du héros à hauteur de [#1A7331]800[-] pendant [#1A7331]10s[-]. (Max : [#1A7331]4[-] fois)",
+   "Renforce la puissance de [#3C22D6]Compétence normale : Flash résiduel[-], [#3C22D6]Compétence normale : Croc plongeant[-] et [#3C22D6]Compétence normale : Entaille croisée[-] de [#1A7331]15%[-] et leurs dégâts supplémentaires de [#1A7331]25%[-].",
+   "À chaque utilisation d'une compétence convertie par [#3C22D6]Passif : Œil de l'esprit[-], augmente les chances crit. du héros de [#1A7331]2%[-] et ses dégâts crit. de [#1A7331]5%[-] pendant [#1A7331]10s[-]. (Max : [#1A7331]10 fois[-])",
+   "Augmente l'attaque de [#1A7331]15%[-], la défense de [#1A7331]12%[-] et les PV max de [#1A7331]5%[-].",
+   "Renforce la puissance de [#3C22D6]Compétence normale : Flash résiduel[-], [#3C22D6]Compétence normale : Croc plongeant[-] et [#3C22D6]Compétence normale : Entaille croisée[-] de [#1A7331]30%[-] et leurs dégâts supplémentaires de [#1A7331]40%[-].",
+   "Augmente le percement de défense des compétences converties par [#3C22D6]Passif : Œil de l'esprit[-] de [#1A7331]10%[-] et leur nombre d'utilisations de [#1A7331]2[-]."
   ]
  },
  "manny": {

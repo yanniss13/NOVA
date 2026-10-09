@@ -177,6 +177,48 @@ NON_INCLUS_SPECIFIQUES = {
     "engraving:133065003:EpEq_Bug_D:1": "effet-equipe",
     "engraving:133065003:EpEq_Bug_D:2": "effet-equipe",
     "engraving:133065003:EpEq_Bug_D:3": "effet-equipe",
+    # --- Lancelot, octobre 2026 ------------------------------------------
+    #
+    # Les armes « de garde indomptable » sortent avec lui, une par type.
+    # Leur passif majore les degats crit. de la SEULE competence normale :
+    # meme impasse que le passif des gantelets de Ban plus haut, une regle
+    # `critDamage` globale majorerait aussi l'attaque speciale et l'ultime.
+    **{
+        f"weapon:indomitable-guard-{arme}:{niveau}": "crit-limite-a-la-competence-normale"
+        for arme in (
+            "axe", "dual-swords", "gauntlets", "greatsword", "grimoire", "lance",
+            "longsword", "nunchaku", "rapier", "staff", "sword-and-shield", "wand",
+        )
+        for niveau in (1, 2, 3)
+    },
+    # Le passif de l'epee longue convertit des competences (Postlueur, Croc
+    # tombant, Taille croisee) qui n'ont aucune entree propre dans
+    # data/competences.js : rien a quoi accrocher leurs majorations.
+    "potential:lancelot:Sword1h:6": "competences-converties-hors-catalogue",
+    "potential:lancelot:Sword1h:9": "competences-converties-hors-catalogue",
+    "potential:lancelot:Sword1h:10": "competences-converties-hors-catalogue",
+    # T7 cumule du critique a chaque competence convertie : son declencheur
+    # n'existe pas pour le simulateur, qui ne lance jamais ces competences.
+    "potential:lancelot:Sword1h:7": "competences-converties-hors-catalogue",
+    # Le Tir d'ancrage des gantelets est un etat pose sur la CIBLE, avec ses
+    # tics, son explosion au retrait et un renvoi des degats subis.
+    "skill:lancelot_gauntlets_skill_q": "tir-d-ancrage-debuff-sur-la-cible",
+    "potential:lancelot:Gauntlets:10": "tir-d-ancrage-debuff-sur-la-cible",
+    # T7 renforce le bonus de degats crit. du passif, lui-meme conditionnel.
+    "potential:lancelot:Gauntlets:7": "renfort-de-passif-conditionnel",
+    # T6 : « Reussir l'attaque ultime sur un ennemi affecte par Tir d'ancrage
+    # augmente les degats crit. de 200 % », sans duree — le coup d'ultime
+    # seul. Le classifieur en faisait +200 % de degats crit. GLOBAUX.
+    "potential:lancelot:Gauntlets:6": "crit-limite-a-l-ultime-sous-tir-d-ancrage",
+    # Ruee divine est un ultime octroye apres deux attaques speciales, sans
+    # entree propre ; son bonus crit. depend d'un Deluge sur la cible.
+    "skill:lancelot_staff_skill_q": "ultime-octroye-hors-catalogue",
+    # La reinitialisation exige une attaque combinee, donc un second heros.
+    "skill:lancelot_staff_skill_r_enchant": "attaque-combinee-effet-equipe",
+    "potential:lancelot:Staff:7": "attaque-combinee-effet-equipe",
+    # Seul l'anglais a change (« all allied heroes » -> « the entire team ») :
+    # le bonus de Terre reste un effet d'equipe, classe tel quel jusqu'ici.
+    "skill:elizabeth_wand_skill_e": "effet-equipe",
 }
 
 NOTES_MODELISE = {
@@ -1131,4 +1173,29 @@ REGLES_SPECIFIQUES = {
             "mode": "passif-max",
         }
     ],
+    # Gravure B de Diane, « Le Serpent de l'Envie ». Depuis octobre 2026 la
+    # prose place chaque plafond juste apres son effet : « recharge -14 %
+    # (Max : 56 %) et degats de Terre +6 % (Max : 24 %) ». L'extracteur
+    # generique y lisait 56 % — le plafond de la RECHARGE — comme bonus de
+    # Terre. Les degats valent ici leur plafond, ce que `passif-max` suppose
+    # (Gil Thunder : +1 % par coup, 20 % retenus). La recharge garde sa
+    # regle par declencheur, inchangee.
+    **{
+        f"engraving:133155001:EpEq_Diane_B:{niveau}": [
+            {
+                "type": "bonus-degats",
+                "cible": "element:earth",
+                "valeur": terre,
+                "mode": "passif-max",
+            },
+            {
+                "type": "recharge-taux",
+                "cible": "normal-skill",
+                "valeur": recharge,
+                "mode": "passif-max",
+                "declencheur": "special",
+            },
+        ]
+        for niveau, terre, recharge in ((1, 2400, 1400), (2, 2800, 1700), (3, 3200, 2000))
+    },
 }

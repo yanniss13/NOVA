@@ -400,6 +400,25 @@
     }
    }
   },
+  "lancelot": {
+   "nom": "Lancelot",
+   "fichier": "7ds-personnages/lancelot.webp",
+   "element": "HOLY",
+   "armes": {
+    "Staff": {
+     "element": "HOLY",
+     "role": "Attacker"
+    },
+    "Sword1h": {
+     "element": "DEFAULT",
+     "role": "Attacker"
+    },
+    "Gauntlets": {
+     "element": "EARTH",
+     "role": "Supporter"
+    }
+   }
+  },
   "manny": {
    "nom": "Manny",
    "fichier": "7ds-personnages/manny.webp",
@@ -558,6 +577,12 @@
     "niveauMax": 40
    }
   },
+  "7ds-armes/Baguette/Baguette de garde indomptable.webp": {
+   "131065002": {
+    "outrepassementMax": 6,
+    "niveauMax": 50
+   }
+  },
   "7ds-armes/Baguette/Baguette de l'âme vorace.webp": {
    "131065010": {
     "outrepassementMax": 6,
@@ -676,6 +701,18 @@
     "niveauMax": 40
    }
   },
+  "7ds-armes/Baton/Bâton de garde indomptable.webp": {
+   "131015002": {
+    "outrepassementMax": 6,
+    "niveauMax": 50
+   }
+  },
+  "7ds-armes/Baton/Bâton de l'âme vorace.webp": {
+   "131015010": {
+    "outrepassementMax": 6,
+    "niveauMax": 50
+   }
+  },
   "7ds-armes/Baton/Bâton de la flamme cramoisie.webp": {
    "131014001": {
     "outrepassementMax": 6,
@@ -786,6 +823,12 @@
    "131043001": {
     "outrepassementMax": 0,
     "niveauMax": 40
+   }
+  },
+  "7ds-armes/Bouclier/Épée et bouclier de garde indomptable.webp": {
+   "131045002": {
+    "outrepassementMax": 6,
+    "niveauMax": 50
    }
   },
   "7ds-armes/Bouclier/Épée et bouclier de l'esprit inébranlable.webp": {
@@ -912,6 +955,12 @@
     "niveauMax": 40
    }
   },
+  "7ds-armes/Epee 1 main/Épée longue de garde indomptable.webp": {
+   "131025002": {
+    "outrepassementMax": 6,
+    "niveauMax": 50
+   }
+  },
   "7ds-armes/Epee 1 main/Épée longue de l'âme vorace.webp": {
    "131025010": {
     "outrepassementMax": 6,
@@ -1036,6 +1085,12 @@
     "niveauMax": 40
    }
   },
+  "7ds-armes/Epee 2 mains/Espadon de garde indomptable.webp": {
+   "131035002": {
+    "outrepassementMax": 6,
+    "niveauMax": 50
+   }
+  },
   "7ds-armes/Epee 2 mains/Espadon de l'ombre noire.webp": {
    "131034003": {
     "outrepassementMax": 6,
@@ -1146,6 +1201,12 @@
    "131113001": {
     "outrepassementMax": 0,
     "niveauMax": 40
+   }
+  },
+  "7ds-armes/Epees doubles/Épées doubles de garde indomptable.webp": {
+   "131115002": {
+    "outrepassementMax": 6,
+    "niveauMax": 50
    }
   },
   "7ds-armes/Epees doubles/Épées doubles de l'âme vorace.webp": {
@@ -1266,6 +1327,12 @@
     "niveauMax": 40
    }
   },
+  "7ds-armes/Gantelets/Gantelets de garde indomptable.webp": {
+   "131075002": {
+    "outrepassementMax": 6,
+    "niveauMax": 50
+   }
+  },
   "7ds-armes/Gantelets/Gantelets de l'âme vorace.webp": {
    "131075010": {
     "outrepassementMax": 6,
@@ -1382,6 +1449,12 @@
    "131123001": {
     "outrepassementMax": 0,
     "niveauMax": 40
+   }
+  },
+  "7ds-armes/Hache/Hache de garde indomptable.webp": {
+   "131125002": {
+    "outrepassementMax": 6,
+    "niveauMax": 50
    }
   },
   "7ds-armes/Hache/Hache de l'âme vorace.webp": {
@@ -1502,6 +1575,12 @@
     "niveauMax": 40
    }
   },
+  "7ds-armes/Lance/Lance de garde indomptable.webp": {
+   "131095002": {
+    "outrepassementMax": 6,
+    "niveauMax": 50
+   }
+  },
   "7ds-armes/Lance/Lance de l'épine de la cupidité.webp": {
    "131094010": {
     "outrepassementMax": 6,
@@ -1612,6 +1691,12 @@
    "131103001": {
     "outrepassementMax": 0,
     "niveauMax": 40
+   }
+  },
+  "7ds-armes/Livre/Grimoire de garde indomptable.webp": {
+   "131105002": {
+    "outrepassementMax": 6,
+    "niveauMax": 50
    }
   },
   "7ds-armes/Livre/Grimoire de l'ombre de la rupture.webp": {
@@ -1744,6 +1829,12 @@
     "niveauMax": 40
    }
   },
+  "7ds-armes/Nunchaku/Nunchaku de garde indomptable.webp": {
+   "131055002": {
+    "outrepassementMax": 6,
+    "niveauMax": 50
+   }
+  },
   "7ds-armes/Nunchaku/Nunchaku de l'âme vorace.webp": {
    "131055010": {
     "outrepassementMax": 6,
@@ -1860,6 +1951,12 @@
    "131083001": {
     "outrepassementMax": 0,
     "niveauMax": 40
+   }
+  },
+  "7ds-armes/Rapiere/Rapière de garde indomptable.webp": {
+   "131085002": {
+    "outrepassementMax": 6,
+    "niveauMax": 50
    }
   },
   "7ds-armes/Rapiere/Rapière de l'âme vorace.webp": {
@@ -2400,6 +2497,7 @@
     "7ds-armures-ssr/Armure liee/Aventure en toute sécurité.webp": 18,
     "7ds-armures-ssr/Armure liee/Aventure exemplaire.webp": 18,
     "7ds-armures-ssr/Armure liee/Barricade de fortune.webp": 18,
+    "7ds-armures-ssr/Armure liee/Bénédiction de Benwick.webp": 18,
     "7ds-armures-ssr/Armure liee/Chercheuse de savoir.webp": 18,
     "7ds-armures-ssr/Armure liee/Chevalier honorable.webp": 18,
     "7ds-armures-ssr/Armure liee/Chevalier impérial.webp": 18,
@@ -2471,6 +2569,8 @@
     "7ds-armures-ssr/Armure liee/Sortie du démon.webp": 17,
     "7ds-armures-ssr/Armure liee/Sortie joyeuse.webp": 18,
     "7ds-armures-ssr/Armure liee/Souffle d'exploration.webp": 18,
+    "7ds-armures-ssr/Armure liee/Tenue d'aventurier.webp": 18,
+    "7ds-armures-ssr/Armure liee/Tenue d'exercice confortable.webp": 18,
     "7ds-armures-ssr/Armure liee/Tenue d'exercice d'exploratrice.webp": 18,
     "7ds-armures-ssr/Armure liee/Tenue de combat cloutée.webp": 18,
     "7ds-armures-ssr/Armure liee/Tenue de cérémonie.webp": 17,
@@ -2877,8 +2977,10 @@
     "131014011": 3,
     "131014012": 3,
     "131014014": 3,
+    "131015002": 3,
     "131015004": 3,
     "131015005": 3,
+    "131015010": 3,
     "131021001": 0,
     "131021003": 0,
     "131021005": 0,
@@ -2899,6 +3001,7 @@
     "131024011": 3,
     "131024012": 3,
     "131024015": 3,
+    "131025002": 3,
     "131025004": 3,
     "131025005": 3,
     "131025010": 3,
@@ -2923,6 +3026,7 @@
     "131034004": 3,
     "131034011": 3,
     "131034012": 3,
+    "131035002": 3,
     "131035004": 3,
     "131035005": 3,
     "131041001": 0,
@@ -2945,6 +3049,7 @@
     "131044011": 3,
     "131044012": 3,
     "131044013": 3,
+    "131045002": 3,
     "131045004": 3,
     "131045005": 3,
     "131045010": 3,
@@ -2968,6 +3073,7 @@
     "131054009": 3,
     "131054011": 3,
     "131054012": 3,
+    "131055002": 3,
     "131055004": 3,
     "131055005": 3,
     "131055010": 3,
@@ -2991,6 +3097,7 @@
     "131064011": 3,
     "131064012": 3,
     "131064017": 3,
+    "131065002": 3,
     "131065004": 3,
     "131065005": 3,
     "131065010": 3,
@@ -3014,6 +3121,7 @@
     "131074008": 3,
     "131074011": 3,
     "131074012": 3,
+    "131075002": 3,
     "131075004": 3,
     "131075005": 3,
     "131075010": 3,
@@ -3037,6 +3145,7 @@
     "131084011": 3,
     "131084012": 3,
     "131084018": 3,
+    "131085002": 3,
     "131085004": 3,
     "131085005": 3,
     "131085010": 3,
@@ -3060,6 +3169,7 @@
     "131094010": 3,
     "131094011": 3,
     "131094012": 3,
+    "131095002": 3,
     "131095004": 3,
     "131095005": 3,
     "131101001": 0,
@@ -3083,6 +3193,7 @@
     "131104011": 3,
     "131104012": 3,
     "131105001": 3,
+    "131105002": 3,
     "131105004": 3,
     "131105005": 3,
     "131105010": 3,
@@ -3107,6 +3218,7 @@
     "131114005": 3,
     "131114011": 3,
     "131114012": 3,
+    "131115002": 3,
     "131115004": 3,
     "131115005": 3,
     "131115010": 3,
@@ -3130,6 +3242,7 @@
     "131124004": 3,
     "131124011": 3,
     "131124012": 3,
+    "131125002": 3,
     "131125004": 3,
     "131125005": 3,
     "131125010": 3

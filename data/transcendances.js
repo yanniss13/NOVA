@@ -210,6 +210,16 @@ window.SEVEN_DS_TRANSCENDANCES = {
       tenue:"7ds-armures-ssr/Armure liee/Tenue d'exercice d'exploratrice.webp", promotion:3, arme:"Staff",
       regle:{ cible:"normal", valeur:5000, phrase:"Augmente les dégâts d'attaque normale de " } }
   ],
+  "lancelot":[
+    { id:"eplb_lancelot_b", nom:"Transcendance de puissance : Frappe mortelle", texte:"Augmente les dégâts d'attaque ultime de 50%.",
+      tenue:"7ds-armures-ssr/Armure liee/Tenue d'exercice confortable.webp", promotion:3, arme:"Staff",
+      regle:{ cible:"ultimate", valeur:5000, phrase:"Augmente les dégâts d'attaque ultime de " } },
+    { id:"eplb_lancelot_c", nom:"Transcendance de puissance : Technique", texte:"Augmente les dégâts de compétence normale de 50%.",
+      tenue:"7ds-armures-ssr/Armure liee/Tenue d'aventurier.webp", promotion:3, arme:"Sword1h",
+      regle:{ cible:"normal-skill", valeur:5000, phrase:"Augmente les dégâts de compétence normale de " } },
+    { id:"eplb_lancelot_d", nom:"Transcendance de soutien : Amélioration", texte:"Augmente les dégâts de Terre de tous les héros alliés de 30% pendant 10 s lorsqu'un héros allié utilise une compétence de relève.",
+      tenue:"7ds-armures-ssr/Armure liee/Bénédiction de Benwick.webp", promotion:3, arme:"Gauntlets" }
+  ],
   "manny":[
     { id:"eplb_manny_b", nom:"Transcendance de soutien : Amélioration", texte:"Augmente tous les dégâts élémentaires de tous les héros alliés de 25% pendant 10 s lorsqu'un héros allié utilise une compétence de relève.",
       tenue:"7ds-armures-ssr/Armure liee/Prestige de l'archiprêtresse.webp", promotion:3, arme:"Staff" },

@@ -96,6 +96,7 @@ def main():
               'peut-être changé.' % len(data))
         sys.exit(1)
 
+    data = client_content.without_public_aliases(data)
     data = client_content.merge_mapping(data, 'potentials')
     client_content.write_text_atomic(
         OUT, client_content.render_window_assignment(HEADER, NAME, data))

@@ -505,6 +505,30 @@
     }
    ]
   },
+  "lancelot": {
+   "nom": "Lancelot",
+   "rarete": "SSR",
+   "armes": [
+    {
+     "type": "Staff",
+     "arme": "Bâton",
+     "element": "Sacré",
+     "role": "Attaquant"
+    },
+    {
+     "type": "Sword1h",
+     "arme": "Épée longue",
+     "element": "Physique",
+     "role": "Attaquant"
+    },
+    {
+     "type": "Gauntlets",
+     "arme": "Gantelets",
+     "element": "Terre",
+     "role": "Soutien"
+    }
+   ]
+  },
   "manny": {
    "nom": "Manny",
    "rarete": "SSR",
@@ -3339,6 +3363,134 @@
     "recharge": 0
    }
   ],
+  "lancelot": [
+   {
+    "type": "Gauntlets",
+    "categorie": "NORMAL",
+    "nom": "Tir en mouvement",
+    "description": "Inflige des dégâts égaux à 75% de l'attaque.\n1er coup : 11%\n2e coup : 12%\n3e coup : 20%\n4e coup : 32%",
+    "recharge": null
+   },
+   {
+    "type": "Gauntlets",
+    "categorie": "NORMAL_SKILL",
+    "nom": "Pluie de flèches",
+    "description": "Dure 4s / 8s en fonction du niveau de charge. Inflige des dégâts égaux à 5% / 7% de l'attaque aux ennemis à portée toutes les 0.3s et réduit leur défense de Terre de 24% de la défense pendant 40s.\nUne attaque complètement chargée restaure 1 point(s) de relève.",
+    "recharge": 23
+   },
+   {
+    "type": "Gauntlets",
+    "categorie": "ACTIVE_THIRD",
+    "nom": "Tir d'ancrage",
+    "description": "Inflige des dégâts égaux à 72% de l'attaque, puis inflige Tir d'ancrage pendant 20s.\n\n※ Tir d'ancrage : inflige des dégâts de Terre égaux à 10% de l'attaque toutes les 1s. Inflige des dégâts de Terre égaux à 120% de l'attaque lorsque l'effet est retiré. Inflige des dégâts supplémentaires égaux à 10% des dégâts subis avec une attaque spéciale ou une compétence normale de Terre.",
+    "recharge": 20
+   },
+   {
+    "type": "Gauntlets",
+    "categorie": "TAG_SKILL",
+    "nom": "Flèche explosive",
+    "description": "Inflige des dégâts égaux à 59% de l'attaque.",
+    "recharge": null
+   },
+   {
+    "type": "Gauntlets",
+    "categorie": "ULTIMATE",
+    "nom": "Faille colossale",
+    "description": "Inflige des dégâts égaux à 250% de l'attaque. Porte un coup critique si l'ennemi est affecté par Tir d'ancrage.",
+    "recharge": 10
+   },
+   {
+    "type": "Gauntlets",
+    "categorie": "PASSIVE",
+    "nom": "Lecture du cœur",
+    "description": "Restaure la jauge de relève de 10 + 0.4% de l'attaque (max : 100) toutes les 0.5s en combat. Augmente les dégâts crit. des alliés d'attribut Terre de 15% pendant 10s chaque fois qu'un héros allié utilise une compétence de relève. (Max : 4 fois)\nRéussir une esquive inflige des dégâts égaux à 48% de l'attaque.",
+    "recharge": 0
+   },
+   {
+    "type": "Staff",
+    "categorie": "NORMAL",
+    "nom": "Lance-chaîne",
+    "description": "Inflige des dégâts égaux à 160% de l'attaque.\n1er coup : 24%\n2e coup : 26%\n3e coup : 42%\n4e coup : 68%",
+    "recharge": null
+   },
+   {
+    "type": "Staff",
+    "categorie": "NORMAL_SKILL",
+    "nom": "Lance sacrée",
+    "description": "Inflige des dégâts égaux à 140% de l'attaque. L'utilisation de la compétence normale octroie la compétence Attaque ultime : Lance explosive.\nL'effet persiste tant que le héros est en combat.\n\nLance explosive\nInflige des dégâts égaux à 325% de l'attaque, et augmente les dégâts d'attaque ultime du héros de 75% pendant 20s en touchant un ennemi sous l'effet d'un Déluge.",
+    "recharge": 17
+   },
+   {
+    "type": "Staff",
+    "categorie": "ACTIVE_THIRD",
+    "nom": "Ruée lumineuse",
+    "description": "Inflige des dégâts égaux à 73% de l'attaque. Utiliser 2 fois l'attaque spéciale octroie la compétence Attaque ultime : Ruée divine.\nL'effet persiste tant que le héros est en combat.\n\nRuée divine\nInflige des dégâts égaux à 251% de l'attaque, et augmente les dégâts crit. du héros de 60% pendant 20s en touchant un ennemi sous l'effet d'un Déluge.",
+    "recharge": 10
+   },
+   {
+    "type": "Staff",
+    "categorie": "TAG_SKILL",
+    "nom": "Chute de lumière",
+    "description": "Inflige des dégâts égaux à 138% de l'attaque.",
+    "recharge": null
+   },
+   {
+    "type": "Staff",
+    "categorie": "ULTIMATE",
+    "nom": "Chemin radieux",
+    "description": "Inflige des dégâts égaux à 353% de l'attaque. Utiliser une attaque combinée avec l'attaque ultime du héros en tant que base réinitialise le temps de recharge de toutes les compétences du héros.",
+    "recharge": null
+   },
+   {
+    "type": "Staff",
+    "categorie": "PASSIVE",
+    "nom": "Perspicacité",
+    "description": "Utiliser à la fois Attaque ultime : Ruée divine et Attaque ultime : Lance explosive convertit les attaques normales en Attaque ultime : Lumière prodigieuse.\nL'effet persiste tant que le héros est en combat.\n\nLumière prodigieuse\nInflige des dégâts égaux à 450% de l'attaque. Dégâts augmentés de 100% contre les ennemis sous l'effet d'un Déluge.",
+    "recharge": 0
+   },
+   {
+    "type": "Sword1h",
+    "categorie": "NORMAL",
+    "nom": "Enchaînement éclair",
+    "description": "Inflige des dégâts égaux à 165% de l'attaque.\n1er coup : 12%\n2e coup : 18%\n3e coup : 29%\n4e coup : 45%\n5e coup : 61%\n\nFlash résiduel\nInflige des dégâts égaux à 105% de l'attaque. La première frappe augmente les dégâts de compétence normale du héros de 12% pendant 10s. (Max : 6 fois)",
+    "recharge": null
+   },
+   {
+    "type": "Sword1h",
+    "categorie": "NORMAL_SKILL",
+    "nom": "Fendoir des cieux",
+    "description": "Inflige des dégâts égaux à 179% de l'attaque.\n1er coup : 24%\n2e coup : 26%\n3e coup : 28%\n4e coup : 30%\n5e coup : 33%\n6e coup : 38%\n\nEntaille croisée\nInflige des dégâts égaux à 94% de l'attaque. La première frappe augmente la perforation du héros de 0.2% de l'attaque (jusqu'à 3 fois) pendant 15s. (Max : 150)",
+    "recharge": 21
+   },
+   {
+    "type": "Sword1h",
+    "categorie": "ACTIVE_THIRD",
+    "nom": "Posture Iai",
+    "description": "Immunise contre les réactions tant que la posture est maintenue. Attaquer lorsque l'arme brille entraîne une charge parfaite, qui déclenche immédiatement Compétence normale : Croc plongeant.\n\nCroc plongeant\nInflige des dégâts égaux à 85% de l'attaque, puis augmente les dégâts subis du héros de 30% pendant 10s.",
+    "recharge": 8
+   },
+   {
+    "type": "Sword1h",
+    "categorie": "TAG_SKILL",
+    "nom": "Tempête de lames",
+    "description": "Inflige des dégâts égaux à 133% de l'attaque.",
+    "recharge": null
+   },
+   {
+    "type": "Sword1h",
+    "categorie": "ULTIMATE",
+    "nom": "Éclair instantané",
+    "description": "Inflige des dégâts égaux à 435% de l'attaque, puis octroie Passif : Œil de l'esprit.",
+    "recharge": 10
+   },
+   {
+    "type": "Sword1h",
+    "categorie": "PASSIVE",
+    "nom": "Œil de l'esprit",
+    "description": "Faire mouche avec Attaque spéciale : Posture Iai parfaitement chargée convertit l'attaque normale en Compétence normale : Flash résiduel, l'attaque spéciale en Compétence normale : Croc plongeant et la compétence normale en Compétence normale : Entaille croisée.\nL'effet persiste tant que le héros est en combat.\nUtiliser ces compétences converties un total de 3 fois les ramène à leur état initial et réinitialise le temps de recharge d'Attaque spéciale : Posture Iai.\nLors de l'utilisation d'une compétence de relève, la dernière frappe de Compétence normale : Flash résiduel, Compétence normale : Croc plongeant et Compétence normale : Entaille croisée inflige des dégâts supplémentaires égaux à 130% de l'attaque pendant 15s.",
+    "recharge": 0
+   }
+  ],
   "manny": [
    {
     "type": "Staff",
@@ -4914,6 +5066,44 @@
     "Chaque coup de l'attaque ultime inflige des dégâts supplémentaires égaux à 33% de l'attaque et réduit la défense de Vent de la cible à hauteur de 2% de sa défense pendant 30s. (Max : 10 fois)"
    ]
   },
+  "lancelot": {
+   "Staff": [
+    "Augmente l'attaque de 5%, la défense de 4% et les PV max de 2%.",
+    "Renforce la puissance de la compétence de relève de 40%.",
+    "Augmente l'attaque de 10%, la défense de 8% et les PV max de 3%.",
+    "Renforce la puissance de l'attaque normale de 40%.",
+    "Augmente la vitesse d'attaque d'Attaque ultime : Lumière prodigieuse de 30% et immunise contre les réactions pendant l'utilisation de la compétence.\nFaire mouche 10 fois avec des attaques normales sur un ennemi sous l'effet d'un Déluge inflige des dégâts supplémentaires égaux à 250% de l'attaque et retire le Déluge.\nLes dégâts supplémentaires comptent comme des dégâts d'attaque ultime.",
+    "Renforce la puissance des compétences Attaque ultime : Ruée divine, Attaque ultime : Lance explosive et Attaque ultime : Lumière prodigieuse de 30%.",
+    "Utiliser une attaque combinée avec l'attaque ultime du héros en tant que base augmente l'attaque du Sacré de 25% pendant 30s et octroie les compétences Attaque ultime : Ruée divine et Attaque ultime : Lance explosive.\nL'effet persiste tant que le héros est en combat.",
+    "Augmente l'attaque de 15%, la défense de 12% et les PV max de 5%.",
+    "Renforce la puissance des compétences Attaque ultime : Ruée divine, Attaque ultime : Lance explosive et Attaque ultime : Lumière prodigieuse de 70%.",
+    "Augmente le percement de défense du héros de 15% contre les ennemis sous l'effet d'un Déluge.\nAugmente légèrement la portée d'Attaque ultime : Lumière prodigieuse et le nombre de ses coups de 10, infligeant des dégâts égaux à 65% de l'attaque."
+   ],
+   "Sword1h": [
+    "Augmente l'attaque de 5%, la défense de 4% et les PV max de 2%.",
+    "Renforce la puissance de la compétence de relève de 40%.",
+    "Augmente l'attaque de 10%, la défense de 8% et les PV max de 3%.",
+    "Renforce la puissance de Compétence normale : Flash résiduel, Compétence normale : Croc plongeant et Compétence normale : Entaille croisée de 10%.",
+    "Réduit les dégâts subis de 50% pendant l'utilisation d'Attaque spéciale : Posture Iai. Réussir une charge parfaite augmente l'attaque physique du héros à hauteur de 800 pendant 10s. (Max : 4 fois)",
+    "Renforce la puissance de Compétence normale : Flash résiduel, Compétence normale : Croc plongeant et Compétence normale : Entaille croisée de 15% et leurs dégâts supplémentaires de 25%.",
+    "À chaque utilisation d'une compétence convertie par Passif : Œil de l'esprit, augmente les chances crit. du héros de 2% et ses dégâts crit. de 5% pendant 10s. (Max : 10 fois)",
+    "Augmente l'attaque de 15%, la défense de 12% et les PV max de 5%.",
+    "Renforce la puissance de Compétence normale : Flash résiduel, Compétence normale : Croc plongeant et Compétence normale : Entaille croisée de 30% et leurs dégâts supplémentaires de 40%.",
+    "Augmente le percement de défense des compétences converties par Passif : Œil de l'esprit de 10% et leur nombre d'utilisations de 2."
+   ],
+   "Gauntlets": [
+    "Augmente l'attaque de 5%, la défense de 4% et les PV max de 2%.",
+    "Renforce la puissance de l'attaque spéciale de 30%.",
+    "Augmente l'attaque de 10%, la défense de 8% et les PV max de 3%.",
+    "Renforce la puissance de l'attaque ultime de 20%.",
+    "Réussir l'attaque spéciale augmente l'efficacité de durée des bonus de tous les héros alliés d'attribut Terre de 25% et leurs dégâts de Terre de 40% pendant 40s.",
+    "Réussir l'attaque ultime sur un ennemi affecté par Tir d'ancrage augmente les dégâts crit. de 200%.\nImmunise contre les réactions pendant l'utilisation de la compétence normale. L'utilisation de la compétence normale augmente la perforation de tous les héros alliés d'attribut Terre à hauteur de 0.3% de l'attaque du héros pendant 30s. (Max : 80)",
+    "Augmente le boost de dégâts crit. issu du passif de 10% supplémentaires.",
+    "Augmente l'attaque de 15%, la défense de 12% et les PV max de 5%.",
+    "Renforce la puissance de l'attaque ultime de 250%.",
+    "L'utilisation de l'attaque spéciale restaure 1 point(s) de magie et renforce les dégâts supplémentaires de Tir d'ancrage de 100%."
+   ]
+  },
   "manny": {
    "Staff": [
     "Augmente l'attaque de 5%, la défense de 4% et les PV max de 2%.",
@@ -5343,6 +5533,16 @@
    "type": "Baguette"
   },
   {
+   "nom": "Baguette de garde indomptable",
+   "fichier": "7ds-armes/Baguette/Baguette de garde indomptable.webp",
+   "categorie": "arme",
+   "type": "Baguette",
+   "passif": {
+    "niveau": 7,
+    "texte": "Chaque utilisation de la compétence normale augmente les dégâts crit. de la compétence normale de 5% pendant 10s. (Max : 50%)\nLorsque l'effet atteint le max, augmente l'attaque de 20% pendant 10s."
+   }
+  },
+  {
    "nom": "Baguette de l'âme vorace",
    "fichier": "7ds-armes/Baguette/Baguette de l'âme vorace.webp",
    "categorie": "arme",
@@ -5455,6 +5655,12 @@
    "categorie": "armure",
    "type": "Bas",
    "ensemble": "equip_t5_splinter"
+  },
+  {
+   "nom": "Bas de l'observateur de la 「Vérité」",
+   "fichier": "7ds-armures-ssr/Bas/Bas de l'observateur de la 「Vérité」.webp",
+   "categorie": "armure",
+   "type": "Bas"
   },
   {
    "nom": "Bas de l'obsession du destructeur",
@@ -5597,6 +5803,26 @@
    "type": "Bâton"
   },
   {
+   "nom": "Bâton de garde indomptable",
+   "fichier": "7ds-armes/Baton/Bâton de garde indomptable.webp",
+   "categorie": "arme",
+   "type": "Bâton",
+   "passif": {
+    "niveau": 7,
+    "texte": "Chaque utilisation de la compétence normale augmente les dégâts crit. de la compétence normale de 5% pendant 10s. (Max : 50%)\nLorsque l'effet atteint le max, augmente l'attaque de 20% pendant 10s."
+   }
+  },
+  {
+   "nom": "Bâton de l'âme vorace",
+   "fichier": "7ds-armes/Baton/Bâton de l'âme vorace.webp",
+   "categorie": "arme",
+   "type": "Bâton",
+   "passif": {
+    "niveau": 7,
+    "texte": "Chaque attaque ultime qui fait mouche augmente les dégâts d'attaque ultime de 4% pendant 10s. (Max : 40%)\nLorsque l'effet atteint le max, augmente les dégâts crit. de 60% pendant 10s."
+   }
+  },
+  {
    "nom": "Bâton de la flamme cramoisie",
    "fichier": "7ds-armes/Baton/Bâton de la flamme cramoisie.webp",
    "categorie": "arme",
@@ -5669,6 +5895,17 @@
    }
   },
   {
+   "nom": "Bénédiction de Benwick",
+   "fichier": "7ds-armures-ssr/Armure liee/Bénédiction de Benwick.webp",
+   "categorie": "gravee",
+   "type": "Armure gravée",
+   "heros": "lancelot",
+   "passif": {
+    "niveau": 3,
+    "texte": "Lorsqu'un héros allié utilise une compétence de relève, restaure la jauge de magie d'une valeur fixe de 300 et augmente les dégâts crit. de tous les héros alliés d'attribut Terre de 35% pendant 10 s."
+   }
+  },
+  {
    "nom": "Bottes de combat de l'araignée de l'ombre",
    "fichier": "7ds-armures-ssr/Bottes/Bottes de combat de l'araignée de l'ombre.webp",
    "categorie": "armure",
@@ -5688,6 +5925,12 @@
    "categorie": "armure",
    "type": "Bottes",
    "ensemble": "equip_t5_splinter"
+  },
+  {
+   "nom": "Bottes de combat de l'observateur de la 「Vérité」",
+   "fichier": "7ds-armures-ssr/Bottes/Bottes de combat de l'observateur de la 「Vérité」.webp",
+   "categorie": "armure",
+   "type": "Bottes"
   },
   {
    "nom": "Bottes de combat de l'obsession du destructeur",
@@ -5925,6 +6168,12 @@
    "categorie": "armure",
    "type": "Ceinture",
    "ensemble": "equip_t5_splinter"
+  },
+  {
+   "nom": "Ceinture de l'observateur de la 「Vérité」",
+   "fichier": "7ds-armures-ssr/Ceinture/Ceinture de l'observateur de la 「Vérité」.webp",
+   "categorie": "armure",
+   "type": "Ceinture"
   },
   {
    "nom": "Ceinture de l'obsession du destructeur",
@@ -6306,7 +6555,7 @@
    "heros": "gowther",
    "passif": {
     "niveau": 3,
-    "texte": "Chaque fois qu'un héros allié d'attribut Foudre bénéficiant de Charge utilise la compétence normale, augmente les dégâts de compétence normale de tous les héros alliés d'attribut Foudre de 8% pendant 10 s. (Max : 24%)\nLorsque l'effet atteint le max, il est remplacé par un effet qui augmente les dégâts de compétence normale de tous les héros alliés d'attribut Foudre de 30% et leur vitesse de déplacement de 50% pendant 15 s. (Non cumulable)"
+    "texte": "Chaque fois qu'un héros allié d'attribut Foudre bénéficiant de Charge utilise la compétence normale, augmente les dégâts de compétence normale de tous les héros alliés d'attribut Foudre de 8% pendant 10 s. (Max : 24%)\nLorsque l'effet atteint le max, il est remplacé par un effet qui augmente les dégâts de compétence normale de tous les héros alliés d'attribut Foudre de 30% et leur vitesse de déplacement de 50% pendant 15 s. (Non cumulable lorsque l'effet remplacé est actif)"
    }
   },
   {
@@ -6339,7 +6588,7 @@
    "heros": "elaine",
    "passif": {
     "niveau": 3,
-    "texte": "Chaque fois qu'une barrière est reçue, augmente la vitesse de déplacement des alliés proches de 30% pendant 5 s.\nChaque fois qu'un héros allié attaque un ennemi dont la résistance au Déluge de Terre est diminuée, augmente la défense de tous les héros alliés de 2% et les dégâts de Terre de 4% pendant 20 s. (Max : 16%, 32%)"
+    "texte": "Chaque fois qu'une barrière est reçue, augmente la vitesse de déplacement des alliés proches de 30% pendant 5 s.\nChaque fois qu'un héros allié attaque un ennemi dont la résistance au Déluge de Terre est diminuée, augmente la défense de tous les héros alliés de 2% (Max : 16%) et les dégâts de Terre de 4% (Max : 32%) pendant 20 s."
    }
   },
   {
@@ -6434,6 +6683,16 @@
    "fichier": "7ds-armes/Bouclier/Épée et bouclier d'aventurier.webp",
    "categorie": "arme",
    "type": "Épée & bouclier"
+  },
+  {
+   "nom": "Épée et bouclier de garde indomptable",
+   "fichier": "7ds-armes/Bouclier/Épée et bouclier de garde indomptable.webp",
+   "categorie": "arme",
+   "type": "Épée & bouclier",
+   "passif": {
+    "niveau": 7,
+    "texte": "Chaque utilisation de la compétence normale augmente les dégâts crit. de la compétence normale de 5% pendant 10s. (Max : 50%)\nLorsque l'effet atteint le max, augmente l'attaque de 20% pendant 10s."
+   }
   },
   {
    "nom": "Épée et bouclier de l'âme vorace",
@@ -6544,6 +6803,16 @@
    "fichier": "7ds-armes/Epee 1 main/Épée longue d'aventurier.webp",
    "categorie": "arme",
    "type": "Épée longue"
+  },
+  {
+   "nom": "Épée longue de garde indomptable",
+   "fichier": "7ds-armes/Epee 1 main/Épée longue de garde indomptable.webp",
+   "categorie": "arme",
+   "type": "Épée longue",
+   "passif": {
+    "niveau": 7,
+    "texte": "Chaque utilisation de la compétence normale augmente les dégâts crit. de la compétence normale de 5% pendant 10s. (Max : 50%)\nLorsque l'effet atteint le max, augmente l'attaque de 20% pendant 10s."
+   }
   },
   {
    "nom": "Épée longue de l'âme vorace",
@@ -6662,6 +6931,16 @@
    "type": "Épées doubles"
   },
   {
+   "nom": "Épées doubles de garde indomptable",
+   "fichier": "7ds-armes/Epees doubles/Épées doubles de garde indomptable.webp",
+   "categorie": "arme",
+   "type": "Épées doubles",
+   "passif": {
+    "niveau": 7,
+    "texte": "Chaque utilisation de la compétence normale augmente les dégâts crit. de la compétence normale de 5% pendant 10s. (Max : 50%)\nLorsque l'effet atteint le max, augmente l'attaque de 20% pendant 10s."
+   }
+  },
+  {
    "nom": "Épées doubles de l'âme vorace",
    "fichier": "7ds-armes/Epees doubles/Épées doubles de l'âme vorace.webp",
    "categorie": "arme",
@@ -6770,6 +7049,16 @@
    "fichier": "7ds-armes/Epee 2 mains/Espadon d'aventurier.webp",
    "categorie": "arme",
    "type": "Espadon"
+  },
+  {
+   "nom": "Espadon de garde indomptable",
+   "fichier": "7ds-armes/Epee 2 mains/Espadon de garde indomptable.webp",
+   "categorie": "arme",
+   "type": "Espadon",
+   "passif": {
+    "niveau": 7,
+    "texte": "Chaque utilisation de la compétence normale augmente les dégâts crit. de la compétence normale de 5% pendant 10s. (Max : 50%)\nLorsque l'effet atteint le max, augmente l'attaque de 20% pendant 10s."
+   }
   },
   {
    "nom": "Espadon de l'ombre noire",
@@ -6938,6 +7227,16 @@
    "type": "Gantelets"
   },
   {
+   "nom": "Gantelets de garde indomptable",
+   "fichier": "7ds-armes/Gantelets/Gantelets de garde indomptable.webp",
+   "categorie": "arme",
+   "type": "Gantelets",
+   "passif": {
+    "niveau": 7,
+    "texte": "Chaque utilisation de la compétence normale augmente les dégâts crit. de la compétence normale de 5% pendant 10s. (Max : 50%)\nLorsque l'effet atteint le max, augmente l'attaque de 20% pendant 10s."
+   }
+  },
+  {
    "nom": "Gantelets de l'âme vorace",
    "fichier": "7ds-armes/Gantelets/Gantelets de l'âme vorace.webp",
    "categorie": "arme",
@@ -7057,6 +7356,16 @@
    "fichier": "7ds-armes/Livre/Grimoire d'aventurier.webp",
    "categorie": "arme",
    "type": "Grimoire"
+  },
+  {
+   "nom": "Grimoire de garde indomptable",
+   "fichier": "7ds-armes/Livre/Grimoire de garde indomptable.webp",
+   "categorie": "arme",
+   "type": "Grimoire",
+   "passif": {
+    "niveau": 7,
+    "texte": "Chaque utilisation de la compétence normale augmente les dégâts crit. de la compétence normale de 5% pendant 10s. (Max : 50%)\nLorsque l'effet atteint le max, augmente l'attaque de 20% pendant 10s."
+   }
   },
   {
    "nom": "Grimoire de l'âme vorace",
@@ -7190,6 +7499,16 @@
    "type": "Hache"
   },
   {
+   "nom": "Hache de garde indomptable",
+   "fichier": "7ds-armes/Hache/Hache de garde indomptable.webp",
+   "categorie": "arme",
+   "type": "Hache",
+   "passif": {
+    "niveau": 7,
+    "texte": "Chaque utilisation de la compétence normale augmente les dégâts crit. de la compétence normale de 5% pendant 10s. (Max : 50%)\nLorsque l'effet atteint le max, augmente l'attaque de 20% pendant 10s."
+   }
+  },
+  {
    "nom": "Hache de l'âme vorace",
    "fichier": "7ds-armes/Hache/Hache de l'âme vorace.webp",
    "categorie": "arme",
@@ -7291,6 +7610,12 @@
    "categorie": "armure",
    "type": "Haut",
    "ensemble": "equip_t5_splinter"
+  },
+  {
+   "nom": "Haut de l'observateur de la 「Vérité」",
+   "fichier": "7ds-armures-ssr/Haut/Haut de l'observateur de la 「Vérité」.webp",
+   "categorie": "armure",
+   "type": "Haut"
   },
   {
    "nom": "Haut de l'obsession du destructeur",
@@ -7477,6 +7802,16 @@
    "type": "Lance"
   },
   {
+   "nom": "Lance de garde indomptable",
+   "fichier": "7ds-armes/Lance/Lance de garde indomptable.webp",
+   "categorie": "arme",
+   "type": "Lance",
+   "passif": {
+    "niveau": 7,
+    "texte": "Chaque utilisation de la compétence normale augmente les dégâts crit. de la compétence normale de 5% pendant 10s. (Max : 50%)\nLorsque l'effet atteint le max, augmente l'attaque de 20% pendant 10s."
+   }
+  },
+  {
    "nom": "Lance de l'épine de la cupidité",
    "fichier": "7ds-armes/Lance/Lance de l'épine de la cupidité.webp",
    "categorie": "arme",
@@ -7600,7 +7935,7 @@
    "heros": "diane",
    "passif": {
     "niveau": 3,
-    "texte": "Chaque coup avec l'attaque spéciale sur un ennemi affecté par Brise-tout réduit le temps de recharge de la compétence normale de 20% et augmente les dégâts de Terre de 8% pendant 10 s. (Nombre maximal de cumuls pour chaque effet : 80%, 32%)"
+    "texte": "Chaque coup avec l'attaque spéciale sur un ennemi affecté par Brise-tout réduit le temps de recharge de la compétence normale de 20% (Max : 80%) et augmente les dégâts de Terre de 8% (Max : 32%) pendant 10 s."
    }
   },
   {
@@ -7742,13 +8077,23 @@
    "type": "Nunchaku"
   },
   {
+   "nom": "Nunchaku de garde indomptable",
+   "fichier": "7ds-armes/Nunchaku/Nunchaku de garde indomptable.webp",
+   "categorie": "arme",
+   "type": "Nunchaku",
+   "passif": {
+    "niveau": 7,
+    "texte": "Chaque utilisation de la compétence normale augmente les dégâts crit. de la compétence normale de 5% pendant 10s. (Max : 50%)\nLorsque l'effet atteint le max, augmente l'attaque de 20% pendant 10s."
+   }
+  },
+  {
    "nom": "Nunchaku de l'âme vorace",
    "fichier": "7ds-armes/Nunchaku/Nunchaku de l'âme vorace.webp",
    "categorie": "arme",
    "type": "Nunchaku",
    "passif": {
     "niveau": 7,
-    "texte": "L'utilisation de l'attaque spéciale augmente toutes les attaques élémentaires de 7% et, si le héros est d'attribut Physique, augmente les dégâts crit. physiques de 10% pendant 10s (Max : 42%, 60%)."
+    "texte": "Chaque utilisation de l'attaque spéciale augmente toutes les attaques élémentaires de 7% (Max : 42%) et, si le héros est d'attribut Physique, augmente les dégâts crit. de 10% (Max : 60%) pendant 10s."
    }
   },
   {
@@ -7951,6 +8296,16 @@
    "type": "Rapière"
   },
   {
+   "nom": "Rapière de garde indomptable",
+   "fichier": "7ds-armes/Rapiere/Rapière de garde indomptable.webp",
+   "categorie": "arme",
+   "type": "Rapière",
+   "passif": {
+    "niveau": 7,
+    "texte": "Chaque utilisation de la compétence normale augmente les dégâts crit. de la compétence normale de 5% pendant 10s. (Max : 50%)\nLorsque l'effet atteint le max, augmente l'attaque de 20% pendant 10s."
+   }
+  },
+  {
    "nom": "Rapière de l'âme vorace",
    "fichier": "7ds-armes/Rapiere/Rapière de l'âme vorace.webp",
    "categorie": "arme",
@@ -8143,6 +8498,28 @@
    }
   },
   {
+   "nom": "Tenue d'aventurier",
+   "fichier": "7ds-armures-ssr/Armure liee/Tenue d'aventurier.webp",
+   "categorie": "gravee",
+   "type": "Armure gravée",
+   "heros": "lancelot",
+   "passif": {
+    "niveau": 3,
+    "texte": "Réussir une charge parfaite d'Attaque spéciale : Posture Iai augmente l'attaque de 30% pendant 10 s.\nChaque utilisation de la compétence normale augmente les dégâts crit. de 5% pendant 20 s. (Max : 25%)"
+   }
+  },
+  {
+   "nom": "Tenue d'exercice confortable",
+   "fichier": "7ds-armures-ssr/Armure liee/Tenue d'exercice confortable.webp",
+   "categorie": "gravee",
+   "type": "Armure gravée",
+   "heros": "lancelot",
+   "passif": {
+    "niveau": 3,
+    "texte": "Chaque coup porté sur des ennemis sous l'effet d'un Déluge augmente les dégâts du Sacré de 5% pendant 10 s. (Max : 50%)\nLorsque l'effet atteint le max, augmente l'attaque du Sacré de 50% pendant 10 s."
+   }
+  },
+  {
    "nom": "Tenue d'exercice d'exploratrice",
    "fichier": "7ds-armures-ssr/Armure liee/Tenue d'exercice d'exploratrice.webp",
    "categorie": "gravee",
@@ -8260,7 +8637,7 @@
    "heros": "meliodas",
    "passif": {
     "niveau": 3,
-    "texte": "Chaque utilisation de la compétence normale inflige des dégâts supplémentaires égaux à 45% des dégâts infligés pendant 13 s lorsqu'un Déluge est activé.\nLorsque l'effet est actif, restaure la jauge de relève de 500 si la cible attaquée n'est pas sous l'effet d'un Déluge. (Temps de recharge : 20 s)"
+    "texte": "Chaque utilisation de la compétence normale inflige des dégâts supplémentaires égaux à 45% des dégâts infligés pendant 13 s en attaquant un ennemi sous l'effet de Déluge des Ténèbres.\nLorsque l'effet est actif, restaure la jauge de relève de 500 si la cible attaquée n'est pas sous l'effet d'un Déluge. (Temps de recharge : 20 s)"
    }
   },
   {

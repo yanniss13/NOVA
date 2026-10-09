@@ -482,7 +482,8 @@ def compacte_competence(skill, recharges_precises=None):
 
 def slugs():
     flight = _gen.flight_payload(_gen.fetch(_gen.PAGE))
-    return [c["slug"] for c in _gen.collect(flight, "characters") if c.get("slug")]
+    personnages = client_content.without_public_aliases(_gen.collect(flight, "characters"))
+    return [c["slug"] for c in personnages if c.get("slug")]
 
 
 def ouverture(texte, pos):
@@ -714,10 +715,14 @@ def main(argv=None, cible=None):
         print("competences.js :", reprises, "competence(s) reprise(s)")
         return
 
+    commite = catalogue_js(cible, "SEVEN_DS_COMPETENCES") if cible.exists() else {}
     catalogue = {}
     for slug in sorted(set(slugs()) | set(client_content.client_slugs())):
         catalogue[slug] = competences_du(slug)
         print(slug, ":", len(catalogue[slug]), "competences")
+    catalogue = client_content.reprendre_retirees(catalogue, commite)
+    for slug in client_content.RETIREES_PAR_LA_SOURCE:
+        catalogue[slug].sort(key=lambda s: (s["weaponType"] or "", s["gameId"] or ""))
     reprises = recuperer_par_somme_des_coups(catalogue, wiki_commite())
     cible.write_text(rendu(catalogue), encoding="utf-8", newline="\n")
     print("competences.js genere,", reprises, "competence(s) reprise(s)")

@@ -1,6 +1,6 @@
 // Généré manuellement depuis la page publique du team builder 7dsorigin.app.
 // Héros absents de cette page : tables du jeu, via 7ds-stats/contenu-jeu.json.
-// Date de génération : 2026-09-17T19:56:29+02:00
+// Date de génération : 2026-10-09T22:23:43+02:00
 // Instantané local : aucun appel réseau n'est effectué par index.html.
 window.SEVEN_DS_ARMURES_LIEES = {
   "ban": [
@@ -104,6 +104,11 @@ window.SEVEN_DS_ARMURES_LIEES = {
     "7ds-armures-ssr/Armure liee/Traces de souvenirs.webp",
     "7ds-armures-ssr/Armure liee/Voyageuse cachottière.webp"
   ],
+  "khala": [
+    "7ds-armures-ssr/Armure liee/Khala — Citoyenne modèle.webp",
+    "7ds-armures-ssr/Armure liee/Khala — Préparation totale.webp",
+    "7ds-armures-ssr/Armure liee/Khala — Tenue de travail ultralégère.webp"
+  ],
   "king": [
     "7ds-armures-ssr/Armure liee/L'ombre de la forêt profonde.webp",
     "7ds-armures-ssr/Armure liee/Le Grizzly de la Paresse.webp",
@@ -114,6 +119,11 @@ window.SEVEN_DS_ARMURES_LIEES = {
     "7ds-armures-ssr/Armure liee/Formalité de l'érudite en chef.webp",
     "7ds-armures-ssr/Armure liee/Tenue d'exercice d'exploratrice.webp",
     "7ds-armures-ssr/Armure liee/Tenue de fête légère.webp"
+  ],
+  "lancelot": [
+    "7ds-armures-ssr/Armure liee/Bénédiction de Benwick.webp",
+    "7ds-armures-ssr/Armure liee/Tenue d'aventurier.webp",
+    "7ds-armures-ssr/Armure liee/Tenue d'exercice confortable.webp"
   ],
   "manny": [
     "7ds-armures-ssr/Armure liee/Cœur de prière.webp",
@@ -147,10 +157,5 @@ window.SEVEN_DS_ARMURES_LIEES = {
     "7ds-armures-ssr/Armure liee/Dignité royale.webp",
     "7ds-armures-ssr/Armure liee/Tenue de cérémonie.webp",
     "7ds-armures-ssr/Armure liee/Vœu du prince.webp"
-  ],
-  "khala": [
-    "7ds-armures-ssr/Armure liee/Khala — Citoyenne modèle.webp",
-    "7ds-armures-ssr/Armure liee/Khala — Préparation totale.webp",
-    "7ds-armures-ssr/Armure liee/Khala — Tenue de travail ultralégère.webp"
   ]
 };

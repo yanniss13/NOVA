@@ -138,16 +138,17 @@ const STORAGE_KEY = "confrerie7ds.teams";
   const localArmorFiles = dataContext.window.SEVEN_DS_DATA.armures["Armure liee"]
     .map(item => item.file);
 
-  assert.strictEqual(Object.keys(linked).length, 27);
+  assert.strictEqual(Object.keys(linked).length, 28);
   /* 83 depuis l'ajout des gravees SR : le catalogue ne contenait que les SSR,
      faute d'icones locales. Puis 93 avec la version 2.0, le 26 aout 2026 :
      les trois pieces de Ban et les sept costumes de la fournee. Puis 96 avec
      les trois tenues de Khala, dont les images portent son nom en prefixe.
+     Puis 99 avec les trois tenues de Lancelot, en octobre 2026.
      Deux pieces restent dehors, toutes deux nommees « Sortie decontractee » —
      un meme nom pour deux pieces differentes, et le catalogue identifie une
      piece par le nom de son fichier image. */
-  assert.strictEqual(files.length, 96);
-  assert.strictEqual(new Set(files).size, 96);
+  assert.strictEqual(files.length, 99);
+  assert.strictEqual(new Set(files).size, 99);
   assert.ok(Object.values(linked).every(items => items.length >= 2 && items.length <= 4));
   assert.deepStrictEqual(
     plain([...files].sort()),
@@ -155,7 +156,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
   );
 }
 
-// Donnée générée réelle : 27 héros, exactement 3 types d'armes chacun.
+// Donnée générée réelle : 28 héros, exactement 3 types d'armes chacun.
 {
   const actual = { window:{} };
   vm.runInNewContext(
@@ -164,7 +165,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     { filename:"potentiels.js" }
   );
   const actualPot = actual.window.SEVEN_DS_POTENTIELS;
-  assert.strictEqual(Object.keys(actualPot).length, 27);
+  assert.strictEqual(Object.keys(actualPot).length, 28);
   assert.ok(Object.values(actualPot).every(
     byWeapon => Object.keys(byWeapon).length === 3
   ));
@@ -702,7 +703,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
   );
   const armures = dataContext.window.SEVEN_DS_DATA.armures;
   const realSets = plain(armorSetsFrom(armures));
-  assert.strictEqual(realSets.length, 17, "17 sets complets attendus");
+  assert.strictEqual(realSets.length, 18, "18 sets complets attendus");
   const slots = ["Haut", "Bas", "Bottes", "Ceinture"];
   const filesBySlot = {};
   slots.forEach(slot => {
@@ -718,7 +719,7 @@ const STORAGE_KEY = "confrerie7ds.teams";
     });
   });
   // Aucun doublon de nom, et un tri français stable.
-  assert.strictEqual(new Set(realSets.map(s => s.name)).size, 17);
+  assert.strictEqual(new Set(realSets.map(s => s.name)).size, 18);
   /* Le jeu pose des crochets 「」 sur six pièces du prédateur abyssal sur
      sept, pas sur sa ceinture : ils ne doivent pas casser le set, ni garder
      leur « de » de liaison dans le libellé. */

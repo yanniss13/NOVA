@@ -4,11 +4,11 @@
   "docs/chronometrage-animations.md. Ne pas editer a la main.",
   "Les mesures se saisissent dans data/animations-mesurees.json."
  ],
- "total": 25,
+ "total": 35,
  "mesurees": 0,
  "debloquent": 0,
- "affinent": 22,
- "releves": 3,
+ "affinent": 29,
+ "releves": 6,
  "prochaines": [
   {
    "gameId": "diane_gauntlets_skill_rmb_1",
@@ -29,6 +29,15 @@
    "role": "affine"
   },
   {
+   "gameId": "lancelot_sword1h_skill_q",
+   "heros": "lancelot",
+   "arme": "Épée longue",
+   "nom": "Posture Iai",
+   "categorie": "Attaque spéciale",
+   "touche": "Q",
+   "role": "affine"
+  },
+  {
    "gameId": "ban_cudgel3c_skill_r",
    "heros": "ban",
    "arme": "Nunchaku",
@@ -42,15 +51,6 @@
    "heros": "ban",
    "arme": "Gantelets",
    "nom": "Explosion obscure",
-   "categorie": "Attaque ultime",
-   "touche": "R",
-   "role": "affine"
-  },
-  {
-   "gameId": "guila_shield_skill_q",
-   "heros": "guila",
-   "arme": "Épée & bouclier",
-   "nom": "Explosion resplendissante",
    "categorie": "Attaque ultime",
    "touche": "R",
    "role": "affine"

@@ -35,11 +35,25 @@ const fichierSource = T + 'Skill/CombineSkillTable.json';
 const source = JSON.parse(fs.readFileSync(fichierSource, 'utf8'));
 const lignes = (source[0] && source[0].Rows) || source.Rows || source;
 
+/* Identifiant de la table -> identifiant que le site publie, quand les deux
+   designent la meme competence. Le baton de Lancelot a deux ultimes dans
+   PC_SkillTable : `lancelot_staff_skill_r`, la base (recharge 10 s, deux
+   charges de magie, comportement `Lancelot_Staff_CombineSkill_Ground`), et sa
+   forme amelioree `_enchant`, sans recharge ni cout. 7dsorigin.app ne publie
+   que la seconde, mais avec le nom, le texte et le role de la premiere :
+   « Chemin radieux », qui « reinitialise le temps de recharge [...] » apres
+   une attaque combinee (local_skill_lancelot_staff_ultimateskill_desc). */
+const IDENTIFIANTS_DU_SITE = {
+  lancelot_staff_skill_r: 'lancelot_staff_skill_r_enchant',
+};
+const publie = tid => IDENTIFIANTS_DU_SITE[tid] || tid;
+
 const combinaisons = Object.values(lignes)
   .map(ligne => ({
-    lanceur: ligne.Owner_Skill_Tid,
+    lanceur: publie(ligne.Owner_Skill_Tid),
     partenaires: [ligne.Striker_A_Skill_Tid, ligne.Striker_B_Skill_Tid]
-      .filter(tid => tid && tid !== 'None'),
+      .filter(tid => tid && tid !== 'None')
+      .map(publie),
   }))
   .filter(c => c.lanceur && c.lanceur !== 'None' && c.partenaires.length);
 
@@ -56,7 +70,7 @@ const competencesRecensees = new Set();
 Object.values(lignes).forEach(ligne => {
   [ligne.Owner_Skill_Tid, ligne.Striker_A_Skill_Tid, ligne.Striker_B_Skill_Tid]
     .forEach(tid => {
-      if (tid && tid !== 'None') competencesRecensees.add(tid);
+      if (tid && tid !== 'None') competencesRecensees.add(publie(tid));
     });
 });
 

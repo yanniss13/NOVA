@@ -17,7 +17,7 @@ et son propriétaire. Il porte aussi la liste des **fausses pistes déjà
 
 - [x] Assets rangés dans des dossiers (fournis par l'utilisateur, ne pas renommer).
 - [x] `scripts/generate-data.ps1` — scanne les dossiers et génère `data.js`.
-- [x] `data.js` — données d'assets générées (27 persos, 12 types d'armes, 5 armures).
+- [x] `data.js` — données d'assets générées (28 persos, 12 types d'armes, 5 armures).
 - [x] `index.html` — appli complète (builder + page d'affichage), autonome.
 - [x] Bijoux **SSR uniquement** (grade5) : 37 images intégrées
       (12 anneaux, 13 colliers, 12 boucles d'oreilles) — correspond aux badges
@@ -31,13 +31,13 @@ et son propriétaire. Il porte aussi la liste des **fausses pistes déjà
       `scripts/telecharger-images.py` complète armes et bijoux : il ne
       télécharge que ce qui manque et ne remplace jamais un fichier existant.
 - [x] Potentiels : palier P0→P10 par héros, façon page team-builder du site.
-      Données FR (27 persos × ~3 types d'arme × 10 paliers) dans `potentiels.js`,
+      Données FR (28 persos × ~3 types d'arme × 10 paliers) dans `potentiels.js`,
       régénérable via `scripts/generate-potentiels.py`. Le palier est **commun au héros** ;
       les 3 clés d'armes par héros déterminent les armes compatibles et l'arme
       équipée choisit les descriptions de bonus affichées.
 - [x] Compatibilité des armes : le picker ne propose que les 3 types autorisés
       du héros. Toute arme incompatible est automatiquement retirée.
-- [x] Compatibilité des armures liées : 96 images locales associées aux 27 héros
+- [x] Compatibilité des armures liées : 99 images locales associées aux 28 héros
       (3 ou 4 par héros). Le picker filtre selon le personnage et retire les
       anciennes valeurs incompatibles.
 - [x] Badges **élément + armes** par personnage. `personnages-meta.js`
@@ -59,6 +59,11 @@ et son propriétaire. Il porte aussi la liste des **fausses pistes déjà
       l'instantané local normalisé `7ds-stats/contenu-jeu.json`, jamais de
       7dsorigin.app ; les 26 autres héros gardent leurs sources historiques.
       Voir « Héros lus dans les tables du jeu » sous « Stats de référence ».
+- [x] **Lancelot, 28ᵉ héros, lu sur 7dsorigin.app** (octobre 2026) par les
+      générateurs réseau habituels, avec les armes « de garde indomptable »
+      sorties en même temps. Le site publie aussi Khala, sous le slug
+      `calla` : `PUBLIC_ALIASES` de `scripts/client_content.py` l'écarte des
+      collectes réseau, et Khala reste lue dans les tables du jeu.
 - [x] **Partage réseau (Supabase) — Étape 1 implémentée**. Comptes + équipes +
       rosters et Analyse partagés. Auth email/mot de passe, ownership par RLS,
       caches hors ligne séparés et migration one-shot des anciennes équipes locales.
@@ -378,18 +383,18 @@ précache pas.
 
 | Fichier | Contenu |
 | --- | --- |
-| `personnages.json` | 27 personnages : `baseHp/baseAtk/baseDef/baseSpd`, précision, blocage, crit (taux, dégâts, résistances), PvP, `weaponSlots`, 15 niveaux de maîtrise, 30 paliers de potentiel, costumes |
+| `personnages.json` | 28 personnages : `baseHp/baseAtk/baseDef/baseSpd`, précision, blocage, crit (taux, dégâts, résistances), PvP, `weaponSlots`, 15 niveaux de maîtrise, 30 paliers de potentiel, costumes |
 | `armes.json` | 155 armes, 275 variantes de grade : `mainStat`, `subStats` (`base`, `max`, `progression`), enchantements, passifs |
 | `armures.json` | 232 pièces sur 7 emplacements × 5 grades : `mainStat`, `subStat`, `setId`, `reinforceMax`, qualité, `growth` |
 | `armures-gravees.json` | 98 équipements gravés, rapprochés de leur costume et de leur personnage, avec passifs de gravure et matériaux |
-| `enchantements.json` | 181 tables basiques, 94 tables de pierre maîtresse, 70 armures, 85 armures gravées |
-| `sets.json` | 22 ensembles avec bonus 2 et 4 pièces |
-| `libelles-stats.json` | 72 codes de stat → libellés FR/EN, `taux`, libellé court |
+| `enchantements.json` | 181 tables basiques, 109 tables de pierre maîtresse, 74 armures, 99 armures gravées |
+| `sets.json` | 24 ensembles avec bonus 2 et 4 pièces |
+| `libelles-stats.json` | 75 codes de stat → libellés FR/EN, `taux`, libellé court |
 | `stat-metadata.json` | Métadonnées explicites `{family, unit}` des codes émis |
 
 ### Héros lus dans les tables du jeu
 
-Un héros que 7dsorigin.app ne publie pas — aujourd'hui Khala seule — vient de
+Un héros que 7dsorigin.app ne publiait pas — Khala — vient de
 l'instantané local normalisé `7ds-stats/contenu-jeu.json`, produit hors CI par
 `outils/fabrication/contenu-jouable.js` (voir `outils/fabrication/LISEZMOI.md`).
 Les générateurs concernés (`generate-meta.py`, `generate-potentiels.py`,
@@ -399,6 +404,14 @@ Les générateurs concernés (`generate-meta.py`, `generate-potentiels.py`,
 l'instantané et **prouvent** que les autres n'ont pas bougé — empreinte ou
 comparaison profonde, erreur au moindre écart. Leur `--check`, quand ils en
 ont un (tous sauf `generate-stats.py`), refuse une entrée locale périmée.
+
+Depuis octobre 2026, 7dsorigin.app publie aussi Khala, sous le slug `calla`.
+`PUBLIC_ALIASES` (`scripts/client_content.py`) l'écarte des collectes réseau :
+sans lui, une régénération la listerait deux fois. On garde l'import local,
+car les fiches de roster déjà enregistrées portent `khala`. Après une
+génération réseau de `generate-effets-dps.py`, relancer son `--client-only` :
+le mode réseau range les sources d'audit de Khala parmi les autres héros, et
+`--check` les attend à la fin.
 
 Une seule exception à l'historique intouchable : `generate-effets-dps.py
 --client-only` pose une note de `NOTES_MODELISE` (`scripts/effets-dps-regles.py`)
@@ -1713,7 +1726,7 @@ seule celle-là ne trouvera pas de set, les autres tiennent. Un regroupement par
 préfixe commun aurait au contraire cassé tout un emplacement d'un seul coup.
 
 Seuls les sets **complets sur tous les emplacements de leur famille** sont
-proposés. Avec les données actuelles : **17 sets d'armure** (68 des 75 pièces) et
+proposés. Avec les données actuelles : **18 sets d'armure** (72 des 79 pièces) et
 **12 sets de bijoux** (36 des 40) ; le reste n'existe que dans un emplacement.
 `armorSetLabel` retire l'article français de liaison pour l'affichage
 (« du cristal de vie » → « Cristal de vie »), y compris un « de » sans article

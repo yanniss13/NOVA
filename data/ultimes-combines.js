@@ -9,10 +9,10 @@
 // heros seraient indiscernables d une extraction jamais relancee.
 window.SEVEN_DS_ULTIMES_COMBINES_PROVENANCE = {
  "source": "Table/Skill/CombineSkillTable",
- "exporteLe": "2026-09-17",
- "lignesLues": 672,
- "lignesRetenues": 672,
- "lanceurs": 24,
+ "exporteLe": "2026-10-08",
+ "lignesLues": 716,
+ "lignesRetenues": 716,
+ "lanceurs": 25,
  "competences": [
   "ban_gauntlets_skill_r",
   "bug_book_skill_q",
@@ -28,6 +28,7 @@ window.SEVEN_DS_ULTIMES_COMBINES_PROVENANCE = {
   "gowther_staff_skill_r",
   "howzer_lance_skill_q",
   "king_staff_skill_q",
+  "lancelot_staff_skill_r_enchant",
   "manny_staff_skill_q",
   "manny_sworddual_skill_q",
   "meliodas_sword1h_skill_q",
@@ -124,6 +125,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "ban_gauntlets_skill_r",
   "partenaires": [
+   "lancelot_staff_skill_r_enchant"
+  ]
+ },
+ {
+  "lanceur": "ban_gauntlets_skill_r",
+  "partenaires": [
    "manny_staff_skill_q"
   ]
  },
@@ -245,6 +252,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "bug_book_skill_q",
   "partenaires": [
    "king_staff_skill_q"
+  ]
+ },
+ {
+  "lanceur": "bug_book_skill_q",
+  "partenaires": [
+   "lancelot_staff_skill_r_enchant"
   ]
  },
  {
@@ -427,6 +440,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "daisy_book_skill_q",
   "partenaires": [
    "king_staff_skill_q"
+  ]
+ },
+ {
+  "lanceur": "daisy_book_skill_q",
+  "partenaires": [
+   "lancelot_staff_skill_r_enchant"
   ]
  },
  {
@@ -705,6 +724,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "derieri_sword2h_skill_r",
   "partenaires": [
+   "lancelot_staff_skill_r_enchant"
+  ]
+ },
+ {
+  "lanceur": "derieri_sword2h_skill_r",
+  "partenaires": [
    "manny_staff_skill_q"
   ]
  },
@@ -833,6 +858,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "diane_axe_skill_q",
   "partenaires": [
    "king_staff_skill_q"
+  ]
+ },
+ {
+  "lanceur": "diane_axe_skill_q",
+  "partenaires": [
+   "lancelot_staff_skill_r_enchant"
   ]
  },
  {
@@ -1020,6 +1051,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "drake_sword2h_skill_q",
   "partenaires": [
+   "lancelot_staff_skill_r_enchant"
+  ]
+ },
+ {
+  "lanceur": "drake_sword2h_skill_q",
+  "partenaires": [
    "manny_staff_skill_q"
   ]
  },
@@ -1190,6 +1227,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "dreyfus_sword1h_skill_q",
   "partenaires": [
    "king_staff_skill_q"
+  ]
+ },
+ {
+  "lanceur": "dreyfus_sword1h_skill_q",
+  "partenaires": [
+   "lancelot_staff_skill_r_enchant"
   ]
  },
  {
@@ -1405,6 +1448,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "elaine_wand_skill_q",
   "partenaires": [
+   "lancelot_staff_skill_r_enchant"
+  ]
+ },
+ {
+  "lanceur": "elaine_wand_skill_q",
+  "partenaires": [
    "manny_staff_skill_q"
   ]
  },
@@ -1699,6 +1748,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "elizabeth_staff_skill_r",
   "partenaires": [
+   "lancelot_staff_skill_r_enchant"
+  ]
+ },
+ {
+  "lanceur": "elizabeth_staff_skill_r",
+  "partenaires": [
    "manny_staff_skill_q"
   ]
  },
@@ -2007,6 +2062,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "escanor_axe_skill_q",
   "partenaires": [
+   "lancelot_staff_skill_r_enchant"
+  ]
+ },
+ {
+  "lanceur": "escanor_axe_skill_q",
+  "partenaires": [
    "manny_staff_skill_q"
   ]
  },
@@ -2191,6 +2252,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "gil_thunder_sword1h_skill_q",
   "partenaires": [
    "king_staff_skill_q"
+  ]
+ },
+ {
+  "lanceur": "gil_thunder_sword1h_skill_q",
+  "partenaires": [
+   "lancelot_staff_skill_r_enchant"
   ]
  },
  {
@@ -2422,6 +2489,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "gowther_staff_skill_r",
   "partenaires": [
    "king_staff_skill_q"
+  ]
+ },
+ {
+  "lanceur": "gowther_staff_skill_r",
+  "partenaires": [
+   "lancelot_staff_skill_r_enchant"
   ]
  },
  {
@@ -2686,6 +2759,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "howzer_lance_skill_q",
   "partenaires": [
+   "lancelot_staff_skill_r_enchant"
+  ]
+ },
+ {
+  "lanceur": "howzer_lance_skill_q",
+  "partenaires": [
    "manny_staff_skill_q"
   ]
  },
@@ -2896,6 +2975,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "king_staff_skill_q",
   "partenaires": [
+   "lancelot_staff_skill_r_enchant"
+  ]
+ },
+ {
+  "lanceur": "king_staff_skill_q",
+  "partenaires": [
    "manny_staff_skill_q"
   ]
  },
@@ -2942,6 +3027,138 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   ]
  },
  {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "ban_gauntlets_skill_r"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "bug_book_skill_q"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "daisy_book_skill_q"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "derieri_sword2h_skill_r"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "diane_axe_skill_q"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "drake_sword2h_skill_q"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "dreyfus_sword1h_skill_q"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "elaine_wand_skill_q"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "elizabeth_staff_skill_r"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "escanor_axe_skill_q"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "gil_thunder_sword1h_skill_q"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "gowther_staff_skill_r"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "howzer_lance_skill_q"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "king_staff_skill_q"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "manny_staff_skill_q"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "manny_sworddual_skill_q"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "meliodas_sword1h_skill_q"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "merlin_book_skill_r"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "merlin_staff_skill_r"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "merlin_wand_skill_r"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "tioreh_book_skill_q"
+  ]
+ },
+ {
+  "lanceur": "lancelot_staff_skill_r_enchant",
+  "partenaires": [
+   "tristan_sworddual_skill_q"
+  ]
+ },
+ {
   "lanceur": "manny_staff_skill_q",
   "partenaires": [
    "ban_gauntlets_skill_r"
@@ -3023,6 +3240,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "manny_staff_skill_q",
   "partenaires": [
    "king_staff_skill_q"
+  ]
+ },
+ {
+  "lanceur": "manny_staff_skill_q",
+  "partenaires": [
+   "lancelot_staff_skill_r_enchant"
   ]
  },
  {
@@ -3148,6 +3371,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "manny_sworddual_skill_q",
   "partenaires": [
+   "lancelot_staff_skill_r_enchant"
+  ]
+ },
+ {
+  "lanceur": "manny_sworddual_skill_q",
+  "partenaires": [
    "meliodas_sword1h_skill_q"
   ]
  },
@@ -3263,6 +3492,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "meliodas_sword1h_skill_q",
   "partenaires": [
    "king_staff_skill_q"
+  ]
+ },
+ {
+  "lanceur": "meliodas_sword1h_skill_q",
+  "partenaires": [
+   "lancelot_staff_skill_r_enchant"
   ]
  },
  {
@@ -3400,6 +3635,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "merlin_book_skill_r",
   "partenaires": [
+   "lancelot_staff_skill_r_enchant"
+  ]
+ },
+ {
+  "lanceur": "merlin_book_skill_r",
+  "partenaires": [
    "manny_staff_skill_q"
   ]
  },
@@ -3593,6 +3834,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "merlin_staff_skill_r",
   "partenaires": [
    "king_staff_skill_q"
+  ]
+ },
+ {
+  "lanceur": "merlin_staff_skill_r",
+  "partenaires": [
+   "lancelot_staff_skill_r_enchant"
   ]
  },
  {
@@ -3754,6 +4001,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
  {
   "lanceur": "merlin_wand_skill_r",
   "partenaires": [
+   "lancelot_staff_skill_r_enchant"
+  ]
+ },
+ {
+  "lanceur": "merlin_wand_skill_r",
+  "partenaires": [
    "manny_staff_skill_q"
   ]
  },
@@ -4003,6 +4256,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "tioreh_book_skill_q",
   "partenaires": [
    "king_staff_skill_q"
+  ]
+ },
+ {
+  "lanceur": "tioreh_book_skill_q",
+  "partenaires": [
+   "lancelot_staff_skill_r_enchant"
   ]
  },
  {
@@ -4240,6 +4499,12 @@ window.SEVEN_DS_ULTIMES_COMBINES = [
   "lanceur": "tristan_sworddual_skill_q",
   "partenaires": [
    "king_staff_skill_q"
+  ]
+ },
+ {
+  "lanceur": "tristan_sworddual_skill_q",
+  "partenaires": [
+   "lancelot_staff_skill_r_enchant"
   ]
  },
  {

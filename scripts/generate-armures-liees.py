@@ -53,7 +53,7 @@ def extract_candidates(html):
                 "game_id": match.group("game_id"),
             }
         )
-    return rows
+    return client_content.without_public_aliases(rows, key="char")
 
 
 def build_mapping(html, armor_dir=ARMOR_DIR, character_dir=CHARACTER_DIR,

@@ -41,8 +41,8 @@ const tenuesVues = new Map();
 assert.ok(table, "Les transcendances doivent s'exposer sur window");
 
 const slugs = Object.keys(table);
-assert.equal(slugs.length, 27,
-  "27 heros ont des transcendances, recu : " + slugs.length);
+assert.equal(slugs.length, 28,
+  "28 heros ont des transcendances, recu : " + slugs.length);
 
 /* Un slug inconnu du site serait publie sans jamais s'afficher : la fiche du
    wiki cherche par slug, et ne trouverait rien. */
@@ -159,25 +159,25 @@ slugs.forEach(slug => {
   assert.equal(ids.size, 3, slug + " : trois identifiants distincts attendus");
 });
 
-assert.equal(total, 81, "81 transcendances attendues, recu : " + total);
+assert.equal(total, 84, "84 transcendances attendues, recu : " + total);
 
-/* Bijection : 81 couples heros/arme distincts. Deux transcendances sur la
+/* Bijection : 84 couples heros/arme distincts. Deux transcendances sur la
    meme arme d'un meme heros passeraient les controles individuels et se
    feraient attraper seulement ici. */
-assert.equal(new Set(armesVues).size, 81,
-  "81 couples heros/arme distincts attendus, recu : " + new Set(armesVues).size);
+assert.equal(new Set(armesVues).size, 84,
+  "84 couples heros/arme distincts attendus, recu : " + new Set(armesVues).size);
 
-/* 31 regles sur 81 : le reste vise l'equipe (45) ou la cible (5). Si ce
+/* 33 regles sur 84 : le reste vise l'equipe (46) ou la cible (5). Si ce
    compte baisse, une phrase du jeu a change de tournure et un bonus est
    passe a la trappe sans bruit. */
-assert.equal(regles, 31,
-  "31 transcendances doivent porter une regle DPS, recu : " + regles);
+assert.equal(regles, 33,
+  "33 transcendances doivent porter une regle DPS, recu : " + regles);
 
-/* 96 tenues gravees, 81 transcendables : les 15 restantes sont les quatriemes
+/* 99 tenues gravees, 84 transcendables : les 15 restantes sont les quatriemes
    tenues des heros qui en ont quatre. Le compte se ferme, donc aucune n'a ete
    perdue en route. */
-assert.equal(tenuesVues.size, 81,
-  "81 tenues distinctes attendues, recu : " + tenuesVues.size);
+assert.equal(tenuesVues.size, 84,
+  "84 tenues distinctes attendues, recu : " + tenuesVues.size);
 const sansTranscendance = Object.keys(gravees).length - tenuesVues.size;
 assert.equal(sansTranscendance, 15,
   "15 tenues gravees sans transcendance attendues, recu : " + sansTranscendance);

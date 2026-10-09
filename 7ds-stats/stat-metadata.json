@@ -507,6 +507,10 @@
   "family": "damage",
   "unit": "ten-thousandths"
  },
+ "normalSkillDmg": {
+  "family": "damage",
+  "unit": "ten-thousandths"
+ },
  "pvpDmgDown": {
   "family": "special",
   "unit": "ten-thousandths"

@@ -240,19 +240,20 @@ const STATS_TEST = {
   const bijoux = api.bijouxDuWiki();
   const gravees = api.graveesDuWiki();
 
-  assert.equal(armes.length, 157, "157 armes attendues");
-  assert.equal(armures.length, 75, "75 armures attendues");
+  assert.equal(armes.length, 170, "170 armes attendues");
+  assert.equal(armures.length, 79, "79 armures attendues");
   assert.equal(bijoux.length, 40, "40 bijoux attendus");
-  assert.equal(gravees.length, 96,
+  assert.equal(gravees.length, 99,
   /* 83 depuis l'ajout des gravees SR au catalogue ; il n'y avait que les
      SSR, faute d'icones locales. Puis 93 avec la version 2.0, le 26 aout
      2026 : les trois pieces de Ban et les sept costumes de la fournee.
-     Puis 96 avec les trois tenues de Khala, lues dans les tables du jeu. */
-  "96 armures gravées attendues");
+     Puis 96 avec les trois tenues de Khala, lues dans les tables du jeu.
+     Puis 99 avec les trois tenues de Lancelot, en octobre 2026. */
+  "99 armures gravées attendues");
 
   assert.equal(
-    armes.filter(arme => arme.aPassif).length, 96,
-    "96 armes portent un passif ; les 61 autres n'en ont pas, "
+    armes.filter(arme => arme.aPassif).length, 109,
+    "109 armes portent un passif ; les 61 autres n'en ont pas, "
       + "et leur fiche ne doit pas inventer de section"
   );
 
@@ -264,8 +265,8 @@ const STATS_TEST = {
     "toute pièce d'équipement doit retrouver ses statistiques"
   );
 
-  /* ⚠️ Une pièce n'appartient PAS forcément à un ensemble : 35 sur 115 sont
-     autonomes. Vingt-quatre d’entre elles sont le palier bas (qualité 86-100) et ne
+  /* ⚠️ Une pièce n'appartient PAS forcément à un ensemble : 39 sur 119 sont
+     autonomes. Vingt-huit d’entre elles sont le palier bas (qualité 86-100) et ne
      portent rien de plus que leurs statistiques ; les onze autres (101-130)
      portent un passif à trois niveaux À LA PLACE de l'ensemble — aucune pièce
      d'ensemble n'a de passif. La fiche doit donc afficher l'un OU l'autre,
@@ -275,8 +276,8 @@ const STATS_TEST = {
     "80 pièces appartiennent à un ensemble"
   );
   assert.equal(
-    armures.concat(bijoux).filter(piece => !piece.setId).length, 35,
-    "35 pièces sont autonomes"
+    armures.concat(bijoux).filter(piece => !piece.setId).length, 39,
+    "39 pièces sont autonomes"
   );
 
   assert.deepEqual(

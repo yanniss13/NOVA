@@ -251,12 +251,15 @@ def main(argv=None, cible=None):
             print("wiki-competences.js : historique intact SHA-256", digest)
         return
 
+    commite = (client_content.read_window_assignment(cible, "SEVEN_DS_WIKI_COMPETENCES")
+               if cible.exists() else {})
     catalogue = {}
     for slug in slugs():
         competences = competences_du(slug)
         valide(slug, competences)
         catalogue[slug] = competences
         print("%-16s %2d competences" % (slug, len(competences)))
+    catalogue = client_content.reprendre_retirees(catalogue, commite)
 
     if len(catalogue) < HEROS_MINIMUM:
         raise SystemExit(

@@ -37,6 +37,12 @@ BASE_STAT_FIELDS = (
     "critDamage", "critResist", "critDmgResist", "blockDmgResist",
     "pvpDmgUp", "pvpDmgDown",
 )
+# Slug public -> slug du site, pour un heros importe des tables du jeu que
+# 7dsorigin.app publie depuis sous un autre identifiant. Khala y est « calla ».
+# On garde l'import local : les fiches de roster deja enregistrees portent
+# « khala », et changer d'identifiant les rendrait orphelines. Les generateurs
+# reseau ecartent donc l'entree publique, sinon le heros paraitrait deux fois.
+PUBLIC_ALIASES = {"calla": "khala"}
 MISSING_FROM_EXPORT = "missing-from-export"
 PLACEHOLDER = re.compile(r"\{\d+\}")
 NO_BREAK_SPACE = chr(0xA0)
@@ -67,6 +73,62 @@ def client_slugs(snapshot=None):
     """Slugs clients, dans l'ordre canonique de fusion."""
     payload = snapshot_or_default(snapshot)
     return tuple(sorted(payload["heroes"], key=str.casefold))
+
+
+def without_public_aliases(payload, key="slug"):
+    """Retire d'une sortie publique les doublons des heros du snapshot.
+
+    Un dictionnaire est indexe par slug ; une liste porte le slug dans `key`.
+    """
+    if isinstance(payload, dict):
+        return {slug: value for slug, value in payload.items()
+                if slug not in PUBLIC_ALIASES}
+    if isinstance(payload, list):
+        return [row for row in payload
+                if not isinstance(row, dict) or row.get(key) not in PUBLIC_ALIASES]
+    raise ValueError("payload public invalide")
+
+
+# Competences que le jeu porte toujours mais que 7dsorigin.app ne publie plus.
+# Les catalogues commites (calcul et wiki) gardent leur derniere forme publiee :
+# les re-aspirer les effacerait, et seuls les fichiers du jeu permettraient de
+# les retrouver. Si la source en republie une, la generation s'arrete pour
+# qu'on la retire d'ici.
+RETIREES_PAR_LA_SOURCE = {
+    # « Spatial Freeze », l'attaque normale amelioree du livre : retiree de la
+    # fiche en octobre 2026, toujours presente dans les fichiers du jeu
+    # (data/animations-verrous.json, data/temps-action.json).
+    "merlin": ("merlin_book_normalatk_enchant_ready",),
+}
+
+
+def reprendre_retirees(catalogue, commite):
+    """Reinjecte depuis `commite` les competences de RETIREES_PAR_LA_SOURCE.
+
+    Chacune reprend sa place : juste apres la competence qui la precedait
+    dans le catalogue commite, le wiki gardant l'ordre de la source.
+    """
+    resultat = {slug: list(skills) for slug, skills in catalogue.items()}
+    for slug, identifiants in RETIREES_PAR_LA_SOURCE.items():
+        liste = resultat.setdefault(slug, [])
+        anciennes = commite.get(slug, [])
+        for identifiant in identifiants:
+            if any(skill.get("gameId") == identifiant for skill in liste):
+                raise ValueError(
+                    f"{identifiant} est de nouveau publie : le retirer de RETIREES_PAR_LA_SOURCE")
+            rangs = [i for i, skill in enumerate(anciennes) if skill.get("gameId") == identifiant]
+            if not rangs:
+                raise ValueError(f"{identifiant} absent du catalogue commite")
+            rang = rangs[0]
+            precedente = anciennes[rang - 1].get("gameId") if rang else None
+            position = 0
+            if precedente is not None:
+                position = next(
+                    (i + 1 for i, skill in enumerate(liste) if skill.get("gameId") == precedente),
+                    len(liste),
+                )
+            liste.insert(position, copy.deepcopy(anciennes[rang]))
+    return resultat
 
 
 def client_section(slug, section, snapshot=None):

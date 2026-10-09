@@ -125,6 +125,19 @@ class ClientContentTests(unittest.TestCase):
         self.assertEqual([row["slug"] for row in result], ["ban", "khala"])
         self.assertEqual(existing, [{"slug": "ban", "nameFr": "Ban"}])
 
+    def test_public_alias_of_a_client_hero_is_dropped(self):
+        # 7dsorigin.app publie Khala sous « calla » : sans ce filtre, la
+        # regeneration reseau la listerait deux fois.
+        self.assertEqual(module.PUBLIC_ALIASES["calla"], "khala")
+        mapping = {"ban": 1, "calla": 2}
+        rows = [{"slug": "ban"}, {"slug": "calla"}, "texte"]
+        armors = [{"char": "calla", "name": "Préparation totale"}]
+
+        self.assertEqual(module.without_public_aliases(mapping), {"ban": 1})
+        self.assertEqual(module.without_public_aliases(rows), [{"slug": "ban"}, "texte"])
+        self.assertEqual(module.without_public_aliases(armors, key="char"), [])
+        self.assertEqual(mapping, {"ban": 1, "calla": 2})
+
     def test_duplicate_slug_is_rejected(self):
         with self.assertRaisesRegex(ValueError, "slug dupliqué.*khala"):
             module.merge_characters([{"slug": "khala"}], self.snapshot)

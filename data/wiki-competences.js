@@ -3450,6 +3450,170 @@ window.SEVEN_DS_WIKI_COMPETENCES = {
    "weaponType": "Staff"
   }
  ],
+ "lancelot": [
+  {
+   "categorie": "NORMAL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]75%[-] de l'attaque.\n1er coup : 11%\n2e coup : 12%\n3e coup : 20%\n4e coup : 32%",
+   "gameId": "lancelot_gauntlets_jumpatk",
+   "icone": "common_Gauntlets_normalAttack.webp",
+   "nomFr": "Tir en mouvement",
+   "recharge": null,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "descriptionFr": "Dure [#1A7331]4s[-] / [#1A7331]8s[-] en fonction du niveau de charge. Inflige des dégâts égaux à [#1A7331]5%[-] / [#1A7331]7%[-] de l'attaque aux ennemis à portée toutes les [#1A7331]0.3s[-] et réduit leur défense de Terre de [#1A7331]24%[-] de la défense pendant [#1A7331]40s[-].\nUne attaque complètement chargée restaure [#1A7331]1[-] point(s) de relève.",
+   "gameId": "lancelot_gauntlets_skill_e_ready",
+   "icone": "Lancelot_Gauntlets_NormalSkill.webp",
+   "nomFr": "Pluie de flèches",
+   "recharge": 23.0,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]72%[-] de l'attaque, puis inflige [#0F5CD8]Tir d'ancrage[-] pendant [#1A7331]20s[-].\n\n※ [#0F5CD8]Tir d'ancrage[-] : inflige des dégâts de Terre égaux à [#1A7331]10%[-] de l'attaque toutes les [#1A7331]1s[-]. Inflige des dégâts de Terre égaux à [#1A7331]120%[-] de l'attaque lorsque l'effet est retiré. Inflige des dégâts supplémentaires égaux à [#1A7331]10%[-] des dégâts subis avec une attaque spéciale ou une compétence normale de Terre.",
+   "gameId": "lancelot_gauntlets_skill_q",
+   "icone": "Lancelot_Gauntlets_ActiveThird.webp",
+   "nomFr": "Tir d'ancrage",
+   "recharge": 20.0,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]59%[-] de l'attaque.",
+   "gameId": "lancelot_gauntlets_skill_tag",
+   "icone": "Icon_TagSkill.webp",
+   "nomFr": "Flèche explosive",
+   "recharge": null,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]250%[-] de l'attaque. Porte un coup critique si l'ennemi est affecté par [#0F5CD8]Tir d'ancrage[-].",
+   "gameId": "lancelot_gauntlets_skill_r",
+   "icone": "Lancelot_Gauntlets_UltimateSkill.webp",
+   "nomFr": "Faille colossale",
+   "recharge": 10.0,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "PASSIVE",
+   "descriptionFr": "Restaure la jauge de relève de [#1A7331]10[-] + [#1A7331]0.4%[-] de l'attaque (max : [#1A7331]100[-]) toutes les [#1A7331]0.5s[-] en combat. Augmente les dégâts crit. des alliés d'attribut Terre de [#1A7331]15%[-] pendant [#1A7331]10s[-] chaque fois qu'un héros allié utilise une compétence de relève. (Max : [#1A7331]4 fois[-])\nRéussir une esquive inflige des dégâts égaux à [#1A7331]48%[-] de l'attaque.",
+   "gameId": "lancelot_gauntlets_passive",
+   "icone": "Lancelot_Gauntlets_SkillPassive.webp",
+   "nomFr": "Lecture du cœur",
+   "recharge": 0.0,
+   "weaponType": "Gauntlets"
+  },
+  {
+   "categorie": "NORMAL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]160%[-] de l'attaque.\n1er coup : 24%\n2e coup : 26%\n3e coup : 42%\n4e coup : 68%",
+   "gameId": "lancelot_staff_jumpatk",
+   "icone": "common_Staff_normalAttack.webp",
+   "nomFr": "Lance-chaîne",
+   "recharge": null,
+   "weaponType": "Staff"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]140%[-] de l'attaque. L'utilisation de la compétence normale octroie la compétence [#3C22D6]Attaque ultime : Lance explosive[-].\nL'effet persiste tant que le héros est en combat.\n\n[#3C22D6]Lance explosive[-]\nInflige des dégâts égaux à [#1A7331]325%[-] de l'attaque, et augmente les dégâts d'attaque ultime du héros de [#1A7331]75%[-] pendant [#1A7331]20s[-] en touchant un ennemi sous l'effet d'un [#0F5CD8]Déluge[-].",
+   "gameId": "lancelot_staff_skill_e",
+   "icone": "Lancelot_Staff_NormalSkilll_1.webp",
+   "nomFr": "Lance sacrée",
+   "recharge": 17.0,
+   "weaponType": "Staff"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]73%[-] de l'attaque. Utiliser [#1A7331]2 fois[-] l'attaque spéciale octroie la compétence [#3C22D6]Attaque ultime : Ruée divine[-].\nL'effet persiste tant que le héros est en combat.\n\n[#3C22D6]Ruée divine[-]\nInflige des dégâts égaux à [#1A7331]251%[-] de l'attaque, et augmente les dégâts crit. du héros de [#1A7331]60%[-] pendant [#1A7331]20s[-] en touchant un ennemi sous l'effet d'un [#0F5CD8]Déluge[-].",
+   "gameId": "lancelot_staff_skill_q",
+   "icone": "Lancelot_Staff_ActiveThird_1.webp",
+   "nomFr": "Ruée lumineuse",
+   "recharge": 10.0,
+   "weaponType": "Staff"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]138%[-] de l'attaque.",
+   "gameId": "lancelot_staff_skill_tag",
+   "icone": "Icon_TagSkill.webp",
+   "nomFr": "Chute de lumière",
+   "recharge": null,
+   "weaponType": "Staff"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]353%[-] de l'attaque. Utiliser une attaque combinée avec l'attaque ultime du héros en tant que base réinitialise le temps de recharge de toutes les compétences du héros.",
+   "gameId": "lancelot_staff_skill_r_enchant",
+   "icone": "Lancelot_Staff_UltimateSkill_1.webp",
+   "nomFr": "Chemin radieux",
+   "recharge": null,
+   "weaponType": "Staff"
+  },
+  {
+   "categorie": "PASSIVE",
+   "descriptionFr": "Utiliser à la fois [#3C22D6]Attaque ultime : Ruée divine[-] et [#3C22D6]Attaque ultime : Lance explosive[-] convertit les attaques normales en [#3C22D6]Attaque ultime : Lumière prodigieuse[-].\nL'effet persiste tant que le héros est en combat.\n\n[#3C22D6]Lumière prodigieuse[-]\nInflige des dégâts égaux à [#1A7331]450%[-] de l'attaque. Dégâts augmentés de [#1A7331]100%[-] contre les ennemis sous l'effet d'un [#0F5CD8]Déluge[-].",
+   "gameId": "lancelot_staff_passive",
+   "icone": "Lancelot_Staff_SkillPassive.webp",
+   "nomFr": "Perspicacité",
+   "recharge": 0.0,
+   "weaponType": "Staff"
+  },
+  {
+   "categorie": "NORMAL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]165%[-] de l'attaque.\n1er coup : 12%\n2e coup : 18%\n3e coup : 29%\n4e coup : 45%\n5e coup : 61%\n\n[#3C22D6]Flash résiduel[-]\nInflige des dégâts égaux à [#1A7331]105%[-] de l'attaque. La première frappe augmente les dégâts de compétence normale du héros de [#1A7331]12%[-] pendant [#1A7331]10s[-]. (Max : [#1A7331]6 fois[-])",
+   "gameId": "lancelot_sword1h_jumpatk",
+   "icone": "common_Sword1H_normalAttack.webp",
+   "nomFr": "Enchaînement éclair",
+   "recharge": null,
+   "weaponType": "Sword1h"
+  },
+  {
+   "categorie": "NORMAL_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]179%[-] de l'attaque.\n1er coup : 24%\n2e coup : 26%\n3e coup : 28%\n4e coup : 30%\n5e coup : 33%\n6e coup : 38%\n\n[#3C22D6]Entaille croisée[-]\nInflige des dégâts égaux à [#1A7331]94%[-] de l'attaque. La première frappe augmente la perforation du héros de [#1A7331]0.2%[-] de l'attaque (jusqu'à [#1A7331]3 fois[-]) pendant [#1A7331]15s[-]. (Max : [#1A7331]150[-])",
+   "gameId": "lancelot_sword1h_skill_e_atk1",
+   "icone": "Lancelot_Sword1h_NormalSkill_1.webp",
+   "nomFr": "Fendoir des cieux",
+   "recharge": 21.0,
+   "weaponType": "Sword1h"
+  },
+  {
+   "categorie": "ACTIVE_THIRD",
+   "descriptionFr": "Immunise contre les réactions tant que la posture est maintenue. Attaquer lorsque l'arme brille entraîne une charge parfaite, qui déclenche immédiatement [#3C22D6]Compétence normale : Croc plongeant[-].\n\n[#3C22D6]Croc plongeant[-]\nInflige des dégâts égaux à [#1A7331]85%[-] de l'attaque, puis augmente les dégâts subis du héros de [#1A7331]30%[-] pendant [#1A7331]10s[-].",
+   "gameId": "lancelot_sword1h_skill_q",
+   "icone": "Lancelot_Sword1h_ActiveThird_1.webp",
+   "nomFr": "Posture Iai",
+   "recharge": 8.0,
+   "weaponType": "Sword1h"
+  },
+  {
+   "categorie": "TAG_SKILL",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]133%[-] de l'attaque.",
+   "gameId": "lancelot_sword1h_skill_tag",
+   "icone": "Icon_TagSkill.webp",
+   "nomFr": "Tempête de lames",
+   "recharge": null,
+   "weaponType": "Sword1h"
+  },
+  {
+   "categorie": "ULTIMATE",
+   "descriptionFr": "Inflige des dégâts égaux à [#1A7331]435%[-] de l'attaque, puis octroie [#3C22D6]Passif : Œil de l'esprit[-].",
+   "gameId": "lancelot_sword1h_skill_r",
+   "icone": "Lancelot_Sword1h_UltimateSkill.webp",
+   "nomFr": "Éclair instantané",
+   "recharge": 10.0,
+   "weaponType": "Sword1h"
+  },
+  {
+   "categorie": "PASSIVE",
+   "descriptionFr": "Faire mouche avec [#3C22D6]Attaque spéciale : Posture Iai[-] parfaitement chargée convertit l'attaque normale en [#3C22D6]Compétence normale : Flash résiduel[-], l'attaque spéciale en [#3C22D6]Compétence normale : Croc plongeant[-] et la compétence normale en [#3C22D6]Compétence normale : Entaille croisée[-].\nL'effet persiste tant que le héros est en combat.\nUtiliser ces compétences converties un total de [#1A7331]3 fois[-] les ramène à leur état initial et réinitialise le temps de recharge d'[#3C22D6]Attaque spéciale : Posture Iai[-].\nLors de l'utilisation d'une compétence de relève, la dernière frappe de [#3C22D6]Compétence normale : Flash résiduel[-], [#3C22D6]Compétence normale : Croc plongeant[-] et [#3C22D6]Compétence normale : Entaille croisée[-] inflige des dégâts supplémentaires égaux à [#1A7331]130%[-] de l'attaque pendant [#1A7331]15s[-].",
+   "gameId": "lancelot_sword1h_passive",
+   "icone": "Lancelot_Sword1h_SkillPassive.webp",
+   "nomFr": "Œil de l'esprit",
+   "recharge": 0.0,
+   "weaponType": "Sword1h"
+  }
+ ],
  "manny": [
   {
    "categorie": "NORMAL",

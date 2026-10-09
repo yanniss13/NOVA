@@ -104,7 +104,17 @@ Object.keys(TABLE).forEach(fichier => {
        Une ligne DISPENSEE (valeur DERIVEE, sans nombre a pointer dans son
        propre texte) saute ce seul controle ; tout le reste s'applique. */
     if(!DISPENSES_DE_PHRASE.has(passif.id)) niveaux.forEach((source, index) => {
-      const texte = nu(source.textFr);
+      let texte = nu(source.textFr);
+      /* `apres` borne la recherche quand la phrase revient ailleurs dans le
+         texte : le repere doit lui-meme apparaitre EXACTEMENT une fois. */
+      if(passif.provenance.apres){
+        const avant = texte.split(passif.provenance.apres);
+        assert.equal(avant.length, 2,
+          passif.id + " : le repere doit apparaitre EXACTEMENT une fois au "
+            + "niveau " + source.level + ", trouve " + (avant.length - 1)
+            + " fois\n  cherche : " + passif.provenance.apres);
+        texte = avant[1];
+      }
       const morceaux = texte.split(passif.provenance.phrase);
       assert.equal(morceaux.length, 2,
         passif.id + " : la phrase doit apparaitre EXACTEMENT une fois au "
