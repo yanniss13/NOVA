@@ -95,6 +95,9 @@ const HOOK_EXPORT = `Object.assign(globalThis.__hooks,{
   profilsDeLaConfrerie:typeof profilsDeLaConfrerie === "function"
     ? profilsDeLaConfrerie
     : undefined,
+  profilsConsultables:typeof profilsConsultables === "function"
+    ? profilsConsultables
+    : undefined,
   joueursAvecEquipe:typeof joueursAvecEquipe === "function"
     ? joueursAvecEquipe
     : undefined,

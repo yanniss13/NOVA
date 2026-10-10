@@ -112,6 +112,7 @@ import { Store } from "../donnees/equipes-store.js";
     sessionCourante.membre = true;
     sessionCourante.admin = false;
     sessionCourante.rosterProfiles = [];
+    sessionCourante.profilsConsultables = [];
     if(sessionCourante.user){
       let profil = null;
       try{

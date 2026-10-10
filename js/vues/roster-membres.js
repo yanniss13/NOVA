@@ -423,7 +423,7 @@ import { toast } from "./toast.js";
       : [];
     const paintedFromCache = cached.length > 0;
     if(paintedFromCache){
-      renderMemberRosterControls(sessionCourante.rosterProfiles, ownerId);
+      renderMemberRosterControls(sessionCourante.profilsConsultables, ownerId);
       renderMemberRosterCards(cached, ownerId === sessionCourante.user.id);
     }else{
       grid.innerHTML = "";
@@ -432,7 +432,8 @@ import { toast } from "./toast.js";
       ]));
     }
     try{
-      const profiles = await refreshRosterProfiles();
+      await refreshRosterProfiles();
+      const profiles = sessionCourante.profilsConsultables;
       if(memberRosterMode === "others" && !ownerId){
         const other = profiles.find(profile => profile.id !== sessionCourante.user.id);
         ownerId = other ? other.id : "";
@@ -453,7 +454,7 @@ import { toast } from "./toast.js";
         markSyncOffline();
         return;
       }
-      renderMemberRosterControls(sessionCourante.rosterProfiles, ownerId);
+      renderMemberRosterControls(sessionCourante.profilsConsultables, ownerId);
       renderMemberRosterCards(
         MemberRosterStore.all(ownerId),
         ownerId === sessionCourante.user.id

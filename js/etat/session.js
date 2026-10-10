@@ -27,7 +27,8 @@
     membre: true,
     admin: false,
     applicationEpoch: 0,
-    rosterProfiles: []
+    rosterProfiles: [],
+    profilsConsultables: []
   };
 
   // Hors ligne, faute de compte, tout est modifiable en local.

@@ -8,7 +8,13 @@
    mais il n'appartient pas a la confrerie : le laisser ici le ferait
    apparaitre dans le planning et dans le webhook comme un membre qui n'a
    jamais pose ses creneaux. L'administration, elle, a son propre lecteur
-   (`AdministrationStore.comptes`) qui garde tout le monde — c'est son role. */
+   (`AdministrationStore.comptes`) qui garde tout le monde — c'est son role.
+
+   SAUF POUR CONSULTER. Le roster et la collection d'un invite restent
+   lisibles par la confrerie (politiques « a moi ou membre ») : c'est ce qui
+   permet de l'aider sur ses builds. Leurs selecteurs lisent donc
+   `profilsConsultables`, tires de la meme requete — un membre repasse en
+   invite ne doit pas disparaitre de ce qu'on peut encore ouvrir. */
 
 import { sessionCourante } from "../etat/session.js";
 import { sb } from "../noyau/supabase-client.js";
@@ -22,6 +28,13 @@ import { sb } from "../noyau/supabase-client.js";
       .map(item => ({id:item.id, pseudo:item.pseudo || "Membre"}));
   }
 
+  /* Tout profil que la RLS laisse lire, invites compris. */
+  function profilsConsultables(lignes){
+    return (lignes || [])
+      .filter(item => item && item.id)
+      .map(item => ({id:item.id, pseudo:item.pseudo || "Membre"}));
+  }
+
   async function refreshRosterProfiles(){
     if(!sessionCourante.user || !sb) return sessionCourante.rosterProfiles.slice();
     const { data, error } = await sb.from("profiles")
@@ -29,6 +42,7 @@ import { sb } from "../noyau/supabase-client.js";
       .order("pseudo", {ascending:true});
     if(error) throw error;
     sessionCourante.rosterProfiles = profilsDeLaConfrerie(data);
+    sessionCourante.profilsConsultables = profilsConsultables(data);
     return sessionCourante.rosterProfiles.slice();
   }
 

@@ -64,7 +64,7 @@ import { toast } from "./toast.js";
   const rosterAffiche = () => MemberRosterStore.all(ownerAffiche());
 
   const pseudoDe = id => {
-    const profil = (sessionCourante.rosterProfiles || [])
+    const profil = (sessionCourante.profilsConsultables || [])
       .find(item => item.id === id);
     return (profil && profil.pseudo) || "ce membre";
   };
@@ -124,7 +124,7 @@ import { toast } from "./toast.js";
      un controle a une seule option est une promesse non tenue. */
   function selecteurDeMembre(){
     const moi = moiMeme();
-    const autres = (sessionCourante.rosterProfiles || [])
+    const autres = (sessionCourante.profilsConsultables || [])
       .filter(profil => profil.id !== moi);
     $("#collectionOwnerField").hidden = !moi || !autres.length;
     const signature = moi + "|"

@@ -16,7 +16,7 @@ const assert = require("node:assert/strict");
 const { loadApp } = require("./helpers/load-app");
 
 const { hooks } = loadApp();
-const { profilsDeLaConfrerie, equipesDeLaConfrerie } = hooks;
+const { profilsDeLaConfrerie, profilsConsultables, equipesDeLaConfrerie } = hooks;
 
 assert.equal(typeof profilsDeLaConfrerie, "function",
   "le filtre des profils doit être exposé");
@@ -55,6 +55,24 @@ assert.equal(
    ligne qu'on ne sait pas lire, et on ne l'invente pas membre. */
 assert.equal(profilsDeLaConfrerie([{ id:"y", pseudo:"Y" }]).length, 0,
   "sans drapeau, on ne suppose pas l'appartenance");
+
+/* ---- Ce qu'on peut consulter ----
+
+   Le roster et la collection d'un invite restent lisibles par la confrerie.
+   Leurs selecteurs gardent donc tout le monde : sans cela, un membre repasse
+   en invite disparaissait de ce qu'on pouvait encore ouvrir. */
+
+assert.equal(typeof profilsConsultables, "function",
+  "la liste consultable doit être exposée");
+assert.deepEqual(
+  profilsConsultables(LIGNES).map(p => p.id),
+  ["m1", "g1", "m2"],
+  "l'invité reste consultable"
+);
+assert.deepEqual(Object.keys(profilsConsultables(LIGNES)[1]).sort(), ["id", "pseudo"],
+  "même forme que la liste de la confrérie");
+assert.equal(profilsConsultables(null).length, 0,
+  "une lecture vide ne casse pas");
 
 /* ---- Les equipes ---- */
 

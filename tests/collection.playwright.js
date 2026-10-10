@@ -249,17 +249,17 @@ const EQUIPEES = [
     const champMembre = page.locator("#collectionOwner");
     assert.equal(await page.locator("#collectionOwnerField").isVisible(), true,
       "le sélecteur apparaît dès qu'il y a quelqu'un d'autre à regarder");
-    /* « INVITÉ » N'APPARAÎT PAS. La politique « à moi ou membre » rend bien sa
-       collection lisible à la confrérie — mais un invité n'appartient pas à la
-       confrérie, et le proposer ici revenait à le compter parmi nous.
+    /* « INVITÉ » APPARAÎT. La politique « à moi ou membre » rend sa
+       collection lisible à la confrérie, et c'est ce qui permet de l'aider :
+       un membre repassé en invité ne doit pas disparaître de ce qu'on peut
+       encore ouvrir. Le planning, l'Analyse et les Dispos, eux, ne le
+       comptent toujours pas — ils lisent `rosterProfiles`, pas cette liste.
 
-       La liste vient de `refreshRosterProfiles`, qui ne retourne que des
-       membres. L'invité, lui, garde son propre accès : la RLS ne lui rend que
-       sa ligne, donc son sélecteur ne se vide pas — il n'a simplement personne
-       d'autre à regarder, ce qui est exact. */
+       L'invité garde son propre accès : la RLS ne lui rend que sa ligne, donc
+       il n'a personne d'autre à regarder, ce qui est exact. */
     assert.deepEqual(
-      await champMembre.locator("option").allTextContents(),
-      ["Ma collection", "Merlin"]
+      (await champMembre.locator("option").allTextContents()).sort(),
+      ["Invité", "Ma collection", "Merlin"]
     );
 
     await champMembre.selectOption("user-2");
