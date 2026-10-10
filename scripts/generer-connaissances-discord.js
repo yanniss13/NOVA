@@ -85,9 +85,11 @@ const ANIMATION_JOUEE = {
 };
 
 /* `dureeAnimation` : TotalTime de la table du jeu (temps-action.json).
-   `relanceDes` : premier instant ou le heros peut agir de nouveau, deduit des
-   marqueurs du montage (animations-verrous.json). `null` quand le jeu ne le
-   dit pas : une duree inventee serait pire qu'une absence. */
+   `relanceDes` : premier instant ou le heros peut agir de nouveau. Une mesure
+   faite en jeu (animations-mesurees.json) fait foi ; a defaut, le verrou
+   deduit des marqueurs du montage (animations-verrous.json) — la regle du
+   simulateur, voir catalogues-dps.js. `null` quand rien ne le dit : une
+   duree inventee serait pire qu'une absence. */
 function competencesConnues(wiki, tempsAction, verrous) {
   const sortie = {};
   Object.keys(wiki).sort().forEach(id => {
@@ -214,7 +216,11 @@ function construireConnaissances() {
     competences:competencesConnues(
       wiki,
       JSON.parse(fs.readFileSync(path.join(RACINE, "data", "temps-action.json"), "utf8")).actions,
-      JSON.parse(fs.readFileSync(path.join(RACINE, "data", "animations-verrous.json"), "utf8")).animations
+      Object.assign(
+        {},
+        JSON.parse(fs.readFileSync(path.join(RACINE, "data", "animations-verrous.json"), "utf8")).animations,
+        JSON.parse(fs.readFileSync(path.join(RACINE, "data", "animations-mesurees.json"), "utf8")).animations
+      )
     ),
     potentiels:potentielsConnus(potentiels),
     equipements,
