@@ -13,7 +13,9 @@
   "fenetres : instants d ouverture des fenetres d annulation, lus dans les",
   "           marqueurs du montage. Absent de la table officielle.",
   "La table couvre aussi les monstres et les PNJ, pas seulement les heros.",
-  "Actions `calla_*` : build 25436067, ecrites par fusionner.js --seulement=calla."
+  "Actions `calla_*` : build 25436067, ecrites par fusionner.js --seulement=calla.",
+  "Actions `ban_*` : build 25754537, ecrites par fusionner.js --seulement=ban.",
+  "Actions `lancelot_*` : build 25754537, ecrites par fusionner.js --seulement=lancelot."
  ],
  "_unite": "secondes",
  "_build": "1.8.1.2",
@@ -125548,6 +125550,8379 @@
      "fin": 4.867
     }
    }
+  },
+  "ban_common_avoidanceskill": {
+   "montage": "Ban_Moving_Dash_MTG",
+   "duree": 1.833,
+   "action": 1.833,
+   "impacts": [],
+   "superArmor": [
+    [
+     0,
+     1,
+     true
+    ]
+   ]
+  },
+  "ban_common_justavoidanceskill": {
+   "montage": "Ban_Moving_JustDash_MTG",
+   "duree": 1.9,
+   "action": 1.9,
+   "impacts": []
+  },
+  "ban_cudgel3c_jumpatk": {
+   "montage": "Ban_Cudgel3c_JumpAtk_MTG",
+   "duree": 1.8,
+   "action": 1.8,
+   "impacts": [
+    0.028
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.8
+    },
+    "avoidance": {
+     "debut": 0.003,
+     "fin": 1.806
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1.8
+    },
+    "movement": {
+     "debut": 0.45,
+     "fin": 1.8
+    },
+    "normalAttack": {
+     "debut": 0.45,
+     "fin": 1.8
+    },
+    "tagOut": {
+     "debut": 0.45,
+     "fin": 1.8
+    }
+   },
+   "nom": "Triple Chain",
+   "coupsDepot": null
+  },
+  "ban_cudgel3c_normalatk_1": {
+   "montage": "Ban_Cudgel3c_NormalAtk_1_MTG",
+   "duree": 3.5,
+   "action": 3.5,
+   "impacts": [
+    0.171
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "normalAttack": {
+     "debut": 0.171,
+     "fin": 3.5
+    },
+    "movement": {
+     "debut": 0.201,
+     "fin": 3.5
+    },
+    "tagOut": {
+     "debut": 0.201,
+     "fin": 3.499
+    }
+   }
+  },
+  "ban_cudgel3c_normalatk_2": {
+   "montage": "Ban_Cudgel3c_NormalAtk_2_MTG",
+   "duree": 4.567,
+   "action": 4.567,
+   "impacts": [
+    0.333,
+    0.633
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 4.567
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 4.567
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 4.567
+    },
+    "normalAttack": {
+     "debut": 0.633,
+     "fin": 4.567
+    },
+    "movement": {
+     "debut": 0.673,
+     "fin": 4.567
+    },
+    "tagOut": {
+     "debut": 0.673,
+     "fin": 4.567
+    }
+   }
+  },
+  "ban_cudgel3c_normalatk_3": {
+   "montage": "Ban_Cudgel3c_NormalAtk_3_MTG",
+   "duree": 3.5,
+   "action": 3.5,
+   "impacts": [
+    0.131,
+    0.326,
+    0.486
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "normalAttack": {
+     "debut": 0.486,
+     "fin": 3.5
+    },
+    "movement": {
+     "debut": 0.516,
+     "fin": 3.5
+    },
+    "tagOut": {
+     "debut": 0.516,
+     "fin": 3.5
+    }
+   }
+  },
+  "ban_cudgel3c_normalatk_4": {
+   "montage": "Ban_Cudgel3c_NormalAtk_4_MTG",
+   "duree": 3.367,
+   "action": 3.367,
+   "impacts": [
+    0.767
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "normalAttack": {
+     "debut": 0.767,
+     "fin": 3.367
+    },
+    "movement": {
+     "debut": 0.797,
+     "fin": 3.367
+    },
+    "tagOut": {
+     "debut": 0.797,
+     "fin": 3.367
+    }
+   }
+  },
+  "ban_cudgel3c_skill_e": {
+   "montage": "Ban_Cudgel3c_Skill_E_MTG",
+   "duree": 2.5,
+   "action": 2.5,
+   "impacts": [
+    0.009,
+    0.121,
+    0.241,
+    0.36,
+    0.485,
+    0.567
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.506
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "tagOut": {
+     "debut": 0.667,
+     "fin": 2.5
+    },
+    "normalAttack": {
+     "debut": 0.667,
+     "fin": 2.5
+    },
+    "movement": {
+     "debut": 0.667,
+     "fin": 2.5
+    }
+   },
+   "nom": "Spiral Rush",
+   "coupsDepot": null
+  },
+  "ban_cudgel3c_skill_q_1": {
+   "montage": "Ban_Cudgel3c_Skill_Q_1_MTG",
+   "duree": 2.5,
+   "action": 2.5,
+   "impacts": [
+    0.133
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "activeSkill": {
+     "debut": 0.143,
+     "fin": 2.5
+    },
+    "movement": {
+     "debut": 0.167,
+     "fin": 2.5
+    },
+    "normalAttack": {
+     "debut": 0.167,
+     "fin": 2.5
+    },
+    "tagOut": {
+     "debut": 0.167,
+     "fin": 2.5
+    }
+   },
+   "nom": "Rapid Swing",
+   "coupsDepot": null
+  },
+  "ban_cudgel3c_skill_q_2": {
+   "montage": "Ban_Cudgel3c_Skill_Q_2_MTG",
+   "duree": 3.167,
+   "action": 3.167,
+   "impacts": [
+    0.167
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.167
+    },
+    "activeSkill": {
+     "debut": 0.177,
+     "fin": 3.167
+    },
+    "tagOut": {
+     "debut": 0.199,
+     "fin": 3.167
+    },
+    "movement": {
+     "debut": 0.199,
+     "fin": 3.167
+    },
+    "normalAttack": {
+     "debut": 0.199,
+     "fin": 3.167
+    }
+   }
+  },
+  "ban_cudgel3c_skill_q_3": {
+   "montage": "Ban_Cudgel3c_Skill_Q_3_MTG",
+   "duree": 3.767,
+   "action": 3.767,
+   "impacts": [
+    0.068,
+    0.146,
+    0.25,
+    0.353,
+    0.765,
+    0.879
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.767
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.767
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.767
+    },
+    "movement": {
+     "debut": 1.079,
+     "fin": 3.767
+    },
+    "normalAttack": {
+     "debut": 1.079,
+     "fin": 3.767
+    },
+    "tagOut": {
+     "debut": 1.079,
+     "fin": 3.767
+    }
+   }
+  },
+  "ban_cudgel3c_skill_r": {
+   "montage": "Ban_Cudgel3c_Skill_R_MTG",
+   "duree": 4.833,
+   "action": 4.833,
+   "impacts": [
+    2.067,
+    2.8
+   ],
+   "superArmor": [
+    [
+     0,
+     4.83333,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2.8,
+     "fin": 4.833
+    },
+    "avoidance": {
+     "debut": 2.8,
+     "fin": 4.833
+    },
+    "jump": {
+     "debut": 2.81,
+     "fin": 4.833
+    },
+    "movement": {
+     "debut": 2.83,
+     "fin": 4.833
+    },
+    "normalAttack": {
+     "debut": 2.83,
+     "fin": 4.833
+    },
+    "tagOut": {
+     "debut": 2.83,
+     "fin": 4.833
+    }
+   },
+   "nom": "Fox Hunt",
+   "coupsDepot": null
+  },
+  "ban_cudgel3c_skill_r_hit": {
+   "montage": "Ban_Cudgel3c_Skill_R_Hit_MTG",
+   "duree": 2.767,
+   "action": 2.767,
+   "impacts": [
+    0.8
+   ],
+   "superArmor": [
+    [
+     0,
+     5.46667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "montageNonConfirme": 3.133
+  },
+  "ban_cudgel3c_skill_tag": {
+   "montage": "Ban_Cudgel3c_Skill_Tag_MTG",
+   "duree": 2.833,
+   "action": 2.833,
+   "impacts": [
+    0.2,
+    0.267,
+    0.333,
+    0.4,
+    0.467
+   ],
+   "superArmor": [
+    [
+     0,
+     0.8244,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "tagOut": {
+     "debut": 0.467,
+     "fin": 2.833
+    },
+    "activeSkill": {
+     "debut": 0.467,
+     "fin": 2.833
+    },
+    "avoidance": {
+     "debut": 0.467,
+     "fin": 2.833
+    },
+    "jump": {
+     "debut": 0.467,
+     "fin": 2.833
+    },
+    "movement": {
+     "debut": 0.467,
+     "fin": 2.833
+    },
+    "normalAttack": {
+     "debut": 0.467,
+     "fin": 2.833
+    }
+   },
+   "nom": "Chain Strike",
+   "coupsDepot": null
+  },
+  "ban_gauntlets_jumpatk": {
+   "montage": "Ban_Gauntlets_JumpAtk_MTG",
+   "duree": 2.333,
+   "action": 2.333,
+   "impacts": [
+    0.174
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.767
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.336
+    },
+    "movement": {
+     "debut": 0.52,
+     "fin": 2.333
+    },
+    "normalAttack": {
+     "debut": 0.522,
+     "fin": 2.333
+    },
+    "tagOut": {
+     "debut": 0.536,
+     "fin": 2.333
+    },
+    "jump": {
+     "debut": 0.538,
+     "fin": 2.333
+    }
+   },
+   "nom": "Dark Fist",
+   "coupsDepot": null
+  },
+  "ban_gauntlets_normalatk_1": {
+   "montage": "Ban_Gauntlets_NormalAtk_1_MTG",
+   "duree": 2.667,
+   "action": 2.667,
+   "impacts": [
+    0.242
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 2.667
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.667
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.667
+    },
+    "normalAttack": {
+     "debut": 0.267,
+     "fin": 2.667
+    },
+    "movement": {
+     "debut": 0.297,
+     "fin": 2.667
+    },
+    "tagOut": {
+     "debut": 0.297,
+     "fin": 2.667
+    }
+   }
+  },
+  "ban_gauntlets_normalatk_2": {
+   "montage": "Ban_Gauntlets_NormalAtk_2_MTG",
+   "duree": 3.867,
+   "action": 3.867,
+   "impacts": [
+    0.168,
+    0.696
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.867
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.867
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.867
+    },
+    "normalAttack": {
+     "debut": 0.7,
+     "fin": 3.867
+    },
+    "movement": {
+     "debut": 0.73,
+     "fin": 3.867
+    },
+    "tagOut": {
+     "debut": 0.73,
+     "fin": 3.867
+    }
+   }
+  },
+  "ban_gauntlets_normalatk_3": {
+   "montage": "Ban_Gauntlets_NormalAtk_3_MTG",
+   "duree": 3.333,
+   "action": 3.333,
+   "impacts": [
+    0.1,
+    0.202,
+    0.267,
+    0.367,
+    0.433,
+    0.532
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "normalAttack": {
+     "debut": 0.533,
+     "fin": 3.333
+    },
+    "movement": {
+     "debut": 0.563,
+     "fin": 3.333
+    },
+    "tagOut": {
+     "debut": 0.563,
+     "fin": 3.333
+    }
+   }
+  },
+  "ban_gauntlets_normalatk_4": {
+   "montage": "Ban_Gauntlets_NormalAtk_4_MTG",
+   "duree": 4.167,
+   "action": 4.167,
+   "impacts": [
+    0.493
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 4.167
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 4.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 4.167
+    },
+    "normalAttack": {
+     "debut": 0.5,
+     "fin": 4.167
+    },
+    "movement": {
+     "debut": 0.53,
+     "fin": 4.167
+    },
+    "tagOut": {
+     "debut": 0.53,
+     "fin": 4.167
+    }
+   }
+  },
+  "ban_gauntlets_skill_e": {
+   "montage": "Ban_Gauntlets_Skill_E_MTG",
+   "duree": 3.367,
+   "action": 3.367,
+   "impacts": [
+    0.297,
+    0.865
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "normalAttack": {
+     "debut": 1.165,
+     "fin": 3.367
+    },
+    "movement": {
+     "debut": 1.165,
+     "fin": 3.367
+    },
+    "tagOut": {
+     "debut": 1.165,
+     "fin": 3.367
+    }
+   },
+   "nom": "\"Snatch\"",
+   "coupsDepot": null
+  },
+  "ban_gauntlets_skill_e_extra": {
+   "montage": "Ban_Gauntlets_Skill_E_MTG",
+   "duree": 3.367,
+   "action": 3.367,
+   "impacts": [
+    0.297,
+    0.865
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "normalAttack": {
+     "debut": 1.165,
+     "fin": 3.367
+    },
+    "movement": {
+     "debut": 1.165,
+     "fin": 3.367
+    },
+    "tagOut": {
+     "debut": 1.165,
+     "fin": 3.367
+    }
+   }
+  },
+  "ban_gauntlets_skill_q": {
+   "montage": "Ban_Gauntlets_Skill_Q_MTG",
+   "duree": 3.667,
+   "action": 3.667,
+   "impacts": [
+    0.5,
+    0.97
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.667
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.667
+    },
+    "avoidance": {
+     "debut": 0.004,
+     "fin": 3.671
+    },
+    "movement": {
+     "debut": 1.264,
+     "fin": 3.667
+    },
+    "normalAttack": {
+     "debut": 1.264,
+     "fin": 3.667
+    },
+    "tagOut": {
+     "debut": 1.264,
+     "fin": 3.667
+    }
+   },
+   "nom": "Abyss Uppercut",
+   "coupsDepot": null
+  },
+  "ban_gauntlets_skill_r": {
+   "montage": "Ban_Gauntlets_Skill_R_MTG",
+   "duree": 4.133,
+   "action": 4.133,
+   "impacts": [
+    2.011,
+    2.013
+   ],
+   "superArmor": [
+    [
+     0,
+     4.13333,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2.033,
+     "fin": 4.133
+    },
+    "avoidance": {
+     "debut": 2.033,
+     "fin": 4.133
+    },
+    "jump": {
+     "debut": 2.033,
+     "fin": 4.133
+    },
+    "movement": {
+     "debut": 2.333,
+     "fin": 4.133
+    },
+    "normalAttack": {
+     "debut": 2.333,
+     "fin": 4.133
+    },
+    "tagOut": {
+     "debut": 2.333,
+     "fin": 4.133
+    }
+   },
+   "nom": "Black Burst",
+   "coupsDepot": null
+  },
+  "ban_gauntlets_skill_r_action": {
+   "montage": "Ban_Gauntlets_Skill_R_Action_MTG",
+   "duree": 2.133,
+   "action": 2.133,
+   "impacts": [
+    0,
+    0.01
+   ],
+   "superArmor": [
+    [
+     0,
+     2.13333,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0.704,
+     "fin": 2.133
+    },
+    "avoidance": {
+     "debut": 0.704,
+     "fin": 2.133
+    },
+    "jump": {
+     "debut": 0.704,
+     "fin": 2.133
+    },
+    "movement": {
+     "debut": 0.763,
+     "fin": 2.133
+    },
+    "normalAttack": {
+     "debut": 0.763,
+     "fin": 2.133
+    },
+    "tagOut": {
+     "debut": 0.763,
+     "fin": 2.133
+    }
+   }
+  },
+  "ban_gauntlets_skill_r_directing": {
+   "montage": "Ban_Gauntlets_Skill_R_Directing_MTG",
+   "duree": 4.133,
+   "action": 3.5,
+   "impacts": [],
+   "superArmor": [
+    [
+     0,
+     4.13333,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets"
+  },
+  "ban_gauntlets_skill_tag": {
+   "montage": "Ban_Gauntlets_Skill_Tag_MTG",
+   "duree": 2.333,
+   "action": 2.333,
+   "impacts": [
+    0.333
+   ],
+   "superArmor": [
+    [
+     0,
+     0.664576,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "tirs": [
+    0.333
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0.363,
+     "fin": 2.333
+    },
+    "avoidance": {
+     "debut": 0.363,
+     "fin": 2.333
+    },
+    "jump": {
+     "debut": 0.363,
+     "fin": 2.333
+    },
+    "normalAttack": {
+     "debut": 0.363,
+     "fin": 2.333
+    },
+    "movement": {
+     "debut": 0.363,
+     "fin": 2.333
+    },
+    "tagOut": {
+     "debut": 0.363,
+     "fin": 2.333
+    }
+   },
+   "nom": "Ambush Strike",
+   "coupsDepot": null
+  },
+  "ban_sword2h_jumpatk": {
+   "montage": "Ban_Sword2H_JumpAtk_MTG",
+   "duree": 2.2,
+   "action": 2.2,
+   "impacts": [
+    0.056
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.2
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.202
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 2.2
+    },
+    "movement": {
+     "debut": 0.45,
+     "fin": 2.2
+    },
+    "normalAttack": {
+     "debut": 0.45,
+     "fin": 2.2
+    },
+    "tagOut": {
+     "debut": 0.45,
+     "fin": 2.2
+    }
+   },
+   "nom": "Unchained Edge",
+   "coupsDepot": null
+  },
+  "ban_sword2h_normalatk_1": {
+   "montage": "Ban_Sword2H_NormalAtk_1_MTG",
+   "duree": 2.967,
+   "action": 2.967,
+   "impacts": [
+    0.24,
+    0.415
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.967
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.967
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.967
+    },
+    "normalAttack": {
+     "debut": 0.415,
+     "fin": 2.967
+    },
+    "movement": {
+     "debut": 0.445,
+     "fin": 2.967
+    },
+    "tagOut": {
+     "debut": 0.445,
+     "fin": 2.967
+    }
+   }
+  },
+  "ban_sword2h_normalatk_2": {
+   "montage": "Ban_Sword2H_NormalAtk_2_MTG",
+   "duree": 2.267,
+   "action": 2.267,
+   "impacts": [
+    0.16
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 2.267
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.267
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.267
+    },
+    "normalAttack": {
+     "debut": 0.16,
+     "fin": 2.267
+    },
+    "movement": {
+     "debut": 0.19,
+     "fin": 2.267
+    },
+    "tagOut": {
+     "debut": 0.19,
+     "fin": 2.267
+    }
+   }
+  },
+  "ban_sword2h_normalatk_3": {
+   "montage": "Ban_Sword2H_NormalAtk_3_MTG",
+   "duree": 2.967,
+   "action": 2.967,
+   "impacts": [
+    0.2,
+    0.35
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.97
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.967
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.967
+    },
+    "normalAttack": {
+     "debut": 0.35,
+     "fin": 2.967
+    },
+    "movement": {
+     "debut": 0.38,
+     "fin": 2.967
+    },
+    "tagOut": {
+     "debut": 0.38,
+     "fin": 2.967
+    }
+   }
+  },
+  "ban_sword2h_normalatk_4": {
+   "montage": "Ban_Sword2H_NormalAtk_4_MTG",
+   "duree": 2.767,
+   "action": 2.767,
+   "impacts": [
+    0.31,
+    0.494,
+    1.004
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "normalAttack": {
+     "debut": 1.004,
+     "fin": 2.767
+    },
+    "movement": {
+     "debut": 1.034,
+     "fin": 2.767
+    },
+    "tagOut": {
+     "debut": 1.034,
+     "fin": 2.767
+    }
+   }
+  },
+  "ban_sword2h_skill_e": {
+   "montage": "Ban_Sword2H_Skill_E_2_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0,
+    0.167
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "sameSkill": {
+     "debut": 0.167,
+     "fin": 3.1
+    },
+    "activeSkill": {
+     "debut": 0.167,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.467,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.467,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.467,
+     "fin": 3.1
+    }
+   },
+   "nom": "Breaking Smash",
+   "coupsDepot": null
+  },
+  "ban_sword2h_skill_e_2_1": {
+   "montage": "Ban_Sword2H_Skill_E_2_1_MTG",
+   "duree": 3.333,
+   "action": 3.333,
+   "impacts": [
+    0,
+    0.485
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "activeSkill": {
+     "debut": 0.621,
+     "fin": 3.333
+    },
+    "movement": {
+     "debut": 0.815,
+     "fin": 3.333
+    },
+    "normalAttack": {
+     "debut": 0.815,
+     "fin": 3.333
+    },
+    "tagOut": {
+     "debut": 0.815,
+     "fin": 3.333
+    }
+   }
+  },
+  "ban_sword2h_skill_q": {
+   "montage": "Ban_Sword2H_Skill_Q_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0.457
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "montageNonConfirme": 3,
+   "nom": "Rough Grind",
+   "coupsDepot": null
+  },
+  "ban_sword2h_skill_r": {
+   "montage": "Ban_Sword2H_Skill_R_MTG",
+   "duree": 3.667,
+   "action": 3.667,
+   "impacts": [
+    1.67
+   ],
+   "superArmor": [
+    [
+     0,
+     3.66667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 1.7,
+     "fin": 3.667
+    },
+    "avoidance": {
+     "debut": 1.7,
+     "fin": 3.667
+    },
+    "jump": {
+     "debut": 1.7,
+     "fin": 3.667
+    },
+    "movement": {
+     "debut": 1.95,
+     "fin": 3.667
+    },
+    "normalAttack": {
+     "debut": 1.95,
+     "fin": 3.667
+    },
+    "tagOut": {
+     "debut": 1.95,
+     "fin": 3.667
+    }
+   },
+   "nom": "Unbreakable Howl",
+   "coupsDepot": null
+  },
+  "ban_sword2h_skill_tag": {
+   "montage": "Ban_Sword2H_Skill_Tag_MTG",
+   "duree": 2.833,
+   "action": 2.833,
+   "impacts": [
+    0.535
+   ],
+   "superArmor": [
+    [
+     0,
+     0.564169,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0.67,
+     "fin": 2.833
+    },
+    "avoidance": {
+     "debut": 0.67,
+     "fin": 2.833
+    },
+    "jump": {
+     "debut": 0.67,
+     "fin": 2.833
+    },
+    "movement": {
+     "debut": 0.7,
+     "fin": 2.833
+    },
+    "normalAttack": {
+     "debut": 0.7,
+     "fin": 2.833
+    },
+    "tagOut": {
+     "debut": 0.7,
+     "fin": 2.833
+    }
+   },
+   "nom": "Crash Impact",
+   "coupsDepot": null
+  },
+  "grade_10_ban_cudgel3c_skill_q_1": {
+   "montage": "Ban_Cudgel3c_Skill_Q_1_MTG",
+   "duree": 2.5,
+   "action": 2.5,
+   "impacts": [
+    0.133
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "activeSkill": {
+     "debut": 0.143,
+     "fin": 2.5
+    },
+    "movement": {
+     "debut": 0.167,
+     "fin": 2.5
+    },
+    "normalAttack": {
+     "debut": 0.167,
+     "fin": 2.5
+    },
+    "tagOut": {
+     "debut": 0.167,
+     "fin": 2.5
+    }
+   }
+  },
+  "grade_10_ban_cudgel3c_skill_q_2": {
+   "montage": "Ban_Cudgel3c_Skill_Q_2_MTG",
+   "duree": 3.167,
+   "action": 3.167,
+   "impacts": [
+    0.167
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.167
+    },
+    "activeSkill": {
+     "debut": 0.177,
+     "fin": 3.167
+    },
+    "tagOut": {
+     "debut": 0.199,
+     "fin": 3.167
+    },
+    "movement": {
+     "debut": 0.199,
+     "fin": 3.167
+    },
+    "normalAttack": {
+     "debut": 0.199,
+     "fin": 3.167
+    }
+   }
+  },
+  "grade_10_ban_cudgel3c_skill_q_3": {
+   "montage": "Ban_Cudgel3c_Skill_Q_3_G7_MTG",
+   "duree": 3.767,
+   "action": 3.767,
+   "impacts": [
+    0.068,
+    0.146,
+    0.25,
+    0.353,
+    0.765,
+    0.879
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.767
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.767
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.767
+    },
+    "movement": {
+     "debut": 1.079,
+     "fin": 3.767
+    },
+    "normalAttack": {
+     "debut": 1.079,
+     "fin": 3.767
+    },
+    "tagOut": {
+     "debut": 1.079,
+     "fin": 3.767
+    }
+   }
+  },
+  "grade_10_ban_cudgel3c_skill_r": {
+   "montage": "Ban_Cudgel3c_Skill_R_G10_MTG",
+   "duree": 4.833,
+   "action": 4.833,
+   "impacts": [
+    2.067,
+    2.8
+   ],
+   "superArmor": [
+    [
+     0,
+     4.83333,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2.8,
+     "fin": 4.833
+    },
+    "avoidance": {
+     "debut": 2.8,
+     "fin": 4.833
+    },
+    "jump": {
+     "debut": 2.81,
+     "fin": 4.833
+    },
+    "movement": {
+     "debut": 2.83,
+     "fin": 4.833
+    },
+    "normalAttack": {
+     "debut": 2.83,
+     "fin": 4.833
+    },
+    "tagOut": {
+     "debut": 2.83,
+     "fin": 4.833
+    }
+   }
+  },
+  "grade_10_ban_cudgel3c_skill_r_hit": {
+   "montage": "Ban_Cudgel3c_Skill_R_Hit_G10_MTG",
+   "duree": 2.767,
+   "action": 2.767,
+   "impacts": [
+    0.8
+   ],
+   "superArmor": [
+    [
+     0,
+     5.46667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "montageNonConfirme": 3.133
+  },
+  "grade_10_ban_gauntlets_skill_e": {
+   "montage": "Ban_Gauntlets_Skill_E_G10_MTG",
+   "duree": 3.367,
+   "action": 3.367,
+   "impacts": [
+    0.297,
+    0.865
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "normalAttack": {
+     "debut": 1.165,
+     "fin": 3.367
+    },
+    "movement": {
+     "debut": 1.165,
+     "fin": 3.367
+    },
+    "tagOut": {
+     "debut": 1.165,
+     "fin": 3.367
+    }
+   }
+  },
+  "grade_10_ban_sword2h_skill_e": {
+   "montage": "Ban_Sword2H_Skill_E_2_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0,
+    0.167
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "sameSkill": {
+     "debut": 0.167,
+     "fin": 3.1
+    },
+    "activeSkill": {
+     "debut": 0.167,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.467,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.467,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.467,
+     "fin": 3.1
+    }
+   }
+  },
+  "grade_10_ban_sword2h_skill_e_2_1": {
+   "montage": "Ban_Sword2H_Skill_E_2_1_G10_MTG",
+   "duree": 3.333,
+   "action": 3.333,
+   "impacts": [
+    0,
+    0.485
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "activeSkill": {
+     "debut": 0.621,
+     "fin": 3.333
+    },
+    "sameSkill": {
+     "debut": 0.621,
+     "fin": 3.333
+    },
+    "movement": {
+     "debut": 0.815,
+     "fin": 3.333
+    },
+    "normalAttack": {
+     "debut": 0.815,
+     "fin": 3.333
+    },
+    "tagOut": {
+     "debut": 0.815,
+     "fin": 3.333
+    }
+   }
+  },
+  "grade_2_ban_cudgel3c_skill_q_1": {
+   "montage": "Ban_Cudgel3c_Skill_Q_1_MTG",
+   "duree": 2.5,
+   "action": 2.5,
+   "impacts": [
+    0.133
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "activeSkill": {
+     "debut": 0.143,
+     "fin": 2.5
+    },
+    "movement": {
+     "debut": 0.167,
+     "fin": 2.5
+    },
+    "normalAttack": {
+     "debut": 0.167,
+     "fin": 2.5
+    },
+    "tagOut": {
+     "debut": 0.167,
+     "fin": 2.5
+    }
+   }
+  },
+  "grade_2_ban_cudgel3c_skill_q_2": {
+   "montage": "Ban_Cudgel3c_Skill_Q_2_MTG",
+   "duree": 3.167,
+   "action": 3.167,
+   "impacts": [
+    0.167
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.167
+    },
+    "activeSkill": {
+     "debut": 0.177,
+     "fin": 3.167
+    },
+    "tagOut": {
+     "debut": 0.199,
+     "fin": 3.167
+    },
+    "movement": {
+     "debut": 0.199,
+     "fin": 3.167
+    },
+    "normalAttack": {
+     "debut": 0.199,
+     "fin": 3.167
+    }
+   }
+  },
+  "grade_2_ban_cudgel3c_skill_q_3": {
+   "montage": "Ban_Cudgel3c_Skill_Q_3_MTG",
+   "duree": 3.767,
+   "action": 3.767,
+   "impacts": [
+    0.068,
+    0.146,
+    0.25,
+    0.353,
+    0.765,
+    0.879
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.767
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.767
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.767
+    },
+    "movement": {
+     "debut": 1.079,
+     "fin": 3.767
+    },
+    "normalAttack": {
+     "debut": 1.079,
+     "fin": 3.767
+    },
+    "tagOut": {
+     "debut": 1.079,
+     "fin": 3.767
+    }
+   }
+  },
+  "grade_2_ban_gauntlets_skill_q": {
+   "montage": "Ban_Gauntlets_Skill_Q_MTG",
+   "duree": 3.667,
+   "action": 3.667,
+   "impacts": [
+    0.5,
+    0.97
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.667
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.667
+    },
+    "avoidance": {
+     "debut": 0.004,
+     "fin": 3.671
+    },
+    "movement": {
+     "debut": 1.264,
+     "fin": 3.667
+    },
+    "normalAttack": {
+     "debut": 1.264,
+     "fin": 3.667
+    },
+    "tagOut": {
+     "debut": 1.264,
+     "fin": 3.667
+    }
+   }
+  },
+  "grade_2_ban_sword2h_normalatk_1": {
+   "montage": "Ban_Sword2H_NormalAtk_1_MTG",
+   "duree": 2.967,
+   "action": 2.967,
+   "impacts": [
+    0.24,
+    0.415
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.967
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.967
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.967
+    },
+    "normalAttack": {
+     "debut": 0.415,
+     "fin": 2.967
+    },
+    "movement": {
+     "debut": 0.445,
+     "fin": 2.967
+    },
+    "tagOut": {
+     "debut": 0.445,
+     "fin": 2.967
+    }
+   }
+  },
+  "grade_2_ban_sword2h_normalatk_2": {
+   "montage": "Ban_Sword2H_NormalAtk_2_MTG",
+   "duree": 2.267,
+   "action": 2.267,
+   "impacts": [
+    0.16
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 2.267
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.267
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.267
+    },
+    "normalAttack": {
+     "debut": 0.16,
+     "fin": 2.267
+    },
+    "movement": {
+     "debut": 0.19,
+     "fin": 2.267
+    },
+    "tagOut": {
+     "debut": 0.19,
+     "fin": 2.267
+    }
+   }
+  },
+  "grade_2_ban_sword2h_normalatk_3": {
+   "montage": "Ban_Sword2H_NormalAtk_3_MTG",
+   "duree": 2.967,
+   "action": 2.967,
+   "impacts": [
+    0.2,
+    0.35
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.97
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.967
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.967
+    },
+    "normalAttack": {
+     "debut": 0.35,
+     "fin": 2.967
+    },
+    "movement": {
+     "debut": 0.38,
+     "fin": 2.967
+    },
+    "tagOut": {
+     "debut": 0.38,
+     "fin": 2.967
+    }
+   }
+  },
+  "grade_2_ban_sword2h_normalatk_4": {
+   "montage": "Ban_Sword2H_NormalAtk_4_MTG",
+   "duree": 2.767,
+   "action": 2.767,
+   "impacts": [
+    0.31,
+    0.494,
+    1.004
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.767
+    },
+    "normalAttack": {
+     "debut": 1.004,
+     "fin": 2.767
+    },
+    "movement": {
+     "debut": 1.034,
+     "fin": 2.767
+    },
+    "tagOut": {
+     "debut": 1.034,
+     "fin": 2.767
+    }
+   }
+  },
+  "grade_4_ban_cudgel3c_normalatk_1": {
+   "montage": "Ban_Cudgel3c_NormalAtk_1_MTG",
+   "duree": 3.5,
+   "action": 3.5,
+   "impacts": [
+    0.171
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "normalAttack": {
+     "debut": 0.171,
+     "fin": 3.5
+    },
+    "movement": {
+     "debut": 0.201,
+     "fin": 3.5
+    },
+    "tagOut": {
+     "debut": 0.201,
+     "fin": 3.499
+    }
+   }
+  },
+  "grade_4_ban_cudgel3c_normalatk_2": {
+   "montage": "Ban_Cudgel3c_NormalAtk_2_MTG",
+   "duree": 4.567,
+   "action": 4.567,
+   "impacts": [
+    0.333,
+    0.633
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 4.567
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 4.567
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 4.567
+    },
+    "normalAttack": {
+     "debut": 0.633,
+     "fin": 4.567
+    },
+    "movement": {
+     "debut": 0.673,
+     "fin": 4.567
+    },
+    "tagOut": {
+     "debut": 0.673,
+     "fin": 4.567
+    }
+   }
+  },
+  "grade_4_ban_cudgel3c_normalatk_3": {
+   "montage": "Ban_Cudgel3c_NormalAtk_3_MTG",
+   "duree": 3.5,
+   "action": 3.5,
+   "impacts": [
+    0.131,
+    0.326,
+    0.486
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "normalAttack": {
+     "debut": 0.486,
+     "fin": 3.5
+    },
+    "movement": {
+     "debut": 0.516,
+     "fin": 3.5
+    },
+    "tagOut": {
+     "debut": 0.516,
+     "fin": 3.5
+    }
+   }
+  },
+  "grade_4_ban_cudgel3c_normalatk_4": {
+   "montage": "Ban_Cudgel3c_NormalAtk_4_MTG",
+   "duree": 3.367,
+   "action": 3.367,
+   "impacts": [
+    0.767
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "normalAttack": {
+     "debut": 0.767,
+     "fin": 3.367
+    },
+    "movement": {
+     "debut": 0.797,
+     "fin": 3.367
+    },
+    "tagOut": {
+     "debut": 0.797,
+     "fin": 3.367
+    }
+   }
+  },
+  "grade_4_ban_gauntlets_skill_e": {
+   "montage": "Ban_Gauntlets_Skill_E_MTG",
+   "duree": 3.367,
+   "action": 3.367,
+   "impacts": [
+    0.297,
+    0.865
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "normalAttack": {
+     "debut": 1.165,
+     "fin": 3.367
+    },
+    "movement": {
+     "debut": 1.165,
+     "fin": 3.367
+    },
+    "tagOut": {
+     "debut": 1.165,
+     "fin": 3.367
+    }
+   }
+  },
+  "grade_4_ban_sword2h_skill_e": {
+   "montage": "Ban_Sword2H_Skill_E_2_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0,
+    0.167
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "sameSkill": {
+     "debut": 0.167,
+     "fin": 3.1
+    },
+    "activeSkill": {
+     "debut": 0.167,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.467,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.467,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.467,
+     "fin": 3.1
+    }
+   }
+  },
+  "grade_4_ban_sword2h_skill_e_2_1": {
+   "montage": "Ban_Sword2H_Skill_E_2_1_MTG",
+   "duree": 3.333,
+   "action": 3.333,
+   "impacts": [
+    0,
+    0.485
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "activeSkill": {
+     "debut": 0.621,
+     "fin": 3.333
+    },
+    "movement": {
+     "debut": 0.815,
+     "fin": 3.333
+    },
+    "normalAttack": {
+     "debut": 0.815,
+     "fin": 3.333
+    },
+    "tagOut": {
+     "debut": 0.815,
+     "fin": 3.333
+    }
+   }
+  },
+  "grade_5_ban_cudgel3c_skill_r": {
+   "montage": "Ban_Cudgel3c_Skill_R_G5_MTG",
+   "duree": 4.833,
+   "action": 4.833,
+   "impacts": [
+    2.067,
+    2.8
+   ],
+   "superArmor": [
+    [
+     0,
+     4.83333,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2.8,
+     "fin": 4.833
+    },
+    "avoidance": {
+     "debut": 2.8,
+     "fin": 4.833
+    },
+    "jump": {
+     "debut": 2.81,
+     "fin": 4.833
+    },
+    "movement": {
+     "debut": 2.83,
+     "fin": 4.833
+    },
+    "normalAttack": {
+     "debut": 2.83,
+     "fin": 4.833
+    },
+    "tagOut": {
+     "debut": 2.83,
+     "fin": 4.833
+    }
+   }
+  },
+  "grade_5_ban_cudgel3c_skill_r_hit": {
+   "montage": "Ban_Cudgel3c_Skill_R_Hit_G5_MTG",
+   "duree": 2.767,
+   "action": 2.767,
+   "impacts": [
+    0.8
+   ],
+   "superArmor": [
+    [
+     0,
+     5.46667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "montageNonConfirme": 3.133
+  },
+  "grade_5_ban_gauntlets_normalatk_1": {
+   "montage": "Ban_Gauntlets_NormalAtk_1_G5_MTG",
+   "duree": 2.667,
+   "action": 2.667,
+   "impacts": [
+    0.242
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 2.667
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.667
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.667
+    },
+    "normalAttack": {
+     "debut": 0.267,
+     "fin": 2.667
+    },
+    "movement": {
+     "debut": 0.297,
+     "fin": 2.667
+    },
+    "tagOut": {
+     "debut": 0.297,
+     "fin": 2.667
+    }
+   }
+  },
+  "grade_5_ban_gauntlets_normalatk_2": {
+   "montage": "Ban_Gauntlets_NormalAtk_2_G5_MTG",
+   "duree": 3.867,
+   "action": 3.867,
+   "impacts": [
+    0.168,
+    0.696
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.867
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.867
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.867
+    },
+    "normalAttack": {
+     "debut": 0.7,
+     "fin": 3.867
+    },
+    "movement": {
+     "debut": 0.73,
+     "fin": 3.867
+    },
+    "tagOut": {
+     "debut": 0.73,
+     "fin": 3.867
+    }
+   }
+  },
+  "grade_5_ban_gauntlets_normalatk_3": {
+   "montage": "Ban_Gauntlets_NormalAtk_3_G5_MTG",
+   "duree": 3.333,
+   "action": 3.333,
+   "impacts": [
+    0.1,
+    0.202,
+    0.267,
+    0.367,
+    0.433,
+    0.532
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "normalAttack": {
+     "debut": 0.533,
+     "fin": 3.333
+    },
+    "movement": {
+     "debut": 0.563,
+     "fin": 3.333
+    },
+    "tagOut": {
+     "debut": 0.563,
+     "fin": 3.333
+    }
+   }
+  },
+  "grade_5_ban_gauntlets_normalatk_4": {
+   "montage": "Ban_Gauntlets_NormalAtk_4_G5_MTG",
+   "duree": 4.167,
+   "action": 4.167,
+   "impacts": [
+    0.493
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 4.167
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 4.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 4.167
+    },
+    "normalAttack": {
+     "debut": 0.5,
+     "fin": 4.167
+    },
+    "movement": {
+     "debut": 0.53,
+     "fin": 4.167
+    },
+    "tagOut": {
+     "debut": 0.53,
+     "fin": 4.167
+    }
+   }
+  },
+  "grade_5_ban_sword2h_skill_e": {
+   "montage": "Ban_Sword2H_Skill_E_2_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0,
+    0.167
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "sameSkill": {
+     "debut": 0.167,
+     "fin": 3.1
+    },
+    "activeSkill": {
+     "debut": 0.167,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.467,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.467,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.467,
+     "fin": 3.1
+    }
+   }
+  },
+  "grade_5_ban_sword2h_skill_e_2_1": {
+   "montage": "Ban_Sword2H_Skill_E_2_1_MTG",
+   "duree": 3.333,
+   "action": 3.333,
+   "impacts": [
+    0,
+    0.485
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "activeSkill": {
+     "debut": 0.621,
+     "fin": 3.333
+    },
+    "movement": {
+     "debut": 0.815,
+     "fin": 3.333
+    },
+    "normalAttack": {
+     "debut": 0.815,
+     "fin": 3.333
+    },
+    "tagOut": {
+     "debut": 0.815,
+     "fin": 3.333
+    }
+   }
+  },
+  "grade_5_ban_sword2h_skill_r": {
+   "montage": "Ban_Sword2H_Skill_R_MTG",
+   "duree": 3.667,
+   "action": 3.667,
+   "impacts": [
+    1.67
+   ],
+   "superArmor": [
+    [
+     0,
+     3.66667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 1.7,
+     "fin": 3.667
+    },
+    "avoidance": {
+     "debut": 1.7,
+     "fin": 3.667
+    },
+    "jump": {
+     "debut": 1.7,
+     "fin": 3.667
+    },
+    "movement": {
+     "debut": 1.95,
+     "fin": 3.667
+    },
+    "normalAttack": {
+     "debut": 1.95,
+     "fin": 3.667
+    },
+    "tagOut": {
+     "debut": 1.95,
+     "fin": 3.667
+    }
+   }
+  },
+  "grade_6_ban_cudgel3c_jumpatk": {
+   "montage": "Ban_Cudgel3c_JumpAtk_MTG",
+   "duree": 1.8,
+   "action": 1.8,
+   "impacts": [
+    0.028
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.8
+    },
+    "avoidance": {
+     "debut": 0.003,
+     "fin": 1.806
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1.8
+    },
+    "movement": {
+     "debut": 0.45,
+     "fin": 1.8
+    },
+    "normalAttack": {
+     "debut": 0.45,
+     "fin": 1.8
+    },
+    "tagOut": {
+     "debut": 0.45,
+     "fin": 1.8
+    }
+   }
+  },
+  "grade_6_ban_cudgel3c_normalatk_1": {
+   "montage": "Ban_Cudgel3c_NormalAtk_1_MTG",
+   "duree": 3.5,
+   "action": 3.5,
+   "impacts": [
+    0.171
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "normalAttack": {
+     "debut": 0.171,
+     "fin": 3.5
+    },
+    "movement": {
+     "debut": 0.201,
+     "fin": 3.5
+    },
+    "tagOut": {
+     "debut": 0.201,
+     "fin": 3.499
+    }
+   }
+  },
+  "grade_6_ban_cudgel3c_normalatk_2": {
+   "montage": "Ban_Cudgel3c_NormalAtk_2_MTG",
+   "duree": 4.567,
+   "action": 4.567,
+   "impacts": [
+    0.333,
+    0.633
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 4.567
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 4.567
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 4.567
+    },
+    "normalAttack": {
+     "debut": 0.633,
+     "fin": 4.567
+    },
+    "movement": {
+     "debut": 0.673,
+     "fin": 4.567
+    },
+    "tagOut": {
+     "debut": 0.673,
+     "fin": 4.567
+    }
+   }
+  },
+  "grade_6_ban_cudgel3c_normalatk_3": {
+   "montage": "Ban_Cudgel3c_NormalAtk_3_MTG",
+   "duree": 3.5,
+   "action": 3.5,
+   "impacts": [
+    0.131,
+    0.326,
+    0.486
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "normalAttack": {
+     "debut": 0.486,
+     "fin": 3.5
+    },
+    "movement": {
+     "debut": 0.516,
+     "fin": 3.5
+    },
+    "tagOut": {
+     "debut": 0.516,
+     "fin": 3.5
+    }
+   }
+  },
+  "grade_6_ban_cudgel3c_normalatk_4": {
+   "montage": "Ban_Cudgel3c_NormalAtk_4_MTG",
+   "duree": 3.367,
+   "action": 3.367,
+   "impacts": [
+    0.767
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "normalAttack": {
+     "debut": 0.767,
+     "fin": 3.367
+    },
+    "movement": {
+     "debut": 0.797,
+     "fin": 3.367
+    },
+    "tagOut": {
+     "debut": 0.797,
+     "fin": 3.367
+    }
+   }
+  },
+  "grade_6_ban_cudgel3c_skill_e": {
+   "montage": "Ban_Cudgel3c_Skill_E_MTG",
+   "duree": 2.5,
+   "action": 2.5,
+   "impacts": [
+    0.009,
+    0.121,
+    0.241,
+    0.36,
+    0.485,
+    0.567
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.506
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "tagOut": {
+     "debut": 0.667,
+     "fin": 2.5
+    },
+    "normalAttack": {
+     "debut": 0.667,
+     "fin": 2.5
+    },
+    "movement": {
+     "debut": 0.667,
+     "fin": 2.5
+    }
+   }
+  },
+  "grade_6_ban_cudgel3c_skill_q_1": {
+   "montage": "Ban_Cudgel3c_Skill_Q_1_MTG",
+   "duree": 2.5,
+   "action": 2.5,
+   "impacts": [
+    0.133
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "activeSkill": {
+     "debut": 0.143,
+     "fin": 2.5
+    },
+    "movement": {
+     "debut": 0.167,
+     "fin": 2.5
+    },
+    "normalAttack": {
+     "debut": 0.167,
+     "fin": 2.5
+    },
+    "tagOut": {
+     "debut": 0.167,
+     "fin": 2.5
+    }
+   }
+  },
+  "grade_6_ban_cudgel3c_skill_q_2": {
+   "montage": "Ban_Cudgel3c_Skill_Q_2_MTG",
+   "duree": 3.167,
+   "action": 3.167,
+   "impacts": [
+    0.167
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.167
+    },
+    "activeSkill": {
+     "debut": 0.177,
+     "fin": 3.167
+    },
+    "tagOut": {
+     "debut": 0.199,
+     "fin": 3.167
+    },
+    "movement": {
+     "debut": 0.199,
+     "fin": 3.167
+    },
+    "normalAttack": {
+     "debut": 0.199,
+     "fin": 3.167
+    }
+   }
+  },
+  "grade_6_ban_cudgel3c_skill_q_3": {
+   "montage": "Ban_Cudgel3c_Skill_Q_3_MTG",
+   "duree": 3.767,
+   "action": 3.767,
+   "impacts": [
+    0.068,
+    0.146,
+    0.25,
+    0.353,
+    0.765,
+    0.879
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.767
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.767
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.767
+    },
+    "movement": {
+     "debut": 1.079,
+     "fin": 3.767
+    },
+    "normalAttack": {
+     "debut": 1.079,
+     "fin": 3.767
+    },
+    "tagOut": {
+     "debut": 1.079,
+     "fin": 3.767
+    }
+   }
+  },
+  "grade_6_ban_cudgel3c_skill_r": {
+   "montage": "Ban_Cudgel3c_Skill_R_G6_MTG",
+   "duree": 4.833,
+   "action": 4.833,
+   "impacts": [
+    2.067,
+    2.8
+   ],
+   "superArmor": [
+    [
+     0,
+     4.83333,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2.8,
+     "fin": 4.833
+    },
+    "avoidance": {
+     "debut": 2.8,
+     "fin": 4.833
+    },
+    "jump": {
+     "debut": 2.81,
+     "fin": 4.833
+    },
+    "movement": {
+     "debut": 2.83,
+     "fin": 4.833
+    },
+    "normalAttack": {
+     "debut": 2.83,
+     "fin": 4.833
+    },
+    "tagOut": {
+     "debut": 2.83,
+     "fin": 4.833
+    }
+   }
+  },
+  "grade_6_ban_cudgel3c_skill_r_hit": {
+   "montage": "Ban_Cudgel3c_Skill_R_Hit_G5_MTG",
+   "duree": 2.767,
+   "action": 2.767,
+   "impacts": [
+    0.8
+   ],
+   "superArmor": [
+    [
+     0,
+     5.46667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "montageNonConfirme": 3.133
+  },
+  "grade_6_ban_cudgel3c_skill_tag": {
+   "montage": "Ban_Cudgel3c_Skill_Tag_MTG",
+   "duree": 2.833,
+   "action": 2.833,
+   "impacts": [
+    0.2,
+    0.267,
+    0.333,
+    0.4,
+    0.467
+   ],
+   "superArmor": [
+    [
+     0,
+     0.8244,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "tagOut": {
+     "debut": 0.467,
+     "fin": 2.833
+    },
+    "activeSkill": {
+     "debut": 0.467,
+     "fin": 2.833
+    },
+    "avoidance": {
+     "debut": 0.467,
+     "fin": 2.833
+    },
+    "jump": {
+     "debut": 0.467,
+     "fin": 2.833
+    },
+    "movement": {
+     "debut": 0.467,
+     "fin": 2.833
+    },
+    "normalAttack": {
+     "debut": 0.467,
+     "fin": 2.833
+    }
+   }
+  },
+  "grade_6_ban_gauntlets_skill_e": {
+   "montage": "Ban_Gauntlets_Skill_E_MTG",
+   "duree": 3.367,
+   "action": 3.367,
+   "impacts": [
+    0.297,
+    0.865
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "normalAttack": {
+     "debut": 1.165,
+     "fin": 3.367
+    },
+    "movement": {
+     "debut": 1.165,
+     "fin": 3.367
+    },
+    "tagOut": {
+     "debut": 1.165,
+     "fin": 3.367
+    }
+   }
+  },
+  "grade_6_ban_gauntlets_skill_e_extra": {
+   "montage": "Ban_Gauntlets_Skill_E_MTG",
+   "duree": 3.367,
+   "action": 3.367,
+   "impacts": [
+    0.297,
+    0.865
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.367
+    },
+    "normalAttack": {
+     "debut": 1.165,
+     "fin": 3.367
+    },
+    "movement": {
+     "debut": 1.165,
+     "fin": 3.367
+    },
+    "tagOut": {
+     "debut": 1.165,
+     "fin": 3.367
+    }
+   }
+  },
+  "grade_6_ban_sword2h_skill_e": {
+   "montage": "Ban_Sword2H_Skill_E_2_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0,
+    0.167
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "sameSkill": {
+     "debut": 0.167,
+     "fin": 3.1
+    },
+    "activeSkill": {
+     "debut": 0.167,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.467,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.467,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.467,
+     "fin": 3.1
+    }
+   }
+  },
+  "grade_6_ban_sword2h_skill_e_2_1": {
+   "montage": "Ban_Sword2H_Skill_E_2_1_MTG",
+   "duree": 3.333,
+   "action": 3.333,
+   "impacts": [
+    0,
+    0.485
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "activeSkill": {
+     "debut": 0.621,
+     "fin": 3.333
+    },
+    "movement": {
+     "debut": 0.815,
+     "fin": 3.333
+    },
+    "normalAttack": {
+     "debut": 0.815,
+     "fin": 3.333
+    },
+    "tagOut": {
+     "debut": 0.815,
+     "fin": 3.333
+    }
+   }
+  },
+  "grade_6_ban_sword2h_skill_r": {
+   "montage": "Ban_Sword2H_Skill_R_MTG",
+   "duree": 3.667,
+   "action": 3.667,
+   "impacts": [
+    1.67
+   ],
+   "superArmor": [
+    [
+     0,
+     3.66667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 1.7,
+     "fin": 3.667
+    },
+    "avoidance": {
+     "debut": 1.7,
+     "fin": 3.667
+    },
+    "jump": {
+     "debut": 1.7,
+     "fin": 3.667
+    },
+    "movement": {
+     "debut": 1.95,
+     "fin": 3.667
+    },
+    "normalAttack": {
+     "debut": 1.95,
+     "fin": 3.667
+    },
+    "tagOut": {
+     "debut": 1.95,
+     "fin": 3.667
+    }
+   }
+  },
+  "grade_7_ban_cudgel3c_skill_q_1": {
+   "montage": "Ban_Cudgel3c_Skill_Q_1_MTG",
+   "duree": 2.5,
+   "action": 2.5,
+   "impacts": [
+    0.133
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.5
+    },
+    "activeSkill": {
+     "debut": 0.143,
+     "fin": 2.5
+    },
+    "movement": {
+     "debut": 0.167,
+     "fin": 2.5
+    },
+    "normalAttack": {
+     "debut": 0.167,
+     "fin": 2.5
+    },
+    "tagOut": {
+     "debut": 0.167,
+     "fin": 2.5
+    }
+   }
+  },
+  "grade_7_ban_cudgel3c_skill_q_2": {
+   "montage": "Ban_Cudgel3c_Skill_Q_2_MTG",
+   "duree": 3.167,
+   "action": 3.167,
+   "impacts": [
+    0.167
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.167
+    },
+    "activeSkill": {
+     "debut": 0.177,
+     "fin": 3.167
+    },
+    "tagOut": {
+     "debut": 0.199,
+     "fin": 3.167
+    },
+    "movement": {
+     "debut": 0.199,
+     "fin": 3.167
+    },
+    "normalAttack": {
+     "debut": 0.199,
+     "fin": 3.167
+    }
+   }
+  },
+  "grade_7_ban_cudgel3c_skill_q_3": {
+   "montage": "Ban_Cudgel3c_Skill_Q_3_G7_MTG",
+   "duree": 3.767,
+   "action": 3.767,
+   "impacts": [
+    0.068,
+    0.146,
+    0.25,
+    0.353,
+    0.765,
+    0.879
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.767
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.767
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.767
+    },
+    "movement": {
+     "debut": 1.079,
+     "fin": 3.767
+    },
+    "normalAttack": {
+     "debut": 1.079,
+     "fin": 3.767
+    },
+    "tagOut": {
+     "debut": 1.079,
+     "fin": 3.767
+    }
+   }
+  },
+  "grade_7_ban_gauntlets_skill_q": {
+   "montage": "Ban_Gauntlets_Skill_Q_G7_MTG",
+   "duree": 3.667,
+   "action": 3.667,
+   "impacts": [
+    0.5,
+    0.97
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.667
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.667
+    },
+    "avoidance": {
+     "debut": 0.004,
+     "fin": 3.671
+    },
+    "movement": {
+     "debut": 1.264,
+     "fin": 3.667
+    },
+    "normalAttack": {
+     "debut": 1.264,
+     "fin": 3.667
+    },
+    "tagOut": {
+     "debut": 1.264,
+     "fin": 3.667
+    }
+   }
+  },
+  "grade_7_ban_sword2h_skill_tag": {
+   "montage": "Ban_Sword2H_Skill_Tag_MTG",
+   "duree": 2.833,
+   "action": 2.833,
+   "impacts": [
+    0.535
+   ],
+   "superArmor": [
+    [
+     0,
+     0.564169,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0.67,
+     "fin": 2.833
+    },
+    "avoidance": {
+     "debut": 0.67,
+     "fin": 2.833
+    },
+    "jump": {
+     "debut": 0.67,
+     "fin": 2.833
+    },
+    "movement": {
+     "debut": 0.7,
+     "fin": 2.833
+    },
+    "normalAttack": {
+     "debut": 0.7,
+     "fin": 2.833
+    },
+    "tagOut": {
+     "debut": 0.7,
+     "fin": 2.833
+    }
+   }
+  },
+  "grade_9_ban_cudgel3c_skill_r": {
+   "montage": "Ban_Cudgel3c_Skill_R_G9_MTG",
+   "duree": 4.833,
+   "action": 4.833,
+   "impacts": [
+    2.067,
+    2.8
+   ],
+   "superArmor": [
+    [
+     0,
+     4.83333,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2.8,
+     "fin": 4.833
+    },
+    "avoidance": {
+     "debut": 2.8,
+     "fin": 4.833
+    },
+    "jump": {
+     "debut": 2.81,
+     "fin": 4.833
+    },
+    "movement": {
+     "debut": 2.83,
+     "fin": 4.833
+    },
+    "normalAttack": {
+     "debut": 2.83,
+     "fin": 4.833
+    },
+    "tagOut": {
+     "debut": 2.83,
+     "fin": 4.833
+    }
+   }
+  },
+  "grade_9_ban_cudgel3c_skill_r_hit": {
+   "montage": "Ban_Cudgel3c_Skill_R_Hit_G5_MTG",
+   "duree": 2.767,
+   "action": 2.767,
+   "impacts": [
+    0.8
+   ],
+   "superArmor": [
+    [
+     0,
+     5.46667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "montageNonConfirme": 3.133
+  },
+  "grade_9_ban_gauntlets_normalatk_1": {
+   "montage": "Ban_Gauntlets_NormalAtk_1_G5_MTG",
+   "duree": 2.667,
+   "action": 2.667,
+   "impacts": [
+    0.242
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 2.667
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.667
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.667
+    },
+    "normalAttack": {
+     "debut": 0.267,
+     "fin": 2.667
+    },
+    "movement": {
+     "debut": 0.297,
+     "fin": 2.667
+    },
+    "tagOut": {
+     "debut": 0.297,
+     "fin": 2.667
+    }
+   }
+  },
+  "grade_9_ban_gauntlets_normalatk_2": {
+   "montage": "Ban_Gauntlets_NormalAtk_2_G5_MTG",
+   "duree": 3.867,
+   "action": 3.867,
+   "impacts": [
+    0.168,
+    0.696
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.867
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.867
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.867
+    },
+    "normalAttack": {
+     "debut": 0.7,
+     "fin": 3.867
+    },
+    "movement": {
+     "debut": 0.73,
+     "fin": 3.867
+    },
+    "tagOut": {
+     "debut": 0.73,
+     "fin": 3.867
+    }
+   }
+  },
+  "grade_9_ban_gauntlets_normalatk_3": {
+   "montage": "Ban_Gauntlets_NormalAtk_3_G5_MTG",
+   "duree": 3.333,
+   "action": 3.333,
+   "impacts": [
+    0.1,
+    0.202,
+    0.267,
+    0.367,
+    0.433,
+    0.532
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "normalAttack": {
+     "debut": 0.533,
+     "fin": 3.333
+    },
+    "movement": {
+     "debut": 0.563,
+     "fin": 3.333
+    },
+    "tagOut": {
+     "debut": 0.563,
+     "fin": 3.333
+    }
+   }
+  },
+  "grade_9_ban_gauntlets_normalatk_4": {
+   "montage": "Ban_Gauntlets_NormalAtk_4_G5_MTG",
+   "duree": 4.167,
+   "action": 4.167,
+   "impacts": [
+    0.493
+   ],
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "jump": {
+     "debut": 0,
+     "fin": 4.167
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 4.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 4.167
+    },
+    "normalAttack": {
+     "debut": 0.5,
+     "fin": 4.167
+    },
+    "movement": {
+     "debut": 0.53,
+     "fin": 4.167
+    },
+    "tagOut": {
+     "debut": 0.53,
+     "fin": 4.167
+    }
+   }
+  },
+  "grade_9_ban_sword2h_skill_e": {
+   "montage": "Ban_Sword2H_Skill_E_2_MTG",
+   "duree": 3.1,
+   "action": 3.1,
+   "impacts": [
+    0,
+    0.167
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.1
+    },
+    "sameSkill": {
+     "debut": 0.167,
+     "fin": 3.1
+    },
+    "activeSkill": {
+     "debut": 0.167,
+     "fin": 3.1
+    },
+    "movement": {
+     "debut": 0.467,
+     "fin": 3.1
+    },
+    "normalAttack": {
+     "debut": 0.467,
+     "fin": 3.1
+    },
+    "tagOut": {
+     "debut": 0.467,
+     "fin": 3.1
+    }
+   }
+  },
+  "grade_9_ban_sword2h_skill_e_2_1": {
+   "montage": "Ban_Sword2H_Skill_E_2_1_MTG",
+   "duree": 3.333,
+   "action": 3.333,
+   "impacts": [
+    0,
+    0.485
+   ],
+   "heros": "ban",
+   "arme": "Sword2H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 3.333
+    },
+    "activeSkill": {
+     "debut": 0.621,
+     "fin": 3.333
+    },
+    "movement": {
+     "debut": 0.815,
+     "fin": 3.333
+    },
+    "normalAttack": {
+     "debut": 0.815,
+     "fin": 3.333
+    },
+    "tagOut": {
+     "debut": 0.815,
+     "fin": 3.333
+    }
+   }
+  },
+  "grade_10_lancelot_gauntlets_skill_q": {
+   "montage": "Lancelot_Gauntlets_Skill_Q_MTG",
+   "duree": 1.167,
+   "action": 1.167,
+   "impacts": [],
+   "tirs": [
+    0.088
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.167
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 1.167
+    },
+    "normalAttack": {
+     "debut": 0.017,
+     "fin": 1.167
+    },
+    "movement": {
+     "debut": 0.018,
+     "fin": 1.168
+    },
+    "tagOut": {
+     "debut": 0.021,
+     "fin": 1.167
+    }
+   }
+  },
+  "grade_10_lancelot_staff_normalatk_1": {
+   "montage": "Lancelot_Staff_NormalAtk_1_MTG",
+   "duree": 2.867,
+   "action": 2.867,
+   "impacts": [
+    0.126,
+    0.274,
+    0.433
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.867
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.867
+    },
+    "normalAttack": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "jump": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "tagOut": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "movement": {
+     "debut": 0.367,
+     "fin": 2.867
+    }
+   }
+  },
+  "grade_10_lancelot_staff_skill_r_enchant": {
+   "montage": "Lancelot_Staff_Skill_Enchant_R_G5_MTG",
+   "duree": 1.826,
+   "action": 1.826,
+   "impacts": [],
+   "superArmor": [
+    [
+     0,
+     1.82564,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "tirs": [
+    0.602
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "montageNonConfirme": 2.373
+  },
+  "grade_10_lancelot_sword1h_normalatk_1": {
+   "montage": "Lancelot_Sword1H_NormalAtk_1_MTG",
+   "duree": 2,
+   "action": 2,
+   "impacts": [
+    0.101,
+    0.305
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2
+    },
+    "tagOut": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "jump": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "normalAttack": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 2
+    }
+   }
+  },
+  "grade_10_lancelot_sword1h_skill_e_atk1": {
+   "montage": "Lancelot_Sword1H_Skill_E_Atk1_MTG",
+   "duree": 1.067,
+   "action": 1.067,
+   "impacts": [
+    0.12
+   ],
+   "tirs": [
+    0.1
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.067
+    },
+    "activeSkill": {
+     "debut": 0.133,
+     "fin": 1.067
+    },
+    "movement": {
+     "debut": 0.267,
+     "fin": 1.067
+    },
+    "normalAttack": {
+     "debut": 0.268,
+     "fin": 1.068
+    },
+    "tagOut": {
+     "debut": 0.269,
+     "fin": 1.069
+    },
+    "jump": {
+     "debut": 0.269,
+     "fin": 1.069
+    }
+   }
+  },
+  "grade_10_lancelot_sword1h_skill_q": {
+   "montage": "Lancelot_Sword1H_Skill_Q_MTG",
+   "duree": 1.167,
+   "action": 1.167,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.167
+    },
+    "normalAttack": {
+     "debut": 0,
+     "fin": 2.167
+    }
+   }
+  },
+  "grade_10_lancelot_sword1h_skill_q_atk1": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk1_MTG",
+   "duree": 1.333,
+   "action": 1.333,
+   "impacts": [
+    0.122
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.333
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.333
+    },
+    "sameSkill": {
+     "debut": 0.133,
+     "fin": 1.333
+    },
+    "movement": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "normalAttack": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "tagOut": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "jump": {
+     "debut": 0.233,
+     "fin": 1.333
+    }
+   }
+  },
+  "grade_10_lancelot_sword1h_skill_q_atk2": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk2_MTG",
+   "duree": 1.467,
+   "action": 1.467,
+   "impacts": [
+    0.237,
+    0.318
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.467
+    },
+    "sameSkill": {
+     "debut": 0.2,
+     "fin": 1.467
+    },
+    "activeSkill": {
+     "debut": 0.213,
+     "fin": 1.467
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "tagOut": {
+     "debut": 0.404,
+     "fin": 1.467
+    }
+   }
+  },
+  "grade_10_lancelot_sword1h_skill_q_atk3": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk3_MTG",
+   "duree": 1.5,
+   "action": 1.5,
+   "impacts": [
+    0.018
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "sameSkill": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "movement": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "normalAttack": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "tagOut": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "jump": {
+     "debut": 0.333,
+     "fin": 1.5
+    }
+   }
+  },
+  "grade_10_lancelot_sword1h_skill_q_end": {
+   "montage": "Lancelot_Sword1H_Skill_Q_End_MTG",
+   "duree": 1,
+   "action": 1,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1
+    },
+    "normalAttack": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "tagOut": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "jump": {
+     "debut": 0.067,
+     "fin": 1
+    }
+   }
+  },
+  "grade_10_lancelot_sword1h_skill_q_just": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk2_MTG",
+   "duree": 1.467,
+   "action": 1.467,
+   "impacts": [
+    0.237,
+    0.318
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.467
+    },
+    "sameSkill": {
+     "debut": 0.2,
+     "fin": 1.467
+    },
+    "activeSkill": {
+     "debut": 0.213,
+     "fin": 1.467
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "tagOut": {
+     "debut": 0.404,
+     "fin": 1.467
+    }
+   }
+  },
+  "grade_10_lancelot_sword1h_skill_q_over": {
+   "montage": "Lancelot_Sword1H_Skill_Q_End_MTG",
+   "duree": 1,
+   "action": 1,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1
+    },
+    "normalAttack": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "tagOut": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "jump": {
+     "debut": 0.067,
+     "fin": 1
+    }
+   }
+  },
+  "grade_10_lancelot_sword1h_skill_r": {
+   "montage": "Lancelot_Sword1H_Skill_R_MTG",
+   "duree": 4,
+   "action": 4,
+   "impacts": [
+    2.047,
+    2.187,
+    2.33,
+    2.712
+   ],
+   "superArmor": [
+    [
+     0,
+     4,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 3,
+     "fin": 4
+    },
+    "avoidance": {
+     "debut": 3,
+     "fin": 4
+    },
+    "movement": {
+     "debut": 3,
+     "fin": 4
+    },
+    "normalAttack": {
+     "debut": 3,
+     "fin": 4
+    },
+    "tagOut": {
+     "debut": 3,
+     "fin": 4
+    },
+    "jump": {
+     "debut": 3,
+     "fin": 4
+    }
+   }
+  },
+  "grade_2_lancelot_gauntlets_skill_q": {
+   "montage": "Lancelot_Gauntlets_Skill_Q_MTG",
+   "duree": 1.167,
+   "action": 1.167,
+   "impacts": [],
+   "tirs": [
+    0.088
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.167
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 1.167
+    },
+    "normalAttack": {
+     "debut": 0.017,
+     "fin": 1.167
+    },
+    "movement": {
+     "debut": 0.018,
+     "fin": 1.168
+    },
+    "tagOut": {
+     "debut": 0.021,
+     "fin": 1.167
+    }
+   }
+  },
+  "grade_2_lancelot_staff_skill_tag": {
+   "montage": "Lancelot_Staff_Skill_Tag_MTG",
+   "duree": 4,
+   "action": 4,
+   "impacts": [
+    0.139,
+    0.568
+   ],
+   "superArmor": [
+    [
+     0,
+     0.599,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0.556,
+     "fin": 4
+    },
+    "avoidance": {
+     "debut": 0.556,
+     "fin": 4
+    },
+    "movement": {
+     "debut": 0.72,
+     "fin": 4
+    },
+    "normalAttack": {
+     "debut": 0.72,
+     "fin": 4
+    },
+    "jump": {
+     "debut": 0.72,
+     "fin": 4
+    },
+    "tagOut": {
+     "debut": 0.72,
+     "fin": 4
+    }
+   }
+  },
+  "grade_2_lancelot_sword1h_skill_tag": {
+   "montage": "Lancelot_Sword1H_Skill_Tag_MTG",
+   "duree": 1.6,
+   "action": 1.6,
+   "impacts": [
+    0.4
+   ],
+   "superArmor": [
+    [
+     0,
+     0.696193,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0.659,
+     "fin": 1.6
+    },
+    "activeSkill": {
+     "debut": 0.661,
+     "fin": 1.6
+    },
+    "jump": {
+     "debut": 0.685,
+     "fin": 2.933
+    },
+    "movement": {
+     "debut": 0.726,
+     "fin": 2.933
+    },
+    "normalAttack": {
+     "debut": 0.726,
+     "fin": 2.933
+    },
+    "tagOut": {
+     "debut": 0.726,
+     "fin": 2.933
+    }
+   }
+  },
+  "grade_4_lancelot_gauntlets_skill_r": {
+   "montage": "Lancelot_Gauntlets_Skill_R_MTG",
+   "duree": 3.767,
+   "action": 3.767,
+   "impacts": [
+    2.008
+   ],
+   "superArmor": [
+    [
+     0,
+     3.76667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "avoidance": {
+     "debut": 2.169,
+     "fin": 3.767
+    },
+    "jump": {
+     "debut": 2.169,
+     "fin": 3.767
+    },
+    "activeSkill": {
+     "debut": 2.173,
+     "fin": 3.767
+    },
+    "normalAttack": {
+     "debut": 2.23,
+     "fin": 3.767
+    },
+    "tagOut": {
+     "debut": 2.23,
+     "fin": 3.767
+    },
+    "movement": {
+     "debut": 2.237,
+     "fin": 3.767
+    }
+   }
+  },
+  "grade_4_lancelot_staff_normalatk_1": {
+   "montage": "Lancelot_Staff_NormalAtk_1_MTG",
+   "duree": 2.867,
+   "action": 2.867,
+   "impacts": [
+    0.126,
+    0.274,
+    0.433
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.867
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.867
+    },
+    "normalAttack": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "jump": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "tagOut": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "movement": {
+     "debut": 0.367,
+     "fin": 2.867
+    }
+   }
+  },
+  "grade_4_lancelot_staff_normalatk_2": {
+   "montage": "Lancelot_Staff_NormalAtk_2_MTG",
+   "duree": 2.9,
+   "action": 2.9,
+   "impacts": [
+    0.172
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.9
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.9
+    },
+    "normalAttack": {
+     "debut": 0.033,
+     "fin": 2.897
+    },
+    "jump": {
+     "debut": 0.033,
+     "fin": 2.9
+    },
+    "tagOut": {
+     "debut": 0.033,
+     "fin": 2.9
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 2.9
+    }
+   }
+  },
+  "grade_4_lancelot_staff_normalatk_3": {
+   "montage": "Lancelot_Staff_NormalAtk_3_MTG",
+   "duree": 3.5,
+   "action": 3.5,
+   "impacts": [
+    0.487,
+    0.651
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "normalAttack": {
+     "debut": 0.5,
+     "fin": 3.5
+    },
+    "jump": {
+     "debut": 0.5,
+     "fin": 3.5
+    },
+    "tagOut": {
+     "debut": 0.5,
+     "fin": 3.5
+    },
+    "movement": {
+     "debut": 0.533,
+     "fin": 3.5
+    }
+   }
+  },
+  "grade_4_lancelot_staff_normalatk_4": {
+   "montage": "Lancelot_Staff_NormalAtk_4_MTG",
+   "duree": 2.833,
+   "action": 2.833,
+   "impacts": [
+    0.27,
+    0.413,
+    0.586,
+    0.929
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.833
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.833
+    },
+    "normalAttack": {
+     "debut": 1.033,
+     "fin": 2.833
+    },
+    "jump": {
+     "debut": 1.033,
+     "fin": 2.833
+    },
+    "tagOut": {
+     "debut": 1.033,
+     "fin": 2.833
+    },
+    "movement": {
+     "debut": 1.067,
+     "fin": 2.833
+    }
+   }
+  },
+  "grade_4_lancelot_sword1h_normalatk_1": {
+   "montage": "Lancelot_Sword1H_NormalAtk_1_MTG",
+   "duree": 2,
+   "action": 2,
+   "impacts": [
+    0.101,
+    0.305
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2
+    },
+    "tagOut": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "jump": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "normalAttack": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 2
+    }
+   }
+  },
+  "grade_4_lancelot_sword1h_skill_e_atk1": {
+   "montage": "Lancelot_Sword1H_Skill_E_Atk1_MTG",
+   "duree": 1.067,
+   "action": 1.067,
+   "impacts": [
+    0.12
+   ],
+   "tirs": [
+    0.1
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.067
+    },
+    "activeSkill": {
+     "debut": 0.133,
+     "fin": 1.067
+    },
+    "movement": {
+     "debut": 0.267,
+     "fin": 1.067
+    },
+    "normalAttack": {
+     "debut": 0.268,
+     "fin": 1.068
+    },
+    "tagOut": {
+     "debut": 0.269,
+     "fin": 1.069
+    },
+    "jump": {
+     "debut": 0.269,
+     "fin": 1.069
+    }
+   }
+  },
+  "grade_4_lancelot_sword1h_skill_q": {
+   "montage": "Lancelot_Sword1H_Skill_Q_MTG",
+   "duree": 1.167,
+   "action": 1.167,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.167
+    },
+    "normalAttack": {
+     "debut": 0,
+     "fin": 2.167
+    }
+   }
+  },
+  "grade_4_lancelot_sword1h_skill_q_atk1": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk1_MTG",
+   "duree": 1.333,
+   "action": 1.333,
+   "impacts": [
+    0.122
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.333
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.333
+    },
+    "sameSkill": {
+     "debut": 0.133,
+     "fin": 1.333
+    },
+    "movement": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "normalAttack": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "tagOut": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "jump": {
+     "debut": 0.233,
+     "fin": 1.333
+    }
+   }
+  },
+  "grade_4_lancelot_sword1h_skill_q_atk2": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk2_MTG",
+   "duree": 1.467,
+   "action": 1.467,
+   "impacts": [
+    0.237,
+    0.318
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.467
+    },
+    "sameSkill": {
+     "debut": 0.2,
+     "fin": 1.467
+    },
+    "activeSkill": {
+     "debut": 0.213,
+     "fin": 1.467
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "tagOut": {
+     "debut": 0.404,
+     "fin": 1.467
+    }
+   }
+  },
+  "grade_4_lancelot_sword1h_skill_q_atk3": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk3_MTG",
+   "duree": 1.5,
+   "action": 1.5,
+   "impacts": [
+    0.018
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "sameSkill": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "movement": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "normalAttack": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "tagOut": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "jump": {
+     "debut": 0.333,
+     "fin": 1.5
+    }
+   }
+  },
+  "grade_4_lancelot_sword1h_skill_q_end": {
+   "montage": "Lancelot_Sword1H_Skill_Q_End_MTG",
+   "duree": 1,
+   "action": 1,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1
+    },
+    "normalAttack": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "tagOut": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "jump": {
+     "debut": 0.067,
+     "fin": 1
+    }
+   }
+  },
+  "grade_4_lancelot_sword1h_skill_q_just": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk2_MTG",
+   "duree": 1.467,
+   "action": 1.467,
+   "impacts": [
+    0.237,
+    0.318
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.467
+    },
+    "sameSkill": {
+     "debut": 0.2,
+     "fin": 1.467
+    },
+    "activeSkill": {
+     "debut": 0.213,
+     "fin": 1.467
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "tagOut": {
+     "debut": 0.404,
+     "fin": 1.467
+    }
+   }
+  },
+  "grade_4_lancelot_sword1h_skill_q_over": {
+   "montage": "Lancelot_Sword1H_Skill_Q_End_MTG",
+   "duree": 1,
+   "action": 1,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1
+    },
+    "normalAttack": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "tagOut": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "jump": {
+     "debut": 0.067,
+     "fin": 1
+    }
+   }
+  },
+  "grade_5_lancelot_gauntlets_skill_q": {
+   "montage": "Lancelot_Gauntlets_Skill_Q_MTG",
+   "duree": 1.167,
+   "action": 1.167,
+   "impacts": [],
+   "tirs": [
+    0.088
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.167
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 1.167
+    },
+    "normalAttack": {
+     "debut": 0.017,
+     "fin": 1.167
+    },
+    "movement": {
+     "debut": 0.018,
+     "fin": 1.168
+    },
+    "tagOut": {
+     "debut": 0.021,
+     "fin": 1.167
+    }
+   }
+  },
+  "grade_5_lancelot_staff_normalatk_1": {
+   "montage": "Lancelot_Staff_NormalAtk_1_MTG",
+   "duree": 2.867,
+   "action": 2.867,
+   "impacts": [
+    0.126,
+    0.274,
+    0.433
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.867
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.867
+    },
+    "normalAttack": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "jump": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "tagOut": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "movement": {
+     "debut": 0.367,
+     "fin": 2.867
+    }
+   }
+  },
+  "grade_5_lancelot_staff_normalatk_2": {
+   "montage": "Lancelot_Staff_NormalAtk_2_MTG",
+   "duree": 2.9,
+   "action": 2.9,
+   "impacts": [
+    0.172
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.9
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.9
+    },
+    "normalAttack": {
+     "debut": 0.033,
+     "fin": 2.897
+    },
+    "jump": {
+     "debut": 0.033,
+     "fin": 2.9
+    },
+    "tagOut": {
+     "debut": 0.033,
+     "fin": 2.9
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 2.9
+    }
+   }
+  },
+  "grade_5_lancelot_staff_normalatk_3": {
+   "montage": "Lancelot_Staff_NormalAtk_3_MTG",
+   "duree": 3.5,
+   "action": 3.5,
+   "impacts": [
+    0.487,
+    0.651
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "normalAttack": {
+     "debut": 0.5,
+     "fin": 3.5
+    },
+    "jump": {
+     "debut": 0.5,
+     "fin": 3.5
+    },
+    "tagOut": {
+     "debut": 0.5,
+     "fin": 3.5
+    },
+    "movement": {
+     "debut": 0.533,
+     "fin": 3.5
+    }
+   }
+  },
+  "grade_5_lancelot_staff_normalatk_4": {
+   "montage": "Lancelot_Staff_NormalAtk_4_MTG",
+   "duree": 2.833,
+   "action": 2.833,
+   "impacts": [
+    0.27,
+    0.413,
+    0.586,
+    0.929
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.833
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.833
+    },
+    "normalAttack": {
+     "debut": 1.033,
+     "fin": 2.833
+    },
+    "jump": {
+     "debut": 1.033,
+     "fin": 2.833
+    },
+    "tagOut": {
+     "debut": 1.033,
+     "fin": 2.833
+    },
+    "movement": {
+     "debut": 1.067,
+     "fin": 2.833
+    }
+   }
+  },
+  "grade_5_lancelot_staff_skill_r_enchant": {
+   "montage": "Lancelot_Staff_Skill_Enchant_R_G5_MTG",
+   "duree": 1.826,
+   "action": 1.826,
+   "impacts": [],
+   "superArmor": [
+    [
+     0,
+     1.82564,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "tirs": [
+    0.602
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "montageNonConfirme": 2.373
+  },
+  "grade_5_lancelot_sword1h_skill_q": {
+   "montage": "Lancelot_Sword1H_Skill_Q_MTG",
+   "duree": 1.167,
+   "action": 1.167,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.167
+    },
+    "normalAttack": {
+     "debut": 0,
+     "fin": 2.167
+    }
+   }
+  },
+  "grade_5_lancelot_sword1h_skill_q_end": {
+   "montage": "Lancelot_Sword1H_Skill_Q_End_MTG",
+   "duree": 1,
+   "action": 1,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1
+    },
+    "normalAttack": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "tagOut": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "jump": {
+     "debut": 0.067,
+     "fin": 1
+    }
+   }
+  },
+  "grade_5_lancelot_sword1h_skill_q_just": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk2_MTG",
+   "duree": 1.467,
+   "action": 1.467,
+   "impacts": [
+    0.237,
+    0.318
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.467
+    },
+    "sameSkill": {
+     "debut": 0.2,
+     "fin": 1.467
+    },
+    "activeSkill": {
+     "debut": 0.213,
+     "fin": 1.467
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "tagOut": {
+     "debut": 0.404,
+     "fin": 1.467
+    }
+   }
+  },
+  "grade_5_lancelot_sword1h_skill_q_over": {
+   "montage": "Lancelot_Sword1H_Skill_Q_End_MTG",
+   "duree": 1,
+   "action": 1,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1
+    },
+    "normalAttack": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "tagOut": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "jump": {
+     "debut": 0.067,
+     "fin": 1
+    }
+   }
+  },
+  "grade_6_lancelot_gauntlets_skill_e": {
+   "montage": "Lancelot_Gauntlets_Skill_E_MTG",
+   "duree": 1.567,
+   "action": 1.567,
+   "impacts": [
+    0.046
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.567
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.568
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 1.568
+    },
+    "movement": {
+     "debut": 0.1,
+     "fin": 1.567
+    },
+    "normalAttack": {
+     "debut": 0.103,
+     "fin": 1.568
+    },
+    "tagOut": {
+     "debut": 0.109,
+     "fin": 1.568
+    }
+   }
+  },
+  "grade_6_lancelot_gauntlets_skill_e_charge": {
+   "montage": "Lancelot_Gauntlets_Skill_E_MTG",
+   "duree": 1.567,
+   "action": 1.567,
+   "impacts": [
+    0.046
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.567
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.568
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 1.568
+    },
+    "movement": {
+     "debut": 0.1,
+     "fin": 1.567
+    },
+    "normalAttack": {
+     "debut": 0.103,
+     "fin": 1.568
+    },
+    "tagOut": {
+     "debut": 0.109,
+     "fin": 1.568
+    }
+   }
+  },
+  "grade_6_lancelot_gauntlets_skill_e_ready": {
+   "montage": "Lancelot_Gauntlets_Skill_E_Ready_MTG",
+   "duree": 1.733,
+   "action": 1.733,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.733
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.733
+    }
+   }
+  },
+  "grade_6_lancelot_gauntlets_skill_r": {
+   "montage": "Lancelot_Gauntlets_Skill_R_MTG",
+   "duree": 3.767,
+   "action": 3.767,
+   "impacts": [
+    2.008
+   ],
+   "superArmor": [
+    [
+     0,
+     3.76667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "avoidance": {
+     "debut": 2.169,
+     "fin": 3.767
+    },
+    "jump": {
+     "debut": 2.169,
+     "fin": 3.767
+    },
+    "activeSkill": {
+     "debut": 2.173,
+     "fin": 3.767
+    },
+    "normalAttack": {
+     "debut": 2.23,
+     "fin": 3.767
+    },
+    "tagOut": {
+     "debut": 2.23,
+     "fin": 3.767
+    },
+    "movement": {
+     "debut": 2.237,
+     "fin": 3.767
+    }
+   }
+  },
+  "grade_6_lancelot_staff_normalatk_1": {
+   "montage": "Lancelot_Staff_NormalAtk_1_MTG",
+   "duree": 2.867,
+   "action": 2.867,
+   "impacts": [
+    0.126,
+    0.274,
+    0.433
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.867
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.867
+    },
+    "normalAttack": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "jump": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "tagOut": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "movement": {
+     "debut": 0.367,
+     "fin": 2.867
+    }
+   }
+  },
+  "grade_6_lancelot_staff_skill_e": {
+   "montage": "Lancelot_Staff_Skill_E_MTG",
+   "duree": 2.147,
+   "action": 2.147,
+   "impacts": [],
+   "tirs": [
+    0.331
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "montageNonConfirme": 2.267
+  },
+  "grade_6_lancelot_staff_skill_e_enchant": {
+   "montage": "Lancelot_Staff_Skill_Enchant_E_MTG",
+   "duree": 2.087,
+   "action": 2.087,
+   "impacts": [],
+   "tirs": [
+    0.62
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "montageNonConfirme": 2.167
+  },
+  "grade_6_lancelot_staff_skill_q": {
+   "montage": "Lancelot_Staff_Skill_Q_MTG",
+   "duree": 1.867,
+   "action": 1.867,
+   "impacts": [],
+   "tirs": [
+    0.23
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.867
+    },
+    "activeSkill": {
+     "debut": 0.089,
+     "fin": 1.867
+    },
+    "sameSkill": {
+     "debut": 0.31,
+     "fin": 1.867
+    },
+    "movement": {
+     "debut": 0.34,
+     "fin": 1.867
+    },
+    "normalAttack": {
+     "debut": 0.34,
+     "fin": 1.867
+    },
+    "jump": {
+     "debut": 0.34,
+     "fin": 1.867
+    },
+    "tagOut": {
+     "debut": 0.34,
+     "fin": 1.867
+    }
+   }
+  },
+  "grade_6_lancelot_staff_skill_q_enchant": {
+   "montage": "Lancelot_Staff_Skill_Enchant_Q_MTG",
+   "duree": 3.272,
+   "action": 3.272,
+   "impacts": [
+    0.284,
+    0.367,
+    0.434,
+    0.501,
+    0.592,
+    0.687,
+    0.839
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "montageNonConfirme": 3.5
+  },
+  "grade_6_lancelot_staff_skill_r_enchant": {
+   "montage": "Lancelot_Staff_Skill_Enchant_R_G5_MTG",
+   "duree": 1.826,
+   "action": 1.826,
+   "impacts": [],
+   "superArmor": [
+    [
+     0,
+     1.82564,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "tirs": [
+    0.602
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "montageNonConfirme": 2.373
+  },
+  "grade_6_lancelot_sword1h_normalatk_1": {
+   "montage": "Lancelot_Sword1H_NormalAtk_1_MTG",
+   "duree": 2,
+   "action": 2,
+   "impacts": [
+    0.101,
+    0.305
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2
+    },
+    "tagOut": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "jump": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "normalAttack": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 2
+    }
+   }
+  },
+  "grade_6_lancelot_sword1h_skill_e_atk1": {
+   "montage": "Lancelot_Sword1H_Skill_E_Atk1_MTG",
+   "duree": 1.067,
+   "action": 1.067,
+   "impacts": [
+    0.12
+   ],
+   "tirs": [
+    0.1
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.067
+    },
+    "activeSkill": {
+     "debut": 0.133,
+     "fin": 1.067
+    },
+    "movement": {
+     "debut": 0.267,
+     "fin": 1.067
+    },
+    "normalAttack": {
+     "debut": 0.268,
+     "fin": 1.068
+    },
+    "tagOut": {
+     "debut": 0.269,
+     "fin": 1.069
+    },
+    "jump": {
+     "debut": 0.269,
+     "fin": 1.069
+    }
+   }
+  },
+  "grade_6_lancelot_sword1h_skill_q": {
+   "montage": "Lancelot_Sword1H_Skill_Q_MTG",
+   "duree": 1.167,
+   "action": 1.167,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.167
+    },
+    "normalAttack": {
+     "debut": 0,
+     "fin": 2.167
+    }
+   }
+  },
+  "grade_6_lancelot_sword1h_skill_q_atk1": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk1_MTG",
+   "duree": 1.333,
+   "action": 1.333,
+   "impacts": [
+    0.122
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.333
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.333
+    },
+    "sameSkill": {
+     "debut": 0.133,
+     "fin": 1.333
+    },
+    "movement": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "normalAttack": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "tagOut": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "jump": {
+     "debut": 0.233,
+     "fin": 1.333
+    }
+   }
+  },
+  "grade_6_lancelot_sword1h_skill_q_atk2": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk2_MTG",
+   "duree": 1.467,
+   "action": 1.467,
+   "impacts": [
+    0.237,
+    0.318
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.467
+    },
+    "sameSkill": {
+     "debut": 0.2,
+     "fin": 1.467
+    },
+    "activeSkill": {
+     "debut": 0.213,
+     "fin": 1.467
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "tagOut": {
+     "debut": 0.404,
+     "fin": 1.467
+    }
+   }
+  },
+  "grade_6_lancelot_sword1h_skill_q_atk3": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk3_MTG",
+   "duree": 1.5,
+   "action": 1.5,
+   "impacts": [
+    0.018
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "sameSkill": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "movement": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "normalAttack": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "tagOut": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "jump": {
+     "debut": 0.333,
+     "fin": 1.5
+    }
+   }
+  },
+  "grade_6_lancelot_sword1h_skill_q_end": {
+   "montage": "Lancelot_Sword1H_Skill_Q_End_MTG",
+   "duree": 1,
+   "action": 1,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1
+    },
+    "normalAttack": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "tagOut": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "jump": {
+     "debut": 0.067,
+     "fin": 1
+    }
+   }
+  },
+  "grade_6_lancelot_sword1h_skill_q_just": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk2_MTG",
+   "duree": 1.467,
+   "action": 1.467,
+   "impacts": [
+    0.237,
+    0.318
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.467
+    },
+    "sameSkill": {
+     "debut": 0.2,
+     "fin": 1.467
+    },
+    "activeSkill": {
+     "debut": 0.213,
+     "fin": 1.467
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "tagOut": {
+     "debut": 0.404,
+     "fin": 1.467
+    }
+   }
+  },
+  "grade_6_lancelot_sword1h_skill_q_over": {
+   "montage": "Lancelot_Sword1H_Skill_Q_End_MTG",
+   "duree": 1,
+   "action": 1,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1
+    },
+    "normalAttack": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "tagOut": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "jump": {
+     "debut": 0.067,
+     "fin": 1
+    }
+   }
+  },
+  "grade_7_lancelot_sword1h_normalatk_1": {
+   "montage": "Lancelot_Sword1H_NormalAtk_1_MTG",
+   "duree": 2,
+   "action": 2,
+   "impacts": [
+    0.101,
+    0.305
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2
+    },
+    "tagOut": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "jump": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "normalAttack": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 2
+    }
+   }
+  },
+  "grade_7_lancelot_sword1h_skill_e_atk1": {
+   "montage": "Lancelot_Sword1H_Skill_E_Atk1_MTG",
+   "duree": 1.067,
+   "action": 1.067,
+   "impacts": [
+    0.12
+   ],
+   "tirs": [
+    0.1
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.067
+    },
+    "activeSkill": {
+     "debut": 0.133,
+     "fin": 1.067
+    },
+    "movement": {
+     "debut": 0.267,
+     "fin": 1.067
+    },
+    "normalAttack": {
+     "debut": 0.268,
+     "fin": 1.068
+    },
+    "tagOut": {
+     "debut": 0.269,
+     "fin": 1.069
+    },
+    "jump": {
+     "debut": 0.269,
+     "fin": 1.069
+    }
+   }
+  },
+  "grade_7_lancelot_sword1h_skill_q": {
+   "montage": "Lancelot_Sword1H_Skill_Q_MTG",
+   "duree": 1.167,
+   "action": 1.167,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.167
+    },
+    "normalAttack": {
+     "debut": 0,
+     "fin": 2.167
+    }
+   }
+  },
+  "grade_7_lancelot_sword1h_skill_q_atk1": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk1_MTG",
+   "duree": 1.333,
+   "action": 1.333,
+   "impacts": [
+    0.122
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.333
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.333
+    },
+    "sameSkill": {
+     "debut": 0.133,
+     "fin": 1.333
+    },
+    "movement": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "normalAttack": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "tagOut": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "jump": {
+     "debut": 0.233,
+     "fin": 1.333
+    }
+   }
+  },
+  "grade_7_lancelot_sword1h_skill_q_atk2": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk2_MTG",
+   "duree": 1.467,
+   "action": 1.467,
+   "impacts": [
+    0.237,
+    0.318
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.467
+    },
+    "sameSkill": {
+     "debut": 0.2,
+     "fin": 1.467
+    },
+    "activeSkill": {
+     "debut": 0.213,
+     "fin": 1.467
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "tagOut": {
+     "debut": 0.404,
+     "fin": 1.467
+    }
+   }
+  },
+  "grade_7_lancelot_sword1h_skill_q_atk3": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk3_MTG",
+   "duree": 1.5,
+   "action": 1.5,
+   "impacts": [
+    0.018
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "sameSkill": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "movement": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "normalAttack": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "tagOut": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "jump": {
+     "debut": 0.333,
+     "fin": 1.5
+    }
+   }
+  },
+  "grade_7_lancelot_sword1h_skill_q_end": {
+   "montage": "Lancelot_Sword1H_Skill_Q_End_MTG",
+   "duree": 1,
+   "action": 1,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1
+    },
+    "normalAttack": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "tagOut": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "jump": {
+     "debut": 0.067,
+     "fin": 1
+    }
+   }
+  },
+  "grade_7_lancelot_sword1h_skill_q_just": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk2_MTG",
+   "duree": 1.467,
+   "action": 1.467,
+   "impacts": [
+    0.237,
+    0.318
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.467
+    },
+    "sameSkill": {
+     "debut": 0.2,
+     "fin": 1.467
+    },
+    "activeSkill": {
+     "debut": 0.213,
+     "fin": 1.467
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "tagOut": {
+     "debut": 0.404,
+     "fin": 1.467
+    }
+   }
+  },
+  "grade_7_lancelot_sword1h_skill_q_over": {
+   "montage": "Lancelot_Sword1H_Skill_Q_End_MTG",
+   "duree": 1,
+   "action": 1,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1
+    },
+    "normalAttack": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "tagOut": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "jump": {
+     "debut": 0.067,
+     "fin": 1
+    }
+   }
+  },
+  "grade_9_lancelot_gauntlets_skill_r": {
+   "montage": "Lancelot_Gauntlets_Skill_R_MTG",
+   "duree": 3.767,
+   "action": 3.767,
+   "impacts": [
+    2.008
+   ],
+   "superArmor": [
+    [
+     0,
+     3.76667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "avoidance": {
+     "debut": 2.169,
+     "fin": 3.767
+    },
+    "jump": {
+     "debut": 2.169,
+     "fin": 3.767
+    },
+    "activeSkill": {
+     "debut": 2.173,
+     "fin": 3.767
+    },
+    "normalAttack": {
+     "debut": 2.23,
+     "fin": 3.767
+    },
+    "tagOut": {
+     "debut": 2.23,
+     "fin": 3.767
+    },
+    "movement": {
+     "debut": 2.237,
+     "fin": 3.767
+    }
+   }
+  },
+  "grade_9_lancelot_staff_normalatk_1": {
+   "montage": "Lancelot_Staff_NormalAtk_1_MTG",
+   "duree": 2.867,
+   "action": 2.867,
+   "impacts": [
+    0.126,
+    0.274,
+    0.433
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.867
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.867
+    },
+    "normalAttack": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "jump": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "tagOut": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "movement": {
+     "debut": 0.367,
+     "fin": 2.867
+    }
+   }
+  },
+  "grade_9_lancelot_staff_skill_e": {
+   "montage": "Lancelot_Staff_Skill_E_MTG",
+   "duree": 2.147,
+   "action": 2.147,
+   "impacts": [],
+   "tirs": [
+    0.331
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "montageNonConfirme": 2.267
+  },
+  "grade_9_lancelot_staff_skill_e_enchant": {
+   "montage": "Lancelot_Staff_Skill_Enchant_E_MTG",
+   "duree": 2.087,
+   "action": 2.087,
+   "impacts": [],
+   "tirs": [
+    0.62
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "montageNonConfirme": 2.167
+  },
+  "grade_9_lancelot_staff_skill_q": {
+   "montage": "Lancelot_Staff_Skill_Q_MTG",
+   "duree": 1.867,
+   "action": 1.867,
+   "impacts": [],
+   "tirs": [
+    0.23
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.867
+    },
+    "activeSkill": {
+     "debut": 0.089,
+     "fin": 1.867
+    },
+    "sameSkill": {
+     "debut": 0.31,
+     "fin": 1.867
+    },
+    "movement": {
+     "debut": 0.34,
+     "fin": 1.867
+    },
+    "normalAttack": {
+     "debut": 0.34,
+     "fin": 1.867
+    },
+    "jump": {
+     "debut": 0.34,
+     "fin": 1.867
+    },
+    "tagOut": {
+     "debut": 0.34,
+     "fin": 1.867
+    }
+   }
+  },
+  "grade_9_lancelot_staff_skill_q_enchant": {
+   "montage": "Lancelot_Staff_Skill_Enchant_Q_MTG",
+   "duree": 3.272,
+   "action": 3.272,
+   "impacts": [
+    0.284,
+    0.367,
+    0.434,
+    0.501,
+    0.592,
+    0.687,
+    0.839
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "montageNonConfirme": 3.5
+  },
+  "grade_9_lancelot_staff_skill_r_enchant": {
+   "montage": "Lancelot_Staff_Skill_Enchant_R_G5_MTG",
+   "duree": 1.826,
+   "action": 1.826,
+   "impacts": [],
+   "superArmor": [
+    [
+     0,
+     1.82564,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "tirs": [
+    0.602
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "montageNonConfirme": 2.373
+  },
+  "grade_9_lancelot_sword1h_normalatk_1": {
+   "montage": "Lancelot_Sword1H_NormalAtk_1_MTG",
+   "duree": 2,
+   "action": 2,
+   "impacts": [
+    0.101,
+    0.305
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2
+    },
+    "tagOut": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "jump": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "normalAttack": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 2
+    }
+   }
+  },
+  "grade_9_lancelot_sword1h_skill_e_atk1": {
+   "montage": "Lancelot_Sword1H_Skill_E_Atk1_MTG",
+   "duree": 1.067,
+   "action": 1.067,
+   "impacts": [
+    0.12
+   ],
+   "tirs": [
+    0.1
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.067
+    },
+    "activeSkill": {
+     "debut": 0.133,
+     "fin": 1.067
+    },
+    "movement": {
+     "debut": 0.267,
+     "fin": 1.067
+    },
+    "normalAttack": {
+     "debut": 0.268,
+     "fin": 1.068
+    },
+    "tagOut": {
+     "debut": 0.269,
+     "fin": 1.069
+    },
+    "jump": {
+     "debut": 0.269,
+     "fin": 1.069
+    }
+   }
+  },
+  "grade_9_lancelot_sword1h_skill_q": {
+   "montage": "Lancelot_Sword1H_Skill_Q_MTG",
+   "duree": 1.167,
+   "action": 1.167,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.167
+    },
+    "normalAttack": {
+     "debut": 0,
+     "fin": 2.167
+    }
+   }
+  },
+  "grade_9_lancelot_sword1h_skill_q_atk1": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk1_MTG",
+   "duree": 1.333,
+   "action": 1.333,
+   "impacts": [
+    0.122
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.333
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.333
+    },
+    "sameSkill": {
+     "debut": 0.133,
+     "fin": 1.333
+    },
+    "movement": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "normalAttack": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "tagOut": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "jump": {
+     "debut": 0.233,
+     "fin": 1.333
+    }
+   }
+  },
+  "grade_9_lancelot_sword1h_skill_q_atk2": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk2_MTG",
+   "duree": 1.467,
+   "action": 1.467,
+   "impacts": [
+    0.237,
+    0.318
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.467
+    },
+    "sameSkill": {
+     "debut": 0.2,
+     "fin": 1.467
+    },
+    "activeSkill": {
+     "debut": 0.213,
+     "fin": 1.467
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "tagOut": {
+     "debut": 0.404,
+     "fin": 1.467
+    }
+   }
+  },
+  "grade_9_lancelot_sword1h_skill_q_atk3": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk3_MTG",
+   "duree": 1.5,
+   "action": 1.5,
+   "impacts": [
+    0.018
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "sameSkill": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "movement": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "normalAttack": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "tagOut": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "jump": {
+     "debut": 0.333,
+     "fin": 1.5
+    }
+   }
+  },
+  "grade_9_lancelot_sword1h_skill_q_end": {
+   "montage": "Lancelot_Sword1H_Skill_Q_End_MTG",
+   "duree": 1,
+   "action": 1,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1
+    },
+    "normalAttack": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "tagOut": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "jump": {
+     "debut": 0.067,
+     "fin": 1
+    }
+   }
+  },
+  "grade_9_lancelot_sword1h_skill_q_just": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk2_MTG",
+   "duree": 1.467,
+   "action": 1.467,
+   "impacts": [
+    0.237,
+    0.318
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.467
+    },
+    "sameSkill": {
+     "debut": 0.2,
+     "fin": 1.467
+    },
+    "activeSkill": {
+     "debut": 0.213,
+     "fin": 1.467
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "tagOut": {
+     "debut": 0.404,
+     "fin": 1.467
+    }
+   }
+  },
+  "grade_9_lancelot_sword1h_skill_q_over": {
+   "montage": "Lancelot_Sword1H_Skill_Q_End_MTG",
+   "duree": 1,
+   "action": 1,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1
+    },
+    "normalAttack": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "tagOut": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "jump": {
+     "debut": 0.067,
+     "fin": 1
+    }
+   }
+  },
+  "lancelot_common_avoidanceskill": {
+   "montage": "Lancelot_Moving_Dash_MTG",
+   "duree": 1.5,
+   "action": 1.5,
+   "impacts": [],
+   "superArmor": [
+    [
+     0,
+     1.5,
+     true,
+     0,
+     false,
+     false
+    ]
+   ]
+  },
+  "lancelot_common_justavoidanceskill": {
+   "montage": "Lancelot_Moving_JustDash_MTG",
+   "duree": 1.5,
+   "action": 1.5,
+   "impacts": [],
+   "superArmor": [
+    [
+     0,
+     1.5,
+     true,
+     0,
+     false,
+     false
+    ]
+   ]
+  },
+  "lancelot_gauntlets_jumpatk": {
+   "montage": "Lancelot_Gauntlets_JumpAtk_MTG",
+   "duree": 1.933,
+   "action": 1.933,
+   "impacts": [
+    0.11
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.933
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.933
+    },
+    "movement": {
+     "debut": 0.55,
+     "fin": 1.933
+    },
+    "normalAttack": {
+     "debut": 0.55,
+     "fin": 1.933
+    },
+    "jump": {
+     "debut": 0.552,
+     "fin": 1.933
+    },
+    "tagOut": {
+     "debut": 0.557,
+     "fin": 1.933
+    }
+   },
+   "nom": "Step Shot",
+   "coupsDepot": null
+  },
+  "lancelot_gauntlets_justavoidanceskill": {
+   "montage": "Lancelot_Gauntlets_EvadeShot_MTG",
+   "duree": 1.767,
+   "action": 1.767,
+   "impacts": [
+    0.163,
+    0.196,
+    0.228
+   ],
+   "superArmor": [
+    [
+     0,
+     1.76667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.767
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.1
+    },
+    "avoidance": {
+     "debut": 0.4,
+     "fin": 1.767
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1.767
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 1.767
+    },
+    "sameSkill": {
+     "debut": 0.4,
+     "fin": 1.767
+    }
+   }
+  },
+  "lancelot_gauntlets_normalatk_1": {
+   "montage": "Lancelot_Gauntlets_NormalAtk_1_MTG",
+   "duree": 1.933,
+   "action": 1.933,
+   "impacts": [],
+   "tirs": [
+    0.123,
+    0.278,
+    0.472
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.933
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.933
+    },
+    "tagOut": {
+     "debut": 0.278,
+     "fin": 1.933
+    },
+    "normalAttack": {
+     "debut": 0.467,
+     "fin": 1.933
+    },
+    "jump": {
+     "debut": 0.5,
+     "fin": 1.933
+    },
+    "movement": {
+     "debut": 0.5,
+     "fin": 1.933
+    }
+   }
+  },
+  "lancelot_gauntlets_normalatk_2": {
+   "montage": "Lancelot_Gauntlets_NormalAtk_2_MTG",
+   "duree": 1.433,
+   "action": 1.433,
+   "impacts": [],
+   "tirs": [
+    0.372
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.433
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.433
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 1.433
+    },
+    "normalAttack": {
+     "debut": 0.367,
+     "fin": 1.433
+    },
+    "tagOut": {
+     "debut": 0.367,
+     "fin": 1.433
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1.433
+    }
+   }
+  },
+  "lancelot_gauntlets_normalatk_3": {
+   "montage": "Lancelot_Gauntlets_NormalAtk_3_MTG",
+   "duree": 2,
+   "action": 2,
+   "impacts": [],
+   "tirs": [
+    0.167,
+    0.299,
+    0.464
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2
+    },
+    "normalAttack": {
+     "debut": 0.467,
+     "fin": 2
+    },
+    "movement": {
+     "debut": 0.5,
+     "fin": 2
+    },
+    "tagOut": {
+     "debut": 0.5,
+     "fin": 2
+    }
+   }
+  },
+  "lancelot_gauntlets_normalatk_4": {
+   "montage": "Lancelot_Gauntlets_NormalAtk_4_MTG",
+   "duree": 2.533,
+   "action": 2.533,
+   "impacts": [],
+   "tirs": [
+    0.53
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.533
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.533
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 2.533
+    },
+    "normalAttack": {
+     "debut": 0.933,
+     "fin": 2.533
+    },
+    "movement": {
+     "debut": 0.933,
+     "fin": 2.533
+    },
+    "tagOut": {
+     "debut": 0.933,
+     "fin": 2.533
+    }
+   }
+  },
+  "lancelot_gauntlets_skill_e": {
+   "montage": "Lancelot_Gauntlets_Skill_E_MTG",
+   "duree": 1.567,
+   "action": 1.567,
+   "impacts": [
+    0.046
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.567
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.568
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 1.568
+    },
+    "movement": {
+     "debut": 0.1,
+     "fin": 1.567
+    },
+    "normalAttack": {
+     "debut": 0.103,
+     "fin": 1.568
+    },
+    "tagOut": {
+     "debut": 0.109,
+     "fin": 1.568
+    }
+   }
+  },
+  "lancelot_gauntlets_skill_e_charge": {
+   "montage": "Lancelot_Gauntlets_Skill_E_MTG",
+   "duree": 1.567,
+   "action": 1.567,
+   "impacts": [
+    0.046
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.567
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.568
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 1.568
+    },
+    "movement": {
+     "debut": 0.1,
+     "fin": 1.567
+    },
+    "normalAttack": {
+     "debut": 0.103,
+     "fin": 1.568
+    },
+    "tagOut": {
+     "debut": 0.109,
+     "fin": 1.568
+    }
+   }
+  },
+  "lancelot_gauntlets_skill_e_ready": {
+   "montage": "Lancelot_Gauntlets_Skill_E_Ready_MTG",
+   "duree": 1.733,
+   "action": 1.733,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.733
+    },
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.733
+    }
+   },
+   "nom": "Arrow Rain",
+   "coupsDepot": null
+  },
+  "lancelot_gauntlets_skill_q": {
+   "montage": "Lancelot_Gauntlets_Skill_Q_MTG",
+   "duree": 1.167,
+   "action": 1.167,
+   "impacts": [],
+   "tirs": [
+    0.088
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.167
+    },
+    "jump": {
+     "debut": 0,
+     "fin": 1.167
+    },
+    "normalAttack": {
+     "debut": 0.017,
+     "fin": 1.167
+    },
+    "movement": {
+     "debut": 0.018,
+     "fin": 1.168
+    },
+    "tagOut": {
+     "debut": 0.021,
+     "fin": 1.167
+    }
+   },
+   "nom": "Anchor Shot",
+   "coupsDepot": null
+  },
+  "lancelot_gauntlets_skill_r": {
+   "montage": "Lancelot_Gauntlets_Skill_R_MTG",
+   "duree": 3.767,
+   "action": 3.767,
+   "impacts": [
+    2.008
+   ],
+   "superArmor": [
+    [
+     0,
+     3.76667,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "avoidance": {
+     "debut": 2.169,
+     "fin": 3.767
+    },
+    "jump": {
+     "debut": 2.169,
+     "fin": 3.767
+    },
+    "activeSkill": {
+     "debut": 2.173,
+     "fin": 3.767
+    },
+    "normalAttack": {
+     "debut": 2.23,
+     "fin": 3.767
+    },
+    "tagOut": {
+     "debut": 2.23,
+     "fin": 3.767
+    },
+    "movement": {
+     "debut": 2.237,
+     "fin": 3.767
+    }
+   },
+   "nom": "Grand Rift",
+   "coupsDepot": null
+  },
+  "lancelot_gauntlets_skill_tag": {
+   "montage": "Lancelot_Gauntlets_Skill_Tag_MTG",
+   "duree": 2,
+   "action": 2,
+   "impacts": [],
+   "superArmor": [
+    [
+     0,
+     0.599,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "tirs": [
+    0.318
+   ],
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0.347,
+     "fin": 2
+    },
+    "avoidance": {
+     "debut": 0.347,
+     "fin": 2.003
+    },
+    "jump": {
+     "debut": 0.349,
+     "fin": 2.003
+    },
+    "movement": {
+     "debut": 0.349,
+     "fin": 2
+    },
+    "tagOut": {
+     "debut": 0.349,
+     "fin": 2
+    },
+    "normalAttack": {
+     "debut": 0.351,
+     "fin": 2
+    }
+   },
+   "nom": "Burst Arrow",
+   "coupsDepot": null
+  },
+  "lancelot_staff_jumpatk": {
+   "montage": "Lancelot_Staff_JumpAtk_MTG",
+   "duree": 2.3,
+   "action": 2.3,
+   "impacts": [
+    0.066
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.333
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.333
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 2.333
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 2.333
+    },
+    "tagOut": {
+     "debut": 0.4,
+     "fin": 2.333
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 2.333
+    }
+   },
+   "nom": "Chain Spear",
+   "coupsDepot": null
+  },
+  "lancelot_staff_normalatk_1": {
+   "montage": "Lancelot_Staff_NormalAtk_1_MTG",
+   "duree": 2.867,
+   "action": 2.867,
+   "impacts": [
+    0.126,
+    0.274,
+    0.433
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.867
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.867
+    },
+    "normalAttack": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "jump": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "tagOut": {
+     "debut": 0.33,
+     "fin": 2.867
+    },
+    "movement": {
+     "debut": 0.367,
+     "fin": 2.867
+    }
+   }
+  },
+  "lancelot_staff_normalatk_2": {
+   "montage": "Lancelot_Staff_NormalAtk_2_MTG",
+   "duree": 2.9,
+   "action": 2.9,
+   "impacts": [
+    0.172
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.9
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.9
+    },
+    "normalAttack": {
+     "debut": 0.033,
+     "fin": 2.897
+    },
+    "jump": {
+     "debut": 0.033,
+     "fin": 2.9
+    },
+    "tagOut": {
+     "debut": 0.033,
+     "fin": 2.9
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 2.9
+    }
+   }
+  },
+  "lancelot_staff_normalatk_3": {
+   "montage": "Lancelot_Staff_NormalAtk_3_MTG",
+   "duree": 3.5,
+   "action": 3.5,
+   "impacts": [
+    0.487,
+    0.651
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 3.5
+    },
+    "normalAttack": {
+     "debut": 0.5,
+     "fin": 3.5
+    },
+    "jump": {
+     "debut": 0.5,
+     "fin": 3.5
+    },
+    "tagOut": {
+     "debut": 0.5,
+     "fin": 3.5
+    },
+    "movement": {
+     "debut": 0.533,
+     "fin": 3.5
+    }
+   }
+  },
+  "lancelot_staff_normalatk_4": {
+   "montage": "Lancelot_Staff_NormalAtk_4_MTG",
+   "duree": 2.833,
+   "action": 2.833,
+   "impacts": [
+    0.27,
+    0.413,
+    0.586,
+    0.929
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.833
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.833
+    },
+    "normalAttack": {
+     "debut": 1.033,
+     "fin": 2.833
+    },
+    "jump": {
+     "debut": 1.033,
+     "fin": 2.833
+    },
+    "tagOut": {
+     "debut": 1.033,
+     "fin": 2.833
+    },
+    "movement": {
+     "debut": 1.067,
+     "fin": 2.833
+    }
+   }
+  },
+  "lancelot_staff_skill_e": {
+   "montage": "Lancelot_Staff_Skill_E_MTG",
+   "duree": 2.147,
+   "action": 2.147,
+   "impacts": [],
+   "tirs": [
+    0.301
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "montageNonConfirme": 2.267,
+   "nom": "Holy Spear",
+   "coupsDepot": null
+  },
+  "lancelot_staff_skill_e_enchant": {
+   "montage": "Lancelot_Staff_Skill_Enchant_E_MTG",
+   "duree": 2.087,
+   "action": 2.087,
+   "impacts": [],
+   "tirs": [
+    0.62
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "montageNonConfirme": 2.167
+  },
+  "lancelot_staff_skill_q": {
+   "montage": "Lancelot_Staff_Skill_Q_MTG",
+   "duree": 1.867,
+   "action": 1.867,
+   "impacts": [],
+   "tirs": [
+    0.23
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.867
+    },
+    "activeSkill": {
+     "debut": 0.089,
+     "fin": 1.867
+    },
+    "sameSkill": {
+     "debut": 0.31,
+     "fin": 1.867
+    },
+    "movement": {
+     "debut": 0.34,
+     "fin": 1.867
+    },
+    "normalAttack": {
+     "debut": 0.34,
+     "fin": 1.867
+    },
+    "jump": {
+     "debut": 0.34,
+     "fin": 1.867
+    },
+    "tagOut": {
+     "debut": 0.34,
+     "fin": 1.867
+    }
+   },
+   "nom": "Light Rush",
+   "coupsDepot": null
+  },
+  "lancelot_staff_skill_q_enchant": {
+   "montage": "Lancelot_Staff_Skill_Enchant_Q_MTG",
+   "duree": 3.272,
+   "action": 3.272,
+   "impacts": [
+    0.284,
+    0.367,
+    0.434,
+    0.501,
+    0.592,
+    0.687,
+    0.839
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "montageNonConfirme": 3.5
+  },
+  "lancelot_staff_skill_r": {
+   "montage": "Lancelot_Staff_Skill_R_MTG",
+   "duree": 4.1,
+   "action": 4.1,
+   "impacts": [
+    1.939,
+    2.02
+   ],
+   "superArmor": [
+    [
+     0,
+     4.1,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 2.4,
+     "fin": 4.1
+    },
+    "avoidance": {
+     "debut": 2.4,
+     "fin": 4.1
+    },
+    "movement": {
+     "debut": 2.4,
+     "fin": 4.1
+    },
+    "normalAttack": {
+     "debut": 2.4,
+     "fin": 4.1
+    },
+    "jump": {
+     "debut": 2.4,
+     "fin": 4.1
+    },
+    "tagOut": {
+     "debut": 2.4,
+     "fin": 4.1
+    }
+   }
+  },
+  "lancelot_staff_skill_r_action": {
+   "montage": "Lancelot_Staff_Skill_R_Action_MTG",
+   "duree": 2.2,
+   "action": 2.2,
+   "impacts": [
+    0.028,
+    0.043
+   ],
+   "superArmor": [
+    [
+     0,
+     2.2,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0.42,
+     "fin": 2.2
+    },
+    "avoidance": {
+     "debut": 0.42,
+     "fin": 2.2
+    },
+    "movement": {
+     "debut": 0.42,
+     "fin": 2.2
+    },
+    "normalAttack": {
+     "debut": 0.42,
+     "fin": 2.2
+    },
+    "jump": {
+     "debut": 0.42,
+     "fin": 2.2
+    },
+    "tagOut": {
+     "debut": 0.42,
+     "fin": 2.2
+    }
+   }
+  },
+  "lancelot_staff_skill_r_directing": {
+   "montage": "Lancelot_Staff_Skill_R_Directing_MTG",
+   "duree": 1.9,
+   "action": 3.5,
+   "impacts": [],
+   "superArmor": [
+    [
+     0,
+     1.9,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "lancelot",
+   "arme": "Staff"
+  },
+  "lancelot_staff_skill_r_enchant": {
+   "montage": "Lancelot_Staff_Skill_Enchant_R_MTG",
+   "duree": 2.373,
+   "action": 2.373,
+   "impacts": [],
+   "tirs": [
+    0.782
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.376
+    },
+    "activeSkill": {
+     "debut": 0.672,
+     "fin": 2.373
+    },
+    "tagOut": {
+     "debut": 0.967,
+     "fin": 2.373
+    },
+    "movement": {
+     "debut": 0.967,
+     "fin": 2.373
+    },
+    "normalAttack": {
+     "debut": 0.967,
+     "fin": 2.373
+    },
+    "jump": {
+     "debut": 0.967,
+     "fin": 2.373
+    }
+   },
+   "nom": "Shining Road",
+   "coupsDepot": null
+  },
+  "lancelot_staff_skill_tag": {
+   "montage": "Lancelot_Staff_Skill_Tag_MTG",
+   "duree": 4,
+   "action": 4,
+   "impacts": [
+    0.139,
+    0.568
+   ],
+   "superArmor": [
+    [
+     0,
+     0.599,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "lancelot",
+   "arme": "Staff",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0.556,
+     "fin": 4
+    },
+    "avoidance": {
+     "debut": 0.556,
+     "fin": 4
+    },
+    "movement": {
+     "debut": 0.72,
+     "fin": 4
+    },
+    "normalAttack": {
+     "debut": 0.72,
+     "fin": 4
+    },
+    "jump": {
+     "debut": 0.72,
+     "fin": 4
+    },
+    "tagOut": {
+     "debut": 0.72,
+     "fin": 4
+    }
+   },
+   "nom": "Lightfall",
+   "coupsDepot": null
+  },
+  "lancelot_sword1h_jumpatk": {
+   "montage": "Lancelot_Sword1H_JumpAtk_MTG",
+   "duree": 1,
+   "action": 1,
+   "impacts": [
+    0.065
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 1
+    },
+    "tagOut": {
+     "debut": 0.4,
+     "fin": 1
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1
+    }
+   },
+   "nom": "Chain Flash",
+   "coupsDepot": null
+  },
+  "lancelot_sword1h_normalatk_1": {
+   "montage": "Lancelot_Sword1H_NormalAtk_1_MTG",
+   "duree": 2,
+   "action": 2,
+   "impacts": [
+    0.101,
+    0.305
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2
+    },
+    "tagOut": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "jump": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "normalAttack": {
+     "debut": 0.373,
+     "fin": 2
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 2
+    }
+   }
+  },
+  "lancelot_sword1h_normalatk_2": {
+   "montage": "Lancelot_Sword1H_NormalAtk_2_MTG",
+   "duree": 2,
+   "action": 2,
+   "impacts": [
+    0.067
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2
+    },
+    "normalAttack": {
+     "debut": 0.167,
+     "fin": 2
+    },
+    "tagOut": {
+     "debut": 0.167,
+     "fin": 2
+    },
+    "jump": {
+     "debut": 0.167,
+     "fin": 2
+    },
+    "movement": {
+     "debut": 0.2,
+     "fin": 2
+    }
+   }
+  },
+  "lancelot_sword1h_normalatk_3": {
+   "montage": "Lancelot_Sword1H_NormalAtk_3_MTG",
+   "duree": 1.667,
+   "action": 1.667,
+   "impacts": [
+    0.067
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.667
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.667
+    },
+    "normalAttack": {
+     "debut": 0.1,
+     "fin": 1.667
+    },
+    "tagOut": {
+     "debut": 0.1,
+     "fin": 1.667
+    },
+    "jump": {
+     "debut": 0.1,
+     "fin": 1.667
+    },
+    "movement": {
+     "debut": 0.133,
+     "fin": 1.667
+    }
+   }
+  },
+  "lancelot_sword1h_normalatk_4": {
+   "montage": "Lancelot_Sword1H_NormalAtk_4_MTG",
+   "duree": 2,
+   "action": 2,
+   "impacts": [
+    0.1,
+    0.267
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2
+    },
+    "normalAttack": {
+     "debut": 0.467,
+     "fin": 2
+    },
+    "tagOut": {
+     "debut": 0.467,
+     "fin": 2
+    },
+    "jump": {
+     "debut": 0.467,
+     "fin": 2
+    },
+    "movement": {
+     "debut": 0.533,
+     "fin": 2
+    }
+   }
+  },
+  "lancelot_sword1h_normalatk_5": {
+   "montage": "Lancelot_Sword1H_NormalAtk_5_MTG",
+   "duree": 2.267,
+   "action": 2.267,
+   "impacts": [
+    0.267
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.267
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.267
+    },
+    "normalAttack": {
+     "debut": 1.1,
+     "fin": 2.267
+    },
+    "tagOut": {
+     "debut": 1.1,
+     "fin": 2.267
+    },
+    "jump": {
+     "debut": 1.1,
+     "fin": 2.267
+    },
+    "movement": {
+     "debut": 1.167,
+     "fin": 2.267
+    }
+   }
+  },
+  "lancelot_sword1h_skill_e_atk1": {
+   "montage": "Lancelot_Sword1H_Skill_E_Atk1_MTG",
+   "duree": 1.067,
+   "action": 1.067,
+   "impacts": [
+    0.12
+   ],
+   "tirs": [
+    0.1
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.067
+    },
+    "activeSkill": {
+     "debut": 0.133,
+     "fin": 1.067
+    },
+    "movement": {
+     "debut": 0.267,
+     "fin": 1.067
+    },
+    "normalAttack": {
+     "debut": 0.268,
+     "fin": 1.068
+    },
+    "tagOut": {
+     "debut": 0.269,
+     "fin": 1.069
+    },
+    "jump": {
+     "debut": 0.269,
+     "fin": 1.069
+    }
+   },
+   "nom": "Skycleave",
+   "coupsDepot": null
+  },
+  "lancelot_sword1h_skill_e_atk2": {
+   "montage": "Lancelot_Sword1H_Skill_E_Atk2_MTG",
+   "duree": 1.133,
+   "action": 1.133,
+   "impacts": [
+    0.1
+   ],
+   "tirs": [
+    0.067
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.133
+    },
+    "activeSkill": {
+     "debut": 0.105,
+     "fin": 1.133
+    },
+    "movement": {
+     "debut": 0.233,
+     "fin": 1.133
+    },
+    "normalAttack": {
+     "debut": 0.233,
+     "fin": 1.133
+    },
+    "tagOut": {
+     "debut": 0.233,
+     "fin": 1.133
+    },
+    "jump": {
+     "debut": 0.233,
+     "fin": 1.133
+    }
+   }
+  },
+  "lancelot_sword1h_skill_e_atk3": {
+   "montage": "Lancelot_Sword1H_Skill_E_Atk3_MTG",
+   "duree": 1.333,
+   "action": 1.333,
+   "impacts": [
+    0.134
+   ],
+   "tirs": [
+    0.1
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.333
+    },
+    "activeSkill": {
+     "debut": 0.147,
+     "fin": 1.333
+    },
+    "normalAttack": {
+     "debut": 0.433,
+     "fin": 1.333
+    },
+    "tagOut": {
+     "debut": 0.433,
+     "fin": 1.333
+    },
+    "jump": {
+     "debut": 0.433,
+     "fin": 1.333
+    },
+    "movement": {
+     "debut": 0.433,
+     "fin": 1.333
+    }
+   }
+  },
+  "lancelot_sword1h_skill_e_atk4": {
+   "montage": "Lancelot_Sword1H_Skill_E_Atk4_MTG",
+   "duree": 1.067,
+   "action": 1.067,
+   "impacts": [
+    0.12
+   ],
+   "tirs": [
+    0.1
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.067
+    },
+    "activeSkill": {
+     "debut": 0.185,
+     "fin": 1.067
+    },
+    "movement": {
+     "debut": 0.267,
+     "fin": 1.067
+    },
+    "normalAttack": {
+     "debut": 0.268,
+     "fin": 1.068
+    },
+    "tagOut": {
+     "debut": 0.269,
+     "fin": 1.069
+    },
+    "jump": {
+     "debut": 0.269,
+     "fin": 1.069
+    }
+   }
+  },
+  "lancelot_sword1h_skill_e_atk5": {
+   "montage": "Lancelot_Sword1H_Skill_E_Atk5_MTG",
+   "duree": 1.133,
+   "action": 1.133,
+   "impacts": [
+    0.1
+   ],
+   "tirs": [
+    0.067
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.133
+    },
+    "activeSkill": {
+     "debut": 0.105,
+     "fin": 1.133
+    },
+    "movement": {
+     "debut": 0.233,
+     "fin": 1.133
+    },
+    "normalAttack": {
+     "debut": 0.233,
+     "fin": 1.133
+    },
+    "tagOut": {
+     "debut": 0.233,
+     "fin": 1.133
+    },
+    "jump": {
+     "debut": 0.233,
+     "fin": 1.133
+    }
+   }
+  },
+  "lancelot_sword1h_skill_e_atk6": {
+   "montage": "Lancelot_Sword1H_Skill_E_Atk6_MTG",
+   "duree": 1.333,
+   "action": 1.333,
+   "impacts": [
+    0.134
+   ],
+   "tirs": [
+    0.1
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.333
+    },
+    "activeSkill": {
+     "debut": 0.147,
+     "fin": 1.333
+    },
+    "normalAttack": {
+     "debut": 0.433,
+     "fin": 1.333
+    },
+    "tagOut": {
+     "debut": 0.433,
+     "fin": 1.333
+    },
+    "jump": {
+     "debut": 0.433,
+     "fin": 1.333
+    },
+    "movement": {
+     "debut": 0.433,
+     "fin": 1.333
+    }
+   }
+  },
+  "lancelot_sword1h_skill_q": {
+   "montage": "Lancelot_Sword1H_Skill_Q_MTG",
+   "duree": 1.167,
+   "action": 1.167,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 2.167
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 2.167
+    },
+    "normalAttack": {
+     "debut": 0,
+     "fin": 2.167
+    }
+   },
+   "nom": "Iai Stance",
+   "coupsDepot": null
+  },
+  "lancelot_sword1h_skill_q_atk1": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk1_MTG",
+   "duree": 1.333,
+   "action": 1.333,
+   "impacts": [
+    0.122
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.333
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.333
+    },
+    "sameSkill": {
+     "debut": 0.133,
+     "fin": 1.333
+    },
+    "movement": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "normalAttack": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "tagOut": {
+     "debut": 0.233,
+     "fin": 1.333
+    },
+    "jump": {
+     "debut": 0.233,
+     "fin": 1.333
+    }
+   }
+  },
+  "lancelot_sword1h_skill_q_atk2": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk2_MTG",
+   "duree": 1.467,
+   "action": 1.467,
+   "impacts": [
+    0.237,
+    0.318
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.467
+    },
+    "sameSkill": {
+     "debut": 0.2,
+     "fin": 1.467
+    },
+    "activeSkill": {
+     "debut": 0.213,
+     "fin": 1.467
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "tagOut": {
+     "debut": 0.404,
+     "fin": 1.467
+    }
+   }
+  },
+  "lancelot_sword1h_skill_q_atk3": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk3_MTG",
+   "duree": 1.5,
+   "action": 1.5,
+   "impacts": [
+    0.018
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "sameSkill": {
+     "debut": 0,
+     "fin": 1.5
+    },
+    "movement": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "normalAttack": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "tagOut": {
+     "debut": 0.333,
+     "fin": 1.5
+    },
+    "jump": {
+     "debut": 0.333,
+     "fin": 1.5
+    }
+   }
+  },
+  "lancelot_sword1h_skill_q_end": {
+   "montage": "Lancelot_Sword1H_Skill_Q_End_MTG",
+   "duree": 1,
+   "action": 1,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1
+    },
+    "normalAttack": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "tagOut": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "jump": {
+     "debut": 0.067,
+     "fin": 1
+    }
+   }
+  },
+  "lancelot_sword1h_skill_q_just": {
+   "montage": "Lancelot_Sword1H_Skill_Q_Atk2_MTG",
+   "duree": 1.467,
+   "action": 1.467,
+   "impacts": [
+    0.237,
+    0.318
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0,
+     "fin": 1.467
+    },
+    "sameSkill": {
+     "debut": 0.2,
+     "fin": 1.467
+    },
+    "activeSkill": {
+     "debut": 0.213,
+     "fin": 1.467
+    },
+    "movement": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "normalAttack": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "jump": {
+     "debut": 0.4,
+     "fin": 1.467
+    },
+    "tagOut": {
+     "debut": 0.404,
+     "fin": 1.467
+    }
+   }
+  },
+  "lancelot_sword1h_skill_q_over": {
+   "montage": "Lancelot_Sword1H_Skill_Q_End_MTG",
+   "duree": 1,
+   "action": 1,
+   "impacts": [],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 0,
+     "fin": 1
+    },
+    "avoidance": {
+     "debut": 0,
+     "fin": 1
+    },
+    "normalAttack": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "movement": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "tagOut": {
+     "debut": 0.067,
+     "fin": 1
+    },
+    "jump": {
+     "debut": 0.067,
+     "fin": 1
+    }
+   }
+  },
+  "lancelot_sword1h_skill_r": {
+   "montage": "Lancelot_Sword1H_Skill_R_MTG",
+   "duree": 4,
+   "action": 4,
+   "impacts": [
+    2.047,
+    2.187,
+    2.33,
+    2.712
+   ],
+   "superArmor": [
+    [
+     0,
+     4,
+     true,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "activeSkill": {
+     "debut": 3,
+     "fin": 4
+    },
+    "avoidance": {
+     "debut": 3,
+     "fin": 4
+    },
+    "movement": {
+     "debut": 3,
+     "fin": 4
+    },
+    "normalAttack": {
+     "debut": 3,
+     "fin": 4
+    },
+    "tagOut": {
+     "debut": 3,
+     "fin": 4
+    },
+    "jump": {
+     "debut": 3,
+     "fin": 4
+    }
+   },
+   "nom": "Instant Flash",
+   "coupsDepot": null
+  },
+  "lancelot_sword1h_skill_tag": {
+   "montage": "Lancelot_Sword1H_Skill_Tag_MTG",
+   "duree": 1.6,
+   "action": 1.6,
+   "impacts": [
+    0.4
+   ],
+   "superArmor": [
+    [
+     0,
+     0.696193,
+     false,
+     0,
+     false,
+     false
+    ]
+   ],
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "fenetres": {
+    "avoidance": {
+     "debut": 0.659,
+     "fin": 1.6
+    },
+    "activeSkill": {
+     "debut": 0.661,
+     "fin": 1.6
+    },
+    "jump": {
+     "debut": 0.685,
+     "fin": 2.933
+    },
+    "movement": {
+     "debut": 0.726,
+     "fin": 2.933
+    },
+    "normalAttack": {
+     "debut": 0.726,
+     "fin": 2.933
+    },
+    "tagOut": {
+     "debut": 0.726,
+     "fin": 2.933
+    }
+   },
+   "nom": "Stormblade",
+   "coupsDepot": null
   }
  }
 }

@@ -29,7 +29,8 @@ const CATALOGUE = {
   },
   competences:{
     meliodas:[
-      { type:"Axe", categorie:"NORMAL", nom:"Coup de hache", description:"Inflige 160% de l'attaque.", recharge:8 },
+      { type:"Axe", categorie:"NORMAL", nom:"Coup de hache", description:"Inflige 160% de l'attaque.", recharge:8,
+        dureeAnimation:2.5, relanceDes:1.2 },
       { type:"Sword1h", categorie:"NORMAL", nom:"Taille", description:"Inflige 120%.", recharge:6 },
       { type:null, categorie:"PASSIVE", nom:"Démon", description:"Passif commun.", recharge:null }
     ],
@@ -118,6 +119,12 @@ async function main() {
   assert.equal(fiche.donnees.armes.length, 3);
   const hache = fiche.donnees.armes.find(a => a.arme === "Hache");
   assert.deepEqual(hache.competences.map(c => c.nom), ["Coup de hache"]);
+  /* La duree d'animation et l'instant de relance viennent du jeu : sans
+     elles, /jarvis ne savait pas dire combien de temps dure un ultime. */
+  assert.equal(hache.competences[0].dureeAnimation, 2.5);
+  assert.equal(hache.competences[0].relanceDes, 1.2);
+  const passif = fiche.donnees.competencesCommunes[0];
+  assert.equal(passif.dureeAnimation, null, "absente du catalogue, la duree vaut null, jamais 0");
   assert.equal(hache.potentiels[0], "P1 : Bonus hache 1");
   assert.equal(hache.potentiels[9], "P10 : Bonus hache 10");
   assert.deepEqual(fiche.donnees.competencesCommunes.map(c => c.nom), ["Démon"]);
@@ -131,9 +138,18 @@ async function main() {
   assert.deepEqual(ficheLivre.donnees.armes.map(a => a.arme), ["Grimoire"]);
   const ficheEpee = await outils().executer("fiche_personnage", { nom:"meliodas", arme:"épée 1 main" });
   assert.deepEqual(ficheEpee.donnees.armes.map(a => a.arme), ["Épée longue"]);
+  /* Un membre dit « Ban physique », pas « Ban nunchaku » : l'element choisit
+     l'arme. Il peut en designer plusieurs, et alors toutes sont gardees. */
+  const ficheTenebres = await outils().executer("fiche_personnage", { nom:"meliodas", arme:"ténèbres" });
+  assert.deepEqual(ficheTenebres.donnees.armes.map(a => a.arme), ["Hache"]);
+  const ficheFeu = await outils().executer("fiche_personnage", { nom:"meliodas", arme:"FEU" });
+  assert.deepEqual(ficheFeu.donnees.armes.map(a => a.arme), ["Épée longue", "Grimoire"]);
+  /* L'echec donne l'element de chaque arme : sans lui, Gemini ne pouvait pas
+     relier « physique » a une arme et abandonnait. */
   const ficheArmeInconnue = await outils().executer("fiche_personnage", { nom:"meliodas", arme:"lance" });
   assert.equal(ficheArmeInconnue.donnees.armeInconnue, "lance");
-  assert.deepEqual(ficheArmeInconnue.donnees.armes, ["Épée longue", "Hache", "Grimoire"]);
+  assert.deepEqual(ficheArmeInconnue.donnees.armes,
+    ["Épée longue (Feu)", "Hache (Ténèbres)", "Grimoire (Feu)"]);
 
   /* ... introuvable : des propositions plutot qu'un refus sec */
   const inconnu = await outils().executer("fiche_personnage", { nom:"Merlinette" });

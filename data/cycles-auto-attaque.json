@@ -304,6 +304,16 @@
    "fiable": true
   },
   {
+   "heros": "lancelot",
+   "arme": "Staff",
+   "coups": 4,
+   "brut": 12.1,
+   "enchaine": 1.896,
+   "sansFenetre": 0,
+   "gain": 84,
+   "fiable": true
+  },
+  {
    "heros": "dreyfus",
    "arme": "Sword1H",
    "coups": 3,
@@ -321,6 +331,16 @@
    "enchaine": 1.928,
    "sansFenetre": 0,
    "gain": 77,
+   "fiable": true
+  },
+  {
+   "heros": "ban",
+   "arme": "Sword2H",
+   "coups": 4,
+   "brut": 10.968,
+   "enchaine": 1.929,
+   "sansFenetre": 0,
+   "gain": 82,
    "fiable": true
   },
   {
@@ -354,6 +374,16 @@
    "fiable": true
   },
   {
+   "heros": "ban",
+   "arme": "Gauntlets",
+   "coups": 4,
+   "brut": 14.034,
+   "enchaine": 2,
+   "sansFenetre": 0,
+   "gain": 86,
+   "fiable": true
+  },
+  {
    "heros": "derieri",
    "arme": "Sword2H",
    "coups": 4,
@@ -361,6 +391,16 @@
    "enchaine": 2.05,
    "sansFenetre": 0,
    "gain": 76,
+   "fiable": true
+  },
+  {
+   "heros": "ban",
+   "arme": "Cudgel3c",
+   "coups": 4,
+   "brut": 14.934,
+   "enchaine": 2.057,
+   "sansFenetre": 0,
+   "gain": 86,
    "fiable": true
   },
   {
@@ -434,6 +474,16 @@
    "fiable": true
   },
   {
+   "heros": "lancelot",
+   "arme": "Sword1H",
+   "coups": 5,
+   "brut": 9.934,
+   "enchaine": 2.207,
+   "sansFenetre": 0,
+   "gain": 78,
+   "fiable": true
+  },
+  {
    "heros": "daisy",
    "arme": "Book",
    "coups": 4,
@@ -451,6 +501,16 @@
    "enchaine": 2.234,
    "sansFenetre": 0,
    "gain": 80,
+   "fiable": true
+  },
+  {
+   "heros": "lancelot",
+   "arme": "Gauntlets",
+   "coups": 4,
+   "brut": 7.899,
+   "enchaine": 2.234,
+   "sansFenetre": 0,
+   "gain": 72,
    "fiable": true
   },
   {

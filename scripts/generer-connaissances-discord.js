@@ -76,16 +76,35 @@ function personnagesConnus(data, meta) {
   return sortie;
 }
 
-function competencesConnues(wiki) {
+/* L'identifiant que le site publie n'est pas toujours celui de l'animation
+   jouee. Le baton de Lancelot : 7dsorigin.app publie son ultime de base,
+   « Chemin radieux », sous l'identifiant de sa forme amelioree. La meme
+   correspondance, et sa preuve, vivent dans ecrire-ultimes-combines.js. */
+const ANIMATION_JOUEE = {
+  lancelot_staff_skill_r_enchant:"lancelot_staff_skill_r"
+};
+
+/* `dureeAnimation` : TotalTime de la table du jeu (temps-action.json).
+   `relanceDes` : premier instant ou le heros peut agir de nouveau, deduit des
+   marqueurs du montage (animations-verrous.json). `null` quand le jeu ne le
+   dit pas : une duree inventee serait pire qu'une absence. */
+function competencesConnues(wiki, tempsAction, verrous) {
   const sortie = {};
   Object.keys(wiki).sort().forEach(id => {
-    sortie[id] = (wiki[id] || []).map(competence => ({
-      type:competence.weaponType || null,
-      categorie:competence.categorie || null,
-      nom:competence.nomFr,
-      description:sansBalisesCouleur(competence.descriptionFr),
-      recharge:Number.isFinite(competence.recharge) ? competence.recharge : null
-    }));
+    sortie[id] = (wiki[id] || []).map(competence => {
+      const joue = ANIMATION_JOUEE[competence.gameId];
+      const action = tempsAction[joue || competence.gameId];
+      const verrou = joue ? undefined : verrous[competence.gameId];
+      return {
+        type:competence.weaponType || null,
+        categorie:competence.categorie || null,
+        nom:competence.nomFr,
+        description:sansBalisesCouleur(competence.descriptionFr),
+        recharge:Number.isFinite(competence.recharge) ? competence.recharge : null,
+        dureeAnimation:action && Number.isFinite(action.duree) ? action.duree : null,
+        relanceDes:Number.isFinite(verrou) ? verrou : null
+      };
+    });
   });
   return sortie;
 }
@@ -192,7 +211,11 @@ function construireConnaissances() {
   const catalogue = {
     version:1,
     personnages:personnagesConnus(data, meta),
-    competences:competencesConnues(wiki),
+    competences:competencesConnues(
+      wiki,
+      JSON.parse(fs.readFileSync(path.join(RACINE, "data", "temps-action.json"), "utf8")).actions,
+      JSON.parse(fs.readFileSync(path.join(RACINE, "data", "animations-verrous.json"), "utf8")).animations
+    ),
     potentiels:potentielsConnus(potentiels),
     equipements,
     ensembles:ensemblesConnus(

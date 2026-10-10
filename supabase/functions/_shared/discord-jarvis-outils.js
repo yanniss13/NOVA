@@ -56,12 +56,14 @@ const DECLARATIONS_OUTILS_JARVIS = [
   },
   {
     name:"fiche_personnage",
-    description:"Compétences, passifs et potentiels P1 à P10 d'un héros, arme par arme.",
+    description:"Compétences, passifs et potentiels P1 à P10 d'un héros, arme par arme."
+      + " Chaque compétence donne sa recharge, la durée de son animation (dureeAnimation, en s)"
+      + " et l'instant où le héros peut agir de nouveau (relanceDes, en s), quand le jeu les publie.",
     parameters:{
       type:"OBJECT",
       properties:{
         nom:{ type:"STRING", description:"Nom du héros, même approximatif (ex. « mel » pour Meliodas)." },
-        arme:{ type:"STRING", description:"Facultatif : un type d'arme pour ne garder qu'elle (ex. « hache », « grimoire »)." }
+        arme:{ type:"STRING", description:"Facultatif : une arme (ex. « hache », « grimoire ») ou un élément (ex. « physique », « terre ») pour ne garder qu'elle." }
       },
       required:["nom"]
     }
@@ -163,7 +165,27 @@ function trouverTypeArmeJarvis(personnage, saisie) {
   const trouvee = armes.find(arme => noms(arme).includes(cherche))
     || armes.find(arme => noms(arme).some(nom => nom.startsWith(cherche)))
     || (cherche.length >= 3 && armes.find(arme => noms(arme).some(nom => nom.includes(cherche))));
-  return trouvee ? trouvee.type : undefined;
+  if(trouvee) return trouvee.type;
+  /* Un membre dit « Ban physique » plutot que « Ban nunchaku ». Un element ne
+     choisit une arme que s'il n'en designe qu'une : sinon le filtre serait un
+     tirage au sort, et `typesParElementJarvis` les rend toutes. */
+  const parElement = typesParElementJarvis(personnage, saisie);
+  return parElement.length === 1 ? parElement[0] : undefined;
+}
+
+function typesParElementJarvis(personnage, saisie) {
+  const cherche = normaliserRecherche(saisie);
+  if(cherche.length < 3) return [];
+  return (personnage.armes || [])
+    .filter(arme => arme.element && normaliserRecherche(arme.element).startsWith(cherche))
+    .map(arme => arme.type);
+}
+
+/* La liste rendue quand une arme est introuvable : l'element y figure, sans
+   quoi Gemini ne peut pas relier « physique » a une arme et abandonne. */
+function armesAvecElementJarvis(personnage) {
+  return (personnage.armes || []).map(arme =>
+    arme.element ? arme.arme + " (" + arme.element + ")" : arme.arme);
 }
 
 function introuvableJarvis(saisie, candidats) {
@@ -182,7 +204,9 @@ function outilListerPersonnages(catalogue) {
 function competenceLisible(competence) {
   return {
     categorie:competence.categorie, nom:competence.nom,
-    description:competence.description, recharge:competence.recharge
+    description:competence.description, recharge:competence.recharge,
+    dureeAnimation:competence.dureeAnimation === undefined ? null : competence.dureeAnimation,
+    relanceDes:competence.relanceDes === undefined ? null : competence.relanceDes
   };
 }
 
@@ -191,12 +215,14 @@ function outilFichePersonnage(catalogue, args) {
   if(!id) return introuvableJarvis(args.nom, nomsDesPersonnagesJarvis(catalogue));
   const personnage = catalogue.personnages[id];
   const filtre = trouverTypeArmeJarvis(personnage, args.arme);
-  if(filtre === undefined){
+  const parElement = filtre === undefined ? typesParElementJarvis(personnage, args.arme) : [];
+  if(filtre === undefined && !parElement.length){
     return {
       personnage:personnage.nom, armeInconnue:args.arme,
-      armes:personnage.armes.map(arme => arme.arme)
+      armes:armesAvecElementJarvis(personnage)
     };
   }
+  const types = filtre ? [filtre] : (parElement.length ? parElement : null);
   const competences = (catalogue.competences || {})[id] || [];
   const potentiels = (catalogue.potentiels || {})[id] || {};
   return {
@@ -204,7 +230,7 @@ function outilFichePersonnage(catalogue, args) {
     rarete:personnage.rarete,
     competencesCommunes:competences.filter(c => !c.type).map(competenceLisible),
     armes:personnage.armes
-      .filter(arme => !filtre || arme.type === filtre)
+      .filter(arme => !types || types.includes(arme.type))
       .map(arme => ({
         arme:arme.arme, element:arme.element, role:arme.role,
         competences:competences.filter(c => c.type === arme.type).map(competenceLisible),
@@ -352,7 +378,7 @@ async function outilQuiPossede(contexte, args) {
   if(type === undefined){
     return {
       personnage:personnage.nom, armeInconnue:args.arme,
-      armes:personnage.armes.map(arme => arme.arme)
+      armes:armesAvecElementJarvis(personnage)
     };
   }
   const dossier = type ? TYPE_ARME_VERS_DOSSIER[type] : null;

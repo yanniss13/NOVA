@@ -1361,6 +1361,11 @@ le SQL Editor afin d'ajouter les tables à la publication
   `data/connaissances-discord.json`, généré par
   `scripts/generer-connaissances-discord.js`. Procédure :
   `docs/discord-planning.md`.
+  `fiche_personnage` accepte un **élément** comme filtre d'arme (« Ban
+  physique » → nunchakus) ; chaque compétence porte `dureeAnimation`
+  (`temps-action.json`) et `relanceDes` (`animations-verrous.json`), à
+  `null` quand le jeu ne les donne pas. Les données arrivent avec Pages ;
+  un changement d'outil exige de redéployer l'Edge Function.
   **Lot 2a (monstres et boss)** : `outils/fabrication/extraire-monstres.js` lit
   l'export local (`DONNEES_JEU`) et écrit `output/jarvis/monstres.json`,
   ignoré par git, que le propriétaire dépose dans le bucket **privé**
